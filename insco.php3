@@ -80,13 +80,9 @@ if ($action=="addform") {
     <BR>
 
     <$STDFONT_B>Insurance Group : <$STDFONT_E>
-    <SELECT NAME=\"inscogroup\">
-  ";
-
-  freemed_display_inscogroups($inscogroup);
-
-  echo "
-    </SELECT>
+  ".
+  freemed_display_inscogroups($inscogroup)
+  ."
     <BR>
 
     <$STDFONT_B>Insurance Type :<$STDFONT_E>
@@ -291,13 +287,9 @@ if ($action=="addform") {
     <BR>
 
     <$STDFONT_B>Insurance Group : <$STDFONT_E>
-    <SELECT NAME=\"inscogroup\">
-  ";
-
-  freemed_display_inscogroups($inscogroup);
-
-  echo "
-    </SELECT>
+  ".
+  freemed_display_inscogroups($inscogroup)
+  ."
     <BR>
 
     <$STDFONT_B>Insurance Type : <$STDFONT_E>
@@ -400,7 +392,7 @@ if ($action=="addform") {
 
   echo "
     <P>
-    <I>Insurance Company $id deleted<I>.
+    <I>Insurance Company $id deleted</I>.
   ";
   if ($debug) {
     echo "

@@ -1,8 +1,8 @@
 <?php
- # file: payment_record.php3
- # note: ledger/patient payment record functions
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: payment_record.php3
+ // note: ledger/patient payment record functions
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name   = "payment_record.php3";
  $record_name = "Patient Ledger Record";
@@ -228,11 +228,11 @@
 
      <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>Insurance Company : <$STDFONT_E></TD>
-     <TD ALIGN=LEFT><SELECT NAME=\"payreclink\">
-   ";
-   freemed_display_insco ($payreclink);
-   echo "
-     </SELECT></TD>
+     <TD ALIGN=LEFT>
+   ".
+   freemed_display_insco ($payreclink)
+   ."
+     </TD>
      </TR>
 
      <TR>

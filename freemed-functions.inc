@@ -1,12 +1,13 @@
 <?php
-  # file: freemed-functions.inc
-  # note: complete list of included functions for all modules
-  #       basically to cut down on includes, and make everything
-  #       a little easier
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  #       max k <amk@span.ch>
-  # lic : GPL, v2
-  # ver : 2000-04-19
+ // file: freemed-functions.inc
+ // note: complete list of included functions for all modules
+ //       basically to cut down on includes, and make everything
+ //       a little easier
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ //       max k <amk@span.ch>
+ //       adam (gdrago23@yahoo.com)
+ // lic : GPL, v2
+ // ver : 2000-04-19
 
 $__freemed_functions__ = true;
 
@@ -415,11 +416,11 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
   global $lang_ADD, $RETURN_TO_MENU, $page_name, $patient, $_ref, $_auth;
 
+  $buffer = "";
+
   if (!empty($_ref)) $__ref = $_ref;
 
   if ($this_page_name=="") $this_page_name = $page_name;
-
-  if (!empty($patient))    $patient_info   = "&patient=$patient";
 
   if (!empty($__ref)) {
     $_ref="main.php3";
@@ -427,13 +428,13 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 
     // show the actual bar, build with page_name reference
     // and global variables
-  echo "
+  $buffer .= "
     <TABLE BGCOLOR=#000000 WIDTH=100% BORDER=0
      CELLSPACING=0 CELLPADDING=3>
     <TR BGCOLOR=#000000>
     <TD ALIGN=LEFT><A HREF=\"$this_page_name?$_auth&action=addform".
-     "$patient_info\"
-     ><FONT COLOR=#ffffff FACE=\"Arial, Helvetica, Verdana\"
+     ( !empty($patient) ? "&patient=$patient" : "" )
+     ."\"><FONT COLOR=#ffffff FACE=\"Arial, Helvetica, Verdana\"
      SIZE=-1><B>$lang_ADD</B></FONT></A></TD>
     <TD WIDTH=30%>&nbsp;</TD>
     <TD ALIGN=RIGHT><A HREF=\"$__ref?$_auth\"
@@ -441,6 +442,9 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
      SIZE=-1><B>$RETURN_TO_MENU</B></FONT></A></TD>
     </TR></TABLE>
   ";
+
+  return $buffer;
+
 } // end function freemed_display_actionbar
 
 // function freemed_display_cptcodes
@@ -576,45 +580,47 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 } // end function freemed_display_html_top
 
 // function freemed_display_itemlist
-function freemed_display_itemlist ($title, $result, $page_link, 
-                                   $control_list,  $blank_list)
+function freemed_display_itemlist ($result, $page_link, 
+                                   $control_list,  $blank_list, $xref_list="")
 {
-  global $_ref, $LoginCookie, $STDFONT_B, $STDFONT_E, $modify_level, $delete_level;
-  global $patient;
+  global $_ref, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
+  global $modify_level, $delete_level, $patient;
 
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
+  
+  $buffer="";
 
-  echo "
+  $buffer .= "
     <!-- Begin itemlist Table -->
     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#555555\">
     <TR>
      <TD ALIGN=CENTER>
-      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">$title<$STDFONT_E>
+      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">$record_name<$STDFONT_E>
      </TD>
     </TR>
     <TR><TD>
-  ";
-  freemed_display_actionbar();
-  echo "
+  ".
+  freemed_display_actionbar()
+  ."
     </TD></TR>
     <TR><TD>
   ";
   // end header
 
-  echo "
+  $buffer .= "
     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
      ALIGN=CENTER VALIGN=MIDDLE>
     <TR>
   ";
   while (list($k,$v)=each($control_list)) {
-    echo "
+    $buffer .= "
       <TD BGCOLOR=\"#000000\">
        <$STDFONT_B COLOR=\"#ffffff\">$k<$STDFONT_E>
       </TD>
     ";
   }
-  echo "
+  $buffer .= "
       <TD BGCOLOR=\"#000000\">
        <$STDFONT_B COLOR=\"#ffffff\">Action<$STDFONT_E>
       </TD>
@@ -624,19 +630,37 @@ function freemed_display_itemlist ($title, $result, $page_link,
   if (fdb_num_rows($result)>0) 
    while ($this_result_array = fdb_fetch_array($result)) {
     $first = true; // first item in the list has 'view' link
-    echo "
+    $buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
     ";
     reset($control_list); // it's already each'd the array, 
                           // but we have to do it again
     $field_num=0;
     while (list($k,$v)=each($control_list)) {
-      $item_text = ( empty($this_result_array[$v])    ?
-                     fm_prep($blank_list[$field_num]) :
-		     fm_prep($this_result_array[$v]) );
+      $is_xref=false;
+      if (is_array($xref_list)) {
+        reset($xref_list);
+        $xref_k = $xref_v = "";
+        for ($i=0;$i<=$field_num;$i++)
+          list ($xref_k, $xref_v) = each($xref_list);
+        // the proper item is now in $xref_{k,v}
+        if (strlen($xref_v)>1) {
+          $is_xref=true;
+          $xref_item=freemed_get_link_field($this_result_array[$v],
+                                                    $xref_k,$xref_v);
+          $item_text = ( (strlen($xref_item)<1) ?
+                         fm_prep($blank_list[$field_num]) :
+                         fm_prep($xref_item) );
+        }
+      } // if there are any xrefs in the table
+      if (!$is_xref) { // not an xref item
+        $item_text = ( (strlen($this_result_array[$v])<1)?
+                       fm_prep($blank_list[$field_num])  :
+                       fm_prep($this_result_array[$v]) ); 
+      }
       if ($first) {
         $first = false;
-	echo "
+        $buffer .= "
       <TD>
         <A HREF=\"$page_link?$_auth&patient=$patient&action=display&id=".
 	"$this_result_array[id]\"><$STDFONT_B
@@ -644,7 +668,7 @@ function freemed_display_itemlist ($title, $result, $page_link,
       </TD>
         ";
       } else {
-	echo "
+        $buffer .= "
       <TD>
         <$STDFONT_B>$item_text&nbsp;<$STDFONT_E>
       </TD>
@@ -652,48 +676,50 @@ function freemed_display_itemlist ($title, $result, $page_link,
       }
     $field_num++;
     } // while each data field
-    // MOD/DEL here
-    echo "
+    
+    $buffer .= "
       <TD>
     ";
     if (freemed_get_userlevel($LoginCookie)>$database_level) {
-      echo "
+      $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=modform&id=".
 	"$this_result_array[id]\"><$STDFONT_B>MOD<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$delete_level) {
-      echo "
+      $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=delete&id=".
 	"$this_result_array[id]\"><$STDFONT_B>DEL<$STDFONT_E></A>&nbsp;
       ";
     }
     
-    echo "&nbsp;</TD>
+    $buffer .= "
+      &nbsp;</TD>
     </TR>
     ";
    } // while each result-row
   else { // no items to display
-   echo "
+   $buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
      <TD COLSPAN=".(count($control_list)+1)." ALIGN=CENTER>
-      <$STDFONT_B><I>No $title</I><$STDFONT_E>
+      <$STDFONT_B><I>No $record_name</I><$STDFONT_E>
      </TD>
     </TR>
    ";
   } // if no items to display
    
-  echo "
+  $buffer .= "
     </TABLE>
   ";
   
   // footer
-  freemed_display_actionbar();
-  echo "
-    </TD></TR>
+  $buffer .= freemed_display_actionbar()
+    ."</TD></TR>
     </TABLE>
     <!-- End itemlist Table -->
   ";
+
+  return $buffer; // gotta remember this part!
 }
 
 // function freemed_display_facilities (selected)
@@ -837,7 +863,10 @@ function freemed_display_insco ($param="0")
 {
   global $NONE_SELECTED;
 
-  echo "
+  $buffer="";
+
+  $buffer .= "
+   <SELECT NAME=\"$param\">
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
   $result = fdb_query ("SELECT * FROM insco
@@ -853,13 +882,17 @@ function freemed_display_insco ($param="0")
         $debug_var = "[$i_id]";
       else $debug_var = "";
 
-      echo "
+      $buffer .= "
         <OPTION VALUE=\"$i_id\" ".
 	( ($param == $row[id]) ? "SELECTED" : "" )
         .">$i_name ($row[inscocity],$row[inscostate]) $debug_var
-      "; // actually show it
+      "; // actually en-buffer it
     } // while there are more results...
   } // end master loop
+  $buffer .= "
+   </SELECT>
+  ";
+  return $buffer;
 } // end function freemed_display_insco
 
 // function freemed_display_inscogroups (selected)
@@ -867,9 +900,12 @@ function freemed_display_inscogroups ($param="")
 {
   global $NONE_SELECTED;
 
+  $buffer = "";
+
   // list doctors in SELECT/OPTION tag list, and
   // leave doctor selected who is in param
-  echo "
+  $buffer .= "
+   <SELECT NAME =\"$param\">
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
 
@@ -887,13 +923,17 @@ function freemed_display_inscogroups ($param="")
         $debug_var = "";
       } // end debug clause
 
-      echo "
+      $buffer .= "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($param == $row[id]) ? "SELECTED" : "" )
         .">".htmlentities($row[inscogroup])." $debug_var
       "; // end of actual output
     } // while there are more results...
   } // end of master if clause
+  $buffer .= "
+   </SELECT>
+  ";
+  return $buffer;
 } // end function freemed_display_inscogroups
 
 // function freemed_display_ptstatus
@@ -994,9 +1034,11 @@ function freemed_display_physicians ($param="", $intext="")
 {
   global $NONE_SELECTED;
 
+  $buffer = "";
+
   // list doctors in SELECT/OPTION tag list, and
   // leave doctor selected who is in param
-  echo "
+  $buffer .= "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
   $query = "SELECT * FROM physician ".
@@ -1007,13 +1049,14 @@ function freemed_display_physicians ($param="", $intext="")
     // don't do anything...! 
   } else { // exit if no more docs
     while ($row=fdb_fetch_array($result)) {
-      echo "
+      $buffer .= "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
         ">".fm_prep("$row[phylname], $row[phyfname]")."
       "; // end of actual output
     } // while there are more results...
   }
+  return $buffer;
 } // end function freemed_display_physicians
 
 ///////////////////////////////////////////////////

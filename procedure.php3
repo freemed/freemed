@@ -1,8 +1,8 @@
 <?php
- # file: procedure.php3
- # desc: procedure database interface
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: procedure.php3
+ // desc: procedure database interface
+ // code: jeff b (jeff@univrel.pr.uconn.edu), adam
+ // lic : GPL, v2
 
  $page_name   = "procedure.php3";
  $db_name     = "procrec";
@@ -725,58 +725,32 @@ switch ($action) { // master action switch
     </CENTER>
     <P>
 
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
-     ALIGN=CENTER>
-    <TR BGCOLOR=#bbbbbb>
-     <TD><B>Date of Procedure<B>&nbsp;</TD>
-     <TD><B>Procedure Code</B>&nbsp;</TD>
-     <TD><B>Modifier</B>&nbsp;</TD>
-     <TD><B>Comment</B>&nbsp;</TD>
-     <TD><B>Action</B></TD>
-    </TR>
   ";
-  $_alternate = freemed_bar_alternate_color ();
-  if (($result<1) or (fdb_num_rows ($result)<1))
-   echo "
-    <TR>
-     <TD COLSPAN=3 ALIGN=CENTER>
-      <CENTER>
-       <$STDFONT_B><U>There are no procedures for this patient.</U><$STDFONT_E>
-      </CENTER>
-     </TD>
-    </TR>
-   ";
-  while ($r = fdb_fetch_array ($result)) {
-    $_alternate = freemed_bar_alternate_color ($_alternate);
-    $cptcode    = freemed_get_link_rec ($r["proccpt"], "cpt");
-    $cptmod     = freemed_get_link_rec ($r["proccptmod"], "cptmod");
-    if (empty($r["proccomment"])) $r["proccomment"]="NO COMMENT";
-    echo "
-     <TR BGCOLOR=$_alternate>
-      <TD>".fm_prep($r["procdt"])."</TD>
-      <TD>".fm_prep($cptcode["cptcode"]." (".$cptcode["cptnameint"].")")."</TD>
-      <TD>".fm_prep($cptmod["cptmod"])."</TD>
-      <TD>".fm_prep($r["proccomment"])."</TD>
-      <TD>
-    ";
-    if (($this_user->getLevel())>$database_level)
-     echo "
-      <A HREF=\"$page_name?$_auth&patient=$patient&action=modform&id=".
-      $r["id"]."\"
-      ><$STDFONT_B SIZE=-2>$lang_MOD<$STDFONT_E></A>&nbsp;
-     ";
-    if (($this_user->getLevel())>$delete_level)
-     echo "
-      <A HREF=\"$page_name?$_auth&patient=$patient&action=del&id=".
-      $r["id"]."\"
-      ><$STDFONT_B SIZE=-2>$lang_DEL<$STDFONT_E></A>&nbsp;
-     ";
-    echo "&nbsp;
-     </TR>
-    ";
-  } // end while looping for fetched array
+
+  echo freemed_display_itemlist(
+    $result,
+    "procedure.php3",
+    array ( // control
+      "Date of Procedure" => "procdt",
+      "Procedure Code"    => "proccpt",
+      "Modifier"          => "proccptmod",
+      "Comment"           => "proccomment"
+    ),
+    array ( // blanks
+      "",
+      "",
+      "",
+      "NO COMMENT"
+    ),
+    array ( // xref
+      "",
+      "cpt"    => "cptcode",
+      "cptmod" => "cptmod",
+      ""
+    )
+  );
+
   echo "
-    </TABLE>
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"

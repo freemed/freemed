@@ -1,8 +1,8 @@
 <?php
- # file: progress_notes.php3
- # note: patient authorizations module
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: authorizations.php3
+ // note: patient authorizations module
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $record_name = "Authorizations";
  $page_name   = "authorizations.php3";
@@ -165,11 +165,9 @@
          <$STDFONT_B>Authorizing Insurance Company : <$STDFONT_E><BR>
         </TD>
         <TD ALIGN=LEFT>
-         <SELECT NAME=\"authinsco\">
-     ";
-     freemed_display_insco ($authinsco);
-     echo "
-         </SELECT>
+     ".
+     freemed_display_insco ($authinsco)
+     ."
         </TD>
        </TR>
 

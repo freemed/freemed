@@ -1,14 +1,15 @@
 <?php
-  # file: patient.php3
-  # note: patient database functions
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  #       some small stuff by: max k <amk@span.ch>
-  # lic : GPL, v2
+ // file: patient.php3
+ // note: patient database functions
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ //       some small stuff by: max k <amk@span.ch>
+ // lic : GPL, v2
 
   $page_name="patient.php3"; // for help info, later
   $record_name="Patient";    // compatibility with API functions
   include ("global.var.inc");
   include ("freemed-functions.inc");
+  include ("webtools.php"); // webtools
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -23,30 +24,322 @@
   freemed_display_html_top ();
   freemed_display_banner ();
 
+switch ($action) {
+  case "add": case "addform":
+  case "mod": case "modform":
+    // addform and modform not used due to "notebook"
+   $book = new notebook ($page_name,
+     array ("action", "_auth", "id", "been_here")
+     );
+   $book->set_submit_name ("OK");
+   switch ($action) {
+     case "add": case "addform":
+      if (empty($been_here)) {
+        $ptstatus  = "0";
+        $been_here = "1"; // set been_here
+      } // end of checking empty been_here
+      $action_name = "$Add";
+      break; // end internal add
+
+     case "mod": case "modform":
+      if (empty($been_here)) {
+
+        $been_here = "1"; // set been_here
+      } // end of checking empty been_here
+      $action_name = "$Modify";
+      break; // end internal mod
+   } // end of internal switch add/mod
+
+   // ** DISPLAY ADD/MOD ***
+
+   $book->add_page (
+     "Primary Information",
+     array ("ptlname", "ptfname", "ptmname",
+            "ptdob", "ptdob_m", "ptdob_d", "ptdob_y",
+            "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
+            "has_insurance"),
+     "
+       <!-- primary information page -->
+    <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
+
+    <TR><TD ALIGN=RIGHT>
+     <$STDFONT_B>$Last_name : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptlname\" SIZE=25 MAXLENGTH=50
+     VALUE=\"".prepare($ptlname)."\">
+    </TD></TR>
+    
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$First_name : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptfname\" SIZE=25 MAXLENGTH=50
+     VALUE=\"".prepare($ptfname)."\">
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+     <$STDFONT_B>$Middle_name : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+     <INPUT TYPE=TEXT NAME=ptmname SIZE=25 MAXLENGTH=50
+      VALUE=\"".prepare($ptmname)."\">
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Address $Line 1 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptaddr1\" SIZE=25 MAXLENGTH=45
+     VALUE=\"".prepare($ptaddr1)."\">
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+     <$STDFONT_B>Address Line 2 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptaddr2\" SIZE=25 MAXLENGTH=45
+     VALUE=\"".prepare($ptaddr2)."\">
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$City, $State, $Zip : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptcity\" SIZE=10 MAXLENGTH=45
+     VALUE=\"".prepare($ptcity)."\">
+    <INPUT TYPE=TEXT NAME=\"ptstate\" SIZE=3 MAXLENGTH=2
+     VALUE=\"".prepare($ptstate)."\"> 
+    <INPUT TYPE=TEXT NAME=\"ptzip\" SIZE=10 MAXLENGTH=10
+     VALUE=\"".prepare($ptzip)."\">
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Has Insurance : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=CHECKBOX NAME=\"has_insurance\" ".
+      (($has_insurance) ? "CHECKED" : "")."
+    </TD></TR>
+
+    </TABLE>
+
+     ");
+
+   if (!isset($num_other_docs)) { // first time through
+     $num_other_docs=0;
+     for ($i=1;$i<=4;$i++) // for ptphy[1..4]
+       if (${"ptphy$i"}>0) 
+         $num_other_docs++; // some days, i'm so clever it hurts.
+   } // is !isset num_other_docs
+
+   $book->add_page(
+     "Physician",     
+     array ("ptdoc", "ptphy1", "ptphy2", "ptphy3", "ptphy4", "ptpcp",
+            "ptrefdoc", "num_other_docs"),
+     "
+    <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$In_house_doctor : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"ptdoc\">".
+  freemed_display_physicians ($ptdoc)."
+    </SELECT>
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Referring_doctor : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"ptrefdoc\">".
+  freemed_display_physicians ($ptrefdoc)."
+    </SELECT>
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_care_physician : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"ptpcp\">".
+  freemed_display_physicians ($ptpcp)."
+    </SELECT>
+    </TD></TR>
+
+    ".(($num_other_docs>0) ? "
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Other $Physician 1 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"ptphy1\">".
+  freemed_display_physicians ($ptphy1)."
+    </SELECT>
+    </TD></TR>
+    " : "").
+
+    (($num_other_docs>1) ? "
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Other $Physician 2 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"ptphy2\">".
+  freemed_display_physicians ($ptphy2)."
+    </SELECT>
+    </TD></TR>
+    " : "").
+
+    (($num_other_docs>2) ? "
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Other $Physician 3 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"ptphy3\">".
+  freemed_display_physicians ($ptphy3)."
+    </SELECT>
+    </TD></TR>
+    " : "").
+
+    (($num_other_docs>3) ? "
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Other $Physician 4 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"ptphy4\">".
+  freemed_display_physicians ($ptphy4).
+    "</SELECT>
+    </TD></TR>
+    " : "").
+
+    "<TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Number of Other Physicians : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"num_other_docs\">
+     <OPTION VALUE=\"0\" ".((1>$num_other_docs OR 4<$num_other_docs)
+                            ? "SELECTED" : "").">NONE
+     <OPTION VALUE=\"1\" ".($num_other_docs==1 ? "SELECTED" : "").">1
+     <OPTION VALUE=\"2\" ".($num_other_docs==2 ? "SELECTED" : "").">2
+     <OPTION VALUE=\"3\" ".($num_other_docs==3 ? "SELECTED" : "").">3
+     <OPTION VALUE=\"4\" ".($num_other_docs==4 ? "SELECTED" : "").">4
+    </SELECT>
+    </TD></TR>
+
+    </TABLE>
+     ");     
+
+  if ($has_insurance) { // optional tab
+   $book->add_page(
+    "Insurance",
+    array (
+     "ptins1", "ptins2", "ptins3",
+     "ptinsno1", "ptinsno2", "ptinsno3",
+     "ptinsgrp1", "ptinsgrp2", "ptinsgrp3",
+     "num_inscos"
+    ),
+    "
+   <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Number of insurance companies : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"num_inscos\">
+     <OPTION VALUE=\"0\" ".((1>$num_inscos OR 4<$num_inscos)
+                            ? "SELECTED" : "").">NONE
+     <OPTION VALUE=\"1\" ".($num_inscos==1 ? "SELECTED" : "").">1
+     <OPTION VALUE=\"2\" ".($num_inscos==2 ? "SELECTED" : "").">2
+     <OPTION VALUE=\"3\" ".($num_inscos==3 ? "SELECTED" : "").">3
+    </SELECT>
+    </TD></TR>".
+
+    (($num_inscos>0) ? "
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Primary Insurance : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>".
+  freemed_display_insco ($ptins1)
+    ."</TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Primary Insurance Code : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptinsno1\" SIZE=20 MAXLENGTH=50
+     VALUE=\"$ptinsno1\">
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Primary Insurance Group Code : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptinsgrp1\" SIZE=20 MAXLENGTH=50
+     VALUE=\"$ptinsgrp1\">
+    </TD></TR>
+
+    " : "").
+   
+    (($num_inscos>1) ? "
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Secondary Insurance : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>".
+  freemed_display_insco ($ptins2)
+    ."</TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Secondary Insurance Code : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptinsno2\" SIZE=20 MAXLENGTH=50
+     VALUE=\"$ptinsno2\">
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Secondary Insurance Group Code : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptinsgrp2\" SIZE=20 MAXLENGTH=50
+     VALUE=\"$ptinsgrp2\">
+    </TD></TR>
+
+    " : "").
+
+    (($num_inscos>2) ? "
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Tertiary Insurance : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>".
+  freemed_display_insco ($ptins3)
+    ."</TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Tertiary Insurance Code : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptinsno3\" SIZE=20 MAXLENGTH=50
+     VALUE=\"$ptinsno3\">
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Tertiary Insurance Group Code : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=\"ptinsgrp3\" SIZE=20 MAXLENGTH=50
+     VALUE=\"$ptinsgrp3\">
+    </TD></TR>
+
+    " : "").
+
+   "
+   </TABLE>
+    "
+   );
+  } // if has insurance
+    /*
+
+
+      JUNK GOES SOMEWHERE IN HERE !!!!!!!!!!!!!!!
+
+    <BR>
+    <$STDFONT_B>$Country : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=ptcountry SIZE=20 MAXLENGTH=50
+     VALUE=\"$ptcountry\">
+    <P>
+
+     */
+
+
+   // show notebook
+   freemed_display_box_top("$record_name :: Modify");
+   
+   echo "<CENTER>\n";
+   $book->display();
+   echo "</CENTER>\n";
+
+   break; // end action add/mod
+
+  case "del":
+    // STUB
+    break; // end action delete
+
+  default: // default action
+    // STUB
+    break; // end default action
+} // end action
+
+freemed_display_box_bottom();
+
+/*
+
 if ($action=="addform") {
 
-  $_dep = ""; // by default, no guarantor
-  if (empty($ptstatus)) {
-    $ptstatus="0";         // inactive status
-  }
-
-    // dependant (19990520) guarantor generation
-  if (strlen($id)>0) { // if called with guarantor
-    $dependant = new Patient ($id);
-    $_dep = "\n  <OPTION VALUE=\"$id\" SELECTED>".$dependant->fullName()."\n";
-  } // end this clause dependant of guarantor
-
-    // change title appropriately if dependant
-  if (strlen($id)>0) 
-    freemed_display_box_top ("$Add $Dependant", $page_name, $_ref); 
-  else 
-    freemed_display_box_top ("$Add $Patient", $page_name, $_ref);
-
-  if ($debug) {
-    echo "
-      date = ($cur_date)<BR>
-    ";
-  }
   echo "
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -160,72 +453,6 @@ if ($action=="addform") {
        ";
   if ($ptdoc < 1) $ptdoc = freemed_get_link_field ($default_facility,
     "facility", "psrdefphy");
-  echo "
-    <$STDFONT_B>$In_house_doctor : <$STDFONT_E>
-    <SELECT NAME=\"ptdoc\">
-  ";
-
-  freemed_display_physicians ($ptdoc);
-
-  echo "
-    </SELECT>
-    <BR>
-       ";
-    /// 
-  echo "
-    <$STDFONT_B>$Referring_doctor : <$STDFONT_E>
-    <SELECT NAME=\"ptrefdoc\">
-  "; // break for doctor list
-
-  freemed_display_physicians ($ptrefdoc);
-
-  echo "
-    </SELECT><BR>
-
-    <$STDFONT_B>$Primary_care_physician : <$STDFONT_E>
-    <SELECT NAME=\"ptpcp\">
-  ";
-
-  freemed_display_physicians ($ptpcp);
-
-  echo "
-    </SELECT><BR>
-
-    <$STDFONT_B>$Other $Physician 1 : <$STDFONT_E>
-    <SELECT NAME=\"ptphy1\">
-  ";
-
-  freemed_display_physicians ($ptphy1);
-
-  echo "
-    </SELECT><BR>
-
-    <$STDFONT_B>$Other $Physician 2 : <$STDFONT_E>
-    <SELECT NAME=\"ptphy2\">
-  ";
-
-  freemed_display_physicians ($ptphy2);
-
-  echo "
-    </SELECT><BR>
-
-    <$STDFONT_B>$Other $Physician 3 : <$STDFONT_E>
-    <SELECT NAME=\"ptphy3\">
-  ";
-
-  freemed_display_physicians ($ptphy3);
-  
-  echo "
-    </SELECT><BR>
-
-    <$STDFONT_B>$Other $Physician 4 : <$STDFONT_E>
-    <SELECT NAME=\"ptphy4\">
-  ";
-
-  freemed_display_physicians ($ptphy4);
-
-  echo "
-    </SELECT><BR>
 
     <$STDFONT_B>$Type_of_billing : <$STDFONT_E>
     <SELECT NAME=\"ptbilltype\">
@@ -705,32 +932,7 @@ if ($action=="addform") {
      VALUE=\"$ptid\">
     <BR>  
 
-    <$STDFONT_B>$Address $Line 1 : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=ptaddr1 SIZE=25 MAXLENGTH=45
-     VALUE=\"$ptaddr1\">
-    <BR>
 
-    <$STDFONT_B>Address Line 2 : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=ptaddr2 SIZE=25 MAXLENGTH=45
-     VALUE=\"$ptaddr2\">
-    <BR>
-
-    <$STDFONT_B>$City : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=ptcity SIZE=10 MAXLENGTH=45
-     VALUE=\"$ptcity\">
-
-    <$STDFONT_B>$State : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=ptstate SIZE=3 MAXLENGTH=2
-     VALUE=\"$ptstate\">    
-
-    <$STDFONT_B>$Zip_code : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=ptzip SIZE=10 MAXLENGTH=10
-     VALUE=\"$ptzip\">
-    <BR>
-    <$STDFONT_B>$Country : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=ptcountry SIZE=20 MAXLENGTH=50
-     VALUE=\"$ptcountry\">
-    <P>
 
     <$STDFONT_B>$Home_phone : <$STDFONT_E>
   ";
@@ -1445,6 +1647,9 @@ if ($action=="addform") {
   "; // close out with return to main menu tags
 }
 
+*/
+
 freemed_close_db(); 
 freemed_display_html_bottom ();
 ?>
+
