@@ -259,7 +259,7 @@ switch ($_REQUEST['stage']) {
 		array ( 'facility' )
 	),
 
-	__("Next Available") => na_widget()
+	"<small>".__("Next Available")."</small>" => na_widget()
 
 	), "", "", "")."
 
@@ -478,6 +478,7 @@ function process () {
 	 else        { $buffer .= __("ERROR");    }
 
 	$display_buffer .= " </div> <p/> <div ALIGN=\"CENTER\">\n";
+	global $refresh;
 	if (!$travel) {
 		if ($type != "temp") {
 			$refresh = "manage.php?id=".urlencode($patient);
