@@ -205,13 +205,14 @@ switch ($action) {
 	// Perform deletion
 	if ($_REQUEST['id'] > 0) {
 		$result = $sql->query("DELETE FROM messages WHERE id='".
-			addslashes($id)."' AND msgpatient=0");
+			addslashes($id)."' ".
+			( $return != 'manage' ? "AND msgpatient=0" : ""));
 		$result = $sql->query("UPDATE messages SET msgread=1 WHERE ".
 			"id='".addslashes($id)."' AND msgpatient>0");
 	} elseif (is_array($_REQUEST['mark'])) {
 		$query = "DELETE FROM messages WHERE FIND_IN_SET(id, '".
-				join(",", $_REQUEST['mark'])."') AND ".
-				"msgpatient=0";
+				join(",", $_REQUEST['mark'])."') ".
+				( $return != 'manage' ? "AND msgpatient=0" : "" );
 		$result = $sql->query($query);
 		$query = "UPDATE messages SET msgread=1 WHERE ".
 				"FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ".
