@@ -2,10 +2,10 @@
 	// $Id$
 	// $Author$
 
-class FBAgents {
+class FBBillingContact {
 
 	// WARNING: Everything here is a STUB, since we don't really have
-	// "Agents" in the system.
+	// "Billing Contacts" in the system.
 
 	function Name ( $key ) {
 		return '';
@@ -47,6 +47,6 @@ class FBAgents {
 		return '';
 	} // end method TIN
 
-} // end class FBAgents
+} // end class FBBillingContact
 
 ?>
