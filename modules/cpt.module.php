@@ -1,31 +1,60 @@
 <?php
- // file: cpt.php3
+ // $Id$
  // desc: CPT (procedural codes) database
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name = "cpt.php3";
- $record_name = "CPT Codes";
- $db_name = "cpt";
- include ("lib/freemed.php");
- include ("lib/API.php");
+if (!defined("__CPT_MODULE_PHP__")) {
 
-freemed_open_db ($LoginCookie);
-$this_user = new User ($LoginCookie);
+define (__CPT_MODULE_PHP__, true);
 
-freemed_display_html_top ();
-freemed_display_banner ();
+include "lib/module_maintenance.php";
 
-switch ($action) { // begin master switch
- case "addform": case "add":
- case "modform": case "mod":
-  if (!$been_here) {
-   switch ($action) { // begin inner action switch
-    case "addform":
-     break; // end case addform
-    case "modform":
+class cptMaintenance extends freemedMaintenanceModule {
+
+	var $MODULE_NAME = "CPT Codes Maintenance";
+	var $MODULE_VERSION = "0.1";
+
+	var $record_name = "CPT Codes";
+	var $table_name = "cpt";
+
+	var $variables = array (
+		"cptcode",
+		"cptnameint",
+		"cptnameext",
+		"cptgender",
+		"cpttaxed",
+		"cpttype",
+		"cptreqcpt",
+		"cptexccpt",
+		"cptreqicd",
+		"cptexcicd",
+		"cptrelval",
+		"cptdeftos",
+		"cptdefstdfee",
+		"cptstdfee",
+		"cpttos"
+	);
+
+	function cptMaintenance () {
+		$this->freemedMaintenanceModule();
+	} // end constructor cptMaintenance
+
+	function add () { $this->form(); }
+	function mod () { $this->form(); }
+
+	function form () {
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		$book = new notebook (
+			array ("action", "_auth", "id", "module"),
+			NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH);
+    
+  		if (!$book->been_here()) {
+			switch ($action) {
+				case "mod":
+    			case "modform":
      if ($id<1) DIE ("$page_name :: need to have id for modform");
-     $this_record  = freemed_get_link_rec ($id, $db_name);
+     $this_record  = freemed_get_link_rec ($id, $this->table_name);
      extract ($this_record);
      $cptreqcpt    = fm_split_into_array ($cptreqcpt);
      $cptexccpt    = fm_split_into_array ($cptexccpt);
@@ -34,18 +63,10 @@ switch ($action) { // begin master switch
      $cptrelval    = bcadd($cptrelval, 0, 2);
      $cptstdfee    = fm_split_into_array ($cptstdfee);
      $cpttos       = fm_split_into_array ($cpttos);
-     break; // end case modform
-   } // end inner action switch
-   $been_here = 1; // make sure been here is set now
-  } // end checking if been here
+			break;
+			} // end switch
+		} // end checking if been here
 
-  freemed_display_box_top (( ($action=="addform") ? _("Add") : _("Modify") ).
-    " "._($record_name));
-
-  $book = new notebook (
-    array ("action", "_auth", "id", "been_here"),
-    NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH);
-    
   $book->add_page (
     _("Primary Information"),
     array ("cptcode", "cptnameint", "cptnameext", "cptgender",
@@ -54,7 +75,7 @@ switch ($action) { // begin master switch
       _("Procedural Code") =>
        "<INPUT TYPE=TEXT NAME=\"cptcode\" SIZE=8 MAXLENGTH=7
         VALUE=\"".prepare($cptcode)."\"> &nbsp;".
-	$book->generate_refresh(),
+		$book->generate_refresh(),
       _("Internal Description") =>
       "<INPUT TYPE=TEXT NAME=\"cptnameint\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($cptnameint)."\">",
@@ -265,99 +286,24 @@ switch ($action) { // begin master switch
   ");
  } // end of fee profiles conditional
 
- if (!$book->is_done()) {
-   echo $book->display();
- } else {
-   switch ($action) {
-     case "add": case "addform":
-      $query = "INSERT INTO $db_name VALUES (
-            '".addslashes($cptcode).                        "',
-            '".addslashes($cptnameint).                     "',
-            '".addslashes($cptnameext).                     "',
-            '".addslashes($cptgender).                      "',
-            '".addslashes($cpttaxed).                       "',
-            '".addslashes($cpttype).                        "',
-            '".addslashes(fm_join_from_array ($cptreqcpt)). "',
-            '".addslashes(fm_join_from_array ($cptexccpt)). "',
-            '".addslashes(fm_join_from_array ($cptreqicd)). "',
-            '".addslashes(fm_join_from_array ($cptexcicd)). "',
-            '".addslashes($cptrelval).                      "',
-            '".addslashes($cptdeftos).                      "',
-            '".addslashes($cptdefstdfee).                   "',
-            '".addslashes(fm_join_from_array ($cptstdfee)). "',
-            '".addslashes(fm_join_from_array ($cpttos)).    "',
-            NULL )";
-      echo "
-       <P ALIGN=CENTER>
-       <$STDFONT_B>"._("Adding")." ...
-      ";
-      if ($debug) echo " ( query = \"$query\" ) <BR>\n";
-      break; // end action = add
-      
-     case "mod": case "modform": // modify action
-      $query = "UPDATE $db_name SET
-            cptcode      ='".addslashes($cptcode).                        "',
-            cptnameint   ='".addslashes($cptnameint).                     "',
-            cptnameext   ='".addslashes($cptnameext).                     "',
-            cptgender    ='".addslashes($cptgender).                      "',
-            cpttaxed     ='".addslashes($cpttaxed).                       "',
-            cpttype      ='".addslashes($cpttype).                        "',
-            cptreqcpt    ='".addslashes(fm_join_from_array ($cptreqcpt)). "',
-            cptexccpt    ='".addslashes(fm_join_from_array ($cptexccpt)). "',
-            cptreqicd    ='".addslashes(fm_join_from_array ($cptreqicd)). "',
-            cptexcicd    ='".addslashes(fm_join_from_array ($cptexcicd)). "',
-            cptrelval    ='".addslashes($cptrelval).                      "',
-            cptdeftos    ='".addslashes($cptdeftos).                      "',
-            cptdefstdfee ='".addslashes($cptdefstdfee).                   "',
-            cptstdfee    ='".addslashes(fm_join_from_array ($cptstdfee)). "',
-            cpttos       ='".addslashes(fm_join_from_array ($cpttos)).    "'
-            WHERE id='$id'";
-      echo "
-       <P ALIGN=CENTER>
-       <$STDFONT_B>"._("Modifying")." ...
-      ";
-      if ($debug) echo " ( query = \"$query\" ) <BR>\n";
-      break; // end action mod/modform 
-   } // end switch add/modform   
-  $result = $sql->query ($query);
-  if ($result) { echo _("done")."."; }
-  else         { echo _("ERROR");    }
-  echo "
-   <$STDFONT_E>
-   <P>
-   <CENTER>
-   <A HREF=\"$page_name?$_auth&action=addform\"
-   ><$STDFONT_B>"._("Add Another")."<$STDFONT_E></A> <B>|</B>
-   <A HREF=\"$page_name?$_auth\"
-   ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-   </CENTER>
-   <P>
-  ";
-  } // end if book done
-  freemed_display_box_bottom ();
-  break; // end add/mod action
+		if (!$book->is_done()) {
+			echo $book->display();
+		} else {
+			switch ($action) {
+				case "add": case "addform":
+					$this->_add();
+					break;
+				case "mod": case "modform":
+					$this->_mod();
+					break;
+			} // end switch
 
- case "del": case "delete": // delete action
-  freemed_display_box_top (_("Deleting")." "._($record_name));
-  echo "<P ALIGN=CENTER><$STDFONT_B>"._("Deleting")." ... ";
-  $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
-  $result = $sql->query ($query);
-  if ($result) { echo "<B>"._("done").".</B>"; }
-   else        { echo "<B>"._("ERROR")."</B>"; }
-  echo "
-   <$STDFONT_E></P>
-   <CENTER>
-    <A HREF=\"$page_name?$_auth\"
-    ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-   </CENTER>
-  ";
-  freemed_display_box_bottom ();
-  break; // end delete action
+	} // end function cptMaintenance->form()
 
 /*
  case "profileform": // insurance company profiles form
   $num_inscos = $sql->num_rows ($sql->query ("SELECT * FROM insco"));
-  $this_code  = freemed_get_link_rec ($id, $db_name);
+  $this_code  = freemed_get_link_rec ($id, $this->table_name);
   $cpttos     = fm_split_into_array ($this_code["cpttos"]);
   $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
   freemed_display_box_top (_($record_name));
@@ -433,7 +379,7 @@ switch ($action) { // begin master switch
 
  case "profile": // modification for the profile form
   freemed_display_box_top (_("Modifying")." "._($record_name));
-  $query = "UPDATE $db_name SET
+  $query = "UPDATE $this->table_name SET
             cpttos='".fm_join_from_array($cpttos)."',
             cptstdfee='".fm_join_from_array($cptstdfee)."'
             WHERE id='$id'";
@@ -456,24 +402,28 @@ switch ($action) { // begin master switch
   freemed_display_box_bottom ();
   break; // end of mod for the profile form
 */
+	} // end function cptMaintenance->form()
 
- default: // default action begin
-  freemed_display_box_top (_($record_name));
-  $query = "SELECT cptcode,cptnameint,id FROM $db_name ORDER BY cptcode";
-  $result = $sql->query ($query);
-  echo freemed_display_itemlist (
-    $result,
-    $page_name,
-    array (
-      _("Procedural Code")	=>	"cptcode",
-      _("Internal Description")	=>	"cptnameint"
-    ),
-    array ("", "")
-  );
-  freemed_display_box_bottom ();
-  break; // default action end
-} // end master switch
+	function view () {
+		global $sql;
 
-freemed_close_db ();
-freemed_display_html_bottom ();
+		$result = $sql->query ($query);
+		echo freemed_display_itemlist (
+			$sql->query ("SELECT cptcode,cptnameint,id FROM ".
+				$this->table_name." ORDER BY cptcode"),
+			$this->page_name,
+			array (
+				_("Procedural Code")	=>	"cptcode",
+				_("Internal Description")	=>	"cptnameint"
+			),
+			array ("", "")
+		);
+	} // end function cptMaintenance->view()
+
+} // end class cptMaintenance
+
+register_module ("cptMaintenance");
+
+} // end if not defined
+
 ?>

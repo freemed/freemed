@@ -1,6 +1,9 @@
 freemed project changelog
 ($Id$)
 
+* Tue Jan 16 2001 rufustfirefly
+  - cpt.php3 -> modules/cpt.module.php
+
 * Tue Jan 16 2001 fforest
   - accidenty applied my freemed.inc. put that back to the original
   - fix a bug I intrduced in generate_fixedforms that issued a warning if insured
