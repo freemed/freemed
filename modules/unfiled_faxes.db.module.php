@@ -25,6 +25,18 @@ class UnfiledFaxes extends MaintenanceModule {
 		// Add main menu notification handler
 		$this->_SetHandler('MainMenu', 'notify');
 		
+		// Form proper configuration information
+		$this->_SetMetaInformation('global_config_vars', array(
+			'uffax_user'
+		));
+		$this->_SetMetaInformation('global_config', array(
+			__("Single Recipient") =>
+			'html_form::select_widget("uffax_user", '.
+				'module_function ( "UnfiledFaxes", '.
+				'"user_select" ) )'
+			)
+		);
+		
 		// Call parent constructor
 		$this->MaintenanceModule();
 	} // end constructor UnfiledFaxes
@@ -150,6 +162,13 @@ class UnfiledFaxes extends MaintenanceModule {
 	} // end method mod
 
 	function notify ( ) {
+		// Check to see if we're the person who is supposed to be
+		// notified. If not, die out right now.
+		$supposed = freemed::config_value('uffax_user');
+		if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
+			return false;
+		}
+	
 		// Decide if we have any "unfiled faxes" in the system
 		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
 		$result = $GLOBALS['sql']->query($query);
@@ -172,6 +191,16 @@ class UnfiledFaxes extends MaintenanceModule {
 			);
 		}
 	} // end method notify
+
+	function user_select ( ) {
+		$results[__("NONE")] = 0;
+		$result = $GLOBALS['sql']->query("SELECT * FROM user ".
+			"ORDER BY username");
+		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			$results[$r['username']." (".$r['userdescrip'].")"] = $r['id'];
+		}
+		return $results;
+	} // end method user_select
 
 } // end class UnfiledFaxes
 
