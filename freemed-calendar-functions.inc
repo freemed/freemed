@@ -230,6 +230,172 @@
 
   } // end function fc_display_week_calendar
 
+  function fc_generate_calendar_mini ($given_date, $this_url) {
+    // mostly hacked code from TWIG's calendar
+    global $cur_date, $lang_months, $lang_days, $STDFONT_B, $STDFONT_E;
+
+    // break current day into pieces
+    list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
+    if ($cur_month < 10) $cur_month = "0".$cur_month;
+    if ($cur_day   < 10) $cur_day   = "0".$cur_day  ;
+
+    // validate day
+    if ((empty ($given_date)) or (!strpos($given_date, "-")))
+          { $this_date = $cur_date;   }
+     else { $this_date = $given_date; }
+
+    // break day into pieces
+    list ($this_year, $this_month, $this_day) = explode ("-", $this_date);
+    if (($this_month < 10) and (strlen($this_day)==1))
+      $this_month = "0".$this_month;
+    if (($this_day   < 10) and (strlen($this_day)==1))
+      $this_day   = "0".$this_day  ;
+
+    // Figure out the last day of the month
+    $lastday  [4] = $lastday [6] = $lastday [9] = $lastday [11] = 30;
+    // check for leap years in february)
+    if (checkdate( $this_month, 29, $this_year )) { $lastday [2] = 29; }
+      else                                        { $lastday [2] = 28; }
+    $lastday  [1] = $lastday  [3] = $lastday  [5] = $lastday [7] =
+    $lastday  [8] = $lastday [10] = $lastday [12] = 31;
+
+    // generate top of table
+    echo "
+     <TABLE BORDER=0 CELLSPACING=0>
+      <TR BGCOLOR=>
+       <TD ALIGN=LEFT>
+    ";
+
+    // previous month link
+    $prev_year  = $this_year;
+    $prev_month = $this_month - 1;
+    if( $prev_month <  1) { $prev_month = $prev_month + 12; $prev_year--; }
+    if (($prev_month < 10) and (strlen($prev_month)==1))
+      $prev_month = "0".$prev_month;
+    echo "
+     <A HREF=\"$this_url&selected_date=".$prev_year."-".$prev_month."-".
+      $this_day."\"
+      <$STDFONT_B>prev<$STDFONT_E></A>
+     </TD>
+     <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
+      <$STDFONT_B>
+       <B>".htmlentities($lang_months[$this_month])." $this_year</b>
+      <$STDFONT_E>
+     </TD>
+     <TD ALIGN=RIGHT>
+    ";
+    $next_year  = $this_year;
+    $next_month = $this_month + 1;
+    if ($next_month > 12) { $next_month = $next_month - 12; $next_year++; }
+    if ($next_month < 10) $next_month = "0".$next_month;
+    echo "
+     <A HREF=\"$this_url&selected_date=".$next_year."-".$next_month."-".
+      $this_day."\"
+      <$STDFONT_B>next<$STDFONT_E></A>
+     </TD>
+     </TR>
+     <TR>
+    ";
+    // print days across top
+    for( $i = 1; $i <= 7; $i++) {
+     echo "
+      <TD BGCOLOR=#cccccc>
+       <$STDFONT_B>
+       <B>".htmlentities($lang_days[$i])."</B>
+       <$STDFONT_E>
+      </TD>
+     ";
+    } // end of day display
+    echo "
+     </TR>
+    ";
+
+    // calculate first day
+    $first_day = date( 'w', mktime( 0, 0, 0, $this_month, 1, $this_year ) );
+    $day_row = 0;
+
+    if( $first_day > 0 ) {
+  	while( $day_row < $first_day ) {
+   		echo "  <TD ALIGN=RIGHT BGCOLOR=#bbbbbb>&nbsp;</td>\n";
+   		$day_row += 1;  
+  		}
+ 	} // end while day row < first day
+
+ 	while( $day < $lastday[($this_month + 0)] ) 
+		{
+  		if( ( $day_row % 7 ) == 0) 
+			{
+   			echo " </TR>\n<TR BGCOLOR=#bbbbbb>\n";
+  			}
+
+  		$dayp = $day + 1;
+
+   		//$datestr = createSqlDate( $thisYear, $thisMonth, $dayp );
+   		//$query = "SELECT * FROM " . $dbconfig["schedule_table"] . " WHERE " . sqlDuringDay( $datestr ) . "  AND (" . $groupquery . ")";
+   		//$result = dbQuery( $query );
+
+   		//if( $dayp == $thisDay ) 
+		//	{ 
+		//	$bgcolor = $config["cellheadtext"]; 
+		//	$txtcolor = $config["cellheadcolor"]; 
+		//	}
+   		//elseif( dbNumRows( $result ) >= 1) 
+		//	{ 
+		//	$bgcolor = $config["cellheadcolor"]; 
+		//	$txtcolor = $config["cellheadtext"]; 
+		//	}
+   		//else 
+		//	{ 
+		//	$bgcolor = $config["cellcolor"]; 
+		//	$txtcolor = $config["celltext"]; 
+		//	}
+    echo "
+     <TD ALIGN=CENTER BGCOLOR=#bbbbbb>
+      <$STDFONT_B>
+    ";
+ 
+	if( $dayp       == $cur_day AND
+            $this_month == $cur_month AND
+            $this_year  == $cur_year )
+          { $hilitecolor = "#ff0000"; } 
+        else { $hilitecolor = "#0000ff"; }
+       
+        echo "
+         <A HREF=\"$this_url&selected_date=".$this_year."-".$this_month."-".
+          $dayp."\"><$STDFONT_B COLOR=$hilitecolor>$dayp<$STDFONT_E></A>
+        ";
+   	//if( $dayp       == $cur_day AND
+        //    $this_month == $cur_month AND
+        //    $this_year  == $cur_year )
+        //  { echo "</B></FONT>"; }
+      echo "
+        <$STDFONT_E>
+       </TD>
+      ";
+      $day++;
+      $day_row++;
+    }
+
+    while( $day_row % 7 ) {
+   	echo "
+         <TD ALIGN=RIGHT BGCOLOR=#bbbbbb>&nbsp;</TD>
+        ";
+   	$day_row += 1;  
+    } // end of day row
+    echo "
+     </TR>
+     <TR>
+     <TD COLSPAN=7 ALIGN=RIGHT BGCOLOR=#bbbbbb>
+     <$STDFONT_B>
+      <A HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
+       $cur_day."\"
+      ><$STDFONT_B>go to today<$STDFONT_E></A>
+     </TD>
+     </TR>
+     </TABLE>
+    ";
+  } // end function fc_generate_calendar_mini
+
   function fc_generate_interference_map ($query_part, $this_date, 
                                          $privacy=false) {
     global $current_imap; // global current interference map
