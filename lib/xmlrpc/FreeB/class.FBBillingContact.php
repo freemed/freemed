@@ -4,56 +4,61 @@
 
 class FBBillingContact {
 
-	// WARNING: Everything here is a STUB, since we don't really have
-	// "Billing Contacts" in the system.
-
 	function FirstName ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return $r['bcfname'];
 	} // end method FirstName
 
 	function MiddleName ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return $r['bcmname'];
 	} // end method MiddleName
 
 	function LastName ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return $r['bclname'];
 	} // end method FirstName
 
 	function StreetAddress ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return $r['bcaddr'];
 	} // end method StreetAddress
 
 	function City ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return $r['bccity'];
 	} // end method City
 
 	function State ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return $r['bcstate'];
 	} // end method State
 
 	function Zipcode ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return $r['bczip'];
 	} // end method Zipcode
 
 	function PhoneCountry ( $key ) {
+		$r = freemed::get_link_rec($key, 'bcontact');
+		// TODO: Fix i18n
 		return '';
 	} // end method PhoneCountry
 
 	function PhoneArea ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return substr($r['bcphone'], 0, 3);
 	} // end method PhoneArea
 
 	function PhoneNumber ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return substr($r['bcphone'], 3, 7);
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bcontact');
+		return substr($r['bcphone'], 10, 4);
 	} // end method PhoneExtension
-
-	function TIN ( $key ) {
-		return '';
-	} // end method TIN
 
 } // end class FBBillingContact
 

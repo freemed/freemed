@@ -4,51 +4,60 @@
 
 class FBBillingService {
 
-	// WARNING: Everything here is a STUB, since we don't really have
-	// "Billing Services" in the system.
-
 	function Name ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return $r['bsname'];
 	} // end method Name
 
 	function StreetAddress ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return $r['bsaddr'];
 	} // end method StreetAddress
 
 	function City ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return $r['bscity'];
 	} // end method City
 
 	function State ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return $r['bsstate'];
 	} // end method State
 
 	function Zipcode ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return $r['bszip'];
 	} // end method Zipcode
 
 	function PhoneCountry ( $key ) {
+		$r = freemed::get_link_rec($key, 'bservice');
 		return '';
 	} // end method PhoneCountry
 
 	function PhoneArea ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return substr($r['bsphone'], 0, 3);
 	} // end method PhoneArea
 
 	function PhoneNumber ( $key ) {
+		$r = freemed::get_link_rec($key, 'bservice');
+		return substr($r['bsphone'], 3, 7);
 		return '';
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return substr($r['bsphone'], 10, 4);
 	} // end method PhoneExtension
 
 	function ETIN ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return $r['bsetin'];
 	} // end method ETIN
 
 	function TIN ( $key ) {
-		return '';
+		$r = freemed::get_link_rec($key, 'bservice');
+		return $r['bstin'];
 	} // end method TIN
 
 } // end class FBBillingService
