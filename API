@@ -493,8 +493,9 @@ fm_phone_entry (name of phone # string[, array value])
   displays the select tags/text fields/whatever for phone #s to be entered
   in, and the array value (optional) does the same as the one in
   fm_date_entry...
-    returns: nothing
-    created: 19991105
+    returns : buffered output
+    created : 19991105
+    modified: 20000725
 
 fm_prep (original string)
   prepares a string to be shown as HTML

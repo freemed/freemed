@@ -166,9 +166,9 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>$Phone_Number : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-  ";
-  fm_phone_entry ("psrphone");
-  echo "
+  ".
+  fm_phone_entry ("psrphone")
+  ."
      </TD>
     </TR>
 
@@ -176,9 +176,9 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>$Fax_Number : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-  ";
-  fm_phone_entry ("psrfax");
-  echo "
+  ".
+  fm_phone_entry ("psrfax")
+  ."
      </TD>
     </TR>
 

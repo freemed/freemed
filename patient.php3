@@ -2,6 +2,7 @@
  // file: patient.php3
  // note: patient database functions
  // code: jeff b (jeff@univrel.pr.uconn.edu)
+ //       adam b (gdrago23@yahoo.com)
  //       some small stuff by: max k <amk@span.ch>
  // lic : GPL, v2
 
@@ -119,6 +120,9 @@ switch ($action) {
 
      ");
 
+   $disp_phys_query = "SELECT * FROM physician ORDER BY phylname,phyfname";
+   $disp_phys_result = fdb_query($disp_phys_query);
+
    if (!isset($num_other_docs)) { // first time through
      $num_other_docs=0;
      for ($i=1;$i<=4;$i++) // for ptphy[1..4]
@@ -136,34 +140,26 @@ switch ($action) {
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$In_house_doctor : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"ptdoc\">".
-  freemed_display_physicians ($ptdoc)."
-    </SELECT>
+  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptdoc")."
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$Referring_doctor : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"ptrefdoc\">".
-  freemed_display_physicians ($ptrefdoc)."
-    </SELECT>
+  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptrefdoc")."
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$Primary_care_physician : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"ptpcp\">".
-  freemed_display_physicians ($ptpcp)."
-    </SELECT>
+  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptpcp")."
     </TD></TR>
 
     ".(($num_other_docs>0) ? "
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$Other $Physician 1 : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"ptphy1\">".
-  freemed_display_physicians ($ptphy1)."
-    </SELECT>
+  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptphy1")."
     </TD></TR>
     " : "").
 
@@ -171,9 +167,7 @@ switch ($action) {
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$Other $Physician 2 : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"ptphy2\">".
-  freemed_display_physicians ($ptphy2)."
-    </SELECT>
+  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptphy2")."
     </TD></TR>
     " : "").
 
@@ -181,9 +175,7 @@ switch ($action) {
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$Other $Physician 3 : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"ptphy3\">".
-  freemed_display_physicians ($ptphy3)."
-    </SELECT>
+  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptphy3")."
     </TD></TR>
     " : "").
 
@@ -191,9 +183,7 @@ switch ($action) {
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$Other $Physician 4 : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"ptphy4\">".
-  freemed_display_physicians ($ptphy4).
-    "</SELECT>
+  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptphy4")."
     </TD></TR>
     " : "").
 
@@ -423,20 +413,20 @@ if ($action=="addform") {
     <P>
 
     <$STDFONT_B>$Home_phone : <$STDFONT_E>
-  ";
-  fm_phone_entry ("pthphone");
-  echo "
+  ".
+  fm_phone_entry ("pthphone")
+  ."
     <BR>
 
     <$STDFONT_B>$Work_phone : <$STDFONT_E>
-  ";
-  fm_phone_entry ("ptwphone");
-  echo "
+  ".
+  fm_phone_entry ("ptwphone")
+  ."
     <BR>
     <$STDFONT_B>$Fax_number : <$STDFONT_E>
-  ";
-  fm_phone_entry ("ptfax");
-  echo "
+  ".
+  fm_phone_entry ("ptfax")
+  ."
     <BR>
 
     <$STDFONT_B>$Email_address : <$STDFONT_E>
@@ -935,20 +925,20 @@ if ($action=="addform") {
 
 
     <$STDFONT_B>$Home_phone : <$STDFONT_E>
-  ";
-  fm_phone_entry ("pthphone");
-  echo "
+  ".
+  fm_phone_entry ("pthphone")
+  ."
     <BR>
 
     <$STDFONT_B>$Work_phone : <$STDFONT_E>
-  ";
-  fm_phone_entry ("ptwphone");
-  echo "
+  ".
+  fm_phone_entry ("ptwphone")
+  ."
     <BR>
     <$STDFONT_B>$Fax_number : <$STDFONT_E>
-  ";
-  fm_phone_entry ("ptfax");
-  echo "
+  ".
+  fm_phone_entry ("ptfax")
+  ."
     <BR>
 
     <$STDFONT_B>$Email_address : <$STDFONT_E>

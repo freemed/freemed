@@ -54,14 +54,14 @@ if ($action=="addform") {
      VALUE=\"$inscozip\">
     <BR>
     <$STDFONT_B>Phone #<$STDFONT_E>
-  ";
-  fm_phone_entry ("inscophone");
-  echo "
+  ".
+  fm_phone_entry ("inscophone")
+  ."
     <BR>
     <$STDFONT_B>Facsimile #<$STDFONT_E>
-  ";
-  fm_phone_entry ("inscofax");
-  echo "
+  ".
+  fm_phone_entry ("inscofax")
+  ."
     <BR>
 
     <$STDFONT_B>Email Address<$STDFONT_E>
@@ -261,14 +261,14 @@ if ($action=="addform") {
      VALUE=\"$inscozip\">
     <BR>
     <$STDFONT_B>Phone # : <$STDFONT_E>
-  ";
-  fm_phone_entry ("inscophone");
-  echo "
+  ".
+  fm_phone_entry ("inscophone")
+  ."
     <BR>
     <$STDFONT_B>Facsimile # : <$STDFONT_E>
-  ";
-  fm_phone_entry ("inscofax");
-  echo "
+  ".
+  fm_phone_entry ("inscofax")
+  ."
     <BR>
 
     <$STDFONT_B>Email Address : <$STDFONT_E>

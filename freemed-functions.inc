@@ -2016,6 +2016,7 @@ function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false) {
 } // end function fm_number_select
 
 function fm_phone_assemble ($phonevarname="", $array_index=-1) {
+  $buffer = ""; // we use buffered output for notebook class!
   if ($phonevarname=="") return ""; // return nothing if no variable is given
   eval ("global \$". $phonevarname. ",
                 \$". $phonevarname. "_1,
@@ -2079,7 +2080,7 @@ function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
   // now actually display the input boxes
   switch ($formatting) {
     case "usa":
-     echo "
+     $buffer .= "
       <B>(</B>
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."_1$suffix\" SIZE=4
        MAXLENGTH=3 VALUE=\"$p1\"> <B>)</B>
@@ -2092,12 +2093,12 @@ function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
      "; break;
     case "unformatted": 
     default:
-     echo "
+     $buffer .= "
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."$suffix\" SIZE=15
        MAXLENGTH=16 VALUE=\"$w\">
      "; break;
   } // end switch for dtfmt config value
-  return true;                         // we exited well!
+  return $buffer;                         // we exited well!
 } // end function fm_phone_entry
 
 function fm_split_into_array ($original_string) {

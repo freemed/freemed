@@ -281,7 +281,7 @@
               VALUE=\"$this_answer\">\n";
        break;
       case "phone":
-       fm_phone_entry ("answer$i");
+       echo fm_phone_entry ("answer$i");
        break;
       case "heading":
        echo "
