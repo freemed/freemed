@@ -66,7 +66,7 @@ if ($action=="addform") {
      VALUE=\"$ptmname\">
     <BR>
 
-    <$STDFONT_B>$Date_of_birth ($YMD) : <$STDFONT_E>
+    <$STDFONT_B>$Date_of_birth : <$STDFONT_E>
   ";
   fm_date_entry("ptdob", true);
   echo "
@@ -82,17 +82,23 @@ if ($action=="addform") {
     <BR>
 
     <$STDFONT_B>$Marital_status : <$STDFONT_E>
-    <SELECT NAME=ptmarital>
+    <SELECT NAME=\"ptmarital\">
       <OPTION VALUE=\"\"         >--$Unknown--
       <OPTION VALUE=\"single\"   >$Single
       <OPTION VALUE=\"married\"  >$Married
       <OPTION VALUE=\"divorced\" >$Divorced
       <OPTION VALUE=\"separated\">$Separated
+      <OPTION VALUE=\"widowed\"  >Widowed
     </SELECT>
     <BR>
 
+    <$STDFONT_B>Social Security Number : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=\"ptssn\" SIZE=9 MAXLENGTH=10
+     VALUE=\"$ptssn\">
+    <BR>
+
     <$STDFONT_B>$Internal_practice_id # : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=ptid SIZE=10 MAXLENGTH=10
+    <INPUT TYPE=TEXT NAME=\"ptid\" SIZE=10 MAXLENGTH=10
      VALUE=\"$ptid\">
     <BR>
  
@@ -599,20 +605,20 @@ if ($action=="addform") {
   }
 
   // this is the code for SELECT/OPTION clauses...
-  switch ($ptsex) {
-    case "m": $_sex_m="SELECTED"; break;
-    case "f": $_sex_f="SELECTED"; break;
-    case "t": $_sex_t="SELECTED"; break;
-    default:  $_sex_n="SELECTED";
-  } // this switch is to set the $ptsex (not <INPUT>)
+  //switch ($ptsex) {
+  //  case "m": $_sex_m="SELECTED"; break;
+  //  case "f": $_sex_f="SELECTED"; break;
+  //  case "t": $_sex_t="SELECTED"; break;
+  //  default:  $_sex_n="SELECTED";
+  //} // this switch is to set the $ptsex (not <INPUT>)
 
-  switch ($ptmarital) {
-    case "single"   : $_mar_s="SELECTED"; break;
-    case "married"  : $_mar_m="SELECTED"; break;
-    case "divorced" : $_mar_d="SELECTED"; break;
-    case "separated": $_mar_e="SELECTED"; break;
-    default:  $_mar_n="SELECTED";
-  } // this switch is to set the $ptmarital (not <INPUT>)
+  //switch ($ptmarital) {
+  //  case "single"   : $_mar_s="SELECTED"; break;
+  //  case "married"  : $_mar_m="SELECTED"; break;
+  //  case "divorced" : $_mar_d="SELECTED"; break;
+  //  case "separated": $_mar_e="SELECTED"; break;
+  //  default:  $_mar_n="SELECTED";
+  //} // this switch is to set the $ptmarital (not <INPUT>)
 
   switch ($ptempl) {
     case "y": $_emp_y="SELECTED"; break;
@@ -666,23 +672,37 @@ if ($action=="addform") {
 
     <$STDFONT_B>$Gender : <$STDFONT_E>
     <SELECT NAME=\"ptsex\">
-      <OPTION VALUE=\"\"  $_sex_n>$NONE_SELECTED
-      <OPTION VALUE=\"f\" $_sex_f>$Female
-      <OPTION VALUE=\"m\" $_sex_m>$Male
-      <OPTION VALUE=\"t\" $_sex_t>$Transgender
+      <OPTION VALUE=\"\"  ".
+      ( ($ptsex == "") ? "SELECTED" : "" ).">$NONE_SELECTED
+      <OPTION VALUE=\"f\" ".
+      ( ($ptsex == "f") ? "SELECTED" : "" ).">$Female
+      <OPTION VALUE=\"m\" ".
+      ( ($ptsex == "m") ? "SELECTED" : "" ).">$Male
+      <OPTION VALUE=\"t\" ".
+      ( ($ptsex == "t") ? "SELECTED" : "" ).">$Transgender
     </SELECT>
     <BR>    
 
 
     <STDFONT_B>$Marital_status : <$STDFONT_E>
     <SELECT NAME=ptmarital>
-      <OPTION VALUE=\"\"          $_mar_n>--$Unknown--
-      <OPTION VALUE=\"single\"    $_mar_s>$Single
-      <OPTION VALUE=\"married\"   $_mar_m>$Married
-      <OPTION VALUE=\"divorced\"  $_mar_d>$Divorced
-      <OPTION VALUE=\"separated\" $_mar_e>$Separated
+      <OPTION VALUE=\"\"          ".
+       ( ($ptmarital==""         ) ? "SELECTED" : "" ).">--$Unknown--
+      <OPTION VALUE=\"single\"    ".
+       ( ($ptmarital=="single"   ) ? "SELECTED" : "" ).">$Single
+      <OPTION VALUE=\"married\"   ".
+       ( ($ptmarital=="married"  ) ? "SELECTED" : "" ).">$Married
+      <OPTION VALUE=\"divorced\"  ".
+       ( ($ptmarital=="divorced" ) ? "SELECTED" : "" ).">$Divorced
+      <OPTION VALUE=\"separated\" ".
+       ( ($ptmarital=="separated") ? "SELECTED" : "" ).">$Separated
     </SELECT>
     <BR>   
+
+    <$STDFONT_B>Social Security Number : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=\"ptssn\" SIZE=9 MAXLENGTH=10
+     VALUE=\"$ptssn\">
+    <BR>  
 
     <$STDFONT_B>$Internal_practice_id # : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=ptid SIZE=10 MAXLENGTH=20
@@ -910,21 +930,6 @@ if ($action=="addform") {
     <SELECT NAME=ptdep>
       <OPTION VALUE=\"\">--$Self_insured--
       $_dep
-    </SELECT>
-    <P>
-
-    <$STDFONT_B>Relation to Guarantor : <$STDFONT_E>
-    <SELECT NAME=\"ptreldep\">
-     <OPTION VALUE=\"S\" ".
-      ( ($ptreldep=="S") ? "SELECTED" : "" ).">Self
-     <OPTION VALUE=\"C\" ".
-      ( ($ptreldep=="C") ? "SELECTED" : "" ).">Child
-     <OPTION VALUE=\"H\" ".
-      ( ($ptreldep=="H") ? "SELECTED" : "" ).">Husband
-     <OPTION VALUE=\"W\" ".
-      ( ($ptreldep=="W") ? "SELECTED" : "" ).">Wife
-     <OPTION VALUE=\"O\" ".
-      ( ($ptreldep=="O") ? "SELECTED" : "" ).">Other
     </SELECT>
     <P>
 
