@@ -24,14 +24,8 @@
  switch ($action) {
 
   case "addform":
-   freemed_display_box_top ("$Add $record_name");
-   echo "
-     <P>
-     <CENTER>
-      <$STDFONT_B>$Patient : <$STDFONT_E>
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
-      ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-     </CENTER>
+   freemed_display_box_top (_("Add")." "._($record_name));
+   echo freemed_patient_box ($this_patient)."
      <P>
 
      <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
@@ -54,7 +48,7 @@
        <$STDFONT_B>Procedure : <$STDFONT_E>
       </TD><TD ALIGN=LEFT>
        <SELECT NAME=\"payrecproc\">
-        <OPTION VALUE=\"0\">$NONE_SELECTED
+        <OPTION VALUE=\"0\">"._("NONE SELECTED")."
   ";
   // grab all procedures for patient (with non-zero balance)
   $procs = fdb_query ("SELECT * FROM procrec
@@ -136,18 +130,12 @@
      $payrecdt = $cur_date; // by default, the date is now...
 
    // actual display
-   freemed_display_box_top ("$Add $record_name", $_ref, $page_name);
+   freemed_display_box_top (_("Add")." "._($record_name));
 
    // if a patient is provided...
    if ($patient>0) {
      if (empty($payrecsource)) $payrecsource = 1; // set to patient payment
-     echo "
-      <CENTER>
-       <$STDFONT_B>Patient : <$STDFONT_E>
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-      </CENTER>
-     ";  
+     echo freemed_patient_box ($this_patient);
    }
 
    // addform1 action, top of form/table
@@ -204,16 +192,14 @@
 
      <TR>
       <TD ALIGN=RIGHT><$STDFONT_B>Date Received : <$STDFONT_E></TD>
-      <TD>";
-    fm_date_entry ("payrecdt");
-    echo "
+      <TD>".fm_date_entry ("payrecdt")."
       </TD>
      </TR>
 
      <TR>
       <TD ALIGN=RIGHT><$STDFONT_B>Payment Amount : <$STDFONT_E></TD>
       <TD><INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=15
-       VALUE=\"$payrecamt\"></TD>
+       VALUE=\"".prepare($payrecamt)."\"></TD>
      </TR>
    ";
    break; // end of payment
@@ -230,8 +216,11 @@
      <TD ALIGN=RIGHT><$STDFONT_B>Insurance Company : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ".
-   freemed_display_insco ($payreclink)
-   ."
+   freemed_display_selectbox (
+     fdb_query ("SELECT insconame,inscocity,inscostate,id FROM insco
+       ORDER BY insconame,inscostate,inscocity"),
+       "#insconame# (#inscocity#, #inscostate#)", "payreclink" 
+   )."
      </TD>
      </TR>
 
@@ -239,9 +228,7 @@
       <TD ALIGN=RIGHT>
        <$STDFONT_B>Date Received : <$STDFONT_E>
       </TD><TD ALIGN=LEFT>
-    ";
-    fm_date_entry ("payrecdt");
-    echo "
+    ".fm_date_entry ("payrecdt")."
       </TD>
      </TR>
 
@@ -267,9 +254,7 @@
       <TD ALIGN=RIGHT>
        <$STDFONT_B>Date of Refund : <$STDFONT_E>
       </TD><TD ALIGN=LEFT>
-   ";
-   fm_date_entry ("payrecdt");
-   echo "
+   ".fm_date_entry ("payrecdt")."
       </TD>
      </TR>
 
@@ -309,9 +294,7 @@
       <TD ALIGN=RIGHT>
        <$STDFONT_B>Date of Denial : <$STDFONT_E>
       </TD><TD ALIGN=LEFT>
-   ";
-   fm_date_entry ("payrecdt");
-   echo "
+   ".fm_date_entry ("payrecdt")."
       </TD>
      </TR>
 
@@ -351,7 +334,7 @@
 
      <CENTER>
      <INPUT TYPE=SUBMIT VALUE=\" Continue \">
-     <INPUT TYPE=RESET  VALUE=\" Clear \">
+     <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
      </FORM>
      </CENTER>
      <P>
@@ -361,7 +344,7 @@
 
   case "addform2":
    if (empty($payrecamt)) {
-     freemed_display_box_top ("$Add $record_name");
+     freemed_display_box_top (_("Adding")." "._($record_name));
      echo "
       <P>
       You must enter an amount!
@@ -387,14 +370,8 @@
      freemed_close_db ();
      DIE("");
    } // end checking for empty payrecamt
-   freemed_display_box_top ("$Add $record_name", $_ref, $page_name);
-   echo "
-    <P>
-    <CENTER>
-     <$STDFONT_B>$Patient : <$STDFONT_E>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-    </CENTER>
+   freemed_display_box_top (_("Adding")." "._($record_name));
+   echo freemed_patient_box ($this_patient)."
     <P>
    
     <TABLE WIDTH=100% CELLSPACING=2 CELLPADDING=2 BORDER=0
@@ -542,11 +519,11 @@
      <$HEADERFONT_B>Step Three: Denial Information<$HEADERFONT_E>
      </TD></TR>
      <INPUT TYPE=HIDDEN NAME=\"payreclink\" 
-      VALUE=\"".fm_prep($payreclink)."\">
+      VALUE=\"".prepare($payreclink)."\">
      <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
      <TD><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30
-       VALUE=\"$payrecdescrip\"></TD>
+       VALUE=\"".prepare($payrecdescrip)."\"></TD>
      </TR>
     ";
      break; // end denial (addform2)
@@ -568,8 +545,8 @@
   echo " 
     </TABLE>
     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\" $Add \">
-     <INPUT TYPE=RESET  VALUE=\" $Clear \">
+     <INPUT TYPE=SUBMIT VALUE=\" "._("Add")." \">
+     <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
     </CENTER>
     </FORM>
     <P>
@@ -578,7 +555,7 @@
    break;
 
   case "add": // actual add is done here
-   freemed_display_box_top ("$Adding $record_name");
+   freemed_display_box_top (_("Adding")." "._($record_name));
 
    switch ($payreccat) { // begin category case (add)
      case PAYMENT: // payment category (add) 0
@@ -632,7 +609,7 @@
       break; // end rebill category (add)
    } // end category switch (add)
 
-   echo "<$STDFONT_B>$Adding ... <$STDFONT_E>\n";
+   echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
    $query = "INSERT INTO $db_name VALUES (
      '$cur_date',
      '',
@@ -650,8 +627,8 @@
      NULL )";
    if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
    $result = fdb_query($query);
-   if ($result) { echo "$Done."; }
-    else        { echo "$ERROR"; }
+   if ($result) { echo _("done")."."; }
+    else        { echo _("ERROR");    }
    echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
    switch ($payreccat) {
      case ADJUSTMENT: // adjustment category (add) 1
@@ -685,14 +662,14 @@
       $query = "UPDATE procrec SET
                 procbalcurrent = procbalcurrent - $payrecamt,
                 procamtpaid    = procamtpaid    + $payrecamt
-                WHERE id='$payrecproc'";
+                WHERE id='".addslashes($payrecproc)."'";
       break;
    } // end category switch (add)
    if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
    if (!empty($query)) {
      $result = fdb_query($query);
-     if ($result) { echo "$Done."; }
-      else        { echo "$ERROR"; }
+     if ($result) { echo _("done")."."; }
+      else        { echo -("ERROR");    }
    } else { // if there is no query, let the user know we did nothing
      echo "unnecessary";
    } // end checking for null query
@@ -700,7 +677,7 @@
     <P>
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> <B>|</B>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"payment_record.php3?$_auth&patient=$patient\"
      ><$STDFONT_B>View Patient Ledger<$STDFONT_E></A>
     </CENTER>
@@ -712,22 +689,22 @@
   case "del":
    if ($this_user->getLevel() < $delete_level)
     die ("$page_name :: You don't have permission to do this");
-   freemed_display_box_top ("$Deleting $record_name");
+   freemed_display_box_top (_("Deleting")." "._($record_name));
    echo "
     <P>
-    <$STDFONT_B>$Deleting ... <$STDFONT_E>
+    <$STDFONT_B>"._("Deleting")." ... <$STDFONT_E>
    ";
-   $query = "DELETE FROM $db_name WHERE id='$id'";
+   $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
    $result = fdb_query ($query);
-   if ($result) { echo "$Done."; }
-    else        { echo "$ERROR"; }
+   if ($result) { echo _("done")."."; }
+    else        { echo _("ERROR");    }
    echo "
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth&patient=$patient\"
-     ><$STDFONT_B>Return to $record_name Menu<$STDFONT_E></A> <B>|</B>
+     ><$STDFONT_B>"._("back")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
     <P>
    ";
@@ -736,15 +713,9 @@
 
   default:
    // default action
-   freemed_display_box_top ("$record_name");
+   freemed_display_box_top (_($record_name));
 
-   echo "
-    <P>
-    <CENTER>
-     <$STDFONT_B><B>$Patient</B><$STDFONT_E>:
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-    </CENTER>
+   echo freemed_patient_box ($this_patient)."
     <P>
    ";
 
@@ -762,9 +733,9 @@
        </B><$STDFONT_E>
        <P>
        <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-        ><$STDFONT_B>$Add $record_name<$STDFONT_E></A> <B>|</B>
+        ><$STDFONT_B>"._("Add")." "._($record_name)."<$STDFONT_E></A> <B>|</B>
        <A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Manage_Patient")."<$STDFONT_E></A>
        <P>
       </CENTER>
      ";
@@ -794,7 +765,7 @@
 
    while ($r = fdb_fetch_array ($chg_result)) {
      $procdate        = fm_date_print ($r["procdt"]);
-     $proccomment     = fm_prep ($r["proccomment"]);
+     $proccomment     = prepare ($r["proccomment"]);
      $procbalorig     = $r["procbalorig"];
      $id              = $r["id"];
      $_alternate      = freemed_bar_alternate_color ($_alternate);
@@ -826,8 +797,8 @@
 
    while ($r = fdb_fetch_array ($pay_result)) {
      $payrecdate      = fm_date_print ($r["payrecdt"]);
-     $payrecdescrip   = fm_prep ($r["payrecdescrip"]);
-     $payrecamt       = fm_prep ($r["payrecamt"]);
+     $payrecdescrip   = prepare ($r["payrecdescrip"]);
+     $payrecamt       = prepare ($r["payrecamt"]);
      switch ($r["payreccat"]) { // category switch
       case REFUND: // refunds 2
       case PROCEDURE: // charges 5
@@ -891,20 +862,21 @@
        break;
      } // end of categry switch (name)
      $id              = $r["id"];
-     $_alternate      = freemed_bar_alternate_color ($_alternate);
      if (empty($payrecdescrip)) $payrecdescrip="NO DESCRIPTION";
      echo "
-      <TR BGCOLOR=$_alternate>
+      <TR BGCOLOR=\"".
+       ($_alternate = freemed_bar_alternate_color ($_alternate)).
+      "\">
        <TD>$payrecdate</TD>
        <TD><I>$payrecdescrip</I></TD>
        <TD>$this_type</TD>
        <TD ALIGN=RIGHT>
-        <FONT COLOR=#ff0000\">
+        <FONT COLOR=\"#ff0000\">
          <TT><B>".$charge."</B></TT>
         </FONT>
        </TD> 
        <TD ALIGN=RIGHT>
-        <FONT COLOR=#000000>
+        <FONT COLOR=\"#000000\">
          <TT><B>".$payment."</B></TT>
         </FONT>
        </TD>
@@ -915,7 +887,7 @@
          ($r[payreclock] != "locked"))
       echo "
        <A HREF=\"$page_name?$_auth&id=$id&patient=$patient&action=del\"
-       ><$STDFONT_B>$lang_DEL<$STDFONT_E></A>
+       ><$STDFONT_B>"._("DEL")."<$STDFONT_E></A>
       "; 
 
      echo "\n   &nbsp;</TD></TR>";
@@ -925,10 +897,10 @@
    $patient_total = $total_payments - $total_charges;
    $patient_total = bcadd ($patient_total, 0, 2);
    if ($patient_total<0) {
-     $pat_total = "<FONT COLOR=#000000>".
+     $pat_total = "<FONT COLOR=\"#000000\">".
       bcadd (-$patient_total, 0, 2)."</FONT>";
    } else {
-     $pat_total = "-<FONT COLOR=#ff0000>".
+     $pat_total = "-<FONT COLOR=\"#ff0000\">".
       bcadd (-$patient_total, 0, 2)."</FONT>";
    } // end of creating total string/color
 
@@ -940,7 +912,7 @@
      <TD>&nbsp;</TD>
      <TD>&nbsp;</TD>
      <TD ALIGN=RIGHT>
-      <FONT COLOR=#ff0000><TT>".bcadd($total_charges,0,2)."</TT></FONT>
+      <FONT COLOR=\"#ff0000\"><TT>".bcadd($total_charges,0,2)."</TT></FONT>
      </TD>
      <TD ALIGN=RIGHT>
       <TT>".bcadd($total_payments,0,2)."</TT>
@@ -957,9 +929,9 @@
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-     ><$STDFONT_B>$Add $record_name<$STDFONT_E></A> <B>|</B>
+     ><$STDFONT_B>"._("Add")." "._($record_name)."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
     <P>
    "; 
