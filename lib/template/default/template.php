@@ -161,6 +161,9 @@ if (is_object($this_user)) {
 	// Show what we have, if that's what we're doing
 	print "<html>\n".
 		"<head>\n".
+		"<title>".prepare(PACKAGENAME)." v".VERSION." - ".
+		( !empty($GLOBALS['page_title']) ? $GLOBALS['page_title']." - " : "" ) .
+		prepare(INSTALLATION)."</title>\n".
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
 		"HREF=\"lib/template/default/stylesheet.css\"/>\n".
 		"</head>\n".
