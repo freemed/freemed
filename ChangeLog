@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Fri Feb 09 2001 rufustfirefly
+  - use new version_check() from phpwebtools 0.2 release
+  - added stub lib/module_edi.php to repository
+  - releasing 0.2.1 (Persephone) CVS release
+
 * Wed Feb 07 2001 rufustfirefly
   - cleaning up modules/payment.module.php a little in the addform section
     to have nbsp;'s for proper rendering
