@@ -150,7 +150,7 @@ class User {
 	// Fred Trotter
 	// creates database and populates it with "Required Data"
 	// This is not "default" or "usefull starting" data
-	// it is the data that is required to run Freemed!!
+	// it is the data that is required to run FreeMED!!
 	function init($adminpassword) {
 		global $sql;
 
@@ -158,14 +158,18 @@ class User {
 		$result=$sql->query("DROP TABLE user"); 
 
 		// Database Rebuild
-		$result=$sql->query($sql->create_table_query(
+		$result = $sql->query($sql->create_table_query(
 			'user',
 			array(
-				'username' => SQL_NOT_NULL(SQL_VARCHAR(16)),
-				'userpassword' => SQL_NOT_NULL(SQL_VARCHAR(32)),
+				'username' => SQL_VARCHAR(16),
+				'userpassword' => SQL_VARCHAR(32),
 				'userdescrip' => SQL_VARCHAR(50),
 				'userlevel' => SQL_INT_UNSIGNED(0),
-				'usertype' => SQL_ENUM (array("phy", "misc","super")),
+				'usertype' => SQL_ENUM (array(
+					"phy",
+					"misc",
+					"super"
+				)),
 				'userfac' => SQL_BLOB,
 				'userphy' => SQL_BLOB,
 				'userphygrp' => SQL_BLOB,
@@ -189,7 +193,7 @@ class User {
 				"userphy" => "-1",
 				"userphygrp" => "-1",
 				"userrealphy" => "0",
-				"usermanageopt" => "'/automatic_refresh_time=/display_columns=3/num_summary_items=1/static_components=appointments:custom_reports:medical_information:messages:patient_information:photo_id__action_last=Static Components:appointments:custom_reports:medical_information:messages:patient_information:photo_id::/modular_components=AllergiesModule:ChronicProblemsModule:CurrentProblemsModule:EpisodeOfCare:AuthorizationsModule:LettersModule:QuickmedsModule:PatientCoveragesModule:PatientImages:PaymentModule:PrescriptionModule:PreviousOperationsModule:ProcedureModule:ProgressNotes'"
+				"usermanageopt" => "'/automatic_refresh_time=/display_columns=3/num_summary_items=1/static_components=appointments:custom_reports:medical_information: messages:patient_information:photo_id__action_last=Static Components:appointments:custom_reports:medical_information:messages:patient_information:photo_id::/modular_components=AllergiesModule:ChronicProblemsModule:CurrentProblemsModule:EpisodeOfCare:AuthorizationsModule:LettersModule:QuickmedsModule:PatientCoveragesModule:PatientImages:PaymentModule:PrescriptionModule:PreviousOperationsModule:ProcedureModule:ProgressNotes'"
 	    		)
 	    	));
 
