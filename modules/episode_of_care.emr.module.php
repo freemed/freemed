@@ -157,6 +157,7 @@ class episodeOfCare extends freemedEMRModule {
 			"Last" => "eocdtlastsimilar",
 			_("Description") => "eocdescrip"
 		);
+		$this->summary_view_link = true;
 	} // end constructor episodeOfCare
 
 	function form () {
@@ -691,26 +692,28 @@ class episodeOfCare extends freemedEMRModule {
 
     // view of entire episode (central control screen)
 	function display () {
-		global $display_buffer;
-   if ($id<1) {
-     $page_title = _("$record_name")." :: "._("ERROR");
-     $display_buffer .= "
-       <P>
-       "._("You must specify an ID to view an Episode!")."
-       <P>
-       <CENTER>
-        <A HREF=\"manage.php?id=$patient\"
-        >"._("Manage Patient")."</A>
-       </CENTER>
-     ";
-     template_display();
-   } // end checking for ID as valid
+		global $display_buffer, $id, $sql;
+		global $record_name, $save_module, $module, $_auth;
+		global $patient;
+		if ($id<1) {
+			$page_title = _("$record_name")." :: "._("ERROR");
+			$display_buffer .= "
+			<P>
+			"._("You must specify an ID to view an Episode!")."
+			<P>
+			<CENTER>
+			<A HREF=\"manage.php?id=$patient\"
+			>"._("Manage Patient")."</A>
+			</CENTER>
+			";
+			template_display();
+		} // end checking for ID as valid
 
-   $eoc = freemed_get_link_rec($id, $this->table_name);
-   // display vitals for current episode
-   $display_buffer .= "
-     <P>
-     <!-- Vitals Display Table -->
+		$eoc = freemed_get_link_rec($id, $this->table_name);
+		// display vitals for current episode
+		$display_buffer .= "
+		<P>
+		<!-- Vitals Display Table -->
      <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=1
       ALIGN=CENTER VALIGN=MIDDLE>
      <TR>
@@ -731,24 +734,24 @@ class episodeOfCare extends freemedEMRModule {
      </TR>
      </TABLE>
      <!-- End Vitals Display Table -->
-     <P>
-   ";
-   // procedures display
-   // special jimmy-rigged query to find in 3d array...
-   $query = "SELECT * FROM procrec
+		<P>
+		";
+		// procedures display
+		// special jimmy-rigged query to find in 3d array...
+		$query = "SELECT * FROM procrec
              WHERE ((proceoc LIKE '".addslashes($id).":%') OR
                     (proceoc LIKE '%:".addslashes($id)."') OR
                     (proceoc LIKE '%:".addslashes($id).":%') OR
                     (proceoc='".addslashes($id)."'))
              ORDER BY procdt DESC";
-   $result = $sql->query ($query);
+		$result = $sql->query ($query);
   
-   $r_name = $record_name; // backup
-   $_auth = "proceoc=".urlencode($id);  
-   $record_name = "Procedure";
-   $save_module = $module;
-   $module = "procedureModule"; // pass for the module loader
-   $display_buffer .= freemed_display_itemlist (
+		$r_name = $record_name; // backup
+		$_auth = "proceoc=".urlencode($id);  
+		$record_name = "Procedure";
+		$save_module = $module;
+		$module = "procedureModule"; // pass for the module loader
+		$display_buffer .= freemed_display_itemlist (
      $result,
      "module_loader.php",
      array (
@@ -770,53 +773,47 @@ class episodeOfCare extends freemedEMRModule {
        ""
      )
    );
-   // end of procedures display
-   $module = $save_module;
+		// end of procedures display
+		$module = $save_module;
    
-   $display_buffer .= "
-   <P>\n";
+		$display_buffer .= "<P>\n";
    
-   // progress notes display
+		// progress notes display
    
-   // special jimmy-rigged query to find in 3d array...
-   $result = 0;
-   $query = "SELECT * FROM pnotes
+		// special jimmy-rigged query to find in 3d array...
+		$result = 0;
+		$query = "SELECT * FROM pnotes
              WHERE ((pnotespat='".addslashes($patient)."') AND
                     ((pnoteseoc LIKE '".addslashes($id).":%') OR
                     (pnoteseoc LIKE '%:".addslashes($id)."') OR
                     (pnoteseoc LIKE '%:".addslashes($id).":%') OR
                     (pnoteseoc='".addslashes($id)."')))
              ORDER BY pnotesdt DESC";
-   $result = $sql->query ($query);
+		$result = $sql->query ($query);
      
-   $_auth = "pnoteseoc=".urlencode($id);  
-   $record_name = "Progress Notes";
-   $save_module = $module;
-   $module = "progressNotes";
-   $display_buffer .= freemed_display_itemlist (
-     $result,
-     "module_loader.php",
-     array (
-       _("Date") => "pnotesdt"
-     ),
-     array (
-       ""
-     )
-   );
-   $module = $save_module;
+		$record_name = "Progress Notes";
+		$save_module = $module;
+		$module = "progressNotes";
+		$display_buffer .= freemed_display_itemlist (
+			$result,
+			"module_loader.php",
+			array ( _("Date") => "pnotesdt" ),
+			array ( "" )
+		);
+		$module = $save_module;
 
-   $record_name = $r_name; // restore from backup var
+		$record_name = $r_name; // restore from backup var
 
-   // end of progress notes display
-   // display management link at the bottom...
-   $display_buffer .= "
-     <P>
-     <CENTER>
-      <A HREF=\"$this->page_name?patient=$patient&module=$module\"
-      >"._("Choose Another $record_name")."</A>
-     </CENTER>
-     <P>
-   ";
+		// end of progress notes display
+		// display management link at the bottom...
+		$display_buffer .= "
+		<P>
+		<CENTER>
+		<A HREF=\"$this->page_name?patient=$patient&module=$module\"
+		>"._("Choose Another $record_name")."</A>
+		</CENTER>
+		<P>
+		";
 	} // end function episodeOfCare->display
 
 	function view () {
