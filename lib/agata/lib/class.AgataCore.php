@@ -450,7 +450,7 @@ class AgataCore
         {
           $_Linha = explode(":", trim($buffer));
 	  $Linha[0] = $_Linha[0];
-	  unset ($_Linha[0]); $Linha[1] = join('', $_Linha);
+	  unset ($_Linha[0]); $Linha[1] = join(':', $_Linha);
 	  if (substr($buffer,0,1) == ';') { // commenting
 	    // do nothing ... comment
           } elseif (in_array($Linha[0], $Clause)) {
