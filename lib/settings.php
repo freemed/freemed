@@ -16,7 +16,7 @@ define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('HTTP', 'http'); // http for normal, https for SSL
 define ('SESSION_PROTECTION', true); // strong session protection?
 define ('DEFAULT_LANGUAGE', "en_US"); // default language
-define ('ALWAYS_SELFTEST', false); // We can check the health of the database etc, at every login...
+define ('ALWAYS_SELFTEST', true); // We can check the health of the database etc, at every login...
 define ('ALWAYS_LANGUAGE_BAR', true); // Do we always display the language selection bar?
 define ('INIT_ADDR',"127.0.0.1"); // this is the only IP address that can run the init wizard...
     // Logging settings	
@@ -30,7 +30,7 @@ define ('LOG_HIPAA', true); // This turns on all the logging required by HIPAA
 define ('LOG_LOGIN', true); // This will force logging of login attempts
 
    // Powerful and dangerous debugging
-define ('LOG_MD5ATTEMPTS', true); // This is a dangerous tool to test authentication
+define ('LOG_MD5ATTEMPTS', false); // This is a dangerous tool to test authentication
 				 // DO NOT turn this on for a production system
 				// this will put crackable passwords in the logs
 define ('LOG_SQL', false); 	// This logs the SQL Statments that have been entered
