@@ -37,7 +37,6 @@ function freemed_check_access_for_facility ($f_cookie, $facility_number)
   if ((fm_value_in_string($f_fac, "-1")) OR
       (fm_value_in_string($f_fac, $facility_number)))
     return true;                       // if all or present, return true
-  
   return false;                        // if not, return false
 } // end function freemed_check_access_for_facility
 
@@ -1122,7 +1121,7 @@ function freemed_display_rooms ($param)
       if (strlen($rm_desc)<1) $rm_desc = ""; 
       else $rm_desc = "[$rm_desc]";
 
-      if (($debug) or ($debug==1)) 
+      if ($debug)
         $debug_var = "[$rm_id]";
       else $debug_var = "";
 
