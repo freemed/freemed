@@ -182,11 +182,11 @@ class prescriptionModule extends freemedEMRModule {
             $rxdtto = "unspecified";
           $display_buffer .= "
             <TR><TD>
-             <A HREF=\"$this->page_name?patient=$patient&id=$id&action=display\"
+             <A HREF=\"$this->page_name?module=".urlencode($module)."&patient=$patient&id=$id&action=display\"
               >".fm_date_print($rxdtfrom)." / 
                            ".fm_date_print($rxdtto)." </A>
               <B>[</B> <A HREF=
-               \"$this->page_name?module=$module&id=$rxdrug&action=modform\"
+               \"$this->page_name?module=".urlencode($module)."&id=$rxdrug&action=modform\"
                ><I>$drug</I></A> <B>]</B>
             </TR></TD>
           "; 
@@ -199,7 +199,7 @@ class prescriptionModule extends freemedEMRModule {
       $display_buffer .= "
         <P>
         <CENTER>
-         <A HREF=\"$this->page_name?module=$module&patient=$patient&action=addform\"
+         <A HREF=\"$this->page_name?module=".urlencode($module)."&patient=$patient&action=addform\"
          >"._("Add")." "._($record_name)."</A> |
          <A HREF=\"manage.php?id=$patient\"
          >"._("Manage Patient")."</A>
