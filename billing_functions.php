@@ -72,7 +72,7 @@
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B><B>Unpaid Procedures  : </B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Unpaid Procedures")." : </B><$STDFONT_E>
      </TD><TD ALIGN=LEFT COLSPAN=2>
       <A HREF=\"manage_bills.php?$_auth&action=list\"
       ><$STDFONT_B>View<$STDFONT_E></A>

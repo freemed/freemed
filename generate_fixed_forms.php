@@ -45,7 +45,7 @@
                                  b.procbillable = '0' AND
                                  b.procbilled = '0')";
   
-   $b_result = fdb_query($query);
+   $b_result = sql->query($query);
    //  echo "
    //   <P>
    //   <CENTER>
@@ -55,11 +55,11 @@
    //  ";
                           
 
-   if (!$b_result or (fdb_num_rows($b_result)<1)) {
+   if (!$sql->results($b_result)) {
      echo "
       <P>
       <CENTER>
-       <$STDFONT_B>Nothing to be billed.<$STDFONT_E>
+       <$STDFONT_B>"._("There is nothing to be billed.")."<$STDFONT_E>
       </CENTER>
       <P>
      ";
@@ -77,7 +77,7 @@
    $current_skip   = 0;
 
    // loop for all patients
-   while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
+   while (($b_r = sql->fetch_array ($b_result)) and ($still_going)) {
 
     // pull current patient
     $current_patient = $b_r[payrecpatient];
@@ -96,8 +96,8 @@
      // get current patient information
      $this_patient = new Patient ($current_patient);
      echo "
-      <B>Processing ".$this_patient->fullName()."
-        (<A HREF=\"manage.php3?$auth&id=$current_patient\"
+      <B>"._("Processing")." ".$this_patient->fullName()."
+        (<A HREF=\"manage.php?$auth&id=$current_patient\"
          >".$this_patient->local_record[ptid]."</A>)</B>
       <BR>\n\n
      ";
@@ -112,7 +112,7 @@
      }
 
 
-     $result = fdb_query ("SELECT a.*,b.* FROM payrec AS a,
+     $result = sql->query ("SELECT a.*,b.* FROM payrec AS a,
                                            procrec AS b 
                            WHERE ( 
                              a.payreccat = '5' AND
@@ -375,7 +375,7 @@
 
      // queue all entries
      $first_procedure = 0;
-     while ($r = fdb_fetch_array ($result)) {
+     while ($r = sql->fetch_array ($result)) {
        //$p = freemed_get_link_rec ($r[payrecproc], "procrec");
        if (first_procedure == 0)
        {
@@ -548,7 +548,7 @@
    echo "
     <FORM ACTION=\"echo.php3/form.txt\" METHOD=POST>
      <CENTER>
-      <$STDFONT_B><B>Preview</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
      </CENTER>
      <BR>
      <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
@@ -556,10 +556,10 @@
     <P>
     <CENTER>
      <SELECT NAME=\"type\">
-      <OPTION VALUE=\"\">Render to Screen
+      <OPTION VALUE=\"\">"._("Render to Screen")."
       <OPTION VALUE=\"application/x-rendered-text\">Render to File
      </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
+     <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
     </CENTER>
     </FORM>
     <P>
@@ -568,7 +568,7 @@
    // present the form so that we can mark as billed
    echo "
     <CENTER>
-    <$STDFONT_B><B>Mark as Billed</B><$STDFONT_E>
+    <$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
     </CENTER>
     <BR>
     <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -581,13 +581,13 @@
        <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
         VALUE=\"".$patient_forms[$i]."\" CHECKED>
        ".$this_patient->fullName(false)."
-       (<A HREF=\"manage.php3?$_auth&id=$patient_forms[$i]\"
+       (<A HREF=\"manage.php?$_auth&id=$patient_forms[$i]\"
         >".$this_patient->local_record["ptid"]."</A>) <BR>
      ";
    } // end looping for all processed patients
    echo "
     <P>
-    <INPUT TYPE=SUBMIT VALUE=\"Mark as Billed\">
+    <INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
     </FORM>
     <P>
    ";
@@ -596,17 +596,17 @@
    break; // end of action geninsform
 
   case "mark": // mark as billed action
-   freemed_display_box_top ("Mark Forms as Billed");
+   freemed_display_box_top (_("Mark Forms as Billed"));
    if (count($processed)<1) {
     echo "
      <P>
      <CENTER>
-      <$STDFONT_B><B>Nothing set to be marked!</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Nothing set to be marked!")."</B><$STDFONT_E>
      </CENTER>
      <P>
      <CENTER>
       <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("Return to Fixed Forms Generation Menu")."<$STDFONT_E></A>
      </CENTER>
      <P>
     ";
@@ -622,7 +622,7 @@
                    (procbilled     = '0') AND
                    (procbalcurrent > '0')
                  )";
-       $result = fdb_query ($query);
+       $result = sql->query ($query);
        if ($result) { echo "$Done.<BR>\n"; }
         else        { echo "$ERROR<BR>\n"; }
      }
@@ -630,7 +630,7 @@
       <P>
       <CENTER>
        <A HREF=\"$page_name?$_auth\"
-       ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
+       ><$STDFONT_B>"._(Back")."<$STDFONT_E></A>
       </CENTER>
       <P>
      ";
@@ -638,40 +638,9 @@
    freemed_display_box_bottom ();
    break; // end of mark as billed action
 
-  case "invoice": // create a patient invoice menu 
   default:
-    //<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"geninvoice\">
-   if ($action=="invoice")
-   {
-       freemed_display_box_top ("Fixed Forms Generation Menu");
-   	echo "
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
-     VALIGN=MIDDLE ALIGN=CENTER>
 
-    <TR>
-     <TD COLSPAN=2>
-      <CENTER>
-       <$STDFONT_B><B>Generate Patient Invoice</B><$STDFONT_E>
-      </CENTER>
-     </TD>
-    </TR>
-
-    <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <CENTER>
-       <$STDFONT_B>Invoice : <$STDFONT_E>
-      </CENTER>
-     </TD>
-     <TD ALIGN=LEFT>
-      <SELECT NAME=\"whichform\">
-   ";
-   } // end action invoice
-   else
-   { // default
-   freemed_display_box_top ("Fixed Forms Generation Menu");
+   freemed_display_box_top (_("Fixed Forms Generation Menu"));
    echo "
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
      VALIGN=MIDDLE ALIGN=CENTER>
@@ -679,7 +648,7 @@
     <TR>
      <TD COLSPAN=2>
       <CENTER>
-       <$STDFONT_B><B>Generate Insurance Claim Forms</B><$STDFONT_E>
+       <$STDFONT_B><B>"._("Generate Insurance Claim Forms")."</B><$STDFONT_E>
       </CENTER>
      </TD>
     </TR>
@@ -697,10 +666,9 @@
      <TD ALIGN=LEFT>
       <SELECT NAME=\"whichform\">
    ";
-   }
-   $result = fdb_query ("SELECT * FROM fixedform WHERE fftype='1'
+   $result = sql->query ("SELECT * FROM fixedform WHERE fftype='1'
                          ORDER BY ffname, ffdescrip");
-   while ($r = fdb_fetch_array ($result)) {
+   while ($r = sql->fetch_array ($result)) {
     echo "
      <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
     ";
@@ -713,7 +681,7 @@
     <TR>
      <TD ALIGN=RIGHT>
       <CENTER>
-       <$STDFONT_B>Number of Patients : <$STDFONT_E>
+       <$STDFONT_B>"._("Number of Patients")." :"." <$STDFONT_E>
       </CENTER>
      </TD>
      <TD ALIGN=LEFT>
@@ -725,7 +693,7 @@
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Skip # of Pats to Bill : <$STDFONT_E>
+      <$STDFONT_B>"._("Skip # of Pats to Bill :")."<$STDFONT_E>
      </TD>
      <TD ALIGN=LEFT>
    ";
@@ -738,11 +706,11 @@
         <$STDFONT_B>To : <$STDFONT_E>
        </TD><TD ALIGN=LEFT>
         <SELECT NAME=\"bill_request_type\">
-         <OPTION VALUE=\"0\">1st Insurance\n
-         <OPTION VALUE=\"1\">2nd Insurance\n
-         <OPTION VALUE=\"2\">3rd Insurance\n
-         <OPTION VALUE=\"3\">Worker's Comp\n
-         <OPTION VALUE=\"4\">Patient
+         <OPTION VALUE=\"0\">_("1st Insurance")\n
+         <OPTION VALUE=\"1\">_("2nd Insurance")\n
+         <OPTION VALUE=\"2\">_("3rd Insurance")\n
+         <OPTION VALUE=\"3\">_("Worker's Comp")\n
+         <OPTION VALUE=\"4\">_("Patient")
         </SELECT>
        </TD>
     </TR>
@@ -750,7 +718,7 @@
     <TR>
      <TD COLSPAN=2>
       <CENTER>
-       <INPUT TYPE=SUBMIT VALUE=\"go\">
+       <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
       </CENTER>
      </TD>
     </TR>
