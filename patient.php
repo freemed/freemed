@@ -311,6 +311,18 @@ switch ($action) {
     </TABLE>
      ");    
 
+   $book->add_page(
+     _("Notes"),
+     array("ptnextofkin"),
+     html_form::form_table(array(
+       "" => "
+         <CENTER>
+         <TEXTAREA NAME=\"ptnextofkin\" ROWS=10 COLS=40>".
+	 prepare($ptnextofkin)."</TEXTAREA>
+	 </CENTER>
+	 "
+     ))
+   );
 
    // show notebook
    freemed_display_html_top ();

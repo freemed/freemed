@@ -504,11 +504,64 @@ if ($action=="cfgform") {
 	covzip       CHAR(10),
 	covdob       DATE, 
 	covsex       ENUM(\"m\",\"f\",\"t\") NOT NULL,
+	covinstp     INT UNSIGNED,
+	covprovasgn  INT UNSIGNED,
+	covbenasgn   INT UNSIGNED,
+	covrelinfo   INT UNSIGNED,
+	covrelinfodt INT UNSIGNED,
+	covplanname  VARCHAR(33),
     PRIMARY KEY (id)    
   )");
   if ($result) { echo "<LI>"._("Coverage")."\n"; }
   else         { echo "<LI>"._("Coverage")." Failed\n"; }
 
+  // coverage types
+  $result=$sql->query("DROP TABLE covtypes");
+  $result=$sql->query("CREATE TABLE covtypes (
+    covtpname      VARCHAR(5),
+    covtpdescrip   VARCHAR(60),
+    covtpdtadd     DATE,
+    covtpdtmod     DATE,
+    id             INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY    (id)
+  )");
+  if ($result) { echo "<LI>"._("Insurance Coverage Types")."\n"; }
+  if ($re_load) {
+    if (freemed_import_stock_data("covtypes"))
+      echo "<I>("._("Stock Insurance Coverage Types").")</I> \n ";
+  }
+
+  // queries database
+  $result=$sql->query("DROP TABLE queries");
+  $result=$sql->query("CREATE TABLE queries (
+    qdatabase      VARCHAR(250) NOT NULL DEFAULT '',
+    qquery         TEXT,
+    qtitle         VARCHAR(255) NOT NULL DEFAULT '',
+    id             INT(5) NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY    (id),
+    KEY qtitle (qtitle)
+  )");
+  if ($result) { echo "<LI>"._("Queries")."\n"; }
+  if ($re_load) {
+    if (freemed_import_stock_data("queries"))
+      echo "<I>("._("Stock Queries").")</I> \n ";
+  }
+
+  // queries database
+  $result=$sql->query("DROP TABLE claimtypes");
+  $result=$sql->query("CREATE TABLE claimtypes (
+    clmtpname      VARCHAR(5),
+    clmtpdescrip   VARCHAR(60),
+    clmtpdtadd     DATE,
+    clmtpdtmod     DATE,
+    id             INT(5) NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY    (id)
+  )");
+  if ($result) { echo "<LI>"._("Insurance Claim Types")."\n"; }
+  if ($re_load) {
+    if (freemed_import_stock_data("claimtypes"))
+      echo "<I>("._("Stock Insurance Claim Types").")</I> \n ";
+  }
 
   // generate payer database 
   $result=$sql->query("DROP TABLE payer");
@@ -575,6 +628,8 @@ if ($action=="cfgform") {
     proccov2			   INT UNSIGNED,
     proccov3			   INT UNSIGNED,
     proccov4			   INT UNSIGNED,
+    proccert               INT UNSIGNED,
+    procclmtp              INT UNSIGNED,
     KEY (procpatient),
     PRIMARY KEY (id)
     )");
@@ -734,6 +789,7 @@ if ($action=="cfgform") {
     cptdefstdfee   REAL,
     cptstdfee      TEXT,
     cpttos         TEXT,
+    cpttosprfx     TEXT,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
@@ -1282,6 +1338,13 @@ if ($action=="cfgform") {
      eocrelpreglastper         DATE,
      eocrelpregconfine         DATE,
      eocrelothercomment        VARCHAR(100),
+     eocdistype                INT UNSIGNED,
+     eocdisfromdt              DATE,
+     eocdistodt                DATE,
+     eocdisworkdt              DATE,
+     eochosadmdt               DATE,
+     eochosdischrgdt           DATE,
+     eocrelautotime            CHAR(8),
      id                        INT NOT NULL AUTO_INCREMENT,
      KEY (eocpatient),
      PRIMARY KEY (id)
@@ -1354,6 +1417,19 @@ if ($action=="cfgform") {
      );");
   if ($result) echo "<LI>"._("Authorizations")."\n";
 
+  // certifications
+  $result = $sql->query ("DROP TABLE certifications"); 
+  $result = $sql->query ("CREATE TABLE certifications (
+     certpatient               INT UNSIGNED,
+     certtype                  INT UNSIGNED,
+     certformnum               INT UNSIGNED,
+     certdesc                  VARCHAR(20),
+     certformdata              TEXT,
+     id                        INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );");
+  if ($result) echo "<LI>"._("Certifications")."\n";
+  
   // insurance modifiers table
   $result = $sql->query ("DROP TABLE insmod"); 
   $result = $sql->query ("CREATE TABLE insmod (

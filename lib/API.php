@@ -1113,7 +1113,7 @@ function freemed_display_selectbox ($result, $format, $param="")
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="")
 {
-  global $default_language, $cur_date_hash, 
+  global $sql, $default_language, $cur_date_hash, 
          $debug;
 
   $physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . "/" .
@@ -2254,6 +2254,115 @@ function fm_verify_patient_coverage($ptid=0,$coveragetype=PRIMARY)
 		return $ret;
 }
 
+// function freemed_display_selectbox_array
+function freemed_display_selectbox_array ($result, $format, $name="", $param="")
+{
+  global $$param; // so it knows to put SELECTED on properly
+  static $var; // array of $result-IDs so we only go through them once
+  static $count; // count of results
+  global $sql; // for database connection
+
+  if (!isset($var["$result"])) {
+    if ($result) {
+      $count["$result"] = $sql->num_rows($result);
+      while ($var["$result"][] = $sql->fetch_array($result));
+    } // non-empty result
+  } // if we haven't gone through this list yet
+ 
+  $buffer = "";
+  if ($count["$result"]<1) { 
+    $buffer .= _("NONE")."
+      <INPUT TYPE=HIDDEN NAME=\"$name\" VALUE=\"0\">";
+    return $buffer; // do nothing!
+  } // if no result
+
+  $buffer .= "
+    <SELECT NAME=\"$name\">
+      <OPTION VALUE=\"0\">"._("NONE SELECTED")."
+  ";
+  reset($var["$result"]); // if we're caching it, we have to reset it!
+  while ( (list($pickle,$item) = each($var["$result"])) 
+                                     AND ($item[id])) { // no null values!
+    // START FORMAT-FETCHING
+    $format_array = explode("#",$format); // odd members are variable names!
+    while (list($index,$str) = each($format_array)) {
+      if ( !($index & 1) ) continue; // ignore the evens!
+      $format_array[$index] = $item[$str];// can't just change $str!
+    } // while replacing each variable name
+    $this_format = join("", $format_array); // put it back together
+    // END FORMAT-FETCHING    
+    $buffer .= "
+      <OPTION VALUE=\"$item[id]\" ".
+      ( ($item[id] == $$param) ? "SELECTED" : "" ).
+      ">".prepare($this_format)."\n";
+  } // while fetching result
+  $buffer .= "
+    </SELECT>
+  ";
+  
+  return $buffer;
+} // end function freemed_display_selectbox_array
+
+
+function fm_time_entry ($timevarname="") {
+  if ($timevarname=="") return false;  // indicate problems
+  global $$timevarname, ${$timevarname."_h"}, 
+    ${$timevarname."_m"}, ${$timevarname."_ap"};
+
+
+  $w = $$timevarname;       
+  $h = ${$timevarname."_h"};
+  if (!empty($w))
+  {
+		// if timeval then extract the pieces
+		// this could be first time thru since $timevarname
+        // will not be saved across page invocations
+	  $values = explode(":",$$timevarname);
+      ${$timevarname."_h"}  = $values[0];
+      ${$timevarname."_m"}  = $values[1];
+      ${$timevarname."_ap"} = $values[2];
+      $ap = $values[2];
+     
+  }
+  elseif (empty($h))
+  {
+	  // if not timeval and not hour then
+      // plug a default. we shoud have a value in $h
+      // secondtime thru
+	  $$timevarname = "00:00:AM";
+      ${$timevarname."_h"} = "00";
+	  ${$timevarname."_m"} = "00";
+	  ${$timevarname."_ap"} = _("AM");
+	  $ap = _("AM");
+  }
+
+  //echo ${$timevarname."_h"}."<BR>";
+  //echo ${$timevarname."_m"}."<BR>";
+  //echo ${$timevarname."_ap"}."<BR>";
+	
+
+  $buffer_h = fm_number_select($timevarname."_h",0,12);
+  $buffer_m = fm_number_select($timevarname."_m",0,59);
+  $buffer_ap = "<SELECT NAME=\"$timevarname"."_ap"."\">".
+	"<OPTION VALUE=\"AM\" ".
+		( $ap=="AM" ? "SELECTED" : "").">". _("AM").
+	"<OPTION VALUE=\"PM\" ".
+		( $ap=="PM" ? "SELECTED" : "").">". _("PM");
+   
+  return $buffer_h.$buffer_m.$buffer_ap;
+  
+} // end fm_time_entry
+
+
+function fm_time_assemble ($timevarname="") {
+  if ($timevarname=="") return ""; // return nothing if no variable is given
+  global ${$timevarname."_h"}, ${$timevarname."_m"}, ${$timevarname."_ap"};
+
+    $m = ${$timevarname."_m"};
+    $h = ${$timevarname."_h"};
+    $ap = ${$timevarname."_ap"};
+  return $h.":".$m.":".$ap;                     // return SQL format date
+} // end function fm_time_assemble
 
 } // end checking for __API_PHP__
 

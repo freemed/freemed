@@ -3,6 +3,8 @@
  // desc: CPT (procedural codes) database
  // lic : GPL, v2
 
+ // TODO: STILL NEED TO INTEGRATE REST OF FRED'S CHANGES TO THIS MODULE
+
 if (!defined("__CPT_MODULE_PHP__")) {
 
 define (__CPT_MODULE_PHP__, true);
@@ -30,7 +32,8 @@ class cptMaintenance extends freemedMaintenanceModule {
 		"cptdeftos",
 		"cptdefstdfee",
 		"cptstdfee",
-		"cpttos"
+		"cpttos",
+		"cpttosprfx"
 	);
 
 	function cptMaintenance () {

@@ -8,7 +8,9 @@ include_once "lib/API.php";
 include_once "lib/module.php";
 
 // module loaders
+include_once "lib/module_admin.php";
 include_once "lib/module_billing.php";
+include_once "lib/module_cert.php";
 include_once "lib/module_edi.php";
 include_once "lib/module_emr.php";
 include_once "lib/module_emr_report.php";

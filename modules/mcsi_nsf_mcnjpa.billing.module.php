@@ -3,15 +3,15 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__COMMERCIALMCSIFORMS_MODULE_PHP__")) {
+if (!defined("__MEDICARENJPAMCSIFORMS_MODULE_PHP__")) {
 
-define (__COMMERCIALMCSIFORMS_MODULE_PHP__, true);
+define (__MEDICARENJPAMCSIFORMS_MODULE_PHP__, true);
 
-// class CommercialMCSIFormsModule extends freemedModule
-class CommercialMCSIFormsModule extends freemedBillingModule {
+// class MedicareNJPAMCSIFormsModule extends freemedModule
+class MedicareNJPAMCSIFormsModule extends freemedBillingModule {
 
 	// override variables
-	var $MODULE_NAME = "MCSI NSF Commercial";
+	var $MODULE_NAME = "MCSI NSF Medicare NJ-PA";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
@@ -21,17 +21,12 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 	var $CATEGORY_VERSION = "0";
 
 	var $bill_request_type;
-	var $ins_upin = array("HCPHM", "HCPMC", "19572");
-	var $ins_medicaid = array("26374", "26375", "MSC33", "SET22", "SPH11", "88833");
-	var $ins_commercial = array("MSC11","MSC22","MSC33","88811","88822","88833","75201","19572","94999");
     var $form_buffer;
     var $batchno = "0000";
     var $batchid = "000000";
     var $subno = "000000";
     var $pat_processed;
     var $formno;
-    var $insmod;
-
 	var $record_types = array(
 		"aa0" => "1",
 		"ba0" => "2",
@@ -73,10 +68,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		);
 
 	// contructor method
-	function CommercialMCSIFormsModule ($nullvar = "") {
+	function MedicareNJPAMCSIFormsModule ($nullvar = "") {
 		// call parent constructor
 		$this->freemedBillingModule($nullvar);
-	} // end function CommercialFormsModule
+	} // end function MedicareFormsModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -86,7 +81,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 	} // end function check_vars
 
 	// override main function
-
 
 	function addform()
 	{
@@ -103,8 +97,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		    $this->form_buffer = "";
 			$this->pat_processed = 0;
 
-			$result = $this->CheckforInsBills();
-			if ($result == 0)
+ 			$result = $this->CheckforInsBills();
+            if ($result == 0)
 			{
 				DIE("No patients with this coverage type");
 			}
@@ -120,15 +114,13 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 					$insmod = freemed_get_link_rec($coverage->covinsco->modifiers[0],"insmod");
 					if (!$insmod)
 						DIE("Failed getting insurance modifier");
-					if ( ($insmod[insmod] == "CI") OR ($insmod[insmod] == "CH") )
-					{
-						$this->insmod = $insmod[insmod];
-						$this->bill_request_type = $row[proccurcovtp];
-						$this->GenerateFixedForms($row[procpatient], $row[proccurcovid]);
-
-					}
+					if ($insmod[insmod] != "MB")
+						continue;
 				}
+				$this->bill_request_type = $row[proccurcovtp];
+				$this->GenerateFixedForms($row[procpatient], $row[proccurcovid]);
 			}
+			//}
 	
 			if (!empty($this->form_buffer))
 			{
@@ -154,7 +146,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 						$file_buffer .= "\n";
 					}
 					//$filename = PHYSICAL_LOCATION_BILLS."/mcsi_comm_bills-".$cur_date.gmdate("Hi").".data";
-					$billfilename = "/mcsi_comm_bills-".$cur_date.gmdate("Hi").".data";
+					$billfilename = "/mcsi_medicare_bills-".$cur_date.gmdate("Hi").".data";
 					$dirname = "/tmp";
 					$httpdir = "/bills";
 					$httpfilename = $httpdir.$billfilename;
@@ -171,7 +163,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         			if ($rc <= 0)
             			echo "Error writing $filename<BR>";
 					else
-        				echo "Wrote bills to <A HREF=\"$httpfilename\">$httpfilename</A><BR>";
+						echo "Wrote bills to <A HREF=\"$httpfilename\">$httpfilename</A><BR>";
+
 				}
 
 			}
@@ -209,6 +202,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 	}
 
+
 	function Insurer($procstack)
 	{
 		$bill_request_type = $this->bill_request_type;;
@@ -216,6 +210,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		if ($bill_request_type == PRIMARY)
 			$buffer = $this->BillPrimary($procstack);
 		else
+			//echo "Error - Medicare Secondary Not supported at this Time<BR>";
 			$buffer = $this->BillSecondary($prockstack);
 		return $buffer;
 
@@ -223,6 +218,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 	function BillSecondary($procstack)
 	{
+		//echo "Error - Medicare Secondary Not supported at this Time<BR>";
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -275,61 +271,56 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			echo "Error Insurer no patient<BR>";
 			return;
 		}
-			
+
+		$insmod = freemed_get_link_rec($coverage2->covinsco->modifiers[0],"insmod");
+		if (!$insmod)
+			echo "Error Primary does not contain an insurance modifier in BillSecondary<BR>";
+		
+		// Primary is not medicare.	
+
 		$da0[seqno] = "01";
 		$da0[patcntl] = $ca0[patcntl];
-		$da0[clmfileind] = "I"; // show primary as info
-		$da0[clmsource] = " "; // default unknown
+		$da0[clmfileind] = "I";   // the primary data is info
+		$da0[clmsource] = " ";
 
-		$mod = $insco2->modifiers[0];
-	
-		// find source of pay for primary
-		// we *know* the secondary in commercial "F"	
-
-		if ($mod=="WC")
+		if ($insmod == "WC")
 			$da0[clmsource] = "B";
-		if ($mod=="CI")
+		if ($insmod == "CI")
 			$da0[clmsource] = "F";
-		if ($mod=="BL")
+		if ($insmod == "BL")
 			$da0[clmsource] = "G";
-		if ($mod=="HM")
+		if ($insmod == "HM")
 			$da0[clmsource] = "I";
-		if ($mod=="FI")
+		if ($insmod == "FI")
 			$da0[clmsource] = "J";
-		if ($mod=="CH")
-			$da0[clmsource] = "H";
 
+		$covinstp = "";
+		if ($coverage2->local_record[covinstp] > 0)
+		{
+			$covtype = freemed_get_link_rec($coverage2->local_record[covinstp],"covtypes");
+			$covinstp = $covtype[covtpname];
+			if (empty($covinstp))
+			{
+				echo "Error Primary does not contain a coverage type BillSecondary<BR>";
+				$covinstp = "OT"; // default to other
+			}
+		}
+
+		$da0[instypcd] = $covinstp;
 		$da0[payerid] = $this->CleanNumber($insco2->local_record[inscoid]); // NAIC #
 		$da0[payername] = $this->CleanChar($insco2->insconame);
 		$da0[patgrpno] = $this->CleanNumber($coverage2->covpatgrpno);
-
-		if ($coverage2->local_record[covbenasgn] == 1)	
+		$da0[patgrpname] = $this->CleanChar($coverage2->covplanname);
+		if ($coverage2->local_record[covbenasgn] == 1)
 			$da0[assign] = "Y";
 		else
 			$da0[assign] = "N";
 
-		//$da0[assign] = "Y";
-		$da0[patsigsrc] = "C"; // signed HCFA 1500 on file.
+		$da0[patsigsrc] = "C"; // Signed HCFA 1500 on file.
+		$da0[supinsind] = "P"; // This guy is primary?
 
-		if ($mod == "CH")
-        {
-			$fac_row=0;
-			$fac_row = freemed_get_link_rec($row[procpos], "facility");
 
-        	if ($fac_row)
-        	{
-				$da0[ppoid] = $fac_row[psrein];
-			}
-			$covtpid = $coverage2->local_record[covinstp];
-			if ($covtpid > 0)	
-			{
-				$covtype = freemed_get_link_rec($covtpid,"covtypes");
-				$da0[instypcd] = $covtype[covtpname];
-			}
-		}
-
-		
-		$da0[patrel] = $this->GetRelationShip($coverage2->covreldep,"NSF");
+		$da0[patrel] = GetRelationShip($coverage2->covreldep,"NSF");
 
 		$da0[patidno] = $this->CleanNumber($coverage2->covpatinsno);
 
@@ -376,7 +367,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			}
 
 		}
-
+/*
+		// AUTH NOT NEEDED FOR MC NJ PA
 		if ($row[procauth] != 0)
         {
             $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
@@ -404,7 +396,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 				if ($auth_row[authvisitsremain] == 0)
 				{
 					echo "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
-				}	
+				}
+
+
 			}
 			$da0[authno] = $this->CleanNumber($auth_num);
         }
@@ -413,6 +407,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
             echo "Warning - No Authorization for this procedure<BR>";
         }
 
+		// AUTH NOT NEEDED FOR MC NJ PA
+*/
 
 		$da1[recid] = "DA1";
 		$da1[seqno] = "01";
@@ -422,7 +418,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$da1[payercity] = $this->CleanChar($insco2->local_record[inscocity]);
 		$da1[payerstate] = $this->CleanChar($insco2->local_record[inscostate]);
 		$da1[payerzip] = $this->CleanNumber($insco2->local_record[inscozip]);
-	
+
+/*
+		// EOB VALUES NOT NEEDED FOR MC NJ PA	
 		$count = count($procstack);
 
 		$payerpaid = 0;
@@ -463,6 +461,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$da1[zeropayind1] = "Z";  
 		else
 			$da1[zeropayind1] = "N";
+		// EOB VALUES NOT NEEDED FOR MC NJ PA	
+*/
 		
 
 
@@ -479,7 +479,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
    		$buffer .= render_fixedRecord ($whichform,$this->record_types["da1"]);
    		$buffer .= render_fixedRecord ($whichform,$this->record_types["da2"]);
 
-		// now gen the secondary ins info
+		// now gen the secondary ins info which IS medicare
 		unset($GLOBALS[da0]);
 		unset($GLOBALS[da1]);
 		unset($GLOBALS[da2]);
@@ -488,24 +488,37 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$da0[recid] = "DA0";
 		$da0[seqno] = "02";
 		$da0[patcntl] = $ca0[patcntl];
-		$da0[clmfileind] = "P"; // payment from secondary is requested
-		$da0[clmsource] = "F";  // secondary in commercial
+		$da0[clmfileind] = "P";
+		$da0[clmsource] = "C";
+
+		$covinstp = "";
+		if ($coverage->local_record[covinstp] > 0)
+		{
+			$covtype = freemed_get_link_rec($coverage->local_record[covinstp],"covtypes");
+			$covinstp = $covtype[covtpname];
+			if (empty($covinstp))
+			{
+				echo "Error Medicare Secondary requires Coverage Insurance Type in BillSecondary<BR>";
+				$covinstp = "XX"; // default to other
+			}
+		}
+
+		$da0[instypcd] = $covinstp;
+
 		//$da0[instypcd] = $insco->modifiers[0];
-		$da0[payerid] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
-		$da0[payername] = $this->CleanChar($insco->insconame);
-		$da0[patgrpno] = $this->CleanNumber($coverage->covpatgrpno);
+		//$da0[payerid] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
+		//$da0[payername] = $this->CleanChar($insco->insconame);
+		//$da0[patgrpno] = $this->CleanNumber($coverage->covpatgrpno);
+		//$da0[assign] = "Y";
 
-		if ($coverage->local_record[covbenasgn] == 1)	
-			$da0[assign] = "Y";
-		else
-			$da0[assign] = "N";
+		$da0[patsigsrc] = "C"; // signed HCFA 1500 on file
 
-		$da0[patsigsrc] = "C";  // signed HCFA 1500 on file.
+		$da0[patrel] = GetRelationShip($coverage->covreldep,"NSF");
 
-		$da0[patrel] = $this->GetRelationShip($coverage->covreldep,"NSF");
-		
 		$da0[patidno] = $this->CleanNumber($coverage->covpatinsno);
 
+/*
+		//NOT REQUIRED FOR MC NJ PA
 		if ($coverage->covdep == 0)  // patient is the insured
 		{
 			$da0[insrdlname] = $this->CleanChar($patient->ptlname);
@@ -552,15 +565,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		if (!empty($auth_num))
 			$da0[authno] = $this->CleanNumber($auth_num);
 
-		$da1[recid] = "DA1";
-		$da1[seqno] = "02";
-		$da1[patcntl] = $ca0[patcntl];
-		$da1[payeraddr1] = $this->CleanChar($insco->local_record[inscoaddr1]);
-		$da1[payeraddr2] = $this->CleanChar($insco->local_record[inscoaddr2]);
-		$da1[payercity] = $this->CleanChar($insco->local_record[inscocity]);
-		$da1[payerstate] = $this->CleanChar($insco->local_record[inscostate]);
-		$da1[payerzip] = $this->CleanNumber($insco->local_record[inscozip]);
-
 		$da2[recid] = "DA2";
 		$da2[seqno] = "02";
 		$da2[patcntl] = $ca0[patcntl];
@@ -569,12 +573,11 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$da2[insrdstate] = $state;
 		$da2[insrdzip] = $zip;
 
+*/
+
    		$buffer .= render_fixedRecord ($whichform,$this->record_types["da0"]);
-		if ($da0[payerid] == "PAPER")
-		{ 
-        	$buffer  .= render_fixedRecord ($whichform,$this->record_types["da1"]);
-		}
-   		$buffer .= render_fixedRecord ($whichform,$this->record_types["da2"]);
+   		//$buffer .= render_fixedRecord ($whichform,$this->record_types["da1"]);
+   		//$buffer .= render_fixedRecord ($whichform,$this->record_types["da2"]);
 		return $buffer;
 		
 	} // end do secondary bill
@@ -592,6 +595,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$row = $procstack[0]; // all rows are the same
 		$cov = $row[proccurcovid];
+		$cov2 = $row[proccov2];  // medicare requires info on the secondary.
 		$pat = $row[procpatient];
 
 		$da0[recid] = "DA0";
@@ -611,6 +615,23 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			return;
 		}
 
+		if ($cov2 != 0)
+		{
+			$coverage2 = new Coverage($cov2);
+			if (!$coverage2)
+			{
+				echo "Error Insurer Failed secondary coverage<BR>";
+				return;
+			}
+
+			$insco2 = $coverage2->covinsco;
+			if (!$insco2)
+			{
+				echo "Error Insurer Failed secondary insurance<BR>";
+				return;
+			}
+		}
+
 		$patient = new Patient($pat);
 		if (!$patient)
 		{
@@ -621,45 +642,30 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$da0[seqno] = "01";
 		$da0[patcntl] = $ca0[patcntl];
 		
-		$da0[clmfileind] = "P"; // primary coverage
-		$da0[clmsource] = "F";  // commercial
-	
-		if ($this->insmod == "CH")
-        {
-			$da0[clmsource] = "H";
-			// champus requires da0[instypcd] here
-			$fac_row=0;
-			$fac_row = freemed_get_link_rec($row[procpos], "facility");
+		$da0[clmfileind] = "P";
+		$da0[clmsource] = "C";  // C for medicare
 
-        	if ($fac_row)
-        	{
-				$da0[ppoid] = $fac_row[psrein];
-			}
-			$covtpid = $coverage->local_record[covinstp];
-			if ($covtpid > 0)	
-			{
-				$covtype = freemed_get_link_rec($covtpid,"covtypes");
-				$da0[instypcd] = $covtype[covtpname];
-			}
-		}
-
+		$da0[instypcd] = "MP";  // medicare primary
 		//$da0[instypcd] = $insco->modifiers[0];
 		$da0[payerid] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
 		$da0[payername] = $this->CleanChar($insco->insconame);
-		$da0[patgrpno] = $this->CleanNumber($coverage->covpatgrpno);
+		//$da0[patgrpno] = $this->CleanNumber($coverage->covpatgrpno);
+		$da0[assign] = "Y";
+		$da0[patsigsrc] = "C";
 
-		if ($coverage->local_record[covbenasgn] == 1)	
-			$da0[assign] = "Y";
-		else
-			$da0[assign] = "N";
-
-		$da0[patsigsrc] = "C";  // signed HCFA 1500 on file.
-
-		$da0[patrel] = $this->GetRelationShip($coverage->covreldep,"NSF");
-
-
+		$da0[patrel] = "01";  // must be self for medicare
 		$da0[patidno] = $this->CleanNumber($coverage->covpatinsno);
 
+/*
+		NOT REQUIRED FOR MEDICARE NJ PA
+		$da0[patrel] = GetRelationShip($coverage->covreldep,"NSF");
+		$patrel = $da0[patrel];
+		ABOVE NOT REQUIRED FOR MEDICARE NJ PA
+*/
+
+
+/*
+		NOT REQUIRED FOR MEDICARE NJ PA
 		if ($coverage->covdep == 0)  // patient is the insured
 		{
 			$da0[insrdlname] = $this->CleanChar($patient->ptlname);
@@ -730,8 +736,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 				if ($auth_row[authvisitsremain] == 0)
 				{
 					echo "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
-				}	
-
+				}
 			}
 			$da0[authno] = $this->CleanNumber($auth_num);
         }
@@ -740,33 +745,116 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
             echo "Warning - No Authorization for this procedure<BR>";
         }
 
-		$da1[recid] = "DA1";
-		$da1[seqno] = "01";
-		$da1[patcntl] = $ca0[patcntl];
-		$da1[payeraddr1] = $this->CleanChar($insco->local_record[inscoaddr1]);
-		$da1[payeraddr2] = $this->CleanChar($insco->local_record[inscoaddr2]);
-		$da1[payercity] = $this->CleanChar($insco->local_record[inscocity]);
-		$da1[payerstate] = $this->CleanChar($insco->local_record[inscostate]);
-		$da1[payerzip] = $this->CleanNumber($insco->local_record[inscozip]);
-
-		$da2[recid] = "DA2";
-		$da2[seqno] = "01";
-		$da2[patcntl] = $ca0[patcntl];
-		//echo "da2 addr city state zip $addr1 $city $state $zip<BR>";
-		$da2[insrdaddr1] = $addr1;
-		$da2[insrdcity] = $city;
-		$da2[insrdstate] = $state;
-		$da2[insrdzip] = $zip;
+		ABOVE NOT REQUIRED FOR MEDICARE NJ PA
+*/      
 
 		$buffer = "";
    		$buffer  = render_fixedRecord ($whichform,$this->record_types["da0"]);
-    
+
+/*
+		NOT REQUIRED FOR MEDICARE NJ PA
 		if ($da0[payerid] == "PAPER")
-		{ 
-        	$buffer  .= render_fixedRecord ($whichform,$this->record_types["da1"]);
+		{
+			$da1[recid] = "DA1";
+			$da1[seqno] = "01";
+			$da1[patcntl] = $ca0[patcntl];
+			$da1[payeraddr1] = $this->CleanChar($insco->local_record[inscoaddr1]);
+			$da1[payeraddr2] = $this->CleanChar($insco->local_record[inscoaddr2]);
+			$da1[payercity] = $this->CleanChar($insco->local_record[inscocity]);
+			$da1[payerstate] = $this->CleanChar($insco->local_record[inscostate]);
+			$da1[payerzip] = $this->CleanNumber($insco->local_record[inscozip]);
+   			$buffer  .= render_fixedRecord ($whichform,$this->record_types["da1"]);
 		}
 
-   		$buffer .= render_fixedRecord ($whichform,$this->record_types["da2"]);
+		if ($da0[patrel] != "01")
+		{
+			$da2[recid] = "DA2";
+			$da2[seqno] = "01";
+			$da2[patcntl] = $ca0[patcntl];
+			$da2[insrdaddr1] = $addr1;
+			$da2[insrdcity] = $city;
+			$da2[insrdstate] = $state;
+			$da2[insrdzip] = $zip;
+   			$buffer .= render_fixedRecord ($whichform,$this->record_types["da2"]);
+		}
+
+		ABOVE NOT REQUIRED FOR MEDICARE NJ PA
+*/
+
+		unset($GLOBALS[da0]);
+		unset($GLOBALS[da1]);
+		unset($GLOBALS[da2]);
+		global $da0,$da1,$da2;
+
+		// process any secondary coverages now.
+		if ($cov2 != 0)
+		{
+			$insmod = freemed_get_link_rec($coverage2->covinsco->modifiers[0],"insmod");
+			if (!$insmod)
+				DIE("Failed getting insurance modifier");
+
+			if ($coverage2->local_record[covinstp] > 0)
+			{
+				$covtype = freemed_get_link_rec($coverage2->local_record[covinstp],"covtypes");
+				$covinstp = $covtype[covtpname];
+			}
+			
+			$da0[recid] = "DA0";
+			$da0[seqno] = "02";
+			$da0[patcntl] = $ca0[patcntl];
+			$da0[clmfileind] = "I";
+			$da0[patrel] = "01"; // must be self for medicare
+
+			// make a da1 record incase one of these need it.
+
+			$da1[recid] = "DA1";
+			$da1[seqno] = "02";
+			$da1[patcntl] = $ca0[patcntl];
+			$da1[payeraddr1] = $this->CleanChar($insco2->local_record[inscoaddr1]);
+			$da1[payeraddr2] = $this->CleanChar($insco2->local_record[inscoaddr2]);
+			$da1[payercity] = $this->CleanChar($insco2->local_record[inscocity]);
+			$da1[payerstate] = $this->CleanChar($insco2->local_record[inscostate]);
+			$da1[payerzip] = $this->CleanNumber($insco2->local_record[inscozip]);
+
+			if ($insmod[insmod] == "MC")  // Medicaid is secondary
+			{
+				$da0[clmsource] = "D";  // D for Medicade
+				$da0[patsigsrc] = "C";  // Signed HCFA 1500
+				$da0[mcaidid] = $this->CleanNumber($coverage2->covpatinsno);
+   				$buffer  .= render_fixedRecord ($whichform,$this->record_types["da0"]);
+				
+				
+			}
+
+			// it is possible for the modifier to be commercial 
+			// but the inst coverage type is Medigap
+			if ($insmod[insmod] == "MG" OR $covinstp == "MG")
+			{
+				// medigap
+				$da0[clmsource] = "F";  // F for Medigap
+				$da0[instypcd] = "MG";  // Medigap
+				$da0[payerid] = $this->CleanNumber($insco2->local_record[inscoid]); // NAIC #
+				$da0[patsigsrc] = "C";
+				$da0[patidno] = $this->CleanNumber($coverage2->covpatinsno);
+   				$buffer  .= render_fixedRecord ($whichform,$this->record_types["da0"]);
+   				$buffer  .= render_fixedRecord ($whichform,$this->record_types["da1"]);
+			}
+
+			if ($insmod[insmod] == "CI")
+			{
+				// medigap
+				$da0[clmsource] = "F";  // F for Commercial
+				$da0[instypcd] = "OT";  // Other type
+				if (!empty($covinstp))
+					$da0[instypcd] = $covinstp;
+				$da0[payerid] = $this->CleanNumber($insco2->local_record[inscoid]); // NAIC #
+				$da0[assign] = "Y";
+				$da0[patidno] = $this->CleanNumber($coverage2->covpatinsno);
+   				$buffer  .= render_fixedRecord ($whichform,$this->record_types["da0"]);
+   				$buffer  .= render_fixedRecord ($whichform,$this->record_types["da1"]);
+			}
+		}
+
 		return $buffer;
 
 		
@@ -784,25 +872,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$row = $procstack[0]; // all rows are the same
 		$cov = $row[proccurcovid];
 		$pat = $row[procpatient];
-		$doc = $row[procphysician];
 
 		$ca0[recid] = "CA0";
-		$cb0[recid] = "CB0";  // only required for champus
-
-		$coverage = new Coverage($cov);
-		if (!$coverage)
-		{
-			echo "Error in claimheader no coverage<BR>";
-			return;
-		}
-
-		$physician = new Physician($doc);
-		if (!$physician)
-		{
-			echo "Error in claimheader no physician<BR>";
-			return;
-		}
-
+		$cb0[recid] = "XXX";
 		$patient = new Patient($pat);
 		if (!$patient)
 		{
@@ -815,6 +887,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		else
 			$ca0[patcntl] = $this->CleanChar($patient->local_record[ptid]);
 
+		$ca0[deathind] = "N";
+
 		$ca0[patlname] = $this->CleanChar($patient->local_record[ptlname]);
 		$ca0[patfname] = $this->CleanChar($patient->local_record[ptfname]);
 		$ca0[patdob] = $this->CleanNumber($patient->local_record[ptdob]);
@@ -826,43 +900,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$ca0[patzip] = $this->CleanNumber($patient->local_record[ptzip]);
 		$ca0[patphone] = $this->CleanNumber($patient->local_record[ptphone]);
 
-     	// marital status
-        if ($patient->ptmarital == "single") 
-     		$ca0[patmarital] = "S";
-        if ($patient->ptmarital == "divorced") 
-     		$ca0[patmarital] = "D";
-        if ($patient->ptmarital == "seperated") 
-     		$ca0[patmarital] = "S";
-        if ($patient->ptmarital == "married") 
-     		$ca0[patmarital] = "M";
-        if ($patient->ptmarital == "widowed") 
-     		$ca0[patmarital] = "W";
 
-		$ca0[patstudent] = "N";  // default not student
-		if ($patient->local_record[ptstatus] == 0)
-		{
-			$ca0[patstudent] = "N";
-		}
-		else
-		{
-			// look up the status record.
-			$status = freemed_get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
-			if (!$status)
-				echo "Error failed to get ptstatus<BR>";
-			if ($status == "HC")
-				$ca0[patstudent] = "N";
-			else
-			{
-				$datediff = date_diff($patient->local_record[ptdob]);
-				$yrdiff = $datediff[0];
-				if ( ($yrdiff > 18) AND ($status == "FT") )
-					$ca0[patstudent] = "F";
-				if ( ($yrdiff > 18) AND ($status == "PT") )
-					$ca0[patstudent] = "P";
-				//echo "year diff $yrdiff<BR>";
-			}
 
-		}
 		if ($patient->local_record[ptempl] == "y")
 			$ca0[patempl] = "1";
 		if ($patient->local_record[ptempl] == "p")
@@ -884,71 +923,71 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			echo "Error. patient coverage invalid<BR>";
 			return;
 		}
+
+		if ($coverage->covreldep == "LR")  // Legal rep
+			$ca0[legalrepind] = "Y";
+		else
+			$ca0[legalrepind] = "N";
+
 		$covtype = $coverage->local_record[covtype];
 		$othrins = 3;  // no other coverage
 
 		if ( ($covtype == PRIMARY) AND ($row[proccov.(SECONDARY)] != 0) )
-				$othrins = "2"; // has other coverage not on this bill
+				$othrins = "1"; // has other coverage
 		
 		if ( ($covtype == SECONDARY) AND ($row[proccov.(PRIMARY)] != 0) )
-				$othrins = "1"; // has other coverage in this bill
+				$othrins = "1"; // has other coverage
 
 		// NSF does not handle tertiary!
 
 		$ca0[othrins] = $othrins;
 
-		// asseume commercial
-		$ca0[clmeditind] = "F"; // comercial filing
-
-		if ($this->insmod == "CH")
-		{
-			$ca0[clmeditind] = "H"; // champus filing
-			$ca0[origin] = $this->CleanNumber($physician->local_record[phyzipa]);
-			$ca0[billprno] = $ba0[taxid];
-		}
+		$ca0[clmeditind] = "C"; // Medicare filing
 
 		$ca0[clmtype] = " ";
 
-		// need origin codes champus provider id if payer is REG06
-
-		// cb0 is required for champus (REG06) if the patient is
-        // under 18 at the time of service. difference between patdob and the lowest date of service
-		// is < 18
+		if ($row[procclmtp] > 0)
+		{
+			$type="";
+			$clmtype = freemed_get_link_rec($row[procclmtp],"claimtypes");
+			$type = $clmtype[clmtpname];
+			if (empty($type))
+				echo "Error getting Claimtypes in ClaimHeader<BR>";
+			else
+				$ca0[clmtype] = $type;
+		}
 
 		$buffer = "";		
    		$buffer  = render_fixedRecord ($whichform,$this->record_types["ca0"]);
 
-		if ($this->insmod == "CH")
+
+		// cb0 is required if the patient is
+        // under 18 
+
+		if ($ca0[legalrepind] == "Y")
 		{
-			// cut cb0 record for champus only. 
-			// required if patient is under 18 and the time of the oldest date of service
-			$svcdate = $row[procdt]; // since ordered by date this should be oldest
-			$datediff = date_diff($patient->local_record[ptdob],$svcdate);
-			$diffyr = $datediff[0];
-			//echo "diffyear $diffyr<BR>";
-			if ($diffyr < 18)
-			{
 				$cb0[patcntl] = $ca0[patcntl];
-				// we assume the guarantor is the responsible party
-				if ($coverage->covdep != 0)
-				{
-					$guar = new Guarantor($coverage->covdep);
-					if (!$guar)
-						echo "Error getting guarantor in CB0 record<BR>";
-					$cb0[respfname] = $this->CleanChar($guar->guarfname);
-					$cb0[resplname] = $this->CleanChar($guar->guarlname);
-   					$buffer  .= render_fixedRecord ($whichform,$this->record_types["cb0"]);
-					
-				}
-				else
-				{
-					echo "Error in Champus CB0 record for Procedure $row[procdt]<BR>";
-					echo "Under aged patient does not have Guarantor<BR>";
-				}
-								
+                // we assume the guarantor is the responsible party
+                if ($coverage->covdep != 0)
+                {
+                    $guar = new Guarantor($coverage->covdep);
+                    if (!$guar)
+                        echo "Error getting guarantor in CB0 record<BR>";
+                    $cb0[respfname] = $this->CleanChar($guar->guarfname);
+                    $cb0[resplname] = $this->CleanChar($guar->guarlname);
+                    $cb0[respaddr1] = $this->CleanChar($guar->guaraddr1);
+                    $cb0[respaddr2] = $this->CleanChar($guar->guaraddr2);
+                    $cb0[respcity] = $this->CleanChar($guar->guarcity);
+                    $cb0[respstate] = $this->CleanChar($guar->guarstate);
+                    $cb0[respzip] = $this->CleanNumber($guar->guarzip);
+                    $buffer  .= render_fixedRecord ($whichform,$this->record_types["cb0"]);
 
-			}
-
+                }
+                else
+                {
+                    echo "Error in Medicare CB0 record for Procedure $row[procdt]<BR>";
+                    echo "Under aged patient does not have Guarantor<BR>";
+                }
 		}
 
 		return $buffer;
@@ -972,11 +1011,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$aa0[createdt] = $this->CleanNumber($cur_date);
 		$aa0[recvrid] = "MIXED";  // file contains claims for multiple payers
-        if ($this->insmod == "CH")
-			$aa0[recvrtype] = "H"; // champus
-		else
-			$aa0[recvrtype] = "F"; // commercial
+		$aa0[recvrtype] = "C";    // C for medicare part B
 		$aa0[nsfverno] = "00301";
+		$aa0[nsfvernoloc] = "00301";
 		$aa0[testprod] = "PROD";
 		$aa0[password] = $this->CleanChar($password);
 		$aa0[vendorid] = "FREMED";
@@ -1060,39 +1097,28 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
 
 		if ($default_facility != 0)
-		{
-			$fac = 0;
-			$fac = freemed_get_link_rec($default_facility,"facility");
-			if (!$fac)
-				echo "Error getting facility<BR>";
-			$ba0[posname] = $this->CleanChar($fac[psrname]);
-			$ba0[taxid] = $this->CleanNumber($fac[psrein]);
-			$ba0[idtype] = "E";
-			
-		}
-		else
-		{
-			$ba0[posname] = $this->CleanChar($physician->local_record[phypracname]);
-			$ba0[taxid] = $this->CleanNumber($physician->local_record[physsn]);
-			$ba0[idtype] = "S";
-		}
+        {
+            $fac = 0;
+            $fac = freemed_get_link_rec($default_facility,"facility");
+            if (!$fac)
+                echo "Error getting facility<BR>";
+            $ba0[taxid] = $this->CleanNumber($fac[psrein]);
+            $ba0[idtype] = "E";
+
+        }
+        else
+        {
+            $ba0[taxid] = $this->CleanNumber($physician->local_record[physsn]);
+            $ba0[idtype] = "S";
+        }
 
 		// other id's are dependant on the ins NAIC no
 
 		$ba0[prlname] = $this->CleanChar($physician->local_record[phylname]);
-		$fname = $physician->local_record[phyfname];
-
-		$insid = $this->CleanChar($insco->local_record[inscoid]);
-
-		if ($insid=="PAPER") // paper claim require credentials
-			$fname = $fname." ".$physician->local_record[phytitle];
-
-		$ba0[prfname] = $this->CleanChar($fname);
-
+		$ba0[prfname] = $this->CleanChar($physician->local_record[phyfname]);
 		$prspec  = $physician->local_record[physpe1];
         $specrow = freemed_get_link_rec($prspec,"specialties");
         $ba0[prspec]  = $this->CleanChar($specrow[specname]);
-
 
 		$provider_id = "0";
         $grp = $insco->local_record[inscogroup];
@@ -1104,52 +1130,28 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
         $providerids = explode(":",$physician->local_record[phyidmap]);
         $provider_id = $providerids[$grp];
-	
 
 		$naic = $insco->inscoid;
 		$naic = strtoupper($naic);
 
-		$upin = $physician->local_record[phyupin];
-		$ba0[upin] = $this->CleanNumber($upin);
-		$ba0[ciid] = $this->CleanNumber($provider_id); // commercial provider id
+		//$upin = $physician->local_record[phyupin];
+		//$ba0[upin] = $this->CleanNumber($upin);
+		//$ba0[ciid] = $this->CleanNumber($provider_id); // commercial provider id
+		$ba0[mcareid] = $this->CleanNumber($provider_id);
+		$ba0[emcid] = $this->CleanNumber($provider_id);
 
-		// these carriers want the upin number
-		//if (fm_value_in_array($ins_upin,$naic))
-		//{
-		//	$upin = $physician->local_record[phyupin];
-		//	$ba0[upin] = $this->CleanNumber($upin);
-		//}
-		// these carriers want the medicaid number
-		if (fm_value_in_array($ins_medicaid,$naic))
-		{
-			$ba0[mcid] = $this->CleanNumber(provider_id);
-		}
-		// these carriers want the commercial provider number
-		//if (fm_value_in_array($ins_commercial,$naic))
-		//{
-		//	$ba0[ciid] = $this->CleanNumber($provider_id);
-		//}
-	
+		$state = $this->CleanChar($physician->local_record[phystatea]);
 
-		$ba1[batchtype] = $ba0[batchtype];
-		$ba1[batchid] = $ba0[batchid];
-		$ba1[batchnum] = $ba0[batchnum];
-		$ba1[praddr1] = $this->CleanChar($physician->local_record[phyaddr1a]);
-		$ba1[praddr2] = $this->CleanChar($physician->local_record[phyaddr2a]);
-		$ba1[prcity] = $this->CleanChar($physician->local_record[phycitya]);
-		$ba1[prstate] = $this->CleanChar($physician->local_record[phystatea]);
-		$ba1[przip] = $this->CleanNumber($physician->local_record[phyzipa]);
-		$ba1[prphone] = $this->CleanNumber($physician->local_record[phyphonea]);
-		$ba1[prpayaddr1] = $this->CleanChar($physician->local_record[phyaddr1a]);
-		$ba1[prpayaddr2] = $this->CleanChar($physician->local_record[phyaddr2a]);
-		$ba1[prpaycity] = $this->CleanChar($physician->local_record[phycitya]);
-		$ba1[prpaystate] = $this->CleanChar($physician->local_record[phystatea]);
-		$ba1[prpayzip] = $this->CleanNumber($physician->local_record[phyzipa]);
-		$ba1[prpayphone] = $this->CleanNumber($physician->local_record[phyphonea]);
+		//echo "state $state<BR>";
+		if ($state == "PA")
+			$ba0[prodnaic] = "M";
+		if ($state == "NJ")
+			$ba0[prodnaic] = "J";
+
 
 		$buffer = "";
    		$buffer = render_fixedRecord ($whichform,$this->record_types["ba0"]);
-   		$buffer .= render_fixedRecord ($whichform,$this->record_types["ba1"]);
+   		//$buffer .= render_fixedRecord ($whichform,$this->record_types["ba1"]);
 		return $buffer;
 		
 	}  // end provider
@@ -1163,15 +1165,14 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		global $ea0,$ea1;
 		
 		$row = $procstack[0];
-
 		$cov = $row[proccurcovid];
 
 		$coverage = new Coverage($cov);
-		if (!$coverage)
-		{
-			echo "Error no coverage ClaimData<BR>";
-			return;
-		}
+        if (!$coverage)
+        {
+            echo "Error Insurer no coverage in ClaimData<BR>";
+            return;
+        }
 
 		$ea0[recid] = "EA0";
 		$ea1[recid] = "XXX";
@@ -1182,22 +1183,18 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$ea0[accident] = "N";
 		$ea0[symptomind] = "0";
 
-		if ($coverage->local_record[covrelinfo] == 0)
-			$ea0[relinfoind] = "N";
-		if ($coverage->local_record[covrelinfo] == 1)
+		if ($coverage->local_record[colverinfo] > 0)
 			$ea0[relinfoind] = "Y";
-		if ($coverage->local_record[covrelinfo] == 2)
-			$ea0[relinfoind] = "M";
+		else
+			$ea0[relinfoind] = "N";
 
-		$ea0[relinfodt] = $this->CleanNumber($coverage->local_record[covrelinfodt]);
+		//$ea0[provsigind] = "Y";  // sig on file
+		if ($coverage->local_record[colprocasgn] > 0)
+			$ea0[provassign] = "A";  // accepts assignment
+		else
+			$ea0[provassign] = "N";  // accepts assignment
 
-		if ($coverage->local_record[covprovasgn] == 0)
-			$ea0[provassign] = "N";  // provider accepts assigmnent
-		if ($coverage->local_record[covprovasgn] == 1)
-			$ea0[provassign] = "A";  // provider accepts assigmnent
-
-		// NOTE champus needs this but no sure where to get it
-		//$ea0[speclpgm]
+		$ea0[docind] = "9";  // no documentation by default
 
 		//echo "referer $row[procrefdoc]<BR>";
 		if ($row[procrefdoc] != 0)
@@ -1238,11 +1235,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 				$ea0[symptomind] = "2";
                 $accident_date = $eoc_row[eocpreglastper];
             }
-			if ($eoc_row[eochospital] > 0)
-			{
-				$ea0[admitdt] = $this->CleanNumber($eoc_row[eochosadmdt]);
-				$ea0[dischargdt] = $this->CleanNumber($eoc_row[eochosdischrgdt]);
-			}
 
         }
         else
@@ -1277,6 +1269,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                              $prow[procdiag2],
                              $prow[procdiag3],
                              $prow[procdiag4]);
+
+			if ($prow[proccert] > 0)
+				$ea0[docind] = 5;
 
         }
 
@@ -1318,8 +1313,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                 echo "Failed reading pos table";
             $pos = $cur_pos[posname];
         }
-		if ($pos==0)
-			$pos="11"; // office default
 
 		// 11 = office 12 = home
         if ($pos > 12)
@@ -1351,28 +1344,23 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		global $fa0;
 
 		$row = $procstack[0];
-		$doc = $row[procphysician];
+
 		$cov = $row[proccurcovid];
 
-		$coverage = new Coverage($cov);
+		$coverage = new Coverage($cov);  // all these should have the same cov.
 		if (!$coverage)
 		{
 			echo "Error ServiceDetail no coverage<BR>";
 			return;
 		}
-
-		$insco = $coverage->covinsco;
-		if (!$insco)
+		$inscoid = $coverage->local_record[covinsco];
+		if (!$inscoid)
 		{
-			echo "Error ServiceDetail no insurance<BR>";
+			echo "Error ServiceDetail no Insurance<BR>";
 			return;
 		}
 
-		$physician = new Physician($doc);
-		if (!$physician)
-		{
-			echo "Error in ServiceDetail no physician<BR>";
-		}
+			
 
 		$diagset = new diagnosisSet();
 
@@ -1421,6 +1409,16 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$fa0[startdt] = $this->CleanNumber($row[procdt]);
 			$fa0[enddt] = $this->CleanNumber($row[procdt]);
 			$fa0[pos]   = $pos;
+			$fa0[purchservind] = "N";
+
+			if ($this->bill_request_type == SECONDARY)
+			{
+				$primpdtamt = $this->GetPrimaryAmountPaid($row);
+				$fa0[primpdtamt] = $this->MakeDecimal($primpdtamt,2);
+				$defltfee = $this->GetMedicareProcFee($row[proccpt],$inscoid);
+				$fa0[obacceptamt] = $this->MakeDecimal($defltfee,2);
+
+			}
 		
 			if ($row[proccptmod] != 0)
 			{
@@ -1430,26 +1428,20 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 				$fa0[cptmod1] = $itemcptmod;
 			}
 
+/*
+			// TOS not required for Medicare
 			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
             if (!$cur_cpt)
                 echo "Failed reading cpt table<BR>";
             $cur_insco = $insco->local_record[id];
-			//echo "insco $cur_insco<BR>";
             $tos_stack = fm_split_into_array ($cur_cpt[cpttos]);
             $tosid = ( ($tos_stack[$cur_insco] < 1) ?
                       $cur_cpt[cptdeftos] :
                       $tos_stack[$cur_insco] );
-			// tos prefix used by champus
-			//echo "cpt prefix $cur_cpt[cpttosprfx]";
-            $tosprfx_stack = fm_split_into_array ($cur_cpt[cpttosprfx]);
-            $tosprfxid = ( ($tosprfx_stack[$cur_insco] < 1) ?
-                      "0" :
-                      $tosprfx_stack[$cur_insco] );
-
 			if ($tosid == 0)
             {
                 echo "No default type of service for this proc $row[procdt]<BR>";
-                $tos = "XX";
+                $tos = "TOSXXXX";
             }
             else
             {
@@ -1458,37 +1450,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                     echo "Failed reading tos table<BR>";
                 $tos = $cur_tos[tosname];
             }
-
-			if ($this->insmod == "CH") // champus
-			{
-				if ($tosprfxid == 0)
-				{
-					echo "No Champus type of service prefix for this proc $row[procdt]<BR>";
-					$tos = "XX";
-				}
-				else
-				{
-					//echo "prfxid $tosprfxid<BR>";
-					$cur_tos = freemed_get_link_rec($tosprfxid, "tos");
-					if (!$cur_tos)
-						echo "Failed reading prefix tos table<BR>";
-					$tosprfx = $cur_tos[tosname];
-				}
-				// make champus tos
-				$tos = $tosprfx.$tos;			
-				if (strlen($tos) > 3)
-				{
-					echo "Invalid Champus type of service proc $row[procdt]<BR>";
-					$tos = "XX";
-				}
-
-
-			}
-		
-			if ( (strlen($tos) < 2)	AND ($tos > 0) AND ($tos < 10) )
-				$tos = "0".$tos;
-
+			// TOS not required for Medicare
 			$fa0[tos] = $tos;
+*/
+
 		
 			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
             if (!$cur_cpt)
@@ -1505,20 +1470,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                              $row[procdiag4]);
 
 			$fa0[cpt] = $cur_cpt[cptcode];
-
-			if ($this->insmod == "CH")
-			{	
-				// champus also wants the referring provider upin here
-				// if there is one.
-				if ($row[procrefdoc] != 0)
-				{
-					$fa0[refprid] = $ea0[refprovupin];
-				}
-				$rendprid = $physician->local_record[physsn];
-				$rendprid = $this->CleanNumber($rendprid);
-				$fa0[rendprid] = $rendprid;
-
-			}
 			$data = $this->MakeDecimal($row[procbalorig],2);
 			$fa0[charges] = $data;
 
@@ -1533,31 +1484,130 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$data = $this->MakeDecimal($row[procunits],1);
 			$fa0[units] = $data;
 
-   			$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
-			unset ($GLOBALS[fa0]);
-			global $fa0;
-			if ($this->insmod == "CH")
+   			//$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
+
+			if ($row[proccert] > 0)
 			{
-				// champus requires the fb1 record 
-				global $fb1;
-				$fb1[recid] = "FB1";
-				$fb1[seqno] = $seq;
-				$fb1[patcntl] = $ca0[patcntl];
-				$fb1[renprvlname] = $ba0[prlname];
-				$fb1[renprvfname] = $ba0[prfname];
-				$rendprid = $physician->local_record[physsn];
-				$rendprid = $this->CleanNumber($rendprid);
-				$fb1[renprvupin] = $rendprid;
-   				$buffer .= render_fixedRecord ($whichform,$this->record_types["fb1"]);
-				unset ($GLOBALS[fb1]);
-				global $fb1;
-	
+				// we may need to change the fa0 record in the cert code.
+				$cert_buffer =  $this->GenCertRecords($row,$seq);
+   				$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
+				$buffer .= $cert_buffer;
 			}
+			else
+			{
+   				$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
+			}
+
+			unset($GLOBALS[fa0]);
+			global $fa0;
 
 		}
 		return $buffer;
 
 	} // end servicedetail
+
+	function GenCertRecords($proc,$seq)
+	{
+		// these records are required for various type of certification.
+		// currently only DMEPOS is supported  See the medicare DMERC spec.
+		unset($GLOBALS[fb1]);
+		unset($GLOBALS[gu0]);
+
+		global $ba0,$ca0,$ea0,$fa0,$gu0,$fb1,$whichform;
+
+		//echo "form $whichform in cert<BR>";
+		$buffer = "";
+
+		$fb1[recid] = "FB1";
+		$fb1[seqno] = $seq;
+		$fb1[patcntl] = $ca0[patcntl];
+		$fb1[ordprvupin] = $ea0[refprovupin];
+		$fb1[ordprvlname] = $ea0[reflname];
+		$fb1[ordprvfname] = $ea0[reffname];
+
+
+		$proccert = $proc[proccert];
+
+		$certrow = 0;
+		$certrow = freemed_get_link_rec($proccert,"certifications");
+		if (!($certrow))
+		{
+			echo "Error getting cert<BR>";
+			return;
+		}
+		
+		$gu0[recid] = "GU0";
+		$gu0[seqno] = $seq;
+		$gu0[patcntl] = $ca0[patcntl];
+
+
+		if ($certrow[certtype] == DMEPOS)
+		{
+			$fa0[rendprid] = $ba0[mcareid];
+			//echo "fa0 rend $fa0[rendprid]<BR>";
+			$gu0[certpos] = $fa0[pos];
+			$gu0[certcpt] = $fa0[cpt];
+			$gu0[certcptmod] = $fa0[cptmod1];
+
+			if ($fa0[diag1] > 0)
+				$gu0[certdiag1] = $ea0[diag1];
+			if ($fa0[diag2] > 0)
+				$gu0[certdiag2] = $ea0[diag2];
+			if ($fa0[diag3] > 0)
+				$gu0[certdiag3] = $ea0[diag3];
+			if ($fa0[diag4] > 0)
+				$gu0[certdiag4] = $ea0[diag4];
+
+			$formdata = explode(":",$certrow[certformdata]);
+			$gu0[certstatus] = $formdata[1];
+			if ($gu0[certstatus] == "1")  // initial cert
+				$gu0[certinitdate] = $this->CleanNumber($formdata[2]);
+			else // recert
+				$gu0[certrevdate] = $this->CleanNumber($formdata[3]);
+			$timeneeded = $formdata[4];
+			if ($timeneeded < 10) 
+				$timeneeded = "0".$timeneeded;
+			$gu0[certlenneed] = $timeneeded;
+			$gu0[certdatesig] = $this->CleanNumber($formdata[5]);
+			$gu0[certonfile] = $this->CleanChar($formdata[6]);
+			
+			if ($certrow[certformnum] == F0602) // TENS
+			{
+				$gu0[certformnum] = "0602";
+				$gu0[l1n2] = $this->CleanChar($formdata[10]);  // q3
+				$gu0[nl4n1] = $this->CleanNumber($formdata[11]);  // q4
+				$gu0[l1n3] = $this->CleanChar($formdata[12]);  // q5
+				$gu0[l1n4] = $this->CleanChar($formdata[13]);   // q6
+
+				if ($formdata[7] > 0)  // rental
+				{	
+					$gu0[l1n1] = $this->CleanChar($formdata[8]); // q1
+					$gu0[l8n1] = $this->CleanNumber($formdata[9]); // q2
+				}
+				else // purchase
+				{
+
+					$gu0[l1n5] = $this->CleanChar($formdata[14]);  // q7
+					$gu0[l8n2] = $this->CleanNumber($formdata[15]);  // q8a
+					$gu0[l8n3] = $this->CleanNumber($formdata[16]);  // q8b
+					$gu0[l8n4] = $this->CleanNumber($formdata[17]);  // q9
+					$gu0[l1n6] = $this->CleanChar($formdata[18]);  // q10
+					$gu0[l1n7] = $this->CleanChar($formdata[19]);  // q11
+					$gu0[l1n8] = $this->CleanChar($formdata[20]);  // q12
+					
+
+				}  // end rental?
+
+			} // end TENS form
+				
+
+			$buffer .= render_fixedRecord ($whichform,$this->record_types["fb1"]);
+			$buffer .= render_fixedRecord ($whichform,$this->record_types["gu0"]);
+		}  // end DMEPOS cert type
+	
+		return $buffer;	
+
+	} // end gencertrecords
 
 	function ClaimTrailer($procstack,$buffer)
 	{
@@ -1605,6 +1655,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$total = 0;
 		// see if patient already paid anything
         $total_paid_bypatient = 00.00;
+		$payerpaid = 00.00;
+		$total_deductable = 00.00;
+		$total_copay = 00.00;
 
 		for ($i=0;$i<$count;$i++)
 		{
@@ -1618,6 +1671,50 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         	{
             	$total_paid_bypatient += $pay_row[payrecamt];
         	}
+
+			if ($this->bill_request_type == SECONDARY)
+			{
+				// when medicare is secondary
+				// total paid by primary
+				$query = "SELECT * FROM payrec WHERE payrecproc='$row[id]' AND
+												payrecsource='".PRIMARY."' AND
+												payreclink = '$row[proccov1]' AND
+												payreccat='".PAYMENT."'";
+				$pay_result = $sql->query($query) or DIE("Query failed for primary payments");
+				while ($pay_row = $sql->fetch_array($pay_result))
+				{
+					$payerpaid += $pay_row[payrecamt];
+				}
+
+				// total deductables
+				$query = "SELECT * FROM payrec WHERE payrecproc='$row[id]' AND
+												payrecsource='".PRIMARY."' AND
+												payreclink = '$row[proccov1]' AND
+												payreccat='".DEDUCTABLE."'";
+				$pay_result = $sql->query($query) or DIE("Query failed for primary payments");
+				while ($pay_row = $sql->fetch_array($pay_result))
+				{
+					$total_deductable += $pay_row[payrecamt];
+				}
+				// total copay
+				$query = "SELECT * FROM payrec WHERE payrecproc='$row[id]' AND
+												payrecsource='".PRIMARY."' AND
+												payreclink = '$row[proccov1]' AND
+												payreccat='".COPAY."'";
+				$pay_result = $sql->query($query) or DIE("Query failed for primary payments");
+				while ($pay_row = $sql->fetch_array($pay_result))
+				{
+					$total_copay += $pay_row[payrecamt];
+				}
+
+				$data = $this->MakeDecimal($payerpaid,2);
+				$xa0[totpayeramt] = $data;
+				$data = $this->MakeDecimal($total_deductable,2);
+				$xa0[totdeduct] = $data;
+				$data = $this->MakeDecimal($total_copay,2);
+				$xa0[totcoins] = $data;
+			}
+			
 			
 		}
 		$data = $this->MakeDecimal($total,2);
@@ -1718,7 +1815,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 	} // end file trailer
 
-	// makestack callback function
 	function ProcessClaims($procstack)
 	{
 
@@ -1756,7 +1852,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			trigger_error("No coverage", E_USER_ERROR);
 		}
 
-        // grab form information form
+		// grab form information form
         $this->formno = freemed_get_link_rec ($whichform, "fixedform");
 
 
@@ -1771,130 +1867,17 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$this->pat_processed++;
 		$this->patient_forms[$this->pat_processed] = $parmpatient;
 
-
-   } // end generateFixed
-
+	
+	} // end generateFixed
 
 	function ProcCallBack($stack)
-	{
-		$form_buffer = $this->ProcessClaims($stack); // batch trailer
-		$form_buffer .= $this->ClaimTrailer($stack,$form_buffer);
-		$form_buffer .= $this->ProviderTrailer($stack,$form_buffer);
-		$this->form_buffer .= $form_buffer;
-	}
+    {
+        $form_buffer = $this->ProcessClaims($stack); // batch trailer
+        $form_buffer .= $this->ClaimTrailer($stack,$form_buffer);
+        $form_buffer .= $this->ProviderTrailer($stack,$form_buffer);
+        $this->form_buffer .= $form_buffer;
+    }
 
-	function ChampusTOS($cpt,$pos, $cptmod)
-	{
-		echo "pos $pos cpt $cpt mod $cptmod<BR>";
-		if ($pos == "24") // Ambulatory Surgery
-			$pos1="A";
-		if ($pos == "21") // Inpatient
-			$pos1="I";
-		if ($pos == "22") // Outpatient
-			$pos1="O";
-
-		if ( ($ctp >= "59000") AND ($cpt <= "59899") )
-		{
-			$pos1="M";
-			$pos2="9";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "99341") AND ($cpt <= "99353") )
-		{
-			$pos2="9";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "97010") AND ($cpt <= "99353") )
-		{
-			$pos2="9";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "97010") AND ($cpt <= "97799") )
-		{
-			$pos2="9";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "90801") AND ($cpt <= "90899") )
-		{
-			$pos2="9";
-			return $pos1.$pos2;
-		}
-		if ($ctpmod == "29")
-		{
-			$pos2="9";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "99221") AND ($cpt <= "99238") )
-		{
-			$pos2="9";
-			return $pos1.$pos2;
-		}
-		if ($ctpmod == "80")
-		{
-			$pos2="8";
-			return $pos1.$pos2;
-		}
-		if ($ctpmod == "30")
-		{
-			$pos2="7";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "77261") AND ($cpt <= "77799") )
-		{
-			$pos2="6";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "79000") AND ($cpt <= "79999") )
-		{
-			$pos2="6";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "80002") AND ($cpt <= "89399") )
-		{
-			$pos2="5";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "70010") AND ($cpt <= "79999") )
-		{
-			$pos2="4";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "99241") AND ($cpt <= "99275") )
-		{
-			$pos2="3";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "10040") AND ($cpt <= "58999") )
-		{
-			$pos2="2";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "60000") AND ($cpt <= "69979") )
-		{
-			$pos2="2";
-			return $pos1.$pos2;
-		}
-		if ( ($ctp >= "90700") AND ($cpt <= "99499") )
-		{
-			$pos2="1";
-			return $pos1.$pos2;
-		}
-		$cptletter = substr($cpt,0,1);
-		$cptletter = strtoupper($cptletter);
-		if ($cptletter = "J")
-		{
-			$pos2="1";
-			return $pos1.$pos2;
-		}
-		if ($ctpmod == "26")
-		{
-			$pos2="4";
-			return $pos1.$pos2;
-		}
-		
-		
-
-	} //end champus TOS
 
 	function view()
 	{
@@ -1907,7 +1890,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <$STDFONT_B><B>"._("Generate NSF Commercial Claims")."</B><$STDFONT_E>
+		   <$STDFONT_B><B>"._("Generate NSF Medicare Claims")."</B><$STDFONT_E>
 		  </CENTER>
 		 </TD>
     	</TR>
@@ -1970,7 +1953,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		 </TD>
 		";
 
-
 		echo "
 		<TR>
 		 <TD COLSPAN=2>
@@ -1985,11 +1967,50 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		</TABLE>
 	   ";
 	} // end view functions
+
+	//misc helpers
+	function GetPrimaryAmountPaid($procrec)
+	{
+		global $sql;
+
+		$query = "SELECT * FROM payrec WHERE payrecproc='$procrec[id]' AND
+										payrecsource='".PRIMARY."' AND
+										payreclink = '$procrec[proccov1]' AND
+										payreccat='".PAYMENT."'";
+		$pay_result = $sql->query($query) or DIE("Query failed for primary payments");
+		while ($pay_row = $sql->fetch_array($pay_result))
+		{
+			$payerpaid += $pay_row[payrecamt];
+		}
+
+		return $payerpaid;
+
+
+	}
+
+	function GetMedicareProcFee($cptid,$inscoid)
+	{
+		global $sql;
+
+		$cur_cpt = 0;
+		$mcfee = 0;
+		$cur_cpt = freemed_get_link_rec ($cptid, "cpt");
+		if (!$cur_cpt)
+			echo "Failed reading cpt table in GetMedicareProcFee<BR>";
+
+		$fee_stack = fm_split_into_array ($cur_cpt[cptstdfee]);
+		$mcfee = $fee_stack[$inscoid];
+
+		if ($mcfee == 0)
+			echo "Error - No Standard Medicare fee for procedure<BR>";
+
+		return $mcfee;
+	}
 	
 
-} // end class CommercialMCSIFormsModule
+} // end class MedicareNJPAMCSIFormsModule
 
-register_module("CommercialMCSIFormsModule");
+register_module("MedicareNJPAMCSIFormsModule");
 
 } // end if not defined
 

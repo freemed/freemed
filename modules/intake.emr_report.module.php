@@ -187,7 +187,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 
 			}		
 
-			$buffer = render_fixedForm(5);
+			$buffer = render_fixedForm(3);
 			echo "<PRE>".$buffer."</PRE>";
 			echo "</BODY></HTML>";
 			

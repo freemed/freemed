@@ -45,6 +45,20 @@ define ('BASE_URL', "/freemed");		// offset (i.e. http://here/package)
 define ('HTTP', "http");                // http for normal, https for SSL
 $default_language="EN";               // default language
 
+    // GPG settings
+    //
+    // customize if you are using the db backup maintenance module with
+    // pgp. for keyring, you need to as root create /home/nobody,
+    // chown nobody:nobody /home/nobody
+    // su nobody
+    // export HOME=/home/nobody; cd $HOME
+    // use GPG to encrypt a file, run it twice
+    // you should now have /home/nobody/.gpg
+
+define ('USE_GPG', "NO");	// encrypt backups? (YES|NO)
+define ('GPG_PASSPHRASE_LOCATION', PHYSICAL_LOCATION."/lib/gpg_phrase.php");
+define ('GPG_HOME', "/home/nobody");
+
     // *************************************
     // ** fax subsystem  --please        ***
     // ** read incoming_fax_scripts.mk   ***

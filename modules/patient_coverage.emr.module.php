@@ -58,8 +58,39 @@ class PatientCoveragesModule extends freemedEMRModule {
 			extract($row);
 		}
 
+		$query = "SELECT * FROM covtypes ORDER BY covtpname";
+		$covtypes_result = $sql->query($query);
+		if (!covtypes_result)
+			DIE("Failed to get insurance coverage types");
+
 		$book = new notebook (array ("action", "id", "module", "been_here", "patient"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
+
+			$book->add_page(_("Supply Coverage Information"),
+								array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
+											date_vars("covrelinfodt")),
+								html_form::form_table( array (
+										_("Coverage Insurance Type") => 
+											freemed_display_selectbox($covtypes_result,"#covtpname# #covtpdescrip#","covinstp"),
+										_("Provider Accepts Assigment") =>
+											html_form::select_widget("covprovasgn",array(
+												_("Yes") => "1",
+												_("No") => "0")),
+										_("Assigment Of Benefits") =>
+											html_form::select_widget("covbenasgn",array(
+												_("Yes") => "1",
+												_("No") => "0")),
+										_("Release Of Information") =>
+											html_form::select_widget("covrelinfo",array(
+												_("Yes") => "1",
+												_("No") => "0",
+												_("Limited") => "2")),
+										_("Release Date Signed") => fm_date_entry("covrelinfodt"),
+										_("Group - Plan Name") => 
+											"<INPUT TYPE=TEXT NAME=\"covplanname\" SIZE=20 MAXLENGTH=33 ".
+                                            "VALUE=\"".prepare($covplanname)."\">"
+																))
+								);
 			$book->add_page("Modify Insurance Information",
 								array_merge( array("covpatgrpno", "covpatinsno", "covrel"), 
 									  date_vars("coveffdt")),
@@ -76,12 +107,13 @@ class PatientCoveragesModule extends freemedEMRModule {
 															_("Child")   => "C",
 															_("Husband") => "H",
 															_("Wife")    => "W",
-															"Child Not Fin" => "D",
-															"Step Child" => "SC",
-															"Foster Child" => "FC",
-															"Ward of Court" => "WC",
-															"HC Dependent" => "HD",
-															"Sponsored Dependent" => "SD",
+															_("Child Not Fin") => "D",
+															_("Step Child") => "SC",
+															_("Foster Child") => "FC",
+															_("Ward of Court") => "WC",
+															_("HC Dependent") => "HD",
+															_("Sponsored Dependent") => "SD",
+															_("Medicare Legal Rep") => "LR",
 															_("Other")   => "O" ) )
 										 					 ) 
 													) 
@@ -89,7 +121,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 			if ($covrel != "S")
 			{
-				$book->add_page("Supply Insureds Information",
+				$book->add_page("Modify Insureds Information",
 								array_merge(array("covlname", "covfname", "covmname", "covaddr1", "covaddr2", "covcity",
 											"covstate", "covzip", "covsex"), date_vars("covdob")),
 						html_form::form_table ( array (
@@ -178,9 +210,11 @@ class PatientCoveragesModule extends freemedEMRModule {
 		}
 
 		$covstatus=ACTIVE;
-		$startdt = fm_date_assemble("coveffdt");
+		$coveffdt = fm_date_assemble("coveffdt");
 		$covdob = fm_date_assemble("covdob");
-		$query = "UPDATE $this->table_name SET coveffdt='".addslashes($startdt)."',".
+		$covrelinfodt = fm_date_assemble("covrelinfodt");
+
+		$query = "UPDATE $this->table_name SET coveffdt='".addslashes($coveffdt)."',".
 												"covdtmod='".addslashes($cur_date)."',".
 												"covlname='".addslashes($covlname)."',".
 												"covfname='".addslashes($covfname)."',".
@@ -194,7 +228,13 @@ class PatientCoveragesModule extends freemedEMRModule {
 												"covzip='".addslashes($covzip)."',".
 												"covrel='".addslashes($covrel)."',".
 												"covpatinsno='".addslashes($covpatinsno)."',".
-												"covpatgrpno='".addslashes($covpatgrpno)."'".
+												"covpatgrpno='".addslashes($covpatgrpno)."',".
+												"covinstp='".addslashes($covinstp)."',".
+												"covprovasgn='".addslashes($covprovasgn)."',".
+												"covbenasgn='".addslashes($covbenasgn)."',".
+												"covrelinfo='".addslashes($covrelinfo)."',".
+												"covrelinfodt='".addslashes($covrelinfodt)."',".
+												"covplanname='".addslashes($covplanname)."'".
 				" WHERE id='".addslashes($id)."'";
 		$result = $sql->query($query);
 		echo "<CENTER>";
@@ -243,44 +283,83 @@ class PatientCoveragesModule extends freemedEMRModule {
 						</TD>
 						</TR>
 						</TABLE></CENTER>" );
-		if ($coveragetype==0)
+
+		if ($coveragetype==0)  // Insurance Coverage
 		{
 			// patient has insurance
 			$query = "SELECT * FROM insco ORDER BY insconame";
 			$ins_result = $sql->query($query);
 			if (!$ins_result)
 				DIE("Failed to get insurance companies");
+			$query = "SELECT * FROM covtypes ORDER BY covtpname";
+			$covtypes_result = $sql->query($query);
+			if (!$covtypes_result)
+				DIE("Failed to get insurance coverage types");
 			//insurance coverage
 			$wizard->add_page("Select an Insurance Company",
 								array("covinsco"),
 								html_form::form_table( array(
-										"Insurance Company" => 
+										_("Insurance Company") => 
 										freemed_display_selectbox($ins_result,"#insconame#","covinsco")
 										) )
 							);
+
+			$wizard->add_page(_("Supply Coverage Information"),
+								array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
+											date_vars("covrelinfodt")),
+								html_form::form_table( array (
+										_("Coverage Insurance Type") => 
+											freemed_display_selectbox($covtypes_result,"#covtpname# #covtpdescrip#","covinstp"),
+										_("Provider Accepts Assigment") =>
+											html_form::select_widget("covprovasgn",array(
+												_("Yes") => "1",
+												_("No") => "0")),
+										_("Assigment Of Benefits") =>
+											html_form::select_widget("covbenasgn",array(
+												_("Yes") => "1",
+												_("No") => "0")),
+										_("Release Of Information") =>
+											html_form::select_widget("covrelinfo",array(
+												_("Yes") => "1",
+												_("No") => "0",
+												_("Limited") => "2")),
+										_("Release Date Signed") => fm_date_entry("covrelinfodt"),
+										_("Group - Plan Name") => 
+											"<INPUT TYPE=TEXT NAME=\"covplanname\" SIZE=20 MAXLENGTH=33 ".
+                                            "VALUE=\"".prepare($covplanname)."\">\n"
+																))
+								);
+										
 			$wizard->add_page("Supply Insurance Information",
 								array_merge( array("covpatgrpno", "covpatinsno", "covreplace", 
 									  "covtype", "covstatus", "covrel"),date_vars("coveffdt")),
 								html_form::form_table( array (
-										"Start Date" => fm_date_entry("coveffdt"),
-										"Insurance ID Number" => 
+										_("Start Date") => fm_date_entry("coveffdt"),
+										_("Insurance ID Number") => 
 											"<INPUT TYPE=TEXT NAME=\"covpatinsno\" SIZE=30 MAXLENGTH=30 ".
                                             "VALUE=\"".prepare($covpatinsno)."\">\n",
-										"Insurance Group Number" => 
+										_("Insurance Group Number") => 
 											"<INPUT TYPE=TEXT NAME=\"covpatgrpno\" SIZE=30 MAXLENGTH=30 ".
                                             "VALUE=\"".prepare($covpatgrpno)."\">\n",
-										"Insurance Type" => html_form::select_widget("covtype", array (
+										_("Insurance Type") => html_form::select_widget("covtype", array (
 															_("Primary") => "1",
 															_("Secondary") => "2",
 															_("Tertiary") => "3",
 															_("Work Comp") => "4" )	),
-										"Relationship to Insured" => html_form::select_widget("covrel", array (
+										_("Relationship to Insured") => html_form::select_widget("covrel", array (
 															_("Self")    => "S",
 															_("Child")   => "C",
 															_("Husband") => "H",
 															_("Wife")    => "W",
+															_("Child Not Fin") => "D",
+															_("Step Child") => "SC",
+															_("Foster Child") => "FC",
+															_("Ward of Court") => "WC",
+															_("HC Dependent") => "HD",
+															_("Sponsored Dependent") => "SD",
+															_("Medicare Legal Rep") => "LR",
 															_("Other")   => "O" ) ),
-										"Replace Like Coverage" => html_form::select_widget("covreplace", array (
+										_("Replace Like Coverage") => html_form::select_widget("covreplace", array (
 															_("No") => "0",
 															_("Yes") => "1" ) )
 										 					 ) 
@@ -336,7 +415,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 					 );
 
 
-			}
+			} // end relation not self
 			else
 			{
 				$wizard->add_page("Press Finish",
@@ -345,7 +424,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 			}
 								
-		} // end page for patient is insured
+		} // end page for Insurance type coverage
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled())
 		{
@@ -388,19 +467,24 @@ class PatientCoveragesModule extends freemedEMRModule {
 			}
 			// we should be good to go
 
-			$startdt = fm_date_assemble("coveffdt");
-
 			// start by replacing existing coverages.
 			if ($covreplace==1) // replace an existing coverage
 			{
 				echo "<$STDFONT_B>Removing Old Coverage<BR><$STDFONT_E>\n";
-				$query = "UPDATE coverage SET covstatus='".DELETED."' WHERE covtype='".addslashes($covtype)."' AND covpatient='".addslashes($patient)."'";
+				$query = "UPDATE coverage SET covstatus='".DELETED."' WHERE covtype='".addslashes($covtype)."'".
+						 " AND covpatient='".addslashes($patient)."'";
 				$updres = $sql->query($query);
 				if (!$updres)
 					DIE("Error updating coverage status");
 
 			}
+
 			// add the coverage
+			$coveffdt = fm_date_assemble("coveffdt");
+			$covdob = fm_date_assemble("covdob");
+			$covrelinfodt = fm_date_assemble("covrelinfodt");
+
+			echo "<CENTER>";
 			echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
 			$covstatus = ACTIVE;  // active
 			$query = $sql->insert_query($this->table_name,
@@ -419,17 +503,24 @@ class PatientCoveragesModule extends freemedEMRModule {
 										"covsex" => $covsex,
 										"covdob" => $covdob,
 										"covinsco" => $covinsco,
-										"coveffdt" => $startdt,
+										"coveffdt" => $coveffdt,
 										"covpatient" => $patient,
 										"covpatgrpno" => $covpatgrpno,
 										"covpatinsno" => $covpatinsno,
 										"covtype" => $covtype,
-										"covstatus" => $covstatus) );
+										"covstatus" => $covstatus,
+										"covinstp" => $covinstp,
+										"covprovasgn" => $covprovasgn,
+										"covbenasgn" => $covbenasgn,
+										"covrelinfo" => $covrelinfo,
+										"covplanname" => $covplanname,
+										"covrelinfodt" => $covrelinfodt));
 			$coverage = $sql->query($query);
 			if ($coverage)
 				echo _("done").".";
 			else
 				echo _("ERROR");
+			echo "</CENTER>";
 
 		} // end edit for patient insured
 

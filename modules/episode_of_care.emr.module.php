@@ -64,7 +64,15 @@ class episodeOfCare extends freemedEMRModule {
 		"eocrelpregabort",
 		"eocrelpreglastper",
 		"eocrelpregconfine",
-		"eocrelothercomment"
+		"eocrelothercomment",
+		"eocdistype",
+		"eocdisfromdt",
+		"eocdistodt",
+		"eocdisworkdt",
+		"eochosadmdt",
+		"eochosdischrgdt",
+		"eocrelautotime",
+		"eochospital"
 	);
 
 	function episodeOfCare () {
@@ -96,6 +104,8 @@ class episodeOfCare extends freemedEMRModule {
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
+		reset ($this->variables);
+		foreach ($this->variables as $k => $v) global $$v;
         $r      = freemed_get_link_rec ($id, $this->table_name);
         extract ($r);
         break;
@@ -114,20 +124,20 @@ class episodeOfCare extends freemedEMRModule {
      ALIGN=CENTER>
     <TR>
      <TD COLSPAN=4 ALIGN=CENTER BGCOLOR=\"#777777\">
-      <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
       "._("General Information")."
-      <$STDFONT_E>
+      </FONT>
      </TD>
     </TR>
     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Description")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocdescrip\" SIZE=25 MAXLENGTH=100
        VALUE=\"".prepare($eocdescrip)."\">
      </TD>
   ";
   if ($this->this_patient->isFemale()) { echo "
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Pregnancy")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Related to Pregnancy")."</TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelpreg\">
        <OPTION VALUE=\"no\"  ".
@@ -137,19 +147,19 @@ class episodeOfCare extends freemedEMRModule {
       </SELECT>
      </TD>
   "; } else { echo "
-     <TD ALIGN=RIGHT><$STDFONT_B><I>"._("Related to Pregnancy")."<$STDFONT_E></I></TD>
+     <TD ALIGN=RIGHT><I>"._("Related to Pregnancy")."</I></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=HIDDEN NAME=\"eocrelpreg\" VALUE=\"no\">
-      <I><$STDFONT_B>"._("No")."<$STDFONT_E></I>
+      <I>"._("No")."</I>
      </TD>
   "; } // end checking if female
   echo "  
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of First Occurance")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Date of First Occurance")."</TD>
       <TD ALIGN=LEFT>
   ".fm_date_entry("eocstartdate")."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Employment")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Related to Employment")."</TD>
       <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelemp\">
        <OPTION VALUE=\"no\"  ".
@@ -159,11 +169,11 @@ class episodeOfCare extends freemedEMRModule {
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Last Similar")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Date of Last Similar")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocdtlastsimilar")."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Automobile")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Related to Automobile")."</TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelauto\">
        <OPTION VALUE=\"no\"  ".
@@ -173,7 +183,7 @@ class episodeOfCare extends freemedEMRModule {
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Referring Physician")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Referring Physician")."</TD>
      <TD ALIGN=LEFT>
    ";
    echo freemed_display_selectbox (
@@ -181,7 +191,7 @@ class episodeOfCare extends freemedEMRModule {
        ORDER BY phylname,phyfname"),
      "#phylname#, #phyfname#", "eocreferrer")."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Other Cause")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Related to Other Cause")."</TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelother\">
        <OPTION VALUE=\"no\"  ".
@@ -191,7 +201,7 @@ class episodeOfCare extends freemedEMRModule {
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Facility")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Facility")."</TD>
      <TD ALIGN=LEFT>
    ";
    if (empty($eocfacility)) $eocfacility = $default_facility;
@@ -202,13 +212,13 @@ class episodeOfCare extends freemedEMRModule {
        "#psrname# [#psrnote#]", 
        "eocfacility")."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("State/Province")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("State/Province")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelstpr\" SIZE=5 MAXLENGTH=5
        VALUE=\"".prepare($eocrelstpr)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Diagnosis Family")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Diagnosis Family")."</TD>
      <TD ALIGN=LEFT>
     ";
     // compact and display eocdiagfamily
@@ -216,7 +226,7 @@ class episodeOfCare extends freemedEMRModule {
            ORDER BY dfname, dfdescrip", "dfname:dfdescrip", "eocdiagfamily",
            fm_join_from_array($eocdiagfamily), false)."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Episode Type")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Episode Type")."</TD>
      <TD ALIGN=LEFT>
     ";
     // case statement for eoctype
@@ -241,6 +251,69 @@ class episodeOfCare extends freemedEMRModule {
       </SELECT>
      </TD>
     </TR>
+	";
+	echo "
+    <TR>
+	<TD ALIGN=RIGHT>"._("Disability Type")."</TD>
+    <TD ALIGN=LEFT>
+      <SELECT NAME=\"eocdistype\">
+       <OPTION VALUE=\"0\" ".
+         ( ($eocdistype==0) ? "SELECTED" : "" ).">"._("Unknown")."
+       <OPTION VALUE=\"1\" ".
+         ( ($eocdistype==1) ? "SELECTED" : "" ).">"._("LT")."
+       <OPTION VALUE=\"2\" ".
+         ( ($eoctype==2) ? "SELECTED" : "" ).">"._("ST")."
+       <OPTION VALUE=\"3\" ".
+         ( ($eocdistype==3) ? "SELECTED" : "" ).">". _("Permanent")."
+       <OPTION VALUE=\"4\" ".
+         ( ($eoctype==4) ? "SELECTED" : "" ).">"._("No Disability")."
+      </SELECT>
+	</TD>
+	<TD ALIGN=RIGHT>"._("Hospital")."</TD>
+    <TD ALIGN=LEFT>
+      <SELECT NAME=\"eochospital\">
+       <OPTION VALUE=\"0\" ".
+         ( ($eochospital==0) ? "SELECTED" : "" ).">"._("No")."
+       <OPTION VALUE=\"1\" ".
+         ( ($eochospital==1) ? "SELECTED" : "" ).">"._("Yes")."
+      </SELECT>
+	</TD>
+	</TR>
+	";
+	echo "
+    <TR>
+	<TD ALIGN=RIGHT>"._("Disability From Date")."</TD>
+    <TD ALIGN=LEFT>
+   	    ".fm_date_entry("eocdisfromdt")."
+	</TD>
+	<TD ALIGN=RIGHT>"._("Hospitial Admission Date")."</TD>
+    <TD ALIGN=LEFT>
+   	    ".fm_date_entry("eochosadmdt")."
+	</TD>
+	</TR>
+	";
+	echo "
+    <TR>
+	<TD ALIGN=RIGHT>"._("Disability To Date")."</TD>
+    <TD ALIGN=LEFT>
+   	    ".fm_date_entry("eocdistodt")."
+	</TD>
+	<TD ALIGN=RIGHT>"._("Hospitial Discharge Date")."</TD>
+    <TD ALIGN=LEFT>
+   	    ".fm_date_entry("eochosdischrgdt")."
+	</TD>
+	</TR>
+	";
+	echo "
+    <TR>
+	<TD ALIGN=RIGHT>"._("Disability Back to Work Date")."</TD>
+    <TD ALIGN=LEFT>
+   	    ".fm_date_entry("eocdisworkdt")."
+	</TD>
+	</TR>
+	";
+	
+	echo "
     </TABLE>
     <P>
    ";
@@ -253,46 +326,46 @@ class episodeOfCare extends freemedEMRModule {
       ALIGN=CENTER>
      <TR>
      <TD ALIGN=CENTER COLSPAN=4 BGCOLOR=\"#777777\">
-      <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
       "._("Automobile Related Information")."
-      <$STDFONT_E>
+      </FONT>
      </TD>
      </TR>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Auto Insurance")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Auto Insurance")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautoname)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Case Number")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Case Number")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocase\" SIZE=10 MAXLENGTH=20
        VALUE=\"".prepare($eocrelautocase)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 1)")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Address (Line 1)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr1\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautoaddr1)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Name")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Contact Name")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautorcname)."\">
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 2)")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Address (Line 2)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr2\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautoaddr2)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Phone")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Contact Phone")."</TD>
      <TD ALIGN=LEFT>
    ".
    fm_phone_entry("eocrelautorcphone")
    ."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("City, State/Prov, Postal Code")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("City, State/Prov, Postal Code")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocity\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautocity)."\"> <B>,</B>
@@ -301,25 +374,26 @@ class episodeOfCare extends freemedEMRModule {
       <INPUT TYPE=TEXT NAME=\"eocrelautozip\" SIZE=11 MAXLENGTH=10
        VALUE=\"".prepare($eocrelautozip)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Email Address")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Email Address")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcemail\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautorcemail)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Country")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Country")."</TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelautocountry\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautocountry)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>&nbsp; <!-- placeholder --><$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Time of Accident")."</TD>
      <TD ALIGN=LEFT>
-       &nbsp; <!-- placeholder -->
+	 ".fm_time_entry("eocrelautotime")."
      </TD>
      </TR>
      </TABLE>
      </CENTER>
    "; } // end of conditional auto info
+
 
 
 
@@ -331,44 +405,44 @@ class episodeOfCare extends freemedEMRModule {
       ALIGN=CENTER>
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
-     <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+     <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
      "._("Employment Related Information")."
-     <$STDFONT_E>
+     </FONT>
      </TD>
      </TR>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Name of Employer")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Name of Employer")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempname)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("File Number")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("File Number")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempfile\" SIZE=10 MAXLENGTH=20
        VALUE=\"".prepare($eocrelempfile)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 1)")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Address (Line 1)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr1\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempaddr1)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Name")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Contact Name")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelemprcname)."\">
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 2)")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Address (Line 2)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr2\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempaddr2)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Phone")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Contact Phone")."</TD>
      <TD ALIGN=LEFT>
    ".fm_phone_entry("eocrelemprcphone")."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("City, State/Prov, Postal Code")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("City, State/Prov, Postal Code")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempcity\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempcity)."\"> <B>,</B>
@@ -377,18 +451,18 @@ class episodeOfCare extends freemedEMRModule {
       <INPUT TYPE=TEXT NAME=\"eocrelempzip\" SIZE=11 MAXLENGTH=10
        VALUE=\"".prepare($eocrelempzip)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Email Address")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Email Address")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcemail\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelemprcemail)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Country")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Country")."</TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelempcountry\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempcountry)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>&nbsp; <!-- placeholder --><$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>&nbsp; <!-- placeholder --></TD>
      <TD ALIGN=LEFT>
        &nbsp; <!-- placeholder -->
      </TD>
@@ -406,43 +480,43 @@ class episodeOfCare extends freemedEMRModule {
       ALIGN=CENTER>
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
-     <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+     <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
      "._("Pregnancy Related Information")."
-     <$STDFONT_E>
+     </FONT>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Length of Cycle")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Length of Cycle")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select ("eocrelpregcycle", 10, 40)."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Last Menstrual Period")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Last Menstrual Period")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocrelpreglastper")."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Gravida")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Gravida")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpreggravida", 0, 15)."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Confinement")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Date of Confinement")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocrelpregconfine");
    echo "
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Para")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Para")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpregpara", 0, 15)."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Miscarries")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Miscarries")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpregmiscarry", 0, 15)."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Abortions")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Abortions")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpregabort", 0, 15)."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>&nbsp; <!-- placeholder --><$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>&nbsp; <!-- placeholder --></TD>
      <TD ALIGN=LEFT>
        &nbsp; <!-- placeholder -->
      </TD>
@@ -459,13 +533,13 @@ class episodeOfCare extends freemedEMRModule {
       ALIGN=CENTER>
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
-     <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+     <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
       "._("Other Related Information")."
-     <$STDFONT_E>
+     </FONT>
      </TD>
      </TR>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("More Information")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("More Information")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelothercomment\" SIZE=35 MAXLENGTH=100
        VALUE=\"".prepare($eocrelothercomment)."\">
@@ -495,7 +569,13 @@ class episodeOfCare extends freemedEMRModule {
 			$eocrelpregconfine,
 			$eocrelautorcphone,
 			$eocrelemprcphone,
-			$eocpatient,$patient;
+			$eocpatient,$patient,
+			$eocdisfromdt,
+			$eocdistodt,
+			$eocdisworkdt,
+			$eochosadmdt,
+			$eochosdischrgdt,
+			$eocrelautotime;
 
 			// compact 3d arrays into strings...
 		$eocdiagfamily     = fm_join_from_array ($eocdiagfamily     );
@@ -505,6 +585,12 @@ class episodeOfCare extends freemedEMRModule {
 		$eocdtlastsimilar  = fm_date_assemble   ("eocdtlastsimilar" );
 		$eocrelpreglastper = fm_date_assemble   ("eocrelpreglastper");
 		$eocrelpregconfine = fm_date_assemble   ("eocrelpregconfine");
+		$eocdisfromdt      = fm_date_assemble   ("eocdisfromdt");
+		$eocdistodt        = fm_date_assemble   ("eocdistodt");
+		$eocdisworkdt      = fm_date_assemble   ("eocdisworkdt");
+		$eochosadmdt       = fm_date_assemble   ("eochosadmdt");
+		$eochosdischrgdt   = fm_date_assemble   ("eochosdischrgdt");
+		$eocrelautotime    = fm_time_assemble   ("eocrelautotime");
 
 			// assemble all phone numbers
 		$eocrelautorcphone = fm_phone_assemble  ("eocrelautorcphone");
@@ -530,13 +616,11 @@ class episodeOfCare extends freemedEMRModule {
      freemed_display_box_top (_("ERROR"));
      echo "
        <P>
-       <$STDFONT_B>
        "._("You must specify an ID to view an Episode!")."
-       <$STDFONT_E>
        <P>
        <CENTER>
         <A HREF=\"manage.php?$_auth&id=$patient\"
-        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+        >"._("Manage Patient")."</A>
        </CENTER>
      ";
      freemed_display_box_bottom ();
@@ -554,18 +638,18 @@ class episodeOfCare extends freemedEMRModule {
       ALIGN=CENTER VALIGN=MIDDLE>
      <TR>
       <TD ALIGN=CENTER>
-       <$STDFONT_B>"._("Starting Date")."<$STDFONT_E>
+       "._("Starting Date")."
       </TD>
       <TD ALIGN=CENTER>
-       <$STDFONT_B>"._("Description")."<$STDFONT_E>
+       "._("Description")."
       </TD>
      </TR>
      <TR>
       <TD ALIGN=CENTER>
-       <$STDFONT_B>$eoc[eocstartdate]<$STDFONT_E>
+       $eoc[eocstartdate]
       </TD>
       <TD ALIGN=CENTER>
-       <$STDFONT_B>".prepare($eoc[eocdescrip])."<$STDFONT_E>
+       ".prepare($eoc[eocdescrip])."
       </TD>
      </TR>
      </TABLE>
@@ -652,7 +736,7 @@ class episodeOfCare extends freemedEMRModule {
      <P>
      <CENTER>
       <A HREF=\"$this->page_name?$_auth&patient=$patient&module=$module\"
-      ><$STDFONT_B>"._("Choose Another $record_name")."<$STDFONT_E></A>
+      >"._("Choose Another $record_name")."</A>
      </CENTER>
      <P>
    ";

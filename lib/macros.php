@@ -8,6 +8,32 @@ if (!defined("__MACROS_PHP__")) {
 define ('__MACROS_PHP__', true);
 
   // *****************************
+  // Certification types
+  // *****************************
+define ('AMBULANCE',              1);
+define ('CHIROPRACTIC',           2);
+define ('DME',                    3); //Durable Medical Equipment
+define ('ENT',                    4); //Enteral Nutrition Therapy
+define ('PNT',                    5); //Parenteral Nutrition Therapy
+define ('DMEPOS',                 6); //Prosthetics Orthotics and Supplies  
+
+  // *****************************
+  // Certification form numbers
+  // *****************************
+  // DMEPOS forms
+define ('F0102',                 1); //Hospital Bed and Support Services
+define ('F0203',                 2); //Manual and Motorized Wheelchairs
+define ('F0302',                 3); //Continuous Positive Airway Pressure System
+define ('F0403',                 4); //Lymphedema Pump, Osteogenesis Stimulator
+define ('F0502',                 5); //Reserved for Future Use
+define ('F0602',                 6); //Transcutaneous Electrical Nerve Stimulator (TENS)
+define ('F0702',                 7); //Seat Lift Mechanisms, Power Operated Vehicle 
+define ('F0802',                 8); //Immunosuppressive Drugs
+define ('F0902',                 9); //External Infusion Pump
+define ('F1002',                 10); //Parenteral and Enteral Nutrition
+ 
+
+  // *****************************
   //    payment related macros
   // *****************************
 
@@ -44,8 +70,7 @@ define ('DEDUCTABLE',           8);
 define ('FEEADJUST',            9);
 define ('BILLED',               10);
 define ('COPAY',                11);
-define ('PATWRITEOFF',          12);  // not used yet
-define ('INSWRITEOFF',          13);  // not used yet
+define ('WRITEOFF',             12);  // not used yet
 
 // itemlist macros
 define ('ITEMLIST_VIEW',        1);

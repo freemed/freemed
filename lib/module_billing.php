@@ -236,6 +236,7 @@ class freemedBillingModule extends freemedModule {
 		$ref = $row["procrefdoc"];
 		$auth = $row["procauth"];
 		$eoc = $row["proceoc"];
+		$clmtp = $row["procclmtp"];
 		$cov1 = $row["proccov1"];
 		$cov2 = $row["proccov2"];
 
@@ -243,7 +244,7 @@ class freemedBillingModule extends freemedModule {
 		$date = str_replace("-","",$date);
 		$datey = substr($date,0,4);
 		$datem = substr($date,4,2);
-		$newkey = $pos.$doc.$ref.$eoc.$auth.$cov1.$cov2.$datey.$datem;
+		$newkey = $pos.$doc.$ref.$eoc.$clmtp.$auth.$cov1.$cov2.$datey.$datem;
 		return $newkey;
 
 	} // end newkey
@@ -337,7 +338,7 @@ class freemedBillingModule extends freemedModule {
 			procpatient = '$covpatient' AND
 			procbillable = '0' AND
 			procbilled = '0')
-			ORDER BY procpos,procphysician,procrefdoc,proceoc,procauth,proccov1,proccov2,procdt";
+			ORDER BY procpos,procphysician,procrefdoc,proceoc,procclmtp,procauth,proccov1,proccov2,procdt";
 
 		$result = $sql->query($query);
 		if (!$sql->results($result))
@@ -610,6 +611,39 @@ class freemedBillingModule extends freemedModule {
 
 		
 	} // end ShowMarkBilled
+
+
+	function GetRelationShip($rel,$type="NSF")
+	{
+		if ($type=="NSF")
+		{
+			if ($rel == "S")
+				$patrel = "01";
+			if ($rel == "LR")  // medicare legal rep
+				$patrel = "01";
+			if ($rel == "H" OR $rel == "W")
+				$patrel = "02";
+			if ($rel == "C")
+				$patrel = "03";
+			if ($rel == "D") // Natural Child insured not financially resp.
+				$patrel = "04";
+			if ($rel == "SC") // Step child
+				$patrel = "05";
+			if ($rel == "FC") // Foster child
+				$patrel = "06";
+			if ($rel == "WC") // Ward of Court
+				$patrel = "07";
+			if ($rel == "HD") // Handicapped Dependent
+				$patrel = "10";
+			if ($rel == "SD") // Sponsered Dependent
+				$patrel = "16";
+
+			return $patrel;
+
+		}
+
+
+	}
 
 
 

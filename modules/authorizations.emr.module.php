@@ -34,6 +34,8 @@ class authorizationsModule extends freemedEMRModule {
 		"authprovid",
 		"authinsco",
 		"authvisits",
+		"authvisitsused",
+		"authvisitsremain",
 		"authcomment",
 		"authpatient",
 		"authdtadd"
@@ -60,6 +62,7 @@ class authorizationsModule extends freemedEMRModule {
          DIE("");
        }
        $r = freemed_get_link_rec ($id, $this->table_name);
+	   while(list($k,$v)=each($this->variables)) global $$v;
        extract ($r);
        break; // end internal modform
      } // end internal action switch
@@ -180,6 +183,24 @@ class authorizationsModule extends freemedEMRModule {
         </TD>
         <TD ALIGN=LEFT>
      ".fm_number_select ("authvisits", 0, 100)."
+        </TD>
+       </TR>
+
+       <TR>
+        <TD ALIGN=RIGHT>
+         <$STDFONT_B>"._("Used Visits")." : <$STDFONT_E>
+        </TD>
+        <TD ALIGN=LEFT>
+     ".fm_number_select ("authvisitsused", 0, 100)."
+        </TD>
+       </TR>
+
+       <TR>
+        <TD ALIGN=RIGHT>
+         <$STDFONT_B>"._("Remaining Visits")." : <$STDFONT_E>
+        </TD>
+        <TD ALIGN=LEFT>
+     ".fm_number_select ("authvisitsremain", 0, 100)."
         </TD>
        </TR>
 

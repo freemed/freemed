@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Wed Aug 08 2001 rufustfirefly
+  - HUGE merge with Fred's code. Expect strange things for a while.
+  - removed move_appointment.php legacy module
+
 * Thu Jul 26 2001 rufustfirefly
   - modules/procedure.emr.module.php: removed requirement for
     procbalorig to not be zero, as it was a broken assumption

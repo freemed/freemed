@@ -51,9 +51,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
 			// special circumstances when being called from the unpaid
 			// reports module
-			if ($viewaction=="unpaidledger")  
+			if ($viewaction=="paidledger")  
 			{
-				$this->view_query = $this->view_updaid;
+				$this->view_query = $this->view_closed;
 				$this->ledger();
 				return;
 			}
@@ -71,7 +71,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 return;
             }
 
-            if ($viewaction=="ledger")
+            if ($viewaction=="ledger") // triggered from the ledger link
             {
                 $this->ledger($item);
                 return;
@@ -141,6 +141,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 $this->transaction_wizard($item, DENIAL);
             }
 
+            if ($viewaction=="writeoff")
+            {
+                $this->transaction_wizard($item, WRITEOFF);
+            }
+
             if ($viewaction=="refund")
             {
                 $this->transaction_wizard($item, REFUND);
@@ -177,8 +182,12 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 			$proccovmap = "0:".$proc_rec[proccov1].":".$proc_rec[proccov2].":".
 							$proc_rec[proccov3].":".$proc_rec[proccov4];
 
+			global $visitsused,$visitsremain;
+			$this->IsAuthorized($proc_rec,$visitsremain,$visitsused);
+
             // **************** FORM THE WIZARD ***************
-            $wizard = new wizard (array("item", "been_here", "module", "viewaction", "action", "patient", "_auth"));
+            $wizard = new wizard (array("item", "been_here", "module", 
+									     "viewaction", "action", "patient", "_auth"));
 
 
             // ************** SECOND STEP PREP ****************
@@ -278,9 +287,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         "MAXLENGTH=16 VALUE=\"".prepare($payrecnum_1)."\">\n";
 
                     $second_page_array[_("Expiration Date")] =
-                        number_select ("payrecnum_e1", 1, 12, 1, true).
+                        fm_number_select ("payrecnum_e1", 1, 12, 1, true).
                         "\n <B>/</B>&nbsp; \n".
-                        number_select ("payrecnum_e2", (date("Y")-2), (date("Y")+10), 1);
+                        fm_number_select ("payrecnum_e2", (date("Y")-2), (date("Y")+10), 1);
                     break;
                 case "4": // traveller's check
                     $second_page_array[_("Cheque Number")] =
@@ -305,6 +314,21 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                            "payrecnum_e1", "payrecnum_e2"),
                     html_form::form_table ( $second_page_array )
                 );
+
+				if ($visitsremain)
+				{
+					$wizard->add_page(_("Handle Authorization"),
+						array("updatevists","visitsremain","visitsused"),
+						html_form::form_table( array(
+								_("Update Visits") => "<SELECT NAME=\"updatevisits\">".
+													  "<OPTION VALUE=\"0\">"._("No").
+													  "<OPTION VALUE=\"1\">"._("Yes").
+													  "</SELECT>",
+								_("Remaining Visits") => prepare($visitsremain),
+								_("Used Visits") => prepare($visitsused)
+											))
+								);
+				}
 
                 break; // end of payment
 
@@ -428,6 +452,21 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
                 break; // end of denial
 
+            case WRITEOFF: // writeoff (12)
+                $wizard->add_page (
+                    _("Step Two").": "._("Describe the Writeoff"),
+                    array_merge(array ("payreclink", "payrecdescrip"), date_vars("payrecdt")),
+                    html_form::form_table ( array (
+                                                _("Date of Writeoff") =>
+                                                                  fm_date_entry ("payrecdt"),
+
+                                                _("Description") =>
+                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
+                                            ) )
+                );
+
+                break; // end of writeoff
             case TRANSFER: // transfer (6)
                 $wizard->add_page (
                     _("Step Two").": "._("Describe the Transfer"),
@@ -516,6 +555,13 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         DIE("");
                         break;
                     } // end switch payrectype
+
+					if ($updatevisits)
+					{
+						$auth_query = "UPDATE authorizations SET authvisitsremain=authvisitsremain-1,".
+								      "authvisitsused=authvisitsused+1";
+
+					}
                     break; // end payment category (add)
 
                 case ADJUSTMENT: // adjustment category 1
@@ -559,6 +605,12 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     }
                     break; // end denial category (add)
 
+                case WRITEOFF: // writeoff entire balance
+					$payrecamt = 0; // default
+                    $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
+                                                               "procbalcurrent");
+                    break; // end writeoff category (add)
+
                 case REBILL: // rebill category (add) 4
 						// save off the amount we are re billing
                         $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
@@ -588,7 +640,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 						"payreclink",
 						"payrectype",
 						"payrecnum",
-						"payrecamt",
+						"payrecamt" => $payrecamt,
 						"payrecdescrip",
 						"payreclock" => "unlocked"
 						));
@@ -655,6 +707,16 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     } // end checking for adjust to zero
                     break; // end denial category (add)
 
+                case WRITEOFF: // writeoff entire balance
+					// this should force it to 0 naturally
+					$proccharges = $proccharges - $payrecamt;
+					$procbalcurrent = $proccharges - $procamtpaid;
+					$query = "UPDATE procrec SET
+						 proccharges    = '$proccharges',
+						 procbalcurrent = '$procbalcurrent'
+						 WHERE id='$payrecproc'";
+                    break; // end Writeoff 
+
                 case REBILL: // rebill category (add) 4
                     $query = "UPDATE procrec SET procbilled='0' WHERE id='".addslashes($payrecproc)."'";
                     break; // end rebill category (add)
@@ -705,6 +767,15 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 { // if there is no query, let the user know we did nothing
                     echo "unnecessary";
                 } // end checking for null query
+			
+				if ($updatevisits)
+				{
+                	echo "  <BR><$STDFONT_B>"._("Modifying Authorized visits")." ... <$STDFONT_E>\n";
+                    $result = $sql->query($auth_query);
+                    if ($result) { echo _("done")."."; }
+                    else        { echo _("ERROR");    }
+				}
+
             }  // end processing wizard done
 
 
@@ -852,7 +923,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     }
                     else
                     {
-                        $prc_total = "<FONT COLOR==\"#ff0000\">".
+                        $prc_total = "<FONT COLOR=\"#ff0000\">".
                                      $proc_total."</FONT>";
                     } // end of creating total string/color
 
@@ -898,6 +969,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $payment         = "&nbsp;";
                     $charge          = "&nbsp;";
                     break;
+                case WRITEOFF: // writeoff 12
                 case DENIAL: // denials 3
                     $pay_color       = "#000000";
                     $charge          = bcadd(-$payrecamt, 0, 2);
@@ -953,6 +1025,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     break;
                 case DENIAL: // denial 3
                     $this_type = _("Denial");
+                    break;
+                case WRITEOFF: // writeoff 12 
+                    $this_type = _("Writeoff");
                     break;
                 case REBILL: // rebill 4
                     $this_type = _("Rebill");
@@ -1226,9 +1301,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             <OPTION VALUE=\"transfer\">"._("Transfer")."
             <OPTION VALUE=\"allowedamt\">"._("Allowed Amount")."
             <OPTION VALUE=\"denial\"  >"._("Denial")."
+            <OPTION VALUE=\"writeoff\"  >"._("Writeoff")."
             <OPTION VALUE=\"refund\">"._("Refund")."
             <OPTION VALUE=\"mistake\" >"._("Mistake")."
             <OPTION VALUE=\"ledgerall\">"._("Ledger")."
+            <OPTION VALUE=\"paidledger\">"._("Ledger Closed")."
             <OPTION VALUE=\"closed\">"._("Closed")."
             </SELECT>
             <INPUT TYPE=SUBMIT VALUE=\"  "._("Select Line Item")."  \">
@@ -1307,6 +1384,21 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 				}
 			}
 			return $returned_string;
+		}
+
+		function IsAuthorized($proc,&$remain,&$used)
+		{
+			global $sql;
+
+			if ($proc[procauth] == 0)
+			{
+				$remain = $used = 0;
+				return;
+			}
+
+			$auth_rec = freemed_get_link_rec($proc[procauth],"authorizations");
+			$remain = $auth_rec[authvisitsremain];
+			$used = $auth_rec[authvisitsused];
 		}
 
     } // end class testModule

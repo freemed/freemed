@@ -33,6 +33,7 @@ class agedInscoReport extends freemedReportsModule {
 	
 		$query = "SELECT 
 				d.insconame,
+				d.inscophone
 				b.ptlname,
 				a.procbalcurrent,
 				b.ptfname,
@@ -63,6 +64,7 @@ class agedInscoReport extends freemedReportsModule {
 		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
 		<TR>
 		<TD><B>"._("Insurance")."</B></TD>
+		<TD><B>"._("Phone")."</B></TD>
 		<TD><B>"._("Patient")."</B></TD>
 		<TD ALIGN=CENTER><B>&lt;30</B></TD>
 		<TD ALIGN=CENTER><B>30</B></TD>
@@ -84,6 +86,7 @@ class agedInscoReport extends freemedReportsModule {
 		{
 			$pat = $row[ptlname].", ".$row[ptfname];
 			$insconame = $row[insconame];	
+			$inscoph = $row[inscophone];
 		
 			//echo "pat $pat ins $insconame<BR>";
 
@@ -94,8 +97,8 @@ class agedInscoReport extends freemedReportsModule {
 				{
 					// calc pat totals.
 					$_alternate=freemed_bar_alternate_color ($_alternate);
-					echo $this->pattotals($patins,$pat_bucket,$prevpat,$_alternate);
-					$patins = "&nbsp;";
+					echo $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
+					$patinsph = "&nbsp;";
 				}
 
 				$prevpat = $pat;
@@ -119,6 +122,7 @@ class agedInscoReport extends freemedReportsModule {
 				}
 				$previns = $insconame;
 				$patins = $insconame;
+				$patinsph = $inscoph;
 				for ($i=0;$i<$numbuckets;$i++)
 				{
 					$tot_bucket[$i] += $ins_bucket[$i];
@@ -147,7 +151,7 @@ class agedInscoReport extends freemedReportsModule {
 
 		// calc pat totals.
 		$_alternate=freemed_bar_alternate_color ($_alternate);
-		echo $this->pattotals($patins,$pat_bucket,$prevpat,$_alternate);
+		echo $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
 
 		for ($i=0;$i<$numbuckets;$i++)
 		{
@@ -173,25 +177,26 @@ class agedInscoReport extends freemedReportsModule {
 
 	} // end view function
 
-	function pattotals($insname,$total,$patname,$color)
+	function pattotals($insname,$insphone,$total,$patname,$color)
 	{
 		$num = count($total);
 
 		// calc pat totals.
-		$buffer =  "<TR BGCOLOR=\"".$color."\">";
-		$buffer .=  "<TD>$insname</TD>";
-		$buffer .=  "<TD>$patname</TD>";
+		$buffer =  "<TR BGCOLOR=\"".$color."\">\n";
+		$buffer .=  "<TD>$insname</TD>\n";
+		$buffer .=  "<TD>$insphone</TD>\n";
+		$buffer .=  "<TD>$patname</TD>\n";
 
 		$pattot = 0;
 		for ($i=0;$i<$num;$i++)
 		{
 			$bal = bcadd($total[$i],0,2);
-			$buffer .=  "<TD ALIGN=RIGHT>$bal</TD>";
+			$buffer .=  "<TD ALIGN=RIGHT>$bal</TD>\n";
 			$pattot += $bal;
 		}
 		$pattot = bcadd($pattot,0,2);
-		$buffer .=  "<TD ALIGN=RIGHT>$pattot</TD>";
-		$buffer .=  "</TR>";
+		$buffer .=  "<TD ALIGN=RIGHT>$pattot</TD>\n";
+		$buffer .=  "</TR>\n";
 		return $buffer;
 	}
 
@@ -200,20 +205,21 @@ class agedInscoReport extends freemedReportsModule {
 		$num = count($total);
 
 		// calc ins totals.
-		$buffer =  "<TR BGCOLOR=\"".$color."\">";
-		$buffer .=  "<TD><B>"._("Total")."</B></TD>";
-		$buffer .=  "<TD>&nbsp;</TD>";
+		$buffer =  "<TR BGCOLOR=\"".$color."\">\n";
+		$buffer .=  "<TD><B>"._("Total")."</B></TD>\n";
+		$buffer .=  "<TD>&nbsp;</TD>\n";
+		$buffer .=  "<TD>&nbsp;</TD>\n";
 
 		$pattot = 0;
 		for ($i=0;$i<$num;$i++)
 		{
 			$bal = bcadd($total[$i],0,2);
-			$buffer .=  "<TD ALIGN=RIGHT><B>$bal</B></TD>";
+			$buffer .=  "<TD ALIGN=RIGHT><B>$bal</B></TD>\n";
 			$pattot += $bal;
 		}
 		$pattot = bcadd($pattot,0,2);
-		$buffer .=  "<TD ALIGN=RIGHT><B>$pattot</B></TD>";
-		$buffer .=  "</TR>";
+		$buffer .=  "<TD ALIGN=RIGHT><B>$pattot</B></TD>\n";
+		$buffer .=  "</TR>\n";
 		return $buffer;
 	}
 

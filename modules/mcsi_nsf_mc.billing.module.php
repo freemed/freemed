@@ -46,7 +46,8 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		"fb1" => "13",
 		"xa0" => "14",
 		"ya0" => "15",
-		"za0" => "16"
+		"za0" => "16",
+		"gu0" => "17"
 		);
 
 	var $rendorform_variables = array(
@@ -63,6 +64,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		"fa0",
 		"fb0",
 		"fb1",
+		"gu0",
 		"ha0",
 		"xa0",
 		"ya0"
@@ -125,7 +127,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 	
 			if (!empty($this->form_buffer))
 			{
-				$new_buffer = $this->FileHeader();
+				$new_buffer = $this->FileHeader($userid,$password);
 				$this->form_buffer = $new_buffer.$this->form_buffer;
 				$this->form_buffer = $this->FileTrailer($this->form_buffer);	
 				//$new_buffer="";
@@ -284,24 +286,8 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$da0[assign] = "Y";
 		$da0[patsigsrc] = "C";
 
-		if ($coverage2->covreldep == "S")
-			$da0[patrel] = "01";
-		if ($coverage2->covreldep == "H" OR $coverage2->covreldep == "W")
-			$da0[patrel] = "02";
-		if ($coverage2->covreldep == "C")
-			$da0[patrel] = "03";
-		if ($coverage->covreldep == "D") // Natural Child insured not financially resp.
-            $da0[patrel] = "04";
-        if ($coverage->covreldep == "SC") // Step child
-            $da0[patrel] = "05";
-        if ($coverage->covreldep == "FC") // Foster child
-            $da0[patrel] = "06";
-        if ($coverage->covreldep == "WC") // Ward of Court
-            $da0[patrel] = "07";
-        if ($coverage->covreldep == "HD") // Handicapped Dependent
-            $da0[patrel] = "10";
-        if ($coverage->covreldep == "SD") // Sponsered Dependent
-            $da0[patrel] = "16";
+
+		$da0[patrel] = GetRelationShip($coverage2->covreldep,"NSF");
 
 		$da0[patidno] = $this->CleanNumber($coverage2->covpatinsno);
 
@@ -371,9 +357,12 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 			
 				if (!date_in_range($procdt,$authdtbegin,$authdtend))
 				{
-					echo "Warning: Authorization $auth_num has expired for procedure $procdt";
-
+					echo "Warning: Authorization $auth_num has expired for procedure $procdt<BR>";
 				}
+				if ($auth_row[authvisitsremain] == 0)
+				{
+					echo "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
+				}	
 			}
 			$da0[authno] = $this->CleanNumber($auth_num);
         }
@@ -466,12 +455,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$da0[assign] = "Y";
 		$da0[patsigsrc] = "C";
 
-		if ($coverage->covreldep == "S")
-			$da0[patrel] = "01";
-		if ($coverage->covreldep == "H" OR $coverage->covreldep == "W")
-			$da0[patrel] = "02";
-		if ($coverage->covreldep == "C")
-			$da0[patrel] = "03";
+		$da0[patrel] = GetRelationShip($coverage->covreldep,"NSF");
 		
 		$da0[patidno] = $this->CleanNumber($coverage->covpatinsno);
 
@@ -607,12 +591,9 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$da0[assign] = "Y";
 		$da0[patsigsrc] = "C";
 
-		if ($coverage->covreldep == "S")
-			$da0[patrel] = "01";
-		if ($coverage->covreldep == "H" OR $coverage->covreldep == "W")
-			$da0[patrel] = "02";
-		if ($coverage->covreldep == "C")
-			$da0[patrel] = "03";
+		$da0[patrel] = GetRelationShip($coverage->covreldep,"NSF");
+
+		$patrel = $da0[patrel];
 
 		$da0[patidno] = $this->CleanNumber($coverage->covpatinsno);
 
@@ -681,9 +662,12 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 			
 				if (!date_in_range($procdt,$authdtbegin,$authdtend))
 				{
-					echo "Warning: Authorization $auth_num has expired for procedure $procdt";
-
+					echo "Warning: Authorization $auth_num has expired for procedure $procdt<BR>";
 				}
+				if ($auth_row[authvisitsremain] == 0)
+				{
+					echo "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
+				}	
 			}
 			$da0[authno] = $this->CleanNumber($auth_num);
         }
@@ -736,6 +720,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 			$da0[seqno] = "02";
 			$da0[patcntl] = $ca0[patcntl];
 			$da0[clmfileind] = "I";
+			$da0[patrel] = $patrel;
 
 			if ($insmod[insmod] == "MG")
 			{
@@ -744,6 +729,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 				$da0[instypcd] = "MG";  // Medigap
 				$da0[payerid] = $this->CleanNumber($insco2->local_record[inscoid]); // NAIC #
 				$da0[assign] = "Y";
+				$da0[patsigsrc] = "C";
 				$da0[patidno] = $this->CleanNumber($coverage2->covpatinsno);
    				$buffer  .= render_fixedRecord ($whichform,$this->record_types["da0"]);
 			}
@@ -791,6 +777,8 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		else
 			$ca0[patcntl] = $this->CleanChar($patient->local_record[ptid]);
 
+		$ca0[deathind] = "N";
+
 		$ca0[patlname] = $this->CleanChar($patient->local_record[ptlname]);
 		$ca0[patfname] = $this->CleanChar($patient->local_record[ptfname]);
 		$ca0[patdob] = $this->CleanNumber($patient->local_record[ptdob]);
@@ -814,6 +802,15 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
         if ($patient->ptmarital == "widowed") 
      		$ca0[patmarital] = "W";
 
+		$datediff = date_diff($patient->local_record[ptdob]);
+		$yrdiff = $datediff[0];
+		
+		if ($yrdiff < 18)
+			$ca0[legalrepind] = "Y";
+		else
+			$ca0[legalrepind] = "N";
+
+		$ca0[patstudent] = "N";
 		if ($patient->local_record[ptstatus] == 0)
 		{
 			$ca0[patstudent] = "N";
@@ -830,7 +827,11 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 			{
 				$datediff = date_diff($patient->local_record[ptdob]);
 				$yrdiff = $datediff[0];
-				echo "year diff $yrdiff<BR>";
+				if ( ($yrdiff > 18) AND ($status == "FT") )
+					$ca0[patstudent] = "F";
+				if ( ($yrdiff > 18) AND ($status == "PT") )
+					$ca0[patstudent] = "P";
+				//echo "year diff $yrdiff<BR>";
 			}
 
 		}
@@ -871,26 +872,51 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$ca0[clmeditind] = "C"; // Medicare filing
 		$ca0[clmtype] = " ";
 
-		// need origin codes champus provider id if payer is REG06
-
-		// cb0 is required for champus (REG06) if the patient is
-        // under 18 at the time of service. difference between patdob and the highest date of service
-		// is < 18
-
 		$buffer = "";		
    		$buffer  = render_fixedRecord ($whichform,$this->record_types["ca0"]);
+
+
+		// cb0 is required if the patient is
+        // under 18 
+
+		if ($ca0[legalrepind] == "Y")
+		{
+				$cb0[patcntl] = $ca0[patcntl];
+                // we assume the guarantor is the responsible party
+                if ($coverage->covdep != 0)
+                {
+                    $guar = new Guarantor($coverage->covdep);
+                    if (!$guar)
+                        echo "Error getting guarantor in CB0 record<BR>";
+                    $cb0[respfname] = $this->CleanChar($guar->guarfname);
+                    $cb0[resplname] = $this->CleanChar($guar->guarlname);
+                    $cb0[respaddr1] = $this->CleanChar($guar->guaraddr1);
+                    $cb0[respaddr2] = $this->CleanChar($guar->guaraddr2);
+                    $cb0[respcity] = $this->CleanChar($guar->guarcity);
+                    $cb0[respstate] = $this->CleanChar($guar->guarstate);
+                    $cb0[respzip] = $this->CleanNumber($guar->guarzip);
+                    $buffer  .= render_fixedRecord ($whichform,$this->record_types["cb0"]);
+
+                }
+                else
+                {
+                    echo "Error in Medicare CB0 record for Procedure $row[procdt]<BR>";
+                    echo "Under aged patient does not have Guarantor<BR>";
+                }
+		}
+
 		return $buffer;
 
 	} // end patient
 
-	function FileHeader()
+	function FileHeader($userid,$password)
 	{
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		unset($GLOBALS[aa0]);
 		global $aa0;
 		$aa0[recid] = "AA0";
-		$aa0[submtrid] = "FFOREST";
+		$aa0[submtrid] = $this->CleanChar($userid);
 		$aa0[subtype] = "U";
 
 		$this->subno++;
@@ -903,8 +929,8 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$aa0[recvrtype] = "C";    // C for medicare part B
 		$aa0[nsfverno] = "00301";
 		$aa0[nsfvernoloc] = "00301";
-		$aa0[testprod] = "TEST";
-		$aa0[password] = "FORESTER";
+		$aa0[testprod] = "PROD";
+		$aa0[password] = $this->CleanChar($password);
 		$aa0[vendorid] = "FREMED";
 	
 		$ruler = "";
@@ -1027,6 +1053,14 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		//$ba0[upin] = $this->CleanNumber($upin);
 		//$ba0[ciid] = $this->CleanNumber($provider_id); // commercial provider id
 		$ba0[mcareid] = $this->CleanNumber($provider_id);
+		$ba0[emcid] = $this->CleanNumber($provider_id);
+
+		$state = $this->CleanChar($physician->local_record[phystatea]);
+		//echo "state $state<BR>";
+		if ($state == "PA")
+			$ba0[prodnaic] = "M";
+		if ($state == "NJ")
+			$ba0[prodnaic] = "J";
 
 		// these carriers want the upin number
 		//if (fm_value_in_array($ins_upin,$naic))
@@ -1088,6 +1122,9 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$ea0[accident] = "N";
 		$ea0[symptomind] = "0";
 		$ea0[relinfoind] = "Y";
+		$ea0[provsigind] = "Y";  // sig on file
+		$ea0[provassign] = "A";  // accepts assignment
+		$ea0[docind] = "9";  // no documentation by default
 
 		//echo "referer $row[procrefdoc]<BR>";
 		if ($row[procrefdoc] != 0)
@@ -1162,6 +1199,9 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
                              $prow[procdiag2],
                              $prow[procdiag3],
                              $prow[procdiag4]);
+
+			if ($prow[proccert] > 0)
+				$ea0[docind] = 5;
 
         }
 
@@ -1257,7 +1297,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
         {
             // plug with Office code
             $pos="11";
-            echo "Warning: Plugged pos with Office Code 11";
+            echo "Warning: Plugged pos with Office Code 11<BR>";
         }
 		
 		$count = count($procstack);
@@ -1343,7 +1383,20 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 			$data = $this->MakeDecimal($row[procunits],1);
 			$fa0[units] = $data;
 
-   			$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
+   			//$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
+
+			if ($row[proccert] > 0)
+			{
+				// we may need to change the fa0 record in the cert code.
+				$cert_buffer =  $this->GenCertRecords($row,$seq);
+   				$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
+				$buffer .= $cert_buffer;
+			}
+			else
+			{
+   				$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
+			}
+
 			unset($GLOBALS[fa0]);
 			global $fa0;
 
@@ -1351,6 +1404,109 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		return $buffer;
 
 	} // end servicedetail
+
+	function GenCertRecords($proc,$seq)
+	{
+		// these records are required for various type of certification.
+		// currently only DMEPOS is supported  See the medicare DMERC spec.
+		unset($GLOBALS[fb1]);
+		unset($GLOBALS[gu0]);
+
+		global $ba0,$ca0,$ea0,$fa0,$gu0,$fb1,$whichform;
+
+		//echo "form $whichform in cert<BR>";
+		$buffer = "";
+
+		$fb1[recid] = "FB1";
+		$fb1[seqno] = $seq;
+		$fb1[patcntl] = $ca0[patcntl];
+		$fb1[ordprvupin] = $ea0[refprovupin];
+		$fb1[ordprvlname] = $ea0[reflname];
+		$fb1[ordprvfname] = $ea0[reffname];
+
+
+		$proccert = $proc[proccert];
+
+		$certrow = 0;
+		$certrow = freemed_get_link_rec($proccert,"certifications");
+		if (!($certrow))
+		{
+			echo "Error getting cert<BR>";
+			return;
+		}
+		
+		$gu0[recid] = "GU0";
+		$gu0[seqno] = $seq;
+		$gu0[patcntl] = $ca0[patcntl];
+
+
+		if ($certrow[certtype] == DMEPOS)
+		{
+			$fa0[rendprid] = $ba0[mcareid];
+			//echo "fa0 rend $fa0[rendprid]<BR>";
+			$gu0[certpos] = $fa0[pos];
+			$gu0[certcpt] = $fa0[cpt];
+			$gu0[certcptmod] = $fa0[cptmod1];
+
+			if ($fa0[diag1] > 0)
+				$gu0[certdiag1] = $ea0[diag1];
+			if ($fa0[diag2] > 0)
+				$gu0[certdiag2] = $ea0[diag2];
+			if ($fa0[diag3] > 0)
+				$gu0[certdiag3] = $ea0[diag3];
+			if ($fa0[diag4] > 0)
+				$gu0[certdiag4] = $ea0[diag4];
+
+			$formdata = explode(":",$certrow[certformdata]);
+			$gu0[certstatus] = $formdata[1];
+			if ($gu0[certstatus] == "1")  // initial cert
+				$gu0[certinitdate] = $this->CleanNumber($formdata[2]);
+			else // recert
+				$gu0[certrevdate] = $this->CleanNumber($formdata[3]);
+			$timeneeded = $formdata[4];
+			if ($timeneeded < 10) 
+				$timeneeded = "0".$timeneeded;
+			$gu0[certlenneed] = $timeneeded;
+			$gu0[certdatesig] = $this->CleanNumber($formdata[5]);
+			$gu0[certonfile] = $this->CleanChar($formdata[6]);
+			
+			if ($certrow[certformnum] == F0602) // TENS
+			{
+				$gu0[certformnum] = "0602";
+				$gu0[l1n2] = $this->CleanChar($formdata[10]);  // q3
+				$gu0[nl4n1] = $this->CleanNumber($formdata[11]);  // q4
+				$gu0[l1n3] = $this->CleanChar($formdata[12]);  // q5
+				$gu0[l1n4] = $this->CleanChar($formdata[13]);   // q6
+
+				if ($formdata[7] > 0)  // rental
+				{	
+					$gu0[l1n1] = $this->CleanChar($formdata[8]); // q1
+					$gu0[l8n1] = $this->CleanNumber($formdata[9]); // q2
+				}
+				else // purchase
+				{
+
+					$gu0[l1n5] = $this->CleanChar($formdata[14]);  // q7
+					$gu0[l8n2] = $this->CleanNumber($formdata[15]);  // q8a
+					$gu0[l8n3] = $this->CleanNumber($formdata[16]);  // q8b
+					$gu0[l8n4] = $this->CleanNumber($formdata[17]);  // q9
+					$gu0[l1n6] = $this->CleanChar($formdata[18]);  // q10
+					$gu0[l1n7] = $this->CleanChar($formdata[19]);  // q11
+					$gu0[l1n8] = $this->CleanChar($formdata[20]);  // q12
+					
+
+				}  // end rental?
+
+			} // end TENS form
+				
+
+			$buffer .= render_fixedRecord ($whichform,$this->record_types["fb1"]);
+			$buffer .= render_fixedRecord ($whichform,$this->record_types["gu0"]);
+		}  // end DMEPOS cert type
+	
+		return $buffer;	
+
+	} // end gencertrecords
 
 	function ClaimTrailer($procstack,$buffer)
 	{
@@ -1586,7 +1742,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <$STDFONT_B><B>"._("Generate Insurance Claim Forms")."</B><$STDFONT_E>
+		   <$STDFONT_B><B>"._("Generate NSF Medicare Claims")."</B><$STDFONT_E>
 		  </CENTER>
 		 </TD>
     	</TR>
@@ -1606,7 +1762,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
      	<TD ALIGN=LEFT>
       	<SELECT NAME=\"whichform\">
    		";
-	   $result = $sql->query ("SELECT * FROM fixedform WHERE id='3'");
+	   $result = $sql->query ("SELECT * FROM fixedform WHERE id='2'");
 							 //ORDER BY ffname, ffdescrip");
 	   while ($r = $sql->fetch_array ($result)) {
 		echo "
@@ -1629,7 +1785,27 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		<INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
        </TD>
     	</TR>
+		";
 
+		echo "
+		<TR>
+		 <TD ALIGN=RIGHT>
+		  <$STDFONT_B>"._("Userid")."<STDFONT_E></TD>
+		 <TD ALIGN=LEFT>
+		   <INPUT TYPE=TEXT NAME=\"userid\">
+		 </TD>
+		";
+
+		echo "
+		<TR>
+		 <TD ALIGN=RIGHT>
+		  <$STDFONT_B>"._("Password")."<$STDFONT_E></TD>
+		 <TD ALIGN=LEFT>
+		   <INPUT TYPE=PASSWORD NAME=\"password\">
+		 </TD>
+		";
+
+		echo "
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>

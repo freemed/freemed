@@ -36,6 +36,7 @@ class procedureModule extends freemedEMRModule {
             "procbilled",
             "procbillable",
             "procauth",
+            "proccert",
             "procrefdoc",
             "procrefdt",			
 			"proccurcovid",     
@@ -43,7 +44,8 @@ class procedureModule extends freemedEMRModule {
 			"proccov1",       
 			"proccov2",      
 			"proccov3",     
-			"proccov4"
+			"proccov4",
+			"procclmtp"
 		);    
 
 
@@ -83,6 +85,11 @@ class procedureModule extends freemedEMRModule {
 		$icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
 		$icd_result = $sql->query($icd_query);
 
+		$cert_query = "SELECT id,certdesc FROM certifications WHERE certpatient='$patient'";
+		$cert_result = $sql->query($cert_query);
+		$clmtype_query = "SELECT id,clmtpname,clmtpdescrip FROM claimtypes";
+		$clmtype_result = $sql->query($clmtype_query);
+
 
 		$auth_r_buffer = $this->GetAuthorizations($patient);
 
@@ -94,7 +101,7 @@ class procedureModule extends freemedEMRModule {
 							  "proccpt", "proccptmod", "procunits", 
 							  "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
 							  "procpos", "procvoucher","proccomment",
-								"procauth"),
+								"procauth","proccert","procclmtp"),
 							  date_vars("procdt"),date_vars("procrefdt")),
 		html_form::form_table ( array (
 		  _("Provider") =>
@@ -147,6 +154,8 @@ class procedureModule extends freemedEMRModule {
 			( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
 			$auth_r_buffer.
 			"</SELECT>\n",
+		  _("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
+		  _("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  _("Referring Provider") =>
 			freemed_display_selectbox (
 			  $sql->query("SELECT phylname,phyfname,id FROM physician 
@@ -168,6 +177,7 @@ class procedureModule extends freemedEMRModule {
 					array ("procdt_m", VERIFY_NONZERO, NULL, _("Must Specify proc Month")),
 					array ("procdt_d", VERIFY_NONZERO, NULL, _("Must Specify proc Day")),
 					array ("procpos", VERIFY_NONZERO, NULL, _("Must Specify Place of Service")),
+					array ("procclmtp", VERIFY_NONZERO, NULL, _("Must Specify Type of Claim")),
 					array ("proccpt", VERIFY_NONZERO, NULL, _("Must Specify Procedural code"))
 				 )
 		); // end of page one
@@ -233,13 +243,12 @@ class procedureModule extends freemedEMRModule {
 		   prepare($proccomment)
 		) ),
 			array (
-					// need to allow 0 values for non ins bills
 					array ("procbalorig", VERIFY_NONNULL, NULL, _("Must Specify Amount"))
 				)
 		);
 
 		// required to get the wizard to validate the previous (last) page
-		$wizard->add_page(_("Finish"),array("dummy"),"");
+		$wizard->add_page(_("Click Finish"),array("dummy"),"");
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
@@ -285,6 +294,7 @@ class procedureModule extends freemedEMRModule {
 					"procbilled"        =>  "0",
 					"procbillable",
 					"procauth",
+					"proccert",
 					"procrefdoc",
 					"procrefdt"         =>  fm_date_assemble("procrefdt"),
 					"proccurcovid"        =>  $proccurcovid,
@@ -292,7 +302,8 @@ class procedureModule extends freemedEMRModule {
 					"proccov1"        =>  $proccov1,
 					"proccov2"        =>  $proccov2,
 					"proccov3"        =>  $proccov3,
-					"proccov4"        =>  $proccov4
+					"proccov4"        =>  $proccov4,
+					"procclmtp"        =>  $procclmtp
 					)
 				);
 
@@ -403,11 +414,16 @@ class procedureModule extends freemedEMRModule {
 
 		$auth_r_buffer = $this->GetAuthorizations($patient);
 
+		$cert_query = "SELECT id,certdesc FROM certifications WHERE certpatient='$patient'";
+		$cert_result = $sql->query($cert_query);
+		$clmtype_query = "SELECT id,clmtpname,clmtpdescrip FROM claimtypes";
+		$clmtype_result = $sql->query($clmtype_query);
+
 		// ************** BUILD THE WIZARD ****************
 		$wizard = new wizard ( array ("been_here", "action", "patient", "id", "module") );
 
 		$wizard->add_page ("Step One",
-				array("proceoc", "proccomment", "procauth", "procvoucher"),
+				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
 			html_form::form_table ( array (
 		  _("Episode of Care") =>
 			freemed_multiple_choice ("SELECT * FROM eoc
@@ -426,6 +442,8 @@ class procedureModule extends freemedEMRModule {
 			( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
 			$auth_r_buffer.
 			"</SELECT>\n",
+		  _("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
+		  _("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  _("Comment") =>
 			"<INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"".prepare($proccomment)."\" ".
 			"SIZE=30 MAXLENGTH=512>\n"
@@ -447,6 +465,8 @@ class procedureModule extends freemedEMRModule {
 			proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
 			procvoucher     = '".addslashes($procvoucher).  "',
 			proccomment     = '".addslashes($proccomment).  "',
+			proccert        = '".addslashes($proccert).  "',
+			procclmtp       = '".addslashes($procclmtp).  "',
 			procauth        = '".addslashes($procauth).     "'".
 			" WHERE id='$id'";
 			$result = $sql->query ($query);

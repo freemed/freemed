@@ -8,6 +8,7 @@ include ("lib/freemed.php");
 include ("lib/API.php");
 include ("lib/module.php");
 include ("lib/module_emr.php");
+include ("lib/module_cert.php");
 include ("lib/module_emr_report.php");
 
 if ($id != $current_patient)
@@ -93,11 +94,11 @@ if ($id<1) {
         </TR>
        ";
       } // end of if, checking for custom records....
-      echo "
-        <TR><TD ALIGN=RIGHT>
-         <B>Dependent Information</B> : 
-        </TD><TD ALIGN=LEFT>
-     ";
+//      echo "
+//        <TR><TD ALIGN=RIGHT>
+//         <B>Dependent Information</B> : 
+//        </TD><TD ALIGN=LEFT>
+//     ";
 //      removed as part of coverage overhaul
 //     if (!$this_patient->isDependent()) {
 //      $dep_query = "SELECT COUNT(*) FROM patient WHERE ptdep='".
@@ -153,6 +154,31 @@ if ($id<1) {
 	$module_list = new module_list (PACKAGENAME, ".emr.module.php");
 	echo $module_list->generate_list ($category, 0, $template);
 
+    echo "
+		<TR><TD ALIGN=RIGHT>
+		<BR>
+    	<B>"._("Certifications")."</B>
+		<BR>
+    	</TD>
+	";
+	$category = "EMR Certifications";
+	$template = "
+        <TR><TD ALIGN=RIGHT>
+        <B>#name#</B> : 
+        </TD><TD> 
+        <A HREF=\"module_loader.php?module=#class#&action=addform&patient=$id\"
+         >"._("Add")."</A>
+        </TD><TD> 
+        <A HREF=\"module_loader.php?module=#class#&patient=$id\"
+         >"._("View/Manage")."</A>
+        </TD><TD>
+        </TD></TR>
+
+	";
+
+	$module_list = new module_list (PACKAGENAME, ".emr_report.module.php");
+	echo $module_list->generate_list ($category, 0, $template);
+	// end of loadable modules code
     echo "
 		<TR><TD ALIGN=RIGHT>
 		<BR>
