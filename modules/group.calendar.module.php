@@ -59,6 +59,7 @@ class groupCalendar extends freemedCalendarModule {
 
 		// Check for calendar deletions
 		if ($submit=="delappt") $this->delete_appt();
+		if ($submit=="delanesth") $this->delete_anesth();
 
 		// For extra space, turn off template
 		global $no_template_display; $no_template_display = true;
@@ -69,9 +70,14 @@ class groupCalendar extends freemedCalendarModule {
 		// Check for selected date
 		global $selected_date;
 		if (!isset($selected_date)) $selected_date = date("Y-m-d");
+		if (!isset($mark)) { global $mark; $mark = 0; }
 
 		// Set page title
 		global $page_title; $page_title = _("Group Calendar");
+
+		// Get facility for current room
+		global $my_facility;
+		$my_facility = $SESSION["default_facility"];
 
 		// Determine if a physician group is set, if not, default
 		global $group;
@@ -79,7 +85,7 @@ class groupCalendar extends freemedCalendarModule {
 			// Find first group that is defined for this fac
 			$query = "SELECT * FROM phygroup ".
 				"WHERE phygroupfac='".
-				addslashes($SESSION[default_facility])."'";
+				addslashes($my_facility)."'";
 			$result = $sql->query($query);
 			if ($sql->results($result)) {
 				$r = $sql->fetch_array($result);
@@ -106,6 +112,16 @@ class groupCalendar extends freemedCalendarModule {
 			$physicians[] = $phy;
 			} // end if phy>0
 		}
+
+		// Create "other" map
+		$map[0] = freemedCalendar::map(
+				"SELECT * FROM scheduler WHERE ".
+				"calphysician='0' AND ".
+				"caldateof='".addslashes($selected_date)."' "
+				//"AND calfacility='".
+				//addslashes($my_facility)."'"
+		);
+		$physicians[] = 0;
 
 		// Finally display the calendar
 		$display_buffer .= $this->displayCalendar($physicians, $map);
@@ -144,7 +160,7 @@ class groupCalendar extends freemedCalendarModule {
 		</TD></TR>
 		<TR><TD ALIGN=\"CENTER\" COLSPAN=\"2\">
 		<B>".fm_date_print($selected_date)."</B><BR>
-		<I>(".count($physicians)." "._("physicians").")</I>
+		<I>(".(count($physicians)-1)." "._("physicians").")</I>
 		</TD></TR>
 		<TR>
 		<TD>"._("Mark as")."</TD>
@@ -166,17 +182,51 @@ class groupCalendar extends freemedCalendarModule {
 		</TABLE>
 		</DIV>
 		<BR>
+		";
 
+		// Add anesthesia display if that module is installed
+		if (check_module("anesthCalendar")) {
+			// Check for someone covering this day
+			$anquery = "SELECT * FROM anesth WHERE ".
+				"andate='".addslashes($selected_date)."' AND ".
+				"anfacility='".addslashes($SESSION['default_facility'])."'";
+			$anresult = $sql->query($anquery);
+			if ($sql->results($anresult)) {
+				$buffer .= "<div CLASS=\"reverse\">\n".
+					"<b>"._("Anesthesiology Coverage").
+					"</b> : ";
+				unset($cov);
+				while ($anr = $sql->fetch_array($anresult)) {
+					$my_phy = new Physician($anr['anphysician']);
+					$cov[] = $my_phy->fullName().
+					"<A HREF=\"module_loader.php?".
+					"module=".urlencode($this->MODULE_CLASS)."&".
+					"action=".urlencode($action)."&".
+					"selected_date=".urlencode($selected_date)."&".
+					"group=".urlencode($group)."&".
+					"facility=".urlencode($my_facility)."&".
+					"id=".urlencode($my_phy->id)."&".
+					"submit=delanesth#hour".$c_hour."\"".
+					"><IMG SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\"></A>\n";
+				}
+				$buffer .= join(", ", $cov);
+				$buffer .= "</div>\n";
+			}
+		}
+
+		$buffer .= "
 		<!-- full calendar -->
-		<DIV ALIGN=\"CENTER\">
-		<TABLE WIDTH=\"100%\" CELLSPACING=\0\" CELLPADDING=\"2\" ".
+		<div ALIGN=\"CENTER\">
+		<table WIDTH=\"100%\" CELLSPACING=\0\" CELLPADDING=\"2\" ".
 		"BORDER=\"0\" CLASS=\"calendar\">
 		<TR><TD COLSPAN=\"2\">&nbsp;</TD>
 		";
 		foreach ($physicians AS $k => $v) {
-			$p[$k] = new Physician($v);
-			$buffer .= "<TD ALIGN=\"CENTER\"><B>".
-				$p[$k]->fullName()."</B></TD>\n";
+			if ($k != -1) $p[$k] = new Physician($v);
+			$buffer .= "<td ALIGN=\"CENTER\"><b>".
+				($v!=0 ? $p[$k]->fullName() : _("Other") ).
+				//$p[$k]->fullName().
+				"</b></td>\n";
 		}
 		$buffer .= "</TR>\n";
 
@@ -237,7 +287,7 @@ class groupCalendar extends freemedCalendarModule {
 							if (freemedCalendar::map_fit(
 									$map[$this_phy],
 									$idx,
-									$k)) {
+									$k)) { 
 								$buffer .= "<A HREF=\"".
 									"module_loader.php?".
 									"module=".$this->MODULE_CLASS."&".
@@ -251,7 +301,7 @@ class groupCalendar extends freemedCalendarModule {
 									"submit=travelbook#hour".
 									$c_hour."\"".
 									"><IMG SRC=\"lib/template/$template/img/cal_".
-									$v.".png\" BORDER=\"0\"></A>\n";
+									$v.".png\" BORDER=\"0\"></A>";
 							} // end if fit
 						} // end foreach
 						$buffer .= "</TD>\n";
@@ -281,6 +331,18 @@ class groupCalendar extends freemedCalendarModule {
 
 	// ----- "sub-action" section
 
+	function delete_anesth() {
+		// Globalize
+		foreach ($GLOBALS AS $k => $v) global ${$k};
+
+		// Delete selected entry
+		$query = "DELETE FROM anesth ".
+			"WHERE andate='".addslashes($selected_date)."' AND ".
+			"anphysician='".addslashes($id)."' AND ".
+			"anfacility='".addslashes($facility)."'";
+		$result = $sql->query($query);
+	} // end function groupCalendar->delete_anesth
+
 	function delete_appt() {
 		// Globalize
 		foreach ($GLOBALS AS $k => $v) global ${$k};
@@ -300,7 +362,7 @@ class groupCalendar extends freemedCalendarModule {
 			return freemed::config_value("cal".${$var});
 			break;
 
-			default: print "var ($var) = ${$var}<BR>\n"; return _("Travel"); break;
+			default: return _("Travel"); break;
 		}
 
 	} // end function groupCalendar->mark_lookup
@@ -319,7 +381,10 @@ class groupCalendar extends freemedCalendarModule {
 				"calduration" => $duration,
 				"calhour" => $hour,
 				"calminute" => $minute,
-				"calfacility" => "0",
+				"calfacility" => ( 
+					$physician==0 ?
+					$my_facility :
+					"0" ),
 				"calroom" => "0",
 				"calpatient" => "0",
 				"calprenote" => $this->mark_lookup("mark"),
