@@ -16,6 +16,7 @@ if ($patient>0) {
 	$this_patient = new Patient ($patient, ($type=="temp"));
 } elseif ($SESSION["current_patient"]>0) {
 	$this_patient = new Patient ($SESSION["current_patient"]);
+	$type = "pat"; // kludge to keep real patient for this
 }
 
 if (strlen($selected_date)!=10) {
