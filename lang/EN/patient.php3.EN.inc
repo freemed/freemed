@@ -57,6 +57,8 @@
   $UNKNOWN                       = "UNKNOWN";
   $Yes                           = "yes";
   $No                            = "no";
+  $PartTimeStudent               = "Part Time Student";
+  $FullTimeStudent               = "Full Time Student";
   $Adding_patient                = "Adding Patient";
   $ADDING                        = "Adding";
   $Query_result                  = "Query result";

@@ -149,7 +149,7 @@
       Added denial.
      </CENTER>
     ";
-    if ($denial_rebill == "yes") {
+    if ($denial_resubmit == "yes") {
       $query = "UPDATE procrec
                 SET procbilled='0'
                 WHERE id='".addslashes($item)."'";

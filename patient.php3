@@ -233,7 +233,7 @@ switch ($action) {
 	_("Separated") => "separated",
 	_("Widowed")   => "widowed") )."
   </TD></TR>
-
+	
   <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Social Security Number")." : <$STDFONT_E>
   </TD><TD ALIGN=LEFT>

@@ -13,3 +13,11 @@ freemed project changelog
   - now processes lang/registry, ignoring comment lines
   - added lang/registry to replace old language registry system
   - started new changelog
+* Fri Nov 17 2000 fforest - 0.2.0
+  - Fixed bug in manage_payment. rebill broken
+  - enhanced HFCA fixedform
+  - generate_fixed_forms can print a 1500 form
+  - code in billing_functions started for a better bill viewing experience.
+  - admin.php. removed create/drop db. not secure. added drop table for each table.
+    reapplied the db fields removed in 0.2.0 to ease conversion from 0.1.0
+    made reloading stock data optional. (also for migration).

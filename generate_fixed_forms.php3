@@ -26,6 +26,35 @@
    $counter = 0;
    $current_patient = 0;
 
+//
+   // procduce a list only. Don't acutally process any bills
+   if ($listonly == "yes")
+   {
+        $b_result = fdb_query ("SELECT DISTINCT procpatient
+                           FROM procrec
+                           WHERE (
+                                procbalcurrent > 0
+                           ) ORDER BY procpatient");
+
+        // loop for all patients
+        while ($b_r = fdb_fetch_array ($b_result))
+        {
+
+                // pull current patient
+                $current_patient = $b_r[procpatient];
+
+                // get current patient information
+                $this_patient = new Patient ($current_patient);
+                echo "<A HREF=\"manage_payment_records.php3?ref=$page_name&patient=$current_patient\">Manage</A> ";
+                echo "<B>".$this_patient->fullName()."</B>";
+                echo "<BR>\n\n";
+                //flush ();
+        }
+
+        break;
+   }
+//
+
    // get list of all patient who need to be billed
    $b_result = fdb_query ("SELECT DISTINCT payrecpatient
                            FROM payrec
@@ -52,6 +81,7 @@
      freemed_display_html_bottom ();
      DIE(""); // kill! kill! kill!
    } // if there is no result, end
+
 
    // zero form buffer
    $form_buffer = "";
@@ -191,10 +221,11 @@
 
      // employment status
      $ptemployed[yes] =
-       ( ($this_patient->isEmployed) ?
+       ( ($this_patient->ptempl == "y") ?
           $this_form[ffcheckchar] : " " );
+     // no is not an option here. should be partime/fulltime student FIXME !!!
      $ptemployed[no] =
-       ( !($this_patient->isEmployed) ?
+       ( !($this_patient->ptempl == "n") ?
           $this_form[ffcheckchar] : " " );
 
      // address information
@@ -314,11 +345,16 @@
        unset ($guaraddr);
        unset ($guardob);
        unset ($guarsex);
+       unset ($guarphone);
      } else {
        // if it is someone else, get *their* information
        $guarname[last]    = $guarantor->local_record["ptlname"];
        $guarname[first]   = $guarantor->local_record["ptfname"];
        $guarname[middle]  = $guarantor->local_record["ptmname"];
+       $guardob[full]     = $guarantor->local_record["ptdob"  ];
+       $guardob[month]      = substr ($guardob[full], 5, 2);  
+       $guardob[day]        = substr ($guardob[full], 8, 2);  
+       $guardob[year]       = substr ($guardob[full], 0, 4);
        $guarsex[male]     = ( ($guarantor->ptsex == "m") ?
                                $this_form[ffcheckchar] : " " );
        $guarsex[female]   = ( ($guarantor->ptsex == "f") ?
@@ -330,6 +366,7 @@
        $guaraddr[city]    = $guarantor->local_record["ptcity"   ];
        $guaraddr[state]   = $guarantor->local_record["ptstate"  ];
        $guaraddr[zip]     = $guarantor->local_record["ptzip"    ];
+       $guarphone[full]   = $guarantor->local_record["pthphone" ];
 
        $insco[number]     = $guarantor->local_record["ptinsno".
                             ($b_r[payreclink]+1)];
@@ -364,8 +401,40 @@
      $diag_set = new diagnosisSet ();
 
      // queue all entries
+     $first_procedure = 0;
      while ($r = fdb_fetch_array ($result)) {
        $p = freemed_get_link_rec ($r[payrecproc], "procrec");
+        // kludge to get eoc info from procedure. 
+	if (first_procedure == 0)
+        {
+           $eocs = explode (":", $p[proceoc]);
+           if ($eocs[0])
+           {
+                $eoc = freemed_get_link_rec ($eocs[0], "eoc");
+                // what is this related to?
+                $employment = $eoc[eocrelemp];
+                $related_employment[yes] =
+                   ( ( $employment == "yes" ) ? $this_form[ffcheckchar] : " " );
+                $related_employment[no]  =
+                   ( ( $employment == "no" ) ? $this_form[ffcheckchar] : " " );
+                $auto = $eoc[eocrelauto];
+                $related_auto[yes] =
+                   ( ( $auto == "yes" ) ? $this_form[ffcheckchar] : " " );
+                $related_auto[no]  =
+                   ( ( $auto == "no" ) ? $this_form[ffcheckchar] : " " );
+                $related_auto[state] =    
+                   ( ( $auto == "yes" ) ? $eoc[eocrelautostpr] : "  " );
+                $other = $eoc[eocrelother];
+                $related_other[yes] =
+                   ( ( $other == "yes" ) ? $this_form[ffcheckchar] : " " );
+                $related_other[no] =
+                   ( ( $other == "no" ) ? $this_form[ffcheckchar] : " " );
+                $first_procedure = 1;
+                if ($debug) echo "\n$employment $auto $other<BR>\n";
+
+
+           }
+         }
        if ($debug) echo "\n"._("Retrieved procedure")." $r[payrecproc] <BR>\n";
        flush();
 
@@ -433,6 +502,7 @@
                       $cur_cpt[cptdeftos] :
                       $tos_stack[$cur_insco] );
        $this_auth = freemed_get_link_rec ($p[procauth], "authorizations");
+       $authorized[authnum] = $this_auth[authnum];
 
        if ($p[procrefdoc]>0) {
          $ref_physician  = new Physician ($p[procrefdoc]);
