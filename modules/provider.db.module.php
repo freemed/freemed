@@ -71,7 +71,7 @@ class ProviderModule extends MaintenanceModule {
 		'zip' => 'phyzipa',
 		'practice' => 'phypracname'
 	);
-	var $widget_hash = '##phylname##, ##phyfname## ##phymname##';
+	var $widget_hash = '##phylname##, ##phyfname## ##phymname## (##phypracname##)';
 
 	function ProviderModule () {
 		// Table definition
