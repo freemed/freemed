@@ -21,6 +21,13 @@ class EMRModule extends BaseModule {
 	var $form_vars;
 	var $table_name;
 
+	// Variable: disable_patient_box
+	//
+	//	Whether or not to disable the patient box display at
+	//	the top of the screen. Defaults to false.
+	//
+	var $disable_patient_box = false;
+
 	// Variable: patient_field
 	//
 	//	Field name that describes the patient. This is used by
@@ -46,6 +53,22 @@ class EMRModule extends BaseModule {
 	//
 	var $display_format;
 
+	// Variable: summary_order_by
+	//
+	//	The order in which the EMR summary items are displayed.
+	//	This is passed verbatim to an SQL "ORDER BY" clause, so
+	//	DESC can be used. Defaults to 'id' if nothing else is
+	//	specified.
+	//
+	// Example:
+	//
+	//	$this->summary_order_by = 'eocdtlastsimilar, eocstate DESC';
+	//
+	// See Also:
+	//	<summary>
+	//
+	var $summary_order_by = 'id';
+
 	// contructor method
 	function EMRModule () {
 		// Check for patient, if so, then set _ref appropriately
@@ -53,11 +76,6 @@ class EMRModule extends BaseModule {
 			$GLOBALS['_ref'] = "manage.php?id=".urlencode($GLOBALS['patient']);
 		}
 
-		// summary_order_by
-		if (!isset($this->summary_order_by)) {
-			$this->summary_order_by = 'id';
-		}
-	
 		// Call parent constructor
 		$this->BaseModule();
 	} // end function EMRModule
@@ -254,9 +272,16 @@ class EMRModule extends BaseModule {
 	// function add
 	// - addition routine
 	function add () { $this->_add(); }
-	function _add () {
+	function _add ($_param = NULL) {
 		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global ${$k};
+
+		if (is_array($_param)) {
+			foreach ($_param AS $k => $v) {
+				global ${$k};
+				${$k} = $v;
+			}
+		}
 
 		$result = $sql->query (
 			$sql->insert_query (
@@ -265,8 +290,13 @@ class EMRModule extends BaseModule {
 			)
 		);
 
-		if ($result) $this->message = __("Record added successfully.");
-		 else $this->message = __("Record addition failed.");
+		if ($result) {
+			$this->message = __("Record added successfully.");
+			if (is_array($_param)) { return true; }
+		} else {
+			$this->message = __("Record addition failed.");
+			if (is_array($_param)) { return false; }
+		}
 		$this->view(); $this->display_message();
 
 		// Check for return to management screen
@@ -279,9 +309,12 @@ class EMRModule extends BaseModule {
 	// function del
 	// - delete function
 	function del () { $this->_del(); }
-	function _del () {
+	function _del ($_id = -1) {
 		global $display_buffer;
 		global $id, $sql;
+
+		// Pull from parameter, if given
+		if ($_id > 0) { $id = $_id; }
 
 		// Check for record locking
 		if ($this->locked($id)) return false;
@@ -289,8 +322,13 @@ class EMRModule extends BaseModule {
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) $this->message = __("Record deleted successfully.");
-		 else $this->message = __("Record deletion failed.");
+		if ($result) {
+			$this->message = __("Record deleted successfully.");
+			if ($_id > 0) { return true; }
+		} else {
+			$this->message = __("Record deletion failed.");
+			if ($_id > 0) { return false; }
+		}
 		$this->view(); $this->display_message();
 
 		// Check for return to management screen
@@ -303,12 +341,19 @@ class EMRModule extends BaseModule {
 	// function mod
 	// - modification function
 	function mod () { $this->_mod(); }
-	function _mod () {
+	function _mod ($_param = NULL) {
 		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 
 		// Check for record locking
 		if ($this->locked($id)) return false;
+
+		if (is_array($_param)) {
+			foreach ($_param AS $k => $v) {
+				global ${$k};
+				${$k} = $v;
+			}
+		}
 
 		$result = $sql->query (
 			$sql->update_query (
@@ -319,8 +364,13 @@ class EMRModule extends BaseModule {
 				)
 			)
 		);
-		if ($result) $this->message = __("Record modified successfully.");
-		 else $this->message = __("Record modification failed.");
+		if ($result) {
+			$this->message = __("Record modified successfully.");
+			if (is_array($_param)) { return true; }
+		} else {
+			$this->message = __("Record modification failed.");
+			if (is_array($_param)) { return false; }
+		}
 		$this->view(); $this->display_message();
 
 		// Check for return to management screen
