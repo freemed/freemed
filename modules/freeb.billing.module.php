@@ -60,6 +60,10 @@ class FreeBBillingTransport extends BillingModule {
 				return $this->rebillkey();
 				break;
 
+			case 'reports':
+				return $this->reports();
+				break;
+
 			// By default, we show the form with information
 			// regarding what is going on.
 			default:
@@ -330,13 +334,41 @@ class FreeBBillingTransport extends BillingModule {
 			"&billing_action=billing&action=type\"
 			>".__("Perform Billing")."</a></td>
 		<td>
-		Perform FreeB billing runs.
+		".__("Perform FreeB billing runs.")."
+		</td>
+		</tr>
+
+		<tr>
+		<td>
+		<a href=\"billing_functions.php?type=".get_class($this).
+			"&billing_action=reports&action=type\"
+			>".__("Show Reports")."</a></td>
+		<td>
+		".__("View output files and logs from FreeB.")."
 		</td>
 		</tr>
 		</table>
 		";
 		return $buffer;
 	} // end method menu
+
+	function reports ( ) {
+		// This is all a horrible hack, and should be managed by XMLRPC
+		// calls in future. - Jeff
+		$buffer = '';
+		$dir = opendir('/usr/share/freeb/public');
+		while ($filename = readdir($dir)) {
+			if ( ($filename != '.') and
+					($filename != '..') and
+					($filename != 'CVS') ) {
+
+				$buffer .= "<a href=\"/freeb/".
+					urlencode($filename) . "\">".
+					prepare($filename) . "</a><br/>\n";
+			}
+		}
+		return $buffer;
+	} // end method reports
 
 	function process ( $single = NULL ) {
 		$buffer .= __("Submitting data to FreeB server")." ... <br/>\n"; 		
