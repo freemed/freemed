@@ -43,6 +43,7 @@ class Images {
 		$date = $params["date"];
 		$category = $params["category"];
 		$desc = $params["description"];
+		$color = ( isset($params["color"]) ? $params['color'] : false );
 
 		// If everything worked, return true
 		if ($patient_id < 1) {
@@ -64,6 +65,7 @@ class Images {
 				"imagedesc" => $desc
 			)
 		);
+		//print "query = $query\n";
 		$result = $sql->query($query);
 	
 		// Set names properly
@@ -91,19 +93,20 @@ class Images {
 				"\"".$tempname.".pbm\"";
 			//print "PBM: $command\n";
 			exec($command);
-			//syslog(LOG_INFO,"XMLRPC|$command");	
+			syslog(LOG_INFO,"XMLRPC|$command");	
 			//if (!file_exists($tempname.".pbm")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
 			//unlink($tempname.".jpg");
 			
 			// Convert to DJVU
 			//$command = `which cjb2`." ".
-			$command = "/usr/bin/cjb2 ".
+			$command = "/usr/bin/".
+				( $color ? 'c44' : 'cjb2' )." ".
 				"\"".$tempname.".pbm\" ".
 				"\"".$tempname.".djvu\"";
 			//print "DJVU: $command\n";
-			//syslog(LOG_INFO,"XMLRPC|$command");	
+			syslog(LOG_INFO,"XMLRPC|$command");	
 			exec($command);
-			//if (!file_exists($tempname.".djvu")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
+			if (!file_exists($tempname.".djvu")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
 			//unlink($tempname.".pbm");
 	
 			// Add to stack	
@@ -120,7 +123,7 @@ class Images {
 				)
 			);
 		exec ($mkdir_command);
-		//syslog(LOG_INFO,"XMLRPC|$mkdir_command");	
+		syslog(LOG_INFO,"XMLRPC|$mkdir_command");	
 	
 		// Compile into DJVU final file
 		//$command = `which djvm`.' -c '.PHYSICAL_LOCATION.'/'.
@@ -132,8 +135,8 @@ class Images {
 			).'" '.join (' ', $djvu);
 		//print "command = $command\n";
 		exec($command);
-		//syslog(LOG_INFO,"XMLRPC|$command");	
-		//if (!file_exists(freemed::image_filename($patient_id, $last_record, 'djvu'))) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
+		syslog(LOG_INFO,"XMLRPC|$command");	
+		if (!file_exists(freemed::image_filename($patient_id, $last_record, 'djvu'))) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
 
 		// Just in cast the prefix is a file, kill that too...
 		//@unlink($tempname);
