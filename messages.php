@@ -30,8 +30,12 @@ if ($_REQUEST['submit_action']==__("Cancel")) {
 		die("");
 	}
 }
-if ($_REQUEST['submit_action']==__("Mark as Read")) { $action = "del"; }
-if ($_REQUEST['submit_action']==__("Delete Marked Messages")) { $action = "remove"; }
+if ($_REQUEST['submit_action']==__("Mark as Read")) {
+	$action = "del";
+}
+if ($_REQUEST['submit_action']==__("Delete Marked Messages")) { 
+	$action = "remove";
+}
 
 switch ($action) {
 
@@ -192,11 +196,23 @@ switch ($action) {
 
 	case "del": case "delete":
 	// Perform "deletion" (marking as read)
-	$result = $sql->query($sql->update_query(
+	if ($_REQUEST['id'] > 0) {
+		$result = $sql->query($sql->update_query(
 			'messages',
 			array('msgread' => '1'),
-			array('id' => $id)
+			array('id' => $_REQUEST['id'])
 		));
+	} elseif (is_array($_REQUEST['mark'])) {
+		foreach ($_REQUEST['mark'] AS $v) {
+			$result = $sql->query($sql->update_query(
+				'messages',
+				array('msgread' => '1'),
+				array('id' => $v)
+			));
+		}
+	} else {
+		$display_buffer .= __("There is nothing to mark as read.");
+	}
 
 	// Check if we return to management
 	if ($return=="manage") {
