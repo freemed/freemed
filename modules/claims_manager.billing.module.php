@@ -17,6 +17,7 @@ class ClaimsManager extends BillingModule {
 		// Add appropriate handler information
 		$this->_SetHandler('BillingFunctions', 'search_form');
 		$this->_SetMetaInformation('BillingFunctionName', __("Claims Manager"));
+		$this->_SetMetaInformation('BillingFunctionDescription', __("Manage outstanding claims and view aging information."));
 
 		// Call parent constructor
 		$this->BillingModule();
@@ -30,6 +31,7 @@ class ClaimsManager extends BillingModule {
 		// Switchboard
 		switch ($_REQUEST['submit_action']) {
 			case __("Aging Summary"):
+			unset($_REQUEST['criteria']);
 			return $this->aging_summary( );
 			break; // aging summary
 
