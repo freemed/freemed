@@ -3,48 +3,44 @@ $Author$
 ..........................................................................
 
 This is a brief HOWTO concerning language translations for FreeMED using
-GNU gettext. Please consult the GNU's page (http://www.gnu.org/) concerning
-gettext if you have any other questions.
+GettextXML. This is an XML-based format which resembles GNU gettext in
+many aspects.
 
 INITIAL TRANSLATION-------------------------------------------------------
 
-First, fetch a CVS version of po/freemed.pot from the CVS repository. There
-are instructions on how to do this on the project page on sourceforge, at
-http://sourceforge.net/projects/freemed/ .
+TODO: Explain how to generate template files from CVS.
 
-Copy this file from po/freemed.pot to (language).po . Please note that
-(language) is the two letter abbreviation for your language.
+Assign a language abbreviation:
 
 Examples:
+	en = English
 	es = Espagnole
 	de = Deutche
 	et cetera
 
-You can then use either a text editor or a tool like poEdit
-(http://poedit.sourceforge.net/), which works under both Linux and Windows.
+The language files are in this format:
 
-If you choose to use a text editor, be sure to put the translations in
-the msgstr fields, not in the msgid fields.
+<?xml version="1.0">
+<GettextXML>
 
-Send this translation to dr_gnu@ourexchange.net or jeff@ourexchange.net so
+	<Information>
+
+	</Information>
+
+	<Translation>
+		<Original>original</Original>
+		<Translated>translated</Translated>
+	</Translation>
+
+</GettextXML>
+
+You can then use either a text editor or an XML tool.
+
+Send this translation to irv@ourexchange.net or jeff@ourexchange.net so
 that it is included in the distribution. Please ZIP or tarball it prior
 to transmission.
 
 REVISED TRANSLATIONS------------------------------------------------------
 
-This is a bit trickier than initial translations. You have to take your
-old translation ((language).po) and combine it with the new po template
-(po/freemed.pot) in the repository. You have to have GNU gettext installed
-on your system to be able to revise translations.
-
-First, grab the new version of the template from the repository, as
-explained above.
-
-Then use msgmerge to combine them, like so (example for Espagnole):
-	msgmerge freemed.pot es.po > new.po
-
-The new file that is created should have all of your previous translations
-and blank fields for the new phrases to be translated. You can move
-new.po to replace your old .po file when you are satisfied that it was
-properly merged.
+TODO: Explain this, since it isn't the same as GNU gettext.
 
