@@ -357,6 +357,7 @@ if ($action=="cfgform") {
     phyrefamt    REAL,
     phyrefcoll   REAL,
     phychargemap TEXT,
+    phyidmap     TEXT,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
@@ -473,6 +474,7 @@ if ($action=="cfgform") {
     procbalcurrent         REAL,
     procamtpaid            REAL,
     procbilled             INT UNSIGNED,
+    procbillable           INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
@@ -1088,6 +1090,26 @@ if ($action=="cfgform") {
      PRIMARY KEY (id)
      );");
   if ($result) echo "<LI>patient images db \n";
+
+  $result = fdb_query ("CREATE TABLE $database.authorizations (
+     authdtadd                 DATE,
+     authdtmod                 DATE,
+     authpatient               INT UNSIGNED,
+     authdtbegin               DATE,
+     authdtend                 DATE,
+     authnum                   VARCHAR(25),
+     authtype                  INT UNSIGNED,
+     authprov                  INT UNSIGNED,
+     authprovid                VARCHAR(20),
+     authinsco                 INT UNSIGNED,
+     authvisits                INT UNSIGNED,
+     authvisitsused            INT UNSIGNED,
+     authvisitsremain          INT UNSIGNED,
+     authcomment               VARCHAR(100),
+     id                        INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );";
+  if ($result) echo "<LI>authorizations db \n";
 
   echo "</UL><B>done</B><$STDFONT_E><BR>\n";
   
