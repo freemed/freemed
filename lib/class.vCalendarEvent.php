@@ -26,6 +26,7 @@ class vCalendarEvent {
 		}
 
 		// Parse out from the array
+		$this->event = $event;
 		$this->hour = $event['calhour'];
 		$this->minute = $event['calminute'];
 		$this->duration = $event['calduration'];
@@ -66,8 +67,8 @@ class vCalendarEvent {
 	function description ( ) {
 		// Get patient information
 		$patient = CreateObject('FreeMED.Patient', $this->patient);
-		$buffer .= __("Patient").": ".$patient->fullName()."\n";
-//		$buffer .= __("Facility").": ".		
+		$buffer .= $patient->fullName()." (".
+			$patient->local_record['ptid'].")\n";
 		return $this->_txt2vcal($buffer);
 	} // end method vCalendarEvent->description
 

@@ -45,9 +45,34 @@ function freemed_basic_auth () {
 	return $authed;
 } // function freemed_basic_auth
 
-// Check for basic authentication
-if (!freemed_basic_auth()) {
-	die("Not authorized.");
+function freemed_get_auth ( ) {
+	global $sql;
+	syslog(LOG_INFO, "XMLRPC [get] username = ".$_GET['user']);
+	$query = "SELECT username, userpassword, userrealphy, id FROM user ".
+		"WHERE username='".addslashes($_GET['user'])."' AND ".
+		"userpassword='".addslashes($_GET['hash'])."'";
+	$result = $sql->query($query);
+	if (@$sql->num_rows($result) == 1) {
+		$authed = true;
+		$r = $sql->fetch_array($result);
+		$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
+		$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
+		return true;
+	} else {
+		// Clear basic auth id
+		$authed = false;
+		$GLOBALS['__freemed']['basic_auth_id'] = 0;
+		$GLOBALS['__freemed']['basic_auth_phy'] = 0;
+		return false;
+	}
+	return false;
+} // end function freemed_get_auth
+
+// Check for GET, then basic authentication
+if (!freemed_get_auth()) {
+	if (!freemed_basic_auth()) {
+		die("Not authorized.");
+	}
 }
 
 // Intelligently decide which physician to use
@@ -57,6 +82,20 @@ $__phy = ( ($_REQUEST['physician'] > 0) ?
 
 // Figure out name, etc
 switch ($_REQUEST['type']) {
+	case 'fromdate':
+	if ($__phy > 0) {
+		// Assume that it's for a physician
+		$ts = mktime (0,0,0, $_REQUEST['m'], $_REQUEST['d'], $_REQUEST['y']);
+		$physician = CreateObject('FreeMED.Physician', $__phy);
+		$name = $physician->fullName();
+		$criteria = "calphysician='".addslashes($__phy)."' AND ".
+			"caldateof >= '".date("Y-m-d", $ts)."'";
+		$stamp = date("Ymd", $ts) . '.' . $__phy;
+	} else {
+		die('Not enough information provided.');
+	}
+	break;
+
 	default:
 	if ($__phy > 0) {
 		// Assume that it's for a physician
