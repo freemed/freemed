@@ -220,13 +220,13 @@ class TeX {
 
 		// Send data to $tmp.ltx
 		$fp = fopen ($tmp.'.ltx', 'w');
-		fwrite ($fp, $buffer);
+		fwrite ($fp, $buffer, strlen($buffer));
 		fclose ($fp);
 
 		// Execute pdflatex rendering
 		// (twice for appropriate page numbering)
-		`( cd /tmp; pdflatex $tmp.ltx $tmp.pdf )`;
-		`( cd /tmp; pdflatex $tmp.ltx $tmp.pdf )`;
+		`( cd /tmp; pdflatex "$tmp.ltx" "$tmp.pdf" )`;
+		`( cd /tmp; pdflatex "$tmp.ltx" "$tmp.pdf" )`;
 
 		// Remove intermediary step file(s)
 		unlink($tmp);
@@ -416,10 +416,11 @@ class TeX {
 		$string = str_replace('{', '\{', $string);
 		$string = str_replace('}', '\}', $string);
 
-		// Get rid of #, _, %
+		// Get rid of #, _, %, +
 		$string = str_replace('#', '\#', $string);
 		$string = str_replace('_', '\_', $string);
 		$string = str_replace('%', '\%', $string);
+		$string = str_replace('+', '$+$', $string);
 
 		// Deal with amphersands, and &quot; &amp; stuff
 		$string = str_replace('&quot;', '\'\'', $string);
