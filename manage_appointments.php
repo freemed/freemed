@@ -46,43 +46,42 @@ if ($patient<1) {
    break; // end delete appointment section
   default: // default action is to view appointments
    // grab patient information
-   $this_patient = new Patient ($patient);
+   $this_patient = CreateObject('FreeMED.Patient', $patient);
 
    // display top of the box
    $page_title = _("Manage Appointments");
    $display_buffer .= freemed_patient_box($this_patient)."
-     <P>
-     <CENTER>
+     <p/>
+     <div ALIGN=\"CENTER\">
       <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
        >"._("Book Appointment")."</A> |
       <A HREF=\"manage.php?id=$patient\"
        >"._("Manage Patient")."</A>
-     </CENTER>
-     <P>
+     </div>
+     <p/>
     ";
 
    // form the query
    $query = "SELECT * FROM scheduler WHERE (
-             (caldateof  >= '$cur_date' ) AND
-             (calpatient =  '$patient'  ) AND
-             (caltype    =  'pat'       ) )
+             (caldateof  >= '".addslashes($cur_date)."' ) AND
+             (calpatient =  '".addslashes($patient)."'  ) AND
+             (caltype    =  'pat'                       ) )
              ORDER BY caldateof, calhour, calminute";
 
    // submit the query
    $result = $sql->query ($query);
 
    // check for results
-   if ($sql->num_rows($result) < 1) {
+   if (!$sql->results($result)) {
      $display_buffer .= "
-       <P>
-       <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=2 CELLPADDING=2
-        BORDER=0 VALIGN=CENTER ALIGN=CENTER><TR><TD BGCOLOR=#000000
+       <p/>
+       <table WIDTH=\"100%\" CLASS=\"reverse\" CELLSPACING=\"2\"
+        CELLPADDING=\"2\" BORDER=\"0\" VALIGN=\"CENTER\"
+        ALIGN=\"CENTER\"><TR><TD CLASS=\"reverse\"
         ALIGN=CENTER VALIGN=CENTER>
-        <FONT COLOR=\"#ffffff\">
 	"._("This patient has no appointments.")."
-	</FONT>
-       </TD></TR></TABLE>
-       <P>
+       </td></tr></table>
+       <p/>
        <CENTER>
        <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
         >"._("Book Appointment")."</A> |
@@ -94,17 +93,18 @@ if ($patient<1) {
    } else { // if there are results...
 
      // first display the top of the table
+     $bar_start_color = "cell"; $bar_alt_color = "cell_alt";
      $_alternate = freemed_bar_alternate_color ($_alternate);
      $display_buffer .= "
-       <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3 BGCOLOR=#000000
-        BORDER=0><TR>
-        <TD><FONT COLOR=\"#cccccc\">"._("Date")."</FONT></TD>
-        <TD><FONT COLOR=\"#cccccc\">Time/Duration</FONT></TD>
-        <TD><FONT COLOR=\"#cccccc\">Location</FONT></TD>
-        <TD><FONT COLOR=\"#cccccc\">Note</FONT></TD>
-        <TD><FONT COLOR=\"#cccccc\">CPT Code</FONT></TD> 
-        <TD><FONT COLOR=#cccccc>"._("Action")."</FONT></TD> 
-       </TR>
+       <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"3\"
+        CLASS=\"reverse\" BORDER=\"0\"><tr>
+        <td>"._("Date")."</td>
+        <td>"._("Time/Duration")."</td>
+        <td>"._("Location")."</td>
+        <td>"._("Note")."</td>
+        <td>"._("CPT Code")."</td> 
+        <td>"._("Action")."</td> 
+       </tr>
       ";
 
      // loop for all occurances in calendar db
@@ -133,14 +133,15 @@ if ($patient<1) {
        if (($minutes+0)==0)    $minutes="00";   // fix for 0 not 00
        if (($calminute+0)==0)  $calminute="00"; // same as above
 
-       if (($calcptcode+0)==0) $calcptcode="<B>$NONE_SELECTED</B>";
+       if (($calcptcode+0)==0) $calcptcode="<b>"._("NONE SELECTED")."</b>";
 
        // actual display
        $display_buffer .= "
-        <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
+        <TR CLASS=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
          <TD>$caldateof</TD>
-         <TD><CENTER>$calhour:$calminute<BR>
-             ($hours h $minutes m)<CENTER></TD>
+         <TD ALIGN=\"CENTER\">".freemedCalendar::display_time(
+		$calhour,$calminute)."<BR>
+             (".$hours."h ".$minutes."m)</TD>
          <TD>".( !empty($location)   ? $location   : "&nbsp;" )."</TD>
          <TD>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</TD>
          <TD>$calcptcode</TD>
@@ -152,15 +153,15 @@ if ($patient<1) {
 
      // bottom of the table
      $display_buffer .= "
-       </TABLE>
-       <P>
-       <CENTER>
+       </table>
+       <p/>
+       <div ALIGN=\"CENTER\">
         <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
          >"._("Book Appointment")."</A> |
         <A HREF=\"manage.php?id=$patient\"
          >"._("Manage Patient")."</A>
-       </CENTER>
-       <P>
+       </div>
+       <p/>
       ";
 
    } // end checking for results (if)
@@ -168,5 +169,7 @@ if ($patient<1) {
    break;
  } // end master switch
 
+//----- Display template
 template_display();
+
 ?>
