@@ -112,9 +112,9 @@ foreach ($static_components AS $garbage => $component) {
 			<SELECT NAME=\"form\">
 			";
 			while ($f_r = $sql->fetch_array ($f_results)) 
-			$display_buffer .= "<OPTION VALUE=\"".$f_r["id"]."\">".
-				$f_r["prtname"]."\n";
-			$display_buffer .= "
+			$panel[_("Custom Records")] .= "<OPTION VALUE=\"".$f_r["id"]."\">".
+				$f_r["prtname"]."\n"; 
+			$panel[_("Custom Records")] .= "
 				</SELECT>
 				<INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
 				</FORM>
