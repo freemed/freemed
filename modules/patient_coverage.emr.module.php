@@ -199,7 +199,7 @@ class PatientCoveragesModule extends EMRModule {
 						"VALUE=\"".prepare($covzip)."\">",
 
 					__("Date of Birth") =>
-						date_entry("covdob"),
+						fm_date_entry("covdob"),
 					__("Gender") =>
             					html_form::select_widget("covsex",
               						array (
@@ -452,7 +452,7 @@ class PatientCoveragesModule extends EMRModule {
 						"VALUE=\"".prepare($covzip)."\">",
 
 					__("Date of Birth") =>
-						date_entry("covdob"),
+						fm_date_entry("covdob"),
 					__("Gender") =>
           					html_form::select_widget("covsex",
               						array (
