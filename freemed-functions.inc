@@ -93,14 +93,18 @@ function freemed_close_db ($_null=" ")
 // function freemed_config_value
 function freemed_config_value ($config_var)
 {
+  static $_config;
+  
+  if (is_array($_config)) return $_config[$config_var];
+  
   $query = fdb_query("SELECT * FROM config
     WHERE (c_option='$config_var')");
 
   if ($query < 1) return ""; // fix for config db not being there...
 
-  $_temp_r = fdb_fetch_array($query);
+  $_config = fdb_fetch_array($query);
 
-  return $_temp_r["c_value"]; // return value
+  return $_config["c_value"]; // return value
 } // end function freemed_config_value
 
 // function freemed_display_banner (page description)
