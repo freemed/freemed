@@ -1,6 +1,9 @@
 freemed project changelog
 ($Id$)
 
+* Mon May 21 2001 rufustfirefly
+  - updated german translation from Dr. Roesler
+
 * Fri May 18 2001 fforest
   - API fm_make_string_array added to make sure
     a string contains a colon if not one is appened
@@ -11,6 +14,7 @@ freemed project changelog
   - procedure module. removed the verification for a primary 
     insurance. patient may be rich and is paying the bill 
     himself. 
+
 * Thu May 17 2001 fforest
   - macros added defines for covstatus ACTIVE DELETED
   - API change the coverage functions to use the above 
@@ -32,7 +36,11 @@ freemed project changelog
     in seqence with no gaps?
   - generate_forms now pass parms to Checkforinsbills
   - procedure module dropping proccomment
-  - 
+
+* Mon May 14 2001 rufustfirefly
+  - po/de.po: added German translation from Georg Roesler
+    <groesle@gwdg.de>
+
 * Wed May 09 2001 rufustfirefly
   Released 0.2.1.2 (Thelonious/CVS)
 
