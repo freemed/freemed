@@ -21,6 +21,7 @@ body {
 }
 #login_form {
 	position: fixed;
+	.position: absolute;
 	top: 25%;
 	left: 30%;
 	border: 1px dashed #555555;
