@@ -287,7 +287,7 @@ class ProcedureModule extends EMRModule {
 
 
 		$wizard->add_page (__("Step Three: Confirm"),
-		array ("proccomment","procunits", "procbalorig", "procbillable"),
+		array ("proccomment", "procbalorig", "procbillable"),
 		html_form::form_table ( array (
 
 		 __("Procedural Code") =>
@@ -751,7 +751,7 @@ class ProcedureModule extends EMRModule {
 		);
 
 		// required to get the wizard to validate the previous (last) page
-		$wizard->add_page(__("Click Finish"),array("dummy"),"");
+		//$wizard->add_page(__("Click Finish"),array("dummy"),"");
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
