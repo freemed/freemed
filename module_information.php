@@ -16,6 +16,7 @@ include_once ("lib/module_cert.php");
 include_once ("lib/module_edi.php");
 include_once ("lib/module_emr.php");
 include_once ("lib/module_emr_report.php");
+include_once ("lib/module_graph.php");
 include_once ("lib/module_maintenance.php");
 include_once ("lib/module_reports.php");
 
