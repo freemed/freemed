@@ -82,16 +82,13 @@ class facilityMaintenance extends freemedMaintenanceModule {
     ),
     html_form::form_table ( array (
       _("Facility Name") =>
-      "<INPUT TYPE=TEXT NAME=\"psrname\" SIZE=20 MAXLENGTH=25
-      VALUE=\"".prepare($psrname)."\">",
+	html_form::text_widget("psrname", 30, 100),
 
       _("Address (Line 1)") =>
-      "<INPUT TYPE=TEXT NAME=\"psraddr1\" SIZE=20 MAXLENGTH=25
-       VALUE=\"".prepare($psraddr1)."\">",
+	html_form::text_widget("psraddr1", 20, 50),
 
       _("Address (Line 2)") =>
-      "<INPUT TYPE=TEXT NAME=\"psraddr2\" SIZE=20 MAXLENGTH=25
-       VALUE=\"".prepare($psraddr2)."\">",
+	html_form::text_widget("psraddr2", 20, 50),
 
       _("City, State, Zip") =>
       "<INPUT TYPE=TEXT NAME=\"psrcity\" SIZE=10 MAXLENGTH=15
@@ -130,16 +127,16 @@ class facilityMaintenance extends freemedMaintenanceModule {
 	),
 	
         _("Employer Identification Number") =>
-        "<INPUT TYPE=TEXT NAME=\"psrein\" SIZE=10 MAXLENGTH=9
-         VALUE=\"".prepare($psrein)."\">",
+	html_form::text_widget("psrein", 9),
 
         _("Internal or External Facility") =>
-        "<SELECT NAME=\"psrintext\">
-         <OPTION VALUE=\"0\" ".
-          ( ($psrintext == 0) ? "SELECTED" : "" ).">"._("Internal")."
-         <OPTION VALUE=\"1\" ".
-          ( ($psrintext == 1) ? "SELECTED" : "" ).">"._("External")."
-        </SELECT>"
+	html_form::select_widget(
+		"psrintext",
+		array (
+			_("Internal") => "0",
+			_("External") => "1"
+		)
+	)
 
       ) )
     );

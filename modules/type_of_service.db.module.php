@@ -71,29 +71,18 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 		if ($action=="modform")
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
 
-		$display_buffer .= "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
-			<TR><TD ALIGN=RIGHT>
-			 "._("Type of Service")." :
-			</TD><TD ALIGN=LEFT>
-			 <INPUT TYPE=TEXT NAME=\"tosname\" SIZE=20 MAXLENGTH=75
- 			  VALUE=\"".prepare($tosname)."\">
-			</TD></TR>
+		$display_buffer .= html_form::form_table(array(
+			_("Type of Service") =>
+			html_form::text_widget("tosname", 20, 75),
 
-			<TR><TD ALIGN=RIGHT>
-			 "._("Description")." :
-			</TD><TD ALIGN=LEFT>
-			 <INPUT TYPE=TEXT NAME=\"tosdescrip\" SIZE=25 MAXLENGTH=200
-			  VALUE=\"".prepare($tosdescrip)."\">
-			</TD></TR>
-
-			<TR><TD ALIGN=CENTER COLSPAN=2>
-			 <INPUT TYPE=SUBMIT VALUE=\"".(
+			_("Description") =>
+			html_form::text_widget("tosdescrip", 25, 200)
+		)).
+			"<DIV ALIGN=\"CENTER\">\n".
+			"<INPUT TYPE=SUBMIT VALUE=\"".(
 			 ($action=="modform") ? _("Modify") : _("Add"))."\">
 			 <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
-			 </FORM>
-			</TD></TR>
-			</TABLE>
+			</DIV></FORM>
 		";
 		if ($action=="modform") $display_buffer .= "
 			<P>
