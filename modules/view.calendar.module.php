@@ -10,7 +10,7 @@ class ViewCalendar extends CalendarModule {
 
 	var $MODULE_NAME = "Calendar View";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -102,31 +102,31 @@ class ViewCalendar extends CalendarModule {
 
 		$row = $sql->fetch_array($result);
 		//$display_buffer .= "row id $row[id]<BR>";
-		if ($row[calpatient] != 0)
+		if ($row['calpatient'] != 0)
 		{
-			$this_patient = CreateObject('FreeMED.Patient', $row[calpatient]);
+			$this_patient = CreateObject('FreeMED.Patient', $row['calpatient']);
 			$ptname = $this_patient->fullname();
 			//$display_buffer .= "$ptname<BR>";
 		}
-		if ($row[calphysician] != 0)
+		if ($row['calphysician'] != 0)
 		{
-			$this_physician = CreateObject('FreeMED.Physician', $row[calphysician]);
+			$this_physician = CreateObject('FreeMED.Physician', $row['calphysician']);
 			$phname = $this_physician->fullname();
 		}
-		if ($row[calfacility] != 0)
+		if ($row['calfacility'] != 0)
 		{
-			$fac = freemed::get_link_rec($row[calfacility],"facility");
-			$facname = $fac[psrname];
+			$fac = freemed::get_link_rec($row['calfacility'], "facility");
+			$facname = $fac['psrname'];
 		}
 
-		if ($row[calroom] != 0)
+		if ($row['calroom'] != 0)
 		{
-			$room = freemed::get_link_rec($row[calroom],"room");
-			$roomname = $room[roomname];
+			$room = freemed::get_link_rec($row['calroom'], "room");
+			$roomname = $room['roomname'];
 		}
 
-		$prenote = $row[calprenote];
-		$postnote = $row[calpostnote];
+		$prenote = $row['calprenote'];
+		$postnote = $row['calpostnote'];
 
 		if (empty($prenote))
 			$prenote = __("None");
@@ -139,6 +139,17 @@ class ViewCalendar extends CalendarModule {
 
 		//if ($calminute==0) $calminute="00";
 
+		// Figure out duration
+		$_duration = $row['calduration'];
+		if ($_duration >= 60) {
+			$duration = floor($_duration / 60)."h ";
+			if (($_duration % 60) > 0) {
+				$duration .= ($_duration % 60)."m";
+			}
+		} else {
+			$duration = $_duration."m ";
+		}
+
 		// Time formatting
 		$time = fc_get_time_string($calhour,$calminute);
 
@@ -149,12 +160,14 @@ class ViewCalendar extends CalendarModule {
 				__("Facility") => $facname,
 				__("Room") => $roomname,
 				__("Time") => $time,
+				__("Duration") => $duration,
 				__("Pre Note") => $prenote,
 				__("Post Note") => $postnote)
 		);
 		$display_buffer .= "<div CLASS=\"letterbox\">$data</div>\n";
 		$display_buffer .= "<div ALIGN=\"CENTER\">\n".
-			"<a HREF=\"javascript:window.close();\">".
+			"<a class=\"button\" ".
+			"HREF=\"javascript:window.close();\">".
 			__("Close")."</a>\n".
 			"</div>\n";
 	
