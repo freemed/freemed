@@ -8,7 +8,7 @@ class ScannedDocuments extends EMRModule {
 
 	var $MODULE_NAME = "Scanned Documents";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.4.1";
+	var $MODULE_VERSION = "0.4.2";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
@@ -30,12 +30,17 @@ class ScannedDocuments extends EMRModule {
 
 		// Define variables for EMR summary
 		$this->summary_vars = array (
-			__("Date")        =>	"imagedt",
+			__("Date")        =>	"my_date",
 			__("Type")        =>	"imagetype",
 			__("Category")	  =>	"imagecat",
-			__("Description") =>	"imagedesc"
+			__("Description") =>	"imagedesc",
+			__("Reviewed")    =>	"reviewed"
 		);
-		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_DELETE;
+		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_DELETE | SUMMARY_PRINT;
+		$this->summary_query = array (
+			"DATE_FORMAT(imagedt, '%m/%d/%Y') AS my_date",
+			"CASE imagereviewed WHEN 0 THEN 'no' ELSE 'yes' END AS reviewed"
+		);
 
 		// Define table
 		$this->table_definition = array (
@@ -47,6 +52,7 @@ class ScannedDocuments extends EMRModule {
 			"imageeoc"	=>	SQL__TEXT,
 			"imagefile"	=>	SQL__VARCHAR(100),
 			"imagephy"	=>	SQL__INT_UNSIGNED(0),
+			"imagereviewed"	=>	SQL__INT_UNSIGNED(0),
 			"locked"	=>	SQL__INT_UNSIGNED(0),
 			"id"		=>	SQL__SERIAL
 		);
@@ -100,7 +106,8 @@ class ScannedDocuments extends EMRModule {
 				"imagecat" => $imagecat,
 				"imagephy",
 				"imagedesc",
-				"imageeoc"
+				"imageeoc",
+				"imagereviewed" => 0
 			)
 		);
 		$result = $sql->query ($query);
@@ -450,6 +457,14 @@ class ScannedDocuments extends EMRModule {
 		);
 	} // end method tc_widget
 
+	function print_override ( $id ) {
+		// Create djvu object
+		$rec = freemed::get_link_rec($id, $this->table_name);
+		$filename = freemed::image_filename($rec[$this->patient_field], $id, 'djvu');
+		$d = CreateObject('FreeMED.Djvu', $filename);
+		return $d->ToPDF(true);
+	} // end method print_override
+
 	function _update () {
 		$version = freemed::module_version($this->MODULE_NAME);
 		// Version 0.3
@@ -477,6 +492,17 @@ class ScannedDocuments extends EMRModule {
 		if (!version_check($version, '0.4.1')) {
 			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
 				' ADD COLUMN locked INT UNSIGNED AFTER imagephy');
+		}
+
+		// Version 0.4.2
+		//
+		//	Add reviewed flag
+		//
+		if (!version_check($version, '0.4.2')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
+				' ADD COLUMN imagereviewed INT UNSIGNED AFTER imagephy');
+			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
+				'SET imagereviewed=0');
 		}
 	} // end method _update
 
