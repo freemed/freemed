@@ -108,7 +108,6 @@ class BaseModule extends module {
 				>".__("Printer")."</td>
 				<td>".freemed::printers_widget('printer')."</td>
 			</tr>
-			<!--
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
 				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
@@ -120,11 +119,10 @@ class BaseModule extends module {
 				<td>".__("Fax")."</td>
 				<td>".html_form::text_widget('fax_number',
 					array(
-						'length' => '12'
+						'length' => '16'
 					)
 				)."</td>
 			</tr>
-			-->
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
 				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
@@ -182,9 +180,13 @@ class BaseModule extends module {
 			break;
 
 			case 'fax':
-			$display_buffer .= "<pre>\n".
-				$TeX->RenderDebug().
-				"</pre>\n(You must disable this to print)";
+			$file = $TeX->RenderToPDF();
+			$fax = CreateObject('_FreeMED.Fax', $file, array (
+				'sender' => PACKAGENAME.' v'.DISPLAY_VERSION
+				));
+			$output = $fax->Send($_REQUEST['fax_number']);
+			$display_buffer .= "<b>".$output."</b>\n";
+			$GLOBALS['__freemed']['close_on_load'] = true;
 			break;
 
 			// Handle actual printer
