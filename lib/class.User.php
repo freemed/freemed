@@ -32,7 +32,12 @@ class User {
 	//
 	function User ($param=NULL) {
 		if ($param == NULL) {
-			$this->user_number = $_SESSION['authdata']['user'];
+			// Check to see if XML-RPC or session data
+			if ($_SESSION['authdata']['user']) {
+				$this->user_number = $_SESSION['authdata']['user']; 
+			} else {
+				$this->user_number = $GLOBALS['__freemed']['basic_auth_id'];
+			}
 		} else {
 			$this->user_number = $param;
 		}
