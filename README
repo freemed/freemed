@@ -1,21 +1,21 @@
-freemed documentation
+FreeMED documentation
 from jeff b (jeff@univrel.pr.uconn.edu)
-(c) 1999-2001 by the freemed project under the LGPL
+(c) 1999-2001 by the freemed project under the GPL/LGPL
 
 ********************************************************************** ERRATA
 * index.php has to be added in /etc/httpd/conf/?????.conf under the
   list of valid index files.
-* these are to be installed in /usr/share/freemed, and a virtual directory
+* These are to be installed in /usr/share/freemed, and a virtual directory
   alias should be made in the Apache configuration files, as well as
   giving read perms to Apache.
-* if something doesn't work after you upgrade to a new tarball, please
+* If something doesn't work after you upgrade to a new tarball, please
   reinitialize the database to get the new parts up and running. (this
   will change as soon as the database is capable of holding live data)
-* code is annotated with an author if the primary author is other than
+* Code is annotated with an author if the primary author is other than
   jeff b <jeff@univrel.pr.uconn.edu>
-* since freemed involves a fairly hefty codebase, php optimizing tricks,
+* Since freemed involves a fairly hefty codebase, php optimizing tricks,
   such as the bware_cache module or the Zend Optimizer should be used to
-  minimize load times.
+  minimize load times. APC is also available (apc.communityconnect.com)
 
 **************************************************************** INSTALLATION
 
@@ -30,7 +30,9 @@ from jeff b (jeff@univrel.pr.uconn.edu)
 
 3) Install phpwebtools (you can download it from
    http://sourceforge.net/projects/phpwebtools/). This library is required
-   for versions of freemed starting at 0.2.0.
+   for versions of freemed starting at 0.2.0. FreeMED will give you a
+   warning if your version of phpwebtools is too old. We try not to rely
+   on a CVS version of phpwebtools for release versions of FreeMED.
 
 4) Install the freemed package:
 
@@ -45,7 +47,8 @@ from jeff b (jeff@univrel.pr.uconn.edu)
    # ln -s /etc/httpd/php/webtools.php .
 
 6) Edit the /usr/share/freemed/lib/freemed.php file to make sure that all
-   settings are correct for your machine.
+   settings are correct for your machine. (There is a setup wizard in the
+   works that performs this step for you, using a web browser.)
 
 7) Edit your Apache configuration files to associate .php, .inc, and .php3
    files with php, as well as setting index.php3 to be one of the default
@@ -70,7 +73,7 @@ from jeff b (jeff@univrel.pr.uconn.edu)
    files.
 
 9) Create the database with the command "mysqladmin -p create freemed"
-   (if you are using MySQL).
+   (if you are using MySQL). (The setup wizard also does this.)
 
 10) Try to load http://localhost/freemed/ in your web browser. If no error
     messages occur, login in as "root" with the password being your database
@@ -85,46 +88,45 @@ from jeff b (jeff@univrel.pr.uconn.edu)
 
 ********************************************************* current coders/staff
 
-jeff (jeff@univrel.pr.uconn.edu) -
-  a great deal of the coding and documentation so far
+Jeff (jeff@univrel.pr.uconn.edu) -
+  Most of the code in the codebase is Jeff's. If you have any
+  problems with something non-billing related, he's probably
+  the person you want to speak to.
 
 dr_gnu (dr_gnu@ourexchange.net) -
-  db management, planning, and all of those lovely tasks we all
-  wish that we could be doing instead of sitting around coding
-  like we had a torch under our proverbial arse.
+  DB management, planning, and direction. Architectural design
+  and questions should be addressed to him.
 
-adam (gdrago23@yahoo.com) -
-  much maintenance and general upkeep, as well as module
+Adam (gdrago23@yahoo.com) -
+  Much maintenance and general upkeep, as well as module
   conversions
 
-max klohn (amk@span.ch) -
-  this guy is incredible. lots of translations, fixes, and bug
+Max Klohn (amk@span.ch) -
+  This guy is incredible. lots of translations, fixes, and bug
   reports like you wouldn't believe, as well as things to think
   about, and many database structures...
 
-chris beggy (chrisb@kippona.com) -
-  one of the two website maintainers, as well as the admin of
+Chris Beggy (chrisb@kippona.com) -
+  One of the two website maintainers, as well as the admin of
   our web server, he also codes modules and helps decide
   important decision stuff.
 
-francisco sam castillo (fsam@proyecto-web.com.mx) -
-  sam does the other 1/2 of the website maintaining, and is
+Francisco Sam Castillo (fsam@proyecto-web.com.mx) -
+  Sam does the other 1/2 of the website maintaining, and is
   responsible for the layout as well as a lot of the content.
   his other contributions have been very good, and he is
   probably going to be doing HTML scripting for the modules
   when they are ready for him.
 
-ryan losh (rklosh@rkl.org) -
-  returning to the project after a six month absence...runs a billing
+Ryan Losh (rklosh@rkl.org) -
+  Returning to the project after a six month absence...runs a billing
   service that wants to switch from that closed source 800lb gorilla.
 
-john gage (jgage@epo.som.sunysb.edu) -
-  author of a great anesthesia tracking/report system, which as
-  of 19990924 is slated to be put into the source tree... but
-  you'll have to have a java enabled web-browser to use it. thems
-  the breaks.
+John Gage (jgage@epo.som.sunysb.edu) -
+  Author of a great anesthesia tracking/report system, and has been
+  doing usability and capability testing for freemed.
 
-fred forrester (fforest@netcarrier.com) -
-  current maintainer of the billing code. fred has done a fine job, and
+Fred Forrester (fforest@netcarrier.com) -
+  Current maintainer of the billing code. fred has done a fine job, and
   has added much functionality. as well as cleaning up some of the age-old
   code...
