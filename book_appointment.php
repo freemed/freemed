@@ -106,8 +106,12 @@ switch ($action) {
        <INPUT TYPE=HIDDEN NAME=\"type\"
         VALUE=\"".prepare($type)."\">
     ".freemed_display_selectbox (
-      $sql->query ("SELECT roomname,roomdescrip,id FROM room ORDER BY roomname"),
-      "#roomname# (#roomdescrip#)",
+      $sql->query ("SELECT room.roomname AS roomname, ".
+	"facility.psrcity AS poscity,facility.psrstate AS posstate,".
+	"facility.psrname AS posname,room.id AS id ".
+	"FROM room,facility ".
+	"WHERE room.roompos=facility.id ORDER BY roomname"),
+      "#roomname# (#posname#/#poscity#,#posstate#)",
       "room"
     )."
        <INPUT TYPE=SUBMIT VALUE=\""._("Change Room")."\">
@@ -115,7 +119,6 @@ switch ($action) {
       <P>
     ";
 
-  //if ($room > 0) {
     // now, find if it is "booked"
     if ($room > 0) { // only if it is specific
         // generate interference map
@@ -200,24 +203,6 @@ switch ($action) {
         </TABLE>
       ";
     } // why is this here?
-
-    if ($type=="pat") {
-      $display_buffer .= "
-        <P>
-        <CENTER><A HREF=\"manage.php?id=$patient\"
-         >"._("Manage Patient")."</CENTER>
-        <P>
-      ";
-    } else {
-      $display_buffer .= "
-        <P>
-        <CENTER><A HREF=\"call-in.php?action=view&id=$patient\"
-         >"._("Manage Patient")."</CENTER>
-        <P>
-      ";
-    } // end checking for type
-
-  //} // end if...else for room (whether > 1 or not)
 
   break; 
  case "step2":
@@ -335,6 +320,7 @@ switch ($action) {
  case "add":
   $page_title = _("Add Appointment");
   $display_buffer .= "<CENTER>"._("Adding")." ... ";
+	// TODO: migrate to insert_query wrapper
   $query = "INSERT INTO scheduler VALUES (
     '".addslashes($selected_date)."',
     '".addslashes($type)."',
@@ -405,12 +391,14 @@ switch ($action) {
     <CENTER>
   ";
   if ($type=="pat") {
+	$refresh = "manage.php?id=".urlencode($patient);
     $display_buffer .= "
      <A HREF=\"manage.php?id=$patient\"
      >"._("Manage Patient")."</A>
      </CENTER>
     ";
   } else {
+	$refresh = "call-in.php?action=display&id=".urlencode($patient);
     $display_buffer .= "
      <A HREF=\"call-in.php?action=display&id=$patient\"
      >"._("Manage Patient")."</A>
