@@ -155,6 +155,12 @@ $book->add_page("Modular Components",
 	html_form::form_table($modules_to_choose)
 );
 
+//----- Handle cancel
+if ($book->is_cancelled()) {
+	Header("Location: manage.php?action=menu&id=".urlencode($id));
+	die("");
+}
+
 //----- Either display the book or finish up
 if (!$book->is_done()) {
 	$display_buffer .= "<CENTER>\n";
