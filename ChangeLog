@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Wed May 09 2001 fforest
+	- payment module needed </TABLE> in ledger function
+      or netscape display a blank page (djordan)
+    - unpaid_procedures module needed semicolons after &nbsp
+      or netscape gets wierd  (djordan)
 * Fri May 04 2001 fforest
    - add calendar.php menu.
    - main.php use Gear icon for calendar

@@ -1088,6 +1088,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             </TD>
             <TD>&nbsp;</TD>
             </TR>
+			</TABLE>
             ";
 
         } // end ledger

@@ -86,11 +86,11 @@ class unpaidProceduresReport extends freemedReportsModule {
                   		\"$this->page_name?$_auth&id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
                   		><FONT SIZE=-1>"._("View/Manage")."</FONT></A></TD>
                   		<TD><A HREF=
-                  		\"$this->page_name?_auth=$auth&patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
+                  		\"$this->page_name?$_auth&patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
                   		><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
       					";
 					if (!$billed)
-						echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
+						echo "<TD> <FONT COLOR=#ff0000>&nbsp;NO&nbsp;</FONT></TD>";
 					else
 						echo "<TD>YES</TD>";
 					echo "<TD>$oldest_bill</TD>";
