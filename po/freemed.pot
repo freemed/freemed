@@ -1307,4 +1307,72 @@ msgstr ""
 msgid "Nothing set to be marked!"
 msgstr ""
 
+msgid "You must select a template."
+msgstr ""
+
+msgid "Date Added"
+msgstr ""
+
+msgid "Form"
+msgstr ""
+
+msgid "Fee Profiles"
+msgstr ""
+
+msgid "Procedural Code"
+msgstr ""
+
+msgid "Internal Description"
+msgstr ""
+
+msgid "External Description"
+msgstr ""
+
+msgid "Gender Restriction"
+msgstr ""
+
+msgid "no restriction"
+msgstr ""
+
+msgid "female only"
+msgstr ""
+
+msgid "male only"
+msgstr ""
+
+msgid "Taxed?"
+msgstr ""
+
+msgid "Relative Value"
+msgstr ""
+
+msgid "Default Type of Service"
+msgstr ""
+
+msgid "Default Standard Fee"
+msgstr ""
+
+msgid "Diagnosis Required"
+msgstr ""
+
+msgid "Diagnosis Excluded"
+msgstr ""
+
+msgid "Procedural Codes Required"
+msgstr ""
+
+msgid "Procedural Codes Excluded"
+msgstr ""
+
+msgid "Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used."
+msgstr ""
+
+msgid "Standard Fee"
+msgstr ""
+
+msgid "Insurance Company"
+msgstr ""
+
+
+
 # END
