@@ -350,9 +350,16 @@
      // by default, render the form
      $render_form = true;
 
+     // clear $diag_set in case of legacy
+     unset ($diag_set);
+     $diag_set = new diagnosisSet ();
+
      // queue all entries
      while ($r = fdb_fetch_array ($result)) {
-       $p = freemed_get_link_rec ($r[payrecproc], "procedure");
+       $p = freemed_get_link_rec ($r[payrecproc], "procrec");
+       if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
+       flush();
+
        if ($p[procbalcurrent]<=0) {
          $render_form = false; // don't render the form if 0
          next; // skip if no charge
@@ -362,13 +369,6 @@
        $number_of_charges++; // increment number of charges
 
        if ($debug) echo "\nThis form, charge $number_of_charges <BR>\n";
-       flush();
-
-       // get the current procedure
-       //if ($r[payrecproc] > 0)
-       //  $p = freemed_get_link_rec ($r[payrecproc], "procedure");
-
-       if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
        flush();
 
        ////if there's room, pull another procedure:
@@ -384,7 +384,7 @@
          echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
          flush();
 
-         $ptdiag = $diag_set->getStack();     // get pt diagnoses
+         $ptdiag          = $diag_set->getStack();     // get pt diagnoses
          $current_balance = bcadd ($total_charges - $total_paid, 0, 2);
          $total_charges   = bcadd ($total_charges, 0, 2);
          $total_paid      = bcadd ($total_paid,    0, 2);
@@ -398,6 +398,11 @@
 
          // reset the counter to 1, for the first...
          $number_of_charges = 1;
+
+         // reset the diag_set array
+         unset ($diag_set);
+         $diag_set = new diagnosisSet ();
+
          // and zero the arrays
          for ($j=0;$j<=$this_form[ffloopnum];$j++)
            $itemdate[$j]    = $itemdate_m[$j]  = $itemdate_d[$j]  =
