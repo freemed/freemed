@@ -2,12 +2,29 @@
 # $Id$
 # $Author$
 
+use XML::RAX;
+
 $VERSION = "0.1";
 $appversion = "0.6.0";
 
 # Get parameters
 $locale = shift || 'template';
 $locale_name = shift || '';
+
+sub Current_Date {
+	my ($mon, $day, $year);
+	(undef, undef, $mon, $day, $year, undef, undef, undef) = gmtime();
+	$mon++;		# months returned as 0..11
+	$year += 2000;	# years returned as # years since 1900
+	$day = "0".$day if (length($day) eq 1);
+	$mon = "0".$mon if (length($mon) eq 1);
+	return $year . "-" . $mon . "-" . $day;
+} # end sub Current_Date
+
+sub File_Exists {
+	my $file = shift;
+	return (-f $relative_path.'locale/'.$locale.'/'.$file.'.xml');
+} # end sub File_Exists
 
 sub Generate_GettextXML {
 	my ($component, $version, $_phrases) = @_; @phrases = @$_phrases;
@@ -21,14 +38,11 @@ sub Generate_GettextXML {
 		"\t\t<ComponentVersion>".HtmlEntities($version)."</ComponentVersion>\n".
 		"\t\t<Locale>".HtmlEntities($locale)."</Locale>\n".
 		"\t\t<LocaleName>".HtmlEntities($locale_name)."</LocaleName>\n".
-		"\t\t<RevisionDate>".$cur_date."</RevisionDate>\n".
+		"\t\t<RevisionDate>".Current_Date()."</RevisionDate>\n".
 		"\t\t<RevisionCount>1</RevisionCount>\n".
-		"\t\t<Generator>Perl5</Generator>\n".
+		"\t\t<Generator>GettextXML</Generator>\n".
 		"\t\t<ContentTransferEncoding>8bit</ContentTransferEncoding>\n".
-		"\t\t<Translator>\n".
-		"\t\t\t<Name></Name>\n".
-		"\t\t\t<Address></Address>\n".
-		"\t\t</Translator>\n".
+		"\t\t<Translator></Translator>\n".
 		"\t</information>\n".
 		"\n";
 
@@ -44,6 +58,51 @@ sub Generate_GettextXML {
 	return $output;
 } # end sub Generate_GettextXML
 
+sub Generate_GettextXML_Merged {
+	my ($component, $version, $_mphrases) = @_; @phrases = @$_mphrases;
+
+	my %meta = Translation_Meta_Information($component);
+	my %processed = %{&Merge_From_Translation($component, \@mphrases)};
+	#print "Generate_GettextXML_Merged: ".keys(%processed)." translations imported\n";
+
+	my $revision;
+	if ($meta{'RevisionDate'} eq Current_Date()) {
+		# If more than one in a day, increment the revision counter
+		$revision = $meta{'RevisionCount'} + 1;
+	} else {
+		# Reset revision
+		$revision = 1;
+	}
+
+	my $output = "<?xml version=\"1.0\"?>\n".
+		"<gettextXML lang=\"".$locale."\">\n\n".
+		"\t<information>\n".
+		"\t\t<Application>FreeMED</Application>\n".
+		"\t\t<ApplicationVersion>$appversion</ApplicationVersion>\n".
+		"\t\t<Component>".HtmlEntities($component)."</Component>\n".
+		"\t\t<ComponentVersion>".HtmlEntities($version)."</ComponentVersion>\n".
+		"\t\t<Locale>".HtmlEntities($locale)."</Locale>\n".
+		"\t\t<LocaleName>".HtmlEntities($locale_name)."</LocaleName>\n".
+		"\t\t<RevisionDate>".Current_Date()."</RevisionDate>\n".
+		"\t\t<RevisionCount>".$revision."</RevisionCount>\n".
+		"\t\t<Generator>".$meta{'Generator'}."</Generator>\n".
+		"\t\t<ContentTransferEncoding>8bit</ContentTransferEncoding>\n".
+		"\t\t<Translator>".$meta{'Translator'}."</Translator>\n".
+		"\t</information>\n".
+		"\n";
+
+	foreach $phrase (@mphrases) {
+		$output .= "\t<translation>\n";
+		$output .= "\t\t<original>".HtmlEntities(StripSlashes($phrase))."</original>\n";
+		$output .= "\t\t<translated>".HtmlEntities($processed{$phrase})."</translated>\n";
+		$output .= "\t</translation>\n\n";
+	}
+
+	$output .= "</gettextXML>\n\n";
+
+	return $output;
+} # end sub Generate_GettextXML_Merged
+
 sub Get_Modules {
 	my @modules = glob("modules/*.module.php");
 	$relative_path = "";
@@ -51,8 +110,8 @@ sub Get_Modules {
 		@modules = glob("../modules/*.module.php");
 		$relative_path = "../";
 	}
-	return @modules;
-} # end Get_Modules
+	return wantarray ? @modules : \@modules;
+} # end sub Get_Modules
 
 sub Get_Module_Name {
 	my $module = shift;
@@ -75,7 +134,27 @@ sub Get_Module_Name {
 	$name =~ tr/A-Z/a-z/;
 
 	return $name;
-} # end Get_Module_Name
+} # end sub Get_Module_Name
+
+sub Get_Module_Title {
+	my $module = shift;
+	my $title;
+
+	open(MODULE, $module) or
+		die ("GetModuleVersion : error opening $module");
+
+	while (<MODULE>) {
+		chop;
+		if (/var\ \$MODULE_NAME = \"(.+?[^\"\)])\"/) {
+			$title = $1;
+			#print "title = $title\n";
+		}
+	}
+
+	close(MODULE);
+
+	return $title;
+} # end sub Get_Module_Title
 
 sub Get_Module_Version {
 	my $module = shift;
@@ -95,7 +174,7 @@ sub Get_Module_Version {
 	close(MODULE);
 
 	return $version;
-} # end Get_Module_Version
+} # end sub Get_Module_Version
 
 sub Get_Page_Name {
 	my $file = shift;
@@ -110,7 +189,7 @@ sub Get_Page_Name {
 	$file =~ s/\.php$//;
 
 	return $file;
-} # end Get_Page_Name
+} # end sub Get_Page_Name
 
 sub HtmlEntities {
 	my $string = shift;
@@ -119,6 +198,31 @@ sub HtmlEntities {
 	$string =~ s/\>/\&gt;/ge;
 	return $string
 } # end sub HtmlEntities
+
+sub Merge_From_Translation {
+	my ($component, $_phrases) = @_; my @phrases = @$_phrases;
+	my $phrase;
+
+	# Get previous translations
+	my %translations = %{&Read_From_Translation($component)};
+	#print "Merge_From_Translations: ".keys(%translations)." translations found\n";
+	my %new = ( );
+
+	# Loop through phrases
+	foreach $phrase (@phrases) {
+		if (defined $translations{$phrase}) {
+			# Merge from old
+			$new->{$phrase} = $translations{$phrase};
+		} else {
+			# None, add null
+			$new->{$phrase} = '';
+		}
+	}
+
+	# Return new array
+	return $new;
+	#return wantarray ? %new : \%new;
+} # end sub Merge_From_Translation
 
 sub Parse_File {
 	my $filename = shift;
@@ -140,9 +244,34 @@ sub Parse_File {
 
 	close(HANDLE);
 
-	return @phrases;
+	return wantarray ? @phrases : \@phrases;
+} # end sub Parse_File
 
-} # end Parse_File
+sub Read_From_Translation {
+	my $component = shift;
+
+	my %tphrases;
+
+	my $R = new XML::RAX();
+	$R->openfile($relative_path.'locale/'.$locale.'/'.$component.'.xml');
+	$R->setRecord('translation');
+
+	my $rec = $R->readRecord();
+	while ($rec) {
+		my $original = $rec->getField('original');
+		my $translated = $rec->getField('translated');
+		
+		$tphrases->{$original} = $translated;
+		#print "\t".$original." = ".$translated."\n";
+
+		# Read next record
+		$rec = $R->readRecord();
+	}
+
+	#print "Read_From_Translation: found ".keys(%tphrases)." phrases in old file\n";
+	
+	return $tphrases;
+} # end sub Read_From_Translation
 
 sub Remove_API_Duplicates {
 	my ($_array, $_API) = @_;
@@ -160,20 +289,40 @@ sub Remove_API_Duplicates {
 		#print "found in API: ".$value."\n" if ($found);
 		push (@results, $value) if (!$found);
 	}
-	return @results;
-} # end Remove_API_Duplicates
+	return wantarray ? @results : \@results;
+} # end sub Remove_API_Duplicates
 
 sub Remove_Duplicates {
 	my ($_array) = @_; @array = @$_array;
 	my %seen;
 	return grep ( !$seen{$_}++, @array );
-} # end Remove_Duplicates
+} # end sub Remove_Duplicates
 
 sub StripSlashes {
 	my $string = shift;
 	$string =~ s/\\//g;
 	return $string;
-} # end StripSlashes
+} # end sub StripSlashes
+
+sub Translation_Meta_Information {
+	my $file = shift;
+
+	my $R = new XML::RAX();
+	$R->openfile($relative_path.'locale/'.$locale.'/'.$file.'.xml');
+
+	$R->setRecord('information');
+	my $rec = $R->readRecord();
+
+	my %hash = (
+		'Generator' => $rec->getField('Generator'),
+		'LocaleName' => $rec->getField('LocaleName'),
+		'RevisionDate' => $rec->getField('RevisionDate'),
+		'RevisionCount' => $rec->getField('RevisionCount'),
+		'Translator' => $rec->getField('Translator')
+	);
+
+	return %hash;
+} # end sub Translation_Meta_Information
 
 sub Write_to_File {
 	my ($filename, $output) = @_;
@@ -188,6 +337,9 @@ print "(c) 2003 by the FreeMED Software Foundation\n\n";
 
 my @modules = Get_Modules();
 
+# Create template path
+system ("mkdir -p ".$relative_path."locale/".$locale."/");
+
 print "Processing API ... \n";
 
 my @API_files = glob($relative_path."lib/*.php");
@@ -199,13 +351,24 @@ foreach $API_file (@API_files) {
 }
 @API_strings = Remove_Duplicates(\@API_strings);
 @API_strings = sort @API_strings;
-my $output = Generate_GettextXML("API", $version, \@API_strings);
-Write_to_File($relative_path."locale/".$locale."/freemed.xml", $output);
+if (File_Exists('freemed')) {
+	my $output = Generate_GettextXML_Merged(
+		'freemed',
+		$version,
+		\@API_strings
+	);
+	Write_to_File($relative_path."locale/".$locale."/freemed.xml", $output);
+	print "\t\t[ merged old translations ]\n";
+} else {
+	my $output = Generate_GettextXML(
+		'freemed',
+		$version,
+		\@API_strings
+	);
+	Write_to_File($relative_path."locale/".$locale."/freemed.xml", $output);
+}
 
 print "Processing modules ... \n";
-
-# Create template path
-`mkdir -p $relative_path/$locale/template/`;
 
 if ($#modules ge 1) {
 	foreach $module (@modules) {
@@ -213,10 +376,32 @@ if ($#modules ge 1) {
 		my $module_name = Get_Module_Name($module);
 		print "\t($module)\n";
 		my $module_version = Get_Module_Version($module);
-		my $output = Generate_GettextXML($module_name, $module_version, \@strings);
-		if (length($module_name) ge 1) {
-			Write_to_File($relative_path."locale/template/".
-				$module_name.".xml", $output);
+		my $module_title = Get_Module_Title($module);
+		if ($module_title) {
+			push @strings, $module_title;
+		}
+		@strings = Remove_Duplicates(\@strings);
+		@strings = Remove_API_Duplicates(\@strings, \@API_strings);
+		@strings = sort @strings;
+		if (File_Exists($module_name)) {
+			my $output = Generate_GettextXML_Merged(
+				$module_name,
+				$module_version,
+				\@strings
+			);
+			if (length($module_name) ge 1) {
+				Write_to_File($relative_path."locale/".
+					$locale."/".$module_name.".xml",
+					$output);
+			}
+			print "\t\t[ merged old translations ]\n";
+		} else {
+			my $output = Generate_GettextXML($module_name, $module_version, \@strings);
+			if (length($module_name) ge 1) {
+				Write_to_File($relative_path."locale/".
+					$locale."/".$module_name.".xml",
+					$output);
+			}
 		}
 	}
 }
@@ -231,14 +416,26 @@ foreach $file (@files) {
 	@strings = Remove_API_Duplicates(\@strings, \@API_strings);
 	@strings = sort @strings;
 	if (($#strings ge 1) and (length($page_name) ge 1)) {
-		Write_to_File($relative_path."locale/template/".
-			$page_name.".xml",
-			Generate_GettextXML(
-				$page_name,
-				$appversion,
-				\@strings
-			)
-		);
+		if (File_Exists($page_name)) {
+			Write_to_File($relative_path."locale/".
+				$locale."/".$page_name.".xml",
+				Generate_GettextXML_Merged(
+					$page_name,
+					$appversion,
+					\@strings
+				)
+			);
+			print "\t\t[ merged old translations ]\n";
+		} else {
+			Write_to_File($relative_path."locale/".$locale."/".
+				$page_name.".xml",
+				Generate_GettextXML(
+					$page_name,
+					$appversion,
+					\@strings
+				)
+			);
+		}
 	}
 }
 
@@ -254,7 +451,7 @@ while ($template = readdir(DH)) {
 
 		my @template_files = glob($relative_path.
 			"lib/template/".$template."/*.php");
-		my @template_strings;
+		my @template_strings = ( );
 		foreach $template_file (@template_files) {
 			print "\t($template_file)\n";
 			my @strings = Parse_File($template_file);
@@ -265,20 +462,35 @@ while ($template = readdir(DH)) {
 				\@template_strings,
 				\@API_strings);
 		@template_strings = sort @template_strings;
-		Write_to_File(
-			$relative_path.
-				"locale/".$locale."/template_".$template.".xml",
-			Generate_GettextXML(
+		if (File_Exists('template_'.$template)) {
+			my $output = Generate_GettextXML_Merged(
 				"Template",
 				$version,
 				\@template_strings
-			)
-		);
+			);
+			Write_to_File(
+				$relative_path."locale/".$locale.
+				"/template_".$template.".xml",
+				$output
+			);
+			print "\t\t[ merged old translations ]\n";
+		} else {
+			my $output = Generate_GettextXML(
+				"Template",
+				$version,
+				\@template_strings
+			);
+			Write_to_File(
+				$relative_path."locale/".$locale.
+				"/template_".$template.".xml",
+				$output
+			);
+		}
 	} # end checking for a proper template
 } # end directory looping
 
 print "\n".
-	"-----\n".
+	"-----\n\n".
 	"Template language files should be located in ".$relative_path.
 	"locale/template/.\n\n".
 	"There is a possibility that some strings will not have been\n".
