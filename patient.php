@@ -718,7 +718,7 @@ switch ($action) {
   case "view":
     // KludgE AlerTx0r!
     header("Location:".ereg_replace("patient.php",
-           "manage.php", $REQUEST_URI));
+           "manage.php", basename($REQUEST_URI)));
   break;
 
   default: // default action
