@@ -272,9 +272,11 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Referring Provider : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
+      <SELECT NAME=\"procrefdoc\">
   ";
   freemed_display_physicians ($procrefdoc, "yes");
   echo "
+      </SELECT>
      </TD>
     </TR>
 

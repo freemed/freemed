@@ -225,9 +225,9 @@
 
      // pull physician # for insco
      $insco[phyid]      = ( ($this_insco->local_record[inscogroup] < 1) ?
-                             "" :
-                             ($this_physician->getMapId(
-                              $this_insco->local_record[inscogroup]) );
+         "" :
+         ($this_physician->getMapId($this_insco->local_record[inscogroup]))
+         );
 
      // pull facility
      $this_facility     = freemed_get_link_rec ($default_facility, "facility");
@@ -247,13 +247,13 @@
      $curdate[y]        = date ("Y");
 
      // pull referring physician information
-     $referring_physician = freemed_get_link_rec (
-        $this_patient->local_record[ptrefdoc], "physician");
-     $refphy[name]      = $referring_physician[phyfname].
-        ( !empty($referring_physician[phymname]) ? " " : "").
-        $referring_physician[phymname]." ".
-        $referring_physician[phylname];
-     $refphy[upin]      = $referring_physician[phyupin];
+     //$referring_physician = freemed_get_link_rec (
+     //   $this_patient->local_record[ptrefdoc], "physician");
+     //$refphy[name]      = $referring_physician[phyfname].
+     //   ( !empty($referring_physician[phymname]) ? " " : "").
+     //   $referring_physician[phymname]." ".
+     //   $referring_physician[phylname];
+     //$refphy[upin]      = $referring_physician[phyupin];
 
      // check for guarantor information
      if ($this_patient->local_record[ptdep] == 0) {
@@ -363,6 +363,7 @@
        if ($p[procrefdoc]>0) {
          $ref_physician  = new Physician ($p[procrefdoc]);
          $ref[physician] = $ref_physician->fullName();
+         $ref[upin]      = $ref_physician->local_record["phyupin"];
          $ref[date]      = $p[procrefdt] ;
          $ref[y]         = substr ($ref[date], 0, 4);
          $ref[m]         = substr ($ref[date], 5, 2);

@@ -143,7 +143,7 @@ if ($action=="addform") {
     <$STDFONT_B>$Actual_physician : <$STDFONT_E>
     <SELECT NAME=\"userrealphy\">
   ";
-  freemed_display_physicians ($userrealphy);
+  freemed_display_physicians ($userrealphy, "no");
   echo "
     </SELECT>
     <P> 
@@ -415,7 +415,7 @@ if ($action=="addform") {
     <$STDFONT_B>$Actual_physician : <$STDFONT_E>
     <SELECT NAME=\"userrealphy\">
   ";
-  freemed_display_physicians ($userrealphy);
+  freemed_display_physicians ($userrealphy, "no");
   echo "
     </SELECT>
     <P>
