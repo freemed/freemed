@@ -370,16 +370,16 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      <TR BGCOLOR=\"$menubar_color\">
     ";
     if ($current_patient>0) { 
-      $p_link = "manage.php?$_auth&id=$current_patient";
+      $p_link = "manage.php?id=".urlencode($current_patient);
     } else {
-      $p_link = "patient.php?$_auth";
+      $p_link = "patient.php";
     } // end creating patient link
 
     if (freemed_config_value ("gfx")=="1") {
      if ($this_userlevel>$admin_level)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"admin.php?$_auth\"
+        <A HREF=\"admin.php\"
         ><IMG SRC=\"img/KeysOnChain-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Admin Menu]\"></A>
        </TD>
@@ -387,7 +387,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      if ($this_userlevel>$database_level)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"billing_functions.php?$_auth&patient=$current_patient\"
+        <A HREF=\"billing_functions.php?patient=".urlencode($current_patient)."\"
         ><IMG SRC=\"img/CashRegister-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Billing]\"></A>
        </TD>
@@ -395,7 +395,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      // no if statement needed for callins...
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"call-in.php?$_auth\"
+        <A HREF=\"call-in.php\"
         ><IMG SRC=\"img/Text-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Call-In Menu]\"></A>
        </TD>
@@ -403,7 +403,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      if ($this_userlevel>$database_level)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"db_maintenance.php?$_auth\"
+        <A HREF=\"db_maintenance.php\"
         ><IMG SRC=\"img/Database-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Database]\"></A>
        </TD>
@@ -411,7 +411,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      if ($is_physician)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"physician_day_view.php?$_auth&physician=$physician_number\"
+        <A HREF=\"physician_day_view.php?physician=".urlencode($physician_number)."\"
         ><IMG SRC=\"img/karm-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Day View]\"></A>
        </TD>
@@ -427,7 +427,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      // nothing else needed for help, either
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"help.php?$_auth&page_name=$page_name\"
+        <A HREF=\"help.php?page_name=".urlencode($page_name)."\"
          TARGET=\"__HELP__\"><IMG SRC=\"img/readme-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Help]\"></A>
        </TD>
@@ -435,7 +435,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      // nothing needed for return to main menu...
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
-        <A HREF=\"main.php?$_auth\"
+        <A HREF=\"main.php\"
         ><IMG SRC=\"img/HandPointingLeft-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Main Menu]\"></A>
        </TD>
@@ -444,28 +444,28 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       if ($this_userlevel>$admin_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"admin.php?$_auth\"
+         <A HREF=\"admin.php\"
          ><$STDFONT_B SIZE=-1>Admin<$STDFONT_E></A>
         </TD>
         "; // end admin
       if ($this_userlevel>$database_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"billing_functions.php?$_auth&patient=$current_patient\"
+         <A HREF=\"billing_functions.php?patient=".urlencode($current_patient)."\"
          ><$STDFONT_B SIZE=-1>Bill<$STDFONT_E></A>
         </TD>
        ";
       // no special things needed for callins
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"call-in.php?$_auth\"
+         <A HREF=\"call-in.php\"
          ><$STDFONT_B SIZE=-1>Callin<$STDFONT_E></A>
         </TD>
         ";
       if ($this_userlevel>$database_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"db_maintenance.php?$_auth\"
+         <A HREF=\"db_maintenance.php\"
          ><$STDFONT_B SIZE=-1>DB<$STDFONT_E></A>
         </TD>
         "; // end db
@@ -479,13 +479,13 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       // no special conditions for help
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"help.php?$_auth&page_name=$page_name\"
+         <A HREF=\"help.php?page_name=".urlencode($page_name)."\"
          ><$STDFONT_B SIZE=-1>?<$STDFONT_E></A>
         </TD>
         ";
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
-        <A HREF=\"main.php?$_auth\"
+        <A HREF=\"main.php\"
         ><$STDFONT_B SIZE=-1>Main<$STDFONT_E></A>
         </TD>
        ";
@@ -500,7 +500,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 
 // function freemed_display_actionbar
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
-  global $page_name, $patient, $_ref, $_auth, $module;
+  global $page_name, $patient, $_ref, $module;
 
   $buffer = "";
 
@@ -518,13 +518,13 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
     <TABLE BGCOLOR=\"#000000\" WIDTH=\"100%\" BORDER=0
      CELLSPACING=0 CELLPADDING=3>
     <TR BGCOLOR=\"#000000\">
-    <TD ALIGN=LEFT><A HREF=\"$this_page_name?$_auth&module=$module&".
+    <TD ALIGN=LEFT><A HREF=\"$this_page_name?module=".urlencode($module)."&".
 	"action=addform".
-     ( !empty($patient) ? "&patient=$patient" : "" )
+     ( !empty($patient) ? "&patient=".urlencode($patient) : "" )
      ."\"><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
      SIZE=-1><B>"._("ADD")."</B></FONT></A></TD>
     <TD WIDTH=\"30%\">&nbsp;</TD>
-    <TD ALIGN=RIGHT><A HREF=\"$__ref?$_auth\"
+    <TD ALIGN=RIGHT><A HREF=\"$__ref\"
      ><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
      SIZE=-1><B>"._("RETURN TO MENU")."</B></FONT></A></TD>
     </TR></TABLE>
@@ -590,7 +590,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 			   $cur_page_var="this_page",
 			   $index_field="", $flags=-1)
 {
-  global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
+  global $_ref, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
   global $modify_level, $delete_level, $patient, $action, $module;
   global $page_name, $$cur_page_var, $max_num_res;
   global $_s_field, $_s_val, $sql;
@@ -614,7 +614,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   }
   
 
-  $_auth .= "&$cur_page_var=".chop($$cur_page_var);
+  //$_auth .= "&$cur_page_var=".chop($$cur_page_var);
  
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
 
@@ -642,7 +642,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
    ( ((strlen($cur_page_var)>0) AND ($num_pages>1)) ? "
    <TR ALIGN=CENTER><TD BGCOLOR=\"#000000\">
     <TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0>
-     <FORM METHOD=POST ACTION=\"$page_name?$_auth\">
+     <FORM METHOD=POST ACTION=\"$page_name\">
     ".
     
     (($$cur_page_var>1) ? "
@@ -755,7 +755,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
         $first = false;
         $buffer .= "
       <TD>
-        <A HREF=\"$page_link?$_auth&patient=$patient&action=display&id=".
+        <A HREF=\"$page_link?patient=$patient&action=display&id=".
 	"$this_result[id]&module=$module\"><$STDFONT_B
 	  >$item_text<$STDFONT_E></A>&nbsp;
       </TD>
@@ -775,21 +775,21 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     ";
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
-        <A HREF=\"$page_link?$_auth&module=$module&patient=$patient&action=view&id=".
+        <A HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
 	"$this_result[id]\"><$STDFONT_B>"._("VIEW")."<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$database_level AND 
          ($flags & ITEMLIST_MOD)) {
       $buffer .= "
-        <A HREF=\"$page_link?$_auth&module=$module&patient=$patient&action=modform&id=".
+        <A HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
 	"$this_result[id]\"><$STDFONT_B>"._("MOD")."<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$delete_level AND
          ($flags & ITEMLIST_DEL)) {
       $buffer .= "
-        <A HREF=\"$page_link?$_auth&patient=$patient&module=$module&action=delete&id=".
+        <A HREF=\"$page_link?patient=$patient&module=$module&action=delete&id=".
 	"$this_result[id]\"><$STDFONT_B>"._("DEL")."<$STDFONT_E></A>&nbsp;
       ";
     }
@@ -2055,13 +2055,10 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
          ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
          ${$phonevarname."_4"}, ${$phonevarname."_5"}; 
 
-  if ($array_index == -1)  
-  {
-    $w  = $$phonevarname;    // whole number
-  } 
-  else 
-  {
-    $w  = $$phonevarname[$array_index];  // whole number
+  if ($array_index == -1)  {
+    $w = ${$phonevarname};    // whole number
+  } else {
+    $w = ${$phonevarname}[$array_index];  // whole number
   }
 
   if (!empty($w)) {
@@ -2085,7 +2082,22 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
        // nothing!! hahahahahahahahahahahahaha!
        break;
     } // end formatting case statement
-  } // end if not empty whole date
+  } else { // end if not empty whole date
+    if ($array_index == -1) {
+      $p1 = ${$phonevarname."_1"};    // part 1
+    $p2 = ${$phonevarname."_2"};    // part 2
+    $p3 = ${$phonevarname."_3"};    // part 3
+    $p4 = ${$phonevarname."_4"};    // part 4
+    $p5 = ${$phonevarname."_5"};    // part 5
+    } else {
+    $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
+    $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
+    $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
+    $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
+    $p5 = ${$phonevarname."_5"}[$array_index];  // part 5
+    } // end checking for array index
+  }
+
   // now actually display the input boxes
   switch ($formatting) {
     case "usa":
@@ -2121,20 +2133,6 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
        MAXLENGTH=16 VALUE=\"$w\">
      "; break;
   } // end switch for dtfmt config value
-
-  if ($array_index == -1) {
-    ${$phonevarname."_1"} = $p1;    // part 1
-    ${$phonevarname."_2"} = $p2;    // part 2
-    ${$phonevarname."_3"} = $p3;    // part 3
-    ${$phonevarname."_4"} = $p4;    // part 4
-    ${$phonevarname."_5"} = $p5;    // part 5
-  } else {
-    ${$phonevarname."_1"}[$array_index] = $p1;  // part 1
-    ${$phonevarname."_2"}[$array_index] = $p2;  // part 2
-    ${$phonevarname."_3"}[$array_index] = $p3;  // part 3
-    ${$phonevarname."_4"}[$array_index] = $p4;  // part 4
-    ${$phonevarname."_5"}[$array_index] = $p5;  // part 5
-  } // end checking for array index
 
   return $buffer;                         // we exited well!
 } // end function fm_phone_entry

@@ -70,8 +70,6 @@ switch ($action) {
    } // end of internal switch add/mod
 
    // ** DISPLAY ADD/MOD ***
-
-   
    $book->add_page (
      _("Primary Information"),
      array ("ptlname", "ptfname", "ptmname",
@@ -120,11 +118,14 @@ switch ($action) {
          "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip",
 	 "ptcountry",
           // phone_vars("pthphone"),
-         "pthphone1", "pthphone2", "pthphone3", "pthphone4", "pthphone5",
+         "pthphone",
+         "pthphone_1", "pthphone_2", "pthphone_3", "pthphone_4", "pthphone_5",
           // phone_vars("ptwphone"),
-         "ptwphone1", "ptwphone2", "ptwphone3", "ptwphone4", "ptwphone5",
+         "ptwphone",
+         "ptwphone_1", "ptwphone_2", "ptwphone_3", "ptwphone_4", "ptwphone_5",
 	  // phone_vars("ptfax")
-         "ptfax1", "ptfax2", "ptfax3", "ptfax4", "ptfax5"
+         "ptfax",
+         "ptfax_1", "ptfax_2", "ptfax_3", "ptfax_4", "ptfax_5"
          ),
 		html_form::form_table ( array (
 
@@ -520,7 +521,7 @@ switch ($action) {
      echo "
       <$STDFONT_E>
       <P><$STDFONT_B>
-      <A HREF=\"manage.php?$_auth&id=$pid\">
+      <A HREF=\"manage.php?$_auth&id=".( $action=="addform" ? $pid : $id )."\">
       "._("Manage This Patient")."
       </A><$STDFONT_E>
       
@@ -596,7 +597,7 @@ switch ($action) {
 
       freemed_display_html_top ();
       freemed_display_banner ();
-      freemed_display_box_top (_("Patients Meeting Criteria")." ".$_crit),
+      freemed_display_box_top (_("Patients Meeting Criteria")." ".$_crit,
         $page_name);
 
       if (strlen($_ref)<5) {
