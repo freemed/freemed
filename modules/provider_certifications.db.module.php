@@ -42,12 +42,12 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 	function form () { $this->view(); }
 
 	function view () {
-		global $display_buffer;
+		global $display_buffer, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		if ($action=="modform") {
 			$r = freemed::get_link_rec($id, $this->table_name);
-			extract ($r);
+			foreach ($r AS $k => $v) { global ${$k}; ${$k} = $v; }
 		} // modform fetching
 
 		// display the table 
