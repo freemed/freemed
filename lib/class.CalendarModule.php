@@ -338,7 +338,7 @@ class CalendarModule extends BaseModule {
 		/*
 		 * month data
 		 */
-		$query = "SELECT a.calprenote,a.calhour,a.calminute,a.id,DAYOFMONTH(a.caldateof) AS day, b.roomname,".
+		$query = "SELECT a.calpatient as ptid,a.calprenote,a.calhour,a.calminute,a.id,DAYOFMONTH(a.caldateof) AS day, b.roomname,".
 				"c.ptlname,c.ptfname ".
 				"FROM scheduler AS a, room AS b, patient AS c ".
 				"WHERE a.calroom = b.id AND a.calpatient = c.id AND ".
@@ -368,6 +368,7 @@ class CalendarModule extends BaseModule {
 			$this->month_data[$tmp["day"]]["time"][] = fc_get_time_string($wrkh,$wrkm);
 			$this->month_data[$tmp["day"]]["room"][] = prepare($calroom);
 			$this->month_data[$tmp["day"]]["patient"][] = prepare($ptlname).", ".prepare($ptfname);
+			$this->month_data[$tmp["day"]]["patient_id"][] = prepare($tmp['ptid']);
 		}
 	  } // end function month
 	
@@ -646,7 +647,9 @@ class CalendarModule extends BaseModule {
 	     	  	$theevent .= $this->month_data[$theday]["room"][$j];
 		  	$theevent .= "</a></small><br/>\n"; 
      		  	$theevent .= "&nbsp;&nbsp;<abbr title=\"".$this->month_data[$theday]["event_title"][$j]."\">".
-				"<small>".$this->month_data[$theday]["patient"][$j]."</small></abbr></div>\n"; 
+				"<small>".$this->month_data[$theday]["patient"][$j]."</small></abbr>".
+				"<a href=\"manage.php?id=".$this->month_data[$theday]["patient_id"][$j].
+				"\"><img src=\"lib/template/default/img/magnifying_glass.gif\" border=\"0\" alt=\"[?]\"/></a></div>\n"; 
 		  }
 		}
 	  }
