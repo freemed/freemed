@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Thu Jul 12 2001 rufustfirefly
+  - po/br.po: added Brazilian Portuguese translation from Flavio
+    Jose Fonseca de Souza <flavio@tc.df.gov.br>
+
 * Tue Jul 10 2001 rufustfirefly
   Released 0.2.1.3 (Bread and Butter/CVS)
   - lib/freemed.php, lib/bcadd.php: added fake function to perform
