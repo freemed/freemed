@@ -126,12 +126,12 @@ switch($action) { // master action switch
 		html_form::text_widget("username", 16),
 
 		__("Password") =>
-		"<INPUT TYPE=PASSWORD NAME=\"userpassword1\" SIZE=17 MAXLENGTH=16 
-     VALUE=\"".prepare($userpassword1)."\">",
+		"<input TYPE=\"PASSWORD\" NAME=\"userpassword1\" SIZE=\"33\" MAXLENGTH=\"32\" 
+     VALUE=\"".prepare($userpassword1)."\"/>",
    
 		__("Password (Verify)") =>
-		"<INPUT TYPE=PASSWORD NAME=\"userpassword2\" SIZE=17 MAXLENGTH=16 
-     VALUE=\"".prepare($userpassword2)."\">",
+		"<input TYPE=\"PASSWORD\" NAME=\"userpassword2\" SIZE=\"33\" MAXLENGTH=\"32\" 
+     VALUE=\"".prepare($userpassword2)."\"/>",
 
 		__("Description") =>
 		html_form::text_widget("userdescrip", 20, 50),
@@ -282,9 +282,9 @@ switch($action) { // master action switch
 			"userdescrip"  => $userdescrip,
 			"userlevel"    => ($flags+0),
 			"usertype"     => $usertype,
-			"userfac"      => sql_squash($userfac),
-			"userphy"      => sql_squash($userphy),
-			"userphygrp"   => sql_squash($userphygrp),
+			"userfac"      => sql_squash(array_unique($userfac)),
+			"userphy"      => sql_squash(array_unique($userphy)),
+			"userphygrp"   => sql_squash(array_unique($userphygrp)),
 			"userrealphy"  => $userrealphy
 		),
 		array ( "id" => $id )
@@ -313,8 +313,13 @@ switch($action) { // master action switch
 
     if ($userpassword1 != $userpassword2) {
       $display_buffer .= "
+	<div align=\"center\">
         ".__("Error")." !
-	<B>(".__("Passwords must match").")</B>
+	<b>(".__("Passwords must match").")</b>
+	<p/>
+	<a class=\"button\" href=\"user.php?action=modform&id=".urlencode($id)."\"
+	>".__("Try Again")."</a>
+	</div>
       ";
       template_display();
     } // if the passwords _don't_ match...
