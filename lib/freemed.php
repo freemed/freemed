@@ -38,6 +38,7 @@ define ('DB_PASSWORD', "password");		// SQL server password
 define ('PHYSICAL_LOCATION', "/usr/freemed");
 define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
 define ('BUG_TRACKER', true);   // set bug tracker on or off
+define ('USE_CSS', true);		// do we use cascading style sheets?
 
 define ('HOST', "localhost");             // host name for this system
 define ('BASE_URL', "/freemed");		// offset (i.e. http://here/package)
