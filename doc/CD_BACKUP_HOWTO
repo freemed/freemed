@@ -1,0 +1,13 @@
+$Id$
+$Author$
+
+---
+
+This file contains the setup steps necessary to get the CD backups module
+working under Debian with MySQL. It also assumes that the MySQL database
+name is "freemed".
+
+* Add "www-data" to the cdrecording group in /etc/group.
+* Add "www-data" to the mysql group in /etc/group.
+* Execute "chmod g+rx /var/lib/mysql/freemed".
+

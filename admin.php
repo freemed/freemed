@@ -159,14 +159,10 @@ if ($action=="cfgform") {
 
 	// Check for dynamic components
 	if (!is_object($module_list)) {
-		$module_list = CreateObject(
-			'PHP.module_list', 
-			PACKAGENAME,
-			array(
-				'cache_file' => 'data/cache/modules'
-			)
-		);
+		$module_list = freemed::module_cache();
 	}
+
+	// Loop
 	foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
 		if (is_array($v['META_INFORMATION']['global_config'])) {
 			$this_one = $v['META_INFORMATION']['global_config'];
@@ -591,6 +587,26 @@ if ($userdata["user"] == 1) { // if we are root...
     </td></tr>
   ";
 }
+
+	// Load dynamic modules for administration via AdminMenu handler
+	LoadObjectDependency('PHP.module');
+	$admin_actions = freemed::module_handler('AdminMenu');
+	if (is_array($admin_actions)) {
+		foreach ($admin_actions as $class => $handler) {
+			GettextXML::textdomain(strtolower($class));
+			$title = freemed::module_get_value($class, 'MODULE_NAME');
+			$icon = freemed::module_get_value($class, 'ICON');
+			$display_buffer .= "
+			<tr><td ALIGN=\"RIGHT\">
+			<a HREF=\"module_loader.php?module=".urlencode($class).
+			"\"><img src=\"".$icon."\" BORDER=\"0\" ALT=\"\"/></a>
+			</td><td ALIGN=\"LEFT\">
+			<a HREF=\"module_loader.php?module=".urlencode($class).
+			"\">".__($title)."</a>
+			</td></tr>
+			";
+		}
+	} // end if is array admin_actions
 
   $display_buffer .= "
     <tr><td ALIGN=\"RIGHT\">
