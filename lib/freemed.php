@@ -121,8 +121,6 @@ if (strstr($HTTP_USER_AGENT, "Lynx")) {
 // if there's no bcmath module, use fake bcadd() function
 if (!function_exists("bcadd"))
 	include_once ("lib/bcadd.php");
-if (!function_exists("bindtextdomain"))
-	die ("PHP must be compiled with GNU gettext (--with-gettext)");
 
   // check for proper template, and load default if not provided
 if (!isset($template)) {
@@ -139,7 +137,7 @@ else include_once("lib/template/default/lib.php");
 include_once ("lib/error_handler.php");   // internal error handler
 include_once ("/usr/share/phpwebtools/webtools.php"); // webtools toolkit
 
-define ('WEBTOOLS_REQUIRED', "0.2.4");   // version of phpwebtools required
+define ('WEBTOOLS_REQUIRED', "0.3");   // version of phpwebtools required
 
   // version check for webtools
 if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) )
@@ -153,16 +151,19 @@ if (!defined('SESSION_DISABLE')) {
 	session_start();
 	session_register("SESSION"); // master session storage
 
+	// Create object map for FreeMED
+	CreateApplicationMap(array('FreeMED' => 'lib/class.*.php'));
+
 	// Load gettext routines. This can only be done if a session
 	// is running, as it stores several variables in session
 	// tracking.
 	include_once ("lib/i18n.php");
+	set_up_language($SESSION['language']);
 }
 // ***************************************************************
 
 include_once ("lib/iso-set.php");         // ISO set handler
 include_once ("lib/API.php");             // API functions
-include_once ("lib/containers.php");      // class containers
 include_once ("lib/macros.php");          // macros/contants
 include_once ("lib/xml.php");             // XML import/export routines
 
@@ -175,7 +176,7 @@ include_once ("lib/xml.php");             // XML import/export routines
     //   SQL_MSQL     - mSQL backend
 define ('DB_ENGINE', SQL_MYSQL);
 
-$sql = new sql (DB_ENGINE, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+$sql = CreateObject ('PHP.sql', DB_ENGINE, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
   // ***************************************************************
 
