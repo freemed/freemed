@@ -8,7 +8,6 @@
  $db_name     = "payrec";
 
  include ("lib/freemed.php");
- include ("lib/API.php");
 
  freemed_open_db ($LoginCookie);
  $this_user = new User ($LoginCookie);
@@ -18,7 +17,7 @@
 
  // create patient object
  if ($patient>0) { $this_patient = new Patient ($patient); }
-  else           { DIE("NO PATIENT PROVIDED!");            }
+  else           { trigger_error("No patient provided!", E_USER_ERROR); }
 
  switch ($action) {
 
@@ -433,9 +432,8 @@
       case "5": // EFT
        break;
       default: // if somebody messed up...
-       echo "$ERROR!!! payrectype not present<BR>\n";
        $payrecnum = ""; // kill!!!
-       DIE("");
+       trigger_error("payrectype not present", E_USER_ERROR);
        break;
      } // end switch payrectype
      break; // end payment category (add)
