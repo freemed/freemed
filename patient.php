@@ -789,6 +789,9 @@ switch ($action) {
     $result = $sql->query ($query);
     if ($result) { $display_buffer .= __("done")."."; }
      else        { $display_buffer .= __("ERROR");    }
+	// Take care of scheduler entries
+    $query = "DELETE FROM scheduler WHERE calpatient='".addslashes($id)."'";
+    $result = $sql->query ($query);
     $display_buffer .= "
      </div>
     ";
