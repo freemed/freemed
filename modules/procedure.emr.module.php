@@ -162,7 +162,14 @@ class ProcedureModule extends EMRModule {
 		// ************** BUILD THE WIZARD ****************
 		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", 
 			"patient", "id", "module", "return") );
-		$wizard->add_page ("Step One",
+		$wizard->set_cancel_name(__("Cancel"));
+		$wizard->set_finish_name(__("Finish"));
+		$wizard->set_previous_name(__("Previous"));
+		$wizard->set_next_name(__("Next"));
+		$wizard->set_refresh_name(__("Refresh"));
+		$wizard->set_revise_name(__("Revise"));
+
+		$wizard->add_page (__("Step One"),
 			array_merge(array("procphysician", "proceoc", "procrefdoc",
 							  "proccpt", "proccptmod", "procunits", 
 							  "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
@@ -504,6 +511,12 @@ class ProcedureModule extends EMRModule {
 
 		// ************** BUILD THE WIZARD ****************
 		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id", "module", "return") );
+		$wizard->set_cancel_name(__("Cancel"));
+		$wizard->set_finish_name(__("Finish"));
+		$wizard->set_previous_name(__("Previous"));
+		$wizard->set_next_name(__("Next"));
+		$wizard->set_refresh_name(__("Refresh"));
+		$wizard->set_revise_name(__("Revise"));
 
 		// Determine if we have EOC support
 		if (check_module('EpisodeOfCare')) {
@@ -513,7 +526,7 @@ class ProcedureModule extends EMRModule {
 				array('proceoc', $patient));
 		}
 
-		$wizard->add_page ("Step One",
+		$wizard->add_page (__("Step One"),
 				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
 			html_form::form_table ( array (
 		  $__episode_of_care => $__episode_of_care_widget,
@@ -658,6 +671,12 @@ class ProcedureModule extends EMRModule {
 
 		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id",
 		"module") );
+		$wizard->set_cancel_name(__("Cancel"));
+		$wizard->set_finish_name(__("Finish"));
+		$wizard->set_previous_name(__("Previous"));
+		$wizard->set_next_name(__("Next"));
+		$wizard->set_refresh_name(__("Refresh"));
+		$wizard->set_revise_name(__("Revise"));
 		$wizard->add_page (__("Part One"),
 			array_merge(array("phyname", "proceoc", "refphyname",
 							  "procunits", 
