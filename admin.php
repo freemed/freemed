@@ -333,6 +333,7 @@ if ($action=="cfgform") {
     phychargemap TEXT,
     phyidmap     TEXT,
     phygrpprac   INT UNSIGNED,
+    phyanesth    INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
@@ -864,6 +865,17 @@ if ($action=="cfgform") {
     PRIMARY KEY (id)
     )");
   if ($result) $display_buffer .= "<LI>"._("Scheduler")."\n";
+
+  // generate anesthesiology scheduler table
+  $result=$sql->query("DROP TABLE anesth"); 
+  $result=$sql->query("CREATE TABLE anesth (
+    andate            DATE,
+    anphysician       INT UNSIGNED,
+    anfacility        INT UNSIGNED,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    )");
+  if ($result) $display_buffer .= "<LI>"._("Anesthesiology Scheduler")."\n";
 
   // generate physician availability map
   $result=$sql->query("DROP TABLE phyavailmap");
