@@ -230,7 +230,7 @@ class TeX {
 
 		// Remove intermediary step file(s)
 		unlink($tmp);
-		unlink($tmp.'.ltx');
+		//unlink($tmp.'.ltx');
 		unlink($tmp.'.log');
 		unlink($tmp.'.aux');
 
@@ -367,7 +367,7 @@ class TeX {
 
 		// Handle embedded CRs... for now we treat them as line
 		// breaks
-		$text = str_replace("\n", " \\\\\n", $text);
+		$text = str_replace("\n", "\\  \\\\\n", $text);
 
 		// Do something about <br /> and <br> tags (<br /> are used
 		// by HTMLarea JS). For now, we treat them as though they
