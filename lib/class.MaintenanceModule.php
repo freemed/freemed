@@ -13,7 +13,7 @@ LoadObjectDependency('_FreeMED.BaseModule');
 class MaintenanceModule extends BaseModule {
 
 	// override variables
-	var $CATEGORY_NAME = "Database Maintenance";
+	var $CATEGORY_NAME = "Support Data";
 	var $CATEGORY_VERSION = "0.2.1";
 
 	// Variable: $this->order_field

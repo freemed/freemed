@@ -16,13 +16,13 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"db_maintenance.php|user $user_to_lo
 
 
 //----- Set page title
-$page_title = __("Database Maintenance");
+$page_title = __("Support Data");
 
 //----- Add page to stack
 page_push();
 
 // information for module loader
-$category = "Database Maintenance";
+$category = "Support Data";
 $module_template = "<a HREF=\"module_loader.php?module=#class#\"".
 	">#name#</a><br/>\n";
 

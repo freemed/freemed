@@ -143,7 +143,7 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		"><a href=\"call-in.php?action=addform\">".
 		prepare(__("New"))."</a></td>\n".
 		"\t</tr>\n";
-	print menu_bar_cell(__("Database Maintenance"), "db_maintenance.php");
+	print menu_bar_cell(__("Support Data"), "db_maintenance.php");
 	print "\t<tr>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
