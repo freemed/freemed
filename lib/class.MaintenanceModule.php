@@ -642,6 +642,7 @@ class MaintenanceModule extends BaseModule {
 			return html_form::select_widget($varname, $return, $options);
 		} else {
 			// Process multiple
+			global ${$varname};
 			$buffer .= "<select NAME=\"".$varname."[]\" SIZE=\"".
 				($options['multiple']+0)."\" ".
 				"MULTIPLE=\"multiple\">\n";
