@@ -500,7 +500,15 @@ class FreeBBillingTransport extends BillingModule {
 			$buffer .= "<div class=\"section\">".
 				__("FreeB Billing Sent")."</div><br/>\n";
 			$buffer .= __("Result file returned was")." ".
-				$result."<br/>\n";
+				"<a href=\"".page_name()."?".
+				"module=".$_REQUEST['module']."&".
+				"type=".$_REQUEST['type']."&".
+				"action=".$_REQUEST['action']."&".
+				"billing_action=display_report&".
+				"file_type=report&".
+				"report=".urlencode(basename($result)) . "\" ".
+				"target=\"_view\">".
+				prepare(basename($result)) . "</a><br/>\n";
 			//print "DEBUG: format = ".$format[$single]." target = ".$target[$single]."<br/>\n";
 			//print "DEBUG: "; print_r($result); print "<br/>\n";
 			//$buffer .= "Should have returned $result.<br/>\n";
@@ -567,7 +575,15 @@ class FreeBBillingTransport extends BillingModule {
 			// ... and send it to FreeB, to see what we get for a result
 			$result = $freeb->ProcessBill($key, $my_format, $my_target);
 			$buffer = __("Result file returned was")." ".
-				$result."<br/>\n";
+				"<a href=\"".page_name()."?".
+				"module=".$_REQUEST['module']."&".
+				"type=".$_REQUEST['type']."&".
+				"action=".$_REQUEST['action']."&".
+				"billing_action=display_report&".
+				"file_type=report&".
+				"report=".urlencode(basename($result)) . "\" ".
+				"target=\"_view\">".
+				prepare(basename($result)) . "</a><br/>\n";
 			// Add to claimlog
 			$result = $claimlog->log_billing (
 				$key,
