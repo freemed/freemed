@@ -12,7 +12,7 @@ class EMRModule extends BaseModule {
 	var $CATEGORY_VERSION = "0.3";
 
 	// vars to be passed from child modules
-	var $order_field;
+	var $order_fields;
 	var $form_vars;
 	var $table_name;
 	var $patient_field; // the field that links to the patient ID
@@ -89,7 +89,7 @@ class EMRModule extends BaseModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient, $submit, $return;
+		global $action, $patient, $__submit, $return;
 
 		// Pull current patient from session if needed
 		if (!isset($patient)) {
@@ -106,8 +106,11 @@ class EMRModule extends BaseModule {
 		$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
 		}
 
-		// Handle cancel action from submit
-		if ($submit==__("Cancel")) {
+		// Kludge for older "submit" actions
+		if (!isset($__submit)) { $__submit = $GLOBALS['submit']; }
+
+		// Handle cancel action from __submit
+		if ($__submit==__("Cancel")) {
 			if ($return=="manage") {
 			Header("Location: manage.php?".
 				"id=".urlencode($patient));
@@ -168,6 +171,10 @@ class EMRModule extends BaseModule {
 			";
 		}
 	} // end function display_message
+
+	function form_table () {
+		return NULL;
+	} // end function form_table
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
@@ -262,8 +269,7 @@ class EMRModule extends BaseModule {
 	// function form
 	// - add/mod form stub
 	function form () {
-		global $display_buffer;
-		global $action, $id, $sql;
+		global $display_buffer, $module, $action, $id, $sql, $patient;
 
 		if (is_array($this->form_vars)) {
 			reset ($this->form_vars);
@@ -275,10 +281,11 @@ class EMRModule extends BaseModule {
 				break;
 
 			case "modform":
-				$result = $sql->query ("SELECT * FROM ".$this->table_name.
-					" WHERE ( id = '".prepare($id)."' )");
-				$r = $sql->fetch_array ($result);
-				extract ($r);
+				$r = freemed::get_link_rec($id, $this->table_name);
+				foreach ($r as $k => $v) {
+					global ${$k};
+					${$k} = $v;
+				}
 
 				// Check for record locking
 				if ($this->locked($id)) return false;
@@ -286,6 +293,27 @@ class EMRModule extends BaseModule {
 				break;
 		} // end of switch action
 		
+		$display_buffer .= "
+		<div align=\"center\">
+		<form action=\"".$this->page_name."\" method=\"post\">
+		<input type=\"hidden\" name=\"module\" value=\"".
+			prepare($module)."\"/>
+		<input type=\"hidden\" name=\"return\" value=\"".
+			prepare($return)."\"/>
+		<input type=\"hidden\" name=\"action\" value=\"".
+			( $action=="addform" ? "add" : "mod" )."\"/>
+		<input type=\"hidden\" name=\"patient\" value=\"".
+			prepare($patient)."\"/>
+		".html_form::form_table($this->form_table())."
+		<p/>
+		<input type=\"submit\" name=\"__submit\" value=\"".
+			 ( ($action=="addform") ? __("Add") : __("Modify") )."\" ".
+			 "class=\"button\" />
+		<input type=\"submit\" name=\"__submit\" value=\"".
+			__("Cancel")."\" class=\"button\" />
+		</form>
+		</div>
+		";
 	} // end function form
 
 	// function lock
@@ -512,7 +540,7 @@ class EMRModule extends BaseModule {
 			"SELECT * FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".
 				addslashes($patient)."' ".
-			"ORDER BY ".$this->order_field
+			"ORDER BY ".$this->order_fields
 		);
 
 		while ($r = $sql->fetch_array($result)) {
