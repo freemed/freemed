@@ -50,11 +50,33 @@ if ($page_history) {
 	</td><td align=\"CENTER\" valign=\"MIDDLE\">
 	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/forward.".
 	IMAGE_TYPE."\"
-		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Jump to page]\"/>
+		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[".__("Jump to page")."]\"/>
 	</form>
 	</td></tr>
 	";
 } // end checking for page history
+
+// Language bar
+if ($_COOKIE['language_bar']) {
+	$langugage_bar = true;
+	$registry = CreateObject('FreeMED.LanguageRegistry');
+	print "
+	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
+	<form ACTION=\"".page_name()."\" METHOD=\"POST\">
+	<input type=\"HIDDEN\" name=\"module\" value=\"".prepare($module)."\"/>
+	<input type=\"HIDDEN\" name=\"id\" value=\"".prepare($id)."\"/>
+	<input type=\"HIDDEN\" name=\"patient\" value=\"".prepare($patient)."\"/>
+	<input type=\"HIDDEN\" name=\"action\" value=\"".prepare($action)."\"/>
+	".$registry->widget('__language',
+		array ('style' => 'width: 220px;', 'refresh' => true))."
+	</td><td align=\"CENTER\" valign=\"MIDDLE\">
+	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/forward.".
+	IMAGE_TYPE."\"
+		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[".__("Change Language")."]\"/>
+	</form>
+	</td></tr>
+	";
+}
 
 // Check for new messages in bar
 if (is_object($this_user)) {
@@ -63,7 +85,7 @@ if (is_object($this_user)) {
 	<tr><td colspan=\"2\" align=\"center\" valign=\"middle\">
 	<img src=\"img/messages_small.gif\" alt=\"\" ".
 	"width=\"16\" height=\"16\" border=\"0\"/>
-	<small>".$new_messages." ".__("new message(s)")."</small>
+	<small>".sprintf(__("%d new message(s)"), $new_messages)."</small>
 	<img src=\"img/messages_small.gif\" alt=\"\" ".
 	"width=\"16\" height=\"16\" border=\"0\"/>
 	</td></tr>
@@ -71,7 +93,7 @@ if (is_object($this_user)) {
 	}
 }
 
-if ($patient_history or $page_history or $new_messages) {
+if ($patient_history or $page_history or $new_messages or $language_bar) {
 	print "
 	</table>
 	";
