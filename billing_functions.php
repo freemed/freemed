@@ -9,6 +9,7 @@
   include ("lib/API.php");
   include ("lib/module_emr.php");
   include ("lib/module_maintenance.php");
+  include ("lib/module_billing.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -25,6 +26,10 @@
       freemed_patient_box ($this_patient);
   } // if there is a patient
 
+//
+// payment links removed till billing module is
+// complete. use manage to make payments
+//
    // here is the actual guts of the menu
   if ($this_user->getLevel() > $database_level) {
    echo "
@@ -40,20 +45,7 @@
 
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
      ALIGN=CENTER>
-
-    ".($this_patient ?  
-    "<TR>
-    <TD ALIGN=RIGHT>
-      <$STDFONT_B><B>"._("Patient Payment")." : </B><$STDFONT_E></TD>
-    <TD ALIGN=LEFT>
-     <A HREF=\"payment_record.php?$_auth&action=addform&patient=$patient\"
-     ><$STDFONT_B>"._("Entry")."<$STDFONT_E></A>
-    </TD>
-    <TD ALIGN=LEFT>
-     <A HREF=\"payment_record.php?$_auth&action=view&patient=$patient\"
-     ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
-    </TD>
-    </TR>" :
+    ".($this_patient ? "" :
     "<TR>
      <TD COLSPAN=2 ALIGN=CENTER>
       <CENTER>
@@ -65,15 +57,6 @@
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B><B>"._("Generate Insurance Billing")." : </B><$STDFONT_E>
-     </TD><TD ALIGN=LEFT COLSPAN=2>
-      <A HREF=\"generate_fixed_forms.php?$_auth\"
-      ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
       <$STDFONT_B><B>"._("Generate EDI Billing")." : </B><$STDFONT_E>
      </TD><TD ALIGN=LEFT COLSPAN=2>
       <A HREF=\"generate_edi.php?$_auth\"
@@ -81,29 +64,26 @@
      </TD>
     </TR>
 
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B><B>"._("Unpaid Procedures")." : </B><$STDFONT_E>
-     </TD><TD ALIGN=LEFT COLSPAN=2>
-      <A HREF=\"manage_bills.php?$_auth&action=list\"
-      ><$STDFONT_B>View<$STDFONT_E></A>
-     </TD>
-    </TR>
-
-
     </TABLE> 
     <P>
 
     <$STDFONT_E>
     ";
-
+	$catagory = "Billing";
+	$template = "
+		<TR><TD ALIGN=RIGHT>
+        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
+        </TD>
+        <TD>
+        <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
+         ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
+        </TD>
+		</TR>";
     // modules list
     $module_list = new module_list (PACKAGENAME);
-    echo "<CENTER>\n";
-    echo $module_list->generate_list("Billing", 0,
-      "<A HREF=\"module_loader.php?$_auth&module=#class#\"".
-      ">#name#</A><BR>\n");
-    echo "</CENTER>\n";
+    echo "<CENTER><TABLE>\n";
+    echo $module_list->generate_list($catagory, 0, $template);
+    echo "</TABLE></CENTER>\n";
   } else { 
     echo "
       <P>

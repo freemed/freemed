@@ -530,7 +530,7 @@ if ($action=="cfgform") {
     procrefdt              DATE,
     id INT NOT NULL AUTO_INCREMENT,
     procamtallowed         REAL,
-    procdtbilled	   TEXT,
+    procdtbilled	       TEXT,
     KEY (procpatient),
     PRIMARY KEY (id)
     )");
@@ -555,6 +555,7 @@ if ($action=="cfgform") {
     psrein       VARCHAR(9),
     psrintext    INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
+	psrpos       INT UNSIGNED,
     PRIMARY KEY (id) )");
   if ($result) echo "<LI>"._("Facility")."\n"; 
 
@@ -956,6 +957,24 @@ if ($action=="cfgform") {
   {
   	if (freemed_import_stock_data("tos"))
     		echo "<I>("._("Stock Type of Service Data").")</I> \n ";
+  }
+
+  // generate place of service db required for x12
+  $result=$sql->query("DROP TABLE pos");
+  $result=$sql->query("CREATE TABLE pos (
+    posname        VARCHAR(75),
+    posdescrip     VARCHAR(200),
+    posdtadd       DATE,
+    posdtmod       DATE,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    )");
+  if ($result) echo "<LI>"._("Place of Service")."\n ";
+
+  if ($re_load)
+  {
+  	if (freemed_import_stock_data("pos"))
+    		echo "<I>("._("Stock Place of Service Data").")</I> \n ";
   }
 
   // generate internal service types db

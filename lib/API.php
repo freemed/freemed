@@ -2109,14 +2109,16 @@ function fm_get_active_guarids ($ptid=0)
 {
         global $database, $sql, $cur_date;
         $result = 0;
-	if ($ptid == 0)
+		if ($ptid == 0)
            return $result;
-        $query = "SELECT id FROM guarantors WHERE ";
-        $query .= "guarpatient='$ptid' AND guarrstatus='0' ";
+        $query = "SELECT id FROM guarantor WHERE ";
+        $query .= "guarpatient='$ptid' AND guarstatus='0' ";
         $query .= "AND guarstartdt<='$cur_date' AND guarenddt>='$cur_date'";
         $result = $sql->query($query);
         if (!$result)
-           return $result;  // not an array!
+		{
+            return $result;  // not an array!
+		}
         $sub=0;
         while ($rec = $sql->fetch_array($result))
         {

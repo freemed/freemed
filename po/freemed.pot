@@ -231,6 +231,9 @@ msgstr ""
 msgid "Insurance Companies"
 msgstr ""
 
+msgid "Insurance Company"
+msgstr ""
+
 msgid "Stock Insurance Company Data"
 msgstr ""
 
@@ -298,6 +301,12 @@ msgid "Stock Room Equipment Data"
 msgstr ""
 
 msgid "Type of Service"
+msgstr ""
+
+msgid "Place of Service"
+msgstr ""
+
+msgid "Stock Place of Service Data"
 msgstr ""
 
 msgid "Stock Type of Service Data"
@@ -562,6 +571,9 @@ msgid "Country"
 msgstr ""
 
 msgid "Employment Related Information"
+msgstr ""
+
+msgid "Employment Status"
 msgstr ""
 
 msgid "Name of Employer"
@@ -1589,5 +1601,21 @@ msgstr ""
 
 msgid "Add Payment"
 msgstr ""
+
+msgid "Describe the Payment"
+msgstr ""
+
+msgid "Payment Source"
+msgstr ""
+
+msgid "Payment Type"
+msgstr ""
+
+msgid "Date Received"
+msgstr ""
+
+msgid "Payment Amount"
+msgstr ""
+
 
 # END

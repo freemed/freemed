@@ -173,7 +173,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             {
             case PAYMENT: // payment (0)
                     $wizard->add_page (
-                        "Step Two: Describe the Payment",
+                        _("Describe the Payment"),
                         array_merge(array ("payrecsource", "payrectype", "payrecamt"), date_vars("payrecdt")),
                         html_form::form_table ( array (
                                                     "Payment Source" =>
@@ -183,7 +183,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         											.$this_patient->insuranceSelectionByType()."
                                                                  </SELECT>",
 
-                                                    "Payment Type" =>
+                                                    _("Payment Type") =>
                                                                     "<SELECT NAME=\"payrectype\">
                                                                     <OPTION VALUE=\"0\" ".
                                                                     ( ($payrectype==0) ? "SELECTED" : "" ).">cash
@@ -199,10 +199,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                                                     ( ($payrectype==5) ? "SELECTED" : "" ).">EFT
                                                                     </SELECT>",
 
-                                                    "Date Received" =>
+                                                    _("Date Received") =>
                                                                      fm_date_entry ("payrecdt"),
 
-                                                    "Payment Amount" =>
+                                                    _("Payment Amount") =>
                                                                       "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=15 ".
                                                                       "VALUE=\"".prepare($payrecamt)."\">\n"
                                                 )
@@ -234,7 +234,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 				default:
 					// we can make this hidden now also since we know the link amount
 					// fixme when you get a chance.
-                    $second_page_array["Insurance Company"] =
+                    $second_page_array[_("Insurance Company")] =
                         "<SELECT NAME=\"payreclink\">".
                         $this_patient->insuranceSelection().
                         "</SELECT>\n";
@@ -300,7 +300,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     "Step Two: $title[$payreccat]",
                     array_merge(array ("payreclink", "payrecamt"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                "Date Received" =>
+                                                _("Date Received") =>
                                                                  fm_date_entry ("payrecdt"),
 
                                                 _("Description") =>
@@ -319,13 +319,13 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     "Step Two: Describe the Adjustment",
                     array_merge(array ("payreclink", "payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                "Insurance Company" =>
+                                                _("Insurance Company") =>
                         										"<SELECT NAME=\"payreclink\">".
                         										$this_patient->insuranceSelection().
                         										"</SELECT>\n",
                                                                      
 
-                                                "Date Received" =>
+                                                _("Date Received") =>
                                                                  fm_date_entry ("payrecdt"),
 
                                                 _("Description") =>
@@ -752,7 +752,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                               WHERE b.procbalcurrent != '0' AND
                               b.id = a.payrecproc AND
                               a.payrecpatient='".addslashes($patient)."'
-                              ORDER BY payrecproc,payrecdt,b.id";
+                              ORDER BY payrecproc,payrecdt,a.id";
             }
             $pay_result = $sql->query ($pay_query);
 

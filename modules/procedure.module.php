@@ -127,7 +127,7 @@ class procedureModule extends freemedEMRModule {
 		array_merge(array("procphysician", "proceoc", 
 						  "proccpt", "proccptmod", "procunits", 
 					      "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
-					      "procpos", "proctos", "procvoucher", 
+					      "procpos", "procvoucher", 
 							"procauth"),
 						  date_vars("procdt")),
     html_form::form_table ( array (
@@ -171,12 +171,6 @@ class procedureModule extends freemedEMRModule {
           $sql->query("SELECT psrname,psrnote,id FROM facility"),
           "#psrname# [#psrnote#]", 
           "procpos"
-        ),
-      _("Type of Service") =>
-        freemed_display_selectbox (
-          $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER by tosname"),
-          "#tosname# #tosdescrip#",
-          "proctos"
         ),
       _("Voucher Number") =>
         "<INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"".prepare($procvoucher)."\" ".
@@ -324,15 +318,14 @@ class procedureModule extends freemedEMRModule {
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
-  
+ 
       echo "
         </CENTER>
         <P>
         <CENTER>
          <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-         <A HREF=\"payment_record.php?$_auth&action=addform&patient=$patient&".
-         "procedure=$this_procedure\"
+         <A HREF=\"$this->page?$_auth&module=PaymentModule&action=addform&patient=$patient\"
          ><$STDFONT_B>"._("Add Payment")."<$STDFONT_E></A> <B>|</B>
          <A HREF=\"$this->page_name?$_auth&module=$module&action=addform&procvoucher=$procvoucher".
           "&patient=$patient&procdt=".fm_date_assemble("procdt").

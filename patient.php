@@ -197,7 +197,7 @@ switch ($action) {
        _("Personal"),
        array (
          "ptsex", "ptmarital", "ptssn", "ptid",
-	 "ptdmv", "ptbilltype", "ptbudg"
+	 "ptdmv", "ptbilltype", "ptbudg", "ptempl"
 	 ),
 	html_form::form_table ( array (
 
@@ -221,6 +221,13 @@ switch ($action) {
 				)
 			),
 	
+		_("Employment Status") =>
+			html_form::select_widget("ptempl",
+				array (
+					_("Yes")    => "y",
+					_("No")     => "n",
+				)
+			),
 		_("Social Security Number") =>
 			"<INPUT TYPE=TEXT NAME=\"ptssn\" SIZE=9 MAXLENGTH=10 ".
 			"VALUE=\"".prepare($ptssn)."\">",

@@ -150,6 +150,7 @@ class fixedFormEntry {
 
   // constructor fixedFormEntry
   function fixedFormEntry ($row, $col, $len, $data, $format, $comment) {
+
     $this->row     = $row;
     $this->col     = $col;
     $this->len     = $len;

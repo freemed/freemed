@@ -31,7 +31,8 @@ class facilityMaintenance extends freemedMaintenanceModule {
 		"psrfax",
 		"psremail",
 		"psrein",
-		"psrintext"
+		"psrintext",
+		"psrpos"
 	);
 
 	function facilityMaintenance () {
@@ -102,7 +103,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
     $book->add_page (
       _("Details"),
       array (
-        "psrnote", "psrdefphy", "psrein", "psrintext"
+        "psrnote", "psrdefphy", "psrein", "psrintext", "psrpos"
       ),
       html_form::form_table ( array (
         _("Description") =>
@@ -114,6 +115,12 @@ class facilityMaintenance extends freemedMaintenanceModule {
           $sql->query("SELECT * FROM physician ORDER BY phylname,phyfname"),
 	  "#phylname#, #phyfname#",
 	  "psrdefphy" 
+	),
+        _("POS Code") =>
+	freemed_display_selectbox (
+          $sql->query("SELECT * FROM pos ORDER BY posname,posdescrip"),
+	  "#posname#, #posdescrip#",
+	  "psrpos" 
 	),
 	
         _("Employer Identification Number") =>

@@ -102,7 +102,6 @@ class Patient {
              echo "Error getting link rec guarantor in patient class<BR>";
              DIE("Error in patient class guarantor");
          }
-
 	 
 	 // not sure about this but we asume only 1 guar is allowed
          // and take the first one

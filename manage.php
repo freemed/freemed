@@ -63,22 +63,6 @@ if ($id<1) {
          ><$STDFONT_B>"._("Show Today")."<$STDFONT_E></A></TD>
         <TD>&nbsp;</TD>
         </TR>
-        <TR><TD ALIGN=RIGHT>
-         <$STDFONT_B><B>"._("Billing Functions")."</B> : <$STDFONT_E>
-        </TD><TD>
-         <A HREF=\"payment_record.php?$_auth&patient=$id\"
-         ><$STDFONT_B>Patient Ledger<$STDFONT_E></A>
-        </TD><TD>
-         <A HREF=\"payment_record.php?$_auth&patient=$id&action=addform\"
-         ><$STDFONT_B>New Record Entry<$STDFONT_E></A>
-        </TD>
-        </TR>
-        <TR><TD>&nbsp;</TD><TD>
-        <A HREF=\"manage_payment_records.php?$_auth&patient=$id\"
-         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
-        </TD><TD>
-        &nbsp;
-        </TD></TR>
       ";
       $f_results = $sql->query("SELECT * FROM patrectemplate
                               ORDER BY prtname");

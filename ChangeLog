@@ -1,6 +1,25 @@
 freemed project changelog
 ($Id$)
 
+* Wed Feb 14 2001 fforest
+	add lib/modules_billing.php
+        modules/place_of_service.module (new place of service table maint)
+        modules/generate_forms.module   (old generate_fixedforms now a module)
+    admin - added pos table (like tos) added psrtos to facility
+    billing_functions pulled all the payment links. (now in manage as module)
+        pulled the old links to generate (now a module)
+		pulled the link for manage_bills. (it's an easy convert won't take long)
+		changed module list template to match the old layout.
+    manage pulled all billing functions. not needed with payment module
+    patient add code to capture ptempl
+    API fixed bug in guarantor selection
+    module.php added include for billing_module
+    facility module added code to grab new psrpos from pos table
+    payment module did some I18n work
+    procedure module pulled all proctos references. now in cpt table.
+     NOTE proctos was never added to procrec!
+    freemed.pot po work for payment module
+
 * Sun Feb 11 2001 fforest
     added generate_edi to the billing functions to make it easier to
     test the edi generator under freemed. the actual code is not
