@@ -1,7 +1,6 @@
 <?php
- // $Id$
- // desc: module for call-in patients
- // lic : GPL, v2
+	// $Id$
+	// desc: module for call-in patients
 
 $page_name = "call-in.php";          // page name
 include ("lib/freemed.php");           // global variables
@@ -15,12 +14,14 @@ $this_user = CreateObject('FreeMED.User');
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"call-in.php|user $user_to_log views callin");}	
 
-
-
-
 if ($_REQUEST['submit'] == __("Cancel")) {
-	Header('Location: main.php');
-	$refresh = "main.php";
+	if ($_REQUEST['action'] == 'add') {
+		Header('Location: call-in.php');
+		$refresh = 'call-in.php';
+	} else {
+		Header('Location: main.php');
+		$refresh = "main.php";
+	}
 	template_display();
 }
 
@@ -82,23 +83,11 @@ switch ($action) {
     </td></tr>
     <tr>
      <td WIDTH=\"40%\" ALIGN=\"RIGHT\">".__("Home Phone")." &nbsp;</td>
-     <td><b>(</b> <input TYPE=\"TEXT\" NAME=\"cihphone1\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($cihphone1)."\"/>
-         <b>)</b> <input TYPE=\"TEXT\" NAME=\"cihphone2\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($cihphone2)."\"/>
-         <b>-</b> <input TYPE=\"TEXT\" NAME=\"cihphone3\" SIZE=5 MAXLENGTH=4
-                   VALUE=\"".prepare($cihphone3)."\"/>
-     </td>
+     <td>".fm_phone_entry('cihphone', -1, false)."</td>
     </tr>
     <tr>
      <td WIDTH=\"40%\" ALIGN=\"RIGHT\">".__("Work Phone")." &nbsp;</td>
-     <td><b>(</b> <input TYPE=\"TEXT\" NAME=\"ciwphone1\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($ciwphone1)."\"/>
-         <b>)</b> <input TYPE=\"TEXT\" NAME=\"ciwphone2\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($ciwphone2)."\"/>
-         <b>-</b> <input TYPE=\"TEXT\" NAME=\"ciwphone3\" SIZE=5 MAXLENGTH=4
-                   VALUE=\"".prepare($ciwphone3)."\"/>
-     </td>
+     <td>".fm_phone_entry('ciwphone', -1, false)."</td>
     </tr>
     <tr>
      <td WIDTH=\"40%\" ALIGN=\"RIGHT\">".__("Took Call")." &nbsp;</td>
@@ -121,7 +110,7 @@ switch ($action) {
      CELLSPACING=\"0\" CELLPADDING=\"5\">
      <tr>
       <td ALIGN=\"RIGHT\">".__("Date of Birth")."</td>
-      <td>".fm_date_entry("cidob")."</td>
+      <td>".fm_date_entry("cidob", true)."</td>
      </tr>
      <tr>
       <td ALIGN=\"RIGHT\">".__("Complaint")."</td>
@@ -175,8 +164,8 @@ switch ($action) {
 		'cilname',
 		'cifname',
 		'cimname',
-		'cihphone' => $cihphone1 . $cihphone2 . $cihphone3,
-		'ciwphone' => $ciwphone1 . $ciwphone2 . $ciwphone3,
+		'cihphone' => fm_phone_assemble('cihphone'),
+		'ciwphone' => fm_phone_assemble('ciwphone'),
 		'cidob' => fm_date_assemble('cidob'),
 		'cicomplaint',
 		'cidatestamp' => date('Y-m-d'),
@@ -246,6 +235,9 @@ switch ($action) {
   
   // Push onto stack
   page_push();
+
+	// Make sure that we "return" to the main menu
+	$_ref = $__ref = "main.php";
 
   $display_buffer .= template::link_bar(array(
 		__("Old") =>
