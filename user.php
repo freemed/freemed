@@ -87,36 +87,35 @@ switch($action) { // master action switch
    
    
    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Username")." : <$STDFONT_E>
+    "._("Username")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=\"username\" SIZE=17 MAXLENGTH=16
      VALUE=\"".prepare($username)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Password")." : <$STDFONT_E>
+    "._("Password")." : 
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=PASSWORD NAME=\"userpassword1\" SIZE=17 MAXLENGTH=16 
      VALUE=\"".prepare($userpassword1)."\">
    </TD></TR>
    
    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Password (Verify)")." :
-     <$STDFONT_E>
+    "._("Password (Verify)")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=PASSWORD NAME=\"userpassword2\" SIZE=17 MAXLENGTH=16 
      VALUE=\"".prepare($userpassword2)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Description")." : <$STDFONT_E>
+    "._("Description")." : 
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=\"userdescrip\" SIZE=20 MAXLENGTH=50
      VALUE=\"".prepare($userdescrip)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("User level")." : <$STDFONT_E>
+    "._("User level")." : 
    </TD><TD ALIGN=LEFT>
     <SELECT NAME=\"userlevel\">
       <OPTION VALUE=\"0\" ".(($userlevel==0) ? "SELECTED" : "")
@@ -143,7 +142,7 @@ switch($action) { // master action switch
    </TD></TR>
     
    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("User type")." : <$STDFONT_E>
+    "._("User type")." :
    </TD><TD ALIGN=LEFT>
     <SELECT NAME=\"usertype\">
       <OPTION VALUE=\"phy\"  ".(($usertype=="phy") ? "SELECTED" : "").">
@@ -154,7 +153,7 @@ switch($action) { // master action switch
    </TD></TR>
     
    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Actual Physician").": <$STDFONT_E>
+    "._("Actual Physician").":
    </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox($phy_r, "#phylname#, #phyfname#", "userrealphy")."
    </TD></TR>
@@ -174,8 +173,8 @@ switch($action) { // master action switch
     <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2
      VALIGN=CENTER ALIGN=CENTER>
     <TR><TD ALIGN=CENTER>
-      <$STDFONT_B><B>"._("Authorized facilities")." :
-        </B><$STDFONT_E>
+      <B>"._("Authorized facilities")." :
+        </B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
       ".freemed_multiple_choice ("SELECT * FROM facility ORDER BY
@@ -188,7 +187,7 @@ switch($action) { // master action switch
     <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0
      VALIGN=MIDDLE ALIGN=CENTER>
     <TR><TD ALIGN=CENTER>
-      <$STDFONT_B><B>"._("Authorized physicians")."</B><$STDFONT_E>
+      <B>"._("Authorized physicians")."</B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
       ".freemed_multiple_choice ("SELECT * FROM physician ORDER BY phylname, 
@@ -202,7 +201,7 @@ switch($action) { // master action switch
     <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0
      VALIGN=CENTER ALIGN=CENTER>
     <TR><TD ALIGN=CENTER>
-    <$STDFONT_B><B>"._("Authorized physician groups")."</B><$STDFONT_E>
+    <B>"._("Authorized physician groups")."</B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
       ".freemed_multiple_choice ("SELECT * FROM phygroup ORDER BY
@@ -219,17 +218,15 @@ switch($action) { // master action switch
   if (!( $book->is_done() )) {
     $display_buffer .= "<CENTER>\n".$book->display();
     $display_buffer .= "
-     <$STDFONT_B>
       <A HREF=\"$page_name\">"._("Abandon ".
        (($action=="add" OR $action=="addform") ? "Addition" : "Modification") )
       ." </A>
-     <$STDFONT_E>
     </CENTER>\n";
   } else { // now the add/mod code itself
     if ($action=="mod" || $action=="modform") {
       $display_buffer .= "
         <P ALIGN=CENTER>
-        <$STDFONT_B>"._("Modifying")." . . . 
+        "._("Modifying")." . . . 
       ";
         // build update query:
         // only set the values that need to be
@@ -251,7 +248,7 @@ switch($action) { // master action switch
   
       $display_buffer .= "
         <P ALIGN=CENTER>
-        <$STDFONT_B>"._("Adding")." . . . 
+        "._("Adding")." . . . 
       ";
       $query = "INSERT INTO $table_name VALUES ( ".
         "'".addslashes($username)."',      ".
@@ -270,7 +267,6 @@ switch($action) { // master action switch
       $display_buffer .= "
         "._("Error")." !
 	<B>("._("Passwords must match").")</B>
-	<$STDFONT_E>
       ";
       template_display();
     } // if the passwords _don't_ match...
@@ -281,15 +277,15 @@ switch($action) { // master action switch
 
     if ($result) {
       $display_buffer .= "
-        <B>"._("Done")."</B><$STDFONT_E>
+        <B>"._("Done")."</B>
       ";
     } else {
-      $display_buffer .= "<B>"._("Error")." [$query]</B><$STDFONT_E>\n"; 
+      $display_buffer .= "<B>"._("Error")." [$query]</B>\n"; 
     } // end of error reporting clause
     $display_buffer .= "
         <P ALIGN=CENTER>
         <A HREF=\"$page_name?\"
-         ><$STDFONT_B>"._("Go back to user menu")."<$STDFONT_E></A>
+         >"._("Go back to user menu")."</A>
         <P>
     ";
   
@@ -347,7 +343,7 @@ switch($action) { // master action switch
      <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
       ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
      <TR><TD ALIGN=CENTER>
-      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">"._("Users")."<$STDFONT_E>
+      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">"._("Users")."</FONT>
      </TD></TR>
 
      <TR><TD>
@@ -360,15 +356,15 @@ switch($action) { // master action switch
      <TR><TD>
       <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
       <TR BGCOLOR=\"#000000\">
-       <TD><$STDFONT_B COLOR=\"#dddddd\">"._("Username")."</TD><$STDFONT_E>
-       <TD><$STDFONT_B COLOR=\"#dddddd\">"._("Action")."</TD><$STDFONT_E>
+       <TD><FONT COLOR=\"#dddddd\">"._("Username")."</TD></FONT>
+       <TD><FONT COLOR=\"#dddddd\">"._("Action")."</TD></FONT>
       </TR>
     "; // header of box
 
     while ($r = $sql->fetch_array($result)) {
       $display_buffer .= "
         <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
-        <TD><$STDFONT_B>".prepare($r[username])."<$STDFONT_E></TD>
+        <TD>".prepare($r[username])."</TD>
         <TD>
       ";
 
