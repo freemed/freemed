@@ -1139,6 +1139,7 @@ class freemed {
 		// HL7 v2.3.1 compliant race widget (table 0006)
 		return html_form::select_widget($varname,
 			array (
+				"---" => '',
 				__("Catholic") => '0',
 				__("Jewish") => '1',
 				__("Eastern Orthodox") => '2',

@@ -186,7 +186,8 @@ switch ($action) {
        __("Personal"),
        array (
          "ptsex", "ptmarital", "ptssn", "ptid",
-	 "ptdmv", "ptbilltype", "ptbudg", "ptempl"
+	 "ptdmv", "ptbilltype", "ptbudg", "ptempl",
+	 "ptrace", "ptreligion"
 	 ),
 	html_form::form_table ( array (
 
@@ -227,6 +228,10 @@ switch ($action) {
 
 		__("Social Security Number") =>
 			html_form::text_widget("ptssn", 9),
+
+		__("Race") => freemed::race_widget('ptrace'),
+
+		__("Religion") => freemed::religion_widget("ptreligion"),
 
 		__("Internal Practice ID #") =>
 			html_form::text_widget("ptid", 10),
@@ -421,6 +426,7 @@ switch ($action) {
          "ptfax_1", "ptfax_2", "ptfax_3", "ptfax_4", "ptfax_5",
           // email address portions
          "ptemail1", "ptemail2",
+	 "ptrace", "ptreligion",
          "ptsex", "ptmarital", "ptssn", "ptid",
 	 "ptdmv", "ptbilltype", "ptbudg", "ptempl",
 	"ptdoc", "ptphy1", "ptphy2", "ptphy3", "ptphy4", "ptpcp",
@@ -520,6 +526,10 @@ switch ($action) {
 
 		__("Social Security Number") =>
 			html_form::text_widget("ptssn", 9),
+
+		__("Race") => freemed::race_widget('ptrace'),
+
+		__("Religion") => freemed::religion_widget("ptreligion"),
 
 		__("Internal Practice ID #") =>
 			html_form::text_widget("ptid", 10),
@@ -680,6 +690,8 @@ switch ($action) {
              "ptwphone"  => fm_phone_assemble ("ptwphone"),
              "ptfax" => fm_phone_assemble ("ptfax"),
              "ptemail",
+	     "ptrace",
+	     "ptreligion",
              "ptsex",
              "ptssn",
              "ptdmv",
@@ -757,6 +769,8 @@ switch ($action) {
              "ptwphone"  => fm_phone_assemble ("ptwphone"),
              "ptfax" => fm_phone_assemble ("ptfax"),
              "ptemail",
+	     "ptrace",
+	     "ptreligion",
              "ptsex",
              "ptssn",
              "ptdmv",
