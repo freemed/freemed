@@ -8,7 +8,7 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.3";
+	var $MODULE_VERSION = "0.3.4";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -80,7 +80,7 @@ class ProviderModule extends MaintenanceModule {
 			'phyfname' => SQL__VARCHAR(50),
 			'phymname' => SQL__VARCHAR(50),
 			'phytitle' => SQL__VARCHAR(10),
-			'phypracname' => SQL__VARCHAR(45),
+			'phypracname' => SQL__VARCHAR(80),
 			'phypracein' => SQL__VARCHAR(16),
 				// Address 1
 			'phyaddr1a' => SQL__VARCHAR(30),
@@ -195,7 +195,7 @@ class ProviderModule extends MaintenanceModule {
 	html_form::text_widget("phytitle", 10),
 
 	__("Practice Name") =>
-	html_form::text_widget("phypracname", 45, 45),
+	html_form::text_widget("phypracname", 45, 80),
 
 	__("Practice EIN") =>
 	html_form::text_widget("phypracein", 16, 16),
@@ -600,6 +600,15 @@ class ProviderModule extends MaintenanceModule {
 		if (!version_check($version, '0.3.3')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN phyhl7id phyhl7id VARCHAR(16)');
+		}
+
+		// Version 0.3.4
+		//
+		//	Extend practice name to 80 chars
+		//
+		if (!version_check($version, '0.3.4')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN phypracname phypracname VARCHAR(80)');
 		}
 
 	} // end method _update
