@@ -1,6 +1,8 @@
 freemed (0.7.0-0.0.2.1) stable; urgency=low
 
-  * Released beta 2 for 0.7.0.
+  * Fixed dependencies oops.
+  * Makefiles corrected to actually copy all files.
+  * postin -> postinst
 
  -- Jeff Buchbinder <jeff@freemedsoftware.com>  Tue, 16 Mar 2004 11:30:00 -0500
 
