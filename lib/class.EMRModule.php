@@ -370,6 +370,9 @@ class EMRModule extends BaseModule {
 	// - generate print view
 	function printaction ( ) { $this->_print(); }
 	function _print ( ) {
+		// Turn off the template
+		$GLOBALS['__freemed']['no_template_display'] = true;
+
 		// Check for selected printer
 		if (!freemed::config_value('printnoselect') and !isset($_REQUEST['printer'])) {
 			// select printer form
@@ -412,9 +415,6 @@ class EMRModule extends BaseModule {
 
 		global $display_buffer;
 
-		// Turn off the template
-		$GLOBALS['__freemed']['no_template_display'] = true;
-
 		// Get appropriate printer from user settings
 		global $this_user;
 		if (!is_object($this_user)) {
@@ -424,14 +424,15 @@ class EMRModule extends BaseModule {
 
 		$display_buffer .= __("Printing")." ... <br/>\n";
 
-		if (true) {
+		if (false) {
 			$display_buffer .= "<pre>\n".
 				$TeX->RenderDebug().
 				"</pre>\n(You must disable this to print)";
 		} else {
 		$TeX->SetPrinter(
 			CreateObject('PHP.PrinterWrapper'),
-			$user->getManageConfig('default_printer')
+			//$user->getManageConfig('default_printer')
+			$_REQUEST['printer']
 		);
 		// TODO: Handle direct PDF generation and return here
 		$TeX->PrintTeX(1);

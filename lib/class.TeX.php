@@ -73,10 +73,27 @@ class TeX {
 
 	function PrintTeX ( $copies = 1 ) {
 		$file = $this->RenderToPDF();
-		if (!is_object($this->wrapper)) { return false; }
-		for ($i=1;$i<=$copies;$i++) {
-			$this->wrapper->driver->PrintFile($this->printer, $file);
+
+		// Render to postscript, since CUPS doesn't like PDF
+		`( cd /tmp; pdf2ps $file $file.ps )`;
+
+		// Check for a wrapper
+		if (!is_object($this->wrapper)) { 
+			syslog(LOG_INFO,"FreeMED.TeX|Failed to open wrapper class in PrintTex()");
+			return false; 
 		}
+
+		// Loop for copies
+		for ($i=1;$i<=$copies;$i++) {
+			syslog(LOG_INFO,"FreeMED.TeX|Printing file $file.ps");
+			$this->wrapper->driver->PrintFile($this->printer, $file.'.ps');
+		}
+
+		// Remove temporary files
+		unlink($file);
+		unlink($file.'.ps');
+
+		// This is correct, so we return true
 		return true;
 	} // end method Print
 
@@ -111,11 +128,14 @@ class TeX {
 
 		// Execute pdflatex rendering
 		// (twice for appropriate page numbering)
-		`pdflatex $tmp.ltx $tmp.pdf`;
-		`pdflatex $tmp.ltx $tmp.pdf`;
+		`( cd /tmp; pdflatex $tmp.ltx $tmp.pdf )`;
+		`( cd /tmp; pdflatex $tmp.ltx $tmp.pdf )`;
 
-		// Remove intermediary step file
+		// Remove intermediary step file(s)
+		unlink($tmp);
 		unlink($tmp.'.ltx');
+		unlink($tmp.'.log');
+		unlink($tmp.'.aux');
 
 		return ($tmp.'.pdf');
 	} // end method RenderToPDF
