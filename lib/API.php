@@ -8,6 +8,11 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.48  2002/06/25 17:20:24  rufustfirefly
+ // moved version to 0.4 (Betafish),
+ // added support for disabling sessions (for XML-RPC),
+ // and added basic auth transport for remote services
+ //
  // Revision 1.47  2002/06/11 20:43:56  rufustfirefly
  // added freemed::patient_widget(), fixed fm_display_date
  //
@@ -2374,6 +2379,27 @@ function help_url ( $page = "", $section = "" ) {
 		}
 	}
 } // end function help_url
+
+//---------------------------------------------------------------------------
+// Authentication Subsystem
+//---------------------------------------------------------------------------
+
+function check_basic_authentication () {
+	global $sql;
+
+	// Build array of users
+	$query = "SELECT username, userpass, userlevel FROM users";
+	$result = $sql->query($query);
+	if ($sql->results($result)) {
+		while ($r = $sql->fetch_array($result)) {
+			$users[(stripslashes($r[username]))] =
+				stripslashes($r[userpass]);
+		} // end looping thru results
+	} // end no results
+
+	// Call phpwebtools' basic authentication function
+	return basic_authentication(PACKAGENAME, $users);
+} // end function check_basic_authentication
 
 } // end checking for __API_PHP__
 

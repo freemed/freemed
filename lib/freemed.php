@@ -1,5 +1,6 @@
 <?php
  // $Id$
+ // $Author$
  // note: global variables for entire freemed code base
  // lic : GPL, v2
 
@@ -14,7 +15,7 @@ define ('__FREEMED_PHP__', true);
     // these variables you should not touch
 define ('PACKAGENAME', "freemed");				// package name
 define ('CODED_BY', "The Freemed Project");		// coded by tag
-define ('VERSION', "0.3 (Zinc)");	// current version
+define ('VERSION', "0.4 (Betafish)");	// current version
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
@@ -152,10 +153,14 @@ if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_R
 	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required for this version of freemed ".
 		"(http://phpwebtools.sourceforge.net/)\n");
 
-  // ********************** START SESSION **************************
-session_start();
-session_register("SESSION"); // master session storage
-  // ***************************************************************
+// ********************** START SESSION **************************
+if (!defined('SESSION_DISABLE')) {
+	// This is *only* disabled when XML-RPC calls are being made,
+	// etc, so that it does not require information it can't get.
+	session_start();
+	session_register("SESSION"); // master session storage
+}
+// ***************************************************************
 
   // check for WDDX functions
 //if (!function_exists("wddx_deserialize")) 
