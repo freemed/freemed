@@ -1,5 +1,6 @@
 <?php
  // $Id$
+ // $Author$
  // desc: custom patient records engine
  // lic : GPL, v2
 
@@ -14,7 +15,7 @@ freemed_open_db ();
 
 // Check for no patient provided
 if ($patient<1) {
-  $page_title = _($record_name)." :: "._("ERROR"));
+  $page_title = _($record_name)." :: "._("ERROR");
   $display_buffer .= "
    <P>
    <B>"._("You must select a patient.")."</B>
@@ -38,6 +39,11 @@ if ($patient<1) {
    <P>
    <CENTER>
     <B>"._("You must select a template.")."</B>
+   </CENTER>
+   <P>
+   <CENTER>
+   <A HREF=\"manage.php?id=".urlencode($patient)."\"
+    >"._("Manage Patient")."</A> 
    </CENTER>
    <P>
   ";
@@ -406,9 +412,9 @@ if ($patient<1) {
     </CENTER>
     <P>
     <CENTER>
-     <A HREF=\"manage.php?id=$patient\"
+     <A HREF=\"manage.php?id=".urlencode($patient)."\"
       >"._("Manage Patient")."</A> | 
-     <A HREF=\"$page_name?patient=$patient\"
+     <A HREF=\"$page_name?patient=".urlencode($patient)."\"
       >"._("View/Modify")." "._($record_name)."</A>
     </CENTER>
     <P>
