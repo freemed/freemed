@@ -204,14 +204,6 @@
        // use patient class instead of doofy way 19991217
      $this_patient  = new Patient ($patient);
 
-     $pnotes_S = htmlentities ( $r["pnotes_S"] );
-     $pnotes_O = htmlentities ( $r["pnotes_O"] );
-     $pnotes_A = htmlentities ( $r["pnotes_A"] );
-     $pnotes_P = htmlentities ( $r["pnotes_P"] );
-     $pnotes_I = htmlentities ( $r["pnotes_I"] );
-     $pnotes_E = htmlentities ( $r["pnotes_E"] );
-     $pnotes_R = htmlentities ( $r["pnotes_R"] );
-
      freemed_display_box_top ("$Modify $record_name", $_ref, $_ref);
      echo "
        <P>
@@ -241,9 +233,9 @@
      ";
      freemed_multiple_choice ("SELECT * FROM $database.eoc WHERE ".
                               "eocpatient='$patient'",
-                              "eocdescrip:eoclastsimilar",
+                              "eocdescrip:eocdtlastsimilar",
                               "pnoteseoc",
-                              $pnoteseoc);
+                              $r[pnoteseoc]);
      echo "
        <P>
        <$STDFONT_B>$Applicable_Date : <$STDFONT_E><BR>
@@ -254,37 +246,37 @@
 
        <$STDFONT_B>$Subjective : <$STDFONT_E><BR>
         <TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>$pnotes_S</TEXTAREA>
+         WRAP=VIRTUAL>".fm_prep($r[pnotes_S])."</TEXTAREA>
        <P>
 
        <$STDFONT_B>$Objective : <$STDFONT_E><BR>
         <TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>$pnotes_O</TEXTAREA>
+         WRAP=VIRTUAL>".fm_prep($r[pnotes_O])."</TEXTAREA>
        <P>
 
        <$STDFONT_B>$Assessment : <$STDFONT_E><BR>
         <TEXTAREA NAME=\"pnotes_A\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>$pnotes_A</TEXTAREA>
+         WRAP=VIRTUAL>".fm_prep($r[pnotes_A])."</TEXTAREA>
        <P>
 
        <$STDFONT_B>$Plan : <$STDFONT_E><BR>
         <TEXTAREA NAME=\"pnotes_P\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>$pnotes_P</TEXTAREA>
+         WRAP=VIRTUAL>".fm_prep($r[pnotes_P])."</TEXTAREA>
        <P>
 
        <$STDFONT_B>$Interval : <$STDFONT_E><BR>
         <TEXTAREA NAME=\"pnotes_I\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>$pnotes_I</TEXTAREA>
+         WRAP=VIRTUAL>".fm_prep($r[pnotes_I])."</TEXTAREA>
        <P>
 
        <$STDFONT_B>$Education : <$STDFONT_E><BR>
         <TEXTAREA NAME=\"pnotes_E\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>$pnotes_E</TEXTAREA>
+         WRAP=VIRTUAL>".fm_prep($r[pnotes_E])."</TEXTAREA>
        <P>
 
        <$STDFONT_B>$Prescription : <$STDFONT_E><BR>
         <TEXTAREA NAME=\"pnotes_R\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>$pnotes_R</TEXTAREA>
+         WRAP=VIRTUAL>".fm_prep($r[pnotes_R])."</TEXTAREA>
        <P>
 
        <CENTER>
