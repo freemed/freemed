@@ -553,6 +553,16 @@ class ProgressNotes extends EMRModule {
       ";
      } // end checking for EOC stuff
      $display_buffer .= "<CENTER>\n";
+
+     // Crappy hack to get around not detecting <br />'s
+     $pnotes_S = str_replace (' />', '/>', $pnotes_S);
+     $pnotes_O = str_replace (' />', '/>', $pnotes_O);
+     $pnotes_A = str_replace (' />', '/>', $pnotes_A);
+     $pnotes_P = str_replace (' />', '/>', $pnotes_P);
+     $pnotes_I = str_replace (' />', '/>', $pnotes_I);
+     $pnotes_E = str_replace (' />', '/>', $pnotes_E);
+     $pnotes_R = str_replace (' />', '/>', $pnotes_R);
+
      if (!empty($pnotes_S)) $display_buffer .= "
        <TABLE BGCOLOR=\"#ffffff\" BORDER=1><TR BGCOLOR=\"$darker_bgcolor\">
        <TD ALIGN=\"CENTER\"><B>".__("<u>S</u>ubjective")."</B></TD></TR>
