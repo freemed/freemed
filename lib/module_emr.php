@@ -247,6 +247,22 @@ class freemedEMRModule extends freemedModule {
 				<TR VALIGN=\"MIDDLE\">
 				";
 				foreach ($this->summary_vars AS $k => $v) {
+					if (!(strpos($v, ":")===false)) {
+						// Split it up
+						list ($p1, $p2) = explode(":", $v);
+					
+						switch ($p2) {
+						case "phy":
+						case "physician":
+						$p = new Physician (${$p1});
+						${$v} = $p->fullName();
+						break;
+
+						default:
+							${$v} = $p1;
+							break;
+						}
+					}
 					$buffer .= "
 					<TD VALIGN=\"MIDDLE\">
 					<SMALL>".prepare(${$v})."</SMALL>
@@ -257,12 +273,12 @@ class freemedEMRModule extends freemedModule {
 				<TD VALIGN=\"MIDDLE\">
 				<A HREF=\"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=modform&id=$r[id]\"
+				"action=modform&id=$r[id]&return=manage\"
 				><SMALL>"._("Modify")."</SMALL></A>
 				".( $this->summary_view_link ?
 				"| <A HREF=\"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=display&id=$r[id]\"
+				"action=display&id=$r[id]&return=manage\"
 				><SMALL>"._("View")."</SMALL></A>" : "" )."
 				</TD>
 				</TR>
