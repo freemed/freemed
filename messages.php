@@ -12,6 +12,15 @@ define ('PAGE_ROLL', 5);
 
 //----- Open the database, etc
 freemed_open_db ();
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log message access");}	
+
+
+
+
+
 $this_user = CreateObject('FreeMED.User');
 
 if ($submit_action==" ".__("Add")." ") { $action = "add"; }
@@ -47,7 +56,7 @@ switch ($action) {
 		__("For") =>
 		freemed_display_selectbox(
 			$sql->query("SELECT * FROM user ".
-				"WHERE username != 'root' ".
+				"WHERE username != 'admin' ".
 				"ORDER BY userdescrip"),
 			"#username# (#userdescrip#)",
 			"msgfor"
