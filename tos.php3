@@ -5,16 +5,6 @@
   //       jeff b (jeff@univrel.pr.uconn.edu) -- template
   //       adam b (gdrago23@yahoo.com) -- modified a lot
   // lic : GPL
-  // 
-  // please note that you _can_ remove the comments down below,
-  // but everything above here should remain untouched. please
-  // do _not_ remove my name or address from this file, since I
-  // have worked very hard on it. the license must also always
-  // remain GPL.                                     -- jeff b
-
-    // *** local variables section ***
-    // complete these to reflect the data for this
-    // module.
 
   $page_name="tos.php3";              // for help info, later
   $db_name  ="tos";                   // get this from jeff
@@ -55,15 +45,14 @@ switch($action) {
     // grab record number "id"
   
   if ($action=="modform") { 
-    $result = fdb_query("SELECT * FROM $db_name WHERE ( id = '$id' )");
+    $result = fdb_query("SELECT tosname,tosdescrip FROM $db_name
+                         WHERE ( id = '$id' )");
 
     $r = fdb_fetch_array($result); // dump into array r[]
-
-    $tosname    = $r["tosname"   ];
-    $tosdescrip = $r["tosdescrip"];
+    extract ($r);
   } // if loading values
 
-  $query = "SELECT * FROM $db_name ".
+  $query = "SELECT tosname,tosdescrip,id FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);
@@ -86,22 +75,22 @@ switch($action) {
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
     ($action=="modform" ? "mod" : "add")."\">";
   if ($action=="modform") echo "
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >";
+    <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
 
   echo "
    <TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
    <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Type of Service")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=tosname SIZE=20 MAXLENGTH=75
-     VALUE=\"$tosname\">
+    <INPUT TYPE=TEXT NAME=\"tosname\" SIZE=20 MAXLENGTH=75
+     VALUE=\"".prepare($tosname)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Description")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=tosdescrip SIZE=25 MAXLENGTH=200
-     VALUE=\"$tosdescrip\">
+    <INPUT TYPE=TEXT NAME=\"tosdescrip\" SIZE=25 MAXLENGTH=200
+     VALUE=\"".prepare($tosdescrip)."\">
    </TD></TR>
 
    <TR><TD ALIGN=CENTER COLSPAN=2>
@@ -138,15 +127,15 @@ switch($action) {
       "'$tosname', '$tosdescrip', '$cur_date', '$cur_date', NULL ) ";
    break;
    case "mod":
-    freemed_display_box_top (_("Modifying $record_name"), $page_name);
+    freemed_display_box_top (_("Modifying")." "._("$record_name")), $page_name);
     echo "
       <P ALIGN=CENTER>
       <$STDFONT_B>"._("Modifying")." . . . 
     ";
     $query = "UPDATE $db_name SET ".
-      "tosname    = '$tosname',    ".
-      "tosdescrip = '$tosdescrip', ".
-      "tosdtmod   = '$cur_date'    ". 
+      "tosname    = '".prepare($tosname)."',    ".
+      "tosdescrip = '".prepare($tosdescrip)."', ".
+      "tosdtmod   = '".prepare($cur_date)."'    ". 
       "WHERE id='$id'";
    break;
    case "delete":
@@ -155,7 +144,7 @@ switch($action) {
       <P ALIGN=CENTER>
       <$STDFONT_B>"._("Deleting")." . . . 
     ";
-    $query = "DELETE FROM $db_name WHERE (id = \"$id\")";
+    $query = "DELETE FROM $db_name WHERE (id = '".prepare($id)."')";
    break;
   } // inner actionswitch
   $result = fdb_query($query);
