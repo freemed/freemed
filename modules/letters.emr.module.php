@@ -230,7 +230,7 @@ class LettersModule extends EMRModule {
 		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
 			"VALUE=\"".
 	         ( ($action=="addform") ? __("Add") : __("Modify"))."\"/>
-		<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
+		<!-- <input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/> -->
 		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"__submit\" VALUE=\"Cancel\"/>
 		</div>
 		</form>
