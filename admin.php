@@ -41,9 +41,9 @@ if ($action=="cfgform") {
   // database.
 
     // icd9 option
-  $c_result = fdb_query("SELECT * FROM ".
+  $c_result = $sql->query("SELECT * FROM ".
     "config WHERE (c_option='icd')");
-  $c_r = fdb_fetch_array($c_result);
+  $c_r = $sql->fetch_array($c_result);
   $icd = $c_r["c_value"];
   if ($icd=="10") {
     $_icd_10 = "SELECTED";
@@ -52,9 +52,9 @@ if ($action=="cfgform") {
   } // default is icd9
 
     // gfx option (graphics enhanced)
-  $c_result = fdb_query("SELECT * FROM ".
+  $c_result = $sql->query("SELECT * FROM ".
     "config WHERE (c_option='gfx')");
-  $c_r = fdb_fetch_array($c_result);
+  $c_r = $sql->fetch_array($c_result);
   $gfx = $c_r["c_value"];
   if ($gfx=="1") {
     $_gfx_1 = "SELECTED";
@@ -219,31 +219,31 @@ if ($action=="cfgform") {
     <P>
   ";
 
-  $q = fdb_query("UPDATE config SET
+  $q = $sql->query("UPDATE config SET
     c_value='$icd' WHERE c_option='icd'");
   if (($debug) AND ($q)) echo "ICD = $icd<BR>\n";
 
-  $q = fdb_query("UPDATE config SET
+  $q = $sql->query("UPDATE config SET
     c_value='$gfx' WHERE c_option='gfx'");
   if (($debug) AND ($q)) echo "gfx = $gfx<BR>\n";
 
-  $q = fdb_query("UPDATE config SET
+  $q = $sql->query("UPDATE config SET
     c_value='$calshr' WHERE c_option='calshr'");
   if (($debug) AND ($q)) echo "calshr = $calshr<BR>\n";
 
-  $q = fdb_query("UPDATE config SET
+  $q = $sql->query("UPDATE config SET
     c_value='$calehr' WHERE c_option='calehr'");
   if (($debug) AND ($q)) echo "calehr = $calehr<BR>\n";
 
-  $q = fdb_query("UPDATE config SET
+  $q = $sql->query("UPDATE config SET
     c_value='$cal_ob' WHERE c_option='cal_ob'");
   if (($debug) AND ($q)) echo "cal_ob = $cal_ob<BR>\n";
 
-  $q = fdb_query("UPDATE config SET
+  $q = $sql->query("UPDATE config SET
     c_value='$dtfmt' WHERE c_option='dtfmt'");
   if (($debug) AND ($q)) echo "dtfmt = $dtfmt<BR>\n";
 
-  $q = fdb_query("UPDATE config SET
+  $q = $sql->query("UPDATE config SET
     c_value='$phofmt' WHERE c_option='phofmt'");
   if (($debug) AND ($q)) echo "phofmt = $phofmt<BR>\n";
 
@@ -301,13 +301,13 @@ if ($action=="cfgform") {
 
 //  if ($first_time!="first") {
 //    echo "<$STDFONT_B>"._("Erasing old database")."... ";
-//    fdb_drop_db($database) OR
+//    $sql-drop_db($database) OR
 //      DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
 //    echo "<B>"._("done")."</B><$STDFONT_E><BR>\n";
 //  }
 
 //  echo "<$STDFONT_B>"._("Creating new database")."... ";
-//  fdb_create_db($database) OR
+//  $sql->create_db($database) OR
 //    DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
 //  echo "<B>"._("done")."</B><$STDFONT_E><BR>\n";
 
@@ -316,8 +316,8 @@ if ($action=="cfgform") {
 
   // generate test table, if debug is on
   if ($debug) {
-    $result=fdb_query("DROP TABLE test");
-    $result=fdb_query("CREATE TABLE test (
+    $result=$sql->query("DROP TABLE test");
+    $result=$sql->query("CREATE TABLE test (
       name CHAR(10), other CHAR(12), phone INT,
       ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
       PRIMARY KEY (ID))");
@@ -325,8 +325,8 @@ if ($action=="cfgform") {
   } // end debug section
 
   // generate physician db table
-  $result=fdb_query("DROP TABLE physician");
-  $result=fdb_query("CREATE TABLE physician (
+  $result=$sql->query("DROP TABLE physician");
+  $result=$sql->query("CREATE TABLE physician (
     phylname     VARCHAR(52),
     phyfname     VARCHAR(50),
     phytitle     CHAR(10),
@@ -371,8 +371,8 @@ if ($action=="cfgform") {
   if ($result) { echo "<LI>"._("Physicians")."\n"; }
 
   // generate icd9 code table
-  $result=fdb_query("DROP TABLE icd9"); 
-  $result=fdb_query("CREATE TABLE icd9 (
+  $result=$sql->query("DROP TABLE icd9"); 
+  $result=$sql->query("CREATE TABLE icd9 (
     icd9code     VARCHAR(6),
     icd10code    VARCHAR(7),
     icd9descrip  VARCHAR(45),
@@ -389,8 +389,8 @@ if ($action=="cfgform") {
   if ($result) { echo "<LI>"._("ICD Codes")."\n"; }
 
   // generate patient database
-  $result=fdb_query("DROP TABLE patient");
-  $result=fdb_query("CREATE TABLE patient (
+  $result=$sql->query("DROP TABLE patient");
+  $result=$sql->query("CREATE TABLE patient (
     ptdtadd      DATE,
     ptdtmod      DATE,
     ptbal        REAL,
@@ -473,8 +473,8 @@ if ($action=="cfgform") {
   if ($result) { echo "<LI>"._("Patients")."\n"; }
 
   // generate proc database (second generation)
-  $result=fdb_query("DROP TABLE procrec");
-  $result=fdb_query("CREATE TABLE procrec (
+  $result=$sql->query("DROP TABLE procrec");
+  $result=$sql->query("CREATE TABLE procrec (
     procpatient            INT UNSIGNED NOT NULL,
     proceoc                TEXT,
     proccpt                INT UNSIGNED,
@@ -506,8 +506,8 @@ if ($action=="cfgform") {
   if ($result) { echo "<LI>"._("Procedures")."\n"; }
 
   // generate facility database
-  $result=fdb_query("DROP TABLE facility"); 
-  $result=fdb_query("CREATE TABLE facility (
+  $result=$sql->query("DROP TABLE facility"); 
+  $result=$sql->query("CREATE TABLE facility (
     psrname      CHAR(25),
     psraddr1     CHAR(25),
     psraddr2     CHAR(25),
@@ -529,15 +529,15 @@ if ($action=="cfgform") {
 
   if ($re_load)
   {
-  	$result=fdb_query("INSERT INTO facility VALUES (
+  	$result=$sql->query("INSERT INTO facility VALUES (
    	'Default Facility', '', '', '', '', '', '', '', '$cur_date',
    	'', '', '', '', NULL )");
   	if ($result) echo "<I>("._("default facility added").")</I> \n"; 
   }
 
   // generate room database
-  $result=fdb_query("DROP TABLE room"); 
-  $result=fdb_query("CREATE TABLE room (
+  $result=$sql->query("DROP TABLE room"); 
+  $result=$sql->query("CREATE TABLE room (
     roomname     CHAR(20),
     roompos      INT UNSIGNED,
     roomdescrip  CHAR(40),
@@ -552,14 +552,14 @@ if ($action=="cfgform") {
 
   if ($re_load)
   {
-  	$result=fdb_query("INSERT INTO room VALUES (
+  	$result=$sql->query("INSERT INTO room VALUES (
    	'Default Room', '1', '', '', '', '', '', NULL) ");
   	if ($result) echo "<I>("._("default room added").")</I> \n";
   }
 
   // generate degrees database
-  $result=fdb_query("DROP TABLE degrees");
-  $result=fdb_query("CREATE TABLE degrees (
+  $result=$sql->query("DROP TABLE degrees");
+  $result=$sql->query("CREATE TABLE degrees (
     degdegree     CHAR(10),
     degname       VARCHAR(50),
     degdate       DATE,
@@ -575,8 +575,8 @@ if ($action=="cfgform") {
   }
 
   // generate specialties database
-  $result=fdb_query("DROP TABLE specialties"); 
-  $result=fdb_query("CREATE TABLE specialties (
+  $result=$sql->query("DROP TABLE specialties"); 
+  $result=$sql->query("CREATE TABLE specialties (
     specname      VARCHAR(50),
     specdesc      VARCHAR(100),
     specdatestamp DATE,
@@ -592,8 +592,8 @@ if ($action=="cfgform") {
   }
 
   // generate insurance company database
-  $result=fdb_query("DROP TABLE insco"); 
-  $result=fdb_query("CREATE TABLE insco (
+  $result=$sql->query("DROP TABLE insco"); 
+  $result=$sql->query("CREATE TABLE insco (
     inscodtadd   DATE,
     inscodtmod   DATE,
     insconame    VARCHAR(50) NOT NULL,
@@ -626,8 +626,8 @@ if ($action=="cfgform") {
   }
 
   // generate insurance company groups db
-  $result=fdb_query("DROP TABLE inscogroup"); 
-  $result=fdb_query("CREATE TABLE inscogroup (
+  $result=$sql->query("DROP TABLE inscogroup"); 
+  $result=$sql->query("CREATE TABLE inscogroup (
     inscogroup     VARCHAR(50),
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
@@ -641,8 +641,8 @@ if ($action=="cfgform") {
   }
 
   // generate CPT (procedural) codes database
-  $result=fdb_query("DROP TABLE cpt");
-  $result=fdb_query("CREATE TABLE cpt (
+  $result=$sql->query("DROP TABLE cpt");
+  $result=$sql->query("CREATE TABLE cpt (
     cptcode        CHAR(7),
     cptnameint     VARCHAR(50),
     cptnameext     VARCHAR(50),
@@ -669,9 +669,9 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock CPT Code Data").")</I> \n";
   }
 
-  // generate cpt modifier db (19990605)
-  $result=fdb_query("DROP TABLE cptmod");
-  $result=fdb_query("CREATE TABLE cptmod (
+  // generate cpt modifier db
+  $result=$sql->query("DROP TABLE cptmod");
+  $result=$sql->query("CREATE TABLE cptmod (
     cptmod         CHAR(2),
     cptmoddescrip  VARCHAR(50),
     id INT NOT NULL AUTO_INCREMENT,
@@ -685,9 +685,9 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock CPT Modifier Data").")</I> \n";
   }
 
-  // generate physician groups db (19990625)
-  $result=fdb_query("DROP TABLE phygroup");
-  $result=fdb_query("CREATE TABLE phygroup (
+  // generate physician groups db
+  $result=$sql->query("DROP TABLE phygroup");
+  $result=$sql->query("CREATE TABLE phygroup (
     phygroupname   VARCHAR(100),
     phygroupfac    INT UNSIGNED,
     phygroupdtadd  DATE,
@@ -698,8 +698,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Physician Groups")."\n";
 
   // generate user db
-  $result=fdb_query("DROP TABLE user"); 
-  $result=fdb_query("CREATE TABLE user (
+  $result=$sql->query("DROP TABLE user"); 
+  $result=$sql->query("CREATE TABLE user (
     username       VARCHAR(16) NOT NULL,
     userpassword   VARCHAR(16) NOT NULL,
     userdescrip    VARCHAR(50),
@@ -719,15 +719,15 @@ if ($action=="cfgform") {
 
   if ($re_load)
   {
-  	$result=fdb_query("INSERT INTO user VALUES (
+  	$result=$sql->query("INSERT INTO user VALUES (
     	'root', '$db_password', 'Superuser', '9', '', '-1', '-1', '-1',
     	'', NULL )");
   	if ($result) echo "<I>[["._("Added Superuser")."]]</I> \n";
   }
 
   // generate scheduler table
-  $result=fdb_query("DROP TABLE scheduler"); 
-  $result=fdb_query("CREATE TABLE scheduler (
+  $result=$sql->query("DROP TABLE scheduler"); 
+  $result=$sql->query("CREATE TABLE scheduler (
     caldateof         DATE,
     caltype           ENUM (\"temp\", \"pat\") NOT NULL,
     calhour           INT UNSIGNED,
@@ -747,8 +747,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Scheduler")."\n";
 
   // generate physician availability map
-  $result=fdb_query("DROP TABLE phyavailmap");
-  $result=fdb_query("CREATE TABLE phyavailmap (
+  $result=$sql->query("DROP TABLE phyavailmap");
+  $result=$sql->query("CREATE TABLE phyavailmap (
     pamdatefrom      DATE,
     pamdateto        DATE,
     pamtimefromhour  INT UNSIGNED,
@@ -763,8 +763,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Physician Availability Map")."\n";
 
   // generate insurance company groups db
-  $result=fdb_query("DROP TABLE phystatus"); 
-  $result=fdb_query("CREATE TABLE phystatus (
+  $result=$sql->query("DROP TABLE phystatus"); 
+  $result=$sql->query("CREATE TABLE phystatus (
     phystatus      VARCHAR(30),
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
@@ -773,8 +773,8 @@ if ($action=="cfgform") {
 
   // generate progress notes db (19990707)
   // * 19991228 - add iso
-  $result=fdb_query("DROP TABLE pnotes"); 
-  $result=fdb_query("CREATE TABLE pnotes (
+  $result=$sql->query("DROP TABLE pnotes"); 
+  $result=$sql->query("CREATE TABLE pnotes (
     pnotesdt       DATE,
     pnotesdtadd    DATE,
     pnotesdtmod    DATE,
@@ -796,8 +796,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Progress Notes")."\n";
 
   // generate payment record db
-  $result=fdb_query("DROP TABLE payrec"); 
-  $result=fdb_query("CREATE TABLE payrec (
+  $result=$sql->query("DROP TABLE payrec"); 
+  $result=$sql->query("CREATE TABLE payrec (
     payrecdtadd   DATE,
     payrecdtmod   DATE,
     payrecpatient INT UNSIGNED NOT NULL,
@@ -817,10 +817,9 @@ if ($action=="cfgform") {
     )");
   if ($result) echo "<LI>"._("Payment Records")."\n";
 
-  // generate formulary database (19990714)
-  // date mod/add added 19990719 - jeff b
-  $result=fdb_query("DROP TABLE frmlry"); 
-  $result=fdb_query("CREATE TABLE frmlry (
+  // generate formulary database
+  $result=$sql->query("DROP TABLE frmlry"); 
+  $result=$sql->query("CREATE TABLE frmlry (
     frmlrydtadd    DATE,
     frmlrydtmod    DATE,
     class          VARCHAR(20),
@@ -840,9 +839,9 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock Formulary Data").")</I> \n";
   }
 
-  // Rx (prescription) database (19990723)
-  $result=fdb_query("DROP TABLE rx"); 
-  $result=fdb_query("CREATE TABLE rx (
+  // Rx (prescription) database
+  $result=$sql->query("DROP TABLE rx"); 
+  $result=$sql->query("CREATE TABLE rx (
     rxdtadd        DATE,
     rxdtmod        DATE,
     rxpatient      INT UNSIGNED,
@@ -858,9 +857,9 @@ if ($action=="cfgform") {
     )");
   if ($result) echo "<LI>"._("Prescriptions")."\n";
 
-  // generate simple reports table (19990810)
-  $result=fdb_query("DROP TABLE simplereport");
-  $result=fdb_query("CREATE TABLE simplereport (
+  // generate simple reports table
+  $result=$sql->query("DROP TABLE simplereport");
+  $result=$sql->query("CREATE TABLE simplereport (
     sr_label       VARCHAR(50),
     sr_type        INT UNSIGNED,
     sr_text        TEXT,
@@ -872,9 +871,9 @@ if ($action=="cfgform") {
     )");
   if ($result) echo "<LI>"._("Simple Reports")."\n";
 
-  // generate call-in table/db (19990824)
-  $result=fdb_query("DROP TABLE callin");
-  $result=fdb_query("CREATE TABLE callin (
+  // generate call-in table/db
+  $result=$sql->query("DROP TABLE callin");
+  $result=$sql->query("CREATE TABLE callin (
     cilname        VARCHAR(50),
     cifname        VARCHAR(50),
     cimname        VARCHAR(50),
@@ -893,8 +892,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Call-Ins")."\n ";
 
   // generate room equipment inventory db
-  $result=fdb_query("DROP TABLE roomequip"); 
-  $result=fdb_query("CREATE TABLE roomequip (
+  $result=$sql->query("DROP TABLE roomequip"); 
+  $result=$sql->query("CREATE TABLE roomequip (
     reqname         VARCHAR(100),
     reqdescrip      TEXT,
     reqdateadd      DATE,
@@ -910,9 +909,9 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock Room Equipment Data").")</I> \n ";
   }
 
-  // generate type of service db (19990922)
-  $result=fdb_query("DROP TABLE tos");
-  $result=fdb_query("CREATE TABLE tos (
+  // generate type of service db
+  $result=$sql->query("DROP TABLE tos");
+  $result=$sql->query("CREATE TABLE tos (
     tosname        VARCHAR(75),
     tosdescrip     VARCHAR(200),
     tosdtadd       DATE,
@@ -928,9 +927,9 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock Type of Service Data").")</I> \n ";
   }
 
-  // generate internal service types db (19991231)
-  $result=fdb_query("DROP TABLE intservtype"); 
-  $result=fdb_query("CREATE TABLE intservtype (
+  // generate internal service types db
+  $result=$sql->query("DROP TABLE intservtype"); 
+  $result=$sql->query("CREATE TABLE intservtype (
     intservtype    VARCHAR(50),
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
@@ -944,8 +943,8 @@ if ($action=="cfgform") {
   }
 
   // generate patient record template (custom) db
-  $result=fdb_query("DROP TABLE patrectemplate"); 
-  $result=fdb_query("CREATE TABLE patrectemplate (
+  $result=$sql->query("DROP TABLE patrectemplate"); 
+  $result=$sql->query("CREATE TABLE patrectemplate (
     prtname        VARCHAR(100),
     prtdescrip     VARCHAR(100),
     prtfname       TEXT,
@@ -966,8 +965,8 @@ if ($action=="cfgform") {
   }
 
   // generate questionnaire template (custom) db
-  $result=fdb_query("DROP TABLE qtemplate"); 
-  $result=fdb_query("CREATE TABLE qtemplate (
+  $result=$sql->query("DROP TABLE qtemplate"); 
+  $result=$sql->query("CREATE TABLE qtemplate (
     qname          VARCHAR(100),
     qdescrip       VARCHAR(100),
     qfname         TEXT,
@@ -986,9 +985,9 @@ if ($action=="cfgform") {
   	 if (freemed_import_stock_data("qtemplate"))
     		echo "<I>("._("Stock Questionnaire Template Data").")</I> \n";
   } 
-  // generate diagnosis family db (19991029)
-  $result=fdb_query("DROP TABLE diagfamily"); 
-  $result=fdb_query("CREATE TABLE diagfamily (
+  // generate diagnosis family db
+  $result=$sql->query("DROP TABLE diagfamily"); 
+  $result=$sql->query("CREATE TABLE diagfamily (
     dfname         VARCHAR(100),
     dfdescrip      VARCHAR(100),
     id INT NOT NULL AUTO_INCREMENT,
@@ -1002,8 +1001,8 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock Diagnosis Family Data").")</I> \n";
   }
   // generate patient statuses
-  $result=fdb_query("DROP TABLE ptstatus"); 
-  $result=fdb_query("CREATE TABLE ptstatus (
+  $result=$sql->query("DROP TABLE ptstatus"); 
+  $result=$sql->query("CREATE TABLE ptstatus (
     ptstatus         CHAR(3),
     ptstatusdescrip  VARCHAR(30),
     id INT NOT NULL AUTO_INCREMENT,
@@ -1017,8 +1016,8 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock Patient Statuses Data").")</I> \n";
   }
   // generate patient record data (custom) db
-  $result=fdb_query("DROP TABLE patrecdata"); 
-  $result=fdb_query("CREATE TABLE patrecdata (
+  $result=$sql->query("DROP TABLE patrecdata"); 
+  $result=$sql->query("CREATE TABLE patrecdata (
     prpatient      INT UNSIGNED NOT NULL,
     prtemplate     INT UNSIGNED,
     prdtadd        DATE,
@@ -1031,8 +1030,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Patient Record Data")."\n";
 
   // generate action log table db
-  $result=fdb_query("DROP TABLE log"); 
-  $result=fdb_query("CREATE TABLE log (
+  $result=$sql->query("DROP TABLE log"); 
+  $result=$sql->query("CREATE TABLE log (
     datestamp      DATE,
     user           INT UNSIGNED,
     db_name        VARCHAR(20),
@@ -1043,9 +1042,9 @@ if ($action=="cfgform") {
     )");
   if ($result) echo "<LI>"._("Action Log")."\n";
 
-  // generate configuration table info (updated 19991007)
-  $result=fdb_query("DROP TABLE config"); 
-  $result=fdb_query("CREATE TABLE config (
+  // generate configuration table info
+  $result=$sql->query("DROP TABLE config"); 
+  $result=$sql->query("CREATE TABLE config (
     c_option       CHAR(6),
     c_value        VARCHAR(100),
     id INT NOT NULL AUTO_INCREMENT,
@@ -1055,25 +1054,25 @@ if ($action=="cfgform") {
 
   if ($re_load)
   {
-  	if (fdb_query("INSERT INTO config VALUES (
+  	if ($sql->query("INSERT INTO config VALUES (
     	'icd', '9', NULL )"))   if ($debug)   echo "(ICD) \n";
-  	if (fdb_query("INSERT INTO config VALUES (
+  	if ($sql->query("INSERT INTO config VALUES (
     	'gfx', '1', NULL )"))   if ($debug)   echo "(graphics) \n";
-  	if (fdb_query("INSERT INTO config VALUES (
+  	if ($sql->query("INSERT INTO config VALUES (
     	'calshr', '$cal_starting_hour', NULL )")) if ($debug) echo "(calshr) \n";
-  	if (fdb_query("INSERT INTO config VALUES (
+  	if ($sql->query("INSERT INTO config VALUES (
     	'calehr', '$cal_ending_hour', NULL )")) if ($debug) echo "(calehr) \n";
-  	if (fdb_query("INSERT INTO config VALUES (
+  	if ($sql->query("INSERT INTO config VALUES (
     	'cal_ob', 'enable', NULL )")) if ($debug) echo "(cal_ob) \n";
-  	if (fdb_query("INSERT INTO config VALUES (
+  	if ($sql->query("INSERT INTO config VALUES (
     	'dtfmt', 'ymd', NULL )")) if ($debug) echo "(dtfmt) \n";
-  	if (fdb_query("INSERT INTO config VALUES (
+  	if ($sql->query("INSERT INTO config VALUES (
     	'phofmt', 'unformatted', NULL )")) if ($debug) echo "(phofmt) \n";
   }
 
-  // generate incoming faxes table (19990919)
-  $result=fdb_query("DROP TABLE infaxes"); 
-  $result=fdb_query("CREATE TABLE infaxes (
+  // generate incoming faxes table
+  $result=$sql->query("DROP TABLE infaxes"); 
+  $result=$sql->query("CREATE TABLE infaxes (
     infcode	  VARCHAR(5),  
     infsender	  VARCHAR(50),
     inftotpages	  INT UNSIGNED,
@@ -1089,9 +1088,9 @@ if ($action=="cfgform") {
     );");
    if ($result) echo "<LI>"._("Incoming Faxes")."\n";
 
-  // generate fax sender lookup table (19990924)
-  $result=fdb_query("DROP TABLE infaxlut"); 
-  $result=fdb_query("CREATE TABLE infaxlut (
+  // generate fax sender lookup table
+  $result=$sql->query("DROP TABLE infaxlut"); 
+  $result=$sql->query("CREATE TABLE infaxlut (
     lutsender VARCHAR(50),
     lutname   VARCHAR(50),
     id INT NOT NULL AUTO_INCREMENT,
@@ -1100,8 +1099,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Fax Sender Lookup")."\n";
 
    // generate printers table (19991008)
-   $result = fdb_query ("DROP TABLE printer"); 
-   $result = fdb_query ("CREATE TABLE printer (
+   $result = $sql->query ("DROP TABLE printer"); 
+   $result = $sql->query ("CREATE TABLE printer (
      prntname   VARCHAR(50),
      prnthost   VARCHAR(50),
      prntaclvl  ENUM(\"9\",\"8\",\"7\",\"6\",\"5\",\"4\",\"3\",\"2\",\"1\",\"0\") NOT NULL,
@@ -1112,8 +1111,8 @@ if ($action=="cfgform") {
    if ($result) echo "<LI>"._("Printers")."\n";
 
    // generate fixed form table (19991020)
-  $result = fdb_query ("DROP TABLE fixedform");
-  $result = fdb_query ("CREATE TABLE fixedform (
+  $result = $sql->query ("DROP TABLE fixedform");
+  $result = $sql->query ("CREATE TABLE fixedform (
      ffname        VARCHAR(50),
      ffdescrip     VARCHAR(100),
      fftype        INT UNSIGNED,
@@ -1139,8 +1138,8 @@ if ($action=="cfgform") {
     		echo "<I>("._("Stock Fixed Forms Data").")</I> \n";
   }
   // episode of care
-  $result = fdb_query ("DROP TABLE eoc"); 
-  $result = fdb_query ("CREATE TABLE eoc (
+  $result = $sql->query ("DROP TABLE eoc"); 
+  $result = $sql->query ("CREATE TABLE eoc (
      eocpatient                INT UNSIGNED NOT NULL,
      eocdescrip                VARCHAR(100),
      eocstartdate              DATE,
@@ -1193,8 +1192,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Episode of Care")."\n";
 
   // old reports
-  $result = fdb_query ("DROP TABLE oldreports"); 
-  $result = fdb_query ("CREATE TABLE oldreports (
+  $result = $sql->query ("DROP TABLE oldreports"); 
+  $result = $sql->query ("CREATE TABLE oldreports (
      oldrep_timestamp          DATE,
      oldrep_label              VARCHAR(50),
      oldrep_type               INT UNSIGNED,
@@ -1222,8 +1221,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Old Reports")."\n";
 
   // patient image database
-  $result = fdb_query ("DROP TABLE patimg");
-  $result = fdb_query ("CREATE TABLE patimg (
+  $result = $sql->query ("DROP TABLE patimg");
+  $result = $sql->query ("CREATE TABLE patimg (
      pipatient                 INT UNSIGNED NOT NULL,
      pilink                    INT UNSIGNED,
      pidate                    INT UNSIGNED,
@@ -1236,8 +1235,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Patient Images")."\n";
 
   // authorizations
-  $result = fdb_query ("DROP TABLE authorizations"); 
-  $result = fdb_query ("CREATE TABLE authorizations (
+  $result = $sql->query ("DROP TABLE authorizations"); 
+  $result = $sql->query ("CREATE TABLE authorizations (
      authdtadd                 DATE,
      authdtmod                 DATE,
      authpatient               INT UNSIGNED NOT NULL,
@@ -1259,8 +1258,8 @@ if ($action=="cfgform") {
   if ($result) echo "<LI>"._("Authorizations")."\n";
 
   // insurance modifiers table
-  $result = fdb_query ("DROP TABLE insmod"); 
-  $result = fdb_query ("CREATE TABLE insmod (
+  $result = $sql->query ("DROP TABLE insmod"); 
+  $result = $sql->query ("CREATE TABLE insmod (
      insmod                    VARCHAR(15),
      insmoddesc                VARCHAR(50),
      id                        INT NOT NULL AUTO_INCREMENT,

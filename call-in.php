@@ -1,10 +1,9 @@
 <?php
- // file: call-in.php3
+ // $Id$
  // desc: module for call-in patients
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name = "call-in.php3";          // page name
+  $page_name = "call-in.php";          // page name
   include ("lib/freemed.php");           // global variables
   include ("lib/API.php");    // API calls
   $record_name = _("Call In");          // name of record
@@ -105,7 +104,7 @@ switch ($action) {
     <P>
     ";
     
-    $fac_r = fdb_query("SELECT * FROM facility ORDER BY psrname,psrnote");
+    $fac_r = $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote");
     if (!isset($cifacility)) $cifacility=$default_facility; 
       // doesn't seem to hurt, but doesn't seem to do anything...
    
@@ -137,7 +136,7 @@ switch ($action) {
       $ciphysician = freemed_get_link_field ($default_facility, "facility",
         "psrdefphy");
     }
-    $phys_r = fdb_query("SELECT * FROM physician ORDER BY phylname, phyfname");
+    $phys_r = $sql->query("SELECT * FROM physician ORDER BY phylname, phyfname");
 
     echo "
     ".freemed_display_selectbox($phys_r, "#phylname#, #phyfname#", "ciphysician")."
@@ -176,7 +175,7 @@ switch ($action) {
     '$citookcall',
     '0',
     NULL )";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
 
   if ($result) echo _("done");
    else echo _("ERROR");
@@ -184,9 +183,9 @@ switch ($action) {
     <P>
     <CENTER>
      <A HREF=\"patient.php?$_auth\"
-      ><$STDFONT_B>$Patient_Menu<$STDFONT_E> |
-     <A HREF=\"call-in.php3?$_auth\"
-      ><$STDFONT_B>$Call_In_Menu<$STDFONT_E> |
+      ><$STDFONT_B>Patient Menu<$STDFONT_E> |
+     <A HREF=\"$page_name?$_auth\"
+      ><$STDFONT_B>Call In Menu<$STDFONT_E> |
      <A HREF=\"main.php?$_auth\"
       ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E>
     </CENTER>
@@ -201,8 +200,8 @@ switch ($action) {
   $query   = "SELECT * FROM scheduler WHERE
               ((calpatient='$id') AND (caltype='temp'))
               ORDER BY caldateof, calhour, calminute";
-  $result  = fdb_query ($query);
-  $rows    = fdb_num_rows ($result);
+  $result  = $sql->query ($query);
+  $rows    = $sql->num_rows ($result);
   $ciname  = freemed_get_link_rec ($id, "callin");
   $cilname = $ciname ["cilname"];
   $cifname = $ciname ["cifname"];
@@ -267,11 +266,11 @@ switch ($action) {
     case "cur": default: $__type_call_in__ = "cipatient = 0";  break;
   } // end checking for type...
 
-  $result = fdb_query ("SELECT * FROM $db_name
+  $result = $sql->query ("SELECT * FROM $db_name
              WHERE ($__type_call_in__)
              ORDER BY cidatestamp, cilname, cifname, cimname");
 
-  while ($r = fdb_fetch_array ($result)) {
+  while ($r = $sql->fetch_array ($result)) {
     extract ($r);
 
     if (freemed_check_access_for_facility ($LoginCookie, $cifacility)) {

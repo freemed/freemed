@@ -20,7 +20,7 @@
  freemed_display_html_top ();
  freemed_display_banner ();
 
-freemed_display_box_top(PACKAGENAME." "._("Main Menu"), "index.php3");
+freemed_display_box_top(PACKAGENAME." "._("Main Menu"));
 
 echo "
   <P>
@@ -60,14 +60,14 @@ echo "
  echo "
    <TR>
    <TD ALIGN=RIGHT BGCOLOR=#dddddd>
-    <A HREF=\"call-in.php3?$_auth\"
+    <A HREF=\"call-in.php?$_auth\"
     ><IMG SRC=\"img/Text.gif\" BORDER=0 ALT=\"\"></A>
    </TD>
    <TD ALIGN=LEFT>
    <B>"._("Call In")." : &nbsp;</B>
-   <A HREF=\"call-in.php3?$_auth&action=addform\"
+   <A HREF=\"call-in.php?$_auth&action=addform\"
     >"._("Entry")."</A> |
-   <A HREF=\"call-in.php3?$_auth\"
+   <A HREF=\"call-in.php?$_auth\"
     >"._("Menu")."</A>
    </TD></TR>
  ";

@@ -4,7 +4,6 @@
  // lic : GPL, v2
 
  include ("lib/freemed.php");
- include ("freemed-functions.inc");
 
 if (!defined ("__RENDER_FORMS_PHP__")) {
 

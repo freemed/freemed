@@ -1,11 +1,11 @@
 <?php
- // file: index.php3
+ // $Id$
  // note: login screen... maybe move to login.php3??
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  //       Max Klohn (amk@span.ch)
  // lic : GPL, v2
 
-  $page_name = "index.php3";
+  $page_name = "index.php";
   include "lib/freemed.php";
   include "lib/API.php";
 
@@ -14,7 +14,7 @@
   freemed_display_html_top ();
   freemed_display_banner ();
 
-  freemed_display_box_top(PACKAGENAME." "._("Login"), "index.php3");
+  freemed_display_box_top(PACKAGENAME." "._("Login"));
 
 echo "
 <P>
@@ -57,8 +57,8 @@ echo "
 </TR>
 ";
 
-$Connection = fdb_connect (DB_HOST, DB_USER, DB_PASSWORD);
-if (fdb_query ("SELECT * FROM config")) {
+//$Connection = $sql->connect (DB_HOST, DB_USER, DB_PASSWORD);
+if ($sql->query ("SELECT * FROM config")) {
 echo "
 <TR><TD ALIGN=RIGHT>
 <TT>"._("Facility")." : </TT>
@@ -70,7 +70,7 @@ echo "
 ";
 
 } // end checking for connection
-fdb_close ();
+//$sql->close ();
 
  // 19990921 -- checking if persistant...
 if (!empty($_URL))

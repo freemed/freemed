@@ -83,15 +83,15 @@ if ($id<1) {
         </TD>
         </TR>
         <TR><TD>&nbsp;</TD><TD>
-        <A HREF=\"manage_payment_records.php3?$_auth&patient=$id\"
+        <A HREF=\"manage_payment_records.php?$_auth&patient=$id\"
          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         &nbsp;
         </TD></TR>
       ";
-      $f_results = fdb_query("SELECT * FROM patrectemplate
+      $f_results = $sql->query("SELECT * FROM patrectemplate
                               ORDER BY prtname");
-      if (($f_results>0) and (fdb_num_rows($f_results))) {
+      if (($f_results>0) and ($sql->num_rows($f_results))) {
        echo "
          <TR><TD ALIGN=RIGHT>
           <$STDFONT_B><B>"._("Custom Records")."</B> : <$STDFONT_E>
@@ -101,7 +101,7 @@ if ($id<1) {
            <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
            <SELECT NAME=\"form\">
        ";
-       while ($f_r = fdb_fetch_array ($f_results)) 
+       while ($f_r = $sql->fetch_array ($f_results)) 
          echo "<OPTION VALUE=\"".$f_r["id"]."\">".$f_r["prtname"]."\n";
        echo "
            </SELECT>
@@ -124,8 +124,8 @@ if ($id<1) {
      if (!$this_patient->isDependent()) {
       $dep_query = "SELECT COUNT(*) FROM patient WHERE ptdep='".
                    $this_patient->id."'";
-      $dep_result = fdb_query($dep_query);
-      $dep_r = fdb_fetch_array($dep_result);
+      $dep_result = $sql->query($dep_query);
+      $dep_r = $sql->fetch_array($dep_result);
       $num_deps = $dep_r[0];
       if ($num_deps<1)
         echo "<$STDFONT_B>No Dependents<$STDFONT_E>";
@@ -159,17 +159,6 @@ if ($id<1) {
         <A HREF=\"patient.php?$_auth&action=modform&id=$id\"
          ><$STDFONT_B>"._("Modify")."<$STDFONT_E></A>
         </TD><TD>&nbsp;
-        </TD><TD>
-        </TD></TR>
-
-        <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>"._("Prescriptions")."</B> : <$STDFONT_E>
-        </TD><TD>
-        <A HREF=\"Rx.php3?$_auth&action=addform&patient=$id\"
-         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
-        </TD><TD> 
-        <A HREF=\"Rx.php3?$_auth&patient=$id\"
-         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         </TD></TR>
 

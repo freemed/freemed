@@ -86,20 +86,22 @@ function freemed_check_access_for_patient ($f_cookie, $patient_number)
 // function freemed_close_db
 function freemed_close_db ($_null=" ")
 {
-  fdb_close(); // close the link
+  global $sql;
+  //$sql->close(); // close the link
 } // end function freemed_close_db
 
 // function freemed_config_value
 function freemed_config_value ($config_var)
 {
   static $_config;
+  global $sql;
   
-  $query = fdb_query("SELECT * FROM config
+  $query = $sql->query("SELECT * FROM config
     WHERE (c_option='".addslashes($config_var)."')");
 
   if ($query < 1) return ""; // fix for config db not being there...
 
-  $_config = fdb_fetch_array($query);
+  $_config = $sql->fetch_array($query);
 
   return $_config["c_value"]; // return value
 } // end function freemed_config_value
@@ -273,7 +275,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 
   // speed hack
   if ((strpos($LoginCookie, ":")) and
-      ($page_name != "index.php3") and
+      ($page_name != "index.php") and
       ($page_name != "authenticate.php") and
       ($page_name != "logout.php")) 
     $this_userlevel = freemed_get_userlevel ($LoginCookie);
@@ -285,7 +287,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
   //if ($_pg_desc=="[HELP]") $width = "WIDTH=75%";
   $width="WIDTH=\"100%\"";
 
-  if ($page_name=="index.php3") { $b_b = "<B>"; $b_e = "</B>"; }
+  if ($page_name=="index.php") { $b_b = "<B>"; $b_e = "</B>"; }
 
   echo "
     <CENTER>
@@ -307,7 +309,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       <TD BGCOLOR=\"$topbar_color\" ALIGN=RIGHT WIDTH=32 
     ";
 
-    if (($_ref!="index.php3") AND ($_ref != $pg_name)) {
+    if (($_ref!="index.php") AND ($_ref != $pg_name)) {
       echo "
          ><A HREF=\"$ref?$_auth\"
          ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
@@ -331,7 +333,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
     ";
   } // if there is a box title
   //if ($debug) echo "_ref = $_ref, pg_name = $pg_name<BR>\n";
-  if (($page_name != "index.php3") and
+  if (($page_name != "index.php") and
       ($page_name != "authenticate.php") and
       ($page_name != "logout.php") and
       ($page_name != "main.php") and
@@ -368,7 +370,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      // no if statement needed for callins...
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"call-in.php3?$_auth\"
+        <A HREF=\"call-in.php?$_auth\"
         ><IMG SRC=\"img/Text-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Call-In Menu]\"></A>
        </TD>
@@ -431,7 +433,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       // no special things needed for callins
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"call-in.php3?$_auth\"
+         <A HREF=\"call-in.php?$_auth\"
          ><$STDFONT_B SIZE=-1>Callin<$STDFONT_E></A>
         </TD>
         ";
@@ -559,7 +561,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
   global $modify_level, $delete_level, $patient, $action, $module;
   global $page_name, $$cur_page_var, $max_num_res;
-  global $_s_field, $_s_val;
+  global $_s_field, $_s_val, $sql;
 
   if ($flags==-1) $flags=(ITEMLIST_MOD|ITEMLIST_DEL);
 
@@ -573,12 +575,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
  
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
 
-  $num_pages = ceil(fdb_num_rows($result)/$max_num_res);
+  $num_pages = ceil($sql->num_rows($result)/$max_num_res);
   if ($$cur_page_var<1 OR $$cur_page_var>$num_pages) $$cur_page_var=1;
 
   if (strlen($$cur_page_var)>0) { // there's an offset
     for ($i=1;$i<=($$cur_page_var-1)*$max_num_res;$i++) {
-      $herman = fdb_fetch_array($result); // offset the proper number of rows
+      $herman = $sql->fetch_array($result); // offset the proper number of rows
     }
   }
 
@@ -667,8 +669,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     </TR>
   ";
  
-  if (fdb_num_rows($result)>0) 
-   while ($this_result = fdb_fetch_array($result) AND 
+  if ($sql->num_rows($result)>0) 
+   while ($this_result = $sql->fetch_array($result) AND 
       ((strlen($cur_page_var)>0) ? ($on_this_page < $max_num_res) : (1)) ) {
     $on_this_page++;
     $first = true; // first item in the list has 'view' link
@@ -807,7 +809,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="")
 {
-  global $default_facility;
+  global $default_facility, $sql;
 
   $buffer = "";
 
@@ -831,11 +833,11 @@ function freemed_display_facilities ($param="", $default_load = false,
   $query = "SELECT * FROM facility
             $intextquery
             ORDER BY psrname,psrnote";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more docs
-    while ($row=fdb_fetch_array($result)) {
+    while ($row=$sql->fetch_array($result)) {
       if ((strlen($param)>0) AND ($param != "0") AND
           ($param == $row["id"])) 
         $selected_var = " SELECTED";
@@ -878,11 +880,11 @@ function freemed_display_physicians ($param="", $intext="")
   $query = "SELECT * FROM physician ".
      ( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
      "ORDER BY phylname,phyfname";
-  $result = fdb_query ($query);
-  if (!$result) {
+  $result = $sql->query ($query);
+  if (!$sql->results($result)) {
     // don't do anything...! 
   } else { // exit if no more docs
-    while ($row=fdb_fetch_array($result)) {
+    while ($row=$sql->fetch_array($result)) {
       $buffer .= "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
@@ -898,7 +900,7 @@ function freemed_display_physicians ($param="", $intext="")
 // displays printers from the database
 function freemed_display_printerlist ($param="")
 {
-  global $NONE_SELECTED;
+  global $NONE_SELECTED, $sql;
 
   // list printers in SELECT/OPTION tag list, and
   // leave printer selected who is in param
@@ -907,11 +909,11 @@ function freemed_display_printerlist ($param="")
   ";
   $query = "SELECT * FROM printer ORDER BY ".
      "prnthost, prntname";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more printers
-    while ($row=fdb_fetch_array($result)) {
+    while ($row=$sql->fetch_array($result)) {
       echo "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($param == $row[id]) ? "SELECTED" : "" ).
@@ -936,11 +938,11 @@ function freemed_display_simplereports ($param="")
   ";
   $query = "SELECT * FROM simplereport ORDER BY ".
      "sr_type, sr_label";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more docs
-    while ($row=fdb_fetch_array($result)) {
+    while ($row=$sql->fetch_array($result)) {
       echo "
         <OPTION VALUE=\"$_sr_id\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
@@ -953,6 +955,7 @@ function freemed_display_simplereports ($param="")
 
 // function freemed_display_tos
 //   display <SELECT>-type list of types of service
+/*
 function freemed_display_tos ($param)
 {
   global $NONE_SELECTED;
@@ -960,12 +963,12 @@ function freemed_display_tos ($param)
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM tos
+  $result = $sql->query ("SELECT * FROM tos
     ORDER BY tosname,tosdescrip");
   if (!$result) {
     // don't do anything...
   } else { // 
-    while ($row=fdb_fetch_array($result)) {
+    while ($row=$sql->fetch_array($result)) {
       echo "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
@@ -974,9 +977,11 @@ function freemed_display_tos ($param)
     } // while there are more results...
   } // end master loop
 } // end function freemed_display_tos
+*/
 
 // function freemed_display_rooms
 //   display <SELECT>-type list of rooms
+/*
 function freemed_display_rooms ($param)
 {
   global $default_facility, $LoginCookie, $NONE_SELECTED; 
@@ -984,12 +989,12 @@ function freemed_display_rooms ($param)
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM room
+  $result = $sql->query ("SELECT * FROM room
     ORDER BY roomname, roomdescrip");
   if (!$result) {
     // don't do anything...
   } else { // 
-    while ($row=fdb_fetch_array($result)) {
+    while ($row=$sql->fetch_array($result)) {
       $f_auth=explode(":", $LoginCookie);
 
       if ((freemed_check_access_for_facility ($LoginCookie, $rm_pos)) OR
@@ -1005,6 +1010,7 @@ function freemed_display_rooms ($param)
     } // while there are more results...
   } // end master loop
 } // end function freemed_display_rooms
+*/
 
 // function freemed_display_selectbox
 function freemed_display_selectbox ($result, $format, $param="")
@@ -1012,11 +1018,12 @@ function freemed_display_selectbox ($result, $format, $param="")
   global $$param; // so it knows to put SELECTED on properly
   static $var; // array of $result-IDs so we only go through them once
   static $count; // count of results
+  global $sql; // for database connection
 
   if (!isset($var["$result"])) {
     if ($result) {
-      $count["$result"] = fdb_num_rows($result);
-      while ($var["$result"][] = fdb_fetch_array($result));
+      $count["$result"] = $sql->num_rows($result);
+      while ($var["$result"][] = $sql->fetch_array($result));
     } // non-empty result
   } // if we haven't gone through this list yet
  
@@ -1075,7 +1082,7 @@ function freemed_export_stock_data ($table_name, $file_name="")
 
   if ($debug) echo "<BR> query = \"$query\" <BR> \n";
 
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
 
   if ($debug) echo "<BR> result = \"$result\" <BR> \n";
 
@@ -1149,17 +1156,17 @@ function freemed_get_date_prev ($cur_dt)
 // function freemed_get_link_rec
 //   return the entire record as an array for
 //   a link
-function freemed_get_link_rec($id="0", $db="")
+function freemed_get_link_rec($id="0", $table="")
 {
-  global $database;
+  global $database, $sql;
 
-  if (empty($db)) {
+  if (empty($table)) {
     return "";
   }
 
-  $result=fdb_query("SELECT * FROM $db WHERE
+  $result=$sql->query("SELECT * FROM ".addslashes($table)." WHERE
     id='".addslashes($id)."'"); // get just that record
-  return fdb_fetch_array($result); // return the array
+  return $sql->fetch_array($result); // return the array
 
 } // end function freemed_get_link_rec
 
@@ -1183,7 +1190,7 @@ function freemed_get_link_field($id="0", $db="", $field="id")
 //   (assumes 1 if not found, 9 if root)
 function freemed_get_userlevel ($f_cookie="")
 {
-  global $LoginCookie, $database;
+  global $LoginCookie, $database, $sql;
 
   if ($f_cookie=="") $f_cookie = $LoginCookie; // 19990920
 
@@ -1197,14 +1204,14 @@ function freemed_get_userlevel ($f_cookie="")
     return 10; // if root, give superuser access
   } else {
 
-    $result = fdb_query("SELECT * FROM user
+    $result = $sql->query("SELECT * FROM user
       WHERE id='$f_auth[0]'"); // get query...
 
-    if (fdb_num_rows($result)!=1) {
+    if ($sql->num_rows($result)!=1) {
       return 1;
     } // if there is more or less than one answer...
 
-    $r = fdb_fetch_array($result);
+    $r = $sql->fetch_array($result);
     $userlevel = $r["userlevel"]; // get the userlevel
     return $userlevel;  // give it back to everything else...
 
@@ -1227,7 +1234,7 @@ function freemed_import_stock_data ($table_name)
             TABLE $table_name
             FIELDS TERMINATED BY ','";
            
-  $result = fdb_query ($query); // try doing it
+  $result = $sql->query ($query); // try doing it
 
   return $result; // send the results home...
 } // end function freemed_import_stock_data
@@ -1243,12 +1250,12 @@ function freemed_inscogroup_display ($param)
   } else {
     $query = "SELECT * FROM inscogroup ".
        "WHERE id='".addslashes($param)."'";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     if (!$result) {
       echo "$NO_RESULT_OF_QUERY";
       // don't do anything...! 
     } else { // exit if no more
-      $row = fdb_fetch_array($result); 
+      $row = $sql->fetch_array($result); 
       echo prepare ($row[inscogroup]).
        ( $debug ? " [ $row[id] ]" : "" )."\n";
     }
@@ -1257,7 +1264,7 @@ function freemed_inscogroup_display ($param)
 
 // function freemed_log
 function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
-  global $LoginCookie, $cur_date;
+  global $LoginCookie, $cur_date, $sql;
 
   if (empty($f_cookie)) $f_cookie = $LoginCookie;
 
@@ -1265,7 +1272,7 @@ function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
   $f_user = $f_auth [0];  // extract the user number
   $query = "INSERT INTO log VALUES ( '$cur_date',
     '$f_user', '$db_name', '$record_number', '$comment', NULL )";
-  $result = fdb_query ($query); // perform addition
+  $result = $sql->query ($query); // perform addition
   return true;  // return true
 } // end function freemed_log
 
@@ -1273,10 +1280,11 @@ function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
 function freemed_multiple_choice ($sql_query, $display_field, $select_name,
   $blob_data, $display_all=true)
 {
+  global $sql;
   $buffer = "";
 
   $brackets = "[]";
-  $result = fdb_query ($sql_query); // check
+  $result = $sql->query ($sql_query); // check
   $all_selected = fm_value_in_string ($blob_data, -1);
   $buffer .= " 
     <SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
@@ -1286,8 +1294,8 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
        ($all_selected ? "SELECTED" : "").">"._("ALL")."
   "; // if there is nothing...
 
-  if ( fdb_num_rows($result) > 0) 
-   while ($r = fdb_fetch_array ($result)) {
+  if ( $sql->num_rows($result) > 0) 
+   while ($r = $sql->fetch_array ($result)) {
     if (strpos ($display_field, ":")) {
       $displayed = ""; // set as null
       $split_display_field = explode (":", $display_field);
@@ -1400,7 +1408,7 @@ function freemed_patient_box ($patient_object) {
 function freemed_search_query ($ctrl_array, $ord_array, 
                            $db = "", $id_var = "id")
 {
-  global $db_name;
+  global $db_name, $sql;
   if (strlen($id_var)<1) { } else {
     if (is_array($id_var)) {
       while (list($k,$v) = each($id_var)) {
@@ -1478,7 +1486,7 @@ function freemed_search_query ($ctrl_array, $ord_array,
     $buf .= " ORDER BY ";
     $buf .= implode(',', $ord_array);
   } // include orderby clause
-  return fdb_query($buf); 
+  return $sql->query($buf); 
 } // end function freemed_search_query
 
 // function freemed_specialty_display
@@ -1490,12 +1498,12 @@ function freemed_specialty_display ($param)
   } else {
     $query = "SELECT * FROM specialty ".
        "WHERE id='$param'";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     if (!$result) {
       echo "$NO_RESULT_OF_QUERY";
       // don't do anything...! 
     } else { // exit if no more
-      $row=fdb_fetch_array($result); 
+      $row=$sql->fetch_array($result); 
       echo prepare ($row[specdegree]." (".
                     $row[specname].")");
     }
@@ -1510,9 +1518,9 @@ function freemed_specialty_display ($param)
   // a root "backdoor", so as to allow for setup...
 
 function freemed_auth_db_connect () {
-  global $Connection; // , $db_user, $db_password;
-  $Connection = fdb_connect (DB_HOST, DB_USER, DB_PASSWORD);
-  return $Connection;
+  global $Connection, $sql; // , $db_user, $db_password;
+  // $Connection = $sql->connect (DB_HOST, DB_USER, DB_PASSWORD);
+  return $sql;
 } // end function freemed_auth_db_connect
 
 function freemed_auth_login ($f_username, $f_password) {
@@ -1526,10 +1534,10 @@ function freemed_auth_login ($f_username, $f_password) {
     return 1;
   } // endif for root case loop
   $f_connection = freemed_auth_db_connect ();
-  $f_result = fdb_query ("SELECT * FROM ".
+  $f_result = $sql->query ("SELECT * FROM ".
     "user WHERE username='$f_username'");
   if (!$f_result) return 0; // then fail
-  $f_row = fdb_fetch_array ($f_result);
+  $f_row = $sql->fetch_array ($f_result);
   if (($f_row["username"] == $f_username) AND
       ($f_row["userpassword"] == $f_password) AND
       ($f_username != "")) {
@@ -1544,7 +1552,7 @@ function freemed_auth_login ($f_username, $f_password) {
 } // end function freeemed_auth_login
 
 function freemed_verify_auth ($f_cookie="") {
-  global $_cookie_expire, $LoginCookie, $debug, $Connection;
+  global $_cookie_expire, $LoginCookie, $debug, $Connection, $sql;
 
   if ($f_cookie=="") $f_cookie = $LoginCookie;
     // split into user/pw pair
@@ -1554,10 +1562,10 @@ function freemed_verify_auth ($f_cookie="") {
   $Connection = $f_connection;  // not cookie -> global (19990921)
   //if ($debug) echo "f_auth[0] = $f_auth[0], f_auth[1] = $f_auth[1]";
   if (($f_auth[0]==1) AND ($f_auth[1]==md5(DB_PASSWORD))) return 1;
-  $f_result = fdb_query ("SELECT * FROM user ".
+  $f_result = $sql->query ("SELECT * FROM user ".
     "WHERE id = '$f_auth[0]'");
   if (!$f_result) return 0; // kill
-  $f_row = fdb_fetch_array($f_result); // get result array
+  $f_row = $sql->fetch_array($f_result); // get result array
   $md5pw = md5($f_row["userpassword"]);
   if (($f_row["id"] == $f_auth[0]) AND
       ($md5pw == $f_auth[1]) AND
@@ -1584,6 +1592,7 @@ function fdb_affected_rows ($result = "0") {
   } // end switch
 } // end function fdb_affected_rows
 
+/*
 function fdb_close ($null = "") {
   global $Connection;
   switch (strtolower(DB_ENGINE)) {
@@ -1708,6 +1717,8 @@ function fdb_query ($querystring) {
       return mysql_query ($querystring); break;
   } // end switch
 } // end function fdb_query
+
+*/
 
   //
   //  FUNCTIONS FOR DEALING WITH MISCELLANEOUS STUFF

@@ -68,7 +68,7 @@ class progressNotes extends freemedEMRModule {
         array (
 	 _("Provider") =>
 	   freemed_display_selectbox (
-            fdb_query ("SELECT * FROM physician ORDER BY phylname,phyfname"),
+            $sql->query ("SELECT * FROM physician ORDER BY phylname,phyfname"),
 	    "#phylname#, #phyfname#",
 	    "pnotesdoc"
 	   ),
@@ -236,7 +236,7 @@ class progressNotes extends freemedEMRModule {
 	 break;
        } // end inner switch
        // now actually send the query
-       $result = fdb_query ($query);
+       $result = $sql->query ($query);
        if ($debug) echo "(query = '$query') ";
        if ($result)
          echo " <B> "._("done").". </B><$STDFONT_E>\n";
@@ -337,9 +337,9 @@ class progressNotes extends freemedEMRModule {
            ><$STDFONT_B>$e_desc / $e_first to $e_last<$STDFONT_E></A><BR>
           ";
 	} else {
-	  $episodes = fdb_query (
+	  $episodes = $sql->query (
 	    "SELECT * FROM eoc WHERE eocpatient='$patient'" );
-	  while ($epi = fdb_fetch_array ($episodes)) {
+	  while ($epi = $sql->fetch_array ($episodes)) {
             $e_id    = $epi["id"];
             $e_desc  = $epi["eocdescrip"];
             $e_first = $epi["eocstartdate"];
@@ -453,7 +453,7 @@ class progressNotes extends freemedEMRModule {
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE (pnotespat='".addslashes($patient)."') ".
 			"ORDER BY pnotesdt";
-		$result = fdb_query ($query);
+		$result = $sql->query ($query);
 
 		echo freemed_display_itemlist(
 			$result,

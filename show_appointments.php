@@ -39,7 +39,7 @@
       case "temp":
         $qualifier .= " AND (caltype='temp')";
         $master_patient_link_location =
-          "call-in.php3?$_auth&action=display&id=$patient";
+          "call-in.php?$_auth&action=display&id=$patient";
         break;
       case "pat": case "default":
         $qualifier .= " AND (caltype='pat')";
@@ -51,9 +51,9 @@
 
   $query = "SELECT * FROM scheduler WHERE (($day_criteria)
     AND ($qualifier)) ORDER BY caldateof, calhour, calminute";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if ($debug) echo "query=\"$query\"";
-  if (fdb_num_rows ($result) < 1) {
+  if ($sql->num_rows ($result) < 1) {
     echo "
       <TR><TD ALIGN=CENTER>
        <$STDFONT_B><I>"._("No appointments today.")."</I><$STDFONT_E>
@@ -87,7 +87,7 @@
     DIE("");
   } // end checking if there are any results
   $any_appointments = false;            // until there are, there aren't
-  while ($r = fdb_fetch_array ($result)) {
+  while ($r = $sql->fetch_array ($result)) {
     if (freemed_check_access_for_facility ($LoginCookie, $r["calfacility"])) {
       if (!$any_appointments) // if this is the first appointment...
         echo "
@@ -124,7 +124,7 @@
                    "cifname");
         $ptmname = freemed_get_link_field ($r["calpatient"], "callin",
                    "cimname");
-        $patient_link_location = "call-in.php3?$_auth&action=view&".
+        $patient_link_location = "call-in.php?$_auth&action=view&".
                    "id=$calpatient";
         break;
        case "pat": default:

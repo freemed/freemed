@@ -65,7 +65,7 @@ switch($action) { // master action switch
   
   $phy_q = "SELECT * FROM physician WHERE phyref='no' ".
            "ORDER BY phylname,phyfname";
-  $phy_r = fdb_query($phy_q);
+  $phy_r = $sql->query($phy_q);
   // fetch all in-house docs
   
   $book->add_page(
@@ -281,7 +281,7 @@ switch($action) { // master action switch
     } // if the passwords _don't_ match...
 
     if ($id != 1)
-      $result = fdb_query($query); // execute query
+      $result = $sql->query($query); // execute query
     else echo _("You cannot modify root!");
 
     if ($result) {
@@ -308,7 +308,7 @@ switch($action) { // master action switch
 
     // select only "id" record, and delete
   if ($id != 1)
-    $result = fdb_query("DELETE FROM $db_name
+    $result = $sql->query("DELETE FROM $db_name
       WHERE (id = \"$id\")");
   else { // if we tried to delete root!!!
     echo "
@@ -338,7 +338,7 @@ switch($action) { // master action switch
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   if ($result) {
     freemed_display_box_top ("$record_name "._("Maintenance"));
 
@@ -368,9 +368,7 @@ switch($action) { // master action switch
       </TR>
     "; // header of box
 
-    $_alternate = freemed_bar_alternate_color ();
-
-    while ($r = fdb_fetch_array($result)) {
+    while ($r = $sql->fetch_array($result)) {
       echo "
         <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
         <TD><$STDFONT_B>".prepare($r[username])."<$STDFONT_E></TD>

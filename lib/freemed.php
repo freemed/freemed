@@ -32,8 +32,11 @@ define (__FREEMED_PHP__, true);
   define (INSTALLATION, "Stock Freemed Install"); // installation name
   define (LOCALEDIR,	"/usr/share/locale");     // gettext location
   define (DB_HOST, "localhost");	// database (SQL) host location
+  define (DB_NAME, "freemed");	// database name
+  define (DB_USER, "root");				// SQL server username
+  define (DB_PASSWORD, "password");		// SQL server password
   define (PHYSICAL_LOCATION, "/usr/freemed");
-  $database="freemed";			// SQL db name (for places
+  $database=DB_HOST;			// SQL db name (for places
 
   $host="localhost";                    // host name for this system
   $physical_loc=PHYSICAL_LOCATION;      // skip the eval, speed hack
@@ -41,10 +44,6 @@ define (__FREEMED_PHP__, true);
 										// with multiple iterations...)
   $base_url="/freemed";					// offset (i.e. http://here/package)
   $http="http";                         // http for normal, https for SSL
-    // these are for the SQL server, since it needs at least one real
-    // account to function. please change at will
-  define(DB_USER, "root");				// SQL server username
-  define(DB_PASSWORD, "password");		// SQL server password
   $default_language="EN";               // default language
 
     // *************************************
@@ -64,13 +63,6 @@ define (__FREEMED_PHP__, true);
     // don't touch these variables either...
   $complete_url="$http://$host$base_url"; 
   $_cookie_expire="36000";     // cookies expire in 1 hour
-
-    // *** database engine ***
-    //   mysql    - MySQL backend
-    //   odbc     - ODBC compliant (i.e. M$ SQL Server)
-    //   postgres - PostgreSQL backend
-    //   msql     - mSQL backend
-  define (DB_ENGINE, "mysql");
 
   $debug=false;  // true=debug info on, false=debug info off
   $_mail_handler="mailto:";  // where the mail goes...
@@ -145,6 +137,17 @@ define (__FREEMED_PHP__, true);
   include ("lib/language-loader.php"); // external language loader
   include ("lib/macros.php");          // macros/contants
   include ("lib/module.php");          // loadable module support (phpwebtools)
+
+  // ****************** INITIALIZE SQL CONNECTION ******************
+
+    // *** database engine ***
+    //   SQL_MYSQL    - MySQL backend
+    //   SQL_ODBC     - ODBC compliant (i.e. M$ SQL Server)
+    //   SQL_POSTGRES - PostgreSQL backend
+    //   SQL_MSQL     - mSQL backend
+  define (DB_ENGINE, SQL_MYSQL);
+
+  $sql = new sql (DB_ENGINE, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
   // ***************************************************************
 

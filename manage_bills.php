@@ -6,7 +6,7 @@
 
  $page_name = "manage_bills.php";
  $db_name = "procrec";
- $record_name = "Procrec";
+ $record_name = "Manage Patient Bills";
  include ("lib/freemed.php");
  include ("lib/API.php");
  
@@ -20,7 +20,7 @@
  { // master action switch
   case "list":
    // procduce a list only. Don't acutally process any bills
-	$result = fdb_query ("SELECT DISTINCT patient.*
+	$result = $sql->query ("SELECT DISTINCT patient.*
 				FROM patient,procrec 
 				WHERE patient.id = procrec.procpatient 
 				AND procrec.procbalcurrent > 0 ORDER BY ptlname");
@@ -39,8 +39,7 @@
       		</TR>
     		"; // header of box
 
-    		$_alternate = freemed_bar_alternate_color ();
-		while ($r = fdb_fetch_array($result)) 
+		while ($r = $sql->fetch_array($result)) 
 		{
 
       			$ptlname  = $r["ptlname"  ] ;
@@ -48,15 +47,16 @@
       			$id        = $r["id"        ] ;
 
         		// alternate the bar color
-     			$_alternate = freemed_bar_alternate_color ($_alternate);
 
       			echo "
-        			<TR BGCOLOR=$_alternate>
+        			<TR BGCOLOR=\"".(
+     			$_alternate = freemed_bar_alternate_color ()
+					)."\">
         			<TD><A HREF=
          			\"patient.php?$_auth&id=$id&action=display\"
          			>$ptlname, $ptfname</A></TD>
         			<TD><A HREF=
-         			\"manage_payment_records.php3?$_auth&id=$id&patient=$id&bills=yes\"
+         			\"manage_payment_records.php?$_auth&id=$id&patient=$id&bills=yes\"
          			><FONT SIZE=-1>View/Manage</FONT></A></TD>
         			<TD><A HREF=
          			\"payment_record.php?_ref=$page_name&id=$id&patient=$id\"
@@ -66,10 +66,10 @@
          			><FONT SIZE=-1>View/Manage</FONT></A></TD>
       				";
  			// see if all procs are billed. if not then show No
-         		$billed_result = fdb_query("SELECT COUNT(*) FROM procrec where
+         		$billed_result = $sql->query("SELECT COUNT(*) FROM procrec where
                                                         procpatient='$id' AND procbilled='0'
                                                         AND procbalcurrent>'0'");
-                        $billed = fdb_fetch_array($billed_result);
+                        $billed = $sql->fetch_array($billed_result);
                         if ($billed)
                         {
                                 if ($billed[0] > 0)
@@ -96,7 +96,7 @@
 
 //        echo freemed_display_itemlist(
 //    		$result,
-//    		"manage_payment_records.php3",
+//    		"manage_payment_records.php",
 //    		array ( // control
 //      		_("Last Name")       => "ptlname",
 //      		_("First Name")      => "ptfname"

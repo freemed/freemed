@@ -23,25 +23,10 @@ class prescriptionModule extends freemedEMRModule {
   // action shows it in the browser window for printout. other than that,
   // you're on your own...                                           -jb-
 
-/*
-  if ($action != "display")       // check if showing prescription... 
-    freemed_display_banner ();
-*/
-
-/*
-  // FOLD THIS INTO THE MAIN CLASS ... CHECK FOR PATIENT ...
-  // 19990924 -- check access for patient
-  if (!freemed_check_access_for_patient($LoginCookie, $patient)) {
-    echo "
-      <$HEADERFONT_B>
-        $No_Access_To_This_Patient
-      <$HEADERFONT_E>
-    ";
-*/
 	function add ()    { $this->old_main(); }
 	function mod ()    { $this->old_main(); }
-	function delete () { $this->old_main(); }
 	function form ()   { $this->old_main(); }
+	function view ()   { $this->old_main(); }
 
 	function old_main () {
 		reset ($GLOBALS);
@@ -70,14 +55,14 @@ class prescriptionModule extends freemedEMRModule {
         <$STDFONT_B>$Drug : <$STDFONT_E>
       ";
 
-      $rx_r = fdb_query("SELECT * FROM frmlry ORDER BY trdmrkname");
+      $rx_r = $sql->query("SELECT * FROM frmlry ORDER BY trdmrkname");
       echo freemed_display_selectbox (
         $rx_r, "#trdmrkname#", "rxdrug"
       )."
 
         <P>
 
-        <$STDFONT_B>$Dosage : <$STDFONT_E>
+        <$STDFONT_B>Dosage : <$STDFONT_E>
         <INPUT TYPE=TEXT NAME=\"rxdosage\" VALUE=\"$rxdosage\"
          SIZE=20 MAXLENGTH=100>
         <P>
@@ -86,17 +71,17 @@ class prescriptionModule extends freemedEMRModule {
      ".fm_date_entry("rxdtfrom")."
         <P>
 
-        <$STDFONT_B>$Duration ($In_Days, $Infinite) : <$STDFONT_E>
+        <$STDFONT_B>Duration (In Days, 0 = Infinite) : <$STDFONT_E>
         <INPUT TYPE=TEXT NAME=\"rxduration\" VALUE=\"$rxduration\"
          SIZE=5 MAXLENGTH=5>
         <P>
 
-        <$STDFONT_B>$Refills : <$STDFONT_E>
+        <$STDFONT_B>Refills : <$STDFONT_E>
         <INPUT TYPE=TEXT NAME=\"rxrefills\" VALUE=\"$rxrefills\"
          SIZE=5 MAXLENGTH=4>
         <P>
 
-        <$STDFONT_B>$Substitution : <$STDFONT_E>
+        <$STDFONT_B>Substitution : <$STDFONT_E>
         <SELECT NAME=\"rxsubstitute\">
          <OPTION VALUE=\"may not subsitute\">$May_Not_Substitute
          <OPTION VALUE=\"may substitute\"   >$May_Substitute
@@ -129,7 +114,7 @@ class prescriptionModule extends freemedEMRModule {
         '$rxsubstitute',
         '$rxmd5sum',
         NULL ) ";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       if (DEBUG) echo "<BR>query = \"$query\", result = \"$result\"<BR>";
       if ($result) echo "\n<$STDFONT_B><B>"._("done").".</B><$STDFONT_E>\n";
        else echo "\n<$STDFONT_B><B>"._("ERROR")."</B><$STDFONT_E>\n";
@@ -137,7 +122,7 @@ class prescriptionModule extends freemedEMRModule {
         <P>
         <CENTER>
         <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-         ><$STDFONT_B>$Manage_Prescriptions<$STDFONT_E></A> |
+         ><$STDFONT_B>Manage Prescriptions<$STDFONT_E></A> |
         <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
         </CENTER>
@@ -157,9 +142,9 @@ class prescriptionModule extends freemedEMRModule {
         <P>
       ";
 
-      $query = fdb_query ("SELECT * FROM $this->table_name ".
+      $query = $sql->query ("SELECT * FROM $this->table_name ".
 		"WHERE rxpatient='".addslashes($patient)."'");
-      $num_records = fdb_num_rows ($query);
+      $num_records = $sql->num_rows ($query);
 
       if ($num_records < 1) {
         // if there are no prescriptions yet
@@ -176,7 +161,7 @@ class prescriptionModule extends freemedEMRModule {
           <TABLE BORDER=1 CELLSPACING=1 CELLPADDING=1 ALIGN=CENTER
            BGCOLOR=#ffffff VALIGN=CENTER>
         "; // table header
-        while ( $r = fdb_fetch_array ($query) ) {
+        while ( $r = $sql->fetch_array ($query) ) {
           extract ($r);
           $drug = freemed_get_link_field ($rxdrug, "frmlry", "trdmrkname");
           $rxdtto       = $rxdtfrom;  // set to starting date
@@ -195,7 +180,7 @@ class prescriptionModule extends freemedEMRModule {
                ><$STDFONT_B><I>$drug</I><$STDFONT_E></A> <B>]</B>
             </TR></TD>
           "; 
-        } // end while (WEND legacy code ??)
+        }
         echo "
           </TABLE>
         "; // end table

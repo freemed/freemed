@@ -45,10 +45,10 @@ switch ($action) {
 
      case "mod": case "modform":
       if (empty($been_here)) {
-        $result = fdb_query("SELECT * FROM patient ".
+        $result = $sql->query("SELECT * FROM patient ".
           "WHERE ( id = '$id' )");
 
-        $r = fdb_fetch_array($result); // dump into array r[]
+        $r = $sql->fetch_array($result); // dump into array r[]
 	extract($r); // pull variables in from array
 
 	reset($t_vars);
@@ -277,13 +277,13 @@ switch ($action) {
      ");
 
 
-   $ref_phys_r = fdb_query("SELECT phylname,phyfname,id
+   $ref_phys_r = $sql->query("SELECT phylname,phyfname,id
                             FROM physician WHERE phyref='yes' 
                             ORDER BY phylname,phyfname");
-   $int_phys_r = fdb_query("SELECT phylname,phyfname,id
+   $int_phys_r = $sql->query("SELECT phylname,phyfname,id
                             FROM physician WHERE phyref='no' 
                             ORDER BY phylname,phyfname");
-   $all_phys_r = fdb_query("SELECT phylname,phyfname,id
+   $all_phys_r = $sql->query("SELECT phylname,phyfname,id
                             FROM physician
 			    ORDER BY phylname,phyfname");
 
@@ -798,7 +798,7 @@ switch ($action) {
      echo "
       <CENTER><$STDFONT_B>".( (($action=="mod") OR ($action=="modform")) ?
              _("Modifying") : _("Adding") )." ... ";
-     $result = fdb_query($query);
+     $result = $sql->query($query);
      if ($result) echo _("Done");
      else echo _("Error");
      echo "
@@ -820,7 +820,7 @@ switch ($action) {
     echo "<CENTER>
      <P><$STDFONT_B>"._("Deleting")." ... ";
     $query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     if ($result) { echo _("done")."."; }
      else        { echo _("ERROR");    }
     echo "
@@ -876,7 +876,7 @@ switch ($action) {
         break;
     } // end criteria search
 
-    $result = fdb_query($query); 
+    $result = $sql->query($query); 
 
       freemed_display_html_top ();
       freemed_display_banner ();
@@ -930,9 +930,9 @@ switch ($action) {
          CELLPADDING=0 VALIGN=TOP ALIGN=CENTER><TR><TD>
         <FONT FACE=\"Arial, Helvetica, Verdana\" COLOR=#ffffff>
       ";
-      $result = fdb_query ("SELECT COUNT(*) FROM patient");
+      $result = $sql->query ("SELECT COUNT(*) FROM patient");
       if ($result) {
-        $_res   = fdb_fetch_array ($result);
+        $_res   = $sql->fetch_array ($result);
         $_total = $_res[0];               // total number in db
   
           // patched 19990622 for 1 and 0 values...
@@ -1065,7 +1065,7 @@ switch ($action) {
        ><$STDFONT_B>"._("Show all Patients")."<$STDFONT_E></A> |
       <A HREF=\"$page_name?$_auth&action=addform\"
        ><$STDFONT_B>"._("Add Patient")."<$STDFONT_E></A> |
-      <A HREF=\"call-in.php3?$_auth\"
+      <A HREF=\"call-in.php?$_auth\"
        ><$STDFONT_B>"._("Call In Menu")."<$STDFONT_E></A>
       <P> 
       </CENTER>

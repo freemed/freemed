@@ -32,7 +32,7 @@
 //                             payreccat = '5' AND
    if ($action=="geninvoice")
    {
-       $b_result = fdb_query ("SELECT DISTINCT payrecpatient
+       $b_result = $sql->query ("SELECT DISTINCT payrecpatient
                            FROM payrec
                            WHERE (
                              payreccat = '".PROCEDURE."' AND
@@ -41,7 +41,7 @@
    }
    else
    {
-   $b_result = fdb_query ("SELECT DISTINCT payrecpatient
+   $b_result = $sql->query ("SELECT DISTINCT payrecpatient
                            FROM payrec
                            WHERE (
                              payreccat = '".PROCEDURE."' AND
@@ -54,7 +54,7 @@
    // 3 = workers' comp
    // 4 = patient/guarantor
 
-   if (!$b_result or (fdb_num_rows($b_result)<1)) {
+   if (!$sql->results($b_result)) {
      echo "
       <P>
       <CENTER>
@@ -79,15 +79,15 @@
    // skip kludge - moved to new kludge below
    //if ($skip > 0)
    //  for ($i=1;$i<=$skip;$i++)
-   //    $null_me = fdb_fetch_array ($b_result);
+   //    $null_me = $sql->fetch_array ($b_result);
 
    // loop for all patients
-   while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
+   while (($b_r = $sql->fetch_array ($b_result)) and ($still_going)) {
 
     // pull current patient
     $current_patient = $b_r[payrecpatient];
 
-    $current_status = fdb_num_rows( fdb_query (
+    $current_status = $sql->num_rows( $sql->query (
       "SELECT * FROM procrec
        WHERE (
          (procpatient    = '$current_patient') AND
@@ -130,7 +130,7 @@
      // decide which ones we are generating
      if ($action=="geninvoice")
      {
-     $result = fdb_query ("SELECT a.* FROM payrec AS a,
+     $result = $sql->query ("SELECT a.* FROM payrec AS a,
                                            procrec AS b 
                            WHERE ( 
                              a.payreccat = '5' AND
@@ -145,7 +145,7 @@
      }
      else
      {
-     $result = fdb_query ("SELECT a.* FROM payrec AS a,
+     $result = $sql->query ("SELECT a.* FROM payrec AS a,
                                            procrec AS b 
                            WHERE ( 
                              a.payreccat = '5' AND
@@ -407,7 +407,7 @@
 
      // queue all entries
      $first_procedure = 0;
-     while ($r = fdb_fetch_array ($result)) {
+     while ($r = $sql->fetch_array ($result)) {
        $p = freemed_get_link_rec ($r[payrecproc], "procrec");
         // kludge to get eoc info from procedure. 
 	if (first_procedure == 0)
@@ -654,7 +654,7 @@
                    (procbilled     = '0') AND
                    (procbalcurrent > '0')
                  )";
-       $result = fdb_query ($query);
+       $result = $sql->query ($query);
        if ($result) { echo "$Done.<BR>\n"; }
         else        { echo "$ERROR<BR>\n"; }
      }
@@ -731,9 +731,9 @@
    ";
    } // end default action
 
-   $result = fdb_query ("SELECT * FROM fixedform WHERE fftype='1'
+   $result = $sql->query ("SELECT * FROM fixedform WHERE fftype='1'
                          ORDER BY ffname, ffdescrip");
-   while ($r = fdb_fetch_array ($result)) {
+   while ($r = $sql->fetch_array ($result)) {
     echo "
      <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
     ";

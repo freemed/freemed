@@ -445,7 +445,7 @@ define (__CALENDAR_FUNCTIONS_PHP__, true);
   function fc_generate_interference_map ($query_part, $this_date, 
                                          $privacy=false) {
     global $current_imap; // global current interference map
-    global $database, $cur_date, $_auth;
+    global $database, $cur_date, $_auth, $sql;
 
     // initialize the new array
     $current_imap          = Array (); 
@@ -455,9 +455,9 @@ define (__CALENDAR_FUNCTIONS_PHP__, true);
     $querystring = "SELECT * FROM $database.scheduler WHERE ".
       "(($query_part) AND (caldateof='$this_date')) ".
       "ORDER BY caldateof,calhour,calminute";
-    $result = fdb_query ($querystring);
+    $result = $sql->query ($querystring);
 
-    while ($r = fdb_fetch_array($result)) { // loop for all patients
+    while ($r = $sql->fetch_array($result)) { // loop for all patients
       // get all common data
       $calhour     = $r["calhour"    ];
       $calminute   = $r["calminute"  ];
@@ -507,7 +507,7 @@ define (__CALENDAR_FUNCTIONS_PHP__, true);
                    "\">$ptname</A> [$ptdob] [$ptid] - $desc";
         break;
        case "temp": // call-in patient
-        $mapping = "<A HREF=\"call-in.php3?$_auth&action=display&id=".
+        $mapping = "<A HREF=\"call-in.php?$_auth&action=display&id=".
                    $r["calpatient"]."\">$ptname</A> [$ptdob] - $desc";
         break;
       } // end of switch

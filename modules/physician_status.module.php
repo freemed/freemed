@@ -28,7 +28,7 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
 		$query = "INSERT INTO $this->table_name VALUES ( ".
 			"'".addslashes($phystatus)."',   NULL ) ";
 
-		$result = fdb_query($query);
+		$result = $sql->query($query);
 
 		if ($result) { echo "<B>"._("done").".</B>"; }
 		 else        { echo "<B>"._("ERROR")."</B>"; }
@@ -80,17 +80,18 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
 			"SET phystatus = '".addslashes($phystatus)."' ". 
 			"WHERE id='".addslashes($id)."'";
 
-		$result = fdb_query($query);
+		$result = $sql->query($query);
 
 		if ($result) { echo "<B>"._("done").".</B>"; }
 		 else        { echo "<B>"._("ERROR")."</B>"; }
 
 	} // end function physicianStatusMaintenance->mod()
 
+	/*
 	function delete () {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-		$result = fdb_query("DELETE FROM $this->table_name WHERE id='".addslashes($id)."'");
+		$result = $sql->query("DELETE FROM $this->table_name WHERE id='".addslashes($id)."'");
 
 		echo "
     <P><CENTER>
@@ -102,12 +103,13 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
      >"._("back")."</A></CENTER>
 		";
 	} // end function physicianStatusMaintenance->delete()
+	*/
 
 	function view () {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
   		echo freemed_display_itemlist (
-			fdb_query("SELECT phystatus,id FROM $this->table_name ".
+			$sql->query("SELECT phystatus,id FROM $this->table_name ".
 				"ORDER BY phystatus"),
 			$this->page_name,
 			array (

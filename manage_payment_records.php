@@ -1,10 +1,9 @@
 <?php
- # file: manage_payment_records.php3
- # note: ledger/patient payment record functions
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // $Id$
+ // note: ledger/patient payment record functions
+ // lic : GPL
 
- $page_name   = "manage_payment_records.php3";
+ $page_name   = "manage_payment_records.php";
  $record_name = "Manage Patient Ledger";
  $db_name     = "payrec";
 
@@ -26,7 +25,9 @@
  // pull the current physician (main physician)
  $physician = new Physician ($this_patient->local_record[ptdoc]);
 
- echo "
+ echo freemed_patient_box ($this_patient)."
+
+	<!--
   <P>
   <CENTER>
    <$STDFONT_B><B>$Patient</B> : 
@@ -34,6 +35,7 @@
     >".htmlentities($this_patient->fullName(true))."</A><BR>
     <I>(".htmlentities($physician->fullName()).")</I><$STDFONT_E>
   </CENTER>
+	-->
   <P>
 
   <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -49,7 +51,7 @@
                    (procbalcurrent > 0) )
            ORDER BY procdt";
 
- $result = fdb_query ($query);
+ $result = $sql->query ($query);
 
  echo "
   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
@@ -69,7 +71,7 @@
  $_alternate = freemed_bar_alternate_color ();
 
  // loop for all "line items"
- while ($r = fdb_fetch_array ($result)) {
+ while ($r = $sql->fetch_array ($result)) {
    $line_item_count++;
    $_alternate = freemed_bar_alternate_color ($_alternate);
    $this_cpt = freemed_get_link_field ($r[proccpt], "cpt", "cptnameint"); 
@@ -150,7 +152,7 @@
                 'unlocked',
                 NULL 
               )";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     echo "
      <CENTER>
       Added denial.
@@ -160,7 +162,7 @@
       $query = "UPDATE procrec
                 SET procbilled='0'
                 WHERE id='".addslashes($item)."'";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       echo "
        <CENTER>
         Procedure set for rebill.
@@ -182,7 +184,7 @@
                 'unlocked',
                 NULL
               )";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     echo "
      <CENTER>
       Added Rebill to ledger.
@@ -193,7 +195,7 @@
       $query = "UPDATE procrec
                 SET procbalcurrent='0'
                 WHERE id='".addslashes($item)."'";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       echo "
        <CENTER>
         Procedure adjusted to zero.
@@ -222,7 +224,7 @@
                 'unlocked',
                 NULL
                 )";
-      $result = fdb_query ($query); 
+      $result = $sql->query ($query); 
       if ($result) echo "<$STDFONT_B>$Adding withhold <$STDFONT_E><BR> \n";
     } // end of withhold check
     if ($deductable > 0) {
@@ -242,7 +244,7 @@
                 'unlocked',
                 NULL
                 )";
-      $result = fdb_query ($query); 
+      $result = $sql->query ($query); 
       if ($result) echo "<$STDFONT_B>$Adding deductable.<$STDFONT_E><BR> \n";
     } // end of deductable check
     if ($adjustment > 0) {
@@ -262,7 +264,7 @@
                 'unlocked',
                 NULL
                 )";
-      $result = fdb_query ($query); 
+      $result = $sql->query ($query); 
       if ($result) echo "<$STDFONT_B>$Adding adjustment.<$STDFONT_E><BR> \n";
     } // end of adjustment check
 
@@ -274,7 +276,7 @@
 				SET procbalcurrent = '".addslashes($allowed_amount)."' - procamtpaid,
                               	procamtallowed = '".addslashes($allowed_amount)."'
                      		WHERE id='".addslashes($item)."'";
-                $result = fdb_query ($query);
+                $result = $sql->query ($query);
                 if ($result)
                 {
                         echo "<$STDFONT_B>Updated procedure Allowed Amount<$STDFONT_E><BR>\n";
@@ -291,7 +293,7 @@
                      	WHERE payrecproc ='".addslashes($item)."' AND 
 				payrecpatient = '".addslashes($patient)."' AND payreccat = '".PROCEDURE."'";
 
-                $result = fdb_query ($query);
+                $result = $sql->query ($query);
                 if ($result)
                 {
                         echo "<$STDFONT_B>Updated Procedure Payrec<$STDFONT_E><BR>\n";
@@ -321,7 +323,7 @@
                 'unlocked',
                 NULL
                 )";
-      $result = fdb_query ($query); 
+      $result = $sql->query ($query); 
       if ($result) echo "<$STDFONT_B>$Adding payment.<$STDFONT_E><BR> \n";
     } // end of payment amount check
     // calculate the amounts
@@ -336,7 +338,7 @@
                     procamtpaid    =
                       procamtpaid + '".addslashes($total_payments)."'
                 WHERE id='".addslashes($item)."'";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       if ($result) 
         echo "<$STDFONT_B>Updated procedure record.<$STDFONT_E><BR>\n";
     } // end of checking for any changes
@@ -352,7 +354,7 @@
                 payrecpatient='".addslashes($patient)."' AND
                 payreccat='".PROCEDURE."'
               )";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     echo "
      <CENTER>
       Item transfered.
@@ -374,7 +376,7 @@
                 'unlocked',
                 NULL 
               )";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     echo "
      <CENTER>
       Added transfer.
@@ -384,7 +386,7 @@
       $query = "UPDATE procrec
                 SET procbilled='0'
                 WHERE id='".addslashes($item)."'";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       echo "
        <CENTER>
         Procedure set for rebill.
@@ -406,7 +408,7 @@
                 'unlocked',
                 NULL
               )";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     echo "
      <CENTER>
       Added Rebill to ledger.
@@ -417,7 +419,7 @@
       $query = "UPDATE procrec
                 SET procbalcurrent='0'
                 WHERE id='".addslashes($item)."'";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       echo "
        <CENTER>
         Procedure adjusted to zero.
@@ -430,10 +432,10 @@
    case "mistake": // mistake action
     $query = "DELETE FROM procrec 
               WHERE id='".addslashes($item)."'";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     $query = "DELETE FROM payrec 
               WHERE payrecproc='".addslashes($item)."'";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     echo "
      <CENTER>
       Item $item removed (with references).
@@ -473,9 +475,9 @@
      $denial_query = "SELECT DISTINCT payrecdescrip FROM payrec
                       WHERE payreccat='3'
                       ORDER BY payrecdescrip";
-     $denial_result = fdb_query ($denial_query);
-     if ($denial_result and (fdb_num_rows($denial_result)>0)) {
-       while ($denial_r = fdb_fetch_array ($denial_result)) {
+     $denial_result = $sql->query ($denial_query);
+     if ($denial_result and ($sql->num_rows($denial_result)>0)) {
+       while ($denial_r = $sql->fetch_array ($denial_result)) {
         if (!empty ($denial_r[payrecdescrip]))
          echo "     <OPTION VALUE=\"".htmlentities($denial_r[payrecdescrip]).
               "\">".htmlentities($denial_r[payrecdescrip])."\n";

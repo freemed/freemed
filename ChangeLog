@@ -1,5 +1,17 @@
 freemed project changelog
 
+* Thu Dec 28 2000 rufustfirefly
+  - rehauling db layer today. i think everything that could have been broken
+    is now *being* broken. using phpwebtools sql class now.
+  - moved index.php3 -> index.php
+  - moved manage_payment_records.php3 -> manage_payment_records.php
+  - moved call-in.php3 -> call-in.php
+  - moved cptmod.php3 -> modules/cpt_modifiers.module.php
+  - moved patient_image_handler.php3 -> patient_image_handler.php
+  - moved internal_service_types.php3 -> internal_service_types.module.php
+  - added add() and mod() routines in lib/module_maintenance.php, so that
+    maintenance modules can use them instead of reinventing the wheel
+
 * Wed Dec 27 2000 rufustfirefly
   - started to convert Rx.php3 -> modules/prescription.module.php
   - modified EMR core module to check for access to current patient

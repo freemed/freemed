@@ -79,27 +79,80 @@ class freemedMaintenanceModule extends freemedModule {
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
 	// function add
-	// - addition stub
+	// - addition routine (can be overridden if need be)
 	function add () {
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		echo "
+			<P><CENTER>
+			<$STDFONT_B>"._("Adding")." ...
+		";
+
+		$result = $sql->query (
+			$sql->insert_query (
+				$this->table_name,
+				$this->variables
+			)
+		);
+
+		if ($result) { echo "<B>"._("done").".</B>\n"; }
+		 else        { echo "<B>"._("ERROR")."</B>\n"; }
+
+		echo "
+			<$STDFONT_E></CENTER>
+			<P>
+			<CENTER>
+				<A HREF=\"$this->page_name?$_auth&module=$module\"
+				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+			</CENTER>
+		";
 	} // end function add
 
 	// function del
 	// - only override this if you *really* have something weird to do
 	function del () {
-		global $STDFONT_B, $STDFONT_E, $id;
+		global $STDFONT_B, $STDFONT_E, $id, $sql;
 		echo "<P ALIGN=CENTER>".
 			"<$STDFONT_B>"._("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
-		$result = fdb_query ($query);
+		$result = $sql->query ($query);
 		if ($result) { echo _("done"); }
 		 else        { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
 		echo "<$STDFONT_E></P>\n";
 	} // end function del
 
 	// function mod
-	// - modification stub
+	// - modification routine (override if neccessary)
 	function mod () {
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		echo "
+			<P><CENTER>
+			<$STDFONT_B>"._("Modifying")." ...
+		";
+
+		$result = $sql->query (
+			$sql->update_query (
+				$this->table_name,
+				$this->variables,
+				array ("id")
+			)
+		);
+
+		if ($result) { echo "<B>"._("done").".</B>\n"; }
+		 else        { echo "<B>"._("ERROR")."</B>\n"; }
+
+		echo "
+			<$STDFONT_E></CENTER>
+			<P>
+			<CENTER>
+				<A HREF=\"$this->page_name?$_auth&module=$module\"
+				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+			</CENTER>
+		";
 	} // end function mod
 
 	// function add/modform
@@ -110,7 +163,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function form
 	// - add/mod form stub
 	function form () {
-		global $action, $id;
+		global $action, $id, $sql;
 
 		if (is_array($form_vars)) {
 			reset ($form_vars);
@@ -122,9 +175,9 @@ class freemedMaintenanceModule extends freemedModule {
 				break;
 
 			case "modform":
-				$result = fdb_query ("SELECT * FROM ".$this->table_name.
+				$result = $sql->query ("SELECT * FROM ".$this->table_name.
 					" WHERE ( id = '".prepare($id)."' )");
-				$r = fdb_fetch_array ($result);
+				$r = $sql->fetch_array ($result);
 				extract ($r);
 				break;
 		} // end of switch action
@@ -134,7 +187,8 @@ class freemedMaintenanceModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
-		$result = fdb_query ("SELECT ".$this->order_fields." FROM ".
+		global $sql;
+		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
 		echo freemed_display_itemlist (
 			$result,

@@ -19,6 +19,13 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 	var $table_name  = "tos";
 	var $order_field = "tosname,tosdescrip";
 
+	var $variables = array (
+			"tosname",
+			"tosdescrip",
+			"tosdtadd",
+			"tosdtmod"   => $GLOBALS["cur_date"]
+	);
+
 	function typeOfServiceMaintenance () {
 		// run constructor
 		$this->freemedMaintenanceModule();
@@ -29,9 +36,9 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 
 		echo freemed_display_itemlist (
-			fdb_query("SELECT tosname,tosdescrip,id FROM ".$this->table_name.
+			$sql->query("SELECT tosname,tosdescrip,id FROM ".$this->table_name.
 				" ORDER BY ".prepare($this->order_field)),
-			$page_name,
+			$this->page_name,
 			array (
 				_("Code") => "tosname",
 				_("Description") => "tosdescrip"
@@ -44,9 +51,9 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
   		if ($action=="modform") { 
-    		$result = fdb_query("SELECT tosname,tosdescrip FROM $this->table_name
+    		$result = $sql->query("SELECT tosname,tosdescrip FROM $this->table_name
 				WHERE ( id = '$id' )");
-			$r = fdb_fetch_array($result); // dump into array r[]
+			$r = $sql->fetch_array($result); // dump into array r[]
 			extract ($r);
 		} // if loading values
 
@@ -54,7 +61,9 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 		$this->view ();
 
 		echo "
-			<FORM ACTION=\"$page_name\">
+			<FORM ACTION=\"$this->page_name\" METHOD=POST>
+			<INPUT TYPE=HIDDEN NAME=\"tosdtadd\"".prepare($cur_date)."\">
+			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
 			($action=="modform" ? "mod" : "add")."\">";
 		if ($action=="modform")
@@ -92,63 +101,6 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 			<$STDFONT_E></CENTER>
 			";
 	} // end function typeOfServiceMaintenance->form
-
-	function sql () {
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global $$k;
-		switch($action) { // inner actionswitch
-			case "add":
-			echo "
-				<P ALIGN=CENTER>
-				<$STDFONT_B>"._("Adding")." . . . 
-			";
-			$query = "INSERT INTO $this->table_name VALUES ( ".
-				"'$tosname', '$tosdescrip', '$cur_date', '$cur_date', NULL ) ";
-			break;
-
-			case "mod":
-			echo "
-				<P ALIGN=CENTER>
-				<$STDFONT_B>"._("Modifying")." . . . 
-			";
-			$query = "UPDATE $this->table_name SET ".
-			"tosname    = '".prepare($tosname)."',    ".
-			"tosdescrip = '".prepare($tosdescrip)."', ".
-			"tosdtmod   = '".prepare($cur_date)."'    ". 
-			"WHERE id='".prepare($id)."'";
-			break;
-
-			case "delete":
-			echo "
-				<P ALIGN=CENTER>
-				<$STDFONT_B>"._("Deleting")." . . . 
-			";
-			$query = "DELETE FROM $this->table_name ".
-				"WHERE id = '".prepare($id)."'";
-			break;
-		} // end action switch
-
-		$result = fdb_query($query);
-		if ($result) {
-			echo "
-				<B>"._("Done").".</B><$STDFONT_E>
-			";
-		} else {
-			echo ("<B>"._("ERROR")." ($result)</B>\n"); 
-		}
-
-		echo "
-			<P>
-			<CENTER><A HREF=\"$page_name?$_auth&module=$module\"
-			><$STDFONT_B>"._("Return to $this->record_name Menu")."<$STDFONT_E></A>
-			</CENTER>
- 			<P>
-		";
-	} // end function typeOfServiceMaintenance->sql
-
-	// now all of the sql things serve as a wrapper to this
-	function add ()    { $this->sql(); }
-	function mod ()    { $this->sql(); }
 
 } // end of class typeOfServiceMaintenance
 

@@ -47,21 +47,21 @@ class procedureModule extends freemedEMRModule {
   } // end checking if been here
   $phys_query = "SELECT * FROM physician WHERE phyref='no' ".
                 "ORDER BY phylname,phyfname";
-  $phys_result = fdb_query($phys_query);
+  $phys_result = $sql->query($phys_query);
 
   // prep stuff for page one
   if (empty ($procdt)) $procdt = $cur_date; // show current date
   $icd_type = freemed_config_value("icd"); // '9' or '10'
   $cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
-  $cptmod_result = fdb_query($cptmod_query);
+  $cptmod_result = $sql->query($cptmod_query);
   $icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
-  $icd_result = fdb_query($icd_query);
+  $icd_result = $sql->query($icd_query);
 
   $auth_r_buffer = "";
-  $auth_res = fdb_query ("SELECT * FROM authorizations
+  $auth_res = $sql->query ("SELECT * FROM authorizations
                           WHERE (authpatient='$patient')");
   if ($auth_res > 0) { // begin if there are authorizations...
-   while ($auth_r = fdb_fetch_array ($auth_res)) {
+   while ($auth_r = $sql->fetch_array ($auth_res)) {
     $auth_r_buffer .= "
      <OPTION VALUE=\"$auth_r[id]\" ".
      ( ($auth_r[id]==$procauth) ? "SELECTED" : "" )
@@ -141,10 +141,10 @@ class procedureModule extends freemedEMRModule {
                              false),
       _("Procedural Code") =>
         freemed_display_selectbox(
-          fdb_query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
+          $sql->query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
             "#cptcode# (#cptnameint#)", "proccpt").
           freemed_display_selectbox(
-            fdb_query("SELECT cptmod,cptmoddescrip,id ".
+            $sql->query("SELECT cptmod,cptmoddescrip,id ".
               "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
               "#cptmod# (#cptmoddescrip#)", "proccptmod"),
       _("Units") =>
@@ -164,13 +164,13 @@ class procedureModule extends freemedEMRModule {
           "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4"),
       _("Place of Service") =>
         freemed_display_selectbox(
-          fdb_query("SELECT psrname,psrnote,id FROM facility"),
+          $sql->query("SELECT psrname,psrnote,id FROM facility"),
           "#psrname# [#psrnote#]", 
           "procpos"
         ),
       _("Type of Service") =>
         freemed_display_selectbox (
-          fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER by tosname"),
+          $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER by tosname"),
           "#tosname# #tosdescrip#",
           "proctos"
         ),
@@ -185,7 +185,7 @@ class procedureModule extends freemedEMRModule {
         "</SELECT>\n",
       _("Referring Provider") =>
         freemed_display_selectbox (
-          fdb_query("SELECT phylname,phyfname,id FROM physician 
+          $sql->query("SELECT phylname,phyfname,id FROM physician 
                       WHERE phyref='yes'
                       ORDER BY phylname, phyfname"),
           "#phylname#, #phyfname#", "procrefdoc"
@@ -268,12 +268,13 @@ class procedureModule extends freemedEMRModule {
             '".fm_date_assemble("procrefdt")."',
             NULL )";
 
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
 
-      $this_procedure = fdb_last_record ();
+      echo "FIX THIS!!";
+      $this_procedure = $sql->last_record ();
 
       // form add query
       echo "
@@ -295,11 +296,11 @@ class procedureModule extends freemedEMRModule {
             '".addslashes($proccomment)."',
             'unlocked',
             NULL )";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
-      $this_procedure = fdb_last_record ($result, $this->table_name);
+      $this_procedure = $sql->last_record ($result, $this->table_name);
   
        // updating patient diagnoses
       echo "
@@ -312,7 +313,7 @@ class procedureModule extends freemedEMRModule {
             ptdiag3  = '$procdiag3',
             ptdiag4  = '$procdiag4'
             WHERE id = '$patient'";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
@@ -363,7 +364,7 @@ class procedureModule extends freemedEMRModule {
             procrefdoc      = '".addslashes($procrefdoc).   "',
             procrefdt       = '".fm_date_assemble("procrefdt")."'
             WHERE id='$id'";
-       $result = fdb_query ($query);
+       $result = $sql->query ($query);
        if ($debug) echo " (query = $query, result = $result) <BR>\n";
        if ($result) { echo _("done")."."; }
         else        { echo _("ERROR");    }
@@ -379,7 +380,7 @@ class procedureModule extends freemedEMRModule {
             payrecamt     = '$procbalorig',
             payrecdescrip = '".addslashes($proccomment)."'
             WHERE ( (payreccat='5') AND (payrecproc='$id') )";
-       $result = fdb_query ($query);
+       $result = $sql->query ($query);
        if ($debug) echo " (query = $query, result = $result) <BR>\n";
        if ($result) { echo _("done")."."; }
         else        { echo _("ERROR");    }
@@ -395,7 +396,7 @@ class procedureModule extends freemedEMRModule {
            ptdiag3  = '$procdiag3',
            ptdiag4  = '$procdiag4'
            WHERE id = '$patient'";
-      $result = fdb_query ($query);
+      $result = $sql->query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
@@ -422,12 +423,12 @@ class procedureModule extends freemedEMRModule {
    <$STDFONT_B>"._("Deleting")." ...
   ";
   $query = "DELETE FROM $this->table_name WHERE id='$id'";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if ($result) { echo "["._("Procedure")."] "; }
    else        { echo "["._("ERROR")."] ";     }
   $query = "DELETE FROM payrec WHERE payrecproc='".addslashes($id)."'
             AND payreccat='5'"; // delete record in payrec db
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if ($result) { echo "["._("Payment Record")."] "; }
    else        { echo "["._("ERROR")."] ";          }
   echo "
@@ -451,7 +452,7 @@ class procedureModule extends freemedEMRModule {
   $query = "SELECT * FROM $this->table_name
             WHERE procpatient='".addslashes($patient)."'
             ORDER BY procdt DESC";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   echo freemed_display_itemlist(
     $result,
     $this->page_name,

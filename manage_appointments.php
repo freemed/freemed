@@ -34,7 +34,7 @@
    freemed_display_box_top ("$Deleting Appointment");
    echo "\n<$STDFONT_B>"._("Deleting")." ... <$STDFONT_E>\n";
    $query = "DELETE FROM scheduler WHERE id='".addslashes($id)."'";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
    if ($result) { echo _("done")."."; }
     else        { echo _("ERROR");    }
    echo "
@@ -74,10 +74,10 @@
              ORDER BY caldateof, calhour, calminute";
 
    // submit the query
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
 
    // check for results
-   if (fdb_num_rows($result) < 1) {
+   if ($sql->num_rows($result) < 1) {
      echo "
        <P>
        <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=2 CELLPADDING=2
@@ -113,7 +113,7 @@
       ";
 
      // loop for all occurances in calendar db
-     while ($r = fdb_fetch_array ($result)) {
+     while ($r = $sql->fetch_array ($result)) {
        extract ($r);
        $calprenote   = htmlentities (stripslashes (
                         substr ($r["calprenote"],0,50) ) ).

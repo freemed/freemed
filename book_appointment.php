@@ -6,7 +6,7 @@
   $page_name = "book_appointment.php";
   include ("lib/freemed.php");
   include ("lib/API.php");
-  include ("freemed-calendar-functions.inc");
+  include ("lib/calendar-functions.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();
@@ -101,7 +101,7 @@ switch ($action) {
        <INPUT TYPE=HIDDEN NAME=\"type\"
         VALUE=\"".prepare($type)."\">
     ".freemed_display_selectbox (
-      fdb_query ("SELECT roomname,roomdescrip,id FROM room ORDER BY roomname"),
+      $sql->query ("SELECT roomname,roomdescrip,id FROM room ORDER BY roomname"),
       "#roomname# (#roomdescrip#)",
       "room"
     )."
@@ -212,7 +212,7 @@ switch ($action) {
     } else {
       echo "
         <P>
-        <CENTER><A HREF=\"call-in.php3?$_auth&action=view&id=$patient\"
+        <CENTER><A HREF=\"call-in.php?$_auth&action=view&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
         <P>
       ";
@@ -313,7 +313,7 @@ switch ($action) {
      <TD ALIGN=LEFT>
    ";
 
-   $phy_r = fdb_query(
+   $phy_r = $sql->query(
       "SELECT phyfname,phylname,id 
        FROM physician
        WHERE phyref='no'");
@@ -354,7 +354,7 @@ switch ($action) {
     '".addslashes($note)."',
     '',
     NULL )";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
 
   if ($result) { echo _("done")."."; }
    else        { echo _("ERROR");    }
@@ -372,7 +372,7 @@ switch ($action) {
     ";
   } else {
     echo "
-     <A HREF=\"call-in.php3?$_auth&action=display&id=$patient\"
+     <A HREF=\"call-in.php?$_auth&action=display&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
      </CENTER>
     ";

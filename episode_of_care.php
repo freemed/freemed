@@ -121,7 +121,7 @@
      <TD ALIGN=LEFT>
    ";
    echo freemed_display_selectbox (
-     fdb_query("SELECT * FROM physician WHERE phyref='yes'
+     $sql->query("SELECT * FROM physician WHERE phyref='yes'
        ORDER BY phylname,phyfname"),
      "#phylname#, #phyfname#", "eocreferrer")."
      </TD>
@@ -142,7 +142,7 @@
    
    echo 
      freemed_display_selectbox (
-       fdb_query("SELECT * FROM facility ORDER BY psrname,psrnote"),
+       $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote"),
        "#psrname# [#psrnote#]", 
        "eocfacility")."
      </TD>
@@ -557,7 +557,7 @@
       break;
    } // end of action switch...
 
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
    if ($debug)  { echo " ( query = \"$query\" ) <BR>"; }
    if ($result) { echo _("done"); }
     else        { echo _("ERROR"); }
@@ -581,7 +581,7 @@
     <$STDFONT_B>"._("Deleting")." ...
     ";
    $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
    if ($result) { echo _("done")."\n";    }
     else        { echo _("ERROR")."\n";   }
    echo "
@@ -660,7 +660,7 @@
                     (proceoc LIKE '%:".addslashes($id).":%') OR
                     (proceoc='".addslashes($id)."'))
              ORDER BY procdt DESC";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
   
    $r_name = $record_name; // backup
    $_auth = "proceoc=".urlencode($id);  
@@ -704,7 +704,7 @@
                     (pnoteseoc LIKE '%:".addslashes($id).":%') OR
                     (pnoteseoc='".addslashes($id)."')))
              ORDER BY pnotesdt DESC";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
      
    $_auth = "pnoteseoc=".urlencode($id);  
    $record_name = "Progress Notes";
@@ -749,7 +749,7 @@
    } // kick the bucket if no patient
 
    freemed_display_box_top ("$record_name");
-   $result = fdb_query ("SELECT * FROM $db_name
+   $result = $sql->query ("SELECT * FROM $db_name
                          WHERE eocpatient='".addslashes($patient)."'
                          ORDER BY eocstartdate DESC");
 

@@ -106,7 +106,7 @@ class freemedEMRModule extends freemedModule {
 	// function form
 	// - add/mod form stub
 	function form () {
-		global $action, $id;
+		global $action, $id, $sql;
 
 		if (is_array($form_vars)) {
 			reset ($form_vars);
@@ -118,9 +118,9 @@ class freemedEMRModule extends freemedModule {
 				break;
 
 			case "modform":
-				$result = fdb_query ("SELECT * FROM ".$this->table_name.
+				$result = $sql->query ("SELECT * FROM ".$this->table_name.
 					" WHERE ( id = '".prepare($id)."' )");
-				$r = fdb_fetch_array ($result);
+				$r = $sql->fetch_array ($result);
 				extract ($r);
 				break;
 		} // end of switch action
@@ -130,7 +130,8 @@ class freemedEMRModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
-		$result = fdb_query ("SELECT ".$this->order_fields." FROM ".
+		global $sql;
+		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
 		echo freemed_display_itemlist (
 			$result,

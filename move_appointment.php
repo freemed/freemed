@@ -140,13 +140,13 @@ switch ($action) {
   if ($type=="pat") {
    echo "
     <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
     </P>
    ";
   } elseif ($type=="temp") {
    echo "
-    <CENTER><A HREF=\"call-in.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
+    <CENTER><A HREF=\"call-in.php?$_auth&id=$patient\"
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
     ";
   }
   freemed_display_box_bottom (); // show box bottom
@@ -171,13 +171,13 @@ switch ($action) {
     if ($type=="pat") {
       echo "
         <A HREF=\"manage.php?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Manage_Patient")."<$STDFONT_E></A>
         <P>
       ";
     } else {
       echo "
-        <A HREF=\"call-in.php3?$_auth&id=$patient&action=view\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+        <A HREF=\"call-in.php?$_auth&id=$patient&action=view\"
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
         <P>
       ";
     } // end checking type
@@ -328,14 +328,14 @@ switch ($action) {
       echo "
         <P>
         <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
         <P>
       ";
     } else {
       echo "
         <P>
-        <CENTER><A HREF=\"call-in.php3?$_auth&action=view&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
+        <CENTER><A HREF=\"call-in.php?$_auth&action=view&id=$patient\"
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
         <P>
       ";
     } // end checking for type
@@ -484,13 +484,13 @@ switch ($action) {
   if ($type=="pat") {
     echo "
      <A HREF=\"manage.php?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
      </CENTER>
     ";
   } elseif ($type=="temp") {
     echo "
-     <A HREF=\"call-in.php3?$_auth&action=display&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+     <A HREF=\"call-in.php?$_auth&action=display&id=$patient\"
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
      </CENTER>
     ";
   } // end checking type

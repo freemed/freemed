@@ -26,11 +26,11 @@
    // ************** PREP STUFF ****************
 
    // grab all procedures for patient (with non-zero balance)
-   $procs = fdb_query ("SELECT * FROM procrec
+   $procs = $sql->query ("SELECT * FROM procrec
                        WHERE ((procpatient='$patient')
                        AND (procbalcurrent>0))");
-   if (($procs==0) or (fdb_num_rows ($procs)>0)) { // if there are results...
-    while ($p_r = fdb_fetch_array ($procs)) {
+   if (($procs==0) or ($sql->num_rows ($procs)>0)) { // if there are results...
+    while ($p_r = $sql->fetch_array ($procs)) {
       if (($procedure>0) and ($procedure==$p_r["id"]))
         { $this_selected = "SELECTED"; } else { $this_selected = ""; }
       $procedures_to_display .= "\n      <OPTION VALUE=\"".$p_r["id"].
@@ -230,7 +230,7 @@
      form_table ( array (
        "Insurance Company" =>
          freemed_display_selectbox (
-           fdb_query ("SELECT insconame,inscocity,inscostate,id FROM insco
+           $sql->query ("SELECT insconame,inscocity,inscostate,id FROM insco
            ORDER BY insconame,inscostate,inscocity"),
            "#insconame# (#inscocity#, #inscostate#)", "payreclink" 
          ),
@@ -446,7 +446,7 @@
      'unlocked',
      NULL )";
     if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
-    $result = fdb_query($query);
+    $result = $sql->query($query);
     if ($result) { echo _("done")."."; }
      else        { echo _("ERROR");    }
     echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
@@ -487,7 +487,7 @@
     } // end category switch (add)
     if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
     if (!empty($query)) {
-     $result = fdb_query($query);
+     $result = $sql->query($query);
       if ($result) { echo _("done")."."; }
        else        { echo -("ERROR");    }
     } else { // if there is no query, let the user know we did nothing
@@ -519,7 +519,7 @@
     <P><CENTER>
     <$STDFONT_B>"._("Deleting")." ... <$STDFONT_E>\n";
    $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
    if ($result) { echo _("done")."."; }
     else        { echo _("ERROR");    }
    echo "
@@ -547,9 +547,9 @@
    $pay_query  = "SELECT * FROM payrec
                   WHERE payrecpatient='$patient'
                   ORDER BY payrecdt";
-   $pay_result = fdb_query ($pay_query);
+   $pay_result = $sql->query ($pay_query);
    
-   if (($pay_result<1) or (fdb_num_rows($pay_result)<1)) {
+   if (!$sql->results($pay_result)) {
      echo "
       <CENTER>
        <P>
@@ -588,7 +588,7 @@
    $total_payments = 0.00; // initially no payments
    $total_charges  = 0.00; // initially no charges
 
-   while ($r = fdb_fetch_array ($chg_result)) {
+   while ($r = $sql->fetch_array ($chg_result)) {
      $procdate        = fm_date_print ($r["procdt"]);
      $proccomment     = prepare ($r["proccomment"]);
      $procbalorig     = $r["procbalorig"];
@@ -619,7 +619,7 @@
      echo "\n   &nbsp;</TD></TR>";
    } // wend?
 
-   while ($r = fdb_fetch_array ($pay_result)) {
+   while ($r = $sql->fetch_array ($pay_result)) {
      $payrecdate      = fm_date_print ($r["payrecdt"]);
      $payrecdescrip   = prepare ($r["payrecdescrip"]);
      $payrecamt       = prepare ($r["payrecamt"]);
