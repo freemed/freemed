@@ -320,14 +320,14 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     // generate top of table
     $display_buffer .= "
      <CENTER>
-     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
-      ALIGN=CENTER>
+     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=\"MIDDLE\"
+      ALIGN=\"CENTER\">
      <TR>
 
      </TR>
      <TABLE BORDER=0 CELLSPACING=0>
-      <TR BGCOLOR=>
-       <TD ALIGN=LEFT>
+      <TR BGCOLOR=\"#ffffff\">
+       <TD ALIGN=LEFT BGCOLOR=\"#ffffff\">
     ";
 
     // previous month link
@@ -338,23 +338,23 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
          fc_scroll_prev_month($this_date)
         )
        )."\"
-      3</A>
+      >3</A>
      <A HREF=\"$this_url&selected_date=".fc_scroll_prev_month($this_date)."\"
-      "._("prev")."</A>
+      ><SMALL>"._("prev")."</SMALL></A>
      </TD>
      <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
-       <B>".htmlentities($lang_months[($this_month+0)])." $this_year</b>
+       <B>".htmlentities(date("M",mktime(0,0,0,($this_month+0),0,0)))." $this_year</b>
      </TD>
-     <TD ALIGN=RIGHT>
+     <TD ALIGN=RIGHT BGCOLOR=\"#ffffff\">
      <A HREF=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
-      "._("next")."</A>    
+      ><SMALL>"._("next")."</SMALL></A>    
      <A HREF=\"$this_url&selected_date=".
        fc_scroll_next_month(
         fc_scroll_next_month(
          fc_scroll_next_month($this_date)
         )
        )."\"
-      3</A>
+      >3</A>
      </TD>
      </TR>
      <TR>
@@ -426,10 +426,10 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
             "#ff0000" : 
             "#0000ff" );
        
-        $display_buffer .= "
+        $display_buffer .= "&nbsp;&nbsp;
          <A HREF=\"$this_url&selected_date=".
          date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
-         "\"><FONT COLOR=\"$hilitecolor\">$dayp</FONT></A>
+         "\"><FONT COLOR=\"$hilitecolor\">$dayp</FONT></A>&nbsp;&nbsp;
         ";
    	//if( $dayp       == $cur_day AND
         //    $this_month == $cur_month AND
