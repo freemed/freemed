@@ -10,7 +10,7 @@ class PatientImages extends EMRModule {
 
 	var $MODULE_NAME = "Patient Images";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.1.2";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
