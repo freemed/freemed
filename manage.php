@@ -34,6 +34,5 @@ if (file_exists("lib/template/".$template."/manage.php")) {
 	include_once ("lib/template/default/manage.php");
 } // end of importing template piece
 
-freemed_close_db ();
 template_display();
 ?>

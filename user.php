@@ -405,7 +405,6 @@ switch($action) { // master action switch
 
 } // end master action switch
 
-freemed_close_db(); // always close the database when done!
 template_display();
 
 ?>

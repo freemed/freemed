@@ -84,7 +84,6 @@ if ($sql->num_rows ($result) < 1) {
       <P>
 		";
 	}
-	freemed_close_db ();
 	template_display();
 } // end checking if there are any results
 
@@ -196,6 +195,5 @@ if ($patient>0) // if there is a patient link
       <P>
 ";
 
-freemed_close_db (); // close the db
 template_display();
 ?>

@@ -102,6 +102,5 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
     ";
   }
 
-freemed_close_db ();
 template_display ();
 ?>

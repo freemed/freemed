@@ -80,7 +80,6 @@ $display_buffer .= "
 	</CENTER>
 ";
 
-freemed_close_db (); // close db
 template_display();
 
 ?>

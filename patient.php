@@ -878,7 +878,6 @@ switch ($action) {
     break; // end default action
 } // end action
 
-freemed_close_db(); 
 template_display();
 ?>
 

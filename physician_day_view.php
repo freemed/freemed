@@ -66,6 +66,5 @@ fc_generate_calendar_mini ($selected_date,
 fc_display_day_calendar ($selected_date, "calphysician='$physician'");
 
  // end everything
-freemed_close_db ();
 template_display();
 ?>

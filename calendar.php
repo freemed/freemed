@@ -71,7 +71,5 @@ if (!$module_list->empty_category($category)) {
 	";
 }
 
-freemed_close_db ();
 template_display ();
-
 ?>

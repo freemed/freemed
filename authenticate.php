@@ -31,6 +31,11 @@ if (freemed_check_access_for_facility ($_f)) {
 	SetCookie("default_facility", "0"  , time()+$_cookie_expire);
 }
 
+//----- Determine "language session variable, if set
+if ($_l != $default_language) {
+	$SESSION["language"] = $_l;
+}
+
 // Header("Location: ".COMPLETE_URL."/main.php");
 
 $_jump_page = "main.php"; // by default, go to the main page
@@ -62,5 +67,6 @@ $display_buffer .= "
 
 //----- Load the template
 template_display();
+//print "session[language] = ".$SESSION["language"].", s_lng = $s_lng<BR>\n";
 
 ?>

@@ -25,7 +25,6 @@ if ($patient<1) {
    </CENTER>
    <P>
   ";
-  freemed_close_db ();
   template_display();
  } // end checking if patient is provided
 
@@ -42,7 +41,6 @@ if ($patient<1) {
    </CENTER>
    <P>
   ";
-  freemed_close_db ();
   template_display();
  } // end checking for valud form
 
@@ -456,7 +454,6 @@ if ($patient<1) {
       </CENTER>
       <P>
       ";
-     freemed_close_db ();
      template_display();
    } // end checking if no result
    $display_buffer .= "
@@ -517,6 +514,5 @@ if ($patient<1) {
    break;
  } // end master action switch
 
-freemed_close_db ();
 template_display();
 ?>

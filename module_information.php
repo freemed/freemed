@@ -76,7 +76,6 @@ if ($categories != NULL) {
 
 
 // bottom
-freemed_close_db ();
 template_display();
 
 ?>

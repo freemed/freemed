@@ -168,6 +168,5 @@ if ($patient<1) {
    break;
  } // end master switch
 
-freemed_close_db ();
 template_display();
 ?>

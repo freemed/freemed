@@ -421,7 +421,6 @@ switch ($action) {
   break;
 } // end master switch
 
-freemed_close_db (); // close the db
 template_display();
 
 ?>

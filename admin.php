@@ -1461,8 +1461,6 @@ if ($userdata["user"]==1) // if we are root...
   "; // end standard font
 }
 
-freemed_close_db(); // close up database
-
 $display_buffer .= "
   <P>
   <CENTER>

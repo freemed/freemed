@@ -66,6 +66,5 @@ $display_buffer .= "
 fc_display_week_calendar ($for_date, "calphysician='$physician'");
 
  // end everything
-freemed_close_db ();
 template_display();
 ?>

@@ -161,19 +161,4 @@ $display_buffer .= "
   </TABLE>
 ";
 
-//----- Redirection "Quickjump" box 
-/*
-$display_buffer .= "
-<FORM ACTION=\"redirect.php\">
-  <CENTER>
-  <B><FONT SIZE=-1>"._("Quickjump")."</FONT></B><BR>
-  <INPUT TYPE=TEXT NAME=\"location\" VALUE=\"/\" SIZE=5>
-  </CENTER>
-</FORM>
-";
-*/
-
-//----- Close database
-freemed_close_db();
-
 ?>

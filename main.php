@@ -29,7 +29,6 @@ if (file_exists("./lib/template/".$template."/main_menu.php")) {
 }
 
 //----- Finish display template
-freemed_close_db();
 template_display();
 
 ?>

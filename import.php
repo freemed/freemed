@@ -100,7 +100,6 @@ switch ($action) {
   break;
 } // end action switch
 
-freemed_close_db ();
 template_display();
 
 ?>

@@ -64,7 +64,6 @@ $display_buffer .= "
   </CENTER>
 ";
 
-freemed_close_db (); // close db after user authentication
 template_display();
 
 ?>
