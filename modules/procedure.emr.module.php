@@ -182,8 +182,7 @@ class ProcedureModule extends EMRModule {
 				  "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
 				  "#cptmod# (#cptmoddescrip#)", "proccptmod"),
 		  __("Units") =>
-			"<INPUT TYPE=TEXT NAME=\"procunits\" VALUE=\"".prepare($procunits)."\" ".
-			"SIZE=10 MAXLENGTH=9>",
+		  	html_form::text_widget('procunits', 9),
 		  __("Diagnosis Code")." 1" =>
 			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
 			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1"),
@@ -205,11 +204,12 @@ class ProcedureModule extends EMRModule {
 		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  __("Authorization") =>
-			"<SELECT NAME=\"procauth\">\n".
-			"<OPTION VALUE=\"0\" ".
-			( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
+			"<select NAME=\"procauth\">\n".
+			"<option VALUE=\"0\" ".
+			( ($procauth==0) ? "SELECTED" : "" ).">".
+			__("NONE SELECTED")."</option>\n".
 			$auth_r_buffer.
-			"</SELECT>\n",
+			"</select>\n",
 		  __("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
 		  __("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  __("Referring Provider") =>
@@ -284,23 +284,23 @@ class ProcedureModule extends EMRModule {
 		   $cpt_code_stdfee,
 
 		 __("Calculated Charge") =>
-		   "<INPUT TYPE=TEXT NAME=\"procbalorig\" SIZE=10 MAXLENGTH=9 ".
-		   "VALUE=\"".prepare($charge)."\">",
+		   "<input TYPE=\"TEXT\" NAME=\"procbalorig\" SIZE=\"10\" ".
+		   "MAXLENGTH=\"9\" VALUE=\"".prepare($charge)."\"/>",
 
 		 __("Insurance Billable?") =>
-		   "<SELECT NAME=\"procbillable\">
-			<OPTION VALUE=\"0\" ".
-			 ( ($procbillable == 0) ? "SELECTED" : "" ).">".__("Yes")."
-			<OPTION VALUE=\"1\" ".
-			 ( ($procbillable != 0) ? "SELECTED" : "" ).">".__("No")."
-		   </SELECT>\n",
+		   "<select NAME=\"procbillable\">
+			<option VALUE=\"0\" ".
+			 ( ($procbillable == 0) ? "SELECTED" : "" ).">".__("Yes")."</option>
+			<option VALUE=\"1\" ".
+			 ( ($procbillable != 0) ? "SELECTED" : "" ).">".__("No")."</option>
+		   </select>\n",
 
 		 __("Comment") =>
 		   prepare($proccomment)
 		) ),
-			array (
-					array ("procbalorig", VERIFY_NONNULL, NULL, __("Must Specify Amount"))
-				)
+		array (
+			array ("procbalorig", VERIFY_NONNULL, NULL, __("Must Specify Amount"))
+			)
 		);
 
 		// required to get the wizard to validate the previous (last) page
@@ -372,7 +372,7 @@ class ProcedureModule extends EMRModule {
 
 				// form add query
 				$display_buffer .= "
-				<BR>
+				<br/>
 				".__("Committing to ledger")." ... 
 				";
 				$query = $sql->insert_query(
@@ -418,26 +418,29 @@ class ProcedureModule extends EMRModule {
 				else        { $display_buffer .= __("ERROR");    }
 
 				$display_buffer .= "
-				</CENTER>
-				<P>
-				<CENTER>
-				 <A HREF=\"manage.php?id=$patient\"
-				 >".__("Manage Patient")."</A> <B>|</B>
-				 <A HREF=\"$this->page_name?module=PaymentModule&action=addform&patient=$patient\"
-				 >".__("Add Payment")."</A> <B>|</B>
-				 <A HREF=\"$this->page_name?module=$module&action=addform&procvoucher=$procvoucher".
-				  "&patient=$patient&procdt=".fm_date_assemble("procdt").
+				</div>
+				<p/>
+				<div align=\"CENTER\">
+				".template::link_bar(array(
+					__("Manage Patient") =>
+					"manage.php?id=".urlencode($patient),
+					__("Add Payment") =>
+				 	$this->page_name."?module=PaymentModule&action=addform&patient=".urlencode($patient),
+					__("Add Another") =>
+				$this->page_name."?module=".urlencode($module).
+				"&action=addform&procvoucher=".urlencode($procvoucher).
+				  "&patient=".urlencode($patient)."
+				  "&procdt=".fm_date_assemble("procdt").
 				  "&proccpt=$proccpt".
 				  "&procpos=$procpos".
 				  "&procdiag1=$procdiag1".
 				  "&procdiag2=$procdiag2".
 				  "&procdiag3=$procdiag3".
 				  "&procdiag4=$procdiag4".
-				  "&procphysician=$procphysician".
-				  "\"
-				 >".__("Add Another")." "._($record_name)."</A>
-				</CENTER>
-				<P>
+				  "&procphysician=".urlencode($procphysician),
+				))."
+				</div>
+				<p/>
 				";
 
 			global $refresh;
@@ -495,26 +498,27 @@ class ProcedureModule extends EMRModule {
 		// ************** BUILD THE WIZARD ****************
 		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id", "module", "return") );
 
+		// Determine if we have EOC support
+		if (check_module('EpisodeOfCare')) {
+			$__episode_of_care = __("Episode of Care");
+			$__episode_of_care_widget =
+			module_function('EpisodeOfCare', 'widget',
+				array('proceoc', $patient));
+		}
+
 		$wizard->add_page ("Step One",
 				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
 			html_form::form_table ( array (
-		  __("Episode of Care") =>
-			freemed::multiple_choice ("SELECT * FROM eoc ".
-				  "WHERE eocpatient='".addslashes($patient)."' ".
-				  "ORDER BY eocdtlastsimilar DESC",
-				 "##eocstartdate## to ##eocdtlastsimilar## ".
-				 	"(##eocdescrip##)",
-				 "proceoc",
-				 $proceoc,
-				 false),
+		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  __("Authorization") =>
-			"<SELECT NAME=\"procauth\">\n".
-			"<OPTION VALUE=\"0\" ".
-			( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
+			"<select NAME=\"procauth\">\n".
+			"<option VALUE=\"0\" ".
+			( ($procauth==0) ? "SELECTED" : "" ).">".
+				__("NONE SELECTED")."</option>\n".
 			$auth_r_buffer.
-			"</SELECT>\n",
+			"</select>\n",
 		  __("Certifications") =>
 		  	freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
 		  __("Claim Type") => 
@@ -527,13 +531,13 @@ class ProcedureModule extends EMRModule {
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
 			// display the wizard
-			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>\n";
+			$display_buffer .= "<div align=\"CENTER\">".$wizard->display()."</div>\n";
 		}
 
 		if ($wizard->is_done())
 		{
 
-			$display_buffer .= "<P><CENTER>".__("Modifying")." ... ";
+			$display_buffer .= "<p><div align=\"CENTER\">".__("Modifying")." ... ";
 
 			$query = "UPDATE $this->table_name SET
 			proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
@@ -549,14 +553,16 @@ class ProcedureModule extends EMRModule {
 			else        { $display_buffer .= __("ERROR");    }
 
 			$display_buffer .= "
-				<P>
-				<CENTER>
-			 	<A HREF=\"$this->page_name?module=$module&patient=$patient\"
-			 	>".__("back")."</A><BR>
-				<A HREF=\"manage.php?id=$patient\"
-				>".__("Manage Patient")."</A>
-				</CENTER>
-				<P>
+				<p/>
+				<div align=\"CENTER\">
+				".template::link_bar(array(
+				__("back") =>
+			 	$this->page_name."?module=$module&patient=$patient",
+				__("Manage Patient") =>
+				"manage.php?id=".urlencode($patient)
+				))."
+				</div>
+				<p/>
 			";
 
 
@@ -566,30 +572,27 @@ class ProcedureModule extends EMRModule {
 		if ($wizard->is_cancelled())
 		{
 				$display_buffer .= "
-				<P>
-				<CENTER><B>"._(Cancelled)."</B><BR>
-				 <A HREF=\"manage.php?id=$patient\"
+				<p/>
+				<div align=\"CENTER\"><b>".__("Cancelled")."</b>
+				<br/>
+				 <a class=\"button\"
+				 HREF=\"manage.php?id=".urlencode($patient)."\"
 				 >".__("Manage Patient")."</A> 
+				</div>
 				";
-
 		} // end cancelled
-
-		
-		
-
 	} // end modform
-
 	
 	function delete () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$display_buffer .= "
-		<P><CENTER>
+		<p><div align=\"CENTER\">
 		".__("Deleting")." ...
 		";
-		$query = "DELETE FROM $this->table_name WHERE id='$id'";
+		$query = "DELETE FROM ".$this->table_name." ".
+			"WHERE id='".addslashes($id)."'";
 		$result = $sql->query ($query);
 		if ($result) { $display_buffer .= "[".__("Procedure")."] "; }
 		else        { $display_buffer .= "[".__("ERROR")."] ";     }
@@ -598,15 +601,16 @@ class ProcedureModule extends EMRModule {
 		if ($result) { $display_buffer .= "[".__("Payment Record")."] "; }
 		else        { $display_buffer .= "[".__("ERROR")."] ";          }
 		$display_buffer .= "
-		</CENTER>
-		<P>
-		<CENTER>
-		 <A HREF=\"$this->page_name?module=$module&patient=$patient\"
-		 >".__("back")."</A> <B>|</B>
-		 <A HREF=\"manage.php?id=$patient\"
-		 >".__("Manage Patient")."</A>
-		</CENTER>
-		<P>
+		</div>
+		<p/>
+		".template::link_bar(array(
+		 __("back") =>
+		 $this->page_name."?module=$module&patient=$patient",
+		 __("Manage Patient") =>
+		 "manage.php?id=".urlencode($patient)
+		))."
+		</div>
+		<p/>
 		";
 	} // end function ProcedureModule->delete()
 
@@ -689,40 +693,37 @@ class ProcedureModule extends EMRModule {
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
 			// display the wizard
-			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>\n";
-		}
-		else
-		{
+			$display_buffer .= "<div align=\"CENTER\">".$wizard->display()."</div>\n";
+		} else {
 			$display_buffer .= "
-			<P>
-			<CENTER>
-			 <A HREF=\"$this->page_name?module=$module&patient=$patient\"
-			 >".__("back")."</A>
-			</CENTER>
-			<P>
+			<p/>
+			<div align=\"CENTER\">
+			 <a class=\"button\"
+			 HREF=\"$this->page_name?module=$module&patient=$patient\"
+			 >".__("back")."</a>
+			</div>
+			<p/>
 			";
 		}
-		
-
 	}
 
 	function view() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-		$query = "SELECT * FROM $this->table_name
-				WHERE procpatient='".addslashes($patient)."'
-				ORDER BY procdt DESC";
-		$result = $sql->query ($query);
 		$display_buffer .= freemed_display_itemlist(
-			$result,
+			$sql->query(
+				"SELECT * FROM ".$this->table_name." ".
+				"WHERE procpatient='".addslashes($patient)."' ".
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY procdt DESC"
+			),
 			$this->page_name,
 			array ( // control
-			  __("Date of Procedure")	=> "procdt",
+			  __("Date of Procedure") => "procdt",
 			  __("Procedure Code")	=> "proccpt",
-			  __("Modifier")		=> "proccptmod",
-			  __("Comment")		=> "proccomment"
+			  __("Modifier") => "proccptmod",
+			  __("Comment") => "proccomment"
 			),
 			array ( // blanks
 			  "",
@@ -739,29 +740,27 @@ class ProcedureModule extends EMRModule {
 		);
 	} // end function ProcedureModule->view()
 
-
 	function GetAuthorizations($patid) {
 		global $display_buffer;
 		global $sql;
 		
 		$auth_r_buffer = "";
+		if ($patid == 0) return $auth_r_buffer;
 
-		if ($patid==0)
-			return $auth_r_buffer;
-
-		$auth_res = $sql->query ("SELECT * FROM authorizations
-							  WHERE (authpatient='$patid')");
+		$auth_res = $sql->query ("SELECT * FROM authorizations ".
+			"WHERE (authpatient='".addslashes($patid)."')");
 		if ($auth_res > 0) { // begin if there are authorizations...
 		while ($auth_r = $sql->fetch_array ($auth_res)) {
 		$auth_r_buffer .= "
-		 <OPTION VALUE=\"$auth_r[id]\" ".
+		 <option VALUE=\"".prepare($auth_r['id'])."\" ".
 		 ( ($auth_r[id]==$procauth) ? "SELECTED" : "" )
-		 .">$auth_r[authdtbegin] to $auth_r[authdtend]\n";
+		 .">".prepare($auth_r['authdtbegin'])." ".__("to")." ".
+		 prepare($auth_r['authdtend'])."</option>\n";
 		} // end while looping for authorizations
 		} // end if there are authorizations
 
 		return $auth_r_buffer;
-	}
+	} // end function ProcedureModule->GetAuthorizations()
 
 	function CalculateCharge($covid,$cptid,$phyid,$patid)  {
 		global $display_buffer;
@@ -824,8 +823,7 @@ class ProcedureModule extends EMRModule {
 		//   adjust values to proper precision
 		$charge = bcadd ($charge, 0, 2);
 		return $charge;
-
-	}
+	} // end function ProcedureModule->CalculateCharge()
 
 } // end class ProcedureModule
 
