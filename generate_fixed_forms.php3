@@ -403,7 +403,7 @@
        $itemdate_d  [$number_of_charges] = substr($p[procdt], 8, 2);
        $itemdate_y  [$number_of_charges] = substr($p[procdt], 0, 4);
        $itemdate_sy [$number_of_charges] = substr($p[procdt], 2, 2);
-       $itemcharges [$number_of_charges] = bcadd($p[procbalcurrent],0,2);
+       $itemcharges [$number_of_charges] = bcadd($p[procbalorig],0,2);
        $itemunits   [$number_of_charges] = $p[procunits];
        $itempos     [$number_of_charges] = "11";  // KLUDGE!! KLUDGE!!
        $itemvoucher [$number_of_charges] = $p[procvoucher];
@@ -472,7 +472,7 @@
     <BR>
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
-     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mark\">`
+     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mark\">
    ";
    for ($i=1;$i<=$pat_processed;$i++) {
      $this_patient = new Patient ($patient_forms[$i]);
