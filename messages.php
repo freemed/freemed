@@ -22,7 +22,14 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log mess
 $this_user = CreateObject('FreeMED.User');
 
 if ($submit_action==" ".__("Add")." ") { $action = "add"; }
-if ($submit_action==" ".__("Cancel")) { $action = ""; }
+if ($submit_action==" ".__("Cancel")) {
+	$action = "";
+	// Handle return to patient during cancel
+	if ($return=="manage") {
+		Header("Location: manage.php?id=".urlencode($_REQUEST['msgpatient']));
+		die("");
+	}
+}
 
 switch ($action) {
 
