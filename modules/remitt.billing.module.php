@@ -95,6 +95,11 @@ class RemittBillingTransport extends BillingModule {
 	} // end method transport
 
 	function billing ( ) {
+		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
+		if (!$remitt->GetServerStatus()) {
+			trigger_error(__("The REMITT Server is not running. Please start it and try again."), E_USER_ERROR);
+		}
+
 		global $type;
 		extract ($_REQUEST);
 
@@ -120,9 +125,6 @@ class RemittBillingTransport extends BillingModule {
 				}
 			}
 		}
-
-		// Get Remitt formats and information
-		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
 
 		// Start master form
 		$buffer .= "
@@ -322,10 +324,14 @@ class RemittBillingTransport extends BillingModule {
 	} // end method billing
 
 	function menu () {
+		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
 		$buffer .= "
 		<div class=\"section\">
-		".__("Remitt Billing System")."
-		</div>
+		".__("Remitt Billing System")." ( <span ".
+		( $remitt->GetServerStatus() ?
+		">".__("REMITT Server Running") :
+		"style=\"color: #ff0000;\"><b>".__("REMITT Server Not Running")."</b>"
+		)."</span> ) </div>
 		<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
 
 		<tr>
@@ -368,6 +374,11 @@ class RemittBillingTransport extends BillingModule {
 	} // end method menu
 
 	function rebill_menu ( ) {
+		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
+		if (!$remitt->GetServerStatus()) {
+			trigger_error(__("The REMITT Server is not running. Please start it and try again."), E_USER_ERROR);
+		}
+
 		$buffer = '';
 
 		$query = "SELECT * FROM billkey ORDER BY id DESC LIMIT 50";
@@ -442,6 +453,9 @@ class RemittBillingTransport extends BillingModule {
 		$buffer = '';
 
 		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
+		if (!$remitt->GetServerStatus()) {
+			trigger_error(__("The REMITT Server is not running. Please start it and try again."), E_USER_ERROR);
+		}
 		$remitt->Login(
 			freemed::config_value('remitt_user'),
 			freemed::config_value('remitt_pass')

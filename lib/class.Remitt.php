@@ -15,12 +15,29 @@ class Remitt {
 
 	function Remitt ( $server = '127.0.0.1' ) {
 		$this->protocol = 'http';
-		$port = freemed::config_value('remitt_port'); 
-		if (!$port) { $port = '7688'; }
-		$this->_connection = CreateObject('PHP.xmlrpc_client', '/RPC2', $server, $port);
+		$this->server = $server;
+		$this->port = freemed::config_value('remitt_port'); 
+		if (!$this->port) { $this->port = '7688'; }
+		$this->_connection = CreateObject('PHP.xmlrpc_client', '/RPC2', $this->server, $this->port);
 		// TODO: set credentials ...
 		
 	} // end constructor
+
+	// Method: GetServerStatus
+	//
+	//	Determine if the REMITT server is up.
+	//
+	// Returns:
+	//
+	//	true if up, false if not
+	//
+	function GetServerStatus ( ) {
+		if (@fsockopen($this->server, $this->port, $_err, $_str, 10)) {
+			return true;
+		} else {
+			return false;
+		}
+	} // end method GetServerStatus
 
 	// Method: GetStatus
 	//
@@ -36,6 +53,9 @@ class Remitt {
 	//	NULL meaning still in process, or name of result file.
 	//
 	function GetStatus ( $unique ) {
+		if (!$this->GetServerStatus()) {
+			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
+		}
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
 			$_SESSION['remitt']['key']
@@ -181,6 +201,9 @@ class Remitt {
 
 	// Method: ProcessBill
 	function ProcessBill ( $billkey, $render, $transport ) {
+		if (!$this->GetServerStatus()) {
+			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
+		}
 		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
 		// For now, just use the first ones ... FIXME FIXME FIXME
 		$bc = $bs = $ch = 1;
