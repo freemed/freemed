@@ -18,10 +18,10 @@ class freemed {
 	// function freemed::check_access_for_patient
 	function check_access_for_patient ($patient_number) {
 		// Grab authdata
-		$_authdata = $GLOBALS["authdata"];
+		$_authdata = $_SESSION['authdata'];
 
 		// Root has all access...
-		if ($_authdata["user"]==1) return true;
+		if ($_authdata["user"] == 1) return true;
 	
 		// Grab auth information from db
 		$f_user   = freemed::get_link_rec ($_authdata["user"], "user");
@@ -453,7 +453,7 @@ class freemed {
 		static $userlevel;
 
 		// Extract authdata from SESSION
-		$authdata = $GLOBALS["authdata"];
+		$authdata = $_SESSION['authdata'];
 
 		// Check for cached userlevel
 		if (isset($userlevel)) { return ($userlevel & $flag); }
@@ -1291,8 +1291,10 @@ function freemed_display_selectbox ($result, $format, $param="") {
 function freemed_export_stock_data ($table_name, $file_name="") {
 	global $sql, $default_language, $cur_date_hash, $debug;
 
-	$physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . 
-		"/" .  $table_name . "." . $default_language . "." . 
+	$language = strtoupper($default_language);
+
+	$physical_file = PHYSICAL_LOCATION . "/data/" . $language . 
+		"/" .  $table_name . "." . $language . "." . 
 		$cur_date_hash;
 
 	//if (strlen ($file_name) > 2) $physical_file = $file_name;
@@ -1326,9 +1328,11 @@ function freemed_get_userlevel ( $param = "" ) {
 function freemed_import_stock_data ($table_name) {
 	global $default_language, $sql;
 
+	$language = strtoupper($default_language);
+
 	// Produce a physical location
-	$physical_file = PHYSICAL_LOCATION . "/data/" . $default_language .
-		"/" .  $table_name . "." . $default_language . ".data";
+	$physical_file = PHYSICAL_LOCATION . "/data/" . $language .
+		"/" .  $table_name . "." . $language . ".data";
 
 	// Die if the phile doesn't exist
 	if (!file_exists($physical_file)) return false;
@@ -1366,13 +1370,16 @@ function freemed_open_db () {
 	// Verify
 	if (!freemed::verify_auth()) {
 		$display_buffer .= "
-      <div ALIGN=\"CENTER\">
-      <b>"._("You have entered an incorrect username or password.")."</b>
-      <br/><br/>
-      <b><i>"._("It is possible that your cookies have expired.")."</i></b>
-      <p/>
-      <a HREF=\"index.php\">"._("Return to the Login Screen")."</a>
-      </div>
+		<div ALIGN=\"CENTER\">
+		<b>"._("You have entered an incorrect username or password.")."</b>
+		<br/><br/>
+		<b><i>"._("It is possible that your cookies have expired.")."</i></b>
+		<p/>
+		".template::link_button(
+			_("Return to the Login Screen"),
+			"index.php"
+		)."
+		</div>
 		";
 		template_display();
 	} // end if connected loop
@@ -1533,51 +1540,51 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	// Form the buffers, then assemble
 
 	// Month buffer
-	$buffer_m = "\t<SELECT NAME=\"".$datevarname."_m$suffix\">\n".
-		"\t\t<OPTION VALUE=\"00\" ".
-		( ($m==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
+	$buffer_m = "\t<select NAME=\"".$datevarname."_m$suffix\">\n".
+		"\t\t<option VALUE=\"00\" ".
+		( ($m==0) ? "SELECTED" : "" ).">"._("NONE")."</option>\n";
 	for ($i=1;$i<=12;$i++) {
-		$buffer_m .= "\n\t\t<OPTION VALUE=\"".( ($i<10) ? "0" : "" ).
+		$buffer_m .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
 			"$i\" ".  ( ($i==$m) ? "SELECTED" : "" ).
-			">"._($months[$i])."\n";
+			">"._($months[$i])."</option>\n";
 	} // end for loop (months) 
-	$buffer_m .= "\t</SELECT>\n";
+	$buffer_m .= "\t</select>\n";
 
 	// Day buffer
-	$buffer_d = "\t<SELECT NAME=\"".$datevarname."_d$suffix\">\n".
-		"\t\t<OPTION VALUE=\"00\" ".
-		( ($d==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
+	$buffer_d = "\t<select NAME=\"".$datevarname."_d$suffix\">\n".
+		"\t\t<option VALUE=\"00\" ".
+		( ($d==0) ? "SELECTED" : "" ).">"._("NONE")."</option>\n";
 	for ($i=1;$i<=31;$i++) {
-		$buffer_d .= "\n\t\t<OPTION VALUE=\"".( ($i<10) ? "0" : "" ).
-			"$i\" ".( ($i==$d) ? "SELECTED" : "" ).">$i\n";
+		$buffer_d .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
+			"$i\" ".( ($i==$d) ? "SELECTED" : "" ).">$i</option>\n";
 	} // end looping for days
-	$buffer_d .= "\t</SELECT>\n";
+	$buffer_d .= "\t</selectg\n";
 
 	// Year buffer
-	$buffer_y = "\t<SELECT NAME=\"".$datevarname."_y$suffix\">\n".
-		"\t\t<OPTION VALUE=\"0000\" ".
-		( ($y==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
+	$buffer_y = "\t<select NAME=\"".$datevarname."_y$suffix\">\n".
+		"\t\t<option VALUE=\"0000\" ".
+		( ($y==0) ? "SELECTED" : "" ).">"._("NONE")."</option>\n";
 	for ($i=$starting_year;$i<=$ending_year;$i++) {
-		$buffer_y .= "\n\t\t<OPTION VALUE=\"$i\" ".
-			( ($i==$y) ? "SELECTED" : "" ).">$i\n";
+		$buffer_y .= "\n\t\t<option VALUE=\"$i\" ".
+			( ($i==$y) ? "SELECTED" : "" ).">$i</option>\n";
 	} // end for look (years)
-	$buffer_y .= "\t</SELECT>\n";
+	$buffer_y .= "\t</select>\n";
 
 	// now actually display the input boxes
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
-			return $buffer_m . " <B>-</B> ".
-			$buffer_d . " <B>-</B> ".
+			return $buffer_m . " <b>-</b> ".
+			$buffer_d . " <b>-</b> ".
 			$buffer_y;
 			break;
 		case "dmy":
-			return $buffer_d . " <B>-</B> ".
-			$buffer_m . " <B>-</B> ".
+			return $buffer_d . " <b>-</b> ".
+			$buffer_m . " <b>-</b> ".
 			$buffer_y;
 			break;
 		case "ymd": default:
-			return $buffer_y . " <B>-</B> ".
-			$buffer_m . " <B>-</B> ".
+			return $buffer_y . " <b>-</b> ".
+			$buffer_m . " <b>-</b> ".
 			$buffer_d;
 			break;
 	} // end switch for dtfmt config value
@@ -2016,11 +2023,11 @@ function fm_time_entry ($timevarname="") {
 
   $buffer_h = fm_number_select($timevarname."_h",0,12);
   $buffer_m = fm_number_select($timevarname."_m",0,59);
-  $buffer_ap = "<SELECT NAME=\"$timevarname"."_ap"."\">".
-	"<OPTION VALUE=\"AM\" ".
-		( $ap=="AM" ? "SELECTED" : "").">". _("AM").
-	"<OPTION VALUE=\"PM\" ".
-		( $ap=="PM" ? "SELECTED" : "").">". _("PM");
+  $buffer_ap = "<select NAME=\"$timevarname"."_ap"."\">".
+	"<option VALUE=\"AM\" ".
+		( $ap=="AM" ? "SELECTED" : "").">". _("AM")."</option>\n".
+	"<option VALUE=\"PM\" ".
+		( $ap=="PM" ? "SELECTED" : "").">". _("PM")."</option>\n";
    
   return $buffer_h.$buffer_m.$buffer_ap;
   
@@ -2250,8 +2257,8 @@ function check_basic_authentication () {
 	$result = $sql->query($query);
 	if ($sql->results($result)) {
 		while ($r = $sql->fetch_array($result)) {
-			$users[(stripslashes($r[username]))] =
-				stripslashes($r[userpassword]);
+			$users[(stripslashes($r['username']))] =
+				stripslashes($r['userpassword']);
 		} // end looping thru results
 	} // end no results
 
