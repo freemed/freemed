@@ -9,7 +9,7 @@ $page_title = PACKAGENAME." ".__("Login");
 
 $display_buffer .= "
 <div ALIGN=\"CENTER\">
-	<i>".__("version")." ".VERSION."</i>
+	<i>".__("version")." ".DISPLAY_VERSION."</i>
 </div>
 
 <p/>
