@@ -76,6 +76,12 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
+		if ($_REQUEST['__submit'] == __("Cancel")) {
+			global $refresh;
+			$refresh = $this->page_name.'?module='.get_class($this);
+			return false;
+		}
+
 		// too much data for this now
 		//$this->view();
 
