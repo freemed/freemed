@@ -1347,6 +1347,16 @@ echo "
  </TD></TR>
 ";  
 
+ echo "
+    <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
+     <A HREF=\"module_information.php?$_auth\"
+     ><IMG SRC=\"img/magnify.gif\" BORDER=0 ALT=\"[*]\"></A>
+    </TD><TD ALIGN=LEFT>
+    <A HREF=\"module_information.php?$_auth\"
+     ><$STDFONT_B>"._("Module Information")."<$STDFONT_E></A>
+    </TD></TR>
+ ";
+
 if ($_userdata[0]==1) // if we are root...
  echo "
   <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>

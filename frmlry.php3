@@ -512,7 +512,7 @@ if ($action=="addform") {
     if ( file_exists ("lang/$language/doc/$page_name.$language.html") ) 
       echo "
         <BR><CENTER>
-        <A HREF=\"help.php3?$_auth&page_name=$page_name\" TARGET=_HELP_
+        <A HREF=\"help.php?$_auth&page_name=$page_name\" TARGET=_HELP_
          ><$STDFONT_B>$lang_HELP<$STDFONT_E></A>
         </CENTER><BR>
       ";

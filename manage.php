@@ -6,8 +6,6 @@
 $page_name = "manage.php";
 include ("lib/freemed.php");
 include ("lib/API.php");
-include ("lib/module_emr.php");
-include ("lib/module_maintenance.php");
 
 if ($id != $current_patient)
   SetCookie ("current_patient", $id, time()+$_cookie_expire);

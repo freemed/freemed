@@ -1,16 +1,15 @@
 <?php
- // file: help.php3
+ // $Id$
  // note: help module
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL
 
-  $_pg_desc = "[HELP]"; // show that we are a help page...
-  include ("lib/freemed.php");
-  include ("lib/API.php");
+$_pg_desc = "[HELP]"; // show that we are a help page...
+include ("lib/freemed.php");
+include ("lib/API.php");
 
-  freemed_open_db ($LoginCookie);
-  freemed_display_html_top ();
-  freemed_display_banner ();
+freemed_open_db ($LoginCookie);
+freemed_display_html_top ();
+freemed_display_banner ();
 
  //
  //  eventually, we want to be able to call a
@@ -43,7 +42,7 @@ if (!file_exists($_help_name)) {
   echo "
     <P>
     <CENTER>
-    <A HREF=\"help.php3?$_auth\"
+    <A HREF=\"help.php?$_auth\"
     ><$STDFONT_B>Go to the Help Page<$STDFONT_E></A>
     </CENTER>
   "; // link back to the main help page
@@ -78,7 +77,6 @@ echo "
 ";
 
 freemed_close_db (); // close db after user authentication
-
 freemed_display_html_bottom (); // show ending bit...
 
 ?>

@@ -5,6 +5,18 @@ freemed project changelog
   - fixed procedure module to pass "module" variable in wizard
   - added includes to billing functions modules so that the module loader
     doesn't complain
+  - scope fixes in modules/authorizations.module.php in add
+  - moved help.php3 -> help.php
+  - added reports category, icon and module loader, and frame for class
+  - added doc/ directory, moved much documentation from root of tree
+  - moved img/index.php3 -> img/index.php
+  - added img/magnify.gif and "Module Information" to admin module
+  - silly typo removed in user module
+  - added module_information.php, and updated phpwebtools with extra fields,
+    etc
+  - default MODULE_AUTHOR in lib/module.php
+  - fixed logout to have proper define usage
+  - fixed authenticate to be nicely parsed and proper
 
 * Wed Jan 24 2001 fforest
   - admin.php added procdtbilled to procrec

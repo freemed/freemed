@@ -2,6 +2,11 @@ freemed-project TODO list
 by jeff b (jeff@univrel.pr.uconn.edu)
 (c) 1999 under the GPL, version 2
 
+20010125 -------------------------------------------------------
+ * step up loadable module support to allow for more module types
+ * code optimizing
+ * much API documentation needs to be done
+
 20000405 -------------------------------------------------------
  * perhaps move to mcal as soon as libmcal stabilizes (this should
    be easier now that jeff is developing libmcal as well)

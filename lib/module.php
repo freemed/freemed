@@ -15,6 +15,11 @@ class freemedModule extends module {
 	// override variables
 	var $PACKAGE_NAME = PACKAGENAME;
 	var $PACKAGE_VERSION = VERSION;
+	var $MODULE_AUTHOR = "jeff b (jeff@univrel.pr.uconn.edu)";
+	var $MODULE_DESCRIPTION = "No description.";
+	var $MODULE_VENDOR = "Stock Module";
+
+	// all modules use this one loader
 	var $page_name = "module_loader.php";
 
 	// contructor method
@@ -45,6 +50,11 @@ class freemedModule extends module {
 	} // end function footer
 
 } // end class freemedModule
+
+// rest of module loaders
+include ("lib/module_emr.php");
+include ("lib/module_maintenance.php");
+include ("lib/module_reports.php");
 
 } // end if not defined
 

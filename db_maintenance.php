@@ -6,8 +6,6 @@
 $page_name = basename($GLOBALS["REQUEST_URI"]);
 include ("lib/freemed.php");
 include ("lib/API.php");
-include ("lib/module_emr.php");
-include ("lib/module_maintenance.php");
 
 SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 

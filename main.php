@@ -26,7 +26,7 @@ echo "
   <P>
 
   <$STDFONT_B>
-  <TABLE WIDTH=100% BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=CENTER
+  <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
    ALIGN=CENTER>
  "; // standard font begin
 
@@ -116,16 +116,29 @@ echo "
     </TD></TR>
    ";
 
+ if ($this_user->getLevel() > $database_level)
+   echo "
+    <TR> 
+    <TD ALIGN=RIGHT BGCOLOR=#dddddd>
+     <A HREF=\"reports.php?$_auth\"
+     ><IMG SRC=\"img/reports.gif\" BORDER=0 ALT=\"\"></A>
+    </TD>
+    <TD ALIGN=LEFT>
+    <A HREF=\"reports.php?$_auth\"
+     >"._("Reports")."</A>
+    </TD></TR>
+   ";
+
     // help screen
 echo "
   <TR>
   <TD ALIGN=RIGHT>
-   <A HREF=\"help.php3?$_auth&page_name=$page_name\"
+   <A HREF=\"help.php?$_auth&page_name=$page_name\"
     TARGET=\"__HELP__\"
    ><IMG SRC=\"img/readme.gif\" BORDER=0 ALT=\"\"></A>
   </TD>
   <TD ALIGN=LEFT>
-  <A HREF=\"help.php3?$_auth&page_name=$page_name\"
+  <A HREF=\"help.php?$_auth&page_name=$page_name\"
    TARGET=\"__HELP__\">"._("Main Menu Help")."</A>
   </TD></TR>
   <TR>

@@ -7,8 +7,6 @@ if (!defined("__MODULE_EMR_PHP__")) {
 
 define (__MODULE_EMR_PHP__, true);
 
-include "lib/freemed.php";
-
 // class freemedEMRModule
 class freemedEMRModule extends freemedModule {
 

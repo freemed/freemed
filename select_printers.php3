@@ -598,7 +598,7 @@ if (($action=="addform") AND ($separate_add_section)) {
 
    echo "
    <P>
-   <A HREF=\"help.php3?$_auth&page_name=$page_name\"
+   <A HREF=\"help.php?$_auth&page_name=$page_name\"
    TARGET=\"__HELP__\">$Help_for</A>
   <P>
         ";
