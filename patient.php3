@@ -23,7 +23,8 @@
 
   freemed_open_db ($LoginCookie); // authenticate user
 
-$t_vars = array("ptguar","ptrelguar", "ptguarstart", "ptguarend",
+// NULL at top so next() works...
+$t_vars = array("NULL", "ptguar","ptrelguar", "ptguarstart", "ptguarend",
     "ptins", "ptinsno", "ptinsgrp", "ptinsstart", "ptinsend"); 
 
 switch ($action) {
@@ -418,7 +419,7 @@ switch ($action) {
       <$STDFONT_B>"._("Display Inactive Insurance Companies")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=CHECKBOX NAME=\"ins_disp_inactive\"".
-       ($ins_disp_inactive ? " CHECKED" : "").">
+       /*($ins_disp_inactive ? " CHECKED" : "").*/" CHECKED>
      </TD></TR>
      <TR><TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Insurance")."<FONT SIZE=\"-1\">".
@@ -486,7 +487,7 @@ switch ($action) {
     </TABLE>
       "
     );
-   
+
     // push the current guarantor onto the stack
     if ($add_this_guar AND ($ptguar_>0)) { // not persistent! use once!
       $add_this_guar = false;
@@ -499,35 +500,35 @@ switch ($action) {
                array ("ptlname", "ptfname", "ptdob"), "patient", "");
     if (is_array($ptguar)) {
       while (list($idx,$val)=each($ptguar)) {
-        $ptguar_active[$idx]=( $guar_disp_inactive OR
-          (!date_in_range($cur_date,$ptinsstart[$idx],$ptinsend[$idx])) );
+        $ptguar_active[$idx]=( true /* $guar_disp_inactive OR
+          (!date_in_range($cur_date,$ptinsstart[$idx],$ptinsend[$idx])) */);
 	// unsure why, but have to take !date_in_range...
       } // for each insurance co, determine if active
       reset($ptguar);
       for ($arr_idx=0;$arr_idx<count($ptguar);) { // increment at bottom
         if (!isset($ptguarmod)) $ptguarmod=-1; // sanity check
-	if ($ptinsmod==$arr_idx) { // push it onto the current one
-          $ptins_ = $ptins[$arr_idx];echo $arr_idx;
-          $ptinsno_ = $ptinsno[$arr_idx];
-          $ptinsgrp_ = $ptinsgrp[$arr_idx];
-          $ptinsstart_ = $ptins[$arr_idx]; // what's the 
-          $ptinsend_ = $ptins[$arr_idx]; // opposite of fm_date_assemble?
-	  unset($ptins[$arr_idx]); // take it off the stack so it's not added again
+	if ($ptguarmod==$arr_idx) { // push it onto the current one
+          $ptguar_ = $ptins[$arr_idx];echo $arr_idx;
+          $ptrelguar_ = $ptrelguar[$arr_idx];
+          $ptguarstart_ = $ptguarstart[$arr_idx]; // what's the 
+          $ptguarend_ = $ptguarend[$arr_idx]; // opposite of fm_date_assemble?
+	  $ptguar[$arr_idx]=-1; // take it off the stack so it's not added again
 	  $arr_idx++;
 	}
-        if ($ptinsdel[$arr_idx]) unset($ptins[$arr_idx]); // delete 
-        if (!isset($ptins[$arr_idx])) continue; // take this one off the list
+        if ($ptguardel[$arr_idx]) {$ptins[$arr_idx]=-1; $arr_idx++;} // delete 
+        if ($ptins[$arr_idx]==-1) continue; // take this one off the list
         if ($ins_disp_inactive OR !date_in_range($cur_date,
             $ptinsstart[$arr_idx], $ptinsend[$arr_idx]) ) {
         } // if it's a visible insco
-      } // for each insco listed
+	$arr_idx++;
+      } // for each guar listed
     } // if inscos already exist
-    
+   
    $dep_r = freemed_search_query ( 
         array ($dep_s_val => $dep_s_field, $dep_s_val2 => $dep_s_field2),
         array ("ptlname", "ptfname"), "patient", 
-        "ptdep" );
-
+        "ptguar_" );
+   
    $book->add_page(
      _("Guarantor"),
      array ("ptguar", "ptrelguar", "ptguarstart", "ptguarend",
@@ -569,13 +570,13 @@ switch ($action) {
       <$STDFONT_B>"._("Guarantor")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
       ".freemed_display_selectbox($dep_r,
-          "#ptlname#, #ptfname#", "ptdep")."
+          "#ptlname#, #ptfname#", "ptguar_")."
     </TD></TR>
     
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Relation to Guarantor")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    ".select_widget("ptreldep", array (
+    ".select_widget("ptrelguar_", array (
         _("Self")    => "S",
         _("Child")   => "C",
         _("Husband") => "H",
