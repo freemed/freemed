@@ -185,6 +185,7 @@ class AgataMerge extends AgataCore
         // Decide whether we need to skip pages here
 	if ($lin <= $this->TopMargin or substr($Line, 0, 9)=='PAGEBREAK') {
 	  // End page
+	  $Line = ''; // reset line so 'PAGEBREAK' doesn't print
           fwrite($fd, "showpage \n");
           $page ++;
           fwrite($fd, '%%Page: ' . $page . ' ' . $page . "\n");
