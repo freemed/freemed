@@ -521,103 +521,6 @@ class freemedCalendarModule extends freemedModule {
 
 
 	$display_buffer .= $this->js_popup();
-	if( !$draw_array["textcolor"] ){
-	  $textcolor = "#000000";
-	}
-	else{
-	  $textcolor = $draw_array["textcolor"];
-	}
-
-	if( !$draw_array["bgcolor"] ){
-	  $bgcolor = "#FFFFFF";
-	}
-	else{
-	  $bgcolor = $draw_array["bgcolor"];
-	}
-
-	if( !$draw_array["font_face"] ){
-	  $font_face = "Verdana, Arial, Helvetica";
-	}
-	else{
-	  $font_face = $draw_array["font_face"];
-	}
-
-	if( !$draw_array["font_size"] ){
-	  $font_size = "-1";
-	}
-	else{
-	  $font_size = $draw_array["font_size"];
-	}
-
-	if( !$draw_array["table_width"] ){
-	  $table_width = "100";
-	}
-	else{
-	  $table_width = $draw_array["table_width"];
-	}
-
-	if( !$draw_array["table_height"] ){
-	  $table_height = "100";
-	}
-	else{
-	  $table_height = $draw_array["table_height"];
-	}
-
-	if( !$draw_array["cellpadding"] ){
-	  $cellpadding = "0";
-	}
-	else{
-	  $cellpadding = $draw_array["cellpadding"];
-	}
-
-	if( !$draw_array["cellspacing"] ){
-	  $cellspacing = "0";
-	}
-	else{
-	  $cellspacing = $draw_array["cellspacing"];
-	}
-
-	if( !$draw_array["table_border"] ){
-	  $table_border = "0";
-	}
-	else{
-	  $table_border = $draw_array["table_border"];
-	}
-
-	if( !$draw_array["top_row_align"] ){
-	  $table_top_row_align = "left";
-	}
-	else{
-	  $table_top_row_align = $draw_array["top_row_align"];
-	}
-
-	if( !$draw_array["top_row_valign"] ){
-	  $table_top_row_valign = "top";
-	}
-	else{
-	  $table_top_row_valign = $draw_array["top_row_valign"];
-	}
-
-	if( !$draw_array["row_align"] ){
-	  $table_row_align = "left";
-	}
-	else{
-	  $table_row_align = $draw_array["row_align"];
-	}
-
-	if( !$draw_array["row_valign"] ){
-	  $table_row_valign = "top";
-	}
-	else{
-	  $table_row_valign = $draw_array["row_valign"];
-	}
-
-	if( !$draw_array["top_row_cell_height"] ){
-	  $table_top_row_cell_height = "";
-	}
-	else{
-	  $table_top_row_cell_height = $draw_array["top_row_cell_height"];
-	}
 
 	/*
 	 * end of "getting drawing parameters section.
@@ -663,7 +566,7 @@ class freemedCalendarModule extends freemedModule {
 
 	/* start printout of main calendar table */
 	$display_buffer .= "<!-- begin lucid calendar printout, http://www.luciddesigns.com -->\n";
-	$display_buffer .= "<table cellspacing=\"$cellspacing\" cellpadding=\"$cellpadding\" width=\"$table_width\" height=\"$table_height\" border=\"$table_border\">\n";
+	$display_buffer .= "<table cellspacing=\"2\" cellpadding=\"2\" width=\"100%\" border=\"0\" class=\"calendar\">\n";
 
 	/*
 	 * we need to figure out the cell height and width for each of these.
@@ -676,7 +579,7 @@ class freemedCalendarModule extends freemedModule {
 	  $dates_cell_width = sprintf( "%.3f" , eregi_replace("%","",$table_width)/7 ) . "%";
 	}
 	else{
-	  $dates_cell_width = ceil( $table_width / 7 );
+	  $dates_cell_width = ceil( 100 / 7 )."%";
 	}
 
 	/*
@@ -684,13 +587,13 @@ class freemedCalendarModule extends freemedModule {
 	 * days of the week. I consider it a distinct sort of thing.
 	 */
 	$display_buffer .= "<tr>\n";
-	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Sunday</b></font></td>\n";
-	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Monday</b></font></td>\n";
-	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Tuesday</b></font></td>\n";
-	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Wednesday</b></font></td>\n";
-	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Thursday</b></font></td>\n";
-	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Friday</b></font></td>\n";
-	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Saturday</b></font></td>\n";
+	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Sunday</b></font></td>\n";
+	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Monday</b></font></td>\n";
+	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Tuesday</b></font></td>\n";
+	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Wednesday</b></font></td>\n";
+	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Thursday</b></font></td>\n";
+	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Friday</b></font></td>\n";
+	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Saturday</b></font></td>\n";
 	$display_buffer .= "</tr>\n";
 
 
@@ -737,19 +640,15 @@ class freemedCalendarModule extends freemedModule {
 		  }
 		  else
 		  {
-		  	//$c = $this->month_data[$theday]["id"][$j];
-		  	//$display_buffer .= "id is $c<BR>";
-		  	$theevent .= "<font face=\"$font_face\" size=\"$font_size\">";
+			$theevent .= "<div class=\"thinbox_noscroll\">\n";
 			$theevent .= "<a href=\"javascript:openWin(";
 		  	$theevent .= $this->month_data[$theday]["id"][$j]; 
-		  	$theevent .= ")\">";
+		  	$theevent .= ")\"><small>";
 			$theevent .= $this->month_data[$theday]["time"][$j]." - ";
-     	  	$theevent .= $this->month_data[$theday]["room"][$j]."<BR>"; 
-     	  	//$theevent .= "&nbsp;&nbsp;".$this->month_data[$theday]["patient"][$j]."<BR>"; 
-     	  	//$theevent .= "&nbsp;&nbsp".$this->month_data[$theday]["event_title"][$j]; 
-		  	$theevent .= "</a></font>\n";
-     	  	$theevent .= "&nbsp;&nbsp;".$this->month_data[$theday]["patient"][$j]."<BR>"; 
-     	  	$theevent .= "&nbsp;&nbsp".$this->month_data[$theday]["event_title"][$j]."<BR>"; 
+	     	  	$theevent .= $this->month_data[$theday]["room"][$j];
+		  	$theevent .= "</a></small><br/>\n"; 
+     		  	$theevent .= "&nbsp;&nbsp;<abbr title=\"".$this->month_data[$theday]["event_title"][$j]."\">".
+				"<small>".$this->month_data[$theday]["patient"][$j]."</small></abbr></div>\n"; 
 		  }
 		}
 	  }
@@ -764,12 +663,11 @@ class freemedCalendarModule extends freemedModule {
 			
 	  }
 
-	  $display_buffer .= "<td bgcolor=\"$bgcolor\" align=\"$table_row_align\" valign=\"$table_row_valign\" height=\"$dates_cell_height\"";
+	  $display_buffer .= "<td class=\"cell_alt\" align=\"$table_row_align\" valign=\"TOP\" height=\"$dates_cell_height\"";
 	  $display_buffer .= "width=\"$dates_cell_width\">";
-	  $display_buffer .= "<font face=\"$font_face\" size=\"$font_size\"";
-	  $display_buffer .= ">$theday<br>\n";
-      $display_buffer .= "$theevent";
-	  $display_buffer .= "</font>";
+	  $display_buffer .= "<small>$theday<br>\n";
+	$display_buffer .= "$theevent";
+	  $display_buffer .= "</small>";
 	  $display_buffer .= "</td>\n";
 	  /* be sure to clear out $theevent */
 	  $theevent = "";
