@@ -19,7 +19,8 @@ class Connection extends AgataError
     $DbName  = $agataConfig['DbName'];
     $DbHost  = $agataConfig['DbHost'];
     $DbType  = $agataConfig['DbType'];
-    require_once 'classes/DB.php';
+
+    LoadObjectDependency('PEAR.DB');
     $dsn="$DbType://$DbUser:$DbPass@$DbHost/$DbName";
     $this->db = DB::connect($dsn);
 
