@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=lib/perl
-SUBDIR=Config Frontier XML
+SUBDIR=Config Encode Frontier XML
 
 all:
 	# Nothing
