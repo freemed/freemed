@@ -28,12 +28,6 @@ class freemedModule extends module {
 		$this->module();
 		// call setup
 		$this->setup();
-
-		// Globalize record_name and page_title
-		if (page_name() == $this->page_name) {
-			$GLOBALS["record_name"] = $this->record_name;
-			$GLOBALS["page_title"] = $this->record_name;
-		}
 	} // end constructor freemedModule
 
 	// override check_vars method
@@ -51,6 +45,13 @@ class freemedModule extends module {
 		global $display_buffer, $page_name;
 		freemed_open_db ();
 		$page_name = _($this->MODULE_NAME);
+
+		// Globalize record_name and page_title
+		global $record_name, $page_title;
+		if (page_name() == $this->page_name) {
+			$record_name = $this->record_name;
+			$page_title = $this->record_name;
+		}
 	} // end function header
 
 	// override footer method
