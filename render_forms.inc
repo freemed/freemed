@@ -55,11 +55,12 @@ function swap_fixedFormEntry (&$ff1, &$ff2) {
 
 // function to render single item, proper length
 function render_FixedFormEntry ($formentry) {
+  if ($formentry->len < 1) return "";
   $this_evalled = fm_eval ($formentry->data);
   if (strlen ($this_evalled) > $formentry->len) {
     $length_adjusted = substr ($this_evalled, 0, $formentry->len);
   } elseif (strlen ($this_evalled) < $formentry->len) {
-    for ($loop=0;$loop<($this_evalled - ($formentry->len));$loop++)
+    for ($loop=0;$loop<abs($this_evalled - ($formentry->len));$loop++)
       $this_evalled .= " ";
     $length_adjusted = $this_evalled;
   } else { // no change neccesary
@@ -154,8 +155,8 @@ function render_fixedForm ($id, $offset=0) {
       for ($lc=0;$lc<$num_spc;$lc++) $buffer .= " "; 
     } // end of checking for current row status
      // actually write the rendered item to the buffer...
-    $cur_row = ($form_item->row + $line_off); 
-    $cur_col = $form_item->col;
+    $cur_row = ($form_item->row + $line_off);
+    $cur_col = $form_item->col + $form_item->len;
     $buffer .= render_fixedFormEntry ($form_item);
     $cur_entry = $skip_to; // increment the counter!
     if ($inc_loop) $recursive++; // increment loop counter
