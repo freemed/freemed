@@ -18,7 +18,7 @@ class BillingService extends MaintenanceModule {
 	var $order_field = "bsname,bsstate,bszip";
 
 	var $variables		= array (
-		'bshname',
+		'bsname',
 		'bsaddr',
 		'bscity',
 		'bsstate',
