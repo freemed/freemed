@@ -9,7 +9,7 @@ class LettersModule extends EMRModule {
 
 	var $MODULE_NAME    = "Letters";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -37,6 +37,7 @@ class LettersModule extends EMRModule {
 		global $patient;
 		$this->variables = array (
 			"letterdt" => date_assemble("letterdt"),
+			"lettereoc",
 			"letterfrom",
 			"letterto",
 			"lettertext",
@@ -46,6 +47,7 @@ class LettersModule extends EMRModule {
 		// Table definition
 		$this->table_definition = array (
 			"letterdt" => SQL_DATE,
+			"lettereoc" => SQL_TEXT,
 			"letterfrom" => SQL_VARCHAR(150),
 			"letterto" => SQL_VARCHAR(150),
 			"lettertext" => SQL_TEXT,
@@ -166,8 +168,21 @@ class LettersModule extends EMRModule {
 			$lt_array = array ('' => '');
 		}
 
+		if (check_module("EpisodeOfCare")) {
+			$eoc_array = array (
+				__("Episode of Care") =>
+				module_function(
+					'EpisodeOfCare',
+					'widget',
+					array('letterteoc', $patient)
+				)
+			);
+		} else {
+			$eoc_array = array ('' => '');
+		}
+
 		$display_buffer .= html_form::form_table(array_merge(
-		$lt_array, array(
+		$lt_array, $eoc_array, array(
 		__("Date") =>
 		date_entry("letterdt"),
 
@@ -316,6 +331,17 @@ class LettersModule extends EMRModule {
 			)
 		);
 	} // end function LettersModule->view()
+
+	// ----- Internal update
+
+	function _update() {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				 'ADD COLUMN lettereoc AFTER letterdt');
+		}
+	} // end method _update
 
 } // end class LettersModule
 
