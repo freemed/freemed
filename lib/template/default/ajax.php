@@ -20,6 +20,7 @@ ob_start();
 	border-bottom: 1px solid #000000;
 	border-right: 1px solid #000000;
 }
+.hiddendiv span { cursor: pointer; }
 </style>
 
 <!-- Javascript libraries for AJAX -->
