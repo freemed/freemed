@@ -7,6 +7,22 @@
 # Patch PHP ini file to have more than 8M per process
 perl -pi -e "s|8M|64M|;" /etc/php4/apache/php.ini
 
+# Apache user has to own freemed
+echo -n "Updating ownership of freemed to webserver user ... "
+chown -Rf www-data.www-data /usr/share/freemed 
+echo "[done]"
+
+# Change writeable permissions for data/, img/store, etc
+echo -n "Updating permissions ... "
+chmod -Rf a+w /usr/share/freemed/{data/{cache,backup},img/store}
+echo "[done]"
+
+# Attempt to create freemed mysql database ... will have no password if
+# it has just been installed
+echo -n "Attempting to create freemed database (no password) ... "
+mysqladmin -u root create freemed 2>&1
+echo "[done]"
+
 #DEBHELPER#
 
 exit 0
