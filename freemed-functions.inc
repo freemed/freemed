@@ -1462,23 +1462,26 @@ function freemed_search_query ($ctrl_array, $ord_array,
                            $db = "", $id_var = "id")
 {
   global $db_name;
-  if (is_array($id_var)) {
-    while (list($k,$v) = each($id_var)) {
-      global $$v;
-      $_id_[]=$$v;
-    }
-  } else {
-    global $$id_var;
-    $_id_=$$id_var;
-  } // import the id-list
+  if (strlen($id_var)<1) { } else {
+    if (is_array($id_var)) {
+      while (list($k,$v) = each($id_var)) {
+        global $$v;
+        $_id_[]=$$v;
+      }
+    } else {
+      global $$id_var;
+      $_id_=$$id_var;
+    } // import the id-list
+  } // if id-vars exist
   
   $buf = "";
   if (strlen($db)<1) $db=$db_name;
   
-  $buf .= "SELECT * FROM ".addslashes($db)." WHERE (";
+  $buf .= "SELECT * FROM ".addslashes($db)." WHERE (1>0) ";
   
   $first_field=true;
   if (is_array($_id_)) { // array case
+    $buf .= "AND (";
     while (list($k,$v) = each($_id_)) {
       if ($first_field) {
         $first_field = false;
@@ -1488,9 +1491,11 @@ function freemed_search_query ($ctrl_array, $ord_array,
       if (strlen($v)>0) $buf .= "(id = '".$v."')";
     } // while each id to check
     $buf .= ")";
-  } else { // end array case
-    $buf .= "(id = '".$_id_."') ";
-  } // non-array case
+  } else if (strlen($_id_>0)) { // end array case
+    $buf .= " AND (id = '".$_id_."') ";
+  } else { // non-array case
+    $has_id = false;
+  } // end non-id case
  
   $kill_it=true;
   $ctrl_array[""]="swedishchefborkborkbork"; // kludge to avoid 'Warning:'
@@ -1498,32 +1503,43 @@ function freemed_search_query ($ctrl_array, $ord_array,
     if (strlen($k)>0) $kill_it=false;
   }
   if ($kill_it) unset($ctrl_array);
+  else if (!$has_id) $buf .= "AND (";
  
-  if (is_array($ctrl_array) AND count($ctrl_array)>0) $buf .= " OR (";
-    else $buf .= ")";
+  if (is_array($ctrl_array) AND count($ctrl_array)>0 AND strlen($_id_)>1) 
+    $buf .= " OR (";
+
   $first_field = true;
-  while ( is_array($ctrl_array) AND 
-         (list($fieldval, $fieldname) = each($ctrl_array)) ) { // the rest
-    if (strlen($fieldval)>0) { // if it's an activated query
-      if ($first_field) {
-        $first_field = false;
-      } else {
-        $buf .= " AND ";
-      }
-      $buf .= " (
-        $fieldname LIKE '%$fieldval%' OR
-        $fieldname LIKE '$fieldval%' OR
-        $fieldname LIKE '%$fieldval' OR
-        $fieldname = '%$fieldval%'
-      ) ";
-    } // checking for active query
-  } // while each in ctrl_array
-  if (is_array($ctrl_array) AND count($ctrl_array)>0) $buf .= ")";
+  if (is_array($ctrl_array)) {
+    reset($ctrl_array);
+    while ( is_array($ctrl_array) AND 
+           (list($fieldval, $fieldname) = each($ctrl_array)) ) { // the rest
+      if (strlen($fieldval)>0) { // if it's an activated query
+        if ($first_field) {
+          $first_field = false;
+        } else {
+          $buf .= " AND ";
+        }
+        $buf .= " (
+          $fieldname LIKE '%$fieldval%' OR
+          $fieldname LIKE '$fieldval%' OR
+          $fieldname LIKE '%$fieldval' OR
+          $fieldname = '%$fieldval%'
+        ) ";
+      } // checking for active query
+    } // while each in ctrl_array
+    $buf .= " ) ";
+  } // control array in place
+
+  // KLUDGE TO KEEP FROM LISTING EVERYTHING
+  if (!is_array($ctrl_array) AND (!$has_id)) {
+    $buf .= " AND (1<0) ";
+  } // we don't want to list *all* of them, now do we...
 
   if (count($ord_array)>0) { 
     $buf .= " ORDER BY ";
     $buf .= implode(',', $ord_array);
   } // include orderby clause
+  echo $buf."<BR>";
   return fdb_query($buf); 
 } // end function freemed_search_query
 
