@@ -8,11 +8,11 @@ class SchedulerTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Scheduler Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.3.1';
+	var $MODULE_VERSION = '0.6.4';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.3';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $table_name = "scheduler";
 
@@ -130,7 +130,7 @@ class SchedulerTable extends MaintenanceModule {
 				'caltype ENUM(\'temp\', \'pat\', \'block\')');
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN calstatus '.
-				'calstatus ENUM(\'scheduled\',\'confirmed\',\'attended\',\'canceled\',\'noshow\',\'tenative\')');
+				'calstatus ENUM(\'scheduled\',\'confirmed\',\'attended\',\'cancelled\',\'noshow\',\'tenative\')');
 		}
 		// Version 0.6.3.1
 		//
@@ -140,6 +140,19 @@ class SchedulerTable extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN calprenote '.
 				'calprenote VARCHAR(250)');
+		}
+
+		// Version 0.6.4
+		//
+		//	Attempt revision again
+		//
+		if (!version_check($version, '0.6.3.2')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN caltype '.
+				'caltype ENUM(\'temp\', \'pat\', \'block\')');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN calstatus '.
+				'calstatus ENUM(\'scheduled\',\'confirmed\',\'attended\',\'cancelled\',\'noshow\',\'tenative\')');
 		}
 	} // end function _update
 }
