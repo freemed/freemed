@@ -1374,6 +1374,8 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
   $brackets = "[]";
   $result = $sql->query ($sql_query); // check
   $all_selected = fm_value_in_string ($blob_data, "-1");
+
+
   $buffer .= " 
     <SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
   ";
@@ -1963,6 +1965,14 @@ function fm_htmlize_array ($variable_name, $cur_array) {
   return $buffer;                         // be nice, return true
 } // end function fm_htmlize_array
 
+function fm_make_string_array($string)
+{
+	// ensure string ends in :
+	if (!strpos($string,":"))
+		return $string.":";
+	return $string;
+
+}
 function fm_join_from_array ($cur_array) {
   if (count($cur_array)==0) return ""; // error checking
   if (!is_array($cur_array)) return "$cur_array";  // error checking
@@ -2126,11 +2136,13 @@ function fm_value_in_array ($cur_array, $value) {
 } // end function fm_split_into_array
 
 function fm_value_in_string ($cur_string, $value) {
+
   if ( strpos ($cur_string, ":") > 0 )
 	{
     	$this_array = fm_split_into_array ($cur_string);
   		return fm_value_in_array ($this_array, $value);
 	}
+
 	if (strstr($cur_string,$value) != "")
 		return true;
 	return false;

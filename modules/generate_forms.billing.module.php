@@ -288,7 +288,7 @@ class GenerateFormsModule extends freemedBillingModule {
 			
      	echo "
       	<B>"._("Processing")." ".$this_patient->fullName()."
-      	<BR>\n\n
+      	</B><BR>\n\n
      	";
      	flush ();
 

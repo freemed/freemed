@@ -1,6 +1,16 @@
 freemed project changelog
 ($Id$)
 
+* Fri May 18 2001 fforest
+  - API fm_make_string_array added to make sure
+    a string contains a colon if not one is appened
+  - generate_forms missing a </B>
+  - insurance_company maint. calls fm_string_array to ensure 
+    and inscomod value of 17 is changed to 17: so value_in_string
+    function will parse is as an array for the multiple_choice box.
+  - procedure module. removed the verification for a primary 
+    insurance. patient may be rich and is paying the bill 
+    himself. 
 * Thu May 17 2001 fforest
   - macros added defines for covstatus ACTIVE DELETED
   - API change the coverage functions to use the above 

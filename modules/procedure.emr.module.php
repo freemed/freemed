@@ -197,10 +197,7 @@ class procedureModule extends freemedEMRModule {
 				_("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame#","proccov2"),
 				_("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov3"),
 				_("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov4")
-				)),
-			array (
-					array ("proccov1", VERIFY_NONZERO, NULL, _("Must Specify Primary")),
-				)
+				))
 			); // end coverage page	
 
 		$charge = $this->CalculateCharge($proccov1,$proccpt,$procphysician,$patient);

@@ -51,13 +51,15 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
       case "modform":
 		// need this before extract or modform wont display
         // existing data on page 2
+		reset($this->variables);
 		while(list($k,$v)=each($this->variables))
         {
            global $$v;
         } 
 
         $r = freemed_get_link_rec ($id, $this->table_name);
-        extract ($r); 
+        extract ($r);
+		$inscomod = fm_make_string_array($inscomod); // ensure 17 is 17:
         break; // end of modform
     } // end inner action switch
   } // end checking if been here
@@ -136,6 +138,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
     </TABLE>
   ");
 
+	
   $book->add_page(
    _("Internal Information"),
    array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod" ),"
@@ -211,7 +214,8 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 				_("Group")	=>	"inscogroup"
 			),
 			array ("", "", ""),
-			"", "", "",
+			array("","","","inscogroup" => "inscogroup"),
+			"", "",
 			ITEMLIST_MOD|ITEMLIST_VIEW
 		);
 	} // end function insuranceCompanyMaintenance->view()
