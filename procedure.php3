@@ -562,7 +562,7 @@ switch ($action) { // master action switch
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
   if ($result) { echo "$Done."; }
    else        { echo "$ERROR"; }
-  $this_procedure = fdb_last_record ($result, "procedure");
+  $this_procedure = fdb_last_record ($result, $db_name);
   
     // updating patient diagnoses
   echo "
