@@ -78,6 +78,78 @@ class episodeOfCare extends freemedEMRModule {
 
 	function episodeOfCare () {
 		$this->freemedEMRModule();
+
+		// define create query
+		$this->table_definition = array (
+			"eocpatient"		=> SQL_NOT_NULL(SQL_INT_UNSIGNED(0)),
+			"eocdescrip"		=> SQL_VARCHAR(100),
+			"eocstartdate"		=> SQL_DATE,
+			"eocdtlastsimilar"	=> SQL_DATE,
+			"eocreferrer"		=> SQL_INT_UNSIGNED(0),
+			"eocfacility"		=> SQL_INT_UNSIGNED(0),
+			"eocdiagfamiliy"	=> SQL_TEXT,
+			"eocrelpreg"		=> SQL_ENUM(array("no", "yes")),
+			"eocrelemp"		=> SQL_ENUM(array("no", "yes")),
+			"eocrelauto"		=> SQL_ENUM(array("no", "yes")),
+			"eocrelother"		=> SQL_ENUM(array("no", "yes")),
+			"eocrelstpr"		=> SQL_VARCHAR(10),
+			"eoctype"		=> SQL_ENUM(array(
+				"acute",
+				"chronic",
+				"chronic recurrent",
+				"historical"
+			)),
+			
+			//"eochospital"		=> SQL_INT_UNSIGNED(0),
+
+			// Automobile
+			"eocrelautoname"	=> SQL_VARCHAR(100),
+			"eocrelautoaddr1"	=> SQL_VARCHAR(100),
+			"eocrelautoaddr2"	=> SQL_VARCHAR(100),
+			"eocrelautocity"	=> SQL_VARCHAR(50),
+			"eocrelautostpr"	=> SQL_VARCHAR(30),
+			"eocrelautozip"		=> SQL_VARCHAR(16),
+			"eocrelautocountry"	=> SQL_VARCHAR(100),
+			"eocrelautocase"	=> SQL_VARCHAR(30),
+			"eocrelautorcname"	=> SQL_VARCHAR(100),
+			"eocrelautorcphone"	=> SQL_VARCHAR(16),
+
+			// Employment related
+			"eocrelempname"		=> SQL_VARCHAR(100),
+			"eocrelempaddr1"	=> SQL_VARCHAR(100),
+			"eocrelempaddr2"	=> SQL_VARCHAR(100),
+			"eocrelempcity"		=> SQL_VARCHAR(50),
+			"eocrelempstpr"		=> SQL_VARCHAR(30),
+			"eocrelempzip"		=> SQL_VARCHAR(10),
+			"eocrelempcountry"	=> SQL_VARCHAR(100),
+			"eocrelempfile"		=> SQL_VARCHAR(30),
+			"eocrelemprcname"	=> SQL_VARCHAR(100),
+			"eocrelemprcphone"	=> SQL_VARCHAR(16),
+			"eocrelemprcemail"	=> SQL_VARCHAR(100),
+
+			// Pregnancy
+			"eocrelpregcyle"	=> SQL_INT_UNSIGNED(0),
+			"eocrelpreggravida"	=> SQL_INT_UNSIGNED(0),
+			"eocrelpregpara"	=> SQL_INT_UNSIGNED(0),
+			"eocrelpregmiscarry"	=> SQL_INT_UNSIGNED(0),
+			"eocrelpregabort"	=> SQL_INT_UNSIGNED(0),
+			"eocrelpreglastper"	=> SQL_DATE,
+			"eocrelpregconfine"	=> SQL_DATE,
+
+			// Other
+			"eocrelothercomment"	=> SQL_VARCHAR(100),
+
+			// Admittance & Discharge
+			"eocdistype"		=> SQL_INT_UNSIGNED(0),
+			"eocdisfromdt"		=> SQL_DATE,
+			"eocdistodt"		=> SQL_DATE,
+			"eocdisworkdt"		=> SQL_DATE,
+			"eochosadmdt"		=> SQL_DATE,
+			"eochosdischrgdt"	=> SQL_DATE,
+			"eocrelautotime"	=> SQL_CHAR(8),
+
+			"id"			=> SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+		);
 	} // end constructor episodeOfCare
 
 	function form () {
@@ -98,7 +170,6 @@ class episodeOfCare extends freemedEMRModule {
       if ($id<1) {
        $page_title =  _("$record_name")." :: "._("ERROR");
        $display_buffer .= _("Must select record to Modify");
-       freemed_close_db ();
        template_display();
       } // end of if.. statement checking for id #
 
@@ -625,7 +696,6 @@ class episodeOfCare extends freemedEMRModule {
         >"._("Manage Patient")."</A>
        </CENTER>
      ";
-     freemed_close_db ();
      template_display();
    } // end checking for ID as valid
 
