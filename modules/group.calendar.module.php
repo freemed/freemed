@@ -39,6 +39,43 @@ class GroupCalendar extends CalendarModule {
 	);
 
 	function GroupCalendar () {
+		// Set MetaInformation
+		$this->_SetMetaInformation('global_config_vars', array(
+			'cal1',
+			'cal2',
+			'cal3',
+			'cal4',
+			'cal5',
+			'cal6',
+			'cal7',
+			'cal8',
+		));
+		$this->_SetMetaInformation('global_config', array(
+			__("Calendar Category")." 1" =>	
+			'html_form::text_widget("cal1", 20, 50)',
+
+			__("Calendar Category")." 2" =>	
+			'html_form::text_widget("cal2", 20, 50)',
+
+			__("Calendar Category")." 3" =>	
+			'html_form::text_widget("cal3", 20, 50)',
+
+			__("Calendar Category")." 4" =>	
+			'html_form::text_widget("cal4", 20, 50)',
+
+			__("Calendar Category")." 5" =>	
+			'html_form::text_widget("cal5", 20, 50)',
+
+			__("Calendar Category")." 6" =>	
+			'html_form::text_widget("cal6", 20, 50)',
+
+			__("Calendar Category")." 7" =>	
+			'html_form::text_widget("cal7", 20, 50)',
+
+			__("Calendar Category")." 8" =>	
+			'html_form::text_widget("cal8", 20, 50)'
+		));
+
 		// run constructor
 		$this->CalendarModule();
 	} // end constructor GroupCalendar	

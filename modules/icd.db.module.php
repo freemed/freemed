@@ -34,6 +34,15 @@ class IcdMaintenance extends MaintenanceModule {
 	);
 
 	function IcdMaintenance () {
+		$this->_SetMetaInformation('global_config_vars', array('icd'));
+		$this->_SetMetaInformation('global_config', array(
+			__("ICD Code Type") =>
+			'html_form::select_widget("icd", '.
+			'array ('.
+				'"ICD9" => "9",'.
+				'"ICD10" => "10"'.
+			'))'
+		));
 		$this->table_definition = array (
 			'icd9code' => SQL_VARCHAR(6),
 			'icd10code' => SQL_VARCHAR(7),
