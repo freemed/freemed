@@ -13,7 +13,7 @@ include_once("lib/freemed.php");         // load global variables
 
     // *** authorizing user ***
 
-freemed_open_db ();
+freemed::connect ();
 
 $this_user = CreateObject('FreeMED.User');
 
@@ -23,16 +23,11 @@ if (!freemed::user_flag(USER_ROOT)) {  // if not admin...
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"user.php|user access failed, user is not admin");}	
-
-
 }
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"user.php|user $user_to_log manage users");}	
-
-
-
 
 // *** main action loop ***
 // (default action is "view")
@@ -241,7 +236,7 @@ switch($action) { // master action switch
 	}
 
   if (!( $book->is_done() )) {
-    $display_buffer .= "<CENTER>\n".$book->display();
+    $display_buffer .= "<center>\n".$book->display()."</center>\n";
   } else { // now the add/mod code itself
 
 	// Assemble flags
@@ -261,6 +256,16 @@ switch($action) { // master action switch
 
 
     if ($action=="mod" || $action=="modform") {
+	// Figure out whether we changed the password, or whether it is just
+	// being re-passed
+	if (strlen($userpassword1)==32) {
+		// Length 32 = passed MD5 password, pass as is
+		$_pass = $userpassword1;
+	} else {
+		// Otherwise use the hash
+		$_pass = $md5_pass;
+	}
+    
       $display_buffer .= "
         <div ALIGN=\"CENTER\">
         ".__("Modifying")." . . . 
@@ -273,7 +278,7 @@ switch($action) { // master action switch
 	$query = $sql->update_query($table_name,
 		array (
 			"username"     => $username,
-			"userpassword" => $md5_pass,
+			"userpassword" => $_pass,
 			"userdescrip"  => $userdescrip,
 			"userlevel"    => ($flags+0),
 			"usertype"     => $usertype,
@@ -348,7 +353,7 @@ switch($action) { // master action switch
     	"WHERE id='".addslashes($id)."'");
   else { // if we tried to delete admin!!!
     $display_buffer .= "
-      <B><CENTER>".__("You cannot delete admin!")."</CENTER></B>
+      <b><center>".__("You cannot delete admin!")."</center></b>
     ";
     template_display();
   }
@@ -356,10 +361,10 @@ switch($action) { // master action switch
   $display_buffer .= "
     <P ALIGN=CENTER>
     $record_name ".__("Deleted")."
-    <BR>
-    <BR>
-    <A HREF=\"$page_name?action=view\"
-     >".__("Go back to user menu")."</A>
+    <br/>
+    <br/>
+    <a HREF=\"$page_name?action=view\"
+     >".__("Go back to user menu")."</a>
   ";
 
 	// Set automatic refresh
@@ -408,16 +413,16 @@ switch($action) { // master action switch
     while ($r = $sql->fetch_array($result)) {
       $display_buffer .= "
         <TR CLASS=\"".freemed_alternate()."\">
-        <TD>".prepare($r[username])."</TD>
+        <TD>".prepare($r['username'])."</TD>
         <TD>
       ";
 
         // don't allow add or delete on admin...
       if ($r[id] != 1) 
         $display_buffer .= "
-         <a class=\"button\" HREF=\"$page_name?id=$r[id]&action=modform\"
+         <a class=\"button\" HREF=\"$page_name?id=".$r['id']."&action=modform\"
          ><small>".__("MOD")."</small></a>
-         <a class=\"button\" HREF=\"$page_name?id=$r[id]&action=del\"
+         <a class=\"button\" HREF=\"$page_name?id=".$r['id']."&action=del\"
          ><small>".__("DEL")."</small></a>
         "; // show actions...
       else $display_buffer .= "&nbsp; \n";
