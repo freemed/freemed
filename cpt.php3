@@ -289,17 +289,13 @@ switch ($action) { // begin master switch
             '".addslashes(fm_join_from_array ($cpttos)).    "',
             NULL )";
       echo "
-       <P>
+       <P ALIGN=CENTER>
        <$STDFONT_B>"._("Adding")." ...
       ";
       if ($debug) echo " ( query = \"$query\" ) <BR>\n";
-      $result = fdb_query ($query);
-      if ($result) { echo _("done")."."; }
-       else        { echo _("ERROR");    }
       break; // end action = add
       
      case "mod": case "modform": // modify action
-      freemed_display_box_top (_("Modifying")." "._($record_name));
       $query = "UPDATE $db_name SET
             cptcode      ='".addslashes($cptcode).                        "',
             cptnameint   ='".addslashes($cptnameint).                     "',
@@ -318,15 +314,15 @@ switch ($action) { // begin master switch
             cpttos       ='".addslashes(fm_join_from_array ($cpttos)).    "'
             WHERE id='$id'";
       echo "
-       <P>
+       <P ALIGN=CENTER>
        <$STDFONT_B>"._("Modifying")." ...
       ";
       if ($debug) echo " ( query = \"$query\" ) <BR>\n";
-      $result = fdb_query ($query);
-      if ($result) { echo _("done")."."; }
-       else        { echo _("ERROR");    }
       break; // end action mod/modform 
    } // end switch add/modform   
+  $result = fdb_query ($query);
+  if ($result) { echo _("done")."."; }
+  else         { echo _("ERROR");    }
   echo "
    <$STDFONT_E>
    <P>
@@ -334,7 +330,7 @@ switch ($action) { // begin master switch
    <A HREF=\"$page_name?$_auth&action=addform\"
    ><$STDFONT_B>"._("Add Another")."<$STDFONT_E></A> <B>|</B>
    <A HREF=\"$page_name?$_auth\"
-   ><$STDFONT_B>"._("back")."<$STDFONT_E>
+   ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
    </CENTER>
    <P>
   ";
@@ -356,7 +352,7 @@ switch ($action) { // begin master switch
   echo "
    <P>
     <CENTER>
-    <$STDFONT_B><B>Current Code</B> : <$STDFONT_E>
+    <$STDFONT_B><B>"._("Current Code")."</B> : <$STDFONT_E>
     <A HREF=\"$page_name?$_auth&id=$id&action=modform\"
     ><$STDFONT_B>".$this_code["cptcode"]."<$STDFONT_E></A>&nbsp;
     <$STDFONT_B><I>(".$this_code["cptnameint"].")</I><$STDFONT_E>
