@@ -476,7 +476,8 @@ a:hover {
 
 /* Box for tooltips */
 #dhtmltooltip{
-	position: absolute;
+	position: fixed;
+	.position: absolute; /* IE hack */
 	width: 150px;
 	border: 2px solid black;
 	padding: 2px;
