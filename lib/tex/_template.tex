@@ -1,0 +1,46 @@
+%%
+%% $Id$
+%% $Author$
+%%
+%% FreeMED v0.7.0
+%% Old Generic TeX Template
+%%
+\documentclass[10pt,letterpaper]{article}
+
+\newcommand{\headingbox}[1]{\fbox{\sc #1}}
+
+\usepackage{courier} % For tt support
+\usepackage{lastpage}
+\usepackage{supertabular}
+\usepackage{fancyhdr}
+\usepackage[left=0.5in,right=0.5in,top=0.5in,bottom=1.2in,nohead,nofoot]{geometry}
+\usepackage{relsize}
+
+% Define header and footer
+
+\lhead{
+ \framebox[\textwidth]{
+  \relsize{1}
+  \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+   \textbf{{{INSTALLATION}}} & {{heading}} \\
+   {{title}} & Page \thepage\ of \pageref{LastPage} \\
+   {{physician}} & \today \\
+  \end{tabular*}
+ }
+}
+
+\cfoot{\textsl{{{PACKAGENAME}} v{{VERSION}}}}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\setlength{\topskip}{7ex}
+\setlength{\headheight}{9ex}
+\setlength{\footskip}{3ex}
+
+\begin{document}
+\pagestyle{fancy}
+
+%% BODY GOES HERE
+{{content}}
+
+\end{document}

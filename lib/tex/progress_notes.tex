@@ -1,0 +1,68 @@
+%%
+%%	$Id$
+%%	$Author$
+%%
+%%	FreeMED TeX Template
+%%	Progress Notes
+%%
+
+\documentclass{article}
+
+% No normal header, footer, etc
+% Extra room on bottom and left for bindings, etc
+\usepackage[top=0.5in,left=1.2in,right=0.5in,bottom=1.2in,nohead,nofoot]{geometry}
+% Relative size package
+\usepackage{relsize}
+
+% Macro for progress-note type headers
+\newcommand{\sheading}[1]{\textbf{#1:}}
+
+\begin{document}
+
+% Deal with the document "header". For now, we're just looking at a one-time
+% only display. FIXME: Migrate this to a header.
+\begin{center}
+	{\relsize{1}\textbf{{{INSTALLATION}}}} \\
+	{\relsize{-1}\textsl{{{physician}}}} \\
+	\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
+	\textsl{phone {{physicianphone}} fax {{physicianfax}}}
+\end{center}
+
+
+{{physician}}, MD \\
+\begin{tabular}{ll}
+	NAME:	&	{{patient}}	\\
+	DOB:	&	{{patientdob}}	\\
+	DATE:	&	\today
+\end{tabular}
+
+\begin{center}
+	{\relsize{1}\textbf{PATIENT PROGRESS NOTES}}
+\end{center}
+
+% Nice fixed block with \cr's in between them
+\begin{tabular}{ll}
+\sheading{BMI} & {{pnotesBMI}} \\
+\sheading{Height} & {{pnotesHEIGHT}} \\
+\sheading{Weight} & {{pnotesWEIGHT}} \\
+\sheading{Blood Pressure} & {{pnotesBP}} \\
+\sheading{Heart Rate} & {{pnotesHEART}} \\
+\sheading{Respiratory Rate} & {{pnotesRESP}}
+\end{tabular} \\
+\par
+
+{{pnotesSUBJECTIVE}}
+
+{{pnotesOBJECTIVE}}
+
+{{pnotesASSESSMENT}}
+
+{{pnotesPLAN}}
+
+{{pnotesINTERVAL}}
+
+{{pnotesEDUCATION}}
+
+{{pnotesRX}}
+
+\end{document}

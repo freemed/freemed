@@ -3,13 +3,13 @@
 %%	$Author$
 %%
 %%	FreeMED TeX Template
-%%	Patient Correspondence
+%%	Letters
 %%
 
 \documentclass{article}
 
 % No normal header, footer, etc
-\usepackage[top=0.5in,left=0.7in,right=0.7in,bottom=1.2in,nohead,nofoot]{geometry}
+\usepackage[nohead,nofoot]{geometry}
 % Relative size package
 \usepackage{relsize}
 
@@ -18,31 +18,31 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-	{\relsize{1}\textbf{{{practice}}}} \\
-%	{\relsize{-1}\textsl{{{physician}}}} \\
+	{\relsize{1}\textbf{{{INSTALLATION}}}} \\
+	{\relsize{-1}\textsl{{{physician}}}} \\
 	\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
-	\textsl{Phone: {{physicianphone}} Fax: {{physicianfax}}}
+	\textsl{phone {{physicianphone}} fax {{physicianfax}}}
 \end{center}
 
-\flushleft
 
-\  \\
+\begin{tabular}{ll}
+	NAME:	&	{{patient}}	\\
+	DATE:	&	\today
+\end{tabular}
 
-\today \\
+%\begin{center}
+%	{\relsize{1}\textbf{PATIENT CORRESPONDENCE}}
+%\end{center}
 
-\  \\
+{{to}}: \\
 
-{{patient}} \\
-{{patientaddress}} \\
-{{patientcitystatezip}} \\
-
-\  \\
+\hfill \\
 
 {{body}}
 
-\  \\
+\hfill \\
 
-{{physician}} \\
-{{practice}}
+Sincerely, \\
+{{from}}
 
 \end{document}

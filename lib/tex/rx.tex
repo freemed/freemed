@@ -1,0 +1,53 @@
+%%
+%%	$Id$
+%%	$Author$
+%%
+%%	FreeMED TeX Template
+%%	Prescriptions
+%%
+
+\documentclass{article}
+
+% No normal header, footer, etc
+\usepackage[nohead,nofoot]{geometry}
+% Relative size package
+\usepackage{relsize}
+
+\begin{document}
+
+\framebox[5in]{
+	\parbox{4.8in}{
+		\begin{center}
+			{\relsize{1}\textbf{{{practicename}}}} \\
+			{\relsize{-1}\textsl{{{physician}}}} \\
+			\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
+			\textsl{phone {{physicianphone}} fax {{physicianfax}}}
+		\end{center}
+		\begin{center}
+			\begin{tabular}{r|l}
+				\textbf{Patient} & {{patient}} \\
+			 	\textbf{SSN} & {{ssn}} \\	
+				\  & \  \\
+				\textbf{Rx Date} & {{date}} \\
+				\  & \  \\
+				\textbf{Address} & {{patientaddress}} \\
+				\  & {{patientcitystatezip}} \\
+				\  & \  \\
+				\textbf{Medication}  & {\large {{drug}}} \\
+				\  & {\large {{size}} {{units}} ({{quantity}} total)} \\
+				\textbf{Dosage} & {{{dosage}} {{units}} {{interval}} ({{form}})} \\ 
+				\  & \  \\
+				\textbf{Refill} & {{{refill}}} \\
+				\  & \  \\
+				\textbf{Substitution} & {{substitution}}
+			\end{tabular}
+		\end{center}
+		\hfill \\
+		\centerline{{\large \textbf{{{physician}}}}} 
+		\centerline{{\large Signature On File}} 
+		\hfill \\
+		\centerline{{{md5}}}
+	}
+}
+
+\end{document}
