@@ -795,6 +795,8 @@ switch ($action) {
     $display_buffer .= "
      </div>
     ";
+    // Refresh to patient selection
+    $refresh = "patient.php";
   break; // end action delete
 
   case "find":
