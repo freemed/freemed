@@ -28,6 +28,8 @@ class BillingContact extends MaintenanceModule {
 		'bcphone'
 	);
 
+	var $widget_hash = '##bclname##, ##bcfname## ##bcmname##';
+
 	function BillingContact () {
 		// Table definition
 		$this->table_definition = array (
