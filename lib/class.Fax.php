@@ -46,10 +46,27 @@ class Fax {
 			$this->options['recipient'] = '';
 
 		// Check for Hylafax install
-		if (!$this->HylaFaxInstalled()) {
-			die(basename(__FILE__).": Hylafax binaries not found");
+		if ($this->eFaxInstalled()) {
+			$this->options['fax_server'] = 'efax';
+		} elseif ($this->HylaFaxInstalled()) {
+			$this->options['fax_server'] = 'hylafax';
+		} else {
+			die(basename(__FILE__).": Hylafax or efax binaries not found");
 		}
 	} // end constructor Fax
+
+	// Method: eFaxInstalled
+	//
+	//	Determines whether Mac OS X's efax client is properly
+	//	installed on the server.
+	//
+	// Returns:
+	//
+	//	Boolean, whether or not 'efax' executable is found.
+	//
+	function eFaxInstalled ( ) {
+		return file_exists("/usr/bin/efax");
+	} // end method eFaxInstalled
 
 	// Method: HylaFaxInstalled
 	//
@@ -90,7 +107,15 @@ class Fax {
 		));
 
 		// Form command
-		$cmd = 'sendfax  '.
+		switch ($this->options['fax_server']) {
+			case 'efax':
+			$cmd = 'efax '.
+				'-t '.$number.' '.
+				' "'.$this->attachment.'"';
+			break; // end efax
+		
+			case 'hylafax': default:
+			$cmd = 'sendfax '.
 			( freemed::config_value('fax_nocover') ?
 				'-n ' : '' ).
 				'-f "'.$this->options['sender'].'" '.
@@ -101,6 +126,8 @@ class Fax {
 					$this->options['recipient'].'@' : ''
 				).$number.'" '.
 				' "'.$this->attachment.'"';
+			break; // end hylafax
+		} // end switch
 		$output = `$cmd`;
 		return $output;
 	} // end method Send
