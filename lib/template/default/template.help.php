@@ -66,7 +66,7 @@ if (isset($page_title)) {
 			TARGET="help_frame"
 			><?php print _("Main Menu"); ?></A>
 		<LI><A HREF="#"
-			onClick="this.close();"
+			onClick="window.close();"
 			><?php print _("Close this Window"); ?></A>
 		</UL>
 	</TD></TR></TABLE>
