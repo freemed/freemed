@@ -869,7 +869,7 @@ class ProcedureModule extends EMRModule {
 
 				// Check if authorization changed
 				if ($_REQUEST['procauth'] != $_p['procauth']) {
-					$a = CreateObject('FreeMED.Authorization');
+					$a = CreateObject('FreeMED.Authorizations');
 					// Try to remove old authorization
 					if ($_p['procauth'] > 0) {
 						$a->replace_authorization($_p['procauth']);
