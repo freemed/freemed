@@ -12,7 +12,7 @@ class RebillByCovModule extends BillingModule {
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
-	var $ICON = "img/rebill.gif";
+	//var $ICON = "img/rebill.gif";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.1';
 
@@ -24,6 +24,7 @@ class RebillByCovModule extends BillingModule {
 		// Handler for the billing menu
 		$this->_SetHandler('BillingFunctions', 'view');
 		$this->_SetMetaInformation('BillingFunctionName', __("Rebill by Coverage"));
+		$this->_SetMetaInformation('BillingFunctionDescription', __("Mark claims to be rebilled by coverage. This option is depreciated."));
 		
 		// call parent constructor
 		$this->BillingModule($nullvar);
