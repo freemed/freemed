@@ -24,7 +24,12 @@ class prescriptionModule extends freemedEMRModule {
 	function prescriptionModule () {
 		$this->freemedEMRModule();
 		$this->summary_vars = array (
-			"Date From" => "rxdtfrom"			
+			"Date From" => "rxdtfrom",
+			"Crypto Key" => "rxmd5"
+		);
+		// Specialized query bits
+		$this->summary_query = array (
+			"MD5(id) AS rxmd5"
 		);
 	} // end constructor prescriptionModule
 
