@@ -309,7 +309,7 @@ class AccountsReceivable extends BillingModule {
 		} // end procedure
 		if ($_REQUEST['criteria']['type']) {
 			$display_buffer .= "<b>".__("Item Type").
-				": </b>".$_REQUEST['criteria']['item_type']." ".
+				": </b>".$_REQUEST['criteria']['type']." ".
 				"<a href=\"".$this->_search_link(array(
 					'type' => ''	
 				))."\" class=\"remove_link\">X</a><br/>\n";
@@ -409,7 +409,7 @@ class AccountsReceivable extends BillingModule {
 				( empty($hash['item_type']) ? '&nbsp;' :
 				'<a href="'.
 				$this->_search_link(array(
-					'type' => $hash['item_type_id']
+					'type' => $hash['item_type_id']+0
 				)).'"><acronym TITLE="'.
 				__("Filter by this item type").'">'.
 				'<small>'.$hash['item_type'].'</small>'.
