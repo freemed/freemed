@@ -43,6 +43,20 @@ class InsuranceCompany {
 		);
 	} // end constructor InsuranceCompany
 
+	// Method: get_name
+	//
+	//	Form name of insurance company / payer.
+	//
+	// Returns:
+	//
+	//	Common name of insurance company / payer.
+	//
+	function get_name ( ) {
+		return $this->local_record['insconame'].' ('.
+			$this->local_record['inscocity'].', '.
+			$this->local_record['inscostate'].')';
+	} // end method get_name
+
 } // end class InsuranceCompany
 
 ?>
