@@ -10,7 +10,7 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Place of Service Maintenance";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -38,8 +38,12 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT posname,posdescrip,id FROM ".$this->table_name.
-				" ORDER BY ".prepare($this->order_field)),
+			$sql->query(
+				"SELECT posname,posdescrip,id ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY ".prepare($this->order_field)
+			),
 			$this->page_name,
 			array (
 				_("Code") => "posname",
