@@ -1,8 +1,8 @@
 <?php
- # file: episode_of_care.php3
- # desc: episode of care database module
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: episode_of_care.php3
+ // desc: episode of care database module
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name   = "episode_of_care.php3";
  $record_name = "Episode of Care";
@@ -21,18 +21,16 @@
    switch ($action) {
      case "addform":
       $go = "add";
-      $this_action = "$Add";
+      $this_action = "Add";
       $eocstartdate = $eocdtlastsimilar = $cur_date;
       break;
      case "modform":
       $go = "mod";
-      $this_action = "$Modify";
+      $this_action = "Modify";
        // check to see if an id was submitted
       if ($id<1) {
-       freemed_display_box_top ("$record_name :: $ERROR");
-       echo "
-         $Must_select_record_to_modify
-       ";
+       freemed_display_box_top (_("$record_name")." :: "._("ERROR"));
+       echo _("Must select record to Modify");
        freemed_display_box_bottom ();
        freemed_close_db ();
        freemed_display_html_bottom ();
@@ -89,7 +87,7 @@
         break;
       } // end checking if we have been here yet...
    } // end of interior switch
-   freemed_display_box_top ("$this_action $record_name");
+   freemed_display_box_top (_("$this_action $record_name"));
 
    // fix the yes/no and multiple choice switches
    switch ($eocrelauto) {
@@ -114,9 +112,10 @@
 
    echo "
     <CENTER>
-     <B>$Patient:</B> 
+     <$STDFONT_B>"._("Patient")." :
      <A HREF=\"manage.php3?$_auth&id=$patient\"
       >".$this_patient->fullName (true)."</A>
+     <$STDFONT_E>
     </CENTER><P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
@@ -125,98 +124,98 @@
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Description<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocdescrip\" SIZE=25 MAXLENGTH=100
        VALUE=\"".fm_prep($eocdescrip)."\">
      </TD>
   ";
   if ($this_patient->isFemale()) { echo "
-     <TD ALIGN=RIGHT><$STDFONT_B>$Related_to_Pregnancy<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Pregnancy")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelpreg\">
-       <OPTION VALUE=\"no\"  $eocrelpreg_n>$lang_no
-       <OPTION VALUE=\"yes\" $eocrelpreg_y>$lang_yes
+       <OPTION VALUE=\"no\"  $eocrelpreg_n>"._("No")."
+       <OPTION VALUE=\"yes\" $eocrelpreg_y>"._("Yes")."
       </SELECT>
      </TD>
   "; } else { echo "
-     <TD ALIGN=RIGHT><$STDFONT_B><I>$Related_to_Pregnancy<$STDFONT_E></I></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B><I>"._("Related to Pregnancy")."<$STDFONT_E></I></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=HIDDEN NAME=\"eocrelpreg\" VALUE=\"no\">
-      <I><$STDFONT_B>no<$STDFONT_E></I>
+      <I><$STDFONT_B>"._("No")."<$STDFONT_E></I>
      </TD>
   "; } // end checking if female
   echo "  
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Date_of_First_Occurance<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of First Occurance")."<$STDFONT_E></TD>
       <TD ALIGN=LEFT>
   ";
   fm_date_entry("eocstartdate");
   echo "
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Related_to_Employment<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Employment")."<$STDFONT_E></TD>
       <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelemp\">
-       <OPTION VALUE=\"no\"  $eocrelemp_n>$lang_no
-       <OPTION VALUE=\"yes\" $eocrelemp_y>$lang_yes
+       <OPTION VALUE=\"no\"  $eocrelemp_n>"._("No")."
+       <OPTION VALUE=\"yes\" $eocrelemp_y>"._("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Date_of_Last_Similar<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Last Similar")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_date_entry("eocdtlastsimilar");
    echo "
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Related_to_Automobile<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Automobile")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelauto\">
-       <OPTION VALUE=\"no\"  $eocrelauto_n>$lang_no
-       <OPTION VALUE=\"yes\" $eocrelauto_y>$lang_yes
+       <OPTION VALUE=\"no\"  $eocrelauto_n>"._("No")."
+       <OPTION VALUE=\"yes\" $eocrelauto_y>"._("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Referring_Physician<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Referring Physician")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-      <SELECT NAME=\"eocreferrer\">
    ";
-   freemed_display_physicians ($eocreferrer);
-   echo "
-      </SELECT>
+   $pref_r = fdb_query("SELECT * FROM physician WHERE phyref='yes'
+                        ORDER BY phylname,phyfname");
+   echo freemed_display_selectbox ($pref_r, 
+     "#phylname#, #phyfname#", "eocreferrer")."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Related_to_Other_Cause<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Other Cause")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelother\">
-       <OPTION VALUE=\"no\"  $eocrelother_n>$lang_no
-       <OPTION VALUE=\"yes\" $eocrelother_y>$lang_yes
+       <OPTION VALUE=\"no\"  $eocrelother_n>"._("No")."
+       <OPTION VALUE=\"yes\" $eocrelother_y>"._("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Facility<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Facility")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-      <SELECT NAME=\"eocfacility\">
    ";
    if (empty($eocfacility)) $eocfacility = $default_facility;
-   freemed_display_facilities ($eocfacility);
-   echo "
-      </SELECT>
+   $fac_r = fdb_query("SELECT * FROM facility ORDER BY psrname,psrnote");
+   
+   echo 
+     freemed_display_selectbox ($fac_r, "#psrname# [#psrnote#]", 
+     "eocfacility")."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>State Province<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("State/Province")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelstpr\" SIZE=5 MAXLENGTH=5
        VALUE=\"$eocrelstpr\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Diagnosis_Family<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Diagnosis Family")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
     ";
     // compact and display eocdiagfamily
-    $eocdiagfamily = fm_join_from_array ($eocdiagfamily);
     echo freemed_multiple_choice ("SELECT * FROM diagfamily
            ORDER BY dfname, dfdescrip", "dfname:dfdescrip", "eocdiagfamily",
-           $eocdiagfamily, false)."
+           fm_join_from_array($eocdiagfamily), false)."
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Episode_Type<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Episode Type")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
     ";
     // case statement for eoctype
@@ -228,11 +227,11 @@
     } // end switch for $eoctype
     echo "
       <SELECT NAME=\"eoctype\">
-       <OPTION VALUE=\"\"                          >$NONE_SELECTED
-       <OPTION VALUE=\"acute\"             $type_a >$lang_acute
-       <OPTION VALUE=\"chronic\"           $type_c >$lang_chronic
-       <OPTION VALUE=\"chronic recurrent\" $type_cr>$lang_chronic_recurrent
-       <OPTION VALUE=\"historical\"        $type_h >$lang_historical
+       <OPTION VALUE=\"\"                          >"._("NONE SELECTED")."
+       <OPTION VALUE=\"acute\"             $type_a >"._("acute")."
+       <OPTION VALUE=\"chronic\"           $type_c >"._("chronic")."
+       <OPTION VALUE=\"chronic recurrent\" $type_cr>"._("chronic recurrent")."
+       <OPTION VALUE=\"historical\"        $type_h >"._("historical")."
       </SELECT>
      </TD>
     </TR>
@@ -245,45 +244,45 @@
 
      <CENTER>
      <P>
-      <$STDFONT_B><B>$Automobile_Related_Information</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Automobile Related Information")."</B><$STDFONT_E>
      <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Auto_Insurance<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Auto Insurance")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoname\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelautoname\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Case_Number<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Case Number")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocase\" SIZE=10 MAXLENGTH=20
        VALUE=\"$eocrelautocase\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Address ($Line_1)<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 1)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr1\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelautoaddr1\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Contact_Name<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Name")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcname\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelautorcname\">
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Address ($Line_2)<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 2)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr2\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelautoaddr2\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Contact_Phone<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Phone")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ".
    fm_phone_entry("eocrelautorcphone")
    ."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$City, $St_Pr,<BR>$Postal_Code<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("City, State/Prov, Postal Code")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocity\" SIZE=10 MAXLENGTH=100
        VALUE=\"$eocrelautocity\"> <B>,</B>
@@ -292,13 +291,13 @@
       <INPUT TYPE=TEXT NAME=\"eocrelautozip\" SIZE=11 MAXLENGTH=10
        VALUE=\"$eocrelautozip\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Email_Address<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Email Address")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcemail\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelautorcemail\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Country<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Country")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelautocountry\" SIZE=10 MAXLENGTH=100
        VALUE=\"$eocrelautocountry\">
@@ -319,45 +318,45 @@
 
      <CENTER>
      <P>
-      <$STDFONT_B><B>$Employment_Related_Information</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Employment Related Information")."</B><$STDFONT_E>
      <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Name_of_Employer<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Name of Employer")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempname\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelempname\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$File_Number<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("File Number")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempfile\" SIZE=10 MAXLENGTH=20
        VALUE=\"$eocrelempfile\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Address ($Line_1)<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 1)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr1\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelempaddr1\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Contact_Name<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Name")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcname\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelemprcname\">
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Address ($Line_2)<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 2)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr2\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelempaddr2\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Contact_Phone<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Phone")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ".
    fm_phone_entry("eocrelemprcphone")
    ."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$City, $St_Pr,<BR>$Postal_Code<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("City, State/Prov, Postal Code")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempcity\" SIZE=10 MAXLENGTH=100
        VALUE=\"$eocrelempcity\"> <B>,</B>
@@ -366,13 +365,13 @@
       <INPUT TYPE=TEXT NAME=\"eocrelempzip\" SIZE=11 MAXLENGTH=10
        VALUE=\"$eocrelempzip\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Email_Address<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Email Address")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcemail\" SIZE=20 MAXLENGTH=100
        VALUE=\"$eocrelemprcemail\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Country<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Country")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelempcountry\" SIZE=10 MAXLENGTH=100
        VALUE=\"$eocrelempcountry\">
@@ -392,51 +391,51 @@
 
      <CENTER>
      <P>
-      <$STDFONT_B><B>$Pregnancy_Related_Information</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Pregnancy Related Information")."</B><$STDFONT_E>
      <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Length_of_Cycle<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Length of Cycle")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_number_select ("eocrelpregcycle", 10, 40);
    echo "
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Last_Menstrual_Period<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Last Menstrual Period")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_date_entry("eocrelpreglastper");
    echo "
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Gravida<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Gravida")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_number_select("eocrelpreggravida", 0, 15);
    echo "
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Date_of_Confinement<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Confinement")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_date_entry("eocrelpregconfine");
    echo "
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Para<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Para")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_number_select("eocrelpregpara", 0, 15);
    echo "
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Miscarries<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Miscarries")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_number_select("eocrelpregmiscarry", 0, 15);
    echo "
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$Abortions<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Abortions")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
    fm_number_select("eocrelpregabort", 0, 15);
@@ -456,12 +455,12 @@
 
      <CENTER>
      <P>
-      <$STDFONT_B><B>$Other_Related_Information</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Other Related Information")."</B><$STDFONT_E>
      <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
      <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>$More_Information<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("More Information")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelothercomment\" SIZE=35 MAXLENGTH=100
        VALUE=\"$eocrelothercomment\">
@@ -474,11 +473,11 @@
      <P>
      <CENTER>
      <SELECT NAME=\"action\">
-      <OPTION VALUE=\"$action\">Update
-      <OPTION VALUE=\"$go\">$this_action
-      <OPTION VALUE=\"view\">$Return_to_Menu
+      <OPTION VALUE=\"$action\">"._("Update")."
+      <OPTION VALUE=\"$go\">"._("$this_action")."
+      <OPTION VALUE=\"view\">"._("Return to Menu")."
      </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\"$lang_go\">
+     <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
      </CENTER>
     ";
    freemed_display_box_bottom ();
@@ -489,13 +488,13 @@
   case "add": case "mod":
    switch ($action) {
      case "add":
-       $this_action = "$Adding";
+       $this_action = "Adding";
      case "mod":
-       $this_action = "$Modifying";
+       $this_action = "Modifying";
    }
-   freemed_display_box_top ("$this_action $record_name");
+   freemed_display_box_top (_("$this_action $record_name"));
    echo "
-     <$STDFONT_B>$this_action<$STDFONT_E> ...
+     <$STDFONT_B>"._("$this_action")."<$STDFONT_E> ...
    ";
 
    // compact 3d arrays into strings...
@@ -611,38 +610,39 @@
 
    $result = fdb_query ($query);
    if ($debug)  { echo " ( query = \"$query\" ) <BR>"; }
-   if ($result) { echo "$Done."; }
-    else        { echo "$ERROR"; }
+   if ($result) { echo _("Done"); }
+    else        { echo _("ERROR"); }
    echo "
      <P>
      <CENTER>
       <A HREF=\"manage.php3?$_auth&id=$patient\"
-      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> <B>|</B>
+      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
       <A HREF=\"$page_name?$_auth&patient=$patient\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A></CENTER>
+      ><$STDFONT_B>"._("Return to $record_name Menu")."<$STDFONT_E></A>
+     </CENTER>
      <BR>
    ";
    freemed_display_box_bottom ();
    break;
 
   case "del":
-   freemed_display_box_top ("$Deleting $record_name");
+   freemed_display_box_top (_("Deleting $record_name"));
    echo "
     <P>
-    <$STDFONT_B>$Deleting ...
+    <$STDFONT_B>"._("Deleting")." ...
     ";
    $query = "DELETE FROM $db_name WHERE id='$id'";
    $result = fdb_query ($query);
-   if ($result) { echo "$Done\n";    }
-    else        { echo "$ERROR\n";   }
+   if ($result) { echo _("Done")."\n";    }
+    else        { echo _("ERROR")."\n";   }
    echo "
     <$STDFONT_E>
     <P>
     <CENTER>
       <A HREF=\"manage.php3?$_auth&id=$patient\"
-      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> <B>|</B>
+      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("Return to $record_name Menu")."<$STDFONT_E></A>
     </CENTER> 
    ";
    freemed_display_box_bottom ();
@@ -650,14 +650,16 @@
 
   case "display": // view of entire episode (central control screen)
    if ($id<1) {
-     freemed_display_box_top ("$record_name View :: $ERROR");
+     freemed_display_box_top (_("ERROR"));
      echo "
        <P>
-       <$STDFONT_B>You must specify an ID to view an Episode!<$STDFONT_E>
+       <$STDFONT_B>
+       "._("You must specify an ID to view an Episode!")."
+       <$STDFONT_E>
        <P>
        <CENTER>
         <A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        </CENTER>
      ";
      freemed_display_box_bottom ();
@@ -665,7 +667,7 @@
      freemed_display_html_bottom ();
      DIE("");
    } // end checking for ID as valid
-   freemed_display_box_top ("$record_name View");
+   freemed_display_box_top (_("$record_name View"));
 
    // create new patient object
    $this_patient = new Patient ($patient);
@@ -674,7 +676,7 @@
    echo "
      <P>
       <CENTER>
-      <$STDFONT_B>$Patient<$STDFONT_E> :
+      <$STDFONT_B>"._("Patient")."<$STDFONT_E> :
       <A HREF=\"manage.php3?$_auth&id=$patient\"
       ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
       </CENTER>
@@ -690,10 +692,10 @@
       ALIGN=CENTER VALIGN=MIDDLE>
      <TR>
       <TD ALIGN=CENTER>
-       <$STDFONT_B>Starting Date<$STDFONT_E>
+       <$STDFONT_B>"._("Starting Date")."<$STDFONT_E>
       </TD>
       <TD ALIGN=CENTER>
-       <$STDFONT_B>Description<$STDFONT_E>
+       <$STDFONT_B>"._("Description")."<$STDFONT_E>
       </TD>
      </TR>
      <TR>
@@ -722,16 +724,16 @@
      $result,
      "procedure.php3",
      array (
-       "Date" => "procdt",
-       "Procedure" => "proccpt",
+       _("Date") => "procdt",
+       _("Procedure") => "proccpt",
        "" => "proccptmod",
-       "Comment" => "proccomment"
+       _("Comment") => "proccomment"
      ),
      array (
        "",
        "",
        "",
-       "NO COMMENT"
+       _("NO COMMENT")
      ),
      array (
        "",
@@ -739,7 +741,7 @@
        "cptmod" => "cptmod",
        ""
      ),
-     "Procedures"
+     _("Procedures")
    );
    // end of procedures display
    
@@ -763,13 +765,13 @@
      $result,
      "progress_notes.php3",
      array (
-       "Date" => "pnotesdt"
+       _("Date") => "pnotesdt"
      ),
      array (
        ""
      ),
      "", // no xrefs
-     "Progress Notes"
+     _("Progress Notes")
    );
    // end of progress notes display
    // display management link at the bottom...
@@ -777,7 +779,7 @@
      <P>
      <CENTER>
       <A HREF=\"$page_name?$_auth&patient=$patient\"
-      ><$STDFONT_B>Choose Another $record_name<$STDFONT_E></A>
+      ><$STDFONT_B>"._("Choose Another $record_name")."<$STDFONT_E></A>
      </CENTER>
      <P>
    ";
@@ -786,10 +788,10 @@
 
   default: // default action -- menu
    if ($patient<1) {
-     freemed_display_box_top ("$record_name :: $ERROR");
+     freemed_display_box_top (_("$record_name :: ERROR"));
      echo "
       <P>
-      <$STDFONT_B>$Must_specify_patient<$STDFONT_E>
+      <$STDFONT_B>"._("Must specify a patient!")."<$STDFONT_E>
       <P>
      ";
      freemed_display_box_bottom ();
@@ -807,7 +809,7 @@
     echo "
       <P>
       <CENTER>
-       <$STDFONT_B>$Patient : <$STDFONT_E>
+       <$STDFONT_B>"._("Patient")." : <$STDFONT_E>
        <A HREF=\"manage.php3?$_auth&id=$patient\"
        ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
       </CENTER>
@@ -816,12 +818,12 @@
       $result,
       "episode_of_care.php3",
       array (
-        "Starting Date" => "eocstartdate",
-	"Description"   => "eocdescrip"
+        _("Starting Date") => "eocstartdate",
+	_("Description")   => "eocdescrip"
       ),
       array (
         "",
-	"NO DESCRIPTION"
+	_("NO DESCRIPTION")
       )
     );
 
