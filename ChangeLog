@@ -11,6 +11,10 @@ freemed project changelog
   - provider.module fix loss of physsn after a mod. 
     fix link for Abandon to this->page_name
 
+* Fri Mar 23 2001 rufustfirefly
+  - payment_record.php -> old/payment_record.php
+  - manage_payment_records.php -> old/manage_payment_records.php
+
 * Fri Mar 23 2001 fforest
   - fixedform_EN.data update with new requirements for
     commercial and Medicare NSF record layouts
