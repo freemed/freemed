@@ -26,13 +26,13 @@ if ($patient_history or $page_history) {
 if ($patient_history) {
 	print "
 	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
-	<form ACTION=\"manage.php\" METHOD=\"POST\">
+	<form ACTION=\"manage.php\" METHOD=\"GET\">
 	".html_form::select_widget("id", $patient_history,
 		array ('style' => 'width: 220px;', 'refresh' => true))."
 	</td><td align=\"CENTER\" valign=\"MIDDLE\">
-	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/magnifying_glass.".
+	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/img/magnifying_glass.".
 	IMAGE_TYPE."\"
-		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Manage]\"/>
+		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[".__("Manage")."]\"/>
 	</form>
 	</td></tr>
 	";
@@ -45,7 +45,7 @@ if ($page_history) {
 	// Show the actual pick list
 	print "
 	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
-	<form ACTION=\"redirect.php\" METHOD=\"POST\">
+	<form ACTION=\"redirect.php\" METHOD=\"GET\">
 	".html_form::select_widget("location", $page_history,
 		array ('style' => 'width: 220px;', 'refresh' => true))."
 	</td><td align=\"CENTER\" valign=\"MIDDLE\">
