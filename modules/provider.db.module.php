@@ -17,7 +17,6 @@ class providerMaintenance extends freemedMaintenanceModule {
 
 	var $record_name    = "Provider";
 	var $table_name     = "physician";
-
 	var $variables      = array (
         "phylname",
         "phyfname",
@@ -88,10 +87,9 @@ class providerMaintenance extends freemedMaintenanceModule {
 		$book->set_submit_name("OK"); // not sure what this does...
   
   if (($action=="modform") AND (!$book->been_here())) { // load the values
+    reset ($this->variables);
     while(list($k,$v)=each($this->variables))
-    {
         global $$v;
-    }
 	global $physsn1,$physsn2,$physsn3;
 
     $r = freemed_get_link_rec ($id, $this->table_name);
@@ -167,13 +165,9 @@ class providerMaintenance extends freemedMaintenanceModule {
 
   $book->add_page (
     "Contact",
-    array (
-     "phyemail", "phycellular", "phypager",
-     "phycellular_1", "phycellular_2", "phycellular_3", "phycellular_4",
-     "phycellular_5",
-     "phypager_1", "phypager_2", "phypager_3", "phypager_4",
-     "phypager_5",
-    ),
+    array_merge ( array(
+     "phyemail"), phone_vars("phycellular"), phone_vars("phypager") 
+	),
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT> 
@@ -195,16 +189,13 @@ class providerMaintenance extends freemedMaintenanceModule {
    </TABLE>
     "
   );
- 
+
   $book->add_page (
     _("Address"),
-    array (
-     "phyaddr1a", "phyaddr2a", "phycitya", "phystatea", "phyphonea", "phyzipa",
-     "phyphonea_1", "phyphonea_2", "phyphonea_3", "phyphonea_4",
-     "phyphonea_5",
-     "phyfaxa_1", "phyfaxa_2", "phyfaxa_3", "phyfaxa_4", "phyfaxa",
-     "phyfaxa_5",
-     "has_second_addr"
+    array_merge ( array(
+     "has_second_addr", "phyaddr1a", "phyaddr2a", "phycitya", "phystatea", "phyzipa"),
+     phone_vars("phyphonea"),
+     phone_vars("phyfaxa")
     ),
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
@@ -262,13 +253,11 @@ class providerMaintenance extends freemedMaintenanceModule {
   if ($has_second_addr)
     $book->add_page (
       _("Address 2"),
-      array (
-       "phyphoneb_1", "phyphoneb_2", "phyphoneb_3", "phyphoneb_4",
-       "phyphoneb_5",
-       "phyfaxb_1", "phyfaxb_2", "phyfaxb_3", "phyfaxb_4", "phyfaxb",
-       "phyfaxb_5",
-       "phyaddr1b", "phyaddr2b", "phycityb", "phystateb", "phyphoneb", "phyzipb"
-      ),
+      array_merge ( 
+		phone_vars("phyphoneb"),
+		phone_vars("phyfaxb"),
+       array("phyaddr1b", "phyaddr2b", "phycityb", "phystateb", "phyzipb"
+      ) ),
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>

@@ -1,6 +1,12 @@
 freemed project changelog
 ($Id$)
 
+* Wed May 02 2001 fforest
+  - modules/provider.db  changed all phone _x to 
+    phone_vars(phone)
+  - lib/API.php fix phone_entry function to set the _n variables
+    before exiting.
+
 * Tue May 01 2001 fforest
   - removed modules/intake.emr.report
   - added modules/intake.emr_report

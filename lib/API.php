@@ -2025,22 +2025,17 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
   $formatting = freemed_config_value("phofmt"); // get phone formatting
   global $$phonevarname, ${$phonevarname."_1"},	 // get global vars
          ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
-	 ${$phonevarname."_4"}, ${$phonevarname."_5"}; 
-  if ($array_index == -1) {
+         ${$phonevarname."_4"}, ${$phonevarname."_5"}; 
+
+  if ($array_index == -1)  
+  {
     $w  = $$phonevarname;    // whole number
-    $p1 = ${$phonevarname."_1"};    // part 1
-    $p2 = ${$phonevarname."_2"};    // part 2
-    $p3 = ${$phonevarname."_3"};    // part 3
-    $p4 = ${$phonevarname."_4"};    // part 4
-    $p5 = ${$phonevarname."_5"};    // part 5
-  } else {
+  } 
+  else 
+  {
     $w  = $$phonevarname[$array_index];  // whole number
-    $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
-    $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
-    $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
-    $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
-    $p5 = ${$phonevarname."_5"}[$array_index];  // part 5
-  } // end checking for array index
+  }
+
   if (!empty($w)) {
     // if phone # is not empty, split
     switch ($formatting) {
@@ -2098,6 +2093,21 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
        MAXLENGTH=16 VALUE=\"$w\">
      "; break;
   } // end switch for dtfmt config value
+
+  if ($array_index == -1) {
+    ${$phonevarname."_1"} = $p1;    // part 1
+    ${$phonevarname."_2"} = $p2;    // part 2
+    ${$phonevarname."_3"} = $p3;    // part 3
+    ${$phonevarname."_4"} = $p4;    // part 4
+    ${$phonevarname."_5"} = $p5;    // part 5
+  } else {
+    ${$phonevarname."_1"}[$array_index] = $p1;  // part 1
+    ${$phonevarname."_2"}[$array_index] = $p2;  // part 2
+    ${$phonevarname."_3"}[$array_index] = $p3;  // part 3
+    ${$phonevarname."_4"}[$array_index] = $p4;  // part 4
+    ${$phonevarname."_5"}[$array_index] = $p5;  // part 5
+  } // end checking for array index
+
   return $buffer;                         // we exited well!
 } // end function fm_phone_entry
 
