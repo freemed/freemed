@@ -814,9 +814,24 @@ switch ($action) {
 
    break; // end action add/mod
 
+  case "delete":
   case "del":
-    // STUB
-    echo "del STUB <BR>\n";
+    freemed_display_box_top (_("Deleting")." "._($record_name));
+    echo "<CENTER>
+     <P><$STDFONT_B>"._("Deleting")." ... ";
+    $query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
+    $result = fdb_query ($query);
+    if ($result) { echo _("done")."."; }
+     else        { echo _("ERROR");    }
+    echo "
+     <$STDFONT_E>
+     </CENTER>
+     <P>
+     <CENTER>
+     <A HREF=\"patient.php3?$_auth\"
+     ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+     </CENTER>
+    ";
   break; // end action delete
 
   case "find":
