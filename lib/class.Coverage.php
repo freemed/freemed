@@ -1,8 +1,7 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
-// class Coverage
 class Coverage {
 	var $local_record;                // stores basic record
 	var $id;                          // record ID for insurance company
@@ -51,6 +50,45 @@ class Coverage {
 		}
 
 	} // end constructor Coverage
+
+	function GetProceduresToBill ( $pat=-1, $id=-1, $type=-1, $forpat=0 ) {
+		global $display_buffer;
+		//print "GetProceduresToBill (pat = $pat, id = $id, type = $type, forpat = $forpat)\n";
+
+		if ($forpat == 0) {
+			if (!$id) {
+				//print "Coverage::GetProceduresToBill - no id present.<br/>\n";
+				return 0;
+			}
+			if (!$type) {
+				//print "Coverage::GetProceduresToBill - no type present.<br/>\n";
+				return 0;
+			}
+		}
+
+		if (!$pat) {
+			//print "Coverage::GetProceduresToBill - no patient present.<br/>\n";
+			return 0;
+		}
+
+		$query = "SELECT * FROM procrec ".
+			"WHERE (proccurcovtp='".addslashes($type)."' AND ".
+			"proccurcovid='".addslashes($id)."' AND ".
+			"procbalcurrent > '0' AND ".
+			"procpatient = ".addslashes($pat)." AND ".
+			"procbillable='0' AND procbilled='0') ".
+			"ORDER BY procpos,procphysician,procrefdoc,proceoc,".
+				"procclmtp,procauth,proccov1,proccov2,".
+				"procdt";
+		//print "query = \"$query\"\n";
+		$result = $GLOBALS['sql']->query($query);
+		if (!$GLOBALS['sql']->results($result)) {
+			return 0;
+		} else {
+			return $result;
+		}
+	} // end method GetProceduresToBill
+
 } // end class Coverage
 
 ?>
