@@ -305,7 +305,7 @@ class ProcedureModule extends EMRModule {
 				))
 			); // end coverage page	
 
-		$charge = $this->CalculateCharge($proccov1,$proccpt,$procphysician,$patient);
+		$charge = $this->CalculateCharge($proccov1,$procunits,$proccpt,$procphysician,$patient);
 		$cpt_code = freemed::get_link_rec ($proccpt, "cpt"); // cpt code
 
 
@@ -736,7 +736,7 @@ class ProcedureModule extends EMRModule {
 				))
 			); // end coverage page	
 
-		$charge = $this->CalculateCharge($proccov1,$proccpt,$procphysician,$patient);
+		$charge = $this->CalculateCharge($proccov1,$procunits,$proccpt,$procphysician,$patient);
 		$cpt_code = freemed::get_link_rec ($proccpt, "cpt"); // cpt code
 
 
@@ -1161,7 +1161,7 @@ class ProcedureModule extends EMRModule {
 		return $auth_r_buffer;
 	} // end function ProcedureModule->GetAuthorizations()
 
-	function CalculateCharge($covid,$cptid,$phyid,$patid)  {
+	function CalculateCharge($covid,$procunits,$cptid,$phyid,$patid)  {
 		global $display_buffer;
 		// id of coverage record, cpt record, physician record
 		// and patient record
