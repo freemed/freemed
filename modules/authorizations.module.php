@@ -202,11 +202,10 @@ class authorizationsModule extends freemedEMRModule {
 	} // end function authorizationsModule->form()
 
 	function add () {
-		reset ($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		global $authdtbegin, $authdtend, $authdtmod, $cur_date;
 		$authdtbegin = fm_date_assemble("authdtbegin");
 		$authdtend   = fm_date_assemble("authdtend");
-		$authdtmod    = $cur_date;
+		$authdtmod   = $cur_date;
 		$this->_add();
 	} // end function authorizationsModule->add()
 
