@@ -6,7 +6,7 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   #       max k <amk@span.ch>
   # lic : GPL, v2
-  # ver : 2000-01-26
+  # ver : 2000-04-19
 
 $__freemed_functions__ = true;
 
@@ -1956,5 +1956,12 @@ function fm_secure ($orig_string) {
   $this_string = str_replace ("\$LoginCookie", "", $this_string);
   return $this_string;    // return cleansed string
 } // end function fm_secure
+
+// fph -- freemed phrase handler
+function fph ($this_phrase) {
+  global $phrase;
+
+  return fm_prep($phrase[$this_phrase]);
+} // end function fph
 
 ?>

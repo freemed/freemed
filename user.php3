@@ -62,21 +62,22 @@ if ($action=="addform") {
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
 
-    <$STDFONT_B>$User_name : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[User_name])." : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=username SIZE=17 MAXLENGTH=16
      VALUE=\"$username\">
     <BR>
 
-    <$STDFONT_B>$Password : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[Password])." : <$STDFONT_E>
     <INPUT TYPE=PASSWORD NAME=userpassword1 SIZE=17 MAXLENGTH=16 
      VALUE=\"$userpassword\">
     <BR>
-    <$STDFONT_B>$Password ($Verify) : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep("$phrase[Password] ($phrase[Verify])")." :
+     <$STDFONT_E>
     <INPUT TYPE=PASSWORD NAME=userpassword2 SIZE=17 MAXLENGTH=16 
      VALUE=\"$userpassword\">
     <BR>
 
-    <$STDFONT_B>$Description : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[Description])." : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=userdescrip SIZE=20 MAXLENGTH=50
      VALUE=\"$userdescrip\">
     <P>
@@ -85,7 +86,8 @@ if ($action=="addform") {
      VALIGN=CENTER ALIGN=CENTER><TR>
     <TD ALIGN=CENTER WIDTH=50%><CENTER>
 
-    <$STDFONT_B><B>$Authorized_facilities : </B><$STDFONT_E>
+    <$STDFONT_B><B>".fm_prep($phrase[Authorized_facilities])." :
+      </B><$STDFONT_E>
     </CENTER></TD><TD WIDTH=50%>&nbsp;</TD></TR>
     <TR><TD ALIGN=CENTER><CENTER>
   ";
@@ -96,11 +98,11 @@ if ($action=="addform") {
 
     <TR>
     <TD WIDTH=50% ALIGN=CENTER><CENTER>
-    <$STDFONT_B><B>$Authorized_physicians</B><$STDFONT_E>
+    <$STDFONT_B><B>".fm_prep($phrase[Authorized_physicians])."</B><$STDFONT_E>
     </CENTER></TD>
 
     <TD WIDTH=50% ALIGN=CENTER><CENTER>
-    <$STDFONT_B><B>$Authorized_phy_groups</B><$STDFONT_E>
+    <$STDFONT_B><B>".fm_prep($phrase[Authorized_phy_groups])."</B><$STDFONT_E>
     </CENTER></TD></TR><TR><TD ALIGN=CENTER><CENTER>
   ";
 
@@ -118,29 +120,29 @@ if ($action=="addform") {
     </CENTER></TD></TR></TABLE>
     <P>
 
-    <$STDFONT_B>$User_level : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[User_level])." : <$STDFONT_E>
     <SELECT NAME=\"userlevel\">
-      <OPTION VALUE=\"0\" $_ul_0>$Locked_out
-      <OPTION VALUE=\"1\" $_ul_1>$Undefined
-      <OPTION VALUE=\"2\" $_ul_2>$Undefined
-      <OPTION VALUE=\"3\" $_ul_3>$Undefined
-      <OPTION VALUE=\"4\" $_ul_4>$Undefined
-      <OPTION VALUE=\"5\" $_ul_5>$Delete_privs
-      <OPTION VALUE=\"6\" $_ul_6>$Undefined
-      <OPTION VALUE=\"7\" $_ul_7>$Undefined
-      <OPTION VALUE=\"8\" $_ul_8>$Undefined
-      <OPTION VALUE=\"9\" $_ul_9>$Superuser
+      <OPTION VALUE=\"0\" $_ul_0>".fm_prep($phrase[Locked_out])."
+      <OPTION VALUE=\"1\" $_ul_1>".fm_prep($phrase[Undefined])."
+      <OPTION VALUE=\"2\" $_ul_2>".fm_prep($phrase[Undefined])."
+      <OPTION VALUE=\"3\" $_ul_3>".fm_prep($phrase[Undefined])."
+      <OPTION VALUE=\"4\" $_ul_4>".fm_prep($phrase[Undefined])."
+      <OPTION VALUE=\"5\" $_ul_5>".fm_prep($phrase[Delete_privs])."
+      <OPTION VALUE=\"6\" $_ul_6>".fm_prep($phrase[Undefined])."
+      <OPTION VALUE=\"7\" $_ul_7>".fm_prep($phrase[Undefined])."
+      <OPTION VALUE=\"8\" $_ul_8>".fm_prep($phrase[Undefined])."
+      <OPTION VALUE=\"9\" $_ul_9>".fm_prep($phrase[Superuser])."
     </SELECT>
 
     <P>
-    <$STDFONT_B>$User_type : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phase[User_type])." : <$STDFONT_E>
     <SELECT NAME=\"usertype\">
-      <OPTION VALUE=\"phy\"  $_ut_phy>$Physician
-      <OPTION VALUE=\"misc\" $_ut_misc>$Miscellaneous
+      <OPTION VALUE=\"phy\"  $_ut_phy>".fm_prep($phrase[Physician])."
+      <OPTION VALUE=\"misc\" $_ut_misc>".fm_prep($phrase[Miscellaneous])."
     </SELECT>
     <P>
 
-    <$STDFONT_B>$Actual_physician : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[Actual_physician])." : <$STDFONT_E>
     <SELECT NAME=\"userrealphy\">
   ";
   freemed_display_physicians ($userrealphy, "no");
@@ -149,8 +151,8 @@ if ($action=="addform") {
     <P> 
 
     <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" $Update \">
-    <INPUT TYPE=RESET  VALUE=\"$Remove_changes\">
+    <INPUT TYPE=SUBMIT VALUE=\" ".fm_prep($phrase[Update])." \">
+    <INPUT TYPE=RESET  VALUE=\"".fm_prep($phrase[Remove_changes])."\">
     </CENTER></FORM>
   ";
 
@@ -160,17 +162,18 @@ if ($action=="addform") {
     <BR><BR>
     <CENTER>
     <A HREF=\"$page_name?$_auth&action=view\"
-     >$Abandon_addition</A>
+     >".fm_prep($phrase[Abandon_addition])."</A>
     </CENTER>
   ";
 
 } elseif ($action=="add") {
 
-  freemed_display_box_top("$Adding $record_name", $page_name);
+  freemed_display_box_top(fm_prep($phrase[$Adding])." $record_name",
+    $page_name);
 
   echo "
-    <BR><BR>
-    <$STDFONT_B>$Adding . . .  
+    <P>
+    <$STDFONT_B>".fm_prep($phrase[Adding])." . . .  
   ";
 
   if (count ($userfac) > 0)
@@ -185,32 +188,38 @@ if ($action=="addform") {
 
   if ($userpassword1==$userpassword2) 
     $query = "INSERT INTO $db_name VALUES ( ".
-      "'$username',      ".
-      "'$userpassword1', ".
-      "'$userdescrip',   ".
-      "'$userlevel',     ".
-      "'$usertype',      ".
-      "'$userfac_s',     ".
-      "'$userphy_s',     ".
-      "'$userphygrp_s',  ".
-      "'$userrealphy',   ".
+      "'".addslashes($username)."',      ".
+      "'".addslashes($userpassword1)."', ".
+      "'".addslashes($userdescrip)."',   ".
+      "'".addslashes($userlevel)."',     ".
+      "'".addslashes($usertype)."',      ".
+      "'".addslashes($userfac_s)."',     ".
+      "'".addslashes($userphy_s)."',     ".
+      "'".addslashes($userphygrp_s)."',  ".
+      "'".addslashes($userrealphy)."',   ".
       " NULL ) ";
   else {
     echo "
       <P>
       <CENTER>
-      <$STDFONT_B><B>$Passwords_must_match</B><$STDFONT_E>
+      <$STDFONT_B><B>".fm_prep($phrase[Passwords_must_match])."</B><$STDFONT_E>
       </CENTER>
       <P>
       <CENTER>
       <FORM ACTION=\"$page_name\" METHOD=POST>
-       <INPUT TYPE=HIDDEN NAME=\"username\"    VALUE=\"$username\">
-       <INPUT TYPE=HIDDEN NAME=\"userdescrip\" VALUE=\"$userdescrip\">
-       <INPUT TYPE=HIDDEN NAME=\"userphygrp\"  VALUE=\"$userphygrp\">
-       <INPUT TYPE=HIDDEN NAME=\"userlevel\"   VALUE=\"$userlevel\">
-       <INPUT TYPE=HIDDEN NAME=\"usertype\"    VALUE=\"$usertype\">
-       <INPUT TYPE=HIDDEN NAME=\"userrealphy\" VALUE=\"$userrealphy\">
-       <INPUT TYPE=SUBMIT VALUE=\" $Try_Again \">
+       <INPUT TYPE=HIDDEN NAME=\"username\"
+        VALUE=\"".htmlentities($username)."\">
+       <INPUT TYPE=HIDDEN NAME=\"userdescrip\"
+        VALUE=\"".htmlentities($userdescrip)."\">
+       <INPUT TYPE=HIDDEN NAME=\"userphygrp\"
+        VALUE=\"".htmlentities($userphygrp)."\">
+       <INPUT TYPE=HIDDEN NAME=\"userlevel\"  
+        VALUE=\"".htmlentities($userlevel)."\">
+       <INPUT TYPE=HIDDEN NAME=\"usertype\" 
+        VALUE=\"".htmlentities($usertype)."\">
+       <INPUT TYPE=HIDDEN NAME=\"userrealphy\"
+        VALUE=\"".htmlentities($userrealphy)."\">
+       <INPUT TYPE=SUBMIT VALUE=\" ".fm_prep($phrase[Try_Again])." \">
       </FORM>
       </CENTER>
       <P>
@@ -223,18 +232,18 @@ if ($action=="addform") {
     // query the db with new values
   $result = fdb_query($query);
 
-  if ($debug==1) {
-    echo "\n<BR><BR><B>$Query_result :</B><BR>\n";
+  if ($debug) {
+    echo "\n<BR><BR><B>".fm_prep($phrase[Query_result])." :</B><BR>\n";
     echo $result;      
-    echo "\n<BR><BR><B>$Query_string :</B><BR>\n";
+    echo "\n<BR><BR><B>".fm_prep($phrase[Query_string])." :</B><BR>\n";
     echo "$query";
-    echo "\n<BR><BR><B>$Actual_query_result :</B><BR>\n";
+    echo "\n<BR><BR><B>".fm_prep($phrase[Actual_query_result])." :</B><BR>\n";
     echo "($result)";
   }
 
   if ($result) {
     echo "
-      <B>$Done .</B><$STDFONT_E>
+      <B>".fm_prep($phrase[Done])." .</B><$STDFONT_E>
     ";
   } else {
     echo ("<B>ERROR ($result)</B>\n"); 
@@ -243,29 +252,27 @@ if ($action=="addform") {
   echo "
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Go_back_to_user_menu<$STDFONT_E></A>
+      ><$STDFONT_B>".fm_prep($phrase[Go_back_to_user_menu])."<$STDFONT_E></A>
     </CENTER>
   ";
   freemed_display_box_bottom (); // display the bottom of the box
-  freemed_display_bottom_links ($record_name, $page_name, $_ref);
 
 } elseif ($action=="modform") {
 
-  freemed_display_box_top ("$Modify $record_name", $page_name);
+  freemed_display_box_top (fm_prep($phrase[Modify])." $record_name",
+    $page_name);
 
-  # here, we have the difference between adding and
-  # modifying...
-
-  if (strlen($id)<1) {
+  if (empty($id)) {
     echo "
 
-     <B><CENTER>$Please_use_the_modify_form $record_name!</B>
+     <B><CENTER>".fm_prep($phrase[Please_use_the_modify_form])."
+      ".fm_prep($record_name)."!</B>
      </CENTER>
 
      <BR><BR>
     ";
 
-    if ($debug==1) {
+    if ($debug) {
       echo "
         ID = [<B>$id</B>]
         <BR><BR>
@@ -276,7 +283,7 @@ if ($action=="addform") {
     echo "
       <CENTER>
       <A HREF=\"main.php3?$_auth\"
-       >$Return_to_main_menu</A>
+       >".fm_prep($phrase[Return_to_main_menu])."</A>
       </CENTER>
     ";
     DIE("");
@@ -290,8 +297,8 @@ if ($action=="addform") {
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
-  if ($debug==1) {
-    echo " <B>$Result</B> = [$result]<BR><BR> ";
+  if ($debug) {
+    echo " <B>".fm_prep($phrase[Result])."</B> = [$result]<BR><BR> ";
   }
 
   $r = fdb_fetch_array($result); // dump into array r[]
@@ -327,37 +334,40 @@ if ($action=="addform") {
     case "misc": default:  $_ut_misc = "SELECTED"; break;
   } // end of usertype switch
 
-  //freemed_display_box_top ("$Modify $record_name", $page_name);
+  //freemed_display_box_top (fm_prep($phrase[Modify])." $record_name",
+  // $page_name);
 
   echo "
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
+    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".htmlentities($id)."\"  >
 
-    <$STDFONT_B>$User_name : <$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=username SIZE=17 MAXLENGTH=16
-     VALUE=\"$username\">
+    <$STDFONT_B>".fm_prep($phrase[User_name])." : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=\"username\" SIZE=17 MAXLENGTH=16
+     VALUE=\"".fm_prep($username)."\">
     <BR>
 
-    <$STDFONT_B>$Password : <$STDFONT_E>
-    <INPUT TYPE=PASSWORD NAME=userpassword1 SIZE=17 MAXLENGTH=16 
-     VALUE=\"$userpassword\">
+    <$STDFONT_B>".fm_prep($phrase[Password])." : <$STDFONT_E>
+    <INPUT TYPE=PASSWORD NAME=\"userpassword1\" SIZE=17 MAXLENGTH=16 
+     VALUE=\"".fm_prep($userpassword)."\">
     <BR>
-    <$STDFONT_B>$Password ($Verify) : <$STDFONT_E>
-    <INPUT TYPE=PASSWORD NAME=userpassword2 SIZE=17 MAXLENGTH=16 
-     VALUE=\"$userpassword\">
+    <$STDFONT_B>".fm_prep($phrase[Password]." (".$phrase[Verify].")")." :
+      <$STDFONT_E>
+    <INPUT TYPE=PASSWORD NAME=\"userpassword2\" SIZE=17 MAXLENGTH=16 
+     VALUE=\"".fm_prep($userpassword)."\">
     <BR>
 
-    <$STDFONT_B>$Description<$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=userdescrip SIZE=20 MAXLENGTH=50
-     VALUE=\"$userdescrip\">
+    <$STDFONT_B>".fm_prep($phrase[Description])." : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=\"userdescrip\" SIZE=20 MAXLENGTH=50
+     VALUE=\"".fm_prep($userdescrip)."\">
     <BR>
     <TABLE WIDTH=100% BORDER=0 CELLSPACING=5 CELLPADDING=0
      VALIGN=CENTER ALIGN=CENTER><TR>
     <TD ALIGN=CENTER WIDTH=50%><CENTER>
 
-    <$STDFONT_B><B>$Authorized_facilities : </B><$STDFONT_E>
+    <$STDFONT_B><B>".fm_prep($phrase[Authorized_facilities])." :
+      </B><$STDFONT_E>
     </CENTER></TD><TD WIDTH=50%>&nbsp;</TD></TR>
     <TR><TD ALIGN=CENTER><CENTER>
   ";
@@ -368,11 +378,11 @@ if ($action=="addform") {
 
     <TR>
     <TD WIDTH=50% ALIGN=CENTER><CENTER>
-    <$STDFONT_B><B>$Authorized_physicians</B><$STDFONT_E>
+    <$STDFONT_B><B>".fm_prep($phrase[Authorized_physicians])."</B><$STDFONT_E>
     </CENTER></TD>
 
     <TD WIDTH=50% ALIGN=CENTER><CENTER>
-    <$STDFONT_B><B>$Authorized_phy_groups</B><$STDFONT_E>
+    <$STDFONT_B><B>".fm_prep($phrase[Authorized_phy_groups])."</B><$STDFONT_E>
     </CENTER></TD></TR><TR><TD ALIGN=CENTER><CENTER>
   ";
 
@@ -390,7 +400,7 @@ if ($action=="addform") {
     </CENTER></TD></TR></TABLE>
     <P>
 
-    <$STDFONT_B>$User_level : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[User_level])." : <$STDFONT_E>
     <SELECT NAME=\"userlevel\">
       <OPTION VALUE=\"0\" $_ul_0>!!! Locked Out !!!
       <OPTION VALUE=\"1\" $_ul_1>UNDEFINED
@@ -405,14 +415,14 @@ if ($action=="addform") {
     </SELECT>
 
     <P>
-    <$STDFONT_B>$User_type<$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[User_type])."<$STDFONT_E>
     <SELECT NAME=\"usertype\">
-     <OPTION VALUE=\"phy\"  $_ut_phy>$Physician
-     <OPTION VALUE=\"misc\" $_ut_misc>$Miscellaneous
+     <OPTION VALUE=\"phy\"  $_ut_phy>".fm_prep($phrase[Physician])."
+     <OPTION VALUE=\"misc\" $_ut_misc>".fm_prep($phrase[Miscellaneous])."
     </SELECT>
     <P>
 
-    <$STDFONT_B>$Actual_physician : <$STDFONT_E>
+    <$STDFONT_B>".fm_prep($phrase[Actual_physician])." : <$STDFONT_E>
     <SELECT NAME=\"userrealphy\">
   ";
   freemed_display_physicians ($userrealphy, "no");
@@ -421,8 +431,8 @@ if ($action=="addform") {
     <P>
 
     <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" $Update \">
-    <INPUT TYPE=RESET  VALUE=\"$Remove_changes\">
+    <INPUT TYPE=SUBMIT VALUE=\" ".fm_prep($phrase[Update])." \">
+    <INPUT TYPE=RESET  VALUE=\"".fm_prep($phrase[Remove_changes])."\">
     </CENTER></FORM>
   ";
 
@@ -432,19 +442,18 @@ if ($action=="addform") {
     <P>
     <CENTER>
     <A HREF=\"$page_name?$_auth&action=view\"
-     >$Abandon_addition</A>
+     >".fm_prep($phrase[Abandon_addition])."</A>
     </CENTER>
   ";
 
 } elseif ($action=="mod") {
 
-   #      M O D I F Y - R O U T I N E
-
-  freemed_display_box_top ("$Modifying $record_name", $page_name);
+  freemed_display_box_top (fm_prep($phrase[Modifying])." $record_name",
+    $page_name);
 
   echo "
     <P>
-    <$STDFONT_B>$Modifying . . . 
+    <$STDFONT_B>".fm_prep($phrase[Modifying])." . . . 
   ";
 
   if (count ($userfac) > 0)
@@ -463,22 +472,22 @@ if ($action=="addform") {
     // creation date in a modify. also,
     // remember the commas...
   $query = "UPDATE $db_name SET ".
-    "username     = '$username',      ".
-    "userpassword = '$userpassword1', ".
-    "userdescrip  = '$userdescrip',   ".
-    "userlevel    = '$userlevel',     ".
-    "usertype     = '$usertype',      ". // 19990909
-    "userfac      = '$userfac_s',     ".
-    "userphy      = '$userphy_s',     ".
-    "userphygrp   = '$userphygrp_s',  ". 
-    "userrealphy  = '$userrealphy'    ". // 19990929
-    "WHERE id='$id'";
+    "username     = '".addslashes($username)."',      ".
+    "userpassword = '".addslashes($userpassword1)."', ".
+    "userdescrip  = '".addslashes($userdescrip)."',   ".
+    "userlevel    = '".addslashes($userlevel)."',     ".
+    "usertype     = '".addslashes($usertype)."',      ". // 19990909
+    "userfac      = '".addslashes($userfac_s)."',     ".
+    "userphy      = '".addslashes($userphy_s)."',     ".
+    "userphygrp   = '".addslashes($userphygrp_s)."',  ". 
+    "userrealphy  = '".addslashes($userrealphy)."'    ". // 19990929
+    "WHERE id='".addslashes($id)."'";
 
   if ($userpassword1 != $userpassword2) {
     echo "
-      $Error !<$STDFONT_E>
+      ".fm_prep($phrase[Error])." !<$STDFONT_E>
       <P>
-      <B><CENTER>$Passwords_must_match</CENTER></B>
+      <B><CENTER>".fm_prep($phrase[Passwords_must_match])."</CENTER></B>
     ";
     freemed_display_box_bottom ();
     freemed_display_html_bottom ();
@@ -487,9 +496,9 @@ if ($action=="addform") {
 
   if ($id != 1)
     $result = fdb_query($query); // execute query
-  else echo "You_cannot_modify_root !";
+  else echo fm_prep($phrase[You_cannot_modify_root])." !";
 
-  if ($debug==1) {
+  if ($debug) {
     echo "\n<BR><BR><B>$Query_result :</B><BR>\n";
     echo $result;
     echo "\n<BR><BR><B>$Query_string :</B><BR>\n";
@@ -500,20 +509,19 @@ if ($action=="addform") {
 
   if ($result) {
     echo "
-      <B>$Done .</B><$STDFONT_E>
+      <B>".fm_prep($phrase[Done])." .</B><$STDFONT_E>
       <P>
 
       <CENTER><A HREF=\"$page_name?$_auth\"
-       ><$STDFONT_B>$Go_back_to_user_menu<$STDFONT_E></A>
+       ><$STDFONT_B>".fm_prep($phrase[Go_back_to_user_menu])."<$STDFONT_E></A>
       </CENTER>
       <P>
     ";
   } else {
-    echo ("<B>$Error ($result)</B>\n"); 
+    echo ("<B>".fm_prep($phrase[Error])." ($result)</B>\n"); 
   } // end of error reporting clause
 
   freemed_display_box_bottom (); // display box bottom 
-  freemed_display_bottom_links ($record_name, $page_name, $_ref);
 
 } elseif ($action=="del") {
 
@@ -525,20 +533,19 @@ if ($action=="addform") {
       WHERE (id = \"$id\")");
   else { // if we tried to delete root!!!
     echo "
-      <B><CENTER>$You_cannot_delete_root !</CENTER></B>
+      <B><CENTER>".fm_prep($phrase[You_cannot_delete_root])." !</CENTER></B>
     ";
     freemed_display_box_bottom ();
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
     freemed_display_html_bottom ();
     DIE("");
   }
 
   echo "
     <P>
-    <I>$record_name <B>$id</B> $Deleted<I>.
+    <I>$record_name <B>$id</B> ".fm_prep($phrase[Deleted])."<I>.
     <BR>
   ";
-  if ($debug==1) {
+  if ($debug) {
     echo "
       <BR><B>$Result :</B><BR>
       $result<BR><BR>
@@ -550,7 +557,6 @@ if ($action=="addform") {
      >$Update / $Delete $Another</A></CENTER>
   ";
   freemed_display_box_bottom ();
-  freemed_display_bottom_links ($record_name, $page_name, $_ref);
 
 } else {
 
@@ -563,7 +569,7 @@ if ($action=="addform") {
 
   $result = fdb_query($query);
   if ($result) {
-    freemed_display_box_top ("$record_name $Maintenance", $_ref, $page_name);
+    freemed_display_box_top ("$record_name ".fph("Maintenance"));
 
     if (strlen($_ref)<5) {
       $_ref="main.php3";
@@ -575,7 +581,7 @@ if ($action=="addform") {
     echo "
       <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
       <TR>
-       <TD><B>$User_name</B></TD>
+       <TD><B>".fph("User_name")."</B></TD>
        <TD><B>&nbsp;</B></TD>
        <TD><B>$Action</B></TD>
       </TR>
@@ -584,10 +590,7 @@ if ($action=="addform") {
     $_alternate = freemed_bar_alternate_color ();
 
     while ($r = fdb_fetch_array($result)) {
-
-      $username = $r["username"];
-      // $value_b = $r["value_b"];
-      $id      = $r["id"     ];
+      $id       = $r["id"     ];
 
         // alternate the bar color
       $_alternate = freemed_bar_alternate_color ($_alternate);
@@ -600,7 +603,7 @@ if ($action=="addform") {
 
       echo "
         <TR BGCOLOR=$_alternate>
-        <TD>$username</TD>
+        <TD>".fm_prep($r[username])."</TD>
         <TD><I><!-- nothing yet here -->&nbsp;</I></TD>
         <TD>
       ";
@@ -625,7 +628,7 @@ if ($action=="addform") {
 
     echo "
       </TABLE>
-    "; // end table (fixed 19990617)
+    ";
 
     if (strlen($_ref)<5) {
       $_ref="main.php3";
@@ -634,7 +637,6 @@ if ($action=="addform") {
     freemed_display_actionbar ($page_name, $_ref);
 
     freemed_display_box_bottom (); // display bottom of the box
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
 
   } else {
     echo "\n<B>$No $record_name $Found_with_that_criteria.</B>\n";
