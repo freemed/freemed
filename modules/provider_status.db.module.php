@@ -15,26 +15,16 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
 	var $record_name    = "Provider Status";
 	var $table_name     = "phystatus";
 
+	var $variables = array ( "phystatus" );
+
 	function providerStatusMaintenance () {
 		$this->freemedMaintenanceModule();
+
+		$this->table_definition = array (
+			"phystatus" => SQL_VARCHAR(30),
+			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+		);
 	} // end contructor providerStatusMaintenance
-
-	function add () {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-		$display_buffer .= "
-			<P><CENTER>
-			"._("Adding")." ... \n";
-
-		$query = "INSERT INTO $this->table_name VALUES ( ".
-			"'".addslashes($phystatus)."',   NULL ) ";
-
-		$result = $sql->query($query);
-
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>"; }
-	} // end function providerStatusMaintenance->add()
 
 	function form () {
 		global $display_buffer;
@@ -73,42 +63,6 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
     </CENTER>
   ";
 	} // end function providerStatusMaintenance->form()
-
-	function mod () {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-		$display_buffer .= "<P><CENTER>"._("Modifying")." ...  ";
-
-		$query = "UPDATE $this->table_name ".
-			"SET phystatus = '".addslashes($phystatus)."' ". 
-			"WHERE id='".addslashes($id)."'";
-
-		$result = $sql->query($query);
-
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>"; }
-
-	} // end function providerStatusMaintenance->mod()
-
-	/*
-	function delete () {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-		$result = $sql->query("DELETE FROM $this->table_name WHERE id='".addslashes($id)."'");
-
-		$display_buffer .= "
-    <P><CENTER>
-    <I>"._($record_name)." <B>$id</B> "._("Deleted")."<I>.
-    </CENTER>
-    <P>
-    <CENTER>
-    <A HREF=\"$this->page_name?module=$module&action=view\"
-     >"._("back")."</A></CENTER>
-		";
-	} // end function providerStatusMaintenance->delete()
-	*/
 
 	function view () {
 		global $display_buffer;
