@@ -3,7 +3,11 @@
 # gettext / i18n language catalog
 # language : DE (German)
 
+msgid ""
+msgstr ""
 "Last-Translator: Dr. Georg Roesler <groesle@gwdg.de>\n"
+"Project-Id-Version: 0.2.1.2 (Thelonious/CVS)\n"
+"MIME-Version: \n"
 "PO-Revision-Date: 19.05.2001 22:38\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"

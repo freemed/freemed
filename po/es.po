@@ -8,8 +8,10 @@ msgstr ""
 ""
 "Last-Translator: Alejandro Fernandez <soporte@linuxya.com>\n"
 "PO-Revision-Date: 2001-06-10 08:05GMT\n"
+"Project-Id-Version: 0.2.1.2 (Thelonious/CVS)\n"
+"MIME-Version: \n"
 "Language-Team: Espagnole <es@li.org>\n"
-"Content-Type: text/plain; charset=ISO 8859-1\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: vim 5.6\n"
 
@@ -826,9 +828,6 @@ msgstr "Tipo de Seguro"
 msgid "Insurance Group"
 msgstr "Grupo de Seguro"
 
-msgid "Insurance Company"
-msgstr "Empresa de Seguro"
-
 msgid "Insurance IDs"
 msgstr "Ids de Seguro"
 
@@ -1231,8 +1230,7 @@ msgstr "Lugar de Servicio"
 msgid "Place of Service"
 msgstr "Lugar de Servicio"
 
-msgid "Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to
-be used."
+msgid "Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used."
 msgstr "Por favor note que seleccionar \"0\" o \"NINGUNA SELECCIÓN\" se usarán valores por defecto."
 
 msgid "Powered by PHP"
@@ -1449,7 +1447,7 @@ msgid "Rooms"
 msgstr "Habitaciones"
 
 msgid "Row/Line"
-msgstr "Columna/Fila'
+msgstr "Columna/Fila"
 
 msgid "Save"
 msgstr "Grabar"
