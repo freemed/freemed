@@ -16,6 +16,17 @@ class EMRModule extends BaseModule {
 	var $CATEGORY_NAME = "Electronic Medical Record";
 	var $CATEGORY_VERSION = "0.4";
 
+	// Variable: $this->widget_hash
+	//
+	//	Specifies the format of the <widget> method. This is
+	//	formatted by having SQL field names surrounded by '##'s.
+	//
+	// Example:
+	//
+	//	$this->widget_hash = '##phylname##, ##phyfname##';
+	//	
+	var $widget_hash;
+
 	// vars to be passed from child modules
 	var $order_fields;
 	var $form_vars;
@@ -399,6 +410,21 @@ class EMRModule extends BaseModule {
 			while (list ($k, $v) = each ($this->form_vars)) global ${$v};
 		} // end if is array
 
+		// Handle additional hidden variables
+		$form_hidden = '';
+		if (is_array($this->form_hidden)) {
+			foreach ($this->form_hidden AS $k => $v) {
+				if ( (($k+0)>0) or empty($k)) {
+					$k = $v;
+					$v = $_REQUEST[$v];
+				}
+				// TODO: should handle arrays, etc
+				$form_hidden .= "<input type=\"hidden\" ".
+					"name=\"".prepare($k)."\" ".
+					"value=\"".prepare($v)."\" />\n";
+			}
+		}
+
 		switch ($action) {
 			case "addform":
 				break;
@@ -422,11 +448,14 @@ class EMRModule extends BaseModule {
 		<input type=\"hidden\" name=\"module\" value=\"".
 			prepare($module)."\"/>
 		<input type=\"hidden\" name=\"return\" value=\"".
-			prepare($return)."\"/>
+			prepare($GLOBALS['return'])."\"/>
 		<input type=\"hidden\" name=\"action\" value=\"".
 			( $action=="addform" ? "add" : "mod" )."\"/>
 		<input type=\"hidden\" name=\"patient\" value=\"".
 			prepare($patient)."\"/>
+		<input type=\"hidden\" name=\"id\" value=\"".
+			prepare($id)."\"/>
+		".$form_hidden."
 		".html_form::form_table($this->form_table())."
 		<p/>
 		<input type=\"submit\" name=\"__submit\" value=\"".
@@ -547,6 +576,12 @@ class EMRModule extends BaseModule {
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
 				"action=modform&id=".$r['id']."&return=manage") : "" ).
+				// Delete option
+				( ((!$r['locked'] > 0) and ($this->summary_options & SUMMARY_DELETE)) ?
+				template::summary_delete_link($this,
+				"module_loader.php?module=".
+				get_class($this)."&patient=$patient&".
+				"action=del&id=".$r['id']."&return=manage") : "" ).
 				"\n".( ($this->summary_options & SUMMARY_VIEW) ?
 				template::summary_view_link($this,
 				"module_loader.php?module=".
@@ -575,8 +610,16 @@ class EMRModule extends BaseModule {
 				template::summary_print_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=print&id=".$r['id']) : "" )."
-				</td>
+				"action=print&id=".$r['id']) : "" ).
+
+				// Annotations
+				template::summary_annotate_link($this,
+				"module_loader.php?module=annotations&".
+				"atable=".$this->table_name."&".
+				"amodule=".get_class($this)."&".
+				"patient=$patient&action=addform&".
+				"aid=".$r['id']."&return=manage").
+				"</td>
 				</tr>
 				";
 			} // end of loop and display
@@ -708,6 +751,55 @@ class EMRModule extends BaseModule {
 		return $results;
 	} // end method EMRModule->picklist
 
+	// Method: widget
+	//
+	//	Generic widget code to allow a picklist-based widget for
+	//	simple modules. Should be overridden for more complex tasks.
+	//
+	//	This function uses $this->widget_hash, which contains field
+	//	names surrounded by '##'s.
+	//
+	// Parameters:
+	//
+	//	$varname - Name of the variable that the widget's data is
+	//	passed in.
+	//
+	//	$patient - Id of patient this deals with.
+	//
+	//	$conditions - (optional) Additional clauses for SQL WHERE.
+	//	defaults to none.
+	//
+	// Returns:
+	//
+	//	XHTML-compliant picklist widget.
+	//
+	function widget ( $varname, $patient, $conditions = false ) {
+		$query = "SELECT * FROM ".$this->table_name." WHERE ".
+			"( ".$this->patient_field.
+				" = '".addslashes($patient)."') ".
+			( $conditions ? "AND ( ".$conditions." ) " : "" ).
+			"ORDER BY ".$this->order_field;
+		$result = $GLOBALS['sql']->query($query);
+		$return[__("NONE SELECTED")] = "";
+		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			if (!(strpos($this->widget_hash, "##") === false)) {
+				$key = '';
+				$hash_split = explode('##', $this->widget_hash);
+				foreach ($hash_split AS $_k => $_v) {
+					if (!($_k & 1)) {
+						$key .= prepare($_v);
+					} else {
+						$key .= prepare($r[$_v]);
+					}
+				}
+			} else {
+				$key = $this->widget_hash;
+			}
+			$return[$key] = $r['id'];
+		}
+		return html_form::select_widget($varname, $return);
+	} // end method widget
+
 	//------ Internal Printing ----------------------------------------
 
 	// Method: _RenderTeX
@@ -734,11 +826,19 @@ class EMRModule extends BaseModule {
 	function _RenderTeX ( $TeX, $id ) {
 		if (is_array($id)) {
 			foreach ($id AS $k => $v) {
-				$buffer .= _RenderTeX ( $TeX, $v );
+				$buffer .= _RenderTeX ( &$TeX, $v );
 			}
 			return $buffer;
 		} else {
 			if (!$id) return false;
+
+			// Handle templating elsewhere
+			if (isset($this->print_template)) {
+				return $TeX->RenderFromTemplate(
+					$this->print_template,
+					$this->_print_mapping($TeX, $id)
+				);
+			}
 
 			// Get record from ID
 			$r = freemed::get_link_rec($id, $this->table_name);
