@@ -1065,12 +1065,13 @@ function freemed_display_selectbox ($result, $format, $param="")
   
   $buffer = "";
   if ($count["$result"]<1) { 
-    $buffer .= _("NONE");
+    $buffer .= _("NONE")."
+      <INPUT TYPE=HIDDEN NAME=\"$param\" VALUE=\"0\">";
     return $buffer; // do nothing!
   } // if no result
 
   $buffer .= "
-    <SELECT NAME =\"$param\">
+    <SELECT NAME=\"$param\">
       <OPTION VALUE=\"0\">"._("NONE SELECTED")."
   ";
   reset($var["$result"]); // if we're caching it, we have to reset it!
