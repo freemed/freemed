@@ -65,7 +65,10 @@ switch ($action) {
 
 	// If no results, die right here
 	if (!$sql->results($result)) {
-		$display_buffer .= __("No patients found with that criteria!");
+		$display_buffer .= __("No patients found with that criteria!").
+			"<br/>&nbsp;<br/>\n".
+			"<a href=\"patient_lookup.php?varname=$varname&formname=$formname&submitname=$submitname\" ".
+			"class=\"button\">".__("Back")."</a>\n";
 		break;
 	}
 
@@ -90,7 +93,7 @@ switch ($action) {
 			opener.document.".prepare($formname).".".prepare($submitname).
 			".value = ''
 			// Submit the form
-			opener.document.forms.".prepare($formname).".submit();
+			opener.document.".prepare($formname).".submit();
 			
 			// Close the window
 			window.self.close()
