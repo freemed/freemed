@@ -95,8 +95,6 @@ function freemed_config_value ($config_var)
 {
   static $_config;
   
-  if (is_array($_config)) return $_config[$config_var];
-  
   $query = fdb_query("SELECT * FROM config
     WHERE (c_option='$config_var')");
 
@@ -501,16 +499,20 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 
 // function freemed_display_itemlist
 function freemed_display_itemlist ($result, $page_link, $control_list, 
-                           $blank_list, $xref_list="", $cur_page_var="")
+                           $blank_list, $xref_list="", $cur_page_var="",
+			   $index_field="", $flags=-1)
 {
   global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
   global $modify_level, $delete_level, $patient, $action;
   global $page_name, $$cur_page_var, $max_num_res;
   global $_s_field, $_s_val;
 
+  if ($flags==-1) $flags=(ITEMLIST_MOD|ITEMLIST_DEL);
+
   // pull current page name
   if (empty ($page_link)) {
-    $page_link = basename($GLOBALS["REQUEST_URI"]);
+    $parts = explode("?", basename($GLOBALS["REQUEST_URI"]));
+    $page_link = $parts[0];
   } // end of pull current page name
 
   $_auth .= "&$cur_page_var=".chop($$cur_page_var);
@@ -666,13 +668,21 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $buffer .= "
       <TD>
     ";
-    if (freemed_get_userlevel($LoginCookie)>$database_level) {
+    if ($flags & ITEMLIST_VIEW) {
+      $buffer .= "
+        <A HREF=\"$page_link?$_auth&patient=$patient&action=view&id=".
+	"$this_result[id]\"><$STDFONT_B>VIEW<$STDFONT_E></A>&nbsp;
+      ";
+    }
+    if (freemed_get_userlevel($LoginCookie)>$database_level AND 
+         ($flags & ITEMLIST_MOD)) {
       $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=modform&id=".
 	"$this_result[id]\"><$STDFONT_B>MOD<$STDFONT_E></A>&nbsp;
       ";
     }
-    if (freemed_get_userlevel($LoginCookie)>$delete_level) {
+    if (freemed_get_userlevel($LoginCookie)>$delete_level AND
+         ($flags & ITEMLIST_DEL)) {
       $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=delete&id=".
 	"$this_result[id]\"><$STDFONT_B>DEL<$STDFONT_E></A>&nbsp;
@@ -1094,13 +1104,13 @@ function freemed_display_selectbox ($result, $format, $param="")
   
   $buffer = "";
   if (count($var[$result])<1) { 
-    $buffer .= "NONE";
+    $buffer .= _("NONE");
     return $buffer; // do nothing!
   } // if no result
 
   $buffer .= "
     <SELECT NAME =\"$param\">
-      <OPTION VALUE=\"0\">NONE SELECTED
+      <OPTION VALUE=\"0\">"._("NONE SELECTED")."
   ";
   reset($var[$result]); // if we're caching it, we have to reset it!
   while ( (list($pickle,$item) = each($var[$result])) 
@@ -1108,7 +1118,7 @@ function freemed_display_selectbox ($result, $format, $param="")
     // START FORMAT-FETCHING
     $format_array = explode("#",$format); // odd members are variable names!
     while (list($index,$str) = each($format_array)) {
-      if ( (bcadd($index/2,0,0)) == ($index/2) ) continue; // ignore the evens!
+      if ( !($index & 1) ) continue; // ignore the evens!
       $format_array[$index] = $item[$str];// can't just change $str!
     } // while replacing each variable name
     $this_format = join("", $format_array); // put it back together
