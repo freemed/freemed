@@ -133,7 +133,7 @@ class Ledger {
 				( $disallow + 0 )." ".
 				"WHERE id = '".addslashes($proc)."'";
 		} else {
-			$query = $GLOBALS['sql']->insert_query(
+			$query = $GLOBALS['sql']->update_query(
 				'procrec',
 				array (
 					'procbilled' => '0',
@@ -156,7 +156,7 @@ class Ledger {
 		}
 
 		// Update the current coverage id
-		$query = $GLOBALS['sql']->insert_query(
+		$query = $GLOBALS['sql']->update_query(
 			'procrec',
 			array (
 				'proccurcovid' => $coverage
