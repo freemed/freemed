@@ -282,10 +282,14 @@ class freemed {
 	//	field, and its associated value is the value found in the
 	//	database.
 	//
+	//	$force_no_cache - (optional) Boolean, allows defeating of
+	//	automatic caching, which will distrupt sequential
+	//	operations. Defaults to false.
+	//
 	// See Also:
 	//	<freemed::get_link_field>
 	//
-	function get_link_rec($id="0", $table="") {
+	function get_link_rec($id="0", $table="", $force_no_cache=false) {
 		global $sql, $_cache;
 
 		// Handle EMRi URL
@@ -299,7 +303,7 @@ class freemed {
 				E_USER_ERROR);
 
 		// Check to see if it's cached
-		if (!isset($_cache[$table][$id])) {
+		if (!isset($_cache[$table][$id]) or $force_no_cache) {
 			// Perform the actual query
 			$result = $sql->query("SELECT * FROM ".addslashes($table)." ".
 				"WHERE id='".addslashes($id)."'");

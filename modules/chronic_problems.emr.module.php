@@ -61,6 +61,8 @@ class ChronicProblemsModule extends EMRModule {
 				<td ALIGN=\"LEFT\">".
 				template::summary_delete_link($this,
 				"module_loader.php?module=ChronicProblemsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
+				template::summary_modify_link($this,
+				"module_loader.php?module=ChronicProblemsModule&action=modform&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
 				"</td></tr>
 				";
 			} // end looping thru problems
@@ -92,16 +94,28 @@ class ChronicProblemsModule extends EMRModule {
 
 	function summary_bar() { }
 
+	function form_table () {
+		$r = freemed::get_link_rec($_REQUEST['patient'], 'patient', true);
+		$p = sql_expand($r['ptcproblems']);
+		if (!is_array($p)) { $p = array($p); }
+		global $problem;
+		$problem = $p[$_REQUEST['id']];
+		return array (
+			__("Chronic Problem") =>
+			html_form::text_widget ( 'problem', 50 )
+		);
+	} // end method form_table
+
 	function add () {
 		global $display_buffer, $return, $patient, $problem;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = CreateObject('FreeMED.Patient', $patient);
+		$r = freemed::get_link_rec($patient, 'patient', true);
 
 		// Get problems, and extract to an array
-		$problems = $this_patient->local_record["ptcproblems"];
+		$problems = $r["ptcproblems"];
 		$my_problems = sql_expand($problems);
 		if (!is_array($my_problems)) {
 			$my_problems = array ($my_problems);
@@ -153,16 +167,16 @@ class ChronicProblemsModule extends EMRModule {
 	} // end function ChronicProblemsModule->add()
 
 	function del() { $this->delete(); }
-	function delete () {
+	function delete ($die = true) {
 		global $display_buffer, $return, $patient, $id;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = CreateObject('FreeMED.Patient', $patient);
+		$r = freemed::get_link_rec($patient, 'patient', true);
 
 		// Get problems, and extract to an array
-		$problems = $this_patient->local_record["ptcproblems"];
+		$problems = $r["ptcproblems"];
 		$my_problems = sql_expand($problems);
 		if (!is_array($my_problems)) {
 			$my_problems = array ($my_problems);
@@ -185,7 +199,7 @@ class ChronicProblemsModule extends EMRModule {
 			array ( "ptcproblems" => $problems ),
 			array ( "id" => $patient )
 		);
-		print "query = $query<br/>\n";
+		//print "query = $query<br/>\n";
 		$result = $sql->query($query);
 
 		// Check for result, etc
@@ -194,11 +208,16 @@ class ChronicProblemsModule extends EMRModule {
 		$display_buffer .= "</CENTER>\n";
 
 		// If we came from patient management (EMR), return there
-		if ($return=="manage") {
+		if (($return=="manage") and ($die)) {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
 	} // end function ChronicProblemsModule->delete()
+
+	function mod () {
+		$this->delete(false);
+		$this->add();
+	}
 
 	function view() {
 		global $display_buffer;

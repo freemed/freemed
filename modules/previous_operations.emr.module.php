@@ -59,6 +59,8 @@ class PreviousOperationsModule extends EMRModule {
 				<tr>
 				<td ALIGN=\"LEFT\"><small>".prepare($v)."</small></td>
 				<td ALIGN=\"LEFT\">".
+				template::summary_modify_link($this,
+				"module_loader.php?module=PreviousOperationsModule&action=modform&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
 				template::summary_delete_link($this,
 				"module_loader.php?module=PreviousOperationsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
 				"</td></tr>
@@ -92,16 +94,28 @@ class PreviousOperationsModule extends EMRModule {
 
 	function summary_bar() { }
 
+	function form_table () {
+		$r = freemed::get_link_rec($_REQUEST['patient'], 'patient', true);
+		$p = sql_expand($r['ptops']);
+		if (!is_array($p)) { $p = array($p); }
+		global $op;
+		$op = $p[$_REQUEST['id']];
+		return array (
+			__("Previous Operation") =>
+			html_form::text_widget('op', 50)
+		);
+	} // end method form_table
+
 	function add () {
 		global $display_buffer, $return, $patient, $op;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = CreateObject('FreeMED.Patient', $patient);
+		$r = freemed::get_link_rec($patient, 'patient', true);
 
 		// Get ops, and extract to an array
-		$ops = $this_patient->local_record["ptops"];
+		$ops = $r["ptops"];
 		$my_ops = sql_expand($ops);
 		if (!is_array($my_ops)) {
 			$my_ops = array ($my_ops);
@@ -144,7 +158,7 @@ class PreviousOperationsModule extends EMRModule {
 	} // end function PreviousOperationsModule->add()
 
 	function del() { $this->delete(); }
-	function delete () {
+	function delete ($die = true) {
 		global $display_buffer, $return, $patient, $id;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -184,11 +198,16 @@ class PreviousOperationsModule extends EMRModule {
 		$display_buffer .= "</CENTER>\n";
 
 		// If we came from patient management (EMR), return there
-		if ($return=="manage") {
+		if (($return=="manage") and ($die)) {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function PreviousOperationsModule->delete()
+	} // end method delete
+
+	function mod () {
+		$this->delete(false);
+		$this->add();
+	} // end method mod
 
 	function view() {
 		global $display_buffer;
