@@ -468,11 +468,9 @@ class TeX {
 		// Get rid of \r character
 		$string = str_replace("\r", "", $string);
 
-		// Sanitize {, }, [, ]
+		// Sanitize {, } (do NOT escape [ and ])
 		$string = str_replace('{', '\{', $string);
 		$string = str_replace('}', '\}', $string);
-		$string = str_replace('[', '\[', $string);
-		$string = str_replace(']', '\]', $string);
 
 		// Get rid of #, _, %, +
 		$string = str_replace('#', '\#', $string);
