@@ -44,7 +44,83 @@ switch ($action) {
 
      case "mod": case "modform":
       if (empty($been_here)) {
+        $result = fdb_query("SELECT * FROM patient ".
+          "WHERE ( id = '$id' )");
 
+        $r = fdb_fetch_array($result); // dump into array r[]
+
+        $ptdtadd      = $r["ptdtadd"     ];
+        $ptdtmod      = $r["ptdtmod"     ]; 
+        $ptbal        = $r["ptbal"       ];
+        $ptbalfwd     = $r["ptbalfwd"    ];
+        $ptunapp      = $r["ptunapp"     ];
+        $ptrefdoc     = $r["ptrefdoc"    ];
+        $ptpcp        = $r["ptpcp"       ];
+        $ptphy1       = $r["ptphy1"      ];
+        $ptphy2       = $r["ptphy2"      ];
+        $ptphy3       = $r["ptphy3"      ];
+        $ptphy4       = $r["ptphy4"      ];
+        $ptbilltype   = $r["ptbilltype"  ];
+        $ptbudg       = $r["ptbudg"      ];
+        $ptdoc        = $r["ptdoc"       ];
+        $ptlname      = $r["ptlname"     ];
+        $ptfname      = $r["ptfname"     ];
+        $ptmname      = $r["ptmname"     ];
+        $ptaddr1      = $r["ptaddr1"     ];
+        $ptaddr2      = $r["ptaddr2"     ];
+        $ptcity       = $r["ptcity"      ];
+        $ptstate      = strtoupper ($r["ptstate"]);
+        $ptzip        = $r["ptzip"       ];
+        $ptcountry    = $r["ptcountry"   ];
+        $pthphone     = $r["pthphone"    ];
+        $ptwphone     = $r["ptwphone"    ];
+        $ptfax        = $r["ptfax"       ];
+        $ptemail      = $r["ptemail"     ];
+        $ptsex        = $r["ptsex"       ];
+        $ptssn        = $r["ptssn"       ];
+        $ptdmv        = $r["ptdmv"       ];
+        $ptdtlpay     = $r["ptdtlpay"    ];
+        $ptamtlpay    = $r["ptamtlpay"   ];
+        $ptpaytype    = $r["ptpaytype"   ];
+        $ptdtbill     = $r["ptdtbill"    ];
+        $ptamtbill    = $r["ptamtbill"   ];
+        $ptstatus     = $r["ptstatus"    ];
+        $ptytdchg     = $r["ptytdchg"    ];
+        $ptar         = $r["ptar"        ];
+        $ptextinf     = $r["ptextinf"    ];
+        $ptdisc       = $r["ptdisc"      ];
+        $ptdol        = $r["ptdol"       ];
+        $ptdiag1      = $r["ptdiag1"     ];
+        $ptdiag2      = $r["ptdiag2"     ];
+        $ptdiag3      = $r["ptdiag3"     ];
+        $ptdiag4      = $r["ptdiag4"     ];
+        $ptid         = $r["ptid"        ];
+        $pthistbal    = $r["pthistbal"   ];
+        $ptmarital    = $r["ptmarital"   ];
+        $ptempl       = $r["ptempl"      ];
+        $ptemp1       = $r["ptemp1"      ];
+        $ptemp2       = $r["ptemp2"      ];
+        $ptdep        = $r["ptdep"       ];
+        $ptdob        = $r["ptdob"       ]; // date of birth
+        $ptins1       = $r["ptins1"      ]; // added insurance fields
+        $ptins2       = $r["ptins2"      ];
+        $ptins3       = $r["ptins3"      ];
+        $ptinsno1     = $r["ptinsno1"    ]; // insurance identifiers
+        $ptinsno2     = $r["ptinsno2"    ]; // insurance identifiers
+        $ptinsno3     = $r["ptinsno3"    ]; // insurance identifiers
+        $ptinsgrp1    = $r["ptinsgrp1"   ]; // insurance groups
+        $ptinsgrp2    = $r["ptinsgrp2"   ]; // insurance groups
+        $ptinsgrp3    = $r["ptinsgrp3"   ]; // insurance groups
+
+        // 19990728 -- next of kin pull and remake
+        $ptnextofkin  = htmlentities ($r["ptnextofkin"]);
+
+        // resplit email
+        if (strlen($ptemail)>3) {
+          $ptemail_array = explode ("@", $ptemail);
+          $ptemail1      = $ptemail_array[0];
+          $ptemail2      = $ptemail_array[1];
+        } // end of resplit email
         $been_here = "1"; // set been_here
       } // end of checking empty been_here
       $action_name = "$Modify";
@@ -310,7 +386,7 @@ switch ($action) {
 
 
    // show notebook
-   freemed_display_box_top("$record_name :: Modify");
+   freemed_display_box_top("$record_name $action_name");
 
    if (!( $book->is_done() )) {
      echo "<CENTER>\n";
@@ -331,14 +407,315 @@ switch ($action) {
 
   case "del":
     // STUB
+    echo "del STUB <BR>\n";
     break; // end action delete
 
+  case "find":
+    switch ($criteria) {
+      case "letter":
+        $query = "SELECT * FROM patient ".
+         "WHERE (ptlname LIKE '$f1%') ".
+         "ORDER BY ptlname, ptfname, ptdob";
+        $_crit = "$Last_Names ($f1)";
+        break;
+      case "contains":
+        $query = "SELECT * FROM patient ".
+         "WHERE ($f1 LIKE '%$f2%') ".
+         "ORDER BY ptlname, ptfname, ptdob";
+        $_crit = "$Searching_for \"$f2\"";
+        break;
+      case "soundex":
+        $query = "SELECT * FROM patient ".
+         "WHERE (soundex($f1) = soundex('$f2')) ".
+         "ORDER BY ptlname, ptfname, ptdob";
+        $_crit = "Sounds Like \"$f2\"";
+        break;
+      case "all":
+        $query = "SELECT * FROM patient ".
+         "ORDER BY ptlname, ptfname, ptdob";
+        $_crit = "\"$All_Patients\"";
+        break;
+      case "dependants":
+        $query = "SELECT * FROM patient ".
+         "WHERE (ptdep = '$f1') ".
+         "ORDER BY ptlname, ptfname, ptdob";
+        $_crit = "$Dependants";
+        break;
+      case "guarantor":
+        $query = "SELECT * FROM patient ".
+         "WHERE (id = '$f1') ".
+         "ORDER BY ptlname, ptfname, ptdob";
+        $_crit = "Guarantor";
+        break;
+      default:
+        $_crit = "";
+        break;
+    } // end criteria search
+
+    $result = fdb_query($query); 
+
+    if ($result) {
+      freemed_display_box_top ("$Patients_meeting_criteria $_crit",
+        $page_name);
+
+      if (strlen($_ref)<5) {
+        $_ref="main.php3";
+      } // if no ref, then return to home page...
+
+      echo freemed_display_actionbar($page_name, $_ref);
+
+      echo "
+        <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+        <TR>
+         <TD><B>$Last_name</B></TD>
+         <TD><B>$First_name</B></TD>
+         <TD><B>Date of Birth</B></TD>
+         <TD><B>Practice ID</B></TD>
+         <TD><B>$Action</B></TD>
+        </TR>
+      "; // header of box
+
+      $_alternate = freemed_bar_alternate_color ();
+
+      while ($r = fdb_fetch_array($result)) {
+
+        $ptfname = $r["ptfname"];
+        $ptlname = $r["ptlname"];
+        $ptdob   = $r["ptdob"  ];
+        $ptid    = $r["ptid"   ];
+        //$ptdep   = $r["ptdep"  ]; // guarantor, or 0 if guarantor
+        $id      = $r["id"     ];
+
+        if (freemed_check_access_for_patient ($LoginCookie, $id)) {
+
+            // alternate the bar color
+          $_alternate = freemed_bar_alternate_color ($_alternate);
+ 
+          if ($debug) {
+            $id_mod = " [$id]"; // if debug, insert ID #
+          } else {
+            $id_mod = ""; // else, let's avoid it...
+          } // end debug clause (like sanity clause)
+  
+          echo "
+            <TR BGCOLOR=$_alternate>
+            <TD><$STDFONT_B>$ptlname<$STDFONT_E></TD>
+            <TD><$STDFONT_B>$ptfname<$STDFONT_E></TD>
+            <TD><$STDFONT_B>$ptdob<$STDFONT_E></TD>
+            <TD><$STDFONT_B>".
+              ( !empty($ptid) ? $ptid : "&nbsp;" ) .
+             "<$STDFONT_E></TD>
+            <TD>
+            <A HREF=
+             \"manage.php3?$_auth&id=$id\"
+            ><FONT SIZE=-2>$MANAGE</FONT></A>
+          ";
+     
+             // end dependency check
+          echo "
+            </TD></TR>
+          ";
+        } // end checking if the patient is accessable by this user
+  
+      } // while there are no more
+
+      echo "
+        </TABLE>
+      "; // end table (fixed 19990617)
+
+      if (strlen($_ref)<5) {
+        $_ref="main.php3";
+      } // if no ref, then return to home page...
+
+      echo freemed_display_actionbar ($page_name, $_ref);
+      echo "
+       <P>
+       <CENTER>
+        <A HREF=\"$page_name?$_auth\"
+        ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+       </CENTER>
+       <P>
+       ";
+      freemed_display_box_bottom (); // display bottom of the box
+    } else { // result loop
+      freemed_display_box_top ("$Patients_meeting_criteria $_crit",
+        $page_name);
+      echo "
+        <B>$No_patients_found_with_that .</B>
+        <BR>
+      ";
+      if ($debug) echo " ( query = \"$query\" ) ";
+      freemed_display_box_bottom ();
+    } // result loop
+    break; // end action find
+
   default: // default action
-    // STUB
+    freemed_display_box_top ("$PATIENTS", $_ref, $page_name);
+  
+    if (freemed_get_userlevel($LoginCookie)>$database_level) {
+      echo "
+        <TABLE WIDTH=100% BGCOLOR=#000000 BORDER=0 CELLSPACING=0
+         CELLPADDING=0 VALIGN=TOP ALIGN=CENTER><TR><TD>
+        <FONT FACE=\"Arial, Helvetica, Verdana\" COLOR=#ffffff>
+      ";
+      $result = fdb_query ("SELECT COUNT(*) FROM patient");
+      if ($result) {
+        $_res   = fdb_fetch_array ($result);
+        $_total = $_res[0];               // total number in db
+  
+          // patched 19990622 for 1 and 0 values...
+        if ($_total>1)
+          echo "
+            <CENTER>
+             <B><I>$_total $Ppl $In_system</I></B>
+            </CENTER>
+          ";
+        elseif ($_total==0)
+          echo "
+            <CENTER>
+             <B><I>$No_patients $In_system</I></B>
+            </CENTER>
+          ";
+        elseif ($_total==1)
+          echo "
+            <CENTER>
+            <B><I>$One $Patient $In_system</I></B>
+            </CENTER>
+          ";
+      } else {
+        echo "
+          <CENTER>
+           <B><I>$No_patients $In_system</I></B>
+          </CENTER>
+        ";
+      } // if there are none...
+      echo "
+        </FONT>
+        </TD></TR></TABLE>
+      "; // end table statement for bar
+    }
+
+    if ($current_patient>0) {
+      $patient = new Patient ($current_patient);
+      echo "
+        <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
+         VALIGN=CENTER BORDER=0><TR><TD ALIGN=CENTER><CENTER>
+         <A HREF=\"manage.php3?$_auth&id=$current_patient\"
+         >$Current_Patient : ".$patient->fullName(true)."</A>
+         </CENTER></TD></TR></TABLE>
+      ";
+    } // end check for current patient cookie
+
+    echo "
+      <BR>
+      <CENTER>
+       <B>$PATIENTS $By_name</B>
+      <BR>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=A\">A</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=B\">B</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=C\">C</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=D\">D</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=E\">E</A>
+  
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=F\">F</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=G\">G</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=H\">H</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=I\">I</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=J\">J</A>
+  
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=K\">K</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=L\">L</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=M\">M</A>
+      <BR>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=N\">N</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=O\">O</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=P\">P</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=Q\">Q</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=R\">R</A>
+  
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=S\">S</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=T\">T</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=U\">U</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=V\">V</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=W\">W</A>
+  
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=X\">X</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=Y\">Y</A>
+      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=Z\">Z</A>
+
+      <P>
+
+      <FORM ACTION=\"$page_name\" METHOD=POST>
+       <B>$Patients_field_search</B>
+      <BR>
+      <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"find\">
+      <INPUT TYPE=HIDDEN NAME=\"criteria\" VALUE=\"contains\">
+      <SELECT NAME=\"f1\">
+       <OPTION VALUE=\"ptlname\" SELECTED>$Last_name
+       <OPTION VALUE=\"ptfname\" >$First_name
+       <OPTION VALUE=\"ptdob\"   >$Date_of_birth
+       <OPTION VALUE=\"ptid\"    >$Internal_practice_id
+       <OPTION VALUE=\"ptcity\"  >$City
+       <OPTION VALUE=\"ptstate\" >$State
+       <OPTION VALUE=\"ptzip\"   >$Zip_code
+       <OPTION VALUE=\"pthphone\">$Home_phone
+       <OPTION VALUE=\"ptwphone\">$Work_phone
+       <OPTION VALUE=\"ptemail\" >$Email_address
+       <OPTION VALUE=\"ptssn\"   >$Social_security_number
+       <OPTION VALUE=\"ptdmv\"   >$Drivers_license
+       <OPTION VALUE=\"ptacct\"  >$Patient_account_number
+      </SELECT>
+      <I>$CONTAINS</I>
+      <INPUT TYPE=TEXT NAME=\"f2\" SIZE=15 MAXLENGTH=30>
+      <INPUT TYPE=SUBMIT VALUE=\"find\">
+      </FORM>
+      <P>
+
+      <FORM ACTION=\"$page_name\" METHOD=POST>
+      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"find\">
+      <INPUT TYPE=HIDDEN NAME=\"criteria\" VALUE=\"soundex\">
+      <B>Soundalike Search</B><BR>
+      <SELECT NAME=\"f1\">
+       <OPTION VALUE=\"ptlname\" >$Last_name
+       <OPTION VALUE=\"ptfname\" >$First_name
+      </SELECT>
+        <I>sounds like</I>
+      <INPUT TYPE=TEXT NAME=\"f2\" SIZE=15 MAXLENGTH=30>
+      <INPUT TYPE=SUBMIT VALUE=\"find\">
+      </FORM>
+      <P>
+
+      <A HREF=\"$page_name?$_auth&action=find&criteria=all&f1=\"
+       ><$STDFONT_B>$Show_all $PATIENTS<$STDFONT_E></A> |
+      <A HREF=\"$page_name?$_auth&action=addform\"
+       ><$STDFONT_B>$Add $Patient<$STDFONT_E></A> |
+      <A HREF=\"call-in.php3?$_auth\"
+       ><$STDFONT_B>$Call_In_Menu<$STDFONT_E></A>
+      <P> 
+      </CENTER>
+    ";
+
+    freemed_display_box_bottom (); 
+
+    echo "
+      <P>
+      <CENTER>
+      <A HREF=\"main.php3?$_auth\">$Return_to $Main_menu</A>
+      </CENTER>
+    "; // close out with return to main menu tags
+
     break; // end default action
 } // end action
 
 freemed_display_box_bottom();
+
+
+
+
+
+
+
+
 
 /*
 
@@ -1656,4 +2033,5 @@ if ($action=="addform") {
 freemed_close_db(); 
 freemed_display_html_bottom ();
 ?>
+
 
