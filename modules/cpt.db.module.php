@@ -18,6 +18,7 @@ class CptMaintenance extends MaintenanceModule {
 
 	var $record_name = "CPT Codes";
 	var $table_name = "cpt";
+	var $order_fields = "cptcode";
 
 	var $variables = array (
 		"cptcode",
@@ -434,8 +435,12 @@ class CptMaintenance extends MaintenanceModule {
 
 		$result = $sql->query ($query);
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query ("SELECT cptcode,cptnameint,id FROM ".
-				$this->table_name." ORDER BY cptcode"),
+			$sql->query (
+				"SELECT cptcode,cptnameint,id ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY ".$this->order_fields
+			),
 			$this->page_name,
 			array (
 				__("Procedural Code")	=>	"cptcode",
