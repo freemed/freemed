@@ -44,10 +44,10 @@ class MaintenanceModule extends BaseModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $submit;
+		global $action, $__submit;
 
 		// Handle a "Cancel" button being pushed
-		if ($submit==__("Cancel")) {
+		if ($__submit==__("Cancel")) {
 			$action = "";
 			$this->view();
 			return NULL;
@@ -145,13 +145,6 @@ class MaintenanceModule extends BaseModule {
 		global $display_buffer, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-		print $GLOBALS['sql']->update_query (
-				$this->table_name,
-				$this->variables,
-				array (
-					"id"	=>	$id
-				)
-			)."<br/>\n";
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
 				$this->table_name,
