@@ -34,10 +34,11 @@ $page_name = "init_wizard.php";
 
 if(0!=strcmp($_SERVER['REMOTE_ADDR'],INIT_ADDR)){	
 	include_once("errors/init_admin_ipaddr.php");	
-	die("<BR>FreeMED expects the intial setup to be done from the localhost. Dying b/c your IP is not in settings.php as INIT_ADDR");
+	die("<br/>FreeMED expects the intial setup to be done from the localhost. Dying b/c your IP is not in settings.php as INIT_ADDR");
 }
 
 if ($action=="login") {     
+    global $display_buffer;
     $display_buffer .= "
 <div ALIGN=\"LEFT\">
 	

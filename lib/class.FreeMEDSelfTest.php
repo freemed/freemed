@@ -149,13 +149,14 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Selected.");}
 $query = ("SELECT username FROM user WHERE id='1'");
 if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Checking existence of user admin.");}
 if(LOG_LEVEL==0||LOG_SQL){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|".$query);}
-if(!($result = @mysql_query($query)))
+if(!($result = mysql_query($query)))
 {// if we didnt get anything then...
    // include_once("init_wizard.php"); 
 
 if(LOG_ERROR){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|user admin select failure. Database not init()ed creating admin...");}
-   header("Refresh: 0;url=init_wizard.php?action=login");
-
+   $action = "login";
+   include_once("init_wizard.php"); 
+   die();
 }
 if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|admin exists");}
 
