@@ -154,7 +154,7 @@ class FBProcedure {
 	function BillingContactKey ( $bill, $proc ) {
 		$key_rec = freemed::get_link_rec($bill, 'billkey');
 		$r = unserialize($key_rec['billkey']);
-		return $bill['contact'];
+		return $r['contact'];
 	} // end method BillingContactKey
 
 	function isUsingBillingService ( $proc ) {
@@ -164,7 +164,7 @@ class FBProcedure {
 	function BillingServiceKey ( $bill, $proc ) {
 		$key_rec = freemed::get_link_rec($bill, 'billkey');
 		$r = unserialize($key_rec['billkey']);
-		return $bill['service'];
+		return $r['service'];
 	} // end method BillingServiceKey
 
 	function isUsingClearingHouse ( $proc ) {
@@ -174,7 +174,7 @@ class FBProcedure {
 	function ClearingHouseKey ( $bill, $proc ) {
 		$key_rec = freemed::get_link_rec($bill, 'billkey');
 		$r = unserialize($key_rec['billkey']);
-		return $bill['clearinghouse'];
+		return $r['clearinghouse'];
 	} // end method ClearingHouseKey
 
 	function MedicaidResubmissionCode ( $proc ) {

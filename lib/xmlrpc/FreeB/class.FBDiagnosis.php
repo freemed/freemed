@@ -17,7 +17,8 @@ class FBDiagnosis {
 	function RelatedToHCFA ( $diagkey ) {
 		// TODO: slot 10 in ICD code
 		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
-		return '';
+		return ' '; // hack until we fix the type detection or get
+				// this to actually do something - Jeff
 	} // end method RelatedToHCFA
 
 	function isRelatedToAutoAccident ( $diagkey ) {

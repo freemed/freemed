@@ -85,7 +85,7 @@ class FBPatient {
 
 	function PhoneExtension ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return substr($p['pthphone'], 7, 4);
+		return substr($p->local_record['pthphone'], 10, 4);
 	} // end method PhoneExtension
 
 	function isMale ( $patient ) {

@@ -6,27 +6,27 @@ class FBFacility {
 
 	function Name ( $key ) {
 		$f = freemed::get_link_rec($key, 'facility');
-		return $r['psrname'];
+		return $f['psrname'];
 	} // end method Name
 
 	function StreetAddress ( $key ) {
 		$f = freemed::get_link_rec($key, 'facility');
-		return $r['psraddr1'];
+		return $f['psraddr1'];
 	} // end method StreetAddress
 
 	function City ( $key ) {
 		$f = freemed::get_link_rec($key, 'facility');
-		return $r['psrcity'];
+		return $f['psrcity'];
 	} // end method City
 
 	function State ( $key ) {
 		$f = freemed::get_link_rec($key, 'facility');
-		return $r['psrstate'];
+		return $f['psrstate'];
 	} // end method State
 
 	function Zipcode ( $key ) {
 		$f = freemed::get_link_rec($key, 'facility');
-		return $r['psrzip'];
+		return $f['psrzip'];
 	} // end method Zipcode
 
 	function PhoneCountry ( $key ) {
