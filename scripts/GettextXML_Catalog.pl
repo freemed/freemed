@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I/usr/share/freemed/lib/perl
 # $Id$
 # $Author$
 
