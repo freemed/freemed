@@ -289,7 +289,7 @@ switch ($action) {
         <A HREF=\"progress_notes.php3?$_auth&action=addform&patient=$id\"
          ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD> 
-        <A HREF=\"progress_notes.php3?$_auth&action=view&patient=$id\"
+        <A HREF=\"progress_notes.php3?$_auth&patient=$id\"
          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         </TD></TR>
