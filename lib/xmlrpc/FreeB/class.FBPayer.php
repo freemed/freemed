@@ -9,9 +9,13 @@ class FBPayer {
 		return $i['insconame'];
 	} // end method Name
 
-	function ID ( $key ) {
+	function NationalPlanID ( $key ) {
 		$i = freemed::get_link_rec($key, 'insco');
 		return $i['inscoid'];
+	} // end method NationaPlanID
+
+	function ID ( $key ) {
+		return FBPayer::NationalPlanID($key);
 	} // end method ID
 
 	function Attn ( $key ) {
