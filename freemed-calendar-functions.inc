@@ -528,12 +528,12 @@
          $cur_minute  = (int)($cur_minute / 60);
        } // end checking for current time spillovers
 
-       $loop_ehour = $calhour   + (int)($calduration / 60);
-       $loop_emin  = $calminute + (int)($calduration % 60);
+       $loop_ehour = $calhour   + ((int)($calduration / 60));
+       $loop_emin  = $calminute + ((int)($calduration % 60));
 
        if ($loop_emin > 59) { // if spilling over the hour...
-         $loop_ehour += (int)($loop_emin % 60);
-         $loop_emin   = (int)($loop_emin / 60);
+         $loop_ehour += (int)($loop_emin / 60);
+         $loop_emin   = (int)($loop_emin % 60);
        } // end checking for spilling over the hour
 
        // now loop for hours and minutes, and add a modified mapping
