@@ -188,6 +188,8 @@ class Annotations extends EMRModule {
 	function prepareAnnotation ( $a ) {
 		$b = $a;
 		$b = htmlentities($b);
+		$b = str_replace("'", '\\\'', $b);
+		$b = str_replace("\"", '\\"', $b);
 		$b = str_replace("\n", '<br/>\n', $b);
 		return $b;
 	} // end method prepareAnnotation
