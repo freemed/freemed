@@ -28,6 +28,8 @@ class BillingService extends MaintenanceModule {
 		'bstin'
 	);
 
+	var $widget_hash = '##bsname## (##bscity##, ##bsstate##)';
+
 	function BillingService () {
 		// Table definition
 		$this->table_definition = array (

@@ -29,6 +29,8 @@ class BillingClearinghouse extends MaintenanceModule {
 		'chx12gsreceiver'
 	);
 
+	var $widget_hash = '##chname## (##chcity##, ##chstate##)';
+
 	function BillingClearinghouse () {
 		// Table definition
 		$this->table_definition = array (
