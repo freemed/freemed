@@ -127,6 +127,7 @@ if (!defined('SESSION_DISABLE')) {
 	// Create object map for FreeMED
 	CreateApplicationMap(array(
 		'FreeMED' => 'lib/class.*.php',
+		'Agata' => 'lib/agata/lib/class.*.php',
 		// Protected namespaces:
 		'_FreeMED' => 'lib/class.*.php',
 		'_ACL' => 'lib/acl/*.class.php'
