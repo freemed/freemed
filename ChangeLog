@@ -1,6 +1,16 @@
 freemed project changelog
 ($Id$)
 
+* Wed Dec 26 2001 rufustfirefly
+  - modules/*.graph.module.php: converted to $display_buffer format
+    from echo (since Fred is still working with the 0.2.x tree...)
+
+* Fri Dec 21 2001 rufustfirefly
+  - module_information.php, module_loader.php, lib/module_graph.php,
+    lib/class.phplot.php,
+    modules/{acntpaid,charges,receivables,transaction}.graph.module.php:
+    added graphing modules (Fred Forester)
+
 * Mon Dec 10 2001 rufustfirefly
   - modules/prescription.emr.module.php: fixed bum links and problem
     in phpwebtools' module::check_module() (Vincent Meyer)
