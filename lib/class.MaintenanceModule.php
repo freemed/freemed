@@ -571,11 +571,15 @@ class MaintenanceModule extends BaseModule {
 	//
 	//	$field - (optional) Field to return as value. Defaults to
 	//	id.
+	//
+	//	$options - (optional) Options to pass to 
+	//	html_form::select_widget
+	//
 	// Returns:
 	//
 	//	XHTML-compliant picklist widget.
 	//
-	function widget ( $varname, $conditions = false, $field = 'id' ) {
+	function widget ( $varname, $conditions = false, $field = 'id', $options = NULL ) {
 		$query = "SELECT * FROM ".$this->table_name." WHERE ( 1 = 1) ".
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).
 			"ORDER BY ".$this->order_field;
@@ -597,7 +601,7 @@ class MaintenanceModule extends BaseModule {
 			}
 			$return[$key] = $r[$field];
 		}
-		return html_form::select_widget($varname, $return);
+		return html_form::select_widget($varname, $return, $options);
 	} // end method widget
 
 	// Method: _setup
