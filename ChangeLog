@@ -1,6 +1,23 @@
 freemed project changelog
 ($Id$)
 
+* Mon Apr 30 2001 rufustfirefly
+  - manage_bills.php: moved this module to old
+  - modules/unpaid_procs.report.module.php: committed changes from
+    manage_bills.php (including one SQL error fix)
+  - select_printers.php3, simplerep*.php3: moved to old, since they are
+    very stale
+  - db-update-0.1to0.2, freemed.db.mysql, incoming_fax_scripts.mk: moved
+    to doc/
+  - lib/module_emr.php: added xml_export() and xml_generate() methods for
+    EMR module superclass, to allow EMR export. override xml_generate()
+    function to return proper value
+  - po/freemed.pot: alphebetized the entire catalog for easier editing,
+    thanks to dr_gnu@ourexchange.net
+  - lots of i18n fixes in the po template and in the modules directory.
+    lots more to go, though. (payment.emr, patient_demographic.report
+    done)
+
 * Sun Apr 29 2001 rufustfirefly
   - manage_bills.php: fixed error in 1st SQL query, small optimizations
 
