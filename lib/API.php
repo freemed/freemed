@@ -1536,9 +1536,9 @@ function freemed_display_selectbox ($result, $format, $param="") {
 
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="") {
-	global $sql, $default_language, $cur_date_hash, $debug;
+	global $sql, $cur_date_hash, $debug;
 
-	$language = strtoupper($default_language);
+	$language = strtoupper(DEFAULT_LANGUAGE);
 
 	$physical_file = PHYSICAL_LOCATION . "/data/" . $language . 
 		"/" .  $table_name . "." . $language . "." . 
@@ -1573,9 +1573,9 @@ function freemed_get_userlevel ( $param = "" ) {
 // function freemed_import_stock_data
 //  import stock data from data/$language directory
 function freemed_import_stock_data ($table_name) {
-	global $default_language, $sql;
+	global $sql;
 
-	$language = strtoupper($default_language);
+	$language = strtoupper(DEFAULT_LANGUAGE);
 
 	// Produce a physical location
 	$physical_file = PHYSICAL_LOCATION . "/data/" . $language .

@@ -6,10 +6,14 @@
 LoadObjectDependency('PHP.GettextXML');
 
 GettextXML::bindtextdomain('FreeMED', './locale');
-GettextXML::setlanguage($_COOKIE['language']);
+GettextXML::setlanguage($_COOKIE['language'] ? $_COOKIE['language'] : DEFAULT_LANGUAGE);
 
 // Set basic text domain
 GettextXML::textdomain('freemed');
+GettextXML::textdomain('template_default');
+if ($template) {
+	GettextXML::textdomain('template_'.$template);
+}
 
 // Set text domain for page
 GettextXML::textdomain(str_replace('.php', '', page_name()));
