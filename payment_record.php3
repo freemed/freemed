@@ -752,9 +752,9 @@
      <TD><B>Date</B></TD>
      <TD><B>Description</B></TD>
      <TD><B>Type</B></TD>
-     <TD><B>Charges</B></TD>
-     <TD><B>Payments</B></TD>
-     <TD><B>Action</B></TD>
+     <TD ALIGN=RIGHT><B>Charges</B></TD>
+     <TD ALIGN=RIGHT><B>Payments</B></TD>
+     <TD ALIGN=RIGHT><B>Action</B></TD>
     </TR>
    ";
 
@@ -799,6 +799,7 @@
      $payrecdate      = fm_date_print ($r["payrecdt"]);
      $payrecdescrip   = prepare ($r["payrecdescrip"]);
      $payrecamt       = prepare ($r["payrecamt"]);
+     $payrectype      = $r["payrectype"];
      switch ($r["payreccat"]) { // category switch
       case REFUND: // refunds 2
       case PROCEDURE: // charges 5
@@ -845,7 +846,10 @@
        $this_type = "rebill";
        break;
       case PROCEDURE: // charge 5
-       $this_type = "charge";
+       if ($payrectype == "6")
+           $this_type = "Fee Adjust";
+       else
+       	   $this_type = "charge";
        break;
       case TRANSFER: // transfer 6
        $this_type = "transfer";

@@ -499,6 +499,7 @@ if ($action=="cfgform") {
     procrefdoc             INT UNSIGNED,
     procrefdt              DATE,
     id INT NOT NULL AUTO_INCREMENT,
+    procamtallowed         REAL,
     KEY (procpatient),
     PRIMARY KEY (id)
     )");

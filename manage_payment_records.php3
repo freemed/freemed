@@ -52,15 +52,17 @@
  $result = fdb_query ($query);
 
  echo "
-  <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
+  <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
   <TR BGCOLOR=#cccccc>
    <TD>&nbsp;</TD>
    <TD><B>Date</B></TD>
    <TD><B>Proc Code</B></TD>
    <TD><B>Provider</B></TD>
-   <TD><B>Original Amt</B></TD>
-   <TD><B>Amount Paid</B></TD>
-   <TD><B>Current Amt</B></TD>
+   <TD ALIGN=RIGHT><B>Charged</B></TD>
+   <TD ALIGN=RIGHT><B>Allowed</B></TD>
+   <TD ALIGN=RIGHT><B>Paid</B></TD>
+   <TD ALIGN=RIGHT><B>Balance</B></TD>
+   <TD ALIGN=RIGHT><B>Billed</B></TD>
   </TR>
  ";
 
@@ -88,8 +90,11 @@
     <TD ALIGN=LEFT>".htmlentities($this_cpt." (".$this_cptmod.")")."</TD>
     <TD ALIGN=LEFT>".htmlentities($this_physician->fullName())."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procbalorig], 0, 2)."</TD>
+    <TD ALIGN=RIGHT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
+    <TD ALIGN=RIGHT>".(($r[procbilled]) ? "Yes" : "No")."</TD>
+
     </TR>
    ";
  } // end looping for results
@@ -99,6 +104,7 @@
   <P>
   <CENTER>
    <SELECT NAME=\"action\">
+    <OPTION VALUE=\"refresh\"  >Refresh
     <OPTION VALUE=\"denialform\"  >Denial
     <OPTION VALUE=\"mistakeform\" >Mistake
     <OPTION VALUE=\"paymentform\" >Payment
@@ -108,7 +114,7 @@
   </CENTER>
   </FORM>
  ";
-
+ if ($action != "refresh") {
  if ($item > 0) {
   echo "
    <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -236,6 +242,41 @@
       $result = fdb_query ($query); 
       if ($result) echo "<$STDFONT_B>$Adding adjustment.<$STDFONT_E><BR> \n";
     } // end of adjustment check
+
+    if ($allowed_amount > 0)
+    {
+		// recalc the procedure balance
+
+                $query = "UPDATE procrec SET procbalcurrent = '".addslashes($allowed_amount)."' - procamtpaid,
+                              procamtallowed = '".addslashes($allowed_amount)."'
+                     WHERE id='".addslashes($item)."'";
+                $result = fdb_query ($query);
+                if ($result)
+                {
+                        echo "<$STDFONT_B>Updated procedure Allowed Amount<$STDFONT_E><BR>\n";
+                }
+                else
+                {
+                        DIE ("$page_name :: DB error updating procedure");
+                }
+
+		// recalc the procedure's charge and change the type to 6 which means a PROCEDURE charge with Fee Adjustment.
+                $query = "UPDATE payrec SET payrecamt = '".addslashes($allowed_amount)."', payrectype = '6'
+                     WHERE payrecproc ='".addslashes($item)."' AND payrecpatient = '".addslashes($patient)."' AND payreccat = '".PROCEDURE."'";
+
+                $result = fdb_query ($query);
+                if ($result)
+                {
+                        echo "<$STDFONT_B>Updated Procedure Payrec<$STDFONT_E><BR>\n";
+                }
+                else
+                {
+                        DIE ("$page_name :: DB error updateing procedure payrec");
+                }
+
+
+    } // end allowed amount
+
     if ($payment_amount > 0) {
       $query = "INSERT INTO $db_name VALUES (
                 '".addslashes($cur_date)."',
@@ -395,7 +436,7 @@
      <CENTER>
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
       <TR>
-       <TD COLSPAN=5 ALIGN=LEFT BGCOLOR=#aaaaaa>
+       <TD COLSPAN=6 ALIGN=LEFT BGCOLOR=#aaaaaa>
         <$HEADERFONT_B>
          <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"payment\">
          Payment
@@ -403,17 +444,31 @@
        </TD>
       </TR>
 
+      <TR>
+       <TD COLSPAN=2 ALIGN=RIGHT>
+        <$STDFONT_B>Date of Action : <$STDFONT_E>
+       </TD><TD COLSPAN=4 ALIGN=LEFT>
+    ".fm_date_entry ("date_of_action")."
+       </TD>
+      </TR>
 
       <TR>
        <TD ALIGN=RIGHT>
         <$STDFONT_B>Voucher<$STDFONT_E>
-       </TD><TD ALIGN=RIGHT>
+       </TD>
+	<TD ALIGN=RIGHT>
         <$STDFONT_B>Withhold<$STDFONT_E>
-       </TD><TD ALIGN=RIGHT>&nbsp;
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
         <$STDFONT_B>Deductable<$STDFONT_E>
-       </TD><TD ALIGN=RIGHT>&nbsp;
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
         <$STDFONT_B>Adjustment<$STDFONT_E>
-       </TD><TD ALIGN=RIGHT>&nbsp;
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
+        <$STDFONT_B>Allowed<$STDFONT_E>
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
         <$STDFONT_B>Payment Amt<$STDFONT_E>
        </TD>
       </TR>
@@ -423,25 +478,33 @@
         <INPUT TYPE=TEXT NAME=\"voucher\"
          SIZE=8 MAXLENGTH=8
          VALUE=\"\">
-       </TD><TD ALIGN=RIGHT>
+       </TD>
+	<TD ALIGN=RIGHT>
         <INPUT TYPE=TEXT NAME=\"withhold\"
          SIZE=8 MAXLENGTH=8
          VALUE=\"0.00\">
-       </TD><TD ALIGN=RIGHT>&nbsp;
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
         <INPUT TYPE=TEXT NAME=\"deductable\"
          SIZE=8 MAXLENGTH=8
          VALUE=\"0.00\">
-       </TD><TD ALIGN=RIGHT>&nbsp;
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
         <INPUT TYPE=TEXT NAME=\"adjustment\"
          SIZE=8 MAXLENGTH=8
          VALUE=\"0.00\">
-       </TD><TD ALIGN=RIGHT>&nbsp;
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
+        <INPUT TYPE=TEXT NAME=\"allowed_amount\"
+         SIZE=8 MAXLENGTH=8
+         VALUE=\"0.00\">
+       </TD>
+	<TD ALIGN=RIGHT>&nbsp;
         <INPUT TYPE=TEXT NAME=\"payment_amount\"
          SIZE=8 MAXLENGTH=8
          VALUE=\"0.00\">
        </TD>
       </TR>
-
       </TABLE>
       </CENTER>
     ";
@@ -457,6 +520,13 @@
          <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"transfer\">
          Transfer <I>(to another source of payment)</I>
         <$HEADERFONT_E>
+       </TD>
+      </TR>
+      <TR>
+       <TD ALIGN=RIGHT>
+        <$STDFONT_B>Date of Action : <$STDFONT_E>
+       </TD><TD ALIGN=LEFT>
+    ".fm_date_entry ("date_of_action")."
        </TD>
       </TR>
       <TR>
@@ -517,6 +587,7 @@
    </FORM>
   ";
  } // end checking for item
+ } // end checking for action not refresh
 
  freemed_display_box_bottom ();
 

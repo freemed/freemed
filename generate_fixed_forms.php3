@@ -27,39 +27,13 @@
    $current_patient = 0;
 
 //
-   // procduce a list only. Don't acutally process any bills
-   if ($listonly == "yes")
-   {
-        $b_result = fdb_query ("SELECT DISTINCT procpatient
-                           FROM procrec
-                           WHERE (
-                                procbalcurrent > 0
-                           ) ORDER BY procpatient");
-
-        // loop for all patients
-        while ($b_r = fdb_fetch_array ($b_result))
-        {
-
-                // pull current patient
-                $current_patient = $b_r[procpatient];
-
-                // get current patient information
-                $this_patient = new Patient ($current_patient);
-                echo "<A HREF=\"manage_payment_records.php3?ref=$page_name&patient=$current_patient\">Manage</A> ";
-                echo "<B>".$this_patient->fullName()."</B>";
-                echo "<BR>\n\n";
-                //flush ();
-        }
-
-        break;
-   }
-//
 
    // get list of all patient who need to be billed
+//                             payreccat = '5' AND
    $b_result = fdb_query ("SELECT DISTINCT payrecpatient
                            FROM payrec
                            WHERE (
-                             payreccat = '5' AND
+                             payreccat = '".PROCEDURE."' AND
                              payreclink < '3'
                            ) ORDER BY payrecpatient");
    // 0 = 1st insurance

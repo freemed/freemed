@@ -75,10 +75,11 @@
      <TD ALIGN=RIGHT>
       <$STDFONT_B><B>Unpaid Procedures  : </B><$STDFONT_E>
      </TD><TD ALIGN=LEFT COLSPAN=2>
-      <A HREF=\"generate_fixed_forms.php3?$_auth&action=geninsform&listonly=yes\"
+      <A HREF=\"manage_bills.php3?$_auth&action=list\"
       ><$STDFONT_B>View<$STDFONT_E></A>
      </TD>
     </TR>
+
 
     </TABLE> 
     <P>
