@@ -44,7 +44,7 @@ if (!$connect) {
     template_display();
 }
 
-if (freemed_check_access_for_facility ($_f)) {
+if (freemed::check_access_for_facility ($_f)) {
 	SetCookie('default_facility', $_f);
 	$_COOKIE['default_facility'] = $_SESSION['default_facility'] = $_f;
 } else {
@@ -53,9 +53,10 @@ if (freemed_check_access_for_facility ($_f)) {
 }
 
 //----- Determine "language session variable, if set
-if ($_l != $default_language) {
-	$_SESSION['language'] = $_l;
-}
+//if ($_l != $default_language) {
+$_SESSION['language'] = $_l;
+SetCookie('language', $_l);
+//}
 
 // Header("Location: ".COMPLETE_URL."/main.php");
 

@@ -269,7 +269,7 @@ switch ($action) {
   while ($r = $sql->fetch_array ($result)) {
     extract ($r);
 
-    if (freemed_check_access_for_facility ($cifacility)) {
+    if (freemed::check_access_for_facility ($cifacility)) {
 
     if (strlen($cimname)>0) $ci_comma = ", ";
      else $ci_comma = " ";

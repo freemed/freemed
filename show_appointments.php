@@ -88,7 +88,7 @@ if ($sql->num_rows ($result) < 1) {
 
 $any_appointments = false;            // until there are, there aren't
 while ($r = $sql->fetch_array ($result)) {
-	if (freemed_check_access_for_facility ($r["calfacility"])) {
+	if (freemed::check_access_for_facility ($r["calfacility"])) {
 	if (!$any_appointments) // if this is the first appointment...
 	$display_buffer .= "
           <tr CLASS=".(freemed_alternate()).">
@@ -150,7 +150,7 @@ while ($r = $sql->fetch_array ($result)) {
                   "room", "roomname");
 	if (strlen($psrname)<1) $psrname = "&nbsp;";
 	if ($show=="all") $_date = $r["caldateof"]." <BR>";
-	if (freemed_check_access_for_facility ($r["calfacility"])){
+	if (freemed::check_access_for_facility ($r["calfacility"])){
        $display_buffer .= "
          <TR CLASS=\"".
           ( ($r["calpatient"]==$current_patient) ?
