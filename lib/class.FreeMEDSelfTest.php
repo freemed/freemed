@@ -107,6 +107,12 @@ if(!function_exists('mysql_connect'))
 }
 
 
+// Check for PEAR HTML_QuickForm and HTML_Table objects
+if ( !is_object(CreateObject('PEAR.HTML_QuickForm')) 
+		or !is_object(CreateObject('PEAR.HTML_Table')) ) {
+	die(sprintf(__("PEAR needs to be installed (%s) with its HTML_QuickForm and HTML_Table packages."), "<a href=\"http://pear.php.net\">http://pear.php.net</a>"));
+}
+
 $link = mysql_connect(DB_HOST,DB_USER,DB_PASSWORD)
         or die(
 		__("FreeMED cannot seem to connect to the database.")."<br/>\n".
