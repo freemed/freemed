@@ -10,6 +10,9 @@ include ("lib/freemed.php");
 //----- Login and authenticate
 freemed_open_db ();
 
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"photo_id.php|user $user_to_log ");}	
 //----- Set page title
 $page_title = __("Photographic ID Maintenance");
 
@@ -22,7 +25,11 @@ switch ($action) {
 		$patient = freemed::secure_filename($patient);
 
 		// Form filename
-		$imagefilename = "img/store/".$patient.".identification.jpg";
+		$imagefilename = freemed::image_filename(
+			$patient,
+			'identification',
+			'djvu'
+		);
 
 		// If it exists, unlink it
 		if (file_exists($imagefilename)) {
