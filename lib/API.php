@@ -2626,7 +2626,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	$y  = substr ($actualdate, 0, 4);        // extract year
 	$m  = substr ($actualdate, 5, 2);        // extract month
 	$d  = substr ($actualdate, 8, 2);        // extract day
-	$ts = mktime (0, 0, 0, $m, $d, $y);      // generate timestamp
+	$ts = mktime (0, 0, 0, $m, $d, 2000); // generate timestamp (fake year)
 
 	$lang_months = array (
 		'',
