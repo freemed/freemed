@@ -26,7 +26,8 @@ if ($new_messages = $this_user->newMessages()) {
 		<img src=\"img/messages_small.gif\" alt=\"\" ".
 		"width=\"16\" height=\"16\" border=\"0\"/>
 		<a HREF=\"messages.php\"
-		>You have ".$new_messages." new message(s).</A>
+		>".sprintf(__("You have %d new message(s)."), $new_messages).
+		"</a>
 		<img src=\"img/messages_small.gif\" ALT=\"\" ".
 		"WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\"/>
 		</div>
