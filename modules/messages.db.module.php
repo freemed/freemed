@@ -30,6 +30,20 @@ class MessagesTable extends MaintenanceModule {
 			'id' => SQL__SERIAL
 		);
 
+		// Set configuration stuff
+		$this->_SetMetaInformation('global_config_vars', array(
+			'message_delete'
+		));
+		$this->_SetMetaInformation('global_config', array(
+			__("Allow Direct Message Deletion") =>
+			'html_form::select_widget("message_delete", '.
+				'array( '.
+					'"'.__("Disable").'" => "0", '.
+					'"'.__("Enable").'" => "1" '.
+				')'.
+			')'
+		));
+
 		// Add main menu handler item
 		$this->_SetHandler('MainMenu', 'UnreadMessages');
 

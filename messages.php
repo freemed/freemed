@@ -30,6 +30,8 @@ if ($_REQUEST['submit_action']==__("Cancel")) {
 		die("");
 	}
 }
+if ($_REQUEST['submit_action']==__("Mark as Read")) { $action = "del"; }
+if ($_REQUEST['submit_action']==__("Delete Marked Messages")) { $action = "remove"; }
 
 switch ($action) {
 
@@ -384,12 +386,16 @@ switch ($action) {
 			"onClick=\"selectAll(this.form); return true;\" ".
 			"class=\"button\"/>
 			".( ($old==0) ?
-			"<input class=\"button\" TYPE=\"SUBMIT\" ".
-				"VALUE=\"".__("Mark as Read")."\"/>" :
-			"<input class=\"button\" TYPE=\"SUBMIT\" ".
-				"VALUE=\"".__("Delete Marked Messages")."\"/>"
-			)."
-			</form>
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Mark as Read")."\"/> " :
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Delete Marked Messages")."\"/> "
+			).( ($old==0 and freemed::config_value('message_delete')) ?
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Delete Marked Messages")."\" ".
+				"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently delete this message?"))."')) { return true; } else { return false; }\" />" : "" ).
+
+			"</form>
 		</div>
 		";
 	}
