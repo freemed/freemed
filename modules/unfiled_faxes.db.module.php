@@ -581,10 +581,9 @@ class UnfiledFaxes extends MaintenanceModule {
 				__("Unfiled Faxes"),
 				( $unfiled==1 ?
 				__("There is currently 1 unfiled fax in the system.") :
-				sprintf(__("There are currently %d unfiled fax(es) in the system."), $unfiled) ).
-				"&nbsp; &nbsp; ".
+				sprintf(__("There are currently %d unfiled fax(es) in the system."), $unfiled) )." ".
 				"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\">".
-				__("File")."</a>",
+				"[".__("File")."}</a>",
 				"img/facsimile_icon.png"
 			);
 		} else {
