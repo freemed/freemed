@@ -892,13 +892,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     ".
     
     ((${$cur_page_var} > 1) ? "
-    <tr><td>
-     <a CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".(${$cur_page_var}-1).
-     ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
-       .prepare($_s_val)."" : "").
-     "&module=$module&action=$action\">
-        "._("Previous")."
-     </a>
+    <tr><td>".template::link_button(
+        _("Previous"),
+        "$page_name?$cur_page_var=".(${$cur_page_var}-1).
+        ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
+        .prepare($_s_val)."" : "").
+        "&module=$module&action=$action")."
     </td>
     " : "" )
     
@@ -913,13 +912,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     </td>".
     
     ((${$cur_page_var} < $num_pages) ? "
-    <td>
-     <a CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".(${$cur_page_var}+1).
-     ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
-       .prepare($_s_val)."" : "").
-     "&module=$module&action=$action\">
-        "._("Next")."
-     </a>
+    <td>".template::link_button(
+        _("Next"),
+        "$page_name?$cur_page_var=".(${$cur_page_var}+1).
+        ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
+        .prepare($_s_val)."" : "").
+        "&module=$module&action=$action")."
     </td></tr>
     " : "" )
     
@@ -1016,14 +1014,15 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
         <a HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
-	urlencode($this_result['id'])."\">"._("VIEW")."</a>&nbsp;
+	urlencode($this_result['id'])."\" class=\"button\">"._("VIEW")."</a>
       ";
     }
     if (freemed::user_flag(USER_DATABASE) AND 
          ($flags & ITEMLIST_MOD) AND (!$this_result['locked'])) {
       $buffer .= "
-        <a HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
-	urlencode($this_result['id'])."\">"._("MOD")."</a>&nbsp;
+        <a class=\"button\" ".
+	"HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
+	urlencode($this_result['id'])."\">"._("MOD")."</a>
       ";
     }
     if (freemed::user_flag(USER_DELETE) AND
@@ -1036,9 +1035,10 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 			'confirm_text' =>
 			_("Are you sure you want to delete this record?"),
 
-			'text' => _("Delete")
+			'text' => _("Delete"),
+			'class' => 'button'
 		)
-	)."&nbsp;\n";
+	)."\n";
 
     }
     if (freemed::user_flag(USER_DELETE) AND
@@ -1051,9 +1051,10 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 			'confirm_text' =>
 			_("Are you sure you want to lock this record?"),
 
-			'text' => _("Lock")
+			'text' => _("Lock"),
+			'class' => 'button'
 		)
-	)."&nbsp;\n";
+	)."\n";
     }
     
     
