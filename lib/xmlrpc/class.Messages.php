@@ -71,7 +71,7 @@ class Messages {
 					"msgsubject" => $message['subject'],
 					"msgurgency" => $message['urgency'],
 					"msgread"    => '0',
-					"msgtime"    => SQL_NOW
+					"msgtime"    => SQL__NOW
 				)
 			));
 		return CreateObject('PHP.xmlrpcval', $res, 'boolean');
