@@ -189,7 +189,8 @@ div.menu div.menuItemSep {
 	margin: 20px 0px 0px 20px;
 }
 <?php } ?>
-.main {
+#main {
+	display: inline;
 	top: 20px;
 	padding: 5px;
 	/* try not to overflow past the edges */
