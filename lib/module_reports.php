@@ -21,10 +21,10 @@ class freemedReportsModule extends freemedModule {
 	var $this_user;
 
 	// contructor method
-	function freemedEMRModule () {
+	function freemedReportsModule () {
 		// call parent constructor
 		$this->freemedModule();
-	} // end function freemedEMRModule
+	} // end function freemedReportsModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
