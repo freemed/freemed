@@ -133,6 +133,24 @@ class Agata {
 		} // end if rpt
 	} // end method CreateReport
 
+	// Method: GetReports
+	//
+	//	Get array of report information for reports available
+	//	to the system.
+	//
+	function GetReports ( ) {
+		if (! ($d = dir(dirname(__FILE__).'/agata/report/')) ) {
+			DIE(get_class($this)." :: could not open directory '".dirname(__FILE__)."/agata/report/'");
+		}
+		while ($entry = $d->read()) {
+			if (eregi('\.report$', $entry)) {
+				//print "dir entry = $entry\n";
+				$reports[str_replace('.report', '', basename($entry))] = $this->_ReadMetaInformation(basename($entry));
+			} // end checking file name match
+		} // end while
+		return $reports;
+	} // end method GetReports
+
 	// Method: ReportToFile
 	//
 	//	Moves a completed report to a specified filename.
@@ -164,9 +182,11 @@ class Agata {
 	//
 	function ServeReport ( ) {
 		switch ($this->report_format) {
+			case 'Csv':  $c = 'text/csv'; break;
 			case 'Pdf':  $c = 'application/x-pdf'; break;
 			case 'Ps':   $c = 'application/x-ps'; break;
 			case 'Html': $c = 'text/html'; break;
+			case 'Txt':  $c = 'text/plain'; break;
 
 			// Merge outputs Postscript for now
 			case 'Merge': $c = 'application/x-ps'; break;
@@ -196,6 +216,37 @@ class Agata {
 		unlink ($tmp.'.pdf');
 		die();
 	} // end method ServeMergeAsPDF
+
+	// Method: _ReadMetaInformation
+	//
+	//	Get report meta-information
+	//
+	// Returns:
+	//
+	//	Array containing an associative array containing the
+	//	meta-information.
+	//
+	function _ReadMetaInformation ( $report ) {
+		//print "checking $report\n";
+		$fp = fopen(dirname(__FILE__).'/agata/report/'.$report, 'r');
+		if (!$fp) { DIE(get_class($this).' :: could not open '.$report); }
+		while (!feof($fp)) { $buffer .= fgets($fp, 1024); }
+		fclose($fp);
+		$lines = explode("\n", $buffer);
+		foreach ($lines AS $_garbage => $line) {
+			if (eregi('##[A-Za-z=\., ]*##', $line)) {
+				// Process meta line
+				//print "meta line = $line\n";
+				$chunks = explode('##', $line);
+				$meta = explode(',', $chunks[1]);
+				foreach ($meta AS $garbage => $info) {
+					list ($k, $v) = explode('=', $info);
+					$return[$k] = $v;
+				}
+				return $return;
+			}
+		}
+	} // end method _ReadMetaInformation
 
 } // end class Agata
 
