@@ -4,6 +4,7 @@
   # lic : GPL
   # Translation by Johann KRAUTINGER <j.krau@teleweb.at> 19991004
   # mod: 19990917
+  # mod: 20000407
 
   $record_name                         = "Benutzer";
 
@@ -24,10 +25,10 @@
   $Go_back_to_user_menu                = "Gehen Sie zurück zum Benutzermenü";
   #"Go back to the User Menu" ;
   
-  $Please_use_the_modify_form          = Bitte verwenden Sie das Berichtigungsformular um das zu tun";
+  $Please_use_the_modify_form          = "Bitte verwenden Sie das Berichtigungsformular um das zu tun";
   #"Please use the MODIFY form to do this" ;
   $Result                              = "ERGEBNIS" ;
-  $You_cannot_modify_root              = "Sie sind nicht zu Ändrungen an "root" Einstellungen berechtigt"; 
+  $You_cannot_modify_root              = "Sie sind nicht zu Änderungen an \"root\" Einstellungen berechtigt"; 
   #"You cannot modify the SuperUser" ;
   $You_cannot_delete_root              = "Es ist nicht möglich den Hauptbenutzer zu löschen" ;  
   $Query_result                        = "Abfrage Ergebnis";
@@ -37,7 +38,7 @@
   $Actual_query_result                 = "aktuelles Abfrageergebnis";
   #"Actual query result" ;
   $Another                             = "Andere" ;
-  $Maintenance                         = "Verwaltungen";
+  $Maintenance                         = "Verwaltung";
   #"Maintenance" ;
   $Action                              = "Durchführen" ;
   $No                                  = "Nein" ;
