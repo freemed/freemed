@@ -150,7 +150,7 @@ class EpisodeOfCare extends EMRModule {
 			"eochosdischrgdt"	=> SQL_DATE,
 			"eocrelautotime"	=> SQL_CHAR(8),
 
-			"id"			=> SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			"id"			=> SQL_SERIAL
 		);
 
 		// Summary box for management
@@ -160,49 +160,70 @@ class EpisodeOfCare extends EMRModule {
 			_("Description") => "eocdescrip"
 		);
 		$this->summary_options = SUMMARY_VIEW;
+
+		global $action, $submit, $module;
+		if (strtolower($module)==get_class($this)) {
+			switch ($submit) {
+				case _("Add"):
+					$action = "add";
+					break;
+				
+				case _("Modify"):
+					$action = "mod";
+					break;
+				
+				case _("Refresh"):
+				default:
+					// do nothing otherwise
+					break;
+			}
+		}
 	} // end constructor EpisodeOfCare
 
 	function form () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		foreach ($GLOBALS as $k => $v) global $$k;
+		foreach ($GLOBALS as $k => $v) global ${$k};
 
-   switch ($action) {
-     case "addform":
-      $go = "add";
-      $this_action = "Add";
-      if ($been_here != "yes") $eocstartdate = $eocdtlastsimilar = $cur_date;
-      break;
-     case "modform":
-      $go = "mod";
-      $this_action = "Modify";
-       // check to see if an id was submitted
-      if ($id<1) {
-       $page_title =  _("$record_name")." :: "._("ERROR");
-       $display_buffer .= _("Must select record to Modify");
-       template_display();
-      } // end of if.. statement checking for id #
+		switch ($action) {
+			case "addform":
+			$go = "addform";
+			$this_action = _("Add");
+			if ($been_here != "yes") {
+				 $eocstartdate = $eocdtlastsimilar = $cur_date;
+			}
+			break;
 
-      if ($been_here != "yes") {
-         // now we extract the data, since the record was given...
-		reset ($this->variables);
-		foreach ($this->variables as $k => $v) global $$v;
-        $r      = freemed::get_link_rec ($id, $this->table_name);
-        extract ($r);
-        break;
-      } // end checking if we have been here yet...
-   } // end of interior switch
+			case "modform":
+			$go = "modform";
+			$this_action = _("Modify");
+			// check to see if an id was submitted
+			if ($id<1) {
+				$page_title =  _("$record_name")." :: "._("ERROR");
+				$display_buffer .= _("Must select record to Modify");
+				template_display();
+			} // end of if.. statement checking for id #
+			if ($been_here != "yes") {
+				// now we extract the data, since the record was given...
+				reset ($this->variables);
+				foreach ($this->variables as $k => $v) { global ${$v}; }
+				$r = freemed::get_link_rec ($id, $this->table_name);
+				extract ($r);
+				break;
+			} // end checking if we have been here yet...
+			break;
+		} // end of interior switch
 
-    // grab important patient information
-    $display_buffer .= "
+// grab important patient information
+	$display_buffer .= "
 	<P>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
-     <INPUT TYPE=HIDDEN NAME=\"id\"        VALUE=\"".prepare($id)."\">
-     <INPUT TYPE=HIDDEN NAME=\"patient\"   VALUE=\"".prepare($patient)."\">
-     <INPUT TYPE=HIDDEN NAME=\"module\"    VALUE=\"".prepare($module)."\">
-    <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
-     ALIGN=CENTER>
+	<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"yes\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".prepare($go)."\"/>
+	<table WIDTH=\"100%\" CELLPSPACING=\"2\" CELLPADDING=\"2\" BORDER=\"0\"
+	 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
     <TR>
      <TD COLSPAN=4 ALIGN=CENTER BGCOLOR=\"#777777\">
       <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
@@ -213,10 +234,9 @@ class EpisodeOfCare extends EMRModule {
     <TR>
      <TD ALIGN=RIGHT>"._("Description")."</TD>
      <TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"eocdescrip\" SIZE=25 MAXLENGTH=100
-       VALUE=\"".prepare($eocdescrip)."\">
+     ".html_form::text_widget('eocdescrip', 25, 100)."
      </TD>
-  ";
+";
   if ($this->this_patient->isFemale()) { $display_buffer .= "
      <TD ALIGN=RIGHT>"._("Related to Pregnancy")."</TD>
      <TD ALIGN=LEFT>
@@ -303,9 +323,11 @@ class EpisodeOfCare extends EMRModule {
      <TD ALIGN=LEFT>
     ";
     // compact and display eocdiagfamily
-    $display_buffer .= freemed_multiple_choice ("SELECT * FROM diagfamily
-           ORDER BY dfname, dfdescrip", "dfname:dfdescrip", "eocdiagfamily",
-           fm_join_from_array($eocdiagfamily), false)."
+    $display_buffer .= freemed::multiple_choice (
+      "SELECT * FROM diagfamily ORDER BY dfname, dfdescrip",
+      "##dfname## (##dfdescrip##)",
+      "eocdiagfamily",
+      fm_join_from_array($eocdiagfamily), false)."
      </TD>
      <TD ALIGN=RIGHT>"._("Episode Type")."</TD>
      <TD ALIGN=LEFT>
@@ -630,15 +652,12 @@ class EpisodeOfCare extends EMRModule {
     "; } // end of other conditional reason
 
    $display_buffer .= "
-     <P>
-     <CENTER>
-     <SELECT NAME=\"action\">
-      <OPTION VALUE=\"$action\">"._("Update")."
-      <OPTION VALUE=\"$go\">"._("$this_action")."
-      <OPTION VALUE=\"view\">"._("back")."
-     </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
-     </CENTER>
+     <p/>
+     <div ALIGN=\"CENTER\">
+     <input name=\"submit\" type=\"submit\" class=\"button\" value=\"".$this_action."\"/>
+     <input name=\"submit\" type=\"submit\" class=\"button\" value=\""._("Refresh")."\"/>
+     <input name=\"submit\" type=\"submit\" class=\"button\" value=\""._("Cancel")."\"/>
+     </div>
     ";
 	} // end function EpisodeOfCare->form
 

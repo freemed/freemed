@@ -58,6 +58,44 @@ class ProcedureModule extends EMRModule {
 			_("Comment") => "proccomment"
 		);
 
+		// Table definition
+		$this->table_definition = array (
+			'procpatient' => SQL_INT_UNSIGNED(0),
+			'proceoc' => SQL_TEXT,
+			'proccpt' => SQL_INT_UNSIGNED(0),
+			'proccptmod' => SQL_INT_UNSIGNED(0),
+			'procdiag1' => SQL_INT_UNSIGNED(0),
+			'procdiag2' => SQL_INT_UNSIGNED(0),
+			'procdiag3' => SQL_INT_UNSIGNED(0),
+			'procdiag4' => SQL_INT_UNSIGNED(0),
+			'proccharges' => SQL_REAL,
+			'procunits' => SQL_REAL,
+			'procvoucher' => SQL_VARCHAR(25),
+			'procphysician' => SQL_VARCHAR(150),
+			'procdt' => SQL_DATE,
+			'procpos' => SQL_VARCHAR(150),
+			'proccomment' => SQL_TEXT,
+			'procbalorig' => SQL_REAL,
+			'procbalcurrent' => SQL_REAL,
+			'procamtpaid' => SQL_REAL,
+			'procbilled' => SQL_INT_UNSIGNED(0),
+			'procbillable' => SQL_INT_UNSIGNED(0),
+			'procauth' => SQL_INT_UNSIGNED(0),
+			'procrefdoc' => SQL_VARCHAR(150),
+			'procrefdt' => SQL_DATE,
+			'procamtallowed' => SQL_REAL,
+			'procdtbilled' => SQL_TEXT,
+			'proccurcovid' => SQL_INT_UNSIGNED(0),
+			'proccurcovtp' => SQL_INT_UNSIGNED(0),
+			'proccov1' => SQL_INT_UNSIGNED(0),
+			'proccov2' => SQL_INT_UNSIGNED(0),
+			'proccov3' => SQL_INT_UNSIGNED(0),
+			'proccov4' => SQL_INT_UNSIGNED(0),
+			'proccert' => SQL_INT_UNSIGNED(0),
+			'procclmtp' => SQL_INT_UNSIGNED(0),
+			'id' => SQL_SERIAL
+		);
+
 		// Call parent constructor
 		$this->EMRModule();
 	} // end constructor ProcedureModule
@@ -104,10 +142,11 @@ class ProcedureModule extends EMRModule {
 		// Check for eoc
 		if (check_module("episodeOfCare")) {
 			$related_episode_array = array ( _("Episode of Care") =>
-				freemed_multiple_choice ("SELECT * FROM eoc
-				 WHERE eocpatient='$patient'
-				 ORDER BY eocdtlastsimilar DESC",
-				 "eocstartdate:eocdtlastsimilar:eocdescrip",
+				freemed::multiple_choice ("SELECT * FROM eoc ".
+				 "WHERE eocpatient='".addslashes($patient)."' ".
+				 "ORDER BY eocdtlastsimilar DESC",
+				 "##eocstartdate## to ##eocdtlastsimilar## ".
+				 	"(##eocdescrip##)",
 				 "proceoc",
 				 $proceoc,
 				 false)
@@ -164,8 +203,7 @@ class ProcedureModule extends EMRModule {
 			  "procpos"
 			),
 		  _("Voucher Number") =>
-			"<INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"".prepare($procvoucher)."\" ".
-			"SIZE=20>\n",
+		  	html_form::text_widget('procvoucher', 20),
 		  _("Authorization") =>
 			"<SELECT NAME=\"procauth\">\n".
 			"<OPTION VALUE=\"0\" ".
@@ -184,8 +222,7 @@ class ProcedureModule extends EMRModule {
 		  _("Date of Last Visit") =>
 			fm_date_entry ("procrefdt"),
 		  _("Comment") =>
-			"<INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"".prepare($proccomment)."\" ".
-			"SIZE=30 MAXLENGTH=512>\n"
+		  	html_form::text_widget('proccomment', 30, 255)
 		) ),
 			// verify
 			array(
@@ -461,13 +498,14 @@ class ProcedureModule extends EMRModule {
 				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
 			html_form::form_table ( array (
 		  _("Episode of Care") =>
-			freemed_multiple_choice ("SELECT * FROM eoc
-								  WHERE eocpatient='$patient'
-								  ORDER BY eocdtlastsimilar DESC",
-								 "eocstartdate:eocdtlastsimilar:eocdescrip",
-								 "proceoc",
-								 $proceoc,
-								 false),
+			freemed::multiple_choice ("SELECT * FROM eoc ".
+				  "WHERE eocpatient='".addslashes($patient)."' ".
+				  "ORDER BY eocdtlastsimilar DESC",
+				 "##eocstartdate## to ##eocdtlastsimilar## ".
+				 	"(##eocdescrip##)",
+				 "proceoc",
+				 $proceoc,
+				 false),
 		  _("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  _("Authorization") =>
@@ -619,13 +657,14 @@ class ProcedureModule extends EMRModule {
 		  _("Provider") => prepare($phyname),
 		  _("Date of Procedure") => prepare($procdt),
 		  _("Episode of Care") =>
-			freemed_multiple_choice ("SELECT * FROM eoc
-								  WHERE eocpatient='$patient'
-								  ORDER BY eocdtlastsimilar DESC",
-								 "eocstartdate:eocdtlastsimilar:eocdescrip",
-								 "proceoc",
-								 $proceoc,
-								 false),
+			freemed::multiple_choice ("SELECT * FROM eoc ".
+				 "WHERE eocpatient='".addslashes($patient)."' ".
+				 "ORDER BY eocdtlastsimilar DESC",
+				 "##eocstartdate## to ##eocdtlastsimilar## ".
+				 	"(##eocdescrip##)",
+				 "proceoc",
+				 $proceoc,
+				 false),
 		  _("Units") => prepare($procunits), 
 		  _("Diagnosis Code")." 1" => prepare($diag1),
 		  _("Diagnosis Code")." 2" => prepare($diag2),

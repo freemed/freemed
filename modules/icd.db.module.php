@@ -34,6 +34,20 @@ class IcdMaintenance extends MaintenanceModule {
 	);
 
 	function IcdMaintenance () {
+		$this->table_definition = array (
+			'icd9code' => SQL_VARCHAR(6),
+			'icd10code' => SQL_VARCHAR(7),
+			'icd9descrip' => SQL_VARCHAR(45),
+			'icd10descrip' => SQL_VARCHAR(45),
+			'icdmetadesc' => SQL_VARCHAR(30),
+			'icdng' => SQL_DATE,
+			'icddrg' => SQL_DATE,
+			'icdnum' => SQL_INT_UNSIGNED(0),
+			'icdamt' => SQL_REAL,
+			'icdcoll' => SQL_REAL,
+			'id' => SQL_SERIAL
+		);
+	
 		$this->MaintenanceModule();
 	} // end constructor IcdMaintenance
 
@@ -42,32 +56,33 @@ class IcdMaintenance extends MaintenanceModule {
 		foreach ($GLOBALS as $k => $v) { global ${$k}; }
 
 		switch ($action) { // internal action switch
-		case "addform":
+			case "addform":
 			break;
-		case "modform":
-			if (!$been_here) {
-			$r = freemed::get_link_rec ($id,$this->table_name);
-			foreach ($r AS $k => $v) {
-				global ${$k};
-				${$k} = stripslashes($v);
-			}
-			$icddrg = sql_expand($icddrg);
-			$icdamt        = bcadd($icdamt, 0,2);
-			$icdcoll       = bcadd($icdcoll,0,2);
-			$been_here=1;
-			}
-    break;
-  } // end internal action switch
 
-	$display_buffer .= "
-    <P>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-      ( ($action=="addform") ? "add" : "mod" )."\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
-    <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
-    <INPUT TYPE=HIDDEN NAME=\"module\"    VALUE=\"".prepare($module)."\">
-	";
+			case "modform":
+			if (!$been_here) {
+				$r = freemed::get_link_rec ($id,$this->table_name);
+				foreach ($r AS $k => $v) {
+					global ${$k};
+					${$k} = stripslashes($v);
+				}
+				$icddrg = sql_expand($icddrg);
+				$icdamt = bcadd($icdamt, 0,2);
+				$icdcoll = bcadd($icdcoll,0,2);
+				$been_here=1;
+			}
+			break;
+		} // end internal action switch
+
+		$display_buffer .= "
+		<p/>
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+		( ($action=="addform") ? "add" : "mod" )."\"/> 
+		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		";
 
 	$display_buffer .= html_form::form_table(array(
 		_("Code")." ("._("ICD9").")" =>
@@ -86,23 +101,23 @@ class IcdMaintenance extends MaintenanceModule {
 		html_form::text_widget("icd10descrip", 20, 45),
 
 		_("Diagnosis Related Groups") =>
-		freemed_multiple_choice (
+		freemed::multiple_choice (
 			"SELECT * FROM diagfamily ORDER BY dfname, dfdescrip",
-			"dfname:dfdescrip",
+			"##dfname## (##dfdescrip##)",
 			"icddrg",
 			fm_join_from_array($icddrg)
 		)
 	));
 
-	$display_buffer .= "
-	<P>
-	<CENTER>
-
-	<INPUT TYPE=SUBMIT VALUE=\" ".
-      ( ($action=="addform") ? _("Add") : _("Modify") )." \">
-	<INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\">
-	</CENTER></FORM>
+		$display_buffer .= "
+		<p/>
+		<div ALIGN=\"CENTER\">
+		<input class=\"button\" type=\"SUBMIT\" value=\" ".
+			( ($action=="addform") ? _("Add") : _("Modify") )." \"/>
+		<input class=\"button\" type=\"RESET\" value=\" "._("Clear")." \"/>
+		<input class=\"button\" type=\"SUBMIT\" name=\"submit\" ".
+			"value=\""._("Cancel")."\"/>
+		</div></form>
 		";
 	} // end function IcdMaintenance->form
 

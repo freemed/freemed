@@ -32,6 +32,20 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 	function ProviderGroupsMaintenance () {
 		global $phygroupdtmod;
 		$phygroupdtmod = date("Y-m-d");
+
+		// Table definition
+		$this->table_definition = array (
+			'phygroupname' => SQL_VARCHAR(100),
+			'phygroupfac' => SQL_INT_UNSIGNED(0),
+			'phygroupdtadd' => SQL_DATE,
+			'phygroupdtmod' => SQL_DATE,
+			'phygroupidmap' => SQL_TEXT,
+			'phygroupdocs' => SQL_TEXT,
+			'phygroupspe1' => SQL_INT_UNSIGNED,
+			'id' => SQL_SERIAL
+		);
+
+		// Run constructor
 		$this->MaintenanceModule();
 	} // end constructor ProviderGroupsMaintenance
 
@@ -112,9 +126,9 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
        					"#specname#, #specdesc#",
 					 "phygroupspe1"),
 
-			_("Physicians") => freemed_multiple_choice(
+			_("Physicians") => freemed::multiple_choice(
 					"SELECT phylname,phyfname,id FROM physician WHERE phylname != '' ORDER BY phylname",
-					"phylname:phyfname",
+					"##phylname##, ##phyfname## ##phymname##",
 					"phygroupdocs",
 					$phygroupdocs,
 					false)

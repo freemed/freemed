@@ -45,11 +45,7 @@ class PatientImages extends EMRModule {
 			"imagedesc"	=>	SQL_VARCHAR(150),
 			"imageeoc"	=>	SQL_TEXT,
 			"imagefile"	=>	SQL_VARCHAR(100),
-			"id"		=>	SQL_NOT_NULL(
-							SQL_AUTO_INCREMENT(
-							SQL_INT_UNSIGNED(0)
-							)
-						)
+			"id"		=>	SQL_SERIAL
 		);
 
 		// call parent constructor
@@ -217,10 +213,10 @@ class PatientImages extends EMRModule {
 			$imageeoc = sql_squash($imageeoc); // for multiple choice (HACK)
 			$related_episode_array = array (
 			_("Related Episode(s)") =>
-			freemed_multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
+			freemed::multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
                                   "eocdtlastsimilar FROM eoc WHERE ".
                                   "eocpatient='".addslashes($patient)."'",
-                                  "eocdescrip:eocstartdate:eocdtlastsimilar",
+                                  "##eocdescrip## (##eocstartdate## to ##eocdtlastsimilar##)",
                                   "imageeoc",
                                   $imageeoc,
                                   false),
@@ -285,9 +281,9 @@ class PatientImages extends EMRModule {
 			<div ALIGN=\"CENTER\">
 			<input TYPE=\"SUBMIT\" VALUE=\"".
 			( ($action=="add" || $action=="addform") ?
-			_("Attach Image") : _("Modify") )."\"/>
+			_("Attach Image") : _("Modify") )."\" class=\"button\"/>
 			<input TYPE=\"SUBMIT\" NAME=\"submit\" ".
-			 "VALUE=\""._("Cancel")."\"/>
+			 "VALUE=\""._("Cancel")."\" class=\"button\"/>
 			</div>
 
 		</form></div>

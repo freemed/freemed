@@ -42,7 +42,7 @@ class ProgressNotes extends EMRModule {
 			'pnotes_R' => SQL_TEXT,
 			'iso' => SQL_VARCHAR(15),
 			'locked' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			'id' => SQL_SERIAL
 		);
 	
 		// Define variables for EMR summary
@@ -154,10 +154,10 @@ class ProgressNotes extends EMRModule {
 	$pnoteseoc = sql_squash($pnoteseoc); // for multiple choice (HACK)
        $related_episode_array = array (
          _("Related Episode(s)") =>
-           freemed_multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
+           freemed::multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
                                   "eocdtlastsimilar FROM eoc WHERE ".
                                   "eocpatient='".addslashes($patient)."'",
-                                  "eocdescrip:eocstartdate:eocdtlastsimilar",
+                                  "##eocdescrip## (##eocstartdate## to ##eocdtlastsimilar##)",
                                   "pnoteseoc",
                                   $pnoteseoc,
                                   false),
@@ -176,7 +176,9 @@ class ProgressNotes extends EMRModule {
         array (
 	 _("Provider") =>
 	   freemed_display_selectbox (
-            $sql->query ("SELECT * FROM physician ORDER BY phylname,phyfname"),
+            $sql->query ("SELECT * FROM physician ".
+	    	"WHERE phyref != 'yes' AND phylname != '' ".
+		"ORDER BY phylname,phyfname"),
 	    "#phylname#, #phyfname#",
 	    "pnotesdoc"
 	   ),

@@ -38,6 +38,35 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 		"inscomod"
 	);
 
+	function InsuranceCompanyMaintenance() {
+		// Table definition
+		$this->table_definition = array (
+			'inscodtadd' => SQL_DATE,
+			'inscodtmod' => SQL_DATE,
+			'insconame' => SQL_NOT_NULL(SQL_VARCHAR(50)),
+			'inscoalias' => SQL_VARCHAR(30),
+			'inscoaddr1' => SQL_VARCHAR(45),
+			'inscoaddr2' => SQL_VARCHAR(45),
+			'inscocity' => SQL_VARCHAR(30),
+			'inscostate' => SQL_CHAR(3),
+			'inscozip' => SQL_VARCHAR(10),
+			'inscophone' => SQL_VARCHAR(16),
+			'inscofax' => SQL_VARCHAR(16),
+			'inscocontact' => SQL_VARCHAR(100),
+			'inscoid' => SQL_CHAR(10),
+			'inscowebsite' => SQL_VARCHAR(100),
+			'inscoemail' => SQL_VARCHAR(50),
+			'inscogroup' => SQL_INT_UNSIGNED(0),
+			'inscotype' => SQL_INT_UNSIGNED(0),
+			'inscoassign' => SQL_INT_UNSIGNED(0),
+			'inscomod' => SQL_TEXT,
+			'id' => SQL_SERIAL
+		);
+	
+		// Run parent constructor
+		$this->MaintenanceModule();
+	} // end constructor InsuranceCompanyMaintenance
+
 	function form () {
 		global $display_buffer;
 		reset($GLOBALS);
@@ -174,7 +203,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 
     <TR>
     <TD ALIGN=RIGHT>"._("Insurance Modifiers")." : </TD>
-    <TD ALIGN=LEFT>".freemed_multiple_choice ("SELECT * FROM insmod
+    <TD ALIGN=LEFT>".freemed::multiple_choice ("SELECT * FROM insmod
       ORDER BY insmoddesc", "insmoddesc", "inscomod",
       $inscomod, false)."</TD>
     </TR>

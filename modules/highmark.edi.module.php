@@ -93,7 +93,7 @@ class HighmarkEDIModule extends EDIModule {
 
 		$wizard->add_page("Select Insurance Companies",
 						array("instobill"),
-						freemed_multiple_choice($query,"insconame","instobill","")
+						freemed::multiple_choice($query,"insconame","instobill","")
 						);
 		$wizard->add_page("Select Billing Provider",
 							array("providertyp"),
@@ -123,7 +123,7 @@ class HighmarkEDIModule extends EDIModule {
 							
 			$wizard->add_page("Select Physicians",
 								array("providerid"),
-						freemed_multiple_choice($query,"phylname:phyfname","providerid","")
+						freemed::multiple_choice($query,"##phylname##, ##phyfname## ##phymname##","providerid","")
 						);
 		}
 		if ($providertyp==1) // Physician group
@@ -136,7 +136,7 @@ class HighmarkEDIModule extends EDIModule {
 							
 			$wizard->add_page("Select Physicians Group",
 								array("providerid"),
-						freemed_multiple_choice($query,"phygroupname","providerid","")
+						freemed::multiple_choice($query,"phygroupname","providerid","")
 						);
 		}
 		
