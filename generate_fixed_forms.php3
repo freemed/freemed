@@ -71,14 +71,19 @@
      $current_patient = $b_r[payrecpatient];
 
      $current_status = fdb_num_rows( fdb_query (
-       "SELECT procbilled FROM $database.procedure
+       "SELECT * FROM $database.procedure
         WHERE (
           (procpatient    = '$current_patient') AND
           (procbilled     = '0') AND
           (procbalcurrent > '0')
         )"
        ) );
-     if ($current_status < 1) next; // skip
+     if ($current_status < 1) {
+       echo "
+        <B>Skipping record # $current_patient</B><BR>
+       ";
+       next; // skip
+     }
 
      // get current patient information
      $this_patient = new Patient ($current_patient);
