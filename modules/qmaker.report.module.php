@@ -52,7 +52,7 @@ class qmakerReport extends freemedReportsModule {
 				<P>
 				<CENTER>
 				<A HREF=\"$this->page_name?patient=$patient&module=$module\">
-				<$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+				"._("Back")."</A>
 				</CENTER>
 				<P>
 				";	
@@ -199,10 +199,10 @@ class qmakerReport extends freemedReportsModule {
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"view\">";
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">";
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">";
-			$display_buffer .= "<input type=hidden name=fldy  value=$fldy>\n";	
-			$display_buffer .= "<input type=hidden name=cnty  value=$cnty>\n";	
-				$display_buffer .= "<INPUT TYPE=reset value=\"Clear All\">\n";
-			$display_buffer .= "<input type=submit name=btnSubmit  value=SelectOptions>\n";
+			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"fldy\"  VALUE=\"".prepare($fldy)."\">\n";	
+			$display_buffer .= "<INPUT TYPE=hidden NAME=\"cnty\"  VALUE=\"".prepare($cnty)."\">\n";	
+			$display_buffer .= "<INPUT TYPE=RESET VALUE=\"Clear All\">\n";
+			$display_buffer .= "<INPUT TYPE=SUBMIT NAME=\"btnSubmit\"  value=\"SelectOptions\">\n";
 			$display_buffer .= "</FORM>\n";
 				//mysql_close($ConID);
 
@@ -217,7 +217,7 @@ class qmakerReport extends freemedReportsModule {
 				$xy = $this->matchset($fields);
 				$cnt = count($xy);
 
-				$display_buffer .= "The current Select statement is:";	
+				$display_buffer .= _("The current Select statement is:");	
 			$fldx  = "";
 				$j = 0;
 				for($j = 0; $j<$cnt; $j++)
@@ -268,10 +268,10 @@ class qmakerReport extends freemedReportsModule {
 		$display_buffer .= "<h3>WHERE CLAUSE</h3>
 		<table cellspacing=0 cellpadding=1 border=1>
 		<tr>
-		<td><b>Field</b></td>
-		<td><b>Operator</b></td>
-		<td><b>Value</b></td>
-		<td><b>Condition</b></td>
+		<td><b>"._("Field")."</b></td>
+		<td><b>"._("Operator")."</b></td>
+		<td><b>"._("Value")."</b></td>
+		<td><b>"._("Condition")."</b></td>
 		</tr>";
 		for ($i=0; $i<5; $i++)
 		{
@@ -288,13 +288,13 @@ class qmakerReport extends freemedReportsModule {
 
 			$display_buffer .= "</select></td>\n";
 		$display_buffer .= "<td>
-		<SELECT name=\"fields_op[$i]\">
+		<SELECT NAME=\"fields_op[$i]\">
 		<OPTION VALUE=\"=\">=</OPTION>
-		<OPTION VALUE=\"<>\"><></OPTION>
-		<OPTION VALUE=\">\">></OPTION>
-		<OPTION VALUE=\">=\">>=</OPTION>
-		<OPTION VALUE=\"<\"><</OPTION>
-		<OPTION VALUE=\"<=\"><=</OPTION>
+		<OPTION VALUE=\"&lt;&gt;\">&lt;&gt;</OPTION>
+		<OPTION VALUE=\"&gt;\">></OPTION>
+		<OPTION VALUE=\"&gt;=\">&gt;=</OPTION>
+		<OPTION VALUE=\"&lt;\">&lt;</OPTION>
+		<OPTION VALUE=\"&lt;=\">&lt;=</OPTION>
 		<OPTION VALUE=\"LIKE\">LIKE</OPTION>
 		</SELECT>
 		</td>
@@ -312,14 +312,14 @@ class qmakerReport extends freemedReportsModule {
 		$display_buffer .= "<h3>GROUP BY CLAUSE</h3>";
 		$display_buffer .= "<table cellspacing=0 cellpadding=1 border=1>
 		<tr>
-		<td><b>Field</b></td>
+		<td><b>"._("Field")."</b></td>
 		</tr>";
 		$display_buffer .= "<td>";
-		$display_buffer .= "<SELECT name=\"gfields\">";
+		$display_buffer .= "<SELECT NAME=\"gfields\">";
 				$xy = $this->matchset($fields);
 				$cnt = count($xy);
 
-			$display_buffer .= "<option value=\"None\">None</option>\n";
+			$display_buffer .= "<option value=\"None\">"._("NONE")."</option>\n";
 				$j = 0;
 				for($j = 0; $j<$cnt; $j++)
 			   {
@@ -385,7 +385,7 @@ class qmakerReport extends freemedReportsModule {
 		$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"view\">";
 		$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">";
 		$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">";
-		$display_buffer .= "<input type=submit name=btnSubmit value=AssembleQuery>\n";
+		$display_buffer .= "<input type=submit name=\"btnSubmit\" value=\"AssembleQuery\">\n";
 		$display_buffer .= "</FORM>\n";
 			 //mysql_close($ConID);
 		return;
@@ -482,10 +482,10 @@ class qmakerReport extends freemedReportsModule {
 		   {
 			 $hdr = $sql->field_name($qid,$i);
 			 if (!$hdr) {
-			 print ("No Information available<br>\n");
+			 	$display_buffer .= _("No Information available")."<br>\n";
 			 continue;
 			 }
-			  printf( "<th>%s</th>\n",htmlspecialchars ($hdr) );
+			  $display_buffer .= sprintf( "<th>%s</th>\n",htmlspecialchars ($hdr) );
 			
 		   }
 			$display_buffer .= "</<tr>\n";
@@ -496,7 +496,7 @@ class qmakerReport extends freemedReportsModule {
 			$display_buffer .= "<tr bgcolor=\"".$color."\">\n";
 			for ($i=0; $i< $sql->num_fields($qid); $i++)
 			 {
-			  printf( "<td>%s</td>\n",htmlspecialchars ($row[$i]) );
+			  $display_buffer .= sprintf( "<td>%s</td>\n",htmlspecialchars ($row[$i]) );
 			 }
 			$display_buffer .= "</<tr>\n";
 		   }
@@ -538,7 +538,7 @@ class qmakerReport extends freemedReportsModule {
 
 	function getqueryform($query,$name,$queryid=0) {
 		global $display_buffer;
-		global $patient,$module,$STDFONT_B,$STDFONT_E;
+		global $patient,$module;
 
 		if (empty($name))
 			$saveas = "Unnamed";
@@ -567,7 +567,7 @@ class qmakerReport extends freemedReportsModule {
 		$buffer .= "<P>
 				<CENTER>
 				<A HREF=\"$this->page_name?patient=$patient&module=$module\">
-				<$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+				"._("Back")."</A>
 				</CENTER>
 				<P>
 				";	

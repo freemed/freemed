@@ -31,11 +31,11 @@ $display_buffer .= "
    $display_buffer .= "
      <TR>
      <TD ALIGN=RIGHT>
-     <A HREF=\"admin.php?$_auth\"
+     <A HREF=\"admin.php\"
       ><IMG SRC=\"img/KeysOnChain.gif\" BORDER=0
         ALT=\"\"></TD>
      <TD ALIGN=LEFT>
-     <A HREF=\"admin.php?$_auth\"
+     <A HREF=\"admin.php\"
       >"._("Administration Menu")."</A>
      </A>
      </TD></TR>
@@ -45,11 +45,11 @@ $display_buffer .= "
    $display_buffer .= "
     <TR>
     <TD ALIGN=RIGHT>
-     <A HREF=\"billing_functions.php?$_auth\"
+     <A HREF=\"billing_functions.php\"
      ><IMG SRC=\"img/CashRegister.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"billing_functions.php?$_auth\"
+    <A HREF=\"billing_functions.php\"
      >"._("Billing Functions")."</A>
     </TD></TR>
    ";
@@ -57,14 +57,14 @@ $display_buffer .= "
  $display_buffer .= "
    <TR>
    <TD ALIGN=RIGHT>
-    <A HREF=\"call-in.php?$_auth\"
+    <A HREF=\"call-in.php\"
     ><IMG SRC=\"img/Text.gif\" BORDER=0 ALT=\"\"></A>
    </TD>
    <TD ALIGN=LEFT>
    <B>"._("Call In")." : &nbsp;</B>
-   <A HREF=\"call-in.php?$_auth&action=addform\"
+   <A HREF=\"call-in.php?action=addform\"
     >"._("Entry")."</A> |
-   <A HREF=\"call-in.php?$_auth\"
+   <A HREF=\"call-in.php\"
     >"._("Menu")."</A>
    </TD></TR>
  ";
@@ -73,11 +73,11 @@ $display_buffer .= "
    $display_buffer .= "
     <TR>
     <TD ALIGN=RIGHT>
-     <A HREF=\"db_maintenance.php?$_auth\"
+     <A HREF=\"db_maintenance.php\"
      ><IMG SRC=\"img/Database.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"db_maintenance.php?$_auth\"
+    <A HREF=\"db_maintenance.php\"
      >"._("Database Maintenance")."</A>
     </TD></TR>
    ";
@@ -86,15 +86,15 @@ $display_buffer .= "
    $display_buffer .= "
     <TR>
     <TD ALIGN=RIGHT>
-     <A HREF=\"physician_day_view.php?$_auth&physician=".
+     <A HREF=\"physician_day_view.php?physician=".
       $this_user->getPhysician()."\"
      ><IMG SRC=\"img/karm.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"physician_day_view.php?$_auth&physician=".
+    <A HREF=\"physician_day_view.php?physician=".
       $this_user->getPhysician()."\"
      >"._("Day View")."</A><BR>
-    <A HREF=\"physician_week_view.php?$_auth&physician=".
+    <A HREF=\"physician_week_view.php?physician=".
       $this_user->getPhysician()."\"
      >"._("Week View")."</A>
     </TD></TR>
@@ -104,11 +104,11 @@ $display_buffer .= "
    $display_buffer .= "
     <TR> 
     <TD ALIGN=RIGHT>
-     <A HREF=\"patient.php?$_auth\"
+     <A HREF=\"patient.php\"
      ><IMG SRC=\"img/HandOpen.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"patient.php?$_auth\"
+    <A HREF=\"patient.php\"
      >"._("Patient Functions")."</A>
     </TD></TR>
    ";
@@ -117,11 +117,11 @@ $display_buffer .= "
    $display_buffer .= "
     <TR> 
     <TD ALIGN=RIGHT>
-     <A HREF=\"reports.php?$_auth\"
+     <A HREF=\"reports.php\"
      ><IMG SRC=\"img/reports.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"reports.php?$_auth\"
+    <A HREF=\"reports.php\"
      >"._("Reports")."</A>
     </TD></TR>
    ";
@@ -130,11 +130,11 @@ $display_buffer .= "
    $display_buffer .= "
     <TR> 
     <TD ALIGN=RIGHT>
-     <A HREF=\"calendar.php?$_auth\"
+     <A HREF=\"calendar.php\"
      ><IMG SRC=\"img/clock.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"calendar.php?$_auth\"
+    <A HREF=\"calendar.php\"
      >"._("Calendar")."</A>
     </TD></TR>
    ";
@@ -143,12 +143,12 @@ $display_buffer .= "
 $display_buffer .= "
   <TR>
   <TD ALIGN=RIGHT>
-   <A HREF=\"help.php?$_auth&page_name=$page_name\"
+   <A HREF=\"help.php?page_name=$page_name\"
     TARGET=\"__HELP__\"
    ><IMG SRC=\"img/readme.gif\" BORDER=0 ALT=\"\"></A>
   </TD>
   <TD ALIGN=LEFT>
-  <A HREF=\"help.php?$_auth&page_name=$page_name\"
+  <A HREF=\"help.php?page_name=$page_name\"
    TARGET=\"__HELP__\">"._("Main Menu Help")."</A>
   </TD></TR>
   <TR>
@@ -164,7 +164,7 @@ $display_buffer .= "
 //----- Redirection "Quickjump" box 
 /*
 $display_buffer .= "
-<FORM ACTION=\"redirect.php?$_auth\">
+<FORM ACTION=\"redirect.php\">
   <CENTER>
   <B><FONT SIZE=-1>"._("Quickjump")."</FONT></B><BR>
   <INPUT TYPE=TEXT NAME=\"location\" VALUE=\"/\" SIZE=5>

@@ -76,33 +76,32 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
    
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Company Name (full)")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Company Name (full)")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"insconame\" SIZE=20 MAXLENGTH=50
      VALUE=\"".prepare($insconame)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Company Name (on forms)")." : 
-      <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Company Name (on forms)")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoalias\" SIZE=20 MAXLENGTH=30
      VALUE=\"".prepare($inscoalias)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Address Line 1")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Address Line 1")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoaddr1\" SIZE=30 MAXLENGTH=30
      VALUE=\"".prepare($inscoaddr1)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Address Line 2")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Address Line 2")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoaddr2\" SIZE=30 MAXLENGTH=30
      VALUE=\"".prepare($inscoaddr2)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("City").", "._("State")."
-      "._("Zip")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("City").", "._("State")."
+      "._("Zip")." : </TD>
     <TD ALIGN=LEFT>  
     <INPUT TYPE=TEXT NAME=\"inscocity\" SIZE=20 MAXLENGTH=20
      VALUE=\"".prepare($inscocity)."\"><B>,</B>
@@ -114,24 +113,24 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Phone")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Contact Phone")." : </TD>
     <TD ALIGN=LEFT>".fm_phone_entry ("inscophone")."</TD>
     </TR>
   
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Fax Number")."<$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Fax Number")." : </TD>
     <TD ALIGN=LEFT>".fm_phone_entry ("inscofax")."</TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Email Address")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Email Address")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoemail\" SIZE=20 MAXLENGTH=50
      VALUE=\"".prepare($inscoemail)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Web Site")."
-      (<I>http://insco.com</I>)<$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Web Site")."
+      (<I>http://insco.com</I>) : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscowebsite\" SIZE=15 MAXLENGTH=100
      VALUE=\"".prepare($inscowebsite)."\"></TD>
     </TR>
@@ -146,32 +145,32 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
    
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("NEIC ID")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("NEIC ID")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoid\" SIZE=11 MAXLENGTH=10
      VALUE=\"".prepare($inscoid)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Insurance Group")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Insurance Group")." : </TD>
     <TD ALIGN=LEFT>".freemed_display_selectbox(
       $sql->query("SELECT * FROM inscogroup ORDER BY inscogroup"),
       "#inscogroup#", "inscogroup")."</TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Insurance Type")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Insurance Type")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscotype\" SIZE=10 MAXLENGTH=30
      VALUE=\"".prepare($inscotype)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>Insurance Assign? : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>Insurance Assign? : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoassign\" SIZE=10 MAXLENGTH=12
      VALUE=\"".prepare($inscoassign)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Insurance Modifiers")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Insurance Modifiers")." : </TD>
     <TD ALIGN=LEFT>".freemed_multiple_choice ("SELECT * FROM insmod
       ORDER BY insmoddesc", "insmoddesc", "inscomod",
       $inscomod, false)."</TD>

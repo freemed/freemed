@@ -86,13 +86,13 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Name of Template<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Name of Template")."</TD>
       <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"qname\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($qname)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")."<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Description")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"qdescrip\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($qdescrip)."\">
@@ -103,15 +103,15 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
      <TR BGCOLOR=#000000>
-      <TD><$STDFONT_B COLOR=#ffffff>#<$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><CENTER><B>"._("Ins/Del")."</B></CENTER>
-        <$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>"._("Caption")."</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Variable</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>"._("Limits")."</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>"._("Type")."</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Type Formatting</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Text of Question</B><$STDFONT_E></TD>
+      <TD><FONT COLOR=\"#ffffff\">#</FONT></TD>
+      <TD><FONT_B COLOR=#ffffff><CENTER><B>"._("Ins/Del")."</B></CENTER>
+        </FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>"._("Caption")."</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>Variable</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>"._("Limits")."</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>"._("Type")."</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>Type Formatting</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>Text of Question</B></FONT></TD>
      </TR>
     ";
 
@@ -126,8 +126,8 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
       $display_buffer .= "
        <TR BGCOLOR=\"".
         ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
-        <TD ALIGN=RIGHT><$STDFONT_B COLOR=\"$num_color\"
-         >".($cur_line_count+1)."<$STDFONT_E></TD>
+        <TD ALIGN=RIGHT><FONT COLOR=\"$num_color\"
+         >".($cur_line_count+1)."</FONT></TD>
         <TD><CENTER>
             <INPUT TYPE=CHECKBOX NAME=\"ins$brackets\"
              VALUE=\"$cur_line_count\">
@@ -191,8 +191,8 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
        $display_buffer .= "
         <TR BGCOLOR=\"".
        ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
-         <TD ALIGN=RIGHT><$STDFONT_B COLOR=\"#ff0000\"
-          >".($cur_line_count+1)."<$STDFONT_E></TD>
+         <TD ALIGN=RIGHT><FONT COLOR=\"#ff0000\"
+          >".($cur_line_count+1)."</FONT></TD>
          <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"ins$brackets\"
               VALUE=\"".prepare($cur_line_count)."\">
              <INPUT TYPE=CHECKBOX NAME=\"del$brackets\"
@@ -236,9 +236,9 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
      </TABLE>
      <P>
      <CENTER>
-     <$STDFONT_B SIZE=-1>Line Insert :
+     <FONT SIZE=\"-1\">"._("Line Insert")." :
       <INPUT TYPE=TEXT NAME=\"lineinsert\" VALUE=\"0\"
-       SIZE=2 MAXLENGTH=2><$STDFONT_E>
+       SIZE=2 MAXLENGTH=2></FONT>
      </CENTER>
      <BR>
      <CENTER>

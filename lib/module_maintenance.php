@@ -117,7 +117,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// - only override this if you *really* have something weird to do
 	function _del () {
 		global $display_buffer;
-		global $STDFONT_B, $STDFONT_E, $id, $sql, $module;
+		global $id, $sql, $module;
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);

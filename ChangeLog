@@ -3,6 +3,14 @@ freemed project changelog
 
 * Fri Oct 05 2001 rufustfirefly
   - UI/Templates/Sessions merge. Huge.
+  - user.php: removed STDFONT stuff
+  - lib/template/default/main_menu.php: removed legacy _auth
+    links
+  - physician_day_view.php, physician_week_view.php,
+    show_appointments.php, modules/insurance_company.db.module.php,
+    modules/patient_record_template.db.module.php,
+    modules/type_of_service.db.module.php,
+    modules/questionnaire_template.db.module.php: removed STDFONT stuff
 
 * Thu Oct 04 2001 rufustfirefly
   *** part of large UI/sessions merge ***

@@ -8,44 +8,45 @@ include ("lib/freemed.php");
 include ("lib/API.php");
 include ("lib/calendar-functions.php");
 
-freemed_open_db ($LoginCookie);
+//----- Login/authenticate
+freemed_open_db ();
 
- // check if there is a valid date... if not, assign current date
- if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
-     substr($for_date, 0, 4))) $for_date = $cur_date;
+// check if there is a valid date... if not, assign current date
+if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
+	substr($for_date, 0, 4))) $for_date = $cur_date;
 
- // calculate previous and next dates for menubar
- $prev_date = freemed_get_date_prev ($for_date);
- for ($i=1; $i<=6; $i++)
-   $prev_date = freemed_get_date_prev ($prev_date);
- $next_date = freemed_get_date_next ($for_date);
- for ($i=1; $i<=6; $i++)
-   $next_date = freemed_get_date_next ($next_date);
+// calculate previous and next dates for menubar
+$prev_date = freemed_get_date_prev ($for_date);
+for ($i=1; $i<=6; $i++)
+	$prev_date = freemed_get_date_prev ($prev_date);
+$next_date = freemed_get_date_next ($for_date);
+for ($i=1; $i<=6; $i++)
+	$next_date = freemed_get_date_next ($next_date);
 
- // display the top of the box
- freemed_display_box_top ("$Physician_Weekly_View");
+//----- Set page title
+$page_title = _("Physician Weekly View");
 
- // display previous/next bar
- $display_buffer .= "
-  <TABLE WIDTH=100% BGCOLOR=#000000 VALIGN=TOP ALIGN=CENTER BORDER=0
-   CELLSPACING=0 CELLPADDING=2><TR BGCOLOR=#000000>
-   <TD VALIGN=CENTER ALIGN=LEFT>
+//----- Display previous/next bar
+$display_buffer .= "
+  <TABLE WIDTH=\"100%\" BGCOLOR=\"#000000\" VALIGN=\"TOP\"
+   ALIGN=\"CENTER\" BORDER=0 CELLSPACING=0 CELLPADDING=2>
+   <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
    <A HREF=\"$page_name?for_date=$prev_date&physician=$physician\"
-    ><$STDFONT_B COLOR=#ffffff>$back_one_week<$STDFONT_E></A>
+    ><FONT COLOR=\"#ffffff\">$back_one_week</FONT></A>
    </TD><TD VALIGN=CENTER ALIGN=RIGHT>
    <A HREF=\"$page_name?for_date=$next_date&physician=$physician\"
-    ><$STDFONT_B COLOR=#ffffff>$forward_one_week<$STDFONT_E></A>
+    ><FONT COLOR=\"#ffffff\">$forward_one_week</FONT></A>
    </TD></TR></TABLE>
    <BR>
- ";
+";
 
  // check if there is a physician specified, and if so, display their
  // name, etc at the top...
  if ($physician<=0) {
    $display_buffer .= "
-     <CENTER><$STDFONT_B>
-      <B>$No_Physician_Selected</B>
-     <$STDFONT_E></CENTER>
+     <CENTER>
+      <B>"._("No Physician Selected")."</B>
+     </CENTER>
      <BR>
    ";
  } else {
@@ -54,9 +55,9 @@ freemed_open_db ($LoginCookie);
    $phyfname = $phyinfo["phyfname"];
    $phymname = $phyinfo["phymname"];
    $display_buffer .= "
-     <CENTER><$STDFONT_B>
-      $Physician: $phylname, $phyfname $phymname
-     <$STDFONT_E></CENTER>
+     <CENTER>
+      "._("Physician").": $phylname, $phyfname $phymname
+     </CENTER>
      <BR>
    ";
  }

@@ -74,14 +74,14 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 		$display_buffer .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
 			<TR><TD ALIGN=RIGHT>
-			 <$STDFONT_B>"._("Type of Service")." : <$STDFONT_E>
+			 "._("Type of Service")." :
 			</TD><TD ALIGN=LEFT>
 			 <INPUT TYPE=TEXT NAME=\"tosname\" SIZE=20 MAXLENGTH=75
  			  VALUE=\"".prepare($tosname)."\">
 			</TD></TR>
 
 			<TR><TD ALIGN=RIGHT>
-			 <$STDFONT_B>"._("Description")." : <$STDFONT_E>
+			 "._("Description")." :
 			</TD><TD ALIGN=LEFT>
 			 <INPUT TYPE=TEXT NAME=\"tosdescrip\" SIZE=25 MAXLENGTH=200
 			  VALUE=\"".prepare($tosdescrip)."\">
@@ -97,10 +97,10 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 		";
 		if ($action=="modform") $display_buffer .= "
 			<P>
-			<CENTER><$STDFONT_B>
+			<CENTER>
 			<A HREF=\"$this->page_name?module=$module&action=view\"
 			>"._("Abandon Modification")."</A>
-			<$STDFONT_E></CENTER>
+			</CENTER>
 			";
 	} // end function typeOfServiceMaintenance->form
 
