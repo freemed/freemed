@@ -28,16 +28,16 @@ echo "
  VALUE=\"01234567890123456789012345678901234567890
         01234567890123456789012345678901234567890
         01234567890123456789012345678901234567890\">
-<TT>"._("Username")." : </TT>
+"._("Username")." :
 </TD><TD ALIGN=LEFT>
 <INPUT TYPE=TEXT NAME=\"_u\" LENGTH=20 MAXLENGTH=32>
 </TD></TR>
 <TR><TD ALIGN=RIGHT>
-<TT>"._("Password")." : </TT>
+"._("Password")." :
 </TD><TD>
 <INPUT TYPE=PASSWORD NAME=\"_p\" LENGTH=20 MAXLENGTH=32></TD></TR> 
 <TR><TD ALIGN=RIGHT>
-<TT>"._("Language")." : </TT>
+"._("Language")." :
 </TD><TD ALIGN=LEFT>
 <SELECT NAME=\"_l\">
  <OPTION VALUE=\"$language\">"._("Default Language")."
@@ -62,7 +62,7 @@ echo "
 if ($sql->query ("SELECT * FROM config")) {
 echo "
 <TR><TD ALIGN=RIGHT>
-<TT>"._("Facility")." : </TT>
+"._("Facility")." :
 </TD><TD ALIGN=LEFT>
 <SELECT NAME=\"_f\">
 ".freemed_display_facilities ($_f, true, "0")."
