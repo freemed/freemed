@@ -188,9 +188,7 @@ class ProcedureModule extends EMRModule {
 			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Procedural Code") =>
-			freemed_display_selectbox(
-			  $sql->query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
-				"#cptcode# (#cptnameint#)", "proccpt").
+			module_function('cptmaintenance', 'widget', array ('proccpt')).
 			  freemed_display_selectbox(
 				$sql->query("SELECT cptmod,cptmoddescrip,id ".
 				  "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
