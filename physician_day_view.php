@@ -8,7 +8,11 @@ include_once ("lib/freemed.php");
 include_once ("lib/calendar-functions.php");
 
 //----- Login/authenticate
-freemed_open_db ();
+freemed::connect ();
+
+//----- Add to page stack
+$page_title = __("Physician Daily View");
+page_push();
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
@@ -50,10 +54,10 @@ $display_buffer .= "
 // name, etc at the top...
 if ($physician<=0) {
 	$display_buffer .= "
-     <CENTER>
-      <B>".__("No Physician Selected")."</B>
-     </CENTER>
-     <BR>
+     <div ALIGN=\"CENTER\">
+      <b>".__("No Physician Selected")."</b>
+     </div>
+     <br/>
 	";
 } else {
 	$phyinfo  = freemed::get_link_rec ($physician, "physician");
@@ -61,11 +65,11 @@ if ($physician<=0) {
 	$phyfname = $phyinfo["phyfname"];
 	$phymname = $phyinfo["phymname"];
 	$display_buffer .= "
-     <CENTER>
+     <div ALIGN=\"CENTER\">
       <B>".__("Physician")." : </B>
        $phylname, $phyfname $phymname
-     </CENTER>
-     <BR>
+     </div>
+     <br/>
 	";
 }
 
@@ -73,10 +77,12 @@ if ($physician<=0) {
 if (empty($selected_date)) $selected_date = date("Y-m-d");
 
 //----- Call API function to generate miniature calendar
-fc_generate_calendar_mini ($selected_date, "$page_name?physician=$physician");
+$display_buffer .= fc_generate_calendar_mini ($selected_date, "$page_name?physician=$physician");
 
 //----- Actually display the day calendar
-fc_display_day_calendar ($selected_date, "calphysician='$physician'");
+fc_display_day_calendar ($selected_date,
+	"calphysician='".addslashes($physician)."'"
+);
 
 //----- Display and end
 template_display();

@@ -8,7 +8,11 @@ include ("lib/freemed.php");
 include ("lib/calendar-functions.php");
 
 //----- Login/authenticate
-freemed_open_db ();
+freemed::connect ();
+
+//----- Add to stack
+$page_title = __("Physician Weekly View");
+page_push();
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
