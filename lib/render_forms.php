@@ -293,6 +293,7 @@ function render_fixedForm ($id) {
   return $buffer."\n";
 } // end function render_fixedForm
 
+
 } // end checking for __RENDER_FORMS_PHP__
 
 ?>

@@ -669,6 +669,9 @@ msgstr ""
 msgid "Modify"
 msgstr ""
 
+msgid "Save"
+msgstr ""
+
 msgid "Primary Information"
 msgstr ""
 
@@ -1189,6 +1192,9 @@ msgid "This patient has no authorizations."
 msgstr ""
 
 msgid "back"
+msgstr ""
+
+msgid "Mark"
 msgstr ""
 
 msgid "exit"

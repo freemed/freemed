@@ -696,7 +696,6 @@ class GenerateFormsModule extends freemedBillingModule {
             ($number_of_charges > $this_form[ffloopnum]         )  OR
             ($prev_key != $cur_key) )
        {
-			echo "Control break";
          if ($prev_key != $cur_key)
          {
               $prev_key = $cur_key;
@@ -754,7 +753,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
        // doctor link/information
        $this_physician  = new Physician
-                       ($this_patient->local_record["ptdoc"]);
+                       ($r["procphysician"]);
        $phy[name]       = $this_physician->fullName();
        $phy[practice]   = $this_physician->practiceName();
        $phy[addr1]      = $this_physician->local_record["phyaddr1a"];

@@ -1222,7 +1222,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 				$this->Error("Failed to read procauth");
 			$auth_num = $this->CleanNumber($auth_row[authnum]);
 			$auth_num = $this->CleanChar($auth_num);
-			if (!$auth_row)
+			if (!$auth_name)
 			{
 				$this->Error("Authorization number Invalid");
 				$auth_num = "AUTHXXXX";
@@ -1313,9 +1313,10 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 			$this->edi_buffer = $this->edi_buffer."LX*".$LX_setno.$this->record_terminator;
 
-			$cpt_row = freemed_get_link_rec($row[proccpt], "cpt");
-			if (!$cpt_row)
-				$this->Error("Failed to get cpt record");
+
+			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
+			if (!$cur_cpt)
+				$this->Error("Failed reading cpt table");
 
 			$diagset->testAddSet($row[procdiag1],
 							 $row[procdiag2],
@@ -1329,15 +1330,12 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 			$diag_xref = str_replace(",",":",$diag_xref);
 			$this->edi_buffer = $this->edi_buffer."SV1*HC:".
-							$cpt_row[cptcode].":".$diag_xref."*";
+							$cur_cpt[cptcode].":".$diag_xref."*";
 			$this->edi_buffer .= floor($row[procbalcurrent]);
 			$this->edi_buffer .= "*UN*";
 			$this->edi_buffer .= floor($row[procunits]);
 			$this->edi_buffer .= "**";
 
-			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
-			if (!$cur_cpt)
-				$this->Error("Failed reading cpt table");
 			$cur_insco = $this->InsuranceCo->local_record[id];
 			$tos_stack = fm_split_into_array ($cur_cpt[cpttos]);
        		$tosid = ( ($tos_stack[$cur_insco] < 1) ?

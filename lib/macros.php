@@ -25,6 +25,7 @@ define (PRIMARY,              1);
 define (SECONDARY,            2);
 define (TERTIARY,             3);
 define (WORKCOMP,             4);
+define (MAXCOVTYPES,          4);   // max coverages contained in procrec cov1-4 (unless zero)
 
 	// ledger transaction types
 define (PAYMENT,              0);

@@ -56,14 +56,6 @@
      </TD>
     </TR>" )."
 
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B><B>"._("Generate EDI Billing")." : </B><$STDFONT_E>
-     </TD><TD ALIGN=LEFT COLSPAN=2>
-      <A HREF=\"generate_edi.php?$_auth\"
-      ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
-     </TD>
-    </TR>
 
     </TABLE> 
     <P>

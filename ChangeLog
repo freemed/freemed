@@ -1,6 +1,20 @@
 freemed project changelog
 ($Id$)
 
+* Sat Mar 10 2001 fforest
+  - billing_functions - all old links removed. everything is now
+    modules.
+  - patient.php added some ptempl options needed for edi. also
+    automagically create the ptid using the new prefix in freemed.php
+  - freemed.php added define (PATID_PREFIX, "PAT");
+  - macros.php added MAXCOVTYPES 4 
+  - fixed_forms modules. re written to work more like an editor and
+    implemented scrolling. 
+  - highmark_edi some bug fixes.
+  - fixedform supplied data now contains 2 NSF forms.
+  - add 2 NSF modules for billing. 1 for commercial and
+    1 for medicare. Still not fully tested
+
 * Tue Mar 02 2001 fforest
   - admin added new fields to phygroup to support groupids and physicians
   - updated supplied files containing X12 codes.

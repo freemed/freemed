@@ -177,6 +177,11 @@ switch ($action) {
 				array (
 					_("Yes")    => "y",
 					_("No")     => "n",
+					"Part Time" => "p",
+					"Self"      => "s",
+					"Retired"   => "r",
+					"Military"  => "m",
+					"Unknown"   => "u"
 				)
 			),
 		_("Social Security Number") =>
@@ -494,6 +499,17 @@ switch ($action) {
      $result = $sql->query($query);
      if ($result) echo _("Done");
      else echo _("Error");
+	 if ( ($result) AND ($action=="addform") AND (empty($ptid)) )
+	 {
+		echo "<BR>Adding Patient ID<BR>";
+		$pid = $sql->last_record($result);
+		$patid = PATID_PREFIX.$pid;
+		$result = $sql->query("UPDATE patient SET ptid='$patid' WHERE id='$pid'");
+     	if ($result) echo _("Done");
+     	else echo _("Error");
+		echo "<BR>";
+		
+	 }
      echo "
       <$STDFONT_E>
       <P><$STDFONT_B>
