@@ -1,5 +1,6 @@
 #
 # README.Debian
+# ($Id$)
 #
 # Copyright (C) 1999, Ryan Losh.  May be freely distributed under the GNU
 # GPL version 2.0.
@@ -74,7 +75,7 @@ extension=mysql.so
 -----------------------
 Step 4) Configure Freemed
 -----------------------
-	1) Edit the global.var.inc file in the freemed directory...
+	1) Edit the lib/freemed.php file in the freemed directory...
 	   change the following variables to appropriate values...
 
 	   $db_password
@@ -177,7 +178,7 @@ Then change the root password for mysql:
 $ /usr/bin/mysqladmin -u root password 'some-new-password'
 
 
-Change some variables in the /usr/local/var/freemed/global.var.inc file:
+Change some variables in the /usr/local/var/freemed/lib/freemed.php file:
 ------------------------------------------------------------------------
 $host="yourHostName";
 $db_host="(where database server resides)";

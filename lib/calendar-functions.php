@@ -3,7 +3,7 @@
  // note: calendar functions for the freemed project
  // lic : GPL, v2
 
-if (!defined (__CALENDAR_FUNCTIONS_PHP__)) {
+if (!defined ("__CALENDAR_FUNCTIONS_PHP__")) {
 
 define (__CALENDAR_FUNCTIONS_PHP__, true);
 

@@ -3,7 +3,7 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined(__MODULE_MAINTENANCE_PHP__)) {
+if (!defined("__MODULE_MAINTENANCE_PHP__")) {
 
 define (__MODULE_MAINTENANCE_PHP__, true);
 
@@ -25,8 +25,8 @@ class freemedMaintenanceModule extends freemedModule {
 	// contructor method
 	function freemedMaintenanceModule ($nullvar = "") {
 		// call parent constructor
-		$this->freemedMaintenanceModule($nullvar);
-	} // end fnction freemedModule
+		$this->freemedModule($nullvar);
+	} // end function freemedMaintenanceModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -107,7 +107,7 @@ class freemedMaintenanceModule extends freemedModule {
 				break;
 
 			case "modform":
-				$result = fdb_query ("SELECT * FROM ".$this->db_name.
+				$result = fdb_query ("SELECT * FROM ".$this->table_name.
 					" WHERE ( id = '".prepare($id)."' )");
 				$r = fdb_fetch_array ($result);
 				extract ($r);
@@ -120,7 +120,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// - view stub
 	function view () {
 		$result = fdb_query ("SELECT ".$this->order_fields." FROM ".
-			$this->db_name." ORDER BY ".$this->order_fields);
+			$this->table_name." ORDER BY ".$this->order_fields);
 		echo freemed_display_itemlist (
 			$result,
 			"module_loader.php",

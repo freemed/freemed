@@ -7,7 +7,7 @@
   // variables that the program needs to know, to
   // eliminate needless typing...
 
-if (!defined(__FREEMED_PHP__)) {
+if (!defined("__FREEMED_PHP__")) {
 
 define (__FREEMED_PHP__, true);
 
@@ -32,7 +32,7 @@ define (__FREEMED_PHP__, true);
   define (INSTALLATION, "Stock Freemed Install"); // installation name
   define (LOCALEDIR,	"/usr/share/locale");     // gettext location
   define (DB_HOST, "localhost");	// database (SQL) host location
-  define (PHYSICAL_LOCATION, "/var/www/html/freemed");
+  define (PHYSICAL_LOCATION, "/usr/freemed");
   $database="freemed";			// SQL db name (for places
 
   $host="localhost";                    // host name for this system
@@ -133,6 +133,13 @@ define (__FREEMED_PHP__, true);
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
   include ("webtools.php");            // webtools toolkit
+
+  // version check for webtools
+  if ( !defined("WEBTOOLS_VERSION") or ((WEBTOOLS_VERSION + 0) < 0.2) ) {
+    die ("phpwebtools >= 0.2 is required for this version of freemed ".
+         "(http://sourceforge.net/projects/phpwebtools/)");
+  }
+
   include ("lib/iso-set.php");         // ISO set handler
   include ("lib/containers.php");      // class containers
   include ("lib/language-loader.php"); // external language loader

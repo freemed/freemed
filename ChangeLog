@@ -31,6 +31,14 @@ freemed project changelog
   - moved patient.php3 -> patient.php
   - moved manage.php3 -> manage.php
   - moved authorizations.php3 -> authorizations.php
+  - fixed lib/module_maintenance.php to inheirit properly
+  - actionbar function now passes $module
+  - added modules/progress_notes.module.php
+  - manage.php now pulls "Electronic Medical Record" modules
+  - now have page_name = "module_loader.php" in lib/module.php
+  - small addition to .pot file
+  - procedure.php -> modules/procedure.module.php
+  - fixed if(!defined()) to use quotes as per PHP manual
 
 * Thu Dec 21 2000 rufustfirefly
   - more work on typeOfServiceMaintenance, now using module_maintenance.php

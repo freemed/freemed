@@ -6,7 +6,7 @@
  //       jeff b <jeff@univrel.pr.uconn.edu>
  // lic : GPL, v2
 
-if (!defined (__MAIL_FUNCTIONS_PHP__)) {
+if (!defined ("__MAIL_FUNCTIONS_PHP__")) {
 
 define (__MAIL_FUNCTIONS_PHP__, true);
 

@@ -3,7 +3,7 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined(__TEST_MODULE_PHP__)) {
+if (!defined("__TEST_MODULE_PHP__")) {
 
 define (__TEST_MODULE_PHP__, true);
 

@@ -6,7 +6,7 @@
  include ("lib/freemed.php");
  include ("freemed-functions.inc");
 
-if (!defined (__RENDER_FORMS_PHP__)) {
+if (!defined ("__RENDER_FORMS_PHP__")) {
 
 define (__RENDER_FORMS_PHP__, true);
 

@@ -44,7 +44,7 @@ from jeff b (jeff@univrel.pr.uconn.edu)
    # cd /usr/share/freemed
    # ln -s /etc/httpd/php/webtools.php .
 
-6) Edit the /usr/share/freemed/global.var.inc file to make sure that all
+6) Edit the /usr/share/freemed/lib/freemed.php file to make sure that all
    settings are correct for your machine.
 
 7) Edit your Apache configuration files to associate .php, .inc, and .php3
@@ -54,7 +54,7 @@ from jeff b (jeff@univrel.pr.uconn.edu)
 
    DirectoryIndex index.php3 index.php (et cetera...)
 
-   AddType application/x-httpd-php3 .php3 .phtml .php .inc
+   AddType application/x-httpd-php3 .php3 .phtml .php
 
    Alias /freemed /usr/share/freemed
 

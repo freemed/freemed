@@ -1,3 +1,4 @@
+# $Id$
 # freemed project
 # gettext / i18n language catalog
 # language : TEMPLATE
@@ -1583,5 +1584,7 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
+msgid "Add Payment"
+msgstr ""
 
 # END

@@ -8,7 +8,7 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
 
-if (!defined(__API_PHP__)) {
+if (!defined("__API_PHP__")) {
 
 define (__API_PHP__, true);
 
@@ -473,7 +473,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 
 // function freemed_display_actionbar
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
-  global $page_name, $patient, $_ref, $_auth;
+  global $page_name, $patient, $_ref, $_auth, $module;
 
   $buffer = "";
 
@@ -491,7 +491,8 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
     <TABLE BGCOLOR=\"#000000\" WIDTH=\"100%\" BORDER=0
      CELLSPACING=0 CELLPADDING=3>
     <TR BGCOLOR=\"#000000\">
-    <TD ALIGN=LEFT><A HREF=\"$this_page_name?$_auth&action=addform".
+    <TD ALIGN=LEFT><A HREF=\"$this_page_name?$_auth&module=$module&".
+	"action=addform".
      ( !empty($patient) ? "&patient=$patient" : "" )
      ."\"><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
      SIZE=-1><B>"._("ADD")."</B></FONT></A></TD>

@@ -4,7 +4,7 @@
  //       problems with repetitive database access
  // lic : GPL, v2
 
-if (!defined (__CONTAINERS_PHP__)) {
+if (!defined ("__CONTAINERS_PHP__")) {
 
 define (__CONTAINERS_PHP__, true);
 

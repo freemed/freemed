@@ -3,29 +3,27 @@
  // note: patient management functions -- links to other modules
  // lic : GPL, v2
 
-  $page_name = "manage.php";
-  include ("lib/freemed.php");
-  include ("lib/API.php"); // API functions
+$page_name = "manage.php";
+include ("lib/freemed.php");
+include ("lib/API.php"); // API functions
 
-  if ($id != $current_patient)
-    SetCookie ("current_patient", $id, time()+$_cookie_expire);
-  $current_patient = $id; // kludge
+if ($id != $current_patient)
+  SetCookie ("current_patient", $id, time()+$_cookie_expire);
+$current_patient = $id; // kludge
 
-  freemed_open_db ($LoginCookie);
-  if (($id<1) AND ($current_patient>0)) { $id = $current_patient; }
-   elseif (($id<1) and ($patient>0))    { $id = $patient;         }
+freemed_open_db ($LoginCookie);
+if (($id<1) AND ($current_patient>0)) { $id = $current_patient; }
+ elseif (($id<1) and ($patient>0))    { $id = $patient;         }
 
-  // load the Patient object
-  $this_patient = new Patient ($id);
+// load the Patient object
+$this_patient = new Patient ($id);
 
-  freemed_display_html_top ();
-  freemed_display_banner ();
+freemed_display_html_top ();
+freemed_display_banner ();
 
-switch ($action) {
-  default:
-    freemed_display_box_top (_("Manage Patient"), $_ref);
-    if ($id<1) {
-      // if someone needs to 1st go to the patient menu
+freemed_display_box_top (_("Manage Patient"), $_ref);
+if ($id<1) {
+  // if someone needs to 1st go to the patient menu
       echo "
         <BR><BR>
         <CENTER>
@@ -42,6 +40,9 @@ switch ($action) {
 
      } else {
       $_auth   = "_ref=$page_name";
+
+      // **************************************************** STATIC MODULES
+
       echo "
 
      ".freemed_patient_box($this_patient)."
@@ -146,10 +147,10 @@ switch ($action) {
         <TR><TD ALIGN=RIGHT>
          <$STDFONT_B><B>"._("Episode of Care")."</B> : <$STDFONT_E>
         </TD><TD ALIGN=LEFT>
-         <A HREF=\"episode_of_care.php3?$_auth&patient=$id&action=addform\"
+         <A HREF=\"episode_of_care.php?$_auth&patient=$id&action=addform\"
           ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD>
-         <A HREF=\"episode_of_care.php3?$_auth&patient=$id\"
+         <A HREF=\"episode_of_care.php?$_auth&patient=$id\"
           ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD></TR>
         <TR><TD ALIGN=RIGHT>
@@ -172,28 +173,29 @@ switch ($action) {
         </TD><TD>
         </TD></TR>
 
-        <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>".("Procedures")."</B> : <$STDFONT_E>
-        </TD><TD>
-        <A HREF=\"procedure.php?$_auth&action=addform&patient=$id\"
-         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
-        </TD><TD> 
-        <A HREF=\"procedure.php?$_auth&patient=$id\"
-         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
-         </TD><TD>
-         </TD></TR>
+	";
 
+      // **************************************************** DYNAMIC MODULES
+	// loadable modules start here
+	$category = "Electronic Medical Record";
+	$template = "
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>"._("Progress Notes")."</B> : <$STDFONT_E>
+        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
         </TD><TD>
-        <A HREF=\"progress_notes.php?$_auth&action=addform&patient=$id\"
+        <A HREF=\"module_loader.php?$_auth&module=#class#&action=addform&patient=$id\"
          ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD> 
-        <A HREF=\"progress_notes.php?$_auth&patient=$id\"
+        <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         </TD></TR>
 
+	";
+	$module_list = new module_list (PACKAGENAME);
+	echo $module_list->generate_list ($category, 0, $template);
+	// end of loadable modules code
+
+	echo "
         <!--
 
 	  // this is commented out until we can make it work properly
@@ -217,12 +219,9 @@ switch ($action) {
         <P>
       </CENTER>
      ";
-    } // if there is an ID specified
+} // if there is an ID specified
     
-    freemed_display_box_bottom ();
-    break;
-} // main switch statement
-
+freemed_display_box_bottom ();
 freemed_close_db ();
 freemed_display_html_bottom ();
 ?>

@@ -4,7 +4,7 @@
   // code: adam b (gdrago23@yahoo.com) -- modified a lot
   // lic : GPL, v2
 
-if (!defined(__TYPE_OF_SERVICE_MODULE_PHP__)) {
+if (!defined("__TYPE_OF_SERVICE_MODULE_PHP__")) {
 
 define (__TYPE_OF_SERVICE_MODULE_PHP__, true);
 
@@ -21,7 +21,7 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 
 	function typeOfServiceMaintenance () {
 		// run constructor
-		$this->freemedModule();
+		$this->freemedMaintenanceModule();
 	} // end constructor typeOfServiceMaintenance	
 
 	function view () {

@@ -5,7 +5,7 @@
  //       minor mods from jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-if (!defined (__LANGUAGE_LOADER_PHP__)) {
+if (!defined ("__LANGUAGE_LOADER_PHP__")) {
 
 define (__LANGUAGE_LOADER_PHP__, true);
 

@@ -3,7 +3,7 @@
  // note: ISO set checking, included by lib/freemed.php
  // lic : GPL, v2
 
-if (!defined (__ISO_SET_PHP__)) {
+if (!defined ("__ISO_SET_PHP__")) {
 
 define (__ISO_SET_PHP__, true);
 

@@ -62,7 +62,7 @@
          			\"payment_record.php?_ref=$page_name&id=$id&patient=$id\"
          			><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
         			<TD><A HREF=
-         			\"procedure.php?$_auth&id=$id&patient=$id\"
+         			\"module_loader.php?$_auth&module=procedureModule&id=$id&patient=$id\"
          			><FONT SIZE=-1>View/Manage</FONT></A></TD>
       				";
  			// see if all procs are billed. if not then show No

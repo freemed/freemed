@@ -3,7 +3,7 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined(__MODULE_PHP__)) {
+if (!defined("__MODULE_PHP__")) {
 
 define (__MODULE_PHP__, true);
 
@@ -15,6 +15,7 @@ class freemedModule extends module {
 	// override variables
 	var $PACKAGE_NAME = PACKAGENAME;
 	var $PACKAGE_VERSION = VERSION;
+	var $page_name = "module_loader.php";
 
 	// contructor method
 	function freemedModule ($nullvar = "") {

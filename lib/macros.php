@@ -3,7 +3,7 @@
  // note: macros for commonly used constants
  // lic : GPL, v2
 
-if (!defined(__MACROS_PHP__)) {
+if (!defined("__MACROS_PHP__")) {
 
 define (__MACROS_PHP__, true);
 

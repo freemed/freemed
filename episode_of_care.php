@@ -1,10 +1,9 @@
 <?php
- // file: episode_of_care.php3
+ // $Id$
  // desc: episode of care database module
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name   = "episode_of_care.php3";
+ $page_name   = "episode_of_care.php";
  $record_name = "Episode of Care";
  $db_name     = "eoc";
 
@@ -666,9 +665,10 @@
    $r_name = $record_name; // backup
    $_auth = "proceoc=".urlencode($id);  
    $record_name = "Procedure";
+   $module = "procedureModule"; // pass for the module loader
    echo freemed_display_itemlist (
      $result,
-     "procedure.php",
+     "module_loader.php",
      array (
        _("Date") => "procdt",
        _("Procedure") => "proccpt",
@@ -758,7 +758,7 @@
       <P>
     ".freemed_display_itemlist(
       $result,
-      "episode_of_care.php3",
+      $page_name,
       array (
         _("Starting Date") => "eocstartdate",
 	_("Description")   => "eocdescrip"
