@@ -1,11 +1,9 @@
 <?php
- // file: global.var.inc
- // note: global variables for entire freemed code base
- // code: jeff b (jeff@univrel.pr.uconn.edu)
- // lic : GPL, v2
  // $Id$
+ // note: global variables for entire freemed code base
+ // lic : GPL, v2
 
-  // This is the global.var.php3 file, which keeps all
+  // This is the global.var.inc file, which keeps all
   // variables that the program needs to know, to
   // eliminate needless typing...
 
@@ -16,7 +14,7 @@ define (__GLOBAL_VAR_INC__, true);
     // these variables you should not touch
   define (PACKAGENAME, "freemed");				// package name
   define (CODED_BY, "The Freemed Project");		// coded by tag
-  define (VERSION, "0.2.0-20001211");			// current version
+  define (VERSION, "0.2.1 (cvs)");				// current version
   define (BUGS_EMAIL, "code_bugs@ourexchange.net");	// coder email...
 
   define (BUGS_ADDRESS, "http://sourceforge.net/project/freemed/");

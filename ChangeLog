@@ -1,5 +1,9 @@
 freemed project changelog
 
+* Wed Dec 13 2000 rufustfirefly
+  - started implementing new phpwebtools 0.2 PHP module loader classes and
+    functions -- beginning of a new era in PHP application development
+
 * Tue Dec 12 2000 rufustfirefly
   - moved payment_record.php over to using the wizard class
   - fixed display problems in payment_record ledger
