@@ -108,6 +108,7 @@ class BaseModule extends module {
 				>".__("Printer")."</td>
 				<td>".freemed::printers_widget('printer')."</td>
 			</tr>
+			<!--
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
 				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
@@ -123,6 +124,7 @@ class BaseModule extends module {
 					)
 				)."</td>
 			</tr>
+			-->
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
 				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
