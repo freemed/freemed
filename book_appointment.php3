@@ -311,13 +311,17 @@ switch ($action) {
 
      <TR>
      <TD ALIGN=RIGHT><B>"._("Physician")."</B>:</TD>
-     <TD ALIGN=LEFT><SELECT NAME=\"physician\">
+     <TD ALIGN=LEFT>
    ";
 
-   freemed_display_physicians ($physician);
+   $phy_r = fdb_query(
+      "SELECT phyfname,phylname,id 
+       FROM physician
+       WHERE phyref='no'");
 
-   echo "
-      </SELECT></TD></TR>
+   echo 
+     freemed_display_selectbox($phy_r,"#phylname#,#phyfname#", "physician")."
+      </TD></TR>
 
      <TR>
      <TD ALIGN=RIGHT><B>"._("Note")."</B>:</TD>
