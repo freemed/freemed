@@ -7,7 +7,7 @@
  //       max k <amk@span.ch>
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
- // ver : 2000-07-25
+ // ver : 2000-09-01
 
 if (!defined(__FREEMED_FUNCTIONS_INC__)) {
 
@@ -805,7 +805,9 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="")
 {
-  global $default_facility, $NONE_SELECTED;
+  global $default_facility;
+
+  $buffer = "";
 
   switch ($intext) {
    case "0": // internal
@@ -820,7 +822,7 @@ function freemed_display_facilities ($param="", $default_load = false,
 
   // list doctors in SELECT/OPTION tag list, and
   // leave doctor selected who is in param
-  echo "
+  $buffer .= "
     <OPTION VALUE=\"0\"".
      ( ($param == 0) ? " SELECTED" : "" ).">"._("NONE SELECTED")."
   ";
@@ -848,14 +850,14 @@ function freemed_display_facilities ($param="", $default_load = false,
       if (strlen($_psr_note)<1) $__psr_note = "";
         else $__psr_note = "[$_psr_note]";
 
-      echo "
+      $buffer .= "
         <OPTION VALUE=\"$_psr_id\" $selected_var 
          >$_psr_name $__psr_note ".
          ( $debug ? "[$_psr_id]" : "" )."
       "; // end of actual output
     } // while there are more results...
   }
-
+  return $buffer;
 } // end function freemed_display_facilities
 
 // function freemed_display_insco
