@@ -472,7 +472,7 @@ if (count($ms) > 0) {
 
 	$column = 1; reset ($ms);
 	foreach ($ms AS $k => $_v) {
-		if (!empty($k) {
+		if (!empty($k)) {
 		$v = $panel[$k];
 		
 		// Check to see if we're on a new row yet
