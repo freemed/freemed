@@ -2,6 +2,9 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.1  2001/12/14 16:35:41  rufustfirefly
+ // renamed from soap_* to xmlrpc_* (since it's really XMLRPC, not SOAP)
+ //
  // Revision 1.1  2001/11/20 21:59:06  rufustfirefly
  // WDDX/XMLRPC services
  //
@@ -42,13 +45,17 @@ function rpc_authenticate ( $params ) {
 	global $sql;
 
 	// Decode parameters
-	$username = xmlrpc_decode_parameter($params);
-	$password = xmlrpc_decode_parameter($params);
+	//$username = xmlrpc_decode_parameter($params);
+	$_username = $params->getParam(0);
+	$username = $_username->scalarVal();
+	//$password = xmlrpc_decode_parameter($params);
+	$_password = $params->getParam(1);
+	$password = $_password->scalarVal();
 
 	// Perform the query for username and password
 	$query = $sql->query("SELECT * FROM user ".
 		"WHERE username='".addslashes($username)."' AND ".
-		"userpassword='".addslashes($userpassword)."'"
+		"userpassword='".addslashes($password)."'"
 	);
 	
 	// Build a value and return it
