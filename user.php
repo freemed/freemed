@@ -419,5 +419,4 @@ switch($action) { // master action switch
 freemed_close_db(); // always close the database when done!
 freemed_display_html_bottom (); // starting here, combined php3 code areas
 
-w
 ?>
