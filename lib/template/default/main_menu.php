@@ -5,8 +5,7 @@
  // lic : GPL
 
 $page_name = "main.php";
-include ("lib/freemed.php");
-include ("lib/API.php");
+include_once ("lib/freemed.php");
 
 //----- Add page to page history list
 page_push ();
@@ -152,7 +151,7 @@ if (freemed::user_flag(USER_DATABASE))
     </TD></TR>
    ";
 
- if ($this_user->getLevel() > $database_level)
+ if (freemed::user_flag(USER_DATABASE))
    $display_buffer .= "
     <TR> 
     <TD ALIGN=RIGHT>

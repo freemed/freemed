@@ -14,10 +14,8 @@ class User {
 	var $perms_fac, $perms_phy, $perms_phygrp;
 
 	function User ($param=NULL) {
-		$SESSION = &$_SESSION['SESSION'];
-
 		if ($param == NULL) {
-			$this->user_number = $SESSION['authdata']['user'];
+			$this->user_number = $_SESSION['authdata']['user'];
 		} else {
 			$this->user_number = $param;
 		}

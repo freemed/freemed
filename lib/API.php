@@ -7,89 +7,6 @@
  //       max k <amk@span.ch>
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
- // $Log$
- // Revision 1.58  2002/12/30 15:45:35  rufustfirefly
- // Fixed register_globals = off problem with session handling. (Thanks to Fred Trotter for the bug report)
- //
- // Revision 1.57  2002/12/29 14:40:01  rufustfirefly
- // Added patient box iconbar, defined in lib/template/*/lib.php.
- // Added autoskip feature to phone entry fields.
- //
- // Revision 1.56  2002/12/27 17:43:41  rufustfirefly
- // Added record locking capabilities.
- // New freemed::itemlist_conditions() method to allow display_itemlist to work properly with conditionals from its internal form.
- //
- // Revision 1.55  2002/12/25 05:08:43  rufustfirefly
- // Remember default facility by machine, using cookies.
- //
- // Revision 1.54  2002/12/15 07:28:46  rufustfirefly
- // Moved freemed_patient_box to freemed::patient_box (and other small fixes)
- //
- // Revision 1.53  2002/12/12 17:10:57  rufustfirefly
- // Made entire patient box clickable, and hilights with mouseover.
- //
- // Revision 1.52  2002/12/11 20:38:28  rufustfirefly
- // Bugfix and working sync for phpwebtools 0.4.0 module_list/cache support.
- //
- // Revision 1.51  2002/11/04 05:10:28  rufustfirefly
- // Updates for phpwebtools 0.3 object loader.
- //
- // Revision 1.50  2002/09/26 18:25:19  rufustfirefly
- // Additional DjVu support.
- // CSS fixes.
- // Bug fixes.
- //
- // Revision 1.49  2002/07/08 15:23:27  rufustfirefly
- // Added freemed::drug_widget() and small default_facility fix.
- //
- // Revision 1.48  2002/06/25 17:20:24  rufustfirefly
- // moved version to 0.4 (Betafish),
- // added support for disabling sessions (for XML-RPC),
- // and added basic auth transport for remote services
- //
- // Revision 1.47  2002/06/11 20:43:56  rufustfirefly
- // added freemed::patient_widget(), fixed fm_display_date
- //
- // Revision 1.46  2002/05/08 20:50:48  rufustfirefly
- // added option for secure client for EMRi server, added EMRi->patient_search
- // method
- //
- // Revision 1.45  2002/05/07 21:30:19  rufustfirefly
- // added methods freemed::secure_filename, freemed::store_image,
- // started populating EMRi class with calls to EMRi server (much kludgy
- // stuff in there now, but coming along nice) using lib/xmlrpc_epi_utils.php
- // and the xmlrpc-epi-php library extension
- //
- // Revision 1.44  2002/04/05 23:49:00  rufustfirefly
- // new booking system. almost works ;)
- //
- // Revision 1.43  2002/04/05 19:29:20  rufustfirefly
- // freemed:: and EMRi:: initial namespace commit
- //
- // Revision 1.42  2002/04/05 15:13:09  rufustfirefly
- // added initial freemed namespace (heavy TODO), added freemed::user_flag(flag), implemented user flags, removed freemed_get_userlevel()
- //
- // Revision 1.41  2002/04/04 18:21:03  rufustfirefly
- // itemlist now allows for auto-refreshed select in logical order, config_value works properly, facility dropdown displays city and state, fm_number_select() had extra onChange parameter added (false by default)
- //
- // Revision 1.40  2001/11/21 21:03:42  rufustfirefly
- // removed .php from help file names
- //
- // Revision 1.39  2001/11/21 15:19:22  rufustfirefly
- // freemed_verify_auth() - showstopper fixed for non-root login
- //
- // Revision 1.38  2001/11/19 21:28:43  rufustfirefly
- // adaptations to help system
- //
- // Revision 1.37  2001/10/18 20:41:51  rufustfirefly
- // removed more dead code
- //
- // Revision 1.36  2001/10/17 20:47:36  rufustfirefly
- // another day of changes... or two...
- //
- // Revision 1.35  2001/10/12 14:59:59  rufustfirefly
- // added Log tag
- //
 
 if (!defined("__API_PHP__")) {
 
@@ -100,16 +17,14 @@ class freemed {
 
 	// function freemed::check_access_for_patient
 	function check_access_for_patient ($patient_number) {
-		$SESSION = &$_SESSION['SESSION'];
-
 		// Grab authdata
-		$authdata = $SESSION["authdata"];
+		$_authdata = $GLOBALS["authdata"];
 
 		// Root has all access...
-		if ($authdata["user"]==1) return true;
+		if ($_authdata["user"]==1) return true;
 	
 		// Grab auth information from db
-		$f_user   = freemed::get_link_rec ($authdata["user"], "user");
+		$f_user   = freemed::get_link_rec ($_authdata["user"], "user");
 	
 		// Get data records in question for the user
 		$f_fac    = $f_user ["userfac"   ];
@@ -492,10 +407,8 @@ class freemed {
 		global $database, $sql;
 		static $userlevel;
 
-		$SESSION = &$_SESSION['SESSION'];
-
 		// Extract authdata from SESSION
-		$authdata = $SESSION["authdata"];
+		$authdata = $GLOBALS["authdata"];
 
 		// Check for cached userlevel
 		if (isset($userlevel)) { return ($userlevel & $flag); }
@@ -707,16 +620,16 @@ function freemed_alternate ($_elements) {
 
 // function freemed_check_access_for_facility
 function freemed_check_access_for_facility ($facility_number) {
-	$SESSION = &$_SESSION['SESSION'];
+	global $_SESSION;
 
 	// Separate out authdata
-	$authdata = $SESSION["authdata"];
+	$authdata = $_SESSION['authdata'];
 
 	// Root has all access...
-	if ($authdata["user"]==1) return true;
+	if ($_SESSION['authdata']['user'] == 1) return true;
 
 	// Grab the authorizations field
-	$f_fac = freemed::get_link_field ($authdata["user"], "user", "userfac");
+	$f_fac = freemed::get_link_field ($authdata['user'], "user", "userfac");
 
 	// No facility, assume no access restrictions
 	if ($facility_number == 0) return true;
@@ -1145,8 +1058,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 // function freemed_display_facilities (selected)
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="", $by_array="") {
-	global $sql;
-	$SESSION = &$_SESSION['SESSION'];
+	global $sql, $_COOKIE;
 
 	// Check for default or passed facility
 	if ($GLOBALS[$param] > 0) {
@@ -1154,7 +1066,9 @@ function freemed_display_facilities ($param="", $default_load = false,
 		$facility = $GLOBALS[$param];
 	} else {
 		// Otherwise set via cookie
-		$facility = $_COOKIE["default_facility"] + 0;
+		$facility = ( $_SESSION['default_facility'] > 0 ?
+			$_SESSION['default_facility'] :
+			$_COOKIE['default_facility'] ) + 0;
 	}
 
 	$buffer = "";
@@ -1431,7 +1345,6 @@ function freemed_import_stock_data ($table_name) {
  TODO: FIX ME!
 function freemed_log ($db_name, $record_number, $comment) {
 	global $cur_date, $sql;
-	$SESSION = &$_SESSION['SESSION'];
 
 	$f_auth = explode (":", $f_cookie);
 	$f_user = $f_auth [0];  // extract the user number
@@ -1603,25 +1516,24 @@ function freemed_verify_auth ( ) {
 	global $debug, $Connection, $sql;
 
 	// Associate "SESSION" with proper session variable
-	$SESSION = &$_SESSION['SESSION'];
-	$PHP_SELF = &$_SERVER['PHP_SELF'];
-
+	$PHP_SELF = $_SERVER['PHP_SELF'];
+ 
 	// Do we have to check for _username?
 	$check = !empty($_REQUEST['_username']);
 
 	// Check for authdata array
-	if (is_array($SESSION['authdata'])) {
+	if (is_array($GLOBALS['authdata'])) {
 		// Check to see if ipaddr is set or not...
 		if (!SESSION_PROTECTION) {
 			return true;
 		} else {
-			if ( !empty($SESSION['ipaddr']) ) {
-				if ($SESSION['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
+			if ( !empty($GLOBALS['ipaddr']) ) {
+				if ($GLOBALS['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
 					// We're already authorized
 					return true;
 				} else {
 					// IP address has changed, ERROR
-					unset($_SESSION['SESSION']['ipaddr']);
+					unset($GLOBALS['ipaddr']);
 					return false;
 				} // end checking ipaddr
 			} else {
@@ -1638,12 +1550,13 @@ function freemed_verify_auth ( ) {
 		if ( ($_REQUEST['_username'] == 'root') and 
 				($_REQUEST['_password'] == DB_PASSWORD) ) {
 			// Pass the proper session variable
-			$SESSION["authdata"] = array (
+			$GLOBALS['authdata'] = array (
 				"username" => $_REQUEST['_username'],
 				"user" => "1" // superuser id
 			);
 			// Set ipaddr for SESSION_PROTECTION
-			$SESSION["ipaddr"] = $_SERVER['REMOTE_ADDR'];
+			$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+
 			// Return back that this is true
 			return true;
 		}
@@ -1661,19 +1574,19 @@ function freemed_verify_auth ( ) {
 		// Check password
 		if ($_REQUEST['_password'] == $r['userpassword']) {
 			// Set session vars
-			$SESSION["authdata"] = array (
+			$GLOBALS['authdata'] = array (
 				"username" => $_REQUEST['_username'],
 				"user" => $r['id']
 			);
 			// Set ipaddr for SESSION_PROTECTION
-			$SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+			$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 
 			// Authorize
 			return true;
 		} else { // check password
 			// Failed password check
-			unset ( $SESSION['authdata'] );
-			unset ( $SESSION['ipaddr'] );
+			unset ( $GLOBALS['authdata'] );
+			unset ( $GLOBALS['ipaddr'] );
 			return false;
 		} // end check password
 	} // end of checking for authdata array
@@ -2368,70 +2281,67 @@ function template_display ($terminate_on_execute=true) {
 //********************** END TEMPLATE SUPPORT
 
 function page_push () {
-	global $PHP_SELF, $page_title;
-	$SESSION = &$_SESSION['SESSION'];
+	global $page_title;
+	$page_history = $_SESSION['page_history'];
 
 	// Import it if it exists
-	if (isset($SESSION["page_history"])) {
+	if (isset($_SESSION['page_history'])) {
 		// Import
-		$page_history = $SESSION["page_history"];
+		$_page_history = $_SESSION['page_history'];
 
 		// Check to see if this is the last item on the list...
 		// ... kick out without adding.
-		if (basename($page_history[(count($page_history))]) ==
-			basename($PHP_SELF)) return true;
+		if (basename($_page_history[(count($_page_history))]) ==
+			basename($_SERVER['PHP_SELF'])) return true;
 	} // end checking for existing history
 
 	// Add to the list of pages
-	$page_history["$page_title"] = basename($PHP_SELF);
+	$_page_history["$page_title"] = basename($_SERVER['PHP_SELF']);
 
 	// Reimport into SESSION
-	$SESSION["page_history"] = $page_history;
+	$_SESSION['page_history'] = $_page_history;
 } // end function page_push
 
 function page_pop () {
-	$SESSION = &$_SESSION['SESSION'];
-
 	// Return false if there is nothing in the list
-	if (!isset($SESSION["page_history"])) return false;
+	if (!isset($_SESSION['page_history'])) return false;
 
 	// Import page_history
-	$page_history = $SESSION["page_history"];
+	$_page_history = $_SESSION['page_history'];
 
 	// Otherwise get the last one and return it ...
-	$to_return = $page_history[(count($page_history)-1)];
-	$to_return_name = $page_history[(count($page_history_name)-1)];
+	$to_return = $_page_history[(count($page_history)-1)];
+	$to_return_name = $_page_history[(count($page_history_name)-1)];
 
 	// .. then remove it from the stack
-	unset($page_history[(count($page_history)-1)]);
-	unset($page_history_name[(count($page_history)-1)]);
+	unset($_page_history[(count($_page_history)-1)]);
+	unset($_page_history_name[(count($_page_history)-1)]);
 
 	// Reimport into SESSION
-	$SESSION["page_history"] = $page_history;
-	$SESSION["page_history_name"] = $page_history_name;
+	$_SESSION['page_history'] = $_page_history;
+	$_SESSION['page_history_name'] = $_page_history_name;
 
 	// And return value (access as list(x,y) = page_pop())
 	return array ($to_return, $to_return_name);
 } // end function page_pop
 
 function patient_push ($patient) {
-	$SESSION = &$_SESSION['SESSION'];
-
 	// Import it if it exists
-	if (isset($SESSION["patient_history"])) {
+	if (isset($_SESSION['patient_history'])) {
 		// Import
-		$patient_history = $SESSION["patient_history"];
+		$patient_history = $_SESSION['patient_history'];
 
-		// Clean out null entries...
+		// Clean out null entries... and rogue arrays
 		foreach ($patient_history AS $k => $v) {
 			if (!$v) unset($patient_history[$k]);
+			if (is_array($v)) unset($patient_history[$k]);
 		} // end foreach
 
 		// Check to see if this is the last item on the list...
 		// ... kick out without adding.
 		if ($patient_history[(count($patient_history))] == $patient) {
 			// Reimport due to cleaning
-			$SESSION["patient_history"] = $patient_history;
+			$_SESSION['patient_history'] = $patient_history;
 
 			// And we don't have to add it, exit with true
 			return true;
@@ -2442,17 +2352,15 @@ function patient_push ($patient) {
 	$patient_history[] = $patient;
 
 	// Reimport into SESSION
-	$SESSION["patient_history"] = $patient_history;
+	$_SESSION['patient_history'] = $patient_history;
 } // end function patient_push
 
 function patient_history_list () {
-	$SESSION = &$_SESSION['SESSION'];
-
 	// Return false if there is nothing in the list
-	if (!isset($SESSION["patient_history"])) return false;
+	if (!isset($_SESSION['patient_history'])) return false;
 
 	// Import patient_history
-	$patient_history = $SESSION["patient_history"];
+	$patient_history = $_SESSION['patient_history'];
 
 	// Check for no patient history
 	if (count($patient_history)<1) return false;
@@ -2462,14 +2370,18 @@ function patient_history_list () {
 
 	// Loop through array
 	foreach ($patient_history AS $k => $v) {
-		// Get patient information
-		$this_patient = CreateObject('FreeMED.Patient', $v);
+		// Kludge to get around strange PHP crashing error on
+		// $v processing by checking if it's an array.
+		if (!is_array($v)) {
+			// Get patient information
+			$this_patient = CreateObject('FreeMED.Patient', $v);
 	
-		// Form Lastname, Firstname, ID list item
-		$key = $this_patient->fullName() . " (".$v.")";
+			// Form Lastname, Firstname, ID list item
+			$key = $this_patient->fullName() . " (".$v.")";
 
-		// Add to new array
-		$history["$key"] = $v;
+			// Add to new array
+			$history["$key"] = $v;
+		}
 	} // end foreach
 
 	// Return generated array
@@ -2477,13 +2389,11 @@ function patient_history_list () {
 } // end function patient_history_list
 
 function page_history_list () {
-	$SESSION = &$_SESSION['SESSION'];
-
 	// Return false if there is nothing in the list
-	if (!isset($SESSION["page_history"])) return false;
+	if (!isset($_SESSION['page_history'])) return false;
 
 	// Import patient_history
-	$page_history = $SESSION["page_history"];
+	$page_history = $_SESSION['page_history'];
 
 	// Check for no patient history
 	if (count($page_history)<1) return false;
@@ -2493,7 +2403,7 @@ function page_history_list () {
 
 	// Loop through array
 	foreach ($page_history AS $k => $v) {
-		if (!empty($k) and !empty($v)) {
+		if (!empty($k) and !empty($v) and !is_array($v)) {
 			// Add to new array
 			$history["$k"] = $v;
 		}

@@ -5,12 +5,14 @@
  // lic : GPL, v2
 
 //----- Use "current_patient" SESSION variable if it's there
-if (!$id and ($SESSION["current_patient"]>0)) {
-	$id = $SESSION["current_patient"];
+if (!$id and ($_COOKIE['current_patient']>0)) {
+	$id = $_COOKIE['current_patient'];
 }
 
 //----- Load the Patient object
-$this_patient = CreateObject('FreeMED.Patient', $id);
+if (!is_object($this_patient)) {
+	$this_patient = CreateObject('FreeMED.Patient', $id);
+}
 
 //----- Make sure that $patient is also set to this
 $patient = $id;
