@@ -53,30 +53,31 @@ class cptMaintenance extends freemedMaintenanceModule {
     
   		if (!$book->been_here()) {
 			switch ($action) {
-				case "mod":
+			case "mod":
     			case "modform":
 		// we need to do this before the extract or mod form does not
 		// show the second page on existing data ??
-        while(list($k,$v)=each($this->variables))
-        {
-            global $$v;
-        }
+		while(list($k,$v)=each($this->variables)) { global ${$v}; }
 
-     if ($id<1) {
+			if ($id<1) {
 		$display_buffer .= "$page_name :: need to have id for modform";
 		template_display();
-     }
-     $this_record  = freemed_get_link_rec ($id, $this->table_name);
-     extract ($this_record);
-     $cptreqcpt    = fm_split_into_array ($cptreqcpt);
-     $cptexccpt    = fm_split_into_array ($cptexccpt);
-     $cptreqicd    = fm_split_into_array ($cptreqicd);
-     $cptexcicd    = fm_split_into_array ($cptexcicd);
-     $cptrelval    = bcadd($cptrelval, 0, 2);
-     $cptstdfee    = fm_split_into_array ($cptstdfee);
-     $cpttos       = fm_split_into_array ($cpttos);
+			}
+			$this_record  = freemed_get_link_rec ($id,
+				$this->table_name);
+			foreach ($this_record AS $k => $v) {
+				global ${$k};
+				${$k} = stripslashes($v);
+			}
+			$cptreqcpt    = fm_split_into_array ($cptreqcpt);
+			$cptexccpt    = fm_split_into_array ($cptexccpt);
+			$cptreqicd    = fm_split_into_array ($cptreqicd);
+			$cptexcicd    = fm_split_into_array ($cptexcicd);
+			$cptrelval    = bcadd($cptrelval, 0, 2);
+			$cptstdfee    = fm_split_into_array ($cptstdfee);
+			$cpttos       = fm_split_into_array ($cpttos);
 			break;
-			} // end switch
+		} // end switch
 		} // end checking if been here
 
   $book->add_page (
@@ -85,9 +86,9 @@ class cptMaintenance extends freemedMaintenanceModule {
            "cpttaxed", "cpttype"),
     html_form::form_table (array (
       _("Procedural Code") =>
-       "<INPUT TYPE=TEXT NAME=\"cptcode\" SIZE=8 MAXLENGTH=7
-        VALUE=\"".prepare($cptcode)."\"> &nbsp;".
-		$book->generate_refresh(),
+	html_form::text_widget("cptcode", 7)." &nbsp;".
+	$book->generate_refresh(),
+
       _("Internal Description") =>
       "<INPUT TYPE=TEXT NAME=\"cptnameint\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($cptnameint)."\">",
@@ -118,44 +119,24 @@ class cptMaintenance extends freemedMaintenanceModule {
        ))
   );
 
-  $book->add_page (
-    _("Billing Information"),
-    array ("cptrelval", "cptdeftos", "cptdefstdfee"),
-    "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
-     ALIGN=CENTER>
-    <TR>
-     <TD ALIGN=RIGHT>
-      "._("Relative Value")." : 
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"cptrelval\" SIZE=10 MAXLENGTH=9
-       VALUE=\"".prepare($cptrelval)."\">
-     </TD>
-    </TR>
+		$book->add_page (
+			_("Billing Information"),
+			array ("cptrelval", "cptdeftos", "cptdefstdfee"),
+			html_form::form_table(array(
+	_("Relative Value") =>
+	html_form::text_widget("cptrelval", 9),
 
-    <TR>
-     <TD ALIGN=RIGHT>
-      "._("Default Type of Service")." : 
-     </TD><TD ALIGN=LEFT>
-        ".freemed_display_selectbox (
+	_("Default Type of Service") =>
+	freemed_display_selectbox (
           $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
   	  "#tosname# #tosdescrip#",
 	  "cptdeftos"
-	  )."
-      </SELECT>
-     </TD>
-    </TR>
+	),
 
-    <TR>
-     <TD ALIGN=RIGHT>
-      "._("Default Standard Fee")." : 
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"cptdefstdfee\" SIZE=10 MAXLENGTH=8
-       VALUE=\"".prepare($cptdefstdfee)."\">
-     </TD>
-    </TR>
-
-    </TABLE>
-  ");
+	_("Default Standard Fee") =>
+	html_form::text_widget("cptdefstdfee", 8)
+			))
+		);
 
   $book->add_page (
     _("Inclusion/Exclusion"),
@@ -299,6 +280,14 @@ class cptMaintenance extends freemedMaintenanceModule {
 
   ");
  } // end of fee profiles conditional
+
+		// Handle cancel
+		if ($book->is_cancelled()) {
+			Header("Location: ".$this->page_name."?patient=".
+				urlencode($patient)."&module=".
+				urlencode($this->MODULE_CLASS));
+			die("");
+		}
 
 		if (!$book->is_done()) {
 			$display_buffer .= $book->display();
