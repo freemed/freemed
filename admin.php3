@@ -475,6 +475,7 @@ if ($action=="cfgform") {
     procamtpaid            REAL,
     procbilled             INT UNSIGNED,
     procbillable           INT UNSIGNED,
+    procauth               INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");

@@ -144,7 +144,7 @@ switch ($action) {
      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
     </P>
    ";
-  } elseif ($type="temp") {
+  } elseif ($type=="temp") {
    echo "
     <CENTER><A HREF=\"call-in.php3?$_auth&id=$patient\"
      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>

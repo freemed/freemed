@@ -288,12 +288,13 @@ if ($action=="addform") {
 
   
     <TR><TD>
-    <$STDFONT_B>$Reference<$STDFONT_E>
+    <$STDFONT_B>Physician Internal/External<$STDFONT_E>
     </TD><TD>
     <SELECT NAME=\"phyref\">
-      <OPTION VALUE=\"no\" >$Primary_care_provider
-      <OPTION VALUE=\"yes\">$Referring
-      <OPTION VALUE=\"\" SELECTED>$NULL
+      <OPTION VALUE=\"no\" ".
+       ( ($phyref != "yes") ? "SELECTED" : "" ).">In-House
+      <OPTION VALUE=\"yes\" ".
+       ( ($phyref == "yes") ? "SELECTED" : "" ).">Referring
     </SELECT>
     </TD><TD>&nbsp;</TD><TD>&nbsp</TD></TR>
 
@@ -394,9 +395,6 @@ if ($action=="addform") {
   // assemble ssn
   $physsn    = $physsn1.$physsn2.$physsn3;
 
-  // compact phychargemap
-  $phychargemap_c = fm_join_from_array ($phychargemap);
-
     // actual query/insert
   $query = "INSERT INTO $database.physician VALUES ( ".
     "'$phylname',  '$phyfname',    '$phytitle',   ". 
@@ -410,7 +408,9 @@ if ($action=="addform") {
     "'$phydeg2',   '$phydeg3',     '$physpe1',    ".
     "'$physpe2',   '$physpe3',     '$phyid1',     ".
     "'$phystatus', '$phyref',      '$phyrefcount',".
-    "'$phyrefamt', '$phyrefcoll',  '$phychargemap_c',".
+    "'$phyrefamt', '$phyrefcoll',  '$phyintext',  ".
+    "'".fm_join_from_array($phychargemap)."',     ".
+    "'".fm_join_from_array($phyidmap)."',         ".
     " NULL ) ";
 
   $result = fdb_query($query);
@@ -472,14 +472,7 @@ if ($action=="addform") {
     DIE("");
   }
 
-  $result = fdb_query("SELECT * FROM $database.physician ".
-    "WHERE ( id = '$id' )");
-
-  if ($debug) {
-    echo " <B>RESULT</B> = [$result]<BR><BR> ";
-  }
-
-  $r = fdb_fetch_array($result); // dump into array r[]
+  $r = freemed_get_link_rec ($id, "physician");
 
   $phylname    = $r["phylname"   ];
   $phyfname    = $r["phyfname"   ];
@@ -518,17 +511,12 @@ if ($action=="addform") {
   $phyrefamt   = $r["phyrefamt"  ];
   $phyrefcoll  = $r["phyrefcoll" ];
   $phychargemap = fm_split_into_array( $r[phychargemap] );
+  $phyidmap = fm_split_into_array( $r[phyidmap] );
 
   // disassemble ssn
   $physsn1    = substr($physsn,    0, 3);
   $physsn2    = substr($physsn,    3, 2);
   $physsn3    = substr($physsn,    5, 4);
-
-  switch ($phyref) {
-    case "no":  $_pr1="SELECTED"; break;
-    case "yes": $_pr2="SELECTED"; break;
-    default:    $_pr0="SELECTED";
-  } // this switch is to set the $phyref (not <INPUT>)
 
   echo "
     <P>
@@ -786,19 +774,20 @@ if ($action=="addform") {
      </SELECT>
     </TD></TR>
     <TR><TD>
-    <$STDFONT_B>$Reference<$STDFONT_E>
+    <$STDFONT_B>Physician Internal/External<$STDFONT_E>
     </TD><TD>
     <SELECT NAME=\"phyref\">
-      <OPTION VALUE=\"no\" >$Primary_care_provider
-      <OPTION VALUE=\"yes\">$Referring
-      <OPTION VALUE=\"\" SELECTED>$NULL
+      <OPTION VALUE=\"no\" ".
+       ( ($phyref != "yes") ? "SELECTED" : "" ).">In-House
+      <OPTION VALUE=\"yes\" ".
+       ( ($phyref == "yes") ? "SELECTED" : "" ).">Referring
     </SELECT>
     </TD><TD>&nbsp;</TD><TD>&nbsp</TD></TR>
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
     <$STDFONT_B>$Number_of_Referrals<$STDFONT_E>
     </TD><TD>
     <INPUT TYPE=TEXT NAME=phyrefcount SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyrefcount\">
+     VALUE=\"".fm_prep($phyrefcount)."\">
      </TD></TR>
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
     <$STDFONT_B>$Referral_Amount ($S_charged)<$STDFONT_E>
@@ -809,7 +798,7 @@ if ($action=="addform") {
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
     <$STDFONT_B>$Referral_Amount ($S_received)<$STDFONT_E>
     </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyrefcoll SIZE=10 MAXLENGTH=10
+    <INPUT TYPE=TEXT NAME=\"phyrefcoll\" SIZE=10 MAXLENGTH=10
      VALUE=\"$phyrefcoll\">
     </TD></TR></TABLE>
 
@@ -843,6 +832,43 @@ if ($action=="addform") {
       <TD>
        <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
         SIZE=10 MAXLENGTH=9 VALUE=\"".$phychargemap[$i_id]."\">
+      </TD>
+     </TR>
+    ";
+  } // end looping for service types
+  echo "
+    </TABLE>
+
+    </TR></TABLE>
+
+    <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=1
+     VALIGN=MIDDLE ALIGN=CENTER><TR><TD>
+
+    <CENTER>
+     <$STDFONT_B><B>Insurance ID #s by Group</B><$STDFONT_E>
+    </CENTER>
+
+    <!-- hide record zero, since it isn't used... -->
+    <INPUT TYPE=HIDDEN NAME=\"phyidmap$brackets\" VALUE=\"0\">
+
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
+     ALIGN=CENTER>
+    <TR BGCOLOR=#aaaaaa>
+     <TD><B>Insurance Group</B></TD>
+     <TD><B>ID Number</B></TD>
+    </TR>
+  ";
+  $_alternate = freemed_bar_alternate_color ();  
+  $i_res = fdb_query("SELECT * FROM $database.inscogroup");
+  while ($i_r = fdb_fetch_array ($i_res)) {
+    $_alternate = freemed_bar_alternate_color ($_alternate);  
+    $i_id = $i_r ["id"];
+    echo "
+     <TR BGCOLOR=$_alternate>
+      <TD>".fm_prep($i_r["inscogroup"])."</TD>
+      <TD>
+       <INPUT TYPE=TEXT NAME=\"phyidmap$brackets\"
+        SIZE=10 MAXLENGTH=9 VALUE=\"".$phyidmap[$i_id]."\">
       </TD>
      </TR>
     ";
@@ -928,11 +954,12 @@ if ($action=="addform") {
     "phyrefcount='$phyrefcount', ".
     "phyrefamt  ='$phyrefamt',   ".
     "phyrefcoll ='$phyrefcoll',  ".
-    "phychargemap='".fm_join_from_array($phychargemap)."' ". 
+    "phychargemap='".fm_join_from_array($phychargemap)."', ".
+    "phyidmap    ='".fm_join_from_array($phyidmap)    ."'  ". 
     "WHERE id='$id'";
 
   $result = fdb_query($query);
-  if ($debug==1) {
+  if ($debug) {
     echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
     echo $result;
     echo "\n<BR><BR><B>QUERY STRING:</B><BR>\n";
@@ -965,7 +992,7 @@ if ($action=="addform") {
     <BR><BR>
     <I>$Physician $id deleted<I>.
   ";
-  if ($debug==1) {
+  if ($debug) {
     echo "
       <BR><B>$RESULT:</B><BR>
       $result<BR><BR>
@@ -992,10 +1019,7 @@ if ($action=="addform") {
 
   freemed_display_box_top ("$Physician_Display", $page_name, $_ref);
 
-  # here, we have the difference between adding and
-  # modifying...
-
-  if (strlen($id)<1) {
+  if (empty($id)) {
     echo "
 
      <CENTER>
@@ -1025,23 +1049,8 @@ if ($action=="addform") {
     DIE("");
   }
 
-  # if there _IS_ an ID tag presented, we must extract the record
-  # from the database, and proverbially "fill in the blanks"
+  $r = freemed_get_link_rec ($id, "physician");
 
-  $result = fdb_query("SELECT * FROM $database.physician ".
-    "WHERE ( id = '$id' )");
-
-  if ($debug==1) {
-    echo " <B>$RESULT</B> = [$result]<BR><BR> ";
-  }
-
-    # mysql_fetch_row shows array by index 0..n
-    # mysql_fetch_array shows results by "fieldname"
-
-  $r = fdb_fetch_array($result); // dump into array r[]
-
-    # now comes the monotony
-    # of horrendous repetition...
   $phylname    = $r["phylname"   ];
   $phyfname    = $r["phyfname"   ];
   $phytitle    = $r["phytitle"   ];

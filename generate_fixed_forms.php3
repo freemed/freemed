@@ -118,6 +118,7 @@
                            $this_form[ffcheckchar] : " " );
      $ptsex[trans]    = ( ($this_patient->ptsex == "t") ?
                            $this_form[ffcheckchar] : " " );
+     $ptssn           = $this_patient->local_record["ptssn"];
      $ptid            = $this_patient->local_record["ptid"];
 
      // relationship to guarantor
@@ -213,6 +214,12 @@
      $insco[city]       = $this_insco->local_record[inscocity];
      $insco[state]      = $this_insco->local_record[inscostate];
      $insco[zip]        = $this_insco->local_record[inscozip];
+
+     // pull physician # for insco
+     $insco[phyid]      = ( ($this_insco->local_record[inscogroup] < 1) ?
+                             "" :
+                             ($this_physician->getMapId(
+                              $this_insco->local_record[inscogroup]) );
 
      // pull facility
      $this_facility     = freemed_get_link_rec ($default_facility, "facility");
@@ -326,10 +333,11 @@
          $number_of_charges = 1;
          // and zero the arrays
          for ($j=0;$j<=$this_form[ffloopnum];$j++)
-           $itemdate[$j]   = $itemdate_m[$j]  = $itemdate_d[$j]  =
-           $itemdate_y[$j] = $itemdate_sy[$j] = $itemcharges[$j] =
-           $itemunits[$j]  = $itempos[$j]     = $itemvoucher[$j] =
-           $itemcpt[$j]    = $itemcptmod[$j]  = "";
+           $itemdate[$j]    = $itemdate_m[$j]  = $itemdate_d[$j]  =
+           $itemdate_y[$j]  = $itemdate_sy[$j] = $itemcharges[$j] =
+           $itemunits[$j]   = $itempos[$j]     = $itemvoucher[$j] =
+           $itemcpt[$j]     = $itemcptmod[$j]  = $itemdiagref[$j] =
+           $itemauthnum[$j] = "";
        } else {
          // DONT DO ANYTHING IN THIS CASE (PLACEHOLDER)       
        } // end checking if the set will fit
@@ -342,6 +350,7 @@
        $this_tos = ( ($tos_stack[$cur_insco] < 1) ?
                       $cur_cpt[cptdeftos] :
                       $tos_stack[$cur_insco] );
+       $this_auth = freemed_get_link_rec ($p[procauth], "authorizations");
 
        $itemdate    [$number_of_charges] = $p[procdt];
        $itemdate_m  [$number_of_charges] = substr($p[procdt], 5, 2);
@@ -360,6 +369,8 @@
        $itemdiagref [$number_of_charges] =
           $diag_set->xrefList ($p[procdiag1], $p[procdiag2],
                                $p[procdiag3], $p[procdiag4]);
+       $itemauthnum [$number_of_charges] = $this_auth [authnum];
+
        $total_paid    += $p[procamtpaid];
        $total_charges += $itemcharges[$number_of_charges];
        if ($debug) echo "\ndiagref = $itemdiagref[$number_of_charges] <BR>\n";
@@ -385,7 +396,7 @@
    ########################################################################
 
    echo "
-    <FORM ACTION=\"echo.php3/hcfa.txt\" METHOD=POST>
+    <FORM ACTION=\"echo.php3/form.txt\" METHOD=POST>
      <CENTER>
       <$STDFONT_B><B>Preview</B><$STDFONT_E>
      </CENTER>
@@ -453,7 +464,7 @@
      </TD>
      <TD ALIGN=LEFT>
    ";
-   fm_number_select ("num_patients", 0, 20);
+   fm_number_select ("num_patients", 0, 200);
    echo "
      </TD>
     </TR>

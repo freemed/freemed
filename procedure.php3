@@ -72,6 +72,7 @@ switch ($action) { // master action switch
     $procbalcurrent = $this_data["procbalcurrent"];
     $procamtpaid    = $this_data["procamtpaid"   ];
     $procbilled     = $this_data["procbilled"    ];
+    $procauth       = $this_data["procauth"      ];
     break; // end of modform (inner)
   } // inner action switch
   freemed_display_box_top ("$this_action $record_name");
@@ -96,7 +97,7 @@ switch ($action) { // master action switch
      </TD><TD ALIGN=LEFT>
       <SELECT NAME=\"procphysician\">
   ";
-  freemed_display_physicians ($procphysician);
+  freemed_display_physicians ($procphysician, "no");
   echo "
       </SELECT>
      </TD>
@@ -243,6 +244,30 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
+      <$STDFONT_B>Authorization : <$STDFONT_E>
+     </TD><TD ALIGN=LEFT>
+      <SELECT NAME=\"procauth\">
+       <OPTION VALUE=\"0\" ".
+        ( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED
+  ";
+  $auth_res = fdb_query ("SELECT * FROM $database.authorizations
+                          WHERE (authpatient='$patient')");
+  if ($auth_res > 0) { // begin if there are authorizations...
+   while ($auth_r = fdb_fetch_array ($auth_res)) {
+    echo "
+     <OPTION VALUE=\"$auth_r[id]\" ".
+     ( ($auth_r[id]==$procauth) ? "SELECTED" : "" )
+     .">$auth_r[authdtbegin] to $auth_r[authdtend]
+    ";
+   } // end while looping for authorizations
+  } // end if there are authorizations
+  echo "
+      </SELECT>
+     </TD>
+    </TR>
+
+    <TR>
+     <TD ALIGN=RIGHT>
       <$STDFONT_B>Comment : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"$proccomment\"
@@ -313,6 +338,8 @@ switch ($action) { // master action switch
     <INPUT TYPE=HIDDEN NAME=\"procpos\"  VALUE=\"$procpos\">
     <INPUT TYPE=HIDDEN NAME=\"proccomment\" VALUE=\"".
        fm_prep($proccomment)."\">
+    <INPUT TYPE=HIDDEN NAME=\"procauth\" VALUE=\"".
+       fm_prep($procauth)."\">
 
     <!-- calculate charges and allow change here -->
   ";
@@ -406,6 +433,19 @@ switch ($action) { // master action switch
 
    <TR>
     <TD ALIGN=RIGHT>
+     <$STDFONT_B>Insurance Billable? : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+     <SELECT NAME=\"procbillable\">
+      <OPTION VALUE=\"0\" ".
+       ( ($procbillable == 0) ? "SELECTED" : "" ).">yes
+      <OPTION VALUE=\"1\" ".
+       ( ($procbillable != 0) ? "SELECTED" : "" ).">no
+     </SELECT>
+    </TD>
+   </TR>
+
+   <TR>
+    <TD ALIGN=RIGHT>
      <$STDFONT_B>Comment : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
      <$STDFONT_B>".fm_prep($proccomment)."<$STDFONT_E>
@@ -443,17 +483,19 @@ switch ($action) { // master action switch
             '$procdiag2',
             '$procdiag3',
             '$procdiag4',
-            '$proccharges',
-            '$procunits',
-            '".addslashes($procvoucher)."',
+            '".addslashes($proccharges).  "',
+            '".addslashes($procunits).    "',
+            '".addslashes($procvoucher).  "',
             '$procphysician',
             '".fm_date_assemble("procdt")."',
             '$procpos',
-            '".addslashes($proccomment)."',
+            '".addslashes($proccomment).  "',
             '$procbalorig',
             '$procbalorig',
             '0',
             '0',
+            '".addslashes($procbillable). "',
+            '".addslashes($procauth).     "',
             NULL )";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
@@ -513,7 +555,13 @@ switch ($action) { // master action switch
      "procedure=$this_procedure\"
      ><$STDFONT_B>Add Payment<$STDFONT_E></A> <B>|</B>
      <A HREF=\"procedure.php3?$_auth&action=addform&procvoucher=$procvoucher".
-      "&patient=$patient&procdt=".fm_date_assemble("procdt")."\"
+      "&patient=$patient&procdt=".fm_date_assemble("procdt").
+      "&procdiag1=$procdiag1".
+      "&procdiag2=$procdiag2".
+      "&procdiag3=$procdiag3".
+      "&procdiag4=$procdiag4".
+      "&procphysician=$procphysician".
+      "\"
      ><$STDFONT_B>Add Another $record_name<$STDFONT_E></A>
     </CENTER>
     <P>
@@ -539,12 +587,14 @@ switch ($action) { // master action switch
             procdiag4       = '$procdiag4',
             proccharges     = '$proccharges',
             procunits       = '$procunits',
-            procvoucher     = '".addslashes($procvoucher)."',
-            procphysician   = '$procphysician',
+            procvoucher     = '".addslashes($procvoucher).  "',
+            procphysician   = '".addslashes($procphysician)."',
             procdt          = '".fm_date_assemble("procdt")."',
-            procpos         = '$procpos',
-            procbalorig     = '$procbalorig',
-            proccomment     = '".addslashes($proccomment)."'
+            procpos         = '".addslashes($procpos).      "',
+            procbalorig     = '".addslashes($procbalorig).  "',
+            proccomment     = '".addslashes($proccomment).  "',
+            procauth        = '".addslashes($procauth).     "',
+            procbillable    = '".addslashes($procbillable). "'
             WHERE id='$id'";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";

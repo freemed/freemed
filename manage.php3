@@ -172,6 +172,15 @@ switch ($action) {
         <TD>&nbsp;</TD>
         </TR>
         <TR><TD ALIGN=RIGHT>
+        <$STDFONT_B><B>Authorizations : </B><$STDFONT_E>
+        </TD><TD>
+        <A HREF=\"authorizations.php3?$_auth&patient=$id&action=addform\"
+        ><$STDFONT_B>$Add<$STDFONT_E></A>
+        </TD><TD>
+        <A HREF=\"authorizations.php3?$_auth&patient=$id&action=view\"
+        ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+        </TD></TR>
+        <TR><TD ALIGN=RIGHT>
          <$STDFONT_B><B>Billing Functions</B> : <$STDFONT_E>
         </TD><TD>
          <A HREF=\"payment_record.php3?$_auth&patient=$id\"
