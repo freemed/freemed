@@ -8,7 +8,7 @@ if (!defined("__UNPAID_PROCEDURES_REPORT_MODULE_PHP__")) {
 class UnpaidProceduresReport extends freemedReportsModule {
 
 	var $MODULE_NAME = "Unpaid Procedures Report";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
 	var $show = array (
@@ -28,13 +28,14 @@ class UnpaidProceduresReport extends freemedReportsModule {
 	{
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-   		// procduce a list only. Don't acutally process any bills
 
+   		// produce a list only. Don't actually process any bills
         $query = "SELECT procrec.procbilled,procrec.procdtbilled,
                   procrec.procbalcurrent,patient.ptlname,patient.ptfname,
                   patient.id
                   FROM procrec,patient 
-                  WHERE procbalcurrent>'0' AND procrec.procpatient = patient.id
+                  WHERE procrec.procbalcurrent > '0' 
+                    AND procrec.procpatient = patient.id
                   ORDER BY patient.ptlname
                  ";
         $result = $sql->query($query);
@@ -127,7 +128,6 @@ class UnpaidProceduresReport extends freemedReportsModule {
 				if (!$procbilled)
 					$billed = 0;
 
-
     		} // while there are no more
 			// process last record from control break;
             echo "
@@ -161,7 +161,6 @@ class UnpaidProceduresReport extends freemedReportsModule {
 			<TD ALIGN=RIGHT><FONT COLOR=#ff0000>".bcadd($total_unpaid,0,2)."</TD>
 			</TR>
 			";
-
 
 	 		echo "
       			</TABLE>
