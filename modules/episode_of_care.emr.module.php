@@ -73,8 +73,7 @@ class episodeOfCare extends freemedEMRModule {
 		"eocdisworkdt",
 		"eochosadmdt",
 		"eochosdischrgdt",
-		"eocrelautotime",
-		"eochospital"
+		"eocrelautotime"
 	);
 
 	function episodeOfCare () {
