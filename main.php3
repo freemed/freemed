@@ -161,7 +161,7 @@ echo "<$STDFONT_E>"; // end standard font
      <$STDFONT_E>
       &nbsp;<B>|</B>&nbsp;
      <$STDFONT_B SIZE=-1>
-     "._("User description").": ".fm_prep($this_user->getDescription())."
+     "._("User description").": ".prepare($this_user->getDescription())."
      <$STDFONT_E>
     </TD></TR>
     <TR><TD>
