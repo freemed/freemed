@@ -21,7 +21,10 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 		"phygroupname",
 		"phygroupfac",
 		"phygroupdtadd",
-		"phygroupdtmod"
+		"phygroupdtmod",
+		"phygroupidmap",
+		"phygroupdocs",
+		"phygroupspe1"
 	);
 
 	function providerGroupsMaintenance () {
@@ -51,7 +54,8 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
-		$this->view();
+		// too much data for this now
+		//$this->view();
 
 		switch($action) { // inner action switch
 			case "modform":
@@ -59,8 +63,12 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 					$action="addform";
 					break;
 				}
+				while(list($k,$v)=each($this->variables))
+            		global $$v;
 				$r = freemed_get_link_rec($id,$this->table_name);
 				extract ($r);
+				$phygroupidmap  = fm_split_into_array($phygroupidmap);
+				//$phygroupdocs 	= fm_split_into_array($phygroupdocs);
 				break;
 			case "addform": // addform *is* the default
 			default:
@@ -71,7 +79,11 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 		// set date of addition if not set 
 		if (!isset($phygroupdtadd)) $phygroupdtadd = $cur_date;
  
-		$fac_r = $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote");
+		$fac_r = $sql->query("SELECT psrname,psrnote,id FROM facility ORDER BY psrname,psrnote");
+		$spec_r = $sql->query("SELECT * FROM specialties ORDER BY specname,specdesc");
+		$phy_q = "SELECT phylname,phyfname,id FROM physician ORDER BY phylname";
+
+
 		echo "
 			<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=\"100%\">
    <TR><TD ALIGN=CENTER>
@@ -80,8 +92,24 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
       (($action=="modform") ? "mod" : "add")."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-    <INPUT TYPE=HIDDEN NAME=\"phygroupdtadd\" VALUE=\"".prepare($phygroupdtadd)."\">
-   
+    <INPUT TYPE=HIDDEN NAME=\"phygroupdtadd\" VALUE=\"".prepare($phygroupdtadd)."\">";
+ 
+	echo html_form::form_table( array (
+	_("Physician Group Name") => 
+	"<INPUT TYPE=TEXT NAME=phygroupname SIZE=20 MAXLENGTH=100 ".
+     "VALUE=\"".prepare($phygroupname)."\">",
+	_("Default Facility") => freemed_display_selectbox($fac_r, 
+														"#psrname# [#psrnote#]",
+       													"phygroupfac"),
+	_("Specialty 1") => freemed_display_selectbox ($spec_r,
+       												"#specname#, #specdesc#",
+													 "phygroupspe1"),
+
+	_("Physicians") => freemed_multiple_choice($phy_q,"phylname:phyfname","phygroupdocs",$phygroupdocs,false)
+			)
+		);
+/*
+	 
     <$STDFONT_B>"._("Physician Group Name")." : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=phygroupname SIZE=20 MAXLENGTH=100
      VALUE=\"".prepare($phygroupname)."\">
@@ -92,7 +120,44 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
     ".freemed_display_selectbox($fac_r, "#psrname# [#psrnote#]", 
        "phygroupfac")."
    </TD></TR>
-   
+	";
+*/
+
+	// handle groupidmap (just like phyidmap)
+
+  $insmap_buf = ""; // cache the output, as above
+  $i_res = $sql->query("SELECT * FROM inscogroup");
+  while ($i_r = $sql->fetch_array ($i_res)) {
+    $i_id = $i_r ["id"];
+    $insmap_buf .= "
+     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+      <TD>".prepare($i_r["inscogroup"])."</TD>
+      <TD>
+       <INPUT TYPE=TEXT NAME=\"phygroupidmap$brackets\"
+        SIZE=15 MAXLENGTH=30 VALUE=\"".$phygroupidmap[$i_id]."\">
+      </TD>
+     </TR>
+    ";
+  } // end looping for service types
+	echo "<P>
+  <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 
+   BGCOLOR=\"#000000\"> <!-- black border --><TR><TD>
+
+    <!-- hide record zero, since it isn't used... -->
+    <INPUT TYPE=HIDDEN NAME=\"phygroupidmap$brackets\" VALUE=\"0\">
+
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
+     ALIGN=CENTER>
+    <TR BGCOLOR=#aaaaaa>
+     <TD><B>"._("Insurance Group")."</B></TD>
+     <TD><B>"._("ID Number")."</B></TD>
+    </TR>
+    $insmap_buf
+    </TABLE>
+  </TD></TR></TABLE></CENTER>
+	";
+	// end groupidmap
+	echo "<P>
    <TR><TD ALIGN=CENTER>
     <INPUT TYPE=SUBMIT VALUE=\"".
       (($action=="modform") ? _("Modify") : _("Add"))."\">

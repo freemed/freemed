@@ -27,8 +27,9 @@ class placeOfServiceMaintenance extends freemedMaintenanceModule {
 	function placeOfServiceMaintenance () {
 		// run constructor
 		$this->freemedMaintenanceModule();
-		global $posdtmod;
+		global $posdtmod, $posdtadd;
 		$posdtmod = $GLOBALS["cur_date"];
+		$posdtadd = $GLOBALS["cur_date"];
 	} // end constructor placeOfServiceMaintenance	
 
 	function view () {
@@ -51,18 +52,23 @@ class placeOfServiceMaintenance extends freemedMaintenanceModule {
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
   		if ($action=="modform") { 
-    		$result = $sql->query("SELECT posname,posdescrip FROM $this->table_name
+    		$result = $sql->query("SELECT * FROM $this->table_name
 				WHERE ( id = '$id' )");
 			$r = $sql->fetch_array($result); // dump into array r[]
 			extract ($r);
 		} // if loading values
+		if ($action=="addform")
+		{
+			global $posdtadd;
+			$posdtadd = $cur_date;
+		}
 
 		// display itemlist first
 		$this->view ();
 
 		echo "
 			<FORM ACTION=\"$this->page_name\" METHOD=POST>
-			<INPUT TYPE=HIDDEN NAME=\"posdtadd\"".prepare($cur_date)."\">
+			<INPUT TYPE=HIDDEN NAME=\"posdtadd\"".prepare($posdtadd)."\">
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
 			($action=="modform" ? "mod" : "add")."\">";

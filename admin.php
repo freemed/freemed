@@ -770,6 +770,9 @@ if ($action=="cfgform") {
     phygroupdtadd  DATE,
     phygroupdtmod  DATE,
     id INT NOT NULL AUTO_INCREMENT,
+	phygroupidmap  TEXT,
+	phygroupdocs   TEXT,
+	phygroupspe1   INT UNSIGNED,
     PRIMARY KEY (id)
     )");
   if ($result) echo "<LI>"._("Physician Groups")."\n";

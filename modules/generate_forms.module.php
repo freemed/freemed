@@ -450,16 +450,16 @@ class GenerateFormsModule extends freemedBillingModule {
      	$ptphone[full]   = $this_patient->local_record["pthphone" ];
 
      	// doctor link/information
-     	$this_physician  = new Physician
-                        ($this_patient->local_record["ptdoc"]);
-     	$phy[name]       = $this_physician->fullName();
-     	$phy[practice]   = $this_physician->practiceName();
-     	$phy[addr1]      = $this_physician->local_record["phyaddr1a"];
-     	$phy[addr2]      = $this_physician->local_record["phyaddr2a"];
-     	$phy[city]       = $this_physician->local_record["phycitya" ];
-     	$phy[state]      = $this_physician->local_record["phystatea"];
-     	$phy[zip]        = $this_physician->local_record["phyzipa"  ];
-     	$phy[phone]      = $this_physician->local_record["phyphonea"];
+     	//$this_physician  = new Physician
+          //              ($this_patient->local_record["ptdoc"]);
+     	//$phy[name]       = $this_physician->fullName();
+     	//$phy[practice]   = $this_physician->practiceName();
+     	//$phy[addr1]      = $this_physician->local_record["phyaddr1a"];
+     	//$phy[addr2]      = $this_physician->local_record["phyaddr2a"];
+     	//$phy[city]       = $this_physician->local_record["phycitya" ];
+     	//$phy[state]      = $this_physician->local_record["phystatea"];
+     	//$phy[zip]        = $this_physician->local_record["phyzipa"  ];
+     	//$phy[phone]      = $this_physician->local_record["phyphonea"];
 
 		$this_insco = $this_coverage->covinsco;
         if (!$this_insco)
@@ -495,7 +495,7 @@ class GenerateFormsModule extends freemedBillingModule {
      
      $insco[number]     = $this_coverage->covpatinsno;
      $insco[group]      = $this_coverage->covpatgrpno;
-     $insco[name]       = $this_insco->inscoalias;
+     $insco[name]       = ( (empty($this_insco->inscoalias)) ? $this_insco->insconame : $this_insco->inscoalias);
      $insco[line1]      = $this_insco->local_record[inscoaddr1];
      $insco[line2]      = $this_insco->local_record[inscoaddr2];
      $insco[city]       = $this_insco->local_record[inscocity];
@@ -511,21 +511,21 @@ class GenerateFormsModule extends freemedBillingModule {
      } // end of modifiers loop
 
      // pull physician # for insco
-     $insco[phyid]      = ( ($this_insco->local_record[inscogroup] < 1) ?
-         "" :
-         ($this_physician->getMapId($this_insco->local_record[inscogroup]))
-         );
+     //$insco[phyid]      = ( ($this_insco->local_record[inscogroup] < 1) ?
+     //    "" :
+     //    ($this_physician->getMapId($this_insco->local_record[inscogroup]))
+     //    );
 
      // pull facility
-     $this_facility     = freemed_get_link_rec ($default_facility, "facility");
-     if ($debug) echo "\n$default_facility<BR>\n";
-     $fac[name]         = $this_facility[psrname];
-     $fac[line1]        = $this_facility[psraddr1];
-     $fac[line2]        = $this_facility[psraddr2];
-     $fac[city]         = $this_facility[psrcity];
-     $fac[state]        = $this_facility[psrstate];
-     $fac[zip]          = $this_facility[psrzip];
-     $fac[ein]          = $this_facility[psrein];
+     //$this_facility     = freemed_get_link_rec ($default_facility, "facility");
+     //if ($debug) echo "\n$default_facility<BR>\n";
+     //$fac[name]         = $this_facility[psrname];
+     //$fac[line1]        = $this_facility[psraddr1];
+     //$fac[line2]        = $this_facility[psraddr2];
+     //$fac[city]         = $this_facility[psrcity];
+     //$fac[state]        = $this_facility[psrstate];
+     //$fac[zip]          = $this_facility[psrzip];
+     //$fac[ein]          = $this_facility[psrein];
 
      // current date hashes
      $curdate[mmddyy]   = date ("m d y");
@@ -585,11 +585,23 @@ class GenerateFormsModule extends freemedBillingModule {
                                $this_form[ffcheckchar] : " " );
        $guarsex[trans]    = ( ($guarantor->guarsex == "t") ?
                                $this_form[ffcheckchar] : " " );
-       $guaraddr[line1]   = $guarantor->guaraddr1;
-       $guaraddr[line2]   = $guarantor->guaraddr2;
-       $guaraddr[city]    = $guarantor->guarcity;
-       $guaraddr[state]   = $guarantor->guarstate;
-       $guaraddr[zip]     = $guarantor->guarzip;
+       // address information
+	   if ($guarantor->guarsame) // pat and guar have same addr?
+	   {
+       	$guaraddr[line1]   = $this_patient->local_record["ptaddr1"  ];
+       	$guaraddr[line2]   = $this_patient->local_record["ptaddr2"  ];
+       	$guaraddr[city]    = $this_patient->local_record["ptcity"   ];
+       	$guaraddr[state]   = $this_patient->local_record["ptstate"  ];
+       	$guaraddr[zip]     = $this_patient->local_record["ptzip"    ];
+	   }
+	   else
+	   {
+       	$guaraddr[line1]   = $guarantor->guaraddr1;
+       	$guaraddr[line2]   = $guarantor->guaraddr2;
+       	$guaraddr[city]    = $guarantor->guarcity;
+       	$guaraddr[state]   = $guarantor->guarstate;
+       	$guaraddr[zip]     = $guarantor->guarzip;
+	   }
        //$guarphone[full]   = $guarantor->local_record["pthphone" ];
 
        //$insco[number]     = $guarantor->payer[$bill_request_type]->local_record["payerpatientinsno"];
@@ -632,7 +644,7 @@ class GenerateFormsModule extends freemedBillingModule {
 									 procpatient = '$parmpatient' AND
                                      procbillable = '0' AND
                                      procbilled = '0') 
-                           	  ORDER BY proceoc,procauth,procdt";
+                           	  ORDER BY procpos,procphysician,proceoc,procauth,procdt";
      $result = $sql->query ($query);
 
      if (!$result or ($result==0))
@@ -644,15 +656,19 @@ class GenerateFormsModule extends freemedBillingModule {
        //$p = freemed_get_link_rec ($r[payrecproc], "procrec");
        if ($first_procedure == 0)
        {
-	   $prev_auth = $r["procauth"];
+		   $prev_pos = $r["procpos"];
+		   $prev_doc = $r["procphysician"];
+	   	   $prev_auth = $r["procauth"];
            $prev_eoc = $r["proceoc"];
-           $prev_key = $prev_eoc.$prev_auth;
+           $prev_key = $prev_pos.$prev_doc.$prev_eoc.$prev_auth;
            $first_procedure = 1;
        }
 	
+	   $cur_pos = $r["procpos"];
+	   $cur_doc = $r["procphysician"];
        $cur_auth = $r["procauth"];
        $cur_eoc = $r["proceoc"];
-       $cur_key = $cur_eoc.$cur_auth;
+       $cur_key = $cur_pos.$cur_doc.$cur_eoc.$cur_auth;
 
        if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
        flush();
@@ -724,6 +740,34 @@ class GenerateFormsModule extends freemedBillingModule {
        } else {
          // DONT DO ANYTHING IN THIS CASE (PLACEHOLDER)       
        } // end checking if the set will fit
+
+       // pull facility
+       $this_facility     = freemed_get_link_rec ($r[procpos], "facility");
+       if ($debug) echo "\n$default_facility<BR>\n";
+       $fac[name]         = $this_facility[psrname];
+       $fac[line1]        = $this_facility[psraddr1];
+       $fac[line2]        = $this_facility[psraddr2];
+       $fac[city]         = $this_facility[psrcity];
+       $fac[state]        = $this_facility[psrstate];
+       $fac[zip]          = $this_facility[psrzip];
+       $fac[ein]          = $this_facility[psrein];
+
+       // doctor link/information
+       $this_physician  = new Physician
+                       ($this_patient->local_record["ptdoc"]);
+       $phy[name]       = $this_physician->fullName();
+       $phy[practice]   = $this_physician->practiceName();
+       $phy[addr1]      = $this_physician->local_record["phyaddr1a"];
+       $phy[addr2]      = $this_physician->local_record["phyaddr2a"];
+       $phy[city]       = $this_physician->local_record["phycitya" ];
+       $phy[state]      = $this_physician->local_record["phystatea"];
+       $phy[zip]        = $this_physician->local_record["phyzipa"  ];
+       $phy[phone]      = $this_physician->local_record["phyphonea"];
+       // pull physician # for insco
+       $insco[phyid]      = ( ($this_insco->local_record[inscogroup] < 1) ?
+         "" :
+         ($this_physician->getMapId($this_insco->local_record[inscogroup]))
+         );
 
        // pull into current array
        if ($debug) echo "\nnumber of charges = $number_of_charges <BR>\n";

@@ -372,7 +372,7 @@ class procedureModule extends freemedEMRModule {
         <CENTER>
          <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-         <A HREF=\"$this->page?$_auth&module=PaymentModule&action=addform&patient=$patient\"
+         <A HREF=\"$this->page_name?$_auth&module=PaymentModule&action=addform&patient=$patient\"
          ><$STDFONT_B>"._("Add Payment")."<$STDFONT_E></A> <B>|</B>
          <A HREF=\"$this->page_name?$_auth&module=$module&action=addform&procvoucher=$procvoucher".
           "&patient=$patient&procdt=".fm_date_assemble("procdt").

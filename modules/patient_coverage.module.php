@@ -174,6 +174,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 		$covstatus='0';
 		$startdt = fm_date_assemble("coveffdt");
+		$covdob = fm_date_assemble("covdob");
 		$query = "UPDATE $this->table_name SET coveffdt='".addslashes($startdt)."',".
 												"covdtmod='".addslashes($cur_date)."',".
 												"covlname='".addslashes($covlname)."',".
@@ -526,7 +527,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 		$startdt = fm_date_assemble("coveffdt");
 
 		if ($startdt > $cur_date)
-			$error_msg .= "Start date cannot be less than Today $cur_date<BR>";
+			$error_msg .= "Start date cannot be greater than Today $cur_date<BR>";
 
 		if ( (empty($covpatgrpno)) OR (empty($covpatinsno)) )
 			$error_msg .= "You must supply Group and ID numbers<BR>";

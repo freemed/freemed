@@ -1,7 +1,21 @@
 medicare,Medicare,1
 medicaid,Medicaid,2
 champus,Champus,3
-champva,Champva,4
+champva,Champva Mod,4
 grouphealth,Group Health Plan,5
 fecablacklung,FECA Black Lung,6
 other,Other Insurance Type (HCFA),7
+09,Self Pay X12,8
+WC,Workers Comp X12,9
+MA,Medicare Part A X12,10
+MB,Medcare Part B  X12,11
+MC,Medicaid X12,12
+OF,Other Federal  X12,13
+CI,Comercial Insurance X12,14
+CH,CHAMPUS X12,15
+BL,Blue Cross Blue Shield X12,16
+HM,HMO  X12,17
+FI,FEP  X12,18
+10,Central Certification X12,19
+SA,Self Administered Group X12,20
+11,Other Non Federal Program X12,21

@@ -1,6 +1,22 @@
 freemed project changelog
 ($Id$)
 
+* Tue Mar 02 2001 fforest
+  - admin added new fields to phygroup to support groupids and physicians
+  - updated supplied files containing X12 codes.
+      insmod, specialties, tos, added pos.EN.data
+  - generate_fixed. changed to get phy and fac data from proc rather
+    than patient. use new guarantor class. use pat address for guarantor
+    if guarantor->guarsame is true.
+  - highmark_edi. added code to support the new phygroup data. 
+  - patient_coverage. fixed covdob not being pickedup.
+  - place_of_service needed to get posdtadd.
+  - procedure_module $this->page should have been $this->page_name
+  - provider_groups enhanced to get a list of physicians for a group along
+    with the idmap of insurance group provider ids. and a group specialty code. 
+    this is now a new screen since it was too much to fit at the bottom of the
+    view.
+    
 * Tue Feb 27 2001 rufustfirefly
   - lib/module_maintenance.php: now runs freemed_import_stock_data after
     create_table method in _setup()

@@ -19,10 +19,11 @@ class HighmarkEDIModule extends freemedEDIModule {
 	var $tier1 = array("93688", "60061", "54763", "54720", "53252", "95199", "95056", "54771");
 
 	var $fac_row;
+	var $phygrp_row;
     var $bill_request_type;  // primary or secondary payer.
     var $bill_coverageid;  //  pointer to coverage table entry
-	var $billing_providerid;   // can be a physician or phygroup id depending on...
-    var $billing_provider_type;  // "GRP" or "PHY"
+	//var $billing_providerid;   // can be a physician or phygroup id depending on...
+    var $group_physicians;       // physicians in group as "1:2:3" etc..
     var $ptinsno;
     var $ptinsgrp;
     var $ptinsnoS;
@@ -250,7 +251,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			}
 		}
 		$providers = count($providerid);
-		echo "providers $providers $providerid[0]<BR>";
+		//echo "providers $providers $providerid[0]<BR>";
 
 		if (!$this->EDIOpen())
 		{	
@@ -459,11 +460,19 @@ class HighmarkEDIModule extends freemedEDIModule {
 		// generate specialtycode record
 		// specialty codes are noted in appendix 2 of the Highmark
 		// X12 specification for bluecross;
-		$specid = $this->Physician->local_record["physpe1"];	
+
+		if ($this->phygrp_row != 0)
+		{
+			$specid = $this->phygrp_row[phygroupspe1];
+		}
+		else
+		{
+			$specid = $this->Physician->local_record["physpe1"];	
+		}
 
 		if ( ($specid == 0) OR (empty($specid)) )
 		{
-			$this->Error("Physician must have a specialty code");
+			$this->Error("Physician or Group must have a specialty code");
 			$specialty_code = "SPECXXXXXX";
 		}
 		else
@@ -483,20 +492,35 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$this->edi_buffer = $this->edi_buffer."REF*87*".$specialty_code;
 		$this->edi_buffer .= $this->record_terminator;
 
-		// generate provider id record we get the provider number this doc has
+		// generate provider id record we get the provider number this doc/grp has
 		// for this insurer.
 		// phyidmap is as array of provider numbers for insurance companies
 		// the group code in the insco is the offset into the array. it should be 		
-		// the Docs provider id for this insco.
+		// the Docs/grp provider id for this insco.
+
 		$provider_id = "0";
-		$providerids = explode(":",$this->Physician->local_record[phyidmap]);
 		$grp = $this->InsuranceCo->local_record[inscogroup];
-		$provider_id = $providerids[$grp];
+		if (!$grp)
+		{
+			$name = $this->InsuranceCo->local_record[insconame];	
+			$this->Error("Error - Failed to get inscogroup record for $name");
+		}
+
+		if ($this->phygrp_row != 0)
+		{
+			$providerids = explode(":",$this->phygrp_row[phygroupidmap]);
+			$provider_id = $providerids[$grp];
+		}
+		else
+		{
+			$providerids = explode(":",$this->Physician->local_record[phyidmap]);
+			$provider_id = $providerids[$grp];
+		}
 
 		if ($provider_id == "0")
 		{
-			$this->Error("Physician does not have a valid provider ID");
-			$provider_id = "XXXXX";
+			$this->Error("Physician/Group does not have a valid provider ID");
+			$provider_id = "PROVXXXXX";
 		}
 
 		$ref_qualifier = "BQ";  // tier 2 payer
@@ -540,17 +564,21 @@ class HighmarkEDIModule extends freemedEDIModule {
 		// if we have a facility and a doc use the docs info here else we can skip it.
 		// NOTE:: this assumes that the physicians address if any is his/her billing address
 		// and should be different from the facility.
-
+		// NOTE::
+		// decided not to support this payto provider stuff at this time
+		// need to know which address to assume if not empty then bill it.
+		// maybe phyaddr1b ????
+/* comment start
 		if ($this->fac_row != 0)
 		{
        		if (!empty($this->Physician->local_record[phyaddr1a]))
-       		{
-               // this says we have a payto provider as an individual
-               	$this->edi_buffer = $this->edi_buffer."NM1*87*1".$this->record_terminator;
+      		{ 
+              // this says we have a payto provider as an individual
+            	$this->edi_buffer = $this->edi_buffer."NM1*87*1".$this->record_terminator;
 				$phyaddr1a = $this->CleanChar($this->Physician->local_record[phyaddr1a]);
-               	$this->edi_buffer = $this->edi_buffer."N3*".$phyaddr1a;
+             	$this->edi_buffer = $this->edi_buffer."N3*".$phyaddr1a;
                	if (!empty($this->Physician->local_record[phyaddr2a]))
-				{
+					{
 					$phyaddr2a = $this->CleanChar($this->Physician->local_record[phyaddr2a]);
 					$this->edi_buffer = $this->edi_buffer."*".$phyaddr2a;
 					$this->edi_buffer .= $this->record_terminator;
@@ -569,7 +597,7 @@ class HighmarkEDIModule extends freemedEDIModule {
             	$this->edi_buffer = $this->edi_buffer.$zip.$this->record_terminator;
      		}
 		}
-
+ comment end */
 
 		
 
@@ -917,20 +945,28 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
-		$phy_select = "procphysician = '".$this->billing_providerid."' AND";
-		$phygroup_select = "procpos = '".$this->billing_providerid."' AND";
+
+		//$phy_select = "procphysician = '".$this->billing_providerid."' AND";
+		//$phygroup_select = "procpos = '".$this->billing_providerid."'".
+		//		" AND procphysician IN($this->group_physicians) AND";
 		$phygroup_order = "ORDER BY procphysician,proceoc,procauth,procrefdoc,proccurcovid,proccov1,procdt";
 		$normal_order = "ORDER BY proceoc,procauth,procrefdoc,proccurcovid,proccov1,procdt";
 	
 		$xtraselect = "";	
-		if ($this->billing_provider_type == "GRP")
+		if ($this->phygrp_row != 0)
 		{
-			$xtraselect = $phygroup_select;
+			$pos = $this->phygrp_row[phygroupfac];
+			$physicians = $this->phygrp_row[phygroupdocs];
+			$physicians = str_replace(":",",",$physicians);
+			$xtraselect = "procpos = '".$pos."' AND procphysician IN($physicians) AND";
+			//$xtraselect = $phygroup_select;
 			$xtraorder  = $phygroup_order;
 		}
 		else
 		{
-			$xtraselect = $phy_select;
+			$physician = $this->Physician->local_record[id];
+			$xtraselect = "procphysician = '".$physician."' AND"; 
+			//$xtraselect = $phy_select;
 			$xtraorder  = $normal_order;
 		}
 
@@ -1339,7 +1375,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$row = $procstack[0];
 
 		
-		if ($this->billing_provider_type == "GRP")
+		if ($this->phygrp_row != 0)
 		{
 			// if billing a grp, the billing providerid is the id for the
 			// group and each physician is considered a rendering provider
@@ -1361,13 +1397,23 @@ class HighmarkEDIModule extends freemedEDIModule {
 			$ls2310 .= "***";
 
 			$provider_id = "0";
+			$grp = $this->InsuranceCo->local_record[inscogroup];
+			if (!$grp)
+			{
+				$name = $this->InsuranceCo->local_record[insconame];
+				$this->Error("Failed getting inscogroup for $name");
+			}
+
+			$providerids = explode(":",$physician->local_record[phyidmap]);
+			$provider_id = $providerids[$grp];
+
+			$err="";
 			if (fm_value_in_array($this->tier1,$this->NaicNo))
 			{
 				$provider_qualifier = "BS"; // tier 1 payer
-				$providerids = explode(":",$physician->local_record[phyidmap]);
-				$grp = $this->InsuranceCo->local_record[inscogroup];
-				$provider_id = $providerids[$grp];
 				$provider_id = $this->PadNumber($provider_id,"0","10");
+				$err = "Physician does not have a valid Provider ID for this insurer".
+				$proverr = "PROVXXXXX";
 
 			}
 			else
@@ -1375,25 +1421,49 @@ class HighmarkEDIModule extends freemedEDIModule {
 				$provider_qualifier = "FI";  // tier 2 payer
 				$provider_id = $physician->local_record[physsn];
 				$provider_id = $this->CleanNumber($provider_id);
-				echo "providerid $provider_id<BR>";
+				$err = "Physician does not have a valid SSN".
+				$proverr = "SSNXXXXX";
 			}
 
 			if ($provider_id == "0" OR empty($provider_id))
 			{
-				$err = "Physician does not have a valid ".
-					($provider_qualifier=="FI") ? "SSN" : "Group ID";
 				$this->Error($err);
-				$provider_id = "PROVXXXXX";
+				$provider_id = $proverr;
 			}
 
 			$ls2310 .= $provider_qualifier;
 			$ls2310 .= "*";
 			$ls2310 .= $provider_id;
 			$ls2310 .= $this->record_terminator; 
+
+			$specid = $physician->local_record["physpe1"];	
+			if ( ($specid == 0) OR (empty($specid)) )
+			{
+				$this->Error("Physician must have a specialty code");
+				$specialty_code = "SPECXXXXXX";
+			}
+			else
+			{
+				$spec_row = freemed_get_link_rec($specid, "specialties");
+				if (!$spec_row)
+				{
+					$this->Error("Error in Rendering provider getting specialty code");
+					$specialty_code = "SPECXXXXXX";
+				}
+				$specialty_code = $spec_row[specname];
+				$specialty_code = $this->CleanNumber($specialty_code); 
+			}
+
+			$ls2310 = $ls2310."REF*87*".$specialty_code.$this->record_terminator;
+
+		
+			
 			
 		} // end rendering provider 2310a
 
+
 		// 2310-b facility if inpatient outpatient skilled nursing
+		// 2310-c referring provider
 
 		// common end
 		if (!empty($ls2310))
@@ -1662,7 +1732,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 	//
 	// we may be able to put most of generate in the base class
 	// then overridie it here, call the base class, the all the internal functions
-	//
+	// provid = id of physician or id of phygroup
+
 	function Generate($patid, $coverageid, $provid, $provtype)
 	{
 		reset ($GLOBALS);
@@ -1694,8 +1765,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			return false;
 		}
 	
-		$this->billing_providerid = $provid;
-		$this->billing_provider_type = $provtype;
+		//$this->billing_providerid = $provid;
 
 		$this_coverage = 0;
 		$this_coverage = new Coverage($coverageid);
@@ -1709,7 +1779,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 		if ($bill_request_type == PATIENT)
 		{
-			$this->Error("bill reques type cant be zero");
+			$this->Error("bill request type cant be zero");
 			return false;  // only primary (1) or secondary(2)
 		}
 
@@ -1725,6 +1795,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		// clear prev patient if any
 
 		$this->fac_row = 0;
+		$this->phygrp_row = 0;
 		$this->ptinsno = 0;
 		$this->ptinsnoS = 0;
 		$this->ptinsgrp = 0;
@@ -1750,15 +1821,6 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$ptfname = $this->CurPatient->ptfname;
 		$this->Error("processing $ptlname, $ptfname");
 
-		$bills = $this->GetClaims(true);
-
-		if ($bills <= 0)
-		{
-			// this should never happen if the driver of this
-			// class is doing the right thing.
-			$this->Error("Nothing to bill for this Patient");
-			return false;
-		}
 		//$ptdep = $this->CurPatient->ptdep;
 		//echo "ptdep $ptdep<BR>";
 		if ($this_coverage->covdep != 0)   // use this guarantors ins
@@ -1799,26 +1861,27 @@ class HighmarkEDIModule extends freemedEDIModule {
 	 	//    return false;
 		//}
 
-		if ($this->billing_provider_type=="GRP")
+		if ($provtype=="GRP")
 		{
-			$grp = freemed_get_link_rec($this->billing_providerid,"phygroup");
-			if (!$grp)
+			$this->phygrp_row = freemed_get_link_rec($provid,"phygroup");
+			if (!$this->phygrp_row)
 			{
 				$this->Error("error in generate Failed to get phy group");
 				return;
 			}
-			$fac_row = freemed_get_link_rec($grp[phygroupfac],"facility");
-			if (!$fac_row)
+			$this->group_physicians = $this->phygrp_row[phygroupdocs];
+			$this->group_physicians = str_replace(":",",",$this->group_physicians);
+			$this->fac_row = freemed_get_link_rec($this->phygrp_row[phygroupfac],"facility");
+			if (!$this->fac_row)
 			{
 				$this->Error("error in generate Failed to get facility");
 				return;
 			}
-			$this->fac_row = $fac_row;
 			
 		}
-		if ($this->billing_provider_type=="PHY")
+		if ($provtype=="PHY")
 		{
-			$this->Physician = new Physician($this->billing_providerid);
+			$this->Physician = new Physician($provid);
 			if (!$this->Physician)
 			{
 				$this->Error("error in generate: Physician class");
@@ -1826,6 +1889,15 @@ class HighmarkEDIModule extends freemedEDIModule {
 			}
 		}
 		
+		$bills = $this->GetClaims(true);
+
+		if ($bills <= 0)
+		{
+			// this should never happen if the driver of this
+			// class is doing the right thing.
+			$this->Error("Nothing to bill for this Patient");
+			return false;
+		}
 	
 
 		// WARNING. the calling order is mandatory!!!
@@ -1877,7 +1949,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 	}
 	function NewKey($row)
     {
-		if ($this->billing_provider_type = "GRP")
+		if ($this->phygrp_row != 0)
 		{
         	$key = $row[procphysician].$row[proceoc].
 					$row[procauth].$row[procrefdoc].
