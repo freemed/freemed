@@ -11,31 +11,34 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
     class PaymentModule extends freemedEMRModule {
 
         // override variables
-        var $MODULE_NAME = "Payments";
+        var $MODULE_NAME    = "Payments";
+	var $MODULE_AUTHOR  = "Fred Forester (fforest@netcarrier.com)";
         var $MODULE_VERSION = "0.1";
 
+	var $table_name     = "payrec";
+	var $record_name    = "Payments";
+	var $patient_field  = "payrecpatient";
+
         var $item;
-		var $view_query = "!='0'";  // by default see unpaid and overpaid
-		var $view_closed = "='0'";  // see paid procedures when closed is selected
-		var $view_unpaid = ">'0'";  // we use this when being called from the unpaid procs report
-		var $table_name = "payrec";
+	var $view_query = "!='0'";  // by default see unpaid and overpaid
+	var $view_closed = "='0'";  // see paid procedures when closed is selected
+	var $view_unpaid = ">'0'";  // we use this when being called from the unpaid procs report
 
-		var $variables = array(
-			"payrecdtadd",
-			"payrecdtmod",
-			"payrecpatient",
-			"payrecdt",
-			"payreccat",
-			"payrecproc",
-			"payrecsource",
-			"payreclink",
-			"payrectype",
-			"payrecnum",
-			"payrecamt",
-			"payrecdescrip",
-			"payreclock"
-			);
-
+	var $variables = array(
+		"payrecdtadd",
+		"payrecdtmod",
+		"payrecpatient",
+		"payrecdt",
+		"payreccat",
+		"payrecproc",
+		"payrecsource",
+		"payreclink",
+		"payrectype",
+		"payrecnum",
+		"payrecamt",
+		"payrecdescrip",
+		"payreclock"
+	);
 
         // contructor method
         function PaymentModule ($nullvar = "") {

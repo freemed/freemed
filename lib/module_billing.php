@@ -416,8 +416,10 @@ class freemedBillingModule extends freemedModule {
 								$r[procdiag2], 
 								$r[procdiag3], 
 								$r[procdiag4]);
-				if (!$test_AddSet)
-					 DIE("AddSet failed!!");
+				if (!$test_AddSet) {
+					$display_buffer .= "AddSet failed!!";
+					template_display();
+				}
 
 			} 
 
@@ -483,7 +485,7 @@ class freemedBillingModule extends freemedModule {
        			if (!$result)
        			{
        				$display_buffer .= "Mark failed getting procrecs<BR>";
-       				DIE("Mark failed getting procrecs");
+				template_display();
        			}
 				//$display_buffer .= "proc query $query<BR>";
        			$bill_tran = $sql->fetch_array($result);

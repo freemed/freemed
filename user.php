@@ -4,7 +4,7 @@
   // code: adam b (gdrago23@yahoo.com) -- near-complete rewrite
   // lic : GPL
   
-$page_name   = basename($GLOBALS["REQUEST_URI"]);
+$page_name   = "user.php";
 $table_name  = "user";
 $record_name = "User";
 $order_field = "id";
@@ -41,10 +41,14 @@ switch($action) { // master action switch
     if (empty($id)) {
       $action="addform";
     } else {
-    freemed_display_box_top ( _("Modify")." $record_name",
-      $page_name );
+     $page_title = _("Modify")." "._($record_name);
     }
   } // first modform if
+
+  if ($id==1) {
+    $display_buffer .= _("You cannot modify root!");
+    template_display();
+  }
   
   $book->set_submit_name(($action=="addform") ? _("Add") : _("Modify"));
   
@@ -65,7 +69,7 @@ switch($action) { // master action switch
   } // second modform if
   
   if ($action=="addform") {
-    freemed_display_box_top ( _("Add")." "._($record_name) );
+    $page_title =  _("Add")." "._($record_name);
   } // addform if
   
   // now the body
@@ -233,34 +237,40 @@ switch($action) { // master action switch
         // changed... for example, don't set the
         // creation date in a modify. also,
         // remember the commas...
-      $query = "UPDATE $table_name SET ".
-        "username     = '".addslashes($username)."',      ".
-        "userpassword = '".addslashes($userpassword1)."', ".
-        "userdescrip  = '".addslashes($userdescrip)."',   ".
-        "userlevel    = '".addslashes($userlevel)."',     ".
-        "usertype     = '".addslashes($usertype)."',      ".
-        "userfac      = '".addslashes(sql_squash($userfac))."',       ".
-        "userphy      = '".addslashes(sql_squash($userphy))."',       ".
-        "userphygrp   = '".addslashes(sql_squash($userphygrp))."',    ". 
-        "userrealphy  = '".addslashes($userrealphy)."'    ".
-        "WHERE id='".addslashes($id)."'";
+	$query = $sql->update_query($table_name,
+		array (
+			"username"     => $username,
+			"userpassword" => $userpassword1,
+			"userdescrip"  => $userdescrip,
+			"userlevel"    => $userlevel,
+			"usertype"     => $usertype,
+			"userfac"      => sql_squash($userfac),
+			"userphy"      => sql_squash($userphy),
+			"userphygrp"   => sql_squash($userphygrp),
+			"userrealphy"  => $userrealphy
+		),
+		array ( "id" => $id )
+	);
+
     } else { // now the "add" guts
   
       $display_buffer .= "
         <P ALIGN=CENTER>
         "._("Adding")." . . . 
       ";
-      $query = "INSERT INTO $table_name VALUES ( ".
-        "'".addslashes($username)."',      ".
-        "'".addslashes($userpassword1)."', ".
-        "'".addslashes($userdescrip)."',   ".
-        "'".addslashes($userlevel)."',     ".
-        "'".addslashes($usertype)."',      ".
-        "'".addslashes(sql_squash($userfac))."',     ".
-        "'".addslashes(sql_squash($userphy))."',     ".
-        "'".addslashes(sql_squash($userphygrp))."',  ".
-        "'".addslashes($userrealphy)."',   ".
-        " NULL ) ";
+	$query = $sql->insert_query ( "$table_name",
+		array (
+			"username"     => $username,
+			"userpassword" => $userpassword1,
+			"userdescrip"  => $userdescrip,
+			"userlevel"    => $userlevel,
+			"usertype"     => $usertype,
+			"userfac"      => sql_squash($userfac),
+			"userphy"      => sql_squash($userphy),
+			"userphygrp"   => sql_squash($userphygrp),
+			"userrealphy"  => $userrealphy
+		)
+	);
     } // 'add' guts
 
     if ($userpassword1 != $userpassword2) {
@@ -284,23 +294,22 @@ switch($action) { // master action switch
     } // end of error reporting clause
     $display_buffer .= "
         <P ALIGN=CENTER>
-        <A HREF=\"$page_name?\"
+        <A HREF=\"$page_name\"
          >"._("Go back to user menu")."</A>
         <P>
     ";
   
   } // if 'done'
 
-  freemed_display_box_bottom (); // show the bottom of the box
  break;
 
  case "del":
-  freemed_display_box_top (_("Deleting")." $record_name", $page_name);
+	$page_title = _("Deleting")." "._($record_name);
 
     // select only "id" record, and delete
   if ($id != 1)
-    $result = $sql->query("DELETE FROM $table_name
-      WHERE (id = \"$id\")");
+    $result = $sql->query("DELETE FROM $table_name ".
+    	"WHERE id='".addslashes($id)."'");
   else { // if we tried to delete root!!!
     $display_buffer .= "
       <B><CENTER>"._("You cannot delete root!")."</CENTER></B>
@@ -316,7 +325,6 @@ switch($action) { // master action switch
     <A HREF=\"$page_name?action=view\"
      >"._("Go back to user menu")."</A>
   ";
-  freemed_display_box_bottom ();
  break;
 
  default:
@@ -328,16 +336,11 @@ switch($action) { // master action switch
 	//       OR MAKE IT A MODULE, INHEIRITING FROM THE MAINTENANCE
 	//       MODULE
 
-  $query = "SELECT * FROM $table_name ".
-   "ORDER BY $order_field";
+  $query = "SELECT * FROM $table_name ORDER BY $order_field";
 
   $result = $sql->query($query);
   if ($result) {
-    freemed_display_box_top (_($record_name)." "._("Maintenance"));
-
-    if (strlen($_ref)<5) {
-      $_ref="main.php";
-    } // if no ref, then return to home page...
+    $page_title = _($record_name);
 
     $display_buffer .= "
      <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
@@ -369,7 +372,7 @@ switch($action) { // master action switch
       ";
 
         // don't allow add or delete on root...
-      if ($id != 1) 
+      if ($r[id] != 1) 
         $display_buffer .= "
          <A HREF=
          \"$page_name?id=$r[id]&action=modform\"
@@ -396,8 +399,6 @@ switch($action) { // master action switch
     if (strlen($_ref)<5) {
       $_ref="main.php";
     } // if no ref, then return to home page...
-
-    freemed_display_box_bottom (); // display bottom of the box
 
   } else {
     $display_buffer .= "\n<B>"._("No record found with that criteria.")."</B>\n";

@@ -18,6 +18,7 @@ class freemedEMRModule extends freemedModule {
 	var $order_field;
 	var $form_vars;
 	var $table_name;
+	var $patient_field; // the field that links to the patient ID
 
 	// contructor method
 	function freemedEMRModule () {
@@ -28,17 +29,14 @@ class freemedEMRModule extends freemedModule {
 	// override check_vars method
 	function check_vars ($nullvar = "") {
 		global $module, $patient, $LoginCookie;
-		if (!isset($module)) 
-		{
+		if (!isset($module)) {
 			trigger_error("No Module Defined", E_ERROR);
 		}
-		if ($patient < 1) 
-		{
+		if ($patient < 1) {
 			trigger_error( "No Patient Defined", E_ERROR);
 		}
 		// check access to patient
-		if (!freemed_check_access_for_patient($LoginCookie, $patient)) 
-		{
+		if (!freemed_check_access_for_patient($patient)) {
 			trigger_error("User not Authorized for this function", E_USER_ERROR);
 		}
 		return true;
@@ -193,6 +191,73 @@ class freemedEMRModule extends freemedModule {
 		} // end of switch action
 		
 	} // end function form
+
+	// function summary
+	// - show summary view of last few items
+	function summary ($patient, $items) {
+		global $sql, $display_buffer;
+
+		// get last $items results
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE $this->patient_field='".addslashes($patient)."' ".
+			"ORDER BY id DESC LIMIT ".addslashes($items);
+		$result = $sql->query($query);
+
+		// Check to see if there *are* any...
+		if ($sql->num_rows($result) < 1) {
+			// If not, let the world know
+			$buffer .= "<B>"._("NONE")."</B>\n";
+		} else { // checking for results
+			// Or loop and display
+			$buffer .= "
+			<TABLE WIDTH=\"100%\" CELLSPACING=0
+			 CELLPADDING=2 BORDER=0>
+			<TR>
+			";
+			foreach ($this->summary_vars AS $k => $v) {
+				$buffer .= "
+				<TD VALIGN=MIDDLE>
+				<B>".prepare($k)."</B>
+				</TD>
+				";
+			} // end foreach summary_vars
+			$buffer .= "
+				<TD VALIGN=MIDDLE>
+				<B>"._("Action")."</B>
+				</TD>
+			</TR>
+			";
+			while ($r = $sql->fetch_array($result)) {
+				// Pull out all variables
+				extract ($r);
+
+				// Use $this->summary_vars
+				$buffer .= "
+				<TR VALIGN=MIDDLE>
+				";
+				foreach ($this->summary_vars AS $k => $v) {
+					$buffer .= "
+					<TD VALIGN=MIDDLE>
+					".prepare($$v)."
+					</TD>
+					";
+				} // end looping through summary vars
+				$buffer .= "
+				<TD VALIGN=MIDDLE>
+				<A HREF=\"module_loader.php?module=".
+				get_class($this)."&patient=$patient&".
+				"action=modform\"
+				>"._("MOD")."</A>
+				</TD>
+				</TR>
+				";
+			} // end of loop and display
+			$buffer .= "</TABLE>\n";
+		} // checking if there are any results
+
+		// Send back the buffer
+		return $buffer;
+	} // end function summary
 
 	// function view
 	// - view stub

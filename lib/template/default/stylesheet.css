@@ -52,3 +52,9 @@ a:hover {
 	font-size: 8pt
 }
 
+.reverse {
+	border-width: none;
+	background: #000055;
+	color: #ffffff
+}
+

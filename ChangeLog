@@ -11,6 +11,41 @@ freemed project changelog
     modules/patient_record_template.db.module.php,
     modules/type_of_service.db.module.php,
     modules/questionnaire_template.db.module.php: removed STDFONT stuff
+  - lib/module_billing.php, modules/authorizations.emr.module.php,
+    modules/cpt.db.module.php, modules/episode_of_care.emr.module.php,
+    modules/fixed_forms.db.module.php,
+    modules/generate_forms.billing.module.php,
+    modules/generate_statemnt.billing.module.php,
+    modules/highmark.edi.module.php,
+    modules/internal_service_types.db.module.php,
+    modules/payment.emr.module.php, modules/progress_notes.emr.module.php,
+    modules/questionnaire_template.db.module.php: more updates and removal
+    of box calls
+  - admin.php: made configuration *much* easier to maintain with
+    html_form class from phpwebtools, added usermanageopt field in user
+    for configurable EMR display
+  - user.php: moved to $sql->{insert,update}_query(), minor fixen
+  - lib/containers.php: added functions to User class to handle manage
+    configuration
+  - lib/template/default/template.php: added ability to do automatic
+    refresh, looks for time in $automatic_refresh
+  - moved $template to module_template for all module_list instances
+  - patient.php: added ability to immediately jump to patient
+    management screen if there is only one patient found in a search
+  - various files: moved all other "template" variable to other names
+  - lib/template/default/manage_{main,config}.php: split out config
+    of patient management and maintain usermanageopt field from user db
+  - lib/modules.php, modules/*.emr.module.php: added summary method to
+    superclass (for manage.php stuff) and added $this->patient_field to
+    determine which field describes the patient...
+  - you NEED the CVS (0.2.4) version of phpwebtools for freemed to
+    work properly now, since I added module_function() there
+  - manage.php, lib/template/default/manage*: moved to configurable
+    patient management module setup
+  - $this->summary_vars associative array needs to be defined in all
+    EMR modules. this should be "title" => "field name" for the summary
+    screen, unless someone wants to override that with the summary
+    method
 
 * Thu Oct 04 2001 rufustfirefly
   *** part of large UI/sessions merge ***

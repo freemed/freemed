@@ -17,8 +17,9 @@ class progressNotes extends freemedEMRModule {
 		SOAPIER style notes.
 	";
 
-	var $record_name = "Progress Notes";
-	var $table_name  = "pnotes";
+	var $record_name   = "Progress Notes";
+	var $table_name    = "pnotes";
+	var $patient_field = "pnotespat";
 
 	function progressNotes () {
 		// call parent constructor

@@ -20,10 +20,10 @@ include_once ("lib/module_maintenance.php");
 include_once ("lib/module_reports.php");
 
 // top of page
-freemed_open_db ($LoginCookie); // authenticate user
+freemed_open_db (); // authenticate user
 
 // check for access
-$this_user = new User ($LoginCookie);
+$this_user = new User ();
 if ($this_user->getLevel() < $admin_level) {
 	$display_buffer .= _("Access Denied");
 	template_display();
@@ -49,7 +49,7 @@ if ($categories != NULL) {
 		</TR>
 		";
 		// show all modules
-		$template = "
+		$module_template = "
 		<TR>
 			<TD BGCOLOR=\"#aaaacc\"><FONT COLOR=\"#ffffff\">#name#</FONT></TD>
 			<TD BGCOLOR=\"#aaaacc\"><FONT COLOR=\"#eeeeee\">#author#</FONT></TD>
@@ -59,7 +59,7 @@ if ($categories != NULL) {
 			<TD BGCOLOR=\"#aaaacc\" COLSPAN=4>#description#</TD>
 		</TR>
 		";
-		$display_buffer .= $module_list->generate_list ($this_category, 0, $template);
+		$display_buffer .= $module_list->generate_list ($this_category, 0, $module_template);
 	} // end of foreach
 	$display_buffer .= "
 	</TABLE>

@@ -15,7 +15,9 @@ class PatientCoveragesModule extends freemedEMRModule {
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
-	var $table_name = "coverage";
+	var $table_name    = "coverage";
+	var $record_name   = "Patient Coverage";
+	var $patient_field = "covpatient";
 
 	// contructor method
 	function PatientCoveragesModule ($nullvar = "") {

@@ -9,14 +9,18 @@ include ("lib/API.php");
 include ("lib/module.php");
 include ("lib/module_maintenance.php");
 
-SetCookie ("_ref", $page_name, time()+$_cookie_expire);
+//----- Login and authenticate
+freemed_open_db ();
 
-freemed_open_db ($LoginCookie);
+//----- Add page to stack
+page_push();
+
+//----- Set page title
 $page_title = _("Database Maintenance");
 
 // information for module loader
 $category = "Database Maintenance";
-$template = "<A HREF=\"module_loader.php?module=#class#\"".
+$module_template = "<A HREF=\"module_loader.php?module=#class#\"".
 	">#name#</A><BR>\n";
 $template_menubar = "<LI><A HREF=\"module_loader.php?module=#class#\"".
 	"><FONT SIZE=\"-3\">#name#</FONT></A>\n";
@@ -25,9 +29,7 @@ $template_menubar = "<LI><A HREF=\"module_loader.php?module=#class#\"".
 if (freemed_get_userlevel ($LoginCookie) < $database_level) { 
 	$display_buffer .= "
       <P>
-      <$HEADERFONT_B>
         "._("You don't have access for this menu.")."
-      <$HEADERFONT_E>
       <P>
 	";
 	template_display();
@@ -61,7 +63,7 @@ $display_buffer .= "
 
 // module loader
 $module_list = new module_list (PACKAGENAME, ".db.module.php");
-$display_buffer .= $module_list->generate_list($category, 0, $template);
+$display_buffer .= $module_list->generate_list($category, 0, $module_template);
 
 // create menu bar
 $menu_bar = "<UL>\n";

@@ -10,11 +10,16 @@ include ("lib/API.php");
 include ("lib/module.php");
 include ("lib/module_billing.php");
 
-freemed_open_db ($LoginCookie);
-$this_user = new User ($LoginCookie);
+//----- Login/authenticate
+freemed_open_db ();
 
+//----- Create user object
+$this_user = new User ();
+
+//----- Add page to stack
 page_push();
 
+//----- Set page title
 $page_title = _("Billing Functions");
 
 $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
@@ -56,7 +61,7 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
     <P>
     ";
 	$catagory = "Billing";
-	$template = "
+	$module_template = "
 		<TR><TD ALIGN=RIGHT>
         <B>#name#</B> : 
         </TD>
@@ -68,10 +73,10 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
     // modules list
     $module_list = new module_list (PACKAGENAME, ".billing.module.php");
     $display_buffer .= "<CENTER><TABLE>\n";
-    $display_buffer .= $module_list->generate_list($catagory, 0, $template);
+    $display_buffer .= $module_list->generate_list($catagory, 0, $module_template);
     $display_buffer .= "</TABLE></CENTER>\n";
 	$catagory = "X12";
-	$template = "
+	$module_template = "
 		<TR><TD ALIGN=RIGHT>
         <B>#name#</B> : 
         </TD>
@@ -83,15 +88,13 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
     // modules list
     //$module_list2 = new module_list (PACKAGENAME);
     $display_buffer .= "<CENTER><TABLE>\n";
-    $display_buffer .= $module_list->generate_list($catagory, 0, $template);
+    $display_buffer .= $module_list->generate_list($catagory, 0, $module_template);
     $display_buffer .= "</TABLE></CENTER>\n";
 
   } else { 
     $display_buffer .= "
       <P>
-      <$HEADERFONT_B>
         "._("You don't have access for this menu.")."
-      <$HEADERFONT_E>
       <P>
     ";
   }

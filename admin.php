@@ -6,11 +6,21 @@
  // lic : GPL, v2
 
 $page_name=basename($GLOBALS["REQUEST_URI"]);
-include ("lib/freemed.php");
+include_once ("lib/freemed.php");
 
-SetCookie ("_ref", $page_name, time()+$_cookie_expire);
-
+//----- Login/authenticate
 freemed_open_db ();
+
+//----- Set configuration variables
+$config_vars = array (
+	"icd", // icd9 option
+	"gfx", // gfx option (graphics enhanced)
+	"cal_ob", // calendar overbooking
+	"calshr", // calendar start time
+	"calehr", // calendar end time
+	"dtfmt", // date format
+	"phofmt" // phone format
+);
 
   // security patch...
 if (freemed_get_userlevel()<9) {
@@ -33,226 +43,138 @@ if ($action=="cfgform") {
   // this is the frontend to the config
   // database.
 
-    // icd9 option
-  $c_result = $sql->query("SELECT * FROM ".
-    "config WHERE (c_option='icd')");
-  $c_r = $sql->fetch_array($c_result);
-  $icd = $c_r["c_value"];
-  if ($icd=="10") {
-    $_icd_10 = "SELECTED";
-  } else {
-    $_icd_9  = "SELECTED";
-  } // default is icd9
+	//----- Pull in all configuration variables
+	reset ($config_vars);
+	while ($config = each($config_vars)) {
+		$$config = freemed_config_value($config);
+	}
 
-    // gfx option (graphics enhanced)
-  $c_result = $sql->query("SELECT * FROM ".
-    "config WHERE (c_option='gfx')");
-  $c_r = $sql->fetch_array($c_result);
-  $gfx = $c_r["c_value"];
-  if ($gfx=="1") {
-    $_gfx_1 = "SELECTED";
-  } else {
-    $_gfx_9  = "SELECTED";
-  } // default is disabled
+	//----- Push page onto the stack
+	page_push();
 
-  $cal_ob = freemed_config_value ("cal_ob");
-  switch ($cal_ob) {
-    case "enable":  $_cal_ob_e = "SELECTED"; break;
-    case "disable":
-           default: $_cal_ob_d = "SELECTED"; break;
-  }
+	$page_title = "Configuration";
+	$display_buffer .= "
+		<P>
 
-  $calshr = freemed_config_value ("calshr"); // get starting time
-  switch ($calshr) {
-    case  "4": $_cal_s4  = "SELECTED"; break;
-    case  "5": $_cal_s5  = "SELECTED"; break;
-    case  "6": $_cal_s6  = "SELECTED"; break;
-    case  "7": $_cal_s7  = "SELECTED"; break;
-    case  "8": $_cal_s8  = "SELECTED"; break;
-    case  "9": $_cal_s9  = "SELECTED"; break;
-    case "10": $_cal_s10 = "SELECTED"; break;
-    case "11": $_cal_s11 = "SELECTED"; break;
-    case "12": $_cal_s12 = "SELECTED"; break;
-    default  : $_cal_sd  = "SELECTED"; break;
-  } // end starting time switch
+		<FORM ACTION=\"".page_name()."\" METHOD=POST>
+		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"cfg\">
+	";
 
-  $calehr = freemed_config_value ("calehr"); // get ending time
-  switch ($calehr) {
-    case "14": $_cal_e14 = "SELECTED"; break;
-    case "15": $_cal_e15 = "SELECTED"; break;
-    case "16": $_cal_e16 = "SELECTED"; break;
-    case "17": $_cal_e17 = "SELECTED"; break;
-    case "18": $_cal_e18 = "SELECTED"; break;
-    case "19": $_cal_e19 = "SELECTED"; break;
-    case "20": $_cal_e20 = "SELECTED"; break;
-    default:   $_cal_ed  = "SELECTED"; break;
-  } // end ending time switch
+	$display_buffer .= html_form::form_table(array(
+		_("ICD Code Type") =>
+    		html_form::select_widget("icd",
+    			array (
+				"ICD9"  => "9",
+				"ICD10" => "10"
+			)
+		),
 
-  $dtfmt = freemed_config_value ("dtfmt"); // get date format
-  switch ($dtfmt) {
-    case "mdy":   $_dtfmt_mdy = "SELECTED"; break;
-    case "ydm":   $_dtfmt_ydm = "SELECTED"; break;
-    case "dmy":   $_dtfmt_dmy = "SELECTED"; break;
-    case "ymd":
-    default:      $_dtfmt_ymd = "SELECTED"; break;
-  } // end date format switch
+		_("Graphics Enhanced") =>
+		html_form::select_widget("gfx",
+			array (
+				_("Disabled") => "0",
+				_("Enabled")  => "1"
+			)
+		),
 
-  $phofmt = freemed_config_value ("phofmt"); // get phone format
-  switch ($phofmt) {
-    case "usa":           $_phofmt_us = "SELECTED"; break;
-    case "fr":            $_phofmt_fr = "SELECTED"; break;
-    case "unformatted":
-    default:              $_phofmt_uf = "SELECTED"; break;
-  } // end phone format switch
+		_("Scheduling Start Time") =>
+		html_form::select_widget("calshr",
+			array (
+				_("Default") => "",
+				"4 am"  => "4",
+				"5 am"  => "5",
+				"6 am"  => "6",
+				"7 am"  => "7",
+				"8 am"  => "8",
+				"9 am"  => "9",
+				"10 am" => "10"
+			)
+    		),
 
-  freemed_display_box_top (PACKAGENAME." Configuration", $page_name);
-  $display_buffer .= "
-    <P>
+		_("Scheduling End Time") =>
+		html_form::select_widget("calehr",
+			array (
+				_("Default") => "",
+				"2 pm"  => "14",
+				"3 pm"  => "15",
+				"4 pm"  => "16",
+				"5 pm"  => "17",
+				"6 pm"  => "18",
+				"7 pm"  => "19",
+				"8 pm"  => "20",
+				"9 pm"  => "21",
+				"10 pm" => "22",
+				"11 pm" => "23"
+			)
+		),
 
-    <FORM ACTION=\"".page_name()."\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"cfg\">
+		_("Calendar Overbooking") =>
+		html_form::select_widget("cal_ob",
+			array (
+				_("Enabled")  => "enable",
+				_("Disabled") => "disable"
+			)
+		),
 
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
-     VALIGN=MIDDLE ALIGN=CENTER>
+		_("Date Format") =>
+		html_form::select_widget("dtfmt",
+			array (
+				"YYYY-MM-DD" => "ymd",
+				"MM-DD-YYYY" => "mdy",
+				"DD-MM-YYYY" => "dmy",
+				"YYYY-DD-MM" => "ydm"
+			)
+		),
 
-    <TR>
-    <TD ALIGN=RIGHT>"._("ICD Code Type")." : </TD>
-    <TD ALIGN=LEFT>
-    <SELECT NAME=\"icd\">
-     <OPTION VALUE=\"9\"  $_icd_9 > 9
-     <OPTION VALUE=\"10\" $_icd_10>10
-    </SELECT>
-    </TD></TR>
+		_("Phone Number Format") =>
+		html_form::select_widget("phofmt",
+			array (
+				_("United States")." (XXX) XXX-XXXX" => "usa",
+				_("France")." (XX) XX XX XX XX" => "fr",
+				_("Unformatted")." XXXXXXXXXX" => "unformatted"
+			)
+		)
+	));
 
-    <TR>
-    <TD ALIGN=RIGHT>"._("Graphics Enhanced")." : </TD>
-    <TD ALIGN=LEFT>
-    <SELECT NAME=\"gfx\">
-     <OPTION VALUE=\"0\" $_gfx_0>"._("Disabled")."
-     <OPTION VALUE=\"1\" $_gfx_1>"._("Enabled")."
-    </SELECT>
-    </TD></TR>
+	$display_buffer .= "
+		<P>
 
-    <TR>
-    <TD ALIGN=RIGHT>"._("Scheduling Start Time")." : </TD>
-    <TD ALIGN=LEFT>
-    <SELECT NAME=\"calshr\">
-     <OPTION VALUE=\"\"  $_cal_sd>$DEFAULT
-     <OPTION VALUE=\"4\" $_cal_s4>4 am
-     <OPTION VALUE=\"5\" $_cal_s5>5 am
-     <OPTION VALUE=\"6\" $_cal_s6>6 am
-     <OPTION VALUE=\"7\" $_cal_s7>7 am
-     <OPTION VALUE=\"8\" $_cal_s8>8 am
-     <OPTION VALUE=\"9\" $_cal_s9>9 am
-     <OPTION VALUE=\"10\" $_cal_s10>10 am
-    </SELECT>
-    </TD></TR>
-
-    <TR>
-    <TD ALIGN=RIGHT>"._("Scheduling End Time")." : </TD>
-    <TD ALIGN=LEFT>
-    <SELECT NAME=\"calehr\">
-     <OPTION VALUE=\"\"  $_cal_ed>$DEFAULT
-     <OPTION VALUE=\"14\" $_cal_e14>2 pm
-     <OPTION VALUE=\"15\" $_cal_e15>3 pm
-     <OPTION VALUE=\"16\" $_cal_e16>4 pm
-     <OPTION VALUE=\"17\" $_cal_e17>5 pm
-     <OPTION VALUE=\"18\" $_cal_e18>6 pm
-     <OPTION VALUE=\"19\" $_cal_e19>7 pm
-     <OPTION VALUE=\"20\" $_cal_e20>8 pm
-    </SELECT>
-    </TD></TR>
-
-    <TR>
-    <TD ALIGN=RIGHT>"._("Calendar Overbooking")." : </TD>
-    <TD ALIGN=LEFT>
-    <SELECT NAME=\"cal_ob\">
-     <OPTION VALUE=\"enable\"  $_cal_ob_e>"._("Enabled")."
-     <OPTION VALUE=\"disable\" $_cal_ob_d>"._("Disabled")."
-    </SELECT>
-    </TD></TR>
-
-    <TR>
-    <TD ALIGN=RIGHT>"._("Date Format")." : </TD>
-    <TD ALIGN=LEFT>
-    <SELECT NAME=\"dtfmt\">
-     <OPTION VALUE=\"ymd\"  $_dtfmt_ymd>YYYY-MM-DD
-     <OPTION VALUE=\"mdy\"  $_dtfmt_mdy>MM-DD-YYYY
-     <OPTION VALUE=\"dmy\"  $_dtfmt_dmy>DD-MM-YYYY
-     <OPTION VALUE=\"ydm\"  $_dtfmt_ydm>YYYY-DD-MM
-    </SELECT>
-    </TD></TR>
-
-    <TR>
-    <TD ALIGN=RIGHT>"._("Phone Number Format")." : </TD>
-    <TD ALIGN=LEFT>
-    <SELECT NAME=\"phofmt\">
-     <OPTION VALUE=\"usa\"         $_phofmt_us>"._("United States")." (XXX) XXX-XXXX
-     <OPTION VALUE=\"fr\"          $_phofmt_fr>"._("France")." (XX) XX XX XX XX
-     <OPTION VALUE=\"unformatted\" $_phofmt_uf>"._("Unformatted")." XXXXXXXXXXXXXXXX
-    </SELECT>
-    </TD></TR>
-
-    </TABLE>
-
-    <P>
-
-    <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" "._("Configure")." \">
-    <INPUT TYPE=RESET  VALUE=\"   "._("Reset")."   \">
-    </CENTER>
-    </FORM>
-  ";
-  freemed_display_box_bottom ();
+		<CENTER>
+		<INPUT TYPE=SUBMIT VALUE=\" "._("Configure")." \">
+		<INPUT TYPE=RESET  VALUE=\"   "._("Reset")."   \">
+		</CENTER>
+		</FORM>
+	";
 
 } elseif ($action=="cfg") {
 
-  freemed_display_box_top (PACKAGENAME._("Update Config"), $page_name);
-  $display_buffer .= "
-    <P>
-  ";
+	$page_title = _("Update Config");
+	$display_buffer .= "
+		<P>
+	";
 
-  $q = $sql->query("UPDATE config SET
-    c_value='".addslashes($icd)."' WHERE c_option='icd'");
-  if (($debug) AND ($q)) $display_buffer .= "ICD = $icd<BR>\n";
+	//----- Commit all configuration variables
+	reset ($config_vars);
+	while ($config = each($config_vars)) {
+		$$config = freemed_config_value($config);
+		$q = $sql->query("UPDATE config SET ".
+			"c_value='".addslashes($$config)."' ".
+			"WHERE c_option='".addslashes($config)."'");
+		if (($debug) AND ($q))
+			$display_buffer .= "$config = $$config<BR>\n";
+	}
 
-  $q = $sql->query("UPDATE config SET
-    c_value='".addslashes($gfx)."' WHERE c_option='gfx'");
-  if (($debug) AND ($q)) $display_buffer .= "gfx = $gfx<BR>\n";
 
-  $q = $sql->query("UPDATE config SET
-    c_value='".addslashes($calshr)."' WHERE c_option='calshr'");
-  if (($debug) AND ($q)) $display_buffer .= "calshr = $calshr<BR>\n";
-
-  $q = $sql->query("UPDATE config SET
-    c_value='".addslashes($calehr)."' WHERE c_option='calehr'");
-  if (($debug) AND ($q)) $display_buffer .= "calehr = $calehr<BR>\n";
-
-  $q = $sql->query("UPDATE config SET
-    c_value='".addslashes($cal_ob)."' WHERE c_option='cal_ob'");
-  if (($debug) AND ($q)) $display_buffer .= "cal_ob = $cal_ob<BR>\n";
-
-  $q = $sql->query("UPDATE config SET
-    c_value='".addslashes($dtfmt)."' WHERE c_option='dtfmt'");
-  if (($debug) AND ($q)) $display_buffer .= "dtfmt = $dtfmt<BR>\n";
-
-  $q = $sql->query("UPDATE config SET
-    c_value='".addslashes($phofmt)."' WHERE c_option='phofmt'");
-  if (($debug) AND ($q)) $display_buffer .= "phofmt = $phofmt<BR>\n";
-
-  $display_buffer .= "
-    <P>
-    <CENTER><B>"._("Configuration Complete")."</B></CENTER>
-  ";
-  $display_buffer .= "
-    <P ALIGN=CENTER>
-    <A HREF=\"".page_name()."\"
-     >"._("Return To Administration Menu")."</A>
-  ";
-  freemed_display_box_bottom ();
+	$display_buffer .= "
+		<P>
+		<CENTER><B>"._("Configuration Complete")."</B></CENTER>
+		<P ALIGN=CENTER>
+		<A HREF=\"".page_name()."\"
+		>"._("Return To Administration Menu")."</A>
+	";
 
 } elseif ($action=="reinit") {
-  freemed_display_box_top (_("Reinitialize Database"), $page_name);
+	$page_title = _("Reinitialize Database");
   
     // here, to prevent problems, we ask the user to check that they
     // REALLY want to...
@@ -284,8 +206,6 @@ if ($action=="cfgform") {
    </TD></TR></TABLE>
    </CENTER>
   ";
-
-  freemed_display_box_bottom ();
 
 } elseif ($action=="reinit_sure") {
  // here we actually put the reinitialization (read - wiping
@@ -838,6 +758,7 @@ if ($action=="cfgform") {
     userphy        BLOB,
     userphygrp     BLOB,
     userrealphy    INT UNSIGNED,
+    usermanageopt  BLOB,
     id INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id),
     UNIQUE idx_id (id),

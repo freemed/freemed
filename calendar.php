@@ -25,7 +25,7 @@ if (freemed_get_userlevel () < $database_level) {
 
 // information for module loader
 $category = "Calendar";
-$template = "
+$module_template = "
 	<TR>
 	<TD ALIGN=RIGHT>#icon#</TD>
 	<TD ALIGN=LEFT><A HREF=\"module_loader.php?module=#class#\"".
@@ -41,7 +41,7 @@ if (!$module_list->empty_category($category)) {
 	<CENTER>
 	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
 	 ALIGN=CENTER>
-	".$module_list->generate_list($category, 0, $template)."
+	".$module_list->generate_list($category, 0, $module_template)."
     </TABLE>
 	</CENTER>
 	<P>

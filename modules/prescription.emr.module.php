@@ -9,11 +9,12 @@ define(__PRESCRIPTION_MODULE_PHP__, true);
 
 class prescriptionModule extends freemedEMRModule {
 
-	var $MODULE_NAME = "Prescription";
+	var $MODULE_NAME    = "Prescription";
 	var $MODULE_VERSION = 0.1;
 
-	var $record_name = "Prescription";
-	var $table_name  = "rx";
+	var $record_name    = "Prescription";
+	var $table_name     = "rx";
+	var $patient_field  = "rxpatient";
 
   // note: for whoever wants to do this module -- prescription info depends
   // on drug info in a separate db, which hasn't been done yet. the display
@@ -22,6 +23,9 @@ class prescriptionModule extends freemedEMRModule {
 
 	function prescriptionModule () {
 		$this->freemedEMRModule();
+		$this->summary_vars = array (
+			"Date From" => "rxdtfrom"			
+		);
 	} // end constructor prescriptionModule
 
 	function add ()    { $this->old_main(); }

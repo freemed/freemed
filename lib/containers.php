@@ -364,6 +364,7 @@ class User {
 	var $user_name;                    // name of the user
 	var $user_descrip;                 // user description
 	var $user_phy;                     // number of physician 
+	var $manage_config; // configuration for patient management
 	var $perms_fac, $perms_phy, $perms_phygrp;
 
 	function User () {
@@ -383,6 +384,9 @@ class User {
 
 		// special root stuff
 		if ($this->user_number == 1) $this->user_level = 9;
+
+		// Map configuration vars
+		$this->mapConfiguration();
 	} // end function User
 
   function getDescription ($no_parameters = "") {
@@ -405,6 +409,40 @@ class User {
   function isPhysician ($no_parameters = "") {
     return ($this->user_phy != 0);
   } // end function isPhysician
+
+	function mapConfiguration () {
+		// Start with usermanageopt
+		$usermanageopt = $this->local_record["usermanageopt"];
+
+		// Check if set...
+		if (empty($usermanageopt)) return false;
+
+		// Split out by "/"'s
+		$usermanageopt_array = explode("/", $usermanageopt);
+
+		// Pull pairs one by one
+		foreach ($usermanageopt_array AS $garbage => $opt) {
+			// Check if not empty..
+			if (!empty($opt)) {
+				// Explode pairs by "="
+				list ($key, $val) = explode ("=", $opt);
+
+				// Map to global manage_config map
+				if ( !(strpos($val, ":") === false) ) {
+					// Handle arrays
+					$this->manage_config["$key"] =
+						explode(":", $val);
+				} else {
+					// Handle scalar
+					$this->manage_config["$key"] = $val;
+				} // end mapping
+			} // end checking for empties
+		} // end looping through
+	} // end function User->mapConfiguration
+
+	function getManageConfig ($key) {
+		return $this->manage_config["$key"];
+	} // end function getManageConfig
 
 } // end class User
 

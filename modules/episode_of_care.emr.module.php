@@ -20,8 +20,9 @@ class episodeOfCare extends freemedEMRModule {
 		be used per visit. 
 	";
 
-	var $record_name	= "Episode of Care";
+	var $record_name    = "Episode of Care";
 	var $table_name     = "eoc";
+	var $patient_field  = "eocpatient";
 
 	var $variables		= array (
 		"eocpatient",

@@ -14,39 +14,39 @@ class procedureModule extends freemedEMRModule {
 
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
-    var $proc_fields = array(
-            "procpatient",
-            "proceoc",
-			"proccpt",
-            "proccptmod",
-            "procdiag1",
-            "procdiag2",
-            "procdiag3",
-            "procdiag4",
-            "proccharges",      
-            "procunits",
-            "procvoucher",
-            "procphysician",
-            "procdt",		
-            "procpos",
-            "proccomment",
-            "procbalorig",
-            "procbalcurrent",	
-            "procamtpaid",	
-            "procbilled",
-            "procbillable",
-            "procauth",
-            "proccert",
-            "procrefdoc",
-            "procrefdt",			
-			"proccurcovid",     
-			"proccurcovtp",    
-			"proccov1",       
-			"proccov2",      
-			"proccov3",     
-			"proccov4",
-			"procclmtp"
-		);    
+	var $proc_fields = array(
+		"procpatient",
+		"proceoc",
+		"proccpt",
+		"proccptmod",
+		"procdiag1",
+		"procdiag2",
+		"procdiag3",
+		"procdiag4",
+		"proccharges",      
+		"procunits",
+		"procvoucher",
+		"procphysician",
+		"procdt",		
+		"procpos",
+		"proccomment",
+		"procbalorig",
+		"procbalcurrent",	
+		"procamtpaid",	
+		"procbilled",
+		"procbillable",
+		"procauth",
+		"proccert",
+		"procrefdoc",
+		"procrefdt",			
+		"proccurcovid",     
+		"proccurcovtp",    
+		"proccov1",       
+		"proccov2",      
+		"proccov3",     
+		"proccov4",
+		"procclmtp"
+	);    
 
 
 	function procedureModule () {
@@ -56,11 +56,11 @@ class procedureModule extends freemedEMRModule {
 
 	function addform() {
 		global $display_buffer;
-		reset ($GLOBALS);
-        while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		if (!$been_here)
-		{
+		reset ($GLOBALS);
+		 while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		if (!$been_here) {
 			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
 			$procunits = "1.0";        // default value for units
 			$this_patient = new Patient($patient);

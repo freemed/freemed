@@ -26,6 +26,10 @@ if (isset($refresh)) {
 ?>
 	<META HTTP-EQUIV="REFRESH" CONTENT="0;URL=<?php print $refresh; ?>">
 <?php
+} else if (isset($automatic_refresh)) { // handle automatic refreshes
+?>
+	<META HTTP-EQUIV="REFRESH" CONTENT="<?php print $automatic_refresh; ?>;URL=<?php print $PHP_SELF; ?>">
+<?php
 } // end handle refresh
 ?>
 	<LINK REL="StyleSheet" TYPE="text/css"

@@ -9,13 +9,16 @@ include_once ("lib/API.php");
 include_once ("lib/module.php");
 include_once ("lib/module_reports.php");
 
-page_push();
+//----- Login/authenticate
+freemed_open_db ();
 
-// Login/authenticate
-freemed_open_db ($LoginCookie);
+//----- Set page title
 $page_title = (_("Reports"));
 
-// Create user object
+//----- Add page to history
+page_push();
+
+//----- Create user object
 if (!is_object($this_user)) $this_user = new User;
 
  // Check for appropriate access level
@@ -30,7 +33,7 @@ if (freemed_get_userlevel ($LoginCookie) < $database_level) {
 
 // information for module loader
 $category = "Reports";
-$template = "
+$module_template = "
 	<TR>
 	<TD ALIGN=RIGHT>#icon#</TD>
 	<TD ALIGN=LEFT><A HREF=\"module_loader.php?module=#class#\"".
@@ -46,7 +49,7 @@ if (!$module_list->empty_category($category)) {
 	<CENTER>
 	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
 	 ALIGN=CENTER>
-	".$module_list->generate_list($category, 0, $template)."
+	".$module_list->generate_list($category, 0, $module_template)."
     </TABLE>
 	</CENTER>
 	<P>

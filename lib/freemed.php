@@ -137,7 +137,7 @@ if (!isset($template)) { $template = TEMPLATE; }
 include_once ("lib/error_handler.php");   // internal error handler
 include_once ("webtools.php");            // webtools toolkit
 
-define ('WEBTOOLS_REQUIRED', "0.2.3");   // version of phpwebtools required
+define ('WEBTOOLS_REQUIRED', "0.2.4");   // version of phpwebtools required
 
   // version check for webtools
 if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) )

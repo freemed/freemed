@@ -6,12 +6,13 @@
 $page_name   = "custom_records.php";
 $record_name = "Custom Records";
 $table_name  = "patrecdata";
+include_once ("lib/freemed.php");
+include_once ("lib/API.php");
 
-include ("lib/freemed.php");
-include ("lib/API.php");
-
+//----- Login/authenticate
 freemed_open_db ();
 
+// Check for no patient provided
 if ($patient<1) {
   $page_title = _($record_name)." :: "._("ERROR"));
   $display_buffer .= "
@@ -53,21 +54,21 @@ if ($patient<1) {
    switch($action) {
     case "addform":
      $this_action = "add";
-     $template = $form;  // we use the provided one when adding.
+     $form_template = $form;  // we use the provided one when adding.
      break;
     case "modform":
      $this_action = "mod";
      $result = $sql->query ("SELECT * FROM $table_name WHERE id='$id'");
      $r = $sql->fetch_array ($result);
-     $template = $r["prtemplate"];
-     $form = $template;   // to allow us to pass it as hidden
+     $form_template = $r["prtemplate"];
+     $form = $form_template;   // to allow us to pass it as hidden
      if ($patient != $r["prpatient"]) {
        // FINISH THIS LATER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      } // end if patient does not "own" record
      $prdata = $r["prdata"]; // get the actual data
      $this_data = fm_split_into_array ($prdata);
 
-     $this_template = freemed_get_link_rec($template, "patrectemplate");
+     $this_template = freemed_get_link_rec($form_template, "patrectemplate");
      $type_n  = fm_split_into_array ($this_template["prtftype"   ]);
      $typefor = fm_split_into_array ($this_template["prtftypefor"]);
      $maxlen  = fm_split_into_array ($this_template["prtfmaxlen" ]);
@@ -103,7 +104,7 @@ if ($patient<1) {
 
    // now, here's the heart of the whole routine...
    $f_r = $sql->fetch_array ($sql->query ("SELECT * FROM patrectemplate
-                      WHERE id='$template'"));
+                      WHERE id='".addslashes($form_template)."'"));
    $prtfname    = fm_split_into_array ($f_r["prtfname"   ]);
    $prtftype    = fm_split_into_array ($f_r["prtftype"   ]);
    $prtftypefor = fm_split_into_array ($f_r["prtftypefor"]);
@@ -336,10 +337,10 @@ if ($patient<1) {
   case "add":
   case "mod":
    // first compact the record...
-   $template    = freemed_get_link_rec ($form, "patrectemplate");
-   $form_length = count(fm_split_into_array($template["prtfname"]));
-   $prtftype    = fm_split_into_array($template["prtftype"]);
-   $prtfmaxlen  = fm_split_into_array($template["prtfmaxlen"]);
+   $form_template = freemed_get_link_rec ($form, "patrectemplate");
+   $form_length = count(fm_split_into_array($form_template["prtfname"]));
+   $prtftype    = fm_split_into_array($form_template["prtftype"]);
+   $prtfmaxlen  = fm_split_into_array($form_template["prtfmaxlen"]);
 
    $current_form = array ();          // clear current form array
    for ($i=0;$i<=$form_length;$i++) { // loop for each element
@@ -476,13 +477,13 @@ if ($patient<1) {
    $_alternate = freemed_bar_alternate_color ($_alternate);
    while ($r = $sql->fetch_array ($result)) {
      $dtadd    = $r["prdtadd"   ];
-     $template = $r["prtemplate"];
+     $form_template = $r["prtemplate"];
      $id       = $r["id"        ];
-     $formname = freemed_get_link_field ($template, "patrectemplate",
+     $formname = freemed_get_link_field ($form_template, "patrectemplate",
                                          "prtname");
      $_alternate = freemed_bar_alternate_color ($_alternate);
      $display_buffer .= "
-      <TR BGCOLOR=$_alternate>
+      <TR BGCOLOR=\"$_alternate\">
        <TD>$dtadd</TD>
        <TD>".prepare($formname)."</TD>
        <TD>
@@ -490,7 +491,7 @@ if ($patient<1) {
      if (0==0)
       $display_buffer .= "
        <A HREF=\"$page_name?id=$id&patient=$patient&".
-        "form=$template&action=modform\"
+        "form=$form_template&action=modform\"
        ><FONT SIZE=-1>"._("MOD")."</FONT></A>
       ";
 

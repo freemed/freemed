@@ -23,6 +23,7 @@ class authorizationsModule extends freemedEMRModule {
 
 	var $record_name    = "Authorizations";
 	var $table_name     = "authorizations";
+	var $patient_field  = "authpatient";
 
 	var $variables = array (
 		"authdtmod",
