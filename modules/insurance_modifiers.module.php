@@ -40,8 +40,10 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 	function modform () {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-		$r = freemed::get_link_rec ($id, $this->table_name);
-		extract ($r);
+		$r = freemed::get_link_rec ($_REQUEST['id'], $this->table_name);
+		foreach ($r AS $k => $v) {
+			global ${$k}; ${$k} = stripslashes($v);
+		}
 
 		$display_buffer .= "
 		<p/>
@@ -61,7 +63,8 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 		<div ALIGN=\"CENTER\">
 		<input class=\"button\" type=\"SUBMIT\" VALUE=\" ".
 		 ( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
-		<input TYPE=\"RESET\" VALUE=\"".__("Clear")."\"/>
+		<input TYPE=\"RESET\" VALUE=\"".__("Clear")."\" ".
+		"class=\"button\" />
 		<input class=\"button\" name=\"submit\" ".
 		"type=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
 		</div></form>
