@@ -4,12 +4,12 @@
  // note: template for patient management functions
  // lic : GPL, v2
 
-//----- Load the Patient object
-$this_patient = new Patient ($id);
-
 //----- Use "current_patient" SESSION variable if it's there
 if (!$id and ($SESSION["current_patient"]>0))
 	$id = $SESSION["current_patient"];
+
+//----- Load the Patient object
+$this_patient = CreateObject('FreeMED.Patient', $id);
 
 //----- Make sure that $patient is also set to this
 $patient = $id;
