@@ -1,0 +1,61 @@
+freemed documentation
+from jeff b (jeff@univrel.pr.uconn.edu)
+(c) 1999 by the freemed project under the GPL, v2
+
+ERRATA:
+* index.php3 has to be added in /etc/httpd/conf/?????.conf under the
+  list of valid index files.
+* these are to be installed in /var/(packagename), and a virtual directory
+  alias should be made in the Apache configuration files, as well as
+  giving read perms to Apache.
+* if something doesn't work after you upgrade to a new tarball, please
+  reinitialize the database to get the new parts up and running. (this
+  will change as soon as the database is capable of holding live data)
+
+INSTALLATION:
+To install, add
+  Alias /package /var/package
+and change the first AddType line to read (19990807):
+  AddType application/x-httpd-php3 .php3 .phtml .php .inc
+to your /etc/httpd/conf/srm.conf file, and
+  <Directory /var/package>
+  Options Indexes Includes ExecCGI MultiViews FollowSymLinks
+  AllowOverride All
+  Order allow,deny
+  allow from all
+  </Directory>
+to your access.conf file. Then HUP Apache, or restart it, depending on your
+religion.
+(also, the lang/reg/ directory has to be set chmod o+w or else it will not
+ build the language registry properly)
+
+current coders/staff:
+
+jeff (jeff@univrel.pr.uconn.edu) -
+  all coding and documentation so far
+dr_gnu (dr_gnu@strangelove.dyndns.org, doc@footcare.dyndns.org) -
+  db management, planning, and all of those lovely tasks we all
+  wish that we could be doing instead of sitting around coding
+  like we had a torch under our proverbial arse.
+max klohn (amk@span.ch) -
+  this guy is incredible. lots of translations, fixes, and bug
+  reports like you wouldn't believe, as well as things to think
+  about, and many database structures...
+chris beggy (chrisb@kippona.com) -
+  one of the two website maintainers, as well as the admin of
+  our web server, he also codes modules and helps decide
+  important decision stuff.
+francisco sam castillo (fsam@proyecto-web.com.mx) -
+  sam does the other 1/2 of the website maintaining, and is
+  responsible for the layout as well as a lot of the content.
+  his other contributions have been very good, and he is
+  probably going to be doing HTML scripting for the modules
+  when they are ready for him.
+ryan losh (rkl@rklosh.org) -
+  good coder, but temporarily absent due to a family emergency.
+john gage (jgage@epo.som.sunysb.edu) -
+  author of a great anesthesia tracking/report system, which as
+  of 19990924 is slated to be put into the source tree... but
+  you'll have to have a java enabled web-browser to use it. thems
+  the breaks.
+

@@ -1,0 +1,483 @@
+------------------8<------------Cut Here------------>8------------------------
+README.tables
+---------------------------
+freemed table documentation...
+---------------------------
+
+This file is copyright (C) 1999, Ryan Losh (rklosh@rkl.org), All rights
+reserved.  That said, this file my be copied, and distributed under the terms
+of the GNU GPL version 2.
+
+Version: 19990605
+This is a "ROUGHT DRAFT" version, with my observations on how we can
+improve the freemed database over Medical Manager.
+
+My background:  I have a BS in mathematics w/minor in computer science.
+After college, I worked for 5 years at AMSC, an independent Medical Manager
+dealership as a programmer.  I wrote several thousand lines of datamerge code,
+Medical Manager's proprietary (and crappy) scripting language.   I wrote an
+interface to a pharmacy package, a primative lab interface that read
+HL7 lab results, custom downloads of demographics for several Universities, and
+several data conversion from other software packages.  I've also built Medical
+Manager boxes, installed them, worked the support line, written custom reports,
+as well as set up EMC and ERS.  After Medical Manager started to "absorb"
+(read *SUCK*) the independent dealership network, I had to get out.  I went to
+work for Professional Business Services, a billing service located in Topeka,
+KS.  For the past 3 years, I've served as in-house support for all aspects of
+our computer network.  I was hired so that PBS could write our own billing
+software.  After introducing my boss (who has some unconventional personnel
+management philosiphies) to Linux, I convinced him that writing the software
+under GPL was the best thing we could do.  Luckily I saw the freemed project on
+freshmeat.net before our efforts were very far along. It is a no-brainer for
+me to jump in and contribute.
+
+-------------------------------------------------------------------------------
+PLEASE send any comments/corrections on this file to me (rklosh@rkl.org) so
+that I may include them in future versions...
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+I've seen several inconsistencies throughout the database.  A phone number
+should be the same data type whether it is in the patient, insurance or doctor
+table.  Other fields that come to mind include assignment, email, websites.
+The database should be updated so that these types are consistent from table
+to table.
+-------------------------------------------------------------------------------
+
+The freemed software (currently) uses php3 to create dynamic web pages (with
+data being piped in from the MySQL database system).  Currently, freemed
+creates a database called "package" with the a tables named test, physician,
+icd9, patient, procedure, facility, room, specialty, insco, inscogroup and
+config.
+
+This file attempts to document the structure of each table, and the relation
+between them.  Any errors should be brought to my attention so that corrections
+can be made...
+
+Each table is  contains an "id" field which is the unique identifier for each
+record.  For example, each procedure contains a column called addproact, which
+contains an INT UNSIGNED which corresponds to a row in the patient table
+with the same id field.
+
+###########
+table test
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+name                       CHAR(10)             Name???
+other                      CHAR(12)             Other???
+phone                      INT                  Phone number, perhaps???
+ID                         INT UNSIGNED         unique id # for each record
+
+Primary Key:  ID
+
+Table Relations:   I have no idea what this table does...Grepping for test in
+the 19990602 snapshot only shows that admin.php3 uses the table.  Probably
+safe to ignore this table as will go away soon :-)
+
+
+
+###########
+table physician
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+phylname                   CHAR(12)             Doctor/Provider's last name
+phyfname                   CHAR(10)             Doctor/Provider's first name
+phytitle                   CHAR(10)             title (M.D, D.O, etc)
+phymi CHAR(1) Doctor/Provider's middle name ^1phypracname CHAR(30) Practice Name ^2phyaddr1a                  CHAR(30)             Practice Address line 1
+phyaddr2a                  CHAR(30)             Practice Address line 2
+phycitya                   CHAR(20)             Practice City
+phyzipa                    CHAR(10)             Practice Zip
+phyphonea                  CHAR(10)             Practice Phone #
+phyfaxa                    CHAR(10)             Practice Fax #
+phyaddr1b                  CHAR(30)             ??? Address line 1
+phyaddr2b                  CHAR(30)             ??? Address line 2
+phycityb                   CHAR(20)             ??? City
+phyzipb                    CHAR(10)             ??? Zip
+phyphoneb                  INT UNSIGNED         ??? Phone 
+phyfaxb                    INT UNSIGNED         ??? Fax #
+phyemail                   CHAR(30)             Doctor's email address
+phyupin INT UNSIGNED Doctor's UPIN # ^3physsn                     CHAR(9)              Doctor's SSN/Tax ID#
+physpe1                    INT UNSIGNED         Doctor's Primary Specialty
+physpe2                    INT UNSIGNED         Doctor's Second Specialty??
+physpe3                    INT UNSIGNED         Doctor's Third Specialty??
+phyid1                     CHAR(10)             Doctor's Other ID#
+phystatus                  INT UNSIGNED         Doctor's status (perhaps used
+                                                so that doctors who have left
+                                                a practice can be "deactivated"
+                                                so charges and payments aren't
+                                                posted to them in error??)
+phyref                     ENUM "yes" "no"      Referring doctor?
+                                                (Perhaps used to abstract both
+                                                 practice doctors and
+                                                 non-practice doctors info into
+                                                 a single table??)
+phyrefcount                INT UNSIGNED          Number of referrals for a
+                                                 referring doctor??
+phyrefamt                  REAL                  Total Charges for this ref dr?
+Total Charges for this prac dr?phyrefcoll                 REAL                  Total Collections for dr??
+id                         INT NOT NULL          unique record id
+
+Primary Key:  id
+
+Notes:
+1)  I have always detested the way that Medical Manager (and most other
+    software packages) forces a first name middle initial last name on the
+    world.  I know several people who are known in every aspect of their life
+    as first initial middle name last name.  Why should their doctor's bill be
+    any different?  Also, a separate field for generation (such as JR, SR, III,
+    etc) would be useful, and in fact the NSF claims formats provide such a
+    field...
+
+2)  Practice Name for each doctor??  This makes sense for keeping track of
+    referring doctors, but for the "in-house" doctors, it should not be
+    a field that can be modified.
+
+3)  INT UNSIGNED will *NOT* work for the dr's UPIN number.  All 52 providers
+    that I work with have alpha characters in their UPIN numbers...
+
+Medical Manager doesn't have a graceful way to do billing for Physician
+Assistants or Nurse Practitioners.  To get paid from most insurance companies,
+these services must be billed under the supervising doctor's name and/or ID
+numbers.  This creates a cluster F#@k to administer under mm because the only
+solution is to set up additional doctors (one for each doctor who supervises
+a PA or ARNP).  So, take a fair sized group of doctors (say 10 or so), and add
+4 PA's and/or ARNP's, and all of a sudden you're dealing with a dr database
+of 50+ providers.  Worse if you use a separate dr to track by location...
+freemed should address this issue...
+
+Consistency??  Why is phyphonea a CHAR(10), and phyphoneb a INT UNSIGNED??
+
+Consolidating Practice physician and Referring physician data is a good idea.
+(All of the accounts I run do self-referrals for stuff like lab and X-Ray).
+
+
+
+###########
+table icd9
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+icd9code                   CHAR(6)              icd9 code
+icd10code                  CHAR(7)              icd10 code
+icd9descrip                CHAR(45)             Diagnosis V9 description
+icd10descrip               CHAR(45)             Diagnosis V10 description
+icdng DATE date for what?? ^1icddrg                     CHAR(45)             ???
+icdnum                     INT UNSIGNED         ???
+icdamt                     REAL                 Charge for Diag??
+icdcoll                    REAL                 Collections for Diag??
+id                         INT NUT NULL         unique id#
+
+Primary Key: id
+
+Notes:
+1)  I'd like to have a range of dates for which this diagnosis is considered
+    valid.  If a diagnosis code is no longer valid, it would be nice if the
+    procedure entry module could look at this range of dates, make sure the
+date of service was in this range, and reject the procedure entry otherwise.    This would increase collections, and reduce the number of times a claim
+    must be submitted to insurance for final payment.
+
+I'd also like to have the ICD9/ICD10 searchable (as closely as possible) to the
+same way a person would go about looking up a diagnosis code in the paper books.
+
+
+###########
+table patient
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+ptacct                     CHAR(10)             patient Account #
+ptupdt                     DATE                 date last changed??
+ptbillunique               INT UNSIGNED         This seems extraneous, and a
+                                                dead give-away that medical
+medical manager is being copied.                                                Used to give "sequence" to
+                                                posting order of charges and
+                                                payments in MM.
+ptbal                      REAL                 Account Balance
+ptbalfwd                   REAL                 Bal Fwd (Used in Med Mgr for
+                                                "balance forward" statements.
+ptunapp                    REAL                 Unapplied Credit (Until V9, the
+                                                "black hole" of the Medical
+                                                Manager's accounting system).
+ptdoa                      DATE                 Date account created
+ptrefdoc                   INT UNSIGNED         Patient Referring Doctor
+ptpcp                      INT UNSIGNED         Patient "default doctor" for
+                                                procedure entry.
+ptphy1                     INT UNSIGNED         ???
+ptphy2                     INT UNSIGNED         ???
+ptphy3                     INT UNSIGNED         ???
+ptphy4                     INT UNSIGNED         ???
+ptbilltype ENUM sta, mon, chg Bill type ^1ptbudg                     REAL                 Monthly payment amount???
+ptnoplan                   INT UNSIGNED         number of insurance plans??
+ptnodep                    INT UNSIGNED         number of dependents
+                                                (family billing)
+ptdoc                      INT UNSIGNED         ???Redundant with pcp???
+ptlname                    CHAR(12)             Patient Last Name
+ptfname                    CHAR(10)             Patient First Name
+ptmi                       CHAR(1)              Patient middle
+ptaddr1                    VARCHAR(30)          Patient Address Line 1
+ptaddr2                    VARCHAR(30)          Patient Address Line 2
+ptcity                     CHAR(25)             Patient City
+ptstate                    CHAR(2)              Patient State
+ptzip                      CHAR(10)             Patient zip code
+pthphone                   CHAR(10)             Patient home phone
+ptwphone                   CHAR(10)             Patient work phone
+ptwphoneext                VARCHAR(5)           Patient work ext.
+ptfax                      CHAR(10)             Patient fax #
+ptemail                    CHAR(30)             Patient email
+ptsex                      ENUM m f             Patient sex
+ptdob                      DATE                 Patient date of birth
+ptssn                      CHAR(9)              Patient soc sec number
+ptdmv                      CHAR(9)              Patient drivers license #
+ptdtlpay                   DATE                 Date of last pat payment
+patamtlpay                 REAL                 Amount of last pat payment
+ptpaytime                  INT UNSIGNED         ???
+ptdtbill                   DATE                 Date last statement mailed
+ptamtbill                  REAL                 Amount of last statement
+ptstatus                   INT UNSIGNED         ???
+ptytdchg                   REAL                 Year to date charges
+ptar                       REAL                 Amount due from pat
+ptextinf                   TEXT                 ????
+ptdisc                     REAL                 Discount (%)??
+ptdol                      DATE                 Date of last visit??
+ptdiag1                    INT UNSIGNED         Last Diag 1
+ptdiag2                    INT UNSIGNED         Last Diag 2
+ptdiag3                    INT UNSIGNED         Last Diag 3
+ptdiag4                    INT UNSIGNED         Last Diag 4
+ptid                       VARCHAR(10)          Other patient ID#
+pthistbal                  REAL                 (Medical Manager Hold-over)
+                                                Balance of purged history items
+ptmarital                  ENUM s m d           Patient Marital status
+ptempl                     ENUM y n             ???
+ptemp1                     INT UNSIGNED         ???
+ptemp2                     INT UNSIGNED         ???
+ptdep                      INT UNSIGNED         ???
+id                         INT NOT NULL         unique ID#
+
+Comments:
+---------
+1) Patient Name (see doctor table above) should be able to accomidate
+   E. John Kleinschlogger III.
+2) Keeping the dt of last stmt, and amt of last statement is not enough.  A
+person should be able to review the entire statement history for the account.   Disk storage is cheap!!!
+3) Medical Manager did a *HORRIBLE* job with dependents.  Ever bill for a peds
+   group??  Kids can change guarantors monthly!!  Its a BITCH to track with 
+   Medical Manager.  Freemed should do this better.  I've looked at the
+   implementation, and I like the fact that there is not a separate "guarantor"
+   file and "dependent" file.  This should make "splitting" familys (i.e.
+   dependent becomes the guarantor) **MUCH** cleaner.
+4) Medical Manager fields should go!  We could use a timestamp to track
+   charge and payment posting order...and I don't see that we need the histbal.
+   That is a remnant of the day when a 120M disk cost $5000.
+
+
+
+###########
+table procedure
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+addproacct                 INT UNSIGNED         Referrs to the patient.id
+                                                for this procedure??
+addproacctdep              INT UNSIGNED         Redundant info if *BOTH*
+                                                guarantors and deps are stored
+                                                in the patient table.
+addproincident             INT UNSIGNED         I guess this would refer to
+                                                a record in what Medical Mgr
+                                                calls the ailment file???
+addprodtmod                DATE                 Date this record last modified?
+addprochg                  REAL                 Charge for this item
+addprorcp                  REAL                 Actual Money received for item
+addproadj                  REAL                 Amount of Write/Offs for item
+addprocode                 INT UNSIGNED         I'm guessing the CPT-IV or
+                                                HCSPCS id for the item
+addpromod1                 INT UNSIGNED         id of Modifier #1 for item
+addpromod2                 INT UNSIGNED         id of Modifier #2 for item
+addpromod3                 INT UNSIGNED         id of Modifier #3 for item
+addprodx1                  INT UNSIGNED         id of icd9/icd10 diagnosis #1
+addprodx2                  INT UNSIGNED         id of icd9/icd10 diagnosis #2
+addprodx3                  INT UNSIGNED         id of icd9/icd10 diagnosis #3
+addprodx4                  INT UNSIGNED         id of icd9/icd10 diagnosis #4
+addprocom                  VARCHAR(45)          procedure comment
+addproprov                 INT UNSIGNED         doctor.id of performing dr
+addpropos                  INT UNSIGNED         Place of Service Code
+addprotos                  INT UNSIGNED         Type of Service Code
+addprostatus               INT UNSIGNED         (See Note #1 Below)
+addprodept                 INT UNSIGNED         Department of charge
+addprovouch                INT UNSIGNED         "Voucher" number (used for
+                                                encounter form tracking).
+addpropriins               INT UNSIGNED         (See RANT #2 below)
+addprosecins               INT UNSIGNED         (See RANT #2 below)
+addprounits                REAL                 Number of units of the proc.
+addprotype                 ENUM "normal"        Type of Charge Item
+                                "finance"
+addprodate                 DATE                 Date the service was rendered.
+addprodtpost               DATE                 Date the charge was posted.
+addprodtpostrep            DATE                 ?????
+addprodtinsbill            DATE                 (See RANT #2 below)
+addprodtinsbill2           DATE                 (See RANT #2 below)
+addproassign               ENUM "yes" "no"      Accept Assignment?
+                                "estimate"
+addprotax                  CHAR(5)              Tax amount???
+addproaprov                REAL                 Approved amount (RANT #2)
+addproemc ENUM "valid" Seems to mirror Medical Manager                                "passed_prebill" for electronic claims
+                                "no_emc"
+                                "emc_billed"
+addproloc                  INT UNSIGNED        Procedure Location
+addproclmnum               INT UNSIGNED        ?????
+addpromin                  REAL                Anesthesia minutes???
+addproplan                 INT UNSIGNED        (RANT #2)
+id                         INT NOT NULL        unique id# for record
+
+Primary Key : id
+
+Note #1/Rant #2
+---------------
+        In my opinion, Medical Manager's activity record **SUCKS** for the
+list of reasons listed below.  The database in freemed should address
+*ALL* of these items...
+
+1) Medical Manager only stores the id of the person who *MOST RECENTLY
+   UPDATED* the records.  Thus making future analysis of "who did what" to the
+   record IMPOSSIBLE.
+
+2) Medical Manager only has slots for a primary and secondary insurance.  When
+   responsibility is transferred to secondary, the status flag is changed, and
+   the primary and secondary ins fields (with date billed) "swap"  This would
+be "fine and dandy" if this mirrored the way things worked in the real world.
+   However, people change insurance plans, and they do it more often than most
+   programmer-types would realize.  If a charge is billed to the old insurance
+   plan, it is rejected, and these fields are simply "updated" with the current
+   insurance plan information.  The fact that the first claim went out to the
+   wrong insurance company is now IMPOSSIBLE to ascertain.
+
+   Also, we're seeing more and more people with a third, and even some with a
+   fourth insurance.  How the FSCK do you track which insurance the line is
+   sitting at with only slots for a PRI and SEC???
+
+   Let's not forget about procedures related to a motor vehicle accident.
+   People are in car crashes every day, and *ONLY* those charges that are
+related to the accident should be billed to the automobile insurance company.   Medical Manager missed the boat here, too.
+
+Our company would like to be able to answer simple questions such as,
+
+     "On average, how many times is a line item submitted to insurance to get
+     payment?"
+
+     "What is the most common reason for claims being denied?"
+
+     "We'd like to implement an incentive for our data-entry employees based
+     on the rate of claims being paid the first time."
+
+The way that Medical Manager is structured makes it impossible to answer any
+of the above questions.  Freemed should be structured so that we can.
+
+3) The insurance coverage for each patient should also include a range of
+   dates for which that coverage list is valid.  This way, the charge entry
+   module can check the date of service and prevent a claim being denied
+   for the policy not being in effect at the time of service.  Medical Manager
+   has the fields to implement this, but doesn't "finish the job."  Once the
+   "coverage priority" list is changed, THOSE ins plans are the default pri
+   and sec with no regard to the coverage dates....
+
+Anyway, comments???
+
+
+
+###########
+table facility
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+psrname                    CHAR(25)             Name of Facility
+psraddr1                   CHAR(25)             address line 1
+psraddr2                   CHAR(25)             address line 2
+psrcity                    CHAR(15)             city
+psrstate                   CHAR(3)              state
+psrzip                     CHAR(10)             zip
+psrnote                    VARCHAR(40)          Note???
+psrdateentry               DATE                 date of what???
+psrdefphy                  INT UNSIGNED         provider.id ???  (Why)
+psrphone                   INT UNSIGNED         phone #
+psrfax                     CHAR(15)             fax #
+psremail                   CHAR(25)             email address
+id                         INT NOT NULL AUTO_INC  unique id for record
+
+Primary Key:  id
+
+Comments:
+        We probably shouldn't use variable names that are (mostly) identical
+to those in Appendix C of the Installation and Appendicies manual from
+Medical Manager.  Those books are copyrighted material....
+
+
+###########
+table room
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+
+
+
+
+###########
+table specialty
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+
+
+
+
+###########
+table insco
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+inscodtadd                 DATE                 Date Plan added??
+inscodtmod                 DATE                 Date Plan last changed??
+insconame                  VARCHAR(50)          Plan Name
+inscoalias                 VARCHAR(30)          Alias for Plan
+inscoaddr1                 VARCHAR(45)          Address 1
+inscoaddr2                 VARCHAR(45)          Address 2
+inscocity                  VARCHAR(30)          city
+inscostate                 VARCHAR(3)           state
+inscozip                   CHAR(10)             zip code
+inscophone                 CHAR(10)             phone #
+inscofax                   CHAR(10)             Fax #
+inscocontact               VARCHAR(100)         Contact Person
+inscoid                    CHAR(20)             ????? NEIC # perhaps???
+inscowebsite               VARCHAR(100)         Ins Co's web site
+inscoemail                 VARCHAR(50)          Ins Co's email
+inscogroup                 INT UNSIGNED         Insurance Group ID
+inscotype INT UNSIGNED (Medicare/Medicaid/BCBS/etc)/etcinscoassign                INT UNSIGNED         Accept Assignment
+                                                (Default for procedure entry)
+id                      INT NOT NULL AUTO_INC   unique id# of record
+
+Primary Key:  id
+
+Comments:
+     Nothing major.  We need to be consistent with address lines, city, state
+zip, phone numbers, email fields.  Also, assign should be an enum like it
+it in the procedure table.
+
+
+
+###########
+table inscogroup
+###########
+Variable Name              Type                 Description
+------------------------------------------------------------------------------
+inscogroup                 VARCHAR(50)          Name of Group
+id                         INT NOT NULL AUTO_IN Unique # of record
+
+Primary Key:  id
+
+Comments:
+        This seems to mirror the "carrier code" concept from MM.
+
+
+END OF FILE.
+
+

@@ -1,0 +1,2161 @@
+freemed project
+changelog
+(c) 1999 by the freemed project under GPL version 2
+
+  freemed project homepage:
+    http://www.freemed.org
+  FTP ACCESS (for tarballs, etc):
+    ftp://test.pr.uconn.edu/pub/freemed-project
+  CVS server:
+    CVSROOT=:pserver:(user)@cvs.freemed.org:/var/cvsroot
+  CHANGELOG:
+    http://www.freemed.org/apps/CHANGELOG
+  FAQ (Frequently Asked Questions):
+    http://www.freemed.org/faq.php3
+  MAILING LIST:
+    freemed-project@kippona.com
+    freemed-project-bugs@kippona.com
+
+20000101 --
+n Happy new century or millenium or year or whatever! Nothing crashed! Y2K
+  was a bunch of hot air, and it was about the same as any other moment. Eh.
+m Payment calc routines work now, and since the 0.1 release is scheduled for
+  today, there'll be just enough time to clean up some *really* messy spots
+  in the code and finish up the install script before the PR stuff goes out.
+a Among other things, added an Internal Service Type table which Physicians/
+  Providers use for pricing structure. Pretty keen if you ask me.
+
+19991230 --
+m overhauled med manager patient import script to pull ICD code references
+  from the diagcode.dat file
+m overhauled episode of care support in progress notes and procedures
+m fixed several longstanding manage.php3 problems
+m fixed up procedure.php3 to actually work with most things, including
+  action=modform
+
+19991229 --
+a added scripts/convert/medical_manager directory for Perl scripts to
+  convert from old Medical Manager 6.x databases.
+a scripts/convert/medical_manager/diagcode.pl for ICD codes
+a scripts/convert/medical_manager/patfile.pl for patient record(s)
+a import.php3 to handle importing of databases from legacy apps
+
+19991228 --
+m soundex queries on patient database work now!
+m iso set field added in patient and progress notes tables
+a added payreclock field in payrec database for locking of dates through
+  "closes"
+a added cpttype for doctor's billing schedules
+
+19991227 --
+n sorry about the lack of a day of coding. I really meant to, but I've been
+  trying not to go loopy in the meantime.
+m working on the cpt module -- hopefully will be 100% operational today
+a added scripts/install.sh as a beginning to a good install script
+
+19991225 --
+m christmas fixes -- freemed now works on fresh systems for reiniting dbs,
+  since everyone has complained about this for a *long* time.
+a cpt module from scratch. don't know how well it works yet, but I'm trying.
+m more things -- but who cares? code matters, not lengthy changelog entries
+
+19991224 --
+m huge changes to all aspects of financial and billing thingies
+a new procedure.php3 module built from the ground up
+m API changes, lots of small fixes for little things. too many to list --
+  check the CVS changelog record for more information
+
+19991223 --
+m fixes to episode_of_care.php3 ... now working to make this package kick
+  some serious tail before the new year. Billing *will* work.
+
+19991219 --
+a added "manage" action to Episode of Care to allow centralized management
+  of Episodes, with links to progress notes, etc
+m modified billing_functions.php3 to be based in a table and better put
+  together
+a added left/right capabilities in custom_records module and moved most of
+  the formatting stuff to "type formatting". now an "L" in a record should
+  lock that field, and a "2" in a record should specify left and right (this
+  is referring to the maxlen field...)
+a tried to add soundex search capabilities to patient module, but am having
+  huge problems with it.
+
+19991217 --
+n I've been really under a lot of stress, so I've been slacking off. But
+  it's time to get cracking.
+a modified progress notes to have links to Episode of Care multiple choice
+  support
+m progress notes now use Patient class
+m progress notes now has links to management menu, as well as the BR/BR ->
+  P conversion and a few other updates
+n still have to put EOC support in progress notes' display and modform
+  sections. d'oh.
+
+19991206 --
+n moderately stressful weekend, but the doc and I figured out how to do
+  GEHR/H7 compliant objects and patient records. we really weren't that
+  far off to begin with, but we need to start embedding the ISO set and
+  possibly the language.
+a added Freemed+PostgreSQL-HOWTO for all those people who think that
+  MySQL isn't their "cup of pie"
+
+19991203 --
+m updated CREDITS file, finally -- with new contributors. sorry if I left
+  anyone out... please let me know.
+m modified simplereports choose action to be slightly nicer format and
+  to use patient class container
+m monkeyed around with simplereports... not sure if they work 100% right
+m fixed gender identifier generation problem in simplerep
+
+19991202 --
+m modified patient class container to be able to hold call-in data with a
+  tiny abstraction and a flag called is_callin ... should probably make a
+  function to refer to that as well.
+a added Ergin Soysal's new on demand language loader, which has also been
+  moved to global.var.inc's loader section from freemed-functions.inc
+
+19991201 --
+m implementing class containers across modules to make development easier --
+  so far we only have the patient class, but I'm sure we'll come up with
+  more...
+
+19991130 --
+m fixed changelog entry to read 19991129 instead of 19991124... d'oh!
+m implemented new section in global.var.inc for loading of different
+  handling and class "modules"
+m included new class containers (containers.inc) in global.var.inc
+a added new functions to class container Patient 
+a added CONTAINERS API description
+
+19991129 --
+m fixed gfx enable/disable to work with the top menu bar, and squashed some
+  scope bugs while I was at it. need to remember to translate the text on
+  the menubar
+n possibility of integration of a nicer/purtier calendar/scheduler system
+  because my calendaring skills aren't very finely honed...
+m fixed payment_record.php3 to have proper comma in INSERT, and added a
+  link in manage.php3 to link it it
+a added container.inc to have class containers for data objects, which should
+  make freemed into a much more relational database-type deal for those who
+  dain to code it.
+
+19991124 --
+m overhauling patient module to be in tables and look purtier, as well
+  as having date and phone extentions in them...
+
+19991123 --
+m overhauled ICD9/10 database, adding meta descriptors and fixing old
+  legacy problems with module -- hopefully we can get this at 100%
+  capacity very soon.
+m modified admin.php3 table for icd codes
+
+19991122 --
+n finially got back to working on the project -- after a week of working on
+  something else...
+a added patient_image_handler.php3 and defs to admin.php3 to handle it...
+  has support for patient pictures (ID photos...) and xrays, will add support
+  for clinical photos as well -- perhaps adding the possibility of thumbnailing
+  large photos, etc... resizing?? etc
+
+19991116 --
+m fixed up physician availability map -- will work into calendar routines
+  soon.
+a added phy_avail_map.php3 to the db_maintenance menu, so that it is
+  accessable to users...
+a date_in_range function added to freemed-calendar-functions.inc
+
+19991115 --
+a more features for custom reports
+n looking into an HL7 parsing engine -- if anyone is interested, please
+  contact me (jeff@univrel.pr.uconn.edu)
+m updated BROWSERS with the QNX Voyager single-disk OS/browser combo
+  (http://www.qnx.com/demodisk/) which works as well
+m patched custom records to be able to deal with multiple checkboxes, and
+  soon multiple choice things as well.
+
+19991113 --
+a added locking features for dates in custom reports, changed length of
+  limits field to allow for temps, etc, and made the headings more readable
+
+19991112 --
+a added types heading and checkbox to the custom records modules
+a added a "line insert" box at the bottom of the custom records template
+  module to facilitate easy addition of lines.
+m fixed some perfectly dumb typos in custom_reports.php3 and even a bug
+  in the CHANGELOG!
+a implemented mini iconbar in freemed_display_box_top ... but haven't worked
+  in the graphics enabled/disabled toggle yet
+
+19991111 --
+m fixed perfectly retarded error in custom_records.php3 -- well, alright,
+  _several_ perfectly retarded errors. must not code so fast - produces
+  errors.
+m modified payrec structure inside admin.php3 to correspond to the date of
+  payment (payrecdt) which somehow got left out -- I still have to do a
+  bunch of record folding for all the fields to fit in the one descrip
+  field ...
+m made fm_date_entry work with all pulldowns, but needed to add a true/false
+  pre_epoch parameter to allow for older dates (i.e. birthdates, injuries,
+  etc)
+m major work going on in payment_record.php3 -- needed for 0.1alpha
+
+19991109 --
+m started CVS repository -- many problems, but it seems to work now.
+m heavily ripped apart phone function -- for some reason array_value never
+  got put through as -1, so I smashed the hell out of the function to allow
+  the custom records to partially work
+m heavy work on custom records -- they actually seem to work now
+n I'm cutting down on changelog entries because I have to enter this into CVS
+  as well... just major things from now on.
+m un-fscked the phone assembling function -- used != instead of == by accident
+
+19991108 --
+m fix for fm_eval where variables were not being listed with $s
+m another fix for fm_eval to avoid warnings -- GLOBALS and key are not
+  evaluated.
+a added prtvar value in 3d array to allow variables to be passed on from
+  here...
+
+19991105 --
+m major change -- moved all 3d arrays out of EOC -- db change
+m lots of physician.php3 and simplerep*.php and language mods
+a added (finalized as well) fm_number_select to allow ranged selectable
+  numbers -- really great if you ask me.
+a added oldreports database definition to admin.php3
+a added phofmt to config sections in admin.php3 for phone format -- only
+  two options right now, which are United States and unformatted -- more if
+  people ask for them.
+m fixed really dumb spelling bug in fm_date_assemble because the correct vars
+  were not being brought in with the eval (global ....;)
+d removed html.php3, since it was moved to simplerep_html.php3 ... funny
+  how I never notice these things until Max tells me.
+a functions fm_phone_entry and fm_phone_assemble are now in the API and I'll
+  hopefully remember to put in their descriptions into the API documentation.
+m d'oh! another bug in fm_date_assemble -- hopefully squashed now.
+m finally! Episode of Care seems to work with add/mod through most cases, tho
+  I haven't gotten to check it out as much as I should...
+
+19991104 --
+m from max, fixes to simplerep (with lang modules) and physician modules
+m fixed stupid bracket bug (are there any other kinds?) in mail API ... what
+  would I do without Max pointing these things out?
+m thought about it twice, and added a routine to scan through all of the
+  global variables and make them local in fm_eval (thanks to Max for pointing
+  this one out)
+
+19991103 --
+m from Max, physician.php3 and EN/FR/ES language modules for it
+d removed _old_ "select" action from physician.php3
+m fm_date_assemble now supports array indexes, for handy array folding...
+m fixed fm_date_entry to use 2 digits for month and day in the pulldown
+  values, to avoid misshappen dates...
+m combined the add and mod actions in episode_of_care.php3 to save space, time
+  and sanity -- perhaps a reworking of the template is in order?
+m fixed mention of releasedto in insert for 3d array in EOC
+a added most of an INSERT command for EOC, action=add
+m with only one monkey typing at one computer, I managed to get the defs into
+  admin (preliminary, of course) and set up most of a squash for add/mod in
+  EOC (which is what the admin definition is for)... hopefully I can finish
+  the mod tomorrow, since I don't have enough time today.
+m fixed horrible bug in extra 0 insert in API's fm_date_entry, by using extra
+  variable (stupid kludge, I know)
+m forgot Date of Confinement... (to new format...)
+a began to add fm_number_select for ranged number select boxes, but didn't
+  _quite_ get around to finishing, or even really starting it. tomorrow. it's
+  only a day away.
+
+19991102 --
+m Max stamped out $SELECTED bug in API
+m from Max, simplerep routines changes, with lout formatting changes
+m jeff: modified simplerep.php3 to use METHOD=POST -- hope the change gets
+  to Max
+d removed the java/ parts from John Gage (we decided on an eventual port from
+  Java to PHP) and a whole bunch of useless stuff in old/ ...
+m fixed spelling of "Address" in lang/EN/patient.php3.EN.inc
+m implemented new fm_date_entry and fm_date_assemble in patient.php3
+m fixed stupid : missing in admin.php3 that broke it yesterday, as well as
+  spelling OPTION as OPIION, which didn't work either.
+n the date formatting functions seems to work flawlessly. now is the time to
+  implement them everywhere, then work on a method of doing phone numbers
+  as well.
+m implemented date functions in progress_notes.php3, taking out YYYY-MM-DD
+  references and moving to direct date assignment in action=addform.
+a added LINKS document with some URLs of where the project has been mentioned.
+a added the GPL as LICENSE
+m fixed following files for dates (hopefully):
+  book_appointment.php3
+  manage_appointments.php3
+  progress_notes.php3
+  Rx.php3
+  partial workings on episode_of_care.php3
+m had to rewrite the fscking fm_date_entry routine to accomodate arrays ...
+  just put the array index (or some number other than -1 if you don't want
+  any value there) to make it put it through as an array...
+n releasing now -- not ... responsible .. for ... bugs ...
+
+19991101 --
+a/m from Max:
+  simplerep modules
+  translations
+  new simplerep_plaintext_email module
+  more lout defs
+m slightly updated feature set.
+m modified Rx.php3 and admin.php3 to allow Rx.php3 to store MD5 sums in the
+  database -- now if someone would only put in a generation routine for them,
+  we'd really be cooking.
+m changed config in admin.php3 to allow for date formatting
+a added fm_date_entry and fm_date_assemble to allow for use of date formatting
+  without any hassle -- a little more help from the ol' API.
+n not quite done with fm_date_entry yet -- implementing pull downs for the
+  date. had to spit-n-bailing-wire together a routine to pull out the global
+  vars, compare to the whole date, etc. will finish tomorrow
+m changed physical_loc var in global var inc to be chop(`pwd`) for now.
+
+19991029 --
+a added diagfamily table (diagnosis_family.php3 module) for diagnosis
+  families, from template
+a added entry for diagnosis family in db_maintenance.php3
+m modified fm_multiple_choice to have extra optional parameter for display of
+  "ALL" (-1) option
+m modified fm_join_from_array to correctly work with both regular variables
+  and one-element arrays, by using !is_array instead of count()
+m fixed checking routine for EOC facilities 3D array
+m added disabilities 3D array in EOC module
+a added diagnosis family multiple choice and episode type to EOC module
+a added disabilities 3D sub-table into EOC module -- maybe we're ready to
+  fly with this? soon?
+
+19991028 --
+n am applying doc's corrections to Episode of Care module
+m fixed freemed_display_insco function to accept no params (doc)
+m moved time of death and coroner, etc, off of the facilities 3D
+  section and down into the regular part, since usually people only
+  die once. unless they're irish ;).
+a added "fold-out" other relation specific field(s) in EOC (doc)
+a added patient_record_template.php3 with 3D tables to handle custom info
+  gathering -- now I just have to make the engine to handle it.
+a added entry for patient_record_template in db_maintenance, with language
+  stuff in lang/EN/db_maintenance, needing translations...
+
+19991027 --
+m monkeyed around with authenticate.php3 and the box_top display to actually
+  pass the entire URL instead of just parts of it, by using the global var
+  for URI, found at http://www.phpwizard.net/ ... gotta love it
+a modified mime_mail class (GPL) for freemed, calling it mail_message, mow
+  in freemed-mail-functions -- when I get the time, I'll build a mailer right
+  into this...
+m in EOC, fixed the syntax checking on the Authorizations 3D table -- working
+  on facilities table now
+
+19991026post --
+d removed old freemed-functions.inc.old file, which was just taking up space
+  after the GUI improvement. too bad I forgot to write this _before_ the
+  release, even though I did it before I released.
+
+19991026 --
+n sorry about the delay in working -- the doc and I were working on the
+  incident/ailment/episode-of-care stuff and I forgot my worksheet at home
+  on monday -- d'oh!
+a/m from Max:
+  {simplerep,simplerep_lout,simplerep_html,select_printers}.php3
+  data/lout/sr_{doc,sheet,defs}
+  lang/EN/{simplerep,simplerep_lout}.php3.EN.inc
+  lang/FR/{simplerep,simplerep_lout}.php3.FR.inc
+  lang/ES/{simplerep,simplerep_lout}.php3.ES.inc
+m temporarily added $Export_Data to lang/EN/API.EN.inc because I had
+  $Export_Database there instead -- hmm.
+m changed '\\' to '\\\\' in freemed_export_data function in the API, so that
+  the characters are escaped properly -- was causing errors in the export.
+m added $debug to the global tag of freemed_export_data so that debug info
+  was actually passed.
+m more changes to freemed_display_box_top to actually pass $_ref if not
+  actually specified in calling
+a dumped the Doc's additions to Physician Specialties and Degrees (which
+  definately aren't all of them, but definately enough to get started on)
+  in the data/EN/ directory for import with the stock version
+a added fm_htmlize_array for passing an array as HTML hidden input tags,
+  updated API listing for it as well
+a added episode_of_care.php3 as the module for Incidents/Ailments/
+  Episodes of Care ... to be called with a patient # ($patient) ... uses
+  combined add/modify sections as in fixed_forms.php3. and implements
+  3D SQL arrays, with the possibility of implementing virtual 4D SQL
+  arrays (for certain multiple choice variables)
+  (con't)
+  still plunking away at this ... no database structure for sure yet, since
+  I've added 5-10 fields while looking at my slip of paper, so I'll just get
+  the add/mod routine set up, then people can let me know what we're missing
+  and maybe we can get this done...
+a added link for Episode of Care temporarily in Manage Patient so that I can
+  go over the form with people without typing in URLs -- will also be the
+  permanant link once it is translated.
+
+19991022 --
+m changed API for newer box style (freemed-functions.inc, index.php3)
+a added fm_eval and fm_secure as evaluation handling routines in the API
+a added the functions from freemed-calendar-functions.inc to the API listing
+  file so that we aren't going about function documentation the Redmond (tm)
+  way. ;)
+m updated authenticate.php3 and logout.php3 to have cleaner box-based
+  interfaces instead of the ol' eyesore method.
+m fixed bug in book_appointment.php3 where moving forwards or backwards did
+  not pass $type, and therefore did not work for call-ins
+a added facilities for moving around time-wise while looking at the day
+  calendar (step2) in book_appointment.php3
+n verified booking routine _does_ seem to work for English in most, if not
+  all, circumstances that I have seen.
+
+19991021 --
+m fixed _stupid_ mistake in fixed_forms.php3 where I forgot to carry a
+  change across all iterations.
+a added error checking to fixed forms, so that their numbers appear as
+  red if there is an error or they are new.
+a added fm_prep function for preparing strings to be shown in HTML (API)
+m modified fixedform definition in admin.php3
+n tried freemed with Postgres -- it crapped out and wouldn't let me set up
+  anything. has anyone tried with anything other than MySQL?
+m added "Fixed Forms" to the db_maintenance.php3 module -- eagerly awaiting
+  translations for it and the actual fleshing out of all words to be
+  translated...
+n sorry about not having included the ISO codings into records yet -- I'll
+  have to look into doing it soon, though, since interest in it seems to be
+  picking up.
+a added "Back to Menu" function from the Add/Modify pulldown in fixed_forms,
+  to make it a little easier on me...
+
+19991020 --
+a/m from Max:
+  {simplerep,simplerep_html,simplerep_lout,select_printers}.php3
+  lang/EN/{select_printers,db_maintenance}.php3.EN.inc
+  lang/FR/{select_printers,db_maintenance}.php3.FR.inc
+  lang/ES/{select_printers,db_maintenance}.php3.ES.inc
+  data/lout/sr_defs
+m YEEEES! I got 3d arrays for forms to work properly, including inserting
+  deleting, and all sorts of other goodies...
+a added fixed_forms.php3, no language module yet.
+m fixed_forms.php3 joins the add and modify forms into one, so as to eliminate
+  excess coding (yes, I'm that lazy) and to consolidate changes to the form.
+  I've been trying to make it a little more horizontal and less vertical...
+m fixed fm_(whatever) array functions to do error checking for single element
+  arrays and nulls, so that we don't have to keep doing it. updated in API
+
+19991019 --
+n going to make a go at doing multidimensional (3d) arrays for forms -- uugh!
+
+19991018 --
+m tracked down stupid facility=ALL bug in user perms -- and squashed the hell
+  out of it in the API.
+a/m from Max --
+  {simplerep,simplerep_html,simplerep_lout}.php3
+  data/lout/{index.php3,sr_{defs,doc,langdefs,sheet}}
+  lang/EN/{simplerep,simplerep_html,simplerep_lout}.php3.EN.inc
+  lang/ES/{simplerep,simplerep_html,simplerep_lout}.php3.ES.inc
+  lang/FR/{simplerep,simplerep_html,simplerep_lout}.php3.FR.inc
+a added DE translation to LANGUAGES (I forgot!)
+a added Opera for windows to BROWSERS
+
+19991015 --
+a from Max --
+  lang/ES/{API,tos.php3}.ES.inc
+  lang/FR/{API,tos.php3}.FR.inc
+
+19991014 --
+n Max said we are the biggest project using PHP -- can anyone verify this?
+a/m from Max --
+  simplerep.php3
+  html.php3
+  lang/{EN,FR,ES}/{simplerep,html}.php3.{EN,FR,ES}.inc
+a Max added a module called html, which seems to give HTML "printed"
+  output for certain things.
+m more fixes to move_appointment.php3 -- now it updates properly, or so I
+  think -- I haven't had time to test it yet.
+
+19991013 --
+n stupid unlucky 13th ;)
+a added more icons, switched out some bad ones
+m converted admin main menu to new icon-ized format. y'know, for the kids.
+  (obscure reference, Hudsucker Proxy)
+m moved main menu link into box, with cool back hand icon in admin.php3
+m now no-one except root can reinit the database. pretty smart to do that,
+  if anyone asks me.
+a added iso-set.inc, which is the abstracted ISO set lookup table that
+  formerly resided in global.var.inc, but I hate switches in config files.
+a added show_appointments.php3 module -- needs patient and type to be able
+  to show individual patients -- otherwise does days. need to implement
+  facility security here.
+d moved scheduler.php3 to old/ -- let me know where everything is broken.
+m more mods and improvements to scheduling booking and showing...
+m modified lang/EN/db_maintenance.php3.EN.inc for facility wording
+a added $Export_Database to lang/EN/API.EN.inc
+m modified Show Today tag in manage.php3 to work -- the question is, would
+  we want it to show every appointment, or just this?
+n NOTE TO SELF: remember to add check on duration possible in booking
+  module if overbooking is disabled, so that you can't book a long appointment
+  15 minutes before another. DON'T FORGET THIS!!
+m now even if overbooking is turned on, an appointed space is put in italics
+  to show that it is already taken, so that you have an idea what your
+  schedule is like.
+a added ability to change booking room from calendar, thereby making it
+  much easier to peruse the selection of available timeslots... (this is
+  in book_appointment.php3) with all appropriate language alterations.
+a added patient name/dob display in the booking module -- makes more sense.
+a added preliminary move_appointment module, which is basically a clone of
+  the current book_appointment routine, but which I will work on.
+a added $admin_level to global.var.inc, which I should have done _months_
+  ago.
+m fixed ridiculous error in mod form of facility module (where i forgot to
+  end one of the tags.... *smacks self in forehead*)
+m added some more in lang/EN/tos.php3.EN.inc -- translators take note!
+n would like to look into moving the user level/description bar to the
+  box bottom feature, and add the name in there as well ---
+  well, anyways, I'm done for today. complain if you like, but i'm a huge
+  fan of sleep.
+
+19991012 --
+a added icons to the img/ directory for the main menu. don't even ask why
+  they aren't all there -- just send me some!!
+m from Max, many improvements/translations of simple reports module
+  (simplerep) and revision of documentation.
+a from Max, new API function to display printers, along with definition in
+  admin.php3 module...
+m redid much of the main menu code, so that it looks much nicer with the
+  icons, preserved [*] links for those with Lynx, so as not to make their
+  displays too fugly.
+n if any translators are interested, I have packaged tclbabel/tkbabel for
+  Mandrake, which is great for simple translations, if you're not quite
+  sure of a word. Please let me know.
+
+19991010 --
+m fixed call-in link to scheduler -> book_appointment with no action
+  field.
+m fixed display of past call-ins
+m fixed links in book_appointment to not have action=addform...
+
+19991008 --
+a/m from Max:
+  {specialties,simplerep}.php3
+  lang/EN/{simplerep,admin,book_appointment}.php3.EN.inc
+  lang/ES/{simplerep,admin,book_appointment,main}.php3.ES.inc
+  lang/FR/{simplerep,admin,book_appointment,main}.php3.FR.inc
+  lang/EN/doc/simplerep.php3.EN.html
+m as per doc's instructions, modified week view in calendar API to
+  generate 8 days instead of 7 -- today as well as a week ahead.
+m fixed up lang/EN/doc/simplerep.php3.EN.html simple reports documentation
+  ... will issue a documentation standard.
+m fixed up some HTML code in simplerep.php3 for Max
+a added code to encode the facility of a booking location into the scheduler
+  which should have been done before, but wasn't because I am lazy.
+
+19991007 --
+m fixed following translation files (minor errors):
+  lang/DE/main.php3.DE.inc
+  lang/DE/call-in.php3.DE.inc
+  lang/DE/db_maintenance.php3.DE.inc
+m updated $ADD in cptmod.php3 to $lang_ADD
+  also updated $ADD to $lang_ADD in freemed_display_actionbar (API)
+m major fixed for tos.php3 so that it actually looks and functions
+  properly and conforms to the language model.
+m files from Max:
+  {simplerep,phystatus,manage}.php3
+  lang/EN/{API,{degrees,frmlry,phystatus,simplerep}.php3}.EN.inc
+  lang/FR/{API,{degrees,frmlry,phystatus,simplerep,room}.php3}.FR.inc
+  lang/ES/{API,{degrees,frmlry,phystatus,simplerep,room}.php3}.ES.inc
+m fixed lack of TR tags in simplerep.php3
+a added fc_interference_map_count to return whether there are or are not
+  appointments in the interference map.
+a added book_appointment.php3 from old scheduler routine, but working
+  the calendar API into it. slow process.
+m changed config db to accept VARCHAR(100) values up from CHAR(6) and
+  added Calendar Overbooking option in admin.php3
+m added more to lang/EN/admin.php3.EN.inc -- this is for all you
+  translators out there...
+a added lang/EN/book_appointment.php3.EN.inc
+m modified manage.php3 to point to new booking routine
+m fixed problems in admin, manage ...
+n overbooking select does work, as does new booking -- note in future:
+  do not end URLs with =, as KFM 1.1.2 doesn't do well with them
+m modified admin.php3 scheduler definition to use TEXT for post-note --
+  so that new routine can use it.
+a added manage_appointments.php3, no language file yet. not operational
+  yet either, but I'm working on it.
+m check that -- manage_appointments actually displays appointments, but
+  does not do any other maintenance work, yet. also, it has been linked to
+  the View/Manage link for Appointments in Manage Patient (manage.php3)
+m cleaned up manage.php3 HTML, mostly missing <CENTER> tag
+
+19991006 (post release) --
+a added img/tag-0.0.gif because I am bored -- integrated into index.php3
+  with some corrections for alignment of the table (ALIGN=LEFT/RIGHT was
+  not implemented all across)
+
+19991006 --
+a already, Max has translations for the physician_week_view module:
+  lang/FR/physician_week_view.php3.FR.inc
+  lang/ES/physician_week_view.php3.ES.inc
+a and for yesterday's belated max contribution:
+  admin.php3 (updated)
+  facility.php3 (updated)
+  global.var.inc (updated)
+  simplerep.php3 (updated)
+  lang/EN/{facility,simplerep}.php3.EN.inc
+  lang/EN/doc/simplerep.php3.EN.inc
+  lang/FR/{facility,simplerep}.php3.FR.inc
+  lang/ES/{facility,simplerep}.php3.ES.inc
+a another one, also from Max...
+  lang/FR/{Rx,phy_avail_map}.php3.FR.inc
+  lang/ES/{Rx,phy_avail_map}.php3.ES.inc
+m fixed the bug in fc_display_week_calendar (accidentally used += instead
+  of .= as shorthand for string concatenation, ended up with a 0)
+a added week view in main.php3 for physicians (those with the physician
+  identifier) and modified lang/EN/main.php3.EN.inc to boot (as in
+  "additionally", not "start up")
+n tested new main menu features -- seem to work fine, but i'd like some
+  friendly icons in the near future...
+  in that vien, I'm going to start moving the booking functions, etc
+  out of the old scheduler into the new API'd scheduler. tomorrow.
+
+19991005 --
+m completed phy_avail_map.php3 module
+m also completed lang/EN/phy_avail_map.php3.EN.inc
+m finished roomequip.php3 module and lang/EN/roomequip.php3.EN.inc
+a added day_of_the_week (this_date [YYYY-MM-DD], short form [T/F]) to the
+  calendar API (freemed-calendar-functions.inc)
+a added Johann's german (DE) translation, but no registry file, so it is
+  identified as "German". this is a BIG!!! addition, because German is the
+  3rd or 4th most popular language on the internet. in the lang/DE/doc/
+  there are also beginning translations of the freemed site in german!!
+a added physician_week_view.php3 and lang/EN/physician_week_view.php3.EN.inc
+  but have no time to fix the stupid mapping bug -- will get to it later.
+
+19991004 --
+m added $Dosage in lang/EN/Rx.php3.EN.inc
+m fixes/additions from Max Klohn (19991004):
+  simplerep.php3
+  lang/EN/user.php3.EN.inc
+  lang/ES/user.php3.ES.inc
+  lang/FR/user.php3.FR.inc
+  lang/FR/main.php3.FR.inc
+  lang/ES/main.php3.ES.inc
+  lang/FR/physician_day_view.php3.FR.inc
+  lang/ES/physician_day_view.php3.ES.inc
+n sorry no release today -- not enough stuff. will release tomorrow, if
+  middle management meetings (ugh!) allow.
+
+19990930 --
+m fixed huge bug in index.php3 not rebuilding the language registry,
+  made freemed-rebuild-language-registry in scripts/ obsolete --
+  index.php3 does it itself. freemed now ships with no language
+  registry, and index.php3 builds it the first time you start up
+  from the individual registry files.
+
+19990929 --
+m fixed the README.debian to work with newer configuration options.
+m put in a $current_imap["key"] mapping on the interference map in
+  freemed-calendar-functions.inc which keeps the date of the interference
+  map to let you know what date it is for... also to let the program
+  know that you have created a map.
+a added fc_check_interference_map function to check the map for possible
+  conflicts. the function checks to see if the proper map has been
+  generated, and if not, calls fc_generate_interference_map.
+a moved credits to separate file, to centrally give credits where credit
+  is due.
+m modified fc_display_day_calendar code to look nicer
+a added physician_day_view.php3 and lang/EN/physician_day_view.php3.EN.inc
+  files for the first part of the new scheduler, based on the calendar
+  API in freemed-calendar-functions.inc
+m modified fdb_fetch_array to return a null array instead of an error if
+  it is called with a $result<1 (for bad queries, etc)
+m fixed problems with freemed_check_access_for_{facility,patient} where
+  they were expecting root to be user 0, when root is actually user 1.
+a added $current_imap["count"] to keep track of how many appointments in
+  the interference map -- and to print it at the top of the display,
+  next to the date.
+m names in interference map now link to the call-in and management displays
+  for patients (in the fc_generate_interference_map function)
+m many other little changes in the API to help speed things right along --
+  mostly calendar API tweaks.
+m added new field to user db to allow for mapping to doctor for actual
+  physicians with mods to:
+  main.php3
+  admin.php3
+  user.php3
+  lang/EN/main.php3.EN.inc
+  lang/EN/user.php3.EN.inc
+  -- sorry you guys, but to use it, you're going to have to reinit!
+n will someone remind me to translate the text in the calendar API?
+  I haven't gotten a chance to do it yet...
+
+19990928 --
+a added the following updates from Mark L
+  cpt.php3
+  lang/EN/{cpt,icd9,user}.php3.EN.inc
+a added the following updates from Max Klohn (god do I need CVS)
+  simplerep.php3
+  lang/EN/simplerep.php3.EN.inc
+  lang/FR/simplerep.php3.FR.inc
+  lang/ES/simplerep.php3.ES.inc
+m very small language change to simplerep.php3
+a added fc_generate_interference_map to freemed-calendar-functions.inc to
+  generate the $current_imap array, which is an associative global array
+  containing the appointments for a certain day. it will be used for the
+  next generation set of scheduler modules to generate day information.
+  A HREF tags, etc have not been added, just basic stuff for right now.
+n update on John Gage's module -- he is recoding it for PHP3 to avoid any
+  other hassles. until he commits it to the distribution, the java/
+  directory will stay there.
+m modified fc_generate_interference_map to also map the rest of the
+  appointment in italics up until the ending.
+m modified fc_starting_hour and fc_ending_hour to use global scope in
+  freemed-calendar-functions.inc
+m heavily modified fc_display_day_calendar to work with the new
+  interference map routine (in freemed-calendar-functions.inc)
+
+19990927 --
+n back from the weekend, fresh and ready to code
+a added nursing-plan.html to the code repository, for all those that want
+  to see the prototype for it (thanks to Johann Krautinger j.krau@teleweb.at)
+a added temporary java/ directory for John Gage's anesthesia applet
+a added new icd9.php3 and lang/EN/icd9.php3.EN.inc files from mark l
+  (lesswin@ibm.com), using the new template, to which I made a minor
+  modification
+a added following Max Klohn files:
+  patient.php3
+  simplerep.php3
+  lang/EN/simplerep.php3.EN.inc
+  lang/FR/simplerep.php3.FR.inc
+  lang/ES/simplerep.php3.ES.inc
+m made small language and form modifications to simplerep.php3 and
+  lang/EN/simplerep.php3.EN.inc
+a added scripts/cfg-value, which allows other languages to pull config
+  variables out of global.var.inc (like Perl, Java, Bash, etc)... called
+  from package root directory like:  scripts/cfg-value (actual-value)
+m moved icd9.php3.old to old/
+m created specs/ directory without index for any upcoming specs that are
+  to be implemented, before they are put into table form.
+n very busy today. i hope we get CVS soon?
+
+19990924 --
+n just got back from the Toronto Summit, with plenty of fresh ideas.
+  I met a lot of great people, and the doc and I have some pics of the
+  entire crew for you all to see, just as soon as we have the spare time
+  to pull them off the camera and put them up (* how I love gPhoto! *)
+a tarball from Max with changes to: (19990923)
+  patient.php3
+  lang/EN/patient.php3.EN.inc
+  lang/FR/patient.php3.FR.inc
+  lang/ES/patient.php3.ES.inc
+a another tarball from Max with changes to: (19990924)
+  {admin,db_maintenance}.php3
+  lang/FR/{index,phygroup,phystatus,API,specialties,tos}.FR.inc
+  lang/ES/{index,phystatus,API,specialties,tos}.ES.inc
+m moved "admin.php3" refs in admin module to $page_name
+m added line to freemed_check_access_for_facility to allow non-facility
+  specific patients to be processed (true by default)
+m fixed obnoixious typo in call-in.php3 module which caused a blank
+  work phone # field to produce a blank home phone # field
+m brought the room.php3 module to fdb_ wrapper compliance (finally)
+a added lang/EN/room.php3.EN.inc with appropriate changes and massive
+  cleanup in room.php3
+m revamped old facility.php3 module with new updates, as of this last
+  century, and put in language support, split phone # support, and
+  addslashes for fields that might have them.
+a added lang/EN/facility.php3.EN.inc for facilities...
+a added $lang_HELP to lang/EN/API.EN.inc
+a added lang/EN/frmlry.php3.EN.inc for formulary, with appropriate
+  changes and fixes to the module
+m fixed duplicate use of "Generic Name" instead of "Class" in frmlry.php3
+a added another language var to lang/EN/API.EN.inc
+a added access checking for the patient record in prescription module (Rx)
+a added lang/EN/Rx.php3.EN.inc with appropriate changes to Rx module
+m fixed accidental inclusion of french into lang/EN/patient.php3.EN.inc
+  by Max...
+n at the Toronto conference, I talked to John Gage about integrating his
+  modular java-based anesthesia tracking and report program, and putting
+  it into freemed. we both agreed that it would be mutually beneficial,
+  and the modified version will be committed to the tree as soon as John
+  sends it to me. please don't complain until I patch the code. (note:
+  I will be using guavac to compile from the source, and will be writing
+  a PHP wrapper, for security's sake)
+
+19990922 --
+d deleted old mk-19990921.tar accidentally left in distro for yesterday
+a added/updated the following files, courtest of Max Klohn:
+  lang/FR/{degrees,db_maintenance,cpt,cptmod,manage,patient,
+           progress_notes,roomequip,call-in}.FR.inc
+  lang/ES/{degrees,db_maintenance,cpt,cptmod,manage,patient,
+           progress_notes,roomequip,call-in}.ES.inc
+  lang/EN/call-in.php3.EN.inc
+a added persistant page recall -- if you hit the X to logout, it will
+  remember where you were, in case you log back in immediately. it
+  needed lang/EN/index.php3.EN.inc to be updated, but it asks if you
+  want to resume or not. also changed authenticate.php3, the
+  freemed_display_box_top function, index.php3, authenticate.php3 and
+  logout.php3 ... did I miss any?
+d removed main_phy.php3 setting in authenticate. will use loadable parts
+  from main.php3 so as not to have to reinvent the wheel. (now in old/)
+a FINALLY added tos definition to admin.php3, replaced the old tos.php3
+  file, and added the freemed_display_tos function to the API
+m fixed _TEMPLATE_.php3 to use $Action language variable
+a working on FEATURE_SET for presentation at Minoru Development OpenSource
+  Medical Management Conference.
+a another tarball from Max with
+  user.php3
+  lang/FR/{main,admin,user}.php3.FR.inc
+  lang/ES/user.php3.ES.inc
+m removed mysql_ references in phygroup.php3 -> fdb_ wrapper
+m modernized phygroup.php3 and fixed a whole bunch of problems, while
+  doing initial translation to lang/EN/phygroup.php3.EN.inc
+a modernized and translated specialties.php3 ->
+  lang/EN/specialties.php3.EN.inc
+m fixed $lang_ALL to global scope for freemed_multiple_choice in API
+a added lang/EN/phystatus.php3.EN.inc and updated phystatus.php module
+  to this century and language updates
+
+19990921 --
+n moved to .tar.bz2 tarballs to appease the throng of bandwidth misers ;)
+a added/updated the following files, courtesy of Max Klohn:
+  lang/FR/{API,admin.php3,simplerep.php3}.FR.inc
+  lang/ES/{API,admin.php3,simplerep.php3}.ES.inc
+  lang/IT/{API,admin.php3}.IT.inc
+  lang/PT/{API,admin.php3}.PT.inc
+m fixed dumb typo in freemed-functions.inc (API) that didn't pass the db
+  passwd properly.
+m removed all extra $debug==1 -> $debug in admin.php3
+m cleaned up some HTML in admin.php3
+m fixed gfx config var not getting passed in admin.php3 (thanks Max)
+a implemented ISO 8859-x support for all languages I could find (50+)...
+  we are now ready for non-western languages, etc, if someone would only
+  fill in what is missing. possibly move all language loader code to a
+  separate inc file called by global.var.inc, since they really aren't
+  just global variables anymore...
+m fixed global/local scope problem in API's freemed_display_actionbar
+  with $page_name -> $this_page_name for local scope (thanks Chris)
+m fixed $coded_by scope in freemed_display_html_bottom
+a added feature to select Old/All/Current call-ins to call-in.php3
+  and added those new words to lang/EN/call-in.php3.EN.inc
+
+19990920 --
+n back from weekend. didn't get as much done as I wanted to.
+m put in Max Klohn's translations (ES and FR) for user.php3
+a data/fax and data/fax/incoming directories added (Max Klohn)
+a scripts/new_fax added (Max Klohn)
+m changes to global.var.inc and admin.php3 by Max
+a added global.var.inc ISO set detection case statement and
+  modified freemed_display_html_top to have ISO support in its
+  meta tags (and updated the API)
+m changed all $debug==1 to $debug so that debug can be set to true
+  (in freemed-functions.inc)
+m updated a few functions in API...
+a added $lang_ADD in lang/EN/API.EN.inc
+m removed references to global.var.inc, and used global scope
+  variables instead in freemed-functions.inc
+
+19990917 --
+a added Max Klohn's preliminary incoming fax support message to the
+  tarball, in case anyone missed it on the mailing list.
+m converted BLOB defs in admin.php3 to TEXT for all but multiple
+  choice fields, to allow case insensitive searching of text.
+m modified the lang/EN/TEMPLATE.EN.inc file to have $record_name in
+  it
+a added common words/phrases to the API language file
+  (lang/EN/API.EN.inc)
+m changed <BR><BR> in _TEMPLATE_.php3 to <P>
+m "translated" all of the parts of the template which are now in the
+  API language file, to be shared by all (tm)
+a added roomequip.php3 room equipment database, for equipment names and
+  descriptions
+a added lang/EN/db_maintenance.php3.EN.inc with translations to make it
+  more Compliant (tm)
+d moved banner.php3 to old/ because I should have done that "years" ago
+n remember to implement freemed_display_tos function in API
+a added lang/EN/{cpt,cptmod}.php3.EN.inc files and made appropriate
+  changes to their modules for language support and general updates.
+a added lang/EN/degrees.php3.EN.inc and changes to degrees.php3 for
+  language support...
+n done for the weekend -- or am I? I'll be putting all of my weekend
+  additions and changes into the log, so that Monday's release is great.
+  mainly more features to show at the Minoru Development-sponsored
+  Open Source Medical Management Conference in Toronto. The doc and I
+  (perhaps Chris Beggy also?) will be attending. Wish us luck!
+
+19990915 --
+a added fm_button function to generate button with text
+a added generate_button.php3 module to generate buttons on the fly --
+  will someone fix it to work with the sizes we are working with?
+m test implementation of the aforementioned new module in user.php3
+  menu... will get back later...
+
+19990914 --
+a yesterday added PT (portuguese) translation. releasing today.
+
+19990910 --
+a added lang/EN/TEMPLATE.EN.inc for future language people to work
+  with, flame, etc
+a added lang/EN/simplerep.php3.EN.inc for Max Klohn's excellent
+  simple reports module (someone translate me!)
+d removed all CVS directories present -- they're just wasting space
+  since I haven't gotten CVS to work yet.
+d removed redundant $dark_table_color and used global.var.inc's
+  $darker_bgcolor instead in progress_notes.php3
+a added $record_name to progress_notes.php3 and propagated changes
+  throughout the module
+a added script to use txt2pdf to convert the API into a PDF file
+  when the distribution is packed -- I know you will all appreciate
+  this, for ease of printing if nothing else.
+a added progress_notes.php3.EN.inc in lang/EN/ for all you closet
+  translators out there...
+
+19990909 --
+n going to the Open Source Medical Management Summit in Toronto, CA
+  on the 22nd-23rd to represent freemed with the doc. and we are also
+  meeting with the VP of Marketing for Merallis.Net (providing
+  insurance billing) about possible modules, etc. very exciting.
+a added user type feature for separate menus for physicians, etc.
+  also means check lang/EN/user.php3.EN.inc for new things, etc
+a added routine to check usertype if LoginCookie part 1 > 1 and
+  if it is a physician, bring up the main_phy.php3 menu instead of
+  the regular main menu.
+m fixed two mysql_ refs in main.php3 to the fdb_ db wrapper
+a been implementing basic current_patient cookie to hold the current
+  patient through multiple menus, actions, etc (persistance) ...
+  now currently implemented in patient.php3 (mostly) and manage.php3
+  (somewhat)
+a added a global LoginCookie to freemed_auth_login to pass the cookie
+  var back to be used (called SessionLoginCookie, for temp session
+  until refresh from browser).
+m changed things around to try to keep main.php3 and main_phy.php3
+  from biting each other. will have to write exceptions for links.
+
+19990907 --
+a added freemed-calendar-functions.inc library, which I am pulling
+  functions from the scheduler to complete, so that booking, etc
+  functions can be put into other modules
+
+19990903 --
+n sorry about the lack of productivity, but I have been busy setting
+  up the CVS server and locking down my box. feel free to ask me for
+  CVS access if you would like to help develop the freemed project.
+
+19990830 --
+a two language bundles from our good friend Max Klohn, plus updates
+  to call-in and the defs in admin for a physician to be specified.
+n sorry for not releasing for 5 days -- I've been busy. also, my
+  machine has been under attack, so until people knock it off, I've
+  locked down all the services besides Apache on my machine.
+a added check for facility's default physician to appear initially
+  selected in call-in menu -- finally! I used that field!
+m fixed typo in freemed_check_access_for_facility so that it actually
+  works.
+m modified $All_patients -> $All_Patients in patient.php3.EN.inc --
+  translators please take note
+m minor fix to freemed_display_phy_degrees
+a added freemed_display_phy_specialties
+a added fields in admin.php3 def of physician db to allow for degrees
+  and specialties
+m modified physician.php3 to work with new db defs
+
+19990825 --
+a added link in db_maintenance.php3 for physician specialties
+a added &nbsp; to specialties.php3 to have description part of table
+  render properly in Netscape if there was no description
+a added same fix to _TEMPLATE_, cptmod, cpt
+a fixed inscogroup module to work with mods/adds and LoginCookie
+m cleaned up links in manage.php3
+m reworking call-in code to scheduler.php3
+n now it is possible to book call-ins, but it requires a db reinit,
+  since i added another field to the scheduler db code.
+m changed HTML header to include link colors in BODY tag
+
+19990824 --
+a added specialties.php3, which has real specialties as opposed to degrees
+  which are now in degrees.php3 -- sheesh! also updated admin.php3 with 
+  proper definition, etc. they have a name, description and date stamp
+  for add/modify.
+a added $Adding to lang/EN/API.EN.inc
+a big change -- added call-in.php3, which allows patients to be "called in"
+  without being entered in the actual master database. the trick is that
+  there is an option called "enter" in the menu which allows them to be
+  transfered into the main patient db, with all of the entered contact info
+  intact. good for certain things. suggested by the doc.
+m changed bottom links in box in patient.php3 and added temp links in
+  main.php3 for call-in module
+a added facility access check for call-in module
+n the woman will leave me here if I don't leave now, so I'm done for the
+  day. -- jeff
+
+19990823 --
+m changed ptmarital statuses from 1 letter to multiples (single, etc), and
+  added $Separated language variable
+n been working on the doc's additions...
+m changed specialty.php3 -> degrees.php3 with all other changes and
+  mysql -> fdb conversion in prefixes
+m kludge fix for help.php3, since I broke it somehow
+m moved freemed_display_phy_specialties -> freemed_display_phy_degrees
+  and updated the select code
+m fixed references to specialties -> degrees in physician.php3
+n I'm cooked for today. Please send mods, etc to me...
+
+19990822 --
+n not much here -- just max's fix
+m added Max's translations for {user,index,main}.php3
+m fixed break in authenticate.php3 due to negligence
+
+19990820 --
+m fixed some more language things in patient.php3
+a added $record_name to lang/??/(module).??.inc files, at least for
+  english... this makes basically everything interchangeable
+a added facility ($_f) select box to index.php3, as well as making
+  language adjustments for it.
+m modified freemed_display_facilities function, cleaned up the
+  deadwood in freemed_open_db (like the <!-- -->) and added cookie
+  repeating code.
+m after many many hours of reviewing code, i used the global keyword
+  to scope the default_value cookie... and all was well.
+n if I may digress -- we recently have had a minor falling out between
+  developers. as part of the GNU community, producing community-written
+  software, which we wholeheartedly believe is as good, if not better
+  than commercially written softeare, we should know better than to let
+  petty arguments escalate into full scale flaming wars. please think
+  about what you say before you say it, or we may lose good developers
+  and designers, as well as good friends. now, i'm climbing off of my
+  miniature pulpit, and going back to what we started to do in the
+  first place -- code!
+a added capability for freemed_display_rooms to check for the facility
+  perms (good for booking) and to check $default_facility as passed from
+  the cookie. also updated all these in the API.
+m changed bugs address in global.var.inc to code_bugs@test.pr.uconn.edu,
+  where I will be answering bug problems.
+a added null length check on facilities display function in the
+  freemed-functions.inc file (gets rid of annoying brackets)
+
+19990819 --
+n most of today's modifications will be for the upcoming db.freemed.org
+  site -- sorry to everyone who expected anything else...
+m modified cpt.php3 to have an export function
+m modified template to have export function
+m modified cptmod.php3 to be up to date (no more "include boxhead"s or
+  anything like that) and added an export function...
+a added import functions to most stock databases in admin.php3
+a moved _facilitylist.php3 to old/
+
+19990818 --
+a added check in patient.php3 to see if patient is accessable by the
+  current user, and if not, it doesn't display that patient.
+a created lang/reg directory, with self title language file (like
+  "EN" for english) with a single line, like "EN:English"... there
+  is a script which is called by freemed in the scripts/ directory
+  called scripts/freemed-refresh-language-registry which rebuilds
+  the lang/reg/registry file from all of the language registry files.
+  freemed does this automatically if there is no lang/reg/registry
+  file.
+m now all of the languages actually show up in the list box at logon
+  and properly return to the global.var.inc value upon exit.
+m updated index.php3 with language things, etc...
+a forgot to mention -- added scripts/ directory for shell or perl
+  scripts that glue things together.
+a added freemed_check_access_for_facility function --- like the
+  freemed_check_access_for_patient, but much simpler, just checking
+  access for facilities -- i put it in mainly for the scheduler, but
+  I can see where else it could be used.
+a added image_handler.php3 to retrieve images from a repository to
+  be used in here -- would be very useful for handling Xray photos,
+  once I write the module --- ;) it takes a loc (or "location") param
+  which specifies an alias in image.conf (which I will eventually move
+  to a cfg/ directory) and an image parameter to specify the image
+  name. if someone can fix the # comment checking, I'd be much
+  obliged...
+a added displayday action in scheduler to show current day with optional
+  passthru of $patient variable
+a added link in manage.php3 to show current day (link to scheduler
+  displayday action) with added var in lang/EN/manage.php3.EN.inc ...
+  please translate !!
+a added $physical_loc variable to global.var.inc, to aid in physical
+  file imports, etc
+m moved default language to $default_language, which is pulled into
+  $language variable if there is no valid one specified in the logon
+a added a data/ directory for stock data to be sent with it, plus
+  language subdirectories for importing data. with routine in
+  API (freemed_import_stock_data).
+a added freemed_export_stock_data function to allow exporting of stock
+  data for gnuCPT or such projects to provide "shipping" data for not
+  only freemed, but for other GPL'd medical projects.
+d finally removed some deadwood from specialty.php3
+a added link to specialty.php3 in menu to export data ... as a test of
+  the export function. it seems to export nicely, in a comma delimited
+  format.
+m redid admin module additions to make it readable... finally
+a added data/EN/specialty.EN.data to show what exports/imports do...
+n done for the day -- and WHAT a day it was...
+
+19990817 --
+n back to work -- trying to get _something_ done.
+a added freemed_check_access_for_patient function, which checks the
+  perms from the user module to see if the user is allowed access to
+  that particular patient. will have to add checks for that in all
+  patient related modules. also, all facilities and scheduling modules
+  will need another, related function, to see if the user has perms for
+  that facility. will build into display_facilities listing function,
+  etc, but not today. today is getting this out.
+a added support for selectable lanugages with default still being
+  $language in global.var.inc, but carried as a cookie (u_lang var
+  in cookie) ... still need to make a language registry from which to
+  pull ... maybe just searching lang/ for two character names, then
+  requiring an informational file... like lang/EN/language.name or
+  something equally dumb. eh. 
+m modified english language files for index.php3 with two new words
+  Default and Language for anyone nosy enough to ask... translate!
+  translate!
+
+19990815 --
+m put in proper begin bracket for else statement in manage.php3 to
+  avoid premature ending of switch/case statement (thanks Max)
+
+19990814 --
+a added t (transgender) option to gender in patient.php3 (Max, remember
+  to add $Transgender in the lang/??/... file for patient.php3)
+m updated the ENUM definition in admin.php3 for transgender change
+m fixed Max's caps in 1st gender pulldown...
+
+19990813 --
+n Oh No! Friday the 13th!?!?!?
+a (Chris Beggy) added lang/EN/doc/frmlry.php3.EN.html documentation
+m (Max Klohn) all user/manage language modules updated, and
+  simple reports and the actual management module updated
+a (Chris Beggy) added freemed.db database dump for those who want
+  to know a little more, but don't want to reinit...
+n for once, everyone else did 100x more than I did on a release --
+  maybe because it's Fri 13? ;) I'll fix the scheduler next week.
+
+19990812 --
+n I've _got_ to start remembering to release. I keep leaving work early
+  and forgetting to tar and send -- oops?
+a added IT (italian) language file translations from Stefano
+  (ste@sirius.ccii.unipi.it) to the distribution!! (another day, another
+  lanugage)
+m fixed typo in admin.php3 where Creating_new_db was missing $ prefix
+a added button in user.php3 to try again if passwords don't match for
+  addition. $Try_Again lang variable added.
+a added freemed_multiple_choice to the API to assist in multiple choice
+  SELECT boxes.
+m fixed lingering mysql_ functions in user.php3
+m updated phymi to phymname, changed types on name vars to VARCHAR 50s
+  to allow for longer physician names
+m added capability for facility, physican and physician group authoriziation
+  from user database using freemed_multiple_choice function.
+m moved all references in physician.php3 to use new lengths and new
+  phymname field instead of phymi field.
+m modified fm_value_in_array to correctly see first element [0]
+a added a "return to user menu" link at the bottom of the modify screen
+  in the user.php3 module
+
+19990811 --
+n I didn't release on my birthday. Oops.
+m Max modified a whole bunch of things in patient.php3, and so
+  did I, after I got it back. patient data reordered in forms
+  <BR><BR> converted to <P> in some places, menus redone in a nicer
+  fashion. more...
+m <Max) display_insco line for tertiary insurance was showing secondary...
+m (Max) fixed gender updating in modform action.
+a (Max) added language translations for EN, FR, ES for patient.php3
+m lots of other things in patient.php3 -- mostly removing deadwood.
+
+19990810 --
+n it's my birthday. yay me.
+m moved to fdb_ from mysql_ convention in progress_notes.php3
+  (thanks to Max for pointing this one out)
+a added simplereport table to admin.php3 (thanks to Max Klohn
+  again for outlining the table, etc)
+a added simplerep.php3 module, written by Max Klohn, as well
+  as a mod to the db_maintenance.php3 module and translations
+  for the Patient Management menu (manage.php3)
+
+19990809 --
+n updated MySQL to v3.22.25, and now the scheduler works ... hm.
+a reintegrated scheduler module from old/ to main distribution.
+m added calduration field to scheduler to allow for multiple
+  duration visits/appointments.
+a added rudimentary routine for determining previous booking in
+  certain rooms. need to add a configuration variable to allow
+  the end user to decide whether that is neccessary or not.
+m implemented fdb_ convention in scheduler.php3 and manage.php3
+n need to add checking for links for adding appointments and
+  conflict checking for hours (:00) links
+n mental note: add extra param to physician list function to
+  allow for listings only by physician group, etc
+m Max Klohn changed the SP to ES for spanish, as well as
+  modifying the proper entry in LANGUAGES
+d removed old/opendb.php3, old/main.php3.old, old/_actionbar.php3
+  old/box{head,foot}.php3, old/head.php3, old/tail.php3 from the
+  distribution.
+n should probably remove "NO ROOM SELECTED" error code, since it
+  should allow a no preference booking if there is no room 
+  specified
+
+19990807 --
+m fixed problem with phygroup.php3 serving up more than one
+  freemed_display_box_top in the modform section (thanks Max)
+m changed $user=="root" to freemed_get_userlevel($LoginCookie)>
+  $delete_level in facility.php3 main view (also thanks Max)
+n identified global.var.inc and other inc file problem via viewing
+  as text files... adding .inc to the list of associations for
+  the php3 mime type in srm.conf for Apache or modifying the
+  .htaccess file fixes this.
+a added translations for index.php3 and authenticate.php3 as
+  well as updates, all by the incredible Max Klohn!!
+m updated README with instructions for the AddType patch for
+  Apache. also updates the "thanks" list on the guilty parties
+  part of the README
+
+19990805 --
+a sorry no great new features, but Max did send in the translations
+  into spanish and english for the user module, as well as the
+  user mods, which I guess are the only fixes/mods/features for
+  today. sorry. -- jeff
+
+19990804 --
+a added files for main.php3 with language support from Max Klohn,
+  with proper French and Spanish translations
+a added date of birth search support and ordering support in
+  patient.php3
+a added cellphone and pager number support into physican module,
+  along with moving to fdb_ functions from mysql_ functions
+  (the database changes for physician are in admin, reinit!)
+a added language calls to freemed-functions.inc (API) so that the
+  functions will correctly pull in the language information. BTW:
+  I added many other things to the API.$language.inc file, so it
+  will have to be redone for all languages other than english...
+m fixed small non-language compliant bug in API (DEBUG IS ON needed
+  to be put into a variable in one instance).
+m patched the help.php3 file to death
+a added full documentation support through HTML based help files in
+  subdirectories of the language directories. only a default document
+  and a test page for the main menu doc are currently present in the
+  lang/EN/doc subdir -- more when I get to it.
+n maybe more stuff -- who knows? I was busy ;)
+
+19990803 --
+a added CORRECT french for what I had done as well as spanish, thanks
+  to Max Klohn!
+m moved boxhead.php3 and boxfoot.php3 to old/ until I decide to remove
+  them permanently -- let's see what breaks...
+a lang/EN/main.php3.EN.inc, lang/EN/API.EN.inc (with fixed comment
+  header from yesterday), lang/EN/manage.php3.EN.inc added and
+  freemed-functions.inc, main.php3 and manage.php3 all now language
+  independant!
+a added LANGUAGES file with EN, FR and SP definitions -- should I
+  use ES for spanish instead of SP???
+m modified KFM browser entry in BROWSERS to reflect success I've had
+  today with it.
+a Max comes through again! I've now got an admin.php3 and all three
+  language files from him, which are in today's distro. minor mods
+  in adding "$SELECTED" and "$DEFAULT"...
+m had to add lines for the internal functions to give them access to
+  the language files -- must finish in tomorrows' release
+
+19990802 --
+m changed "BAD!!" message in authenticate.php3 to much more pleasing
+  message concerning lack of access. enough people didn't like the
+  simple yet effective "BAD!!"  ...
+a began to add basic multiple language support
+m overhauled index.php3 to allow for multiple language support, as
+  well as modifications to freemed-functions.inc
+a added lang/EN and lang/FR directories for language modules. the
+  file format for the language loader is pretty simple. I'll convert
+  the modules as soon as I can. BTW to all french speakers -- I'm
+  sorry, I haven't taken french in years, and I know that "DEBUG EST
+  ICI?" is _not_ "debug on"... I just needed to test it! honest!
+
+19990730 --
+m added ptdob field to the display on the management module, as per
+  request of Max.
+
+19990728 --
+n I've been falling behind in putting up the tarballs, but I've had an
+  _extremely_ busy and crazy weekend, and I'd like to think it's over,
+  but it keeps coming back to bite me in the arse. Anyways, on to the
+  CHANGES.
+m added ptcountry field to patient record (thanks Max (was it Max??))...
+  side note : don't _ever_ code for too long, or you'll start using
+  recursive parentheses. &lt; g &gt;
+m added ptnextofkin BLOB field for next of kin information in the
+  patient db, with addslashes and htmlentities where appropriate.
+n I'm sorry that I didn't get any more work done today, but I was busy
+  taking a certification exam and stomping out fires. The problem is
+  between the keyboard and the chair.
+
+19990727 --
+n did some work on the 26th, but not anything _extremely_ noteworthy
+  so I left it out. go figure.
+m modified _TEMPLATE_.php3 to have add section, enabled by variable
+  in the top of the form. Also modified formulary module to use separate
+  add form.
+
+19990725 --
+m tried to change modifying form format for inscogroups module as a
+  test... it should be neat, but I'm not promising anything.
+n I've taken a look at some of the HL7/XML interchange format stuff,
+  and I think I'm going to take a whack at integrating some of it
+  myself.
+
+19990723 --
+a implemented fdb_last_record function to let the user know what
+  the last record inserted was.
+a added table definitions for rx table (Rx.php3 module) in admin.php3
+m working on Rx (prescription db)... got most everything except modify
+  and delete working. mostly fleshing out needs to be done, links to
+  formulary db are done (yes Chris, I know it took a little longer
+  than we would have liked)... also just general debugging.
+a added $http variable (http for regular, https for SSL HTTPD...)
+a added freemed_display_drugs to API
+m fixed minor bug in procedure module, line 387
+m fixed display bug in procedure module
+a added the prescriptions stuff to the patient management module
+  (manage.php3), thereby setting it out for all you wolves to toy with.
+m fixed lingering problem with redirect by removing superfluous /
+  in the bounced URL and removing the authentication to allow use of
+  the Location: HTTP/1.1 header.
+
+19990722 --
+m revamped the API file to reflect the fact that I actually care
+  about it instead of letting it gather dust in a corner.
+a added a set of miscellaneous functions, mostly functions to allow
+  multiple selections of items via BLOB fields in databases.
+m changed naming convention in procedure database to procXXXX
+  instead of "homage-to-crappy-Medical-Manager" addpro convention.
+  this unfortunately requires a database reinit. lucky i thought of
+  this before the freeze.
+a added freemed_display_cptcodes and freemed_display_cptmods
+  functions to freemed-functions.inc, to allow for CPT codes and
+  modifers pulldowns. (i would have done it earlier, but i forgot,
+  and now i needed it for the procedure module...)
+a implemented SQL Abstraction Library (SAL) code parts from
+  px.skylar.com written by Gianugo Rabellino <nemorino@opera.it>
+  to fix ODBC connectivity and add msql connectivity -- mostly.
+  not all of the msql calls have been implemented, so it should be
+  considered moderately broken.
+m added lcase() to fdb_ abstraction functions to allow for stupids
+  who don't know how to let go of the shift key when changing the
+  config files... ;)
+m modified the patient database to include insurance companies -- 
+  now how in the world did I gloss over that one for 2+ months?
+m minor rebuilding of links between the patient and procedure
+  databases -- now the ICD codes and guarantor are passed across
+  for safekeeping. now i just need to put in the treatment db and
+  make the other 95% of everything work right &lt; g &gt;...
+m changed the TTs to STDFONTs in the physician module, and removed
+  the legacy searchform action.
+
+19990721 --
+m increased maximum count of patient record names (f/m/l) to 50 chars
+n please submit any changes, as the database is being prepared for
+  a freeze.
+a added function freemed_log to log actions, upon demands of the
+  general populace, along with definition in admin.php3 -- gentleman,
+  reinitialize your databases...
+m took out all mysql_ type functions in admin.php3 and replaced them
+  with their fdb_ equivalents, and changed an instance of $mysql_db_pw
+  to $db_password
+m changed <TT>s to STDFONT type tags in user.php3 and specialty.php3
+a added freemed_display_insco function for insurance company pulldowns
+m major overhaul of procedure module for usefulness and functionality,
+  linking in with patient management menu (manage.php3) and trying to
+  bring it up to specs...
+m modified format of manage.php3 to accomodate more items. (yes, my
+  spelling is atrocious, but that is the least of my concerns)
+n still modifying procedure database so as to be useful -- please don't
+  complain until it is done. I left some notes for myself in the add
+  section, but haven't finished the delete or modify sections, as well
+  as having to take out a whole load of fields that are too fscking
+  redundant. more tomorrow -- until then, keep watching the skies.
+
+19990719 --
+m incorporated new revisions of formulary (frmlry) module from Chris
+  Beggy, and modifed the db to have date add/mod tags
+
+19990716 --
+a due to overwhelming popular demand, I have added a date-of-birth
+  field in the patient database.
+m changed all mysql_ references in patient.php3 to fdb_ refs.
+n please note that the db change will NOT require a reinit. due to
+  an oversight on my part, there was already a ptdob record, but I
+  forgot to put it in the form -- you don't have to reinit your dbs.
+n just tested freemed with Mozilla M8 -- and it works. check for a
+  screenshot at ftp://test.pr.uconn.edu/pub/freemed-project/snapshots/
+
+19990715 --
+a added $ADD, $MOD, and $DEL to the global.var.inc file, to facilitate
+  easier transition to a graphical format like that.
+a added a view function to the progress notes... and set up paths back
+  to the modify, but not the delete yet, since I'm pretty sure I haven't
+  written a delete routine yet.
+n will whoever continually wipes my database, please stop! I have to use
+  this, and reinitializing my database means I have to recreate the
+  webuser so that no one complains. Please stop, or I will change the
+  root password.
+
+19990714 --
+m _MAJOR_ change: db wrappers now implemented. they are in the style of
+  the mysql functions (i.e. mysql_create_db -> fdb_create_db) with the
+  notable exception that pconnect has been mapped to connect (in other
+  words mysql_pconnect is now referenced by fdb_connect) to save time
+  in case I wanted to rescind the entire pconnect thing.
+n I'm not sure whether anything other than MySQL works properly, since
+  I have just added them. So far I have put in ODBC, PostgreSQL and
+  MySQL.
+m reorganized and clarified the global.var.inc file so that it doesn't
+  look quite so imposing.
+m Majorly redid template with new db wrappers... still need to change
+  <TT> tags to <$STDFONT_B>,etc tags...
+a added Formulary module from Chris Beggy, who has become the first
+  non-me coder to contribute to the master code base. Thanks, but don't
+  let that discourage anyone else ;) -- it's called frmlry.php3 and
+  is referenced through db maintenance...
+m bunch of usability improvements to _TEMPLATE_.php3
+m did the <TT> -> $STDFONT_x conversion on both the _TEMPLATE_ and the
+  frmlry.php3...
+m removed _ref cookie set in frmlry module, since it is a "dead end"
+  module, and doesn't link out.
+
+19990709 --
+m major overhaul to the patient module, including new STDFONT_B/E tags
+  and split phone #s... some broken links fixed, other links added for
+  conveniences as I found them. db structure slightly modified, and
+  add/modify condensed to the beginning of the db as ptdtadd/ptdtmod,
+  as well as all personal data being moved to the top of the form, and
+  some fields enlarged to be easier to enter.
+m slight modifications to the progress_notes and manage modules in
+  accordance with the aforementioned modifications.
+a added structures for payment records (for checks, etc) to the admin
+  module. stupid db reinit -- you go squish now.
+a added prelim payment records module -- working on addition function
+  now.
+a added billing function from main menu with billing_functions module.
+n these functions are not ready for prime-time yet. please do not wail
+  on them then complain that they don't work ;) -jeff
+
+19990708 --
+n Put out the possibility of using db wrappers instead of mysql calls
+  to allow people to change db backends at will.
+m changed the progress_notes (pnotes db) structure to include
+  industry standard progress notation (four part)
+m fixed major stupid in patient module -- action=find would return
+  last name and first name swapped positions, due to typo.
+d commented out stupid mysqladmin path in global.var.inc, due to
+  rehashed auth scheme removing the need for more users...
+m minor modifications to the manage patient code to incorporate the
+  progress notes...
+m progress notes module -- main "manage" screen, hopefully a delete
+  and print view/email view option...
+n current progress notes main screen links to modify, rather than
+  view...
+m fixed problem with parsing of date split in progress notes modify
+  screen (action=modform).
+m way too many more changes and additions to progress notes for me to
+  list...
+n updated BROWSERS with kfm problems & new version of Netscrape. have
+  added TODO...
+n tomorrow I restructure the patient db and hopefully still have time
+  to hash out the payments structures... g'night.
+
+19990707 --
+n I've been off for a while, but I'm back and coding at full tilt. I 
+  have added a prescription module (Rx.php3) which is not ready, and
+  will depend on a drug module which I haven't done yet. I am also
+  working on a patient notes set of routines to work from the patient
+  management menu... just a bunch of blobs, but will be fine.
+a added prescription module skeleton to distribution (Rx.php3)
+a added progress notes skeleton to distribution (progress_notes.php3)
+  which I am currently fleshing out
+m removed user pull-in routine from reinit in admin module, due to
+  modified authentication scheme
+a added pnotes db (patient notes) to admin module
+m modified manage module (patients management) to show which links are
+  broken and not, added select another patient option at the bottom,
+  and began to implement $STDFONT_B,$STDFONT_E tags.
+n stopped in the middle of Rx.php3 and progress_notes.php3, but will
+  resume tomorrow...
+
+19990702 --
+n Yesterday was bizarrely busy, but I'd like to take this opportunity
+  to welcome aboard Tim Cook, of the FreePM project, who has
+  decided to help us out. We were also added to the Littlefish
+  project contributors list as a cooperating project.
+
+19990701 --
+n FreePM has an article in LWN, but we are still pressless, to my
+  knowledge. They are using the same format we are, and Ryan has
+  inquired as to whether they are interested in collaboration.
+m begun to implement new user auth scheme with MD5 (no more clear
+  text security!)
+m made "old" subdirectory for old modules and pseudo-functions, so
+  that they aren't deleted if something new comes along.
+m implemented authentication scheme -- seems to work, but haven't
+  tried it with a new implementation, so I'm not sure if the "user
+  1=root, pw=db passwd" hack is going to do.
+n there is a developer's board up at test.pr.uconn.edu/freemed-board
+  in case anyone wants to know what is going on, and to discuss
+  everything.
+a added separate user module to handle the user db, accessable only
+  as root.
+m modified template for new logon scheme...
+m got user forms and users other than root to be able to use the
+  program... also checked to see if it would work clean, and the
+  program seems to allow root in without an authentication database,
+  using the database password as the root password.
+n please note that the user menu is _ONLY_ accessable by root. not
+  even others with userlevel=9.
+m centered the admin menu link on the main menu.
+m monkeyed around with the _ref cookie, and got the menu chain to
+  work a _little_ better.
+a added HEADERFONT_B, HEADERFONT_E, STDFONT_B, and STDFONT_E to the
+  global.var.inc module to help out consistancy in fonts...
+m _MAN_ have I been busy today! Redid the main menu in a more
+  flow-oriented scheme, then began to rip apart the admin module.
+m scudged out the ICD, facility and cptmod modules for some old
+  "legacy" crappe that I forgot I left there.
+
+19990629/30 --
+n Stupid changelogs... you go squish now. I have not remembered to
+  do tarballs/releases or changelogs for the past three days now,
+  mainly due to incredible sloth, but also due to my heavy workload.
+a added the addform action in the CPT module
+a started a TOS (type of service) module, to go with the CPT module,
+  since it depends on them. I don't have the db structure from the
+  doc yet, so I can't really do much concerning that. more when it
+  happens. did anyone see the article on the project?
+
+19990627 --
+n it's after midnight on the night of the 26th, so I guess it's the
+  27th. i have _got_ to get a life.
+m fixed template problems with not checking for userlevel.
+m cpt module well in the works... has dependency on TOS (type of
+  service) simple db. must remember to do this.
+n D'oh! I forgot to put an action=addform case in the _TEMPLATE_,
+  which propagated to the CPT codes db. Must fix... Must fix...
+a added an "Add Patient" option on the main patient module screen,
+  to calm the rising tide of complaints I'm sure I would get.
+
+19990625 --
+n sorry everyone, i've been really busy, but here goes.
+a created cpt database.
+a created physican group database (phygroup) to handle problem of
+  accounting by groups of docs and perms of users to do so.
+m added field to reference phygroup in user record.
+n should add something to add all of the system users into the db
+  at reinit... currently dumps all but root into level 5, and
+  puts root into level 9. also displays user description in main
+  screen along with level (mental note: in future, add a display
+  bar like that to the bottom of all boxes?)
+a patched template for some stupid errors.
+m far overdue, MASSIVE overhaul of facility module, including
+  conformance to the API. phone & fax formatting to come.
+m did phone and fax in add, must do modify splits and recombines.
+m minor main.php3 modification.
+
+19990622 --
+m heavy db modifications to patient table -- please reinit. ptmi ->
+  ptmname, VC(15), and ptlname,ptfname -> VC(15), thanks to Ryan Losh
+  for this bugfix. now people like E Frank Shermheiler will be fine ;)
+m changed detachment of dependants of new dependant to linking to the
+  new guarantor. if you think i'm speaking greek, it probably doesn't
+  matter too much.
+m fixed _really_ dumb error, whereby asking for the guarantors to be
+  displayed resulted in the dependants being displayed... ($id ->
+  $ptdep for f1 in the link)
+m heavily patched physician module (physician.php3) to include states
+  for primary and secondary addresses. the patch is also in admin.php3,
+  and requires a reinit to take effect.
+m fixed problem with bottom links in patient module by adding a
+  $record_name definition for API compatibility, and allowing a link
+  back to the module default page if $_ref points to it.
+
+19990619 --
+a added README.debian from our good friend Ryan
+a/m did credits change/addition. if you should be listed here, please
+  let me know. also, if more people begin to help, the credits will
+  be separated into a "CREDITS" file.
+q is anyone interested in doing documentation on getting started,
+  past the actual code set up -- like initializing the db, etc?
+m fixed broken extra freemed_display_box_top in manage.php3
+a heavy additions to the management module (manage.php3), including
+  dependant attachment/detachment, with smart capabilities (i.e. it
+  will disconnect all dependants of a former guarantor if they become
+  dependants. should i modify this to make them become dependants of
+  the new guarantor? i need some feedback on this one.
+n TODO -- must add a checkbox to the attach to guarantor thing so that
+  the address, other information CAN be cloned if neccesary. if not,
+  it can be an option in the config -- i don't know. also, when
+  making "new dependant" from the patient menu, should pull address,
+  phone data from the guarantor as defaults... set by config variable.
+
+19990618 --
+n I have to do some kind of campus tour thing as part of my day job,
+  so not much is happening today... just tweaks, no major revelations.
+m heavily cleaned the patient module, taking out most of the action
+  loop parts that will _never_ be used.
+a show all patients find option ("all") in patient find menu.
+m finished commenting out old includes in patient module
+a added guarantor and dependant searches from their respective
+  dependants and guarantors, from the view menu in the patient
+  find result screen (patient module). no, I haven't forgotten how
+  to speak in proper english.
+m somehow broke manage function from patient menu... will analyze and
+  fix by next release.
+
+19990617 --
+n been very busy with other things (work related), so not much has
+  been done. just minor API updates, fixes to existing modules. will
+  someone tell me why KFM 1.1.1 is having problems again?
+n website should be on DNS servers sometime this evening, according
+  to Chris and Ryan. hopefully we'll pick up a few more coders. make
+  my life easer.... ;)
+m updated phystatus module with API
+d deleted "select" action from room module
+m updated room module with API
+d deleted old default index for room module (mostly housecleaning
+  today...)
+m cleaned up ICD code db... still haven't converted to new table
+  format for add/mod/del
+m changed location of </TABLE> in view part of _TEMPLATE_, to allow
+  for actual display... sorry all you developers out there!
+m started to implement actual patient interface (searching, etc)...
+  i have _not_ added a "show all patients" option, with criteria
+  "add", but that will come soon. This module needs a lot of
+  overhaul.
+
+19990616 --
+n forgot to do tarball yesterday. [hits head against wall]
+a added date handling procedures for previous and next day, which
+  strangely seem to work, and began to implement the add appointment
+  action in the scheduler. i need graphics for skipping around, as
+  the text looks really ugly. multiple steps might be needed to do
+  this...
+a added book appointment link to modify patient screen, mostly as
+  as test to be sure the linking works.
+m fixed open_db function so that it refreshes cookies... but now all
+  things must have freemed_open_db ($user, $pw) called before any
+  other function, or PHP3 will warning you to death.
+m begun fixing warnings due to revised refreshes on authentication.
+n NOTE TO SELF -- patient and facility modules are _far_ out of
+  whack and need to be brought up to snuff.
+n I think I whacked MySQL on my development system. I'm not sure
+  what happened or why, but I may consider advising an upgrade to
+  3.22.23 if this happens again. The mysqld ended as soon as it was
+  brought back up.
+a scheduling has barebones functionality, but moving (rescheduling)
+  appointments, deleting, and changing needs to be put in... this is
+  really going to kill.
+q (this is a general query...) who wants to begin on the accounting
+  and management side? I've been implementing general dbs, and now
+  scheduling, but I need people to fill in the gaps. this is quite
+  far from completion now, but I would like people to volunteer for
+  0.1 functionality parts. also, if you are an active coder, please
+  tell me, and i will add you to this file or a credits file when
+  we warrant one.
+m oops... almost forgot to update the _TEMPLATE_.php3 for everyone
+  with the changed authentication order.
+n MySQL crashes every time an addition to the calendar table is
+  attempted. Trying to figure out why.
+
+19990615 --
+m changed the changelog format (a=add, m=modify, d=delete, n=notify)
+m changed some more dbs over to the new API
+a added some new API functionality
+m finished up the template (_TEMPLATE_.php3) module for people to
+  get cracking on dbs.
+n the doc and I had an interview for Inside Healthcare magazine
+  about the project. the issue is coming out June 28th, so we
+  should have a page up, and some more definate work done by then.
+a added BROWSERS, which is a browsers compatibility listing. if you
+  know of a browser on a particular platform that is not listed,
+  please email jeff and let him know.
+m fixed up the physician view... now works moderately well, and
+  only displays the second address if it needs to.
+m fixed freemed_config_value to actually return the value instead
+  of the query #...
+a adding rudimentary calendaring features... first a module called
+  scheduler, then config options calshr/calehr, and vars in the
+  global.var.inc for defaults. probably generating month calendars
+  via GNU cal, and filtering. for those M$ NT buffs, you can find
+  the source and recompile it.
+
+19990613/19990614 --
+* fixed problem in login denied... link was to $base_href instead
+  of $base_url
+* implemented API in insco module
+* fixed null $_alternate value problem in freemed_bar_alternate_color
+* implemented API in inscogroup module
+* created _TEMPLATE_.php3 for developers... in mid creation as of
+  this tarball..
+* I'm not sure where or when I am, so I split this entry.
+
+19990612 --
+* I really have _got_ to stop doing this on the weekends.
+* fixed stupid "localhost" bug in 19990611. made separate $db_host
+  variable to fix problem with separate MySQL server.
+* continuing current module GUI implementation.
+
+19990611 --
+* reworking the GUI and the API. how about some GNP or some GNU?
+* added close button widget and banner to the box top
+* many many many changes...
+
+19990610 --
+* more API functions, converting current modules to that standard.
+* considering CVSing the project, due to popular demand.
+* we have been asked for a general description of what is going on
+  with us in terms of standards, dbs, etc... if someone would like
+  to get back to the littlefish people with that, it would be much
+  appreciated.
+
+19990609 --
+* skipped a day -- so what?
+* implementing API functions in freemed-functions.inc
+* added many API functions...
+* added API documentation for all would-be module coders.
+* fixed the problem with the freemed_open_db function.
+* changed global.var.php3 to global.var.inc, with a symbolic
+  link back for the time being, until i remember to change that
+  in all of the modules.
+* revised the credits to include Ryan Losh.
+* moved configure point for rotating bar colors in view function
+  to global.var.inc, and created function in API to deal with
+  it.
+
+19990607 --
+* added freemed_get_userlevel function in functions module, to
+  facilitate the use of user levels (returns user level, called
+  with the user name)...
+* the day that I remember to increment the version number...
+* changed all phone #s to CHAR(10) from INT UNSIGNED, and changed
+  upin to CHAR(15) [[ is that enough ?? ]]... thanks Ryan.
+* updated admin module to new authentication scheme ... i'm not
+  quite sure _how_ i missed this for so long.
+* re-wrote head module to include support for automatically
+  refreshing (say, upon an add)
+* inscogroup module now refreshes on add, to bring the menu back
+  up, and uses Header() instead of stupid META tag.
+* admin menu is accessable from users with level 9 and root
+  (the root accessability is for first time use, mostly, so
+   that even if the user db does not exist, root can recreate
+   everything)
+* implemented broken form phone #s in physician module... for all
+  those who know, substr uses indexes starting from "0", not 1.
+  stupid language conventions. you go squish now.
+* all mod and adds with phone and fax #s in physician module
+  should work now.
+* ssn # broken format support now added in physician module, and
+  view contains ssn and #s reassembled.
+* added physician status module (phystatus), and have been testing
+  with different browsers. so far, Netscape 4.6, StarOffice 5.1
+  Internal Browser, and KFM 1.1.1 have passed (although KFM needs
+  a little tweaking with cookie policy).
+* added delete_level in global.var module and changed to level
+  check for deleting records in phystatus module... now should read
+  if (freemed_get_userlevel($user)>$delete_level) ....
+* added freemed_display_phystatus function in functions module,
+  and finished relationalizing in add and modify functions, but
+  not show yet.
+* that's it for today. hope there are no errors in the tarball.
+
+19990606 --
+* didn't tar up yesterday...
+* included Ryan Losh's descriptions of all of the dbs as of 19990602
+  and what they do.
+* haven't used user levels for real stuff. (this log entry was cut
+  off in the 19990606 tarball, due to carelessness on my part) 
+
+19990605 --
+* implemented CPT modifier module (cptmod)... with add built into
+  view, as per inscogroup module.
+* seems to be error with MySQL adding users. will not re-read tables
+  even when flushed, until mysqld is restarted. what is the problem?
+* implemented user db for levels, etc.
+
+19990603 --
+* no work done today. only changed back to including opendb module
+  instead of function... admin module wouldn't read stupid cookie.
+
+19990602 --
+* fixed problem with room module not loading, due to lack of
+  freemed-functions.inc inclusion
+* tweaked with cookie routines... not sure if fixed.
+* same problem with lack of inclusion was in facility module... I
+  must be getting slow in my old age.
+* fixed lack of inscowebsite instance in add & mod routines in
+  insco module
+* added link from opening screen to this file, for those who are
+  _terminally_ lazy...
+* added debug notification on login screen, and will add to the
+  boxfoot module...
+* mostly cosmetic changes to main menu, with debug notification
+* changed "Exit ..." to "logoff" for the terminally problematic.
+* today was _way_ too busy. mostly bugfixes, but no major work was
+  done. i think the next step is to add transactions. maybe? any
+  comments on this one?
+
+19990601 --
+* this project has broken through the month of may...
+* i think i accidentally mailed a 5 MB attachment to the list...
+  if i did, please delete it.
+* i've been very busy with the list, and have had trouble getting
+  work done, but here goes...
+* moved _actionbar module to freemed_display_actionbar($page_name)
+  function
+* began work (finally) on the insurance company module (insco), and
+  will begin to implement an insurance company groups module (????)
+  to track groups of insurance companies like BCBS...
+* changed all physician.php3 references in physician module to
+  $page_name references... (for greater ease of update...)
+* converted _icdlist module to freemed_display_icdcodes, but have
+  to find and update in the other modules.
+* we've just had an offer to do a translation into french...
+* i have added an img/ directory with the "powered by php3" graphic
+  for the login screen, and hopefully a title graphic, if grendel
+  drago ever gets off his _can_...
+* fixed admin module to look nicer, and removed a few items from
+  menu
+* fixed freemed_open_db function to include $user and $pw params
+* NOTE: remember to add passing _ref as parameter for actionbar,etc
+* web server went down, possibly due to burnt modem. i'll look into
+  that. in the meantime, i need to get a mirror, and quick...
+* insurance company db implemented
+* insurance company groups db implemented
+* insurance company groups pretty much done, but insurance co
+  view function not yet implemented.
+* minor bug-fixes, added inscogroup module to the "main menu" (for
+  the time being), and will consider adding tag from insco module
+  to the inscogroups modules....???
+* it's 6:15 and i'm bushed. time to tar this puppy.
+
+19990529 --
+* i wish i got paid for this... then it would make sense to work
+  on the weekends...
+* added _specialtydisplay module for physician module show action,
+  and cleaned up the display. perhaps adding a modify button at the
+  top and bottom??
+* still haven't implemented hypenated SSN and phone #s, but that 
+  will come soon enough.
+* will remove the "title" field in the physican db, because the
+  "specialty" db makes it obsolete.
+* considering making id persistant with patients, so that it has
+  the "memory" capacity, like Med Manager...? opinions?
+
+19990528 --
+* many many many changes...
+* first, implemented cookie-based authentication, which means no
+  more plain text passwords appearing...
+* removed duplicate $_auth definition in redirect module
+* changing all references to $user/$pw to $_auth, to simplify
+  changing to cookie format
+* changed instance of "ICD9" in patient module to PATIENT
+* made the "you don't have access screen in the opendb module
+  much cleaner, with a link to the login if they don't have
+  access. we are officially on the way towards being secure,
+  and with any luck, i'll add SSL support.
+* converted tail.html -> tail module, and inserted the $coded_by
+  variable in the php code
+* added $_mail_handler variable for mail handling support
+* inserted tail module in the end of help module
+* fixed few misc brackets problems
+* added __dummy field to initial login to hide password from 
+  casual viewing.
+* due to the cookie-based nature, it is recommended that users
+  of this software turn _off_ their browsers' histories. that
+  way, no record of your password will exist on your computer.
+* starting with the facility module, the view section has taken
+  the place of the default.
+* added an abandon modification/abandon addition link at the
+  bottom of the physician module add & modify routines...
+* added an &nbsp; in the degrees column of the view section of
+  the physician module, to fix a problem with Netscape viewing
+  it.
+* added a rudimentary show action (called view from the menu)
+  which displays the entire record without modification...
+  could serve as a jumping off point for other things.
+  it currently has no relational or selected item capabilities,
+  but it is only a prototype right now.
+* refined the php tags in the redirect module, and added more
+  redirect destinations.
+* currently you have to change the $_cookie_expire in the
+  global.var module to change the lifetime of the cookies.
+
+19990527post --
+* I have _really_ got to stop doing these post releases.
+* facility db converted to new format... removing dependencies on
+  old format, slowly.
+* specialty db has most of dependencies removed... but needs
+  $_ref=main.php3 taken out of main menu, done up with style of
+  specialty module.
+* grendel drago is a foofball for kicking me off of his console
+  whilst i was trying to _code_, unlike other _LAZY_ slobs...
+
+19990527 --
+* I apologize to the faithful for the lack of tarballs available at
+  the site... I told grendel drago to fix it, but knowing his holy
+  bum-ness, i'll have to do it myself. in the meantime, I will mail
+  out tarballs to anyone who wants them.
+* removed duplicate $cur_date definitions from facility and room
+  dbs.
+* started work on specialty db, so that physician db could be
+  made 100% complete (besides listings, of course...)
+* changed date("Y-m-d") to $cur_date in facility and room modules,
+  to make things easier on the eyes.
+* changed "facility" to read "room" in room module, notification of
+  lack of returns on query.
+* created _specialtylist internal module to deal with specialty
+  listings in physician db...
+* physician db now has hooks for specialty db, but there is a
+  problem -- phone and fax seem to give errors, changing them to
+  CHAR(10)s, and adding formatting soon (splitting and combining
+  fields : 1234567890 =>> ( 123 ) 456 - 7890 =>> 1234567890 ) 
+  also pt phone & fax now 10 digit, and SSNs 9 digits...
+* too many changes in specialty db to mention. it now has the new
+  menubar format, which i will expand to fit all of our needs, soon,
+  but in the meantime, i'll modify the other dbs to have the same
+  neato format for viewing, instead of what is there now... maybe
+  in addition to searching...?
+* try the new specialty view from the main menu
+* specialty and room modules have been converted to new format, but
+  the question remains whether they are completely converted... some
+  of the menus, such as the obsolete "select" action will be deleted
+  if the format proves to be workable. bug reports, please.
+* due to db modifications, reinitialize your database, then fill out
+  the specialty, physician, room, and facility databases.... if you
+  want to see new features. broken field phone #s will be available
+  soon, maybe tomorrow.
+
+19990526 --
+* after a hard night of post fixes, here are some more...
+* fixed bug in code for facility module, where psrnote was confused
+  with psrname... probably in my horrible haste.
+* after a _long_ meeting with the doc, we've decided on a few more
+  ways things should be... but not neccesarily how to implement them.
+* completed the database structure for procedures in the admin
+  module... which worked on the first try, thanks to no stupid
+  UNSIGNED INTs...
+* added a cur_date_hash variable in the global variables, to allow
+  for generated numbers from the date, with something else tacked on
+  after...
+* fixed procedure db add to be up to snuff, including the actual
+  SQL command... I hope that I didn't misspell anything.
+* since its moderately obvious that i modified the physician module
+  to become the procedure module, the procedure module has just been
+  cleaned of most phy and physician references. add works, but mod
+  del and search have not been coded yet. i've had a busy day at my
+  day job.
+* most likely adding another function to the modules... (late, I know,
+  but better late than never) ... a view function, with buttons or
+  links at the top to perform actions (like adding dependants, creating
+  vouchers, etc...) which would become the default thing, as opposed
+  to the clunky functions we have implemented now. will have a _ref
+  parameter issued to it, so that you can return to whatever you were
+  doing before...
+
+19990525post --
+* so, I officially have no life. this is after the official release,
+  and I just found a major bug in the _icdlist, _doclist and
+  _facilitylist subroutines, where it would display SELECTED for all
+  items due to a lack of checking against the given parameter. It
+  is all fixed, but after the daily release. oops.
+* forgot to modify a few items in the room module. just took care of
+  it, so it should work better.
+* the check boxes for booking enabled and surgery don't work yet,
+  due to an unforseen problem. they will be moved to a pulldown
+  menu as soon as I remember.
+* TO ALL BRAVE SOULS TRYING THIS: remember that if you don't
+  reinitialize the database, a new tarball may not work, since db
+  structures and such will change on a daily basis. be forewarned.
+
+19990525 --
+* got tired of waiting for minor databases, began to code facility
+  and room databases
+* modified admin to be "good" PHP3 code, and release $result after
+  every database add in reinit, then decided against it.
+* finished prototype for facility database, and heard from the 
+  first "freemed" fan. if anyone else is using this, please give
+  me a hollar... i'd like to know if we're going in the right
+  direction.
+* adding rudimentary directions...
+* note for C programmers... SQL doesn't like UNSIGNED INT, only
+  INT UNSIGNED. i feel dumb after 1/2 hour of bug-looking-for.
+* facility module seems to work, but needs tidying up. will do later,
+  am in the zone.
+* fixed facility db lack of date stamp, coded _facilitylist.php3
+  internal module for facility listings in room module.
+* _just_ added the room module, expect problems in formatting, etc...
+  originally was part of facility module, but split to accomidate
+  in-house booking. relational database is 100% operational in this
+  area.
+
+19990524 --
+* i have _got_ to remember to update the version number in the
+  global.var module...
+* implemented graphics choice in config module, but not quite sure
+  where to read in the variable...
+* i am suspending the procedure module until the good doctor can
+  decide whether these are for procedure prototypes or instances. 
+
+19990523 --
+* the littlefish project (www.littlefish.au?) contacted me about the
+  prospect of collaborating. cool.
+* found the stupid bug... ever forget a </SELECT> tag on something?
+  it was the last ICD9/10 code in procedure module.
+* yesterday was broken, but today will be a tarball, only minor
+  weekend changes.
+* changed ICD9 to ICD to be more generic in icd9 module... but..
+  the module name... d'oh!
+* took out the second "me" in the bottom of the procedure module...
+  oh, but i like the recognition, fame... well, not fame, but...
+
+19990522 --
+* may not have a release today (saturday), but must note that the name
+  freemed as pertaining to the name of the program we are coding... is
+  or has been taken already by some Wintel Med-Management piece of
+  software. will most likely remain "the freemed project", but will
+  call the software freeMOSS (free Medical Office System Software),
+  continuing to issue it under the GPL. for a copy of the freemed (TM)
+  software (for the terminally wintel based), go to the SimTel archive.
+* put relational icd9 bit into procedure module for all four. seems to
+  crash the kfm i am using from home... don't know why -- probably a
+  kfm bug fixed in 1.1.1
+* main module now has link to procedure module for my ease of coding.
+* might have multiple selectable menu layouts.... same ideas as help
+  files? will have config switch in config db.
+
+19990521 --
+* removed link status adding a dependant if the patient is already a
+  dependant. (now just have to remember to build in the routine to
+  pull address info, etc from the guarantor, or at least default to
+  that information)
+* created configuration database, where we can store information, such
+  as ICD9 or ICD10 (preference)...
+* configuration menu active from admin menu... ICD9/10 selection needs
+  to be made active in the DBs where it is needed.
+* removed obnoxious ?> bug in icd9.php3 where it would display "area
+  ?>"...
+* added a few more redirect codes in redirect.php3
+* removed date of entry in icd9.php3 as a field... and set it to
+  display only.
+* fixed spelling bug in icd9.php3 data extraction (icddng -> icdng) 
+* multiple file help system ready, but not implemented (to implement,
+  set $_hf in global.var.php3 to be 1)... currently using case
+  statement.
+* changed head.html -> head.php3 for easier switches of info...
+* moved the old procedure.php3 to procedure_old.php3, and began to
+  convert it into a working DB, with ICD9/10 support.
+* created _icdlist.php3 to display a list of ICD9/10 codes (depending
+  on configuration) in a drop-down SELECT/OPTION box, the same way
+  as _doclist.php3 does now.
+* fixed bug where deleting a physician returned "DELETING USER"... is
+  this in any module other than physician.php3?
+* moved the global.var.php3 include to before the head.php3 to make
+  sure that global variables were set first.
+* updated the title and banner to show a little more about the
+  package... but the database will remain with the name "package"
+  until it reaches bare-bones usability in a medical environment.
+* put in exit command from main menu and implemented base_url from
+  global.vars
+* NOTE TO SELF: remove other references to $cur_date, since it is now
+  in global.vars
+* cutting out early today. will work on weekend.
+
+19990520 --
+* added ptdep (guarantor link) to patient.php3. 19990519 is a little
+  broken -- accidentally built tarball in /var/package.
+* found a way to do guarantors... add link to patient find that
+  creates dependants (and a link to separate a dependant, if their
+  ptdep != 0)
+* finished add and modify routines for patient db, but somehow
+  broke the select... the search function works fine. must bring
+  someone somewhere. fix later.
+* fixed link back to physician menu at bottom of add physician scn.
+* fixed bug in patient select screen (ORDER instead of ORDER BY)
+  that prevented listing of patients.
+* need to create the speciality db, as well as some other minor dbs
+* removed ailment menu option, since that hasn't been implemented
+  yet.
+* prettied up the "MAIN MENU" by inserting nbsp...
+* still awaiting more db structures from the doc.
+* fixed bug in update/modify where employed status was forgotton.
+* added "add dependant" option to patient search results... can
+  detach via pulldown menu in modify patient.
+* must make a reattach guarantor function, but not sure how yet. will
+  figure out in next few days.
+
+19990519 --
+* added BGCOLOR=#ffffff to head.html to fix obnoxious netscape
+  problem of always using the wrong background color.
+* determined that an "end of day" set of commands will reindex and
+  compact the database, and also update the counts and totals in the
+  various databases. until the basic dbs are written, it won't be
+  possible to implement that (or at least, highly improbably)
+* 19990518 came out as 19990518-1, due to my impression that I was
+  doing two snapshots today. will change filename if it ever is
+  important to do so.
+* ICD9/10 database complete under icd9.php3 (no interdependencies
+  yet)... daily end-of-day updating not implemented in icd9.php3,
+  perhaps in admin.php3
+* will add tags for PHP3 to detect browser, and enable javascript
+  add and subtract buttons, etc, if the browser supports it. this
+  much later.
+* implemented _doclist.php3 module to simplify SELECT/OPTION
+  clauses across modules. doctors are listed in a list box, and
+  a default one is selectable via $param passed var. could have
+  done this as a function, but this was way too easy.
+* in _doclist.php3 (1st actual relational module), added order, so
+  that SELECT/OPTION pulldown would be in alpha order
+* patient.php3 is still horribly broken, since I am still convert-
+  ing it from the old icd9.php3 document. I finally counted right
+  and got the add function to work. god, these changelog entries
+  had better _not_ be this long every day. fix patient.php3
+  tomorrow. i sleep now.
+
+19990518 --
+* completed add, modify and delete routines for physicians.
+* the physician module is complete, and is ready to be "cloned" for
+  other database modules, with the exception of interdatabase
+  relationships, which will be coded as we go.
+* all doubts about MySQL being a stable db went up in smoke as I
+  found that the bug was actually the inability of kedit to show
+  me the difference between two kinds of quotes. that'll be the
+  last time _I_ stray from good ol' VI. (thankfully, the CHANGELOG
+  is done in VI, for increased doughy goodness) -jeff b
+* some links back to "Administration Menu", at least in the
+  physician package, are being moved to point to the main menu. If
+  there are submenus, and godforbid, a structure, they'll be moved
+  to there.
+* mental note - remember to update hyperlink menu (/whatever
+  jumps to certain modules....)
+* numbering version scheme will be implemented at about the time
+  that the package is ready for RPM packaging (full database
+  implementation for usable functionality)
+* remember to change the name from "package" to "freemed" as soon
+  as a few more dbs are available for usage.
+* remember to make script for install to create default users
+  (root & webuser) with default pws, so as not to put anyone off.
+  (also, a grant table scheme, modified by a user-controlled
+  user table is looking better and better)
+
+19990514 --
+* began to realise that the changelog should be updated.
+* added entire physician structure to database, as well as add and
+  delete, no modify working yet. 
+* add physician doesn't work unless I manually plunk it in... is
+  mySQL a bad platform choice?
+* for user update/delete, remember to combine, as in physician.php3 
+
+19990510 --
+* began changelog.
+* already have implemented user addition and deletion features, but no
+  permissions (user levels) or any such refinements.
+* quick-jump (/whatever) feature works, with redirector PHP3 script
+* still waiting on prototypes and menu layouts from dr_gnu... in this
+  arena implementation is still stalled, although the user add and del
+  routines demonstrate most or all of the characteristics of the
+  working database.
+* have not implemented flush-tables after delete user, only add. will
+  fix.
+* this only is a framework, and cannot be used for anything remotely
+  medical in nature, but... as soon as the layouts arrive, this will
+  kick into high gear.

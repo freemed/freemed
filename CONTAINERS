@@ -1,0 +1,65 @@
+                                      freemed project class containers API
+                                                        (c) 1999 by jeff b
+                                              Under the GPL/LGPL version 2
+..........................................................................
+last updated 19991202
+
+     ===============
+      class Patient
+     ===============
+
+VARIABLES
+---------
+
+ptlname                       last name
+ptfname                       first name
+ptmname                       middle name/initial
+ptdob                         date of birth
+id                            identification number, from record
+
+METHODS
+-------
+
+constructor Patient (id)
+  creates the Patient class container with patient record id
+  created: 19991129
+  modified: 19991130
+
+function dateOfBirth
+  returns date of birth in current format
+  created: 19991201
+
+function fullName ([with date of birth?])
+  returns full name of patient, with optional date of birth
+  created: 19991130
+
+     ============
+      class User
+     ============
+
+VARIABLES
+---------
+
+METHODS
+-------
+
+constructor User ([login cookie])
+  creates the User class container from the login cookie
+  created: 19991202
+
+function getDescription
+  returns the user's description
+  created: 19991202
+
+function getLevel
+  returns the user's level (0..9)
+  created: 19991202
+
+function getName
+  returns the user's name
+  created: 19991202
+
+function isPhysician
+  returns true if the user is associated with a physician/provider,
+  false if not
+  created: 19991202

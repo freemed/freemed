@@ -1,0 +1,16 @@
+# Update for database from v0.1 to v0.2
+# changes in data definitions
+
+# new table for questionnaire templates added
+CREATE TABLE freemed.qtemplate (
+  qname          VARCHAR(100),
+  qdescrip       VARCHAR(100),
+  qfname         TEXT,
+  qvar           TEXT,
+  qftype         TEXT,
+  qftypefor      TEXT,
+  qfmaxlen       TEXT,
+  qftext         TEXT,
+  id INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (id)
+);

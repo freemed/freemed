@@ -1,0 +1,575 @@
+# MySQL dump 6.0
+#
+# Host: localhost    Database: package
+#--------------------------------------------------------
+# Server version	3.22.23b
+
+#
+# Table structure for table 'config'
+#
+CREATE TABLE config (
+  c_option char(6),
+  c_value char(6),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'config'
+#
+
+INSERT INTO config VALUES ('icd','9',1);
+INSERT INTO config VALUES ('gfx','0',2);
+
+#
+# Table structure for table 'cpt'
+#
+CREATE TABLE cpt (
+  cptcode varchar(7),
+  cptnameint varchar(50),
+  cptnameext varchar(50),
+  cptrelvalue double(16,4),
+  cptgender enum('n','m','f') DEFAULT 'n' NOT NULL,
+  cpttos int(10) unsigned,
+  cptdtadd date,
+  cptdtmod date,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'cpt'
+#
+
+
+#
+# Table structure for table 'cptmod'
+#
+CREATE TABLE cptmod (
+  cptmod char(2),
+  cptmoddescrip varchar(50),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'cptmod'
+#
+
+
+#
+# Table structure for table 'facility'
+#
+CREATE TABLE facility (
+  psrname varchar(25),
+  psraddr1 varchar(25),
+  psraddr2 varchar(25),
+  psrcity varchar(15),
+  psrstate char(3),
+  psrzip varchar(10),
+  psrnote varchar(40),
+  psrdateentry date,
+  psrdefphy int(10) unsigned,
+  psrphone varchar(10),
+  psrfax varchar(10),
+  psremail varchar(25),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'facility'
+#
+
+
+#
+# Table structure for table 'frmlry'
+#
+CREATE TABLE frmlry (
+  frmlrydtadd date,
+  frmlrydtmod date,
+  class varchar(20),
+  gnrcname varchar(20),
+  trdmrkname varchar(20),
+  ind1 varchar(50),
+  ind2 varchar(50),
+  ind3 varchar(50),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'frmlry'
+#
+
+
+#
+# Table structure for table 'icd9'
+#
+CREATE TABLE icd9 (
+  icd9code char(6),
+  icd10code char(7),
+  icd9descrip char(45),
+  icd10descrip char(45),
+  icdng date,
+  icddrg char(45),
+  icdnum int(10) unsigned,
+  icdamt double(16,4),
+  icdcoll double(16,4),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'icd9'
+#
+
+
+#
+# Table structure for table 'insco'
+#
+CREATE TABLE insco (
+  inscodtadd date,
+  inscodtmod date,
+  insconame varchar(50),
+  inscoalias varchar(30),
+  inscoaddr1 varchar(45),
+  inscoaddr2 varchar(45),
+  inscocity varchar(30),
+  inscostate char(3),
+  inscozip varchar(10),
+  inscophone varchar(10),
+  inscofax varchar(10),
+  inscocontact varchar(100),
+  inscoid varchar(20),
+  inscowebsite varchar(100),
+  inscoemail varchar(50),
+  inscogroup int(10) unsigned,
+  inscotype int(10) unsigned,
+  inscoassign int(10) unsigned,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'insco'
+#
+
+
+#
+# Table structure for table 'inscogroup'
+#
+CREATE TABLE inscogroup (
+  inscogroup varchar(50),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'inscogroup'
+#
+
+
+#
+# Table structure for table 'log'
+#
+CREATE TABLE log (
+  datestamp date,
+  user int(10) unsigned,
+  db_name varchar(20),
+  rec_num int(10) unsigned,
+  comment blob,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'log'
+#
+
+
+#
+# Table structure for table 'patient'
+#
+CREATE TABLE patient (
+  ptdtadd date,
+  ptdtmod date,
+  ptbal double(16,4),
+  ptbalfwd double(16,4),
+  ptunapp double(16,4),
+  ptrefdoc int(10) unsigned,
+  ptpcp int(10) unsigned,
+  ptphy1 int(10) unsigned,
+  ptphy2 int(10) unsigned,
+  ptphy3 int(10) unsigned,
+  ptphy4 int(10) unsigned,
+  ptbilltype enum('sta','mon','chg') DEFAULT 'sta' NOT NULL,
+  ptbudg double(16,4),
+  ptdoc int(10) unsigned,
+  ptlname varchar(50),
+  ptfname varchar(50),
+  ptmname varchar(50),
+  ptaddr1 varchar(30),
+  ptaddr2 varchar(30),
+  ptcity varchar(25),
+  ptstate char(2),
+  ptzip varchar(10),
+  ptcountry varchar(50),
+  pthphone varchar(10),
+  ptwphone varchar(10),
+  ptwphoneext varchar(5),
+  ptfax varchar(10),
+  ptemail varchar(30),
+  ptsex enum('m','f') DEFAULT 'm' NOT NULL,
+  ptdob date,
+  ptssn varchar(9),
+  ptdmv varchar(9),
+  ptdtlpay date,
+  ptamtlpay double(16,4),
+  ptpaytype int(10) unsigned,
+  ptdtbill date,
+  ptamtbill double(16,4),
+  ptstatus int(10) unsigned,
+  ptytdchg double(16,4),
+  ptar double(16,4),
+  ptextinf text,
+  ptdisc double(16,4),
+  ptdol date,
+  ptdiag1 int(10) unsigned,
+  ptdiag2 int(10) unsigned,
+  ptdiag3 int(10) unsigned,
+  ptdiag4 int(10) unsigned,
+  ptid varchar(10),
+  pthistbal double(16,4),
+  ptmarital enum('s','m','d') DEFAULT 's' NOT NULL,
+  ptempl enum('y','n') DEFAULT 'y' NOT NULL,
+  ptemp1 int(10) unsigned,
+  ptemp2 int(10) unsigned,
+  ptdep int(10) unsigned,
+  ptins1 int(10) unsigned,
+  ptins2 int(10) unsigned,
+  ptins3 int(10) unsigned,
+  ptnextofkin blob,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'patient'
+#
+
+
+#
+# Table structure for table 'payrec'
+#
+CREATE TABLE payrec (
+  payrecdtadd date,
+  payrecdtmod date,
+  payrecsource int(10) unsigned,
+  payreclink int(10) unsigned,
+  payrectype int(10) unsigned,
+  payrecnum varchar(30),
+  payrecamt double(16,4),
+  payrecdescrip blob,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'payrec'
+#
+
+
+#
+# Table structure for table 'phygroup'
+#
+CREATE TABLE phygroup (
+  phygroupname varchar(100),
+  phygroupfac int(10) unsigned,
+  phygroupdtadd date,
+  phygroupdtmod date,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'phygroup'
+#
+
+
+#
+# Table structure for table 'physician'
+#
+CREATE TABLE physician (
+  phylname varchar(52),
+  phyfname varchar(50),
+  phytitle varchar(10),
+  phymname varchar(50),
+  phypracname varchar(30),
+  phyaddr1a varchar(30),
+  phyaddr2a varchar(30),
+  phycitya varchar(20),
+  phystatea varchar(5),
+  phyzipa varchar(10),
+  phyphonea varchar(10),
+  phyfaxa varchar(10),
+  phyaddr1b varchar(30),
+  phyaddr2b varchar(30),
+  phycityb varchar(20),
+  phystateb varchar(5),
+  phyzipb varchar(10),
+  phyphoneb varchar(10),
+  phyfaxb varchar(10),
+  phyemail varchar(30),
+  phycellular varchar(10),
+  phypager varchar(10),
+  phyupin varchar(15),
+  physsn varchar(9),
+  physpe1 int(10) unsigned,
+  physpe2 int(10) unsigned,
+  physpe3 int(10) unsigned,
+  phyid1 varchar(10),
+  phystatus int(10) unsigned,
+  phyref enum('yes','no') DEFAULT 'yes' NOT NULL,
+  phyrefcount int(10) unsigned,
+  phyrefamt double(16,4),
+  phyrefcoll double(16,4),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'physician'
+#
+
+
+#
+# Table structure for table 'phystatus'
+#
+CREATE TABLE phystatus (
+  phystatus varchar(30),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'phystatus'
+#
+
+
+#
+# Table structure for table 'pnotes'
+#
+CREATE TABLE pnotes (
+  pnotesdt date,
+  pnotesdtadd date,
+  pnotesdtmod date,
+  pnotespat int(10) unsigned,
+  pnotes_S blob,
+  pnotes_O blob,
+  pnotes_A blob,
+  pnotes_P blob,
+  pnotes_I blob,
+  pnotes_E blob,
+  pnotes_R blob,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'pnotes'
+#
+
+
+#
+# Table structure for table 'proc'
+#
+CREATE TABLE proc (
+  procacct int(10) unsigned,
+  procacctdep int(10) unsigned,
+  procincident int(10) unsigned,
+  procdtmod date,
+  procchg double(16,4),
+  procrcp double(16,4),
+  procadj double(16,4),
+  proccode int(10) unsigned,
+  procmod1 int(10) unsigned,
+  procmod2 int(10) unsigned,
+  procmod3 int(10) unsigned,
+  procdx1 int(10) unsigned,
+  procdx2 int(10) unsigned,
+  procdx3 int(10) unsigned,
+  procdx4 int(10) unsigned,
+  proccom varchar(45),
+  procprov int(10) unsigned,
+  procpos int(10) unsigned,
+  proctos int(10) unsigned,
+  procstatus int(10) unsigned,
+  procdept int(10) unsigned,
+  procvouch int(10) unsigned,
+  procpriins int(10) unsigned,
+  procsecins int(10) unsigned,
+  procunits double(16,4),
+  proctype enum('normal','finance','other','contract') DEFAULT 'normal' NOT NULL,
+  procdate date,
+  procdtpost date,
+  procdtpostrep date,
+  procdtinsbill date,
+  procdtinsbill2 date,
+  procassign enum('yes','no','estimate') DEFAULT 'yes' NOT NULL,
+  proctax varchar(5),
+  procaprov double(16,4),
+  procemc enum('valid','passed_prebill','no_emc','emc_billed') DEFAULT 'valid' NOT NULL,
+  procloc int(10) unsigned,
+  procclmnum int(10) unsigned,
+  procmin double(16,4),
+  procplan int(10) unsigned,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'proc'
+#
+
+
+#
+# Table structure for table 'room'
+#
+CREATE TABLE room (
+  roomname varchar(20),
+  roompos int(10) unsigned,
+  roomdescrip varchar(40),
+  roomdefphy int(10) unsigned,
+  roomsurgery enum('y','n') DEFAULT 'y' NOT NULL,
+  roombooking enum('y','n') DEFAULT 'y' NOT NULL,
+  roomipaddr varchar(15),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'room'
+#
+
+
+#
+# Table structure for table 'rx'
+#
+CREATE TABLE rx (
+  rxdtadd date,
+  rxdtmod date,
+  rxpatient int(10) unsigned,
+  rxdtfrom date,
+  rxduration int(10) unsigned,
+  rxdrug int(10) unsigned,
+  rxdosage varchar(100),
+  rxrefills int(10) unsigned,
+  rxsubstitute varchar(30),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'rx'
+#
+
+
+#
+# Table structure for table 'scheduler'
+#
+CREATE TABLE scheduler (
+  caldateof date,
+  calhour int(10) unsigned,
+  calminute int(10) unsigned,
+  calduration int(10) unsigned,
+  calfacility int(10) unsigned,
+  calroom int(10) unsigned,
+  calphysician int(10) unsigned,
+  calpatient int(10) unsigned,
+  calcptcode int(10) unsigned,
+  calstatus int(10) unsigned,
+  calprenote varchar(100),
+  calpostnote varchar(100),
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'scheduler'
+#
+
+
+#
+# Table structure for table 'simplereport'
+#
+CREATE TABLE simplereport (
+  sr_label varchar(50),
+  sr_type int(10) unsigned,
+  sr_text blob,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'simplereport'
+#
+
+
+#
+# Table structure for table 'specialty'
+#
+CREATE TABLE specialty (
+  specdegree varchar(10),
+  specname varchar(50),
+  specdate date,
+  id int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id)
+);
+
+#
+# Dumping data for table 'specialty'
+#
+
+
+#
+# Table structure for table 'test'
+#
+CREATE TABLE test (
+  name char(10),
+  other char(12),
+  phone int(11),
+  ID int(10) unsigned DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (ID)
+);
+
+#
+# Dumping data for table 'test'
+#
+
+
+#
+# Table structure for table 'user'
+#
+CREATE TABLE user (
+  username varchar(16) DEFAULT '' NOT NULL,
+  userpassword varchar(16) DEFAULT '' NOT NULL,
+  userdescrip varchar(50),
+  userlevel int(10) unsigned,
+  userfac blob,
+  userphy blob,
+  userphygrp blob,
+  id int(32) unsigned DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (id),
+  UNIQUE idx_id (id),
+  KEY username (username),
+  UNIQUE idx_username (username)
+);
+
+#
+# Dumping data for table 'user'
+#
+
+INSERT INTO user VALUES ('root','','Superuser',9,'-1','-1','-1',1);
+INSERT INTO user VALUES ('webuser','password','web-based user',8,'','','',2);
+

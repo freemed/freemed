@@ -1,0 +1,17 @@
+freemed-project TODO list
+by jeff b (jeff@univrel.pr.uconn.edu)
+(c) 1999 under the GPL, version 2
+
+19990708 -------------------------------------------------------
+ * implement payments and billing databases, with structures
+ * rehash patient database into usable form, removing all legacy
+   code, symbols, etc, and redoing for current work
+ * implement scheduling using vCalendar interface, so as to work
+   with PalmPilots, etc
+ * implement <$STDFONT_B>, <$STDFONT_E>, <$HEADERFONT_B> and
+   <$HEADERFONT_E> across all modules, replacing outdated <TT>s
+ * insurance payments related dbs and tie-ins, possibly with API
+   revisions
+ * clarify terms
+ * begin writing man pages in separated "file" format...
+ * more when I think of more...

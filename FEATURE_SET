@@ -1,0 +1,86 @@
+===============================================================================
+                                                                freemed project
+                                                     feature set as of 19991101
+                                 compiled by jeff b (jeff@univrel.pr.uconn.edu)
+===============================================================================
+
+--------------------------------------------------------------------------- API
+* freemed has a fully featured API for future module coders to work with, and
+  passes parameters in an interoperable way.
+* freemed also has a seperate API for calendaring and scheduling functions,
+  including an appointment interference map for minimum SQL server load.
+
+------------------------------------------------------------ COMMUNITY INTEREST
+* we have had over 10,000 hits to our main page since the site gained a web
+  counter. over 6000 of those were from freshmeat.net, one of the Linux
+  community's main software announcement points.
+* people from all over the world coming from both english and non-english
+  speaking countries have been pledging their support to the project, both in
+  code/translations and testing.
+* the people at Merallis.Net, one of the United States' larger medical
+  insurance claim submission organizations have expressed interest in working
+  out a direct interchange format, as an alternative to the proprietary and
+  insecure MSIE-only Active-X method that is in use now.
+
+--------------------------------------------------- DB MANAGEMENT AND STRUCTURE
+* relational database provides for supreme customization
+* "stock" or "shipping" databases allow docs to get up and running without
+  having to worry about customizing everything.
+* virtual 3D SQL tables allow for "folding out" of data, to limit the spread
+  of related subtables.
+
+-------------------------------------------------------------- LANGUAGE SUPPORT
+* freemed has the capacity for multiple ISO set language compatibility
+  (currently only the ISO-8859-x sets are implemented)
+* language support is built into every module, with shared definitions for
+  multiple modules -- language support is as easy as a quick translation
+* languages for use are selectable at login -- half your staff can speak
+  English, and the other half French, Italian, Spanish, etc, and it is still
+  possible to let them work in their native languages.
+* as of 1999 Sep 22, English, French, Spanish/Castellano, Italian and
+  Portuguese are supported by freemed.
+
+---------------------------------------------------------------- LEARNING CURVE
+* we believe that the learning curve on a "point-and-click" web-based
+  application is much easier for current and new medical management users.
+  the structure allows for intuitive moving from point A to point B, with
+  minimal mess. even hotkeys are partially implemented, for those who
+  prefer legacy system-type shortcuts.
+* using the common API interface gives a consistant look to the package,
+  which decreases learning time.
+* a comprehensive multi-lingual help system is built into freemed, providing
+  the framework for detailed help screens during almost any portion of the
+  program.
+
+------------------------------------------------------------- PHYSICIAN CENTRIC
+* freemed has and is being designed by a team of physicians from all over
+  the world along with database and coding experts, to create a system that
+  has the physician's needs in mind instead of insurance companies,
+  providing physicians with the tools that they need and want to be able to
+  serve their patients in the most efficient and helpful way possible.
+* separate menus and forms are being designed for physicians' special needs
+  apart from office staff. instead of being just another user on the system,
+  you immediately can have all of the current pertinant information that
+  the system has to offer at your fingertips.
+* the system is based on Episodes of Care, which can range from one visit to
+  an entire lifetime, which offers an alternative to the billing-centric
+  ailment/incident type workings of most other Medical Management suites.
+* being browser based, freemed is compatible with most Voice Dictation systems
+  and can even run on a Palmtop PC.
+
+------------------------------------------------------------------- SCALABILITY
+* freemed was designed from the bottom up to be scalable from a single doctor
+  single practice setup to a multiple hospital setup.
+* multiple freemed servers can be located on the same box for lower
+  equipment purchase price.
+* the SQL server can be any one of many free and commercial SQL servers,
+  including, but not limited to, MySQL, mSQL, PostgreSQL, Microsoft SQL
+  Server, etc..
+
+---------------------------------------------------------------------- SECURITY
+* full http/https switchable support
+* MD5 password encryption for higher security
+* cookie time expiration for decreased risk of attacks at unattended terminals
+* the SQL server can be on a separate box from the web server, allowing for
+  safe firewalling of data from outside attacks
+* VPN or PPTP capable networking (Virtual Private Networking)

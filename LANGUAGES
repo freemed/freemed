@@ -1,0 +1,38 @@
+freemed-project
+LANGUAGES file -- supported languages
+(c) 1999 GPL by the freemed-project
+
+Last Modified: 	19991018
+
+19991018 --
+* oops! forgot the germans!
+
+19990913 --
+* Monday the 13th -- and we have added Portuguese...
+
+19990812 --
+* jeff - added IT (italian language files)
+
+19990809 --
+* max k -Changed Spanish directory and abbreviation from SP to ES so
+  we are compliant with international standards 8-)
+
+======================================================================
+Name:           German                  Abbreviation: DE
+Maintainer:     Johann Krautinger (j.krau@teleweb.at)
+======================================================================
+Name: 		English			Abbreviation: EN
+Maintainer: 	jeff (jeff@univrel.pr.uconn.edu)
+======================================================================
+Name:		French			Abbreviation: FR
+Maintainer:	Max Klohn (amk@span.ch)
+======================================================================
+Name:           Italian                 Abbreviation: IT
+Maintainer:     Stefano Fava (ste@sirius.ccii.unipi.it)
+======================================================================
+Name:           Spanish                 Abbreviation: ES
+Maintainer:     Max Klohn (amk@span.ch)
+======================================================================
+Name:           Portuguese                Abbreviation: PT
+Maintainer:     Eduardo SH (edu@icarus.com.br)
+======================================================================
