@@ -265,18 +265,24 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 	default: // display menu
 	$display_buffer .= "
 	<div align=\"center\">
-	<a href=\"preferences.php?action=passwordform\"
-	>".__("Change Password")."</a>
-	</div>
 
-	<div align=\"center\">
-	<a href=\"preferences.php?action=templateform\"
-	>".__("Change Template Options")."</a>
-	</div>
+	<table border=\"0\" cellspacing=\"0\" cellpadding=\"5\">
+	<tr><td><img src=\"img/key.png\" width=\"64\" height=\"53\" alt=\"\" /></td>
+	<td><a href=\"preferences.php?action=passwordform\"
+	>".__("Change Password")."</a></td>
+	</tr>
 
-	<div align=\"center\">
-	<a href=\"preferences.php?action=userform\"
-	>".__("Change User Options")."</a>
+	<tr><td><img src=\"img/window_star.png\" width=\"64\" height=\"51\" alt=\"\" /></td>
+	<td><a href=\"preferences.php?action=templateform\"
+	>".__("Change Template Options")."</a></td>
+	</tr>
+
+	<tr><td><img src=\"img/circle_star.png\" width=\"60\" height=\"55\" alt=\"\" /></td>
+	<td><a href=\"preferences.php?action=userform\"
+	>".__("Change User Options")."</a></td>
+	</tr>
+	</table>
+
 	</div>
 
 	<p/>
