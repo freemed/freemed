@@ -1596,7 +1596,8 @@ class freemed {
 			// Get information
 			$r = $sql->fetch_array ($result);
 
-			$login_md5=md5($_REQUEST['_password']);
+			// Use _hash (md5) if passed, else plain _password
+			$login_md5 = ( $_REQUEST['_hash'] ? $_REQUEST['_hash'] : md5($_REQUEST['_password']) );
 
 			$user=$_REQUEST['_username'];
 
