@@ -649,7 +649,7 @@
    freemed_display_box_bottom ();
    break;
 
-  case "manage": // view of entire episode (central control screen)
+  case "display": // view of entire episode (central control screen)
    if ($id<1) {
      freemed_display_box_top ("$record_name View :: $ERROR");
      echo "
@@ -682,13 +682,38 @@
      <P>
    ";
 
+   $eoc = freemed_get_link_rec($id,"eoc");
    // display vitals for current episode
-
+   echo "
+     <P>
+     <!-- Vitals Display Table -->
+     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=1
+      ALIGN=CENTER VALIGN=MIDDLE>
+     <TR>
+      <TD ALIGN=CENTER>
+       <$STDFONT_B>Starting Date<$STDFONT_E>
+      </TD>
+      <TD ALIGN=CENTER>
+       <$STDFONT_B>Description<$STDFONT_E>
+      </TD>
+     </TR>
+     <TR>
+      <TD ALIGN=CENTER>
+       <$STDFONT_B>$eoc[eocstartdate]<$STDFONT_E>
+      </TD>
+      <TD ALIGN=CENTER>
+       <$STDFONT_B>".fm_prep($eoc[eocdescrip])."<$STDFONT_E>
+      </TD>
+     </TR>
+     </TABLE>
+     <!-- End Vitals Display Table -->
+     <P>
+   ";
    // procedures display
    echo "
      <!-- Outer Table -->
      <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=3
-      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
+      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
      <TR><TD ALIGN=CENTER>
        <$STDFONT_B COLOR=\"#ffffff\" SIZE=+1>Procedures<$HEADERFONT_E>
      </TD></TR>
@@ -723,7 +748,7 @@
      $p_cpt    = $r["proccpt"];
      $p_cptmod = $r["proccptmod"];
      $p_dt     = $r["procdt"]; // date
-     $p_co     = $r["proccomment"];
+     $p_co     = fm_prep($r["proccomment"]);
      $p_cpt_name = freemed_get_link_field($p_cpt,"cpt","cptcode");
      if (empty($p_co)) { $p_co = "NO DESCRIPTION"; }
      if (strlen ($p_co)>50) $p_co = substr ($p_co, 0, 50)."...";
@@ -779,7 +804,7 @@
    echo "
      <!-- Outer Table -->
      <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=3
-      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
+      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
      <TR><TD ALIGN=CENTER>
        <$STDFONT_B COLOR=\"#ffffff\" SIZE=+1>Progress Notes<$HEADERFONT_E>
      </TD></TR>
@@ -882,7 +907,6 @@
    $result = fdb_query ("SELECT * FROM $db_name
                          WHERE eocpatient='$patient'
                          ORDER BY eocstartdate DESC");
-   if (($result>0) and (fdb_num_rows($result)>0)) {
 
     $this_patient = new Patient ($patient);
     echo "
@@ -895,81 +919,20 @@
       <P>
     ";
 
-    // display action bar
-    freemed_display_actionbar ();
+    freemed_display_itemlist(
+      "Episode of Care",
+      $result,
+      "episode_of_care.php3",
+      array (
+        "Starting Date" => "eocstartdate",
+	"Description"   => "eocdescrip"
+      ),
+      array (
+        "",
+	"NO DESCRIPTION"
+      )
+    );
 
-    // display table top
-    echo "
-      <P>
-      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0
-       BGCOLOR=#000000 VALIGN=MIDDLE ALIGN=CENTER>
-      <TR BGCOLOR=#000000>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>$Starting Date<$STDFONT_E></TD>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>$Description<$STDFONT_E></TD>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>$Action<$STDFONT_E></TD>
-      </TR>
-     ";
-
-    // loop for all
-    while ($r = fdb_fetch_array ($result)) {
-      $_alternate   = freemed_bar_alternate_color ($_alternate);
-      $eocstartdate = fm_prep($r["eocstartdate"]);
-      $eocdescrip   = fm_prep($r["eocdescrip"  ]);
-      $id           =         $r["id"          ] ;
-
-      echo "
-        <TR BGCOLOR=\"$_alternate\">
-         <TD>$eocstartdate</TD>
-         <TD>$eocdescrip</TD>
-         <TD>
-       ";
-      if (freemed_get_userlevel($LoginCookie)>$database_level)
-       echo "
-        <A HREF=\"$page_name?$_auth&action=manage&patient=$patient&id=$id\"
-         ><$STDFONT_B SIZE=-2>MANAGE<$STDFONT_E></A>
-       ";
-
-      if (freemed_get_userlevel($LoginCookie)>$database_level)
-       echo "
-        <A HREF=\"$page_name?$_auth&action=modform&patient=$patient&id=$id\"
-         ><$STDFONT_B SIZE=-1>$lang_MOD<$STDFONT_E></A>
-       ";
-
-      if (freemed_get_userlevel($LoginCookie)>$delete_level)
-       echo "
-        <A HREF=\"$page_name?$_auth&action=del&id=$id&patient=$patient\"
-         ><$STDFONT_B SIZE=-1>$lang_DEL<$STDFONT_E></A>
-       ";
-
-      echo "
-         &nbsp;</TD>
-        </TR>
-       ";
-    } // end of while loop 
-
-    // display table bottom
-    echo "
-      </TABLE>
-      <P>
-     ";
- 
-    // display bottom action bar
-    freemed_display_actionbar ();
-   } else { // if there aren't any records, tell us so
-    echo "
-      <P>
-      <CENTER>
-       <B><$STDFONT_B>$No_record_for_patient<$STDFONT_E></B>
-       <P>
-       <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-        ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
-      </CENTER>
-      <P>
-    ";
-   }
    freemed_display_box_bottom ();
    break;
  } // end master switch
