@@ -1,13 +1,12 @@
 <?php
- // $Id$
- // $Author$
- // desc: custom patient records engine
- // lic : GPL, v2
+	// $Id$
+	// $Author$
+	// lic : GPL, v2
 
-$page_name   = "custom_records.php";
-$record_name = __("Custom Records");
-$table_name  = "patrecdata";
 include_once ("lib/freemed.php");
+$page_name   = "custom_records.php";
+$table_name  = "patrecdata";
+$record_name = __("Custom Records");
 
 //----- Login/authenticate
 freemed::connect ();
