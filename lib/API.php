@@ -8,6 +8,10 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.57  2002/12/29 14:40:01  rufustfirefly
+ // Added patient box iconbar, defined in lib/template/*/lib.php.
+ // Added autoskip feature to phone entry fields.
+ //
  // Revision 1.56  2002/12/27 17:43:41  rufustfirefly
  // Added record locking capabilities.
  // New freemed::itemlist_conditions() method to allow display_itemlist to work properly with conditionals from its internal form.
@@ -308,6 +312,9 @@ class freemed {
 	} // end function freemed::module_version
 
 	function patient_box ($patient_object) {
+		// Make sure template functions are included
+		include_once('lib/template/'.$GLOBALS['template'].'/lib.php');
+	
 		// empty buffer
 		$buffer = "";
 
@@ -322,19 +329,18 @@ class freemed {
 		urlencode($patient_object->id)."'; return true;\"
       ><td VALIGN=\"CENTER\" ALIGN=\"LEFT\">
       <a HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
-       CLASS=\"patientbox\" NAME=\"patientboxlink\"><big>".
+       CLASS=\"patientbox\" NAME=\"patientboxlink\"><b>".
        $patient_object->fullName().
-      "</big></a>
+      "</b></a>
      </td><td ALIGN=\"CENTER\" VALIGN=\"CENTER\">
       ".( (!empty($patient_object->local_record["ptid"])) ?
           $patient_object->idNumber() : "(no id)" )."
      </td><td ALIGN=\"CENTER\" VALIGN=\"CENTER\">
-      &nbsp;
-      <!-- ICON BAR NEEDS TO GO HERE ... TODO -->
+	".template::patient_box_iconbar($patient_object->id)."
      </td><td VALIGN=\"CENTER\" ALIGN=\"RIGHT\">
       <font COLOR=\"#cccccc\">
-       ".$patient_object->age()." old, DOB ".
-        $patient_object->dateOfBirth()."
+       <small>".$patient_object->age()." old, DOB ".
+        $patient_object->dateOfBirth()."</small>
       </font>
      </td></tr>
     </table>
@@ -1924,11 +1930,28 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
 function fm_phone_entry ($phonevarname="", $array_index=-1) {
   if ($phonevarname=="") return false;  // indicate problems
   if (($array_index+0)==-1) { $suffix="";   }     
-  else                     { $suffix="[]"; }
+   else                     { $suffix="[]"; }
   $formatting = freemed::config_value("phofmt"); // get phone formatting
   global $$phonevarname, ${$phonevarname."_1"},	 // get global vars
          ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
          ${$phonevarname."_4"}, ${$phonevarname."_5"}; 
+
+  // Check to see if autoskip JS is enabled
+  if (!$GLOBALS['__phpwebtools']['autoskip']) {
+    // Enable autoskip
+    $buffer .= "
+    	<script LANGUAGE=\"JavaScript\">
+	function autoskip(here, next) {
+		if (here.value.length==here.getAttribute('maxlength') && here.getAttribute) {
+			next.focus()
+		}
+	}
+	</script>
+    ";
+    
+    // Set for future reference
+    $GLOBALS['__phpwebtools']['autoskip'] = 1;
+  }
 
   if ($array_index == -1)  {
     $w = ${$phonevarname};    // whole number
@@ -1978,28 +2001,43 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
     case "usa":
      $buffer .= "
       <B>(</B>
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_1$suffix\" SIZE=4
-       MAXLENGTH=3 VALUE=\"$p1\"> <B>)</B>
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_2$suffix\" SIZE=4
-       MAXLENGTH=3 VALUE=\"$p2\"> <B>-</B>
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_3$suffix\" SIZE=5
-       MAXLENGTH=4 VALUE=\"$p3\"> <I>ext.</I>
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_4$suffix\" SIZE=5
+      <input TYPE=TEXT NAME=\"".$phonevarname."_1$suffix\" SIZE=4
+       MAXLENGTH=3 VALUE=\"$p1\"
+       onKeyup=\"autoskip(this, ".$phonevarname."_2$suffix); return true;\"
+       > <B>)</B>
+      <input TYPE=TEXT NAME=\"".$phonevarname."_2$suffix\" SIZE=4
+       MAXLENGTH=3 VALUE=\"$p2\"
+       onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
+       > <B>-</B>
+      <input TYPE=TEXT NAME=\"".$phonevarname."_3$suffix\" SIZE=5
+       MAXLENGTH=4 VALUE=\"$p3\"
+       onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
+       > <I>ext.</I>
+      <input TYPE=TEXT NAME=\"".$phonevarname."_4$suffix\" SIZE=5
        MAXLENGTH=4 VALUE=\"$p4\">
      "; break;
     case "fr":
      $buffer .= "
       <B>(</B>
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."_1$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p1\"> <B>)</B>
+       MAXLENGTH=2 VALUE=\"$p1\"
+       onKeyup=\"autoskip(this, ".$phonevarname."_2$suffix); return true;\"
+       > <B>)</B>
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."_2$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p2\"> 
+       MAXLENGTH=2 VALUE=\"$p2\"
+       onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
+       > 
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."_3$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p3\">
+       MAXLENGTH=2 VALUE=\"$p3\"
+       onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
+       >
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."_4$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p4\">
+       MAXLENGTH=2 VALUE=\"$p4\"
+       onKeyup=\"autoskip(this, ".$phonevarname."_5$suffix); return true;\"
+       >
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."_5$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p4\">
+       MAXLENGTH=2 VALUE=\"$p5\"
+       >
      "; break;
     case "unformatted": 
     default:

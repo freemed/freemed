@@ -7,6 +7,24 @@ define ('IMAGE_TYPE', "png");
 
 class template {
 
+	function patient_box_iconbar ($patient) {
+		$buffer .= "<table border=\"0\" cellspacing=\"1\" cellpadding=\"1\">\n".
+			"<tr>".
+			
+			// Icon for patient appointments
+			"<td><a href=\"book_appointment.php?patient=".urlencode($patient).
+			"\" onMouseOver=\"window.status='"._("Book Appointment")."'; ".
+				"return true;\" ".
+			"onMouseOut=\"window.status=''; return true;\"".
+			"><img src=\"lib/template/".$GLOBALS['template']."/img/".
+			"pbox_book_appointment.".IMAGE_TYPE."\" border=\"0\" ".
+			"width=\"16\" height=\"16\" ".
+			"alt=\""._("Book Appointment")."\"/></a></td>\n".
+			
+			"</tr></table>\n";
+		return $buffer;
+	} // end method patient_box_iconbar
+
 	function summary_delete_link($class, $url) {
 		$buffer .= html_form::confirm_link_widget($url,
 			"<img SRC=\"lib/template/default/img/summary_delete.png\"
