@@ -143,13 +143,16 @@ $display_buffer .= "
 $display_buffer .= "
   <TR>
   <TD ALIGN=RIGHT>
-   <A HREF=\"help.php?page_name=$page_name\"
-    TARGET=\"__HELP__\"
+   <A HREF=\"#\"
+   onClick=\"window.open('help.php?page_name=$page_name', 'Help', ".
+   "'width=600,height=400,resizable=yes');\"
    ><IMG SRC=\"img/readme.gif\" BORDER=0 ALT=\"\"></A>
   </TD>
   <TD ALIGN=LEFT>
-  <A HREF=\"help.php?page_name=$page_name\"
-   TARGET=\"__HELP__\">"._("Main Menu Help")."</A>
+   <A HREF=\"#\"
+   onClick=\"window.open('help.php?page_name=$page_name', 'Help', ".
+   "'width=600,height=400,resizable=yes');\"
+   >"._("Main Menu Help")."</A>
   </TD></TR>
   <TR>
   <TD ALIGN=RIGHT>

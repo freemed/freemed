@@ -1,0 +1,26 @@
+/*
+ *  $Id$
+ *  freemed external style sheet
+ */
+
+body {
+	background: #aaaaff;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+	margin-top: 0px;
+	margin-left: 0px;
+	text-decoration: none
+}
+
+/* Equivalent to onMouseOver */
+a:hover {
+	color: black;
+	text-decoration: underline;
+	background-color: white
+}
+
+.interior {
+	color: black;
+	background-color: #ccccff
+}
