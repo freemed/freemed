@@ -67,6 +67,7 @@ switch ($action) { // master action switch
     $procphysician  = $this_data["procphysician" ];
     $procdt         = $this_data["procdt"        ];
     $procpos        = $this_data["procpos"       ];
+    $proctos        = $this_data["proctos"       ];
     $proccomment    = $this_data["proccomment"   ];
     $procbalorig    = $this_data["procbalorig"   ];
     $procbalcurrent = $this_data["procbalcurrent"];
