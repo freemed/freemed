@@ -461,6 +461,7 @@ if ($process) {
 				"calprenote" => stripslashes($note)
 			)
 		);
+		$move = false;
 	} else {
 		// Perform move
 		$result = $scheduler->move_appointment(
@@ -476,6 +477,7 @@ if ($process) {
 				"calphysician" => $_REQUEST['physician']
 			)
 		);
+		$move = true;
 	}
 	if ($result) { $display_buffer .= __("done")."."; }
 	 else        { $display_buffer .= __("ERROR");    }
@@ -503,6 +505,11 @@ if ($process) {
 	} else {
 		// Travel "link"
 		$refresh = "main.php";
+	}
+	if ($move) {
+		// Override refresh back to group calendar
+		$refresh = "module_loader.php?module=groupcalendar&selected_date=".
+			urlencode($_REQUEST['selected_date']);
 	}
 } else {
 	$display_buffer .= $calendar_form;
