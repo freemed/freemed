@@ -226,11 +226,10 @@ class PaymentModule extends EMRModule {
             // determine closest date if none is provided
             //if (empty($payrecdt) and empty($payrecdt_y))
             //	$display_buffer .= "date $payrecdt $payrecdt_y $cur_date";
-            if (empty($payrecdt_y))
-			{
-				global $payrecdt;
+	    global $payrecdt_y, $payrecdt;
+            if (empty($payrecdt_y) and empty($payrecdt)) {
                 $payrecdt = $cur_date; // by default, the date is now...
-			}
+		}
             // ************* ADD PAGE FOR STEP TWO *************
 
             switch ($payreccat)
@@ -650,9 +649,9 @@ class PaymentModule extends EMRModule {
                     break; // end rebill category (add)
                 } // end category switch (add)
 
-                if (empty($payrecdt_y))
+		global $payrecdt, $payrecdt_y;
+                if (empty($payrecdt_y) and empty($payrecdt))
                 {
-                    global $payrecdt;
                     $payrecdt = $cur_date; // by default, the date is now...
                 }
                 else
