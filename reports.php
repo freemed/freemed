@@ -61,7 +61,7 @@ if (!$module_list->empty_category($category)) {
 	echo "
 	<P>
 	<CENTER>
-		<$STDFONT_B>There are no report modules present.<$STDFONT_E>
+		<$STDFONT_B>"._("There are no report modules present.")."<$STDFONT_E>
 	</CENTER>
 	<P>
 	<CENTER>
