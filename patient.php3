@@ -158,6 +158,8 @@ if ($action=="addform") {
      VALUE=\"$ptdmv\">
     <BR>
        ";
+  if ($ptdoc < 1) $ptdoc = freemed_get_link_field ($default_facility,
+    "facility", "psrdefphy");
   echo "
     <$STDFONT_B>$In_house_doctor : <$STDFONT_E>
     <SELECT NAME=\"ptdoc\">
@@ -184,12 +186,6 @@ if ($action=="addform") {
     <SELECT NAME=\"ptpcp\">
   ";
 
-  if ($ptpcp<1) $ptpcp = freemed_get_link_field ($default_facility,
-    "facility", "psrdefphy");
-    // here, if a doc adds a patient, it's probably theirs
-  //$f_auth = explode (":", $LoginCookie);
-  //if (freemed_get_link_field ($f_auth[0], "user", "usertype") ==
-  //   "phy") $ptpcp =....
   freemed_display_physicians ($ptpcp);
 
   echo "
@@ -834,6 +830,7 @@ if ($action=="addform") {
   echo "
     </SELECT><BR>
 
+  <!--
     <$STDFONT_B>Diagnosis Code 1 : <$STDFONT_E>
   ";
   freemed_display_icdcodes($ptdiag1, "ptdiag1");
@@ -854,6 +851,8 @@ if ($action=="addform") {
   freemed_display_icdcodes($ptdiag4, "ptdiag4");
   echo "
     <BR>
+  -->
+
     <$STDFONT_B>$Type_of_billing : <$STDFONT_E>
     <SELECT NAME=\"ptbilltype\">
       <OPTION VALUE=\"mon\">$Monthly_billing_on_acct
