@@ -4,10 +4,7 @@
  // lic : GPL
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
-include ("lib/freemed.php");
-include ("lib/API.php");
-include ("lib/module.php");
-include ("lib/module_calendar.php");
+include_once ("lib/freemed.php");
 
 //----- Login/authenticate
 freemed_open_db ();
@@ -35,7 +32,7 @@ $module_template = "
 ";
 
 // module loader
-$module_list = CreateObject('PHP.module_list', PACKAGENAME,".calendar.module.php");
+$module_list = CreateObject('PHP.module_list', PACKAGENAME);
 if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
 	<P>

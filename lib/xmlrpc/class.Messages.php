@@ -26,6 +26,7 @@ class Messages {
 				"physician"  => rpc_prepare($r['msgfor']),
 				"patient"    => rpc_prepare($r['msgpatient']),
 				"person"     => rpc_prepare($r['msgperson']),
+				"subject"    => rpc_prepare($r['msgsubject']),
 				"text"       => rpc_prepare($r['msgtext']),
 				"urgency"    => rpc_prepare($r['msgurgency']),
 				"read"       => rpc_prepare($r['msgread']),
@@ -67,6 +68,7 @@ class Messages {
 					"msgpatient" => $message['patient'],
 					"msgperson"  => $message['person'],
 					"msgtext"    => $message['text'],
+					"msgsubject" => $message['subject'],
 					"msgurgency" => $message['urgency'],
 					"msgread"    => '0',
 					"msgtime"    => SQL_NOW
@@ -93,6 +95,7 @@ class Messages {
 					"physician"  => rpc_prepare($r['msgfor']),
 					"patient"    => rpc_prepare($r['msgpatient']),
 					"person"     => rpc_prepare($r['msgperson']),
+					"subject"    => rpc_prepare($r['msgsubject']),
 					"text"       => rpc_prepare($r['msgtext']),
 					"urgency"    => rpc_prepare($r['msgurgency']),
 					"read"       => rpc_prepare($r['msgread']),

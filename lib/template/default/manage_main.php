@@ -7,6 +7,9 @@
 //----- Pull configuration for this user
 if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
+//----- Make sure all module functions are loaded
+LoadObjectDependency('PHP.module');
+
 //----- Extract all configuration data
 if (is_array($this_user->manage_config)) extract($this_user->manage_config);
 
@@ -173,7 +176,7 @@ foreach ($static_components AS $garbage => $component) {
 		$panel[_("Messages")] = "
 		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 		 CELLPADDING=3 CLASS=\"thinbox\">
-		<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+		<TR><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 		 CLASS=\"menubar_items\">
 		<A HREF=\"messages.php?action=addform\">"._("Add")."</A>
 		</TD></TR>
@@ -189,33 +192,33 @@ foreach ($static_components AS $garbage => $component) {
 			$panel[_("Messages")] .= "<TR CLASS=\"menubar_info\">".
 				"<TD>"._("Date")."</TD>".
 				"<TD>"._("Time")."</TD>".
-				"<TD>"._("Physician")."</TD>".
+				"<TD>"._("User")."</TD>".
 				"<TD>"._("Action")."</TD>".
 				"</TR>\n";
 			while ($my_r = $sql->fetch_array($my_result)) {
 				// Transformations for date and time
 				$y = $m = $d = $hour = $min = '';
-				$y = substr($my_r[msgtime], 0, 4);
-				$m = substr($my_r[msgtime], 4, 2);
-				$d = substr($my_r[msgtime], 6, 2);
-				$hour = substr($my_r[msgtime], 8, 2);
-				$min  = substr($my_r[msgtime], 10, 2);
+				$y = substr($my_r['msgtime'], 0, 4);
+				$m = substr($my_r['msgtime'], 4, 2);
+				$d = substr($my_r['msgtime'], 6, 2);
+				$hour = substr($my_r['msgtime'], 8, 2);
+				$min  = substr($my_r['msgtime'], 10, 2);
 
-				// Get Physician object
-				$this_physician = CreateObject('FreeMED.Physician', $my_r[msgfor]);
+				// Get User object
+				$this_user = CreateObject('FreeMED.User', $my_r[msgfor]);
 
 				// Form the panel
 				$panel[_("Messages")] .= "<TR>".
 					"<TD ALIGN=\"LEFT\">$y-$m-$d</TD>".
 					"<TD ALIGN=\"LEFT\">".fc_get_time_string($hour,$min)."</TD>".
-					"<TD ALIGN=\"LEFT\"><SMALL>".$this_physician->fullName()."</SMALL></TD>".
+					"<TD ALIGN=\"LEFT\"><SMALL>".$this_user->getDescription()."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\">".
 					template::summary_delete_link(NULL,
-					"messages.php?action=del&id=".$my_r[id].
+					"messages.php?action=remove&id=".$my_r['id'].
 					"&return=manage").
 					"</TR>\n".
 					"<TR><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
-					prepare($my_r[msgtext]).
+					prepare($my_r['msgtext']).
 					"</SMALL></TD></TR>\n";			
 			}
 		} else {
@@ -226,6 +229,7 @@ foreach ($static_components AS $garbage => $component) {
 		}
 		$panel[_("Messages")] .= "
 		</TABLE>
+		</DIV>
 		</TD></TR></TABLE>";
 		break; // end medical_information
 
@@ -330,8 +334,9 @@ foreach ($static_components AS $garbage => $component) {
 //-- ... then modular
 foreach ($modular_components AS $garbage => $component) {
 	// Determine if the class exists
-	if (!is_object($module_list))
-		$module_list = CreateObject('PHP.module_list', PACKAGENAME, ".emr.module.php");
+	if (!is_object($module_list)) {
+		$module_list = CreateObject('PHP.module_list', PACKAGENAME, "modules/");
+	}
 	
 	// End checking for component
 	if ($module_list->check_for($component)) {
@@ -479,7 +484,9 @@ if ($action != "config") {
 
 
 //----- Add to menu bar
-$module_list = CreateObject('PHP.module_list', PACKAGENAME, ".emr.module.php");
+if (!is_object($module_list)) {
+	$module_list = CreateObject('PHP.module_list', PACKAGENAME, "modules/");
+}
 // Form template for menubar
 $menu_bar = array_merge (
 	$menu_bar,
@@ -528,44 +535,4 @@ $module_template = "
 ";
 */
 
-/*
-$display_buffer .= "
-        <!--
-
-	  // this is commented out until we can make it work properly
-
-        <TR><TD ALIGN=RIGHT>
-        <B>"._("Reports and Certificates")."</B> : 
-        </TD><TD>
-        <A HREF=\"simplerep.php?action=choose&patient=$id\"
-        >"._("Choose")."</A>
-        </TD><TD>
-        </TD><TD>
-        </TD></TR>
-        -->
-
-		<!--	
-        <TR><TD ALIGN=RIGHT>
-        <B>"._("Patient Reports")."</B> : 
-        </TD><TD>
-        <A HREF=\"emrreports.php?action=choose&patient=$id\"
-        >"._("Choose")."</A>
-        </TD><TD>
-        </TD><TD>
-        </TD></TR>
-        -->
-        </TABLE>
-
-        <CENTER>
-		<P>
-        <A HREF=\"patient.php\"
-         >"._("Select Another Patient")."</A> |
-	<A HREF=\"manage.php?id=$id&action=config\"
-	 >"._("Configuration")."</A>
-        </CENTER>
-        <P>
-      </CENTER>
-";
-*/
-    
 ?>

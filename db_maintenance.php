@@ -6,8 +6,6 @@
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
 include ("lib/freemed.php");
-include ("lib/module.php");
-include ("lib/module_maintenance.php");
 
 //----- Login and authenticate
 freemed_open_db ();
@@ -60,7 +58,7 @@ $display_buffer .= "
 "; // end of static listing
 
 // module loader
-$module_list = CreateObject('PHP.module_list', PACKAGENAME, ".db.module.php");
+$module_list = CreateObject('PHP.module_list', PACKAGENAME);
 $all_modules = $module_list->generate_array(
 	$category,
 	0,

@@ -129,7 +129,7 @@ $book->add_page("Static Components",
 );
 
 //----- Create module list for modular configuration
-$module_list = CreateObject('PHP.module_list', PACKAGENAME, ".emr.module.php");
+$module_list = CreateObject('PHP.module_list', PACKAGENAME, "modules/");
 
 //----- This is *so* jimmy rigged... -----
 
@@ -142,6 +142,9 @@ $module_template = "#name#:#class#/";
 // Form the actual hash with the template
 $class_hash = $module_list->generate_list ( "Electronic Medical Record",
 	0, $module_template );
+
+print "class_hash = $class_hash<BR>\n";
+
 // Break apart key/value pairs into array
 $class_array = explode( "/", $class_hash );
 // Loop through array to separate key and val

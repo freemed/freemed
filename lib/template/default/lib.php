@@ -8,9 +8,16 @@ define ('IMAGE_TYPE', "png");
 class template {
 
 	function summary_delete_link($class, $url) {
-		$buffer .= "<A HREF=\"".$url."\" ".
-			"><IMG SRC=\"lib/template/default/img/summary_delete.png\"
-			BORDER=\"0\" ALT=\""._("Delete")."\"></A>";
+		$buffer .= html_form::confirm_link_widget($url,
+			"<img SRC=\"lib/template/default/img/summary_delete.png\"
+			BORDER=\"0\" ALT=\""._("Delete")."\"/>",
+			array(
+				'confirm_text' =>
+				_("Are you sure you want to delete this?"),
+
+				'text' => _("Delete")
+			)
+		);
 		return $buffer;
 	} // end function summary_delete_link
 

@@ -27,11 +27,11 @@ class Images {
 		$date = $params["date"];
 		$category = $params["category"];
 		$desc = $params["description"];
-	
+
 		// If everything worked, return true
 		if ($patient_id < 1) {
 			return CreateObject('PHP.xmlrpcresp',
-				CreateObject('PHP.xmlrpcval', true, 'boolean')
+				CreateObject('PHP.xmlrpcval', false, 'boolean')
 			);
 		}
 

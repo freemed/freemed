@@ -5,15 +5,15 @@
 
 $page_name = "manage.php";
 include ("lib/freemed.php");
-include ("lib/API.php");
 include ("lib/module.php");
 include ("lib/module_emr.php");
 include ("lib/module_cert.php");
 include ("lib/module_emr_report.php");
 
 //----- Set current patient cookie if it's not set...
-if ($id != $current_patient)
+if ($id != $current_patient) {
 	$SESSION["current_patient"] = $current_patient = $id;
+}
 
 //----- Push patient onto list
 patient_push($id);
@@ -35,4 +35,5 @@ if (file_exists("lib/template/".$template."/manage.php")) {
 } // end of importing template piece
 
 template_display();
+
 ?>

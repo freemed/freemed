@@ -1462,6 +1462,7 @@ if ($action=="cfgform") {
      msgpatient                INT UNSIGNED,
      msgperson                 VARCHAR(50),
      msgurgency                INT UNSIGNED,
+     msgsubject                VARCHAR(75),
      msgtext                   TEXT,
      msgread                   INT UNSIGNED,
      id                        INT NOT NULL AUTO_INCREMENT,

@@ -2,6 +2,9 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.6  2002/12/11 20:38:13  rufustfirefly
+ // Bugfix and working sync for phpwebtools 0.4.0 module_list/cache support.
+ //
  // Revision 1.5  2002/11/06 13:55:45  rufustfirefly
  // Pass the user and real physician info so it can be used by methods.
  //
@@ -65,6 +68,7 @@ function freemed_basic_auth () {
 			$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
 		} else {
 			// Clear basic auth id
+			$authed = false;
 			$GLOBALS['__freemed']['basic_auth_id'] = 0;
 			$GLOBALS['__freemed']['basic_auth_phy'] = 0;
 		}

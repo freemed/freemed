@@ -6,13 +6,12 @@
 
 $page_name = "index.php";
 include_once ("lib/freemed.php");
-include_once ("lib/API.php");
 
 //----- Set page title
 $page_title = PACKAGENAME . " - " . _("Login");
 
 //----- Set no menu bar for login screen
-$no_menu_bar = true;
+$GLOBALS['__freemed']['no_menu_bar'] = true;
 
 //----- *DON'T* Reset default facility session cookie
 

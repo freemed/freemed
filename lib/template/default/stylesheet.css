@@ -20,6 +20,11 @@ a:hover {
 	background-color: blue
 }
 
+/* Menu bar */
+ul:menubar {
+	list-style-type: none
+}
+
 /* Main freemed dialog box */
 .mainbox {
 	border: thick black;
@@ -108,6 +113,15 @@ A.reverse:link { color: #ffffff }
 	border-style: solid;
 	overflow: scroll;
 	background: #aaaaaa 
+}
+
+.cell_hilite {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #0000ff;
+	color: #ffffff
 }
 
 .calcell_hour {

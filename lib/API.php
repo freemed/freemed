@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.52  2002/12/11 20:38:28  rufustfirefly
+ // Bugfix and working sync for phpwebtools 0.4.0 module_list/cache support.
+ //
  // Revision 1.51  2002/11/04 05:10:28  rufustfirefly
  // Updates for phpwebtools 0.3 object loader.
  //
@@ -462,9 +465,6 @@ class freemed {
 
 } // end namespace/class freemed
 
-// Make sure XMLRPC Utils are loaded
-include_once("lib/xmlrpc_epi_utils.php");
-
 class EMRi {
 	// EMRi Server information
 	var $EMRi_server_host;
@@ -605,21 +605,29 @@ class EMRi {
 
 //------------------ NON NAMESPACE FUNCTIONS ---------------------
 
-// function freemed_bar_alternate_color
-function freemed_bar_alternate_color ($cur_color="") {
-	global $bar_start_color, $bar_alt_color;
+// function freemed_alternate
+function freemed_alternate ($_elements) {
+	static $_pos;
 
-	switch ($cur_color) {
-		case $bar_start_color:
-		return $bar_alt_color;
-		break;
-		
-		case $bar_alt_color:
-		default:
-		return $bar_start_color;
-		break;
-	} // end color decision switch
-} // end function freemed_bar_alternate_color
+	if (!is_array($_elements)) {
+		// By default, cell and cell_alt
+		$elements = array ("cell", "cell_alt");
+	} else {
+		// Otherwise, pull into local scope
+		$elements = $_elements;
+	}
+
+	if (!isset($_pos)) {
+		// If there is no current position, set to initial state
+		$_pos = 0;
+	} else {
+		// Otherwise increment and wrap around
+		$_pos++;
+		if ($_pos >= count($elements)) { $_pos = 0; }
+	}
+
+	return $elements[$_pos];
+} // end function freemed_alternate
 
 // function freemed_check_access_for_facility
 function freemed_check_access_for_facility ($facility_number) {
@@ -694,7 +702,7 @@ function freemed_display_arraylist ($var_array, $xref_array="") {
     if (!isset($mainval)) {echo "{[$i]}";continue;} // skip if removed
     $this_active = ${$main."_active"}[$i]; // is this item active?
     if ($this_active)
-      $buffer .= "<TR BGCOLOR=".($bar=freemed_bar_alternate_color($bar)).">";
+      $buffer .= "<tr CLASS=\"".freemed_alternate()."\">";
       
     reset($var_array); if (is_array($xref_array)) reset($xref_array);
     while (list($key,$val)=each($var_array)) { // each variable
@@ -907,7 +915,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $on_this_page++;
     $first = true; // first item in the list has 'view' link
     $buffer .= "
-    <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+    <TR CLASS=\"".freemed_alternate()."\">
     ";
     reset($control_list); // it's already each'd the arrays, 
     if (is_array($xref_list)) 
@@ -985,11 +993,11 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
    } // while each result-row
   else { // no items to display
    $buffer .= "
-    <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
-     <TD COLSPAN=".(count($control_list)+1)." ALIGN=CENTER>
-      <I>No "._($GLOBALS["record_name"])."</I>
-     </TD>
-    </TR>
+    <tr CLASS=\"".freemed_alternate()."\">
+     <td COLSPAN=".(count($control_list)+1)." ALIGN=\"CENTER\">
+      <i>No "._($GLOBALS["record_name"])."</i>
+     </td>
+    </tr>
    ";
   } // if no items to display
    
@@ -1410,21 +1418,17 @@ function freemed_patient_box ($patient_object) {
 	$buffer .= "
     <CENTER>
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
-     <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
+     <TR CLASS=\"reverse\"><TD VALIGN=\"CENTER\" ALIGN=\"LEFT\">
       <A HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
-      ><FONT COLOR=\"#ffffff\" SIZE=\"+1\">".
+       CLASS=\"reverse\"><FONT SIZE=\"+1\">".
        $patient_object->fullName().
       "</FONT></A>
      </TD><TD ALIGN=CENTER VALIGN=CENTER>
-      <FONT COLOR=\"#ffffff\">
       ".( (!empty($patient_object->local_record["ptid"])) ?
           $patient_object->idNumber() : "(no id)" )."
-      </FONT>
      </TD><TD ALIGN=CENTER VALIGN=CENTER>
-      <FONT COLOR=\"#ffffff\">
       &nbsp;
       <!-- ICON BAR NEEDS TO GO HERE ... TODO -->
-      </FONT>
      </TD><TD VALIGN=CENTER ALIGN=RIGHT>
       <FONT COLOR=\"#cccccc\">
        ".$patient_object->age()." old, DOB ".

@@ -37,8 +37,9 @@ switch ($action) {
 	$display_buffer .= "
 	<p/>
 	<form NAME=\"myform\" ACTION=\"$page_name\" METHOD=\"POST\">
-	<input TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\"/>
-	<input TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($return)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
 	<div ALIGN=\"CENTER\">
 	".html_form::form_table(array(
 		_("For") =>
@@ -78,8 +79,8 @@ switch ($action) {
 
 	<p/>
 	<div ALIGN=\"CENTER\">
-	<INPUT TYPE=SUBMIT NAME=\"submit_action\" VALUE=\" "._("Add")." \" />
-	<INPUT TYPE=RESET VALUE=\" "._("Clear")." \"/>
+	<input TYPE=\"SUBMIT\" NAME=\"submit_action\" VALUE=\" "._("Add")." \" />
+	<input TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
 	</div>
 	</form>
 	<p/>
@@ -217,36 +218,37 @@ switch ($action) {
 		";
 		while ($r = $sql->fetch_array($result)) {
 			// Determine who we're looking at by number
-			if ($r[msgpatient] > 0) {
-				$this_patient = CreateObject('FreeMED.Patient', $r[msgpatient]);
+			if ($r['msgpatient'] > 0) {
+				$this_patient = CreateObject('FreeMED.Patient',
+						$r['msgpatient']);
 				$r[from] = "<a HREF=\"manage.php?id=".
-					$r[msgpatient]."\">".
+					$r['msgpatient']."\">".
 					$this_patient->fullName()."</a>";
 			} else {
-				$r[from] = stripslashes($r[msgperson]);
+				$r[from] = stripslashes($r['msgperson']);
 			}
 
 			// Convert from timestamp to time/date
 			$y = $m = $d = $hour = $min = '';
-			$y = substr($r[msgtime], 0, 4);
-			$m = substr($r[msgtime], 4, 2);
-			$d = substr($r[msgtime], 6, 2);
-			$hour = substr($r[msgtime], 8, 2);
-			$min  = substr($r[msgtime], 10, 2);
+			$y = substr($r['msgtime'], 0, 4);
+			$m = substr($r['msgtime'], 4, 2);
+			$d = substr($r['msgtime'], 6, 2);
+			$hour = substr($r['msgtime'], 8, 2);
+			$min  = substr($r['msgtime'], 10, 2);
 
 			// Display message
 			$display_buffer .= "
 			<tr>
 				<td><input TYPE=\"CHECKBOX\" ".
-					"NAME=\"mark[".$r[id]."]\" ".
-					"VALUE=\"".prepare($r[id])."\"/></td>
+					"NAME=\"mark[".$r['id']."]\" ".
+					"VALUE=\"".prepare($r['id'])."\"/></td>
 				<td>$y-$m-$d</td>
 				<td>".fc_get_time_string($hour,$min)."</td>
-				<td>".$r[from]."</td>
-				<td>".$r[msgurgency]." out of 5</td>
+				<td>".$r['from']."</td>
+				<td>".$r['msgurgency']." out of 5</td>
 			</tr>
 			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
-				<i>".prepare($r[msgtext])."</i>
+				<i>".prepare($r['msgtext'])."</i>
 			</td></tr>
 			";
 		}
@@ -294,7 +296,7 @@ switch ($action) {
 
 } // end master switch
 
-// Display template
+//----- Display template
 template_display();
 
 ?>

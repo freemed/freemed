@@ -14,8 +14,8 @@ define ('__FREEMED_PHP__', true);
 
     // these variables you should not touch
 define ('PACKAGENAME', "freemed");				// package name
-define ('CODED_BY', "The Freemed Project");		// coded by tag
-define ('VERSION', "0.5 (Development/CVS)");	// current version
+define ('CODED_BY', "The FreeMED Project");		// coded by tag
+define ('VERSION', "0.6.0");	// current version
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
@@ -41,9 +41,9 @@ define ('BUG_TRACKER', true);   // set bug tracker on or off
 define ('USE_CSS', true);		// do we use cascading style sheets?
 define ('TEMPLATE', "default");	// set template
 
-define ('HOST', "localhost");             // host name for this system
-define ('BASE_URL', "/freemed");		// offset (i.e. http://here/package)
-define ('HTTP', "http");                // http for normal, https for SSL
+define ('HOST', 'localhost');             // host name for this system
+define ('BASE_URL', '/freemed');		// offset (i.e. http://here/package)
+define ('HTTP', 'http');                // http for normal, https for SSL
 define ('SESSION_PROTECTION', true);	// strong session protection?
 $default_language="EN";               // default language
 
@@ -57,8 +57,8 @@ $default_language="EN";               // default language
     // use GPG to encrypt a file, run it twice
     // you should now have /home/nobody/.gpg
 
-define ('USE_GPG', "NO");	// encrypt backups? (YES|NO)
-define ('GPG_PASSPHRASE_LOCATION', PHYSICAL_LOCATION."/lib/gpg_phrase.php");
+define ('USE_GPG', 'NO');	// encrypt backups? (YES|NO)
+define ('GPG_PASSPHRASE_LOCATION', PHYSICAL_LOCATION.'/lib/gpg_phrase.php');
 define ('GPG_HOME', "/home/nobody");
 
     // *************************************
@@ -66,7 +66,7 @@ define ('GPG_HOME', "/home/nobody");
     // ** read incoming_fax_scripts.mk   ***
     // *************************************
 
-$gifhome = PHYSICAL_LOCATION . "/data/fax/incoming";
+$gifhome = PHYSICAL_LOCATION . '/data/fax/incoming';
 
     // *************************************
     // ***** language setting routines *****
@@ -119,13 +119,10 @@ if (strstr($HTTP_USER_AGENT, "Lynx")) {
   // ****************** CHECK FOR PHP MODULES **********************
 
 // if there's no bcmath module, use fake bcadd() function
-if (!function_exists("bcadd"))
-	include_once ("lib/bcadd.php");
+if (!function_exists("bcadd")) include_once ("lib/bcadd.php");
 
   // check for proper template, and load default if not provided
-if (!isset($template)) {
-	$template = TEMPLATE;
-}
+if (!isset($template)) { $template = TEMPLATE; }
 
  // Include library for template
 if (file_exists("lib/template/".$template."/lib.php"))
@@ -137,7 +134,7 @@ else include_once("lib/template/default/lib.php");
 include_once ("lib/error_handler.php");   // internal error handler
 include_once ("/usr/share/phpwebtools/webtools.php"); // webtools toolkit
 
-define ('WEBTOOLS_REQUIRED', "0.3");   // version of phpwebtools required
+define ('WEBTOOLS_REQUIRED', "0.4.0");   // version of phpwebtools required
 
   // version check for webtools
 if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) )
