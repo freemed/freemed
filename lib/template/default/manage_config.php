@@ -92,7 +92,7 @@ $book->add_page("General",
 if (!defined($static_components)) $static_components[] = NULL;
 $book->add_page("Static Components",
 	array ( "static_components" ),
-	"<CENTER>\n".
+	"<center>\n".
 	html_form::form_table(array(
 		__("Appointments") =>
 		html_form::checkbox_widget(
@@ -125,7 +125,7 @@ $book->add_page("Static Components",
 		)
 
 	)).
-	"</CENTER>\n"
+	"</center>\n"
 );
 
 //----- Create module list for modular configuration
@@ -175,9 +175,9 @@ if ($book->is_cancelled()) {
 
 //----- Either display the book or finish up
 if (!$book->is_done()) {
-	$display_buffer .= "<CENTER>\n";
+	$display_buffer .= "<center>\n";
 	$display_buffer .= $book->display();
-	$display_buffer .= "</CENTER>\n";
+	$display_buffer .= "</center>\n";
 } else { // checking if book is done
 	// This is *really* fun. Make the appropriate hashes...
 	foreach ($config_vars AS $__lotta_garbage_var__ => $opt) {
@@ -208,11 +208,11 @@ if (!$book->is_done()) {
 		// Display the page just in case...
 		$display_buffer .= __("Updated configuration");
 		$display_buffer .= "
-			<P>
-			<CENTER>
-			<A HREF=\"manage.php?action=menu&id=$id\"
-			>".__("Manage Patient")."</A>
-			</CENTER>
+			<p/>
+			<div align=\"CENTER\">
+			<a HREF=\"manage.php?action=menu&id=$id\"
+			 class=\"button\">".__("Manage Patient")."</a>
+			</div>
 		";
 	} else {
 		$display_buffer .= __("ERROR")." (query=\"".prepare($query)."\"";
