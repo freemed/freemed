@@ -475,19 +475,18 @@ class MaintenanceModule extends BaseModule {
 		}
 
 		// Map criteria from rpc_field_map
-		unset($c);
 		if (is_array($criteria)) {
 			foreach ($criteria AS $k => $v) {
 				if (!empty($this->rpc_field_map[$k])) {
-					$c[] = "TO_LOWER(".$this->rpc_field_map[$k].") LIKE '%".addslashes(strtolower($v))."%'";
+					$c[] = "LOWER(".$this->rpc_field_map[$k].") LIKE '%".addslashes(strtolower($v))."%'";
 				}
 			}
 		}
 
-		$result = $GLOBALS['sql']->query("SELECT * FROM ".
-			$this->table_name.
+		$query = "SELECT * FROM ".$this->table_name.
 			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
-			" ORDER BY ".$this->order_by);
+			" ORDER BY ".$this->order_by;
+		$result = $GLOBALS['sql']->query($query);
 		if (!$GLOBALS['sql']->results($result)) {
 			return CreateObject('PHP.xmlrpcresp',
 				CreateObject('PHP.xmlrpcval', 'none', 'string')
@@ -499,6 +498,7 @@ class MaintenanceModule extends BaseModule {
 				$this->rpc_field_map,
 				array ( 'id' => 'id' )
 			),
+			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
 			'ORDER BY '.$this->order_by
 		);
 	} // end method picklist
