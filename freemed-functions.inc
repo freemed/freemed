@@ -1749,19 +1749,18 @@ function fm_join_from_array ($cur_array) {
 function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false) {
   global $$varname; // bring in the variable
   $selected = $$varname; // get selected..?
-  echo "\n<SELECT NAME=\"$varname\">\n";   // show start of select tag 
+  $buffer = "";
+  $buffer .= "\n<SELECT NAME=\"".prepare($varname)."\">\n";
   if                   ($step==0)    $step = 1;    // bounds checking
   if ( ($min>$max) AND ($step>=0) )  return false; // bounds checking
   if ( ($min<$max) AND ($step<=0) )  return false; // bounds checking
   for ($i=$min;$i<=$max;$i+=$step) {
-    if (("$selected"=="$i") or
-        ($selected==$i))   { $this_selected = " SELECTED"; }
-     else                  { $this_selected = "";          }
-    if (($i<10) AND ($addz)) { $number = "0".$i; }
-     else                    { $number = $i;     }
-    echo "<OPTION VALUE=\"$number\"$this_selected>$number\n";
+    $buffer .=  "<OPTION VALUE=\"$number\"".
+      ( (("$selected"=="$i") or ($selected==$i)) ? "SELECTED" : "" ).
+      ">".( (($i<10) and ($addz)) ? "0" : "" )."$number\n";
   } // end for loop
-  echo "</SELECT>\n"; // end select tag 
+  $buffer .= "</SELECT>\n"; // end select tag
+  return $buffer;
 } // end function fm_number_select
 
 function fm_phone_assemble ($phonevarname="", $array_index=-1) {

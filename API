@@ -433,10 +433,11 @@ fm_number_select (variable name, minimum, maximum[, step [, add zeros]])
   displays a select box for a number, with the variable being selected...
   with a minimum and maximum. add zeroes, if specified as true, adds
   zeros to the beginning of numbers < 10 (9 becomes 09).
-  * 19991110 -- added steps (so you can do increases of 5, etc
+  * 1999-11-10 -- added steps (so you can do increases of 5, etc
+  * 2000-08-01 -- conversion to buffer style returns, kruft removal
     returns: none
     created: 19991105
-    modified: 19991110
+    modified: 20000801
 
 fm_phone_assemble (name of phone # string[, array value])
   assembles a phone number from its parts, if the optional array value is
