@@ -69,18 +69,18 @@ class Images {
 			fclose($original);
 	
 			// Convert to PBM
-			$command = "/usr/X11R6/bin/convert ".
+			$command = "`which convert` ".
 				freemed::secure_filename($tempname).".jpg ".
 				$tempname.".pbm";
-			print "PBM: $command\n";
+			//print "PBM: $command\n";
 			exec($command);
 			unlink($tempname.".jpg");
 			
 			// Convert to DJVU
-			$command = "/usr/bin/cjb2 ".
+			$command = "`which cjb2` ".
 				$tempname.".pbm ".
 				$tempname.".djvu";
-			print "DJVU: $command\n";
+			//print "DJVU: $command\n";
 			exec($command);
 			unlink($tempname.".pbm");
 	
@@ -89,16 +89,19 @@ class Images {
 		}
 	
 		// Compile into DJVU final file
-		$command = "/usr/bin/djvm -c ".PHYSICAL_LOCATION."/img/store/".
+		$command = "`which djvm` -c ".PHYSICAL_LOCATION."/img/store/".
 			$patient_id.".".$last_record.".djvu ".
 			join (" ", $djvu);
-		print "command = $command\n";
+		//print "command = $command\n";
 		exec($command);
 
+		// Just in cast the prefix is a file, kill that too...
+		@unlink($tempname);
+
 		// Remove temporary DJVU files
-		//foreach ($djvu as $__garbage => $my_file) {
-		//	unlink($djvu.".djvu");
-		//}
+		foreach ($djvu as $__garbage => $my_file) {
+			unlink($djvu.".djvu");
+		}
 
 		// If everything worked, return true
 		return CreateObject('PHP.xmlrpcresp',
