@@ -206,7 +206,8 @@ class Agata {
 	//	Content-type header MIME type
 	//
 	function ServeMergeAsPDF ( ) {
-		Header('Content-type: application/x-pdf');
+		Header('Content-Type: application/x-pdf');
+		Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
 		// Convert using ps2pdf
 		$tmp = tempnam('/tmp', 'fm_agata');
 		$this->ReportToFile($tmp);
