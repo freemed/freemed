@@ -493,8 +493,8 @@ class progressNotes extends freemedEMRModule {
 			$result,
 			$this->page_name,
 			array (
-				"Date"        => "pnotesdt",
-				"Description" => "pnotesdescrip"
+				_("Date")        => "pnotesdt",
+				_("Description") => "pnotesdescrip"
 			), // array
 			array (
 				"",
