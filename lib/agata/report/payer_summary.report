@@ -1,0 +1,53 @@
+;
+;	Payer Summary Report
+;	Agata Report Format
+;	$Id$
+;
+;	jeff@ourexchange.net
+;
+;	##name=Payer Summary,type=merge,by=date##
+;
+;	1	Provider Name
+;	2	Payment Total
+;	3	Charges Total
+;	4	Provider ID Key
+;	5	Month of
+;
+Select:CONCAT(phy.phylname, ', ', phy.phyfname, ' ', phy.phymname) AS 'Provider Name', ROUND(SUM(pay.payrecamt), 2) AS 'Payment Total', ROUND(SUM(proc.proccharges), 2), phy.id AS 'Provider ID', DATE_FORMAT('##BY##', '%m/%Y') AS month_of
+From:physician AS phy, payrec AS pay, procrec AS proc
+Where:MONTH(pay.payrecdt) = MONTH('##BY##') AND YEAR(pay.payrecdt) = YEAR('##BY##') AND pay.payreccat = '0' AND pay.payrecproc = proc.id AND proc.procphysician = phy.id
+Group by:phy.id
+Order by:'Provider Name'
+
+%%: 
+&&: 
+
+@Graph Title:
+@Graph Titlex:
+@Graph Titley:
+@GraphIntroduction:
+
+@MergeSpacing:1
+@MergeTopMargin:20
+@MergeLeftMargin:10
+
+@MergeText:#setfab14 #tab200 Payer Summary
+@MergeText:#setfab10 #tab200 for $var1 (Month of $var5)
+@MergeText:$line3
+@MergeText:
+@MergeText:#setfab10 #tab20 Payer #setfab10 #tab150 Amt Billed #setfab10 #tab210 Amt Paid #tab250
+@MergeText:$fan08
+@MergeText:>>>SUB-SQL
+@MergeText:#tab20 $subfield1 #tab150 $subfield2 #tab210 $subfield3 #tab250 $subfield4 #tab290 $subfield5 #tab440 $subfield6 #tab500 $subfield7
+@MergeText:
+@MergeText:<<<SUB-SQL
+@MergeText:$line1
+@MergeText:$fab10
+@MergeText:#tab25 TOTAL #tab150 $var3 #tab210 $var2
+@MergeText:
+
+; Subquery: List all payer totals
+@SubQuery: SELECT i.insconame, ROUND(SUM(proc.proccharges), 2), ROUND(SUM(pay.payrecamt), 2) FROM insco AS i, payrec AS pay, procrec AS proc WHERE pay.payreccat='0' AND pay.payrecproc = proc.id AND pay.payreclink = i.id GROUP BY i.id
+
+@LabelText:Payer Summary
+

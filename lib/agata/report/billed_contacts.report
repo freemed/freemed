@@ -1,0 +1,28 @@
+;
+;	Billed Contacts
+;	Agata Report Format
+;	$Id$
+;
+;	jeff@ourexchange.net
+;
+;	##name=Billed Contacts,type=standard,by=provider##
+;
+Select:DATE_FORMAT(proc.procdt, '%m/%d/%Y') AS 'Date Billed', CONCAT(pt.ptlname, ', ', pt.ptfname, ' ', pt.ptmname) AS 'Patient Name', DATE_FORMAT(proc.procdt, '%d/%m/%Y') AS 'DOS', icd.icd9code AS 'DSM-IV', cpt.cptcode AS 'CPT', ROUND(proc.procunits,1) AS 'Units', CONCAT('$',ROUND(proc.proccharges,2)) AS 'Fee', IF(proc.procauth>0,auth.authnum,'') AS 'Cert', i.insconame AS 'Insurance'
+From:patient AS pt, icd9 AS icd, cpt AS cpt, procrec AS proc, coverage AS cov, insco AS i, authorizations AS auth
+Where:proc.procphysician='##BY##' AND proc.procpatient=pt.id AND proc.procdiag1=icd.id AND proc.proccpt=cpt.id AND proc.proccurcovid=cov.id AND cov.covinsco=i.id AND (proc.procauth = 0 OR proc.procauth=auth.id)
+Group by:proc.id
+Order by:'Date Billed'
+%%: 
+&&: 
+
+@Graph Title:
+@Graph Titlex:
+@Graph Titley:
+@GraphIntroduction:
+
+@MergeSpacing:1
+@MergeTopMargin:20
+@MergeLeftMargin:10
+
+@LabelText:Billed Contacts
+

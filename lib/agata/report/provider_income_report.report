@@ -1,0 +1,66 @@
+;
+;	Provider Income Report
+;	Agata Report Format
+;	$Id$
+;
+;	jeff@ourexchange.net
+;
+;	##name=Provider Income Report,type=merge,by=date##
+;
+;	1	Provider Name
+;	2	Payment Total
+;	3	Payment Date
+;	4	Provider ID Key
+;	5	Month of
+;
+Select:CONCAT(phy.phylname, ', ', phy.phyfname, ' ', phy.phymname) AS 'Provider Name', ROUND(SUM(pay.payrecamt), 2) AS 'Payment Total', pay.payrecdt AS 'Payment Date', phy.id AS 'Provider ID', DATE_FORMAT('##BY##', '%m/%Y') AS month_of
+From:physician AS phy, payrec AS pay, procrec AS proc
+Where:MONTH(pay.payrecdt) = MONTH('##BY##') AND YEAR(pay.payrecdt) = YEAR('##BY##') AND pay.payreccat = '0' AND pay.payrecproc = proc.id AND proc.procphysician = phy.id
+Group by:phy.id, pay.payrecdt
+Order by:'Provider Name'
+						
+%%: 
+&&: 
+
+@Graph Title:
+@Graph Titlex:
+@Graph Titley:
+@GraphIntroduction:
+
+@MergeSpacing:1
+@MergeTopMargin:20
+@MergeLeftMargin:10
+
+@MergeText:#setfab14 #tab200 Provider Income Report
+@MergeText:#setfab10 #tab200 for $var1 (Month of $var5)
+@MergeText:$line3
+@MergeText:
+@MergeText:#setfab10 #tab20 Posted #setfab10 #tab80 Patient #setfab10 #tab190 DOS #tab250 CPT #tab290 Payment Type #tab370 Note #tab440 Check No #tab500 Amount
+@MergeText:$fan08
+@MergeText:>>>SUB-SQL
+@MergeText:#tab20 $subfield1 #tab80 $subfield2 #tab190 $subfield3 #tab250 $subfield4 #tab290 $subfield5 #tab440 $subfield6 #tab500 $subfield7
+@MergeText:
+@MergeText:<<<SUB-SQL
+@MergeText:
+@MergeText:$line1
+@MergeText:#setfab10 #tab440 Daily Total: #setfab10 #tab500 $var2
+@MergeText:
+@MergeText:$fab10
+@MergeText:>>>SUB-SQL
+@MergeText:#tab20 Insurance Payment Total: #tab180 $subfield1
+@MergeText:<<<SUB-SQL
+@MergeText:>>>SUB-SQL
+@MergeText:#tab20 Patient Payment Total: #tab180 $subfield1
+@MergeText:<<<SUB-SQL
+
+; Subquery 1: List all payments made on this date
+@SubQuery: SELECT DATE_FORMAT(pay.payrecdt, '%Y/%m/%d') AS payment_posted, CONCAT(pat.ptlname, ', ', pat.ptfname, ' ', pat.ptmname) AS patient_name, DATE_FORMAT(proc.procdt, '%Y/%m/%d') AS date_of_service, cptcode AS cpt_code, IF(pay.payreclink < 1,'Patient Payment',CASE proc.proccurcovtp WHEN 1 THEN 'Primary Ins' WHEN 2 THEN 'Secondary Ins' WHEN 3 THEN 'Tertiary Ins' END) AS payment_type, IF(pay.payrectype=1,pay.payrecnum,'') AS check_number, IF(pay.payrecamt<0,CONCAT('($',ROUND(ABS(pay.payrecamt), 2),')'), CONCAT('$',ROUND(pay.payrecamt,2))) AS amount FROM patient AS pat, procrec AS proc, payrec AS pay, cpt AS c WHERE pay.payrecdt = '$var3' AND pay.payreccat = '0' AND pay.payrecproc = proc.id AND proc.procphysician = '$var4' AND proc.procpatient = pat.id AND proc.proccpt = c.id ORDER BY patient_name
+
+; Subquery 2: Repetitive query to display provider insurance total
+@SubQuery:SELECT IF(COUNT(*) = 0,'0.00',ROUND(SUM(pay.payrecamt), 2)) AS insurance_total FROM payrec AS pay, procrec AS proc WHERE proc.procphysician='$var4' AND pay.payrecproc=proc.id AND pay.payreccat='0' AND pay.payreclink > 0
+
+; Subquery 3: Repetitive query to display provider patient total
+@SubQuery:SELECT IF(COUNT(*) = 0,'0.00',ROUND(SUM(pay.payrecamt), 2)) AS patient_total FROM payrec AS pay, procrec AS proc WHERE proc.procphysician='$var4' AND pay.payrecproc=proc.id AND pay.payreccat='0' AND pay.payreclink = 0
+
+@LabelText:Provider Income Report
+
