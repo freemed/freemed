@@ -115,14 +115,11 @@ A.reverse:link { color: #ffffff }
 }
 A.patientbox:visited { color: #ffffff }
 A.patientbox:link { color: #ffffff }
-
-.patientbox_hilite {
+.patientbox:hover {
 	border-width: none;
 	background: #5555ff;
 	color: #00000;
 }
-A.patientbox_hilite:visited { color: #000000 }
-A.patientbox_hilite:link { color: #000000 }
 
 .calendar {
 	border: thin black;

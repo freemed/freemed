@@ -147,7 +147,9 @@ foreach ($static_components AS $garbage => $component) {
 			// Quick null panel
 			$panel[_("Custom Records")] .= "
 				<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-				 CELLPADDING=3 CLASS=\"thinbox\">
+				 CELLPADDING=3 CLASS=\"thinbox\"
+		 		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+				 onMouseOut=\"this.className='thinbox'; return true;\">
 				<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 				 CLASS=\"menubar_items\">
 				<A HREF=\"custom_records.php?patient=$id\" 
