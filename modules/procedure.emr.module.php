@@ -68,6 +68,8 @@ class procedureModule extends freemedEMRModule {
 
 		if (!$been_here) {
 			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
+			global $been_here;
+
 			$procunits = "1.0";        // default value for units
 			$this_patient = new Patient($patient);
 			$procdiag1      = $this_patient->local_record[ptdiag1];
@@ -76,7 +78,6 @@ class procedureModule extends freemedEMRModule {
 			$procdiag4      = $this_patient->local_record[ptdiag4];
 			$procphysician = $this_patient->local_record[ptdoc];
 			$procrefdoc = $this_patient->local_record[ptrefdoc];
-			global $been_here;
 			$been_here = 1;
 		}
 
