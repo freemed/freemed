@@ -138,7 +138,7 @@ switch ($action) {
 
     $display_buffer .= "
     ".freemed_display_selectbox(
-		$sql->query("SELECT * FROM physician WHERE phylname != '' ".
+		$sql->query("SELECT * FROM physician WHERE phylname != '' AND phyref != 'yes' ".
 				"ORDER BY phylname, phyfname"),
 		"#phylname#, #phyfname#", "ciphysician")."
       </td>
