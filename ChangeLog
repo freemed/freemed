@@ -1,11 +1,15 @@
 freemed project changelog
 ($Id$)
 
+* Wed May 09 2001 rufustfirefly
+  Released 0.2.1.2 (Thelonious/CVS)
+
 * Wed May 09 2001 fforest
 	- payment module needed </TABLE> in ledger function
       or netscape display a blank page (djordan)
     - unpaid_procedures module needed semicolons after &nbsp
       or netscape gets wierd  (djordan)
+
 * Fri May 04 2001 fforest
    - add calendar.php menu.
    - main.php use Gear icon for calendar
@@ -18,6 +22,11 @@ freemed project changelog
      view now does the javasvript popup window when
      an appointment is booked.
    
+* Fri May 04 2001 rufustfirefly
+  - added img/clock.gif, updated link in menu.php
+  - module_information.php: added lib/module_calendar.php
+    include to stop breakage
+
 * Thu May 03 2001 fforest
    - added lib/module_calendar
    - added modules/admin.calendar 
@@ -25,6 +34,7 @@ freemed project changelog
    - added modules/view.calendar 
      (still needs work but not as much as admin)
    - calendar code given to us by Chris Lea at Lucid.
+
 * Wed May 02 2001 fforest
   - modules/provider.db  changed all phone _x to 
     phone_vars(phone)

@@ -14,7 +14,7 @@ define ('__FREEMED_PHP__', true);
     // these variables you should not touch
 define ('PACKAGENAME', "freemed");				// package name
 define ('CODED_BY', "The Freemed Project");		// coded by tag
-define ('VERSION', "0.2.1.2 (CVS)");		// current version
+define ('VERSION', "0.2.1.2 (Thelonious/CVS)");		// current version
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
