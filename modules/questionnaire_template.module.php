@@ -1,23 +1,39 @@
 <?php
- // file: questionnaire_template.php3	
+ // $Id$
  // desc: questionnaire template editing engine
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name   = "questionnaire_template.php3";
- $record_name = "Questionnaire Templates";
- $db_name     = "qtemplate";
+if (!defined ("__QUESTIONNAIRE_TEMPLATE_MODULE_PHP__")) {
 
- include ("lib/freemed.php");
- include ("lib/API.php");
+define (__QUESTIONNAIRE_TEMPLATE_MODULE_PHP__, true);
 
- freemed_open_db ($LoginCookie);
- freemed_display_html_top ();
- freemed_display_banner ();
+class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
 
- switch ($action) {
-  // trying to combine add and modify forms for simplicity
-  case "addform": case "modform":
+	var $MODULE_NAME = "Questionnaire Template Maintenance";
+	var $MODULE_VERSION = "0.1";
+
+ 	var $record_name = "Questionnaire Templates";
+	var $table_name     = "qtemplate";
+
+	var $variables = array (
+		"qname",
+		"qdescrip",
+		"qfname",
+		"qvar",
+		"qftype",
+		"qftypefor",
+		"qfmaxlen",
+		"qftext"
+	);
+
+	function questionnaireTemplateMaintenance () {
+		$this->freemedMaintenanceModule();
+	} // end constructor questionnaireTemplateMaintenance
+
+	function form () {
+		reset ($GLOBALS);
+		while(list($k,$v)=each($GLOBALS)) global $$k;
+
    switch ($action) {
      case "addform":
       $go = "add";
@@ -40,7 +56,7 @@
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
-        $query  = "SELECT * FROM $db_name WHERE id='$id'";
+        $query  = "SELECT * FROM $this->table_name WHERE id='".addslashes($id)."'";
         $result = $sql->query ($query);
         $r      = $sql->fetch_array ($result);
         $qname      = $r["qname"     ];
@@ -54,7 +70,6 @@
         break;
       } // end checking if we have been here yet...
    } // end of interior switch
-   freemed_display_box_top ("$this_action "._($record_name));
    $cur_line_count = 0; // zero the current line count (displayed)
    $prev_line_total = count ($qfname); // previous # of lines
      // display the top of the repetitive table
@@ -63,9 +78,10 @@
      $first_insert = true;
    }
    echo "
-    <FORM ACTION=\"$page_name\" METHOD=POST>
+    <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
      <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
+     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
@@ -227,116 +243,35 @@
      <CENTER>
      <SELECT NAME=\"action\">
       <OPTION VALUE=\"$action\">"._("Update")."
-      <OPTION VALUE=\"$go\">$this_action
+      <OPTION VALUE=\"".( ($action=="addform") ? "add" : "mod" ).
+		"\">".( ($action=="addform") ? _("Add") : _("Modify") )."
       <OPTION VALUE=\"view\">Back to Menu
      </SELECT>
      <INPUT TYPE=SUBMIT VALUE=\"go!\">
      </CENTER>
     ";
-    freemed_display_box_bottom ();
-   break;
+	} // end function questionnaireTemplateMaintenance->form()
 
-  case "add":
-   freemed_display_box_top ("$Adding $record_name");
-   echo "
-     <P><CENTER>
-     <$STDFONT_B>"._("Adding")." ...
-   ";
-   $query = "INSERT INTO $db_name VALUES (
-     '".addslashes($qname)."',
-     '".addslashes($qdescrip)."',
-     '".addslashes(fm_join_from_array($qfname)).   "',
-     '".addslashes(fm_join_from_array($qvar)).     "',
-     '".addslashes(fm_join_from_array($qftype)).   "',
-     '".addslashes(fm_join_from_array($qftypefor))."',
-     '".addslashes(fm_join_from_array($qfmaxlen)). "',
-     '".addslashes(fm_join_from_array($qftext)).   "',
-     NULL )";
-   if ($debug) echo " (query = \"$query\") <P>";
-   $result = $sql->query ($query);
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "
-     <$STDFONT_E></CENTER>
-     <P>
-     <CENTER><A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A></CENTER>
-     <BR>
-   ";
-   freemed_display_box_bottom ();
-   break;
+	function view () {
+		global $sql;
+		echo freemed_display_itemlist (
+			$sql->query ("SELECT * FROM $this->table_name ".
+				"ORDER BY qname, qdescrip"),
+			$this->page_name,
+			array (
+				_("Name")			=>	"qname",
+				_("Description")	=>	"qdescrip"
+			),
+			array (
+				"", _("NO DESCRIPTION")
+			)
+		);
+	} // end function questionnaireTemplateMaintenance->view()
 
-  case "mod":
-   freemed_display_box_top (_("Modifying")." "._($record_name));
-   echo "
-     <P><CENTER>
-     <$STDFONT_B>"._("Modifying")." ...
-   ";
+} // end class questionnaireTemplateMaintenance
 
-   // do query
-   $query = "UPDATE $db_name SET
-      qname       = '".addslashes($qname)."',
-      qdescrip    = '".addslashes($qdescrip)."',
-      qfname      = '".addslashes(fm_join_from_array($qfname))."',
-      qvar        = '".addslashes(fm_join_from_array($qvar))."',
-      qftype      = '".addslashes(fm_join_from_array($qftype))."',
-      qftypefor   = '".addslashes(fm_join_from_array($qftypefor))."',
-      qfmaxlen    = '".addslashes(fm_join_from_array($qfmaxlen))."',
-      qftext      = '".addslashes(fm_join_from_array($qftext))."'
-      WHERE id='$id'";
-   $result = $sql->query ($query);
-   if ($debug) echo "query = \"$query\" <BR>";
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "
-    <$STDFONT_E></CENTER>
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER>
-    "; 
-   freemed_display_box_bottom ();
-   break;
+register_module ("questionnaireTemplateMaintenance");
 
-  case "del":
-   freemed_display_box_top (_("Deleting")." "._($record_name));
-   echo "
-    <P><CENTER>
-    <$STDFONT_B>"._("Deleting")." ...
-    ";
-   $query = "DELETE * FROM $db_name WHERE id='".addslashes($id)."'";
-   $result = $sql->query ($query);
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "
-    <$STDFONT_E></CENTER>
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER> 
-   ";
-   freemed_display_box_bottom ();
-   break;
+} // end if not defined
 
-  default: // default action -- menu
-   freemed_display_box_top (_($record_name));
-   echo freemed_display_itemlist (
-     $sql->query ("SELECT * FROM $db_name ORDER BY qname, qdescrip"),
-     $page_name,
-     array (
-       _("Name")	=>	"qname",
-       _("Description")	=>	"qdescrip"
-     ),
-     array (
-       "", _("NO DESCRIPTION")
-     )
-   );
-   freemed_display_box_bottom ();
-   break;
- } // end master switch
-
- freemed_close_db ();
- freemed_display_html_bottom ();
 ?>

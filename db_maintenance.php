@@ -38,10 +38,6 @@ echo "
 	<CENTER>
     <$STDFONT_B>
 
-     <A HREF=\"cpt.php3?$_auth\"
-      >"._("CPT Codes")."</A>
-     <BR>
-
      <A HREF=\"diagnosis_family.php3?$_auth\"
       >"._("Diagnosis Families")."</A>
      <BR>
@@ -58,10 +54,6 @@ echo "
       >"._("ICD Codes")."</A>
      <BR>
 
-     <A HREF=\"insco.php3?$_auth\"
-      >"._("Insurance Companies")."</A>
-     <BR>
-
      <A HREF=\"inscogroup.php3?$_auth\"
       >"._("Insurance Company Groups")."</A>
      <BR>
@@ -71,14 +63,6 @@ echo "
       >"._("Physician Availability Map")."</A>
      <BR>
      -->
-
-     <A HREF=\"facility.php3?$_auth\"
-      >"._("Place of Service")."</A>
-     <BR>
-
-     <A HREF=\"questionnaire_template.php3?$_auth\"
-      >"._("Questionnaire Templates")."</A>
-     <BR>
 
      <A HREF=\"room.php?$_auth\"
       >"._("Rooms")." (<I>"._("Scheduling Locations")."</I>)</A>

@@ -31,7 +31,7 @@
 
  switch ($action) {
   case "del":
-   freemed_display_box_top ("$Deleting Appointment");
+   freemed_display_box_top ("Deleting Appointment");
    echo "\n<$STDFONT_B>"._("Deleting")." ... <$STDFONT_E>\n";
    $query = "DELETE FROM scheduler WHERE id='".addslashes($id)."'";
    $result = $sql->query ($query);
@@ -108,7 +108,7 @@
         <TD><$STDFONT_B COLOR=#cccccc>Location<$STDFONT_E></TD>
         <TD><$STDFONT_B COLOR=#cccccc>Note<$STDFONT_E></TD>
         <TD><$STDFONT_B COLOR=#cccccc>CPT Code<$STDFONT_E></TD> 
-        <TD><$STDFONT_B COLOR=#cccccc>$Action<$STDFONT_E></TD> 
+        <TD><$STDFONT_B COLOR=#cccccc>"._("Action")."<$STDFONT_E></TD> 
        </TR>
       ";
 
@@ -150,7 +150,7 @@
          <TD>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</TD>
          <TD>$calcptcode</TD>
          <TD><A HREF=\"$page_name?$_auth&id=$r[id]&action=del&patient=$patient\"
-             >$lang_DEL</A></TD>
+             >"._("DEL")."</A></TD>
         </TR>
         ";
      } // end loop for all occurances (while)

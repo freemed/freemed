@@ -1,33 +1,45 @@
 freemed project changelog
 ($Id$)
 
+* Thu Jan 18 2001 rufustfirefly
+  - minor problems in manage_appointments.php
+  - moved questionnaire_template.php3 ->
+    modules/questionnaire_template.module.php
+  - finally removed physician.php3 from root of tree (it was moved to
+    modules/provider.module.php a while ago)
+  - moved patient_status.php3 -> modules/patient_status.module.php
+  - moved insco.php3 -> modules/insurance_company.module.php
+    (but might still have some bugs ... haven't checked it yet
+
 * Tue Jan 16 2001 rufustfirefly
   - cpt.php3 -> modules/cpt.module.php
 
 * Tue Jan 16 2001 fforest
   - accidenty applied my freemed.inc. put that back to the original
-  - fix a bug I intrduced in generate_fixedforms that issued a warning if insured
-    did not have coverage. 
-  - add a rebill option to the manage_payments select list. added the code to handle just
-    a rebill.
-  - removed the rebill option from manage_payments paymentform since there is a seperate option now.
-  - commented out the code in manage_payments that resets the procbalcurrent to 0. We don;t ask the user
-    if they want this. we just doit if they select no on the rebill. I'll make in optional in the next round
+  - fix a bug I intrduced in generate_fixedforms that issued a warning if
+    insured did not have coverage. 
+  - add a rebill option to the manage_payments select list. added the code
+    to handle just a rebill.
+  - removed the rebill option from manage_payments paymentform since there
+    is a seperate option now.
+  - commented out the code in manage_payments that resets the procbalcurrent
+    to 0. We don't ask the user if they want this. we just do it if they
+    select no on the rebill. I'll make in optional in the next round
     of updates.
 
 * Wed Jan 09 2001 fforest
   - manage_bills show unpaid proc totals per patient. grand total at end
   - generate_fixed_forms Added some warning messages to spit out 
-      during bill generation.
-  - manage_payments handling of allowed amt (fee adjust) recoded to act more like
-      a deductable but with a twist. Looks better on ledger also.
-      pick up payrectype,source and desc for payments. also allow bill to be 
-      resubmitted from a payment add.
+    during bill generation.
+  - manage_payments handling of allowed amt (fee adjust) recoded to act
+    more like a deductable but with a twist. Looks better on ledger also.
+    pick up payrectype,source and desc for payments. also allow bill to be 
+    resubmitted from a payment add.
   - patient issue warning messages if :
       more than 1 insurer of a type is active.
       more than 1 guar is active.
   - payment_records dont allow Next without selecting a proc
-      ledger is now a control break report with subtotals by procedure.
+    ledger is now a control break report with subtotals by procedure.
   - macros add FEEADJUST 9
 
 * Wed Jan 09 2001 rufustfirefly

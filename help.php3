@@ -1,8 +1,8 @@
 <?php
-  # file: help.php3
-  # note: help module
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL
+ // file: help.php3
+ // note: help module
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL
 
   $_pg_desc = "[HELP]"; // show that we are a help page...
   include ("lib/freemed.php");
@@ -32,7 +32,7 @@ if ((strlen($page_name)<1) AND (strlen($section)<1)) {
 
  // if the helpfile doesn't exist, but is enabled, ERROR! out...
 if (!file_exists($_help_name)) {
-  freemed_display_box_top ("$package_name Help System Error");
+  freemed_display_box_top (PACKAGENAME." Help System Error");
   echo "
     <B>The requested help file was not found on this<BR>
        system. It is possible that it has not been<BR>
@@ -50,7 +50,7 @@ if (!file_exists($_help_name)) {
   DIE("");  // and we bite the big one
 } // if the help file does not exist
 
-freemed_display_box_top ("$package_name Help System");
+freemed_display_box_top (PACKAGENAME." Help System");
 
 echo "
   <$STDFONT_B>
