@@ -2,6 +2,9 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.4  2002/11/03 20:41:14  rufustfirefly
+ // Changes for phpwebtools 0.3 XML-RPC support.
+ //
  // Revision 1.3  2002/08/17 14:59:40  rufustfirefly
  // Updated XML-RPC services to scan lib/xmlrpc/ for additional functions.
  // Removed old kruft.
@@ -21,8 +24,11 @@ define ('SESSION_DISABLE', true);
 include_once ("lib/freemed.php");
 
 //----- Check for XML-RPC support in PHP build
-if (!is_array($_xmlrpcs_listMethods_sig))
+if (!file_exists(WEBTOOLS_ROOT.'/class.xmlrpc_server.php'))
 	die("There is no XML-RPC support in this build of phpwebtools!");
+
+// Create seperate XML-RPC object map
+CreateApplicationMap(array('FreeMED' => 'lib/xmlrpc/class.*.php'));
 
 //----- Create XMLRPC_METHODS
 unset ($XMLRPC_METHODS);
@@ -30,47 +36,42 @@ unset ($XMLRPC_METHODS);
 //----- Register services
 include_once ("lib/xmlrpc_services.php");
 
-//----- Register lib/xmlrpc/ services
-$dir = dir("lib/xmlrpc/");
-while ($script = $dir->read()) {
-	if (preg_match("/\.[Pp][Hh][Pp]/", $script)) {
-		include_once ("lib/xmlrpc/".$script);
+//----- Define freemed authorization
+function freemed_basic_auth () {
+	global $sql;
+	//----- Check for authentication
+	$headers = getallheaders(); $authed = false;
+	if (ereg('Basic', $headers['Authorization'])) {
+		// Parse headers
+		$tmp = $headers['Authorization'];
+		$tmp = ereg_replace(' ', '', $tmp);
+		$tmp = ereg_replace('Basic', '', $tmp);
+		$auth = base64_decode(trim($tmp));
+		list ($user, $pass) = split(':', $auth);
+	
+		// Check for username/password
+		$query = "SELECT username, userpassword FROM user ".
+			"WHERE username='".addslashes($user)."' AND ".
+			"userpassword='".addslashes($pass)."'";
+		$result = $sql->query($query);
+
+		if (@$sql->num_rows($result) == 1) {
+			$authed = true;
+		}
+	} else {
+		// Otherwise return fault for no authorization
+		$authed = false;
 	}
-}
-
-//----- Check for authentication
-$headers = getallheaders(); $authed = false;
-if (ereg('Basic', $headers['Authorization'])) {
-	// Parse headers
-	$tmp = $headers['Authorization'];
-	$tmp = ereg_replace(' ', '', $tmp);
-	$tmp = ereg_replace('Basic', '', $tmp);
-	$auth = base64_decode(trim($tmp));
-	list ($user, $pass) = split(':', $auth);
-
-	// Check for username/password
-	$query = "SELECT username, userpassword FROM user ".
-		"WHERE username='".addslashes($user)."' AND ".
-		"userpassword='".addslashes($pass)."'";
-	$result = $sql->query($query);
-
-	if (@$sql->num_rows($result) == 1) {
-		$authed = true;
-	}
-} else {
-	// Otherwise return fault for no authorization
-	$authed = false;
-}
-
-//----- Return fault for no authorization
-if (!$authed) {
-	$XMLRPC_SERVER = new xmlrpc_server ( $XMLRPC_METHODS, false );
-	$XMLRPC_SERVER->returnFault('auth_error');
-	die();
-}
+	return $authed;
+} // function freemed_basic_auth
 
 //----- Run XML-RPC server
 Header("Content-Type: text/xml");
-$XMLRPC_SERVER = new xmlrpc_server ( $XMLRPC_METHODS );
-
+$XMLRPC_SERVER = CreateObject(
+	'PHP.xmlrpc_server',
+	$XMLRPC_METHODS,
+	true,
+	'freemed_basic_auth'
+);
+	
 ?>
