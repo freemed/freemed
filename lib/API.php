@@ -352,6 +352,31 @@ class freemed {
 		return $this_array["$field"];
 	} // end function freemed::get_link_field
 
+	// Function: freemed::handler_breakpoint
+	//
+	//	Set breakpoint for handlers for a certain function
+	//
+	// Parameters:
+	//
+	//	$name - Name of handler (example: MainMenuNotify)
+	//
+	//	$params - Array of parameters to be passed to the
+	//	associated handlers. None are passed by default.
+	//
+	function handler_breakpoint ( $name, $params = NULL ) {
+		LoadObjectDependency('PHP.module');
+		$handlers = freemed::module_handler($name);
+		if (is_array($handlers)) {
+			foreach ($handlers AS $class => $handler) {
+				if ($params != NULL) {
+					$reply = module_function ($class, $handler, $params);
+				} else {
+					$reply = module_function ($class, $handler);
+				}
+			}
+		}
+	} // end function freemed::handler_breakpoint
+
 	// Function: freemed::itemlist_conditions
 	//
 	//	Creates an SQL "WHERE" clause based on search information
