@@ -48,7 +48,7 @@
 
  $query = "SELECT * FROM procrec
            WHERE ( (procpatient = '$patient') AND
-                   (procbalcurrent > 0) )
+                   (procbalcurrent !='0') )
            ORDER BY procdt";
 
  $result = $sql->query ($query);
@@ -57,14 +57,15 @@
   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
   <TR BGCOLOR=#cccccc>
    <TD>&nbsp;</TD>
-   <TD><B>Date</B></TD>
-   <TD><B>Proc Code</B></TD>
-   <TD><B>Provider</B></TD>
-   <TD ALIGN=RIGHT><B>Charged</B></TD>
-   <TD ALIGN=RIGHT><B>Allowed</B></TD>
-   <TD ALIGN=RIGHT><B>Paid</B></TD>
-   <TD ALIGN=RIGHT><B>Balance</B></TD>
-   <TD ALIGN=RIGHT><B>Billed</B></TD>
+   <TD ALIGN=LEFT><B>Date</B></TD>
+   <TD ALIGN=RIGTH><B>Proc Code</B></TD>
+   <TD ALIGN=LEFT><B>Provider</B></TD>
+   <TD ALIGN=LEFT><B>Charged</B></TD>
+   <TD ALIGN=LEFT><B>Allowed</B></TD>
+   <TD ALIGN=LEFT><B>Paid</B></TD>
+   <TD ALIGN=LEFT><B>Balance</B></TD>
+   <TD ALIGN=LEFT><B>Billed</B></TD>
+   <TD ALIGN=LEFT><B>View</B></TD>
   </TR>
  ";
 
@@ -89,15 +90,16 @@
      ".( ($r[id] == $item) ?
          "CHECKED"        :
          ""                )."></TD>
-    <TD>".fm_date_print ($r[procdt])."</TD>
+    <TD ALIGN=LEFT>".fm_date_print ($r[procdt])."</TD>
     <TD ALIGN=LEFT>".htmlentities($this_cptcode." (".$this_cpt.")")."</TD>
     <TD ALIGN=LEFT>".htmlentities($this_physician->fullName())."</TD>
-    <TD ALIGN=RIGHT>".bcadd ($r[procbalorig], 0, 2)."</TD>
-    <TD ALIGN=RIGHT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
-    <TD ALIGN=RIGHT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
-    <TD ALIGN=RIGHT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
-    <TD ALIGN=RIGHT>".(($r[procbilled]) ? "Yes" : "No")."</TD>
-
+    <TD ALIGN=LEFT>".bcadd ($r[procbalorig], 0, 2)."</TD>
+    <TD ALIGN=LEFT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
+    <TD ALIGN=LEFT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
+    <TD ALIGN=LEFT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
+    <TD ALIGN=LEFT>".(($r[procbilled]) ? "Yes" : "No")."</TD>
+    <TD ALIGN LEFT><A HREF=\"payment_record.php?_ref=$page_name&patient=$patient&byproc=$r[id]\"
+    >Ledger</A>
     </TR>
    ";
  } // end looping for results
@@ -610,13 +612,13 @@
         <SELECT NAME=\"transfer_to\">
          <OPTION VALUE=\"4\">Patient
         ".(
-            ($this_patient->local_record[ptins1] != 0) ?
+            ($this_patient->payer[0]->local_record[payerinsco] != 0) ?
             "<OPTION VALUE=\"0\">1st Insurance\n" : ""
         ).(
-            ($this_patient->local_record[ptins2] != 0) ?
+            ($this_patient->payer[1]->local_record[payerinsco] != 0) ?
             "<OPTION VALUE=\"1\">2nd Insurance\n" : ""
         ).(
-            ($this_patient->local_record[ptins3] != 0) ?
+            ($this_patient->payer[2]->local_record[payerinsco] != 0) ?
             "<OPTION VALUE=\"2\">3rd Insurance\n" : ""
         )."
          <OPTION VALUE=\"3\">Worker's Comp

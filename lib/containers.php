@@ -8,6 +8,24 @@ if (!defined ("__CONTAINERS_PHP__")) {
 
 define (__CONTAINERS_PHP__, true);
 
+// class Payer
+
+class Payer {
+  var $local_record;                // stores basic record
+  var $id;                          // record ID for insurance company
+  var $insconame;                   // name of company
+  var $inscoalias;                  // insurance company alias (for forms)
+  var $modifiers;                   // modifiers array
+
+  function Payer ($payerid = "") {
+    global $database;
+
+    if ($payerid=="") return false;    // error checking
+    $this->local_record = freemed_get_link_rec ($payerid, "payer");
+
+  } // end constructor InsuranceCompany
+
+} // end class InsuranceCompany
 // class InsuranceCompany
 
 class InsuranceCompany {
@@ -44,6 +62,7 @@ class Patient {
   var $is_callin;                   // flag for call ins
   var $insco;                       // array of insurance companies
   var $ptid;			    // local practice ID (chart num)
+  var $payer;                      // array of the patients insurers
 
   function Patient ($patient_number = 0, $is_callin = false) { // constructor
     if ($patient_number<1) return false;   // if the patient number is an error
@@ -60,35 +79,75 @@ class Patient {
      $this->id           = $this->local_record["id"       ];
      
      // do dependency stuff
-     $this->ptreldep     = $this->local_record["ptreldep" ];
-     $this->ptdep        = $this->local_record["ptdep"    ];
+     $this->ptreldep     = 0; 
+     $this->ptdep        = 0; 
+     $guarids = fm_get_active_guarids($patient_number);
+     if (is_array($guarids))
+     {
+         $guarrec = freemed_get_link_rec($guarids[0],"guarantor");
+         if (!$guarrec)
+         {
+             echo "Error getting link rec guarantor in patient class<BR>";
+             DIE("Error in patient class guarantor");
+         }
+
+	 
+	 // not sure about this but we asume only 1 guar is allowed
+         // and take the first one
+         $this->ptreldep     = $guarrec["guarrel"];
+         $this->ptdep        = $guarrec["guarguar"];
+
+     }
+
+     // do payors
+     $this->payer[0] = $this->payer[1] = $this->payer[2] = 0;
+     $this->insco[0] = $this->insco[1] = $this->insco[2] = 0;
+     $payerids = fm_get_active_payerids($patient_number);
+     if (is_array($payerids))
+     {
+         $num = count($payerids);
+         //echo "got $num payors<BR>";
+	 for ($i=0;$i<$num;$i++)
+         {
+	     $payertype = freemed_get_link_field($payerids[$i], "payer", "payertype");
+             if ($payertype=="")
+             {
+                 echo "Error getting link field payertype in patient class<BR>";
+                 DIE("Error in patient class payertype");
+             }
+	     $this->payer[$payertype] = new Payer ($payerids[$i]);
+             $this->insco[$payertype] = new InsuranceCompany ($this->payer[$payertype]->local_record["payerinsco"]);
+             $insname = $this->insco[$payertype]->insconame;
+             //echo "insname $insname";
+         }
+     }
 
      // pull insurance companies
-     $ins      = sql_expand ($this->local_record["ptins"]     );
-     $insno    = sql_expand ($this->local_record["ptinsno"]   );
-     $insgrp   = sql_expand ($this->local_record["ptinsgrp"]  );
-     $insstart = sql_expand ($this->local_record["ptinsstart"]);
-     $insend   = sql_expand ($this->local_record["ptinsend"]  );
+     //$ins      = sql_expand ($this->local_record["ptins"]     );
+     //$insno    = sql_expand ($this->local_record["ptinsno"]   );
+     //$insgrp   = sql_expand ($this->local_record["ptinsgrp"]  );
+     //$insstart = sql_expand ($this->local_record["ptinsstart"]);
+     //$insend   = sql_expand ($this->local_record["ptinsend"]  );
 
      // make sure arrays are passed
-     if (!is_array ($ins)     ) $ins[0]      = $ins;
-     if (!is_array ($insno)   ) $insno[0]    = $insno;
-     if (!is_array ($insgrp)  ) $insgrp[0]   = $insgrp;
-     if (!is_array ($insstart)) $insstart[0] = $insstart;
-     if (!is_array ($insend)  ) $insend[0]   = $insend;
+     //if (!is_array ($ins)     ) $ins[0]      = $ins;
+     //if (!is_array ($insno)   ) $insno[0]    = $insno;
+     //if (!is_array ($insgrp)  ) $insgrp[0]   = $insgrp;
+     //if (!is_array ($insstart)) $insstart[0] = $insstart;
+     //if (!is_array ($insend)  ) $insend[0]   = $insend;
      
      // reset all pulled arrays
-     if (is_array($ins)) {
-       reset ($ins);
-       if (is_array($insno))    reset ($insno);
-       if (is_array($insgrp))   reset ($insgrp);
-       if (is_array($insstart)) reset ($insstart);
-       if (is_array($insend))   reset ($insend);
-       $count = 0;
-       while (list ($k, $v) = each ($ins)) {
-         if ($v>0) $this->insco[$count] = new InsuranceCompany ($v);
-       } // end looping for inscos
-     } // end checking for insurance companies at all  
+     //if (is_array($ins)) {
+     //  reset ($ins);
+     //  if (is_array($insno))    reset ($insno);
+     //  if (is_array($insgrp))   reset ($insgrp);
+     //  if (is_array($insstart)) reset ($insstart);
+     //  if (is_array($insend))   reset ($insend);
+     //  $count = 0;
+     //  while (list ($k, $v) = each ($ins)) {
+     //    if ($v>0) $this->insco[$count] = new InsuranceCompany ($v);
+     //  } // end looping for inscos
+     //} // end checking for insurance companies at all  
 
      // callin set as false
      $this->is_callin    = false;

@@ -251,14 +251,14 @@
      // insco information
      if ($this_patient->ptdep == 0) {
        $this_insco = new InsuranceCompany (
-              $this_patient->local_record["ptins".($bill_request_type+1)]);
-       $insco[number]     = $this_patient->local_record["ptinsno".($bill_request_type+1)];
-       $insco[group]      = $this_patient->local_record["ptinsgrp".($bill_request_type+1)];
+              $this_patient->payer[$bill_request_type]->local_record["payerinsco"]);
+       $insco[number]     = $this_patient->payer[$bill_request_type]->local_record["payerpatientinsno"];
+       $insco[group]     = $this_patient->payer[$bill_request_type]->local_record["payerpatientgrp"];
      } else { // if there *is* a guarantor
        $this_insco = new InsuranceCompany (
-              $guarantor->local_record["ptins".($bill_request_type+1)]);
-       $insco[number]     = $guarantor->local_record["ptinsno".($bill_request_type+1)];
-       $insco[group]      = $guarantor->local_record["ptinsgrp".($bill_request_type+1)];
+              $guarantor->payer[$bill_request_type]->local_record["payerinsco"]);
+       $insco[number]     = $guarantor->payer[$bill_request_type]->local_record["payerpatientinsno"];
+       $insco[group]      = $guarantor->payer[$bill_request_type]->local_record["payerpatientgrp"];
      } // end checking for insco
      
      $insco[name]       = $this_insco->inscoalias;
@@ -341,8 +341,8 @@
        $guaraddr[zip]     = $guarantor->local_record["ptzip"    ];
        $guarphone[full]   = $guarantor->local_record["pthphone" ];
 
-       $insco[number]     = $guarantor->local_record["ptinsno".($bill_request_type+1)];
-       $insco[group]      = $guarantor->local_record["ptinsgrp".($bill_request_type+1)];
+       $insco[number]     = $guarantor->payer[$bill_request_type]->local_record["payerpatientinsno"];
+       $insco[group]      = $guarantor->payer[$bill_request_type]->local_record["payerpatientgrp"];
        // PULL INSCO  HERE IF GUARANTOR !!!!!!!!!!!!!!!!!!!!!
        //       FIIIIIIIIIX MEEEEEEEEEEEE!
      } // end checking for dependant

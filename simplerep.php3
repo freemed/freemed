@@ -579,9 +579,9 @@ DIE ("");
       $ptempl      = $pat->local_record ["ptempl"  ];
       $ptemp1      = $pat->local_record ["ptemp1"  ];
       $ptemp2      = $pat->local_record ["ptemp2"  ];
-      $ptins1      = $pat->local_record ["ptins1"  ];
-      $ptins2      = $pat->local_record ["ptins2"  ];
-      $ptins3      = $pat->local_record ["ptins3"  ];
+      $ptins1      = $pat->payer[0]->local_record["payerinsco"  ];
+      $ptins2      = $pat->payer[1]->local_record["payerinsco"  ];
+      $ptins3      = $pat->payer[2]->local_record["payerinsco"  ];
 
       $_auth   = "_ref=$page_name";
 //

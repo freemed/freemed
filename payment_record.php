@@ -543,10 +543,18 @@
    echo freemed_patient_box ($this_patient)."
     <P>
    ";
-
-   $pay_query  = "SELECT * FROM payrec
+   if (isset($byproc))
+   {
+       $pay_query  = "SELECT * FROM payrec
+                  WHERE payrecpatient='$patient' AND payrecproc='$byproc'
+                  ORDER BY payrecdt";
+   }
+   else
+   {
+       $pay_query  = "SELECT * FROM payrec
                   WHERE payrecpatient='$patient'
                   ORDER BY payrecdt";
+   }
    $pay_result = $sql->query ($pay_query);
    
    if (!$sql->results($pay_result)) {
