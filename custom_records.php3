@@ -168,34 +168,47 @@
      switch ($this_type) { // generate answer by box...
       case "link":
        // there _has_ to be a better way than this...
-       echo "<SELECT NAME=\"answer$i\">\n";
        switch ($prtftypefor[$i]) {
         case "cpt":
         case "cptcodes":
-         freemed_display_cptcodes ($this_answer);
+	 $cpt_q = "SELECT * FROM cpt ORDER BY cptcode, cptnameint";
+	 $cpt_r = fdb_query($cpt_q);
+	 echo freemed_display_selectbox(
+	   $cpt_q, "#cptcode# (#cptnameint#)", "this_answer");
          break;
         case "cptmod":
-         freemed_display_cptmods ($this_answer);
+	 $cptmod_q = "SELECT * FROM cptmod ORDER BY cptmod, cptmoddescrip";
+	 $cptmod_r = fdb_query($cptmod_q);
+	 echo freemed_display_selectbox(
+	   $cptmod_q, "#cptmod# (#cptmoddescrip#)", "this_answer");
          break;
         case "facilities":
         case "facility":
         case "pos":
-         freemed_display_facilities ($this_answer);
+	 $fac_q = "SELECT * FROM facility ORDER BY psrname, psrnote";
+	 $fac_r = fdb_query($fac_q);
+	 echo freemed_display_selectbox(
+	   $fac_r, "#psrname# [#psrnote#]", "this_answer");
          break;
         case "frmlry":
         case "drugs":
-         freemed_display_drugs ($this_answer);
+	 $frm_q = "SELECT * FROM frmlry ORDER BY trdmrkname";
+	 $frm_r = fdb_query($frm_q);
+	 echo freemed_display_selectbox(
+	   $frm_r, "#trdmrkname#", "this_answer");
          break;
         case "doc":
         case "physician":
         case "phy":
-         freemed_display_physicians ($this_answer);
+	 $doc_q = "SELECT * FROM physician ORDER BY phylname, phyfname";
+	 $doc_r = fdb_query($doc_q);
+	 echo freemed_display_selectbox(
+	   $doc_r, "#phylname#, #phyfname#", "this_answer");
          break;
         default:
          echo "\n<B>NOT IMPLEMENTED!</B>\n";
          break;
        } // end inner switch
-       echo "</SELECT>\n";
        break;
       case "multi":
        echo "\nNOT IMPLEMENTED YET!\n";
