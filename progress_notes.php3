@@ -195,12 +195,6 @@
      $pnotesdt   = $r["pnotesdt"];
      
      $patient  = $r["pnotespat"];
-     //   // use link_rec instead of multiple fields 19990910
-     // $patient_rec = freemed_get_link_rec ($patient, "patient");
-     // $ptlname    = $patient_rec["ptlname"];
-     // $ptfname    = $patient_rec["ptfname"];
-     // $ptmname    = $patient_rec["ptmname"];
-     // $ptdob      = $patient_rec["ptdob"  ];
        // use patient class instead of doofy way 19991217
      $this_patient  = new Patient ($patient);
 
@@ -413,16 +407,32 @@
         <BR>
       ";
       for ($i=0;$i<count($pnoteseoc);$i++) {
-        $e_r     = freemed_get_link_rec ($pnoteseoc[$i]+0, "eoc"); 
-        $e_id    = $e_r["id"];
-        $e_desc  = $e_r["eocdescrip"];
-        $e_first = $e_r["eocstartdate"];
-        $e_last  = $e_r["eocdtlastsimilar"];
-        echo "
-         <A HREF=\"episode_of_care.php3?$_auth&patient=$patient&action=manage".
-         "&id=$e_id\"
-         ><$STDFONT_B>$e_desc / $e_first to $e_last<$STDFONT_E></A><BR>
-        ";
+        if ($pnoteseoc[$i] != -1) {
+          $e_r     = freemed_get_link_rec ($pnoteseoc[$i]+0, "eoc"); 
+          $e_id    = $e_r["id"];
+          $e_desc  = $e_r["eocdescrip"];
+          $e_first = $e_r["eocstartdate"];
+          $e_last  = $e_r["eocdtlastsimilar"];
+          echo "
+           <A HREF=\"episode_of_care.php3?$_auth&patient=$patient&".
+  	   "action=manage&id=$e_id\"
+           ><$STDFONT_B>$e_desc / $e_first to $e_last<$STDFONT_E></A><BR>
+          ";
+	} else {
+	  $episodes = fdb_query (
+	    "SELECT * FROM eoc WHERE eocpatient='$patient'" );
+	  while ($epi = fdb_fetch_array ($episodes)) {
+            $e_id    = $epi["id"];
+            $e_desc  = $epi["eocdescrip"];
+            $e_first = $epi["eocstartdate"];
+            $e_last  = $epi["eocdtlastsimilar"];
+            echo "
+             <A HREF=\"episode_of_care.php3?$_auth&patient=$patient&".
+  	     "action=manage&id=$e_id\"
+             ><$STDFONT_B>$e_desc / $e_first to $e_last<$STDFONT_E></A><BR>
+            ";
+	  } // end fetching
+	} // check if not "ALL"
       } // end looping for all EOCs
       echo "
        </CENTER>
