@@ -2100,10 +2100,42 @@ function fm_get_active_payerids ($ptid=0)
             $ins_id[$sub] = $rec["id"];
             $sub++;
         }
+		if ($sub == 0)
+			return 0;
         return $ins_id;
 
 
 } // end get_active_payerids
+
+function fm_get_all_insured_patients()
+{
+        global $database, $sql, $cur_date;
+        $result = 0;
+		$query = "SELECT DISTINCT a.payerpatient,b.ptlname,b.ptfname,b.id FROM payer as a, patient as b WHERE ".
+				"a.payerpatient=b.id AND a.payerstatus='0' AND ".
+				"a.payerstartdt<='$cur_date' AND a.payerenddt>='$cur_date'";
+        $result = $sql->query($query);
+		return $result;
+
+}
+
+function fm_verify_patient_coverage($ptid=0,$coveragetype=0)
+{
+        global $database, $sql, $cur_date;
+        $result = 0;
+		if ($ptid == 0)
+           return $result;
+	
+		// default coveragetype is primary	
+
+        $query = "SELECT id FROM payer WHERE ";
+        $query .= "payerpatient='$ptid' AND payerstatus='0' AND payertype='$coveragetype' ";
+        $query .= "AND payerstartdt<='$cur_date' AND payerenddt>='$cur_date'";
+        $result = $sql->query($query);
+		if (!$result)
+			return 0;
+		return $result;
+}
 
 function fm_get_active_guarids ($ptid=0)
 {
@@ -2125,6 +2157,8 @@ function fm_get_active_guarids ($ptid=0)
             $guar_id[$sub] = $rec["id"];
             $sub++;
         }
+		if ($sub == 0)
+			return 0;
         return $guar_id;
 
 

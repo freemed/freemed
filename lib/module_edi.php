@@ -17,14 +17,30 @@ class freemedEDIModule extends freemedModule {
 	var $CATEGORY_NAME = "Electronic Data Interchange";
 	var $CATEGORY_VERSION = "0.1";
 
-	var $transaction_reference_num;
-	var $current_transaction_set = "0000";
-	var $record_terminator = "~";
-	var $start_envelope;	// this holds the ISA/GC headers
-	var $end_envelope;		// this holds the ISA/GC trailer
-	var $error_buffer;
-	var $edi_buffer;
-	var $transaction_reference_number;
+	// vars related to this edi class
+	var $record_terminator;
+	var $start_envelope; // this holds the ISA/GC headers
+	var $end_envelope;   // this holds the ISA/GC trailer (GS/IEA)
+	var $error_buffer;   // stack error messages
+	var $edi_buffer;     // stack edi output
+	var $fac_row;        // facility we are processing
+	var $bill_request_type;  // primary or secondary payer.
+	var $ptinsno;          // patients ins ID
+	var $ptinsgrp;        // patients grp number
+	var $ptinsnoS;         // when billing secondary
+	var $ptinsgrpS;        // when billing secondary
+	var $sourceid;         // transmission source id
+	var $billing_service;  // some records may need to know this
+	var $interchange_senderid;  // all from your edi clearinghouse
+	var $interchange_recvrid;
+	var $interchange_cntrlnum;
+	var $testorprod;          // sending test data only T or P
+	var $relationship_code;  // picked up in patient and used later in clm is scndry bill.
+	var $CurPatient;
+	var $Guarantor;       // this pats guarantor if there is one.
+	var $Physician;        // this pats doc
+	var $InsuranceCo;   // insco being billed
+	var $InsuranceCoS;  // secondary
 
 	// contructor method
 	function freemedEDIModule () {
@@ -33,10 +49,35 @@ class freemedEDIModule extends freemedModule {
 		$this->freemedModule();
 
 		// form proper transaction reference number
-		$random = rand (1, 99);
-		if ( strlen ( $random ) < 2 ) 
-			$this->transaction_reference_number =
-				"0" . $this->transaction_reference_number;
+		//$random = rand (1, 99);
+		//if ( strlen ( $random ) < 2 ) 
+		//	$this->transaction_reference_number =
+		//		"0" . $this->transaction_reference_number;
+
+		
+		$this->transaction_reference_number = "0";
+		$this->current_transaction_set = "0000";
+		$this->record_terminator = "~";
+		$this->fac_row = 0;
+		$this->CurPatient = 0;
+		$this->Guarantor = 0;
+    	$this->Physician = 0;
+		$this->InsuranceCo = 0;
+		$this->InsuranceCoS = 0;  // secondary
+		$this->ptinsno = 0;
+		$this->ptinsgrp = 0;
+		$this->edi_buffer = "";
+		$this->error_buffer = "";
+		$this->start_envelope = "";
+		$this->end_envelope = "";
+		$this->billing_service = $BILLING_SERVICE;
+		$this->vendorid = $EDI_VENDOR;
+		$this->sourceid = $EDI_SOURCE_NUMBER;
+		$this->interchange_senderid = $EDI_INTERCHANGE_SENDER_ID;
+		$this->interchange_recvrid  = $EDI_INTERCHANGE_RECVR_ID;
+		$this->interchange_cntrlnum = $EDI_INTERCHANGE_CNTLNUM;
+		$this->testorprod = $EDI_TESTORPROD;
+
 
 	} // end function freemedEDIModule
 
@@ -74,6 +115,305 @@ class freemedEDIModule extends freemedModule {
 	// function display
 	// by default, a wrapper for view
 	function display () { $this->view(); }
+
+	// ********************** EDI SPECIFIC ACTIONS *********************
+
+	function StartISAHeader()
+	{
+		
+		if ( (empty($this->vendorid))    OR
+			 (empty($this->sourceid)) OR
+			 (empty($this->interchange_senderid)) OR
+			 (empty($this->interchange_recvrid)) OR
+			 (empty($this->interchange_cntrlnum)) )
+		{
+				$this->Error("EDI Variables have not been set!!");
+				return false;
+		}
+
+		$ten_blanks = "..........";
+		$ten_blanks = str_replace("."," ",$ten_blanks);
+
+		$this->start_envelope = $this->start_envelope."ISA*00*".$ten_blanks."*00*".$ten_blanks;
+		$this->start_envelope = $this->start_envelope."*ZZ*".$this->interchange_senderid;
+		$this->start_envelope = $this->start_envelope."*33*".$this->interchange_recvrid;
+		$this->start_envelope = $this->start_envelope."*".gmdate("ymd")."*";
+		$this->start_envelope = $this->start_envelope.gmdate("Hi")."*";
+		$this->start_envelope = $this->start_envelope."U*03305*".$this->interchange_cntrlnum;
+		$this->start_envelope = $this->start_envelope."*1*".$this->testorprod."*:";
+		$this->start_envelope .= $this->record_terminator;
+
+		
+		// functional group header.
+		
+		$this->start_envelope = $this->start_envelope."GS*HC*";
+		$sourceid = $this->sourceid;
+		$len = strlen($sourceid);
+
+		if ($len < 7)
+		{
+			// zero fill
+			$diff = 7 - $len;
+			$work = "";
+			for ($i=0;$i<$diff;$i++)
+			{
+				$work .= "0";
+			}
+			$sourceid = $sourceid.$work;
+
+		}
+		$this->start_envelope = $this->start_envelope.$sourceid."*";
+		$this->start_envelope = $this->start_envelope.$this->interchange_recvrid."*";
+		$this->start_envelope = $this->start_envelope.gmdate(ymd)."*";
+		$this->start_envelope = $this->start_envelope.gmdate(Hi)."*";
+		// this is the same the transaction seq num. we hard code it assuming
+		// we are not sending more than 1 functional group
+		$this->start_envelope = $this->start_envelope."01*X*003051".$this->record_terminator;
+		
+		
+		return true;
+	}
+
+	function EndISAHeader()
+	{
+		$this->end_envelope = $this->end_envelope."GE*".$this->current_transaction_set."*";
+		$this->end_envelope .= $this->interchange_cntrlnum;
+		$this->end_envelope .= $this->record_terminator;
+
+		// NOTE: again the functional group number is 1. 
+
+		$this->end_envelope = $this->end_envelope."IEA*01*".$this->interchange_cntrlnum;
+		$this->end_envelope .= $this->record_terminator;
+		return true;
+		
+		
+	
+	}
+
+	function EDIOpen()
+	{
+		$ret = $this->StartISAHeader();
+		return $ret;
+
+	}
+
+	function EDIClose()
+	{
+		$ret = $this->EndISAHeader();
+		return $ret;
+
+	}
+
+
+	function StartTransaction()
+	{
+		$random = rand(1,99);
+		$this->Error("Random = $random");
+		
+		if ($this->transaction_reference_number != "00")
+		{
+			//try to ensure no dupes. no guarantees tho
+			while($random == $this->transaction_reference_number)
+			{
+				$random = rand(1,99);
+			}
+		}
+
+		if (strlen($random)<2)
+		{	
+			$this->transaction_reference_number = 
+			"0".$random;
+
+		}
+		else
+		{
+			$this->transaction_reference_number = $random;
+
+		}
+
+		$this->current_transaction_set++;
+		$this->edi_buffer .= "ST*837*".$this->current_transaction_set.$this->record_terminator;
+		$this->edi_buffer .= "BGN*00*";
+		$this->edi_buffer .= $this->transaction_reference_number;
+		$this->edi_buffer .= "*";
+		$this->edi_buffer .= gmdate("ymd");
+		$this->edi_buffer .= "*";
+		$this->edi_buffer .= gmdate("his");
+		$this->edi_buffer .= $this->record_terminator;
+		
+		// this code
+		$this->edi_buffer .= "REF*F1*2BS~";
+
+		$this->edi_buffer .= "REF*VR*";
+		$this->edi_buffer .= strtoupper($this->vendorid); 
+		$this->edi_buffer .= $this->record_terminator;
+		$ret = $this->RecvrSubmitter();
+		return $ret;
+		
+
+	} // end StartTrans
+
+
+	function EndTransaction()
+	{
+		$segcount = "00";
+		$ST_seg = "ST*837*".$this->current_transaction_set.$this->record_terminator;
+		$gotseg = false;
+
+		$edi_records = explode($this->record_terminator,$this->edi_buffer);
+		$edirec_count = count($edi_records);
+		$edirec_count--;  // subtract the last this->record_terminator.
+
+		for ($i=0;$i<$edirec_count;$i++)
+		{
+				if ($gotseg)
+					$segcount++;
+					
+				if ($edi_records[$i] == $ST_seg)
+					$gotseg = true;
+		}
+		$this->edi_buffer = $this->edi_buffer."SE*".$segcount."*";
+		$this->edi_buffer .= $this->current_transaction_set;
+		$this->edi_buffer .= $this->record_terminator;
+		
+
+	} // end of EndTrans
+	
+	function RecvrSubmitter($entity="1")
+	{
+		// entity type 1 = person, 2 = company ( eg. billing service)
+		if ( ($entity < 0) OR ($entity > 2) )
+		{
+			$this->Error("Invalid entity in RecvrSubmitter function!");
+			return false;
+		}
+
+		if (empty($this->sourceid))
+		{
+			$this->Error("Invalid EDI sourceid in RecvrSubmitter function!");
+			return false;
+		}
+
+		$this->edi_buffer .= "NM1*41*";
+		$this->edi_buffer = $this->edi_buffer.$entity."******94*";
+		$this->edi_buffer .= strtoupper($this->sourceid);
+		$this->edi_buffer .= $this->record_terminator;
+		$this->edi_buffer =  $this->edi_buffer."NM1*40*2******94*865".$this->record_terminator;
+		return true;
+		
+	} // end of RecvSubmitter
+
+
+    function PutEDITBufferToFile()
+	{
+		reset ($GLOBALS);
+        while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		$filename = PHYSICAL_LOCATION_BILLS."/bills-".$cur_date.gmdate("Hi").".data";
+		$this->Error("Writing bills to $filename");
+		
+		$fp = fopen($filename,"w");
+
+		if (!$fp)
+		{
+			$this->Error("Error opening $filename");
+			return;
+		}
+
+		$buffer = $this->start_envelope.$this->edi_buffer.$this->end_envelope;
+		$rc = fwrite($fp,$buffer);
+
+		if ($rc <= 0)
+		{
+			$this->Error("Error writing $filename");
+			return;
+		}
+		$this->Error("Wrote bills to $filename");
+		return;
+
+
+	} // end putedibuffertofile
+
+
+	function GetEDIBuffer($stream=false)
+	{
+		if ($stream)
+		{
+			$buffer = $this->start_envelope.$this->edi_buffer.$this->end_envelope;
+			return $buffer;
+		}
+
+		$edi_records = explode($this->record_terminator,$this->edi_buffer);
+		$edirec_count = count($edi_records);
+		$edirec_count--;  // subtract the last this->record_terminator.
+		$this->Error("info - edi rec count = $edirec_count");
+		$buffer = $buffer.$this->start_envelope."<br>";
+		for ($i=0;$i<$edirec_count;$i++)
+		{
+				
+        		$buffer .= "$edi_records[$i]~<br>";
+		}
+
+		$buffer .= $this->end_envelope."<br>";
+
+		return $buffer;
+
+	} // end getedibuffer
+
+
+	function GetEDIErrors()
+	{
+
+		$edi_records = explode($this->record_terminator,$this->error_buffer);
+		$edirec_count = count($edi_records);
+		$edirec_count--;  // subtract the last this->record_terminator.
+		for ($i=0;$i<$edirec_count;$i++)
+		{
+				
+        		$buffer .= "$edi_records[$i]<br>";
+		}
+
+		return $buffer;
+
+	} // end get edierrors
+
+
+	function Error($errormsg)
+	{
+		$this->error_buffer .= $errormsg;
+		$this->error_buffer .= $this->record_terminator;
+
+	} // end Error
+	
+	function CleanChar($data)
+	{
+			$data = stripslashes($data);
+			$data = str_replace("'"," ",$data);
+			$data = str_replace("-"," ",$data);
+			$data = str_replace(";"," ",$data);
+			$data = str_replace("(","",$data);
+			$data = str_replace(")","",$data);
+			$data = str_replace(":"," ",$data);
+			$data = str_replace("."," ",$data);
+			$data = str_replace(","," ",$data);
+			$data = trim($data);
+			$data = strtoupper($data);
+			return $data;
+	} // end cleanchar
+
+	function CleanNumber($data)
+	{
+			$data = stripslashes($data);
+			$data = str_replace(".","",$data);
+			$data = str_replace(",","",$data);
+			$data = str_replace("(","",$data);
+			$data = str_replace(")","",$data);
+			$data = str_replace("-","",$data);
+			$data = str_replace(" ","",$data);
+			$data = trim($data);
+			return $data;
+	} // end cleannumber
+
 
 } // end class freemedEDIModule
 

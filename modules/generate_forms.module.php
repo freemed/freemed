@@ -6,8 +6,6 @@
 if (!defined("__GENERATEFORMS_MODULE_PHP__")) {
 
 define (__GENERATEFORMS_MODULE_PHP__, true);
-//include "lib/calendar-functions.php";
-//include "lib/render_forms.php";
 
 // class GenerateFormsModule extends freemedModule
 class GenerateFormsModule extends freemedBillingModule {
@@ -36,6 +34,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		"ptphone",
 		"ptdiag",
 		"phy",
+		"ref",
 		"insco",
 		"fac",
 		"curdate",
@@ -60,7 +59,11 @@ class GenerateFormsModule extends freemedBillingModule {
 		"itemauthnum",
 		"current_balance",
 		"total_charges",
-		"total_paid"
+		"total_paid",
+        "employment", 
+        "related_employment",
+        "related_auto",
+        "related_other"
 		);
 
 	// contructor method
@@ -142,23 +145,24 @@ class GenerateFormsModule extends freemedBillingModule {
        		{
        			$cur_bal = $bill_tran[procbalcurrent];
           		$proc_id = $bill_tran[id];
-       			$query = "INSERT INTO payrec VALUES (
-           			'".addslashes($cur_date)."',
-              		'0000-00-00',
-               		'".addslashes($processed[$i])."',
-           			'".addslashes($cur_date)."',
-               		'".BILLED."',
-              		'".addslashes($proc_id)."',
-               		'".addslashes($billtype)."',
-              		'0',
-               		'0',
-               		'',
-               		'".addslashes($cur_bal)."',
-           			'Billed',
-               		'unlocked',
-               		NULL
-           			)";
+				$payreccat = BILLED;
+				$query = $sql->insert_query("payrec",
+					array (
+						"payrecdtadd" => $cur_date,
+						"payrecdtmod" => $cur_date,
+						"payrecpatient" => $processed[$i],
+						"payrecdt" => $cur_date,
+						"payreccat" => $payreccat,
+						"payrecproc" => $proc_id,
+						"payrecsource" => $billtype,
+						"payrecamt" => $cur_bal,
+						"payrecdescrip" => "Billed",
+						"payreclock" => "unlocked"
+						)	
+					);
+
            		$pay_result = $sql->query ($query);
+				echo "query $query";
            		if ($pay_result)
                		echo "<$STDFONT_B>$Adding Bill Date to ledger.<$STDFONT_E><BR> \n";
            		else
@@ -270,23 +274,23 @@ class GenerateFormsModule extends freemedBillingModule {
      	";
      	flush ();
 
-     	// make sure patient has prim sec ter or wc insurance
-     	$ins_valid = $this_patient->payer[$bill_request_type]->local_record["payerinsco"];
-     	if ( ($bill_request_type < 4) AND ($ins_valid == 0) )
-     	{
-         	echo "<B>Error - Patient does not have insurance of this type</B><BR>\n";
-         	flush();
-     	}
-
      	// grab current insurance company
      	if ($this_patient->ptdep == 0) 
 		{
        		$this_insco = $this_patient->insco[$bill_request_type];
+     		$ins_valid = $this_patient->payer[$bill_request_type]->local_record["payerinsco"];
      	} 
 		else 
 		{ // if get from guarantor
        		$guarantor = new Patient ($this_patient->ptdep);
        		$this_insco = $guarantor->insco[$bill_request_type];
+     		$ins_valid = $guarantor->payer[$bill_request_type]->local_record["payerinsco"];
+     	}
+     	// make sure patient has prim sec ter or wc insurance
+     	if ( ($bill_request_type < 4) AND ($ins_valid == 0) )
+     	{
+         	echo "<B>Error - Patient does not have insurance of this type</B><BR>\n";
+         	flush();
      	}
 
 
@@ -459,11 +463,22 @@ class GenerateFormsModule extends freemedBillingModule {
      if ($this_patient->ptdep == 0) {
        // if self insured, transfer data to guarantor arrays
        // clear all of the guarantor fields
-       unset ($guarname);
-       unset ($guaraddr);
-       unset ($guardob);
-       unset ($guarsex);
-       unset ($guarphone);
+       $guarname[last] = "";
+       $guarname[first] = "";
+       $guarname[middle] = "";
+       $guardob[full] = "";
+       $guardob[month] = "";
+       $guardob[day] = "";
+       $guardob[year] = "";
+       $guarsex[male] = "";
+       $guarsex[female] = "";
+       $guarsex[trans] = "";
+       $guaraddr[line1] = "";
+       $guaraddr[line2] = "";
+       $guaraddr[city] = "";
+       $guaraddr[state] = "";
+       $guaraddr[zip] = "";
+       $guarphone[full] = "";
      } else {
        // if it is someone else, get *their* information
        $guarname[last]    = $guarantor->local_record["ptlname"];

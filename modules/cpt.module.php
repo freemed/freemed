@@ -132,7 +132,7 @@ class cptMaintenance extends freemedMaintenanceModule {
         ".freemed_display_selectbox (
           $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
   	  "#tosname# #tosdescrip#",
-	  "cpttos[$i]"
+	  "cptdeftos"
 	  )."
       </SELECT>
      </TD>

@@ -568,24 +568,24 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $payrecdt = fm_date_assemble("payrecdt");
                 }
                 echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
-                $query = "INSERT INTO payrec VALUES (
-                         '$cur_date',
-                         '',
-                         '".addslashes($patient).      "',
-                         '".addslashes($payrecdt).	   "',
-                         '".addslashes($payreccat).    "',
-                         '".addslashes($payrecproc).   "',
-                         '".addslashes($payrecsource). "',
-                         '".addslashes($payreclink).   "',
-                         '".addslashes($payrectype).   "',
-                         '".addslashes($payrecnum).    "',
-                         '".addslashes($payrecamt).    "',
-                         '".addslashes($payrecdescrip)."',
-                         'unlocked',
-                         NULL )";
+				$query = $sql->insert_query($this->table_name,
+					array(
+						"payrecdtadd" => $cur_date,
+						"payrecdtmod" => $cur_date,
+						"payrecpatient" => $patient,
+						"payrecdt",
+						"payreccat",
+						"payrecproc",
+						"payrecsource",
+						"payreclink",
+						"payrectype",
+						"payrecnum",
+						"payrecamt",
+						"payrecdescrip",
+						"payreclock" => "unlocked"
+						));
 
                 if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
-
                 $result = $sql->query($query);
             	if ($result) 
                 { 

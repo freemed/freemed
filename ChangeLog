@@ -1,6 +1,24 @@
 freemed project changelog
 ($Id$)
 
+* Sat Feb 17 2001 fforest
+	Added a new patient_coverage module to eliminate the need for the patient
+        code to have to handle it.
+	patient copied patient.php to old/patient.php. removed all 
+        payer/gurantor code from patient.
+    edi module. added a lot of code /lib/module_edi to get 
+      ready for creating the new highmark edi module. this should be
+      common code.
+    cpt module. fixed bug where cptdeftos was not being captured.
+    generate_forms module. fixed a efw bugs due to globals. changed
+        the query INSERT's to sql->insert_qeury. fixed bug in guarantor
+        coverage checking. due to global problems some unset's need changing
+        to $var = "";
+    payment module. change INSERT to insert_query.
+	API tighten up return code handling in get_active_guarids and payerids.
+       added 2 new functions for the coverage module. get_all_insured_patients
+       and verify_patient_coverage. 
+    
 * Wed Feb 14 2001 fforest
 	add lib/modules_billing.php
         modules/place_of_service.module (new place of service table maint)
