@@ -258,10 +258,15 @@
      // check for guarantor information
      if ($this_patient->local_record[ptdep] == 0) {
        // if self insured, transfer data to guarantor arrays
-       $guarname      = $ptname;  // assign name information
-       $guaraddr      = $ptaddr;  // assign address information
-       $guardob       = $ptdob;   // assign date of birth info
-       $guarsex       = $ptsex;   // assign gender information
+       //$guarname      = $ptname;  // assign name information
+       //$guaraddr      = $ptaddr;  // assign address information
+       //$guardob       = $ptdob;   // assign date of birth info
+       //$guarsex       = $ptsex;   // assign gender information
+       // clear all of the guarantor fields
+       unset ($guarname);
+       unset ($guaraddr);
+       unset ($guardob);
+       unset ($guarsex);
      } else {
        // if it is someone else, get *their* information
        $guarantor = new Patient ($this_patient->local_record[ptdep]);
