@@ -50,6 +50,7 @@ class AgataMerge extends AgataCore
     
     $Is_SubSQL = false;
 
+    $fan06 = "font/Arial findfont 6 scalefont setfont\n";
     $fan08 = "font/Arial findfont 8 scalefont setfont\n";
     $fan10 = "font/Arial findfont 10 scalefont setfont\n";
     $fan12 = "font/Arial findfont 12 scalefont setfont\n";
@@ -57,30 +58,35 @@ class AgataMerge extends AgataCore
     $fan16 = "font/Arial findfont 16 scalefont setfont\n";
     $fan18 = "font/Arial findfont 18 scalefont setfont\n";
 
+    $fab08 = "font/Arial-bold findfont 8 scalefont setfont\n";
     $fab10 = "font/Arial-bold findfont 10 scalefont setfont\n";
     $fab12 = "font/Arial-bold findfont 12 scalefont setfont\n";
     $fab14 = "font/Arial-bold findfont 14 scalefont setfont\n";
     $fab16 = "font/Arial-bold findfont 16 scalefont setfont\n";
     $fab18 = "font/Arial-bold findfont 18 scalefont setfont\n";
 
+    $ftn08  = "font/Times findfont 8 scalefont setfont\n";
     $ftn10  = "font/Times findfont 10 scalefont setfont\n";
     $ftn12  = "font/Times findfont 12 scalefont setfont\n";
     $ftn14  = "font/Times findfont 14 scalefont setfont\n";
     $ftn16  = "font/Times findfont 16 scalefont setfont\n";
     $ftn18  = "font/Times findfont 18 scalefont setfont\n";
 
+    $ftb08  = "font/Times-bold findfont 8 scalefont setfont\n";
     $ftb10  = "font/Times-bold findfont 10 scalefont setfont\n";
     $ftb12  = "font/Times-bold findfont 12 scalefont setfont\n";
     $ftb14  = "font/Times-bold findfont 14 scalefont setfont\n";
     $ftb16  = "font/Times-bold findfont 16 scalefont setfont\n";
     $ftb18  = "font/Times-bold findfont 18 scalefont setfont\n";
 
+    $fcn08  = "font/Courier findfont 8 scalefont setfont\n";
     $fcn10  = "font/Courier findfont 10 scalefont setfont\n";
     $fcn12  = "font/Courier findfont 12 scalefont setfont\n";
     $fcn14  = "font/Courier findfont 14 scalefont setfont\n";
     $fcn16  = "font/Courier findfont 16 scalefont setfont\n";
     $fcn18  = "font/Courier findfont 18 scalefont setfont\n";
 
+    $fcb08  = "font/Courier-bold findfont 8 scalefont setfont\n";
     $fcb10  = "font/Courier-bold findfont 10 scalefont setfont\n";
     $fcb12  = "font/Courier-bold findfont 12 scalefont setfont\n";
     $fcb14  = "font/Courier-bold findfont 14 scalefont setfont\n";
@@ -408,6 +414,7 @@ class AgataMerge extends AgataCore
   function FormatRewriteCallback ( $format ) {
     // Do a basic lookup for font strings
     $font_lookup = array (
+    'fan06' => "/Arial findfont 6 scalefont setfont\n",
     'fan08' => "/Arial findfont 8 scalefont setfont\n",
     'fan10' => "/Arial findfont 10 scalefont setfont\n",
     'fan12' => "/Arial findfont 12 scalefont setfont\n",
@@ -415,30 +422,35 @@ class AgataMerge extends AgataCore
     'fan16' => "/Arial findfont 16 scalefont setfont\n",
     'fan18' => "/Arial findfont 18 scalefont setfont\n",
 
+    'fab08' => "/Arial-bold findfont 8 scalefont setfont\n",
     'fab10' => "/Arial-bold findfont 10 scalefont setfont\n",
     'fab12' => "/Arial-bold findfont 12 scalefont setfont\n",
     'fab14' => "/Arial-bold findfont 14 scalefont setfont\n",
     'fab16' => "/Arial-bold findfont 16 scalefont setfont\n",
     'fab18' => "/Arial-bold findfont 18 scalefont setfont\n",
 
+    'ftn08'  => "/Times findfont 8 scalefont setfont\n",
     'ftn10'  => "/Times findfont 10 scalefont setfont\n",
     'ftn12'  => "/Times findfont 12 scalefont setfont\n",
     'ftn14'  => "/Times findfont 14 scalefont setfont\n",
     'ftn16'  => "/Times findfont 16 scalefont setfont\n",
     'ftn18'  => "/Times findfont 18 scalefont setfont\n",
 
+    'ftb08'  => "/Times-bold findfont 8 scalefont setfont\n",
     'ftb10'  => "/Times-bold findfont 10 scalefont setfont\n",
     'ftb12'  => "/Times-bold findfont 12 scalefont setfont\n",
     'ftb14'  => "/Times-bold findfont 14 scalefont setfont\n",
     'ftb16'  => "/Times-bold findfont 16 scalefont setfont\n",
     'ftb18'  => "/Times-bold findfont 18 scalefont setfont\n",
 
+    'fcn08'  => "/Courier findfont 8 scalefont setfont\n",
     'fcn10'  => "/Courier findfont 10 scalefont setfont\n",
     'fcn12'  => "/Courier findfont 12 scalefont setfont\n",
     'fcn14'  => "/Courier findfont 14 scalefont setfont\n",
     'fcn16'  => "/Courier findfont 16 scalefont setfont\n",
     'fcn18'  => "/Courier findfont 18 scalefont setfont\n",
 
+    'fcb08'  => "/Courier-bold findfont 8 scalefont setfont\n",
     'fcb10'  => "/Courier-bold findfont 10 scalefont setfont\n",
     'fcb12'  => "/Courier-bold findfont 12 scalefont setfont\n",
     'fcb14'  => "/Courier-bold findfont 14 scalefont setfont\n",
