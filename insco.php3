@@ -4,11 +4,12 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   # lic : GPL, v2
 
-  $page_name="insco.php3";
-  $db_name  ="insco";
+  $page_name   = "insco.php3";
+  $record_name = "Insurance Company";
+  $db_name     = "insco";
 
-  include "global.var.inc";
-  include "freemed-functions.inc"; // API functions
+  include ("global.var.inc");
+  include ("freemed-functions.inc");
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top();
@@ -16,7 +17,7 @@
 
 if ($action=="addform") {
   
-  freemed_display_box_top ("Add Insurance Company", $page_name);
+  freemed_display_box_top ("$Add $record_name", $page_name);
   echo "
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -116,11 +117,11 @@ if ($action=="addform") {
 
 } elseif ($action=="add") {
 
-  freemed_display_box_top("Adding Insurance Company", $page_name);
+  freemed_display_box_top("$Adding $record_name", $page_name);
 
   echo "
     <P>
-    <$STDFONT_B>Adding . . . 
+    <$STDFONT_B>$Adding . . . 
   ";
 
   $inscodtadd = $cur_date; // set date added to current
@@ -135,16 +136,17 @@ if ($action=="addform") {
     "'".addslashes($inscoaddr2)."',         ".
     "'".addslashes($inscocity)."',          ".
     "'".addslashes($inscostate)."',         ".
-    "'$inscozip',       ".
+    "'".addslashes($inscozip)."',           ".
     "'".fm_phone_assemble("inscophone")."', ".
     "'".fm_phone_assemble("inscofax")."',   ".
     "'".addslashes($inscocontact)."',       ".
     "'".addslashes($inscoid)."',            ".
     "'".addslashes($inscowebsite)."',       ".
     "'".addslashes($inscoemail)."',         ".
-    "'$inscogroup',     ".
-    "'$inscotype',      ".
-    "'$inscoassign',    ".
+    "'".addslashes($inscogroup)."',         ".
+    "'".addslashes($inscotype)."',          ".
+    "'".addslashes($inscoassign)."',        ".
+    "'".addslashes(fm_join_from_array($inscomod))."', ".
     " NULL ) ";
 
   $result = fdb_query($query);
@@ -223,6 +225,7 @@ if ($action=="addform") {
   $inscogroup   = $r["inscogroup"  ];
   $inscotype    = $r["inscotype"   ];
   $inscoassign  = $r["inscoassign" ];
+  $inscomod     = $r["inscomod"    ];
   $id           = $r["id"          ];
 
   echo "
@@ -307,7 +310,13 @@ if ($action=="addform") {
      MAXLENGTH=12>
     <BR>
 
-    <BR>
+    <$STDFONT_B>Modifiers : <$STDFONT_E>
+  ";
+  freemed_multiple_choice ("SELECT * FROM $database.insmod
+    ORDER BY insmoddesc", "insmoddesc", "inscomod",
+    $insmod, false);
+  echo "
+    <P>
     <CENTER>
     <INPUT TYPE=SUBMIT VALUE=\" Update \">
     <INPUT TYPE=RESET  VALUE=\"Clear\">
@@ -350,7 +359,8 @@ if ($action=="addform") {
     "inscoemail   ='$inscoemail',   ".
     "inscogroup   ='$inscogroup',   ".
     "inscotype    ='$inscotype',    ".
-    "inscoassign  ='$inscoassign'   ". 
+    "inscoassign  ='$inscoassign',  ".
+    "inscomod     ='".addslashes(fm_join_from_array($inscomod))."'  ". 
     "WHERE id='$id'";
 
   $result = fdb_query($query);

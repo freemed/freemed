@@ -73,6 +73,8 @@ switch ($action) { // master action switch
     $procamtpaid    = $this_data["procamtpaid"   ];
     $procbilled     = $this_data["procbilled"    ];
     $procauth       = $this_data["procauth"      ];
+    $procrefdoc     = $this_data["procrefdoc"    ];
+    $procrefdt      = $this_data["procrefdt"     ];
     break; // end of modform (inner)
   } // inner action switch
   freemed_display_box_top ("$this_action $record_name");
@@ -268,6 +270,26 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
+      <$STDFONT_B>Referring Provider : <$STDFONT_E>
+     </TD><TD ALIGN=LEFT>
+  ";
+  freemed_display_physicians ($procrefdoc, "yes");
+  echo "
+     </TD>
+    </TR>
+
+    <TR>
+     <TD ALIGN=RIGHT>
+      <$STDFONT_B>Date of Last Visit : <$STDFONT_E>
+     </TD><TD ALIGN=LEFT>
+  ";
+  fm_date_entry ("procrefdt");
+  echo "
+     </TD>
+    </TR>
+
+    <TR>
+     <TD ALIGN=RIGHT>
       <$STDFONT_B>Comment : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"$proccomment\"
@@ -340,6 +362,14 @@ switch ($action) { // master action switch
        fm_prep($proccomment)."\">
     <INPUT TYPE=HIDDEN NAME=\"procauth\" VALUE=\"".
        fm_prep($procauth)."\">
+    <INPUT TYPE=HIDDEN NAME=\"procrefdoc\" VALUE=\"".
+       fm_prep($procrefdoc)."\">
+    <INPUT TYPE=HIDDEN NAME=\"procrefdt_y\" VALUE=\"".
+       fm_prep($procrefdt_y)."\">
+    <INPUT TYPE=HIDDEN NAME=\"procrefdt_m\" VALUE=\"".
+       fm_prep($procrefdt_m)."\">
+    <INPUT TYPE=HIDDEN NAME=\"procrefdt_d\" VALUE=\"".
+       fm_prep($procrefdt_d)."\">
 
     <!-- calculate charges and allow change here -->
   ";

@@ -57,6 +57,10 @@
       >$Insurance_Company_Groups</A>
      <BR>
 
+     <A HREF=\"insurance_modifiers.php3?$_auth&action=view\"
+      >Insurance Company Modifiers</A>
+     <BR>
+
      <A HREF=\"internal_service_type.php3?$_auth&action=view\"
       >Internal Service Type</A>
      <BR>

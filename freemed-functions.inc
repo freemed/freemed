@@ -922,7 +922,7 @@ function freemed_display_physicians ($param="", $intext="")
   ";
   $query = "SELECT * FROM $database.physician ORDER BY ".
      "phylname, phyfname".
-     ( ($intext != "") ? "WHERE phyref='$intext'" : "" );
+     ( ($intext != "") ? " WHERE phyref='$intext'" : "" );
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 

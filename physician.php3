@@ -5,7 +5,9 @@
   # translation: max k <amk@span.ch>
   # lic : GPL, v2
 
-  $page_name="physician.php3"; // for help info, later
+  $page_name   ="physician.php3"; // for help info, later
+  $record_name ="Provider";
+  $db_name     ="physician";
 
   include "global.var.inc";
   include "freemed-functions.inc"; // API functions
@@ -348,7 +350,7 @@ if ($action=="addform") {
       <TD>".fm_prep($i_r["intservtype"])."</TD>
       <TD>
        <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
-        SIZE=10 MAXLENGTH=9 VALUE=\"".$phychargemap[$i_id]."\">
+        SIZE=15 MAXLENGTH=30 VALUE=\"".$phychargemap[$i_id]."\">
       </TD>
      </TR>
     ";
@@ -396,7 +398,7 @@ if ($action=="addform") {
   $physsn    = $physsn1.$physsn2.$physsn3;
 
     // actual query/insert
-  $query = "INSERT INTO $database.physician VALUES ( ".
+  $query = "INSERT INTO $database.$db_name VALUES ( ".
     "'$phylname',  '$phyfname',    '$phytitle',   ". 
     "'$phymname',  '$phypracname', '$phyaddr1a',  ". 
     "'$phyaddr2a', '$phycitya',    '$phystatea',     '$phyzipa',    ". 
@@ -472,7 +474,7 @@ if ($action=="addform") {
     DIE("");
   }
 
-  $r = freemed_get_link_rec ($id, "physician");
+  $r = freemed_get_link_rec ($id, $db_name);
 
   $phylname    = $r["phylname"   ];
   $phyfname    = $r["phyfname"   ];
@@ -868,7 +870,7 @@ if ($action=="addform") {
       <TD>".fm_prep($i_r["inscogroup"])."</TD>
       <TD>
        <INPUT TYPE=TEXT NAME=\"phyidmap$brackets\"
-        SIZE=10 MAXLENGTH=9 VALUE=\"".$phyidmap[$i_id]."\">
+        SIZE=15 MAXLENGTH=30 VALUE=\"".$phyidmap[$i_id]."\">
       </TD>
      </TR>
     ";
@@ -902,8 +904,8 @@ if ($action=="addform") {
   freemed_display_box_top ("$Modifying_Physician", $page_name);
 
   echo "
-    <BR><BR>
-    <$STDFONT_B>$Modifying . . . 
+    <P>
+    <$STDFONT_B>$Modifying . . . <$STDFONT_E> 
   ";
 
   // reassemble phone #s
@@ -917,7 +919,7 @@ if ($action=="addform") {
   // reassemble ssn #
   $physsn    = $physsn1.$physsn2.$physsn3;
 
-  $query = "UPDATE $database.physician SET ".
+  $query = "UPDATE $database.$db_name SET ".
     "phylname   ='$phylname',    ".
     "phyfname   ='$phyfname',    ".
     "phytitle   ='$phytitle',    ". 
@@ -970,22 +972,28 @@ if ($action=="addform") {
 
   if ($result) {
     echo "
-      <B>$Done.</B><$STDFONT_E>
+      <B>$Done.</B>
     ";
   } else {
     echo ("<B>$ERROR ($result)</B>\n"); 
   }
 
+  echo "
+   <P>
+   <CENTER>
+    <A HREF=\"$page_name?$_auth\"
+    ><$STDFONT_B>Return to $record_name Menu<$STDFONT_E></A>
+   </CENTER>
+   <P>
+  ";
+
   freemed_display_box_bottom ();
-
-  freemed_display_bottom_links ("$Physician", $page_name, $_ref);
-
 
 } elseif ($action=="del") {
 
   freemed_display_box_top ("$Deleting_Physician", $page_name, $_ref);
 
-  $result = fdb_query("DELETE FROM $database.physician
+  $result = fdb_query("DELETE FROM $database.$db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -1005,8 +1013,6 @@ if ($action=="addform") {
   ";
 
   freemed_display_box_bottom ();
-
-  freemed_display_bottom_links ("$Physician", $page_name, $_ref);
 
 } elseif ($action=="show") {
 
@@ -1049,7 +1055,7 @@ if ($action=="addform") {
     DIE("");
   }
 
-  $r = freemed_get_link_rec ($id, "physician");
+  $r = freemed_get_link_rec ($id, $db_name);
 
   $phylname    = $r["phylname"   ];
   $phyfname    = $r["phyfname"   ];
@@ -1312,11 +1318,9 @@ if ($action=="addform") {
 
   freemed_display_box_bottom ();
 
-  freemed_display_bottom_links ("$Physician", $page_name);
-
 } else { // view is now the default
 
-  $query = "SELECT * FROM $database.physician ".
+  $query = "SELECT * FROM $database.$db_name ".
     "ORDER BY phylname, phyfname";
 
   $result = fdb_query($query);
@@ -1440,23 +1444,7 @@ if ($action=="addform") {
 
     freemed_display_actionbar($page_name); // bottom action bar
     freemed_display_box_bottom ();
-    freemed_display_bottom_links ("$Physicians", $page_name, $_ref);
 
-    //if ((strlen($_ref)<5) OR ($_ref=="main.php3")) {
-    //  echo "
-    //    <BR><BR>
-    //    <CENTER><A HREF=\"main.php3?$_auth\"
-    //     >$Return_to_the_Main_Menu</A>
-    //    </CENTER>
-    //  ";
-    //} else {
-    //  echo "
-    //    <BR><BR>
-    //    <CENTER><A HREF=\"$_ref?$_auth\"
-    //     >$Return_to_Previous_Menu</A>
-    //    </CENTER>
-    //  ";
-    //} // page footer
   } else {
     echo "\n<B>$No_physicians_found_with_that_criteria.</B>\n";
   }

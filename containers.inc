@@ -15,6 +15,7 @@ class InsuranceCompany {
   var $local_record;                // stores basic record
   var $id;                          // record ID for insurance company
   var $insconame;                   // name of company
+  var $modifiers;                   // modifiers array
 
   function InsuranceCompany ($insco = 0) {
     global $database;
@@ -22,6 +23,8 @@ class InsuranceCompany {
     if ($insco==0) return false;    // error checking
     $this->local_record = freemed_get_link_rec ($insco, "insco");
     $this->insconame    = $this->local_record["insconame"];
+    $this->modifiers    = fm_split_into_array (
+                          $this->local_record["inscomod"]);
   } // end constructor InsuranceCompany
 
 } // end class InsuranceCompany

@@ -5,10 +5,12 @@
   # small mods by max k <amk@span.ch>
   # lic : GPL, v2
 
-  $page_name="facility.php3"; // for help info, later
+  $page_name  ="facility.php3";
   $record_name="Facility (POS)";
-  include "global.var.inc";
-  include "freemed-functions.inc"; // basic functions
+  $db_name    ="facility";
+
+  include ("global.var.inc");
+  include ("freemed-functions.inc");
 
   freemed_open_db ($LoginCookie);
   freemed_display_html_top ();
@@ -25,47 +27,48 @@ if ($action=="addform") {
   }
   echo "
     <P>
-    <FORM ACTION=\"$page_name\">
+    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\"> 
+    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
 
-    <$STDFONT_B>$Facility_Name<$STDFONT_E>
+    <$STDFONT_B>$Facility_Name : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrname SIZE=20 MAXLENGTH=25
      VALUE=\"$psrname\">
     <BR>
 
-    <$STDFONT_B>$Address_Line_1<$STDFONT_E>
+    <$STDFONT_B>$Address_Line_1 : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psraddr1 SIZE=20 MAXLENGTH=25
      VALUE=\"$psraddr1\">
     <BR>
-    <$STDFONT_B>$Address_Line_2<$STDFONT_E>
+    <$STDFONT_B>$Address_Line_2 : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psraddr2 SIZE=20 MAXLENGTH=25
      VALUE=\"$psraddr2\">
     <BR>
 
-    <$STDFONT_B>$City<$STDFONT_E>
+    <$STDFONT_B>$City : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrcity SIZE=10 MAXLENGTH=15
      VALUE=\"$psrcity\">
     <BR>
-    <$STDFONT_B>$State<$STDFONT_E>
+    <$STDFONT_B>$State : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrstate SIZE=4 MAXLENGTH=3
      VALUE=\"$psrstate\">
    
-     <$STDFONT_B>$Zip<$STDFONT_E>
+     <$STDFONT_B>$Zip : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrzip SIZE=11 MAXLENGTH=10
      VALUE=\"$psrzip\">
     <BR>
 
-     <$STDFONT_B>$Country<$STDFONT_E>
+     <$STDFONT_B>$Country : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrcountry SIZE=20 MAXLENGTH=50
      VALUE=\"$psrcountry\">
     <BR>
 
-    <$STDFONT_B>$Description_Note<$STDFONT_E>
+    <$STDFONT_B>$Description_Note : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrnote SIZE=20 MAXLENGTH=40
      VALUE=\"$psrnote\">
     <BR>
 
-    <$STDFONT_B>$Default_Physician<$STDFONT_E>
+    <$STDFONT_B>$Default_Physician : <$STDFONT_E>
     <SELECT NAME=\"psrdefphy\">
   ";
 
@@ -79,31 +82,22 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("psrphone");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=psrphone1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrphone1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=psrphone2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrphone2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=psrphone3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$psrphone3\"> -->
     <BR>
     <$STDFONT_B>$Fax_Number : <$STDFONT_E>
   ";
   fm_phone_entry ("psrfax");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=psrfax1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrfax1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=psrfax2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrfax2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=psrfax3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$psrfax3\"> -->
     <BR>
 
-    <$STDFONT_B>$Email_Address<$STDFONT_E>
-    <INPUT TYPE=TEXT NAME=psremail SIZE=25 MAXLENGTH=25
+    <$STDFONT_B>$Email_Address : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=\"psremail\" SIZE=25 MAXLENGTH=25
      VALUE=\"$psremail\">
-    <BR><BR>
+    <P>
+
+    <$STDFONT_B>Employer Identification Number : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=\"psrein\" SIZE=10 MAXLENGTH=9
+     VALUE=\"".fm_prep($psrein)."\">
+    <P>
 
     <CENTER>
     <INPUT TYPE=SUBMIT VALUE=\" $Add \">
@@ -146,7 +140,7 @@ if ($action=="addform") {
     "'$psrdefphy', ".
     "'".fm_phone_assemble("psrphone")."',     ".
     "'".fm_phone_assemble("psrfax").  "',     ".
-    "'$psremail',     ".
+    "'$psremail',  '".addslashes($psrein)."', ".
     " NULL ) ";
 
   $result = fdb_query($query);
@@ -210,14 +204,7 @@ if ($action=="addform") {
     DIE("");
   }
 
-  $result = fdb_query("SELECT * FROM $database.facility ".
-    "WHERE ( id = '$id' )");
-
-  if ($debug) {
-    echo " <B>RESULT</B> = [$result]<BR><BR> ";
-  }
-
-  $r = fdb_fetch_array($result); // dump into array r[]
+  $r = freemed_get_link_rec ($id, "facility");
 
   $psrname      = $r["psrname"     ];
   $psraddr1     = $r["psraddr1"    ];
@@ -233,60 +220,50 @@ if ($action=="addform") {
   $psrfax       = $r["psrfax"      ];
   $psremail     = $r["psremail"    ];
 
-  /*
-  // 19990924 -- split phone & fax
-  $psrphone1 = substr ($psrphone, 0, 3);
-  $psrphone2 = substr ($psrphone, 3, 3);
-  $psrphone3 = substr ($psrphone, 6, 4);
-  $psrfax1   = substr ($psrfax  , 0, 3);
-  $psrfax2   = substr ($psrfax  , 3, 3);
-  $psrfax3   = substr ($psrfax  , 6, 4); 
-  */
-
   echo "
     <P>
     <FORM ACTION=\"$page_name\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
 
-    <$STDFONT_B>$Date_of_Entry :<$STDFONT_E>
+    <$STDFONT_B>$Date_of_Entry : <$STDFONT_E>
     $psrdateentry<BR>
 
-    <$STDFONT_B>$Facility_Name<$STDFONT_E>
+    <$STDFONT_B>$Facility_Name : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrname SIZE=20 MAXLENGTH=25
      VALUE=\"$psrname\">
     <BR>
 
-    <$STDFONT_B>$Address_Line_1<$STDFONT_E>
+    <$STDFONT_B>$Address_Line_1 : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psraddr1 SIZE=20 MAXLENGTH=25
      VALUE=\"$psraddr1\">
     <BR>
-    <$STDFONT_B>$Address_Line_2<$STDFONT_E>
+    <$STDFONT_B>$Address_Line_2 : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psraddr2 SIZE=20 MAXLENGTH=25
      VALUE=\"$psraddr2\">
     <BR>
 
-    <$STDFONT_B>$City<$STDFONT_E>
+    <$STDFONT_B>$City : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrcity SIZE=10 MAXLENGTH=15
      VALUE=\"$psrcity\">
     <BR>
-    <$STDFONT_B>$State<$STDFONT_E>
+    <$STDFONT_B>$State : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrstate SIZE=4 MAXLENGTH=3
      VALUE=\"$psrstate\">
-    <$STDFONT_B>$Zip<$STDFONT_E>
+    <$STDFONT_B>$Zip : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrzip SIZE=11 MAXLENGTH=10
      VALUE=\"$psrzip\">
     <BR>
-    <$STDFONT_B>$Country<$STDFONT_E>
+    <$STDFONT_B>$Country : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrcountry SIZE=20 MAXLENGTH=50
      VALUE=\"$psrcountry\">
     <BR>
-    <$STDFONT_B>$Description_Note<$STDFONT_E>
+    <$STDFONT_B>$Description_Note : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psrnote SIZE=20 MAXLENGTH=40
      VALUE=\"$psrnote\">
     <BR>
 
-    <$STDFONT_B>$Default_Physician<$STDFONT_E>
+    <$STDFONT_B>$Default_Physician : <$STDFONT_E>
     <SELECT NAME=\"psrdefphy\">
   ";
 
@@ -296,35 +273,25 @@ if ($action=="addform") {
     </SELECT>
     <BR>
 
-    <$STDFONT_B>$Phone_Number :<$STDFONT_E>
+    <$STDFONT_B>$Phone_Number : <$STDFONT_E>
   ";
   fm_phone_entry ("psrphone");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=psrphone1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrphone1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=psrphone2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrphone2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=psrphone3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$psrphone3\"> -->
     <BR>
-    <$STDFONT_B>$Fax_Number :<$STDFONT_E>
+    <$STDFONT_B>$Fax_Number : <$STDFONT_E>
   ";
   fm_phone_entry ("psrfax");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=psrfax1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrfax1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=psrfax2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$psrfax2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=psrfax3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$psrfax3\"> -->
     <BR>
 
-    <$STDFONT_B>$Email_Address<$STDFONT_E>
+    <$STDFONT_B>$Email_Address : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=psremail SIZE=25 MAXLENGTH=25
      VALUE=\"$psremail\">
     <P>
+
+    <$STDFONT_B>Employer Identification Number : <$STDFONT_E>
+    <INPUT TYPE=TEXT NAME=\"psrein\" SIZE=10 MAXLENGTH=9
+     VALUE=\"".fm_prep($r[psrein])."\">
 
     <BR>
     <CENTER>
@@ -352,29 +319,20 @@ if ($action=="addform") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  // 19990924 -- recombin split phone #s
-  //$psrphone = $psrphone1 . $psrphone2 . $psrphone3;
-  //$psrfax   = $psrfax1   . $psrfax2   . $psrfax3;
-
-  // 19990924 -- addslashes to descrip, name, addresses...
-  $psrname  = addslashes ($psrname);
-  $psraddr1 = addslashes ($psraddr1);
-  $psraddr2 = addslashes ($psraddr2);
-  $psrnote  = addslashes ($psrnote);
-
-  $query = "UPDATE $database.facility SET ".
-    "psrname     ='$psrname',     ".
-    "psraddr1    ='$psraddr1',    ".
-    "psraddr2    ='$psraddr2',    ".
-    "psrcity     ='$psrcity',     ".
-    "psrstate    ='$psrstate',    ".
-    "psrzip      ='$psrzip',      ".
-    "psrcountry  ='$psrcountry',  ".
-    "psrnote     ='$psrnote',     ".
-    "psrdefphy   ='$psrdefphy',   ".
+  $query = "UPDATE $database.$db_name SET ".
+    "psrname     ='".addslashes($psrname).         "', ".
+    "psraddr1    ='".addslashes($psraddr1).        "', ".
+    "psraddr2    ='".addslashes($psraddr2).        "', ".
+    "psrcity     ='".addslashes($psrcity).         "', ".
+    "psrstate    ='".addslashes($psrstate).        "', ".
+    "psrzip      ='".addslashes($psrzip).          "', ".
+    "psrcountry  ='".addslashes($psrcountry).      "', ".
+    "psrnote     ='".addslashes($psrnote).         "', ".
+    "psrdefphy   ='".addslashes($psrdefphy).       "', ".
     "psrphone    ='".fm_phone_assemble("psrphone")."', ".
-    "psrfax      ='".fm_phone_assemble("psrfax")."',   ".
-    "psremail    ='$psremail'     ". 
+    "psrfax      ='".fm_phone_assemble("psrfax").  "', ".
+    "psremail    ='".addslashes($psremail).        "', ". 
+    "psrein      ='".addslashes($psrein).          "'  ".
     "WHERE id='$id'";
 
   $result = fdb_query($query);
@@ -471,19 +429,13 @@ if ($action=="addform") {
 
     while ($r = fdb_fetch_array($result)) {
 
-      $psrname    = $r["psrname"];
-      $psrnote    = $r["psrnote"];
+      $psrname    = $r[psrname];
+      $psrnote    = ( (!empty($r[psrnote])) ? $r[psrnote] : "&nbsp;" );
       $id         = $r["id"];
-
-      if (empty($psrnote)) $psrnote = "&nbsp;";
 
       $_alternate = freemed_bar_alternate_color ($_alternate);
 
-      if ($debug) {
-        $id_mod = " [$id]"; // if debug, insert ID #
-      } else {
-        $id_mod = ""; // else, let's avoid it...
-      } // end debug clause (like sanity clause)
+      $id_mod = ( ($debug) ? " [$id]" : "" );
 
       echo "
         <TR BGCOLOR=$_alternate>

@@ -476,6 +476,8 @@ if ($action=="cfgform") {
     procbilled             INT UNSIGNED,
     procbillable           INT UNSIGNED,
     procauth               INT UNSIGNED,
+    procrefdoc             INT UNSIGNED,
+    procrefdt              DATE,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
@@ -495,7 +497,8 @@ if ($action=="cfgform") {
     psrdefphy    INT UNSIGNED,
     psrphone     VARCHAR(16),
     psrfax       VARCHAR(16),
-    psremail     CHAR(25),
+    psremail     VARCHAR(25),
+    psrein       VARCHAR(9),
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id) )");
   if ($result) echo "<LI>facility db \n"; 
@@ -565,6 +568,7 @@ if ($action=="cfgform") {
     inscogroup   INT UNSIGNED,
     inscotype    INT UNSIGNED,
     inscoassign  INT UNSIGNED,
+    inscomod     TEXT,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
@@ -1003,6 +1007,7 @@ if ($action=="cfgform") {
   if (freemed_import_stock_data("fixedform"))
     echo "<I>(fixed forms data)</I> \n";
 
+  // episode of care
   $result = fdb_query ("CREATE TABLE $database.eoc (
      eocpatient                INT UNSIGNED,
      eocdescrip                VARCHAR(100),
@@ -1054,6 +1059,7 @@ if ($action=="cfgform") {
      );");
   if ($result) echo "<LI>episode of care db \n";
 
+  // old reports
   $result = fdb_query ("CREATE TABLE $database.oldreports (
      oldrep_timestamp          DATE,
      oldrep_label              VARCHAR(50),
@@ -1081,6 +1087,7 @@ if ($action=="cfgform") {
      );");
   if ($result) echo "<LI>old reports db \n";
 
+  // patient image database
   $result = fdb_query ("CREATE TABLE $database.patimg (
      pipatient                 INT UNSIGNED,
      pilink                    INT UNSIGNED,
@@ -1092,6 +1099,7 @@ if ($action=="cfgform") {
      );");
   if ($result) echo "<LI>patient images db \n";
 
+  // authorizations
   $result = fdb_query ("CREATE TABLE $database.authorizations (
      authdtadd                 DATE,
      authdtmod                 DATE,
@@ -1109,8 +1117,19 @@ if ($action=="cfgform") {
      authcomment               VARCHAR(100),
      id                        INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
-     );";
+     );");
   if ($result) echo "<LI>authorizations db \n";
+
+  // insurance modifiers table
+  $result = fdb_query ("CREATE TABLE $database.insmod (
+     insmod                    VARCHAR(15),
+     insmoddesc                VARCHAR(50),
+     id                        INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );");
+  if ($result) echo "<LI>insurance modifiers db \n";
+  if (freemed_import_stock_data("insmod"))
+    echo "<I>(insurance modifiers data)</I> \n";
 
   echo "</UL><B>done</B><$STDFONT_E><BR>\n";
   

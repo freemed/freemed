@@ -215,6 +215,14 @@
      $insco[state]      = $this_insco->local_record[inscostate];
      $insco[zip]        = $this_insco->local_record[inscozip];
 
+     // pull all insco mods
+     unset ($inscomod);  // clear the array first
+     for ($mod_loop=0;$mod_loop<count($this_insco->modifiers);$mod_loop++) {
+       $mod_key = freemed_get_link_field ($this_insco->modifiers,
+                  "insmod", "insmod");
+       $inscomod[$mod_key] = $this_form[ffcheckchar];
+     } // end of modifiers loop
+
      // pull physician # for insco
      $insco[phyid]      = ( ($this_insco->local_record[inscogroup] < 1) ?
                              "" :
@@ -351,6 +359,18 @@
                       $cur_cpt[cptdeftos] :
                       $tos_stack[$cur_insco] );
        $this_auth = freemed_get_link_rec ($p[procauth], "authorizations");
+
+       if ($p[procrefdoc]>0) {
+         $ref_physician  = new Physician ($p[procrefdoc]);
+         $ref[physician] = $ref_physician->fullName();
+         $ref[date]      = $p[procrefdt] ;
+         $ref[y]         = substr ($ref[date], 0, 4);
+         $ref[m]         = substr ($ref[date], 5, 2);
+         $ref[d]         = substr ($ref[date], 8, 2);
+         $ref[sy]        = substr ($ref[date], 2, 2);
+         $ref[mmddyy]    = $ref[m]."-".$ref[d]."-".$ref[sy];
+         $ref[mmddyyyy]  = $ref[m]."-".$ref[d]."-".$ref[y]; 
+       }
 
        $itemdate    [$number_of_charges] = $p[procdt];
        $itemdate_m  [$number_of_charges] = substr($p[procdt], 5, 2);
