@@ -299,7 +299,7 @@
    case "mod":
      freemed_display_box_top ("$Modifying $record_name", $_ref, $_ref);
      echo "
-       <B><$STDFONT_B>$Modifying . . . <$STDFONT_E></B>
+       <B><CENTER><$STDFONT_B>$Modifying . . . <$STDFONT_E></B>
      ";
      //$pnotesdt = $pnotesdt_y ."-". $pnotesdt_m ."-". $pnotesdt_d;
      $pnotesdt  = fm_date_assemble("pnotesdt");
@@ -327,8 +327,8 @@
        WHERE id='$id'";
      $result = fdb_query ($query);
      if ($debug==1) echo "query = \"$query\", result = \"$result\"<BR>\n";
-     if ($result) echo "<B><$STDFONT_B>$Done.<$STDFONT_E></B>\n";
-      else echo "<B><$STDFONT_B>$FAILED<$STDFONT_E></B>\n";
+     if ($result) echo "<B><$STDFONT_B>$Done.<$STDFONT_E></CENTER></B>\n";
+      else echo "<B><$STDFONT_B>$FAILED<$STDFONT_E></CENTER></B>\n";
      echo "
        <P>
        <CENTER>
@@ -366,13 +366,13 @@
      $pnotesdt_formatted = substr ($pnotesdt, 0, 4). "-".
                            substr ($pnotesdt, 5, 2). "-".
                            substr ($pnotesdt, 8, 2);
-     $pnotes_S = htmlentities ( $r ["pnotes_S"] );
-     $pnotes_O = htmlentities ( $r ["pnotes_O"] );
-     $pnotes_A = htmlentities ( $r ["pnotes_A"] );
-     $pnotes_P = htmlentities ( $r ["pnotes_P"] );
-     $pnotes_I = htmlentities ( $r ["pnotes_I"] );
-     $pnotes_E = htmlentities ( $r ["pnotes_E"] );
-     $pnotes_R = htmlentities ( $r ["pnotes_R"] );
+     $pnotes_S = stripslashes ( htmlentities ( $r ["pnotes_S"] ) );
+     $pnotes_O = stripslashes ( htmlentities ( $r ["pnotes_O"] ) );
+     $pnotes_A = stripslashes ( htmlentities ( $r ["pnotes_A"] ) );
+     $pnotes_P = stripslashes ( htmlentities ( $r ["pnotes_P"] ) );
+     $pnotes_I = stripslashes ( htmlentities ( $r ["pnotes_I"] ) );
+     $pnotes_E = stripslashes ( htmlentities ( $r ["pnotes_E"] ) );
+     $pnotes_R = stripslashes ( htmlentities ( $r ["pnotes_R"] ) );
      $pnotespat = $r ["pnotespat"];
      $pnoteseoc = fm_split_into_array ($r["pnoteseoc"]);
 
