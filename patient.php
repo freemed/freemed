@@ -33,9 +33,9 @@ switch ($action) {
     // addform and modform not used due to "notebook"
    $book = new notebook ( array ("action", "id", "been_here"),
      NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH, 3);
-   $book->set_submit_name (_("OK"));
    switch ($action) {
      case "add": case "addform":
+	$book->set_submit_name (_("Add"));
       if ( !$book->been_here() ) {
         // $ins_disp_inactive=false; // TODO! not implemented
       } // end of checking empty been_here
@@ -43,6 +43,7 @@ switch ($action) {
       break; // end internal add
 
      case "mod": case "modform":
+	$book->set_submit_name (_("Modify"));
       if ( !$book->been_here() ) {
       $result = $sql->query("SELECT * FROM patient ".
          "WHERE ( id = '".prepare($id)."' )");
@@ -99,8 +100,8 @@ switch ($action) {
 			_("City").", "._("State").", "._("Zip") =>
 				"<INPUT TYPE=TEXT NAME=\"ptcity\" SIZE=10 MAXLENGTH=45 ".
 				"VALUE=\"".prepare($ptcity)."\">\n".
-				"<INPUT TYPE=TEXT NAME=\"ptstate\" SIZE=3 MAXLENGTH=2 ".
-				"VALUE=\"".prepare($ptstate)."\">\n". 
+				html_form::state_pulldown("ptstate").
+
 				"<INPUT TYPE=TEXT NAME=\"ptzip\" SIZE=10 MAXLENGTH=10 ".
 				"VALUE=\"".prepare($ptzip)."\">",
 
@@ -297,7 +298,7 @@ switch ($action) {
     <TR><TD ALIGN=RIGHT>
     "._("Other Physician 4")." :
     </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptphy4")."
+  ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy4")."
     </TD></TR>
     " : "").
 
@@ -329,6 +330,20 @@ switch ($action) {
      $this_patient = new Patient ($id);
      $display_buffer .= freemed_patient_box ($this_patient);
    }
+	// Handle cancel action
+	if ($book->is_cancelled()) {
+		switch($action) {
+			case "add": case "addform":
+			global $patient;
+			Header("Location: patient.php");
+			die(""); break;
+
+			case "mod": case "modform":
+			global $patient;
+			Header("Location: manage.php?id=".urlencode($id));
+			die(""); break;
+		}
+	}
 
    if (!( $book->is_done() )) {
      $display_buffer .= "<CENTER>\n".$book->display()."</CENTER>\n";
@@ -516,6 +531,10 @@ switch ($action) {
 		$display_buffer .= "<BR>\n";
 		
 	 }
+
+	// Set automatic page refresh to management screen
+	$refresh = "manage.php?id=".( $action=="addform" ? $pid : $id );
+
      $display_buffer .= "
       <P>
       <A HREF=\"manage.php?id=".( $action=="addform" ? $pid : $id )."\">
