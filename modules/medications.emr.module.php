@@ -40,6 +40,7 @@ class MedicationsModule extends EMRModule {
 			__("Dosage") => 'mdosage'
 		);
 		$this->summary_options = SUMMARY_DELETE;
+		$this->summary_order_by = 'mdrug';
 
 		// call parent constructor
 		$this->EMRModule();
