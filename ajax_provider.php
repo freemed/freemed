@@ -15,6 +15,7 @@ function lookup ( $module, $parameter, $patient = NULL ) {
 	include_once(resolve_module($module));
 	if (!resolve_module($module)) { return false; }
 	$m = new $module ();
+	$table = $m->table_name;
 	$hash = $m->widget_hash;
 	$limit = 10;		// logical limit to how many we can display
 	
