@@ -132,6 +132,7 @@ class ClaimLog {
 			"c.covinsco = i.id AND ".
 			"p.procpatient = pt.id AND ".
 			"p.proccurcovid = c.id AND ".
+			"p.procbalcurrent > 0 AND ".
 			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
 			"ORDER BY patient_name, balance DESC";
 		//print "<hr/>query = \"$query\"<hr/>\n";
