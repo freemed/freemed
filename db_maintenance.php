@@ -1,5 +1,6 @@
 <?php
  // $Id$
+ // $Author$
  // note: database maintenance modules
  // lic : GPL
 
@@ -61,7 +62,39 @@ $display_buffer .= "
 
 // module loader
 $module_list = new module_list (PACKAGENAME, ".db.module.php");
-$display_buffer .= $module_list->generate_list($category, 0, $module_template);
+$all_modules = $module_list->generate_array(
+	$category,
+	0,
+	"#name#",
+	$module_template
+);
+
+// Check for number of modules
+if (is_array($all_modules)) {
+	$size = count($all_modules);
+	if ($size > 10) {
+		$display_buffer .= "<TABLE BORDER=\"0\" CELLSPACING=\"0\" ".
+			"CELLPADDING=\"2\">\n";
+		$display_buffer .= "<TR><TD VALIGN=\"TOP\">\n";
+		$count = 0;
+		foreach ($all_modules AS $k => $v) {
+			if ($count==ceil($size/2)) {
+				$display_buffer .= "</TD><TD VALIGN=\"TOP\">\n";
+			}
+			$display_buffer .= $v;
+			$count++;
+		}
+		$display_buffer .= "</TD></TR>\n";
+		$display_buffer .= "</TABLE>\n";
+	} else {
+		// Default, plain listing behavior
+		$display_buffer .= $module_list->generate_list(
+			$category,
+			0,
+			$module_template
+		);
+	}
+}
 
 // create menu bar
 if (!is_array($menu_bar)) $menu_bar[] = NULL;
