@@ -66,23 +66,11 @@
      $this_patient = new Patient ($patient);
 
      echo "
+       <P>
        <$HEADERFONT_B>$Patient: <A HREF=\"manage.php3?$_auth&id=$patient\"
          >".$this_patient->fullName(true)."</A><$HEADERFONT_E>
        <P>
 
-       <!-- prototype for patient management bar -->
-
-       <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-        <B>|</B>
-        <A HREF=\"$page_name?$_auth&patient=$patient\"
-         ><$STDFONT_B>$View_Modify $record_name<$STDFONT_E></A>
-       </CENTER>
-
-       <!-- end prototype -->
-
-       <P>
        <FORM ACTION=\"$page_name\" METHOD=POST>
        <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"$next_action\">
        <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"$id\">
@@ -226,7 +214,7 @@
      freemed_display_box_top ("$Adding $record_name", $page_name, 
        "manage.php3?id=$patient");
      echo "
-       <$STDFONT_B><B>$Adding . . . </B>
+       <CENTER><$STDFONT_B><B>$Adding . . . </B>
      ";
 
        // actual addition
@@ -249,9 +237,9 @@
      $result = fdb_query ($query);
      if ($debug1) echo "(query = '$query') ";
      if ($result)
-       echo " <B> $Done. </B><$STDFONT_E>\n";
+       echo " <B> $Done. </B><$STDFONT_E></CENTER>\n";
      else
-       echo " <B> <FONT COLOR=#ff0000>$ERROR</FONT> </B><$STDFONT_E>\n";
+       echo " <B> <FONT COLOR=#ff0000>$ERROR</FONT> </B><$STDFONT_E></CENTER>\n";
      echo "
        <BR><BR>
        <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
@@ -317,7 +305,7 @@
          <P>
          <CENTER>
           <$STDFONT_B>
-          <B>$Patient</B> :
+          $Patient :
            <A HREF=\"manage.php3?$_auth&id=$patient\"
             >".$this_patient->fullName(true)."</A>
           <$STDFONT_E>
@@ -349,24 +337,27 @@
      echo "
        <P>
        <CENTER>
-       <B>$Patient</B> : <A HREF=\"manage.php3?$_auth&id=$patient\"
+       <$STDFONT_B>
+       $Patient : <A HREF=\"manage.php3?$_auth&id=$patient\"
          >".$this_patient->fullName(true)."</A>
+       <$STDFONT_E>
        </CENTER>
        <P>
-       <$HEADERFONT_B>$Existing $record_name<$HEADERFONT_E>
+     ";
+     freemed_display_actionbar();
+     echo "
        <P>
-       <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2
-        ALIGN=CENTER VALIGN=MIDDLE>
-       <TR BGCOLOR=#aaaaaa>
-        <TD><B>Dates</B></TD>
-        <TD><B>&nbsp;</B></TD>
-        <TD><B>$Action</B></TD>
+       <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
+        ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
+       <TR>
+        <TD><$STDFONT_B COLOR=\"#ffffff\">Dates<$STDFONT_E></TD>
+        <TD><$STDFONT_B COLOR=\"#ffffff\">&nbsp;<$STDFONT_E></TD>
+        <TD><$STDFONT_B COLOR=\"#ffffff\">$Action<$STDFONT_E></TD>
        </TR>
      ";
-     $_alternate = freemed_bar_alternate_color ();
      while ($r = fdb_fetch_array ($result)) {
        $id         = $r[id];
-       $_alternate = freemed_bar_alternate_color ();
+       $_alternate = freemed_bar_alternate_color ($_alternate);
        echo "
         <TR BGCOLOR=$_alternate>
          <TD>
@@ -395,7 +386,11 @@
        ";
      } // end master while fetch loop
      echo "
-       </TABLE>
+       </TABLE>";
+     
+     freemed_display_actionbar();
+     
+     echo "
        <P>
        <CENTER>
         <A HREF=\"manage.php3?$_auth&id=$patient\"
