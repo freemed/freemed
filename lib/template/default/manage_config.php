@@ -330,6 +330,18 @@ if (!$book->is_done()) {
 	$display_buffer .= $book->display();
 	$display_buffer .= "</center>\n";
 } else { // checking if book is done
+	// Grab the old options, so we don't lose them
+	$old = unserialize($this_user->local_record['usermanageopt']);
+	foreach ($old as $k => $v) {
+		switch ($k) {
+			case 'modular_components':
+			case 'static_components':
+				break;
+
+			default:
+				$mc[$k] = $v;
+		}
+	}
 	// This is *really* fun. Make the appropriate hashes...
 	foreach ($config_vars AS $opt) {
 		switch ($opt) {
