@@ -148,7 +148,7 @@ class ScannedDocuments extends EMRModule {
 		";
 		global $refresh, $manage;
 		if ($return=="manage") {
-			$refresh = "manage.php?id=".$patient;
+			$refresh = "manage.php?id=".$patient."&ts=".urlencode(mktime());
 		}
  	} // end method ScannedDocuments->add
 
@@ -174,9 +174,10 @@ class ScannedDocuments extends EMRModule {
 		"patient=".urlencode($patient)."&".
 		"id=".urlencode($id)."\" BORDER=\"0\"
 		PLUGINSPAGE=\"".COMPLETE_URL."support/\"
+		FLAGS=\"width=100% height=100% passive=yes zoom=stretch\"
 		TYPE=\"image/x.djvu\" WIDTH=\"".
 		( $GLOBALS['__freemed']['Mozilla'] ? '600' : '100%' ).
-		"\" HEIGHT=\"600\"></embed>
+		"\" HEIGHT=\"800\"></embed>
 		</div>
 		<div ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<a class=\"button\" HREF=\"";
