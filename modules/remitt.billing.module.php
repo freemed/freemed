@@ -677,7 +677,6 @@ class RemittBillingTransport extends BillingModule {
 
 			// ... and send it to Remitt, to see what we get for a result
 			$unique_key = $remitt->ProcessBill($key, $my_format, $my_target);
-
 			// Add to claimlog
 			$result = $claimlog->log_billing (
 				$key,
@@ -704,7 +703,7 @@ class RemittBillingTransport extends BillingModule {
 		// Show something
 		if (!is_array($__billkeys)) {
 			$__billkeys = array ($__billkeys);
-			$uniques = array ( $__billkeys => $result );
+			//$uniques = array ( $__billkeys => $result );
 		}
 
 		// Refresh to status screen
@@ -740,7 +739,7 @@ class RemittBillingTransport extends BillingModule {
 			$uniques = $_uniques;
 		} else {
 			// If passed by POST/GET, they are serialized
-			$uniques = unserialize($_REQUEST['uniques']);
+			$uniques = unserialize(stripslashes($_REQUEST['uniques']));
 		}
 
 		// Handle invalid uniques
