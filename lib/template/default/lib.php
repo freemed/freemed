@@ -21,6 +21,29 @@ class template {
 		return $buffer;
 	} // end function summary_delete_link
 
+	function summary_lock_link($class, $url) {
+		$buffer .= html_form::confirm_link_widget($url,
+			"<img SRC=\"lib/template/default/img/summary_lock.png\"
+			BORDER=\"0\" ALT=\""._("Lock")."\"/>",
+			array(
+				'confirm_text' =>
+				_("Are you sure you want to lock this record?"),
+
+				'text' => _("Lock")
+			)
+		);
+		return $buffer;
+	} // end function summary_lock_link
+
+	function summary_locked_link($class, $url) {
+		$buffer .= "<a onClick=\"var a=alert('".
+			_("This record has been locked, and can no longer be modified.").
+			"'); return true;\"
+			><img SRC=\"lib/template/default/img/summary_locked.png\"
+			BORDER=\"0\" ALT=\""._("Locked")."\"/></a>\n";
+		return $buffer;
+	} // end function summary_locked_link
+
 	function summary_modify_link($class, $url) {
 		$buffer .= "<A HREF=\"".$url."\" ".
 			"><IMG SRC=\"lib/template/default/img/summary_modify.png\"

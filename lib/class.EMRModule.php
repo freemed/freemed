@@ -45,6 +45,45 @@ class EMRModule extends BaseModule {
 
 	} // end function check_vars
 
+	// function locked
+	// - determines if record id is locked or not, and reacts accordingly
+	//   (use like :  if ($this->locked($id)) return false;         )
+	function locked ($id, $quiet = false) {
+		global $sql, $display_buffer;
+		static $locked;
+
+		if (!isset($locked)) {
+			$query = "SELECT * FROM ".$this->table_name." WHERE ".
+				"id='".addslashes($id)."' AND (locked > 0)";
+			$result = $sql->query($query);
+			$locked = $sql->results($result);
+		}
+
+		if ($locked) {
+			if (!$quiet) 
+			$display_buffer .= "
+			<div ALIGN=\"CENTER\">
+
+			</div>
+
+			<p/>
+
+			<div ALIGN=\"CENTER\">
+			".(
+				($GLOBALS['return'] == "manage") ?
+				"<a href=\"manage.php?id=".urlencode($GLOBALS['patient']).
+					"\">"._("Manage Patient")."</a>" :
+				"<a href=\"module_loader.php?module=".
+					get_class($this)."\">"._("back")."</a>"
+			)."
+			</div>
+			";
+			return true;
+		} else {
+			return false;
+		}
+	} // end function locked
+
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
@@ -88,6 +127,10 @@ class EMRModule extends BaseModule {
 				$this->del();
 				break;
 
+			case "lock":
+				$this->lock();
+				break;
+
 			case "mod":
 			case "modify":
 				$this->mod();
@@ -112,10 +155,10 @@ class EMRModule extends BaseModule {
 		global $display_buffer;
 		if (isset($this->message)) {
 			$display_buffer .= "
-			<P>
-			<CENTER>
-			<B>".prepare($this->message)."</B>
-			</CENTER>
+			<p/>
+			<div ALIGN=\"CENTER\">
+			<b>".prepare($this->message)."</b>
+			</div>
 			";
 		}
 	} // end function display_message
@@ -147,6 +190,10 @@ class EMRModule extends BaseModule {
 	function _del () {
 		global $display_buffer;
 		global $id, $sql;
+
+		// Check for record locking
+		if ($this->locked($id)) return false;
+
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
@@ -161,6 +208,10 @@ class EMRModule extends BaseModule {
 	function _mod () {
 		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
+
+		// Check for record locking
+		if ($this->locked($id)) return false;
+
 		$result = $sql->query (
 			$sql->update_query (
 				$this->table_name,
@@ -192,7 +243,7 @@ class EMRModule extends BaseModule {
 
 		if (is_array($this->form_vars)) {
 			reset ($this->form_vars);
-			while (list ($k, $v) = each ($this->form_vars)) global $$v;
+			while (list ($k, $v) = each ($this->form_vars)) global ${$v};
 		} // end if is array
 
 		switch ($action) {
@@ -204,10 +255,40 @@ class EMRModule extends BaseModule {
 					" WHERE ( id = '".prepare($id)."' )");
 				$r = $sql->fetch_array ($result);
 				extract ($r);
+
+				// Check for record locking
+				if ($this->locked($id)) return false;
+
 				break;
 		} // end of switch action
 		
 	} // end function form
+
+	// function lock
+	// - locking function
+	function lock () { $this->_lock(); }
+	function _lock () {
+		global $display_buffer;
+		foreach ($GLOBALS as $k => $v) global ${$k};
+
+		// Check for record locking
+		if ($this->locked($id)) return false;
+
+		$result = $sql->query (
+			$sql->update_query (
+				$this->table_name,
+				array (
+					"locked" => $GLOBALS['SESSION']['authdata']['user']
+				),
+				array (
+					"id" => $id
+				)
+			)
+		);
+		if ($result) $this->message = _("Record locked successfully.");
+			else $this->message = _("Record locking failed.");
+		$this->view(); $this->display_message();
+	} // end function _mod
 
 	// function summary
 	// - show summary view of last few items
@@ -230,22 +311,22 @@ class EMRModule extends BaseModule {
 		} else { // checking for results
 			// Or loop and display
 			$buffer .= "
-			<TABLE WIDTH=\"100%\" CELLSPACING=0
-			 CELLPADDING=2 BORDER=0>
+			<table WIDTH=\"100%\" CELLSPACING=\"0\"
+			 CELLPADDING=\"2\" BORDER=\"0\">
 			<TR>
 			";
 			foreach ($this->summary_vars AS $k => $v) {
 				$buffer .= "
-				<TD VALIGN=MIDDLE CLASS=\"menubar_info\">
-				<B>".prepare($k)."</B>
-				</TD>
+				<td VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
+				<b>".prepare($k)."</b>
+				</td>
 				";
 			} // end foreach summary_vars
 			$buffer .= "
-				<TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
-				<B>"._("Action")."</B>
-				</TD>
-			</TR>
+				<td VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
+				<b>"._("Action")."</b>
+				</td>
+			</tr>
 			";
 			while ($r = $sql->fetch_array($result)) {
 				// Pull out all variables
@@ -253,7 +334,7 @@ class EMRModule extends BaseModule {
 
 				// Use $this->summary_vars
 				$buffer .= "
-				<TR VALIGN=\"MIDDLE\">
+				<tr VALIGN=\"MIDDLE\">
 				";
 				foreach ($this->summary_vars AS $k => $v) {
 					if (!(strpos($v, ":")===false)) {
@@ -273,28 +354,45 @@ class EMRModule extends BaseModule {
 						}
 					}
 					$buffer .= "
-					<TD VALIGN=\"MIDDLE\">
-					<SMALL>".prepare(${$v})."</SMALL>
-					</TD>
+					<td VALIGN=\"MIDDLE\">
+					<small>".prepare(${$v})."</small>
+					</td>
 					";
 				} // end looping through summary vars
 				$buffer .= "
-				<TD VALIGN=\"MIDDLE\">
-				".template::summary_modify_link($this,
+				<td VALIGN=\"MIDDLE\">
+				".( (!$r['locked'] > 0) ?
+				template::summary_modify_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=modform&id=$r[id]&return=manage")."
-				".( ($this->summary_options & SUMMARY_VIEW) ?
+				"action=modform&id=".$r['id']."&return=manage") : "" ).
+				"\n".( ($this->summary_options & SUMMARY_VIEW) ?
 				template::summary_view_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=display&id=$r[id]&return=manage",
-				($this->summary_options & SUMMARY_VIEW_NEWWINDOW)) : "" )."
-				</TD>
-				</TR>
+				"action=display&id=".$r['id']."&return=manage",
+				($this->summary_options & SUMMARY_VIEW_NEWWINDOW)) : "" ).
+
+				// "Lock" link for quick locking from the menu
+				
+				"\n".( (($this->summary_options & SUMMARY_LOCK) and
+				!($r['locked'] > 0)) ?
+				template::summary_lock_link($this,
+				"module_loader.php?module=".
+				get_class($this)."&patient=$patient&".
+				"action=lock&id=".$r['id']."&return=manage") : "" ).
+
+				// Process a "locked" link, which does nothing other
+				// than display that the record is locked
+				
+				"\n".( (($this->summary_options & SUMMARY_LOCK) and
+				($r['locked'] > 0)) ?
+				template::summary_locked_link($this) : "" )."
+				</td>
+				</tr>
 				";
 			} // end of loop and display
-			$buffer .= "</TABLE>\n";
+			$buffer .= "</table>\n";
 		} // checking if there are any results
 
 		// Send back the buffer

@@ -85,10 +85,12 @@ define ('WRITEOFF',             12);  // not used yet
 define ('ITEMLIST_VIEW',        1);
 define ('ITEMLIST_MOD',         2);
 define ('ITEMLIST_DEL',         4);
+define ('ITEMLIST_LOCK',        8);
 
 // Flags for EMR summaries
 define ('SUMMARY_VIEW',			1);
 define ('SUMMARY_VIEW_NEWWINDOW',	2);
+define ('SUMMARY_LOCK',			4);
 
 } // end checking for __MACROS_PHP__
 

@@ -3,11 +3,15 @@
  // note: complete list of included functions for all modules
  //       basically to cut down on includes, and make everything
  //       a little easier
- // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // code: jeff b (jeff@ourexchange.net)
  //       max k <amk@span.ch>
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.56  2002/12/27 17:43:41  rufustfirefly
+ // Added record locking capabilities.
+ // New freemed::itemlist_conditions() method to allow display_itemlist to work properly with conditionals from its internal form.
+ //
  // Revision 1.55  2002/12/25 05:08:43  rufustfirefly
  // Remember default facility by machine, using cookies.
  //
@@ -232,6 +236,20 @@ class freemed {
 		// Return just the key asked for
 		return $this_array["$field"];
 	} // end function freemed::get_link_field
+
+	// function freemed::itemlist_conditions
+	// - use with freemed::display_itemlist
+	function itemlist_conditions($where = true) {
+		if (strlen($GLOBALS['_s_val']) > 0) {
+			$field = addslashes($GLOBALS['_s_field']);
+			$val = addslashes($GLOBALS['_s_val']);
+			return ( $where ? " WHERE ( " : " AND ( " ).
+				$field." = '".$val."' OR ".
+				$field." LIKE '%".$val."' OR ".
+				$field." LIKE '".$val."%' OR ".
+				$field." LIKE '%".$val."%' ) ";
+		}
+	} // end function freemed::itemlist_conditions
 
 	// function freemed::module_check
 	function module_check ($module, $minimum_version="0.01")
@@ -838,7 +856,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 {
   global $_ref, $record_name;
   global $modify_level, $delete_level, $patient, $action, $module;
-  global $page_name, $$cur_page_var, $max_num_res;
+  global $page_name, ${$cur_page_var}, $max_num_res;
   global $_s_field, $_s_val, $sql;
 
   //echo "page name $page_name this $this->page_name module $module<BR>";
@@ -858,15 +876,14 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $parts = explode("?", basename($GLOBALS["REQUEST_URI"]));
     $page_name = $parts[0];
   }
-  
 
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
 
   $num_pages = ceil($sql->num_rows($result)/$max_num_res);
-  if ($$cur_page_var<1 OR $$cur_page_var>$num_pages) $$cur_page_var=1;
+  if (${$cur_page_var}<1 OR ${$cur_page_var}>$num_pages) ${$cur_page_var}=1;
 
-  if (strlen($$cur_page_var)>0) { // there's an offset
-    for ($i=1;$i<=($$cur_page_var-1)*$max_num_res;$i++) {
+  if (strlen(${$cur_page_var})>0) { // there's an offset
+    for ($i=1;$i<=(${$cur_page_var}-1)*$max_num_res;$i++) {
       $herman = $sql->fetch_array($result); // offset the proper number of rows
     }
   }
@@ -875,86 +892,85 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 
   $buffer .= "
     <!-- Begin itemlist Table -->
-    <TABLE WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\"
+    <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\"
      ALIGN=\"CENTER\" VALIGN=\"MIDDLE\" CLASS=\"itemlistbox\">
-    <TR>
-     <TD ALIGN=\"CENTER\">
-      <BIG><B>"._("$record_name")."</B></BIG>
-     </TD>
-    </TR>".
+    <tr>
+     <td ALIGN=\"CENTER\">
+      <big><b>"._($record_name)."</b></big>
+     </td>
+    </tr>".
     
    ( ((strlen($cur_page_var)>0) AND ($num_pages>1)) ? "
-   <TR ALIGN=CENTER><TD CLASS=\"reverse\">
-    <TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0>
-     <FORM METHOD=POST ACTION=\"$page_name\">
+   <tr ALIGN=\"CENTER\"><td CLASS=\"reverse\">
+    <table BORDER=\"0\" CELLPADDING=\"2\" CELLSPACING=\"0\">
+     <form METHOD=\"POST\" ACTION=\"$page_name\">
     ".
     
-    (($$cur_page_var>1) ? "
-    <TR><TD>
-     <A CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
+    ((${$cur_page_var} > 1) ? "
+    <tr><td>
+     <a CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".(${$cur_page_var}-1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
      "&module=$module&action=$action\">
         "._("Previous")."
-     </A>
-    </TD>
+     </a>
+    </td>
     " : "" )
     
-    ."<TD CLASS=\"reverse\">
+    ."<td CLASS=\"reverse\">
      "._("Page"). 
      fm_number_select($cur_page_var, 1, $num_pages, 1, false, true).
 	" of ".$num_pages."
-     <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".prepare($action)."\" >
-     <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\" >
-     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-     <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
-    </TD>".
+     <input TYPE=HIDDEN NAME=\"action\"  VALUE=\"".prepare($action)."\"/>
+     <input TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\"/>
+     <input TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
+     <input TYPE=SUBMIT VALUE=\""._("Go")."\"/>
+    </td>".
     
-    (($$cur_page_var<$num_pages) ? "
-    <TD>
-     <A CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
+    ((${$cur_page_var} < $num_pages) ? "
+    <td>
+     <a CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".(${$cur_page_var}+1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
      "&module=$module&action=$action\">
         "._("Next")."
-     </A>
-    </TD></TR>
+     </a>
+    </td></tr>
     " : "" )
     
     ."
-     </FORM>
-    </TABLE>
-   </TD></TR>
+     </form>
+    </table>
+   </td></tr>
     " : "" )
     
-    ."<TR><TD>
+    ."<tr><td>
     ".freemed_display_actionbar($page_link)."
-    </TD></TR>
-    <TR><TD>
+    </td></tr>
+    <tr><td>
   ";
   // end header
 
   $buffer .= "
-    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
+    <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\"
      ALIGN=\"CENTER\" ALIGN=\"MIDDLE\">
-    <TR>
+    <tr>
   ";
   while (list($k,$v)=each($control_list)) {
     $buffer .= "
-      <TD CLASS=\"reverse\">
+      <td CLASS=\"reverse\">
        $k&nbsp;
-      </TD>
+      </td>
     ";
   }
-  if ($flags != 0)
-  {
+  if ($flags != 0) {
   $buffer .= "
-      <TD CLASS=\"reverse\">"._("Action")."</TD>
-	  </TR>
+      <td CLASS=\"reverse\">"._("Action")."</td>
+	  </tr>
   ";
+  } else {
+  	$buffer .= "<td CLASS=\"reverse\"></td></tr>";
   }
-  else
-  	$buffer .= "<TD CLASS=\"reverse\"></TD></TR>";
  
   if ($sql->num_rows($result)>0) 
    while ($this_result = $sql->fetch_array($result) AND 
@@ -962,7 +978,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $on_this_page++;
     $first = true; // first item in the list has 'view' link
     $buffer .= "
-    <TR CLASS=\"".freemed_alternate()."\">
+    <tr CLASS=\"".freemed_alternate()."\">
     ";
     reset($control_list); // it's already each'd the arrays, 
     if (is_array($xref_list)) 
@@ -993,29 +1009,29 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
       if ($first) {
         $first = false;
         $buffer .= "
-      <TD>
-        <A HREF=\"$page_link?patient=$patient&action=display&id=".
+      <td>
+        <a HREF=\"$page_link?patient=$patient&action=display&id=".
 	"$this_result[id]&module=$module\"
-	  >$item_text</FONT></A>&nbsp;
-      </TD>
+	  >$item_text</a>&nbsp;
+      </td>
         ";
       } else {
         $buffer .= "
-      <TD>
+      <td>
         $item_text&nbsp;
-      </TD>
+      </td>
         ";
       }
     $field_num++;
     } // while each data field
     
     $buffer .= "
-      <TD>
+      <td>
     ";
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
-        <A HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
-	urlencode($this_result['id'])."\">"._("VIEW")."</A>&nbsp;
+        <a HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
+	urlencode($this_result['id'])."\">"._("VIEW")."</a>&nbsp;
       ";
     }
     if (freemed::user_flag(USER_DATABASE) AND 
@@ -1027,11 +1043,34 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     }
     if (freemed::user_flag(USER_DELETE) AND
          ($flags & ITEMLIST_DEL) AND (!$this_result['locked'])) {
-      $buffer .= "
-        <A HREF=\"$page_link?patient=$patient&module=$module&action=delete&id=".
-	urlencode($this_result['id'])."\">"._("DEL")."</A>&nbsp;
-      ";
+	$buffer .= html_form::confirm_link_widget(
+        	"$page_link?patient=$patient&module=$module&action=delete&id=".
+				urlencode($this_result['id']),
+	 	_("DEL"),
+		array(
+			'confirm_text' =>
+			_("Are you sure you want to delete this record?"),
+
+			'text' => _("Delete")
+		)
+	)."&nbsp;\n";
+
     }
+    if (freemed::user_flag(USER_DELETE) AND
+         ($flags & ITEMLIST_LOCK) AND ($this_result['locked']=='0')) {
+	$buffer .= html_form::confirm_link_widget(
+        	"$page_link?patient=$patient&module=$module&action=lock&id=".
+				urlencode($this_result['id']),
+	 	_("LOCK"),
+		array(
+			'confirm_text' =>
+			_("Are you sure you want to lock this record?"),
+
+			'text' => _("Lock")
+		)
+	)."&nbsp;\n";
+    }
+    
     
     $buffer .= "
       &nbsp;</TD>
@@ -1049,44 +1088,43 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   } // if no items to display
    
   $buffer .= "
-    </TABLE>
-   </TD></TR>
-   <TR><TD>
+    </table>
+   </td></tr>
+   <tr><td>
   ";
   
   // searchbox
- if ($num_pages>1) {
+ if (($num_pages>1) or !empty($_s_val)) {
   $buffer .= "
-    <TABLE WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\">
-    <TR CLASS=\"reverse\">
-    <FORM METHOD=\"POST\" ACTION=\"".prepare($page_name)."\">
-     <TD ALIGN=\"CENTER\">
-      <SELECT NAME=\"_s_field\">
-  ";
-  reset($control_list);
-  while (list($c_k, $c_v) = each($control_list))
-    $buffer .= "<OPTION VALUE=\"$c_v\">$c_k\n";
-  $buffer .= "
-      </SELECT>
+    <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\">
+    <tr CLASS=\"reverse\">
+    <form METHOD=\"POST\" ACTION=\"".prepare($page_name)."\">
+     <td ALIGN=\"CENTER\">
+      ".html_form::select_widget(
+        "_s_field",
+	$control_list
+      )."
       "._("contains")."
-      <INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
-      <INPUT TYPE=\"HIDDEN\" NAME=\"$cur_page_var\" VALUE=\"1\">
-      <INPUT TYPE=\"TEXT\" NAME=\"_s_val\">
-      <INPUT TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
-     </TD>
-    </FORM>
-    </TR>
-    </TABLE>
-   </TR></TD>
-   <TR><TD>
+      <input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+      <input TYPE=\"HIDDEN\" NAME=\"$cur_page_var\" VALUE=\"1\"/>
+      ".html_form::text_widget('_s_val', 20)."
+      <input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\"/>
+      <input TYPE=\"BUTTON\" VALUE=\""._("Reset")."\"
+       onClick=\"this.form._s_val.value=''; this.form.submit(); return true;\"/>
+     </td>
+    </form>
+    </tr>
+    </table>
+   </tr></td>
+   <tr><td>
   ";
  } // no searchbox for short-short lists
   // end searchbox
   
   // footer
   $buffer .= freemed_display_actionbar($page_link)
-    ."</TD></TR>
-    </TABLE>
+    ."</td></tr>
+    </table>
     <!-- End itemlist Table -->
   ";
 
