@@ -100,6 +100,16 @@ A: Try using the commandline clients for your SQL server. (For MySQL, this is
    using does not have proper access rights on the SQL server. Please consult
    your SQL server documentation if this is the case.
 
+Q: Why isn't FreeMED letting me log in! I entered everything in correctly,
+   but it still gives me an error, with a menubar to the left.
+A: Your version of PHP is probably broken in regard to sessions support. This
+   problem has been noted on PHP 4.1.2, but your version may also have this
+   problem. Use the newest version of PHP available to you. (For one reason
+   or another, global variable registration changed from on to off by
+   default in newer versions of PHP, supposedly for security reasons. This
+   assumption has been known to break PHP code, so you can go into your
+   php.ini file and enable register_globals if you still have problems.)
+
 ******************************************************** current coders/staff
 
 Jeff (jeff@ourexchange.net) -
