@@ -74,6 +74,20 @@ class EMRModule extends BaseModule {
 	//	$this->summary_conditional = "ptsex = 'm'";
 	var $summary_conditional = '';
 
+	// Variable: summary_query_link
+	//
+	//	Allows another table (or more) to be "linked" via a
+	//	WHERE clause.
+	//
+	// Example:
+	//
+	//	$this->summary_query_link = array ('payrecproc', 'procrec');
+	//
+	// See Also:
+	//	<summary>
+	//
+	var $summary_query_link = false;
+
 	// Variable: summary_order_by
 	//
 	//	The order in which the EMR summary items are displayed.
@@ -609,14 +623,26 @@ class EMRModule extends BaseModule {
 	function summary ($patient, $items) {
 		global $sql, $display_buffer, $patient;
 
+		if (is_array($this->summary_query_link)) {
+			foreach ($this->summary_query_link AS $my_k => $my_v) {
+				// Format: field => table_name
+				$_from[] = $my_v;
+				$_where[] = $my_v.'.id = '.$this->table_name.'.'.$my_k;
+			}
+			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
+		}
+
 		// get last $items results
 		$query = "SELECT *".
 			( (count($this->summary_query)>0) ? 
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
+			( is_array($this->summary_query_link) ? ",".join(',',$_from).' ' : ' ' ).
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
-			"ORDER BY ".$this->summary_order_by." DESC LIMIT ".addslashes($items);
+			( is_array($this->summary_query_link) ? ' AND '.join(' AND ',$_where).' ' : ' ' ).
+			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC LIMIT ".addslashes($items);
+		//if ($this->summary_query_link) { die ($query); }
 		$result = $sql->query($query);
 
 		// Check to see if there *are* any...
@@ -645,6 +671,11 @@ class EMRModule extends BaseModule {
 			</tr>
 			";
 			while ($r = $sql->fetch_array($result)) {
+				// Deal with record.id for query_link
+				if (is_array($this->summary_query_link)) {
+					$r['id'] = $r['__actual_id'];
+				}
+
 				// Pull out all variables
 				extract ($r);
 
