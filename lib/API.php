@@ -2626,7 +2626,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	$y  = substr ($actualdate, 0, 4);        // extract year
 	$m  = substr ($actualdate, 5, 2);        // extract month
 	$d  = substr ($actualdate, 8, 2);        // extract day
-	$ts = mktime (0, 0, 0, $m, $d, date("Y"));      // generate timestamp
+	$ts = mktime (0, 0, 0, $m, $d, $y);      // generate timestamp
 
 	$lang_months = array (
 		'',
@@ -2651,7 +2651,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 			break;
 		case "dmy":
 			if ($show_text_days) {
-				return $d." ".$lang_months[0+substr($m)].", ".$y;
+				return $d." ".$lang_months[0+$m].", ".$y;
 			} else {
 				return date("d M, ", $ts).$y;
 			}
