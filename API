@@ -363,6 +363,18 @@ freemed_open_db (login cookie)
     created: API epoch or prior (19990609)
     modify : 19990820
 
+freemed_search_query(ctrl_array,ord_array,db,id_var)
+  runs a searching query on database 'db' (if "", defaults to
+  $db_name), ordering by the list in ord_array (in that order)
+  and using ctrl_array as such: it's an associative array, and
+  "fieldname" => "foo" searches for 'foo' in field 'fieldname'.
+  id_var is the name of the variable containing the current 
+  value. (if searching for inscos, it contains the current insco
+  id.) id_var can also be an array of variable names, if the
+  search is to be used for multiple selects.
+    returns: SQL result
+    created: 20000809 (adam b)
+
                              *****
 
                   LOW-LEVEL DATABASE FUNCTIONS

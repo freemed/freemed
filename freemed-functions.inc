@@ -1125,6 +1125,24 @@ function freemed_display_selectbox ($result, $format, $param="")
   return $buffer;
 } // end function freemed_display_selectbox
 
+// function freemed_display_simple_selectbox
+function freemed_display_simple_selectbox($list_array, $param, $zero_flag=true)
+{
+  global $$param;
+  $buffer = "";
+
+  $buffer .= "
+    <SELECT NAME=\"$param\">";
+  if ($zero_flag) $buffer .= "
+      <OPTION VALUE=\"0\">NONE SELECTED";
+  while (list($k,$v) = each($list_array)) {
+    $buffer .= "
+      <OPTION VALUE=\"$k\"".(($$param==$k) ? " SELECTED" : "").">$v";
+  } // while each option
+  $buffer .= "
+    </SELECT>";
+  return $buffer;
+} // end function freemed_display_simple_selectbox
 
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="")
@@ -1427,6 +1445,69 @@ function freemed_open_db ($my_cookie) {
     // begin showing things again
   //echo " -->";
 } // end function freemed_open_db
+
+// function freemed_search_query()
+//   generates result from in-notebook query
+function freemed_search_query ($ctrl_array, $ord_array, 
+                           $db = "", $id_var = "id")
+{
+  global $db_name;
+  if (is_array($id_var)) {
+    while (list($k,$v) = each($id_var)) {
+      global $$v;
+      $_id_[]=$$v;
+    }
+  } else {
+    global $$id_var;
+    $_id_=$$id_var;
+  } // import the id-list
+  
+  $buf = "";
+  if (strlen($db)<1) $db=$db_name;
+  
+  $buf .= "SELECT * FROM ".addslashes($db)." WHERE (";
+  
+  $first_field=true;
+  if (is_array($_id_)) { // array case
+    while (list($k,$v) = each($_id_)) {
+      if ($first_field) {
+        $first_field = false;
+      } else {
+        if (strlen($v)>0) $buf .= " OR ";
+      } // end checking for first field
+      if (strlen($v)>0) $buf .= "(id = '".$v."')";
+    } // while each id to check
+    $buf .= ")";
+  } else { // end array case
+    $buf .= "(id = '".$_id_."') ";
+  } // non-array case
+  
+  if (is_array($ctrl_array) AND count($ctrl_array)>0) $buf .= " OR (";
+  $first_field = true;
+  while ( is_array($ctrl_array) AND 
+         (list($fieldval, $fieldname) = each($ctrl_array)) ) { // the rest
+    if (strlen($fieldval)>0) { // if it's an activated query
+      if ($first_field) {
+        $first_field = false;
+      } else {
+        $buf .= " AND ";
+      }
+      $buf .= " (
+        $fieldname LIKE '%$fieldval%' OR
+        $fieldname LIKE '$fieldval%' OR
+        $fieldname LIKE '%$fieldval' OR
+        $fieldname = '%$fieldval%'
+      ) ";
+    } // checking for active query
+  } // while each in ctrl_array
+  if (is_array($ctrl_array) AND count($ctrl_array)>0) $buf .= ")";
+
+  if (count($ord_array)>0) { 
+    $buf .= " ORDER BY ";
+    $buf .= implode(',', $ord_array);
+  } // include orderby clause
+  return fdb_query($buf); 
+} // end function freemed_search_query
 
 // function freemed_specialty_display
 //   displays specialty db entry in text format
