@@ -19,7 +19,8 @@ if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 //---- Set page title
 $page_title = PACKAGENAME." ".__("Main Menu");
 
-// Check for new messages
+// Check for new messages (depreciated, moved into modules)
+/*
 if ($new_messages = $this_user->newMessages()) {
 	$display_buffer .= "
 		<div align=\"center\" valign=\"MIDDLE\" class=\"infobox\">
@@ -33,6 +34,7 @@ if ($new_messages = $this_user->newMessages()) {
 		</div>
 	";
 }
+*/
 
 //----- New static menu system goes down here ....
 
