@@ -92,10 +92,16 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 
         $r = freemed::get_link_rec ($id, $this->table_name);
         extract ($r);
-		$inscomod = fm_make_string_array($inscomod); // ensure 17 is 17:
+	$inscomod = fm_make_string_array($inscomod); // ensure 17 is 17:
         break; // end of modform
     } // end inner action switch
   } // end checking if been here
+
+	// Handle arrays in inscomod. This is such an incredible kludge.
+	// TODO: Debug why freemed_multiple_choice does not work right here.
+	if (is_array($inscomod)) {
+		$inscomod = join(':', $inscomod);
+	}
 
   $book->add_page(
    __("Contact Information"),
