@@ -11,7 +11,8 @@ define ('PHYSICAL_LOCATION', "/usr/share/freemed");
 define ('PHPWEBTOOLS_LOCATION', "/usr/share/phpwebtools");
 define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
 define ('BUG_TRACKER', false); // set bug tracker on or off
-define ('TEMPLATE', "default");	// set default template
+//define ('TEMPLATE', "default");	// set default template
+define ('TEMPLATE', "newskin");	// set default template
 define ('HOST', 'localhost'); // host name for this system
 define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('HTTP', 'http'); // http for normal, https for SSL
