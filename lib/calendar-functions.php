@@ -294,7 +294,6 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_generate_calendar_mini ($given_date, $this_url) {
     // mostly hacked code from TWIG's calendar
     global $cur_date, $lang_months, $lang_days;
-    global $display_buffer;
 
     // break current day into pieces
     list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
@@ -318,7 +317,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     $lastday  [8] = $lastday [10] = $lastday [12] = 31;
 
     // generate top of table
-    $display_buffer .= "
+    $buffer .= "
      <CENTER>
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=\"MIDDLE\"
       ALIGN=\"CENTER\">
@@ -331,7 +330,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     ";
 
     // previous month link
-    $display_buffer .= "     
+    $buffer .= "     
      <A HREF=\"$this_url&selected_date=".
        fc_scroll_prev_month(
         fc_scroll_prev_month(
@@ -361,13 +360,13 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     ";
     // print days across top
     for( $i = 1; $i <= 7; $i++) {
-     $display_buffer .= "
+     $buffer .= "
       <TD BGCOLOR=#cccccc ALIGN=CENTER>
        <B>".htmlentities($lang_days[$i])."</B>
       </TD>
      ";
     } // end of day display
-    $display_buffer .= "
+    $buffer .= "
      </TR>
     ";
 
@@ -377,7 +376,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     if( $first_day > 0 ) {
   	while( $day_row < $first_day ) {
-   		$display_buffer .= "  <TD ALIGN=RIGHT BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
+   		$buffer .= "  <TD ALIGN=RIGHT BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
    		$day_row += 1;  
   		}
  	} // end while day row < first day
@@ -386,7 +385,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 		{
   		if( ( $day_row % 7 ) == 0) 
 			{
-   			$display_buffer .= " </TR>\n<TR BGCOLOR=\"#bbbbbb\">\n";
+   			$buffer .= " </TR>\n<TR BGCOLOR=\"#bbbbbb\">\n";
   			}
 
   		$dayp = $day + 1;
@@ -415,7 +414,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
            "#ccccff" :
            "#bbbbbb" );
 
-    $display_buffer .= "
+    $buffer .= "
      <TD ALIGN=CENTER BGCOLOR=\"$this_color\">
     ";
  
@@ -426,16 +425,15 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
             "#ff0000" : 
             "#0000ff" );
        
-        $display_buffer .= "&nbsp;&nbsp;
-         <A HREF=\"$this_url&selected_date=".
+        $buffer .= "&nbsp;&nbsp;<A HREF=\"$this_url&selected_date=".
          date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
          "\"><FONT COLOR=\"$hilitecolor\">$dayp</FONT></A>&nbsp;&nbsp;
         ";
    	//if( $dayp       == $cur_day AND
         //    $this_month == $cur_month AND
         //    $this_year  == $cur_year )
-        //  { $display_buffer .= "</B></FONT>"; }
-      $display_buffer .= "
+        //  { $buffer .= "</B></FONT>"; }
+      $buffer .= "
        </TD>
       ";
       $day++;
@@ -443,12 +441,12 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     }
 
     while( $day_row % 7 ) {
-   	$display_buffer .= "
+   	$buffer .= "
          <TD ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">&nbsp;</TD>
         ";
    	$day_row += 1;  
     } // end of day row
-    $display_buffer .= "
+    $buffer .= "
      </TR>
      <TR>
      <TD COLSPAN=7 ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">
@@ -460,6 +458,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
      </TABLE>
      </CENTER>
     ";
+	return $buffer;
   } // end function fc_generate_calendar_mini
 
   function fc_generate_interference_map ($query_part, $this_date, 
@@ -532,6 +531,11 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
                    $r["calpatient"]."\">$ptname</A> [$ptdob] - $desc";
         break;
       } // end of switch
+
+	// Travel kludge
+	if ($calpatient == 0) {
+		$mapping = _("Travel");
+	}
 
       // map the name
       $current_imap["$calhour:$calminute"] .= $mapping;
@@ -632,6 +636,160 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     global $current_imap;
     return (int)$current_imap["count"];    
   } // end function fc_interference_map_count
+
+class freemedCalendar {
+
+  	function display_hour ( $hour ) {
+		// time checking/creation if/else clause
+		if ($hour<12)
+			return $hour." AM";
+		elseif ($hour == 12)
+			return $hour." PM";
+		else
+			return ($hour-12)." PM";
+  	} // end method freemedCalendar::display_hour
+
+	function event_calendar_print ( $event ) {
+		global $sql;
+
+		// Get event
+		$my_event = freemed::get_link_rec($event, "scheduler");
+
+		// Handle travel
+		if ($my_event[calpatient] == 0) return _("Travel")." ".
+			"(".$my_event[calduration]."m)\n";
+
+		// Get patient information
+		$my_patient = new Patient ($my_event[calpatient],
+			($my_event[caltype]=="temp"));
+
+		return "<A HREF=\"manage.php?id=".$my_patient->id."\"".
+			">".$my_patient->fullName()."</A> ".
+			"(".$my_event[calduration]."m)\n";
+	} // end method freemedCalendar::event_calendar_print
+
+	// method map: returns a map (associative array)
+	function map ( $query ) {
+		global $sql;
+
+		// Initialize the map;
+		unset ($map);
+		$map[count] = 0;
+		for ($hour=freemed::config_value("calshr");$hour<freemed::config_value("calehr");$hour++) {
+			for ($minute=00; $minute<60; $minute+=15) {
+				$idx = $hour.":".($minute==0 ? "00" : $minute);
+				$map[$idx][link] = 0; // no link
+				$map[$idx][span] = 1; // one slot per
+			} // end init minute loop
+		} // end init hour loop
+		$idx = "";
+
+		// Get the query
+		$result = $sql->query($query);
+
+		// If nothing, return empty map
+		if (!$sql->results($result)) return $map;
+
+		// Run through query
+		while ($r = $sql->fetch_array($result)) {
+			// Move to "c" array, which is stripslashes'd
+			foreach ($r AS $k => $v) {
+				$c[(stripslashes($k))] = stripslashes($v);
+			} // end removing slashes
+
+			// Determine index
+			$idx = ($c[calhour]+0).":".( $c[calminute]==0 ?
+				"00" : ($c[calminute]+0) );
+			
+			// Insert into current position
+			$map[$idx][link] = $c[id];
+			$map[$idx][span] = ceil($c[calduration] / 15);
+			$cur_pos = $idx;
+
+			// Clear out remaining portion of slot
+			$count = 1;
+			while ($count < $map[$idx][span]) {
+				// Move pointer forward
+				$cur_pos = freemedCalendar::next_time($cur_pos);
+				$count++;
+
+				// Zero those records
+				$map[$cur_pos][link] = 0;
+				$map[$cur_pos][span] = 0;
+			} // end clear out remaining portion of slot
+		} // end running through array
+
+		// Return completed map
+		return $map;
+	} // end method freemedCalendar::map
+
+	function map_fit ( $map, $time, $duration=15 ) {
+		// If this is already booked, return false
+		if ($map[$time][span] == 0) { return false; }
+		if ($map[$time][link] != 0) { return false; }
+
+		// If anything *after* it for its duration is booked...
+		if ($duration > 15) {
+			// Determine number of blocks to search
+			$blocks = ceil(($duration - 1) / 15); $cur_pos = $time;
+			for ($check=1; $check<$blocks; $check++) {
+				// Increment pointer to time
+				$cur_pos = freemedCalendar::next_time($cur_pos);
+
+				// Check for past boundaries
+				list ($a, $b) = explode (":", $cur_pos);
+				if ($a>=freemed::config_value("calehr"))
+					return false;
+
+				// If there's a link, return false
+				if ($map[$cur_pos][link] != 0) return false;
+			} // end looping through longer duration
+		} // end if duration > 15
+
+		// If all else fails, return true
+		return true;
+	} // end method freemedCalendar::map
+
+	function next_time ( $time ) {
+		// Split into time components
+		list ($h, $m) = explode (":", $time);
+		
+		// Decide what to do based on the minutes
+		switch ($m) {
+			case "00": $return = $h.":15"; break;
+			case "15": $return = $h.":30"; break;
+			case "30": $return = $h.":45"; break;
+			case "45": $return = ($h+1).":00"; break;
+		}
+		return $return;
+	} // end method freemedCalendar::next_time
+
+	function refresh_select ( $varname, $values ) {
+		global ${$varname};
+		$buffer = "<SELECT NAME=\"".prepare($varname)."\" ".
+			"onChange=\"this.form.submit(); return true;\">\n";
+		foreach ($values AS $k => $v) {
+			if ( (is_integer($k) and ($values[($k+0)] == $v))
+				 or empty($k)) $k = $v;
+			$buffer .= html_form::select_option (
+				$varname, $v, $k
+			)."\n";
+		}
+		$buffer .= "</SELECT>\n";
+		return $buffer;
+	} // end method freemedCalendar::refresh_select
+
+	function refresh_text_widget ( $varname, $len, $_max=-1 ) {
+		global ${$varname};
+		if ($_max != -1) $max = $_max; else $_max = $len;
+		return "<INPUT TYPE=\"TEXT\" NAME=\"".prepare($varname)."\" ".
+			"SIZE=\"".( $len<50 ? $len+1 : 50 )."\" ".
+			"MAXLENGTH=\"".$max."\" ".
+			"VALUE=\"".prepare(${$varname})."\" ".
+			"onChange=\"this.form.submit(); return true;\" ".
+			"onBlur=\"this.form.submit(); return true;\">\n";
+	} // end method freemedCalendar::refresh_text_widget
+}
 
 } // end checking for __CALENDAR_FUNCTIONS_PHP__
 

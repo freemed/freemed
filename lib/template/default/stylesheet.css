@@ -67,3 +67,43 @@ a:hover {
 	color: #ffffff
 }
 
+.calendar {
+	border: thin black;
+	border-width: thick;
+	border-style: solid;
+	overflow: scroll;
+	background: #ffffff 
+}
+
+.calcell {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #cccccc 
+}
+
+.calcell_alt {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #aaaaaa 
+}
+
+.calcell_hour {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #ffffff 
+}
+
+.calendar_book_link {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #ffffff 
+}
+

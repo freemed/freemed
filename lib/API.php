@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.44  2002/04/05 23:49:00  rufustfirefly
+ // new booking system. almost works ;)
+ //
  // Revision 1.43  2002/04/05 19:29:20  rufustfirefly
  // freemed:: and EMRi:: initial namespace commit
  //
@@ -213,6 +216,22 @@ class freemed {
 		// check in cache for version
 		return $_config["$module"];
 	} // end function freemed::module_version
+
+	function query_to_array ( $query ) {
+		global $sql;
+		unset ($this_array);
+
+		$result = $sql->query($query);
+
+		if (!$sql->results($result)) return array("" => "");
+
+		while ($r = $sql->fetch_array($result)) {
+			$this_array[(stripslashes($r[k]))] =
+				stripslashes($r[v]);
+		}
+
+		return $this_array;
+	} // end function freemed::query_to_array
 
 	function user_flag ( $flag ) {
 		global $database, $sql, $SESSION;

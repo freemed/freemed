@@ -26,6 +26,10 @@ freemed project changelog
   - modules/authorizations.emr.module.php: html_form::-ification and
     Cancel button
   - modules/provider_status.db.module.php: removed extra cruft
+  - lib/API.php, lib/calendar_functions.php, 
+    lib/template/default/manage_main.php,
+    lib/template/default/stylesheet.css, book_appointment.php:
+    new scheduler and framework. almost working properly ;)
 
 * Thu Apr 04 2002 rufustfirefly
   - lib/module_billing.php: fixed patient management return link

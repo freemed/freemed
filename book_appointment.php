@@ -11,12 +11,23 @@ include ("lib/calendar-functions.php");
 //----- Login/authenticate
 freemed_open_db ();
 
+//----- Set current user
+$this_user = new User ();
+
 //----- Check for current patient
-if ($patient>0) {
+if ($travel) {
+	// Kludge travel, patient = 0
+	$patient = 0; $type = "pat"; $room = 0;
+} elseif ($patient>0) {
 	$this_patient = new Patient ($patient, ($type=="temp"));
 } elseif ($SESSION["current_patient"]>0) {
 	$this_patient = new Patient ($SESSION["current_patient"]);
 	$type = "pat"; // kludge to keep real patient for this
+}
+
+// Check for current physician, if not, use default
+if (!isset($physician) and $this_user->isPhysician()) {
+	$physician = $this_user->getPhysician();
 }
 
 if (strlen($selected_date)!=10) {
@@ -31,292 +42,285 @@ $prev = freemed_get_date_prev ($selected_date);
 $prev_wk = $selected_date;
 for ($i=1;$i<=7;$i++) $prev_wk = freemed_get_date_prev ($prev_wk);
 
-switch ($action) {
- case "":
-      // STAGE ONE:
+//----- Display patient management bar if not travel
+if (!$travel) {
+	$display_buffer .= freemed_patient_box($this_patient);
+} else {
+	// Display travel bar
+	$display_buffer .= "
+	<DIV ALIGN=\"CENTER\">
+	<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
+	<TR BGCOLOR=\"#000000\"><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+	<FONT COLOR=\"#ffffff\"><B>"._("Travel")."</B></FONT>
+	</TD></TR></TABLE>
+	</DIV>
+	";
+}
 
-      // BROWSE DATES ON THE CALENDAR TO DECIDE WHERE
-      // AND WHAT DAY WE ARE LOOKING FOR...
+//----- Create form
+if (date_in_the_past($selected_date)) {
+	$form .= "
+		<DIV ALIGN=\"CENTER\"><I><FONT SIZE=-2
+		>"._("this date occurs in the past")."</FONT></I>
+		</DIV>
+	";
+}
+$form .= "
+	<FORM ACTION=\"".page_name()."\" METHOD=\"POST\">
+	<INPUT TYPE=\"HIDDEN\" NAME=\"selected_date\" ".
+	"VALUE=\"".prepare($selected_date)."\">
+	<INPUT TYPE=\"HIDDEN\" NAME=\"type\" ".
+	"VALUE=\"".prepare($type)."\">
+	<INPUT TYPE=\"HIDDEN\" NAME=\"patient\" ".
+	"VALUE=\"".prepare($patient)."\">
+	<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
+	 VALIGN=\"TOP\" ALIGN=\"CENTER\">
+";
 
-	$page_title = _("Add Appointment");
-  //fc_generate_calendar_mini($selected_date,
-  // "$page_name?patient=$patient&room=$room&type=$type");
+//----- Add mini calendar to the top
+$form .= "
+	<TR><TD>".fc_generate_calendar_mini(
+		$selected_date,
+		"$page_name?".
+			"patient=".urlencode($patient)."&".
+			"room=".urlencode($room)."&".
+			"type=".urlencode($type)."&".
+			"travel=".urlencode($travel)."&".
+			"physician=".urlencode($physician)."&".
+			"duration=".urlencode($duration)."&".
+			"note=".urlencode($note)
+	)."</TD>
+";
 
-  //$display_buffer .= "
-  //  <CENTER>
-  //   <B><FONT FACE=\"Arial, Helvetica, Verdana\">
-  //   $Current_Date_is ".fm_date_print($selected_date)."
-  //   </FONT></B>
-  //  </CENTER>
-  //  <BR>
-  //";
+//----- Room/Physician/etc selection
+$form .= "
+	<TD ALIGN=\"LEFT\">
+	".html_form::form_table(array(
+	
+	"<SMALL>Phy</SMALL>" =>
+	freemedCalendar::refresh_select(
+		"physician", 
+		freemed::query_to_array(
+			"SELECT phylname,phyfname, ".
+			"CONCAT(phylname,', ',phyfname) AS k,".
+			"id AS v FROM physician ".
+			"ORDER BY phylname,phyfname"
+		)
+	),
 
-  if (date_in_the_past($selected_date))
-    $display_buffer .= "
-      <CENTER><I><FONT SIZE=-2
-      >"._("this date occurs in the past")."</FONT></I></CENTER>
-      <BR>
-    ";
+	"<SMALL>Rm</SMALL>" =>
+	freemedCalendar::refresh_select(
+		"room",
+		( $travel ? array ( _("Travel") => "0" ) :
+		freemed::query_to_array(
+			"SELECT CONCAT(room.roomname,' (',".
+			"facility.psrcity,"."', ',facility.psrstate,')') AS k,".
+			"room.id AS v ".
+			"FROM room,facility ".
+			"WHERE room.roompos=facility.id AND ".
+			"room.roombooking='y' ".
+			"ORDER BY k"
+		)
+		)
+	),
 
-    $rm_name = freemed::get_link_field ($room, "room", "roomname");
-    $rm_desc = freemed::get_link_field ($room, "room", "roomdescrip");
+	"<SMALL>Dur</SMALL>" =>
+	freemedCalendar::refresh_select(
+		"duration", 
+		array (
+			"0:15" => 15,	
+			"0:30" => 30,	
+			"0:45" => 45,	
+			"1:00" => 60,	
+			"1:15" => 75,	
+			"1:30" => 90,	
+			"1:45" => 105,
+			"2:00" => 120,	
+			"3:00" => 180,	
+			"8:00" => 480	
+		)
+	),
 
-    if (strlen($rm_desc)<1) { $rm_desc="";               }
-     else                   { $rm_desc="(".$rm_desc.")"; }
+	"<SMALL>Note</SMALL>" =>
+	freemedCalendar::refresh_text_widget("note", 25)
 
-    if ($debug) $debug_var = "[$room]";
+	), "", "", "")."
 
-    $display_buffer .= freemed_patient_box ($this_patient)."
-      <P>
-      <CENTER>
-    ";
-    fc_generate_calendar_mini($selected_date,
-     "$page_name?patient=$patient&room=$room&type=$type");
-    $display_buffer .= " 
-      <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
-       ALIGN=CENTER>
-      ". (
-       ($room > 0) ? "
-      <TR>
-      <TD ALIGN=RIGHT><B>"._("Room")." : </B></TD>
-      <TD ALIGN=LEFT>$rm_name $rm_desc $debug_var</TD></TR>
-        " : "" )."
-      <TR>
-      <TD ALIGN=RIGHT><B>"._("Date")." : </B></TD>
-      <TD ALIGN=LEFT>".fm_date_print($selected_date)."</TD></TR>
-      </TABLE>
-      </CENTER>
-    ";
-    if (date_in_the_past($selected_date)) 
-     $display_buffer .= "
-      <BR><CENTER><I><FONT SIZE=-2>
-      "._("this date occurs in the past")."</FONT></I></CENTER>
-     ";
-    $display_buffer .= "
-      <P><CENTER>
-      <FORM ACTION=\"$page_name\" METHOD=POST>
-       <INPUT TYPE=HIDDEN NAME=\"action\"
-        VALUE=\"\">
-       <INPUT TYPE=HIDDEN NAME=\"patient\"
-        VALUE=\"".prepare($patient)."\">
-       <INPUT TYPE=HIDDEN NAME=\"selected_date\"
-        VALUE=\"".prepare($selected_date)."\">
-       <INPUT TYPE=HIDDEN NAME=\"type\"
-        VALUE=\"".prepare($type)."\">
-    ".freemed_display_selectbox (
-      $sql->query ("SELECT room.roomname AS roomname, ".
-	"facility.psrcity AS poscity,facility.psrstate AS posstate,".
-	"facility.psrname AS posname,room.id AS id ".
-	"FROM room,facility ".
-	"WHERE room.roompos=facility.id AND room.roombooking='y' ".
-	"ORDER BY roomname"),
-      "#roomname# (#posname#/#poscity#,#posstate#)",
-      "room"
-    )."
-       <INPUT TYPE=SUBMIT VALUE=\""._("Change Room")."\">
-      </FORM></CENTER>
-      <P>
-    ";
+	<DIV ALIGN=\"CENTER\"><INPUT TYPE=\"SUBMIT\" VALUE=\"Refresh\"></DIV>
 
-    // now, find if it is "booked"
-    if ($room > 0) { // only if it is specific
-        // generate interference map
-      fc_generate_interference_map ("calroom='$room'",
-         $selected_date);
-      if (fc_interference_map_count () < 1) {
-        $display_buffer .= "
-          <CENTER>
-           <I>"._("The selected room is free all day.")."</I>
-          </CENTER>
-          <BR>
-        ";
-      }
+	</TD>
+	</TR>
+";
 
-      // display calendar here
+//----- Generate calendar
+if ($room>0 and $physician>0) { // check for this first
 
-      $display_buffer .= "
-        <TABLE WIDTH=100% BORDER=1 CELLSPACING=0 CELLPADDING=3
-         BGCOLOR=#777777><TR>
-        <TD COLSPAN=2><CENTER>
-         <FONT SIZE=-1
-          COLOR=#ffffff><B>"._("TIME")."</B></FONT></CENTER></TD>
-      ";
+// Get room information
+$rm_name = freemed::get_link_field ($room, "room", "roomname");
+$rm_desc = freemed::get_link_field ($room, "room", "roomdescrip");
 
-      $_alternate = freemed_bar_alternate_color ();
-      for ($i=fc_starting_hour();$i<=fc_ending_hour();$i++) {
-        if ($i > 11) { 
-          $ampm = "pm"; 
-          if ($i>12) $ampm_t = $i - 12;
-            elseif ($i==12) $ampm_t=$i;
-        } else { $ampm = "am"; $ampm_t = $i;}
-        if (!fc_check_interference_map($i, "0", $selected_date, false) or
-            (freemed::config_value("cal_ob")=="enable")) {
-          $display_buffer .= "
-            <TR BGCOLOR=\"".($_alternate =
-	      freemed_bar_alternate_color ($_alternate))."\">
-            <TD ALIGN=RIGHT VALIGN=TOP>
-            <A HREF=\"$page_name?action=step2&patient=$patient&hour=$i".
-            "&minute=00&room=$room&selected_date=$selected_date&type=$type\"
-            >$ampm_t $ampm</A></TD><TD ALIGN=CENTER>
-          ";
-        } else { // if we _can't_ book here
-          $interfere = fc_check_interference_map ($i, "0", $selected_date,
-             false);
-          $display_buffer .= "
-            <TR BGCOLOR=\"".($_alternate =
-	      freemed_bar_alternate_color ($_alternate))."\">
-            <TD ALIGN=RIGHT VALIGN=TOP>
-           ";
-          if ($interfere) $display_buffer .= "<I>";
-          $display_buffer .= "$ampm_t $ampm";
-          if ($interfere) $display_buffer .= "</I>";
-          $display_buffer .= "
-            </TD><TD ALIGN=CENTER>
-          ";
-        } // end checking if booked
+$form .= "
+	<TR><TD COLSPAN=2>
+	<!-- begin calendar display -->
 
-        for ($j=15;$j<=45;$j+=15) {
-          if (!fc_check_interference_map($i, $j, $selected_date, false) or
-              freemed::config_value("cal_ob")=="enable") {
-            $display_buffer .= "
-             <A HREF=\"$page_name?action=step2&patient=$patient&".
-             "hour=$i&minute=$j&room=$room&selected_date=$selected_date&".
-             "type=$type\"
-             ><B>:$j</B></A>&nbsp;
-            ";
-          } else {
-            $interfere = fc_check_interference_map($i, $j, $selected_date,
-               false);
-            if ($interfere) $display_buffer .= "<I>";
-            $display_buffer .= "<B>:$j</B>";
-            if ($interfere) $display_buffer .= "</I>";
-            $display_buffer .= "&nbsp;\n";
-          } // end checking for booked?
-        } // end for minutes loop
+	<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
+	 CLASS=\"calendar\">
+	<TR><TD COLSPAN=4 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+		<B>Calendar</B>
+	</TD></TR>
 
-        $display_buffer .= "
-          </TD></TR>
-        "; // end row
-      } // end for loop (hours)
-      $display_buffer .= "
-        </TABLE>
-      ";
-    } // why is this here?
+	<TR>
+		<TD COLSPAN=2 WIDTH=\"20%\">&nbsp;</TD>
+		<TD COLSPAN=1 WIDTH=\"40%\">"._("Physician")."</TD>
+		<TD COLSPAN=1 WIDTH=\"40%\">".prepare($rm_name)."</TD>
+	</TR>
+";
 
-  break; 
- case "step2":
+// Create maps for each
+$p_map = freemedCalendar::map("SELECT * FROM scheduler ".
+	"WHERE calphysician='".addslashes($physician)."' AND ".
+	"caldateof='".addslashes($selected_date)."'");
+$r_map = freemedCalendar::map("SELECT * FROM scheduler ".
+	"WHERE calroom='".addslashes($room)."' AND ".
+	"caldateof='".addslashes($selected_date)."'");
 
-      // STAGE TWO:
+// Loop through the hours
+for ($c_hour=freemed::config_value("calshr");
+	 $c_hour<freemed::config_value("calehr");
+	 $c_hour++) {
+	// Display beginning of row/hour
+	$form .= "<TR><TD VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
+		"CLASS=\"calcell_hour\"><B>".
+		freemedCalendar::display_hour($c_hour)."</B></TD>\n";
 
-      // ACTUALLY BOOKING SOMETHING... REQUIRES ROOM, HOUR,
-      // PATIENT NUMBER, PHYSICIAN, ETC... THIS IS THE
-      // FINAL FORM.
+	// Loop through the minutes
+	for ($c_min="00"; $c_min<60; $c_min+=15) {
+		// Change cell_class
+		$cell_class = alternate_colors (
+			array("calcell", "calcell_alt")
+		);
 
-   $page_title = _("Add Appointment");
-   $display_buffer .= freemed_patient_box ($this_patient);
+		// Get index
+		$idx = $c_hour.":".$c_min;
+	
+		// If 15 minutes, row change (because of rowspan args)
+		if ($c_min==15) {
+		//	$form .= "</TR><TR>\n";
+		}	
 
-   if (strlen($room)>0) {
-     $rm_name = freemed::get_link_field ($room, "room", "roomname");
-     $rm_desc = freemed::get_link_field ($room, "room", "roomdescrip");
+		// Generate minute cell
+		$form .= "<TD ALIGN=\"LEFT\" VALIGN=\"TOP\" CLASS=\"".
+			$cell_class."\"".">:".$c_min."</TD>\n";
 
-     if (strlen($rm_desc)<1) $rm_desc="";
-     else $rm_desc="(".$rm_desc.")";
-   } else {
-     $rm_name = _("NO PREFERENCE");
-     $rm_desc = "";
-   } // checking if room
+		// First physician...
+		$p_event = false;
+		if ($p_map[$idx][span] == 0) {
+			// Skip
+		} elseif ($p_map[$idx][link] != 0) {
+			// Display actual booking
+			$booking = freemed::get_link_rec(
+				$p_map[$idx][link], "scheduler"
+			);
+			
+			// Show it
+			$p_event = true;
+			$form .= "
+			<TD COLSPAN=1 CLASS=\"".$cell_class."\" ".
+			"ROWSPAN=\"".$p_map[$idx][span]."\"".
+			">".freemedCalendar::event_calendar_print(
+			$p_map[$idx][link])."</TD>
+			";
+		} else {
+			// Decide if it fits here
+		   if (freemedCalendar::map_fit($p_map, $idx, $duration)
+		   and (freemedCalendar::map_fit($r_map, $idx, $duration))) {
+				$form .= "<TD COLSPAN=\"2\" ALIGN=\"CENTER\"".
+				" CLASS=\"calendar_book_link\">".
+				"<A HREF=\"".page_name()."?process=1&".
+				"hour=".urlencode($c_hour)."&".
+				"minute=".urlencode($c_min)."&".
+				"room=".urlencode($room)."&".
+				"physician=".urlencode($physician)."&".
+				"duration=".urlencode($duration)."&".
+				"type=".urlencode($type)."&".
+				"selected_date=".urlencode($selected_date)."&".
+				"patient=".urlencode($patient)."\"".
+				">Book</A></TD>\n";
+			} else {
+				// If not, null block
+				$form .= "<TD COLSPAN=\"1\" ".
+					"CLASS=\"".$cell_class."\" ".
+					">&nbsp;</TD>\n";
+			}
+		} // end of processing physician map
 
-   if ($hour > 11) { 
-     $ampm = "pm"; 
-     if ($hour>12) $ampm_t = $hour - 12;
-       elseif ($hour==12) $ampm_t=12;
-   } else { $ampm = "am"; $ampm_t = $hour;}
-   
-     // find default physician by room, if there is one
-   if ($room!=0)
-     if (freemed::get_link_field($room, "room", "roomdefphy")!=0)
-       $physician = freemed::get_link_field($room, "room", "roomdefphy");
+		// ... then room
+		if ($r_map[$idx][span] == 0) {
+			// Skip
+		} elseif ($r_map[$idx][link] != 0) {
+			// Display actual booking
+			$booking = freemed::get_link_rec(
+				$r_map[$idx][link], "scheduler"
+			);
+			
+			// Show it
+			$form .= "
+			<TD COLSPAN=1 ROWSPAN=\".$r_map[$idx][span].\"".
+			" CLASS=\"calcell\">".
+			freemedCalendar::event_calendar_print(
+			$r_map[$idx][link])."</TD>
+			";
+		} else {
+			// Decide if it fits here
+		   if (freemedCalendar::map_fit($p_map, $idx, $duration)
+		   and (freemedCalendar::map_fit($r_map, $idx, $duration))) {
+				// Already in physician map
+				$form .= "";
+			} else {
+				// If not, null block
+				$form .= "<TD COLSPAN=\"1\" ".
+					"CLASS=\"".$cell_class."\"".
+					">&nbsp;</TD>\n";
+			}
+		} // end of processing room map
 
-     // find the facility for it, with info
-   $facility = freemed::get_link_field ($room, "room", "roompos");
-   if ($facility > 0) {
-     $fac_name = freemed::get_link_field ($facility, "facility", "psrname");
-   } else {
-     $fac_name = _("Default Facility");
-   } // end checking for facility
+		// End of row
+		$form .= "</TR>\n"; $row = false;
+		
+	} // end minute looping
 
-   if ($debug) $debug_var = "[$room]";
-   $display_buffer .= "
-     <FORM ACTION=\"$page_name\">
-     <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"add\">
-     <INPUT TYPE=HIDDEN NAME=\"patient\"  VALUE=\"".prepare($patient)."\">
-     <INPUT TYPE=HIDDEN NAME=\"room\"     VALUE=\"".prepare($room)."\">
-     <INPUT TYPE=HIDDEN NAME=\"facility\" VALUE=\"".prepare($facility)."\">
-     <INPUT TYPE=HIDDEN NAME=\"type\"     VALUE=\"".prepare($type)."\">
-     <INPUT TYPE=HIDDEN NAME=\"selected_date\"
-      VALUE=\"".prepare($selected_date)."\">
-     <INPUT TYPE=HIDDEN NAME=\"hour\"     VALUE=\"".prepare($hour)."\">
-     <INPUT TYPE=HIDDEN NAME=\"minute\"   VALUE=\"".prepare($minute)."\">
+	// Display end of this row
+	$form .= "</TR>\n";
+} // end hour looping
 
-     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
-      ALIGN=MIDDLE>
+//----- End of calendar
+$form .= "
+	</TABLE>
+";
 
-     <TR>
-     <TD ALIGN=RIGHT><B>"._("Facility")."</B>:</TD>
-     <TD ALIGN=LEFT>$fac_name</TD></TR>
-     <TR>
-     <TD ALIGN=RIGHT><B>"._("Room")."</B>:</TD>
-     <TD ALIGN=LEFT>$rm_name $rm_desc</TD></TR>
-     <TR>
-     <TD ALIGN=RIGHT><B>"._("Date")."</B>:</TD>
-     <TD ALIGN=LEFT>".fm_date_print($selected_date)."</TD></TR>
-     <TR>
-     <TD ALIGN=RIGHT><B>"._("Time")."</B>:</TD>
-     <TD ALIGN=LEFT>$ampm_t $minute $ampm</TD></TR>
+} // end of checking for room & physician
 
-     <TR>
-     <TD ALIGN=RIGHT><B>"._("Duration")."</B>:</TD>
-     <TD ALIGN=LEFT><SELECT NAME=\"duration\">
-       <OPTION VALUE=\"15\" >0:15 
-       <OPTION VALUE=\"30\" >0:30 
-       <OPTION VALUE=\"45\" >0:45 
-       <OPTION VALUE=\"60\" >1:00 
-       <OPTION VALUE=\"75\" >1:15
-       <OPTION VALUE=\"90\" >1:30
-       <OPTION VALUE=\"105\">1:45
-       <OPTION VALUE=\"120\">2:00
-       <OPTION VALUE=\"180\">3:00
-       <OPTION VALUE=\"480\">8:00
-      </SELECT></TD></TR>
+//----- End of page
+$form .= "
+	</TABLE>
+";
 
-     <TR>
-     <TD ALIGN=RIGHT><B>"._("Physician")."</B>:</TD>
-     <TD ALIGN=LEFT>
-   ".freemed_display_selectbox(
-		$sql->query(
-			"SELECT phyfname,phylname,id 
-			FROM physician
-			WHERE phyref='no'"),
-		"#phylname#,#phyfname#",
-		 "physician")."
-      </TD></TR>
 
-     <TR>
-     <TD ALIGN=RIGHT><B>"._("Note")."</B>:</TD>
-     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"note\" VALUE=\"\"
-      SIZE=40 MAXLENGTH=100></TD></TR>
-     </TABLE>
 
-     <BR>
-     <CENTER>
-      <INPUT TYPE=SUBMIT VALUE=\" "._("Commit Booking")." \">
-     </CENTER>
-     </FORM>
-   ";
-  break;
- case "add":
+//----- Check for process form
+if ($process) {
+	// Process form here
 	$page_title = _("Add Appointment");
 	$display_buffer .= "<CENTER>"._("Adding")." ... ";
+
+	// Travel kludge modifications
+	if ($travel) {
+		$calfacility = 0;
+		$calroom     = 0;
+		$calpatient  = 0;
+		$calprenote  = _("Travel");
+	}
+
 	$query = $sql->insert_query(
 		"scheduler",
 		array (
@@ -336,77 +340,36 @@ switch ($action) {
 	);
 	$result = $sql->query ($query);
 
-  if ($result) { $display_buffer .= _("done")."."; }
-   else        { $display_buffer .= _("ERROR");    }
+	if ($result) { $display_buffer .= _("done")."."; }
+	 else        { $display_buffer .= _("ERROR");    }
 
-	/* FIXME: THIS HAS TO BE UNCOMMENTED
+	$display_buffer .= " </CENTER> <P> <CENTER>\n";
+	if (!$travel) {
+		if ($type=="pat") {
+			//$refresh = "manage.php?id=".urlencode($patient);
+			$display_buffer .= "
+			<A HREF=\"manage.php?id=$patient\"
+			>"._("Manage Patient")."</A>
+			</CENTER>
+			";
+		} else {
+			//$refresh = "call-in.php?action=display&id=".
+				urlencode($patient);
+			$display_buffer .= "
+			<A HREF=\"call-in.php?action=display&id=$patient\"
+			>"._("Manage Patient")."</A>
+			</CENTER>
+			";
+		} // end checking type
+	} else {
+		// Travel "link"
+		$refresh = "main.php";
+	}
+} else {
+	$display_buffer .= $form;
+} // done checking for processing
 
-  $display_buffer .= "\n$selected_date, $fac_name, $room_nm";
-
-  // get patient, room (lab) and selected_date info
-  $dj_rm  = freemed::get_link_field ($room, "room", "roomname");
-  $dj_mo  = substr ($selected_date, 5, 2);
-  $dj_yr  = substr ($selected_date, 0, 4);
-  $dj_day = substr ($selected_date, 8, 2);
-
-  // TODO: change time back to am/pm format
-  $dj_title = $dj_rm." ".$this_patient->ptlname." ".$hour.":".$minute." ".$note;
-  // dj_text (javascript) popup window should have more information
-  $dj_text  = $dj_rm." ".$this_patient->ptlname.", ".$this_patient->ptfname.
-    " ".$hour.":".$minute." ".$note;
-  $dj_id    = "01"; // dummied up, should be the actual user id
-  $dj_sp    = "";
-
-  $dj_query = "INSERT INTO calendar_messages ( ".
-    "msg_id, msg_month, msg_day, msg_year, msg_title, msg_text, ".
-    "msg_poster_id, msg_recurring, msg_active ) ".
-    "VALUES ( ".
-    "'NULL'
-  $dj_query = $sql->insert_query (
-	"calendar_messages",
-	array (
-		"msg_id"		=>	'NULL',
-		"msg_month"		=>	$dj_mo,
-		"msg_day"		=>	$dj_day,
-		"msg_year"		=>	$dj_year,
-		"msg_title"		=>	$dj_title,
-		"msg_text"		=>	$dj_text,
-		"msg_poster_id"	=>	$dj_id,
-		"msg_recurring"	=>	$dj_sp,
-		"msg_active"	=>	"1"
-	)
-  );
-
-  $result = $sql->query ($dj_query);
-
-  if (!$result) $display_buffer .= _("ERROR");
-
-	END OF SECTION THAT HAS TO BE UNCOMMENTED */
-
-  $display_buffer .= "
-    </CENTER>
-    <P>
-    <CENTER>
-  ";
-  if ($type=="pat") {
-	$refresh = "manage.php?id=".urlencode($patient);
-    $display_buffer .= "
-     <A HREF=\"manage.php?id=$patient\"
-     >"._("Manage Patient")."</A>
-     </CENTER>
-    ";
-  } else {
-	$refresh = "call-in.php?action=display&id=".urlencode($patient);
-    $display_buffer .= "
-     <A HREF=\"call-in.php?action=display&id=$patient\"
-     >"._("Manage Patient")."</A>
-     </CENTER>
-    ";
-  } // end checking type
-
-  break;
-} // end master switch
-
+//----- Display the actual page
 template_display();
 
 ?>

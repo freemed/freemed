@@ -42,6 +42,7 @@ foreach ($static_components AS $garbage => $component) {
 		$query =
 			"SELECT * FROM scheduler WHERE ".
 			"calpatient='".addslashes($id)."' AND ".
+			"caltype='pat' AND ".
 			"( caldateof > '".date("Y-m-d")."' OR ".
 			  "( caldateof = '".date("Y-m-d")."' AND ".
 			  "  calhour >= '".date("H")."' )".
