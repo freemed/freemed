@@ -29,6 +29,11 @@ freemed project changelog
     procedure_module  turned of the debugging code since it seems to be working now.
     module_emr and module_maint user $form_vars instead of $this->form_vars
 
+	Applied a fix to all modules using the notebook to run the $variables array and 
+    put the variables in global scope prior to the extract function being called. this
+    fixes the problem for modform where if there is exiting data in the table it will
+    be displayed. 
+
 
  
 * Fri Feb 09 2001 rufustfirefly
