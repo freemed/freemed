@@ -25,7 +25,25 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log mess
 $this_user = CreateObject('FreeMED.User');
 
 if ($_REQUEST['submit_action']==" ".__("Add")." ") { $action = "add"; }
+if ($_REQUEST['submit_action']==__("Save Draft")) {
+	$_SESSION['message_draft']['for'] = $_REQUEST['msgfor'];
+	$_SESSION['message_draft']['group'] = $_REQUEST['group'];
+	$_SESSION['message_draft']['text'] = $_REQUEST['msgtext'];
+	$_SESSION['message_draft']['person'] = $_REQUEST['msgperson'];
+	$_SESSION['message_draft']['patient'] = $_REQUEST['msgpatient'];
+	$_SESSION['message_draft']['subject'] = $_REQUEST['msgsubject'];
+	$_SESSION['message_draft']['urgency'] = $_REQUEST['msgurgency'];
+	if ($return=="manage") {
+		Header("Location: manage.php?id=".urlencode($_REQUEST['msgpatient']));
+		die("");
+	} else {
+		Header("Location: messages.php");
+		die("");
+	}
+}
 if ($_REQUEST['submit_action']==__("Cancel")) {
+	// Clear message draft on cancel
+	unset($_SESSION['message_draft']);
 	$action = "";
 	// Handle return to patient during cancel
 	if ($return=="manage") {
@@ -74,6 +92,17 @@ switch ($action) {
 		}
 	}
 
+	// Check for saved draft
+	if (!$_REQUEST['been_here'] and $_SESSION['message_draft']) {
+		$msgfor = $_SESSION['message_draft']['for'];
+		$group = $_SESSION['message_draft']['group'];
+		$msgtext = $_SESSION['message_draft']['text'];
+		$msgperson = $_SESSION['message_draft']['person'];
+		$msgpatient = $_SESSION['message_draft']['patient'];
+		$msgsubject = $_SESSION['message_draft']['subject'];
+		$msgurgency = $_SESSION['message_draft']['urgency'];
+	}
+
 	$display_buffer .= "
 	<p/>
 	<form NAME=\"myform\" ACTION=\"$page_name\" METHOD=\"POST\">
@@ -98,7 +127,7 @@ switch ($action) {
 				"ORDER BY descrip",
 			"descrip",
 			"msgfor",
-			fm_join_from_array($_REQUEST['msgfor']),
+			fm_join_from_array(($msgfor ? $msgfor : $_REQUEST['msgfor'])),
 			false
 		).
 		module_function(
@@ -137,6 +166,8 @@ switch ($action) {
 	<div ALIGN=\"CENTER\">
 	<input class=\"button\" TYPE=\"SUBMIT\" ".
 	"NAME=\"submit_action\" VALUE=\" ".__("Add")." \" />
+	<input class=\"button\" TYPE=\"SUBMIT\" ".
+	"NAME=\"submit_action\" VALUE=\"".__("Save Draft")."\" />
 	<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
 	<input class=\"button\" TYPE=\"SUBMIT\" ".
 	"NAME=\"submit_action\" VALUE=\"".__("Cancel")."\" />
@@ -147,6 +178,10 @@ switch ($action) {
 	break; // end action addform
 
 	case "add":
+	// Remove any drafts from the session
+	if ($_SESSION['message_draft']) {
+		unset($_SESSION['message_draft']);
+	}
 	// Make sure duplicates are not sent
 	if ($_SESSION['message_send_stamp'][$_REQUEST['send_stamp']]) {
 		trigger_error(__("This message has been sent multiple times."), E_USER_ERROR);
@@ -410,7 +445,7 @@ switch ($action) {
 				<td><input TYPE=\"CHECKBOX\" ".
 					"NAME=\"mark[".$r['id']."]\" ".
 					"VALUE=\"".prepare($r['id'])."\"/></td>
-				<td>$y-$m-$d</td>
+				<td>".date('m/d/Y', mktime(0,0,0,$m,$d,$y))."</td>
 				<td>".$scheduler->get_time_string($hour,$min)."</td>
 				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
