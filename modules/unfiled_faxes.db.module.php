@@ -91,7 +91,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			break;
 			
 			case __("Send to Provider"):
-			case __("File without First Page"):
+			case __("Send to Provider without First Page"):
 			$this->mod();
 			return false;
 			break;
@@ -176,7 +176,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		"class=\"button\" value=\"".__("Send to Provider")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"onClick=\"return validate(this.form);\" ".
-		"class=\"button\" value=\"".__("File without First Page")."\"/>
+		"class=\"button\" value=\"".__("Send to Provider without First Page")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"onClick=\"return validate(this.form);\" ".
 		"class=\"button\" value=\"".__("File Directly")."\"/>
@@ -239,16 +239,16 @@ class UnfiledFaxes extends MaintenanceModule {
 		}
 
 		// If we're removing the first page, do that now
-		if ($_REQUEST['submit_action'] == __("File without First Page")) {
-			$command = "/usr/bin/djvm -d data/fax/unfiled/".
-				$filename." 1";
+		if ($_REQUEST['submit_action'] == __("Send to Provider without First Page")) {
+			$command = "/usr/bin/djvm -d \"data/fax/unfiled/".
+				$filename."\" 1";
 			`$command`;
 			$GLOBALS['display_buffer'] .= __("Removed first page.")."<br/>\n";
 		}
 
 		// Move actual file to new location
 		//echo "mv data/fax/unfiled/$filename data/fax/unread/$filename -f";
-		if ($filename) { `mv data/fax/unfiled/$filename data/fax/unread/$filename -f`; }
+		if ($filename) { `mv "data/fax/unfiled/$filename" "data/fax/unread/$filename" -f`; }
 
 		// Insert new table query in unread
 		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
@@ -340,9 +340,9 @@ class UnfiledFaxes extends MaintenanceModule {
 		// Move actual file to new location
 		//echo "mv data/fax/unfiled/$filename $new_filename -f<br/>\n";
 		$dirname = dirname($new_filename);
-		`mkdir -p $dirname`;
+		`mkdir -p "$dirname"`;
 		//echo "mkdir -p $dirname";
-		if ($filename) { `mv data/fax/unfiled/$filename $new_filename -f`; }
+		if ($filename) { `mv "data/fax/unfiled/$filename" "$new_filename" -f`; syslog(LOG_INFO, "UnfiledFax| mv data/fax/unfiled/$filename $new_filename -f"); }
 
 		$GLOBALS['display_buffer'] .= __("Moved fax to scanned documents.");
 
@@ -469,6 +469,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			foreach ($pages AS $_page) {
 				unlink($dir."/".$_page);
 			}
+			unlink($dir);
 
 			// Add new entry for fax file
 			$result = $GLOBALS['sql']->query(
