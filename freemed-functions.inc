@@ -1056,13 +1056,15 @@ function freemed_display_selectbox ($result, $format, $param="")
 {
   global $$param; // so it knows to put SELECTED on properly
   static $var; // array of $result-IDs so we only go through them once
+  static $count; // count of results
 
-  if (!isset($var[$result])) {
-    while ($var[$result][] = fdb_fetch_array($result));
+  if (!isset($var["$result"])) {
+    $count["$result"] = fdb_num_rows($result);
+    while ($var["$result"][] = fdb_fetch_array($result));
   } // if we haven't gone through this list yet
   
   $buffer = "";
-  if (count($var[$result])<1) { 
+  if ($count["$result"]<1) { 
     $buffer .= _("NONE");
     return $buffer; // do nothing!
   } // if no result
@@ -1071,8 +1073,8 @@ function freemed_display_selectbox ($result, $format, $param="")
     <SELECT NAME =\"$param\">
       <OPTION VALUE=\"0\">"._("NONE SELECTED")."
   ";
-  reset($var[$result]); // if we're caching it, we have to reset it!
-  while ( (list($pickle,$item) = each($var[$result])) 
+  reset($var["$result"]); // if we're caching it, we have to reset it!
+  while ( (list($pickle,$item) = each($var["$result"])) 
                                      AND ($item[id])) { // no null values!
     // START FORMAT-FETCHING
     $format_array = explode("#",$format); // odd members are variable names!
