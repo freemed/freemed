@@ -15,16 +15,18 @@
     freemed_display_banner ();
     if (strlen($_URL)>0) $__url_part = "?_URL=".urlencode($_URL);
     echo "
-      <TABLE BORDER=1 CELLPADDING=4 VALIGN=CENTER ALIGN=CENTER WIDTH=60%
+      <TABLE BORDER=1 CELLPADDING=4 VALIGN=CENTER ALIGN=CENTER WIDTH=100%
        BGCOLOR=#cccccc>
-      <TR><TD>
+      <TR><TD ALIGN=CENTER>
        <P>
-       <$HEADERFONT_B>$Error !<$HEADERFONT_E>
+       <$HEADERFONT_B>"._("Error")." !<$HEADERFONT_E>
        <P>
-       <$STDFONT_B>$Incorrect_name_password <$STDFONT_E>
+       <$STDFONT_B>
+       "._("You have entered an incorrect name or password.")."
+       <$STDFONT_E>
        <P>
        <CENTER><$STDFONT_B><A HREF=\"$complete_url$__url_part\"
-        >$Return_to_the_login_screen </A><$STDFONT_E></CENTER>
+        >"._("Return to the login screen")."</A><$STDFONT_E></CENTER>
        <P>
       </TD></TR>
       </TABLE>
@@ -66,12 +68,12 @@
     <BODY BGCOLOR=#ffffff>
   ";
   freemed_display_banner ();
-  freemed_display_box_top ("Authenticating ... ");
+  freemed_display_box_top (_("Authenticating")." ... ");
   echo "
       <P>
       <CENTER>
-        <B>If your browser does not support the REFRESH tag, click
-        <A HREF=\"$_jump_page\">here</A>.</B>
+        <B>"._("If your browser does not support the REFRESH tag, click
+        <A HREF=\"$_jump_page\">here</A>").".</B>
       </CENTER>
       <P>
   ";
