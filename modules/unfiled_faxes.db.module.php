@@ -31,10 +31,14 @@ class UnfiledFaxes extends MaintenanceModule {
 			'uffax_user'
 		));
 		$this->_SetMetaInformation('global_config', array(
-			__("Single Recipient") =>
-			'html_form::select_widget("uffax_user", '.
-				'module_function ( "UnfiledFaxes", '.
-				'"user_select" ) )'
+			__("Recipient(s)") =>
+			//'html_form::select_widget("uffax_user", '.
+			//	'module_function ( "UnfiledFaxes", '.
+			//	'"user_select" ) )'
+			'freemed::multiple_choice ( '.
+				'"SELECT CONCAT(username, \' (\', userdescrip, \')\') '.
+				'AS descrip, id FROM user ORDER BY descrip", "descrip", '.
+				'"uffax_user", fm_join_from_array($uffax_user))'
 			)
 		);
 		
@@ -512,8 +516,17 @@ class UnfiledFaxes extends MaintenanceModule {
 		// Check to see if we're the person who is supposed to be
 		// notified. If not, die out right now.
 		$supposed = freemed::config_value('uffax_user');
-		if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
-			return false;
+		if (!(strpos($supposed, ',') === false)) {
+			// Handle array
+			$found = false;
+			foreach (explode(',', $supposed) AS $s) {
+				if ($s == $_SESSION['authdata']['user']) { $found = true; }
+			}
+			if (!$found) { return false; }
+		} else {
+			if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
+				return false;
+			}
 		}
 	
 		// Decide if we have any "unfiled faxes" in the system
@@ -543,8 +556,17 @@ class UnfiledFaxes extends MaintenanceModule {
 		// Check to see if we're the person who is supposed to be
 		// notified. If not, die out right now.
 		$supposed = freemed::config_value('uffax_user');
-		if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
-			return false;
+		if (!(strpos($supposed, ',') === false)) {
+			// Handle array
+			$found = false;
+			foreach (explode(',', $supposed) AS $s) {
+				if ($s == $_SESSION['authdata']['user']) { $found = true; }
+			}
+			if (!$found) { return false; }
+		} else {
+			if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
+				return false;
+			}
 		}
 	
 		// Decide if we have any "unfiled faxes" in the system
