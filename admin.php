@@ -19,10 +19,10 @@ $config_vars = array (
 	"calshr", // calendar start time
 	"calehr", // calendar end time
 	"dtfmt", // date format
-	"phofmt" // phone format
+	"phofmt", // phone format
+	"folded"  // do we fold multipage forms?
 );
 
-  // security patch...
 if (!freemed::user_flag(USER_ADMIN)) {
   $page_title = _("Administration")." :: "._("ERROR");
   $display_buffer .= "
@@ -135,6 +135,14 @@ if ($action=="cfgform") {
 				_("United States")." (XXX) XXX-XXXX" => "usa",
 				_("France")." (XX) XX XX XX XX" => "fr",
 				_("Unformatted")." XXXXXXXXXX" => "unformatted"
+			)
+		),
+
+		_("Fold Multipage Forms?") =>
+		html_form::select_widget("folded",
+			array (
+				_("yes") => "yes",
+				_("no")  => "no"
 			)
 		)
 	));
@@ -400,6 +408,10 @@ if ($action=="cfgform") {
     ptemritimestamp   TIMESTAMP(16),
     ptemriversion     BLOB,
     ptallergies	      TEXT,
+    ptquickmeds	      TEXT,
+    ptproblems	      TEXT,
+    ptcproblems	      TEXT,
+    ptops	      TEXT,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
@@ -1158,6 +1170,8 @@ if ($action=="cfgform") {
     	'dtfmt', 'ymd', NULL )")) if ($debug) $display_buffer .= "(dtfmt) \n";
   	if ($sql->query("INSERT INTO config VALUES (
     	'phofmt', 'unformatted', NULL )")) if ($debug) $display_buffer .= "(phofmt) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'folded', 'yes', NULL )")) if ($debug) $display_buffer .= "(folded) \n";
   }
 
   // generate incoming faxes table

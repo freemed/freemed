@@ -72,6 +72,7 @@ switch ($action) {
       break; // end internal mod
    } // end of internal switch add/mod
 
+	if (freemed::config_value("folded") == "yes") {
    // ** DISPLAY ADD/MOD ***
    $book->add_page (
      _("Primary Information"),
@@ -337,6 +338,205 @@ switch ($action) {
 	"</CENTER>"
      ))
    );
+
+	} else { // checking for folded
+
+
+   	 $ptstatus_r = $sql->query("SELECT ptstatus,ptstatusdescrip,id
+                            FROM ptstatus
+                            ORDER BY ptstatus");
+   $ref_phys_r = $sql->query("SELECT phylname,phyfname,id
+                            FROM physician WHERE phyref='yes' 
+                            ORDER BY phylname,phyfname");
+   $int_phys_r = $sql->query("SELECT phylname,phyfname,id
+                            FROM physician WHERE phyref='no' 
+                            ORDER BY phylname,phyfname");
+   $all_phys_r = $sql->query("SELECT phylname,phyfname,id
+                            FROM physician
+			    ORDER BY phylname,phyfname");
+
+   if (!isset($num_other_docs)) { // first time through
+     $num_other_docs=0;
+     for ($i=1;$i<=4;$i++) // for ptphy[1..4]
+       if (${"ptphy$i"}>0) 
+         $num_other_docs++; // some days, i'm so clever it hurts.
+   } // is !isset num_other_docs
+
+   $book->add_page (
+     _("Patient"),
+     array ("ptlname", "ptfname", "ptmname",
+            date_vars("ptdob"),
+            "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
+            "has_insurance",
+         "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip",
+	 "ptcountry",
+          // phone_vars("pthphone"),
+         "pthphone",
+         "pthphone_1", "pthphone_2", "pthphone_3", "pthphone_4", "pthphone_5",
+          // phone_vars("ptwphone"),
+         "ptwphone",
+         "ptwphone_1", "ptwphone_2", "ptwphone_3", "ptwphone_4", "ptwphone_5",
+	  // phone_vars("ptfax")
+         "ptfax",
+         "ptfax_1", "ptfax_2", "ptfax_3", "ptfax_4", "ptfax_5",
+          // email address portions
+         "ptemail1", "ptemail2",
+         "ptsex", "ptmarital", "ptssn", "ptid",
+	 "ptdmv", "ptbilltype", "ptbudg", "ptempl",
+	"ptdoc", "ptphy1", "ptphy2", "ptphy3", "ptphy4", "ptpcp",
+            "ptrefdoc", "num_other_docs",
+	"ptblood",
+     	"ptnextofkin"
+         ),
+
+		html_form::form_table ( array (
+			_("Last Name") =>
+				html_form::text_widget("ptlname", 25, 50),
+    
+			_("First Name") =>
+				html_form::text_widget("ptfname", 25, 50),
+
+			_("Middle Name") =>
+				html_form::text_widget("ptmname", 25, 50),
+
+			_("Address Line 1") =>
+				html_form::text_widget("ptaddr1", 25, 45),
+
+			_("Address Line 2") =>
+				html_form::text_widget("ptaddr2", 25, 45),
+
+			_("City").", "._("State").", "._("Zip") =>
+				html_form::text_widget("ptcity", 10, 45)."\n".
+				html_form::state_pulldown("ptstate").
+				html_form::text_widget("ptzip", 10),
+
+			_("Date of Birth") =>
+				date_entry("ptdob"),
+
+			_("Country") =>
+				html_form::country_pulldown("ptcountry"),
+
+			_("Home Phone") =>
+				fm_phone_entry ("pthphone"),
+
+			_("Work Phone") =>
+				fm_phone_entry ("ptwphone"),
+    
+			_("Fax Number") =>
+				fm_phone_entry ("ptfax"),
+  
+			_("Email Address") =>
+				"<INPUT TYPE=TEXT NAME=\"ptemail1\" SIZE=20 MAXLENGTH=40 ".
+				"VALUE=\"".prepare($ptemail1)."\"> <B>@</B>\n".
+				"<INPUT TYPE=TEXT NAME=\"ptemail2\" SIZE=20 MAXLENGTH=40 ".
+				"VALUE=\"".prepare($ptemail2)."\">",
+
+		_("Gender") =>
+			html_form::select_widget("ptsex",
+				array (
+					 _("Female")        => "f",
+					 _("Male")          => "m",
+					 _("Transgendered") => "t"
+				)
+			),
+
+		_("Marital Status") =>
+			html_form::select_widget("ptmarital",
+				array (
+					_("Single")    => "single",
+					_("Married")   => "married",
+					_("Divorced")  => "divorced",
+					_("Separated") => "separated",
+					_("Widowed")   => "widowed"
+				)
+			),
+	
+		_("Employment Status") =>
+			html_form::select_widget("ptempl",
+				array (
+					_("Yes")    => "y",
+					_("No")     => "n",
+					"Part Time" => "p",
+					"Self"      => "s",
+					"Retired"   => "r",
+					"Military"  => "m",
+					"Unknown"   => "u"
+				)
+			),
+		_("Patient Status") => 
+  			freemed_display_selectbox ($ptstatus_r, "#ptstatus#, #ptstatusdescrip", "ptstatus"),
+
+		_("Social Security Number") =>
+			html_form::text_widget("ptssn", 9),
+
+		_("Internal Practice ID #") =>
+			html_form::text_widget("ptid", 10),
+    
+		_("Driver's License (No State)") =>
+			html_form::text_widget("ptdmv", 9),
+       
+		_("Type of Billing") =>
+			html_form::select_widget("ptbilltype",
+				array (
+					_("Monthly Billing On Account") => "mon",
+					_("Statement Billing")          => "sta",
+					_("Charge Card Billing")        => "chg",
+					_("NONE SELECTED")              => ""
+				)
+			),
+
+		_("Monthly Budget Amount") =>
+			"<INPUT TYPE=TEXT NAME=ptbudg SIZE=10 MAXLENGTH=20 ".
+			"VALUE=\"".prepare($ptbudg)."\">",
+		 
+	_("In House Doctor") =>
+	freemed_display_selectbox ($int_phys_r, "#phylname#, #phyfname#", "ptdoc"),
+
+	_("Referring Doctor") =>
+	freemed_display_selectbox ($ref_phys_r, "#phylname#, #phyfname#", "ptrefdoc"),
+
+	_("Primary Care Physician") =>
+	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptpcp"),
+
+	(($num_other_docs>0) ? _("Other Physician 1") : "" ) =>
+	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy1"),
+
+	(($num_other_docs>1) ? _("Other Physician 2") : "" ) =>
+	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy2"),
+
+	(($num_other_docs>2) ? _("Other Physician 3") : "" ) =>
+	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy3"),
+
+	(($num_other_docs>3) ? _("Other Physician 4") : "" ) =>
+	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy4"),
+
+	_("Number of Other Physicians") =>
+	html_form::number_pulldown("num_other_docs", 0, 4),
+
+			_("Blood Type") =>
+			html_form::select_widget(
+				"ptblood",
+				array(
+					"O",
+					"O+",
+					"O-",
+					"A",
+					"A+",
+					"A-",
+					"B",
+					"B+",
+					"B-",
+					"AB",
+					"AB+",
+					"AB-"
+				)
+			),
+       _("Next of Kin") =>
+	html_form::text_area("ptnextofkin", "VIRTUAL", 10, 40)
+     ))
+   );
+
+	} // end checking for folded
 
    // show notebook
    $page_title = _("Patient")." "._("$action_name");

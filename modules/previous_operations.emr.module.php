@@ -1,0 +1,201 @@
+<?php
+ // $Id$
+ // desc: previous operations summary module
+ // lic : GPL, v2
+
+if (!defined("__PREVIOUS_OPERATIONS_EMR_MODULE_PHP__")) {
+
+define ('__PREVIOUS_OPERATIONS_EMR_MODULE_PHP__', true);
+
+class previousOperationsModule extends freemedEMRModule {
+
+	var $MODULE_NAME = "Previous Operations";
+	var $MODULE_VERSION = "0.1";
+
+	var $record_name = "Previous Operations";
+	// Dummy array for prototype:
+	var $summary_items = array ( 1,2,3 );
+
+	function previousOperationsModule () {
+		// call parent constructor
+		$this->freemedEMRModule();
+	} // end constructor previousOperationsModule
+
+	// The EMR box; probably the most important part of this module
+	function summary ($patient, $dummy_items) {
+		// Get patient object from global scope (if it exists)
+		if (isset($GLOBALS[this_patient])) {
+			global $this_patient;
+		} else {
+			$this_patient = new Patient ($patient);
+		}
+
+		// Extract ops
+		$ops = $this_patient->local_record["ptops"];
+
+		// Check to see if it's set (show listings if it is)
+		if (strlen($ops)>3) {
+			// Form an array
+			$my_ops = sql_expand($ops);
+			if (!is_array($my_ops)) {
+				$my_ops = array ($my_ops);
+			}
+
+			// Show menu bar
+			$buffer .= "
+			<TABLE BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
+			"CELLPADDING=\"2\">
+			<TR CLASS=\"menubar_info\">
+			<TD>"._("Medication")."</TD>
+			<TD>"._("Action")."</TD>
+			</TR>
+			";
+
+			// Loop thru and display ops 
+			foreach ($my_ops AS $k => $v) {
+				$buffer .= "
+				<TR>
+				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
+				<TD ALIGN=\"LEFT\"><A HREF=\"module_loader.php?module=previousOperationsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)."\"".
+				"><SMALL>"._("Delete")."</SMALL></A></TD>
+				</TR>
+				";
+			} // end looping thru ops 
+
+			// End table
+			$buffer .= "
+			</TABLE>
+			";
+		}
+
+		$buffer .= "
+			<DIV ALIGN=\"CENTER\">
+			<FORM ACTION=\"module_loader.php\" METHOD=\"POST\">
+			<INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".
+			prepare($this->MODULE_CLASS)."\">
+			<INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+			"add\">
+			<INPUT TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".
+			"manage\">
+			<INPUT TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
+			prepare($patient)."\">
+			".html_form::text_widget("op", 20, 50)."
+			<INPUT TYPE=\"SUBMIT\" VALUE=\""._("Add")."\">
+			</FORM>
+			</DIV>
+			";
+		return $buffer;
+	} // end function previousOperationsModule->summary
+
+	function add () {
+		global $display_buffer, $return, $patient, $op;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global ${$k};
+
+		// Get patient object
+		$this_patient = new Patient ($patient);
+
+		// Get ops, and extract to an array
+		$ops = $this_patient->local_record["ptops"];
+		$my_ops = sql_expand($ops);
+		if (!is_array($my_ops)) {
+			$my_ops = array ($my_ops);
+		}
+
+		// Add a new member to the array
+		$my_ops[] = $op;
+
+		// Remove empties
+		foreach ($my_ops AS $k => $v) {
+			if (empty($v)) unset($my_ops[$k]);
+		}
+
+		// Recombine into a single variable
+		$ops = sql_squash($my_ops);
+
+		$display_buffer .= "
+		<P><CENTER>
+		"._("Adding")." ...
+		";
+
+		// Update the proper table
+		$query = $sql->update_query (
+			"patient",
+			array ( "ptops" => $ops ),
+			array ( "id" => $patient )
+		);
+		$result = $sql->query($query);
+
+		// Check for result, etc
+		if ($result) { $display_buffer .= _("done");  }
+		 else        { $display_buffer .= _("ERROR"); }
+		$display_buffer .= "</CENTER>\n";
+
+		// If we came from patient management (EMR), return there
+		if ($return=="manage") {
+			Header("Location: manage.php?id=".urlencode($patient));
+			die("");
+		}
+	} // end function previousOperationsModule->add()
+
+	function del() { $this->delete(); }
+	function delete () {
+		global $display_buffer, $return, $patient, $id;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		// Get patient object
+		$this_patient = new Patient ($patient);
+
+		// Get ops, and extract to an array
+		$ops = $this_patient->local_record["ptops"];
+		$my_ops = sql_expand($ops);
+		if (!is_array($my_ops)) {
+			$my_ops = array ($my_ops);
+		}
+
+		// Unset the proper member of the array
+		unset ($my_ops[$id]);
+
+		// Recombine into a single variable
+		$ops = sql_squash($my_ops);
+
+		$display_buffer .= "
+		<P><CENTER>
+		"._("Deleting")." ...
+		";
+
+		// Update the proper table
+		$query = $sql->update_query (
+			"patient",
+			array ( "ptops" => $ops ),
+			array ( "id" => $patient )
+		);
+		$result = $sql->query($query);
+
+		// Check for result, etc
+		if ($result) { $display_buffer .= _("done");  }
+		 else        { $display_buffer .= _("ERROR"); }
+		$display_buffer .= "</CENTER>\n";
+
+		// If we came from patient management (EMR), return there
+		if ($return=="manage") {
+			Header("Location: manage.php?id=".urlencode($patient));
+			die("");
+		}
+	} // end function previousOperationsModule->delete()
+
+	function view() {
+		global $display_buffer;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+		$display_buffer .= "TODO: Listing for operations here\n";
+	} // end function previousOperationsModule->view()
+
+} // end class previousOperationsModule
+
+register_module ("previousOperationsModule");
+
+} // end if not defined
+
+?>
