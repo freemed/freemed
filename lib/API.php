@@ -796,7 +796,8 @@ class freemed {
 			return "<input TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\" ".
 				"VALUE=\"".prepare(${$varname})."\"/>".
-				$this_patient->fullName()." ".
+				$this_patient->fullName()." (".
+				$this_patient->ptdob.") ".
 				"<input class=\"button\" TYPE=\"BUTTON\" ".
 				"onClick=\"patientPopup=window.open(".
 				"'patient_lookup.php?varname=".
