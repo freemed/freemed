@@ -147,7 +147,7 @@ class GroupCalendar extends CalendarModule {
 		} elseif (strpos($my_group['phygroupdocs'], ',') > 0) {
 			$physician_list = explode(",", $my_group[phygroupdocs]);
 		} else {
-			$physician_list = $my_group['phygroupdocs'];
+			$physician_list = array($my_group['phygroupdocs']);
 		}
 
 		// Map all physicians in this group
