@@ -7,7 +7,7 @@
  //       max k <amk@span.ch>
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
- // ver : 2000-09-01
+ // ver : 2000-09-20
 
 if (!defined(__FREEMED_FUNCTIONS_INC__)) {
 
@@ -96,7 +96,7 @@ function freemed_config_value ($config_var)
   static $_config;
   
   $query = fdb_query("SELECT * FROM config
-    WHERE (c_option='$config_var')");
+    WHERE (c_option='".addslashes($config_var)."')");
 
   if ($query < 1) return ""; // fix for config db not being there...
 
@@ -232,10 +232,10 @@ function freemed_display_box_bottom ($_null="")
   if ($debug) {
     echo "
       
-      <TABLE WIDTH=100% BORDER=0 CELLSPACING=0 CELLPADDING=0
-       BGCOLOR=#ff0000 VALIGN=BOTTOM ALIGN=CENTER>
-      <TR><TD BGCOLOR=#ff0000>
-      <CENTER><B><FONT SIZE=-2 COLOR=#ffffff>"._("DEBUG IS ON")."</FONT>
+      <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=0
+       BGCOLOR=\"#ff0000\" VALIGN=BOTTOM ALIGN=CENTER>
+      <TR><TD BGCOLOR=\"#ff0000\">
+      <CENTER><B><FONT SIZE=-2 COLOR=\"#ffffff\">"._("DEBUG IS ON")."</FONT>
       </B></CENTER>
       </TD></TR></TABLE>
 
@@ -284,28 +284,28 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
   } // if there is no ref
 
   //if ($_pg_desc=="[HELP]") $width = "WIDTH=75%";
-  $width="WIDTH=100%";
+  $width="WIDTH=\"100%\"";
 
   if ($page_name=="index.php3") { $b_b = "<B>"; $b_e = "</B>"; }
 
   echo "
     <CENTER>
-    <TABLE BGCOLOR=#000000 CELLSPACING=0 CELLPADDING=2 ALIGN=CENTER
-     BORDER=0 VALIGN=MIDDLE $width><TR><TD BGCOLOR=#000000>
+    <TABLE BGCOLOR=\"#000000\" CELLSPACING=0 CELLPADDING=2 ALIGN=CENTER
+     BORDER=0 VALIGN=MIDDLE $width><TR><TD BGCOLOR=\"#000000\">
 
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 ALIGN=CENTER
-     VALIGN=CENTER BGCOLOR=#dddddd WIDTH=100%><TR><TD>
+     VALIGN=CENTER BGCOLOR=\"#dddddd\" WIDTH=\"100%\"><TR><TD>
   ";
 
   if (strlen($box_title)>0) {
     echo "
       <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
-       VALIGN=TOP BORDER=0><TR BGCOLOR=$topbar_color>
-       <TD BGCOLOR=$topbar_color>
+       VALIGN=TOP BORDER=0><TR BGCOLOR=\"$topbar_color\">
+       <TD BGCOLOR=\"$topbar_color\">
        <CENTER><FONT FACE=\"Arial, Helvetica, Verdana\"
-        SIZE=+1 COLOR=#ffffff>$b_b".INSTALLATION.": $box_title$b_e</FONT></CENTER>
+        SIZE=+1 COLOR=\"#ffffff\">$b_b".INSTALLATION.": $box_title$b_e</FONT></CENTER>
       </TD>
-      <TD BGCOLOR=$topbar_color ALIGN=RIGHT WIDTH=32 
+      <TD BGCOLOR=\"$topbar_color\" ALIGN=RIGHT WIDTH=32 
     ";
 
     if (($_ref!="index.php3") AND ($_ref != $pg_name)) {
@@ -339,9 +339,9 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ($_pg_desc != "[HELP]")) {
     // display top of table
     echo "
-     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 BORDER=0
-      VALIGN=TOP ALIGN=CENTER BGCOLOR=$menubar_color>
-     <TR BGCOLOR=$menubar_color>
+     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0 BORDER=0
+      VALIGN=TOP ALIGN=CENTER BGCOLOR=\"$menubar_color\">
+     <TR BGCOLOR=\"$menubar_color\">
     ";
     if ($current_patient>0) { 
       $p_link = "manage.php3?$_auth&id=$current_patient";
@@ -352,7 +352,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
     if (freemed_config_value ("gfx")=="1") {
      if ($this_userlevel>$admin_level)
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
         <A HREF=\"admin.php3?$_auth\"
         ><IMG SRC=\"img/KeysOnChain-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Admin Menu]\"></A>
@@ -360,7 +360,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
      if ($this_userlevel>$database_level)
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
         <A HREF=\"billing_functions.php3?$_auth&patient=$current_patient\"
         ><IMG SRC=\"img/CashRegister-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Billing]\"></A>
@@ -368,7 +368,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
      // no if statement needed for callins...
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
         <A HREF=\"call-in.php3?$_auth\"
         ><IMG SRC=\"img/Text-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Call-In Menu]\"></A>
@@ -376,7 +376,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
      if ($this_userlevel>$database_level)
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
         <A HREF=\"db_maintenance.php3?$_auth\"
         ><IMG SRC=\"img/Database-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Database]\"></A>
@@ -384,7 +384,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
      if ($is_physician)
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
         <A HREF=\"physician_day_view.php3?$_auth&physician=$physician_number\"
         ><IMG SRC=\"img/karm-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Day View]\"></A>
@@ -392,7 +392,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
      if ($this_userlevel>$database_level)
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
         <A HREF=\"$p_link\"
         ><IMG SRC=\"img/HandOpen-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Patients]\"></A>
@@ -400,7 +400,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
      // nothing else needed for help, either
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
         <A HREF=\"help.php3?$_auth&page_name=$page_name\"
          TARGET=\"__HELP__\"><IMG SRC=\"img/readme-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Help]\"></A>
@@ -408,7 +408,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
      // nothing needed for return to main menu...
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=RIGHT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
         <A HREF=\"main.php3?$_auth\"
         ><IMG SRC=\"img/HandPointingLeft-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Main Menu]\"></A>
@@ -417,48 +417,48 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
     } else { // if graphics are disabled...
       if ($this_userlevel>$admin_level)
        echo "
-        <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"admin.php3?$_auth\"
          ><$STDFONT_B SIZE=-1>Admin<$STDFONT_E></A>
         </TD>
         "; // end admin
       if ($this_userlevel>$database_level)
        echo "
-        <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"billing_functions.php3?$_auth&patient=$current_patient\"
          ><$STDFONT_B SIZE=-1>Bill<$STDFONT_E></A>
         </TD>
        ";
       // no special things needed for callins
        echo "
-        <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"call-in.php3?$_auth\"
          ><$STDFONT_B SIZE=-1>Callin<$STDFONT_E></A>
         </TD>
         ";
       if ($this_userlevel>$database_level)
        echo "
-        <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"db_maintenance.php3?$_auth\"
          ><$STDFONT_B SIZE=-1>DB<$STDFONT_E></A>
         </TD>
         "; // end db
       if ($this_userlevel>$database_level)
        echo "
-        <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"$p_link\"
          ><$STDFONT_B SIZE=-1>Patient<$STDFONT_E></A>
         </TD>
         ";
       // no special conditions for help
        echo "
-        <TD BGCOLOR=$menubar_color ALIGN=LEFT>
+        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"help.php3?$_auth&page_name=$page_name\"
          ><$STDFONT_B SIZE=-1>?<$STDFONT_E></A>
         </TD>
         ";
       echo "
-       <TD BGCOLOR=$menubar_color ALIGN=RIGHT>
+       <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
         <A HREF=\"main.php3?$_auth\"
         ><$STDFONT_B SIZE=-1>Main<$STDFONT_E></A>
         </TD>
@@ -489,16 +489,16 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
     // show the actual bar, build with page_name reference
     // and global variables
   $buffer .= "
-    <TABLE BGCOLOR=#000000 WIDTH=100% BORDER=0
+    <TABLE BGCOLOR=\"#000000\" WIDTH=\"100%\" BORDER=0
      CELLSPACING=0 CELLPADDING=3>
-    <TR BGCOLOR=#000000>
+    <TR BGCOLOR=\"#000000\">
     <TD ALIGN=LEFT><A HREF=\"$this_page_name?$_auth&action=addform".
      ( !empty($patient) ? "&patient=$patient" : "" )
-     ."\"><FONT COLOR=#ffffff FACE=\"Arial, Helvetica, Verdana\"
+     ."\"><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
      SIZE=-1><B>"._("ADD")."</B></FONT></A></TD>
-    <TD WIDTH=30%>&nbsp;</TD>
+    <TD WIDTH=\"30%\">&nbsp;</TD>
     <TD ALIGN=RIGHT><A HREF=\"$__ref?$_auth\"
-     ><FONT COLOR=#ffffff FACE=\"Arial, Helvetica, Verdana\"
+     ><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
      SIZE=-1><B>"._("RETURN TO MENU")."</B></FONT></A></TD>
     </TR></TABLE>
   ";
@@ -514,7 +514,7 @@ function freemed_display_html_bottom ($_null="")
 
   echo "
     <CENTER>
-      <I><FONT SIZE=-2 COLOR=#555555>".PACKAGENAME." ".
+      <I><FONT SIZE=-2 COLOR=\"#555555\">".PACKAGENAME." ".
       VERSION." $lang_coded_by
         <A HREF=\"$_mail_handler".BUGS_EMAIL."\">".CODED_BY."</A>
       </FONT></I>
@@ -860,44 +860,6 @@ function freemed_display_facilities ($param="", $default_load = false,
   }
   return $buffer;
 } // end function freemed_display_facilities
-
-// function freemed_display_insco
-//   display <SELECT>-type list of insurance companies
-function freemed_display_insco ($param="0")
-{
-  global $NONE_SELECTED;
-
-  $buffer="";
-
-  $buffer .= "
-   <SELECT NAME=\"$param\">
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $result = fdb_query ("SELECT * FROM insco
-    ORDER BY insconame,inscostate,inscocity");
-  if (!$result) {
-    // don't do anything...
-  } else { // 
-    while ($row=fdb_fetch_array($result)) {
-      $i_name = $row["insconame"];
-      $i_id   = $row["id"];
-
-      if ($debug) 
-        $debug_var = "[$i_id]";
-      else $debug_var = "";
-
-      $buffer .= "
-        <OPTION VALUE=\"$i_id\" ".
-	( ($param == $row[id]) ? "SELECTED" : "" )
-        .">$i_name ($row[inscocity],$row[inscostate]) $debug_var
-      "; // actually en-buffer it
-    } // while there are more results...
-  } // end master loop
-  $buffer .= "
-   </SELECT>
-  ";
-  return $buffer;
-} // end function freemed_display_insco
 
 // function freemed_display_physicians
 //   displays physicians selectable in <SELECT>
