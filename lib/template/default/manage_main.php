@@ -22,6 +22,17 @@ if ($num_summary_items < 1) $num_summary_items = 5;
 //----- Display patient information box...
 $display_buffer .= freemed::patient_box($this_patient);
 
+//----- Create module list
+if (!is_object($module_list)) {
+	$module_list = CreateObject(
+		'PHP.module_list',
+		PACKAGENAME,
+		array(
+			'cache_file' => 'data/cache/modules'	
+		)
+	);
+}
+	
 //----- Suck in management panels
 //-- Static first...
 foreach ($static_components AS $garbage => $component) {
@@ -170,8 +181,25 @@ foreach ($static_components AS $garbage => $component) {
 		<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
 		<table WIDTH=\"100%\" BORDER=\"0\">
+		".(!empty($this_patient->local_record['ptblood']) ? "
 		<tr><TD ALIGN=\"LEFT\"><B>".__("Blood Type")."</B></TD> 
 		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></tr>
+		" : "" );
+		// Loop through last diagnoses
+		for ($diag=1; $diag<=4; $diag++) {
+			if ($this_patient->local_record['ptdiag'.$diag] > 0) {
+				$panel[__("Medical Information")] .= "
+				<tr><td align=\"left\">".__("Diagnosis")." ".
+				$diag."</td>
+				<td align=\"right\">".prepare(module_function(
+					'IcdMaintenance',
+					'display_short',
+					$this_patient->local_record['ptdiag'.$diag]
+					))."</td></tr>
+				";
+			}
+		}
+		$panel[__("Medical Information")] .= "
 		</table>
 		</TD></tr></table>";
 		break; // end medical_information
@@ -351,17 +379,6 @@ foreach ($static_components AS $garbage => $component) {
 
 //-- ... then modular
 foreach ($modular_components AS $garbage => $component) {
-	// Determine if the class exists
-	if (!is_object($module_list)) {
-		$module_list = CreateObject(
-			'PHP.module_list',
-			PACKAGENAME,
-			array(
-				'cache_file' => 'data/cache/modules'	
-			)
-		);
-	}
-	
 	// End checking for component
 	if ($module_list->check_for($component) and (!$already_set[$component])) {
 		// Execute proper portion and add to panel
