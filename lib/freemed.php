@@ -111,13 +111,16 @@ set_time_limit (0);
 
   // quick hack for Lynx caching pages problem
 if (strstr($HTTP_USER_AGENT, "Lynx")) {
-	Header ("Pragma: no-cache"); // force no caching
+	// force no caching
+	Header ("Cache-Control: no-cache, must-revalidate");
+	Header ("Pragma: no-cache");
 } // end checking for lynx
 
   // ****************** CHECK FOR PHP MODULES **********************
 
+// if there's no bcmath module, use fake bcadd() function
 if (!function_exists("bcadd"))
-	die ("PHP must be compiled with bcmath module (--with-bcmath)");
+	include_once ("lib/bcadd.php");
 if (!function_exists("bindtextdomain"))
 	die ("PHP must be compiled with GNU gettext (--with-gettext)");
 
