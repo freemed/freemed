@@ -5,21 +5,21 @@
 
 if (!defined("__PAYMENT_MODULE_PHP__")) {
 
-    define (__PAYMENT_MODULE_PHP__, true);
+define (__PAYMENT_MODULE_PHP__, true);
 
-    // class testModule extends freemedModule
-    class PaymentModule extends freemedEMRModule {
+// class testModule extends freemedModule
+class PaymentModule extends freemedEMRModule {
 
         // override variables
-        var $MODULE_NAME    = "Payments";
+	var $MODULE_NAME    = "Payments";
 	var $MODULE_AUTHOR  = "Fred Forester (fforest@netcarrier.com)";
-        var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1";
 
 	var $table_name     = "payrec";
 	var $record_name    = "Payments";
 	var $patient_field  = "payrecpatient";
 
-        var $item;
+	var $item;
 	var $view_query = "!='0'";  // by default see unpaid and overpaid
 	var $view_closed = "='0'";  // see paid procedures when closed is selected
 	var $view_unpaid = ">'0'";  // we use this when being called from the unpaid procs report
@@ -40,13 +40,26 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 		"payreclock"
 	);
 
-        // contructor method
-        function PaymentModule ($nullvar = "") {
-            // call parent constructor
-            $this->freemedEMRModule($nullvar);
-        } // end function testModule
+	// contructor method
+	function PaymentModule ($nullvar = "") {
+		// call parent constructor
+		$this->freemedEMRModule($nullvar);
+		// Summary box information
+		$this->summary_vars = array (
+			"Date" => "payrecdt",
+			"Amount" => "payrecamt"
+		);
+	} // end function paymentModule
 
-        function addform() {
+	function modform() {
+		global $display_buffer;
+		$display_buffer .= "
+			Temporarily, please use the <A HREF=\"billing_functions.php\"
+			>Billing Functions</A> menu to access this portion of FreeMED.
+		";
+	}
+
+	function addform() {
 		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -159,12 +172,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 $this->transaction_wizard($item, FEEADJUST);
             }
 
+	} // end function paymentModule->addform
 
 
-        } // end addform
-
-
-        function transaction_wizard($procid, $paycat) {
+	function transaction_wizard($procid, $paycat) {
 		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -1404,10 +1415,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 			$used = $auth_rec[authvisitsused];
 		}
 
-    } // end class testModule
+	} // end class PaymentModule
 
-
-    register_module("PaymentModule");
+register_module("PaymentModule");
 
 } // end if not defined
 
