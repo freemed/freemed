@@ -132,6 +132,7 @@ if ($action=="addform") {
     "'".addslashes($icd9descrip)."',   ".
     "'".addslashes($icd10descrip)."',  ".
     "'".addslashes($icdmetadesc)."',   ".
+    "'$icdng',                         ".
     "'$icddrg',                        ".
     "'$icdnum',                        ".
     "'$icdamt',                        ".
@@ -321,6 +322,7 @@ if ($action=="addform") {
     "icd10descrip='$icd10descrip',".
     "icdmetadesc ='$icdmetadesc', ". // newly added meta description
     "icddrg      ='$icddrg',      ".
+    "icdng       ='$icdng',       ".
     "icdnum      ='$icdnum',      ".
     "icdamt      ='$icdamt',      ".
     "icdcoll     ='$icdcoll'      ". 
