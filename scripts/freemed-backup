@@ -1,0 +1,23 @@
+#!/bin/bash
+#  $Id$
+#  $Author$
+
+OURPATH="/usr/share/freemed"
+CFGVALUE=$OURPATH/scripts/cfg-value
+CURRENTDATE=`date +%Y%m%d`
+
+# Extract all neccessary variables from lib/freemed.php
+DB_NAME=`$CFGVALUE DB_NAME`
+DB_USER=`$CFGVALUE DB_USER`
+DB_PASS=`$CFGVALUE DB_PASS`
+
+# MySQL backup
+mysqldump \
+	--user=$DB_USER \
+	--password=$DB_PASS \
+	$DB_NAME \
+	> $OURPATH/data/backup/freemed.backup.$CURRENTDATE
+
+# bzip it...
+bzip2 -q $OURPATH/data/backup/freemed.backup.$CURRENTDATE
+

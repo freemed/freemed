@@ -4,10 +4,11 @@
 #  -- languages. to be run as "scripts/cfg-value (value-to-return, no $)"
 #  -- (ex)  scripts/cfg-value packagename   would be "freemed"....
 
-GLOBALVARFILE="global.var.inc";
+OURPATH="/usr/share/freemed"
+GLOBALVARFILE="lib/freemed.php"
 
 #if [ -f $GLOBALVARFILE ]; then
-#  GLOBALVARFILE="../global.var.inc";
+#  GLOBALVARFILE="../freemed.php";
 #fi
 
-cat $GLOBALVARFILE | grep "\$$1" | awk -F\" '{ print $2 } ' | cat
+cat $OURPATH/$GLOBALVARFILE | grep "define ('$1" | awk -F\" '{ print $2 } ' | cat
