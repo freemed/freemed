@@ -8,12 +8,12 @@ class FreeMEDSelfTest {
 
 	function FreeMEDSelfTest () {
 		// Check for skipping this entire thing
-		if (file_exists('./.healthy')) {
+		if (file_exists('data/cache/healthy')) {
 			// Healthy installation, skipping
 			return true;
 		} else {
 			$this->SelfTest();
-			$touched = touch ('./.healthy');
+			$touched = touch ('data/cache/healthy');
 			if (!$touched) {
 				die(
 				__("FreeMED was unable to create a file to record the healthy status of the system.")."<br/>\n".
