@@ -65,7 +65,8 @@ if (isset($page_title)) {
 		<LI><A HREF="help.php?page_name=main.php&framed=yes"
 			TARGET="help_frame"
 			><?php print _("Main Menu"); ?></A>
-		<LI><A HREF="javascript:this.close(); return true;";
+		<LI><A HREF="#"
+			onClick="this.close();"
 			><?php print _("Close this Window"); ?></A>
 		</UL>
 	</TD></TR></TABLE>
