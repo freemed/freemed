@@ -7,8 +7,16 @@ include_once("lib/freemed.php");
 include_once("lib/class.rxlist.php");
 
 //----- Open database, authenticate, etc
-freemed_open_db ();
+freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
+
+//----- Logging
+// None Yet, as I am not sure how this module integrates into patient data!!
+
+//----- Check for process
+if ($action==__("Search")) {
+	$GLOBALS['__freemed']['on_load'] = 'process';
+}
 
 //----- Form header
 $display_buffer .= "<div ALIGN=\"CENTER\">".

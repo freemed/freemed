@@ -8,8 +8,8 @@ $page_name = "patient_image_handler.php";
 include ("lib/freemed.php");
 define ('RESIZE', 800);
 
- // authenticate user cookie
-freemed_open_db ();
+//----- Authenticate user cookie
+freemed::connect ();
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
@@ -19,7 +19,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"patient_image_handler.php|user $use
 
 //----- Clean all variables
 $patient = freemed::secure_filename($patient);
-$id      = freemed::secure_filename($id     );
+$id = freemed::secure_filename($id);
 
 //----- Use browser detect to determine what kind of image this should be
 $browser = CreateObject('PHP.browser_detect');
