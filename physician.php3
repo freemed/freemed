@@ -23,6 +23,57 @@ switch($action) {
   $book = new notebook ($page_name,
     array ("action", "_auth", "id", "been_here"), true );
   $book->set_submit_name("OK"); // not sure what this does...
+  
+  if (($action=="modform") AND (!$been_here)) { // load the values
+    $r = freemed_get_link_rec ($id, $db_name);
+
+    $phylname    = $r["phylname"   ];
+    $phyfname    = $r["phyfname"   ];
+    $phytitle    = $r["phytitle"   ];
+    $phymname    = $r["phymname"   ];
+    $phypracname = $r["phypracname"];
+    $phyaddr1a   = $r["phyaddr1a"  ];
+    $phyaddr2a   = $r["phyaddr2a"  ];
+    $phycitya    = $r["phycitya"   ];
+    $phystatea   = $r["phystatea"  ]; // 19990622
+    $phyzipa     = $r["phyzipa"    ];
+    $phyphonea   = $r["phyphonea"  ];
+    $phyfaxa     = $r["phyfaxa"    ];
+    $phyaddr1b   = $r["phyaddr1b"  ];
+    $phyaddr2b   = $r["phyaddr2b"  ];
+    $phycityb    = $r["phycityb"   ];
+    $phystateb   = $r["phystateb"  ]; // 19990622
+    $phyzipb     = $r["phyzipb"    ];
+    $phyphoneb   = $r["phyphoneb"  ];
+    $phyfaxb     = $r["phyfaxb"    ];
+    $phyemail    = $r["phyemail"   ];
+    $phycellular = $r["phycellular"]; // 19990804
+    $phypager    = $r["phypager"   ]; // 19990804
+    $phyupin     = $r["phyupin"    ];
+    $physsn      = $r["physsn"     ];
+    $phydeg1     = $r["phydeg1"    ]; // 19990830
+    $phydeg2     = $r["phydeg2"    ]; // ..
+    $phydeg3     = $r["phydeg3"    ]; // ..
+    $physpe1     = $r["physpe1"    ];
+    $physpe2     = $r["physpe2"    ];
+    $physpe3     = $r["physpe3"    ];
+    $phyid1      = $r["phyid1"     ];
+    $phystatus   = $r["phystatus"  ];
+    $phyref      = $r["phyref"     ];
+    $phyrefcount = $r["phyrefcount"];
+    $phyrefamt   = $r["phyrefamt"  ];
+    $phyrefcoll  = $r["phyrefcoll" ];
+    $phychargemap = fm_split_into_array( $r[phychargemap] );
+    $phyidmap = fm_split_into_array( $r[phyidmap] );
+
+    // disassemble ssn
+    $physsn1    = substr($physsn,    0, 3);
+    $physsn2    = substr($physsn,    3, 2);
+    $physsn3    = substr($physsn,    5, 4);
+
+    if (strlen($phyaddr1b)>0) $has_second_addr=true;
+  } // fetch the data first time through
+  
   switch($action) {
    case "addform": case "add":
     $action_name="Add";
@@ -401,7 +452,45 @@ switch($action) {
  
  break; // master addform/modform
 
+ case "display" :
+  freemed_display_box_top("$record_name View");
+  $phy = freemed_get_link_rec($id, "physician");
+  echo "
+    <TABLE>
+     <TR><TD ALIGN=RIGHT>
+      <$STDFONT_B>Name : <$STDFONT_E>
+     </TD><TD ALIGN=LEFT>
+      <$STDFONT_B>$phy[phyfname] 
+          $phy[phymname] $phy[phylname], $phy[phytitle]<$STDFONT_E>
+     </TD></TR>
 
+     <TR><TD COLSPAN=2 ALIGN=CENTER>
+      <$STDFONT_B><A HREF=\"physician.php3?$_auth&action=modform&id=$id\"
+       >Modify $record_name</A><$STDFONT_E>
+     </TD></TR>
+    </TABLE>
+  ";
+  freemed_display_box_bottom();
+ break;
+
+ default:
+  freemed_display_box_top("$record_name");
+  $phy_q = "SELECT * FROM physician ORDER BY phylname,phyfname";
+  $phy_r = fdb_query($phy_q);
+  echo freemed_display_itemlist (
+    $phy_r,
+    "physician.php3",
+    array (
+      "Last Name" => "phylname",
+      "First Name" => "phyfname"
+    ),
+    array (
+      "",
+      ""
+    )
+  );
+  freemed_display_box_bottom();
+ break;
 } // master action switch
 
 /*
