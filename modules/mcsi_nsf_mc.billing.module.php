@@ -147,7 +147,11 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 						$file_buffer .= "\n";
 					}
 					//$filename = PHYSICAL_LOCATION_BILLS."/mcsi_comm_bills-".$cur_date.gmdate("Hi").".data";
-					$filename = "/tmp/mcsi_medicare_bills-".$cur_date.gmdate("Hi").".data";
+					$billfilename = "/mcsi_medicare_bills-".$cur_date.gmdate("Hi").".data";
+					$dirname = "/tmp";
+					$httpdir = "/bills";
+					$httpfilename = $httpdir.$billfilename;
+					$filename = $dirname.$billfilename;
         			$fp = fopen($filename,"w");
 
         			if (!$fp)
@@ -160,14 +164,16 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
         			if ($rc <= 0)
             			echo "Error writing $filename<BR>";
 					else
-        				echo "Wrote bills to $filename<BR>";
+						echo "Wrote bills to <A HREF=\"$httpfilename\">$httpfilename</A><BR>";
+
 				}
 
 			}
 			if ($this->pat_processed > 0)
 			{
+				$preview = ($write_to_file) ? 0 : 1; // no preview if written to file
 				
-				$this->ShowBillsToMark();
+				$this->ShowBillsToMark($preview);
 			}
 			else
 			{

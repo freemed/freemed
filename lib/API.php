@@ -694,12 +694,17 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
       </TD>
     ";
   }
+  if ($flags != 0)
+  {
   $buffer .= "
       <TD BGCOLOR=\"#000000\">
        <$STDFONT_B COLOR=\"#ffffff\">"._("Action")."<$STDFONT_E>
       </TD>
-    </TR>
+	  </TR>
   ";
+  }
+  else
+  	$buffer .= "<TD BGCOLOR=\"#000000\"></TD></TR>";
  
   if ($sql->num_rows($result)>0) 
    while ($this_result = $sql->fetch_array($result) AND 

@@ -1,6 +1,20 @@
 freemed project changelog
 ($Id$)
 
+* Wed Apr 11 2001 fforest
+  - API change display_itemlist so if the flags parm is 0
+    we dont display the Action title and the MOD,DEL,VIEW options.
+    so we can use it for nice tableized reports also.
+  - lib/module_billing change ShowBillsToMark to optionally display
+    the preview box as opposed to displaying it all the time
+  - reports.php needed the filename suffix added to 'new module_list() function
+  - mcsi_nsf* modules can now generate a link to the file created for 
+    submission so the user can left click to download. this makes it easier
+    to get the file till mcsi allows us to interface. This also requires a
+    alias line in httpd.conf Alias /tmp /bills no <Directory> option is
+    required or recommened.
+  - unpaid_procs report module somehow lost its alternate color stuff.
+
 * Wed Apr 11 2001 rufustfirefly
   - lib/macros.php: added ITEMLIST_* macros (Adam left them out)
   - index.php: committed removal of TT tags

@@ -40,7 +40,7 @@ $template = "
 ";
 
 // module loader
-$module_list = new module_list (PACKAGENAME);
+$module_list = new module_list (PACKAGENAME,".report.module.php");
 if (!$module_list->empty_category($category)) {
 	echo "
 	<P>

@@ -510,7 +510,7 @@ class freemedBillingModule extends freemedModule {
 
 	
 
-	function ShowBillsToMark()
+	function ShowBillsToMark($preview=1)
    	{
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -520,31 +520,34 @@ class freemedBillingModule extends freemedModule {
    		#echo "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
    		########################################################################
 
-		echo "
-		<FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
-		 <CENTER>
-		  <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
-		 </CENTER>
-		 <BR>
-		 <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
-		 >".prepare($this->form_buffer)."</TEXTAREA>
-		<P>
-		<CENTER>
-		 <SELECT NAME=\"type\">
-		  <OPTION VALUE=\"\">"._("Render to Screen")."
-		  <OPTION VALUE=\"application/x-rendered-text\">Render to File
-		 </SELECT>
-		 <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
-		</CENTER>
-		</FORM>
-		<P>
-		";
+		if ($preview)
+		{
+			echo "
+			<FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
+			 <CENTER>
+			  <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
+			 </CENTER>
+			 <BR>
+			 <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
+			 >".prepare($this->form_buffer)."</TEXTAREA>
+			<P>
+			<CENTER>
+			 <SELECT NAME=\"type\">
+			  <OPTION VALUE=\"\">"._("Render to Screen")."
+			  <OPTION VALUE=\"application/x-rendered-text\">Render to File
+			 </SELECT>
+			 <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
+			</CENTER>
+			</FORM>
+			<P>
+			";
+		}
 
+		// <CENTER>
+		// <$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
+		// </CENTER>
 		// present the form so that we can mark as billed
 		echo "
-		<CENTER>
-		<$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
-		</CENTER>
 		<BR>
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
 		 <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">

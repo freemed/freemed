@@ -42,6 +42,7 @@ class UnpaidProceduresReport extends freemedReportsModule {
 			DIE("Error<BR>");
 		if ($result)
 		{
+     		$_alternate = freemed_bar_alternate_color ();
 
     		echo "
       		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
@@ -82,7 +83,7 @@ class UnpaidProceduresReport extends freemedReportsModule {
 				{
       				echo "
         				<TR BGCOLOR=\"".
-     					($_alternate = freemed_bar_alternate_color ())."\">
+     					($_alternate = freemed_bar_alternate_color ($_alternate))."\">
         				<TD><A HREF=
          				\"manage.php?$_auth&id=$prev_patient\"
          				>$prev_lname, $prev_fname</A></TD>
