@@ -654,22 +654,26 @@ class freemedCalendar {
 		$my_event = freemed::get_link_rec($event, "scheduler");
 
 		// Handle travel
-		if ($my_event[calpatient] == 0) {
-			return freemedCalendar::event_special($my_event[calmark])." ".
-			"(".$my_event[calduration]."m)\n";
+		if ($my_event['calpatient'] == 0) {
+			return freemedCalendar::event_special($my_event['calmark'])." ".
+			"(".$my_event['calduration']."m)\n";
 		}
 
 		// Get patient information
-		$my_patient = CreateObject('FreeMED.Patient', $my_event[calpatient],
-			($my_event[caltype]=="temp"));
+		$my_patient = CreateObject('FreeMED.Patient', $my_event['calpatient'],
+			($my_event['caltype']=="temp"));
 
-		return "<A HREF=\"".(($my_event[caltype]=="temp") ?
+		return "<a HREF=\"".(($my_event['caltype']=="temp") ?
 				"call-in.php?action=display&id=" :
 				"manage.php?id=" ).
 			$my_patient->id."\"".
-			">".trim($my_patient->fullName())."</A> ".
-			"(".$my_event[calduration]."m)\n".
-			( !empty($my_event[calprenote]) ?
+			">".trim($my_patient->fullName())."</a> ".
+			"(".$my_event['calduration']."m)\n".
+			"<a href=\"book_appointment.php?id=".
+				urlencode($my_event['id'])."&".
+				"type=".$my_event['caltype']."\" ".
+			" class=\"button\">".__("Move")."</a>".
+			( !empty($my_event['calprenote']) ?
 			"<br/>&nbsp;&nbsp;<small><i>".
 			prepare(stripslashes($my_event[calprenote])).
 			"</i></small>\n" : "" );
