@@ -1,6 +1,88 @@
 freemed project changelog
 ($Id$)
 
+* Tue Nov 20 2001 rufustfirefly
+  - scripts/convert/medical_manager/patfile.pl: CVS tags and fixed
+    version number
+  - soap_provider.php, lib/soap_services.php: SOAP/XML-RPC services
+    basic skeleton added
+  - lib/template/default/{help.macros.php,template.help.php}:
+    performs substitutions for help texts
+  - lang/EN/doc/*: <B>FreeMED</B> -> FreeMED
+  - lang/EN/manage.{php,php.configure}.EN.html: more help files
+
+* Mon Nov 19 2001 rufustfirefly
+  - admin.php, module_information.php, patient.php: REQUEST_URI ->
+    PHP_SELF to stop passing of obnoxious parameters
+  - admin.php: fixed creation of superuser "user" entry to properly
+    use sql->insert_query()
+  - lib/template/default/template.help.php: close this window works
+  - lib/API.php, lib/template/default/menu_bar.php: added help_url()
+    function and automatically generating Help menubar links when
+    there is a helpfile for that section
+  - lang/EN/doc/{admin,main}.php.EN.html: add/modify help texts
+  - lang/EN/doc/admin.php.cfgform.EN.html: test for sections help
+  - a lot of miscellaneous help file cleanup
+
+* Tue Nov 13 2001 rufustfirefly
+  - lib/render_forms.php: Fred Forester's patch for sorting entries
+
+* Fri Nov 02 2001 rufustfirefly
+  - lang/EN/*.inc: removed
+  - import.php, export.php: query maker added (queries)
+  - lang/EN/doc/, lib/template/default/{stylesheet.help.css,
+    template_help.php,main_menu.php} : trying to get help system
+    working again
+  - Fred import:
+    * lib/API.php
+      freemed_display_physicians() - added parameter
+    * lib/class.nsf.php
+    * lib/class.nsf.ci.php
+    * lib/class.nsf.mc.php
+    * lib/module_billing.php
+
+* Thu Nov 01 2001 rufustfirefly
+  - *.php, lib/API.php, lib/template/default/main_menu.php,
+    modules/*.php: removed freemed_close_db() function and references
+  - lib/API.php:
+    * fdb_*() - removed old commented code
+    * freemed_display_simplereports() - removed
+    * freemed_get_link_rec() - added caching, added trigger_error
+    * freemed_get_link_field() - cleaned up, added trigger_error
+    * freemed_specialty_display() - removed
+    * freemed_auth_db_connect() - removed
+    * fm_date_assemble() - added trigger_error, cleaned up
+    * fm_date_entry() - cleaned up code, reformatted, added trigger_error
+    * fm_number_select() - cleaned up code
+    * fm_split_into_array() - error checking
+    * fm_value_in_array() - reworked logic a little to remove temp var
+    * fm_button() - removed
+    * fm_eval() - optimized, reformatted
+    * fm_secure() - revamped, reformatted
+    * fm_get_active_coverage() - revamped, reformatted
+    * fm_verify_patient_coverage() - revamped, reformatted
+    * patient_pop() - removed commented function
+
+  - patient.php: update_query in add -> insert_query (thanks to Tony Adams)
+  - user.php: refresh after add/mod user
+  - lib/containers.php: check for invalid patients in Patient container
+  - lib/template/default/stylesheet.php: added overflow property to thinbox
+    and rotated colors a little to allow a more "layered" look
+  - lib/tempalte/default/manage_main.php: added thinbox to Appointments
+
+* Wed Oct 31 2001 rufustfirefly
+  - patient.php: basename() around REQUEST_URI... same problem as
+    yesterday but I didn't catch this one then
+
+* Tue Oct 30 2001 rufustfirefly
+  - lib/template/default/template.php: basename() around REQUEST_URI
+    reported by Nikola Gotovac
+  - authenticate.php, lib/language-loader.php
+
+* Fri Oct 26 2001 rufustfirefly
+  - lib/template/default/login.php: fixed </CENTER> tag being displayed
+    before the template
+
 * Tue Oct 23 2001 rufustfirefly
   - billing_functions.php, lib/template/default/menubar.php: now properly
     uses SESSION["current_patient"] for billing functions (thanks to
