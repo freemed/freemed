@@ -617,8 +617,8 @@ ORDER BY
 		$query = 'UPDATE procrec SET '.
 			'procbilled = \'1\' '.
 			'WHERE FIND_IN_SET(id, \''.$set.'\')';
-		$GLOBALS['display_buffer'] .= "query = $query<br/>\n";
-		//$result = $GLOBALS['sql']->query ( $query );
+		//$GLOBALS['display_buffer'] .= "query = $query<br/>\n";
+		$result = $GLOBALS['sql']->query ( $query );
 
 		return $result;
 	} // end method mark_billed_array
