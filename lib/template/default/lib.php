@@ -156,6 +156,16 @@ class template {
 			"pbox_book_appointment.".IMAGE_TYPE."\" border=\"0\" ".
 			"width=\"16\" height=\"16\" ".
 			"alt=\"".__("Book Appointment")."\"/></a></td>\n".
+			"<td><a href=\"patient.php?action=modform&id=".urlencode($patient).
+			"\" onMouseOver=\"window.status='".__("Modify Patient Information")."'; ".
+				"return true;\" ".
+			"onMouseOut=\"window.status=''; return true;\"".
+			"><img src=\"lib/template/".(
+				file_exists("lib/template/".$GLOBALS['template']."/img/summary_modify.".IMAGE_TYPE) ?
+				$GLOBALS['template'] : 'default' )."/img/".
+			"summary_modify.".IMAGE_TYPE."\" border=\"0\" ".
+			"width=\"16\" height=\"16\" ".
+			"alt=\"".__("Book Appointment")."\"/></a></td>\n".
 			"<td><a href=\"patient.php\" ".
 			"onMouseOver=\"window.status='".__("Choose Another Patient")."'; return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\"".
