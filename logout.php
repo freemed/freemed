@@ -10,8 +10,8 @@ include_once ('lib/freemed.php');
 //if (strlen($_URL)>0) $__url_part = "?_URL=".urlencode($_URL);
 
 //----- Destroy authdata and ipaddr from session
-//unset($_SESSION['authdata']);
-//unset($_SESSION['ipaddr']);
+unset($_SESSION['authdata']);
+unset($_SESSION['ipaddr']);
 $_SESSION['authdata'] = NULL;
 $_SESSION['ipaddr'] = NULL;
 $_SESSION['language'] = NULL;
