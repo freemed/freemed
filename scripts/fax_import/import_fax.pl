@@ -28,14 +28,14 @@ unlink($original.'.djvu');
 # 	pgmtopbm |
 # 	pnmtotiff -g3 -rowsperstrip 2156 > 1cf.tif
 # to work around problem in faxes being sent funny...
-`tifftopnm $original | pnmscale -xsize 1728 -ysize 2291 | pgmtopbm | pnmtotiff -g3 -rowsperstrip 2156 > $original.processed.tif`;
+#`tifftopnm $original | pnmscale -xsize 1728 -ysize 2291 | pgmtopbm | pnmtotiff -g3 -rowsperstrip 2156 > $original.processed.tif`;
 
 
 # Run the convert program to process into jpeg images, then process
 # each jpeg into pbms. This has to be done, since convert does not
 # create multiple pbm images for a multipage tiff.
-print "/usr/bin/convert $original.processed.tif $original.jpg\n";
-`/usr/bin/convert $original.processed.tif $original.jpg`;
+print "/usr/bin/convert $original -scale 1728x2291 $original.jpg\n";
+`/usr/bin/convert $original $original.jpg`;
 print "for i in $original*jpg*; do convert \$i \$i.pbm; done\n";
 `for i in $original*jpg*; do convert \$i \$i.pbm; done`;
 
