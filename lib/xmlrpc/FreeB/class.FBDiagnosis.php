@@ -5,130 +5,174 @@
 class FBDiagnosis {
 
 	function ICD9Code ( $diagkey ) {
-		return freemed::get_link_field($diagkey, 'icd', 'icd9code');
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
+		return freemed::get_link_field($diag, 'icd', 'icd9code');
 	} // end method ICD9Code
 
 	function ICD10Code ( $diagkey ) {
-		return freemed::get_link_field($diagkey, 'icd', 'icd10code');
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
+		return freemed::get_link_field($diag, 'icd', 'icd10code');
 	} // end method ICD10Code
 
-	function RelatedToHCFA ( $prockey, $diagkey ) {
+	function RelatedToHCFA ( $diagkey ) {
 		// TODO: slot 10 in ICD code
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		return '';
 	} // end method RelatedToHCFA
 
-	function isRelatedToAutoAccident ( $prockey, $diagkey ) {
+	function isRelatedToAutoAccident ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
 
 		// Determine from data
-		return ($eoc['eocrelauto'] == 'yes');
+		return ($eoc_r['eocrelauto'] == 'yes');
 	} // end method isRelatedToAutoAccident
 
-	function AutoAccidentState ( $prockey, $diagkey ) {
+	function AutoAccidentState ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
-		return $eoc['eocrelautostpr'];
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
+		return $eoc_r['eocrelautostpr'];
 	} // end method AutoAccidentState
 
-	function isRelatedToOtherAccident ( $prockey, $diagkey ) {
+	function isRelatedToOtherAccident ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
 
 		// Determine from data
-		return ($eoc['eocrelother'] == 'yes');
+		return ($eoc_r['eocrelother'] == 'yes');
 	} // end method isRelatedToOtherAccident
 
-	function isRelatedToEmployment ( $prockey, $diagkey ) {
+	function isRelatedToEmployment ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
 
 		// Determine from data
-		return ($eoc['eocrelemp'] == 'yes');
+		return ($eoc_r['eocrelemp'] == 'yes');
 	} // end method isRelatedToEmployment
 
-	function DateOfOnset ( $prockey, $diagkey ) {
+	function DateOfOnset ( $diagkey ) {
 		return FBDiagnosis::DateOfFirstOccurrence($prockey, $diagkey);
 	} // end method DateOfOnset
 
-	function DateOfFirstOccurrence ( $prockey, $diagkey ) {
+	function DateOfFirstOccurrence ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
-		list ($y, $m, $d) = explode ('-', $eoc['eocstartdate']);
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
+		list ($y, $m, $d) = explode ('-', $eoc_r['eocstartdate']);
 		return $y.$m.$d.'T00:00:00';
 	} // end method DateOfFirstOccurrence
 
-	function DateOfFirstSymptom ( $prockey, $diagkey ) {
+	function DateOfFirstSymptom ( $diagkey ) {
 		// TODO: Actually put this in
 		return FBDiagnosis::DateOfFirstOccurrence($prockey, $diagkey);
 	} // end method DateOfFirstSymptom
 
-	function isFirstOccurrence ( $prockey, $diagkey ) {
+	function isFirstOccurrence ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
+
+		// FIXME FIXME FIXME
 		
 		// SUCH a hack.... if the procedure was on the start date,
 		// it's the first occurrance. Probably broken in some cases.
-		if ($eoc['startdate'] == $p['procdt']) {
+		if ($eoc_r['startdate'] == $p['procdt']) {
 			return true;
 		} else {
 			return false;
 		}
 	} // end method isFirstOccurrence
 
-	function isCantWork ( $prockey, $diagkey ) {
+	function isCantWork ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
 
 		// Determine from data
-		return ( ($eoc['eocdistype'] > 0) and ($eoc['eocdistype'] < 4) );
+		return ( ($eoc_r['eocdistype'] > 0) and ($eoc_r['eocdistype'] < 4) );
 	} // end method isCantWork
 
-	function DateOfCantWorkStart ( $prockey, $diagkey ) {
+	function DateOfCantWorkStart ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
+
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
-		list ($y, $m, $d) = explode ('-', $eoc['eocdisfromdt']);
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
+		list ($y, $m, $d) = explode ('-', $eoc_r['eocdisfromdt']);
 		return $y.$m.$d.'T00:00:00';
 	} // end method DateOfCantWorkStart
 
-	function DateOfCantWorkEnd ( $prockey, $diagkey ) {
+	function DateOfCantWorkEnd ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// Get related EOC
-		$p = freemed::get_link_rec($prockey, 'procrec');
-		$e = explode (':', $p['proceoc']);
-		if (!$e[0]) { return false; }
-		$eoc = freemed::get_link_rec($e[0], 'eoc');
-		list ($y, $m, $d) = explode ('-', $eoc['eocdistodt']);
+		//$p = freemed::get_link_rec($prockey, 'procrec');
+		//$e = explode (':', $p['proceoc']);
+		//if (!$e[0]) { return false; }
+		//$eoc = freemed::get_link_rec($e[0], 'eoc');
+
+		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
+		list ($y, $m, $d) = explode ('-', $eoc_r['eocdistodt']);
 		return $y.$m.$d.'T00:00:00';
 	} // end method DateOfCantWorkEnd
 
-	function LocalUseHCFA ( $prockey, $diagkey ) {
+	function LocalUseHCFA ( $diagkey ) {
+		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
 		// TODO: What does this thing do?
 		return '';
 	} // end method LocalUseHCFA
+
+	// Internal Helper Functions -----------------------------------
+
+	function _ExplodeParameters ( $joint_key ) {
+		if (!(strpos($joint_key, ',') === false)) {
+			// If this is a joint key
+			return explode ( ',', $joint_key );
+		} else {
+			// Otherwise just pass a null EOC key
+			return array ( NULL, $joint_key );
+		}
+	} // end method _ExplodeParameters
 
 } // end class FBDiagnosis
 
