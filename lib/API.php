@@ -1008,6 +1008,56 @@ class freemed {
 		);
 	} // end function freemed::religion_widget
 
+	// Function: freemed::rich_text_area
+	//
+	//
+	// Parameters:
+	//
+	// Returns:
+	//
+	//	XHTML-compliant rich text area widget
+	function rich_text_area ( $varname, $wrap="ON", $rows=10, $cols=60 ) {
+		static $_jsset;
+
+		// Handle initial setting of includes, etc
+		if (!$_jsset) {
+			$buffer .= 
+			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n".
+			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n".
+			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/dialog.js\"></script>\n".
+			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/popupwin.js\"></script>\n".
+			"<script type=\"text/javascript\">\n".
+			"\tHTMLArea.loadPlugin(\"TableOperations\");\n".
+			"\tHTMLArea.loadPlugin(\"SpellChecker\");\n".
+			"</script>\n".
+			"<link rel=\"stylesheet\" type=\"text/css\" ".
+				"href=\"lib/template/default/htmlarea/htmlarea.css\" />\n";
+				    
+			$_jsset = true;
+		}
+
+		// Add code for activating the editor on this widget
+		$buffer .= "\n\n".
+			"<script type=\"text/javascript\">\n".
+			"function initEditor () {\n".
+			"editor = new HTMLArea(\"".$varname."\");\n".
+			"editor.registerPlugin(\"TableOperations\");\n".
+			"editor.registerPlugin(\"SpellChecker\");\n".
+			"editor.generate();\n".
+			"return false;\n".
+			"}\n".
+			"</script>\n\n";
+
+		// Set this to be what we do
+		$GLOBALS['__freemed']['on_load'] = 'initEditor';
+			
+		// Add the actual widget from phpwebtools
+		$buffer .= html_form::text_area($varname,$wrap,$rows,$cols);
+
+		// Return the whole bundle
+		return $buffer;
+	} // end function freemed::rich_text_area
+
 	// Function: freemed::secure_filename
 	//
 	//	Remove potentially hazardous characters from filenames
