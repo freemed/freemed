@@ -5,10 +5,10 @@
 #  -- (ex)  scripts/cfg-value packagename   would be "freemed"....
 
 OURPATH="/usr/share/freemed"
-GLOBALVARFILE="lib/freemed.php"
+GLOBALVARFILE="lib/settings.php"
 
 #if [ -f $GLOBALVARFILE ]; then
-#  GLOBALVARFILE="../freemed.php";
+#  GLOBALVARFILE="../settings.php";
 #fi
 
 cat $OURPATH/$GLOBALVARFILE | grep "define ('$1" | awk -F\" '{ print $2 } ' | cat
