@@ -11,8 +11,10 @@ include ("lib/module.php");
 
 // module types to include ...
 include ("lib/module_billing.php");
+include ("lib/module_calendar.php");
 include ("lib/module_edi.php");
 include ("lib/module_emr.php");
+include ("lib/module_emr_report.php");
 include ("lib/module_maintenance.php");
 include ("lib/module_reports.php");
 
