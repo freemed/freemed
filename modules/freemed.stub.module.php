@@ -11,7 +11,7 @@ class FreeMED_Package extends MaintenanceModule {
 
 	var $MODULE_NAME = 'FreeMED';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.3.1';
+	var $MODULE_VERSION = '0.6.3.2';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -43,7 +43,8 @@ class FreeMED_Package extends MaintenanceModule {
 		// 	(Actual update from old module name - HACK)
 		//	Add inscodef{format,target}e for electronic mappings
 		//
-		if ($GLOBALS['sql']->results($GLOBALS['sql']->query("SELECT * FROM module WHERE module_name='Insurance Company Maintenance'"))) {
+		if (!version_check($version, '0.6.3.2')) {
+		//if ($GLOBALS['sql']->results($GLOBALS['sql']->query("SELECT * FROM module WHERE module_name='Insurance Company Maintenance'"))) {
 			// Remove stale entry
 			$GLOBALS['sql']->query(
 				'DELETE FROM module WHERE '.
@@ -51,19 +52,23 @@ class FreeMED_Package extends MaintenanceModule {
 			);
 			// Make changes
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
+				'ALTER TABLE insco '.
+				'ADD COLUMN inscoidmap TEXT AFTER inscomod'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE insco '.
 				'ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap'
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
+				'ALTER TABLE insco '.
 				'ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat'
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
+				'ALTER TABLE insco '.
 				'ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget'
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
+				'ALTER TABLE insco '.
 				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformate'
 			);
 		}
