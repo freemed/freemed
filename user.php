@@ -15,12 +15,26 @@ include_once("lib/freemed.php");         // load global variables
 
 freemed_open_db ();
 
+
+
 $this_user = CreateObject('FreeMED.User');
 
-if (!freemed::user_flag(USER_ROOT)) {  // if not root...
+if (!freemed::user_flag(USER_ROOT)) {  // if not admin...
 	$display_buffer .= "$page_name :: access denied\n";
 	template_display();
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"user.php|user access failed, user is not admin");}	
+
+
 }
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"user.php|user $user_to_log manage users");}	
+
+
+
 
 // *** main action loop ***
 // (default action is "view")
@@ -45,7 +59,7 @@ switch($action) { // master action switch
   } // first modform if
 
   if ($id==1) {
-    $display_buffer .= __("You cannot modify root!");
+    $display_buffer .= __("You cannot modify admin!");
     template_display();
   }
   
@@ -238,6 +252,14 @@ switch($action) { // master action switch
 		}
 	}
 
+
+	//Fred Trotter
+	// in either case below we need the md5hash
+	// of the password
+
+	$md5_pass=md5($userpassword1);
+
+
     if ($action=="mod" || $action=="modform") {
       $display_buffer .= "
         <div ALIGN=\"CENTER\">
@@ -251,7 +273,7 @@ switch($action) { // master action switch
 	$query = $sql->update_query($table_name,
 		array (
 			"username"     => $username,
-			"userpassword" => $userpassword1,
+			"userpassword" => $md5_pass,
 			"userdescrip"  => $userdescrip,
 			"userlevel"    => ($flags+0),
 			"usertype"     => $usertype,
@@ -272,7 +294,7 @@ switch($action) { // master action switch
 	$query = $sql->insert_query ( $table_name,
 		array (
 			"username"     => $username,
-			"userpassword" => $userpassword1,
+			"userpassword" => $md5_pass,
 			"userdescrip"  => $userdescrip,
 			"userlevel"    => ($flags+0),
 			"usertype"     => $usertype,
@@ -294,7 +316,7 @@ switch($action) { // master action switch
 
     if ($id != 1)
       $result = $sql->query($query); // execute query
-    else $display_buffer .= __("You cannot modify root!");
+    else $display_buffer .= __("You cannot modify admin!");
 
     if ($result) {
       $display_buffer .= " <B>".__("Done")."</B> ";
@@ -324,9 +346,9 @@ switch($action) { // master action switch
   if ($id != 1)
     $result = $sql->query("DELETE FROM $table_name ".
     	"WHERE id='".addslashes($id)."'");
-  else { // if we tried to delete root!!!
+  else { // if we tried to delete admin!!!
     $display_buffer .= "
-      <B><CENTER>".__("You cannot delete root!")."</CENTER></B>
+      <B><CENTER>".__("You cannot delete admin!")."</CENTER></B>
     ";
     template_display();
   }
@@ -390,7 +412,7 @@ switch($action) { // master action switch
         <TD>
       ";
 
-        // don't allow add or delete on root...
+        // don't allow add or delete on admin...
       if ($r[id] != 1) 
         $display_buffer .= "
          <a class=\"button\" HREF=\"$page_name?id=$r[id]&action=modform\"
