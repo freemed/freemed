@@ -186,15 +186,15 @@ class progressNotes extends freemedEMRModule {
       echo "
         <CENTER>
          <A HREF=\"$this->page_name?module=$module&$_auth&patient=$patient\"
-          ><$STDFONT_B>"._("Abandon ".( ($action=="addform") ?
- 	   "Addition" : "Modification" ))."<$STDFONT_E></A>
+          >"._("Abandon ".( ($action=="addform") ?
+ 	   "Addition" : "Modification" ))."</A>
         </CENTER>
       ";
      } else {
        switch ($action) {
         case "addform": case "add":
          echo "
-           <CENTER><$STDFONT_B><B>"._("Adding")." ... </B>
+           <CENTER><B>"._("Adding")." ... </B>
          ";
            // preparation of values
          $pnotesdtadd = $cur_date;
@@ -222,7 +222,7 @@ class progressNotes extends freemedEMRModule {
 
 	case "modform": case "mod":
          echo "
-           <CENTER><$STDFONT_B><B>"._("Modifying")." ... </B>
+           <CENTER><B>"._("Modifying")." ... </B>
          ";
          $query = "UPDATE ".$this->table_name." SET
           pnotespat      = '".addslashes($patient)."',
@@ -245,23 +245,23 @@ class progressNotes extends freemedEMRModule {
        $result = $sql->query ($query);
        if ($debug) echo "(query = '$query') ";
        if ($result)
-         echo " <B> "._("done").". </B><$STDFONT_E>\n";
+         echo " <B> "._("done").". </B>\n";
        else
-         echo " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B><$STDFONT_E>\n";
+         echo " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
        echo "
         </CENTER>
         <BR><BR>
          <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
-          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+          >"._("Manage Patient")."</A>
          <B>|</B>
          <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-          ><$STDFONT_B>"._($this->record_name)."<$STDFONT_E></A>
+          >"._($this->record_name)."</A>
 	  ";
        if ($action=="mod" OR $action=="modform")
          echo "
 	 <B>|</B>
 	 <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient&action=view&id=$id\"
-	  ><$STDFONT_B>"._("View $this->record_name")."<$STDFONT_E></A>
+	  >"._("View $this->record_name")."</A>
 	 ";
        echo "
          </CENTER>
@@ -275,15 +275,16 @@ class progressNotes extends freemedEMRModule {
 	} // end of function progressNotes->form()
 
 	function display () {
+		foreach ($GLOBALS AS $k => $v) global $$k;
      if (($id<1) OR (strlen($id)<1)) {
        //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
        echo "
-         <$HEADERFONT_B>"._("Specify Notes to Display")."<$HEADERFONT_E>
+         "._("Specify Notes to Display")."
          <P>
          <CENTER><A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-          ><$STDFONT_B>"._("back")."<$STDFONT_E></A> |
+          >"._("back")."</A> |
           <A HREF=\"manage.php?$_auth&id=$patient\"
-          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+          >"._("Manage Patient")."</A>
          </CENTER>
        ";
        //freemed_display_box_bottom ();
@@ -305,29 +306,27 @@ class progressNotes extends freemedEMRModule {
      if (freemed_get_userlevel($LoginCookie)>$database_level)
        $__MODIFY__ = " |
          <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient&id=$id&action=modform\"
-          ><$STDFONT_B>"._("Modify")."<$STDFONT_E></A>
+          >"._("Modify")."</A>
        "; // add this if they have modify privledges
      echo "
        <P>
        <CENTER><A HREF=\"$this->page_name?$_auth&module=$module&patient=$pnotespat\"
-        ><$STDFONT_B>"._($this->record_name)."<$STDFONT_E></A> |
+        >"._($this->record_name)."</A> |
         <A HREF=\"manage.php?$_auth&id=$pnotespat\"
-        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> $__MODIFY__
+        >"._("Manage Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
 
        <CENTER>
-        <$STDFONT_B>
         <B>Relevant Date : </B>
          $pnotesdt_formatted
-        <$STDFONT_E>
        </CENTER>
        <P>
      ";
      if (count($pnoteseoc)>0 and is_array($pnoteseoc)) {
       echo "
        <CENTER>
-        <$STDFONT_B><B>"._("Related Episode(s)")."</B><$STDFONT_E>
+        <B>"._("Related Episode(s)")."</B>
         <BR>
       ";
       for ($i=0;$i<count($pnoteseoc);$i++) {
@@ -340,11 +339,11 @@ class progressNotes extends freemedEMRModule {
           echo "
            <A HREF=\"episode_of_care.php3?$_auth&patient=$patient&".
   	   "action=manage&id=$e_id\"
-           ><$STDFONT_B>$e_desc / $e_first to $e_last<$STDFONT_E></A><BR>
+           >$e_desc / $e_first to $e_last</A><BR>
           ";
 	} else {
 	  $episodes = $sql->query (
-	    "SELECT * FROM eoc WHERE eocpatient='$patient'" );
+	    "SELECT * FROM eoc WHERE eocpatient='".addslashes($patient)."'" );
 	  while ($epi = $sql->fetch_array ($episodes)) {
             $e_id    = $epi["id"];
             $e_desc  = $epi["eocdescrip"];
@@ -353,7 +352,7 @@ class progressNotes extends freemedEMRModule {
             echo "
              <A HREF=\"episode_of_care.php3?$_auth&patient=$patient&".
   	     "action=manage&id=$e_id\"
-             ><$STDFONT_B>$e_desc / $e_first to $e_last<$STDFONT_E></A><BR>
+             >$e_desc / $e_first to $e_last</A><BR>
             ";
 	  } // end fetching
 	} // check if not "ALL"
@@ -364,82 +363,82 @@ class progressNotes extends freemedEMRModule {
      } // end checking for EOC stuff
      echo "<CENTER>\n";
      if (!empty($pnotes_S)) echo "
-       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>"._("<U>S</U>ubjective")."</B><$STDFONT_E></CENTER></TD></TR>
+       <TABLE BGCOLOR=\"#ffffff\" BORDER=1 WIDTH=400><TR BGCOLOR=\"$darker_bgcolor\">
+       <TD ALIGN=CENTER><CENTER><FONT COLOR=\"#ffffff\">
+        <B>"._("<U>S</U>ubjective")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <$STDFONT_B COLOR=#555555>
+         <FONT COLOR=#555555>
            ".prepare($pnotes_S)."
-         <$STDFONT_E>
+         </FONT>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_O)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>"._("<U>O</U>bjective")."</B><$STDFONT_E></CENTER></TD></TR>
+       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
+        <B>"._("<U>O</U>bjective")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <$STDFONT_B COLOR=#555555>
+         <FONT COLOR=#555555>
            ".prepare($pnotes_O)."
-         <$STDFONT_E>
+         </FONT>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_A)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>"._("<U>A</U>ssessment")."</B><$STDFONT_E></CENTER></TD></TR>
+       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
+        <B>"._("<U>A</U>ssessment")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <$STDFONT_B COLOR=#555555>
+         <FONT COLOR=#555555>
            ".prepare($pnotes_A)."
-         <$STDFONT_E>
+         </FONT>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_P)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>"._("<U>P</U>lan")."</B><$STDFONT_E></CENTER></TD></TR>
+       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
+        <B>"._("<U>P</U>lan")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <$STDFONT_B COLOR=#555555>
+         <FONT COLOR=#555555>
            ".prepare($pnotes_P)."
-         <$STDFONT_E>
+         </FONT>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_I)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>"._("<U>I</U>nterval")."</B><$STDFONT_E></CENTER></TD></TR>
+       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
+        <B>"._("<U>I</U>nterval")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <$STDFONT_B COLOR=#555555>
+         <FONT COLOR=#555555>
            ".prepare($pnotes_I)."
-         <$STDFONT_E>
+         </FONT>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_E)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>"._("<U>E</U>ducation")."</B><$STDFONT_E></CENTER></TD></TR>
+       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
+        <B>"._("<U>E</U>ducation")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <$STDFONT_B COLOR=#555555>
+         <FONT COLOR=#555555>
            ".prepare($pnotes_E)."
-         <$STDFONT_E>
+         </FONT>
        </TD></TR></TABLE> 
        ";
       if (!empty($pnotes_R)) echo "
       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>"._("P<U>R</U>escription")."</B><$STDFONT_E></CENTER></TD></TR>
+       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
+        <B>"._("P<U>R</U>escription")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <$STDFONT_B COLOR=#555555>
+         <FONT COLOR=#555555>
            ".prepare($pnotes_R)."
-         <$STDFONT_E>
+         </FONT>
        </TD></TR></TABLE>
       ";
         // back to your regularly sceduled program...
       echo "
        <P>
        <CENTER><A HREF=\"$this->page_name?$_auth&module=$module&patient=$pnotespat\"
-        ><$STDFONT_B>"._($this->record_name)."<$STDFONT_E></A> |
+        >"._($this->record_name)."</A> |
         <A HREF=\"manage.php?$_auth&id=$pnotespat\"
-        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> $__MODIFY__
+        >"._("Manage Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
      ";

@@ -17,6 +17,9 @@ freemed project changelog
   - lib/freemed.php: supposedly fixed Lynx caching problem
   NOTE: FreeMED's database structures, especially the core EMR, are
     going to be changing *rapidly* after this release.
+  ---------------- after release changes below -------------------
+  - modules/progress_notes.emr.module.php: fixed problem with
+    display() method, removed STDFONT and HEADERFONT tags
 
 * Thu Jun 21 2001 rufustfirefly
   - modules/cpt.db.module.php: form() action fixed, needed to have
