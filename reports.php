@@ -22,7 +22,7 @@ page_push();
 if (!is_object($this_user)) $this_user = new User;
 
  // Check for appropriate access level
-if (!freemed::user_flag(USER_DATABASE) {
+if (!freemed::user_flag(USER_DATABASE)) {
    $display_buffer .= "
       <P>
         "._("You don't have access for this menu.")."
