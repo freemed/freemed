@@ -42,7 +42,15 @@ if (freemed::user_flag(USER_DATABASE)) {
       "; // end table statement for bar
 }
 
+$GLOBALS['__freemed']['on_load'] = 'changeFocus';
 $display_buffer .= "
+      <script language=\"Javascript\">
+	function changeFocus() {
+		document.forms.pfsearch.f2.focus();
+		return true;
+	}
+      </script>
+
       <br/>
       <div ALIGN=\"CENTER\">
        <b>".__("Patients By Name")."</b>
@@ -81,7 +89,7 @@ $display_buffer .= "
 
       <p/>
 
-      <form ACTION=\"$page_name\" METHOD=\"POST\">
+      <form ACTION=\"$page_name\" METHOD=\"POST\" name=\"pfsearch\">
        <b>".__("Patients Field Search")."</b>
       <br/>
       <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"find\"/>
