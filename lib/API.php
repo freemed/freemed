@@ -623,20 +623,20 @@ class freemed {
 	} // end function freemed::secure_filename
 
 	function store_image ( $patient_id=0, $varname, $type="identification" ) {
-		global $HTTP_POST_FILES, ${$varname};
+		global ${$varname};
 
 		// Check for valid patient id
 		if ($patient_id < 1) return false;
 
 		// Determine extension
-		$file_parts = explode (".", $HTTP_POST_FILES[$varname]["name"]);
+		$file_parts = explode (".", $_FILES[$varname]["name"]);
 		$ext = $file_parts[count($file_parts)-1];
 
 		// If there is no extension, die
 		if (strlen($ext) < 3) return false;
 
 		// Get temporary name
-		$image = $HTTP_POST_FILES[$varname]["tmp_name"];
+		$image = $_FILES[$varname]["tmp_name"];
 
 		// If temp name doesn't exist, return false
 		if (empty($image)) return false;
@@ -671,6 +671,15 @@ class freemed {
 					);
 				exec ($command);
 				// Convert to DJVU
+				$mkdir_command = "mkdir -p ".
+					PHYSICAL_LOCATION."/".dirname(
+					freemed::image_filename(
+						$patient_id,
+						$type,
+						'djvu'
+					));
+				print "mkdir_command = $mkdir_command<br>";
+				exec ($mkdir_command);
 				$command = "/usr/bin/cjb2 ".
 					PHYSICAL_LOCATION."/".
 					freemed::image_filename(
@@ -1536,13 +1545,11 @@ function freemed_display_selectbox ($result, $format, $param="") {
 
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="") {
-	global $sql, $cur_date_hash, $debug;
+	global $sql, $debug;
 
-	$language = strtoupper(DEFAULT_LANGUAGE);
-
-	$physical_file = PHYSICAL_LOCATION . "/data/" . $language . 
-		"/" .  $table_name . "." . $language . "." . 
-		$cur_date_hash;
+	$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE . 
+		"/" .  $table_name . "." . DEFAULT_LANGUAGE . "." . 
+		date("Ymd");
 
 	//if (strlen ($file_name) > 2) $physical_file = $file_name;
 
@@ -1575,11 +1582,9 @@ function freemed_get_userlevel ( $param = "" ) {
 function freemed_import_stock_data ($table_name) {
 	global $sql;
 
-	$language = strtoupper(DEFAULT_LANGUAGE);
-
 	// Produce a physical location
-	$physical_file = PHYSICAL_LOCATION . "/data/" . $language .
-		"/" .  $table_name . "." . $language . ".data";
+	$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE .
+		"/" .  $table_name . "." . DEFAULT_LANGUAGE . ".data";
 
 	// Die if the phile doesn't exist
 	if (!file_exists($physical_file)) return false;
@@ -1703,18 +1708,18 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	// Set months
 	$months = array (
 		"", // null so that 1 = Jan, not 0 = Jan
-		"Jan",
-		"Feb",
-		"Mar",
-		"Apr",
-		"May",
-		"Jun",
-		"Jul",
-		"Aug",
-		"Sep",
-		"Oct",
-		"Nov",
-		"Dec"
+		__("Jan"),
+		__("Feb"),
+		__("Mar"),
+		__("Apr"),
+		__("May"),
+		__("Jun"),
+		__("Jul"),
+		__("Aug"),
+		__("Sep"),
+		__("Oct"),
+		__("Nov"),
+		__("Dec")
 	);
 
 	// For brevity, import into single letter variables
