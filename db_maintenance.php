@@ -24,7 +24,7 @@ $module_template = "<A HREF=\"module_loader.php?module=#class#\"".
 	">#name#</A><BR>\n";
 
  // Check for appropriate access level
-if (freemed_get_userlevel ($LoginCookie) < $database_level) { 
+if (freemed_get_userlevel () < $database_level) { 
 	$display_buffer .= "
       <P>
         "._("You don't have access for this menu.")."

@@ -491,7 +491,7 @@ if ($patient<1) {
        ><FONT SIZE=-1>"._("MOD")."</FONT></A>
       ";
 
-     if (freemed_get_userlevel($LoginCookie)>$delete_level)
+     if (freemed_get_userlevel()>$delete_level)
       $display_buffer .= "
        <A HREF=\"$page_name?id=$id&patient=$patient&action=del\"
        ><FONT SIZE=-1>"._("DEL")."</FONT></A>
