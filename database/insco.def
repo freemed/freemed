@@ -1,0 +1,23 @@
+CREATE TABLE freemed.insco (
+    inscodtadd   DATE,
+    inscodtmod   DATE,
+    insconame    VARCHAR(50),
+    inscoalias   VARCHAR(30),
+    inscoaddr1   VARCHAR(45),
+    inscoaddr2   VARCHAR(45),
+    inscocity    VARCHAR(30),
+    inscostate   CHAR(3),
+    inscozip     CHAR(10),
+    inscophone   VARCHAR(16),
+    inscofax     VARCHAR(16),
+    inscocontact VARCHAR(100),
+    inscoid      CHAR(20),
+    inscowebsite VARCHAR(100),
+    inscoemail   VARCHAR(50),
+    inscogroup   INT UNSIGNED,
+    inscotype    INT UNSIGNED,
+    inscoassign  INT UNSIGNED,
+    inscomod     TEXT,
+    id INT NOT NULL AUTO_INCREMENT
+    PRIMARY KEY (id)
+);

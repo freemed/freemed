@@ -1,0 +1,18 @@
+CREATE TABLE freemed.facility (
+    psrname      CHAR(25),
+    psraddr1     CHAR(25),
+    psraddr2     CHAR(25),
+    psrcity      CHAR(15),
+    psrstate     CHAR(3),
+    psrzip       CHAR(10),
+    psrcountry   VARCHAR(50),
+    psrnote      VARCHAR(40),
+    psrdateentry DATE,
+    psrdefphy    INT UNSIGNED,
+    psrphone     VARCHAR(16),
+    psrfax       VARCHAR(16),
+    psremail     VARCHAR(25),
+    psrein       VARCHAR(9),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+);

@@ -1,0 +1,6 @@
+CREATE TABLE freemed.insmod (
+     insmod                    VARCHAR(15),
+     insmoddesc                VARCHAR(50),
+     id INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+);

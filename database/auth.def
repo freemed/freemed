@@ -1,0 +1,18 @@
+CREATE TABLE freemed.authorizations (
+     authdtadd                 DATE,
+     authdtmod                 DATE,
+     authpatient               INT UNSIGNED,
+     authdtbegin               DATE,
+     authdtend                 DATE,
+     authnum                   VARCHAR(25),
+     authtype                  INT UNSIGNED,
+     authprov                  INT UNSIGNED,
+     authprovid                VARCHAR(20),
+     authinsco                 INT UNSIGNED,
+     authvisits                INT UNSIGNED,
+     authvisitsused            INT UNSIGNED,
+     authvisitsremain          INT UNSIGNED,
+     authcomment               VARCHAR(100),
+     id INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+);
