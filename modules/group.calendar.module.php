@@ -142,7 +142,13 @@ class GroupCalendar extends CalendarModule {
 
 		// Select all the physicians in the group
 		$my_group = freemed::get_link_rec($group, "phygroup");
-		$physician_list = explode(",", $my_group[phygroupdocs]);
+		if (strpos($my_group['phygroupdocs'], ':') > 0) {
+			$physician_list = explode(":", $my_group[phygroupdocs]);
+		} elseif (strpos($my_group['phygroupdocs'], ',') > 0) {
+			$physician_list = explode(",", $my_group[phygroupdocs]);
+		} else {
+			$physician_list = $my_group['phygroupdocs'];
+		}
 
 		// Map all physicians in this group
 		unset($map); 
