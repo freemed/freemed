@@ -31,8 +31,17 @@ class AgataMerge extends AgataCore
     $this->Paging = $Paging;
   }
 
-  function MergePS($textMerge, $textSubQuery)
+  function MergePS($textMerge, $SubQueries)
   {
+    // Patch to deal with multiple sub-queries (jeff@ourexchange.net)
+    if (is_array($SubQueries)) {
+      $_SubQueries = $SubQueries;
+    } else {
+      // Legacy non-multiple support
+      $_SubQueries = array ($SubQueries);
+    }
+    $current_subquery = 0;
+  
     $PsSoft = $this->agataConfig['app']['PsSoft'];
     $LineLen = $this->agataConfig['ps']['PsLineLen'];
     
@@ -98,6 +107,7 @@ class AgataMerge extends AgataCore
     $year = date('Y');
     $month = date('m');
     $day = date('d');
+    LoadObjectDependency('Agata.Trans');
     $monthname = Trans::Translate(trim(date('F')));
     $weekday = Trans::Translate(trim(date('l')));
 
@@ -180,6 +190,10 @@ class AgataMerge extends AgataCore
         }
         elseif (substr($Line, 0, 10) == '>>>SUB-SQL')
         {
+	  // Patch to deal with multiple sub-queries
+          $textSubQuery = $_SubQueries[$current_subquery];
+          $current_subquery = $current_subquery + 1;  
+	  
           $Is_SubSQL = true;
 
           if (substr($textSubQuery, 0, 2) != '--')
@@ -205,6 +219,9 @@ class AgataMerge extends AgataCore
         elseif (substr($Line, 0, 10) == '<<<SUB-SQL')
         {
           $Is_SubSQL = false;
+	  for ($i=0; $i<=$SubColCount; $i++) {
+            unset(${'subfield'.$i});
+	  }
         }
         elseif (((strpos($Line, '#tab') > 0) || (substr($Line,0,1) =='#')) && (!$Is_SubSQL))
         {
@@ -263,6 +280,11 @@ class AgataMerge extends AgataCore
       }
 
       fwrite($fd, "showpage \n"); // grava no arquivo PS
+
+      // Patch to enable multiple sub queries...
+      // Have to reset at the end of a page, otherwise there are
+      // issues, as it will continue to increment
+      $current_subquery = 0;
     }
     fclose($fd);
     Wait::Off();

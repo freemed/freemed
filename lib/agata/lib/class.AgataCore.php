@@ -417,6 +417,24 @@ class AgataCore
     return $sql;
   }
 
+	// Method: ReadSqlFile
+	//
+	//	Reads Agata formatted sql query file. (The FreeMED
+	//	forked version also parses the Merge and SubQuery
+	//	fields)
+	//
+	// Parameters:
+	//
+	//	$SqlFile - File to read
+	//
+	// Returns:
+	//
+	//	Array of values found:
+	//	* [0] - Block
+	//	* [1] - Breaks
+	//	* [2] - Merge
+	//	* [3] - SubQuery
+	//
   function ReadSqlFile($SqlFile)
   {
     $Clause = array('Select', 'From', 'Where',  'Group by', 'Order by');
@@ -431,22 +449,22 @@ class AgataCore
         if ($buffer!='')
         {
           $Linha = explode(":", trim($buffer));
-          if (in_array($Linha[0], $Clause))
-	  {
+	  if (substr($buffer,0,1) == ';') { // commenting
+	    // do nothing ... comment
+          } elseif (in_array($Linha[0], $Clause)) {
             $Block[$Linha[0]] = array($Linha[0],$Linha[1]);
-	  }
-	  else
-	  {
-	    if (substr($Linha[0],0,1) == '#')  // break
-	    {
+	  } elseif (ereg('@MergeText', $Linha[0])) {
+	    $Merge[] = $Linha[1]; 
+	  } elseif (ereg('@SubQuery', $Linha[0])) {
+	    $SubQuery[] = $Linha[1]; 
+	  } elseif (substr($Linha[0],0,1) == '#') {  // break
 	      $break = trim(substr($Linha[0],1));
 	      $Breaks[$break] = trim($Linha[1]);
-	    }
 	  }
         }
       }
 
-      return array($Block, $Breaks);
+      return array($Block, $Breaks, $Merge, $SubQuery);
 
       fclose($fd);
     }
