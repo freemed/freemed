@@ -60,7 +60,7 @@ class FBPatient {
 
 	function Sex ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return $p->local_record['ptgender'];
+		return $p->local_record['ptsex'];
 	} // end method Sex
 
 	function SocialSecurityNumber ( $patient ) {
