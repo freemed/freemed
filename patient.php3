@@ -30,7 +30,8 @@ switch ($action) {
   case "mod": case "modform":
     // addform and modform not used due to "notebook"
    $book = new notebook ($page_name,
-     array ("action", "_auth", "id", "been_here")
+     array ("action", "_auth", "id", "been_here"),
+     true                         // common bar...
      );
    $book->set_submit_name ("OK");
    switch ($action) {
@@ -289,6 +290,9 @@ switch ($action) {
 
    "
    </TABLE>
+   <P><CENTER>
+   ".$book->generate_refresh()."</CENTER>
+   
     "
    );
   } // if has insurance
@@ -308,10 +312,21 @@ switch ($action) {
 
    // show notebook
    freemed_display_box_top("$record_name :: Modify");
-   
-   echo "<CENTER>\n";
-   $book->display();
-   echo "</CENTER>\n";
+
+   if (!( $book->is_done() )) {
+     echo "<CENTER>\n";
+     $book->display();
+     echo "</CENTER>\n";
+   } else { // if it is done
+     switch ($action) {
+       case "add": case "addform":
+         echo "add STUB <BR>\n";
+	 break; // end add
+       case "mod": case "modform":
+         echo "mod STUB <BR>\n";
+	 break; // end mod
+     } // end switch for action (done .. actual action)
+   } // end checking if done
 
    break; // end action add/mod
 
