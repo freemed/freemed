@@ -10,4 +10,5 @@ name is "freemed".
 * Add "www-data" to the cdrecording group in /etc/group.
 * Add "www-data" to the mysql group in /etc/group.
 * Execute "chmod g+rx /var/lib/mysql/freemed".
+* Execute "chmod u+s  /usr/bin/cdrecord /usr/bin/mkisofs"
 

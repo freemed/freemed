@@ -53,7 +53,8 @@ class CDRWBackup extends AdminModule {
 	} // end constructor CDRWBackup
 
 	function menu ( ) {
-		$this->action();
+		global $display_buffer;
+		$display_buffer .= $this->action();
 	} // end method menu
 
 	function action ( ) {
@@ -63,6 +64,7 @@ class CDRWBackup extends AdminModule {
 		$driver = freemed::config_value('cdrw_driver');
 		$speed = freemed::config_value('cdrw_speed');
 		$output = `/usr/share/freemed/scripts/cdrw_backup.sh $dev $driver $speed`;
+		//print "/usr/share/freemed/scripts/cdrw_backup.sh $dev | $driver | $speed\n";
 		$buffer .= "<b>".__("done")."</b><br/>\n";
 		$buffer .= "<pre>".prepare($output, true)."</pre>\n";
 		$buffer .= "<br/><br/>\n".
@@ -84,9 +86,18 @@ class CDRWBackup extends AdminModule {
 		$stack = array();
 		foreach ($_devices as $__garbage => $device) {
 			$p = explode(" ",$device);
+			
+			// Check for "2,0,0\t200)" type device names
+			$p[0] = trim($p[0]);
+			if (strpos($p[0], "\t") > 1) {
+				list ($_p, $__garbage) = explode ("\t", $p[0]);
+			} else {
+				$_p = $p[0];
+			}
+
 			$a = explode("'",$device);
 			if (!empty($a[1])) {
-				$stack[$a[1]." - ".$a[3]] = trim($p[0]);
+				$stack[$a[1]." - ".$a[3]] = trim($_p);
 			}
 		}
 		return $stack;
