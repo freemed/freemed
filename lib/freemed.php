@@ -27,7 +27,12 @@ $local_date_display="%Y-%m-%d";       // United States
   // $local_date_display="%d.%m.%Y";    // European countries
 
 //----- Import settings
-include_once('lib/settings.php');
+if (file_exists('lib/settings.php')) {
+	include_once('lib/settings.php');
+} else {
+	die("FreeMED cannot find the configuration file ".
+		"<b>lib/settings.php</b>.");
+}
 
 //----- Fax subsystem
 $gifhome = PHYSICAL_LOCATION . '/data/fax/incoming';
@@ -81,7 +86,14 @@ if (file_exists("lib/template/".$template."/lib.php")) {
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
 include_once ("lib/error_handler.php");   // internal error handler
-include_once (PHPWEBTOOLS_LOCATION."/webtools.php"); // webtools toolkit
+
+if (file_exists(PHPWEBTOOLS_LOCATION."/webtools.php")) {
+	include_once (PHPWEBTOOLS_LOCATION."/webtools.php"); // webtools toolkit
+} else {
+	die("FreeMED requires that phpwebtools be installed at <b>".
+		PHPWEBTOOLS_LOCATION."</b>. This location can be changed in ".
+		"<b>lib/settings.php</b>.");
+}
 
 define ('WEBTOOLS_REQUIRED', '0.4.2');   // version of phpwebtools required
 
@@ -119,9 +131,9 @@ if (!defined('SESSION_DISABLE')) {
 	));
 
 	//----- Gettext and language settings
-	if (isset($_POST['__language'])) {
+	if (isset($_POST['_l'])) {
 		// Handle template language changes
-		$_SESSION['language'] = $_POST['__language'];
+		$_SESSION['language'] = $_POST['_l'];
 	} elseif ($_SESSION['language']) {
 		// Pull from cookie (do nothing)
 	} else {
