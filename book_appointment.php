@@ -32,9 +32,11 @@ if ($travel) {
 		$_REQUEST['type'] = $type = 'pat';
 	}
 } elseif ($_COOKIE["current_patient"]>0) {
-	$this_patient = CreateObject('FreeMED.Patient', $_COOKIE["current_patient"]);
-	$type = "pat"; // kludge to keep real patient for this
-	$_REQUEST['patient'] = $patient = $_COOKIE['current_patient'];
+	if ($type != 'temp') {
+		$this_patient = CreateObject('FreeMED.Patient', $_COOKIE["current_patient"]);
+		$type = "pat"; // kludge to keep real patient for this
+		$_REQUEST['patient'] = $patient = $_COOKIE['current_patient'];
+	}
 }
 
 //----- Create scheduler object
@@ -175,7 +177,10 @@ switch ($_REQUEST['stage']) {
 	".html_form::form_table(array(
 
 	"<small>".__("Patient")."</small>" =>
-	freemed::patient_widget("patient"),
+	( $_REQUEST['type'] == 'temp' ?
+	$this_patient->fullName().
+	"<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\" />" :
+	freemed::patient_widget("patient") ),
 
 	"<small>".__("Template")."</small>" =>
 	module_function(
