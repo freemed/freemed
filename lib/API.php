@@ -545,7 +545,8 @@ class freemed {
 	// Returns:
 	//
 	//	$modules - Array of modules which are associated with the
-	//	specified handler.
+	//	specified handler. These all will be in lowercase, so
+	//	remember to use strtolower().
 	//
 	function module_handler ($handler) {
 		// Get module list object
@@ -555,7 +556,7 @@ class freemed {
 		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] as $k => $v) {
 			// Check to see if this handler is registered
 			if (!empty($v['META_INFORMATION']['__handler']["$handler"])) {
-				$handler_data[$v['MODULE_CLASS']] = $v['META_INFORMATION']['__handler']["$handler"];
+				$handler_data[strtolower($v['MODULE_CLASS'])] = $v['META_INFORMATION']['__handler']["$handler"];
 			}
 		}
 

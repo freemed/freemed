@@ -48,7 +48,8 @@ switch ($_REQUEST['action']) {
 	case 'type':
 	// Execute handler
 	$module_handlers = freemed::module_handler('BillingFunctions');
-	$display_buffer .= module_function($_REQUEST['type'], $module_handlers[$_REQUEST['type']]);
+	$display_buffer .= module_function($_REQUEST['type'], $module_handlers[strtolower($_REQUEST['type'])]);
+
 	// Display closing information for return to menu
 	$display_buffer .= "
 	<p/>
