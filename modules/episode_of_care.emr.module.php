@@ -804,6 +804,39 @@ class episodeOfCare extends freemedEMRModule {
 
 		$record_name = $r_name; // restore from backup var
 
+		// images display
+		// special jimmy-rigged query to find in 3d array...
+		$display_buffer .= "<P>\n";
+		$query = "SELECT * FROM images ".
+			"WHERE ((imageeoc LIKE '".addslashes($id).":%') OR ".
+			"(imageeoc LIKE '%:".addslashes($id)."') OR ".
+			"(imageeoc LIKE '%:".addslashes($id).":%') OR ".
+			"(imageeoc='".addslashes($id)."')) ".
+			"ORDER BY imagedt DESC";
+		$result = $sql->query ($query);
+  
+		$r_name = $record_name; // backup
+		$_auth = "imageeoc=".urlencode($id);  
+		$record_name = _("Patient Images");
+		$save_module = $module;
+		$module = "patientImages"; // pass for the module loader
+		$display_buffer .= freemed_display_itemlist (
+			$result,
+			"module_loader.php",
+			array (
+				_("Date") => "imagedt",
+				_("Description") => "imagedesc"
+			),
+			array (
+				"",
+				_("NO DESCRIPTION")
+			)
+		);
+
+		// end of procedures display
+		$module = $save_module;
+		$record_name = $r_name; // restore from backup var
+   
 		// end of progress notes display
 		// display management link at the bottom...
 		$display_buffer .= "
