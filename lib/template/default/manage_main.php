@@ -137,10 +137,11 @@ foreach ($static_components AS $garbage => $component) {
 				$f_r["prtname"]."</option>\n"; 
 			$panel[_("Custom Records")] .= "
 				</select>
-				<INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
-				</FORM>
-				</DIV>
-				</TD></TR></TABLE>
+				<input class=\"button\" TYPE=\"SUBMIT\" ".
+				"VALUE=\""._("Add")."\"/>
+				</form>
+				</div>
+				</td></tr></table>
 			";
 		} else {
 			// Quick null panel
