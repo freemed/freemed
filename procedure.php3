@@ -78,6 +78,9 @@ switch ($action) { // master action switch
     $procrefdt      = $this_data["procrefdt"     ];
     break; // end of modform (inner)
   } // inner action switch
+  $phys_query = "SELECT * FROM physician WHERE phyref='no' ".
+                "ORDER BY phylname,phyfname";
+  $phys_result = fdb_query($phys_query);
   freemed_display_box_top ("$this_action $record_name");
   echo "
     <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -98,11 +101,9 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Provider : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procphysician\">
-  ";
-  freemed_display_physicians ($procphysician, "no");
-  echo "
-      </SELECT>
+  ".
+  freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician")
+  ."
      </TD>
     </TR>
 
@@ -129,6 +130,19 @@ switch ($action) { // master action switch
                            "proceoc",
                            $proceoc,
                            false);
+  
+  $icd_type_q = "SELECT c_value FROM config WHERE c_option='icd'";
+  $icd_type_r = fdb_query($icd_type_q);
+  $icd_type_a = fdb_fetch_array($icd_type_r);
+  $icd_type = $icd_type_a[c_value]; // '9' or '10'
+
+  $cpt_query = "SELECT * FROM cpt ORDER BY cptcode,cptnameint";
+  $cpt_result = fdb_query($cpt_query);
+  $cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
+  $cptmod_result = fdb_query($cptmod_query);
+  $icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
+  $icd_result = fdb_query($icd_query);
+  
   echo "
      </TD>
     </TR>
@@ -137,21 +151,18 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>CPT Code/Modifier : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"proccpt\">
-  ";
-  freemed_display_cptcodes ($proccpt);
-  echo "
-      </SELECT>
+  ".
+  freemed_display_selectbox($cpt_result, "#cptcode# (#cptnameint#)", "proccpt")
+  ."
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>&nbsp;</TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"proccptmod\">
-  ";
-  freemed_display_cptmods ($proccptmod);
-  echo "
-      </SELECT>
+  ".
+  freemed_display_selectbox($cptmod_result, 
+                            "#cptmod# (#cptmoddescrip#)", "proccptmod")
+  ."
      </TD>
     </TR>
 
@@ -168,11 +179,10 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Diagnosis Code 1 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procdiag1\">
-  ";
-  freemed_display_icdcodes ($procdiag1);
-  echo "
-      </SELECT>
+  ".
+  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1")
+  ."
      </TD>
     </TR>
 
@@ -180,11 +190,10 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Diagnosis Code 2 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procdiag2\">
-  ";
-  freemed_display_icdcodes ($procdiag2);
-  echo "
-      </SELECT>
+  ".
+  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag2")
+  ."
      </TD>
     </TR>
 
@@ -192,11 +201,10 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Diagnosis Code 3 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procdiag3\">
-  ";
-  freemed_display_icdcodes ($procdiag3);
-  echo "
-      </SELECT>
+  ".
+  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag3")
+  ."
      </TD>
     </TR>
 
@@ -204,11 +212,10 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Diagnosis Code 4 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procdiag4\">
-  ";
-  freemed_display_icdcodes ($procdiag4);
-  echo "
-      </SELECT>
+  ".
+  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4")
+  ."
      </TD>
     </TR>
 
@@ -724,7 +731,6 @@ switch ($action) { // master action switch
      ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
     </CENTER>
     <P>
-
   ";
 
   echo freemed_display_itemlist(
@@ -750,16 +756,6 @@ switch ($action) { // master action switch
     )
   );
 
-  echo "
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"
-     ><$STDFONT_B>$Add $record_name<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-    </CENTER>
-    <P>
-  ";
   freemed_display_box_bottom ();
   break; // end of default action
 
