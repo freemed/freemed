@@ -98,7 +98,8 @@ class template {
     <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"5\" WIDTH=\"100%\">
      <tr CLASS=\"patientbox\"
 	onClick=\"window.location='manage.php?id=".
-		urlencode($patient_object->id)."'; return true;\"
+		urlencode($patient_object->id)."&ts=".urlencode(mktime()).
+		"'; return true;\"
       ><td VALIGN=\"CENTER\" ALIGN=\"LEFT\">
       <a HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
        CLASS=\"patientbox\" NAME=\"patientboxlink\"><b>".
@@ -168,6 +169,28 @@ class template {
 			"</tr></table>\n";
 		return $buffer;
 	} // end method patient_box_iconbar
+
+	// Method: summary_annotate_link
+	//
+	//	Creates a annotate link for the EMR summary screen
+	//
+	// Parameters:
+	//
+	//	$class - Class of the EMR module in question
+	//
+	//	$url - Location that should be loaded if this is
+	//	successful
+	//
+	// Returns:
+	//
+	//	XHTML widget
+	//
+	function summary_annotate_link($class, $url) {
+		$buffer .= "<a href=\"".$url."\" ".
+			"><img SRC=\"lib/template/default/img/annotate.png\"
+			BORDER=\"0\" ALT=\"".__("Annotate")."\"/></a>";
+		return $buffer;
+	} // end function summary_annotate_link
 
 	// Method: summary_delete_link
 	//
