@@ -98,6 +98,7 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 	} // end function diagnosisFamilyMaintenance->modform
 
 	function view () {
+		global $sql;
 		echo freemed_display_itemlist (
 			$sql->query ( "SELECT * FROM $this->table_name ".
 				"ORDER BY $this->order_field"),

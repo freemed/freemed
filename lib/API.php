@@ -1223,7 +1223,7 @@ function freemed_get_userlevel ($f_cookie="")
 //  import stock data from data/$language directory
 function freemed_import_stock_data ($table_name)
 {
-  global $default_language;
+  global $default_language, $sql;
 
   $physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . "/" .
     $table_name . "." . $default_language . ".data";

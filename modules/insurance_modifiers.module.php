@@ -28,7 +28,9 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
 	function addform () { $this->view(); }
 
 	function modform () {
-		$r = freemed_get_link_rec ($id, $db_name);
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+		$r = freemed_get_link_rec ($id, $this->table_name);
 		extract ($r);
 
 		echo "

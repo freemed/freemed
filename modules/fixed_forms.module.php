@@ -59,10 +59,10 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
-        $query  = "SELECT * FROM $db_name WHERE id='$id'";
+        $query  = "SELECT * FROM $this->table_name WHERE id='$id'";
         $result = $sql->query ($query);
         $r      = $sql->fetch_array ($result);
-		extract ($r);
+		extract ($r); 
         $row          = fm_split_into_array ($ffrow);
         $col          = fm_split_into_array ($ffcol);
         $len          = fm_split_into_array ($fflength);

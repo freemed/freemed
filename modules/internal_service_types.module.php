@@ -82,6 +82,7 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
 	} // end function internalSericeTypesMaintenance->modform()
 
 	function view () {
+		global $sql;
 		echo freemed_display_itemlist (
 			$sql->query("SELECT * FROM $this->table_name ORDER BY $order_field"),
 			$this->page_name,

@@ -24,14 +24,15 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 		$this->freemedMaintenanceModule();
 	} // end constructor insuranceCompanyGroupMaintenance
 
-	function addform () { $this->view(); }
-	function modform () { $this->view(); }
+	function addform () { $this->form(); }
+	function modform () { $this->form(); }
 
  	function form () {
-		foreach ($GLOBALS as $k => $v) global $$k;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		if ($id) {
-			$r = freemed_get_link_rec ($id, $db_name);
+			$r = freemed_get_link_rec ($id, $this->table_name);
 			extract ($r);
 		} // end checking for id
 
@@ -42,7 +43,7 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 				( ($action=="addform") ? "add" : "mod" )."\"> 
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
 			<INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\"  >
-			".form_table ( array (
+			".html_form::form_table ( array (
 				_("Name") =>
 					"<INPUT TYPE=TEXT NAME=\"inscogroup\" SIZE=20 MAXLENGTH=20 ".
 					"VALUE=\"".prepare($inscogroup)."\">"

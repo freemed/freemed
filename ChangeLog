@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Fri Feb 02 2001 fforest
+	mostly bug fixes. things needing $sql as global
+    html_form::, $this->table_name etc.
+
 * Fri Jan 26 2001 rufustfirefly
   - added fix for null icons in phpwebtools module class (external)
   - added modules/patient_demographic_report.module.php as a test of the

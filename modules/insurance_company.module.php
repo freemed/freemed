@@ -182,7 +182,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 				break; // end add/addform
 
 				case "mod": case "modform":
-				$inscodtadd = $cur_date; // set date added to current
+				//$inscodtadd = $cur_date; // set date added to current
 				$inscodtmod = $cur_date; // set date modified to current
 				$GLOBALS["inscophone"] = fm_phone_assemble("inscophone");
 				$GLOBALS["inscofax"]   = fm_phone_assemble("inscofax");

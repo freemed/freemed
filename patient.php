@@ -328,7 +328,7 @@ switch ($action) {
     "<TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Number of Other Physicians")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-      ".number_pulldown("num_other_docs", 0, 4)."
+      ".html_form::number_pulldown("num_other_docs", 0, 4)."
     </TD></TR>
 
     </TABLE>
@@ -764,7 +764,7 @@ switch ($action) {
     <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0 WIDTH=\"100%\">
     <TR><TD ALIGN=RIGHT>
      <$STDFONT_B>"._("Guarantor").
-     htmle_form::select_widget("dep_s_field", array (
+     html_form::select_widget("dep_s_field", array (
        _("Last Name")            =>"ptlname",
        _("First Name")           =>"ptfname",
        _("Internal Practice ID") =>"ptid"
