@@ -314,14 +314,16 @@
 
      // queue all entries
      while ($r = fdb_fetch_array ($result)) {
+       $p = freemed_get_link_rec ($r[payrecproc], "procedure");
+       if ($p[procbalcurrent]<=0) next; // skip if no charge
        $number_of_charges++; // increment number of charges
 
        if ($debug) echo "\nThis form, charge $number_of_charges <BR>\n";
        flush();
 
        // get the current procedure
-       #if ($r[payrecproc] > 0)
-         $p = freemed_get_link_rec ($r[payrecproc], "procedure");
+       //if ($r[payrecproc] > 0)
+       //  $p = freemed_get_link_rec ($r[payrecproc], "procedure");
 
        if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
        flush();
