@@ -313,6 +313,7 @@ if ($action=="addform") {
      <OPTION VALUE=\"C\">Child
      <OPTION VALUE=\"?\">FINISH THIS!
     </SELECT>
+    <P>
 
     <$STDFONT_B>$Next_of_kin_information : <$STDFONT_E><BR>
     <TEXTAREA NAME=\"ptnextofkin\" ROWS=4 COLS=25 WRAP=VIRTUAL
