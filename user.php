@@ -351,7 +351,7 @@ switch($action) { // master action switch
      <TR><TD>
     ";
 
-    $display_buffer .= freemed_display_actionbar($page_name, $_ref);
+    $display_buffer .= freemed_display_actionbar($page_name, "admin.php");
 
     $display_buffer .= "
      </TD></TR>
@@ -390,7 +390,7 @@ switch($action) { // master action switch
 
     $display_buffer .= "
       </TABLE>
-      ".freemed_display_actionbar ($page_name, $_ref)."
+      ".freemed_display_actionbar ($page_name, "admin.php")."
      </TD></TR>
     </TABLE>
     ";
