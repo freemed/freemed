@@ -364,11 +364,20 @@ switch ($action) {
     // push the current insco onto the stack
     if ($add_this_insco AND ($ptins_>0)) { // not persistent! use once!
       $add_this_insco = false;
-      $ptins[]      = $ptins_;
-      $ptinsno[]    = $ptinsno_;
-      $ptinsgrp[]   = $ptinsgrp_;
-      $ptinsstart[] = fm_date_assemble("ptinsstart_");
-      $ptinsend[]   = fm_date_assemble("ptinsend_");
+      if (isset($ptins_arr)) {
+        $ptins[$ptins_arr]      = $ptins_;
+        $ptinsno[$ptins_arr]    = $ptinsno_;
+        $ptinsgrp[$ptins_arr]   = $ptinsgrp_;
+        $ptinsstart[$ptins_arr] = fm_date_assemble("ptinsstart_");
+        $ptinsend[$ptins_arr]   = fm_date_assemble("ptinsend_");
+        unset($ptins_arr);
+      } else {
+        $ptins[]      = $ptins_;
+        $ptinsno[]    = $ptinsno_;
+        $ptinsgrp[]   = $ptinsgrp_;
+        $ptinsstart[] = fm_date_assemble("ptinsstart_");
+        $ptinsend[]   = fm_date_assemble("ptinsend_");
+      }
     }
     if (is_array($ptins)) {
       while (list($idx,$val)=each($ptins)) {
@@ -385,6 +394,7 @@ switch ($action) {
           $ptinsgrp_   = $ptinsgrp[$arr_idx];
           $ptinsstart_ = $ptins[$arr_idx]; // what's the 
           $ptinsend_   = $ptins[$arr_idx]; // opposite of fm_date_assemble?
+	  $ptins_arr   = $arr_idx;
 	  unset($ptins[$arr_idx]); // take it off the stack, no duplication
 	}
         if ($ptinsdel[$arr_idx]) unset($ptins[$arr_idx]); // delete 
@@ -393,14 +403,15 @@ switch ($action) {
     } // if ptins is an array
     
     $ins_r = freemed_search_query( array ($ins_s_val => $ins_s_field),
-               array ("insconame", "inscostate", "inscocity"), "insco", "");
+               array ("insconame", "inscostate", "inscocity"), "insco", 
+	       "ptins_");
     
     $book->add_page(
       _("Insurance"),
       array ("ptins", "ptinsno", "ptinsgrp", "ptinsstart",
         "ptinsend", "ins_disp_inactive", "ins_s_val", "ins_s_field", 
 	"ptins_", "ptinsno_", "ptinsgrp_", date_vars("ptinsstart_"), 
-	date_vars("ptinsend_")),
+	date_vars("ptinsend_"), "ptins_arr"),
       "
     <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0 WIDTH=\"100%\">
      <TR><TD ALIGN=RIGHT>
@@ -421,6 +432,9 @@ switch ($action) {
      </TD><TD ALIGN=LEFT>
       <$STDFONT_B>"._("Add This Insurance Company")." : 
        <INPUT TYPE=CHECKBOX NAME=\"add_this_insco\">
+       ".(isset($ptins_arr) ? 
+         "<INPUT TYPE=HIDDEN NAME=\"ptins_arr\" VALUE=\"$ptins_arr\">" 
+	                       : "")."
      </TD></TR>
       <TR><TD ALIGN=RIGHT>
         <$STDFONT_B>
@@ -881,7 +895,8 @@ switch ($action) {
        ";
       freemed_display_box_bottom (); // display bottom of the box
   break; // end action find
-  
+ 
+  case "display":
   case "view":
     // KludgE AlerTx0r!
     header("Location:".ereg_replace("patient.php3",
