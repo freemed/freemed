@@ -1,6 +1,9 @@
 <?php
  // $Id$
  // $Author$
+
+include_once("lib/template/default/help.macros.php");
+ 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
@@ -139,7 +142,21 @@ if (isset($page_title)) {
 				} // end switch
 			} else { // checking for odds
 				// If it's even, display it
-				print ($help_array[$i]);
+
+				// Pull into local variable
+				$this_part = $help_array[$i];
+
+				// Perform replacements
+				foreach ($help_replacements AS $k => $v) {
+					$this_part = str_replace (
+						$k,
+						$v,
+						$this_part
+					);
+				} // end replacements (foreach)
+
+				// Actual display
+				print $this_part;
 			} // end checking for odds
 		} // end looping through array
 	} else {
