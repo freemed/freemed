@@ -37,6 +37,11 @@ a:hover {
 	background: #d9d9ff 
 }
 
+.letterbox {
+	overflow: wrap;
+	background: #bbbbff 
+}
+
 .menubar {
 	border-width: none;
 	background: #bbbbff 
