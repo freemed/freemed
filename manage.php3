@@ -230,19 +230,29 @@ switch ($action) {
      ";
 
      if (!$this_patient->isDependent()) {
-      echo "
-         <A HREF=\"patient.php3?$_auth&action=find&criteria=dependants&f1=$id\"
-         ><$STDFONT_B>Dependants<$STDFONT_E></A>
-      "; } else {
+      $dep_query = "SELECT COUNT(*) FROM patient WHERE ptdep='".
+                   $this_patient->id."'";
+      $dep_result = fdb_query($dep_query);
+      $dep_r = fdb_fetch_array($dep_result);
+      $num_deps = $dep_r[0];
+      if ($num_deps<1)
+        echo "<$STDFONT_B>No Dependents<$STDFONT_E>";
+      else
+        echo "
+	 <$STDFONT_B><A HREF=\"patient.php3?$_auth&action=find&criteria=".
+	 "dependants&f1=$id\">Dependents</A> [$num_deps]<$STDFONT_E>
+        ";
+      } else {
+      $guarantor = new Patient ($this_patient->ptdep);
       echo "
          <A HREF=\"patient.php3?$_auth&action=find&criteria=guarantor&".
          "f1=".$this_patient->ptdep."\"
          ><$STDFONT_B>Guarantor<$STDFONT_E></A>
+	</TD><TD><$STDFONT_B>[".$guarantor->fullName()."]<$STDFONT_E></TD></TR>
       ";
       }
 
      echo "
-        </TD><TD>&nbsp;</TD></TR>
         <TR><TD ALIGN=RIGHT>
          <$STDFONT_B><B>Episode of Care</B> : <$STDFONT_E>
         </TD><TD ALIGN=LEFT>
