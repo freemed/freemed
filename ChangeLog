@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Fri Apr 13 2001 rufustfirefly
+  Released 0.2.1.1 (Good Friday the 13th/CVS)
+  - lib/freemed.php: updated phpwebtools dependency to 0.2.3
+
 * Wed Apr 11 2001 fforest
   - mcsi_nsf* fix bug in specialty code reporting.
 
