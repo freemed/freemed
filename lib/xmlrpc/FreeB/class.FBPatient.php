@@ -119,6 +119,12 @@ class FBPatient {
 		return (strtoupper($p->local_record['ptgender']) == 'F');
 	} // end method isFemale
 
+	function isPregnant ( $patient ) {
+		$p = CreateObject('_FreeMED.Patient', $patient);
+		return (strtoupper($p->local_record['ptpreg']) == 'pregnant');
+	} // end method isPregnant
+
+
 	function isSingle ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
 		return ($p->local_record['ptmarital'] == 'single');

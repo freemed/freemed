@@ -6,7 +6,7 @@ class FBProcedure {
 
 	function CPT4Code ( $procedure ) {
 		$c_id = freemed::get_link_field($procedure, 'procrec', 'proccpt');
-		return freemed::get_link_field($c_id, 'cpt', 'cptname');
+		return freemed::get_link_field($c_id, 'cpt', 'cptcode');
 	} // end method CPT4Code
 
 	function CPT5Code ( $procedure ) {
@@ -20,7 +20,7 @@ class FBProcedure {
 	} // end method CPTCOB
 
 	function CPTCharges ( $procedure ) {
-		$p = freemed::get_link_rec($proc, 'procrec');
+		$p = freemed::get_link_rec($procedure, 'procrec');
 		return $p['proccharges'];
 	} // end method CPTCharges
 
@@ -85,7 +85,7 @@ class FBProcedure {
 
 		// Split out episode of care to be prepended, since we're
 		// using composite keys to do this ...
-		$e = explode (':', $proc['proceoc']);
+		$e = explode (':', $p['proceoc']);
 		$eoc = $e[0];
 		
 		for ($i=1; $i<=4; $i++) {
@@ -146,9 +146,20 @@ class FBProcedure {
 		return $p['proccov'.$covnum];
 	} // end method InsuredKey
 
-	function OtherInsuredKey ( $proc ) {
+	function OtherInsuredKey ( $procedure ) {
+		// This is also a coverage key
+		// The difference is this is the coverage AFTER the current coverage
+		$p = freemed::get_link_rec($procedure, 'procrec');
+		// Where is the bill going, by coverage
+		switch ($p['proccurcovtp']) {
+			case '2': $covnum = 3; break;
+			case '3': $covnum = 4; break;
+			case '4': $covnum = 0; break;
+			case '1': default: $covnum = 2; break;
+		}
+		return $p['proccov'.$covnum];
+
 		// TODO: Not sure where we would get this from.
-		return 0;
 	} // end method OtherInsuredKey
 
 	function BillingContactKey ( $bill, $proc ) {
