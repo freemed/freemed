@@ -111,11 +111,14 @@
      //$debug=true;
 
      // decide which ones we are generating
-     $result = fdb_query ("SELECT * FROM $database.payrec
+     $result = fdb_query ("SELECT a.* FROM $database.payrec AS a,
+                                           $database.procrec AS b 
                            WHERE ( 
-                             payreccat = '5' AND
-                             payreclink < '3' AND
-                             payrecpatient = '$current_patient'
+                             a.payreccat = '5' AND
+                             a.payreclink < '3' AND
+                             a.payrecpatient = '$current_patient' AND
+                             a.payrecproc = b.id AND
+                             b.procbalcurrent > '0'
                            ) ORDER BY payrecpatient,payrecdt");
 
      if (!$result or ($result==0))
