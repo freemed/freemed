@@ -107,7 +107,8 @@ switch ($action) {
 
 	case "add":
 	$page_title = __("Adding")." ".__("Message");
-	$display_buffer .= "\n".__("Adding")." ".__("Message")." ... \n";
+	$display_buffer .= "\n<div align=\"center\">".
+		__("Adding")." ".__("Message")." ... \n";
 	$query = $sql->insert_query(
 		"messages",
 		array(
@@ -127,6 +128,7 @@ switch ($action) {
 	if ($result) $display_buffer .= __("done");
 	else $display_buffer .= __("ERROR");
 	$display_buffer .= " 
+	</div>
 	<p/>
 	".template::link_bar(array(
 	__("Messages") => "messages.php",
@@ -237,11 +239,11 @@ switch ($action) {
 	$result = $sql->query($query);
 
 	if (!$sql->results($result)) {
-		$display_buffer .= "<p/>
+		$display_buffer .= "<p align=\"center\">
 			". ($old ?
 				__("You have no old messages.") :
 				__("You have no waiting messages.")
-			)."<p/>";
+			)."</p>";
 	} else {
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
