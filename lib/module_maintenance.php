@@ -110,7 +110,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function _del
 	// - only override this if you *really* have something weird to do
 	function _del () {
-		global $STDFONT_B, $STDFONT_E, $id, $sql;
+		global $STDFONT_B, $STDFONT_E, $id, $sql, $module;
 		echo "<P ALIGN=CENTER>".
 			"<$STDFONT_B>"._("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
@@ -119,6 +119,8 @@ class freemedMaintenanceModule extends freemedModule {
 		if ($result) { echo _("done"); }
 		 else        { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
 		echo "<$STDFONT_E></P>\n";
+		echo "<P ALIGN=CENTER><$STDFONT_B><A HREF=\"".$this->page_name.
+			"?module=".urlencode($module)."\">"._("back")."</A></P>\n";
 	} // end function _del
 	function del () { $this->_del(); }
 
