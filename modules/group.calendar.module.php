@@ -242,7 +242,7 @@ class GroupCalendar extends CalendarModule {
 				while ($anr = $sql->fetch_array($anresult)) {
 					$my_phy = CreateObject('FreeMED.Physician', $anr['anphysician']);
 					$cov[] = $my_phy->fullName().
-					"<A HREF=\"module_loader.php?".
+					"<a HREF=\"module_loader.php?".
 					"module=".urlencode($this->MODULE_CLASS)."&".
 					"action=".urlencode($action)."&".
 					"selected_date=".urlencode($selected_date)."&".
@@ -300,24 +300,31 @@ class GroupCalendar extends CalendarModule {
 				foreach ($physicians AS $_g => $this_phy) {
 					
 					// If there is an event, display
-					if ($map[$this_phy][$idx][span] == 0) {
+					if ($map[$this_phy][$idx]['span'] == 0) {
 						// skip this
-					} elseif ($map[$this_phy][$idx][link] != 0) {
+					} elseif ($map[$this_phy][$idx]['link'] != 0) {
 						$buffer .= "<td COLSPAN=\"1\" ".
-							"ROWSPAN=\"".$map[$this_phy][$idx][span]."\" ".
+							"ROWSPAN=\"".$map[$this_phy][$idx]['span']."\" ".
 							"ALIGN=\"LEFT\" ".
-							"CLASS=\"calmark".($map[$this_phy][$idx][mark]+0)."\">".
+							"CLASS=\"calmark".($map[$this_phy][$idx]['mark']+0)."\">".
 							freemedCalendar::event_calendar_print(
-								$map[$this_phy][$idx][link]
-							)."<A HREF=\"module_loader.php?".
-							"module=".urlencode($this->MODULE_CLASS)."&".
-							"action=".urlencode($action)."&".
-							"selected_date=".urlencode($selected_date)."&".
-							"group=".urlencode($group)."&".
-							"id=".$map[$this_phy][$idx][link]."&".
-							"submit=delappt#hour".$c_hour."\"
-							><img SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\"/></a>".
-							"</td>\n";
+								$map[$this_phy][$idx]['link']
+							).html_form::confirm_link_widget(
+								"module_loader.php?".
+								"module=".urlencode($this->MODULE_CLASS)."&".
+								"action=".urlencode($action)."&".
+								"selected_date=".urlencode($selected_date)."&".
+								"group=".urlencode($group)."&".
+								"id=".$map[$this_phy][$idx][link]."&".
+								"submit=delappt#hour".$c_hour,
+								"<img SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\" ".
+								"alt=\"".__("DEL")."\"/>",
+								array(
+									'confirm_text' =>
+									__("Are you sure you want to remove this booking?"),
+									'text' => __("Delete")
+								)
+							)."</td>\n";
 					} else {
 						// Handle empty event
 						$buffer .= "<td COLSPAN=\"1\" CLASS=\"cell\" ALIGN=\"LEFT\" VALIGN=\"MIDDLE\">\n";
