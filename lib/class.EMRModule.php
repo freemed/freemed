@@ -388,12 +388,12 @@ class EMRModule extends BaseModule {
 			<table border=\"0\" width=\"98%\" cellspacing=\"0\">
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
-				 onClick=\"document.form.myform.print_method_printer.select(); return true;\">
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
 
 				<td width=\"50\">
-				<input type=\"radio\" name=\"print_method[printer]\"
-				 value=\"1\" checked=\"checked\"
+				<input type=\"radio\" 
+				 name=\"print_method\"
+				 value=\"printer\" checked=\"checked\"
 				 id=\"print_method_printer\" /></td>
 				<td
 				>".__("Printer")."</td>
@@ -401,12 +401,12 @@ class EMRModule extends BaseModule {
 			</tr>
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
-				 onClick=\"document.forms[0].print_method_fax.value='1'; return true;\">
-
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
 				<td width=\"50\">
-				<input type=\"radio\" name=\"print_method[fax]\"
-				 value=\"1\" id=\"print_method_fax\" /></td>
+				<input type=\"radio\"
+				 name=\"print_method\"
+				 value=\"fax\"
+				 id=\"print_method_fax\" /></td>
 				<td>".__("Fax")."</td>
 				<td>".html_form::text_widget('fax_number',
 					array(
@@ -416,11 +416,12 @@ class EMRModule extends BaseModule {
 			</tr>
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
-				 onClick=\"document.forms[0].print_method_browser.value='1'; return true;\">
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
 				 <td width=\"50\">
-				 <input type=\"radio\" name=\"print_method[browser]\"
-				  value=\"1\" id=\"print_method_browser\" /></td>
+				 <input type=\"radio\"
+				  name=\"print_method\"
+				  value=\"browser\"
+				  id=\"print_method_browser\" /></td>
 				 <td colspan=\"2\">".__("Browser-Based")."</td>
 			</tr>
 			</table>
@@ -465,19 +466,21 @@ class EMRModule extends BaseModule {
 		$display_buffer .= __("Printing")." ... <br/>\n";
 
 		// Figure out print method
-		$_pm = '';
-		foreach ($_REQUEST['print_method'] AS $k => $v) {
-			if ($v==1) {
-				$_pm = $k;
-			}
-		}
-
+		$_pm = $_REQUEST['print_method'];
 		switch ($_pm) {
 			// Handle direct to browser
 			case 'browser':
 			Header('Content-Type: application/x-freemed-print-pdf');
-			readfile($TeX->RenderToPDF());
+			$file = $TeX->RenderToPDF();
+			//print "file = $file<br/>\n";
+			readfile($file);
 			die();
+			break;
+
+			case 'fax':
+			$display_buffer .= "<pre>\n".
+				$TeX->RenderDebug().
+				"</pre>\n(You must disable this to print)";
 			break;
 
 			// Handle actual printer
@@ -494,7 +497,7 @@ class EMRModule extends BaseModule {
 			);
 			// TODO: Handle direct PDF generation and return here
 			$TeX->PrintTeX(1);
-//			$GLOBALS['__freemed']['close_on_load'] = true;
+			$GLOBALS['__freemed']['close_on_load'] = true;
 			}
 			break;
 
