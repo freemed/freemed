@@ -76,7 +76,7 @@ div.patient_search {
 }
 
 /* span:pageTitle - page title at upper right on menubar */
-span.pageTitle {
+td.pageTitle {
 	right: 10px;
 	position: absolute;
 	align: left;

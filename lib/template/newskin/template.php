@@ -2,6 +2,7 @@
  // $Id$
  // $Author$
 
+/*
 // Check for fscked up gecko rendering engine prior to 20031030
 // which causes the menus not to work. Default back to the default
 // template quasi-seamlessly if this happens, based on user agent.
@@ -17,6 +18,7 @@ if (eregi('Gecko/', $_ua)) {
 		die();
 	}
 }
+*/
 
 // Check for avoiding template
 if (!$GLOBALS['__freemed']['no_template_display']) {
@@ -47,7 +49,7 @@ if (isset($refresh)) {
 		HREF="lib/template/newskin/stylesheet.css" />
 	<link REL="StyleSheet" TYPE="text/css"
 		HREF="lib/template/newskin/dynamic.css.php" />
-	<script type="text/javascript" src="lib/template/newskin/menu.js"></script>
+	<link rel="stylesheet" href="lib/template/newskin/layersmenu-newskin.css" type="text/css"></link>
 </head>
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
@@ -64,21 +66,28 @@ if (isset($refresh)) {
 
 <!-- menu -->
 
-<?php if (!$GLOBALS['__freemed']['no_menu_bar']) {
-	include "lib/template/newskin/menu.php";
-} else { ?>
 <div id="top" align="left" style="width: 100%;" class="menuBar">
+<?php if (!$GLOBALS['__freemed']['no_menu_bar']) {
+	print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ".
+		"width=\"100%\">\n";
+	print "<tr><td valign=\"top\"><b>".PACKAGENAME." v".DISPLAY_VERSION."</b></td>\n";
+	print "<td valign=\"top\">";
+	include "lib/template/newskin/menu.php";
+	print "</td><td align=\"right\" valign=\"top\">".prepare($GLOBALS['page_title'])."</td>";
+	print "</tr>";
+	print "</table>\n";
+} else { ?>
 	<b><?php print PACKAGENAME." v".DISPLAY_VERSION.
 		( $GLOBALS['page_title'] ? ' - '.$GLOBALS['page_title'] : '' );
 		?></b>
-</div>
 <!-- Move main body down a little bit... -->
-<br/>
 <?php } ?>
+</div>
 
 <!-- body -->
 
 <div class="main" id="main">
+	<br/>
 	<?php print $display_buffer; ?>
 	<br/><br/>
 </div>

@@ -2,22 +2,22 @@
  // $Id$
  // $Author$
 
-function menu_item($text, $link) {
-	return "\t<a class=\"menuItem\" href=\"".$link."\"".
-		">".prepare($text)."</a>\n";
+$GLOBALS['__freemed']['layermenu'] = '';
+
+function menu_item($text, $link, $depth) {
+	for ($i = 1; $i <= $depth; $i++) {
+		$GLOBALS['__freemed']['layermenu'] .= '.';
+	}
+	$GLOBALS['__freemed']['layermenu'] .= '|'.prepare($text).'|'.
+		prepare($link)."\n";
 } // end function menu_item
 
-function sub_menu($text, $menu) {
-	return "\t<a class=\"menuItem\" ".
-		"onMouseOver=\"menuItemMouseover(event, '".$menu."')\"".
-		">".
-		"<span class=\"menuItemText\">".prepare($text)."</span>".
-		"<span class=\"menuItemArrow\">&gt;</span></a>\n";
+function sub_menu($text, $depth) {
+	for ($i = 1; $i <= $depth; $i++) {
+		$GLOBALS['__freemed']['layermenu'] .= '.';
+	}
+	$GLOBALS['__freemed']['layermenu'] .= '|'.prepare($text)."\n";
 } // end function sub_menu
-
-function menu_sep() {
-	return "\t<div class=\"menuItemSep\"></div>\n";
-} // end function menu_sep
 
 // Load handler for menu
 LoadObjectDependency('PHP.module');
@@ -31,30 +31,23 @@ if (is_array($handlers)) {
 	}
 }
 
-/*
-
-// Language bar
-if (defined('ALWAYS_LANGUAGE_BAR') or ($_COOKIE['language_bar']==1)) {
-	$langugage_bar = true;
-	$registry = CreateObject('FreeMED.LanguageRegistry');
-	print "
-	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
-	<form ACTION=\"".page_name()."\" METHOD=\"POST\">
-	<input type=\"HIDDEN\" name=\"module\" value=\"".prepare($module)."\"/>
-	<input type=\"HIDDEN\" name=\"id\" value=\"".prepare($id)."\"/>
-	<input type=\"HIDDEN\" name=\"patient\" value=\"".prepare($patient)."\"/>
-	<input type=\"HIDDEN\" name=\"action\" value=\"".prepare($action)."\"/>
-	".$registry->widget('__language',
-		array ('style' => 'width: 220px;', 'refresh' => true))."
-	</td><td align=\"CENTER\" valign=\"MIDDLE\">
-	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/forward.".
-	IMAGE_TYPE."\"
-		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[".__("Change Language")."]\"/>
-	</form>
-	</td></tr>
-	";
-}
-*/
+// Show headers
+print "
+<script language=\"JavaScript\" type=\"text/javascript\">
+<!--
+";
+include dirname(__FILE__).'/libjs/layersmenu-browser_detection.js';
+print "
+// -->
+</script>
+<script language=\"JavaScript\" type=\"text/javascript\" src=\"".
+	"lib/template/newskin/libjs/layersmenu-library.js\"></script>
+<script language=\"JavaScript\" type=\"text/javascript\" src=\"".
+	"lib/template/newskin/libjs/layersmenu.js\"></script>
+";
+include (dirname(__FILE__)."/lib/PHPLIB.php");
+include (dirname(__FILE__)."/lib/layersmenu-common.inc.php");
+include (dirname(__FILE__)."/lib/layersmenu.inc.php");
 
 	//----- Derive pieces of menu bar
 
@@ -62,133 +55,77 @@ $patient_history = patient_history_list();
 ksort($patient_history);
 $page_history = page_history_list();
 
-?>
+	// System menu
+	
+	sub_menu (__("System"), 1);
+	menu_item(__("Preferences"), "preferences.php", 2);
+	menu_item(__("Return to Main Menu"), "main.php", 2);
+	menu_item(__("Logout"), "logout.php", 2);
 
-<div class="menuBar" style="position: absolute; top: 0px; width: 100%; ">
-	<a class="titleButton"><b><?php print PACKAGENAME." v".DISPLAY_VERSION; ?></b></a>
-	<a class="menuButton" onMouseOver="buttonMouseover(event, 'systemMenu')"><?php print __("System"); ?></a>
-	<a class="menuButton" onMouseOver="buttonMouseover(event, 'mainMenu')"><?php print __("Main"); ?></a>
-	<a class="menuButton" onMouseOver="buttonMouseover(event, 'userMenu')"><?php print __("User"); ?></a>
-	<a class="menuButton" onMouseOver="buttonMouseover(event, 'patientMenu')"><?php print __("Patient"); ?></a>
-	<?php if (is_array($__handle)) print "<a class=\"menuButton\" onMouseOver=\"buttonMouseover(event, 'notifyMenu')\">".__("Notifications")."</a>\n"; ?>
-	<span class="pageTitle"><b><?php print $GLOBALS['page_title']; ?></b></span>
-</div>
+	// Main menu
 
-<div id="systemMenu" class="menu" onMouseOver="menuMouseover(event)">
-	<?php
-	print menu_item(__("Preferences"), "preferences.php");
-	print menu_item(__("Return to Main Menu"), "main.php");
-	print menu_item(__("Logout"), "logout.php");
-	?>
-</div>
+	sub_menu (__("Main"), 1);
+	menu_item(__("Administration Menu"), "admin.php", 2);
+	menu_item(__("Billing Functions"), "billing_functions.php", 2);
+	menu_item(__("Calendar"), "calendar.php", 2);
+	menu_item(__("Call-In"), "call-in.php", 2);
+	menu_item(__("Reports"), "reports.php", 2);
+	menu_item(__("Support Data"), "db_maintenance.php", 2);
 
-
-<div id="mainMenu" class="menu" onMouseOver="menuMouseover(event)">
-	<?php
-	print menu_item(__("Administration Menu"), "admin.php");
-	print menu_item(__("Billing Functions"), "billing_functions.php");
-	print menu_item(__("Calendar"), "calendar.php");
-	print menu_item(__("Call-In"), "call-in.php");
-	print menu_item(__("Reports"), "reports.php");
-	print menu_item(__("Support Data"), "db_maintenance.php");
-	?>
-</div>
-
-<div id="userMenu" class="menu" onMouseOver="menuMouseover(event)">
-	<?php
-	print sub_menu(__("Messages"), 'messagesMenu');
-	if ($patient_history) {
-		print sub_menu(__("History"), "pageHistoryMenu");
-	}
+	// User menu
+	sub_menu(__("User"), 1);
 	if (!is_object($this_user)) {
 		$this_user = CreateObject('FreeMED.User');
 	}
 	if ($this_user->isPhysician()) {
-		print menu_sep();
-		print menu_item(__("Day View"), "physician_day_view.php?physician=".$this_user->getPhysician());
-		print menu_item(__("Week View"), "physician_week_view.php?physician=".$this_user->getPhysician());
+		//print menu_sep();
+		menu_item(__("Day View"), "physician_day_view.php?physician=".$this_user->getPhysician(), 2);
+		menu_item(__("Week View"), "physician_week_view.php?physician=".$this_user->getPhysician(), 2);
 	}
-	?>
-</div>
 
-<div id="messagesMenu" class="menu" onMouseOver="menuMouseover(event)">
-	<?php
-	print menu_item(__("Check"), "messages.php");
-	print menu_item(__("Send"), "messages.php?action=addform");
-	?>
-</div>
+	// User->Messages menu
+	
+	sub_menu(__("Messages"), 2);
+	menu_item(__("Check"), "messages.php", 3);
+	menu_item(__("Send"), "messages.php?action=addform", 3);
+	if ($page_history) {
+		// User->History menu
+		sub_menu(__("History"), 2);
+		foreach ($page_history as $k => $v) {
+			menu_item($k, $v, 3);
+		}
+	}
 
-<div id="patientMenu" class="menu" onMouseOver="menuMouseover(event)">
-	<?php
-	print menu_item(__("New"), "patient.php?action=addform");
-	print menu_item(__("Select"), "patient.php");
+	// Patient menu
+
+	sub_menu(__("Patients"), 1);
+	menu_item(__("New"), "patient.php?action=addform", 2);
+	menu_item(__("Select"), "patient.php", 2);
 	if ($patient_history) {
-		print menu_item(__("Configure"),
-			"manage.php?id=".$patient_history[count($patient_history)-1]."&action=config");
-		print sub_menu(__("Recent"), "patientHistoryMenu");
+		menu_item(__("Configure"),
+			"manage.php?id=".$patient_history[count($patient_history)-1]."&action=config", 2);
+		// Patient->Recent
+		sub_menu(__("Recent"), 2);
+		foreach ($patient_history as $k => $v) {
+			menu_item($k, "manage.php?id=".urlencode($v), 3);
+		}
 	}
-	print menu_sep();
-		print sub_menu(__("Call-In"), "callinMenu");
-	?>
-</div>
 
-<?php if ($patient_history) {
-?><div id="patientHistoryMenu" class="menu" onMouseOver="menuMouseover(event)"><?php
-	foreach ($patient_history as $k => $v) {
-		print menu_item($k, "manage.php?id=".urlencode($v));
+	// Patient->Callin
+	
+	sub_menu(__("Call-In"), 2);
+	menu_item(__("Entry"), "call-in.php?action=addform", 3);
+	menu_item(__("Menu"), "call-in.php", 3);
+
+	// Only display notifications "menu" if there are any
+	if (is_array($__handle)) {
+		sub_menu(__("Notify"), 1);
+		foreach ($__handle AS $text => $link) {
+			menu_item($text, $link, 2);
+		}
 	}
-?></div><?php
-} ?>
 
-<?php if ($page_history) {
-?><div id="pageHistoryMenu" class="menu" onMouseOver="menuMouseover(event)"><?php
-	foreach ($page_history as $k => $v) {
-		print menu_item($k, $v);
-	}
-?></div><?php
-} ?>
-
-<div id="callinMenu" class="menu" onMouseOver="menuMouseover(event)">
-	<?php
-	print menu_item(__("Entry"), "call-in.php?action=addform");
-	print menu_item(__("Menu"), "call-in.php");
-	?>
-</div>
-
-<?php
-
-// Only display notifications "menu" if there are any
-if (is_array($__handle)) {
-	print "<div id=\"notifyMenu\" class=\"menu\" onMouseOver=\"".
-		"menuMouseover(event)\">\n";
-	foreach ($__handle AS $text => $link) {
-		print menu_item($text, $link);
-	}
-	print "</div>\n";
-}
-
-if (0==1) {
-?><table CLASS="menubar" WIDTH="100%" BORDER="0"><?php
-//----- Check for help file link
-if ( ($help_url = help_url()) != "help.php" ) {
-	print "\t<tr>\n".
-		"\t\t<td COLSPAN=\"2\" CLASS=\"menubar_items\" ".
-		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
-		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
-		"onClick=\"window.open('".$help_url."', 'Help', 'width=600,height=400,".
-			"resizable=yes'); return true;\" ".
-		"><a href=\"#\">".
-		prepare(__("Help"))."</a></td>\n".
-		"\t</tr>\n";
-}
-
-	// Create the rest of the stock menubar entries
-
-?>
-</table>
-<!-- new functions come *after* everything else -->
-<?php 
-
+/*
 //----- Check to see if a menubar array exists
 if (is_array($menu_bar)) {
 	print "<div ALIGN=\"CENTER\">".
@@ -215,10 +152,23 @@ if (is_array($menu_bar)) {
 } else { // if is array
 	print "&nbsp;\n";
 } // end if is array
+*/
 
-} // end 0==1
+
+//----- Generate actual menu
+$menu = new LayersMenu(6, 7, 2, 1);
+$menu->setDirroot(dirname(__FILE__));
+$menu->setTpldir(dirname(__FILE__)."/templates/");
+$menu->setImgdir(dirname(__FILE__)."/img/");
+$menu->setImgwww("lib/template/newskin/img/");
+$menu->setDownArrowImg("down-arrow.png");
+$menu->setForwardArrowImg("forward-arrow.png");
+$menu->setMenuStructureString($GLOBALS['__freemed']['layermenu']);
+$menu->parseStructureForMenu("topmenu");
+$menu->newHorizontalMenu("topmenu");
+$menu->printHeader();
+$menu->printMenu("topmenu");
+$menu->printFooter();
+
+//print "<pre>".$GLOBALS['__freemed']['layermenu']."</pre>\n";
 ?>
-
-<!-- Need spacing to push content down a bit -->
-<br/>
-

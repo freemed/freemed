@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=lib/template/newskin
-SUBDIR=img
+SUBDIR=img lib libjs templates
 
 all:
 	# Nothing
