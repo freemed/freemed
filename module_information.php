@@ -23,7 +23,8 @@ $categories = $module_list->categories();
 if ($categories != NULL) {
 	echo "
 	<CENTER>
-	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE ALIGN=CENTER>
+	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE ALIGN=CENTER
+	 WIDTH=\"80%\">
 	";
 	foreach ($categories AS $this_category) {
 		echo "
