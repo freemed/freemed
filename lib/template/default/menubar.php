@@ -144,6 +144,10 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		"><a href=\"call-in.php?action=addform\">".
 		prepare(__("New"))."</a></td>\n".
 		"\t</tr>\n";
+	if (is_object($this_user) and $this_user->getPhysician()) {
+		$__phy = $this_user->getPhysician();
+		print menu_bar_cell(__("Daily Calendar"), "physician_day_view.php?physician=".urlencode($__phy));
+	}
 	print menu_bar_cell(__("Support Data"), "db_maintenance.php");
 	print "\t<tr>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
