@@ -442,8 +442,8 @@ class MaintenanceModule extends BaseModule {
 				$action == "addform" ?
 					__("Add") :
 					__("Modify")
-				)."\"/>\n".
-			"<input type=\"submit\" name=\"__submit\" value=\"".__("Cancel")."\" />\n".
+				)."\" class=\"button\" />\n".
+			"<input type=\"submit\" name=\"__submit\" value=\"".__("Cancel")."\" class=\"button\" />\n".
 			"</div>\n".	
 			"</form>\n";
 	} // end function form
@@ -574,6 +574,8 @@ class MaintenanceModule extends BaseModule {
 	//
 	//	$options - (optional) Options to pass to 
 	//	html_form::select_widget
+	//	* multiple - Pass a size value for this to be a multiple
+	//	  selection widget
 	//
 	// Returns:
 	//
@@ -584,7 +586,7 @@ class MaintenanceModule extends BaseModule {
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).
 			"ORDER BY ".$this->order_field;
 		$result = $GLOBALS['sql']->query($query);
-		$return[__("NONE SELECTED")] = "";
+		if (!$options['multiple']) { $return[__("NONE SELECTED")] = ""; }
 		while ($r = $GLOBALS['sql']->fetch_array($result)) {
 			if (!(strpos($this->widget_hash, "##") === false)) {
 				$key = '';
@@ -601,7 +603,33 @@ class MaintenanceModule extends BaseModule {
 			}
 			$return[$key] = $r[$field];
 		}
-		return html_form::select_widget($varname, $return, $options);
+		if (!$options['multiple']) {
+			return html_form::select_widget($varname, $return, $options);
+		} else {
+			// Process multiple
+			$buffer .= "<select NAME=\"".$varname."[]\" SIZE=\"".
+				($options['multiple']+0)."\" ".
+				"MULTIPLE=\"multiple\">\n";
+			foreach ($return AS $k => $v) {
+				$selected = false;
+				if (is_array(${$varname})) {
+					foreach (${$varname} AS $_v) {
+						if ($_v == $v) {
+							$selected = true;
+						}
+					}
+				} else {
+					if (${$varname} == $v) {
+						$selected = true;
+					}
+				}
+				$buffer .= "<option VALUE=\"".prepare($v)."\" ".
+					( $selected ? "SELECTED" : "" ).">".
+					prepare($k)."</option>\n";
+			}
+			$buffer .= "</select>\n";
+			return $buffer;
+		}
 	} // end method widget
 
 	// Method: _setup
