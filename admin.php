@@ -17,6 +17,7 @@ $config_vars = array (
 	"dtfmt", // date format
 	"phofmt", // phone format
 	"drug_widget_type", // type of drug widget present
+	"date_widget_type", // type of date widget present
 	"folded"  // do we fold multipage forms?
 );
 
@@ -144,6 +145,14 @@ if ($action=="cfgform") {
 			array (
 				__("rxlist.com Drug Listing") => 'rxlist',
 				__("Combo with past drugs") => 'combobox'
+			)
+		),
+
+		__("Date Widget") =>
+		html_form::select_widget("date_widget_type",
+			array (
+				__("javascript widget") => 'js',
+				__("split text entry") => 'split'
 			)
 		),
 

@@ -1712,6 +1712,12 @@ function fm_date_assemble ($datevarname="", $array_index=-1) {
 	// Import into local scope
 	global ${$datevarname."_m"}, ${$datevarname."_d"}, ${$datevarname."_y"};
 
+	// Handle calendar js widget
+	if (freemed::config_value('date_widget_type') == 'js') {
+		global ${$datevarname};
+		return ${$datevarname};
+	}
+
 	// Decide where they come from if they are from an array
 	if ($array_index == -1) {
 		$m = ${$datevarname."_m"};
@@ -1737,6 +1743,83 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	// Import into local scope present values
 	global $$datevarname, ${$datevarname."_y"}, 
 	  ${$datevarname."_m"}, ${$datevarname."_d"};
+
+	// Quickly check to see if we have to replace the value
+	/*
+	if (empty(freemed::config_value('date_widget_type'))) {
+		$GLOBALS['sql']->query(
+			$GLOBALS['sql']->insert_query(
+				'config',
+				array(
+					'c_option' => 'date_widget_type',
+					'c_value' => 'js'
+				)
+			)
+		);
+	}
+	*/
+
+	// Check for use case to use special date widget
+	if (freemed::config_value('date_widget_type') == 'js') {
+		#static $already_js;
+		if (!$already_js) {
+			$buffer .= "<link rel=\"stylesheet\" type=\"text/css\" ".
+				"media=\"all\" ".
+				"href=\"lib/template/default/calendar-system.css\"></link>\n";
+			$buffer .= "<script language=\"javascript\" ".
+				"src=\"lib/template/default/calendar_stripped.js\"></script>\n";
+			$buffer .= "<script language=\"javascript\" ".
+				"src=\"lib/template/default/calendar-en.js\"></script>\n";
+			$buffer .= "<script language=\"javascript\" ".
+				"src=\"lib/template/default/calendar-setup_stripped.js\"></script>\n";
+			$buffer .= "
+			<script language=\"javascript\">
+			var calendar = null;
+			function selected (cal, date) {
+				cal.sel.value = date;
+			}
+			function closeHandler(cal) {
+				cal.hide();
+			}
+			function showCalendar(id) {
+			var el = document.getElementById(id);
+			if (calendar != null) {
+				calendar.hide();
+				calendar.parseDate(el.value);
+			} else {
+				var cal = new Calendar(true, null, selected, closeHandler);
+				calendar = cal;
+				cal.setRange(1900, 2070);
+				calendar.create();
+			}
+			calendar.sel = el;
+			calendar.showAtElement(el);
+			return false;
+			}
+			</script>
+			";
+			$already_js = true;
+		}
+		$buffer .= html_form::text_widget (
+			$datevarname,
+			array (
+				'length' => 10,
+				'id' => $datevarname.'_cal'
+			)
+		);
+		$buffer .= "
+		<script type=\"text/javascript\">
+		Calendar.setup({
+			inputField	:	\"".$datevarname."_cal\",
+			ifFormat	:	\"y-dd-mm\",
+			singleClick	:	true
+		});
+		</script>
+		<img src=\"lib/template/default/img/calendar_widget.gif\" border=\"0\" ".
+			"onClick=\"return showCalendar('".$datevarname."_cal');\" />
+		";
+		return $buffer;
+	}
 
 	// Set months
 	$months = array (
@@ -2053,9 +2136,9 @@ function fm_phone_entry ($phonevarname="", $array_index=-1, $ext=true) {
        onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
        /> <b>-</b>
       <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_3$suffix\" SIZE=\"5\"
-       MAXLENGTH=\"4\" VALUE=\"$p3\"
+       MAXLENGTH=\"4\" VALUE=\"$p3\" ".( $ext ? "
        onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
-       />".( $ext ? " <i>ext.</i>
+       " : "" )."/>".( $ext ? " <i>ext.</i>
       <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_4$suffix\" SIZE=\"5\"
        MAXLENGTH=\"4\" VALUE=\"$p4\"/>" : "" ); break;
     case "fr":
