@@ -5,7 +5,6 @@
 
 $page_name = "book_appointment.php";
 include ("lib/freemed.php");
-include ("lib/API.php");
 include ("lib/calendar-functions.php");
 
 //----- Login/authenticate
@@ -19,9 +18,9 @@ if ($travel) {
 	// Kludge travel, patient = 0
 	$patient = 0; $type = "pat"; $room = 0;
 } elseif ($patient>0) {
-	$this_patient = new Patient ($patient, ($type=="temp"));
+	$this_patient = CreateObject('FreeMED.Patient', $patient, ($type=="temp"));
 } elseif ($SESSION["current_patient"]>0) {
-	$this_patient = new Patient ($SESSION["current_patient"]);
+	$this_patient = CreateObject('FreeMED.Patient', $SESSION["current_patient"]);
 	$type = "pat"; // kludge to keep real patient for this
 }
 
@@ -127,7 +126,7 @@ $form .= "
 	),
 
 	"<SMALL>Dur</SMALL>" =>
-	freemedCalendar::refresh_select(
+	html_form::select_widget(
 		"duration", 
 		array (
 			"0:15" => 15,	
@@ -140,7 +139,8 @@ $form .= "
 			"2:00" => 120,	
 			"3:00" => 180,	
 			"8:00" => 480	
-		)
+		),
+		array('refresh' => true)
 	),
 
 	"<SMALL>Note</SMALL>" =>
@@ -165,8 +165,7 @@ $form .= "
 	<TR><TD COLSPAN=2>
 	<!-- begin calendar display -->
 
-	<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
-	 CLASS=\"calendar\">
+	<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0 CLASS=\"calendar\">
 	<TR><TD COLSPAN=4 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 		<B>Calendar</B>
 	</TD></TR>

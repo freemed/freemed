@@ -5,7 +5,6 @@
 
 $page_name = "import.php";
 include ("lib/freemed.php");
-include ("lib/API.php");
 
 freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');

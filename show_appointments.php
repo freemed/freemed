@@ -91,14 +91,13 @@ while ($r = $sql->fetch_array ($result)) {
 	if (freemed_check_access_for_facility ($r["calfacility"])) {
 	if (!$any_appointments) // if this is the first appointment...
 	$display_buffer .= "
-          <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).
-	   ">
-           <TD><B>"._("Time")."</B></TD>
-           <TD><B>"._("Patient")."</B></TD>
-           <TD><B>"._("Provider")."</B></TD>
-           <TD><B>"._("Facility")."</B></TD>
-           <TD><B>"._("Room")."</B></TD>
-          </TR>
+          <tr CLASS=".(freemed_alternate()).">
+           <td><b>"._("Time")."</b></td>
+           <td><b>"._("Patient")."</b></td>
+           <td><b>"._("Provider")."</b></td>
+           <td><b>"._("Facility")."</b></td>
+           <td><b>"._("Room")."</b></td>
+          </tr>
         ";
 	$any_appointments = true;         // now there are appointments
 	$ptid = $r["calpatient"];         // get patient id for links
@@ -152,10 +151,10 @@ while ($r = $sql->fetch_array ($result)) {
 	if ($show=="all") $_date = $r["caldateof"]." <BR>";
 	if (freemed_check_access_for_facility ($r["calfacility"])){
        $display_buffer .= "
-         <TR BGCOLOR=\"".
+         <TR CLASS=\"".
           ( ($r["calpatient"]==$current_patient) ?
 	  "#aaaaaa" :
-	  ($_alternate=freemed_bar_alternate_color($_alternate)) )."\">
+	  (freemed_alternate()) )."\">
           <TD>$_date$_time</TD>
 	  <TD><A HREF=\"$patient_link_location\"
           ><FONT".

@@ -6,13 +6,12 @@
 
 $page_name="main.php";
 include ("lib/freemed.php");
-include ("lib/API.php");
 
-   // checking for _ref tag.... (19990607) 
- if ((strlen($_ref)>0) AND ($_ref != "main.php")) {
-   SetCookie("_ref", "main.php", time()+$_cookie_expire);
-      // set _ref cookie to be current menu...
- } // if there is a _ref cookie...
+// checking for _ref tag
+if ((strlen($_ref)>0) AND ($_ref != "main.php")) {
+	SetCookie("_ref", "main.php", time()+$_cookie_expire);
+	// set _ref cookie to be current menu...
+} // if there is a _ref cookie...
 
 //----- Generic page opening stuff
 freemed_open_db ();

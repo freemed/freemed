@@ -86,7 +86,8 @@ switch($action) { // master action switch
 		// Pass _userlevel to userlevel
 		$userlevel = $_userlevel;
 	} else {
-		$userlevel = array (0);
+		// Kludge for html_form::checkbox_widget to detect array
+		$userlevel = array ( 0 );
 	}
 
   } // second modform if
@@ -252,7 +253,7 @@ switch($action) { // master action switch
 			"username"     => $username,
 			"userpassword" => $userpassword1,
 			"userdescrip"  => $userdescrip,
-			"userlevel"    => $flags,
+			"userlevel"    => ($flags+0),
 			"usertype"     => $usertype,
 			"userfac"      => sql_squash($userfac),
 			"userphy"      => sql_squash($userphy),
@@ -382,7 +383,7 @@ switch($action) { // master action switch
 
     while ($r = $sql->fetch_array($result)) {
       $display_buffer .= "
-        <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+        <TR CLASS=\"".freemed_alternate()."\">
         <TD>".prepare($r[username])."</TD>
         <TD>
       ";

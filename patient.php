@@ -8,7 +8,6 @@
 $page_name="patient.php"; // for help info, later
 $record_name="Patient";    // compatibility with API functions
 include ("lib/freemed.php");
-include ("lib/API.php");
 include ("lib/calendar-functions.php");
 
 // Create user object

@@ -1,10 +1,10 @@
 <?php
  // $Id$
+ // $Author$
  // note: redirector for /DIS, etc...
  // lic : GPL
 
- include ("lib/freemed.php");
- include ("lib/API.php");
+include ("lib/freemed.php");
 
  // then we do an if... else clause to loop through
  // any other instances, and put them here....

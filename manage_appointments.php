@@ -5,7 +5,6 @@
 
 $page_name = "manage_appointments.php";
 include ("lib/freemed.php");
-include ("lib/API.php");
 include ("lib/calendar-functions.php");
 
 freemed_open_db ();
@@ -94,7 +93,6 @@ if ($patient<1) {
 
      // first display the top of the table
      $bar_start_color = "cell"; $bar_alt_color = "cell_alt";
-     $_alternate = freemed_bar_alternate_color ($_alternate);
      $display_buffer .= "
        <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"3\"
         CLASS=\"reverse\" BORDER=\"0\"><tr>
@@ -137,7 +135,7 @@ if ($patient<1) {
 
        // actual display
        $display_buffer .= "
-        <TR CLASS=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
+        <TR CLASS=\"".(freemed_alternate())."\">
          <TD>$caldateof</TD>
          <TD ALIGN=\"CENTER\">".freemedCalendar::display_time(
 		$calhour,$calminute)."<BR>

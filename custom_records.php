@@ -29,7 +29,7 @@ if ($patient<1) {
   template_display();
  } // end checking if patient is provided
 
- $this_patient = new Patient ($patient);
+ $this_patient = CreateObject('FreeMED.Patient', $patient);
 
  if ( (($action=="addform") or ($action=="modform") or
        ($action=="add")     or ($action=="mod"    ))
@@ -467,22 +467,19 @@ if ($patient<1) {
      <P>
      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0
       VALIGN=MIDDLE ALIGN=CENTER> 
-      <TR BGCOLOR=#000000>
-       <TD><FONT COLOR=#ffffff>"._("Date Added")."</FONT></TD>
-       <TD><FONT COLOR=#ffffff>"._("Form")."</FONT></TD>
-       <TD><FONT COLOR=#ffffff>"._("Action")."</FONT></TD>
+      <TR CLASS=\"reverse\">
+       <TD><b>"._("Date Added")."</b></TD>
+       <TD><b>"._("Form")."</b></TD>
+       <TD><b>"._("Action")."</b></TD>
       </TR>
     ";
-   $_alternate = freemed_bar_alternate_color ($_alternate);
-   while ($r = $sql->fetch_array ($result)) {
      $dtadd    = $r["prdtadd"   ];
      $form_template = $r["prtemplate"];
      $id       = $r["id"        ];
      $formname = freemed::get_link_field ($form_template, "patrectemplate",
                                          "prtname");
-     $_alternate = freemed_bar_alternate_color ($_alternate);
      $display_buffer .= "
-      <TR BGCOLOR=\"$_alternate\">
+      <TR CLASS=\"".freemed_alternate()."\">
        <TD>$dtadd</TD>
        <TD>".prepare($formname)."</TD>
        <TD>

@@ -259,7 +259,7 @@ switch ($action) {
 
   $display_buffer .= "
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3 VALIGN=CENTER
-     ALIGN=CENTER BGCOLOR=\"".($_alternate=freemed_bar_alternate_color())."\">
+     ALIGN=CENTER BGCOLOR=\"".freemed_alternate()."\">
     <TR>
      <TD><B>"._("Name")."</B></TD>
      <TD><B>"._("Date of Call")."</B></TD>
@@ -305,7 +305,7 @@ switch ($action) {
     else $ciphonesep = " ";
 
     $display_buffer .= "
-      <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($alternate))."\">
+      <TR BGCOLOR=\"".freemed_alternate()."\">
        <TD>$cilname, $cifname$ci_comma $cimname</TD>
        <TD>$cidatestamp</TD>
        <TD>$ciwphone $ciphonesep $cihphone&nbsp;</TD>

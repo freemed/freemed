@@ -5,7 +5,6 @@
 
 $page_name="physician_day_view.php";
 include_once ("lib/freemed.php");
-include_once ("lib/API.php");
 include_once ("lib/calendar-functions.php");
 
 //----- Login/authenticate

@@ -6,7 +6,6 @@
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
 include ("lib/freemed.php");
-include ("lib/API.php");
 
 //----- Login and authenticate
 freemed_open_db ();

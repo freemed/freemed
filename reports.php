@@ -5,9 +5,6 @@
 
 $page_name = basename($GLOBALS["PHP_SELF"]);
 include_once ("lib/freemed.php");
-include_once ("lib/API.php");
-include_once ("lib/module.php");
-include_once ("lib/module_reports.php");
 
 //----- Login/authenticate
 freemed_open_db ();
@@ -24,9 +21,9 @@ if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
  // Check for appropriate access level
 if (!freemed::user_flag(USER_DATABASE)) {
    $display_buffer .= "
-      <P>
+      <p/>
         "._("You don't have access for this menu.")."
-      <P>
+      <p/>
     ";
 	template_display();
 } // end if not appropriate userlevel
@@ -34,45 +31,45 @@ if (!freemed::user_flag(USER_DATABASE)) {
 // information for module loader
 $category = "Reports";
 $module_template = "
-	<TR>
-	<TD ALIGN=RIGHT>#icon#</TD>
-	<TD ALIGN=LEFT><A HREF=\"module_loader.php?module=#class#\"".
-	">#name#</A></TD>
-	</TR>
+	<tr>
+	<td ALIGN=\"RIGHT\">#icon#</td>
+	<td ALIGN=\"LEFT\"><a HREF=\"module_loader.php?module=#class#\"".
+	">#name#</a></td>
+	</tr>
 ";
 
 // module loader
-$module_list = CreateObject('PHP.module_list', PACKAGENAME,".report.module.php");
+$module_list = CreateObject('PHP.module_list', PACKAGENAME);
 if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
-	<P>
-	<CENTER>
-	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
-	 ALIGN=CENTER>
+	<p/>
+	<div ALIGN=\"CENTER\">
+	<table BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
+	 ALIGN=\"CENTER\">
 	".$module_list->generate_list($category, 0, $module_template)."
-    </TABLE>
-	</CENTER>
-	<P>
-	<CENTER>
-		<A HREF=\"main.php\"
-		>"._("Return to Main Menu")."</A>
-	</CENTER>
-	<P>
+	</table>
+	</div>
+	<p/>
+	<div ALIGN=\"CENTER\">
+		<a HREF=\"main.php\"
+		>"._("Return to Main Menu")."</a>
+	</div>
+	<p/>
 	";
 } else {
 	$display_buffer .= "
-	<P>
-	<CENTER>
+	<p/>
+	<div ALIGN=\"CENTER\">
 		"._("There are no report modules present.")."
-	</CENTER>
-	<P>
-	<CENTER>
-		<A HREF=\"main.php\"
-		>"._("Return to Main Menu")."</A>
-	</CENTER>
-	<P>
+	</div>
+	<p/>
+	<div ALIGN=\"CENTER\">
+		<a HREF=\"main.php\">"._("Return to Main Menu")."</a>
+	</div>
+	<p/>
 	";
 }
 
 template_display();
+
 ?>
