@@ -8,6 +8,15 @@ if (!defined("__MACROS_PHP__")) {
 define ('__MACROS_PHP__', true);
 
   // *****************************
+  // User permission flags
+  // *****************************
+define ('USER_ADMIN',             1);
+define ('USER_DELETE',            2);
+define ('USER_DATABASE',          4);
+define ('USER_DISABLED',          8);
+define ('USER_ROOT',             16);
+
+  // *****************************
   // Certification types
   // *****************************
 define ('AMBULANCE',              1);
