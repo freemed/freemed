@@ -64,7 +64,7 @@ class SystemReports extends ReportsModule {
 		foreach ($reports AS $k => $v) {
 			$display_buffer .= "<tr><td>".prepare($v['name']).
 				"</td>\n".
-				"<form method=\"post\">\n".
+				"<form method=\"post\" target=\"_report\">\n".
 				"<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\">\n".
 				"<input type=\"hidden\" name=\"action\" value=\"display\">\n".
 				"<input type=\"hidden\" name=\"report\" value=\"".prepare($k)."\">\n".
