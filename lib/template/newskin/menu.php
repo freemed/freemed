@@ -103,7 +103,11 @@ $page_history = page_history_list();
 	menu_item(__("Select"), "patient.php", 2);
 	if ($patient_history) {
 		menu_item(__("Configure"),
-			"manage.php?id=".$patient_history[count($patient_history)-1]."&action=config", 2);
+			"manage.php?id=".(
+				page_name() == 'manage.php' ?
+				$_REQUEST['id'] :
+				$patient_history[count($patient_history)-1]
+			)."&action=config", 2);
 		// Patient->Recent
 		sub_menu(__("Recent"), 2);
 		foreach ($patient_history as $k => $v) {
