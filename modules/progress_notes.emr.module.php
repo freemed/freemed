@@ -29,7 +29,7 @@ class progressNotes extends freemedEMRModule {
 			_("Date")        =>	"pnotesdt",
 			_("Description") =>	"pnotesdescrip"
 		);
-		$this->summary_view_link = true;
+		$this->summary_options |= SUMMARY_VIEW;
 	} // end constructor progressNotes
 
 	function add () { $this->form(); }
