@@ -200,14 +200,19 @@ function render_FixedFormEntry ($formentry) {
   } 
   elseif (strlen ($this_evalled) < $formentry->len) 
   {
-    $this_difference = ($formentry->len) - (strlen($this_evalled));
-    for ($loop=0;$loop<$this_difference;$loop++)
-    { 
-		if ($formentry->format=="N")
-			$this_evalled = "0".$this_evalled;
-		else
-			$this_evalled .= " "; 
-    } //if ($debug) echo "\nSPACE<BR>\n"; 
+    //$this_difference = ($formentry->len) - (strlen($this_evalled));
+    //for ($loop=0;$loop<$this_difference;$loop++)
+    //{ 
+	//	if ($formentry->format=="N")
+	//		$this_evalled = "0".$this_evalled;
+	//	else
+	//		$this_evalled .= " "; 
+    //} //if ($debug) echo "\nSPACE<BR>\n"; 
+
+	if ($formentry->format=="N")
+		$this_evalled = str_pad($this_evalled,$formentry->len,"0",STR_PAD_LEFT); // fill zeros to left 
+	else
+		$this_evalled = str_pad($this_evalled,$formentry->len); // pad spaces to right
     $length_adjusted = $this_evalled;
   } 
   else 

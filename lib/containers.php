@@ -61,7 +61,6 @@ class Coverage {
   var $covinsco;						// pointer to corresponding insco.
   var $covreldep;                 // guar relation to insured 
   var $covdep;                 // help ease the conversion
-  var $guarsame;				// if guars addr is same as patient
 
   // insureds info only if rel is not "S"elf
 

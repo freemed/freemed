@@ -249,7 +249,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
      	";
 	}
 
-	function Insurer($procstatck)
+	function Insurer($procstack)
 	{
 		global $bill_request_type;
 
@@ -279,8 +279,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$pat = $row[procpatient];
 
 		$da0[recid1] = "DA0";
-		$da1[recid] = "XXX";
-		$da2[recid] = "XXX";
+		$da1[recid1] = "XXX";
+		$da2[recid1] = "XXX";
 
 		$coverage = new Coverage($cov);
 		if (!$coverage)
@@ -296,21 +296,19 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			return;
 		}
 
-		if ($bill_request_type == SECONDARY)
+		// cov2 is actually the primary coverage
+		$coverage2 = new Coverage($cov2);
+		if (!$coverage2)
 		{
-			$coverage2 = new Coverage($cov2);
-			if (!$coverage2)
-			{
-				echo "Error Insurer no primary coverage<BR>";
-				return;
-			}
+			echo "Error Insurer no primary coverage<BR>";
+			return;
+		}
 
-			$insco = $coverage2->covinsco;
-			if (!$insco)
-			{
-				echo "Error Insurer no primary insurance<BR>";
-				return;
-			}
+		$insco2 = $coverage2->covinsco;
+		if (!$insco2)
+		{
+			echo "Error Insurer no primary insurance<BR>";
+			return;
 		}
 
 		$patient = new Patient($pat);
@@ -322,46 +320,40 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			
 		$da0[seqno1] = "01";
 		$da0[patcntl1] = $ca0[patcntl];
-		
-		if ($bill_request_type == PRIMARY)
-		{
-			$da0[clmfileind1] = "P";
-			$da0[clmsource1] = "F";
-		}
-		else
-		{
-			$da0[clmfileind1] = "I";
-			$da0[clmsource1] = " ";
-		}
-
-		$da0[instypcd1] = $insco->modifiers[0];
-		$da0[payerid1] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
-		$da0[payername1] = $this->CleanChar($insco->insconame);
-		$da0[patgrpno1] = $this->CleanNumber($coverage->covpatgrpno);
+		$da0[clmfileind1] = "I";
+		$da0[clmsource1] = " ";
+		$da0[instypcd1] = $insco2->modifiers[0];
+		$da0[payerid1] = $this->CleanNumber($insco2->local_record[inscoid]); // NAIC #
+		$da0[payername1] = $this->CleanChar($insco2->insconame);
+		$da0[patgrpno1] = $this->CleanNumber($coverage2->covpatgrpno);
 		$da0[assign1] = "Y";
 		$da0[patsigsrc1] = "C";
 
-		if ($coverage->covreldep == "S")
+		if ($coverage2->covreldep == "S")
 			$da0[patrel1] = "01";
-		if ($coverage->covreldep == "H" OR $coverage->covreldep == "W")
+		if ($coverage2->covreldep == "H" OR $coverage2->covreldep == "W")
 			$da0[patrel1] = "02";
-		if ($coverage->covreldep == "C")
+		if ($coverage2->covreldep == "C")
 			$da0[patrel1] = "03";
 
-		$da0[patidno1] = $this->CleanNumber($coverage->covpatinsno);
+		$da0[patidno1] = $this->CleanNumber($coverage2->covpatinsno);
 
-		if ($coverage->covdep == 0)  // patient is the insured
+		if ($coverage2->covdep == 0)  // patient is the insured
 		{
 			$da0[insrdlname1] = $this->CleanChar($patient->ptlname);
 			$da0[insrdfname1] = $this->CleanChar($patient->ptfname);
 			$da0[insrdmi1] = $this->CleanChar($patient->ptmname);
 			$da0[insrdsex1] = $this->CleanChar($patient->ptsex);
 			$da0[insrddob1] = $this->CleanNumber($patient->ptdob);
+			$addr1 = $this->CleanChar($patient->local_record[ptaddr1]);
+			$city = $this->CleanChar($patient->local_record[ptcity]);
+			$state = $this->CleanChar($patient->local_record[ptstate]);
+			$zip = $this->CleanNumber($patient->local_record[ptzip]);
 	
 		}
 		else
 		{
-			$guarantor = new Guarantor($coverage->covdep);
+			$guarantor = new Guarantor($coverage2->covdep);
 			if (!$guarantor)
 			{
 				echo "Error Insurer guarantor failed<BR>";
@@ -373,7 +365,23 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$da0[insrdsex1] = $this->CleanChar($guarantor->guarsex);
 			$da0[insrddob1] = $this->CleanNumber($guarantor->guardob);
 
+			if ($guarantor->guarsame)  // guar addr same as patient?
+			{
+				$addr1 = $this->CleanChar($patient->local_record[ptaddr1]);
+				$city = $this->CleanChar($patient->local_record[ptcity]);
+				$state = $this->CleanChar($patient->local_record[ptstate]);
+				$zip = $this->CleanNumber($patient->local_record[ptzip]);
+			}
+			else
+			{
+				$addr1 = $this->CleanChar($guarantor->guaraddr1);
+				$city = $this->CleanChar($guarantor->guarcity);
+				$state = $this->CleanChar($guarantor->guarstate);
+				$zip = $this->CleanNumber($guarantor->guarzip);
+			}
+
 		}
+
 		if ($row[procauth] != 0)
         {
             $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
@@ -407,8 +415,145 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
             echo "Warning - No Authorization for this procedure<BR>";
         }
 
+
+		$da1[recid1] = "DA1";
+		$da1[seqno1] = "01";
+		$da1[patcntl1] = $ca0[patcntl];
+		$da1[payeraddr1] = $this->CleanChar($insco2->local_record[inscoaddr1]);
+		$da1[payeraddr2] = $this->CleanChar($insco2->local_record[inscoaddr2]);
+		$da1[payercity] = $this->CleanChar($insco2->local_record[inscocity]);
+		$da1[payerstate] = $this->CleanChar($insco2->local_record[inscostate]);
+		$da1[payerzip] = $this->CleanNumber($insco2->local_record[inscozip]);
+	
+		$count = count($procstack);
+
+		$payerpaid = 0;
+		$patpaid = 0;
+		$total = 0;
+
+		for ($i=0;$i<$count;$i++)
+		{
+			$prow = $procstatck[$i];
+			$total += $row[procbalorig];
+
+			$query = "SELECT * FROM payrec WHERE payrecproc='$row[id]' AND
+                                            payrecsource='".PRIMARY."' AND
+											payreclink = '$row[proccov1]' AND
+                                            payreccat='".PAYMENT."'";
+            $pay_result = $sql->query($query) or DIE("Query failed for primary payments");
+            while ($pay_row = $sql->fetch_array($pay_result))
+            {
+                $payerpaid += $pay_row[payrecamt];
+            }
+
+        	$query = "SELECT * FROM payrec WHERE payrecproc='$row[id]' AND
+                                            payrecsource='0' AND
+                                            payreccat='".PAYMENT."'";
+        	$pay_result = $sql->query($query) or DIE("Query failed for patient payments");
+        	while ($pay_row = $sql->fetch_array($pay_result))
+        	{
+            	$patpaid += $pay_row[payrecamt];
+        	}
+		}	
+
+		$da1[payeramtpd1] = $this->MakeDecimal($payerpaid,2);
+
+		$baldue = $total - $patpaid; 
+		$da1[baldue1] = $this->MakeDecimal($baldue,2);
 		
-	} // end insurer
+		if ($payerpaid == 0)
+			$da1[zeropayind1] = "Z";  
+		else
+			$da1[zeropayind1] = "N";
+		
+
+
+		$da2[recid1] = "DA2";
+		$da2[seqno1] = "01";
+		$da2[patcntl1] = $ca0[patcntl];
+		$da2[insrdaddr11] = $addr1;
+		$da2[insrdcity1] = $city;
+		$da2[insrdstate1] = $state;
+		$da2[insrdzip1] = $zip;
+
+		// now gen the secondary ins info
+		
+		$da0[recid2] = "DA0";
+		$da0[seqno2] = "02";
+		$da0[patcntl2] = $ca0[patcntl];
+		$da0[clmfileind2] = "I";
+		$da0[clmsource2] = " ";
+		$da0[instypcd2] = $insco->modifiers[0];
+		$da0[payerid2] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
+		$da0[payername2] = $this->CleanChar($insco->insconame);
+		$da0[patgrpno2] = $this->CleanNumber($coverage->covpatgrpno);
+		$da0[assign2] = "Y";
+		$da0[patsigsrc2] = "C";
+
+		if ($coverage->covreldep == "S")
+			$da0[patrel2] = "01";
+		if ($coverage->covreldep == "H" OR $coverage->covreldep == "W")
+			$da0[patrel2] = "02";
+		if ($coverage->covreldep == "C")
+			$da0[patrel2] = "03";
+		
+		$da0[patidno2] = $this->CleanNumber($coverage->covpatinsno);
+
+		if ($coverage->covdep == 0)  // patient is the insured
+		{
+			$da0[insrdlname2] = $this->CleanChar($patient->ptlname);
+			$da0[insrdfname2] = $this->CleanChar($patient->ptfname);
+			$da0[insrdmi2] = $this->CleanChar($patient->ptmname);
+			$da0[insrdsex2] = $this->CleanChar($patient->ptsex);
+			$da0[insrddob2] = $this->CleanNumber($patient->ptdob);
+			$addr1 = $this->CleanChar($patient->local_record[ptaddr1]);
+			$city = $this->CleanChar($patient->local_record[ptcity]);
+			$state = $this->CleanChar($patient->local_record[ptstate]);
+			$zip = $this->CleanNumber($patient->local_record[ptzip]);
+	
+		}
+		else
+		{
+			$guarantor = new Guarantor($coverage->covdep);
+			if (!$guarantor)
+			{
+				echo "Error Insurer guarantor failed<BR>";
+				return;
+			}	
+			$da0[insrdlname2] = $this->CleanChar($guarantor->guarlname);
+			$da0[insrdfname2] = $this->CleanChar($guarantor->guarfname);
+			$da0[insrdmi2] = $this->CleanChar($guarantor->guarmname);
+			$da0[insrdsex2] = $this->CleanChar($guarantor->guarsex);
+			$da0[insrddob2] = $this->CleanNumber($guarantor->guardob);
+
+			if ($guarantor->guarsame)  // guar addr same as patient?
+			{
+				$addr1 = $this->CleanChar($patient->local_record[ptaddr1]);
+				$city = $this->CleanChar($patient->local_record[ptcity]);
+				$state = $this->CleanChar($patient->local_record[ptstate]);
+				$zip = $this->CleanNumber($patient->local_record[ptzip]);
+			}
+			else
+			{
+				$addr1 = $this->CleanChar($guarantor->guaraddr1);
+				$city = $this->CleanChar($guarantor->guarcity);
+				$state = $this->CleanChar($guarantor->guarstate);
+				$zip = $this->CleanNumber($guarantor->guarzip);
+			}
+
+		}
+		if (!empty($auth_num))
+			$da0[authno2] = $this->CleanNumber($auth_num);
+
+		$da2[recid2] = "DA2";
+		$da2[seqno2] = "02";
+		$da2[patcntl2] = $ca0[patcntl];
+		$da2[insrdaddr12] = $addr1;
+		$da2[insrdcity2] = $city;
+		$da2[insrdstate2] = $state;
+		$da2[insrdzip2] = $zip;
+		
+	} // end do secondary bill
 
 	function BillPrimary($procstack)
 	{
@@ -479,6 +624,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$da0[insrdmi1] = $this->CleanChar($patient->ptmname);
 			$da0[insrdsex1] = $this->CleanChar($patient->ptsex);
 			$da0[insrddob1] = $this->CleanNumber($patient->ptdob);
+			$addr1 = $this->CleanChar($patient->local_record[ptaddr1]);
+			$city = $this->CleanChar($patient->local_record[ptcity]);
+			$state = $this->CleanChar($patient->local_record[ptstate]);
+			$zip = $this->CleanNumber($patient->local_record[ptzip]);
 	
 		}
 		else
@@ -494,6 +643,21 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$da0[insrdmi1] = $this->CleanChar($guarantor->guarmname);
 			$da0[insrdsex1] = $this->CleanChar($guarantor->guarsex);
 			$da0[insrddob1] = $this->CleanNumber($guarantor->guardob);
+
+			if ($guarantor->guarsame)  // guar addr same as patient?
+			{
+				$addr1 = $this->CleanChar($patient->local_record[ptaddr1]);
+				$city = $this->CleanChar($patient->local_record[ptcity]);
+				$state = $this->CleanChar($patient->local_record[ptstate]);
+				$zip = $this->CleanNumber($patient->local_record[ptzip]);
+			}
+			else
+			{
+				$addr1 = $this->CleanChar($guarantor->guaraddr1);
+				$city = $this->CleanChar($guarantor->guarcity);
+				$state = $this->CleanChar($guarantor->guarstate);
+				$zip = $this->CleanNumber($guarantor->guarzip);
+			}
 
 		}
 		if ($row[procauth] != 0)
@@ -528,6 +692,16 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         {
             echo "Warning - No Authorization for this procedure<BR>";
         }
+
+		$da2[recid1] = "DA2";
+		$da2[seqno1] = "01";
+		$da2[patcntl1] = $ca0[patcntl];
+		$da2[insrdaddr11] = $addr1;
+		$da2[insrdcity1] = $city;
+		$da2[insrdstate1] = $state;
+		$da2[insrdzip1] = $zip;
+
+		
 
 		
 
@@ -790,16 +964,17 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$ea0[patcntl] = $ca0[patcntl];
 
-		$eao[relemp] = "N";
+		$ea0[relemp] = "N";
 		$ea0[accident] = "N";
 		$ea0[symptomind] = "0";
 
+		//echo "referer $row[procrefdoc]<BR>";
 		if ($row[procrefdoc] != 0)
 		{
 			$refdoc = new Physician($row[procrefdoc]);
 			if (!$refdoc)
 				echo "Error getting referring physician<BR>";
-			$ea0[refprovid] = $this->CleanChar($refdoc->local_record[phyupin]);	
+			$ea0[refprovupin] = $this->CleanChar($refdoc->local_record[phyupin]);	
 			$ea0[reflname] = $this->CleanChar($refdoc->local_record[phylname]);	
 			$ea0[reffname] = $this->CleanChar($refdoc->local_record[phyfname]);	
 		}
@@ -871,6 +1046,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$diagstack = $diagset->getStack();
         $diagcnt = count($diagstack);
+		//echo "stack count $diagcnt<BR>";
 
         if ($diagcnt == 0)
         {
@@ -881,8 +1057,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
         for ($i=0;$i<$diagcnt;$i++)
         {
-			$var = "diag".($i+1);
-            $ea0[$var] = $this->CleanNumber($diagstack[$i]);
+			$varno = $i+1;
+			$var = "diag".$varno;
+            $ea0[$var] = $this->CleanNumber($diagstack[$varno]);
             //$this->edi_buffer .= $icd9code;
 
 
@@ -1030,7 +1207,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                              $row[procdiag4]);
 
 			$fa0[cpt.($off)] = $cur_cpt[cptcode];
-			$data = $this->MakeDecimal($row[procbalcurrent],2);
+			$data = $this->MakeDecimal($row[procbalorig],2);
 			$fa0[charges.($off)] = $data;
 
             $diag_xref = explode(",",$diag_xref);
@@ -1101,7 +1278,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		for ($i=0;$i<$count;$i++)
 		{
 			$row = $procstack[$i];
-			$total += $row[procbalcurrent];
+			$total += $row[procbalorig];
         	$query = "SELECT * FROM payrec WHERE payrecproc='$row[id]' AND
                                             payrecsource='0' AND
                                             payreccat='".PAYMENT."'";
@@ -1120,12 +1297,53 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		return;
 	}
 
-	function ProviderTrailer($procstack)
+	function ProviderTrailer($procstack, $buffer)
 	{
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->rendorform_variables);
 		while (list($k,$v)=each($this->rendorform_variables)) global $$v;
+
+		unset($GLOBALS[ya0]);
+		global $ya0;
+		unset($GLOBALS[za0]);
+		global $za0;
+
+		$ya0[recid] = "YA0";
+		$ya0[emcprvid] = $ba0[emcprvid];
+		$ya0[batchtype] = $ba0[batchtype];
+		$ya0[batchid] = $ba0[batchid];
+		$ya0[prvtaxid] = $ba0[taxid];
+
+
+		$buff = explode("\n",$buffer);
+		$buffcount = count($buff);
+
+		$tot = $cxx = $fxx = 0;
+		for ($i=0;$i<$buffcount;$i++)
+		{
+			
+			if (substr($buff[$i],0,3) != "AA0")
+				$tot++;
+			if (substr($buff[$i],0,3) == "CA0")
+				$cxx++;
+			if (substr($buff[$i],0,3) == "FA0")
+				$fxx++;
+		}
+		$tot++;  // account for this ya0 record
+		$ya0[batchreccnt] = $tot;
+		$ya0[svclinecnt] = $fxx;
+		$ya0[batchclmcnt] = $cxx;
+		$ya0[batchtotchg] = $xa0[totalcharge]; // only one batch per control break
+
+		$za0[recid] = "ZA0";
+		$za0[subid] = $aa0[submtrid];
+		$za0[recvrid] = $aa0[recvrid];
+		$za0[filesvclinecnt] = $ya0[svclinecnt];
+		$za0[filereccnt] = $ya0[batchreccnt];
+		$za0[fileclmcnt] = $ya0[batchclmcnt];
+		$za0[batchcnt] = "0001";  
+		$za0[filetotchg] = $ya0[batchtotchg];
 		return;
 	}
 
@@ -1283,6 +1501,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		 		$this->ProcessClaims($procstack); // batch trailer
          		$form_buffer .= render_fixedForm ($whichform);
 				$this->ClaimTrailer($procstack,$form_buffer);
+				$this->ProviderTrailer($procstack,$form_buffer);
          		$this->form_buffer .= render_fixedForm ($whichform);
 
          		// reset the diag_set array
@@ -1322,6 +1541,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		 	$this->ProcessClaims($procstack); // batch trailer
          	$form_buffer .= render_fixedForm ($whichform);
 			$this->ClaimTrailer($procstack,$form_buffer);
+			$this->ProviderTrailer($procstack,$form_buffer);
          	$this->form_buffer .= render_fixedForm ($whichform);
 		}
 		

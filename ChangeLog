@@ -1,6 +1,15 @@
 freemed project changelog
 ($Id$)
 
+* Fri Mar 16 2001 fforest
+   - fixedform.EN.data updated with latest NSF format for commercial
+     insurance.
+   - lib/containers removed unused field from coverage class.
+   - lib/render replaced our loop for data padding with PHP str_pad
+     function in hopes of cutting down CPU utilization. 
+   - mcsi_ncf_ci updated to handle secondary payer records.
+   - procedure module. added procrefdoc to add_page global list.
+
 * Thu Mar 15 2001 rufustfirefly
   - updated Fred's modules to have his name on them. still need
     $MODULE_DESCRIPTION, though ...

@@ -163,7 +163,7 @@ class procedureModule extends freemedEMRModule {
   $wizard = new wizard ( array ("been_here", "action", "patient", "id",
 	"module") );
   $wizard->add_page ("Step One",
-		array_merge(array("procphysician", "proceoc", 
+		array_merge(array("procphysician", "proceoc", "procrefdoc",
 						  "proccpt", "proccptmod", "procunits", 
 					      "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
 					      "procpos", "procvoucher", 
