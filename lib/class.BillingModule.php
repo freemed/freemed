@@ -550,23 +550,23 @@ class BillingModule extends BaseModule {
 		if ($preview)
 		{
 			$display_buffer .= "
-			<FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
-			 <CENTER>
-			  <B>".__("Preview")."</B>
-			 </CENTER>
-			 <BR>
-			 <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
-			 >".prepare($this->form_buffer)."</TEXTAREA>
-			<P>
-			<CENTER>
-			 <SELECT NAME=\"type\">
-			  <OPTION VALUE=\"\">".__("Render to Screen")."
-			  <OPTION VALUE=\"application/x-rendered-text\">Render to File
-			 </SELECT>
-			 <INPUT TYPE=SUBMIT VALUE=\"".__("Get HCFA Rendered Text File")."\">
-			</CENTER>
-			</FORM>
-			<P>
+			<form ACTION=\"echo.php?file=/form.txt\" METHOD=\"POST\">
+			 <div align=\"CENTER\">
+			  <b>".__("Preview")."</b>
+			 </center>
+			 <br/>
+			 <textarea NAME=\"text\" ROWS=\"10\" COLS=\"81\"
+			 >".prepare($this->form_buffer)."</textarea>
+			<p/>
+			<div align=\"CENTER\">
+			 <select NAME=\"type\">
+			  <option VALUE=\"\">".__("Render to Screen")."</option>
+			  <option VALUE=\"application/x-rendered-text\">".__("Render to File")."</option>
+			 </select>
+			 <input TYPE=\"SUBMIT\" VALUE=\"".__("Get HCFA Rendered Text File")."\"/>
+			</div>
+			</form>
+			<p/>
 			";
 		}
 
