@@ -643,34 +643,38 @@ class Scheduler {
 
 		// Run through query
 		while ($r = $sql->fetch_array($result)) {
-			// Move to "c" array, which is stripslashes'd
-			foreach ($r AS $k => $v) {
-				$c[(stripslashes($k))] = stripslashes($v);
-			} // end removing slashes
+			// Don't regard cancelled appointments
+			if ($r['calstatus'] != 'cancelled') {
+				// Move to "c" array, which is stripslashes'd
+				foreach ($r AS $k => $v) {
+					$c[(stripslashes($k))] = stripslashes($v);
+				} // end removing slashes
 
-			// Determine index
-			$idx = ($c['calhour']+0).":".( $c['calminute']==0 ?
-				"00" : ($c['calminute']+0) );
-			
-			// Insert into current position
-			$map[$idx]['link'] = $c['id'];
-			$map[$idx]['span'] = ceil($c['calduration'] / 15);
-			if ($c['calmark'] > 0) {
-				$map[$idx]['mark'] = $c['calmark'];
-			}
-			$cur_pos = $idx;
+				// Determine index
+				$idx = ($c['calhour']+0).":".( $c['calminute']==0 ?
+					"00" : ($c['calminute']+0) );
+				
+				// Insert into current position
+				$map[$idx]['link'] = $c['id'];
+				$map[$idx]['span'] = ceil($c['calduration'] / 15);
+				if ($c['calmark'] > 0) {
+					$map[$idx]['mark'] = $c['calmark'];
+				}
+				$cur_pos = $idx;
+	
+				// Clear out remaining portion of slot
+				$count = 1;
+				while ($count < $map[$idx]['span']) {
+					// Move pointer forward
+					$cur_pos = $this->next_time_increment($cur_pos);
+					$count++;
+	
+					// Zero those records
+					$map[$cur_pos]['link'] = 0;
+					$map[$cur_pos]['span'] = 0;
+				} // end clear out remaining portion of slot
 
-			// Clear out remaining portion of slot
-			$count = 1;
-			while ($count < $map[$idx]['span']) {
-				// Move pointer forward
-				$cur_pos = $this->next_time_increment($cur_pos);
-				$count++;
-
-				// Zero those records
-				$map[$cur_pos]['link'] = 0;
-				$map[$cur_pos]['span'] = 0;
-			} // end clear out remaining portion of slot
+			} // end if !cancelled
 		} // end running through array
 
 		// Return completed map
@@ -876,62 +880,65 @@ class Scheduler {
 
 		// Run through query
 		while ($r = $sql->fetch_array($result)) {
-			// Move to "c" array, which is stripslashes'd
-			foreach ($r AS $k => $v) {
-				$c[(stripslashes($k))] = stripslashes($v);
-			} // end removing slashes
+			// Ignore cancelled appointments
+			if ($r['calstatus'] != 'cancelled') {
+				// Move to "c" array, which is stripslashes'd
+				foreach ($r AS $k => $v) {
+					$c[(stripslashes($k))] = stripslashes($v);
+				} // end removing slashes
 
-			// Determine index
-			$idx = ($c['calhour']+0).":".( $c['calminute']==0 ?
-				"00" : ($c['calminute']+0) );
+				// Determine index
+				$idx = ($c['calhour']+0).":".( $c['calminute']==0 ?
+					"00" : ($c['calminute']+0) );
 
-			// Determine which is the first map that this fits into
-			$cur_map = 0; $mapped = false;
-			while (!$mapped) {
-				if (!$this->map_fit($maps[$cur_map], $idx, $c['calduration'])) {
-					// Check for recursion ....
-					if ($cur_map > 10) {
-						syslog(LOG_INFO, "Scheduler| appointment recursion detected for scheduler record #".$c['id']);
-						$mapped = true; // skip
+				// Determine which is the first map that this fits into
+				$cur_map = 0; $mapped = false;
+				while (!$mapped) {
+					if (!$this->map_fit($maps[$cur_map], $idx, $c['calduration'])) {
+						// Check for recursion ....
+						if ($cur_map > 10) {
+							syslog(LOG_INFO, "Scheduler| appointment recursion detected for scheduler record #".$c['id']);
+							$mapped = true; // skip
+						}
+						// Move to the next map
+						$cur_map++;
+						if (!is_array($maps[$cur_map])) {
+							$maps[$cur_map] = $this->map_init();
+						}
+					} else {
+						// Jump out of the loop
+						$mapped = true;
 					}
-					// Move to the next map
-					$cur_map++;
-					if (!is_array($maps[$cur_map])) {
-						$maps[$cur_map] = $this->map_init();
-					}
-				} else {
-					// Jump out of the loop
-					$mapped = true;
+				} // end while not mapped
+			
+				// Insert into current position
+				$maps[$cur_map][$idx]['link'] = $c['id'];
+				$maps[$cur_map][$idx]['span'] = ceil($c['calduration'] / 15);
+				$maps[$cur_map][$idx]['physician'] = $c['calphysician'];
+				$maps[$cur_map][$idx]['room'] = $c['calroom'];
+
+				// Check for selected
+				if ($c['id'] == $selected) {
+					$maps[$cur_map][$idx]['selected'] = true;
 				}
-			} // end while not mapped
 			
-			// Insert into current position
-			$maps[$cur_map][$idx]['link'] = $c['id'];
-			$maps[$cur_map][$idx]['span'] = ceil($c['calduration'] / 15);
-			$maps[$cur_map][$idx]['physician'] = $c['calphysician'];
-			$maps[$cur_map][$idx]['room'] = $c['calroom'];
+				if ($c['calmark'] > 0) {
+					$maps[$cur_map][$idx]['mark'] = $c['calmark'];
+				}
+				$cur_pos = $idx;
 
-			// Check for selected
-			if ($c['id'] == $selected) {
-				$maps[$cur_map][$idx]['selected'] = true;
-			}
-			
-			if ($c['calmark'] > 0) {
-				$maps[$cur_map][$idx]['mark'] = $c['calmark'];
-			}
-			$cur_pos = $idx;
+				// Clear out remaining portion of slot
+				$count = 1;
+				while ($count < $maps[$cur_map][$idx]['span']) {
+					// Move pointer forward
+					$cur_pos = $this->next_time_increment($cur_pos);
+					$count++;
 
-			// Clear out remaining portion of slot
-			$count = 1;
-			while ($count < $maps[$cur_map][$idx]['span']) {
-				// Move pointer forward
-				$cur_pos = $this->next_time_increment($cur_pos);
-				$count++;
-
-				// Zero those records
-				$maps[$cur_map][$cur_pos]['link'] = 0;
-				$maps[$cur_map][$cur_pos]['span'] = 0;
-			} // end clear out remaining portion of slot
+					// Zero those records
+					$maps[$cur_map][$cur_pos]['link'] = 0;
+					$maps[$cur_map][$cur_pos]['span'] = 0;
+				} // end clear out remaining portion of slot
+			} // end if !cancelled
 		} // end running through array
 
 		// Return completed maps
@@ -1096,8 +1103,13 @@ class Scheduler {
 		// Check for bogus data
 		if ($data == NULL) { return false; }
 
-		// Only pass fields that are set
-		$fields = array ( );
+		// Set defaults
+		$fields = array (
+			'caltype' => 'pat',
+			'calstatus' => 'scheduled'
+		);
+
+		// Only pass fields that are set as overrides
 		foreach ($this->calendar_field_mapping AS $k => $v) {
 			if (isset($data[$k])) {
 				$fields[$v] = $data[$k];
