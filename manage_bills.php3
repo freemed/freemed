@@ -30,11 +30,12 @@
 		freemed_display_actionbar($page_name, $_ref);
 
     		echo "
-      		<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
+      		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
       		<TR>
        		<TD><B>Name</B></TD>
-       		<TD><B>Payments</B></TD>
+                <TD COLSPAN=2 ALIGN=CENTER><B>Billing Functions</B></TD>
        		<TD><B>Procedures</B></TD>
+       		<TD><B>Billed</B></TD>
       		</TR>
     		"; // header of box
 
@@ -58,9 +59,24 @@
          			\"manage_payment_records.php3?$_auth&id=$id&patient=$id&bills=yes\"
          			><FONT SIZE=-1>View/Manage</FONT></A></TD>
         			<TD><A HREF=
+         			\"payment_record.php3?_ref=$page_name&id=$id&patient=$id\"
+         			><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
+        			<TD><A HREF=
          			\"procedure.php3?$_auth&id=$id&patient=$id\"
          			><FONT SIZE=-1>View/Manage</FONT></A></TD>
       				";
+ 			// see if all procs are billed. if not then show No
+         		$billed_result = fdb_query("SELECT COUNT(*) FROM procrec where
+                                                        procpatient='$id' AND procbilled='0'
+                                                        AND procbalcurrent>'0'");
+                        $billed = fdb_fetch_array($billed_result);
+                        if ($billed)
+                        {
+                                if ($billed[0] > 0)
+                                        echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
+                                else
+                                        echo "<TD>YES</TD>";
+                        }
 
 
     		} // while there are no more

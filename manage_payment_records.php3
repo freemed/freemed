@@ -73,6 +73,7 @@
    $line_item_count++;
    $_alternate = freemed_bar_alternate_color ($_alternate);
    $this_cpt = freemed_get_link_field ($r[proccpt], "cpt", "cptnameint"); 
+   $this_cptcode = freemed_get_link_field ($r[proccpt], "cpt", "cptcode");
    $this_cptmod = freemed_get_link_field ($r[proccptmod],
      "cptmod", "cptmod"); 
    $this_physician = new Physician ($r[procphysician]);
@@ -87,7 +88,7 @@
          "CHECKED"        :
          ""                )."></TD>
     <TD>".fm_date_print ($r[procdt])."</TD>
-    <TD ALIGN=LEFT>".htmlentities($this_cpt." (".$this_cptmod.")")."</TD>
+    <TD ALIGN=LEFT>".htmlentities($this_cptcode." (".$this_cpt.")")."</TD>
     <TD ALIGN=LEFT>".htmlentities($this_physician->fullName())."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procbalorig], 0, 2)."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
@@ -165,6 +166,28 @@
         Procedure set for rebill.
        </CENTER>
       ";
+      $query = "INSERT INTO payrec VALUES (
+                '$cur_date',
+                '0000-00-00',
+                '$patient',
+                '".fm_date_assemble("date_of_action")."',
+                '".REBILL."',
+                '".addslashes($item)."',
+                '0',
+                '0',
+                '0',
+                '',
+                '0',
+                'Rebill after Denial',
+                'unlocked',
+                NULL
+              )";
+    $result = fdb_query ($query);
+    echo "
+     <CENTER>
+      Added Rebill to ledger.
+     </CENTER>
+    ";
     } else {
       // otherwise adjust the amount to 0
       $query = "UPDATE procrec
@@ -247,9 +270,10 @@
     {
 		// recalc the procedure balance
 
-                $query = "UPDATE procrec SET procbalcurrent = '".addslashes($allowed_amount)."' - procamtpaid,
-                              procamtallowed = '".addslashes($allowed_amount)."'
-                     WHERE id='".addslashes($item)."'";
+                $query = "UPDATE procrec 
+				SET procbalcurrent = '".addslashes($allowed_amount)."' - procamtpaid,
+                              	procamtallowed = '".addslashes($allowed_amount)."'
+                     		WHERE id='".addslashes($item)."'";
                 $result = fdb_query ($query);
                 if ($result)
                 {
@@ -260,9 +284,12 @@
                         DIE ("$page_name :: DB error updating procedure");
                 }
 
-		// recalc the procedure's charge and change the type to 6 which means a PROCEDURE charge with Fee Adjustment.
-                $query = "UPDATE payrec SET payrecamt = '".addslashes($allowed_amount)."', payrectype = '6'
-                     WHERE payrecproc ='".addslashes($item)."' AND payrecpatient = '".addslashes($patient)."' AND payreccat = '".PROCEDURE."'";
+		// recalc the procedure's charge and change the type to 6 
+		// which means a PROCEDURE charge with Fee Adjustment.
+                $query = "UPDATE payrec 
+			SET payrecamt = '".addslashes($allowed_amount)."', payrectype = '6'
+                     	WHERE payrecproc ='".addslashes($item)."' AND 
+				payrecpatient = '".addslashes($patient)."' AND payreccat = '".PROCEDURE."'";
 
                 $result = fdb_query ($query);
                 if ($result)
@@ -321,7 +348,8 @@
     $query = "UPDATE payrec
               SET payreclink='".addslashes($transfer_to)."'
               WHERE (
-                id='".addslashes($item)."' AND
+                payrecproc='".addslashes($item)."' AND
+                payrecpatient='".addslashes($patient)."' AND
                 payreccat='".PROCEDURE."'
               )";
     $result = fdb_query ($query);
@@ -352,6 +380,50 @@
       Added transfer.
      </CENTER>
     ";
+    if ($transfer_resubmit == "yes") {
+      $query = "UPDATE procrec
+                SET procbilled='0'
+                WHERE id='".addslashes($item)."'";
+      $result = fdb_query ($query);
+      echo "
+       <CENTER>
+        Procedure set for rebill.
+       </CENTER>
+      ";
+      $query = "INSERT INTO payrec VALUES (
+                '$cur_date',
+                '0000-00-00',
+                '$patient',
+                '".fm_date_assemble("date_of_action")."',
+                '".REBILL."',
+                '".addslashes($item)."',
+                '0',
+                '0',
+                '0',
+                '',
+                '0',
+                'Rebill after Transfer',
+                'unlocked',
+                NULL
+              )";
+    $result = fdb_query ($query);
+    echo "
+     <CENTER>
+      Added Rebill to ledger.
+     </CENTER>
+    ";
+    } else {
+      // otherwise adjust the amount to 0
+      $query = "UPDATE procrec
+                SET procbalcurrent='0'
+                WHERE id='".addslashes($item)."'";
+      $result = fdb_query ($query);
+      echo "
+       <CENTER>
+        Procedure adjusted to zero.
+       </CENTER>
+      ";
+    } // end of denial rebill check
     $show_submit = false;
     break; // end of transfer action
 
@@ -547,6 +619,16 @@
         )."
          <OPTION VALUE=\"3\">Worker's Comp
         </SELECT>
+       </TD>
+      </TR>
+      <TR>
+       <TD ALIGN=RIGHT>
+        <$STDFONT_B>Resubmit? : <$STDFONT_E>
+       </TD><TD ALIGN=LEFT>
+        <INPUT TYPE=RADIO NAME=\"transfer_resubmit\"
+         VALUE=\"yes\" CHECKED>Yes &nbsp;&nbsp;
+        <INPUT TYPE=RADIO NAME=\"transfer_resubmit\"
+         VALUE=\"no\"         >No
        </TD>
       </TR>
 

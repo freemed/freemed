@@ -15,6 +15,7 @@
  freemed_display_banner ();
 
  switch ($action) { // master action switch
+  case "geninvoice":
   case "geninsform":
    //freemed_display_box_top ("Generate Insurance Claim Forms");
 
@@ -30,12 +31,24 @@
 
    // get list of all patient who need to be billed
 //                             payreccat = '5' AND
+   if ($action=="geninvoice")
+   {
+       $b_result = fdb_query ("SELECT DISTINCT payrecpatient
+                           FROM payrec
+                           WHERE (
+                             payreccat = '".PROCEDURE."' AND
+                             payreclink = '4'
+                           ) ORDER BY payrecpatient");
+   }
+   else
+   {
    $b_result = fdb_query ("SELECT DISTINCT payrecpatient
                            FROM payrec
                            WHERE (
                              payreccat = '".PROCEDURE."' AND
                              payreclink < '3'
                            ) ORDER BY payrecpatient");
+   }
    // 0 = 1st insurance
    // 1 = 2nd insurance
    // 2 = 3rd insurance
@@ -116,6 +129,23 @@
      //$debug=true;
 
      // decide which ones we are generating
+     if ($action=="geninvoice")
+     {
+     $result = fdb_query ("SELECT a.* FROM payrec AS a,
+                                           procrec AS b 
+                           WHERE ( 
+                             a.payreccat = '5' AND
+                             a.payreclink = '4' AND
+                             a.payrecpatient = '$current_patient' AND
+                             a.payrecproc = b.id AND
+                             b.procbilled = '0' AND
+                             b.procbillable = '0' AND
+                             b.procbalcurrent > '0'
+                           ) ORDER BY payrecpatient,payrecdt");
+
+     }
+     else
+     {
      $result = fdb_query ("SELECT a.* FROM payrec AS a,
                                            procrec AS b 
                            WHERE ( 
@@ -123,9 +153,11 @@
                              a.payreclink < '3' AND
                              a.payrecpatient = '$current_patient' AND
                              a.payrecproc = b.id AND
+                             b.procbilled = '0' AND
                              b.procbillable = '0' AND
                              b.procbalcurrent > '0'
                            ) ORDER BY payrecpatient,payrecdt");
+     }
 
      if (!$result or ($result==0))
        die ("Malformed SQL query ($current_patient)");
@@ -501,7 +533,8 @@
        $itemdate_d  [$number_of_charges] = substr($p[procdt],     8, 2);
        $itemdate_y  [$number_of_charges] = substr($p[procdt],     0, 4);
        $itemdate_sy [$number_of_charges] = substr($p[procdt],     2, 2);
-       $itemcharges [$number_of_charges] = bcadd($p[procbalorig], 0, 2);
+       $itemcharges [$number_of_charges] = 
+           ($p[procamtallowed]) ? bcadd($p[procamtallowed], 0, 2) : bcadd($p[procbalorig], 0, 2);
        $itemunits   [$number_of_charges] = bcadd($p[procunits],   0, 0);
        $itempos     [$number_of_charges] = "11";  // KLUDGE!! KLUDGE!!
        $itemvoucher [$number_of_charges] = $p[procvoucher];
@@ -638,7 +671,39 @@
    freemed_display_box_bottom ();
    break; // end of mark as billed action
 
+  case "invoice":
   default:
+   if ($action=="invoice")
+   {
+       freemed_display_box_top ("Fixed Forms Generation Menu");
+        echo "
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
+     VALIGN=MIDDLE ALIGN=CENTER>
+
+    <TR>
+     <TD COLSPAN=2>
+      <CENTER>
+       <$STDFONT_B><B>Generate Patient Invoice</B><$STDFONT_E>
+      </CENTER>
+     </TD>
+    </TR>
+
+    <FORM ACTION=\"$page_name\" METHOD=POST>
+    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
+    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"geninvoice\">
+
+    <TR>
+     <TD ALIGN=RIGHT>
+      <CENTER>
+       <$STDFONT_B>Invoice : <$STDFONT_E>
+      </CENTER>
+     </TD>
+     <TD ALIGN=LEFT>
+      <SELECT NAME=\"whichform\">
+   ";
+   } // end action invoice
+   else
+   {
    freemed_display_box_top (_("Fixed Forms Generation"));
    echo "
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
@@ -665,6 +730,8 @@
      <TD ALIGN=LEFT>
       <SELECT NAME=\"whichform\">
    ";
+   } // end default action
+
    $result = fdb_query ("SELECT * FROM fixedform WHERE fftype='1'
                          ORDER BY ffname, ffdescrip");
    while ($r = fdb_fetch_array ($result)) {

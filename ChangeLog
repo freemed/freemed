@@ -1,4 +1,18 @@
 freemed project changelog
+
+* Wed Dec 6  2000 fforest
+  - billing_functions : new menu item to generate patient invoices
+  - generate_fixed_forms : when doing the join on payrec and procrec we inadvertantly selected 
+    procedures that where already marked as billed. 
+    procamtallowed now considered in calculating total charges if it's not zero else use the original procedure charge.
+    added new actions of invoice and geninvoice to selected all procedures/payments transferred to patient. this is the start
+    of patient invoice billing.
+  - manage_payment_records : fix display of procedure code. insert a new payrec of type rebill if a transfer or denial
+    is rebilled. this will now show on the patient ledger for tracking rebills.
+    during a payment transfer the OLD payrec was being updated where the selected procedure id matches the payrec id. 
+    this should have been the selected procedure id matching the payrec payrecproc,this patient and payrectype of PROCEDURE.
+  - manage_bills : now informs the user is ANY unpaid procedures have NOT been billed.
+    
 * Wed Nov 29 2000 fforest
   - added procamtallowed to procrec
   - allow manage_payments to handle an allowed amount (fee schedule adjustment). update payrec with 

@@ -72,6 +72,15 @@
     </TR>
 
     <TR>
+      <TD ALIGN=RIGHT>
+       <$STDFONT_B><B>Generate Patient Invoices : </B><$STDFONT_E>
+      </TD><TD ALIGN=LEFT COLSPAN=2>
+       <A HREF=\"generate_fixed_forms.php3?$_auth&action=invoice\"
+       ><$STDFONT_B>Menu<$STDFONT_E></A>
+      </TD>
+     </TR>
+
+    <TR>
      <TD ALIGN=RIGHT>
       <$STDFONT_B><B>Unpaid Procedures  : </B><$STDFONT_E>
      </TD><TD ALIGN=LEFT COLSPAN=2>
