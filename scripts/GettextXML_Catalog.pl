@@ -215,24 +215,36 @@ foreach $API_file (@API_files) {
 my $output = Generate_GettextXML("API", $version, \@API_strings);
 Write_to_File($relative_path."locale/template/freemed.xml", $output);
 
-print "Processing default template ... \n";
+opendir(DH, $relative_path."lib/template/") or
+	die("Could not open template directory");
 
-my @template_files = glob($relative_path."lib/template/default/*.php");
-my @template_strings;
-foreach $template_file (@template_files) {
-	print "\t($template_file)\n";
-	my @strings = Parse_File($template_file);
-	push (@template_strings, @strings);
-}
-@template_strings = Remove_Duplicates(\@template_strings);
-Write_to_File(
-	$relative_path."locale/template/template_default.xml",
-	Generate_GettextXML(
-		"Default Template",
-		$version,
-		\@template_strings
-	)
-);
+while ($template = readdir(DH)) {
+	if ((-d $relative_path."lib/template/".$template) and
+			($template ne ".") and
+			($template ne "..") and
+			($template ne "CVS")) {
+		print "Processing template '$template' ... \n";
+
+		my @template_files = glob($relative_path.
+			"lib/template/".$template."/*.php");
+		my @template_strings;
+		foreach $template_file (@template_files) {
+			print "\t($template_file)\n";
+			my @strings = Parse_File($template_file);
+			push (@template_strings, @strings);
+		}
+		@template_strings = Remove_Duplicates(\@template_strings);
+		Write_to_File(
+			$relative_path.
+				"locale/template/template_".$template.".xml",
+			Generate_GettextXML(
+				"Template",
+				$version,
+				\@template_strings
+			)
+		);
+	} # end checking for a proper template
+} # end directory looping
 
 print "\n".
 	"-----\n".
