@@ -330,7 +330,7 @@ switch ($action) {
 
      // book link
     echo "
-     <A HREF=\"book_appointment.php3?$_auth&action=&".
+     <A HREF=\"book_appointment.php?$_auth&action=&".
       "patient=$id&type=temp\"
       ><FONT SIZE=-1>"._("BOOK")."</FONT></A> &nbsp;
     ";
