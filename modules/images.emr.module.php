@@ -206,18 +206,13 @@ class PatientImages extends EMRModule {
 		}
 
 		// If there's an episode of care module installed...
-		if(check_module("episodeOfCare")) {
+		if (check_module("EpisodeOfCare")) {
 			// Actual piece
 			$imageeoc = sql_squash($imageeoc); // for multiple choice (HACK)
 			$related_episode_array = array (
 			__("Related Episode(s)") =>
-			freemed::multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
-                                  "eocdtlastsimilar FROM eoc WHERE ".
-                                  "eocpatient='".addslashes($patient)."'",
-                                  "##eocdescrip## (##eocstartdate## to ##eocdtlastsimilar##)",
-                                  "imageeoc",
-                                  $imageeoc,
-                                  false),
+			module_function('EpisodeOfCare', 'widget',
+				array('imageeoc', $patient))
 			);
 		} else {
 			// Put in blank array instead
