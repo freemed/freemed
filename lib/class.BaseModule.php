@@ -92,6 +92,22 @@ class BaseModule extends module {
 	// _update (in this case, wrapped in classes...)
 	function _update () { return true; }
 
+	function init($test) {
+		global $sql;
+	
+		$result = $sql->query("DROP TABLE module"); 
+
+		$result = $sql->query($sql->create_table_query(
+			'module',
+			array(
+				'module_name' => SQL_VARCHAR(100),
+				'module_version' => SQL_VARCHAR(50),
+				'id' => SQL_SERIAL
+			), array('id')
+		));
+		return $result;
+	} // end method BaseModule->init
+
 } // end class BaseModule
 
 ?>
