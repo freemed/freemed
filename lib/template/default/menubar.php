@@ -32,4 +32,25 @@ if ($patient_history) {
 	<LI><A HREF="logout.php"><?php print _("Logout"); ?></A>
 </UL>
 <!-- new functions come *after* everything else -->
-<?php if (isset($menu_bar)) { print "<HR>\n".$menu_bar; } else { print "&nbsp;"; } ?>
+<?php 
+
+//----- Check to see if a menubar array exists
+if (is_array($menu_bar)) {
+	print "<HR>\n\n";
+	print "<UL>\n";
+	foreach ($menu_bar AS $k => $v) {
+		if ($v != NULL) {
+		print "\t<LI><A HREF=\"".$v."\" ".
+			"onMouseOver=\"window.status='".prepare(_($k))."'; ".
+			"return true;\" ".
+			"onMouseOut=\"window.status=''; return true;\">".
+			prepare(_($k))."</A>\n";
+		} // end checking for null
+	} // end foreach
+	print "</UL>\n";
+} else { // if is array
+	print "&nbsp;\n";
+} // end if is array
+
+
+?>

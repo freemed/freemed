@@ -1,6 +1,12 @@
 freemed project changelog
 ($Id$)
 
+* Sun Oct 07 2001 rufustfirefly
+  - db_maintenance.php, lib/template/default/manage_main.php,
+    lib/template/default/menubar.php, lib/template/default/stylesheet.css:
+    moved from plaintext $menu_bar to an array key=name, val=link and
+    used new CLASS=thinbox for boxes in patient management
+
 * Fri Oct 05 2001 rufustfirefly
   - UI/Templates/Sessions merge. Huge.
   - user.php: removed STDFONT stuff

@@ -28,6 +28,14 @@ a:hover {
 	background: #bbbbff 
 }
 
+/* Thin box for patient management */
+.thinbox {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #c3c3ff 
+}
+
 .menubar {
 	border-width: none;
 	background: #bbbbff 

@@ -24,7 +24,7 @@ foreach ($static_components AS $garbage => $component) {
 		// Add header and strip at top
 		$panel[_("Appointments")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3>
+			 CELLPADDING=3 CLASS=\"thinbox\">
 			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"book_appointment.php?patient=$id&type=pat\"
@@ -71,7 +71,7 @@ foreach ($static_components AS $garbage => $component) {
 			// Quick null panel
 			$panel[_("Custom Records")] .= "
 				<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-				 CELLPADDING=3>
+				 CELLPADDING=3 CLASS=\"thinbox\">
 				<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 				 CLASS=\"menubar_items\">
 				<A HREF=\"custom_records.php?patient=$id\" 
@@ -87,7 +87,7 @@ foreach ($static_components AS $garbage => $component) {
 		case "patient_information":
 		$panel[_("Patient Information")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3>
+			 CELLPADDING=3 CLASS=\"thinbox\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"patient.php?action=modform&id=$id\" 
@@ -115,7 +115,7 @@ foreach ($modular_components AS $garbage => $component) {
 		// Execute proper portion and add to panel
 		$panel[_($module_list->get_module_name($component))] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3>
+			 CELLPADDING=3 CLASS=\"thinbox\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"module_loader.php?module=".
@@ -139,9 +139,9 @@ foreach ($modular_components AS $garbage => $component) {
 } // end static components
 
 //----- Determine column requirements
-if ($manage_columns < 1) $manage_columns = 1;
+if ($display_columns < 1) $display_columns = 1;
 if (count($panel) > 0) {
-	$column_cutoff = ceil ( count($panel) / $manage_columns );
+	$column_cutoff = ceil ( count($panel) / $display_columns );
 } // check for ability to display panels
 
 //----- Display tables
@@ -156,7 +156,7 @@ if (count($panel) > 0) {
 	$column = 1; reset ($panel);
 	foreach ($panel AS $k => $v) {
 		// Check to see if we're on a new row yet
-		if ($column > $manage_columns) {
+		if ($column > $display_columns) {
 			$column = 1;
 
 			// Display footer and new header
@@ -183,8 +183,8 @@ if (count($panel) > 0) {
 	} // end looping
 
 	// Fill up empty space
-	if ($column < $manage_columns) {
-		for ($i=1; $i<=($manage_columns-$column); $i++)
+	if ($column < $display_columns) {
+		for ($i=1; $i<=($display_columns-$column); $i++)
 			$display_buffer .= "<TD>&nbsp;</TD>\n";
 	} // end filling up empty space
 
@@ -225,18 +225,24 @@ if (count($panel) > 0) {
 //     ";
 //    }
 
+// Add configure to the menu bar
+if ($action != "config") {
+	$menu_bar[_("Configure")] = "manage.php?id=$id&action=config";
+}
+
+
 //----- Add to menu bar
 $module_list = new module_list (PACKAGENAME, ".emr.module.php");
 // Form template for menubar
-$template_menubar = "<LI><A HREF=\"module_loader.php?module=#class#&".
-	"patient=$id\">#name#</A>\n";
-$menu_bar .= "<UL>\n";
-$menu_bar .= $module_list->generate_list ($category, 0, $template_menubar);
-if ($action != "config") {
-	$menu_bar .= "<LI><A HREF=\"manage.php?id=$id&action=config\"".
-		">"._("Configure")."</A>\n";
-}
-$menu_bar .= "</UL>\n";
+$menu_bar = array_merge (
+	$menu_bar,
+	$module_list->generate_array(
+		"Electronic Medical Record",
+		0,
+		"#name#",
+		"module_loader.php?module=#class#&patient=$id"
+	)
+);
 
 /*
 $display_buffer .= "

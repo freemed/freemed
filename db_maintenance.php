@@ -22,8 +22,6 @@ $page_title = _("Database Maintenance");
 $category = "Database Maintenance";
 $module_template = "<A HREF=\"module_loader.php?module=#class#\"".
 	">#name#</A><BR>\n";
-$template_menubar = "<LI><A HREF=\"module_loader.php?module=#class#\"".
-	"><FONT SIZE=\"-3\">#name#</FONT></A>\n";
 
  // Check for appropriate access level
 if (freemed_get_userlevel ($LoginCookie) < $database_level) { 
@@ -66,9 +64,16 @@ $module_list = new module_list (PACKAGENAME, ".db.module.php");
 $display_buffer .= $module_list->generate_list($category, 0, $module_template);
 
 // create menu bar
-$menu_bar = "<UL>\n";
-$menu_bar .= $module_list->generate_list($category, 0, $template_menubar);
-$menu_bar .= "</UL>\n";
+if (!is_array($menu_bar)) $menu_bar[] = NULL;
+$menu_bar = array_merge (
+	$menu_bar,
+	$module_list->generate_array(
+		$category,
+		0,
+		"#name#", // key template
+		"module_loader.php?module=#class#" // value template
+	)
+);
 
 // display end of listing
 $display_buffer .= "
