@@ -78,14 +78,6 @@ echo "
       >"._("Insurance Modifiers")."</A>
      <BR>
 
-     <A HREF=\"internal_service_type.php3?$_auth\"
-      >"._("Internal Service Types")."</A>
-     <BR>
-
-     <A HREF=\"physician.php3?$_auth\"
-      >"._("Physicians")."</A>
-     <BR>
-
      <!-- not ready for prime time yet....
      <A HREF=\"phy_avail_map.php3?$_auth\"
       >"._("Physician Availability Map")."</A>

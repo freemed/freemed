@@ -23,12 +23,14 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 			"tosname",
 			"tosdescrip",
 			"tosdtadd",
-			"tosdtmod"   => $GLOBALS["cur_date"]
+			"tosdtmod"
 	);
 
 	function typeOfServiceMaintenance () {
 		// run constructor
 		$this->freemedMaintenanceModule();
+		global $tosdtmod;
+		$tosdtmod = $GLOBALS["cur_date"];
 	} // end constructor typeOfServiceMaintenance	
 
 	function view () {

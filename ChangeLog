@@ -11,6 +11,7 @@ freemed project changelog
   - moved internal_service_types.php3 -> internal_service_types.module.php
   - added add() and mod() routines in lib/module_maintenance.php, so that
     maintenance modules can use them instead of reinventing the wheel
+  - moved physician.php3 -> modules/provider.module.php
 
 * Wed Dec 27 2000 rufustfirefly
   - started to convert Rx.php3 -> modules/prescription.module.php

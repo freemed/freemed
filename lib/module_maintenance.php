@@ -78,9 +78,9 @@ class freemedMaintenanceModule extends freemedModule {
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
-	// function add
+	// function _add
 	// - addition routine (can be overridden if need be)
-	function add () {
+	function _add () {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -107,11 +107,12 @@ class freemedMaintenanceModule extends freemedModule {
 				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
 			</CENTER>
 		";
-	} // end function add
+	} // end function _add
+	function add () { $this->_add(); }
 
-	// function del
+	// function _del
 	// - only override this if you *really* have something weird to do
-	function del () {
+	function _del () {
 		global $STDFONT_B, $STDFONT_E, $id, $sql;
 		echo "<P ALIGN=CENTER>".
 			"<$STDFONT_B>"._("Deleting")." . . . \n";
@@ -121,11 +122,12 @@ class freemedMaintenanceModule extends freemedModule {
 		if ($result) { echo _("done"); }
 		 else        { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
 		echo "<$STDFONT_E></P>\n";
-	} // end function del
+	} // end function _del
+	function del () { $this->_del(); }
 
-	// function mod
+	// function _mod
 	// - modification routine (override if neccessary)
-	function mod () {
+	function _mod () {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -153,7 +155,8 @@ class freemedMaintenanceModule extends freemedModule {
 				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
 			</CENTER>
 		";
-	} // end function mod
+	} // end function _mod
+	function mod() { $this->_mod(); }
 
 	// function add/modform
 	// - wrappers for form
