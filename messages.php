@@ -20,6 +20,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log mess
 $this_user = CreateObject('FreeMED.User');
 
 if ($submit_action==" ".__("Add")." ") { $action = "add"; }
+if ($submit_action==" ".__("Cancel")) { $action = ""; }
 
 switch ($action) {
 
@@ -64,7 +65,7 @@ switch ($action) {
 		),
 
 		__("Patient")." (".__("if applicable").")" =>
-		freemed::patient_widget("msgpatient"),
+		freemed::patient_widget("msgpatient", "myform", "submit_action"),
 
 		__("From (if not a patient)") =>
 		html_form::text_widget("msgperson", 20, 50),
@@ -94,6 +95,8 @@ switch ($action) {
 	<input class=\"button\" TYPE=\"SUBMIT\" ".
 	"NAME=\"submit_action\" VALUE=\" ".__("Add")." \" />
 	<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
+	<input class=\"button\" TYPE=\"SUBMIT\" ".
+	"NAME=\"submit_action\" VALUE=\"".__("Cancel")."\" />
 	</div>
 	</form>
 	<p/>
