@@ -1097,25 +1097,6 @@ function freemed_display_selectbox ($result, $format, $param="")
   return $buffer;
 } // end function freemed_display_selectbox
 
-// function freemed_display_simple_selectbox
-function freemed_display_simple_selectbox($list_array, $param, $zero_flag=true)
-{
-  global $$param;
-  $buffer = "";
-
-  $buffer .= "
-    <SELECT NAME=\"$param\">";
-  if ($zero_flag) $buffer .= "
-      <OPTION VALUE=\"0\">NONE SELECTED";
-  while (list($k,$v) = each($list_array)) {
-    $buffer .= "
-      <OPTION VALUE=\"$k\"".(($$param==$k) ? " SELECTED" : "").">$v";
-  } // while each option
-  $buffer .= "
-    </SELECT>";
-  return $buffer;
-} // end function freemed_display_simple_selectbox
-
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="")
 {
