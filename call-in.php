@@ -14,7 +14,13 @@ freemed_open_db ($LoginCookie);
 switch ($action) {
 
  case "addform":
+  // Set page title
   $page_title = _("Add")." "._($record_name);
+
+  // Push onto stack
+  page_push();
+
+  // ... continue ...
   if (strlen($citookcall)<1) {
     $f_auth = explode (":", $LoginCookie);
     $citookcall = freemed_get_link_field ($f_auth[0], "user", "userdescrip");
@@ -226,7 +232,11 @@ switch ($action) {
   break;
 
  default:
+  // Set page title
   $page_title = _("$record_name");
+  
+  // Push onto stack
+  page_push();
 
   $display_buffer .= "
     <BR>

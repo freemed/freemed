@@ -723,7 +723,12 @@ switch ($action) {
   break;
 
   default: // default action
+
+    // Set page title
     $page_title = _("Patients");
+
+    // Push onto stack
+    page_push();
   
     if (freemed_get_userlevel()>$database_level) {
       $display_buffer .= "

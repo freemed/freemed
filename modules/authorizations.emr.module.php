@@ -44,6 +44,12 @@ class authorizationsModule extends freemedEMRModule {
 
 	function authorizationsModule () {
 		$this->freemedEMRModule();
+ 
+		// Set vars for patient management summary
+		$this->summary_vars = array (
+			_("From") => "authdtbegin",
+			_("To")   => "authdtend"
+		);
 	} // end constructor authorizationsModule
 
 	function form () {

@@ -2,19 +2,48 @@
  // $Id$
  // $Author$
 
-// Check for presence of patient_history
+// Check for presence of patient and pagehistories
 $patient_history = patient_history_list();
+$page_history = page_history_list();
+if ($patient_history or $page_history) {
+	print "
+	<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0 VALIGN=TOP
+	 ALIGN=CENTER>
+	";
+}
 if ($patient_history) {
 	print "
-	<CENTER>
+	<TR><TD ALIGN=CENTER>
 	<FORM ACTION=\"manage.php\" METHOD=POST>
 	".html_form::select_widget("id", $patient_history)."
 	<INPUT TYPE=IMAGE SRC=\"lib/template/default/magnifying_glass.png\"
 		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Manage]\">
 	</FORM>
-	</CENTER>
+	</TD></TR>
 	";
 } // end checking for patient history
+
+if ($page_history) {
+	// Set current page as default selection
+	$location = basename($PHP_SELF);
+	
+	// Show the actual pick list
+	print "
+	<TR><TD ALIGN=CENTER>
+	<FORM ACTION=\"redirect.php\" METHOD=POST>
+	".html_form::select_widget("location", $page_history)."
+	<INPUT TYPE=IMAGE SRC=\"lib/template/default/forward.png\"
+		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Jump to page]\">
+	</FORM>
+	</TD></TR>
+	";
+} // end checking for page history
+
+if ($patient_history or $page_history) {
+	print "
+	</TABLE>
+	";
+}
 
 ?>
 <UL>

@@ -9,8 +9,13 @@ include ("lib/API.php");
 include ("lib/module.php");
 include ("lib/module_calendar.php");
 
+//----- Login/authenticate
 freemed_open_db ();
+
+//----- Set page title
 $page_title = _("Calendar");
+
+//----- Push page onto stack
 page_push ();
 
  // Check for appropriate access level

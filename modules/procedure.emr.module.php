@@ -52,6 +52,12 @@ class procedureModule extends freemedEMRModule {
 	function procedureModule () {
 		// call parent constructor
 		$this->freemedEMRModule();
+
+		// Set vars for patient management
+		$this->summary_vars = array (
+			_("Date")    => "procdt",
+			_("Comment") => "proccomment"
+		);
 	} // end constructor procedureModule
 
 	function addform() {

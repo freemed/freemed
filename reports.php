@@ -13,7 +13,7 @@ include_once ("lib/module_reports.php");
 freemed_open_db ();
 
 //----- Set page title
-$page_title = (_("Reports"));
+$page_title = _("Reports");
 
 //----- Add page to history
 page_push();

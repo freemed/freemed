@@ -2413,7 +2413,6 @@ function page_push () {
 	if (isset($SESSION["page_history"])) {
 		// Import
 		$page_history = $SESSION["page_history"];
-		$page_history_name = $SESSION["page_history_name"];
 
 		// Check to see if this is the last item on the list...
 		// ... kick out without adding.
@@ -2422,12 +2421,10 @@ function page_push () {
 	} // end checking for existing history
 
 	// Add to the list of pages
-	$page_history[] = basename($PHP_SELF);
-	$page_history_name[] = $page_title;
+	$page_history["$page_title"] = basename($PHP_SELF);
 
 	// Reimport into SESSION
 	$SESSION["page_history"] = $page_history;
-	$SESSION["page_history_name"] = $page_history_name;
 } // end function page_push
 
 function page_pop () {
@@ -2538,8 +2535,35 @@ function patient_history_list () {
 	} // end foreach
 
 	// Return generated array
-	return $history;
+	return array_reverse($history);
 } // end function patient_history_list
+
+function page_history_list () {
+	global $SESSION;
+
+	// Return false if there is nothing in the list
+	if (!isset($SESSION["page_history"])) return false;
+
+	// Import patient_history
+	$page_history = $SESSION["page_history"];
+
+	// Check for no patient history
+	if (count($page_history)<1) return false;
+
+	// Create new empty array
+	unset($history);
+
+	// Loop through array
+	foreach ($page_history AS $k => $v) {
+		if (!empty($k) and !empty($v)) {
+			// Add to new array
+			$history["$k"] = $v;
+		}
+	} // end foreach
+
+	// Return generated array
+	return array_reverse($history);
+} // end function page_history_list
 
 } // end checking for __API_PHP__
 

@@ -1,11 +1,31 @@
 freemed project changelog
 ($Id$)
 
+* Tue Oct 09 2001 rufustfirefly
+  - lib/API.php: added page_history_list() function, modified page_push()
+    to store an associative array instead of two arrays
+  - redirect.php: removed abolute URL references
+  - db_maintenance.php: page_push() has to come after $page_title is set
+  - lib/template/default/menubar.php: set up menubar to have either or
+    both page and patient histories from session
+  - admin.php, calendar.php, call-in.php, patient.php, reports.php: set
+    page_push() calls in appropriate portions of pages
+  - lib/API.php: use array_reverse() to get page and patient histories in
+    FILO style list
+  - modules/authorizations.emr.module.php. modules/procedure.emr.module.php:
+    added summary_vars definition for management box
+  - lib/module_emr.php: changed action bar in patient summary boxen to be
+    CLASS "module_info" for CSS
+
 * Sun Oct 07 2001 rufustfirefly
   - db_maintenance.php, lib/template/default/manage_main.php,
     lib/template/default/menubar.php, lib/template/default/stylesheet.css:
     moved from plaintext $menu_bar to an array key=name, val=link and
     used new CLASS=thinbox for boxes in patient management
+  - lib/template/default/manage_{config,main}.php: added num_summary_items
+    config option instead of hardcoding 5 items per panel
+  - custom_records.php, modules/authorizations.emr.module.php: removed
+    last HEADERFONT tags
 
 * Fri Oct 05 2001 rufustfirefly
   - UI/Templates/Sessions merge. Huge.

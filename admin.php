@@ -1376,12 +1376,16 @@ if ($action=="cfgform") {
 
   // actual menu code for admin menu goes here \/
 
-freemed_display_box_top(PACKAGENAME." "._("Administration Menu"), $_ref,
-$page_name);
+//----- Set page title
+$page_title = _("Administration Menu");
+
+//----- Push page onto the stack
+page_push();
+
 
 $display_buffer .= "
   
-  <TABLE WIDTH=100% VALIGN=CENTER ALIGN=CENTER BORDER=0 CELLSPACING=2
+  <TABLE WIDTH=\"100%\" VALIGN=CENTER ALIGN=CENTER BORDER=0 CELLSPACING=2
    CELLPADDING=0>
  "; // begin standard font
 
@@ -1390,14 +1394,14 @@ $userdata = $SESSION["authdata"];
 $display_buffer .= "
  <TR><TD ALIGN=RIGHT>
   <A HREF=\"export.php\"
-  ><IMG SRC=\"img/kfloppy.gif\" BORDER=0 ALT=\"[*]\"></A>
+  ><IMG SRC=\"img/kfloppy.gif\" BORDER=0 ALT=\"\"></A>
  </TD><TD ALIGN=LEFT>
   <A HREF=\"export.php\"
   >"._("Export Databases")."</A>
  </TD></TR> 
  <TR><TD ALIGN=RIGHT>
   <A HREF=\"import.php\"
-  ><IMG SRC=\"img/ark.gif\" BORDER=0 ALT=\"[*]\"></A>
+  ><IMG SRC=\"img/ark.gif\" BORDER=0 ALT=\"\"></A>
  </TD><TD ALIGN=LEFT>
  <A HREF=\"import.php\"
  >"._("Import Databases")."</A>
@@ -1407,7 +1411,7 @@ $display_buffer .= "
  $display_buffer .= "
     <TR><TD ALIGN=RIGHT>
      <A HREF=\"module_information.php\"
-     ><IMG SRC=\"img/magnify.gif\" BORDER=0 ALT=\"[*]\"></A>
+     ><IMG SRC=\"img/magnify.gif\" BORDER=0 ALT=\"\"></A>
     </TD><TD ALIGN=LEFT>
     <A HREF=\"module_information.php\"
      >"._("Module Information")."</A>
@@ -1418,7 +1422,7 @@ if ($userdata["user"]==1) // if we are root...
  $display_buffer .= "
   <TR><TD ALIGN=RIGHT>
    <A HREF=\"$page_name?action=reinit\"
-   ><IMG SRC=\"img/Gear.gif\" BORDER=0 ALT=\"[*]\"></A>
+   ><IMG SRC=\"img/Gear.gif\" BORDER=0 ALT=\"\"></A>
   </TD><TD ALIGN=LEFT>
   <A HREF=\"$page_name?action=reinit\"
   >"._("Reinitialize Database")."</A>
@@ -1428,7 +1432,7 @@ if ($userdata["user"]==1) // if we are root...
 $display_buffer .= "
   <TR><TD ALIGN=RIGHT>
    <A HREF=\"$page_name?action=cfgform\"
-   ><IMG SRC=\"img/config.gif\" BORDER=0 ALT=\"[*]\"></A>
+   ><IMG SRC=\"img/config.gif\" BORDER=0 ALT=\"\"></A>
   </TD><TD ALIGN=LEFT>
   <A HREF=\"$page_name?action=cfgform\"
   >"._("Update Config")."</A>
@@ -1439,7 +1443,7 @@ if ($userdata["user"]==1) // if we are root...
   $display_buffer .= "
     <TR><TD ALIGN=RIGHT>
      <A HREF=\"user.php?action=view\"
-     ><IMG SRC=\"img/monalisa.gif\" BORDER=0 ALT=\"[*]\"></A>
+     ><IMG SRC=\"img/monalisa.gif\" BORDER=0 ALT=\"\"></A>
     </TD><TD ALIGN=LEFT>
     <A HREF=\"user.php?action=view\"
      >"._("User Maintenance")."</A>
@@ -1448,7 +1452,7 @@ if ($userdata["user"]==1) // if we are root...
 
   $display_buffer .= "
     <TR><TD ALIGN=RIGHT>
-     <IMG SRC=\"img/HandPointingLeft.gif\" BORDER=0 ALT=\"[*]\"></A>
+     <IMG SRC=\"img/HandPointingLeft.gif\" BORDER=0 ALT=\"\"></A>
     </TD><TD ALIGN=LEFT>
      <A HREF=\"main.php\"
      ><B>"._("Return to the Main Menu")."</B></A>
@@ -1468,6 +1472,7 @@ $display_buffer .= "
   </CENTER>
 "; // return to main menu tab...
 
+//----- Display template
 template_display();
 
 ?>

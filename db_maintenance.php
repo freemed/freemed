@@ -12,11 +12,11 @@ include ("lib/module_maintenance.php");
 //----- Login and authenticate
 freemed_open_db ();
 
-//----- Add page to stack
-page_push();
-
 //----- Set page title
 $page_title = _("Database Maintenance");
+
+//----- Add page to stack
+page_push();
 
 // information for module loader
 $category = "Database Maintenance";

@@ -12,6 +12,8 @@
  // at some point, we should document this table, for ease of
  // use in jumping from place A to place B, and eventually put
  // it on the tool bar.
+
+/*
 switch ($location) {
   case "/aicd": $redirect="icd9.php?action=addform"; break;
   case "/cfg":  $redirect="admin.php?action=cfgform"; break;
@@ -24,15 +26,15 @@ switch ($location) {
   case "/phy":  $redirect="physician.php?action=view"; break;
   default:      $redirect="main.php"; break;
 }
+*/
 
   // and now the actual redirector
-
-Header("Location: ".COMPLETE_URL."$redirect");
+Header("Location: $location");
 
 $display_buffer .= "<HTML>
 <HEAD>
 <TITLE>redirector</TITLE>
-<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=".COMPLETE_URL."$redirect\"> 
+<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$location\"> 
 </HEAD> 
 <BODY>
 <CENTER><B>"._("If your browser does not support the REFRESH tag")."

@@ -16,11 +16,11 @@ freemed_open_db ();
 //----- Create user object
 $this_user = new User ();
 
-//----- Add page to stack
-page_push();
-
 //----- Set page title
 $page_title = _("Billing Functions");
+
+//----- Add page to stack
+page_push();
 
 $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
   if ($patient>0) {

@@ -216,13 +216,13 @@ class freemedEMRModule extends freemedModule {
 			";
 			foreach ($this->summary_vars AS $k => $v) {
 				$buffer .= "
-				<TD VALIGN=MIDDLE>
+				<TD VALIGN=MIDDLE CLASS=\"menubar_info\">
 				<B>".prepare($k)."</B>
 				</TD>
 				";
 			} // end foreach summary_vars
 			$buffer .= "
-				<TD VALIGN=MIDDLE>
+				<TD VALIGN=MIDDLE CLASS=\"menubar_info\">
 				<B>"._("Action")."</B>
 				</TD>
 			</TR>
