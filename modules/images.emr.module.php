@@ -134,13 +134,11 @@ class PatientImages extends EMRModule {
 		</div>
 		<p/>
 		<div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
-		>".__("Manage Patient")."</a>
-		<b>|</b>
+		class=\"button\">".__("Manage Patient")."</a>
 		<a HREF=\"$this->page_name?module=$module&patient=$patient\"
-		>"._($this->record_name)."</a>
-		<b>|</b>
+		class=\"button\">".__($this->record_name)."</a>
 		<a HREF=\"$this->page_name?module=$module&patient=$patient&".
-		"action=addform\"
+		"action=addform\" class=\"button\"
 		>".__("Add Another")."</a>
 		</div>
 		";
@@ -172,14 +170,14 @@ class PatientImages extends EMRModule {
 		TYPE=\"image/x.djvu\" WIDTH=\"100%\" HEIGHT=\"600\"></embed>
 		</div>
 		<div ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-		<a HREF=\"";
+		<a class=\"button\" HREF=\"";
 		if ($return=="manage") {
 			$display_buffer .= "manage.php?id=$patient\">".
 			__("Manage Patient");
 		} else {
 			$display_buffer .= $this->page_name."?".
 			"module=".urlencode($module)."&".
-			"action=view\">". _($record_name);
+			"action=view\">". __($this->record_name);
 		}
 		$display_buffer .= "</a>
 		</div>
@@ -321,13 +319,12 @@ class PatientImages extends EMRModule {
 		</div>
 		<p/>
 		<div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
-		>".__("Manage Patient")."</a>
-		<b>|</b>
+		class=\"button\">".__("Manage Patient")."</a>
 		<a HREF=\"$this->page_name?module=$module&patient=$patient\"
-		>"._($this->record_name)."</a>
+		class=\"button\">".__($this->record_name)."</a>
 		</div>
 		";
- 	} // end method PatientImages->add
+ 	} // end method PatientImages->mod
 
 	function view () {
 		global $display_buffer;
