@@ -177,13 +177,13 @@ class UnfiledFaxes extends MaintenanceModule {
 		"onClick=\"return validate(this.form);\" ".
 		"class=\"button\" value=\"".__("Send to Provider")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"return validate(this.form);\" ".
+		"onClick=\"if (confirm('".addslashes(__("Are you sure that this fax contains a cover sheet?"))."')) { return validate(this.form); } else { return false; }\" ".
 		"class=\"button\" value=\"".__("Send to Provider without First Page")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"onClick=\"return validate(this.form);\" ".
 		"class=\"button\" value=\"".__("File Directly")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"return validate(this.form);\" ".
+		"onClick=\"if (confirm('".addslashes(__("Are you sure that this fax contains a cover sheet?"))."')) { return validate(this.form); } else { return false; }\" ".
 		"class=\"button\" value=\"".__("File Directly without First Page")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Split Batch")."\"/>
