@@ -78,8 +78,13 @@ class UnfiledFaxes extends MaintenanceModule {
 	function display ( ) {
 		global $display_buffer, $id;
 
-		if ($_REQUEST['submit_action'] == __("File")) {
+		switch ($_REQUEST['submit_action']) {
+			case __("File"):
 			$this->mod();
+			return false;
+
+			case __("Delete"):
+			$this->del();
 			return false;
 		}
 
@@ -87,6 +92,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			$this->table_name." WHERE id='".addslashes($_REQUEST['id'])."'");
 		$r = $GLOBALS['sql']->fetch_array($result);
 		$display_buffer .= "
+		<br/><br/><br/>
 		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
@@ -97,7 +103,7 @@ class UnfiledFaxes extends MaintenanceModule {
                 <embed SRC=\"data/fax/unfiled/".$r['ufffilename']."\"
 		BORDER=\"0\"
                 PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-                TYPE=\"image/x.djvu\" WIDTH=\"80%\" HEIGHT=\"400\"></embed>
+                TYPE=\"image/x.djvu\" WIDTH=\"100%\" HEIGHT=\"600\"></embed>
 
 		</div>
 		<div align=\"center\">
@@ -127,10 +133,25 @@ class UnfiledFaxes extends MaintenanceModule {
 		"class=\"button\" value=\"".__("File")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
 		</form>
 		";
 	} // end method display
+
+	// Delete method
+	function del () {
+		$id = $_REQUEST['id'];
+		$rec = freemed::get_link_rec($id, $this->table_name);
+		$filename = freemed::secure_filename($rec['ufffilename']);
+
+		// Remove file name
+		unlink('data/fax/unfiled/'.$filename);
+
+		// Insert new table query in unread
+		$this->_del();
+	} // end method del
 
 	// Modify method
 	function mod () {
