@@ -642,8 +642,10 @@ class Remitt {
 			$covnum++; 
 			if ($covnum < 1 or $covnum > 4) { $covnum = 0; }
 		}
+		$buffer .= $this->_tag('secondinsuredkey', $p['proccov'.$covnum], true);
+		$this->_AddDependency('coverage', $p['proccov'.$covnum]);
 		$coverage = freemed::get_link_rec($p['proccov'.$covnum], 'coverage');
-		$buffer .= $this->_tag('secondpayerkey', $coverage['covinsco'], 'coverage');
+		$buffer .= $this->_tag('secondpayerkey', $coverage['covinsco'], true);
 		$this->_AddDependency('insco', $coverage['covinsco']);
 
 		// Get other insured key
