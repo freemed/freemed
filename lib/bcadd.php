@@ -27,7 +27,7 @@ function bcadd ($left, $right, $scale) {
 	} // end checking for a dot
 
 	// handle scale of 0
-	if ($scale = 0) return $int_part;
+	if ($scale == 0) return $int_part;
 
 	// handle real parts that need more precision
 	if ($scale > strlen($real_part)) {
