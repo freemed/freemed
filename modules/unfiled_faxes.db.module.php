@@ -232,7 +232,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 			'unreadfax',
 			array (
-				"urfdate" => $_REQUEST['date'],
+				"urfdate" => fm_date_assemble('date'),
 				"urffilename" => $filename,
 				"urfpatient" => $_REQUEST['patient'],
 				"urfphysician" => $_REQUEST['physician'],
@@ -290,7 +290,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 			'images',
 			array (
-				"imagedt" => $_REQUEST['date'],
+				"imagedt" => fm_date_assemble('date'),
 				"imagepat" => $_REQUEST['patient'],
 				"imagetype" => $type,
 				"imagecat" => $cat,
