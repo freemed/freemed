@@ -715,7 +715,7 @@ class EpisodeOfCare extends EMRModule {
     // view of entire episode (central control screen)
 	function display () {
 		global $display_buffer, $id, $sql;
-		global $record_name, $save_module, $module, $_auth;
+		global $record_name, $save_module, $module, $_pass;
 		global $patient;
 
 		if ($id<1) {
@@ -761,7 +761,7 @@ class EpisodeOfCare extends EMRModule {
 		";
 
 		// DEBUG
-		global $record_name, $_auth, $module;
+		global $record_name, $_pass, $module;
 		foreach ($this->_GetAssociations() as $_garbage => $m) {
 			// Backup settings
 			$save_module = $module;
@@ -769,7 +769,7 @@ class EpisodeOfCare extends EMRModule {
 
 			// Fudge information to pass along
 			$var = freemed::module_get_meta($m, 'EpisodeOfCareVar');
-			$_auth = $var."=".urlencode($id); 
+			$_pass = $var."=".urlencode($id); 
 			$module = $m;
 			$record_name = freemed::module_get_value($m, 'MODULE_NAME');
 
@@ -809,7 +809,7 @@ class EpisodeOfCare extends EMRModule {
 		$result = $sql->query ($query);
   
 		$r_name = $record_name; // backup
-		$_auth = "proceoc=".urlencode($id);  
+		$_pass = "proceoc=".urlencode($id);  
 		$record_name = "Procedure";
 		$save_module = $module;
 		$module = "procedureModule"; // pass for the module loader
@@ -875,7 +875,7 @@ class EpisodeOfCare extends EMRModule {
 		$result = $sql->query ($query);
   
 		$r_name = $record_name; // backup
-		$_auth = "imageeoc=".urlencode($id);  
+		$_pass = "imageeoc=".urlencode($id);  
 		$record_name = __("Patient Images");
 		$save_module = $module;
 		$module = "patientImages"; // pass for the module loader
