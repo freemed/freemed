@@ -25,9 +25,10 @@ class diagnosisSet {
   // function diagnosisSet->getStack
   // -- returns the actual codes in an array
   function getStack ($null_value = "") {
-    for ($i=1;$i<=($this->stack_size);$i++)
-      $figured_stack[$i] = freemed_get_link_field (
-       $this->internal_stack[$i], "icd9", "icd9code");
+    for ($i=1;$i<=($this->stack_size);$i++) 
+      $figured_stack[$i] = ereg_replace ("[^0-9.]", "",
+       freemed_get_link_field (
+       $this->internal_stack[$i], "icd9", "icd9code"));
     return $figured_stack;
   } // end function getStack
 
