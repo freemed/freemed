@@ -37,6 +37,7 @@ print "Processing $arg_input ... ";
 open (CODES, $arg_input)      || die "could not open $arg_input";
 open (OUTPUT, ">$arg_output") || die "could not open $arg_output";
 
+<CODES>; # Skip the Medical Manager Header Record...
 while (<CODES>) {
   chop;
   $this_text = $_;
