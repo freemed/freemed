@@ -318,25 +318,26 @@ switch ($action) {
    ";
   break;
  case "add":
-  $page_title = _("Add Appointment");
-  $display_buffer .= "<CENTER>"._("Adding")." ... ";
-	// TODO: migrate to insert_query wrapper
-  $query = "INSERT INTO scheduler VALUES (
-    '".addslashes($selected_date)."',
-    '".addslashes($type)."',
-    '".addslashes($hour)."',
-    '".addslashes($minute)."',
-    '".addslashes($duration)."',
-    '".addslashes($facility)."',
-    '".addslashes($room)."',     
-    '".addslashes($physician)."',
-    '".addslashes($patient)."',
-    '".addslashes($cptcode)."',
-    '".addslashes($status)."',
-    '".addslashes($note)."',
-    '',
-    NULL )";
-  $result = $sql->query ($query);
+	$page_title = _("Add Appointment");
+	$display_buffer .= "<CENTER>"._("Adding")." ... ";
+	$query = $sql->insert_query(
+		"scheduler",
+		array (
+			"caldateof" => $selected_date,
+			"caltype" => $type,
+			"calhour" => $hour,
+			"calminute" => $minute,
+			"calduration" => $duration,
+			"calfacility" => $facility,
+			"calroom" => $room,
+			"calphysician" => $physician,
+			"calpatient" => $patient,	
+			"calcptcode" => $cptcode,
+			"calstatus" => $status,
+			"calprenote" => $note
+		)
+	);
+	$result = $sql->query ($query);
 
   if ($result) { $display_buffer .= _("done")."."; }
    else        { $display_buffer .= _("ERROR");    }
