@@ -133,6 +133,7 @@ class Messages {
 					"msgsubject" => $message['subject'],
 					"msgurgency" => $message['urgency'],
 					"msgread"    => '0',
+					"msgunique"  => mktime(),
 					"msgtime"    => SQL__NOW
 				)
 			));

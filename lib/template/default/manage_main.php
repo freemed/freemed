@@ -235,8 +235,10 @@ foreach ($static_components AS $garbage => $__component) {
 		<DIV ALIGN=\"CENTER\">
 		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\">
 		";
-		$my_result = $sql->query("SELECT * FROM messages WHERE ".
+		$my_result = $sql->query("SELECT * ".
+			"FROM messages WHERE ".
 			"msgpatient='".urlencode($id)."' ".
+			"GROUP BY msgunique ".
 			"ORDER BY msgtime DESC ".
 			"LIMIT ".$num_summary_items);
 		if ($sql->results($my_result)) {
@@ -265,9 +267,9 @@ foreach ($static_components AS $garbage => $__component) {
 					"<TD ALIGN=\"LEFT\"><SMALL>".$scheduler->get_time_string($hour,$min)."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$phyfrom->getDescription()."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$phyto->getDescription()."</SMALL></TD>".
-					"<TD ALIGN=\"LEFT\">".
+					"<TD ALIGN=\"LEFT\"><!-- ".
 					html_form::confirm_link_widget(
-					"messages.php?action=remove&id=".$my_r['id'].
+					"messages.php?action=remove&msgpatient=".$_REQUEST['id']."&id=".$my_r['id'].
 					"&return=manage", 
 					"<img SRC=\"lib/template/default/img/summary_delete.png\" BORDER=\"0\" ALT=\"".__("Delete")."\"/>",
 					array(
@@ -275,7 +277,7 @@ foreach ($static_components AS $garbage => $__component) {
 						__("Messages should NOT be deleted. Are you sure you want to delete this message?"),
 						'text' => __("Delete")
 					)).
-					"</tr>\n".
+					" --></tr>\n".
 					"<tr><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
 					prepare($my_r['msgtext']).
 					"</SMALL></TD></tr>\n";			
@@ -559,36 +561,6 @@ if (count($ms) > 0) {
 	<p/>
 	";
 } // end checking for *any* panels
-
-// **************************************************** STATIC MODULES
-
-//      $display_buffer .= "
-//        <tr><TD ALIGN=RIGHT>
-//         <B>Dependent Information</B> : 
-//        </TD><TD ALIGN=LEFT>
-//     ";
-//      removed as part of coverage overhaul
-//     if (!$this_patient->isDependent()) {
-//      $dep_query = "SELECT COUNT(*) FROM patient WHERE ptdep='".
-//                   $this_patient->id."'";
-//      $dep_result = $sql->query($dep_query);
-//      $dep_r = $sql->fetch_array($dep_result);
-//      $num_deps = $dep_r[0];
-//      if ($num_deps<1)
-//        $display_buffer .= "No Dependents";
-//      else
-//        $display_buffer .= "
-//	 <A HREF=\"patient.php?action=find&criteria=".
-//	 "dependants&f1=$id\">".__("Dependents")."</A> [$num_deps]
-//        ";
-//      } else {
-//      $guarantor = CreateObject('FreeMED.Patient',$this_patient->ptdep);
-//      $display_buffer .= "
-//         <A HREF=\"manage.php?action=view&id=".$this_patient->ptdep."\"
-//         >".__("Guarantor")."</A>
-//	</TD><TD>[".$guarantor->fullName()."]</TD></tr>
-//     ";
-//    }
 
 // Add configure to the menu bar
 if ($action != "config") {

@@ -8,7 +8,7 @@ class MessagesTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Messages Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.1';
+	var $MODULE_VERSION = '0.7.1.1';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -28,6 +28,7 @@ class MessagesTable extends MaintenanceModule {
 			'msgsubject' => SQL__VARCHAR(75),
 			'msgtext' => SQL__TEXT,
 			'msgread' => SQL__INT_UNSIGNED(0),
+			'msgunique' => SQL__VARCHAR(32),
 			'id' => SQL__SERIAL
 		);
 
@@ -91,6 +92,18 @@ class MessagesTable extends MaintenanceModule {
 				'ADD COLUMN msgrecip TEXT AFTER msgfor');
 			$sql->query('UPDATE '.$this->table_name.' '.
 				'SET msgrecip=msgfor WHERE id>0');
+		}
+
+		// Version 0.7.1.1
+		//
+		//	Add "unique" field to cut down on duplicates in
+		//	patient records, and set defaults
+		//
+		if (!version_check($version, '0.7.1.1')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN msgunique VARCHAR(32) AFTER msgread');
+			$sql->query('UPDATE '.$this->table_name.' '.
+				'SET msgunique=id WHERE id>0');
 		}
 	} // end function _update
 }

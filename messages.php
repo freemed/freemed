@@ -143,6 +143,7 @@ switch ($action) {
 	$display_buffer .= "\n<div align=\"center\">".
 		__("Adding")." ".__("Message")." ... \n";
 	$result = true;
+	$unique = mktime();
 	if ($_REQUEST['group']) {
 		$_g = freemed::get_link_rec($_REQUEST['group'], 'usergroup');
 		$my_for = array_merge($_REQUEST['msgfor'], explode(',', $_g['usergroup']));
@@ -162,6 +163,7 @@ switch ($action) {
 				"msgsubject",
 				"msgtext",
 				"msgurgency",
+				"msgunique" => $unique, // unique marker
 				"msgread" => '0' // mark as not read
 			)
 		);
@@ -189,10 +191,17 @@ switch ($action) {
 	// Perform deletion
 	if ($_REQUEST['id'] > 0) {
 		$result = $sql->query("DELETE FROM messages WHERE id='".
-			addslashes($id)."'");
+			addslashes($id)."' AND msgpatient=0");
+		$result = $sql->query("UPDATE messages SET msgread=1 WHERE ".
+			"id='".addslashes($id)."' AND msgpatient>0");
 	} elseif (is_array($_REQUEST['mark'])) {
 		$query = "DELETE FROM messages WHERE FIND_IN_SET(id, '".
-				join(",", $_REQUEST['mark'])."')";
+				join(",", $_REQUEST['mark'])."') AND ".
+				"msgpatient=0";
+		$result = $sql->query($query);
+		$query = "UPDATE messages SET msgread=1 WHERE ".
+				"FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ".
+				"AND msgpatient>0";
 		$result = $sql->query($query);
 	} else {
 		$display_buffer .= __("There is nothing to delete.");
