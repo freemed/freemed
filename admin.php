@@ -5,7 +5,7 @@
  //       language support by Max Klohn (amk@span.ch)
  // lic : GPL, v2
 
-$page_name=basename($GLOBALS["REQUEST_URI"]);
+$page_name=basename($GLOBALS["$PHP_SELF"]);
 include_once ("lib/freemed.php");
 
 //----- Login/authenticate
@@ -288,6 +288,7 @@ if ($action=="cfgform") {
     phyrefcoll   REAL,
     phychargemap TEXT,
     phyidmap     TEXT,
+    phygrpprac   INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
@@ -391,6 +392,8 @@ if ($action=="cfgform") {
     ptinsgrp1	 VARCHAR(50),
     ptinsgrp2	 VARCHAR(50),
     ptinsgrp3	 VARCHAR(50),
+    ptdead       INT UNSIGNED,
+    ptdeaddt     DATE,
     PRIMARY KEY (id)    
     )");
   if ($result) { $display_buffer .= "<LI>"._("Patients")."\n"; }
@@ -769,9 +772,21 @@ if ($action=="cfgform") {
 
   if ($re_load)
   {
-  	$result=$sql->query("INSERT INTO user VALUES (
-    	'root', '$db_password', 'Superuser', '9', '', '-1', '-1', '-1',
-    	'', NULL )");
+  	$result=$sql->query($sql->insert_query(
+		"user",
+		array (
+    			"username" => "root",
+			"userpassword" => DB_PASSWORD,
+			"userdescrip" => "Superuser",
+			"userlevel" => 9,
+			"usertype" => "misc",
+			"userfac" => "-1",
+			"userphy" => "-1",
+			"userphygrp" => "-1",
+			"userrealphy" => "0",
+			"usermanageopt" => ""
+    		)
+    	));
   	if ($result) $display_buffer .= "<I>[["._("Added Superuser")."]]</I> \n";
   }
 
