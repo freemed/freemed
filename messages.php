@@ -357,7 +357,8 @@ switch ($action) {
 				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
 				<td>".$r['msgurgency']."/5 ".
-				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a> ".
+				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(__("You wrote:")."\n".
+				":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a> ".
 				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Fwd: '.$r['msgsubject'])."\">".__("Fwd")."</a></td>
 			</tr>
 			".( $r['msgrecip'] != $r['msgfor'] ? "
