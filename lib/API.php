@@ -433,7 +433,8 @@ class freemed {
 	//	<freemed::get_link_field>
 	//
 	function get_link_rec($id="0", $table="", $force_no_cache=false) {
-		global $sql, $_cache;
+		global $sql;
+		static $_cache;
 
 		// Handle EMRi URL
 		if (!(strpos($id, "emri://") === false)) {

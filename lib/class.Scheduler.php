@@ -851,8 +851,8 @@ class Scheduler {
 		// Get the query
 		$result = $sql->query($query);
 
-		// If nothing, return empty map
-		if (!$sql->results($result)) return $maps[0];
+		// If nothing, return empty multimap
+		if (!$sql->results($result)) return $maps;
 
 		// Run through query
 		while ($r = $sql->fetch_array($result)) {
