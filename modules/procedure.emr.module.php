@@ -233,8 +233,8 @@ class procedureModule extends freemedEMRModule {
 		   prepare($proccomment)
 		) ),
 			array (
-					array ("procbalorig", VERIFY_NONNULL, NULL, _("Must Specify Amount")),
-					array ("procbalorig", VERIFY_NONZERO, NULL, _("Must Specify Amount"))
+					// need to allow 0 values for non ins bills
+					array ("procbalorig", VERIFY_NONNULL, NULL, _("Must Specify Amount"))
 				)
 		);
 

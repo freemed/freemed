@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Thu Jul 26 2001 rufustfirefly
+  - modules/procedure.emr.module.php: removed requirement for
+    procbalorig to not be zero, as it was a broken assumption
+    (David Jordan)
+
 * Thu Jul 12 2001 rufustfirefly
   - po/br.po: added Brazilian Portuguese translation from Flavio
     Jose Fonseca de Souza <flavio@tc.df.gov.br>
