@@ -150,7 +150,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			$data         = fm_split_into_array ($ffdata);
 			$format       = fm_split_into_array ($ffformat);
 			$comment      = fm_split_into_array ($ffcomment);
-			$maxlines = 25;
+			$maxlines = 50;
 			//create color array 
 			$numcolors = count($row);
 			$colors[0] = "#000000";
@@ -160,6 +160,8 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 		if ($editaction=="save")
 		{
+			// replace file data with screen content
+			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
 			$this->mod();
 			return;
 		}
@@ -193,24 +195,24 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		  <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\""."modform"."\">
 		  <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">";
 
-		$line_total = count($row); 
+		//$line_total = count($row); 
         //echo "total $line_total<BR>";
 
-        if ($line_total != 0)
-        {
-          for($i=0;$i<$line_total;$i++)
-          {
-                echo "
-                  <INPUT TYPE=HIDDEN NAME=\"row$brackets\" VALUE=\"".prepare($row[$i])."\">
-                  <INPUT TYPE=HIDDEN NAME=\"col$brackets\" VALUE=\"".prepare($col[$i])."\">
-                  <INPUT TYPE=HIDDEN NAME=\"len$brackets\" VALUE=\"".prepare($len[$i])."\">
-                  <INPUT TYPE=HIDDEN NAME=\"data$brackets\" VALUE=\"".prepare($data[$i])."\">
-                  <INPUT TYPE=HIDDEN NAME=\"format$brackets\" VALUE=\"".prepare($format[$i])."\">
-                  <INPUT TYPE=HIDDEN NAME=\"comment$brackets\" VALUE=\"".prepare($comment[$i])."\">
-                  <INPUT TYPE=HIDDEN NAME=\"colors$brackets\" VALUE=\"".prepare($colors[$i])."\">
-                  ";
-          }
-        }
+        //if ($line_total != 0)
+        //{
+        //  for($i=0;$i<$line_total;$i++)
+        //  {
+        //        echo "
+        //          <INPUT TYPE=HIDDEN NAME=\"row$brackets\" VALUE=\"".prepare($row[$i])."\">
+        //          <INPUT TYPE=HIDDEN NAME=\"col$brackets\" VALUE=\"".prepare($col[$i])."\">
+        //          <INPUT TYPE=HIDDEN NAME=\"len$brackets\" VALUE=\"".prepare($len[$i])."\">
+        //          <INPUT TYPE=HIDDEN NAME=\"data$brackets\" VALUE=\"".prepare($data[$i])."\">
+        //          <INPUT TYPE=HIDDEN NAME=\"format$brackets\" VALUE=\"".prepare($format[$i])."\">
+        //          <INPUT TYPE=HIDDEN NAME=\"comment$brackets\" VALUE=\"".prepare($comment[$i])."\">
+        //          <INPUT TYPE=HIDDEN NAME=\"colors$brackets\" VALUE=\"".prepare($colors[$i])."\">
+        //          ";
+        //  }
+        //}
 
 
 		echo "
@@ -312,6 +314,9 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 		if ($editaction=="next")
 		{
+			// replace file data with screen content
+			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
+
 			//echo "last $last<BR>";
 			$start = $start + $maxlines;
 			$last = $last + $maxlines;
@@ -331,9 +336,12 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 		if ($editaction=="prev")
 		{
+			// replace file data with screen content
+			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
+
 			//echo "last $last<BR>";
 			$start = $start - $maxlines;
-			$last = $last - $maxlines;
+			$last = $start + $maxlines;
 			//echo "last $last<BR>";
 			if ($start < 0)
 			{
@@ -380,7 +388,24 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		  </TABLE>
 		   <INPUT TYPE=HIDDEN NAME=\"start\" VALUE=\"".prepare($start)."\">
 		   <INPUT TYPE=HIDDEN NAME=\"last\" VALUE=\"".prepare($last)."\">
-		   <INPUT TYPE=HIDDEN NAME=\"maxlines\" VALUE=\"".prepare($maxlines)."\">
+		   <INPUT TYPE=HIDDEN NAME=\"maxlines\" VALUE=\"".prepare($maxlines)."\">";
+
+        if ($line_total != 0)
+        {
+          for($i=0;$i<$line_total;$i++)
+          {
+                echo "
+                  <INPUT TYPE=HIDDEN NAME=\"row$brackets\" VALUE=\"".prepare($row[$i])."\">
+                  <INPUT TYPE=HIDDEN NAME=\"col$brackets\" VALUE=\"".prepare($col[$i])."\">
+                  <INPUT TYPE=HIDDEN NAME=\"len$brackets\" VALUE=\"".prepare($len[$i])."\">
+                  <INPUT TYPE=HIDDEN NAME=\"data$brackets\" VALUE=\"".prepare($data[$i])."\">
+                  <INPUT TYPE=HIDDEN NAME=\"format$brackets\" VALUE=\"".prepare($format[$i])."\">
+                  <INPUT TYPE=HIDDEN NAME=\"comment$brackets\" VALUE=\"".prepare($comment[$i])."\">
+                  <INPUT TYPE=HIDDEN NAME=\"colors$brackets\" VALUE=\"".prepare($colors[$i])."\">
+                  ";
+          }
+        }
+		echo "
 		  <P>
 		  <CENTER>
 		  <$STDFONT_B SIZE=-1>Line Count :
@@ -690,6 +715,25 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 	}
 
+	function DoSaveScreen(&$row,&$col,&$len,&$data,&$format,&$comment,&$start,&$last) 
+	{
+		global $drow,$dcol,$dlen,$ddata,$dformat,$dcomment;
+		//echo "data start $ddata[$start]<BR>";
+		$screen=0;
+		for ($i=$start;$i<$last;$i++)
+		{
+			//echo "before $data[$i] $ddata[$screen]<BR>";
+			$col[$i] = $dcol[$screen];
+			$row[$i] = $drow[$screen];
+			$len[$i] = $dlen[$screen];
+			$data[$i] = $ddata[$screen];
+			$format[$i] = $dformat[$screen];
+			$comment[$i] = $dcomment[$screen];
+			//echo "after $data[$i] $ddata[$screen]<BR>";
+			$screen++;
+		}
+		
+	}
 
 	function add () {
 		reset ($GLOBALS);

@@ -23,6 +23,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 	var $ins_medicaid = array("26374", "26375", "MSC33", "SET22", "SPH11", "88833");
 	var $ins_commercial = array("MSC11","MSC22","MSC33","88811","88822","88833","75201","19572","94999");
     var $form_buffer;
+    var $batchno = "0000";
+    var $batchid = "000000";
+    var $subno = "000000";
     var $pat_processed;
     var $patient_forms;
     var $patient_cov;
@@ -100,22 +103,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 					$this->GenerateFixedForms($row[covpatient], $row[id]);
 				}
 			}
-			//else
-			//{
-			//	// patient bills
-			//	$query = "SELECT DISTINCT procpatient FROM procrec WHERE proccurcovtp='$bill_request_type'
-			//				AND procbalcurrent>'0'";
-			//	$result = $sql->query($query);
-			//	if (!$sql->results($result)) 
-			//	{
-			//		DIE("No patients to be Billed");
-			//	}
-			//
-			//	while($row = $sql->fetch_array($result))
-			//	{	
-			//		$this->GenerateFixedForms($row[procpatient], 0);
-			//	}
-			//}
 	
 			if (!empty($this->form_buffer))
 			{
@@ -261,7 +248,20 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
      	";
 	}
 
-	function Insurer($procstack)
+	function Insurer($procstatck)
+	{
+		global $bill_request_type;
+
+		if ($bill_request_type == PRIMARY)
+			$this->BillPrimary($procstack);
+		else
+			$this->BillSecondary($prockstack);
+		return;
+
+	}
+
+
+	function BillSecondary($procstack)
 	{
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -274,6 +274,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$row = $procstack[0]; // all rows are the same
 		$cov = $row[proccurcovid];
+		$cov2= $row[proccov1];    // we need primary ins if billing secondary
 		$pat = $row[procpatient];
 
 		$da0[recid1] = "DA0";
@@ -292,6 +293,23 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		{
 			echo "Error Insurer no insurance<BR>";
 			return;
+		}
+
+		if ($bill_request_type == SECONDARY)
+		{
+			$coverage2 = new Coverage($cov2);
+			if (!$coverage2)
+			{
+				echo "Error Insurer no primary coverage<BR>";
+				return;
+			}
+
+			$insco = $coverage2->covinsco;
+			if (!$insco)
+			{
+				echo "Error Insurer no primary insurance<BR>";
+				return;
+			}
 		}
 
 		$patient = new Patient($pat);
@@ -366,17 +384,151 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                 echo "Authorization number Invalid";
                 $auth_num = "AUTHXXXX";
             }
-            if (!date_in_range($cur_date,$auth_row[authdtbegin],$auth_row[authdtend]))
-            {
-                echo "Warning: Authorization $auth_num has expired";
+			$authdtbegin = $auth_row[authdtbegin];
+			$authdtend = $auth_row[authdtend];
+			$numprocs = count($procstack);
+			
+			for ($i=0;$i<$numprocs;$i++)
+			{
+				$procrow = $procstack[$i];
+				$procdt = $procrow[procdt];	
+			
+				if (!date_in_range($procdt,$authdtbegin,$authdtend))
+				{
+					echo "Warning: Authorization $auth_num has expired for procedure $procdt";
 
-            }
+				}
+			}
 			$da0[authno1] = $this->CleanNumber($auth_num);
         }
         else
         {
             echo "Warning - No Authorization for this procedure<BR>";
         }
+
+		
+	} // end insurer
+
+	function BillPrimary($procstack)
+	{
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		unset($GLOBALS[da0]);
+		unset($GLOBALS[da1]);
+		unset($GLOBALS[da2]);
+
+		global $da0,$da1,$da2;
+
+		$row = $procstack[0]; // all rows are the same
+		$cov = $row[proccurcovid];
+		$pat = $row[procpatient];
+
+		$da0[recid1] = "DA0";
+		$da1[recid] = "XXX";
+		$da2[recid] = "XXX";
+
+		$coverage = new Coverage($cov);
+		if (!$coverage)
+		{
+			echo "Error Insurer no coverage<BR>";
+			return;
+		}
+
+		$insco = $coverage->covinsco;
+		if (!$insco)
+		{
+			echo "Error Insurer no insurance<BR>";
+			return;
+		}
+
+		$patient = new Patient($pat);
+		if (!$patient)
+		{
+			echo "Error Insurer no patient<BR>";
+			return;
+		}
+			
+		$da0[seqno1] = "01";
+		$da0[patcntl1] = $ca0[patcntl];
+		
+		$da0[clmfileind1] = "P";
+		$da0[clmsource1] = "F";
+
+		$da0[instypcd1] = $insco->modifiers[0];
+		$da0[payerid1] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
+		$da0[payername1] = $this->CleanChar($insco->insconame);
+		$da0[patgrpno1] = $this->CleanNumber($coverage->covpatgrpno);
+		$da0[assign1] = "Y";
+		$da0[patsigsrc1] = "C";
+
+		if ($coverage->covreldep == "S")
+			$da0[patrel1] = "01";
+		if ($coverage->covreldep == "H" OR $coverage->covreldep == "W")
+			$da0[patrel1] = "02";
+		if ($coverage->covreldep == "C")
+			$da0[patrel1] = "03";
+
+		$da0[patidno1] = $this->CleanNumber($coverage->covpatinsno);
+
+		if ($coverage->covdep == 0)  // patient is the insured
+		{
+			$da0[insrdlname1] = $this->CleanChar($patient->ptlname);
+			$da0[insrdfname1] = $this->CleanChar($patient->ptfname);
+			$da0[insrdmi1] = $this->CleanChar($patient->ptmname);
+			$da0[insrdsex1] = $this->CleanChar($patient->ptsex);
+			$da0[insrddob1] = $this->CleanNumber($patient->ptdob);
+	
+		}
+		else
+		{
+			$guarantor = new Guarantor($coverage->covdep);
+			if (!$guarantor)
+			{
+				echo "Error Insurer guarantor failed<BR>";
+				return;
+			}	
+			$da0[insrdlname1] = $this->CleanChar($guarantor->guarlname);
+			$da0[insrdfname1] = $this->CleanChar($guarantor->guarfname);
+			$da0[insrdmi1] = $this->CleanChar($guarantor->guarmname);
+			$da0[insrdsex1] = $this->CleanChar($guarantor->guarsex);
+			$da0[insrddob1] = $this->CleanNumber($guarantor->guardob);
+
+		}
+		if ($row[procauth] != 0)
+        {
+            $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
+            if (!$auth_row)
+                echo "Failed to read procauth";
+			$auth_num = $auth_row[authnum];
+            if (!$auth_num)
+            {
+                echo "Authorization number Invalid";
+                $auth_num = "AUTHXXXX";
+            }
+			$authdtbegin = $auth_row[authdtbegin];
+			$authdtend = $auth_row[authdtend];
+			$numprocs = count($procstack);
+			
+			for ($i=0;$i<$numprocs;$i++)
+			{
+				$procrow = $procstack[$i];
+				$procdt = $procrow[procdt];	
+			
+				if (!date_in_range($procdt,$authdtbegin,$authdtend))
+				{
+					echo "Warning: Authorization $auth_num has expired for procedure $procdt";
+
+				}
+			}
+			$da0[authno1] = $this->CleanNumber($auth_num);
+        }
+        else
+        {
+            echo "Warning - No Authorization for this procedure<BR>";
+        }
+
+		
 
 		
 	} // end insurer
@@ -403,7 +555,11 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			return;
 		}
 
-		$ca0[patcntl] = $patient->local_record[id];
+		if (empty($patient->local_record[ptid]))
+			$ca0[patcntl] = $patient->local_record[id];
+		else
+			$ca0[patcntl] = $this->CleanChar($patient->local_record[ptid]);
+
 		$ca0[patlname] = $this->CleanChar($patient->local_record[ptlname]);
 		$ca0[patfname] = $this->CleanChar($patient->local_record[ptfname]);
 		$ca0[patdob] = $this->CleanNumber($patient->local_record[ptdob]);
@@ -427,13 +583,25 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         if ($patient->ptmarital == "widowed") 
      		$ca0[patmarital] = "W";
 
-		if ($patient->local_record == 0)
+		if ($patient->local_record[ptstatus] == 0)
 		{
 			$ca0[patstudent] = "N";
 		}
 		else
 		{
 			// look up the status record.
+			$status = freemed_get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
+			if (!$status)
+				echo "Error failed to get ptstatus<BR>";
+			if ($status == "HC")
+				$ca0[patstudent] = "N";
+			else
+			{
+				$datediff = date_diff($patient->local_record[ptdob]);
+				$yrdiff = $datediff[0];
+				echo "year diff $yrdiff<BR>";
+			}
+
 		}
 		if ($patient->local_record[ptempl] == "y")
 			$ca0[patempl] = "1";
@@ -456,22 +624,27 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			echo "Error. patient coverage invalid<BR>";
 			return;
 		}
-		if ($coverage->local_record[covtype] == PRIMARY)
-		{
-			if (fm_verify_patient_coverage($pat,SECONDARY))
-				$ca0[othrins] = "1"; // yes has other
-			else
-				$ca0[othrins] = "3"; // no
-			
-		}
-		else
-		{
-				$ca0[othrins] = "1"; // must have other
-		}
-		$ca0[clmeditind] = "F"; // comercial filing
-		//$ca0[clmtype] = "Z";
+		$covtype = $coverage->local_record[covtype];
+		$othrins = 3;  // no other coverage
 
-		// need origin codes if payer is REG06
+		if ( ($covtype == PRIMARY) AND ($row[proccov.(SECONDARY)] != 0) )
+				$othrins = "1"; // has other coverage
+		
+		if ( ($covtype == SECONDARY) AND ($row[proccov.(PRIMARY)] != 0) )
+				$othrins = "1"; // has other coverage
+
+		// NSF does not handle tertiary!
+
+		$ca0[othrins] = $othrins;
+
+		$ca0[clmeditind] = "F"; // comercial filing
+		$ca0[clmtype] = " ";
+
+		// need origin codes champus provider id if payer is REG06
+
+		// cb0 is required for champus (REG06) if the patient is
+        // under 18 at the time of service. difference between patdob and the highest date of service
+		// is < 18
 		
 
 	} // end patient
@@ -489,7 +662,12 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$aa0[recid] = "AA0";
 		$aa0[submtrid] = "FRED";
 		$aa0[subtype] = "U";
-		$aa0[subno] = "123456";  // once in 7 months!!!
+
+		$this->subno++;
+		// this should be saved in the ch table. gotton when started.
+        // incremented as used then saved when done.
+		$aa0[subno] = $this->subno;  // once in 7 months!!!
+
 		$aa0[createdt] = $this->CleanNumber($cur_date);
 		$aa0[recvrid] = "MCSI";
 		$aa0[recvrtype] = "F";
@@ -527,9 +705,16 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		
 	
 		$ba0[batchtype] = "100";  
+		
+		$this->batchno++;
 
-		$ba0[batchnum] = "0001"; // needs incrementer
-		$ba0[batchid] = "000001";  // only used once for 30 days!!!
+		$ba0[batchnum] = $this->batchno; // needs incrementer
+
+	$this->batchid++;
+		// this should be saved in the ch table. gotton when started.
+        // incremented as used then saved when done.
+		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
+
 		$ba0[taxid] = $this->CleanNumber($physician->local_record[physsn]);
 		$ba0[idtype] = "S";
 
@@ -553,14 +738,17 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$naic = $insco->inscoid;
 		$naic = strtoupper($naic);
 
+		// these carriers want the upin number
 		if (fm_value_in_array($ins_upin,$naic))
 		{
 			$ba0[upin] = $this->CleanNumber($provider_id);
 		}
+		// these carriers want the medicaid number
 		if (fm_value_in_array($ins_medicaid,$naic))
 		{
 			$ba0[mcid] = $$this->CleanNumber(provider_id);
 		}
+		// these carriers want the commercial provider number
 		if (fm_value_in_array($ins_commercial,$naic))
 		{
 			$ba0[ciid] = $this->CleanNumber($provider_id);
@@ -604,6 +792,16 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$eao[relemp] = "N";
 		$ea0[accident] = "N";
 		$ea0[symptomind] = "0";
+
+		if ($row[procrefdoc] != 0)
+		{
+			$refdoc = new Physician($row[procrefdoc]);
+			if (!$refdoc)
+				echo "Error getting referring physician<BR>";
+			$ea0[refprovid] = $this->CleanChar($refdoc->local_record[phyupin]);	
+			$ea0[reflname] = $this->CleanChar($refdoc->local_record[phylname]);	
+			$ea0[reffname] = $this->CleanChar($refdoc->local_record[phyfname]);	
+		}
 
 		if ($row[proceoc] != 0)
         {
@@ -660,13 +858,13 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         $diagset = new diagnosisSet();
         for ($i=0;$i<$count;$i++)
         {
-            $row = $procstack[$i];
+            $prow = $procstack[$i];
 
             // this should never overflow if the control break is working.
-            $diagset->testAddSet($row[procdiag1],
-                             $row[procdiag2],
-                             $row[procdiag3],
-                             $row[procdiag4]);
+            $diagset->testAddSet($prow[procdiag1],
+                             $prow[procdiag2],
+                             $prow[procdiag3],
+                             $prow[procdiag4]);
 
         }
 
@@ -680,14 +878,50 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         }
 
 
-        for ($i=1;$diagcnt>=$i;$i++)
+        for ($i=0;$i<$diagcnt;$i++)
         {
-			$var = "diag".$i;
+			$var = "diag".($i+1);
             $ea0[$var] = $this->CleanNumber($diagstack[$i]);
             //$this->edi_buffer .= $icd9code;
 
 
         }
+
+		// see if procpos is not home or office
+		$pos = 0;
+		$fac_row=0;
+		$fac_row = freemed_get_link_rec($row[procpos], "facility");
+
+        if ($fac_row)
+        {
+            // use code from facility
+            if ($fac_row[psrpos] == 0)
+            {
+                echo "Facility does not have a pos code<BR>";
+            }
+            $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
+            if (!$cur_pos)
+                echo "Failed reading pos table";
+            $pos = $cur_pos[posname];
+        }
+
+		// 11 = office 12 = home
+        if ($pos > 12)
+        {
+			$ea0[faclabname] = $this->CleanChar($fac_row[psrname]);
+			$ea1[recid] = "EA1";
+			$ea1[patcntl] = $ca0[patcntl];
+			// for these facilites the ien doubles as the facility id.
+			$ea1[faclabid] = $this->CleanChar($fac_row[psrein]);
+			$ea1[faclabaddr1] = $this->CleanChar($fac_row[psraddr1]);
+			$ea1[faclabaddr2] = $this->CleanChar($fac_row[psraddr2]);
+			$ea1[faclabcity] = $this->CleanChar($fac_row[psrcity]);
+			$ea1[faclabstate] = $this->CleanChar($fac_row[psrstate]);
+		
+			
+        }
+
+		
 
 		
 		return;
@@ -747,6 +981,15 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$fa0[startdt.($off)] = $this->CleanNumber($row[procdt]);
 			$fa0[enddt.($off)] = $this->CleanNumber($row[procdt]);
 			$fa0[pos.($off)]   = $pos;
+		
+			if ($row[proccptmod] != 0)
+			{
+				$itemcptmod  [$number_of_charges] =
+				freemed_get_link_field ($r[proccptmod], "cptmod", "cptmod");
+				if (!$itemcptmod)
+                	echo "Failed reading cptmod table<BR>";
+				$fa0[cptmod1.($off)] = $itemcptmod;
+			}
 
 			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
             if (!$cur_cpt)
@@ -786,7 +1029,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                              $row[procdiag4]);
 
 			$fa0[cpt.($off)] = $cur_cpt[cptcode];
-			$fa0[charges.($off)] = floor($row[procbalcurrent]);
+			$data = $this->MakeDecimal($row[procbalcurrent],2);
+			$fa0[charges.($off)] = $data;
 
             $diag_xref = explode(",",$diag_xref);
 			for ($x=0;$x<count($diag_xref);$x++)
@@ -796,7 +1040,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 				$var = "diag".$xoff.$off;
 				$fa0[$var] = $diag_xref[$x];
 			}
-			$fa0[units.($off)] = floor($row[procunits]);
+			$data = $this->MakeDecimal($row[procunits],1);
+			$fa0[units.($off)] = $data;
 
 
 		}
@@ -805,14 +1050,40 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		return;
 	}
 
-	function ClaimTrailer($procstack)
+	function ClaimTrailer($procstack,$buffer)
 	{
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		unset($GLOBALS[xa0]);
 		global $xa0;
 
+		$buff = explode("\n",$buffer);
+		$buffcount = count($buff);
+
+		$cxx = $dxx = $exx = $fxx = $gxx = $hxx = "00";
+		for ($i=0;$i<$buffcount;$i++)
+		{
+			if (substr($buff[$i],0,1) == "C")
+				$cxx++;
+			if (substr($buff[$i],0,1) == "D")
+				$dxx++;
+			if (substr($buff[$i],0,1) == "E")
+				$exx++;
+			if (substr($buff[$i],0,1) == "F")
+				$fxx++;
+			if (substr($buff[$i],0,1) == "G")
+				$gxx++;
+			if (substr($buff[$i],0,1) == "H")
+				$hxx++;
+		}
 		$xa0[recid] = "XA0";
+		$xa0[patcntl] = $ca0[patcntl];
+		$xa0[cxxcount] = $cxx;
+		$xa0[dxxcount] = $dxx;
+		$xa0[exxcount] = $exx;
+		$xa0[fxxcount] = $fxx;
+		$xa0[gxxcount] = $gxx;
+		$xa0[hxxcount] = $hxx;
 
 		$count = count($procstack);
 
@@ -823,15 +1094,27 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		}
 
 		$total = 0;
+		// see if patient already paid anything
+        $total_paid_bypatient = 00.00;
 
 		for ($i=0;$i<$count;$i++)
 		{
 			$row = $procstack[$i];
 			$total += $row[procbalcurrent];
+        	$query = "SELECT * FROM payrec WHERE payrecproc='$row[id]' AND
+                                            payrecsource='0' AND
+                                            payreccat='".PAYMENT."'";
+        	$pay_result = $sql->query($query) or DIE("Query failed for patient payments");
+        	while ($pay_row = $sql->fetch_array($pay_result))
+        	{
+            	$total_paid_bypatient += $pay_row[payrecamt];
+        	}
 			
 		}
-		$xa0[totalcharge] = $total;
-		
+		$data = $this->MakeDecimal($total,2);
+		$xa0[totalcharge] = $data;
+		$data = $this->MakeDecimal($total_paid_bypatient,2);
+		$xa0[pattotpd] = $data;
 		
 		return;
 	}
@@ -853,14 +1136,22 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$this->Insurer($procstack);    // insurance records 
 		$this->ClaimData($procstack);    // claim data EA0-EA1
 		$this->ServiceDetail($procstack);    // service FA0-FB0-FB1
-		$this->ClaimTrailer($procstack);    // clm trlr XA0
-		$this->ClaimTrailer($procstack);    // clm trlr XA0
-		$this->ProviderTrailer($procstack); // batch trailer
+		//$this->ClaimTrailer($procstack);    // clm trlr XA0
+		//$this->ClaimTrailer($procstack);    // clm trlr XA0
+		//$this->ProviderTrailer($procstack); // batch trailer
 	}
 
+	function MakeDecimal($data,$places)
+	{
+		$data = bcadd($data,0,$places);
+		$data = $this->CleanNumber($data);
+		return $data;		
+	
+	}
 	function CleanChar($data)
     {
             $data = stripslashes($data);
+            $data = str_replace("/"," ",$data);
             $data = str_replace("'"," ",$data);
             $data = str_replace("-"," ",$data);
             $data = str_replace(";"," ",$data);
@@ -943,7 +1234,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 									 procpatient = '$parmpatient' AND
                                      procbillable = '0' AND
                                      procbilled = '0') 
-                           	  ORDER BY procpos,procphysician,proceoc,procauth,procdt";
+                           	  ORDER BY procpos,procphysician,procrefdoc,proceoc,procauth,procdt";
      	$result = $sql->query ($query);
 
      	if (!$result or ($result==0))
@@ -957,18 +1248,20 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
        		{
 		   		$prev_pos = $r["procpos"];
 		   		$prev_doc = $r["procphysician"];
+		   		$prev_ref = $r["procrefdoc"];
 	   	   		$prev_auth = $r["procauth"];
            		$prev_eoc = $r["proceoc"];
-           		$prev_key = $prev_pos.$prev_doc.$prev_eoc.$prev_auth;
+           		$prev_key = $prev_pos.$prev_doc.$prev_ref.$prev_eoc.$prev_auth;
 				$diagset = new diagnosisSet();
            		$first_procedure = 1;
        		}
 	
 	   		$cur_pos = $r["procpos"];
 	   		$cur_doc = $r["procphysician"];
+	   		$cur_ref = $r["procrefdoc"];
        		$cur_auth = $r["procauth"];
        		$cur_eoc = $r["proceoc"];
-       		$cur_key = $cur_pos.$cur_doc.$cur_eoc.$cur_auth;
+       		$cur_key = $cur_pos.$cur_doc.$cur_ref.$cur_eoc.$cur_auth;
 
 			//echo "physician $r[procphysician]<BR>";
 
@@ -976,7 +1269,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
        		if (!($diagset->testAddSet ($r[procdiag1], $r[procdiag2],
                                     $r[procdiag3], $r[procdiag4])) OR
-            	($proccount > $this_form[ffloopnum]         )  OR
+            	($proccount == $this_form[ffloopnum]         )  OR
             	($prev_key != $cur_key) )
        		{
          		if ($prev_key != $cur_key)
@@ -987,6 +1280,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
          		// drop the current form to the buffer
 		 		$this->ProcessClaims($procstack); // batch trailer
+         		$form_buffer .= render_fixedForm ($whichform);
+				$this->ClaimTrailer($procstack,$form_buffer);
          		$this->form_buffer .= render_fixedForm ($whichform);
 
          		// reset the diag_set array
@@ -1024,6 +1319,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			//while (list($k,$v)=each($this->rendorform_variables)) 
 			//	unset($$v);
 		 	$this->ProcessClaims($procstack); // batch trailer
+         	$form_buffer .= render_fixedForm ($whichform);
+			$this->ClaimTrailer($procstack,$form_buffer);
          	$this->form_buffer .= render_fixedForm ($whichform);
 		}
 		

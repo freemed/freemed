@@ -39,8 +39,9 @@ define (WITHHOLD,             7);
 define (DEDUCTABLE,           8);
 define (FEEADJUST,            9);
 define (BILLED,               10);
-define (PATWRITEOFF,          11);
-define (INSWRITEOFF,          12);
+define (COPAY,                11);
+define (PATWRITEOFF,          12);  // not used yet
+define (INSWRITEOFF,          13);  // not used yet
 
 } // end checking for __MACROS_PHP__
 

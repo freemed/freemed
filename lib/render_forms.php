@@ -194,14 +194,24 @@ function render_FixedFormEntry ($formentry) {
                      $formentry->data                    );
   if ($debug) echo "\nnew = $this_evalled <BR>\n";
   flush();
-  if (strlen ($this_evalled) > $formentry->len) {
+  if (strlen ($this_evalled) > $formentry->len) 
+  {
     $length_adjusted = substr ($this_evalled, 0, $formentry->len);
-  } elseif (strlen ($this_evalled) < $formentry->len) {
+  } 
+  elseif (strlen ($this_evalled) < $formentry->len) 
+  {
     $this_difference = ($formentry->len) - (strlen($this_evalled));
     for ($loop=0;$loop<$this_difference;$loop++)
-      { $this_evalled .= " "; } //if ($debug) echo "\nSPACE<BR>\n"; }
+    { 
+		if ($formentry->format=="N")
+			$this_evalled = "0".$this_evalled;
+		else
+			$this_evalled .= " "; 
+    } //if ($debug) echo "\nSPACE<BR>\n"; 
     $length_adjusted = $this_evalled;
-  } else { // no change neccesary
+  } 
+  else 
+  { // no change neccesary
     $length_adjusted = $this_evalled;
   } // end of checking length
   return $length_adjusted;
@@ -236,6 +246,7 @@ function render_fixedForm ($id) {
   /* THIS DOESN'T WORK !!! SOMEONE DO AN INSERTION SORT!!!
      BEGIN FUBAR'D CODE -----------------------------------
   // bubble sort so that everything else works
+
   for ($i=($number_of_entries-1);$i>=0;$i--) {
    for ($j=1;$j<=$i;$j++) {
     $a = $form_entry [$i-1]; $b = $form_entry [$i];

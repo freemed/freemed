@@ -1,6 +1,20 @@
 freemed project changelog
 ($Id$)
 
+* Thu Mar 15 2001 fforest
+  - lib/macros  new define for COPAY transaction
+  - lib/module_edi code to remove slashes from data.
+  - lib/render_forms added code to handle Numeric formating.
+  - eoc module view was not displaying data due to missing global patient.
+  - fixed_form module  fix bug in scrolling code. If changes were made
+    to screen data the changes were not reflected in the hidden arrays.
+  - highmark module. Added code to handle student status correctly. fixed bug
+    auth validation to validate the auth dates to proc dates instead of current date.
+    added pos to sql order and control break
+  - payment module. added code to handle new COPAY transaction
+  - procedure was not displaying default info from patient rec in both add and modform
+  - many update to MSCI NSF generation for commercial carriers.
+
 * Sat Mar 10 2001 fforest
   - billing_functions - all old links removed. everything is now
     modules.

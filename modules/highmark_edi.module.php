@@ -853,28 +853,39 @@ class HighmarkEDIModule extends freemedEDIModule {
 		// a student is someone 19 years or older, not handicapped and not the insured.
 		// NOTE: How do we know if the patient is handicapped??
 
-		$emplcode = "0";
+		$studentcode = "N"; // default not a student
 
-		if ( ($this->CurPatient->local_record[ptempl] == "y") OR 
-		     ($this->CurPatient->local_record[ptempl] == "n") )
+		$ptstatus = $this->CurPatient->local_record[ptstatus];
+		if ($ptstatus != 0)
 		{
-        	$emplcode = "N";
+			$ptstatus = $freemed_get_link_field($ptstatus,"ptstatus","ptstatus");
+			if (!$ptstatus)
+			{
+        		$this->Error("Error - Failed getting ptstatus record");
+        		$studentcode = "STUCODEXX";
+			}
+			else
+			{
+				$datediff = date_diff($this->CurPatient->local_record[ptdob]);
+			
+				if ( ($ptstatus != "HC") AND 
+					 ($datediff[0] >= 19)AND
+					 ($this->Coverage->covdep!=0) )  // got a student
+				{
+					if ($this->CurPatient->local_record[ptempl] == "y") 
+					{
+						$studentcode = "F";  // fulltime
+					}
+					if ($this->CurPatient->local_record[ptempl] == "p")
+					{
+						$studentcode = "P";
+					}
+				}
+			}
 		}
-		if ( ($this->CurPatient->local_record[ptempl] == "f") OR 
-			 ($this->CurPatient->local_record[ptempl] == "p") )
-		{
-        	$emplcode = strtoupper($this->CurPatient->local_record[ptempl]);
-		}
-		if ($emplcode == "0")
-		{
-        	$this->Error("Error - insured/patient employment code is not ANSI X12 Compliant!");
-        	$this->edi_buffer = $this->edi_buffer."X";
-		}
-		else
-		{
-        	$this->edi_buffer = $this->edi_buffer.$emplcode;
 
-		}
+        $this->edi_buffer = $this->edi_buffer.$studentcode;
+
 
 		// the PAT record also has dates of death which would go here
 
@@ -950,7 +961,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		//$phygroup_select = "procpos = '".$this->billing_providerid."'".
 		//		" AND procphysician IN($this->group_physicians) AND";
 		$phygroup_order = "ORDER BY procphysician,proceoc,procauth,procrefdoc,proccurcovid,proccov1,procdt";
-		$normal_order = "ORDER BY proceoc,procauth,procrefdoc,proccurcovid,proccov1,procdt";
+		$normal_order = "ORDER BY procpos,proceoc,procauth,procrefdoc,proccurcovid,proccov1,procdt";
 	
 		$xtraselect = "";	
 		if ($this->phygrp_row != 0)
@@ -1084,15 +1095,12 @@ class HighmarkEDIModule extends freemedEDIModule {
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
+		$row = $procstack[0];
+
 		$pos = 0;
-		if ($this->fac_row != 0)
+		if ($row[procpos] != 0)
 		{
-			// use code from facility
-			if ($this->fac_row[psrpos] == 0)
-			{
-				$this->Error("Facility does not have a pos code");
-			}
-			$cur_pos = freemed_get_link_rec($this->fac_row[psrpos], "pos");
+			$cur_pos = freemed_get_link_rec($row[procpos], "pos");
 			if (!$cur_pos)
 				$this->Error("Failed reading pos table");
 			$pos = $cur_pos[posname];
@@ -1135,7 +1143,6 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$maxdt = max($dates);
 
 		// all rows should have the same eoc,auth
-		$row = $procstack[0];
 		$current_patient = $this->CurPatient->id;
 
 		$accident_date = 0;
@@ -1222,16 +1229,26 @@ class HighmarkEDIModule extends freemedEDIModule {
 				$this->Error("Failed to read procauth");
 			$auth_num = $this->CleanNumber($auth_row[authnum]);
 			$auth_num = $this->CleanChar($auth_num);
-			if (!$auth_name)
+			if (!$auth_num)
 			{
 				$this->Error("Authorization number Invalid");
 				$auth_num = "AUTHXXXX";
 			}
-			if (!date_in_range($cur_date,$auth_row[authdtbegin],$auth_row[authdtend]))
+			//validate auth date for each procedure 
+			$authdtbegin = $auth_row[authdtbegin];
+			$authdtend = $auth_row[authdtend];
+	
+			for ($i=0;$i<$count;$i++)
 			{
-				$this->Error("Warning: Authorization $auth_num has expired");
+				$prow = $procstack[$i];
+				$procdt = $row[procdt];
+				if (!date_in_range($procdt,$authdtbegin,$authdtend))
+				{
+					$this->Error("Warning: Authorization $auth_num has expired for Procedure $procdt");
 
+				}
 			}
+
 			$this->edi_buffer = $this->edi_buffer."REF*G1*".
 					$auth_num.$this->record_terminator;
 		}
@@ -1955,7 +1972,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		}
 		else
 		{
-        	$key = $row[proceoc].$row[procauth].$row[procrefdoc].
+        	$key = $row[procpos].$row[proceoc].$row[procauth].$row[procrefdoc].
 						$row[proccurcovid].$row[proccov1];
 		}
         return $key;

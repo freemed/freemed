@@ -106,6 +106,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 $this->transaction_wizard($item, REBILL);
             }
 
+            if ($viewaction=="copay")
+            {
+                $this->transaction_wizard($item, COPAY);
+            }
+
             if ($viewaction=="payment")
             {
                 $this->transaction_wizard($item, PAYMENT);
@@ -349,15 +354,6 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                             ) )
                 );
 
-                //$wizard->add_page(
-                //    "Step Three: Adjustment Information",
-                //    array ("payrecdescrip"),
-                //    html_form::form_table ( array (
-                //                                _("Description") =>
-                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
-                //                            ) )
-                //);
                 break; // end of adjustment
             case REFUND: // refund (2)
                 $wizard->add_page (
@@ -384,16 +380,29 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
                                             ) )
                 );
-                //$wizard->add_page(
-                //    "Step Three: Refund Information",
-                //    array ("payrecdescrip"),
-                //    html_form::form_table ( array (
-                //                                _("Description") =>
-                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
-                //                            ) )
-                //);
+
                 break; // end of refund
+
+            case COPAY: // copay (11)
+                $wizard->add_page (
+                    "Step Two: Describe the Copayment",
+                    array_merge(array ("payrecamt", "payrecdescrip"),date_vars("payrecdt")),
+                    html_form::form_table ( array (
+                                                "Date of Copay" =>
+                                                                  fm_date_entry ("payrecdt"),
+
+                                                _("Description") =>
+                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n",
+                                                "Copay Amount" =>
+                                                                 "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
+                                                                 "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
+
+                                            ) )
+                );
+
+                break; // end of copay
+
 
             case DENIAL: // denial (3)
                 $wizard->add_page (
@@ -417,15 +426,6 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                             ) )
                 );
 
-                //$wizard->add_page(
-                //    "Step Three: Denial Information",
-                //    array("payrecdescrip"),
-                //    html_form::form_table ( array (
-                //                                _("Description") =>
-                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
-                //                            ) )
-                //);
                 break; // end of denial
 
             case TRANSFER: // transfer (6)
@@ -444,15 +444,6 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                             ) )
                 );
 
-                //$wizard->add_page(
-                //    "Step Three: Transfer Information",
-                //    array("payrecdescrip"),
-                //    html_form::form_table ( array (
-                //                                _("Description") =>
-                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
-                //                            ) )
-                //);
                 break; // end of denial
             case REBILL: // rebill 4
                 $wizard->add_page(
@@ -533,6 +524,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 					$payrecamt = abs($payrecamt);
                     break; // end adjustment category 
 
+				case COPAY: // copay
+					$payreclink = $patient;
+					$payrecsource = 0; // patient is source
+					break;
                 case FEEADJUST: // adjustment category (add) 1
 					// calc the payrecamt
 					$payreclink = $this->coverageIDFromType($proccovmap,$payrecsource);
@@ -689,6 +684,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                              WHERE id='".addslashes($payrecproc)."'";
 					break;
                 case PAYMENT: // payment category (add) 0
+                case COPAY: // copay is a payment but we need to know the difference
                 default:  // default is payment
 					$procamtpaid = $procamtpaid + $payrecamt;
 					$procbalcurrent = $proccharges - $procamtpaid;
@@ -942,6 +938,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $proc_payments += $payment;
                     break;
             	case PAYMENT: default: // default is payments 0
+            	case COPAY: default: // default is payments 0
                     $pay_color       = "#ff0000";
                     $payment         = bcadd($payrecamt, 0, 2);
                     $charge          = "&nbsp;";
@@ -979,6 +976,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     break;
                 case BILLED: // billed 10
                     $this_type = "Billed ".$PAYER_TYPES[$r["payrecsource"]];
+                    break;
+                case COPAY: // COPAY 11
+                    $this_type = "Copay";
                     break;
                 case PAYMENT: // payment 0
                 default:  // default is payment
@@ -1218,6 +1218,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             <OPTION VALUE=\"refresh\"  >Refresh
             <OPTION VALUE=\"rebill\"  >Rebill
             <OPTION VALUE=\"payment\" >Payment
+            <OPTION VALUE=\"copay\" >CoPay
             <OPTION VALUE=\"adjustment\" >Adjustment
             <OPTION VALUE=\"deductable\" >Deductable
             <OPTION VALUE=\"withhold\" >Withhold

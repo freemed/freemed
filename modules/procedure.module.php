@@ -14,6 +14,37 @@ class procedureModule extends freemedEMRModule {
 
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
+    var $proc_fields = array(
+            "procpatient",
+            "proceoc",
+			"proccpt",
+            "proccptmod",
+            "procdiag1",
+            "procdiag2",
+            "procdiag3",
+            "procdiag4",
+            "proccharges",      
+            "procunits",
+            "procvoucher",
+            "procphysician",
+            "procdt",		
+            "procpos",
+            "proccomment",
+            "procbalorig",
+            "procbalcurrent",	
+            "procamtpaid",	
+            "procbilled",
+            "procbillable",
+            "procauth",
+            "procrefdoc",
+            "procrefdt",			
+			"proccurcovid",     
+			"proccurcovtp",    
+			"proccov1",       
+			"proccov2",      
+			"proccov3",     
+			"proccov4"
+		);    
 
 
 	function procedureModule () {
@@ -31,13 +62,21 @@ class procedureModule extends freemedEMRModule {
 		if (!$been_here) {
     switch ($action) { // inner action switch
      case "addform":
+	  global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
       $procunits = "1.0";        // default value for units
-      $procdiag1      = $this->this_patient->local_record[ptdiag1];
-      $procdiag2      = $this->this_patient->local_record[ptdiag2];
-      $procdiag3      = $this->this_patient->local_record[ptdiag3];
-      $procdiag4      = $this->this_patient->local_record[ptdiag4];
+	  $patient = new Patient($patient);
+      $procdiag1      = $patient->local_record[ptdiag1];
+      $procdiag2      = $patient->local_record[ptdiag2];
+      $procdiag3      = $patient->local_record[ptdiag3];
+      $procdiag4      = $patient->local_record[ptdiag4];
+	  $procphysician = $patient->local_record[ptdoc];
+	  $procrefdoc = $patient->local_record[ptrefdoc];
       break; // end of addform (inner)
      case "modform":
+	   while(list($k,$v)=each($this->proc_fields))
+       {
+            global $$v;
+       }
       $this_data = freemed_get_link_rec ($id, $this->table_name);
       extract ($this_data); // extract all of this data
       break; // end of modform (inner)

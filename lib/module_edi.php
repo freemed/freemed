@@ -377,6 +377,7 @@ class freemedEDIModule extends freemedModule {
 	function CleanChar($data)
 	{
 			$data = stripslashes($data);
+			$data = str_replace("/"," ",$data);
 			$data = str_replace("'"," ",$data);
 			$data = str_replace("-"," ",$data);
 			$data = str_replace(";"," ",$data);

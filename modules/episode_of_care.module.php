@@ -64,6 +64,7 @@ class episodeOfCare extends freemedEMRModule {
 	} // end constructor episodeOfCare
 
 	function form () {
+		reset ($GLOBALS);
 		foreach ($GLOBALS as $k => $v) global $$k;
 
    switch ($action) {
@@ -650,7 +651,9 @@ class episodeOfCare extends freemedEMRModule {
 	} // end function episodeOfCare->display
 
 	function view () {
-		global $sql;
+		//global $sql;
+		reset ($GLOBALS);
+		foreach ($GLOBALS as $k => $v) global $$k;
 
 		echo freemed_display_itemlist(
 			$sql->query ("SELECT * FROM $this->table_name
