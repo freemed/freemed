@@ -6,9 +6,6 @@
 $page_name = 'logout.php';
 include_once ('lib/freemed.php');
 
-// Header("Location: ".COMPLETE_URL); // 19990610 - header instead
-//if (strlen($_URL)>0) $__url_part = "?_URL=".urlencode($_URL);
-
 //----- Destroy authdata and ipaddr from session
 unset($_SESSION['authdata']);
 unset($_SESSION['ipaddr']);
