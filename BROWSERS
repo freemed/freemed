@@ -2,8 +2,7 @@ freemed-project browser compatibility listing
 by jeff b (jeff@univrel.pr.uconn.edu)
 Copyright 1999 under the GPL, version 2.
 
-Created       : 19990615
-Last Modified : 20000801
+$Id$
 
 Any statements of compatibility are listed here without
 explicit or implicit guarantee of functionality, but
@@ -43,6 +42,10 @@ KFM v1.1.1 [Linux/KDE] - Has some rendering problems, but
   * As of 19990803, for some reason, everything works
   absolutely flawlessly. I wonder when the pendulum will
   fall... (19990803)
+
+Konqueror 2.0 [Linux/KDE] - I now use this as my primary
+  browser. There are some small problems that may still
+  exist in TEXTAREA fields, but seems to be good. (20001212)
 
 Lynx v2.8.1 [Linux] - Works well, doesn't seem to have any
   known problems. Please note that this browser is TEXT

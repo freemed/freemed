@@ -1,11 +1,11 @@
+$Id$
 *******************************************************************************
                                                         freemed project credits
                        (c) 1999 by the freemed project under the GPL, version 2
-                                                         last modified 19990929
 *******************************************************************************
 
 Project Leader                                                           Dr Gnu
-                                                (dr_gnu@strangelove.dyndns.org)
+                                                       (dr_gnu@ourexchange.net)
 
 Head Project Coder                                                       jeff b
                                                     (jeff@univrel.pr.uconn.edu)
@@ -30,6 +30,10 @@ Coders                                                                Max Klohn
                                                                Ergin Soysal, MD
                                                                 language loader
                                                         (soysal@pleksus.net.tr)
+
+                                                                  Fred Forester
+                                                               billing routines
+                                                       (fforest@netcarrier.com)
 
 Translators                                                           Max Klohn
                                                       French [FR], Spanish [SP]

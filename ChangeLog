@@ -1,5 +1,17 @@
 freemed project changelog
 
+* Tue Dec 12 2000 rufustfirefly
+  - moved payment_record.php over to using the wizard class
+  - fixed display problems in payment_record ledger
+  - added konqueror to the BROWSERS list
+  - added Fred Forester to the CREDITS list
+  - moved roomequip.php3 -> roomequip.php
+  - moved tos.php3 -> type_of_service.php
+  - procedure.php:
+    - fixed back from delete action / fixed delete action
+    - fixed stupid break from yesterday
+    - cleaned up output ... centering, etc
+
 * Mon Dec 11 2000 rufustfirefly
   - increased version number to 0.2.0-20001211 (CVS version)
   - moved in gettext and bcmath module detection into global.var.inc to 

@@ -3,10 +3,9 @@ by jeff b (jeff@univrel.pr.uconn.edu)
 (c) 1999 under the GPL, version 2
 
 20000405 -------------------------------------------------------
- * perhaps move to mcal as soon as libmcal stabilizes
- * move from $Language_Variable to $phrase[Language_Variable]
+ * perhaps move to mcal as soon as libmcal stabilizes (this should
+   be easier now that jeff is developing libmcal as well)
  * move from .php3 -> .php for the futures' sake
- * RPM packages
  * rehash generate_fixed_forms.php3 to be nice
  * XML/HL7 generation routines for billing
  * sync across installs for patients
@@ -17,8 +16,6 @@ by jeff b (jeff@univrel.pr.uconn.edu)
    code, symbols, etc, and redoing for current work
  * implement scheduling using vCalendar interface, so as to work
    with PalmPilots, etc
- * implement <$STDFONT_B>, <$STDFONT_E>, <$HEADERFONT_B> and
-   <$HEADERFONT_E> across all modules, replacing outdated <TT>s
  * insurance payments related dbs and tie-ins, possibly with API
    revisions
  * clarify terms

@@ -22,52 +22,42 @@
 
  switch ($action) {
 
-  case "addform":
-   freemed_display_box_top (_("Add")." "._($record_name));
-   echo freemed_patient_box ($this_patient)."
-     <P>
+  case "addform": case "add":
+   // ************** PREP STUFF ****************
 
-     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
-      ALIGN=CENTER>
-
-     <TR>
-      <TD COLSPAN=2 ALIGN=CENTER>
-       <$HEADERFONT_B>Step One: Select the Item &amp;
-         Type/Category<$HEADERFONT_E>
-      </TD>
-     </TR>
-
-     <FORM ACTION=\"$page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"_auth\"   VALUE=\"$_auth\">
-     <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"addform1\">
-     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Procedure : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-       <SELECT NAME=\"payrecproc\">
-        <OPTION VALUE=\"0\">"._("NONE SELECTED")."
-  ";
-  // grab all procedures for patient (with non-zero balance)
-  $procs = fdb_query ("SELECT * FROM procrec
+   // grab all procedures for patient (with non-zero balance)
+   $procs = fdb_query ("SELECT * FROM procrec
                        WHERE ((procpatient='$patient')
                        AND (procbalcurrent>0))");
-  if (($procs==0) or (fdb_num_rows ($procs)>0)) { // if there are results...
-   while ($p_r = fdb_fetch_array ($procs)) {
-     if (($procedure>0) and ($procedure==$p_r["id"]))
-       { $this_selected = "SELECTED"; } else { $this_selected = ""; }
-     echo "\n      <OPTION VALUE=\"".$p_r["id"].
-                   "\" $this_selected>".$p_r["procdt"]." - ".$p_r["procdesc"].
-              "(".freemed_get_link_field($p_r["proccpt"], "cpt", "cptnameint").
-              ")"; 
-   } // end while there are results
-  } // end if there are results
-  echo "
-       </SELECT>
-      </TD>
-     </TR>
+   if (($procs==0) or (fdb_num_rows ($procs)>0)) { // if there are results...
+    while ($p_r = fdb_fetch_array ($procs)) {
+      if (($procedure>0) and ($procedure==$p_r["id"]))
+        { $this_selected = "SELECTED"; } else { $this_selected = ""; }
+      $procedures_to_display .= "\n      <OPTION VALUE=\"".$p_r["id"].
+                    "\" $this_selected>".$p_r["procdt"]." - ".$p_r["procdesc"].
+               "(".freemed_get_link_field($p_r["proccpt"], "cpt", "cptnameint").
+               ")"; 
+    } // end while there are results
+   } // end if there are results
 
+   // *************** DISPLAY TOP **************
+   //freemed_display_box_top (_("Add")." "._($record_name));
+   //echo freemed_patient_box ($this_patient)."<P>\n";
+
+ 
+   // **************** FORM THE WIZARD ***************
+   $wizard = new wizard (array("action", "patient", "_auth"));
+
+   $wizard->add_page (
+     "Step One: Select the Item & Type/Category",
+     array (),
+     form_table ( array (
+       _("Procedure") =>
+       "<SELECT NAME=\"payrecproc\">
+        <OPTION VALUE=\"0\">"._("NONE SELECTED")."\n".
+        $procedures_to_display."  </SELECT>\n"
+     ) ).
+     "<TABLE ALIGN=CENTER BORDER=0 CELLSPACING=0 CELLPADDING=2>
      <TR>
       <TD ALIGN=RIGHT>
        <INPUT TYPE=RADIO NAME=\"payreccat\" VALUE=\"0\" CHECKED>
@@ -107,72 +97,40 @@
        <$STDFONT_B>Rebill<$STDFONT_E>
       </TD>
      </TR>
+    </TABLE></CENTER>"
+   );
 
-     <TR>
-      <TD COLSPAN=2 ALIGN=CENTER>
-       <CENTER>
-        <INPUT TYPE=SUBMIT VALUE=\"Continue\">
-       </CENTER>
-      </TD>
-     </TR>
-
-     </FORM>
-
-     </TABLE>
-   ";
-   freemed_display_box_bottom ();
-   break;
-
-  case "addform1":
+   // ************** SECOND STEP PREP ****************
    // determine closest date if none is provided
    if (empty($payrecdt) and empty($payrecdt_y))
      $payrecdt = $cur_date; // by default, the date is now...
 
-   // actual display
-   freemed_display_box_top (_("Add")." "._($record_name));
-
    // if a patient is provided...
    if ($patient>0) {
      if (empty($payrecsource)) $payrecsource = 1; // set to patient payment
-     echo freemed_patient_box ($this_patient);
    }
 
-   // addform1 action, top of form/table
-   echo "
-     <P>
-     <FORM ACTION=\"$page_name\" METHOD=POST>
-      <INPUT TYPE=HIDDEN NAME=\"action\"     VALUE=\"addform2\">
-      <INPUT TYPE=HIDDEN NAME=\"patient\"    VALUE=\"$patient\">
-      <INPUT TYPE=HIDDEN NAME=\"payreccat\"  VALUE=\"$payreccat\">
-      <INPUT TYPE=HIDDEN NAME=\"payrecproc\" VALUE=\"$payrecproc\">
-
-     <TABLE WIDTH=100% BORDER=0 CELLSPACING=2 CELLPADDING=2
-      VALIGN=MIDDLE ALIGN=CENTER>
-
-   ";
+   // ************* ADD PAGE FOR STEP TWO *************
 
    switch ($payreccat) {
     case PAYMENT: // payment (0)
-    echo "
-     <TR><TD COLSPAN=2>
-     <$HEADERFONT_B>Step Two: Describe the Payment<$HEADERFONT_E>
-     </TD></TR>
-
-     <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>Payment Source : <$STDFONT_E></TD>
-      <TD><SELECT NAME=\"payrecsource\">
-       <OPTION VALUE=\"0\" ".
+    $wizard->add_page (
+      "Step Two: Describe the Payment",
+      array ("payrecsource", "payrectype", "payrecdt_m", "payrecdt_y",
+        "payrecdt_d", "payrecamt"),
+      form_table ( array (
+        "Payment Source" =>
+          "<SELECT NAME=\"payrecsource\">
+         <OPTION VALUE=\"0\" ".
         ( ($payrecsource==0) ? "SELECTED" : "" ).">Insurance Payment 
        <OPTION VALUE=\"1\" ".
         ( ($payrecsource==1) ? "SELECTED" : "" ).">Patient Payment
        <OPTION VALUE=\"2\" ".
         ( ($payrecsource==2) ? "SELECTED" : "" ).">Worker's Comp
-      </SELECT></TD>
-     </TR>
+      </SELECT>",
 
-     <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>Payment Type : <$STDFONT_E></TD>
-      <TD><SELECT NAME=\"payrectype\">
+      "Payment Type" =>
+        "<SELECT NAME=\"payrectype\">
        <OPTION VALUE=\"0\" ".
         ( ($payrectype==0) ? "SELECTED" : "" ).">cash
        <OPTION VALUE=\"1\" ".
@@ -186,163 +144,202 @@
         ( ($payrectype==4) ? "SELECTED" : "" ).">traveller's check
        <OPTION VALUE=\"5\" ".
         ( ($payrectype==5) ? "SELECTED" : "" ).">EFT
-      </SELECT></TD>
-     </TR>
+      </SELECT>",
 
-     <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>Date Received : <$STDFONT_E></TD>
-      <TD>".fm_date_entry ("payrecdt")."
-      </TD>
-     </TR>
+      "Date Received" =>
+        fm_date_entry ("payrecdt"),
 
-     <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>Payment Amount : <$STDFONT_E></TD>
-      <TD><INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=15
-       VALUE=\"".prepare($payrecamt)."\"></TD>
-     </TR>
-   ";
+      "Payment Amount" =>
+        "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=15 ".
+        "VALUE=\"".prepare($payrecamt)."\">\n"
+    ) )
+   );
+
+   // second page of payments
+   $second_page_array = "";
+
+    switch ($payrecsource) {
+      case "1":
+       if ($patient>0) {
+        $second_page_array["Patient"] =
+          "<TD ALIGN=LEFT><I>".$this_patient->fullName()."</I>
+           <INPUT TYPE=HIDDEN NAME=\"payreclink\" ".
+           "VALUE=\"".prepare($patient)."\">\n";
+       } else {
+        echo "
+          <TR><TD COLSPAN=2><CENTER>NOT IMPLEMENTED YET!</CENTER>
+          </TD></TR>
+        ";
+       }
+       break;
+      case "0": default:
+        $second_page_array["Insurance Company"] =
+        "<SELECT NAME=\"payreclink\">".
+        $this_patient->insuranceSelection().
+        "</SELECT>\n";
+       break;
+    } // payment source switch end
+ 
+    switch ($payrectype) {
+     case "1": // check
+      $second_page_array["Check Number"] =
+       "<INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=20 ".
+       "VALUE=\"".prepare($payrecnum)."\">\n";
+      break;
+     case "2": // money order
+      $second_page_array[] = "<B>NOT IMPLEMENTED YET!</B><BR>\n";
+      break;
+     case "3": // credit card
+      $second_page_array["Credit Card Number"] =
+       "<INPUT TYPE=TEXT NAME=\"payrecnum_1\" SIZE=17 ".
+       "MAXLENGTH=16 VALUE=\"".prepare($payrecnum_1)."\">\n";
+ 
+      $second_page_array["Expiration Date"] =
+        number_select ("payrecnum_e1", 1, 12, 1, true).
+        "\n <B>/</B>&nbsp; \n".
+        number_select ("payrecnum_e2", (date("Y")-2), (date("Y")+10), 1);
+      break;
+     case "4": // traveller's check
+      $second_page_array["Cheque Number"] =
+        "<INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=21 ".
+        "MAXLENGTH=20 VALUE=\"".prepare($payrecnum)."\">\n";
+      break; 
+     case "5": // EFT
+      $second_page_array[] = "<B>NOT IMPLEMENTED YET!</B><BR>\n";
+      break;
+     case "0": default: // if nothing... (or cash)
+      break;
+    } // end of type switch
+
+   $second_page_array[_("Description")] =
+     "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+     "VALUE=\"".prepare($payrecdescrip)."\">\n";
+
+   $wizard->add_page(
+     "Step Three: Specify the Payer",
+     array ("payreclink", "payrecdescrip", "payrecnum",
+            "payrecnum_e1", "payrecnum_e2"),
+     form_table ( $second_page_array )
+   );
+
    break; // end of payment
 
    case ADJUSTMENT: // adjustment (1)
-   echo "
-     <TR>
-      <TD ALIGN=CENTER COLSPAN=2>
-       <$HEADERFONT_B>Step Two: Describe the Adjustment<$HEADERFONT_E> 
-      </TD>
-     </TR>
+   $wizard->add_page (
+     "Step Two: Describe the Adjustment",
+     array ("payreclink", "payrecdt", "payrecamt"),
+     form_table ( array (
+       "Insurance Company" =>
+         freemed_display_selectbox (
+           fdb_query ("SELECT insconame,inscocity,inscostate,id FROM insco
+           ORDER BY insconame,inscostate,inscocity"),
+           "#insconame# (#inscocity#, #inscostate#)", "payreclink" 
+         ),
 
-     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Insurance Company : <$STDFONT_E></TD>
-     <TD ALIGN=LEFT>
-   ".
-   freemed_display_selectbox (
-     fdb_query ("SELECT insconame,inscocity,inscostate,id FROM insco
-       ORDER BY insconame,inscostate,inscocity"),
-       "#insconame# (#inscocity#, #inscostate#)", "payreclink" 
-   )."
-     </TD>
-     </TR>
+       "Date Received" =>
+         fm_date_entry ("payrecdt"),
 
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Date Received : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-    ".fm_date_entry ("payrecdt")."
-      </TD>
-     </TR>
+       "Adjustment Amount" =>
+       "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=9 ".
+       "VALUE=\"".prepare($payrecamt)."\">\n"
+     ) )
+   );
 
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Adjustment Amount : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-       <INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=9>
-      </TD>
-     </TR>
-   ";
+   $wizard->add_page(
+     "Step Three: Adjustment Information",
+     array ("payrecdescrip"),
+     form_table ( array (
+       _("Description") =>
+         "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+         "VALUE=\"".prepare($payrecdescrip)."\">\n"
+     ) )
+   );
    break; // end of adjustment
 
    case REFUND: // refund (2)
-   echo "
-     <TR>
-      <TD COLSPAN=2 ALIGN=CENTER>
-       <$HEADERFONT_B>Step Two: Describe the Refund<$HEADERFONT_E>
-      </TD>
-     </TR>
+   $wizard->add_page (
+     "Step Two: Describe the Refund",
+     array ("payrecdt_y", "payrecdt_m", "payrecdt_d",
+            "payrecamt", "payreclink"),
+     form_table ( array (
+       "Date of Refund" =>
+         fm_date_entry ("payrecdt"),
 
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Date of Refund : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-   ".fm_date_entry ("payrecdt")."
-      </TD>
-     </TR>
+       "Refund Amount" =>
+         "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
+         "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
 
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Refund Amount : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-       <INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10
-        MAXLENGTH=9 VALUE=\"$payrecamt\">
-      </TD>
-     </TR>
-
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Destination : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-       <SELECT NAME=\"payreclink\">
+       "Destination" =>
+         "<SELECT NAME=\"payreclink\">
         <OPTION VALUE=\"0\" ".
          ( ($payreclink==0) ? "SELECTED" : "" ).">Apply to credit
         <OPTION VALUE=\"1\" ".
          ( ($payreclink==1) ? "SELECTED" : "" ).">Refund to patient
-       </SELECT>
-      </TD>
-     </TR>
-   ";
+       </SELECT>\n"
+     ) )
+   );
+   $wizard->add_page(
+     "Step Three: Refund Information",
+     array ("payrecdescrip"),
+     form_table ( array (
+       _("Description") =>
+       "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+       "VALUE=\"".prepare($payrecdescrip)."\">\n"
+     ) )
+   );
    break; // end of refund
 
    case DENIAL: // denial (3)
-   echo "
-     <TR>
-      <TD COLSPAN=2 ALIGN=CENTER>
-       <$HEADERFONT_B>Step Two: Describe the Denial<$HEADERFONT_E>
-      </TD>
-     </TR>
+   $wizard->add_page (
+     "Step Two: Describe the Denial",
+     array ("payrecdt_y", "payrecdt_m", "payrecdt_d", "payreclink"), 
+     form_table ( array (
+       "Date of Denial" =>
+         fm_date_entry ("payrecdt"),
 
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Date of Denial : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-   ".fm_date_entry ("payrecdt")."
-      </TD>
-     </TR>
-
-     <TR>
-      <TD ALIGN=RIGHT>
-       <$STDFONT_B>Adjust to Zero? : <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-       <SELECT NAME=\"payreclink\">
+       "Adjust to Zero?" =>
+         "<SELECT NAME=\"payreclink\">
         <OPTION VALUE=\"0\" ".
            ( ($payreclink==0) ? "SELECTED" : "" ).">no
         <OPTION VALUE=\"1\" ".
            ( ($payreclink==1) ? "SELECTED" : "" ).">yes
-       </SELECT>
-      </TD>
-     </TR>
-   ";
+       </SELECT>\n"
+     ) )
+   );
+
+   $wizard->add_page(
+     "Step Three: Denial Information",
+     array("payrecdescrip"),
+     form_table ( array (
+        _("Description") =>
+          "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+          "VALUE=\"".prepare($payrecdescrip)."\">\n"
+     ) )
+   );
    break; // end of denial
 
    case REBILL: // rebills (4)
-   echo "
-     <TR>
-      <TD COLSPAN=2 ALIGN=CENTER>
-       <$HEADERFONT_B>Step Two: Describe the Rebill<$HEADERFONT_E>
-      </TD>
-     </TR>
-   ";
+   // no page for this one
+   //  "Step Two: Describe the Rebill",
+    case REBILL: // rebill (addform2) 4
+   $wizard->add_page(
+     "Step Two: Rebill Information",
+     array ("payrecdescrip"),
+     form_table ( array (
+       _("Description") =>
+         "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+         "VALUE=\"".prepare($payrecdescrip)."\">\n"
+     ) )
+   );
    break; // end of rebills
 
    default: // we shouldn't be here
-     echo "D'OH!";
+     // do nothing -- we haven't selected payments yet
    break;
   } // end switch payreccat
 
-  // addform1 action, end of table
-  echo "
-     </TABLE>
-
-     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\" Continue \">
-     <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-     </FORM>
-     </CENTER>
-     <P>
-   ";
-   freemed_display_box_bottom ();
-   break;
-
-  case "addform2":
-   if (empty($payrecamt)) {
+   // we should figure out a better way to do this...
+   if (0 == 1) {
      freemed_display_box_top (_("Adding")." "._($record_name));
      echo "
       <P>
@@ -369,194 +366,19 @@
      freemed_close_db ();
      DIE("");
    } // end checking for empty payrecamt
-   freemed_display_box_top (_("Adding")." "._($record_name));
-   echo freemed_patient_box ($this_patient)."
-    <P>
-   
-    <TABLE WIDTH=100% CELLSPACING=2 CELLPADDING=2 BORDER=0
-     VALIGN=MIDDLE ALIGN=CENTER>
 
-    <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
-    <INPUT TYPE=HIDDEN NAME=\"payrecproc\"   VALUE=\"$payrecproc\">
-    <INPUT TYPE=HIDDEN NAME=\"payreccat\"    VALUE=\"$payreccat\">
-    <INPUT TYPE=HIDDEN NAME=\"payrecsource\" VALUE=\"$payrecsource\">
-    <INPUT TYPE=HIDDEN NAME=\"payrectype\"   VALUE=\"$payrectype\">
-    <INPUT TYPE=HIDDEN NAME=\"payrecamt\"    VALUE=\"$payrecamt\">
-    <INPUT TYPE=HIDDEN NAME=\"payrecdt_y\"   VALUE=\"$payrecdt_y\">
-    <INPUT TYPE=HIDDEN NAME=\"payrecdt_m\"   VALUE=\"$payrecdt_m\">
-    <INPUT TYPE=HIDDEN NAME=\"payrecdt_d\"   VALUE=\"$payrecdt_d\">
-    <INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
-
-   ";
-
-   switch ($payreccat) {
-    case "0": // payment (addform2)
-    echo "
-     <TR><TD COLSPAN=2>
-     <$HEADERFONT_B>Step Three: Specify the Payer<$HEADERFONT_E>
-     </TD></TR>
-    ";
-    switch ($payrecsource) {
-      case "1":
-       if ($patient>0) {
-        echo "
-          <TR>
-          <TD ALIGN=RIGHT><$STDFONT_B>Patient : <$STDFONT_E></TD>
-          <TD ALIGN=LEFT><I>".$this_patient->fullName()."</I>
-           <INPUT TYPE=HIDDEN NAME=\"payreclink\" VALUE=\"$patient\">
-          </TD></TR>
-        ";
-       } else {
-        echo "
-          <TR><TD COLSPAN=2><CENTER>NOT IMPLEMENTED YET!</CENTER>
-          </TD></TR>
-        ";
-       }
-       break;
-      case "0": default:
-       echo "
-        <TR>
-        <TD ALIGN=RIGHT><$STDFONT_B>Insurance Company : <$STDFONT_E></TD>
-        <TD ALIGN=LEFT><SELECT NAME=\"payreclink\">
-       ".$this_patient->insuranceSelection()."
-        </SELECT></TD>
-        </TR>
-       ";
-       break;
-    } // payment source switch end
- 
-    echo "
-     <TR><TD COLSPAN=2>
-     <$HEADERFONT_B>Step Four: Payment Information<$HEADERFONT_E>
-     </TD></TR>
-    ";
-
-    switch ($payrectype) {
-     case "1": // check
-      echo "
-       <TR>
-       <TD ALIGN=RIGHT><$STDFONT_B>Check Number : <$STDFONT_E></TD>
-       <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=20
-        VALUE=\"$payrecnum\"></TD>
-       </TR>
-      "; 
-      break;
-     case "2": // money order
-      echo "<B>NOT IMPLEMENTED YET!</B><BR>\n";
-      break;
-     case "3": // credit card
-      echo "
-       <TR>
-       <TD ALIGN=RIGHT><$STDFONT_B>Credit Card Number : <$STDFONT_E></TD>
-       <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"payrecnum_1\" SIZE=17
-        MAXLENGTH=16></TD>
-       </TR>
- 
-       <TR>
-       <TD ALIGN=RIGHT><$STDFONT_B>Expiration Date : <$STDFONT_E></TD>
-       <TD ALIGN=LEFT>";
-      fm_number_select ("payrecnum_e1", 1, 12, 1, true);
-      echo "\n <B>/</B>&nbsp; \n";
-      fm_number_select ("payrecnum_e2", (date("Y")-2), (date("Y")+10), 1);
-      echo "</TD></TR>\n";
-      break;
-     case "4": // traveller's check
-      echo "
-       <TR>
-       <TD ALIGN=RIGHT><$STDFONT_B>Cheque Number : <$STDFONT_E></TD>
-       <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=21
-        MAXLENGTH=20></TD>
-       </TR>
-      ";
-      break; 
-     case "5": // EFT
-      echo "<B>NOT IMPLEMENTED YET!</B><BR>\n";
-      break;
-     case "0": default: // if nothing... (or cash)
-      break;
-    } // end of type switch
-
-    echo "
-     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30
-       VALUE=\"$payrecdescrip\"></TD>
-     </TR>
-    ";
-    break; // end payment (addform2)
-
-    case ADJUSTMENT: // adjustment (addform2) 1
-    echo "
-     <TR><TD COLSPAN=2>
-     <$HEADERFONT_B>Step Three: Adjustment Information<$HEADERFONT_E>
-     </TD></TR>
-     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30
-       VALUE=\"$payrecdescrip\"></TD>
-     </TR>
-    ";
-     break; // end adjustment (addform2)
-
-    case REFUND: // refund (addform2) 2
-    echo "
-     <TR><TD COLSPAN=2>
-     <$HEADERFONT_B>Step Three:: Refund Information<$HEADERFONT_E>
-     </TD></TR>
-     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30
-       VALUE=\"$payrecdescrip\"></TD>
-     </TR>
-    ";
-     break; // end refund (addform2)
-
-    case DENIAL: // denial (addform2) 3
-    echo "
-     <TR><TD COLSPAN=2>
-     <$HEADERFONT_B>Step Three: Denial Information<$HEADERFONT_E>
-     </TD></TR>
-     <INPUT TYPE=HIDDEN NAME=\"payreclink\" 
-      VALUE=\"".prepare($payreclink)."\">
-     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30
-       VALUE=\"".prepare($payrecdescrip)."\"></TD>
-     </TR>
-    ";
-     break; // end denial (addform2)
-
-    case REBILL: // rebill (addform2) 4
-    echo "
-     <TR><TD COLSPAN=2>
-     <$HEADERFONT_B>Step Three: Rebill Information<$HEADERFONT_E>
-     </TD></TR>
-     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30
-       VALUE=\"$payrecdescrip\"></TD>
-     </TR>
-    ";
-     break; // end rebill (addform2)
-  } // end switch for category (addform2)
-
-  echo " 
-    </TABLE>
-    <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\" "._("Add")." \">
-     <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-    </CENTER>
-    </FORM>
-    <P>
-   ";
-   freemed_display_box_bottom ();
-   break;
-
-  case "add": // actual add is done here
-   freemed_display_box_top (_("Adding")." "._($record_name));
-
-   switch ($payreccat) { // begin category case (add)
+  // check for book display, etc
+  if (!$wizard->is_done() and !$wizard->is_cancelled()) {
+    // if not done or cancelled, display the wizard
+    freemed_display_box_top (_("Add")." "._($record_name));
+    if ($patient>0) echo freemed_patient_box ($this_patient);
+    echo "<CENTER>".$wizard->display()."</CENTER>\n";
+    freemed_display_box_bottom ();
+  } elseif ($wizard->is_done()) {
+    freemed_display_box_top (_("Adding")." "._($record_name));
+    if ($patient>0) echo freemed_patient_box ($this_patient);
+    echo "<CENTER>\n";
+    switch ($payreccat) { // begin category case (add)
      case PAYMENT: // payment category (add) 0
      // first clean payrecnum vars
      $payrecnum    = eregi_replace (":", "", $payrecnum   );
@@ -606,10 +428,10 @@
 
      case REBILL: // rebill category (add) 4
       break; // end rebill category (add)
-   } // end category switch (add)
+    } // end category switch (add)
 
-   echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
-   $query = "INSERT INTO $db_name VALUES (
+    echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
+    $query = "INSERT INTO $db_name VALUES (
      '$cur_date',
      '',
      '".addslashes($patient).      "',
@@ -624,80 +446,85 @@
      '".addslashes($payrecdescrip)."',
      'unlocked',
      NULL )";
-   if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
-   $result = fdb_query($query);
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
-   switch ($payreccat) {
-     case ADJUSTMENT: // adjustment category (add) 1
-      $query = "UPDATE procrec SET
-                procbalcurrent = procbalcurrent - $payrecamt
-                WHERE id='$payrecproc'";
-      break; // end adjustment category (add)
-
-     case REFUND: // refund category (add) 2
-      $query = "UPDATE procrec SET
-                procamtpaid    = procamtpaid    + $payrecamt
-                WHERE id='$payrecproc'";
-      break; // end refund category (add)
-
-     case DENIAL: // denial category (add) 3
-      if ($payreclink==1) {
-        $query = "UPDATE procrec SET
-                  procbalcurrent = '0'
-                  WHERE id='$payrecproc'";
-      } else { // if no adjust
-        $query = "";
-      } // end checking for adjust to zero
-      break; // end denial category (add)
-
-     case REBILL: // rebill category (add) 4
-      $query = "";
-      break; // end rebill category (add)
-
-     case PAYMENT: // payment category (add) 0
-     default:  // default is payment
-      $query = "UPDATE procrec SET
-                procbalcurrent = procbalcurrent - $payrecamt,
-                procamtpaid    = procamtpaid    + $payrecamt
-                WHERE id='".addslashes($payrecproc)."'";
-      break;
-   } // end category switch (add)
-   if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
-   if (!empty($query)) {
+    if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
+    $result = fdb_query($query);
+    if ($result) { echo _("done")."."; }
+     else        { echo _("ERROR");    }
+    echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
+    switch ($payreccat) {
+      case ADJUSTMENT: // adjustment category (add) 1
+       $query = "UPDATE procrec SET
+                 procbalcurrent = procbalcurrent - $payrecamt
+                 WHERE id='$payrecproc'";
+       break; // end adjustment category (add)
+ 
+      case REFUND: // refund category (add) 2
+       $query = "UPDATE procrec SET
+                 procamtpaid    = procamtpaid    + $payrecamt
+                 WHERE id='$payrecproc'";
+       break; // end refund category (add)
+ 
+      case DENIAL: // denial category (add) 3
+       if ($payreclink==1) {
+         $query = "UPDATE procrec SET
+                   procbalcurrent = '0'
+                   WHERE id='$payrecproc'";
+       } else { // if no adjust
+         $query = "";
+       } // end checking for adjust to zero
+       break; // end denial category (add)
+ 
+      case REBILL: // rebill category (add) 4
+       $query = "";
+       break; // end rebill category (add)
+ 
+      case PAYMENT: // payment category (add) 0
+      default:  // default is payment
+       $query = "UPDATE procrec SET
+                 procbalcurrent = procbalcurrent - $payrecamt,
+                 procamtpaid    = procamtpaid    + $payrecamt
+                 WHERE id='".addslashes($payrecproc)."'";
+       break;
+    } // end category switch (add)
+    if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
+    if (!empty($query)) {
      $result = fdb_query($query);
-     if ($result) { echo _("done")."."; }
-      else        { echo -("ERROR");    }
-   } else { // if there is no query, let the user know we did nothing
-     echo "unnecessary";
-   } // end checking for null query
-   echo "
-    <P>
-    <CENTER>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"payment_record.php?$_auth&patient=$patient\"
-     ><$STDFONT_B>View Patient Ledger<$STDFONT_E></A>
-    </CENTER>
-    <P>
-   ";
-   freemed_display_box_bottom ();
-   break;
+      if ($result) { echo _("done")."."; }
+       else        { echo -("ERROR");    }
+    } else { // if there is no query, let the user know we did nothing
+      echo "unnecessary";
+    } // end checking for null query
+    echo "
+     </CENTER>
+     <P>
+     <CENTER>
+      <A HREF=\"manage.php3?$_auth&id=$patient\"
+      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
+      <A HREF=\"payment_record.php?$_auth&patient=$patient\"
+      ><$STDFONT_B>View Patient Ledger<$STDFONT_E></A>
+     </CENTER>
+     <P>
+    ";
+    freemed_display_box_bottom ();
+  } else {
+    // if the wizard was cancelled
+    echo "CANCELLED STUB<BR>\n";
+  } // end of seeing what to do with the wizard
+  break; // end of adding
 
   case "del":
    if ($this_user->getLevel() < $delete_level)
     die ("$page_name :: You don't have permission to do this");
    freemed_display_box_top (_("Deleting")." "._($record_name));
    echo "
-    <P>
-    <$STDFONT_B>"._("Deleting")." ... <$STDFONT_E>
-   ";
+    <P><CENTER>
+    <$STDFONT_B>"._("Deleting")." ... <$STDFONT_E>\n";
    $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
    $result = fdb_query ($query);
    if ($result) { echo _("done")."."; }
     else        { echo _("ERROR");    }
    echo "
+    </CENTER>
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth&patient=$patient\"
@@ -748,12 +575,12 @@
    echo "
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
     <TR>
-     <TD><B>Date</B></TD>
-     <TD><B>Description</B></TD>
+     <TD><B>"._("Date")."</B></TD>
+     <TD><B>"._("Description")."</B></TD>
      <TD><B>Type</B></TD>
      <TD ALIGN=RIGHT><B>Charges</B></TD>
      <TD ALIGN=RIGHT><B>Payments</B></TD>
-     <TD ALIGN=RIGHT><B>Action</B></TD>
+     <TD ALIGN=RIGHT><B>"._("Action")."</B></TD>
     </TR>
    ";
 
@@ -767,10 +594,9 @@
      $proccomment     = prepare ($r["proccomment"]);
      $procbalorig     = $r["procbalorig"];
      $id              = $r["id"];
-     $_alternate      = freemed_bar_alternate_color ($_alternate);
      $total_charges  += $procbalorig;     
      echo "
-      <TR BGCOLOR=$_alternate>
+      <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
        <TD>$procdate</TD>
        <TD><I>$proccomment</I></TD>
        <TD>charge</TD>
@@ -789,7 +615,7 @@
      if ($this_user->getLevel() > $database_level)
       echo "
        <A HREF=\"procedure.php?$_auth&id=$id&patient=$patient&action=view\"
-       ><$STDFONT_B>VIEW<$STDFONT_E></A>
+       ><$STDFONT_B>"._("VIEW")."<$STDFONT_E></A>
       "; 
      echo "\n   &nbsp;</TD></TR>";
    } // wend?
@@ -883,7 +709,7 @@
          <TT><B>".$payment."</B></TT>
         </FONT>
        </TD>
-       <TD>
+       <TD ALIGN=RIGHT>
      ";
 
      if (($this_user->getLevel() > $delete_level) and
@@ -903,7 +729,7 @@
      $pat_total = "<FONT COLOR=\"#000000\">".
       bcadd (-$patient_total, 0, 2)."</FONT>";
    } else {
-     $pat_total = "-<FONT COLOR=\"#ff0000\">".
+     $pat_total = "<FONT COLOR=\"#ff0000\">".
       bcadd (-$patient_total, 0, 2)."</FONT>";
    } // end of creating total string/color
 

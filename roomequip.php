@@ -1,10 +1,9 @@
 <?php
- // file: roomequip.php3
+ // $Id$
  // note: room equipment database
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name="roomequip.php3";        // for help info, later
+  $page_name="roomequip.php";         // for help info, later
   $db_name  ="roomequip";             // get this from jeff
   $record_name="Room Equipment";      // such as Room for Room module
                                       // or "CPT Modifiers" for cptmod
@@ -166,7 +165,7 @@ switch ($action) {
   $query = "SELECT * FROM $db_name ORDER BY $order_field";
 
   $result = fdb_query($query);
-  freemed_display_box_top ($record_name, $_ref, $page_name);
+  freemed_display_box_top (_($record_name));
   echo freemed_display_itemlist (
    fdb_query("SELECT * FROM $db_name ORDER BY $order_field"),
    $page_name,

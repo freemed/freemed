@@ -1,19 +1,13 @@
 <?php
-  // file: tos.php3
+  // $Id$
   // note: type of service (TOS) database module
-  // code: guess-who-is-too-lazy-to-not-use-the-template
-  //       jeff b (jeff@univrel.pr.uconn.edu) -- template
-  //       adam b (gdrago23@yahoo.com) -- modified a lot
+  // code: adam b (gdrago23@yahoo.com) -- modified a lot
   // lic : GPL
 
-  $page_name="tos.php3";              // for help info, later
-  $db_name  ="tos";                   // get this from jeff
-  $record_name="Type of Service";     // such as Room for Rooms module
-                                      // or "CPT Modifiers" for cptmod
-  $order_field="tosname,tosdescrip";  // what field the records are
-                                      // sorted by... multiples can
-                                      // be used with commas
-                                      // ("value_a, value_b")
+  $page_name="type_of_service.php";
+  $db_name  ="tos";
+  $record_name="Type of Service";
+  $order_field="tosname,tosdescrip";
 
     // *** includes section ***
 
@@ -63,7 +57,7 @@ switch($action) {
 
   echo freemed_display_itemlist (
     $result,
-    "tos.php3",
+    $page_name,
     array (
       _("Code") => "tosname",
       _("Description") => "tosdescrip"

@@ -181,9 +181,11 @@ switch ($action) { // master action switch
           "procpos"
         ),
       _("Type of Service") =>
-        "<SELECT NAME=\"proctos\">\n".
-        freemed_display_tos ($proctos).
-        "</SELECT>\n",
+        freemed_display_selectbox (
+          fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER by tosname"),
+          "#tosname# #tosdescrip#",
+          "proctos"
+        ),
       _("Voucher Number") =>
         "<INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"".prepare($procvoucher)."\" ".
         "SIZE=20>\n",
@@ -235,18 +237,19 @@ switch ($action) { // master action switch
 
      _("Comment") =>
        prepare($proccomment)
-  ";
+   ) )
+  );
 
   if (!$wizard->is_done() and !$wizard->is_cancelled()) {
     // display the wizard
-    echo $wizard->display();
+    echo "<CENTER>".$wizard->display()."</CENTER>\n";
   } else if ($wizard->is_done()) {
     // process add/mod here
-    freemed_display_box_top (
-     ( (substr($action,0,3)=="add") ? _("Adding") : _("Modifying") ).
-     " "._($record_name));
+    //freemed_display_box_top (
+    // ( (substr($action,0,3)=="add") ? _("Adding") : _("Modifying") ).
+    // " "._($record_name));
     echo "
-      <P>
+      <P><CENTER>
       <$STDFONT_B>".
       ( (substr($action,0,3)=="add") ? _("Adding") : _("Modifying") ).
        " ... <$STDFONT_E>
@@ -282,16 +285,14 @@ switch ($action) { // master action switch
 
       $result = fdb_query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
-      echo "<CENTER>\n";
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
-      echo "</CENTER>\n";
 
       $this_procedure = fdb_last_record ();
 
       // form add query
       echo "
-        <P>
+        <BR>
         <$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
       ";
       $query = "INSERT INTO payrec VALUES (
@@ -317,7 +318,7 @@ switch ($action) { // master action switch
   
        // updating patient diagnoses
       echo "
-        <P>
+        <BR>
         <$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
       ";
       $query = "UPDATE patient SET
@@ -332,6 +333,7 @@ switch ($action) { // master action switch
        else        { echo _("ERROR");    }
   
       echo "
+        </CENTER>
         <P>
         <CENTER>
          <A HREF=\"manage.php3?$_auth&id=$patient\"
@@ -428,10 +430,10 @@ switch ($action) { // master action switch
   freemed_display_box_bottom ();
   break; // end of add/modify form action
 
- case "del": // delete action
+ case "del": case "delete": // delete action
   freemed_display_box_top (_("Deleting")." "._($record_name));
   echo "
-   <P>
+   <P><CENTER>
    <$STDFONT_B>"._("Deleting")." ...
   ";
   $query = "DELETE FROM $db_name WHERE id='$id'";
@@ -444,10 +446,10 @@ switch ($action) { // master action switch
   if ($result) { echo "["._("Payment Record")."] "; }
    else        { echo "["._("ERROR")."] ";          }
   echo "
-   <$STDFONT_E>
+   <$STDFONT_E></CENTER>
    <P>
     <CENTER>
-     <A HREF=\"$page_name?$_auth\"
+     <A HREF=\"$page_name?$_auth&patient=$patient\"
      ><$STDFONT_B>"._("back")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"manage.php3?$_auth?id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>

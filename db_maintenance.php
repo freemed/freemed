@@ -105,11 +105,11 @@ if (freemed_get_userlevel ($LoginCookie) > $database_level) {
       >"._("Rooms")." (<I>"._("Scheduling Locations")."</I>)</A>
      <BR>
 
-     <A HREF=\"roomequip.php3?$_auth\"
+     <A HREF=\"roomequip.php?$_auth\"
       >"._("Room Equipment")."</A>
      <BR>
 
-     <A HREF=\"tos.php3?$_auth\"
+     <A HREF=\"type_of_service.php?$_auth\"
       >"._("Type of Service")."</A>
      <BR>
 
