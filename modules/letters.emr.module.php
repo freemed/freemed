@@ -56,6 +56,10 @@ class LettersModule extends EMRModule {
 			"id" => SQL_SERIAL
 		);
 
+		// Set associations
+		$this->_SetAssociation('EpisodeOfCare');
+		$this->_SetMetaInformation('EpisodeOfCareVar', 'lettereoc');
+
 		// Run parent constructor
 		$this->EMRModule();
 	} // end constructor LettersModule
