@@ -626,6 +626,19 @@ class MaintenanceModule extends BaseModule {
 	//	XHTML-compliant picklist widget.
 	//
 	function widget ( $varname, $conditions = false, $field = 'id', $options = NULL ) {
+		$threshhold = 20;
+
+		// Check for count
+		$c_query = "SELECT COUNT(*) AS my_count ".
+			"FROM ".$this->table_name." ".
+			( $conditions ? "WHERE ( ".$conditions." ) " : "" );
+		$c_result = $GLOBALS['sql']->query($c_query);
+		$c_res = $GLOBALS['sql']->fetch_array($c_result);
+		if ($c_res['my_count'] > $threshhold) {
+			// Use Ajax "widget" instead
+			include_once(freemed::template_file('ajax.php'));
+			return ajax_widget($varname, get_class($this), $this);
+		}
 		$query = "SELECT * FROM ".$this->table_name." WHERE ( 1 = 1) ".
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).
 			"ORDER BY ".$this->order_field;
