@@ -51,7 +51,7 @@ function patient_lookup ( $criteria ) {
 		// Determine if there's a space
 		if (!(strpos($criteria, ' ') === false)) {
 			// Break into first last
-			list ($first, $last) = explode (',', $criteria);
+			list ($first, $last) = explode (' ', $criteria);
 		} else {
 			// Glob search
 			$either = $criteria;	

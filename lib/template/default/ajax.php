@@ -20,7 +20,11 @@ ob_start();
 	border-bottom: 1px solid #000000;
 	border-right: 1px solid #000000;
 }
-.hiddendiv span { cursor: pointer; }
+.hiddendiv * { cursor: pointer; }
+.hiddendiv div:hover {
+	background: #0000ff;
+	color: #ffffff;
+}
 </style>
 
 <!-- Javascript libraries for AJAX -->
@@ -79,10 +83,10 @@ function x_<?php print $name; ?>_populate(data) {
 				try {
 					var _k = innerTokenizer.nextToken();
 					var _v = innerTokenizer.nextToken();
-					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: '+myColor+';" onClick="x_<?php print $name; ?>_set_field(\'' + _k + '\', ' + _v + ');"><span>' + _k + '</span></div>\n';
+					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div onClick="x_<?php print $name; ?>_set_field(\'' + _k + '\', ' + _v + ');"><span>' + _k + '</span></div>\n';
 				} catch (e) {}
 			} else {
-				document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: '+myColor+';">' + _this_one + '</div>\n';
+				document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: #ffffff; color: #000000;" onClick="document.getElementById(\'<?php print $name; ?>_hiddendiv\').style.display = \'none\';">' + _this_one + '</div>\n';
 
 			}
 		}
