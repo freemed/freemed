@@ -1,0 +1,42 @@
+# $Id$
+# $Author$
+
+For those users who have been using pre-release 0.6.0 versions, there are
+several very important changes that have to be made to run the final 0.6.0
+properly.
+
+WARNING: There is a possibility, however slim, that these may cause your
+  installation to become unusable. Please backup both your MySQL database
+  and your image store (/usr/share/freemed/img/store/) before proceeding.
+
+User table----------------------------------------------------------------
+
+The user table now uses MD5 sums. Log into your MySQL server and execute
+the following commands:
+
+	ALTER TABLE user MODIFY COLUMN userpassword CHAR(32);
+	UPDATE user SET userpassword=MD5(userpassword);
+
+Images / Scanned Documents-----------------------------------------------
+
+The EMR module that used to be called "Images" or "Patient Images" is now
+called "Scanned Documents". You must reconfigure your user preferences,
+since it will not show up unless enabled through the "Configure" link
+in the EMR menubar.
+
+There is also a serious change regarding naming for the image store. It
+now uses Photoseek-style naming conventions for images, which breaks
+compatibility. The following commands should upgrade your repository.
+
+	cd img
+	cp store store~ -Rf                    # backup the store
+	cd store
+	for i in *.djvu; do \
+		../../scripts/image2md5scheme.pl $i > commands.sh; \
+	done
+	bash ./commands.sh
+	rm commands.sh
+
+Please be aware that this requires Perl 5 or above, with the Digest::MD5
+perl module installed from CPAN.
+
