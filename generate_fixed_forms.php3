@@ -119,6 +119,7 @@
                              a.payreclink < '3' AND
                              a.payrecpatient = '$current_patient' AND
                              a.payrecproc = b.id AND
+                             b.procbillable = '0' AND
                              b.procbalcurrent > '0'
                            ) ORDER BY payrecpatient,payrecdt");
 
