@@ -44,7 +44,7 @@ if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
 	<p/>
 	<div ALIGN=\"CENTER\">
-	<table BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
+	<table BORDER=\"0\" CELLSPACING=\"2\" CELLPADDING=\"0\" VALIGN=\"MIDDLE\"
 	 ALIGN=\"CENTER\">
 	".$module_list->generate_list($category, 0, $module_template)."
 	</table>
@@ -70,6 +70,7 @@ if (!$module_list->empty_category($category)) {
 	";
 }
 
+//----- Show template
 template_display();
 
 ?>

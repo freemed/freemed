@@ -1,11 +1,11 @@
 <?php
  // $Id$
  // note: main menu module
- // code: jeff b (jeff@univrel.pr.uconn.edu), max k <amk@span.ch>
+ // code: jeff b (jeff@ourexchange.net), max k <amk@span.ch>
  // lic : GPL
 
-$page_name="main.php";
-include ("lib/freemed.php");
+$page_name = "main.php";
+include_once ("lib/freemed.php");
 
 // checking for _ref tag
 if ((strlen($_ref)>0) AND ($_ref != "main.php")) {

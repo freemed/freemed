@@ -2,7 +2,7 @@
  // $Id$
  // note: sets name/password cookie
  // lic : GPL
- // code: jeff b <jeff@univrel.pr.uconn.edu>, max k <amk@span.ch>
+ // code: jeff b <jeff@ourexchange.net>, max k <amk@span.ch>
 
 $page_name = "authenticate.php" ;
 include_once ("lib/freemed.php");
@@ -19,7 +19,7 @@ if ($sql->results($result)) {
 	$r = $sql->fetch_array($query);
 
 	// If it doesn't match...
-	if ((stripslashes($r[userpassword]) != DB_PASSWORD) and ($r[username]=="root")) {
+	if ((stripslashes($r['userpassword']) != DB_PASSWORD) and ($r['username']=="root")) {
 		// ... execute update query to *make* it match.
 		$update_result = $sql->query($sql->update_query(
 			"user",
@@ -34,12 +34,12 @@ $connect = freemed_verify_auth ();
 if (!$connect) {
     if (!empty($_URL)) $__url_part = "?_URL=".urlencode($_URL);
     $display_buffer .= "
-       <CENTER>"._("Error")." !</CENTER>
-       <P>
-       <CENTER>"._("You have entered an incorrect name or password.")."</CENTER>
-       <P>
-       <CENTER><A HREF=\"index.php$__url_part\"
-        >"._("Return to the login screen")."</A></CENTER>
+       <div ALIGN=\"CENTER\">"._("Error")." !</div>
+       <p/>
+       <div ALIGN=\"CENTER\">"._("You have entered an incorrect name or password.")."</div>
+       <p/>
+       <div ALIGN=\"CENTER\"><a HREF=\"index.php$__url_part\"
+        >"._("Return to the login screen")."</a></div>
     ";
     template_display();
 }
@@ -78,12 +78,12 @@ $refresh = $_jump_page;
 $page_title = _("Authenticating")." ... ";
 
 $display_buffer .= "
-      <P>
-      <CENTER>
-        <B>"._("If your browser does not support the REFRESH tag")."
-        <A HREF=\"$_jump_page\">"._("click here")."</A></B>
-      </CENTER>
-      <P>
+      <p/>
+      <div ALIGN=\"CENTER\">
+        <b>"._("If your browser does not support the REFRESH tag")."
+        <a HREF=\"$_jump_page\">"._("click here")."</a></b>
+      </div>
+      <p/>
 ";
 
 //----- Load the template

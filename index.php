@@ -1,7 +1,7 @@
 <?php
  // $Id$
  // $Author$
- // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // code: jeff b (jeff@ourexchange.net)
  // lic : GPL, v2
 
 $page_name = "index.php";

@@ -240,7 +240,7 @@ switch($action) { // master action switch
 
     if ($action=="mod" || $action=="modform") {
       $display_buffer .= "
-        <P ALIGN=CENTER>
+        <div ALIGN=\"CENTER\">
         "._("Modifying")." . . . 
       ";
         // build update query:
@@ -266,10 +266,10 @@ switch($action) { // master action switch
     } else { // now the "add" guts
   
       $display_buffer .= "
-        <P ALIGN=CENTER>
+        <div ALIGN=\"CENTER\">
         "._("Adding")." . . . 
       ";
-	$query = $sql->insert_query ( "$table_name",
+	$query = $sql->insert_query ( $table_name,
 		array (
 			"username"     => $username,
 			"userpassword" => $userpassword1,
@@ -303,10 +303,12 @@ switch($action) { // master action switch
       $display_buffer .= "<B>"._("Error")." [$query]</B>\n"; 
     } // end of error reporting clause
     $display_buffer .= "
-        <P ALIGN=CENTER>
+    	</div>
+	<p/>
+        <div ALIGN=\"CENTER\">
         <A HREF=\"$page_name\"
          >"._("Go back to user menu")."</A>
-        <P>
+        </div>
     ";
 	// Set automatic refresh
 	$refresh = $page_name;
