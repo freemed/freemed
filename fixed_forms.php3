@@ -1,8 +1,8 @@
 <?php
- # file: fixed_forms.php3
- # desc: fixed type forms editing engine
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: fixed_forms.php3
+ // desc: fixed type forms editing engine
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name   = "fixed_forms.php3";
  $record_name = "Fixed Form";
@@ -13,7 +13,6 @@
 
  freemed_open_db ($LoginCookie);
  freemed_display_html_top ();
- freemed_display_banner ();
 
  switch ($action) {
   // trying to combine add and modify forms for simplicity
@@ -21,16 +20,16 @@
    switch ($action) {
      case "addform":
       $go = "add";
-      $this_action = "$Add";
+      $this_action = _("Add");
       break;
      case "modform":
       $go = "mod";
-      $this_action = "$Modify";
+      $this_action = _("Modify");
        // check to see if an id was submitted
       if ($id<1) {
-       freemed_display_box_top ("$record_name :: $ERROR");
+       freemed_display_box_top (_($record_name)." :: "._("ERROR"));
        echo "
-         You must select a record to modify.
+         "._("You must select a record to modify.")."
        ";
        freemed_display_box_bottom ();
        freemed_close_db ();
@@ -62,11 +61,10 @@
    } // end of interior switch
 
    // set the fftype properly
-   for ($i=0;$i<=20;$i++) 
-    eval ("\$_type_".$i."     = \"\"         ; ");
-   eval ("\$_type_".$fftype." = \"SELECTED\" ; ");
+   for ($i=0;$i<=20;$i++) ${"_type_".$i} = "";
+   ${"_type_".$fftype} = "SELECTED";
 
-   freemed_display_box_top ("$this_action $record_name");
+   freemed_display_box_top ("$this_action "._($record_name));
    $cur_line_count = 0; // zero the current line count (displayed)
    $prev_line_total = count ($row); // previous # of lines
      // display the top of the repetitive table
@@ -81,52 +79,55 @@
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Name of Form : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Name of Form")." : <$STDFONT_E></TD>
       <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($ffname)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>Page Length : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Page Length")." : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffpagelength\" SIZE=5 MAXLENGTH=5
-       VALUE=\"$ffpagelength\">
+       VALUE=\"".prepare($ffpagelength)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")." : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($ffdescrip)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>Line Length : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Line Length")." : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"fflinelength\" SIZE=5 MAXLENGTH=5
-       VALUE=\"$fflinelength\">
+       VALUE=\"".prepare($fflinelength)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Loop Repetitions : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Loop Repetitions")." : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffloopnum\" SIZE=5 MAXLENGTH=5
-       VALUE=\"$ffloopnum\">
+       VALUE=\"".prepare($ffloopnum)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>Check Char : <BR>
-                     (<I>ex: \"X\"</I>)<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Check Char")." : <BR>
+                     "._("(<I>example: \"X\"</I>)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
        VALUE=\"".prepare($ffcheckchar)."\"> 
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Loop Line Offset : <BR>
-                     (<I>1 skips to the next line</I>)<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Loop Line Offset")." : <BR>
+                "._("(<I>\"1\" skips to the next line</I>)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffloopoffset\" SIZE=5 MAXLENGTH=5
-       VALUE=\"$ffloopoffset\">
+       VALUE=\"".prepare($ffloopoffset)."\">
      </TD>
-     <TD ALIGN=RIGHT><$STDFONT_B>Type : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Type")." : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"fftype\">
-       <OPTION VALUE=\"0\" $_type_0>generic
-       <OPTION VALUE=\"1\" $_type_1>insurance claim
-       <OPTION VALUE=\"2\" $_type_2>patient bill
+       <OPTION VALUE=\"0\" ".
+         ( ($fftype==0) ? "SELECTED" : "" ).">"._("Generic")."
+       <OPTION VALUE=\"1\" ".
+         ( ($fftype==1) ? "SELECTED" : "" ).">"._("Insurance Claim")."
+       <OPTION VALUE=\"2\" ".
+         ( ($fftype==2) ? "SELECTED" : "" ).">"._("Patient Bill")."
       </SELECT>
      </TD>
     </TR>
@@ -134,16 +135,17 @@
     <P>
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
-     <TR BGCOLOR=#000000>
-      <TD><$STDFONT_B COLOR=#ffffff>#<$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><CENTER><B>Ins/Del</B></CENTER>
+     <TR BGCOLOR=\"#000000\">
+      <TD><$STDFONT_B COLOR=\"#ffffff\">#<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\"><CENTER><B>"._("Ins/Del")."</B></CENTER>
         <$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Row/Line</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Column</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Length</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Data</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Format</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Comment</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\"
+       ><B>"._("Row/Line")."</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Column")."</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Length")."</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Data")."</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Format")."</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Comment")."</B><$STDFONT_E></TD>
      </TR>
     ";
 
@@ -157,7 +159,8 @@
       // print actual record
       $_alternate = freemed_bar_alternate_color ($_alternate);
       echo "
-       <TR BGCOLOR=\"$_alternate\">
+       <TR BGCOLOR=\"".
+        ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
         <TD><$STDFONT_B COLOR=\"$num_color\">".($cur_line_count+1)."<$STDFONT_E></TD>
         <TD><CENTER>
             <INPUT TYPE=CHECKBOX NAME=\"ins$brackets\"
@@ -190,7 +193,8 @@
       for ($l=0;$l<$loopfor;$l++) {
        $_alternate = freemed_bar_alternate_color ($_alternate);
        echo "
-        <TR BGCOLOR=\"$_alternate\">
+        <TR BGCOLOR=\"".
+         ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
          <TD><$STDFONT_B COLOR=\"#ff0000\">".($cur_line_count+1)."<$STDFONT_E></TD>
          <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"ins$brackets\"
               VALUE=\"$cur_line_count\">
@@ -240,9 +244,9 @@
    break;
 
   case "add":
-   freemed_display_box_top ("$Adding $record_name");
+   freemed_display_box_top (_("Adding")." "._($record_name));
    echo "
-     $Adding ...
+     <CENTER><$STDFONT_B>"._("Adding")." ...
    ";
    // check to see if we need to compact into a string...
    if (count($row)>0) {
@@ -264,11 +268,11 @@
      '".addslashes($ffname)."',
      '".addslashes($ffdescrip)."',
      '".addslashes($fftype)."',
-     '$ffpagelength',
-     '$fflinelength',
-     '$ffloopnum',
-     '$ffloopoffset',
-     '$ffcheckchar',
+     '".addslashes($ffpagelength)."',
+     '".addslashes($fflinelength)."',
+     '".addslashes($ffloopnum)."',
+     '".addslashes($ffloopoffset)."',
+     '".addslashes($ffcheckchar)."',
      '".addslashes($row_a)."',
      '".addslashes($col_a)."',
      '".addslashes($len_a)."',
@@ -276,24 +280,24 @@
      '".addslashes($format_a)."',
      '".addslashes($comment_a)."',
      NULL )";
-   //echo " (query = $query) ";
    $result = fdb_query ($query);
-   if ($result) { echo "$Done."; }
-    else        { echo "$ERROR"; }
+   if ($result) { echo "<B>"._("done").".</B>"; }
+    else        { echo "<B>"._("ERROR")."</B>"; }
    echo "
+     <$STDFONT_E></CENTER>
      <P>
      <CENTER><A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A></CENTER>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A></CENTER>
      <BR>
    ";
    freemed_display_box_bottom ();
    break;
 
   case "mod":
-   freemed_display_box_top ("$Modifying $record_name");
+   freemed_display_box_top (_("Modifying")." "._($record_name));
    echo "
-     <P>
-     <$STDFONT_B>$Modifying ...
+     <P><CENTER>
+     <$STDFONT_B>"._("Modifying")." ...
    ";
 
    // prepare data for squash
@@ -309,129 +313,68 @@
       ffname       = '".addslashes($ffname)."',
       ffdescrip    = '".addslashes($ffdescrip)."',
       fftype       = '".addslashes($fftype)."',
-      ffpagelength = '$ffpagelength',
-      fflinelength = '$fflinelength',
-      ffloopnum    = '$ffloopnum',
-      ffloopoffset = '$ffloopoffset',
-      ffcheckchar  = '$ffcheckchar',
+      ffpagelength = '".addslashes($ffpagelength)."',
+      fflinelength = '".addslashes($fflinelength)."',
+      ffloopnum    = '".addslashes($ffloopnum)."',
+      ffloopoffset = '".addslashes($ffloopoffset)."',
+      ffcheckchar  = '".addslashes($ffcheckchar)."',
       ffrow        = '".addslashes($row_a)."',
       ffcol        = '".addslashes($col_a)."',
       fflength     = '".addslashes($len_a)."',
       ffdata       = '".addslashes($data_a)."',
       ffformat     = '".addslashes($format_a)."',
       ffcomment    = '".addslashes($comment_a)."'
-      WHERE id='$id'";
+      WHERE id='".addslashes($id)."'";
    $result = fdb_query ($query);
    if ($debug) echo "query = \"$query\" <BR>";
-   if ($result) { echo "$Done. <$STDFONT_E>";  }
-    else        { echo "$ERROR! <$STDFONT_E>"; }
+   if ($result) { echo "<B>"._("done").".</B>"; }
+    else        { echo "<B>"._("ERROR")."</B>"; }
    echo "
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
     </CENTER>
     "; 
    freemed_display_box_bottom ();
    break;
 
-  case "del":
-   freemed_display_box_top ("$Deleting $record_name");
+  case "del": case "delete":
+   freemed_display_box_top (_("Deleting")." "._($record_name));
    echo "
-    <P>
-    <$STDFONT_B>$Deleting ...
+    <P><CENTER>
+    <$STDFONT_B>"._("Deleting")." ...
     ";
-   $query = "DELETE * FROM $db_name WHERE id='$id'";
+   $query = "DELETE * FROM $db_name WHERE id='".addslashes($id)."'";
    $result = fdb_query ($query);
-   if ($result) { echo "$Done\n";    }
-    else        { echo "$ERROR\n";   }
+   if ($result) { echo "<B>"._("done").".</B>"; }
+    else        { echo "<B>"._("ERROR")."</B>"; }  
    echo "
     <$STDFONT_E>
+    </CENTER>
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
     </CENTER> 
    ";
    freemed_display_box_bottom ();
    break;
 
   default: // default action -- menu
-   freemed_display_box_top ("$record_name");
+   freemed_display_box_top (_($record_name));
    $result = fdb_query ("SELECT * FROM $db_name
                          ORDER BY ffname, ffdescrip");
-   if (fdb_num_rows($result)>0) {
-
-    // display action bar
-    freemed_display_actionbar ();
-
-    // display table top
-    echo "
-      <P>
-      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0
-       BGCOLOR=#000000 VALIGN=MIDDLE ALIGN=CENTER>
-      <TR BGCOLOR=#000000>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>Name<$STDFONT_E></TD>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>Description<$STDFONT_E></TD>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>Action<$STDFONT_E></TD>
-      </TR>
-     ";
-
-    // loop for all
-    while ($r = fdb_fetch_array ($result)) {
-      $_alternate = freemed_bar_alternate_color ($_alternate);
-      $ffname     = prepare($r["ffname"   ]);
-      $ffdescrip  = prepare($r["ffdescrip"]);
-      $id         =         $r["id"       ] ;
-
-      echo "
-        <TR BGCOLOR=\"$_alternate\">
-         <TD>$ffname</TD>
-         <TD>$ffdescrip</TD>
-         <TD>
-       ";
-
-      if (freemed_get_userlevel($LoginCookie)>$database_level)
-       echo "
-        <A HREF=\"$page_name?$_auth&action=modform&id=$id\"
-         ><$STDFONT_B SIZE=-1>$lang_MOD<$STDFONT_E></A>
-       ";
-
-      if (freemed_get_userlevel($LoginCookie)>$delete_level)
-       echo "
-        <A HREF=\"$page_name?$_auth&action=del&id=$id\"
-         ><$STDFONT_B SIZE=-1>$lang_DEL<$STDFONT_E></A>
-       ";
-
-      echo "
-         &nbsp;</TD>
-        </TR>
-       ";
-    } // end of while loop 
-
-    // display table bottom
-    echo "
-      </TABLE>
-      <P>
-     ";
- 
-    // display bottom action bar
-    freemed_display_actionbar ();
-   } else { // if there aren't any records, tell us so
-    echo "
-      <P>
-      <CENTER>
-       <B><$STDFONT_B>There are no records.<$STDFONT_E></B>
-       <P>
-       <A HREF=\"$page_name?$_auth&action=addform\"
-        ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
-      </CENTER>
-      <P>
-    ";
-   }
+   echo freemed_display_itemlist (
+     fdb_query ("SELECT * FROM $db_name ORDER BY ffname, ffdescrip"),
+     $page_name,
+     array (
+	_("Name")		=>	"ffname",
+	_("Description")	=>	"ffdescrip"
+     ),
+     array ( "", _("NO DESCRIPTION") )
+   );  
+     
    freemed_display_box_bottom ();
    break;
  } // end master switch
