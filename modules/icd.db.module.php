@@ -151,6 +151,20 @@ class IcdMaintenance extends MaintenanceModule {
 		);
 	} // end function IcdMaintenance->view
 
+	function display_short ( $code ) {
+		switch (freemed::config_value('icd')) {
+			case '10':
+				$suffix = '10'; break;
+			case '9':
+			default: 
+				$suffix = '9'; break;
+		}
+
+		$code_record = freemed::get_link_rec($code, $this->table_name);
+		return $code_record['icd'.$suffix.'code'].' - '.
+			$code_record['icd'.$suffix.'descrip'];
+	} // end function IcdMaintenance->display_short
+
 } // end class IcdMaintenance
 
 register_module ("IcdMaintenance");
