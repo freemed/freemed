@@ -860,11 +860,14 @@ class freemed {
 	//
 	//	$query - Text SQL query
 	//
+	//	$single_dimension - (optional) Reduce to single array, using
+	//	k and v table columns as key and value. Defaults to true.
+	//
 	// Returns:
 	//
 	//	Multidimentional hashed array.
 	//
-	function query_to_array ( $query ) {
+	function query_to_array ( $query, $single_dimension=true ) {
 		global $sql;
 		unset ($this_array);
 
@@ -881,10 +884,18 @@ class freemed {
 			$index++;
 		}
 
-		if ($index == 1) {
-			return $this_array[0];
+		// Decide if we hash to associative array
+		if ($single_dimension) {
+			foreach ($this_array AS $k => $v) {
+				$result_array[$v['k']] = $v['v'];
+			}
+			return $result_array;
 		} else {
-			return $this_array;
+			if ($index == 1) {
+				return $this_array[0];
+			} else {
+				return $this_array;
+			}
 		}
 	} // end function freemed::query_to_array
 
