@@ -21,48 +21,13 @@ switch($action) {
  case "addform": case "add": // 'form' actions not necessary
  case "modform": case "mod": // in notebook implementation
   $book = new notebook (
-    array ("action", "_auth", "id", "been_here"), true );
+    array ("action", "_auth", "id", "been_here"),
+    NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR );
   $book->set_submit_name("OK"); // not sure what this does...
   
   if (($action=="modform") AND (empty($been_here))) { // load the values
     $r = freemed_get_link_rec ($id, $db_name);
-
-    $phylname    = $r["phylname"   ];
-    $phyfname    = $r["phyfname"   ];
-    $phytitle    = $r["phytitle"   ];
-    $phymname    = $r["phymname"   ];
-    $phypracname = $r["phypracname"];
-    $phyaddr1a   = $r["phyaddr1a"  ];
-    $phyaddr2a   = $r["phyaddr2a"  ];
-    $phycitya    = $r["phycitya"   ];
-    $phystatea   = $r["phystatea"  ]; // 19990622
-    $phyzipa     = $r["phyzipa"    ];
-    $phyphonea   = $r["phyphonea"  ];
-    $phyfaxa     = $r["phyfaxa"    ];
-    $phyaddr1b   = $r["phyaddr1b"  ];
-    $phyaddr2b   = $r["phyaddr2b"  ];
-    $phycityb    = $r["phycityb"   ];
-    $phystateb   = $r["phystateb"  ]; // 19990622
-    $phyzipb     = $r["phyzipb"    ];
-    $phyphoneb   = $r["phyphoneb"  ];
-    $phyfaxb     = $r["phyfaxb"    ];
-    $phyemail    = $r["phyemail"   ];
-    $phycellular = $r["phycellular"]; // 19990804
-    $phypager    = $r["phypager"   ]; // 19990804
-    $phyupin     = $r["phyupin"    ];
-    $physsn      = $r["physsn"     ];
-    $phydeg1     = $r["phydeg1"    ]; // 19990830
-    $phydeg2     = $r["phydeg2"    ]; // ..
-    $phydeg3     = $r["phydeg3"    ]; // ..
-    $physpe1     = $r["physpe1"    ];
-    $physpe2     = $r["physpe2"    ];
-    $physpe3     = $r["physpe3"    ];
-    $phyid1      = $r["phyid1"     ];
-    $phystatus   = $r["phystatus"  ];
-    $phyref      = $r["phyref"     ];
-    $phyrefcount = $r["phyrefcount"];
-    $phyrefamt   = $r["phyrefamt"  ];
-    $phyrefcoll  = $r["phyrefcoll" ];
+    extract ($r);
     $phychargemap = fm_split_into_array( $r[phychargemap] );
     $phyidmap = fm_split_into_array( $r[phyidmap] );
 
@@ -76,12 +41,10 @@ switch($action) {
   
   switch($action) {
    case "addform": case "add":
-    $action_name="Add";
     if (empty($been_here)) 
       $been_here=1;
    break; // inner addform/add switch
    case "modform": case "mod": 
-    $action_name="Modify";
     if (empty($been_here)) 
       $been_here=1;
    break; // inner addform/add switch
@@ -99,16 +62,16 @@ switch($action) {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Last name")." : <$STDFONT_E>
+    <$STDFONT_B>"._("Last Name")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phylname SIZE=25 MAXLENGTH=52
-     VALUE=\"$phylname\">
+     VALUE=\"".prepare($phylname)."\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("First name")." : <$STDFONT_E>
+    <$STDFONT_B>"._("First Name")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyfname SIZE=25 MAXLENGTH=50
-     VALUE=\"$phyfname\">
+     VALUE=\"".prepare($phyfname)."\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Middle Name")." : <$STDFONT_E>
@@ -458,7 +421,9 @@ switch($action) {
     "
   );
   // now display the thing
-  freemed_display_box_top(_("$action_name $record_name"), $page_name);
+  freemed_display_box_top( 
+    ( ($action=="addform" or $action=="add") ? _("Add") : _("Modify") ).
+    " "._($record_name));
   if (!$book->is_done()) {
     echo "<CENTER>\n".$book->display()."</CENTER>
     <P ALIGN=CENTER>
@@ -532,11 +497,11 @@ switch($action) {
       
       if ($result) {
         echo "
-	<$STDFONT_B>"._("Done").".<$STDFONT_E>
+	<$STDFONT_B>"._("done").".<$STDFONT_E>
 	";
       } else { // error!
         echo "
-	<$STDFONT_B>"._("Error")."! [$query, $result]<$STDFONT_E>
+	<$STDFONT_B>"._("ERROR")."! [$query, $result]<$STDFONT_E>
 	";
       }  
       // finished the mod database call
@@ -603,25 +568,25 @@ switch($action) {
 
       if ($result) {
         echo "
-	<$STDFONT_B>"._("Done").".<$STDFONT_E>
+	<$STDFONT_B>"._("done").".<$STDFONT_E>
 	";
       } else { // error!
         echo "
-	<$STDFONT_B>"._("Error")."! [$query, $result]<$STDFONT_E>
+	<$STDFONT_B>"._("ERROR")."! [$query, $result]<$STDFONT_E>
 	";
       }
     
     } else { // error
       echo "
         <P ALIGN=CENTER>
-	<$STDFONT_B>"._("Error")."! \$action=$action!<$STDFONT_E>
+	<$STDFONT_B>"._("ERROR")."! \$action=$action!<$STDFONT_E>
 	</P>
       ";
     } // error handler
     echo "
     <P ALIGN=CENTER>
     <A HREF=\"$page_name?$_auth\">
-    <$STDFONT_B>"._("Back to $record_name page")."<$STDFONT_E>
+    <$STDFONT_B>"._("back")."<$STDFONT_E>
     </A>
     ";
   } // if executing the action
@@ -635,14 +600,14 @@ switch($action) {
   $query = "DELETE FROM physician WHERE id='$id'";
   $result = fdb_query($query);
   if ($result) 
-    echo _("Done").".";
+    echo _("done").".";
   else
-    echo _("Error")."! [$query, $result]";
+    echo _("ERROR")."! [$query, $result]";
   echo "<$STDFONT_E>";
   echo "
   <P ALIGN=CENTER>
   <A HREF=\"$page_name?$_auth\">
-  <$STDFONT_B>"._("Back to $record_name page")."<$STDFONT_E>
+  <$STDFONT_B>"._("back")."<$STDFONT_E>
   </A>
   ";
   freemed_display_box_bottom();
@@ -671,7 +636,7 @@ switch($action) {
   echo "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <$STDFONT_B><A HREF=\"physician.php3?$_auth&id=$id\"
-       >"._("Back to $record_name page")."</A><$STDFONT_E>
+       >"._("back")."</A><$STDFONT_E>
      </TD></TR>
     </TABLE>
    </CENTER>
