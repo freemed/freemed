@@ -4,7 +4,7 @@
   # lic : GPL
   # Translation by Johann KRAUTINGER <j.krau@teleweb.at> 19991004
   # mod: 19990917
-  # mod: 20000407
+  # mod: 20000407 by schwindp
 
   $record_name                         = "Benutzer";
 
@@ -49,7 +49,7 @@
   #"Authorized Facilities";
   $Authorized_physicians               = "Berechtigte Ärzte";
   #"Authorized Physicians";
-  $Authorized_phy_groups               = "Berechtigte Fachrichtungen"
+  $Authorized_phy_groups               = "Berechtigte Fachrichtungen";
   #"Authorized Phy. Groups";
     // 19990909
   $User_type                           = "Art des Benutzers";
