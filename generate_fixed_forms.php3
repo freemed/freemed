@@ -211,7 +211,7 @@
      $insco[group]      = $this_patient->local_record["ptinsgrp".
                           ($b_r[payreclink]+1)];
      
-     $insco[name]       = $this_insco->insconame;
+     $insco[name]       = $this_insco->inscoalias;
      $insco[line1]      = $this_insco->local_record[inscoaddr1];
      $insco[line2]      = $this_insco->local_record[inscoaddr2];
      $insco[city]       = $this_insco->local_record[inscocity];
