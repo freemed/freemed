@@ -1,9 +1,10 @@
 <?php
-  # file: physician.php3
-  # note: physician database services
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # translation: max k <amk@span.ch>
-  # lic : GPL, v2
+  // file: physician.php3
+  // note: physician database services
+  // code: jeff b (jeff@univrel.pr.uconn.edu)
+  //       adam b (gdrago23@yahoo.com)
+  // translation: max k <amk@span.ch>
+  // lic : GPL, v2
 
   $page_name   ="physician.php3"; // for help info, later
   $record_name ="Provider";
@@ -11,11 +12,400 @@
 
   include "global.var.inc";
   include "freemed-functions.inc"; // API functions
+  include "webtools.php";
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();
   freemed_display_banner ();
 
+switch($action) {
+ case "addform": case "add": // 'form' actions not necessary
+ case "modform": case "mod": // in notebook implementation
+  $book = new notebook ($page_name,
+    array ("action", "_auth", "id", "been_here"), true );
+  $book->set_submit_name("OK"); // not sure what this does...
+  switch($action) {
+   case "addform": case "add":
+    $action_name="Add";
+    if (empty($been_here)) 
+      $been_here=1;
+   break; // inner addform/add switch
+   case "modform": case "mod": 
+    $action_name="Modify";
+    if (empty($been_here)) 
+      $been_here=1;
+   break; // inner addform/add switch
+  } // inner add/mod[form] switch
+  
+  $stat_q = "SELECT * FROM phystatus ORDER BY phystatus";
+  $stat_r = fdb_query($stat_q); // have the result ready for display_selectbox
+  
+  $book->add_page (
+    "Primary Information",
+    array (
+      "phylname", "phyfname", "phytitle", "phymname",
+      "phytitle", "phypracname", "phyid1", "phystatus"
+    ),
+    "
+   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Last_name : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phylname SIZE=25 MAXLENGTH=52
+     VALUE=\"$phylname\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$First_name : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyfname SIZE=25 MAXLENGTH=50
+     VALUE=\"$phyfname\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Middle_Name : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phymname SIZE=25 MAXLENGTH=50
+     VALUE=\"$phymname\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Title : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phytitle SIZE=10 MAXLENGTH=10
+     VALUE=\"$phytitle\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Practice_Name : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phypracname SIZE=25 MAXLENGTH=30
+     VALUE=\"$phypracname\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Internal_ID # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyid1 SIZE=11 MAXLENGTH=10
+     VALUE=\"$phyid1\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Status : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".
+    freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
+    ."
+    </TD></TR>
+   </TABLE>
+    "
+  );
+  
+  $book->add_page (
+    "Contact/Address",
+    array (
+     "phyaddr1a", "phyaddr2a", "phycitya", "phystatea", "phyphonea", "phyzipa",
+     "phyphonea_1", "phyphonea_2", "phyphonea_3", "phyphonea_4",
+     "phyfaxa_1", "phyfaxa_2", "phyfaxa_3", "phyfaxa_4", "phyfaxa", 
+     "phyemail", "phycellular", "phypager",
+     "phycellular_1", "phycellular_2", "phycellular_3", "phycellular_4",
+     "phypager_1", "phypager_2", "phypager_3", "phypager_4",
+     "has_second_addr"
+    ),
+    "
+   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_Address_Line 1 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyaddr1a SIZE=25 MAXLENGTH=30
+     VALUE=\"$phyaddr1a\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_Address_Line 2 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyaddr2a SIZE=25 MAXLENGTH=30
+     VALUE=\"$phyaddr2a\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_Address_City : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phycitya SIZE=21 MAXLENGTH=20
+     VALUE=\"$phycitya\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_Address_State : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phystatea SIZE=6 MAXLENGTH=5
+     VALUE=\"$phystatea\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_Address_Zip : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyzipa SIZE=10 MAXLENGTH=10
+     VALUE=\"$phyzipa\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_Address_Phone # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phyphonea")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Primary_Address_Fax # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phyfaxa")."
+    </TD></TR>
+    <TR><TD COLSPAN=2><HR></TD></TR>
+    <TR><TD ALIGN=RIGHT> 
+    <$STDFONT_B>$Email_Address : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
+     VALUE=\"$phyemail\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Cellular_Phone # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phycellular")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$BeeperPager # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phypager")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Has Second Address : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=CHECKBOX NAME=\"has_second_addr\" ".
+    ($has_second_addr ? "CHECKED" : "").">".$book->generate_refresh()."
+    </TD></TR>
+   </TABLE>
+
+    "
+  );
+
+  if ($has_second_addr)
+    $book->add_page (
+      "Address 2",
+      array (
+       "phyphoneb_1", "phyphoneb_2", "phyphoneb_3", "phyphoneb_4",
+       "phyfaxb_1", "phyfaxb_2", "phyfaxb_3", "phyfaxb_4", "phyfaxb",
+       "phyaddr1b", "phyaddr2b", "phycityb", "phystateb", "phyphoneb", "phyzipb"
+      ),
+    "
+   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Secondary_Address_Line 1 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyaddr1b SIZE=25 MAXLENGTH=30
+     VALUE=\"$phyaddr1b\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Secondary_Address_Line 2 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyaddr2b SIZE=25 MAXLENGTH=30
+     VALUE=\"$phyaddr2b\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Secondary_Address_City : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phycityb SIZE=20 MAXLENGTH=20
+     VALUE=\"$phycityb\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Secondary_Address_State : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phystateb SIZE=6 MAXLENGTH=5
+     VALUE=\"$phystateb\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Secondary_Address_Zip : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyzipb SIZE=10 MAXLENGTH=10
+     VALUE=\"$phyzipb\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Secondary_Address_Phone # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phyphoneb")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Secondary_Address_Fax # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phyfaxb")."
+    </TD></TR>
+   </TABLE>
+      "
+    ); // second address page
+
+  $phy_deg_q = "SELECT * FROM degrees ORDER BY ".
+               "degdegree, degname";
+  $phy_deg_r = fdb_query($phy_deg_q);
+  $spec_q = "SELECT * FROM specialties ORDER BY ".
+            "specname, specdesc";
+  $spec_r = fdb_query($spec_q);
+
+  $book->add_page(
+    "Personal",
+    array (
+      "phyupin", "phyref",
+      "physsn1", "physsn2", "physsn3", 
+      "phydeg1", "phydeg2", "phydeg3",
+      "physpe1", "physpe2", "physpe3"
+    ),
+    "
+   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
+    <TR><TD ALIGN=RIGHT>
+     <$STDFONT_B>$UPIN_Number : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyupin SIZE=16 MAXLENGTH=15
+     VALUE=\"$phyupin\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Social_Security # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=physsn1 SIZE=4 MAXLENGTH=3
+     VALUE=\"$physsn1\"> <B>-</B>
+    <INPUT TYPE=TEXT NAME=physsn2 SIZE=3 MAXLENGTH=2
+     VALUE=\"$physsn2\"> <B>-</B>
+    <INPUT TYPE=TEXT NAME=physsn3 SIZE=5 MAXLENGTH=4
+     VALUE=\"$physsn3\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Degree 1 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".freemed_display_selectbox ($phy_deg_r, 
+       "#degdegree#, #degname#", "phydeg1")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Degree 2 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".freemed_display_selectbox ($phy_deg_r, 
+       "#degdegree#, #degname#", "phydeg2")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Degree 3 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".freemed_display_selectbox ($phy_deg_r, 
+       "#degdegree#, #degname#", "phydeg2")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Specialty 1 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".freemed_display_selectbox ($spec_r, 
+       "#specname#, #specdesc#", "physpe1")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Specialty 2 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".freemed_display_selectbox ($spec_r, 
+       "#specname#, #specdesc#", "physpe2")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Specialty 3 : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".freemed_display_selectbox ($spec_r, 
+       "#specname#, #specdesc#", "physpe3")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Physician Internal/External<$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <SELECT NAME=\"phyref\">
+      <OPTION VALUE=\"no\" ".
+       ( ($phyref != "yes") ? "SELECTED" : "" ).">In-House
+      <OPTION VALUE=\"yes\" ".
+       ( ($phyref == "yes") ? "SELECTED" : "" ).">Referring
+    </SELECT>
+    </TD></TR>
+  
+
+   </TABLE>
+    "
+  );
+
+  // cache this outside of the function call (can't abstract that while-loop)
+  $brackets="[]"; // i can't see where they're defined, so i'll do it here
+  $cmap_buf="";
+  $int_r = fdb_query("SELECT * FROM intservtype");
+  while ($i_r = fdb_fetch_array ($int_r)) {
+    $i_id = $i_r ["id"];
+    $cmap_buf .= "
+     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color ($_alternate)).">
+      <TD>".fm_prep($i_r["intservtype"])."</TD>
+      <TD>
+       <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
+        SIZE=15 MAXLENGTH=30 VALUE=\"".$phychargemap[$i_id]."\">
+      </TD>
+     </TR>
+    ";
+  } // end looping for service types
+
+  $book->add_page(
+    "Charge Map",
+    array (
+      "phychargemap"
+    ),
+    "
+    <INPUT TYPE=HIDDEN NAME=\"phychargemap$brackets\" VALUE=\"0\">
+
+   <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2
+    BGCOLOR=\"#000000\"> <!-- black border --><TR><TD>
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
+     ALIGN=CENTER>
+    <TR BGCOLOR=#aaaaaa>
+     <TD><B>Internal Type</B></TD>
+     <TD><B>Amount</B></TD>
+    </TR>
+    $cmap_buf
+    </TABLE>
+   </TD></TR></TABLE></CENTER>
+    "
+  );
+
+  $insmap_buf = ""; // cache the output, as above
+  $i_res = fdb_query("SELECT * FROM inscogroup");
+  while ($i_r = fdb_fetch_array ($i_res)) {
+    $i_id = $i_r ["id"];
+    $insmap_buf .= "
+     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+      <TD>".fm_prep($i_r["inscogroup"])."</TD>
+      <TD>
+       <INPUT TYPE=TEXT NAME=\"phyidmap$brackets\"
+        SIZE=15 MAXLENGTH=30 VALUE=\"".$phyidmap[$i_id]."\">
+      </TD>
+     </TR>
+    ";
+  } // end looping for service types
+
+  $book->add_page(
+    "Insurance IDs",
+    array (
+      "phyidmap"
+    ),
+    "
+  <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 
+   BGCOLOR=\"#000000\"> <!-- black border --><TR><TD>
+
+    <!-- hide record zero, since it isn't used... -->
+    <INPUT TYPE=HIDDEN NAME=\"phyidmap$brackets\" VALUE=\"0\">
+
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
+     ALIGN=CENTER>
+    <TR BGCOLOR=#aaaaaa>
+     <TD><B>Insurance Group</B></TD>
+     <TD><B>ID Number</B></TD>
+    </TR>
+    $insmap_buf
+    </TABLE>
+  </TD></TR></TABLE></CENTER>
+    "
+  );
+  
+  // now display the thing
+  freemed_display_box_top("$action_name $record_name", $page_name);
+  echo "<CENTER>\n";
+  $book->display();
+  echo "</CENTER>\n";
+  freemed_display_box_bottom();
+ 
+ break; // master addform/modform
+
+
+} // master action switch
+
+/*
 if ($action=="addform") {
 
   freemed_display_box_top ("$Add_Physician", $page_name);
@@ -25,281 +415,6 @@ if ($action=="addform") {
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\"> 
 
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
-    <TR><TD>
-    <$STDFONT_B>$Last_name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phylname SIZE=25 MAXLENGTH=52
-     VALUE=\"$phylname\">
-    </TD><TD>
-    <$STDFONT_B>$First_name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyfname SIZE=25 MAXLENGTH=50
-     VALUE=\"$phyfname\">
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Title<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phytitle SIZE=10 MAXLENGTH=10
-     VALUE=\"$phytitle\">
-    </TD><TD>
-    <$STDFONT_B>$Middle_Name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phymname SIZE=25 MAXLENGTH=50
-     VALUE=\"$phymname\">
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Practice_Name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phypracname SIZE=25 MAXLENGTH=30
-     VALUE=\"$phypracname\">
-    </TD><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
-
-  <TR><TD>
-    <$STDFONT_B>$Internal_ID #<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyid1 SIZE=11 MAXLENGTH=10
-     VALUE=\"$phyid1\">
-    </TD><TD>
-    <$STDFONT_B>$Status <$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phystatus\">
-  ";
-
-  freemed_display_phystatus($phystatus);
-
-  echo "
-    </SELECT>
-    </TD></TR>
-
-    <TR><TD COLSPAN=4><HR></TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Line 1<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr1a SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr1a\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Line 2<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr2a SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr2a\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_City<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phycitya SIZE=21 MAXLENGTH=20
-     VALUE=\"$phycitya\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_State<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phystatea SIZE=6 MAXLENGTH=5
-     VALUE=\"$phystatea\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Zip<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyzipa SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyzipa\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Phone # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyphonea");
-  echo "
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Fax # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyfaxa");
-  echo "
-    </TD></TR>
-    <TR><TD COLSPAN=4><HR></TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Line 1<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr1b SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr1b\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Line 2<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr2b SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr2b\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_City<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phycityb SIZE=20 MAXLENGTH=20
-     VALUE=\"$phycityb\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_State<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phystateb SIZE=6 MAXLENGTH=5
-     VALUE=\"$phystateb\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Zip<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyzipb SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyzipb\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Phone # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyphoneb");
-  echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyphoneb1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphoneb1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyphoneb2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphoneb2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyphoneb3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyphoneb3\"> -->
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Fax # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyfaxb");
-  echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyfaxb1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxb1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyfaxb2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxb2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyfaxb3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyfaxb3\"> -->
-    </TD></TR>
-    <TR><TD COLSPAN=4><HR></TD></TR>
-    <TR><TD> 
-    <$STDFONT_B>$Email_Address<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyemail\">
-    </TD><TD>
-    <$STDFONT_B>$Cellular_Phone # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phycellular");
-  echo "
-    </TD></TR>
-    <TR><TD COLSPAN=2>&nbsp;</TD><TD ALIGN=RIGHT>
-    <$STDFONT_B>$BeeperPager # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phypager");
-  echo "
-    </TD></TR>
-    <TR><TD>
-     <$STDFONT_B>$UPIN_Number<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyupin SIZE=16 MAXLENGTH=15
-     VALUE=\"$phyupin\">
-    </TD><TD>
-    <$STDFONT_B>$Social_Security # <$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=physsn1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$physsn1\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=physsn2 SIZE=3 MAXLENGTH=2
-     VALUE=\"$physsn2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=physsn3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$physsn3\">
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Degree 1<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phydeg1\">
-  ";
-
-  freemed_display_phy_degrees ($phydeg1);
-
-  echo "
-    </SELECT>
-    </TD><TD>
-       ";
-
-  echo "
-    <$STDFONT_B>$Specialty 1<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"physpe1\">
-  ";
-
-  freemed_display_phy_specialties ($physpe1);
-
-  echo "
-    </SELECT>
-    </TD></TR>
-        ";
-
-  echo "
-    <TR><TD>
-    <$STDFONT_B>$Degree 2<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phydeg2\">
-  ";
-
-  freemed_display_phy_degrees ($phydeg2);
-
-  echo "
-    </SELECT>
-    </TD><TD>
-       ";
-
-  echo "
-    <$STDFONT_B>$Specialty 2<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"physpe2\">
-  ";
-
-  freemed_display_phy_specialties ($physpe2);
-
-  echo "
-    </SELECT>
-    </TD></TR>
-       " ;
-
- echo "
-    <TR><TD>
-    <$STDFONT_B>$Degree 3<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phydeg3\">
-      " ;
-
-  freemed_display_phy_degrees ($phydeg3);
-
-  echo "
-    </SELECT>
-    </TD><TD>
-       ";
-  echo "
-    <$STDFONT_B>$Specialty 3<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"physpe3\">
-  ";
-
-  freemed_display_phy_specialties ($physpe3);
-
-  echo "
-    </SELECT>
-    </TD></TR>
-
-  
-    <TR><TD>
-    <$STDFONT_B>Physician Internal/External<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phyref\">
-      <OPTION VALUE=\"no\" ".
-       ( ($phyref != "yes") ? "SELECTED" : "" ).">In-House
-      <OPTION VALUE=\"yes\" ".
-       ( ($phyref == "yes") ? "SELECTED" : "" ).">Referring
-    </SELECT>
-    </TD><TD>&nbsp;</TD><TD>&nbsp</TD></TR>
-
     <!-- this shouldn't be here !!! HELP!! HELP!!
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
     <$STDFONT_B>$Number_of_Referrals<$STDFONT_E>
@@ -322,43 +437,6 @@ if ($action=="addform") {
 
     </TABLE>
     <P>
-
-    <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=1
-     VALIGN=MIDDLE ALIGN=CENTER><TR><TD>
-
-    <CENTER>
-     <$STDFONT_B><B>Unit Relative Value Charges</B><$STDFONT_E>
-    </CENTER>
-
-    <!-- hide record zero, since it isn't used... -->
-    <INPUT TYPE=HIDDEN NAME=\"phychargemap$brackets\" VALUE=\"0\">
-
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
-     ALIGN=CENTER>
-    <TR BGCOLOR=#aaaaaa>
-     <TD><B>Internal Type</B></TD>
-     <TD><B>Amount</B></TD>
-    </TR>
-  ";
-  $_alternate = freemed_bar_alternate_color ();  
-  $i_res = fdb_query("SELECT * FROM intservtype");
-  while ($i_r = fdb_fetch_array ($i_res)) {
-    $_alternate = freemed_bar_alternate_color ($_alternate);  
-    $i_id = $i_r ["id"];
-    echo "
-     <TR BGCOLOR=$_alternate>
-      <TD>".fm_prep($i_r["intservtype"])."</TD>
-      <TD>
-       <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
-        SIZE=15 MAXLENGTH=30 VALUE=\"".$phychargemap[$i_id]."\">
-      </TD>
-     </TR>
-    ";
-  } // end looping for service types
-  echo "
-    </TABLE>
-
-    </TD></TR></TABLE>
 
     <P>
     <CENTER>
@@ -1474,7 +1552,7 @@ if ($action=="addform") {
   }
 
 } // view is now the default
-
+*/
 freemed_close_db (); // close the database
 
 freemed_display_html_bottom ();
