@@ -77,7 +77,7 @@
   $Please_use_the_MODIFY_form    = "Bitte benützen sie das Veränderungsformular um Eingaben zu berichtigen";    
   #"Please use the MODIFY form to MODIFY a code";
   $Result                        = "Ergebnis";
-  $Book_an_appointment           = "Termin eingeben"
+  $Book_an_appointment           = "Termin eingeben";
   #"Book an Appointment";
   $Date                          = "Datum";
   $Of_entry                      = "der Eingabe";
