@@ -51,6 +51,9 @@ class GraphModule extends ReportsModule {
 		if ($_REQUEST['graphmode']) {
 			// don't display the box top
 			freemed_open_db();
+//------HIPAA Logging
+// Dont see a need here...
+
 			return;
 		}
 		BaseModule::header();

@@ -47,6 +47,12 @@ class EMRReportModule extends BaseModule {
 		global $display_buffer;
             freemed_open_db();
             // don't display the box top
+	
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"EMRReportModule.php|user $user_to_log report access GLOBAL ACCESS");}		
+
+
         }
         function footer($nullvar="") {
 		global $display_buffer;
