@@ -130,6 +130,10 @@ class BaseModule extends module {
 		$this->META_INFORMATION['__associations']["$with"] = get_class($this);
 	} // end method BaseModule->_SetAssociation
 
+	function _SetHandler ($handler, $method = 'handler') {
+		$this->META_INFORMATION['__handler']["$handler"] = $method;
+	} // end method BaseModule->_SetHandler
+
 } // end class BaseModule
 
 ?>
