@@ -41,7 +41,7 @@ switch ($action) {
   case "add": case "addform":
   case "mod": case "modform":
     // addform and modform not used due to "notebook"
-   $book = CreateObject('PHP.notebook', array ("action", "id", "been_here"),
+   $book = CreateObject('PHP.notebook', array ("action", "id", "been_here", "ci"),
      NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH, 3);
    $book->set_cancel_name(__("Cancel"));
    $book->set_refresh_name(__("Refresh"));
@@ -767,6 +767,30 @@ switch ($action) {
 	 } elseif (($action=="addform") and (!empty($ptid))) {
 		// Be sure to calculate PID if ptid is already calculated
 		$pid = $sql->last_record($result);
+	}
+
+	// If we're dealing with a call-in ...
+	if (($_REQUEST['ci'] > 0) and ($action == 'addform')) {
+		// Just in case ...
+		if (($pid+0) < 1) { $pid = $sql->last_record($result); }
+
+		// Move all appointments to proper patient
+		$display_buffer .= "<b>".__("Reassigning appointments")." ...</b> ";
+		$result = $sql->query("UPDATE scheduler SET ".
+			"caltype = 'pat', calpatient = '".addslashes($pid)."' ".
+			"WHERE caltype = 'temp' AND calpatient = '".
+				addslashes($_REQUEST['ci'])."'");
+		if ($result) $display_buffer .= __("Done");
+		else $display_buffer .= __("Error");
+		$display_buffer .= "<br/>\n";
+
+		// Remove the call-in appointment entirely
+		$display_buffer .= "<b>".__("Removing old temporary patient account")." ...</b> ";
+		$result = $sql->query("DELETE FROM callin ".
+			"WHERE id = '".addslashes($_REQUEST['ci'])."'");
+		if ($result) $display_buffer .= __("Done");
+		else $display_buffer .= __("Error");
+		$display_buffer .= "<br/>\n";
 	}
 
 	// Set automatic page refresh to management screen
