@@ -1,0 +1,702 @@
+#
+# freemed.db.mysql
+# 	- database definitions for freemed/mysql database
+#
+# import using "mysql -p (database_name) < freemed.db.mysql"
+#
+
+  CREATE TABLE physician (
+    phylname     VARCHAR(52),
+    phyfname     VARCHAR(50),
+    phytitle     CHAR(10),
+    phymname     VARCHAR(50),
+    phypracname  CHAR(30),
+    phyaddr1a    CHAR(30),
+    phyaddr2a    CHAR(30),
+    phycitya     CHAR(20),
+    phystatea    CHAR(5),
+    phyzipa      CHAR(10),
+    phyphonea    VARCHAR(16),
+    phyfaxa      VARCHAR(16),
+    phyaddr1b    CHAR(30),
+    phyaddr2b    CHAR(30),
+    phycityb     CHAR(20),
+    phystateb    CHAR(5),
+    phyzipb      CHAR(10),
+    phyphoneb    VARCHAR(16),
+    phyfaxb      VARCHAR(16),
+    phyemail     CHAR(30),
+    phycellular  CHAR(10),
+    phypager     CHAR(10),
+    phyupin      CHAR(15),
+    physsn       CHAR(9),
+    phydeg1      INT UNSIGNED,
+    phydeg2      INT UNSIGNED,
+    phydeg3      INT UNSIGNED,
+    physpe1      INT UNSIGNED,
+    physpe2      INT UNSIGNED,
+    physpe3      INT UNSIGNED,
+    phyid1       CHAR(10),
+    phystatus    INT UNSIGNED,
+    phyref       ENUM("yes","no") NOT NULL,
+    phyrefcount  INT UNSIGNED,
+    phyrefamt    REAL,
+    phyrefcoll   REAL,
+    phychargemap TEXT,
+    phyidmap     TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  CREATE TABLE icd9 (
+    icd9code     VARCHAR(6),
+    icd10code    VARCHAR(7),
+    icd9descrip  VARCHAR(45),
+    icd10descrip VARCHAR(45),
+    icdmetadesc  VARCHAR(30),
+    icdng        DATE,
+    icddrg       TEXT,
+    icdnum       INT UNSIGNED,
+    icdamt       REAL,
+    icdcoll      REAL,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  CREATE TABLE patient (
+    ptdtadd      DATE,
+    ptdtmod      DATE,
+    ptbal        REAL,
+    ptbalfwd     REAL,
+    ptunapp      REAL,
+    ptdoc        INT UNSIGNED,
+    ptrefdoc     INT UNSIGNED,
+    ptpcp        INT UNSIGNED,
+    ptphy1       INT UNSIGNED,
+    ptphy2       INT UNSIGNED,
+    ptphy3       INT UNSIGNED,
+    ptphy4       INT UNSIGNED,
+    ptbilltype   ENUM("sta","mon","chg") NOT NULL,
+    ptbudg       REAL,
+    ptlname      VARCHAR(50),
+    ptfname      VARCHAR(50),
+    ptmname      VARCHAR(50),
+    ptaddr1      VARCHAR(45),
+    ptaddr2      VARCHAR(45),
+    ptcity       VARCHAR(45),
+    ptstate      VARCHAR(20),
+    ptzip        CHAR(10),
+    ptcountry    VARCHAR(50),
+    pthphone     VARCHAR(16),
+    ptwphone     VARCHAR(16),
+    ptfax        VARCHAR(16),
+    ptemail      VARCHAR(80),
+    ptsex        ENUM("m","f","t") NOT NULL,
+    ptdob        DATE,
+    ptssn        VARCHAR(9),
+    ptdmv        VARCHAR(15),
+    ptdtlpay     DATE,
+    ptamtlpay    REAL,
+    ptpaytype    INT UNSIGNED,
+    ptdtbill     DATE,
+    ptamtbill    REAL,
+    ptstatus     INT UNSIGNED,
+    ptytdchg     REAL,
+    ptar         REAL,
+    ptextinf     TEXT,
+    ptdisc       REAL,
+    ptdol        DATE,
+    ptdiag1      INT UNSIGNED,
+    ptdiag2      INT UNSIGNED,
+    ptdiag3      INT UNSIGNED,
+    ptdiag4      INT UNSIGNED,
+    ptid         VARCHAR(10),
+    pthistbal    REAL,
+    ptmarital    ENUM("single","married",
+                      "divorced", "separated",
+                      "widowed") NOT NULL,
+    ptempl       ENUM("y","n") NOT NULL,
+    ptemp1       INT UNSIGNED,
+    ptemp2       INT UNSIGNED,
+    ptguar       TEXT,
+    ptrelguar    TEXT,
+    ptguarstart  TEXT,
+    ptguarend    TEXT,
+    ptins        TEXT,
+    ptinsno      TEXT,
+    ptinsgrp     TEXT,
+    ptinsstart   TEXT,
+    ptinsend     TEXT,
+    ptnextofkin  TEXT,
+    iso          VARCHAR(15),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  CREATE TABLE procrec (
+    procpatient            INT UNSIGNED NOT NULL,
+    proceoc                TEXT,
+    proccpt                INT UNSIGNED,
+    proccptmod             INT UNSIGNED,
+    procdiag1              INT UNSIGNED,
+    procdiag2              INT UNSIGNED,
+    procdiag3              INT UNSIGNED,
+    procdiag4              INT UNSIGNED,
+    proccharges            REAL,
+    procunits              REAL,
+    procvoucher            VARCHAR(25),
+    procphysician          INT UNSIGNED,
+    procdt                 DATE,
+    procpos                INT UNSIGNED,
+    proccomment            TEXT,
+    procbalorig            REAL,
+    procbalcurrent         REAL,
+    procamtpaid            REAL,
+    procbilled             INT UNSIGNED,
+    procbillable           INT UNSIGNED,
+    procauth               INT UNSIGNED,
+    procrefdoc             INT UNSIGNED,
+    procrefdt              DATE,
+    id INT NOT NULL AUTO_INCREMENT,
+    KEY (procpatient),
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE facility (
+    psrname      CHAR(25),
+    psraddr1     CHAR(25),
+    psraddr2     CHAR(25),
+    psrcity      CHAR(15),
+    psrstate     CHAR(3),
+    psrzip       CHAR(10),
+    psrcountry   VARCHAR(50),
+    psrnote      VARCHAR(40),
+    psrdateentry DATE,
+    psrdefphy    INT UNSIGNED,
+    psrphone     VARCHAR(16),
+    psrfax       VARCHAR(16),
+    psremail     VARCHAR(25),
+    psrein       VARCHAR(9),
+    psrintext    INT UNSIGNED,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id) );
+
+  INSERT INTO facility VALUES (
+   'Default Facility', '', '', '', '', '', '', '', '2000-11-13',
+   '', '', '', '', NULL );
+
+  CREATE TABLE room (
+    roomname     CHAR(20),
+    roompos      INT UNSIGNED,
+    roomdescrip  CHAR(40),
+    roomdefphy   INT UNSIGNED,
+    roomsurgery  ENUM("y", "n") NOT NULL,
+    roombooking  ENUM("y", "n") NOT NULL,
+    roomipaddr   VARCHAR(15),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  INSERT INTO room VALUES (
+   'Default Room', '1', '', '', '', '', '', NULL);
+
+  CREATE TABLE degrees (
+    degdegree     CHAR(10),
+    degname       VARCHAR(50),
+    degdate       DATE,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  CREATE TABLE specialties (
+    specname      VARCHAR(50),
+    specdesc      VARCHAR(100),
+    specdatestamp DATE,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE insco (
+    inscodtadd   DATE,
+    inscodtmod   DATE,
+    insconame    VARCHAR(50) NOT NULL,
+    inscoalias   VARCHAR(30),
+    inscoaddr1   VARCHAR(45),
+    inscoaddr2   VARCHAR(45),
+    inscocity    VARCHAR(30),
+    inscostate   CHAR(3),
+    inscozip     CHAR(10),
+    inscophone   VARCHAR(16),
+    inscofax     VARCHAR(16),
+    inscocontact VARCHAR(100),
+    inscoid      CHAR(20),
+    inscowebsite VARCHAR(100),
+    inscoemail   VARCHAR(50),
+    inscogroup   INT UNSIGNED,
+    inscotype    INT UNSIGNED,
+    inscoassign  INT UNSIGNED,
+    inscomod     TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    KEY (insconame),
+    PRIMARY KEY (id)    
+    );
+
+  CREATE TABLE inscogroup (
+    inscogroup     VARCHAR(50),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  CREATE TABLE cpt (
+    cptcode        CHAR(7),
+    cptnameint     VARCHAR(50),
+    cptnameext     VARCHAR(50),
+    cptgender      ENUM("n", "m", "f") NOT NULL,
+    cpttaxed       ENUM("n", "y") NOT NULL,
+    cpttype        INT UNSIGNED,
+    cptreqcpt      TEXT,
+    cptexccpt      TEXT,
+    cptreqicd      TEXT,
+    cptexcicd      TEXT,
+    cptrelval      REAL,
+    cptdeftos      INT UNSIGNED,
+    cptdefstdfee   REAL,
+    cptstdfee      TEXT,
+    cpttos         TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE cptmod (
+    cptmod         CHAR(2),
+    cptmoddescrip  VARCHAR(50),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE phygroup (
+    phygroupname   VARCHAR(100),
+    phygroupfac    INT UNSIGNED,
+    phygroupdtadd  DATE,
+    phygroupdtmod  DATE,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE user (
+    username       VARCHAR(16) NOT NULL,
+    userpassword   VARCHAR(16) NOT NULL,
+    userdescrip    VARCHAR(50),
+    userlevel      INT UNSIGNED,
+    usertype       ENUM ("phy", "misc") NOT NULL,
+    userfac        BLOB,
+    userphy        BLOB,
+    userphygrp     BLOB,
+    userrealphy    INT UNSIGNED,
+    id INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id),
+    UNIQUE idx_id (id),
+    KEY (username),
+    UNIQUE idx_username (username)
+    );
+
+  INSERT INTO user VALUES (
+    'root', 'password', 'Superuser', '9', '', '-1', '-1', '-1',
+    '', NULL );
+
+  CREATE TABLE scheduler (
+    caldateof         DATE,
+    caltype           ENUM ("temp", "pat") NOT NULL,
+    calhour           INT UNSIGNED,
+    calminute         INT UNSIGNED,
+    calduration       INT UNSIGNED,
+    calfacility       INT UNSIGNED,
+    calroom           INT UNSIGNED,
+    calphysician      INT UNSIGNED,
+    calpatient        INT UNSIGNED,
+    calcptcode        INT UNSIGNED,
+    calstatus         INT UNSIGNED,
+    calprenote        VARCHAR(100),
+    calpostnote       TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE phyavailmap (
+    pamdatefrom      DATE,
+    pamdateto        DATE,
+    pamtimefromhour  INT UNSIGNED,
+    pamtimefrommin   INT UNSIGNED,
+    pamtimetohour    INT UNSIGNED,
+    pamtimetomin     INT UNSIGNED,
+    pamphysician     INT UNSIGNED,
+    pamcomment       VARCHAR(75),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE phystatus (
+    phystatus      VARCHAR(30),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  CREATE TABLE pnotes (
+    pnotesdt       DATE,
+    pnotesdtadd    DATE,
+    pnotesdtmod    DATE,
+    pnotespat      INT UNSIGNED,
+    pnotesdescrip  VARCHAR(100),
+    pnotesdoc      INT UNSIGNED,
+    pnoteseoc      TEXT,
+    pnotes_S       TEXT,
+    pnotes_O       TEXT,
+    pnotes_A       TEXT,
+    pnotes_P       TEXT,
+    pnotes_I       TEXT,
+    pnotes_E       TEXT,
+    pnotes_R       TEXT,
+    iso            VARCHAR(15),
+    id INT NOT NULL AUTO_INCREMENT, 
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE payrec (
+    payrecdtadd   DATE,
+    payrecdtmod   DATE,
+    payrecpatient INT UNSIGNED NOT NULL,
+    payrecdt      DATE,
+    payreccat     INT UNSIGNED,
+    payrecproc    INT UNSIGNED,
+    payrecsource  INT UNSIGNED,
+    payreclink    INT UNSIGNED,
+    payrectype    INT UNSIGNED,
+    payrecnum     VARCHAR(100),
+    payrecamt     REAL,
+    payrecdescrip TEXT,
+    payreclock    ENUM ("unlocked", "locked") NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
+    KEY (payrecpatient),
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE frmlry (
+    frmlrydtadd    DATE,
+    frmlrydtmod    DATE,
+    class          VARCHAR(20),
+    gnrcname       VARCHAR(20),
+    trdmrkname     VARCHAR(20),
+    ind1           VARCHAR(50),
+    ind2           VARCHAR(50),
+    ind3           VARCHAR(50),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE rx (
+    rxdtadd        DATE,
+    rxdtmod        DATE,
+    rxpatient      INT UNSIGNED,
+    rxdtfrom       DATE,
+    rxduration     INT UNSIGNED,
+    rxdrug         INT UNSIGNED,
+    rxdosage       VARCHAR (100),
+    rxrefills      INT UNSIGNED,
+    rxsubstitute   VARCHAR (30),
+    rxmd5sum       VARCHAR (50),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE simplereport (
+    sr_label       VARCHAR(50),
+    sr_type        INT UNSIGNED,
+    sr_text        TEXT,
+    sr_textf       TEXT,
+    sr_textcm      TEXT,
+    sr_textcf      TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE callin (
+    cilname        VARCHAR(50),
+    cifname        VARCHAR(50),
+    cimname        VARCHAR(50),
+    cihphone       VARCHAR(16),
+    ciwphone       VARCHAR(16),
+    cidob          DATE,
+    cicomplaint    TEXT,
+    cidatestamp    DATE,
+    cifacility     INT UNSIGNED,
+    ciphysician    INT UNSIGNED,
+    citookcall     VARCHAR(50),
+    cipatient      INT UNSIGNED,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE roomequip (
+    reqname         VARCHAR(100),
+    reqdescrip      TEXT,
+    reqdateadd      DATE,
+    reqdatemod      DATE,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE tos (
+    tosname        VARCHAR(75),
+    tosdescrip     VARCHAR(200),
+    tosdtadd       DATE,
+    tosdtmod       DATE,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE intservtype (
+    intservtype    VARCHAR(50),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE patrectemplate (
+    prtname        VARCHAR(100),
+    prtdescrip     VARCHAR(100),
+    prtfname       TEXT,
+    prtvar         TEXT,
+    prtftype       TEXT,
+    prtftypefor    TEXT,
+    prtfmaxlen     TEXT,
+    prtfcom        TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE qtemplate (
+    qname          VARCHAR(100),
+    qdescrip       VARCHAR(100),
+    qfname         TEXT,
+    qvar           TEXT,
+    qftype         TEXT,
+    qftypefor      TEXT,
+    qfmaxlen       TEXT,
+    qftext         TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+ 
+  CREATE TABLE diagfamily (
+    dfname         VARCHAR(100),
+    dfdescrip      VARCHAR(100),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE ptstatus (
+    ptstatus         CHAR(3),
+    ptstatusdescrip  VARCHAR(30),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE patrecdata (
+    prpatient      INT UNSIGNED NOT NULL,
+    prtemplate     INT UNSIGNED,
+    prdtadd        DATE,
+    prdtmod        DATE,
+    prdata         TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    KEY (prpatient),
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE log (
+    datestamp      DATE,
+    user           INT UNSIGNED,
+    db_name        VARCHAR(20),
+    rec_num        INT UNSIGNED,
+    comment        TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE config (
+    c_option       CHAR(6),
+    c_value        VARCHAR(100),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    );
+
+  INSERT INTO config VALUES ( 'icd', '9', NULL );
+  INSERT INTO config VALUES ( 'gfx', '1', NULL );
+  INSERT INTO config VALUES ( 'calshr', '6', NULL );
+  INSERT INTO config VALUES ( 'calehr', '18', NULL );
+  INSERT INTO config VALUES ( 'cal_ob', 'enable', NULL );
+  INSERT INTO config VALUES ( 'dtfmt', 'ymd', NULL );
+  INSERT INTO config VALUES ( 'phofmt', 'unformatted', NULL );
+
+  CREATE TABLE infaxes (
+    infcode	  VARCHAR(5),  
+    infsender	  VARCHAR(50),
+    inftotpages	  INT UNSIGNED,
+    infthispage	  INT UNSIGNED,
+    inftimestamp  TIMESTAMP,
+    infimage	  VARCHAR(50),
+    inforward	  ENUM("no","yes") NOT NULL,		
+    infack	  ENUM("no","yes") NOT NULL,
+    infptid	  VARCHAR(10),
+    infphysid	  VARCHAR(10),
+    id            INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+  CREATE TABLE infaxlut (
+    lutsender VARCHAR(50),
+    lutname   VARCHAR(50),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+    );
+
+   CREATE TABLE printer (
+     prntname   VARCHAR(50),
+     prnthost   VARCHAR(50),
+     prntaclvl  ENUM("9","8","7","6","5","4","3","2","1","0") NOT NULL,
+     prntdesc   VARCHAR(100),
+     id         INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );
+
+   CREATE TABLE fixedform (
+     ffname        VARCHAR(50),
+     ffdescrip     VARCHAR(100),
+     fftype        INT UNSIGNED,
+     ffpagelength  INT UNSIGNED,
+     fflinelength  INT UNSIGNED,
+     ffloopnum     INT UNSIGNED,
+     ffloopoffset  INT UNSIGNED,
+     ffcheckchar   CHAR(1),
+     ffrow         TEXT,
+     ffcol         TEXT,
+     fflength      TEXT,
+     ffdata        TEXT,
+     ffformat      TEXT,
+     ffcomment     TEXT,
+     id            INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );
+
+  CREATE TABLE eoc (
+     eocpatient                INT UNSIGNED NOT NULL,
+     eocdescrip                VARCHAR(100),
+     eocstartdate              DATE,
+     eocdtlastsimilar          DATE,
+     eocreferrer               INT UNSIGNED,
+     eocfacility               INT UNSIGNED,
+     eocdiagfamily             TEXT,
+     eocrelpreg                ENUM ("no", "yes") NOT NULL,
+     eocrelemp                 ENUM ("no", "yes") NOT NULL,
+     eocrelauto                ENUM ("no", "yes") NOT NULL,
+     eocrelother               ENUM ("no", "yes") NOT NULL,
+     eocrelstpr                VARCHAR(10),
+     eoctype                   ENUM ("acute",
+                                     "chronic",
+                                     "chronic recurrent",
+                                     "historical") NOT NULL,
+     eocrelautoname            VARCHAR(100),
+     eocrelautoaddr1           VARCHAR(100),
+     eocrelautoaddr2           VARCHAR(100),
+     eocrelautocity            VARCHAR(50),
+     eocrelautostpr            VARCHAR(30),
+     eocrelautozip             VARCHAR(10),
+     eocrelautocountry         VARCHAR(100),
+     eocrelautocase            VARCHAR(30),
+     eocrelautorcname          VARCHAR(100),
+     eocrelautorcphone         VARCHAR(16),
+     eocrelempname             VARCHAR(100),
+     eocrelempaddr1            VARCHAR(100),
+     eocrelempaddr2            VARCHAR(100),
+     eocrelempcity             VARCHAR(50),
+     eocrelempstpr             VARCHAR(30),
+     eocrelempzip              VARCHAR(10),
+     eocrelempcountry          VARCHAR(100),
+     eocrelempfile             VARCHAR(30),
+     eocrelemprcname           VARCHAR(100),
+     eocrelemprcphone          VARCHAR(16),
+     eocrelemprcemail          VARCHAR(100),
+     eocrelpregcycle           INT UNSIGNED,
+     eocrelpreggravida         INT UNSIGNED,
+     eocrelpregpara            INT UNSIGNED,
+     eocrelpregmiscarry        INT UNSIGNED,
+     eocrelpregabort           INT UNSIGNED,
+     eocrelpreglastper         DATE,
+     eocrelpregconfine         DATE,
+     eocrelothercomment        VARCHAR(100),
+     id                        INT NOT NULL AUTO_INCREMENT,
+     KEY (eocpatient),
+     PRIMARY KEY (id)
+     );
+
+  CREATE TABLE oldreports (
+     oldrep_timestamp          DATE,
+     oldrep_label              VARCHAR(50),
+     oldrep_type               INT UNSIGNED,
+     oldrep_sender             INT UNSIGNED,
+     oldrep_delivery           VARCHAR(20),
+     oldrep_author             INT UNSIGNED,
+     oldrep_dateline           VARCHAR(100),
+     oldrep_header1            VARCHAR(100),
+     oldrep_header2            VARCHAR(100),
+     oldrep_header3            VARCHAR(100),
+     oldrep_header4            VARCHAR(100),
+     oldrep_header5            VARCHAR(100),
+     oldrep_header6            VARCHAR(100),
+     oldrep_header7            VARCHAR(100),
+     oldrep_dest1              VARCHAR(100),
+     oldrep_dest2              VARCHAR(100),
+     oldrep_dest3              VARCHAR(100),
+     oldrep_dest4              VARCHAR(100),
+     oldrep_signature1         VARCHAR(100),
+     oldrep_signature2         VARCHAR(100),
+     oldrep_text               TEXT,
+     id                        INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );
+
+  CREATE TABLE patimg (
+     pipatient                 INT UNSIGNED NOT NULL,
+     pilink                    INT UNSIGNED,
+     pidate                    INT UNSIGNED,
+     pitype                    ENUM ("picture", "xray") NOT NULL,
+     pidata                    BLOB, 
+     id                        INT NOT NULL AUTO_INCREMENT,
+     KEY (pipatient),
+     PRIMARY KEY (id)
+     );
+
+  CREATE TABLE authorizations (
+     authdtadd                 DATE,
+     authdtmod                 DATE,
+     authpatient               INT UNSIGNED NOT NULL,
+     authdtbegin               DATE,
+     authdtend                 DATE,
+     authnum                   VARCHAR(25),
+     authtype                  INT UNSIGNED,
+     authprov                  INT UNSIGNED,
+     authprovid                VARCHAR(20),
+     authinsco                 INT UNSIGNED,
+     authvisits                INT UNSIGNED,
+     authvisitsused            INT UNSIGNED,
+     authvisitsremain          INT UNSIGNED,
+     authcomment               VARCHAR(100),
+     id                        INT NOT NULL AUTO_INCREMENT,
+     KEY (authpatient),
+     PRIMARY KEY (id)
+     );
+
+  CREATE TABLE insmod (
+     insmod                    VARCHAR(15),
+     insmoddesc                VARCHAR(50),
+     id                        INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );
