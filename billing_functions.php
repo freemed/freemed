@@ -70,7 +70,7 @@ switch ($_REQUEST['action']) {
 		die();
 	} else {
 		$display_buffer .= 
-		"<div class=\"section\">".__("FreeMED Billing System")."</div><br/> ".
+		"<div class=\"section\">".__("Billing System")."</div><br/> ".
 		"<p/>\n";
 	}
 
