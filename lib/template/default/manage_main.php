@@ -49,7 +49,9 @@ foreach ($static_components AS $garbage => $component) {
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
 			><tr><td COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 			 CLASS=\"menubar_items\">
-			<A HREF=\"book_appointment.php?patient=$id&type=pat\"
+			<A HREF=\"book_appointment.php?selected_date=".
+			urlencode(freemed_get_date_next(date("Y-m-d")))."&".
+			"patient=$id&type=pat\"
 			>".__("Add")."</A> |
 			<A HREF=\"manage_appointments.php?patient=$id\"
 			>".__("View/Manage")."</A> |
