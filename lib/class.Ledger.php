@@ -79,7 +79,9 @@ class Ledger {
 		$current_type = $this_procedure['proccurcovtp'];
 		for ($i=1; $i<=4; $i++) {
 			// Determine if a certain coverage exists
-			$cov_exist[$i] = ($this_procedure['proccov'.$i] > 0);
+			if ($this_procedure['proccov'.$i] > 0) {
+				$cov_exists[$i] = true;
+			}
 		}
 
 		// If this is set to be patient billed *NOW* and it
@@ -480,7 +482,7 @@ class Ledger {
 				'procamtpaid' => $amount_paid
 			), array ( 'id' => $data['procedure'] )
 		);
-		$pay_result = $GLOBALS['sql']->query ( $query );
+		$proc_result = $GLOBALS['sql']->query ( $query );
 
 		return ($proc_query and $pay_query);
 	} // end method post_payment
