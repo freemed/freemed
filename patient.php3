@@ -528,9 +528,7 @@ switch ($action) {
    freemed_display_box_top("$record_name $action_name");
 
    if (!( $book->is_done() )) {
-     echo "<CENTER>\n";
-     $book->display();
-     echo "</CENTER>\n";
+     echo "<CENTER>\n".$book->display()."</CENTER>\n";
    } else { // if it is done
      switch ($action) {
        case "add": case "addform":

@@ -210,8 +210,7 @@ switch($action) { // master action switch
   );
 
   if (!( $book->is_done() )) {
-    echo "<CENTER>\n";
-    $book->display();
+    echo "<CENTER>\n".$book->display();
     echo "
      <$STDFONT_B>
       <A HREF=\"$page_name?$_auth\">"._("Abandon ".

@@ -19,22 +19,30 @@ switch ($action) {
  case "addform":
  case "modform":
 
-  switch ($action) {
-    case "addform":
-      // no prep work here
-      break; // end of addform
-    case "modform":
-      $r = freemed_get_link_rec ($id, $db_name);
-      extract ($r); 
-      break; // end of modform
-  } // end inner action switch
+  if (!$been_here) {
+    switch ($action) {
+      case "addform":
+        // no prep work here
+        break; // end of addform
+      case "modform":
+        $r = freemed_get_link_rec ($id, $db_name);
+        extract ($r); 
+        break; // end of modform
+    } // end inner action switch
+    $been_here = 1;
+  } // end checking if been here
 
   $book = new notebook ( array ("action", "_auth", "id", "been_here"),
     NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH);
 
   $book->add_page(
    _("Contact Information"),
-   array(""),"
+   array("insconame", "inscoalias", "inscoaddr1", "inscoaddr2",
+         "inscocity", "inscostate", "inscozip",
+	 phone_vars ("inscophone"),
+	 phone_vars ("inscofax"),
+         "inscoemail", "inscowebsite"
+	 ),"
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
    
     <TR>
@@ -144,7 +152,7 @@ switch ($action) {
   freemed_display_box_top ( ( ($action=="addform") ? _("Add") : _("Modify") ).
     " $record_name", $page_name);
   if (!$book->is_done()) {
-    $book->display();
+    echo $book->display();
   } else {
     switch ($action) {
       case "add": case "addform":

@@ -460,9 +460,7 @@ switch($action) {
   // now display the thing
   freemed_display_box_top(_("$action_name $record_name"), $page_name);
   if (!$book->is_done()) {
-    echo "<CENTER>\n";
-    $book->display();
-    echo "</CENTER>
+    echo "<CENTER>\n".$book->display()."</CENTER>
     <P ALIGN=CENTER>
      <$STDFONT_B>
      <A HREF=\"$page_name?$_auth\">
