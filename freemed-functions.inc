@@ -583,11 +583,13 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 } // end function freemed_display_html_top
 
 // function freemed_display_itemlist
-function freemed_display_itemlist ($result, $page_link, 
-                                   $control_list,  $blank_list, $xref_list="")
+function freemed_display_itemlist ($result, $page_link, $control_list,  
+                                   $blank_list, $xref_list="", $title="")
 {
   global $_ref, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
   global $modify_level, $delete_level, $patient;
+
+  if (strlen($title)<1) $title=$record_name;
 
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
 
@@ -599,7 +601,7 @@ function freemed_display_itemlist ($result, $page_link,
      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
     <TR>
      <TD ALIGN=CENTER>
-      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">$record_name<$STDFONT_E>
+      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">$title<$STDFONT_E>
      </TD>
     </TR>
     <TR><TD>
@@ -619,7 +621,7 @@ function freemed_display_itemlist ($result, $page_link,
   while (list($k,$v)=each($control_list)) {
     $buffer .= "
       <TD BGCOLOR=\"#000000\">
-       <$STDFONT_B COLOR=\"#ffffff\">$k<$STDFONT_E>
+       <$STDFONT_B COLOR=\"#ffffff\">$k&nbsp;<$STDFONT_E>
       </TD>
     ";
   }
@@ -706,7 +708,7 @@ function freemed_display_itemlist ($result, $page_link,
    $buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
      <TD COLSPAN=".(count($control_list)+1)." ALIGN=CENTER>
-      <$STDFONT_B><I>No $record_name</I><$STDFONT_E>
+      <$STDFONT_B><I>No $title</I><$STDFONT_E>
      </TD>
     </TR>
    ";
