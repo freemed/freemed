@@ -6,23 +6,29 @@ by jeff b (jeff@univrel.pr.uconn.edu)
 - = done
 / = in progress
 
+2001-06-13 -------------------------------------------------------
+ / XML export of EMR (jeff)
+ / DTD creation for FreeMED EMR (jeff)
+ * XML import (jeff)
+ * patient versioning information (see distributed records handling)
+
 2001-03-16 -------------------------------------------------------
- * implement single view for EMR modules for a patient
+ * implement single view for EMR modules for a patient (jeff)
  * EDI feedback processing (Fred)
- * distributed records handling
- * fax support (probably in phpwebtools)
+ * distributed records handling (jeff)
+ * fax support (probably in phpwebtools) (??)
 
 2001-01-25 -------------------------------------------------------
  - step up loadable module support to allow for more module types
- * code optimizing
- * much API documentation needs to be done
+ / code optimizing (jeff, adam)
+ / much API documentation needs to be done (dr_gnu, jeff)
 
 2000-04-05 -------------------------------------------------------
  * perhaps move to mcal as soon as libmcal stabilizes (this should
    be easier now that jeff is developing libmcal as well)
  - move from .php3 -> .php for the futures' sake
  * rehash generate_fixed_forms.php3 to be nice
- * XML/HL7 generation routines for billing
+ / XML/HL7 generation routines for billing
  * sync across installs for patients
 
 1999-07-08 -------------------------------------------------------

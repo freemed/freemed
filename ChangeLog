@@ -1,6 +1,15 @@
 freemed project changelog
 ($Id$)
 
+* Wed Jun 13 2001 rufustfirefly
+  - TODO: updated todo list to be a little bit more current
+  - doc/MODULE_API: added initial modular API documentation
+  - lib/xml.php: implemented skeletal XML creation
+  - NOTE - The next CVS release will most likely be the last CVS
+    release before 0.2.2 (or 0.3, depending on the XML EMR status)
+  - lib/freemed.php: updated version number to 0.2.1.3, set
+    tentative name to "Bread and Butter" for next release
+
 * Mon Jun 11 2001 rufustfirefly
   - added spanish translation catalog from Alejandro Fernandez
     <soprte@linuxya.com>
