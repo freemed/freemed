@@ -392,9 +392,9 @@ class EMRModule extends BaseModule {
 				 onClick=\"document.form.myform.print_method_printer.select(); return true;\">
 
 				<td width=\"50\">
-				<input type=\"radio\" name=\"print_method\"
-				 value=\"printer\" checked=\"checked\"
-				 id=\"print_method_printer\" />
+				<input type=\"radio\" name=\"print_method[printer]\"
+				 value=\"1\" checked=\"checked\"
+				 id=\"print_method_printer\" /></td>
 				<td
 				>".__("Printer")."</td>
 				<td>".freemed::printers_widget('printer')."</td>
@@ -405,14 +405,23 @@ class EMRModule extends BaseModule {
 				 onClick=\"document.forms[0].print_method_fax.value='1'; return true;\">
 
 				<td width=\"50\">
-				<input type=\"radio\" name=\"print_method\"
-				 value=\"fax\" id=\"print_method_fax\" />
+				<input type=\"radio\" name=\"print_method[fax]\"
+				 value=\"1\" id=\"print_method_fax\" /></td>
 				<td>".__("Fax")."</td>
 				<td>".html_form::text_widget('fax_number',
 					array(
 						'length' => '12'
 					)
 				)."</td>
+			</tr>
+			<tr class=\"PrintContainerItem\"
+			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
+				 onClick=\"document.forms[0].print_method_browser.value='1'; return true;\">
+				 <td width=\"50\">
+				 <input type=\"radio\" name=\"print_method[browser]\"
+				  value=\"1\" id=\"print_method_browser\" /></td>
+				 <td colspan=\"2\">".__("Browser-Based")."</td>
 			</tr>
 			</table>
 			<div align=\"center\">
@@ -455,20 +464,44 @@ class EMRModule extends BaseModule {
 
 		$display_buffer .= __("Printing")." ... <br/>\n";
 
-		if (false) {
-			$display_buffer .= "<pre>\n".
-				$TeX->RenderDebug().
-				"</pre>\n(You must disable this to print)";
-		} else {
-		$TeX->SetPrinter(
-			CreateObject('PHP.PrinterWrapper'),
-			//$user->getManageConfig('default_printer')
-			$_REQUEST['printer']
-		);
-		// TODO: Handle direct PDF generation and return here
-		$TeX->PrintTeX(1);
-		$GLOBALS['__freemed']['close_on_load'] = true;
-		} // remove this line to print, along with if thru else
+		// Figure out print method
+		$_pm = '';
+		foreach ($_REQUEST['print_method'] AS $k => $v) {
+			if ($v==1) {
+				$_pm = $k;
+			}
+		}
+
+		switch ($_pm) {
+			// Handle direct to browser
+			case 'browser':
+			Header('Content-Type: application/x-freemed-print-pdf');
+			readfile($TeX->RenderToPDF());
+			die();
+			break;
+
+			// Handle actual printer
+			case 'printer': 
+			if (false) {
+				$display_buffer .= "<pre>\n".
+					$TeX->RenderDebug().
+					"</pre>\n(You must disable this to print)";
+			} else {
+			$TeX->SetPrinter(
+				CreateObject('PHP.PrinterWrapper'),
+				//$user->getManageConfig('default_printer')
+				$_REQUEST['printer']
+			);
+			// TODO: Handle direct PDF generation and return here
+			$TeX->PrintTeX(1);
+//			$GLOBALS['__freemed']['close_on_load'] = true;
+			}
+			break;
+
+			default:
+			print "print_method = ".$_pm."<br/>\n";
+			break;
+		}
 	} // end function print
 
 	// function summary
