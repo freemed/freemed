@@ -187,14 +187,12 @@ switch ($action) { // begin master switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Diagnosis Required : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-   ";
-   freemed_multiple_choice ("SELECT * FROM icd9
-                             ORDER BY icd9code,icd9descrip",
-                            "icd9code:icd9descrip",
-                            "cptreqicd",
-                            $cptreqicd,
-                            false);
-   echo "
+   ".freemed_multiple_choice ("SELECT * FROM icd9
+                               ORDER BY icd9code,icd9descrip",
+                              "icd9code:icd9descrip",
+                              "cptreqicd",
+                              $cptreqicd,
+                              false)."
      </TD>
     </TR>
 
@@ -202,14 +200,12 @@ switch ($action) { // begin master switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Diagnosis Excluded : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-   ";
-   freemed_multiple_choice ("SELECT * FROM icd9
-                             ORDER BY icd9code,icd9descrip",
-                            "icd9code:icd9descrip",
-                            "cptexcicd",
-                            $cptexcicd,
-                            true); 
-   echo "
+   "freemed_multiple_choice ("SELECT * FROM icd9
+                              ORDER BY icd9code,icd9descrip",
+                             "icd9code:icd9descrip",
+                             "cptexcicd",
+                             $cptexcicd,
+                             true)."
      </TD>
     </TR>
 
@@ -217,14 +213,12 @@ switch ($action) { // begin master switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Procedural Codes Required : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-   ";
-   freemed_multiple_choice ("SELECT * FROM cpt
-                             ORDER BY cptnameint,cptcode",
-                            "cptcode:cptnameint",
-                            "cptreqcpt",
-                            $cptreqcpt,
-                            false);
-   echo "
+   ".freemed_multiple_choice ("SELECT * FROM cpt
+                               ORDER BY cptnameint,cptcode",
+                              "cptcode:cptnameint",
+                              "cptreqcpt",
+                              $cptreqcpt,
+                              false)."
      </TD>
     </TR>
 
@@ -232,14 +226,12 @@ switch ($action) { // begin master switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Procedural Codes Excluded : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-   ";
-   freemed_multiple_choice ("SELECT * FROM cpt
-                             ORDER BY cptcode,cptnameint",
-                            "cptcode:cptnameint",
-                            "cptexccpt",
-                            $cptexccpt,
-                            true);
-   echo "
+   ".freemed_multiple_choice ("SELECT * FROM cpt
+                               ORDER BY cptcode,cptnameint",
+                              "cptcode:cptnameint",
+                              "cptexccpt",
+                              $cptexccpt,
+                              true)."
      </TD>
     </TR>
 

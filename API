@@ -356,7 +356,7 @@ freemed_multiple_choice (sql query, displayed field, select box name,
   named by "select box name" and the values selected are specified
   by "blob data".
   * added switch to turn off the "ALL" (-1) option (19991029)
-    returns: none
+    returns: buffered output
     created: 19990812
     modified: 19991029
 

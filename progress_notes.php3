@@ -57,14 +57,12 @@
        <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
 
        <$STDFONT_B>Related Episode(s) : <$STDFONT_B><BR>
-     ";
-     freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
-                              "eocpatient='$patient'",
-                              "eocdescrip:eocstartdate:eocdtlastsimilar",
-                              "pnoteseoc",
-                              $pnoteseoc,
-                              false);
-     echo "
+     ".freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
+                                "eocpatient='$patient'",
+                                "eocdescrip:eocstartdate:eocdtlastsimilar",
+                                "pnoteseoc",
+                                $pnoteseoc,
+                                false)."
        <P>
        <$STDFONT_B>$Applicable_Date : <$STDFONT_E><BR>
      ";
@@ -224,13 +222,11 @@
        <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"$id\"     >
 
        <$STDFONT_B>Related Episode(s) : <$STDFONT_E><BR>
-     ";
-     freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
-                              "eocpatient='$patient'",
-                              "eocdescrip:eocdtlastsimilar",
-                              "pnoteseoc",
-                              $r[pnoteseoc]);
-     echo "
+     ".freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
+                                "eocpatient='$patient'",
+                                "eocdescrip:eocdtlastsimilar",
+                                "pnoteseoc",
+                                $r[pnoteseoc])."
        <P>
        <$STDFONT_B>$Applicable_Date : <$STDFONT_E><BR>
      ";

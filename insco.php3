@@ -303,11 +303,9 @@ if ($action=="addform") {
     <BR>
 
     <$STDFONT_B>Modifiers : <$STDFONT_E>
-  ";
-  freemed_multiple_choice ("SELECT * FROM insmod
-    ORDER BY insmoddesc", "insmoddesc", "inscomod",
-    $inscomod, false);
-  echo "
+  ".freemed_multiple_choice ("SELECT * FROM insmod
+      ORDER BY insmoddesc", "insmoddesc", "inscomod",
+      $inscomod, false)."
     <P>
     <CENTER>
     <INPUT TYPE=SUBMIT VALUE=\" Update \">

@@ -1322,17 +1322,17 @@ function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
 function freemed_multiple_choice ($sql_query, $display_field, $select_name,
   $blob_data, $display_all=true)
 {
-  global $lang_ALL; 
+  $buffer = "";
 
   $brackets = "[]";
   $result = fdb_query ($sql_query); // check
   $all_selected = fm_value_in_string ($blob_data, -1);
-  echo " 
+  $buffer .= " 
     <SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
   ";
-  if ($display_all) echo "
+  if ($display_all) $buffer .= "
       <OPTION VALUE=\"-1\" ".
-       ($all_selected ? "SELECTED" : "").">".fm_prep($lang_ALL)."
+       ($all_selected ? "SELECTED" : "").">"._("ALL")."
   "; // if there is nothing...
 
   if ( fdb_num_rows($result) > 0) 
@@ -1352,15 +1352,16 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
     if ($debug) $debuginfo = " [$id] ";
     if (fm_value_in_string ($blob_data, $id)) $selected = $SELECTED;
       else $selected = "";
-    echo "
+    $buffer .= "
       <OPTION VALUE=\"$id\" ".
        ( (fm_value_in_string ($blob_data, id)) ? "SELECTED" : "" ).
        ">$displayed $debuginfo
     ";
   } // end while
-  echo "
+  $buffer .= "
     </SELECT>
   "; // end the select tag
+  return $buffer;
 } // end function freemed_multiple_choice
 
 // function freemed_open_db

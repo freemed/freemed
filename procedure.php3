@@ -122,14 +122,13 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Episode of Care : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-  ";
-  freemed_multiple_choice ("SELECT * FROM eoc
-                            WHERE eocpatient='$patient'
-                            ORDER BY eocdtlastsimilar DESC",
-                           "eocstartdate:eocdtlastsimilar:eocdescrip",
-                           "proceoc",
-                           $proceoc,
-                           false);
+  ".freemed_multiple_choice ("SELECT * FROM eoc
+                              WHERE eocpatient='$patient'
+                              ORDER BY eocdtlastsimilar DESC",
+                             "eocstartdate:eocdtlastsimilar:eocdescrip",
+                             "proceoc",
+                             $proceoc,
+                             false);
   
   $icd_type = freemed_config_value("icd"); // '9' or '10'
 

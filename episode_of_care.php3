@@ -212,10 +212,9 @@
     ";
     // compact and display eocdiagfamily
     $eocdiagfamily = fm_join_from_array ($eocdiagfamily);
-    freemed_multiple_choice ("SELECT * FROM diagfamily
-      ORDER BY dfname, dfdescrip", "dfname:dfdescrip", "eocdiagfamily",
-      $eocdiagfamily, false);
-    echo "
+    echo freemed_multiple_choice ("SELECT * FROM diagfamily
+           ORDER BY dfname, dfdescrip", "dfname:dfdescrip", "eocdiagfamily",
+           $eocdiagfamily, false)."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>$Episode_Type<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
