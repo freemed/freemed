@@ -452,6 +452,9 @@ class freemed {
 
 
 	function patient_box ($patient_object) {
+		// Catch to make sure it's an actual object
+		if (!is_object($patient_object)) return NULL;
+		
 		// Make sure template functions are included
 		include_once('lib/template/'.$GLOBALS['template'].'/lib.php');
 	
