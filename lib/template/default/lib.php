@@ -41,7 +41,9 @@ class template {
 			"\" onMouseOver=\"window.status='".__("Book Appointment")."'; ".
 				"return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\"".
-			"><img src=\"lib/template/".$GLOBALS['template']."/img/".
+			"><img src=\"lib/template/".(
+				file_exists("lib/template/".$GLOBALS['template']."/img/pbox_book_appointment.".IMAGE_TYPE) ?
+				$GLOBALS['template'] : 'default' )."/img/".
 			"pbox_book_appointment.".IMAGE_TYPE."\" border=\"0\" ".
 			"width=\"16\" height=\"16\" ".
 			"alt=\"".__("Book Appointment")."\"/></a></td>\n".
