@@ -48,8 +48,8 @@ if ($action=="cfgform") {
 
 	//----- Pull in all configuration variables
 	reset ($config_vars);
-	while ($config = each($config_vars)) {
-		$$config = freemed_config_value($config);
+	foreach ($config_vars AS $_garbage => $v) {
+		${$v} = freemed_config_value($v);
 	}
 
 	//----- Push page onto the stack
@@ -157,14 +157,13 @@ if ($action=="cfgform") {
 	";
 
 	//----- Commit all configuration variables
-	reset ($config_vars);
-	while ($config = each($config_vars)) {
-		$$config = freemed_config_value($config);
-		$q = $sql->query("UPDATE config SET ".
-			"c_value='".addslashes($$config)."' ".
-			"WHERE c_option='".addslashes($config)."'");
+	foreach ($config_vars AS $_garbage => $v) {
+		$q = "UPDATE config SET ".
+			"c_value='".addslashes(${$v})."' ".
+			"WHERE c_option='".addslashes($v)."'";
+		$query = $sql->query($q);
 		if (($debug) AND ($q))
-			$display_buffer .= "$config = $$config<BR>\n";
+			$display_buffer .= "$config = ${$v}<BR>\n";
 	}
 
 
@@ -190,7 +189,7 @@ if ($action=="cfgform") {
   $display_buffer .= "<BR><CENTER>\n";
 
   $display_buffer .= "
-   <FORM ACTION=\"$page_name\" METHOD=POST>
+   <FORM ACTION=\"admin.php\" METHOD=POST>
    <INPUT TYPE=CHECKBOX NAME=\"first_time\" VALUE=\"first\">
    <I>"._("First Initialization")."</I><BR>
    <INPUT TYPE=CHECKBOX NAME=\"re_load\" VALUE=\"reload\">
@@ -202,7 +201,7 @@ if ($action=="cfgform") {
 
    </TD><TD>
 
-   <FORM ACTION=\"$page_name\" METHOD=POST>
+   <FORM ACTION=\"admin.php\" METHOD=POST>
    <INPUT TYPE=SUBMIT VALUE=\""._("Cancel")."\">
    </FORM>
 
@@ -558,10 +557,10 @@ if ($action=="cfgform") {
   // generate facility database
   $result=$sql->query("DROP TABLE facility"); 
   $result=$sql->query("CREATE TABLE facility (
-    psrname      CHAR(25),
-    psraddr1     CHAR(25),
-    psraddr2     CHAR(25),
-    psrcity      CHAR(15),
+    psrname      VARCHAR(100),
+    psraddr1     VARCHAR(50),
+    psraddr2     VARCHAR(50),
+    psrcity      VARCHAR(50),
     psrstate     CHAR(3),
     psrzip       CHAR(10),
     psrcountry   VARCHAR(50),
@@ -573,8 +572,8 @@ if ($action=="cfgform") {
     psremail     VARCHAR(25),
     psrein       VARCHAR(9),
     psrintext    INT UNSIGNED,
-    id INT NOT NULL AUTO_INCREMENT,
 	psrpos       INT UNSIGNED,
+    id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id) )");
   if ($result) $display_buffer .= "<LI>"._("Facility")."\n"; 
 
@@ -1385,7 +1384,7 @@ if ($action=="cfgform") {
 
   $display_buffer .= "
     <BR><BR><CENTER>
-    <A HREF=\"$page_name\">
+    <A HREF=\"admin.php\">
      "._("Return to Administration Menu")."</A>
     </CENTER>
   ";
@@ -1439,20 +1438,20 @@ $display_buffer .= "
 if ($userdata["user"]==1) // if we are root...
  $display_buffer .= "
   <TR><TD ALIGN=RIGHT>
-   <A HREF=\"$page_name?action=reinit\"
+   <A HREF=\"admin.php?action=reinit\"
    ><IMG SRC=\"img/Gear.gif\" BORDER=0 ALT=\"\"></A>
   </TD><TD ALIGN=LEFT>
-  <A HREF=\"$page_name?action=reinit\"
+  <A HREF=\"admin.php?action=reinit\"
   >"._("Reinitialize Database")."</A>
   </TD></TR>
  ";
 
 $display_buffer .= "
   <TR><TD ALIGN=RIGHT>
-   <A HREF=\"$page_name?action=cfgform\"
+   <A HREF=\"admin.php?action=cfgform\"
    ><IMG SRC=\"img/config.gif\" BORDER=0 ALT=\"\"></A>
   </TD><TD ALIGN=LEFT>
-  <A HREF=\"$page_name?action=cfgform\"
+  <A HREF=\"admin.php?action=cfgform\"
   >"._("Update Config")."</A>
   </TD></TR>
 ";
