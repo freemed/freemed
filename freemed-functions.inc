@@ -552,7 +552,8 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 
 // function freemed_display_itemlist
 function freemed_display_itemlist ($result, $page_link, $control_list, 
-                           $blank_list, $xref_list="", $cur_page_var="",
+                           $blank_list, $xref_list="",
+			   $cur_page_var="this_page",
 			   $index_field="", $flags=-1)
 {
   global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
@@ -575,12 +576,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   $num_pages = ceil(fdb_num_rows($result)/$max_num_res);
   if ($$cur_page_var<1 OR $$cur_page_var>$num_pages) $$cur_page_var=1;
 
-  if (strlen($cur_page_var)>0) { // there's an offset
+  if (strlen($$cur_page_var)>0) { // there's an offset
     for ($i=1;$i<=($$cur_page_var-1)*$max_num_res;$i++) {
       $herman = fdb_fetch_array($result); // offset the proper number of rows
     }
   }
- 
+
   $buffer="";
 
   $buffer .= "
