@@ -507,8 +507,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
  
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
 
-  if ($$cur_page_var<1) $$cur_page_var=1;
   $num_pages = ceil(fdb_num_rows($result)/$max_num_res);
+  if ($$cur_page_var<1 OR $$cur_page_var>$num_pages) $$cur_page_var=1;
 
   if (strlen($cur_page_var)>0) { // there's an offset
     for ($i=1;$i<=($$cur_page_var-1)*$max_num_res;$i++) {
