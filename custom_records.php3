@@ -94,7 +94,7 @@
      } // end internal loop
      break;
    } // end interior action switch
-   freemed_display_box_top ( ($action=="addform") ? _("Add") : _("Modify")).
+   freemed_display_box_top ( (($action=="addform") ? _("Add") : _("Modify")).
      " "._($record_name)); 
    echo "
     <P>
@@ -150,7 +150,7 @@
        <TD ALIGN=CENTER VALIGN=MIDDLE COLSPAN=2 BGCOLOR=#bbbbbb>
       ";
      } // end if/else for heading
-     $this_answer = ${answer".$i};
+     $this_answer = ${"answer".$i};
      $leftright = false;
 
      // determine if left/right
@@ -374,7 +374,7 @@
         trim (${"answer".$i."_m"}) ;
       break;
      default:
-      if (!$leftright) { $current_form["$i"] = ${"answer".$i};
+      if (!$leftright) { $current_form["$i"] = ${"answer".$i}; }
        else {
          $current_form["$i"] = ${"answer".$i."_l"} . "," . 
                                         ${"answer".$i."_r"} ;
@@ -409,7 +409,7 @@
    freemed_display_box_top (( ($action=="add") ? _("Adding") : _("Modifying")).
      " "._($record_name));
    echo "
-     <P>
+     <P><CENTER>
      <$STDFONT_B>".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
     ";
    if ($debug)    echo "<BR>(query = \"$query\")<BR>\n";
@@ -417,7 +417,7 @@
    if ($result) { echo _("done").".\n"; }
     else        { echo _("ERROR")."\n"; }
    echo "
-    <$STDFONT_E>
+    </CENTER><$STDFONT_E>
     <P>
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
