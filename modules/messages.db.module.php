@@ -2,11 +2,11 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
-class MessagesTable extends MaintenanceModule {
+class MessagesTable extends EMRModule {
 
-	var $MODULE_NAME = 'Messages Table';
+	var $MODULE_NAME = 'Messages';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
 	var $MODULE_VERSION = '0.7.1.1';
 	var $MODULE_FILE = __FILE__;
@@ -15,6 +15,9 @@ class MessagesTable extends MaintenanceModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.7.1';
 
 	var $table_name = "messages";
+	var $patient_field = "msgpatient";
+	var $order_by      = "msgunique DESC";
+	var $widget_hash   = "##msgsubject## [##msgtime##]";
 
 	function MessagesTable () {
 		$this->table_definition = array (
@@ -50,7 +53,7 @@ class MessagesTable extends MaintenanceModule {
 		$this->_SetHandler('MainMenu', 'UnreadMessages');
 
 		// Call parent constructor
-		$this->MaintenanceModule();
+		$this->EMRModule();
 	} // end constructor MessagesTable
 
 	function UnreadMessages ( ) {
