@@ -24,6 +24,7 @@ foreach ($static_components AS $garbage => $component) {
 		case "appointments": // Appointments static component
 		include_once("lib/calendar-functions.php");
 		// Add header and strip at top
+		$modules[_("Appointments")] = "appointments";
 		$panel[_("Appointments")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\">
@@ -105,6 +106,7 @@ foreach ($static_components AS $garbage => $component) {
 		case "custom_reports":
 		$f_results = $sql->query("SELECT * FROM patrectemplate ".
 			"ORDER BY prtname");
+		$modules[_("Custom Records")] = "custom_reports";
 		if ($sql->results($f_results)) {
 			$panel[_("Custom Records")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
@@ -147,6 +149,7 @@ foreach ($static_components AS $garbage => $component) {
 		break; // end custom_reports
 
 		case "medical_information":
+		$modules[_("Medical Information")] = "medical_information";
 		$panel[_("Medical Information")] = "
 		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 		 CELLPADDING=3 CLASS=\"thinbox\">
@@ -164,6 +167,7 @@ foreach ($static_components AS $garbage => $component) {
 		break; // end medical_information
 
 		case "messages":
+		$modules[_("Messages")] = "messages";
 		$panel[_("Messages")] = "
 		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 		 CELLPADDING=3 CLASS=\"thinbox\">
@@ -203,10 +207,10 @@ foreach ($static_components AS $garbage => $component) {
 					"<TD ALIGN=\"LEFT\">$y-$m-$d</TD>".
 					"<TD ALIGN=\"LEFT\">".fc_get_time_string($hour,$min)."</TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$this_physician->fullName()."</SMALL></TD>".
-					"<TD ALIGN=\"LEFT\"><A HREF=\"".
+					"<TD ALIGN=\"LEFT\">".
+					template::summary_delete_link(NULL,
 					"messages.php?action=del&id=".$my_r[id].
-					"&return=manage".
-					"\"><SMALL>"._("Delete")."</SMALL></A>".
+					"&return=manage").
 					"</TR>\n".
 					"<TR><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
 					prepare($my_r[msgtext]).
@@ -225,16 +229,18 @@ foreach ($static_components AS $garbage => $component) {
 
 		case "photo_id":
 		// If there is a file with that name, show it, else box
-		if (file_exists("img/store/$id.identification.jpg")) {
+		if (file_exists("img/store/$id.identification.djvu")) {
+			$modules[_("Photo ID")] = "photo_id";
 			$panel[_("Photo ID")] = "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
-			<A HREF=\"photo_id.php?patient=".urlencode($id)."\"
+			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
+			"return=manage\"
 			 >"._("Update")."</A> |
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
-			"action=remove\"
+			"action=remove&return=manage\"
 			 >"._("Remove")."</A>
 			</TD></TR>
 			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
@@ -244,10 +250,13 @@ foreach ($static_components AS $garbage => $component) {
 			"id=identification\" TARGET=\"new\"
 			onMouseOver=\"window.status='"._("Enlarge image")."'; return true;\"
 			onMouseOut=\"window.status=''; return true;\"
-			><IMG SRC=\"patient_image_handler.php?".
+			><EMBED SRC=\"patient_image_handler.php?".
 			"patient=".urlencode($id)."&id=identification\"
 			 BORDER=\"0\" ALT=\"Photographic Identification\"
-			 WIDTH=\"200\"></A>
+			 WIDTH=\"200\" HEIGHT=\"150\"
+			 TYPE=\"image/x.djvu\"
+			 PLUGINSPAGE=\"".COMPLETE_URL."support/\"
+			 ></EMBED></A>
 			</DIV>
 			</TD></TR>
 			</TABLE>
@@ -290,6 +299,7 @@ foreach ($static_components AS $garbage => $component) {
 			$dolv = prepare(fm_date_print($dolv_r["caldateof"]));
 		} // end if there is no result
 		//----- Create the panel
+		$modules[_("Patient Information")] = "patient_information";
 		$panel[_("Patient Information")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\">
@@ -302,6 +312,10 @@ foreach ($static_components AS $garbage => $component) {
 				<B>"._("Date of Last Visit")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$dolv."
+			</TR><TR><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
+				<B>"._("Phone Number")."</B> :
+			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
+				".$this_patient->local_record["pthphone"]."
 			</TD></TR></TABLE>
 		";
 		break; // end patient information
@@ -320,6 +334,8 @@ foreach ($modular_components AS $garbage => $component) {
 	// End checking for component
 	if ($module_list->check_for($component)) {
 		// Execute proper portion and add to panel
+		$modules[_($module_list->get_module_name($component))] =
+			$component;
 		$panel[_($module_list->get_module_name($component))] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\">
@@ -354,6 +370,9 @@ if (count($panel) > 0) {
 //----- Display tables
 
 if (count($panel) > 0) {
+	// Sort by panel names
+	ksort($panel);
+
 	// Table header
 	$display_buffer .= "
 	<TABLE WIDTH=\"100%\" CELLSPACING=3 CELLPADDING=0 BORDER=0>
@@ -373,13 +392,23 @@ if (count($panel) > 0) {
 		}
 
 		// Add panel
+		$myk = str_replace(" ", "_", $k);
 		$display_buffer .= "
-		<TD VALIGN=TOP ALIGN=CENTER>
-		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=0>
-		<TR><TD CLASS=\"reverse\" VALIGN=MIDDLE ALIGN=CENTER>
+		<TD VALIGN=\"TOP\" ALIGN=\"CENTER\" WIDTH=\"".
+			( (int) (100 / $display_columns) )."%\">
+		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+		 CELLPADDING=\"0\">
+		<TR><TD CLASS=\"reverse\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 		<B>".prepare($k)."</B>
-		</TD></TR>
-		<TR><TD VALIGN=MIDDLE ALIGN=CENTER>
+		</TD><TD CLASS=\"reverse\" VALIGN=\"MIDDLE\" ALIGN=\"RIGHT\">
+		<A HREF=\"manage.php?id=".urlencode($id)."&".
+		"action=remove&module=".urlencode($modules[$k])."\"
+		onMouseOver=\"document.images.".$myk."_close.src='lib/template/default/img/close_x_pressed.png'; return true;\"
+		onMouseOut=\"document.images.".$myk."_close.src='lib/template/default/img/close_x.png'; return true;\"
+		><IMG NAME=\"".$myk."_close\"
+		SRC=\"lib/template/default/img/close_x.png\"
+		BORDER=\"0\" ALT=\"X\"></A></TD></TR>
+		<TR><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\" COLSPAN=\"2\">
 		<CENTER>$v</CENTER>
 		</TD></TR></TABLE>
 		</TD>
