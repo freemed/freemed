@@ -1,11 +1,15 @@
 #!/usr/bin/perl
-# file: patfile.pl
+# $Id$
+# $Author$
 # desc: med manager patfile.dat -> freemed patient database
-# code: jeff b (jeff@univrel.pr.uconn.edu)
 # lic : GPL, v2
+# $Log$
+# Revision 1.4  2001/11/20 15:01:27  rufustfirefly
+# fixed version number problem, added CVS tags
+#
 
 $program_description = "patfile.dat converter";
-$version             = "20000-01-13";
+$version             = "2000-01-13";
 $code_bugs_email     = "jeff\@univrel.pr.uconn.edu";
 $ISO                 = "iso-8859-1";
 $debug               = 0;
