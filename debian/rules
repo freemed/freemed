@@ -6,9 +6,6 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-
-
-
 CFLAGS = -Wall -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -67,8 +64,8 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs CHANGES
-	dh_installdocs
+#	dh_installchangelogs CHANGES
+	dh_installdocs doc/*
 #	dh_installexamples
 #	dh_install
 #	dh_installmenu
@@ -85,6 +82,10 @@ binary-arch: build install
 	dh_strip
 	dh_compress
 	dh_fixperms
+	# Quick patch to allow me to have world writeable cache and
+	# backup directories, as well as an image store, etc... - Jeff
+	chown -Rvf www-data.www-data debian/freemed/usr/share/freemed/{data/cache,data/backup,img/store}
+	chmod ug+w -Rvf debian/freemed/usr/share/freemed/{data/cache,data/backup,img/store}
 #	dh_perl
 #	dh_python
 #	dh_makeshlibs

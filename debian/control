@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.0
 
 Package: freemed
-Architecture: any
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Depends: perl, libxml-parser-perl, libtext-iconv-perl
 Depends: cron
