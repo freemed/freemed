@@ -7,8 +7,9 @@ $page_name = "manage.php";
 include ("lib/freemed.php");
 
 //----- Set current patient cookie if it's not set...
-if ($id != $current_patient) {
-	$SESSION["current_patient"] = $current_patient = $id;
+if ($id != $_SESSION['current_patient']) {
+	$_SESSION['current_patient'] = $id;
+	SetCookie('current_patient', $id);
 }
 
 //----- Push patient onto list

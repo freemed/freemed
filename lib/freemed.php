@@ -140,6 +140,7 @@ if (!defined('SESSION_DISABLE')) {
 	session_start();
 	session_register(
 		'authdata',
+		'current_patient',
 		'ipaddr',
 		'language',
 		'page_history',
