@@ -22,7 +22,7 @@
    <P>
    <CENTER>
     <A HREF=\"patient.php?$_auth\"
-     ><$STDFONT_B>"._("Select a Patient")."<$STDFONT_E></A> 
+     >"._("Select a Patient")."</A> 
    </CENTER>
    <P>
   ";
@@ -41,7 +41,7 @@
   echo "
    <P>
    <CENTER>
-    <B><$STDFONT_B>"._("You must select a template.")."<$STDFONT_E></B>
+    <B>"._("You must select a template.")."</B>
    </CENTER>
    <P>
   ";
@@ -120,7 +120,7 @@
     <TR BGCOLOR=#000000>
      <TD COLSPAN=2>
       <CENTER>
-      <$STDFONT_B COLOR=#cccccc><B>".prepare($f_r["prtname"])."</B><$STDFONT_E>
+      <FONT COLOR=#cccccc><B>".prepare($f_r["prtname"])."</B></FONT>
       </CENTER>
      </TD>
     </TR>
@@ -134,7 +134,7 @@
       echo "
        <TR>
        <TD ALIGN=RIGHT>
-        <B><$STDFONT_B>$this_question<$STDFONT_E></B>
+        <B>$this_question</B>
        </TD>
        <TD ALIGN=LEFT>
       ";
@@ -404,20 +404,20 @@
      " "._($record_name));
    echo "
      <P><CENTER>
-     <$STDFONT_B>".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
+     ".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
     ";
    if ($debug)    echo "<BR>(query = \"$query\")<BR>\n";
    $result = $sql->query ($query); // send the prepared query through
    if ($result) { echo _("done").".\n"; }
     else        { echo _("ERROR")."\n"; }
    echo "
-    </CENTER><$STDFONT_E>
+    </CENTER>
     <P>
     <CENTER>
      <A HREF=\"manage.php?$_auth&id=$patient\"
-      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> | 
+      >"._("Manage Patient")."</A> | 
      <A HREF=\"$page_name?$_auth&patient=$patient\"
-      ><$STDFONT_B>"._("View/Modify")." "._($record_name)."<$STDFONT_E></A>
+      >"._("View/Modify")." "._($record_name)."</A>
     </CENTER>
     <P>
     ";
@@ -434,7 +434,7 @@
       ".freemed_patient_box($this_patient)."
       <P>
       <CENTER>
-       <B><$STDFONT_B>"._("No records for this patient.")."<$STDFONT_E></B>
+       <B>"._("No records for this patient.")."</B>
       </CENTER>
       <P>
       <CENTER>
@@ -457,9 +457,9 @@
       <P>
       <CENTER>
        <A HREF=\"manage.php?$_auth&id=$patient\"
-        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
+        >"._("Manage Patient")."</A> |
        <A HREF=\"main.php?$_auth\"
-        ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
+        >"._("Return to the Main Menu")."</A>
       </CENTER>
       <P>
       ";
@@ -474,9 +474,9 @@
      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0
       VALIGN=MIDDLE ALIGN=CENTER> 
       <TR BGCOLOR=#000000>
-       <TD><$STDFONT_B COLOR=#ffffff>"._("Date Added")."<$STDFONT_E></TD>
-       <TD><$STDFONT_B COLOR=#ffffff>"._("Form")."<$STDFONT_E></TD>
-       <TD><$STDFONT_B COLOR=#ffffff>"._("Action")."<$STDFONT_E></TD>
+       <TD><FONT COLOR=#ffffff>"._("Date Added")."</FONT></TD>
+       <TD><FONT COLOR=#ffffff>"._("Form")."</FONT></TD>
+       <TD><FONT COLOR=#ffffff>"._("Action")."</FONT></TD>
       </TR>
     ";
    $_alternate = freemed_bar_alternate_color ($_alternate);
@@ -489,8 +489,8 @@
      $_alternate = freemed_bar_alternate_color ($_alternate);
      echo "
       <TR BGCOLOR=$_alternate>
-       <TD><$STDFONT_B>$dtadd<$STDFONT_E></TD>
-       <TD><$STDFONT_B>".prepare($formname)."<$STDFONT_E></TD>
+       <TD>$dtadd</TD>
+       <TD>".prepare($formname)."</TD>
        <TD>
       ";
      if (0==0)
@@ -517,9 +517,9 @@
     <P>
     <CENTER>
      <A HREF=\"manage.php?$_auth&id=$patient\"
-     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
+     >"._("Manage Patient")."</A> |
      <A HREF=\"main.php?$_auth\"
-     ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
+     >"._("Return to the Main Menu")."</A>
     </CENTER>
     <P>
     "; // end table

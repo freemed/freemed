@@ -34,23 +34,23 @@ switch ($action) {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2
      VALIGN=TOP ALIGN=CENTER>
     <TR><TD COLSPAN=2 ALIGN=CENTER>
-      <B><$STDFONT_B COLOR=#000000>"._("Name")."<$STDFONT_E></B>
+      <B><FONT COLOR=#000000>"._("Name")."</FONT></B>
     </TD></TR>
     <TR>
      <TD WIDTH=30% ALIGN=RIGHT
-     ><$STDFONT_B COLOR=#444444>"._("Last")."<$STDFONT_E></TD>
+     ><FONT COLOR=#444444>"._("Last")."</FONT></TD>
      <TD><INPUT TYPE=TEXT NAME=\"cilname\" SIZE=20 MAXLENGTH=50
           VALUE=\"".prepare($cilname)."\"></TD>
     </TR>
     <TR>
      <TD WIDTH=30% ALIGN=RIGHT
-     ><$STDFONT_B COLOR=#444444>"._("First")."<$STDFONT_E></TD>
+     ><FONT COLOR=#444444>"._("First")."</FONT></TD>
      <TD><INPUT TYPE=TEXT NAME=\"cifname\" SIZE=20 MAXLENGTH=50
           VALUE=\"".prepare($cifname)."\"></TD>
     </TR>
     <TR>
      <TD WIDTH=30% ALIGN=RIGHT
-     ><$STDFONT_B COLOR=#444444>"._("Middle")."<$STDFONT_E></TD>
+     ><FONT COLOR=#444444>"._("Middle")."</FONT></TD>
      <TD><INPUT TYPE=TEXT NAME=\"cimname\" SIZE=20 MAXLENGTH=50
           VALUE=\"$cimname\"></TD>
     </TR>
@@ -61,12 +61,12 @@ switch ($action) {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=TOP
      ALIGN=CENTER BGCOLOR=\"$darker_bgcolor\">
     <TR><TD COLSPAN=2 ALIGN=CENTER>
-     <B><$STDFONT_B COLOR=#ffffff>"._("Contact Information")."<$STDFONT_E></B>
+     <B><FONT COLOR=#ffffff>"._("Contact Information")."</FONT></B>
     </TD></TR>
     <TR>
      <TD WIDTH=40% ALIGN=RIGHT>
-     <$STDFONT_B COLOR=#cccccc>"._("Home Phone")." &nbsp;
-      <$STDFONT_E></TD>
+     <FONT COLOR=#cccccc>"._("Home Phone")." &nbsp;
+      </FONT></TD>
      <TD><B>(</B> <INPUT TYPE=TEXT NAME=\"cihphone1\" SIZE=4 MAXLENGTH=3
                    VALUE=\"".prepare($cihphone1)."\">
          <B>)</B> <INPUT TYPE=TEXT NAME=\"cihphone2\" SIZE=4 MAXLENGTH=3
@@ -77,8 +77,8 @@ switch ($action) {
     </TR>
     <TR>
      <TD WIDTH=40% ALIGN=RIGHT>
-     <$STDFONT_B COLOR=#cccccc>"._("Work Phone")." &nbsp;
-      <$STDFONT_E></TD>
+     <FONT COLOR=#cccccc>"._("Work Phone")." &nbsp;
+      </FONT></TD>
      <TD><B>(</B> <INPUT TYPE=TEXT NAME=\"ciwphone1\" SIZE=4 MAXLENGTH=3
                    VALUE=\"".prepare($ciwphone1)."\">
          <B>)</B> <INPUT TYPE=TEXT NAME=\"ciwphone2\" SIZE=4 MAXLENGTH=3
@@ -89,8 +89,8 @@ switch ($action) {
     </TR>
     <TR>
      <TD WIDTH=40% ALIGN=RIGHT>
-     <$STDFONT_B COLOR=#cccccc>"._("Took Call")." &nbsp;
-      <$STDFONT_E></TD>
+     <FONT COLOR=#cccccc>"._("Took Call")." &nbsp;
+      </FONT></TD>
     <TD>
      <INPUT TYPE=TEXT NAME=\"citookcall\" SIZE=25 MAXLENGTH=50
       VALUE=\"".prepare($citookcall)."\">
@@ -112,23 +112,23 @@ switch ($action) {
     <TABLE WIDTH=100% BORDER=0 ALIGN=CENTER VALIGN=CENTER
      CELLSPACING=0 CELLPADDING=5>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Birth")."<$STDFONT_E></TD>
+      <TD ALIGN=RIGHT><FONT>"._("Date of Birth")."</FONT></TD>
       <TD>".fm_date_entry("cidob")."</TD>
      </TR>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>"._("Complaint")." <$STDFONT_E></TD>
+      <TD ALIGN=RIGHT><FONT>"._("Complaint")." </FONT></TD>
       <TD><TEXTAREA NAME=\"cicomplaint\" ROWS=4 COLS=40
            WRAP=VIRTUAL>".prepare($cicomplaint)."</TEXTAREA>
       </TD>
      </TR>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>"._("Facility")." <$STDFONT_E></TD>
+      <TD ALIGN=RIGHT><FONT>"._("Facility")." </FONT></TD>
       <TD>
       ".freemed_display_selectbox ($fac_r, "#psrname# [#psrnote#]", "cifacility")."
       </TD>
      </TR>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>"._("Physician")." <$STDFONT_E></TD>
+      <TD ALIGN=RIGHT><FONT>"._("Physician")." </FONT></TD>
       <TD>
     ";
 
@@ -160,7 +160,7 @@ switch ($action) {
   $cicomment   = addslashes ($citookcall);
   $cihphone    = $cihphone1 . $cihphone2 . $cihphone3;
   $ciwphone    = $ciwphone1 . $ciwphone2 . $ciwphone3;
-  echo "\n<$STDFONT_B>"._("Adding")." "._("$record_name")." ... \n";
+  echo "\n"._("Adding")." "._("$record_name")." ... \n";
   $query = "INSERT INTO $db_name VALUES (
     '$cilname',
     '$cifname',
@@ -179,15 +179,15 @@ switch ($action) {
 
   if ($result) echo _("done");
    else echo _("ERROR");
-  echo " <$STDFONT_E>
+  echo " 
     <P>
     <CENTER>
      <A HREF=\"patient.php?$_auth\"
-      ><$STDFONT_B>Patient Menu<$STDFONT_E> |
+      >Patient Menu |
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>Call In Menu<$STDFONT_E> |
+      >Call In Menu |
      <A HREF=\"main.php?$_auth\"
-      ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E>
+      >"._("Return to the Main Menu")."
     </CENTER>
     <P>
   ";
@@ -210,20 +210,20 @@ switch ($action) {
     <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=0 CELLPADDING=2
      VALIGN=CENTER ALIGN=CENTER>
     <TR><TD ALIGN=CENTER BGCOLOR=#000000>
-     <$STDFONT_B COLOR=#ffffff>
+     <FONT COLOR=#ffffff>
       <B>$cilname, $cifname $cimname</B> : $rows "._("Appointments")."
-     <$STDFONT_E>
+     </FONT>
     </TD></TR>
     </TABLE>
     <P>
     <A HREF=\"show_appointments.php?$_auth&patient=$id&type=temp\"
-     ><$STDFONT_B>"._("Show Today's Appointments")."<$STDFONT_E></A>
+     >"._("Show Today's Appointments")."</A>
     <P>
     <A HREF=\"show_appointments.php?$_auth&patient=$id&type=temp&show=all\"
-     ><$STDFONT_B>"._("Show All Appointments")."<$STDFONT_E></A>
+     >"._("Show All Appointments")."</A>
     <P>
     <A HREF=\"main.php?$_auth\"
-     ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
+     >"._("Return to the Main Menu")."</A>
     </A>
     <P>
   ";
@@ -237,11 +237,11 @@ switch ($action) {
     <BR>
     <CENTER>
      <A HREF=\"$page_name?$_auth&type=old\"
-      ><$STDFONT_B>"._("Old")."<$STDFONT_E></A> |
+      >"._("Old")."</A> |
      <A HREF=\"$page_name?$_auth&type=all\"
-      ><$STDFONT_B>"._("All")."<$STDFONT_E></A> |
+      >"._("All")."</A> |
      <A HREF=\"$page_name?$_auth&type=cur\"
-      ><$STDFONT_B>"._("Current")."<$STDFONT_E></A>
+      >"._("Current")."</A>
     </CENTER>
     <BR>
   ";
@@ -297,10 +297,10 @@ switch ($action) {
 
     echo "
       <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($alternate))."\">
-       <TD><$STDFONT_B>$cilname, $cifname$ci_comma $cimname<$STDFONT_E></TD>
-       <TD><$STDFONT_B>$cidatestamp<$STDFONT_E></TD>
-       <TD><$STDFONT_B>$ciwphone $ciphonesep $cihphone&nbsp;<$STDFONT_E></TD>
-       <TD><$STDFONT_B>
+       <TD>$cilname, $cifname$ci_comma $cimname</TD>
+       <TD>$cidatestamp</TD>
+       <TD>$ciwphone $ciphonesep $cihphone&nbsp;</TD>
+       <TD>
     ";
 
      // display the convert link
@@ -336,7 +336,7 @@ switch ($action) {
     ";
 
     echo "
-        <$STDFONT_E></TD>
+        </TD>
       </TR>
     ";
 
@@ -356,11 +356,11 @@ switch ($action) {
     <BR>
     <CENTER>
      <A HREF=\"$page_name?$_auth&type=old\"
-      ><$STDFONT_B>"._("Old")."<$STDFONT_E></A> |
+      >"._("Old")."</A> |
      <A HREF=\"$page_name?$_auth&type=all\"
-      ><$STDFONT_B>"._("All")."<$STDFONT_E></A> |
+      >"._("All")."</A> |
      <A HREF=\"$page_name?$_auth&type=cur\"
-      ><$STDFONT_B>"._("Current")."<$STDFONT_E></A>
+      >"._("Current")."</A>
     </CENTER>
     <BR>
   ";

@@ -48,8 +48,8 @@ switch ($action) {
 
   if (date_in_the_past($selected_date))
     echo "
-      <CENTER><I><$STDFONT_B SIZE=-2
-      >"._("this date occurs in the past")."<$STDFONT_E></I></CENTER>
+      <CENTER><I><FONT SIZE=-2
+      >"._("this date occurs in the past")."</FONT></I></CENTER>
       <BR>
     ";
 
@@ -86,8 +86,8 @@ switch ($action) {
     ";
     if (date_in_the_past($selected_date)) 
      echo "
-      <BR><CENTER><I><$STDFONT_B SIZE=-2>
-      "._("this date occurs in the past")."<$STDFONT_E></I></CENTER>
+      <BR><CENTER><I><FONT SIZE=-2>
+      "._("this date occurs in the past")."</FONT></I></CENTER>
      ";
     echo "
       <P><CENTER>
@@ -131,8 +131,8 @@ switch ($action) {
         <TABLE WIDTH=100% BORDER=1 CELLSPACING=0 CELLPADDING=3
          BGCOLOR=#777777><TR>
         <TD COLSPAN=2><CENTER>
-         <$STDFONT_B SIZE=-1
-          COLOR=#ffffff><B>"._("TIME")."</B><$STDFONT_E></CENTER></TD>
+         <FONT SIZE=-1
+          COLOR=#ffffff><B>"._("TIME")."</B></FONT></CENTER></TD>
       ";
 
       $_alternate = freemed_bar_alternate_color ();
@@ -148,10 +148,9 @@ switch ($action) {
             <TR BGCOLOR=\"".($_alternate =
 	      freemed_bar_alternate_color ($_alternate))."\">
             <TD ALIGN=RIGHT VALIGN=TOP>
-            <$STDFONT_B>
             <A HREF=\"$page_name?$_auth&action=step2&patient=$patient&hour=$i".
             "&minute=00&room=$room&selected_date=$selected_date&type=$type\"
-            >$ampm_t $ampm</A><$STDFONT_E></TD><TD ALIGN=CENTER>
+            >$ampm_t $ampm</A></TD><TD ALIGN=CENTER>
           ";
         } else { // if we _can't_ book here
           $interfere = fc_check_interference_map ($i, "0", $selected_date,
@@ -160,13 +159,12 @@ switch ($action) {
             <TR BGCOLOR=\"".($_alternate =
 	      freemed_bar_alternate_color ($_alternate))."\">
             <TD ALIGN=RIGHT VALIGN=TOP>
-            <$STDFONT_B>
            ";
           if ($interfere) echo "<I>";
           echo "$ampm_t $ampm";
           if ($interfere) echo "</I>";
           echo "
-            <$STDFONT_E></TD><TD ALIGN=CENTER>
+            </TD><TD ALIGN=CENTER>
           ";
         } // end checking if booked
 
@@ -174,22 +172,18 @@ switch ($action) {
           if (!fc_check_interference_map($i, $j, $selected_date, false) or
               freemed_config_value("cal_ob")=="enable") {
             echo "
-             <$STDFONT_B>
              <A HREF=\"$page_name?$_auth&action=step2&patient=$patient&".
              "hour=$i&minute=$j&room=$room&selected_date=$selected_date&".
              "type=$type\"
-             ><B>:$j</B></A><$STDFONT_E>&nbsp;
+             ><B>:$j</B></A>&nbsp;
             ";
           } else {
             $interfere = fc_check_interference_map($i, $j, $selected_date,
                false);
-            echo "
-             <$STDFONT_B>
-             ";
             if ($interfere) echo "<I>";
             echo "<B>:$j</B>";
             if ($interfere) echo "</I>";
-            echo "<$STDFONT_E>&nbsp;\n";
+            echo "&nbsp;\n";
           } // end checking for booked?
         } // end for minutes loop
 
@@ -206,14 +200,14 @@ switch ($action) {
       echo "
         <P>
         <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
-         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
+         >"._("Manage Patient")."</CENTER>
         <P>
       ";
     } else {
       echo "
         <P>
         <CENTER><A HREF=\"call-in.php?$_auth&action=view&id=$patient\"
-         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
+         >"._("Manage Patient")."</CENTER>
         <P>
       ";
     } // end checking for type
@@ -337,7 +331,7 @@ switch ($action) {
   break;
  case "add":
   freemed_display_box_top (_("Add Appointment"));
-  echo "<CENTER><$STDFONT_B>"._("Adding")." ... ";
+  echo "<CENTER>"._("Adding")." ... ";
   $query = "INSERT INTO scheduler VALUES (
     '".addslashes($selected_date)."',
     '".addslashes($type)."',
@@ -403,20 +397,20 @@ switch ($action) {
 	END OF SECTION THAT HAS TO BE UNCOMMENTED */
 
   echo "
-    <$STDFONT_E></CENTER>
+    </CENTER>
     <P>
     <CENTER>
   ";
   if ($type=="pat") {
     echo "
      <A HREF=\"manage.php?$_auth&id=$patient\"
-     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+     >"._("Manage Patient")."</A>
      </CENTER>
     ";
   } else {
     echo "
      <A HREF=\"call-in.php?$_auth&action=display&id=$patient\"
-     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+     >"._("Manage Patient")."</A>
      </CENTER>
     ";
   } // end checking type

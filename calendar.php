@@ -35,7 +35,7 @@ $template = "
 	<TR>
 	<TD ALIGN=RIGHT>#icon#</TD>
 	<TD ALIGN=LEFT><A HREF=\"module_loader.php?$_auth&module=#class#\"".
-	"><$STDFONT_B>#name#<$STDFONT_E></A></TD>
+	">#name#</A></TD>
 	</TR>
 ";
 
@@ -52,8 +52,8 @@ if (!$module_list->empty_category($category)) {
 	</CENTER>
 	<P>
 	<CENTER>
-		<$STDFONT_B><A HREF=\"main.php?$_auth\"
-		>"._("Return to Main Menu")."</A><$STDFONT_E>
+		<A HREF=\"main.php?$_auth\"
+		>"._("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";
@@ -61,12 +61,12 @@ if (!$module_list->empty_category($category)) {
 	echo "
 	<P>
 	<CENTER>
-		<$STDFONT_B>"._("There are no report modules present.")."<$STDFONT_E>
+		"._("There are no report modules present.")."
 	</CENTER>
 	<P>
 	<CENTER>
-		<$STDFONT_B><A HREF=\"main.php?$_auth\"
-		>"._("Return to Main Menu")."</A><$STDFONT_E>
+		<A HREF=\"main.php?$_auth\"
+		>"._("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";

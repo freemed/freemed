@@ -38,8 +38,6 @@ if (freemed_get_userlevel ($LoginCookie) < $database_level) {
 
 echo "
 	<CENTER>
-    <$STDFONT_B>
-
 	<!-- modules that still need to be converted ...
 
      <A HREF=\"frmlry.php3?$_auth\"
@@ -68,7 +66,6 @@ echo $module_list->generate_list($category, 0, $template);
 
 // display end of listing
 echo "
-    <$STDFONT_E>
 	</CENTER>
 ";
 

@@ -52,18 +52,18 @@ if ($id<1) {
 
         <TABLE WIDTH=100% BORDER=0 CELLPADDING=3>
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>"._("Appointments")."</B> : <$STDFONT_E>
+        <B>"._("Appointments")."</B> : 
         </TD><TD>
         <A HREF=\"book_appointment.php?$_auth&patient=$id&type=pat\"
-         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A> 
+         >"._("Add")."</A> 
         </TD><TD>
         <A HREF=\"manage_appointments.php?$_auth&patient=$id\"
-         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A><BR>
+         >"._("View/Manage")."</A><BR>
         </TD><TD>
         </TD></TR>
         <TR><TD>&nbsp;</TD>
         <TD><A HREF=\"show_appointments.php?$_auth&patient=$id&type=pat\"
-         ><$STDFONT_B>"._("Show Today")."<$STDFONT_E></A></TD>
+         >"._("Show Today")."</A></TD>
         <TD>&nbsp;</TD>
         </TR>
       ";
@@ -72,7 +72,7 @@ if ($id<1) {
       if (($f_results>0) and ($sql->num_rows($f_results))) {
        echo "
          <TR><TD ALIGN=RIGHT>
-          <$STDFONT_B><B>"._("Custom Records")."</B> : <$STDFONT_E>
+          <B>"._("Custom Records")."</B> : 
          </TD><TD COLSPAN=2>
           <FORM ACTION=\"custom_records.php3\" METHOD=POST>
            <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$id\">
@@ -89,13 +89,13 @@ if ($id<1) {
         <TR>
          <TD>&nbsp;</TD>
          <TD><A HREF=\"custom_records.php3?$_auth&patient=$id\" 
-          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A></TD>
+          >"._("View/Manage")."</A></TD>
         </TR>
        ";
       } // end of if, checking for custom records....
       echo "
         <TR><TD ALIGN=RIGHT>
-         <$STDFONT_B><B>Dependent Information</B> : <$STDFONT_E>
+         <B>Dependent Information</B> : 
         </TD><TD ALIGN=LEFT>
      ";
 //      removed as part of coverage overhaul
@@ -106,27 +106,27 @@ if ($id<1) {
 //      $dep_r = $sql->fetch_array($dep_result);
 //      $num_deps = $dep_r[0];
 //      if ($num_deps<1)
-//        echo "<$STDFONT_B>No Dependents<$STDFONT_E>";
+//        echo "No Dependents";
 //      else
 //        echo "
-//	 <$STDFONT_B><A HREF=\"patient.php?$_auth&action=find&criteria=".
-//	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]<$STDFONT_E>
+//	 <A HREF=\"patient.php?$_auth&action=find&criteria=".
+//	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]
 //        ";
 //      } else {
 //      $guarantor = new Patient ($this_patient->ptdep);
 //      echo "
 //         <A HREF=\"manage.php?$_auth&action=view&id=".$this_patient->ptdep."\"
-//         ><$STDFONT_B>"._("Guarantor")."<$STDFONT_E></A>
-//	</TD><TD><$STDFONT_B>[".$guarantor->fullName()."]<$STDFONT_E></TD></TR>
+//         >"._("Guarantor")."</A>
+//	</TD><TD>[".$guarantor->fullName()."]</TD></TR>
 //     ";
 //    }
 
      echo "
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>"._("Patient Information")."</B> : <$STDFONT_E>
+        <B>"._("Patient Information")."</B> : 
         </TD><TD> 
         <A HREF=\"patient.php?$_auth&action=modform&id=$id\"
-         ><$STDFONT_B>"._("Modify")."<$STDFONT_E></A>
+         >"._("Modify")."</A>
         </TD><TD>&nbsp;
         </TD><TD>
         </TD></TR>
@@ -138,13 +138,13 @@ if ($id<1) {
 	$category = "Electronic Medical Record";
 	$template = "
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
+        <B>#name#</B> : 
         </TD><TD>
         <A HREF=\"module_loader.php?$_auth&module=#class#&action=addform&patient=$id\"
-         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
+         >"._("Add")."</A>
         </TD><TD> 
         <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
-         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
+         >"._("View/Manage")."</A>
         </TD><TD>
         </TD></TR>
 
@@ -156,18 +156,18 @@ if ($id<1) {
     echo "
 		<TR><TD ALIGN=RIGHT>
 		<BR>
-    	<$STDFONT_B><B>"._("Patient Reports")."</B><$STDFONT_E>
+    	<B>"._("Patient Reports")."</B>
 		<BR>
     	</TD>
 	";
 	$category = "Electronic Medical Record Report";
 	$template = "
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
+        <B>#name#</B> : 
         </TD>
 		<TD> 
         <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
-         ><$STDFONT_B>"._("View")."<$STDFONT_E></A>
+         >"._("View")."</A>
         </TD><TD>
         </TD></TR>
 
@@ -183,10 +183,10 @@ if ($id<1) {
 	  // this is commented out until we can make it work properly
 
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>"._("Reports and Certificates")."</B> : <$STDFONT_E>
+        <B>"._("Reports and Certificates")."</B> : 
         </TD><TD>
         <A HREF=\"simplerep.php3?$_auth&action=choose&patient=$id\"
-        ><$STDFONT_B>"._("Choose")."<$STDFONT_E></A>
+        >"._("Choose")."</A>
         </TD><TD>
         </TD><TD>
         </TD></TR>
@@ -194,10 +194,10 @@ if ($id<1) {
 
 		<!--	
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>"._("Patient Reports")."</B> : <$STDFONT_E>
+        <B>"._("Patient Reports")."</B> : 
         </TD><TD>
         <A HREF=\"emrreports.php?$_auth&action=choose&patient=$id\"
-        ><$STDFONT_B>"._("Choose")."<$STDFONT_E></A>
+        >"._("Choose")."</A>
         </TD><TD>
         </TD><TD>
         </TD></TR>
@@ -207,7 +207,7 @@ if ($id<1) {
         <CENTER>
 		<P>
         <A HREF=\"patient.php?$_auth\"
-         ><$STDFONT_B>"._("Select Another Patient")."<$STDFONT_E></A>
+         >"._("Select Another Patient")."</A>
         </CENTER>
         <P>
       </CENTER>

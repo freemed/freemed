@@ -6,6 +6,14 @@ freemed project changelog
     fields (David Jordan)
   - lib/API.php: fix for search box not passing $module
 
+* Fri Jun 15 2001 gdrago23
+  - admin.php, authenticate.php, billing_functions.php,
+    book_appointment.php, calendar.php, call-in.php,
+    custom_records.php, db_maintenance.php, export.php, help.php, 
+    import.php, main.php, manage.php: removed STDFONT_{B,E}     
+  - note for the future: <B>foo</B> should become <EM>foo</EM> 
+  - note for the future: <FONT>foo</FONT> should be in the CSS.
+
 * Thu Jun 14 2001 rufustfirefly
   - general include -> include_once overhaul for many modules,
     but never enough

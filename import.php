@@ -21,18 +21,17 @@ switch ($action) {
   freemed_display_box_top (_("Import Database"));
   echo "
    <P>
-   <$STDFONT_B>"._("Importing Database")." \"$db\" ... 
+   "._("Importing Database")." \"$db\" ... 
   ";
   if (freemed_import_stock_data ($db)) { echo _("done");  }
    else                                { echo _("ERROR"); }
   echo "
-   <$STDFONT_E>
    <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>"._("Import Another Database")."<$STDFONT_E></A> <B>|</B>
+     >"._("Import Another Database")."</A> <B>|</B>
      <A HREF=\"admin.php?$_auth\"
-     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
+     >"._("Return to Administration Menu")."</A>
     </CENTER>
    <P>
   ";
@@ -44,7 +43,7 @@ switch ($action) {
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"import\">
     <P>
-    <$STDFONT_B>"._("Select Database to Import")." : <$STDFONT_E>
+    "._("Select Database to Import")." : 
     <SELECT NAME=\"db\">
      <OPTION VALUE=\"authorizations\"
                                    >Authorizations (authorizations)
@@ -95,7 +94,7 @@ switch ($action) {
     <P>
     <CENTER>
      <A HREF=\"admin.php?$_auth\"
-     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
+     >"._("Return to Administration Menu")."</A>
     </CENTER>
     <P>
    </FORM>

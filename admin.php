@@ -25,7 +25,7 @@ if (freemed_get_userlevel($LoginCookie)<9) {
     <P>
     <CENTER>
      <A HREF=\"main.php?$_auth\"
-     ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E>
+     >"._("Return to the Main Menu")."
     </CENTER>
     <P>
   ";
@@ -122,7 +122,7 @@ if ($action=="cfgform") {
      VALIGN=MIDDLE ALIGN=CENTER>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("ICD Code Type")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("ICD Code Type")." : </TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"icd\">
      <OPTION VALUE=\"9\"  $_icd_9 > 9
@@ -131,7 +131,7 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Graphics Enhanced")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Graphics Enhanced")." : </TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"gfx\">
      <OPTION VALUE=\"0\" $_gfx_0>"._("Disabled")."
@@ -140,7 +140,7 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Scheduling Start Time")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Scheduling Start Time")." : </TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"calshr\">
      <OPTION VALUE=\"\"  $_cal_sd>$DEFAULT
@@ -155,7 +155,7 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Scheduling End Time")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Scheduling End Time")." : </TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"calehr\">
      <OPTION VALUE=\"\"  $_cal_ed>$DEFAULT
@@ -170,7 +170,7 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Calendar Overbooking")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Calendar Overbooking")." : </TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"cal_ob\">
      <OPTION VALUE=\"enable\"  $_cal_ob_e>"._("Enabled")."
@@ -179,7 +179,7 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Date Format")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Date Format")." : </TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"dtfmt\">
      <OPTION VALUE=\"ymd\"  $_dtfmt_ymd>YYYY-MM-DD
@@ -190,7 +190,7 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Phone Number Format")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Phone Number Format")." : </TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"phofmt\">
      <OPTION VALUE=\"usa\"         $_phofmt_us>"._("United States")." (XXX) XXX-XXXX
@@ -253,7 +253,7 @@ if ($action=="cfgform") {
   echo "
     <P ALIGN=CENTER>
     <A HREF=\"".page_name()."\"
-     ><$STDFONT_B>"._("Return To Administration Menu")."<$STDFONT_E></A>
+     >"._("Return To Administration Menu")."</A>
   ";
   freemed_display_box_bottom ();
 
@@ -299,18 +299,18 @@ if ($action=="cfgform") {
  // stupids don't accidentally click on it and... oops!
 
 //  if ($first_time!="first") {
-//    echo "<$STDFONT_B>"._("Erasing old database")."... ";
+//    echo ""._("Erasing old database")."... ";
 //    $sql-drop_db($database) OR
-//      DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
-//    echo "<B>"._("done")."</B><$STDFONT_E><BR>\n";
+//      DIE("<B>"._("Error accessing SQL")."</B><BR><BR>\n");
+//    echo "<B>"._("done")."</B><BR>\n";
 //  }
 
-//  echo "<$STDFONT_B>"._("Creating new database")."... ";
+//  echo ""._("Creating new database")."... ";
 //  $sql->create_db($database) OR
-//    DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
-//  echo "<B>"._("done")."</B><$STDFONT_E><BR>\n";
+//    DIE("<B>"._("Error accessing SQL")."</B><BR><BR>\n");
+//  echo "<B>"._("done")."</B><BR>\n";
 
-  echo "<$STDFONT_B><UL>"._("Creating tables")."... \n";
+  echo "<UL>"._("Creating tables")."... \n";
   echo "$re_load\n";
 
   // generate test table, if debug is on
@@ -1369,7 +1369,7 @@ if ($action=="cfgform") {
   	if (freemed_import_stock_data("insmod"))
     		echo "<I>("._("Stock Insurance Modifiers").")</I> \n";
   }
-  echo "</UL><B>"._("done").".</B><$STDFONT_E><BR>\n";
+  echo "</UL><B>"._("done").".</B><BR>\n";
   
   // now generate "return code" so that we can get back to the
   // admin menu... or perhaps skip that... ??
@@ -1377,7 +1377,7 @@ if ($action=="cfgform") {
   echo "
     <BR><BR><CENTER>
     <A HREF=\"$page_name?$_auth\">
-     <$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
+     "._("Return to Administration Menu")."</A>
     </CENTER>
   ";
 
@@ -1389,7 +1389,7 @@ freemed_display_box_top(PACKAGENAME." "._("Administration Menu"), $_ref,
 $page_name);
 
 echo "
-  <$STDFONT_B>
+  
   <TABLE WIDTH=100% VALIGN=CENTER ALIGN=CENTER BORDER=0 CELLSPACING=2
    CELLPADDING=0>
  "; // begin standard font
@@ -1402,14 +1402,14 @@ echo "
   ><IMG SRC=\"img/kfloppy.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
   <A HREF=\"export.php?$_auth\"
-  ><$STDFONT_B>"._("Export Databases")."<$STDFONT_E></A>
+  >"._("Export Databases")."</A>
  </TD></TR> 
  <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
   <A HREF=\"import.php?$_auth\"
   ><IMG SRC=\"img/ark.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
  <A HREF=\"import.php?$_auth\"
- ><$STDFONT_B>"._("Import Databases")."<$STDFONT_E></A>
+ >"._("Import Databases")."</A>
  </TD></TR>
 ";  
 
@@ -1419,7 +1419,7 @@ echo "
      ><IMG SRC=\"img/magnify.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
     <A HREF=\"module_information.php?$_auth\"
-     ><$STDFONT_B>"._("Module Information")."<$STDFONT_E></A>
+     >"._("Module Information")."</A>
     </TD></TR>
  ";
 
@@ -1430,7 +1430,7 @@ if ($_userdata[0]==1) // if we are root...
    ><IMG SRC=\"img/Gear.gif\" BORDER=0 ALT=\"[*]\"></A>
   </TD><TD ALIGN=LEFT>
   <A HREF=\"$page_name?$_auth&action=reinit\"
-  ><$STDFONT_B>"._("Reinitialize Database")."<$STDFONT_E></A>
+  >"._("Reinitialize Database")."</A>
   </TD></TR>
  ";
 
@@ -1440,7 +1440,7 @@ echo "
    ><IMG SRC=\"img/config.gif\" BORDER=0 ALT=\"[*]\"></A>
   </TD><TD ALIGN=LEFT>
   <A HREF=\"$page_name?$_auth&action=cfgform\"
-  ><$STDFONT_B>"._("Update Config")."<$STDFONT_E></A>
+  >"._("Update Config")."</A>
   </TD></TR>
 ";
 
@@ -1451,7 +1451,7 @@ if ($_userdata[0]==1)  // if we are root...
      ><IMG SRC=\"img/monalisa.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
     <A HREF=\"user.php?$_auth&action=view\"
-     ><$STDFONT_B>"._("User Maintenance")."<$STDFONT_E></A>
+     >"._("User Maintenance")."</A>
     </TD></TR>
   ";
 
@@ -1461,9 +1461,9 @@ if ($_userdata[0]==1)  // if we are root...
      ><IMG SRC=\"img/HandPointingLeft.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
      <A HREF=\"main.php?$_auth\"
-     ><B><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></B></A>
+     ><B>"._("Return to the Main Menu")."</B></A>
     </TD></TR>
-    </TABLE><$STDFONT_E>
+    </TABLE>
   "; // end standard font
 
   freemed_display_box_bottom ();
@@ -1473,11 +1473,9 @@ freemed_close_db(); // close up database
 
 echo "
   <P>
-  <$STDFONT_B>
   <CENTER>
   <A HREF=\"main.php?$_auth\">"._("Return to the Main Menu")."</A>
   </CENTER>
-  <$STDFONT_E>
 "; // return to main menu tab...
 
 freemed_display_html_bottom (); // ending of document...

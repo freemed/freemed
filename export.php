@@ -21,18 +21,17 @@ switch ($action) {
   freemed_display_box_top (_("Export Database"));
   echo "
    <P>
-   <$STDFONT_B>"._("Exporting Database")." \"$db\" ... 
+   "._("Exporting Database")." \"$db\" ... 
   ";
   if (freemed_export_stock_data ($db)) { echo "$Done."; }
    else                                { echo "$ERROR"; }
   echo "
-   <$STDFONT_E>
    <P>
     <CENTER>
     <A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>"._("Export Another Database")."<$STDFONT_E></A> <B>|</B>
+     >"._("Export Another Database")."</A> <B>|</B>
     <A HREF=\"admin.php?$_auth\"
-     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
+     >"._("Return to Administration Menu")."</A>
     </CENTER>
    <P>
   ";
@@ -44,7 +43,7 @@ switch ($action) {
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"export\">
     <P>
-    <$STDFONT_B>"._("Select Database to Export")." : <$STDFONT_E>
+    "._("Select Database to Export")." : 
     <SELECT NAME=\"db\">
      <OPTION VALUE=\"authorizations\"
                                    >Authorizations (authorizations)
@@ -95,7 +94,7 @@ switch ($action) {
     <P>
     <CENTER>
      <A HREF=\"admin.php?$_auth\"
-     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
+     >"._("Return to Administration Menu")."</A>
     </CENTER>
     <P>
    </FORM>

@@ -18,7 +18,7 @@
   freemed_display_html_top ();
   freemed_display_box_top (_("Billing Functions"));
 
-  $patient_information = "<$STDFONT_B><B>"._("NO PATIENT SPECIFIED")."</B><$STDFONT_E>";
+  $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
   if ($patient>0) {
     $this_patient = new Patient ($patient);
     $patient_information =
@@ -32,8 +32,6 @@
    // here is the actual guts of the menu
   if ($this_user->getLevel() > $database_level) {
    echo "
-    <$STDFONT_B>
-
     <P>
 
     <CENTER>
@@ -57,17 +55,15 @@
 
     </TABLE> 
     <P>
-
-    <$STDFONT_E>
     ";
 	$catagory = "Billing";
 	$template = "
 		<TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
+        <B>#name#</B> : 
         </TD>
         <TD>
         <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
-         ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
+         >"._("Menu")."</A>
         </TD>
 		</TR>";
     // modules list
@@ -78,11 +74,11 @@
 	$catagory = "X12";
 	$template = "
 		<TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
+        <B>#name#</B> : 
         </TD>
         <TD>
         <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
-         ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
+         >"._("Menu")."</A>
         </TD>
 		</TR>";
     // modules list

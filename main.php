@@ -25,7 +25,6 @@ freemed_display_box_top(PACKAGENAME." "._("Main Menu"));
 echo "
   <P>
 
-  <$STDFONT_B>
   <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
    ALIGN=CENTER>
  "; // standard font begin
@@ -174,20 +173,18 @@ echo "
 </FORM>
 ";
 
-echo "<$STDFONT_E>"; // end standard font
-
 // this should always be shown
 //if ($debug)
   echo "
     </TD></TR>
     <TR><TD>
-     <$STDFONT_B SIZE=-1>
+     <FONT SIZE=\"-1\">
      "._("User level").": ".$this_user->getLevel()."
-     <$STDFONT_E>
+     </FONT>
       &nbsp;<B>|</B>&nbsp;
-     <$STDFONT_B SIZE=-1>
+     <FONT SIZE=\"-1\">
      "._("User description").": ".prepare($this_user->getDescription())."
-     <$STDFONT_E>
+     </FONT>
     </TD></TR>
     <TR><TD>
   ";

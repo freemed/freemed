@@ -43,17 +43,13 @@ if (!file_exists($_help_name)) {
     <P>
     <CENTER>
     <A HREF=\"help.php?$_auth\"
-    ><$STDFONT_B>Go to the Help Page<$STDFONT_E></A>
+    >Go to the Help Page</A>
     </CENTER>
   "; // link back to the main help page
   DIE("");  // and we bite the big one
 } // if the help file does not exist
 
 freemed_display_box_top (PACKAGENAME." Help System");
-
-echo "
-  <$STDFONT_B>
-"; // standard font -- begin
 
 if ($debug) {
   echo "
@@ -67,12 +63,11 @@ include ($_help_name); // include the actual help text
 freemed_display_box_bottom (); // end of box
 
 echo "
-  <$STDFONT_E>
   <P>
   <CENTER>
-  <$STDFONT_B><B>If this is in a \"child window\",<BR>
+  <B>If this is in a \"child window\",<BR>
   please close it or minimize it to<BR>
-  return to </B><$STDFONT_E>
+  return to </B>
   </CENTER>
 ";
 

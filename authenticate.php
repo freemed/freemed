@@ -20,12 +20,10 @@ if (!$connect) {
        <P>
        <$HEADERFONT_B>"._("Error")." !<$HEADERFONT_E>
        <P>
-       <$STDFONT_B>
        "._("You have entered an incorrect name or password.")."
-       <$STDFONT_E>
        <P>
-       <CENTER><$STDFONT_B><A HREF=\"".COMPLETE_URL."$__url_part\"
-        >"._("Return to the login screen")."</A><$STDFONT_E></CENTER>
+       <CENTER><A HREF=\"".COMPLETE_URL."$__url_part\"
+        >"._("Return to the login screen")."</A></CENTER>
        <P>
       </TD></TR>
       </TABLE>
