@@ -37,7 +37,7 @@ class Patient {
   var $local_record;                // stores basic patient record
   var $ptlname, $ptfname, $ptmname; // name variables
   var $ptdob;                       // date of birth
-  var $ptdep;                       // patient dependency
+  var $ptdep;                       // patient dependencies
   var $ptsex;                       // gender
   var $ptmarital;                   // marital status
   var $ptreldep;                    // relation to guarantor
@@ -55,21 +55,37 @@ class Patient {
      $this->ptfname      = $this->local_record["ptfname"  ];
      $this->ptmname      = $this->local_record["ptmname"  ];
      $this->ptdob        = $this->local_record["ptdob"    ];
-     $this->ptdep        = $this->local_record["ptdep"    ];
      $this->ptsex        = $this->local_record["ptsex"    ];
      $this->ptmarital    = $this->local_record["ptmarital"];
-     $this->ptreldep     = $this->local_record["ptreldep" ];
      $this->ptid         = $this->local_record["ptid"     ];
      $this->id           = $this->local_record["id"       ];
-     if ($this->local_record["ptins1"]>0)
-       $this->insco[0] =
-         new InsuranceCompany ($this->local_record["ptins1"]);
-     if ($this->local_record["ptins2"]>0)
-       $this->insco[1] =
-         new InsuranceCompany ($this->local_record["ptins2"]);
-     if ($this->local_record["ptins3"]>0)
-       $this->insco[2] =
-         new InsuranceCompany ($this->local_record["ptins3"]); 
+     
+     // do dependency stuff
+     $this->ptreldep     = $this->local_record["ptreldep" ];
+     $this->ptdep        = $this->local_record["ptdep"    ];
+
+     // pull insurance companies
+     $ins      = sql_expand ($this->local_record["ptins"]     );
+     $insno    = sql_expand ($this->local_record["ptinsno"]   );
+     $insgrp   = sql_expand ($this->local_record["ptinsgrp"]  );
+     $insstart = sql_expand ($this->local_record["ptinsstart"]);
+     $insend   = sql_expand ($this->local_record["ptinsend"]  );
+
+     // make sure arrays are passed
+     if (!is_array ($ins)     ) $ins[0]      = $ins;
+     if (!is_array ($insno)   ) $insno[0]    = $insno;
+     if (!is_array ($insgrp)  ) $insgrp[0]   = $insgrp;
+     if (!is_array ($insstart)) $insstart[0] = $insstart;
+     if (!is_array ($insend)  ) $insend[0]   = $insend;
+     
+     // reset all pulled arrays
+     reset ($ins); reset ($insno); reset ($insgrp);
+     reset ($insstart); reset ($insend); $count = 0;
+     while (list ($k, $v) = each ($ins)) {
+       if ($v>0) $this->insco[$count] = new InsuranceCompany ($v);
+     } // end looping for inscos
+
+     // callin set as false
      $this->is_callin    = false;
     } else {
      $this->local_record = freemed_get_link_rec ($patient_number, "callin");
@@ -82,6 +98,11 @@ class Patient {
      $this->is_callin    = true;
     } // end if/else for is_callin
   } // end constructor Patient
+
+  function age ($date_to="") {
+    return date_diff_display ($this->local_record["ptdob"], $date_to,
+      _("year(s)"), _("month(s)"), _("day(s)"), _("ago"), _("ahead"));
+  } // end function Patient->age
 
   function fullName ($with_dob = false) {
     if (!$with_dob) {
