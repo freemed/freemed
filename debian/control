@@ -13,6 +13,8 @@ Depends: cron
 Depends: djvulibre-bin, netpbm, imagemagick
 Depends: php4, php4-mysql, phpwebtools (>= 0.4.2)
 Depends: apache | apache-ssl
-Depends: tetex-bin, tetex-extra, cupsys
+Depends: tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common
+Depends: php4-pear, php4-pear-html-table, php4-pear-html-quickform, php4-cgi
+Suggests: freeb
 Suggests: cdrecord, mkisofs
 Description: FreeMED Opensource Electronic Medical Record System

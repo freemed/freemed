@@ -1,3 +1,9 @@
+freemed (0.7.0-0.0.2) stable; urgency=low
+
+  * Released beta 2 for 0.7.0.
+
+ -- Jeff Buchbinder <jeff@freemedsoftware.com>  Thu, 15 Mar 2004 09:11:22 -0500
+
 freemed (0.6.2-1) stable; urgency=low
 
   * Initial Release.
