@@ -4,6 +4,10 @@ freemed project changelog
 * Fri Mar 30 2001 rufustfirefly
   Released 0.2.1 (Persephone/CVS)
   - committed old error checking patch in insurance billing module
+  - README: updated instructions for creating freemed database, to avoid
+    sql class error
+  - admin.php: massive cleanup in cfg action, also fixed $page_name use in
+    cfg and cfgform actions
 
 * Mon Mar 26 2001 fforest
   - lib/API boxtop and boxbotton checks for incorrect calling sequence

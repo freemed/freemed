@@ -115,7 +115,7 @@ if ($action=="cfgform") {
   echo "
     <P>
 
-    <FORM ACTION=\"$page_name\">
+    <FORM ACTION=\"".page_name()."\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"cfg\">
 
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
@@ -219,31 +219,31 @@ if ($action=="cfgform") {
   ";
 
   $q = $sql->query("UPDATE config SET
-    c_value='$icd' WHERE c_option='icd'");
+    c_value='".addslashes($icd)."' WHERE c_option='icd'");
   if (($debug) AND ($q)) echo "ICD = $icd<BR>\n";
 
   $q = $sql->query("UPDATE config SET
-    c_value='$gfx' WHERE c_option='gfx'");
+    c_value='".addslashes($gfx)."' WHERE c_option='gfx'");
   if (($debug) AND ($q)) echo "gfx = $gfx<BR>\n";
 
   $q = $sql->query("UPDATE config SET
-    c_value='$calshr' WHERE c_option='calshr'");
+    c_value='".addslashes($calshr)."' WHERE c_option='calshr'");
   if (($debug) AND ($q)) echo "calshr = $calshr<BR>\n";
 
   $q = $sql->query("UPDATE config SET
-    c_value='$calehr' WHERE c_option='calehr'");
+    c_value='".addslashes($calehr)."' WHERE c_option='calehr'");
   if (($debug) AND ($q)) echo "calehr = $calehr<BR>\n";
 
   $q = $sql->query("UPDATE config SET
-    c_value='$cal_ob' WHERE c_option='cal_ob'");
+    c_value='".addslashes($cal_ob)."' WHERE c_option='cal_ob'");
   if (($debug) AND ($q)) echo "cal_ob = $cal_ob<BR>\n";
 
   $q = $sql->query("UPDATE config SET
-    c_value='$dtfmt' WHERE c_option='dtfmt'");
+    c_value='".addslashes($dtfmt)."' WHERE c_option='dtfmt'");
   if (($debug) AND ($q)) echo "dtfmt = $dtfmt<BR>\n";
 
   $q = $sql->query("UPDATE config SET
-    c_value='$phofmt' WHERE c_option='phofmt'");
+    c_value='".addslashes($phofmt)."' WHERE c_option='phofmt'");
   if (($debug) AND ($q)) echo "phofmt = $phofmt<BR>\n";
 
   echo "
@@ -252,8 +252,8 @@ if ($action=="cfgform") {
   ";
   echo "
     <P ALIGN=CENTER>
-    <A HREF=\"$page_name?$_auth\"
-     >"._("Return To Administration Menu")."</A>
+    <A HREF=\"".page_name()."\"
+     ><$STDFONT_B>"._("Return To Administration Menu")."<$STDFONT_E></A>
   ";
   freemed_display_box_bottom ();
 
@@ -276,7 +276,7 @@ if ($action=="cfgform") {
    <I>"._("First Initialization")."</I><BR>
    <INPUT TYPE=CHECKBOX NAME=\"re_load\" VALUE=\"reload\">
    <I>"._("Reload Stock Data")."</I><BR>
-   <INPUT TYPE=HIDDEN NAME=action VALUE=\"reinit_sure\">
+   <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"reinit_sure\">
    <TABLE BORDER=0 ALIGN=CENTER><TR><TD>
    <INPUT TYPE=SUBMIT VALUE=\""._("Continue")."\">
    </FORM>
