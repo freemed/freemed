@@ -86,7 +86,8 @@ if (is_object($this_user)) {
 	<tr><td colspan=\"2\" align=\"center\" valign=\"middle\">
 	<img src=\"img/messages_small.gif\" alt=\"\" ".
 	"width=\"16\" height=\"16\" border=\"0\"/>
-	<small>".sprintf(__("%d new message(s)"), $new_messages)."</small>
+	<small><a href=\"messages.php\">".
+	sprintf(__("%d new message(s)"), $new_messages)."</a></small>
 	<img src=\"img/messages_small.gif\" alt=\"\" ".
 	"width=\"16\" height=\"16\" border=\"0\"/>
 	</td></tr>
