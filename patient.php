@@ -326,7 +326,7 @@ switch ($action) {
 			html_form::select_widget(
 				"ptblood",
 				array(
-					"-",
+					"-" => "",
 					"O",
 					"O+",
 					"O-",
@@ -367,8 +367,9 @@ switch ($action) {
                             FROM ptstatus
                             ORDER BY ptstatus");
    $ref_phys_r = $sql->query("SELECT phylname,phyfname,id
-                            FROM physician WHERE phyref='yes' 
-                            ORDER BY phylname,phyfname");
+                            FROM physician ".
+			    //WHERE phyref='yes' 
+                            "ORDER BY phylname,phyfname");
    $int_phys_r = $sql->query("SELECT phylname,phyfname,id
                             FROM physician WHERE phyref='no' 
                             ORDER BY phylname,phyfname");
@@ -539,7 +540,7 @@ switch ($action) {
 			html_form::select_widget(
 				"ptblood",
 				array(
-					"-",
+					"-" => "",
 					"O",
 					"O+",
 					"O-",
