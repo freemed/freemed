@@ -772,7 +772,7 @@
      <P>
      <CENTER>
       <$STDFONT_B><A HREF=\"progress_notes.php3?$_auth&action=addform".
-       "&patient=$patient\">Add a Procedure</A><$STDFONT_E>
+       "&patient=$patient\">Add Progress Notes</A><$STDFONT_E>
      </CENTER>
    ";
    // end of progress notes display
