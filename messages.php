@@ -308,8 +308,12 @@ switch ($action) {
 	$m = freemed::get_link_rec($_REQUEST['id'], 'messages');
 	$title = __("Message");
 
-	$sentuser = CreateObject('FreeMED.User', $m['msgby']);
-	$sent_by = $sentuser->getDescription();
+	if ($r['msgby']) {
+		$sentuser = CreateObject('FreeMED.User', $m['msgby']);
+		$sent_by = $sentuser->getDescription();
+	} else {
+		$sent_by = __("FreeMED Messaging System");
+	}
 
 	$display_buffer .= "
 	<table border=\"0\" style=\"border: 1px black dotted; width: 75%; background: #cccccc; padding: .5em;\">
@@ -428,8 +432,12 @@ switch ($action) {
 
 			// Figure out who sent it
 			$sent_by = '';
-			$sentuser = CreateObject('FreeMED.User', $r['msgby']);
-			$sent_by = $sentuser->getName();
+			if ($r['msgby']) {
+				$sentuser = CreateObject('FreeMED.User', $r['msgby']);
+				$sent_by = $sentuser->getName();
+			} else {
+				$sent_by = __("FreeMED Messaging System");
+			}
 
 			// Convert from timestamp to time/date
 			$y = $m = $d = $hour = $min = '';
