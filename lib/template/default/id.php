@@ -11,7 +11,16 @@ $TEMPLATE_OPTIONS = array (
 		'name'    => __("Color Scheme"),
 		'var'     => "stylesheet",
 		'options' => array (
-			"Default Blue" => "stylesheet.css"
+			__("Default Blue") => "stylesheet.css"
+		)
+	),
+
+	array(
+		'name'    => __("Display Language Selection"),
+		'var'     => "language_bar",
+		'options' => array (
+			__("Yes") => '1',
+			__("No")  => '0'
 		)
 	)
 );
