@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -w -I/usr/share/freemed/lib/perl
 
 # Spell Checker Plugin for HTMLArea-3.0
 # Implementation by Mihai Bazon.  Sponsored by www.americanbible.org
@@ -16,7 +16,7 @@
 
 use strict;
 use utf8;
-use Encode;
+use Encode::compat;
 use Text::Aspell;
 use HTML::Parser;
 use HTML::Entities;
