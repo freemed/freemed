@@ -62,6 +62,7 @@ class PaymentModule extends EMRModule {
 		$this->summary_vars = array (
 			"Date" => "payrecdt",
 			"Type" => "_type",
+			"Form" => "_form",
 			"Amount" => "_amount"
 		);
 		$this->summary_query = array (
@@ -80,6 +81,17 @@ class PaymentModule extends EMRModule {
 				"WHEN 11 THEN '".addslashes(__("Copayment"))."' ".
 				"WHEN 12 THEN '".addslashes(__("Writeoff"))."' ".
 				"ELSE '".__("Unknown")."' END AS _type",
+			"CASE payreccat ".
+				"WHEN 0 THEN ".
+				"CASE payrectype ".
+					"WHEN 0 THEN '".addslashes(__("Cash"))."' ".
+					"WHEN 1 THEN '".addslashes(__("Check"))."' ".
+					"WHEN 2 THEN '".addslashes(__("Credit Card"))."' ".
+					"WHEN 3 THEN '".addslashes(__("Money Order"))."' ".
+					"WHEN 4 THEN '".addslashes(__("Traveller's Check"))."' ".
+					"ELSE '-' ".
+				"END ".
+				"ELSE '-' END AS _form",
 			"CASE (CAST(payrecamt AS CHAR) LIKE '%.%') WHEN 1 THEN CONCAT('\$', CAST(payrecamt AS CHAR)) ELSE CONCAT('\$', CAST(payrecamt AS CHAR), '.00') END AS _amount"
 		);
 
