@@ -1,0 +1,475 @@
+/*
+ *  $Id$
+ *  freemed external style sheet
+ */
+
+body {
+	background: #ffffff;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	margin-top: 0px;
+	margin-left: 0px;
+	text-decoration: none;
+}
+
+/* Equivalent to onMouseOver */
+a:hover {
+	color: #ffffff;
+	text-decoration: underline
+	/* background-color: #0000ff */
+}
+
+/* Main freemed dialog box */
+.mainbox {
+	border: thick black;
+	border-width: thick;
+	border-style: solid; 
+	background: #ccccff 
+}
+
+/* Section headings */
+.section {
+	border: 0px;
+	color: #555555;
+	font-size: 12pt;
+	text-decoration: none;
+}
+
+/* Thin box for patient management */
+.thinbox {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #d9d9ff 
+}
+
+.thinbox:hover {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #9999ff
+}
+
+.thinbox_noscroll {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: wrap;
+	background: #d9d9ff 
+}
+
+.letterbox {
+	overflow: wrap;
+	background: #bbbbff 
+}
+
+/* Box for itemlist function in API */
+.itemlistbox {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #d9d9ff 
+}
+
+.menubar {
+	border-width: none;
+	background: #bbbbff 
+}
+
+/* Title portion of menubar */
+.menubar_title {
+	border-width: none;
+	background: #9999ff
+}
+
+/* Information portion of menubar */
+.menubar_info, .menubar_info a {
+	border-width: none;
+	background: #9999ff;
+	font-size: 8pt
+}
+
+/* Menubar items and hilighting */
+.menubar_items {
+	border-width: none;
+	background: #b8b8ff;
+	font-size: 8pt
+}
+
+.menubar_items_hilite {
+	border-width: none;
+	background: #9999ff;
+	font-size: 8pt
+}
+
+/* Class for reversed table cells. */
+.reverse, .reverse a {
+	border-width: none;
+	background: #000055;
+	color: #ffffff;
+}
+.reverse a:visited, .reverse a:link { color: #ffffff }
+
+.patientbox {
+	border-width: none;
+	background: #000055;
+	color: #ffffff;
+}
+.patientbox a:visited, .patientbox a:link { color: #ffffff }
+.patientbox:hover {
+	border-width: none;
+	background: #5555ff;
+	color: #000000;
+}
+.patientbox:hover a {
+	background: #5555ff;
+	color: #000000;
+	
+}
+
+.calendar {
+	border: thin black;
+	border-width: thick;
+	border-style: solid;
+	overflow: scroll;
+	background: #ffffff 
+}
+
+/* These are the alternating ledger-looking lines. */
+.cell {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #aaaaff; 
+	padding: 1pt
+}
+
+.cell_alt {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #9999ff;
+	padding: 1pt
+}
+
+.cell_hilite, .cell:hover, .cell_alt:hover {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #0000ff;
+	color: #ffffff;
+}
+
+.calcell {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #aaaaff; 
+	padding: 1pt;
+	font-size: 8pt;
+}
+
+.calcell:hover, .calcell_alt:hover, .calendar_book_link:hover {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #5555ff; 
+	padding: 1pt;
+	font-size: 8pt;
+}
+
+.calcell_alt {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #9999ff;
+	padding: 1pt;
+	font-size: 8pt;
+}
+
+/* Make sure calendar cells have small text */
+.calcell a, .calcell a:hover, .calcell_alt a, .calcell_alt a:hover {
+	font-size: 8pt;
+}
+
+.calcell_selected {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #8888cc; 
+	padding: 1pt;
+	font-size: 8pt;
+}
+
+.calcell_hour {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #ffffff;
+	font-size: small;
+	padding: 1pt
+}
+
+.calendar_book_link {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #ffffff 
+}
+
+.calendar_book_link a {
+	border: 0px;
+	background: #ffffff;
+	color: #000000;
+	font-size: 8pt;
+	text-decoration: none;
+}
+
+/* Mini-calendar classes */
+.calendar_mini {
+	border: 1px solid;
+	border-color: #000000;
+	background: #dfdfdf;
+	color: #000000;
+}
+.calendar_mini_cell {
+	background: #dddddd;
+	color: #000000;
+	font-size: small;
+	text-decoration: none;
+	border: 1px;
+}
+.calendar_mini_cell a {
+	background: #dddddd;
+	color: #000000;
+	font-size: small;
+	text-decoration: none;
+	border: 0px;
+}
+.calendar_mini_cell:hover, .calendar_mini_cell a:hover {
+	background: #ffffff;
+	color: #000000;
+	font-size: small;
+	text-decoration: none;
+}
+.calendar_mini_cell { border-color: #ffffff; }
+.calendar_mini_cell:hover { border-color: #000000; }
+.calendar_mini_selected, .calendar_mini_selected:hover {
+	border: 1px solid;
+	border-color: #000000 #000000 #777777 #777777;
+	color: #000000;
+	font-size: small;
+}
+.calendar_mini_current, .calendar_mini_current:hover {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #8888cc; 
+	padding: 1px;
+	text-decoration: none;
+	color: #000000;
+	font-size: small;
+}
+.calendar_mini_selected a, .calendar_mini_current a {
+	border: 0px;
+	color: #000000;
+	text-decoration: none;
+	font-size: small;
+}
+.calendar_mini_selected a:hover, .calendar_mini_current a:hover {
+	border: 0px;
+	color: #ffffff;
+	text-decoration: none;
+	font-size: small;
+}
+
+/* Real HACK for keeping button hovers visible */
+.button_style {
+	font-size: 9pt;
+	border: 1px solid;
+	border-color: #000000;
+	background-color: #ffffff;
+	color: #000000;
+
+	/* For all button links */
+	padding: 2px 4px 2px 4px;
+	text-decoration: none;
+}
+.button_text, .button_text:hover {
+	text-decoration: none;
+}
+.button_text:hover {
+	color: #000000;
+}
+
+/* Calendar marking colors; these are defined as different labels in config */
+
+.calmark0 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #ffffff;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark1 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #ffd08c;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark2 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #d8ff84;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark3 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #7fffae;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark4 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #9fefff;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark5 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #9dc9ff;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark6 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #9aa4ff;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark7 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #eec5ff;
+	font-size: small;
+	padding: 1pt
+}
+
+.calmark8 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #ffffff;
+	font-size: small;
+	padding: 1pt
+}
+
+/* Informational box. */
+.infobox {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #d9d9ff 
+}
+
+/* Buttons */
+.button {
+	font-size: 9pt;
+	border: 1px solid;
+	border-color: #000000;
+	background-color: #ffffff;
+	color: #000000;
+
+	/* For all button links */
+	padding: 2px 4px 2px 4px;
+	text-decoration: none;
+}
+
+.button:hover {
+	font-size: 9pt;
+	border: 1px dotted;
+	border-color: #ffffff;
+	background-color: #cccccc;
+	color: #000000;
+
+	padding: 2px 4px 2px 4px;
+	text-decoration: none;
+}
+
+/* Small Buttons */
+.button_small {
+	font-size: 7pt;
+	border: 1px solid;
+	border-color: #000000;
+	background-color: #ffffff;
+	color: #000000;
+
+	/* For all button links */
+	padding: 0px;
+	text-decoration: none;
+}
+
+.button_small:hover {
+	font-size: 7pt;
+	border: 1px dotted;
+	border-color: #ffffff;
+	background-color: #cccccc;
+	color: #000000;
+
+	padding: 0px;
+	text-decoration: none;
+}
+
+/* Printing stuff */
+.PrintContainer {
+	border: 1px solid;
+	border-color: #bbbbbb #000000 #000000 #bbbbbb;
+	background-color: #d5d5d5;
+	color: #000000;
+	padding: 2px;
+}
+
+.PrintContainerItem {
+	background: #d5d5d5;
+	color: #000000;
+}
+
+.PrintContainerItemSelected {
+	background: #aaaaaa;
+	color: #000000;
+}
