@@ -182,15 +182,16 @@ class Agata {
 	//
 	function ServeReport ( ) {
 		switch ($this->report_format) {
-			case 'Csv':  $c = 'text/csv'; break;
-			case 'Pdf':  $c = 'application/x-pdf'; break;
-			case 'Ps':   $c = 'application/x-ps'; break;
+			case 'Csv':  $c = 'text/csv'; $e = 'csv'; break;
+			case 'Pdf':  $c = 'application/x-pdf'; $e = 'pdf'; break;
+			case 'Ps':   $c = 'application/x-ps'; $e = 'ps'; break;
 			case 'Html': $c = 'text/html'; break;
 			case 'Txt':  $c = 'text/plain'; break;
 
 			// Merge outputs Postscript for now
-			case 'Merge': $c = 'application/x-ps'; break;
+			case 'Merge': $c = 'application/x-ps'; $e = 'ps'; break;
 		}
+		if ($e) { Header('Content-Disposition: inline; filename="'.mktime().'.'.$e.'"'); }
 		if ($c) { Header('Content-type: '.$c); }
 		print $this->report_file;
 		die();
