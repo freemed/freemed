@@ -14,8 +14,7 @@ $page_title = PACKAGENAME . " - " . _("Login");
 //----- Set no menu bar for login screen
 $no_menu_bar = true;
 
-//----- Reset default facility cookie
-SetCookie ("default_facility", "0", time()-100);
+//----- *DON'T* Reset default facility session cookie
 
 //----- Load template with main menu
 if (file_exists("./lib/template/".$template."/login.php")) {
