@@ -5,13 +5,13 @@
 	//       tables, like "module", "config" and "user" to be updated with
 	//       versioning.
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-class FreeMED_Package extends BaseModule {
+class FreeMED_Package extends MaintenanceModule {
 
 	var $MODULE_NAME = 'FreeMED';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = VERSION;
+	var $MODULE_VERSION = '0.6.3.1';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -27,14 +27,47 @@ class FreeMED_Package extends BaseModule {
 		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
 
-		// Version 0.6.1 database changes to core tables
-		// ---------------------------------------------
+		// Version 0.6.1
+		//
+		//	Database changes to core tables
+		//
 		if (!version_check($version, '0.6.1')) {
 			// In version 0.6.1, we upgrade the configuration table
 			// to have 128 character keys
 			$sql->query('ALTER TABLE config CHANGE c_option c_option CHAR(64)');
 		}
-	} // end function _update
+
+		// Version 0.6.3
+		//
+		// 	Insurance module (0.3.3)
+		// 	(Actual update from old module name - HACK)
+		//	Add inscodef{format,target}e for electronic mappings
+		//
+		if ($GLOBALS['sql']->results($GLOBALS['sql']->query("SELECT * FROM module WHERE module_name='Insurance Company Maintenance'"))) {
+			// Remove stale entry
+			$GLOBALS['sql']->query(
+				'DELETE FROM module WHERE '.
+				'module_name=\'Insurance Company Maintenance\''
+			);
+			// Make changes
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformate'
+			);
+		}
+	} // end method _update
 }
 
 register_module('FreeMED_Package');
