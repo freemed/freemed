@@ -2,12 +2,21 @@
  // $Id$
  // $Author$
 
-// Check for refresh location
-/*
-if (isset($refresh)) {
-	Header("Location: ".$refresh_location);
+// Check for fscked up gecko rendering engine prior to 20031030
+// which causes the menus not to work. Default back to the default
+// template quasi-seamlessly if this happens, based on user agent.
+$_ua = getenv('HTTP_USER_AGENT').' ';
+if (eregi('Gecko/', $_ua)) {
+	$gecko_pos = strpos($_ua, 'Gecko/');
+	$next_space = strpos($_ua, ' ', $gecko_pos);
+	$version = substr($_ua, $gecko_pos+6,
+		($next_space - $gecko_pos)-6);
+	//die ( "version = -".$version."-");
+	if ($version < '20031030') {
+		include "lib/template/default/template.php";
+		die();
+	}
 }
-*/
 
 // Check for avoiding template
 if (!$GLOBALS['__freemed']['no_template_display']) {
