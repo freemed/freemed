@@ -21,18 +21,18 @@
   echo "
     <HTML>
     <HEAD>
-     <TITLE>logout for ".PACKAGENAME."</TITLE>
+     <TITLE>"._("Logout of")." ".PACKAGENAME."</TITLE>
      <META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$base_url$__url_part\">
     </HEAD>
     <BODY BGCOLOR=#ffffff>
   ";
   freemed_display_banner ();
-  freemed_display_box_top ("Logging Out ... ");
+  freemed_display_box_top (_("Logging Out ... "));
   echo "
       <P>
       <CENTER>
-        <B>If your browser does not support the REFRESH tag, click
-        <A HREF=\"$base_url\">here</A>.</B>
+        <B>"._("If your browser does not support the REFRESH tag")."
+        <A HREF=\"$base_url\">"._("click here")."</A>.</B>
       </CENTER>
       <P>
   ";
