@@ -70,7 +70,13 @@ class AppointmentTemplates extends MaintenanceModule {
 		".html_form::form_table ( array (
 		__("Template Name") => html_form::text_widget('atname'),
 		__("Duration") => html_form::number_pulldown('atduration', 1, 90),
-		__("Equipment") => "NOT USED FOR NOW"
+		__("Required Equipment") => module_function(
+			'RoomEquipment',
+			'widget',
+			false,
+			'id',
+			array ( 'multiple' => 5 )
+		)
 
 		) )."
 		<p/>
@@ -135,6 +141,63 @@ class AppointmentTemplates extends MaintenanceModule {
 		$r = freemed::get_link_rec ( $id, $this->table_name );
 		return $r['atduration'] + 0;
 	} // end method get_duration
+
+	// Method: get_rooms
+	//
+	//	Get rooms which are acceptable with the current
+	//	template requirements.
+	//
+	// Parameters:
+	//
+	//	$id - Record id field for template
+	//
+	// Returns:
+	//
+	//	Array of acceptable ids, or false if there is no
+	//	limit on rooms.
+	//
+	function get_rooms ( $id ) {
+		$t = freemed::get_link_rec($id, $this->table_name);
+		if (!$t['atequipment']) { return false; }
+
+		// Cache rooms
+		$res = $GLOBALS['sql']->query("SELECT * FROM room");
+		while ($my_r = $GLOBALS['sql']->fetch_array($res)) {
+			$rooms[$my_r['id']] = explode(',', $my_r['roomequipment']);
+		}
+		
+		$e = explode(',', $t['atequipment']);
+		foreach ($e AS $this_e) {
+			if (is_array($rooms)) {
+				foreach ($rooms AS $k => $this_room) {
+					$found = false;
+					if ($this_room == $this_e) {
+						$found = true;
+					}
+					foreach ($this_room AS $check) {
+						if ($check == $this_e) {
+							$found = true;
+						}
+					}
+					if (!$found) { unset($rooms[$k]); }
+				}
+			} else {
+				// What in the hell do you do when there is
+				// nothing that matches the criteria??!?!?!?
+				// FIXME FIXME FIXME HACK FIXME FIXME FIXME
+				return false;
+			}
+		}
+		if (is_array($rooms)) {
+			foreach ($rooms AS $k => $v) {
+				$return[] = $k;
+			}
+			return $return;
+		} else {
+			// Ridiculous restrictions?
+			return false;
+		}
+	} // end method get_rooms
 
 } // end class AppointmentTemplates
 
