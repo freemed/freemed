@@ -190,6 +190,11 @@ class UnfiledFaxes extends MaintenanceModule {
 
 		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." ".
 			"WHERE id='".addslashes($id)."'");
+
+		// Refresh to unfiled faxes main screen
+		global $refresh;
+		$refresh = $this->page_name . "?".
+			"module=".urlencode(get_class($this));
 	} // end method mod
 
 	function notify ( ) {
