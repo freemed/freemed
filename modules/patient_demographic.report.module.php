@@ -52,7 +52,7 @@ class PatientDemographicReport extends ReportsModule {
 			$display_buffer .= "
 			<TR>
 				<TD ALIGN=RIGHT BGCOLOR=\"#ccccff\">
-					".prepare(_($k))."
+					".prepare(__($k))."
 				</TD><TD ALIGN=LEFT BGCOLOR=\"#aaaaff\">
 					".prepare($$v)."
 				</TD>
