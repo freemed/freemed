@@ -45,6 +45,18 @@ class Procedure {
 		return $total_charges - $total_payments;
 	} // end method CurrentBalance
 
+	// Method: get_procedure
+	//
+	//	Get procedure record from the current object
+	//
+	// Returns:
+	//
+	//	Associative array containing procedure record information.
+	//
+	function get_procedure ( ) {
+		return $this->local_record;
+	} // end method get_procedure
+
 } // end class Procedure
 
 ?>

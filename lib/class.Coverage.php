@@ -119,6 +119,11 @@ class Coverage {
 		}
 	} // end method GetProceduresToBill
 
+	// Method: get_coverage
+	function get_coverage ( ) {
+		return $this->local_record;
+	} // end method get_coverage
+
 } // end class Coverage
 
 ?>
