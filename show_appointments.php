@@ -157,7 +157,7 @@ while ($r = $sql->fetch_array ($result)) {
           ( ($r["calpatient"]==$current_patient) ?
 	  "#aaaaaa" :
 	  ($_alternate=freemed_bar_alternate_color($_alternate)) )."\">
-          <TD>$_date$_time/TD>
+          <TD>$_date$_time</TD>
 	  <TD><A HREF=\"$patient_link_location\"
           ><FONT".
 	   ( ($r["calpatient"]==$current_patient) ?
