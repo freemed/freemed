@@ -10,33 +10,275 @@ define(__PRESCRIPTION_MODULE_PHP__, true);
 class prescriptionModule extends freemedEMRModule {
 
 	var $MODULE_NAME    = "Prescription";
-	var $MODULE_VERSION = 0.1;
+	var $MODULE_VERSION = 0.2;
+	var $MODULE_DESCRIPTION = "
+		The prescription module allows prescriptions to be written 
+		for patients from any drug in the local formulary or in the 
+		Multum drug database (if access to that database is 
+		available.";
 
 	var $record_name    = "Prescription";
 	var $table_name     = "rx";
 	var $patient_field  = "rxpatient";
 
-  // note: for whoever wants to do this module -- prescription info depends
-  // on drug info in a separate db, which hasn't been done yet. the display
-  // action shows it in the browser window for printout. other than that,
-  // you're on your own...                                           -jb-
-
 	function prescriptionModule () {
-		$this->freemedEMRModule();
 		$this->summary_vars = array (
 			"Date From" => "rxdtfrom",
-			"Crypto Key" => "rxmd5"
+			"Drug" => "rxdrug"
+			//"Crypto Key" => "rxmd5"
 		);
 		// Specialized query bits
 		$this->summary_query = array (
 			"MD5(id) AS rxmd5"
 		);
+
+		// Table definition
+		$this->table_definition = array (
+			"rxdtfrom" => SQL_DATE,
+			"rxdrug" => SQL_VARCHAR(150),
+			"rxform" => SQL_ENUM(array(
+				"suspension",
+				"tablet",
+				"capsule",
+				"solution"
+				)),
+			"rxdosage" => SQL_INT_UNSIGNED(0),
+			"rxunit" => SQL_ENUM(array(
+				"mg",
+				"mg/1cc",
+				"mg/2cc",
+				"mg/3cc",
+				"mg/4cc",
+				"mg/5cc",
+				"g"
+				)),
+			"rxinterval" => SQL_ENUM(array(
+				"b.i.d.",
+				"t.i.d.",
+				"q.i.d.",
+				"q. 3h",
+				"q. 4h",
+				"q. 5h",
+				"q. 6h",
+				"q. 8h"
+				)),
+			"rxpatient" => SQL_INT_UNSIGNED(0),
+			"rxsubstitute" => SQL_ENUM(array(
+				"may substitute", "may not substitute"
+				)),
+			"rxrefills" => SQL_INT_UNSIGNED(0),
+			"rxperrefill" => SQL_INT_UNSIGNED(0),
+			"rxnote" => SQL_TEXT,
+			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+		);
+
+		$this->variables = array (
+			"rxdtfrom" => date_assemble("rxdtfrom"),
+			"rxdrug",
+			"rxdosage",
+			"rxunit",
+			"rxinterval",
+			"rxpatient",
+			"rxsubstitute",
+			"rxrefills",
+			"rxperrefill",
+			"rxnote"
+		);
+		$this->freemedEMRModule();
 	} // end constructor prescriptionModule
 
-	function add ()    { $this->old_main(); }
-	function mod ()    { $this->old_main(); }
-	function form ()   { $this->old_main(); }
-	function view ()   { $this->old_main(); }
+	function form () {
+		global $display_buffer, $sql, $action, $id, $patient,
+			$return;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global ${$k};
+
+		// If modify, grab old record
+		if (($action=="mod") or ($action=="modform")) {
+			$r = freemed::get_link_rec($id, $this->table_name);
+			foreach ($r AS $k => $v) {
+				global ${$k};
+				${$k} = $v;
+			}
+		}
+
+		// Create new notebook
+		$book = new notebook (
+			array ("module", "action", "id", "patient", "return"),
+			NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH | NOTEBOOK_NOFORM
+		);
+		$book->set_submit_name(
+			(
+				( ($action=="add") or ($action=="addform") ) ?
+				_("Add") :
+				 _("Modify")
+			)
+		);
+
+		// Add pages
+		$book->add_page(
+			_("Prescription"),
+			array(
+				"rxdtfrom",
+				"rxdrug",
+				"rxsize",
+				"rxunit",
+				"rxdosage",
+				"rxform",
+				"rxinterval",
+				"rxrefills",
+				"rxperrefill",
+				"rxsubstitute"
+			),
+			html_form::form_table(array(
+				_("Starting Date") =>
+				date_entry("rxdtfrom"),
+
+				_("Drug") =>
+				freemed::drug_widget("rxdrug", "myform", "__action"),
+
+				_("Medicine Units") =>
+				html_form::text_widget(
+					"rxsize", 10
+				).
+				html_form::select_widget(
+					"rxunit",
+					array(
+						"mg" => "mg",
+						"mg/1cc" => "mg/1cc",
+						"mg/2cc" => "mg/2cc",
+						"mg/3cc" => "mg/3cc",
+						"mg/4cc" => "mg/4cc",
+						"mg/5cc" => "mg/5cc",
+						"g" => "g"
+					)
+				),
+
+				_("Dosage") =>
+				html_form::text_widget(
+					"rxdosage", 10
+				).
+				" "._("in")." ".
+				html_form::select_widget(
+					"rxform",
+					array(
+						"suspension" => "suspension",
+						"tablet" => "tablet",
+						"capsule" => "capsule",
+						"solution" => "solution"
+					)
+				)." ".
+				html_form::select_widget(
+					"rxinterval",
+					array(
+						"b.i.d." => "b.i.d.",
+						"t.i.d." => "t.i.d.",
+						"q.i.d." => "q.i.d.",
+						"q. 3h",
+						"q. 4h",
+						"q. 5h",
+						"q. 6h",
+						"q. 8h"
+					)
+				),
+
+				_("Refill") =>
+				html_form::number_pulldown(
+					"rxrefills", 0, 20
+				)." / ".
+				html_form::text_widget(
+					"rxperrefill", 10
+				)." "._("units"),
+
+				_("Substitution") =>
+				html_form::select_widget(
+					"rxsubstitute",
+					array (
+					_("may not substitute") => "may not substitute",
+					_("may substitute") => "may substitute"
+					)
+				)
+			))
+		);
+
+		$book->add_page(
+			_("Notes"),
+			array(
+				"rxnote"
+			),
+			"<DIV ALIGN=\"CENTER\">\n".
+			html_form::text_area(
+				"rxnote"
+			).
+			"</DIV>"
+		);
+
+		// Handle cancel
+		if ($book->is_cancelled()) {
+			if ($return=="manage") {
+				Header("Location: manage.php?".
+					"id=".urlencode($patient));
+			} else {
+				Header("Location: module_loader.php?module=".
+					urlencode($module)."&".
+					"patient=".urlencode($patient));
+			}
+			die("");
+		}
+
+		// If not done, display
+		if (!$book->is_done()) {
+			$display_buffer .= "<CENTER>\n";
+			$display_buffer .= "<FORM NAME=\"myform\" ACTION=\"".
+				$this->page_name."\" METHOD=\"POST\">\n";
+			$display_buffer .= $book->display();
+			$display_buffer .= "</FORM>\n";
+			$display_buffer .= "</CENTER>\n";
+			return true;
+		}
+
+		// Process notebook
+		switch ($action) {
+			case "add": case "addform":
+			$this->prepare();
+			$this->add();
+			break;
+
+			case "mod": case "modform":
+			$this->prepare();
+			$this->mod();
+			break;
+		}
+	} // end function prescriptionModule->form
+
+	function prepare () {
+		// Common stuff between add/mod to prepare vars
+		global $display_buffer,
+			$rxpatient, $patient;
+		$rxpatient = $patient;
+	} // end function prescriptionModule->prepare
+
+	function view () {
+		global $display_buffer, $patient;
+		foreach ($GLOBALS AS $k => $v) global ${$k};
+		$display_buffer .= freemed_display_itemlist(
+			$sql->query("SELECT *,".
+				"CONCAT(rxdosage,' ',rxunit,' ',".
+				"rxinterval) AS _dosage ".
+				"FROM $this->table_name ".
+				"WHERE rxpatient='".addslashes($patient)."' ".
+				"ORDER BY rxdtfrom DESC"),
+			$this->page_name,
+			array(
+				_("Date") => "rxdtfrom",
+				_("Drug") => "rxdrug",
+				_("Dosage") => "_dosage"
+			),
+			array("", _("NONE")),
+			NULL, NULL, NULL,
+			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
+		);
+	} // end function prescriptionModule->view
 
 	function old_main () {
 		global $display_buffer;
@@ -52,96 +294,7 @@ class prescriptionModule extends freemedEMRModule {
         <P>
       ";
       break;
-    case "addform":
-    case "modform":
-      $rxdtfrom = $cur_date;
-      $display_buffer .= "
-        <FORM ACTION=\"".$this->page_name."\" METHOD=POST>
-        <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-        <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-        <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".(
-		($action=="addform") ? "add" : "mod" )."\">
-        <INPUT TYPE=HIDDEN NAME=\"rxpatient\" VALUE=\"".prepare($patient)."\">
-
-        "._("Drug")." : ";
-
-      $rx_r = $sql->query("SELECT * FROM frmlry ORDER BY trdmrkname");
-      $display_buffer .= freemed_display_selectbox (
-        $rx_r, "#trdmrkname#", "rxdrug"
-      )."
-
-        <P>
-
-        "._("Dosage")." :
-        <INPUT TYPE=TEXT NAME=\"rxdosage\" VALUE=\"$rxdosage\"
-         SIZE=20 MAXLENGTH=100>
-        <P>
-
-        "._("Starting Date")." :
-     ".fm_date_entry("rxdtfrom")."
-        <P>
-
-        "._("Duration")." (In Days, 0 = Infinite) :
-        <INPUT TYPE=TEXT NAME=\"rxduration\" VALUE=\"$rxduration\"
-         SIZE=5 MAXLENGTH=5>
-        <P>
-
-        "._("Refills")." :
-        <INPUT TYPE=TEXT NAME=\"rxrefills\" VALUE=\"$rxrefills\"
-         SIZE=5 MAXLENGTH=4>
-        <P>
-
-        "._("Substitution")." :
-        <SELECT NAME=\"rxsubstitute\">
-         <OPTION VALUE=\"may not subsitute\">$May_Not_Substitute
-         <OPTION VALUE=\"may substitute\"   >$May_Substitute
-        </SELECT>
-        <P>
-
-        <CENTER>
-        <INPUT TYPE=SUBMIT VALUE=\" "._("Add")." \">
-        <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-        </CENTER>
-        </FORM>
-      ";
-      break;
-    case "add":
-      $display_buffer .= "
-        <P><B>"._("Adding")." . . . </B>
-      ";
-      $rxdtadd = $cur_date;
-      //$rxdtfrom = $rxdtfrom_y. "-". $rxdtfrom_m. "-". $rxdtfrom_d;
-      $rxdtfrom = fm_date_assemble("rxdtfrom");
-      $query = "INSERT INTO ".$this->table_name." VALUES (
-        '$rxdtadd',
-        '$rxdtmod',
-        '$rxpatient',
-        '$rxdtfrom',
-        '$rxduration',
-        '$rxdrug',
-        '$rxdosage',
-        '$rxrefills',
-        '$rxsubstitute',
-        '$rxmd5sum',
-        NULL ) ";
-      $result = $sql->query ($query);
-      if (DEBUG) $display_buffer .= "<BR>query = \"$query\", result = \"$result\"<BR>";
-      if ($result) $display_buffer .= "\n<B>"._("done").".</B>\n";
-       else $display_buffer .= "\n<B>"._("ERROR")."</B>\n";
-      $display_buffer .= "
-        <P>
-        <CENTER>
-        <A HREF=\"$this->page_name?module=$module&patient=$patient\"
-         >"._("Manage Prescriptions")."</A> |
-        <A HREF=\"manage.php?id=$patient\"
-         >"._("Manage Patient")."</A>
-        </CENTER>
-        <P>
-      ";
-      break;
     default:
-      $ptlname = freemed::get_link_field ($patient, "patient", "ptlname");
-      $ptfname = freemed::get_link_field ($patient, "patient", "ptfname");
       $display_buffer .= "
         <CENTER>
          <A HREF=\"$this->page_name?module=$module&patient=$patient&action=addform\"
