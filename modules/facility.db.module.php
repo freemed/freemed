@@ -11,7 +11,7 @@ class FacilityModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Facility Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_DESCRIPTION = "
 		Facilities are used by FreeMED to describe locations where 
 		services are performed. Any physician/provider can do work 
@@ -40,7 +40,9 @@ class FacilityModule extends MaintenanceModule {
 		"psremail",
 		"psrein",
 		"psrintext",
-		"psrpos"
+		"psrpos",
+		'psrx12id',
+		'psrx12idtype'
 	);
 
 	var $rpc_field_map = array (
@@ -68,6 +70,8 @@ class FacilityModule extends MaintenanceModule {
 			'psrein' => SQL__VARCHAR(9),
 			'psrintext' => SQL__INT_UNSIGNED(0),
 			'psrpos' => SQL__INT_UNSIGNED(0),
+			'psrx12id' => SQL__VARCHAR(24),
+			'psrx12idtype' => SQL__VARCHAR(10),
 			'id' => SQL__SERIAL
 		);
 
@@ -183,6 +187,17 @@ class FacilityModule extends MaintenanceModule {
      ) )
     );
 
+	$book->add_page(__("Electronic Billing"),
+		array ('psrx12id', 'psrx12idtype'),
+		html_form::form_table(array(
+			__("X12 Identifier") =>
+			html_form::text_widget('psrx12id'),
+
+			__("X12 Identifier Type") =>
+			html_form::text_widget('psrx12idtype'),
+		))
+	);
+
                 // Handle cancel action
         if ($book->is_cancelled()) {
                 Header("Location: ".page_name()."?module=".$this->MODULE_CLASS);
@@ -247,6 +262,22 @@ class FacilityModule extends MaintenanceModule {
 			"ORDER BY ".$this->order_by
 		);
 	} // end function FacilityModule->picklist
+
+	function _update ( ) {
+		global $sql;
+ 		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Version 0.3
+		//
+		//	Added X12 fields (id and idtype)
+		//
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN psrx12id VARCHAR(24) AFTER psrpos');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN psrx12idtype VARCHAR(10) AFTER psrx12id');
+		}
+	} // end method _update
 
 } // end class FacilityModule
 

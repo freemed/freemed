@@ -1,11 +1,11 @@
 <?php
 	// $Id$
 	// $Author$
-/*      Class: FBFacility
 
-	FreeMEDs implementation of FreeB::FBFacility.
-
-*/
+// Class: FBFacility
+//
+//	FreeMEDs implementation of FreeB::FBFacility.
+//
 class FBFacility {
 
 /*      Function: Name
@@ -68,17 +68,22 @@ class FBFacility {
 		return $f['psrzip'];
 	} // end method Zipcode
 
-/*      Function: PhoneCountry
-
-        Returns:
-
-        BROKEN
-
-*/ 
+	// Method: PhoneCountry
+	//
+	//	Return the phone country code. This defaults to 1, as there
+	//	is no foreign country handling currently in the FreeB code.
+	//
+	// Parameters:
+	//
+	//	$key - Facility key
+	//
+	// Returns:
+	//	Country code
+	//
 	function PhoneCountry ( $key ) {
 		//$f = freemed::get_link_field($key, 'facility', 'psrphone');
 		// TODO: Broken behavior
-		return '';
+		return '1';
 	} // end method PhoneCountry
 
 /*      Function: PhoneArea

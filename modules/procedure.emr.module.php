@@ -3,13 +3,13 @@
  // desc: procedure database module
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -48,7 +48,10 @@ class ProcedureModule extends EMRModule {
 		"proccov2",      
 		"proccov3",     
 		"proccov4",
-		"procclmtp"
+		"procclmtp",
+		'procmedicaidref',
+		'procmedicaidresub',
+		'proclabcharges',
 	);    
 
 	function ProcedureModule () {
@@ -93,6 +96,9 @@ class ProcedureModule extends EMRModule {
 			'proccov4' => SQL__INT_UNSIGNED(0),
 			'proccert' => SQL__INT_UNSIGNED(0),
 			'procclmtp' => SQL__INT_UNSIGNED(0),
+			'procmedicaidref' => SQL__VARCHAR(20),
+			'procmedicaidresub' => SQL__VARCHAR(20),
+			'proclabcharges' => SQL__REAL,
 			'id' => SQL__SERIAL
 		);
 		
@@ -110,7 +116,7 @@ class ProcedureModule extends EMRModule {
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 
 		if (!$been_here) {
-			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
+			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc,$proclabcharges;
 			global $been_here;
 
 			$procunits = "1.0";        // default value for units
@@ -121,6 +127,7 @@ class ProcedureModule extends EMRModule {
 			$procdiag4      = $this_patient->local_record[ptdiag4];
 			$procphysician = $this_patient->local_record[ptdoc];
 			$procrefdoc = $this_patient->local_record[ptrefdoc];
+			$proclabcharges = '0.00';
 			$been_here = 1;
 		}
 
@@ -166,6 +173,7 @@ class ProcedureModule extends EMRModule {
 		$wizard->set_next_name(__("Next"));
 		$wizard->set_refresh_name(__("Refresh"));
 		$wizard->set_revise_name(__("Revise"));
+		$wizard->set_width('100%');
 
 		$wizard->add_page (__("Step One"),
 			array_merge(array("procphysician", "proceoc", "procrefdoc",
@@ -311,7 +319,26 @@ class ProcedureModule extends EMRModule {
 		);
 
 		// required to get the wizard to validate the previous (last) page
-		$wizard->add_page(__("Click Finish"),array("dummy"),"");
+		$wizard->add_page(__("Miscellaneous"),
+			array('proclabcharges',
+				'procmedicaidresub', 'procmedicaidref'),
+			html_form::form_table(array(
+				__("Outside Lab Charges") =>
+				html_form::text_widget(
+					'proclabcharges'
+				),
+
+				__("Medicaid Original Reference") =>
+				html_form::text_widget(
+					'procmedicaidref'
+				),
+
+				__("Medicaid Resubmission Code") =>
+				html_form::text_widget(
+					'procmedicaidresub'
+				)
+			))
+		);
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
@@ -1121,6 +1148,25 @@ class ProcedureModule extends EMRModule {
 		$charge = bcadd ($charge, 0, 2);
 		return $charge;
 	} // end function ProcedureModule->CalculateCharge()
+
+	function _update ( ) {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Version 0.3
+		//
+		//	Added medicaid resubmission and reference codes
+		//	Added outside lab charges
+		//
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN procmedicaidref VARCHAR(20) AFTER procclmtp');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN procmedicaidresub VARCHAR(20) AFTER procmedicaidref');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN proclabcharges REAL AFTER procmedicaidresub');
+		}
+	} // end method _update
 
 } // end class ProcedureModule
 

@@ -70,12 +70,17 @@ class FBPractice {
 	} // end method isAcceptsAssignment
 
 	function X12Id ( $payer ) {
-		return '1111111111'; // stub
+		$f = freemed::get_link_field($key, 'facility', 'psrx12id');
+			// Force string so as not to trip out FreeB
+		return CreateObject('PHP.xmlrpcval', $f, xmlrpcString);
+		//return '1111111111'; // stub
 	} // end method X12Id
 
 	function X12IdType ( $prac ) {
-		// TODO - hardcoded 0B value
-		return 'BQ';
+		$f = freemed::get_link_field($key, 'facility', 'psrx12id');
+		return CreateObject('PHP.xmlrpcval', $f, xmlrpcString);
+		// hardcoded 0B value
+		//return 'BQ';
 	} // end method X12IdType
 
 } // end class FBPractice

@@ -269,53 +269,54 @@ class FBInsured {
 
 /*	Function: isEmployed
 
-	BROKEN hardcoded false
+	Returns: covemployer not empty (boolean) from coverage
 	
 */
 	function isEmployed ( $cov ) {
-		// TODO: don't store this anywhere?
-		return false;
+		$c = freemed::get_link_rec($cov, 'coverage');
+		return !empty($c['covemployer']);
 	} // end method isEmployed
 
 /*	Function: EmployerName
 
-	BROKEN hardcoded blank
+	Returns: covemployer from coverage
 	
 */
 	function EmployerName ( $cov ) {
-		// TODO: don't store this anywhere?
-		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
+		$c = freemed::get_link_rec($cov, 'coverage');
+		return CreateObject('PHP.xmlrpcval', $c['covemployer'], xmlrpcString);
 	} // end method EmployerName
 
 /*	Function: isStudent
 
-	BROKEN hardcoded false
+	Returns: covschool not empty (boolean) from coverage
 	
 */
 	function isStudent ( $cov ) {
-		// TODO: don't store this anywhere?
-		return false;
+		$c = freemed::get_link_rec($cov, 'coverage');
+		return !empty($c['covschool']);
 	} // end method isStudent
 
 /*	Function: SchoolName
 
-	BROKEN hardcoded blank
+	Returns: covschool from coverage
 	
 */
 	function SchoolName ( $cov ) {
-		// TODO: don't store this anywhere?
-		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
+		$c = freemed::get_link_rec($cov, 'coverage');
+		return CreateObject('PHP.xmlrpcval', $c['covschool'], xmlrpcString);
 	} // end method SchoolName
 
 /*	Function: isAssigning
 
-	BROKEN hardcoded true.
+	Returns: covisassigning > 0 from coverage
 	
 */
 	function isAssigning ( $cov ) {
+		$c = freemed::get_link_rec($cov, 'coverage');
 		// If this isn't true, we don't bill
-		// TODO: Look into this
-		return true;
+		//  - force as boolean
+		return ($c['covisassigning'] > 0);
 	} // end method isAssigning
 
 } // end class FBInsured

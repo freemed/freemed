@@ -39,6 +39,18 @@ class FBProcedure {
 		return false;
 	} // end method CPTEPSDT
 
+	// Method: CPTModifier
+	//
+	//	Get text name for the current CPT code modifier.
+	//
+	// Parameters:
+	//
+	//	$proceduer - Procedure key
+	//
+	// Returns:
+	//
+	//	Text name for the current CPT code modifier
+	//
 	function CPTModifier ( $procedure ) {
 		$c_id = freemed::get_link_field($procedure, 'procrec', 'proccptmod');
 		return freemed::get_link_field($c_id, 'cptmod', 'cptmod');
@@ -48,10 +60,31 @@ class FBProcedure {
 		return freemed::get_link_field($procedure, 'procrec', 'procunits');
 	} // end method CPTUnits
 
+	// Method: WeightGrams
+	//
+	//	Get weight in grams for infants. This is not stored anywhere
+	//	currently, so it is stubbed with a 0.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure key
+	//
 	function WeightGrams ( $procedure ) {
 		return 0; // kludge ... have to fix this
 	} // end method WeightGrams
-
+	
+	// Method: ProcArray
+	//
+	//	Return a list of procedures to be billed from a billing
+	//	key. This data is deserialized from the billkey table.
+	//
+	// Parameters:
+	//
+	//	$billkey - Billkey
+	//
+	// Returns:
+	//	Array of procedure keys
+	//
 	function ProcArray ( $billkey ) {
 		// This, provided a "billing number" should ideally return a
 		// subset of what should be billed. For now, we break that
@@ -80,6 +113,19 @@ class FBProcedure {
 		return $key['procedures'];
 	} // end method ProcArray
 
+	// Method: DiagArray
+	//
+	//	Get array of diagnoses associated with a procedure key. The
+	//	procedure key's diagnosis codes are joined with the episode
+	//	of care (if present) to pass the EOC information.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure key
+	//
+	// Returns:
+	//	Array of diagnosis keys
+	//
 	function DiagArray ( $proc ) {
 		$p = freemed::get_link_rec($proc, 'procrec');
 
@@ -96,6 +142,17 @@ class FBProcedure {
 		return $diag;
 	} // end method DiagArray
 
+	// Method: PatientKey
+	//
+	//	Get the patient key from the procedure key
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure key
+	//
+	// Returns:
+	//	Patient key
+	//
 	function PatientKey ( $proc ) {
 		$p = freemed::get_link_rec($proc, 'procrec');
 		return $p['procpatient'];
@@ -186,6 +243,19 @@ class FBProcedure {
 		}
 	} // end method BillingServiceKey
 
+	// Function: isUsingClearingHouse
+	//
+	//	Determines whether a clearinghouse is being used for an
+	//	electronic transmission. Is stubbed to "yes", since there
+	//	is currently no other way to submit them.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure key
+	//
+	// Returns:
+	//	Boolean
+	//
 	function isUsingClearingHouse ( $proc ) {
 		return true;
 	} // end method isUsingClearingHouse
@@ -201,25 +271,56 @@ class FBProcedure {
 	} // end method ClearingHouseKey
 
 	function MedicaidResubmissionCode ( $proc ) {
-		// TODO: STUB
-		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
+		$p = freemed::get_link_field($procedure, 'procrec', 'procmedicaidresub');
+		return CreateObject('PHP.xmlrpcval', $p, xmlrpcString);
 	} // end method MedicaidResubmissionCode
 
 	function MedicaidOriginalReference ( $proc ) {
-		// TODO: STUB
-		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
+		$p = freemed::get_link_field($procedure, 'procrec', 'procmedicaidref');
+		return CreateObject('PHP.xmlrpcval', $p, xmlrpcString);
 	} // end method MedicaidOriginalReference
 
 	function HCFALocalUse19 ( $proc ) {
-		// TODO: STUB
-		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
+		// need to work from payer key and physician
+		$payer = FBProcedure::PayerKey($proc);
+		$provider = FBProcedure::ProviderKey($proc);
+		$map = unserialize(freemed::get_link_field(
+			$payer, 'insco', 'inscoidmap'
+		));
+		return CreateObject(
+			'PHP.xmlrpcval', 
+			$map[$provider]['local19'],
+			xmlrpcString
+		);
 	} // end method HCFALocalUse19
 
 	function HCFALocalUse10d ( $proc ) {
-		// TODO: STUB
-		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
+		// need to work from payer key and physician
+		$payer = FBProcedure::PayerKey($proc);
+		$provider = FBProcedure::ProviderKey($proc);
+		$map = unserialize(freemed::get_link_field(
+			$payer, 'insco', 'inscoidmap'
+		));
+		return CreateObject(
+			'PHP.xmlrpcval', 
+			$map[$provider]['local10d'],
+			xmlrpcString
+		);
 	} // end method HCFALocalUse10d
 
+	// Method: AmountPaid
+	//
+	//	Gets the current amount paid, given a procedure, or
+	//	array of procedures. Creates an SQL SUM() statement in
+	//	the procrec table.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure key (or array of procedures)
+	//
+	// Returns:
+	//	Amount paid from current procedure(s).
+	//
 	function AmountPaid ( $proc ) {
 		$query = "SELECT SUM(proccharges) AS charges FROM procrec ".
 			"WHERE FIND_IN_SET(id, '".join(',', $proc)."')";
@@ -228,21 +329,73 @@ class FBProcedure {
 		return $r['charges'];
 	} // end method AmountPaid
 
+	// Method: ProviderKey
+	//
+	//	Extract the provider key from the procedure key.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure key
+	//
+	// Returns:
+	//	Provider key.
+	//
 	function ProviderKey ( $procedure ) {
 		$p = freemed::get_link_rec($procedure, 'procrec');
 		return $p['procphysician'];
 	} // end method ProviderKey
 
+	// Method: FacilityKey
+	//
+	//	Extract the facility key from the procedure key.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure key
+	//
+	// Returns:
+	//	Facility key.
+	//
 	function FacilityKey ( $procedure ) {
 		$p = freemed::get_link_rec($procedure, 'procrec');
 		return $p['procpos'];
 	} // end method FacilityKey
 
+	// Method: PracticeKey
+	//
+	//	Extract the practice key from the procedure key. Currently
+	//	returns the facility key, since they are the same.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure key
+	//
+	// Returns:
+	//	Practice key.
+	//
 	function PracticeKey ( $procedure ) {
 		// TODO: Un-wrap this
 		return FBProcedure::FacilityKey($procedure);
 	} // end method PracticeKey
 
+	// Method: TypeOfService
+	//
+	//	Get type of service code from procedure and insured keys.
+	//	This is extracted by pulling the insurance code out of
+	//	the insured key (coverage table), and comparing it against
+	//	the cpttos table (cpt table), then pulling the actual
+	//	name out of the type of service table (tos table).
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure key
+	//
+	//	$insured - Insured key
+	//
+	// Returns:
+	//
+	//	Text name of the type of service.
+	//
 	function TypeOfService ( $procedure, $insured ) {
 		// This is going to hurt. We go like this:
 		// [procedure] -> [cptcode]
@@ -267,7 +420,7 @@ class FBProcedure {
 		}
 
 		// Return name
-		return freemed::get_link_field($tos_id, 'tos');
+		return freemed::get_link_field($tos_id, 'tos', 'tosname');
 	} // end method TypeOfService
 
 	function PriorAuth ( $prockey ) {
@@ -278,13 +431,15 @@ class FBProcedure {
 	} // end method PriorAuth
 
 	function isOutsideLab ( $prockey ) {
-		// TODO: This needs a spot in the db. stub for now
-		return false;
+		$c = freemed::get_link_field($prockey, 'procrec', 'proclabcharges');
+		// If charges are > 0, there is an outside lab
+		return ($c > 0);
 	} // end method isOutsideLab
 
 	function OutsideLabCharges ( $prockey ) {
-		// TODO: This needs a spot in the db. stub for now
-		return 0.00;
+		$c = freemed::get_link_field($prockey, 'procrec', 'proclabcharges');
+		// Force this to be passed as a "double"
+		return CreateObject('PHP.xmlrpcval', $c, xmlrpcDouble);
 	} // end method OutsideLabCharges
 
 	function DateOfServiceStart ( $prockey ) {

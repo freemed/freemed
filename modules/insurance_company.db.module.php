@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class InsuranceCompanyMaintenance extends MaintenanceModule {
 
@@ -205,6 +205,12 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][group]\"
 				size=\"20\" maxlength=\"24\"
 				value=\"".prepare($inscoidmap[$i_r['id']]['group'])."\" /></td>
+			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][local10d]\"
+				size=\"20\" maxlength=\"24\"
+				value=\"".prepare($inscoidmap[$i_r['id']]['group'])."\" /></td>
+			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][local19]\"
+				size=\"20\" maxlength=\"24\"
+				value=\"".prepare($inscoidmap[$i_r['id']]['group'])."\" /></td>
 			</tr>
 			";
 		}
@@ -219,6 +225,10 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 				<td><b>".__("Provider")."</b></td>
 				<td><b>".__("ID")."</b></td>
 				<td><b>".__("Group ID")."</b></td>
+				<td><b><abbr TITLE=\"".__("HCFA Form Space 10d")."\"
+					>".__("Local Use 10d")."</abbr></b></td>
+				<td><b><abbr TITLE=\"".__("HCFA Form Space 19")."\"
+					>".__("Local Use 9")."</abbr></b></td>
 			</tr>
 			$map_buffer
 			</table>

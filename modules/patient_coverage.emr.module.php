@@ -3,14 +3,14 @@
  // desc: module prototype
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class PatientCoveragesModule extends EMRModule {
 
 	// override variables
 	var $MODULE_NAME = "Patient Coverage";
-	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com), Jeff (jeff@ourexchange.net)";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -49,6 +49,9 @@ class PatientCoveragesModule extends EMRModule {
 			'covrelinfo' => SQL__INT_UNSIGNED(0),
 			'covrelinfodt' => SQL__DATE,
 			'covplanname' => SQL__VARCHAR(33),
+			'covisassigning' => SQL__INT_UNSIGNED(0),
+			'covschool' => SQL__VARCHAR(50),
+			'covemployer' => SQL__VARCHAR(50),
 			'id' => SQL__SERIAL
 		);
 	
@@ -138,6 +141,7 @@ class PatientCoveragesModule extends EMRModule {
 					html_form::text_widget("covplanname", 20, 33)
 															))
 		);
+
 		$book->add_page("Modify Insurance Information",
 			array_merge( array("covpatgrpno", "covpatinsno", "covrel"), 
 				  date_vars("coveffdt")),
@@ -165,6 +169,27 @@ class PatientCoveragesModule extends EMRModule {
 				 ) 
 			) 
 		); // end add page
+
+		// Add employment assigning and school information
+		$book->add_page(__("Miscellaneous Information"),
+			array('covisassigning', 'covschool', 'covemployer'),
+			html_form::form_table(array(
+				__("Is Assigning?") =>
+				html_form::select_widget(
+					'covisassigning',
+					array(
+						__("Yes") => '1',
+						__("No")  => '0'
+					)
+				),
+
+				__("School Name for Insured (Leave blank if not a student)") =>
+				html_form::text_widget('covschool'),
+
+				__("Employer of Insured (Leave blank if unemployed)") =>
+				html_form::text_widget('covemployer')
+			))
+		);
 
 		if ($covrel != "S")
 		{
@@ -215,7 +240,7 @@ class PatientCoveragesModule extends EMRModule {
 
 
 			}
-			
+
 		if ($book->is_cancelled()) {
 			Header("Location: ".$this->page_name."?".
 				"module=".$this->MODULE_CLASS."&".
@@ -275,7 +300,10 @@ class PatientCoveragesModule extends EMRModule {
 				'covbenasgn' => $covbenasgn,
 				'covrelinfo' => $covrelinfo,
 				'covrelinfodt' => fm_date_assemble('covrelinfodt'),
-				'covplanname' => $covplanname
+				'covplanname' => $covplanname,
+				'covisassigning' => $covisassigning,
+				'covschool' => $covschool,
+				'covemployer' => $covemployer
 			), array ('id' => $id)
 		);
 		$result = $sql->query($query);
@@ -478,6 +506,27 @@ class PatientCoveragesModule extends EMRModule {
 								
 		} // end page for Insurance type coverage
 
+		// Add employment assigning and school information
+		$wizard->add_page(__("Miscellaneous Information"),
+			array('covisassigning', 'covschool', 'covemployer'),
+			html_form::form_table(array(
+				__("Is Assigning?") =>
+				html_form::select_widget(
+					'covisassigning',
+					array(
+						__("Yes") => '1',
+						__("No")  => '0'
+					)
+				),
+
+				__("School Name for Insured (Leave blank if not a student)") =>
+				html_form::text_widget('covschool'),
+
+				__("Employer of Insured (Leave blank if unemployed)") =>
+				html_form::text_widget('covemployer')
+			))
+		);
+
 		if (!$wizard->is_done() and !$wizard->is_cancelled())
 		{
 			$display_buffer .= "<div ALIGN=\"CENTER\">".$wizard->display()."</div>\n";
@@ -574,7 +623,10 @@ class PatientCoveragesModule extends EMRModule {
 					"covbenasgn" => $covbenasgn,
 					"covrelinfo" => $covrelinfo,
 					"covplanname" => $covplanname,
-					"covrelinfodt" => fm_date_assemble('covrelinfodt')
+					"covrelinfodt" => fm_date_assemble('covrelinfodt'),
+					'covisassigning' => $covisassigning,
+					'covschool' => $covschool,
+					'covemployer' => $covemployer
 				)
 			);
 			$coverage = $sql->query($query);
@@ -701,6 +753,25 @@ class PatientCoveragesModule extends EMRModule {
 		return $error_msg;
 
 	} // end method EditInsurance
+
+	function _update( ) {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Version 0.3
+		//
+		//	Add assigning, school name and employer name for
+		//		HCFA and X12 forms and billing stuff.
+		//
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN covisassigning INT UNSIGNED AFTER covplanname');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN covschool INT UNSIGNED AFTER covisassigning');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN covemployer INT UNSIGNED AFTER covschool');
+		}
+	} // end method _update
 
 } // end class PatientCoveragesModule
 

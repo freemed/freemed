@@ -160,9 +160,9 @@ class EpisodeOfCare extends EMRModule {
 		);
 		$this->summary_options = SUMMARY_VIEW;
 
-		global $action, $submit, $module;
+		global $action, $module;
 		if (strtolower($module)==get_class($this)) {
-			switch ($submit) {
+			switch ($_REQUEST['submit_action']) {
 				case __("Add"):
 					$action = "add";
 					break;
@@ -218,7 +218,7 @@ class EpisodeOfCare extends EMRModule {
 // grab important patient information
 	$display_buffer .= "
 	<p/>
-	<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+	<form ACTION=\"$this->page_name\" METHOD=\"POST\" name=\"eoc\">
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"yes\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
@@ -242,12 +242,17 @@ class EpisodeOfCare extends EMRModule {
   if ($this->this_patient->isFemale()) { $display_buffer .= "
      <TD ALIGN=RIGHT>".__("Related to Pregnancy")."</TD>
      <TD ALIGN=LEFT>
-      <SELECT NAME=\"eocrelpreg\">
-       <OPTION VALUE=\"no\"  ".
-         ( ($eocrelpreg=="no") ? "SELECTED" : "" ).">".__("No")."
-       <OPTION VALUE=\"yes\" ".
-         ( ($eocrelpreg=="yes") ? "SELECTED" : "" ).">".__("Yes")."
-      </SELECT>
+	".html_form::select_widget(
+		'eocrelpreg',
+		array(
+			__("No") => 'no',
+			__("Yes") => 'yes'
+		),
+		array(
+			'form_name' => 'eoc',
+			'refresh' => true
+		)
+	)."
      </TD>
   "; } else { $display_buffer .= "
      <TD ALIGN=RIGHT><I>".__("Related to Pregnancy")."</I></TD>
@@ -264,26 +269,36 @@ class EpisodeOfCare extends EMRModule {
      </TD>
      <TD ALIGN=RIGHT>".__("Related to Employment")."</TD>
       <TD ALIGN=LEFT>
-      <SELECT NAME=\"eocrelemp\">
-       <OPTION VALUE=\"no\"  ".
-         ( ($eocrelemp=="no") ? "SELECTED" : "" ).">".__("No")."
-       <OPTION VALUE=\"yes\" ".
-         ( ($eocrelemp=="yes") ? "SELECTED" : "" ).">".__("Yes")."
-      </SELECT>
+	".html_form::select_widget(
+		'eocrelemp',
+		array(
+			__("No") => 'no',
+			__("Yes") => 'yes'
+		),
+		array(
+			'form_name' => 'eoc',
+			'refresh' => true
+		)
+	)."
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT>".__("Date of Last Similar")."</TD>
+     <TD ALIGN=RIGHT>".__("Date of Current Onset")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocdtlastsimilar")."
      </TD>
      <TD ALIGN=RIGHT>".__("Related to Automobile")."</TD>
      <TD ALIGN=LEFT>
-     <SELECT NAME=\"eocrelauto\">
-       <OPTION VALUE=\"no\"  ".
-         ( ($eocrelauto=="no") ? "SELECTED" : "" ).">".__("No")."
-       <OPTION VALUE=\"yes\" ".
-         ( ($eocrelauto=="yes") ? "SELECTED" : "" ).">".__("Yes")."
-      </SELECT>
+	".html_form::select_widget(
+		'eocrelauto',
+		array(
+			__("No") => 'no',
+			__("Yes") => 'yes'
+		),
+		array(
+			'form_name' => 'eoc',
+			'refresh' => true
+		)
+	)."
      </TD>
     </TR><TR>
      <TD ALIGN=RIGHT>".__("Referring Physician")."</TD>
@@ -296,12 +311,17 @@ class EpisodeOfCare extends EMRModule {
      </TD>
      <TD ALIGN=RIGHT>".__("Related to Other Cause")."</TD>
      <TD ALIGN=LEFT>
-     <SELECT NAME=\"eocrelother\">
-       <OPTION VALUE=\"no\"  ".
-         ( ($eocrelother=="no") ? "SELECTED" : "" ).">".__("No")."
-       <OPTION VALUE=\"yes\" ".
-         ( ($eocrelother=="yes") ? "SELECTED" : "" ).">".__("Yes")."
-      </SELECT>
+	".html_form::select_widget(
+		'eocrelother',
+		array(
+			__("No") => 'no',
+			__("Yes") => 'yes'
+		),
+		array(
+			'form_name' => 'eoc',
+			'refresh' => true
+		)
+	)."
      </TD>
     </TR><TR>
      <TD ALIGN=RIGHT>".__("Facility")."</TD>
@@ -367,11 +387,11 @@ class EpisodeOfCare extends EMRModule {
        <OPTION VALUE=\"1\" ".
          ( ($eocdistype==1) ? "SELECTED" : "" ).">".__("LT")."
        <OPTION VALUE=\"2\" ".
-         ( ($eoctype==2) ? "SELECTED" : "" ).">".__("ST")."
+         ( ($eocdistype==2) ? "SELECTED" : "" ).">".__("ST")."
        <OPTION VALUE=\"3\" ".
          ( ($eocdistype==3) ? "SELECTED" : "" ).">". __("Permanent")."
        <OPTION VALUE=\"4\" ".
-         ( ($eoctype==4) ? "SELECTED" : "" ).">".__("No Disability")."
+         ( ($eocdistype==4) ? "SELECTED" : "" ).">".__("No Disability")."
       </SELECT>
 	</TD>
 	<TD ALIGN=RIGHT>".__("Hospital")."</TD>
@@ -644,7 +664,8 @@ class EpisodeOfCare extends EMRModule {
      </TD>
      </TR>
      <TR>
-     <TD ALIGN=RIGHT>".__("More Information")."</TD>
+     <TD ALIGN=RIGHT><abbr TITLE=\"".__("HCFA-1500 box 10")."\"
+	>".__("Condition Related to")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelothercomment\" SIZE=35 MAXLENGTH=100
        VALUE=\"".prepare($eocrelothercomment)."\">
@@ -656,9 +677,9 @@ class EpisodeOfCare extends EMRModule {
    $display_buffer .= "
      <p/>
      <div ALIGN=\"CENTER\">
-     <input name=\"submit\" type=\"submit\" class=\"button\" value=\"".$this_action."\"/>
-     <input name=\"submit\" type=\"submit\" class=\"button\" value=\"".__("Refresh")."\"/>
-     <input name=\"submit\" type=\"submit\" class=\"button\" value=\"".__("Cancel")."\"/>
+     <input name=\"submit_action\" type=\"submit\" class=\"button\" value=\"".$this_action."\"/>
+     <input name=\"submit_action\" type=\"submit\" class=\"button\" value=\"".__("Refresh")."\"/>
+     <input name=\"submit_action\" type=\"submit\" class=\"button\" value=\"".__("Cancel")."\"/>
      </div>
     ";
 	} // end function EpisodeOfCare->form
