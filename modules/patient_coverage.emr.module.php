@@ -491,19 +491,10 @@ class PatientCoveragesModule extends EMRModule {
            						)
            					)
 
-
 					) )
 				 );
 
-
 			} // end relation not self
-			else
-			{
-				$wizard->add_page("Press Finish",
-								array_merge(array("covlname", "covfname", "covaddr1", "covaddr2", "covcity",
-											"covstate", "covzip", "covsex"), date_vars("covdob")),"");
-
-			}
 								
 		} // end page for Insurance type coverage
 
