@@ -22,6 +22,7 @@ class LettersModule extends EMRModule {
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			__("Date") => "letterdt",
+			__("From")   => "letterfrom:physician",
 			__("To")   => "letterto:physician"
 		);
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW
