@@ -61,9 +61,11 @@ class PaymentModule extends EMRModule {
 		// Summary box information
 		$this->summary_vars = array (
 			"Date" => "payrecdt",
+			"Proc Date" => "procdt",
 			"Type" => "_type",
 			"Form" => "_form",
-			"Amount" => "_amount"
+			"Amount" => "_amount",
+			"Balance" => "_balance"
 		);
 		$this->summary_query = array (
 			"CASE payreccat ".
@@ -92,8 +94,13 @@ class PaymentModule extends EMRModule {
 					"ELSE '-' ".
 				"END ".
 				"ELSE '-' END AS _form",
+			"CASE (CAST(procbalcurrent AS CHAR) LIKE '%.%') WHEN 1 THEN CONCAT('\$', CAST(procbalcurrent AS CHAR)) ELSE CONCAT('\$', CAST(procbalcurrent AS CHAR), '.00') END AS _balance",
 			"CASE (CAST(payrecamt AS CHAR) LIKE '%.%') WHEN 1 THEN CONCAT('\$', CAST(payrecamt AS CHAR)) ELSE CONCAT('\$', CAST(payrecamt AS CHAR), '.00') END AS _amount"
 		);
+		$this->summary_query_link = array (
+			'payrecproc' => 'procrec'
+		);
+		$this->summary_order_by = "payrecproc DESC, __actual_id";
 
 		// Call parent constructor
 		$this->EMRModule();
