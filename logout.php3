@@ -8,11 +8,11 @@
   include ("global.var.inc");
 
     // expire all of the cookies
-  SetCookie("LoginCookie", " ", time()+0);
-  SetCookie("_ref", " ", time()+0);
-  SetCookie("u_lang", " ", time()+0);
+  SetCookie("LoginCookie",      " ", time()+0);
+  SetCookie("_ref",             " ", time()+0);
+  SetCookie("u_lang",           " ", time()+0);
   SetCookie("default_facility", "0", time()+0);
-  SetCookie("current_patient", "0", time()+0);
+  SetCookie("current_patient",  "0", time()+0);
 
   # Header("Location: $complete_url"); // 19990610 - header instead
   include ("freemed-functions.inc");

@@ -34,11 +34,14 @@
   }
 
   $f_user = explode (":", $SessionLoginCookie); 
-  SetCookie("_ref", "",  time()+$_cookie_expire); // clear _ref
+  SetCookie("_ref",   "",  time()+$_cookie_expire); // clear _ref
   SetCookie("u_lang", $_l, time()+$_cookie_expire);
 
-  if (freemed_check_access_for_facility ($SessionLoginCookie, $_f))
-    SetCookie("default_facility", $_f, time()+$_cookie_expire);
+  if (freemed_check_access_for_facility ($SessionLoginCookie, $_f)) {
+    SetCookie("default_facility", "$_f", time()+$_cookie_expire);
+  } else {
+    SetCookie("default_facility", "0"  , time()+$_cookie_expire);
+  }
 
   # Header("Location: $complete_url/main.php3");
 
@@ -51,8 +54,6 @@
     } else {
       $_page = $_URL;                 // otherwise, the whole thing
     } // end checking for ? in $_URL
-    //if ( (is_file($_page)) or 
-    //   ( (is_link($_page)) and (is_file(readlink($_page))) ))
      $_jump_page = $_URL;  // if it's there, let 'em jump to it 
   } // end checking for $_URL
 

@@ -9,6 +9,8 @@
   include "global.var.inc";
   include "freemed-functions.inc";
 
+  SetCookie ("default_facility", "0", time()-100);
+
   freemed_display_html_top ();
   freemed_display_banner ();
 
@@ -68,7 +70,7 @@ echo "
 <SELECT NAME=\"_f\">
 ";
 
-freemed_display_facilities ($_f);
+freemed_display_facilities ($_f, true);
 
 echo "
 </SELECT>

@@ -587,12 +587,13 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 // function freemed_display_facilities (selected)
 function freemed_display_facilities ($param="", $default_load = false)
 {
-  global $default_facility, $NONE_SELECTED, $database, $SELECTED;
+  global $default_facility, $NONE_SELECTED, $database;
 
   // list doctors in SELECT/OPTION tag list, and
   // leave doctor selected who is in param
   echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
+    <OPTION VALUE=\"0\"".
+     ( ($param == 0) ? " SELECTED" : "" ).">$NONE_SELECTED
   ";
   $query = "SELECT * FROM $database.facility ORDER BY ".
      "psrname, psrnote";
@@ -603,7 +604,7 @@ function freemed_display_facilities ($param="", $default_load = false)
     while ($row=fdb_fetch_array($result)) {
       if ((strlen($param)>0) AND ($param != "0") AND
           ($param == $row["id"])) 
-        $selected_var = " $SELECTED";
+        $selected_var = " SELECTED";
       else
         $selected_var = ""; // or not...
 
@@ -612,17 +613,16 @@ function freemed_display_facilities ($param="", $default_load = false)
       $_psr_id   = $row["id"];
 
       if (($_psr_id==$default_facility) AND ($default_facility>0))
-        $selected_var = " $SELECTED";
+            { $selected_var = " $SELECTED"; }
+       else { $selected_var = "";           }
 
       if (strlen($_psr_note)<1) $__psr_note = "";
         else $__psr_note = "[$_psr_note]";
 
-      if ($debug) $debug_var = "[$_psr_id]"; 
-        else $debug_var = "";
-
       echo "
         <OPTION VALUE=\"$_psr_id\" $selected_var 
-         >$_psr_name $__psr_note $debug_var
+         >$_psr_name $__psr_note ".
+         ( $debug ? "[$_psr_id]" : "" )."
       "; // end of actual output
     } // while there are more results...
   }

@@ -62,7 +62,7 @@ switch ($action) {
     <BR>
   ";
 
-  if (date_in_the_past($selected_date)==1)
+  if (date_in_the_past($selected_date))
     echo "
       <CENTER><I><$STDFONT_B SIZE=-2
       >$this_date_occurs_in_the_past<$STDFONT_E></I></CENTER>
@@ -103,7 +103,6 @@ switch ($action) {
     <INPUT TYPE=HIDDEN NAME=\"type\"    VALUE=\"$type\">
     <INPUT TYPE=HIDDEN NAME=\"selected_date\"
      VALUE=\"$selected_date\">
- 
     <$STDFONT_B>$Room : <$STDFONT_E>
     <SELECT NAME=\"room\">
   ";
@@ -415,7 +414,7 @@ switch ($action) {
      $fac_name = "Default Facility";
    } // end checking for facility
 
-   if ($debug==1) $debug_var = "[$room]";
+   if ($debug) $debug_var = "[$room]";
    echo "
      <FORM ACTION=\"$page_name\">
      <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"add\">
@@ -504,7 +503,7 @@ switch ($action) {
     NULL )";
   $result = fdb_query ($query);
 
-  if ($debug==1) {
+  if ($debug) {
     echo "
       <BR>
       <B>RESULT</B>: $result

@@ -164,8 +164,8 @@
          <TD>$caldateof</TD>
          <TD><CENTER>$calhour:$calminute<BR>
              ($hours h $minutes m)<CENTER></TD>
-         <TD>$location</TD>
-         <TD>$calprenote</TD>
+         <TD>".( !empty($location)   ? $location   : "&nbsp;" )."</TD>
+         <TD>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</TD>
          <TD>$calcptcode</TD>
          <TD><A HREF=\"$page_name?$_auth&id=$r[id]&action=del&patient=$patient\"
              >$lang_DEL</A></TD>

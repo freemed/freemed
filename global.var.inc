@@ -3,7 +3,7 @@
   # note: global variables for entire freemed code base
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   # lic : GPL, v2
-  # mod : 2000-01-19
+  # mod : 2000-01-20
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
@@ -12,7 +12,7 @@
     // these variables you should not touch
   $packagename="freemed";		// package name
   $coded_by="jeff b";			// coded by tag
-  $version="0.1.1/pre-20000119";	// current version number
+  $version="0.1.1/pre-20000120";	// current version number
   $bugs_email="code_bugs@test.pr.uconn.edu";	// coder email...
   $bugs_address="http://www.freemed.org/keystone/visitor.php3";
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
@@ -112,8 +112,8 @@
 
   $__global_var__ = true;
 
-  if ($default_facility>0)
-    SetCookie ("default_facility", $default_facility, time()+$_cookie_expire); 
+  //if ($default_facility>0) {
+  // SetCookie ("default_facility", $default_facility, time()+$_cookie_expire); 
 
   // set the maximum timeout...
   set_time_limit (0);
