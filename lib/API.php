@@ -1082,7 +1082,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
    $buffer .= "
     <tr CLASS=\"".freemed_alternate()."\">
      <td COLSPAN=".(count($control_list)+1)." ALIGN=\"CENTER\">
-      <i>No "._($GLOBALS["record_name"])."</i>
+      <i>No ".__($GLOBALS["record_name"])."</i>
      </td>
     </tr>
    ";
