@@ -1,13 +1,13 @@
 <?php
-  # file: call-in.php3
-  # desc: module for call-in patients
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL, v2
+ // file: call-in.php3
+ // desc: module for call-in patients
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
   $page_name = "call-in.php3";          // page name
   include ("global.var.inc");           // global variables
   include ("freemed-functions.inc");    // API calls
-  $record_name = "$Call_In";            // name of record
+  $record_name = _("Call In");          // name of record
   $db_name = "callin";                  // database name
 
 freemed_open_db ($LoginCookie);
@@ -17,7 +17,7 @@ freemed_display_banner ();
 switch ($action) {
 
  case "addform":
-  freemed_display_box_top ("$Add $record_name", $_ref, $page_name); 
+  freemed_display_box_top (_("Add")." "._($record_name));
   if (strlen($citookcall)<1) {
     $f_auth = explode (":", $LoginCookie);
     $citookcall = freemed_get_link_field ($f_auth[0], "user", "userdescrip");
@@ -38,17 +38,20 @@ switch ($action) {
       <B><$STDFONT_B COLOR=#000000>$Name<$STDFONT_E></B>
     </TD></TR>
     <TR>
-     <TD WIDTH=30% ALIGN=RIGHT><$STDFONT_B COLOR=#444444>$Last<$STDFONT_E></TD>
+     <TD WIDTH=30% ALIGN=RIGHT
+     ><$STDFONT_B COLOR=#444444>"._("Last")."<$STDFONT_E></TD>
      <TD><INPUT TYPE=TEXT NAME=\"cilname\" SIZE=20 MAXLENGTH=50
-          VALUE=\"$cilname\"></TD>
+          VALUE=\"".prepare($cilname)."\"></TD>
     </TR>
     <TR>
-     <TD WIDTH=30% ALIGN=RIGHT><$STDFONT_B COLOR=#444444>$First<$STDFONT_E></TD>
+     <TD WIDTH=30% ALIGN=RIGHT
+     ><$STDFONT_B COLOR=#444444>"._("First")."<$STDFONT_E></TD>
      <TD><INPUT TYPE=TEXT NAME=\"cifname\" SIZE=20 MAXLENGTH=50
-          VALUE=\"$cifname\"></TD>
+          VALUE=\"".prepare($cifname)."\"></TD>
     </TR>
     <TR>
-     <TD WIDTH=30% ALIGN=RIGHT><$STDFONT_B COLOR=#444444>$Middle<$STDFONT_E></TD>
+     <TD WIDTH=30% ALIGN=RIGHT
+     ><$STDFONT_B COLOR=#444444>"._("Middle")."<$STDFONT_E></TD>
      <TD><INPUT TYPE=TEXT NAME=\"cimname\" SIZE=20 MAXLENGTH=50
           VALUE=\"$cimname\"></TD>
     </TR>
@@ -57,38 +60,41 @@ switch ($action) {
     </TD><TD>
 
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=TOP
-     ALIGN=CENTER BGCOLOR=$darker_bgcolor>
+     ALIGN=CENTER BGCOLOR=\"$darker_bgcolor\">
     <TR><TD COLSPAN=2 ALIGN=CENTER>
-     <B><$STDFONT_B COLOR=#ffffff>$Contact_Information<$STDFONT_E></B>
+     <B><$STDFONT_B COLOR=#ffffff>"._("Contact Information")."<$STDFONT_E></B>
     </TD></TR>
     <TR>
-     <TD WIDTH=40% ALIGN=RIGHT><$STDFONT_B COLOR=#cccccc>$Home_Phone &nbsp;
+     <TD WIDTH=40% ALIGN=RIGHT>
+     <$STDFONT_B COLOR=#cccccc>"._("Home Phone")." &nbsp;
       <$STDFONT_E></TD>
      <TD><B>(</B> <INPUT TYPE=TEXT NAME=\"cihphone1\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"$cihphone1\">
+                   VALUE=\"".prepare($cihphone1)."\">
          <B>)</B> <INPUT TYPE=TEXT NAME=\"cihphone2\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"$cihphone2\">
+                   VALUE=\"".prepare($cihphone2)."\">
          <B>-</B> <INPUT TYPE=TEXT NAME=\"cihphone3\" SIZE=5 MAXLENGTH=4
-                   VALUE=\"$cihphone3\">
+                   VALUE=\"".prepare($cihphone3)."\">
      </TD>
     </TR>
     <TR>
-     <TD WIDTH=40% ALIGN=RIGHT><$STDFONT_B COLOR=#cccccc>$Work_Phone &nbsp;
+     <TD WIDTH=40% ALIGN=RIGHT>
+     <$STDFONT_B COLOR=#cccccc>"._("Work Phone")." &nbsp;
       <$STDFONT_E></TD>
      <TD><B>(</B> <INPUT TYPE=TEXT NAME=\"ciwphone1\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"$ciwphone1\">
+                   VALUE=\"".prepare($ciwphone1)."\">
          <B>)</B> <INPUT TYPE=TEXT NAME=\"ciwphone2\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"$ciwphone2\">
+                   VALUE=\"".prepare($ciwphone2)."\">
          <B>-</B> <INPUT TYPE=TEXT NAME=\"ciwphone3\" SIZE=5 MAXLENGTH=4
-                   VALUE=\"$ciwphone3\">
+                   VALUE=\"".prepare($ciwphone3)."\">
      </TD>
     </TR>
     <TR>
-     <TD WIDTH=40% ALIGN=RIGHT><$STDFONT_B COLOR=#cccccc>$Took_Call &nbsp;
+     <TD WIDTH=40% ALIGN=RIGHT>
+     <$STDFONT_B COLOR=#cccccc>"._("Took Call")." &nbsp;
       <$STDFONT_E></TD>
     <TD>
      <INPUT TYPE=TEXT NAME=\"citookcall\" SIZE=25 MAXLENGTH=50
-      VALUE=\"$citookcall\">
+      VALUE=\"".prepare($citookcall)."\">
     </TD>
     </TR>
     </TABLE>
@@ -107,29 +113,23 @@ switch ($action) {
     <TABLE WIDTH=100% BORDER=0 ALIGN=CENTER VALIGN=CENTER
      CELLSPACING=0 CELLPADDING=5>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>$Date_of_Birth<$STDFONT_E></TD>
-      <TD><INPUT NAME=\"cidob1\" SIZE=5 MAXLENGTH=4
-           VALUE=\"$cidob1\"> <B>-</B>
-          <INPUT NAME=\"cidob2\" SIZE=3 MAXLENGTH=2
-           VALUE=\"$cidob2\"> <B>-</B>
-          <INPUT NAME=\"cidob3\" SIZE=3 MAXLENGTH=2
-           VALUE=\"$cidob3\">
-      </TD>
+      <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Birth")."<$STDFONT_E></TD>
+      <TD>".fm_date_entry("cidob")."</TD>
      </TR>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>$Complaint <$STDFONT_E></TD>
+      <TD ALIGN=RIGHT><$STDFONT_B>"._("Complaint")." <$STDFONT_E></TD>
       <TD><TEXTAREA NAME=\"cicomplaint\" ROWS=4 COLS=40
-           WRAP=VIRTUAL>$cicomplaint</TEXTAREA>
+           WRAP=VIRTUAL>".prepare($cicomplaint)."</TEXTAREA>
       </TD>
      </TR>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>$Facility <$STDFONT_E></TD>
+      <TD ALIGN=RIGHT><$STDFONT_B>"._("Facility")." <$STDFONT_E></TD>
       <TD>
       ".freemed_display_selectbox ($fac_r, "#psrname# [#psrnote#]", "cifacility")."
       </TD>
      </TR>
      <TR>
-      <TD ALIGN=RIGHT><$STDFONT_B>$Physician <$STDFONT_E></TD>
+      <TD ALIGN=RIGHT><$STDFONT_B>"._("Physician")." <$STDFONT_E></TD>
       <TD>
     ";
 
@@ -146,8 +146,8 @@ switch ($action) {
     </TABLE>
     <P>
     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\" $Add \"  >
-     <INPUT TYPE=RESET  VALUE=\" $Clear \">
+     <INPUT TYPE=SUBMIT VALUE=\" "._("Add")." \"  >
+     <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
     </CENTER>
     </FORM>
     <P>
@@ -156,22 +156,19 @@ switch ($action) {
   break;
 
  case "add":
-  freemed_display_box_top ("$Adding $record_name", $_ref, $page_name);
+  freemed_display_box_top (_("Adding")." "._("$record_name"));
   $cicomplaint = addslashes ($cicomplaint);
   $cicomment   = addslashes ($citookcall);
   $cihphone    = $cihphone1 . $cihphone2 . $cihphone3;
   $ciwphone    = $ciwphone1 . $ciwphone2 . $ciwphone3;
-  $cidob       = $cidob1 . "-" . $cidob2 . "-" . $cidob3;
-  echo "
-    <$STDFONT_B>$Adding $record_name ...
-  ";
+  echo "\n<$STDFONT_B>"._("Adding")." "._("$record_name")." ... \n";
   $query = "INSERT INTO $db_name VALUES (
     '$cilname',
     '$cifname',
     '$cimname',
     '$cihphone',
     '$ciwphone',
-    '$cidob',
+    '".fm_date_assemble("cidob")."',
     '$cicomplaint',
     '$cur_date',
     '$default_facility',
@@ -181,10 +178,8 @@ switch ($action) {
     NULL )";
   $result = fdb_query ($query);
 
-  if ($debug==1) echo " (query = \"$query\", result = \"$result\") ";
-
-  if ($result) echo "done.";
-   else echo "ERROR";
+  if ($result) echo _("done");
+   else echo _("ERROR");
   echo " <$STDFONT_E>
     <P>
     <CENTER>
@@ -193,7 +188,7 @@ switch ($action) {
      <A HREF=\"call-in.php3?$_auth\"
       ><$STDFONT_B>$Call_In_Menu<$STDFONT_E> |
      <A HREF=\"main.php3?$_auth\"
-      ><$STDFONT_B>$Main_Menu<$STDFONT_E>
+      ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E>
     </CENTER>
     <P>
   ";
@@ -201,7 +196,7 @@ switch ($action) {
   break;
 
  case "display":
-  freemed_display_box_top ("$record_name Display");
+  freemed_display_box_top (_("$record_name")." "._("View/Manage"));
   $query   = "SELECT * FROM scheduler WHERE
               ((calpatient='$id') AND (caltype='temp'))
               ORDER BY caldateof, calhour, calminute";
@@ -216,19 +211,19 @@ switch ($action) {
      VALIGN=CENTER ALIGN=CENTER>
     <TR><TD ALIGN=CENTER BGCOLOR=#000000>
      <$STDFONT_B COLOR=#ffffff>
-      <B>$cilname, $cifname $cimname</B> : $rows Appointments
+      <B>$cilname, $cifname $cimname</B> : $rows "._("Appointments")."
      <$STDFONT_E>
     </TD></TR>
     </TABLE>
     <P>
     <A HREF=\"show_appointments.php3?$_auth&patient=$id&type=temp\"
-     ><$STDFONT_B>Show Today's Appointments<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Show Today's Appointments")."<$STDFONT_E></A>
     <P>
     <A HREF=\"show_appointments.php3?$_auth&patient=$id&type=temp&show=all\"
-     ><$STDFONT_B>Show All Appointments<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Show All Appointments")."<$STDFONT_E></A>
     <P>
     <A HREF=\"main.php3?$_auth\"
-     ><$STDFONT_B>Return to Main Menu<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
     </A>
     <P>
   ";
@@ -236,33 +231,31 @@ switch ($action) {
   break;
 
  default:
-  freemed_display_box_top ("$record_name");
+  freemed_display_box_top (_("$record_name"));
 
   echo "
     <BR>
     <CENTER>
      <A HREF=\"$page_name?$_auth&type=old\"
-      ><$STDFONT_B>$Old<$STDFONT_E></A> |
+      ><$STDFONT_B>"._("Old")."<$STDFONT_E></A> |
      <A HREF=\"$page_name?$_auth&type=all\"
-      ><$STDFONT_B>$All<$STDFONT_E></A> |
+      ><$STDFONT_B>"._("All")."<$STDFONT_E></A> |
      <A HREF=\"$page_name?$_auth&type=cur\"
-      ><$STDFONT_B>$Current<$STDFONT_E></A>
+      ><$STDFONT_B>"._("Current")."<$STDFONT_E></A>
     </CENTER>
     <BR>
   ";
 
   echo freemed_display_actionbar ($page_name);
 
-  $_alternate = freemed_bar_alternate_color ();
-
   echo "
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3 VALIGN=CENTER
-     ALIGN=CENTER BGCOLOR=$_alternate>
+     ALIGN=CENTER BGCOLOR=\"".($_alternate=freemed_bar_alternate_color())."\">
     <TR>
-     <TD><B>$Name</B></TD>
-     <TD><B>$Date_of_Call</B></TD>
-     <TD><B>$Home_Work_Phone</B></TD>
-     <TD><B>$Action</B></TD>
+     <TD><B>"._("Name")."</B></TD>
+     <TD><B>"._("Date of Call")."</B></TD>
+     <TD><B>"._("Home/Work Phone")."</B></TD>
+     <TD><B>"._("Action")."</B></TD>
     </TR> 
   ";
 
@@ -278,17 +271,7 @@ switch ($action) {
              ORDER BY cidatestamp, cilname, cifname, cimname");
 
   while ($r = fdb_fetch_array ($result)) {
-
-    $_alternate = freemed_bar_alternate_color ($_alternate);
-
-    $cilname     = $r["cilname"    ];
-    $cifname     = $r["cifname"    ];
-    $cimname     = $r["cimname"    ];
-    $cidatestamp = $r["cidatestamp"];
-    $cidob       = $r["cidob"      ];
-    $cifacility  = $r["cifacility" ];
-    $ciphysician = $r["ciphysician"];
-    $id          = $r["id"         ];
+    extract ($r);
 
     if (freemed_check_access_for_facility ($LoginCookie, $cifacility)) {
 
@@ -313,7 +296,7 @@ switch ($action) {
     else $ciphonesep = " ";
 
     echo "
-      <TR BGCOLOR=$_alternate>
+      <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($alternate))."\">
        <TD><$STDFONT_B>$cilname, $cifname$ci_comma $cimname<$STDFONT_E></TD>
        <TD><$STDFONT_B>$cidatestamp<$STDFONT_E></TD>
        <TD><$STDFONT_B>$ciwphone $ciphonesep $cihphone&nbsp;<$STDFONT_E></TD>
@@ -342,14 +325,14 @@ switch ($action) {
       // view link
     echo "
      <A HREF=\"$page_name?$_auth&action=display&id=$id\"
-      ><FONT SIZE=-1>$VIEW</FONT></A> &nbsp;
+      ><FONT SIZE=-1>"._("VIEW")."</FONT></A> &nbsp;
     ";
 
      // book link
     echo "
      <A HREF=\"book_appointment.php3?$_auth&action=&".
       "patient=$id&type=temp\"
-      ><FONT SIZE=-1>$BOOK</FONT></A> &nbsp;
+      ><FONT SIZE=-1>"._("BOOK")."</FONT></A> &nbsp;
     ";
 
     echo "
@@ -373,11 +356,11 @@ switch ($action) {
     <BR>
     <CENTER>
      <A HREF=\"$page_name?$_auth&type=old\"
-      ><$STDFONT_B>$Old<$STDFONT_E></A> |
+      ><$STDFONT_B>"._("Old")."<$STDFONT_E></A> |
      <A HREF=\"$page_name?$_auth&type=all\"
-      ><$STDFONT_B>$All<$STDFONT_E></A> |
+      ><$STDFONT_B>"._("All")."<$STDFONT_E></A> |
      <A HREF=\"$page_name?$_auth&type=cur\"
-      ><$STDFONT_B>$Current<$STDFONT_E></A>
+      ><$STDFONT_B>"._("Current")."<$STDFONT_E></A>
     </CENTER>
     <BR>
   ";

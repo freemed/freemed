@@ -19,15 +19,13 @@ switch($action) {
  case "modform":
  case "addform":
   if ($action=="modform") {
-    freemed_display_box_top(_("Modify $record_name"), $page_name);
+    freemed_display_box_top(_("Modify")." "._($record_name));
     $result = fdb_query("SELECT * FROM degrees ".
       "WHERE ( id = '$id' )");
     $r = fdb_fetch_array($result); // dump into array r[]
-    $degdegree   = $r["degdegree"];
-    $degname     = $r["degname"  ];
-    $degdate     = $r["degdate"  ];
+    extract ($r);
   } else {
-    freemed_display_box_top(_("$record_name"), $page_name);
+    freemed_display_box_top(_($record_name));
   } // modform fetching
 
   // display the table 
@@ -51,8 +49,8 @@ switch($action) {
     <FORM ACTION=\"$page_name\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".(($action=="modform") ? 
                                                    "mod" : "add")."\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
-    <INPUT TYPE=HIDDEN NAME=\"_ref\" VALUE=\"$_ref\">
+    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
+    <INPUT TYPE=HIDDEN NAME=\"_ref\" VALUE=\"".prepare($_ref)."\">
 
   ".(($action=="modform") ? "
     <$STDFONT_B>"._("Date Last Modified")." : <$STDFONT_E>
@@ -105,7 +103,7 @@ switch($action) {
  case "delete":
   switch($action) { // inner action switch
    case "add":
-    freemed_display_box_top(_("Adding $record_name"), $page_name);
+    freemed_display_box_top(_("Adding")." "._($record_name));
     echo "
       <P ALIGN=CENTER>
       <$STDFONT_B>"._("Adding")." . . . 
@@ -118,7 +116,7 @@ switch($action) {
       " NULL ) ";
    break;
    case "mod":
-    freemed_display_box_top(_("Modifying $record_name"), $page_name);
+    freemed_display_box_top(_("Modifying")." "._($record_name));
     echo "
       <P ALIGN=CENTER>
       <$STDFONT_B>"._("Modifying")." . . . 
@@ -130,7 +128,7 @@ switch($action) {
       "WHERE id='$id'";
    break;
    case "delete":
-    freemed_display_box_top (_("Deleting $record_name"), $page_name);
+    freemed_display_box_top (_("Deleting")." ". _($record_name));
     $query = "DELETE FROM degrees WHERE (id = \"$id\")";
     echo "
       <P ALIGN=CENTER>
