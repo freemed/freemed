@@ -8,6 +8,7 @@ include ("lib/freemed.php");
 include ("lib/API.php");
 include ("lib/module.php");
 include ("lib/module_emr.php");
+include ("lib/module_emr_report.php");
 
 if ($id != $current_patient)
   SetCookie ("current_patient", $id, time()+$_cookie_expire);
@@ -132,7 +133,7 @@ if ($id<1) {
 
 	";
 
-      // **************************************************** DYNAMIC MODULES
+    // **************************************************** DYNAMIC MODULES
 	// loadable modules start here
 	$category = "Electronic Medical Record";
 	$template = "
@@ -148,7 +149,31 @@ if ($id<1) {
         </TD></TR>
 
 	";
+
 	$module_list = new module_list (PACKAGENAME, ".emr.module.php");
+	echo $module_list->generate_list ($category, 0, $template);
+
+    echo "
+		<TR><TD ALIGN=RIGHT>
+		<BR>
+    	<$STDFONT_B><B>"._("Patient Reports")."</B><$STDFONT_E>
+		<BR>
+    	</TD>
+	";
+	$category = "Electronic Medical Record Report";
+	$template = "
+        <TR><TD ALIGN=RIGHT>
+        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
+        </TD>
+		<TD> 
+        <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
+         ><$STDFONT_B>"._("View")."<$STDFONT_E></A>
+        </TD><TD>
+        </TD></TR>
+
+	";
+
+	$module_list = new module_list (PACKAGENAME, ".emr.report.module.php");
 	echo $module_list->generate_list ($category, 0, $template);
 	// end of loadable modules code
 
@@ -166,10 +191,21 @@ if ($id<1) {
         </TD><TD>
         </TD></TR>
         -->
-	
+
+		<!--	
+        <TR><TD ALIGN=RIGHT>
+        <$STDFONT_B><B>"._("Patient Reports")."</B> : <$STDFONT_E>
+        </TD><TD>
+        <A HREF=\"emrreports.php?$_auth&action=choose&patient=$id\"
+        ><$STDFONT_B>"._("Choose")."<$STDFONT_E></A>
+        </TD><TD>
+        </TD><TD>
+        </TD></TR>
+        -->
         </TABLE>
 
         <CENTER>
+		<P>
         <A HREF=\"patient.php?$_auth\"
          ><$STDFONT_B>"._("Select Another Patient")."<$STDFONT_E></A>
         </CENTER>

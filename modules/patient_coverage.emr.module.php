@@ -24,11 +24,11 @@ class PatientCoveragesModule extends freemedEMRModule {
 	} // end function PatientCoveragesModule
 
 	// override check_vars method
-	function check_vars ($nullvar = "") {
-		global $module;
-		if (!isset($module)) return false;
-		return true;
-	} // end function check_vars
+	//function check_vars ($nullvar = "") {
+	//	global $module;
+	//	if (!isset($module)) return false;
+	//	return true;
+	//} // end function check_vars
 
 	function modform()
 	{
@@ -76,6 +76,12 @@ class PatientCoveragesModule extends freemedEMRModule {
 															_("Child")   => "C",
 															_("Husband") => "H",
 															_("Wife")    => "W",
+															"Child Not Fin" => "D",
+															"Step Child" => "SC",
+															"Foster Child" => "FC",
+															"Ward of Court" => "WC",
+															"HC Dependent" => "HD",
+															"Sponsored Dependent" => "SD",
 															_("Other")   => "O" ) )
 										 					 ) 
 													) 

@@ -299,6 +299,18 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			$da0[patrel] = "02";
 		if ($coverage2->covreldep == "C")
 			$da0[patrel] = "03";
+		if ($coverage->covreldep == "D") // Natural Child insured not financially resp.
+            $da0[patrel] = "04";
+        if ($coverage->covreldep == "SC") // Step child
+            $da0[patrel] = "05";
+        if ($coverage->covreldep == "FC") // Foster child
+            $da0[patrel] = "06";
+        if ($coverage->covreldep == "WC") // Ward of Court
+            $da0[patrel] = "07";
+        if ($coverage->covreldep == "HD") // Handicapped Dependent
+            $da0[patrel] = "10";
+        if ($coverage->covreldep == "SD") // Sponsered Dependent
+            $da0[patrel] = "16";
 
 		$da0[patidno] = $this->CleanNumber($coverage2->covpatinsno);
 
@@ -1767,6 +1779,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 	   } // end looping through results                         
 
 	   echo "
+		 </SELECT>
 		 </TD>
 		</TR>
 		<TR>

@@ -29,6 +29,14 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 				"Line : ".$line."\n".
 				"Error : ".$str."\n";
 
+			// since we are in a error handler we need to check this
+			if ($GLOBALS["FREEMED_BOX"] == false)  // we have a box top
+			{	
+				if (function_exists("freemed_display_html_top"))	
+					freemed_display_html_top ();
+				if (function_exists("freemed_display_box_top"))	
+					freemed_display_box_top ();
+			}
 			// currently, show error
 			echo "<PRE>\n$error\n</PRE>\n";
 			if (BUG_TRACKER) {
@@ -44,11 +52,16 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 				</CENTER>
 				";
 			} // end if BUG_TRACKER
-	
-			if (function_exists("freemed_display_box_bottom"))	
-				freemed_display_box_bottom ();
-			if (function_exists("freemed_display_html_bottom"))	
-				freemed_display_html_bottom ();
+
+			// since we are in a error handler we need to check this
+			if ($GLOBALS["FREEMED_BOX"] == true)  // we have a box top
+			{	
+				if (function_exists("freemed_display_box_bottom"))	
+					freemed_display_box_bottom ();
+				if (function_exists("freemed_display_html_bottom"))	
+					freemed_display_html_bottom ();
+			}
+			
 			DIE("");
 			break;
 		//default: echo "error type : $no<BR>\n"; break;

@@ -29,7 +29,10 @@ class freemedReportsModule extends freemedModule {
 	// override check_vars method
 	function check_vars ($nullvar = "") {
 		global $module, $LoginCookie;
-		if (!isset($module)) return false;
+		if (!isset($module)) 
+		{
+			trigger_error("Module not Defined", E_ERROR);
+		}
 		// FIXME!!: check access to facility
 		//if (!freemed_check_access_for_patient($LoginCookie, $patient)) return false;
 		return true;

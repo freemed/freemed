@@ -28,7 +28,10 @@ class freemedMaintenanceModule extends freemedModule {
 	// override check_vars method
 	function check_vars ($nullvar = "") {
 		global $module;
-		if (!isset($module)) return false;
+		if (!isset($module)) 
+		{
+			trigger_error("Module not Defined", E_ERROR);
+		}
 		return true;
 	} // end function check_vars
 

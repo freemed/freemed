@@ -33,7 +33,10 @@ class freemedBillingModule extends freemedModule {
 	// override check_vars method
 	function check_vars ($nullvar = "") {
 		global $module;
-		if (!isset($module)) return false;
+		if (!isset($module))
+		{
+			trigger_error("No Module Defined", E_ERROR);
+		}
 		return true;
 	} // end function check_vars
 

@@ -102,6 +102,8 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			  ( ($fftype==2) ? "SELECTED" : "" ).">"._("Patient Bill")."
 			<OPTION VALUE=\"3\" ".
 			  ( ($fftype==3) ? "SELECTED" : "" ).">"."NSF Format"."
+			<OPTION VALUE=\"4\" ".
+			  ( ($fftype==4) ? "SELECTED" : "" ).">"."EMR Report"."
 		   </SELECT>
 		  </TD>
 		 </TR>

@@ -1,17 +1,18 @@
 <?php
  // $Id$
- // desc: module prototype
+ // desc: module prototype. These modules are used to produce
+ // a single report for the patient being viewed
  // lic : GPL, v2
 
-if (!defined("__MODULE_EMR_PHP__")) {
+if (!defined("__MODULE_EMR_REPORT_PHP__")) {
 
-define ('__MODULE_EMR_PHP__', true);
+define ('__MODULE_EMR_REPORT_PHP__', true);
 
 // class freemedEMRModule
-class freemedEMRModule extends freemedModule {
+class freemedEMRReportModule extends freemedModule {
 
 	// override variables
-	var $CATEGORY_NAME = "Electronic Medical Record";
+	var $CATEGORY_NAME = "Electronic Medical Record Report";
 	var $CATEGORY_VERSION = "0.1";
 
 	// vars to be passed from child modules
@@ -20,10 +21,10 @@ class freemedEMRModule extends freemedModule {
 	var $table_name;
 
 	// contructor method
-	function freemedEMRModule () {
+	function freemedEMRReportModule () {
 		// call parent constructor
 		$this->freemedModule();
-	} // end function freemedEMRModule
+	} // end function freemedEMRReportModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -45,18 +46,31 @@ class freemedEMRModule extends freemedModule {
 
 	} // end function check_vars
 
+		function header($nullvar="")
+        {
+            global $LoginCookie;
+            freemed_open_db($LoginCookie);
+            // don't display the box top
+        }
+        function footer($nullvar="")
+        {
+            // dont display the bottom
+            return;
+        }
+
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
 		global $action, $patient, $LoginCookie;
 
-		if (!isset($this_patient))
+		if (!isset($this->this_patient))
 			$this->this_patient = new Patient ($patient);
-		if (!isset($this_user))
+		if (!isset($this->this_user))
 			$this->this_user    = new User ($LoginCookie);
 
 		// display universal patient box
-		echo freemed_patient_box($this->this_patient)."<P>\n";
+		// no box used since these need to be printable
+		//echo freemed_patient_box($this->this_patient)."<P>\n";
 
 		switch ($action) {
 			case "add":
@@ -225,7 +239,7 @@ class freemedEMRModule extends freemedModule {
 		);
 	} // end function view
 
-} // end class freemedEMRModule
+} // end class freemedEMRReportModule
 
 } // end if not defined
 

@@ -1,6 +1,25 @@
 freemed project changelog
 ($Id$)
 
+* Thu Apr 19 2001 fforest
+  - README add httpd.conf requirement for Alias /tmp /bills
+  - manage.php added code to load the new emr_report module
+  - module_loader added include for module_emr_report.php
+  - lib/error_handler added code to display box top and or 
+    box bottom if needed
+  - lib/module_* all check_vars functions changed to call trigger_error
+    if missing variables or not authorized.
+  - fixed_forms added new type EMR Report for fixedform fftype
+  - modules/patient_coverage added more relationship types for guarantor
+  - modules/mcsi_nsf* process new relationship types.
+    added </SELECT> since netscape wanted it.
+  - lib/module_emr_report NEW. this is used for loading patient report 
+    modules in manage. the reports show up as plain white reports than can 
+    be printed. (djordan request).
+  - modules/intake.emr.report.module.php NEW this is selected from manage to 
+    display a patient intake report. basically, name address of patient,physician
+    insurance co. (also per djordan)
+
 * Fri Apr 13 2001 rufustfirefly
   Released 0.2.1.1 (Good Friday the 13th/CVS)
   - lib/freemed.php: updated phpwebtools dependency to 0.2.3
