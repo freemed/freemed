@@ -87,14 +87,24 @@ class Patient {
 					case 'first_name': $k = 'ptfname'; break;
 					case 'city': $k = 'ptcity'; break;
 					case 'state': $k = 'ptstate'; break;
+					case 'date_of_birth': $k = 'ptdob'; break;
+					case 'dob': $k = 'ptdob'; break;
 					default: break;
 				}
 				// Handle single patient request
-				if ($k == 'id') {
+				switch ($k) {
+					case 'id':
 					$params[] = 'id = \''.addslashes($v).'\'';
-				} else {
+					break;
+
+					case 'ptdob':
+					$params[] = 'ptdob = \''.addslashes($v).'\'';
+					break;
+
+					default:
 					$params[] = 'LCASE('.addslashes($k).') LIKE '.
 						'\'%'.addslashes($v).'%\'';
+					break;
 				}
 			}
 			$query = "SELECT * FROM patient WHERE (".
