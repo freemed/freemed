@@ -23,16 +23,13 @@ if ( ($id>0) AND
 } else { $current_patient = 0; }
 
 //----- Logon/authenticate
-freemed_open_db ();
+freemed::connect ();
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"patient.php|user $user_to_log accesses");}	
 // In order to be compliant I need to be able to log which patient is viewed here
 // $id $patient and $current_patient dont seem to work
-
-
-
 
 //---- Push page onto stack
 page_push();
@@ -874,7 +871,7 @@ switch ($action) {
 	),
 	array ("","",""),
 	"", "", "",
-	ITEMLIST_MOD|ITEMLIST_VIEW
+	ITEMLIST_MOD|ITEMLIST_VIEW|ITEMLIST_DEL
       );
 
       $display_buffer .= "<p/>\n";
