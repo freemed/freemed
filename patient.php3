@@ -5,11 +5,12 @@
  //       adam b (gdrago23@yahoo.com)
  //       some small stuff by: max k <amk@span.ch>
  // lic : GPL, v2
-
+ 
   $page_name="patient.php3"; // for help info, later
   $record_name="Patient";    // compatibility with API functions
   include ("global.var.inc");
   include ("freemed-functions.inc");
+  include ("freemed-calendar-functions.inc");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -22,6 +23,9 @@
 
   freemed_open_db ($LoginCookie); // authenticate user
 
+$t_vars = array("ptguar","ptrelguar", "ptguarstart", "ptguarend",
+    "ptins", "ptinsno", "ptinsgrp", "ptinsstart", "ptinsend"); 
+
 switch ($action) {
   case "add": case "addform":
   case "mod": case "modform":
@@ -32,7 +36,7 @@ switch ($action) {
    switch ($action) {
      case "add": case "addform":
       if (empty($been_here)) {
-        $ptstatus  = "0";
+        $ins_disp_inactive=false; // TODO! not implemented
         $been_here = "1"; // set been_here
       } // end of checking empty been_here
       $action_name = _("Add");
@@ -46,6 +50,14 @@ switch ($action) {
         $r = fdb_fetch_array($result); // dump into array r[]
 	extract($r); // pull variables in from array
 
+	reset($t_vars);
+	while ($i=next($t_vars)) { // for all these TEXT items
+	  if (strlen($$i)>0)
+            $$i = fm_split_into_array($$i); // pull the array items
+	  else
+	    $$i = array (); // set to null array if strlen<1
+	} // for each TEXT item
+
         $ptstate      = strtoupper ($ptstate);
 
         // 19990728 -- next of kin pull and remake
@@ -57,6 +69,8 @@ switch ($action) {
           $ptemail1      = $ptemail_array[0];
           $ptemail2      = $ptemail_array[1];
         } // end of resplit email
+	
+        $ins_disp_inactive=false;
         $been_here = "1"; // set been_here
       } // end of checking empty been_here
       $action_name = _("Modify");
@@ -66,10 +80,7 @@ switch ($action) {
    // ** DISPLAY ADD/MOD ***
 
    if (!isset($num_inscos)) { // first time through
-     $num_inscos=0;
-     for ($i=1;$i<=3;$i++)
-       if (${"ptins$i"}>0)
-         $num_inscos++;
+     $num_inscos=count($ptins);
      if ($num_inscos>0) $has_insurance=true;
    } // checking for unset num_inscos
    
@@ -151,7 +162,8 @@ switch ($action) {
        _("Contact"),
        array (
          "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip",
-	 "ptcountry"
+	 "ptcountry", phone_vars("pthphone"), phone_vars("ptwphone"),
+	 phone_vars("ptfax")
          ),
        "
   <TABLE CELLPADDING=2 CELLSPACING=0 BORDER=0>
@@ -180,7 +192,7 @@ switch ($action) {
   </TD></TR>
   
   <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Email_address : <$STDFONT_E>
+    <$STDFONT_B>"._("Email Address")." : <$STDFONT_E>
   </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=ptemail1 SIZE=20 MAXLENGTH=40
      VALUE=\"".prepare($ptemail1)."\"> <B>@</B>
@@ -210,7 +222,7 @@ switch ($action) {
   </TD></TR>
 
   <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Marital_status : <$STDFONT_E>
+    <$STDFONT_B>"._("Marital Status")." : <$STDFONT_E>
   </TD><TD ALIGN=LEFT>
     ".select_widget("ptmarital",
       array (
@@ -347,131 +359,156 @@ switch ($action) {
     </TABLE>
      ");     
 
-  if ($has_insurance) {
-    $ctrl_arr=""; // reset it
-    if (strlen($ins_s_val)>0) { // add the searchterm
-      $ctrl_arr[$ins_s_val] = $ins_s_field;
-      if (strlen($ins_s_field2)>0) { // if second query
-        $ctrl_arr[$ins_s_val2] = $ins_s_field2;
-      } // if second query
-    } // if a value has been entered
-    $ins_r = freemed_search_query ( $ctrl_arr, 
-         array ("insconame", "inscostate", "inscocity"), "insco", 
-         array ("ptins1", "ptins2", "ptins3") );
-  } // perform search for each insco record
+  if ($has_insurance) { 
 
-  if ($has_insurance) { // optional tab
-   $book->add_page(
-    _("Insurance"),
-    array (
-     "ptins1", "ptins2", "ptins3",
-     "ptinsno1", "ptinsno2", "ptinsno3",
-     "ptinsgrp1", "ptinsgrp2", "ptinsgrp3",
-     "ins_s_field", "ins_s_val",
-     "ins_s_field2", "ins_s_val2",
-     "num_inscos"
-    ),
-    "
-   <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
-
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Number of Insurance Companies")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"num_inscos\">
-     <OPTION VALUE=\"0\" ".((1>$num_inscos OR 3<$num_inscos)
-                            ? "SELECTED" : "").">NONE
-     <OPTION VALUE=\"1\" ".($num_inscos==1 ? "SELECTED" : "").">1
-     <OPTION VALUE=\"2\" ".($num_inscos==2 ? "SELECTED" : "").">2
-     <OPTION VALUE=\"3\" ".($num_inscos==3 ? "SELECTED" : "").">3
-    </SELECT>
-    ".$book->generate_refresh()."
-    </TD></TR>".
-
-    (($num_inscos>0) ? "
-    <TR><TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Insurance").
-     select_widget("ins_s_field", array (
-       _("Name")  =>"insconame",
-       _("City")  =>"inscocity",
-       _("State") =>"inscostate",
-       _("Zip")   =>"inscozip"
-     ) )."
-     <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>"._("like")."
-      <INPUT TYPE=TEXT NAME=\"ins_s_val\" VALUE=\"".prepare($ins_s_val)."\">
-     <$STDFONT_E> 
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Insurance").
-     select_widget("ins_s_field2", array (
-       _("Name")  =>"insconame",
-       _("City")  =>"inscocity",
-       _("State") =>"inscostate",
-       _("Zip")   =>"inscozip"
-     ) )."
-     <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>"._("like")."
-      <INPUT TYPE=TEXT NAME=\"ins_s_val2\" VALUE=\"".prepare($ins_s_val2)."\">
-      <I>("._("Optional").")</I>
-     <$STDFONT_E> 
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Insurance")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>".
-      freemed_display_selectbox ($ins_r, 
-        "#insconame# (#inscocity#, #inscostate# #inscozip#)", "ptins1")
-    ."</TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Insurance ID/Group Code")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptinsno1\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($ptinsno1)."\">
-    <INPUT TYPE=TEXT NAME=\"ptinsgrp1\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($ptinsgrp1)."\">
-    </TD></TR>
-    " : "").
+    // push the current insco onto the stack
+    if ($add_this_insco AND ($ptins_>0)) { // not persistent! use once!
+      $add_this_insco = false;
+      $ptins[]      = $ptins_;
+      $ptinsno[]    = $ptinsno_;
+      $ptinsgrp[]   = $ptinsgrp_;
+      $ptinsstart[] = fm_date_assemble("ptinsstart_");
+      $ptinsend[]   = fm_date_assemble("ptinsend_");
+    }
+    if (is_array($ptins)) {
+      while (list($idx,$val)=each($ptins)) {
+        $ptins_active[$idx]=( $ins_disp_inactive OR
+          (!date_in_range($cur_date,$ptinsstart[$idx],$ptinsend[$idx])) );
+	// unsure why, but have to take !date_in_range...
+      } // for each insurance co, determine if active
+      reset($ptins);
+      for ($arr_idx=0;$arr_idx<count($ptins);) { // increment at bottom
+        if (!isset($ptinsmod)) $ptinsmod=-1; // sanity check
+	if ($ptinsmod==$arr_idx) { // push it onto the current one
+          $ptins_      = $ptins[$arr_idx];
+          $ptinsno_    = $ptinsno[$arr_idx];
+          $ptinsgrp_   = $ptinsgrp[$arr_idx];
+          $ptinsstart_ = $ptins[$arr_idx]; // what's the 
+          $ptinsend_   = $ptins[$arr_idx]; // opposite of fm_date_assemble?
+	  unset($ptins[$arr_idx]); // take it off the stack, no duplication
+	}
+        if ($ptinsdel[$arr_idx]) unset($ptins[$arr_idx]); // delete 
+        $arr_idx++; // increment at *end*!
+      } // for each insco listed
+    } // if ptins is an array
+    
+    $ins_r = freemed_search_query( array ($ins_s_val => $ins_s_field),
+               array ("insconame", "inscostate", "inscocity"), "insco", "");
+    
+    $book->add_page(
+      _("Insurance"),
+      array ("ptins", "ptinsno", "ptinsgrp", "ptinsstart",
+        "ptinsend", "ins_disp_inactive", "ins_s_val", "ins_s_field", 
+	"ptins_", "ptinsno_", "ptinsgrp_", date_vars("ptinsstart_"), 
+	date_vars("ptinsend_")),
+      "
+    <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0 WIDTH=\"100%\">
+     <TR><TD ALIGN=RIGHT>
+      <$STDFONT_B>"._("Display Inactive Insurance Companies")." : <$STDFONT_E>
+     </TD><TD ALIGN=LEFT>
+      <INPUT TYPE=CHECKBOX NAME=\"ins_disp_inactive\"".
+       ($ins_disp_inactive ? " CHECKED" : "").">
+     </TD></TR>
+     <TR><TD ALIGN=RIGHT>
+      <$STDFONT_B>"._("Insurance")."<FONT SIZE=\"-1\">".
+       select_widget("ins_s_field", array (
+        _("Name") => "insconame",
+	_("City") => "inscocity" ) )."</FONT><$STDFONT_E>
+      <$STDFONT_B>"._("like")."<FONT SIZE=\"-1\">
+        <INPUT TYPE=TEXT NAME=\"ins_s_val\" 
+        VALUE=\"$ins_s_val\" SIZE=15 MAXLENGTH=20></FONT>
+      <$STDFONT_E>
+     </TD><TD ALIGN=LEFT>
+      <$STDFONT_B>"._("Add This Insurance Company")." : 
+       <INPUT TYPE=CHECKBOX NAME=\"add_this_insco\">
+     </TD></TR>
+      <TR><TD ALIGN=RIGHT>
+        <$STDFONT_B>
+         "._("Insurance Company")." :
+        <$STDFONT_E>
+      </TD><TD ALIGN=LEFT>
+        <$STDFONT_B SIZE=\"-1\">
+         ".freemed_display_selectbox($ins_r, 
+            "#insconame# (#inscocity#, #inscostate# #inscozip#)", 
+	    "ptins_")."
+        <$STDFONT_E>
+      </TD></TR>
+	
+      <TR><TD ALIGN=RIGHT>
+        <$STDFONT_B>
+         "._("Insurance ID / Group ID")." : 
+	<$STDFONT_E>
+      </TD><TD ALIGN=LEFT>
+	<$STDFONT_B SIZE=\"-1\">
+	  <INPUT NAME=\"ptinsno_\"  VALUE=\"".$ptinsno_."\"  SIZE=15>
+	   <INPUT NAME=\"ptinsgrp_\" VALUE=\"".$ptinsgrp_."\" SIZE=15>
+	<$STDFONT_E>
+      </TD></TR>
+	
+      <TR><TD ALIGN=RIGHT>
+        <$STDFONT_B>"._("Start Date")."<$STDFONT_E>
+	<$STDFONT_B SIZE=\"-1\">
+	  ".date_entry("ptinsstart_", 1990, "mdy")."
+	<$STDFONT_E>
+      </TD><TD ALIGN=LEFT>
+	<$STDFONT_B>"._("End Date")."<$STDFONT_E>
+	<$STDFONT_B SIZE=\"-1\">
+	  ".date_entry("ptinsend_", 1990, "mdy")."
+	<$STDFONT_E>
+      </TD></TR>
+      <TR WIDTH=\"100%\"><TD COLSPAN=2>
+        ".freemed_display_arraylist(
+	    array (_("Insurer"  ) => "ptins",
+	           _("Start"    ) => "ptinsstart",
+	           _("End"      ) => "ptinsend",
+	           _("ID Number") => "ptinsno",
+	           _("Group"    ) => "ptinsgrp"), 
+	    array ("insco" => "insconame",
+	           "",
+		   "",
+		   "",
+		   ""))."
+      </TD></TR>
+    </TABLE>
+      "
+    );
    
-    (($num_inscos>1) ? "
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Insurance")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>".
-      freemed_display_selectbox ($ins_r, 
-        "#insconame# (#inscocity#, #inscostate# #inscozip#)", "ptins2")
-    ."</TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Insurance ID/Group Code")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptinsno2\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($ptinsno2)."\">
-    <INPUT TYPE=TEXT NAME=\"ptinsgrp2\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($ptinsgrp2)."\">
-    </TD></TR>
-
-    " : "").
-
-    (($num_inscos>2) ? "
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Tertiary Insurance")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>".
-      freemed_display_selectbox ($ins_r, 
-        "#insconame# (#inscocity#, #inscostate# #inscozip#)", "ptins3")
-    ."</TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Tertiary Insurance ID/Group Code")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptinsno3\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($ptinsno3)."\">
-    <INPUT TYPE=TEXT NAME=\"ptinsgrp3\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($ptinsgrp3)."\">
-    </TD></TR>
-    " : "").
-
-   "
-   </TABLE>
-    "
-   );
+    // push the current guarantor onto the stack
+    if ($add_this_guar AND ($ptguar_>0)) { // not persistent! use once!
+      $add_this_guar = false;
+      $ptguar[]      = $ptguar_;
+      $ptrelguar[]   = $ptrelguar_;
+      $ptguarstart[] = fm_date_assemble("ptguarstart_");
+      $ptguarend[]   = fm_date_assemble("ptguarend_");
+    }
+    $guar_r = freemed_search_query( array ($guar_s_val => $guar_s_field),
+               array ("ptlname", "ptfname", "ptdob"), "patient", "");
+    if (is_array($ptguar)) {
+      while (list($idx,$val)=each($ptguar)) {
+        $ptguar_active[$idx]=( $guar_disp_inactive OR
+          (!date_in_range($cur_date,$ptinsstart[$idx],$ptinsend[$idx])) );
+	// unsure why, but have to take !date_in_range...
+      } // for each insurance co, determine if active
+      reset($ptguar);
+      for ($arr_idx=0;$arr_idx<count($ptguar);) { // increment at bottom
+        if (!isset($ptguarmod)) $ptguarmod=-1; // sanity check
+	if ($ptinsmod==$arr_idx) { // push it onto the current one
+          $ptins_ = $ptins[$arr_idx];echo $arr_idx;
+          $ptinsno_ = $ptinsno[$arr_idx];
+          $ptinsgrp_ = $ptinsgrp[$arr_idx];
+          $ptinsstart_ = $ptins[$arr_idx]; // what's the 
+          $ptinsend_ = $ptins[$arr_idx]; // opposite of fm_date_assemble?
+	  unset($ptins[$arr_idx]); // take it off the stack so it's not added again
+	  $arr_idx++;
+	}
+        if ($ptinsdel[$arr_idx]) unset($ptins[$arr_idx]); // delete 
+        if (!isset($ptins[$arr_idx])) continue; // take this one off the list
+        if ($ins_disp_inactive OR !date_in_range($cur_date,
+            $ptinsstart[$arr_idx], $ptinsend[$arr_idx]) ) {
+        } // if it's a visible insco
+      } // for each insco listed
+    } // if inscos already exist
+    
    $dep_r = freemed_search_query ( 
         array ($dep_s_val => $dep_s_field, $dep_s_val2 => $dep_s_field2),
         array ("ptlname", "ptfname"), "patient", 
@@ -479,11 +516,12 @@ switch ($action) {
 
    $book->add_page(
      _("Guarantor"),
-     array ("ptdep", 
-       "dep_s_field", "dep_s_val",
-       "dep_s_field2", "dep_s_val2"),
+     array ("ptguar", "ptrelguar", "ptguarstart", "ptguarend",
+            "ptguar_","ptrelguar_","ptguarstart_","ptguarend_",
+            "guar_disp_inactive", "dep_s_field", "dep_s_val",
+            "dep_s_field2", "dep_s_val2"),
      "
-    <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
+    <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0 WIDTH=\"100%\">
     <TR><TD ALIGN=RIGHT>
      <$STDFONT_B>"._("Guarantor").
      select_widget("dep_s_field", array (
@@ -497,6 +535,7 @@ switch ($action) {
       <INPUT TYPE=TEXT NAME=\"dep_s_val\" VALUE=\"".prepare($dep_s_val)."\">
      <$STDFONT_E> 
     </TD></TR>
+    
     <TR><TD ALIGN=RIGHT>
      <$STDFONT_B>"._("Guarantor").
      select_widget("dep_s_field2", array (
@@ -509,19 +548,53 @@ switch ($action) {
      <$STDFONT_B>"._("like")."
       <INPUT TYPE=TEXT NAME=\"dep_s_val2\" VALUE=\"".prepare($dep_s_val2)."\">
       <I>("._("Optional").")</I>
-     <$STDFONT_E> 
+     <$STDFONT_E>
+    </TD></TR>
+    
     <TR><TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Guarantor")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
       ".freemed_display_selectbox($dep_r,
           "#ptlname#, #ptfname#", "ptdep")."
     </TD></TR>
+    
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>"._("Relation to Guarantor")." : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".select_widget("ptreldep", array (
+        _("Self")    => "S",
+        _("Child")   => "C",
+        _("Husband") => "H",
+        _("Wife")    => "W",
+        _("Other")   => "O"
+	) )."
+    </TD></TR>
+    
+    <TR><TD ALIGN=RIGHT>
+      <$STDFONT_B>"._("Add This Guarantor")." : 
+       <INPUT TYPE=CHECKBOX NAME=\"add_this_guar\"><$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+
+    </TD></TR>
+    
+    <TR WIDTH=\"100%\"><TD COLSPAN=2>
+        ".freemed_display_arraylist(
+	    array (_("Guarantor"   ) => "ptguar",
+	           _("Relationship") => "ptrelguar",
+	           _("Start"       ) => "ptguarstart",
+	           _("End"         ) => "ptguarend"),
+	    array ("patient" => "ptlname",
+	           "",
+		   "",
+		   ""))."
+    </TD></TR>
+	
     </TABLE>
      "
    );
 
   } // if has insurance
-  
+
    // show notebook
    freemed_display_html_top ();
    freemed_display_banner ();
@@ -532,9 +605,103 @@ switch ($action) {
    } else { // if it is done
      switch ($action) {
        case "add": case "addform":
-         echo "add STUB <BR>\n";
+         $ptdtadd = $cur_date; // current date of add...
+         $ptdtmod = $cur_date; // current date for mod as well
+
+         // next of kin prepare blob field
+         $ptnextofkin = addslashes ($ptnextofkin);
+
+         // assemble phone numbers
+         $pthphone   = fm_phone_assemble ("pthphone");
+         $ptwphone   = fm_phone_assemble ("ptwphone");
+         $ptfax      = fm_phone_assemble ("ptfax");
+
+         // assemble dates
+         $ptdob      = fm_date_assemble("ptdob");
+         // ptins{start,end} already assembled
+
+         // knock state to upper case
+         $ptstate  = strtoupper ($ptstate); 
+
+         // assemble email
+         if ((strlen($ptemail1)>0) AND (strlen($ptemail2)>3))
+           $ptemail = $ptemail1 . "@" . $ptemail2;
+       
+         // collapse the TEXT variables...
+	 reset($t_vars);while ($i=next($t_vars)) 
+	                  $$i = fm_join_from_array($$i);
+
+         $query = "INSERT INTO patient VALUES (
+           '$ptdtadd',
+           '$ptdtmod',
+           '$ptbal',
+           '$ptbalfwd',
+           '$ptunapp',
+           '$ptdoc',
+           '$ptrefdoc',
+           '$ptpcp',
+           '$ptphy1',
+           '$ptphy2',
+           '$ptphy3',
+           '$ptphy4',
+           '$ptbilltype',
+           '$ptbudg',
+           '$ptlname',
+           '$ptfname',
+           '$ptmname',
+           '$ptaddr1',
+           '$ptaddr2',
+           '$ptcity',
+           '$ptstate',
+           '$ptzip',
+           '$ptcountry',
+           '$pthphone',
+           '$ptwphone',
+           '$ptfax',
+           '$ptemail',
+           '$ptsex',
+           '$ptdob',
+           '$ptssn',
+           '$ptdmv',
+           '$ptdtlpay',
+           '$ptamtlpay',
+           '$ptpaytype',
+           '$ptdtbill',
+           '$ptamtbill',
+           '$ptstatus',
+           '$ptytdchg',
+           '$ptar',
+           '$ptextinf',
+           '$ptdisc',
+           '$ptdol',
+           '$ptdiag1',
+           '$ptdiag2',
+           '$ptdiag3',
+           '$ptdiag4',
+           '$ptid',
+           '$pthistbal',
+           '$ptmarital',
+           '$ptempl',
+           '$ptemp1',
+           '$ptemp2',
+           '$ptguar',
+           '$ptrelguar',
+           '$ptguarstart',
+           '$ptguarend',
+           '$ptins',
+           '$ptinsno',
+           '$ptinsgrp',
+           '$ptinsstart',
+           '$ptinsend',
+           '$ptnextofkin',
+           '$__ISO_SET__',
+           NULL ) ";
 	 break; // end add
        case "mod": case "modform":
+         // collapse the TEXT variables...
+	 reset($t_vars);while ($i=next($t_vars)) 
+	                  if (is_array($$i)) $$i = implode(':', $$i);
+         //$ptins{start,end} already fm_date_assemble'd
 	 $ptdtmod  = $cur_date; // set modification date to current date
 	 $pthphone = fm_phone_assemble ("pthphone");
 	 $ptwphone = fm_phone_assemble ("ptwphone");
@@ -595,16 +762,15 @@ switch ($action) {
 	   "ptempl      ='$ptempl',       ".
 	   "ptemp1      ='$ptemp1',       ".
 	   "ptemp2      ='$ptemp2',       ".
-	   "ptdep       ='$ptdep',        ".
-	   "ptins1      ='$ptins1',       ".
-	   "ptins2      ='$ptins2',       ".
-	   "ptins3      ='$ptins3',       ".
-	   "ptinsno1    ='$ptinsno1',     ".
-	   "ptinsno2    ='$ptinsno2',     ".
-	   "ptinsno3    ='$ptinsno3',     ".
-	   "ptinsgrp1   ='$ptinsgrp1',    ".
-	   "ptinsgrp2   ='$ptinsgrp2',    ".
-	   "ptinsgrp3   ='$ptinsgrp3',    ".
+	   "ptguar      ='$ptguar',       ". // guars and ins's
+	   "ptguarstart ='$ptguarstart',  ". // are collapsed arrays
+	   "ptguarend   ='$ptguarend',    ".
+	   "ptrelguar   ='$ptrelguar',    ".
+	   "ptins       ='$ptins',        ".
+	   "ptinsno     ='$ptinsno',      ".
+	   "ptinsgrp    ='$ptinsgrp',     ".
+	   "ptinsstart  ='$ptinsstart',   ". // are collapsed arrays
+	   "ptinsend    ='$ptinsend',     ".
 	   "ptnextofkin ='$ptnextofkin',  ". // 19990728 next of kin add
 	   "iso         ='iso'            ". // 19991228
 	   "WHERE id='$id'";
@@ -913,19 +1079,6 @@ if ($action=="addform") {
     </SELECT>
     <P>
 
-    <$STDFONT_B>Relation to Guarantor : <$STDFONT_E>
-    <SELECT NAME=\"ptreldep\">
-     <OPTION VALUE=\"S\" ".
-      ( ($ptreldep=="S") ? "SELECTED" : "" ).">Self
-     <OPTION VALUE=\"C\" ".
-      ( ($ptreldep=="C") ? "SELECTED" : "" ).">Child
-     <OPTION VALUE=\"H\" ".
-      ( ($ptreldep=="H") ? "SELECTED" : "" ).">Husband
-     <OPTION VALUE=\"W\" ".
-      ( ($ptreldep=="W") ? "SELECTED" : "" ).">Wife
-     <OPTION VALUE=\"O\" ".
-      ( ($ptreldep=="O") ? "SELECTED" : "" ).">Other
-    </SELECT>
     <P>
 
     <$STDFONT_B>$Next_of_kin_information : <$STDFONT_E><BR>
@@ -967,94 +1120,6 @@ if ($action=="addform") {
 
   //
 
-  $ptdtadd = $cur_date; // current date of add...
-  $ptdtmod = $cur_date; // current date for mod as well
-
-    // next of kin prepare blob field
-  $ptnextofkin = addslashes ($ptnextofkin);
-
-    // assemble phone numbers
-  $pthphone   = fm_phone_assemble ("pthphone");
-  $ptwphone   = fm_phone_assemble ("ptwphone");
-  $ptfax      = fm_phone_assemble ("ptfax");
-
-    // assemble date of birth
-  $ptdob      = fm_date_assemble("ptdob");
-
-    // knock state to upper case
-  $ptstate  = strtoupper ($ptstate); 
-
-   // assemble email
-  if ((strlen($ptemail1)>0) AND (strlen($ptemail2)>3))
-    $ptemail = $ptemail1 . "@" . $ptemail2;
-
-  $query = "INSERT INTO patient VALUES (
-           '$ptdtadd',
-           '$ptdtmod',
-           '$ptbal',
-           '$ptbalfwd',
-           '$ptunapp',
-           '$ptrefdoc',
-           '$ptpcp',
-           '$ptphy1',
-           '$ptphy2',
-           '$ptphy3',
-           '$ptphy4',
-           '$ptbilltype',
-           '$ptbudg',
-           '$ptdoc',
-           '$ptlname',
-           '$ptfname',
-           '$ptmname',
-           '$ptaddr1',
-           '$ptaddr2',
-           '$ptcity',
-           '$ptstate',
-           '$ptzip',
-           '$ptcountry',
-           '$pthphone',
-           '$ptwphone',
-           '$ptfax',
-           '$ptemail',
-           '$ptsex',
-           '$ptdob',
-           '$ptssn',
-           '$ptdmv',
-           '$ptdtlpay',
-           '$ptamtlpay',
-           '$ptpaytype',
-           '$ptdtbill',
-           '$ptamtbill',
-           '$ptstatus',
-           '$ptytdchg',
-           '$ptar',
-           '$ptextinf',
-           '$ptdisc',
-           '$ptdol',
-           '$ptdiag1',
-           '$ptdiag2',
-           '$ptdiag3',
-           '$ptdiag4',
-           '$ptid',
-           '$pthistbal',
-           '$ptmarital',
-           '$ptempl',
-           '$ptemp1',
-           '$ptemp2',
-           '$ptdep',
-           '$ptreldep',
-           '$ptins1',
-           '$ptins2',
-           '$ptins3',
-           '$ptinsno1',
-           '$ptinsno2',
-           '$ptinsno3',
-           '$ptinsgrp1',
-           '$ptinsgrp2',
-           '$ptinsgrp3',
-           '$ptnextofkin',
-           '$__ISO_SET__',
-           NULL ) ";
 
   $result = fdb_query($query);
   if ($debug) {
@@ -1276,120 +1341,6 @@ if ($action=="addform") {
 } elseif ($action=="mod") {
 
    #      M O D I F Y - R O U T I N E
-
-  freemed_display_box_top ("$Modifying $Patient", $page_name);
-
-  echo "
-    <P>
-    <$STDFONT_B>$Modifying ... 
-  ";
-
-  $ptdtmod  = $cur_date; // set modification date to current date
-  $pthphone = fm_phone_assemble ("pthphone");
-  $ptwphone = fm_phone_assemble ("ptwphone");
-  $ptfax    = fm_phone_assemble ("ptfax");
-
-  $ptdob       = fm_date_assemble("ptdob"); // assemble date of birth
-  $ptnextofkin = addslashes ($ptnextofkin); // 19990728 next of kin add
-
-  $ptstate  = strtoupper ($ptstate); // knock state to upper case
-
-  // reassemble email
-  if ((strlen($ptemail1)>1) AND (strlen($ptemail2)>3))
-    $ptemail = $ptemail1 . "@" . $ptemail2;
-
-  $query = "UPDATE patient SET ".
-    "ptdtmod     ='$ptdtmod',      ".
-    "ptdob       ='$ptdob',        ".
-    "ptbal       ='$ptbal',        ".
-    "ptbalfwd    ='$ptbalfwd',     ".
-    "ptunapp     ='$ptunapp',      ".
-    "ptrefdoc    ='$ptrefdoc',     ".
-    "ptpcp       ='$ptpcp',        ".
-    "ptphy1      ='$ptphy1',       ".
-    "ptphy2      ='$ptphy2',       ".
-    "ptphy3      ='$ptphy3',       ".
-    "ptphy4      ='$ptphy4',       ".
-    "ptbilltype  ='$ptbilltype',   ".
-    "ptbudg      ='$ptbudg',       ".
-    "ptdoc       ='$ptdoc',        ".
-    "ptlname     ='$ptlname',      ".
-    "ptfname     ='$ptfname',      ".
-    "ptmname     ='$ptmname',      ".
-    "ptaddr1     ='$ptaddr1',      ".
-    "ptaddr2     ='$ptaddr2',      ".
-    "ptcity      ='$ptcity',       ".
-    "ptstate     ='$ptstate',      ".
-    "ptzip       ='$ptzip',        ".
-    "ptcountry   ='$ptcountry',    ". // 19990728 country add
-    "pthphone    ='$pthphone',     ".
-    "ptwphone    ='$ptwphone',     ".
-    "ptfax       ='$ptfax',        ".
-    "ptemail     ='$ptemail',      ".
-    "ptsex       ='$ptsex',        ".
-    "ptdob       ='$ptdob',        ".
-    "ptssn       ='$ptssn',        ".
-    "ptdmv       ='$ptdmv',        ".
-    "ptdtlpay    ='$ptdtlpay',     ".
-    "ptamtlpay   ='$ptpaytype',    ".
-    "ptstatus    ='$ptstatus',     ".
-    "ptytdchg    ='$ptstatus',     ".
-    "ptar        ='$ptar',         ".
-    "ptextinf    ='$ptextinf',     ".
-    "ptdisc      ='$ptdisc',       ".
-    "ptdol       ='$ptdol',        ".
-    "ptdiag1     ='$ptdiag1',      ".
-    "ptdiag2     ='$ptdiag2',      ".
-    "ptdiag3     ='$ptdiag3',      ".
-    "ptdiag4     ='$ptdiag4',      ".
-    "ptid        ='$ptid',         ".
-    "pthistbal   ='$pthistbal',    ".
-    "ptmarital   ='$ptmarital',    ".
-    "ptempl      ='$ptempl',       ".
-    "ptemp1      ='$ptemp1',       ".
-    "ptemp2      ='$ptemp2',       ".
-    "ptdep       ='$ptdep',        ".
-    "ptins1      ='$ptins1',       ".
-    "ptins2      ='$ptins2',       ".
-    "ptins3      ='$ptins3',       ".
-    "ptinsno1    ='$ptinsno1',     ".
-    "ptinsno2    ='$ptinsno2',     ".
-    "ptinsno3    ='$ptinsno3',     ".
-    "ptinsgrp1   ='$ptinsgrp1',    ".
-    "ptinsgrp2   ='$ptinsgrp2',    ".
-    "ptinsgrp3   ='$ptinsgrp3',    ".
-    "ptnextofkin ='$ptnextofkin',  ". // 19990728 next of kin add
-    "iso         ='iso'            ". // 19991228
-    "WHERE id='$id'";
-
-  $result = fdb_query($query);
-  if ($debug==1) {
-    echo "\n<BR><BR><B>$Query_result :</B><BR>\n";
-    echo $result;
-    echo "\n<BR><BR><B>$Query_string :</B><BR>\n";
-    echo "$query";
-    echo "\n<BR><BR><B>$Actual_query_result :</B><BR>\n";
-    echo "($result)";
-  }
-
-  if ($result) {
-    echo "
-      <B>$Done .</B> : <$STDFONT_E>
-    ";
-  } else {
-    echo ("<B>$Error ($result)</B>\n"); 
-  } // end of error reporting clause
-
-  echo "
-    <P>
-    <CENTER>
-    <A HREF=\"manage.php3?$_auth&id=$id\"
-     ><$STDFONT_B>$Manage $Patient<$STDFONT_E></A>
-    </CENTER>
-    <P>
-  ";
-
-  freemed_display_box_bottom ();
 
 } elseif ($action=="del") {
 

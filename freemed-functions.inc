@@ -105,6 +105,95 @@ function freemed_config_value ($config_var)
   return $_config["c_value"]; // return value
 } // end function freemed_config_value
 
+// function freemed_display_arraylist
+function freemed_display_arraylist ($var_array, $xref_array="")
+{
+  global $STDFONT_B, $STDFONT_E;
+
+  $buffer = ""; // return a buffer
+  if (!is_array($var_array)) // we've been passed an empty array
+    return "";
+  
+  $buffer .= "
+    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=1>
+  ";
+  $first=true;
+  $buffer .= "<TR>";
+  while (list($key,$val)=each($var_array)) { // for each variable
+    if ($first) $main=$val; // first item is index...
+    global $$val; // global all the arrays, remember to
+                  // use ${$foo}[0] for subscripts!
+    $first=false;
+    $buffer .= "
+      <TD ALIGN=CENTER>
+        <$STDFONT_B><B>$key</B><$STDFONT_E>
+      </TD>
+    ";
+  } // while... displaying header
+  $buffer .= "
+      <TD ALIGN=CENTER>
+        <$STDFONT_B>"._("Remove")."<$STDFONT_E>
+      </TD>
+      <TD ALIGN=CENTER>
+        <$STDFONT_B>"._("Modify")." ( "._("None")."
+	<INPUT TYPE=RADIO NAME=\"".$main."mod\" VALUE=\"-1\" CHECKED> ) 
+	<$STDFONT_E>
+      </TD>
+     </TR>
+  ";
+
+  global ${$main."_active"}; // e.g., 'ptins_active', is set outside func
+  // use ${$foo}[0] for arrays!!
+
+  if (!is_array($$main))
+    return ($buffer."
+      <TR><TD COLSPAN=".(count($var_array)+2)." ALIGN=CENTER>
+        <$STDFONT_B>"._("No Items")."<$STDFONT_E>
+      </TD></TR>
+     </TABLE>"); // make sure it's safe if there are no items
+
+  reset($$main);
+  while(list($i,$mainval)=each($$main)) {
+    if (!isset($mainval)) {echo "{[$i]}";continue;} // skip if removed
+    $this_active = ${$main."_active"}[$i]; // is this item active?
+    if ($this_active)
+      $buffer .= "<TR BGCOLOR=".($bar=freemed_bar_alternate_color($bar)).">";
+      
+    reset($var_array); if (is_array($xref_array)) reset($xref_array);
+    while (list($key,$val)=each($var_array)) { // each variable
+      $item_text=${$val}[$i];
+      if (is_array($xref_array)) {
+        list($x_key,$x_val)=each($xref_array);
+	if (strlen($x_val)>0)
+          $item_text=freemed_get_link_field(${$val}[$i],$x_key,$x_val);
+      } // grab the xref if necessary
+      if ($this_active)
+        $buffer .= "
+          <TD ALIGN=CENTER>
+            <$STDFONT_B SIZE=\"-1\">
+	    ".((strlen($item_text)>1) ? $item_text : "&nbsp;")."
+	    <$STDFONT_E>
+          </TD>";
+      $buffer .= "
+        <INPUT TYPE=HIDDEN NAME=\"$val"."[$i]\" VALUE=\"".${$val}[$i]."\">
+      "; // always add the hidden tags!
+    } // while each variable
+    
+    if ($this_active)
+      $buffer .= "
+      <TD ALIGN=CENTER>
+        <INPUT TYPE=CHECKBOX NAME=\"".$main."del[$i]\">
+      </TD>
+      <TD ALIGN=CENTER>
+        <INPUT TYPE=RADIO NAME=\"".$main."mod\" VALUE=\"$i\"> 
+      </TD>
+     </TR>";
+  } // for each item in the stack
+  
+  $buffer .= "</TABLE>";
+  return $buffer;
+} // end function freemed_display_arraylist
+
 // function freemed_display_banner (page description)
 function freemed_display_banner ($_pg_desc="")
 {
@@ -843,70 +932,6 @@ function freemed_display_insco ($param="0")
   return $buffer;
 } // end function freemed_display_insco
 
-// function freemed_display_ptstatus
-//   displays patient statuses selectable in <SELECT>
-//   list with $param selected
-function freemed_display_ptstatus ($param="", $outer_tags="")
-{
-  global $NONE_SELECTED;
-  if (!empty($outer_tags))
-   echo "
-    <SELECT NAME=\"$outer_tags\">
-     <OPTION VALUE=\"0\">$NONE_SELECTED
-   "; // end outer tags...
-  $result = fdb_query ("SELECT * FROM ptstatus
-                        ORDER BY ptstatusdescrip,ptstatus");
-  while ($r = fdb_fetch_array ($result)) {
-   $ptstatus        = prepare ($r["ptstatus"       ]);
-   $id              =          $r["id"             ] ;
-   echo "
-    <OPTION VALUE=\"$id\" ".
-    ( ($r[id] == $param) ? "SELECTED" : "" ).
-    ">".prepare($r[ptstatusdescrip])." ($ptstatus)
-   ";
-  } // end while
-
-  if (!empty($outer_tags))
-   echo "
-    </SELECT>
-   "; // end outer tags...
-} // end function freemed_display_ptstatus
-
-// function freemed_display_phygroups
-//   displays physician groups selectable in <SELECT>
-//   list with $param selected
-function freemed_display_phygroups ($param="")
-{
-  global $NONE_SELECTED;
-  
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $query = "SELECT * FROM phygroups ORDER BY ".
-     "phygroupname";
-  $result = fdb_query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more docs
-    while ($row=fdb_fetch_array($result)) {
-      $_pg_name = $row["phygroupname"];
-      $_pg_id   = $row["id"];
-
-      if ($debug) {
-        $debug_var = "[$_pg_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
-      echo "
-        <OPTION VALUE=\"$row[id]\" ".
-	( ($param == $row[id]) ? "SELECTED" : "" ).
-        ">".prepare($row[phygroupname])." $debug_var
-      "; // end of actual output
-    } // while there are more results...
-  }
-} // end function freemed_display_phygroups
-
 // function freemed_display_physicians
 //   displays physicians selectable in <SELECT>
 //   list with $param selected
@@ -1059,10 +1084,12 @@ function freemed_display_selectbox ($result, $format, $param="")
   static $count; // count of results
 
   if (!isset($var["$result"])) {
-    $count["$result"] = fdb_num_rows($result);
-    while ($var["$result"][] = fdb_fetch_array($result));
+    if ($result) {
+      $count["$result"] = fdb_num_rows($result);
+      while ($var["$result"][] = fdb_fetch_array($result));
+    } // non-empty result
   } // if we haven't gone through this list yet
-  
+ 
   $buffer = "";
   if ($count["$result"]<1) { 
     $buffer .= _("NONE")."
