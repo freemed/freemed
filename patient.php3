@@ -147,11 +147,15 @@ switch ($action) {
 
      ");
 
-   $ref_phys_r = fdb_query("SELECT * FROM physician WHERE phyref='yes' 
+   $ref_phys_r = fdb_query("SELECT phylname,phyfname,id
+                            FROM physician WHERE phyref='yes' 
                             ORDER BY phylname,phyfname");
-   $int_phys_r = fdb_query("SELECT * FROM physician WHERE phyref='no' 
+   $int_phys_r = fdb_query("SELECT phylname,phyfname,id
+                            FROM physician WHERE phyref='no' 
                             ORDER BY phylname,phyfname");
-   $all_phys_r = fdb_query("SELECT * FROM physician ORDER BY phylname,phyfname");
+   $all_phys_r = fdb_query("SELECT phylname,phyfname,id
+                            FROM physician
+			    ORDER BY phylname,phyfname");
 
    if (!isset($num_other_docs)) { // first time through
      $num_other_docs=0;
@@ -928,14 +932,14 @@ if ($action=="addform") {
   //////////
 
   /////////
+  $int_insco_r = fdb_query (
+    "SELECT insconame,inscocity,inscostate,inscozip FROM insco
+     ORDER BY insconame");
   echo "
     <$STDFONT_B>$Primary_insurance : <$STDFONT_E>
     <SELECT NAME=\"ptins1\">
-  ";
-
-  freemed_display_insco ($ptins1);
-
-  echo "
+  ".freemed_display_selectbox ($int_insco_r,
+    "#insconame# (#inscocity#, #inscostate# #inscozip#)", "ptins1")."
      </SELECT><BR>
     <$STDFONT_B>Primary Insurance Code : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=\"ptinsno1\" SIZE=20 MAXLENGTH=50
@@ -946,11 +950,8 @@ if ($action=="addform") {
 
     <$STDFONT_B>$Secondary_insurance : <$STDFONT_E>
     <SELECT NAME=\"ptins2\">
-  ";
-
-  freemed_display_insco ($ptins2);
-
-  echo "
+  ".freemed_display_selectbox ($int_insco_r,
+    "#insconame# (#inscocity#, #inscostate# #inscozip#)", "ptins2")."
      </SELECT><BR>
     <$STDFONT_B>Secondary Insurance Code : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=\"ptinsno2\" SIZE=20 MAXLENGTH=50
@@ -961,11 +962,8 @@ if ($action=="addform") {
 
     <$STDFONT_B>$Tertiary_insurance : <$STDFONT_E>
     <SELECT NAME=\"ptins3\">
-  ";
-
-  freemed_display_insco ($ptins3);
-
-  echo "
+  ".freemed_display_selectbox ($int_insco_r,
+    "#insconame# (#inscocity#, #inscostate# #inscozip#)", "ptins2")."
      </SELECT><BR>
     <$STDFONT_B>Tertiary Insurance Code : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=\"ptinsno3\" SIZE=20 MAXLENGTH=50
