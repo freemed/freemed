@@ -1,36 +1,38 @@
 <?php
-  # file: lang/PT/call-in.php3.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro: ling/PT/call-in.php3.PT.inc
+  # código: Cristina Bouça <bugsoft@bug-software.com>
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br>
-  # Mod : 19990830
-
-$Call_In              = "Chamada";
-$Add                  = "Adicionar";
-$Adding               = "Adicionando";
-$Clear                = "Limpar";
-$Name                 = "Nome";
-$Last                 = "Sobrenome";
-$First                = "Nome";
-$Middle               = "Segundo nome";
-$Contact_Information  = "Informações de Contato";
-$Home_Phone           = "Fone Residencial";
-$Work_Phone           = "Fone Comercial";
-$Took_Call            = "Recibo da chamada";
-$Date_of_Birth        = "Data de Nascimento";
-$Complaint            = "Mensagem";
-$Facility             = "Local";
-$Physician            = "Médico";
-$Patient_Menu         = "Menu Pacientes";
-$Call_In_Menu         = "Menu Chamadas";
-$Main_Menu            = "Menu Principal";
-$NOT_IMPLEMENTED_YET  = "NÃO IMPLEMENTADO AINDA";
-$Date_of_Call         = "Data da Chamada";
-$Home_Work_Phone      = "Fone Residencial/Comercial";
-$Action               = "Ação";
-$VIEW                 = "VER";
-$BOOK                 = "AGENDA";
+  # Tradução por Cristina Bouça <bugsoft@bug-software.com>
+  # Mod : 20000228
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
+  # lic : GPL
+  # ver : 20000228
 
 
-
+  $Call_In              = "Chamada";
+  $Name                 = "Nome";
+  $Last                 = "Último";
+  $First                = "Primeiro";
+  $Middle               = "Meio";
+  $Contact_Information  = "Informação para contacto";
+  $Home_Phone           = "Telefone de casa";
+  $Work_Phone           = "Telefone do trabalho";
+  $Took_Call            = "Chamar";
+  $Date_of_Birth        = "Data de nascimento";
+  $Complaint            = "Mensagem";
+  $Facility             = "Facilidade";
+  $Physician            = "Cirurgião";
+  $Patient_Menu         = "Menu dos Pacientes";
+  $Call_In_Menu         = "Chamada no Menu";
+  $Main_Menu            = "Menu Principal";
+  $NOT_IMPLEMENTED_YET  = "AINDA NÃO ESTÁ IMPLEMENTADO";
+  $Date_of_Call         = "Data de chamada";
+  $Home_Work_Phone      = "Casa/Trabalho Telefone";
+  $Action               = "Acção";
+  $VIEW                 = "VER";
+  $BOOK                 = "LIVRO";
+  // 19990920
+  $Old                  = "Antigo";
+  $All                  = "Tudo";
+  $Current              = "Actual";
 ?>

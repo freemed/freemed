@@ -1,37 +1,41 @@
 <?php
-  # file: lang/PT/manage.php3.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro: ling/PT/manage.php3.PT.inc
+  # código: Cristina Bouça <bugsoft@bug-software.com>
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br>
+  # Tradução por Cristina Bouça
+  # Modificações por Cristina Bouça
+  # ver : 20000228
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
+  # lic : GPL
+  # ver : 20000228
 
 
-  $Attach_to_Guarantor           = "Anexar Fiador";
-  $Must_select_a_patient         = "Você deve selecionar um paciente.";
-  $Select_Guarantor_to_Attach_to = "Selecionar Fiador para anexação:";
-  $detach                        = "desanexar";
-  $Attach                        = "anexar";
-  $Return_to_Patient_Management  = "Retornar para a administração de Pacientes";
-  $Attaching_Guarantor           = "Anexando Fiador";
-  $Detaching_current_dependants  = "Desligando os atuais dependentes";
-  $lang_done                     = "terminado.";
-  $Manage_Patient                = "Administrar o Paciente";
-  $Select_a_patient              = "Selecionar um paciente";
-  $Patient_Information           = "Informação sobre o paciente";
-  $Modify                        = "Modificar";
-  $Add                           = "Adicionar";
-  $View_Manage                   = "Ver/Administrar";
-  $Prescriptions                 = "Receitas";
-  $Procedures                    = "Processos";
-  $Progress_Notes                = "Apontes Clinicos";
-  $Reports_and_certificates      = "Informes e certificados";  //19990813
-  $Choose                        = "Escolher";                   //19990813
-  $Show_Dependants               = "Ver os Dependentes";
-  $Show_Guarantor                = "Exibir Fiador";
-  $Last_Name                     = "Sobrenome";
-  $All                           = "Todos";
-  $Select_Another_Patient        = "Selecionar outro Paciente";// 19990809
+  $Attach_to_Guarantor           = "Attach para o supervisor";
+  $Must_select_a_patient         = "tem que seleccionar um paciente.";
+  $Select_Guarantor_to_Attach_to = "Seleccione um supervisor para fazer o Attach:";
+  $detach                        = "Retirar";
+  $Attach                        = "Attach";
+  $Return_to_Patient_Management  = "Voltar à manutenção do paciente";
+  $Attaching_Guarantor           = "Attaching do supervisor";
+  $Detaching_current_dependants  = "Retirar as dependências";
+  $lang_done                     = "feito.";
+  $Manage_Patient                = "Manutenção do paciente";
+  $Select_a_patient              = "Seleccione o paciente";
+  $Patient_Information           = "Informação do paciente";
+  $View_Manage                   = "Visualizar/Manter";
+  $Prescriptions                 = "Prescrições";
+  $Procedures                    = "Procedimentos";
+  $Progress_Notes                = "Notas dos Progressos";
+  $Reports_and_certificates      = "Relatórios e certificados";  // 19990813
+  $Choose                        = "Escolha";                    // 19990813
+  $Show_Dependants               = "Mostrar Dependentess";
+  $Show_Guarantor                = "Mostrar Supervisor";
+  $Last_Name                     = "Último Nome";
+  $All                           = "Tudo";
+  $Select_Another_Patient        = "Seleccione outro paciente";
+    // 19990809
   $Appointments                  = "Apontamentos";
-  $Book                          = "Prontuário";
+  $Book                          = "Livro";
   $Patient                       = "Paciente";
-
+  $Show_Today                    = "Mostrar Hoje";
 ?>

@@ -2,7 +2,10 @@ freemed-project
 LANGUAGES file -- supported languages
 (c) 1999 GPL by the freemed-project
 
-Last Modified: 	19991018
+Last Modified: 	2000-02-29
+
+20000229 --
+* added new BR and PT tree information
 
 19991018 --
 * oops! forgot the germans!
@@ -33,6 +36,11 @@ Maintainer:     Stefano Fava (ste@sirius.ccii.unipi.it)
 Name:           Spanish                 Abbreviation: ES
 Maintainer:     Max Klohn (amk@span.ch)
 ======================================================================
-Name:           Portuguese                Abbreviation: PT
+Name:           Portuguese Brazilian    Abbreviation: BR
 Maintainer:     Eduardo SH (edu@icarus.com.br)
+======================================================================
+Name:            Portuguese Standard        Abbreviation: PT
+Maintainer 1:    Cristina Bouça (bugsoft@bug-software.com)
+Maintainer 2:	 Paulo Andrade (paulo@bug-software.com)
+Maintainer 3:	 Marco Pereira (marco@bug-software.com)
 ======================================================================

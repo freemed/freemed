@@ -1,17 +1,23 @@
 <?php
-  # file: lang/PT/index.php3.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro: ling/PT/index.php3.PT.inc
+  # Cristina Bouça <bugsoft@bug-software.com>
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br>
- 
+  # Tradução por Cristina Bouça
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
+  # lic : GPL
+  # ver : 20000228
 
-  $Username                  = "Usuário";
-  $Password                  = "Senha";
-  $Enter_the_database        = "Acessar a  base de dados";
-  $Clear                     = "Limpar";
-  $Language                  = "Idioma";
-  $Default                   = "Padrão";
-  $Facility                  = "Local";
-  $Login                     = "Entrar";
 
+  $Username     = "Nome do utilizador";
+  $Password     = "Password";
+  $Enter_the_database = "Base de dados";
+  $Clear        = "Limpar";
+  $Language     = "Linguagem";
+  $Default      = "Por defeito";
+    // 19990820
+  $Facility     = "Evento";
+  $Login        = "Login";
+    // 19990922
+  $Resume       = "Resumo";
+  $Reset_Resume = "Apagar resumo";
 ?>

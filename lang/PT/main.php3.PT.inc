@@ -1,21 +1,27 @@
 <?php
-  # file: lang/PT/main.php3.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro: ling/PT/main.php3.PT.inc
+  # Cristina Bouça <bugsoft@bug-software.com>
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br>
+  # Tradução por Cristina Bouça
+  # ver : 20000228
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
+  # lic : GPL
+  # ver : 20000228
+
 
   $Main_menu                 = "Menu Principal" ;
-  $Administration_menu       = "Menu de Administração" ;
-  $Billing_functions         = "Faturas" ;
-  $Database_maintenance      = "Configuração da base de dados" ;
-  $Patient_functions         = "Pacientes" ;
+  $Administration_menu       = "Menu administrativo" ;
+  $Billing_functions         = "Funções de pagamento";
+  $Database_maintenance      = "Manutenção da base de dados" ;
+  $Patient_functions         = "Funções dos Pacientes" ;
   $Help_main_menu            = "Ajuda para o menu principal" ;
-  $Logout_of                 = "Sair de" ;
-  $Quickjump                 = "IR PARA" ;
-  $User_level                = "NIVEL DO USUARIO" ;
-  $User_description          = "DESCRIÇÂO" ;
-  $Call_in                   = "Chamadas";
-  $Entry                     = "Nona";
-  $Menu                      = "Menu"; 
-  
+  $Logout_of                 = "Fazer o Logout de" ;
+  $Quickjump                 = "Ir para" ;
+  $User_level                = "Nível do utilizador" ;
+  $User_description          = "Descrição do utilizador" ;
+  $Call_in                   = "Chamada para";
+  $Entry                     = "Entrada";
+  // 19991006
+  $Day_View                  = "Ver Dia (Calendário)";
+  $Week_View                 = "Ver Semana (Calendário)";
 ?>

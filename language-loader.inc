@@ -47,7 +47,8 @@
 	  "IT"=>"IT",
 	  "ES"=>"ES",
 	  "MX"=>"ES",
-	  "BR"=>"PT"
+	  "BR"=>"BR",
+	  "PT"=>"PT"
 	 );
 	  
   $s_lng= strtoupper($default_language); // from global.var.inc

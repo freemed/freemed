@@ -1,16 +1,19 @@
 <?php
-  # file: lang/PT/authenticate.php3.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro: ling/PT/authenticate.php3.PT.inc
+  # código: Cristina Bouça <bugsoft@bug-software.com>
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br>
+  # ver : 20000228
+  # Tradução por Cristina Bouça <bugsoft@bug-software.com>
+  # file : ling/PT/authenticate.php3.PT.inc
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
+  # lic : GPL
+  # ver : 20000228
 
 
-  $Error = "ERROR" ;
-  $Return_to_the_login_screen = "Retornar a tela de autenticação" ;
-  $Incorrect_name_password= "Nome do usuário ou senha incorretos. <BR>
-   No caso desta mensagem aparecer varia vezes, notifique  seu <BR>
-   administrador de sistemas. Por favor anote as circunstâncias em que<BR>
-   esta mensagem aparece, e comunique igualmente seu seu adminisrador de<BR>
-   sistemas. Estas informações serão úteis para sanar o problema." ;
-
+  $Error = "ERRO" ;
+  $Return_to_the_login_screen = "Voltar ao ecran de Login";
+  $Incorrect_name_password= "Você introduziu o nome ou password incorrecta. <BR>
+   Por favor contacte o seu administrador de sistema. Se pensa que esta mensagem é<BR>
+   um erro, por favor tome nota das circunstâncias em que isso<BR>
+   aconteceu, e forneça isso ao seu administrador de sistema." ;
 ?>

@@ -1,37 +1,43 @@
 <?php
-  # file: lang/PT/admin.php3.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro: lang/PT/admin.php3.PT.inc  
+  # tradução : Cristina Bouça <bugsoft@bug-software.com>  
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br>
-  # ver : 19990921
+  # ver : 20000228
+  # file lang/PT/admin.php3.PT.inc  
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
+  # lic : GPL
+  # ver : 20000228
 
-  $No_admin_menu_access 	= "Você nâo tem acesso ao menu de administração" ; 
-  $Icd_code_type 		= "Códigos CIE" ;
-  $Graphics_enhanced 		= "Gráficos" ;
-  $Disabled 			= "inativos" ;
-  $Enabled 			= "ativos" ;
-  $Scheduling_start_time 	= "Inicio do agendamento" ;
-  $Scheduling_end_time 		= "Fim do agendamento" ;
-  $Configure 			= "Configurar" ;
-  $Reset 			= "Reinicializar" ;
-  $Configuration_complete 	= "Fim da configuração" ;
-  $Return_adm_menu 		= "Voltar par o menu de administração" ;
-  $Reinitialize_database 	= "Reinicializar a base de dados" ;
-  $Are_you_sure 		= "Você tem certeza?" ;
-  $Irreversable_process 	= "É um processo irreversivel!" ;
-  $First_initialization 	= "Clique aqui se for a primera inicialização" ;
-  $Continue 			= "Continuar" ;
-  $Cancel 			= "Cancelar" ;
-  $Erasing_old_db 		= "Retornar dados antigos" ;
-  $Error_accessing_sql 		= "Erro durante o acceso a  base de dados SQL" ;
-  $Done 			= "Concluído" ;
-  $Creating_new_db 		= "Criar uma nova base de dados" ;
-  $Creating_tables 		= "Criar tabelas" ;
-  $Administration_menu 		= "Menu de Administração" ;
-  $Update_config 		= "Atualizar configuração" ;
-  $User_maintenance 		= "Configurar  usuarios" ;
-  $Return_main_menu 		= "Voltar par o menu principal" ;
-  $DEFAULT 			= "DEFAULT" ;
-  $SELECTED 			= "SELECTED" ;
-  $Update_Configuration 	= "Atualizar configuração";
+  $No_admin_menu_access = "Não tem acesso ao menu administrativo" ; 
+  $Icd_code_type = "Tipo de código ICD" ;
+  $Graphics_enhanced = "Gráficos" ;
+  $Disabled = "Desactivo" ;
+  $Enabled = "Activo" ;
+  $Scheduling_start_time = "Início do tempo de horário" ;
+  $Scheduling_end_time = "Fim do tempo de horário" ;
+  $Configure = "Configuração" ;
+  $Reset = "Desligar" ;
+  $Configuration_complete = "Configuração completa" ;
+  $Return_adm_menu = "Voltar ao menu administrativo" ;
+  $Reinitialize_database = "Re-inicializar a base de dados" ;
+  $Are_you_sure = "Tem a certeza que quer" ;
+  $Irreversable_process = "Isto é um processo irreversível!" ;
+  $First_initialization = "Verifique aqui se é a primeira inicialização" ;
+  $Continue = "Continuar" ;
+  $Cancel = "Cancelar" ;
+  $Erasing_old_db = "Apagando a base de dados antiga" ;
+  $Error_accessing_sql = "Erro ao aceder à base de dados SQL" ;
+  $Creating_new_db = "Criando uma nova base de dados" ;
+  $Creating_tables = "Criando tabelas" ;
+  $Administration_menu = "Menu administrativo" ;
+  $Update_config = "Actualizar a configuração" ;
+  $User_maintenance = "Manutenção dos utilizadores" ;
+  $Return_main_menu = "Voltar ao menu principal" ;
+  $DEFAULT = "Início";
+    // 19990830
+  $SELECTED = "SELEccionado";
+  $Update_Configuration = "Actualizar a configuração";
+    // 19991007
+  $Calendar_overbooking = "Over-Booking do calendário";
+
 ?>

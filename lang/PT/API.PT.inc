@@ -1,51 +1,105 @@
 <?php
-  # file: lang/PT/API.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro : lang/PT/API.PT.inc
+  # código : Cristina Bouça<bugsoft@bug-software.com>
+  # lic  : GPL
+  # Tradução por Cristina Bouça
+  # ver : 20000228
+  # file : lang/PT/API.PT.inc
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br> 
-  # and Max Klohn <amk@span.ch>
-  # ver : 19990921
+  # ver : 20000228
 
-  $DEBUG_IS_ON = "DEBUG ATIVO";
-  $Return_to_the_Main_Menu = "Voltar para o  menu principal";
-  $Return_to_Previous_Menu = "Voltar para o  menu anterior";
-  $lang_main = "principal"; // alt tag for main menu button
-  $lang_exit = "sair"; // alt tag for logout button
-  $RETURN_TO_MENU          = "VOLTAR PARA O MENU";
-  $ADD                     = "ADICIONAR";
-  $NONE_SELECTED           = "SEM SELEÇÃO";
-  $SELECTED                = "SELECIONADO";
-  $lang_coded_by           = "programado por"; 
-  $NO_RESULT_OF_QUERY      = "SEM RESULTADO PARA A SELEÇÃO";
+
+  $DEBUG_IS_ON = "Verificando erros";
+  $Return_to_the_Main_Menu = "Voltar ao menu principal";
+  $Return_to_Previous_Menu = "Voltar ao menu anterior";
+  $lang_main = "principal"; // alt tag para o menu superior
+  $lang_exit = "exit"; // alt tag para sair do menu superior
+  $RETURN_TO_MENU          = "Voltar ao menu";
+  $NONE_SELECTED           = "Nada foi seleccionado";
+  $SELECTED                = "SELECTED"; // must NOT be translated
+  $lang_coded_by           = "feito por"; 
+  $NO_RESULT_OF_QUERY      = "Nenhum resultado da pesquisa";
   $Entered_incorrect_NamePasswd =
-    "Nome do usuário ou senha incorretos";
+    "Introduziu um nome ou password incorrectos";
   $Possible_Cookies_Have_Expired =
-    "Possivelmente seus cookies expiraram. Por favor<BR>
-     refaça a autenticação, ou  peça para o seu administrador de sistemas<BR>
-     para aumentar o tempo de duração dos cookies.";
-  $Login_Screen            = "Autenticação";
+    "Também é possível que as suas cookies tenham acabado. Por favor<BR>
+     volte a fazer login, ou pergunte ao seu administrador de sistema para incrementar a<BR>
+     o tempo limite dos cookies.";
+  $Login_Screen            = "Menu de Login";
     // 19990824
   $Add                     = "Adicionar";
   $Adding                  = "Adicionando";
-  $Clear                   = "Limpiar";
+  $Clear                   = "Limpar";
     // 19990917
-  $Return_to               = "Retornar para";
-  $Main_Menu               = "Menu Principal";
-  $Modify                  = "Modifica";
+  $Return_to               = "Voltar para";
+  $Main_Menu               = "Menu principal";
+  $Modify                  = "Modificar";
   $Modifying               = "Modificando";
-  $Done                    = "Concluído";
+  $Done                    = "terminou";
   $Menu                    = "Menu";
-  $Deleting                = "Excluíndo";
-  $Update_Delete_Another   = "Modificar/Excluir Outro";
-  $Deleted                 = "Excluído";
-  $Abandon_Addition        = "Abandonar Adicion";
-  $Abandon_Modification    = "Abandonar Modificacion";
-  $Update                  = "Atualizar";
-  $Remove_Changes          = "Excluindo modificações";
-  $Exporting_data          = "Exportando informações";
-  $Export                  = "Exporta";
+  $Deleting                = "Apagando";
+  $Update_Delete_Another   = "Actualizar/Apagar outro";
+  $Deleted                 = "apagado";
+  $Abandon_Addition        = "Acabar adicionar";
+  $Abandon_Modification    = "Acabar mofificação";
+  $Update                  = "Actualizar";
+  $Remove_Changes          = "Apagar Alterações";
+  $Exporting_data          = "Exportando dados";
+  $Export                  = "Exportar";
   $ERROR                   = "ERRO";
-  $Action                  = "Accion";
+  $Action                  = "Acção";
   // 19990920
-  $lang_ALL                = "TODO";
+  $lang_ALL                = "TUDO";
+  // 19990921
+  $lang_ADD                = "ADICIOANR";  
+  $lang_MOD                = "MODIFICAR";
+  $lang_DEL                = "APAGAR";
+  // 19990922
+  $No_Record_Found         = "Não foi encontrado $record_name com a selecção feita.";
+  $lang_back               = "Atrás";
+  // 19990924
+  $lang_HELP               = "AJUDA";
+  $Module                  = "MÓDULO";
+  $Manage_Patient          = "Actualizar Paciente";
+  // 19991005
+  $Week_Of                 = "Semana de";
+  // 19991013
+  $Export_Database         = "Exportar base de dados";
+  // 19991026
+  $Export_Data             = "Exportar dados";
+  // 19991102
+  $lang_months             = array ("", // nulo para 0
+                                    "Jan",
+                                    "Fev",   
+                                    "Mar",
+                                    "Abr",
+                                    "Mai",
+                                    "Jun",
+                                    "Jul",
+                                    "Ago",
+                                    "Set",
+                                    "Out",
+                                    "Nov",
+                                    "Dez" );
+  $lang_days               = array ("", // nulo para 0
+                                    "Dom",
+                                    "Seg",
+                                    "Ter",
+                                    "Qua",
+                                    "Qui",
+                                    "Sex",
+                                    "Sab" ); 
+  // 19991116
+  $midnight                = "meia noite";
+  $noon                    = "noite";
+  // 19991122
+  $Patient                 = "Paciente";
+  $lang_no                 = "não";
+  $lang_yes                = "sim";
+  $lang_go                 = "ir";  
+  $State_Providence        = "Estado/Providência";
+  $Return_to_Menu          = "Voltar para o menu";
+  // 19991201
+  $Post                    = "Post";
 ?>

@@ -1,106 +1,114 @@
 <?php
-  # file: lang/PT/patient.php3.PT.inc
-  # code: jeff b <jeff@univrel.pr.uconn.edu>
+  # ficheiro: ling/PT/patient.php3.PT.inc
+  # código: Cristina Bouça <bugsoft@bug-software.com>
+  # lic : GPL, v2
+  # Translation : Cristina Bouça <bugsoft@bug-software.com>  
   # lic : GPL
-  # Translation by Eduardo SH <edu@icarus.com.br>
+  # ver : 20000228
 
 
-  $record_name                   = "Paciente";  
 
-  $Add                           = "Adicionar";
-  $Dependant                     = "Dependente";
+  $record_name                   = "Paciente";
+
+  $Dependant                     = "Dependentes";
   $Patient                       = "Paciente";
-  $Last_name                     = "Sobrenome";
-  $First_name                    = "Nome";
-  $Middle_name                   = "Segundo nome";
-  $Date_of_birth                 = "Data de Nascimento";
+  $Last_name                     = "Último Nome";
+  $First_name                    = "Primeiro Nome";
+  $Middle_name                   = "Nome do meio";
+  $Date_of_birth                 = "Data de nascimento";
   $YMD                           = "A-M-D";
   $Gender                        = "Sexo";
-  $NONE_SELECTED                 = "SEM SELEÇÂO";
+  $NONE_SELECTED                 = "NENHUM SELECCIONADO";
   $Female                        = "feminino";
   $Male                          = "masculino";
-  $Marital_status                = "Estado Civil";
+  $Transgender                   = "transsexual";
+  $Marital_status                = "Casamento Marietal";
   $Unknown                       = "desconhecido";
-  $Single                        = "solteiro";
+  $Single                        = "single";
   $Married                       = "casado";
   $Divorced                      = "divorciado";
-  $Internal_practice_id          = "Número Interno";
-  $Adress                        = "Endereço";
+  $Internal_practice_id          = "Prática Interna ID";
+  $Address                       = "Morada";
   $Line                          = "Linha";
   $City                          = "Cidade";
-  $State                         = "Estado";
-  $Zip_code                      = "CEP";
+  $State                         = "Concelho";
+  $Zip_code                      = "Código Postal";
   $Country                       = "País";
-  $Home_phone                    = "Fone Residencial";
-  $Work_phone                    = "Fone Comercial";
-  $Fax_number                    = "Fone Fax";
-  $Email_address                 = "E-mail";
-  $Drivers_license               = "Carteira de motorista";
-  $No_state                      = "Sem Estado";
-  $Referring_doctor              = "Médico Responsável";
-  $Primary_care_physician        = "Médico Principal";
+  $Home_phone                    = "Telefone Casa";
+  $Work_phone                    = "Telefone Trabalho";
+  $Fax_number                    = "Número de Fax";
+  $Email_address                 = "Endereço de Email";
+  $Drivers_license               = "Drivers da Licença";
+  $No_state                      = "Nenhum estado";
+  $Referring_doctor              = "Doutor de referência";
+  $Primary_care_physician        = "Tratamento Primário";
   $Other                         = "Outro";
-  $Physician                     = "Médico";
-  $Type_of_billing               = "Tipo de Fatura"; 
-  $Monthly_billing_on_acct       = "cobrança mensal sobre conta";
-  $Statement_billing             = "fatura";
-  $Charge_card_billing           = "cobrança sobre cartão de crédito";
-  $Monthly_budget_amount         = "Presuposto mensal";
-  $In_house_doctor               = "Médico Interno";
-  $Primary_insurance             = "Seguro Primário";
-  $Secondary_insurance           = "Seguro Secundário";
-  $Tertiary_insurance            = "Seguro Terciário";
-  $Discount_percent_if_applic    = "Desconto % (se aplicável)";
-  $Self_insured                  = "Auto assegurado";
-  $Guarantor                     = "Fiador";
-  $Next_of_kin_information       = "Outras Informações";
-  $Employed_presently            = "Empregado Atualmente?";
+  $Physician                     = "Cirurgião";
+  $Type_of_billing               = "Tipo de pagamento"; 
+  $Monthly_billing_on_acct       = "pagamento mensal na conta";
+  $Statement_billing             = "estado do pagamento";
+  $Charge_card_billing           = "alterar tipo de pagamento";
+  $Monthly_budget_amount         = "Montante mensal";
+  $In_house_doctor               = "Na casa do Doutor";
+  $Primary_insurance             = "Primeira instância";
+  $Secondary_insurance           = "Segunda instância";
+  $Tertiary_insurance            = "Terceira instância";
+  $Discount_percent_if_applic    = "Desconto % (se for aplicável)";
+  $Self_insured                  = "assegurado";
+  $Guarantor                     = "Supervisor";
+  $Next_of_kin_information       = "Próxima informação";
+  $Employed_presently            = "Empregado actualmente?";
   $UNKNOWN                       = "DESCONHECIDO";
   $Yes                           = "sim";
   $No                            = "não";
-  $Clear                         = "Limpar";
-  $Adding_patient                = "Adicionando  Paciente";
+  $Adding_patient                = "Adicionando paciente";
   $ADDING                        = "Adicionando";
-  $Query_result                  = "Resultado da Pesquisa";
-  $Query_string                  = "Veriável da Pesquisa";
-  $Actual_query_result           = "Resultado atual da pesquisa";    
-  $Done                          = "Concluído";  
+  $Query_result                  = "Resultado da pesquisa";
+  $Query_string                  = "Pesquisa";
+  $Actual_query_result           = "Resultado actual da pesquisa";    
   $Error                         = "ERRO";    
-  $Return_to_the                 = "Retornar para";
-  $Patient_menu                  = "Menu de Pacientes";
-  $Main_menu                     = "Menu Principal";
-  $Modify                        = "Modificar";
+  $Return_to_the                 = "Voltar para";
+  $Patient_menu                  = "Menu dos pacientes";
+  $Main_menu                     = "Menu principal";
   $MODIFYING                     = "Modificando";
-  $Please_use_the_MODIFY_form    = "Por favor use o menu MODIFICAR para esta opção";
+  $Please_use_the_MODIFY_form    = "Por favor use o menu MODIFICAR para MODIFICAR um código";
   $Result                        = "RESULTADO";
-  $Book_an_appointment           = "Tomar nota";
+  $Book_an_appointment           = "Marque um apontamento";
   $Date                          = "Data";
-  $Of_entry                      = "da Entrada";
-  $Of_last_mod                   = "da última Modificação";
-  $Update                        = "Atualizar";
-  $Remove_changes                = "Excluindo modificações";
-  $Manage                        = "Administrar";
-  $Deleting                      = "Excluindo";
-  $Deleted                       = "Excluido";
-  $Select_another                = "Selecionar Outro";
-  $Patients_meeting_criteria     = "Pacientes que correspondem ao critério";
-  $Action                        = "Ação";
-  $MOD                           = "MOD";
-  $DEL                           = "EXC";
-  $NEWDEP                        = "NOVDEP";
-  $DEPS                          = "DEPS";
-  $GUA                           = "FIA";
-  $MANAGE                        = "CLIN";
-  $No_patients_found_with_that   = "Não há Pacientes com estes critérios";
+  $Of_entry                      = "de entrada";
+  $Of_last_mod                   = "da última alteração";
+  $Update                        = "Actualizar";
+  $Remove_changes                = "Apagar alterações";
+  $Manage                        = "Manter";
+  $Select_another                = "Seleccione outro";
+  $Patients_meeting_criteria     = "Critério de encontro dos Pacientes";
+  $Action                        = "Acção";
+  $NEWDEP                        = "Nova dep";
+  $DEPS                          = "DEP";
+  $GUA                           = "GUA";
+  $MANAGE                        = "MANTER";
+  $No_patients_found_with_that   = "Não foram encontrados Pacientes na selecção feita";
   $PATIENTS                      = "Pacientes";
-  $In_system                     = "no  Sistema";
-  $No_patients                   = "Nenhum Paciente";
+  $In_system                     = "Sem sistema";
+  $No_patients                   = "Sem Pacientes";
   $Ppl                           = "Paciente(s)";
   $One                           = "Um";
-  $By_name                       = "Por Nome";
-  $Patients_field_search         = "Campo de Busca de Paciente(s)"; 
-  $Social_security_number        = "Número de Seguro Social";
-  $Patient_account_number        = "Número da Conta do Paciente";
-  $Show_all                      = "Exibir todos";
-  $Dependants                    = "Dependentes";  
+  $By_name                       = "Por nome";
+  $Patients_field_search         = "Campo de pesquisa de pacientes"; 
+  $Social_security_number        = "Número de segurança social";
+  $Patient_account_number        = "Número de contribuinte do paciente";
+  $Show_all                      = "Mostrar Tudo";
+  $Contains                      = "Contém";
+  $Find                          = "encontrar";
+  $Searching_for                 = "Procurando por";
+  $Last_names                    = "Últimos Nomes";
+  $All_Patients                  = "Todos os pacientes";
+  $Dependants                    = "Dependentes";
+    // 19990823
+  $Separated                     = "separados";
+    // 19990830
+  $Call_In_Menu                  = "Menu de chamada";
+    // 19990923
+  $Current_Patient		 = "Paciente Actual"; 
+  $CONTAINS			 = "contém";        
 ?>

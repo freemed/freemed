@@ -1,5 +1,6 @@
 <?php
-  # file: lang/PT/index.php3
+  # file: lang/EN/index.php3
+  # note: removes prying eyes from english language directory
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   # lic : GPL
 
