@@ -65,6 +65,10 @@ class FreeBBillingTransport extends BillingModule {
 				return $this->reports();
 				break;
 
+			case 'display_report':
+				return $this->display_report();
+				break;
+
 			// By default, we show the form with information
 			// regarding what is going on.
 			default:
@@ -73,7 +77,6 @@ class FreeBBillingTransport extends BillingModule {
 		}
 	} // end method transport
 
-	
 	function billing ( ) {
 		global $type;
 		extract ($_REQUEST);
@@ -313,7 +316,10 @@ class FreeBBillingTransport extends BillingModule {
 
 	function menu () {
 		$buffer .= "
-		<table border=\"0\">
+		<div class=\"section\">
+		".__("FreeB Billing System")."
+		</div>
+		<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
 
 		<tr>
 			<td class=\"DataHead\" width=\"15%\">".__("Function")."</td>
@@ -345,22 +351,100 @@ class FreeBBillingTransport extends BillingModule {
 	} // end method menu
 
 	function reports ( ) {
-		// This is all a horrible hack, and should be managed by XMLRPC
-		// calls in future. - Jeff
 		$buffer = '';
-		$dir = opendir('/usr/share/freeb/public');
-		while ($filename = readdir($dir)) {
-			if ( ($filename != '.') and
-					($filename != '..') and
-					($filename != 'CVS') ) {
 
-				$buffer .= "<a href=\"/freeb/".
-					urlencode($filename) . "\">".
-					prepare($filename) . "</a><br/>\n";
-			}
+		$freeb = CreateObject('FreeMED.FreeB_v1');
+		$reports = $freeb->_call('FreeB.Report.list', array(
+			CreateObject('PHP.xmlrpcval', 'report', 'string')
+			), false);
+
+		$buffer .= "<div class=\"section\">".__("FreeB Results and Logs")."</div>\n";
+		//print "<br/<hr/>reports = "; print_r($reports); print "<hr/>\n";
+		$buffer .= "<table border=\"0\" cellspacing=\"0\" ".
+			"width=\"75%\" cellpadding=\"2\">\n".
+			"<tr>\n".
+			"<td class=\"DataHead\">".__("Results")."</td>\n".
+			"<td class=\"DataHead\">".__("Logs")."</td>\n".
+			"</tr>\n".
+			"<tr><td valign=\"top\">\n";
+		foreach ($reports AS $report) {
+			$buffer .= "<a href=\"".page_name()."?".
+				"module=".$_REQUEST['module']."&".
+				"type=".$_REQUEST['type']."&".
+				"action=".$_REQUEST['action']."&".
+				"billing_action=display_report&".
+				"file_type=report&".
+				"report=".urlencode($report) . "\" ".
+				"target=\"_view\">".
+				prepare($report) . "</a><br/>\n";
 		}
+		$buffer .= "</td><td valign=\"top\">\n";
+
+		// Get log years
+		$years = $freeb->_call('FreeB.Report.log_years');
+		//print "<br/><hr/>"; print_r($years); print "<hr/>";
+		$selected_year = ( isset($_REQUEST['year']) ?
+			$_REQUEST['year'] : date('Y') );
+		foreach ($years AS $this_year) {
+			$buffer .= "<a href=\"".page_name()."?".
+				"module=".$_REQUEST['module']."&".
+				"type=".$_REQUEST['type']."&".
+				"action=".$_REQUEST['action']."&".
+				"billing_action=reports&".
+				"year=".urlencode($this_year) . "\" ".
+				">".prepare($this_year)."</a><br/>\n";
+			if ($this_year == $selected_year) {
+				$freeb = CreateObject('FreeMED.FreeB_v1');
+				$logs = $freeb->_call('FreeB.Report.list', array(
+					CreateObject('PHP.xmlrpcval', 'log', 'string'),
+					CreateObject('PHP.xmlrpcval', $this_year, 'string')
+					), false);
+				foreach ($logs AS $log) {
+					$buffer .= "&nbsp;&nbsp; - ".
+						"<a href=\"".page_name()."?".
+						"module=".$_REQUEST['module']."&".
+						"type=".$_REQUEST['type']."&".
+						"action=".$_REQUEST['action']."&".
+						"billing_action=display_report&".
+						"report=".urlencode($log)."&".
+						"file_type=log&".
+						"year=".urlencode($this_year)."\" ".
+						"target=\"_view\">".
+						prepare($log)."</a><br/>\n";
+				}
+			} // is selected year
+		} // end looping through years
+		$buffer .= "</td></tr></table>\n";
 		return $buffer;
 	} // end method reports
+
+	function display_report ( ) {
+		$buffer = '';
+
+		$freeb = CreateObject('FreeMED.FreeB_v1');
+		switch ($_REQUEST['file_type']) {
+			case 'report':
+			$param = array (
+				CreateObject('PHP.xmlrpcval', 'report', 'string'),
+				CreateObject('PHP.xmlrpcval', $_REQUEST['report'], 'string')
+				);
+			break; // report
+
+			case 'log':
+			$param = array (
+				CreateObject('PHP.xmlrpcval', 'log', 'string'),
+				CreateObject('PHP.xmlrpcval', $_REQUEST['year'], 'string'),
+				CreateObject('PHP.xmlrpcval', $_REQUEST['report'], 'string')
+				);
+			break; // log
+		}
+		//print "param = "; print_r($param); print "<br/>\n";
+		$report = $freeb->_call('FreeB.Report.get', $param, false);
+
+		//Header('Content-type: text/plain');
+		print $report;
+		die();
+	} // end method display_report
 
 	function process ( $single = NULL ) {
 		$buffer .= __("Submitting data to FreeB server")." ... <br/>\n"; 		
@@ -411,6 +495,9 @@ class FreeBBillingTransport extends BillingModule {
 				$my_target,
 				__("FreeB billing run sent")
 			);
+			/*
+			$mark = $claimlog->mark_billed ( $this_billkey );
+			*/
 			return $buffer;
 		}
 
@@ -464,6 +551,9 @@ class FreeBBillingTransport extends BillingModule {
 				$my_target,
 				__("FreeB billing run sent")
 			);
+			/*
+			$mark = $claimlog->mark_billed ( $this_billkey );
+			*/
 
 			// DEBUG: Show what we got
 		//	print "DEBUG: "; print_r($result); print "<br/>\n";
