@@ -565,10 +565,13 @@ class NSF
 		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
 
 		$ba0[taxid] = "";
-		if ($default_facility != 0)
+		if ($SESSION["default_facility"] != 0)
 		{
 			$fac = 0;
-			$fac = freemed::get_link_rec($default_facility,"facility");
+			$fac = freemed::get_link_rec(
+				$SESSION["default_facility"],
+				"facility"
+			);
 			if (!$fac)
 				echo "ERROR - Failed getting default facility<BR>";
 			$ba0[posname] = $this->CleanChar($fac[psrname]);
