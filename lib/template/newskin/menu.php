@@ -115,6 +115,7 @@ $page_history = page_history_list();
 		menu_item(__("New"), "patient.php?action=addform", 2);
 	}
 	menu_item(__("Select"), "patient.php", 2);
+	menu_item(__("Schedule"), "book_appointment.php", 2);
 	if ($patient_history) {
 		menu_item(__("Configure"),
 			"manage.php?id=".(

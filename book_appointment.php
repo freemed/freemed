@@ -4,6 +4,7 @@
 
 $page_name = "book_appointment.php";
 include ("lib/freemed.php");
+$page_title = __("Book Appointment");
 
 //----- Login/authenticate
 freemed::connect ();
@@ -410,7 +411,7 @@ function process () {
 	} else {
 		$page_title = __("Move Appointment");
 	}
-	$display_buffer .= "<div ALIGN=\"CENTER\">".
+	$buffer .= "<div ALIGN=\"CENTER\">".
 		( $id ? __("Moving") : __("Booking") )." ... ";
 
 	// Travel kludge modifications
@@ -459,14 +460,14 @@ function process () {
 		);
 		$move = true;
 	}
-	if ($result) { $display_buffer .= __("done")."."; }
-	 else        { $display_buffer .= __("ERROR");    }
+	if ($result) { $buffer .= __("done")."."; }
+	 else        { $buffer .= __("ERROR");    }
 
 	$display_buffer .= " </div> <p/> <div ALIGN=\"CENTER\">\n";
 	if (!$travel) {
 		if ($type != "temp") {
 			$refresh = "manage.php?id=".urlencode($patient);
-			$display_buffer .= "
+			$buffer .= "
 			<a href=\"manage.php?id=$patient\"
 			class=\"button\"
 			>".__("Manage Patient")."</a>
@@ -475,7 +476,7 @@ function process () {
 		} else {
 			$refresh = "call-in.php?action=display&id=".
 				urlencode($patient);
-			$display_buffer .= "
+			$buffer .= "
 			<a href=\"call-in.php?action=display&id=$patient\"
 			class=\"button\"
 			>".__("Manage Patient")."</a>
@@ -491,6 +492,7 @@ function process () {
 		$refresh = "module_loader.php?module=groupcalendar&selected_date=".
 			urlencode($_REQUEST['selected_date']);
 	}
+	return $buffer;
 } // end function process
 
 // We split this into a subroutine so we can call it more than once
