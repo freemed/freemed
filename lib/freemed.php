@@ -150,6 +150,7 @@ include_once ("lib/containers.php");      // class containers
 include_once ("lib/language-loader.php"); // external language loader
 include_once ("lib/macros.php");          // macros/contants
 include_once ("lib/xml.php");             // XML import/export routines
+include_once ("lib/wddx.php");            // WDDX exchange routines
 
   // ****************** INITIALIZE SQL CONNECTION ******************
 
