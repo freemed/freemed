@@ -757,39 +757,8 @@ class freemed {
 		
 		// Make sure template functions are included
 		include_once('lib/template/'.$GLOBALS['template'].'/lib.php');
-	
-		// empty buffer
-		$buffer = "";
 
-		// top of box
-		$buffer .= "
-    <div ALIGN=\"CENTER\">
-    <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"5\" WIDTH=\"100%\">
-     <tr CLASS=\"patientbox\"
-	onClick=\"window.location='manage.php?id=".
-		urlencode($patient_object->id)."'; return true;\"
-      ><td VALIGN=\"CENTER\" ALIGN=\"LEFT\">
-      <a HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
-       CLASS=\"patientbox\" NAME=\"patientboxlink\"><b>".
-       $patient_object->fullName().
-      "</b></a>
-     </td><td ALIGN=\"CENTER\" VALIGN=\"CENTER\">
-      ".( (!empty($patient_object->local_record["ptid"])) ?
-          $patient_object->idNumber() : "(no id)" )."
-     </td><td ALIGN=\"CENTER\" VALIGN=\"CENTER\">
-	".template::patient_box_iconbar($patient_object->id)."
-     </td><td VALIGN=\"CENTER\" ALIGN=\"RIGHT\">
-      <font COLOR=\"#cccccc\">
-       <small>".$patient_object->age()." old, DOB ".
-        $patient_object->dateOfBirth()."</small>
-      </font>
-     </td></tr>
-    </table>
-    </div>
-		";
-  
-		// return buffer
-		return $buffer;
+		return template::patient_box($patient_object);	
 	} // end function freemed::patient_box
 
 	// Function: freemed::patient_widget
