@@ -557,7 +557,7 @@ class ProgressNotes extends EMRModule {
      $pnotes_E = str_replace (' />', '/>', $pnotes_E);
      $pnotes_R = str_replace (' />', '/>', $pnotes_R);
 
-     if (!empty($pnotes_S)) $display_buffer .= "
+      if (strlen($pnotes_S) > 7) $display_buffer .= "
        <TABLE BGCOLOR=\"#ffffff\" BORDER=1><TR BGCOLOR=\"$darker_bgcolor\">
        <TD ALIGN=\"CENTER\"><B>".__("<u>S</u>ubjective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
@@ -566,7 +566,7 @@ class ProgressNotes extends EMRModule {
 		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_S))) )."
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_O)) $display_buffer .= "
+      if (strlen($pnotes_O) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<U>O</U>bjective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
@@ -575,7 +575,7 @@ class ProgressNotes extends EMRModule {
 		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_O))) )."
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_A)) $display_buffer .= "
+      if (strlen($pnotes_A) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<U>A</U>ssessment")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
@@ -584,7 +584,7 @@ class ProgressNotes extends EMRModule {
 		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_A))) )."
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_P)) $display_buffer .= "
+      if (strlen($pnotes_P) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>".__("<u>P</u>lan")."</B></FONT></CENTER></TD></TR>
@@ -603,7 +603,7 @@ class ProgressNotes extends EMRModule {
 		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_I))) )."
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_E)) $display_buffer .= "
+      if (strlen($pnotes_E) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<u>E</u>ducation")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
@@ -612,7 +612,7 @@ class ProgressNotes extends EMRModule {
 		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_E))) )."
        </TD></TR></TABLE> 
        ";
-      if (!empty($pnotes_R)) $display_buffer .= "
+      if (strlen($pnotes_R) > 7) $display_buffer .= "
       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<u>R</u>x")."</B></TD></TR>
 		".( eregi("<[A-Z/]*>", $pnotes_R) ?
@@ -671,6 +671,35 @@ class ProgressNotes extends EMRModule {
 		);
 		$display_buffer .= "\n<p/>\n";
 	} // end function ProgressNotes->view()
+
+	// Method: noteForDate
+	//
+	//	Determines if a progress note was entered for a particular
+	//	appointment.
+	//
+	// Parameters:
+	//
+	//	$patient - ID for patient record
+	//
+	//	$date - Date to be queried
+	//
+	// Returns:
+	//
+	//	Boolean, whether or not a note exists.
+	//
+	function noteForDate ( $patient, $date ) {
+		$q = "SELECT COUNT(id) AS my_count ".
+			"FROM ".$this->table_name." WHERE ".
+			"pnotespat = '".addslashes($patient)."' AND ".
+			"pnotesdt = '".addslashes($date)."'";
+		$res = $GLOBALS['sql']->query($q);
+		$r = $GLOBALS['sql']->fetch_array($res);
+		if ($r['my_count'] > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	} // end method noteForDate
 
 	// Print formatting
 	function _print_mapping ($TeX, $id) {

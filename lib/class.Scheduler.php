@@ -246,6 +246,8 @@ class Scheduler {
 	function event_calendar_print ( $event, $short = false ) {
 		global $sql;
 
+		$cache = freemed::module_cache();
+
 		// Get event
 		$my_event = freemed::get_link_rec($event, "scheduler");
 
@@ -270,6 +272,9 @@ class Scheduler {
 				urlencode($my_event['id'])."&".
 				"type=".$my_event['caltype']."\" ".
 			">".__("Move")."</a>".
+			( module_function('progressnotes', 'noteForDate',
+					array($my_event['calpatient'], $my_event['caldateof'])) ?
+			"&nbsp;[".__("NOTE")."] " : "" ).
 			//" ( phy = ".$my_event['calphysician']." ) ".
 			( !empty($my_event['calprenote']) ?
 			"<br/>&nbsp;&nbsp;<i>".
