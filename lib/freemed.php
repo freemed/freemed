@@ -32,11 +32,6 @@ include_once('lib/settings.php');
 //----- Fax subsystem
 $gifhome = PHYSICAL_LOCATION . '/data/fax/incoming';
 
-//----- Gettext and language settings
-
-if (strlen($u_lang)==2) $language=$u_lang;
-  else $language=DEFAULT_LANGUAGE;
-
 define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
 
 $debug=false;  // true=debug info on, false=debug info off
@@ -108,7 +103,6 @@ if (!defined('SESSION_DISABLE')) {
 		'authdata',
 		'current_patient',
 		'ipaddr',
-		'language',
 		'page_history',
 		'page_history_name',
 		'patient_history'
@@ -123,6 +117,18 @@ if (!defined('SESSION_DISABLE')) {
 		// Protected namespace:
 		'_FreeMED' => 'lib/class.*.php'
 	));
+
+	//----- Gettext and language settings
+	if (isset($_POST['__language'])) {
+		// Handle template language changes
+		$_SESSION['language'] = $_POST['__language'];
+	} elseif ($_SESSION['language']) {
+		// Pull from cookie (do nothing)
+	} else {
+		// Use the default
+		$_SESSION['language'] = DEFAULT_LANGUAGE;
+	}
+	$GLOBALS['freemed']['__language'] = $_SESSION['language'];
 
 	// Load GettextXML routines (most non-session things don't need it).
 	include_once ("lib/i18n.php");

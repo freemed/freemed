@@ -94,7 +94,7 @@ class LanguageRegistry {
 		return html_form::select_widget(
 			$varname,
 			array_merge(
-				array(__("Default Language") => $GLOBALS['language']),
+				array(__("Default Language") => DEFAULT_LANGUAGE),
 				$this->registry
 			),
 			$_options

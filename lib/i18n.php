@@ -6,7 +6,7 @@
 LoadObjectDependency('PHP.GettextXML');
 
 GettextXML::bindtextdomain('FreeMED', './locale');
-GettextXML::setlanguage($_COOKIE['language'] ? $_COOKIE['language'] : DEFAULT_LANGUAGE);
+GettextXML::setlanguage($GLOBALS['freemed']['__language']);
 
 // Set basic text domain
 GettextXML::textdomain('freemed');
