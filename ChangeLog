@@ -8,6 +8,11 @@ freemed project changelog
   - added lib/error_handler.php with hooks in freemed.php
   - set freemed_display_box_bottom to check for a box, as well as top, so
     that *those* errors are fixed
+  - patient.php: fixed "Manage This Patient" link, and prettied up
+    SQL output
+  - lib/freemed.php: now needs phpwebtools 0.2.1, and version kept in
+    seperate define
+  - reports.php: prettier output (added font tags)
 
 * Thu Mar 15 2001 fforest
   - lib/macros  new define for COPAY transaction

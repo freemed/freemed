@@ -33,7 +33,7 @@ $template = "
 	<TR>
 	<TD ALIGN=RIGHT>#icon#</TD>
 	<TD ALIGN=LEFT><A HREF=\"module_loader.php?$_auth&module=#class#\"".
-	">#name#</A></TD>
+	"><$STDFONT_B>#name#<$STDFONT_E></A></TD>
 	</TR>
 ";
 

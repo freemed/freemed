@@ -494,26 +494,28 @@ switch ($action) {
          break; // end mod
      } // end switch for action (done .. actual action)
      echo "
-      <CENTER><$STDFONT_B>".( (($action=="mod") OR ($action=="modform")) ?
-             _("Modifying") : _("Adding") )." ... ";
+      <CENTER><$STDFONT_B><B>".( (($action=="mod") OR ($action=="modform")) ?
+             _("Modifying") : _("Adding") )." ...</B> ";
      $result = $sql->query($query);
      if ($result) echo _("Done");
      else echo _("Error");
+     echo "<BR>\n";
 	 if ( ($result) AND ($action=="addform") AND (empty($ptid)) )
 	 {
-		echo "<BR>Adding Patient ID<BR>";
+		echo "<B>Adding Patient ID ...</B> ";
 		$pid = $sql->last_record($result);
 		$patid = PATID_PREFIX.$pid;
-		$result = $sql->query("UPDATE patient SET ptid='$patid' WHERE id='$pid'");
+		$result = $sql->query("UPDATE patient SET ptid='".addslashes($patid)."' ".
+			WHERE id='".addslashes($pid)."'");
      	if ($result) echo _("Done");
      	else echo _("Error");
-		echo "<BR>";
+		echo "<BR>\n";
 		
 	 }
      echo "
       <$STDFONT_E>
       <P><$STDFONT_B>
-      <A HREF=\"manage.php?$_auth&id=$id\">
+      <A HREF=\"manage.php?$_auth&id=$pid\">
       "._("Manage This Patient")."
       </A><$STDFONT_E>
       
