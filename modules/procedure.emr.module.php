@@ -82,7 +82,7 @@ class procedureModule extends freemedEMRModule {
 			$been_here = 1;
 		}
 
-		$phys_query = "SELECT * FROM physician WHERE phyref='no' ".
+		$phys_query = "SELECT * FROM physician WHERE phyref!='yes' ".
 					  "ORDER BY phylname,phyfname";
 		$phys_result = $sql->query($phys_query);
 
