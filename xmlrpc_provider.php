@@ -2,6 +2,10 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.3  2002/08/17 14:59:40  rufustfirefly
+ // Updated XML-RPC services to scan lib/xmlrpc/ for additional functions.
+ // Removed old kruft.
+ //
  // Revision 1.2  2002/08/06 14:11:11  rufustfirefly
  // XMLRPC services now working with basic authentication and methods
  //
@@ -25,6 +29,14 @@ unset ($XMLRPC_METHODS);
 
 //----- Register services
 include_once ("lib/xmlrpc_services.php");
+
+//----- Register lib/xmlrpc/ services
+$dir = dir("lib/xmlrpc/");
+while ($script = $dir->read()) {
+	if (preg_match("/\.[Pp][Hh][Pp]/", $script)) {
+		include_once ("lib/xmlrpc/".$script);
+	}
+}
 
 //----- Check for authentication
 $headers = getallheaders(); $authed = false;

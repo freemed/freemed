@@ -2,6 +2,10 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.2  2002/08/17 14:59:41  rufustfirefly
+ // Updated XML-RPC services to scan lib/xmlrpc/ for additional functions.
+ // Removed old kruft.
+ //
  // Revision 1.1  2001/12/14 16:35:41  rufustfirefly
  // renamed from soap_* to xmlrpc_* (since it's really XMLRPC, not SOAP)
  //
@@ -11,68 +15,6 @@
 
 //----- Unset server methods
 unset($XMLRPC_METHODS);
-
-//----- Internal function
-define ('XMLRPC_SCALAR', 1);
-define ('XMLRPC_ARRAY',  2);
-function xmlrpc_decode_parameter ( $params, $type=XMLRPC_SCALAR ) {
-	static $this_pointer, $this_params;
-
-	// If there is no pointer, start at the beginning (if this is the same)
-	if (!isset($this_pointer) or ($this_params != $params))
-		$this_pointer = 0;
-
-	// Pull in local params
-	$this_params = $params;
-
-	// Pull parameter object into temporary storage
-	$temporary = $params->getParam($this_pointer);
-
-	// Increment the pointer for next time
-	$this_pointer++;
-
-	// Check what we have to return
-	switch ($type) {
-		// By default, return scalar values
-		case XMLRPC_SCALAR:
-		default:
-			return $temporary->scalarval();
-	} // end function switch
-} // end function decode_parameter
-
-// boolean rpc_authenticate ( username, password )
-function rpc_authenticate ( $params ) {
-	global $sql;
-
-	// Decode parameters
-	//$username = xmlrpc_decode_parameter($params);
-	$_username = $params->getParam(0);
-	$username = $_username->scalarVal();
-	//$password = xmlrpc_decode_parameter($params);
-	$_password = $params->getParam(1);
-	$password = $_password->scalarVal();
-
-	// Perform the query for username and password
-	$query = $sql->query("SELECT * FROM user ".
-		"WHERE username='".addslashes($username)."' AND ".
-		"userpassword='".addslashes($password)."'"
-	);
-	
-	// Build a value and return it
-	return new xmlrpcresp(
-		new xmlrpcval($sql->results($query), "boolean")
-	);
-} // end function rpc_authenticate
-$XMLRPC_METHODS["freemed.authenticate"] = array (
-	"function" => "rpc_authenticate",
-	"signature" => array (
-		$xmlrpcBoolean,
-		$xmlrpcString,
-		$xmlrpcString),
-	"docstring" =>
-		"Authenticates a username/password pair against a ".
-		"FreeMED installation."
-);
 
 // array rpc_capability ( void )
 //   This function is a clone of IMAP's CAPABILITY function,
@@ -101,5 +43,49 @@ $XMLRPC_METHODS["freemed.capability"] = array (
 );
 
 // TODO: Implement module pull for functions (??????.rpc.module.php, perhaps)
+
+// Internal function for preparing raw values for XML-RPC transport
+function rpc_prepare ($value) {
+	return xmlrpc_php_encode(stripslashes($value));
+}
+
+// Internal function for registering methods with XML-RPC server
+function rpc_register ($method, $doc='') {
+	global $xmlrpc_server, $XMLRPC_METHODS;
+	$func = str_replace(".", "_", $method);
+	$XMLRPC_METHODS[$method] = array(
+		'function'  => $func,
+		'docstring' => $doc
+	);
+}
+
+//----- XMLRPC Function Definitions ----------------------------------------
+
+//----- EMRi Namespace
+
+function EMRi_Information_auth($params) {
+	// Resplit headers for basic auth information
+	$headers = getallheaders();
+	if (ereg('Basic', $headers['Authorization'])) {
+		// Parse headers
+		$tmp = $headers['Authorization'];
+		$tmp = ereg_replace(' ', '', $tmp);
+		$tmp = ereg_replace('Basic', '', $tmp);
+		$auth = base64_decode(trim($tmp));
+		list ($user, $pass) = split(':', $auth);
+	}
+
+	// Create struct to return
+	$val = new xmlrpcval();
+	$val->addStruct(array(
+		"user" => xmlrpc_php_encode($user),
+		"pass" => xmlrpc_php_encode($pass)
+	));
+	return new xmlrpcresp($val);
+} rpc_register("EMRi.Information.auth");
+
+function EMRi_Information_hostname($params) {
+	return new xmlrpcresp(new xmlrpcval(trim(`hostname`), "string"));
+} rpc_register("EMRi.Information.hostname");
 
 ?>
