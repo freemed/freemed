@@ -110,11 +110,16 @@ define (__LANGUAGE_LOADER_INC__, true);
   // if there is no $lang variable or whatever present (error handling)
   if (strlen($s_lng) != 2)  $s_lng = $language;
 
-  // actual language loader part
-  if (file_exists("lang/$s_lng/API.$s_lng.inc"))
-    include ("lang/$s_lng/API.$s_lng.inc");
-  if (file_exists("lang/$s_lng/$me.$s_lng.inc"))
-    include ("lang/$s_lng/$me.$s_lng.inc");
+  // old language loader
+  //if (file_exists("lang/$s_lng/API.$s_lng.inc"))
+  //  include ("lang/$s_lng/API.$s_lng.inc");
+  //if (file_exists("lang/$s_lng/$me.$s_lng.inc"))
+  //  include ("lang/$s_lng/$me.$s_lng.inc");
+
+  // gettext bindings
+  putenv ("LANG=".strtolower($s_lng));
+  bindtextdomain (PACKAGENAME, LOCALEDIR);
+  textdomain (PACKAGENAME);
 
 } // end checking for __LANGUAGE_LOADER_INC__
 
