@@ -19,6 +19,7 @@ class CptMaintenance extends MaintenanceModule {
 	var $record_name = "CPT Codes";
 	var $table_name = "cpt";
 	var $order_fields = "cptcode";
+	var $widget_hash = "##cptcode## ##cptnameint##";
 
 	var $variables = array (
 		"cptcode",
