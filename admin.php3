@@ -708,6 +708,8 @@ if ($action=="cfgform") {
     pnotesdtadd    DATE,
     pnotesdtmod    DATE,
     pnotespat      INT UNSIGNED,
+    pnotesdescrip  VARCHAR(100),
+    pnotesdoc      INT UNSIGNED,
     pnoteseoc      TEXT,
     pnotes_S       TEXT,
     pnotes_O       TEXT,

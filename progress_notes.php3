@@ -12,7 +12,7 @@
 
  freemed_open_db ($LoginCookie); // authenticate
  freemed_display_html_top ();
- freemed_display_banner ();
+ $this_user = new User ($LoginCookie);
 
  if ($patient<1) {
    freemed_display_box_top (_($record_name)." :: "._("ERROR"));
@@ -27,28 +27,31 @@
 
  switch ($action) { // master action switch
    case "addform": case "modform":
-     switch ($action) { // internal switch
-       case "addform":
-        break; // end addform
-       case "modform":
-        if (($id<1) OR (strlen($id)<1)) {
-          freemed_display_box_top (_($record_name)." :: "._("ERROR"));
-          echo "
-            <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
-          ";
-          freemed_display_box_bottom ();
-          DIE("");
-        }
-	if ($been_here<1) {
-          $r = freemed_get_link_rec ($id, "pnotes");
-  	  extract ($r);
-	  $been_here=1;
-	} // 
-        break; // end modform
-     } // end internal switch
-     freemed_display_box_top ("$record_name $Entry", $page_name,
-      "manage.php3?id=$patient");
-     $pnotesdt     = $cur_date;
+     if (!$been_here) {
+      switch ($action) { // internal switch
+        case "addform":
+         if ($this_user->isPhysician()) // check if we are a physician
+ 	  $pnotesdoc = $this_user->getPhysician(); // if so, set as default
+         $pnotesdt     = $cur_date;
+         break; // end addform
+        case "modform":
+         if (($id<1) OR (strlen($id)<1)) {
+           freemed_display_box_top (_($record_name)." :: "._("ERROR"));
+           echo "
+             <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
+           ";
+           freemed_display_box_bottom ();
+           DIE("");
+         }
+         $r = freemed_get_link_rec ($id, "pnotes");
+  	 extract ($r);
+         break; // end modform
+      } // end internal switch
+      $been_here = 1;
+     } // end checking if been here
+
+     freemed_display_box_top (( (($action=="addform") or ($action=="add")) ?
+       _("Add") : _("Modify") )." "._($record_name));
 
      $this_patient = new Patient ($patient);
 
@@ -64,6 +67,17 @@
        array ("pnoteseoc", date_vars("pnotesdt")),
        form_table (
         array (
+	 _("Provider") =>
+	   freemed_display_selectbox (
+            fdb_query ("SELECT * FROM physician ORDER BY phylname,phyfname"),
+	    "#phylname#, #phyfname#",
+	    "pnotesdoc"
+	   ),
+	   
+         _("Description") =>
+	  "<INPUT TYPE=TEXT NAME=\"pnotesdescrip\" SIZE=25 MAXLENGTH=100
+	    VALUE=\"".prepare($pnotesdescrip)."\">\n",
+	   
          _("Related Episode(s)") =>
            freemed_multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
                                   "eocdtlastsimilar FROM eoc WHERE ".
@@ -71,7 +85,8 @@
                                   "eocdescrip:eocstartdate:eocdtlastsimilar",
                                   "pnoteseoc",
                                   $pnoteseoc,
-                                  false), 
+                                  false),
+				  
          _("Date") => fm_date_entry("pnotesdt") 
 	 )
         )
@@ -187,6 +202,8 @@
            '$pnotesdtadd',
            '$pnotesdtmod',
            '".addslashes($patient)."',
+	   '".addslashes($pnotesdescrip)."',
+	   '".addslashes($pnotesdoc)."',
            '".addslashes(sql_squash($pnoteseoc))."',
            '".addslashes($pnotes_S)."',
            '".addslashes($pnotes_O)."',
@@ -249,24 +266,113 @@
      freemed_display_box_bottom ();
      break;
 
-   case "view": case "display":
+   case "add":
+     freemed_display_box_top (_("Adding")." "._($record_name), $page_name, 
+       "manage.php3?id=$patient");
+     echo "
+       <$STDFONT_B><B>"._("Adding")." ... </B>
+     ";
+       // preparation of values
+     $pnotesdtadd = $cur_date;
+     $pnotesdtmod = $cur_date;
+     $pnotesdt  = fm_date_assemble("pnotesdt");
+
+       // actual addition
+     $query = "INSERT INTO pnotes VALUES (
+       '$pnotesdt',
+       '$pnotesdtadd',
+       '$pnotesdtmod',
+       '".addslashes($patient)."',
+       '".addslashes(sql_squash($pnoteseoc))."',
+       '".addslashes($pnotes_S)."',
+       '".addslashes($pnotes_O)."',
+       '".addslashes($pnotes_A)."',
+       '".addslashes($pnotes_P)."',
+       '".addslashes($pnotes_I)."',
+       '".addslashes($pnotes_E)."',
+       '".addslashes($pnotes_R)."',
+       '$__ISO_SET__',
+       NULL ) "; // actual add query
+     $result = fdb_query ($query);
+     if ($debug) echo "(query = '$query') ";
+     if ($result)
+       echo " <B> "._("done").". </B><$STDFONT_E>\n";
+     else
+       echo " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B><$STDFONT_E>\n";
+     echo "
+       <BR><BR>
+       <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+       <B>|</B>
+       <A HREF=\"$page_name?$_auth&patient=$patient\"
+        ><$STDFONT_B>"._($record_name)."<$STDFONT_E></A>
+       </CENTER>
+       <BR>
+     ";
+     freemed_display_box_bottom ();
+     break;
+
+   case "mod":
+     freemed_display_box_top (_("Modifying")." "._($record_name));
+     echo "
+       <B><CENTER><$STDFONT_B>"._("Modifying")." ... <$STDFONT_E></B>
+     ";
+     $query = "UPDATE pnotes SET
+       pnotespat      = '".addslashes($patient)."',
+       pnotesdescrip  = '".addslashes($pnotesdescrip)."',
+       pnotesdoc      = '".addslashes($pnotesdoc)."',
+       pnoteseoc      = '".addslashes(sql_squash($pnoteseoc))."',
+       pnotesdt       = '".addslashes(fm_date_assemble("pnotesdt"))."',
+       pnotesdtmod    = '".addslashes($cur_date)."',
+       pnotes_S       = '".addslashes($pnotes_S)."',
+       pnotes_O       = '".addslashes($pnotes_O)."',
+       pnotes_A       = '".addslashes($pnotes_A)."',
+       pnotes_P       = '".addslashes($pnotes_P)."',
+       pnotes_I       = '".addslashes($pnotes_I)."',
+       pnotes_E       = '".addslashes($pnotes_E)."',
+       pnotes_R       = '".addslashes($pnotes_R)."',
+       iso            = '$__ISO_SET__'
+       WHERE id='$id'";
+     $result = fdb_query ($query);
+     if ($debug) echo "query = \"$query\", result = \"$result\"<BR>\n";
+     if ($result) echo "<B><$STDFONT_B>"._("done").".<$STDFONT_E>";
+      else echo "<B><$STDFONT_B>"._("ERROR")."<$STDFONT_E>";
+     echo "
+       </CENTER></B>
+       <P>
+       <CENTER>
+        <A HREF=\"manage.php3?$_auth&id=$patient\"
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+        <B>|</B>
+        <A HREF=\"$page_name?$_auth&patient=$patient\"
+         ><$STDFONT_B>"._("View/Modify")." "._($record_name)."<$STDFONT_E></A>
+        <BR>
+        <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"
+         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
+       </CENTER>
+     ";
+     freemed_display_box_bottom ();
+     break;
+
+   case "display":
      if (($id<1) OR (strlen($id)<1)) {
        freemed_display_box_top (_($record_name)." :: "._("ERROR"));
        echo "
          <$HEADERFONT_B>"._("Specify Notes to Display")."<$HEADERFONT_E>
          <P>
          <CENTER><A HREF=\"$page_name?$_auth&patient=$patient\"
-          ><$STDFONT_B>$record_name $Menu<$STDFONT_E></A> |
+          ><$STDFONT_B>"._("back")."<$STDFONT_E></A> |
           <A HREF=\"manage.php3?$_auth&id=$patient\"
           ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
          </CENTER>
        ";
        freemed_display_box_bottom ();
        freemed_display_html_bottom ();
+       DIE("");
      }
       // if it is legit, grab the data
      $r = freemed_get_link_rec ($id, "pnotes");
-     extract ($r);
+     if (is_array($r)) extract ($r);
      $pnotesdt_formatted = substr ($pnotesdt, 0, 4). "-".
                            substr ($pnotesdt, 5, 2). "-".
                            substr ($pnotesdt, 8, 2);
@@ -429,8 +535,9 @@
      // in case of emergency, break glass -- default shows all things from
      // specified patient...
 
-     $query = "SELECT * FROM pnotes WHERE (pnotespat='".addslashes($patient)."')
-        ORDER BY pnotesdt";
+     $query = "SELECT * FROM pnotes ".
+              "WHERE (pnotespat='".addslashes($patient)."') ".
+              "ORDER BY pnotesdt";
      $result = fdb_query ($query);
      //$rows = fdb_num_rows ($result);
 
@@ -446,7 +553,7 @@
        "progress_notes.php3",
        array (
          "Date"        => "pnotesdt",
-	 "Description" => "pnotesdesc"
+	 "Description" => "pnotesdescrip"
        ), // array
        array (
          "",
