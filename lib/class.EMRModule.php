@@ -90,6 +90,23 @@ class EMRModule extends BaseModule {
 	//
 	var $summary_order_by = 'id';
 
+	// Variable: $this->rpc_field_map
+	//
+	//	Specifies the format of the XML-RPC structures returned by
+	//	the FreeMED.DynamicModule.picklist method. These are
+	//	passed as key => value, where key is the target name of the
+	//	structure item and value is the name of the SQL field. "id"
+	//	is passed as "id" by default, as <$this->patient_field> is
+	//	passed as "patient". If this is not defined,
+	//	FreeMED.DynamicModule.picklist will fail for the target
+	//	module.
+	//
+	// Example:
+	//
+	//	$this->rpc_field_map = array ( 'last_name' => 'ptlname' );
+	//
+	var $rpc_field_map;
+
 	// contructor method
 	function EMRModule () {
 		// Check for patient, if so, then set _ref appropriately
@@ -106,6 +123,9 @@ class EMRModule extends BaseModule {
 		}
 		if (!empty($this->widget_hash)) {
 			$this->_SetMetaInformation('widget_hash', $this->widget_hash);
+		}
+		if (!empty($this->rpc_field_map)) {
+			$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
 		}
 
 		// Call parent constructor
@@ -353,13 +373,16 @@ class EMRModule extends BaseModule {
 
 		if (is_array($_param)) {
 			foreach ($_param AS $k => $v) {
-				global ${$k};
-				${$k} = $v;
+				global ${$k}; ${$k} = $v;
+				$_REQUEST[$k] = $v;
 			}
 		}
 
-		$result = $sql->query (
-			$sql->insert_query (
+		$this->_preadd($_param);
+		$this->{get_class($this)}();
+
+		$result = $GLOBALS['sql']->query (
+			$GLOBALS['sql']->insert_query (
 				$this->table_name,
 				$this->variables
 			)
@@ -367,7 +390,7 @@ class EMRModule extends BaseModule {
 
 		if ($result) {
 			$this->message = __("Record added successfully.");
-			if (is_array($_param)) { return true; }
+			if (is_array($_param)) { return $GLOBALS['sql']->last_record($result); }
 		} else {
 			$this->message = __("Record addition failed.");
 			if (is_array($_param)) { return false; }
@@ -380,6 +403,7 @@ class EMRModule extends BaseModule {
 			$refresh = "manage.php?id=".urlencode($patient);
 		}
 	} // end function _add
+	function _preadd ( $param = NULL ) { }
 
 	// function del
 	// - delete function
@@ -803,46 +827,73 @@ class EMRModule extends BaseModule {
 	function xml_generate ($patient) { return ""; } // stub 
 
 	// ----- XML-RPC Functions -----------------------------------------
-	function picklist ($patient) {
+
+	// Method: picklist
+	//
+	// Parameters:
+	//
+	//	$criteria - Hash of criteria information. If this is to
+	//	be patient specific, 'patient' must be passed with the
+	//	patient id number.
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	// See Also:
+	//	<$this->rpc_field_map>
+	//
+	function picklist ($criteria) {
 		global $sql;
 
-		// Check for access violation from user
-		$user_id = $GLOBALS['__freemed']['basic_auth_id'];
+		if (is_array($criteria) and $criteria['patient']>0) {
+			$patient = $criteria['patient'];
+		}
 
-		if (!freemed::check_for_access($patient, $user_id)) {
-			// TODO: Set to return XML-RPC error
-			return false;
+		if (!is_array($criteria)) {
+			$c[] = $this->patient_field." = '".addslashes($criteria)."'";
+			// Check for access violation from user
+			$user_id = $GLOBALS['__freemed']['basic_auth_id'];
+	
+			if (!freemed::check_for_access($patient, $user_id)) {
+				// TODO: Set to return XML-RPC error
+				return false;
+			}
+		} else {
+			foreach ($criteria AS $k => $v) {
+				if ($k == 'patient') {
+					$c[] = $this->patient_field." = '".addslashes($v)."'";
+				} else {
+					$c[] = "LOWER(".addslashes($k).") LIKE '%'".addslashes($v)."%'";
+				}
+			}
 		}
 
 		$result = $sql->query(
 			"SELECT * FROM ".$this->table_name." ".
-			"WHERE ".$this->patient_field."='".
-				addslashes($patient)."' ".
-			"ORDER BY ".$this->order_fields
+			"WHERE ".join(' AND ', $c)." ".
+			( $this->order_fields ? "ORDER BY ".$this->order_fields : "" )
 		);
-
-		while ($r = $sql->fetch_array($result)) {
-			if (!(strpos($this->display_format, '##') === false)) {
-				$displayed = '';
-				$split = explode('##', $this->display_format);
-				foreach ($split as $_k => $_v) {
-					if (!($_k & 1)) {
-						$displayed .= $_v;
-					} else {
-						$displayed .= prepare($r[$_v]);
-					}
-				}
-			} else {
-				// Assume single field if no '##'s
-				$displayed = stripslashes($r[$this->display_format]);
-			}
-
-			// Add to the hash
-			$results["$displayed"] = $r['id'];
-		}
 		
-		return $results;
-	} // end method EMRModule->picklist
+		if (!$GLOBALS['sql']->results($result)) {
+			return CreateObject('PHP.xmlrpcresp',
+				CreateObject('PHP.xmlrpcval', 'none', 'string')
+			);
+		}
+
+		return rpc_generate_sql_hash (
+			$this->table_name,
+			array_merge (
+				$this->rpc_field_map,
+				array (
+					'id' => 'id',
+					'patient' => $this->patient_field
+				)
+			),
+			" WHERE ".join(' AND ', $c)." ".
+			( $this->order_fields ? "ORDER BY ".$this->order_fields : "" )
+		);
+	} // end method picklist
 
 	// Method: widget
 	//
@@ -871,7 +922,7 @@ class EMRModule extends BaseModule {
 			"( ".$this->patient_field.
 				" = '".addslashes($patient)."') ".
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).
-			( $this->order_field ? "ORDER BY ".$this->order_field : "" );
+			( $this->order_fields ? "ORDER BY ".$this->order_fields : "" );
 		$result = $GLOBALS['sql']->query($query);
 		$return[__("NONE SELECTED")] = "";
 		while ($r = $GLOBALS['sql']->fetch_array($result)) {

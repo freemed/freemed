@@ -240,10 +240,10 @@ class MaintenanceModule extends BaseModule {
 		}
 
 		// If we're an XML-RPC process, need to re-call the
-		// constructor ...
-		//if ($GLOBALS['XMLRPC_SERVER']) { 
+		// constructor, as well as execute optional _preadd for
+		// specific things that have to be done beforehand ...
+		$this->_preadd($_param);
 		$this->{get_class($this)}();
-		//}
 
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->insert_query (
@@ -262,6 +262,7 @@ class MaintenanceModule extends BaseModule {
 		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _add
+	function _preadd ( $params = NULL ) { }
 
 	// Method: add
 	//
@@ -522,7 +523,7 @@ class MaintenanceModule extends BaseModule {
 				array ( 'id' => 'id' )
 			),
 			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
-			'ORDER BY '.$this->order_field
+			' ORDER BY '.$this->order_field
 		);
 	} // end method picklist
 
