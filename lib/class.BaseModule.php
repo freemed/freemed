@@ -47,6 +47,11 @@ class BaseModule extends module {
 		freemed_open_db ();
 		$page_name = _($this->MODULE_NAME);
 
+		// Check for existance of separate "record_name"
+		if (!isset($this->record_name)) {
+			$this->record_name = _($this->MODULE_NAME);
+		}
+
 		// Globalize record_name and page_title
 		if (page_name() == $this->page_name) {
 			$GLOBALS['record_name'] = $this->record_name;
