@@ -32,6 +32,13 @@ class ChargesGraph extends GraphModule {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
+		// Check for gd
+		if (!function_exists('imagecreate')) {
+			$display_buffer .= 
+			__("The PHP gd extension must be installed for this report to work.")."<br/>\n";
+			return false;
+		} // end gd check
+
 		// Assemble ...
 		$sqlcharges = implode(",",$CHARGE_TYPES);
 

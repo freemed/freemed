@@ -25,6 +25,13 @@ class AcntPaidGraph extends GraphModule {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
+		// Check for gd
+		if (!function_exists('imagecreate')) {
+			$display_buffer .= 
+			__("The PHP gd extension must be installed for this report to work.")."<br/>\n";
+			return false;
+		} // end gd check
+
 		$start_dt = fm_date_assemble("start_dt");
 		$end_dt = fm_date_assemble("end_dt");
 	
