@@ -127,7 +127,7 @@ class Patient {
 
   function insuranceSelection ($no_parameters = "") {
     $returned_string = "";
-    for ($i=0;$i<=2;$i++) {
+    for ($i=0;$i<=(count($this->insco));$i++) {
      $current = $this->insco[$i];
      if (is_object ($current)) {
       $returned_string .= "
@@ -140,7 +140,8 @@ class Patient {
 
   function isDependent ($no_parameters = "") {
     if ($is_callin) return false;  // if they are a callin, no information
-    return ($this->ptdep != 0);
+    return (!empty($this->ptdep));
+    //return ($this->ptdep != 0);
   } // end function Patient->isDependent
 
   function isEmployed ($no_parameters = "") {
