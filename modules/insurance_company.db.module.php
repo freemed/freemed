@@ -89,7 +89,7 @@ class InsuranceCompany extends MaintenanceModule {
 				NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH);
 
 		// Create billing connection for target and format selects
-		$freeb = CreateObject('FreeMED.FreeB_v1');
+		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
 
 	if (!$book->been_here()) {
     switch ($action) {
@@ -191,16 +191,16 @@ class InsuranceCompany extends MaintenanceModule {
       $inscomod, false),
 
 	__("Default Paper Billing Format") =>
-	html_form::select_widget('inscodefformat', $freeb->FormatList()),
+	html_form::select_widget('inscodefformat', $remitt->ListOptions('Render', 'XSLT')),
 
 	__("Default Paper Billing Target") =>
-	html_form::select_widget('inscodeftarget', $freeb->TargetList()),
+	html_form::select_widget('inscodeftarget', $remitt->ListPlugins('Transport')),
 
 	__("Default Electronic Billing Format") =>
-	html_form::select_widget('inscodefformate', $freeb->FormatList()),
+	html_form::select_widget('inscodefformate', $remitt->ListOptions('Render', 'XSLT')),
 
 	__("Default Electronic Billing Target") =>
-	html_form::select_widget('inscodeftargete', $freeb->TargetList())
+	html_form::select_widget('inscodeftargete', $remitt->ListPlugins('Transport'))
 
 		))
 	);

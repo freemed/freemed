@@ -10,9 +10,10 @@
 class Remitt {
 
 	var $ref; // references hash
+	var $_cache; // result cache
 	var $_connection; // XMLRPC connection
 
-	function Remitt ( $server ) {
+	function Remitt ( $server = '127.0.0.1' ) {
 		$this->protocol = 'http';
 		$port = freemed::config_value('remitt_port'); 
 		if (!$port) { $port = '7688'; }
@@ -52,6 +53,77 @@ class Remitt {
 		} // end switch status
 	} // end method GetStatus
 
+	// Method: ListOptions
+	//
+	//	Wrapper for Remitt.Interface.ListOptions
+	//
+	// Parameters:
+	//
+	//	$type - Plugin type (Render, Translation, Transport)
+	//
+	//	$plugin - Name of the plugin to query
+	//
+	//	$media - (optional) Electronic or Paper. If neither is
+	//	specified, defaults to all media forms.
+	//
+	// Returns:
+	//
+	//	Array of available options for the specified plugin
+	//
+	function ListOptions ( $type, $plugin, $media = NULL ) {
+		$this->_connection->SetCredentials(
+			$_SESSION['remitt']['sessionid'],
+			$_SESSION['remitt']['key']
+		);
+
+		if (!isset($this->_cache['ListOptions'][$type][$plugin])) {
+			$this->_cache['ListOptions'][$type][$plugin] = $this->_call(
+				'Remitt.Interface.ListOptions',
+				array(
+					CreateObject('PHP.xmlrpcval', $type, 'string'),
+					CreateObject('PHP.xmlrpcval', $plugin, 'string')
+				)
+			);
+		}
+
+		// Process into nice form for select widgets
+		foreach ($this->_cache['ListOptions'][$type][$plugin] AS $k => $v) {
+			if (($media == NULL) or ($v['Media'] == $media)) {
+				$r[$v['Description']] = $k;
+			}
+		}
+		return $r;
+	} // end method ListOptions
+			
+	// Method: ListPlugins
+	//
+	//	Wrapper for Remitt.Interface.ListPlugins
+	//
+	// Parameters:
+	//
+	//	$type - Plugin type (Render, Translation, Transport)
+	//
+	// Returns:
+	//
+	//	Array of available plugins
+	//
+	function ListPlugins ( $type ) {
+		$this->_connection->SetCredentials(
+			$_SESSION['remitt']['sessionid'],
+			$_SESSION['remitt']['key']
+		);
+
+		if (!isset($this->_cache['ListPlugins'][$type])) {
+			$this->_cache['ListPlugins'][$type] = $this->_call(
+				'Remitt.Interface.ListPlugins',
+				array(
+					CreateObject('PHP.xmlrpcval', $type, 'string')
+				)
+			);
+		}
+		return $this->_cache['ListPlugins'][$type];
+	} // end method ListPlugins
+			
 	// Method: Login
 	//
 	//	Logs into the Remitt server, and stores authentication
@@ -783,6 +855,7 @@ class Remitt {
 				$method
 			);
 		}
+		if ($debug) { print_r($message); }
 
 		// If we're debugging, we set the debug flag
 		$this->_connection->setDebug ( $debug );
@@ -793,6 +866,7 @@ class Remitt {
 			0,
 			$this->protocol
 		);
+		if ($debug) { print_r($response); }
 
 		// Deserialize response
 		return $response->deserialize();
