@@ -264,7 +264,7 @@ if ($action=="cfgform") {
     # here, to prevent problems, we ask the user to check that they
     # REALLY want to...
 
-  echo _("Are you sure you want to reinitialize the database?\n");
+  echo _("Are you sure you want to reinitialize the database?")."\n";
   echo "<BR><U><B>"._("This is an IRREVERSIBLE PROCESS!")."</B></U><BR>\n";
 
   echo "<BR><CENTER>\n";
@@ -299,13 +299,13 @@ if ($action=="cfgform") {
     echo "<$STDFONT_B>"._("Erasing old database")."... ";
     fdb_drop_db($database) OR
       DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
-    echo "<B>"._("Done")."</B><$STDFONT_E><BR>\n";
+    echo "<B>"._("done")."</B><$STDFONT_E><BR>\n";
   }
 
   echo "<$STDFONT_B>"._("Creating new database")."... ";
   fdb_create_db($database) OR
     DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
-  echo "<B>"._("Done")."</B><$STDFONT_E><BR>\n";
+  echo "<B>"._("done")."</B><$STDFONT_E><BR>\n";
 
   echo "<$STDFONT_B><UL>"._("Creating tables")."... \n";
 
@@ -1138,7 +1138,7 @@ if ($action=="cfgform") {
   if (freemed_import_stock_data("insmod"))
     echo "<I>("._("Stock Insurance Modifiers").")</I> \n";
 
-  echo "</UL><B>"._("Done").".</B><$STDFONT_E><BR>\n";
+  echo "</UL><B>"._("done").".</B><$STDFONT_E><BR>\n";
   
   // now generate "return code" so that we can get back to the
   // admin menu... or perhaps skip that... ??
