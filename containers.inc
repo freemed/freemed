@@ -1,13 +1,17 @@
 <?php
- # file: containers.inc
- # desc: class containers for objects used by freemed ... to avoid any
- #       problems with repetitive database access
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: containers.inc
+ // desc: class containers for objects used by freemed ... to avoid any
+ //       problems with repetitive database access
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
 // check to see if global vars is loaded...
 if (empty($packagename))
   DIE("global.var.inc has not been loaded before containers.inc -- fatal");
+
+if (!defined (__CONTAINERS_INC__)) {
+
+define (__CONTAINERS_INC__, true);
 
 // class InsuranceCompany
 
@@ -222,5 +226,7 @@ class User {
   } // end function isPhysician
 
 } // end class User
+
+} // end checking for __CONTAINERS_INC__
 
 ?>

@@ -1,9 +1,13 @@
 <?php  
- # file: language-loader.inc
- # desc: language loader for freemed
- # code: Ergin Soysal, MD (soysal@pleksus.net.tr)
- #       minor mods from jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: language-loader.inc
+ // desc: language loader for freemed
+ // code: Ergin Soysal, MD (soysal@pleksus.net.tr)
+ //       minor mods from jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
+
+if (!defined (__LANGUAGE_LOADER_INC__)) {
+
+define (__LANGUAGE_LOADER_INC__, true);
 
 # Created to allow multilingual support
 # 1. if you call a file with lang parameter:
@@ -111,4 +115,7 @@
     include ("lang/$s_lng/API.$s_lng.inc");
   if (file_exists("lang/$s_lng/$me.$s_lng.inc"))
     include ("lang/$s_lng/$me.$s_lng.inc");
+
+} // end checking for __LANGUAGE_LOADER_INC__
+
 ?>

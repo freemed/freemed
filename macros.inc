@@ -1,10 +1,12 @@
 <?php
-  # file: macros.inc
-  # note: macros for commonly used constants
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL, v2
+ // file: macros.inc
+ // note: macros for commonly used constants
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
-  $__MACROS__ = true;   // we have loaded macros.inc
+if (!defined(__MACROS_INC__)) {
+
+define (__MACROS_INC__, true);
 
   // *****************************
   //    payment related macros
@@ -25,5 +27,7 @@
   define (TRANSFER,             6);
   define (WITHHOLD,             7);
   define (DEDUCTABLE,           8);
+
+} // end checking for __MACROS_INC__
 
 ?>

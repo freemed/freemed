@@ -1,18 +1,20 @@
 <?php
-  # file: global.var.inc
-  # note: global variables for entire freemed code base
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL, v2
-  # mod : 2000-07-17
+ // file: global.var.inc
+ // note: global variables for entire freemed code base
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
+ // mod : 2000-07-25
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
   // eliminate needless typing...
 
+if (!defined(__GLOBAL_VAR_INC__)) {
+
     // these variables you should not touch
   $packagename="freemed";		// package name
   $coded_by="jeff b";			// coded by tag
-  $version="0.2pre20000717";            // current version number
+  $version="0.2pre20000725";            // current version number
   $bugs_email="code_bugs@test.pr.uconn.edu";	// coder email...
   $bugs_address="http://www.freemed.org/keystone/visitor.php3";
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
@@ -112,8 +114,6 @@
   $DEL          = "<$STDFONT_B SIZE=-1>DEL<$STDFONT_E>";
   $brackets     = "[]";
 
-  $__global_var__ = true;
-
   //if ($default_facility>0) {
   // SetCookie ("default_facility", $default_facility, time()+$_cookie_expire); 
 
@@ -130,8 +130,10 @@
   include ("iso-set.inc");             // ISO set handler
   include ("containers.inc");          // class containers
   include ("language-loader.inc");     // external language loader
-  if (!$__MACROS__)
-    include ("macros.inc");            // macros/contants
+  include ("macros.inc");              // macros/contants
 
   // ***************************************************************
+
+} // end checking for __GLOBAL_VAR_INC__
+
 ?>

@@ -9,7 +9,10 @@
  // lic : GPL, v2
  // ver : 2000-04-19
 
-$__freemed_functions__ = true;
+
+if (!defined(__FREEMED_FUNCTIONS_INC__)) {
+
+define (__FREEMED_FUNCTIONS_INC__, true);
 
 // function freemed_bar_alternate_color
 function freemed_bar_alternate_color ($cur_color="")
@@ -1034,7 +1037,6 @@ function freemed_display_phystatus ($param="")
 function freemed_display_physicians ($param="", $intext="")
 {
   global $NONE_SELECTED;
-
   $buffer = "";
 
   // list doctors in SELECT/OPTION tag list, and
@@ -2143,5 +2145,7 @@ function fph ($this_phrase) {
 
   return fm_prep($phrase[$this_phrase]);
 } // end function fph
+
+} // end checking for __FREEMED_FUNCTIONS_INC__
 
 ?>

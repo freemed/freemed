@@ -1,10 +1,14 @@
 <?php
- # file: freemed-mail-functions.inc
- # desc: functions/classes to allow inline mailing
- # code: Sascha Schumann <sascha@schumann.cx>,
- #       Tobias Ratschiller <tobias@dnet.it>,
- #       jeff b <jeff@univrel.pr.uconn.edu>
- # lic : GPL, v2
+ // file: freemed-mail-functions.inc
+ // desc: functions/classes to allow inline mailing
+ // code: Sascha Schumann <sascha@schumann.cx>,
+ //       Tobias Ratschiller <tobias@dnet.it>,
+ //       jeff b <jeff@univrel.pr.uconn.edu>
+ // lic : GPL, v2
+
+if (!defined (__FREEMED_MAIL_FUNCTIONS_INC__)) {
+
+define (__FREEMED_MAIL_FUNCTIONS_INC__, true);
 
  // Class mail_message
  // formerly: Class mime_mail
@@ -115,4 +119,7 @@ class mail_message {
     $mail->send();
                                       
   */
+
+} // end checking for __FREEMED_MAIL_FUNCTIONS_INC__
+
 ?>
