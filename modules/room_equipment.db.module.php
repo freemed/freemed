@@ -34,7 +34,7 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
 			case "addform":
 				break;
 			case "modform":
-				$r = freemed_get_link_rec ($id, $db_name);
+				$r = freemed::get_link_rec ($id, $db_name);
 				extract ($r);
 				break;
 		} // end switch

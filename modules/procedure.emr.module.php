@@ -86,7 +86,7 @@ class procedureModule extends freemedEMRModule {
 		$phys_result = $sql->query($phys_query);
 
 		if (empty ($procdt)) $procdt = $cur_date; // show current date
-		$icd_type = freemed_config_value("icd"); // '9' or '10'
+		$icd_type = freemed::config_value("icd"); // '9' or '10'
 		$cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
 		$cptmod_result = $sql->query($cptmod_query);
 		$icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
@@ -229,7 +229,7 @@ class procedureModule extends freemedEMRModule {
 			); // end coverage page	
 
 		$charge = $this->CalculateCharge($proccov1,$proccpt,$procphysician,$patient);
-		$cpt_code = freemed_get_link_rec ($proccpt, "cpt"); // cpt code
+		$cpt_code = freemed::get_link_rec ($proccpt, "cpt"); // cpt code
 
 
 		$wizard->add_page (_("Step Three: Confirm"),
@@ -422,7 +422,7 @@ class procedureModule extends freemedEMRModule {
 			{
 				global $$v;
 			}
-			$this_data = freemed_get_link_rec ($id, $this->table_name);
+			$this_data = freemed::get_link_rec ($id, $this->table_name);
 			extract ($this_data); // extract all of this data
 
 			global $been_here;
@@ -561,32 +561,32 @@ class procedureModule extends freemedEMRModule {
 		{
 			global $$v;
 		}
-		$this_data = freemed_get_link_rec ($id, $this->table_name);
+		$this_data = freemed::get_link_rec ($id, $this->table_name);
 		extract ($this_data); // extract all of this data
 
-		$phyname = freemed_get_link_field($procphysician,"physician","phylname");
-		$refphyname = freemed_get_link_field($procrefdoc,"physician","phylname");
+		$phyname = freemed::get_link_field($procphysician,"physician","phylname");
+		$refphyname = freemed::get_link_field($procrefdoc,"physician","phylname");
 
-		$icd_type = freemed_config_value("icd"); // '9' or '10'
+		$icd_type = freemed::config_value("icd"); // '9' or '10'
 		$icd_code = "icd".$icd_type."code";
-		$diag1 = freemed_get_link_field($procdiag1,"icd9",$icd_code);
-		$diag2 = freemed_get_link_field($procdiag2,"icd9",$icd_code);
-		$diag3 = freemed_get_link_field($procdiag3,"icd9",$icd_code);
-		$diag4 = freemed_get_link_field($procdiag4,"icd9",$icd_code);
-		$psrname = freemed_get_link_field($procpos,"pos","psrname");
-		$authdtbeg = freemed_get_link_field($procauth,"authorizations","authdtbegin");
-		$authdtend = freemed_get_link_field($procauth,"authorizations","authdtend");
+		$diag1 = freemed::get_link_field($procdiag1,"icd9",$icd_code);
+		$diag2 = freemed::get_link_field($procdiag2,"icd9",$icd_code);
+		$diag3 = freemed::get_link_field($procdiag3,"icd9",$icd_code);
+		$diag4 = freemed::get_link_field($procdiag4,"icd9",$icd_code);
+		$psrname = freemed::get_link_field($procpos,"pos","psrname");
+		$authdtbeg = freemed::get_link_field($procauth,"authorizations","authdtbegin");
+		$authdtend = freemed::get_link_field($procauth,"authorizations","authdtend");
 		$authdt = $authdtbeg.$authdtend;
-		$cov1ins = freemed_get_link_field($proccov1,"coverage","covinsco");
-		$cov1name = freemed_get_link_field($cov1ins,"insco","insconame");
-		$cov2ins = freemed_get_link_field($proccov2,"coverage","covinsco");
-		$cov2name = freemed_get_link_field($cov2ins,"insco","insconame");
-		$cov3ins = freemed_get_link_field($proccov3,"coverage","covinsco");
-		$cov3name = freemed_get_link_field($cov3ins,"insco","insconame");
-		$cov4ins = freemed_get_link_field($proccov4,"coverage","covinsco");
-		$cov4name = freemed_get_link_field($cov4ins,"insco","insconame");
-		$covins = freemed_get_link_field($proccurcovid,"coverage","covinsco");
-		$covname = freemed_get_link_field($covins,"insco","insconame");
+		$cov1ins = freemed::get_link_field($proccov1,"coverage","covinsco");
+		$cov1name = freemed::get_link_field($cov1ins,"insco","insconame");
+		$cov2ins = freemed::get_link_field($proccov2,"coverage","covinsco");
+		$cov2name = freemed::get_link_field($cov2ins,"insco","insconame");
+		$cov3ins = freemed::get_link_field($proccov3,"coverage","covinsco");
+		$cov3name = freemed::get_link_field($cov3ins,"insco","insconame");
+		$cov4ins = freemed::get_link_field($proccov4,"coverage","covinsco");
+		$cov4name = freemed::get_link_field($cov4ins,"insco","insconame");
+		$covins = freemed::get_link_field($proccurcovid,"coverage","covinsco");
+		$covname = freemed::get_link_field($covins,"insco","insconame");
 
 		$wizard = new wizard ( array ("been_here", "action", "patient", "id",
 		"module") );
@@ -725,7 +725,7 @@ class procedureModule extends freemedEMRModule {
 		$primary = new Coverage($covid);
 		$insid = $primary->local_record[covinsco];
 
-		$cpt_code = freemed_get_link_rec ($cptid, "cpt"); // cpt code
+		$cpt_code = freemed::get_link_rec ($cptid, "cpt"); // cpt code
 		$cpt_code_fees = fm_split_into_array ($cpt_code["cptstdfee"]);
 		$cpt_code_stdfee = $cpt_code_fees[$insid]; // grab proper std fee
 		if (empty($cpt_code_stdfee) or ($cpt_code_stdfee==0))
@@ -742,7 +742,7 @@ class procedureModule extends freemedEMRModule {
 		$internal_type  = $cpt_code ["cpttype"]; // grab internal type
 		if ($debug) 
 		$display_buffer .= " (inttype = $internal_type) (procphysician = $procphysician) ";
-		$this_physician = freemed_get_link_rec ($physid, "physician");
+		$this_physician = freemed::get_link_rec ($physid, "physician");
 		$charge_map     = fm_split_into_array($this_physician ["phychargemap"]);
 		$base_value     = $charge_map [$internal_type];
 		if ($debug) $display_buffer .= "<BR>base value = \"$base_value\"\n";

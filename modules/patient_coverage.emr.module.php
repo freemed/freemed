@@ -52,7 +52,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 			global $been_here;
 			$been_here = 1;
 			// note book ignores globals of 0 (BUG??)
-			$row = freemed_get_link_rec($id,$this->table_name);
+			$row = freemed::get_link_rec($id,$this->table_name);
 			if (!$row) {
 				$display_buffer .= _("Failed to read coverage table");
 				template_display();

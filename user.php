@@ -54,7 +54,7 @@ switch($action) { // master action switch
   if ( ($action=="modform") AND (!$book->been_here()) ) { // catch the empty ID
 
 	// grab record number "id"
-	$r = freemed_get_link_rec ($id, $table_name);
+	$r = freemed::get_link_rec ($id, $table_name);
 
 	// Pull into the global scope
 	foreach ($r AS $k => $v) {

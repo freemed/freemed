@@ -127,13 +127,13 @@ class ViewCalendar extends freemedCalendarModule {
 		}
 		if ($row[calfacility] != 0)
 		{
-			$fac = freemed_get_link_rec($row[calfacility],"facility");
+			$fac = freemed::get_link_rec($row[calfacility],"facility");
 			$facname = $fac[psrname];
 		}
 
 		if ($row[calroom] != 0)
 		{
-			$room = freemed_get_link_rec($row[calroom],"room");
+			$room = freemed::get_link_rec($row[calroom],"room");
 			$roomname = $room[roomname];
 		}
 

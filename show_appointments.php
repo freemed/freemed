@@ -119,35 +119,35 @@ while ($r = $sql->fetch_array ($result)) {
 	// prepare the patient and physician names
 	switch ($r["caltype"]) {
 	case "temp":
-	$ptlname = freemed_get_link_field ($r["calpatient"], "callin",
+	$ptlname = freemed::get_link_field ($r["calpatient"], "callin",
 		"cilname"); 
-	$ptfname = freemed_get_link_field ($r["calpatient"], "callin",
+	$ptfname = freemed::get_link_field ($r["calpatient"], "callin",
                    "cifname");
-	$ptmname = freemed_get_link_field ($r["calpatient"], "callin",
+	$ptmname = freemed::get_link_field ($r["calpatient"], "callin",
                    "cimname");
 	$patient_link_location = "call-in.php?action=view&".
                    "id=$calpatient";
 	break;
 	case "pat": default:
-	$ptlname = freemed_get_link_field ($r["calpatient"], "patient",
+	$ptlname = freemed::get_link_field ($r["calpatient"], "patient",
                    "ptlname");
-	$ptfname = freemed_get_link_field ($r["calpatient"], "patient",
+	$ptfname = freemed::get_link_field ($r["calpatient"], "patient",
                    "ptfname");
-	$ptmname = freemed_get_link_field ($r["calpatient"], "patient",
+	$ptmname = freemed::get_link_field ($r["calpatient"], "patient",
                    "ptmname");
         $patient_link_location = "manage.php?id=$patient";
 	break;
 	} // end of switch (getting proper patient info
 
-	$phylname = freemed_get_link_field ($r["calphysician"],
+	$phylname = freemed::get_link_field ($r["calphysician"],
                  "physician", "phylname"); // physician last name
-	$phyfname = freemed_get_link_field ($r["calphysician"],
+	$phyfname = freemed::get_link_field ($r["calphysician"],
                  "physician", "phyfname"); // physician first name
 
        // get facility and room names
-	$psrname = freemed_get_link_field ($r["calfacility"],
+	$psrname = freemed::get_link_field ($r["calfacility"],
                  "facility", "psrname");
-	$roomname = freemed_get_link_field ($r["calroom"],
+	$roomname = freemed::get_link_field ($r["calroom"],
                   "room", "roomname");
 	if (strlen($psrname)<1) $psrname = "&nbsp;";
 	if ($show=="all") $_date = $r["caldateof"]." <BR>";

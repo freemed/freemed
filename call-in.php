@@ -137,7 +137,7 @@ switch ($action) {
     ";
 
     if ($ciphysician < 1) {
-      $ciphysician = freemed_get_link_field ($default_facility, "facility",
+      $ciphysician = freemed::get_link_field ($default_facility, "facility",
         "psrdefphy");
     }
     $phys_r = $sql->query("SELECT * FROM physician ORDER BY phylname, phyfname");
@@ -204,7 +204,7 @@ switch ($action) {
               ORDER BY caldateof, calhour, calminute";
   $result  = $sql->query ($query);
   $rows    = $sql->num_rows ($result);
-  $ciname  = freemed_get_link_rec ($id, "callin");
+  $ciname  = freemed::get_link_rec ($id, "callin");
   $cilname = $ciname ["cilname"];
   $cifname = $ciname ["cifname"];
   $cimname = $ciname ["cimname"];

@@ -155,7 +155,7 @@ class GenerateStatementsModule extends freemedBillingModule {
      	flush ();
 
         // grab form information form
-        $this->formno = freemed_get_link_rec ($whichform, "fixedform");
+        $this->formno = freemed::get_link_rec ($whichform, "fixedform");
 
 		// current date hashes
 		$curdate[mmddyy]   = date ("m d y");
@@ -212,7 +212,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 			$fac = $row[procpos];
 		}
 
-		$facility = freemed_get_link_rec($fac,"facility");
+		$facility = freemed::get_link_rec($fac,"facility");
 		
 		$stmnt[facname] = $facility[psrname];
 		$stmnt[facaddr1] = $facility[psraddr1];
@@ -323,7 +323,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 			//}
 				
 
-			$cur_cpt = freemed_get_link_rec($row[proccpt],"cpt");
+			$cur_cpt = freemed::get_link_rec($row[proccpt],"cpt");
 			$itemcpt     [$number_of_charges] = $cur_cpt[cptcode];
 			$itemdesc     [$number_of_charges] = $cur_cpt[cptnameext];
 			$itemdate    [$number_of_charges] = $row[procdt];

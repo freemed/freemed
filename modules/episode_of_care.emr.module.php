@@ -185,7 +185,7 @@ class episodeOfCare extends freemedEMRModule {
          // now we extract the data, since the record was given...
 		reset ($this->variables);
 		foreach ($this->variables as $k => $v) global $$v;
-        $r      = freemed_get_link_rec ($id, $this->table_name);
+        $r      = freemed::get_link_rec ($id, $this->table_name);
         extract ($r);
         break;
       } // end checking if we have been here yet...
@@ -709,7 +709,7 @@ class episodeOfCare extends freemedEMRModule {
 			template_display();
 		} // end checking for ID as valid
 
-		$eoc = freemed_get_link_rec($id, $this->table_name);
+		$eoc = freemed::get_link_rec($id, $this->table_name);
 		// display vitals for current episode
 		$display_buffer .= "
 		<P>

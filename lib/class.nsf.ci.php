@@ -71,7 +71,7 @@ class NSFCI extends NSF
 		{
 			// champus requires da0[instypcd] here
 			$fac_row=0;
-			$fac_row = freemed_get_link_rec($row[procpos], "facility");
+			$fac_row = freemed::get_link_rec($row[procpos], "facility");
 
 			if ($fac_row)
 			{
@@ -80,7 +80,7 @@ class NSFCI extends NSF
 			$covtpid = $coverage->local_record[covinstp];
 			if ($covtpid > 0)
 			{
-				$covtype = freemed_get_link_rec($covtpid,"covtypes");
+				$covtype = freemed::get_link_rec($covtpid,"covtypes");
 				$da0[instypcd] = $covtype[covtpname];
 			}
 			else
@@ -129,7 +129,7 @@ class NSFCI extends NSF
 		{
 			// champus requires da0[instypcd] here
 			$fac_row=0;
-			$fac_row = freemed_get_link_rec($row[procpos], "facility");
+			$fac_row = freemed::get_link_rec($row[procpos], "facility");
 
 			if ($fac_row)
 			{
@@ -138,7 +138,7 @@ class NSFCI extends NSF
 			$covtpid = $coverage->local_record[covinstp];
 			if ($covtpid > 0)
 			{
-				$covtype = freemed_get_link_rec($covtpid,"covtypes");
+				$covtype = freemed::get_link_rec($covtpid,"covtypes");
 				$da0[instypcd] = $covtype[covtpname];
 			}
 			else
@@ -209,7 +209,7 @@ class NSFCI extends NSF
 		else
 		{
 			// look up the status record.
-			$status = freemed_get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
+			$status = freemed::get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
 			if (!$status)
 				echo "Error failed to get ptstatus<BR>";
 			if ($status == "HC")
@@ -441,7 +441,7 @@ class NSFCI extends NSF
 
 		$pos = 0;
 		$fac_row=0;
-		$fac_row = freemed_get_link_rec($row[procpos], "facility");
+		$fac_row = freemed::get_link_rec($row[procpos], "facility");
         if ($fac_row)
         {
             // use code from facility
@@ -449,7 +449,7 @@ class NSFCI extends NSF
             {
                 echo "Facility does not have a pos code<BR>";
             }
-            $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
+            $cur_pos = freemed::get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
                 echo "Failed reading pos table";
             $pos = $cur_pos[posname];

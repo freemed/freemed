@@ -29,7 +29,7 @@ class Guarantor {
     global $database;
 
     if ($coverageid=="") return false;    // error checking
-    $this->local_record = freemed_get_link_rec ($coverageid, "coverage");
+    $this->local_record = freemed::get_link_rec ($coverageid, "coverage");
 	$this->guarfname = $this->local_record["covfname"];
 	$this->guarlname = $this->local_record["covlname"];
 	$this->guarmname = $this->local_record["covmname"];
@@ -69,7 +69,7 @@ class Coverage {
     global $database;
 
     if ($coverageid=="" OR $coverageid==0) return false;    // error checking
-    $this->local_record = freemed_get_link_rec ($coverageid, "coverage");
+    $this->local_record = freemed::get_link_rec ($coverageid, "coverage");
 	$this->covpatgrpno = $this->local_record[covpatgrpno];	
 	$this->covpatinsno = $this->local_record[covpatinsno];	
 	$this->covstatus = $this->local_record[covstatus];	
@@ -106,7 +106,7 @@ class Payer {
     global $database;
 
     if ($payerid=="") return false;    // error checking
-    $this->local_record = freemed_get_link_rec ($payerid, "payer");
+    $this->local_record = freemed::get_link_rec ($payerid, "payer");
 	$this->patgroupno = $this->local_record[payerpatientgrp];	
 	$this->patinsidno = $this->local_record[payerpatientinsno];	
 	$this->payerstatus = $this->local_record[payerstatus];	
@@ -131,7 +131,7 @@ class InsuranceCompany {
 		global $database;
 
 		if ($insco==0) return false;    // error checking
-		$this->local_record = freemed_get_link_rec ($insco, "insco");
+		$this->local_record = freemed::get_link_rec ($insco, "insco");
 		$this->id    		= $this->local_record["id" ];
 		$this->insconame    = $this->local_record["insconame" ];
 		$this->inscoalias   = $this->local_record["inscoalias"];
@@ -163,7 +163,7 @@ class Patient {
 
 		// Check if this is supposed to be a call-in
 		if (!$is_callin) {
-			$this->local_record = freemed_get_link_rec (
+			$this->local_record = freemed::get_link_rec (
 				$patient_number, "patient"
 			);
 
@@ -192,7 +192,7 @@ class Patient {
      //$guarids = fm_get_active_guarids($patient_number);
      //if (is_array($guarids))
      //{
-     //    $guarrec = freemed_get_link_rec($guarids[0],"guarantor");
+     //    $guarrec = freemed::get_link_rec($guarids[0],"guarantor");
      //    if (!$guarrec)
      //    {
      //        echo "Error getting link rec guarantor in patient class<BR>";
@@ -224,7 +224,7 @@ class Patient {
     //     //echo "got $num payors<BR>";
 	// 	 for ($i=0;$i<$num;$i++)
     //     {
-	//		 $covtype = freemed_get_link_field($covids[$i], "coverage", "covtype");
+	//		 $covtype = freemed::get_link_field($covids[$i], "coverage", "covtype");
 	//			 if ($covtype=="")
 	//			 {
 	//				 echo "Error getting link field covtype in patient class<BR>";
@@ -242,7 +242,7 @@ class Patient {
 		// callin set as false
 		$this->is_callin    = false;
 	} else {
-		$this->local_record = freemed_get_link_rec ($patient_number,
+		$this->local_record = freemed::get_link_rec ($patient_number,
 			"callin");
 		// pull records (limited for callins)
 		$this->ptlname      = $this->local_record["cilname"];
@@ -346,7 +346,7 @@ class Physician {
 		global $database;
 
 		if ($physician==0) return false;    // error checking
-		$this->local_record = freemed_get_link_rec ($physician,
+		$this->local_record = freemed::get_link_rec ($physician,
 			"physician");
 		$this->phylname     = $this->local_record["phylname"];
 		$this->phyfname     = $this->local_record["phyfname"];
@@ -386,7 +386,7 @@ class User {
 		extract ($SESSION);
 
 		$this->user_number  = $authdata["user"];
-		$this->local_record = freemed_get_link_rec ($this->user_number,
+		$this->local_record = freemed::get_link_rec ($this->user_number,
 			"user");
 		$this->user_name    = $this->local_record["username"   ];
 		$this->user_descrip = $this->local_record["userdescrip"];

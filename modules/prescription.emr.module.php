@@ -140,8 +140,8 @@ class prescriptionModule extends freemedEMRModule {
       ";
       break;
     default:
-      $ptlname = freemed_get_link_field ($patient, "patient", "ptlname");
-      $ptfname = freemed_get_link_field ($patient, "patient", "ptfname");
+      $ptlname = freemed::get_link_field ($patient, "patient", "ptlname");
+      $ptfname = freemed::get_link_field ($patient, "patient", "ptfname");
       $display_buffer .= "
         <CENTER>
          <A HREF=\"$this->page_name?module=$module&patient=$patient&action=addform\"
@@ -173,7 +173,7 @@ class prescriptionModule extends freemedEMRModule {
         "; // table header
         while ( $r = $sql->fetch_array ($query) ) {
           extract ($r);
-          $drug = freemed_get_link_field ($rxdrug, "frmlry", "trdmrkname");
+          $drug = freemed::get_link_field ($rxdrug, "frmlry", "trdmrkname");
           $rxdtto       = $rxdtfrom;  // set to starting date
           if ($rxduration > 0) 
             for ($i=1; $i<$rxduration; $i++) 

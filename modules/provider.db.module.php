@@ -90,7 +90,7 @@ class providerMaintenance extends freemedMaintenanceModule {
 			while(list($k,$v)=each($this->variables)) global ${$v};
 			global $physsn1,$physsn2,$physsn3;
 
-			$r = freemed_get_link_rec ($id, $this->table_name);
+			$r = freemed::get_link_rec ($id, $this->table_name);
 			extract ($r);
 			$phychargemap = fm_split_into_array( $r[phychargemap] );
 			$phyidmap = fm_split_into_array( $r[phyidmap] );
@@ -423,7 +423,7 @@ class providerMaintenance extends freemedMaintenanceModule {
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
-		$phy = freemed_get_link_rec($id, $this->table_name);
+		$phy = freemed::get_link_rec($id, $this->table_name);
 		$display_buffer .= "
    <CENTER>
     <TABLE WIDTH=\"100%\">

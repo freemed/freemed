@@ -83,7 +83,7 @@ class NSFBCPA extends NSF {
 		$covtpid = $coverage->local_record[covinstp];
 		if ($covtpid > 0)
 		{
-			$covtype = freemed_get_link_rec($covtpid,"covtypes");
+			$covtype = freemed::get_link_rec($covtpid,"covtypes");
 			$da0[instypcd] = $covtype[covtpname];
 		}
 
@@ -201,7 +201,7 @@ class NSFBCPA extends NSF {
 
 		$covtpid = $coverage->local_record[covinstp];
 		if ($covtpid > 0) {
-			$covtype = freemed_get_link_rec($covtpid,"covtypes");
+			$covtype = freemed::get_link_rec($covtpid,"covtypes");
 			$da0[instypcd] = $covtype[covtpname];
 		} else {
 			echo "ERROR - No Insurance type for PrimaryInfo<BR>";
@@ -255,7 +255,7 @@ class NSFBCPA extends NSF {
 		if ( ($patient->local_record[ptstatus] != 0) AND ($coverage->covdep != 0) )
 		{
 			//patient has student status and not the insured
-			$status = freemed_get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
+			$status = freemed::get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
 			if (!$status)
 				echo "ERROR - Failed to get ptstatus ClaimHeader<BR>";
 
@@ -417,7 +417,7 @@ class NSFBCPA extends NSF {
 
 		$pos = 0;
 		$fac_row=0;
-		$fac_row = freemed_get_link_rec($row[procpos], "facility");
+		$fac_row = freemed::get_link_rec($row[procpos], "facility");
         if ($fac_row)
         {
             // use code from facility
@@ -425,7 +425,7 @@ class NSFBCPA extends NSF {
             {
                 echo "Facility does not have a pos code<BR>";
             }
-            $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
+            $cur_pos = freemed::get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
                 echo "Failed reading pos table";
             $pos = $cur_pos[posname];

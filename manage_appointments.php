@@ -121,11 +121,11 @@ if ($patient<1) {
 
        // put together location name
        if (($calroom != 0) and ($calfacility != 0)) {
-        $location = freemed_get_link_field ($calroom, "room", "roomname")." (".
-                    freemed_get_link_field ($calfacility, "facility",
+        $location = freemed::get_link_field ($calroom, "room", "roomname")." (".
+                    freemed::get_link_field ($calfacility, "facility",
                      "psrname").")";
        } elseif (($calroom != 0) and ($calfacility == 0)) {
-        $location = freemed_get_link_field ($calroom, "room", "roomname");
+        $location = freemed::get_link_field ($calroom, "room", "roomname");
        } else { 
         $location = _("NONE SELECTED");
        } // end of location putting together

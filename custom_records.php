@@ -70,7 +70,7 @@ if ($patient<1) {
      $prdata = $r["prdata"]; // get the actual data
      $this_data = fm_split_into_array ($prdata);
 
-     $this_template = freemed_get_link_rec($form_template, "patrectemplate");
+     $this_template = freemed::get_link_rec($form_template, "patrectemplate");
      $type_n  = fm_split_into_array ($this_template["prtftype"   ]);
      $typefor = fm_split_into_array ($this_template["prtftypefor"]);
      $maxlen  = fm_split_into_array ($this_template["prtfmaxlen" ]);
@@ -338,7 +338,7 @@ if ($patient<1) {
   case "add":
   case "mod":
    // first compact the record...
-   $form_template = freemed_get_link_rec ($form, "patrectemplate");
+   $form_template = freemed::get_link_rec ($form, "patrectemplate");
    $form_length = count(fm_split_into_array($form_template["prtfname"]));
    $prtftype    = fm_split_into_array($form_template["prtftype"]);
    $prtfmaxlen  = fm_split_into_array($form_template["prtfmaxlen"]);
@@ -478,7 +478,7 @@ if ($patient<1) {
      $dtadd    = $r["prdtadd"   ];
      $form_template = $r["prtemplate"];
      $id       = $r["id"        ];
-     $formname = freemed_get_link_field ($form_template, "patrectemplate",
+     $formname = freemed::get_link_field ($form_template, "patrectemplate",
                                          "prtname");
      $_alternate = freemed_bar_alternate_color ($_alternate);
      $display_buffer .= "

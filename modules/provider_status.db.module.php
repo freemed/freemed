@@ -41,7 +41,7 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-  $r = freemed_get_link_rec ($id, $this->table_name);
+  $r = freemed::get_link_rec ($id, $this->table_name);
   extract ($r);
 
   $display_buffer .= "

@@ -66,7 +66,7 @@ class authorizationsModule extends freemedEMRModule {
          $display_buffer .= _("You must select a patient.")."\n";
          template_display ();
        }
-       $r = freemed_get_link_rec ($id, $this->table_name);
+       $r = freemed::get_link_rec ($id, $this->table_name);
 	   while(list($k,$v)=each($this->variables)) global $$v;
        extract ($r);
        break; // end internal modform

@@ -33,7 +33,7 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		if ($id) {
-			$r = freemed_get_link_rec ($id, $this->table_name);
+			$r = freemed::get_link_rec ($id, $this->table_name);
 			extract ($r);
 		} // end checking for id
 

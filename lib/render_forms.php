@@ -38,7 +38,7 @@ class diagnosisSet {
 	function getStack ($null_value = "") {
 		for ($i=1;$i<=($this->stack_size);$i++) 
 			$figured_stack[$i] = ereg_replace ("[^A-Z0-9.]", "",
-				freemed_get_link_field (
+				freemed::get_link_field (
 					$this->internal_stack[$i],
 					"icd9",
 					"icd9code"
@@ -259,7 +259,7 @@ function render_fixedForm ($id) {
 	flush ();
 
 	// get record
-	$this_form  = freemed_get_link_rec ($id, "fixedform");
+	$this_form  = freemed::get_link_rec ($id, "fixedform");
 	$pagelength = $this_form ["ffpagelength"];
 	$rows       = fm_split_into_array ($this_form["ffrow"    ]);
 	$cols       = fm_split_into_array ($this_form["ffcol"    ]);
@@ -354,7 +354,7 @@ function render_fixedRecord ($id,$rectype="") {
 
 	if (empty($rectype)) return "";
 
-	$this_form  = freemed_get_link_rec ($id, "fixedform"); // get record
+	$this_form  = freemed::get_link_rec ($id, "fixedform"); // get record
 	$linelength = $this_form ["fflinelength"];
 	$pagelength = $this_form ["ffpagelength"];
 	$rows       = fm_split_into_array ($this_form["ffrow"    ]);

@@ -37,7 +37,7 @@ class freemedCERTModule extends freemedModule {
 			trigger_error( "No Patient Defined", E_ERROR);
 		}
 		// check access to patient
-		if (!freemed_check_access_for_patient($patient)) 
+		if (!freemed::check_access_for_patient($patient)) 
 		{
 			trigger_error("User not Authorized for this function", E_USER_ERROR);
 		}

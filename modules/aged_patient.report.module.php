@@ -87,7 +87,7 @@ class agedPatientReport extends freemedReportsModule {
 				}
 
 				$prevpat = $pat;
-				//$patrow = freemed_get_link_rec($pat,"patient");
+				//$patrow = freemed::get_link_rec($pat,"patient");
 				$patname = $row[ptlname].", ".$row[ptfname];
 				//$display_buffer .= "patname $patname<BR>";
 				$grandtot += $pattot;
@@ -99,8 +99,8 @@ class agedPatientReport extends freemedReportsModule {
 
 			if ($previnsco != $row[insconame])
 			{
-				//$covrec = freemed_get_link_rec($row[proccurcovid],"coverage");
-				//$insco = freemed_get_link_rec($covrec[covinsco],"insco");
+				//$covrec = freemed::get_link_rec($row[proccurcovid],"coverage");
+				//$insco = freemed::get_link_rec($covrec[covinsco],"insco");
 				$insconame = $row[insconame];	
 				$previnsco = $row[insconame];
 			}

@@ -34,7 +34,7 @@ class freemedReportsModule extends freemedModule {
 			trigger_error("Module not Defined", E_ERROR);
 		}
 		// FIXME!!: check access to facility
-		//if (!freemed_check_access_for_patient($patient)) return false;
+		//if (!freemed::check_access_for_patient($patient)) return false;
 		return true;
 	} // end function check_vars
 

@@ -219,7 +219,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			$inscnt = count($instobill);
 			for ($i=0;$i<$inscnt;$i++)
 			{	
-				$insnme = freemed_get_link_field($instobill[$i],"insco","insconame");
+				$insnme = freemed::get_link_field($instobill[$i],"insco","insconame");
 				$instobillname[$i] = $insnme;
 			}
 			
@@ -295,7 +295,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			if ($providertyp==1) // physicians groups
 			for ($p=0;$p<$providers;$p++)
 			{
-				$pos = freemed_get_link_rec($providerid[$p],"phygroup");
+				$pos = freemed::get_link_rec($providerid[$p],"phygroup");
 				if (!$pos) {
 					$display_buffer .= _("ERROR")." - failed getting facility for group";
 					template_display();
@@ -494,7 +494,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		}
 		else
 		{
-			$spec_row = freemed_get_link_rec($specid, "specialties");
+			$spec_row = freemed::get_link_rec($specid, "specialties");
 			if (!$spec_row)
 			{
 				$this->Error("Error in provider getting specialty code");
@@ -875,7 +875,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$ptstatus = $this->CurPatient->local_record[ptstatus];
 		if ($ptstatus != 0)
 		{
-			$ptstatus = $freemed_get_link_field($ptstatus,"ptstatus","ptstatus");
+			$ptstatus = freemed::get_link_field($ptstatus,"ptstatus","ptstatus");
 			if (!$ptstatus)
 			{
         		$this->Error("Error - Failed getting ptstatus record");
@@ -1119,7 +1119,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$pos = 0;
 		if ($row[procpos] != 0)
 		{
-			$cur_pos = freemed_get_link_rec($row[procpos], "pos");
+			$cur_pos = freemed::get_link_rec($row[procpos], "pos");
 			if (!$cur_pos)
 				$this->Error("Failed reading pos table");
 			$pos = $cur_pos[posname];
@@ -1170,7 +1170,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$this->edi_buffer = $this->edi_buffer."BL**".$pos.":B**A*Y*M";
 		if ($row[proceoc] != 0)
 		{
-			$eoc_row = freemed_get_link_rec($row[proceoc], "eoc");
+			$eoc_row = freemed::get_link_rec($row[proceoc], "eoc");
 			if (!$eoc_row)
 				$this->Error("Failed reading eoc record");
 
@@ -1243,7 +1243,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		
 		if ($row[procauth] != 0)
 		{
-			$auth_row = freemed_get_link_rec($row[procauth],"authorizations");
+			$auth_row = freemed::get_link_rec($row[procauth],"authorizations");
 			if (!$auth_row)
 				$this->Error("Failed to read procauth");
 			$auth_num = $this->CleanNumber($auth_row[authnum]);
@@ -1350,7 +1350,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			$this->edi_buffer = $this->edi_buffer."LX*".$LX_setno.$this->record_terminator;
 
 
-			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
+			$cur_cpt = freemed::get_link_rec ($row[proccpt], "cpt");
 			if (!$cur_cpt)
 				$this->Error("Failed reading cpt table");
 
@@ -1385,7 +1385,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			}
 			else
 			{
-				$cur_tos = freemed_get_link_rec($tosid, "tos");
+				$cur_tos = freemed::get_link_rec($tosid, "tos");
 				if (!$cur_tos)
 					$this->Error("Failed reading tos table");
 				$tos = $cur_tos[tosname];
@@ -1478,7 +1478,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			}
 			else
 			{
-				$spec_row = freemed_get_link_rec($specid, "specialties");
+				$spec_row = freemed::get_link_rec($specid, "specialties");
 				if (!$spec_row)
 				{
 					$this->Error("Error in Rendering provider getting specialty code");
@@ -1897,7 +1897,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 		if ($provtype=="GRP")
 		{
-			$this->phygrp_row = freemed_get_link_rec($provid,"phygroup");
+			$this->phygrp_row = freemed::get_link_rec($provid,"phygroup");
 			if (!$this->phygrp_row)
 			{
 				$this->Error("error in generate Failed to get phy group");
@@ -1905,7 +1905,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			}
 			$this->group_physicians = $this->phygrp_row[phygroupdocs];
 			$this->group_physicians = str_replace(":",",",$this->group_physicians);
-			$this->fac_row = freemed_get_link_rec($this->phygrp_row[phygroupfac],"facility");
+			$this->fac_row = freemed::get_link_rec($this->phygrp_row[phygroupfac],"facility");
 			if (!$this->fac_row)
 			{
 				$this->Error("error in generate Failed to get facility");

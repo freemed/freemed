@@ -568,7 +568,7 @@ class NSF
 		if ($default_facility != 0)
 		{
 			$fac = 0;
-			$fac = freemed_get_link_rec($default_facility,"facility");
+			$fac = freemed::get_link_rec($default_facility,"facility");
 			if (!$fac)
 				echo "ERROR - Failed getting default facility<BR>";
 			$ba0[posname] = $this->CleanChar($fac[psrname]);
@@ -598,7 +598,7 @@ class NSF
 		$ba0[prfname] = $this->CleanChar($fname);
 
 		$prspec  = $physician->local_record[physpe1];
-        $specrow = freemed_get_link_rec($prspec,"specialties");
+        $specrow = freemed::get_link_rec($prspec,"specialties");
         $ba0[prspec]  = $this->CleanChar($specrow[specname]);
 
 
@@ -704,13 +704,13 @@ class NSF
 		}
 
 		if ($row[proceoc] != 0)
-			$eoc_row = freemed_get_link_rec($row[proceoc], "eoc");
+			$eoc_row = freemed::get_link_rec($row[proceoc], "eoc");
         else
             echo "Warning - No EOC for this procedure $row[procdt]<BR>";
 
         if ($eoc_row)
         {
-            $eoc_row = freemed_get_link_rec($row[proceoc], "eoc");
+            $eoc_row = freemed::get_link_rec($row[proceoc], "eoc");
             if (!$eoc_row)
                 echo "Failed reading eoc record<BR>";
 
@@ -812,7 +812,7 @@ class NSF
 		// see if procpos is not home or office
 		$pos = 0;
 		$fac_row=0;
-		$fac_row = freemed_get_link_rec($row[procpos], "facility");
+		$fac_row = freemed::get_link_rec($row[procpos], "facility");
 
         if ($fac_row)
         {
@@ -821,7 +821,7 @@ class NSF
             {
                 echo "Facility does not have a pos code<BR>";
             }
-            $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
+            $cur_pos = freemed::get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
                 echo "Failed reading pos table";
             $pos = $cur_pos[posname];
@@ -933,20 +933,20 @@ class NSF
 	
 		if ($row[proccptmod] != 0)
 		{
-			$itemcptmod  = freemed_get_link_field ($row[proccptmod], "cptmod", "cptmod");
+			$itemcptmod  = freemed::get_link_field ($row[proccptmod], "cptmod", "cptmod");
 			if (!$itemcptmod)
 				echo "ERROR - Failed reading cptmod table<BR>";
 			$fa0[cptmod1] = $itemcptmod;
 		}
 		if ($row[proccptmod2] != 0)
 		{
-			$itemcptmod  = freemed_get_link_field ($row[proccptmod2], "cptmod", "cptmod");
+			$itemcptmod  = freemed::get_link_field ($row[proccptmod2], "cptmod", "cptmod");
 			if (!$itemcptmod)
 				echo "ERROR - Failed reading cptmod table<BR>";
 			$fa0[cptmod2] = $itemcptmod;
 		}
 
-		$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
+		$cur_cpt = freemed::get_link_rec ($row[proccpt], "cpt");
 		if (!$cur_cpt)
 			echo "ERROR - Failed reading cpt table<BR>";
 		$cur_insco = $insco->local_record[id];
@@ -969,7 +969,7 @@ class NSF
 		}
 		else
 		{
-			$cur_tos = freemed_get_link_rec($tosid, "tos");
+			$cur_tos = freemed::get_link_rec($tosid, "tos");
 			if (!$cur_tos)
 				echo "ERROR - Failed reading TOS table<BR>";
 			$tos = $cur_tos[tosname];
@@ -985,7 +985,7 @@ class NSF
 			else
 			{
 				//echo "prfxid $tosprfxid<BR>";
-				$cur_tos = freemed_get_link_rec($tosprfxid, "tos");
+				$cur_tos = freemed::get_link_rec($tosprfxid, "tos");
 				if (!$cur_tos)
 					echo "ERROR - Failed REG06 reading prefix tos table<BR>";
 				$tosprfx = $cur_tos[tosname];
@@ -1004,7 +1004,7 @@ class NSF
 
 		$fa0[tos] = $tos;
 	
-		$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
+		$cur_cpt = freemed::get_link_rec ($row[proccpt], "cpt");
 		if (!$cur_cpt)
 			echo "Failed reading cpt table<BR>";
 
@@ -1347,7 +1347,7 @@ class NSF
 
 		if ($row[procauth] != 0)
         {
-            $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
+            $auth_row = freemed::get_link_rec($row[procauth],"authorizations");
             if (!$auth_row)
                 echo "Failed to read procauth";
 			$auth_num = $auth_row[authnum];
@@ -1387,7 +1387,7 @@ class NSF
 	function GetClaimSource($insco)
 	{
 		$insmodrec=0;
-		$insmodrec = freemed_get_link_rec($insco->modifiers[0],"insmod");
+		$insmodrec = freemed::get_link_rec($insco->modifiers[0],"insmod");
 		if (!$insmodrec)
 			DIE("Failed getting insurance modifier");
 		$insmod = $insmodrec[insmod];
@@ -1440,7 +1440,7 @@ class NSF
 			// we can have a group but necessarily an ID for this insurance
 			// So. if we have a group defined (phygrpprac) AND a groupid exists for this group
 			// then use this groupid for the bill. FA0-23 will use the *rendering* provider id
-			$phygroup_rec = freemed_get_link_rec($phygrp,"phygroup");
+			$phygroup_rec = freemed::get_link_rec($phygrp,"phygroup");
 			if (!$phygroup_rec)
 				echo "ERROR - Failed getting group rec in GetProviderGroupID<BR>";
 			$provider_group_ids = explode(":",$phygroup_rec[phygroupidmap]);

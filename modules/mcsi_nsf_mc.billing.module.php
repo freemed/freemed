@@ -114,7 +114,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 				// commercial insurers only
 				if ($coverage->covinsco) 
 				{
-					$insmod = freemed_get_link_rec($coverage->covinsco->modifiers[0],"insmod");
+					$insmod = freemed::get_link_rec($coverage->covinsco->modifiers[0],"insmod");
 					if (!$insmod)
 						DIE("Failed getting insurance modifier");
 					if ($insmod[insmod] != "MB")
@@ -337,7 +337,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		if ($row[procauth] != 0)
         {
-            $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
+            $auth_row = freemed::get_link_rec($row[procauth],"authorizations");
             if (!$auth_row)
                 $display_buffer .= "Failed to read procauth";
 			$auth_num = $auth_row[authnum];
@@ -642,7 +642,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		}
 		if ($row[procauth] != 0)
         {
-            $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
+            $auth_row = freemed::get_link_rec($row[procauth],"authorizations");
             if (!$auth_row)
                 $display_buffer .= "Failed to read procauth";
 			$auth_num = $auth_row[authnum];
@@ -712,7 +712,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		// process any secondary insurance records now.
 		if ($cov2 != 0)
 		{
-			$insmod = freemed_get_link_rec($coverage2->covinsco->modifiers[0],"insmod");
+			$insmod = freemed::get_link_rec($coverage2->covinsco->modifiers[0],"insmod");
 			if (!$insmod)
 				DIE("Failed getting insurance modifier");
 			
@@ -818,7 +818,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		else
 		{
 			// look up the status record.
-			$status = freemed_get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
+			$status = freemed::get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
 			if (!$status)
 				$display_buffer .= "Error failed to get ptstatus<BR>";
 			if ($status == "HC")
@@ -1014,7 +1014,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		if ($default_facility != 0)
         {
             $fac = 0;
-            $fac = freemed_get_link_rec($default_facility,"facility");
+            $fac = freemed::get_link_rec($default_facility,"facility");
             if (!$fac)
                 $display_buffer .= "Error getting facility<BR>";
             $ba0[taxid] = $this->CleanNumber($fac[psrein]);
@@ -1032,7 +1032,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$ba0[prlname] = $this->CleanChar($physician->local_record[phylname]);
 		$ba0[prfname] = $this->CleanChar($physician->local_record[phyfname]);
 		$prspec  = $physician->local_record[physpe1];
-        $specrow = freemed_get_link_rec($prspec,"specialties");
+        $specrow = freemed::get_link_rec($prspec,"specialties");
         $ba0[prspec]  = $this->CleanChar($specrow[specname]);
 
 		$provider_id = "0";
@@ -1139,7 +1139,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		if ($row[proceoc] != 0)
         {
-            $eoc_row = freemed_get_link_rec($row[proceoc], "eoc");
+            $eoc_row = freemed::get_link_rec($row[proceoc], "eoc");
             if (!$eoc_row)
                 $display_buffer .= "Failed reading eoc record<BR>";
 
@@ -1229,7 +1229,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		// see if procpos is not home or office
 		$pos = 0;
 		$fac_row=0;
-		$fac_row = freemed_get_link_rec($row[procpos], "facility");
+		$fac_row = freemed::get_link_rec($row[procpos], "facility");
 
         if ($fac_row)
         {
@@ -1238,7 +1238,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
             {
                 $display_buffer .= "Facility does not have a pos code<BR>";
             }
-            $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
+            $cur_pos = freemed::get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
                 $display_buffer .= "Failed reading pos table";
             $pos = $cur_pos[posname];
@@ -1279,7 +1279,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		$pos = 0;
 		$fac_row=0;
-		$fac_row = freemed_get_link_rec($row[procpos], "facility");
+		$fac_row = freemed::get_link_rec($row[procpos], "facility");
         if ($fac_row)
         {
             // use code from facility
@@ -1287,7 +1287,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
             {
                 $display_buffer .= "Facility does not have a pos code<BR>";
             }
-            $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
+            $cur_pos = freemed::get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
                 $display_buffer .= "Failed reading pos table";
             $pos = $cur_pos[posname];
@@ -1325,13 +1325,13 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		
 			if ($row[proccptmod] != 0)
 			{
-				$itemcptmod  = freemed_get_link_field ($row[proccptmod], "cptmod", "cptmod");
+				$itemcptmod  = freemed::get_link_field ($row[proccptmod], "cptmod", "cptmod");
 				if (!$itemcptmod)
                 	$display_buffer .= "Failed reading cptmod table<BR>";
 				$fa0[cptmod1] = $itemcptmod;
 			}
 
-			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
+			$cur_cpt = freemed::get_link_rec ($row[proccpt], "cpt");
             if (!$cur_cpt)
                 $display_buffer .= "Failed reading cpt table<BR>";
             $cur_insco = $insco->local_record[id];
@@ -1346,7 +1346,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
             }
             else
             {
-                $cur_tos = freemed_get_link_rec($tosid, "tos");
+                $cur_tos = freemed::get_link_rec($tosid, "tos");
                 if (!$cur_tos)
                     $display_buffer .= "Failed reading tos table<BR>";
                 $tos = $cur_tos[tosname];
@@ -1354,7 +1354,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 			$fa0[tos] = $tos;
 		
-			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
+			$cur_cpt = freemed::get_link_rec ($row[proccpt], "cpt");
             if (!$cur_cpt)
                 $display_buffer .= "Failed reading cpt table<BR>";
 
@@ -1428,7 +1428,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$proccert = $proc[proccert];
 
 		$certrow = 0;
-		$certrow = freemed_get_link_rec($proccert,"certifications");
+		$certrow = freemed::get_link_rec($proccert,"certifications");
 		if (!($certrow))
 		{
 			$display_buffer .= "Error getting cert<BR>";
@@ -1705,7 +1705,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		}
 
 		// grab form information form
-        $this->formno = freemed_get_link_rec ($whichform, "fixedform");
+        $this->formno = freemed::get_link_rec ($whichform, "fixedform");
 
 
 		// grab all the procedures to bill for this patient

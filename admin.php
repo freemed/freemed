@@ -49,7 +49,7 @@ if ($action=="cfgform") {
 	//----- Pull in all configuration variables
 	reset ($config_vars);
 	foreach ($config_vars AS $_garbage => $v) {
-		${$v} = freemed_config_value($v);
+		${$v} = freemed::config_value($v);
 	}
 
 	//----- Push page onto the stack

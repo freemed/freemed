@@ -63,7 +63,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 		$display_buffer .= "$page_name :: need to have id for modform";
 		template_display();
 			}
-			$this_record  = freemed_get_link_rec ($id,
+			$this_record  = freemed::get_link_rec ($id,
 				$this->table_name);
 			foreach ($this_record AS $k => $v) {
 				global ${$k};
@@ -265,8 +265,7 @@ class cptMaintenance extends freemedMaintenanceModule {
       <TD ALIGN=RIGHT>
        "._("Default Type of Service")." : </TD>
       <TD ALIGN=LEFT>
-       ".freemed_get_link_field ($cptdeftos, "tos",
-        "tosname")."</TD>
+       ".freemed::get_link_field ($cptdeftos, "tos", "tosname")."</TD>
      </TR>
 
      <TR>
@@ -308,7 +307,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 /*
  case "profileform": // insurance company profiles form
   $num_inscos = $sql->num_rows ($sql->query ("SELECT * FROM insco"));
-  $this_code  = freemed_get_link_rec ($id, $this->table_name);
+  $this_code  = freemed::get_link_rec ($id, $this->table_name);
   $cpttos     = fm_split_into_array ($this_code["cpttos"]);
   $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
   $page_title = _($record_name);
@@ -324,8 +323,7 @@ class cptMaintenance extends freemedMaintenanceModule {
     ".bcadd($this_code["cptdefstdfee"],0,2)."
     <BR>
     <U>"._("Default Type of Service")."</U> :
-    ".freemed_get_link_field ($this_code["cptdeftos"], "tos",
-      "tosname")."
+    ".freemed::get_link_field ($this_code["cptdeftos"], "tos", "tosname")."
     </CENTER> 
    <P>
    <CENTER>

@@ -67,7 +67,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 				}
 				while(list($k,$v)=each($this->variables))
             		global $$v;
-				$r = freemed_get_link_rec($id,$this->table_name);
+				$r = freemed::get_link_rec($id,$this->table_name);
 				extract ($r);
 				$phygroupidmap  = fm_split_into_array($phygroupidmap);
 				//$phygroupdocs 	= fm_split_into_array($phygroupdocs);

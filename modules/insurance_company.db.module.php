@@ -58,7 +58,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
            global $$v;
         } 
 
-        $r = freemed_get_link_rec ($id, $this->table_name);
+        $r = freemed::get_link_rec ($id, $this->table_name);
         extract ($r);
 		$inscomod = fm_make_string_array($inscomod); // ensure 17 is 17:
         break; // end of modform

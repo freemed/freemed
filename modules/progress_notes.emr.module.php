@@ -74,7 +74,7 @@ class progressNotes extends freemedEMRModule {
            ";
            template_display();
          }
-         $r = freemed_get_link_rec ($id, "pnotes");
+         $r = freemed::get_link_rec ($id, "pnotes");
          foreach ($r AS $k => $v) {
            global $$k; $$k = stripslashes($v);
          }
@@ -331,7 +331,7 @@ class progressNotes extends freemedEMRModule {
        template_display();
      }
       // if it is legit, grab the data
-     $r = freemed_get_link_rec ($id, "pnotes");
+     $r = freemed::get_link_rec ($id, "pnotes");
      if (is_array($r)) extract ($r);
      $pnotesdt_formatted = substr ($pnotesdt, 0, 4). "-".
                            substr ($pnotesdt, 5, 2). "-".
@@ -370,7 +370,7 @@ class progressNotes extends freemedEMRModule {
       ";
       for ($i=0;$i<count($pnoteseoc);$i++) {
         if ($pnoteseoc[$i] != -1) {
-          $e_r     = freemed_get_link_rec ($pnoteseoc[$i]+0, "eoc"); 
+          $e_r     = freemed::get_link_rec ($pnoteseoc[$i]+0, "eoc"); 
           $e_id    = $e_r["id"];
           $e_desc  = $e_r["eocdescrip"];
           $e_first = $e_r["eocstartdate"];

@@ -44,7 +44,7 @@ class icdMaintenance extends freemedMaintenanceModule {
 			break;
 		case "modform":
 			if (!$been_here) {
-			$r = freemed_get_link_rec ($id,$this->table_name);
+			$r = freemed::get_link_rec ($id,$this->table_name);
 			foreach ($r AS $k => $v) {
 				global ${$k};
 				${$k} = stripslashes($v);

@@ -68,7 +68,7 @@ class NSFMC extends NSF {
 		$covtpid = $coverage->local_record[covinstp];
 		if ($covtpid > 0)
 		{
-			$covtype = freemed_get_link_rec($covtpid,"covtypes");
+			$covtype = freemed::get_link_rec($covtpid,"covtypes");
 			$da0[instypcd] = $covtype[covtpname];
 		}
 
@@ -174,7 +174,7 @@ class NSFMC extends NSF {
 		$covtpid = $coverage->local_record[covinstp];
 		if ($covtpid > 0)
 		{
-			$covtype = freemed_get_link_rec($covtpid,"covtypes");
+			$covtype = freemed::get_link_rec($covtpid,"covtypes");
 			$da0[instypcd] = $covtype[covtpname];
 		}
 		else
@@ -252,7 +252,7 @@ class NSFMC extends NSF {
 		if ($patient->local_record[ptstatus] != 0)
 		{
 			// look up the status record.
-			$status = freemed_get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
+			$status = freemed::get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
 			if (!$status)
 				echo "Error failed to get ptstatus<BR>";
 			if ($status == "HC")
@@ -444,7 +444,7 @@ class NSFMC extends NSF {
 
 		$pos = 0;
 		$fac_row=0;
-		$fac_row = freemed_get_link_rec($row[procpos], "facility");
+		$fac_row = freemed::get_link_rec($row[procpos], "facility");
         if ($fac_row)
         {
             // use code from facility
@@ -452,7 +452,7 @@ class NSFMC extends NSF {
             {
                 echo "Facility does not have a pos code<BR>";
             }
-            $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
+            $cur_pos = freemed::get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
                 echo "Failed reading pos table";
             $pos = $cur_pos[posname];
@@ -534,7 +534,7 @@ class NSFMC extends NSF {
 		$proccert = $proc[proccert];
 
 		$certrow = 0;
-		$certrow = freemed_get_link_rec($proccert,"certifications");
+		$certrow = freemed::get_link_rec($proccert,"certifications");
 		if (!($certrow))
 		{
 			echo "Error getting cert<BR>";

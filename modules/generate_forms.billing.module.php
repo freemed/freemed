@@ -296,7 +296,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		}
 
         // grab form information form
-        $this->formno = freemed_get_link_rec ($whichform, "fixedform");
+        $this->formno = freemed::get_link_rec ($whichform, "fixedform");
 
 		// current date hashes
 		$curdate[mmddyy]   = date ("m d y");
@@ -597,7 +597,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		// if we have an eoc use it else set the defaults to no
 		if ($eocs[0])
 		{
-			$eoc = freemed_get_link_rec ($eocs[0], "eoc");
+			$eoc = freemed::get_link_rec ($eocs[0], "eoc");
 			// what is this related to?
 			$employment = $eoc[eocrelemp];
 			$related_employment[yes] =
@@ -694,7 +694,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
 		if ($default_facility>0)
 		{
-		   $dfltfac = freemed_get_link_rec($default_facility,"facility");
+		   $dfltfac = freemed::get_link_rec($default_facility,"facility");
 		   $taxid = $dfltfac[psrein];
 		   $boxein = "X";
 		   $boxssn = "";
@@ -708,10 +708,10 @@ class GenerateFormsModule extends freemedBillingModule {
 		}
 
 
-		$this_facility     = freemed_get_link_rec ($row[procpos], "facility");
+		$this_facility     = freemed::get_link_rec ($row[procpos], "facility");
 		$pos = $this_facility[psrpos];
 		//$display_buffer .= "pos $pos<BR>";
-		$cur_pos = freemed_get_link_rec($pos, "pos");
+		$cur_pos = freemed::get_link_rec($pos, "pos");
 		$pos = $cur_pos[posname];
 		if ($pos==0)
 		  $pos=11;
@@ -749,7 +749,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
 		}
 
-		$this_auth = freemed_get_link_rec ($row[procauth], "authorizations");
+		$this_auth = freemed::get_link_rec ($row[procauth], "authorizations");
 		$authorized[authnum] = $this_auth[authnum];
 		if (!$this_auth[authnum])
 		{
@@ -792,7 +792,7 @@ class GenerateFormsModule extends freemedBillingModule {
 			$row = $stack[$i];
 			$number_of_charges++;
 
-			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
+			$cur_cpt = freemed::get_link_rec ($row[proccpt], "cpt");
         	$tos_stack = fm_split_into_array ($cur_cpt[cpttos]);
         	$this_tos = ( ($tos_stack[$cur_insco] < 1) ?
                   $cur_cpt[cptdeftos] :
@@ -810,9 +810,9 @@ class GenerateFormsModule extends freemedBillingModule {
 			$itemvoucher [$number_of_charges] = $row[procvoucher];
 			$itemcpt     [$number_of_charges] = $cur_cpt[cptcode];
 			$itemtos     [$number_of_charges] =
-			  freemed_get_link_field ($this_tos, "tos", "tosname");
+			  freemed::get_link_field ($this_tos, "tos", "tosname");
 			$itemcptmod  [$number_of_charges] =
-			  freemed_get_link_field ($row[proccptmod], "cptmod", "cptmod");
+			  freemed::get_link_field ($row[proccptmod], "cptmod", "cptmod");
 			$itemdiagref [$number_of_charges] =
 			  $diag_set->xrefList ($row[procdiag1], $row[procdiag2],
 								   $row[procdiag3], $row[procdiag4]);

@@ -191,7 +191,7 @@ class PaymentModule extends freemedEMRModule {
                 template_display();
 	    }
 
-			$proc_rec = freemed_get_link_rec($procid, "procrec");
+			$proc_rec = freemed::get_link_rec($procid, "procrec");
 			if (!$proc_rec) {
 				$display_buffer .= _("Error getting procedure");
 				template_display();
@@ -594,7 +594,7 @@ class PaymentModule extends freemedEMRModule {
                 case FEEADJUST: // adjustment category (add) 1
 					// calc the payrecamt
 					$payreclink = $this->coverageIDFromType($proccovmap,$payrecsource);
-                    $proccharges = freemed_get_link_field ($payrecproc, "procrec",
+                    $proccharges = freemed::get_link_field ($payrecproc, "procrec",
                                                                "proccharges");
 					$payrecamt = $proccharges - abs($payrecamt);
                     break; // end adjustment category (add)
@@ -604,7 +604,7 @@ class PaymentModule extends freemedEMRModule {
 
                 case TRANSFER: // refund category 6
 						// show as transferring the balance
-                        $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
+                        $payrecamt = freemed::get_link_field ($payrecproc, "procrec",
                                                                "procbalcurrent");
 						if ($payrecsource == 0)
 							$payreclink = 0;
@@ -616,7 +616,7 @@ class PaymentModule extends freemedEMRModule {
 					$payrecamt = 0; // default
                     if ($payreclink==1) // adjust to zero
                     {
-                        $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
+                        $payrecamt = freemed::get_link_field ($payrecproc, "procrec",
                                                                "procbalcurrent");
                         //$payrecamt   = -(abs($amount_left));
                     }
@@ -624,13 +624,13 @@ class PaymentModule extends freemedEMRModule {
 
                 case WRITEOFF: // writeoff entire balance
 					$payrecamt = 0; // default
-                    $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
+                    $payrecamt = freemed::get_link_field ($payrecproc, "procrec",
                                                                "procbalcurrent");
                     break; // end writeoff category (add)
 
                 case REBILL: // rebill category (add) 4
 						// save off the amount we are re billing
-                        $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
+                        $payrecamt = freemed::get_link_field ($payrecproc, "procrec",
                                                                "procbalcurrent");
                     break; // end rebill category (add)
                 } // end category switch (add)
@@ -673,7 +673,7 @@ class PaymentModule extends freemedEMRModule {
                     $display_buffer .= _("ERROR");    
                 }
                 $display_buffer .= "  <BR>"._("Modifying procedural charges")." ... \n";
-				$procrec = freemed_get_link_rec($payrecproc,"procrec");	
+				$procrec = freemed::get_link_rec($payrecproc,"procrec");	
 				if (!$procrec)
 					$display_buffer .= _("ERROR");
 
@@ -1271,9 +1271,9 @@ class PaymentModule extends freemedEMRModule {
             while ($r = $sql->fetch_array ($result))
             {
                 $line_item_count++;
-                $this_cpt = freemed_get_link_field ($r[proccpt], "cpt", "cptnameint");
-                $this_cptcode = freemed_get_link_field ($r[proccpt], "cpt", "cptcode");
-                $this_cptmod = freemed_get_link_field ($r[proccptmod],
+                $this_cpt = freemed::get_link_field ($r[proccpt], "cpt", "cptnameint");
+                $this_cptcode = freemed::get_link_field ($r[proccpt], "cpt", "cptcode");
+                $this_cptmod = freemed::get_link_field ($r[proccptmod],
                                                        "cptmod", "cptmod");
                 $this_physician = new Physician ($r[procphysician]);
                 $display_buffer .= "
@@ -1344,8 +1344,8 @@ class PaymentModule extends freemedEMRModule {
 				{
 					if ($cov_ids[$i] != 0)
 					{
-						$insid = freemed_get_link_field($cov_ids[$i],"coverage","covinsco");
-						$insname = freemed_get_link_field($insid,"insco","insconame");
+						$insid = freemed::get_link_field($cov_ids[$i],"coverage","covinsco");
+						$insname = freemed::get_link_field($insid,"insco","insconame");
 						$returned_string .= "<OPTION VALUE=\"".$i."\">".$insname."\n";
 					}
 				}
@@ -1362,8 +1362,8 @@ class PaymentModule extends freemedEMRModule {
 		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
-			$insid = freemed_get_link_field($coverage,"coverage","covinsco");
-			$insname = freemed_get_link_field($insid,"insco","insconame");
+			$insid = freemed::get_link_field($coverage,"coverage","covinsco");
+			$insname = freemed::get_link_field($insid,"insco","insconame");
 			return $insname;
 
 		}
@@ -1391,8 +1391,8 @@ class PaymentModule extends freemedEMRModule {
 				{
 					if ($cov_ids[$i] != 0)
 					{
-						$insid = freemed_get_link_field($cov_ids[$i],"coverage","covinsco");
-						$insname = freemed_get_link_field($insid,"insco","insconame");
+						$insid = freemed::get_link_field($cov_ids[$i],"coverage","covinsco");
+						$insname = freemed::get_link_field($insid,"insco","insconame");
 						$returned_string .= "<OPTION VALUE=\"".$cov_ids[$i]."\">".$insname."\n";
 					}
 				}
@@ -1410,7 +1410,7 @@ class PaymentModule extends freemedEMRModule {
 				return;
 			}
 
-			$auth_rec = freemed_get_link_rec($proc[procauth],"authorizations");
+			$auth_rec = freemed::get_link_rec($proc[procauth],"authorizations");
 			$remain = $auth_rec[authvisitsremain];
 			$used = $auth_rec[authvisitsused];
 		}

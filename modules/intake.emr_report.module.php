@@ -42,7 +42,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 				$sched_row = $sql->fetch_array($sched_result);
 				$schid = $sched_row[id];
 				//$display_buffer .= "schid $schid<BR>";
-				$sched_row = freemed_get_link_rec($schid, "scheduler");
+				$sched_row = freemed::get_link_rec($schid, "scheduler");
 				$pt[calldate] = $sched_row["caldateof"];
 				$calminute = $sched_row["calminute"];
 				$calhour = $sched_row["calhour"];
@@ -67,7 +67,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			if ($default_facility > 0)
 			{
 				$fac_row = 0;
-				$fac_row = freemed_get_link_rec($default_facility,"facility");
+				$fac_row = freemed::get_link_rec($default_facility,"facility");
 				if ($fac_row)
 				{
 					$pt[facility] = $fac_row[psrname]." "."Intake Report";

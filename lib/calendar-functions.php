@@ -134,9 +134,9 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_starting_hour () {
     global $cal_starting_hour;
 
-    if (freemed_config_value("calshr")=="")
+    if (freemed::config_value("calshr")=="")
       return $cal_starting_hour;
-    else return freemed_config_value ("calshr");
+    else return freemed::config_value ("calshr");
   } // end function fc_starting_hour
 
   // function fc_ending_hour
@@ -144,9 +144,9 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_ending_hour () {
     global $cal_ending_hour;
 
-    if (freemed_config_value("calehr")=="")
+    if (freemed::config_value("calehr")=="")
       return $cal_ending_hour;
-    else return freemed_config_value ("calehr");
+    else return freemed::config_value ("calehr");
   } // end function fc_ending_hour
 
   // function fc_display_day_calendar
@@ -493,7 +493,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       // record or temporary patient record, depending on type
       switch ($r["caltype"]) {
        case "pat":
-        $calpatient = freemed_get_link_rec ($r["calpatient"], "patient");
+        $calpatient = freemed::get_link_rec ($r["calpatient"], "patient");
         $ptlname    = $calpatient["ptlname"];
         $ptfname    = $calpatient["ptfname"];
         $ptmname    = $calpatient["ptmname"];
@@ -501,7 +501,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
         $ptid       = $calpatient["ptid"   ];
         break;
        case "temp":
-        $calpatient = freemed_get_link_rec ($r["calpatient"], "callin");
+        $calpatient = freemed::get_link_rec ($r["calpatient"], "callin");
         $ptlname    = $calpatient["cilname"];
         $ptfname    = $calpatient["cifname"];
         $ptmname    = $calpatient["cimname"];

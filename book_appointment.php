@@ -58,10 +58,8 @@ switch ($action) {
       <BR>
     ";
 
-    $rm_name = freemed_get_link_field ($room, "room",
-      "roomname");
-    $rm_desc = freemed_get_link_field ($room, "room",
-      "roomdescrip");
+    $rm_name = freemed::get_link_field ($room, "room", "roomname");
+    $rm_desc = freemed::get_link_field ($room, "room", "roomdescrip");
 
     if (strlen($rm_desc)<1) { $rm_desc="";               }
      else                   { $rm_desc="(".$rm_desc.")"; }
@@ -152,7 +150,7 @@ switch ($action) {
             elseif ($i==12) $ampm_t=$i;
         } else { $ampm = "am"; $ampm_t = $i;}
         if (!fc_check_interference_map($i, "0", $selected_date, false) or
-            (freemed_config_value("cal_ob")=="enable")) {
+            (freemed::config_value("cal_ob")=="enable")) {
           $display_buffer .= "
             <TR BGCOLOR=\"".($_alternate =
 	      freemed_bar_alternate_color ($_alternate))."\">
@@ -179,7 +177,7 @@ switch ($action) {
 
         for ($j=15;$j<=45;$j+=15) {
           if (!fc_check_interference_map($i, $j, $selected_date, false) or
-              freemed_config_value("cal_ob")=="enable") {
+              freemed::config_value("cal_ob")=="enable") {
             $display_buffer .= "
              <A HREF=\"$page_name?action=step2&patient=$patient&".
              "hour=$i&minute=$j&room=$room&selected_date=$selected_date&".
@@ -218,10 +216,8 @@ switch ($action) {
    $display_buffer .= freemed_patient_box ($this_patient);
 
    if (strlen($room)>0) {
-     $rm_name = freemed_get_link_field ($room, "room",
-       "roomname");
-     $rm_desc = freemed_get_link_field ($room, "room",
-       "roomdescrip");
+     $rm_name = freemed::get_link_field ($room, "room", "roomname");
+     $rm_desc = freemed::get_link_field ($room, "room", "roomdescrip");
 
      if (strlen($rm_desc)<1) $rm_desc="";
      else $rm_desc="(".$rm_desc.")";
@@ -238,13 +234,13 @@ switch ($action) {
    
      // find default physician by room, if there is one
    if ($room!=0)
-     if (freemed_get_link_field($room, "room", "roomdefphy")!=0)
-       $physician = freemed_get_link_field($room, "room", "roomdefphy");
+     if (freemed::get_link_field($room, "room", "roomdefphy")!=0)
+       $physician = freemed::get_link_field($room, "room", "roomdefphy");
 
      // find the facility for it, with info
-   $facility = freemed_get_link_field ($room, "room", "roompos");
+   $facility = freemed::get_link_field ($room, "room", "roompos");
    if ($facility > 0) {
-     $fac_name = freemed_get_link_field ($facility, "facility", "psrname");
+     $fac_name = freemed::get_link_field ($facility, "facility", "psrname");
    } else {
      $fac_name = _("Default Facility");
    } // end checking for facility
@@ -348,7 +344,7 @@ switch ($action) {
   $display_buffer .= "\n$selected_date, $fac_name, $room_nm";
 
   // get patient, room (lab) and selected_date info
-  $dj_rm  = freemed_get_link_field ($room, "room", "roomname");
+  $dj_rm  = freemed::get_link_field ($room, "room", "roomname");
   $dj_mo  = substr ($selected_date, 5, 2);
   $dj_yr  = substr ($selected_date, 0, 4);
   $dj_day = substr ($selected_date, 8, 2);

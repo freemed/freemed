@@ -69,7 +69,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
             //$display_buffer .= "$k $v<BR>";
      }
      $next_action = "mod";
-     $r = freemed_get_link_rec ($id, $this->table_name);
+     $r = freemed::get_link_rec ($id, $this->table_name);
      extract ($r);
      break;
    } // end internal case

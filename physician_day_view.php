@@ -46,7 +46,7 @@ if ($physician<=0) {
      <BR>
 	";
 } else {
-	$phyinfo  = freemed_get_link_rec ($physician, "physician");
+	$phyinfo  = freemed::get_link_rec ($physician, "physician");
 	$phylname = $phyinfo["phylname"];
 	$phyfname = $phyinfo["phyfname"];
 	$phymname = $phyinfo["phymname"];
