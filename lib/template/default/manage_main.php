@@ -197,7 +197,7 @@ foreach ($static_components AS $garbage => $component) {
 			$panel[__("Messages")] .= "<tr CLASS=\"menubar_info\">".
 				"<TD><b>".__("Date")."</b></TD>".
 				"<TD><b>".__("Time")."</b></TD>".
-				"<TD><b>".__("User")."</b></TD>".
+				"<TD><b>".__("Sender")."</b></TD>".
 				"<TD><b>".__("Action")."</b></TD>".
 				"</tr>\n";
 			while ($my_r = $sql->fetch_array($my_result)) {
@@ -240,6 +240,7 @@ foreach ($static_components AS $garbage => $component) {
 
 		case "photo_id":
 		// If there is a file with that name, show it, else box
+		//print "filename = ".freemed::image_filename($id, 'identification', 'djvu')."<br>";
 		if (file_exists(freemed::image_filename(
 				$id,
 				'identification',
