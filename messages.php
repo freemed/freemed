@@ -12,6 +12,9 @@ define ('PAGE_ROLL', 5);
 //----- Open the database, etc
 freemed::connect ();
 
+//----- Get module cache for any loaded modules
+$cache = freemed::module_cache();
+
 //----- Create scheduler
 if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
@@ -87,6 +90,11 @@ switch ($action) {
 			"msgfor",
 			fm_join_from_array($_REQUEST['msgfor']),
 			false
+		).
+		module_function(
+			'UserGroupsMaintenance',
+			'widget',
+			array ( 'group' )
 		),
 
 		__("Patient")." (".__("if applicable").")" =>
@@ -133,7 +141,13 @@ switch ($action) {
 	$display_buffer .= "\n<div align=\"center\">".
 		__("Adding")." ".__("Message")." ... \n";
 	$result = true;
-	foreach ($_REQUEST['msgfor'] AS $this_is_for) {
+	if ($_REQUEST['group']) {
+		$_g = freemed::get_link_rec($_REQUEST['group'], 'usergroup');
+		$my_for = array_merge($_REQUEST['msgfor'], explode(',', $_g['usergroup']));
+	} else {
+		$my_for = $_REQUEST['msgfor'];
+	}
+	foreach ($my_for AS $this_is_for) {
 		$query = $sql->insert_query(
 			"messages",
 			array(
