@@ -449,6 +449,13 @@ class FreeBBillingTransport extends BillingModule {
 		$report = $freeb->_call('FreeB.Report.get', $param, false);
 
 		//Header('Content-type: text/plain');
+		if (eregi('\%PDF\-1', $report)) {
+			Header('Content-type: application/x-pdf');
+		} elseif (eregi('<html', $report)) {
+			// nothing
+		} else {
+			Header('Content-type: text/plain');
+		}
 		print $report;
 		die();
 	} // end method display_report
