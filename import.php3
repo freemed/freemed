@@ -47,6 +47,8 @@ switch ($action) {
     <P>
     <$STDFONT_B>Select Database to Import : <$STDFONT_E>
     <SELECT NAME=\"db\">
+     <OPTION VALUE=\"authorizations\"
+                                   >Authorizations (authorizations)
      <OPTION VALUE=\"room\"        >Booking Locations (room)
      <OPTION VALUE=\"roomequip\"   >Booking Locations Equipment (roomequip)
      <OPTION VALUE=\"callin\"      >Call-In Patients (callin)
@@ -65,6 +67,7 @@ switch ($action) {
      <OPTION VALUE=\"infaxes\"     >Incoming Faxes (infaxes)
      <OPTION VALUE=\"insco\"       >Insurance Companies (insco)
      <OPTION VALUE=\"inscogroyp\"  >Insurance Company Groups (inscogroup)
+     <OPTION VALUE=\"insmod\"      >Insurance Company Modifiers (insmod)
      <OPTION VALUE=\"intservtype\" >Internal Service Types (intservtype)
      <OPTION VALUE=\"log\"         >Log File (log)
      <OPTION VALUE=\"oldreports\"  >Old Reports (oldreports)
