@@ -10,11 +10,6 @@ include_once("lib/class.rxlist.php");
 freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
-//----- Check for process
-if ($action==__("Search")) {
-	$GLOBALS['__freemed']['on_load'] = 'process';
-}
-
 //----- Form header
 $display_buffer .= "<div ALIGN=\"CENTER\">".
 	"<form NAME=\"lookup\" ACTION=\"".$page_name."\" ".
@@ -38,6 +33,8 @@ switch ($action) {
 
 	// Handle immediate passing and closing
 	if (count($list) == 1) {
+		$GLOBALS['__freemed']['on_load'] = 'process';
+
 		$display_buffer .= "
 		<script language=\"Javascript\">
 		function process () {
@@ -88,7 +85,7 @@ switch ($action) {
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::select_widget(
 			"list",	$pick_list,
-			array('refresh' => true)
+			array('on_change' => 'my_process()')
 		)."
 		<input class=\"button\" TYPE=\"BUTTON\" NAME=\"select\" ".
 		"VALUE=\"Select\" onClick=\"my_process(); return true;\">
