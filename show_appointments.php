@@ -163,10 +163,7 @@ while ($r = $sql->fetch_array ($result)) {
 	if ($show=="all") $_date = $r["caldateof"]." <BR>";
 	if (freemed::check_access_for_facility ($r["calfacility"])){
        $display_buffer .= "
-         <tr CLASS=\"".
-          ( ($r["calpatient"]==$current_patient) ?
-	  "#aaaaaa" :
-	  (freemed_alternate()) )."\">
+         <tr CLASS=\"".freemed_alternate()."\">
           <td>$_date$_time</td>
 	  <td><A HREF=\"$patient_link_location\"
           ><FONT".
