@@ -405,7 +405,7 @@ class FreeBBillingTransport extends BillingModule {
 			$key = $freeb->StoreBillKey($billkey);
 
 			// ... and send it to FreeB, to see what we get for a result
-			$result = $freeb->ProcessBill($key, $my_format, $my_target, $my_key);
+			$result = $freeb->ProcessBill($key, $my_format, $my_target);
 
 			// DEBUG: Show what we got
 			print "DEBUG: "; print_r($result); print "<br/>\n";
@@ -417,14 +417,14 @@ class FreeBBillingTransport extends BillingModule {
 	} // end method process
 
 	function rebillkey ( ) {
-		$key = $_REQUEST['key'];
+		$billkey = $_REQUEST['key'];
 
 		$freeb = CreateObject('FreeMED.FreeB_v1');
 		$this_billkey = $freeb->StoreBillKey( $billkey );
 		$result = $freeb->ProcessBill(
 			$key,
-			'hcfa', //$format[$single],
-			'txt' //$target[$single]
+			$format[$single],
+			$target[$single]
 		);
 		return $result;
 	} // end method rebillkey
