@@ -423,13 +423,12 @@ function fc_generate_calendar_mini ($given_date, $this_url) {
 	  ( $dayp       == $cur_day AND
             $this_month == $cur_month AND
             $this_year  == $cur_year ) ?
-            "calcell_selected" : 
+            "calendar_mini_selected" : 
             "calendar_mini_cell" );
        
 	$buffer .= "<td align=\"RIGHT\" class=\"".$thisclass."\">\n";
 
         $buffer .= "<a ".
-	  ( $thisclass=='calendar_mini_cell' ? "class=\"$thisclass\" " : "" ).
 	  "href=\"$this_url&selected_date=".
          date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
          "\">$dayp</a>\n";
