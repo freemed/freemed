@@ -123,7 +123,7 @@ if ($action=="add") {
 
     <$STDFONT_B>Internal Service Type<$STDFONT_E>
     <INPUT TYPE=TEXT NAME=\"intservtype\" SIZE=25 MAXLENGTH=50 
-     VALUE=\"".fm_prep($intservtype)."\">
+     VALUE=\"".prepare($intservtype)."\">
 
     <P>
     <CENTER>
@@ -264,7 +264,7 @@ if ($action=="add") {
 
       echo "
         <TR BGCOLOR=$_alternate>
-        <TD>".fm_prep($intservtype)."</TD>
+        <TD>".prepare($intservtype)."</TD>
         <TD><A HREF=
          \"$page_name?$_auth&id=$id&action=modform\"
          ><FONT SIZE=-1>$lang_MOD$id_mod</FONT></A>
