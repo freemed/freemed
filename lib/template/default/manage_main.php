@@ -58,7 +58,7 @@ foreach ($static_components AS $garbage => $component) {
 			$panel[_("Appointments")] .= "
 			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER>
 			<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0
-			 BORDER=0><TR>
+			 BORDER=0 CLASS=\"thinbox\"><TR>
 			<TD VALIGN=MIDDLE ALIGN=LEFT CLASS=\"menubar_info\">
 				<B>"._("Date")."</B>
 			</TD><TD VALIGN=MIDDLE ALIGN=LEFT
@@ -66,6 +66,8 @@ foreach ($static_components AS $garbage => $component) {
 				<B>"._("Time")."</B>
 			</TD><TD VALIGN=MIDDLE CLASS=\"menubar_info\">
 				<!-- <B>"._("Room")."</B> -->
+			</TD><TD VALIGN=MIDDLE CLASS=\"menubar_info\">
+				<B>"._("Description")."</B>
 			</TD></TR>
 			";
 			while ($appoint_r=$sql->fetch_array($appoint_result)) {
@@ -79,6 +81,9 @@ foreach ($static_components AS $garbage => $component) {
 				".prepare(fc_get_time_string(
 					$appoint_r["calhour"]
 				))."
+				</TD><TD VALIGN=MIDDLE ALIGN=LEFT>
+				</TD><TD VALIGN=MIDDLE ALIGN=LEFT>
+				".prepare($appoint_r["calprenote"])."
 				</TD></TR>
 				";
 			} // end of looping through results
