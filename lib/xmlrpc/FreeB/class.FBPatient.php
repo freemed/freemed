@@ -208,8 +208,35 @@ class FBPatient {
 	} // end method isOtherOfInsured
 
 	function X12InsuredRelationship ( $pat, $cov ) {
+		//TODO create all potential relationships
 		$c = freemed::get_link_rec($cov, 'coverage');
-		return $c['covrel'];
+		switch($c['covrel'])
+		{
+			case "H":	
+			case "W":	
+				$x12rel="01";
+			break;
+
+			case "C":	
+				$x12rel="19";
+			break;
+			case "SC":	
+				$x12rel="17";
+			break;
+
+			case "FC":	
+				$x12rel="10";
+			break;
+		
+			default :	
+				$x12rel="21";
+			break;
+
+		}
+
+
+
+		return $x12rel;
 	} // end method X12InsuredRelationship
 
 } // end class FBPatient

@@ -70,12 +70,12 @@ class FBPractice {
 	} // end method isAcceptsAssignment
 
 	function X12Id ( $payer ) {
-		return CreateObject('PHP.xmlrpcval', '', xmlrpcString); // stub
+		return '1111111111'; // stub
 	} // end method X12Id
 
 	function X12IdType ( $prac ) {
-		// fixme - hardcoded 0B value
-		return '0B';
+		// TODO - hardcoded 0B value
+		return 'BQ';
 	} // end method X12IdType
 
 } // end class FBPractice

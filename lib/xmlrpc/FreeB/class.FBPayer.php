@@ -189,7 +189,8 @@ class FBPayer {
 	function X12ClaimType ( $key ) {
 		$i = freemed::get_link_rec($key, 'insco');
 		$mods = explode (':', $i['inscomod']);
-		return freemed::get_link_field($mods[0], 'insmod', 'insmod');
+	//	return freemed::get_link_field($mods[0], 'insmod', 'insmod');
+		return 'HM'; //TODO fix this.
 	} // end method X12ClaimType
 
 } // end class FBPayer

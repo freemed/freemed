@@ -83,7 +83,8 @@ class FBProvider {
 
 	function TIN ( $provider ) {
 		$p = CreateObject('_FreeMED.Physician', $provider);
-		return $p->local_record['phyein'];
+		//return $p->local_record['phyein']; What it should be
+		return $p->local_record['physsn']; // What it can be
 	} // end method TIN
 
 	function IPN ( $provider ) {

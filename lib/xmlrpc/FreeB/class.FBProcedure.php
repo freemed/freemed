@@ -76,7 +76,7 @@ class FBProcedure {
 		// regarding if the bill was sent, etc.
 		$key_rec = freemed::get_link_rec($billkey, 'billkey');
 		$key = unserialize($key_rec['billkey']);
-		syslog(LOG_INFO, 'FBProcedure.ProcArray| size = '.count($key['procedures']));
+		if(LOG_FREEB){syslog(LOG_INFO, 'FBProcedure.ProcArray| size = '.count($key['procedures']));}
 		return $key['procedures'];
 	} // end method ProcArray
 
