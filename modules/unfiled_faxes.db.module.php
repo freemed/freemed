@@ -22,7 +22,8 @@ class UnfiledFaxes extends MaintenanceModule {
 			'id' => SQL__SERIAL
 		);
 
-		// Add main menu notification handler
+		// Add main menu notification handlers
+		$this->_SetHandler('MenuNotifyItems', 'menu_notify');
 		$this->_SetHandler('MainMenu', 'notify');
 		
 		// Form proper configuration information
@@ -103,7 +104,7 @@ class UnfiledFaxes extends MaintenanceModule {
                 <embed SRC=\"data/fax/unfiled/".$r['ufffilename']."\"
 		BORDER=\"0\"
                 PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-                TYPE=\"image/x.djvu\" WIDTH=\"100%\" HEIGHT=\"600\"></embed>
+                TYPE=\"image/x.djvu\" WIDTH=\"600\" HEIGHT=\"600\"></embed>
 
 		</div>
 		<div align=\"center\">
@@ -198,7 +199,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			return array (
 				__("Unfiled Faxes"),
 				sprintf(__("There are currently %d unfiled faxes in the system."), $unfiled)."&nbsp;".
-				"<a href=\"module_loader.php?module=unfiledfaxes&action=display\" class=\"reverse\">".
+				"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\" class=\"reverse\">".
 				"<img src=\"lib/template/default/add.png\" ".
 				"border=\"0\" alt=\"[".__("File")."]\" /></a>"
 			);
@@ -212,6 +213,30 @@ class UnfiledFaxes extends MaintenanceModule {
 			);
 		}
 	} // end method notify
+
+	function menu_notify ( ) {
+		// Check to see if we're the person who is supposed to be
+		// notified. If not, die out right now.
+		$supposed = freemed::config_value('uffax_user');
+		if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
+			return false;
+		}
+	
+		// Decide if we have any "unfiled faxes" in the system
+		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
+		$result = $GLOBALS['sql']->query($query);
+		extract($GLOBALS['sql']->fetch_array($result));
+		if ($unfiled > 0) {
+			return array (
+				sprintf(__("You have %d unfiled faxes"), $unfiled),
+				"module_loader.php?module=".urlencode(get_class($this))."&action=display"
+			);
+		} else {
+			// For now, we're just going to return nothing so that
+			// the box doesn't show up
+			return false;
+		}
+	} // end method menu_notify
 
 	function user_select ( ) {
 		$results[__("NONE")] = 0;
