@@ -31,9 +31,11 @@ foreach ($static_components AS $garbage => $component) {
 		// Add header and strip at top
 		$modules[_("Appointments")] = "appointments";
 		$panel[_("Appointments")] .= "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\">
-			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER
+			<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+			 CELLPADDING=\"3\" CLASS=\"thinbox\"
+			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+			 onMouseOut=\"this.className='thinbox'; return true;\"
+			><TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 			 CLASS=\"menubar_items\">
 			<A HREF=\"book_appointment.php?patient=$id&type=pat\"
 			>"._("Add")."</A> |
@@ -57,40 +59,42 @@ foreach ($static_components AS $garbage => $component) {
 		$appoint_result = $sql->query($query);
 		if (!$sql->results($appoint_result)) {
 			$panel[_("Appointments")] .= "
-			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER>
+			<TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 			<B>"._("NONE")."</B>
 			</TD></TR>
 			";
 		} else {
 			$panel[_("Appointments")] .= "
-			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER>
+			<TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 			<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0
 			 BORDER=0 CLASS=\"thinbox\"><TR>
-			<TD VALIGN=MIDDLE ALIGN=LEFT CLASS=\"menubar_info\">
+			<TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\"
+			 CLASS=\"menubar_info\">
 				<B>"._("Date")."</B>
-			</TD><TD VALIGN=MIDDLE ALIGN=LEFT
+			</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\"
 			 CLASS=\"menubar_info\">
 				<B>"._("Time")."</B>
-			</TD><TD VALIGN=MIDDLE CLASS=\"menubar_info\">
+			</TD><TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
 				<!-- <B>"._("Room")."</B> -->
-			</TD><TD VALIGN=MIDDLE CLASS=\"menubar_info\">
+			</TD><TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
 				<B>"._("Description")."</B>
 			</TD></TR>
 			";
 			while ($appoint_r=$sql->fetch_array($appoint_result)) {
 				$panel[_("Appointments")] .= "
 				<TR>
-				<TD VALIGN=MIDDLE ALIGN=LEFT>
-				".prepare(fm_date_print(
+				<TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
+				<SMALL>".prepare(fm_date_print(
 					$appoint_r["caldateof"]
-				))."
-				</TD><TD VALIGN=MIDDLE ALIGN=LEFT>
-				".prepare(fc_get_time_string(
-					$appoint_r["calhour"]
-				))."
-				</TD><TD VALIGN=MIDDLE ALIGN=LEFT>
-				</TD><TD VALIGN=MIDDLE ALIGN=LEFT>
-				".prepare($appoint_r["calprenote"])."
+				))."</SMALL>
+				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
+				<SMALL>".prepare(fc_get_time_string(
+					$appoint_r["calhour"],
+					$appoint_r["calminute"]
+				))."</SMALL>
+				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
+				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
+				<SMALL>".prepare(stripslashes($appoint_r["calprenote"]))."</SMALL>
 				</TD></TR>
 				";
 			} // end of looping through results
@@ -115,7 +119,9 @@ foreach ($static_components AS $garbage => $component) {
 		if ($sql->results($f_results)) {
 			$panel[_("Custom Records")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\">
+			 CELLPADDING=3 CLASS=\"thinbox\"
+			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+			 onMouseOut=\"this.className='thinbox'; return true;\">
 			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			</TD></TR>
@@ -157,7 +163,9 @@ foreach ($static_components AS $garbage => $component) {
 		$modules[_("Medical Information")] = "medical_information";
 		$panel[_("Medical Information")] = "
 		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-		 CELLPADDING=3 CLASS=\"thinbox\">
+		 CELLPADDING=3 CLASS=\"thinbox\"
+		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+		 onMouseOut=\"this.className='thinbox'; return true;\">
 		<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 		 CLASS=\"menubar_items\">
 		(no actions)
@@ -175,7 +183,9 @@ foreach ($static_components AS $garbage => $component) {
 		$modules[_("Messages")] = "messages";
 		$panel[_("Messages")] = "
 		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-		 CELLPADDING=3 CLASS=\"thinbox\">
+		 CELLPADDING=3 CLASS=\"thinbox\"
+		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+		 onMouseOut=\"this.className='thinbox'; return true;\">
 		<TR><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 		 CLASS=\"menubar_items\">
 		<A HREF=\"messages.php?action=addform\">"._("Add")."</A>
@@ -209,8 +219,8 @@ foreach ($static_components AS $garbage => $component) {
 
 				// Form the panel
 				$panel[_("Messages")] .= "<TR>".
-					"<TD ALIGN=\"LEFT\">$y-$m-$d</TD>".
-					"<TD ALIGN=\"LEFT\">".fc_get_time_string($hour,$min)."</TD>".
+					"<TD ALIGN=\"LEFT\"><SMALL>$y-$m-$d</SMALL></TD>".
+					"<TD ALIGN=\"LEFT\"><SMALL>".fc_get_time_string($hour,$min)."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$this_user->getDescription()."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\">".
 					template::summary_delete_link(NULL,
@@ -239,7 +249,9 @@ foreach ($static_components AS $garbage => $component) {
 			$modules[_("Photo ID")] = "photo_id";
 			$panel[_("Photo ID")] = "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\">
+			 CELLPADDING=3 CLASS=\"thinbox\"
+			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+			 onMouseOut=\"this.className='thinbox'; return true;\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
@@ -271,7 +283,9 @@ foreach ($static_components AS $garbage => $component) {
 		} else {
 			$panel[_("Photo ID")] = "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\">
+			 CELLPADDING=3 CLASS=\"thinbox\"
+			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+			 onMouseOut=\"this.className='thinbox'; return true;\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."\"
@@ -308,7 +322,9 @@ foreach ($static_components AS $garbage => $component) {
 		$modules[_("Patient Information")] = "patient_information";
 		$panel[_("Patient Information")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\">
+			 CELLPADDING=3 CLASS=\"thinbox\"
+			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+			 onMouseOut=\"this.className='thinbox'; return true;\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\" COLSPAN=2>
 			<A HREF=\"patient.php?action=modform&id=$id\" 
@@ -345,7 +361,9 @@ foreach ($modular_components AS $garbage => $component) {
 			$component;
 		$panel[_($module_list->get_module_name($component))] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\">
+			 CELLPADDING=3 CLASS=\"thinbox\"
+		 	 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
+		 	 onMouseOut=\"this.className='thinbox'; return true;\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"module_loader.php?module=".

@@ -42,6 +42,14 @@ ul:menubar {
 	background: #d9d9ff 
 }
 
+.thinbox_hilite {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #d9d9d9 
+}
+
 .thinbox_noscroll {
 	border: thin grey;
 	border-width: thin;

@@ -7,20 +7,20 @@ $patient_history = patient_history_list();
 $page_history = page_history_list();
 if ($patient_history or $page_history) {
 	print "
-	<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0 VALIGN=TOP
-	 ALIGN=CENTER>
+	<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"0\" VALIGN=\"TOP\"
+	 ALIGN=\"CENTER\">
 	";
 }
 if ($patient_history) {
 	print "
-	<TR><TD ALIGN=RIGHT>
-	<FORM ACTION=\"manage.php\" METHOD=POST>
+	<TR><TD ALIGN=\"RIGHT\">
+	<form ACTION=\"manage.php\" METHOD=\"POST\">
 	".html_form::select_widget("id", $patient_history)."
-	</TD><TD ALIGN=CENTER>
-	<INPUT TYPE=IMAGE SRC=\"lib/template/default/magnifying_glass.".
+	</TD><TD ALIGN=\"CENTER\">
+	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/magnifying_glass.".
 	IMAGE_TYPE."\"
-		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Manage]\">
-	</FORM>
+		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Manage]\"/>
+	</form>
 	</TD></TR>
 	";
 } // end checking for patient history
@@ -32,10 +32,10 @@ if ($page_history) {
 	// Show the actual pick list
 	print "
 	<TR><TD ALIGN=RIGHT>
-	<FORM ACTION=\"redirect.php\" METHOD=POST>
+	<FORM ACTION=\"redirect.php\" METHOD=\"POST\">
 	".html_form::select_widget("location", $page_history)."
-	</TD><TD ALIGN=CENTER>
-	<INPUT TYPE=IMAGE SRC=\"lib/template/default/forward.".
+	</TD><TD ALIGN=\"CENTER\">
+	<INPUT TYPE=\"IMAGE\" SRC=\"lib/template/default/forward.".
 	IMAGE_TYPE."\"
 		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Jump to page]\">
 	</FORM>
@@ -64,7 +64,7 @@ if ($patient_history or $page_history) {
 	    <A HREF="patient.php?action=addform"><?php print _("New"); ?></A>
 	<LI><A HREF="reports.php"><?php print _("Reports"); ?></A>
 </UL>
-<HR>
+<hr/>
 <UL>
 <?php
 //----- Check for help file link
@@ -72,6 +72,7 @@ if ( ($help_url = help_url()) != "help.php" ) print "\t<LI><A HREF=\"#\" ".
 	"onClick=\"window.open('".$help_url."', 'Help', 'width=600,height=400,".
 	"resizable=yes');\">"._("Help")."</A>\n";
 ?>
+	<LI><A HREF="preferences.php"><?php print _("Preferences"); ?></A>
 	<LI><A HREF="main.php"><?php print _("Return to Main Menu"); ?></A>
 	<LI><A HREF="logout.php"><?php print _("Logout"); ?></A>
 </UL>
