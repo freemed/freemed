@@ -3,19 +3,16 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MODULE_BILLING_PHP__")) {
-
-define ('__MODULE_BILLING_PHP__', true);
-
 include_once("lib/render_forms.php");
 include_once("lib/calendar-functions.php");
 
-// class freemedBillingModule extends freeMedmodule
-class freemedBillingModule extends freemedModule {
+LoadObjectDependency('FreeMED.BaseModule');
+
+class BillingModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Billing";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 	var $order_field;
@@ -25,10 +22,10 @@ class freemedBillingModule extends freemedModule {
     var $patient_procs;  // 2d array [patient][ids of procs processed]
 
 	// contructor method
-	function freemedBillingModule () {
+	function BillingModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedBillingModule
+		$this->BaseModule();
+	} // end function BillingModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -655,10 +652,6 @@ class freemedBillingModule extends freemedModule {
 
 	}
 
-
-
-} // end class freemedBillingModule
-
-} // end if not defined
+} // end class BillingModule
 
 ?>

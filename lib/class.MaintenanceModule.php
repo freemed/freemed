@@ -3,16 +3,13 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MODULE_MAINTENANCE_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define ('__MODULE_MAINTENANCE_PHP__', true);
-
-// class freemedMaintenanceModule extends freeMedmodule
-class freemedMaintenanceModule extends freemedModule {
+class MaintenanceModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Database Maintenance";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 	var $order_field;
@@ -20,10 +17,10 @@ class freemedMaintenanceModule extends freemedModule {
 	var $table_name;
 
 	// contructor method
-	function freemedMaintenanceModule () {
+	function MaintenanceModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedMaintenanceModule
+		$this->BaseModule();
+	} // end function MaintenanceModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -226,8 +223,6 @@ class freemedMaintenanceModule extends freemedModule {
 		return !empty($result);
 	} // end function create_table
 
-} // end class freemedMaintenanceModule
-
-} // end if not defined
+} // end class MaintenanceModule
 
 ?>

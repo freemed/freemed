@@ -3,16 +3,13 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MODULE_CALENDAR_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define ('__MODULE_CALENDAR_PHP__', true);
-
-// class freemedCalendarModule
-class freemedCalendarModule extends freemedModule {
+class CalendarModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Calendar";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 	var $order_field;
@@ -44,13 +41,11 @@ class freemedCalendarModule extends freemedModule {
 	var $prevmonth;
 	var $prevyear;
 
-	
-
 	// contructor method
-	function freemedCalendarModule () {
+	function CalendarModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedCalendarModule
+		$this->BaseModule();
+	} // end function CalendarModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -681,11 +676,6 @@ class freemedCalendarModule extends freemedModule {
 	$display_buffer .= "<!-- end lucid calendar printout -->\n"; /* end of calendar printout */
 	} /* end draw function */
 
-
-
-
-} // end class freemedCalendarModule
-
-} // end if not defined
+} // end class CalendarModule
 
 ?>

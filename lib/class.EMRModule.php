@@ -3,16 +3,13 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MODULE_EMR_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define ('__MODULE_EMR_PHP__', true);
-
-// class freemedEMRModule
-class freemedEMRModule extends freemedModule {
+class EMRModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Electronic Medical Record";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 	var $order_field;
@@ -21,10 +18,10 @@ class freemedEMRModule extends freemedModule {
 	var $patient_field; // the field that links to the patient ID
 
 	// contructor method
-	function freemedEMRModule () {
+	function EMRModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedEMRModule
+		$this->BaseModule();
+	} // end function EMRModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -349,12 +346,10 @@ class freemedEMRModule extends freemedModule {
 			$this->this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		return $this->xml_generate($this->this_patient);
-	} // end function freemedEMRModule->xml_export
+	} // end function EMRModule->xml_export
 
 	function xml_generate ($patient) { return ""; } // stub 
 
-} // end class freemedEMRModule
-
-} // end if not defined
+} // end class EMRModule
 
 ?>

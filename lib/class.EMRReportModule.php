@@ -4,16 +4,13 @@
  // a single report for the patient being viewed
  // lic : GPL, v2
 
-if (!defined("__MODULE_EMR_REPORT_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define ('__MODULE_EMR_REPORT_PHP__', true);
-
-// class freemedEMRModule
-class freemedEMRReportModule extends freemedModule {
+class EMRReportModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Electronic Medical Record Report";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 	var $order_field;
@@ -21,10 +18,10 @@ class freemedEMRReportModule extends freemedModule {
 	var $table_name;
 
 	// contructor method
-	function freemedEMRReportModule () {
+	function EMRReportModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedEMRReportModule
+		$this->BaseModule();
+	} // end function EMRReportModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -244,8 +241,6 @@ class freemedEMRReportModule extends freemedModule {
 		);
 	} // end function view
 
-} // end class freemedEMRReportModule
-
-} // end if not defined
+} // end class EMRReportModule
 
 ?>

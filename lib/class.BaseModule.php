@@ -3,16 +3,12 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MODULE_PHP__")) {
-
-define ('__MODULE_PHP__', true);
-
 include_once("lib/freemed.php");
 
 LoadObjectDependency('PHP.module');
 
 // class freemedModule extends module
-class freemedModule extends module {
+class BaseModule extends module {
 
 	// override variables
 	var $PACKAGE_NAME = PACKAGENAME;
@@ -21,16 +17,19 @@ class freemedModule extends module {
 	var $MODULE_DESCRIPTION = "No description.";
 	var $MODULE_VENDOR = "Stock Module";
 
-	// all modules use this one loader
+	// Set package versioning information
+	var $PACKAGE_VERSION = VERSION;
+
+	// All FreeMED modules use this one loader
 	var $page_name = "module_loader.php";
 
 	// contructor method
-	function freemedModule () {
+	function BaseModule () {
 		// call parent constructor
 		$this->module();
 		// call setup
 		$this->setup();
-	} // end constructor freemedModule
+	} // end constructor BaseModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -49,10 +48,9 @@ class freemedModule extends module {
 		$page_name = _($this->MODULE_NAME);
 
 		// Globalize record_name and page_title
-		global $record_name, $page_title;
 		if (page_name() == $this->page_name) {
-			$record_name = $this->record_name;
-			$page_title = $this->record_name;
+			$GLOBALS['record_name'] = $this->record_name;
+			$GLOBALS['page_title'] = $this->record_name;
 		}
 	} // end function header
 
@@ -87,15 +85,6 @@ class freemedModule extends module {
 	// _update (in this case, wrapped in classes...)
 	function _update () { return true; }
 
-} // end class freemedModule
-
-// rest of module loaders
-//include ("lib/module_emr.php");
-//include ("lib/module_maintenance.php");
-//include ("lib/module_reports.php");
-//include ("lib/module_billing.php");
-//include ("lib/module_edi.php");
-
-} // end if not defined
+} // end class BaseModule
 
 ?>

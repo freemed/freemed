@@ -1,18 +1,14 @@
 <?php
  // $Id$
- // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MODULE_ADMIN_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define ('__MODULE_ADMIN_PHP__', true);
-
-// class freemedAdminModule extends freeMedmodule
-class freemedAdminModule extends freemedModule {
+class CertModule extends BaseModule {
 
 	// override variables
-	var $CATEGORY_NAME = "Freemed Admin";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_NAME = "EMR Certifications";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 	var $order_field;
@@ -20,26 +16,44 @@ class freemedAdminModule extends freemedModule {
 	var $table_name;
 
 	// contructor method
-	function freemedAdminModule () {
+	function CertModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedAdminModule
+		$this->BaseModule();
+	} // end function CertModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
-		global $module;
+		global $module, $patient;
 		if (!isset($module)) 
 		{
-			trigger_error("Module not Defined", E_ERROR);
+			trigger_error("No Module Defined", E_ERROR);
+		}
+		if ($patient < 1) 
+		{
+			trigger_error( "No Patient Defined", E_ERROR);
+		}
+		// check access to patient
+		if (!freemed::check_access_for_patient($patient)) 
+		{
+			trigger_error("User not Authorized for this function", E_USER_ERROR);
 		}
 		return true;
+
 	} // end function check_vars
 
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action;
+		global $action, $patient;
+
+		if (!isset($this->this_patient))
+			$this->this_patient = CreateObject('FreeMED.Patient', $patient);
+		if (!isset($this->this_user))
+			$this->this_user    = CreateObject('FreeMED.User');
+
+		// display universal patient box
+		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
 
 		switch ($action) {
 			case "add":
@@ -61,11 +75,11 @@ class freemedAdminModule extends freemedModule {
 				break;
 
 			case "modform":
-				global $id;
-				if (empty($id) or ($id<1)) {
-					template_display();
-				}
 				$this->modform();
+				break;
+
+			case "display";
+				$this->display();
 				break;
 
 			case "view":
@@ -77,13 +91,13 @@ class freemedAdminModule extends freemedModule {
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
-	// function _add
-	// - addition routine (can be overridden if need be)
+	// function add
+	// - addition routine
+	function add () { $this->_add(); }
 	function _add () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-
+		foreach ($GLOBALS as $k => $v) global $$k;
+	
 		$display_buffer .= "
 			<P><CENTER>
 			"._("Adding")." ...
@@ -97,44 +111,42 @@ class freemedAdminModule extends freemedModule {
 		);
 
 		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?module=$module\"
+				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
 				>"._("back")."</A>
 			</CENTER>
 		";
-	} // end function _add
-	function add () { $this->_add(); }
 
-	// function _del
-	// - only override this if you *really* have something weird to do
+	} // end function _add
+
+	// function del
+	// - delete function
+	function del () { $this->_del(); }
 	function _del () {
 		global $display_buffer;
-		global $id, $sql, $module;
+		global $id, $sql;
 		$display_buffer .= "<P ALIGN=CENTER>".
 			_("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
 		if ($result) { $display_buffer .= _("done"); }
-		 else        { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		 else		 { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
 		$display_buffer .= "</P>\n";
-		$display_buffer .= "<P ALIGN=CENTER><A HREF=\"".$this->page_name.
-			"?module=".urlencode($module)."\">"._("back")."</A></P>\n";
 	} // end function _del
-	function del () { $this->_del(); }
 
-	// function _mod
-	// - modification routine (override if neccessary)
+	// function mod
+	// - modification function
+	function mod () { $this->_mod(); }
 	function _mod () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-
+		foreach ($GLOBALS as $k => $v) global $$k;
+	
 		$display_buffer .= "
 			<P><CENTER>
 			"._("Modifying")." ...
@@ -145,34 +157,37 @@ class freemedAdminModule extends freemedModule {
 				$this->table_name,
 				$this->variables,
 				array (
-					"id"	=>	$id
+					"id"	=>		$id
 				)
 			)
 		);
 
 		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?module=$module\"
+				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
 				>"._("back")."</A>
 			</CENTER>
 		";
+
 	} // end function _mod
-	function mod() { $this->_mod(); }
 
 	// function add/modform
 	// - wrappers for form
 	function addform () { $this->form(); }
 	function modform () { $this->form(); }
 
+	// function display
+	// by default, a wrapper for view
+	function display () { $this->view(); }
+
 	// function form
 	// - add/mod form stub
 	function form () {
-		global $display_buffer;
 		global $action, $id, $sql;
 
 		if (is_array($this->form_vars)) {
@@ -211,26 +226,21 @@ class freemedAdminModule extends freemedModule {
 		);
 	} // end function view
 
-	// override _setup with create_table
-	function _setup () {
-		if (!$this->create_table()) return false;
-		return freemed_import_stock_data ($this->record_name);
-	} // end function _setup
+	// this function exports XML for the entire patient record
+	function xml_export () {
+		global $display_buffer;
+		global $patient;
 
-	// function create_table
-	// - used to initially create SQL table
-	function create_table () {
-		if (!isset($this->table_definition)) return false;
-		$query = $sql->create_table_query(
-			$this->table_name,
-			$this->table_definition
-		);
-		$result = $sql->query ($query);
-		return !empty($result);
-	} // end function create_table
+		if (!isset($this->this_patient)) {
+			$this->this_patient = CreateObject('FreeMED.Patient',
+				$patient);
+		}
 
-} // end class freemedAdminModule
+		return $this->xml_generate($this->this_patient);
+	} // end function CertModule->xml_export
 
-} // end if not defined
+	function xml_generate ($patient) { return ""; } // stub 
+
+} // end class freemedCertModule
 
 ?>

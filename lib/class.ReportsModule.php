@@ -3,16 +3,12 @@
  // desc: module prototype for reports
  // lic : GPL, v2
 
-if (!defined("__MODULE_REPORTS_PHP__")) {
+LoadObjectDependency('FreeMED.ReportsModule');
 
-define ('__MODULE_REPORTS_PHP__', true);
+class ReportsModule extends BaseModule {
 
-// class freemedReportsModule
-class freemedReportsModule extends freemedModule {
-
-	// override variables
 	var $CATEGORY_NAME = "Reports";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 	var $form_vars;
@@ -21,10 +17,10 @@ class freemedReportsModule extends freemedModule {
 	var $this_user;
 
 	// contructor method
-	function freemedReportsModule () {
+	function ReportsModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedReportsModule
+		$this->BaseModule();
+	} // end function ReportsModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -71,8 +67,6 @@ class freemedReportsModule extends freemedModule {
 	// - view stub
 	function view () { }
 
-} // end class freemedReportsModule
-
-} // end if not defined
+} // end class ReportsModule
 
 ?>

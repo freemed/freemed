@@ -1,26 +1,22 @@
 <?php
  // $Id$
- // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MODULE_GRAPH_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define ('__MODULE_GRAPH_PHP__', true);
-
-// class freemedGraphModule extends freeMedmodule
-class freemedGraphModule extends freemedModule {
+class GraphModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Graph";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars to be passed from child modules
 
 	// contructor method
-	function freemedGraphModule () {
+	function GraphModule () {
 		// call parent constructor
-		$this->freemedModule();
-	} // end function freemedGraphModule
+		$this->BaseModule();
+	} // end function GraphModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -56,7 +52,7 @@ class freemedGraphModule extends freemedModule {
 			freemed_open_db();
 			return;
 		}
-		freemedModule::header();
+		BaseModule::header();
 	} // end function header
 
 	function footer() {
@@ -82,7 +78,6 @@ class freemedGraphModule extends freemedModule {
         	<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
 		<INPUT TYPE=HIDDEN NAME=\"graphmode\" VALUE=\"1\">
 
-
 		<TR>
 		<TD>"._("Start Date").": </TD>
 		<TD>".fm_date_entry("start_dt")."</TD>
@@ -100,10 +95,6 @@ class freemedGraphModule extends freemedModule {
 
 	} // end function GetGraphOptions
 
-} // end class freemedGraphModule
+} // end class GraphModule
 
-} // end define
-
-
-
-
+?>

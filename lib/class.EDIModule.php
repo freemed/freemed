@@ -16,16 +16,13 @@ $EDI_INTERCHANGE_RECVR_ID="54771";        // highmark
 $EDI_INTERCHANGE_CNTLNUM="INTCHGCTLNUM";
 $EDI_TESTORPROD = "T";
 
-if (!defined("__MODULE_EDI_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define ('__MODULE_EDI_PHP__', true);
-
-// class freemedEDIModule
-class freemedEDIModule extends freemedModule {
+class EDIModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "EDI";
-	var $CATEGORY_VERSION = "0.1";
+	var $CATEGORY_VERSION = "0.2";
 
 	// vars related to this edi class
 	var $record_terminator;
@@ -41,13 +38,13 @@ class freemedEDIModule extends freemedModule {
 	var $testorprod;          // sending test data only T or P
 
 	// contructor method
-	function freemedEDIModule () {
+	function EDIModule () {
 		global $display_buffer;
 		global $BILLING_SERVICE, $EDI_VENDOR, $EDI_SOURCE_NUMBER, $EDI_INTERCHANGE_SENDER_ID;
         global $EDI_INTERCHANGE_RECVR_ID, $EDI_INTERCHANGE_CNTLNUM, $EDI_TESTORPROD;
 
 		// call parent constructor
-		$this->freemedModule();
+		$this->BaseModule();
 
 		$this->transaction_reference_number = "0";
 		$this->current_transaction_set = "0000";
@@ -65,7 +62,7 @@ class freemedEDIModule extends freemedModule {
 		$this->testorprod = $EDI_TESTORPROD;
 
 
-	} // end function freemedEDIModule
+	} // end function EDIModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -407,8 +404,6 @@ class freemedEDIModule extends freemedModule {
 	} // end cleannumber
 
 
-} // end class freemedEDIModule
-
-} // end if not defined
+} // end class EDIModule
 
 ?>
