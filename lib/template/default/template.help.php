@@ -8,7 +8,7 @@ include_once("lib/template/default/help.macros.php");
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-	<TITLE><?php print prepare(PACKAGENAME) . " v". VERSION . " - " .
+	<TITLE><?php print prepare(PACKAGENAME) . " v". DISPLAY_VERSION ." - ".
 		( !empty($page_title) ? $page_title." - " : "" ) .
 		prepare(INSTALLATION); ?></TITLE>
 	<META HTTP-EQUIV="Content-Type" 
@@ -42,7 +42,7 @@ if (!$GLOBALS['__freemed']['no_menu_bar']) {
 	<TR><TD VALIGN="TOP" ALIGN="CENTER" CLASS="menubar_title">
 		<B><?php print INSTALLATION; ?></B>
 		<BR>
-		<SMALL><?php print PACKAGENAME." v".VERSION; ?></SMALL>
+		<SMALL><?php print PACKAGENAME." v".DISPLAY_VERSION; ?></SMALL>
 <?php
 //----- Add page title text if it exists
 if (isset($page_title)) {
