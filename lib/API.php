@@ -8,6 +8,10 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.46  2002/05/08 20:50:48  rufustfirefly
+ // added option for secure client for EMRi server, added EMRi->patient_search
+ // method
+ //
  // Revision 1.45  2002/05/07 21:30:19  rufustfirefly
  // added methods freemed::secure_filename, freemed::store_image,
  // started populating EMRi class with calls to EMRi server (much kludgy
@@ -401,6 +405,7 @@ class EMRi {
 			'uri'    => $this->EMRi_server_uri,
 			'debug'  => 1,
 			'output' => NULL,
+			'secure' => 0, // this needs to be fixed!
 
 			// FIXME: These should be pulled from the database
 			'user'   => 'root',
@@ -444,6 +449,8 @@ class EMRi {
 		);
 	} // end method EMRi->authenticate_user
 
+	//----- Patient methods ---------------------------------------------
+
 	function patient_index ($pid) {
 		// If it's an array, send the array, if not,
 		// send an array wrapper for the scalar value
@@ -474,6 +481,25 @@ class EMRi {
 			array($param)
 		);
 	} // end method EMRi->patient_index
+
+	function patient_search ($pid) {
+		// If it's an array, send the array, if not,
+		// send an array wrapper for the scalar value
+		if (!is_array($pid)) {
+			$param = array ("pid" => $pid);			
+		} else {
+			$param = $pid;
+		}
+
+		// Call the method
+		$result = $this->server_method(
+			"EMRi.Patient.search",
+			array($param)
+		);
+
+		// For now, return the raw result
+		return $result;
+	} // end method EMRi->patient_search
 
 } // end namespace/class EMRi
 
