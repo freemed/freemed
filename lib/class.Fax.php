@@ -9,6 +9,22 @@
 //
 class Fax {
 
+	// Constructor: Fax
+	//
+	//	Creates a fax object.
+	//
+	// Parameters:
+	//
+	//	$attachment - File name of PS/PDF/etc file to fax. This
+	//	is an absolute filename.
+	//
+	//	$_options - (optional) Associative array of options to
+	//	pass to the fax cover page.
+	//		* subject
+	//		* size - defaults to 'letter'
+	//		* sender
+	//		* recipient
+	//
 	function Fax ( $attachment, $_options = NULL ) {
 		$this->attachment = $attachment;
 
@@ -35,10 +51,31 @@ class Fax {
 		}
 	} // end constructor Fax
 
+	// Method: HylaFaxInstalled
+	//
+	//	Determines whether HylaFax's sendfax client is properly
+	//	installed on the server.
+	//
+	// Returns:
+	//
+	//	Boolean, whether or not 'sendfax' executable is found.
+	//
 	function HylaFaxInstalled ( ) {
 		return file_exists("/usr/bin/sendfax");
 	} // end method HylaFaxInstalled
 
+	// Method: Send
+	//
+	//	Transmit a fax.
+	//
+	// Parameters:
+	//
+	//	$destination_number - Number to which the fax is to be sent.
+	//
+	// Returns:
+	//
+	//	Output of sendfax executable.
+	//
 	function Send ( $destination_number ) {
 		// Sanitize number
 		$number = strtr($destination_number, array(
