@@ -350,12 +350,14 @@ class LettersModule extends EMRModule {
 		$r = freemed::get_link_rec($id, $this->table_name);
 		$pt = freemed::get_link_rec($r[$this->patient_field], 'patient');
 		$phyobj = CreateObject('_FreeMED.Physician', $r['letterfrom']);
+		$tophyobj = CreateObject('_FreeMED.Physician', $r['letterto']);
 		$phf = freemed::get_link_rec($r['letterfrom'], 'physician');
 		$pht = freemed::get_link_rec($r['letterto'], 'physician');
 		return array (
 			'date' => $TeX->_SanitizeText( fm_date_print($r['letterdt'], true) ),
 			'patient' => $TeX->_SanitizeText($pt['ptfname'].
 				' '. $pt['ptmname'] . ' ' . $pt['ptlname']),
+			'dateofbirth' => $TeX->_SanitizeText(fm_date_print($pt['ptdob'])),
 			'from' => $TeX->_SanitizeText(
 				'Dr '.$phf['phyfname'].' '.$phf['phylname']
 				),
@@ -364,16 +366,20 @@ class LettersModule extends EMRModule {
 				),
 			'body' => $TeX->_HTMLToRichText($r['lettertext']),
 			'physician' => $TeX->_SanitizeText($phyobj->fullName()),
-			'physicianaddress' => $TeX->_SanitizeText($ph['phyaddr1a']),
-			'physiciancitystatezip' => $TeX->_SanitizeText($ph['phycitya'].', '.$ph['phystatea'].' '.$ph['phyzipa']),
+			'physicianaddress' => $TeX->_SanitizeText($phf['phyaddr1a']),
+			'physiciancitystatezip' => $TeX->_SanitizeText($phf['phycitya'].', '.$phf['phystatea'].' '.$phf['phyzipa']),
 			'physicianphone' => $TeX->_SanitizeText(
-				substr($ph['phyphonea'], 0, 3).'-'.
-				substr($ph['phyphonea'], 3, 3).'-'.
-				substr($ph['phyphonea'], 6, 4) ),
+				substr($phf['phyphonea'], 0, 3).'-'.
+				substr($phf['phyphonea'], 3, 3).'-'.
+				substr($phf['phyphonea'], 6, 4) ),
 			'physicianfax' => $TeX->_SanitizeText(
-				substr($ph['phyfaxa'], 0, 3).'-'.
-				substr($ph['phyfaxa'], 3, 3).'-'.
-				substr($ph['phyfaxa'], 6, 4) )
+				substr($phf['phyfaxa'], 0, 3).'-'.
+				substr($phf['phyfaxa'], 3, 3).'-'.
+				substr($phf['phyfaxa'], 6, 4) ),
+			'tophysicianpractice' => $TeX->_SanitizeText($pht['phypracname']),
+			'tophysician' => $TeX->_SanitizeText($tophyobj->fullName()),
+			'tophysicianaddress' => $TeX->_SanitizeText($pht['phyaddr1a']),
+			'tophysiciancitystatezip' => $TeX->_SanitizeText($pht['phycitya'].', '.$pht['phystatea'].' '.$pht['phyzipa'])
 		);
 	} // end method _print_mapping
 
