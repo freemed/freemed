@@ -1,7 +1,9 @@
 <?php
 	// $Id$
 	// $Author$
-	// note: stub module for FreeMED installation
+	// note: Module for FreeMED installation. This primarily allows "core"
+	//       tables, like "module", "config" and "user" to be updated with
+	//       versioning.
 
 LoadObjectDependency('FreeMED.BaseModule');
 
@@ -22,28 +24,16 @@ class FreeMED_Package extends BaseModule {
 
 	// Use _update to perform upgrade-specific activities.
 	function _update () {
+		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
-		/* 
-			// Example of how to upgrade with ALTER TABLE
-			// Successive instances change the structure of the table
-			// into whatever its current version is, without having
-			// to reload the table at all. This pulls in all of the
-			// changes a version at a time. (You can probably use
-			// REMOVE COLUMN as well, but I'm steering away for now.)
 
-		if (!version_check($version, '0.1.0')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN ptglucose INT UNSIGNED AFTER id');
+		// Version 0.6.1 database changes to core tables
+		// ---------------------------------------------
+		if (!version_check($version, '0.6.1')) {
+			// In version 0.6.1, we upgrade the configuration table
+			// to have 128 character keys
+			$sql->query('ALTER TABLE config CHANGE c_option c_option CHAR(64)');
 		}
-		if (!version_check($version, '0.1.1')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN somedescrip TEXT AFTER ptglucose');
-		}
-		if (!version_check($version, '0.1.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN fakefield AFTER ptglucose');
-		}
-		*/
 	} // end function _update
 }
 
