@@ -81,11 +81,11 @@ class SinglePatientStatement extends EMRModule {
 				addslashes($_REQUEST['patient'])."'" )
 		);
 		switch ($_REQUEST['output']) {
-			case _("PDF"):
+			case __("PDF"):
 			$agata->ServeMergeAsPDF();
 			break; // pdf
 
-			case _("Postscript"):
+			case __("Postscript"):
 			$agata->ServeReport();
 			break; // ps
 		} // end
