@@ -313,10 +313,18 @@
      // grab form information form
      $this_form = freemed_get_link_rec ($whichform, "fixedform");
 
+     // by default, render the form
+     $render_form = true;
+
      // queue all entries
      while ($r = fdb_fetch_array ($result)) {
        $p = freemed_get_link_rec ($r[payrecproc], "procedure");
-       if ($p[procbalcurrent]<=0) next; // skip if no charge
+       if ($p[procbalcurrent]<=0) {
+         $render_form = false; // don't render the form if 0
+         next; // skip if no charge
+       } else {
+         $render_form = true; // reset to render form
+       }
        $number_of_charges++; // increment number of charges
 
        if ($debug) echo "\nThis form, charge $number_of_charges <BR>\n";
@@ -348,7 +356,9 @@
          $total_paid      = bcadd ($total_paid,    0, 2);
 
          // drop the current form to the buffer
-         $form_buffer .= render_fixedForm ($whichform);
+         if ($render_form)
+           $form_buffer .= render_fixedForm ($whichform);
+         $render_form  = true;
          $total_paid = $total_charges   =
                        $current_balance = 0;  // zero the charges
 
@@ -418,7 +428,9 @@
      $total_paid      = bcadd($total_paid,    0, 2);
 
      // render last form
-     $form_buffer .= render_fixedForm ($whichform);
+     if ($render_form)
+       $form_buffer .= render_fixedForm ($whichform);
+     $render_form = true; // reset to true for rendering the form
      $total_paid = $total_charges = $current_balance = 0;  // zero the charges
 
      $pat_processed++;
