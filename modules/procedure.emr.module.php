@@ -130,6 +130,11 @@ class ProcedureModule extends EMRModule {
 
 		if (empty ($procdt)) $procdt = $cur_date; // show current date
 		$icd_type = freemed::config_value("icd"); // '9' or '10'
+		if ( (($icd_type+0) != 9) and (($icd_type+0) != 10) ) {
+			// Default to 9 if nothing is selected.
+			// TODO: Fix this broken behavior
+			$icd_type = 9;
+		}
 		$cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
 		$cptmod_result = $sql->query($cptmod_query);
 		$icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
