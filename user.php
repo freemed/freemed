@@ -9,14 +9,13 @@ $table_name  = "user";
 $record_name = "User";
 $order_field = "id";
 
-include ("lib/freemed.php");         // load global variables
-include ("lib/API.php");  // API functions
+include_once("lib/freemed.php");         // load global variables
 
     // *** authorizing user ***
 
 freemed_open_db ();
 
-$this_user = new User ($LoginCookie);
+$this_user = new User ();
 
 if ($this_user->user_number != 1) {  // if not root...
 	$display_buffer .= "$page_name :: access denied\n";
