@@ -43,6 +43,10 @@ switch ($action) { // master action switch
     $next_action = "addform2";
     $this_action = "$Add";
     $procunits = "1.0";        // default value for units
+    $procdiag1      = $this_patient->local_record[ptdiag1];
+    $procdiag2      = $this_patient->local_record[ptdiag2];
+    $procdiag3      = $this_patient->local_record[ptdiag3];
+    $procdiag4      = $this_patient->local_record[ptdiag4];
     break; // end of addform (inner)
    case "modform":
     $next_action = "modform2";
@@ -483,6 +487,23 @@ switch ($action) { // master action switch
   if ($result) { echo "$Done."; }
    else        { echo "$ERROR"; }
   $this_procedure = fdb_last_record ($result, "procedure");
+  
+    // updating patient diagnoses
+  echo "
+    <P>
+    <$STDFONT_B>Updating patient diagnoses ... <$STDFONT_E>
+  ";
+  $query = "UPDATE $database.patient SET
+            ptdiag1  = '$procdiag1',
+            ptdiag2  = '$procdiag2',
+            ptdiag3  = '$procdiag3',
+            ptdiag4  = '$procdiag4'
+            WHERE id = '$patient'";
+  $result = fdb_query ($query);
+  if ($debug) echo " (query = $query, result = $result) <BR>\n";
+  if ($result) { echo "$Done."; }
+   else        { echo "$ERROR"; }
+  
   echo "
     <P>
     <CENTER>
@@ -504,7 +525,7 @@ switch ($action) { // master action switch
   freemed_display_box_top ("$Modifying $record_name");
   echo "
     <P>
-    <$STDFONT_B>$Modifying ...
+    <$STDFONT_B>$Modifying ... <$STDFONT_E>
   ";
   // form add query
   $query = "UPDATE $database.procedure SET
@@ -531,7 +552,7 @@ switch ($action) { // master action switch
    else        { echo "$ERROR"; }
   echo "
     <P>
-    <$STDFONT_B>Updating patient ledger ...
+    <$STDFONT_B>Updating patient ledger ... <$STDFONT_E>
   ";
   // form add query
   $query = "UPDATE $database.payrec SET
@@ -546,8 +567,23 @@ switch ($action) { // master action switch
   if ($result) { echo "$Done."; }
    else        { echo "$ERROR"; }
 
+    // updating patient diagnoses
   echo "
-    <$STDFONT_E>
+    <P>
+    <$STDFONT_B>Updating patient diagnoses ... <$STDFONT_E>
+  ";
+  $query = "UPDATE $database.patient SET
+            ptdiag1  = '$procdiag1',
+            ptdiag2  = '$procdiag2',
+            ptdiag3  = '$procdiag3',
+            ptdiag4  = '$procdiag4'
+            WHERE id = '$patient'";
+  $result = fdb_query ($query);
+  if ($debug) echo " (query = $query, result = $result) <BR>\n";
+  if ($result) { echo "$Done."; }
+   else        { echo "$ERROR"; }
+
+  echo "
     <P>
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
