@@ -54,12 +54,14 @@ if ($patient_history or $page_history) {
 	<LI><A HREF="admin.php"><?php print _("Administration Menu"); ?></A>
 	<LI><A HREF="billing_functions.php?patient=<?php print $SESSION["current_patient"]; ?>"
 		><?php print _("Billing Functions"); ?></A>
+	<LI><A HREF="calendar.php"><?php print _("Calendar"); ?></A>
 	<LI><A HREF="call-in.php"><?php print _("Call-In"); ?></A>
 	<LI><A HREF="db_maintenance.php"
 		><?php print _("Database Maintenance"); ?></A>
 	<LI><A HREF="messages.php"><?php print _("Messages"); ?></A> |
 	    <A HREF="messages.php?action=addform"><?php print _("Add"); ?></A>
-	<LI><A HREF="patient.php"><?php print _("Patient Functions"); ?></A>
+	<LI><A HREF="patient.php"><?php print _("Patients"); ?></A> |
+	    <A HREF="patient.php?action=addform"><?php print _("New"); ?></A>
 	<LI><A HREF="reports.php"><?php print _("Reports"); ?></A>
 </UL>
 <HR>
