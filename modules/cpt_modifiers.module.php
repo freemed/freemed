@@ -47,13 +47,15 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 	} // end function cptModifiersMaintenance->add()
 
 	function form () {
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
   switch ($action) { // inner switch
     case "addform":
      break;
 
     case "modform":
      if ($id<1) die ("NO ID");
-     $r = freemed_get_link_rec ($id, $db_name);
+     $r = freemed_get_link_rec ($id, $this->table_name);
      extract ($r);
      break;
   } // end inner switch

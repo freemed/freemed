@@ -90,7 +90,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
        VALUE=\"".prepare($psrzip)."\">",
 
       _("Country") =>
-      country_pulldown("psrcountry")
+      html_form::country_pulldown("psrcountry")
      ) )
     );
 
