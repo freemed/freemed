@@ -5,17 +5,22 @@
 $VERSION = "0.1";
 $appversion = "0.6.0";
 
+# Get parameters
+$locale = shift || 'template';
+$locale_name = shift || '';
+
 sub Generate_GettextXML {
 	my ($component, $version, $_phrases) = @_; @phrases = @$_phrases;
 
-	my $output = "<?xml version=\"1.0\">\n".
-		"<GettextXML lang=\"en\">\n\n".
+	my $output = "<?xml version=\"1.0\"?>\n".
+		"<gettextXML lang=\"".$locale."\">\n\n".
 		"\t<information>\n".
 		"\t\t<Application>FreeMED</Application>\n".
 		"\t\t<ApplicationVersion>$appversion</ApplicationVersion>\n".
 		"\t\t<Component>".HtmlEntities($component)."</Component>\n".
 		"\t\t<ComponentVersion>".HtmlEntities($version)."</ComponentVersion>\n".
-		"\t\t<Locale></Locale>\n".
+		"\t\t<Locale>".HtmlEntities($locale)."</Locale>\n".
+		"\t\t<LocaleName>".HtmlEntities($locale_name)."</LocaleName>\n".
 		"\t\t<RevisionDate>".$cur_date."</RevisionDate>\n".
 		"\t\t<RevisionCount>1</RevisionCount>\n".
 		"\t\t<Generator>Perl5</Generator>\n".
@@ -34,7 +39,7 @@ sub Generate_GettextXML {
 		$output .= "\t</translation>\n\n";
 	}
 
-	$output .= "</GettextXML>\n\n";
+	$output .= "</gettextXML>\n\n";
 
 	return $output;
 } # end sub Generate_GettextXML
@@ -139,6 +144,25 @@ sub Parse_File {
 
 } # end Parse_File
 
+sub Remove_API_Duplicates {
+	my ($_array, $_API) = @_;
+	my @array = @$_array;
+	my @API = @$_API;
+
+	my @results = ( );
+
+	foreach $value (@array) {
+		my $found = 0;
+		foreach $API_value (@API) {
+			#print "value = $value, API_value = $API_value\n";
+			if ($value eq $API_value) { $found = 1; }
+		}
+		#print "found in API: ".$value."\n" if ($found);
+		push (@results, $value) if (!$found);
+	}
+	return @results;
+} # end Remove_API_Duplicates
+
 sub Remove_Duplicates {
 	my ($_array) = @_; @array = @$_array;
 	my %seen;
@@ -159,15 +183,29 @@ sub Write_to_File {
 	close (OUTPUT);
 } # end sub Write_to_File
 
-
 print "GettextXML Catalog Builder v$VERSION\n";
 print "(c) 2003 by the FreeMED Software Foundation\n\n";
 
-print "Processing modules ... \n";
 my @modules = Get_Modules();
 
+print "Processing API ... \n";
+
+my @API_files = glob($relative_path."lib/*.php");
+@API_strings = ( );
+foreach $API_file (@API_files) {
+	print "\t($API_file)\n";
+	my @strings = Parse_File($API_file);
+	push (@API_strings, @strings);
+}
+@API_strings = Remove_Duplicates(\@API_strings);
+@API_strings = sort @API_strings;
+my $output = Generate_GettextXML("API", $version, \@API_strings);
+Write_to_File($relative_path."locale/".$locale."/freemed.xml", $output);
+
+print "Processing modules ... \n";
+
 # Create template path
-`mkdir -p $relative_path/locale/template/`;
+`mkdir -p $relative_path/$locale/template/`;
 
 if ($#modules ge 1) {
 	foreach $module (@modules) {
@@ -190,6 +228,8 @@ foreach $file (@files) {
 	my @strings = Parse_File($file);
 	my $page_name = Get_Page_Name($file);
 	@strings = Remove_Duplicates(\@strings);
+	@strings = Remove_API_Duplicates(\@strings, \@API_strings);
+	@strings = sort @strings;
 	if (($#strings ge 1) and (length($page_name) ge 1)) {
 		Write_to_File($relative_path."locale/template/".
 			$page_name.".xml",
@@ -201,19 +241,6 @@ foreach $file (@files) {
 		);
 	}
 }
-
-print "Processing API ... \n";
-
-my @API_files = glob($relative_path."lib/*.php");
-my @API_strings;
-foreach $API_file (@API_files) {
-	print "\t($API_file)\n";
-	my @strings = Parse_File($API_file);
-	push (@API_strings, @strings);
-}
-@API_strings = Remove_Duplicates(\@API_strings);
-my $output = Generate_GettextXML("API", $version, \@API_strings);
-Write_to_File($relative_path."locale/template/freemed.xml", $output);
 
 opendir(DH, $relative_path."lib/template/") or
 	die("Could not open template directory");
@@ -234,9 +261,13 @@ while ($template = readdir(DH)) {
 			push (@template_strings, @strings);
 		}
 		@template_strings = Remove_Duplicates(\@template_strings);
+		@template_strings = Remove_API_Duplicates(
+				\@template_strings,
+				\@API_strings);
+		@template_strings = sort @template_strings;
 		Write_to_File(
 			$relative_path.
-				"locale/template/template_".$template.".xml",
+				"locale/".$locale."/template_".$template.".xml",
 			Generate_GettextXML(
 				"Template",
 				$version,
