@@ -166,9 +166,11 @@ class ScannedDocuments extends EMRModule {
 		// Delete actual image
 		global $id, $patient, $display_buffer;
 
-		if ($this->locked($id)) {
-			$display_buffer .= __("Record is locked.");
-			return false;
+		if (!freemed::lock_override()) {
+			if ($this->locked($id)) {
+				$display_buffer .= __("Record is locked.");
+				return false;
+			}
 		}
 		
 		unlink(freemed::image_filename(
