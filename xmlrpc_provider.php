@@ -27,6 +27,13 @@ unset ($XMLRPC_METHODS);
 //----- Register services
 include_once ("lib/xmlrpc_services.php");
 
+//----- Figure out auth type
+if (isset($_GET['user']) and isset($_GET['hash'])) {
+	$__auth_function = 'freemed_get_auth';
+} else {
+	$__auth_function = 'freemed_basic_auth';
+}
+
 //----- Define freemed authorization
 function freemed_basic_auth () {
 	global $sql;
@@ -39,6 +46,7 @@ function freemed_basic_auth () {
 		$tmp = ereg_replace('Basic', '', $tmp);
 		$auth = base64_decode(trim($tmp));
 		list ($user, $pass) = split(':', $auth);
+		syslog(LOG_INFO, "XMLRPC [basic] username = $user");
 	
 		// Check for username/password
 		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
@@ -65,7 +73,30 @@ function freemed_basic_auth () {
 		$GLOBALS['__freemed']['basic_auth_phy'] = 0;
 	}
 	return $authed;
-} // function freemed_basic_auth
+} // end function freemed_basic_auth
+
+function freemed_get_auth ( ) {
+	global $sql;
+	syslog(LOG_INFO, "XMLRPC [get] username = ".$_GET['user']);
+	$query = "SELECT username, userpassword, userrealphy, id FROM user ".
+		"WHERE username='".addslashes($_GET['user'])."' AND ".
+		"userpassword='".addslashes($_GET['hash'])."'";
+	$result = $sql->query($query);
+	if (@$sql->num_rows($result) == 1) {
+		$authed = true;
+		$r = $sql->fetch_array($result);
+		$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
+		$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
+		return true;
+	} else {
+		// Clear basic auth id
+		$authed = false;
+		$GLOBALS['__freemed']['basic_auth_id'] = 0;
+		$GLOBALS['__freemed']['basic_auth_phy'] = 0;
+		return false;
+	}
+	return false;
+} // end function freemed_get_auth
 
 //----- Run XML-RPC server
 Header("Content-Type: text/xml");
@@ -73,7 +104,7 @@ $XMLRPC_SERVER = CreateObject(
 	'PHP.xmlrpc_server',
 	$XMLRPC_METHODS,
 	true,
-	'freemed_basic_auth'
+	$__auth_function
 );
 	
 ?>
