@@ -29,7 +29,13 @@ class Patient {
 	//	$is_callin - (optional) Boolean flag to specify if the
 	//	patient is a "call-in" patient. Defaults to false.
 	//
-	function Patient ($patient_number, $is_callin = false) { // constructor
+	function Patient ($_patient_number, $is_callin = false) { // constructor
+		if (is_array($_patient_number)) {
+			$patient_number = $_patient_number['id'];
+		} else {
+			$patient_number = $_patient_number;
+		}
+
 		// if the patient number is an error
 		if ($patient_number<1) return false;
 
@@ -37,9 +43,11 @@ class Patient {
 		$_callin = ($is_callin ? "callin" : "patient");
 		if (!isset($GLOBALS['__freemed']['cache'][$_callin][$patient_number])) {
 			// Get new record ...
-			$this->local_record = freemed::get_link_rec (
-				$patient_number, $_callin
-			);
+			if (is_array($_patient_number)) {
+				$this->local_record = $_patient_number;
+			} else {
+				$this->local_record = freemed::get_link_rec ( $patient_number, $_callin );
+			}
 
 			// ... and store in the cache
 			$GLOBALS['__freemed']['cache'][$_callin][$patient_number] = $this->local_record;
