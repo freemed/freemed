@@ -536,7 +536,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
 	// Travel kludge
 	if ($calpatient == 0) {
-		$mapping = _("Travel");
+		$mapping = _($r[calmark]);
 	}
 
       // map the name
@@ -658,8 +658,10 @@ class freemedCalendar {
 		$my_event = freemed::get_link_rec($event, "scheduler");
 
 		// Handle travel
-		if ($my_event[calpatient] == 0) return _("Travel")." ".
+		if ($my_event[calpatient] == 0) {
+			return freemedCalendar::event_special($my_event[calmark])." ".
 			"(".$my_event[calduration]."m)\n";
+		}
 
 		// Get patient information
 		$my_patient = new Patient ($my_event[calpatient],
@@ -669,6 +671,17 @@ class freemedCalendar {
 			">".$my_patient->fullName()."</A> ".
 			"(".$my_event[calduration]."m)\n";
 	} // end method freemedCalendar::event_calendar_print
+
+	function event_special ( $mapping ) {
+		switch ($mapping) {
+			case 1: case 2: case 3: case 4:
+			case 5: case 6: case 7: case 8:
+				return freemed::config_value("cal". $mapping );
+				break;
+
+			default: return _("Travel"); break;
+		}
+	}
 
 	// method map: returns a map (associative array)
 	function map ( $query ) {
@@ -682,6 +695,7 @@ class freemedCalendar {
 				$idx = $hour.":".($minute==0 ? "00" : $minute);
 				$map[$idx][link] = 0; // no link
 				$map[$idx][span] = 1; // one slot per
+				$map[$idx][mark] = 0; // default marking
 			} // end init minute loop
 		} // end init hour loop
 		$idx = "";
@@ -706,6 +720,9 @@ class freemedCalendar {
 			// Insert into current position
 			$map[$idx][link] = $c[id];
 			$map[$idx][span] = ceil($c[calduration] / 15);
+			if ($c[calmark] > 0) {
+				$map[$idx][mark] = $c[calmark];
+			}
 			$cur_pos = $idx;
 
 			// Clear out remaining portion of slot
