@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.43  2002/04/05 19:29:20  rufustfirefly
+ // freemed:: and EMRi:: initial namespace commit
+ //
  // Revision 1.42  2002/04/05 15:13:09  rufustfirefly
  // added initial freemed namespace (heavy TODO), added freemed::user_flag(flag), implemented user flags, removed freemed_get_userlevel()
  //
@@ -39,6 +42,177 @@ define ('__API_PHP__', true);
 
 // namespace/class freemed
 class freemed {
+
+	// function freemed::check_access_for_patient
+	function check_access_for_patient ($patient_number) {
+		global $SESSION;
+
+		// Grab authdata
+		$authdata = $SESSION["authdata"];
+
+		// Root has all access...
+		if ($authdata["user"]==1) return true;
+	
+		// Grab auth information from db
+		$f_user   = freemed::get_link_rec ($authdata["user"], "user");
+	
+		// Get data records in question for the user
+		$f_fac    = $f_user ["userfac"   ];
+		$f_phy    = $f_user ["userphy"   ];
+		$f_phygrp = $f_user ["userphygrp"];
+	
+		// Retrieve patient record
+		$f_pat    = freemed::get_link_rec ($patient_number, "patient");
+	
+		// check for universal access
+		if ((fm_value_in_string ($f_fac,    "-1")) OR
+			(fm_value_in_string ($f_phy,    "-1")) OR
+			(fm_value_in_string ($f_phygrp, "-1")))
+			return true;
+	
+		// Check for physician in any physician fields
+		if (($f_pat["ptpcp"]>0) AND
+			(fm_value_in_string ($f_phy, $f_pat["ptpcp"])))
+			return true;
+		if (($f_pat["ptphy1"]>0) AND
+			(fm_value_in_string ($f_phy, $f_pat["ptphy1"])))
+			return true;
+		if (($f_pat["ptphy2"]>0) AND
+			(fm_value_in_string ($f_phy, $f_pat["ptphy2"])))
+			return true;
+		if (($f_pat["ptphy3"]>0) AND
+			(fm_value_in_string ($f_phy, $f_pat["ptphy3"])))
+			return true;
+		if (($f_pat["ptdoc"]>0) AND
+			(fm_value_in_string ($f_phy, $f_pat["ptdoc"])))
+			return true;
+
+	    	// Default to false
+		return false;
+	} // end function freemed::check_access_for_patient
+
+	// function freemed::config_value
+	function config_value ($config_var) {
+		static $_config;
+		global $sql;
+	 
+ 		// Set to cache values
+ 		if (!isset($_config)) {
+			$query = $sql->query("SELECT * FROM config");
+	
+			// If the table doesn't exist, skip out
+			if (!$query) return false;
+	
+			// Loop through results
+			while ($r = $sql->fetch_array($query)) {
+				$_config[stripslashes($r[c_option])] =
+					stripslashes($r[c_value]);
+			} // end of looping through results
+		} // end of caching
+	
+		// Return from cache
+		return $_config["$config_var"];
+	} // end function freemed::config_value
+
+	// function freemed::get_link_rec
+	//   return the entire record as an array for
+	//   a link
+	function get_link_rec($id="0", $table="") {
+		global $sql, $_cache;
+
+		// Handle EMRi URL
+		if (!(strpos($id, "emri://") === false)) {
+			return EMRi::get_link_rec($id);
+		}
+
+		// If no database is available, trigger error
+		if (empty($table))
+			trigger_error ("freemed::get_link_rec: no table provided",
+				E_USER_ERROR);
+
+		// Check to see if it's cached
+		if (!isset($_cache[$table][$id])) {
+			// Perform the actual query
+			$result = $sql->query("SELECT * FROM ".addslashes($table)." ".
+				"WHERE id='".addslashes($id)."'");
+			// Fetch the array from the result into cache
+			$_cache[$table][$id] = $sql->fetch_array($result);
+		}
+
+		// Return member from cache
+		return $_cache[$table][$id];
+	} // end function freemed::get_link_rec
+
+	// function freemed::get_link_field
+	//   return a particular field from a link...
+	function get_link_field($id, $table, $field="id") {
+		// Die if no table was passed
+		if (empty($table))
+			trigger_error ("freemed::get_link_field: no table provided",
+				E_USER_ERROR);
+
+		// Retrieve the entire record
+		$this_array = freemed::get_link_rec($id, $table);
+
+		// Return just the key asked for
+		return $this_array["$field"];
+	} // end function freemed::get_link_field
+
+	// function freemed::module_check
+	function module_check ($module, $minimum_version="0.01")
+	{
+		static $_config; global $sql;
+
+		// cache all modules  
+		if (!is_array($_config)) {
+			unset ($_config);
+			$query = $sql->query("SELECT * FROM module");
+			while ($r = $sql->fetch_array($query)) {
+				extract ( $r );
+				$_config["$module_name"] = $module_version;
+			} // end of while results
+		} // end caching modules config
+	
+		// check in cache for version > minimum_version
+		return version_check($_config["$module"], $minimum_version);
+	} // end function freemed::module_check
+
+	// function freemed::module_register
+	function module_register ($module, $version) {
+		global $sql;
+
+		// check for modules  
+		if (!freemed::module_check($module, $version)) {
+			$query = $sql->query($sql->insert_query(
+				"module",
+				array(
+					"module_name"		=>	$module,
+					"module_version"	=>	$version
+				)
+			));
+			return (!empty($query));
+		} // end caching modules config
+
+		return true;
+	} // end function freemed::module_register
+
+	// function freemed::module_version
+	function module_version ($module) {
+		static $_config; global $sql;
+
+		// cache all modules  
+		if (!is_array($_config)) {
+			unset ($_config);
+			$query = $sql->query("SELECT * FROM module");
+			while ($r = $sql->fetch_array($query)) {
+				extract ( $r );
+				$_config["$module_name"] = $module_version;
+			} // end of while results
+		} // end caching modules config
+
+		// check in cache for version
+		return $_config["$module"];
+	} // end function freemed::module_version
 
 	function user_flag ( $flag ) {
 		global $database, $sql, $SESSION;
@@ -91,6 +265,18 @@ class freemed {
 
 } // end namespace/class freemed
 
+
+class EMRi {
+
+	// TODO: finish EMRi linking functions
+	function get_link_rec ( $url ) {
+		die("STUB: EMRi::get_link_rec()");
+	} // end method EMRi::get_link_rec
+
+} // end namespace/class EMRi
+
+//------------------ NON NAMESPACE FUNCTIONS ---------------------
+
 // function freemed_bar_alternate_color
 function freemed_bar_alternate_color ($cur_color="") {
 	global $bar_start_color, $bar_alt_color;
@@ -118,7 +304,7 @@ function freemed_check_access_for_facility ($facility_number) {
 	if ($authdata["user"]==1) return true;
 
 	// Grab the authorizations field
-	$f_fac = freemed_get_link_field ($authdata["user"], "user", "userfac");
+	$f_fac = freemed::get_link_field ($authdata["user"], "user", "userfac");
 
 	// No facility, assume no access restrictions
 	if ($facility_number == 0) return true;
@@ -131,77 +317,6 @@ function freemed_check_access_for_facility ($facility_number) {
     	// Default to false
 	return false;
 } // end function freemed_check_access_for_facility
-
-// function freemed_check_access_for_patient
-function freemed_check_access_for_patient ($patient_number) {
-	global $SESSION;
-
-	// Grab authdata
-	$authdata = $SESSION["authdata"];
-
-	// Root has all access...
-	if ($authdata["user"]==1) return true;
-
-	// Grab auth information from db
-	$f_user   = freemed_get_link_rec ($authdata["user"], "user");
-
-	// Get data records in question for the user
-	$f_fac    = $f_user ["userfac"   ];
-	$f_phy    = $f_user ["userphy"   ];
-	$f_phygrp = $f_user ["userphygrp"];
-
-	// Retrieve patient record
-	$f_pat    = freemed_get_link_rec ($patient_number, "patient");
-
-	// check for universal access
-	if ((fm_value_in_string ($f_fac,    "-1")) OR
-		(fm_value_in_string ($f_phy,    "-1")) OR
-		(fm_value_in_string ($f_phygrp, "-1")))
-		return true;
-
-	// Check for physician in any physician fields
-	if (($f_pat["ptpcp"]>0) AND
-		(fm_value_in_string ($f_phy, $f_pat["ptpcp"])))
-		return true;
-	if (($f_pat["ptphy1"]>0) AND
-		(fm_value_in_string ($f_phy, $f_pat["ptphy1"])))
-		return true;
-	if (($f_pat["ptphy2"]>0) AND
-		(fm_value_in_string ($f_phy, $f_pat["ptphy2"])))
-		return true;
-	if (($f_pat["ptphy3"]>0) AND
-		(fm_value_in_string ($f_phy, $f_pat["ptphy3"])))
-		return true;
-	if (($f_pat["ptdoc"]>0) AND
-		(fm_value_in_string ($f_phy, $f_pat["ptdoc"])))
-		return true;
-
-    	// Default to false
-	return false;
-} // end function freemed_check_access_for_patient
-
-// function freemed_config_value
-function freemed_config_value ($config_var) {
-	static $_config;
-	global $sql;
- 
- 	// Set to cache values
- 	if (!isset($_config)) {
-		$query = $sql->query("SELECT * FROM config");
-
-		// If the table doesn't exist, skip out
-		if (!$query) return false;
-
-		// Loop through results
-		while ($r = $sql->fetch_array($query)) {
-			$_config[stripslashes($r[c_option])] =
-				stripslashes($r[c_value]);
-		} // end of looping through results
-	} // end of caching
-
-	// Return from cache
-	return $_config["$config_var"];
-} // end function freemed_config_value
 
 // function freemed_display_arraylist
 function freemed_display_arraylist ($var_array, $xref_array="") {
@@ -259,7 +374,7 @@ function freemed_display_arraylist ($var_array, $xref_array="") {
       if (is_array($xref_array)) {
         list($x_key, $x_val) = each($xref_array);
 	if (strlen($x_val) > 0)
-          $item_text=freemed_get_link_field(${$val}[$i], $x_key, $x_val);
+          $item_text=freemed::get_link_field(${$val}[$i], $x_key, $x_val);
       } // grab the xref if necessary
       if ($this_active)
         $buffer .= "
@@ -477,7 +592,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
         // the proper item is now in $xref_{k,v}
         if (strlen($xref_v)>1) {
           $is_xref=true;
-          $xref_item=freemed_get_link_field($this_result[$v],
+          $xref_item=freemed::get_link_field($this_result[$v],
                                                     $xref_k,$xref_v);
           $item_text = ( (strlen($xref_item)<1) ?
                          prepare($blank_list[$field_num]) :
@@ -845,45 +960,6 @@ function freemed_get_date_prev ($cur_dt) {
 	} // end checking for first day
 } // end function freemed_get_date_prev
 
-// function freemed_get_link_rec
-//   return the entire record as an array for
-//   a link
-function freemed_get_link_rec($id="0", $table="") {
-	global $sql, $_cache;
-
-	// If no database is available, trigger error
-	if (empty($table))
-		trigger_error ("freemed_get_link_rec: no table provided",
-			E_USER_ERROR);
-
-	// Check to see if it's cached
-	if (!isset($_cache[$table][$id])) {
-		// Perform the actual query
-		$result = $sql->query("SELECT * FROM ".addslashes($table)." ".
-			"WHERE id='".addslashes($id)."'");
-		// Fetch the array from the result into cache
-		$_cache[$table][$id] = $sql->fetch_array($result);
-	}
-
-	// Return member from cache
-	return $_cache[$table][$id];
-} // end function freemed_get_link_rec
-
-// function freemed_get_link_field
-//   return a particular field from a link...
-function freemed_get_link_field($id, $table, $field="id") {
-	// Die if no table was passed
-	if (empty($table))
-		trigger_error ("freemed_get_link_field: no table provided",
-			E_USER_ERROR);
-
-	// Retrieve the entire record
-	$this_array = freemed_get_link_rec($id, $table);
-
-	// Return just the key asked for
-	return $this_array["$field"];
-} // end function freemed_get_link_field
-
 // function freemed_get_userlevel
 //   returns user level (1-10)
 //   (assumes 1 if not found, 9 if root)
@@ -928,63 +1004,6 @@ function freemed_log ($db_name, $record_number, $comment) {
 	return true;  // return true
 } // end function freemed_log
 */
-
-// function freemed_module_check
-function freemed_module_check ($module, $minimum_version="0.01")
-{
-	static $_config; global $sql;
-
-	// cache all modules  
-	if (!is_array($_config)) {
-		unset ($_config);
-		$query = $sql->query("SELECT * FROM module");
-		while ($r = $sql->fetch_array($query)) {
-			extract ( $r );
-			$_config["$module_name"] = $module_version;
-		} // end of while results
-	} // end caching modules config
-
-	// check in cache for version > minimum_version
-	return version_check($_config["$module"], $minimum_version);
-} // end function freemed_module_check
-
-// function freemed_module_version
-function freemed_module_version ($module) {
-	static $_config; global $sql;
-
-	// cache all modules  
-	if (!is_array($_config)) {
-		unset ($_config);
-		$query = $sql->query("SELECT * FROM module");
-		while ($r = $sql->fetch_array($query)) {
-			extract ( $r );
-			$_config["$module_name"] = $module_version;
-		} // end of while results
-	} // end caching modules config
-
-	// check in cache for version
-	return $_config["$module"];
-} // end function freemed_module_version
-
-// function freemed_module_register
-function freemed_module_register ($module, $version)
-{
-	global $sql;
-
-	// check for modules  
-	if (!freemed_module_check($module, $version)) {
-		$query = $sql->query($sql->insert_query(
-			"module",
-			array(
-				"module_name"		=>	$module,
-				"module_version"	=>	$version
-			)
-		));
-		return (!empty($query));
-	} // end caching modules config
-
-	return true;
-} // end function freemed_module_register
 
 // function freemed_multiple_choice
 function freemed_multiple_choice ($sql_query, $display_field, $select_name,
@@ -1381,7 +1400,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	$buffer_y .= "\t</SELECT>\n";
 
 	// now actually display the input boxes
-	switch (freemed_config_value("dtfmt")) {
+	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
 			return $buffer_m . " <B>-</B> ".
 			$buffer_d . " <B>-</B> ".
@@ -1415,7 +1434,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	  else               { $week = " ";      }
 	
 	// Return depending on configuration format
-	switch (freemed_config_value("dtfmt")) {
+	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
 			return chop($week.$mt." ".$d.", ".$y);
 			break;
@@ -1518,7 +1537,7 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
     $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
     $p5 = ${$phonevarname."_5"}[$array_index];  // part 5
   } // end checking for array index
-  switch (freemed_config_value("phofmt")) {
+  switch (freemed::config_value("phofmt")) {
     case "usa":
      return $p1.$p2.$p3.$p4;        // assemble number and put it all together
     case "fr":
@@ -1533,7 +1552,7 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
   if ($phonevarname=="") return false;  // indicate problems
   if (($array_index+0)==-1) { $suffix="";   }     
   else                     { $suffix="[]"; }
-  $formatting = freemed_config_value("phofmt"); // get phone formatting
+  $formatting = freemed::config_value("phofmt"); // get phone formatting
   global $$phonevarname, ${$phonevarname."_1"},	 // get global vars
          ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
          ${$phonevarname."_4"}, ${$phonevarname."_5"}; 
