@@ -159,6 +159,7 @@ class ClaimsManager extends BillingModule {
 		$search_form->addElement(
 			'select', 'criteria[billed]', __("Billing Status"),
 			array (
+				'-1' => '----',
 				'0' => __("Queued"),
 				'1' => __("Billed")
 			));
@@ -378,6 +379,14 @@ class ClaimsManager extends BillingModule {
 		$search_form->addElement(
 			'select', 'criteria[payer]', __("Payer"),
 			array_flip($cl->aging_insurance_companies( )) );
+		$search_form->addElement(
+			'select', 'criteria[billed]', __("Billing Status"),
+			array (
+				'-1' => '----',
+				'0' => __("Queued"),
+				'1' => __("Billed")
+			));
+
 		$submit_group[] = &HTML_QuickForm::createElement(
 			'submit', 'submit_action', __("Narrow Search") );
 		$submit_group[] = &HTML_QuickForm::createElement(

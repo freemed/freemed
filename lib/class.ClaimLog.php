@@ -73,7 +73,7 @@ class ClaimLog {
 				break; // end aging case
 
 				case 'billed':
-				if (!empty($v)) { $q[] = "p.procbilled = '".addslashes($v)."'"; }
+				if ($v == '0' or $v == '1') { $q[] = "p.procbilled = '".addslashes($v)."'"; }
 				break; // end billed case
 
 				case 'date':
