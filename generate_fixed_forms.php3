@@ -402,7 +402,7 @@
        if ($debug) echo "\ndiagref = $itemdiagref[$number_of_charges] <BR>\n";
      } // end of looping for all charges
 
-     $ptdiag = $diag_set->getStack; // get pt diagnoses
+     $ptdiag = $diag_set->getStack(); // get pt diagnoses
      $current_balance = bcadd($total_charges - $total_paid, 0, 2);
      $total_charges   = bcadd($total_charges, 0, 2);
      $total_paid      = bcadd($total_paid,    0, 2);
