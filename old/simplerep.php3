@@ -148,7 +148,6 @@ if ($patient) {
     echo "\n<B>$No_Records_Found</B>\n";
   }
 
-  freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");   // DIE, DIE, php3, DIE!
 
@@ -222,7 +221,6 @@ if ($patient) {
   ";
 
 
-    freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");   // DIE, DIE, php3, DIE!
 //////////////////////////////////////////////////
@@ -262,7 +260,6 @@ if ($patient) {
   "; // readability fix 19990714
 
 freemed_display_box_bottom (); // display the bottom of the box
-freemed_close_db ();
 freemed_display_html_bottom ();
 DIE ("");
 
@@ -397,7 +394,6 @@ DIE ("");
     </CENTER>
   ";
 
-    freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");
 
@@ -464,7 +460,6 @@ DIE ("");
 
   freemed_display_box_bottom (); // display box bottom 
 
-  freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");
 
@@ -495,7 +490,6 @@ DIE ("");
      >$Update_Delete_Another</A></CENTER>
   ";
   freemed_display_box_bottom ();
-  freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");
 
@@ -524,7 +518,6 @@ DIE ("");
   ";
 
   freemed_display_box_bottom ();
-  freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");
 
@@ -542,7 +535,6 @@ DIE ("");
       <$HEADERFONT_E>
     ";
     freemed_display_box_bottom ();
-    freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");
   
@@ -832,7 +824,6 @@ echo "
   ";
 
 
-  freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");
 
@@ -866,7 +857,6 @@ if ($chosenrep==0)
     </P>
   ";
     freemed_display_box_bottom ();
-    freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");   // DIE, DIE, php3, DIE!
   }
@@ -1515,7 +1505,6 @@ echo "
 
   // ritual ablutions
 
-    freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");           // samhain time.
      
@@ -1547,7 +1536,6 @@ echo "
       <$HEADERFONT_E>
     ";
     freemed_display_box_bottom ();
-    freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");
 
@@ -1578,7 +1566,6 @@ echo "
   freemed_display_box_bottom (); // display bottom of the box
 
 } 
-freemed_close_db ();
 freemed_display_html_bottom ();
 
 ?>
