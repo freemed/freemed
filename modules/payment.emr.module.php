@@ -199,7 +199,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         _("Describe the Payment"),
                         array_merge(array ("payrecsource", "payrectype", "payrecamt"), date_vars("payrecdt")),
                         html_form::form_table ( array (
-                                                    "Payment Source" =>
+                                                    _("Payment Source") =>
                                                                 "<SELECT NAME=\"payrecsource\">"
                         											.$this->insuranceSelectionByType($proccovmap)."
                                                                  </SELECT>",
@@ -265,7 +265,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 switch ($payrectype)
                 {
                 case "1": // check
-                    $second_page_array["Check Number"] =
+                    $second_page_array[_("Check Number")] =
                         "<INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=20 ".
                         "VALUE=\"".prepare($payrecnum)."\">\n";
                     break;
@@ -273,17 +273,17 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $second_page_array[] = "<B>NOT IMPLEMENTED YET!</B><BR>\n";
                     break;
                 case "3": // credit card
-                    $second_page_array["Credit Card Number"] =
+                    $second_page_array[_("Credit Card Number")] =
                         "<INPUT TYPE=TEXT NAME=\"payrecnum_1\" SIZE=17 ".
                         "MAXLENGTH=16 VALUE=\"".prepare($payrecnum_1)."\">\n";
 
-                    $second_page_array["Expiration Date"] =
+                    $second_page_array[_("Expiration Date")] =
                         number_select ("payrecnum_e1", 1, 12, 1, true).
                         "\n <B>/</B>&nbsp; \n".
                         number_select ("payrecnum_e2", (date("Y")-2), (date("Y")+10), 1);
                     break;
                 case "4": // traveller's check
-                    $second_page_array["Cheque Number"] =
+                    $second_page_array[_("Cheque Number")] =
                         "<INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=21 ".
                         "MAXLENGTH=20 VALUE=\"".prepare($payrecnum)."\">\n";
                     break;
@@ -300,7 +300,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     "VALUE=\"".prepare($payrecdescrip)."\">\n";
 
                 $wizard->add_page(
-                    "Step Three: Specify the Payer",
+                    _("Step Three").": "._("Specify the Payer"),
                     array ("payreclink", "payrecdescrip", "payrecnum",
                            "payrecnum_e1", "payrecnum_e2"),
                     html_form::form_table ( $second_page_array )
@@ -311,14 +311,14 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             case WITHHOLD: // adjustment (7)
             case DEDUCTABLE: // adjustment (8)
             case ADJUSTMENT: // adjustment (1)
-				$amount_heading[WITHHOLD] = "Withhold Amount";
-				$amount_heading[ADJUSTMENT] = "Adjustment Amount";
-				$amount_heading[DEDUCTABLE] = "Deductable Amount";
-				$title[WITHHOLD] = "Describe the Withholding";
-				$title[ADJUSTMENT] = "Describe the Adjustment";
-				$title[DEDUCTABLE] = "Describe the Deductable";
+				$amount_heading[WITHHOLD] = _("Withhold Amount");
+				$amount_heading[ADJUSTMENT] = _("Adjustment Amount");
+				$amount_heading[DEDUCTABLE] = _("Deductable Amount");
+				$title[WITHHOLD] = _("Describe the Withholding");
+				$title[ADJUSTMENT] = _("Describe the Adjustment");
+				$title[DEDUCTABLE] = _("Describe the Deductable");
                 $wizard->add_page (
-                    "Step Two: $title[$payreccat]",
+                    _("Step Two").": ".$title[$payreccat],
                     array_merge(array ("payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 _("Date Received") =>
@@ -336,7 +336,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             case FEEADJUST: // adjustment (1)
                 $wizard->add_page (
-                    "Step Two: Describe the Adjustment",
+                    _("Step Two").": "._("Describe the Adjustment"),
                     array_merge(array ("payrecsource", "payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 _("Insurance Company") =>
@@ -357,24 +357,24 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 break; // end of adjustment
             case REFUND: // refund (2)
                 $wizard->add_page (
-                    "Step Two: Describe the Refund",
+                    _("Step Two").": "._("Describe the Refund"),
                     array_merge(array ("payrecamt", "payrecdescrip", "payreclink"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                "Date of Refund" =>
+                                                _("Date of Refund") =>
                                                                   fm_date_entry ("payrecdt"),
 
-                                                "Destination" =>
+                                                _("Destination") =>
                                                                "<SELECT NAME=\"payreclink\">
                                                                <OPTION VALUE=\"0\" ".
-                                                               ( ($payreclink==0) ? "SELECTED" : "" ).">Apply to credit
+                                                               ( ($payreclink==0) ? "SELECTED" : "" ).">"._("Apply to Credit")."
                                                                <OPTION VALUE=\"1\" ".
-                                                               ( ($payreclink==1) ? "SELECTED" : "" ).">Refund to patient
+                                                               ( ($payreclink==1) ? "SELECTED" : "" ).">"._("Refund to Patient")."
                                                                </SELECT>\n",
 
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
-                                                "Refund Amount" =>
+                                                _("Refund Amount") =>
                                                                  "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
                                                                  "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
 
@@ -385,16 +385,16 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             case COPAY: // copay (11)
                 $wizard->add_page (
-                    "Step Two: Describe the Copayment",
+                    _("Step Two").": "._("Describe the Copayment"),
                     array_merge(array ("payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                "Date of Copay" =>
+                                                _("Date of Copay") =>
                                                                   fm_date_entry ("payrecdt"),
 
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
-                                                "Copay Amount" =>
+                                                _("Copay Amount") =>
                                                                  "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
                                                                  "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
 
@@ -406,22 +406,22 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             case DENIAL: // denial (3)
                 $wizard->add_page (
-                    "Step Two: Describe the Denial",
+                    _("Step Two").": "._("Describe the Denial"),
                     array_merge(array ("payreclink", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                "Date of Denial" =>
+                                                _("Date of Denial") =>
                                                                   fm_date_entry ("payrecdt"),
 
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
 
-                                                "Adjust to Zero?" =>
+                                                _("Adjust to Zero?") =>
                                                                    "<SELECT NAME=\"payreclink\">
                                                                    <OPTION VALUE=\"0\" ".
-                                                                   ( ($payreclink==0) ? "SELECTED" : "" ).">no
+                                                                   ( ($payreclink==0) ? "SELECTED" : "" ).">"._("no")."
                                                                    <OPTION VALUE=\"1\" ".
-                                                                   ( ($payreclink==1) ? "SELECTED" : "" ).">yes
+                                                                   ( ($payreclink==1) ? "SELECTED" : "" ).">"._("yes")."
                                                                    </SELECT>\n"
                                             ) )
                 );
@@ -430,14 +430,14 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             case TRANSFER: // transfer (6)
                 $wizard->add_page (
-                    "Step Two: Describe the Transfer",
+                    _("Step Two").": "._("Describe the Transfer"),
                     array_merge(array ("payrecsource", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                "Date of Transfer" =>
+                                                _("Date of Transfer") =>
                                                                   fm_date_entry ("payrecdt"),
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ",
-                                                "Transfer to" =>
+                                                _("Transfer to") =>
                                                                 "<SELECT NAME=\"payrecsource\">"
                         											.$this->insuranceSelectionByType($proccovmap)."
                                                                  </SELECT>"
@@ -447,10 +447,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 break; // end of denial
             case REBILL: // rebill 4
                 $wizard->add_page(
-                    "Step Two: Rebill Information",
+                    _("Step Two").": "._("Rebill Information"),
                     array_merge(array ("payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                "Date of Rebill" =>
+                                                _("Date of Rebill") =>
                                                                   fm_date_entry ("payrecdt"),
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
@@ -603,7 +603,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 { 
                     echo _("ERROR");    
                 }
-                echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
+                echo "  <BR><$STDFONT_B>"._("Modifying procedural charges")." ... <$STDFONT_E>\n";
 				$procrec = freemed_get_link_rec($payrecproc,"procrec");	
 				if (!$procrec)
 					echo _("ERROR");
@@ -789,11 +789,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
             <TR>
             <TD><B>"._("Date")."</B></TD>
-            <TD><B>Type</B></TD>
+            <TD><B>"._("Type")."</B></TD>
             <TD><B>"._("Description")."</B></TD>
-            <TD ALIGN=RIGHT><B>Charges</B></TD>
-            <TD ALIGN=RIGHT><B>Payments</B></TD>
-            <TD ALIGN=RIGHT><B>Balance</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Charges")."</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Payments")."</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Balance")."</B></TD>
             <TD ALIGN=RIGHT><B>"._("Action")."</B></TD>
             </TR>
             ";
@@ -946,41 +946,41 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 } // end of category switch (for totals)
                 switch ($r["payreccat"]) {
                 case ADJUSTMENT: // adjustments 1
-                    $this_type = "Adjustment";
+                    $this_type = _("Adjustment");
                     break;
                 case REFUND: // refunds 2
-                    $this_type = "Refund";
+                    $this_type = _("Refund");
                     break;
                 case DENIAL: // denial 3
-                    $this_type = "Denial";
+                    $this_type = _("Denial");
                     break;
                 case REBILL: // rebill 4
-                    $this_type = "Rebill";
+                    $this_type = _("Rebill");
                     break;
                 case PROCEDURE: // charge 5
-                    $this_type = "Charge";
+                    $this_type = _("Charge");
                     break;
                 case TRANSFER: // transfer 6
-                    $this_type = "Transfer to ".$PAYER_TYPES[$r["payrecsource"]];
+                    $this_type = _("Transfer to")." ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 case WITHHOLD: // withhold 7
-                    $this_type = "Withhold";
+                    $this_type = _("Withhold");
                     break;
                 case DEDUCTABLE: // deductable 8
-                    $this_type = "Deductable";
+                    $this_type = _("Deductable");
                     break;
                 case FEEADJUST: // feeadjust 9
-                    $this_type = "Fee Adjust";
+                    $this_type = _("Fee Adjust");
                     break;
                 case BILLED: // billed 10
-                    $this_type = "Billed ".$PAYER_TYPES[$r["payrecsource"]];
+                    $this_type = _("Billed")." ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 case COPAY: // COPAY 11
-                    $this_type = "Copay";
+                    $this_type = _("Copay");
                     break;
                 case PAYMENT: // payment 0
                 default:  // default is payment
-                    $this_type = "Payment ".$PAYER_TYPES[$r["payrecsource"]];
+                    $this_type = _("Payment")." ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 } // end of categry switch (name)
                 $id              = $r["id"];
@@ -1110,7 +1110,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 echo "
                 <P>
                 <CENTER>
-                <B>All records for this procedure have been deleted.</B><BR><BR>
+                <B>"._("All records for this procedure have been deleted.")."</B><BR><BR>
                 <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=refresh".
                 "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
                 <$STDFONT_B>"._("Back")."<$STDFONT_E></A>
@@ -1124,7 +1124,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             echo "
             <P>
             <CENTER>
-            Confirm delete request or cancel?<P>
+            "._("Confirm delete request or cancel?")."<P>
             <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=mistake".
             "&action=addform&delete=1&item=$procid&patient=$patient&module=$module\">
             <$STDFONT_B>"._("Confirm")."<$STDFONT_E></A>&nbsp;|&nbsp;
@@ -1163,17 +1163,17 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
             <TR BGCOLOR=\"#cccccc\">
             <TD>&nbsp;</TD>
-            <TD ALIGN=LEFT><B>Date</B></TD>
-            <TD ALIGN=LEFT><B>Proc Code</B></TD>
-            <TD ALIGN=LEFT><B>Provider</B></TD>
-            <TD ALIGN=RIGHT><B>Charged</B></TD>
-            <TD ALIGN=RIGHT><B>Allowed</B></TD>
-            <TD ALIGN=RIGHT><B>Charges</B></TD>
-            <TD ALIGN=RIGHT><B>Paid</B></TD>
-            <TD ALIGN=RIGHT><B>Balance</B></TD>
-            <TD ALIGN=LEFT><B>Billed</B></TD>
-            <TD ALIGN=LEFT><B>Date Billed</B></TD>
-            <TD ALIGN=LEFT><B>View</B></TD>
+            <TD ALIGN=LEFT><B>"._("Date")."</B></TD>
+            <TD ALIGN=LEFT><B>"._("Proc Code")."</B></TD>
+            <TD ALIGN=LEFT><B>"._("Provider")."</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Charged")."</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Allowed")."</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Charges")."</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Paid")."</B></TD>
+            <TD ALIGN=RIGHT><B>"._("Balance")."</B></TD>
+            <TD ALIGN=LEFT><B>"._("Billed")."</B></TD>
+            <TD ALIGN=LEFT><B>"._("Date Billed")."</B></TD>
+            <TD ALIGN=LEFT><B>"._("View")."</B></TD>
             </TR>
             ";
 
@@ -1200,7 +1200,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 <TD ALIGN=RIGHT>".bcadd ($r[proccharges], 0, 2)."</TD>
                 <TD ALIGN=RIGHT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
                 <TD ALIGN=RIGHT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
-                <TD ALIGN=LEFT>".(($r[procbilled]) ? "Yes" : "No")."</TD>
+                <TD ALIGN=LEFT>".(($r[procbilled]) ? _("Yes") : _("No") )."</TD>
                 <TD ALIGN=LEFT>".( !empty($r[procdtbilled]) ?
 					prepare($r[procdtbilled]) : "&nbsp;" )."</TD>
                 <TD ALIGN LEFT><A HREF=\"$this->page_name?_auth=$_auth&action=addform".
@@ -1215,22 +1215,22 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             <P>
             <CENTER>
             <SELECT NAME=\"viewaction\">
-            <OPTION VALUE=\"refresh\"  >Refresh
-            <OPTION VALUE=\"rebill\"  >Rebill
-            <OPTION VALUE=\"payment\" >Payment
-            <OPTION VALUE=\"copay\" >CoPay
-            <OPTION VALUE=\"adjustment\" >Adjustment
-            <OPTION VALUE=\"deductable\" >Deductable
-            <OPTION VALUE=\"withhold\" >Withhold
-            <OPTION VALUE=\"transfer\">Transfer
-            <OPTION VALUE=\"allowedamt\">AllowedAmt
-            <OPTION VALUE=\"denial\"  >Denial
-            <OPTION VALUE=\"refund\">Refund
-            <OPTION VALUE=\"mistake\" >Mistake
-            <OPTION VALUE=\"ledgerall\">Ledger
-            <OPTION VALUE=\"closed\">Closed
+            <OPTION VALUE=\"refresh\"  >"._("Refresh")."
+            <OPTION VALUE=\"rebill\"  >"._("Rebill")."
+            <OPTION VALUE=\"payment\" >"._("Payment")."
+            <OPTION VALUE=\"copay\" >"._("Copay")."
+            <OPTION VALUE=\"adjustment\" >"._("Adjustment")."
+            <OPTION VALUE=\"deductable\" >"._("Deductable")."
+            <OPTION VALUE=\"withhold\" >"._("Withhold")."
+            <OPTION VALUE=\"transfer\">"._("Transfer")."
+            <OPTION VALUE=\"allowedamt\">"._("Allowed Amount")."
+            <OPTION VALUE=\"denial\"  >"._("Denial")."
+            <OPTION VALUE=\"refund\">"._("Refund")."
+            <OPTION VALUE=\"mistake\" >"._("Mistake")."
+            <OPTION VALUE=\"ledgerall\">"._("Ledger")."
+            <OPTION VALUE=\"closed\">"._("Closed")."
             </SELECT>
-            <INPUT TYPE=SUBMIT VALUE=\"  Select Line Item  \">
+            <INPUT TYPE=SUBMIT VALUE=\"  "._("Select Line Item")."  \">
             <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
             </CENTER>
             </FORM>

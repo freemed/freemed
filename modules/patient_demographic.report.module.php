@@ -46,7 +46,7 @@ class patientDemographicReport extends freemedReportsModule {
 			echo "
 			<TR>
 				<TD ALIGN=RIGHT BGCOLOR=\"#ccccff\">
-					".prepare($k)."
+					".prepare(_($k))."
 				</TD><TD ALIGN=LEFT BGCOLOR=\"#aaaaff\">
 					".prepare($$v)."
 				</TD>
