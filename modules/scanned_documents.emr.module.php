@@ -6,9 +6,9 @@
 
 LoadObjectDependency('FreeMED.EMRModule');
 
-class PatientImages extends EMRModule {
+class ScannedDocuments extends EMRModule {
 
-	var $MODULE_NAME = "Patient Images";
+	var $MODULE_NAME = "Scanned Documents";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_DESCRIPTION = "
@@ -19,12 +19,12 @@ class PatientImages extends EMRModule {
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
-	var $record_name   = "Patient Images";
+	var $record_name   = "Scanned Documents";
 	var $table_name    = "images";
 	var $patient_field = "imagepat";
 	var $order_by      = "imagedt";
 
-	function PatientImages () {
+	function ScannedDocuments () {
 		// Get browser information
 		$browser = CreateObject('PHP.browser_detect');
 		if ($browser->BROWSER=="IE") $this->IEupload = true;
@@ -54,7 +54,7 @@ class PatientImages extends EMRModule {
 
 		// Call parent constructor
 		$this->EMRModule();
-	} // end constructor PatientImages
+	} // end constructor ScannedDocuments
 
 	function activeXupload ($name) {
 		global $display_buffer;
@@ -76,7 +76,7 @@ class PatientImages extends EMRModule {
 		<input TYPE=\"FILE\" NAME=\"imageupload\"/>
 		";
 		return $buffer;
-	} // end function PatientImages->activeXupload
+	} // end function ScannedDocuments->activeXupload
 
 	function add () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module;
@@ -150,7 +150,7 @@ class PatientImages extends EMRModule {
 		if ($return=="manage") {
 			$refresh = "manage.php?id=".$patient;
 		}
- 	} // end method PatientImages->add
+ 	} // end method ScannedDocuments->add
 
 	function del () {
 		// Delete actual image
@@ -163,7 +163,7 @@ class PatientImages extends EMRModule {
 
 		// Run stock deletion routine
 		$this->_del();
-	} // end function PatientImages->del
+	} // end function ScannedDocuments->del
 
 	function display () {
 		global $sql, $id, $patient, $display_buffer, $return;
@@ -189,7 +189,7 @@ class PatientImages extends EMRModule {
 		$display_buffer .= "</a>
 		</div>
 		";
-	} // end function PatientImages->display
+	} // end function ScannedDocuments->display
 
 	function form () {
 		global $display_buffer, $sql, $module, $patient, $imageeoc,
@@ -288,7 +288,7 @@ class PatientImages extends EMRModule {
 
 		</form></div>
 		";
-	} // end of function PatientImages->form()
+	} // end of function ScannedDocuments->form()
 
 	function mod () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module, $id;
@@ -326,7 +326,7 @@ class PatientImages extends EMRModule {
 		class=\"button\">".__($this->record_name)."</a>
 		</div>
 		";
- 	} // end method PatientImages->mod
+ 	} // end method ScannedDocuments->mod
 
 	function view ($condition = false) {
 		global $display_buffer;
@@ -360,10 +360,10 @@ class PatientImages extends EMRModule {
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
 		$display_buffer .= "\n<p/>\n";
-	} // end function PatientImages->view()
+	} // end function ScannedDocuments->view()
 
-} // end of class PatientImages
+} // end of class ScannedDocuments
 
-register_module ("PatientImages");
+register_module ("ScannedDocuments");
 
 ?>
