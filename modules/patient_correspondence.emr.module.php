@@ -16,6 +16,7 @@ class PatientCorrespondence extends EMRModule {
 	var $record_name    = "Correspondence";
 	var $table_name     = "patletter";
 	var $patient_field  = "letterpatient";
+	var $widget_hash    = "##letterdt## ##letterfrom:physician:phylname##";
 
 	var $print_template = 'patient_correspondence';
 

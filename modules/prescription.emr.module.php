@@ -21,6 +21,7 @@ class PrescriptionModule extends EMRModule {
 	var $record_name    = "Prescription";
 	var $table_name     = "rx";
 	var $patient_field  = "rxpatient";
+	var $widget_hash    = "##rxdtfrom## ##rxdrug## ##rxform##";
 
 	var $print_template = 'rx';
 

@@ -17,6 +17,7 @@ class LettersModule extends EMRModule {
 	var $record_name    = "Letters";
 	var $table_name     = "letters";
 	var $patient_field  = "letterpatient";
+	var $widget_hash    = "##letterdt## ##letterfrom:physician:phylname## to ##letterto:physician:phylname##";
 
 	var $print_template = 'letters';
 

@@ -22,6 +22,7 @@ class ProgressNotes extends EMRModule {
 	var $record_name   = "Progress Notes";
 	var $table_name    = "pnotes";
 	var $patient_field = "pnotespat";
+	var $widget_hash   = "##pnotesdt## ##pnotesdescrip##";
 
 	var $print_template = 'progress_notes';
 
