@@ -1055,7 +1055,8 @@ class freemed {
 				)
 			);
 		//print "mkdir_command = $mkdir_command<br/>\n";
-		exec ($mkdir_command);
+		$output = `$mkdir_command`;
+		//print $mkdir_output."<br/>\n";
 
 		// Process depending on 
 		switch (strtolower($ext)) {
@@ -1081,7 +1082,7 @@ class freemed {
 					'djvu'
 				);
 				// Convert to PBM
-				$command = "/usr/X11R6/bin/convert ".
+				$command = "/usr/bin/convert ".
 					freemed::secure_filename($image).
 					" ".PHYSICAL_LOCATION."/".
 					freemed::image_filename(
@@ -1091,8 +1092,8 @@ class freemed {
 						( $encoding=='c44' ?
 						'jpg' : 'pbm' )
 					);
-				exec ($command);
-				//print ($command)."<br>";
+				$output = `$command`;
+				//print ($output)."<br>";
 
 				// Convert to DJVU
 				switch ($encoding) {
@@ -1119,8 +1120,9 @@ class freemed {
 						$type,
 						'djvu'
 					);
-				print "command = $command<br/>\n";
-				print "<br/>".exec ($command)."<br/>\n";
+				//print "command = $command<br/>\n";
+				//print "<br/>".exec ($command)."<br/>\n";
+				//print "<br/>".`$command`."<br/>\n";
 
 				// Remove PBM
 				unlink(PHYSICAL_LOCATION.
