@@ -19,7 +19,7 @@ if ($sql->results($result)) {
 	$r = $sql->fetch_array($query);
 
 	// If it doesn't match...
-	if (stripslashes($r[userpassword]) != DB_PASSWORD) {
+	if ((stripslashes($r[userpassword]) != DB_PASSWORD) and ($r[username]=="root")) {
 		// ... execute update query to *make* it match.
 		$update_result = $sql->query($sql->update_query(
 			"user",
