@@ -477,7 +477,12 @@ class ClaimsManager extends BillingModule {
 				__("Filter by this patient").'">'.
 				$hash['patient_name'].'</acronym></a> '.
 				'<a href="manage.php?id='.$hash['patient_id'].
-				'">['.__("EMR").']</a>'); 
+				'">['.__("EMR").']</a> '.
+				'<a href="module_loader.php?'.
+				'module=PaymentModule&'.
+				'action=view&'.
+				'patient='.$hash['patient_id'].
+				'">['.__("Ledger").']</a>'); 
 			// Show all claims
 			$table->setCellContents($count, 2, '<a href="'.
 				$this->_detail_link(array(
