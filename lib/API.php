@@ -1129,6 +1129,31 @@ class freemed {
 		return $this_filename;
 	} // end function freemed::secure_filename
 
+	// Function: freemed::sql2date
+	//
+	//	Convert an SQL timestamp (such as MySQL timestamps) into
+	//	a nice-looking date string.
+	//
+	// Parameters:
+	//
+	//	$date - SQL timestamp string
+	//
+	// Returns:
+	//
+	//	Formatted date/time string
+	//
+	function sql2date ( $date ) {
+		$ts = mktime (
+			substr($date, 8, 2),
+			substr($date, 10, 2),
+			substr($date, 12, 2),
+			substr($date, 4, 2),
+			substr($date, 6, 2),
+			substr($date, 0, 4)
+		);
+		return date('m/d/Y H:i', $ts);
+	} // end function freemed::sql2date
+
 	// Function: freemed::store_image
 	//
 	//	Stores posted file in scanned document image store.

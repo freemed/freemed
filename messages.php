@@ -244,6 +244,41 @@ switch ($action) {
 	}
 	break; // end action del
 
+	case "printview":
+	$GLOBALS['__freemed']['no_template_display'] = true;
+	$messages = CreateObject('FreeMED.Messages');
+	$m = freemed::get_link_rec($_REQUEST['id'], 'messages');
+	$title = __("Message");
+
+	$sentuser = CreateObject('FreeMED.User', $m['msgby']);
+	$sent_by = $sentuser->getDescription();
+
+	$display_buffer .= "
+	<table border=\"0\" style=\"border: 1px black dotted; width: 75%; background: #cccccc; padding: .5em;\">
+	<tr>
+		<td width=\"150\"><b>".__("Date")."</b></td>
+		<td>".freemed::sql2date($m['msgtime'])."</td>
+	</tr>
+	<tr>
+		<td width=\"150\"><b>".__("From")."</b></td>
+		<td>".prepare($sent_by)."</td>
+	</tr>
+	<tr>
+		<td><b>".__("To")."</b></td>
+		<td>".$messages->recipients_to_text($m['msgrecip'])."</td>
+	</tr>
+	<tr>
+		<td><b>".__("Subject")."</b></td>
+		<td>".prepare($m['msgsubject'])."</td>
+	</tr>
+	</table>
+	<div style=\"padding: 1em; width: 75%;\">
+	".prepare(str_replace("\n", "<br/>\n", $m['msgtext']))."</td>
+	</div>
+	";
+	template_display();
+	break; // end action printview
+
 	case "mark":
 	if (is_array($mark)) {
 		$query = "UPDATE messages SET msgread = '1', ".
@@ -359,7 +394,8 @@ switch ($action) {
 				<td>".$r['msgurgency']."/5 ".
 				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(__("You wrote:")."\n".
 				":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a> ".
-				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Fwd: '.$r['msgsubject'])."\">".__("Fwd")."</a></td>
+				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Fwd: '.$r['msgsubject'])."\">".__("Fwd")."</a>".
+				"<a class=\"button\" href=\"".page_name()."?action=printview&id=".urlencode($r['id'])."\" target=\"msgprint\">".__("Print")."</a></td>
 			</tr>
 			".( $r['msgrecip'] != $r['msgfor'] ? "
 			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
