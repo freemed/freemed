@@ -42,6 +42,14 @@ ul:menubar {
 	background: #d9d9ff 
 }
 
+.thinbox_noscroll {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: wrap;
+	background: #d9d9ff 
+}
+
 .letterbox {
 	overflow: wrap;
 	background: #bbbbff 
@@ -90,6 +98,22 @@ ul:menubar {
 A.reverse:visited { color: #ffffff }
 A.reverse:link { color: #ffffff }
 
+.patientbox {
+	border-width: none;
+	background: #000055;
+	color: #ffffff;
+}
+A.patientbox:visited { color: #ffffff }
+A.patientbox:link { color: #ffffff }
+
+.patientbox_hilite {
+	border-width: none;
+	background: #5555ff;
+	color: #00000;
+}
+A.patientbox_hilite:visited { color: #000000 }
+A.patientbox_hilite:link { color: #000000 }
+
 .calendar {
 	border: thin black;
 	border-width: thick;
@@ -104,7 +128,8 @@ A.reverse:link { color: #ffffff }
 	border-width: thin;
 	border-style: solid;
 	overflow: scroll;
-	background: #cccccc 
+	background: #cccccc; 
+	padding: 1pt
 }
 
 .cell_alt {
@@ -112,7 +137,8 @@ A.reverse:link { color: #ffffff }
 	border-width: thin;
 	border-style: solid;
 	overflow: scroll;
-	background: #aaaaaa 
+	background: #aaaaaa;
+	padding: 1pt
 }
 
 .cell_hilite {
@@ -129,7 +155,9 @@ A.reverse:link { color: #ffffff }
 	border-width: thin;
 	border-style: solid;
 	overflow: scroll;
-	background: #ffffff 
+	background: #ffffff;
+	font-size: small;
+	padding: 1pt
 }
 
 .calendar_book_link {
@@ -142,60 +170,85 @@ A.reverse:link { color: #ffffff }
 
 /* Calendar marking colors; these are defined as different labels in config */
 
+.calmark0 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #ffffff;
+	font-size: small;
+	padding: 1pt
+}
+
 .calmark1 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #ffd08c
+	background: #ffd08c;
+	font-size: small;
+	padding: 1pt
 }
 
 .calmark2 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #d8ff84
+	background: #d8ff84;
+	font-size: small;
+	padding: 1pt
 }
 
 .calmark3 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #7fffae
+	background: #7fffae;
+	font-size: small;
+	padding: 1pt
 }
 
 .calmark4 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #9fefff
+	background: #9fefff;
+	font-size: small;
+	padding: 1pt
 }
 
 .calmark5 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #9dc9ff
+	background: #9dc9ff;
+	font-size: small;
+	padding: 1pt
 }
 
 .calmark6 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #9aa4ff
+	background: #9aa4ff;
+	font-size: small;
+	padding: 1pt
 }
 
 .calmark7 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #eec5ff
+	background: #eec5ff;
+	font-size: small;
+	padding: 1pt
 }
 
 .calmark8 {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #ffffff
+	background: #ffffff;
+	font-size: small;
+	padding: 1pt
 }
 
 /* Informational box. */

@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.53  2002/12/12 17:10:57  rufustfirefly
+ // Made entire patient box clickable, and hilights with mouseover.
+ //
  // Revision 1.52  2002/12/11 20:38:28  rufustfirefly
  // Bugfix and working sync for phpwebtools 0.4.0 module_list/cache support.
  //
@@ -1418,9 +1421,14 @@ function freemed_patient_box ($patient_object) {
 	$buffer .= "
     <CENTER>
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
-     <TR CLASS=\"reverse\"><TD VALIGN=\"CENTER\" ALIGN=\"LEFT\">
+     <TR CLASS=\"patientbox\"
+	onMouseOver=\"this.className='patientbox_hilite'; patientboxlink.className='patientbox_hilite'; return true;\"
+	onMouseOut=\"this.className='patientbox'; patientboxlink.className='patientbox'; return true;\"
+	onClick=\"window.location='manage.php?id=".
+		urlencode($patient_object->id)."'; return true;\"
+      ><TD VALIGN=\"CENTER\" ALIGN=\"LEFT\">
       <A HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
-       CLASS=\"reverse\"><FONT SIZE=\"+1\">".
+       CLASS=\"patientbox\" NAME=\"patientboxlink\"><FONT SIZE=\"+1\">".
        $patient_object->fullName().
       "</FONT></A>
      </TD><TD ALIGN=CENTER VALIGN=CENTER>
