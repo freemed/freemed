@@ -1,8 +1,8 @@
 <?php
-  # file: degrees.php3
-  # note: physician degrees database functions
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL
+  // file: degrees.php3
+  // note: physician degrees database functions
+  // code: jeff b (jeff@univrel.pr.uconn.edu)
+  // lic : GPL
 
   $page_name="degrees.php3";        // for help info, later
   $record_name="Physician Degree";  // actual name
@@ -14,62 +14,38 @@
   freemed_display_banner();
 
 switch($action) {
- case "add":
-  freemed_display_box_top("$Adding $record_name", $page_name);
-
-  echo "
-    <P>
-    <$STDFONT_B>$Adding . . . 
-  ";
-
-  $degdate = $cur_date; // set to current date
-
-  $query = "INSERT INTO degrees VALUES ( ".
-    "'$degdegree',  ".
-    "'$degname',    ".
-    "'$degdate',    ".
-    " NULL ) ";
-
-  $result = fdb_query($query);
-
-  if ($result) {
-    echo "
-      <B>$Done.</B><$STDFONT_E>
-    ";
-  } else {
-    echo ("<B>$ERROR ($result)</B>\n"); 
-  }
-
-  freemed_display_box_bottom();
-
-  echo "
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth&action=view&_ref=$_ref\"
-      >$Return_to $record_name $Menu</A>
-     <P>
-     <A HREF=\"main.php3?$_auth\"
-      >$Return_to_the_Main_Menu</A>
-    </CENTER>
-  ";
- break;
-
+ default:
  case "display":
  case "modform":
  case "addform":
-  if ($action=="addform")
-    freemed_display_box_top("$Add $record_name", $page_name);
-  else {
-    freemed_display_box_top("$Modify $record_name", $page_name);
+  if ($action=="modform") {
+    freemed_display_box_top(_("Modify $record_name"), $page_name);
     $result = fdb_query("SELECT * FROM degrees ".
       "WHERE ( id = '$id' )");
     $r = fdb_fetch_array($result); // dump into array r[]
     $degdegree   = $r["degdegree"];
     $degname     = $r["degname"  ];
     $degdate     = $r["degdate"  ];
+  } else {
+    freemed_display_box_top(_("$record_name"), $page_name);
   } // modform fetching
 
+  // display the table 
+  $query = "SELECT * FROM degrees ".
+    "ORDER BY degdegree,degname";
+  $result = fdb_query($query);
+  echo freemed_display_itemlist(
+    $result,
+    "degrees.php3", //$page_name,
+    array (
+      _("Degree") => "degdegree",
+      _("Description") => "degname"
+    ),
+    array ( "", "" )
+  );
+  
   echo "
+   <CENTER>
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2>
    <TR><TD ALIGN=RIGHT>
     <FORM ACTION=\"$page_name\">
@@ -79,116 +55,107 @@ switch($action) {
     <INPUT TYPE=HIDDEN NAME=\"_ref\" VALUE=\"$_ref\">
 
   ".(($action=="modform") ? "
-    <$STDFONT_B>$Date_Last_Modified : <$STDFONT_E>
+    <$STDFONT_B>"._("Date Last Modified")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
     $degdate
    </TD></TR>
    <TR><TD ALIGN=RIGHT>
-  " : "")."
-    <$STDFONT_B>$Degree_Title (<I>$Degree_Title_Example</I>) : <$STDFONT_E>
+  " : "")
+  
+  ."
+    <$STDFONT_B>"._("Degree")." : <$STDFONT_E>
+   </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=degdegree SIZE=11 MAXLENGTH=10
+     VALUE=\"$degdegree\">
+   </TD></TR>
+ 
+  <TR><TD ALIGN=RIGHT>
+   <$STDFONT_B>"._("Degree Description")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=degname SIZE=30 MAXLENGTH=50
      VALUE=\"$degname\">
    </TD></TR>
 
-   <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Degree_Name (<I>$Degree_Name_Example</I>) : <$STDFONT_E>
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=degdegree SIZE=11 MAXLENGTH=10
-     VALUE=\"$degdegree\">
-   </TD></TR>
-
    <TR><TD COLSPAN=2 ALIGN=CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\"".($action=="addform" ? "Add" : "Update")." \">
-    <INPUT TYPE=RESET  VALUE=\"$Remove_Changes\">
+    <INPUT TYPE=SUBMIT VALUE=\"".($action=="modform" ? 
+        _("Update") : _("Add"))." \">
+    <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
    </TD></TR>
+  ";
 
+  if ($action=="modform") 
+    echo "
    <TR><TD COLSPAN=2 ALIGN=CENTER>
-     <$STDFONT_B><A HREF=\"$page_name?$_auth\">Abandon ".($action=="addform" ?
-              "Addition" : "Modification")."</A><$STDFONT_E>
+     <$STDFONT_B><A HREF=\"$page_name?$_auth\">".
+       _("Abandon Modification")."</A><$STDFONT_E>
    </TD></TR>
+    ";
     
+  echo "
    </FORM>
    </TABLE>
-  ";
+   </CENTER>
+    ";
   freemed_display_box_bottom ();
 
  break;
+ 
+ case "add":
  case "mod":
-
-  freemed_display_box_top("$Modifying $record_name", $page_name);
-
-  echo "
-    <P>
-    <$STDFONT_B>$Modifying . . . 
-  ";
-
-  $query = "UPDATE degrees SET ".
-    "degdegree ='$degdegree',  ".
-    "degname   ='$degname',    ".
-    "degdate   ='$cur_date'    ". 
-    "WHERE id='$id'";
+ case "delete":
+  switch($action) { // inner action switch
+   case "add":
+    freemed_display_box_top(_("Adding $record_name"), $page_name);
+    echo "
+      <P ALIGN=CENTER>
+      <$STDFONT_B>"._("Adding")." . . . 
+    ";
+    $degdate = $cur_date; // set to current date
+    $query = "INSERT INTO degrees VALUES ( ".
+      "'$degdegree',  ".
+      "'$degname',    ".
+      "'$degdate',    ".
+      " NULL ) ";
+   break;
+   case "mod":
+    freemed_display_box_top(_("Modifying $record_name"), $page_name);
+    echo "
+      <P ALIGN=CENTER>
+      <$STDFONT_B>"._("Modifying")." . . . 
+    ";
+    $query = "UPDATE degrees SET ".
+      "degdegree ='$degdegree',  ".
+      "degname   ='$degname',    ".
+      "degdate   ='$cur_date'    ". 
+      "WHERE id='$id'";
+   break;
+   case "delete":
+    freemed_display_box_top (_("Deleting $record_name"), $page_name);
+    $query = "DELETE FROM degrees WHERE (id = \"$id\")";
+    echo "
+      <P ALIGN=CENTER>
+      <$STDFONT_B>"._("Deleting")." . . . 
+    ";
+   break;
+  } // inner action switch
 
   $result = fdb_query($query);
 
   if ($result) {
     echo "
-      <B>$Done.</B><$STDFONT_E>
+      <B>"._("Done").".</B><$STDFONT_E>
     ";
   } else {
-    echo ("<B>$ERROR ($result)</B>\n"); 
-  } // end of error reporting clause
-
-  freemed_display_box_bottom ();
+    echo ("<B>"._("ERROR")." ($query)</B><$STDFONT_E>"); 
+  }
   echo "
     <P>
-    <CENTER>
-    <A HREF=\"$page_name?$_auth&_ref=$_ref&action=view\"
-    >$Return_to $record_name $Menu</A>
-    </CENTER>
+    <CENTER><$STDFONT_B>
+    <A HREF=\"$page_name?$_auth&_ref=$_ref\"
+    >"._("Return to $record_name page")."</A>
+    <$STDFONT_E></CENTER>
   ";
-
- break;
- case "del":
-
-  freemed_display_box_top ("$Deleting $record_name", $page_name);
-
-  $result = fdb_query("DELETE FROM degrees
-    WHERE (id = \"$id\")");
-
-  echo "
-    <P>
-    <I>$record_name <B>$id</B> $Deleted</I>.
-  ";
-  if ($debug==1) {
-    echo "
-      <BR><B>RESULT:</B><BR>
-      $result<BR><BR>
-    ";
-  } // debug code
-  echo "
-    <BR><CENTER>
-    <A HREF=\"$page_name?$_auth&action=view\"
-     >$Update_Delete_Another</A></CENTER>
-  ";
-  freemed_display_box_bottom ();
-
- break;
- default:
-  $query = "SELECT * FROM degrees ".
-    "ORDER BY degdegree,degname";
-  $result = fdb_query($query);
-  freemed_display_box_top ("$record_name", $_ref);
-  echo freemed_display_itemlist(
-    $result,
-    "degrees.php3", //$page_name,
-    array (
-      "Degree" => "degdegree",
-      "Description" => "degname"
-    ),
-    array ( "", "" )
-  );
-  freemed_display_box_bottom ();
+  freemed_display_box_bottom();
  break;
 } // master action switch
 
