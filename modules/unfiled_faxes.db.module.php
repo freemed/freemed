@@ -80,6 +80,16 @@ class UnfiledFaxes extends MaintenanceModule {
 		global $display_buffer, $id;
 
 		switch ($_REQUEST['submit_action']) {
+			case __("Split Batch"):
+			$this->batch_split_screen();
+			return false;
+			break;
+
+			case __("Split"):
+			$this->batch_split();
+			return false;
+			break;
+			
 			case __("Send to Provider"):
 			case __("File without First Page"):
 			$this->mod();
@@ -93,6 +103,11 @@ class UnfiledFaxes extends MaintenanceModule {
 
 			case __("Delete"):
 			$this->del();
+			return false;
+			break;
+
+			case "pageview":
+			$this->get_pageview();
 			return false;
 			break;
 		}
@@ -128,6 +143,8 @@ class UnfiledFaxes extends MaintenanceModule {
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("File Directly")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("Split Batch")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Delete")."\"/>
@@ -158,6 +175,9 @@ class UnfiledFaxes extends MaintenanceModule {
 
 		// Insert new table query in unread
 		$this->_del();
+
+		global $refresh;
+		$refresh = $this->page_name."?module=".get_class($this);
 	} // end method del
 
 	// Modify method
@@ -267,6 +287,152 @@ class UnfiledFaxes extends MaintenanceModule {
 				$this->page_name.'?module='.get_class($this)
 			));
 	} // end method mod_direct
+
+	function batch_split_screen ( ) {
+		global $display_buffer;
+
+		$r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		$display_buffer .= "
+		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
+		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
+		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
+		<input type=\"hidden\" name=\"action\" value=\"view\"/>
+		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
+		";
+
+		// Use Djvu object to get thumbnails, etc
+		$djvu = CreateObject('_FreeMED.Djvu', 
+			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			$r['ufffilename']);
+		$pages = $djvu->NumberOfPages();
+		if ($pages < 2) {
+			trigger_error("You can't split a single page document.");
+		}
+
+		for ( $i = 1; $i <= $pages; $i++ ) {
+			// Display icon/thumb
+			$display_buffer .= "
+			<div align=\"center\">
+			<img src=\"".$this->page_name."?module=".
+			get_class($this)."&".
+			"action=".$_REQUEST['action']."&".
+			"submit_action=pageview&".
+			"id=".$_REQUEST['id']."&".
+			"page=".$i."\" alt=\"page $i\" border=\"1\" />
+			</div>
+			";
+			if ($i != $pages) {
+			$display_buffer .= "
+			<div align=\"center\">
+			<input type=\"checkbox\" name=\"splitafter[".$i."]\" ".
+			"value=\"1\" /> ----------------------
+			</div>
+			";
+			}
+		}
+
+		$display_buffer .= "
+		<div align=\"center\">
+		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("Split")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("Cancel")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("Delete")."\"/>
+		</div>
+
+		</form>
+		";
+	} // end method batch_split_screen
+
+	function batch_split ( ) {
+		// Get the "splits"
+		$s = $_REQUEST['splitafter'];
+
+		// Get page information
+		$r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		$djvu = CreateObject('_FreeMED.Djvu', 
+			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			$r['ufffilename']);
+		$pages = $djvu->NumberOfPages();
+		$chunks = $djvu->StoredChunks();
+
+		// Create temporary extraction location
+		$dir_prefix = tempnam('/tmp', 'fmdir');
+		$dir = $dir_prefix.'.d';
+
+		// Extract
+		$filename = $djvu->filename;
+		`mkdir "$dir"`;
+		//print "dir = $dir<br/>\n";
+		`djvmcvt -i "$filename" "$dir" "$dir/index.djvu"`;
+
+		// Figure out where the splits are ...
+		$cur = 1;
+		for ($i = 1; $i <= $pages; $i++) {
+			$d[$cur][] = $i;
+			if ($s[$i] == 1) {
+				$cur++;
+			}
+		}
+
+		// Reassemble
+		foreach ($d AS $k => $v) {
+			$hash = "";
+
+			// Put together lists of files
+			foreach ($v AS $this_file) {
+				$hash .= "\"".$dir."/".$chunks[$this_file-1]."\" ";
+			}
+
+			// New Filename
+			$new_filename = $filename.'.'.$k.'.djvu';
+
+			// Create new file
+			$output = `djvm -c "$new_filename" $hash`;
+
+			// Erase temporary files
+			unlink($dir."/index.djvu");
+			foreach ($pages AS $_page) {
+				unlink($dir."/".$_page);
+			}
+
+			// Add new entry for fax file
+			$result = $GLOBALS['sql']->query(
+				$GLOBALS['sql']->insert_query(
+					$this->table_name,
+					array (
+						'uffdate' => $r['uffdate'],
+						'ufffilename' => basename(trim($new_filename))
+					)
+				)
+			);
+
+			// TODO TODO: Make sure to erase old fax
+		}
+		
+		// Show some output
+		$display_buffer .= __("Split fax successfully.").
+			"<br/>";
+		global $refresh;
+		$refresh = $this->page_name."?module=".get_class($this).
+			"&action=display";
+
+		// Cleanup
+		unlink($dir);
+		unlink($dir_prefix);
+	} // end method batch_split
+
+	function get_pageview() {
+		// Return image ...
+		$r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		$djvu = CreateObject('_FreeMED.Djvu', 
+			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			$r['ufffilename']);
+		Header('Content-type: image/jpeg');
+		print $djvu->GetPageThumbnail($_REQUEST['page']);
+		die();
+	} // end method get_pageview
 
 	function notify ( ) {
 		// Check to see if we're the person who is supposed to be
