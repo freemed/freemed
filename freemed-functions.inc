@@ -224,42 +224,6 @@ function freemed_display_banner ($_pg_desc="")
   ";
 } // end function freemed_display_banner
 
-// function freemed_display_bottom_links
-function freemed_display_bottom_links ($phy_name="", $pg_name="", $ref="")
-{
-  global $Return_to_the_Main_Menu, $Return_to_Previous_Menu, $_auth,
-   $page_name, $record_name, $_ref;
-
-  // 19990924 -- patch to eliminate neccesity of parameters
-  if ($ref=="")      $ref      = $_ref;
-  if ($phy_name=="") $phy_name = $record_name;
-  if ($pg_name=="")  $pg_name  = $page_name;
-
-  if ((strlen($ref)<5) OR ($ref=="main.php3")
-                       OR ($ref==$pg_name)) {
-    echo "
-      <P>
-      <CENTER><A HREF=\"main.php3?$_auth&action=view\"
-       ><FONT FACE=\"Arial, Helvetica, Verdana\"
-       >$Return_to_the_Main_Menu</FONT></A>
-      </CENTER>
-    "; 
-  } else {
-    echo "
-      <P>
-      <CENTER><A HREF=\"$ref?$_auth\"
-       ><FONT FACE=\"Arial, Helvetica, Verdana\"
-       >$Return_to_Previous_Menu</FONT></A>
-      </CENTER>
-      <P>
-      <CENTER><A HREF=\"main.php3?$_auth\"
-       ><FONT FACE=\"Arial, Helvetica, Verdana\"
-       >$Return_to_the_Main_Menu</FONT></A>
-      </CENTER>
-    ";
-  } // end master if/else loop
-} // end function freemed_display_bottom_links
-
 // function freemed_display_box_bottom
 function freemed_display_box_bottom ($_null="")
 {
@@ -676,7 +640,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     " : "" )
     
     ."<TR><TD>
-    ".freemed_display_actionbar()."
+    ".freemed_display_actionbar($page_link)."
     </TD></TR>
     <TR><TD>
   ";
@@ -828,7 +792,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   // end searchbox
   
   // footer
-  $buffer .= freemed_display_actionbar()
+  $buffer .= freemed_display_actionbar($page_link)
     ."</TD></TR>
     </TABLE>
     <!-- End itemlist Table -->
