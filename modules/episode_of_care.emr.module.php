@@ -9,7 +9,7 @@ class EpisodeOfCare extends EMRModule {
 
 	var $MODULE_NAME = "Episode of Care";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_DESCRIPTION = "
 		Episode of care is another portion of FreeMED
 		designed to help with outcomes management. Any
@@ -129,7 +129,7 @@ class EpisodeOfCare extends EMRModule {
 			"eocrelemprcemail"	=> SQL__VARCHAR(100),
 
 			// Pregnancy
-			"eocrelpregcyle"	=> SQL__INT_UNSIGNED(0),
+			"eocrelpregcycle"	=> SQL__INT_UNSIGNED(0),
 			"eocrelpreggravida"	=> SQL__INT_UNSIGNED(0),
 			"eocrelpregpara"	=> SQL__INT_UNSIGNED(0),
 			"eocrelpregmiscarry"	=> SQL__INT_UNSIGNED(0),
@@ -959,6 +959,19 @@ class EpisodeOfCare extends EMRModule {
 			false
 		);
 	} // end method EpisodeOfCare->widget
+
+	// ----- Auto-updating of tables
+	function _update ( ) {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Upgrade to 0.3.1
+		// - Fix table definition problems
+		if (!version_check($version, '0.6.1')) {
+			$sql->query('ALTER TABLE eoc CHANGE eocrelpregcyle '.
+				'eocrelpregcycle INT UNSIGNED');
+		}
+	} // end method _update
 
 } // end class EpisodeOfCare
 
