@@ -1,0 +1,10 @@
+$Id$
+$Author$
+
+This directory should be filled with subdirectories such as fr_CA. The
+designator is:
+
+	(language)_(locale)
+
+and the files follow the GettextXML document internationalization format.
+
