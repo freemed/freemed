@@ -11,14 +11,16 @@ define (__MACROS_PHP__, true);
   //    payment related macros
   // *****************************
 
-  $PAYER_TYPES = array("Primary","Secondary","Tertiary","WorkComp","Patient");
+  $PAYER_TYPES = array("Patient","Primary","Secondary","Tertiary","WorkComp");
 
-  define (PAYMENT_TARGET_INS1,  0);
-  define (PAYMENT_TARGET_INS2,  1);
-  define (PAYMENT_TARGET_INS3,  2);
-  define (PAYMENT_TARGET_WCOMP, 3);
-  define (PAYMENT_TARGET_PAT,   4);
+	// coverage types
+  define (PATIENT,              0);
+  define (PRIMARY,              1);
+  define (SECONDARY,            2);
+  define (TERTIARY,             3);
+  define (WORKCOMP,             4);
 
+	// ledger transaction types
   define (PAYMENT,              0);
   define (ADJUSTMENT,           1);
   define (REFUND,               2);
@@ -30,7 +32,8 @@ define (__MACROS_PHP__, true);
   define (DEDUCTABLE,           8);
   define (FEEADJUST,            9);
   define (BILLED,               10);
-  define (WRITEOFF,             11);
+  define (PATWRITEOFF,          11);
+  define (INSWRITEOFF,          12);
 
 } // end checking for __MACROS_PHP__
 

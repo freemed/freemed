@@ -6,6 +6,16 @@
 // CURRENTLY, THIS IS A STUB, AND SHOULD NOT BE USED UNTIL IT IS
 // FLESHED OUT                              -- THE MANAGEMENT :)
 
+// EDI GLOBALS for freemed.php (global_var.inc)
+// these are for testing till the reall stuff can be done
+$BILLING_SERVICE="yes";
+$EDI_VENDOR="EDIVNDID";
+$EDI_SOURCE_NUMBER="ISRCN";
+$EDI_INTERCHANGE_SENDER_ID="INCHGSNDID";
+$EDI_INTERCHANGE_RECVR_ID="54771";        // highmark
+$EDI_INTERCHANGE_CNTLNUM="INTCHGCTLNUM";
+$EDI_TESTORPROD = "T";
+
 if (!defined("__MODULE_EDI_PHP__")) {
 
 define (__MODULE_EDI_PHP__, true);
@@ -23,49 +33,25 @@ class freemedEDIModule extends freemedModule {
 	var $end_envelope;   // this holds the ISA/GC trailer (GS/IEA)
 	var $error_buffer;   // stack error messages
 	var $edi_buffer;     // stack edi output
-	var $fac_row;        // facility we are processing
-	var $bill_request_type;  // primary or secondary payer.
-	var $ptinsno;          // patients ins ID
-	var $ptinsgrp;        // patients grp number
-	var $ptinsnoS;         // when billing secondary
-	var $ptinsgrpS;        // when billing secondary
 	var $sourceid;         // transmission source id
 	var $billing_service;  // some records may need to know this
 	var $interchange_senderid;  // all from your edi clearinghouse
 	var $interchange_recvrid;
 	var $interchange_cntrlnum;
 	var $testorprod;          // sending test data only T or P
-	var $relationship_code;  // picked up in patient and used later in clm is scndry bill.
-	var $CurPatient;
-	var $Guarantor;       // this pats guarantor if there is one.
-	var $Physician;        // this pats doc
-	var $InsuranceCo;   // insco being billed
-	var $InsuranceCoS;  // secondary
 
 	// contructor method
-	function freemedEDIModule () {
+	function freemedEDIModule () 
+	{
+		global $BILLING_SERVICE, $EDI_VENDOR, $EDI_SOURCE_NUMBER, $EDI_INTERCHANGE_SENDER_ID;
+        global $EDI_INTERCHANGE_RECVR_ID, $EDI_INTERCHANGE_CNTLNUM, $EDI_TESTORPROD;
 
 		// call parent constructor
 		$this->freemedModule();
 
-		// form proper transaction reference number
-		//$random = rand (1, 99);
-		//if ( strlen ( $random ) < 2 ) 
-		//	$this->transaction_reference_number =
-		//		"0" . $this->transaction_reference_number;
-
-		
 		$this->transaction_reference_number = "0";
 		$this->current_transaction_set = "0000";
 		$this->record_terminator = "~";
-		$this->fac_row = 0;
-		$this->CurPatient = 0;
-		$this->Guarantor = 0;
-    	$this->Physician = 0;
-		$this->InsuranceCo = 0;
-		$this->InsuranceCoS = 0;  // secondary
-		$this->ptinsno = 0;
-		$this->ptinsgrp = 0;
 		$this->edi_buffer = "";
 		$this->error_buffer = "";
 		$this->start_envelope = "";
@@ -84,6 +70,7 @@ class freemedEDIModule extends freemedModule {
 	// override check_vars method
 	function check_vars ($nullvar = "") {
 		global $module;
+		echo "checkvar of base $module<BR>";
 		if (!isset($module)) return false;
 		return true;
 	} // end function check_vars
@@ -114,10 +101,16 @@ class freemedEDIModule extends freemedModule {
 
 	// function display
 	// by default, a wrapper for view
-	function display () { $this->view(); }
+	function display () 
+	{ 
+		$this->view(); 
+	}
+	function view () 
+	{ 
+		return; 
+	}
 
 	// ********************** EDI SPECIFIC ACTIONS *********************
-
 	function StartISAHeader()
 	{
 		
@@ -210,7 +203,7 @@ class freemedEDIModule extends freemedModule {
 		$random = rand(1,99);
 		$this->Error("Random = $random");
 		
-		if ($this->transaction_reference_number != "00")
+		if ($this->transaction_reference_number != 0)
 		{
 			//try to ensure no dupes. no guarantees tho
 			while($random == $this->transaction_reference_number)
@@ -247,8 +240,8 @@ class freemedEDIModule extends freemedModule {
 		$this->edi_buffer .= "REF*VR*";
 		$this->edi_buffer .= strtoupper($this->vendorid); 
 		$this->edi_buffer .= $this->record_terminator;
-		$ret = $this->RecvrSubmitter();
-		return $ret;
+		//$ret = $this->RecvrSubmitter();
+		return true;
 		
 
 	} // end StartTrans
@@ -279,14 +272,10 @@ class freemedEDIModule extends freemedModule {
 
 	} // end of EndTrans
 	
-	function RecvrSubmitter($entity="1")
+	function RecvrSubmitter($fac)
 	{
-		// entity type 1 = person, 2 = company ( eg. billing service)
-		if ( ($entity < 0) OR ($entity > 2) )
-		{
-			$this->Error("Invalid entity in RecvrSubmitter function!");
-			return false;
-		}
+		$entity = ($fac) ? 2 : 1;
+
 
 		if (empty($this->sourceid))
 		{

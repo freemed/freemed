@@ -166,6 +166,12 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             else
                 DIE("No patient");
 
+			$proc_rec = freemed_get_link_rec($procid, "procrec");
+			if (!$proc_rec)
+				DIE("Error getting procedure");
+			$proccovmap = "0:".$proc_rec[proccov1].":".$proc_rec[proccov2].":".
+							$proc_rec[proccov3].":".$proc_rec[proccov4];
+
             // **************** FORM THE WIZARD ***************
             $wizard = new wizard (array("item", "been_here", "module", "viewaction", "action", "patient", "_auth"));
 
@@ -175,8 +181,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             //if (empty($payrecdt) and empty($payrecdt_y))
             //	echo "date $payrecdt $payrecdt_y $cur_date";
             if (empty($payrecdt_y))
+			{
+				global $payrecdt;
                 $payrecdt = $cur_date; // by default, the date is now...
-
+			}
             // ************* ADD PAGE FOR STEP TWO *************
 
             switch ($payreccat)
@@ -187,10 +195,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         array_merge(array ("payrecsource", "payrectype", "payrecamt"), date_vars("payrecdt")),
                         html_form::form_table ( array (
                                                     "Payment Source" =>
-                                                                "<SELECT NAME=\"payrecsource\">
-                                                                 <OPTION VALUE=\"4\" ".
-                                                                   ( ($payrecsource==4) ? "SELECTED" : "" ).">Patient"
-                        											.$this_patient->insuranceSelectionByType()."
+                                                                "<SELECT NAME=\"payrecsource\">"
+                        											.$this->insuranceSelectionByType($proccovmap)."
                                                                  </SELECT>",
 
                                                     _("Payment Type") =>
@@ -224,11 +230,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
                 switch ($payrecsource)
                 {
-                case "4":
+                case "0":
                     if ($patient>0)
                     {
                         $second_page_array["Patient"] =
-                            "<TD ALIGN=LEFT><I>".$this_patient->fullName()."</I>
+                            $this_patient->fullName()."
                             <INPUT TYPE=HIDDEN NAME=\"payreclink\" ".
                             "VALUE=\"".prepare($patient)."\">\n";
                     }
@@ -240,14 +246,14 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         ";
                     }
                     break;
-            	case "0": 
 				default:
+					$payreclink = $this->coverageIDFromType($proccovmap,$payrecsource);
 					// we can make this hidden now also since we know the link amount
 					// fixme when you get a chance.
                     $second_page_array[_("Insurance Company")] =
-                        "<SELECT NAME=\"payreclink\">".
-                        $this_patient->insuranceSelection().
-                        "</SELECT>\n";
+                        $this->insuranceName($payreclink)."
+                        <INPUT TYPE=HIDDEN NAME=\"payreclink\" ".
+                        "VALUE=\"".prepare($payreclink)."\">\n";
                     break;
                 } // payment source switch end
                 // how is the payment being made
@@ -308,11 +314,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 				$title[DEDUCTABLE] = "Describe the Deductable";
                 $wizard->add_page (
                     "Step Two: $title[$payreccat]",
-                    array_merge(array ("payreclink", "payrecamt"),date_vars("payrecdt")),
+                    array_merge(array ("payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 _("Date Received") =>
                                                                  fm_date_entry ("payrecdt"),
-
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
@@ -327,17 +332,14 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             case FEEADJUST: // adjustment (1)
                 $wizard->add_page (
                     "Step Two: Describe the Adjustment",
-                    array_merge(array ("payreclink", "payrecamt", "payrecdescrip"),date_vars("payrecdt")),
+                    array_merge(array ("payrecsource", "payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 _("Insurance Company") =>
-                        										"<SELECT NAME=\"payreclink\">".
-                        										$this_patient->insuranceSelection().
+                        										"<SELECT NAME=\"payrecsource\">".
+                        										$this->insuranceSelection($proccovmap).
                         										"</SELECT>\n",
-                                                                     
-
                                                 _("Date Received") =>
                                                                  fm_date_entry ("payrecdt"),
-
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
@@ -429,17 +431,15 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             case TRANSFER: // transfer (6)
                 $wizard->add_page (
                     "Step Two: Describe the Transfer",
-                    array_merge(array ("payreclink", "payrecdescrip"), date_vars("payrecdt")),
+                    array_merge(array ("payrecsource", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 "Date of Transfer" =>
                                                                   fm_date_entry ("payrecdt"),
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ",
                                                 "Transfer to" =>
-                                                                "<SELECT NAME=\"payrecsource\">
-                                                                 <OPTION VALUE=\"4\" ".
-                                                                   ( ($payrecsource==4) ? "SELECTED" : "" ).">Patient"
-                        											.$this_patient->insuranceSelectionByType()."
+                                                                "<SELECT NAME=\"payrecsource\">"
+                        											.$this->insuranceSelectionByType($proccovmap)."
                                                                  </SELECT>"
                                             ) )
                 );
@@ -459,6 +459,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     "Step Two: Rebill Information",
                     array_merge(array ("payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
+                                                "Date of Rebill" =>
+                                                                  fm_date_entry ("payrecdt"),
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n"
@@ -533,6 +535,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
                 case FEEADJUST: // adjustment category (add) 1
 					// calc the payrecamt
+					$payreclink = $this->coverageIDFromType($proccovmap,$payrecsource);
                     $proccharges = freemed_get_link_field ($payrecproc, "procrec",
                                                                "proccharges");
 					$payrecamt = $proccharges - abs($payrecamt);
@@ -545,10 +548,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 						// show as transferring the balance
                         $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
                                                                "procbalcurrent");
-						if ($payrecsource == 4)
-							$payreclink = $patient;
+						if ($payrecsource == 0)
+							$payreclink = 0;
 						else
-							$payreclink = $this_patient->insurersID($payrecsource);
+							$payreclink = $this->coverageIDFromType($proccovmap,$payrecsource);
 					
                     break; // end refund category (add)
                 case DENIAL: // denial category (add) 3
@@ -583,7 +586,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 						"payrecdtadd" => $cur_date,
 						"payrecdtmod" => $cur_date,
 						"payrecpatient" => $patient,
-						"payrecdt",
+						"payrecdt"      => fm_date_assemble("payrecdt"),
 						"payreccat",
 						"payrecproc",
 						"payrecsource",
@@ -663,8 +666,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
                 case TRANSFER: // transfer (6)
 					// here the link is an insurance type not an insco id.
-                    $query = "UPDATE payrec SET payreclink='".addslashes($payrecsource)."' 
-							WHERE payreccat='".PROCEDURE."' AND payrecproc='".addslashes($payrecproc)."'";
+                    $query = "UPDATE procrec SET proccurcovtp='".addslashes($payrecsource)."',
+												 proccurcovid='".addslashes($payreclink)."'
+							WHERE id='".addslashes($payrecproc)."'";
                     break; // end rebill category (add)
 
                 case DEDUCTABLE: // adjustment category 8
@@ -978,7 +982,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     break;
                 case PAYMENT: // payment 0
                 default:  // default is payment
-                    $this_type = "Payment";
+                    $this_type = "Payment ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 } // end of categry switch (name)
                 $id              = $r["id"];
@@ -1231,8 +1235,80 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             </FORM>
             ";
         } // end view function
+		
+		function insuranceSelectionByType($proccovmap)
+		{
+            reset ($GLOBALS);
+            while (list($k,$v)=each($GLOBALS))
+			$returned_string = "";
+			
+			$cov_ids = explode(":",$proccovmap);
+
+			$cnt = count($cov_ids);
+			for ($i=0;$i<$cnt;$i++)
+			{
+				if ($i != 0)
+				{
+					if ($cov_ids[$i] != 0)
+					{
+						$insid = freemed_get_link_field($cov_ids[$i],"coverage","covinsco");
+						$insname = freemed_get_link_field($insid,"insco","insconame");
+						$returned_string .= "<OPTION VALUE=\"".$i."\">".$insname."\n";
+					}
+				}
+				else
+				{
+					$returned_string .= "<OPTION VALUE=\"".$i."\">"._("Patient")."\n";
+				}
+			}
+			return $returned_string;
+
+		}
+
+		function insuranceName($coverage)
+		{
+            reset ($GLOBALS);
+            while (list($k,$v)=each($GLOBALS))
+			$insid = freemed_get_link_field($coverage,"coverage","covinsco");
+			$insname = freemed_get_link_field($insid,"insco","insconame");
+			return $insname;
+
+		}
+
+		function coverageIDFromType($proccovmap, $type)
+		{
+            reset ($GLOBALS);
+            while (list($k,$v)=each($GLOBALS))
+			$cov_ids = explode(":",$proccovmap);
+			return $cov_ids[$type];
+			
+		}
+
+		function insuranceSelection($proccovmap)
+		{
+            reset ($GLOBALS);
+            while (list($k,$v)=each($GLOBALS))
+			$returned_string = "";
+			
+			$cov_ids = explode(":",$proccovmap);
+			$cnt = count($cov_ids);
+			for ($i=0;$i<$cnt;$i++)
+			{
+				if ($i != 0)
+				{
+					if ($cov_ids[$i] != 0)
+					{
+						$insid = freemed_get_link_field($cov_ids[$i],"coverage","covinsco");
+						$insname = freemed_get_link_field($insid,"insco","insconame");
+						$returned_string .= "<OPTION VALUE=\"".$cov_ids[$i]."\">".$insname."\n";
+					}
+				}
+			}
+			return $returned_string;
+		}
 
     } // end class testModule
+
 
     register_module("PaymentModule");
 

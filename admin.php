@@ -482,6 +482,35 @@ if ($action=="cfgform") {
     )");
   if ($result) { echo "<LI>"._("Patients")."\n"; }
 
+  $result=$sql->query("DROP TABLE coverage");
+  $result=$sql->query("CREATE TABLE coverage (
+    id           INT NOT NULL AUTO_INCREMENT,
+	covdtadd     DATE,
+	covdtmod     DATE,
+	covpatient   INT UNSIGNED,             
+	coveffdt     TEXT,
+	covinsco     INT UNSIGNED,     
+	covpatinsno  VARCHAR(50),
+	covpatgrpno  VARCHAR(50),
+	covtype      INT UNSIGNED,          
+	covstatus    INT UNSIGNED,
+	covrel       CHAR(2), 
+	covlname     VARCHAR(50), 
+	covfname     VARCHAR(50),
+	covmname     CHAR(1),
+	covaddr1     CHAR(25), 
+	covaddr2     CHAR(25),
+	covcity      CHAR(25),
+	covstate     CHAR(3),
+	covzip       CHAR(10),
+	covdob       DATE, 
+	covsex       ENUM(\"m\",\"f\",\"t\") NOT NULL,
+    PRIMARY KEY (id)    
+  )");
+  if ($result) { echo "<LI>"._("Coverage")."\n"; }
+  else         { echo "<LI>"._("Coverage")." Failed\n"; }
+
+
   // generate payer database 
   $result=$sql->query("DROP TABLE payer");
   $result=$sql->query("CREATE TABLE payer (
@@ -541,6 +570,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     procamtallowed         REAL,
     procdtbilled	       TEXT,
+    proccurcovid		   INT UNSIGNED,
+    proccurcovtp		   INT UNSIGNED,
+    proccov1			   INT UNSIGNED,
+    proccov2			   INT UNSIGNED,
+    proccov3			   INT UNSIGNED,
+    proccov4			   INT UNSIGNED,
     KEY (procpatient),
     PRIMARY KEY (id)
     )");

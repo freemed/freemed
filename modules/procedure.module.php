@@ -240,6 +240,48 @@ class procedureModule extends freemedEMRModule {
     switch ($action) {
      case "addform": case "add":
        // form add query
+	  $cov_ids = fm_get_active_coverage($patient);
+
+	  $covmap[0] = 0;          // [0] coverage is always patient 
+	  if (is_array($cov_ids))
+	  {
+			// make an array of ids indexed by coverage type
+			$cnt = count($cov_ids);
+			// clear the array plus 1 for the patient
+			for ($i=0;$i<$cnt+1;$i++) { $covmap[$i] = 0; }
+			for ($i=0;$i<$cnt;$i++)
+			{
+				// make array of coverages indexed by type
+				$covtype = freemed_get_link_field($cov_ids[$i], "coverage", "covtype");
+				if (!$covtype)
+					DIE("Failed getting coverages");
+				$covmap[$covtype] = $cov_ids[$i];
+				
+			}
+			
+			
+	  }
+
+	  $proccov1 = $proccov2 = $proccov3 = $proccov4 = 0;
+	  $cnt = count($covmap);
+	  $proccurcovid = 0;
+	  $proccurcovtp = 0;
+	  for ($i=1;$i<$cnt;$i++)
+	  {
+    	// get the first non zero coverage and type
+    	// basically the first valid coverage becomes
+    	// this procedures current coverage.
+    	// while were at build proccov1-4;
+    	if ( ($proccurcovid==0) AND ($covmap[$i] != 0) )
+    	{
+       		$proccurcovid = $covmap[$i];
+       		$proccurcovtp = $i;
+    	}
+    	$var = "proccov".$i;
+    	$$var = $covmap[$i];
+	  } 
+
+		
       $query = $sql->insert_query (
 		$this->table_name,
 		array (
@@ -265,7 +307,13 @@ class procedureModule extends freemedEMRModule {
             "procbillable",
             "procauth",
             "procrefdoc",
-            "procrefdt"			=>	fm_date_assemble("procrefdt")
+            "procrefdt"			=>	fm_date_assemble("procrefdt"),
+			"proccurcovid"        =>  $proccurcovid,
+			"proccurcovtp"        =>  $proccurcovtp,
+			"proccov1"        =>  $proccov1,
+			"proccov2"        =>  $proccov2,
+			"proccov3"        =>  $proccov3,
+			"proccov4"        =>  $proccov4
 		)
 	);
 	//$debug=true;
@@ -274,7 +322,6 @@ class procedureModule extends freemedEMRModule {
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
 
-      //echo "FIX THIS!!";
       $this_procedure = $sql->last_record ($result);
 
       // form add query
@@ -287,10 +334,10 @@ class procedureModule extends freemedEMRModule {
             '0000-00-00',
             '$patient',
             '".fm_date_assemble("procdt")."',
-            '5',
+            '".PROCEDURE."',
             '$this_procedure',
-            '0',
-            '0',
+            '$proccurcovtp',
+            '$proccurcovid',
             '0',
             '',
             '$procbalorig',

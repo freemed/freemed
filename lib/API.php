@@ -2143,18 +2143,28 @@ function fm_get_active_payerids ($ptid=0)
 			return 0;
         return $ins_id;
 
+}
 
-} // end get_active_payerids
-
-function fm_get_all_insured_patients()
+function fm_get_active_coverage ($ptid=0)
 {
         global $database, $sql, $cur_date;
         $result = 0;
-		$query = "SELECT DISTINCT a.payerpatient,b.ptlname,b.ptfname,b.id FROM payer as a, patient as b WHERE ".
-				"a.payerpatient=b.id AND a.payerstatus='0' AND ".
-				"a.payerstartdt<='$cur_date' AND a.payerenddt>='$cur_date'";
+	if ($ptid == 0)
+           return $result;
+        $query = "SELECT id FROM coverage WHERE ";
+        $query .= "covpatient='$ptid' AND covstatus='0' ";
         $result = $sql->query($query);
-		return $result;
+        if (!$result)
+           return $result;  // not an array!
+        $sub=0;
+        while ($rec = $sql->fetch_array($result))
+        {
+            $ins_id[$sub] = $rec["id"];
+            $sub++;
+        }
+		if ($sub == 0)
+			return 0;
+        return $ins_id;
 
 }
 
@@ -2167,13 +2177,11 @@ function fm_verify_patient_coverage($ptid=0,$coveragetype=0)
 	
 		// default coveragetype is primary	
 
-        $query = "SELECT id FROM payer WHERE ";
-        $query .= "payerpatient='$ptid' AND payerstatus='0' AND payertype='$coveragetype' ";
-        $query .= "AND payerstartdt<='$cur_date' AND payerenddt>='$cur_date'";
+        $query = "SELECT id FROM coverage WHERE ";
+        $query .= "covpatient='$ptid' AND covstatus='0' AND covtype='$coveragetype' ";
         $result = $sql->query($query);
-		if (!$result)
-			return 0;
-		return $result;
+		$ret = ($result) ? $sql->num_rows($result) : 0;
+		return $ret;
 }
 
 function fm_get_active_guarids ($ptid=0)

@@ -14,9 +14,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 	var $MODULE_NAME = "Patient Coverage";
 	var $MODULE_VERSION = "0.1";
 
-	var $payer_table = "payer";
-	var $guar_table = "guarantor";
-	var $view_coveragetype = "";
+	var $table_name = "coverage";
 
 
 
@@ -43,30 +41,17 @@ class PatientCoveragesModule extends freemedEMRModule {
 		//$this->View();
 		//echo "<CENTER><P><B>Not Implemented</B></P><BR></CENTER>";
 
-		$this_patient = new Patient($patient);
-		if (!$this_patient)
-			DIE("Patient Class failed");
-
 		if (!isset($been_here))
 		{
-			global $been_here, $coveragetype;
+			global $been_here;
 			$been_here = 1;
-			if ($this_patient->ptdep == 0)
-			{
-				// note book ignores globals of 0 (BUG??)
-				$coveragetype="I"; // insurance coverage
-				$row = freemed_get_link_rec($id,$this->payer_table);
-			}
-			else
-			{
-				$coveragetype="G"; // guarantor coverage
-				$row = freemed_get_link_rec($id,$this->guar_table);
-			}
+			// note book ignores globals of 0 (BUG??)
+			$row = freemed_get_link_rec($id,$this->table_name);
 			if (!$row)
-				DIE("Failed to read guar/payer table");
+				DIE("Failed to read coverage table");
 			while (list($k,$v)=each($row)) 
 			{
-				if ( (substr($k,0,4) == "guar") OR (substr($k,0,5) == "payer") )
+				if ( (substr($k,0,3) == "cov") )
 				{
 					global $$k;
 				}
@@ -74,47 +59,81 @@ class PatientCoveragesModule extends freemedEMRModule {
 			extract($row);
 		}
 
-		$book = new notebook (array ("action", "id", "module", "been_here", "coveragetype", "patient"),
+		$book = new notebook (array ("action", "id", "module", "been_here", "patient"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
-		if ($coveragetype=="I")  // insurance
-		{
-			$book->add_page("Supply Insurance Information",
-								array_merge( array("payerpatientgrp", "payerpatientinsno"), 
-									  date_vars("payerstartdt"),date_vars("payerenddt")),
+			$book->add_page("Modify Insurance Information",
+								array_merge( array("covpatgrpno", "covpatinsno", "covrel"), 
+									  date_vars("coveffdt")),
 								html_form::form_table( array (
-										"Start Date" => fm_date_entry("payerstartdt"),
-										"End Date" => fm_date_entry("payerenddt"),
+										"Start Date" => fm_date_entry("coveffdt"),
 										"Insurance ID Number" => 
-											"<INPUT TYPE=TEXT NAME=\"payerpatientinsno\" SIZE=20 MAXLENGTH=30 ".
-                                            "VALUE=\"".prepare($payerpatientinsno)."\">\n",
+											"<INPUT TYPE=TEXT NAME=\"covpatinsno\" SIZE=20 MAXLENGTH=30 ".
+                                            "VALUE=\"".prepare($covpatinsno)."\">\n",
 										"Insurance Group Number" => 
-											"<INPUT TYPE=TEXT NAME=\"payerpatientgrp\" SIZE=20 MAXLENGTH=30 ".
-                                            "VALUE=\"".prepare($payerpatientgrp)."\">\n"
-										 					 ) 
-													) 
-							); // end add page
-			
-		} // end incurance coverage
-		
-		if ($coveragetype=="G") // guar
-		{
-			$book->add_page("Supply Guarantor Information",
-								array_merge(array("guarrel"),date_vars("guarenddt"), date_vars("guarstartdt")),
-								html_form::form_table( array (
-										"Start Date" => fm_date_entry("guarstartdt"),
-										"End Date" => fm_date_entry("guarenddt"),
-										"Relationship to Insured" => html_form::select_widget("guarrel", array (
+											"<INPUT TYPE=TEXT NAME=\"covpatgrpno\" SIZE=20 MAXLENGTH=30 ".
+                                            "VALUE=\"".prepare($covpatgrpno)."\">\n",
+										"Relationship to Insured" => html_form::select_widget("covrel", array (
 															_("Self")    => "S",
 															_("Child")   => "C",
 															_("Husband") => "H",
 															_("Wife")    => "W",
 															_("Other")   => "O" ) )
-															)
-													)
-							);
+										 					 ) 
+													) 
+							); // end add page
+
+			if ($covrel != "S")
+			{
+				$book->add_page("Supply Insureds Information",
+								array_merge(array("covlname", "covfname", "covmname", "covaddr1", "covaddr2", "covcity",
+											"covstate", "covzip", "covsex"), date_vars("covdob")),
+						html_form::form_table ( array (
+							_("Last Name") =>
+								"<INPUT TYPE=TEXT NAME=\"covlname\" SIZE=25 MAXLENGTH=50 ".
+								"VALUE=\"".prepare($covlname)."\">",
+					
+							_("First Name") =>
+								"<INPUT TYPE=TEXT NAME=\"covfname\" SIZE=25 MAXLENGTH=50 ".
+								"VALUE=\"".prepare($covfname)."\">",
+
+							_("Middle Name") =>
+								"<INPUT TYPE=TEXT NAME=\"covmname\" SIZE=25 MAXLENGTH=50 ".
+								"VALUE=\"".prepare($covmname)."\">",
+
+							_("Address Line 1") =>
+								"<INPUT TYPE=TEXT NAME=\"covaddr1\" SIZE=25 MAXLENGTH=45 ".
+								"VALUE=\"".prepare($covaddr1)."\">",
+
+							_("Address Line 2") =>
+								"<INPUT TYPE=TEXT NAME=\"covaddr2\" SIZE=25 MAXLENGTH=45 ".
+								"VALUE=\"".prepare($covaddr2)."\">",
+
+							_("City").", "._("State").", "._("Zip") =>
+								"<INPUT TYPE=TEXT NAME=\"covcity\" SIZE=10 MAXLENGTH=45 ".
+								"VALUE=\"".prepare($covcity)."\">\n".
+								"<INPUT TYPE=TEXT NAME=\"covstate\" SIZE=3 MAXLENGTH=2 ".
+								"VALUE=\"".prepare($covstate)."\">\n". 
+								"<INPUT TYPE=TEXT NAME=\"covzip\" SIZE=10 MAXLENGTH=10 ".
+								"VALUE=\"".prepare($covzip)."\">",
+
+							_("Date of Birth") =>
+								date_entry("covdob"),
+							_("Gender") =>
+            					html_form::select_widget("covsex",
+                						array (
+                     						_("Female")        => "f",
+                     						_("Male")          => "m",
+                     						_("Transgendered") => "t"
+                								)
+            							)
 
 
-		}
+						) )
+					 );
+
+
+			}
+			
 
 		if (!$book->is_done())
 		{
@@ -130,90 +149,55 @@ class PatientCoveragesModule extends freemedEMRModule {
 			return;
 		}
 
-		if ($coveragetype=="I")  // patient is insured
+		$error_msg = $this->EditInsurance();
+
+		if (!empty($error_msg))
 		{
-			$error_msg = $this->EditInsurance();
-
-			if (!empty($error_msg))
-			{
-				echo "
-      				<P>
-      				<CENTER>Entry Error found<BR></CENTER>
-      				<CENTER>$error_msg<BR></CENTER>
-      				<P>
-      				<CENTER>
-      				<FORM ACTION=\"$this->page_name\" METHOD=POST>
-       				<INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
-       				<INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"modform\">
-       				<INPUT TYPE=HIDDEN NAME=\"id\"           VALUE=\"$id\">
-       				<INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
-       				<INPUT TYPE=HIDDEN NAME=\"module\"      VALUE=\"$module\">
-       				<INPUT TYPE=SUBMIT VALUE=\"  Try Again  \">
-      				</FORM>
-      				</CENTER>
-     				";
-					return;
-			}
-
-			$startdt = fm_date_assemble("payerstartdt");
-			$enddt = fm_date_assemble("payerenddt");
-			$query = "UPDATE $this->payer_table SET payerstartdt='".addslashes($startdt)."',".
-													"payerenddt='".addslashes($enddt)."',".
-													"payerpatientinsno='".addslashes($payerpatientinsno)."',".
-													"payerpatientgrp='".addslashes($payerpatientgrp)."'".
-					" WHERE id='".addslashes($id)."'";
-			$result = $sql->query($query);
-			echo "<CENTER>";
-			if ($result)
-				echo _("done").".";
-			else
-				echo _("ERROR");
-			echo "</CENTER>";
-
-			
-
+			echo "
+   				<P>
+   				<CENTER>Entry Error found<BR></CENTER>
+   				<CENTER>$error_msg<BR></CENTER>
+   				<P>
+   				<CENTER>
+   				<FORM ACTION=\"$this->page_name\" METHOD=POST>
+   				<INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
+   				<INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"modform\">
+   				<INPUT TYPE=HIDDEN NAME=\"id\"           VALUE=\"$id\">
+   				<INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
+   				<INPUT TYPE=HIDDEN NAME=\"module\"      VALUE=\"$module\">
+   				<INPUT TYPE=SUBMIT VALUE=\"  Try Again  \">
+   				</FORM>
+   				</CENTER>
+   				";
+				return;
 		}
 
-		if ($coveragetype=="G")  // guarantor is insured
-		{
-			$error_msg = $this->EditGuarantor();
-
-			if (!empty($error_msg))
-			{
-				echo "
-      				<P>
-      				<CENTER>Entry Error found<BR></CENTER>
-      				<CENTER>$error_msg<BR></CENTER>
-      				<P>
-      				<CENTER>
-      				<FORM ACTION=\"$this->page_name\" METHOD=POST>
-       				<INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
-       				<INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"modform\">
-       				<INPUT TYPE=HIDDEN NAME=\"id\"           VALUE=\"$id\">
-       				<INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
-       				<INPUT TYPE=HIDDEN NAME=\"module\"      VALUE=\"$module\">
-       				<INPUT TYPE=SUBMIT VALUE=\"  Try Again  \">
-      				</FORM>
-      				</CENTER>
-     				";
-					return;
-			}
-
-			$startdt = fm_date_assemble("guarstartdt");
-			$enddt = fm_date_assemble("guarenddt");
-			
-			$query = "UPDATE $this->guar_table SET guarenddt='".addslashes($enddt)."',".
-					"guarstartdt='".addslashes($startdt)."',guarrel='".addslashes($guarrel)."'".
-					" WHERE id='".addslashes($id)."'";
-			$result = $sql->query($query);
-			echo "<CENTER>";
-			if ($result)
-				echo _("done").".";
-			else
-				echo _("ERROR");
-			echo "</CENTER>";
-
-		}
+		$covstatus='0';
+		$startdt = fm_date_assemble("coveffdt");
+		$query = "UPDATE $this->table_name SET coveffdt='".addslashes($startdt)."',".
+												"covdtmod='".addslashes($cur_date)."',".
+												"covlname='".addslashes($covlname)."',".
+												"covfname='".addslashes($covfname)."',".
+												"covmname='".addslashes($covmname)."',".
+												"covdob='".addslashes($covdob)."',".
+												"covsex='".addslashes($covsex)."',".
+												"covaddr1='".addslashes($covaddr1)."',".
+												"covaddr2='".addslashes($covaddr2)."',".
+												"covcity='".addslashes($covcity)."',".
+												"covstate='".addslashes($covstate)."',".
+												"covzip='".addslashes($covzip)."',".
+												"covrel='".addslashes($covrel)."',".
+												"covpatinsno='".addslashes($covpatinsno)."',".
+												"covstatus='".addslashes($covstatus)."',".
+												"covpatgrpno='".addslashes($covpatgrpno)."'".
+				" WHERE id='".addslashes($id)."'";
+		$result = $sql->query($query);
+		echo "<CENTER>";
+		if ($result)
+			echo _("done").".";
+		else
+			echo _("ERROR");
+		echo "</CENTER>";
 		
 		echo "
 			<P>
@@ -241,6 +225,8 @@ class PatientCoveragesModule extends freemedEMRModule {
 		// step2/3 select a guar or insurance if a guar then insurance
 		// step4 all other data
 		$wizard = new wizard (array("been_here", "module", "action", "patient", "_auth"));
+
+		// Im leaving this in incase we decide later to break it up more
 		$wizard->add_page("Select Coverage Type",
 						  array("coveragetype"),
 						"<CENTER><TABLE ALIGN=CENTER BORDER=0 CELLSPACING=0 CELLPADDING=2>
@@ -249,13 +235,6 @@ class PatientCoveragesModule extends freemedEMRModule {
 						<INPUT TYPE=RADIO NAME=\"coveragetype\" VALUE=\"0\" CHECKED>
 						</TD><TD ALIGN=LEFT>
 						<$STDFONT_B>Insurance<$STDFONT_E>
-						</TD>
-						</TR>
-						<TR>
-						<TD ALIGN=RIGHT>
-						<INPUT TYPE=RADIO NAME=\"coveragetype\" VALUE=\"1\">
-						</TD><TD ALIGN=LEFT>
-						<$STDFONT_B>Guarantor<$STDFONT_E>
 						</TD>
 						</TR>
 						</TABLE></CENTER>" );
@@ -268,72 +247,100 @@ class PatientCoveragesModule extends freemedEMRModule {
 				DIE("Failed to get insurance companies");
 			//insurance coverage
 			$wizard->add_page("Select an Insurance Company",
-								array("payerinsco"),
+								array("covinsco"),
 								html_form::form_table( array(
 										"Insurance Company" => 
-										freemed_display_selectbox($ins_result,"#insconame#","payerinsco")
+										freemed_display_selectbox($ins_result,"#insconame#","covinsco")
 										) )
 							);
 			$wizard->add_page("Supply Insurance Information",
-								array_merge( array("payerpatientgrp", "payerpatientinsno", "payerreplace", 
-									  "payertype", "payerstatus"),date_vars("payerstartdt"),date_vars("payerenddt")),
+								array_merge( array("covpatgrpno", "covpatinsno", "covreplace", 
+									  "covtype", "covstatus", "covrel"),date_vars("coveffdt")),
 								html_form::form_table( array (
-										"Start Date" => fm_date_entry("payerstartdt"),
-										"End Date" => fm_date_entry("payerenddt"),
+										"Start Date" => fm_date_entry("coveffdt"),
 										"Insurance ID Number" => 
-											"<INPUT TYPE=TEXT NAME=\"payerpatientinsno\" SIZE=30 MAXLENGTH=30 ".
-                                            "VALUE=\"".prepare($payerpatientinsno)."\">\n",
+											"<INPUT TYPE=TEXT NAME=\"covpatinsno\" SIZE=30 MAXLENGTH=30 ".
+                                            "VALUE=\"".prepare($covpatinsno)."\">\n",
 										"Insurance Group Number" => 
-											"<INPUT TYPE=TEXT NAME=\"payerpatientgrp\" SIZE=30 MAXLENGTH=30 ".
-                                            "VALUE=\"".prepare($payerpatientgrp)."\">\n",
-										"Insurance Type" => html_form::select_widget("payertype", array (
-															_("Primary") => "0",
-															_("Secondary") => "1",
-															_("Tertiary") => "2",
-															_("Work Comp") => "3" )	),
-										"Replace Like Coverage" => html_form::select_widget("payerreplace", array (
-															_("No") => "0",
-															_("Yes") => "1" ) )
-										 					 ) 
-													) 
-							);
-								
-		} // end page for patient is insured
-
-		if ($coveragetype==1)
-		{
-			//patient has a guarantor
-			$payer_result = fm_get_all_insured_patients();
-			if (!$payer_result)
-				DIE("Failed to get insured patients");
-			$wizard->add_page("Select a Guarantor",
-								array("guarguar"),
-								html_form::form_table( array(
-										"Guarantor" => 
-										freemed_display_selectbox($payer_result,"#ptlname#, #ptfname#","guarguar")
-										) )
-							);
-			$wizard->add_page("Supply Guarantor Information",
-								array_merge(array("guarrel", "guarreplace"),date_vars("guarenddt"), date_vars("guarstartdt")),
-								html_form::form_table( array (
-										"Start Date" => fm_date_entry("guarstartdt"),
-										"End Date" => fm_date_entry("guarenddt"),
-										"Relationship to Insured" => html_form::select_widget("guarrel", array (
+											"<INPUT TYPE=TEXT NAME=\"covpatgrpno\" SIZE=30 MAXLENGTH=30 ".
+                                            "VALUE=\"".prepare($covpatgrpno)."\">\n",
+										"Insurance Type" => html_form::select_widget("covtype", array (
+															_("Primary") => "1",
+															_("Secondary") => "2",
+															_("Tertiary") => "3",
+															_("Work Comp") => "4" )	),
+										"Relationship to Insured" => html_form::select_widget("covrel", array (
 															_("Self")    => "S",
 															_("Child")   => "C",
 															_("Husband") => "H",
 															_("Wife")    => "W",
 															_("Other")   => "O" ) ),
-										"Replace Like Coverage" => html_form::select_widget("guarreplace", array (
+										"Replace Like Coverage" => html_form::select_widget("covreplace", array (
 															_("No") => "0",
 															_("Yes") => "1" ) )
-															)
-													)
+										 					 ) 
+													) 
 							);
-												
+			if ($covrel != "S")
+			{
+			$wizard->add_page("Supply Insureds Info if Not the Patient",
+								array_merge(array("covlname", "covfname", "covaddr1", "covaddr2", "covcity",
+											"covstate", "covzip", "covsex"), date_vars("covdob")),
+						html_form::form_table ( array (
+							_("Last Name") =>
+								"<INPUT TYPE=TEXT NAME=\"covlname\" SIZE=25 MAXLENGTH=50 ".
+								"VALUE=\"".prepare($covlname)."\">",
+					
+							_("First Name") =>
+								"<INPUT TYPE=TEXT NAME=\"covfname\" SIZE=25 MAXLENGTH=50 ".
+								"VALUE=\"".prepare($covfname)."\">",
+
+							_("Middle Name") =>
+								"<INPUT TYPE=TEXT NAME=\"covmname\" SIZE=25 MAXLENGTH=50 ".
+								"VALUE=\"".prepare($covmname)."\">",
+
+							_("Address Line 1") =>
+								"<INPUT TYPE=TEXT NAME=\"covaddr1\" SIZE=25 MAXLENGTH=45 ".
+								"VALUE=\"".prepare($covaddr1)."\">",
+
+							_("Address Line 2") =>
+								"<INPUT TYPE=TEXT NAME=\"covaddr2\" SIZE=25 MAXLENGTH=45 ".
+								"VALUE=\"".prepare($covaddr2)."\">",
+
+							_("City").", "._("State").", "._("Zip") =>
+								"<INPUT TYPE=TEXT NAME=\"covcity\" SIZE=10 MAXLENGTH=45 ".
+								"VALUE=\"".prepare($covcity)."\">\n".
+								"<INPUT TYPE=TEXT NAME=\"covstate\" SIZE=3 MAXLENGTH=2 ".
+								"VALUE=\"".prepare($covstate)."\">\n". 
+								"<INPUT TYPE=TEXT NAME=\"covzip\" SIZE=10 MAXLENGTH=10 ".
+								"VALUE=\"".prepare($covzip)."\">",
+
+							_("Date of Birth") =>
+								date_entry("covdob"),
+							_("Gender") =>
+            					html_form::select_widget("covsex",
+                						array (
+                     						_("Female")        => "f",
+                     						_("Male")          => "m",
+                     						_("Transgendered") => "t"
+                								)
+            							)
+
+
+						) )
+					 );
+
+
+			}
+			else
+			{
+				$wizard->add_page("Press Finish",
+								array_merge(array("covlname", "covfname", "covaddr1", "covaddr2", "covcity",
+											"covstate", "covzip", "covsex"), date_vars("covdob")),"");
+
+			}
 								
-			
-		} // end wizard page if guarantor
+		} // end page for patient is insured
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled())
 		{
@@ -376,118 +383,51 @@ class PatientCoveragesModule extends freemedEMRModule {
 			}
 			// we should be good to go
 
-			$startdt = fm_date_assemble("payerstartdt");
-			$enddt = fm_date_assemble("payerenddt");
+			$startdt = fm_date_assemble("coveffdt");
 
 			// start by replacing existing coverages.
-			if ($payerreplace==1) // replace an existing coverage
+			if ($covreplace==1) // replace an existing coverage
 			{
-				$result = fm_verify_patient_coverage($patient,$payertype);
-				if ($result)
-				{
-					echo "<$STDFONT_B>Removing Old Coverage<BR><$STDFONT_E>\n";
-					while ($row = $sql->fetch_array($result))
-					{
-						$query = "UPDATE payer SET payerstatus='1' WHERE id='$row[id]'";
-						$updres = $sql->query($query);
-						if (!$updres)
-							DIE("Error updating payer status");
-					}
-				}	
-				echo "<$STDFONT_B>Removing Old Guarantors<BR><$STDFONT_E>\n";
-				// since only 1 guar is allowed we just mark em all
-				$query = "UPDATE guarantor SET guarstatus='1' WHERE guarpatient='$patient'";
-				$updres = $sql->query($query); // hope the best
+				echo "<$STDFONT_B>Removing Old Coverage<BR><$STDFONT_E>\n";
+				$query = "UPDATE coverage SET covstatus='1' WHERE covtype='".addslashes($covtype)."'";
+				$updres = $sql->query($query);
+				if (!$updres)
+					DIE("Error updating coverage status");
 
 			}
-			// add the payer
+			// add the coverage
 			echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
-			$payerstatus = 0;  // active
-			$query = $sql->insert_query($this->payer_table,
+			$covstatus = 0;  // active
+			$query = $sql->insert_query($this->table_name,
 										array (
-										"payerinsco" => $payerinsco,
-										"payerstartdt" => $startdt,
-										"payerenddt" => $enddt,
-										"payerpatient" => $patient,
-										"payerpatientgrp" => $payerpatientgrp,
-										"payerpatientinsno" => $payerpatientinsno,
-										"payertype" => $payertype,
-										"payerstatus" => $payerstatus) );
-			$payer_result = $sql->query($query);
-			if ($payer_result)
+										"covdtadd" => $cur_date,
+										"covdtmod" => $cur_date,
+										"covlname" => $covlname,
+										"covfname" => $covfname,
+										"covmname" => $covmname,
+										"covaddr1" => $covaddr1,
+										"covaddr2" => $covaddr2,
+										"covcity" => $covcity,
+										"covstate" => $covstate,
+										"covzip" => $covzip,
+										"covrel" => $covrel,
+										"covsex" => $covsex,
+										"covdob" => $covdob,
+										"covinsco" => $covinsco,
+										"coveffdt" => $startdt,
+										"covpatient" => $patient,
+										"covpatgrpno" => $covpatgrpno,
+										"covpatinsno" => $covpatinsno,
+										"covtype" => $covtype,
+										"covstatus" => $covstatus) );
+			$coverage = $sql->query($query);
+			if ($coverage)
 				echo _("done").".";
 			else
 				echo _("ERROR");
 
 		} // end edit for patient insured
 
-		// edit input data
-		// start edit for guar data
-		//
-		if ($coveragetype==1)
-		{
-			$error_msg = $this->EditGuarantor();
-
-			if (!empty($error_msg))
-			{
-				echo "
-      				<P>
-      				<CENTER>Entry Error found<BR></CENTER>
-      				<CENTER>$error_msg<BR></CENTER>
-      				<P>
-      				<CENTER>
-      				<FORM ACTION=\"$this->page_name\" METHOD=POST>
-       				<INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
-       				<INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"addform\">
-       				<INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
-       				<INPUT TYPE=HIDDEN NAME=\"module\"      VALUE=\"$module\">
-       				<INPUT TYPE=SUBMIT VALUE=\"  Try Again  \">
-      				</FORM>
-      				</CENTER>
-     				";
-					return;
-			}
-
-			// we should be good to go
-			// wipe out old guars if requested
-
-			if ($guarreplace==1) // replace an existing guarantor
-			{
-				echo "<$STDFONT_B>Removing Old Guarantors<BR><$STDFONT_E>\n";
-				// since only 1 guar is allowed we just mark em all
-				$query = "UPDATE guarantor SET guarstatus='1' WHERE guarpatient='$patient'";
-				$updres = $sql->query($query);
-				if (!$updres)
-					DIE("Error updating Guarantor status");
-				echo "<$STDFONT_B>Removing Old Insurers<BR><$STDFONT_E>\n";
-				// since only 1 guar is allowed we just mark em all
-				$query = "UPDATE payer SET payerstatus='1' WHERE payerpatient='$patient'";
-				$updres = $sql->query($query); // hope for the best
-
-			}
-
-			// add the guarantor
-			echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
-			$guarstatus = 0;  // active
-			$startdt = fm_date_assemble("guarstartdt");
-			$enddt = fm_date_assemble("guarenddt");
-			
-			$query = $sql->insert_query($this->guar_table, array(
-									"guarpatient" => $patient,
-									"guarguar" => $guarguar,
-									"guarrel" => $guarrel,
-									"guarstartdt" => $startdt,
-									"guarenddt" => $enddt,
-									"guarstatus" => $guarstatus
-										) );
-	
-			$guar_result = $sql->query($query);
-			if ($guar_result)
-				echo _("done").".";
-			else
-				echo _("ERROR");
-
-		} // end edit guarantor
 		echo "
 			<P>
 			<CENTER>
@@ -509,30 +449,24 @@ class PatientCoveragesModule extends freemedEMRModule {
 		if ($patient<=0)
 			DIE("Must Select a patient");
 
-		$this_patient = new Patient($patient);
-		if (!$this_patient)
-			DIE("Patient Class failed");
-
-		if ($this_patient->ptdep == 0)
-		{
 			// patient is the insured
-			$query = "SELECT *,IF(payerstatus,\"Deleted\",\"Active\") as payerstat,".
-				"IFNULL(ELT(payertype,\"Secondary\",\"Tertiary\",\"WorkComp\"),\"Primary\") as payertp".
-				" FROM $this->payer_table WHERE ".
-				"payerpatient='$patient' ORDER BY payerstatus,payertype";
+			$query = "SELECT *,IF(covstatus,\"Deleted\",\"Active\") as covstat,".
+				"ELT(covtype,\"Primary\",\"Secondary\",\"Tertiary\",\"WorkComp\") as covtp".
+				" FROM $this->table_name WHERE ".
+				"covpatient='$patient' ORDER BY covstatus,covtype";
 			$result = $sql->query($query);
 			if (!$result)
-				DIE("ERROR Failed to read $this->payer_table");
+				DIE("ERROR Failed to read $this->table_name");
 
 			echo freemed_display_itemlist($result,
 									 $this->page_name,
-									array("InsCo" => "payerinsco",
-										  "StartDate" => "payerstartdt",
-										  "EndDate"   => "payerenddt",
-										  "Group" => "payerpatientgrp",
-										  "ID"    => "payerpatientinsno",
-										  "Status" => "payerstat",
-										  "Type"  => "payertp"),
+									array("InsCo" => "covinsco",
+										  "Relation" => "covrel",
+										  "StartDate" => "coveffdt",
+										  "Group" => "covpatgrpno",
+										  "ID"    => "covpatinsno",
+										  "Status" => "covstat",
+										  "Type"  => "covtp"),
 									array("","","","","","",""),
 									array("insco" => "insconame",
 											"",
@@ -542,75 +476,12 @@ class PatientCoveragesModule extends freemedEMRModule {
 											"",
 											"")
 										);
-			$this->view_coveragetype=0;  // payer is insco
 						 
 			
-		} // end patient is insured
-		else
-		{ 
-			// guar holds the insurance
-			$query = "SELECT *,IF(guarstatus,\"Deleted\",\"Active\") as guarstat FROM $this->guar_table WHERE 
-				guarpatient='$patient'";
-			$result = $sql->query($query);
-			if (!$result)
-				DIE("ERROR Failed to read $this->guar_table");
-
-			echo freemed_display_itemlist($result,
-									 $this->page_name,
-									 array("Guarantor" => "guarguar",
-										   "Relation" => "guarrel",
-										   "StartDate" => "guarstartdt",
-										   "EndDate" => "guarenddt",
-										   "Status" => "guarstat"),
-									 array("","","","",""),
-									 array("patient" => "ptlname",
-											"","","","")
-									);
-			$this->view_coveragetype=1;  // guarantor
-		} // end guar
 
 	} // end of view function
 
 		
-	// misc functions
-	function EditGuarantor()
-	{
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-
-		$error_msg = "";
-		if ($action=="addform")
-		{
-			if ($guarguar == 0)
-				$error_msg .= "You must select a Guarantor<BR>";
-			// see if we already have a guarantor 
-			if ($guarreplace==0)
-			{
-				 // if not replacing a like coverage type then verify 		
-				 // that we DO NOT already coverage of this type.
-				 if (fm_get_active_guarids($patient))
-					$error_msg .= "Patient has an active Guarantor. Select Replace to replace<BR>";
-				 if (fm_get_active_payerids($patient))
-					$error_msg .= "Patient has an active Insurers. Select Replace to replace<BR>";
-			}
-		}
-
-		// modform only or both for addform
-		$startdt = fm_date_assemble("guarstartdt");
-		$enddt = fm_date_assemble("guarenddt");
-		if ($enddt <= $cur_date)
-			$error_msg .= "End date must be greater than Today $cur_date<BR>";
-
-		if ($enddt == $startdt)
-			$erro_msg .= "Start date and End date are equal<BR>";
-
-		if ($startdt > $enddt)
-			$error_msg .= "Start date cannot be greater than End date<BR>";
-
-		return $error_msg;
-
-	}
-
 	function EditInsurance()
 	{
 		reset ($GLOBALS);
@@ -621,37 +492,43 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 		if ($action=="addform")  // cant change these on modform
 		{
-			if ($payerinsco == 0)
+			if ($covinsco == 0)
 				$error_msg .= "You must select an Insurance Company<BR>";
 
 			// see if we alread have an insurer for this type (prim,sec etc...)
-			if ($payerreplace==0)
+			if ($covreplace==0)
 			{
 				 // if not replacing a like coverage type then verify 		
 				 // that we DO NOT already coverage of this type.
 		
-				$cov_result = fm_verify_patient_coverage($patient,$payertype);
-				$result = ($cov_result) ? $sql->num_rows($cov_result) : 0;
+				$result = fm_verify_patient_coverage($patient,$covtype);
 				if ($result > 0)
 					$error_msg .= "Patient has active coverage of this type Select Replace to replace<BR>";
-				 if (fm_get_active_guarids($patient))
-					$error_msg .= "Patient has an active Guarantor. Select Replace to replace<BR>";
 			}
 		}
 
+		if ($covrel != "S")
+		{
+			//if ( empty($covaddr1))
+			//	$error_msg .= "You must supply The Insureds Address<BR>";
+			//if ( (empty($covcity)) OR (empty($covstate)) )
+			//	$error_msg .= "You must supply The Insureds Address<BR>";
+			//if ( empty($covzip))
+			//	$error_msg .= "You must supply The Insureds Address<BR>";
+			if ( (empty($covfname)) OR (empty($covlname)) )
+				$error_msg .= "You must supply The Insureds Name<BR>";
+
+
+
+		}
+
 		// modform only or addform
-		$startdt = fm_date_assemble("payerstartdt");
-		$enddt = fm_date_assemble("payerenddt");
-		if ($enddt <= $cur_date)
-			$error_msg .= "End date must be greater than Today $cur_date<BR>";
+		$startdt = fm_date_assemble("coveffdt");
 
-		if ($enddt == $startdt)
-			$erro_msg .= "Start date and End date are equal<BR>";
+		if ($startdt > $cur_date)
+			$error_msg .= "Start date cannot be less than Today $cur_date<BR>";
 
-		if ($startdt > $enddt)
-			$error_msg .= "Start date cannot be greater than End date<BR>";
-
-		if ( (empty($payerpatientgrp)) OR (empty($payerpatientinsno)) )
+		if ( (empty($covpatgrpno)) OR (empty($covpatinsno)) )
 			$error_msg .= "You must supply Group and ID numbers<BR>";
 
 		return $error_msg;

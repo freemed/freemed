@@ -1,6 +1,28 @@
 freemed project changelog
 ($Id$)
 
+* Tue Feb 27 2001 fforest
+	all of these changes are for implementing the new coverage table. and EDI support.
+    (EDI is still not fully tested but getting better all the time).
+	admin - added coverage table and new fields to procrec to support the 
+            new coverage handling
+    manage - removed all code that checks for guarantor. I'll fix this later to 
+             get it from the new coverage table.
+	lib/API  - removed the old payer/guarantor functions and replaced with 
+           functions to get from the coverage table.
+	lib/containers - removed all insurance handling from the patient
+           container. added a new Coverage class and Guarantor class
+    lib/macros - re arragend the payer types so that Patient is now 0.
+           added macros to support the new payer types.
+	generate_forms module coverted to use the new coverage table.
+    patient_coverage module re written to use the new coverage table.
+	payment module converted to use the new coverage table and the new 
+          fields in procrec.
+    procedure module. changed to get the current coverage info and 
+          fill in the new procrec fields from the info gotten.
+    highmark_edi module added.
+    billing_functions - now loads new EDI module
+
 * Mon Feb 26 2001 rufustfirefly
   - added VERSION freemed_module_check (MODULE_NAME[,MODULE_VERSION]) to
     lib/API.php

@@ -8,6 +8,87 @@ if (!defined ("__CONTAINERS_PHP__")) {
 
 define (__CONTAINERS_PHP__, true);
 
+// class Guarantor
+class Guarantor {
+  var $local_record;                // stores basic record
+  var $id;                          // record ID for insurance company
+  var $guarfname;
+  var $guarlname;
+  var $guarmname;
+  var $guaraddr1;
+  var $guaraddr2;
+  var $guarcity;
+  var $guarstate;
+  var $guarzip;
+  var $guarsex;
+  var $guardob;
+  var $guarsame;
+
+
+  function Guarantor ($coverageid = "") {
+    global $database;
+
+    if ($coverageid=="") return false;    // error checking
+    $this->local_record = freemed_get_link_rec ($coverageid, "coverage");
+	$this->guarfname = $this->local_record["covfname"];
+	$this->guarlname = $this->local_record["covlname"];
+	$this->guarmname = $this->local_record["covmname"];
+	$this->guaraddr1 = $this->local_record["covaddr1"];
+	$this->guaraddr2 = $this->local_record["covaddr2"];
+	$this->guarcity = $this->local_record["covcity"];
+	$this->guarstate = $this->local_record["covstate"];
+	$this->guarzip = $this->local_record["covzip"];
+	$this->guardob = $this->local_record["covdob"];
+	$this->guarsex = $this->local_record["covsex"];
+	$this->id = $this->local_record["id"];
+	if (empty($this->local_record[covaddr1]))
+	{
+		$this->guarsame = 1;
+	}
+	
+  }
+}
+
+// class Coverage
+class Coverage {
+  var $local_record;                // stores basic record
+  var $id;                          // record ID for insurance company
+  var $covpatgrpno;                  // patients group no for this payer
+  var $covpatinsno;                  // patients id number for this payer
+  var $covstatus;
+  var $covtype;                   // payertype 1 prim, 2 sec 3 tert 4 wc
+  var $coveffdt;                // effective dates for coverage
+  var $covinsco;						// pointer to corresponding insco.
+  var $covreldep;                 // guar relation to insured 
+  var $covdep;                 // help ease the conversion
+  var $guarsame;				// if guars addr is same as patient
+
+  // insureds info only if rel is not "S"elf
+
+  function Coverage ($coverageid = "") {
+    global $database;
+
+    if ($coverageid=="" OR $coverageid==0) return false;    // error checking
+    $this->local_record = freemed_get_link_rec ($coverageid, "coverage");
+	$this->covpatgrpno = $this->local_record[covpatgrpno];	
+	$this->covpatinsno = $this->local_record[covpatinsno];	
+	$this->covstatus = $this->local_record[covstatus];	
+	$this->covtype = $this->local_record[covtype];	
+	$this->coveffdt = $this->local_record[coveffdt];	
+	$this->covinsco = new InsuranceCompany($this->local_record[covinsco]);	
+	$this->covreldep = $this->local_record[covrel];	
+	$this->id = $this->local_record[id];	
+	if ($this->covreldep != "S")
+	{
+		$this->covdep = $this->id; // you pass this to the guarantor class
+	}
+	else
+		$this->covdep = 0;
+
+
+  } // end constructor Coverage
+
+} // end class Payer
 // class Payer
 class Payer {
   var $local_record;                // stores basic record
@@ -69,10 +150,12 @@ class Patient {
   var $ptmarital;                   // marital status
   var $ptreldep;                    // relation to guarantor
   var $id;                          // ID number
+  var $ptempl;
   var $is_callin;                   // flag for call ins
-  var $insco;                       // array of insurance companies
+  //var $insco;                       // array of insurance companies
   var $ptid;			    // local practice ID (chart num)
-  var $payer;                      // array of the patients insurers
+  //var $payer;                      // array of the patients insurers
+  var $coverage;
 
   function Patient ($patient_number = 0, $is_callin = false) { // constructor
     if ($patient_number<1) return false;   // if the patient number is an error
@@ -87,84 +170,60 @@ class Patient {
      $this->ptmarital    = $this->local_record["ptmarital"];
      $this->ptid         = $this->local_record["ptid"     ];
      $this->id           = $this->local_record["id"       ];
+     $this->ptempl       = $this->local_record["ptempl"   ];
      
      // do dependency stuff
-     $this->ptreldep     = 0; 
-     $this->ptdep        = 0; 
-     $guarids = fm_get_active_guarids($patient_number);
-     if (is_array($guarids))
-     {
-         $guarrec = freemed_get_link_rec($guarids[0],"guarantor");
-         if (!$guarrec)
-         {
-             echo "Error getting link rec guarantor in patient class<BR>";
-             DIE("Error in patient class guarantor");
-         }
+     //$this->ptreldep     = 0; 
+     //$this->ptdep        = 0; 
+     //$guarids = fm_get_active_guarids($patient_number);
+     //if (is_array($guarids))
+     //{
+     //    $guarrec = freemed_get_link_rec($guarids[0],"guarantor");
+     //    if (!$guarrec)
+     //    {
+     //        echo "Error getting link rec guarantor in patient class<BR>";
+     //        DIE("Error in patient class guarantor");
+     //    }
 	 
 	 // not sure about this but we asume only 1 guar is allowed
          // and take the first one
-         $this->ptreldep     = $guarrec["guarrel"];
-         $this->ptdep        = $guarrec["guarguar"];
+     //    $this->ptreldep     = $guarrec["guarrel"];
+     //    $this->ptdep        = $guarrec["guarguar"];
 
-     }
+     //}
 
      // do payors
-     $this->payer[0] = $this->payer[1] = $this->payer[2] = 0;
-     $this->insco[0] = $this->insco[1] = $this->insco[2] = 0;
+     //$this->payer[0] = $this->payer[1] = $this->payer[2] = 0;
+     //$this->insco[0] = $this->insco[1] = $this->insco[2] = 0;
 
 		// get a list of the active insurance companies for this patient
 
-     $payerids = fm_get_active_payerids($patient_number);
-     if (is_array($payerids))
-     {
+     //$covids = fm_get_active_coverage($patient_number);
+     //if (is_array($covids))
+     //{
 		// now for each active insurer build an array of insurers (payers)
 		// in the order of the coverage type. prim 0, sec 1, ter 2 wc 3
 		// since we allow (but warn) about having multiple inusrers of the same
 		// type we allow the second primary to overlay the first. so if they have 3 primarys
 		// the 3rd primary will be considered as THIS primary.
-         $num = count($payerids);
-         //echo "got $num payors<BR>";
-	 	 for ($i=0;$i<$num;$i++)
-         {
-			 $payertype = freemed_get_link_field($payerids[$i], "payer", "payertype");
-				 if ($payertype=="")
-				 {
-					 echo "Error getting link field payertype in patient class<BR>";
-					 DIE("Error in patient class payertype");
-				 }
-			 	 $this->payer[$payertype] = new Payer ($payerids[$i]);
-				 $this->insco[$payertype] = new InsuranceCompany ($this->payer[$payertype]->inscoid);
-				 $insname = $this->insco[$payertype]->insconame;
-				 //echo "insname $insname"<BR>;
-         }
-     }
+    //     $num = count($covids);
+    //     //echo "got $num payors<BR>";
+	// 	 for ($i=0;$i<$num;$i++)
+    //     {
+	//		 $covtype = freemed_get_link_field($covids[$i], "coverage", "covtype");
+	//			 if ($covtype=="")
+	//			 {
+	//				 echo "Error getting link field covtype in patient class<BR>";
+	//				 DIE("Error in patient class covtype");
+	//			 }
+	//		 	 //$this->payer[$payertype] = new Payer ($payerids[$i]);
+	//			 //$this->insco[$covtype] = new InsuranceCompany ($this->coverage[$covtype]->insco);
+	//			 $this->coverage[$covtype] = new Coverage ($covids[$i]);
+	//			 //$insname = $this->insco[$payertype]->insconame;
+	//			 //echo "insname $insname"<BR>;
+      //   }
+    // }
 
-     // pull insurance companies
-     //$ins      = sql_expand ($this->local_record["ptins"]     );
-     //$insno    = sql_expand ($this->local_record["ptinsno"]   );
-     //$insgrp   = sql_expand ($this->local_record["ptinsgrp"]  );
-     //$insstart = sql_expand ($this->local_record["ptinsstart"]);
-     //$insend   = sql_expand ($this->local_record["ptinsend"]  );
-
-     // make sure arrays are passed
-     //if (!is_array ($ins)     ) $ins[0]      = $ins;
-     //if (!is_array ($insno)   ) $insno[0]    = $insno;
-     //if (!is_array ($insgrp)  ) $insgrp[0]   = $insgrp;
-     //if (!is_array ($insstart)) $insstart[0] = $insstart;
-     //if (!is_array ($insend)  ) $insend[0]   = $insend;
-     
-     // reset all pulled arrays
-     //if (is_array($ins)) {
-     //  reset ($ins);
-     //  if (is_array($insno))    reset ($insno);
-     //  if (is_array($insgrp))   reset ($insgrp);
-     //  if (is_array($insstart)) reset ($insstart);
-     //  if (is_array($insend))   reset ($insend);
-     //  $count = 0;
-     //  while (list ($k, $v) = each ($ins)) {
-     //    if ($v>0) $this->insco[$count] = new InsuranceCompany ($v);
-     //  } // end looping for inscos
-     //} // end checking for insurance companies at all  
 
      // callin set as false
      $this->is_callin    = false;
@@ -204,46 +263,48 @@ class Patient {
     return ($this->ptid);
   } // end func idNumber
 
-  function insuranceSelection ($no_parameters = "") {
-    $returned_string = "";
-    for ($i=0;$i<=(count($this->insco));$i++) {
-     $current = $this->insco[$i];
-     if (is_object ($current)) {
-      $returned_string .= "
-        <OPTION VALUE=\"".$current->id."\">".
-        $current->insconame;
-     } // end if object case
-    } // end for loop
-    return $returned_string;
-  } // end function insuranceSelection
+  //function insuranceSelection ($no_parameters = "") {
+  //  $returned_string = "";
+  //  for ($i=0;$i<=(count($this->coverage));$i++) {
+  //   $current = $this->coverage[$i];
+  //   if (is_object ($current)) {
+  //    $returned_string .= "
+  //      <OPTION VALUE=\"".$current->covinsco->id."\">".
+  //      $current->covinsco->insconame;
+  //   } // end if object case
+  //  } // end for loop
+  //  return $returned_string;
+  //} // end function insuranceSelection
 
-  function insurersID ($offset) {
-    $returned_string = "";
-     $current = $this->insco[$offset];
-     if (is_object ($current)) {
-      $returned_string = $current->id;
-     } // end if object case
-    return $returned_string;
-  } // end function insurersID
+  //function insurersID ($offset) {
+  //  $returned_string = "";
+  //   $current = $this->coverage[$offset];
+  //   if (is_object ($current)) {
+  //    $returned_string = $current->covinsco->id;
+  //   } // end if object case
+  //  return $returned_string;
+  //} // end function insurersID
 
-  function insuranceSelectionByType ($no_parameters = "") {
-    $returned_string = "";
-    for ($i=0;$i<=(count($this->insco));$i++) {
-     $current = $this->insco[$i];
-     if (is_object ($current)) {
-      $returned_string .= "
-        <OPTION VALUE=\"".$i."\">".
-        $current->insconame;
-     } // end if object case
-    } // end for loop
-    return $returned_string;
-  } // end function insuranceSelectionByType
+ // function insuranceSelectionByType ($no_parameters = "") {
+ //   $returned_string = "";
+ //   for ($i=0;$i<=(count($this->coverage));$i++) {
+ //    $current = $this->coverage[$i];
+ //    if (is_object ($current)) {
+ //     $returned_string .= "
+ //       <OPTION VALUE=\"".$i."\">".
+ //       $current->covinsco->insconame;
+ //    } // end if object case
+ //   } // end for loop
+ //   return $returned_string;
+ // } // end function insuranceSelectionByType
 
-  function isDependent ($no_parameters = "") {
-    if ($is_callin) return false;  // if they are a callin, no information
-    return (!empty($this->ptdep));
-    //return ($this->ptdep != 0);
-  } // end function Patient->isDependent
+// this is no longer usefull since you no longer have to 
+// be patient to be an insured (Guarantor)
+//  function isDependent ($no_parameters = "") {
+//    if ($is_callin) return false;  // if they are a callin, no information
+//    return (!empty($this->ptdep));
+//    //return ($this->ptdep != 0);
+//  } // end function Patient->isDependent
 
   function isEmployed ($no_parameters = "") {
     return ($this->ptempl == "y");

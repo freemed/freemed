@@ -10,6 +10,7 @@
   include ("lib/module_emr.php");
   include ("lib/module_maintenance.php");
   include ("lib/module_billing.php");
+  include ("lib/module_edi.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -84,6 +85,22 @@
     echo "<CENTER><TABLE>\n";
     echo $module_list->generate_list($catagory, 0, $template);
     echo "</TABLE></CENTER>\n";
+	$catagory = "EDI";
+	$template = "
+		<TR><TD ALIGN=RIGHT>
+        <$STDFONT_B><B>#name#</B> : <$STDFONT_E>
+        </TD>
+        <TD>
+        <A HREF=\"module_loader.php?$_auth&module=#class#&patient=$id\"
+         ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
+        </TD>
+		</TR>";
+    // modules list
+    //$module_list2 = new module_list (PACKAGENAME);
+    echo "<CENTER><TABLE>\n";
+    echo $module_list->generate_list($catagory, 0, $template);
+    echo "</TABLE></CENTER>\n";
+
   } else { 
     echo "
       <P>

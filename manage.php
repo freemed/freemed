@@ -95,28 +95,28 @@ if ($id<1) {
          <$STDFONT_B><B>Dependent Information</B> : <$STDFONT_E>
         </TD><TD ALIGN=LEFT>
      ";
-
-     if (!$this_patient->isDependent()) {
-      $dep_query = "SELECT COUNT(*) FROM patient WHERE ptdep='".
-                   $this_patient->id."'";
-      $dep_result = $sql->query($dep_query);
-      $dep_r = $sql->fetch_array($dep_result);
-      $num_deps = $dep_r[0];
-      if ($num_deps<1)
-        echo "<$STDFONT_B>No Dependents<$STDFONT_E>";
-      else
-        echo "
-	 <$STDFONT_B><A HREF=\"patient.php?$_auth&action=find&criteria=".
-	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]<$STDFONT_E>
-        ";
-      } else {
-      $guarantor = new Patient ($this_patient->ptdep);
-      echo "
-         <A HREF=\"manage.php?$_auth&action=view&id=".$this_patient->ptdep."\"
-         ><$STDFONT_B>"._("Guarantor")."<$STDFONT_E></A>
-	</TD><TD><$STDFONT_B>[".$guarantor->fullName()."]<$STDFONT_E></TD></TR>
-      ";
-      }
+//      removed as part of coverage overhaul
+//     if (!$this_patient->isDependent()) {
+//      $dep_query = "SELECT COUNT(*) FROM patient WHERE ptdep='".
+//                   $this_patient->id."'";
+//      $dep_result = $sql->query($dep_query);
+//      $dep_r = $sql->fetch_array($dep_result);
+//      $num_deps = $dep_r[0];
+//      if ($num_deps<1)
+//        echo "<$STDFONT_B>No Dependents<$STDFONT_E>";
+//      else
+//        echo "
+//	 <$STDFONT_B><A HREF=\"patient.php?$_auth&action=find&criteria=".
+//	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]<$STDFONT_E>
+//        ";
+//      } else {
+//      $guarantor = new Patient ($this_patient->ptdep);
+//      echo "
+//         <A HREF=\"manage.php?$_auth&action=view&id=".$this_patient->ptdep."\"
+//         ><$STDFONT_B>"._("Guarantor")."<$STDFONT_E></A>
+//	</TD><TD><$STDFONT_B>[".$guarantor->fullName()."]<$STDFONT_E></TD></TR>
+//     ";
+//    }
 
      echo "
         <TR><TD ALIGN=RIGHT>

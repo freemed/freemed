@@ -19,6 +19,10 @@ class GenerateFormsModule extends freemedBillingModule {
 	var $CATEGORY_NAME = "Billing";
 	var $CATEGORY_VERSION = "0";
 
+    var $form_buffer;
+    var $pat_processed;
+    var $patient_forms;
+    var $patient_cov;
 	var $rendorform_variables = array(
 		"ptname",
 		"ptdob",
@@ -63,7 +67,8 @@ class GenerateFormsModule extends freemedBillingModule {
         "employment", 
         "related_employment",
         "related_auto",
-        "related_other"
+        "related_other",
+		"authorized"
 		);
 
 	// contructor method
@@ -93,9 +98,61 @@ class GenerateFormsModule extends freemedBillingModule {
 		}
 		if ($viewaction=="geninsform")
 		{
-			$this->GenerateFixedForms();
+		    $this->form_buffer = "";
+			$this->pat_processed = 0;
+			if ($bill_request_type > 0)
+			{
+				$query = "SELECT covpatient,id FROM coverage WHERE covtype='$bill_request_type'";
+				$result = $sql->query($query);
+				if (!$sql->results($result)) 
+				{
+					DIE("No patients with this coverage type");
+				}
+			
+				while($row = $sql->fetch_array($result))
+				{	
+					$this->GenerateFixedForms($row[covpatient], $row[id]);
+				}
+			}
+			else
+			{
+				// patient bills
+				$query = "SELECT DISTINCT procpatient FROM procrec WHERE proccurcovtp='$bill_request_type'
+							AND procbalcurrent>'0'";
+				$result = $sql->query($query);
+				if (!$sql->results($result)) 
+				{
+					DIE("No patients to be Billed");
+				}
+			
+				while($row = $sql->fetch_array($result))
+				{	
+					$this->GenerateFixedForms($row[procpatient], 0);
+				}
+			}
+			if ($this->pat_processed > 0)
+			{
+				$this->ShowBillsToMark();
+			}
+			else
+			{
+				echo "
+				<P>
+				<CENTER>
+				<$STDFONT_B><B>"._("Nothing to Bill!")."</B><$STDFONT_E>
+				</CENTER>
+				<P>
+				<CENTER>
+				<A HREF=\"$this->page_name?$_auth&module=$module\"
+				><$STDFONT_B>"._("Return to Fixed Forms Generation Menu")."<$STDFONT_E></A>
+				</CENTER>
+				<P>
+				";
+			}
 			return;
-		}
+
+		} // end geninsform
+
 		if ($viewaction=="mark")
 		{
 			$this->MarkBilled();
@@ -133,8 +190,9 @@ class GenerateFormsModule extends freemedBillingModule {
        		Marking ".$processed[$i]." ...<BR> 
        		";
        		// start of insert loop for billed legder entries
-       		$query = "SELECT id,procbalcurrent FROM procrec
-                WHERE procpatient='".$processed[$i]."' AND procbilled='0' AND procbalcurrent>'0'";
+       		$query = "SELECT id,procbalcurrent,proccurcovid FROM procrec";
+			$query .= " WHERE procpatient='$processed[$i]' AND proccurcovid='$proccovid[$i]'";
+			$query .= " AND proccurcovtp='$billtype' AND procbilled='0' AND procbalcurrent>'0'";
        		$result = $sql->query($query);
        		if (!$result)
        		{
@@ -145,6 +203,7 @@ class GenerateFormsModule extends freemedBillingModule {
        		{
        			$cur_bal = $bill_tran[procbalcurrent];
           		$proc_id = $bill_tran[id];
+          		$cov_id  = $bill_tran[proccurcovid];
 				$payreccat = BILLED;
 				$query = $sql->insert_query("payrec",
 					array (
@@ -154,6 +213,7 @@ class GenerateFormsModule extends freemedBillingModule {
 						"payrecdt" => $cur_date,
 						"payreccat" => $payreccat,
 						"payrecproc" => $proc_id,
+						"payreclink" => $cov_id,
 						"payrecsource" => $billtype,
 						"payrecamt" => $cur_bal,
 						"payrecdescrip" => "Billed",
@@ -162,30 +222,23 @@ class GenerateFormsModule extends freemedBillingModule {
 					);
 
            		$pay_result = $sql->query ($query);
-				echo "query $query";
            		if ($pay_result)
                		echo "<$STDFONT_B>$Adding Bill Date to ledger.<$STDFONT_E><BR> \n";
            		else
                		echo "<$STDFONT_B>$Failed Adding Bill Date to ledger!!<$STDFONT_E><BR> \n";
+       			$query = "UPDATE procrec SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'".
+						 " WHERE id = '".$proc_id."'";
+       			$proc_result = $sql->query ($query);
+       			if ($result) 
+				{ 
+					echo _("done").".<BR>\n"; 
+				}
+       			else        
+				{ 
+					echo _("ERROR")."<BR>\n"; 
+				}
 
        		}
-       		// end of insert loop for billed legder entries
-       		$query = "UPDATE procrec
-               	 SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'
-                	WHERE (
-                  (procpatient    = '".$processed[$i]."') AND
-                   (procbilled     = '0') AND
-                   (procbalcurrent > '0')
-                 	)";
-       		$result = $sql->query ($query);
-       		if ($result) 
-			{ 
-				echo _("done").".<BR>\n"; 
-			}
-       		else        
-			{ 
-				echo _("ERROR")."<BR>\n"; 
-			}
      	} // end for processed
      	echo "
       	<P>
@@ -197,7 +250,7 @@ class GenerateFormsModule extends freemedBillingModule {
      	";
 	}
 
-	function GenerateFixedForms()
+	function GenerateFixedForms($parmpatient, $parmcovid)
 	{
 		
 		reset ($GLOBALS);
@@ -220,80 +273,89 @@ class GenerateFormsModule extends freemedBillingModule {
 	    // 2 = 3rd insurance
 	    // 3 = workers' comp
 	    // 4 = patient/guarantor
-	    $query = "SELECT DISTINCT a.payrecpatient from payrec as a, procrec as b
-							  WHERE (a.payrecproc = b.id AND
-									 a.payreccat = '5' AND
-									 a.payreclink = '$bill_request_type' AND
-									 b.procbalcurrent > '0' AND
-                                 b.procbillable = '0' AND
-                                 b.procbilled = '0')";
+	    $query = "SELECT procpatient from procrec
+							  WHERE (proccurcovtp = '$bill_request_type' AND
+									 proccurcovid = '$parmcovid' AND
+									 procbalcurrent > '0' AND
+									 procpatient = '$parmpatient' AND
+                                     procbillable = '0' AND
+                                     procbilled = '0')";
   
    		 $b_result = $sql->query($query);
                           
 
 		 if (!$sql->results($b_result)) 
 		 {
-		  	echo "
-		  	<P>
-		  	<CENTER>
-		   	<$STDFONT_B>"._("There is nothing to be billed.")."<$STDFONT_E>
-		  	</CENTER>
-		  	<P>
-		  	";
-		 	DIE(""); // kill! kill! kill!
-	   	  } // if there is no result, end
+			return false;
+	   	 } // if there is no result, end
 
 		   // zero form buffer
-		   $form_buffer = "";
+		   //$form_buffer = "";
 
 		   $pats_processed = 0;
 		   $still_going    = true;
 		   $current_skip   = 0;
 
 		   // loop for all patients
-   		while (($b_r = $sql->fetch_array ($b_result)) and ($still_going)) {
 
     	// pull current patient
-    	$current_patient = $b_r[payrecpatient];
-    	if ($skip > 0)
-    	{
-        	if ($current_skip < $skip)
-        	{
-            	$current_skip++;
-            	continue;
-        	}
-    	}
+    	//$current_patient = $b_r[procpatient];
+    	//if ($skip > 0)
+    	//{
+        //	if ($current_skip < $skip)
+        //	{
+        //  /  	$current_skip++;
+        //    	continue;
+        //	}
+    	//}
 
      	// get current patient information
-     	$this_patient = new Patient ($current_patient);
+     	$this_patient = new Patient ($parmpatient);
+        if (!$this_patient)
+		{
+			echo "Error no patient $current_patient<BR>";
+			DIE("No Patient");
+		}
+			
      	echo "
       	<B>"._("Processing")." ".$this_patient->fullName()."
-        (<A HREF=\"manage.php?$auth&id=$current_patient\"
-         >".$this_patient->local_record[ptid]."</A>)</B>
       	<BR>\n\n
      	";
      	flush ();
-
-     	// grab current insurance company
-     	if ($this_patient->ptdep == 0) 
+		$this_coverage = new Coverage($parmcovid);
+        if (!$this_coverage)
 		{
-       		$this_insco = $this_patient->insco[$bill_request_type];
-     		$ins_valid = $this_patient->payer[$bill_request_type]->local_record["payerinsco"];
-     	} 
-		else 
-		{ // if get from guarantor
-       		$guarantor = new Patient ($this_patient->ptdep);
-       		$this_insco = $guarantor->insco[$bill_request_type];
-     		$ins_valid = $guarantor->payer[$bill_request_type]->local_record["payerinsco"];
-     	}
+			if ($bill_request_type != 0)
+			{
+				echo "Error Coverage failure<BR>";
+				DIE("No Coverage");
+			}
+		}
+		
+     	// grab current insurance company
+     	//if ($this_patient->ptdep == 0) 
+		//{
+       	//	$this_insco = $this_patient->insco[$bill_request_type];
+     	//	$ins_valid = $this_patient->payer[$bill_request_type]->local_record["payerinsco"];
+     	//} 
+		//else 
+		//{ // if get from guarantor
+       	//	$guarantor = new Patient ($this_patient->ptdep);
+       	//	$this_insco = $guarantor->insco[$bill_request_type];
+     	//	$ins_valid = $guarantor->payer[$bill_request_type]->local_record["payerinsco"];
+     	//}
      	// make sure patient has prim sec ter or wc insurance
-     	if ( ($bill_request_type < 4) AND ($ins_valid == 0) )
-     	{
-         	echo "<B>Error - Patient does not have insurance of this type</B><BR>\n";
-         	flush();
-     	}
+     	//if ( ($bill_request_type < 4) AND ($ins_valid == 0) )
+     	//{
+        // 	echo "<B>Error - Patient does not have insurance of this type</B><BR>\n";
+        // 	flush();
+     	//}
+		
+		
 
 
+        // grab form information form
+        $this_form = freemed_get_link_rec ($whichform, "fixedform");
      	// set number of charges to zero
      	$number_of_charges = 0;
 
@@ -326,20 +388,20 @@ class GenerateFormsModule extends freemedBillingModule {
      	$ptid            = $this_patient->local_record["ptid"];
 
      	// relationship to guarantor
-     	$ptreldep[self]   = ( (($this_patient->ptreldep == "S") or
-                            ($this_patient->ptdep == 0)) ?
+     	$ptreldep[self]   = ( (($this_coverage->covreldep == "S") or
+                            ($this_coverage->covdep == 0)) ?
                             $this_form[ffcheckchar] : " " );
-     	$ptreldep[child]  = ( ($this_patient->ptreldep == "C") ?
+     	$ptreldep[child]  = ( ($this_coverage->covreldep == "C") ?
                             $this_form[ffcheckchar] : " " );
      	$ptreldep[spouse] = 
-       		( (($this_patient->ptreldep == "H") or
-          	($this_patient->ptreldep == "W")) ?
+       		( (($this_coverage->covreldep == "H") or
+          	($this_coverage->covreldep == "W")) ?
           	$this_form[ffcheckchar] : " " );
-     	$ptreldep[husband]= ( ($this_patient->ptreldep == "H") ?
+     	$ptreldep[husband]= ( ($this_coverage->covreldep == "H") ?
                             $this_form[ffcheckchar] : " " );
-     	$ptreldep[wife]   = ( ($this_patient->ptreldep == "W") ?
+     	$ptreldep[wife]   = ( ($this_coverage->covreldep == "W") ?
                             $this_form[ffcheckchar] : " " );
-     	$ptreldep[other]  = ( ($this_patient->ptreldep == "O") ?
+     	$ptreldep[other]  = ( ($this_coverage->covreldep == "O") ?
                             $this_form[ffcheckchar] : " " );
 
      	// marital status
@@ -354,6 +416,10 @@ class GenerateFormsModule extends freemedBillingModule {
           	$this_form[ffcheckchar] : " " );
      	$ptmarital[separated] = 
        		( ($this_patient->ptmarital == "separated") ?
+          	$this_form[ffcheckchar] : " " );
+     	$ptmarital[other]  = 
+       		( (($this_patient->ptmarital == "divorced") OR 
+       		  ($this_patient->ptmarital == "separated")) ?
           	$this_form[ffcheckchar] : " " );
 
      	// employment status
@@ -395,21 +461,40 @@ class GenerateFormsModule extends freemedBillingModule {
      	$phy[zip]        = $this_physician->local_record["phyzipa"  ];
      	$phy[phone]      = $this_physician->local_record["phyphonea"];
 
+		$this_insco = $this_coverage->covinsco;
+        if (!$this_insco)
+		{
+			if ($bill_request_type != 0)
+			{
+				echo "Error insco failure<BR>";
+				DIE("No Insurance");
+			}
+		}
+		if (!is_object($this_insco))
+		{
+			if ($bill_request_type != 0)
+			{
+				echo "Error insco failure<BR>";
+				DIE("No Insurance");
+			}
+		}
      	// insco information
-     	if ($this_patient->ptdep == 0) {
-       		$this_insco = new InsuranceCompany (
-            $this_patient->payer[$bill_request_type]->local_record["payerinsco"]);
-       		$insco[number]     = $this_patient->payer[$bill_request_type]->local_record["payerpatientinsno"];
-       		$insco[group]     = $this_patient->payer[$bill_request_type]->local_record["payerpatientgrp"];
-     	} 
-		else 
-		{ // if there *is* a guarantor
-       		$this_insco = new InsuranceCompany (
-            $guarantor->payer[$bill_request_type]->local_record["payerinsco"]);
-       		$insco[number]     = $guarantor->payer[$bill_request_type]->local_record["payerpatientinsno"];
-       		$insco[group]      = $guarantor->payer[$bill_request_type]->local_record["payerpatientgrp"];
-     	} // end checking for insco
+     	//if ($this_patient->ptdep == 0) {
+       	//	$this_insco = new InsuranceCompany (
+        //    $this_patient->payer[$bill_request_type]->local_record["payerinsco"]);
+       	//	$insco[number]     = $this_patient->payer[$bill_request_type]->local_record["payerpatientinsno"];
+       	//	$insco[group]     = $this_patient->payer[$bill_request_type]->local_record["payerpatientgrp"];
+     	//} 
+		//else 
+		//{ // if there *is* a guarantor
+       	//	$this_insco = new InsuranceCompany (
+        //    $guarantor->payer[$bill_request_type]->local_record["payerinsco"]);
+       	//	$insco[number]     = $guarantor->payer[$bill_request_type]->local_record["payerpatientinsno"];
+       //		$insco[group]      = $guarantor->payer[$bill_request_type]->local_record["payerpatientgrp"];
+     //	} // end checking for insco
      
+     $insco[number]     = $this_coverage->covpatinsno;
+     $insco[group]      = $this_coverage->covpatgrpno;
      $insco[name]       = $this_insco->inscoalias;
      $insco[line1]      = $this_insco->local_record[inscoaddr1];
      $insco[line2]      = $this_insco->local_record[inscoaddr2];
@@ -460,7 +545,7 @@ class GenerateFormsModule extends freemedBillingModule {
      //$refphy[upin]      = $referring_physician[phyupin];
 
      // check for guarantor information
-     if ($this_patient->ptdep == 0) {
+     if ($this_coverage->covdep == 0) {
        // if self insured, transfer data to guarantor arrays
        // clear all of the guarantor fields
        $guarname[last] = "";
@@ -481,28 +566,34 @@ class GenerateFormsModule extends freemedBillingModule {
        $guarphone[full] = "";
      } else {
        // if it is someone else, get *their* information
-       $guarname[last]    = $guarantor->local_record["ptlname"];
-       $guarname[first]   = $guarantor->local_record["ptfname"];
-       $guarname[middle]  = $guarantor->local_record["ptmname"];
-       $guardob[full]     = $guarantor->local_record["ptdob"  ];
+	   $guarantor = new Guarantor($this_coverage->id);
+	   if (!$guarantor)
+	   {
+		   echo "Guarantor failed<BR>";
+		   DIE("Guarantor failed");
+	   }	   
+       $guarname[last]    = $guarantor->guarlname;
+       $guarname[first]   = $guarantor->guarfname;
+       $guarname[middle]  = $guarantor->guarmname;
+       $guardob[full]     = $guarantor->guardob;
        $guardob[month]      = substr ($guardob[full], 5, 2);  
        $guardob[day]        = substr ($guardob[full], 8, 2);  
        $guardob[year]       = substr ($guardob[full], 0, 4);
-       $guarsex[male]     = ( ($guarantor->ptsex == "m") ?
+       $guarsex[male]     = ( ($guarantor->guarsex == "m") ?
                                $this_form[ffcheckchar] : " " );
-       $guarsex[female]   = ( ($guarantor->ptsex == "f") ?
+       $guarsex[female]   = ( ($guarantor->guarsex == "f") ?
                                $this_form[ffcheckchar] : " " );
-       $guarsex[trans]    = ( ($guarantor->ptsex == "t") ?
+       $guarsex[trans]    = ( ($guarantor->guarsex == "t") ?
                                $this_form[ffcheckchar] : " " );
-       $guaraddr[line1]   = $guarantor->local_record["ptaddr1"  ];
-       $guaraddr[line2]   = $guarantor->local_record["ptaddr2"  ];
-       $guaraddr[city]    = $guarantor->local_record["ptcity"   ];
-       $guaraddr[state]   = $guarantor->local_record["ptstate"  ];
-       $guaraddr[zip]     = $guarantor->local_record["ptzip"    ];
-       $guarphone[full]   = $guarantor->local_record["pthphone" ];
+       $guaraddr[line1]   = $guarantor->guaraddr1;
+       $guaraddr[line2]   = $guarantor->guaraddr2;
+       $guaraddr[city]    = $guarantor->guarcity;
+       $guaraddr[state]   = $guarantor->guarstate;
+       $guaraddr[zip]     = $guarantor->guarzip;
+       //$guarphone[full]   = $guarantor->local_record["pthphone" ];
 
-       $insco[number]     = $guarantor->payer[$bill_request_type]->local_record["payerpatientinsno"];
-       $insco[group]      = $guarantor->payer[$bill_request_type]->local_record["payerpatientgrp"];
+       //$insco[number]     = $guarantor->payer[$bill_request_type]->local_record["payerpatientinsno"];
+       //$insco[group]      = $guarantor->payer[$bill_request_type]->local_record["payerpatientgrp"];
        // PULL INSCO  HERE IF GUARANTOR !!!!!!!!!!!!!!!!!!!!!
        //       FIIIIIIIIIX MEEEEEEEEEEEE!
      } // end checking for dependant
@@ -522,7 +613,7 @@ class GenerateFormsModule extends freemedBillingModule {
      unset ($ref); // kill referring doc
 
      // grab form information form
-     $this_form = freemed_get_link_rec ($whichform, "fixedform");
+     //$this_form = freemed_get_link_rec ($whichform, "fixedform");
 
      // by default, render the form
      $render_form = true;
@@ -534,22 +625,20 @@ class GenerateFormsModule extends freemedBillingModule {
      //
      // grab all the procedure for this patient
      //
-     $result = $sql->query ("SELECT a.*,b.* FROM payrec AS a,
-                                           procrec AS b
-                           WHERE (
-                             a.payreccat = '5' AND
-                             a.payreclink = '$bill_request_type' AND
-                             a.payrecpatient = '$current_patient' AND
-                             a.payrecproc = b.id AND
-                             b.procbillable = '0' AND
-                             b.procbilled = '0' AND
-                             b.procbalcurrent > '0'
-                           ) ORDER BY b.proceoc,b.procauth,b.procdt");
+	    $query = "SELECT * FROM procrec
+							  WHERE (proccurcovtp = '$bill_request_type' AND
+									 proccurcovid = '$parmcovid' AND
+									 procbalcurrent > '0' AND
+									 procpatient = '$parmpatient' AND
+                                     procbillable = '0' AND
+                                     procbilled = '0') 
+                           	  ORDER BY proceoc,procauth,procdt";
+     $result = $sql->query ($query);
 
      if (!$result or ($result==0))
        die ("Malformed SQL query ($current_patient)");
 
-     // queue all entries
+     // queue all entries   FOR EACH PROCEDURE to BILL
      $first_procedure = 0;
      while ($r = $sql->fetch_array ($result)) {
        //$p = freemed_get_link_rec ($r[payrecproc], "procrec");
@@ -570,7 +659,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
        if ($r[procbalcurrent]<=0) {
          $render_form = false; // don't render the form if 0
-         next; // skip if no charge
+         continue; // skip if no charge
        } else {
          $render_form = true; // reset to render form
        }
@@ -591,6 +680,7 @@ class GenerateFormsModule extends freemedBillingModule {
             ($number_of_charges > $this_form[ffloopnum]         )  OR
             ($prev_key != $cur_key) )
        {
+			echo "Control break";
          if ($prev_key != $cur_key)
          {
               $prev_key = $cur_key;
@@ -606,7 +696,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
          // drop the current form to the buffer
          if ($render_form)
-           $form_buffer .= render_fixedForm ($whichform);
+           $this->form_buffer .= render_fixedForm ($whichform);
          $render_form  = true;
          $total_paid = $total_charges   =
                        $current_balance = 0;  // zero the charges
@@ -766,18 +856,24 @@ class GenerateFormsModule extends freemedBillingModule {
      // render last form
 	
      if ($render_form)
-       $form_buffer .= render_fixedForm ($whichform);
+       $this->form_buffer .= render_fixedForm ($whichform);
      $render_form = true; // reset to true for rendering the form
      $total_paid = $total_charges = $current_balance = 0;  // zero the charges
 
-     $pat_processed++;
-     $patient_forms[$pat_processed] = $this_patient->local_record["id"];
-     if (($num_patients != 0) and ($pat_processed >= $num_patients))
-       $still_going = false;
+     $this->pat_processed++;
+     $this->patient_forms[$this->pat_processed] = $parmpatient;
+     $this->patient_cov[$this->pat_processed] = $parmcovid;
+     //if (($num_patients != 0) and ($pat_processed >= $num_patients))
+     //  $still_going = false;
 
 
-   } // end of while there are no more patients
+   } // end generateFixed
 
+   function ShowBillsToMark()
+   {
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+		while (list($k,$v)=each($this->rendorform_variables)) global $$v;
    #################### TAKE THIS OUT AFTER TESTING #######################
    #echo "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
    ########################################################################
@@ -789,7 +885,7 @@ class GenerateFormsModule extends freemedBillingModule {
      </CENTER>
      <BR>
      <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
-     >".prepare($form_buffer)."</TEXTAREA>
+     >".prepare($this->form_buffer)."</TEXTAREA>
     <P>
     <CENTER>
      <SELECT NAME=\"type\">
@@ -816,11 +912,13 @@ class GenerateFormsModule extends freemedBillingModule {
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"$been_here\">
      <INPUT TYPE=HIDDEN NAME=\"billtype\" VALUE=\"$bill_request_type\">
    ";
-   for ($i=1;$i<=$pat_processed;$i++) {
-     $this_patient = new Patient ($patient_forms[$i]);
+   for ($i=1;$i<=$this->pat_processed;$i++) {
+     $this_patient = new Patient ($this->patient_forms[$i]);
      echo "
        <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
-        VALUE=\"".$patient_forms[$i]."\" CHECKED>
+        VALUE=\"".$this->patient_forms[$i]."\" CHECKED>
+       <INPUT TYPE=HIDDEN NAME=\"proccovid$brackets\" 
+        VALUE=\"".$this->patient_cov[$i]."\" CHECKED>
        ".$this_patient->fullName(false)."
        (<A HREF=\"manage.php?$_auth&id=$patient_forms[$i]\"
         >".$this_patient->local_record["ptid"]."</A>) <BR>
@@ -834,7 +932,8 @@ class GenerateFormsModule extends freemedBillingModule {
    ";
 
 		
-	}
+	} // end ShowMarkBilled
+
 	function view()
 	{
 		reset ($GLOBALS);
@@ -906,11 +1005,11 @@ class GenerateFormsModule extends freemedBillingModule {
 			<$STDFONT_B>To : <$STDFONT_E>
 		   </TD><TD ALIGN=LEFT>
 			<SELECT NAME=\"bill_request_type\">
-			 <OPTION VALUE=\"0\">"._("1st Insurance")."
-			 <OPTION VALUE=\"1\">"._("2nd Insurance")."
-         <OPTION VALUE=\"2\">"._("3rd Insurance")."
-         <OPTION VALUE=\"3\">"._("Worker's Comp")."
-         <OPTION VALUE=\"4\">"._("Patient")."
+         <OPTION VALUE=\"0\">"._("Patient")."
+			 <OPTION VALUE=\"1\">"._("1st Insurance")."
+			 <OPTION VALUE=\"2\">"._("2nd Insurance")."
+         <OPTION VALUE=\"3\">"._("3rd Insurance")."
+         <OPTION VALUE=\"4\">"._("Worker's Comp")."
         </SELECT>
 		<INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
        </TD>
