@@ -26,14 +26,17 @@ class prescriptionModule extends freemedEMRModule {
 
 		$this->summary_vars = array (
 			"Date From" => "rxdtfrom",
-			"Drug" => "rxdrug",
-			"Dosage" => "_dosage"
+			"Drug" => "_drug",
+			"Dosage" => "_dosage",
+			"Dispensed" => "_dispensed"
 			//"Crypto Key" => "rxmd5"
 		);
 		// Specialized query bits
 		$this->summary_query = array (
 			"MD5(id) AS rxmd5",
-			"CONCAT(rxsize, ' ', rxunit, ' ', rxform, ' ', rxinterval) AS _dosage"
+			"CONCAT(rxdrug, ' ', rxform) AS _drug",
+			"CONCAT(rxsize, ' ', rxunit, ' ', rxinterval) AS _dosage",
+			"CASE rxform WHEN 'tablet' THEN CONCAT(rxquantity, ' tablets') WHEN 'capsule' THEN CONCAT(rxquantity, ' capsules') ELSE CONCAT(rxquantity, ' ', IF(rxunit LIKE '%cc%', 'cc', rxunit)) END AS _dispensed"
 		);
 
 		// Table definition
@@ -47,6 +50,7 @@ class prescriptionModule extends freemedEMRModule {
 				"solution"
 				)),
 			"rxdosage" => SQL_INT_UNSIGNED(0),
+			"rxquantity" => SQL_INT_UNSIGNED(0),
 			"rxsize" => SQL_INT_UNSIGNED(0),
 			"rxunit" => SQL_ENUM(array(
 				"mg",
@@ -65,7 +69,8 @@ class prescriptionModule extends freemedEMRModule {
 				"q. 4h",
 				"q. 5h",
 				"q. 6h",
-				"q. 8h"
+				"q. 8h",
+				"q.d."
 				)),
 			"rxpatient" => SQL_INT_UNSIGNED(0),
 			"rxsubstitute" => SQL_ENUM(array(
@@ -83,6 +88,7 @@ class prescriptionModule extends freemedEMRModule {
 			"rxsize",
 			"rxform",
 			"rxdosage",
+			"rxquantity",
 			"rxunit",
 			"rxinterval",
 			"rxpatient",
@@ -163,6 +169,11 @@ class prescriptionModule extends freemedEMRModule {
 				_("Drug") =>
 				freemed::drug_widget("rxdrug", "myform", "__action"),
 
+				_("Quantity") =>
+				html_form::text_widget(
+					"rxquantity", 10
+				),
+
 				_("Medicine Units") =>
 				html_form::text_widget(
 					"rxsize", 10
@@ -197,6 +208,7 @@ class prescriptionModule extends freemedEMRModule {
 				html_form::select_widget(
 					"rxinterval",
 					array(
+						"q.d."   => "q.d.",
 						"b.i.d." => "b.i.d.",
 						"t.i.d." => "t.i.d.",
 						"q.i.d." => "q.i.d.",
@@ -296,7 +308,7 @@ class prescriptionModule extends freemedEMRModule {
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 		$display_buffer .= freemed_display_itemlist(
 			$sql->query("SELECT *,".
-				"CONCAT(rxsize,' ',rxunit,' ',".
+				"CONCAT(rxquantity,' of ',rxsize,' ',rxunit,' ',".
 				"rxinterval) AS _dosage ".
 				"FROM $this->table_name ".
 				"WHERE rxpatient='".addslashes($patient)."' ".
