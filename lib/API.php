@@ -1055,7 +1055,7 @@ class freemed {
 				)
 			);
 		//print "mkdir_command = $mkdir_command<br/>\n";
-		$output = `$mkdir_command`;
+		$mkdir_output = `$mkdir_command`;
 		//print $mkdir_output."<br/>\n";
 
 		// Process depending on 
@@ -1092,8 +1092,9 @@ class freemed {
 						( $encoding=='c44' ?
 						'jpg' : 'pbm' )
 					);
+				//print "convert command = ".$command."<br/>\n";
 				$output = `$command`;
-				//print ($output)."<br>";
+				//print "convert output = ".$output."<br/>\n";
 
 				// Convert to DJVU
 				switch ($encoding) {
@@ -1122,10 +1123,11 @@ class freemed {
 					);
 				//print "command = $command<br/>\n";
 				//print "<br/>".exec ($command)."<br/>\n";
+				$output = `$command`;
 				//print "<br/>".`$command`."<br/>\n";
 
 				// Remove PBM
-				unlink(PHYSICAL_LOCATION.
+				unlink(PHYSICAL_LOCATION.'/'.
 					freemed::image_filename(
 						$patient_id,
 						$type,
