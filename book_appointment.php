@@ -437,10 +437,11 @@ if ($process) {
 		$facility = 0;
 		$room     = 0;
 		$patient  = 0;
-		$prenote  = __("Travel");
+		$note     = __("Travel");
 	} else {
 		// Get facility for current room
 		$facility = freemed::get_link_field($room, "room", "roompos");
+		$note = $_REQUEST['note'];
 	}
 
 	if (!$id) {
