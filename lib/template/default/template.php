@@ -50,7 +50,8 @@ if (isset($refresh)) {
 <TR>
 	<TD COLSPAN="2" ALIGN="LEFT" VALIGN="TOP">
 		<!-- <I>Banner goes here.</I> -->
-		<IMG SRC="lib/template/default/banner.png"
+		<IMG SRC="lib/template/default/banner.<?php
+		print IMAGE_TYPE; ?>"
 		 WIDTH="300" HEIGHT="40" ALT="freemed">
 	</TD>
 </TR>

@@ -63,8 +63,6 @@ class freemedAdminModule extends freemedModule {
 			case "modform":
 				global $id;
 				if (empty($id) or ($id<1)) {
-					freemed_display_box_bottom ();
-					freemed_display_html_bottom ();
 					template_display();
 				}
 				$this->modform();

@@ -1459,8 +1459,6 @@ if ($userdata["user"]==1) // if we are root...
     </TD></TR>
     </TABLE>
   "; // end standard font
-
-  freemed_display_box_bottom ();
 }
 
 freemed_close_db(); // close up database

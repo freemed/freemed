@@ -712,7 +712,6 @@ switch ($action) {
        </CENTER>
        <P>
        ";
-      freemed_display_box_bottom (); // display bottom of the box
   break; // end action find
  
   case "display":

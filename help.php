@@ -4,10 +4,8 @@
  // lic : GPL
 
 $_pg_desc = "[HELP]"; // show that we are a help page...
-include ("lib/freemed.php");
-include ("lib/API.php");
-
-freemed_open_db ($LoginCookie);
+include_once ("lib/freemed.php");
+freemed_open_db ();
 
  //
  //  eventually, we want to be able to call a
@@ -29,14 +27,13 @@ if ((strlen($page_name)<1) AND (strlen($section)<1)) {
 
  // if the helpfile doesn't exist, but is enabled, ERROR! out...
 if (!file_exists($_help_name)) {
-  freemed_display_box_top (PACKAGENAME." Help System Error");
+  $page_title = PACKAGENAME." Help System Error";
   $display_buffer .= "
     <B>The requested help file was not found on this<BR>
        system. It is possible that it has not been<BR>
        implemented, or it is missing from your system.<BR>
     </B>
   ";
-  freemed_display_box_bottom ();
   $display_buffer .= "
     <P>
     <CENTER>
@@ -47,7 +44,7 @@ if (!file_exists($_help_name)) {
   template_display();
 } // if the help file does not exist
 
-freemed_display_box_top (PACKAGENAME." Help System");
+$page_title =  PACKAGENAME." Help System";
 
 if ($debug) {
   $display_buffer .= "

@@ -7,8 +7,8 @@ $page_name = "import.php";
 include ("lib/freemed.php");
 include ("lib/API.php");
 
-freemed_open_db ($LoginCookie);
-$this_user = new User ($LoginCookie);
+freemed_open_db ();
+$this_user = new User ();
 
 if ($this_user->getLevel()<$admin_level) {
 	$display_buffer .= "$page_name :: You do not have access to this module";
@@ -17,7 +17,7 @@ if ($this_user->getLevel()<$admin_level) {
 
 switch ($action) {
  case "import":
-  freemed_display_box_top (_("Import Database"));
+  $page_title = _("Import Database"));
   $display_buffer .= "
    <P>
    "._("Importing Database")." \"$db\" ... 
@@ -34,10 +34,9 @@ switch ($action) {
     </CENTER>
    <P>
   ";
-  freemed_display_box_bottom ();
   break;
  default:
-  freemed_display_box_top (_("Import Database"));
+  $page_title = _("Import Database");
   $display_buffer .= "
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"import\">

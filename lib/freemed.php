@@ -130,7 +130,15 @@ if (!function_exists("bindtextdomain"))
 	die ("PHP must be compiled with GNU gettext (--with-gettext)");
 
   // check for proper template, and load default if not provided
-if (!isset($template)) { $template = TEMPLATE; }
+if (!isset($template)) {
+	$template = TEMPLATE;
+}
+
+ // Include library for template
+if (file_exists("lib/template/".$template."/lib.php"))
+	include_once("lib/template/".$template."/lib.php");
+//else include_once("lib/template/default/lib.php");
+
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 

@@ -49,18 +49,13 @@ class freemedModule extends module {
 	// override header method
 	function header ($nullvar = "") {
 		global $display_buffer, $page_name;
-		global $LoginCookie;
-		freemed_open_db ($LoginCookie);
-		// freemed_display_html_top();
-		// freemed_display_box_top (_($this->MODULE_NAME));
+		freemed_open_db ();
 		$page_name = _($this->MODULE_NAME);
 	} // end function header
 
 	// override footer method
 	function footer ($nullvar = "") {
 		global $display_buffer, $page_name;
-		//freemed_display_box_bottom();
-		//freemed_display_html_bottom();
 	} // end function footer
 
 	// calling function

@@ -1,6 +1,31 @@
 freemed project changelog
 ($Id$)
 
+* Wed Oct 17 2001 rufustfirefly
+  - doc/API -> old/API
+  - doc/API: starting fresh on the API documentation
+  - lib/API.php: cleaning out the API
+  - lib/template/default/menubar.php: small IMAGE_TYPE problem
+  - lib/freemed.php: needed to add a lib/template/(template)/lib.php
+    conditional loader
+  - lib/containers.php, lib/iso_set.php: reformatted to look prettier
+  - custom_records.php, lib/module_*, etc: removed box_top,bottom
+
+* Tue Oct 16 2001 rufustfirefly
+  - lib/wddx.php: moved to phpwebtools as wddx_tools.php
+  - lib/template/default/*.gif, lib/template/default/lib.php: added
+    IMAGE_TYPE switch for switching between GIFs and PNGs (I would
+    prefer to use PNGs, but IE incorrectly renders transparent PNGs,
+    hence the switch [IMAGE_TYPE])
+  - README.debian -> doc/README.debian
+  - TODO -> doc/TODO
+  - LINKS -> doc/LINKS
+  - CREDITS -> doc/CREDITS
+  - old/....: removed some old modules that have already been ported
+
+* Fri Oct 12 2001 rufustfirefly
+  - lib/wddx.php: added WDDX functions for client/server functionality
+ 
 * Tue Oct 09 2001 rufustfirefly
   - lib/API.php: added page_history_list() function, modified page_push()
     to store an associative array instead of two arrays

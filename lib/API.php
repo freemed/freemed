@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.36  2001/10/17 20:47:36  rufustfirefly
+ // another day of changes... or two...
+ //
  // Revision 1.35  2001/10/12 14:59:59  rufustfirefly
  // added Log tag
  //
@@ -17,20 +20,19 @@ if (!defined("__API_PHP__")) {
 define ('__API_PHP__', true);
 
 // function freemed_bar_alternate_color
-function freemed_bar_alternate_color ($cur_color="")
-{
-  global $bar_start_color, $bar_alt_color;
+function freemed_bar_alternate_color ($cur_color="") {
+	global $bar_start_color, $bar_alt_color;
 
-  switch ($cur_color) {
-    case $bar_start_color:
-      return $bar_alt_color;
-      break;
-    case $bar_alt_color:
-    case "":
-    default:
-      return $bar_start_color;
-      break;
-  } // end color decision switch
+	switch ($cur_color) {
+		case $bar_start_color:
+		return $bar_alt_color;
+		break;
+		
+		case $bar_alt_color:
+		default:
+		return $bar_start_color;
+		break;
+	} // end color decision switch
 } // end function freemed_bar_alternate_color
 
 // function freemed_check_access_for_facility
@@ -49,6 +51,7 @@ function freemed_check_access_for_facility ($facility_number) {
 	// No facility, assume no access restrictions
 	if ($facility_number == 0) return true;
 
+	// If it's an "ALL" or it is found, return true
 	if ((fm_value_in_string($f_fac, "-1")) OR
 		(fm_value_in_string($f_fac, $facility_number)))
 		return true;
@@ -113,24 +116,30 @@ function freemed_close_db ($_null=" ")
 } // end function freemed_close_db
 
 // function freemed_config_value
-function freemed_config_value ($config_var)
-{
-  static $_config;
-  global $sql;
-  
-  $query = $sql->query("SELECT * FROM config
-    WHERE (c_option='".addslashes($config_var)."')");
+function freemed_config_value ($config_var) {
+	static $_config;
+	global $sql;
+ 
+ 	// Set to cache values
+ 	if (!isset($_config)) {
+		$query = $sql->query("SELECT * FROM config");
 
-  if ($query < 1) return ""; // fix for config db not being there...
+		// If the table doesn't exist, skip out
+		if (!$query) return false;
 
-  $_config = $sql->fetch_array($query);
+		// Loop through results
+		while ($r = $sql->fetch_array($query)) {
+			$_config[stripslashes($r[c_option])] =
+				stripslashes($c_value);
+		} // end of looping through results
+	} // end of caching
 
-  return $_config["c_value"]; // return value
+	// Return from cache
+	return $_config["$config_var"];
 } // end function freemed_config_value
 
 // function freemed_display_arraylist
-function freemed_display_arraylist ($var_array, $xref_array="")
-{
+function freemed_display_arraylist ($var_array, $xref_array="") {
   $buffer = ""; // return a buffer
   if (!is_array($var_array)) // we've been passed an empty array
     return "";
@@ -138,13 +147,13 @@ function freemed_display_arraylist ($var_array, $xref_array="")
   $buffer .= "
     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=1>
   ";
-  $first=true;
+  $first = true;
   $buffer .= "<TR>";
-  while (list($key,$val)=each($var_array)) { // for each variable
+  while (list($key, $val)=each($var_array)) { // for each variable
     if ($first) $main=$val; // first item is index...
-    global $$val; // global all the arrays, remember to
+    global ${$val}; // global all the arrays, remember to
                   // use ${$foo}[0] for subscripts!
-    $first=false;
+    $first = false;
     $buffer .= "
       <TD ALIGN=CENTER>
         <B>$key</B>
@@ -165,15 +174,15 @@ function freemed_display_arraylist ($var_array, $xref_array="")
   global ${$main."_active"}; // e.g., 'ptins_active', is set outside func
   // use ${$foo}[0] for arrays!!
 
-  if (!is_array($$main))
+  if (!is_array(${$main}))
     return ($buffer."
-      <TR><TD COLSPAN=".(count($var_array)+2)." ALIGN=CENTER>
+      <TR><TD COLSPAN=".(count($var_array) + 2)." ALIGN=CENTER>
         "._("No Items")."
       </TD></TR>
      </TABLE>"); // make sure it's safe if there are no items
 
-  reset($$main);
-  while(list($i,$mainval)=each($$main)) {
+  reset(${$main});
+  while(list($i, $mainval) = each(${$main})) {
     if (!isset($mainval)) {echo "{[$i]}";continue;} // skip if removed
     $this_active = ${$main."_active"}[$i]; // is this item active?
     if ($this_active)
@@ -181,11 +190,11 @@ function freemed_display_arraylist ($var_array, $xref_array="")
       
     reset($var_array); if (is_array($xref_array)) reset($xref_array);
     while (list($key,$val)=each($var_array)) { // each variable
-      $item_text=${$val}[$i];
+      $item_text = ${$val}[$i];
       if (is_array($xref_array)) {
-        list($x_key,$x_val)=each($xref_array);
-	if (strlen($x_val)>0)
-          $item_text=freemed_get_link_field(${$val}[$i],$x_key,$x_val);
+        list($x_key, $x_val) = each($xref_array);
+	if (strlen($x_val) > 0)
+          $item_text=freemed_get_link_field(${$val}[$i], $x_key, $x_val);
       } // grab the xref if necessary
       if ($this_active)
         $buffer .= "
@@ -214,301 +223,23 @@ function freemed_display_arraylist ($var_array, $xref_array="")
   return $buffer;
 } // end function freemed_display_arraylist
 
-// function freemed_display_box_bottom
-function freemed_display_box_bottom ($_null="")
-{
-  global $debug;
-  /*
-
-  //$v = $GLOBALS["FREEMED_BOX"];
-  //echo "box var $v<BR>";
-  //if (!isset($GLOBALS["FREEMED_BOX"])) return false;
-  if ($GLOBALS["FREEMED_BOX"] == false) 
-  {
-    trigger_error("Multiple freemed_display_box_bottom instances!", E_USER_ERROR);
-  }
-  $GLOBALS["FREEMED_BOX"] = false;
-  //$v = $GLOBALS["FREEMED_BOX"];
-  //echo "box var after $v<BR>";
-
-  if ($debug) {
-    echo "
-      
-      <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=0
-       BGCOLOR=\"#ff0000\" VALIGN=BOTTOM ALIGN=CENTER>
-      <TR><TD BGCOLOR=\"#ff0000\">
-      <CENTER><B><FONT SIZE=-2 COLOR=\"#ffffff\">"._("DEBUG IS ON")."</FONT>
-      </B></CENTER>
-      </TD></TR></TABLE>
-
-    ";
-  } // end of showing debug status if on
-
-  echo "
-    </TD></TR></TABLE>
-    ".( (!USE_CSS) ? "</TD></TR></TABLE>" : "" )."
-    </CENTER>
-  ";
-  */
-} // end function freemed_display_box_bottom
-
-// function freemed_display_box_top
-function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
-{
-  global $language, $topbar_color, $module,
-   $page_name, $action, $id, $patient, $_pg_desc, $_ref,
-   $admin_level, $delete_level, $export_level, $database_level,
-   $menubar_color, $LoginCookie, $current_patient;
-/*
-  if (!isset($GLOBALS["FREEMED_BOX"])) 
-  {
-  	$GLOBALS["FREEMED_BOX"] = true;
-  } // check for existing box
-  elseif ($GLOBALS["FREEMED_BOX"] == true) 
-  {
-    trigger_error("Multiple freemed_display_box_top instances!", E_USER_ERROR);
-  } // check for existing box
-
-  $GLOBALS["FREEMED_BOX"] = true;
-
-  if ($ref=="") $ref = $_ref;  // pass from cookie?
-
-  // determine if we are dealing with a physician...
-  $is_physician = false;   // start out assuming false
-  if (!strpos($LoginCookie, ":")) {
-    $_user = explode (":", $LoginCookie);
-    $user = $_user[0];
-    if ($user>1) {
-     if (freemed_get_link_field($user, "user", "usertype")=="phy")
-      $is_physician = true;
-     if ($is_physician)
-      $physician_number = freemed_get_link_field ($user, "user", "userrealphy");
-    } // end if $user > 1 (not 0, because root is 1)
-  } // end checking for bad logincookie
-
-  // speed hack
-  if ((strpos($LoginCookie, ":")) and
-      ($page_name != "index.php") and
-      ($page_name != "authenticate.php") and
-      ($page_name != "logout.php")) 
-    $this_userlevel = freemed_get_userlevel ();
-
-  if (strlen($ref)<1) {
-    $ref = "main.php";
-  } // if there is no ref
-
-  if ($page_name=="index.php") { $b_b = "<B>"; $b_e = "</B>"; }
-
-  // if this is a module, set the page_name to $module
-  if (!empty($module)) $page_name = $module;
-
-  echo "
-    <CENTER>
-    ".( (!USE_CSS) ? "
-    <TABLE BGCOLOR=\"#000000\" CELLSPACING=0 CELLPADDING=2 ALIGN=CENTER
-     BORDER=0 VALIGN=MIDDLE WIDTH=\"100%\"><TR><TD BGCOLOR=\"#000000\">
-    " : "" )."
-
-    <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 ALIGN=CENTER
-     VALIGN=CENTER BGCOLOR=\"#dddddd\" WIDTH=\"100%\" CLASS=\"mainbox\"
-    ><TR><TD>
-  ";
-
-  if (!empty($box_title)) {
-    echo "
-      <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
-       VALIGN=TOP BORDER=0><TR BGCOLOR=\"$topbar_color\">
-       <TD BGCOLOR=\"$topbar_color\">
-       <CENTER><FONT FACE=\"Arial, Helvetica, Verdana\"
-        SIZE=+1 COLOR=\"#ffffff\">$b_b".INSTALLATION.": $box_title$b_e</FONT></CENTER>
-      </TD>
-      <TD BGCOLOR=\"$topbar_color\" ALIGN=RIGHT WIDTH=32 
-    ";
-
-    if (($_ref!="index.php") AND ($_ref != $pg_name)) {
-      echo "
-         ><A HREF=\"$ref\"
-         ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
-         WIDTH=16 ALT=\"["._("back")."]\"></A
-      ";
-   } elseif  (($_ref == $pg_name) AND
-             ($pg_name != "main.php")) { 
-      // stupid ref patch, 19990701
-      echo "
-         ><A HREF=\"main.php\"
-         ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
-         WIDTH=16 ALT=\"["._("main")."]\"></A
-      ";
-   }
-   echo "
-      ><A HREF=\"logout.php?_URL=".
-       urlencode(getenv("REQUEST_URI")).
-      "\"><IMG SRC=\"img/close-widget.gif\" HEIGHT=16 BORDER=0
-      WIDTH=16 ALT=\"["._("exit")."]\"></A>
-      </TD></TR></TABLE>
-    ";
-  } // if there is a box title
-  //if ($debug) echo "_ref = $_ref, pg_name = $pg_name<BR>\n";
-  if (($page_name != "index.php") and
-      ($page_name != "authenticate.php") and
-      ($page_name != "logout.php") and
-      ($page_name != "main.php") and
-      ($_pg_desc != "[HELP]")) {
-    // display top of table
-    echo "
-     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0 BORDER=0
-      VALIGN=TOP ALIGN=CENTER BGCOLOR=\"$menubar_color\">
-     <TR BGCOLOR=\"$menubar_color\">
-    ";
-    if ($current_patient>0) { 
-      $p_link = "manage.php?id=".urlencode($current_patient);
-    } else {
-      $p_link = "patient.php";
-    } // end creating patient link
-
-    if (freemed_config_value ("gfx")=="1") {
-     if ($this_userlevel>$admin_level)
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"admin.php\"
-        ><IMG SRC=\"img/KeysOnChain-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Admin Menu]\"></A>
-       </TD>
-      ";
-     if ($this_userlevel>$database_level)
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"billing_functions.php?patient=".urlencode($current_patient)."\"
-        ><IMG SRC=\"img/CashRegister-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Billing]\"></A>
-       </TD>
-      ";
-     // no if statement needed for callins...
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"call-in.php\"
-        ><IMG SRC=\"img/Text-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Call-In Menu]\"></A>
-       </TD>
-      ";
-     if ($this_userlevel>$database_level)
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"db_maintenance.php\"
-        ><IMG SRC=\"img/Database-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Database]\"></A>
-       </TD>
-      ";
-     if ($is_physician)
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"physician_day_view.php?physician=".urlencode($physician_number)."\"
-        ><IMG SRC=\"img/karm-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Day View]\"></A>
-       </TD>
-      ";
-     if ($this_userlevel>$database_level)
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"$p_link\"
-        ><IMG SRC=\"img/HandOpen-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Patients]\"></A>
-       </TD>
-      ";
-     // nothing else needed for help, either
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"help.php?page_name=".urlencode($page_name)."\"
-         TARGET=\"__HELP__\"><IMG SRC=\"img/readme-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Help]\"></A>
-       </TD>
-      ";
-     // nothing needed for return to main menu...
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
-        <A HREF=\"main.php\"
-        ><IMG SRC=\"img/HandPointingLeft-mini.gif\"
-        WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Main Menu]\"></A>
-       </TD>
-      ";
-    } else { // if graphics are disabled...
-      if ($this_userlevel>$admin_level)
-       echo "
-        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"admin.php\"
-         ><FONT SIZE=-1>Admin</FONT></A>
-        </TD>
-        "; // end admin
-      if ($this_userlevel>$database_level)
-       echo "
-        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"billing_functions.php?patient=".urlencode($current_patient)."\"
-         ><FONT SIZE=-1>Bill</FONT></A>
-        </TD>
-       ";
-      // no special things needed for callins
-       echo "
-        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"call-in.php\"
-         ><FONT SIZE=-1>Callin</FONT></A>
-        </TD>
-        ";
-      if ($this_userlevel>$database_level)
-       echo "
-        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"db_maintenance.php\"
-         ><FONT SIZE=-1>DB</FONT></A>
-        </TD>
-        "; // end db
-      if ($this_userlevel>$database_level)
-       echo "
-        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"$p_link\"
-         ><FONT SIZE=-1>Patient</FONT></A>
-        </TD>
-        ";
-      // no special conditions for help
-       echo "
-        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"help.php?page_name=".urlencode($page_name)."\"
-         ><FONT SIZE=-1>?</FONT></A>
-        </TD>
-        ";
-      echo "
-       <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
-        <A HREF=\"main.php\"
-        ><FONT SIZE=-1>Main</FONT></A>
-        </TD>
-       ";
-    } // end checking for graphics enabled/disabled
-    // display bottom of table (for graphics at box top)
-    echo "
-      </TR>
-     </TABLE>
-    ";
-  } // end if page (is acceptable for menubar)
-  */
-  global $page_title;
-  $page_title = INSTALLATION.": $box_title";
-} // end function freemed_display_box_top
-
 // function freemed_display_actionbar
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
-  global $page_name, $patient, $_ref, $module;
+	global $page_name, $patient, $_ref, $module;
 
-  $buffer = "";
+	$buffer = "";
 
-  if (!empty($_ref)) $__ref = $_ref;
+	if (!empty($_ref)) $__ref = $_ref;
 
-  if ($this_page_name=="") $this_page_name = $page_name;
+	if ($this_page_name=="") $this_page_name = $page_name;
 
-  if (!empty($__ref)) {
-    $_ref="main.php";
-  } // if no ref, then return to home page...
+	if (!empty($__ref)) {
+		$_ref="main.php";
+	  } // if no ref, then return to home page...
 
     // show the actual bar, build with page_name reference
     // and global variables
-  $buffer .= "
+	$buffer .= "
     <TABLE BGCOLOR=\"#000000\" WIDTH=\"100%\" BORDER=0
      CELLSPACING=0 CELLPADDING=3>
     <TR BGCOLOR=\"#000000\">
@@ -522,46 +253,10 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
      ><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
      SIZE=-1><B>"._("RETURN TO MENU")."</B></FONT></A></TD>
     </TR></TABLE>
-  ";
-
-  return $buffer;
+  	";
+	return $buffer;
 
 } // end function freemed_display_actionbar
-
-// function freemed_display_html_bottom
-function freemed_display_html_bottom ($_null="")
-{
-  global $_mail_handler, $lang_coded_by;
-  //$v = $GLOBALS["FREEMED_BOX"];
-  //echo "box var html bot $v<BR>";
-  if ($GLOBALS["FREEMED_BOX"] == true) {
-    trigger_error("Page ended without displaying box bottom!", E_USER_ERROR);
-  } // check for existing box
-
-  echo "
-    <CENTER>
-      <I><FONT SIZE=-2 COLOR=\"#555555\">".PACKAGENAME." ".
-      VERSION." $lang_coded_by
-        <A HREF=\"$_mail_handler".BUGS_EMAIL."\">".CODED_BY."</A>
-      </FONT></I>
-    </CENTER>
-    </BODY>
-    </HTML>
-  ";
-} // end function freemed_display_html_bottom
-
-// function freemed_display_html_top
-function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
-{
-  global $__ISO_SET__, $_pg_desc;
-
-  if ($_pg_desc_given=="") $_pg_desc_given = $_pg_desc;
-
-  if (strlen($_refresh_location)>0) {
-    Header("Location: $_refresh_location");
-    $_refresh_location = ""; // set to null
-  }
-} // end function freemed_display_html_top
 
 // function freemed_display_itemlist
 function freemed_display_itemlist ($result, $page_link, $control_list, 
@@ -569,7 +264,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 			   $cur_page_var="this_page",
 			   $index_field="", $flags=-1)
 {
-  global $_ref, $LoginCookie, $record_name;
+  global $_ref, $record_name;
   global $modify_level, $delete_level, $patient, $action, $module;
   global $page_name, $$cur_page_var, $max_num_res;
   global $_s_field, $_s_val, $sql;
@@ -893,45 +588,43 @@ function freemed_display_facilities ($param="", $default_load = false,
 // function freemed_display_physicians
 //   displays physicians selectable in <SELECT>
 //   list with $param selected
-function freemed_display_physicians ($param="", $intext="")
-{
-  global $NONE_SELECTED;
-  $buffer = "";
+function freemed_display_physicians ($param, $intext="") {
+	$buffer = "";
 
-  // list doctors in SELECT/OPTION tag list, and
-  // leave doctor selected who is in param
-  $buffer .= "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $query = "SELECT * FROM physician ".
-     ( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
-     "ORDER BY phylname,phyfname";
-  $result = $sql->query ($query);
-  if (!$sql->results($result)) {
-    // don't do anything...! 
-  } else { // exit if no more docs
-    while ($row=$sql->fetch_array($result)) {
-      $buffer .= "
-        <OPTION VALUE=\"$row[id]\" ".
-	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".prepare("$row[phylname], $row[phyfname]")."
-      "; // end of actual output
-    } // while there are more results...
-  }
-  return $buffer;
+	// list doctors in SELECT/OPTION tag list, and
+	// leave doctor selected who is in param
+	$buffer .= "
+		<OPTION VALUE=\"0\">"._("NONE SELECTED")."
+	";
+	$query = "SELECT * FROM physician ".
+		( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
+		"ORDER BY phylname,phyfname";
+	$result = $sql->query ($query);
+	if (!$sql->results($result)) {
+		// don't do anything...! 
+	} else { // exit if no more docs
+		while ($row = $sql->fetch_array($result)) {
+			$buffer .= "
+			<OPTION VALUE=\"$row[id]\" ".
+			( ($row[id] == $param) ? "SELECTED" : "" ).
+			">".prepare("$row[phylname], $row[phyfname]")."
+			"; // end of actual output
+		} // while there are more results...
+	}
+	return $buffer;
 } // end function freemed_display_physicians
 
 ///////////////////////////////////////////////////
-// function freemed_display_printerlist  (19991008)
+// function freemed_display_printerlist
 // displays printers from the database
-function freemed_display_printerlist ($param="")
+function freemed_display_printerlist ($param)
 {
-  global $NONE_SELECTED, $sql;
+  global $sql;
 
   // list printers in SELECT/OPTION tag list, and
   // leave printer selected who is in param
   echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
+    <OPTION VALUE=\"0\">"._("NONE SELECTED")."
   ";
   $query = "SELECT * FROM printer ORDER BY ".
      "prnthost, prntname";
@@ -953,14 +646,11 @@ function freemed_display_printerlist ($param="")
 // function freemed_display_simplereports
 //   displays simple reports templates selectable in <SELECT>
 //   list with $param selected
-function freemed_display_simplereports ($param="")
-{
-  global $NONE_SELECTED;
-
+function freemed_display_simplereports ($param="") {
   // list templates in SELECT/OPTION tag list, and
   // leave report selected who is in param
   echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
+    <OPTION VALUE=\"0\">"._("NONE SELECTED")."
   ";
   $query = "SELECT * FROM simplereport ORDER BY ".
      "sr_type, sr_label";
@@ -977,238 +667,178 @@ function freemed_display_simplereports ($param="")
     } // while there are more results...
   }
 } // end function freemed_display_simplereports
-// --------------- end 19990815
-
-// function freemed_display_tos
-//   display <SELECT>-type list of types of service
-/*
-function freemed_display_tos ($param)
-{
-  global $NONE_SELECTED;
-
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $result = $sql->query ("SELECT * FROM tos
-    ORDER BY tosname,tosdescrip");
-  if (!$result) {
-    // don't do anything...
-  } else { // 
-    while ($row=$sql->fetch_array($result)) {
-      echo "
-        <OPTION VALUE=\"$row[id]\" ".
-	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".prepare("$row[tosname] $row[tosdescrip]")."
-      "; // actually show it
-    } // while there are more results...
-  } // end master loop
-} // end function freemed_display_tos
-*/
-
-// function freemed_display_rooms
-//   display <SELECT>-type list of rooms
-/*
-function freemed_display_rooms ($param)
-{
-  global $default_facility, $LoginCookie, $NONE_SELECTED; 
-
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $result = $sql->query ("SELECT * FROM room
-    ORDER BY roomname, roomdescrip");
-  if (!$result) {
-    // don't do anything...
-  } else { // 
-    while ($row=$sql->fetch_array($result)) {
-      $f_auth=explode(":", $LoginCookie);
-
-      if ((freemed_check_access_for_facility ($LoginCookie, $rm_pos)) OR
-          ($rm_pos<1) or ($f_auth[0]==0)) 
-       if ((($default_facility>0) AND ($rm_pos == $default_facility)) OR
-            ($default_facility<1) OR ($rm_pos<1))
-        echo "
-          <OPTION VALUE=\"$row[id]\" ".
-	  ( ($row[id] == $param) ? "SELECTED" : "" ).
-          ">".prepare("$row[roomname] $row[roomdescrip]")."
-        "; // actually show it
-
-    } // while there are more results...
-  } // end master loop
-} // end function freemed_display_rooms
-*/
 
 // function freemed_display_selectbox
-function freemed_display_selectbox ($result, $format, $param="")
-{
-  global $$param; // so it knows to put SELECTED on properly
-  static $var; // array of $result-IDs so we only go through them once
-  static $count; // count of results
-  global $sql; // for database connection
+function freemed_display_selectbox ($result, $format, $param="") {
+	global ${$param}; // so it knows to put SELECTED on properly
+	global $sql; // for database connection
 
-  if (!isset($var["$result"])) {
-    if ($result) {
-      $count["$result"] = $sql->num_rows($result);
-      while ($var["$result"][] = $sql->fetch_array($result));
-    } // non-empty result
-  } // if we haven't gone through this list yet
+	static $var; // array of $result-IDs so we only go through them once
+	static $count; // count of results
+
+	if (!isset($var["$result"])) {
+		if ($result) {
+			$count["$result"] = $sql->num_rows($result);
+			while ($var["$result"][] = $sql->fetch_array($result));
+		} // non-empty result
+	} // if we haven't gone through this list yet
  
-  $buffer = "";
-  if ($count["$result"]<1) { 
-    $buffer .= _("NONE")."
-      <INPUT TYPE=HIDDEN NAME=\"$param\" VALUE=\"0\">";
-    return $buffer; // do nothing!
-  } // if no result
+	$buffer = "";
+	if ($count["$result"]<1) { 
+		$buffer .= _("NONE")." ".
+			"<INPUT TYPE=HIDDEN NAME=\"$param\" VALUE=\"0\">";
+		return $buffer; // do nothing!
+	} // if no result
 
-  $buffer .= "
-    <SELECT NAME=\"$param\">
-      <OPTION VALUE=\"0\">"._("NONE SELECTED")."
-  ";
-  reset($var["$result"]); // if we're caching it, we have to reset it!
-  while ( (list($pickle,$item) = each($var["$result"])) 
-                                     AND ($item[id])) { // no null values!
-    // START FORMAT-FETCHING
-    $format_array = explode("#",$format); // odd members are variable names!
-    while (list($index,$str) = each($format_array)) {
-      if ( !($index & 1) ) continue; // ignore the evens!
-      $format_array[$index] = $item[$str];// can't just change $str!
-    } // while replacing each variable name
-    $this_format = join("", $format_array); // put it back together
-    // END FORMAT-FETCHING    
-    $buffer .= "
-      <OPTION VALUE=\"$item[id]\" ".
-      ( ($item[id] == $$param) ? "SELECTED" : "" ).
-      ">".prepare($this_format)."\n";
-  } // while fetching result
-  $buffer .= "
-    </SELECT>
-  ";
+	$buffer .= "
+		<SELECT NAME=\"$param\">
+		<OPTION VALUE=\"0\">"._("NONE SELECTED")."
+	";
+	
+	reset($var["$result"]); // if we're caching it, we have to reset it!
+	// no null values!
+	while ( (list($pickle,$item) = each($var["$result"])) AND ($item[id])) {
+		// START FORMAT-FETCHING
+		// Odd members are variable names
+		$format_array = explode("#",$format);
+		while (list($index,$str) = each($format_array)) {
+			// ignore the evens!
+			if ( !($index & 1) ) continue;
+			// can't just change $str!
+			$format_array[$index] = $item[$str];
+		} // while replacing each variable name
+		// put it back together
+		$this_format = join("", $format_array);
+		// END FORMAT-FETCHING    
+
+		$buffer .= "
+		<OPTION VALUE=\"$item[id]\" ".
+		( ($item[id] == $$param) ? "SELECTED" : "" ).
+		">".prepare($this_format)."\n";
+	} // while fetching result
+	$buffer .= "
+	</SELECT>
+	";
   
-  return $buffer;
+	return $buffer;
 } // end function freemed_display_selectbox
 
 // function freemed_export_stock_data
-function freemed_export_stock_data ($table_name, $file_name="")
-{
-  global $sql, $default_language, $cur_date_hash, 
-         $debug;
+function freemed_export_stock_data ($table_name, $file_name="") {
+	global $sql, $default_language, $cur_date_hash, $debug;
 
-  $physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . "/" .
-    $table_name . "." . $default_language . "." . $cur_date_hash;
+	$physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . 
+		"/" .  $table_name . "." . $default_language . "." . 
+		$cur_date_hash;
 
-  #if (strlen ($file_name) > 2) $physical_file = $file_name;
+	//if (strlen ($file_name) > 2) $physical_file = $file_name;
 
-  #if (file_exists ($physical_file)) { return false; } // fix this later
+	//if (file_exists ($physical_file)) { return false; } // fix this later
 
-  $query = "SELECT * FROM $table_name
-            INTO OUTFILE '$physical_file'
-            FIELDS TERMINATED BY ','
-            OPTIONALLY ENCLOSED BY ''
-            ESCAPED BY '\\\\'";
+	$query = "SELECT * FROM ".addslashes($table_name)." ".
+		"INTO OUTFILE '".addslashes($physical_file)."' ".
+		"FIELDS TERMINATED BY ',' ".
+		"OPTIONALLY ENCLOSED BY '' ".
+		"ESCAPED BY '\\\\'";
 
-  if ($debug) echo "<BR> query = \"$query\" <BR> \n";
+	if ($debug) echo "<BR> query = \"$query\" <BR> \n";
 
-  $result = $sql->query ($query);
+	$result = $sql->query ($query);
 
-  if ($debug) echo "<BR> result = \"$result\" <BR> \n";
+	if ($debug) echo "<BR> result = \"$result\" <BR> \n";
 
-  return $result;
-
+	return $result;
 } // end function freemed_export_stock_data
 
 // function freemed_get_date_next
 //  return the next valid date (YYYY-MM-DD)
-function freemed_get_date_next ($cur_dt)
-{
-  global $cur_date;
+function freemed_get_date_next ($cur_dt) {
+	global $cur_date;
 
-  $y = substr ($cur_dt, 0, 4); // get year
-  $m = substr ($cur_dt, 5, 2); // get month
-  $d = substr ($cur_dt, 8, 2); // get date
+	$y = substr ($cur_dt, 0, 4); // get year
+	$m = substr ($cur_dt, 5, 2); // get month
+	$d = substr ($cur_dt, 8, 2); // get date
 
-  // check for validity of given date... if not, cur_date
-  if (!checkdate($m, $d, $y)) { 
-    $y = substr ($cur_date, 0, 4);
-    $m = substr ($cur_date, 5, 2);
-    $d = substr ($cur_date, 8, 2); 
-  }
+	// check for validity of given date... if not, cur_date
+	if (!checkdate($m, $d, $y)) { 
+		$y = substr ($cur_date, 0, 4);
+		$m = substr ($cur_date, 5, 2);
+		$d = substr ($cur_date, 8, 2); 
+	}
 
-  if (!checkdate($m, $d + 1, $y)) { // roll day?
-    if (!checkdate($m + 1, 1, $y)) { // roll month?
-      // roll year
-      return date ("Y-m-d", mktime (0,0,0,1,1,$y+1));
-    } else {
-      // roll month
-      return date ("Y-m-d", mktime (0,0,0,$m+1,1,$y));
-    }
-  } else {
-    // roll day
-    return date ("Y-m-d", mktime (0,0,0,$m,$d+1,$y));
-  }
+	if (!checkdate($m, $d + 1, $y)) { // roll day?
+		if (!checkdate($m + 1, 1, $y)) { // roll month?
+			// roll year
+			return date ("Y-m-d", mktime (0,0,0,1,1,$y+1));
+		} else {
+			// roll month
+			return date ("Y-m-d", mktime (0,0,0,$m+1,1,$y));
+		} // end checking roll month?
+	} else { // checking roll day
+		// roll day
+		return date ("Y-m-d", mktime (0,0,0,$m,$d+1,$y));
+	} // end checking roll day
 } // end function freemed_get_date_next
 
 // function freemed_get_date_prev
 //   returns the previous date
-function freemed_get_date_prev ($cur_dt)
-{
-  global $cur_date;
+function freemed_get_date_prev ($cur_dt) {
+	global $cur_date;
 
-  $y = substr ($cur_dt, 0, 4); // year
-  $m = substr ($cur_dt, 5, 2); // month
-  $d = substr ($cur_dt, 8, 2); // day 
+	$y = substr ($cur_dt, 0, 4); // year
+	$m = substr ($cur_dt, 5, 2); // month
+	$d = substr ($cur_dt, 8, 2); // day 
 
-  if (!checkdate ($m, $d, $y)) {
-    $y = substr ($cur_date, 0, 4);
-    $m = substr ($cur_date, 5, 2);
-    $d = substr ($cur_date, 8, 2);
-  } // if not right, use current date
+	if (!checkdate ($m, $d, $y)) {
+		$y = substr ($cur_date, 0, 4);
+		$m = substr ($cur_date, 5, 2);
+		$d = substr ($cur_date, 8, 2);
+	} // if not right, use current date
 
-  if (($d==1) AND ($m>1)) { // if first day...
-    $d = 31; $m--; // roll back
-    while (!checkdate ($m, $d, $y)) 
-      $d--; // while day too high, decrease
-    return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
-  } else if (($d==1) AND ($m==1)) { 
-    // roll back year
-    $m=12; $y--; $d=31;
-    return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
-  } else {
-    // roll back day
-    $d--;
-    return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
-  }  
+	if (($d==1) AND ($m>1)) { // if first day...
+		$d = 31; $m--; // roll back
+		  // while day too high, decrease
+		while (!checkdate ($m, $d, $y)) $d--;
+		return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
+	} else if (($d==1) AND ($m==1)) { 
+		// roll back year
+		$m=12; $y--; $d=31;
+		return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
+	} else { // checking for day
+		// roll back day
+		$d--;
+		return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
+	} // end checking for first day
 } // end function freemed_get_date_prev
 
 // function freemed_get_link_rec
 //   return the entire record as an array for
 //   a link
-function freemed_get_link_rec($id="0", $table="")
-{
-  global $database, $sql;
+function freemed_get_link_rec($id="0", $table="") {
+	global $database, $sql;
 
-  if (empty($table)) {
-    return "";
-  }
+	if (empty($table)) {
+		return "";
+	}
 
-  $result=$sql->query("SELECT * FROM ".addslashes($table)." WHERE
-    id='".addslashes($id)."'"); // get just that record
-  return $sql->fetch_array($result); // return the array
+	$result = $sql->query("SELECT * FROM ".addslashes($table)." WHERE".
+		" id='".addslashes($id)."'"); // get just that record
+	return $sql->fetch_array($result); // return the array
 
 } // end function freemed_get_link_rec
 
 // function freemed_get_link_field
 //   return a particular field from a link...
-function freemed_get_link_field($id="0", $db="", $field="id")
-{
-  global $database;
+function freemed_get_link_field($id, $db, $field="id") {
+	global $database;
 
-  if (strlen($db)<1) {
-    return "";
-  }
+	if (strlen($db)<1) { return NULL; }
 
-  $this_array=freemed_get_link_rec($id,$db);
-  return $this_array["$field"];
+	// Retrieve the entire record
+	$this_array = freemed_get_link_rec($id, $db);
 
+	// Return just the key asked for
+	return $this_array["$field"];
 } // end function freemed_get_link_field
 
 // function freemed_get_userlevel
@@ -1257,60 +887,41 @@ function freemed_get_userlevel ($f_cookie="") {
 
 // function freemed_import_stock_data
 //  import stock data from data/$language directory
-function freemed_import_stock_data ($table_name)
-{
-  global $default_language, $sql;
+function freemed_import_stock_data ($table_name) {
+	global $default_language, $sql;
 
-  $physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . "/" .
-    $table_name . "." . $default_language . ".data";
+	// Produce a physical location
+	$physical_file = PHYSICAL_LOCATION . "/data/" . $default_language .
+		"/" .  $table_name . "." . $default_language . ".data";
 
-  if (!file_exists($physical_file)) return false;
+	// Die if the phile doesn't exist
+	if (!file_exists($physical_file)) return false;
 
-  $query = "LOAD DATA LOCAL INFILE '$physical_file' INTO
-            TABLE $table_name
-            FIELDS TERMINATED BY ','";
+	// Create the query
+	$query = "LOAD DATA LOCAL INFILE '$physical_file' INTO
+		TABLE $table_name
+		FIELDS TERMINATED BY ','";
            
-  $result = $sql->query ($query); // try doing it
+	$result = $sql->query ($query); // try doing it
 
-  return $result; // send the results home...
+	return $result; // send the results home...
 } // end function freemed_import_stock_data
 
-// function freemed_inscogroup_display
-//   displays inscogroup entry in text format
-function freemed_inscogroup_display ($param)
-{
-  global $NONE_SELECTED, $NO_RESULT_OF_QUERY, $debug;
-
-  if ((strlen($param)<1) OR ($param=="0")) {
-    echo " "._("NONE SELECTED")." ";
-  } else {
-    $query = "SELECT * FROM inscogroup ".
-       "WHERE id='".addslashes($param)."'";
-    $result = $sql->query ($query);
-    if (!$result) {
-      echo "$NO_RESULT_OF_QUERY";
-      // don't do anything...! 
-    } else { // exit if no more
-      $row = $sql->fetch_array($result); 
-      echo prepare ($row[inscogroup]).
-       ( $debug ? " [ $row[id] ]" : "" )."\n";
-    }
-  }
-} // end function freemed_inscogroup_display
-
 // function freemed_log
-function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
-  global $LoginCookie, $cur_date, $sql;
+/*
+ TODO: FIX ME!
+function freemed_log ($db_name, $record_number, $comment) {
+	global $cur_date, $sql, $SESSION;
 
-  if (empty($f_cookie)) $f_cookie = $LoginCookie;
+	$f_auth = explode (":", $f_cookie);
+	$f_user = $f_auth [0];  // extract the user number
 
-  $f_auth = explode (":", $f_cookie);
-  $f_user = $f_auth [0];  // extract the user number
-  $query = "INSERT INTO log VALUES ( '$cur_date',
-    '$f_user', '$db_name', '$record_number', '$comment', NULL )";
-  $result = $sql->query ($query); // perform addition
-  return true;  // return true
+	$query = "INSERT INTO log VALUES ( '$cur_date',
+	$f_user', '$db_name', '$record_number', '$comment', NULL )";
+	$result = $sql->query ($query); // perform addition
+	return true;  // return true
 } // end function freemed_log
+*/
 
 // function freemed_module_check
 function freemed_module_check ($module, $minimum_version="0.01")
@@ -1372,49 +983,46 @@ function freemed_module_register ($module, $version)
 
 // function freemed_multiple_choice
 function freemed_multiple_choice ($sql_query, $display_field, $select_name,
-  $blob_data, $display_all=true)
-{
-  global $sql;
-  $buffer = "";
+  $blob_data, $display_all=true) {
+	global $sql;
+	$buffer = "";
 
-  $brackets = "[]";
-  $result = $sql->query ($sql_query); // check
-  $all_selected = fm_value_in_string ($blob_data, "-1");
+	$brackets = "[]";
+	$result = $sql->query ($sql_query); // check
+	$all_selected = fm_value_in_string ($blob_data, "-1");
 
+	$buffer .= " 
+	<SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
+	";
+	if ($display_all) $buffer .= "
+		<OPTION VALUE=\"-1\" ".
+		($all_selected ? "SELECTED" : "").">"._("ALL")."
+	"; // if there is nothing...
 
-  $buffer .= " 
-    <SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
-  ";
-  if ($display_all) $buffer .= "
-      <OPTION VALUE=\"-1\" ".
-       ($all_selected ? "SELECTED" : "").">"._("ALL")."
-  "; // if there is nothing...
-
-  if ( $sql->results ($result) ) 
-   while ($r = $sql->fetch_array ($result)) {
-    if (strpos ($display_field, ":")) {
-      $displayed = ""; // set as null
-      $split_display_field = explode (":", $display_field);
-      for ($sl=0; $sl<sizeof($split_display_field); $sl++) {
-        $displayed .= $r[$split_display_field[$sl]];
-        if ($sl < (sizeof ($split_display_field) - 1))
-          $displayed .= ", "; // if not the last, insert separator
-      }
-    } else { // if it is only one field
-      $displayed = $r[$display_field];
-    } // end if-else displayed loop
-    $id = $r["id"];
-    if ($debug) $debuginfo = " [$id] ";
-    $buffer .= "
-      <OPTION VALUE=\"".prepare($id)."\" ".
-       ( (fm_value_in_string ($blob_data, $id)) ? "SELECTED" : "" ).
-       ">$displayed $debuginfo
-    ";
-  } // end while
-  $buffer .= "
-    </SELECT>
-  "; // end the select tag
-  return $buffer;
+	if ( $sql->results ($result) ) 
+		while ($r = $sql->fetch_array ($result)) {
+			if (strpos ($display_field, ":")) {
+				$displayed = ""; // set as null
+				$split_display_field = explode (":", $display_field);
+				for ($sl=0; $sl<sizeof($split_display_field); $sl++) {
+					$displayed .= $r[$split_display_field[$sl]];
+					// If not the last, insert separator
+					if ($sl < (sizeof ($split_display_field) - 1))
+						$displayed .= ", "; 
+				}
+			} else { // if it is only one field
+				$displayed = $r[$display_field];
+			} // end if-else displayed loop
+		$id = $r["id"];
+		if ($debug) $debuginfo = " [$id] ";
+		$buffer .= "
+		<OPTION VALUE=\"".prepare($id)."\" ".
+		( (fm_value_in_string ($blob_data, $id)) ? "SELECTED" : "" ).
+		">$displayed $debuginfo
+		";
+	} // end while
+	$buffer .= " </SELECT>\n"; // end the select tag
+	return $buffer;
 } // end function freemed_multiple_choice
 
 // function freemed_open_db
@@ -1423,8 +1031,8 @@ function freemed_open_db ($my_cookie) {
 	global $display_buffer;
 
 	// Verify
-  if (!freemed_verify_auth()) {
-    $display_buffer .= "<!-- -->
+	if (!freemed_verify_auth()) {
+		$display_buffer .= "<!-- -->
       <CENTER>
       <B>
       <P>
@@ -1433,27 +1041,21 @@ function freemed_open_db ($my_cookie) {
       <I>"._("It is possible that your cookies have expired.")."</I>
       <P>
       </B>
-      <A HREF=\"".BASE_URL."\">"._("Return to the Login Screen")."</A>
+      <A HREF=\"index.php\">"._("Return to the Login Screen")."</A>
       </CENTER>
-    ";
-    template_display();
-  } else {
-    //if ((strlen($default_facility)>0) AND ($default_facility!=" "))
-    //  SetCookie ("default_facility", $default_facility,
-    //   time()+$_cookie_expire);
-    //echo "df = $default_facility <BR>";
-  } // end if connected loop
-
+		";
+		template_display();
+	} // end if connected loop
 } // end function freemed_open_db
 
 // function freemed_patient_box
 //   general purpose patient link/info box
 function freemed_patient_box ($patient_object) {
-  // empty buffer
-  $buffer = "";
+	// empty buffer
+	$buffer = "";
 
-  // top of box
-  $buffer .= "
+	// top of box
+	$buffer .= "
     <CENTER>
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
      <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
@@ -1479,10 +1081,10 @@ function freemed_patient_box ($patient_object) {
      </TD></TR>
     </TABLE>
     </CENTER>
-    ";
+	";
   
-  // return buffer
-  return $buffer;
+	// return buffer
+	return $buffer;
 } // end function freemed_patient_box
 
 // function freemed_search_query()

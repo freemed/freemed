@@ -34,7 +34,7 @@ if ($patient<1) {
  if ( (($action=="addform") or ($action=="modform") or
        ($action=="add")     or ($action=="mod"    ))
       AND ($form<1)) {
-  freemed_display_box_top (_($record_name)." :: "._("ERROR"));
+  $page_title = _($record_name)." :: "._("ERROR");
   $display_buffer .= "
    <P>
    <CENTER>
@@ -42,9 +42,7 @@ if ($patient<1) {
    </CENTER>
    <P>
   ";
-  freemed_display_box_bottom ();
   freemed_close_db ();
-  freemed_display_html_bottom ();
   template_display();
  } // end checking for valud form
 
@@ -90,8 +88,8 @@ if ($patient<1) {
      } // end internal loop
      break;
    } // end interior action switch
-   freemed_display_box_top ( (($action=="addform") ? _("Add") : _("Modify")).
-     " "._($record_name)); 
+   $page_title = (($action=="addform") ? _("Add") : _("Modify")).
+     " "._($record_name); 
    $display_buffer .= freemed_patient_box($this_patient)."
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -331,7 +329,6 @@ if ($patient<1) {
     </FORM>
     <P>
    ";
-   freemed_display_box_bottom ();
    break; // end add/modform
 
   case "add":
@@ -397,8 +394,8 @@ if ($patient<1) {
                 WHERE   id = '$id'";
       break;
    } // end inner action switch 
-   freemed_display_box_top (( ($action=="add") ? _("Adding") : _("Modifying")).
-     " "._($record_name));
+   $page_title =  ( ($action=="add") ? _("Adding") : _("Modifying")).
+     " "._($record_name);
    $display_buffer .= "
      <P><CENTER>
      ".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
@@ -418,11 +415,10 @@ if ($patient<1) {
     </CENTER>
     <P>
     ";
-   freemed_display_box_bottom ();
    break;
 
   default: // default view is listing...
-   freemed_display_box_top (_($record_name));
+   $page_title = _($record_name);
    $result = $sql->query ("SELECT * FROM $table_name
                          WHERE prpatient='".addslashes($patient)."'
                          ORDER BY prdtadd DESC");
