@@ -4,7 +4,7 @@
 	// code: fred trotter (ftrotter@synseer.com)
 	// lic: GPL, v2
 
-// Class: FreeMEDSelfTest
+// Class: FreeMED.FreeMEDSelfTest
 //
 //	Class used by FreeMED to determine if its components are in working
 //	order. This should only be called before login; any other use is
