@@ -220,6 +220,7 @@ class FacilityModule extends MaintenanceModule {
   if (!$book->is_done()) {
     $display_buffer .= $book->display();
   } else {
+    global $psrphone, $psrfax;
     $psrphone = fm_phone_assemble("psrphone");
     $psrfax   = fm_phone_assemble("psrfax");
     switch ($action) { // internal action switch
