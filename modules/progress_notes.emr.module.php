@@ -199,8 +199,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<u>S</u>ubjective") =>
-          "<TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".prepare($pnotes_S)."</TEXTAREA>"
+		html_form::text_area('pnotes_S', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -211,8 +210,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<u>O</u>bjective") =>
-          "<TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".prepare($pnotes_O)."</TEXTAREA>"
+		html_form::text_area('pnotes_O', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -223,8 +221,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>A</U>ssessment") =>
-          "<TEXTAREA NAME=\"pnotes_A\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".prepare($pnotes_A)."</TEXTAREA>"
+		html_form::text_area('pnotes_A', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -235,8 +232,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>P</U>lan") =>
-          "<TEXTAREA NAME=\"pnotes_P\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".prepare($pnotes_P)."</TEXTAREA>"
+		html_form::text_area('pnotes_P', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -247,8 +243,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>I</U>nterval") =>
-          "<TEXTAREA NAME=\"pnotes_I\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".prepare($pnotes_I)."</TEXTAREA>"
+		html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -259,8 +254,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>E</U>ducation") =>
-          "<TEXTAREA NAME=\"pnotes_E\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".prepare($pnotes_E)."</TEXTAREA>"
+		html_form::text_area('pnotes_E', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -271,8 +265,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("P<U>R</U>escription") =>
-          "<TEXTAREA NAME=\"pnotes_R\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".prepare($pnotes_R)."</TEXTAREA>"
+		html_form::text_area('pnotes_R', 'VIRTUAL', 20, 75),
         )
        )
      );
