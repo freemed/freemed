@@ -44,7 +44,7 @@ class placeOfServiceMaintenance extends freemedMaintenanceModule {
 				_("Code") => "posname",
 				_("Description") => "posdescrip"
 			),
-			array ("", _("NO DESCRIPTION")), "", "t_page"
+			array ("", _("NO DESCRIPTION"))
 		);
 	} // end function module->view
 
