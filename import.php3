@@ -84,7 +84,7 @@ switch ($action) {
      <OPTION VALUE=\"simplereport\">Simple Reports (simplereport)
      <OPTION VALUE=\"specialties\" >Specialties (specialties)
      <OPTION VALUE=\"tos\"         >Type of Service (tos)
-     <OPTION VALUE=\"users\"       >User Database (users)
+     <OPTION VALUE=\"user\"        >User Database (user)
     </SELECT>
     <P>
     <CENTER>
