@@ -381,6 +381,7 @@ if ($action=="cfgform") {
     ptinsstart   TEXT,
     ptinsend     TEXT,
     ptnextofkin  TEXT,
+    ptblood      CHAR(3),
     iso          VARCHAR(15),
     ptdep        INT UNSIGNED,
     ptins1 	 INT UNSIGNED,
@@ -395,6 +396,9 @@ if ($action=="cfgform") {
     ptinsgrp3	 VARCHAR(50),
     ptdead       INT UNSIGNED,
     ptdeaddt     DATE,
+    pttimestamp       TIMESTAMP(16),
+    ptemritimestamp   TIMESTAMP(16),
+    ptemriversion     BLOB,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");

@@ -146,6 +146,23 @@ foreach ($static_components AS $garbage => $component) {
 		} // end checking for results
 		break; // end custom_reports
 
+		case "medical_information":
+		$panel[_("Medical Information")] = "
+		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
+		 CELLPADDING=3 CLASS=\"thinbox\">
+		<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+		 CLASS=\"menubar_items\">
+		(no actions)
+		</TD></TR>
+		<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		<DIV ALIGN=\"CENTER\">
+		<TABLE WIDTH=\"100%\" BORDER=\"0\">
+		<TR><TD ALIGN=\"LEFT\"><B>"._("Blood Type")."</B></TD> 
+		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></TR>
+		</TABLE>
+		</TD></TR></TABLE>";
+		break; // end medical_information
+
 		case "photo_id":
 		// If there is a file with that name, show it, else box
 		if (file_exists("img/store/$id.identification.jpg")) {
