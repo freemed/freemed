@@ -97,7 +97,13 @@ switch ($action) {
     </TD></TR></TABLE>
 
     <P>
-
+    ";
+    
+    $fac_r = fdb_query("SELECT * FROM facility ORDER BY psrname,psrnote");
+    if (!isset($cifacility)) $cifacility=$default_facility; 
+      // doesn't seem to hurt, but doesn't seem to do anything...
+   
+    echo "
     <TABLE WIDTH=100% BORDER=0 ALIGN=CENTER VALIGN=CENTER
      CELLSPACING=0 CELLPADDING=5>
      <TR>
@@ -118,27 +124,23 @@ switch ($action) {
      </TR>
      <TR>
       <TD ALIGN=RIGHT><$STDFONT_B>$Facility <$STDFONT_E></TD>
-      <TD><SELECT NAME=\"cifacility\"> 
-    ";
-    freemed_display_facilities ($default_facility);
-    echo "
-       </SELECT>
+      <TD>
+      ".freemed_display_selectbox ($fac_r, "#psrname# [#psrnote#]", "cifacility")."
       </TD>
      </TR>
      <TR>
       <TD ALIGN=RIGHT><$STDFONT_B>$Physician <$STDFONT_E></TD>
-      <TD><SELECT NAME=\"ciphysician\">
+      <TD>
     ";
 
     if ($ciphysician < 1) {
       $ciphysician = freemed_get_link_field ($default_facility, "facility",
         "psrdefphy");
     }
-
-    freemed_display_physicians($ciphysician);
+    $phys_r = fdb_query("SELECT * FROM physician ORDER BY phylname, phyfname");
 
     echo "
-          </SELECT>
+    ".freemed_display_selectbox($phys_r, "#phylname#, #phyfname#", "ciphysician")."
       </TD>
     </TR>
     </TABLE>
@@ -249,7 +251,7 @@ switch ($action) {
     <BR>
   ";
 
-  freemed_display_actionbar ($page_name);
+  echo freemed_display_actionbar ($page_name);
 
   $_alternate = freemed_bar_alternate_color ();
 
@@ -365,7 +367,7 @@ switch ($action) {
     </TABLE>
   "; // end of the table
 
-  freemed_display_actionbar ($page_name);
+  echo freemed_display_actionbar ($page_name);
 
   echo "
     <BR>
