@@ -26,55 +26,17 @@ $cur_date_hash=date("Ymd");		// YYYYMMDD date hash
 $local_date_display="%Y-%m-%d";       // United States
   // $local_date_display="%d.%m.%Y";    // European countries
 
-    // **********************************
-    // ***** customizable variables *****
-    // **********************************
-define ('INSTALLATION', "Stock Freemed Install"); // installation name
-define ('LOCALEDIR',	"/usr/share/locale");     // gettext location
-define ('DB_HOST', "localhost");	// database (SQL) host location
-define ('DB_NAME', "freemed");	// database name
-define ('DB_USER', "root");				// SQL server username
-define ('DB_PASSWORD', "password");		// SQL server password
-define ('PHYSICAL_LOCATION', "/usr/share/freemed");
-define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
-define ('BUG_TRACKER', false);   // set bug tracker on or off
-define ('TEMPLATE', "default");	// set default template
+//----- Import settings
+include_once('lib/settings.php');
 
-define ('HOST', 'localhost');             // host name for this system
-define ('BASE_URL', '/freemed');		// offset (i.e. http://here/package)
-define ('HTTP', 'http');                // http for normal, https for SSL
-define ('SESSION_PROTECTION', true);	// strong session protection?
-$default_language="EN";               // default language
-
-    // GPG settings
-    //
-    // customize if you are using the db backup maintenance module with
-    // pgp. for keyring, you need to as root create /home/nobody,
-    // chown nobody:nobody /home/nobody
-    // su nobody
-    // export HOME=/home/nobody; cd $HOME
-    // use GPG to encrypt a file, run it twice
-    // you should now have /home/nobody/.gpg
-
-define ('USE_GPG', false);	// encrypt backups? (true/false)
-define ('GPG_PASSPHRASE_LOCATION', PHYSICAL_LOCATION.'/lib/gpg_phrase.php');
-define ('GPG_HOME', "/home/nobody");
-
-    // *************************************
-    // ** fax subsystem  --please        ***
-    // ** read incoming_fax_scripts.mk   ***
-    // *************************************
-
+//----- Fax subsystem
 $gifhome = PHYSICAL_LOCATION . '/data/fax/incoming';
 
-    // *************************************
-    // ***** language setting routines *****
-    // *************************************
+//----- Gettext and language settings
 
 if (strlen($u_lang)==2) $language=$u_lang;
   else $language=$default_language;
 
-    // don't touch these variables either...
 define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
 
 $debug=false;  // true=debug info on, false=debug info off
@@ -129,15 +91,19 @@ include_once ("/usr/share/phpwebtools/webtools.php"); // webtools toolkit
 define ('WEBTOOLS_REQUIRED', '0.4.0');   // version of phpwebtools required
 
   // version check for webtools
-if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) )
-	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required for this version of freemed ".
+if ( !defined("WEBTOOLS_VERSION") or
+		!version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) ) {
+	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required ".
+		"for this version of FreeMED ".
 		"(http://phpwebtools.sourceforge.net/)\n");
+}
 
 // ********************** START SESSION **************************
 if (!defined('SESSION_DISABLE')) {
 	// This is *only* disabled when XML-RPC calls are being made,
 	// etc, so that it does not require information it can't get.
 	session_start();
+
 	session_register(
 		'authdata',
 		'current_patient',
@@ -158,7 +124,6 @@ if (!defined('SESSION_DISABLE')) {
 	// is running, as it stores several variables in session
 	// tracking.
 	include_once ("lib/i18n.php");
-	set_up_language($_SESSION['language']);
 }
 // ***************************************************************
 
@@ -176,6 +141,7 @@ include_once ("lib/xml.php");             // XML import/export routines
     //   SQL_MSQL     - mSQL backend
 define ('DB_ENGINE', SQL_MYSQL);
 
+//----- Create SQL database object
 $sql = CreateObject (
 	'PHP.sql', 
 	DB_ENGINE,
