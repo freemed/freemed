@@ -5,9 +5,9 @@
  //       language support by Max Klohn (amk@span.ch)
  // lic : GPL, v2
 
- $page_name="admin.php3"; // for help, later
- include "global.var.inc";
- include "freemed-functions.inc"; // include generic functions
+ $page_name=basename($GLOBALS["REQUEST_URI"]);
+ include ("global.var.inc");
+ include ("freemed-functions.inc"); // include generic functions
 
  SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -291,9 +291,9 @@ if ($action=="cfgform") {
   freemed_display_box_bottom ();
 
 } elseif ($action=="reinit_sure") {
-  # here we actually put the reinitialization (read - wiping
-  # and creating the database structure again) code... so that
-  # stupids don't accidentally click on it and... oops!
+ // here we actually put the reinitialization (read - wiping
+ // and creating the database structure again) code... so that
+ // stupids don't accidentally click on it and... oops!
 
   if ($first_time!="first") {
     echo "<$STDFONT_B>"._("Erasing old database")."... ";

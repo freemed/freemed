@@ -5,20 +5,10 @@
   //       adam b (gdrago23@yahoo.com) -- near-complete rewrite
   // lic : GPL
   
-    // *** local variables section ***
-    // complete these to reflect the data for this
-    // module.
-
-  $page_name  ="user.php3";           // for help info, later
-  $db_name    ="user";                // get this from jeff
-  $record_name="User";                // such as Room for Rooms module
-                                      // or "CPT Modifiers" for cptmod
-  $order_field="id";                  // what field the records are
-                                      // sorted by... multiples can
-                                      // be used with commas
-                                      // ("value_a, value_b")
-
-    // *** includes section ***
+  $page_name  = basename($GLOBALS["REQUEST_URI"]);
+  $db_name    ="user";
+  $record_name="User";
+  $order_field="id";
 
   include ("global.var.inc");         // load global variables
   include ("freemed-functions.inc");  // API functions
@@ -429,4 +419,5 @@ switch($action) { // master action switch
 freemed_close_db(); // always close the database when done!
 freemed_display_html_bottom (); // starting here, combined php3 code areas
 
+w
 ?>

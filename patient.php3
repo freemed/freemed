@@ -614,7 +614,7 @@ switch ($action) {
      } // end switch for action (done .. actual action)
      echo "
       <CENTER><$STDFONT_B>".( (($action=="mod") OR ($action=="modform")) ?
-             _("Modifying... ") : _("Adding...") );
+             _("Modifying") : _("Adding") )." ... ";
      $result = fdb_query($query);
      if ($result) echo _("Done");
      else echo _("Error");
