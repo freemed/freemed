@@ -12,8 +12,8 @@ if (!defined("__FREEMED_PHP__")) {
 
 define ('__FREEMED_PHP__', true);
 
-    // these variables you should not touch
-define ('PACKAGENAME', "freemed");				// package name
+    // These variables you should not touch
+define ('PACKAGENAME', "FreeMED");				// package name
 define ('CODED_BY', "The FreeMED Project");		// coded by tag
 define ('VERSION', "0.6.0");	// current version
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
