@@ -104,6 +104,11 @@ $book->add_page("Static Components",
 			"static_components", "patient_information", " "
 		),
 
+		_("Photographic Identification") =>
+		html_form::checkbox_widget(
+			"static_components", "photo_id", " "
+		),
+
 /*
 		_("Custom Reports") =>
 		html_form::checkbox_widget(

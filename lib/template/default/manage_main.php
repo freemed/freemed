@@ -107,6 +107,13 @@ foreach ($static_components AS $garbage => $component) {
 			"ORDER BY prtname");
 		if ($sql->results($f_results)) {
 			$panel[_("Custom Records")] .= "
+			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
+			 CELLPADDING=3 CLASS=\"thinbox\">
+			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER
+			 CLASS=\"menubar_items\">
+			</TD></TR>
+			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+			<DIV ALIGN=\"CENTER\">
           		<FORM ACTION=\"custom_records.php\" METHOD=POST>
         		<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($id)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
@@ -119,6 +126,8 @@ foreach ($static_components AS $garbage => $component) {
 				</SELECT>
 				<INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
 				</FORM>
+				</DIV>
+				</TD></TR></TABLE>
 			";
 		} else {
 			// Quick null panel
@@ -136,6 +145,56 @@ foreach ($static_components AS $garbage => $component) {
 			";
 		} // end checking for results
 		break; // end custom_reports
+
+		case "photo_id":
+		// If there is a file with that name, show it, else box
+		if (file_exists("img/store/$id.identification.jpg")) {
+			$panel[_("Photo ID")] = "
+			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
+			 CELLPADDING=3 CLASS=\"thinbox\">
+			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+			 CLASS=\"menubar_items\">
+			<A HREF=\"photo_id.php?patient=".urlencode($id)."\"
+			 >"._("Update")."</A> |
+			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
+			"action=remove\"
+			 >"._("Remove")."</A>
+			</TD></TR>
+			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+			<DIV ALIGN=\"CENTER\">
+			<A HREF=\"patient_image_handler.php?".
+			"patient=".urlencode($patient)."&".
+			"id=identification\" TARGET=\"new\"
+			onMouseOver=\"window.status='"._("Enlarge image")."'; return true;\"
+			onMouseOut=\"window.status=''; return true;\"
+			><IMG SRC=\"patient_image_handler.php?".
+			"patient=".urlencode($id)."&id=identification\"
+			 BORDER=\"0\" ALT=\"Photographic Identification\"
+			 WIDTH=\"200\"></A>
+			</DIV>
+			</TD></TR>
+			</TABLE>
+			";
+
+		} else {
+			$panel[_("Photo ID")] = "
+			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
+			 CELLPADDING=3 CLASS=\"thinbox\">
+			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+			 CLASS=\"menubar_items\">
+			<A HREF=\"photo_id.php?patient=".urlencode($id)."\"
+			 >"._("Update")."</A>
+			</TD></TR>
+			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+			<DIV ALIGN=\"CENTER\">
+			"._("No photographic identification on file.")."
+			<BR><BR>
+			</DIV>
+			</TD></TR>
+			</TABLE>
+			";
+		}
+		break; // end photo_id
 
 		case "patient_information":
 		//----- Determine date of last visit
