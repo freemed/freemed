@@ -198,7 +198,10 @@ class freemedEMRModule extends freemedModule {
 		global $sql, $display_buffer;
 
 		// get last $items results
-		$query = "SELECT * FROM ".$this->table_name." ".
+		$query = "SELECT *".
+			( (count($this->summary_query)>0) ? 
+			",".join(",", $this->summary_query)." " : " " ).
+			"FROM ".$this->table_name." ".
 			"WHERE $this->patient_field='".addslashes($patient)."' ".
 			"ORDER BY id DESC LIMIT ".addslashes($items);
 		$result = $sql->query($query);
