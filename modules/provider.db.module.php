@@ -59,16 +59,15 @@ class providerMaintenance extends freemedMaintenanceModule {
 	); // end of variables list
 
 	function providerMaintenance () {
-		global $phyphonea, $phyfaxa, $phyfaxb, $phycellular, $phypager,
-			$physsn;
+		foreach ($GLOBALS AS $k => $v) global $$k;
 		$this->freemedMaintenanceModule();
-        $phyphonea	= fm_phone_assemble("phyphonea");
-        $phyfaxa	= fm_phone_assemble("phyfaxa");
-        $phyphoneb	= fm_phone_assemble("phyphoneb");
-        $phyfaxb	= fm_phone_assemble("phyfaxb");
-        $phycellular= fm_phone_assemble("phycellular");
-        $phypager	= fm_phone_assemble("phypager");
-        $physsn		= $GLOBALS["physsn1"].$GLOBALS["physsn2"].$GLOBALS["physsn3"];
+		$phyphonea	= fm_phone_assemble("phyphonea");
+		$phyfaxa	= fm_phone_assemble("phyfaxa");
+		$phyphoneb	= fm_phone_assemble("phyphoneb");
+		$phyfaxb	= fm_phone_assemble("phyfaxb");
+		$phycellular= fm_phone_assemble("phycellular");
+		$phypager	= fm_phone_assemble("phypager");
+		$physsn		= $GLOBALS["physsn1"].$GLOBALS["physsn2"].$GLOBALS["physsn3"];
 	} // end constructor providerMaintenance
 
 	// send 'em to the form for add and mod, due to notebook
