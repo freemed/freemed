@@ -161,9 +161,10 @@ class Annotations extends EMRModule {
 	function outputAnnotations ( $annotations ) {
 		foreach ($annotations AS $a) {
 			$user = freemed::get_link_rec($a['auser'], 'user');
+			$p = str_replace("\r", '', $a['annotation']);
 			$b[] .= "<b>".$user['userdescrip']."</b>\n".
 				"<i>".$a['atimestamp']."</i>\n".
-				$a['annotation'];
+				$p;
 		}
 		return join("\n\n", $b);
 	} // end method outputAnnotations
