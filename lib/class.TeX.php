@@ -200,7 +200,7 @@ class TeX {
 		// Deal with whitespace
 		$text = preg_replace("#<\s*#i", '<', $text);
 		$text = preg_replace("#\s*>#i", '>', $text);
-		$text = preg_replace(""#<[^>\S]*/\s*#i", '</', $text);
+		$text = preg_replace("#<[^>\S]*/\s*#i", '</', $text);
 
 		// Format paragraph breaks properly
 		$text = preg_replace("#\s*<P>#i", "\n\n", $text);
@@ -209,6 +209,18 @@ class TeX {
 		$text = preg_replace("#<B>(.*?)</B>#i", '\textbf{$1}', $text);
 		$text = preg_replace("#<I>(.*?)</I>#i", '\textit{$1}', $text);
 		$text = preg_replace("#<U>(.*?)</U>#i", '\underline{$1}', $text);
+
+		// Also do "SPAN" tags, which are put out by HTMLarea JS
+		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\">(.*?)</SPAN>#i", '\textbf{$1}', $text);
+		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-STYLE:\sITALIC\;\">(.*?)</SPAN>#i", '\textit{$1}', $text);
+		$text = preg_replace("#<SPAN\sSTYLE=\"TEXT\-DECORATION:\sUNDERLINE\;\">(.*?)</SPAN>#i", '\underline{$1}', $text);
+	
+		// Do something about <br /> and <br> tags (<br /> are used
+		// by HTMLarea JS). For now, we treat them as though they
+		// were paragraph breaks. What is the proper way to handle
+		// these?
+		$text = preg_replace("#\s*<BR\s/>#i", "\n\n", $text);
+		$text = preg_replace("#\s*<BR>#i", "\n\n", $text);
 	
 		// Remove all tags we can't understand
 		$text = preg_replace("#<[^>]*?>#i", '', $text);
