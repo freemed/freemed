@@ -213,7 +213,8 @@ foreach ($static_components AS $garbage => $component) {
 		 CELLPADDING=3 CLASS=\"thinbox\"
 		<tr><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 		 CLASS=\"menubar_items\">
-		<A HREF=\"messages.php?action=addform\">".__("Add")."</A>
+		<A HREF=\"messages.php?action=addform&return=manage\">".
+			__("Add")."</A>
 		</TD></tr>
 		<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">

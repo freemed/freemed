@@ -53,7 +53,7 @@ switch ($action) {
 	<p/>
 	<form NAME=\"myform\" ACTION=\"$page_name\" METHOD=\"POST\">
 	<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\"/>
-	<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($return)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
 	<div ALIGN=\"CENTER\">
 	".html_form::form_table(array(
@@ -136,6 +136,10 @@ switch ($action) {
 	))."
 	<p/>
 	";
+	if ($return=="manage") {
+		Header("Location: manage.php?id=".urlencode($_REQUEST['msgpatient']));
+		die("");
+	}
 	break; // end action add
 
 	case "remove":
@@ -153,7 +157,7 @@ switch ($action) {
 
 	// Check if we return to management
 	if ($return=="manage") {
-		Header("Location: manage.php?id=".$_COOKIE['current_patient']);
+		Header("Location: manage.php?id=".urlencode($_REQUEST['msgpatient']));
 		die("");
 	} else {
 		// Otherwise refresh to messages screen
@@ -174,7 +178,7 @@ switch ($action) {
 
 	// Check if we return to management
 	if ($return=="manage") {
-		Header("Location: manage.php?id=".$_COOKIE['current_patient']);
+		Header("Location: manage.php?id=".urlencode($_REQUEST['msgpatient']));
 		die("");
 	} else {
 		// Otherwise refresh to messages screen
