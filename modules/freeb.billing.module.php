@@ -57,6 +57,10 @@ class FreeBBillingTransport extends BillingModule {
 				return $this->billing();
 				break;
 
+			case 'mark':
+				return $this->mark();
+				break;
+
 			case 'rebill':
 				return $this->rebillkey();
 				break;
@@ -471,6 +475,10 @@ class FreeBBillingTransport extends BillingModule {
 			// Create single array of stuff
 			$billkey['procedures'][] = $single;
 			$this_billkey = $freeb->StoreBillKey( $billkey );
+
+			// Add to list to be marked
+			$__billkeys[] = $this_billkey;
+
 			// Get format and target from default
 			list ($my_format, $my_target) =
 				$this->MediaToFormatTarget($single, $media[$single]);
@@ -547,10 +555,14 @@ class FreeBBillingTransport extends BillingModule {
 			// Add to claimlog
 			$result = $claimlog->log_billing (
 				$key,
-				$my_format,
+				my_format,
 				$my_target,
 				__("FreeB billing run sent")
 			);
+
+			// Add to the list of bill keys
+			$__billkeys[] = $key;
+
 			/*
 			$mark = $claimlog->mark_billed ( $this_billkey );
 			*/
@@ -561,10 +573,35 @@ class FreeBBillingTransport extends BillingModule {
 			} // end verifying format and target
 		}
 
-		//$buffer .= "This should show something here eventually.<br/>\n";
+
+		// Show something
+		if (!is_array($__billkeys)) {
+			$__billkeys = array ($__billkeys);
+		}
+
+		$buffer .= __("If you are satisfied with your bills, mark them as sent.")."<br/>".
+			"<a href=\"".page_name()."?".
+			"module=".urlencode($_REQUEST['module'])."&".
+			"action=".urlencode($_REQUEST['action'])."&".
+			"type=".urlencode($_REQUEST['type'])."&".
+			"keys=".urlencode(serialize($__billkeys)).
+			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
 
 		return $buffer;
 	} // end method process
+
+	function mark ( ) {
+		$billkeys = unserialize($_REQUEST['keys']);
+		foreach ($billkeys AS $key) {
+			$mark &= $claimlog->mark_billed ( $key );
+		}
+		if ($mark) {
+			$buffer .=  __("Bills were successfully marked as billed.");
+		} else {
+			$buffer .=  __("Bills were not able to be marked as billed.");
+		}
+		return $buffer;
+	} // end method rebillkey
 
 	function rebillkey ( ) {
 		$billkey = $_REQUEST['key'];
