@@ -1324,6 +1324,30 @@ class freemed {
 		} // end else loop checking for name
 	} // end function user_flag
 
+	// Function: freemed::lock_override
+	//
+	//	Determine if the current user has the ability to "override"
+	//	the locking of a record.
+	//
+	// Returns:
+	//
+	//	Boolean value, whether or not the user has override
+	//	permissions.
+	//
+	function lock_override () {
+		global $this_user;
+		if (!is_object($this_user)) {
+			$this_user = CreateObject('_FreeMED.User');
+		}
+
+		$a = explode(',', freemed::config_value('lock_override'));
+		foreach ($a as $u) {
+			if ($u == $this_user->user_number) { return true; }
+		}
+		
+		return false;
+	} // end function lock_override
+
 	// Function: freemed::verify_auth
 	//
 	//	Determines if the current user is authenticated when dealing
@@ -2651,7 +2675,11 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	// Return depending on configuration format
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
-			return date(($show_text_days and ($y > 1969) ? "D" : "")." F d, ", $ts).$y;
+			if ($show_text_days and ($y > 1969)) {
+				return date("D F d, ", $ts).$y;
+			} else {
+				return date("F d, ", $ts).$y;
+			}
 			break;
 		case "dmy":
 			if ($show_text_days and ($y > 1969)) {

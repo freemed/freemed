@@ -19,6 +19,7 @@ $config_vars = array (
 	"drug_widget_type", // type of drug widget present
 	"date_widget_type", // type of date widget present
 	"folded", // do we fold multipage forms?
+	"lock_override", // ability to override locked records
 	"fax_nocover" // remove cover page?
 );
 
@@ -172,6 +173,15 @@ if ($action=="cfgform") {
 				__("Attach Cover Page") => "0",
 				__("No Cover Page")  => "1"
 			)
+		),
+
+		__("Lock Record Override") =>
+		freemed::multiple_choice (
+			"SELECT CONCAT(username, ' (', userdescrip, ')') ".
+				"AS descrip, id FROM user ORDER BY descrip",
+			"descrip",
+			"lock_override",
+			fm_join_from_array($lock_override)
 		)
 		
 		))

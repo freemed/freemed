@@ -338,7 +338,11 @@ class EMRModule extends BaseModule {
 		if ($_id > 0) { $id = $_id; }
 
 		// Check for record locking
-		if ($this->locked($id)) return false;
+
+		// If there is an override ...
+		if (!freemed::lock_override()) {
+			if ($this->locked($id)) return false;
+		}
 
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
@@ -367,7 +371,9 @@ class EMRModule extends BaseModule {
 		foreach ($GLOBALS as $k => $v) global $$k;
 
 		// Check for record locking
-		if ($this->locked($id)) return false;
+		if (!freemed::lock_override()) {
+			if ($this->locked($id)) return false;
+		}
 
 		if (is_array($_param)) {
 			foreach ($_param AS $k => $v) {
@@ -591,7 +597,7 @@ class EMRModule extends BaseModule {
 				get_class($this)."&patient=$patient&".
 				"action=modform&id=".$r['id']."&return=manage") : "" ).
 				// Delete option
-				( ((!$r['locked'] > 0) and ($this->summary_options & SUMMARY_DELETE)) ?
+				( (((!$r['locked'] > 0) or freemed::lock_override()) and ($this->summary_options & SUMMARY_DELETE)) ?
 				template::summary_delete_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
