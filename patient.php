@@ -760,7 +760,10 @@ switch ($action) {
      	else $display_buffer .= __("Error");
 		$display_buffer .= "<br/>\n";
 		
-	 }
+	 } elseif (($action=="addform") and (!empty($ptid))) {
+		// Be sure to calculate PID if ptid is already calculated
+		$pid = $sql->last_record($result);
+	}
 
 	// Set automatic page refresh to management screen
 	$refresh = "manage.php?id=".( $action=="addform" ? $pid : $id );
