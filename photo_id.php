@@ -58,16 +58,39 @@ switch ($action) {
 		break; // end case upload
 
 	default:
+		// Browser check
+		$browser = new browser_detect();
+		$IEupload = false;
+		if ($browser->BROWSER=="IE") { $IEupload = true; }
+
 		// Show widget
 		$display_buffer .= "
 		<DIV ALIGN=\"CENTER\">
 		"._("Attach Photographic Identification")."
 		</DIV>
 		<DIV ALIGN=\"CENTER\">
-		<FORM METHOD=\"POST\" NAME=\"form\" ENCTYPE=\"multipart/form-data\" ACTION=\"".page_name()."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" VALUE=\"1000000\">
+		<FORM METHOD=\"POST\" NAME=\"form\" ENCTYPE=\"multipart/form-data\" ACTION=\"".page_name()."\" NAME=\"myform\">
+		<INPUT TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" VALUE=\"10000000\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"upload\">
+		";
+		if ($IEupload) {
+			$display_buffer .= "
+			<SCRIPT LANGUAGE=\"VBScript\">
+			<!--
+			Sub ScanControl_ScanComplete(FileName)
+				document.myform.userfile.focus()
+				document.myform.ScanControl.PasteName()
+			End Sub
+			-->
+			</SCRIPT>
+			<OBJECT ID=\"ScanControl\"
+			CLASSID=\"CLSID:4A72D130-BBAD-45BD-AB11-E506466200EA\"
+			CODEBASE=\"./lib/webscanner.cab#version=1,0,0,20\">
+			</OBJECT><BR/>
+			";
+		}
+		$display_buffer .= "
 		<INPUT TYPE=\"FILE\" NAME=\"userfile\">
 		<INPUT TYPE=\"SUBMIT\" VALUE=\""._("Attach Image")."\">
 		</FORM>
