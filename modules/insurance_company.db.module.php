@@ -1,7 +1,6 @@
 <?php
- // $Id$
- // note: insurance company database services
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
 LoadObjectDependency('FreeMED.MaintenanceModule');
 
@@ -9,10 +8,10 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Company Maintenance";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
 
 	var $record_name = "Insurance Company";
 	var $table_name = "insco";
@@ -35,7 +34,11 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 		"inscogroup",
 		"inscotype",
 		"inscoassign",
-		"inscomod"
+		"inscomod",
+		"inscoidmap",
+		// Billing related information
+		"inscodefformat",
+		"inscodeftarget"
 	);
 
 	function InsuranceCompanyMaintenance() {
@@ -60,6 +63,9 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 			'inscotype' => SQL__INT_UNSIGNED(0),
 			'inscoassign' => SQL__INT_UNSIGNED(0),
 			'inscomod' => SQL__TEXT,
+			'inscoidmap' => SQL__TEXT,
+			'inscodefformat' => SQL__VARCHAR(50),
+			'inscodeftarget' => SQL__VARCHAR(50),
 			'id' => SQL__SERIAL
 		);
 	
@@ -75,6 +81,9 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 		$book = CreateObject('PHP.notebook',
 				array ("action", "_auth", "id", "module"),
 				NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH);
+
+		// Create billing connection for target and format selects
+		$freeb = CreateObject('FreeMED.FreeB_v1');
 
 	if (!$book->been_here()) {
     switch ($action) {
@@ -93,6 +102,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
         $r = freemed::get_link_rec ($id, $this->table_name);
         extract ($r);
 	$inscomod = fm_make_string_array($inscomod); // ensure 17 is 17:
+	$inscoidmap = unserialize($inscoidmap);
         break; // end of modform
     } // end inner action switch
   } // end checking if been here
@@ -179,43 +189,73 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 	
   $book->add_page(
    __("Internal Information"),
-   array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod" ),"
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
-   
-    <TR>
-    <TD ALIGN=RIGHT>".__("NEIC ID")." : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoid\" SIZE=11 MAXLENGTH=10
-     VALUE=\"".prepare($inscoid)."\"></TD>
-    </TR>
+   array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod",
+	'inscodefformat', 'inscodeftarget' ),
+	html_form::form_table(array(
+    __("NEIC ID") =>
+    "<INPUT TYPE=TEXT NAME=\"inscoid\" SIZE=11 MAXLENGTH=10
+     VALUE=\"".prepare($inscoid)."\" />",
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Insurance Group")." : </TD>
-    <TD ALIGN=LEFT>".freemed_display_selectbox(
+    __("Insurance Group") =>
+    freemed_display_selectbox(
       $sql->query("SELECT * FROM inscogroup ORDER BY inscogroup"),
-      "#inscogroup#", "inscogroup")."</TD>
-    </TR>
+      "#inscogroup#", "inscogroup"),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Insurance Type")." : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscotype\" SIZE=10 MAXLENGTH=30
-     VALUE=\"".prepare($inscotype)."\"></TD>
-    </TR>
+    __("Insurance Type") =>
+    "<INPUT TYPE=TEXT NAME=\"inscotype\" SIZE=10 MAXLENGTH=30
+     VALUE=\"".prepare($inscotype)."\" />",
 
-    <TR>
-    <TD ALIGN=RIGHT>Insurance Assign? : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoassign\" SIZE=10 MAXLENGTH=12
-     VALUE=\"".prepare($inscoassign)."\"></TD>
-    </TR>
+    __("Insurance Assign?") =>
+    "<INPUT TYPE=TEXT NAME=\"inscoassign\" SIZE=10 MAXLENGTH=12
+     VALUE=\"".prepare($inscoassign)."\" />",
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Insurance Modifiers")." : </TD>
-    <TD ALIGN=LEFT>".freemed::multiple_choice ("SELECT * FROM insmod
+    __("Insurance Modifiers") =>
+    freemed::multiple_choice ("SELECT * FROM insmod
       ORDER BY insmoddesc", "insmoddesc", "inscomod",
-      $inscomod, false)."</TD>
-    </TR>
+      $inscomod, false),
 
-    </TABLE>
-  "); 
+	__("Default Billing Format") =>
+	html_form::select_widget('inscodefformat', $freeb->FormatList()),
+
+	__("Default Billing Target") =>
+	html_form::select_widget('inscodeftarget', $freeb->TargetList())
+
+		))
+	);
+
+		// Calculate insurance id mappings
+		$i_phy = $sql->query('SELECT * FROM physician WHERE '.
+			'phyref != \'yes\'');
+		while ($i_r = $sql->fetch_array($i_phy)) {
+			$map_buffer .= "
+			<tr class=\"".freemed_alternate()."\">
+			<td>".prepare($i_r['phylname'].', '.$i_r['phyfname'])."</td>
+			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][id]\"
+				size=\"20\" maxlength=\"24\"
+				value=\"".prepare($inscoidmap[$i_r['id']]['id'])."\" /></td>
+			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][group]\"
+				size=\"20\" maxlength=\"24\"
+				value=\"".prepare($inscoidmap[$i_r['id']]['group'])."\" /></td>
+			</tr>
+			";
+		}
+
+		// Add insurance company id mappings
+		$book->add_page(
+			__("ID Mappings"),
+			array('inscoidmap'),
+			"<center>
+			<table border=\"0\" class=\"reverse\">
+			<tr class=\"cell_hilite\">
+				<td><b>".__("Provider")."</b></td>
+				<td><b>".__("ID")."</b></td>
+				<td><b>".__("Group ID")."</b></td>
+			</tr>
+			$map_buffer
+			</table>
+			</center>"
+		);	
+
 		// Handle cancel
 		if ($book->is_cancelled()) {
 			Header("Location: ".$this->page_name."?".
@@ -232,6 +272,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 				$inscodtmod = $cur_date; // set date modified to current
 				$GLOBALS["inscophone"] = fm_phone_assemble("inscophone");
 				$GLOBALS["inscofax"]   = fm_phone_assemble("inscofax");
+				$GLOBALS['inscoidmap'] = serialize($GLOBALS['inscoidmap']);
 				$this->_add();
 				break; // end add/addform
 
@@ -240,6 +281,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 				$inscodtmod = $cur_date; // set date modified to current
 				$GLOBALS["inscophone"] = fm_phone_assemble("inscophone");
 				$GLOBALS["inscofax"]   = fm_phone_assemble("inscofax");
+				$GLOBALS['inscoidmap'] = serialize($GLOBALS['inscoidmap']);
 				$this->_mod();
 				break; // end add/addform
 			} // end switch
@@ -264,6 +306,30 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 			ITEMLIST_MOD|ITEMLIST_VIEW
 		);
 	} // end function InsuranceCompanyMaintenance->view()
+
+	function _update ( ) {
+		$version = freemed::module_version ( $this->MODULE_NAME );
+		// Version 0.3
+		//	Move phyidmap to be mapped in insco table (inscoidmap)
+		if (!version_check ( $version, '0.3' )) {
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscoidmap TEXT AFTER inscomod'
+			);
+		}
+		// Version 0.3.1
+		//	Add inscodefformat and inscodeftarget mappings
+		if (!version_check ( $version, '0.3.1' )) {
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat'
+			);
+		}
+	} // end method _update
 
 } // end class InsuranceCompanyMaintenance
 
