@@ -194,15 +194,6 @@ freemed_display_facilities (selected)
     returns: none
     created: 19990614
 
-freemed_display_icdcodes (selected)
-  displays the list of ICD9/10 codes for the innards of a <SELECT> tag
-  set. the parameter can be used to select which one of the codes is
-  displayed as the default.
-  * 20000109 -- now has outer tags option so that select tag is internal
-    returns: none
-    created: API epoch or prior (19990609)
-    modified: 20000109
-
 freemed_display_insco (selected)
   displays list of insurance companies for <SELECT> tags...
   * fixed so that param is optional... (19991028)

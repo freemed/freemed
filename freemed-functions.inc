@@ -697,84 +697,6 @@ function freemed_display_facilities ($param="", $default_load = false,
 
 } // end function freemed_display_facilities
 
-// function freemed_display_icdcodes (selected)
-function freemed_display_icdcodes ($param="", $outer_tags="")
-{
-  global $NONE_SELECTED;
-
-  if (!empty($outer_tags))
-   echo "
-    <SELECT NAME=\"$outer_tags\">
-   ";
-
-  // first, get whether its ICD9 or ICD10 preferred
-  $i_result = fdb_query("SELECT * FROM config WHERE
-    c_option='icd'");
-  $i_r = fdb_fetch_array($i_result);
-  $_icd = $i_r["c_value"];
-
-  if ($debug) {
-    echo "<!-- ICD = $_icd -->\n";
-  } // debug statement
-
-  // list doctors in SELECT/OPTION tag list, and
-  // leave doctor selected who is in param
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-
-    // select order by which type we are using
-  if ($_icd=="9") {
-    $query = "SELECT * FROM icd9 ORDER BY ".
-       "icd9code";
-  } elseif ($_icd=="10") {
-    $query = "SELECT * FROM icd9 ORDER BY ".
-       "icd10code";
-  }
-
-  $result = fdb_query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more docs
-    while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0")) {
-        $selected_var = " SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      if ($_icd=="9") {
-        $_icd_code = $row["icd9code"];
-        $_icd_desc = $row["icd9descrip"];
-      } elseif ($_icd=="10") {
-        $_icd_code = $row["icd10code"];
-        $_icd_desc = $row["icd10descrip"];
-      }
-      $_icd_id   = $row["id"];
-
-      if ($_icd_id!=$param) {
-        $selected_var = "";
-      }
-
-      if ($debug) {
-        $debug_var = "[$_icd_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
-      echo "
-        <OPTION VALUE=\"$_icd_id\" $selected_var 
-         >$_icd_code ($_icd_desc) $debug_var
-      "; // end of actual output
-    } // while there are more results...
-  } // end of master if clause
-
-  if (!empty($outer_tags))
-   echo "
-    </SELECT>
-   ";
-} // end function freemed_display_icdcodes
-
 // function freemed_display_insco
 //   display <SELECT>-type list of insurance companies
 function freemed_display_insco ($param="0")
@@ -1355,11 +1277,9 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
     } // end if-else displayed loop
     $id = $r["id"];
     if ($debug) $debuginfo = " [$id] ";
-    if (fm_value_in_string ($blob_data, $id)) $selected = $SELECTED;
-      else $selected = "";
     $buffer .= "
       <OPTION VALUE=\"$id\" ".
-       ( (fm_value_in_string ($blob_data, id)) ? "SELECTED" : "" ).
+       ( (fm_value_in_string ($blob_data, $id)) ? "SELECTED" : "" ).
        ">$displayed $debuginfo
     ";
   } // end while
