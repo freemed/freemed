@@ -90,10 +90,11 @@ class AllergiesModule extends EMRModule {
 		return $buffer;
 	} // end function AllergiesModule->summary
 
+	function summary_bar () { }
+
 	function add () {
 		global $display_buffer, $return, $patient, $allergy;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global ${$k};
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// Get patient object
 		$this_patient = CreateObject('FreeMED.Patient', $patient);
@@ -144,8 +145,7 @@ class AllergiesModule extends EMRModule {
 	function del() { $this->delete(); }
 	function delete () {
 		global $display_buffer, $return, $patient, $id;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// Get patient object
 		$this_patient = CreateObject('FreeMED.Patient', $patient);
@@ -190,8 +190,7 @@ class AllergiesModule extends EMRModule {
 
 	function view() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		$display_buffer .= "TODO: Listing for allergies here\n";
 	} // end function AllergiesModule->view()
 

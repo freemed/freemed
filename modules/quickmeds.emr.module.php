@@ -93,6 +93,8 @@ class QuickmedsModule extends EMRModule {
 		return $buffer;
 	} // end function QuickmedsModule->summary
 
+	function summary_bar() { }
+
 	function add () {
 		global $display_buffer, $return, $patient, $med;
 		reset ($GLOBALS);

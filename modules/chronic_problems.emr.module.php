@@ -9,7 +9,7 @@ class ChronicProblemsModule extends EMRModule {
 
 	var $MODULE_NAME = "Chronic Problems";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -89,6 +89,8 @@ class ChronicProblemsModule extends EMRModule {
 			";
 		return $buffer;
 	} // end function ChronicProblemsModule->summary
+
+	function summary_bar() { }
 
 	function add () {
 		global $display_buffer, $return, $patient, $problem;

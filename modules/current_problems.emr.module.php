@@ -93,6 +93,8 @@ class CurrentProblemsModule extends EMRModule {
 		return $buffer;
 	} // end function CurrentProblemsModule->summary
 
+	function summary_bar() { }
+
 	function add () {
 		global $display_buffer, $return, $patient, $problem;
 		reset ($GLOBALS);

@@ -90,6 +90,8 @@ class PreviousOperationsModule extends EMRModule {
 		return $buffer;
 	} // end function PreviousOperationsModule->summary
 
+	function summary_bar() { }
+
 	function add () {
 		global $display_buffer, $return, $patient, $op;
 		reset ($GLOBALS);
