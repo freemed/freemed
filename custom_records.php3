@@ -1,8 +1,8 @@
 <?php
- # file: custom_records.php3
- # desc: custom patient records engine
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: custom_records.php3
+ // desc: custom patient records engine
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name   = "custom_records.php3";
  $record_name = "Custom Records";
@@ -16,14 +16,14 @@
  freemed_display_banner ();
 
  if ($patient<1) {
-  freemed_display_box_top ("$record_name :: $ERROR");
+  freemed_display_box_top (_($record_name)." :: "._("ERROR"));
   echo "
    <P>
-   <B>$Must_select_a_patient</B>
+   <B>"._("You must select a patient.")."</B>
    <P>
    <CENTER>
     <A HREF=\"patient.php3?$_auth\"
-     ><$STDFONT_B>$Select_a_Patient<$STDFONT_E></A> 
+     ><$STDFONT_B>"._("Select a Patient")."<$STDFONT_E></A> 
    </CENTER>
    <P>
   ";
@@ -38,11 +38,11 @@
  if ( (($action=="addform") or ($action=="modform") or
        ($action=="add")     or ($action=="mod"    ))
       AND ($form<1)) {
-  freemed_display_box_top ("$record_name :: $ERROR");
+  freemed_display_box_top (_($record_name)." :: "._("ERROR"));
   echo "
    <P>
    <CENTER>
-    <B><$STDFONT_B>$Must_select_a_template<$STDFONT_E></B>
+    <B><$STDFONT_B>"._("You must select a template.")."<$STDFONT_E></B>
    </CENTER>
    <P>
   ";
@@ -57,12 +57,10 @@
   case "modform":
    switch($action) {
     case "addform":
-     $action_name = "$Add";
      $this_action = "add";
      $template = $form;  // we use the provided one when adding.
      break;
     case "modform":
-     $action_name = "$Modify";
      $this_action = "mod";
      $result = fdb_query ("SELECT * FROM $db_name WHERE id='$id'");
      $r = fdb_fetch_array ($result);
@@ -83,26 +81,27 @@
        if (strstr($maxlen[$j], "2")) {  $leftright = true;  }
         else                         {  $leftright = false; }
        if (($type_n[$j]=="check") and (!empty($typefor[$j]))) {
-         eval ("\$answer".$j." = explode (\",\", \"".$this_data[$j]."\") ; ");
+         ${"answer".$j} = explode (",", $this_data[$j]) ;
        } elseif (($type_n[$j]=="time") and (!empty($this_data[$j]))) {
-         eval ("list (\$answer".$j."_h, \$answer".$j."_m) = ".
-               " explode (\",\", \"".$this_data[$j]."\") ; ");
+         list (${"answer".$j."_h"}, ${"answer".$j."_m"}) =
+               explode (",", $this_data[$j]) ;
        } elseif ($leftright) {
-         eval ("list (\$answer".$j."_l, \$answer".$j."_r) = ".
-               " explode (\",\", \"".$this_data[$j]."\") ; ");
+         list (${"answer".$j."_l"}, ${"answer".$j."_r"}) =
+               explode (",", $this_data[$j]) ;
        } else { // regular..
-         eval ("\$answer".$j." = \"".$this_data[$j]."\" ; ");
+         ${"answer".$j} = $this_data[$j];
        }     
      } // end internal loop
      break;
    } // end interior action switch
-   freemed_display_box_top ("$action_name $record_name"); 
+   freemed_display_box_top ( ($action=="addform") ? _("Add") : _("Modify")).
+     " "._($record_name)); 
    echo "
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-     <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"$id\">
-     <INPUT TYPE=HIDDEN NAME=\"form\"    VALUE=\"$form\">
+     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
+     <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"".prepare($id)."\">
+     <INPUT TYPE=HIDDEN NAME=\"form\"    VALUE=\"".prepare($form)."\">
     <TABLE WIDTH=100% BORDER=0 CELLSPACING=2 CELLPADDING=5
      VALIGN=MIDDLE ALIGN=CENTER>
    ";
@@ -122,23 +121,19 @@
     <TR BGCOLOR=#000000>
      <TD COLSPAN=2>
       <CENTER>
-      <$STDFONT_B COLOR=#cccccc><B>".fm_prep($f_r["prtname"])."</B><$STDFONT_E>
+      <$STDFONT_B COLOR=#cccccc><B>".prepare($f_r["prtname"])."</B><$STDFONT_E>
       </CENTER>
      </TD>
     </TR>
     <TR>
      <TD COLSPAN=2>
-      <CENTER>
-      <$STDFONT_B>Patient :<$STDFONT_E>
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
-       ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-      </CENTER>
+     ".freemed_patient_box($this_patient)."
      </TD>
     </TR>
    ";
 
    for ($i=0;$i<$number_of_questions;$i++) {
-     $this_question = fm_prep(chop($prtfname[$i]));
+     $this_question = prepare(chop($prtfname[$i]));
      $this_type     = $prtftype[$i]; // get the type of question
      // begin the row...
      if ($prtftype[$i] != "heading") {
@@ -155,14 +150,14 @@
        <TD ALIGN=CENTER VALIGN=MIDDLE COLSPAN=2 BGCOLOR=#bbbbbb>
       ";
      } // end if/else for heading
-     eval ("\$this_answer   = \$answer".$i."   ; ");
+     $this_answer = ${answer".$i};
      $leftright = false;
 
      // determine if left/right
      if (strstr($prtfmaxlen[$i], "2")) {
        $leftright = true;
-       eval ("\$this_answer_l = \$answer".$i."_l ; ");
-       eval ("\$this_answer_r = \$answer".$i."_r ; ");
+       $this_answer_l = ${"answer".$i."_l"};
+       $this_answer_r = ${"answer".$i."_r"};
      } // end if left/right
 
      switch ($this_type) { // generate answer by box...
@@ -231,14 +226,14 @@
        break;
       case "date":
        if (empty($this_answer))                  // if nothing is provided...
-        eval ("\$answer".$i." = \$cur_date ; "); // ... give the current date
+        ${"answer".$i} = $cur_date ;             // ... give the current date
        // quick and dirty patch to allow locking of dates...
        if (($action=="modform") and (strstr($prtfmaxlen[$i],"L"))) {
         $this_y = substr($this_answer, 0, 4);
         $this_m = substr($this_answer, 5, 2);
         $this_d = substr($this_answer, 8, 2);
         echo "
-         <I>".fm_prep($this_answer)."</I>
+         <I>".prepare($this_answer)."</I>
          <INPUT TYPE=HIDDEN NAME=\"answer".$i."_y\" VALUE=\"$this_y\">
          <INPUT TYPE=HIDDEN NAME=\"answer".$i."_m\" VALUE=\"$this_m\">
          <INPUT TYPE=HIDDEN NAME=\"answer".$i."_d\" VALUE=\"$this_d\">
@@ -291,14 +286,14 @@
          $maxlength = $size - 1;           // recalc maximum length
        }
        echo "<INPUT TYPE=TEXT NAME=\"answer$i\" SIZE=$size MAXLENGTH=$maxlength
-              VALUE=\"$this_answer\">\n";
+              VALUE=\"".prepare($this_answer)."\">\n";
        break;
       case "phone":
        echo fm_phone_entry ("answer$i");
        break;
       case "heading":
        echo "
-        <$HEADERFONT_B>".fm_prep($prtfname[$i])."<$HEADERFONT_E>
+        <$HEADERFONT_B>".prepare($prtfname[$i])."<$HEADERFONT_E>
         <INPUT TYPE=HIDDEN NAME=\"answer$i\" VALUE=\"\">
        ";
        break;
@@ -336,10 +331,11 @@
      <P>
      <CENTER>
      <SELECT NAME=\"action\">
-      <OPTION VALUE=\"$this_action\">$action_name
-      <OPTION VALUE=\"\">$Return_to_Menu
+      <OPTION VALUE=\"".( ($action=="addform") ? "add" : "mod" )."\">".
+        ( ($action=="addform") ? _("Add") : _("Modify") )."
+      <OPTION VALUE=\"\">"._("back")."
      </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\"$lang_go\">
+     <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
      </CENTER>
     </FORM>
     <P>
@@ -367,21 +363,21 @@
       $current_form[$i] = fm_phone_assemble("answer$i");
       break;
      case "check":
-      eval ("if (is_array (\$answer".$i.")) { 
-              \$current_form[".$i."] = implode (\",\", \$answer".$i.") ;
-            } else {
-              \$current_form[".$i."] = $answer".$i." ;
-            } ");
+      if (is_array (${"answer".$i})) { 
+        $current_form["$i"] = implode (",", ${"answer".$i}) ;
+      } else {
+        $current_form["$i"] = ${"answer".$i} ;
+      }
       break;
      case "time":
-      eval ("\$current_form[".$i."] = trim (\$answer".$i."_h) . ".
-            "  trim (\$answer".$i."_m) ; ");
+      $current_form["$i"] = trim (${"answer".$i."_h"}) .
+        trim (${"answer".$i."_m"}) ;
       break;
      default:
-      if (!$leftright) { eval ("\$current_form[".$i."] = \$answer".$i." ; "); }
+      if (!$leftright) { $current_form["$i"] = ${"answer".$i};
        else {
-         eval ("\$current_form[".$i."] = \$answer".$i."_l . \",\" . ".
-                                        "\$answer".$i."_r               ; ");
+         $current_form["$i"] = ${"answer".$i."_l"} . "," . 
+                                        ${"answer".$i."_r"} ;
        } // end of checking for left/right
       break;
     } // end inner switch
@@ -393,7 +389,6 @@
    // do action specific things
    switch ($action) {
      case "add":
-      $action_name = "$Adding";
       $query = "INSERT INTO $db_name VALUES (
                 '".addslashes($patient).  "',
                 '".addslashes($form).     "',
@@ -403,7 +398,6 @@
                 NULL )";
       break;
      case "mod":
-      $action_name = "$Modifying";
       $query = "UPDATE $db_name SET
                 prpatient  = '".addslashes($patient)  ."',
                 prtemplate = '".addslashes($form)     ."',
@@ -412,23 +406,24 @@
                 WHERE   id = '$id'";
       break;
    } // end inner action switch 
-   freemed_display_box_top ("$action_name $record_name");
+   freemed_display_box_top (( ($action=="add") ? _("Adding") : _("Modifying")).
+     " "._($record_name));
    echo "
      <P>
-     <$STDFONT_B>$action_name ... 
+     <$STDFONT_B>".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
     ";
    if ($debug)    echo "<BR>(query = \"$query\")<BR>\n";
    $result = fdb_query ($query); // send the prepared query through
-   if ($result) { echo "$Done.\n"; }
-    else        { echo "$ERROR\n"; }
+   if ($result) { echo _("done").".\n"; }
+    else        { echo _("ERROR")."\n"; }
    echo "
     <$STDFONT_E>
     <P>
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> | 
+      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> | 
      <A HREF=\"$page_name?$_auth&patient=$patient\"
-      ><$STDFONT_B>$View_Modify $record_name<$STDFONT_E></A>
+      ><$STDFONT_B>"._("View/Modify")." "._($record_name)."<$STDFONT_E></A>
     </CENTER>
     <P>
     ";
@@ -436,18 +431,13 @@
    break;
 
   default: // default view is listing...
-   freemed_display_box_top ("$record_name Management");
+   freemed_display_box_top (_($record_name));
    $result = fdb_query ("SELECT * FROM $db_name
-                         WHERE prpatient='$patient'
+                         WHERE prpatient='".addslashes($patient)."'
                          ORDER BY prdtadd DESC");
    if (($result==0) or (fdb_num_rows($result)<1)) {
      echo "
-      <P>
-      <CENTER>
-       <$STDFONT_B>$Patient :<$STDFONT_E>
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-      </CENTER>
+      ".freemed_patient_box($this_patient)."
       <P>
       <CENTER>
        <B><$STDFONT_B>$No_records_for_this_patient<$STDFONT_E></B>
@@ -456,9 +446,9 @@
       <CENTER>
       <FORM ACTION=\"$page_name\" METHOD=POST>
        <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"addform\">
-       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
+       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
        <SELECT NAME=\"form\">
-        <OPTION VALUE=\"\">$NONE_SELECTED
+        <OPTION VALUE=\"\">"._("NONE SELECTED")."
      ";
      $f_result = fdb_query ("SELECT * FROM patrectemplate
                              ORDER BY prtname");
@@ -467,15 +457,15 @@
      } // end of this internal loop
      echo "
        </SELECT>
-       <INPUT TYPE=SUBMIT VALUE=\"$Add\">
+       <INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
       </FORM>
       </CENTER>
       <P>
       <CENTER>
        <A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> |
+        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
        <A HREF=\"main.php3?$_auth\"
-        ><$STDFONT_B>$Return_to_the_Main_Menu<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
       </CENTER>
       <P>
       ";
@@ -485,19 +475,14 @@
      DIE("");
    } // end checking if no result
    echo "
-     <P>
-     <CENTER>
-      <$STDFONT_B>Patient : <$STDFONT_E>
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
-      ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-     </CENTER>
+     ".freemed_patient_box($this_patient)."
      <P>
      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0
       VALIGN=MIDDLE ALIGN=CENTER> 
       <TR BGCOLOR=#000000>
-       <TD><$STDFONT_B COLOR=#ffffff>$Date_Added<$STDFONT_E></TD>
-       <TD><$STDFONT_B COLOR=#ffffff>$Form<$STDFONT_E></TD>
-       <TD><$STDFONT_B COLOR=#ffffff>$Action<$STDFONT_E></TD>
+       <TD><$STDFONT_B COLOR=#ffffff>"._("Date Added")."<$STDFONT_E></TD>
+       <TD><$STDFONT_B COLOR=#ffffff>"._("Form")."<$STDFONT_E></TD>
+       <TD><$STDFONT_B COLOR=#ffffff>"._("Action")."<$STDFONT_E></TD>
       </TR>
     ";
    $_alternate = freemed_bar_alternate_color ($_alternate);
@@ -511,20 +496,20 @@
      echo "
       <TR BGCOLOR=$_alternate>
        <TD><$STDFONT_B>$dtadd<$STDFONT_E></TD>
-       <TD><$STDFONT_B>".addslashes($formname)."<$STDFONT_E></TD>
+       <TD><$STDFONT_B>".prepare($formname)."<$STDFONT_E></TD>
        <TD>
       ";
      if (0==0)
       echo "
        <A HREF=\"$page_name?$_auth&id=$id&patient=$patient&".
         "form=$template&action=modform\"
-       ><FONT SIZE=-1>$lang_MOD</FONT></A>
+       ><FONT SIZE=-1>"._("MOD")."</FONT></A>
       ";
 
      if (freemed_get_userlevel($LoginCookie)>$delete_level)
       echo "
        <A HREF=\"$page_name?$_auth&id=$id&patient=$patient&action=del\"
-       ><FONT SIZE=-1>$lang_DEL</FONT></A>
+       ><FONT SIZE=-1>"._("DEL")."</FONT></A>
       ";
 
      echo "
@@ -538,9 +523,9 @@
     <P>
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> |
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
      <A HREF=\"main.php3?$_auth\"
-     ><$STDFONT_B>$Return_to_the_Main_Menu<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
     </CENTER>
     <P>
     "; // end table
