@@ -1373,6 +1373,19 @@ msgstr ""
 msgid "Insurance Company"
 msgstr ""
 
+msgid "Diagnosis Related Groups"
+msgstr ""
 
+msgid "Amount Billed"
+msgstr ""
+
+msgid "Amount Collected"
+msgstr ""
+
+msgid "ICD9"
+msgstr ""
+
+msgid "ICD10"
+msgstr ""
 
 # END
