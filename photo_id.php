@@ -8,7 +8,7 @@ $page_name = basename($GLOBALS["REQUEST_URI"]);
 include ("lib/freemed.php");
 
 //----- Login and authenticate
-freemed_open_db ();
+freemed::connect ();
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
@@ -37,6 +37,7 @@ switch ($action) {
 			unlink($imagefilename);
 		} else {
 			// Do nothing if it's not there
+			//die("could not remove an image");
 		}
 
 		// Return to management
@@ -48,8 +49,10 @@ switch ($action) {
 		$imagefilename = freemed::store_image(
 			$patient,
 			"userfile",
-			"identification"
+			"identification",
+			'c44' // use nice compression
 		);
+
 		if (!$imagefilename) {
 			$display_buffer .= "
 			<div ALIGN=\"CENTER\">
@@ -92,7 +95,7 @@ switch ($action) {
 			</script>
 			<object ID=\"ScanControl\"
 			CLASSID=\"CLSID:4A72D130-BBAD-45BD-AB11-E506466200EA\"
-			CODEBASE=\"./lib/webscanner.cab#version=1,0,0,20\">
+			CODEBASE=\"./support/webscanner.cab#version=1,0,0,20\">
 			</object><br/>
 			";
 		}
