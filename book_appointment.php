@@ -66,7 +66,7 @@ if (!isset($physician) and $this_user->isPhysician()) {
 }
 
 // If we have an ID present and we haven't been here, pull from database
-if ($_REQUEST['id'] and !$been_here) {
+if ($_REQUEST['id'] and !$_REQUEST['been_here']) {
 	$appt = freemed::get_link_rec ($_REQUEST['id'], "scheduler");
 	$selected_date = $appt['caldateof'];
 	$type = $appt['caltype'];
@@ -434,14 +434,14 @@ function process () {
 		$facility = 0;
 		$room     = 0;
 		$patient  = 0;
-		$note     = __("Travel");
+		$note     = stripslashes(__("Travel"));
 	} else {
 		// Get facility for current room
 		$facility = freemed::get_link_field($room, "room", "roompos");
 		$note = stripslashes($_REQUEST['note']);
 	}
 
-	if (!$id) {
+	if (!$_REQUEST['id']) {
 		$result = $scheduler->set_appointment(
 			array (
 				"caldateof" => $selected_date,
@@ -454,7 +454,7 @@ function process () {
 				"calphysician" => $physician,
 				"calpatient" => $patient,	
 				"calstatus" => 'scheduled',
-				"calprenote" => stripslashes($note)
+				"calprenote" => $note
 			)
 		);
 		$move = false;
@@ -469,7 +469,7 @@ function process () {
 				"calduration" => $_REQUEST['duration'],
 				"calfacility" => $facility,
 				"calroom" => $room,
-				"calprenote" => stripslashes($note),
+				"calprenote" => $note,
 				"calphysician" => $_REQUEST['physician']
 			)
 		);
@@ -951,7 +951,7 @@ function pre_screen ( ) {
 	}
 	
 	$provider = CreateObject('FreeMED.Physician', $_REQUEST['physician']);
-	$patient = CreateObject('FreeMED.Patient', $_REQUEST['patient']);
+	$patient = CreateObject('FreeMED.Patient', $_REQUEST['patient'], ($_REQUEST['type']=="temp"));
 	$buffer .= "<form method=\"post\" name=\"myform\" id=\"myform\">\n";
 	$vars = array (
 		'patient',
@@ -962,6 +962,7 @@ function pre_screen ( ) {
 		'duration',
 		'appttemplate',
 		'id',
+		'been_here',
 		'type'
 	);
 	foreach ($vars AS $v) {
@@ -999,7 +1000,7 @@ function pre_screen ( ) {
 				"ORDER BY k"
 			) )
 		),
-		__("Note") => html_form::text_widget('note', 40)
+		__("Note") => html_form::text_widget('note', 250)
 	));
 	$buffer .= "<div align=\"center\">\n";
 	$buffer .= "<input type=\"submit\" name=\"stage\" ".
