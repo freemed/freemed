@@ -119,6 +119,11 @@
   // set the maximum timeout...
   set_time_limit (0);
 
+  // quick hack for Lynx caching pages problem
+  if (strstr($HTTP_USER_AGENT, "Lynx")) {
+    Header ("Pragma: no-cache"); // force no caching
+  } // end checking for lynx
+
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
   include ("iso-set.inc");             // ISO set handler
