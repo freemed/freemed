@@ -101,7 +101,12 @@
      flush ();
 
      // grab current insurance company
-     $this_insco = $this_patient->insco[($b_r[payreclink])];
+     if ($this_patient->local_record[ptdep] == 0) {
+       $this_insco = $this_patient->insco[($b_r[payreclink])];
+     } else { // if get from guarantor
+       $guarantor = new Patient ($this_patient->local_record[ptdep]);
+       $this_insco = $guarantor->insco[($b_r[payreclink])];
+     }
 
      //$debug=true;
 
@@ -295,7 +300,6 @@
        unset ($guarsex);
      } else {
        // if it is someone else, get *their* information
-       $guarantor = new Patient ($this_patient->local_record[ptdep]);
        $guarname[last]    = $guarantor->local_record["ptlname"];
        $guarname[first]   = $guarantor->local_record["ptfname"];
        $guarname[middle]  = $guarantor->local_record["ptmname"];
