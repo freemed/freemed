@@ -9,7 +9,7 @@ class EpisodeOfCare extends EMRModule {
 
 	var $MODULE_NAME = "Episode of Care";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_DESCRIPTION = "
 		Episode of care is another portion of FreeMED
 		designed to help with outcomes management. Any
@@ -899,6 +899,22 @@ class EpisodeOfCare extends EMRModule {
 			)
 		);
 	} // end function EpisodeOfCare->view
+
+	// ----- Widgets, etc
+
+	function widget ($varname, $patient) {
+		global ${$varname};
+		return freemed::multiple_choice(
+			"SELECT id,eocdescrip,eocstartdate,eocdtlastsimilar ".
+			"FROM ".$this->table_name." WHERE ".
+			"eocpatient='".addslashes($patient)."'",
+			"##eocdescrip## (##eocstartdate## ".__("to")." ".
+				"##eocdtlastsimilar##)",
+			$varname,
+			${$varname},
+			false
+		);
+	} // end method EpisodeOfCare->widget
 
 } // end class EpisodeOfCare
 
