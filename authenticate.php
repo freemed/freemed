@@ -4,7 +4,7 @@
  // lic : GPL
  // code: jeff b <jeff@univrel.pr.uconn.edu>, max k <amk@span.ch>
 
-  $page_name = "authenticate.php3" ;
+  $page_name = "authenticate.php" ;
   include ("lib/freemed.php");
   include ("lib/API.php");
 

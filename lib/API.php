@@ -1524,7 +1524,7 @@ function freemed_auth_db_connect () {
 } // end function freemed_auth_db_connect
 
 function freemed_auth_login ($f_username, $f_password) {
-  global $SessionLoginCookie, $_cookie_expire;
+  global $SessionLoginCookie, $_cookie_expire, $sql;
 
   if (($f_username=="root") AND ($f_password==DB_PASSWORD)) {
     $md5pw = md5($f_password);

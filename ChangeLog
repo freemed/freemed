@@ -9,6 +9,9 @@ freemed project changelog
     this payer type will generate. revoced the code for invoice. no longer
     needed.
 
+  - took a few commits to get things working with the new webtools stuff.
+  - freemed_auth_login needed global $sql 
+
 * Thu Dec 28 2000 rufustfirefly
   - rehauling db layer today. i think everything that could have been broken
     is now *being* broken. using phpwebtools sql class now.
