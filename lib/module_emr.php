@@ -301,10 +301,16 @@ class freemedEMRModule extends freemedModule {
 	// function create_table
 	// - used to initally create SQL table
 	function create_table () {
+		global $sql;
+
 		if (!isset($this->table_definition)) return false;
 		$query = $sql->create_table_query(
 			$this->table_name,
-			$this->table_definition
+			$this->table_definition,
+			( is_array($this->table_keys) ?
+				array_merge(array("id"), $this->table_keys) :
+				array("id")
+			)
 		);
 		$result = $sql->query($query);
 		return !empty($query);
