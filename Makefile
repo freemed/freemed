@@ -11,9 +11,9 @@ all:
 
 install:
 	mkdir -p $(INSTDIR)
-	cp -vf *.php *.html $(INSTDIR)
+	cp -vf .htaccess *.php *.html $(INSTDIR)
 	for d in $(SUBDIR); do \
-		make -C $$d install INSTDIR=$(INSTDIR); \
+		make -C $$d install DESTDIR=$(DESTDIR) INSTDIR=$(INSTDIR); \
 	done
 
 clean:

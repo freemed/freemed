@@ -1,0 +1,10 @@
+# $Id$
+# $Author$
+#
+#	Since sometimes Apache isn't properly configured to view the
+#	proper PHP script, we do this instead, but only if PHP4 is
+#	installed and working properly.
+#
+<IfModule mod_php4.c>
+	DirectoryIndex index.php
+</IfModule>
