@@ -15,6 +15,31 @@ define ('__API_PHP__', true);
 // namespace/class freemed
 class freemed {
 
+	// function freemed::check_access_for_facility
+	function check_access_for_facility ($facility_number) {
+		global $_SESSION;
+
+		// Separate out authdata
+		$authdata = $_SESSION['authdata'];
+
+		// Root has all access...
+		if ($_SESSION['authdata']['user'] == 1) return true;
+
+		// Grab the authorizations field
+		$f_fac = freemed::get_link_field ($authdata['user'], "user", "userfac");
+
+		// No facility, assume no access restrictions
+		if ($facility_number == 0) return true;
+
+		// If it's an "ALL" or it is found, return true
+		if ((fm_value_in_string($f_fac, "-1")) OR
+				(fm_value_in_string($f_fac, $facility_number)))
+			return true;
+
+	    	// Default to false
+		return false;
+	} // end function freemed::check_access_for_facility
+
 	// function freemed::check_access_for_patient
 	function check_access_for_patient ($patient_number) {
 		// Grab authdata
@@ -199,15 +224,32 @@ class freemed {
 
 		// check for modules  
 		if (!freemed::module_check($module, $version)) {
-			$query = $sql->query($sql->insert_query(
-				"module",
-				array(
-					"module_name"		=>	$module,
-					"module_version"	=>	$version
-				)
-			));
+			// Check for preexisting module record
+			$q = $sql->query("SELECT * FROM module ".
+				"WHERE module_name='".
+				addslashes($module)."'");
+			if (!$sql->results($q)) {
+				$query = $sql->query($sql->insert_query(
+					'module',
+					array (
+						'module_name' => $module,
+						'module_version' => $version
+					)
+				));
+			} else {
+				// Perform update query
+				$query = $sql->query($sql->update_query(
+					'module',
+					array (
+						'module_version' => $version
+					),
+					array (
+						'module_name' => $module
+					)
+				));
+			}
 			return (!empty($query));
-		} // end caching modules config
+		} // end checking for module installed
 
 		return true;
 	} // end function freemed::module_register
@@ -284,8 +326,6 @@ class freemed {
     <div ALIGN=\"CENTER\">
     <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"5\" WIDTH=\"100%\">
      <tr CLASS=\"patientbox\"
-	onMouseOver=\"this.className='patientbox_hilite'; patientboxlink.className='patientbox_hilite'; return true;\"
-	onMouseOut=\"this.className='patientbox'; patientboxlink.className='patientbox'; return true;\"
 	onClick=\"window.location='manage.php?id=".
 		urlencode($patient_object->id)."'; return true;\"
       ><td VALIGN=\"CENTER\" ALIGN=\"LEFT\">
@@ -763,31 +803,6 @@ function freemed_alternate ($_elements) {
 
 	return $elements[$_pos];
 } // end function freemed_alternate
-
-// function freemed_check_access_for_facility
-function freemed_check_access_for_facility ($facility_number) {
-	global $_SESSION;
-
-	// Separate out authdata
-	$authdata = $_SESSION['authdata'];
-
-	// Root has all access...
-	if ($_SESSION['authdata']['user'] == 1) return true;
-
-	// Grab the authorizations field
-	$f_fac = freemed::get_link_field ($authdata['user'], "user", "userfac");
-
-	// No facility, assume no access restrictions
-	if ($facility_number == 0) return true;
-
-	// If it's an "ALL" or it is found, return true
-	if ((fm_value_in_string($f_fac, "-1")) OR
-		(fm_value_in_string($f_fac, $facility_number)))
-		return true;
-
-    	// Default to false
-	return false;
-} // end function freemed_check_access_for_facility
 
 // function freemed_display_actionbar
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
