@@ -15,7 +15,7 @@ if (!$GLOBALS['__freemed']['no_template_display']) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
-	<title><?php print prepare(PACKAGENAME) . " v". VERSION . " - " .
+	<title><?php print prepare(PACKAGENAME) . " v". DISPLAY_VERSION . " - " .
 		( !empty($GLOBALS['page_title']) ? $GLOBALS['page_title']." - " : "" ) .
 		prepare(INSTALLATION); ?></title>
 	<meta HTTP-EQUIV="Content-Type" 
@@ -150,7 +150,7 @@ if (!$GLOBALS['__freemed']['no_menu_bar']) {
 		print __("Hide Menu"); ?>'; return true;"
 		onMouseOut="window.status=''; return true;">X</a>
 		<br/>
-		<small><?php print PACKAGENAME." v".VERSION; ?></small>
+		<small><?php print PACKAGENAME." v".DISPLAY_VERSION; ?></small>
 <?php
 //----- Add page title text if it exists
 if (isset($GLOBALS['page_title'])) {
@@ -255,7 +255,7 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 	// Show what we have, if that's what we're doing
 	print "<html>\n".
 		"<head>\n".
-		"<title>".prepare(PACKAGENAME)." v".VERSION." - ".
+		"<title>".prepare(PACKAGENAME)." v".DISPLAY_VERSION." - ".
 		( !empty($GLOBALS['page_title']) ? $GLOBALS['page_title']." - " : "" ) .
 		prepare(INSTALLATION)."</title>\n".
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
