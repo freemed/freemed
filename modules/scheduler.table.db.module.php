@@ -9,7 +9,7 @@ class SchedulerTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Scheduler Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.3';
+	var $MODULE_VERSION = '0.6.3.1';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -30,7 +30,7 @@ class SchedulerTable extends MaintenanceModule {
 			'calpatient' => SQL__INT_UNSIGNED(0),
 			'calcptcode' => SQL__INT_UNSIGNED(0),
 			'calstatus' => SQL__INT_UNSIGNED(0),
-			'calprenote' => SQL__VARCHAR(100),
+			'calprenote' => SQL__VARCHAR(250),
 			'calpostnote' => SQL__TEXT,
 			'calmark' => SQL__INT_UNSIGNED(0),
 			'calgroupid' => SQL__INT_UNSIGNED(10),
@@ -130,6 +130,15 @@ class SchedulerTable extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN calstatus '.
 				'calstatus ENUM(\'scheduled\',\'confirmed\',\'attended\',\'canceled\',\'noshow\',\'tenative\')');
+		}
+		// Version 0.6.3.1
+		//
+		//	Add extra space for appointment note.
+		//
+		if (!version_check($version, '0.6.3.1')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN calprenote '.
+				'calprenote VARCHAR(250)');
 		}
 	} // end function _update
 }

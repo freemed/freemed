@@ -218,7 +218,7 @@ $calendar_form .= "
 	),
 
 	"<small>".__("Note")."</small>" =>
-	html_form::text_widget('note', array ('length' => 100,
+	html_form::text_widget('note', array ('length' => 250,
 		'refresh' => !$refresh_disable ) )
 
 	), "", "", "")."
