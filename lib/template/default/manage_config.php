@@ -154,7 +154,7 @@ foreach($class_array AS $k => $class_pair) {
 		list ($key, $val) = explode (":", $class_pair);
 		// Add it
 		//$classes["$key"] = $val; // this would be for anything else
-		$modules_to_choose[__("$key")] =
+		$modules_to_choose[__($key)] =
 			html_form::checkbox_widget (
 				"modular_components", $val, " "
 			);
