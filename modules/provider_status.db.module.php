@@ -42,7 +42,7 @@ class ProviderStatusMaintenance extends MaintenanceModule {
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($GLOBAL["module"])."\"> 
+    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($_REQUEST["module"])."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
 
     ".html_form::form_table ( array (
