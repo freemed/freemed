@@ -233,7 +233,7 @@ class freemed {
 			$m[4].$m[5].'/'.
 			$m[6].$m[7].'/'.
 			substr($m, -(strlen($m)-8)).
-			'.'.$type;
+			'/'.$record.'.'.$type;
 	} // end function::image_filename
 
 	// function freemed::module_check
@@ -308,6 +308,23 @@ class freemed {
 		// If all else fails, return false
 		return false;
 	} // end function freemed::module_get_meta
+
+	// function freemed::module_handler
+	function module_handler ($handler) {
+		// Cache module list object
+		$module_list = CreateObject('PHP.module_list', PACKAGENAME);
+
+		// Loop through modules
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] as $k => $v) {
+			// Check to see if this handler is registered
+			if (!empty($v['META_INFORMATION']['__handler']["$handler"])) {
+				$handler_data[$v['MODULE_CLASS']] = $v['META_INFORMATION']['__handler']["$handler"];
+			}
+		}
+
+		// Return composite
+		return $handler_data;
+	} // end function freemed::module_handler
 
 	// function freemed::module_lookup
 	// - lookup by the actual class name of the module
@@ -1011,7 +1028,7 @@ function freemed_alternate ($_elements) {
 
 // function freemed_display_actionbar
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
-	global $page_name, $patient, $_ref, $module;
+	global $page_name, $patient, $_ref, $_pass, $module;
 
 	$buffer = "";
 
@@ -1036,14 +1053,13 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
     <table CLASS=\"reverse\" WIDTH=\"100%\" BORDER=\"0\"
      CELLSPACING=\"0\" CELLPADDING=\"3\">
     <tr CLASS=\"reverse\">
-    <td ALIGN=\"LEFT\"><a HREF=\"$this_page_name?module=".urlencode($module)."&".
+    <td ALIGN=\"LEFT\"><a HREF=\"$this_page_name?".
+    	( isset($_pass) ? $_pass.'&' : '' )."module=".urlencode($module)."&".
 	"action=addform".
      ( !empty($patient) ? "&patient=".urlencode($patient) : "" )."\"
 	onMouseOver=\"window.status='".__("Add")."'; return true;\"
 	onMouseOut=\"window.status=''; return true;\"
-	CLASS=\"reverse\"><small><b><img NAME=\"add_$globaladdcounter\"
-	SRC=\"lib/template/$template/img/add.png\" BORDER=\"0\"
-	ALT=\"[".__("Add")."]\"/></b></small></a></td>
+	CLASS=\"reverse\"><small><b>".__("ADD")."</b></small></a></td>
     <td WIDTH=\"30%\">&nbsp;</td>
     <td ALIGN=\"RIGHT\"><a HREF=\"$__ref\" CLASS=\"reverse\"
      ><small><b>".__("RETURN TO MENU")."</b></small></a></td>
@@ -1062,7 +1078,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   global $_ref, $record_name;
   global $modify_level, $delete_level, $patient, $action, $module;
   global $page_name, ${$cur_page_var}, $max_num_res;
-  global $_s_field, $_s_val, $sql;
+  global $_s_field, $_s_val, $_pass, $sql;
 
   //echo "page name $page_name this $this->page_name module $module<BR>";
   
@@ -1217,7 +1233,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
         $first = false;
         $buffer .= "
       <td>
-        <a HREF=\"$page_link?patient=$patient&action=display&id=".
+        <a HREF=\"$page_link?".( !isset($_pass) ? $_pass.'&' : '' ).
+	"patient=$patient&action=display&id=".
 	"$this_result[id]&module=$module\"
 	  >$item_text</a>&nbsp;
       </td>
@@ -1237,22 +1254,24 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     ";
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
-        <a HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
+        <a HREF=\"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
+	"module=$module&patient=$patient&action=view&id=".
 	urlencode($this_result['id'])."\" class=\"button\">".__("VIEW")."</a>
       ";
     }
     if (freemed::user_flag(USER_DATABASE) AND 
          ($flags & ITEMLIST_MOD) AND (!$this_result['locked'])) {
       $buffer .= "
-        <a class=\"button\" ".
-	"HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
-	urlencode($this_result['id'])."\">".__("MOD")."</a>
+        <a HREF=\"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
+	"module=$module&patient=$patient&action=modform&id=".
+	urlencode($this_result['id'])."\" class=\"button\">".__("MOD")."</a>
       ";
     }
     if (freemed::user_flag(USER_DELETE) AND
          ($flags & ITEMLIST_DEL) AND (!$this_result['locked'])) {
 	$buffer .= html_form::confirm_link_widget(
-        	"$page_link?patient=$patient&module=$module&action=delete&id=".
+        	"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
+		"patient=$patient&module=$module&action=delete&id=".
 				urlencode($this_result['id']),
 	 	__("DEL"),
 		array(
@@ -1268,7 +1287,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     if (freemed::user_flag(USER_DELETE) AND
          ($flags & ITEMLIST_LOCK) AND ($this_result['locked']=='0')) {
 	$buffer .= html_form::confirm_link_widget(
-        	"$page_link?patient=$patient&module=$module&action=lock&id=".
+        	"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
+		"patient=$patient&module=$module&action=lock&id=".
 				urlencode($this_result['id']),
 	 	__("LOCK"),
 		array(
