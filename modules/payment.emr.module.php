@@ -1204,31 +1204,33 @@ class PaymentModule extends EMRModule {
                 $query = "DELETE FROM payrec WHERE payrecproc='".addslashes($procid)."'";
                 $result = $sql->query($query);
                 $display_buffer .= "
-                <P>
-                <CENTER>
+                <p/>
+                <div align=\"CENTER\">
                 <B>"._("All records for this procedure have been deleted.")."</B><BR><BR>
-                <A HREF=\"$this->page_name?been_here=1&viewaction=refresh".
+                <a class=\"button\" HREF=\"$this->page_name?been_here=1&viewaction=refresh".
                 "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
-                "._("Back")."</A>
-                </CENTER>
-                <P>
+                "._("Back")."</a>
+                </div>
+                <p/>
                 ";
                 return;
 
             } // end mistake
 
             $display_buffer .= "
-            <P>
-            <CENTER>
-            "._("Confirm delete request or cancel?")."<P>
-            <A HREF=\"$this->page_name?been_here=1&viewaction=mistake".
-            "&action=addform&delete=1&item=$procid&patient=$patient&module=$module\"
-            >"._("Confirm")."</A>&nbsp;|&nbsp;
-            <A HREF=\"$this->page_name?been_here=1&viewaction=refresh".
-            "&action=addform&item=$procid&patient=$patient&module=$module\"
-            >"._("Cancel")."</A>
-            </CENTER>
-            <P>
+            <p/>
+            <div align=\"CENTER\">
+            "._("Confirm delete request or cancel?")."<p/>
+	    </div>
+	    ".template::link_bar(array(
+	    	_("Confirm") =>
+			"$this->page_name?been_here=1&viewaction=mistake".
+			"&action=addform&delete=1&item=$procid&patient=$patient&module=$module",
+		_("Cancel") =>
+			"$this->page_name?been_here=1&viewaction=refresh".
+			"&action=addform&item=$procid&patient=$patient&module=$module"
+		))."
+            <p/>
             ";
 
 
@@ -1256,19 +1258,19 @@ class PaymentModule extends EMRModule {
 
             $display_buffer .= "
             <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" WIDTH=\"100%\">
-            <tr CLASS=\"thinbox\">
+            <tr CLASS=\"thinbox\" style=\"text-size: 8pt;\">
             <td>&nbsp;</td>
-            <td ALIGN=\"LEFT\"><b>"._("Date")."</b></td>
-            <td ALIGN=\"LEFT\"><b>"._("Proc Code")."</b></td>
-            <td ALIGN=\"LEFT\"><b>"._("Provider")."</b></td>
-            <td ALIGN=\"RIGHT\"><b>"._("Charged")."</b></td>
-            <td ALIGN=\"RIGHT\"><b>"._("Allowed")."</b></td>
-            <td ALIGN=\"RIGHT\"><b>"._("Charges")."</b></td>
-            <td ALIGN=\"RIGHT\"><b>"._("Paid")."</b></td>
-            <td ALIGN=\"RIGHT\"><b>"._("Balance")."</b></td>
-            <td ALIGN=\"LEFT\"><b>"._("Billed")."</b></td>
-            <td ALIGN=\"LEFT\"><b>"._("Date Billed")."</b></td>
-            <td ALIGN=\"LEFT\"><b>"._("View")."</b></td>
+            <td ALIGN=\"LEFT\"><b><small>"._("Date")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>"._("Proc Code")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>"._("Provider")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>"._("Charged")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>"._("Allowed")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>"._("Charges")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>"._("Paid")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>"._("Balance")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>"._("Billed")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>"._("Date Billed")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>"._("View")."</small></b></td>
             </tr>
             ";
 
@@ -1287,20 +1289,21 @@ class PaymentModule extends EMRModule {
                 <td>
                 <input TYPE=\"RADIO\" NAME=\"item\" VALUE=\"".prepare($r['id'])."\"
                 ".( ($r['id'] == $this->item) ?  "CHECKED": "" )." /></td>
-                <td ALIGN=\"LEFT\">".fm_date_print ($r['procdt'])."</td>
+                <td ALIGN=\"LEFT\"><small>".fm_date_print ($r['procdt'])."</small></td>
                 <td ALIGN=\"LEFT\"><small>".
 			prepare($this_cptcode." (".$this_cpt.")")."</small></td>
                 <td ALIGN=\"LEFT\"><small>".
 			prepare($this_physician->fullName())."&nbsp;</small></td>
-                <td ALIGN=\"RIGHT\">".bcadd ($r['procbalorig'], 0, 2)."</td>
-                <td ALIGN=\"RIGHT\">".bcadd ($r['procamtallowed'], 0, 2)."</td>
-                <td ALIGN=\"RIGHT\">".bcadd ($r['proccharges'], 0, 2)."</td>
-                <td ALIGN=\"RIGHT\">".bcadd ($r['procamtpaid'], 0, 2)."</td>
-                <td ALIGN=\"RIGHT\">".bcadd ($r['procbalcurrent'], 0, 2)."</td>
-                <td ALIGN=\"LEFT\">".(($r['procbilled']) ? _("Yes") : _("No") )."</td>
-                <td ALIGN=\"LEFT\">".( !empty($r['procdtbilled']) ?
-					prepare($r['procdtbilled']) : "&nbsp;" )."</td>
-                <td ALIGN=\"LEFT\"><a HREF=\"$this->page_name?action=addform".
+                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procbalorig'], 0, 2)."</small></td>
+                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procamtallowed'], 0, 2)."</small></td>
+                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['proccharges'], 0, 2)."</small></td>
+                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procamtpaid'], 0, 2)."</small></td>
+                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procbalcurrent'], 0, 2)."</small></td>
+                <td ALIGN=\"LEFT\"><small>".(($r['procbilled']) ? _("Yes") : _("No") )."</small></td>
+                <td ALIGN=\"LEFT\"><small>".( !empty($r['procdtbilled']) ?
+					prepare($r['procdtbilled']) : "&nbsp;" )."</small></td>
+                <td ALIGN=\"LEFT\"><a class=\"button\" ".
+		"HREF=\"$this->page_name?action=addform".
                 "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=".$r['id']."\"
                 >Ledger</a>
                 </tr>
@@ -1311,26 +1314,27 @@ class PaymentModule extends EMRModule {
             </table>
             <p/>
             <div ALIGN=\"CENTER\">
-            <SELECT NAME=\"viewaction\">
-            <OPTION VALUE=\"refresh\"  >"._("Refresh")."
-            <OPTION VALUE=\"rebill\"  >"._("Rebill")."
-            <OPTION VALUE=\"payment\" >"._("Payment")."
-            <OPTION VALUE=\"copay\" >"._("Copay")."
-            <OPTION VALUE=\"adjustment\" >"._("Adjustment")."
-            <OPTION VALUE=\"deductable\" >"._("Deductable")."
-            <OPTION VALUE=\"withhold\" >"._("Withhold")."
-            <OPTION VALUE=\"transfer\">"._("Transfer")."
-            <OPTION VALUE=\"allowedamt\">"._("Allowed Amount")."
-            <OPTION VALUE=\"denial\"  >"._("Denial")."
-            <OPTION VALUE=\"writeoff\"  >"._("Writeoff")."
-            <OPTION VALUE=\"refund\">"._("Refund")."
-            <OPTION VALUE=\"mistake\" >"._("Mistake")."
-            <OPTION VALUE=\"ledgerall\">"._("Ledger")."
-            <OPTION VALUE=\"paidledger\">"._("Ledger Closed")."
-            <OPTION VALUE=\"closed\">"._("Closed")."
-            </SELECT>
-            <input TYPE=\"SUBMIT\" VALUE=\"  "._("Select Line Item")."  \">
-            <input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\">
+            <select NAME=\"viewaction\">
+            <option VALUE=\"refresh\"  >"._("Refresh")."</option>
+            <option VALUE=\"rebill\"  >"._("Rebill")."</option>
+            <option VALUE=\"payment\" >"._("Payment")."</option>
+            <option VALUE=\"copay\" >"._("Copay")."</option>
+            <option VALUE=\"adjustment\" >"._("Adjustment")."</option>
+            <option VALUE=\"deductable\" >"._("Deductable")."</option>
+            <option VALUE=\"withhold\" >"._("Withhold")."</option>
+            <option VALUE=\"transfer\">"._("Transfer")."</option>
+            <option VALUE=\"allowedamt\">"._("Allowed Amount")."</option>
+            <option VALUE=\"denial\"  >"._("Denial")."</option>
+            <option VALUE=\"writeoff\"  >"._("Writeoff")."</option>
+            <option VALUE=\"refund\">"._("Refund")."</option>
+            <option VALUE=\"mistake\" >"._("Mistake")."</option>
+            <option VALUE=\"ledgerall\">"._("Ledger")."</option>
+            <option VALUE=\"paidledger\">"._("Ledger Closed")."</option>
+            <option VALUE=\"closed\">"._("Closed")."</option>
+            </select>
+            <input class=\"button\" TYPE=\"SUBMIT\" ".
+	    "VALUE=\""._("Select Line Item")."\"/>
+            <input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
             </div>
             </form>
             ";

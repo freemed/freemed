@@ -10,7 +10,7 @@ class PatientCoveragesModule extends EMRModule {
 	// override variables
 	var $MODULE_NAME = "Patient Coverage";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -52,6 +52,11 @@ class PatientCoveragesModule extends EMRModule {
 			'id' => SQL_SERIAL
 		);
 	
+		$this->summary_vars = array (
+			_("Plan") => 'covplanname',
+			_("Date") => 'coveffdt'
+		);
+
 		// Call parent constructor
 		$this->EMRModule($nullvar);
 	} // end function PatientCoveragesModule
@@ -218,15 +223,7 @@ class PatientCoveragesModule extends EMRModule {
 
 		if (!$book->is_done())
 		{
-			$display_buffer .= "<CENTER>".$book->display()."</CENTER>";
-			$display_buffer .= "
-				<P>
-				<CENTER>
-				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
-				>"._("Abandon Modification").
-				"</A>
-				</CENTER>
-				";
+			$display_buffer .= "<div align=\"CENTER\">".$book->display()."</div>";
 			return;
 		}
 
@@ -252,33 +249,33 @@ class PatientCoveragesModule extends EMRModule {
 				return;
 		}
 
-		$covstatus=ACTIVE;
-		$coveffdt = fm_date_assemble("coveffdt");
-		$covdob = fm_date_assemble("covdob");
-		$covrelinfodt = fm_date_assemble("covrelinfodt");
-
-		$query = "UPDATE $this->table_name SET coveffdt='".addslashes($coveffdt)."',".
-												"covdtmod='".addslashes($cur_date)."',".
-												"covlname='".addslashes($covlname)."',".
-												"covfname='".addslashes($covfname)."',".
-												"covmname='".addslashes($covmname)."',".
-												"covdob='".addslashes($covdob)."',".
-												"covsex='".addslashes($covsex)."',".
-												"covaddr1='".addslashes($covaddr1)."',".
-												"covaddr2='".addslashes($covaddr2)."',".
-												"covcity='".addslashes($covcity)."',".
-												"covstate='".addslashes($covstate)."',".
-												"covzip='".addslashes($covzip)."',".
-												"covrel='".addslashes($covrel)."',".
-												"covpatinsno='".addslashes($covpatinsno)."',".
-												"covpatgrpno='".addslashes($covpatgrpno)."',".
-												"covinstp='".addslashes($covinstp)."',".
-												"covprovasgn='".addslashes($covprovasgn)."',".
-												"covbenasgn='".addslashes($covbenasgn)."',".
-												"covrelinfo='".addslashes($covrelinfo)."',".
-												"covrelinfodt='".addslashes($covrelinfodt)."',".
-												"covplanname='".addslashes($covplanname)."'".
-				" WHERE id='".addslashes($id)."'";
+		$query = $sql->update_query (
+			$this->table_name,
+			array (
+				'covstatus' => ACTIVE,
+				'coveffdt' => fm_date_assemble('coveffdt'),
+				'covdtmod' => date("Y-m-d"),
+				'covlname' => $covlname,
+				'covfname' => $covfname,
+				'covmname' => $covmname,
+				'covdob' => fm_date_assemble('covdob'),
+				'covsex' => $covsex,
+				'covaddr1' => $covaddr1,
+				'covaddr2' => $covaddr2,
+				'covcity' => $covcity,
+				'covstate' => $covstate,
+				'covzip' => $covzip,
+				'covrel' => $covrel,
+				'covpatinsno' => $covpatinsno,
+				'covpatgrpno' => $covpatgrpno,
+				'covinstp' => $covinstp,
+				'covprovasgn' => $covprovasgn,
+				'covbenasgn' => $covbenasgn,
+				'covrelinfo' => $covrelinfo,
+				'covrelinfodt' => fm_date_assemble('covrelinfodt'),
+				'covplanname' => $covplanname
+			), array ('id' => $id)
+		);
 		$result = $sql->query($query);
 		$display_buffer .= "<CENTER>";
 		if ($result)
@@ -302,8 +299,7 @@ class PatientCoveragesModule extends EMRModule {
 
 	function addform() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		if ($patient<=0) {
 			$display_buffer .= _("Must Select a patient");
@@ -540,18 +536,14 @@ class PatientCoveragesModule extends EMRModule {
 			}
 
 			// add the coverage
-			$coveffdt = fm_date_assemble("coveffdt");
-			$covdob = fm_date_assemble("covdob");
-			$covrelinfodt = fm_date_assemble("covrelinfodt");
-
 			$display_buffer .= "<div ALIGN=\"CENTER\">";
 			$display_buffer .= _("Adding")." ... \n";
-			$covstatus = ACTIVE;  // active
 			$query = $sql->insert_query(
 				$this->table_name,
 				array (
-					"covdtadd" => $cur_date,
-					"covdtmod" => $cur_date,
+					'covstatus' => ACTIVE,
+					"covdtadd" => date("Y-m-d"),
+					"covdtmod" => date("Y-m-d"),
 					"covlname" => $covlname,
 					"covfname" => $covfname,
 					"covmname" => $covmname,
@@ -562,9 +554,9 @@ class PatientCoveragesModule extends EMRModule {
 					"covzip" => $covzip,
 					"covrel" => $covrel,
 					"covsex" => $covsex,
-					"covdob" => $covdob,
+					"covdob" => fm_date_assemble('covdob'),
 					"covinsco" => $covinsco,
-					"coveffdt" => $coveffdt,
+					"coveffdt" => fm_date_assemble('coveffdt'),
 					"covpatient" => $patient,
 					"covpatgrpno" => $covpatgrpno,
 					"covpatinsno" => $covpatinsno,
@@ -575,8 +567,9 @@ class PatientCoveragesModule extends EMRModule {
 					"covbenasgn" => $covbenasgn,
 					"covrelinfo" => $covrelinfo,
 					"covplanname" => $covplanname,
-					"covrelinfodt" => $covrelinfodt)
-				);
+					"covrelinfodt" => fm_date_assemble('covrelinfodt')
+				)
+			);
 			$coverage = $sql->query($query);
 			if ($coverage) {
 				$display_buffer .= _("done").".";

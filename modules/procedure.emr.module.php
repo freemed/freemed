@@ -375,7 +375,8 @@ class ProcedureModule extends EMRModule {
 				<BR>
 				"._("Committing to ledger")." ... 
 				";
-				$query = $sql->insert_query("payrec",
+				$query = $sql->insert_query(
+					'payrec',
 					array(
 						'payrecdtadd' => date('Y-m-d'),
 						'payrecdtmod' => '0000-00-00',
@@ -385,7 +386,7 @@ class ProcedureModule extends EMRModule {
 						'payrecproc' => $this_procedure,
 						'payrecsource' => $proccurcovtp,
 						'payreclink' => $proccurcovid,
-						'payrecype' => '0',
+						'payrectype' => '0',
 						'payrecnum' => '',
 						'payrecamt' => $procbalorig,
 						'payrecdescrip' => $proccomment,
