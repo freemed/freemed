@@ -5,6 +5,23 @@
 
 class Patient {
 
+	function name($id) {
+		global $sql;
+
+		// Perform search
+		$query = "SELECT * FROM patient WHERE id='".addslashes($id)."'";
+		$result = $sql->query($query);
+
+		// Loop through results and add
+		if ($sql->results($result)) {
+			$r = $sql->fetch_array($result);
+			return $r['ptlname'].', '.$r['ptfname'].
+				( !empty($r['ptmname']) ? ' '.$r['ptmname'] : '' );
+		} else {
+			return 'ERROR';
+		}
+	} // end function name
+
 	function picklist($criteria) {
 		global $sql;
 
