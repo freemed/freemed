@@ -2,7 +2,7 @@
  // $Id$
  // desc: language loader for freemed
  // code: Ergin Soysal, MD (soysal@pleksus.net.tr)
- //       minor mods from jeff b (jeff@univrel.pr.uconn.edu)
+ //       minor mods from jeff b (jeff@ourexchange.net)
  // lic : GPL, v2
 
 if (!defined ("__LANGUAGE_LOADER_PHP__")) {

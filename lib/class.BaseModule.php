@@ -13,7 +13,7 @@ class BaseModule extends module {
 	// override variables
 	var $PACKAGE_NAME = PACKAGENAME;
 	var $PACKAGE_VERSION = VERSION;
-	var $MODULE_AUTHOR = "jeff b (jeff@univrel.pr.uconn.edu)";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_DESCRIPTION = "No description.";
 	var $MODULE_VENDOR = "Stock Module";
 

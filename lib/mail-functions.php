@@ -3,7 +3,7 @@
  // desc: functions/classes to allow inline mailing
  // code: Sascha Schumann <sascha@schumann.cx>,
  //       Tobias Ratschiller <tobias@dnet.it>,
- //       jeff b <jeff@univrel.pr.uconn.edu>
+ //       jeff b <jeff@ourexchange.net>
  // lic : GPL, v2
 
 if (!defined ("__MAIL_FUNCTIONS_PHP__")) {
@@ -17,7 +17,7 @@ define ('__MAIL_FUNCTIONS_PHP__', true);
  //     - General code clean-up
  //     - separate body- and from-property
  //     - killed some mostly un-necessary stuff
- // Modified by jeff b <jeff@univrel.pr.uconn.edu>
+ // Modified by jeff b <jeff@ourexchange.net>
  //     - class name change
  //     - more clean-up
  //     - modifications for use in freemed
