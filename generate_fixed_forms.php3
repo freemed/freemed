@@ -462,7 +462,7 @@
      <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mark\">`
    ";
-   for ($i=1;$i<=$pats_processed;$i++) {
+   for ($i=1;$i<=$pat_processed;$i++) {
      $this_patient = new Patient ($patient_forms[$i]);
      echo "
        <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" CHECKED>
