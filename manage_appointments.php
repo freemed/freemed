@@ -133,7 +133,9 @@ if ($patient<1) {
          <td>".( !empty($location)   ? $location   : "&nbsp;" )."</td>
          <td>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</td>
          <td>$calcptcode</td>
-         <td><a href=\"$page_name?id=$r[id]&action=del&patient=$patient\"
+         <td><a href=\"book_appointment.php?id=".urlencode($r['id']).
+		"&type=pat\" class=\"button\">".__("MOD")."</a>
+             <a href=\"$page_name?id=$r[id]&action=del&patient=$patient\"
              class=\"button\">".__("DEL")."</a></td>
         </tr>
         ";
