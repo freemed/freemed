@@ -1,0 +1,15 @@
+FreeMED for Debian
+------------------
+
+This packaging is meant for Debian stable, and is located primarily at
+the FreeMED Software Foundation APT source, which is:
+
+	deb http://apt.freemedsoftware.com/debian woody fsf
+
+The configuration file for FreeMED is /usr/share/freemed/lib/settings.php
+
+There are a number of things in FreeMED which rely on third-party packages,
+and a lack of or misfunction of any of these packages will cause FreeMED
+to react in strange ways.
+
+ -- Jeff Buchbinder <jeff@freemedsoftware.com>, Thu, 08 Jan 2004 14:09:19 -0500

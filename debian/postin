@@ -1,0 +1,12 @@
+#! /bin/sh -e
+# $Id$
+# $Author$
+#
+# Post-install directives for FreeMED package
+
+# Patch PHP ini file to have more than 8M per process
+perl -pi -e "s|8M|64M|;" /etc/php4/apache/php.ini
+
+#DEBHELPER#
+
+exit 0

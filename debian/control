@@ -1,0 +1,16 @@
+Source: freemed
+Section: unknown
+Priority: optional
+Maintainer: Jeff Buchbinder <jeff@freemedsoftware.com>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+
+Package: freemed
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: perl, libxml-parser-perl, libtext-iconv-perl
+Depends: cron
+Depends: djvulibre-bin, gocr, netpbm, imagemagick
+Depends: php4, php4-mysql, phpwebtools (>= 0.4.2), apache
+Suggests: cdrecord, mkisofs
+Description: FreeMED Opensource Electronic Medical Record System
