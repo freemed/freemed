@@ -14,16 +14,12 @@ include ("lib/calendar-functions.php");
 // Create user object
 if (!is_object($this_user)) $this_user = new User;
 
-  if ( ($id>0) AND 
+if ( ($id>0) AND 
        ($action != "addform") AND ($action != "add") AND
        ($action != "delform") AND ($action != "del")) {
     SetCookie ("current_patient", $id, time()+$_cookie_expire);
     $current_patient = $id;   // patch for first time....
-  } // end checking for current_patient value
-  else
-  {
-  	$current_patient=0;
-  }
+} else { $current_patient = 0; }
 
 //----- Logon/authenticate
 freemed_open_db ();
@@ -56,7 +52,6 @@ switch ($action) {
 
         $ptstate      = strtoupper ($ptstate);
 
-        // 19990728 -- next of kin pull and remake
         $ptnextofkin  = htmlentities ($ptnextofkin);
 
         // resplit email
@@ -365,6 +360,71 @@ switch ($action) {
 	 //reset($t_vars);while ($i=next($t_vars)) 
 	 //                 $$i = fm_join_from_array($$i);
 
+	 $query = $sql->update_query (
+           "patient",
+           array (
+             "ptdtadd" => date("Y-m-d"),
+	     "ptdob" => fm_date_assemble ("ptdob"),
+             "ptbal",
+             "ptbalfwd",
+             "ptunapp",
+             "ptrefdoc",
+             "ptpcp",
+             "ptphy1",
+             "ptphy2",
+             "ptphy3",
+             "ptphy4",
+             "ptbilltype",
+             "ptbudg",
+             "ptdoc",
+             "ptlname",
+             "ptfname",
+             "ptmname",
+             "ptaddr1",
+             "ptaddr2",
+             "ptcity",
+             "ptstate" => strtoupper ($ptstate),
+             "ptzip",
+             "ptcountry",
+             "pthphone"  => fm_phone_assemble ("pthphone"),
+             "ptwphone"  => fm_phone_assemble ("ptwphone"),
+             "ptfax" => fm_phone_assemble ("ptfax"),
+             "ptemail",
+             "ptsex",
+             "ptssn",
+             "ptdmv",
+             "ptdtlpay",
+             "ptamtlpay" => $ptpaytype,
+             "ptstatus",
+             "ptytdchg",
+             "ptar",
+             "ptextinf",
+             "ptdisc",
+             "ptdiag1",
+             "ptdiag2",
+             "ptdiag3",
+             "ptdiag4",
+             "ptid",
+             "pthistbal",
+             "ptmarital",
+             "ptempl",
+             "ptemp1",
+             "ptemp2",
+             "ptguar",
+             "ptguarstart",
+             "ptguarend",
+             "ptrelguar",
+             "ptins",
+             "ptinsno",
+             "ptinsgrp",
+             "ptinsstart",
+             "ptinsend",
+             "ptnextofkin",
+             "iso" => $__ISO_SET__
+            ) );
+
+
+/*	    
          $query = "INSERT INTO patient VALUES (
            '$ptdtadd',
            '$ptdtmod',
@@ -441,7 +501,9 @@ switch ($action) {
            NULL,
            NULL,
            NULL) ";
+*/
 	 break; // end add
+
        case "mod": case "modform":
          // collapse the TEXT variables...
 	 //reset($t_vars);while ($i=next($t_vars)) 
@@ -524,7 +586,7 @@ switch ($action) {
      $display_buffer .= "<BR>\n";
 	 if ( ($result) AND ($action=="addform") AND (empty($ptid)) )
 	 {
-		$display_buffer .= "<B>Adding Patient ID ...</B> ";
+		$display_buffer .= "<B>"._("Adding Patient ID")." ...</B> ";
 		$pid = $sql->last_record($result);
 		$patid = PATID_PREFIX.$pid;
 		$result = $sql->query("UPDATE patient SET ptid='".addslashes($patid)."' ".
@@ -608,6 +670,19 @@ switch ($action) {
     } // end criteria search
 
     $result = $sql->query($query); 
+
+	// Check to see if there's only one result, and jump to them
+	// if it's found
+	if ($result and ($sql->num_rows($result)==1)) {
+		// Go to beginning
+		$sql->data_seek($result, 0);
+		// Grab the data
+		$_r = $sql->fetch_array($result);
+		// Form refresh string to pass to template
+		$refresh = "manage.php?id=$_r[id]";
+		// Reset data so that the display works (in case of no refresh)
+		$sql->data_seek($result, 0);
+	} // end checking for single patient jump
 
       $page_title = _("Patients Meeting Criteria")." ".$_crit;
 
