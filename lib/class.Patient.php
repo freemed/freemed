@@ -185,6 +185,34 @@ class Patient {
 		return ($this->ptsex == "m");
 	} // end function Patient->isMale
 
+	// Method: get_list_by_name
+	//
+	//	Get list of patient id keys based on first and
+	//	last name provided
+	//
+	// Parameters:
+	//
+	//	$last - Last name substring
+	//
+	//	$first - First name substring
+	//
+	// Returns:
+	//
+	//	Array of patient id keys
+	//
+	function get_list_by_name ( $last, $first ) {
+		$query = "SELECT ptlname, ptfname, ptmname, id ".
+			"FROM patient WHERE ".
+			"ptlname LIKE '%".addslashes($last)."%' AND ".
+			"ptfname LIKE '%".addslashes($first)."%' ".
+			"ORDER BY ptlname,ptfname,ptmname";
+		$result = $GLOBALS['sql']->query ( $query );
+		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			$patients[] = $r['id'];
+		} // end while loop
+		return $patients;
+	} // end method get_list_name
+
 } // end class Patient
 
 ?>
