@@ -48,7 +48,7 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($GLOBAL["module"])."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
 
-    ".form_table ( array (
+    ".html_form::form_table ( array (
       _("Status") =>
      "<INPUT TYPE=TEXT NAME=\"phystatus\" SIZE=20 MAXLENGTH=20
        VALUE=\"".prepare($phystatus)."\">"

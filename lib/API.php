@@ -1285,7 +1285,7 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
 
   $brackets = "[]";
   $result = $sql->query ($sql_query); // check
-  $all_selected = fm_value_in_string ($blob_data, -1);
+  $all_selected = fm_value_in_string ($blob_data, "-1");
   $buffer .= " 
     <SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
   ";
@@ -1294,7 +1294,7 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
        ($all_selected ? "SELECTED" : "").">"._("ALL")."
   "; // if there is nothing...
 
-  if ( $sql->num_rows($result) > 0) 
+  if ( $sql->results ($result) ) 
    while ($r = $sql->fetch_array ($result)) {
     if (strpos ($display_field, ":")) {
       $displayed = ""; // set as null
@@ -1310,7 +1310,7 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
     $id = $r["id"];
     if ($debug) $debuginfo = " [$id] ";
     $buffer .= "
-      <OPTION VALUE=\"$id\" ".
+      <OPTION VALUE=\"".prepare($id)."\" ".
        ( (fm_value_in_string ($blob_data, $id)) ? "SELECTED" : "" ).
        ">$displayed $debuginfo
     ";
@@ -2018,7 +2018,7 @@ function fm_split_into_array ($original_string) {
 } // end function fm_split_into_array
 
 function fm_value_in_array ($cur_array, $value) {
-  if (count ($cur_array) < 0) return false; // avoid errors
+  if (!is_array ($cur_array)) return ($cur_array == $value);
   $found = false; // initially presume that it is not there
   for ($c=0;$c<count($cur_array);$c++) // loop through array
     if ($cur_array[$c]==$value)        // if there is a match...
@@ -2027,7 +2027,9 @@ function fm_value_in_array ($cur_array, $value) {
 } // end function fm_split_into_array
 
 function fm_value_in_string ($cur_string, $value) {
-  $this_array = fm_split_into_array ($cur_string);
+  if ( strpos ($cur_string, ":") > 0 )
+    $this_array = fm_split_into_array ($cur_string);
+  else $this_array = $cur_string;
   return fm_value_in_array ($this_array, $value);
 } // end function fm_value_in_string
 

@@ -64,7 +64,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("Basic Information"),
        array ("pnoteseoc", date_vars("pnotesdt")),
-       form_table (
+       html_form::form_table (
         array (
 	 _("Provider") =>
 	   freemed_display_selectbox (
@@ -94,7 +94,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("<U>S</U>ubjective"),
        array ("pnotes_S"),
-       form_table (
+       html_form::form_table (
         array (
           _("<U>S</U>ubjective") =>
           "<TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
@@ -106,7 +106,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("<U>O</U>bjective"),
        array ("pnotes_O"),
-       form_table (
+       html_form::form_table (
         array (
           _("<U>O</U>bjective") =>
           "<TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
@@ -118,7 +118,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("<U>A</U>ssessment"),
        array ("pnotes_A"),
-       form_table (
+       html_form::form_table (
         array (
           _("<U>A</U>ssessment") =>
           "<TEXTAREA NAME=\"pnotes_A\" ROWS=8 COLS=45
@@ -130,7 +130,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("<U>P</U>lan"),
        array ("pnotes_P"),
-       form_table (
+       html_form::form_table (
         array (
           _("<U>P</U>lan") =>
           "<TEXTAREA NAME=\"pnotes_P\" ROWS=8 COLS=45
@@ -142,7 +142,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("<U>I</U>nterval"),
        array ("pnotes_I"),
-       form_table (
+       html_form::form_table (
         array (
           _("<U>I</U>nterval") =>
           "<TEXTAREA NAME=\"pnotes_I\" ROWS=8 COLS=45
@@ -154,7 +154,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("<U>E</U>ducation"),
        array ("pnotes_E"),
-       form_table (
+       html_form::form_table (
         array (
           _("<U>E</U>ducation") =>
           "<TEXTAREA NAME=\"pnotes_E\" ROWS=8 COLS=45
@@ -166,7 +166,7 @@ class progressNotes extends freemedEMRModule {
      $book->add_page (
        _("P<U>R</U>escription"),
        array ("pnotes_R"),
-       form_table (
+       html_form::form_table (
         array (
           _("P<U>R</U>escription") =>
           "<TEXTAREA NAME=\"pnotes_R\" ROWS=8 COLS=45

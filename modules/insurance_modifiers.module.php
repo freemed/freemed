@@ -40,7 +40,7 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\">
 
-    ".form_table ( array (
+    ".html_form::form_table ( array (
 
     _("Modifier") =>
     "<INPUT TYPE=TEXT NAME=\"insmod\" SIZE=16 MAXLENGTH=15 

@@ -39,17 +39,16 @@ switch ($action) {
    $book->set_submit_name (_("OK"));
    switch ($action) {
      case "add": case "addform":
-      if (empty($been_here)) {
+      if ( !$book->been_here() ) {
         // $ins_disp_inactive=false; // TODO! not implemented
-        $been_here = "1"; // set been_here
       } // end of checking empty been_here
       $action_name = _("Add");
       break; // end internal add
 
      case "mod": case "modform":
-      if (empty($been_here)) {
+      if ( !$book->been_here() ) {
         $result = $sql->query("SELECT * FROM patient ".
-          "WHERE ( id = '$id' )");
+          "WHERE ( id = '".prepare($id)."' )");
 
         $r = $sql->fetch_array($result); // dump into array r[]
 	extract($r); // pull variables in from array
@@ -125,72 +124,44 @@ switch ($action) {
             date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
             "has_insurance"),
-     "
-       <!-- primary information page -->
-    <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
-
-    <TR><TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Last Name")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptlname\" SIZE=25 MAXLENGTH=50
-     VALUE=\"".prepare($ptlname)."\">
-    </TD></TR>
+		html_form::form_table ( array (
+			_("Last Name") =>
+				"<INPUT TYPE=TEXT NAME=\"ptlname\" SIZE=25 MAXLENGTH=50 ".
+				"VALUE=\"".prepare($ptlname)."\">",
     
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("First Name")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptfname\" SIZE=25 MAXLENGTH=50
-     VALUE=\"".prepare($ptfname)."\">
-    </TD></TR>
+			_("First Name") =>
+				"<INPUT TYPE=TEXT NAME=\"ptfname\" SIZE=25 MAXLENGTH=50 ".
+				"VALUE=\"".prepare($ptfname)."\">",
 
-    <TR><TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Middle Name")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <INPUT TYPE=TEXT NAME=ptmname SIZE=25 MAXLENGTH=50
-      VALUE=\"".prepare($ptmname)."\">
-    </TD></TR>
+			_("Middle Name") =>
+				"<INPUT TYPE=TEXT NAME=\"ptmname\" SIZE=25 MAXLENGTH=50 ".
+				"VALUE=\"".prepare($ptmname)."\">",
 
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Address Line 1")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptaddr1\" SIZE=25 MAXLENGTH=45
-     VALUE=\"".prepare($ptaddr1)."\">
-    </TD></TR>
+			_("Address Line 1") =>
+				"<INPUT TYPE=TEXT NAME=\"ptaddr1\" SIZE=25 MAXLENGTH=45 ".
+				"VALUE=\"".prepare($ptaddr1)."\">",
 
-    <TR><TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Address Line 2")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptaddr2\" SIZE=25 MAXLENGTH=45
-     VALUE=\"".prepare($ptaddr2)."\">
-    </TD></TR>
+			_("Address Line 2") =>
+				"<INPUT TYPE=TEXT NAME=\"ptaddr2\" SIZE=25 MAXLENGTH=45 ".
+				"VALUE=\"".prepare($ptaddr2)."\">",
 
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("City").", "._("State").", "._("Zip")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptcity\" SIZE=10 MAXLENGTH=45
-     VALUE=\"".prepare($ptcity)."\">
-    <INPUT TYPE=TEXT NAME=\"ptstate\" SIZE=3 MAXLENGTH=2
-     VALUE=\"".prepare($ptstate)."\"> 
-    <INPUT TYPE=TEXT NAME=\"ptzip\" SIZE=10 MAXLENGTH=10
-     VALUE=\"".prepare($ptzip)."\">
-    </TD></TR>
+			_("City").", "._("State").", "._("Zip") =>
+				"<INPUT TYPE=TEXT NAME=\"ptcity\" SIZE=10 MAXLENGTH=45 ".
+				"VALUE=\"".prepare($ptcity)."\">\n".
+				"<INPUT TYPE=TEXT NAME=\"ptstate\" SIZE=3 MAXLENGTH=2 ".
+				"VALUE=\"".prepare($ptstate)."\">\n". 
+				"<INPUT TYPE=TEXT NAME=\"ptzip\" SIZE=10 MAXLENGTH=10 ".
+				"VALUE=\"".prepare($ptzip)."\">",
 
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Date of Birth")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    ".date_entry("ptdob")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Has Insurance")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    
-    <INPUT TYPE=CHECKBOX NAME=\"has_insurance\" ".
-      (($has_insurance) ? "CHECKED" : "").">
-    </TD></TR>
+			_("Date of Birth") =>
+				date_entry("ptdob"),
 
-    </TABLE>
+			_("Has Insurance") =>
+				"<INPUT TYPE=CHECKBOX NAME=\"has_insurance\" ".
+				(($has_insurance) ? "CHECKED" : "").">"
 
-     ");
+		) )
+     );
 
      $book->add_page(
        _("Contact"),
@@ -199,42 +170,27 @@ switch ($action) {
 	 "ptcountry", phone_vars("pthphone"), phone_vars("ptwphone"),
 	 phone_vars("ptfax")
          ),
-       "
-  <TABLE CELLPADDING=2 CELLSPACING=0 BORDER=0>
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Country")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    ".country_pulldown("ptcountry")."
-  </TD></TR>
+		html_form::form_table ( array (
 
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Home Phone")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("pthphone")."
-  </TD></TR>
+			_("Country") =>
+				html_form::country_pulldown("ptcountry"),
 
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Work Phone")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("ptwphone")."
-  </TD></TR>
+			_("Home Phone") =>
+				fm_phone_entry ("pthphone"),
+
+			_("Work Phone") =>
+				fm_phone_entry ("ptwphone"),
     
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Fax Number")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("ptfax")."
-  </TD></TR>
+			_("Fax Number") =>
+				fm_phone_entry ("ptfax"),
   
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Email Address")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=ptemail1 SIZE=20 MAXLENGTH=40
-     VALUE=\"".prepare($ptemail1)."\"> <B>@</B>
-    <INPUT TYPE=TEXT NAME=ptemail2 SIZE=20 MAXLENGTH=40
-     VALUE=\"".prepare($ptemail2)."\">
-  </TD></TR>
-  </TABLE>
-       "
+			_("Email Address") =>
+				"<INPUT TYPE=TEXT NAME=\"ptemail1\" SIZE=20 MAXLENGTH=40 ".
+				"VALUE=\"".prepare($ptemail1)."\"> <B>@</B>\n".
+				"<INPUT TYPE=TEXT NAME=\"ptemail2\" SIZE=20 MAXLENGTH=40 ".
+				"VALUE=\"".prepare($ptemail2)."\">"
+
+		) )
      );
 
      $book->add_page(
@@ -243,71 +199,56 @@ switch ($action) {
          "ptsex", "ptmarital", "ptssn", "ptid",
 	 "ptdmv", "ptbilltype", "ptbudg"
 	 ),
-       "
-  <TABLE>
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Gender")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    ".select_widget("ptsex",
-      array (
-        _("Female")        => "f",
-        _("Male")          => "m",
-        _("Transgendered") => "t") )."
-  </TD></TR>
+	html_form::form_table ( array (
 
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Marital Status")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    ".select_widget("ptmarital",
-      array (
-        _("Single")    => "single",
-	_("Married")   => "married",
-	_("Divorced")  => "divorced",
-	_("Separated") => "separated",
-	_("Widowed")   => "widowed") )."
-  </TD></TR>
+		_("Gender") =>
+			html_form::select_widget("ptsex",
+				array (
+					 _("Female")        => "f",
+					 _("Male")          => "m",
+					 _("Transgendered") => "t"
+				)
+			),
+
+		_("Marital Status") =>
+			html_form::select_widget("ptmarital",
+				array (
+					_("Single")    => "single",
+					_("Married")   => "married",
+					_("Divorced")  => "divorced",
+					_("Separated") => "separated",
+					_("Widowed")   => "widowed"
+				)
+			),
 	
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Social Security Number")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptssn\" SIZE=9 MAXLENGTH=10
-     VALUE=\"".prepare($ptssn)."\">
-  </TD></TR>
+		_("Social Security Number") =>
+			"<INPUT TYPE=TEXT NAME=\"ptssn\" SIZE=9 MAXLENGTH=10 ".
+			"VALUE=\"".prepare($ptssn)."\">",
 
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Internal Practice ID #")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"ptid\" SIZE=10 MAXLENGTH=10
-     VALUE=\"".prepare($ptid)."\">
-  </TD></TR>
+		_("Internal Practice ID #") =>
+			"<INPUT TYPE=TEXT NAME=\"ptid\" SIZE=10 MAXLENGTH=10 ".
+			"VALUE=\"".prepare($ptid)."\">",
     
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Driver's License (No State)")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=ptdmv SIZE=10 MAXLENGTH=9
-     VALUE=\"".prepare($ptdmv)."\">
-  </TD></TR>
+		_("Driver's License (No State)") =>
+			"<INPUT TYPE=TEXT NAME=ptdmv SIZE=10 MAXLENGTH=9 ".
+			"VALUE=\"".prepare($ptdmv)."\">",
        
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Type of Billing")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    ".select_widget("ptbilltype",
-        array (
-	  _("Monthly Billing On Account") => "mon",
-	  _("Statement Billing")          => "sta",
-	  _("Charge Card Billing")        => "chg",
-	  _("NONE SELECTED")              => ""
-	) )."
-  </TD></TR>
+		_("Type of Billing") =>
+			html_form::select_widget("ptbilltype",
+				array (
+					_("Monthly Billing On Account") => "mon",
+					_("Statement Billing")          => "sta",
+					_("Charge Card Billing")        => "chg",
+					_("NONE SELECTED")              => ""
+				)
+			),
 
-  <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Monthly Budget Amount")." : <$STDFONT_E>
-  </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=ptbudg SIZE=10 MAXLENGTH=20
-     VALUE=\"".prepare($ptbudg)."\">
-   </TD></TR>
-  </TABLE>
-     ");
+		_("Monthly Budget Amount") =>
+			"<INPUT TYPE=TEXT NAME=ptbudg SIZE=10 MAXLENGTH=20 ".
+			"VALUE=\"".prepare($ptbudg)."\">"
+		) )
+
+	);
 
 
    $ref_phys_r = $sql->query("SELECT phylname,phyfname,id
@@ -597,7 +538,7 @@ switch ($action) {
      <TR><TD>&nbsp</TD></TR>
      <TR><TD ALIGN=LEFT>
       <$STDFONT_B>"._("Insurance")."<FONT SIZE=\"-1\">".
-       select_widget("ins_s_field", array (
+       html_form::select_widget("ins_s_field", array (
         _("Name") => "insconame",
 	_("City") => "inscocity" ) )."</FONT><$STDFONT_E>
       <$STDFONT_B>"._("like")."<FONT SIZE=\"-1\">
@@ -644,7 +585,7 @@ switch ($action) {
       </TD></TR>
      <TR><TD ALIGN=LEFT>
       <$STDFONT_B>"._("Type")."<FONT SIZE=\"-1\">".
-       select_widget("payertype_", array (
+       html_form::select_widget("payertype_", array (
         _("Primary") => "0",
 	_("Secondary") => "1", 
 	_("Tertiary") => "2", 
@@ -823,7 +764,7 @@ switch ($action) {
     <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0 WIDTH=\"100%\">
     <TR><TD ALIGN=RIGHT>
      <$STDFONT_B>"._("Guarantor").
-     select_widget("dep_s_field", array (
+     htmle_form::select_widget("dep_s_field", array (
        _("Last Name")            =>"ptlname",
        _("First Name")           =>"ptfname",
        _("Internal Practice ID") =>"ptid"
@@ -837,7 +778,7 @@ switch ($action) {
     
     <TR><TD ALIGN=RIGHT>
      <$STDFONT_B>"._("Guarantor").
-     select_widget("dep_s_field2", array (
+     html_form::select_widget("dep_s_field2", array (
        _("Last Name")            =>"ptlname",
        _("First Name")           =>"ptfname",
        _("Internal Practice ID") =>"ptid"
@@ -860,7 +801,7 @@ switch ($action) {
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Relation to Guarantor")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    ".select_widget("guarrel_", array (
+    ".html_form::select_widget("guarrel_", array (
         _("Self")    => "S",
         _("Child")   => "C",
         _("Husband") => "H",

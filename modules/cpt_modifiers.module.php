@@ -67,7 +67,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
       ( ($action=="addform") ? "add" : "mod" )."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
     <INPUT TYPE=HIDDEN NAME=\"module\"   VALUE=\"".prepare($module)."\"  >
-   ".form_table ( array (
+   ".html_form::form_table ( array (
     _("Modifier") =>
     "<INPUT TYPE=TEXT NAME=\"cptmod\" SIZE=3 MAXLENGTH=2
      VALUE=\"".prepare($cptmod)."\">",

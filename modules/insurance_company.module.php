@@ -9,7 +9,10 @@ define (__INSURANCE_COMPANY_MODULE_PHP__, true);
 
 class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 
-	var $record_name = "Insurance Company";
+	var $MODULE_NAME	= "Insurance Company Maintenance";
+	var $MODULE_VERSION = "0.1";
+
+	var $record_name 	= "Insurance Company";
 	var $table_name     = "insco";
 
 	var $variables		= array (
@@ -190,6 +193,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 	} // end function insuranceCompanyMaintenance->form()
 
 	function view () { 
+		global $sql;
 		echo freemed_display_itemlist (
 			$sql->query("SELECT * FROM $this->table_name ORDER BY insconame"),
 			$this->page_name,

@@ -126,7 +126,7 @@ class procedureModule extends freemedEMRModule {
   $wizard->add_page ("Step One",
     array ("procphysician", date_vars("procdt"), "proceoc",
            "proccpt", "proccptmod"),
-    form_table ( array (
+    html_form::form_table ( array (
       _("Provider") =>
         freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
       _("Date of Procedure") =>
@@ -200,7 +200,7 @@ class procedureModule extends freemedEMRModule {
 
   $wizard->add_page ("Step Two: Confirm",
     array ("procunits", "procbalorig", "procbillable"),
-    form_table ( array (
+    html_form::form_table ( array (
 
      _("Procedural Code") =>
        prepare($cpt_code["cptcode"]),

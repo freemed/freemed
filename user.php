@@ -4,10 +4,10 @@
   // code: adam b (gdrago23@yahoo.com) -- near-complete rewrite
   // lic : GPL
   
-  $page_name  = basename($GLOBALS["REQUEST_URI"]);
-  $db_name    ="user";
-  $record_name="User";
-  $order_field="id";
+  $page_name   = basename($GLOBALS["REQUEST_URI"]);
+  $table_name  = "user";
+  $record_name = "User";
+  $order_field = "id";
 
   include ("lib/freemed.php");         // load global variables
   include ("lib/API.php");  // API functions
@@ -34,8 +34,11 @@ switch($action) { // master action switch
  case "add":
  case "modform":
  case "addform":
-  $book = new notebook( 
-    array ("action", "_auth", "id", "been_here"), true);
+  // create new notebook
+  $book = new notebook(
+    array ("action", "_auth", "id"),
+	NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR
+  );
   
   if ($action=="modform") {
     if (empty($id)) {
@@ -48,13 +51,20 @@ switch($action) { // master action switch
   
   $book->set_submit_name(($action=="addform") ? _("Add") : _("Modify"));
   
-  if (($action=="modform") AND (!$been_here)) { // catch the empty ID
-    $been_here=1;
+  if ( ($action=="modform") AND (!$book->been_here()) ) { // catch the empty ID
+
       // grab record number "id"
-    $r = freemed_get_link_rec($id, $db_name);
+    $r = freemed_get_link_rec ($id, $table_name);
     extract ($r);
 
+	// expand the arrays
+	$userphy    = sql_expand ( $userphy );
+	$userfac    = sql_expand ( $userfac );
+	$userphygrp = sql_expand ( $userphygrp );
+
+	// make sure default & verify are the same, so no errors
     $userpassword1 = $userpassword2 = $userpassword;
+
   } // second modform if
   
   if ($action=="addform") {
@@ -66,6 +76,7 @@ switch($action) { // master action switch
   $phy_q = "SELECT * FROM physician WHERE phyref='no' ".
            "ORDER BY phylname,phyfname";
   $phy_r = $sql->query($phy_q);
+
   // fetch all in-house docs
   
   $book->add_page(
@@ -185,7 +196,7 @@ switch($action) { // master action switch
     <TR><TD ALIGN=CENTER>
       ".freemed_multiple_choice ("SELECT * FROM physician ORDER BY phylname, 
         phyfname, phymname", "phylname:phyfname", "userphy", 
-	fm_join_from_array($userphy))."
+		fm_join_from_array($userphy))."
     </TD></TR>
     </TABLE>
    
@@ -199,7 +210,7 @@ switch($action) { // master action switch
     <TR><TD ALIGN=CENTER>
       ".freemed_multiple_choice ("SELECT * FROM phygroup ORDER BY
         phygroupname", "phygroupname", "userphygrp", 
-	fm_join_from_array($userphygrp))."
+		fm_join_from_array($userphygrp))."
     </TD></TR>
     </TABLE>
    </TD></TR>
@@ -218,17 +229,6 @@ switch($action) { // master action switch
      <$STDFONT_E>
     </CENTER>\n";
   } else { // now the add/mod code itself
-  // assemble the arrays
-   /* if (count ($userfac) > 0)
-      $userfac_s    = join (":", $userfac);
-     else $userfac_s = $userfac;
-    if (count ($userphy) > 0)
-      $userphy_s    = join (":", $userphy);
-     else $userphy_s = $userphy;
-    if (count ($userphygrp) > 0)
-      $userphygrp_s = join (":", $userphygrp);
-     else $userphygrp_s = $userphygrp;
-   */
     if ($action=="mod" || $action=="modform") {
       echo "
         <P ALIGN=CENTER>
@@ -239,16 +239,16 @@ switch($action) { // master action switch
         // changed... for example, don't set the
         // creation date in a modify. also,
         // remember the commas...
-      $query = "UPDATE $db_name SET ".
+      $query = "UPDATE $table_name SET ".
         "username     = '".addslashes($username)."',      ".
         "userpassword = '".addslashes($userpassword1)."', ".
         "userdescrip  = '".addslashes($userdescrip)."',   ".
         "userlevel    = '".addslashes($userlevel)."',     ".
-        "usertype     = '".addslashes($usertype)."',      ". // 19990909
-        "userfac      = '".addslashes($userfac_s)."',     ".
-        "userphy      = '".addslashes($userphy_s)."',     ".
-        "userphygrp   = '".addslashes($userphygrp_s)."',  ". 
-        "userrealphy  = '".addslashes($userrealphy)."'    ". // 19990929
+        "usertype     = '".addslashes($usertype)."',      ".
+        "userfac      = '".addslashes(sql_squash($userfac))."',       ".
+        "userphy      = '".addslashes(sql_squash($userphy))."',       ".
+        "userphygrp   = '".addslashes(sql_squash($userphygrp))."',    ". 
+        "userrealphy  = '".addslashes($userrealphy)."'    ".
         "WHERE id='".addslashes($id)."'";
     } else { // now the "add" guts
   
@@ -256,15 +256,15 @@ switch($action) { // master action switch
         <P ALIGN=CENTER>
         <$STDFONT_B>"._("Adding")." . . . 
       ";
-      $query = "INSERT INTO $db_name VALUES ( ".
+      $query = "INSERT INTO $table_name VALUES ( ".
         "'".addslashes($username)."',      ".
         "'".addslashes($userpassword1)."', ".
         "'".addslashes($userdescrip)."',   ".
         "'".addslashes($userlevel)."',     ".
         "'".addslashes($usertype)."',      ".
-        "'".addslashes($userfac_s)."',     ".
-        "'".addslashes($userphy_s)."',     ".
-        "'".addslashes($userphygrp_s)."',  ".
+        "'".addslashes(sql_squash($userfac))."',     ".
+        "'".addslashes(sql_squash($userphy))."',     ".
+        "'".addslashes(sql_squash($userphygrp))."',  ".
         "'".addslashes($userrealphy)."',   ".
         " NULL ) ";
     } // 'add' guts
@@ -308,7 +308,7 @@ switch($action) { // master action switch
 
     // select only "id" record, and delete
   if ($id != 1)
-    $result = $sql->query("DELETE FROM $db_name
+    $result = $sql->query("DELETE FROM $table_name
       WHERE (id = \"$id\")");
   else { // if we tried to delete root!!!
     echo "
@@ -335,12 +335,16 @@ switch($action) { // master action switch
   // in the database for modification... useful to note in
   // future...
 
-  $query = "SELECT * FROM $db_name ".
+	// TODO: MIGRATE THIS TO freemed_display_itemlist FUNCTION
+	//       OR MAKE IT A MODULE, INHEIRITING FROM THE MAINTENANCE
+	//       MODULE
+
+  $query = "SELECT * FROM $table_name ".
    "ORDER BY $order_field";
 
   $result = $sql->query($query);
   if ($result) {
-    freemed_display_box_top ("$record_name "._("Maintenance"));
+    freemed_display_box_top (_($record_name)." "._("Maintenance"));
 
     if (strlen($_ref)<5) {
       $_ref="main.php";

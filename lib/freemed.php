@@ -36,14 +36,10 @@ define (__FREEMED_PHP__, true);
   define (DB_USER, "root");				// SQL server username
   define (DB_PASSWORD, "password");		// SQL server password
   define (PHYSICAL_LOCATION, "/usr/freemed");
-  $database=DB_HOST;			// SQL db name (for places
 
-  $host="localhost";                    // host name for this system
-  $physical_loc=PHYSICAL_LOCATION;      // skip the eval, speed hack
-  $database="freemed";					// SQL db name (for places
-										// with multiple iterations...)
-  $base_url="/freemed";					// offset (i.e. http://here/package)
-  $http="http";                         // http for normal, https for SSL
+  define (HOST, "localhost");             // host name for this system
+  define (BASE_URL, "/freemed");		// offset (i.e. http://here/package)
+  define (HTTP, "http");                // http for normal, https for SSL
   $default_language="EN";               // default language
 
     // *************************************
@@ -51,7 +47,7 @@ define (__FREEMED_PHP__, true);
     // ** read incoming_fax_scripts.mk   ***
     // *************************************
 
-  $gifhome="$physical_loc/data/fax/incoming";
+  $gifhome = PHYSICAL_LOCATION . "/data/fax/incoming";
 
     // *************************************
     // ***** language setting routines *****
@@ -61,7 +57,7 @@ define (__FREEMED_PHP__, true);
   else $language=$default_language;
 
     // don't touch these variables either...
-  $complete_url="$http://$host$base_url"; 
+  define (COMPLETE_URL, HTTP . "://" . HOST . BASE_URL . "/" ); 
   $_cookie_expire="36000";     // cookies expire in 1 hour
 
   $debug=false;  // true=debug info on, false=debug info off

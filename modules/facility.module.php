@@ -68,7 +68,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
 	"psrname", "psraddr1", "psraddr2",
 	"psrcity", "psrstate", "psrzip", "psrcountry"
     ),
-    form_table ( array (
+    html_form::form_table ( array (
       _("Facility Name") =>
       "<INPUT TYPE=TEXT NAME=\"psrname\" SIZE=20 MAXLENGTH=25
       VALUE=\"".prepare($psrname)."\">",
@@ -99,7 +99,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
       array (
         phone_vars("psrphone"), phone_vars("psrfax"), "psremail"
       ),
-      form_table ( array (
+      html_form::form_table ( array (
         _("Phone Number") =>
         fm_phone_entry ("psrphone"),
 
@@ -118,7 +118,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
       array (
         "psrnote", "psrdefphy", "psrein", "psrintext"
       ),
-      form_table ( array (
+      html_form::form_table ( array (
         _("Description") =>
         "<INPUT TYPE=TEXT NAME=\"psrnote\" SIZE=20 MAXLENGTH=40
          VALUE=\"".prepare($psrnote)."\">",

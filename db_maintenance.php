@@ -38,10 +38,6 @@ echo "
 	<CENTER>
     <$STDFONT_B>
 
-     <A HREF=\"diagnosis_family.php3?$_auth\"
-      >"._("Diagnosis Families")."</A>
-     <BR>
-
      <A HREF=\"fixed_forms.php3?$_auth\"
       >"._("Fixed Forms")."</A>
      <BR>
@@ -52,10 +48,6 @@ echo "
 
      <A HREF=\"icd9.php3?$_auth\"
       >"._("ICD Codes")."</A>
-     <BR>
-
-     <A HREF=\"inscogroup.php3?$_auth\"
-      >"._("Insurance Company Groups")."</A>
      <BR>
 
      <!-- not ready for prime time yet....

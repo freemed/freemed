@@ -3,7 +3,8 @@
  // note: redirector for /DIS, etc...
  // lic : GPL
 
- include ("lib/API.php"); // API functions (19990610)
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  // then we do an if... else clause to loop through
  // any other instances, and put them here....
@@ -12,26 +13,26 @@
  // use in jumping from place A to place B, and eventually put
  // it on the tool bar.
 switch ($location) {
-  case "/aicd": $redirect="icd9.php3?$_auth&action=addform"; break;
+  case "/aicd": $redirect="icd9.php?$_auth&action=addform"; break;
   case "/cfg":  $redirect="admin.php?$_auth&action=cfgform"; break;
   case "/dis":  echo "not yet"; break;
-  case "/icd":  $redirect="icd9.php3?$_auth&action=view"; break;
+  case "/icd":  $redirect="icd9.php?$_auth&action=view"; break;
   case "/init": $redirect="admin.php?$_auth&action=reinit"; break;
   case "/npat": $redirect="patient.php?$_auth&action=addform"; break;
-  case "/nphy": $redirect="physician.php3?$_auth&action=addform"; break;
+  case "/nphy": $redirect="physician.php?$_auth&action=addform"; break;
   case "/pat":  $redirect="patient.php?$_auth&action=view";
-  case "/phy":  $redirect="physician.php3?$_auth&action=view"; break;
+  case "/phy":  $redirect="physician.php?$_auth&action=view"; break;
   default:      $redirect="main.php?$_auth"; break;
 }
 
   // and now the actual redirector
 
-Header("Location: $complete_url$redirect");
+Header("Location: ".COMPLETE_URL."$redirect");
 
 echo "<HTML>
 <HEAD>
 <TITLE>redirector</TITLE>
-<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$complete_url$redirect\"> 
+<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=".COMPLETE_URL."$redirect\"> 
 </HEAD> 
 <BODY>
 <CENTER><B>"._("If your browser does not support the REFRESH tag")."

@@ -36,7 +36,7 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
 
-    ".form_table ( array (
+    ".html_form::form_table ( array (
 
     _("Status") =>
     "<INPUT TYPE=TEXT NAME=\"ptstatus\" SIZE=3 MAXLENGTH=2
@@ -91,7 +91,7 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
      		<INPUT TYPE=HIDDEN NAME=\"_auth\" VALUE=\"".prepare($_auth)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-		".form_table ( array (
+		".html_form::form_table ( array (
 			_("Status") =>
 				html_form::text_widget ("ptstatus", 2),
 			_("Description") =>

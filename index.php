@@ -6,8 +6,8 @@
  // lic : GPL, v2
 
   $page_name = "index.php";
-  include "lib/freemed.php";
-  include "lib/API.php";
+  include ("lib/freemed.php");
+  include ("lib/API.php");
 
   SetCookie ("default_facility", "0", time()-100);
 
@@ -42,7 +42,7 @@ echo "
 ";
 
  // actually open the language registry
- $f_reg = fopen ("$physical_loc/lang/registry", "r");
+ $f_reg = fopen ( PHYSICAL_LOCATION . "/lang/registry", "r");
  while ($f_line = fgets ($f_reg, 255)) {
    if (substr ($f_line, 0, 1) != "#") { // skip comments
      $f_line_array = explode (":", $f_line);
@@ -57,7 +57,6 @@ echo "
 </TR>
 ";
 
-//$Connection = $sql->connect (DB_HOST, DB_USER, DB_PASSWORD);
 if ($sql->query ("SELECT * FROM config")) {
 echo "
 <TR><TD ALIGN=RIGHT>
@@ -70,9 +69,7 @@ echo "
 ";
 
 } // end checking for connection
-//$sql->close ();
 
- // 19990921 -- checking if persistant...
 if (!empty($_URL))
  echo "
   <TR><TD ALIGN=RIGHT>

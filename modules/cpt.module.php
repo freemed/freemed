@@ -71,7 +71,7 @@ class cptMaintenance extends freemedMaintenanceModule {
     _("Primary Information"),
     array ("cptcode", "cptnameint", "cptnameext", "cptgender",
            "cpttaxed", "cpttype"),
-    form_table (array (
+    html_form::form_table (array (
       _("Procedural Code") =>
        "<INPUT TYPE=TEXT NAME=\"cptcode\" SIZE=8 MAXLENGTH=7
         VALUE=\"".prepare($cptcode)."\"> &nbsp;".

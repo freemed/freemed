@@ -49,7 +49,7 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"  >
     <INPUT TYPE=HIDDEN NAME=\"reqdateadd\" VALUE=\"".prepare($reqdateadd)."\"  >
 
-  ".form_table ( array (
+  ".html_form::form_table ( array (
     _("Name") =>
     "<INPUT TYPE=TEXT NAME=\"reqname\" SIZE=20 MAXLENGTH=100
      VALUE=\"".prepare($reqname)."\">",

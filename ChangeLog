@@ -1,6 +1,18 @@
 freemed project changelog
 ($Id$)
 
+* Fri Jan 19 2001 rufustfirefly
+  - moved diagnosis_family.php3 -> modules/diagnosis_family.module.php
+  - fixed insurance company module to have name and version (oops!)
+  - changed form_table -> html_form::form_table universally
+  - slightly updated patient.php's notebook been_here code
+  - small cleanups in index.php
+  - removing stale variables from lib/freemed.php
+  - fixed user.php multiple-choice stuff, and cleaned up the API a little
+  - removed test_modules_list.php
+  - moved inscogroup.php3 -> modules/insurance_company_group.module.php
+  - moved room.php -> modules/room.module.php
+
 * Thu Jan 18 2001 rufustfirefly
   - minor problems in manage_appointments.php
   - moved questionnaire_template.php3 ->

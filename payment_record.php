@@ -77,7 +77,7 @@
    $wizard->add_page (
      "Step One: Select the Item & Type/Category",
      array (),
-     form_table ( array (
+     html_form::form_table ( array (
        _("Procedure") =>
        "<SELECT NAME=\"payrecproc\">
         <OPTION VALUE=\"0\">"._("NONE SELECTED")."\n".
@@ -145,7 +145,7 @@
       "Step Two: Describe the Payment",
       array ("payrecsource", "payrectype", "payrecdt_m", "payrecdt_y",
         "payrecdt_d", "payrecamt"),
-      form_table ( array (
+      html_form::form_table ( array (
         "Payment Source" =>
           "<SELECT NAME=\"payrecsource\">
          <OPTION VALUE=\"0\" ".
@@ -245,7 +245,7 @@
      "Step Three: Specify the Payer",
      array ("payreclink", "payrecdescrip", "payrecnum",
             "payrecnum_e1", "payrecnum_e2"),
-     form_table ( $second_page_array )
+     html_form::form_table ( $second_page_array )
    );
 
    break; // end of payment
@@ -254,7 +254,7 @@
    $wizard->add_page (
      "Step Two: Describe the Adjustment",
      array ("payreclink", "payrecdt", "payrecamt"),
-     form_table ( array (
+     html_form::form_table ( array (
        "Insurance Company" =>
          freemed_display_selectbox (
            $sql->query ("SELECT insconame,inscocity,inscostate,id FROM insco
@@ -274,7 +274,7 @@
    $wizard->add_page(
      "Step Three: Adjustment Information",
      array ("payrecdescrip"),
-     form_table ( array (
+     html_form::form_table ( array (
        _("Description") =>
          "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
          "VALUE=\"".prepare($payrecdescrip)."\">\n"
@@ -287,7 +287,7 @@
      "Step Two: Describe the Refund",
      array ("payrecdt_y", "payrecdt_m", "payrecdt_d",
             "payrecamt", "payreclink"),
-     form_table ( array (
+     html_form::form_table ( array (
        "Date of Refund" =>
          fm_date_entry ("payrecdt"),
 
@@ -307,7 +307,7 @@
    $wizard->add_page(
      "Step Three: Refund Information",
      array ("payrecdescrip"),
-     form_table ( array (
+     html_form::form_table ( array (
        _("Description") =>
        "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
        "VALUE=\"".prepare($payrecdescrip)."\">\n"
@@ -319,7 +319,7 @@
    $wizard->add_page (
      "Step Two: Describe the Denial",
      array ("payrecdt_y", "payrecdt_m", "payrecdt_d", "payreclink"), 
-     form_table ( array (
+     html_form::form_table ( array (
        "Date of Denial" =>
          fm_date_entry ("payrecdt"),
 
@@ -336,7 +336,7 @@
    $wizard->add_page(
      "Step Three: Denial Information",
      array("payrecdescrip"),
-     form_table ( array (
+     html_form::form_table ( array (
         _("Description") =>
           "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
           "VALUE=\"".prepare($payrecdescrip)."\">\n"
@@ -351,7 +351,7 @@
    $wizard->add_page(
      "Step Two: Rebill Information",
      array ("payrecdescrip"),
-     form_table ( array (
+     html_form::form_table ( array (
        _("Description") =>
          "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
          "VALUE=\"".prepare($payrecdescrip)."\">\n"
