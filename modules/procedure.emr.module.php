@@ -1,7 +1,7 @@
 <?php
- // $Id$
- // desc: procedure database module
- // lic : GPL, v2
+	// $Id$
+	// $Author$
+	// lic : GPL, v2
 
 LoadObjectDependency('_FreeMED.EMRModule');
 
@@ -9,10 +9,10 @@ class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.4";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.6.3';
 
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
@@ -99,6 +99,7 @@ class ProcedureModule extends EMRModule {
 			'procmedicaidref' => SQL__VARCHAR(20),
 			'procmedicaidresub' => SQL__VARCHAR(20),
 			'proclabcharges' => SQL__REAL,
+			'procstatus' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
 		);
 		
@@ -1165,6 +1166,14 @@ class ProcedureModule extends EMRModule {
 				'ADD COLUMN procmedicaidresub VARCHAR(20) AFTER procmedicaidref');
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN proclabcharges REAL AFTER procmedicaidresub');
+		}
+		// Version 0.4
+		//
+		//	Added procedure status (procstatus)
+		//
+		if (!version_check($version, '0.4')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN procstatus INT UNSIGNED AFTER proclabcharges');
 		}
 	} // end method _update
 
