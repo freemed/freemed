@@ -41,8 +41,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 	function mod () { $this->form(); }
 
 	function form () {
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-		global $sql;
+		foreach ($GLOBALS as $k => $v) global $$k;
 
 		$book = new notebook (
 			array ("action", "_auth", "id", "module"),
@@ -119,7 +118,7 @@ class cptMaintenance extends freemedMaintenanceModule {
      ALIGN=CENTER>
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Relative Value")." : <$STDFONT_E>
+      "._("Relative Value")." : 
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"cptrelval\" SIZE=10 MAXLENGTH=9
        VALUE=\"".prepare($cptrelval)."\">
@@ -128,7 +127,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Default Type of Service")." : <$STDFONT_E>
+      "._("Default Type of Service")." : 
      </TD><TD ALIGN=LEFT>
         ".freemed_display_selectbox (
           $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
@@ -141,7 +140,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Default Standard Fee")." : <$STDFONT_E>
+      "._("Default Standard Fee")." : 
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"cptdefstdfee\" SIZE=10 MAXLENGTH=8
        VALUE=\"".prepare($cptdefstdfee)."\">
@@ -158,7 +157,7 @@ class cptMaintenance extends freemedMaintenanceModule {
      ALIGN=CENTER>
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Diagnosis Required")." : <$STDFONT_E>
+      "._("Diagnosis Required")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM icd9
                                ORDER BY icd9code,icd9descrip",
@@ -171,7 +170,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Diagnosis Excluded")." : <$STDFONT_E>
+      "._("Diagnosis Excluded")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM icd9
                               ORDER BY icd9code,icd9descrip",
@@ -184,7 +183,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Procedural Codes Required")." : <$STDFONT_E>
+      "._("Procedural Codes Required")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM cpt
                                ORDER BY cptnameint,cptcode",
@@ -197,7 +196,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Procedural Codes Excluded")." : <$STDFONT_E>
+      "._("Procedural Codes Excluded")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM cpt
                                ORDER BY cptcode,cptnameint",
@@ -259,31 +258,31 @@ class cptMaintenance extends freemedMaintenanceModule {
 
      <TR>
       <TD ALIGN=RIGHT WIDTH=\"50%\">
-       <$STDFONT_B><B>"._("Procedural Code")."</B> : <$STDFONT_E></TD>
-      <TD ALIGN=LEFT><$STDFONT_B>".prepare($cptcode)."<$STDFONT_E>
-       <$STDFONT_B><I>(".prepare($cptnameint).")</I><$STDFONT_E></TD>
+       <B>"._("Procedural Code")."</B> : </TD>
+      <TD ALIGN=LEFT>".prepare($cptcode)."
+       <I>(".prepare($cptnameint).")</I></TD>
      </TR>
 
      <TR>
       <TD ALIGN=RIGHT>
-       <$STDFONT_B>"._("Default Standard Fee")." : <$STDFONT_E></TD>
+       "._("Default Standard Fee")." : </TD>
       <TD ALIGN=LEFT>
-       <$STDFONT_B>".bcadd($this_code["cptdefstdfee"],0,2)."<$STDFONT_E>
+       ".bcadd($this_code["cptdefstdfee"],0,2)."
       </TD>
      </TR>
 
      <TR>
       <TD ALIGN=RIGHT>
-       <$STDFONT_B>"._("Default Type of Service")." : <$STDFONT_E></TD>
+       "._("Default Type of Service")." : </TD>
       <TD ALIGN=LEFT>
-       <$STDFONT_B>".freemed_get_link_field ($cptdeftos, "tos",
-        "tosname")."<$STDFONT_E></TD>
+       ".freemed_get_link_field ($cptdeftos, "tos",
+        "tosname")."</TD>
      </TR>
 
      <TR>
-      <TD COLSPAN=2><$STDFONT_B SIZE=-1><I>
+      <TD COLSPAN=2><FONT SIZE=-1><I>
        "._("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
-      </I><$STDFONT_E>
+      </I></FONT>
      </TD></TR>
      
      </TABLE>
