@@ -220,7 +220,8 @@ switch ($action) {
          ><$STDFONT_B>Dependants<$STDFONT_E></A>
       "; } else {
       echo "
-         <A HREF=\"patient.php3?$_auth&action=find&criteria=guarantor&f1=$id\"
+         <A HREF=\"patient.php3?$_auth&action=find&criteria=guarantor&".
+         "f1=".$this_patient->ptdep."\"
          ><$STDFONT_B>Guarantor<$STDFONT_E></A>
       ";
       }
