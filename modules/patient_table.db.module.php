@@ -9,11 +9,11 @@ class PatientTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Patient Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.2';
+	var $MODULE_VERSION = '0.7.0';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $table_name = "patient";
 
@@ -106,6 +106,7 @@ class PatientTable extends MaintenanceModule {
 			'ptproblems' => SQL__TEXT,
 			'ptcproblems' => SQL__TEXT,
 			'ptops' => SQL__TEXT,
+			'ptpharmacy' => SQL__INT_UNSIGNED(0),
 			'ptrace' => SQL__INT_UNSIGNED(0),
 			'ptreligion' => SQL__INT_UNSIGNED(0),
 			'ptarchive' => SQL__INT_UNSIGNED(0),
@@ -169,6 +170,15 @@ class PatientTable extends MaintenanceModule {
 			// by default.
 			$sql->query('UPDATE '.$this->table_name.' SET ptarchive=\'0\'');
 		} // end 0.6.2 upgrade
+
+		// Version 0.7.0
+		//
+		//	Added patient pharmacy information
+		//
+		if (!version_check($version, '0.7.0')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN ptpharmacy INT UNSIGNED AFTER ptops');
+		} // end 0.7.0 upgrade
 	} // end function _update
 }
 

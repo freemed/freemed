@@ -293,7 +293,7 @@ class PrescriptionModule extends EMRModule {
 		);
 
 		$book->add_page(
-			__("Notes"),
+			__("Sig"),
 			array(
 				"rxnote"
 			),
@@ -426,6 +426,17 @@ class PrescriptionModule extends EMRModule {
 		);
 	} // end method _print_mapping
 
+	function fax_widget ( $varname, $id ) {
+		global $sql, ${$varname};
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$p = freemed::get_link_rec($r[$this->patient_field], 'patient');
+		$pharmacy = freemed::get_link_rec($p['ptpharmacy'], 'pharmacy');
+		${$varname} = $pharmacy['phfax'];
+		return module_function('pharmacymaintenance',
+			'widget',
+			array ( $varname, false, 'phfax' )
+		);
+	} // end method fax_widget
 
 	// Updates
 	function _update() {
