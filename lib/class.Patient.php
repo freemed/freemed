@@ -51,7 +51,7 @@ class Patient {
 		// Check if this is supposed to be a call-in
 		if (!$is_callin) {
 			// Check for null ID, then trigger error
-			if (!isset($this->local_record[id]))
+			if (!isset($this->local_record['id']))
 				trigger_error ("Patient container: ".
 					"invalid patient ID specified!",
 					E_USER_ERROR
@@ -184,6 +184,25 @@ class Patient {
 	function isMale ($no_parameters = "") {
 		return ($this->ptsex == "m");
 	} // end function Patient->isMale
+
+	// Method: phoneNumber
+	//
+	// Returns:
+	//
+	//	Formatted phone number string
+	//
+	function phoneNumber ( ) {
+		if (!$this->local_record['pthphone']) {
+			return __("No Phone Number");
+		}
+		// TODO: Fix non-US formatting...
+		return '('.
+			substr($this->local_record['pthphone'], 0, 3).
+			') '.
+			substr($this->local_record['pthphone'], 3, 3).
+			'-'.
+			substr($this->local_record['pthphone'], 6, 4);
+	} // end method phoneNumber
 
 	// Method: get_list_by_name
 	//
