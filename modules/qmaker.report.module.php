@@ -13,6 +13,7 @@ class QmakerReport extends ReportsModule {
 	var $MODULE_NAME = "Query Maker";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_VERSION = "0.1.2";
+	var $MODULE_DESCRIPTION = "SQL query formation and execution environment.";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -93,9 +94,9 @@ class QmakerReport extends ReportsModule {
 			$display_buffer .= "</select>";
 			$display_buffer .= "<p/>";
 			$display_buffer .= "<table><tr>";
-			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Load Query")."\"/></td>\n";
-			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Execute Query")."\"/></td>\n";
-			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Create")."\"/></td>\n";
+			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Load Query")."\" class=\"button\" /></td>\n";
+			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Execute Query")."\" class=\"button\" /></td>\n";
+			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Create")."\" class=\"button\" /></td>\n";
 			$display_buffer .= "</tr></table>";
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"view\"/>";
 	 		$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>";

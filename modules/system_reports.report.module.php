@@ -10,6 +10,7 @@ class SystemReports extends ReportsModule {
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_DESCRIPTION = "Interface to the Agata reporting engine.";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
