@@ -2085,10 +2085,17 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   
   // searchbox
  if (($num_pages>1) or !empty($_s_val)) {
+  $GLOBALS['__freemed']['on_load'] = 'changeFocus';
   $buffer .= "
     <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\">
     <tr CLASS=\"reverse\">
-    <form METHOD=\"POST\" ACTION=\"".prepare($page_name)."\">
+    <form METHOD=\"POST\" NAME=\"itemlistsearch\" ACTION=\"".prepare($page_name)."\">
+      <script language=\"Javascript\">
+	function changeFocus() {
+		document.forms.itemlistsearch._s_val.focus();
+		return true;
+	}
+      </script>
      <td ALIGN=\"CENTER\">
       ".html_form::select_widget(
         "_s_field",
