@@ -3,7 +3,7 @@
  // note: global variables for entire freemed code base
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
- // mod : 2000-11-14
+ // mod : 2000-12-11
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
@@ -16,7 +16,7 @@ define (__GLOBAL_VAR_INC__, true);
     // these variables you should not touch
   define (PACKAGENAME, "freemed");				// package name
   define (CODED_BY, "The Freemed Project");		// coded by tag
-  define (VERSION, "0.2.0 (Phoenix)");			// current version
+  define (VERSION, "0.2.0-20001211");			// current version
   define (BUGS_EMAIL, "code_bugs@ourexchange.net");	// coder email...
 
   define (BUGS_ADDRESS, "http://sourceforge.net/project/freemed/");
@@ -34,7 +34,7 @@ define (__GLOBAL_VAR_INC__, true);
   define (INSTALLATION, "Stock Freemed Install"); // installation name
   define (LOCALEDIR,	"/usr/share/locale");     // gettext location
   define (DB_HOST, "localhost");	// database (SQL) host location
-  define (PHYSICAL_LOCATION, "/usr/share/freemed");
+  define (PHYSICAL_LOCATION, "/var/www/html/freemed");
   $database="freemed";			// SQL db name (for places
 
   $host="localhost";                    // host name for this system
@@ -124,6 +124,13 @@ define (__GLOBAL_VAR_INC__, true);
   if (strstr($HTTP_USER_AGENT, "Lynx")) {
     Header ("Pragma: no-cache"); // force no caching
   } // end checking for lynx
+
+  // ****************** CHECK FOR PHP MODULES **********************
+
+  if (!function_exists("bcadd"))
+    die ("PHP must be compiled with bcmath module (--with-bcmath)");
+  if (!function_exists("bindtextdomain"))
+    die ("PHP must be compiled with GNU gettext (--with-gettext)");
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 

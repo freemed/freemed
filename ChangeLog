@@ -1,5 +1,12 @@
 freemed project changelog
 
+* Mon Dec 11 2000 rufustfirefly
+  - increased version number to 0.2.0-20001211 (CVS version)
+  - moved in gettext and bcmath module detection into global.var.inc to 
+    stem the run on list questions 
+  - commited procedure.php3 with wizard code. due to recompiling PHP on my
+    box without bcmath support by mistake, can't check it for problems.
+
 * Wed Dec 6  2000 fforest
   - billing_functions : new menu item to generate patient invoices
   - generate_fixed_forms : when doing the join on payrec and procrec we inadvertantly selected 
@@ -13,6 +20,10 @@ freemed project changelog
     this should have been the selected procedure id matching the payrec payrecproc,this patient and payrectype of PROCEDURE.
   - manage_bills : now informs the user is ANY unpaid procedures have NOT been billed.
     
+* Tue Dec 05 2000 rufustfirefly
+  - moved procedure module to wizard class. probably still broken, so i
+    haven't committed yet.
+
 * Wed Nov 29 2000 fforest
   - added procamtallowed to procrec
   - allow manage_payments to handle an allowed amount (fee schedule adjustment). update payrec with 
@@ -22,11 +33,19 @@ freemed project changelog
   - payment_records changed to show a fee adjust
   - added file manage_biils.php3. gives a view of unpaid procs from billing menu. from there
     user can navigate to patient, manage_payments or payment_records.
-  - 
 
 * Wed Nov 22 2000 rufustfirefly
   - fixed calls to fm_date_entry() to echo, since it now returns buffer,
     in all active modules
+
+* Fri Nov 17 2000 fforest - 0.2.0
+  - Fixed bug in manage_payment. rebill broken
+  - enhanced HFCA fixedform
+  - generate_fixed_forms can print a 1500 form
+  - code in billing_functions started for a better bill viewing experience.
+  - admin.php. removed create/drop db. not secure. added drop table for each table.
+    reapplied the db fields removed in 0.2.0 to ease conversion from 0.1.0
+    made reloading stock data optional. (also for migration).
 
 * Tue Nov 14 2000 rufustfirefly - Version 0.2
   - fixed up the README to correspond with the final version of 0.2, with
@@ -41,11 +60,4 @@ freemed project changelog
   - now processes lang/registry, ignoring comment lines
   - added lang/registry to replace old language registry system
   - started new changelog
-* Fri Nov 17 2000 fforest - 0.2.0
-  - Fixed bug in manage_payment. rebill broken
-  - enhanced HFCA fixedform
-  - generate_fixed_forms can print a 1500 form
-  - code in billing_functions started for a better bill viewing experience.
-  - admin.php. removed create/drop db. not secure. added drop table for each table.
-    reapplied the db fields removed in 0.2.0 to ease conversion from 0.1.0
-    made reloading stock data optional. (also for migration).
+

@@ -38,339 +38,51 @@ if ($patient<1) {
 
 switch ($action) { // master action switch
  case "addform": case "modform": // add or modify form
-  switch ($action) { // inner action switch
-   case "addform":
-    $procunits = "1.0";        // default value for units
-    $procdiag1      = $this_patient->local_record[ptdiag1];
-    $procdiag2      = $this_patient->local_record[ptdiag2];
-    $procdiag3      = $this_patient->local_record[ptdiag3];
-    $procdiag4      = $this_patient->local_record[ptdiag4];
-    break; // end of addform (inner)
-   case "modform":
-    $this_data = freemed_get_link_rec ($id, $db_name);
-    // extract all of the data
-    $procpatient    = $this_data["procpatient"   ];
-    $proceoc        = $this_data["proceoc"       ];
-    $proccpt        = $this_data["proccpt"       ];
-    $proccptmod     = $this_data["proccptmod"    ];
-    $procdiag1      = $this_data["procdiag1"     ];
-    $procdiag2      = $this_data["procdiag2"     ];
-    $procdiag3      = $this_data["procdiag3"     ];
-    $procdiag4      = $this_data["procdiag4"     ];
-    $proccharges    = $this_data["proccharges"   ];
-    $procunits      = $this_data["procunits"     ];
-    $procvoucher    = $this_data["procvoucher"   ];
-    $procphysician  = $this_data["procphysician" ];
-    $procdt         = $this_data["procdt"        ];
-    $procpos        = $this_data["procpos"       ];
-    $proctos        = $this_data["proctos"       ];
-    $proccomment    = $this_data["proccomment"   ];
-    $procbalorig    = $this_data["procbalorig"   ];
-    $procbalcurrent = $this_data["procbalcurrent"];
-    $procamtpaid    = $this_data["procamtpaid"   ];
-    $procbilled     = $this_data["procbilled"    ];
-    $procauth       = $this_data["procauth"      ];
-    $procrefdoc     = $this_data["procrefdoc"    ];
-    $procrefdt      = $this_data["procrefdt"     ];
-    break; // end of modform (inner)
-  } // inner action switch
+ case "add": case "mod":
+  if (!$been_here) {
+    switch ($action) { // inner action switch
+     case "addform":
+      $procunits = "1.0";        // default value for units
+      $procdiag1      = $this_patient->local_record[ptdiag1];
+      $procdiag2      = $this_patient->local_record[ptdiag2];
+      $procdiag3      = $this_patient->local_record[ptdiag3];
+      $procdiag4      = $this_patient->local_record[ptdiag4];
+      break; // end of addform (inner)
+     case "modform":
+      $this_data = freemed_get_link_rec ($id, $db_name);
+      extract ($this_data); // extract all of this data
+      break; // end of modform (inner)
+    } // inner action switch
+    $been_here = 1;
+  } // end checking if been here
   $phys_query = "SELECT * FROM physician WHERE phyref='no' ".
                 "ORDER BY phylname,phyfname";
   $phys_result = fdb_query($phys_query);
   freemed_display_box_top ( ( ($action=="addform") ? _("Add") : _("Modify") ).
    " "._($record_name));
-  echo "
-    <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-    <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
-    ".freemed_patient_box($this_patient)."
-    
-    <P>
+  echo freemed_patient_box($this_patient);
 
-    <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
-     ALIGN=CENTER>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Provider")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".
-  freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician")
-  ."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Date of Procedure")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ";
+  // prep stuff for page one
   if (empty ($procdt)) $procdt = $cur_date; // show current date
-  echo fm_date_entry ("procdt")."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Episode of Care")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".freemed_multiple_choice ("SELECT * FROM eoc
-                              WHERE eocpatient='$patient'
-                              ORDER BY eocdtlastsimilar DESC",
-                             "eocstartdate:eocdtlastsimilar:eocdescrip",
-                             "proceoc",
-                             $proceoc,
-                             false);
-  
   $icd_type = freemed_config_value("icd"); // '9' or '10'
-
   $cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
   $cptmod_result = fdb_query($cptmod_query);
   $icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
   $icd_result = fdb_query($icd_query);
-  
-  echo "
-     </TD>
-    </TR>
 
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Procedural Code")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".
-  freemed_display_selectbox(
-    fdb_query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
-    "#cptcode# (#cptnameint#)", "proccpt")
-  ."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>&nbsp;</TD><TD ALIGN=LEFT>
-  ".
-  freemed_display_selectbox(
-    fdb_query("SELECT cptmod,cptmoddescrip,id ".
-    "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
-    "#cptmod# (#cptmoddescrip#)", "proccptmod")
-  ."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Units")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"procunits\" VALUE=\"".prepare($procunits)."\"
-       SIZE=10 MAXLENGTH=9>
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Diagnosis Code")." 1 : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".
-  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1")
-  ."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Diagnosis Code")." 2 : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".
-  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag2")
-  ."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Diagnosis Code")." 3 : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".
-  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag3")
-  ."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Diagnosis Code")." 4 : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".
-  freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-   "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4")
-  ."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Place of Service")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox(
-      fdb_query("
-        SELECT psrname,psrnote,id
-        FROM facility
-      "),
-      "#psrname# [#psrnote#]", 
-      "procpos"
-    )."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Type of Service")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"proctos\">
-  ";
-  freemed_display_tos ($proctos);
-  echo "
-      </SELECT>
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Voucher Number")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"".prepare($procvoucher)."\"
-       SIZE=20>
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Authorization")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procauth\">
-       <OPTION VALUE=\"0\" ".
-        ( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED
-  ";
+  $auth_r_buffer = "";
   $auth_res = fdb_query ("SELECT * FROM authorizations
                           WHERE (authpatient='$patient')");
   if ($auth_res > 0) { // begin if there are authorizations...
    while ($auth_r = fdb_fetch_array ($auth_res)) {
-    echo "
+    $auth_r_buffer .= "
      <OPTION VALUE=\"$auth_r[id]\" ".
      ( ($auth_r[id]==$procauth) ? "SELECTED" : "" )
-     .">$auth_r[authdtbegin] to $auth_r[authdtend]
-    ";
+     .">$auth_r[authdtbegin] to $auth_r[authdtend]\n";
    } // end while looping for authorizations
   } // end if there are authorizations
-  echo "
-      </SELECT>
-     </TD>
-    </TR>
 
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Referring Provider")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ";
-  $phy_r = fdb_query("SELECT phylname,phyfname,id FROM physician 
-                      WHERE phyref='yes'
-                      ORDER BY phylname, phyfname");
-  echo
-  freemed_display_selectbox ($phy_r, "#phylname#, #phyfname#", "procrefdoc")."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Date of Last Visit")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-  ".fm_date_entry ("procrefdt")."
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Comment")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"".prepare($proccomment)."\"
-       SIZE=30 MAXLENGTH=512>
-     </TD>
-    </TR>
-
-    </TABLE>
-
-    <P>
-    <CENTER>
-     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-       ( ($action=="addform") ? "addform2" : "modform2" )."\">
-     <INPUT TYPE=SUBMIT VALUE=\"".
-       ( ($action=="addform") ? _("Add") : _("Modify") )."\">
-     <INPUT TYPE=RESET  VALUE=\""._("Clear")."\"> 
-    </CENTER>
-    </FORM>
-  ";
-  freemed_display_box_bottom ();
-  break; // end of add/modify form action
-
- case "addform2":
- case "modform2":
-  switch ($action) {
-    case "addform2":
-     $next_action="add";
-     $this_action="$Add";
-     break;
-    case "modform2":
-     $next_action="mod";
-     $this_action="$Modify";
-     break;
-  } // internal action switch (addform2,modform2)
-  freemed_display_box_top ("$record_name Confirm");
-  echo freemed_patient_box($this_patient)."
-   <P>
-
-   <FORM ACTION=\"$page_name\" METHOD=POST>
-
-    <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"$next_action\">
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"   VALUE=\"$_auth\">
-    <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-    <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"$id\">
-
-    <!-- embed all important variables -->
-    <INPUT TYPE=HIDDEN NAME=\"procpatient\" VALUE=\"$procpatient\">
-    <INPUT TYPE=HIDDEN NAME=\"proceoc\" VALUE=\"".
-        prepare(fm_join_from_array($proceoc))."\">
-    <INPUT TYPE=HIDDEN NAME=\"proccpt\" VALUE=\"$proccpt\">
-    <INPUT TYPE=HIDDEN NAME=\"proccptmod\" VALUE=\"$proccptmod\">
-    <INPUT TYPE=HIDDEN NAME=\"procdiag1\" VALUE=\"$procdiag1\">
-    <INPUT TYPE=HIDDEN NAME=\"procdiag2\" VALUE=\"$procdiag2\">
-    <INPUT TYPE=HIDDEN NAME=\"procdiag3\" VALUE=\"$procdiag3\">
-    <INPUT TYPE=HIDDEN NAME=\"procdiag4\" VALUE=\"$procdiag4\">
-    <INPUT TYPE=HIDDEN NAME=\"proccharges\" VALUE=\"$proccharges\">
-    <INPUT TYPE=HIDDEN NAME=\"procunits\" VALUE=\"$procunits\">
-    <INPUT TYPE=HIDDEN NAME=\"procvoucher\" VALUE=\"".
-        prepare($procvoucher)."\">
-    <INPUT TYPE=HIDDEN NAME=\"procphysician\" VALUE=\"$procphysician\">
-    <INPUT TYPE=HIDDEN NAME=\"procdt_y\" VALUE=\"$procdt_y\">
-    <INPUT TYPE=HIDDEN NAME=\"procdt_d\" VALUE=\"$procdt_d\">
-    <INPUT TYPE=HIDDEN NAME=\"procdt_m\" VALUE=\"$procdt_m\">
-    <INPUT TYPE=HIDDEN NAME=\"procpos\"  VALUE=\"$procpos\">
-    <INPUT TYPE=HIDDEN NAME=\"proccomment\" VALUE=\"".
-       prepare($proccomment)."\">
-    <INPUT TYPE=HIDDEN NAME=\"procauth\" VALUE=\"".
-       prepare($procauth)."\">
-    <INPUT TYPE=HIDDEN NAME=\"procrefdoc\" VALUE=\"".
-       prepare($procrefdoc)."\">
-    <INPUT TYPE=HIDDEN NAME=\"procrefdt_y\" VALUE=\"".
-       prepare($procrefdt_y)."\">
-    <INPUT TYPE=HIDDEN NAME=\"procrefdt_m\" VALUE=\"".
-       prepare($procrefdt_m)."\">
-    <INPUT TYPE=HIDDEN NAME=\"procrefdt_d\" VALUE=\"".
-       prepare($procrefdt_d)."\">
-
-    <!-- calculate charges and allow change here -->
-  ";
+  // stuff for page two
 
   // charge calculation routine lies here
   //   charge = units * relative_value(cpt) * 
@@ -421,88 +133,129 @@ switch ($action) { // master action switch
   //   adjust values to proper precision
   $charge = bcadd ($charge, 0, 2);
 
-  echo "
-   <P>
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
-    VALIGN=MIDDLE ALIGN=CENTER>
+  // ************** BUILD THE WIZARD ****************
+  $wizard = new wizard ( array ("been_here", "action", "patient", "id") );
+  
+  $wizard->add_page ("Step One",
+    array ("procphysician", date_vars("procdt"), "proceoc",
+           "proccpt", "proccptmod"),
+    form_table ( array (
+      _("Provider") =>
+        freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
+      _("Date of Procedure") =>
+        fm_date_entry ("procdt"),
+      _("Episode of Care") =>
+        freemed_multiple_choice ("SELECT * FROM eoc
+                              WHERE eocpatient='$patient'
+                              ORDER BY eocdtlastsimilar DESC",
+                             "eocstartdate:eocdtlastsimilar:eocdescrip",
+                             "proceoc",
+                             $proceoc,
+                             false),
+      _("Procedural Code") =>
+        freemed_display_selectbox(
+          fdb_query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
+            "#cptcode# (#cptnameint#)", "proccpt").
+          freemed_display_selectbox(
+            fdb_query("SELECT cptmod,cptmoddescrip,id ".
+              "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
+              "#cptmod# (#cptmoddescrip#)", "proccptmod"),
+      _("Units") =>
+        "<INPUT TYPE=TEXT NAME=\"procunits\" VALUE=\"".prepare($procunits)."\" ".
+        "SIZE=10 MAXLENGTH=9>",
+      _("Diagnosis Code")." 1" =>
+        freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+          "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1"),
+      _("Diagnosis Code")." 2" =>
+        freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+          "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag2"),
+      _("Diagnosis Code")." 3" =>
+        freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+          "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag3"),
+      _("Diagnosis Code")." 4" =>
+        freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+          "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4"),
+      _("Place of Service") =>
+        freemed_display_selectbox(
+          fdb_query("SELECT psrname,psrnote,id FROM facility"),
+          "#psrname# [#psrnote#]", 
+          "procpos"
+        ),
+      _("Type of Service") =>
+        "<SELECT NAME=\"proctos\">\n".
+        freemed_display_tos ($proctos).
+        "</SELECT>\n",
+      _("Voucher Number") =>
+        "<INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"".prepare($procvoucher)."\" ".
+        "SIZE=20>\n",
+      _("Authorization") =>
+        "<SELECT NAME=\"procauth\">\n".
+        "<OPTION VALUE=\"0\" ".
+        ( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
+        $auth_r_buffer.
+        "</SELECT>\n",
+      _("Referring Provider") =>
+        freemed_display_selectbox (
+          fdb_query("SELECT phylname,phyfname,id FROM physician 
+                      WHERE phyref='yes'
+                      ORDER BY phylname, phyfname"),
+          "#phylname#, #phyfname#", "procrefdoc"
+        ),
+      _("Date of Last Visit") =>
+        fm_date_entry ("procrefdt"),
+      _("Comment") =>
+        "<INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"".prepare($proccomment)."\" ".
+        "SIZE=30 MAXLENGTH=512>\n"
+    ) )
+  ); // end of page one
 
-   <TR>
-    <TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Procedural Code")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>".prepare($cpt_code["cptcode"])."<$STDFONT_E>
-    </TD>
-   </TR>
+  $wizard->add_page ("Step Two: Confirm",
+    array ("procunits", "procbalorig", "procbillable"),
+    form_table ( array (
 
-   <TR>
-    <TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Units")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>".prepare($procunits)."<$STDFONT_E>
-    </TD>
-   </TR>
+     _("Procedural Code") =>
+       prepare($cpt_code["cptcode"]),
 
-   <TR>
-    <TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Calculated Accepted Fee")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>$cpt_code_stdfee<$STDFONT_E>
-    </TD>
-   </TR>
+     _("Units") =>
+       prepare($procunits),
 
-   <TR>
-    <TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Calculated Charge")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <INPUT TYPE=TEXT NAME=\"procbalorig\" SIZE=10 MAXLENGTH=9
-      VALUE=\"".prepare($charge)."\">
-    </TD>
-   </TR>
+     _("Calculated Accepted Fee") =>
+       $cpt_code_stdfee,
 
-   <TR>
-    <TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Insurance Billable?")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <SELECT NAME=\"procbillable\">
-      <OPTION VALUE=\"0\" ".
-       ( ($procbillable == 0) ? "SELECTED" : "" ).">"._("Yes")."
-      <OPTION VALUE=\"1\" ".
-       ( ($procbillable != 0) ? "SELECTED" : "" ).">"._("No")."
-     </SELECT>
-    </TD>
-   </TR>
+     _("Calculated Charge") =>
+       "<INPUT TYPE=TEXT NAME=\"procbalorig\" SIZE=10 MAXLENGTH=9 ".
+       "VALUE=\"".prepare($charge)."\">",
 
-   <TR>
-    <TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("Comment")." : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>".prepare($proccomment)."<$STDFONT_E>
-    </TD>
-   </TR>
+     _("Insurance Billable?") =>
+       "<SELECT NAME=\"procbillable\">
+        <OPTION VALUE=\"0\" ".
+         ( ($procbillable == 0) ? "SELECTED" : "" ).">"._("Yes")."
+        <OPTION VALUE=\"1\" ".
+         ( ($procbillable != 0) ? "SELECTED" : "" ).">"._("No")."
+       </SELECT>\n",
 
-   </TABLE>
-
-   <P>
-   <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\"$this_action\">
-    <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
-   </CENTER>
-
-   </FORM>
-   <P>
+     _("Comment") =>
+       prepare($proccomment)
   ";
-  freemed_display_box_bottom ();
-  break; // addform/modform confirm action (addform2,modform2)
 
- case "add": // add action
-  freemed_display_box_top (_("Adding")." "._($record_name));
-  echo "
-    <P>
-    <$STDFONT_B>"._("Adding")." ... <$STDFONT_E>
-  ";
-
-  // form add query
-  $query = "INSERT INTO $db_name VALUES (
+  if (!$wizard->is_done() and !$wizard->is_cancelled()) {
+    // display the wizard
+    echo $wizard->display();
+  } else if ($wizard->is_done()) {
+    // process add/mod here
+    freemed_display_box_top (
+     ( (substr($action,0,3)=="add") ? _("Adding") : _("Modifying") ).
+     " "._($record_name));
+    echo "
+      <P>
+      <$STDFONT_B>".
+      ( (substr($action,0,3)=="add") ? _("Adding") : _("Modifying") ).
+       " ... <$STDFONT_E>
+    ";
+    switch ($action) {
+     case "addform": case "add":
+       // form add query
+      $query = "INSERT INTO $db_name VALUES (
             '$patient',
             '".addslashes(fm_join_from_array($proceoc))."',
             '$proccpt',
@@ -527,19 +280,22 @@ switch ($action) { // master action switch
             '".addslashes($procrefdoc).   "',
             '".fm_date_assemble("procrefdt")."',
             NULL )";
-  $result = fdb_query ($query);
-  if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
 
-  $this_procedure = fdb_last_record ();
+      $result = fdb_query ($query);
+      if ($debug) echo " (query = $query, result = $result) <BR>\n";
+      echo "<CENTER>\n";
+      if ($result) { echo _("done")."."; }
+       else        { echo _("ERROR");    }
+      echo "</CENTER>\n";
 
-  // form add query
-  echo "
-    <P>
-    <$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
-  ";
-  $query = "INSERT INTO payrec VALUES (
+      $this_procedure = fdb_last_record ();
+
+      // form add query
+      echo "
+        <P>
+        <$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
+      ";
+      $query = "INSERT INTO payrec VALUES (
             '$cur_date',
             '0000-00-00',
             '$patient',
@@ -554,59 +310,52 @@ switch ($action) { // master action switch
             '".addslashes($proccomment)."',
             'unlocked',
             NULL )";
-  $result = fdb_query ($query);
-  if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
-  $this_procedure = fdb_last_record ($result, $db_name);
+      $result = fdb_query ($query);
+      if ($debug) echo " (query = $query, result = $result) <BR>\n";
+      if ($result) { echo _("done")."."; }
+       else        { echo _("ERROR");    }
+      $this_procedure = fdb_last_record ($result, $db_name);
   
-    // updating patient diagnoses
-  echo "
-    <P>
-    <$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
-  ";
-  $query = "UPDATE patient SET
+       // updating patient diagnoses
+      echo "
+        <P>
+        <$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
+      ";
+      $query = "UPDATE patient SET
             ptdiag1  = '$procdiag1',
             ptdiag2  = '$procdiag2',
             ptdiag3  = '$procdiag3',
             ptdiag4  = '$procdiag4'
             WHERE id = '$patient'";
-  $result = fdb_query ($query);
-  if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
+      $result = fdb_query ($query);
+      if ($debug) echo " (query = $query, result = $result) <BR>\n";
+      if ($result) { echo _("done")."."; }
+       else        { echo _("ERROR");    }
   
-  echo "
-    <P>
-    <CENTER>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"payment_record.php3?$_auth&action=addform&patient=$patient&".
-     "procedure=$this_procedure\"
-     ><$STDFONT_B>Add Payment<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"procedure.php3?$_auth&action=addform&procvoucher=$procvoucher".
-      "&patient=$patient&procdt=".fm_date_assemble("procdt").
-      "&procdiag1=$procdiag1".
-      "&procdiag2=$procdiag2".
-      "&procdiag3=$procdiag3".
-      "&procdiag4=$procdiag4".
-      "&procphysician=$procphysician".
-      "\"
-     ><$STDFONT_B>Add Another $record_name<$STDFONT_E></A>
-    </CENTER>
-    <P>
-  ";
-  freemed_display_box_bottom ();
-  break; // end of add action
+      echo "
+        <P>
+        <CENTER>
+         <A HREF=\"manage.php3?$_auth&id=$patient\"
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
+         <A HREF=\"payment_record.php3?$_auth&action=addform&patient=$patient&".
+         "procedure=$this_procedure\"
+         ><$STDFONT_B>Add Payment<$STDFONT_E></A> <B>|</B>
+         <A HREF=\"procedure.php3?$_auth&action=addform&procvoucher=$procvoucher".
+          "&patient=$patient&procdt=".fm_date_assemble("procdt").
+          "&procdiag1=$procdiag1".
+          "&procdiag2=$procdiag2".
+          "&procdiag3=$procdiag3".
+          "&procdiag4=$procdiag4".
+          "&procphysician=$procphysician".
+          "\"
+         ><$STDFONT_B>"._("Add Another")." "._($record_name)."<$STDFONT_E></A>
+        </CENTER>
+        <P>
+      ";
+      break; // end add
 
- case "mod": // modify action
-  freemed_display_box_top (_("Modifying")." "._($record_name));
-  echo "
-    <P>
-    <$STDFONT_B>"._("Modifying")." ... <$STDFONT_E>
-  ";
-  // form add query
-  $query = "UPDATE $db_name SET
+     case "modform": case "mod":
+       $query = "UPDATE $db_name SET
             procpatient     = '$patient',
             proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
             proccpt         = '$proccpt',
@@ -628,53 +377,57 @@ switch ($action) { // master action switch
             procrefdoc      = '".addslashes($procrefdoc).   "',
             procrefdt       = '".fm_date_assemble("procrefdt")."'
             WHERE id='$id'";
-  $result = fdb_query ($query);
-  if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
-  echo "
-    <P>
-    <$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
-  ";
-  // form add query
-  $query = "UPDATE payrec SET
+       $result = fdb_query ($query);
+       if ($debug) echo " (query = $query, result = $result) <BR>\n";
+       if ($result) { echo _("done")."."; }
+        else        { echo _("ERROR");    }
+       echo "
+        <P>
+        <$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
+       ";
+       // form add query
+       $query = "UPDATE payrec SET
             payrecdtmod   = '$cur_date',
             payrecpatient = '$patient',
             payrecdt      = '".fm_date_assemble("procdt")."',
             payrecamt     = '$procbalorig',
             payrecdescrip = '".addslashes($proccomment)."'
             WHERE ( (payreccat='5') AND (payrecproc='$id') )";
-  $result = fdb_query ($query);
-  if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
+       $result = fdb_query ($query);
+       if ($debug) echo " (query = $query, result = $result) <BR>\n";
+       if ($result) { echo _("done")."."; }
+        else        { echo _("ERROR");    }
 
-    // updating patient diagnoses
-  echo "
-    <P>
-    <$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
-  ";
-  $query = "UPDATE patient SET
-            ptdiag1  = '$procdiag1',
-            ptdiag2  = '$procdiag2',
-            ptdiag3  = '$procdiag3',
-            ptdiag4  = '$procdiag4'
-            WHERE id = '$patient'";
-  $result = fdb_query ($query);
-  if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
+        // updating patient diagnoses
+      echo "
+        <P>
+        <$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
+      ";
+      $query = "UPDATE patient SET
+           ptdiag1  = '$procdiag1',
+           ptdiag2  = '$procdiag2',
+           ptdiag3  = '$procdiag3',
+           ptdiag4  = '$procdiag4'
+           WHERE id = '$patient'";
+      $result = fdb_query ($query);
+      if ($debug) echo " (query = $query, result = $result) <BR>\n";
+      if ($result) { echo _("done")."."; }
+       else        { echo _("ERROR");    }
 
-  echo "
-    <P>
-    <CENTER>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
-    </CENTER>
-    <P>
-  ";
+      echo "
+       <P>
+       <CENTER>
+        <A HREF=\"manage.php3?$_auth&id=$patient\"
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+       </CENTER>
+       <P>
+      ";
+      break; // end mod
+    } // end switch
+  } // end checking if done/cancelled
+
   freemed_display_box_bottom ();
-  break; // end of modify action
+  break; // end of add/modify form action
 
  case "del": // delete action
   freemed_display_box_top (_("Deleting")." "._($record_name));
