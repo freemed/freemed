@@ -317,12 +317,15 @@ switch ($action) {
         "&ptfname=".rawurlencode ($cifname).
         "&ptlname=".rawurlencode ($cilname).
         "&ptmname=".rawurlencode ($cimname).
+        "&pthphone=".rawurlencode ($cihphone_raw).
         "&pthphone1=".rawurlencode (substr($cihphone_raw, 0, 3)).
         "&pthphone2=".rawurlencode (substr($cihphone_raw, 3, 3)).
         "&pthphone3=".rawurlencode (substr($cihphone_raw, 6, 4)).
+        "&ptwphone=".rawurlencode ($ciwphone_raw).
         "&ptwphone1=".rawurlencode (substr($ciwphone_raw, 0, 3)).
         "&ptwphone2=".rawurlencode (substr($ciwphone_raw, 3, 3)).
         "&ptwphone3=".rawurlencode (substr($ciwphone_raw, 6, 4)).
+        "&ptdob=".rawurlencode ($cidob).
         "&ptdob1=".rawurlencode (substr($cidob, 0, 4)).
         "&ptdob2=".rawurlencode (substr($cidob, 5, 2)).
         "&ptdob3=".rawurlencode (substr($cidob, 8, 2)).
