@@ -3169,7 +3169,10 @@ function page_push () {
 	} // end checking for existing history
 
 	// Add to the list of pages
-	$_page_history["$page_title"] = basename($_SERVER['PHP_SELF']);
+	$_page_history["$page_title"] = basename($_SERVER['PHP_SELF'])."?".
+		"module=".urlencode($_REQUEST['module'])."&".
+		"action=".urlencode($_REQUEST['action'])."&".
+		"type=".urlencode($_REQUEST['type']);
 
 	// Reimport into SESSION
 	$_SESSION['page_history'] = $_page_history;
