@@ -230,11 +230,6 @@ $form .= "
 	<!-- begin calendar display -->
 
 	<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\" CLASS=\"calendar\">
-	<!--
-	<tr><td COLSPAN=\"4\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
-		<B>".__("Calendar")."</B>
-	</td></tr>
-	-->
 
 	<tr>
 		<td COLSPAN=\"2\" WIDTH=\"50\">&nbsp;</td>
@@ -271,7 +266,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 	
 		// Change cell_class
 		$cell_class = alternate_colors (
-			array("cell", "cell_alt")
+			array("calcell", "calcell_alt")
 		);
 
 		// Get index
@@ -362,7 +357,6 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 				"id=".urlencode($id)."&".
 				"note=".urlencode($note)."&".
 				"patient=".urlencode($patient)."\" ".
-				"class=\"button\"".
 				">".__("Book")."</a></td>\n";
 		} else {
 			$form .= "<td class=\"".$cell_class."\">&nbsp;</td>\n";
