@@ -101,7 +101,7 @@ switch ($action) {
 		// Add to pick list
 		$pick_list[(stripslashes($r['ptlname'].", ".
 			$r['ptfname']." [".
-			$r['ptid']."] (".
+			$r['ptdob']."] (".
 			$r['ptcity'].", ".
 			$r['ptstate'].")"))] = $r['id'];
 	} else { // end handling only one result
@@ -111,7 +111,7 @@ switch ($action) {
 		while ($r = $sql->fetch_array($result)) {
 			$pick_list[(stripslashes($r['ptlname'].", ".
 				$r['ptfname']." [".
-				$r['ptid']."] (".
+				$r['ptdob']."] (".
 				$r['ptcity'].", ".
 				$r['ptstate'].")"))] = $r['id'];
 		} // end looping through results
