@@ -18,10 +18,10 @@ class SinglePatientStatement extends EMRModule {
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
-	function QuickmedsModule () {
+	function SinglePatientStatement () {
 		// Call parent constructor
 		$this->EMRModule();
-	} // end constructor QuickmedsModule
+	} // end constructor 
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
@@ -68,7 +68,7 @@ class SinglePatientStatement extends EMRModule {
 			</div>
 			";
 		return $buffer;
-	} // end function QuickmedsModule->summary
+	} // end method summary
 
 	// view actually prints
 	function view ( ) {
