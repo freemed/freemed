@@ -40,6 +40,7 @@ class MessagesTable extends MaintenanceModule {
 	function UnreadMessages ( ) {
 		// Ask the API how many messages we have
 		$m = CreateObject('FreeMED.Messages');
+		if (!$m->view_per_user(true)) { return false; }
 		if (($c = count($m->view_per_user(true))) > 0) {
 			return array (
 				__("Unread Messages"),
