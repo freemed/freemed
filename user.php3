@@ -89,7 +89,7 @@ if ($action=="addform") {
     </CENTER></TD><TD WIDTH=50%>&nbsp;</TD></TR>
     <TR><TD ALIGN=CENTER><CENTER>
   ";
-  freemed_multiple_choice ("SELECT * FROM $database.facility ORDER BY
+  freemed_multiple_choice ("SELECT * FROM facility ORDER BY
     psrname", "psrname", "userfac", $userfac);
   echo "
     </CENTER></TD><TD>&nbsp;</TD></TR>
@@ -104,14 +104,14 @@ if ($action=="addform") {
     </CENTER></TD></TR><TR><TD ALIGN=CENTER><CENTER>
   ";
 
-  freemed_multiple_choice ("SELECT * FROM $database.physician ORDER BY
+  freemed_multiple_choice ("SELECT * FROM physician ORDER BY
     phylname, phyfname, phymname", "phylname:phyfname", "userphy", $userphy);
 
   echo "
     </CENTER></TD><TD ALIGN=CENTER><CENTER>
   ";
 
-  freemed_multiple_choice ("SELECT * FROM $database.phygroup ORDER BY
+  freemed_multiple_choice ("SELECT * FROM phygroup ORDER BY
     phygroupname", "phygroupname", "userphygrp", $userphygrp);
 
   echo "
@@ -184,7 +184,7 @@ if ($action=="addform") {
    else $userphygrp_s = $userphygrp;
 
   if ($userpassword1==$userpassword2) 
-    $query = "INSERT INTO $database.$db_name VALUES ( ".
+    $query = "INSERT INTO $db_name VALUES ( ".
       "'$username',      ".
       "'$userpassword1', ".
       "'$userdescrip',   ".
@@ -286,7 +286,7 @@ if ($action=="addform") {
   // from the database, and proverbially "fill in the blanks"
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $database.$db_name ".
+  $result = fdb_query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
@@ -361,7 +361,7 @@ if ($action=="addform") {
     </CENTER></TD><TD WIDTH=50%>&nbsp;</TD></TR>
     <TR><TD ALIGN=CENTER><CENTER>
   ";
-  freemed_multiple_choice ("SELECT * FROM $database.facility ORDER BY
+  freemed_multiple_choice ("SELECT * FROM facility ORDER BY
     psrname", "psrname", "userfac", $userfac);
   echo "
     </CENTER></TD><TD>&nbsp;</TD></TR>
@@ -376,14 +376,14 @@ if ($action=="addform") {
     </CENTER></TD></TR><TR><TD ALIGN=CENTER><CENTER>
   ";
 
-  freemed_multiple_choice ("SELECT * FROM $database.physician ORDER BY
+  freemed_multiple_choice ("SELECT * FROM physician ORDER BY
     phylname, phyfname, phymname", "phylname:phyfname", "userphy", $userphy);
 
   echo "
     </CENTER></TD><TD ALIGN=CENTER><CENTER>
   ";
 
-  freemed_multiple_choice ("SELECT * FROM $database.phygroup ORDER BY
+  freemed_multiple_choice ("SELECT * FROM phygroup ORDER BY
     phygroupname", "phygroupname", "userphygrp", $userphygrp);
 
   echo "
@@ -462,7 +462,7 @@ if ($action=="addform") {
     // changed... for example, don't set the
     // creation date in a modify. also,
     // remember the commas...
-  $query = "UPDATE $database.$db_name SET ".
+  $query = "UPDATE $db_name SET ".
     "username     = '$username',      ".
     "userpassword = '$userpassword1', ".
     "userdescrip  = '$userdescrip',   ".
@@ -521,7 +521,7 @@ if ($action=="addform") {
 
     // select only "id" record, and delete
   if ($id != 1)
-    $result = fdb_query("DELETE FROM $database.$db_name
+    $result = fdb_query("DELETE FROM $db_name
       WHERE (id = \"$id\")");
   else { // if we tried to delete root!!!
     echo "
@@ -558,7 +558,7 @@ if ($action=="addform") {
   // in the database for modification... useful to note in
   // future...
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);

@@ -44,7 +44,7 @@
     } // end switch
   } else { $qualifier = "0 = 0"; }
 
-  $query = "SELECT * FROM $database.scheduler WHERE (($day_criteria)
+  $query = "SELECT * FROM scheduler WHERE (($day_criteria)
     AND ($qualifier)) ORDER BY caldateof, calhour, calminute";
   $result = fdb_query ($query);
   if ($debug) echo "query=\"$query\"";

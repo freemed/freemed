@@ -64,7 +64,7 @@
     case "modform":
      $action_name = "$Modify";
      $this_action = "mod";
-     $result = fdb_query ("SELECT * FROM $database.$db_name WHERE id='$id'");
+     $result = fdb_query ("SELECT * FROM $db_name WHERE id='$id'");
      $r = fdb_fetch_array ($result);
      $template = $r["prtemplate"];
      $form = $template;   // to allow us to pass it as hidden
@@ -108,7 +108,7 @@
    ";
 
    // now, here's the heart of the whole routine...
-   $f_r = fdb_fetch_array (fdb_query ("SELECT * FROM $database.patrectemplate
+   $f_r = fdb_fetch_array (fdb_query ("SELECT * FROM patrectemplate
                       WHERE id='$template'"));
    $prtfname    = fm_split_into_array ($f_r["prtfname"   ]);
    $prtftype    = fm_split_into_array ($f_r["prtftype"   ]);
@@ -381,7 +381,7 @@
    switch ($action) {
      case "add":
       $action_name = "$Adding";
-      $query = "INSERT INTO $database.$db_name VALUES (
+      $query = "INSERT INTO $db_name VALUES (
                 '".addslashes($patient).  "',
                 '".addslashes($form).     "',
                 '$cur_date',
@@ -391,7 +391,7 @@
       break;
      case "mod":
       $action_name = "$Modifying";
-      $query = "UPDATE $database.$db_name SET
+      $query = "UPDATE $db_name SET
                 prpatient  = '".addslashes($patient)  ."',
                 prtemplate = '".addslashes($form)     ."',
                 prdtmod    = '$cur_date',
@@ -424,7 +424,7 @@
 
   default: // default view is listing...
    freemed_display_box_top ("$record_name Management");
-   $result = fdb_query ("SELECT * FROM $database.$db_name
+   $result = fdb_query ("SELECT * FROM $db_name
                          WHERE prpatient='$patient'
                          ORDER BY prdtadd DESC");
    if (($result==0) or (fdb_num_rows($result)<1)) {
@@ -447,7 +447,7 @@
        <SELECT NAME=\"form\">
         <OPTION VALUE=\"\">$NONE_SELECTED
      ";
-     $f_result = fdb_query ("SELECT * FROM $database.patrectemplate
+     $f_result = fdb_query ("SELECT * FROM patrectemplate
                              ORDER BY prtname");
      while ($f_r = fdb_fetch_array ($f_result)) {
        echo "<OPTION VALUE=\"".$f_r["id"]."\">".$f_r["prtname"]."\n";

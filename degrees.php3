@@ -56,7 +56,7 @@ if ($action=="addform") {
 
   $degdate = $cur_date; // set to current date
 
-  $query = "INSERT INTO $database.degrees VALUES ( ".
+  $query = "INSERT INTO degrees VALUES ( ".
     "'$degdegree',  ".
     "'$degname',    ".
     "'$degdate',    ".
@@ -123,7 +123,7 @@ if ($action=="addform") {
     DIE("");
   }
 
-  $result = fdb_query("SELECT * FROM $database.degrees ".
+  $result = fdb_query("SELECT * FROM degrees ".
     "WHERE ( id = '$id' )");
 
   if ($debug==1) {
@@ -185,7 +185,7 @@ if ($action=="addform") {
 
   $degdate = $cur_date; // date stamp modified...
 
-  $query = "UPDATE $database.degrees SET ".
+  $query = "UPDATE degrees SET ".
     "degdegree ='$degdegree',  ".
     "degname   ='$degname',    ".
     "degdate   ='$degdate'     ". 
@@ -222,7 +222,7 @@ if ($action=="addform") {
 
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
-  $result = fdb_query("DELETE FROM $database.degrees
+  $result = fdb_query("DELETE FROM degrees
     WHERE (id = \"$id\")");
 
   echo "
@@ -248,7 +248,7 @@ if ($action=="addform") {
   // in the database for modification... useful to note in
   // future...
 
-  $query = "SELECT * FROM $database.degrees ".
+  $query = "SELECT * FROM degrees ".
     "ORDER BY degdegree,degname";
 
   $result = fdb_query($query);

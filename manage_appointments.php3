@@ -33,7 +33,7 @@
   case "del":
    freemed_display_box_top ("$Deleting Appointment");
    echo "\n<$STDFONT_B>$Deleting ... <$STDFONT_E>\n";
-   $query = "DELETE FROM $database.scheduler WHERE id='$id'";
+   $query = "DELETE FROM scheduler WHERE id='$id'";
    $result = fdb_query ($query);
    if ($result) { echo "$Done."; }
     else        { echo "$ERROR"; }
@@ -78,7 +78,7 @@
     ";
 
    // form the query
-   $query = "SELECT * FROM $database.scheduler WHERE (
+   $query = "SELECT * FROM scheduler WHERE (
              (caldateof  >= '$cur_date' ) AND
              (calpatient =  '$patient'  ) AND
              (caltype    =  'pat'       ) )

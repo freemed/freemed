@@ -25,7 +25,7 @@ if ($action=="add") {
     <$STDFONT_B>$Adding . . . 
   ";
 
-  $query = "INSERT INTO $database.inscogroup VALUES ( ".
+  $query = "INSERT INTO inscogroup VALUES ( ".
     "'$inscogroup',   NULL ) ";
 
   $result = fdb_query($query);
@@ -99,7 +99,7 @@ if ($action=="add") {
   # if there _IS_ an ID tag presented, we must extract the record
   # from the database, and proverbially "fill in the blanks"
 
-  $result = fdb_query("SELECT * FROM $database.inscogroup ".
+  $result = fdb_query("SELECT * FROM inscogroup ".
     "WHERE ( id = '$id' )");
 
   if ($debug) {
@@ -144,7 +144,7 @@ if ($action=="add") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.inscogroup SET ".
+  $query = "UPDATE inscogroup SET ".
     "inscogroup = '$inscogroup' ". 
     "WHERE id='$id'";
 
@@ -173,7 +173,7 @@ if ($action=="add") {
 
   freemed_display_box_top ("Deleted Insurance Co. Group", $page_name);
 
-  $result = fdb_query("DELETE FROM $database.inscogroup
+  $result = fdb_query("DELETE FROM inscogroup
     WHERE (id = '$id')");
 
   echo "
@@ -196,7 +196,7 @@ if ($action=="add") {
 
 } else {
 
-  $query = "SELECT * FROM $database.inscogroup ".
+  $query = "SELECT * FROM inscogroup ".
    "ORDER BY inscogroup";
 
   $result = fdb_query($query);

@@ -34,7 +34,7 @@ switch ($action) {
         <BR>
       ";
     else { // if it's okay...
-      $result = fdb_query ("SELECT * FROM $database.patient ".
+      $result = fdb_query ("SELECT * FROM patient ".
         "WHERE (ptlname LIKE '$f1%') ORDER BY ptlname, ptfname");
       echo "
         <FORM ACTION=\"$page_name\">
@@ -84,7 +84,7 @@ switch ($action) {
     freemed_display_box_top ("$Attaching_Guarantor", $_ref);
 
       // attaching guarantor
-    $query = "UPDATE $database.patient SET ptdep=$guarantor ".
+    $query = "UPDATE patient SET ptdep=$guarantor ".
       "WHERE id=$patient";
     echo "<B>Attaching ... </B>";
     $result = fdb_query ($query);
@@ -98,7 +98,7 @@ switch ($action) {
       // since dependants can't have dependants...
       // 19990622 -- patch : attach deps to new guarantor...
     if ($guarantor!=0) {
-      $query = "UPDATE $database.patient SET ptdep=$guarantor ".
+      $query = "UPDATE patient SET ptdep=$guarantor ".
         "WHERE ptdep=$patient";
       echo "<BR><B>$Detaching_current_dependants ... </B>";
       $result = fdb_query ($query);
@@ -197,7 +197,7 @@ switch ($action) {
         &nbsp;
         </TD></TR>
       ";
-      $f_results = fdb_query("SELECT * FROM $database.patrectemplate
+      $f_results = fdb_query("SELECT * FROM patrectemplate
                               ORDER BY prtname");
       if (($f_results>0) and (fdb_num_rows($f_results))) {
        echo "

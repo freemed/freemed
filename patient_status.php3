@@ -23,7 +23,7 @@ if ($action=="add") {
     <$STDFONT_B>$Adding . . . 
   ";
 
-  $query = "INSERT INTO $database.$db_name VALUES ( 
+  $query = "INSERT INTO $db_name VALUES ( 
            '".addslashes($ptstatus)."',
            '".addslashes($ptstatusdescrip)."',
             NULL ) ";
@@ -136,7 +136,7 @@ if ($action=="add") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.$db_name SET 
+  $query = "UPDATE $db_name SET 
      ptstatus        = '$ptstatus',       
      ptstatusdescrip = '$ptstatusdescrip'  
      WHERE id='$id'";
@@ -174,7 +174,7 @@ if ($action=="add") {
 } elseif ($action=="del") {
   freemed_display_box_top ("$Deleting $record_name", $_ref, $page_name);
 
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
                        WHERE id='$id'");
 
   echo "
@@ -197,7 +197,7 @@ if ($action=="add") {
 
 } else {
 
-  $query = "SELECT * FROM $database.$db_name 
+  $query = "SELECT * FROM $db_name 
             ORDER BY ptstatusdescrip, ptstatus";
 
   $result = fdb_query($query);

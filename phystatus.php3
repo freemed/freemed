@@ -27,7 +27,7 @@ if ($action=="add") {
     <$STDFONT_B>$Adding . . . 
   ";
 
-  $query = "INSERT INTO $database.phystatus VALUES ( ".
+  $query = "INSERT INTO phystatus VALUES ( ".
     "'$phystatus',   NULL ) ";
 
   $result = fdb_query($query);
@@ -110,7 +110,7 @@ if ($action=="add") {
   # if there _IS_ an ID tag presented, we must extract the record
   # from the database, and proverbially "fill in the blanks"
 
-  $result = fdb_query("SELECT * FROM $database.phystatus ".
+  $result = fdb_query("SELECT * FROM phystatus ".
     "WHERE ( id = '$id' )");
 
   if ($debug) {
@@ -158,7 +158,7 @@ if ($action=="add") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.phystatus SET ".
+  $query = "UPDATE phystatus SET ".
     "phystatus = '$phystatus' ". 
     "WHERE id='$id'";
 
@@ -210,7 +210,7 @@ if ($action=="add") {
 
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
-  $result = fdb_query("DELETE FROM $database.phystatus
+  $result = fdb_query("DELETE FROM phystatus
     WHERE (id = \"$id\")");
 
   echo "
@@ -256,7 +256,7 @@ if ($action=="add") {
 
 } else {
 
-  $query = "SELECT * FROM $database.phystatus ".
+  $query = "SELECT * FROM phystatus ".
    "ORDER BY phystatus";
 
   $result = fdb_query($query);

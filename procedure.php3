@@ -122,7 +122,7 @@ switch ($action) { // master action switch
       <$STDFONT_B>Episode of Care : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ";
-  freemed_multiple_choice ("SELECT * FROM $database.eoc
+  freemed_multiple_choice ("SELECT * FROM eoc
                             WHERE eocpatient='$patient'
                             ORDER BY eocdtlastsimilar DESC",
                            "eocstartdate:eocdtlastsimilar:eocdescrip",
@@ -253,7 +253,7 @@ switch ($action) { // master action switch
        <OPTION VALUE=\"0\" ".
         ( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED
   ";
-  $auth_res = fdb_query ("SELECT * FROM $database.authorizations
+  $auth_res = fdb_query ("SELECT * FROM authorizations
                           WHERE (authpatient='$patient')");
   if ($auth_res > 0) { // begin if there are authorizations...
    while ($auth_r = fdb_fetch_array ($auth_res)) {
@@ -507,7 +507,7 @@ switch ($action) { // master action switch
   ";
 
   // form add query
-  $query = "INSERT INTO $database.$db_name VALUES (
+  $query = "INSERT INTO $db_name VALUES (
             '$patient',
             '".addslashes(fm_join_from_array($proceoc))."',
             '$proccpt',
@@ -544,7 +544,7 @@ switch ($action) { // master action switch
     <P>
     <$STDFONT_B>Committing to ledger ... <$STDFONT_E>
   ";
-  $query = "INSERT INTO $database.payrec VALUES (
+  $query = "INSERT INTO payrec VALUES (
             '$cur_date',
             '0000-00-00',
             '$patient',
@@ -570,7 +570,7 @@ switch ($action) { // master action switch
     <P>
     <$STDFONT_B>Updating patient diagnoses ... <$STDFONT_E>
   ";
-  $query = "UPDATE $database.patient SET
+  $query = "UPDATE patient SET
             ptdiag1  = '$procdiag1',
             ptdiag2  = '$procdiag2',
             ptdiag3  = '$procdiag3',
@@ -611,7 +611,7 @@ switch ($action) { // master action switch
     <$STDFONT_B>$Modifying ... <$STDFONT_E>
   ";
   // form add query
-  $query = "UPDATE $database.$db_name SET
+  $query = "UPDATE $db_name SET
             procpatient     = '$patient',
             proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
             proccpt         = '$proccpt',
@@ -642,7 +642,7 @@ switch ($action) { // master action switch
     <$STDFONT_B>Updating patient ledger ... <$STDFONT_E>
   ";
   // form add query
-  $query = "UPDATE $database.payrec SET
+  $query = "UPDATE payrec SET
             payrecdtmod   = '$cur_date',
             payrecpatient = '$patient',
             payrecdt      = '".fm_date_assemble("procdt")."',
@@ -659,7 +659,7 @@ switch ($action) { // master action switch
     <P>
     <$STDFONT_B>Updating patient diagnoses ... <$STDFONT_E>
   ";
-  $query = "UPDATE $database.patient SET
+  $query = "UPDATE patient SET
             ptdiag1  = '$procdiag1',
             ptdiag2  = '$procdiag2',
             ptdiag3  = '$procdiag3',
@@ -687,11 +687,11 @@ switch ($action) { // master action switch
    <P>
    <$STDFONT_B>$Deleting $record_name ...
   ";
-  $query = "DELETE FROM $database.$db_name WHERE id='$id'";
+  $query = "DELETE FROM $db_name WHERE id='$id'";
   $result = fdb_query ($query);
   if ($result) { echo "[record] "; }
    else        { echo "[$ERROR] "; }
-  $query = "DELETE FROM $database.payrec WHERE payrecproc='$id'
+  $query = "DELETE FROM payrec WHERE payrecproc='$id'
             AND payreccat='5'"; // delete record in payrec db
   $result = fdb_query ($query);
   if ($result) { echo "[payrec] "; }
@@ -712,7 +712,7 @@ switch ($action) { // master action switch
 
  default: // default action (master switch)
   freemed_display_box_top ("$record_name");
-  $query = "SELECT * FROM $database.$db_name
+  $query = "SELECT * FROM $db_name
             WHERE procpatient='$patient'
             ORDER BY procdt DESC";
   $result = fdb_query ($query);

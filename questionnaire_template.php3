@@ -40,7 +40,7 @@
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
-        $query  = "SELECT * FROM $database.$db_name WHERE id='$id'";
+        $query  = "SELECT * FROM $db_name WHERE id='$id'";
         $result = fdb_query ($query);
         $r      = fdb_fetch_array ($result);
         $qname      = $r["qname"     ];
@@ -241,7 +241,7 @@
    echo "
      $Adding ...
    ";
-   $query = "INSERT INTO $database.$db_name VALUES (
+   $query = "INSERT INTO $db_name VALUES (
      '".addslashes($qname)."',
      '".addslashes($qdescrip)."',
      '".addslashes(fm_join_from_array($qfname)).   "',
@@ -272,7 +272,7 @@
    ";
 
    // do query
-   $query = "UPDATE $database.$db_name SET
+   $query = "UPDATE $db_name SET
       qname       = '".addslashes($qname)."',
       qdescrip    = '".addslashes($qdescrip)."',
       qfname      = '".addslashes(fm_join_from_array($qfname))."',
@@ -302,7 +302,7 @@
     <P>
     <$STDFONT_B>$Deleting ...
     ";
-   $query = "DELETE * FROM $database.$db_name WHERE id='$id'";
+   $query = "DELETE * FROM $db_name WHERE id='$id'";
    $result = fdb_query ($query);
    if ($result) { echo "$Done\n";    }
     else        { echo "$ERROR\n";   }
@@ -319,7 +319,7 @@
 
   default: // default action -- menu
    freemed_display_box_top ("$record_name");
-   $result = fdb_query ("SELECT * FROM $database.$db_name
+   $result = fdb_query ("SELECT * FROM $db_name
                          ORDER BY qname, qdescrip");
    if (fdb_num_rows($result)>0) {
 

@@ -61,7 +61,7 @@ echo "
 ";
 
 fdb_connect ($db_host, $db_user, $db_password);
-if (fdb_query ("SELECT * FROM $database.config")) {
+if (fdb_query ("SELECT * FROM config")) {
 echo "
 <TR><TD ALIGN=RIGHT>
 <TT>$Facility : </TT>

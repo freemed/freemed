@@ -364,7 +364,7 @@ switch ($action) {
  case "add":
   freemed_display_box_top ("$Adding_Appointment", $_ref);
   echo "$Adding... ";
-  $query = "INSERT INTO $database.scheduler VALUES (
+  $query = "INSERT INTO scheduler VALUES (
     '$selected_date',
     '$type',
     '$hour',

@@ -230,7 +230,7 @@
      ";
 
        // actual addition
-     $query = "INSERT INTO $database.$db_name VALUES (
+     $query = "INSERT INTO $db_name VALUES (
        '$cur_date',
        '0000-00-00',
        '".addslashes($patient)             ."',
@@ -268,7 +268,7 @@
    case "mod":
      freemed_display_box_top ("$Modifying $record_name", $_ref, $_ref);
      echo "<B><$STDFONT_B>$Modifying . . . <$STDFONT_E></B>\n";
-     $query = "UPDATE $database.$db_name SET
+     $query = "UPDATE $db_name SET
        authdtmod      = '$cur_date',
        authdtbegin    = '".fm_date_assemble("authdtbegin")."',
        authdtend      = '".fm_date_assemble("authdtend")  ."',
@@ -304,7 +304,7 @@
      // in case of emergency, break glass -- default shows all things from
      // specified patient...
 
-     $query = "SELECT * FROM $database.$db_name WHERE (authpatient='$patient')
+     $query = "SELECT * FROM $db_name WHERE (authpatient='$patient')
         ORDER BY authdtbegin,authdtend";
      $result = fdb_query ($query);
      $rows = ( ($result > 0) ? fdb_num_rows ($result) : 0 );

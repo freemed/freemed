@@ -99,7 +99,7 @@ if (($action=="addform") AND ($separate_add_section)) {
     // build the query to database backend (usually MySQL):
     // the last value has to be NULL so that it auto
     // increments record numbers.
-  $query = "INSERT INTO $database.$db_name VALUES ( ".
+  $query = "INSERT INTO $db_name VALUES ( ".
     "'$tosname', '$tosdescrip', '$cur_date', '$cur_date', NULL ) ";
 
     // query the db with new values
@@ -170,7 +170,7 @@ if (($action=="addform") AND ($separate_add_section)) {
   // from the database, and proverbially "fill in the blanks"
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $database.$db_name ".
+  $result = fdb_query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
@@ -232,7 +232,7 @@ if (($action=="addform") AND ($separate_add_section)) {
     // changed... for example, don't set the
     // creation date in a modify. also,
     // remember the commas...
-  $query = "UPDATE $database.$db_name SET ".
+  $query = "UPDATE $db_name SET ".
     "tosname    = '$tosname',    ".
     "tosdescrip = '$tosdescrip', ".
     "tosdtmod   = '$cur_date'    ". 
@@ -272,7 +272,7 @@ if (($action=="addform") AND ($separate_add_section)) {
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -299,7 +299,7 @@ if (($action=="addform") AND ($separate_add_section)) {
   // in the database for modification... useful to note in
   // future...
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);

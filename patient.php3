@@ -384,7 +384,7 @@ if ($action=="addform") {
   if ((strlen($ptemail1)>0) AND (strlen($ptemail2)>3))
     $ptemail = $ptemail1 . "@" . $ptemail2;
 
-  $query = "INSERT INTO $database.patient VALUES (
+  $query = "INSERT INTO patient VALUES (
            '$ptdtadd',
            '$ptdtmod',
            '$ptbal',
@@ -516,7 +516,7 @@ if ($action=="addform") {
     DIE("");
   }
 
-  $result = fdb_query("SELECT * FROM $database.patient ".
+  $result = fdb_query("SELECT * FROM patient ".
     "WHERE ( id = '$id' )");
 
   if ($debug==1) {
@@ -991,7 +991,7 @@ if ($action=="addform") {
   if ((strlen($ptemail1)>1) AND (strlen($ptemail2)>3))
     $ptemail = $ptemail1 . "@" . $ptemail2;
 
-  $query = "UPDATE $database.patient SET ".
+  $query = "UPDATE patient SET ".
     "ptdtmod     ='$ptdtmod',      ".
     "ptdob       ='$ptdob',        ".
     "ptbal       ='$ptbal',        ".
@@ -1088,7 +1088,7 @@ if ($action=="addform") {
 
   freemed_display_box_top ("$Deleting $Patient", $page_name);
 
-  $result = fdb_query("DELETE FROM $database.patient
+  $result = fdb_query("DELETE FROM patient
     WHERE (id = \"$id\")");
 
   echo "
@@ -1122,36 +1122,36 @@ if ($action=="addform") {
 
   switch ($criteria) {
     case "letter":
-      $query = "SELECT * FROM $database.patient ".
+      $query = "SELECT * FROM patient ".
        "WHERE (ptlname LIKE '$f1%') ".
        "ORDER BY ptlname, ptfname, ptdob";
       $_crit = "$Last_Names ($f1)";
       break;
     case "contains":
-      $query = "SELECT * FROM $database.patient ".
+      $query = "SELECT * FROM patient ".
        "WHERE ($f1 LIKE '%$f2%') ".
        "ORDER BY ptlname, ptfname, ptdob";
       $_crit = "$Searching_for \"$f2\"";
       break;
     case "soundex":
-      $query = "SELECT * FROM $database.patient ". 
+      $query = "SELECT * FROM patient ". 
        "WHERE (soundex($f1) = soundex('$f2')) ".
        "ORDER BY ptlname, ptfname, ptdob";
       $_crit = "Sounds Like \"$f2\"";
       break;
     case "all":
-      $query = "SELECT * FROM $database.patient ".
+      $query = "SELECT * FROM patient ".
        "ORDER BY ptlname, ptfname, ptdob";
       $_crit = "\"$All_Patients\"";
       break;
     case "dependants":
-      $query = "SELECT * FROM $database.patient ".
+      $query = "SELECT * FROM patient ".
        "WHERE (ptdep = '$f1') ".
        "ORDER BY ptlname, ptfname, ptdob";
       $_crit = "$Dependants";
       break;
     case "guarantor":
-      $query = "SELECT * FROM $database.patient ".
+      $query = "SELECT * FROM patient ".
        "WHERE (id = '$f1') ".
        "ORDER BY ptlname, ptfname, ptdob";
       $_crit = "Guarantor";
@@ -1298,7 +1298,7 @@ if ($action=="addform") {
        CELLPADDING=0 VALIGN=TOP ALIGN=CENTER><TR><TD>
       <FONT FACE=\"Arial, Helvetica, Verdana\" COLOR=#ffffff>
     ";
-    $result = fdb_query ("SELECT COUNT(*) FROM $database.patient");
+    $result = fdb_query ("SELECT COUNT(*) FROM patient");
     if ($result) {
       $_res   = fdb_fetch_array ($result);
       $_total = $_res[0];               // total number in db

@@ -76,7 +76,7 @@ if (($action=="addform") AND ($separate_add_section)) {
     <$STDFONT_B>$Adding . . . 
   ";
 
-  $query = "INSERT INTO $database.$db_name VALUES ( ".
+  $query = "INSERT INTO $db_name VALUES ( ".
     "'".addslashes($reqname)."', '".addslashes($reqdescrip)."', ".
     "'$cur_date', '$cur_date',  NULL ) ";
 
@@ -191,7 +191,7 @@ if (($action=="addform") AND ($separate_add_section)) {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.$db_name SET ".
+  $query = "UPDATE $db_name SET ".
     "reqname    = '".addslashes($reqname)."',    ".
     "reqdescrip = '".addslashes($reqdescrip)."', ".
     "reqdatemod = '$cur_date',  ". 
@@ -231,7 +231,7 @@ if (($action=="addform") AND ($separate_add_section)) {
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -280,7 +280,7 @@ if (($action=="addform") AND ($separate_add_section)) {
 
 } else {
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);

@@ -15,12 +15,12 @@
 
  // determine what we are getting, and grab it
  if ($id>0) {
-   $result = fdb_query ("SELECT * FROM $database.$db_name
+   $result = fdb_query ("SELECT * FROM $db_name
                          WHERE id='$id'");
    $proper = fdb_fetch_array ($result);
  } elseif ($patient>0) {
    // gets latest picture of patient
-   $result = fdb_query ("SELECT * FROM $database.$db_name
+   $result = fdb_query ("SELECT * FROM $db_name
                          WHERE pipatient='$patient'
                          ORDER BY pidate DESC");
    $proper = fdb_fetch_array ($result);

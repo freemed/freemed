@@ -60,7 +60,7 @@
 
 if ($action=="view") {
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);
@@ -249,7 +249,7 @@ elseif (($action=="addform") AND ($separate_add_section)) {
     // build the query to database backend (usually MySQL):
     // the last value has to be NULL so that it auto
     // increments record numbers.
-  $query = "INSERT INTO $database.$db_name VALUES (
+  $query = "INSERT INTO $db_name VALUES (
            '$sr_label','$sr_type','$sr_text_blob','$sr_textf_blob','$sr_textcm_blob','$sr_textcf_blob', NULL)" ;
 
     // query the db with new values
@@ -326,7 +326,7 @@ DIE ("");
   // from the database, and proverbially "fill in the blanks"
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $database.$db_name ".
+  $result = fdb_query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
@@ -446,7 +446,7 @@ DIE ("");
     // creation date in a modify. also,
     // remember the commas...
 
-  $query = "UPDATE $database.$db_name SET ".
+  $query = "UPDATE $db_name SET ".
     "sr_label  = '$sr_label', ".
     "sr_type   = '$sr_type',  ".
     "sr_text   = '$sr_text_blob',  ".
@@ -496,7 +496,7 @@ DIE ("");
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -926,7 +926,7 @@ if ($chosenrep==0)
 
 // fetch the template data selected in $chosenrep
 
-  $result = fdb_query("SELECT * FROM $database.$db_name ".
+  $result = fdb_query("SELECT * FROM $db_name ".
     "WHERE ( id = '$chosenrep' )");
 
                   
@@ -1584,7 +1584,7 @@ echo "
 //////////////////////////////////////////////////////////////////////
 } else {
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);

@@ -41,7 +41,7 @@
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
-        $query  = "SELECT * FROM $database.$db_name WHERE id='$id'";
+        $query  = "SELECT * FROM $db_name WHERE id='$id'";
         $result = fdb_query ($query);
         $r      = fdb_fetch_array ($result);
 
@@ -212,7 +212,7 @@
     ";
     // compact and display eocdiagfamily
     $eocdiagfamily = fm_join_from_array ($eocdiagfamily);
-    freemed_multiple_choice ("SELECT * FROM $database.diagfamily
+    freemed_multiple_choice ("SELECT * FROM diagfamily
       ORDER BY dfname, dfdescrip", "dfname:dfdescrip", "eocdiagfamily",
       $eocdiagfamily, false);
     echo "
@@ -517,7 +517,7 @@
 
    switch ($action) {
     case "add":
-     $query = "INSERT INTO $database.$db_name VALUES (
+     $query = "INSERT INTO $db_name VALUES (
        '".addslashes($eocpatient)                 ."',
        '".addslashes($eocdescrip)                 ."',
        '".addslashes($eocstartdate)               ."',
@@ -563,7 +563,7 @@
        NULL )";
       break;
      case "mod":
-      $query = "UPDATE $database.$db_name SET
+      $query = "UPDATE $db_name SET
         eocpatient         = '".addslashes($eocpatient).        "',
         eocdescrip         = '".addslashes($eocdescrip).        "',
         eocstartdate       = '".addslashes($eocstartdate).      "',
@@ -632,7 +632,7 @@
     <P>
     <$STDFONT_B>$Deleting ...
     ";
-   $query = "DELETE FROM $database.$db_name WHERE id='$id'";
+   $query = "DELETE FROM $db_name WHERE id='$id'";
    $result = fdb_query ($query);
    if ($result) { echo "$Done\n";    }
     else        { echo "$ERROR\n";   }
@@ -693,7 +693,7 @@
      <P>
    ";
    // special jimmy-rigged query to find in 3d array...
-   $query = "SELECT * FROM $database.procrec
+   $query = "SELECT * FROM procrec
              WHERE ((proceoc LIKE '$id:%') OR
                     (proceoc LIKE '%:$id') OR
                     (proceoc LIKE '%:$id:%') OR
@@ -734,7 +734,7 @@
    ";
    // special jimmy-rigged query to find in 3d array...
    $result = 0;
-   $query = "SELECT * FROM $database.pnotes
+   $query = "SELECT * FROM pnotes
              WHERE ((pnotespat='$patient') AND
                     ((pnoteseoc LIKE '$id:%') OR
                     (pnoteseoc LIKE '%:$id') OR
@@ -792,7 +792,7 @@
    } // kick the bucket if no patient
 
    freemed_display_box_top ("$record_name");
-   $result = fdb_query ("SELECT * FROM $database.$db_name
+   $result = fdb_query ("SELECT * FROM $db_name
                          WHERE eocpatient='$patient'
                          ORDER BY eocstartdate DESC");
    if (($result>0) and (fdb_num_rows($result)>0)) {

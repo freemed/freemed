@@ -35,7 +35,7 @@ if ($action=="add") {
     <$STDFONT_B>$Adding . . . 
   ";
 
-  $query = "INSERT INTO $database.$db_name VALUES (
+  $query = "INSERT INTO $db_name VALUES (
     '".addslashes($insmod).    "',
     '".addslashes($insmoddesc)."',
     NULL ) ";
@@ -142,7 +142,7 @@ if ($action=="add") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.$db_name SET
+  $query = "UPDATE $db_name SET
     insmod     = '".addslashes($insmod).    "',
     insmoddesc = '".addslashes($insmoddesc)."'
     WHERE id='$id'";
@@ -181,7 +181,7 @@ if ($action=="add") {
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -204,7 +204,7 @@ if ($action=="add") {
 
 } else {
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);

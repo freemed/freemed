@@ -44,7 +44,7 @@
  // initialize line item count
  $line_item_count = 0;
 
- $query = "SELECT * FROM $database.procrec
+ $query = "SELECT * FROM procrec
            WHERE ( (procpatient = '$patient') AND
                    (procbalcurrent > 0) )
            ORDER BY procdt";
@@ -123,7 +123,7 @@
   switch ($action) {
 
    case "denial": // denial action
-    $query = "INSERT INTO $database.payrec VALUES (
+    $query = "INSERT INTO payrec VALUES (
                 '".addslashes($cur_date)."',
                 '0000-00-00',
                 '".addslashes($patient)."',
@@ -150,7 +150,7 @@
      </CENTER>
     ";
     if ($denial_rebill == "yes") {
-      $query = "UPDATE $database.procrec
+      $query = "UPDATE procrec
                 SET procbilled='0'
                 WHERE id='".addslashes($item)."'";
       $result = fdb_query ($query);
@@ -161,7 +161,7 @@
       ";
     } else {
       // otherwise adjust the amount to 0
-      $query = "UPDATE $database.procrec
+      $query = "UPDATE procrec
                 SET procbalcurrent='0'
                 WHERE id='".addslashes($item)."'";
       $result = fdb_query ($query);
@@ -177,7 +177,7 @@
    case "payment": // payment action
     echo "<CENTER>\n";
     if ($withhold > 0) {
-      $query = "INSERT INTO $database.$db_name VALUES (
+      $query = "INSERT INTO $db_name VALUES (
                 '".addslashes($cur_date)."',
                 '',
                 '".addslashes($patient)."',
@@ -197,7 +197,7 @@
       if ($result) echo "<$STDFONT_B>$Adding withhold <$STDFONT_E><BR> \n";
     } // end of withhold check
     if ($deductable > 0) {
-      $query = "INSERT INTO $database.$db_name VALUES (
+      $query = "INSERT INTO $db_name VALUES (
                 '".addslashes($cur_date)."',
                 '',
                 '".addslashes($patient)."',
@@ -217,7 +217,7 @@
       if ($result) echo "<$STDFONT_B>$Adding deductable.<$STDFONT_E><BR> \n";
     } // end of deductable check
     if ($adjustment > 0) {
-      $query = "INSERT INTO $database.$db_name VALUES (
+      $query = "INSERT INTO $db_name VALUES (
                 '".addslashes($cur_date)."',
                 '',
                 '".addslashes($patient)."',
@@ -237,7 +237,7 @@
       if ($result) echo "<$STDFONT_B>$Adding adjustment.<$STDFONT_E><BR> \n";
     } // end of adjustment check
     if ($payment_amount > 0) {
-      $query = "INSERT INTO $database.$db_name VALUES (
+      $query = "INSERT INTO $db_name VALUES (
                 '".addslashes($cur_date)."',
                 '',
                 '".addslashes($patient)."',
@@ -261,7 +261,7 @@
     $total_deducts  = (abs($withhold) + abs($deductable) + abs($adjustment));
     $total_payments = $payment_amount;
     if (($total_charges != 0) or ($total_payments != 0)) {
-      $query = "UPDATE $database.procrec
+      $query = "UPDATE procrec
                 SET procbalcurrent = 
                       procbalcurrent - '".addslashes(
                         ($total_deducts + $total_payments))."',
@@ -277,7 +277,7 @@
     break; // end payment action
 
    case "transfer": // transfer action
-    $query = "UPDATE $database.payrec
+    $query = "UPDATE payrec
               SET payreclink='".addslashes($transfer_to)."'
               WHERE (
                 id='".addslashes($item)."' AND
@@ -289,7 +289,7 @@
       Item transfered.
      </CENTER>
     ";
-    $query = "INSERT INTO $database.payrec VALUES (
+    $query = "INSERT INTO payrec VALUES (
                 '$cur_date',
                 '0000-00-00',
                 '$patient',
@@ -315,10 +315,10 @@
     break; // end of transfer action
 
    case "mistake": // mistake action
-    $query = "DELETE FROM $database.procrec 
+    $query = "DELETE FROM procrec 
               WHERE id='".addslashes($item)."'";
     $result = fdb_query ($query);
-    $query = "DELETE FROM $database.payrec 
+    $query = "DELETE FROM payrec 
               WHERE payrecproc='".addslashes($item)."'";
     $result = fdb_query ($query);
     echo "
@@ -359,7 +359,7 @@
          <OPTION VALUE=\"\">[Fill in]
      ";
      // generate list of past denial reasons to choose from
-     $denial_query = "SELECT DISTINCT payrecdescrip FROM $database.payrec
+     $denial_query = "SELECT DISTINCT payrecdescrip FROM payrec
                       WHERE payreccat='3'
                       ORDER BY payrecdescrip";
      $denial_result = fdb_query ($denial_query);

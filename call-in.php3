@@ -163,7 +163,7 @@ switch ($action) {
   echo "
     <$STDFONT_B>$Adding $record_name ...
   ";
-  $query = "INSERT INTO $database.$db_name VALUES (
+  $query = "INSERT INTO $db_name VALUES (
     '$cilname',
     '$cifname',
     '$cimname',
@@ -200,7 +200,7 @@ switch ($action) {
 
  case "display":
   freemed_display_box_top ("$record_name Display");
-  $query   = "SELECT * FROM $database.scheduler WHERE
+  $query   = "SELECT * FROM scheduler WHERE
               ((calpatient='$id') AND (caltype='temp'))
               ORDER BY caldateof, calhour, calminute";
   $result  = fdb_query ($query);
@@ -271,7 +271,7 @@ switch ($action) {
     case "cur": default: $__type_call_in__ = "cipatient = 0";  break;
   } // end checking for type...
 
-  $result = fdb_query ("SELECT * FROM $database.$db_name
+  $result = fdb_query ("SELECT * FROM $db_name
              WHERE ($__type_call_in__)
              ORDER BY cidatestamp, cilname, cifname, cimname");
 

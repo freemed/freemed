@@ -22,7 +22,7 @@ if ($action=="add") {
     <$STDFONT_B>$Adding . . . 
   ";
 
-  $query = "INSERT INTO $database.cptmod VALUES ( ".
+  $query = "INSERT INTO cptmod VALUES ( ".
     "'$cptmod', '$cptmoddescrip', NULL ) ";
 
   $result = fdb_query($query);
@@ -92,7 +92,7 @@ if ($action=="add") {
   # if there _IS_ an ID tag presented, we must extract the record
   # from the database, and proverbially "fill in the blanks"
 
-  $result = fdb_query("SELECT * FROM $database.cptmod ".
+  $result = fdb_query("SELECT * FROM cptmod ".
     "WHERE ( id = '$id' )");
 
   if ($debug==1) {
@@ -146,7 +146,7 @@ if ($action=="add") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.cptmod SET ".
+  $query = "UPDATE cptmod SET ".
     "cptmod        = '$cptmod',       ".
     "cptmoddescrip = '$cptmoddescrip' ". 
     "WHERE id='$id'";
@@ -184,7 +184,7 @@ if ($action=="add") {
 } elseif ($action=="del") {
   freemed_display_box_top ("$Deleting $record_name", $_ref, $page_name);
 
-  $result = fdb_query("DELETE FROM $database.cptmod
+  $result = fdb_query("DELETE FROM cptmod
     WHERE (id = \"$id\")");
 
   echo "
@@ -230,7 +230,7 @@ if ($action=="add") {
 
 } else {
 
-  $query = "SELECT * FROM $database.cptmod ".
+  $query = "SELECT * FROM cptmod ".
    "ORDER BY cptmod, cptmoddescrip";
 
   $result = fdb_query($query);

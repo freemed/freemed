@@ -126,7 +126,7 @@ if ($action=="addform") {
     // build the query to MySQL:
     // the last value has to be NULL so that it auto
     // increments record numbers.
-  $query = "INSERT INTO $database.$db_name VALUES ( ".
+  $query = "INSERT INTO $db_name VALUES ( ".
     "'".addslashes($icd9code)."',      ".
     "'".addslashes($icd10code)."',     ".
     "'".addslashes($icd9descrip)."',   ".
@@ -199,7 +199,7 @@ if ($action=="addform") {
   // from the database, and proverbially "fill in the blanks"
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $database.$db_name ".
+  $result = fdb_query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
@@ -315,7 +315,7 @@ if ($action=="addform") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.$db_name SET ".
+  $query = "UPDATE $db_name SET ".
     "icd9code    ='$icd9code',    ".
     "icd10code   ='$icd10code',   ".
     "icd9descrip ='$icd9descrip', ".
@@ -354,7 +354,7 @@ if ($action=="addform") {
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -380,7 +380,7 @@ if ($action=="addform") {
   // with no anythings, ?action=search returns everything
   // in the database for modification... useful to note in
   // future...
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);

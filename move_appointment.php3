@@ -458,7 +458,7 @@ switch ($action) {
  case "add":
   freemed_display_box_top ("Moving Appointment", $_ref);
   echo "Moving... ";
-  $query = "UPDATE $database.scheduler SET 
+  $query = "UPDATE scheduler SET 
     caldateof   = '$selected_date',
     calhour     = '$hour',
     calminute   = '$minute',

@@ -127,7 +127,7 @@ if ($action=="addform") {
   $inscodtadd = $cur_date; // set date added to current
   $inscodtmod = $cur_date; // set date modified to current
 
-  $query = "INSERT INTO $database.$db_name VALUES ( ".
+  $query = "INSERT INTO $db_name VALUES ( ".
     "'$inscodtadd',     ".
     "'$inscodtmod',     ".
     "'".addslashes($insconame)."',          ".
@@ -312,7 +312,7 @@ if ($action=="addform") {
 
     <$STDFONT_B>Modifiers : <$STDFONT_E>
   ";
-  freemed_multiple_choice ("SELECT * FROM $database.insmod
+  freemed_multiple_choice ("SELECT * FROM insmod
     ORDER BY insmoddesc", "insmoddesc", "inscomod",
     $inscomod, false);
   echo "
@@ -342,7 +342,7 @@ if ($action=="addform") {
 
   $inscodtmod = $cur_date; // set date modified to current
 
-  $query = "UPDATE $database.$db_name SET ".
+  $query = "UPDATE $db_name SET ".
     "inscodtmod   ='$inscodtmod',   ".
     "insconame    ='$insconame',    ".
     "inscoalias   ='$inscoalias',   ".
@@ -395,7 +395,7 @@ if ($action=="addform") {
 
   freemed_display_box_top("Deleted Insurance Company", $page_name);
 
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -534,7 +534,7 @@ if ($action=="addform") {
 
 } else { // view is now the default
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
     "ORDER BY insconame";
 
   $result   = fdb_query($query);

@@ -58,7 +58,7 @@
 
        <$STDFONT_B>Related Episode(s) : <$STDFONT_B><BR>
      ";
-     freemed_multiple_choice ("SELECT * FROM $database.eoc WHERE ".
+     freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
                               "eocpatient='$patient'",
                               "eocdescrip:eocstartdate:eocdtlastsimilar",
                               "pnoteseoc",
@@ -144,7 +144,7 @@
      $pnotes_R_blob = addslashes ($pnotes_R);
 
        // actual addition
-     $query = "INSERT INTO $database.pnotes VALUES (
+     $query = "INSERT INTO pnotes VALUES (
        '$pnotesdt',
        '$pnotesdtadd',
        '$pnotesdtmod',
@@ -231,7 +231,7 @@
 
        <$STDFONT_B>Related Episode(s) : <$STDFONT_E><BR>
      ";
-     freemed_multiple_choice ("SELECT * FROM $database.eoc WHERE ".
+     freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
                               "eocpatient='$patient'",
                               "eocdescrip:eocdtlastsimilar",
                               "pnoteseoc",
@@ -311,7 +311,7 @@
      $pnotes_I_ = addslashes ($pnotes_I);
      $pnotes_E_ = addslashes ($pnotes_E);
      $pnotes_R_ = addslashes ($pnotes_R);
-     $query = "UPDATE $database.pnotes SET
+     $query = "UPDATE pnotes SET
        pnotespat      = '$patient',
        pnoteseoc      = '$pnoteseoc_blob',
        pnotesdt       = '$pnotesdt',
@@ -516,7 +516,7 @@
      // in case of emergency, break glass -- default shows all things from
      // specified patient...
 
-     $query = "SELECT * FROM $database.pnotes WHERE (pnotespat='$patient')
+     $query = "SELECT * FROM pnotes WHERE (pnotespat='$patient')
         ORDER BY pnotesdt";
      $result = fdb_query ($query);
      $rows = fdb_num_rows ($result);

@@ -73,7 +73,7 @@ echo "
   <CENTER>
   <$STDFONT_B><B>If this is in a \"child window\",<BR>
   please close it or minimize it to<BR>
-  return to $database.</B><$STDFONT_E>
+  return to </B><$STDFONT_E>
   </CENTER>
 ";
 

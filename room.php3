@@ -93,7 +93,7 @@ if ($action=="addform") {
 
   $icdng = $cur_date; // set to current date
 
-  $query = "INSERT INTO $database.room VALUES ( ".
+  $query = "INSERT INTO room VALUES ( ".
     "'$roomname',    '$roompos',     ".
     "'$roomdescrip', '$roomdefphy',  ".
     "'$roomsurgery', '$roombooking', ".
@@ -156,7 +156,7 @@ if ($action=="addform") {
   # if there _IS_ an ID tag presented, we must extract the record
   # from the database, and proverbially "fill in the blanks"
 
-  $result = fdb_query("SELECT * FROM $database.room ".
+  $result = fdb_query("SELECT * FROM room ".
     "WHERE ( id = '$id' )");
 
   if ($debug==1) {
@@ -261,7 +261,7 @@ if ($action=="addform") {
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.room SET ".
+  $query = "UPDATE room SET ".
     "roomname    ='$roomname',    ".
     "roompos     ='$roompos',     ".
     "roomdescrip ='$roomdescrip', ".
@@ -296,7 +296,7 @@ if ($action=="addform") {
 
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
-  $result = fdb_query("DELETE FROM $database.room
+  $result = fdb_query("DELETE FROM room
     WHERE (id = \"$id\")");
 
   echo "
@@ -321,7 +321,7 @@ if ($action=="addform") {
   // this is the _DEFAULT_
   // --- deal with it.
 
-  $query = "SELECT * FROM $database.room ".
+  $query = "SELECT * FROM room ".
    "ORDER BY roomname";
 
   $result = fdb_query($query);

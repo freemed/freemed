@@ -341,7 +341,7 @@ if ($action=="addform") {
     </TR>
   ";
   $_alternate = freemed_bar_alternate_color ();  
-  $i_res = fdb_query("SELECT * FROM $database.intservtype");
+  $i_res = fdb_query("SELECT * FROM intservtype");
   while ($i_r = fdb_fetch_array ($i_res)) {
     $_alternate = freemed_bar_alternate_color ($_alternate);  
     $i_id = $i_r ["id"];
@@ -398,7 +398,7 @@ if ($action=="addform") {
   $physsn    = $physsn1.$physsn2.$physsn3;
 
     // actual query/insert
-  $query = "INSERT INTO $database.$db_name VALUES ( 
+  $query = "INSERT INTO $db_name VALUES ( 
     '$phylname',
     '$phyfname',
     '$phytitle',    
@@ -848,7 +848,7 @@ if ($action=="addform") {
     </TR>
   ";
   $_alternate = freemed_bar_alternate_color ();  
-  $i_res = fdb_query("SELECT * FROM $database.intservtype");
+  $i_res = fdb_query("SELECT * FROM intservtype");
   while ($i_r = fdb_fetch_array ($i_res)) {
     $_alternate = freemed_bar_alternate_color ($_alternate);  
     $i_id = $i_r ["id"];
@@ -885,7 +885,7 @@ if ($action=="addform") {
     </TR>
   ";
   $_alternate = freemed_bar_alternate_color ();  
-  $i_res = fdb_query("SELECT * FROM $database.inscogroup");
+  $i_res = fdb_query("SELECT * FROM inscogroup");
   while ($i_r = fdb_fetch_array ($i_res)) {
     $_alternate = freemed_bar_alternate_color ($_alternate);  
     $i_id = $i_r ["id"];
@@ -943,7 +943,7 @@ if ($action=="addform") {
   // reassemble ssn #
   $physsn    = $physsn1.$physsn2.$physsn3;
 
-  $query = "UPDATE $database.$db_name SET ".
+  $query = "UPDATE $db_name SET ".
     "phylname   ='$phylname',    ".
     "phyfname   ='$phyfname',    ".
     "phytitle   ='$phytitle',    ". 
@@ -1017,7 +1017,7 @@ if ($action=="addform") {
 
   freemed_display_box_top ("$Deleting_Physician", $page_name, $_ref);
 
-  $result = fdb_query("DELETE FROM $database.$db_name
+  $result = fdb_query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -1344,7 +1344,7 @@ if ($action=="addform") {
 
 } else { // view is now the default
 
-  $query = "SELECT * FROM $database.$db_name ".
+  $query = "SELECT * FROM $db_name ".
     "ORDER BY phylname, phyfname";
 
   $result = fdb_query($query);
@@ -1387,7 +1387,7 @@ if ($action=="addform") {
 
       if ($spe1!="0") {
         $r = fdb_fetch_array(fdb_query("SELECT * FROM
-           $database.degrees WHERE id='$spe1'"));
+           degrees WHERE id='$spe1'"));
         $_d1 = $r["degdegree"]; // get degree name
       } else {
         $_d1 = "";
@@ -1395,7 +1395,7 @@ if ($action=="addform") {
 
       if ($physpe2!="0") {
         $r = fdb_fetch_array(fdb_query("SELECT * FROM
-           $database.degrees WHERE id='$spe2'"));
+           degrees WHERE id='$spe2'"));
         $_d2 = $r["degdegree"]; // get degree name
       } else {
         $_d2 = "";
@@ -1403,7 +1403,7 @@ if ($action=="addform") {
 
       if ($physpe3!="0") {
         $r = fdb_fetch_array(fdb_query("SELECT * FROM
-           $database.degrees WHERE id='$spe3'"));
+           degrees WHERE id='$spe3'"));
         $_d3 = $r["degdegree"]; // get degree name
       } else {
         $_d3 = "";

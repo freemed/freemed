@@ -239,7 +239,7 @@ switch ($action) { // master action switch
     <P>
     <$STDFONT_B>$Adding . . . <$STDFONT_E>
   ";
-  $query = "INSERT INTO $database.facility VALUES (
+  $query = "INSERT INTO facility VALUES (
     '".addslashes($psrname).         "',
     '".addslashes($psraddr1).        "',
     '".addslashes($psraddr2).        "',
@@ -291,7 +291,7 @@ switch ($action) { // master action switch
     <$STDFONT_B>$Modifying . . . 
   ";
 
-  $query = "UPDATE $database.$db_name SET 
+  $query = "UPDATE $db_name SET 
     psrname     ='".addslashes($psrname).         "',
     psraddr1    ='".addslashes($psraddr1).        "',
     psraddr2    ='".addslashes($psraddr2).        "',
@@ -337,7 +337,7 @@ switch ($action) { // master action switch
  case "del": // delete action
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
-  $result = fdb_query("DELETE FROM $database.facility
+  $result = fdb_query("DELETE FROM facility
     WHERE (id = \"$id\")");
 
   echo "
@@ -363,7 +363,7 @@ switch ($action) { // master action switch
   // in the database for modification... useful to note in
   // future...
 
-  $query = "SELECT * FROM $database.facility ".
+  $query = "SELECT * FROM facility ".
     "ORDER BY psrname,psrnote";
 
   $result = fdb_query($query);

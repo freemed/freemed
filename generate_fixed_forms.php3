@@ -28,7 +28,7 @@
 
    // get list of all patient who need to be billed
    $b_result = fdb_query ("SELECT DISTINCT payrecpatient
-                           FROM $database.payrec
+                           FROM payrec
                            WHERE (
                              payreccat = '5' AND
                              payreclink < '3'
@@ -72,7 +72,7 @@
     $current_patient = $b_r[payrecpatient];
 
     $current_status = fdb_num_rows( fdb_query (
-      "SELECT * FROM $database.procrec
+      "SELECT * FROM procrec
        WHERE (
          (procpatient    = '$current_patient') AND
          (procbilled     = '0') AND
@@ -112,8 +112,8 @@
      //$debug=true;
 
      // decide which ones we are generating
-     $result = fdb_query ("SELECT a.* FROM $database.payrec AS a,
-                                           $database.procrec AS b 
+     $result = fdb_query ("SELECT a.* FROM payrec AS a,
+                                           procrec AS b 
                            WHERE ( 
                              a.payreccat = '5' AND
                              a.payreclink < '3' AND
@@ -571,7 +571,7 @@
        echo "
          Marking ".$processed[$i]." ... 
        ";
-       $query = "UPDATE $database.procrec
+       $query = "UPDATE procrec
                  SET procbilled = '1'
                  WHERE (
                    (procpatient    = '".$processed[$i]."') AND
@@ -621,7 +621,7 @@
      <TD ALIGN=LEFT>
       <SELECT NAME=\"whichform\">
    ";
-   $result = fdb_query ("SELECT * FROM $database.fixedform WHERE fftype='1'
+   $result = fdb_query ("SELECT * FROM fixedform WHERE fftype='1'
                          ORDER BY ffname, ffdescrip");
    while ($r = fdb_fetch_array ($result)) {
     echo "

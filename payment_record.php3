@@ -57,7 +57,7 @@
         <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
   // grab all procedures for patient (with non-zero balance)
-  $procs = fdb_query ("SELECT * FROM $database.procrec
+  $procs = fdb_query ("SELECT * FROM procrec
                        WHERE ((procpatient='$patient')
                        AND (procbalcurrent>0))");
   if (($procs==0) or (fdb_num_rows ($procs)>0)) { // if there are results...
@@ -633,7 +633,7 @@
    } // end category switch (add)
 
    echo "<$STDFONT_B>$Adding ... <$STDFONT_E>\n";
-   $query = "INSERT INTO $database.$db_name VALUES (
+   $query = "INSERT INTO $db_name VALUES (
      '$cur_date',
      '',
      '".addslashes($patient).      "',
@@ -655,20 +655,20 @@
    echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
    switch ($payreccat) {
      case ADJUSTMENT: // adjustment category (add) 1
-      $query = "UPDATE $database.procrec SET
+      $query = "UPDATE procrec SET
                 procbalcurrent = procbalcurrent - $payrecamt
                 WHERE id='$payrecproc'";
       break; // end adjustment category (add)
 
      case REFUND: // refund category (add) 2
-      $query = "UPDATE $database.procrec SET
+      $query = "UPDATE procrec SET
                 procamtpaid    = procamtpaid    + $payrecamt
                 WHERE id='$payrecproc'";
       break; // end refund category (add)
 
      case DENIAL: // denial category (add) 3
       if ($payreclink==1) {
-        $query = "UPDATE $database.procrec SET
+        $query = "UPDATE procrec SET
                   procbalcurrent = '0'
                   WHERE id='$payrecproc'";
       } else { // if no adjust
@@ -682,7 +682,7 @@
 
      case PAYMENT: // payment category (add) 0
      default:  // default is payment
-      $query = "UPDATE $database.procrec SET
+      $query = "UPDATE procrec SET
                 procbalcurrent = procbalcurrent - $payrecamt,
                 procamtpaid    = procamtpaid    + $payrecamt
                 WHERE id='$payrecproc'";
@@ -717,7 +717,7 @@
     <P>
     <$STDFONT_B>$Deleting ... <$STDFONT_E>
    ";
-   $query = "DELETE FROM $database.$db_name WHERE id='$id'";
+   $query = "DELETE FROM $db_name WHERE id='$id'";
    $result = fdb_query ($query);
    if ($result) { echo "$Done."; }
     else        { echo "$ERROR"; }
@@ -748,7 +748,7 @@
     <P>
    ";
 
-   $pay_query  = "SELECT * FROM $database.payrec
+   $pay_query  = "SELECT * FROM payrec
                   WHERE payrecpatient='$patient'
                   ORDER BY payrecdt";
    $pay_result = fdb_query ($pay_query);

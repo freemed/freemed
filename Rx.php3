@@ -132,7 +132,7 @@
       $rxdtadd = $cur_date;
       //$rxdtfrom = $rxdtfrom_y. "-". $rxdtfrom_m. "-". $rxdtfrom_d;
       $rxdtfrom = fm_date_assemble("rxdtfrom");
-      $query = "INSERT INTO $database.rx VALUES (
+      $query = "INSERT INTO rx VALUES (
         '$rxdtadd',
         '$rxdtmod',
         '$rxpatient',
@@ -183,7 +183,7 @@
       ";
 
       $query = fdb_query ("SELECT * FROM 
-         $database.rx WHERE rxpatient='$patient'");
+         rx WHERE rxpatient='$patient'");
       $num_records = fdb_num_rows ($query);
 
       if ($num_records < 1) {

@@ -141,7 +141,7 @@ switch ($action) { // begin master switch
       <SELECT NAME=\"cpttype\">
        <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $i_res = fdb_query ("SELECT * FROM $database.intservtype");
+  $i_res = fdb_query ("SELECT * FROM intservtype");
   while ($i_r = fdb_fetch_array ($i_res)) {
     if ($i_r["id"]==$cpttype) { $this_selected = "SELECTED"; }
      else                     { $this_selected = "";         }
@@ -188,7 +188,7 @@ switch ($action) { // begin master switch
       <$STDFONT_B>Diagnosis Required : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ";
-   freemed_multiple_choice ("SELECT * FROM $database.icd9
+   freemed_multiple_choice ("SELECT * FROM icd9
                              ORDER BY icd9code,icd9descrip",
                             "icd9code:icd9descrip",
                             "cptreqicd",
@@ -203,7 +203,7 @@ switch ($action) { // begin master switch
       <$STDFONT_B>Diagnosis Excluded : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ";
-   freemed_multiple_choice ("SELECT * FROM $database.icd9
+   freemed_multiple_choice ("SELECT * FROM icd9
                              ORDER BY icd9code,icd9descrip",
                             "icd9code:icd9descrip",
                             "cptexcicd",
@@ -218,7 +218,7 @@ switch ($action) { // begin master switch
       <$STDFONT_B>Procedural Codes Required : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ";
-   freemed_multiple_choice ("SELECT * FROM $database.cpt
+   freemed_multiple_choice ("SELECT * FROM cpt
                              ORDER BY cptnameint,cptcode",
                             "cptcode:cptnameint",
                             "cptreqcpt",
@@ -233,7 +233,7 @@ switch ($action) { // begin master switch
       <$STDFONT_B>Procedural Codes Excluded : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ";
-   freemed_multiple_choice ("SELECT * FROM $database.cpt
+   freemed_multiple_choice ("SELECT * FROM cpt
                              ORDER BY cptcode,cptnameint",
                             "cptcode:cptnameint",
                             "cptexccpt",
@@ -259,7 +259,7 @@ switch ($action) { // begin master switch
 
  case "add": // modify action
   freemed_display_box_top ("$Adding $record_name");
-  $query = "INSERT INTO $database.$db_name VALUES (
+  $query = "INSERT INTO $db_name VALUES (
             '".addslashes($cptcode).                        "',
             '".addslashes($cptnameint).                     "',
             '".addslashes($cptnameext).                     "',
@@ -300,7 +300,7 @@ switch ($action) { // begin master switch
 
  case "mod": // modify action
    freemed_display_box_top ("$Modifying $record_name");
-  $query = "UPDATE $database.$db_name SET
+  $query = "UPDATE $db_name SET
             cptcode      ='".addslashes($cptcode).                        "',
             cptnameint   ='".addslashes($cptnameint).                     "',
             cptnameext   ='".addslashes($cptnameext).                     "',
@@ -342,7 +342,7 @@ switch ($action) { // begin master switch
   break; // end delete action
 
  case "profileform": // insurance company profiles form
-  $num_inscos = fdb_num_rows (fdb_query ("SELECT * FROM $database.insco"));
+  $num_inscos = fdb_num_rows (fdb_query ("SELECT * FROM insco"));
   $this_code  = freemed_get_link_rec ($id, $db_name);
   $cpttos     = fm_split_into_array ($this_code["cpttos"]);
   $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
@@ -422,7 +422,7 @@ switch ($action) { // begin master switch
 
  case "profile": // modification for the profile form
   freemed_display_box_top ("$Modifying $record_name");
-  $query = "UPDATE $database.$db_name SET
+  $query = "UPDATE $db_name SET
             cpttos='".fm_join_from_array($cpttos)."',
             cptstdfee='".fm_join_from_array($cptstdfee)."'
             WHERE id='$id'";
@@ -447,7 +447,7 @@ switch ($action) { // begin master switch
 
  default: // default action begin
   freemed_display_box_top ("$record_name");
-  $query = "SELECT * FROM $database.$db_name
+  $query = "SELECT * FROM $db_name
             ORDER BY cptcode";
   $result = fdb_query ($query);
   freemed_display_actionbar ();
