@@ -308,6 +308,7 @@
        $itemdate_y[$j] = $itemdate_sy[$j] = $itemcharges[$j] =
        $itemunits[$j]  = $itempos[$j]     = $itemvoucher[$j] =
        $itemcpt[$j]    = $itemcptmod[$j]  = "";
+     unset ($ref); // kill referring doc
 
      // grab form information form
      $this_form = freemed_get_link_rec ($whichform, "fixedform");
@@ -421,6 +422,7 @@
      $total_paid = $total_charges = $current_balance = 0;  // zero the charges
 
      $pat_processed++;
+     $patient_forms[$pat_processed] = $this_patient->local_record["id"];
      if (($num_patients != 0) and ($pat_processed >= $num_patients))
        $still_going = false;
 
@@ -447,10 +449,79 @@
      <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
     </CENTER>
     </FORM>
+    <P>
+   ";
+
+   // present the form so that we can mark as billed
+   echo "
+    <CENTER>
+    <$STDFONT_B><B>Mark as Billed</B><$STDFONT_E>
+    </CENTER>
+    <BR>
+    <FORM ACTION=\"$page_name\" METHOD=POST>
+     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
+     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mark\">`
+   ";
+   for ($i=1;$i<=$pats_processed;$i++) {
+     $this_patient = new Patient ($patient_forms[$i]);
+     echo "
+       <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" CHECKED>
+       ".$this_patient->fullName(false)."
+       (<A HREF=\"manage.php3?$_auth&id=$patient_forms[$i]\"
+        >".$this_patient->local_record["ptid"]."</A>) <BR>
+     ";
+   } // end looping for all processed patients
+   echo "
+    <P>
+    <INPUT TYPE=SUBMIT VALUE=\"Mark as Billed\">
+    </FORM>
+    <P>
    ";
 
    freemed_display_box_bottom ();
    break; // end of action geninsform
+
+  case "mark": // mark as billed action
+   freemed_display_box_top ("Mark Forms as Billed");
+   if (count($processed)<1) {
+    echo "
+     <P>
+     <CENTER>
+      <$STDFONT_B><B>Nothing set to be marked!</B><$STDFONT_E>
+     </CENTER>
+     <P>
+     <CENTER>
+      <A HREF=\"$page_name?$_auth\"
+      ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
+     </CENTER>
+     <P>
+    ";
+   } else {
+     for ($i=0;$i<count($processed);$i++) {
+       echo "
+         Marking $processed[$i] ... 
+       ";
+       $query = "UPDATE $database.procedure
+                 SET procbilled = 1
+                 WHERE (
+                   (procpatient = '".$processed[$i]."') AND
+                   (procbilled  = 0)
+                 )";
+       $result = fdb_query ($query);
+       if ($result) { echo "$Done."; }
+        else        { echo "$ERROR"; }
+     }
+     echo "
+      <P>
+      <CENTER>
+       <A HREF=\"$page_name?$_auth\"
+       ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
+      </CENTER>
+      <P>
+     ";
+   } // end checking if there is work to do
+   freemed_display_box_bottom ();
+   break; // end of mark as billed action
 
   default:
    freemed_display_box_top ("Fixed Forms Generation Menu");
