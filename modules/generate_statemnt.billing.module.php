@@ -1,7 +1,12 @@
 <?php
- // $Id$
- // desc: module prototype
- // lic : GPL, v2
+	// $Id$
+
+// TODO: This module needs either replacement or a complete overhaul.
+// It needs a common printing API in FreeMED so that the forms can be
+// directly generated to a printer, and probably will eventually need
+// to just be one of several selectable PDF rendered forms sent to the
+// printer, since *no one* uses dot matrix printers to do this junk
+// anymore. - Jeff
 
 LoadObjectDependency('FreeMED.BillingModule');
 
@@ -10,7 +15,7 @@ class GenerateStatementsModule extends BillingModule {
 	// override variables
 	var $MODULE_NAME = "Generate Statement Billing";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -18,8 +23,8 @@ class GenerateStatementsModule extends BillingModule {
 	var $CATEGORY_NAME = "Billing";
 	var $CATEGORY_VERSION = "0.1";
 
-    var $form_buffer;
-    var $pat_processed;
+	var $form_buffer;
+	var $pat_processed;
 	var $formno;
 	var $renderform_variables = array(
 		"stmnt",
@@ -38,7 +43,15 @@ class GenerateStatementsModule extends BillingModule {
 
 	// contructor method
 	function GenerateStatementsModule ($nullvar = "") {
-		// call parent constructor
+		// For GettextXML to pick up:
+		//	__("Single Patient Statement")
+	
+		// Association for billing menu
+		$this->_SetAssociation('StatementBilling');
+		$this->_SetMetaInformation('StatementBillingName', 'Single Patient Statement');
+		$this->_SetMetaInformation('StatementBillingFunction', 'view');
+
+		// Call parent constructor
 		$this->BillingModule($nullvar);
 	} // end function GenerateStatementsModule
 
@@ -78,33 +91,28 @@ class GenerateStatementsModule extends BillingModule {
 		return;
 */
 
-		if ($viewaction=="geninsform")
-		{
+		if ($viewaction=="geninsform") {
 		    $this->form_buffer = "";
 			$this->pat_processed = 0;
 			// patient bills
-			$query = "SELECT DISTINCT procpatient FROM procrec WHERE proccurcovtp='0'
-						AND procbalcurrent>'0' AND procbilled='0'";
+			$query = "SELECT DISTINCT procpatient FROM procrec WHERE proccurcovtp='0' AND procbalcurrent>'0' AND procbilled='0'";
 			$result = $sql->query($query);
-			if (!$sql->results($result)) 
-			{
-				$display_buffer .= "No patients to be billed.<BR>\n";
+			if (!$sql->results($result)) {
+				$display_buffer .= __("No patients to be billed.")."<br/>\n";
+				$display_buffer .= "<p/>\n".
+					"<a href=\"billing_functions.php\" class=\"button\">".__("Return to")." ".__("Billing Functions")."</a>\n";
 				template_display();
 			}
 		
-			while($row = $sql->fetch_array($result))
-			{	
+			while($row = $sql->fetch_array($result)) {	
 				$this->GenerateFixedForms($row[procpatient], 0);
 			}
 
 			//$this->form_buffer = strtoupper($this->form_buffer);
 
-			if ($this->pat_processed > 0)
-			{
+			if ($this->pat_processed > 0) {
 				$this->ShowBillsToMark();
-			}
-			else
-			{
+			} else {
 				$display_buffer .= "
 				<P>
 				<CENTER>
@@ -132,25 +140,26 @@ class GenerateStatementsModule extends BillingModule {
 	}
 	
 	function GenerateFixedForms($parmpatient, $parmcovid) {
-		global $display_buffer;
+		global $display_buffer, $whichform;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 
-	    // zero the buffer 
-	    $buffer = "";
-     	// get current patient information
+		// zero the buffer 
+		$buffer = "";
 
-     	$this_patient = CreateObject('FreeMED.Patient', $parmpatient);
-        if (!$this_patient)
+	     	// get current patient information
+		$this_patient = CreateObject('FreeMED.Patient', $parmpatient);
+		if (!$this_patient) {
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
+		}
 			
-     	$display_buffer .= "
-      	<B>".__("Processing")." ".$this_patient->fullName()."
-      	</B><BR>\n\n
-     	";
-     	flush ();
+		$display_buffer .= "
+		<B>".__("Processing")." ".$this_patient->fullName()."
+		</B><BR>\n\n
+		";
+		flush ();
 
         // grab form information form
         $this->formno = freemed::get_link_rec ($whichform, "fixedform");
@@ -164,23 +173,17 @@ class GenerateStatementsModule extends BillingModule {
 		$curdate[sy]       = substr ($curdate[y], 2, 2);
 
 		// grab all the procedures to bill for this patient
-		$result = $this->GetProcstoBill(0,0,$parmpatient,1);
+		$result = $this->GetProcstoBill(0, 0, $parmpatient, 1);
 
 		$rowcount = $sql->num_rows($result);
 		if ( ($rowcount <= 0) OR ($result==0) )
 			trigger_error("Should have bills for $this_patient->local_record[ptid]");
 
-		
 		// procedure callback function will handle all the data
 		$this->MakeStack($result,$this->formno[ffloopnum]);
 		$this->pat_processed++;
 		$this->patient_forms[$this->pat_processed] = $parmpatient;
-
-
-
-
-   } // end generateFixed
-
+	} // end method generateFixed
 
 	function Provider($stack) {
 		global $display_buffer;
@@ -231,7 +234,6 @@ class GenerateStatementsModule extends BillingModule {
 
 		$row = $stack[0];
 
-
 		// get current patient information
 		$this_patient = CreateObject('FreeMED.Patient', $row[procpatient]);
 		if (!$this_patient)
@@ -240,34 +242,34 @@ class GenerateStatementsModule extends BillingModule {
 		$ptname = $this_patient->fullName();
 		$stmnt[patname] = $ptname;
 
-     	$ptdob[full]     = $this_patient->ptdob;
-     	$ptdob[month]    = substr ($ptdob[full], 5, 2);  
-     	$ptdob[day]      = substr ($ptdob[full], 8, 2);  
-     	$ptdob[year]     = substr ($ptdob[full], 0, 4);
-     	$ptdob[syear]    = substr ($ptdob[full], 2, 2);
-     	$ptdob[mmddyy]   = $ptdob[month].
-                        $ptdob[day].
-                        $ptdob[syear];
-     	$ptdob[mmddyyyy] = $ptdob[month].
-                        $ptdob[day].
-                        $ptdob[year];
-     	$ptsex[male]     = ( ($this_patient->ptsex == "m") ?
-                           $this->formno[ffcheckchar] : " " );
-     	$ptsex[female]   = ( ($this_patient->ptsex == "f") ?
-                           $this->formno[ffcheckchar] : " " );
-     	$ptsex[trans]    = ( ($this_patient->ptsex == "t") ?
-                           $this->formno[ffcheckchar] : " " );
-     	$ptssn           = $this_patient->local_record["ptssn"];
+		$ptdob[full]     = $this_patient->ptdob;
+		$ptdob[month]    = substr ($ptdob[full], 5, 2);  
+		$ptdob[day]      = substr ($ptdob[full], 8, 2);  
+		$ptdob[year]     = substr ($ptdob[full], 0, 4);
+		$ptdob[syear]    = substr ($ptdob[full], 2, 2);
+		$ptdob[mmddyy]   = $ptdob[month].
+		                  $ptdob[day].
+		                  $ptdob[syear];
+		$ptdob[mmddyyyy] = $ptdob[month].
+		                  $ptdob[day].
+		                  $ptdob[year];
+		$ptsex[male]     = ( ($this_patient->ptsex == "m") ?
+		                     $this->formno[ffcheckchar] : " " );
+		$ptsex[female]   = ( ($this_patient->ptsex == "f") ?
+		                     $this->formno[ffcheckchar] : " " );
+		$ptsex[trans]    = ( ($this_patient->ptsex == "t") ?
+		                     $this->formno[ffcheckchar] : " " );
+		$ptssn           = $this_patient->local_record["ptssn"];
 		
-     	// address information
-     	$city    = $this_patient->local_record["ptcity"   ];
-     	$state   = $this_patient->local_record["ptstate"  ];
-     	$zip     = $this_patient->local_record["ptzip"    ];
+		// address information
+		$city    = $this_patient->local_record["ptcity"   ];
+		$state   = $this_patient->local_record["ptstate"  ];
+		$zip     = $this_patient->local_record["ptzip"    ];
 		
 		$stmnt[pataddr1] = $this_patient->local_record["ptaddr1"  ];
 		$stmnt[pataddr2] = $this_patient->local_record["ptaddr2"  ];
 		$stmnt[pataddr3] = $city.", ".$state.". ".$zip;
-     	$stmnt[patid]    = $this_patient->local_record["ptid"];
+		$stmnt[patid]    = $this_patient->local_record["ptid"];
 
 	  	return;
 
@@ -348,7 +350,7 @@ class GenerateStatementsModule extends BillingModule {
 		return;		
    	} // end service lines
 
-   function ProcCallBack($stack) {
+	function ProcCallBack($stack) {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -356,8 +358,9 @@ class GenerateStatementsModule extends BillingModule {
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 
 		$count = count($stack);
-		if ($count == 0)
+		if ($count == 0) {
 			return;
+		}
 		$row = $stack[0];
 
 		$this->Provider($stack);
@@ -368,7 +371,7 @@ class GenerateStatementsModule extends BillingModule {
 
 		//
 
-   }
+	}
 
 
 	function view() {
@@ -403,6 +406,12 @@ class GenerateStatementsModule extends BillingModule {
    		";
 	   $result = $sql->query ("SELECT * FROM fixedform WHERE fftype='2'
 							 ORDER BY ffname, ffdescrip");
+	   // auto refresh hack
+	   if ($sql->num_rows($result) == 1) {
+	   	global $refresh;
+		$refresh = "module_loader.php?module=".get_class($this)."&action=addform&viewaction=geninsform&been_here=1";
+	   }
+	   
 	   while ($r = $sql->fetch_array ($result)) {
 		$display_buffer .= "
 		 <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."

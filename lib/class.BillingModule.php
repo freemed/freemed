@@ -18,8 +18,8 @@ class BillingModule extends BaseModule {
 	var $order_field;
 	var $form_vars;
 	var $table_name;
-    var $patient_forms;  // array of patient id's that we processed
-    var $patient_procs;  // 2d array [patient][ids of procs processed]
+	var $patient_forms;  // array of patient id's that we processed
+	var $patient_procs;  // 2d array [patient][ids of procs processed]
 
 	// contructor method
 	function BillingModule () {
@@ -68,6 +68,10 @@ class BillingModule extends BaseModule {
 					template_display();
 				}
 				$this->modform();
+				break;
+
+			case "transport":
+				return $this->transport();
 				break;
 
 			case "view":
@@ -325,46 +329,48 @@ class BillingModule extends BaseModule {
 		global $display_buffer;
 		global $sql;
 
-		if ($forpat==0) // not doing patient bills
-		{	
+		if ($forpat==0) { // not doing patient bills
 			if (!$covid)
 				return 0;
 			if (!$covtype)
 				return 0;
 		}
-		if (!$covpatient)
+		if (!$covpatient) {
 			return 0;
+		}
 
-		$query = "SELECT * FROM procrec
-			WHERE (proccurcovtp = '$covtype' AND
-			proccurcovid = '$covid' AND
-			procbalcurrent > '0' AND
-			procpatient = '$covpatient' AND
-			procbillable = '0' AND
-			procbilled = '0')
-			ORDER BY procpos,procphysician,procrefdoc,proceoc,procclmtp,procauth,proccov1,proccov2,procdt";
+		$query = "SELECT * FROM procrec ".
+			"WHERE (proccurcovtp = '$covtype' AND ".
+			"proccurcovid = '$covid' AND ".
+			"procbalcurrent > '0' AND ".
+			"procpatient = '$covpatient' AND ".
+//			"procbillable = '0' AND ".
+			"procbilled = '0') ".
+			"ORDER BY procpos,procphysician,procrefdoc,proceoc,procclmtp,procauth,proccov1,proccov2,procdt";
 
 		$result = $sql->query($query);
 
-		if (!$sql->results($result))
+		if (!$sql->results($result)) {
 			return 0;
-		else
+		} else {
 			return $result;
-
+		}
 	}
 
 	// process the resulst set from above and call ProcCallBack
     // function at every control break passing it the like 
     // procedures in an array. User should suppliy the
     // the ProcCallBack method
-	function Makestack($result,$maxloop) {
+	function MakeStack($result,$maxloop) {
 		global $display_buffer;
 		global $sql;
 
-		if (!$result)
+		if (!$result) {
 			return 0;
-		if (!$maxloop)
+		}
+		if (!$maxloop) {
 			return 0;
+		}
 
 		$first_procedure = 0;
 		$proccount=0;
@@ -470,22 +476,21 @@ class BillingModule extends BaseModule {
 			for ($x=0;$x<$procs;$x++)
 			{
 				$prc = $procids[$pat][$x];
-				//$display_buffer .= "proc $prc for patient $pat<BR>";
-       			// start of insert loop for billed legder entries
-       			$query = "SELECT procbalcurrent,proccurcovid,proccurcovtp FROM procrec";
+				//$display_buffer .= "proc $prc for patient $pat<br/>";
+       				// start of insert loop for billed legder entries
+       				$query = "SELECT procbalcurrent,proccurcovid,proccurcovtp FROM procrec";
 				$query .= " WHERE id='".$prc."'";
-       			$result = $sql->query($query);
-       			if (!$result)
-       			{
-       				$display_buffer .= "Mark failed getting procrecs<BR>";
-				template_display();
-       			}
+	       			$result = $sql->query($query);
+       				if (!$result) {
+	       				$display_buffer .= "Mark failed getting procrecs<br/>";
+					template_display();
+       				}
 				//$display_buffer .= "proc query $query<BR>";
-       			$bill_tran = $sql->fetch_array($result);
-       			$cur_bal = $bill_tran[procbalcurrent];
-          		$proc_id = $bill_tran[id];
-          		$cov_id  = $bill_tran[proccurcovid];
-          		$cov_tp  = $bill_tran[proccurcovtp];
+       				$bill_tran = $sql->fetch_array($result);
+       				$cur_bal = $bill_tran[procbalcurrent];
+          			$proc_id = $bill_tran[id];
+          			$cov_id  = $bill_tran[proccurcovid];
+          			$cov_tp  = $bill_tran[proccurcovtp];
 				$payreccat = BILLED;
 				$query = $sql->insert_query("payrec",
 					array (
@@ -503,28 +508,26 @@ class BillingModule extends BaseModule {
 						)	
 					);
 				//$display_buffer .= "payrec insert query $query<BR>";
-           		$pay_result = $sql->query ($query);
-           		if ($pay_result)
-               		$display_buffer .= "Adding Bill Date to ledger.<BR> \n";
-           		else
-               		$display_buffer .= "Failed Adding Bill Date to ledger!!<BR> \n";
+           			$pay_result = $sql->query ($query);
+	           		if ($pay_result) {
+		               		$display_buffer .= __("Adding Bill Date to ledger.")."<br/>\n";
+	           		} else {
+               				$display_buffer .= __("Failed Adding Bill Date to ledger!!")."<br/>\n";
+				}
 
-       			$query = "UPDATE procrec SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'".
+       				$query = "UPDATE procrec SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'".
 						 " WHERE id = '".$prc."'";
 				//$display_buffer .= "procrec update query $query<BR>";
-       			$proc_result = $sql->query ($query);
-       			if ($result) 
-				{ 
+       				$proc_result = $sql->query ($query);
+       				if ($result) { 
 					$display_buffer .= __("done").".<BR>\n"; 
-				}
-       			else        
-				{ 
+				} else { 
 					$display_buffer .= __("ERROR")."<BR>\n"; 
 				}
 
 			} // end proces for patient loop
-			
-     	} // end for processed
+		
+	     	} // end for processed
      	$display_buffer .= "
       	<P>
       	<CENTER>
@@ -563,7 +566,7 @@ class BillingModule extends BaseModule {
 			  <option VALUE=\"\">".__("Render to Screen")."</option>
 			  <option VALUE=\"application/x-rendered-text\">".__("Render to File")."</option>
 			 </select>
-			 <input TYPE=\"SUBMIT\" VALUE=\"".__("Get HCFA Rendered Text File")."\"/>
+			 <input TYPE=\"SUBMIT\" VALUE=\"".__("Generate")."\"/>
 			</div>
 			</form>
 			<p/>
