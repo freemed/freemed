@@ -120,7 +120,7 @@ class GroupCalendar extends CalendarModule {
 
 		// Get facility for current room
 		global $my_facility;
-		$my_facility = $_SESSION["default_facility"];
+		$my_facility = $_COOKIE["default_facility"];
 
 		// Determine if a physician group is set, if not, default
 		global $group;
