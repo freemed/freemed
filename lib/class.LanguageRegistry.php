@@ -90,13 +90,14 @@ class LanguageRegistry {
 		$this->registry[$meta['LocaleName']] = $meta['Locale'];
 	} // end method register
 
-	function widget ($varname) {
+	function widget ($varname, $_options = NULL) {
 		return html_form::select_widget(
 			$varname,
 			array_merge(
-				$this->registry,
-				array(__("Default Language") => $GLOBALS['language'])
-			)
+				array(__("Default Language") => $GLOBALS['language']),
+				$this->registry
+			),
+			$_options
 		);
 	} // end method widget
 
