@@ -56,9 +56,10 @@ class chronicProblemsModule extends freemedEMRModule {
 				$buffer .= "
 				<TR>
 				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
-				<TD ALIGN=\"LEFT\"><A HREF=\"module_loader.php?module=chronicProblemsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)."\"".
-				"><SMALL>"._("Delete")."</SMALL></A></TD>
-				</TR>
+				<TD ALIGN=\"LEFT\">".
+				template::summary_delete_link($this,
+				"module_loader.php?module=chronicProblemsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
+				"</TD></TR>
 				";
 			} // end looping thru problems
 

@@ -9,10 +9,10 @@ define ('__QUICKMEDS_EMR_MODULE_PHP__', true);
 
 class quickmedsModule extends freemedEMRModule {
 
-	var $MODULE_NAME = "QuickMeds";
+	var $MODULE_NAME = "Medications";
 	var $MODULE_VERSION = "0.1";
 
-	var $record_name = "QuickMeds";
+	var $record_name = "Medications";
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
@@ -56,8 +56,12 @@ class quickmedsModule extends freemedEMRModule {
 				$buffer .= "
 				<TR>
 				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
-				<TD ALIGN=\"LEFT\"><A HREF=\"module_loader.php?module=quickmedsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)."\"".
-				"><SMALL>"._("Delete")."</SMALL></A></TD>
+				<TD ALIGN=\"LEFT\">".
+				template::summary_delete_link($this,
+				"module_loader.php?module=quickmedsModule&".
+				"action=del&patient=".urlencode($patient)."&".
+				"return=manage&id=".urlencode($k))."
+				</TD>
 				</TR>
 				";
 			} // end looping thru quickmeds

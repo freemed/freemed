@@ -56,9 +56,10 @@ class allergiesModule extends freemedEMRModule {
 				$buffer .= "
 				<TR>
 				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
-				<TD ALIGN=\"LEFT\"><A HREF=\"module_loader.php?module=allergiesModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)."\"".
-				"><SMALL>"._("Delete")."</SMALL></A></TD>
-				</TR>
+				<TD ALIGN=\"LEFT\">".
+				template::summary_delete_link($this,
+				"module_loader.php?module=allergiesModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
+				"</TD></TR>
 				";
 			} // end looping thru allergies
 
@@ -104,6 +105,11 @@ class allergiesModule extends freemedEMRModule {
 
 		// Add a new member to the array
 		$my_allergies[] = $allergy;
+
+		// Remove empties
+		foreach ($my_allergies AS $k => $v) {
+			if (empty($v)) unset($my_allergies[$k]);
+		}
 
 		// Recombine into a single variable
 		$allergies = sql_squash($my_allergies);
