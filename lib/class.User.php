@@ -111,7 +111,7 @@ class User {
 	function newMessages () {
 		global $sql;
 		$result = $sql->query("SELECT * FROM messages WHERE ".
-			"msgfor='".addslashes($this->user_phy)."' AND ".
+			"msgfor='".addslashes($this->user_number)."' AND ".
 			"msgread='0'");
 		if (!$sql->results($result)) return false;
 		return $sql->num_rows($result);
