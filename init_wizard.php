@@ -42,42 +42,37 @@ if ($action=="login") {
     $display_buffer .= "
 <div ALIGN=\"LEFT\">
 	
-	This is the the wizard to setup the admin account <BR>
-	Before creating that account you must prove that you <BR>
-	Have the appropriate level of access, please provide <BR>
-	The database user name and password, as found in settings.php
+	".__("This is the the wizard to setup the admin account.")."<br/>
+	".__("Before creating that account you must prove that you have the appropriate level of access.")."
+	".__("Please provide the database user name and password, as found in settings.php.")."
 
 </div>
 
 <p/>
+<form ACTION=\"init_wizard.php\" METHOD=\"POST\">
 <table WIDTH=\"100%\" BORDER=\"0\" CELLPADDING=\"2\">
-<tr>  <td ALIGN=\"RIGHT\">
-      <form ACTION=\"init_wizard.php?action=auth\" METHOD=\"POST\">
-
-      <input TYPE=\"HIDDEN\" NAME=\"__dummy\"
-      VALUE=\"01234567890123456789012345678901234567890
-            01234567890123456789012345678901234567890
-            01234567890123456789012345678901234567890\"/>
+<tr><td ALIGN=\"RIGHT\">
+      <input type=\"hidden\" name=\"action\" value=\"auth\"/>
        ".__("Database Username")." :
       </TD><TD ALIGN=\"LEFT\">
       <input TYPE=\"TEXT\" NAME=\"_username\" LENGTH=\"20\" MAXLENGTH=\"32\"/>
       </td>
 </tr>
-<tr>    <td ALIGN=\"RIGHT\">
+<tr><td ALIGN=\"RIGHT\">
         ".__("Database Password")." :
         </td>
          <td>
              <input TYPE=\"PASSWORD\" NAME=\"_password\" LENGTH=\"20\" MAXLENGTH=\"32\"/>
          </td>
 </tr> 
-<tr>    <td ALIGN=\"RIGHT\">
+<tr><td ALIGN=\"RIGHT\">
         ".__("Admin Account Password")." :
         </td>
          <td>
              <input TYPE=\"PASSWORD\" NAME=\"_adminpassword1\" LENGTH=\"20\" MAXLENGTH=\"32\"/>
          </td>
 </tr> 
-<tr>    <td ALIGN=\"RIGHT\">
+<tr><td ALIGN=\"RIGHT\">
         ".__("Confirm Admin Account Password")." :
         </td>
          <td>
@@ -94,11 +89,9 @@ if ($action=="login") {
 	
 // drop to the page...  
 template_display();
-
 }
 
-if($action=="auth")
-{
+if ($action=="auth") {
 
 	//lets display the banner!!
 
@@ -142,7 +135,7 @@ if($action=="auth")
 // these should eventually be connected to a die() command!!
 $this_user = CreateObject('FreeMED.User');
 
-$md5_pass=md5($_REQUEST['_adminpassword1']);
+$md5_pass = md5($_REQUEST['_adminpassword1']);
 	
 $this_user->init($md5_pass);
 
