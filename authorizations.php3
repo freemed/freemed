@@ -16,7 +16,7 @@
  freemed_display_banner ();
 
  if ($patient<1) {
-   freemed_display_box_top ("$record_name $Module :: "._("ERROR"));
+   freemed_display_box_top (_($record_name)." :: "._("ERROR"));
    echo "
      <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
    ";
@@ -54,11 +54,7 @@
 
      $this_patient = new Patient ($patient);
 
-     echo "
-       <P ALIGN=CENTER>
-       <$STDFONT_B>"._("Patient")." :
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A><$STDFONT_E>
+     echo freemed_patient_box($this_patient)."
        <P>
 
        <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -105,7 +101,7 @@
         <TD ALIGN=LEFT>
          <SELECT NAME=\"authtype\">
           <OPTION VALUE=\"0\" ".
-          ( ($authtype <  1) ? "SELECTED" : "" ).">NONE SELECTED
+          ( ($authtype <  1) ? "SELECTED" : "" ).">"._("NONE SELECTED")."
           <OPTION VALUE=\"1\" ".
           ( ($authtype == 1) ? "SELECTED" : "" ).">physician
           <OPTION VALUE=\"2\" ".
@@ -292,16 +288,8 @@
      $this_patient = new Patient ($patient);
      
      if ($rows < 1) {
-       freemed_display_box_top (_("$record_name"));
-       echo "
-         <P>
-         <CENTER>
-          <$STDFONT_B>
-          "._("Patient")." :
-           <A HREF=\"manage.php3?$_auth&id=$patient\"
-            >".$this_patient->fullName(true)."</A>
-          <$STDFONT_E>
-         </CENTER>
+       freemed_display_box_top (_($record_name));
+       echo freemed_patient_box($this_patient)."
          <P>
          <CENTER>
          <$STDFONT_B>"._("This patient has no authorizations.")."<$STDFONT_E>
@@ -323,17 +311,10 @@
      } // if there are none...
 
        // or else, display them...
-     freemed_display_box_top (_("$record_name"),
-      "manage.php3?id=$patient", $page_name);
+     freemed_display_box_top (_($record_name),
+      "manage.php3?id=$patient");
      $this_patient = new Patient ($patient);
-     echo "
-       <P>
-       <CENTER>
-       <$STDFONT_B>
-       "._("Patient")." : <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A>
-       <$STDFONT_E>
-       </CENTER>
+     echo freemed_patient_box($this_patient)."
        <P>
      ".
      freemed_display_itemlist (
