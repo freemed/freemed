@@ -615,7 +615,7 @@ class freemed {
 		return $this_filename;
 	} // end function freemed::secure_filename
 
-	function store_image ( $patient_id=0, $varname, $type="identification" ) {
+	function store_image ( $patient_id=0, $varname, $type="identification", $encoding='cjb2' ) {
 		global ${$varname};
 
 		// Check for valid patient id
@@ -626,13 +626,25 @@ class freemed {
 		$ext = $file_parts[count($file_parts)-1];
 
 		// If there is no extension, die
-		if (strlen($ext) < 3) return false;
+		if (strlen($ext) < 3) { return false; }
 
 		// Get temporary name
 		$image = $_FILES[$varname]["tmp_name"];
 
 		// If temp name doesn't exist, return false
 		if (empty($image)) return false;
+
+		// Create proper path
+		$mkdir_command = 'mkdir -p '.PHYSICAL_LOCATION.'/'.
+			dirname(
+				freemed::image_filename(
+					$patient_id,
+					$type,
+					'djvu'
+				)
+			);
+		//print "mkdir_command = $mkdir_command<br/>\n";
+		exec ($mkdir_command);
 
 		// Process depending on 
 		switch (strtolower($ext)) {
@@ -652,7 +664,11 @@ class freemed {
 
 			default:
 				// More complex: use imagemagick
-				$name = $patient_id.".".$type.".djvu";
+				$name = freemed::image_filename(
+					$patient_id,
+					$type,
+					'djvu'
+				);
 				// Convert to PBM
 				$command = "/usr/X11R6/bin/convert ".
 					freemed::secure_filename($image).
@@ -660,25 +676,31 @@ class freemed {
 					freemed::image_filename(
 						$patient_id,
 						$type,
-						'djvu.pbm'
+						'djvu.'.
+						( $encoding=='c44' ?
+						'jpg' : 'pbm' )
 					);
 				exec ($command);
+				//print ($command)."<br>";
+
 				// Convert to DJVU
-				$mkdir_command = "mkdir -p ".
-					PHYSICAL_LOCATION."/".dirname(
-					freemed::image_filename(
-						$patient_id,
-						$type,
-						'djvu'
-					));
-				print "mkdir_command = $mkdir_command<br>";
-				exec ($mkdir_command);
-				$command = "/usr/bin/cjb2 ".
+				switch ($encoding) {
+					case 'c44':
+						$ee = '/usr/bin/c44';
+						break;
+					case 'cjb2':
+					default:
+						$ee = '/usr/bin/cjb2';
+						break;
+				}
+				$command = $ee." ".
 					PHYSICAL_LOCATION."/".
 					freemed::image_filename(
 						$patient_id,
 						$type,
-						'djvu.pbm'
+						'djvu.'.
+						( $encoding=='c44' ?
+						'jpg' : 'pbm' )
 					)." ".
 					PHYSICAL_LOCATION."/".
 					freemed::image_filename(
@@ -686,13 +708,17 @@ class freemed {
 						$type,
 						'djvu'
 					);
-				exec ($command);
+				print "command = $command<br/>\n";
+				print "<br/>".exec ($command)."<br/>\n";
+
 				// Remove PBM
 				unlink(PHYSICAL_LOCATION.
 					freemed::image_filename(
 						$patient_id,
 						$type,
-						'djvu.pbm'
+						'djvu.'.
+						( $encoding=='c44' ?
+						'jpg' : 'pbm' )
 					)
 				);
 				return $name;
@@ -1812,7 +1838,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	// Return depending on configuration format
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
-			return date(($show_text_days ? "D" : "")."M d, ", $ts).$y;
+			return date(($show_text_days ? "D" : "")." M d, ", $ts).$y;
 			break;
 		case "dmy":
 			return date(($show_text_days ? "D" : "")."d M, ", $ts).$y;
