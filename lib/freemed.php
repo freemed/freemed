@@ -124,9 +124,11 @@ if (!function_exists("bindtextdomain"))
 include ("lib/error_handler.php");   // internal error handler
 include ("webtools.php");            // webtools toolkit
 
+define ('WEBTOOLS_REQUIRED', "0.2.1");   // version of phpwebtools required
+
   // version check for webtools
-if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, "0.2") )
-	die ("phpwebtools >= 0.2 is required for this version of freemed ".
+if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) )
+	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required for this version of freemed ".
 		"(http://phpwebtools.sourceforge.net/)\n");
 
 include ("lib/iso-set.php");         // ISO set handler
