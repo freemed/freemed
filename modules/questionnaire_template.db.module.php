@@ -49,7 +49,6 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
        $display_buffer .= "
          "._("You must select a record to modify.")."
        ";
-       freemed_close_db ();
        template_display();
       } // end of if.. statement checking for id #
 

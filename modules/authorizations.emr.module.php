@@ -282,7 +282,6 @@ class authorizationsModule extends freemedEMRModule {
          </CENTER>
          <P>
        ";
-       freemed_close_db ();
        template_display();
      } // if there are none...
 
