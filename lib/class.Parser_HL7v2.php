@@ -29,6 +29,12 @@ define ('HL7v2_PD1_PROVIDER', 4);
 	define ('HL7v2_PD1_PROVIDER_LASTNAME', 1);
 	define ('HL7v2_PD1_PROVIDER_FIRSTNAME', 2);
 
+// PV1 - Patient Visit
+define ('HL7v2_PV1_REFERRING', 8);
+	define ('HL7v2_PV1_REFERRING_ID', 0);
+	define ('HL7v2_PV1_REFERRING_LASTNAME', 1);
+	define ('HL7v2_PV1_REFERRING_FIRSTNAME', 2);
+
 // AIL - Appointment Information Location - NOT USED RIGHT NOW
 
 // AIP - Appointment Information Personnel Resource
@@ -312,6 +318,42 @@ class Parser_HL7v2 {
 		$r = @$GLOBALS['sql']->fetch_array($result);
 		return $r['id'];
 	} // end method __aip_to_provider
+
+	// Method: __composite_to_provider
+	//
+	//	Resolve CN composite to provider in FreeMED.
+	//
+	// Parameters:
+	//
+	//	$composite - Array describing an HL7 CN composite
+	//
+	// Returns:
+	//
+	//	Valid ID or 0 to indicate non-existance.
+	//
+	function __composite_to_provider ( $composite ) {
+		//syslog('HL7| composite[0] = '.$composite[0]);
+		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($composite[0])."'";
+		$result = $GLOBALS['sql']->query($query);
+		if ($GLOBALS['sql']->results($result)) {
+			// Process from existing ID
+			$r = @$GLOBALS['sql']->fetch_array($result);
+			//syslog('HL7 parser| found single with id = '.$r['id']);
+			return $r['id'];
+		} else {
+			// Infer using first and last name
+			$query = "SELECT id FROM physician WHERE phyfname='".addslashes($composite[2])."' AND phylname='".addslashes($composite[1])."'";
+			$result = $GLOBALS['sql']->query($query);
+			if ($GLOBALS['sql']->results($result)) {
+				// Use the names ...
+				$r = @$GLOBALS['sql']->fetch_array($result);
+				return $r['id'];
+			} else {
+				// Otherwise, bork and return none
+				return 0;
+			}
+		}
+	} // end method __composite_to_provider
 
 } // end class Parser_HL7v2
 
