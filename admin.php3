@@ -261,11 +261,13 @@ if ($action=="cfgform") {
 } elseif ($action=="reinit") {
   freemed_display_box_top (_("Reinitialize Database"), $page_name);
   
-    # here, to prevent problems, we ask the user to check that they
-    # REALLY want to...
+    // here, to prevent problems, we ask the user to check that they
+    // REALLY want to...
 
+  echo "\n<CENTER>\n";
   echo _("Are you sure you want to reinitialize the database?")."\n";
   echo "<BR><U><B>"._("This is an IRREVERSIBLE PROCESS!")."</B></U><BR>\n";
+  echo "\n</CENTER>\n";
 
   echo "<BR><CENTER>\n";
 
