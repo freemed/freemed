@@ -218,11 +218,17 @@ class freemed {
 		// Switch depending on configuration value
 		switch (freemed::config_value('drug_widget_type')) {
 			case 'combobox':
+			// Values from simple distinct ...
+			//$values = $GLOBALS['sql']->distinct_values( 'rx', 'rxdrug');
+			// Use frequency
+			$q = "select rxdrug, count(rxdrug) as occur from rx where length(rxdrug) > 3 group by rxdrug order by occur desc";
+			$result = $GLOBALS['sql']->query($q);
+			while ($r = $GLOBALS['sql']->fetch_array($result)) {
+				$values[stripslashes($r['rxdrug'])] = stripslashes($r['rxdrug']);
+			}
 			return html_form::combo_widget(
 				$varname,
-				$GLOBALS['sql']->distinct_values(
-					'rx', 'rxdrug'
-				)
+				$values
 			);
 			break; // end case combobox
 			
@@ -2640,7 +2646,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	// Return depending on configuration format
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
-			return date(($show_text_days ? "D" : "")." M d, ", $ts).$y;
+			return date(($show_text_days ? "D" : "")." F d, ", $ts).$y;
 			break;
 		case "dmy":
 			if ($show_text_days) {
