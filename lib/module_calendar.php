@@ -82,7 +82,8 @@ class freemedCalendarModule extends freemedModule {
 			$this->this_user    = new User ($LoginCookie);
 
 		// display universal patient box
-		//echo freemed_patient_box($this->this_patient)."<P>\n";
+        if ($patient)
+			echo freemed_patient_box($this->this_patient)."<P>\n";
 
 		switch ($action) {
 			case "add":
@@ -262,13 +263,19 @@ class freemedCalendarModule extends freemedModule {
 	/*
 	 * function to generate the javascript needed for the popup
 	 */
-	function js_popup($w=300,$h=300)
+	function js_popup($w=500,$h=300)
 	{
+	  global $module, $_auth, $action;
+
 	  $buffer = "";
 	  $buffer .= "<script language=\"javascript\">\n";
 	  $buffer .= "<!--\n\n";
 	  $buffer .= "function openWin(id){\n\n";
-	  $buffer .= "  w = window.open('showevent.php3?id='+id,'event'+id,'toolbar=no,";
+	  $buffer .= "  URL = \"$this->page_name?id=\" + id + \"&_auth=".prepare($_auth)."&action=display&module=".prepare($module)."\"\n";
+	  $buffer .= "  NAME = \"Event\" + id\n";
+	  $buffer .= "  w = window.open(";
+	  $buffer .= "URL,";
+	  $buffer .= "NAME,'toolbar=yes,";
 	  $buffer .= "location=no,directories=no,status=no,menubar=no,scrollbars=no,";
 	  $buffer .= "resizable=no,width=$w,height=$h');\n\n";
 	  $buffer .= "}\n\n";
@@ -309,11 +316,11 @@ class freemedCalendarModule extends freemedModule {
 		/*
 		 * month data
 		 */
-		$query = "SELECT id,DAYOFMONTH(caldateof) as day,YEAR(caldateof) as year,
-				MONTH(caldateof) as month, calprenote FROM scheduler WHERE
-			   month='" . $this->month_number . "' AND
-			   year='" . $this->year ."' ORDER BY day";
+		$query = "SELECT id,DAYOFMONTH(caldateof) as day, calprenote FROM scheduler WHERE
+			   MONTH(caldateof)='" . $this->month_number . "' AND
+			   YEAR(caldateof)='" . $this->year ."' ORDER BY day";
 		$result = $sql->query($query);
+
 
 		if( !$result ){
 		  trigger_error("SQL Error reading scheduler table",E_ERROR); 
@@ -474,6 +481,7 @@ class freemedCalendarModule extends freemedModule {
 	*/
 
 
+	echo $this->js_popup();
 	if( !$draw_array["textcolor"] ){
 	  $textcolor = "#000000";
 	}
@@ -674,19 +682,19 @@ class freemedCalendarModule extends freemedModule {
 	   * otherwise, set to "" string
 	   */
 
+	  $theevent = "";
 	  if( $this->month_data[$theday]["event_title"][0] )
 	  {
 		for( $j=0 ; $j <  count($this->month_data[$theday]["event_title"]) ; $j++ )
 		{
-		  $theevent = "<font face=\"$font_face\" size=\"$font_size\"><a href=\"javascript:openWin(";
+		  //$c = $this->month_data[$theday]["id"][$j];
+		  //echo "id is $c<BR>";
+		  $theevent .= "<font face=\"$font_face\" size=\"$font_size\"><a href=\"javascript:openWin(";
 		  $theevent .= $this->month_data[$theday]["id"][$j]; 
 		  $theevent .= ")\">";
      	  $theevent .= $this->month_data[$theday]["event_title"][$j]; 
 		  $theevent .= "</a></font><br><br>";
 		}
-	  }
-	  else{
-		$theevent = "";
 	  }
 
 

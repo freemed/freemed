@@ -40,7 +40,11 @@ class AdminCalendar extends freemedCalendarModule {
 	function view () {
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
-		$this->month();
+		
+		if (!$year) $year = date("Y");
+		if (!$month) $month = date("m");
+
+		$this->month($month,$year);
 		echo "<CENTER><B>Calendar For: $this->month_name, $this->year</B></CENTER><br>\n";
 		$this->draw(array("cellspacing" => "2" , "cellpadding" => "2" ,
                       "top_row_align" => "center" , "table_height" => "300px" ,
@@ -48,12 +52,27 @@ class AdminCalendar extends freemedCalendarModule {
                       "row_align" => "left" , "row_valign" => "top" ,
                       "font_size" => "-1") );
 
+		echo "<CENTER>";
+		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
+			"&action=view&module=$module&month=$this->prevmonth&year=$this->prevyear\">Prev</A>";
+		echo "&nbsp;";
+		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
+			"&action=view&module=$module&month=$this->nextmonth&year=$this->nextyear\">Next</A>";
+		echo "</CENTER>";
+
+		
+
+
 	} // end function module->view
 
 	function form () {
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 	} // end function AdminCalendar->form
+
+	function display () {
+		echo "in display<BR>";
+	} // end display
 
 } // end of class AdminCalendar
 
