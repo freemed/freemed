@@ -64,13 +64,13 @@ class procedureModule extends freemedEMRModule {
      case "addform":
 	  global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
       $procunits = "1.0";        // default value for units
-	  $patient = new Patient($patient);
-      $procdiag1      = $patient->local_record[ptdiag1];
-      $procdiag2      = $patient->local_record[ptdiag2];
-      $procdiag3      = $patient->local_record[ptdiag3];
-      $procdiag4      = $patient->local_record[ptdiag4];
-	  $procphysician = $patient->local_record[ptdoc];
-	  $procrefdoc = $patient->local_record[ptrefdoc];
+	  $this_patient = new Patient($patient);
+      $procdiag1      = $this_patient->local_record[ptdiag1];
+      $procdiag2      = $this_patient->local_record[ptdiag2];
+      $procdiag3      = $this_patient->local_record[ptdiag3];
+      $procdiag4      = $this_patient->local_record[ptdiag4];
+	  $procphysician = $this_patient->local_record[ptdoc];
+	  $procrefdoc = $this_patient->local_record[ptrefdoc];
       break; // end of addform (inner)
      case "modform":
 	   while(list($k,$v)=each($this->proc_fields))
@@ -168,7 +168,7 @@ class procedureModule extends freemedEMRModule {
 					      "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
 					      "procpos", "procvoucher", 
 							"procauth"),
-						  date_vars("procdt")),
+						  date_vars("procdt"),date_vars("procrefdt")),
     html_form::form_table ( array (
       _("Provider") =>
         freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),

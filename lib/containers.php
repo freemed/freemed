@@ -61,6 +61,7 @@ class Coverage {
   var $covinsco;						// pointer to corresponding insco.
   var $covreldep;                 // guar relation to insured 
   var $covdep;                 // help ease the conversion
+  var $covpatient;             // the patient
 
   // insureds info only if rel is not "S"elf
 
@@ -76,7 +77,8 @@ class Coverage {
 	$this->coveffdt = $this->local_record[coveffdt];	
 	$this->covinsco = new InsuranceCompany($this->local_record[covinsco]);	
 	$this->covreldep = $this->local_record[covrel];	
-	$this->id = $this->local_record[id];	
+	$this->id = $this->local_record[id];
+    $this->covpatient = $this->local_record[covpatient];	
 	if ($this->covreldep != "S")
 	{
 		$this->covdep = $this->id; // you pass this to the guarantor class

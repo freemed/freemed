@@ -1,6 +1,20 @@
 freemed project changelog
 ($Id$)
 
+* Tue Apr 03 2001 fforest
+  - data/EN/fixedform  Now defines ALL fields on the HCFA 1500
+  - lib/containers add covpatient member variable to coverage class
+  - lib/module_billing Moved most of the common routines from the mcsi nsf and 
+    generate forms modules to here. 
+  - modules/mcsi_nsf_ci and mc converted to use the new common function in module_billing
+  - modules/generate_forms converted to use the common routines in module_billing. also
+    redesigned code with functions similar to nsf generators. better form performance.
+    now handles refferring provider boxes and handles boxes 32 and 33 correctly.
+  - modules/patient_coverage removed the requirement for ientering an ins groupno.
+    it seems they are not always needed.
+  - modules/procedures - fix one of my ugly bugs. $patient = new Patient($patient) is
+    now $this_patient = new Patient($patient). 
+
 * Fri Mar 30 2001 rufustfirefly
   Released 0.2.1 (Persephone/CVS)
   - committed old error checking patch in insurance billing module

@@ -29,9 +29,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
     var $batchid = "000000";
     var $subno = "000000";
     var $pat_processed;
-    var $patient_forms;
-    var $patient_cov;
-    var $patient_procs;
+    var $formno;
+
 	var $record_types = array(
 		"aa0" => "1",
 		"ba0" => "2",
@@ -99,15 +98,9 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		{
 		    $this->form_buffer = "";
 			$this->pat_processed = 0;
-			//if ($bill_request_type > 0)
-			//{
 
-			//$query = "SELECT covpatient,id,covtype FROM coverage WHERE covtype='".PRIMARY."' OR covtype='".SECONDARY."'";
-			$query = "SELECT DISTINCT procpatient,proccurcovid,proccurcovtp FROM procrec ".
-               "WHERE proccurcovtp='".PRIMARY."' OR proccurcovtp='".SECONDARY."'".
-               " AND procbilled='0' AND procbillable='0' AND procbalcurrent>'0'";
-			$result = $sql->query($query);
-			if (!$sql->results($result)) 
+			$result = $this->CheckforInsBills();
+			if ($result == 0)
 			{
 				DIE("No patients with this coverage type");
 			}
@@ -129,7 +122,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 				$this->bill_request_type = $row[proccurcovtp];
 				$this->GenerateFixedForms($row[procpatient], $row[proccurcovid]);
 			}
-			//}
 	
 			if (!empty($this->form_buffer))
 			{
@@ -203,104 +195,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		}
 		DIE("Something is wrong in generateforms");
 
-	}
-
-	function MarkBilled()
-	{
-
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-
-	   	if (count($processed)<1) 
-		{
-			echo "
-		 	<P>
-		 	<CENTER>
-		  	<$STDFONT_B><B>"._("Nothing set to be marked!")."</B><$STDFONT_E>
-		 	</CENTER>
-		 	<P>
-		 	<CENTER>
-		  	<A HREF=\"$this->page_name?$_auth&module=$module\"
-		  	><$STDFONT_B>"._("Return to Fixed Forms Generation Menu")."<$STDFONT_E></A>
-		 	</CENTER>
-		 	<P>
-			";
-			return;
-       	} 
-     	for ($i=0;$i<count($processed);$i++) 
-		{
-       		echo "
-       		Marking ".$processed[$i]." ...<BR> 
-       		";
-			$pat = $processed[$i];
-			$procs = count($procids[$pat]);
-			
-			for ($x=0;$x<$procs;$x++)
-			{
-				$prc = $procids[$pat][$x];
-				//echo "proc $prc for patient $pat<BR>";
-       			// start of insert loop for billed legder entries
-       			$query = "SELECT procbalcurrent,proccurcovid,proccurcovtp FROM procrec";
-				$query .= " WHERE id='".$prc."'";
-       			$result = $sql->query($query);
-       			if (!$result)
-       			{
-       				echo "Mark failed getting procrecs<BR>";
-       				DIE("Mark failed getting procrecs");
-       			}
-				//echo "proc query $query<BR>";
-       			$bill_tran = $sql->fetch_array($result);
-       			$cur_bal = $bill_tran[procbalcurrent];
-          		$proc_id = $bill_tran[id];
-          		$cov_id  = $bill_tran[proccurcovid];
-          		$cov_tp  = $bill_tran[proccurcovtp];
-				$payreccat = BILLED;
-				$query = $sql->insert_query("payrec",
-					array (
-						"payrecdtadd" => $cur_date,
-						"payrecdtmod" => $cur_date,
-						"payrecpatient" => $pat,
-						"payrecdt" => $cur_date,
-						"payreccat" => $payreccat,
-						"payrecproc" => $prc,
-						"payreclink" => $cov_id,
-						"payrecsource" => $cov_tp,
-						"payrecamt" => $cur_bal,
-						"payrecdescrip" => "Billed",
-						"payreclock" => "unlocked"
-						)	
-					);
-				//echo "payrec insert query $query<BR>";
-           		$pay_result = $sql->query ($query);
-           		if ($pay_result)
-               		echo "<$STDFONT_B>Adding Bill Date to ledger.<$STDFONT_E><BR> \n";
-           		else
-               		echo "<$STDFONT_B>Failed Adding Bill Date to ledger!!<$STDFONT_E><BR> \n";
-
-       			$query = "UPDATE procrec SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'".
-						 " WHERE id = '".$prc."'";
-				//echo "procrec update query $query<BR>";
-       			$proc_result = $sql->query ($query);
-       			if ($result) 
-				{ 
-					echo _("done").".<BR>\n"; 
-				}
-       			else        
-				{ 
-					echo _("ERROR")."<BR>\n"; 
-				}
-
-			} // end proces for patient loop
-			
-     	} // end for processed
-     	echo "
-      	<P>
-      	<CENTER>
-       	<A HREF=\"$this->page_name?$_auth&module=$module\"
-       	><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
-      	</CENTER>
-      	<P>
-     	";
 	}
 
 	function Insurer($procstack)
@@ -627,9 +521,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		unset($GLOBALS[da0]);
+		unset($GLOBALS[da1]);
 		unset($GLOBALS[da2]);
 
-		global $da0,$da2;
+		global $da1,$da0,$da2;
 
 		$row = $procstack[0]; // all rows are the same
 		$cov = $row[proccurcovid];
@@ -1041,6 +936,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
         $providerids = explode(":",$physician->local_record[phyidmap]);
         $provider_id = $providerids[$grp];
+	
 
 		$naic = $insco->inscoid;
 		$naic = strtoupper($naic);
@@ -1224,6 +1120,8 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                 echo "Failed reading pos table";
             $pos = $cur_pos[posname];
         }
+		if ($pos==0)
+			$pos="11"; // office default
 
 		// 11 = office 12 = home
         if ($pos > 12)
@@ -1493,14 +1391,6 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$this->batchclmcnt += $cxx;
 		$this->batchtotchg += $xa0[totalcharge];
 
-		//$za0[recid] = "ZA0";
-		//$za0[subid] = $aa0[submtrid];
-		//$za0[recvrid] = $aa0[recvrid];
-		//$za0[filesvclinecnt] = $ya0[svclinecnt];
-		//$za0[filereccnt] = $ya0[batchreccnt];
-		//$za0[fileclmcnt] = $ya0[batchclmcnt];
-		//$za0[batchcnt] = "0001";  
-		//$za0[filetotchg] = $ya0[batchtotchg];
 
    		$buffer = render_fixedRecord ($whichform,$this->record_types["ya0"]);
 		return $buffer;
@@ -1537,14 +1427,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$new_buffer = $buffer.$zabuffer;
 		return $new_buffer;
 
-		//$za0[filesvclinecnt] = $ya0[svclinecnt];
-		//$za0[filereccnt] = $ya0[batchreccnt];
-		//$za0[fileclmcnt] = $ya0[batchclmcnt];
-		//$za0[batchcnt] = "0001";  
-		//$za0[filetotchg] = $ya0[batchtotchg];
 
 	} // end file trailer
 
+	// makestack callback function
 	function ProcessClaims($procstack)
 	{
 
@@ -1553,292 +1439,62 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$buffer .= $this->Insurer($procstack);    // insurance records 
 		$buffer .= $this->ClaimData($procstack);    // claim data EA0-EA1
 		$buffer .= $this->ServiceDetail($procstack);    // service FA0-FB0-FB1
-		//$this->ClaimTrailer($procstack);    // clm trlr XA0
-		//$this->ProviderTrailer($procstack); // batch trailer
 		return $buffer;
 	}
 
-	function MakeDecimal($data,$places)
-	{
-		$data = bcadd($data,0,$places);
-		$data = $this->CleanNumber($data);
-		return $data;		
-	
-	}
-	function CleanChar($data)
-    {
-            $data = stripslashes($data);
-            $data = str_replace("/"," ",$data);
-            $data = str_replace("'"," ",$data);
-            $data = str_replace("-"," ",$data);
-            $data = str_replace(";"," ",$data);
-            $data = str_replace("(","",$data);
-            $data = str_replace(")","",$data);
-            $data = str_replace(":"," ",$data);
-            $data = str_replace("."," ",$data);
-            $data = str_replace(","," ",$data);
-            $data = trim($data);
-            $data = strtoupper($data);
-            return $data;
-    } // end cleanchar
-
-    function CleanNumber($data)
-    {
-            $data = $this->CleanChar($data);
-            $data = str_replace(" ","",$data);
-            $data = trim($data);
-            return $data;
-    } // end cleannumber
-
-    function NewKey($row)
-    {
-		   	$pos = $row["procpos"];
-		   	$doc = $row["procphysician"];
-		   	$ref = $row["procrefdoc"];
-	   	   	$auth = $row["procauth"];
-           	$eoc = $row["proceoc"];
-           	$cov1 = $row["proccov1"];
-           	$cov2 = $row["proccov2"];
-
-			$date = $row["procdt"];
-            $date = str_replace("-","",$date);
-			$datey = substr($date,0,4);
-			$datem = substr($date,4,2);
-           	$newkey = $pos.$doc.$ref.$eoc.$auth.$cov1.$cov2.$datey.$datem;
-            return $newkey;
-
-    } // end newkey
 
 	function GenerateFixedForms($parmpatient, $parmcovid)
 	{
-		
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-		reset ($this->rendorform_variables);
-		while (list($k,$v)=each($this->rendorform_variables)) global $$v;
+		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 
-
-	    // zero the buffer and counter
+	    // zero the buffer 
 	    $buffer = "";
-	    $counter = 0;
-	    $current_patient = 0;
+     	// get current patient information
+     	$this_patient = new Patient ($parmpatient);
+        if (!$this_patient)
+			trigger_error("Failed retrieving patient", E_USER_ERROR);
+			
+     	echo "
+      	<B>"._("Processing")." ".$this_patient->fullName()."
+      	<BR>\n\n
+     	";
+     	flush ();
 
-		$bill_request_type = $this->bill_request_type;;
-
-	    // get list of all patient who need to be billed
-	    $query = "SELECT procpatient from procrec
-							  WHERE (proccurcovtp = '$bill_request_type' AND
-									 proccurcovid = '$parmcovid' AND
-									 procbalcurrent > '0' AND
-									 procpatient = '$parmpatient' AND
-                                     procbillable = '0' AND
-                                     procbilled = '0')";
-  
-   		 $b_result = $sql->query($query);
-                          
-
-		 if (!$sql->results($b_result)) 
-		 {
-			return false;
-	   	 } // if there is no result, end
-
+		$this_coverage = new Coverage($parmcovid);
+        if (!$this_coverage)
+		{
+			trigger_error("No coverage", E_USER_ERROR);
+		}
 
         // grab form information form
-        $this_form = freemed_get_link_rec ($whichform, "fixedform");
+        $this->formno = freemed_get_link_rec ($whichform, "fixedform");
 
 
-		$patient = new Patient($parmpatient);
-		if (!$patient)
-			DIE("Failed to get Patient");
-		$coverage = new Coverage($parmcovid);
-		if (!$coverage)
-			DIE("Failed to get coverage");
+		// grab all the procedures to bill for this patient
+		$result = $this->GetProcstoBill($this_coverage->id,$this_coverage->covtype,$this_coverage->covpatient);
 
-		$patname = $patient->fullName(false);
+		if (!$result or ($result==0))
+			trigger_error("Should have bills for $this_patient->local_record[ptid]");
 
-		$insname = $coverage->covinsco->insconame;
-		echo "Processing $patname for $insname<BR>";	
-		
-     //
-     // grab all the procedure for this patient
-     //
-		$bill_request_type = $this->bill_request_type;;
-	    $query = "SELECT * FROM procrec
-							  WHERE (proccurcovtp = '$bill_request_type' AND
-									 proccurcovid = '$parmcovid' AND
-									 procbalcurrent > '0' AND
-									 procpatient = '$parmpatient' AND
-                                     procbillable = '0' AND
-                                     procbilled = '0') 
-                      ORDER BY procpos,procphysician,procrefdoc,proceoc,procauth,proccov1,proccov2,procdt";
-     	$result = $sql->query ($query);
-
-     	if (!$result or ($result==0))
-       		DIE ("Failed getting procedures");
-
-     	$first_procedure = 0;
-		$proccount=0;
-		$totprocs = 0;
-     	while ($r = $sql->fetch_array ($result)) 
-		{
-       		if ($first_procedure == 0)
-       		{
-				$prev_key = $this->NewKey($r);
-				$diagset = new diagnosisSet();
-           		$first_procedure = 1;
-       		}
-
-			$this->patient_procs[$parmpatient][$totprocs] = $r[id];
-			$totprocs++;
-	
-			$cur_key = $this->NewKey($r);
-
-			//echo "physician $r[procphysician]<BR>";
-
-       		$render_form = true; // reset to render form
-
-       		if (!($diagset->testAddSet ($r[procdiag1], $r[procdiag2],
-                                    $r[procdiag3], $r[procdiag4])) OR
-            	($proccount == $this_form[ffloopnum]         )  OR
-            	($prev_key != $cur_key) )
-       		{
-         		if ($prev_key != $cur_key)
-				{
-              		$prev_key = $cur_key;
-					//echo "keychange $r[procphysician]<BR>";
-				}
-
-         		// drop the current form to the buffer
-		 		$form_buffer = $this->ProcessClaims($procstack); // batch trailer
-         		//$form_buffer .= render_fixedRecord ($whichform);
-				$form_buffer .= $this->ClaimTrailer($procstack,$form_buffer);
-				$form_buffer .= $this->ProviderTrailer($procstack,$form_buffer);
-         		//$this->form_buffer .= render_fixedRecord ($whichform);
-				$this->form_buffer .= $form_buffer;
-
-         		// reset the diag_set array
-         		unset ($diagset);
-		 		unset ($procstack);
-				reset ($this->rendorform_variables);
-				//while (list($k,$v)=each($this->rendorform_variables)) 
-				//{
-				//	unset($$v);
-					//echo "$$v<BR>";
-				//}
-				$proccount=0;
-         		$diagset = new diagnosisSet ();
-         		$test_AddSet = $diagset->testAddSet ($r[procdiag1], 
-								$r[procdiag2], 
-								$r[procdiag3], 
-								$r[procdiag4]);
-         		if (!$test_AddSet)
-           			 DIE("AddSet failed!!");
-
-       		} 
-
-			$procstack[$proccount] = $r;
-			$proccount++;
-
-
-
-     	} // end of looping for all charges
-
-
-	 	if ($proccount > 0)
-		{
-        	// drop the current form to the buffer
-			reset ($this->rendorform_variables);
-			//while (list($k,$v)=each($this->rendorform_variables)) 
-			//	unset($$v);
-		 	$form_buffer = $this->ProcessClaims($procstack); // batch trailer
-         	//$form_buffer .= render_fixedRecord ($whichform);
-			$form_buffer .= $this->ClaimTrailer($procstack,$form_buffer);
-			$form_buffer .= $this->ProviderTrailer($procstack,$form_buffer);
-         	//$this->form_buffer .= render_fixedRecord ($whichform);
-			$this->form_buffer .= $form_buffer;
-		}
-		
-
-     	$this->pat_processed++;
-     	$this->patient_forms[$this->pat_processed] = $parmpatient;
-     	$this->patient_cov[$this->pat_processed] = $parmcovid;
+		// procedure callback function will handle all the data
+		$this->MakeStack($result,$this->formno[ffloopnum]);
+		$this->pat_processed++;
+		$this->patient_forms[$this->pat_processed] = $parmpatient;
 
 
    } // end generateFixed
 
-   function ShowBillsToMark()
-   {
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-		reset ($this->rendorform_variables);
-		while (list($k,$v)=each($this->rendorform_variables)) global $$v;
-   #################### TAKE THIS OUT AFTER TESTING #######################
-   #echo "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
-   ########################################################################
 
-   echo "
-    <FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
-     <CENTER>
-      <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
-     </CENTER>
-     <BR>
-     <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
-     >".prepare($this->form_buffer)."</TEXTAREA>
-    <P>
-    <CENTER>
-     <SELECT NAME=\"type\">
-      <OPTION VALUE=\"\">"._("Render to Screen")."
-      <OPTION VALUE=\"application/x-rendered-text\">Render to File
-     </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
-    </CENTER>
-    </FORM>
-    <P>
-   ";
+	function ProcCallBack($stack)
+	{
+		$form_buffer = $this->ProcessClaims($stack); // batch trailer
+		$form_buffer .= $this->ClaimTrailer($stack,$form_buffer);
+		$form_buffer .= $this->ProviderTrailer($stack,$form_buffer);
+		$this->form_buffer .= $form_buffer;
+	}
 
-   // present the form so that we can mark as billed
-   echo "
-    <CENTER>
-    <$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
-    </CENTER>
-    <BR>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
-     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
-     <INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"mark\">
-     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
-     <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"$been_here\">
-     <INPUT TYPE=HIDDEN NAME=\"billtype\" VALUE=\"$bill_request_type\">
-   ";
-   for ($i=1;$i<=$this->pat_processed;$i++) {
-     $this_patient = new Patient ($this->patient_forms[$i]);
-     echo "
-       <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
-        VALUE=\"".$this->patient_forms[$i]."\" CHECKED>
-       <INPUT TYPE=HIDDEN NAME=\"proccovid$brackets\" 
-        VALUE=\"".$this->patient_cov[$i]."\" CHECKED>
-       ".$this_patient->fullName(false)."
-       (<A HREF=\"manage.php?$_auth&id=$patient_forms[$i]\"
-        >".$this_patient->local_record["ptid"]."</A>) <BR>
-     ";
-	 $pat = $this->patient_forms[$i];
-	 $patprocs = count($this->patient_procs[$pat]);
-	 //echo "procs for $pat is $patprocs<BR>";
-	 for ($x=0;$x<$patprocs;$x++)
-	 {
-	     echo "<INPUT TYPE=HIDDEN NAME=\"procids[".$pat."][".$x."]\"
-         VALUE=\"".$this->patient_procs[$pat][$x]."\">\n";
-	 }
-   } // end looping for all processed patients
-   echo "
-    <P>
-    <INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
-    </FORM>
-    <P>
-   ";
-
-		
-	} // end ShowMarkBilled
 
 	function view()
 	{

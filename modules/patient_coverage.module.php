@@ -528,8 +528,9 @@ class PatientCoveragesModule extends freemedEMRModule {
 		if ($startdt > $cur_date)
 			$error_msg .= "Start date cannot be greater than Today $cur_date<BR>";
 
-		if ( (empty($covpatgrpno)) OR (empty($covpatinsno)) )
-			$error_msg .= "You must supply Group and ID numbers<BR>";
+		//if ( (empty($covpatgrpno)) OR (empty($covpatinsno)) )
+		if ( (empty($covpatinsno)) )
+			$error_msg .= "You must supply ID numbers<BR>";
 
 		return $error_msg;
 
