@@ -81,9 +81,9 @@ class RoomMaintenance extends MaintenanceModule {
 			//"<INPUT TYPE=CHECKBOX NAME=\"roomsurgery\" VALUE=\"y\"
 			//".( ($roomsurgery=="y") ? "CHECKED" : "" ).">",
 
-			//__("Booking Enabled") =>
-			//"<INPUT TYPE=CHECKBOX NAME=\"roombooking\" VALUE=\"y\" 
-			//".( ($roombooking=="y") ? "CHECKED" : "" ).">",
+			__("Booking Enabled") =>
+			"<INPUT TYPE=CHECKBOX NAME=\"roombooking\" VALUE=\"y\" 
+			".( ($roombooking!='n') ? "CHECKED" : "" ).">",
 
 			__("IP Address") =>
 			html_form::text_widget('roomipaddr', array('length'=>16))
