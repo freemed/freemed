@@ -462,7 +462,15 @@ switch($action) {
   if (!$book->is_done()) {
     echo "<CENTER>\n";
     $book->display();
-    echo "</CENTER>\n";
+    echo "</CENTER>
+    <P ALIGN=CENTER>
+     <$STDFONT_B>
+     <A HREF=\"$page_name?$_auth\">
+      Abandon ".( (($action=="modform") OR ($action=="mod")) ? 
+      "Modification" : "Addition")."
+     </A>
+     <$STDFONT_E>
+    ";
   } else { // submit has been clicked
     if ($action=="modform") {
       echo "
@@ -603,7 +611,8 @@ switch($action) {
         echo "
 	<$STDFONT_B>Error! [$query, $result]<$STDFONT_E>
 	";
-      }  
+      }
+    
     } else { // error
       echo "
         <P ALIGN=CENTER>
@@ -611,16 +620,41 @@ switch($action) {
 	</P>
       ";
     } // error handler
+    echo "
+    <P ALIGN=CENTER>
+    <A HREF=\"$page_name?$_auth\">
+    <$STDFONT_B>Back to $record_name page<$STDFONT_E>
+    </A>
+    ";
   } // if executing the action
   freemed_display_box_bottom();
  
  break; // master add/mod[form]
 
+ case "delete":
+  freemed_display_box_top("Delete $record_name");
+  echo "<P ALIGN=CENTER><$STDFONT_B>Deleting...";
+  $query = "DELETE FROM physician WHERE id='$id'";
+  $result = fdb_query($query);
+  if ($result) 
+    echo "Done.";
+  else
+    echo "Error! [$query, $result]";
+  echo "<$STDFONT_E>";
+  echo "
+  <P ALIGN=CENTER>
+  <A HREF=\"$page_name?$_auth\">
+  <$STDFONT_B>Back to $record_name page<$STDFONT_E>
+  </A>
+  ";
+  freemed_display_box_bottom();
+ break;
+
  case "display" :
   freemed_display_box_top("$record_name View");
   $phy = freemed_get_link_rec($id, "physician");
   echo "
-    <TABLE>
+    <TABLE WIDTH=\"100%\">
      <TR><TD ALIGN=RIGHT>
       <$STDFONT_B>Name : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
@@ -631,6 +665,11 @@ switch($action) {
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <$STDFONT_B><A HREF=\"physician.php3?$_auth&action=modform&id=$id\"
        >Modify $record_name</A><$STDFONT_E>
+     </TD></TR>
+     
+     <TR><TD COLSPAN=2 ALIGN=CENTER>
+      <$STDFONT_B><A HREF=\"physician.php3?$_auth&id=$id\"
+       >Back to $record_name page</A><$STDFONT_E>
      </TD></TR>
     </TABLE>
   ";
@@ -688,492 +727,6 @@ if ($action=="addform") {
     </TD></TR> -->
 
     </TABLE>
-    <P>
-
-    <P>
-    <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" $Add \">
-    <INPUT TYPE=RESET  VALUE=\"$Clear\">
-    </CENTER></FORM>
-  ";
-
-  freemed_display_box_bottom ();
-
-  echo "
-    <BR>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth&action=view\"
-      >$Abandon_Addition</A>
-    </CENTER>
-  "; // abandon addition
-
-} elseif ($action=="add") {
-
-  // [code ported up top]
-
-} elseif ($action=="modform") {
-
-} elseif ($action=="del") {
-
-  freemed_display_box_top ("$Deleting_Physician", $page_name, $_ref);
-
-  $result = fdb_query("DELETE FROM $db_name
-    WHERE (id = \"$id\")");
-
-  echo "
-    <BR><BR>
-    <I>$Physician $id deleted</I>.
-  ";
-  if ($debug) {
-    echo "
-      <BR><B>$RESULT:</B><BR>
-      $result<BR><BR>
-    ";
-  }
-  echo "
-    <BR><BR><CENTER>
-    <A HREF=\"$page_name?$_auth&action=select\"
-     >$Delete_Another</A></CENTER>
-  ";
-
-  freemed_display_box_bottom ();
-
-} elseif ($action=="show") {
-
-  // this section is still quite broken, but should
-  // allow someone to pull up a physician record,
-  // then return them to the menu.
-
-  // multiple choices and RDBMS stuff is not
-  // implemented yet.
-
-  freemed_display_box_top ("$Physician_Display", $page_name, $_ref);
-
-  if (empty($id)) {
-    echo "
-
-     <CENTER>
-      <B>$You_must_specify_an_id #!</B>
-      <BR><BR>
-      <A HREF=\"$page_name?$_auth&action=view\"
-       >$Return_to_the_Physician_Menu</A>
-     </CENTER>
-
-     <BR><BR>
-    ";
-
-    if ($debug==1) {
-      echo "
-        ID = [<B>$id</B>]
-        <BR><BR>
-      ";
-    }
-
-    freened_display_box_bottom ();
-    echo "
-      <CENTER>
-      <A HREF=\"main.php3?$_auth\"
-       >$Return_to_the_Main_Menu</A>
-      </CENTER>
-    ";
-    DIE("");
-  }
-
-  $r = freemed_get_link_rec ($id, $db_name);
-
-  $phylname    = $r["phylname"   ];
-  $phyfname    = $r["phyfname"   ];
-  $phytitle    = $r["phytitle"   ];
-  $phymname    = $r["phymname"   ];
-  $phypracname = $r["phypracname"];
-  $phyaddr1a   = $r["phyaddr1a"  ];
-  $phyaddr2a   = $r["phyaddr2a"  ];
-  $phycitya    = $r["phycitya"   ];
-  $phystatea   = $r["phystatea"  ];
-  $phyzipa     = $r["phyzipa"    ];
-  $phyphonea   = $r["phyphonea"  ];
-  $phyfaxa     = $r["phyfaxa"    ];
-  $phyaddr1b   = $r["phyaddr1b"  ];
-  $phyaddr2b   = $r["phyaddr2b"  ];
-  $phycityb    = $r["phycityb"   ];
-  $phystateb   = $r["phystateb"  ];
-  $phyzipb     = $r["phyzipb"    ];
-  $phyphoneb   = $r["phyphoneb"  ];
-  $phyfaxb     = $r["phyfaxb"    ];
-  $phyemail    = $r["phyemail"   ];
-  $phycellular = $r["phycellular"];
-  $phypager    = $r["phypager"   ];
-  $phyupin     = $r["phyupin"    ];
-  $physsn      = $r["physsn"     ];
-  $phydeg1     = $r["phydeg1"    ];
-  $phydeg2     = $r["phydeg2"    ];
-  $phydeg3     = $r["phydeg3"    ];
-  $physpe1     = $r["physpe1"    ];
-  $physpe2     = $r["physpe2"    ];
-  $physpe3     = $r["physpe3"    ];
-  $phyid1      = $r["phyid1"     ];
-  $phystatus   = $r["phystatus"  ];
-  $phyref      = $r["phyref"     ];
-  $phyrefcount = $r["phyrefcount"];
-  $phyrefamt   = $r["phyrefamt"  ];
-  $phyrefcoll  = $r["phyrefcoll" ];
-
-  // disassemble ssn
-  $physsn1    = substr($physsn,    0, 3);
-  $physsn2    = substr($physsn,    3, 2);
-  $physsn3    = substr($physsn,    5, 4);
-
-  // get real text of phystatus
-  $phystatus = freemed_get_link_field ($phystatus, "phystatus",
-    "phystatus");
-
-  echo "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 WIDTH=100%>
-
-    <TR><TD>
-    <$STDFONT_B>$Last_name : <$STDFONT_E>
-    </TD><TD>
-    $phylname
-    </TD></TR>
-
-    <TR><TD>
-    <$STDFONT_B>$First_name : <$STDFONT_E>
-    </TD><TD>
-    $phyfname
-    </TD></TR>
-
-    <TR><TD>
-    <$STDFONT_B>$Title : <$STDFONT_E>
-    </TD><TD>
-    $phytitle
-    </TD></TR>
-
-    <TR><TD>
-    <$STDFONT_B>$Middle_Name : <$STDFONT_E>
-    </TD><TD>
-    $phymname
-    </TD></TR>
-
-    <TR><TD>
-    <$STDFONT_B>$Practice_Name : <$STDFONT_E>
-    </TD><TD>
-    $phypracname
-    </TD></TR>
-
-    <TR><TD>
-    <$STDFONT_B>$Primary_Address_Line 1 : <$STDFONT_E>
-    </TD><TD>
-    $phyaddr1a
-    </TD></TR>
-
-    <TR><TD>
-    <$STDFONT_B>$Primary_Address_Line 2 : <$STDFONT_E>
-    </TD><TD>
-    $phyaddr2a
-    </TD></TR>
-
-    <TR><TD>
-    <$STDFONT_B>$Primary_Address_City : <$STDFONT_E>
-    </TD><TD>
-    $phycitya
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Primary_Address_State : <$STDFONT_E>
-    </TD><TD>
-    $phystatea
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Primary_Address_Zip : <$STDFONT_E>
-    </TD><TD>
-    $phyzipa
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Primary_Address_Phone # : <$STDFONT_E>
-    </TD><TD>
-    ".fm_phone_assemble("phyphonea")."
-     <!-- ($phyphonea1) $phyphonea2-$phyphonea3 -->
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Primary_Address_Fax # : <$STDFONT_E>
-    </TD><TD>
-    ".fm_phone_assemble("phyfaxa")."
-    </TD></TR>
-
-  ";
-
-  // check if we have to display this
-  if ((strlen(trim($phyaddr1b))!=0) AND (strlen(trim($phyaddr2b))!=0)) {
-    echo "
-    <TR><TD>
-    <$STDFONT_B>$Secondary_Address_Line 1 : <$STDFONT_E>
-    </TD><TD>
-    $phyaddr1b
-    </TD></TR>
-    <TR><TD>    
-    <$STDFONT_B>$Secondary_Address_Line 2 : <$STDFONT_E>
-    </TD><TD>
-    $phyaddr2b
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Secondary_Address_City : <$STDFONT_E>
-    </TD><TD>
-    $phycityb
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Secondary_Address_State : <$STDFONT_E>
-    </TD><TD>
-    $phystateb
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Secondary_Address_Zip : <$STDFONT_E>
-    </TD><TD>
-    $phyzipb
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Secondary_Address_Phone # : <$STDFONT_E>
-    </TD><TD>
-    ($phyphoneb1) $phyphoneb2-$phyphoneb3
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Secondary_Address_Fax # : <$STDFONT_E>
-    </TD><TD>
-    $phyfaxb
-    </TD></TR>
-
-  ";
-  } // end checking for secondary address
-
-  echo "
-    <TR><TD>
-    <$STDFONT_B>$Email_Address : <$STDFONT_E>
-    </TD><TD>
-    <A HREF=\"$_mail_handler$phyemail\"
-     >$phyemail</A>
-    </TD></TR>
-
-     <TR><TD> 
-    <$STDFONT_B>$UPIN_Number : <$STDFONT_E>
-    </TD><TD>
-    $phyupin
-    </TD></TR>
-
-     <TR><TD>
-    <$STDFONT_B>$Social_Security #  : <$STDFONT_E>
-    </TD><TD>
-    $physsn1-$physsn2-$physsn3
-    </TD></TR>
-
-     <TR><TD>
-    <$STDFONT_B>$Specialty 1 : <$STDFONT_E>
-    </TD><TD>
-
-  ";
-
-  freemed_specialty_display($physpe1);
-
-  echo "
-    </TD></TR>
-     <TR><TD>
-    <$STDFONT_B>$Specialty 2 : <$STDFONT_E>
-    </TD><TD>
-  ";
-
-  freemed_specialty_display($physpe2);
-
-  echo "
-    </TD></TR>
-     <TR><TD>
-    <$STDFONT_B>$Specialty 3 : <$STDFONT_E>
-    </TD><TD>
-  ";
-
-  freemed_specialty_display($physpe3);
-
-  echo "
-    </TD></TR>
-     <TR><TD>
-    <$STDFONT_B>$Internal_ID # : <$STDFONT_E>
-    </TD><TD>
-    $phyid1
-    </TD></TR>
-     <TR><TD>
-    <$STDFONT_B>$Status : <$STDFONT_E>
-    </TD><TD>
-    $phystatus
-    </TD></TR>
-     <TR><TD>
-
-    <$STDFONT_B>$Reference : <$STDFONT_E>
-    </TD><TD>
-  ";
-
-    // is the doc a PCP or a referring doc??
-  switch ($phyref) {
-    case "no":
-      echo "\n$Primary_care_provider\n";
-      break;
-    case "yes":
-      echo "\n$Referring\n";
-      break;
-    default:
-      echo "\n$NONE_SELECTED\n";
-  }
-
-  echo "
-    </TD></TR>
-     <TR><TD>
-    <$STDFONT_B>$Number_of_Referrals : <$STDFONT_E>
-    </TD><TD>
-    $phyrefcount
-    </TD></TR>
-     <TR><TD>
-    <$STDFONT_B>$Referral_Amount ($S_charged) : <$STDFONT_E>
-    </TD><TD>
-    $phyrefamt
-    </TD></TR>
-     <TR><TD>
-    <$STDFONT_B>$Referral_Amount ($S_received) : <$STDFONT_E>
-    </TD><TD>
-    $phyrefcoll
-    </TD></TR>
-    </TABLE>
-
-  ";
-
-  freemed_display_box_bottom ();
-
-} else { // view is now the default
-
-  $query = "SELECT * FROM $db_name ".
-    "ORDER BY phylname, phyfname";
-
-  $result = fdb_query($query);
-  if ($result) {
-    freemed_display_box_top ("$Physicians", $_ref, $page_name);
-
-    freemed_display_actionbar($page_name);
-    echo "
-      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
-      <TR>
-       <TD><B>$Last_Name</B></TD>
-       <TD><B>$First_Name</B></TD>
-       <TD><B>$Degrees</B></TD>
-       <TD><B>$Action</B></TD>
-      </TR>
-    "; // header of box
-
-    $_alternate = freemed_bar_alternate_color ($_alternate);
-
-    while ($r = fdb_fetch_array($result)) {
-    
-      $id    = $r["id"      ];
-      $lname = $r["phylname"];
-      $fname = $r["phyfname"];
-      $spe1  = $r["physpe1" ];
-      $spe2  = $r["physpe2" ];
-      $spe3  = $r["physpe3" ];
-
-        // alternate colors
-      $_alternate = freemed_bar_alternate_color ($_alternate);
-
-      if ($debug==1) {
-        $id_mod = " [$id]"; // if debug, insert ID #
-      } else {
-        $id_mod = ""; // else, let's avoid it...
-      } // end debug clause (like sanity clause)
-
-        // here we get __degrees__ from the
-        // specialty database
-
-      if ($spe1!="0") {
-        $r = fdb_fetch_array(fdb_query("SELECT * FROM
-           degrees WHERE id='$spe1'"));
-        $_d1 = $r["degdegree"]; // get degree name
-      } else {
-        $_d1 = "";
-      } // first degree
-
-      if ($physpe2!="0") {
-        $r = fdb_fetch_array(fdb_query("SELECT * FROM
-           degrees WHERE id='$spe2'"));
-        $_d2 = $r["degdegree"]; // get degree name
-      } else {
-        $_d2 = "";
-      } // second specialty
-
-      if ($physpe3!="0") {
-        $r = fdb_fetch_array(fdb_query("SELECT * FROM
-           degrees WHERE id='$spe3'"));
-        $_d3 = $r["degdegree"]; // get degree name
-      } else {
-        $_d3 = "";
-      } // third specialty
-
-        // assemble 1 and 2
-      if (($_d1!="") AND ($_d2!="")) {
-        $_spe = $_d1.", ".$_d2;
-      } elseif (($_s1!="") AND ($_d2=="")) {
-        $_spe = $_d1;
-      } elseif (($_d1=="") AND ($_d2!="")) {
-        $_spe = $_d2;
-      } elseif (($_d1=="") AND ($_d2=="")) {
-        $_spe = "";
-      }
-        // now tack on 3
-      if (($_spe!="") AND ($_d3!="")) {
-        $__degrees__ = $_spe.", ".$_d3;
-      } elseif (($_spe!="") AND ($_d3=="")) {
-        $__degrees__ = $_spe;
-      } elseif (($_spe=="") AND ($_d3!="")) {
-        $__degrees__ = $_d3;
-      } elseif (($_spe=="") AND ($_d3=="")) {
-        $__degrees__ = "";
-      }
-
-      // to solve lack of color problem in Netscape, and
-      // maybe other platforms, insert a &nbsp;
-      if ($__degrees__=="") {
-        $__degrees__="&nbsp;";
-      }
-
-       // here, the actual data is displayed
-      echo "
-        <TR BGCOLOR=$_alternate>
-        <TD>$lname</TD>
-        <TD>$fname</TD>
-        <TD>$__degrees__</TD> 
-        <TD><A HREF=
-         \"$page_name?$_auth&id=$id&action=show\"
-         ><FONT SIZE=-1>$VIEW$id_mod</FONT></A>
-         &nbsp;<A HREF=
-         \"$page_name?$_auth&id=$id&action=modform\"
-         ><FONT SIZE=-1>$MOD$id_mod</FONT></A>
-      ";
-      if (freemed_get_userlevel ($user)>$delete_level) {
-        echo "
-          &nbsp;
-          <A HREF=\"$page_name?$_auth&id=$id&action=del\"
-          ><FONT SIZE=-1>$DEL$id_mod</FONT></A>
-        "; // show delete
-      }
-      echo "
-        </TD></TR>
-      ";
-
-    } // while there are no more
-
-    echo "
-      </TABLE>
-    "; // do bottom of the table
-
-    freemed_display_actionbar($page_name); // bottom action bar
-    freemed_display_box_bottom ();
-
-  } else {
-    echo "\n<B>$No_physicians_found_with_that_criteria.</B>\n";
-  }
-
-} // view is now the default
 */
 freemed_close_db (); // close the database
 
