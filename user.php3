@@ -23,13 +23,6 @@
   include ("global.var.inc");         // load global variables
   include ("freemed-functions.inc");  // API functions
 
-    // *** setting _ref cookie ***
-    // if you are going to be "chaining" out from this
-    // function and want users to be able to return to
-    // it, uncomment this and it will set the cookie to
-    // return people using the bar.
-  //SetCookie("_ref", $page_name, time()+$_cookie_expire);
-
     // *** authorizing user ***
 
   freemed_open_db ($LoginCookie); // authenticate user
@@ -70,15 +63,7 @@ switch($action) { // master action switch
     $been_here=1;
       // grab record number "id"
     $r = freemed_get_link_rec($id, $db_name);
-    $username     = $r["username"    ];
-    $userpassword = $r["userpassword"];
-    $userdescrip  = $r["userdescrip" ];
-    $userlevel    = $r["userlevel"   ];
-    $usertype     = $r["usertype"    ]; // 19990909
-    $userfac      = $r["userfac"     ];
-    $userphy      = $r["userphy"     ];
-    $userphygrp   = $r["userphygrp"  ];
-    $userrealphy  = $r["userrealphy" ]; // 19990929
+    extract ($r);
 
     $userpassword1 = $userpassword2 = $userpassword;
   } // second modform if
@@ -107,30 +92,30 @@ switch($action) { // master action switch
    <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Username")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=username SIZE=17 MAXLENGTH=16
-     VALUE=\"$username\">
+    <INPUT TYPE=TEXT NAME=\"username\" SIZE=17 MAXLENGTH=16
+     VALUE=\"".prepare($username)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Password")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=PASSWORD NAME=userpassword1 SIZE=17 MAXLENGTH=16 
-     VALUE=\"$userpassword1\">
+    <INPUT TYPE=PASSWORD NAME=\"userpassword1\" SIZE=17 MAXLENGTH=16 
+     VALUE=\"".prepare($userpassword1)."\">
    </TD></TR>
    
    <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Password (Verify)")." :
      <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=PASSWORD NAME=userpassword2 SIZE=17 MAXLENGTH=16 
-     VALUE=\"$userpassword2\">
+    <INPUT TYPE=PASSWORD NAME=\"userpassword2\" SIZE=17 MAXLENGTH=16 
+     VALUE=\"".prepare($userpassword2)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Description")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=userdescrip SIZE=20 MAXLENGTH=50
-     VALUE=\"$userdescrip\">
+    <INPUT TYPE=TEXT NAME=\"userdescrip\" SIZE=20 MAXLENGTH=50
+     VALUE=\"".prepare($userdescrip)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>
@@ -331,7 +316,7 @@ switch($action) { // master action switch
  break;
 
  case "del":
-  freemed_display_box_top ("$Deleting $record_name", $page_name);
+  freemed_display_box_top (_("Deleting")." $record_name", $page_name);
 
     // select only "id" record, and delete
   if ($id != 1)
@@ -398,19 +383,8 @@ switch($action) { // master action switch
     $_alternate = freemed_bar_alternate_color ();
 
     while ($r = fdb_fetch_array($result)) {
-      $id       = $r["id"     ];
-
-        // alternate the bar color
-      $_alternate = freemed_bar_alternate_color ($_alternate);
-
-      if ($debug==1) {
-        $id_mod = " [$id]"; // if debug, insert ID #
-      } else {
-        $id_mod = ""; // else, let's avoid it...
-      } // end debug clause (like sanity clause)
-
       echo "
-        <TR BGCOLOR=$_alternate>
+        <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
         <TD><$STDFONT_B>".fm_prep($r[username])."<$STDFONT_E></TD>
         <TD>
       ";
@@ -419,10 +393,10 @@ switch($action) { // master action switch
       if ($id != 1) 
         echo "
          <A HREF=
-         \"$page_name?$_auth&id=$id&action=modform\"
+         \"$page_name?$_auth&id=$r[id]&action=modform\"
          ><FONT SIZE=-1>"._("MOD")."</FONT></A>
           &nbsp;
-          <A HREF=\"$page_name?$_auth&id=$id&action=del\"
+          <A HREF=\"$page_name?$_auth&id=$r[id]&action=del\"
           ><FONT SIZE=-1>"._("DEL")."</FONT></A>
         "; // show actions...
       else echo "&nbsp; \n";
@@ -447,7 +421,7 @@ switch($action) { // master action switch
     freemed_display_box_bottom (); // display bottom of the box
 
   } else {
-    echo "\n<B>$No $record_name $Found_with_that_criteria.</B>\n";
+    echo "\n<B>"._("No record found with that criteria.")."</B>\n";
   }
 
 } // end master action switch

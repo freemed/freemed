@@ -141,16 +141,16 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
       <TR BGCOLOR=#000000><TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER
        VALIGN=CENTER>
        <$STDFONT_B><B>$datestring</B> - <I>".$current_imap["count"].
-         " appointment(s)</I><$STDFONT_E>
+         " _("appointment(s)")."</I><$STDFONT_E>
       </TD></TR>
     ";
 
     // loop through the hours and display them
     for ($h=fc_starting_hour();$h<=fc_ending_hour();$h++) {
       // calculate proper way to display hour
-      if      ($h== 0) $hour="midnight";
+      if      ($h== 0) $hour=_("midnight");
        elseif ($h< 12) $hour="$h am";
-       elseif ($h==12) $hour="noon";
+       elseif ($h==12) $hour=_("noon");
        else            $hour=($h-12)." pm";
 
       // display heading for hour
@@ -193,7 +193,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
       <TABLE WIDTH=100% CELLSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=CENTER
        ALIGN=CENTER BGCOLOR=#000000><TR BGCOLOR=#000000>
        <TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER VALIGN=CENTER>
-       <$STDFONT_B>$Week_Of <B>$datestring</B><$STDFONT_E>
+       <$STDFONT_B>"._("Week of")." <B>$datestring</B><$STDFONT_E>
        </TD></TR>
     ";
 
@@ -314,7 +314,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
        )."\"
       <$STDFONT_B>3<$STDFONT_E></A>
      <A HREF=\"$this_url&selected_date=".fc_scroll_prev_month($this_date)."\"
-      <$STDFONT_B>prev<$STDFONT_E></A>
+      <$STDFONT_B>"._("prev")."<$STDFONT_E></A>
      </TD>
      <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
       <$STDFONT_B>
@@ -323,7 +323,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
      </TD>
      <TD ALIGN=RIGHT>
      <A HREF=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
-      <$STDFONT_B>next<$STDFONT_E></A>    
+      <$STDFONT_B>"._("next")."<$STDFONT_E></A>    
      <A HREF=\"$this_url&selected_date=".
        fc_scroll_next_month(
         fc_scroll_next_month(
@@ -355,7 +355,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
 
     if( $first_day > 0 ) {
   	while( $day_row < $first_day ) {
-   		echo "  <TD ALIGN=RIGHT BGCOLOR=#dfdfdf>&nbsp;</td>\n";
+   		echo "  <TD ALIGN=RIGHT BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
    		$day_row += 1;  
   		}
  	} // end while day row < first day
@@ -364,7 +364,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
 		{
   		if( ( $day_row % 7 ) == 0) 
 			{
-   			echo " </TR>\n<TR BGCOLOR=#bbbbbb>\n";
+   			echo " </TR>\n<TR BGCOLOR=\"#bbbbbb\">\n";
   			}
 
   		$dayp = $day + 1;
@@ -394,7 +394,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
            "#bbbbbb" );
 
     echo "
-     <TD ALIGN=CENTER BGCOLOR=$this_color>
+     <TD ALIGN=CENTER BGCOLOR=\"$this_color\">
       <$STDFONT_B>
     ";
  
@@ -435,7 +435,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
      <$STDFONT_B>
       <A HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
        $cur_day."\"
-      ><$STDFONT_B>go to today<$STDFONT_E></A>
+      ><$STDFONT_B>"_("go to today")."<$STDFONT_E></A>
      </TD>
      </TR>
      </TABLE>

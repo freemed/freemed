@@ -3,7 +3,7 @@
  // note: global variables for entire freemed code base
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
- // mod : 2000-07-30
+ // mod : 2000-08-15
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
@@ -16,10 +16,10 @@ define (__GLOBAL_VAR_INC__, true);
     // these variables you should not touch
   define (PACKAGENAME, "freemed");			// package name
   define (CODED_BY, "The Freemed Project");		// coded by tag
-  define (VERSION, "0.2pre20000730");	// current version number
+  define (VERSION, "0.2.0-test1 (pre-Phoenix)");	// current version
   define (BUGS_EMAIL, "code_bugs@ourexchange.net");	// coder email...
 
-  $bugs_address="http://www.freemed.org/keystone/visitor.php3";
+  $bugs_address="http://sourceforge.net/project/freemed/";
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
   $cur_date_hash=date("Ymd");		// YYYYMMDD date hash
   $_auth="default_value=yes";		// authentication (KFM fix)
@@ -32,6 +32,7 @@ define (__GLOBAL_VAR_INC__, true);
     // ***** customizable variables *****
     // **********************************
   define (INSTALLATION, "Stock Freemed Install"); // installation name
+  define (LOCALEDIR,	"/usr/share/locale");     // gettext location
   $show_top_links=true;                 // do we show links on the top?
   //$host=chop(`cat /etc/HOSTNAME`); 	// webserver location
   $host="localhost";                    // skip the eval, speed hack

@@ -374,10 +374,34 @@ msgstr ""
 msgid "Administration Menu"
 msgstr ""
 
+msgid "Export"
+msgstr ""
+
+msgid "Export Database"
+msgstr ""
+
 msgid "Export Databases"
 msgstr ""
 
+msgid "Export Another Database"
+msgstr ""
+
+msgid "Select Database to Export"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Import Database"
+msgstr ""
+
 msgid "Import Databases"
+msgstr ""
+
+msgid "Import Another Database"
+msgstr ""
+
+msgid "Select Database to Import"
 msgstr ""
 
 msgid "User Maintenance"
@@ -390,6 +414,9 @@ msgid "You have entered an incorrect name or password."
 msgstr ""
 
 msgid "Return to the login screen"
+msgstr ""
+
+msgid "Return to Administration Menu"
 msgstr ""
 
 msgid "Authenticating"
@@ -989,7 +1016,7 @@ msgstr ""
 msgid "Authorized physician groups"
 msgstr ""
 
-msgid "Abandon "
+msgid "Abandon Addition"
 msgstr ""
 
 msgid "Passwords must match"
@@ -1027,3 +1054,71 @@ msgstr ""
 
 msgid "RETURN TO MENU"
 msgstr ""
+
+msgid "Return to Patient Management"
+msgstr ""
+
+msgid "You must select a patient."
+msgstr ""
+
+msgid "Appointments"
+msgstr ""
+
+msgid "View/Manage"
+msgstr ""
+
+msgid "Show Today"
+msgstr ""
+
+msgid "Custom Records"
+msgstr ""
+
+msgid "Select Another Patient"
+msgstr ""
+
+msgid "Select a Patient"
+msgstr ""
+
+msgid "Attach to Guarantor"
+msgstr ""
+
+msgid "done"
+msgstr ""
+
+msgid "Dependents"
+msgstr ""
+
+msgid "Patient Information"
+msgstr ""
+
+msgid "Reports and Certificates"
+msgstr ""
+
+msgid "Choose"
+msgstr ""
+
+msgid "No record found with that criteria."
+msgstr ""
+
+msgid "appointment(s)"
+msgstr ""
+
+msgid "midnight"
+msgstr ""
+
+msgid "noon"
+msgstr ""
+
+msgid "Week of"
+msgstr ""
+
+msgid "prev"
+msgstr ""
+
+msgid "next"
+msgstr ""
+
+msgid "go to today"
+msgstr ""
+
+# END
