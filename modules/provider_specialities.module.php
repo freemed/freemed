@@ -37,7 +37,6 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
 				"WHERE id='".addslashes($id)."'");
 			$r = $sql->fetch_array($result);
 			extract($r);
-			break;
 		} // if this is a modform...
 
 		echo freemed_display_itemlist(
@@ -92,7 +91,7 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
   
   if ($action=="modform") echo "
     <CENTER><$STDFONT_B>
-    <A HREF=\"$this->page_name?$_auth&method=$method&action=view\"
+    <A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
      >"._("Abandon Modification")."</A>
     <$STDFONT_E></CENTER>
   ";

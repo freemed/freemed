@@ -25,29 +25,12 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 		$this->freemedMaintenanceModule();
 	} // end constructor diagnosisFamilyMaintenance 
 
-	function addform () { $this->view(); }
+	//function addform () { $this->view(); }
 
 	function modform () {
-		foreach ( $GLOBALS as $k => $v ) global $$k;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-  if (strlen($id)<1) {
-    echo "
-
-     <B><CENTER>Please use the MODIFY form to MODIFY a
-       $record_name!</B>
-     </CENTER>
-
-     <P>
-    ";
-
-    echo "
-      <CENTER>
-      <A HREF=\"main.php?$_auth\"
-       >"._("Return to the Main Menu")."</A>
-      </CENTER>
-    ";
-    DIE("");
-  }
 
     // grab record number "id"
   $result = $sql->query("SELECT * FROM $this->table_name ".
@@ -73,7 +56,7 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")." : <$STDFONT_E></TD>
-     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"dfdesrip\" SIZE=30 MAXLENGTH=100
+     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"dfdescrip\" SIZE=30 MAXLENGTH=100
       VALUE=\"".prepare($dfdescrip)."\"></TD>
     </TR>
 
@@ -111,8 +94,11 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 		);
 	} // end function diagnosisFamilyMaintenance->view
 
-	function _addform() {
-		global $module, $_auth;
+	
+	function addform() {
+		//global $module, $_auth;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
 		echo "
 			<FORM ACTION=\"$this->page_name\" METHOD=POST>
 			<CENTER>

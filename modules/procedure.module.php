@@ -15,6 +15,7 @@ class procedureModule extends freemedEMRModule {
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
 
+
 	function procedureModule () {
 		// call parent constructor
 		$this->freemedEMRModule();
@@ -41,6 +42,7 @@ class procedureModule extends freemedEMRModule {
       extract ($this_data); // extract all of this data
       break; // end of modform (inner)
     } // inner action switch
+	global $been_here;
     $been_here = 1;
   } // end checking if been here
   $phys_query = "SELECT * FROM physician WHERE phyref='no' ".
@@ -121,10 +123,13 @@ class procedureModule extends freemedEMRModule {
   // ************** BUILD THE WIZARD ****************
   $wizard = new wizard ( array ("been_here", "action", "patient", "id",
 	"module") );
-  
   $wizard->add_page ("Step One",
-    array ("procphysician", date_vars("procdt"), "proceoc",
-           "proccpt", "proccptmod"),
+		array_merge(array("procphysician", "proceoc", 
+						  "proccpt", "proccptmod", "procunits", 
+					      "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
+					      "procpos", "proctos", "procvoucher", 
+							"procauth"),
+						  date_vars("procdt")),
     html_form::form_table ( array (
       _("Provider") =>
         freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
@@ -252,7 +257,7 @@ class procedureModule extends freemedEMRModule {
             "procdiag2",
             "procdiag3",
             "procdiag4",
-            "proccharges",
+            "proccharges"       =>  $procbalorig,
             "procunits",
             "procvoucher",
             "procphysician",

@@ -83,12 +83,15 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
 
 	function view () {
 		global $sql;
+		reset ($GLOBALS);
+		while(list($k,$v)=each($GLOBALS)) global $$k;
 		echo freemed_display_itemlist (
-			$sql->query("SELECT * FROM $this->table_name ORDER BY $order_field"),
+			$sql->query("SELECT * FROM $this->table_name ORDER BY $this->order_field"),
 			$this->page_name,
 			array (
 				_($this->record_name)	=>	"intservtype"
-			)
+			),
+			array("")
 		);
  
 		echo "

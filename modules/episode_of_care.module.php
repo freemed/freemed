@@ -486,7 +486,7 @@ class episodeOfCare extends freemedEMRModule {
 			$eocrelpregconfine,
 			$eocrelautorcphone,
 			$eocrelemprcphone,
-			$eocpatient;
+			$eocpatient,$patient;
 
 			// compact 3d arrays into strings...
 		$eocdiagfamily     = fm_join_from_array ($eocdiagfamily     );

@@ -76,7 +76,7 @@
 
    $wizard->add_page (
      "Step One: Select the Item & Type/Category",
-     array (),
+     array ("payrecproc", "payreccat"),
      html_form::form_table ( array (
        _("Procedure") =>
        "<SELECT NAME=\"payrecproc\">

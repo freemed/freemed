@@ -95,25 +95,6 @@ class facilityMaintenance extends freemedMaintenanceModule {
     );
 
     $book->add_page (
-      _("Contact"),
-      array (
-        phone_vars("psrphone"), phone_vars("psrfax"), "psremail"
-      ),
-      html_form::form_table ( array (
-        _("Phone Number") =>
-        fm_phone_entry ("psrphone"),
-
-        _("Fax Number") =>
-        fm_phone_entry ("psrfax"),
-
-        _("Email Address") =>
-        "<INPUT TYPE=TEXT NAME=\"psremail\" SIZE=25 MAXLENGTH=25
-          VALUE=\"".prepare($psremail)."\">"
-
-      ) )
-    );
-
-    $book->add_page (
       _("Details"),
       array (
         "psrnote", "psrdefphy", "psrein", "psrintext"
@@ -143,6 +124,24 @@ class facilityMaintenance extends freemedMaintenanceModule {
         </SELECT>"
 
       ) )
+    );
+
+    $book->add_page (_("Contact"),
+      array (
+        array_merge(phone_vars("psrphone"), phone_vars("psrfax")), "psremail"
+      ),
+      html_form::form_table ( array (
+        _("Phone Number") =>
+        fm_phone_entry ("psrphone"),
+
+      _("Fax Number") =>
+      fm_phone_entry ("psrfax"),
+
+        _("Email Address") =>
+        "<INPUT TYPE=TEXT NAME=\"psremail\" SIZE=25 MAXLENGTH=25
+         VALUE=\"".prepare($psremail)."\">"
+
+     ) )
     );
 
   if (!$book->is_done()) {

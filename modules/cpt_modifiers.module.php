@@ -62,7 +62,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 
   echo "
     <P>
-    <FORM ACTION=\"$page_name\" METHOD=POST>
+    <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
       ( ($action=="addform") ? "add" : "mod" )."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
@@ -126,6 +126,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 
 	function view () {
 		global $sql;
+		echo "View ";
 		echo freemed_display_itemlist (
 			$sql->query ("SELECT cptmod,cptmoddescrip,id FROM $this->table_name ".
 		((strlen($_s_val)>0)
@@ -138,7 +139,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 		 : "")."
                 ORDER BY cptmod,cptmoddescrip"
 		 ),
-    $this->table_name,
+    $this->page_name,
     array (
 	_("Modifier")		=>	"cptmod",
 	_("Description")	=>	"cptmoddescrip"

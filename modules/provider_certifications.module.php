@@ -59,7 +59,7 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".(($action=="modform") ? 
                                                    "mod" : "add")."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
-    <INPUT TYPE=HIDDEN NAME=\"method\"   VALUE=\"".prepare($method)."\"  >
+    <INPUT TYPE=HIDDEN NAME=\"module\"   VALUE=\"".prepare($module)."\"  >
 
   ".(($action=="modform") ? "
     <$STDFONT_B>"._("Date Last Modified")." : <$STDFONT_E>

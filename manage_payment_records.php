@@ -585,9 +585,10 @@
       <TR>
       <TD COLSPAN=2 ALIGN=RIGHT><$STDFONT_B>Payment Source :<$STDFONT_E></TD>
       <TD COLSPAN=4><SELECT NAME=\"payrecsource\">
-         <OPTION VALUE=\"0\">Insurance Payment
+       <OPTION VALUE=\"0\">Insurance Payment
        <OPTION VALUE=\"1\">Patient Payment
        <OPTION VALUE=\"2\">Worker's Comp
+
       </SELECT></TD>
       </TR>
       <TR>

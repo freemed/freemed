@@ -29,6 +29,12 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
 	function modform () {
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
+		 // grab record number "id"
+  		$result = $sql->query("SELECT * FROM $this->table_name WHERE
+    		(id='".addslashes($id)."')");
+
+  $r = $sql->fetch_array($result);
+  extract ($r);
 		echo "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>

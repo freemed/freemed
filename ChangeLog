@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Wed Feb 07 2001 fforest
+    more bug fixes like previously. mostly global variable issues
+    $db_name to this->table_name etc.
+    added the new payment module to cvs. 
+	
 * Fri Feb 02 2001 fforest
 	mostly bug fixes. things needing $sql as global
     html_form::, $this->table_name etc.

@@ -2018,7 +2018,8 @@ function fm_split_into_array ($original_string) {
 } // end function fm_split_into_array
 
 function fm_value_in_array ($cur_array, $value) {
-  if (!is_array ($cur_array)) return ($cur_array == $value);
+  if (count ($cur_array) < 0) return false; // avoid errors (from old code)
+  //if (!is_array ($cur_array)) return ($cur_array == $value);
   $found = false; // initially presume that it is not there
   for ($c=0;$c<count($cur_array);$c++) // loop through array
     if ($cur_array[$c]==$value)        // if there is a match...
@@ -2028,9 +2029,14 @@ function fm_value_in_array ($cur_array, $value) {
 
 function fm_value_in_string ($cur_string, $value) {
   if ( strpos ($cur_string, ":") > 0 )
-    $this_array = fm_split_into_array ($cur_string);
-  else $this_array = $cur_string;
-  return fm_value_in_array ($this_array, $value);
+	{
+    	$this_array = fm_split_into_array ($cur_string);
+  		return fm_value_in_array ($this_array, $value);
+	}
+	if (strstr($cur_string,$value) != "")
+		return true;
+	return false;
+  
 } // end function fm_value_in_string
 
 function fm_button ($b_text) {

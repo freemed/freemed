@@ -52,7 +52,7 @@ class authorizationsModule extends freemedEMRModule {
          freemed_display_box_bottom ();
          DIE("");
        }
-       $r = freemed_get_link_rec ($id, $db_name);
+       $r = freemed_get_link_rec ($id, $this->table_name);
        extract ($r);
        break; // end internal modform
      } // end internal action switch

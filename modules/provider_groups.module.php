@@ -79,7 +79,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
       (($action=="modform") ? "mod" : "add")."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
-    <INPUT TYPE=HIDDEN NAME=\"method\" VALUE=\"".prepare($method)."\">
+    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
     <INPUT TYPE=HIDDEN NAME=\"phygroupdtadd\" VALUE=\"".prepare($phygroupdtadd)."\">
    
     <$STDFONT_B>"._("Physician Group Name")." : <$STDFONT_E>
@@ -103,7 +103,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
   ";
 		if ($action=="modform") echo "
 			<CENTER>
-			<$STDFONT_B><A HREF=\"$this->page_name?$_auth&method=$method&action=view\"
+			<$STDFONT_B><A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
 			 >"._("Abandon Modification")."</A><$STDFONT_E>
 			</CENTER>\n";
 	} // end function providerGroupsMaintenance->form()

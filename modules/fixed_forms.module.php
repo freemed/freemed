@@ -37,7 +37,9 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 	} // end constructor fixedFormsMaintenance
 
 	function form () {
-		foreach ($GLOBALS as $k => $v) global $$k;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+		//foreach ($GLOBALS as $k => $v) global $$k;
    switch ($action) {
      case "addform":
       $go = "add";
@@ -84,6 +86,12 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
      $insert[0]="ON";
      $first_insert = true;
    }
+	else
+	{
+     $insert[0]="OFF";
+     $first_insert = false;
+
+	}
    echo "
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
@@ -167,8 +175,10 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
      if (!fm_value_in_array ($del, $i)) {
       // check for problems ...
       if ( (strlen($row[$i])<1) or (strlen($col[$i])<1) or
-           (strlen($len[$i])<1) ) { $num_color = "#ff0000"; }
-       else                       { $num_color = "#000000"; }
+           (strlen($len[$i])<1) ) 
+		{ $num_color = "#ff0000"; }
+      else
+        { $num_color = "#000000"; }
       // print actual record
       $_alternate = freemed_bar_alternate_color ($_alternate);
       echo "
@@ -256,18 +266,22 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 	} // end function fixedFormsMaintenance->form
 
 	function add () {
-		foreach ($GLOBALS as $k => $v) global $$k;
-		$GLOBALS["ffrow"    ] = fm_join_from_array ($row    );
-		$GLOBALS["ffcol"    ] = fm_join_from_array ($col    );
-		$GLOBALS["fflength" ] = fm_join_from_array ($len    );
-		$GLOBALS["ffdata"   ] = fm_join_from_array ($data   );
-		$GLOBALS["ffformat" ] = fm_join_from_array ($format );
-		$GLOBALS["ffcomment"] = fm_join_from_array ($comment);
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+		global $ffrow,$ffcol,$fflength,$ffdata,$ffformat,$ffcomment;
+		$ffrow     = fm_join_from_array ($row    );
+		$ffcol     = fm_join_from_array ($col    );
+		$fflength  = fm_join_from_array ($len    );
+		$ffdata    = fm_join_from_array ($data   );
+		$ffformat  = fm_join_from_array ($format );
+		$ffcomment = fm_join_from_array ($comment);
 		$this->_add();
 	} // end function fixedFormsMaintenance->add
 
 	function mod () {
-		foreach ($GLOBALS as $k => $v) global $$k;
+		reset ($GLOBALS);
+		while (list($k,$v)=each($GLOBALS)) global $$k;
+		global $ffrow,$ffcol,$fflength,$ffdata,$ffformat,$ffcomment;
 		$ffrow     = fm_join_from_array ($row    );
 		$ffcol     = fm_join_from_array ($col    );
 		$fflength  = fm_join_from_array ($len    );
