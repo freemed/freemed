@@ -123,6 +123,8 @@ $page_history = page_history_list();
 	print menu_item(__("New"), "patient.php?action=addform");
 	print menu_item(__("Select"), "patient.php");
 	if ($patient_history) {
+		print menu_item(__("Configure"),
+			"manage.php?id=".$patient_history[count($patient_history)-1]."&action=config");
 		print sub_menu(__("Recent"), "patientHistoryMenu");
 	}
 	print menu_sep();
