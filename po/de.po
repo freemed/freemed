@@ -1,12 +1,7 @@
 # $Id$
 # freemed project
 # gettext / i18n language catalog
-# language : TEMPLATE
-#   to use this template for translations, copy this file to
-#   language.po (for example, french would be fr.po) and use
-#   kbabel or a text editor to do the translations, then
-#   modify the header to reflect your changes.
-# Please keep this in alphabetic order. Thanks - jeff.
+# language : DE (German)
 
 "Last-Translator: Dr. Georg Roesler <groesle@gwdg.de>\n"
 "PO-Revision-Date: 19.05.2001 22:38\n"
