@@ -2,7 +2,10 @@ freemed-project
 LANGUAGES file -- supported languages
 (c) 1999 GPL by the freemed-project
 
-Last Modified: 	2000-02-29
+Last Modified: 	2000-04-05
+
+20000405 --
+* added HR translation
 
 20000229 --
 * added new BR and PT tree information
@@ -29,6 +32,9 @@ Maintainer: 	jeff (jeff@univrel.pr.uconn.edu)
 ======================================================================
 Name:		French			Abbreviation: FR
 Maintainer:	Max Klohn (amk@span.ch)
+======================================================================
+Name:		Croatian		Abbreviation: HR
+Maintainer:	nikola (nikola@mamef.mef.hr)
 ======================================================================
 Name:           Italian                 Abbreviation: IT
 Maintainer:     Stefano Fava (ste@sirius.ccii.unipi.it)
