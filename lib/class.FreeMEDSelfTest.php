@@ -4,26 +4,29 @@
     // code: fred trotter (ftrotter@synseer.com)
     // lic: GPL, v2
 
-class HealthCheck {
+class FreeMEDSelfTest {
 
-	function HealthCheck () {
+	function FreeMEDSelfTest () {
 		// Check for skipping this entire thing
 		if (file_exists('./.healthy')) {
 			// Healthy installation, skipping
 			return true;
 		} else {
-			$this->Check();
+			$this->SelfTest();
 			$touched = touch ('./.healthy');
 			if (!$touched) {
 				die(
 				__("FreeMED was unable to create a file to record the healthy status of the system.")."<br/>\n".
-				__("Please give universal write access to FreeMED's home directory to correct this.")."<br/>\n"
+				__("The FreeMED directory should be owned by the user that the webserver is running as...")."<br/>\n".
+				__("Usually this is 'apache'. You can also fix this by giving universal write access to the home directory of FreeMED. ")."<br/>\n".
+				__("But that is not advisable from a security standpoint. ")."<br/>\n"
+
 				);
 			}
 		}
-	} // end constructor HealthCheck
+	} // end constructor FreeMEDSelfTest
 
-	function Check () {
+	function SelfTest () {
 
     // This file has no purpose except to catch the most commone installation 
     // and configuration problems and deal with them in a way that is 
@@ -61,9 +64,9 @@ openlog("freemed", LOG_PID | LOG_PERROR, LOG_LOCAL0);
 
 // lets load the values with which we will connect to the database
 // user password host etc... these can be found here...
-syslog(LOG_INFO,"healthcheck.php|about to load settings.php"); 
+syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Running Self Test... about to load settings.php"); 
 include_once ("lib/settings.php");
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|settings.php loaded");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|settings.php loaded");}
 
 
 // then lets begin to connect based on these values
@@ -79,7 +82,7 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|settings.php loaded");}
 //$link = mysql_connect("localhost","root","password")
 // for testing...
 
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|Attempting to connect to MySQL");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Attempting to connect to MySQL");}
 //if(LOG_LEVEL==0){syslog(LOG_INFO,"using ".DB_HOST." ".DB_USER." ".DB_PASSWORD);}
 
 //because I am supressing error messages
@@ -119,11 +122,11 @@ $link = mysql_connect(DB_HOST,DB_USER,DB_PASSWORD)
 		__("and then hit the enter key. You should see an 'OK'.").
 		"<br/>\n"
 	);
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|Connected.");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Connected.");}
 // Phase II Select database Check...
 // Has the freemed database been created?
 // if so then this command will succeed.             
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|Attempting to select DB=".DB_NAME." ....");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Attempting to select DB=".DB_NAME." ....");}
 mysql_select_db(DB_NAME) or die(
                 __("FreeMED could not select the database.")."<br/>\n".
 		__("If you are just installing FreeMED, and you are using the MySQL database, then you need to type:")."<br/>\n".
@@ -134,7 +137,7 @@ mysql_select_db(DB_NAME) or die(
 		__("Make sure that the user configured in lib/settings.php has access to the FreeMED database.")."<br/>\n"
 		);
 
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|Selected.");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Selected.");}
 
 // Phase III - Verification of intialization
 // Instead of using "root" as the default account name lets switch
@@ -144,17 +147,17 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|Selected.");}
 // Thus an unintialized database will never show the login screen (less user confusion)
 // 
 $query = ("SELECT username FROM user WHERE id='1'");
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|Checking existence of user admin.");}
-if(LOG_LEVEL<=4||LOG_SQL){syslog(LOG_INFO,"healthcheck.php|".$query);}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Checking existence of user admin.");}
+if(LOG_LEVEL==0||LOG_SQL){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|".$query);}
 if(!($result = @mysql_query($query)))
 {// if we didnt get anything then...
    // include_once("init_wizard.php"); 
 
-if(LOG_ERROR){syslog(LOG_INFO,"healthcheck.php user admin select failure. Database not init()ed creating admin...");}
+if(LOG_ERROR){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|user admin select failure. Database not init()ed creating admin...");}
    header("Refresh: 0;url=init_wizard.php?action=login");
 
 }
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php admin exists");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|admin exists");}
 
 
 
@@ -169,13 +172,13 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php admin exists");}
 // which means we can remove the kludge from the authenticate file,
 // allowing me to build out proper authentication...
 							
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php closing test link");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|closing test link");}
 mysql_close($link);
 
-if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php returning to login.php");}
+if(LOG_LEVEL<=99){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Self Test Passed, returning to login");}
 
 	} // end function Check()
 
-} // end class HealthCheck
+} // end class FreeMEDSelfTest
 
 ?>

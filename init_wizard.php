@@ -1,5 +1,4 @@
 <?php
-
 	// $Id$
 	// $Author$
 	// code: fred trotter (ftrotter@synseer.com)
@@ -29,15 +28,13 @@ $GLOBALS['__freemed']['no_menu_bar'] = true;
    // TODO 
    // 1. Add code to enforce timed login!!
 
-
 $page_name = "init_wizard.php";   
-   
 
 // IP based authentication check
 
 if(0!=strcmp($_SERVER['REMOTE_ADDR'],INIT_ADDR)){	
 	include_once("errors/init_admin_ipaddr.php");	
-	die("<BR>dying b/c IP is not in settings.php as INIT_ADDR");
+	die("<BR>FreeMED expects the intial setup to be done from the localhost. Dying b/c your IP is not in settings.php as INIT_ADDR");
 }
 
 if ($action=="login") {     
@@ -48,14 +45,13 @@ if ($action=="login") {
 	Before creating that account you must prove that you <BR>
 	Have the appropriate level of access, please provide <BR>
 	The database user name and password, as found in settings.php
-	
 
 </div>
 
 <p/>
 <table WIDTH=\"100%\" BORDER=\"0\" CELLPADDING=\"2\">
 <tr>  <td ALIGN=\"RIGHT\">
-      <form ACTION=\"initwizard.php?action=auth\" METHOD=\"POST\">
+      <form ACTION=\"init_wizard.php?action=auth\" METHOD=\"POST\">
 
       <input TYPE=\"HIDDEN\" NAME=\"__dummy\"
       VALUE=\"01234567890123456789012345678901234567890
@@ -87,11 +83,6 @@ if ($action=="login") {
              <input TYPE=\"PASSWORD\" NAME=\"_adminpassword2\" LENGTH=\"20\" MAXLENGTH=\"32\"/>
          </td>
 </tr> 
-
-
-";
-
-$display_buffer .= "
 </table>
 <div ALIGN=\"CENTER\">
   <input TYPE=\"SUBMIT\" VALUE=\"".__("Sign In")."\" CLASS=\"button\" />
@@ -99,8 +90,6 @@ $display_buffer .= "
 </div>
 </form>
 ";
-
-
 	
 // drop to the page...  
 template_display();
@@ -112,11 +101,8 @@ if($action=="auth")
 
 	//lets display the banner!!
 
-
 	// Lets check IP addresses again, otherwise people will 
 	// Try to go directly to this page!!
-
-
 
 	if(0!=strcmp($_SERVER['REMOTE_ADDR'],INIT_ADDR)){	
 		die(__("Page Not Accessible from your IP Address")."<br/>");
@@ -131,8 +117,7 @@ if($action=="auth")
 
 
 	if((0!==(strcmp(DB_USER,$_REQUEST['_username']))) or
-	(0!==(strcmp(DB_PASSWORD,$_REQUEST['_password']))))
-	{
+	(0!==(strcmp(DB_PASSWORD,$_REQUEST['_password'])))) {
 		// impose a time penalty here...
 		// something like 30 sec for the first...
 		// 1 min for two or more...
@@ -145,15 +130,12 @@ if($action=="auth")
 
 	if(0!==(strcmp($_REQUEST['_adminpassword1'],$_REQUEST['_adminpassword2'])))
 	{
-
 		die( "admin passwords to not match");
 		// no time setting here, if they know the database password
 		// then this is just an honest mistake!!
-
 	}
 	
 	// here I enter the new admin account into the database!!
-
 	$display_buffer .= __("Database Password Accepted")."... <br/>\n";
 
 // these should eventually be connected to a die() command!!

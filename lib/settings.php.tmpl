@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-define ('INSTALLATION', "Stock Freemed Install"); // installation name
+define ('INSTALLATION', "Stock FreeMED Install"); // installation name
 define ('DB_HOST', "localhost"); // database (SQL) host location
 define ('DB_NAME', "freemed"); // database name
 define ('DB_USER', "root"); // SQL server username
@@ -16,6 +16,7 @@ define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('HTTP', 'http'); // http for normal, https for SSL
 define ('SESSION_PROTECTION', true); // strong session protection?
 $default_language="EN"; // default language
+define ('ALWAYS_SELFTEST',true); // We can check the health of the database etc, at every login...
 define ('INIT_ADDR',"127.0.0.1"); // this is the only IP address that can run the init wizard...
     // Logging settings	
     // Reasonable defaults!
@@ -31,7 +32,7 @@ define ('LOG_LOGIN', true); // This will force logging of login attempts
 define ('LOG_MD5ATTEMPTS', true); // This is a dangerous tool to test authentication
 				 // DO NOT turn this on for a production system
 				// this will put crackable passwords in the logs
-define ('LOG_SQL', true); 	// This logs the SQL Statments that have been entered
+define ('LOG_SQL', false); 	// This logs the SQL Statments that have been entered
 				// This is usefull for debugging why something is messing 
 				// the database!!
 define ('LOG_ERRORS', true);	// This logs major errors, this should be on by default!!
@@ -48,6 +49,7 @@ define ('LOG_ERRORS', true);	// This logs major errors, this should be on by def
 //define ('LOG_LEVEL',2);	   // Log all class traversals 
 //define ('LOG_LEVEL',3);    	   // Log all page traversals (except for certain initiations)
 //define ('LOG_LEVEL',4);	   // Log all database querys, this accelerates database debugging!!
+//define ('LOG_LEVEL',99);	   // Typical logging
 
 
 //define ('LOG_LEVEL',100);	   // Logs nothing except what is explicitly itemized (like LOG_HIPPA)
