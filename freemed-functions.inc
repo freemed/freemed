@@ -2101,12 +2101,13 @@ function fm_button ($b_text) {
 function fm_eval ($orig_string) {
   // import all global variables
   // (thanks to jb@as220.org for this one)
+  reset ($GLOBALS);
   while (list($k,$v) = each ($GLOBALS))
-   if (!isset($$k)) global $$k;
-  $this_string = $orig_string;                 // transfer to internal var
-  $this_string = fm_secure ($this_string);     // secure the string
-  eval ("\$this_string = \"$this_string\";");  // evaluate
-  return $this_string;                         // return
+   if (!isset($$k)) $$k = $GLOBALS[$k];
+  $loc_string = $orig_string;                  // transfer to internal var
+  $sec_string = fm_secure ($loc_string);       // secure the string
+  eval ("\$new_string = \"$sec_string\";");    // evaluate
+  return $new_string;                          // return
 } // end function fm_eval
 
 // fm_prep -- prepare a string to be viewed as HTML
