@@ -22,6 +22,48 @@ class Patient {
 		}
 	} // end function name
 
+	// Method: get
+	//
+	//	Fetch an individual patient record.
+	//
+	// Parameters:
+	//
+	//	$id - Patient record id
+	//
+	// Returns:
+	//
+	//	Structure containing main EMR record for patient
+	//
+	function get ( $id ) {
+		// Pass through from patient record
+		$r = freemed::get_link_rec($id, 'patient');
+		$element = CreateObject('PHP.xmlrpcval');
+		$element->addStruct(array(
+			"last_name" => rpc_prepare($r['ptlname']),
+			"middle_name" => rpc_prepare($r['ptmname']),
+			"first_name" => rpc_prepare($r['ptfname']),
+			"address_line1" => rpc_prepare($r['ptaddr1']),
+			"address_line2" => rpc_prepare($r['ptaddr2']),
+			"date_of_birth" => rpc_prepare($r['ptdob']),
+			"city" => rpc_prepare($r['ptcity']),
+			"state" => rpc_prepare($r['ptstate']),
+			"zip" => rpc_prepare($r['ptzip']),
+			"country" => rpc_prepare($r['ptcountry']),
+			"phone_home" => rpc_prepare($r['pthphone']),
+			"phone_work" => rpc_prepare($r['ptwphone']),
+			"phone_fax" => rpc_prepare($r['ptfax']),
+			"sex" => rpc_prepare($r['ptsex']),
+			"marital" => rpc_prepare($r['ptmarital']),
+			"ssn" => rpc_prepare($r['ptssn']),
+			"next_of_kin" => rpc_prepare($r['ptnextofkin']),
+			"patient_id" => rpc_prepare($r['ptid']),
+			"id" => rpc_prepare($r['id'])
+		));
+
+		// Return structure
+		return CreateObject('PHP.xmlrpcresp', $element);
+	} // end method get
+
 	// Method: picklist
 	//
 	//	Get a list of patients based on provided criteria.
