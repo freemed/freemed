@@ -32,39 +32,41 @@ $display_buffer .= "
    ALIGN=\"CENTER\" BORDER=0 CELLSPACING=0 CELLPADDING=2>
    <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
    <A HREF=\"$page_name?for_date=$prev_date&physician=$physician\"
-    ><FONT COLOR=\"#ffffff\">$back_one_week</FONT></A>
+    ><FONT COLOR=\"#ffffff\">&lt;</FONT></A>
    </TD><TD VALIGN=CENTER ALIGN=RIGHT>
    <A HREF=\"$page_name?for_date=$next_date&physician=$physician\"
-    ><FONT COLOR=\"#ffffff\">$forward_one_week</FONT></A>
+    ><FONT COLOR=\"#ffffff\">&gt;</FONT></A>
    </TD></TR></TABLE>
    <BR>
 ";
 
- // check if there is a physician specified, and if so, display their
- // name, etc at the top...
- if ($physician<=0) {
-   $display_buffer .= "
+// check if there is a physician specified, and if so, display their
+// name, etc at the top...
+if ($physician<=0) {
+	$display_buffer .= "
      <CENTER>
       <B>"._("No Physician Selected")."</B>
      </CENTER>
      <BR>
-   ";
- } else {
-   $phyinfo  = freemed_get_link_rec ($physician, "physician");
-   $phylname = $phyinfo["phylname"];
-   $phyfname = $phyinfo["phyfname"];
-   $phymname = $phyinfo["phymname"];
-   $display_buffer .= "
+	";
+} else {
+	$phyinfo  = freemed_get_link_rec ($physician, "physician");
+	$phylname = $phyinfo["phylname"];
+	$phyfname = $phyinfo["phyfname"];
+	$phymname = $phyinfo["phymname"];
+	$display_buffer .= "
      <CENTER>
       "._("Physician").": $phylname, $phyfname $phymname
      </CENTER>
      <BR>
-   ";
- }
+	";
+}
 
- // actually display the calendar
-fc_display_week_calendar ($for_date, "calphysician='$physician'");
+//----- Actually display the calendar
+fc_display_week_calendar ($for_date,
+	"calphysician='".addslashes($physician)."'"
+);
 
- // end everything
+//----- End and display everything
 template_display();
 ?>
