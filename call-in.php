@@ -344,7 +344,8 @@ switch ($action) {
         </TD>
       </TR>
       <TR>
-        <TD COLSPAN=4><CENTER><I>".prepare($cicomplaint)."</I></CENTER></TD>
+        <TD COLSPAN=4 CLASS=\"infobox\"><CENTER><I>".
+	prepare($cicomplaint)."</I></CENTER></TD>
       </TR>
     ";
 
