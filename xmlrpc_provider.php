@@ -50,6 +50,7 @@ function freemed_basic_auth () {
 			$r = $sql->fetch_array($result);
 			$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
 			$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
+			return true;
 		} else {
 			// Clear basic auth id
 			$authed = false;
