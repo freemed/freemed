@@ -67,8 +67,20 @@
    // loop for all patients
    while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
 
-     // get current patient
+     // pull current patient
      $current_patient = $b_r[payrecpatient];
+
+     $current_status = fdb_num_rows( fdb_query (
+       "SELECT procbilled FROM $database.procedure
+        WHERE (
+          (procpatient    = '$current_patient') AND
+          (procbilled     = '0') AND
+          (procbalcurrent > '0')
+        )"
+       ) );
+     if ($current_status < 1) next; // skip
+
+     // get current patient information
      $this_patient = new Patient ($current_patient);
      echo "
       <B>Processing ".$this_patient->fullName()."
@@ -511,14 +523,14 @@
    } else {
      for ($i=0;$i<count($processed);$i++) {
        echo "
-         Marking $processed[$i] ... 
+         Marking ".$processed[$i]." ... 
        ";
        $query = "UPDATE $database.procedure
                  SET procbilled = '1'
                  WHERE (
                    (procpatient    = '".$processed[$i]."') AND
-                   (procbilled     = 0) AND
-                   (procbalcurrent > 0)
+                   (procbilled     = '0') AND
+                   (procbalcurrent > '0')
                  )";
        $result = fdb_query ($query);
        if ($result) { echo "$Done.<BR>\n"; }
