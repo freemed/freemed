@@ -302,6 +302,7 @@ class Ledger {
 				array ( 'id' => $proc )
 			);
 		}
+		syslog(LOG_INFO, "queue_for_rebill | query = $query");
 		$result = $GLOBALS['sql']->query ( $query );
 
 		// Adjust internal proccurcovid
@@ -323,6 +324,7 @@ class Ledger {
 			),
 			array ( 'id' => $proc )
 		);
+		syslog(LOG_INFO, "queue_for_rebill | query = $query");
 		$result &= $GLOBALS['sql']->query ( $query );
 			
 		return $result;
@@ -441,6 +443,7 @@ class Ledger {
 			array (
 				'payrecdtadd' => date('Y-m-d'),
 				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
 				'payrecpatient' => $patient,
 				'payreccat' => COPAY,
 				'payrecproc' => $procedure,
@@ -497,6 +500,7 @@ class Ledger {
 			array (
 				'payrecdtadd' => date('Y-m-d'),
 				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
 				'payrecpatient' => $patient,
 				'payreccat' => DEDUCTABLE,
 				'payrecproc' => $procedure,
@@ -563,6 +567,7 @@ class Ledger {
 			array (
 				'payrecdtadd' => date('Y-m-d'),
 				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
 				'payrecpatient' => $patient,
 				'payreclink' => $who,
 				'payreccat' => FEEADJUST,
@@ -612,6 +617,7 @@ class Ledger {
 			array (
 				'payrecdtadd' => date('Y-m-d'),
 				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
 				'payrecpatient' => $data['patient'],
 				'payreccat' => '0', // payment
 				'payrecproc' => $data['procedure'],
@@ -642,6 +648,7 @@ class Ledger {
 				'procamtpaid' => $amount_paid
 			), array ( 'id' => $data['procedure'] )
 		);
+		syslog(LOG_INFO, "post_payment | query = $query");
 		$proc_result = $GLOBALS['sql']->query ( $query );
 
 		return ($proc_query and $pay_query);
@@ -797,6 +804,7 @@ class Ledger {
 			array (
 				'payrecdtadd' => date('Y-m-d'),
 				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
 				'payrecpatient' => $patient,
 				'payreccat' => $category,
 				'payrecproc' => $procedure,
