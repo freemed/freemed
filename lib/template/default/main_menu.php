@@ -47,160 +47,30 @@ if (freemed::config_value('calshr')<1 or freemed::config_value('calehr')<1) {
 	";
 }
 
-// Header for main table
-$display_buffer .= "
-<p/>
 
-<table WIDTH=\"100%\" BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
- ALIGN=\"CENTER\">
-";
+//----- New static menu system goes down here ....
 
-if (freemed::user_flag(USER_ADMIN))
-   $display_buffer .= "
-     <TR>
-     <TD ALIGN=RIGHT>
-     <A HREF=\"admin.php\"
-      ><IMG SRC=\"img/KeysOnChain.gif\" BORDER=0
-        ALT=\"\"></TD>
-     <TD ALIGN=LEFT>
-     <A HREF=\"admin.php\"
-      >".__("Administration Menu")."</A>
-     </A>
-     </TD></TR>
-   ";
-
-if (freemed::user_flag(USER_DATABASE))
-   $display_buffer .= "
-    <TR>
-    <TD ALIGN=RIGHT>
-     <A HREF=\"billing_functions.php\"
-     ><IMG SRC=\"img/CashRegister.gif\" BORDER=0 ALT=\"\"></A>
-    </TD>
-    <TD ALIGN=LEFT>
-    <A HREF=\"billing_functions.php\"
-     >".__("Billing Functions")."</A>
-    </TD></TR>
-   ";
-
- $display_buffer .= "
-   <TR>
-   <TD ALIGN=RIGHT>
-    <A HREF=\"call-in.php\"
-    ><IMG SRC=\"img/Text.gif\" BORDER=0 ALT=\"\"></A>
-   </TD>
-   <TD ALIGN=LEFT>
-   <B>".__("Call In")." : &nbsp;</B>
-   <A HREF=\"call-in.php?action=addform\"
-    >".__("Entry")."</A> |
-   <A HREF=\"call-in.php\"
-    >".__("Menu")."</A>
-   </TD></TR>
- ";
-
- if (freemed::user_flag(USER_DATABASE))
-   $display_buffer .= "
-    <TR>
-    <TD ALIGN=RIGHT>
-     <A HREF=\"db_maintenance.php\"
-     ><IMG SRC=\"img/Database.gif\" BORDER=0 ALT=\"\"></A>
-    </TD>
-    <TD ALIGN=LEFT>
-    <A HREF=\"db_maintenance.php\"
-     >".__("Database Maintenance")."</A>
-    </TD></TR>
-   ";
-
-if ($this_user->isPhysician())
-   $display_buffer .= "
-    <TR>
-    <TD ALIGN=RIGHT>
-     <A HREF=\"physician_day_view.php?physician=".
-      $this_user->getPhysician()."\"
-     ><IMG SRC=\"img/karm.gif\" BORDER=0 ALT=\"\"></A>
-    </TD>
-    <TD ALIGN=LEFT>
-    <A HREF=\"physician_day_view.php?physician=".
-      $this_user->getPhysician()."\"
-     >".__("Day View")."</A><BR>
-    <A HREF=\"physician_week_view.php?physician=".
-      $this_user->getPhysician()."\"
-     >".__("Week View")."</A>
-    </TD></TR>
-   ";
-
-$display_buffer .= "
-    <TR>
-    <TD ALIGN=RIGHT>
-     <A HREF=\"messages.php\"
-     ><IMG SRC=\"img/messages.gif\" BORDER=0 WIDTH=48 HEIGHT=48 ALT=\"\"></A>
-    </TD>
-    <TD ALIGN=LEFT>
-    <A HREF=\"messages.php\">".__("Messages")."</A>
-    </TD></TR>
-";
-
-if (freemed::user_flag(USER_DATABASE))
-   $display_buffer .= "
-    <TR> 
-    <TD ALIGN=RIGHT>
-     <A HREF=\"patient.php\"
-     ><IMG SRC=\"img/HandOpen.gif\" BORDER=0 ALT=\"\"></A>
-    </TD>
-    <TD ALIGN=LEFT>
-    <A HREF=\"patient.php\"
-     >".__("Patient Functions")."</A>
-    </TD></TR>
-   ";
-
- if (freemed::user_flag(USER_DATABASE))
-   $display_buffer .= "
-    <TR> 
-    <TD ALIGN=RIGHT>
-     <A HREF=\"reports.php\"
-     ><IMG SRC=\"img/reports.gif\" BORDER=0 ALT=\"\"></A>
-    </TD>
-    <TD ALIGN=LEFT>
-    <A HREF=\"reports.php\"
-     >".__("Reports")."</A>
-    </TD></TR>
-   ";
-
- if (freemed::user_flag(USER_DATABASE))
-   $display_buffer .= "
-    <TR> 
-    <TD ALIGN=RIGHT>
-     <A HREF=\"calendar.php\"
-     ><IMG SRC=\"img/clock.gif\" BORDER=0 ALT=\"\"></A>
-    </TD>
-    <TD ALIGN=LEFT>
-    <A HREF=\"calendar.php\"
-     >".__("Calendar")."</A>
-    </TD></TR>
-   ";
-
-    // help screen
-$display_buffer .= "
-  <TR>
-  <TD ALIGN=RIGHT>
-   <A HREF=\"#\"
-   onClick=\"window.open('help.php?page_name=$page_name', 'Help', ".
-   "'width=600,height=400,resizable=yes');\"
-   ><IMG SRC=\"img/readme.gif\" BORDER=0 ALT=\"\"></A>
-  </TD>
-  <TD ALIGN=LEFT>
-   <A HREF=\"#\"
-   onClick=\"window.open('help.php?page_name=$page_name', 'Help', ".
-   "'width=600,height=400,resizable=yes');\"
-   >".__("Main Menu Help")."</A>
-  </TD></TR>
-  <TR>
-  <TD ALIGN=RIGHT>
-  </TD>
-  <TD ALIGN=LEFT>
-  <B><A HREF=\"logout.php\">".__("Logout of")." ".PACKAGENAME."</A>
-  </B>
-  </TD></TR>
-  </TABLE>
-";
+//----- Define handler for main menu
+LoadObjectDependency('PHP.module');
+$handlers = freemed::module_handler('MainMenu');
+if (is_array($handlers)) {
+	foreach ($handlers AS $class => $handler) {
+		$reply = module_function ($class, $handler);
+		if (is_array($reply)) {
+			// Array format is (title, content)
+			list ($_t, $_c) = $reply;
+			$display_buffer .=
+				"<div class=\"thinbox_noscroll\" style=\"width: 100%; text-align: left;\">\n".
+				"<div class=\"reverse\" style=\"width: 100%; text-weight: bold; text-align: left;\">".prepare($_t)."</div><br />\n".
+				$_c."</div>\n&nbsp;";
+		} else {
+			// Flat, in a box, already formatted
+			if ($reply) {
+				$display_buffer .= "<div class=\"thinbox_noscroll\" style=\"width: 100%;\">\n".
+				$reply."</div>\n&nbsp;\n";
+			}
+		}
+	} // end foreach handlers
+} // end is array handlers
 
 ?>
