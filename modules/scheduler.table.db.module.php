@@ -65,8 +65,7 @@ class SchedulerTable extends MaintenanceModule {
 			// Figure out appointments for today
 			$day_result = $GLOBALS['sql']->query(
 				"SELECT COUNT(*) AS day_count FROM scheduler WHERE ".
-				"caldateof >= '".$begin_date."' AND ".
-				"caldateof <= '".$end_date."' AND ".
+				"caldateof='".$begin_date."' AND ".
 				"calphysician='".$GLOBALS['this_user']->getPhysician()."'"
 			);
 			extract($GLOBALS['sql']->fetch_array($day_result));
@@ -74,7 +73,8 @@ class SchedulerTable extends MaintenanceModule {
 			// Figure out appointments for this week
 			$week_result = $GLOBALS['sql']->query(
 				"SELECT COUNT(*) AS week_count FROM scheduler WHERE ".
-				"caldateof='".$begin_date."' AND ".
+				"caldateof >= '".$begin_date."' AND ".
+				"caldateof <= '".$end_date."' AND ".
 				"calphysician='".$GLOBALS['this_user']->getPhysician()."'"
 			);
 			extract($GLOBALS['sql']->fetch_array($week_result));
