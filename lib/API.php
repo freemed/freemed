@@ -965,6 +965,10 @@ class freemed {
 	function patient_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
 		global ${$varname};
 
+		include_once(freemed::template_file('ajax.php'));
+		if (${$varname}) { $_obj = CreateObject('FreeMED.Patient', ${$varname}); }
+		return ajax_widget($varname, 'patient', $_obj);
+
 		// If it is set, show patient name, else widget
 		if (${$varname} > 0) {
 			$this_patient = CreateObject('FreeMED.Patient', ${$varname});	

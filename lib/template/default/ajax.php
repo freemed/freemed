@@ -5,7 +5,7 @@
 	// Ajax functionality
 
 $ajax = CreateObject('PHP.Sajax', 'ajax_provider.php');
-$ajax->export('lookup');
+$ajax->export('lookup', 'patient_lookup');
 
 // Form header information regarding this
 ob_start();
@@ -46,7 +46,11 @@ function x_<?php print $name; ?>_check_input(i) {
 	if (document.getElementById(i + '_text').value.length >= 3) {
 		document.getElementById(i + '_hiddendiv').style.display = 'block';
 		document.getElementById(i + '_hiddendiv').innerHTML = 'Loading ... ';
+		<?php if ($module == 'patient') { ?>
+		x_patient_lookup(document.getElementById(i + '_text').value, x_<?php print $name; ?>_populate);
+		<?php } else { ?>
 		x_lookup('<?php print $module; ?>', document.getElementById(i + '_text').value, x_<?php print $name; ?>_populate);
+		<?php } ?>
 	} else {
 		document.getElementById(i + '_hiddendiv').innerHTML = '';
 		document.getElementById(i + '_hiddendiv').style.display = 'none';
