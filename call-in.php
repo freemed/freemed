@@ -213,12 +213,10 @@ switch ($action) {
   $cifname = $ciname ["cifname"];
   $cimname = $ciname ["cimname"];
   $display_buffer .= "
-    <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=0 CELLPADDING=2
+    <TABLE WIDTH=100% CLASS=\"reverse\" CELLSPACING=0 CELLPADDING=2
      VALIGN=CENTER ALIGN=CENTER>
-    <TR><TD ALIGN=CENTER BGCOLOR=#000000>
-     <FONT COLOR=#ffffff>
+    <TR><TD ALIGN=CENTER CLASS=\"reverse\">
       <B>$cilname, $cifname $cimname</B> : $rows "._("Appointments")."
-     </FONT>
     </TD></TR>
     </TABLE>
     <P>
@@ -258,8 +256,8 @@ switch ($action) {
   $display_buffer .= freemed_display_actionbar ($page_name);
 
   $display_buffer .= "
-    <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3 VALIGN=CENTER
-     ALIGN=CENTER BGCOLOR=\"".freemed_alternate()."\">
+    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=3 VALIGN=CENTER
+     ALIGN=CENTER CLASS=\"".freemed_alternate()."\">
     <TR>
      <TD><B>"._("Name")."</B></TD>
      <TD><B>"._("Date of Call")."</B></TD>
@@ -305,7 +303,7 @@ switch ($action) {
     else $ciphonesep = " ";
 
     $display_buffer .= "
-      <TR BGCOLOR=\"".freemed_alternate()."\">
+      <TR CLASS=\"".freemed_alternate()."\">
        <TD>$cilname, $cifname$ci_comma $cimname</TD>
        <TD>$cidatestamp</TD>
        <TD>$ciwphone $ciphonesep $cihphone&nbsp;</TD>
