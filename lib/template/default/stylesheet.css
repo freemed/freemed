@@ -154,7 +154,7 @@ A.patientbox:link { color: #ffffff }
 	border-style: solid;
 	overflow: scroll;
 	background: #0000ff;
-	color: #ffffff
+	color: #ffffff;
 }
 
 .calcell {
@@ -163,7 +163,7 @@ A.patientbox:link { color: #ffffff }
 	border-style: solid;
 	overflow: scroll;
 	background: #aaaaff; 
-	padding: 1pt
+	padding: 1pt;
 }
 
 .calcell:hover, .calcell_alt:hover, .calendar_book_link:hover {
@@ -172,7 +172,7 @@ A.patientbox:link { color: #ffffff }
 	border-style: solid;
 	overflow: scroll;
 	background: #5555ff; 
-	padding: 1pt
+	padding: 1pt;
 }
 
 .calcell_alt {
@@ -181,7 +181,16 @@ A.patientbox:link { color: #ffffff }
 	border-style: solid;
 	overflow: scroll;
 	background: #9999ff;
-	padding: 1pt
+	padding: 1pt;
+}
+
+.calcell_selected {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #8888cc; 
+	padding: 1pt;
 }
 
 .calcell_hour {
@@ -200,6 +209,43 @@ A.patientbox:link { color: #ffffff }
 	border-style: solid;
 	overflow: scroll;
 	background: #ffffff 
+}
+
+/* Mini-calendar classes */
+.calendar_mini_cell, a.calendar_mini_cell {
+	border: 0px;
+	padding: 2px;
+	background: #dddddd;
+	color: #000000;
+	font-size: small;
+	text-decoration: none;
+}
+.calendar_mini_cell:hover, a.calendar_mini_cell:hover {
+	border: 0px;
+	padding: 2px;
+	background: #ffffff;
+	color: #000000;
+	font-size: small;
+	text-decoration: none;
+}
+
+/* Real HACK for keeping button hovers visible */
+.button_style {
+	font-size: 9pt;
+	border: 1px solid;
+	border-color: #000000;
+	background-color: #ffffff;
+	color: #000000;
+
+	/* For all button links */
+	padding: 2px 4px 2px 4px;
+	text-decoration: none;
+}
+.button_text, .button_text:hover {
+	text-decoration: none;
+}
+.button_text:hover {
+	color: #000000;
 }
 
 /* Calendar marking colors; these are defined as different labels in config */

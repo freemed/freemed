@@ -301,9 +301,20 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
   } // end function fc_display_week_calendar
 
-  function fc_generate_calendar_mini ($given_date, $this_url) {
-    // mostly hacked code from TWIG's calendar
-    global $cur_date, $lang_months, $lang_days;
+function fc_generate_calendar_mini ($given_date, $this_url) {
+	// mostly hacked code from TWIG's calendar
+	global $cur_date, $lang_months;
+
+	$lang_days = array (
+		"",
+		__("Sun"),
+		__("Mon"),
+		__("Tue"),
+		__("Wed"),
+		__("Thu"),
+		__("Fri"),
+		__("Sat")
+	);
 
     // break current day into pieces
     list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
@@ -328,56 +339,56 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     // generate top of table
     $buffer .= "
-     <CENTER>
-     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=\"MIDDLE\"
-      ALIGN=\"CENTER\">
-     <TR>
-
-     </TR>
-     <TABLE BORDER=0 CELLSPACING=0>
-      <TR BGCOLOR=\"#ffffff\">
-       <TD ALIGN=LEFT BGCOLOR=\"#ffffff\">
+     <center>
+     <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" VALIGN=\"MIDDLE\"
+      ALIGN=\"CENTER\" class=\"calendar_mini\" bgcolor=\"#dfdfdf\">
+      <tr BGCOLOR=\"#ffffff\">
+       <td ALIGN=\"LEFT\" colspan=\"2\">
     ";
 
     // previous month link
     $buffer .= "     
-     <A HREF=\"$this_url&selected_date=".
+     <a href=\"$this_url&selected_date=".
        fc_scroll_prev_month(
         fc_scroll_prev_month(
          fc_scroll_prev_month($this_date)
         )
-       )."\"
+       )."\" class=\"button_text\"
       >3</A>
-     <A HREF=\"$this_url&selected_date=".fc_scroll_prev_month($this_date)."\"
-      ><SMALL>".__("prev")."</SMALL></A>
-     </TD>
-     <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
-       <B>".htmlentities(date("M",mktime(0,0,0,($this_month+1),0,0)))." $this_year</b>
-     </TD>
-     <TD ALIGN=RIGHT BGCOLOR=\"#ffffff\">
-     <A HREF=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
-      ><SMALL>".__("next")."</SMALL></A>    
-     <A HREF=\"$this_url&selected_date=".
+     <a href=\"$this_url&selected_date=".fc_scroll_prev_month($this_date)."\"
+      class=\"button_text\"><small>".__("prev")."</small></a>
+     </td>
+     <td COLSPAN=\"5\" ALIGN=\"CENTER\">
+       <b>".htmlentities(date("M",mktime(0,0,0,($this_month+1),0,0)))." $this_year</b>
+     </td>
+     <td ALIGN=\"RIGHT\" colspan=\"2\">
+     <a href=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
+      class=\"button_text\"><small>".__("next")."</small></a>
+     <a href=\"$this_url&selected_date=".
        fc_scroll_next_month(
         fc_scroll_next_month(
          fc_scroll_next_month($this_date)
         )
-       )."\"
-      >3</A>
-     </TD>
-     </TR>
-     <TR>
+       )."\" class=\"button_text\"
+      >3</a>
+     </td>
+     </tr>
+     <tr>
+      <td colspan=\"1\">&nbsp;</td>
     ";
     // print days across top
     for( $i = 1; $i <= 7; $i++) {
      $buffer .= "
-      <TD BGCOLOR=#cccccc ALIGN=CENTER>
-       <B>".htmlentities($lang_days[$i])."</B>
-      </TD>
+      <td ALIGN=\"CENTER\">
+       <small>".htmlentities($lang_days[$i])."</small>
+      </td>
      ";
     } // end of day display
     $buffer .= "
-     </TR>
+      <td colspan=\"1\">&nbsp;</td>
+     </tr>
+     <tr>
+      <td colspan=\"1\">&nbsp;</td>
     ";
 
     // calculate first day
@@ -386,7 +397,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     if( $first_day > 0 ) {
   	while( $day_row < $first_day ) {
-   		$buffer .= "  <TD ALIGN=RIGHT BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
+   		$buffer .= "\t<td ALIGN=\"RIGHT\" BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
    		$day_row += 1;  
   		}
  	} // end while day row < first day
@@ -395,56 +406,35 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 		{
   		if( ( $day_row % 7 ) == 0) 
 			{
-   			$buffer .= " </TR>\n<TR BGCOLOR=\"#bbbbbb\">\n";
+   			$buffer .= "\t<td colspan=\"1\">&nbsp;</td>\n".
+				"</tr>\n<tr>\n".
+				"<td colspan=\"1\">&nbsp;</td>\n";
   			}
 
   		$dayp = $day + 1;
 
-   		//$datestr = createSqlDate( $thisYear, $thisMonth, $dayp );
-   		//$query = "SELECT * FROM " . $dbconfig["schedule_table"] . " WHERE " . sqlDuringDay( $datestr ) . "  AND (" . $groupquery . ")";
-   		//$result = dbQuery( $query );
-
-   		//if( $dayp == $thisDay ) 
-		//	{ 
-		//	$bgcolor = $config["cellheadtext"]; 
-		//	$txtcolor = $config["cellheadcolor"]; 
-		//	}
-   		//elseif( dbNumRows( $result ) >= 1) 
-		//	{ 
-		//	$bgcolor = $config["cellheadcolor"]; 
-		//	$txtcolor = $config["cellheadtext"]; 
-		//	}
-   		//else 
-		//	{ 
-		//	$bgcolor = $config["cellcolor"]; 
-		//	$txtcolor = $config["celltext"]; 
-		//	}
         $this_color = (
 	  ( $dayp == $this_day ) ?
            "#ccccff" :
            "#bbbbbb" );
 
-    $buffer .= "
-     <TD ALIGN=CENTER BGCOLOR=\"$this_color\">
-    ";
  
-        $hilitecolor = (
+        $thisclass = (
 	  ( $dayp       == $cur_day AND
             $this_month == $cur_month AND
             $this_year  == $cur_year ) ?
-            "#ff0000" : 
-            "#0000ff" );
+            "calcell_selected" : 
+            "calendar_mini_cell" );
        
-        $buffer .= "&nbsp;&nbsp;<A HREF=\"$this_url&selected_date=".
+	$buffer .= "<td align=\"RIGHT\" class=\"".$thisclass."\">\n";
+
+        $buffer .= "<a ".
+	  ( $thisclass=='calendar_mini_cell' ? "class=\"$thisclass\" " : "" ).
+	  "href=\"$this_url&selected_date=".
          date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
-         "\"><FONT COLOR=\"$hilitecolor\">$dayp</FONT></A>&nbsp;&nbsp;
-        ";
-   	//if( $dayp       == $cur_day AND
-        //    $this_month == $cur_month AND
-        //    $this_year  == $cur_year )
-        //  { $buffer .= "</B></FONT>"; }
+         "\">$dayp</a>\n";
       $buffer .= "
-       </TD>
+       </td>
       ";
       $day++;
       $day_row++;
@@ -452,21 +442,22 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     while( $day_row % 7 ) {
    	$buffer .= "
-         <TD ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">&nbsp;</TD>
+         <td ALIGN=\"RIGHT\" BGCOLOR=\"#dfdfdf\">&nbsp;</td>
         ";
    	$day_row += 1;  
     } // end of day row
     $buffer .= "
-     </TR>
-     <TR>
-     <TD COLSPAN=7 ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">
-      <A HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
-       $cur_day."\"
-      >".__("go to today")."</A>
-     </TD>
-     </TR>
-     </TABLE>
-     </CENTER>
+      <td colspan=\"1\">&nbsp;</td>
+     </tr>
+     <tr>
+     <td COLSPAN=\"9\" ALIGN=\"RIGHT\" class=\"button_style\">
+      <a HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
+       $cur_day."\" class=\"button_text\"
+      ><small>".__("go to today")."</small></a>
+     </td>
+     </tr>
+     </table>
+     </center>
     ";
 	return $buffer;
   } // end function fc_generate_calendar_mini
@@ -695,16 +686,6 @@ class freemedCalendar {
 		global $sql;
 
 		// Initialize the map;
-		unset ($map);
-		$map[count] = 0;
-		for ($hour=freemed::config_value("calshr");$hour<freemed::config_value("calehr");$hour++) {
-			for ($minute=00; $minute<60; $minute+=15) {
-				$idx = $hour.":".($minute==0 ? "00" : $minute);
-				$map[$idx][link] = 0; // no link
-				$map[$idx][span] = 1; // one slot per
-				$map[$idx][mark] = 0; // default marking
-			} // end init minute loop
-		} // end init hour loop
 		$idx = "";
 
 		// Get the query
@@ -721,27 +702,27 @@ class freemedCalendar {
 			} // end removing slashes
 
 			// Determine index
-			$idx = ($c[calhour]+0).":".( $c[calminute]==0 ?
-				"00" : ($c[calminute]+0) );
+			$idx = ($c['calhour']+0).":".( $c['calminute']==0 ?
+				"00" : ($c['calminute']+0) );
 			
 			// Insert into current position
-			$map[$idx][link] = $c[id];
-			$map[$idx][span] = ceil($c[calduration] / 15);
-			if ($c[calmark] > 0) {
-				$map[$idx][mark] = $c[calmark];
+			$map[$idx]['link'] = $c['id'];
+			$map[$idx]['span'] = ceil($c['calduration'] / 15);
+			if ($c['calmark'] > 0) {
+				$map[$idx]['mark'] = $c['calmark'];
 			}
 			$cur_pos = $idx;
 
 			// Clear out remaining portion of slot
 			$count = 1;
-			while ($count < $map[$idx][span]) {
+			while ($count < $map[$idx]['span']) {
 				// Move pointer forward
 				$cur_pos = freemedCalendar::next_time($cur_pos);
 				$count++;
 
 				// Zero those records
-				$map[$cur_pos][link] = 0;
-				$map[$cur_pos][span] = 0;
+				$map[$cur_pos]['link'] = 0;
+				$map[$cur_pos]['span'] = 0;
 			} // end clear out remaining portion of slot
 		} // end running through array
 
@@ -749,10 +730,10 @@ class freemedCalendar {
 		return $map;
 	} // end method freemedCalendar::map
 
-	function map_fit ( $map, $time, $duration=15 ) {
+	function map_fit ( $map, $time, $duration=15, $id = -1 ) {
 		// If this is already booked, return false
-		if ($map[$time][span] == 0) { return false; }
-		if ($map[$time][link] != 0) { return false; }
+		if ($map[$time]['span'] == 0) { return false; }
+		if ($map[$time]['link'] != 0) { return false; }
 
 		// If anything *after* it for its duration is booked...
 		if ($duration > 15) {
@@ -762,19 +743,115 @@ class freemedCalendar {
 				// Increment pointer to time
 				$cur_pos = freemedCalendar::next_time($cur_pos);
 
+				// If we're part of this id, return true
+				// (so we can slightly move a booking time)
+				if ($map[$cur_pos]['link'] == $id) {
+					return true;
+				}
+
 				// Check for past boundaries
 				list ($a, $b) = explode (":", $cur_pos);
-				if ($a>=freemed::config_value("calehr"))
+				if ($a>=freemed::config_value("calehr")) {
 					return false;
+				}
 
 				// If there's a link, return false
-				if ($map[$cur_pos][link] != 0) return false;
+				if ($map[$cur_pos]['link'] != 0) return false;
 			} // end looping through longer duration
 		} // end if duration > 15
 
 		// If all else fails, return true
 		return true;
 	} // end method freemedCalendar::map
+
+	function map_init () {
+		$map = array ( );
+		$map['count'] = 0;
+		for ($hour=freemed::config_value("calshr");$hour<freemed::config_value("calehr");$hour++) {
+			for ($minute=00; $minute<60; $minute+=15) {
+				$idx = $hour.":".($minute==0 ? "00" : $minute);
+				$map[$idx]['link'] = 0; // no link
+				$map[$idx]['span'] = 1; // one slot per
+				$map[$idx]['mark'] = 0; // default marking
+				$map[$idx]['selected'] = false; // selection
+				$map[$idx]['physician'] = 0;
+				$map[$idx]['room'] = 0;
+			} // end init minute loop
+		} // end init hour loop
+		return $map;
+	} // end method freemedCalendar::map_init
+
+	function multimap ( $query, $selected = -1 ) {
+		global $sql;
+
+		// Initialize the first map and current index
+		$idx = "";
+		$maps[0] = freemedCalendar::map_init();
+
+		// Get the query
+		$result = $sql->query($query);
+
+		// If nothing, return empty map
+		if (!$sql->results($result)) return $map;
+
+		// Run through query
+		while ($r = $sql->fetch_array($result)) {
+			// Move to "c" array, which is stripslashes'd
+			foreach ($r AS $k => $v) {
+				$c[(stripslashes($k))] = stripslashes($v);
+			} // end removing slashes
+
+			// Determine index
+			$idx = ($c['calhour']+0).":".( $c['calminute']==0 ?
+				"00" : ($c['calminute']+0) );
+
+			// Determine which is the first map that this fits into
+			$cur_map = 0; $mapped = false;
+			while (!$mapped) {
+				if (!freemedCalendar::map_fit($maps[$cur_map], $idx, $c['calduration'])) {
+					// Move to the next map
+					$cur_map++;
+					if (!is_array($maps[$cur_map])) {
+						$maps[$cur_map] = freemedCalendar::map_init();
+					}
+				} else {
+					// Jump out of the loop
+					$mapped = true;
+				}
+			} // end while not mapped
+			
+			// Insert into current position
+			$maps[$cur_map][$idx]['link'] = $c['id'];
+			$maps[$cur_map][$idx]['span'] = ceil($c['calduration'] / 15);
+			$maps[$cur_map][$idx]['physician'] = $c['calphysician'];
+			$maps[$cur_map][$idx]['room'] = $c['calroom'];
+
+			// Check for selected
+			if ($c['id'] == $selected) {
+				$maps[$cur_map][$idx]['selected'] = true;
+			}
+			
+			if ($c['calmark'] > 0) {
+				$maps[$cur_map][$idx]['mark'] = $c['calmark'];
+			}
+			$cur_pos = $idx;
+
+			// Clear out remaining portion of slot
+			$count = 1;
+			while ($count < $maps[$cur_map][$idx]['span']) {
+				// Move pointer forward
+				$cur_pos = freemedCalendar::next_time($cur_pos);
+				$count++;
+
+				// Zero those records
+				$maps[$cur_map][$cur_pos]['link'] = 0;
+				$maps[$cur_map][$cur_pos]['span'] = 0;
+			} // end clear out remaining portion of slot
+		} // end running through array
+
+		// Return completed maps
+		return $maps;
+	} // end method freemedCalendar::multimap
 
 	function next_time ( $time ) {
 		// Split into time components

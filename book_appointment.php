@@ -52,7 +52,7 @@ if (strlen($selected_date)!=10) {
 	$selected_date = $cur_date;
 } // fix date if not correct
 
-// set previous and next date variables...
+//----- Set previous and next date variables...
 $next = freemed_get_date_next ($selected_date);
 $next_wk = $selected_date;
 for ($i=1;$i<=7;$i++) $next_wk = freemed_get_date_next ($next_wk);
@@ -66,10 +66,10 @@ if (!$travel) {
 } else {
 	// Display travel bar
 	$display_buffer .= "
-	<div ALIGN=\"CENTER\">
-	<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"5\" WIDTH=\"100%\">
-	<tr BGCOLOR=\"#000000\"><td ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-	<font COLOR=\"#ffffff\"><b>".__("Travel")."</b></font>
+	<div align=\"CENTER\">
+	<table border=\"0\" cellspacing=\"0\" cellpadding=\"5\" width=\"100%\">
+	<tr bgcolor=\"#000000\"><td align=\"CENTER\" valign=\"MIDDLE\">
+	<font color=\"#ffffff\"><b>".__("Travel")."</b></font>
 	</td></tr></table>
 	</div>
 	";
@@ -93,8 +93,8 @@ $form .= "
 	"VALUE=\"".prepare($type)."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"patient\" ".
 	"VALUE=\"".prepare($patient)."\"/>
-	<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\"
-	 VALIGN=\"TOP\" ALIGN=\"CENTER\">
+	<table width=\"100%\" cellspacing=\"0\" cellpadding=\"2\" border=\"0\"
+	 valign=\"TOP\" align=\"CENTER\">
 ";
 
 //----- Add mini calendar to the top
@@ -116,10 +116,10 @@ $form .= "
 
 //----- Room/Physician/etc selection
 $form .= "
-	<td ALIGN=\"LEFT\">
+	<td align=\"LEFT\">
 	".html_form::form_table(array(
 	
-	"<small>Phy</small>" =>
+	"<small>".__("Phy")."</small>" =>
 	html_form::select_widget(
 		"physician", 
 		array_merge(
@@ -135,7 +135,7 @@ $form .= "
 		array('refresh' => true)
 	),
 
-	"<small>Rm</small>" =>
+	"<small>".__("Rm")."</small>" =>
 	html_form::select_widget(
 		"room",
 		( $travel ? array ( __("Travel") => "0" ) :
@@ -152,7 +152,7 @@ $form .= "
 		array('refresh' => true)
 	),
 
-	"<small>Dur</small>" =>
+	"<small>".__("Dur")."</small>" =>
 	html_form::select_widget(
 		"duration", 
 		array (
@@ -164,7 +164,9 @@ $form .= "
 			"1:30" => 90,	
 			"1:45" => 105,
 			"2:00" => 120,	
+			"2:30" => 150,	
 			"3:00" => 180,	
+			"3:30" => 210,	
 			"4:00" => 240,	
 			"5:00" => 300,	
 			"6:00" => 360,	
@@ -188,47 +190,59 @@ $form .= "
 ";
 
 //----- Generate calendar
-if ($room>0 and isset($physician)) { // check for this first
+//if ($room>0 and isset($physician)) { // check for this first
 
 // Get room information
-$rm_name = freemed::get_link_field ($room, "room", "roomname");
-$rm_desc = freemed::get_link_field ($room, "room", "roomdescrip");
+if ($room > 0) {
+	$_room = freemed::get_link_rec($room, 'room');
+	$rm_name = $_room['roomname'];
+	$rm_desc = $_room['roomdescrip'];
+}
 
 $form .= "
 	<tr><td COLSPAN=\"2\">
 	<!-- begin calendar display -->
 
-	<table WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0 CLASS=\"calendar\">
-	<tr><td COLSPAN=4 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+	<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\" CLASS=\"calendar\">
+	<!--
+	<tr><td COLSPAN=\"4\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 		<B>".__("Calendar")."</B>
 	</td></tr>
+	-->
 
 	<tr>
-		<td COLSPAN=\"2\" WIDTH=\"20%\">&nbsp;</td>
-		<td COLSPAN=\"1\" WIDTH=\"40%\">".__("Physician")."</td>
-		<td COLSPAN=\"1\" WIDTH=\"40%\">".prepare($rm_name)."</td>
+		<td COLSPAN=\"2\" WIDTH=\"50\">&nbsp;</td>
+		<td COLSPAN=\"".($columns + 1)."\">&nbsp;</td>
 	</tr>
 ";
 
-// Create maps for each
-$p_map = freemedCalendar::map("SELECT * FROM scheduler ".
-	"WHERE calphysician='".addslashes($physician)."' AND ".
-	"caldateof='".addslashes($selected_date)."'");
-$r_map = freemedCalendar::map("SELECT * FROM scheduler ".
-	"WHERE calroom='".addslashes($room)."' AND ".
-	"caldateof='".addslashes($selected_date)."'");
+//----- Generate a multiple mapping index (multimap)
+$maps = freemedCalendar::multimap(
+	"SELECT * FROM scheduler WHERE ( ".
+		"calphysician='".addslashes($physician)."' OR ".
+		"calroom='".addslashes($room)."' ) AND ".
+		"caldateof='".addslashes($selected_date)."'",
+		( isset($id) ? $id : -1 )
+);
+
+//----- Create blank map for time references
+$blank_map = freemedCalendar::map_init();
+
+//----- Set how many columns we need
+$columns = count($maps);
 
 // Loop through the hours
-for ($c_hour=freemed::config_value("calshr");
-	 $c_hour<freemed::config_value("calehr");
-	 $c_hour++) {
+for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("calehr"); $c_hour++) {
 	// Display beginning of row/hour
 	$form .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
-		"CLASS=\"calcell_hour\"><B>".
-		freemedCalendar::display_hour($c_hour)."</B></td>\n";
+		"CLASS=\"calcell_hour\"><b>".
+		freemedCalendar::display_hour($c_hour)."</b></td>\n";
 
 	// Loop through the minutes
 	for ($c_min="00"; $c_min<60; $c_min+=15) {
+		// Make sure to zero the current event counter
+		$event = false;
+	
 		// Change cell_class
 		$cell_class = alternate_colors (
 			array("cell", "cell_alt")
@@ -237,54 +251,66 @@ for ($c_hour=freemed::config_value("calshr");
 		// Get index
 		$idx = $c_hour.":".$c_min;
 	
-		// If 15 minutes, row change (because of rowspan args)
-		if ($c_min==15) {
-		//	$form .= "</tr><tr>\n";
-		}	
-
 		// Generate minute cell
-		$form .= "<td ALIGN=\"LEFT\" VALIGN=\"TOP\" CLASS=\"".
+		$form .= "<td align=\"LEFT\" valign=\"TOP\" class=\"".
 			$cell_class."\"".">:".$c_min."</td>\n";
 
-		// First physician...
-		$p_event = false;
-		if ($p_map[$idx]['span'] == 0) {
-			// Skip
-		} elseif ($p_map[$idx]['link'] != 0) {
-			// Display actual booking
-			$booking = freemed::get_link_rec(
-				$p_map[$idx]['link'], "scheduler"
-			);
+		// Set fit to true, by default
+		$fit = true;
+
+		// Loop through all maps
+		for($cur_map=0; $cur_map<$columns; $cur_map++) {
+			// Check for fitting
+			if (!freemedCalendar::map_fit($maps[$cur_map], $idx, $duration, $id)) {
+				$fit = false;
+			}
 			
-			// Show it
-			$p_event = true;
-			$form .= "
-			<td COLSPAN=\"1\" CLASS=\"".$cell_class."\" ".
-			"ROWSPAN=\"".($p_map[$idx]['span'])."\"".
-			">".freemedCalendar::event_calendar_print(
-			$p_map[$idx]['link'])."</td>
-			";
-		} else {
-			// Decide if it fits here
-		   if (freemedCalendar::map_fit($p_map, $idx, $duration)
-		   and (freemedCalendar::map_fit($r_map, $idx, $duration))) {
-				$form .= "<td COLSPAN=\"2\" ALIGN=\"CENTER\"".
-				" CLASS=\"calendar_book_link\" ".
+			if ($maps[$cur_map][$idx]['span'] == 0) {
+				// Skip
+				$event = true;
+			} elseif ($maps[$cur_map][$idx]['link'] != 0) {
+				// Display booking
+				$booking = freemed::get_link_rec(
+					$maps[$cur_map][$idx]['link'],
+					'scheduler'
+				);
+
+				// Show the event
+				$event = true;
+				$form .= "
+				<td colspan=\"1\" class=\"".(
+				$maps[$cur_map][$idx]['selected'] ?
+				'calcell_selected' : $cell_class )."\" ".
+				"rowspan=\"".($maps[$cur_map][$idx]['span']).
+				"\">".freemedCalendar::event_calendar_print(
+					$maps[$cur_map][$idx]['link']
+				)."</td>\n";
+			} else {
+				// If not, null block
+				$form .= "<td colspan=\"1\" ".
+				"class=\"".$cell_class."\" ".
+				">&nbsp;</td>\n";
+			}
+		} // end looping
+
+		// If overbooking, true fit by default
+		if (freemed::config_value('cal_ob') == 'enable') {
+			$fit = true;
+		} elseif ($event) {
+			$fit = false;
+		}
+
+		// Quick check to see if this will fit on a blank map
+		if (!freemedCalendar::map_fit($blank_map, $idx, $duration)) {
+			$fit = false;
+		}
+
+		// Add booking row
+		if ($fit) {
+			$form .= "<td colspan=\"1\" align=\"CENTER\"".
+				" class=\"calendar_book_link\" ".
 				"onClick=\"window.location='".
-					page_name()."?process=1&".
-					"hour=".urlencode($c_hour)."&".
-					"minute=".urlencode($c_min)."&".
-					"room=".urlencode($room)."&".
-					"physician=".urlencode($physician)."&".
-					"duration=".urlencode($duration)."&".
-					"type=".urlencode($type)."&".
-					"selected_date=".urlencode($selected_date)."&".
-					"id=".urlencode($id)."&".
-					"note=".urlencode($note)."&".
-					"patient=".urlencode($patient)."'; ".
-					"return true;\"".
-				">".
-				"<a HREF=\"".page_name()."?process=1&".
+				page_name()."?process=1&".
 				"hour=".urlencode($c_hour)."&".
 				"minute=".urlencode($c_min)."&".
 				"room=".urlencode($room)."&".
@@ -294,45 +320,27 @@ for ($c_hour=freemed::config_value("calshr");
 				"selected_date=".urlencode($selected_date)."&".
 				"id=".urlencode($id)."&".
 				"note=".urlencode($note)."&".
-				"patient=".urlencode($patient)."\"".
+				"patient=".urlencode($patient)."'; ".
+				"return true;\" ".
+				"onMouseOver=\"window.status='".__("Book an appointment at this time")."'; return true;\" ".
+				"onMouseOut=\"window.status=''; return true;\"".
+				">".
+				"<a href=\"".page_name()."?process=1&".
+				"hour=".urlencode($c_hour)."&".
+				"minute=".urlencode($c_min)."&".
+				"room=".urlencode($room)."&".
+				"physician=".urlencode($physician)."&".
+				"duration=".urlencode($duration)."&".
+				"type=".urlencode($type)."&".
+				"selected_date=".urlencode($selected_date)."&".
+				"id=".urlencode($id)."&".
+				"note=".urlencode($note)."&".
+				"patient=".urlencode($patient)."\" ".
+				"class=\"button\"".
 				">".__("Book")."</a></td>\n";
-			} else {
-				// If not, null block
-				$form .= "<td COLSPAN=\"1\" ".
-					"CLASS=\"".$cell_class."\" ".
-					">&nbsp;</td>\n";
-			}
-		} // end of processing physician map
-
-		// ... then room
-		if ($r_map[$idx]['span'] == 0) {
-			// Skip
-		} elseif ($r_map[$idx]['link'] != 0) {
-			// Display actual booking
-			$booking = freemed::get_link_rec(
-				$r_map[$idx]['link'], "scheduler"
-			);
-			
-			// Show it
-			$form .= "
-			<td COLSPAN=\"1\" ROWSPAN=\"".$r_map[$idx]['span']."\"".
-			" CLASS=\"calcell\">".
-			freemedCalendar::event_calendar_print(
-			$r_map[$idx]['link'])."</td>
-			";
 		} else {
-			// Decide if it fits here
-		   if (freemedCalendar::map_fit($p_map, $idx, $duration)
-		   and (freemedCalendar::map_fit($r_map, $idx, $duration))) {
-				// Already in physician map
-				$form .= "";
-			} else {
-				// If not, null block
-				$form .= "<td COLSPAN=\"1\" ".
-					"CLASS=\"".$cell_class."\"".
-					">&nbsp;</td>\n";
-			}
-		} // end of processing room map
+			$form .= "<td class=\"".$cell_class."\">&nbsp;</td>\n";
+		}
 
 		// End of row
 		$form .= "</tr>\n"; $row = false;
@@ -348,7 +356,7 @@ $form .= "
 	</table>
 ";
 
-} // end of checking for room & physician
+//} // end of checking for room & physician
 
 //----- End of page
 $form .= "
@@ -378,9 +386,6 @@ if ($process) {
 		// Get facility for current room
 		$facility = freemed::get_link_field($room, "room", "roompos");
 	}
-
-	// Get facility from room
-	$facility = freemed::get_link_field($room, "room", "roompos");
 
 	if (!$id) {
 		$query = $sql->insert_query(
@@ -433,7 +438,8 @@ if ($process) {
 		if ($type != "temp") {
 			$refresh = "manage.php?id=".urlencode($patient);
 			$display_buffer .= "
-			<a HREF=\"manage.php?id=$patient\"
+			<a href=\"manage.php?id=$patient\"
+			class=\"button\"
 			>".__("Manage Patient")."</a>
 			</div>
 			";
@@ -441,7 +447,8 @@ if ($process) {
 			$refresh = "call-in.php?action=display&id=".
 				urlencode($patient);
 			$display_buffer .= "
-			<a HREF=\"call-in.php?action=display&id=$patient\"
+			<a href=\"call-in.php?action=display&id=$patient\"
+			class=\"button\"
 			>".__("Manage Patient")."</a>
 			</div>
 			";
