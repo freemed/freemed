@@ -197,7 +197,7 @@ function freemed_display_arraylist ($var_array, $xref_array="")
 // function freemed_display_banner (page description)
 function freemed_display_banner ($_pg_desc="")
 {
-  global $STDFONT_B, $STDFONT_E, $bugs_address,
+  global $STDFONT_B, $STDFONT_E,
          $show_top_links;
 
   echo " 
@@ -213,7 +213,7 @@ function freemed_display_banner ($_pg_desc="")
       <$STDFONT_B SIZE=-1>
        <I>homepage : <A HREF=\"http://www.freemed.org\"
         >http://www.freemed.org</A></I><BR>
-       <I>bugs : <A HREF=\"$bugs_address\"
+       <I>bugs : <A HREF=\"".prepare(BUGS_ADDRESS)."\"
         >$bugs_address</A></I>
       <$STDFONT_E>
     ";
@@ -1094,10 +1094,10 @@ function freemed_display_selectbox ($result, $format, $param="")
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="")
 {
-  global $physical_loc, $default_language, $cur_date_hash, 
+  global $default_language, $cur_date_hash, 
          $debug;
 
-  $physical_file = $physical_loc . "/data/" . $default_language . "/" .
+  $physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . "/" .
     $table_name . "." . $default_language . "." . $cur_date_hash;
 
   #if (strlen ($file_name) > 2) $physical_file = $file_name;
@@ -1253,9 +1253,9 @@ function freemed_get_userlevel ($f_cookie="")
 //  import stock data from data/$language directory
 function freemed_import_stock_data ($table_name)
 {
-  global $physical_loc, $default_language;
+  global $default_language;
 
-  $physical_file = $physical_loc . "/data/" . $default_language . "/" .
+  $physical_file = PHYSICAL_LOCATION . "/data/" . $default_language . "/" .
     $table_name . "." . $default_language . ".data";
 
   if (!file_exists($physical_file)) return false;

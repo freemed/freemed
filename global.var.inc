@@ -3,7 +3,7 @@
  // note: global variables for entire freemed code base
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
- // mod : 2000-08-15
+ // mod : 2000-09-11
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
@@ -16,10 +16,10 @@ define (__GLOBAL_VAR_INC__, true);
     // these variables you should not touch
   define (PACKAGENAME, "freemed");			// package name
   define (CODED_BY, "The Freemed Project");		// coded by tag
-  define (VERSION, "0.2.0-test1 (pre-Phoenix)");	// current version
+  define (VERSION, "0.2.0-test2 (pre-Phoenix)");	// current version
   define (BUGS_EMAIL, "code_bugs@ourexchange.net");	// coder email...
 
-  $bugs_address="http://sourceforge.net/project/freemed/";
+  define (BUGS_ADDRESS, "http://sourceforge.net/project/freemed/");
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
   $cur_date_hash=date("Ymd");		// YYYYMMDD date hash
   $_auth="default_value=yes";		// authentication (KFM fix)
@@ -33,10 +33,13 @@ define (__GLOBAL_VAR_INC__, true);
     // **********************************
   define (INSTALLATION, "Stock Freemed Install"); // installation name
   define (LOCALEDIR,	"/usr/share/locale");     // gettext location
-  $show_top_links=true;                 // do we show links on the top?
+  define (DB_HOST, "localhost");	// database (SQL) host location
+  define (PHYSICAL_LOCATION, "/usr/freemed");
+  $database="freemed";			// SQL db name (for places
+
+  //$show_top_links=true;                 // do we show links on the top?
   //$host=chop(`cat /etc/HOSTNAME`); 	// webserver location
   $host="localhost";                    // skip the eval, speed hack
-  define (DB_HOST, "localhost");	// database (SQL) host location
   //$physical_loc="/var/freemed";       // physical directory location
   //$physical_loc=chop(`pwd`);            // get physical dir from "pwd"
   $physical_loc="/usr/freemed";         // skip the eval, speed hack
@@ -102,7 +105,7 @@ define (__GLOBAL_VAR_INC__, true);
   $cal_ending_hour   = "18"; // end at 6 o'clock pm
 
   // maximum number of returned results in multipage result queries
-  $max_num_res = 20;
+  $max_num_res = 15;
 
   // now, some all-purpose time savers
   // don't touch unless you -KNOW- what you are doing.
@@ -113,9 +116,6 @@ define (__GLOBAL_VAR_INC__, true);
   $STDFONT_B    = "FONT FACE=\"Arial, Helvetica, Verdana\"";
   $STDFONT_E    = "/FONT";
 
-  $ADD          = "<$STDFONT_B SIZE=-1>ADD<$STDFONT_E>";
-  $MOD          = "<$STDFONT_B SIZE=-1>MOD<$STDFONT_E>";
-  $DEL          = "<$STDFONT_B SIZE=-1>DEL<$STDFONT_E>";
   $brackets     = "[]";
 
   //if ($default_facility>0) {
