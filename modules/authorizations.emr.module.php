@@ -1,7 +1,7 @@
 <?php
  // $Id$
  // note: patient authorizations module
- // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // code: jeff b (jeff@ourexchange.net)
  //       adam b (gdrago23@yahoo.com)
  // lic : GPL, v2
 
@@ -11,7 +11,7 @@ class AuthorizationsModule extends EMRModule {
 
 	var $MODULE_NAME    = "Insurance Authorizations";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_DESCRIPTION = "
 		Insurance authorizations are used to track whether
 		a patient is authorized by his or her insurance
@@ -45,19 +45,19 @@ class AuthorizationsModule extends EMRModule {
 	);
 
 	function AuthorizationsModule () {
-		$this->EMRModule();
- 
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			_("From") => "authdtbegin",
 			_("To")   => "authdtend"
 		);
+
+		// Run parent constructor
+		$this->EMRModule();
 	} // end constructor AuthorizationsModule
 
 	function form () {
 		global $display_buffer;
-		reset($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
      switch ($action) { // internal action switch
       case "addform":
@@ -155,68 +155,45 @@ class AuthorizationsModule extends EMRModule {
 	} // end function AuthorizationsModule->form()
 
 	function add () {
-		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $cur_date, $patient;
+		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $patient;
 		$authdtbegin = fm_date_assemble("authdtbegin");
 		$authdtend   = fm_date_assemble("authdtend");
-		$authdtadd   = $cur_date;
+		$authdtadd   = date("Y-m-d");
 		$authpatient = $patient;
 		$this->_add();
 	} // end function AuthorizationsModule->add()
 
 	function mod () {
-		global $authpatient, $authdtbegin, $authdtend, $authdtmod, $cur_date, $patient;
+		global $authpatient, $authdtbegin, $authdtend, 
+			$authdtmod, $patient;
 		$authdtbegin = fm_date_assemble("authdtbegin");
-		$authdtend   = fm_date_assemble("authdtend");
-		$authdtmod    = $cur_date;
+		$authdtend = fm_date_assemble("authdtend");
+		$authdtmod = date("Y-m-d");
 		$authpatient = $patient;
 		$this->_mod();
 	} // end function AuthorizationsModule->mod()
 
 	function view () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-     $query = "SELECT * FROM $this->table_name
-        WHERE (authpatient='".addslashes($patient)."')
-        ORDER BY authdtbegin,authdtend";
-     $result = $sql->query ($query);
-     $rows = ( ($result > 0) ? $sql->num_rows ($result) : 0 );
-
-     if ($rows < 1) {
-       $display_buffer .= "
-         <P>
-         <CENTER>
-         "._("This patient has no authorizations.")."
-         </CENTER>
-         <P>
-         <CENTER>
-         <A HREF=\"$this->page_name?action=addform&module=$module&patient=$patient\"
-          >"._("Add")." "._("$record_name")."</A>
-         <B>|</B>
-         <A HREF=\"manage.php?id=$patient\"
-          >"._("Manage Patient")."</A>
-         </CENTER>
-         <P>
-       ";
-       template_display();
-     } // if there are none...
-
-       // or else, display them...
-     $display_buffer .= "
-       <P>
-     ".
-     freemed_display_itemlist (
-       $result,
-       $this->page_name,
-       array (
-         "Dates" => "authdtbegin",
-	 "<FONT COLOR=\"#000000\">_</FONT>" => 
-	    "", // &nbsp; doesn't work, dunno why
-	 "&nbsp;"  => "authdtend"
-       ),
-       array ("", "/", "")
-     );
+		$display_buffer .= freemed_display_itemlist (
+			$sql->query(
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				"WHERE (authpatient='".addslashes($patient)."' ".
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY authdtbegin,authdtend"
+			),
+			$this->page_name,
+			array (
+				"Dates" => "authdtbegin",
+				"<FONT COLOR=\"#000000\">_</FONT>" => 
+					"", // &nbsp; doesn't work, dunno why
+				"&nbsp;"  => "authdtend"
+			),
+			array ("", "/", "")
+		);
 	} // end function AuthorizationsModule->view()
 
 } // end class AuthorizationsModule

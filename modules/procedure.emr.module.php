@@ -52,14 +52,14 @@ class ProcedureModule extends EMRModule {
 	);    
 
 	function ProcedureModule () {
-		// call parent constructor
-		$this->EMRModule();
-
 		// Set vars for patient management
 		$this->summary_vars = array (
 			_("Date")    => "procdt",
 			_("Comment") => "proccomment"
 		);
+
+		// Call parent constructor
+		$this->EMRModule();
 	} // end constructor ProcedureModule
 
 	function addform() {
@@ -104,21 +104,21 @@ class ProcedureModule extends EMRModule {
 		// Check for eoc
 		if (check_module("episodeOfCare")) {
 			$related_episode_array = array ( _("Episode of Care") =>
-			freemed_multiple_choice ("SELECT * FROM eoc
-								  WHERE eocpatient='$patient'
-								  ORDER BY eocdtlastsimilar DESC",
-								 "eocstartdate:eocdtlastsimilar:eocdescrip",
-								 "proceoc",
-								 $proceoc,
-								 false)
+				freemed_multiple_choice ("SELECT * FROM eoc
+				 WHERE eocpatient='$patient'
+				 ORDER BY eocdtlastsimilar DESC",
+				 "eocstartdate:eocdtlastsimilar:eocdescrip",
+				 "proceoc",
+				 $proceoc,
+				 false)
 			);
 		} else {
 			$related_episode_array = array ( "" => "" );
 		} // end checking for eoc
 
 		// ************** BUILD THE WIZARD ****************
-		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id",
-		"module") );
+		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", 
+			"patient", "id", "module", "return") );
 		$wizard->add_page ("Step One",
 			array_merge(array("procphysician", "proceoc", "procrefdoc",
 							  "proccpt", "proccptmod", "procunits", 
@@ -338,21 +338,23 @@ class ProcedureModule extends EMRModule {
 				<BR>
 				"._("Committing to ledger")." ... 
 				";
-				$query = "INSERT INTO payrec VALUES (
-					'$cur_date',
-					'0000-00-00',
-					'$patient',
-					'".fm_date_assemble("procdt")."',
-					'".PROCEDURE."',
-					'$this_procedure',
-					'$proccurcovtp',
-					'$proccurcovid',
-					'0',
-					'',
-					'$procbalorig',
-					'".addslashes($proccomment)."',
-					'unlocked',
-					NULL )";
+				$query = $sql->insert_query("payrec",
+					array(
+						'payrecdtadd' => date('Y-m-d'),
+						'payrecdtmod' => '0000-00-00',
+						'payrecpatient' => $patient,
+						'payrecdt' => fm_date_assemble("procdt"),
+						'payreccat' => PROCEDURE,
+						'payrecproc' => $this_procedure,
+						'payrecsource' => $proccurcovtp,
+						'payreclink' => $proccurcovid,
+						'payrecype' => '0',
+						'payrecnum' => '',
+						'payrecamt' => $procbalorig,
+						'payrecdescrip' => $proccomment,
+						'payreclock' => 'unlocked'
+					)
+				);
 				$result = $sql->query ($query);
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
 				if ($result) { $display_buffer .= _("done")."."; }
@@ -363,12 +365,15 @@ class ProcedureModule extends EMRModule {
 				$display_buffer .= "
 				<BR>
 				"._("Updating patient diagnoses")." ...  ";
-				$query = "UPDATE patient SET
-					ptdiag1  = '$procdiag1',
-					ptdiag2  = '$procdiag2',
-					ptdiag3  = '$procdiag3',
-					ptdiag4  = '$procdiag4'
-					WHERE id = '$patient'";
+				$query = $sql->update_query(
+					'patient',
+					array(
+						'ptdiag1' => $procdiag1,
+						'ptdiag2' => $procdiag2,
+						'ptdiag3' => $procdiag3,
+						'ptdiag4' => $procdiag4
+					), array ('id' => $patient)
+				);
 				$result = $sql->query ($query);
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
 				if ($result) { $display_buffer .= _("done")."."; }
@@ -396,32 +401,44 @@ class ProcedureModule extends EMRModule {
 				</CENTER>
 				<P>
 				";
+
+			global $refresh;
+			if ($GLOBALS['return'] == 'manage') {
+				$refresh = 'manage.php?id='.urlencode($patient);
+			}
 		
 		} // end wizard done
 
 		if ($wizard->is_cancelled())
 		{
-				$display_buffer .= "
-				<P>
-				<CENTER><B>"._(Cancelled)."</B><BR>
-				 <A HREF=\"manage.php?id=$patient\"
-				 >"._("Manage Patient")."</A> 
-				";
+			$display_buffer .= "
+			<p/>
+			<div ALIGN=\"CENTER\"><b>"._(Cancelled)."</b></div>
+			<p/>
+			<div ALIGN=\"CENTER\">
+			 <a HREF=\"manage.php?id=$patient\"
+			 >"._("Manage Patient")."</a> 
+			</div>
+			";
 
+			global $refresh;
+			if ($GLOBALS['return'] == 'manage') {
+				$refresh = 'manage.php?id='.urlencode($patient);
+			}
+		
 		} // end cancelled
 
 	} // end addform
 
 	function modform() {
 		global $display_buffer;
-		reset ($GLOBALS);
-        while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		if (!$been_here)
 		{
 			while(list($k,$v)=each($this->proc_fields))
 			{
-				global $$v;
+				global ${$v};
 			}
 			$this_data = freemed::get_link_rec ($id, $this->table_name);
 			extract ($this_data); // extract all of this data
@@ -438,7 +455,7 @@ class ProcedureModule extends EMRModule {
 		$clmtype_result = $sql->query($clmtype_query);
 
 		// ************** BUILD THE WIZARD ****************
-		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id", "module") );
+		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id", "module", "return") );
 
 		$wizard->add_page ("Step One",
 				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
@@ -452,19 +469,19 @@ class ProcedureModule extends EMRModule {
 								 $proceoc,
 								 false),
 		  _("Voucher Number") =>
-			"<INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"".prepare($procvoucher)."\" ".
-			"SIZE=20>\n",
+		  	html_form::text_widget('procvoucher', 20),
 		  _("Authorization") =>
 			"<SELECT NAME=\"procauth\">\n".
 			"<OPTION VALUE=\"0\" ".
 			( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
 			$auth_r_buffer.
 			"</SELECT>\n",
-		  _("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
-		  _("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
+		  _("Certifications") =>
+		  	freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
+		  _("Claim Type") => 
+		  	freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  _("Comment") =>
-			"<INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"".prepare($proccomment)."\" ".
-			"SIZE=30 MAXLENGTH=512>\n"
+		  	html_form::text_widget('proccomment', 30, 512)
 			) ) 
 		); // end of page one
 

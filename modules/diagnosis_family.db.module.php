@@ -9,7 +9,7 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Diagnosis Family Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_DESCRIPTION = "
 		Diagnosis families are part of FreeMED's attempt to
 		make practice management more powerful through outcomes
@@ -34,51 +34,46 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 		$this->MaintenanceModule();
 	} // end constructor DiagnosisFamilyMaintenance 
 
-	//function addform () { $this->view(); }
+	function addform () { $this->view(); }
 
-	function modform () {
+	function form () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-
-    // grab record number "id"
-  $result = $sql->query("SELECT * FROM $this->table_name ".
-    "WHERE ( id = '$id' )");
-
-  $r = $sql->fetch_array($result); // dump into array r[]
-  extract ($r);
+		// grab record number "id"
+		if ($GLOBALS['action'] == 'modform') {
+			$r = freemed::get_link_rec($id, $this->table_name);
+	  		extract ($r);
+			foreach ($r AS $k => $v) {
+				global ${$k};
+				${$k} = stripslashes($v);
+			}
+		}
 
   $display_buffer .= "
-    <P>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-    <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\"  >
+    <p/>
+    <form ACTION=\"$this->page_name\" METHOD=\"POST\">
+    <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+    	( ($action=='modform') ? 'mod' : 'add' )."\"/>
+    <input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+    <input TYPE=\"HIDDEN\" NAME=\"id\"     VALUE=\"".prepare($id)."\"/>
 
-    <CENTER><TABLE CELLSPACING=0 CELLPADDING=3 BORDER=0>
+    <div ALIGN=\"CENTER\">
+    ".html_form::form_table(array(
+    
+		_("Name") =>
+		html_form::text_widget('dfname', 20, 100),
 
-    <TR>
-     <TD ALIGN=RIGHT>"._("Name")." : </TD>
-     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"dfname\" SIZE=20 MAXLENGTH=100
-      VALUE=\"".prepare($dfname)."\"></TD>
-    </TR>
+		_("Description") =>
+		html_form::text_widget('dfdescrip', 30, 100)
 
-    <TR>
-     <TD ALIGN=RIGHT>"._("Description")." : </TD>
-     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"dfdescrip\" SIZE=30 MAXLENGTH=100
-      VALUE=\"".prepare($dfdescrip)."\"></TD>
-    </TR>
+     ))."</div>
 
-    <TR>
-     <TD ALIGN=CENTER COLSPAN=2>
-     <CENTER>
-      <INPUT TYPE=SUBMIT VALUE=\" "._("Modify")." \">
-      <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
-     </CENTER>
-     </TD>
-    </TR>
-    </TABLE></CENTER>
+     <div ALIGN=\"CENTER\">
+      <input TYPE=\"SUBMIT\" VALUE=\" ".(
+      	($action=='modform') ? _("Modify") : _("Add") )." \"/>
+      <input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+    </div>
 
     </FORM>
 
@@ -92,45 +87,26 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 
 	function view () {
 		global $display_buffer;
-		global $sql;
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query ( "SELECT * FROM $this->table_name ".
-				"ORDER BY $this->order_field"),
-		$this->page_name,
-		array (
-		_("Name")		=>	"dfname",
-		_("Description")	=>	"dfdescrip"
-		),
-		array ("", _("NO DESCRIPTION")), "", "t_page"
+			$GLOBALS['sql']->query ( 
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY $this->order_field"
+			),
+			$this->page_name,
+			array (
+				_("Name")		=>	"dfname",
+				_("Description")	=>	"dfdescrip"
+			),
+			array ("", _("NO DESCRIPTION")), 
+			"", 
+			"t_page"
 		);
-	} // end function DiagnosisFamilyMaintenance->view
 
-	
-	function addform() {
-		global $display_buffer;
-		//global $module;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-		$display_buffer .= "
-			<FORM ACTION=\"$this->page_name\" METHOD=POST>
-			<CENTER>
-			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
-			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-			<CENTER>
-		".html_form::form_table ( array (
-			_("Name") =>
-				html_form::text_widget ("dfname", 100),
-			_("Description") =>
-				html_form::text_widget ("dfdescrip", 100)
-		) )."
-			</CENTER>
-			<BR>
-			<CENTER>
-			<INPUT TYPE=SUBMIT VALUE=\""._("ADD")."\">
-			</CENTER>
-			</FORM>
-		";
-	} // end function _addform
+		// Addition form at the bottom of the page
+		$this->form();
+	} // end function DiagnosisFamilyMaintenance->view
 
 } // end class DiagnosisFamilyMaintenance
 

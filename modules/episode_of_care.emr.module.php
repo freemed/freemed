@@ -9,7 +9,7 @@ class EpisodeOfCare extends EMRModule {
 
 	var $MODULE_NAME = "Episode of Care";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_DESCRIPTION = "
 		Episode of care is another portion of FreeMED
 		designed to help with outcomes management. Any
@@ -812,12 +812,6 @@ class EpisodeOfCare extends EMRModule {
 		// images display
 		// special jimmy-rigged query to find in 3d array...
 		$display_buffer .= "<P>\n";
-		$query = "SELECT * FROM images ".
-			"WHERE ((imageeoc LIKE '".addslashes($id).":%') OR ".
-			"(imageeoc LIKE '%:".addslashes($id)."') OR ".
-			"(imageeoc LIKE '%:".addslashes($id).":%') OR ".
-			"(imageeoc='".addslashes($id)."')) ".
-			"ORDER BY imagedt DESC";
 		$result = $sql->query ($query);
   
 		$r_name = $record_name; // backup
@@ -826,7 +820,16 @@ class EpisodeOfCare extends EMRModule {
 		$save_module = $module;
 		$module = "patientImages"; // pass for the module loader
 		$display_buffer .= freemed_display_itemlist (
-			$result,
+			$sql->query (
+				"SELECT * ".
+				"FROM images ".
+				"WHERE ((imageeoc LIKE '".addslashes($id).":%') OR ".
+				"(imageeoc LIKE '%:".addslashes($id)."') OR ".
+				"(imageeoc LIKE '%:".addslashes($id).":%') OR ".
+				"(imageeoc='".addslashes($id)."')) ".
+				//freemed::itemlist_conditions(false)." ".
+				"ORDER BY imagedt DESC"
+			),
 			"module_loader.php",
 			array (
 				_("Date") => "imagedt",
@@ -845,25 +848,27 @@ class EpisodeOfCare extends EMRModule {
 		// end of progress notes display
 		// display management link at the bottom...
 		$display_buffer .= "
-		<P>
-		<CENTER>
-		<A HREF=\"$this->page_name?patient=$patient&module=$module\"
-		>"._("Choose Another $record_name")."</A>
-		</CENTER>
+		<p/>
+		<div ALIGN=\"CENTER\">
+		<a HREF=\"$this->page_name?patient=$patient&module=$module\"
+		>"._("Choose Another $record_name")."</a>
+		</div>
 		<P>
 		";
 	} // end function EpisodeOfCare->display
 
 	function view () {
 		global $display_buffer;
-		//global $sql;
-		reset ($GLOBALS);
-		foreach ($GLOBALS as $k => $v) global $$k;
+		foreach ($GLOBALS as $k => $v) { global ${$k}; }
 
 		$display_buffer .= freemed_display_itemlist(
-			$sql->query ("SELECT * FROM $this->table_name
-                         WHERE eocpatient='".addslashes($patient)."'
-                         ORDER BY eocstartdate DESC"),
+			$GLOBALS['sql']->query (
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				"WHERE eocpatient='".addslashes($patient)."' ".
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY eocstartdate DESC"
+			),
 			$this->page_name,
 			array (
 				_("Starting Date") => "eocstartdate",

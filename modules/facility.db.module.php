@@ -52,8 +52,7 @@ class FacilityMaintenance extends MaintenanceModule {
 
 	function form () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
   $book = CreateObject('PHP.notebook', array ("action", "id", "module"),
     NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
@@ -190,8 +189,12 @@ class FacilityMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		global $sql;
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query ("SELECT * FROM $this->table_name ".
-				"ORDER BY psrname,psrnote"),
+			$sql->query (
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY psrname,psrnote"
+			),
 			$this->page_name,
 			array (
 				_("Name")         => "psrname",

@@ -10,7 +10,7 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Specialties Maintenance";
 	var $MODULE_AUTHOR  = "Adam (gdrago23@yahoo.com)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -42,10 +42,12 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
 		} // if this is a modform...
 
 		$display_buffer .= freemed_display_itemlist(
-			$sql->query ("SELECT * FROM $this->table_name ".
-				( (strlen($_s_val)>0) ?
-					"WHERE $_s_field LIKE '%".addslashes($_s_val)."%' " : "" ).
-				"ORDER BY specname,specdesc"),
+			$sql->query (
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY specname,specdesc"
+			),
 			$this->page_name,
 			array (
 				_("Specialty") 			=> 	"specname",
@@ -53,8 +55,8 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
 			),
 			array ("", _("NO DESCRIPTION"))
 			)."
-   <CENTER>
-   <TABLE>".
+			<CENTER>
+			<TABLE>".
     (($action=="modform") ? "
       <FORM ACTION=\"$this->page_name\" METHOD=POST>
       <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 

@@ -20,12 +20,14 @@ class ProviderStatusMaintenance extends MaintenanceModule {
 	var $variables = array ( "phystatus" );
 
 	function ProviderStatusMaintenance () {
-		$this->MaintenanceModule();
-
+		// Define database table
 		$this->table_definition = array (
 			"phystatus" => SQL_VARCHAR(30),
 			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
 		);
+
+		// Call parent constructor
+		$this->MaintenanceModule();
 	} // end contructor ProviderStatusMaintenance
 
 	function form () {

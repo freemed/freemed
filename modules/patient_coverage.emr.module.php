@@ -34,8 +34,7 @@ class PatientCoveragesModule extends EMRModule {
 
 	function modform() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		if ($id<=0) {
 			$display_buffer .= _("ID not valid");
@@ -447,13 +446,21 @@ class PatientCoveragesModule extends EMRModule {
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled())
 		{
-			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>";
+			$display_buffer .= "<div ALIGN=\"CENTER\">".$wizard->display()."</div>";
 			return;
 		}
 		if ($wizard->is_cancelled())
 		{
 			// if the wizard was cancelled
-			$display_buffer .= "<CENTER>CANCELLED<BR></CENTER><BR>\n";
+			global $refresh;
+			if ($GLOBALS['return'] == 'manage') {
+				$refresh = "manage.php?id=".urlencode($patient);
+			} else {
+				$refresh = $this->page_name."?module=".
+					urlencode($module)."&patient=".
+					urlencode($patient);
+			}
+			return false;
 		}
 		// wizard must be done
 
@@ -468,19 +475,20 @@ class PatientCoveragesModule extends EMRModule {
 			if (!empty($error_msg))
 			{
 				$display_buffer .= "
-      				<P>
-      				<CENTER>Entry Error found<BR></CENTER>
-      				<CENTER>$error_msg<BR></CENTER>
-      				<P>
-      				<CENTER>
-      				<FORM ACTION=\"$this->page_name\" METHOD=POST>
-       				<INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"addform\">
-       				<INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
-       				<INPUT TYPE=HIDDEN NAME=\"module\"      VALUE=\"$module\">
-       				<INPUT TYPE=SUBMIT VALUE=\"  Try Again  \">
-      				</FORM>
-      				</CENTER>
-     				";
+      				<p/>
+      				<div ALIGN=\"CENTER\">Entry Error found</div>
+				<br/>
+      				<div ALIGN=\"CENTER\">$error_msg</div>
+      				<p/>
+      				<div ALIGN=\"CENTER\">
+      				<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+       				<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\"/>
+       				<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"$patient\"/>
+       				<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"$module\"/>
+       				<input TYPE=\"SUBMIT\" VALUE=\"  Try Again  \"/>
+      				</form>
+      				</div>
+				";
 					return;
 			}
 			// we should be good to go
@@ -488,9 +496,10 @@ class PatientCoveragesModule extends EMRModule {
 			// start by replacing existing coverages.
 			if ($covreplace==1) // replace an existing coverage
 			{
-				$display_buffer .= "Removing Old Coverage<BR>\n";
-				$query = "UPDATE coverage SET covstatus='".DELETED."' WHERE covtype='".addslashes($covtype)."'".
-						 " AND covpatient='".addslashes($patient)."'";
+				$display_buffer .= _("Removing old coverage")."<br/>\n";
+				$query = "UPDATE coverage SET covstatus='".DELETED."' ".
+					"WHERE covtype='".addslashes($covtype)."' ".
+					"AND covpatient='".addslashes($patient)."'";
 				$updres = $sql->query($query);
 				if (!$updres) {
 					$display_buffer .= _("Error updating coverage status");
@@ -504,101 +513,105 @@ class PatientCoveragesModule extends EMRModule {
 			$covdob = fm_date_assemble("covdob");
 			$covrelinfodt = fm_date_assemble("covrelinfodt");
 
-			$display_buffer .= "<CENTER>";
+			$display_buffer .= "<div ALIGN=\"CENTER\">";
 			$display_buffer .= _("Adding")." ... \n";
 			$covstatus = ACTIVE;  // active
-			$query = $sql->insert_query($this->table_name,
-										array (
-										"covdtadd" => $cur_date,
-										"covdtmod" => $cur_date,
-										"covlname" => $covlname,
-										"covfname" => $covfname,
-										"covmname" => $covmname,
-										"covaddr1" => $covaddr1,
-										"covaddr2" => $covaddr2,
-										"covcity" => $covcity,
-										"covstate" => $covstate,
-										"covzip" => $covzip,
-										"covrel" => $covrel,
-										"covsex" => $covsex,
-										"covdob" => $covdob,
-										"covinsco" => $covinsco,
-										"coveffdt" => $coveffdt,
-										"covpatient" => $patient,
-										"covpatgrpno" => $covpatgrpno,
-										"covpatinsno" => $covpatinsno,
-										"covtype" => $covtype,
-										"covstatus" => $covstatus,
-										"covinstp" => $covinstp,
-										"covprovasgn" => $covprovasgn,
-										"covbenasgn" => $covbenasgn,
-										"covrelinfo" => $covrelinfo,
-										"covplanname" => $covplanname,
-										"covrelinfodt" => $covrelinfodt));
+			$query = $sql->insert_query(
+				$this->table_name,
+				array (
+					"covdtadd" => $cur_date,
+					"covdtmod" => $cur_date,
+					"covlname" => $covlname,
+					"covfname" => $covfname,
+					"covmname" => $covmname,
+					"covaddr1" => $covaddr1,
+					"covaddr2" => $covaddr2,
+					"covcity" => $covcity,
+					"covstate" => $covstate,
+					"covzip" => $covzip,
+					"covrel" => $covrel,
+					"covsex" => $covsex,
+					"covdob" => $covdob,
+					"covinsco" => $covinsco,
+					"coveffdt" => $coveffdt,
+					"covpatient" => $patient,
+					"covpatgrpno" => $covpatgrpno,
+					"covpatinsno" => $covpatinsno,
+					"covtype" => $covtype,
+					"covstatus" => $covstatus,
+					"covinstp" => $covinstp,
+					"covprovasgn" => $covprovasgn,
+					"covbenasgn" => $covbenasgn,
+					"covrelinfo" => $covrelinfo,
+					"covplanname" => $covplanname,
+					"covrelinfodt" => $covrelinfodt)
+				);
 			$coverage = $sql->query($query);
-			if ($coverage)
+			if ($coverage) {
 				$display_buffer .= _("done").".";
-			else
+			} else {
 				$display_buffer .= _("ERROR");
-			$display_buffer .= "</CENTER>";
+			}
+			$display_buffer .= "</div>";
 
 		} // end edit for patient insured
 
 		$display_buffer .= "
-			<P>
-			<CENTER>
-			<A HREF=\"$this->page_name?patient=$patient&module=$module\">
-			"._("Back")."</A>
-			</CENTER>
-			<P>
+			<p/>
+			<div ALIGN=\"CENTER\">
+			<a HREF=\"$this->page_name?patient=$patient&module=$module\">
+			"._("Back")."</a>
+			</div>
+			<p>
 			";
 
 	} // end addform
 
 	function view() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-		//view brings up the notebook with the correct page first
+		// View brings up the notebook with the correct page first
 		// ie insurance if not a guar
-		if ($patient<=0) {
-			$display_buffer .= _("Must Select a patient");
+		if ($patient <= 0) {
+			$display_buffer .= 
+				"<div ALIGN=\"CENTER\">\n".
+				_("You must select a patient before viewing coverages.").
+				"</div>\n";
 			template_display();
 		}
 
-			// patient is the insured
-			$query = "SELECT *,IF(covstatus,\"Deleted\",\"Active\") as covstat,".
-				"ELT(covtype,\"Primary\",\"Secondary\",\"Tertiary\",\"WorkComp\") as covtp".
-				" FROM $this->table_name WHERE ".
-				"covpatient='$patient' ORDER BY covstatus,covtype";
-			$result = $sql->query($query);
-			if (!$result) {
-				$display_buffer .= _("ERROR Failed to read $this->table_name");
-				template_display();
-			}
-
-			$display_buffer .= freemed_display_itemlist($result,
-									 $this->page_name,
-									array("InsCo" => "covinsco",
-										  "Relation" => "covrel",
-										  "StartDate" => "coveffdt",
-										  "Group" => "covpatgrpno",
-										  "ID"    => "covpatinsno",
-										  "Status" => "covstat",
-										  "Type"  => "covtp"),
-									array("","","","","","",""),
-									array("insco" => "insconame",
-											"",
-											"",
-											"",
-											"",
-											"",
-											"")
-										);
+		$display_buffer .= freemed_display_itemlist(
+			$sql->query(
+				"SELECT *,IF(covstatus,\"Deleted\",\"Active\") as covstat,".
+				"ELT(covtype,\"Primary\",\"Secondary\",\"Tertiary\",\"WorkComp\") AS covtp ".
+				"FROM ".$this->table_name." ".
+				"WHERE covpatient='".addslashes($patient)."' ".
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY covstatus,covtype"
+			),
+			$this->page_name,
+			array(
+				"InsCo" => "covinsco",
+				"Relation" => "covrel",
+				"StartDate" => "coveffdt",
+				"Group" => "covpatgrpno",
+				"ID"    => "covpatinsno",
+				"Status" => "covstat",
+				"Type"  => "covtp"
+			),
+			array("","","","","","",""),
+			array(
+				"insco" => "insconame",
+				"",
+				"",
+				"",
+				"",
+				"",
+				""
+			)
+		);
 						 
-			
-
 	} // end of view function
 
 		

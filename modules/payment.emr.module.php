@@ -9,7 +9,7 @@ class PaymentModule extends EMRModule {
 
 	var $MODULE_NAME    = "Payments";
 	var $MODULE_AUTHOR  = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -41,13 +41,14 @@ class PaymentModule extends EMRModule {
 
 	// contructor method
 	function PaymentModule ($nullvar = "") {
-		// call parent constructor
-		$this->EMRModule($nullvar);
 		// Summary box information
 		$this->summary_vars = array (
 			"Date" => "payrecdt",
 			"Amount" => "payrecamt"
 		);
+
+		// Call parent constructor
+		$this->EMRModule();
 	} // end function paymentModule
 
 	function modform() {
@@ -60,18 +61,16 @@ class PaymentModule extends EMRModule {
 
 	function addform() {
 		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-
-			// special circumstances when being called from the unpaid
-			// reports module
-			if ($viewaction=="paidledger")  
-			{
-				$this->view_query = $this->view_closed;
-				$this->ledger();
-				return;
-			}
+		// special circumstances when being called from the unpaid
+		// reports module
+		if ($viewaction=="paidledger")  
+		{
+			$this->view_query = $this->view_closed;
+			$this->ledger();
+			return;
+		}
 
             if (!$been_here)
             {
@@ -176,8 +175,7 @@ class PaymentModule extends EMRModule {
 
 	function transaction_wizard($procid, $paycat) {
 		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
             global $payrecproc, $payreccat;
 
             $payreccat = $paycat;
@@ -1239,21 +1237,21 @@ class PaymentModule extends EMRModule {
             $result = $sql->query ($query);
 
             $display_buffer .= "
-            <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
-            <TR BGCOLOR=\"#cccccc\">
-            <TD>&nbsp;</TD>
-            <TD ALIGN=LEFT><B>"._("Date")."</B></TD>
-            <TD ALIGN=LEFT><B>"._("Proc Code")."</B></TD>
-            <TD ALIGN=LEFT><B>"._("Provider")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Charged")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Allowed")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Charges")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Paid")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Balance")."</B></TD>
-            <TD ALIGN=LEFT><B>"._("Billed")."</B></TD>
-            <TD ALIGN=LEFT><B>"._("Date Billed")."</B></TD>
-            <TD ALIGN=LEFT><B>"._("View")."</B></TD>
-            </TR>
+            <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" WIDTH=\"100%\">
+            <tr CLASS=\"thinbox\">
+            <td>&nbsp;</td>
+            <td ALIGN=\"LEFT\"><b>"._("Date")."</b></td>
+            <td ALIGN=\"LEFT\"><b>"._("Proc Code")."</b></td>
+            <td ALIGN=\"LEFT\"><b>"._("Provider")."</b></td>
+            <td ALIGN=\"RIGHT\"><b>"._("Charged")."</b></td>
+            <td ALIGN=\"RIGHT\"><b>"._("Allowed")."</b></td>
+            <td ALIGN=\"RIGHT\"><b>"._("Charges")."</b></td>
+            <td ALIGN=\"RIGHT\"><b>"._("Paid")."</b></td>
+            <td ALIGN=\"RIGHT\"><b>"._("Balance")."</b></td>
+            <td ALIGN=\"LEFT\"><b>"._("Billed")."</b></td>
+            <td ALIGN=\"LEFT\"><b>"._("Date Billed")."</b></td>
+            <td ALIGN=\"LEFT\"><b>"._("View")."</b></td>
+            </tr>
             ";
 
             // loop for all "line items"
@@ -1266,33 +1264,35 @@ class PaymentModule extends EMRModule {
                                                        "cptmod", "cptmod");
                 $this_physician = CreateObject('FreeMED.Physician', $r[procphysician]);
                 $display_buffer .= "
-                <TR CLASS=".( ($this->item == $r[id]) ?  "#00ffff" :
+                <tr CLASS=".( ($this->item == $r['id']) ?  "#00ffff" :
                                 freemed_alternate()).">
-                <TD>
-                <INPUT TYPE=RADIO NAME=\"item\" VALUE=\"".prepare($r[id])."\"
-                ".( ($r[id] == $this->item) ?  "CHECKED": "" )."></TD>
-                <TD ALIGN=LEFT>".fm_date_print ($r[procdt])."</TD>
-                <TD ALIGN=LEFT>".prepare($this_cptcode." (".$this_cpt.")")."</TD>
-                <TD ALIGN=LEFT>".prepare($this_physician->fullName())."&nbsp;</TD>
-                <TD ALIGN=RIGHT>".bcadd ($r[procbalorig], 0, 2)."</TD>
-                <TD ALIGN=RIGHT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
-                <TD ALIGN=RIGHT>".bcadd ($r[proccharges], 0, 2)."</TD>
-                <TD ALIGN=RIGHT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
-                <TD ALIGN=RIGHT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
-                <TD ALIGN=LEFT>".(($r[procbilled]) ? _("Yes") : _("No") )."</TD>
-                <TD ALIGN=LEFT>".( !empty($r[procdtbilled]) ?
-					prepare($r[procdtbilled]) : "&nbsp;" )."</TD>
-                <TD ALIGN LEFT><A HREF=\"$this->page_name?action=addform".
-                "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=$r[id]\"
-                >Ledger</A>
-                </TR>
+                <td>
+                <input TYPE=\"RADIO\" NAME=\"item\" VALUE=\"".prepare($r['id'])."\"
+                ".( ($r['id'] == $this->item) ?  "CHECKED": "" )." /></td>
+                <td ALIGN=\"LEFT\">".fm_date_print ($r['procdt'])."</td>
+                <td ALIGN=\"LEFT\"><small>".
+			prepare($this_cptcode." (".$this_cpt.")")."</small></td>
+                <td ALIGN=\"LEFT\"><small>".
+			prepare($this_physician->fullName())."&nbsp;</small></td>
+                <td ALIGN=\"RIGHT\">".bcadd ($r['procbalorig'], 0, 2)."</td>
+                <td ALIGN=\"RIGHT\">".bcadd ($r['procamtallowed'], 0, 2)."</td>
+                <td ALIGN=\"RIGHT\">".bcadd ($r['proccharges'], 0, 2)."</td>
+                <td ALIGN=\"RIGHT\">".bcadd ($r['procamtpaid'], 0, 2)."</td>
+                <td ALIGN=\"RIGHT\">".bcadd ($r['procbalcurrent'], 0, 2)."</td>
+                <td ALIGN=\"LEFT\">".(($r['procbilled']) ? _("Yes") : _("No") )."</td>
+                <td ALIGN=\"LEFT\">".( !empty($r['procdtbilled']) ?
+					prepare($r['procdtbilled']) : "&nbsp;" )."</td>
+                <td ALIGN=\"LEFT\"><a HREF=\"$this->page_name?action=addform".
+                "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=".$r['id']."\"
+                >Ledger</a>
+                </tr>
                 ";
             } // end looping for results
 
             $display_buffer .= "
-            </TABLE>
-            <P>
-            <CENTER>
+            </table>
+            <p/>
+            <div ALIGN=\"CENTER\">
             <SELECT NAME=\"viewaction\">
             <OPTION VALUE=\"refresh\"  >"._("Refresh")."
             <OPTION VALUE=\"rebill\"  >"._("Rebill")."
@@ -1311,17 +1311,16 @@ class PaymentModule extends EMRModule {
             <OPTION VALUE=\"paidledger\">"._("Ledger Closed")."
             <OPTION VALUE=\"closed\">"._("Closed")."
             </SELECT>
-            <INPUT TYPE=SUBMIT VALUE=\"  "._("Select Line Item")."  \">
-            <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
-            </CENTER>
-            </FORM>
+            <input TYPE=\"SUBMIT\" VALUE=\"  "._("Select Line Item")."  \">
+            <input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\">
+            </div>
+            </form>
             ";
         } // end view function
 		
 		function insuranceSelectionByType($proccovmap) {
 		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS))
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 			$returned_string = "";
 			
 			$cov_ids = explode(":",$proccovmap);
@@ -1384,9 +1383,9 @@ class PaymentModule extends EMRModule {
 			return;
 		}
 
-		$auth_rec = freemed::get_link_rec($proc[procauth],"authorizations");
-		$remain = $auth_rec[authvisitsremain];
-		$used = $auth_rec[authvisitsused];
+		$auth_rec = freemed::get_link_rec($proc['procauth'],"authorizations");
+		$remain = $auth_rec['authvisitsremain'];
+		$used = $auth_rec['authvisitsused'];
 	}
 
 } // end class PaymentModule

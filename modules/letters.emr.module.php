@@ -77,12 +77,19 @@ class LettersModule extends EMRModule {
 
 		// Call wrapped function
 		$this->_add();
+
+		// If this is management, refresh properly
+		/*
+		if ($GLOBALS['return'] == 'manage') {
+			global $refresh, $patient;
+			$refresh = "manage.php?id=".urlencode($patient);
+		}
+		*/
 	} // end function LettersModule->add
 
 	function form () {
 		global $display_buffer;
-		reset($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global ${$k};
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		switch ($action) { // internal action switch
 			case "addform":
@@ -123,6 +130,7 @@ class LettersModule extends EMRModule {
 		<input TYPE=\"HIDDEN\" NAME=\"id\"      VALUE=\"".prepare($id)."\"\>
 		<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"\>
 		<input TYPE=\"HIDDEN\" NAME=\"module\"  VALUE=\"".prepare($module)."\"\>
+		<input TYPE=\"HIDDEN\" NAME=\"return\"  VALUE=\"".prepare($return)."\"\>
 		";
 
 		$display_buffer .= html_form::form_table(array(
@@ -223,7 +231,7 @@ class LettersModule extends EMRModule {
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
-		"CELLPADDING=\"2\">
+				"CELLPADDING=\"2\">
 		<tr>
 			<td ALIGN=\"RIGHT\" WIDTH=\"25%\">"._("Date")."</td>
 			<td ALIGN=\"LEFT\" WIDTH=\"75%\">".$record[letterdt]."</td>
@@ -246,39 +254,16 @@ class LettersModule extends EMRModule {
 
 	function view () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-	$query = "SELECT * FROM ".$this->table_name." ".
-		"WHERE (".$this->patient_field."='".addslashes($patient)."') ".
-		"ORDER BY letterdt";
-	$result = $sql->query ($query);
-	$rows = ( ($result > 0) ? $sql->num_rows ($result) : 0 );
-
-	if ($rows < 1) {
-		$display_buffer .= "
-         <p/>
-         <div ALIGN=\"CENTER\">
-         "._("This patient has no letters.")."
-         </div>
-         <p/>
-         <div ALIGN=\"CENTER\">
-         <a HREF=\"$this->page_name?action=addform&module=$module&patient=$patient\"
-          >"._("Add")." "._("$record_name")."</a>
-         <b>|</b>
-         <a HREF=\"manage.php?id=$patient\"
-          >"._("Manage Patient")."</a>
-         </div>
-         <p/>
-		";
-		template_display();
-	} // if there are none...
-
-	// or else, display them...
-	$display_buffer .= "
-		<p/>".
-		freemed_display_itemlist (
-			$result,
+		$display_buffer .= freemed_display_itemlist (
+			$sql->query(
+				"SELECT * FROM ".$this->table_name." ".
+				"WHERE (".$this->patient_field.
+						"='".addslashes($patient)."') ".
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY letterdt"
+			),
 			$this->page_name,
 			array (
 				_("Date") => "letterdt",

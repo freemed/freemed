@@ -10,7 +10,7 @@ class PatientImages extends EMRModule {
 
 	var $MODULE_NAME = "Patient Images";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
@@ -81,7 +81,7 @@ class PatientImages extends EMRModule {
 	function add () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module;
 		$display_buffer .= "
-			<CENTER><B>"._("Adding")." ... </B>
+			<div ALIGN=\"CENTER\"><b>"._("Adding")." ... </b>
 		";
 
 		// Have to add then update to get file name
@@ -108,16 +108,16 @@ class PatientImages extends EMRModule {
 		}
 
 		if ($result) {
-			$display_buffer .= " <B> "._("done").". </B>\n";
+			$display_buffer .= " <b> "._("done").". </b>\n";
 		} else {
 			if ($debug) $display_buffer .= "(query = '$query') ";
-			 $display_buffer .= " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
+			 $display_buffer .= " <b> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </b>\n";
 		}
-		$display_buffer .= "<BR>\n";
+		$display_buffer .= "<br/>\n";
 
 		// Update database with proper file name
 		$display_buffer .= "
-			<CENTER><B>"._("Updating database")." ... </B>
+			<div ALIGN=\"CENTER\"><b>"._("Updating database")." ... </b>
 		";
 
 		$query = $sql->update_query (
@@ -128,24 +128,25 @@ class PatientImages extends EMRModule {
 		$result = $sql->query ($query);
 
 		if ($result) {
-			$display_buffer .= " <B> "._("done").". </B>\n";
+			$display_buffer .= " <b> "._("done").". </b>\n";
 		} else {
 			if ($debug) $display_buffer .= "(query = '$query') ";
-			 $display_buffer .= " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
+			 $display_buffer .= " <b> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </b>\n";
 		}
 
 		$display_buffer .= "
-		</CENTER>
-		<BR><BR>
-		<CENTER><A HREF=\"manage.php?id=$patient\"
-		>"._("Manage Patient")."</A>
-		<B>|</B>
-		<A HREF=\"$this->page_name?module=$module&patient=$patient\"
-		>"._($this->record_name)."</A>
-		<B>|</B>
-		<A HREF=\"$this->page_name?module=$module&patient=$patient&".
+		</div>
+		<p/>
+		<div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
+		>"._("Manage Patient")."</a>
+		<b>|</b>
+		<a HREF=\"$this->page_name?module=$module&patient=$patient\"
+		>"._($this->record_name)."</a>
+		<b>|</b>
+		<a HREF=\"$this->page_name?module=$module&patient=$patient&".
 		"action=addform\"
-		>"._("Add Another")."</A>
+		>"._("Add Another")."</a>
+		</div>
 		";
 		global $refresh, $manage;
 		if ($return=="manage") {
@@ -167,15 +168,15 @@ class PatientImages extends EMRModule {
 		global $sql, $id, $patient, $display_buffer, $return;
 		if (!$patient or !$id) return false;
 		$display_buffer .= "
-		<DIV ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-		<EMBED SRC=\"patient_image_handler.php?".
+		<div ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		<embed SRC=\"patient_image_handler.php?".
 		"patient=".urlencode($patient)."&".
 		"id=".urlencode($id)."\" BORDER=\"0\"
 		PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-		TYPE=\"image/x.djvu\" WIDTH=\"100%\" HEIGHT=\"600\"></EMBED>
-		</DIV>
-		<DIV ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-		<A HREF=\"";
+		TYPE=\"image/x.djvu\" WIDTH=\"100%\" HEIGHT=\"600\"></embed>
+		</div>
+		<div ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		<a HREF=\"";
 		if ($return=="manage") {
 			$display_buffer .= "manage.php?id=$patient\">".
 			_("Manage Patient");
@@ -184,8 +185,8 @@ class PatientImages extends EMRModule {
 			"module=".urlencode($module)."&".
 			"action=view\">". _($record_name);
 		}
-		$display_buffer .= "</A>
-		</DIV>
+		$display_buffer .= "</a>
+		</div>
 		";
 	} // end function PatientImages->display
 
@@ -230,18 +231,18 @@ class PatientImages extends EMRModule {
 		}
 
 		$display_buffer .= "
-		<DIV ALIGN=\"CENTER\">
-		<FORM METHOD=\"POST\" ACTION=\"module_loader.php\" ".
+		<div ALIGN=\"CENTER\">
+		<form METHOD=\"POST\" ACTION=\"module_loader.php\" ".
 		"ENCTYPE=\"multipart/form-data\" NAME=\"myform\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"module\" ".
-		"VALUE=\"".prepare($module)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"id\" ".
-		"VALUE=\"".prepare($id)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"action\" ".
-		"VALUE=\"".($action=="addform" ? "add" : "mod" )."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"patient\" ".
-		"VALUE=\"".prepare($patient)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" VALUE=\"10000000\">
+		<input TYPE=\"HIDDEN\" NAME=\"module\" ".
+		"VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"id\" ".
+		"VALUE=\"".prepare($id)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"action\" ".
+		"VALUE=\"".($action=="addform" ? "add" : "mod" )."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"patient\" ".
+		"VALUE=\"".prepare($patient)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" VALUE=\"10000000\"/>
 		";
 
 		$display_buffer .= html_form::form_table(array_merge(
@@ -275,28 +276,28 @@ class PatientImages extends EMRModule {
 			_("Attach Image") =>
 			( (($action=="add") || ($action=="addform")) ?
 			( ($this->IEupload) ? $this->activeXupload() :
-			"<INPUT TYPE=\"FILE\" NAME=\"imageupload\">" ) :
+			"<input TYPE=\"FILE\" NAME=\"imageupload\"/>" ) :
 			_("ATTACHED") )
 
 		)));
 
 		$display_buffer .= "
-			<DIV ALIGN=\"CENTER\">
-			<INPUT TYPE=\"SUBMIT\" VALUE=\"".
+			<div ALIGN=\"CENTER\">
+			<input TYPE=\"SUBMIT\" VALUE=\"".
 			( ($action=="add" || $action=="addform") ?
-			_("Attach Image") : _("Modify") )."\">
-			<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" ".
-			 "VALUE=\""._("Cancel")."\">
-			</DIV>
+			_("Attach Image") : _("Modify") )."\"/>
+			<input TYPE=\"SUBMIT\" NAME=\"submit\" ".
+			 "VALUE=\""._("Cancel")."\"/>
+			</div>
 
-		</FORM></DIV>
+		</form></div>
 		";
 	} // end of function PatientImages->form()
 
 	function mod () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module, $id;
 		$display_buffer .= "
-			<CENTER><B>"._("Modifying")." ... </B>
+			<div ALIGN=\"CENTER\"><b>"._("Modifying")." ... </b>
 		";
 
 		// Have to add then update to get file name
@@ -314,28 +315,28 @@ class PatientImages extends EMRModule {
 		if ($debug) $display_buffer .= "(query = '$query') ";
 
 		if ($result) {
-			$display_buffer .= " <B> "._("done").". </B>\n";
+			$display_buffer .= " <b> "._("done").". </b>\n";
 		} else {
 			if ($debug) $display_buffer .= "(query = '$query') ";
-			 $display_buffer .= " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
+			 $display_buffer .= " <b> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </b>\n";
 		}
 
 		$display_buffer .= "
-		</CENTER>
-		<BR><BR>
-		<CENTER><A HREF=\"manage.php?id=$patient\"
-		>"._("Manage Patient")."</A>
-		<B>|</B>
-		<A HREF=\"$this->page_name?module=$module&patient=$patient\"
-		>"._($this->record_name)."</A>
+		</div>
+		<p/>
+		<div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
+		>"._("Manage Patient")."</a>
+		<b>|</b>
+		<a HREF=\"$this->page_name?module=$module&patient=$patient\"
+		>"._($this->record_name)."</a>
+		</div>
 		";
  	} // end method PatientImages->add
 
 	function view () {
 		global $display_buffer;
 		global $patient, $action;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// Check for "view" action (actually display)
 		if ($action=="view") {
@@ -343,13 +344,13 @@ class PatientImages extends EMRModule {
 			return NULL;
 		}
 
-		$query = "SELECT * FROM ".$this->table_name." ".
-			"WHERE (imagepat='".addslashes($patient)."') ".
-			"ORDER BY imagedt";
-		$result = $sql->query ($query);
-
 		$display_buffer .= freemed_display_itemlist(
-			$result,
+			$sql->query(
+				"SELECT * FROM ".$this->table_name." ".
+				"WHERE (imagepat='".addslashes($patient)."') ".
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY imagedt"
+			),
 			$this->page_name,
 			array (
 				"Date"        => "imagedt",
@@ -362,7 +363,7 @@ class PatientImages extends EMRModule {
 			NULL, NULL, NULL,
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
-		$display_buffer .= "\n<P>\n";
+		$display_buffer .= "\n<p/>\n";
 	} // end function PatientImages->view()
 
 } // end of class PatientImages

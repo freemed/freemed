@@ -30,8 +30,7 @@ class patientStatusMaintenance extends MaintenanceModule {
 
 	function modform () {
 		global $display_buffer;
-		reset($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		 // grab record number "id"
   		$result = $sql->query("SELECT * FROM $this->table_name WHERE
     		(id='".addslashes($id)."')");
@@ -79,8 +78,12 @@ class patientStatusMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		global $sql;
  		$display_buffer .= freemed_display_itemlist (
- 			$sql->query ("SELECT ptstatusdescrip,ptstatus,id ".
-				"FROM $this->table_name ORDER BY ptstatusdescrip,ptstatus"),
+ 			$sql->query (
+				"SELECT ptstatusdescrip,ptstatus,id ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY ptstatusdescrip,ptstatus"
+			),
 			$this->page_name,
 			array (
 				_("Status")			=>	"ptstatus",
@@ -97,20 +100,20 @@ class patientStatusMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		global $module;
 		$display_buffer .= "
-		<CENTER>
-    	<FORM ACTION=\"$this->page_name\">
-			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
-			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
+		<div ALIGN=\"CENTER\">
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"add\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
 		".html_form::form_table ( array (
 			_("Status") =>
 				html_form::text_widget ("ptstatus", 2),
 			_("Description") =>
 				html_form::text_widget ("ptstatusdescrip", 20)
 		) )."
-		<BR>	
-			<INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
-		</FORM>
-		</CENTER>
+		<br/>	
+		<input TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"/>
+		</form>
+		</div>
 		";
 	} // end function PatientStatusMaintenance->addform()
 

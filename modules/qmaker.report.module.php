@@ -6,13 +6,13 @@
  // converted to freemed by fforest
  // lic : LGPL
 
-LoadObjectDependency('FreeMED.ReportModule');
+LoadObjectDependency('FreeMED.ReportsModule');
 
 class QmakerReport extends ReportsModule {
 
 	var $MODULE_NAME = "Query Maker";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.1.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -73,9 +73,9 @@ class QmakerReport extends ReportsModule {
 			$display_buffer .= "</select>";
 			$display_buffer .= "<P>";
 			$display_buffer .= "<TABLE><TR>";
-			$display_buffer .= "<TD><INPUT TYPE=SUBMIT NAME=btnSubmit VALUE=LoadQuery></TD>\n";
-			$display_buffer .= "<TD><INPUT TYPE=SUBMIT NAME=btnSubmit VALUE=ExecQuery></TD>\n";
-			$display_buffer .= "<TD><INPUT TYPE=SUBMIT NAME=btnSubmit VALUE=Create></TD>\n";
+			$display_buffer .= "<TD><INPUT TYPE=SUBMIT NAME=\"btnSubmit\" VALUE=\""._("Load Query")."\"></TD>\n";
+			$display_buffer .= "<TD><INPUT TYPE=SUBMIT NAME=\"btnSubmit\" VALUE=\""._("Execute Query")."\"></TD>\n";
+			$display_buffer .= "<TD><INPUT TYPE=SUBMIT NAME=\"btnSubmit\" VALUE=\""._("Create")."\"></TD>\n";
 			$display_buffer .= "</TR></TABLE>";
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"view\">";
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">";
@@ -83,10 +83,6 @@ class QmakerReport extends ReportsModule {
 			$display_buffer .= "</FORM>\n";
 			$display_buffer .= "</CENTER>";
 			$display_buffer .= "
-			<P>
-			<CENTER>
-			<A HREF=\"reports.php\">"._("Reports")."</A>
-			</CENTER>
 			<P>
 			";	
 			return;
@@ -111,14 +107,14 @@ class QmakerReport extends ReportsModule {
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"view\">";
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">";
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">";
-			$display_buffer .= "<INPUT TYPE=SUBMIT NAME=\"btnSubmit\" VALUE=\"SelectFields\">";
+			$display_buffer .= "<INPUT TYPE=SUBMIT NAME=\"btnSubmit\" VALUE=\""._("Select Fields")."\">";
 			$display_buffer .= "</FORM>\n";
 			$display_buffer .= "</CENTER>";
 			return;
 		}
 
 	
-		if ($btnSubmit == "SelectFields")
+		if ($btnSubmit == _("Select Fields"))
 		{
 
 		if (isset ($table) )
@@ -204,7 +200,7 @@ class QmakerReport extends ReportsModule {
 			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"fldy\"  VALUE=\"".prepare($fldy)."\">\n";	
 			$display_buffer .= "<INPUT TYPE=hidden NAME=\"cnty\"  VALUE=\"".prepare($cnty)."\">\n";	
 			$display_buffer .= "<INPUT TYPE=RESET VALUE=\"Clear All\">\n";
-			$display_buffer .= "<INPUT TYPE=SUBMIT NAME=\"btnSubmit\"  value=\"SelectOptions\">\n";
+			$display_buffer .= "<INPUT TYPE=SUBMIT NAME=\"btnSubmit\"  value=\""._("Select Options")."\">\n";
 			$display_buffer .= "</FORM>\n";
 				//mysql_close($ConID);
 
@@ -212,7 +208,7 @@ class QmakerReport extends ReportsModule {
 		} // end SelectFields
 
 
-		if ($btnSubmit == "SelectOptions")
+		if ($btnSubmit == _("Select Options"))
 		{
 
 
@@ -387,7 +383,7 @@ class QmakerReport extends ReportsModule {
 		$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"view\">";
 		$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">";
 		$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">";
-		$display_buffer .= "<input type=submit name=\"btnSubmit\" value=\"AssembleQuery\">\n";
+		$display_buffer .= "<input type=submit name=\"btnSubmit\" value=\""._("Assemble Query")."\">\n";
 		$display_buffer .= "</FORM>\n";
 			 //mysql_close($ConID);
 		return;
@@ -395,7 +391,7 @@ class QmakerReport extends ReportsModule {
 		} // end SelectOptions
 
 
-		if ($btnSubmit == "AssembleQuery")
+		if ($btnSubmit == _("Assemble Query"))
 		{
 
 		//Construct Query from the inputs
@@ -459,7 +455,7 @@ class QmakerReport extends ReportsModule {
 		} // end AssembleQuery
 
 
-		if ($btnSubmit == "ExecQuery")
+		if ($btnSubmit == _("Execute Query"))
 		{
 			if (empty($cquery)) // running from pick menu?
 			{
@@ -508,7 +504,7 @@ class QmakerReport extends ReportsModule {
 		} // end ExecQuery
 
 	
-		if ($btnSubmit == "LoadQuery" )
+		if ($btnSubmit == _("Load Query") )
 		{
 			$saveas = "";
 			$res = $sql->query("SELECT qtitle,qquery FROM queries WHERE id='$loadas'");
@@ -530,8 +526,8 @@ class QmakerReport extends ReportsModule {
 		$arrx = array_values($xx);
 		$i = 0;
 		while (list ($key, $val) = each ($arrx)) {
-		$xy[$i]  = $val;
-		$i++;
+			$xy[$i]  = $val;
+			$i++;
 		}
 		$cnt = $i;
 		return $xy;
@@ -541,20 +537,21 @@ class QmakerReport extends ReportsModule {
 		global $display_buffer;
 		global $patient,$module;
 
-		if (empty($name))
+		if (empty($name)) {
 			$saveas = "Unnamed";
-		else
+		} else {
 			$saveas = $name;
+		}
 
 		$buffer =  "<CENTER>\n";
 		$buffer .=  "<H3>The Selected Query is $saveas</H3>";
 		$buffer .=  "<FORM METHOD=\"POST\" ACTION=\"$this->page_name\">\n";
-		$buffer .=  "<TEXTAREA ROWS=10 COLS=100 WRAP=virtual  NAME=cquery> $query</TEXTAREA>\n";
+		$buffer .=  "<TEXTAREA ROWS=10 COLS=100 WRAP=virtual NAME=\"cquery\">$query</TEXTAREA>\n";
 		$buffer .=  "<TABLE><TR>\n";
 		$buffer .=  "<TD>\n";
-		$buffer .=  "<TD><INPUT TYPE=SUBMIT NAME=btnSubmit VALUE=ExecQuery></TD>\n";
-		$buffer .=  "<TD><INPUT TYPE=SUBMIT NAME=btnSubmit VALUE=PickQuery></TD>\n";
-		$buffer .=  "<TD><INPUT TYPE=RESET VALUE=\"Clear All\"></TD>\n";
+		$buffer .=  "<TD><INPUT TYPE=SUBMIT NAME=btnSubmit VALUE=\""._("Execute Query")."\"></TD>\n";
+		$buffer .=  "<TD><INPUT TYPE=SUBMIT NAME=btnSubmit VALUE=\""._("Pick Query")."\"></TD>\n";
+		$buffer .=  "<TD><INPUT TYPE=RESET VALUE=\""._("Clear All")."\"></TD>\n";
 		$buffer .=  "<TD><INPUT TYPE=SUBMIT NAME=btnTable1 VALUE=SaveQuery></TD>\n";
 		$buffer .=  "</TR></TABLE>\n";
 		$buffer .=  "Save Query As &nbsp;";

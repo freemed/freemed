@@ -43,18 +43,21 @@ class PrescriptionModule extends EMRModule {
 
 		// Table definition
 		$this->table_definition = array (
-			"rxdtfrom" => SQL_DATE,
-			"rxdrug" => SQL_VARCHAR(150),
-			"rxform" => SQL_ENUM(array(
+			'rxdtadd' => SQL_DATE,
+			'rxdtmod' => SQL_DATE,
+			'rxpatient' => SQL_INT_UNSIGNED(0),
+			'rxdtfrom' => SQL_DATE,
+			'rxdrug' => SQL_VARCHAR(150),
+			'rxform' => SQL_ENUM(array(
 				"suspension",
 				"tablet",
 				"capsule",
 				"solution"
 				)),
-			"rxdosage" => SQL_INT_UNSIGNED(0),
-			"rxquantity" => SQL_INT_UNSIGNED(0),
-			"rxsize" => SQL_INT_UNSIGNED(0),
-			"rxunit" => SQL_ENUM(array(
+			'rxdosage' => SQL_INT_UNSIGNED(0),
+			'rxquantity' => SQL_INT_UNSIGNED(0),
+			'rxsize' => SQL_INT_UNSIGNED(0),
+			'rxunit' => SQL_ENUM(array(
 				"mg",
 				"mg/1cc",
 				"mg/2cc",
@@ -63,7 +66,7 @@ class PrescriptionModule extends EMRModule {
 				"mg/5cc",
 				"g"
 				)),
-			"rxinterval" => SQL_ENUM(array(
+			'rxinterval' => SQL_ENUM(array(
 				"b.i.d.",
 				"t.i.d.",
 				"q.i.d.",
@@ -74,14 +77,13 @@ class PrescriptionModule extends EMRModule {
 				"q. 8h",
 				"q.d."
 				)),
-			"rxpatient" => SQL_INT_UNSIGNED(0),
-			"rxsubstitute" => SQL_ENUM(array(
+			'rxsubstitute' => SQL_ENUM(array(
 				"may substitute", "may not substitute"
 				)),
-			"rxrefills" => SQL_INT_UNSIGNED(0),
-			"rxperrefill" => SQL_INT_UNSIGNED(0),
-			"rxnote" => SQL_TEXT,
-			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			'rxrefills' => SQL_INT_UNSIGNED(0),
+			'rxperrefill' => SQL_INT_UNSIGNED(0),
+			'rxnote' => SQL_TEXT,
+			'id' => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
 		);
 
 		$this->variables = array (
@@ -121,8 +123,7 @@ class PrescriptionModule extends EMRModule {
 	function form () {
 		global $display_buffer, $sql, $action, $id, $patient,
 			$return;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global ${$k};
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// Create new notebook
 		$book = CreateObject('PHP.notebook',
@@ -246,11 +247,11 @@ class PrescriptionModule extends EMRModule {
 			array(
 				"rxnote"
 			),
-			"<DIV ALIGN=\"CENTER\">\n".
+			"<div ALIGN=\"CENTER\">\n".
 			html_form::text_area(
 				"rxnote"
 			).
-			"</DIV>"
+			"</div>"
 		);
 
 		// Handle cancel
@@ -268,12 +269,12 @@ class PrescriptionModule extends EMRModule {
 
 		// If not done, display
 		if (!$book->is_done()) {
-			$display_buffer .= "<CENTER>\n";
-			$display_buffer .= "<FORM NAME=\"myform\" ACTION=\"".
+			$display_buffer .= "<div ALIGN=\"CENTER\">\n";
+			$display_buffer .= "<form NAME=\"myform\" ACTION=\"".
 				$this->page_name."\" METHOD=\"POST\">\n";
 			$display_buffer .= $book->display();
-			$display_buffer .= "</FORM>\n";
-			$display_buffer .= "</CENTER>\n";
+			$display_buffer .= "</form>\n";
+			$display_buffer .= "</div>\n";
 			return true;
 		}
 
@@ -309,12 +310,15 @@ class PrescriptionModule extends EMRModule {
 		global $display_buffer, $patient;
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 		$display_buffer .= freemed_display_itemlist(
-			$sql->query("SELECT *,".
+			$sql->query(
+				"SELECT *,".
 				"CONCAT(rxquantity,' of ',rxsize,' ',rxunit,' ',".
 				"rxinterval) AS _dosage ".
-				"FROM $this->table_name ".
+				"FROM ".$this->table_name." ".
 				"WHERE rxpatient='".addslashes($patient)."' ".
-				"ORDER BY rxdtfrom DESC"),
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY rxdtfrom DESC"
+			),
 			$this->page_name,
 			array(
 				_("Date") => "rxdtfrom",
@@ -326,90 +330,6 @@ class PrescriptionModule extends EMRModule {
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
 	} // end function PrescriptionModule->view
-
-	function old_main () {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-
-  switch ($action) { // master action switch
-    case "display":
-      $display_buffer .= "
-        <P>
-        This function has NOT been implemented yet.<BR>
-        Please wait and do not flame me yet -jeff
-        <P>
-      ";
-      break;
-    default:
-      $display_buffer .= "
-        <CENTER>
-         <A HREF=\"$this->page_name?module=$module&patient=$patient&action=addform\"
-         >"._("Add")." "._($record_name)."</A> |
-         <A HREF=\"manage.php?id=$patient\"
-         >"._("Manage Patient")."</A>
-        </CENTER>
-        <P>
-      ";
-
-      $query = $sql->query ("SELECT * FROM $this->table_name ".
-		"WHERE rxpatient='".addslashes($patient)."'");
-      $num_records = $sql->num_rows ($query);
-
-      if ($num_records < 1) {
-        // if there are no prescriptions yet
-        $display_buffer .= "
-          <TABLE WIDTH=100% BORDER=0 VALIGN=CENTER ALIGN=CENTER
-           CELLSPACING=1 CELLPADDING=1 BGCOLOR=#000000><TR>
-          <TD BGCOLOR=\"#000000\"><CENTER><FONT COLOR=\"#ffffff\">
-          <B>No prescriptions for this patient</B></CENTER>
-          </TD></TR></TABLE>
-        ";
-      } else {
-        // or else, show them
-        $display_buffer .= "
-          <TABLE BORDER=1 CELLSPACING=1 CELLPADDING=1 ALIGN=CENTER
-           BGCOLOR=#ffffff VALIGN=CENTER>
-        "; // table header
-        while ( $r = $sql->fetch_array ($query) ) {
-          extract ($r);
-          $drug = freemed::get_link_field ($rxdrug, "frmlry", "trdmrkname");
-          $rxdtto       = $rxdtfrom;  // set to starting date
-          if ($rxduration > 0) 
-            for ($i=1; $i<$rxduration; $i++) 
-              $rxdtto = freemed_get_date_next ($rxdtto); // increment date
-          else
-            $rxdtto = "unspecified";
-          $display_buffer .= "
-            <TR><TD>
-             <A HREF=\"$this->page_name?module=".urlencode($module)."&patient=$patient&id=$id&action=display\"
-              >".fm_date_print($rxdtfrom)." / 
-                           ".fm_date_print($rxdtto)." </A>
-              <B>[</B> <A HREF=
-               \"$this->page_name?module=".urlencode($module)."&id=$rxdrug&action=modform\"
-               ><I>$drug</I></A> <B>]</B>
-            </TR></TD>
-          "; 
-        }
-        $display_buffer .= "
-          </TABLE>
-        "; // end table
-      }
-      
-      $display_buffer .= "
-        <P>
-        <CENTER>
-         <A HREF=\"$this->page_name?module=".urlencode($module)."&patient=$patient&action=addform\"
-         >"._("Add")." "._($record_name)."</A> |
-         <A HREF=\"manage.php?id=$patient\"
-         >"._("Manage Patient")."</A>
-        </CENTER>
-        <P>
-      ";
-      break;
-  } // end master action switch
-
-	} // end function PrescriptionModule->main()
 
 } // end class PrescriptionModule
 

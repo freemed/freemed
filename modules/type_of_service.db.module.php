@@ -10,7 +10,7 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Type of Service Maintenance";
 	var $MODULE_AUTHOR = "Adam (gdrago23@yahoo.com)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -27,20 +27,30 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 	);
 
 	function TypeOfServiceMaintenance () {
-		// run constructor
+		$this->table_definition = array (
+			'tosname' => SQL_VARCHAR(75),
+			'tosdescrip' => SQL_VARCHAR(200),
+			'tosdtadd' => SQL_DATE,
+			'tosdtmod' => SQL_DATE,
+			'id' => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+		);
+	
+		global $tosdtmod; $tosdtmod = date("Y-m-d");
+
+		// Run parent constructor
 		$this->MaintenanceModule();
-		global $tosdtmod;
-		$tosdtmod = $GLOBALS["cur_date"];
 	} // end constructor TypeOfServiceMaintenance	
 
 	function view () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT tosname,tosdescrip,id FROM ".$this->table_name.
-				" ORDER BY ".prepare($this->order_field)),
+			$sql->query(
+				"SELECT tosname,tosdescrip,id ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions().
+				"ORDER BY ".prepare($this->order_field)),
 			$this->page_name,
 			array (
 				_("Code") => "tosname",
@@ -52,8 +62,7 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 
 	function form () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
   		if ($action=="modform") { 
     		$result = $sql->query("SELECT tosname,tosdescrip FROM $this->table_name
 				WHERE ( id = '$id' )");
@@ -65,13 +74,13 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 		$this->view ();
 
 		$display_buffer .= "
-			<FORM ACTION=\"$this->page_name\" METHOD=POST>
-			<INPUT TYPE=HIDDEN NAME=\"tosdtadd\"".prepare($cur_date)."\">
-			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-			($action=="modform" ? "mod" : "add")."\">";
+			<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+			<input TYPE=\"HIDDEN\" NAME=\"tosdtadd\"".date('Y-m-d')."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+			($action=="modform" ? "mod" : "add")."\"/>\n";
 		if ($action=="modform")
-			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>\n";
 
 		$display_buffer .= html_form::form_table(array(
 			_("Type of Service") =>
@@ -80,19 +89,12 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 			_("Description") =>
 			html_form::text_widget("tosdescrip", 25, 200)
 		)).
-			"<DIV ALIGN=\"CENTER\">\n".
-			"<INPUT TYPE=SUBMIT VALUE=\"".(
-			 ($action=="modform") ? _("Modify") : _("Add"))."\">
-			 <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
-			</DIV></FORM>
+			"<div ALIGN=\"CENTER\">\n".
+			"<input TYPE=\"SUBMIT\" VALUE=\"".(
+			 ($action=="modform") ? _("Modify") : _("Add"))."\"/>
+			 <input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+			</div></form>
 		";
-		if ($action=="modform") $display_buffer .= "
-			<P>
-			<CENTER>
-			<A HREF=\"$this->page_name?module=$module&action=view\"
-			>"._("Abandon Modification")."</A>
-			</CENTER>
-			";
 	} // end function TypeOfServiceMaintenance->form
 
 } // end of class TypeOfServiceMaintenance

@@ -1,7 +1,7 @@
 <?php
   // $Id$
   // note: provider (formerly physician) database services
-  // code: jeff b (jeff@univrel.pr.uconn.edu)
+  // code: jeff b (jeff@ourexchange.net)
   //       adam b (gdrago23@yahoo.com)
   // translation: max k <amk@span.ch>
   // lic : GPL
@@ -62,7 +62,7 @@ class ProviderMaintenance extends MaintenanceModule {
 	); // end of variables list
 
 	function ProviderMaintenance () {
-		foreach ($GLOBALS AS $k => $v) global $$k;
+		foreach ($GLOBALS AS $k => $v) global ${$k};
 		$this->MaintenanceModule();
 	} // end constructor ProviderMaintenance
 
@@ -72,8 +72,7 @@ class ProviderMaintenance extends MaintenanceModule {
 
 	function form() {
 		global $display_buffer, $action;
-		reset ($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$book = CreateObject('PHP.notebook',
 			array ("action", "id", "module"),
@@ -469,21 +468,20 @@ class ProviderMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		global $sql;
 
-  $phy_q = "SELECT phylname,phyfname,id FROM ".$this->table_name." ".
-    "ORDER BY phylname,phyfname";
-  $phy_r = $sql->query($phy_q);
-  $display_buffer .= freemed_display_itemlist (
-    $phy_r,
-    $this->page_name,
-    array (
-      _("Last Name") => "phylname",
-      _("First Name") => "phyfname"
-    ),
-    array (
-      "",
-      ""
-    )
-  );
+		$display_buffer .= freemed_display_itemlist (
+			$sql->query(
+				"SELECT phylname,phyfname,id ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY phylname,phyfname"
+			),
+			$this->page_name,
+			array (
+				_("Last Name") => "phylname",
+				_("First Name") => "phyfname"
+			),
+			array ( "", "" )
+		);
 	} // end function ProviderMaintenance->view()
 
 } // end class ProviderMaintenance

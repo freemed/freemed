@@ -1,7 +1,7 @@
 <?php
   // $Id$
   // note: provider groups, used for booking? and user levels
-  // code: jeff b (jeff@univrel.pr.uconn.edu) -- template
+  // code: jeff b (jeff@ourexchange.net) -- template
   //       adam b (gdrago23@yahoo.com) -- redesign and update
   // lic : GPL
 
@@ -39,7 +39,12 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		global $sql;
 		$display_buffer .= freemed_display_itemlist(
-			$sql->query("SELECT phygroupname,phygroupfac,id FROM $this->table_name"),
+			$sql->query(
+				"SELECT phygroupname,phygroupfac,id ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY phygroupname"
+			),
 			$this->page_name,
 			array (
 				_("Physician Group Name") => "phygroupname",
@@ -67,12 +72,11 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 					$action="addform";
 					break;
 				}
-				while(list($k,$v)=each($this->variables))
-            		global $$v;
+				while(list($k,$v)=each($this->variables)) {global ${$v};}
 				$r = freemed::get_link_rec($id,$this->table_name);
 				extract ($r);
 				$phygroupidmap  = fm_split_into_array($phygroupidmap);
-				//$phygroupdocs 	= fm_split_into_array($phygroupdocs);
+				//$phygroupdocs = fm_split_into_array($phygroupdocs);
 				break;
 			case "addform": // addform *is* the default
 			default:

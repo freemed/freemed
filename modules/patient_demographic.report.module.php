@@ -21,6 +21,7 @@ class PatientDemographicReport extends ReportsModule {
 	);
 
 	function PatientDemographicReport () {
+		$this->record_name = $this->MODULE_NAME;
 		$this->ReportsModule();
 	} // end constructor PatientDemographicReport
 
@@ -64,6 +65,8 @@ class PatientDemographicReport extends ReportsModule {
 		";
 	
 	} // end function PatientDemographicReport->display
+
+	function view() { $this->display(); }
 
 } // end class freemedReportsModule
 

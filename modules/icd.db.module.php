@@ -2,7 +2,7 @@
  // $Id$
  // note: icd9 codes database functions
  // code: mark l (lesswin@ibm.net)
- //       jeff b (jeff@univrel.pr.uconn.edu) -- rewrite
+ //       jeff b (jeff@ourexchange.net) -- rewrite
  // lic : GPL, v2
 
 LoadObjectDependency('FreeMED.MaintenanceModule');
@@ -20,7 +20,7 @@ class IcdMaintenance extends MaintenanceModule {
 	var $record_name	 = "ICD9 Code";
 	var $order_field	 = "icd9code,icdnum";
 
-	var $variables		 = array (
+	var $variables = array (
 		"icd9code",
 		"icd10code",
 		"icd9descrip",
@@ -28,7 +28,7 @@ class IcdMaintenance extends MaintenanceModule {
 		"icdmetadesc",
 		"icddrg",
 		"icdng",
-		"icdnum",
+		// "icdnum", // Do not allow this to be manually set
 		"icdamt",
 		"icdcoll"
 	);
@@ -39,7 +39,7 @@ class IcdMaintenance extends MaintenanceModule {
 
 	function form () {
 		global $display_buffer;
-		foreach ($GLOBALS as $k => $v) global $$k;
+		foreach ($GLOBALS as $k => $v) { global ${$k}; }
 
 		switch ($action) { // internal action switch
 		case "addform":
@@ -97,8 +97,6 @@ class IcdMaintenance extends MaintenanceModule {
 	$display_buffer .= "
 	<P>
 	<CENTER>
-    <!-- initially, number of times used is 0 -->
-    <INPUT TYPE=HIDDEN NAME=\"icdnum\" VALUE=\"".prepare($icdnum)."\">
 
 	<INPUT TYPE=SUBMIT VALUE=\" ".
       ( ($action=="addform") ? _("Add") : _("Modify") )." \">
@@ -112,14 +110,20 @@ class IcdMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		global $sql;
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT * FROM $this->table_name ".
-				"ORDER BY $this->order_field"),
+			$sql->query(
+				"SELECT * ".
+				"FROM $this->table_name ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY $this->order_field"
+			),
 			$this->page_name,
 			array (
 				_("Code")        => 	"icd9code",
 				_("Description") =>	"icd9descrip"
 			),
-			array ("", _("NO DESCRIPTION")), "", "t_page"
+			array ("", _("NO DESCRIPTION")),
+			"", 
+			"t_page"
 		);
 	} // end function IcdMaintenance->view
 
