@@ -24,6 +24,19 @@ class BaseModule extends module {
 	// All FreeMED modules use this one loader
 	var $page_name = "module_loader.php";
 
+	// Variable: print_template
+	//
+	//	Sets the print template to be used for this EMR
+	//	segment. Templates are given as files in lib/tex without
+	//	the .tex extension. If this is not definied, FreeMED
+	//	will default to using the internal renderer.
+	//
+	// Example:
+	//
+	//	$this->print_template = '_template';
+	//
+	var $print_template = '';
+
 	// Method: BaseModule constructor
 	function BaseModule () {
 		// Call parent constructor
@@ -66,6 +79,28 @@ class BaseModule extends module {
 	// Method: BaseModule->_footer
 	function footer ($nullvar = "") {
 	} // end function footer
+
+	// Method: fax_widget
+	//
+	//	Callback to allow custom fax controls (for addressbook,
+	//	et cetera). By default, this is disabled, and a standard
+	//	text entry is used.
+	//
+	// Parameters:
+	//
+	//	$varname - Name of the variable
+	//
+	//	$id - Record id that is being printed
+	//
+	// Returns:
+	//
+	//	XHTML widget.
+	//
+	function fax_widget ( $varname, $id ) {
+		return html_form::text_widget('fax_number',
+			array( 'length' => '16' )
+		);
+	} // end method fax_widget
 
 	// Method: printaction
 	//
@@ -117,11 +152,7 @@ class BaseModule extends module {
 				 value=\"fax\"
 				 id=\"print_method_fax\" /></td>
 				<td>".__("Fax")."</td>
-				<td>".html_form::text_widget('fax_number',
-					array(
-						'length' => '16'
-					)
-				)."</td>
+				<td>".$this->fax_widget('fax_number', $_REQIEST['id'])."</td>
 			</tr>
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
@@ -154,7 +185,14 @@ class BaseModule extends module {
 		));
 
 		// Actual renderer for formatting array
-		$this->_RenderTex(&$TeX, $_REQUEST['id']);
+		if ($this->print_template) {
+			$TeX->_buffer = $TeX->RenderFromTemplate(
+				$this->print_template,
+				$this->_print_mapping($TeX, $_REQUEST['id'])
+			);
+		} else {
+			$this->_RenderTex(&$TeX, $_REQUEST['id']);
+		}
 
 		global $display_buffer;
 
@@ -172,15 +210,22 @@ class BaseModule extends module {
 		switch ($_pm) {
 			// Handle direct to browser
 			case 'browser':
-			Header('Content-Type: application/x-freemed-print-pdf');
-			$file = $TeX->RenderToPDF();
-			//print "file = $file<br/>\n";
+			$file = $TeX->RenderToPDF(!empty($this->print_template));
+			ob_start();
 			readfile($file);
+			$contents = ob_get_contents();
+			ob_end_clean();
+
+			Header('Content-Type: application/x-freemed-print-pdf');
+			Header('Content-Length: '.strlen($contents));
+			Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
+			print $contents;
+			//print "file = $file<br/>\n";
 			die();
 			break;
 
 			case 'fax':
-			$file = $TeX->RenderToPDF();
+			$file = $TeX->RenderToPDF(!empty($this->print_template));
 			$fax = CreateObject('_FreeMED.Fax', $file, array (
 				'sender' => PACKAGENAME.' v'.DISPLAY_VERSION
 				));
@@ -202,7 +247,7 @@ class BaseModule extends module {
 				$_REQUEST['printer']
 			);
 			// TODO: Handle direct PDF generation and return here
-			$TeX->PrintTeX(1);
+			$TeX->PrintTeX(!empty($this->print_template));
 			$GLOBALS['__freemed']['close_on_load'] = true;
 			}
 			break;
@@ -213,10 +258,29 @@ class BaseModule extends module {
 		}
 	} // end function print
 
+	// Method: _print_mapping
+	//
+	//	Callback to provide a macro mapping for TeX templating.
+	//
+	// Parameters:
+	//
+	//	$TeX - TeX rendering object of type <FreeMED.TeX>
+	//
+	//	$id - Record id of the target record.
+	//
+	// Returns:
+	//
+	//	Associative array containing mapping information.
+	//
+	function _print_mapping ( $TeX, $id ) {
+		// By default superclass returns nothing
+		return array ( );
+	} // end method _print_mapping
+
 	// Method: _TeX_Information
 	//
 	//	Callback to provide information to the TeX renderer about
-	//	formatting.
+	//	formatting. (Should be depreciated)
 	//
 	// Returns:
 	//
