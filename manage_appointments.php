@@ -27,7 +27,7 @@ if ($patient<1) {
 
  switch ($action) {
   case "del":
-   freemed_display_box_top ("Deleting Appointment");
+   $page_title = "Deleting Appointment";
    $display_buffer .= "\n"._("Deleting")." ... \n";
    $query = "DELETE FROM scheduler WHERE id='".addslashes($id)."'";
    $result = $sql->query ($query);
@@ -49,7 +49,7 @@ if ($patient<1) {
    $this_patient = new Patient ($patient);
 
    // display top of the box
-   freemed_display_box_top (_("Manage Appointments"));
+   $page_title = _("Manage Appointments");
    $display_buffer .= freemed_patient_box($this_patient)."
      <P>
      <CENTER>

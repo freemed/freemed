@@ -33,37 +33,40 @@ $display_buffer .= "
      VALIGN=CENTER ALIGN=CENTER>
 ";
 
-  if ($patient>0) { 
-    $qualifier = "(calpatient='".addslashes($patient)."')";
-    switch ($type) {
-      case "temp":
-        $qualifier .= " AND (caltype='temp')";
-        $master_patient_link_location =
-          "call-in.php?action=display&id=$patient";
-        break;
-      case "pat": case "default":
-        $qualifier .= " AND (caltype='pat')";
-        $master_patient_link_location =
-          "manage.php?id=$patient";
-        break;
-    } // end switch
-  } else { $qualifier = "0 = 0"; }
+if ($patient>0) { 
+	$qualifier = "(calpatient='".addslashes($patient)."')";
+	switch ($type) {
+		case "temp":
+		$qualifier .= " AND (caltype='temp')";
+		$master_patient_link_location =
+			"call-in.php?action=display&id=$patient";
+		break;
 
-  $query = "SELECT * FROM scheduler WHERE (($day_criteria)
-    AND ($qualifier)) ORDER BY caldateof, calhour, calminute";
-  $result = $sql->query ($query);
-  if ($debug) $display_buffer .= "query=\"$query\"";
-  if ($sql->num_rows ($result) < 1) {
-    $display_buffer .= "
+		case "pat": case "default": default:
+		$qualifier .= " AND (caltype='pat')";
+		$master_patient_link_location =
+			"manage.php?id=$patient";
+		break;
+	} // end switch
+} else {
+	$qualifier = "0 = 0";
+}
+
+$query = "SELECT * FROM scheduler WHERE (($day_criteria) ".
+	"AND ($qualifier)) ORDER BY caldateof, calhour, calminute";
+$result = $sql->query ($query);
+if ($debug) $display_buffer .= "query=\"$query\"";
+if ($sql->num_rows ($result) < 1) {
+	$display_buffer .= "
       <TR><TD ALIGN=CENTER>
        <I>"._("No appointments today.")."</I>
       </TD></TR>
       </TABLE>
       <P>
-   ";
+	";
 
-   if ($patient>0) { // if there is a patient link
-    $display_buffer .= "
+	if ($patient>0) { // if there is a patient link
+		$display_buffer .= "
       <CENTER><A HREF=\"$master_patient_link_location$patient\"
        >"._("Manage Patient")."</A> |
        <A HREF=\"book_appointment.php?patient=$patient&type=$type\"
@@ -71,24 +74,25 @@ $display_buffer .= "
       </CENTER>
       <P>
     ";
-    } else {
-     $display_buffer .= "
+	} else {
+		$display_buffer .= "
       <CENTER><A HREF=\"main.php\"
       >"._("Return to Main Menu")."</A> |
       <A HREF=\"patient.php\"
       >"._("Choose a Patient")."</A>
       </CENTER>
       <P>
-     ";
-    }
-    freemed_close_db ();
-    template_display();
-  } // end checking if there are any results
-  $any_appointments = false;            // until there are, there aren't
-  while ($r = $sql->fetch_array ($result)) {
-    if (freemed_check_access_for_facility ($LoginCookie, $r["calfacility"])) {
-      if (!$any_appointments) // if this is the first appointment...
-        $display_buffer .= "
+		";
+	}
+	freemed_close_db ();
+	template_display();
+} // end checking if there are any results
+
+$any_appointments = false;            // until there are, there aren't
+while ($r = $sql->fetch_array ($result)) {
+	if (freemed_check_access_for_facility ($r["calfacility"])) {
+	if (!$any_appointments) // if this is the first appointment...
+	$display_buffer .= "
           <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).
 	   ">
            <TD><B>"._("Time")."</B></TD>
@@ -98,57 +102,57 @@ $display_buffer .= "
            <TD><B>"._("Room")."</B></TD>
           </TR>
         ";
-      $any_appointments = true;         // now there are appointments
-      $ptid = $r["calpatient"];         // get patient id for links
+	$any_appointments = true;         // now there are appointments
+	$ptid = $r["calpatient"];         // get patient id for links
 
-      $calminute = $r["calminute"];
-      if ($calminute==0) $calminute="00";
+	$calminute = $r["calminute"];
+	if ($calminute==0) $calminute="00";
 
-       // time checking/creation if/else clause
-      if ($r["calhour"]<12)
-        $_time = $r["calhour"].":".$calminute." am";
-      elseif ($r["calhour"]==12)
-        $_time = $r["calhour"].":".$calminute." pm";
-      else
-        $_time = ($r["calhour"]-12).":".$calminute." pm";
+	// time checking/creation if/else clause
+	if ($r["calhour"]<12)
+	$_time = $r["calhour"].":".$calminute." am";
+	elseif ($r["calhour"]==12)
+	$_time = $r["calhour"].":".$calminute." pm";
+	else
+	$_time = ($r["calhour"]-12).":".$calminute." pm";
 
-      $calpatient = $r["calpatient"];
-       // prepare the patient and physician names
-      switch ($r["caltype"]) {
-       case "temp":
-        $ptlname = freemed_get_link_field ($r["calpatient"], "callin",
-                   "cilname"); 
-        $ptfname = freemed_get_link_field ($r["calpatient"], "callin",
+	$calpatient = $r["calpatient"];
+	// prepare the patient and physician names
+	switch ($r["caltype"]) {
+	case "temp":
+	$ptlname = freemed_get_link_field ($r["calpatient"], "callin",
+		"cilname"); 
+	$ptfname = freemed_get_link_field ($r["calpatient"], "callin",
                    "cifname");
-        $ptmname = freemed_get_link_field ($r["calpatient"], "callin",
+	$ptmname = freemed_get_link_field ($r["calpatient"], "callin",
                    "cimname");
-        $patient_link_location = "call-in.php?action=view&".
+	$patient_link_location = "call-in.php?action=view&".
                    "id=$calpatient";
-        break;
-       case "pat": default:
-        $ptlname = freemed_get_link_field ($r["calpatient"], "patient",
+	break;
+	case "pat": default:
+	$ptlname = freemed_get_link_field ($r["calpatient"], "patient",
                    "ptlname");
-        $ptfname = freemed_get_link_field ($r["calpatient"], "patient",
+	$ptfname = freemed_get_link_field ($r["calpatient"], "patient",
                    "ptfname");
-        $ptmname = freemed_get_link_field ($r["calpatient"], "patient",
+	$ptmname = freemed_get_link_field ($r["calpatient"], "patient",
                    "ptmname");
         $patient_link_location = "manage.php?id=$patient";
-        break;
-      } // end of switch (getting proper patient info
+	break;
+	} // end of switch (getting proper patient info
 
-      $phylname = freemed_get_link_field ($r["calphysician"],
+	$phylname = freemed_get_link_field ($r["calphysician"],
                  "physician", "phylname"); // physician last name
-      $phyfname = freemed_get_link_field ($r["calphysician"],
+	$phyfname = freemed_get_link_field ($r["calphysician"],
                  "physician", "phyfname"); // physician first name
 
        // get facility and room names
-      $psrname = freemed_get_link_field ($r["calfacility"],
+	$psrname = freemed_get_link_field ($r["calfacility"],
                  "facility", "psrname");
-      $roomname = freemed_get_link_field ($r["calroom"],
+	$roomname = freemed_get_link_field ($r["calroom"],
                   "room", "roomname");
-      if (strlen($psrname)<1) $psrname = "&nbsp;";
-      if ($show=="all") $_date = $r["caldateof"]." <BR>";
-      if (freemed_check_access_for_facility ($LoginCookie, $r["calfacility"])){
+	if (strlen($psrname)<1) $psrname = "&nbsp;";
+	if ($show=="all") $_date = $r["caldateof"]." <BR>";
+	if (freemed_check_access_for_facility ($r["calfacility"])){
        $display_buffer .= "
          <TR BGCOLOR=\"".
           ( ($r["calpatient"]==$current_patient) ?
@@ -164,22 +168,24 @@ $display_buffer .= "
           <TD>$psrname</TD>         
           <TD>$roomname</TD>
          </TR>
-        "; // only display if we have access...
-       } // end of if...
-      } // if there is something here
+		"; // only display if we have access...
+		} // end of if...
+	} // if there is something here
 } // end the universal while loop
+
 if (!$any_appointments)
-    $display_buffer .= "
+	$display_buffer .= "
       <TR><TD ALIGN=CENTER>
        <I>"._("No appointments today.")."</I>
       </TD></TR>
       </TABLE>
       <P>
-    ";
-  else $display_buffer .= "
+	";
+else $display_buffer .= "
     </TABLE>
     <P>
-  ";
+	";
+
 if ($patient>0) // if there is a patient link
     $display_buffer .= "
       <CENTER><A HREF=\"$master_patient_link_location\"

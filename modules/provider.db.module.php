@@ -508,7 +508,7 @@ class providerMaintenance extends freemedMaintenanceModule {
           $phy[phymname] $phy[phylname], $phy[phytitle]
      </TD></TR>
   ";
-  if (freemed_get_userlevel($LoginCookie)>$database_level)
+  if (freemed_get_userlevel()>$database_level)
    $display_buffer .= "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <A HREF=\"physician.php?action=modform&id=$id\"

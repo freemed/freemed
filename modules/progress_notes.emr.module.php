@@ -296,7 +296,7 @@ class progressNotes extends freemedEMRModule {
 
      $this->this_patient = new Patient ($pnotespat);
 
-     if (freemed_get_userlevel($LoginCookie)>$database_level)
+     if (freemed_get_userlevel()>$database_level)
        $__MODIFY__ = " |
          <A HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
           >"._("Modify")."</A>
