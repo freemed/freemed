@@ -388,7 +388,7 @@ switch($action) {
     $i_id = $i_r ["id"];
     $cmap_buf .= "
      <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color ($_alternate)).">
-      <TD>".fm_prep($i_r["intservtype"])."</TD>
+      <TD>".prepare($i_r["intservtype"])."</TD>
       <TD>
        <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
         SIZE=15 MAXLENGTH=30 VALUE=\"".$phychargemap[$i_id]."\">
@@ -425,7 +425,7 @@ switch($action) {
     $i_id = $i_r ["id"];
     $insmap_buf .= "
      <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
-      <TD>".fm_prep($i_r["inscogroup"])."</TD>
+      <TD>".prepare($i_r["inscogroup"])."</TD>
       <TD>
        <INPUT TYPE=TEXT NAME=\"phyidmap$brackets\"
         SIZE=15 MAXLENGTH=30 VALUE=\"".$phyidmap[$i_id]."\">
@@ -660,12 +660,15 @@ switch($action) {
       <$STDFONT_B>$phy[phyfname] 
           $phy[phymname] $phy[phylname], $phy[phytitle]<$STDFONT_E>
      </TD></TR>
-
+  ";
+  if (freemed_get_userlevel($LoginCookie)>$database_level)
+   echo "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <$STDFONT_B><A HREF=\"physician.php3?$_auth&action=modform&id=$id\"
        >"._("Modify $record_name")."</A><$STDFONT_E>
      </TD></TR>
-     
+   ";
+  echo "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <$STDFONT_B><A HREF=\"physician.php3?$_auth&id=$id\"
        >"._("Back to $record_name page")."</A><$STDFONT_E>
