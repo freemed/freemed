@@ -1,0 +1,23 @@
+$Id$
+$Author$
+Fax Setup Documentation
+
+1) Create a user account for XML-RPC transport. This user should have access
+	to the entire system, and should be given database, delete and
+	administrative access.
+
+2) Modify data/config/xmlrpc.ini to reflect your server configuration.
+
+3) Install a working copy of hylafax. For Debian users, this involves
+	issuing the "apt-get install hylafax-server" command.
+
+4) Install the crontab fragment in scripts/fax_import into /etc/cron.d/ 
+	(This location is correct for Debian users; your installation
+	directories may vary.) This action should have been performed by
+	your packager.
+
+5) Make sure that img/store is owned by your web user (www-data under
+	Debian), and that they have write permissions to this directory.
+	This is also necessary for any other operations that involve
+	scanned documents. The same applies for data/fax/unread and
+	data/fax/unfiled.
