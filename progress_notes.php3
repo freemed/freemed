@@ -533,87 +533,31 @@
 
      $this_patient = new Patient ($patient);
      
-     if ($rows < 1) {
-       freemed_display_box_top ("$record_name", $page_name, $_ref);
-       echo "
-         <P>
-         <CENTER>
-          <$STDFONT_B>
-          <B>$Patient</B> :
-           <A HREF=\"manage.php3?$_auth&id=$patient\"
-            >".$this_patient->fullName(true)."</A>
-          <$STDFONT_E>
-         </CENTER>
-         <P>
-         <CENTER>
-         <$STDFONT_B>$This_Patient_Has_No_Notes<$STDFONT_E>
-         </CENTER>
-         <P>
-         <CENTER>
-         <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-          ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
-         <B>|</B>
-         <A HREF=\"manage.php3?$_auth&id=$patient\"
-          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-         </CENTER>
-         <P>
-       ";
-       freemed_display_box_bottom ();
-       freemed_close_db ();
-       freemed_display_html_bottom ();
-       DIE("");
-     } // if there are none...
-
-       // or else, display them...
      freemed_display_box_top ("$record_name",
       "manage.php3?id=$patient", $page_name);
      $this_patient = new Patient ($patient);
      echo "
        <P>
-       <B>$Patient</B> : <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A>
-       <P>
-       <$HEADERFONT_B>$Existing $record_name<$HEADERFONT_E>
-       <P>
-       <TABLE BORDER=2 CELLSPACING=2 CELLPADDING=1 BGCOLOR=#ffffff
-        ALIGN=CENTER VALIGN=CENTER>
-     ";
-     while ($r = fdb_fetch_array ($result)) {
-       $pnotesdt   = $r["pnotesdt"];
-       $pnotesdesc = $r["pnotesdesc"];
-       $id         = $r["id"      ];
-       if (empty($pnotesdesc)) $pnotesdesc="NO DESCRIPTION";
-       echo "
-         <TR><TD BGCOLOR=#ffffff>
-         <A HREF=\"$page_name?$_auth&action=display&patient=$patient&id=$id\"
-          ><$STDFONT_B>$pnotesdt / $pnotesdesc<$STDFONT_E></A>
-       ";
-       if (freemed_get_userlevel($LoginCookie)>$database_level)
-         echo "
-           &nbsp;
-           <A HREF=\"$page_name?$_auth&action=modform&patient=$patient&id=$id\"
-            >$MOD</A>
-         ";
-       if (freemed_get_userlevel($LoginCookie)>$delete_level)
-         echo "
-           &nbsp;
-           <A HREF=\"$page_name?$_auth&action=del&patient=$patient&id=$id\"
-            >$DEL</A>
-         ";
-       echo "
-         </TD></TR>
-       ";
-     } // end master while fetch loop
-     echo "
-       </TABLE>
-       <P>
        <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-       <B>|</B>
-       <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-        ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
+       $Patient : <A HREF=\"manage.php3?$_auth&id=$patient\"
+         >".$this_patient->fullName(true)."</A>
        </CENTER>
+       <P>
+     ";
+     freemed_display_itemlist(
+       "Progress Notes",
+       $result,
+       "progress_notes.php3",
+       array (
+         "Date"        => "pnotesdt",
+	 "Description" => "pnotesdesc"
+       ), // array
+       array (
+         "",
+	 "NO DESCRIPTION"
+       )
+     );
+     echo "
        <P>
      ";
      freemed_display_box_bottom ();
