@@ -169,6 +169,46 @@ class Annotations extends EMRModule {
 		return join("\n\n", $b);
 	} // end method outputAnnotations
 
+	// Method: prepareAnnotation
+	//
+	//	Prepare an annotation for being embedded in a Javascript
+	//	string.
+	//
+	// Parameters:
+	//
+	//	$a - Annotation text.
+	//
+	// Returns:
+	//
+	//	Javascript string formatted text.
+	//
+	function prepareAnnotation ( $a ) {
+		$b = $a;
+		$b = htmlentities($b);
+		$b = str_replace("\n", '<br/>\n', $b);
+		return $b;
+	} // end method prepareAnnotation
+
+	// Method: prepareAnnotation
+	//
+	//	Prepare an annotation for being embedded in a Javascript
+	//	string.
+	//
+	// Parameters:
+	//
+	//	$a - Annotation text.
+	//
+	// Returns:
+	//
+	//	Javascript string formatted text.
+	//
+	function prepareAnnotation ( $a ) {
+		$b = $a;
+		$b = htmlentities($b);
+		$b = str_replace("\n", '<br/>\n', $b);
+		return $b;
+	} // end method prepareAnnotation
+
 	// Update
 	function _update ( ) {
 		global $sql;

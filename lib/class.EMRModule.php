@@ -652,7 +652,7 @@ class EMRModule extends BaseModule {
 					<small>".
 					( ($use_anno and $first) ?
 						"<span style=\"text-decoration: underline;\" ".
-						"onMouseOver=\"tooltip('".str_replace("\n", '<br/>\n', addslashes($_anno))."');\" ".
+						"onMouseOver=\"tooltip('".module_function('Annotations', 'prepareAnnotation', array($_anno))."');\" ".
 						"onMouseOut=\"hidetooltip();\">" : "" ).
 					prepare(${$v}).
 					( ($use_anno and $first) ? "</span>" : "" ).
