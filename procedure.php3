@@ -131,10 +131,7 @@ switch ($action) { // master action switch
                            $proceoc,
                            false);
   
-  $icd_type_q = "SELECT c_value FROM config WHERE c_option='icd'";
-  $icd_type_r = fdb_query($icd_type_q);
-  $icd_type_a = fdb_fetch_array($icd_type_r);
-  $icd_type = $icd_type_a[c_value]; // '9' or '10'
+  $icd_type = freemed_config_value("icd"); // '9' or '10'
 
   $cpt_query = "SELECT * FROM cpt ORDER BY cptcode,cptnameint";
   $cpt_result = fdb_query($cpt_query);
