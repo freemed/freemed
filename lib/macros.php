@@ -93,6 +93,7 @@ define ('SUMMARY_VIEW_NEWWINDOW',	2);
 define ('SUMMARY_LOCK',			4);
 define ('SUMMARY_PRINT',		8);
 define ('SUMMARY_DELETE',		16);
+define ('SUMMARY_NOANNOTATE',		32);
 
 } // end checking for __MACROS_PHP__
 

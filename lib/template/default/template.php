@@ -52,6 +52,10 @@ if (isset($refresh)) {
 	}
  ?>>
 
+<!-- tooltips -->
+<div ID="dhtmltooltip"></div>
+<script type="text/javascript" src="lib/template/default/tooltip.js"></script>
+
 <!-- define main table -->
 
 <table WIDTH="100%" CELLSPACING="0" CELLPADDING="0"

@@ -44,9 +44,11 @@ class Annotations extends EMRModule {
 
 		$this->summary_vars = array (
 			__("Date/Time") => 'atimestamp',
-			__("Table") => 'atable'
+			__("Table") => 'atable',
+			" " => 'annotation'
 		);
-		$this->summary_options = SUMMARY_VIEW | SUMMARY_DELETE;
+		$this->summary_options = SUMMARY_VIEW | SUMMARY_DELETE |
+			SUMMARY_NOANNOTATE;
 
 		$this->form_hidden = array (
 			'amodule',
@@ -91,9 +93,10 @@ class Annotations extends EMRModule {
 
 	function view ( ) {
 		global $sql; global $display_buffer; global $patient;
+
 		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT DATE_FORMAT(atimestamp, '%d %M %Y %H:%i') AS ts, ".
-				"amodule, auser, id FROM ".$this->table_name." ".
+				"amodule, auser, annotation, id FROM ".$this->table_name." ".
 				"WHERE apatient='".addslashes($patient)."' ".
 				freemed::itemlist_conditions(false)." ".
 				"ORDER BY atimestamp DESC"),
@@ -101,16 +104,69 @@ class Annotations extends EMRModule {
 			array(
 				__("Date") => 'ts',
 				__("Module") => 'amodule',
-				__("User") => 'auser'
+				__("User") => 'auser',
+				__("Annotation") => 'annotation'
 			),
 			array('', __("Not specified")), //blanks
 			array(
 				"",
 				"",
-				"user" => "username"
+				"user" => "username",
+				""
 			)
 		);
 	} // end method view
+
+	// Method: getAnnotations
+	//
+	//	Get annotations, if present.
+	//
+	// Parameters:
+	//
+	//	$module - Module to examine for annotations
+	//
+	//	$id - ID number
+	//
+	// Returns:
+	//
+	//	Array of annotations, otherwise false.
+	//
+	function getAnnotations ($module, $id) {
+		$q = "SELECT * FROM ".$this->table_name." ".
+			"WHERE amodule = '".addslashes($module)."' ".
+			"AND aid = '".addslashes($id)."'";
+		$res = $GLOBALS['sql']->query($q);
+		if (!$GLOBALS['sql']->results($res)) {
+			return false;
+		}
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$a[] = $r;
+		}
+		return $a;
+	} // end method getAnnotations
+
+	// Method: outputAnnotations
+	//
+	//	Produce tooltip-friendly annotations from the output
+	//	of <getAnnotations>.
+	//
+	// Parameters:
+	//
+	//	$annotations - Array of annotations
+	//
+	// Returns:
+	//
+	//	XHTML-formatted annotation string
+	//
+	function outputAnnotations ( $annotations ) {
+		foreach ($annotations AS $a) {
+			$user = freemed::get_link_rec($a['auser'], 'user');
+			$b[] .= "<b>".$user['userdescrip']."</b>\n".
+				"<i>".$a['atimestamp']."</i>\n".
+				$a['annotation'];
+		}
+		return join("\n\n", $b);
+	} // end method outputAnnotations
 
 	// Update
 	function _update ( ) {

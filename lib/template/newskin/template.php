@@ -64,6 +64,10 @@ if (isset($refresh)) {
 	}
  ?>>
 
+<!-- tooltips -->
+<div ID="dhtmltooltip"></div>
+<script type="text/javascript" src="lib/template/default/tooltip.js"></script>
+
 <!-- menu -->
 
 <div id="top" align="left" style="width: 100%;" class="menuBar">

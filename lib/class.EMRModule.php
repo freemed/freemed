@@ -544,6 +544,7 @@ class EMRModule extends BaseModule {
 			 CELLPADDING=\"2\" BORDER=\"0\">
 			<TR>
 			";
+
 			foreach ($this->summary_vars AS $k => $v) {
 				$buffer .= "
 				<td VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
@@ -561,10 +562,19 @@ class EMRModule extends BaseModule {
 				// Pull out all variables
 				extract ($r);
 
+				// Check for annotations
+				if ($_anno = module_function('Annotations', 'getAnnotations', array (get_class($this), $id))) {
+					$use_anno = true;
+					$_anno = module_function('Annotations', 'outputAnnotations', array ($_anno));
+				} else {
+					$use_anno = false;
+				}
+
 				// Use $this->summary_vars
 				$buffer .= "
 				<tr VALIGN=\"MIDDLE\">
 				";
+				$first = true;
 				foreach ($this->summary_vars AS $k => $v) {
 					if (!(strpos($v, ":")===false)) {
 						// Split it up
@@ -585,9 +595,17 @@ class EMRModule extends BaseModule {
 					}
 					$buffer .= "
 					<td VALIGN=\"MIDDLE\">
-					<small>".prepare(${$v})."</small>
+					<small>".
+					( ($use_anno and $first) ?
+						"<span style=\"text-decoration: underline;\" ".
+						"onMouseOver=\"tooltip('".str_replace("\n", '<br/>\n', addslashes($_anno))."');\" ".
+						"onMouseOut=\"hidetooltip();\">" : "" ).
+					prepare(${$v}).
+					( ($use_anno and $first) ? "</span>" : "" ).
+					"</small>
 					</td>
 					";
+					$first = false;
 				} // end looping through summary vars
 				$buffer .= "
 				<td VALIGN=\"MIDDLE\">
@@ -633,12 +651,13 @@ class EMRModule extends BaseModule {
 				"action=print&id=".$r['id']) : "" ).
 
 				// Annotations
+				( !($this->summary_options & SUMMARY_NOANNOTATE) ?
 				template::summary_annotate_link($this,
 				"module_loader.php?module=annotations&".
 				"atable=".$this->table_name."&".
 				"amodule=".get_class($this)."&".
 				"patient=$patient&action=addform&".
-				"aid=".$r['id']."&return=manage").
+				"aid=".$r['id']."&return=manage") : "" ).
 				"</td>
 				</tr>
 				";
