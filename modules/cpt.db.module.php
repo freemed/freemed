@@ -234,6 +234,8 @@ class cptMaintenance extends freemedMaintenanceModule {
     $serv_buffer .= "
      </TABLE>
     ";
+
+	global $cptdefstdfee;
   $book->add_page (
     _("Fee Profiles"),
     array (""),
@@ -255,7 +257,7 @@ class cptMaintenance extends freemedMaintenanceModule {
       <TD ALIGN=RIGHT>
        "._("Default Standard Fee")." : </TD>
       <TD ALIGN=LEFT>
-       ".bcadd($this_code["cptdefstdfee"],0,2)."
+       ".bcadd($cptdefstdfee,0,2)."
       </TD>
      </TR>
 
