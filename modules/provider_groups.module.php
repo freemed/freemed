@@ -73,7 +73,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 		// set date of addition if not set 
 		if (!isset($phygroupdtadd)) $phygroupdtadd = $cur_date;
  
-		$fac_r = fdb_query("SELECT * FROM facility ORDER BY psrname,psrnote");
+		$fac_r = $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote");
 		echo "
 			<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=\"100%\">
    <TR><TD ALIGN=CENTER>

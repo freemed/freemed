@@ -37,8 +37,8 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
 		if ($action=="modform") {
-			$result = fdb_query("SELECT * FROM $this->table_name WHERE id='$id'");
-			$r = fdb_fetch_array($result); // dump into array r[]
+			$result = $sql->query("SELECT * FROM $this->table_name WHERE id='$id'");
+			$r = $sql->fetch_array($result); // dump into array r[]
 			extract ($r);
 		} // modform fetching
 

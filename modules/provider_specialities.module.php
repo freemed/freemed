@@ -33,9 +33,9 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
 		if ($action=="modform") {
-			$result = fdb_query("SELECT * FROM $this->table_name ".
+			$result = $sql->query("SELECT * FROM $this->table_name ".
 				"WHERE id='".addslashes($id)."'");
-			$r = fdb_fetch_array($result);
+			$r = $sql->fetch_array($result);
 			extract($r);
 			break;
 		} // if this is a modform...
