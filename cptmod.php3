@@ -129,7 +129,7 @@ switch ($action) {
   
   echo "
     <P>
-    <I>"._($record_name)." <B>$id</B> "._("Deleted")."<I>.
+    <I>"._($record_name)." <B>$id</B> "._("Deleted")."</I>.
     <P>
   ";
   echo "
@@ -142,13 +142,20 @@ switch ($action) {
 
  default: // default action
 
-  $query = "SELECT * FROM cptmod ORDER BY cptmod, cptmoddescrip";
-
-  freemed_display_box_top (_($record_name));
+freemed_display_box_top (_($record_name));
   echo freemed_display_itemlist (
-    fdb_query ("SELECT cptmod,cptmoddescrip,id FROM cptmod
-                ORDER BY cptmod,cptmoddescrip"),
-    _($record_name),
+    fdb_query ("SELECT cptmod,cptmoddescrip,id FROM cptmod ".
+		((strlen($_s_val)>0)
+		 ? "WHERE 
+		   $_s_field = '$_s_val' OR
+		   $_s_field LIKE '%$_s_val' OR
+		   $_s_field LIKE '$_s_val%' OR
+		   $_s_field LIKE '%$_s_val%'" 
+		 
+		 : "")."
+                ORDER BY cptmod,cptmoddescrip"
+		 ),
+    $db_name,
     array (
 	_("Modifier")		=>	"cptmod",
 	_("Description")	=>	"cptmoddescrip"
