@@ -13,6 +13,11 @@ class facilityMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME    = "Facility Maintenance";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_DESCRIPTION = "
+		Facilities are used by FreeMED to describe locations where 
+		services are performed. Any physician/provider can do work 
+		at one or more of these facilities.
+	";
 
 	var $record_name    = "Facility";
 	var $table_name     = "facility";

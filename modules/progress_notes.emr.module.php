@@ -11,6 +11,11 @@ class progressNotes extends freemedEMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_DESCRIPTION = "
+		FreeMED Progress Notes allow physicians and
+		providers to track patient activity through
+		SOAPIER style notes.
+	";
 
 	var $record_name = "Progress Notes";
 	var $table_name  = "pnotes";

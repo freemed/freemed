@@ -11,6 +11,12 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME	= "Fixed Forms Maintenance";
 	var $MODULE_VERSION	= "0.1";
+	var $MODULE_DESCRIPTION = "
+		Fixed forms can be used when generating fixed-column
+		reports and text output. These are mainly used with
+		insurance/form filing and generation of custom forms
+		for internal facility use.
+	";
 
 	var $record_name	= "Fixed Form";
 	var $table_name		= "fixedform";

@@ -11,6 +11,14 @@ class episodeOfCare extends freemedEMRModule {
 
 	var $MODULE_NAME 	= "Episode of Care";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_DESCRIPTION = "
+		Episode of care is another portion of FreeMED
+		designed to help with outcomes management. Any
+		patients' treatment can be described through
+		episodes of care, which may span any range of
+		time, and more than one epsiode of care can
+		be used per visit. 
+	";
 
 	var $record_name	= "Episode of Care";
 	var $table_name     = "eoc";

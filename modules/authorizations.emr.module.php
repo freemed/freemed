@@ -11,8 +11,15 @@ define (__AUTHORIZATIONS_MODULE_PHP__, true);
 
 class authorizationsModule extends freemedEMRModule {
 
-	var $MODULE_NAME    = "Authorizations";
+	var $MODULE_NAME    = "Insurance Authorizations";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_DESCRIPTION = "
+		Insurance authorizations are used to track whether
+		a patient is authorized by his or her insurance
+		company for service during a particular period of
+		time. If you do not use insurance support in
+		FreeMED, this module is not needed.
+	";
 
 	var $record_name    = "Authorizations";
 	var $table_name     = "authorizations";

@@ -11,6 +11,13 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME    = "Diagnosis Family Maintenance";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_DESCRIPTION = "
+		Diagnosis families are part of FreeMED's attempt to
+		make practice management more powerful through outcomes
+		management. Diagnosis families are used to group
+		diagnoses more intelligently, allowing FreeMED to
+		analyze treatment patterns.
+	";
 
 	var $table_name     = "diagfamily";
 	var $record_name    = "Diagnosis Family";
