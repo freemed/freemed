@@ -267,7 +267,23 @@ class EMRModule extends BaseModule {
 				break;
 		} // end switch action
 	} // end function main
-	
+
+	// Method: additional_move
+	//
+	//	Stub function. Define additional EMR movement functionality
+	//	per module. Note that this function does *not* perform the
+	//	actual move, but instead moves support files, et cetera.
+	//
+	// Parameters:
+	//
+	//	$id - Id of the record in question
+	//
+	//	$from - Original patient
+	//
+	//	$to - Destination patient
+	//
+	function additional_move ($id, $from, $to) { }
+
 	function display_message () {
 		global $display_buffer;
 		if (isset($this->message)) {
