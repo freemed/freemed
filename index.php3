@@ -31,11 +31,11 @@ echo "
 <INPUT TYPE=TEXT NAME=\"_u\" LENGTH=20 MAXLENGTH=32>
 </TD></TR>
 <TR><TD ALIGN=RIGHT>
-<TT>".("Password")." : </TT>
+<TT>"._("Password")." : </TT>
 </TD><TD>
 <INPUT TYPE=PASSWORD NAME=\"_p\" LENGTH=20 MAXLENGTH=32></TD></TR> 
 <TR><TD ALIGN=RIGHT>
-<TT>".("Language")." : </TT>
+<TT>"._("Language")." : </TT>
 </TD><TD ALIGN=LEFT>
 <SELECT NAME=\"_l\">
  <OPTION VALUE=\"$language\">"._("Default Language")."
