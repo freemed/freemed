@@ -24,6 +24,11 @@ class progressNotes extends freemedEMRModule {
 	function progressNotes () {
 		// call parent constructor
 		$this->freemedEMRModule();
+		// Define variables for EMR summary
+		$this->summary_vars = array (
+			_("Date")        =>	"pnotesdt",
+			_("Description") =>	"pnotesdesc"
+		);
 	} // end constructor progressNotes
 
 	function add () { $this->form(); }
