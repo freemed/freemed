@@ -9,7 +9,7 @@
 \documentclass{article}
 
 % No normal header, footer, etc
-\usepackage[nohead,nofoot]{geometry}
+\usepackage[top=0.5in,left=0.7in,right=0.7in,bottom=1in,nohead,nofoot]{geometry}
 % Relative size package
 \usepackage{relsize}
 
@@ -18,31 +18,27 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-	{\relsize{1}\textbf{{{INSTALLATION}}}} \\
-	{\relsize{-1}\textsl{{{physician}}}} \\
-	\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
-	\textsl{phone {{physicianphone}} fax {{physicianfax}}}
+	{\relsize{1}\textbf{**link:letterfrom:physician:phypracname**}} \\
+	{\relsize{-1}\textsl{**method:Physician:fullName:letterfrom**}} \\
+	\textsl{**link:letterfrom:physician:phyaddr1a**, **link:letterfrom:physician:phycitya**, **link:letterfrom:physician:phystatea** **link:letterfrom:physician:phyzipa** } \\
+	\textsl{phone **link:letterfrom:physician:phyphonea:phone** fax **link:letterfrom:physician:phyfaxa:phone**}
 \end{center}
 
 
 \begin{tabular}{ll}
-	NAME:	&	{{patient}}	\\
+	NAME:	&	**method:Patient:fullName:letterpatient**	\\
 	DATE:	&	\today
 \end{tabular}
 
-%\begin{center}
-%	{\relsize{1}\textbf{PATIENT CORRESPONDENCE}}
-%\end{center}
-
-{{to}}: \\
+**method:Physician:fullName:letterto**: \\
 
 \hfill \\
 
-{{body}}
+**field:lettertext**
 
 \hfill \\
 
 Sincerely, \\
-{{from}}
+**method:Physician:fullName:letterfrom**
 
 \end{document}
