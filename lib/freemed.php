@@ -81,7 +81,7 @@ if (file_exists("lib/template/".$template."/lib.php")) {
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
 include_once ("lib/error_handler.php");   // internal error handler
-include_once ("/usr/share/phpwebtools/webtools.php"); // webtools toolkit
+include_once (PHPWEBTOOLS_LOCATION."/webtools.php"); // webtools toolkit
 
 define ('WEBTOOLS_REQUIRED', '0.4.2');   // version of phpwebtools required
 
