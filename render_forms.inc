@@ -27,7 +27,7 @@ class diagnosisSet {
   function getStack ($null_value = "") {
     for ($i=1;$i<=($this->stack_size);$i++)
       $figured_stack[$i] = freemed_get_link_field (
-       $this->internal_stack[$i], "icd9", "icd9name");
+       $this->internal_stack[$i], "icd9", "icd9code");
     return $figured_stack;
   } // end function getStack
 
