@@ -308,7 +308,7 @@ switch ($action) {
 	$m = freemed::get_link_rec($_REQUEST['id'], 'messages');
 	$title = __("Message");
 
-	if ($r['msgby']) {
+	if ($m['msgby']) {
 		$sentuser = CreateObject('FreeMED.User', $m['msgby']);
 		$sent_by = $sentuser->getDescription();
 	} else {
