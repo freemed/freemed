@@ -18,10 +18,13 @@ $page_name = "index.php";
 // In order to accomblish this jeff uses phpwebtools, so I have moved to check for php webtools
 // to this file...
 
-if(file_exists("/usr/share/phpwebtools/webtools.php")) {
-	require_once("/usr/share/phpwebtools/webtools.php");
+// Import settings from our global settings file
+include_once('lib/settings.php');
+
+if(file_exists(PHPWEBTOOLS_LOCATION . '/webtools.php')) {
+	require_once(PHPWEBTOOLS_LOCATION . '/webtools.php');
 } else die (
-	"FreeMED requires that phpwebtools be installed at /usr/share/phpwebtools."."<br/>\n".
+	"FreeMED requires that phpwebtools be installed at ".PHPWEBTOOLS_LOCATION."<br/>\n".
 	"FreeMED cannot find the phpwebtools file webtools.php"."<br/>\n"
 );
 
