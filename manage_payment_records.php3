@@ -354,7 +354,8 @@
      $denial_result = fdb_query ($denial_query);
      if ($denial_result and (fdb_num_rows($denial_result)>0)) {
        while ($denial_r = fdb_fetch_array ($denial_result)) {
-         echo "     <OPTION VALUE=\"".htmlentities($denial_r[payrecdesrip]).
+        if (!empty ($denial_r[payrecdescrip]))
+         echo "     <OPTION VALUE=\"".htmlentities($denial_r[payrecdescrip]).
               "\">".htmlentities($denial_r[payrecdescrip])."\n";
        } // end looping for all denial comments
      } // end checking for any results at all
