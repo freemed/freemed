@@ -454,8 +454,8 @@ if ($action=="cfgform") {
     )");
   if ($result) { echo "<LI>patient db \n"; }
 
-  // generate procedure database (second generation)
-  $result=fdb_query("CREATE TABLE $database.procedure (
+  // generate proc database (second generation)
+  $result=fdb_query("CREATE TABLE $database.procrec (
     procpatient            INT UNSIGNED,
     proceoc                TEXT,
     proccpt                INT UNSIGNED,

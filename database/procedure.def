@@ -1,4 +1,4 @@
-CREATE TABLE freemed.procedure (
+CREATE TABLE freemed.procrec (
     procpatient            INT UNSIGNED,
     proceoc                TEXT,
     proccpt                INT UNSIGNED,

@@ -693,7 +693,7 @@
      <P>
    ";
    // special jimmy-rigged query to find in 3d array...
-   $query = "SELECT * FROM $database.procedure
+   $query = "SELECT * FROM $database.procrec
              WHERE ((proceoc LIKE '$id:%') OR
                     (proceoc LIKE '%:$id') OR
                     (proceoc LIKE '%:$id:%') OR

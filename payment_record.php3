@@ -57,7 +57,7 @@
         <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
   // grab all procedures for patient (with non-zero balance)
-  $procs = fdb_query ("SELECT * FROM $database.procedure
+  $procs = fdb_query ("SELECT * FROM $database.procrec
                        WHERE ((procpatient='$patient')
                        AND (procbalcurrent>0))");
   if (($procs==0) or (fdb_num_rows ($procs)>0)) { // if there are results...
@@ -655,20 +655,20 @@
    echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
    switch ($payreccat) {
      case "1": // adjustment category (add)
-      $query = "UPDATE $database.procedure SET
+      $query = "UPDATE $database.procrec SET
                 procbalcurrent = procbalcurrent - $payrecamt
                 WHERE id='$payrecproc'";
       break; // end adjustment category (add)
 
      case "2": // refund category (add)
-      $query = "UPDATE $database.procedure SET
+      $query = "UPDATE $database.procrec SET
                 procamtpaid    = procamtpaid    + $payrecamt
                 WHERE id='$payrecproc'";
       break; // end refund category (add)
 
      case "3": // denial category (add)
       if ($payreclink==1) {
-        $query = "UPDATE $database.procedure SET
+        $query = "UPDATE $database.procrec SET
                   procbalcurrent = '0'
                   WHERE id='$payrecproc'";
       } else { // if no adjust
@@ -682,7 +682,7 @@
 
      case "0": // payment category (add)
      default:  // default is payment
-      $query = "UPDATE $database.procedure SET
+      $query = "UPDATE $database.procrec SET
                 procbalcurrent = procbalcurrent - $payrecamt,
                 procamtpaid    = procamtpaid    + $payrecamt
                 WHERE id='$payrecproc'";

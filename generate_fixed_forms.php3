@@ -72,7 +72,7 @@
     $current_patient = $b_r[payrecpatient];
 
     $current_status = fdb_num_rows( fdb_query (
-      "SELECT * FROM $database.procedure
+      "SELECT * FROM $database.procrec
        WHERE (
          (procpatient    = '$current_patient') AND
          (procbilled     = '0') AND
@@ -550,7 +550,7 @@
        echo "
          Marking ".$processed[$i]." ... 
        ";
-       $query = "UPDATE $database.procedure
+       $query = "UPDATE $database.procrec
                  SET procbilled = '1'
                  WHERE (
                    (procpatient    = '".$processed[$i]."') AND

@@ -506,7 +506,7 @@ switch ($action) { // master action switch
   ";
 
   // form add query
-  $query = "INSERT INTO $database.procedure VALUES (
+  $query = "INSERT INTO $database.procrec VALUES (
             '$patient',
             '".addslashes(fm_join_from_array($proceoc))."',
             '$proccpt',
@@ -610,7 +610,7 @@ switch ($action) { // master action switch
     <$STDFONT_B>$Modifying ... <$STDFONT_E>
   ";
   // form add query
-  $query = "UPDATE $database.procedure SET
+  $query = "UPDATE $database.procrec SET
             procpatient     = '$patient',
             proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
             proccpt         = '$proccpt',
