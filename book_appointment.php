@@ -1,7 +1,6 @@
 <?php
- // $Id$
- // note: scheduling module for freemed-project
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
 $page_name = "book_appointment.php";
 include ("lib/freemed.php");
@@ -11,6 +10,9 @@ freemed::connect ();
 
 //----- Set current user
 $this_user = CreateObject('FreeMED.User');
+
+//----- Cache information for loadable modules
+$_cache = freemed::module_cache();
 
 //----- Check for booking refresh
 if ($this_user->getManageConfig('booking_refresh') == '0') {
@@ -25,9 +27,13 @@ if ($travel) {
 	$patient = 0; $type = "pat"; $room = 0;
 } elseif ($patient>0) {
 	$this_patient = CreateObject('FreeMED.Patient', $patient, ($type=="temp"));
+	if (!isset($_REQUEST['type'])) {
+		$_REQUEST['type'] = $type = 'pat';
+	}
 } elseif ($_COOKIE["current_patient"]>0) {
 	$this_patient = CreateObject('FreeMED.Patient', $_COOKIE["current_patient"]);
 	$type = "pat"; // kludge to keep real patient for this
+	$_REQUEST['patient'] = $patient = $_COOKIE['current_patient'];
 }
 
 //----- Create scheduler object
@@ -49,20 +55,21 @@ if (!isset($physician) and $this_user->isPhysician()) {
 }
 
 // If we have an ID present and we haven't been here, pull from database
-if ($id and !$been_here) {
-	$appt = freemed::get_link_rec ($id, "scheduler");
+if ($_REQUEST['id'] and !$been_here) {
+	$appt = freemed::get_link_rec ($_REQUEST['id'], "scheduler");
 	$selected_date = $appt['caldateof'];
 	$type = $appt['caltype'];
 	$duration = $appt['calduration'];
-	$facility = $appt['calfacility'];
+	$_REQUEST['facility'] = $facility = $appt['calfacility'];
 	$room = $appt['calroom'];
-	$physician = $appt['calphysician'];
+	$_REQUEST['physician'] = $physician = $appt['calphysician'];
 	$patient = $appt['calpatient'];
 	$status = $appt['calstatus'];
 	$note = stripslashes($appt['calprenote']);
 } elseif (!$been_here and !isset($room)) {
 	// Fudge room, if we have a current facility
 	if ($_COOKIE['default_facility']) {
+		$_REQUEST['facility'] = $facility = $_COOKIE['default_facility']; 
 		// Get first room from there
 		$result = $sql->query("SELECT * FROM room ".
 			"WHERE roompos='".addslashes(
@@ -74,6 +81,8 @@ if ($id and !$been_here) {
 	}
 	if ($this_user->getManageConfig('default_room')) {
 		$room = $this_user->getManageConfig('default_room');
+		$_REQUEST['facility'] = $facility = 
+			freemed::get_link_rec($room, 'room', 'roompos');
 	}
 }
 
@@ -81,7 +90,7 @@ if ($id and !$been_here) {
 if (!isset($duration)) { $duration = 15; }
 
 if (strlen($selected_date) != 10) {
-	$selected_date = $cur_date;
+	$selected_date = date('Y-m-d');
 } // fix date if not correct
 
 //----- Set previous and next date variables...
@@ -91,6 +100,8 @@ for ($i=1;$i<=7;$i++) $next_wk = freemed_get_date_next ($next_wk);
 $prev = freemed_get_date_prev ($selected_date);
 $prev_wk = $selected_date;
 for ($i=1;$i<=7;$i++) $prev_wk = freemed_get_date_prev ($prev_wk);
+
+//--------------- Start actual scheduler ----------------------
 
 //----- Display patient management bar if not travel
 if (!$travel) {
@@ -115,43 +126,64 @@ if ($scheduler->date_in_the_past($selected_date)) {
 		</div>
 	";
 }
-$calendar_form .= "
-	<form ACTION=\"".page_name()."\" METHOD=\"POST\">
+
+// Deal with "next available" stuff passed
+if ($_REQUEST['na']) {
+	$na_criteria = $_REQUEST['na'];
+	unset($_REQUEST['na']); unset($na);
+	$_REQUEST['stage'] = $stage = 'nextavailable';
+}
+
+switch ($_REQUEST['stage']) {
+
+	default:
+	// If there is a template, set duration and find which rooms
+	// work under these circumstances
+	if ($_REQUEST['appttemplate'] > 0) {
+		$_REQUEST['duration'] = $duration = module_function (
+			'AppointmentTemplates',
+			'get_duration',
+			array ( $_REQUEST['appttemplate'] )
+		);
+		$rooms = module_function (
+			'AppointmentTemplates',
+			'get_rooms',
+			array ( $_REQUEST['appttemplate'] )
+		);
+	}
+	
+	$calendar_form .= "
+	<form ACTION=\"".page_name()."\" METHOD=\"POST\" name=\"myform\">
 	<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
-	<input TYPE=\"HIDDEN\" NAME=\"selected_date\" ".
-	"VALUE=\"".prepare($selected_date)."\"/>
-	<input TYPE=\"HIDDEN\" NAME=\"type\" ".
-	"VALUE=\"".prepare($type)."\"/>
-	<input TYPE=\"HIDDEN\" NAME=\"patient\" ".
-	"VALUE=\"".prepare($patient)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".addslashes($selected_date)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"hour\" VALUE=\"".$_REQUEST['hour']."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"minute\" VALUE=\"".$_REQUEST['minute']."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"stage\" VALUE=\"0\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"type\" VALUE=\"".prepare($type)."\"/>
 	<table width=\"100%\" cellspacing=\"0\" cellpadding=\"2\" border=\"0\"
 	 valign=\"TOP\" align=\"CENTER\">
-";
+	";
 
-//----- Add mini calendar to the top
-$calendar_form .= "
-	<tr><td>".$scheduler->generate_calendar_mini(
-		$selected_date,
-		"$page_name?".
-			"patient=".urlencode($patient)."&".
-			"room=".urlencode($room)."&".
-			"type=".urlencode($type)."&".
-			"travel=".urlencode($travel)."&".
-			"physician=".urlencode($physician)."&".
-			"duration=".urlencode($duration)."&".
-			"note=".urlencode(stripslashes($note))."&".
-			"been_here=1&".
-			"id=".urlencode($id)
-	)."</td>
-";
+	//----- Add calendar to the top
+	$calendar_form .= "<tr><td>".generate_calendar_mini($scheduler, $selected_date)."</td>";
 
-//----- Room/Physician/etc selection
-$calendar_form .= "
+	//----- Room/Physician/etc selection
+	$calendar_form .= "
 	<td align=\"LEFT\">
 	".html_form::form_table(array(
+
+	"<small>".__("Patient")."</small>" =>
+	freemed::patient_widget("patient"),
+
+	"<small>".__("Template")."</small>" =>
+	module_function(
+		"AppointmentTemplates",
+		"widget",
+		array ( "appttemplate", '', 'id', array('refresh' => ( $refresh_disable ? false : true )))
+	),
 	
-	"<small>".__("Phy")."</small>" =>
+	"<small>".__("Provider")."</small>" =>
 	html_form::select_widget(
 		"physician", 
 		array_merge(
@@ -167,24 +199,7 @@ $calendar_form .= "
 		array('refresh' => ( $refresh_disable ? false : true ))
 	),
 
-	"<small>".__("Rm")."</small>" =>
-	html_form::select_widget(
-		"room",
-		( $travel ? array ( __("Travel") => "0" ) :
-		freemed::query_to_array(
-			"SELECT CONCAT(room.roomname,' (',".
-			"facility.psrcity,', ',facility.psrstate,')') AS k,".
-			"room.id AS v ".
-			"FROM room,facility ".
-			"WHERE room.roompos=facility.id AND ".
-			"room.roombooking='y' ".
-			"ORDER BY k"
-		)
-		),
-		array('refresh' => ( $refresh_disable ? false : true ))
-	),
-
-	"<small>".__("Dur")."</small>" =>
+	"<small>".__("Duration")."</small>" =>
 	html_form::select_widget(
 		"duration", 
 		array (
@@ -218,216 +233,177 @@ $calendar_form .= "
 			"7:00" => 420,	
 			"7:30" => 450,
 			"8:00" => 480	
-		),
-		array('refresh' => ( $refresh_disable ? false : true ))
+		)
+		//,array('refresh' => ( $refresh_disable ? false : true ))
 	),
 
-	"<small>".__("Note")."</small>" =>
-	html_form::text_widget('note', array ('length' => 250,
-		'refresh' => !$refresh_disable ) )
+	"<small>".__("Facility")."</small>" =>
+	module_function(
+		'FacilityModule',
+		'widget',
+		array ( 'facility' )
+	),
+
+	__("Next Available") => na_widget()
 
 	), "", "", "")."
 
 	<div ALIGN=\"CENTER\">
-		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Refresh")."\"/>
+		<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" VALUE=\"".__("Refresh")."\"/>
 	</div>
 
 	</td>
 	</tr>
-";
+	</table>
+	";
 
-//----- Generate calendar
-//if ($room>0 and isset($physician)) { // check for this first
+	$calendar_form .= display_booking_calendar($selected_date);
 
-// Get room information
-if ($room > 0) {
-	$_room = freemed::get_link_rec($room, 'room');
-	$rm_name = $_room['roomname'];
-	$rm_desc = $_room['roomdescrip'];
-}
+	//----- End of page
+	$calendar_form .= "</form>\n";
+	$display_buffer .= $calendar_form;
+	template_display();
+	break; // end default page
 
-// We split this into a subroutine so we can call it more than once
-function display_booking_calendar ($date) {
-	foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-//----- Generate a multiple mapping index (multimap)
-$maps = $scheduler->multimap(
-	"SELECT * FROM scheduler WHERE ( ".
-		"calphysician='".addslashes($physician)."' OR ".
-		"calroom='".addslashes($room)."' ) AND ".
-		"caldateof='".addslashes($date)."'",
-		( isset($id) ? $id : -1 )
-);
-
-//----- Create blank map for time references
-$blank_map = $scheduler->map_init();
-
-//----- Set how many columns we need
-$columns = count($maps);
-
-$form .= "
-	<tr><td COLSPAN=\"2\">
-	<!-- begin calendar display -->
-
-	<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\" CLASS=\"calendar\">
-
-	<tr>
-		<td COLSPAN=\"2\" WIDTH=\"50\">&nbsp;</td>
-		<td COLSPAN=\"".($columns + 1)."\">&nbsp;</td>
-	</tr>
-";
-
-// Loop through the hours
-for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("calehr"); $c_hour++) {
-	// Display beginning of row/hour
-	$form .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
-		"CLASS=\"calcell_hour\"><b>".
-		$scheduler->display_hour($c_hour)."</b></td>\n";
-
-	// Loop through the minutes
-	for ($c_min="00"; $c_min<60; $c_min+=15) {
-		// Make sure to zero the current event counter
-		$event = false;
-	
-		// Change cell_class
-		$cell_class = alternate_colors (
-			array("calcell", "calcell_alt")
+	case '2': // stage 2
+	if ($a = unserialize(stripslashes($_REQUEST['na_choice']))) {
+		$_REQUEST['selected_date'] = $a[0];
+		$_REQUEST['hour'] = $a[1];
+		$_REQUEST['minute'] = $a[2];
+	}
+	if ($_REQUEST['appttemplate']) {
+		global $note;
+		$_REQUEST['note'] = $note = module_function(
+			'AppointmentTemplates',
+			'get_description',
+			array ( $_REQUEST['appttemplate'] )
 		);
+	}
+	$display_buffer .= pre_screen();
+	//ob_start();
+	//print "<pre>";
+	//print_r($_REQUEST);
+	//print "</pre>";
+	//$display_buffer .= ob_get_contents();
+	//ob_end_clean();
+	template_display();
+	break; // end stage 2
 
-		// Get index
-		$idx = $c_hour.":".$c_min;
-	
-		// Generate minute cell
-		$form .= "<td align=\"LEFT\" valign=\"TOP\" class=\"".
-			$cell_class."\"".">:".$c_min."</td>\n";
+	case __("Confirm Booking"):
+	case '3':
+	$display_buffer .= process();
+	template_display();
+	break; // end stage 3
 
-		// Set fit to true, by default
-		$fit = true;
-
-		// Loop through all maps
-		for($cur_map=0; $cur_map<$columns; $cur_map++) {
-			// Check for fitting
-			if (!$scheduler->map_fit($maps[$cur_map], $idx, $duration, $id)) {
-				$fit = false;
-			}
-			
-			if ($maps[$cur_map][$idx]['span'] == 0) {
-				// Skip
-				$event = true;
-			} elseif ($maps[$cur_map][$idx]['link'] != 0) {
-				// Display booking
-				$booking = freemed::get_link_rec(
-					$maps[$cur_map][$idx]['link'],
-					'scheduler'
-				);
-
-				// Show the event
-				$event = true;
-				$form .= "
-				<td colspan=\"1\" class=\"".(
-				$maps[$cur_map][$idx]['selected'] ?
-				'calcell_selected' : $cell_class )."\" ".
-				"rowspan=\"".($maps[$cur_map][$idx]['span']).
-				"\">".$scheduler->event_calendar_print(
-					$maps[$cur_map][$idx]['link']
-				)."</td>\n";
-			} else {
-				// If not, null block
-				$form .= "<td colspan=\"1\" ".
-				"class=\"".$cell_class."\" ".
-				">&nbsp;</td>\n";
-			}
-		} // end looping
-
-		// If overbooking, true fit by default
-		if (freemed::config_value('cal_ob') == 'enable') {
-			$fit = true;
-		} elseif ($event) {
-			$fit = false;
-		}
-
-		// Quick check to see if this will fit on a blank map
-		if (!$scheduler->map_fit($blank_map, $idx, $duration)) {
-			$fit = false;
-		}
-
-		// Add booking row
-		if ($fit) {
-			$form .= "<td colspan=\"1\" align=\"CENTER\"".
-				" class=\"calendar_book_link\" ".
-				//----------------------------------------
-				// If the following portion of code is
-				// uncommented, the system will double
-				// book from most browsers. Might have
-				// to either-or the link and the
-				// onClick to solve the problem. -Jeff
-				//----------------------------------------
-				//"onClick=\"window.location='".
-				//page_name()."?process=1&".
-				//"hour=".urlencode($c_hour)."&".
-				//"minute=".urlencode($c_min)."&".
-				//"room=".urlencode($room)."&".
-				//"physician=".urlencode($physician)."&".
-				//"duration=".urlencode($duration)."&".
-				//"type=".urlencode($type)."&".
-				//"selected_date=".urlencode($date)."&".
-				//"id=".urlencode($id)."&".
-				//"note=".urlencode($note)."&".
-				//"patient=".urlencode($patient)."'; ".
-				//"return true;\" ".
-				"onMouseOver=\"window.status='".__("Book an appointment at this time")."'; return true;\" ".
-				"onMouseOut=\"window.status=''; return true;\"".
-				">".
-				"<a href=\"".page_name()."?process=1&".
-				"hour=".urlencode($c_hour)."&".
-				"minute=".urlencode($c_min)."&".
-				"room=".urlencode($room)."&".
-				"physician=".urlencode($physician)."&".
-				"duration=".urlencode($duration)."&".
-				"type=".urlencode($type)."&".
-				"selected_date=".urlencode($date)."&".
-				"id=".urlencode($id)."&".
-				"note=".urlencode(stripslashes($note))."&".
-				"patient=".urlencode($patient)."\" ".
-				">".__("Book")."</a></td>\n";
-		} else {
-			$form .= "<td class=\"".$cell_class."\">&nbsp;</td>\n";
-		}
-
-		// End of row
-		$form .= "</tr>\n"; $row = false;
+	case 'nextavailable':
+	// display criteria, allow choice
+	$_nextday = $scheduler->date_add($_REQUEST['selected_date']);
+	switch ($na_criteria) {
+		case 'inaweek':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $scheduler->date_add($_REQUEST['selected_date'], 7),
+			'days' => 7,
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break;
 		
-	} // end minute looping
-
-	// Display end of this row
-	$form .= "</tr>\n";
-} // end hour looping
-
-//----- End of calendar
-$form .= "
-	</table>
-";
-	return $form;
-} // end function display_booking_calendar
-
-//} // end of checking for room & physician
-
-$day = $selected_date;
-for ($i = 1; $i <= 5; $i++) {
-	$calendar_form .= "<div align=\"center\">".fm_date_print($day, true)."</div>\n";
-	$calendar_form .= display_booking_calendar($day);
-	$day = freemed_get_date_next($day);
+		case 'in2weeks':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $scheduler->date_add($_REQUEST['selected_date'], 14),
+			'days' => 7,
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end in2weeks
+		
+		case 'inamonth':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $scheduler->date_add($_REQUEST['selected_date'], 28),
+			'days' => 7,
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end inamonth
+		
+		case 'weekday':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $scheduler->date_add($_REQUEST['selected_date'], 7),
+			'weekday' => true,
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end weekday
+		
+		case 'mon':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $_next_day,
+			'days' => 28,
+			'forceday' => 1, // monday
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end mon
+		
+		case 'tue':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $_next_day,
+			'days' => 28,
+			'forceday' => 2, // tuesday
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end tue
+		
+		case 'wed':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $_next_day,
+			'days' => 28,
+			'forceday' => 3, // wednesday
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end wed
+		
+		case 'thu':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $_next_day,
+			'days' => 28,
+			'forceday' => 4, // thursday
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end thu
+		
+		case 'fri':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $_next_day,
+			'days' => 28,
+			'forceday' => 5, // friday
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end fri
+		
+		case 'sat':
+		$display_buffer .= display_available_appointments(array(
+			'date' => $_next_day,
+			'days' => 28,
+			'forceday' => 6, // saturday
+			'provider' => $_REQUEST['physician'],
+			'duration' => $_REQUEST['duration']
+		)); break; // end sat
+		break;
+	
+		default:
+		trigger_error(__("That is not a valid selection!"), E_USER_ERROR);
+		break; // end default
+	}
+	template_display();
+	break; // end next available
 }
 
-//----- End of page
-$calendar_form .= "
-	</table>
-";
+trigger_error(__("You should never be here!"), E_USER_ERROR);
 
+//------------------------------------------------- FUNCTIONS ----------------
 
+function process () {
+	global $id, $sql, $page_title, $scheduler;
 
-//----- Check for process form
-if ($process) {
+	global $room, $facility, $patient, $appttemplate, $selected_date,
+		$hour, $minute, $duration, $physician, $type;
+
 	// Process form here
 	if (!$id) {
 		$page_title = __("Book Appointment");
@@ -461,8 +437,7 @@ if ($process) {
 				"calroom" => $room,
 				"calphysician" => $physician,
 				"calpatient" => $patient,	
-				"calcptcode" => $cptcode,
-				"calstatus" => $status,
+				"calstatus" => 'scheduled',
 				"calprenote" => stripslashes($note)
 			)
 		);
@@ -516,11 +491,521 @@ if ($process) {
 		$refresh = "module_loader.php?module=groupcalendar&selected_date=".
 			urlencode($_REQUEST['selected_date']);
 	}
-} else {
-	$display_buffer .= $calendar_form;
-} // done checking for processing
+} // end function process
 
-//----- Display the actual page
-template_display();
+// We split this into a subroutine so we can call it more than once
+function display_booking_calendar ($date) {
+	foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
+	//----- Generate a multiple mapping index (multimap)
+	$maps = $scheduler->multimap(
+		"SELECT * FROM scheduler WHERE ".
+		"calphysician='".addslashes($_REQUEST['physician'])."' AND ".
+		"caldateof='".addslashes($date)."'",
+		( $_REQUEST['id']>0 ? $_REQUEST['id'] : -1 )
+	);
+
+	//----- Create blank map for time references
+	$blank_map = $scheduler->map_init();
+
+	//----- Set how many columns we need
+	$columns = count($maps);
+	if ($columns < 4) {
+		$columns = 4;
+		while (count($maps) < 4) {
+			$maps[] = $blank_map;
+		}
+	}
+
+	$form .= "
+	<script language=\"javascript\"><!--
+	function setApptTime(h,m) {
+		document.myform.hour.value = h
+		document.myform.minute.value = m
+		document.myform.stage.value = '2'
+	}
+	function goToDate(d) {
+		document.myform.selected_date.value = d
+	}
+	//-->
+	</script>
+
+	<center>
+	<table CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"1\" CLASS=\"calendar\">
+
+	<tr>
+		<td COLSPAN=\"2\" WIDTH=\"80\">&nbsp;</td>
+		<td COLSPAN=\"".($columns + 1)."\">&nbsp;</td>
+	</tr>
+";
+
+	// Loop through the hours
+	for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("calehr"); $c_hour++) {
+		// Display beginning of row/hour
+		$form .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
+			"CLASS=\"calcell_hour\" width=\"50\"><b>".
+			$scheduler->display_hour($c_hour)."</b></td>\n";
+	
+		// Loop through the minutes
+		for ($c_min="00"; $c_min<60; $c_min+=15) {
+			if ($c_min+0 != 0) { $form .= "<tr>"; }
+			
+			// Make sure to zero the current event counter
+			$event = false;
+	
+			// Change cell_class
+			$cell_class = alternate_colors (
+				array("calcell", "calcell_alt")
+			);
+
+			// Get index
+			$idx = $c_hour.":".$c_min;
+	
+			// Generate minute cell
+			$form .= "<td align=\"LEFT\" valign=\"TOP\" class=\"".
+			$cell_class."\""." width=\"30\">:".$c_min."</td>\n";
+
+			// Set fit to true, by default
+			$fit = true;
+
+			// Loop through all maps
+			for($cur_map=0; $cur_map<$columns; $cur_map++) {
+				// Check for fitting
+				if (!$scheduler->map_fit($maps[$cur_map], $idx, $duration, $id) and isset($maps[$cur_map])) {
+					//$display_buffer .= "$idx not fit on $cur_map<br/>\n";
+					$fit = false;
+				}
+				
+				if ($maps[$cur_map][$idx]['span'] == 0) {
+					// Skip
+					$event = true;
+				} elseif ($maps[$cur_map][$idx]['link'] != 0) {
+					// Display booking
+					$booking = freemed::get_link_rec(
+						$maps[$cur_map][$idx]['link'],
+						'scheduler'
+					);
+	
+					// Show the event
+					$event = true;
+					$form .= "
+					<td colspan=\"1\" width=\"100\" ".
+					"class=\"reverse\" ".
+					"rowspan=\"".($maps[$cur_map][$idx]['span']).
+					"\" onMouseOver=\"tooltip('".
+					str_replace("\n", '\n', htmlentities($scheduler->event_calendar_print($maps[$cur_map][$idx]['link']))).
+					"');\" onMouseOut=\"hidetooltip();\" >".
+					"&nbsp;".
+					"</td>\n";
+				} else {
+					// If not, null block
+					if (!$scheduler->map_fit($blank_map, $idx, $duration)) {
+						$fit = false;
+					}
+
+					if ($fit) {
+						$form .= "<td colspan=\"1\" ".
+						"width=\"100\" ".
+						"class=\"".$cell_class."\" ".
+						"onMouseOver=\"window.status='".__("Book an appointment at this time")."'; return true;\" ".
+						"onMouseOut=\"window.status=''; return true;\"".
+						"onClick=\"setApptTime('".$c_hour."', ".
+						"'".$c_min."'); myform.submit();\" ".
+						">&nbsp;</td>\n";
+					} else {
+						$form .= "<td class=\"calendar_book_link\"><small>&nbsp;</small></td>\n";
+					}
+				}
+			} // end looping
+	
+			// If overbooking, true fit by default
+			if (freemed::config_value('cal_ob') == 'enable') {
+				$fit = true;
+			} elseif ($event) {
+				$fit = false;
+			}
+	
+			// Quick check to see if this will fit on a blank map
+			if (!$scheduler->map_fit($blank_map, $idx, $duration)) {
+				$fit = false;
+			}
+
+			// Add booking row
+			if ($fit) {
+				$form .= "<td colspan=\"1\" rowspan=\"1\" ".
+					" width=\"100\" align=\"CENTER\"".
+					" class=\"".$cell_class."\" ".
+					"onMouseOver=\"window.status='".__("Book an appointment at this time")."'; return true;\" ".
+					"onMouseOut=\"window.status=''; return true;\"".
+					"onClick=\"setApptTime('".$c_hour."', ".
+					"'".$c_min."'); myform.submit();\" ".
+					">&nbsp;</td>\n";
+			} else {
+				$form .= "<td class=\"calendar_book_link\"><small>&nbsp;</small></td>\n";
+			}
+	
+			// End of row
+			$form .= "</tr>\n"; $row = false;
+		} // end minute looping
+
+		// Display end of this row
+		if ($row) { $form .= "</tr>\n"; }
+	} // end hour looping
+
+	//----- End of calendar
+	$form .= " </table></center>\n";
+	return $form;
+} // end function display_booking_calendar
+
+// Function: generate_calendar_mini
+//
+//	Generate a miniature calendar, linking to the given page
+//
+// Parameters:
+//
+//	$given_date - Date to be selected
+//
+// Returns:
+//
+//	HTML code for miniature calendar
+//
+function generate_calendar_mini ($scheduler, $given_date) {
+		// mostly hacked code from TWIG's calendar - ancient
+		$cur_date = date('Y-m-d');
+
+		$lang_days = array (
+			"",
+			__("Sun"),
+			__("Mon"),
+			__("Tue"),
+			__("Wed"),
+			__("Thu"),
+			__("Fri"),
+			__("Sat")
+		);
+		$lang_months = array (
+			'',
+			__("Jan"),
+			__("Feb"),
+			__("Mar"),
+			__("Apr"),
+			__("May"),
+			__("Jun"),
+			__("Jul"),
+			__("Aug"),
+			__("Sep"),
+			__("Oct"),
+			__("Nov"),
+			__("Dec")
+		);
+
+    // break current day into pieces
+    list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
+    if ($cur_month < 10) $cur_month = "0".$cur_month;
+    if ($cur_day   < 10) $cur_day   = "0".$cur_day  ;
+
+    // validate day
+    if ((empty ($given_date)) or (!strpos($given_date, "-")))
+          { $this_date = $cur_date;   }
+     else { $this_date = $given_date; }
+
+    // break day into pieces
+    list ($this_year, $this_month, $this_day) = explode ("-", $this_date);
+
+    // Figure out the last day of the month
+    $lastday  [4] = $lastday [6] = $lastday [9] = $lastday [11] = 30;
+    // check for leap years in february)
+    if (checkdate( $this_month, 29, $this_year )) { $lastday [2] = 29; }
+      else                                        { $lastday [2] = 28; }
+    $lastday  [1] = $lastday  [3] = $lastday  [5] = $lastday [7] =
+    $lastday  [8] = $lastday [10] = $lastday [12] = 31;
+
+    // generate top of table
+    $buffer .= "
+     <center>
+     <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" VALIGN=\"MIDDLE\"
+      ALIGN=\"CENTER\" class=\"calendar_mini\" bgcolor=\"#dfdfdf\">
+      <tr BGCOLOR=\"#ffffff\">
+       <td ALIGN=\"LEFT\" colspan=\"2\">
+    ";
+
+    // previous month link
+    $buffer .= "     
+     <a onClick=\"goToDate('".
+       $scheduler->scroll_prev_month( $scheduler->scroll_prev_month( $scheduler->scroll_prev_month($this_date) ) ).
+       "'); document.myform.submit();\" class=\"button_text\"
+      >3</a>
+     <a onClick=\"goToDate('".
+       $scheduler->scroll_prev_month($this_date).
+       "'); document.myform.submit();\" class=\"button_text\"
+      ><small>".__("prev")."</small></a>
+     </td>
+     <td COLSPAN=\"5\" ALIGN=\"CENTER\">
+       <b>".prepare($lang_months[0+$this_month])." ".$this_year."</b>
+     </td>
+     <td ALIGN=\"RIGHT\" colspan=\"2\">
+     <a onClick=\"goToDate('".
+       $scheduler->scroll_next_month($this_date).
+       "'); document.myform.submit();\" class=\"button_text\"
+      ><small>".__("next")."</small></a>
+     <a onClick=\"goToDate('".
+       $scheduler->scroll_next_month( $scheduler->scroll_next_month( $scheduler->scroll_next_month($this_date) ) ).
+       "'); document.myform.submit();\" class=\"button_text\"
+      >3</a>
+     </td>
+     </tr>
+     <tr>
+      <td colspan=\"1\">&nbsp;</td>
+    ";
+    // print days across top
+    for( $i = 1; $i <= 7; $i++) {
+     $buffer .= "
+      <td ALIGN=\"CENTER\">
+       <small>".htmlentities($lang_days[$i])."</small>
+      </td>
+     ";
+    } // end of day display
+    $buffer .= "
+      <td colspan=\"1\">&nbsp;</td>
+     </tr>
+     <tr>
+      <td colspan=\"1\">&nbsp;</td>
+    ";
+
+    // calculate first day
+    $first_day = date( 'w', mktime( 0, 0, 0, $this_month, 1, $this_year ) );
+    $day_row = 0;
+
+    if( $first_day > 0 ) {
+  	while( $day_row < $first_day ) {
+   		$buffer .= "\t<td ALIGN=\"RIGHT\" BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
+   		$day_row += 1;  
+  		}
+ 	} // end while day row < first day
+
+ 	while( $day < $lastday[($this_month + 0)] ) 
+		{
+  		if( ( $day_row % 7 ) == 0) 
+			{
+   			$buffer .= "\t<td colspan=\"1\">&nbsp;</td>\n".
+				"</tr>\n<tr>\n".
+				"<td colspan=\"1\">&nbsp;</td>\n";
+  			}
+
+  		$dayp = $day + 1;
+
+        $thisclass = (
+	  ( $dayp       == $cur_day AND
+            $this_month == $cur_month AND
+            $this_year  == $cur_year ) ?
+            "calendar_mini_selected" : 
+	  ( $dayp       == $this_day ?
+	    "calendar_mini_current" : "calendar_mini_cell" ) );
+       
+	$buffer .= "<td align=\"RIGHT\" class=\"".$thisclass."\">\n";
+
+        $buffer .= "<a onClick=\"goToDate('".
+         date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
+         "'); document.myform.submit();\">$dayp</a>\n";
+      $buffer .= "
+       </td>
+      ";
+      $day++;
+      $day_row++;
+    }
+
+	while( $day_row % 7 ) {
+		$buffer .= "<td ALIGN=\"RIGHT\" BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
+		$day_row += 1;  
+	} // end of day row
+	$buffer .= "<td colspan=\"1\">&nbsp;</td>\n".
+	"</tr><tr>\n".
+	"<td COLSPAN=\"9\" ALIGN=\"RIGHT\" class=\"button_style\">\n".
+	"<a HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
+	$cur_day."\" class=\"button_text\" ".
+	"><small>".__("go to today")."</small></a>\n".
+	"</td></tr></table></center>\n";
+	return $buffer;
+} // end function generate_calendar_mini
+
+function na_widget ( ) {
+	$na_types = array (
+		"--" => '',
+		__("One Week From Now") => 'inaweek',
+		__("Two Weeks From Now") => 'in2weeks',
+		__("One Month From Now") => 'inamonth',
+		__("Weekdays Only") => 'weekdays',
+		__("Mondays Only") => 'mon',
+		__("Tuesdays Only") => 'tue',
+		__("Wednesdays Only") => 'wed',
+		__("Thursdays Only") => 'thu',
+		__("Fridays Only") => 'fri',
+		__("Saturdays Only") => 'sat'
+	);
+	$buffer .= "<select name=\"na\" onChange=\"document.myform.submit();\">\n";
+	foreach ($na_types AS $k => $v) {
+		$buffer .= "<option value=\"".prepare($v)."\">".prepare($k)."</option>\n";
+	}
+	$buffer .= "</select>\n";
+	return $buffer;
+} // end function na_widget
+
+function display_available_appointments ( $params ) {
+	global $scheduler;
+
+	// Set stage to be second stage once we choose something
+	$_REQUEST['stage'] = '2';
+
+	$vars = array (
+		'patient',
+		'physician',
+		'duration',
+		'appttemplate',
+		'type',
+		'id',
+		'facility',
+		'stage'
+	);
+	
+	$na = $scheduler->next_available($params);
+	if (!$na) {
+		return "<div align=\"center\">".
+			__("There are no available appointments which match your criteria.").
+			"</div>\n";
+	}
+	$buffer .= "<br/>\n";
+	$buffer .= "<form method=\"post\" name=\"myform\" id=\"myform\">\n";
+	$buffer .= "<div align=\"center\">\n";
+	$buffer .= __("Please select from the following available times and dates:")."<br/>\n";
+	foreach ($vars AS $v) {
+		$buffer .= "<input type=\"hidden\" name=\"".$v."\" ".
+			"value=\"".prepare($_REQUEST[$v])."\" />\n";
+	}
+	$buffer .= "<select name=\"na_choice\" onChange=\"this.form.submit();\">\n";
+	$buffer .= "<option value=\"\"> ---- </option>\n";
+	foreach ($na as $a) {
+		$buffer .= "<option value=\"".prepare(serialize($a))."\">".
+			fm_date_print($a[0], true)." ".
+			$scheduler->display_time($a[1],$a[2])."</option>\n";
+	}
+	$buffer .= "</select>\n";
+	$buffer .= "</div>\n";
+	$buffer .= "<div align=\"center\">\n";
+	$buffer .= "<input type=\"submit\" name=\"stage\" ".
+		"class=\"button\" value=\"".__("Cancel")."\" />\n";
+	$buffer .= "</div>\n";
+	$buffer .= "</form>\n";
+	return $buffer;
+} // end function display_available_appointments
+
+function pre_screen ( ) {
+	global $scheduler;
+
+	if ($_REQUEST['appttemplate']) {
+		// Get list of available rooms
+		$rooms = module_function (
+			'AppointmentTemplates',
+			'get_rooms',
+			array ( $_REQUEST['appttemplate'] )
+		);
+
+		// Make sure that we don't overbook anything ...
+		if ($rooms) {
+			foreach ($rooms AS $room_key => $this_room) {
+				$map = $scheduler->map(
+					"SELECT * FROM scheduler ".
+					"WHERE calfacility='".addslashes($_REQUEST['facility'])."' ".
+					"AND calphysician='".addslashes($_REQUEST['physician'])."' ".
+					"AND caldateof='".addslashes($_REQUEST['selected_date'])."' "
+				);
+				$idx = $_REQUEST['hour'].":".$_REQUEST['minute'];
+				if (!$scheduler->map_fit($map, $idx, $_REQUEST['duration'])) {
+					// Remove from list
+					unset($rooms[$room_key]);
+				} // end if doesn't fit
+			} // end foreach rooms
+			if (count($rooms) < 1) {
+				// TODO: Should we ever be here?
+				// TODO: Should this end differently?
+				trigger_error(__("Unable to find open slot!"), E_USER_ERROR);
+			}
+		} // end checking for rooms
+	}
+	
+	$provider = CreateObject('FreeMED.Physician', $_REQUEST['physician']);
+	$patient = CreateObject('FreeMED.Patient', $_REQUEST['patient']);
+	$buffer .= "<form method=\"post\" name=\"myform\" id=\"myform\">\n";
+	$vars = array (
+		'patient',
+		'selected_date',
+		'hour',
+		'minute',
+		'physician',
+		'duration',
+		'appttemplate',
+		'id',
+		'type'
+	);
+	foreach ($vars AS $v) {
+		$buffer .= "<input type=\"hidden\" name=\"".$v."\" ".
+			"value=\"".prepare($_REQUEST[$v])."\" />\n";
+	}
+	$buffer .= html_form::form_table(array(
+		__("Date") => fm_date_print($_REQUEST['selected_date']),
+		__("Time") => $scheduler->display_time(
+			$_REQUEST['hour'],
+			$_REQUEST['minute']
+			),
+		__("Duration") => $_REQUEST['duration'].' m',
+		__("Patient") => $patient->fullName(),
+		__("Provider") => $provider->fullName(),
+		__("Place of Service") => module_function (
+			'FacilityModule',
+			'to_text',
+			array ( $_REQUEST['facility'] )
+		),
+		__("Booking Location") =>
+		html_form::select_widget(
+			"room",
+			( $travel ? array ( __("Travel") => "0" ) :
+			freemed::query_to_array(
+				"SELECT CONCAT(room.roomname,' (',".
+				"facility.psrcity,', ',facility.psrstate,')') AS k,".
+				"room.id AS v ".
+				"FROM room,facility ".
+				"WHERE room.roompos=facility.id AND ".
+				"room.roombooking='y' ".
+				( $rooms ?
+				" AND FIND_IN_SET(room.id, '".join(',', $rooms)."') " :
+				"" ).
+				"ORDER BY k"
+			) )
+		),
+		__("Note") => html_form::text_widget('note')
+	));
+	$buffer .= "<div align=\"center\">\n";
+	$buffer .= "<input type=\"submit\" name=\"stage\" ".
+		"class=\"button\" ".
+		"value=\"".__("Confirm Booking")."\" />\n";
+	$buffer .= "<input type=\"submit\" name=\"stage\" ".
+		"class=\"button\" ".
+		"value=\"".__("Cancel")."\" />\n";
+	$buffer .= "</div>\n";
+	/*
+		"caldateof" => $selected_date,
+		"caltype" => $type,
+		"calhour" => $hour,
+		"calminute" => $minute,
+		"calduration" => $duration,
+		"calfacility" => $facility,
+		"calroom" => $room,
+		"calphysician" => $physician,
+		"calpatient" => $patient,	
+		"calcptcode" => $cptcode,
+		"calstatus" => 'scheduled'
+		"calprenote" => stripslashes($note)
+	*/
+	return $buffer;
+} // end function pre_screen
 
 ?>
