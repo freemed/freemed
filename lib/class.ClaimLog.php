@@ -383,12 +383,15 @@ ORDER BY
 	//
 	//	$proc - Procedure id key
 	//
+	//	$payrec - (optional) Payment record id key. Gives information
+	//	regarding only that payment record.
+	//
 	// Returns:
 	//
 	//	Associative array of information about the specified
 	//	procedure
 	//
-	function claim_information ( $proc ) {
+	function claim_information ( $proc, $payrec = NULL ) {
 		$query = "SELECT ".
 			"CONCAT(pt.ptlname, ', ', pt.ptfname, ".
 				"' ', pt.ptmname) AS patient_name, ".
@@ -418,6 +421,7 @@ ORDER BY
 				"coverage AS c, ".
 				"procrec AS p, ".
 				"facility AS f, ".
+				( $payrec ? "payrec AS pa, " : "" ).
 				"cpt AS pc ".
 			"WHERE ".
 				"p.procpos = f.id AND ".
@@ -426,7 +430,11 @@ ORDER BY
 				"p.proccurcovid = c.id AND ".
 				"c.covinsco = i.id AND ".
 				"p.procpatient = pt.id AND ".
-				"p.id = '".addslashes($proc)."'";
+				( $payrec ? "pa.payrecproc = p.id AND " : "" ).
+				( $payrec ? 
+					"pa.id = '".addslashes($payrec)."'" :
+					"p.id = '".addslashes($proc)."'" 
+				);
 		//print "query = \"$query\"<br/>\n";
 		$result = $GLOBALS['sql']->query ( $query );
 		$r = $GLOBALS['sql']->fetch_array ( $result );
@@ -442,12 +450,15 @@ ORDER BY
 	//
 	//	$proc - Procedure id key
 	//
+	//	$payrec - (optional) Payment record id key. Gives only information
+	//	regarding that particular payment record.
+	//
 	// Returns:
 	//
 	//	Array of associative arrays containing billing event
 	//	data from the claimlog table.
 	//
-	function events_for_procedure ( $proc ) {
+	function events_for_procedure ( $proc, $payrec = NULL ) {
 		$query = "SELECT ".
 			"u.username AS user, ".
 			"e.claction AS action, ".
@@ -456,10 +467,15 @@ ORDER BY
 			"e.clcomment AS comment ".
 			"FROM ".
 				"claimlog AS e, ".
+				( $payrec ? "payrec AS p, " : "" ).
 				"user AS u ".
 			"WHERE ".
 				"e.cluser = u.id AND ".
-				"e.clprocedure = '".addslashes($proc)."' ".
+				( $payrec ? "e.clpayrec = p.id AND " : "" ).
+				( $payrec ?
+				"e.clpayrec = '".addslashes($payrec)."' " :
+				"e.clprocedure = '".addslashes($proc)."' "
+				).
 			"ORDER BY e.cltimestamp DESC";
 		//print "query = \"$query\"<br/>\n";
 		return $this->_query_to_result_array ( $query, true );
@@ -529,6 +545,12 @@ ORDER BY
 	//	$procedure - Procedure id key
 	//
 	//	$param - Additional parameters in an associative array.
+	//	* item - Payment record id (optional)
+	//	* billkey - Billkey id for billing runs
+	//	* action - Textual action description
+	//	* format - Billing engine related
+	//	* target - Billing engine related
+	//	* comment - What else?
 	//
 	// Returns:
 	//
@@ -545,6 +567,7 @@ ORDER BY
 				'cltimestamp' => SQL__NOW,
 				'cluser' => $this_user->user_number,
 				'clprocedure' => $procedure,
+				'clpayrec' => ( $param['item'] ? $param['item'] : 0 ),
 				'clbillkey' => $param['billkey'],
 				'claction' => $param['action'],
 				'clformat' => $param['format'],

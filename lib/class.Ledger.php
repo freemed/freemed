@@ -8,6 +8,142 @@ class Ledger {
 	// STUB constructor
 	function Ledger ( ) { }
 
+	// Method: aging_report_qualified
+	//
+	//	Provide an "aging summary" (with number of claims and
+	//	amount due) for a range of agings, grouped by patient.
+	//
+	//	This function is primarily used by the accounts
+	//	receivable module, but could conceivably be used by
+	//	other financial parts of FreeMED.
+	//
+	// Parameters:
+	//
+	//	$criteria - Associative array of criteria types as
+	//	keys and parameters as values.
+	//
+	// Returns:
+	//
+	//	Array of associative arrays containing aging information.
+	//
+	function aging_report_qualified ( $criteria ) {
+		foreach ($criteria AS $k => $v) {
+			//print "criteria key = $k, value = $v<hr/>\n";
+			switch ($k) {
+				case 'aging':
+				switch ($v) {
+					case '0-30': case '31-60':
+					case '61-90': case '91-120':
+					list($lower,$upper)=explode('-', $v);
+					break;
+
+					case '120+':
+					$lower='120'; $upper='10000';
+					break;
+				} // end inner aging switch
+				if ($upper) $q[] =
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) >= ".addslashes($lower).") AND ".
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) <= ".addslashes($upper).")";
+				break; // end aging case
+
+				case 'billed':
+				if ($v == '0' or $v == '1') { $q[] = "p.procbilled = '".addslashes($v)."'"; }
+				break; // end billed case
+
+				case 'date':
+				if ($v) $q[] = "pa.payrecdt = '".addslashes($v)."'";
+				break; // end date
+
+				case 'procedure':
+				if ($v) $q[] = "p.id = '".addslashes($v)."'";
+				break; // end procedure case
+
+				case 'provider':
+				if ($v) $q[] = "pr.id = '".addslashes($v)."'";
+				break; // end provider case
+
+				case 'patient':
+				if ($v) $q[] = "pt.id = '".addslashes($v)."'";
+				break; // end patient case
+
+				case 'first_name':
+				if ($v) $q[] = "pt.ptfname LIKE '%".addslashes($v)."%'";
+				break; // end first name
+
+				case 'last_name':
+				if ($v) $q[] = "pt.ptlname LIKE '%".addslashes($v)."%'";
+				break; // end last name
+
+				case 'type':
+				if ($v) $q[] = "pa.payreccat = '".addslashes($v)."'";
+				break;
+			} // end outer criteria type switch
+		} // end criteria foreach loop
+
+		//print "debug: criteria = ".join(' AND ', $q)." <br/>\n";
+
+		$query = "SELECT ".
+			"pt.ptlname AS last_name, ".
+			"pt.ptfname AS first_name, ".
+			"pt.ptmname AS middle_name, ".
+			"pt.id AS patient_id, ".
+			"pr.id AS provider_id, ".
+			"ROUND(p.procamtpaid, 2) AS total_amount_paid, ".
+			"ROUND(p.procbalcurrent, 2) AS total_balance, ".
+			"ROUND(IF(FIND_IN_SET(pa.payreccat, '0,1,7,8,11'), pa.payrecamt, 0), 2) AS money_in, ".
+			"ROUND(IF(FIND_IN_SET(pa.payreccat, '0,1,7,8,11'), 0, pa.payrecamt), 2) AS money_out, ".
+			"p.id AS procedure_id, ".
+			"p.procdt AS procedure_date, ".
+			"pa.payrecdt AS payment_date, ".
+			"pa.payreccat AS item_type_id, ".
+			"CASE pa.payreccat ".
+				"WHEN 0 THEN '".addslashes(__("Payment"))."' ".
+				"WHEN 1 THEN '".addslashes(__("Adjustment"))."' ".
+				"WHEN 2 THEN '".addslashes(__("Refund"))."' ".
+				"WHEN 3 THEN '".addslashes(__("Denial"))."' ".
+				"WHEN 4 THEN '".addslashes(__("Rebill"))."' ".
+				"WHEN 5 THEN '".addslashes(__("Charge"))."' ".
+				"WHEN 6 THEN '".addslashes(__("Transfer"))."' ".
+				"WHEN 7 THEN '".addslashes(__("Withholding"))."' ".
+				"WHEN 8 THEN '".addslashes(__("Deductable"))."' ".
+				"WHEN 9 THEN '".addslashes(__("Fee Adjustment"))."' ".
+				"WHEN 10 THEN '".addslashes(__("Billed"))."' ".
+				"WHEN 11 THEN '".addslashes(__("Copayment"))."' ".
+				"WHEN 12 THEN '".addslashes(__("Writeoff"))."' ".
+				"ELSE '".__("Unknown")."' END AS item_type, ".
+			"pa.id AS item ".
+			"FROM ".
+			"procrec   AS p, ".
+			"payrec    AS pa, ".
+			"patient   AS pt, ".
+			"physician AS pr ".
+			"WHERE ".
+			"p.id = pa.payrecproc AND ".
+			"pt.id = p.procpatient AND ".
+			"pr.id = p.procphysician AND ".
+			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
+			"ORDER BY ".
+			"payment_date DESC, item DESC";
+		//print "<hr/>query = \"$query\"<hr/>\n";
+		$result = $GLOBALS['sql']->query ( $query );
+		$return = array ( );
+		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			// Make sure to deserialize the id map, since
+			// we can't actually extract values from it using
+			// SQL regex's, or if we could, it would be a
+			// huge waste of processor time...
+			if (is_array(@unserialize($r['id_map']))) {
+				$id_map = unserialize($r['id_map']);
+				$r['id_map'] = $id_map[$r['_provider']];
+			} else {
+				$id_map = array ();
+			}
+			$return[] = $r;
+			 // patient, claims, paid, balance, ratio
+		} 
+		return $return;
+	} // end method aging_report_qualified
+
 	// Method: get_list
 	//
 	//	Get a list of ledger items from the system
