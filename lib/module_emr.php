@@ -276,6 +276,24 @@ class freemedEMRModule extends freemedModule {
 		);
 	} // end function view
 
+	// override _setup with create_table
+	function _setup () {
+		if (!$this->create_table()) return false;
+		return freemed_import_stock_data ($this->record_name);
+	} // end function _setup
+
+	// function create_table
+	// - used to initally create SQL table
+	function create_table () {
+		if (!isset($this->table_definition)) return false;
+		$query = $sql->create_table_query(
+			$this->table_name,
+			$this->table_definition
+		);
+		$result = $sql->query($query);
+		return !empty($query);
+	} // end function create_table
+
 	// this function exports XML for the entire patient record
 	function xml_export () {
 		global $display_buffer;
