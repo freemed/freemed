@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.37  2001/10/18 20:41:51  rufustfirefly
+ // removed more dead code
+ //
  // Revision 1.36  2001/10/17 20:47:36  rufustfirefly
  // another day of changes... or two...
  //
@@ -1207,36 +1210,6 @@ function freemed_auth_db_connect () {
   return $sql;
 } // end function freemed_auth_db_connect
 
-/*
-function freemed_auth_login ($f_username, $f_password) {
-  global $SessionLoginCookie, $_cookie_expire, $sql;
-
-  if (($f_username=="root") AND ($f_password==DB_PASSWORD)) {
-    $md5pw = md5($f_password);
-    $f_connection = freemed_auth_db_connect ();
-    SetCookie("LoginCookie", "1:$md5pw", time()+$_cookie_expire);
-    $SessionLoginCookie = "1:$md5pw"; // 19990909
-    return 1;
-  } // endif for root case loop
-  $f_connection = freemed_auth_db_connect ();
-  $f_result = $sql->query ("SELECT * FROM ".
-    "user WHERE username='$f_username'");
-  if (!$f_result) return 0; // then fail
-  $f_row = $sql->fetch_array ($f_result);
-  if (($f_row["username"] == $f_username) AND
-      ($f_row["userpassword"] == $f_password) AND
-      ($f_username != "")) {
-    $f_id = $f_row["id"];
-    $md5pw = md5($f_password);
-    SetCookie("LoginCookie", "$f_id:$md5pw", time()+$_cookie_expire);
-    $SessionLoginCookie = "$f_id:$md5pw"; // 19990909
-    // commented out following line due to global variable... 19990722
-    // SetCookie("Connection", "$f_connection", time()+$_cookie_expire);
-    return 1;
-  } else return 0;
-} // end function freeemed_auth_login
-*/
-
 // freemed_verify_auth:
 //   moved to sessions support as of version 0.3
 function freemed_verify_auth ( ) {
@@ -1830,7 +1803,6 @@ function fm_secure ($orig_string) {
   $this_string = str_replace ("\$database",    "", $this_string);
   $this_string = str_replace ("\$gifhome",     "", $this_string);
   $this_string = str_replace ("\$db_engine",   "", $this_string);
-  $this_string = str_replace ("\$LoginCookie", "", $this_string);
   return $this_string;    // return cleansed string
 } // end function fm_secure
 
