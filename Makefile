@@ -4,7 +4,7 @@
 
 prefix=/usr
 INSTDIR=$(DESTDIR)$(prefix)/share/freemed
-SUBDIR=data doc img lib locale modules scripts
+SUBDIR=data doc img lib locale modules scripts support
 
 all:
 	# Nothing to do
