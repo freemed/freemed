@@ -72,7 +72,7 @@ switch ($action) {
 	if ($sql->num_rows($result)==1) {
 		$r = $sql->fetch_array($result);
 		$display_buffer .= "
-		<SCRIPT LANGUAGE=\"Javascript\">
+		<script LANGUAGE=\"Javascript\">
 		function process () {
 			var our_value = '".prepare($r[id])."'
 
@@ -94,29 +94,31 @@ switch ($action) {
 			// Close the window
 			window.self.close()
 		}
-		</SCRIPT>
-		We should be '".$r[ptfname].' '.$r[ptlname]."'.
+		</script>
+		We should be '".$r['ptfname'].' '.$r['ptlname']."'.
 		";
 		
 		// Add to pick list
-		$pick_list[(stripslashes($r[ptlname].", ".
-			$r[ptfname]." (".
-			$r[ptcity].", ".
-			$r[ptstate].")"))] = $r[id];
+		$pick_list[(stripslashes($r['ptlname'].", ".
+			$r['ptfname']." [".
+			$r['ptid']."] (".
+			$r['ptcity'].", ".
+			$r['ptstate'].")"))] = $r['id'];
 	} else { // end handling only one result
 		unset($pick_list);
 
 		// Display pick list of results
 		while ($r = $sql->fetch_array($result)) {
-			$pick_list[(stripslashes($r[ptlname].", ".
-				$r[ptfname]." (".
-				$r[ptcity].", ".
-				$r[ptstate].")"))] = $r[id];
+			$pick_list[(stripslashes($r['ptlname'].", ".
+				$r['ptfname']." [".
+				$r['ptid']."] (".
+				$r['ptcity'].", ".
+				$r['ptstate'].")"))] = $r['id'];
 		} // end looping through results
 	}
 
 	$display_buffer .= "
-		<SCRIPT LANGUAGE=\"Javascript\">
+		<script LANGUAGE=\"Javascript\">
 		function my_process () {
 			// Pass the variable
 			opener.document.".prepare($formname).".".prepare($varname).
@@ -133,6 +135,7 @@ switch ($action) {
 			window.self.close()
 		}
 		</SCRIPT>
+		</script>
 		<div ALIGN=\"CENTER\" CLASS=\"patient_search\" ".
 			"style=\"height: 100%; text-valign: middle;\">
 		<br/>
@@ -154,10 +157,11 @@ switch ($action) {
 
 	default:
 	$display_buffer .= "
-		<INPUT TYPE=\"HIDDEN\" NAME=\"varname\" VALUE=\"".prepare($varname)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\">
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".__("Search")."\">
+		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
+		<input TYPE=\"HIDDEN\" NAME=\"varname\" VALUE=\"".prepare($varname)."\" />
+		<input TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\" />
+		<input TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\" />
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".__("Search")."\" />
 		<div ALIGN=\"CENTER\" style=\"height: 100%;\" ".
 			"class=\"patient_search\">
 		".html_form::form_table(array(
