@@ -351,7 +351,8 @@ class progressNotes extends freemedEMRModule {
        <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
         >"._($this->record_name)."</A> |
         <A HREF=\"manage.php?id=$pnotespat\"
-        >"._("Manage Patient")."</A>
+        >"._("Manage Patient")."</A> |
+        <A HREF=\"patient.php\">"._("Select Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
 
@@ -402,73 +403,60 @@ class progressNotes extends freemedEMRModule {
      } // end checking for EOC stuff
      $display_buffer .= "<CENTER>\n";
      if (!empty($pnotes_S)) $display_buffer .= "
-       <TABLE BGCOLOR=\"#ffffff\" BORDER=1 WIDTH=400><TR BGCOLOR=\"$darker_bgcolor\">
+       <TABLE BGCOLOR=\"#ffffff\" BORDER=1><TR BGCOLOR=\"$darker_bgcolor\">
        <TD ALIGN=CENTER><CENTER><FONT COLOR=\"#ffffff\">
         <B>"._("<U>S</U>ubjective")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <FONT COLOR=#555555>
-           ".prepare($pnotes_S)."
-         </FONT>
+           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_S)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_O)) $display_buffer .= "
-       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
+       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>O</U>bjective")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <FONT COLOR=#555555>
-           ".prepare($pnotes_O)."
-         </FONT>
+           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_O)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_A)) $display_buffer .= "
-       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
+       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>A</U>ssessment")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <FONT COLOR=#555555>
-           ".prepare($pnotes_A)."
-         </FONT>
+           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_A)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_P)) $display_buffer .= "
-       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
+       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>P</U>lan")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <FONT COLOR=#555555>
-           ".prepare($pnotes_P)."
-         </FONT>
+           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_P)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_I)) $display_buffer .= "
-       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
+       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>I</U>nterval")."</B></FONT></CENTER></TD></TR>
-       <TR BGCOLOR=#ffffff><TD>
-         <FONT COLOR=#555555>
-           ".prepare($pnotes_I)."
-         </FONT>
+       <TR BGCOLOR=\"#ffffff\"><TD>
+           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_I)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_E)) $display_buffer .= "
-       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
+       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>E</U>ducation")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <FONT COLOR=#555555>
            ".prepare($pnotes_E)."
-         </FONT>
+           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_E)))."
        </TD></TR></TABLE> 
        ";
       if (!empty($pnotes_R)) $display_buffer .= "
-      <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
+      <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("P<U>R</U>escription")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-         <FONT COLOR=#555555>
-           ".prepare($pnotes_R)."
-         </FONT>
+           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_R)))."
        </TD></TR></TABLE>
       ";
         // back to your regularly sceduled program...
@@ -477,7 +465,8 @@ class progressNotes extends freemedEMRModule {
        <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
         >"._($this->record_name)."</A> |
         <A HREF=\"manage.php?id=$pnotespat\"
-        >"._("Manage Patient")."</A> $__MODIFY__
+        >"._("Manage Patient")."</A> |
+        <A HREF=\"patient.php\">"._("Select Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
      ";
