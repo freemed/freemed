@@ -706,7 +706,8 @@ class freemed {
 				'PHP.module_list',
 				PACKAGENAME,
 				array(
-					'cache_file' => 'data/cache/modules'
+					'cache_file' => 'data/cache/modules',
+					'recursive' => true
 				)
 			);
 		}

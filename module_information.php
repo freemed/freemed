@@ -25,7 +25,8 @@ $module_list = CreateObject(
 	PACKAGENAME, 
 	array(
 		'display_hidden' => true,
-		'cache_file' => 'data/cache/modules'
+		'cache_file' => 'data/cache/modules',
+		'recursive' => true
 	)
 );
 $categories = $module_list->categories();
