@@ -2,7 +2,7 @@ freemed project API
 (c) 1999 by jeff b
 Under the GPL/LGPL version 2
 ..........................................................................
-last updated 2000-07-24
+last updated 2000-08-17
 
                                 *****
                                 NOTE:
@@ -200,12 +200,6 @@ freemed_display_insco (selected)
     returns: none
     created: 19990721
     modified: 19991028
-
-freemed_display_inscogroups (selected)
-  displays the list of insurance companies for the innards of a <SELECT>
-  tag set. (same as freemed_display_icdcodes).
-    returns: none
-    created: API epoch or prior (19990609)
 
 freemed_display_itemlist(result pointer, page link, control array, 
                          blank array[, xref array][, pagenum varname])

@@ -843,47 +843,6 @@ function freemed_display_insco ($param="0")
   return $buffer;
 } // end function freemed_display_insco
 
-// function freemed_display_inscogroups (selected)
-function freemed_display_inscogroups ($param="")
-{
-  global $NONE_SELECTED;
-
-  $buffer = "";
-
-  // list doctors in SELECT/OPTION tag list, and
-  // leave doctor selected who is in param
-  $buffer .= "
-   <SELECT NAME =\"$param\">
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-
-  $query = "SELECT * FROM inscogroup ORDER BY ".
-     "inscogroup";
-
-  $result = fdb_query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more docs
-    while ($row = fdb_fetch_array($result)) {
-      if ($debug) {
-        $debug_var = "[$_ic_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
-      $buffer .= "
-        <OPTION VALUE=\"$row[id]\" ".
-	( ($param == $row[id]) ? "SELECTED" : "" )
-        .">".htmlentities($row[inscogroup])." $debug_var
-      "; // end of actual output
-    } // while there are more results...
-  } // end of master if clause
-  $buffer .= "
-   </SELECT>
-  ";
-  return $buffer;
-} // end function freemed_display_inscogroups
-
 // function freemed_display_ptstatus
 //   displays patient statuses selectable in <SELECT>
 //   list with $param selected
