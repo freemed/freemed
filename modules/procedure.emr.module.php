@@ -99,6 +99,21 @@ class procedureModule extends freemedEMRModule {
 
 		$auth_r_buffer = $this->GetAuthorizations($patient);
 
+		// Check for eoc
+		if (check_module("episodeOfCare")) {
+			$related_episode_array = array ( _("Episode of Care") =>
+			freemed_multiple_choice ("SELECT * FROM eoc
+								  WHERE eocpatient='$patient'
+								  ORDER BY eocdtlastsimilar DESC",
+								 "eocstartdate:eocdtlastsimilar:eocdescrip",
+								 "proceoc",
+								 $proceoc,
+								 false)
+			);
+		} else {
+			$related_episode_array = array ( "" => "" );
+		} // end checking for eoc
+
 		// ************** BUILD THE WIZARD ****************
 		$wizard = new wizard ( array ("been_here", "action", "patient", "id",
 		"module") );
@@ -109,19 +124,14 @@ class procedureModule extends freemedEMRModule {
 							  "procpos", "procvoucher","proccomment",
 								"procauth","proccert","procclmtp"),
 							  date_vars("procdt"),date_vars("procrefdt")),
-		html_form::form_table ( array (
+		html_form::form_table ( array_merge ( array (
 		  _("Provider") =>
 			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
 		  _("Date of Procedure") =>
 			fm_date_entry ("procdt"),
-		  _("Episode of Care") =>
-			freemed_multiple_choice ("SELECT * FROM eoc
-								  WHERE eocpatient='$patient'
-								  ORDER BY eocdtlastsimilar DESC",
-								 "eocstartdate:eocdtlastsimilar:eocdescrip",
-								 "proceoc",
-								 $proceoc,
-								 false),
+		 ),
+		 $related_episode_array,
+		 array (
 		  _("Procedural Code") =>
 			freemed_display_selectbox(
 			  $sql->query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
@@ -185,7 +195,8 @@ class procedureModule extends freemedEMRModule {
 					array ("procpos", VERIFY_NONZERO, NULL, _("Must Specify Place of Service")),
 					array ("procclmtp", VERIFY_NONZERO, NULL, _("Must Specify Type of Claim")),
 					array ("proccpt", VERIFY_NONZERO, NULL, _("Must Specify Procedural code"))
-				 )
+				 ) // end of array
+			) // end of array_merge
 		); // end of page one
 
 		$prim_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
