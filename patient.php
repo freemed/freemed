@@ -343,7 +343,7 @@ switch ($action) {
      __("Notes"),
      array("ptnextofkin"),
      html_form::form_table(array(
-       "" => "<div ALIGN=\"CENTER\">".
+       " " => "<div ALIGN=\"CENTER\">".
 	html_form::text_area("ptnextofkin", "VIRTUAL", 10, 40).
 	"</div>"
      ))
