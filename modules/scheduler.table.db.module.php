@@ -9,11 +9,11 @@ class SchedulerTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Scheduler Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.0';
+	var $MODULE_VERSION = '0.6.2';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
 
 	var $table_name = "scheduler";
 
