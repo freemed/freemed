@@ -39,7 +39,14 @@ class freemedMaintenanceModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action;
+		global $action, $submit;
+
+		// Handle a "Cancel" button being pushed
+		if ($submit==_("Cancel")) {
+			$action = "";
+			$this->view();
+			return NULL;
+		}
 
 		switch ($action) {
 			case "add":
@@ -70,6 +77,7 @@ class freemedMaintenanceModule extends freemedModule {
 
 			case "view":
 			default:
+				$action = "";
 				$this->view();
 				break;
 		} // end switch action
@@ -94,7 +102,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function _add
 	// - addition routine (can be overridden if need be)
 	function _add () {
-		global $display_buffer;
+		global $display_buffer, $action;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -106,7 +114,8 @@ class freemedMaintenanceModule extends freemedModule {
 		);
 
 		if ($result) $this->message = _("Record added successfully.");
-		 else $this->message = _("Record addition failed.");
+			else $this->message = _("Record addition failed.");
+		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _add
 	function add () { $this->_add(); }
@@ -115,12 +124,13 @@ class freemedMaintenanceModule extends freemedModule {
 	// - only override this if you *really* have something weird to do
 	function _del () {
 		global $display_buffer;
-		global $id, $sql, $module;
+		global $id, $sql, $module, $action;
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
 		if ($result) $this->message = _("Record deleted successfully.");
-		 else $this->message = _("Record deletion failed.");
+			else $this->message = _("Record deletion failed.");
+		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _del
 	function del () { $this->_del(); }
@@ -128,7 +138,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function _mod
 	// - modification routine (override if neccessary)
 	function _mod () {
-		global $display_buffer;
+		global $display_buffer, $action;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -143,7 +153,8 @@ class freemedMaintenanceModule extends freemedModule {
 		);
 
 		if ($result) $this->message = _("Record modified successfully.");
-		 else $this->message = _("Record modification failed.");
+			else $this->message = _("Record modification failed.");
+		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _mod
 	function mod() { $this->_mod(); }
