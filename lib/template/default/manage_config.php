@@ -99,6 +99,11 @@ $book->add_page("Static Components",
 			"static_components", "appointments", " "
 		),
 
+		_("Custom Reports") =>
+		html_form::checkbox_widget(
+			"static_components", "custom_reports", " "
+		),
+
 		_("Medical Information") =>
 		html_form::checkbox_widget(
 			"static_components", "medical_information", " "
@@ -117,17 +122,6 @@ $book->add_page("Static Components",
 		_("Photographic Identification") =>
 		html_form::checkbox_widget(
 			"static_components", "photo_id", " "
-		),
-
-/*
-		_("Custom Reports") =>
-		html_form::checkbox_widget(
-			"static_components", "custom_reports", " "
-		),
-*/
-		_("Custom Reports") =>
-		html_form::checkbox_widget(
-			"static_components", "custom_reports", " "
 		)
 
 	)).
