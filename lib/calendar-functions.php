@@ -162,16 +162,17 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     // construct the top of the calendar
     $display_buffer .= "
-     <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=2 CELLPADDING=2
-      BORDER=0 VALIGN=CENTER ALIGN=CENTER>
-      <TR BGCOLOR=#000000><TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER
-       VALIGN=CENTER>
+     <TABLE WIDTH=100% CLASS=\"reverse\" CELLSPACING=2 CELLPADDING=2
+      BORDER=0 VALIGN=\"CENTER\" ALIGN=\"CENTER\">
+      <TR CLASS=\"reverse\"><TD CLASS=\"calcell\" COLSPAN=2 ALIGN=\"CENTER\"
+       VALIGN=\"CENTER\">
        <B>$datestring</B> - <I>".$current_imap["count"]." ".
          _("appointment(s)")."</I>
       </TD></TR>
     ";
 
     // loop through the hours and display them
+    $alt = true;
     for ($h=fc_starting_hour();$h<=fc_ending_hour();$h++) {
       // calculate proper way to display hour
       if      ($h== 0) $hour=_("midnight");
@@ -179,11 +180,18 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
        elseif ($h==12) $hour=_("noon");
        else            $hour=($h-12)." pm";
 
+	// Alternate cells
+	if ($alt == true) {
+		$alt = false;
+	} else {
+		$alt = true;
+	}
+
       // display heading for hour
       $display_buffer .= "
-       <TR BGCOLOR=#000000><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%>
+       <TR CLASS=\"reverse\"><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%>
         $hour
-       </TD><TD BGCOLOR=#ffffff COLSPAN=1>
+       </TD><TD CLASS=\"cell".($alt ? "_alt" : "" )."\" COLSPAN=1>
       "; 
 
       // display data in fifteen minute increments, by dumping the
@@ -344,7 +352,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       ><SMALL>"._("prev")."</SMALL></A>
      </TD>
      <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
-       <B>".htmlentities(date("M",mktime(0,0,0,($this_month+0),0,0)))." $this_year</b>
+       <B>".htmlentities(date("M",mktime(0,0,0,($this_month+1),0,0)))." $this_year</b>
      </TD>
      <TD ALIGN=RIGHT BGCOLOR=\"#ffffff\">
      <A HREF=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
@@ -466,7 +474,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_generate_interference_map ($query_part, $this_date, 
                                          $privacy=false) {
     global $current_imap; // global current interference map
-    global $database, $cur_date, $sql;
+    global $cur_date, $sql;
     global $display_buffer;
 
     // initialize the new array
@@ -474,7 +482,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     $current_imap["count"] = 0;
     
     // perform a query of $this_date for the $query_part qualifier
-    $querystring = "SELECT * FROM $database.scheduler WHERE ".
+    $querystring = "SELECT * FROM scheduler WHERE ".
       "(($query_part) AND (caldateof='$this_date')) ".
       "ORDER BY caldateof,calhour,calminute";
     $result = $sql->query ($querystring);
@@ -489,26 +497,6 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
       // since it _is_ a record, increment the counter
       $current_imap["count"]++;
-
-      // pull name, date of birth, etc from either actual patient
-      // record or temporary patient record, depending on type
-      switch ($r["caltype"]) {
-       case "pat":
-        $calpatient = freemed::get_link_rec ($r["calpatient"], "patient");
-        $ptlname    = $calpatient["ptlname"];
-        $ptfname    = $calpatient["ptfname"];
-        $ptmname    = $calpatient["ptmname"];
-        $ptdob      = $calpatient["ptdob"  ];
-        $ptid       = $calpatient["ptid"   ];
-        break;
-       case "temp":
-        $calpatient = freemed::get_link_rec ($r["calpatient"], "callin");
-        $ptlname    = $calpatient["cilname"];
-        $ptfname    = $calpatient["cifname"];
-        $ptmname    = $calpatient["cimname"];
-        $ptdob      = $calpatient["cidob"  ];
-        break;
-      } // end of temp/patient switch
 
       // now that we have the patient information, check to see if the
       // spot is filled, if so, append a break before it...
@@ -534,10 +522,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
         break;
       } // end of switch
 
-	// Travel kludge
-	if ($calpatient == 0) {
-		$mapping = _($r[calmark]);
-	}
+	$mapping = freemedCalendar::event_calendar_print($r[id]);
 
       // map the name
       $current_imap["$calhour:$calminute"] .= $mapping;
@@ -651,6 +636,17 @@ class freemedCalendar {
 			return ($hour-12)." PM";
   	} // end method freemedCalendar::display_hour
 
+	function display_time ( $hour, $minute ) {
+		$m = ($minute<10 ? '0' : '').($minute+0);
+		if ($hour<12)
+			return $hour.":$m AM";
+		elseif ($hour == 12)
+			return $hour.":$m PM";
+		else
+			return ($hour-12).":$m PM";
+		
+	} // end method freemedCalendar::display_time
+
 	function event_calendar_print ( $event ) {
 		global $sql;
 
@@ -667,9 +663,16 @@ class freemedCalendar {
 		$my_patient = new Patient ($my_event[calpatient],
 			($my_event[caltype]=="temp"));
 
-		return "<A HREF=\"manage.php?id=".$my_patient->id."\"".
-			">".$my_patient->fullName()."</A> ".
-			"(".$my_event[calduration]."m)\n";
+		return "<A HREF=\"".(($my_event[caltype]=="temp") ?
+				"call-in.php?action=display&id=" :
+				"manage.php?id=" ).
+			$my_patient->id."\"".
+			">".trim($my_patient->fullName())."</A> ".
+			"(".$my_event[calduration]."m)\n".
+			( !empty($my_event[calprenote]) ?
+			"<br/>&nbsp;&nbsp;<small><i>".
+			prepare(stripslashes($my_event[calprenote])).
+			"</i></small>\n" : "" );
 	} // end method freemedCalendar::event_calendar_print
 
 	function event_special ( $mapping ) {
