@@ -553,6 +553,41 @@ class MaintenanceModule extends BaseModule {
 		return $r;
 	} // end method distinct
 
+	// Method: to_text
+	//
+	//	Convert id to text, based on <$this->widget_hash>
+	//
+	// Parameters:
+	//
+	//	$id - Record id
+	//
+	// Returns:
+	//
+	//	Textual version of record
+	//
+	function to_text ( $id ) {
+		if (!$id) { return __("NO RECORD FOUND"); }
+		$r = freemed::get_link_rec($id, $this->table_name);
+		if ($r['id'] == $id) {
+			if (!(strpos($this->widget_hash, "##") === false)) {
+				$value = '';
+				$hash_split = explode('##', $this->widget_hash);
+				foreach ($hash_split AS $_k => $_v) {
+					if (!($_k & 1)) {
+						$value .= prepare($_v);
+					} else {
+						$value .= prepare($r[$_v]);
+					}
+				}
+			} else {
+				$value = $this->widget_hash;
+			}
+			return $value;
+		} else {
+			return __("ERROR");
+		}
+	} // end method to_text
+
 	// Method: widget
 	//
 	//	Generic widget code to allow a picklist-based widget for
