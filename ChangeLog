@@ -19,6 +19,9 @@ freemed project changelog
        added 2 new functions for the coverage module. get_all_insured_patients
        and verify_patient_coverage. 
     
+* Wed Feb 14 2001 rufustfirefly
+  - cleaned up lib/{freemed,containers}.php a little
+
 * Wed Feb 14 2001 fforest
 	add lib/modules_billing.php
         modules/place_of_service.module (new place of service table maint)
@@ -48,9 +51,9 @@ freemed project changelog
         (do that later)
     API.php stripslashes from the facility name that appears on logon sceen.
 	so that "Moe's Medical Center" displayed correctly.
-    containers.php.  Added remaining fields to Payer class. Added comments on how 
-     we gather up payer/guar/insurer info in the patient class. added 2 new
-     get functions for Patient class. IsureeresByType and InsurerID
+    containers.php.  Added remaining fields to Payer class. Added comments on
+	 how we gather up payer/guar/insurer info in the patient class. added 2
+	 new get functions for Patient class. IsureeresByType and InsurerID
 
     payment_module. now uses proccharges and procamtpaid as debit/credit
      buckets. when the procrec is updated the procbalcurrent is recalculated
@@ -59,19 +62,19 @@ freemed project changelog
      to allow ledger viewing of paid accounts. added option Ledger so the ledger can be viewed
      for all procedures.
      Use the new functions added to containers.
-     payrecsource for payments and transfer were using the id's instead of the type (0-4)
-     of payer. consolidated some wizard pages where the 2nd page only asked for a description.
-     moved descrip to first page. (makes the process faster for the user) Documented 
-     the ledger transactions in README.tablesA
-    procedure_module  turned of the debugging code since it seems to be working now.
+     payrecsource for payments and transfer were using the id's instead of the
+	 type (0-4) of payer. consolidated some wizard pages where the 2nd page
+	 only asked for a description. moved descrip to first page. (makes the
+	 process faster for the user) Documented the ledger transactions in
+	 README.tablesA
+    procedure_module  turned of the debugging code since it seems to be working
+	 now.
     module_emr and module_maint user $form_vars instead of $this->form_vars
 
-	Applied a fix to all modules using the notebook to run the $variables array and 
-    put the variables in global scope prior to the extract function being called. this
-    fixes the problem for modform where if there is exiting data in the table it will
-    be displayed. 
-
-
+	Applied a fix to all modules using the notebook to run the $variables
+	array and put the variables in global scope prior to the extract function
+	being called. this fixes the problem for modform where if there is exiting
+	data in the table it will be displayed. 
  
 * Fri Feb 09 2001 rufustfirefly
   - use new version_check() from phpwebtools 0.2 release
