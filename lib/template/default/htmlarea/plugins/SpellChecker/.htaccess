@@ -1,0 +1,3 @@
+<Files *.cgi>
+	Options +ExecCGI
+</Files>
