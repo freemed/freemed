@@ -69,7 +69,7 @@ switch ($action) {
 		__("Patient")." (".__("if applicable").")" =>
 		freemed::patient_widget("msgpatient", "myform", "submit_action"),
 
-		__("From (if not a patient)") =>
+		__("Regarding (if not a patient)") =>
 		html_form::text_widget("msgperson", 20, 50),
 
 		__("Subject") =>
@@ -255,7 +255,7 @@ switch ($action) {
 			<td><b>".__("Date")."</b></td>
 			<td><b>".__("Time")."</b></td>
 			<td><b>".__("Sent By")."</b></td>
-			<td><b>".__("From")."</b></td>
+			<td><b>".__("Regarding")."</b></td>
 			<td><b>".__("Urgency")."</b></td>
 		</tr>
 		";
