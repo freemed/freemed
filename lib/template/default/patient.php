@@ -138,10 +138,10 @@ $display_buffer .= "
 	<p/>
       </div>
 
-      ".template::link_bar(array(
-      		__("Show All Patients") =>
-      		"$page_name?action=find&criteria=all&f1=",
-
+      ".template::link_bar(
+      array(
+      		( ($_total < 100) ? __("Show All Patients") : '' ) =>
+      		( ($_total < 100) ? "$page_name?action=find&criteria=all&f1=" : '' ),
        		__("Add Patient") =>
       		"$page_name?action=addform",
 

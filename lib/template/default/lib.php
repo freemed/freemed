@@ -13,9 +13,11 @@ class template {
 
 		// Process each one ...
 		foreach ($links AS $text => $url) {
-			$bar[] = "<span style=\"padding: 2px\">".
-				template::link_button($text, $url).
-				"</span>";
+			if (!empty($text)) {
+				$bar[] = "<span style=\"padding: 2px\">".
+					template::link_button($text, $url).
+					"</span>";
+			}
 		}
 
 		// ... then join them back together
