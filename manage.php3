@@ -30,7 +30,7 @@ switch ($action) {
     if (strlen ($patient)<1) 
       echo "
         <BR><BR>
-        <CENTER><B>$Must_select_a_patient</B></CENTER>
+        <CENTER><B>"._("You must select a patient.")."</B></CENTER>
         <BR>
       ";
     else { // if it's okay...
@@ -65,7 +65,7 @@ switch ($action) {
       echo "
           </SELECT>
 
-          <INPUT TYPE=SUBMIT VALUE=\" $Attach \">
+          <INPUT TYPE=SUBMIT VALUE=\" "._("Attach to Guarantor")." \">
         </CENTER>
         </FORM>
       ";
@@ -74,7 +74,7 @@ switch ($action) {
       <BR>
       <CENTER>
       <A HREF=\"$page_name?$_auth&id=$patient\"
-       >$Return_to_Patient_Management</A>
+       >"._("Return to Patient Management")."</A>
       </CENTER>
       <BR>
     ";
@@ -92,7 +92,7 @@ switch ($action) {
       echo "
         <BR>QUERY = ($query), RESULT = ($result)<BR>
       "; 
-    echo "<B>done.</B>";
+    echo "<B>"._("done")."</B>";
 
       // if made a dependant, disconnect all of their dependants,
       // since dependants can't have dependants...
@@ -103,7 +103,7 @@ switch ($action) {
       echo "<BR><B>$Detaching_current_dependants ... </B>";
       $result = fdb_query ($query);
       $affected = fdb_affected_rows ();
-      if ($debug==1)
+      if ($debug)
         echo "
           <BR>QUERY = ($query), RESULT = ($result),
           AFFECTED ROWS = ($affected)<BR>
@@ -112,10 +112,10 @@ switch ($action) {
     }
 
     echo "
-      <BR><BR>
+      <P>
       <CENTER>
         <A HREF=\"$page_name?$_auth&id=$patient\"
-         >$Return_to_Patient_Management</A>
+         >"._("Return to Patient Management")."</A>
       </CENTER>
     ";
     freemed_display_box_bottom ();    
@@ -123,31 +123,31 @@ switch ($action) {
 
 
   default:
-    freemed_display_box_top ("$Manage_Patient", $_ref);
+    freemed_display_box_top (_("Manage Patient"), $_ref);
     if ($id<1) {
       // if someone needs to 1st go to the patient menu
       echo "
         <BR><BR>
         <CENTER>
-          <B>$Must_select_a_patient</B>
+          <B>"._("You must select a patient.")."</B>
         </CENTER>
         <BR><BR>
         <CENTER>
         <A HREF=
          \"patient.php3?$_auth\"
-        >$Select_a_patient</A>
+        >"._("Select a Patient")."</A>
         </CENTER>
         <BR><BR>
       ";
 
-    } else {
+     } else {
       $_auth   = "_ref=$page_name";
       echo "
 
      <TABLE WIDTH=100% BORDER=1 CELLPADDING=3 BGCOLOR=#FFFFFF >
      <TR><TD>
         <CENTER><FONT FACE=\"Arial, Helvetica, Verdana\">
-        <B>$Patient : ".$this_patient->fullName(false)."
+        <B>"._("Patient")." : ".$this_patient->fullName(false)."
            [<I>&nbsp;".$this_patient->dateOfBirth().
            "&nbsp; </I>] ".$this_patient->idNumber()."</B>
         </FONT></CENTER>
@@ -157,31 +157,31 @@ switch ($action) {
 
         <TABLE WIDTH=100% BORDER=0 CELLPADDING=3>
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>$Appointments</B> : <$STDFONT_E>
+        <$STDFONT_B><B>"._("Appointments")."</B> : <$STDFONT_E>
         </TD><TD>
         <A HREF=\"book_appointment.php3?$_auth&patient=$id&type=pat\"
-         ><$STDFONT_B>$Book<$STDFONT_E></A> 
+         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A> 
         </TD><TD>
         <A HREF=\"manage_appointments.php3?$_auth&patient=$id\"
-         ><$STDFONT_B>$View_Manage<$STDFONT_E></A><BR>
+         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A><BR>
         </TD><TD>
         </TD></TR>
         <TR><TD>&nbsp;</TD>
         <TD><A HREF=\"show_appointments.php3?$_auth&patient=$id&type=pat\"
-         ><$STDFONT_B>$Show_Today<$STDFONT_E></A></TD>
+         ><$STDFONT_B>"._("Show Today")."<$STDFONT_E></A></TD>
         <TD>&nbsp;</TD>
         </TR>
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>Authorizations : </B><$STDFONT_E>
+        <$STDFONT_B><B>"._("Authorizations")." : </B><$STDFONT_E>
         </TD><TD>
         <A HREF=\"authorizations.php3?$_auth&patient=$id&action=addform\"
-        ><$STDFONT_B>$Add<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD>
         <A HREF=\"authorizations.php3?$_auth&patient=$id&action=view\"
-        ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+        ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD></TR>
         <TR><TD ALIGN=RIGHT>
-         <$STDFONT_B><B>Billing Functions</B> : <$STDFONT_E>
+         <$STDFONT_B><B>"._("Billing Functions")."</B> : <$STDFONT_E>
         </TD><TD>
          <A HREF=\"payment_record.php3?$_auth&patient=$id\"
          ><$STDFONT_B>Patient Ledger<$STDFONT_E></A>
@@ -192,7 +192,7 @@ switch ($action) {
         </TR>
         <TR><TD>&nbsp;</TD><TD>
         <A HREF=\"manage_payment_records.php3?$_auth&patient=$id\"
-         ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         &nbsp;
         </TD></TR>
@@ -202,7 +202,7 @@ switch ($action) {
       if (($f_results>0) and (fdb_num_rows($f_results))) {
        echo "
          <TR><TD ALIGN=RIGHT>
-          <$STDFONT_B><B>Custom Records</B> : <$STDFONT_E>
+          <$STDFONT_B><B>"._("Custom Records")."</B> : <$STDFONT_E>
          </TD><TD COLSPAN=2>
           <FORM ACTION=\"custom_records.php3\" METHOD=POST>
            <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$id\">
@@ -213,19 +213,19 @@ switch ($action) {
          echo "<OPTION VALUE=\"".$f_r["id"]."\">".$f_r["prtname"]."\n";
        echo "
            </SELECT>
-           <INPUT TYPE=SUBMIT VALUE=\"$Add\">
+           <INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
           </FORM>
          </TR>
         <TR>
          <TD>&nbsp;</TD>
          <TD><A HREF=\"custom_records.php3?$_auth&patient=$id\" 
-          ><$STDFONT_B>$View_Manage<$STDFONT_E></A></TD>
+          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A></TD>
         </TR>
        ";
       } // end of if, checking for custom records....
       echo "
         <TR><TD ALIGN=RIGHT>
-         <$STDFONT_B><B>Dependant Information</B> : <$STDFONT_E>
+         <$STDFONT_B><B>Dependent Information</B> : <$STDFONT_E>
         </TD><TD ALIGN=LEFT>
      ";
 
@@ -240,74 +240,74 @@ switch ($action) {
       else
         echo "
 	 <$STDFONT_B><A HREF=\"patient.php3?$_auth&action=find&criteria=".
-	 "dependants&f1=$id\">Dependents</A> [$num_deps]<$STDFONT_E>
+	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]<$STDFONT_E>
         ";
       } else {
       $guarantor = new Patient ($this_patient->ptdep);
       echo "
          <A HREF=\"manage.php3?$_auth&action=view&id=".$this_patient->ptdep."\"
-         ><$STDFONT_B>Guarantor<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Guarantor")."<$STDFONT_E></A>
 	</TD><TD><$STDFONT_B>[".$guarantor->fullName()."]<$STDFONT_E></TD></TR>
       ";
       }
 
      echo "
         <TR><TD ALIGN=RIGHT>
-         <$STDFONT_B><B>Episode of Care</B> : <$STDFONT_E>
+         <$STDFONT_B><B>"._("Episode of Care")."</B> : <$STDFONT_E>
         </TD><TD ALIGN=LEFT>
          <A HREF=\"episode_of_care.php3?$_auth&patient=$id&action=addform\"
-          ><$STDFONT_B>$Add<$STDFONT_E></A>
+          ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD>
          <A HREF=\"episode_of_care.php3?$_auth&patient=$id&action=view\"
-          ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD></TR>
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>$Patient_Information</B> : <$STDFONT_E>
+        <$STDFONT_B><B>"._("Patient Information")."</B> : <$STDFONT_E>
         </TD><TD> 
         <A HREF=\"patient.php3?$_auth&action=modform&id=$id\"
-         ><$STDFONT_B>$Modify<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Modify")."<$STDFONT_E></A>
         </TD><TD>&nbsp;
         </TD><TD>
         </TD></TR>
 
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>$Prescriptions</B> : <$STDFONT_E>
+        <$STDFONT_B><B>"._("Prescriptions")."</B> : <$STDFONT_E>
         </TD><TD>
         <A HREF=\"Rx.php3?$_auth&action=addform&patient=$id\"
-         ><$STDFONT_B>$Add<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD> 
         <A HREF=\"Rx.php3?$_auth&patient=$id\"
-         ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         </TD></TR>
 
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>$Procedures</B> : <$STDFONT_E>
+        <$STDFONT_B><B>".("Procedures")."</B> : <$STDFONT_E>
         </TD><TD>
         <A HREF=\"procedure.php3?$_auth&action=addform&patient=$id\"
-         ><$STDFONT_B>$Add<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD> 
         <A HREF=\"procedure.php3?$_auth&patient=$id\"
-         ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
          </TD><TD>
          </TD></TR>
 
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>$Progress_Notes</B> : <$STDFONT_E>
+        <$STDFONT_B><B>"._("Progress Notes")."</B> : <$STDFONT_E>
         </TD><TD>
         <A HREF=\"progress_notes.php3?$_auth&action=addform&patient=$id\"
-         ><$STDFONT_B>$Add<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD> 
         <A HREF=\"progress_notes.php3?$_auth&action=view&patient=$id\"
-         ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         </TD></TR>
 
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>$Reports_and_certificates</B> : <$STDFONT_E>
+        <$STDFONT_B><B>"._("Reports and Certificates")."</B> : <$STDFONT_E>
         </TD><TD>
         <A HREF=\"simplerep.php3?$_auth&action=choose&patient=$id\"
-        ><$STDFONT_B>$Choose<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Choose")."<$STDFONT_E></A>
         </TD><TD>
         </TD><TD>
         </TD></TR>
@@ -333,10 +333,10 @@ switch ($action) {
           <FORM ACTION=\"$page_name\">
             <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"attachform\">
             <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$id\"       >
-          <$STDFONT_B><B>$Attach_to_Guarantor</B><$STDFONT_E><BR>
-          <$STDFONT_B>$Last_Name : <$STDFONT_E>
+          <$STDFONT_B><B>"._("Attach to Guarantor")."</B><$STDFONT_E><BR>
+          <$STDFONT_B>".("Last Name")." : <$STDFONT_E>
            <SELECT NAME=\"f1\">
-            <OPTION VALUE=\"\" >$All
+            <OPTION VALUE=\"\" >"._("ALL")."
             <OPTION VALUE=\"A\">A
             <OPTION VALUE=\"B\">B
             <OPTION VALUE=\"C\">C
@@ -365,12 +365,12 @@ switch ($action) {
             <OPTION VALUE=\"Z\">Z
 
            </SELECT>
-          <INPUT TYPE=SUBMIT VALUE=\"go!\">
+          <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
           </FORM>
           <P>
           <CENTER>
           <A HREF=\"patient.php3?$_auth\"
-           ><$STDFONT_B>$Select_Another_Patient<$STDFONT_E></A>
+           ><$STDFONT_B>"._("Select Another Patient")."<$STDFONT_E></A>
           </CENTER>
           <P>
         </CENTER>
@@ -380,6 +380,7 @@ switch ($action) {
     freemed_display_box_bottom ();
     break;
 } // main switch statement
+
 freemed_close_db ();
 freemed_display_html_bottom ();
 ?>
