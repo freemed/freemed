@@ -1081,7 +1081,7 @@ class ClaimsManager extends BillingModule {
 		$table->setHeaderContents(0, 5, __("Outstanding"));
 		$table->setHeaderContents(0, 6, __("Payment"));
 		$table->setHeaderContents(0, 7, __("Copay"));
-		$table->setHeaderContents(0, 8, __("Disallowances"));
+		$table->setHeaderContents(0, 8, __("Left Over"));
 
 		$count = 0;
 		foreach ($_REQUEST['check'] AS $c) {
@@ -1098,13 +1098,13 @@ class ClaimsManager extends BillingModule {
 				$table->setCellContents($count, 3, $ci['service_date']);
 				$table->setCellContents($count, 4, bcadd($ci['paid'],0,2));
 				$table->setCellContents($count, 5, bcadd($ci['balance'],0,2));
-				$table->setCellContents($count, 6, '<input type="text" id="id_pay_'.$c.'" name="pay['.$c.']" value="0" '.
+				$table->setCellContents($count, 6, '<input type="text" id="id_pay_'.$c.'" name="pay['.$c.']" size="6" value="0" '.
 					'onChange="this.form.id_dis_'.$c.'.value = eval(this.form.id_pay_'.$c.'.value) + eval(this.form.id_copay_'.$c.'.value); return true;" '.
 					'/>');
-				$table->setCellContents($count, 7, '<input type="text" id="id_copay_'.$c.'" name="copay['.$c.']" value="0" '.
+				$table->setCellContents($count, 7, '<input type="text" id="id_copay_'.$c.'" name="copay['.$c.']" size="6" value="0" '.
 					'onChange="this.form.id_dis_'.$c.'.value = eval(this.form.id_pay_'.$c.'.value) + eval(this.form.id_copay_'.$c.'.value); return true;" '.
 					'/>');
-				$table->setCellContents($count, 8, '<input type="text" id="id_dis_'.$c.'" name="dis['.$c.']" value="0" disable="true" />');
+				$table->setCellContents($count, 8, '<input type="text" id="id_dis_'.$c.'" name="dis['.$c.']" size="6" value="0" disable="true" />');
 			}
 		}
 
