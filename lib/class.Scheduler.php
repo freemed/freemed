@@ -33,6 +33,7 @@ class Scheduler {
 		'calgroupid' => 'calgroupid',
 		'calrecurnote' => 'calrecurnote',
 		'calrecurid' => 'calrecurid',
+		'calmark' => 'calmark',
 
 		'date' => 'caldateof',
 		'type' => 'caltype',
@@ -48,6 +49,7 @@ class Scheduler {
 			'cpt' => 'calcptcode',
 		'status' => 'calstatus',
 		'note' => 'calprenote',
+		'mark' => 'calmark',
 		'groupid' => 'calgroupid',
 			'group_id' => 'calgroupid',
 			'group' => 'calgroupid',
