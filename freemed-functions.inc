@@ -1992,9 +1992,9 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
   } // end switch for formatting
 } // end function fm_phone_assemble
 
-function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
+function fm_phone_entry ($phonevarname="", $array_index=-1) {
   if ($phonevarname=="") return false;  // indicate problems
-  if (($arrayvalue+0)==-1) { $suffix="";   }     
+  if (($array_index+0)==-1) { $suffix="";   }     
   else                     { $suffix="[]"; }
   $formatting = freemed_config_value("phofmt"); // get phone formatting
   global $$phonevarname, ${$phonevarname."_1"},	 // get global vars
@@ -2016,7 +2016,7 @@ function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
     $p5 = ${$phonevarname."_5"}[$array_index];  // part 5
   } // end checking for array index
   if (!empty($w)) {
-    // if date is not empty, split into $m, $d, $y
+    // if phone # is not empty, split
     switch ($formatting) {
       case "usa":
        $p1 = substr($w,  0, 3); // area code
