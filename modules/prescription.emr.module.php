@@ -26,7 +26,7 @@ class PrescriptionModule extends EMRModule {
 
 	function PrescriptionModule () {
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW |
-			SUMMARY_LOCK | SUMMARY_PRINT;
+			SUMMARY_LOCK | SUMMARY_PRINT | SUMMARY_DELETE;
 
 		$this->summary_vars = array (
 			__("Date From") => "rxdtfrom",
@@ -193,6 +193,7 @@ class PrescriptionModule extends EMRModule {
 				"rxdrug",
 				"rxsize",
 				"rxunit",
+				"rxquantity",
 				"rxdosage",
 				"rxform",
 				"rxinterval",
