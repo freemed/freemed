@@ -41,9 +41,6 @@ define ('__XMLRPC_EPI_UTILS_PHP__', true);
  * author: Dan Libby (dan@libby.com)
  */
 
-// ensure extension is loaded.
-xu_load_extension();
-
 // a function to ensure the xmlrpc extension is loaded.
 // xmlrpc_epi_dir = directory where libxmlrpc.so.0 is located
 // xmlrpc_php_dir = directory where xmlrpc-epi-php.so is located
@@ -58,6 +55,10 @@ function xu_load_extension($xmlrpc_php_dir="") {
    }
    return $bSuccess;
 }
+
+// ensure extension is loaded.
+xu_load_extension();
+
 
 /* generic function to call an http server with post method */
 function xu_query_http_post($request, $host, $uri, $port, $debug, 
