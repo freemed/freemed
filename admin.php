@@ -47,7 +47,8 @@ if ($action=="cfgform") {
 	//----- Create notebook widget
 	$book = CreateObject('PHP.notebook',
 		array('action'),
-		NOTEBOOK_TABS_LEFT | NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH
+		NOTEBOOK_TABS_LEFT | NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH |
+			NOTEBOOK_SCROLL
 	);
 	$book->set_submit_name(__("Configure"));
 	$book->set_refresh_name(__("Refresh"));
@@ -617,15 +618,8 @@ if ($userdata["user"] == 1) { // if we are root...
 		}
 	} // end if is array admin_actions
 
-  $display_buffer .= "
-    <tr><td ALIGN=\"RIGHT\">
-     <img SRC=\"img/HandPointingLeft.gif\" BORDER=\"0\" ALT=\"\"/></a>
-    </td><td ALIGN=\"LEFT\">
-     <a HREF=\"main.php\"
-     ><b>".__("Return to the Main Menu")."</b></a>
-    </td></tr>
-    </table>
-  "; // end standard font
+
+	$display_buffer .= "</table>\n";
 }
 
 $display_buffer .= "
