@@ -454,10 +454,10 @@ class MaintenanceModule extends BaseModule {
 		global $display_buffer;
 		$display_buffer .= freemed_display_itemlist (
 			$GLOBALS['sql']->query (
-				"SELECT ".$this->order_fields." ".
+				"SELECT ".$this->order_field." ".
 				"FROM ".$this->table_name." ".
 				freemed::itemlist_conditions()." ".
-				"ORDER BY ".$this->order_fields
+				"ORDER BY ".$this->order_field
 			),
 			"module_loader.php",
 			$this->form_vars,
@@ -497,7 +497,8 @@ class MaintenanceModule extends BaseModule {
 
 		$query = "SELECT * FROM ".$this->table_name.
 			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
-			" ORDER BY ".$this->order_by;
+			( $this->order_field ? " ORDER BY ".$this->order_field : "" );
+		syslog(LOG_INFO, $query);
 		$result = $GLOBALS['sql']->query($query);
 		if (!$GLOBALS['sql']->results($result)) {
 			return CreateObject('PHP.xmlrpcresp',
@@ -511,7 +512,7 @@ class MaintenanceModule extends BaseModule {
 				array ( 'id' => 'id' )
 			),
 			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
-			'ORDER BY '.$this->order_by
+			'ORDER BY '.$this->order_field
 		);
 	} // end method picklist
 
@@ -530,11 +531,15 @@ class MaintenanceModule extends BaseModule {
 	//
 	function distinct ( $field ) {
 		$found = false;
-		foreach ($this->distinct_values AS $v) {
+		foreach ($this->distinct_fields AS $v) {
 			if ($v == $field) { $found = true; }
 		}
 		if (!$found) { return false; }
-		return $GLOBALS['sql']->distinct_values($this->table_name, $field);
+
+		// Parse distinct_values and return an array
+		$x = $GLOBALS['sql']->distinct_values($this->table_name, $field);
+		foreach ($x AS $v) { $r[] = $v; }
+		return $r;
 	} // end method distinct
 
 	// Method: widget

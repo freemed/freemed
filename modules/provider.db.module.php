@@ -59,7 +59,7 @@ class ProviderModule extends MaintenanceModule {
 	"phyhl7id",
 	"phydea"
 	); // end of variables list
-	var $order_by = 'phylname, phyfname';
+	var $order_field = 'phylname, phyfname';
 
 	// XML-RPC field mapping
 	var $rpc_field_map = array (
