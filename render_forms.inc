@@ -86,16 +86,13 @@ class diagnosisSet {
   //    and add it to the stack if there is room
   function testAddSet ($diag1=0, $diag2=0, $diag3=0, $diag4=0) {
     global $debug;
-    $diag = "";
+    unset ($diag);
     // first determine how many parameters
-    if ($diag1 > 0) $diag[1] = $diag1;
-    if ($diag2 > 0) $diag[2] = $diag2;
-    if ($diag3 > 0) $diag[3] = $diag3;
-    if ($diag4 > 0) $diag[4] = $diag4;
-    $flag = 0;       // by default, none
-    for ($i=1;$i<=4;$i++) {  // loop through diagnoses
-      if (($diag[$i] != 0) and ($flag == ($i - 1))) $flag = $i;
-    } // end of looping through diagnoses
+    $flag = 0;
+    if ($diag1 > 0) { $flag++; $diag[$flag] = $diag1; }
+    if ($diag2 > 0) { $flag++; $diag[$flag] = $diag2; }
+    if ($diag3 > 0) { $flag++; $diag[$flag] = $diag3; }
+    if ($diag4 > 0) { $flag++; $diag[$flag] = $diag4; }
 
     if ($debug) echo "\n$flag diagnoses in this charge<BR>\n";
     flush();
@@ -104,8 +101,8 @@ class diagnosisSet {
     if ($flag == 0) return true;
 
     // if there is enough room, return true and add
-    if (($this->numberUnique ($diag)) <=
-        ($this->maximum_stack_size - $this->$stack_size)) {
+    if (($this->numberUnique ($diag)) <
+        (($this->maximum_stack_size) - ($this->$stack_size))) {
       for ($i=1;$i<=$flag;$i++) $this->popValue($diag[$i]);
       return true;
     } // end of true return for add
