@@ -69,7 +69,7 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
         <B>#name#</B> : 
         </TD>
         <TD>
-        <A HREF=\"module_loader.php?module=#class#&patient=$id\"
+        <A HREF=\"module_loader.php?module=#class#&patient=$patient\"
          >"._("Menu")."</A>
         </TD>
 		</TR>";
@@ -84,7 +84,7 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
         <B>#name#</B> : 
         </TD>
         <TD>
-        <A HREF=\"module_loader.php?module=#class#&patient=$id\"
+        <A HREF=\"module_loader.php?module=#class#&patient=$patient\"
          >"._("Menu")."</A>
         </TD>
 		</TR>";
