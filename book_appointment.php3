@@ -1,8 +1,8 @@
 <?php
-  # file: book_appointment.php3
-  # note: scheduling module for freemed-project
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL
+ // file: book_appointment.php3
+ // note: scheduling module for freemed-project
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
   $page_name = "book_appointment.php3";
   include ("global.var.inc");
@@ -32,7 +32,7 @@ switch ($action) {
       // BROWSE DATES ON THE CALENDAR TO DECIDE WHERE
       // AND WHAT DAY WE ARE LOOKING FOR...
 
-  freemed_display_box_top ("$Add_Appointment");
+  freemed_display_box_top (_("Add Appointment"));
   fc_generate_calendar_mini($selected_date,
    "$page_name?$_auth&patient=$patient&room=$room&type=$type");
 
@@ -48,7 +48,7 @@ switch ($action) {
   if (date_in_the_past($selected_date))
     echo "
       <CENTER><I><$STDFONT_B SIZE=-2
-      >$this_date_occurs_in_the_past<$STDFONT_E></I></CENTER>
+      >"._("this date occurs in the past")."<$STDFONT_E></I></CENTER>
       <BR>
     ";
 
@@ -83,17 +83,17 @@ switch ($action) {
       <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
        ALIGN=CENTER>
       <TR>
-      <TD ALIGN=RIGHT><B>$Patient:</B></TD>
+      <TD ALIGN=RIGHT><B>"._("Patient")." : </B></TD>
       <TD ALIGN=LEFT>$ptlname, $ptfname $ptmname [".fm_date_print($ptdob).
         " ]</TD></TR>
       ". (
        ($room > 0) ? "
       <TR>
-      <TD ALIGN=RIGHT><B>$Room:</B></TD>
+      <TD ALIGN=RIGHT><B>"._("Room")." : </B></TD>
       <TD ALIGN=LEFT>$rm_name $rm_desc $debug_var</TD></TR>
         " : "" )."
       <TR>
-      <TD ALIGN=RIGHT><B>$Date:</B></TD>
+      <TD ALIGN=RIGHT><B>"._("Date")." : </B></TD>
       <TD ALIGN=LEFT>".fm_date_print($selected_date)."</TD></TR>
       </TABLE>
       </CENTER>
@@ -101,7 +101,7 @@ switch ($action) {
     if (date_in_the_past($selected_date)) 
      echo "
       <BR><CENTER><I><$STDFONT_B SIZE=-2>
-      $this_date_occurs_in_the_past<$STDFONT_E></I></CENTER>
+      "._("this date occurs in the past")."<$STDFONT_E></I></CENTER>
      ";
     echo "
       <P><CENTER>
@@ -109,17 +109,17 @@ switch ($action) {
        <INPUT TYPE=HIDDEN NAME=\"action\"
         VALUE=\"\">
        <INPUT TYPE=HIDDEN NAME=\"patient\"
-        VALUE=\"".htmlentities($patient)."\">
+        VALUE=\"".prepare($patient)."\">
        <INPUT TYPE=HIDDEN NAME=\"selected_date\"
-        VALUE=\"".htmlentities($selected_date)."\">
+        VALUE=\"".prepare($selected_date)."\">
        <INPUT TYPE=HIDDEN NAME=\"type\"
-        VALUE=\"".htmlentities($type)."\">
+        VALUE=\"".prepare($type)."\">
        <SELECT NAME=\"room\">
     ";
     freemed_display_rooms ($room);
     echo "
        </SELECT>
-       <INPUT TYPE=SUBMIT VALUE=\"$Change_Room\">
+       <INPUT TYPE=SUBMIT VALUE=\""._("Change Room")."\">
       </FORM></CENTER>
       <P>
     ";
@@ -133,7 +133,7 @@ switch ($action) {
       if (fc_interference_map_count () < 1) {
         echo "
           <CENTER>
-           <I>$The_selected_room_is_free_all_day</I>
+           <I>"._("The selected room is free all day.")."</I>
           </CENTER>
           <BR>
         ";
@@ -146,12 +146,11 @@ switch ($action) {
          BGCOLOR=#777777><TR>
         <TD COLSPAN=2><CENTER>
          <$STDFONT_B SIZE=-1
-          COLOR=#ffffff><B>$TIME</B><$STDFONT_E></CENTER></TD>
+          COLOR=#ffffff><B>"._("TIME")."</B><$STDFONT_E></CENTER></TD>
       ";
 
       $_alternate = freemed_bar_alternate_color ();
       for ($i=fc_starting_hour();$i<=fc_ending_hour();$i++) {
-        $_alternate = freemed_bar_alternate_color ($_alternate);
         if ($i > 11) { 
           $ampm = "pm"; 
           if ($i>12) $ampm_t = $i - 12;
@@ -160,7 +159,8 @@ switch ($action) {
         if (!fc_check_interference_map($i, "0", $selected_date, false) or
             (freemed_config_value("cal_ob")=="enable")) {
           echo "
-            <TR BGCOLOR=$_alternate>
+            <TR BGCOLOR=\"".($_alternate =
+	      freemed_bar_alternate_color ($_alternate))."\">
             <TD ALIGN=RIGHT VALIGN=TOP>
             <$STDFONT_B>
             <A HREF=\"$page_name?$_auth&action=step2&patient=$patient&hour=$i".
@@ -171,7 +171,8 @@ switch ($action) {
           $interfere = fc_check_interference_map ($i, "0", $selected_date,
              false);
           echo "
-            <TR BGCOLOR=$_alternate>
+            <TR BGCOLOR=\"".($_alternate =
+	      freemed_bar_alternate_color ($_alternate))."\">
             <TD ALIGN=RIGHT VALIGN=TOP>
             <$STDFONT_B>
            ";
@@ -219,14 +220,14 @@ switch ($action) {
       echo "
         <P>
         <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
         <P>
       ";
     } else {
       echo "
         <P>
         <CENTER><A HREF=\"call-in.php3?$_auth&action=view&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
         <P>
       ";
     } // end checking for type
@@ -243,7 +244,7 @@ switch ($action) {
       // PATIENT NUMBER, PHYSICIAN, ETC... THIS IS THE
       // FINAL FORM.
 
-   freemed_display_box_top ("$Add_Appointment", $_ref);
+   freemed_display_box_top (_("Add Appointment"));
 
    if (strlen($room)>0) {
      $rm_name = freemed_get_link_field ($room, "room",
@@ -254,7 +255,7 @@ switch ($action) {
      if (strlen($rm_desc)<1) $rm_desc="";
      else $rm_desc="(".$rm_desc.")";
    } else {
-     $rm_name = "$NO_PREFERENCE";
+     $rm_name = _("NO PREFERENCE");
      $rm_desc = "";
    } // checking if room
 
@@ -289,42 +290,43 @@ switch ($action) {
    if ($facility > 0) {
      $fac_name = freemed_get_link_field ($facility, "facility", "psrname");
    } else {
-     $fac_name = "Default Facility";
+     $fac_name = _("Default Facility");
    } // end checking for facility
 
    if ($debug) $debug_var = "[$room]";
    echo "
      <FORM ACTION=\"$page_name\">
      <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"add\">
-     <INPUT TYPE=HIDDEN NAME=\"patient\"  VALUE=\"$patient\">
-     <INPUT TYPE=HIDDEN NAME=\"room\"     VALUE=\"$room\">
-     <INPUT TYPE=HIDDEN NAME=\"facility\" VALUE=\"$facility\">
-     <INPUT TYPE=HIDDEN NAME=\"type\"     VALUE=\"$type\">
-     <INPUT TYPE=HIDDEN NAME=\"selected_date\" VALUE=\"$selected_date\">
-     <INPUT TYPE=HIDDEN NAME=\"hour\"     VALUE=\"$hour\">
-     <INPUT TYPE=HIDDEN NAME=\"minute\"   VALUE=\"$minute\">
+     <INPUT TYPE=HIDDEN NAME=\"patient\"  VALUE=\"".prepare($patient)."\">
+     <INPUT TYPE=HIDDEN NAME=\"room\"     VALUE=\"".prepare($room)."\">
+     <INPUT TYPE=HIDDEN NAME=\"facility\" VALUE=\"".prepare($facility)."\">
+     <INPUT TYPE=HIDDEN NAME=\"type\"     VALUE=\"".prepare($type)."\">
+     <INPUT TYPE=HIDDEN NAME=\"selected_date\"
+      VALUE=\"".prepare($selected_date)."\">
+     <INPUT TYPE=HIDDEN NAME=\"hour\"     VALUE=\"".prepare($hour)."\">
+     <INPUT TYPE=HIDDEN NAME=\"minute\"   VALUE=\"".prepare($minute)."\">
 
      <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
       ALIGN=MIDDLE>
 
      <TR>
-     <TD ALIGN=RIGHT><B>$Facility</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Facility")."</B>:</TD>
      <TD ALIGN=LEFT>$fac_name</TD></TR>
      <TR>
-     <TD ALIGN=RIGHT><B>$Room</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Room")."</B>:</TD>
      <TD ALIGN=LEFT>$rm_name $rm_desc</TD></TR>
      <TR>
-     <TD ALIGN=RIGHT><B>$Patient</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Patient")."</B>:</TD>
      <TD ALIGN=LEFT>$pt_lname, $pt_fname</TD></TR>
      <TR>
-     <TD ALIGN=RIGHT><B>$Date</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Date")."</B>:</TD>
      <TD ALIGN=LEFT>".fm_date_print($selected_date)."</TD></TR>
      <TR>
-     <TD ALIGN=RIGHT><B>$Time</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Time")."</B>:</TD>
      <TD ALIGN=LEFT>$ampm_t $minute $ampm</TD></TR>
 
      <TR>
-     <TD ALIGN=RIGHT><B>$Duration</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Duration")."</B>:</TD>
      <TD ALIGN=LEFT><SELECT NAME=\"duration\">
        <OPTION VALUE=\"15\" >15 $lang_min_abbrev
        <OPTION VALUE=\"30\" >30 $lang_min_abbrev
@@ -338,7 +340,7 @@ switch ($action) {
       </SELECT></TD></TR>
 
      <TR>
-     <TD ALIGN=RIGHT><B>$Physician</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Physician")."</B>:</TD>
      <TD ALIGN=LEFT><SELECT NAME=\"physician\">
    ";
 
@@ -348,48 +350,39 @@ switch ($action) {
       </SELECT></TD></TR>
 
      <TR>
-     <TD ALIGN=RIGHT><B>$Note</B>:</TD>
+     <TD ALIGN=RIGHT><B>"._("Note")."</B>:</TD>
      <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"note\" VALUE=\"\"
       SIZE=40 MAXLENGTH=100></TD></TR>
      </TABLE>
 
      <BR>
      <CENTER>
-      <INPUT TYPE=SUBMIT VALUE=\" Commit Booking \">
+      <INPUT TYPE=SUBMIT VALUE=\" "._("Commit Booking")." \">
      </CENTER>
      </FORM>
    ";
    freemed_display_box_bottom ();
   break;
  case "add":
-  freemed_display_box_top ("$Adding_Appointment", $_ref);
-  echo "$Adding... ";
+  freemed_display_box_top (_("Add Appointment"));
+  echo "<$STDFONT_B>"._("Adding")." ... ";
   $query = "INSERT INTO scheduler VALUES (
-    '$selected_date',
-    '$type',
-    '$hour',
-    '$minute',
-    '$duration',
-    '$facility',
-    '$room',     
-    '$physician',
-    '$patient',
-    '$cptcode',
-    '$status',
+    '".addslashes($selected_date)."',
+    '".addslashes($type)."',
+    '".addslashes($hour)."',
+    '".addslashes($minute)."',
+    '".addslashes($duration)."',
+    '".addslashes($facility)."',
+    '".addslashes($room)."',     
+    '".addslashes($physician)."',
+    '".addslashes($patient)."',
+    '".addslashes($cptcode)."',
+    '".addslashes($status)."',
     '".addslashes($note)."',
     '',
     NULL )";
   $result = fdb_query ($query);
 
-  if ($debug) {
-    echo "
-      <BR>
-      <B>RESULT</B>: $result
-      <BR>
-      <B>QUERY</B>: $query
-      <BR>
-    ";
-  } // end debug...
   echo "
     done.
     <BR>
@@ -398,13 +391,13 @@ switch ($action) {
   if ($type=="pat") {
     echo "
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
      </CENTER>
     ";
   } else {
     echo "
      <A HREF=\"call-in.php3?$_auth&action=display&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
      </CENTER>
     ";
   } // end checking type
