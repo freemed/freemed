@@ -2,6 +2,15 @@ freemed-project TODO list
 by jeff b (jeff@univrel.pr.uconn.edu)
 (c) 1999 under the GPL, version 2
 
+20000405 -------------------------------------------------------
+ * perhaps move to mcal as soon as libmcal stabilizes
+ * move from $Language_Variable to $phrase[Language_Variable]
+ * move from .php3 -> .php for the futures' sake
+ * RPM packages
+ * rehash generate_fixed_forms.php3 to be nice
+ * XML/HL7 generation routines for billing
+ * sync across installs for patients
+
 19990708 -------------------------------------------------------
  * implement payments and billing databases, with structures
  * rehash patient database into usable form, removing all legacy
