@@ -244,7 +244,7 @@ class UnfiledFaxes extends MaintenanceModule {
 				'user' => $_REQUEST['notify'],
 				'urgency' => 4,
 				'text' => __("Fax received for patient").
-					" (".$filename.")"
+					" (".$_REQUEST['note'].")"
 			));
 		}
 
@@ -309,7 +309,7 @@ class UnfiledFaxes extends MaintenanceModule {
 				'user' => $_REQUEST['notify'],
 				'urgency' => 4,
 				'text' => __("Fax received for patient").
-					" (".$filename.")"
+					" (".$_REQUEST['note'].")"
 			));
 		}
 
