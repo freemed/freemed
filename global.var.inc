@@ -3,7 +3,7 @@
   # note: global variables for entire freemed code base
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   # lic : GPL, v2
-  # mod : 2000-03-19
+  # mod : 2000-04-05
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
@@ -12,7 +12,7 @@
     // these variables you should not touch
   $packagename="freemed";		// package name
   $coded_by="jeff b";			// coded by tag
-  $version="0.1.2pre20000319";          // current version number
+  $version="0.1.2 (Bob)";               // current version number
   $bugs_email="code_bugs@test.pr.uconn.edu";	// coder email...
   $bugs_address="http://www.freemed.org/keystone/visitor.php3";
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
@@ -28,10 +28,12 @@
     // **********************************
   $installation="Stock Freemed Install"; // installation name
   $show_top_links=true;                 // do we show links on the top?
-  $host=chop(`cat /etc/HOSTNAME`); 	// webserver location
+  //$host=chop(`cat /etc/HOSTNAME`); 	// webserver location
+  $host="localhost";                    // skip the eval, speed hack
   $db_host="localhost";			// database (SQL) host location
   //$physical_loc="/var/freemed";       // physical directory location
-  $physical_loc=chop(`pwd`);            // get physical dir from "pwd"
+  //$physical_loc=chop(`pwd`);            // get physical dir from "pwd"
+  $physical_loc="/usr/freemed";         // skip the eval, speed hack
   $database="freemed";			// SQL db name (for places
 					// with multiple iterations...)
   $base_url="/freemed";			// offset (i.e. http://here/package)
