@@ -26,16 +26,6 @@
  $physician = new Physician ($this_patient->local_record[ptdoc]);
 
  echo freemed_patient_box ($this_patient)."
-
-	<!--
-  <P>
-  <CENTER>
-   <$STDFONT_B><B>$Patient</B> : 
-    <A HREF=\"manage.php?$_auth&id=$patient\"
-    >".htmlentities($this_patient->fullName(true))."</A><BR>
-    <I>(".htmlentities($physician->fullName()).")</I><$STDFONT_E>
-  </CENTER>
-	-->
   <P>
 
   <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -55,10 +45,10 @@
 
  echo "
   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
-  <TR BGCOLOR=#cccccc>
+  <TR BGCOLOR=\"#cccccc\">
    <TD>&nbsp;</TD>
    <TD ALIGN=LEFT><B>Date</B></TD>
-   <TD ALIGN=RIGTH><B>Proc Code</B></TD>
+   <TD ALIGN=RIGHT><B>Proc Code</B></TD>
    <TD ALIGN=LEFT><B>Provider</B></TD>
    <TD ALIGN=LEFT><B>Charged</B></TD>
    <TD ALIGN=LEFT><B>Allowed</B></TD>
@@ -75,7 +65,6 @@
  // loop for all "line items"
  while ($r = $sql->fetch_array ($result)) {
    $line_item_count++;
-   $_alternate = freemed_bar_alternate_color ($_alternate);
    $this_cpt = freemed_get_link_field ($r[proccpt], "cpt", "cptnameint"); 
    $this_cptcode = freemed_get_link_field ($r[proccpt], "cpt", "cptcode");
    $this_cptmod = freemed_get_link_field ($r[proccptmod],
@@ -84,7 +73,8 @@
    echo "
     <TR BGCOLOR=".(
       ($item == $r[id]) ?
-      "#00ffff" : $_alternate
+      "#00ffff" :
+      ($_alternate = freemed_bar_alternate_color ($_alternate))
     ).">
     <TD>
     <INPUT TYPE=RADIO NAME=\"item\" VALUE=\"".htmlentities($r[id])."\"
@@ -518,7 +508,7 @@
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
 
       <TR>
-       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=#aaaaaa>
+       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=\"#aaaaaa\">
        <$HEADERFONT_B>
         <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"denial\">
         Denial
@@ -578,7 +568,7 @@
      <CENTER>
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
       <TR>
-       <TD COLSPAN=6 ALIGN=LEFT BGCOLOR=#aaaaaa>
+       <TD COLSPAN=6 ALIGN=LEFT BGCOLOR=\"#aaaaaa\">
         <$HEADERFONT_B>
          <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"payment\">
          Payment
@@ -678,7 +668,7 @@
      <CENTER>
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
       <TR>
-       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=#aaaaaa>
+       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=\"#aaaaaa\">
         <$HEADERFONT_B>
          <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"transfer\">
          Transfer <I>(to another source of payment)</I>
@@ -733,7 +723,7 @@
      <CENTER>
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
       <TR>
-       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=#aaaaaa>
+       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=\"#aaaaaa\">
         <$HEADERFONT_B>
          <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mistake\">
          Mistake <I>(deletes record permanently)</I>
