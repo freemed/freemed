@@ -5,6 +5,8 @@
 
 include "lib/freemed.php";
 include "lib/API.php";
+include "lib/module_emr.php";
+include "lib/module_maintenance.php";
 
 // get list of modules
 $module_list = new module_list (PACKAGENAME);

@@ -8,8 +8,6 @@ if (!defined("__PROVIDER_CERTIFICATIONS_MODULE_PHP__")) {
 
 define(__PROVIDER_CERTIFICATIONS_MODULE_PHP__, true);
 
-include "lib/module_maintenance.php";
-
 class providerCertificationsMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Certifications Maintenance";

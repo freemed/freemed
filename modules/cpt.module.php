@@ -7,8 +7,6 @@ if (!defined("__CPT_MODULE_PHP__")) {
 
 define (__CPT_MODULE_PHP__, true);
 
-include "lib/module_maintenance.php";
-
 class cptMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME = "CPT Codes Maintenance";

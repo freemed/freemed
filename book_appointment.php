@@ -306,20 +306,19 @@ switch ($action) {
        <OPTION VALUE=\"105\">1:45
        <OPTION VALUE=\"120\">2:00
        <OPTION VALUE=\"180\">3:00
+       <OPTION VALUE=\"480\">8:00
       </SELECT></TD></TR>
 
      <TR>
      <TD ALIGN=RIGHT><B>"._("Physician")."</B>:</TD>
      <TD ALIGN=LEFT>
-   ";
-
-   $phy_r = $sql->query(
-      "SELECT phyfname,phylname,id 
-       FROM physician
-       WHERE phyref='no'");
-
-   echo 
-     freemed_display_selectbox($phy_r,"#phylname#,#phyfname#", "physician")."
+   ".freemed_display_selectbox(
+		$sql->query(
+			"SELECT phyfname,phylname,id 
+			FROM physician
+			WHERE phyref='no'"),
+		"#phylname#,#phyfname#",
+		 "physician")."
       </TD></TR>
 
      <TR>
@@ -358,6 +357,50 @@ switch ($action) {
 
   if ($result) { echo _("done")."."; }
    else        { echo _("ERROR");    }
+
+	/* FIXME: THIS HAS TO BE UNCOMMENTED
+
+  echo "\n$selected_date, $fac_name, $room_nm";
+
+  // get patient, room (lab) and selected_date info
+  $dj_rm  = freemed_get_link_field ($room, "room", "roomname");
+  $dj_mo  = substr ($selected_date, 5, 2);
+  $dj_yr  = substr ($selected_date, 0, 4);
+  $dj_day = substr ($selected_date, 8, 2);
+
+  // TODO: change time back to am/pm format
+  $dj_title = $dj_rm." ".$this_patient->ptlname." ".$hour.":".$minute." ".$note;
+  // dj_text (javascript) popup window should have more information
+  $dj_text  = $dj_rm." ".$this_patient->ptlname.", ".$this_patient->ptfname.
+    " ".$hour.":".$minute." ".$note;
+  $dj_id    = "01"; // dummied up, should be the actual user id
+  $dj_sp    = "";
+
+  $dj_query = "INSERT INTO calendar_messages ( ".
+    "msg_id, msg_month, msg_day, msg_year, msg_title, msg_text, ".
+    "msg_poster_id, msg_recurring, msg_active ) ".
+    "VALUES ( ".
+    "'NULL'
+  $dj_query = $sql->insert_query (
+	"calendar_messages",
+	array (
+		"msg_id"		=>	'NULL',
+		"msg_month"		=>	$dj_mo,
+		"msg_day"		=>	$dj_day,
+		"msg_year"		=>	$dj_year,
+		"msg_title"		=>	$dj_title,
+		"msg_text"		=>	$dj_text,
+		"msg_poster_id"	=>	$dj_id,
+		"msg_recurring"	=>	$dj_sp,
+		"msg_active"	=>	"1"
+	)
+  );
+
+  $result = $sql->query ($dj_query);
+
+  if (!$result) echo _("ERROR");
+
+	END OF SECTION THAT HAS TO BE UNCOMMENTED */
 
   echo "
     <$STDFONT_E></CENTER>

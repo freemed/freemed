@@ -73,6 +73,10 @@ class freemedEMRModule extends freemedModule {
 				$this->modform();
 				break;
 
+			case "display";
+				$this->display();
+				break;
+
 			case "view":
 			default:
 				$this->view();
@@ -83,24 +87,95 @@ class freemedEMRModule extends freemedModule {
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
 	// function add
-	// - addition stub
-	function add () {
-	} // end function add
+	// - addition routine
+	function add () { $this->_add(); }
+	function _add () {
+		foreach ($GLOBALS as $k => $v) global $$k;
+	
+		echo "
+			<P><CENTER>
+			<$STDFONT_B>"._("Adding")." ...
+		";
+
+		$result = $sql->query (
+			$sql->insert_query (
+				$this->table_name,
+				$this->variables
+			)
+		);
+
+		if ($result) { echo "<B>"._("done").".</B>\n"; }
+		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
+
+		echo "
+			<$STDFONT_E></CENTER>
+			<P>
+			<CENTER>
+				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
+				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+			</CENTER>
+		";
+
+	} // end function _add
 
 	// function del
-	// - delete stub
-	function del () {
-	} // end function del
+	// - delete function
+	function del () { $this->_del(); }
+	function _del () {
+		global $STDFONT_B, $STDFONT_E, $id, $sql;
+		echo "<P ALIGN=CENTER>".
+			"<$STDFONT_B>"._("Deleting")." . . . \n";
+		$query = "DELETE FROM $this->table_name ".
+			"WHERE id = '".prepare($id)."'";
+		$result = $sql->query ($query);
+		if ($result) { echo _("done"); }
+		 else		 { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		echo "<$STDFONT_E></P>\n";
+	} // end function _del
 
 	// function mod
-	// - modification stub
-	function mod () {
-	} // end function mod
+	// - modification function
+	function mod () { $this->_mod(); }
+	function _mod () {
+		foreach ($GLOBALS as $k => $v) global $$k;
+	
+		echo "
+			<P><CENTER>
+			<$STDFONT_B>"._("Modifying")." ...
+		";
+
+		$result = $sql->query (
+			$sql->update_query (
+				$this->table_name,
+				$this->variables,
+				array (
+					"id"	=>		$id
+				)
+			)
+		);
+
+		if ($result) { echo "<B>"._("done").".</B>\n"; }
+		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
+
+		echo "
+			<$STDFONT_E></CENTER>
+			<P>
+			<CENTER>
+				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
+				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+			</CENTER>
+		";
+
+	} // end function _mod
 
 	// function add/modform
 	// - wrappers for form
 	function addform () { $this->form(); }
 	function modform () { $this->form(); }
+
+	// function display
+	// by default, a wrapper for view
+	function display () { $this->view(); }
 
 	// function form
 	// - add/mod form stub

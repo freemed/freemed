@@ -8,8 +8,6 @@ if (!defined("__TYPE_OF_SERVICE_MODULE_PHP__")) {
 
 define (__TYPE_OF_SERVICE_MODULE_PHP__, true);
 
-include "lib/module_maintenance.php";
-
 class typeOfServiceMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME = "Type of Service Maintenance";

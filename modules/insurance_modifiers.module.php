@@ -7,8 +7,6 @@ if (!defined("__INSURANCE_MODIFIERS_MODULE_PHP__")) {
 
 define(__INSURANCE_MODIFIERS_MODULE_PHP__, true);
 
-include "lib/module_maintenance.php";
-
 class insuranceModifiersMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Modifiers Maintenance";

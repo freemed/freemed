@@ -7,8 +7,6 @@ if (!defined("__PROCEDURE_MODULE_PHP__")) {
 
 define (__PROCEDURE_MODULE_PHP__, true);
 
-include ("lib/module_emr.php");
-
 class procedureModule extends freemedEMRModule {
 
 	var $MODULE_NAME = "Procedures";

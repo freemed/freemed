@@ -9,8 +9,6 @@ if (!defined("__PROVIDER_GROUPS_MODULE_PHP__")) {
 
 define(__PROVIDER_GROUPS_MODULE_PHP__, true);
 
-include "lib/module_maintenance.php";
-
 class providerGroupsMaintenance extends freemedMaintenanceModule {
 	var $MODULE_NAME    = "Provider Groups Maintenance";
 	var $MODULE_VERSION = "0.1";

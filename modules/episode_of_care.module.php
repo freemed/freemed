@@ -3,20 +3,69 @@
  // desc: episode of care database module
  // lic : GPL, v2
 
- $page_name   = "episode_of_care.php";
- $record_name = "Episode of Care";
- $db_name     = "eoc";
+if (!defined("__EPISODE_OF_CARE_MODULE_PHP__")) {
 
- include ("lib/freemed.php");
- include ("lib/API.php");
+define (__EPISODE_OF_CARE_MODULE_PHP__, true);
 
- freemed_open_db ($LoginCookie);
- freemed_display_html_top ();
- freemed_display_banner ();
+class episodeOfCare extends freemedEMRModule {
 
- switch ($action) {
-  // trying to combine add and modify forms for simplicity
-  case "addform": case "modform":
+	var $MODULE_NAME 	= "Episode of Care";
+	var $MODULE_VERSION = "0.1";
+
+	var $record_name	= "Episode of Care";
+	var $table_name     = "eoc";
+
+	var $variables		= array (
+		"eocpatient",
+		"eocdescrip",
+		"eocstartdate",
+		"eocdtlastsimilar",
+		"eocreferrer",
+		"eocfacility",
+		"eocdiagfamily",
+		"eocrelpreg",
+		"eocrelemp",
+		"eocrelauto",
+		"eocrelother",
+		"eocrelstpr",
+		"eoctype",
+		"eocrelautoname",
+		"eocrelautoaddr1",
+		"eocrelautoaddr2",
+		"eocrelautocity",
+		"eocrelautostpr",
+		"eocrelautozip",
+		"eocrelautocountry",
+		"eocrelautocase",
+		"eocrelautorcname",
+		"eocrelautorcphone",
+		"eocrelempname",
+		"eocrelempaddr1",
+		"eocrelempaddr2",
+		"eocrelempcity",
+		"eocrelempstpr",
+		"eocrelempzip",
+		"eocrelempcountry",
+		"eocrelempfile",
+		"eocrelemprcname",
+		"eocrelemprcphone",
+		"eocrelemprcemail",
+		"eocrelpregcycle",
+		"eocrelpreggravida",
+		"eocrelpregmiscarry",
+		"eocrelpregabort",
+		"eocrelpreglastper",
+		"eocrelpregconfine",
+		"eocrelothercomment"
+	);
+
+	function episodeOfCare () {
+		$this->freemedEMRModule();
+	} // end constructor episodeOfCare
+
+	function form () {
+		foreach ($GLOBALS as $k => $v) global $$k;
+
    switch ($action) {
      case "addform":
       $go = "add";
@@ -38,22 +87,20 @@
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
-        $r      = freemed_get_link_rec ($id, $db_name);
+        $r      = freemed_get_link_rec ($id, $this->table_name);
         extract ($r);
         break;
       } // end checking if we have been here yet...
    } // end of interior switch
-   freemed_display_box_top (_($this_action)." "._($record_name));
 
     // grab important patient information
-   $this_patient = new Patient ($patient);
-
-   echo freemed_patient_box($this_patient)."
-    <P>
-    <FORM ACTION=\"$page_name\" METHOD=POST>
+    echo "
+	<P>
+    <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
      <INPUT TYPE=HIDDEN NAME=\"id\"        VALUE=\"".prepare($id)."\">
      <INPUT TYPE=HIDDEN NAME=\"patient\"   VALUE=\"".prepare($patient)."\">
+     <INPUT TYPE=HIDDEN NAME=\"module\"    VALUE=\"".prepare($module)."\">
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
@@ -70,7 +117,7 @@
        VALUE=\"".prepare($eocdescrip)."\">
      </TD>
   ";
-  if ($this_patient->isFemale()) { echo "
+  if ($this->this_patient->isFemale()) { echo "
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Pregnancy")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelpreg\">
@@ -429,176 +476,47 @@
      <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
      </CENTER>
     ";
-   freemed_display_box_bottom ();
-   break;
+	} // end function episodeOfCare->form
 
-  // REAL ADD AND MODIFY FUNCTIONS ARE BELOW
+	function prepare () {
+		global $eocdiagfamily,
+			$eocstartdate,
+			$eocdtlastsimilar,
+			$eocrelpreglastper,
+			$eocrelpregconfine,
+			$eocrelautorcphone,
+			$eocrelemprcphone,
+			$eocpatient;
 
-  case "add": case "mod":
-   switch ($action) {
-     case "add":
-       $this_action = "Adding";
-     case "mod":
-       $this_action = "Modifying";
-   }
-   freemed_display_box_top (_("$this_action $record_name"));
-   echo "
-     <$STDFONT_B>"._("$this_action")."<$STDFONT_E> ...
-   ";
+			// compact 3d arrays into strings...
+		$eocdiagfamily     = fm_join_from_array ($eocdiagfamily     );
 
-   // compact 3d arrays into strings...
-   $eocdiagfamily_a   = fm_join_from_array ($eocdiagfamily     );
+			// assemble all "normal" dates
+		$eocstartdate      = fm_date_assemble   ("eocstartdate"     );
+		$eocdtlastsimilar  = fm_date_assemble   ("eocdtlastsimilar" );
+		$eocrelpreglastper = fm_date_assemble   ("eocrelpreglastper");
+		$eocrelpregconfine = fm_date_assemble   ("eocrelpregconfine");
 
-     // assemble all "normal" dates
-   $eocstartdate      = fm_date_assemble   ("eocstartdate"     );
-   $eocdtlastsimilar  = fm_date_assemble   ("eocdtlastsimilar" );
-   $eocrelpreglastper = fm_date_assemble   ("eocrelpreglastper");
-   $eocrelpregconfine = fm_date_assemble   ("eocrelpregconfine");
+			// assemble all phone numbers
+		$eocrelautorcphone = fm_phone_assemble  ("eocrelautorcphone");
+		$eocrelemprcphone  = fm_phone_assemble  ("eocrelemprcphone" );
 
-     // assemble all phone numbers
-   $eocrelautorcphone = fm_phone_assemble  ("eocrelautorcphone");
-   $eocrelemprcphone  = fm_phone_assemble  ("eocrelemprcphone" );
+			// move patient over
+		$eocpatient = $patient;
+	} // end function episodeOfCare->prepare
 
-   // move patient over
-   $eocpatient = $patient;
+	function add () {
+		$this->prepare();
+		$this->_add();
+	} // end function episodeOfCare->add
 
-   switch ($action) {
-    case "add":
-     $query = "INSERT INTO $db_name VALUES (
-       '".addslashes($eocpatient)                 ."',
-       '".addslashes($eocdescrip)                 ."',
-       '".addslashes($eocstartdate)               ."',
-       '".addslashes($eocdtlastsimilar)           ."',
-       '".addslashes($eocreferrer)                ."',
-       '".addslashes($eocfacility)                ."',
-       '".addslashes($eocdiagfamily_a)            ."',
-       '".addslashes($eocrelpreg)                 ."',
-       '".addslashes($eocrelemp)                  ."',
-       '".addslashes($eocrelauto)                 ."',
-       '".addslashes($eocrelother)                ."',
-       '".addslashes($eocrelstpr)                 ."',
-       '".addslashes($eoctype)                    ."',
-       '".addslashes($eocrelautoname)             ."',
-       '".addslashes($eocrelautoaddr1)            ."',
-       '".addslashes($eocrelautoaddr2)            ."',
-       '".addslashes($eocrelautocity)             ."',
-       '".addslashes($eocrelautostpr)             ."',
-       '".addslashes($eocrelautozip)              ."',
-       '".addslashes($eocrelautocountry)          ."',
-       '".addslashes($eocrelautocase)             ."',
-       '".addslashes($eocrelautorcname)           ."',
-       '".addslashes($eocrelautorcphone)          ."',
-       '".addslashes($eocrelempname)              ."',
-       '".addslashes($eocrelempaddr1)             ."',
-       '".addslashes($eocrelempaddr2)             ."',
-       '".addslashes($eocrelempcity)              ."',
-       '".addslashes($eocrelempstpr)              ."',
-       '".addslashes($eocrelempzip)               ."',
-       '".addslashes($eocrelempcountry)           ."',
-       '".addslashes($eocrelempfile)              ."',
-       '".addslashes($eocrelemprcname)            ."',
-       '".addslashes($eocrelemprcphone)           ."',
-       '".addslashes($eocrelemprcemail)           ."',
-       '".addslashes($eocrelpregcycle)            ."',
-       '".addslashes($eocrelpreggravida)          ."',
-       '".addslashes($eocrelpregpara)             ."',
-       '".addslashes($eocrelpregmiscarry)         ."',
-       '".addslashes($eocrelpregabort)            ."',
-       '".addslashes($eocrelpreglastper)          ."',
-       '".addslashes($eocrelpregconfine)          ."',
-       '".addslashes($eocrelothercomment)         ."',
-       NULL )";
-      break;
-     case "mod":
-      $query = "UPDATE $db_name SET
-        eocpatient         = '".addslashes($eocpatient).        "',
-        eocdescrip         = '".addslashes($eocdescrip).        "',
-        eocstartdate       = '".addslashes($eocstartdate).      "',
-        eocdtlastsimilar   = '".addslashes($eocdtlastsimilar).  "',
-        eocreferrer        = '".addslashes($eocreferrer).       "',
-        eocfacility        = '".addslashes($eocfacility).       "',
-        eocdiagfamily      = '".addslashes($eocdiagfamily_a).   "',
-        eocrelpreg         = '".addslashes($eocrelpreg).        "',
-        eocrelemp          = '".addslashes($eocrelemp).         "',
-        eocrelauto         = '".addslashes($eocrelauto).        "',
-        eocrelother        = '".addslashes($eocrelother).       "',
-        eocrelstpr         = '".addslashes($eocrelstpr).        "',
-        eoctype            = '".addslashes($eoctype).           "',
-        eocrelautoname     = '".addslashes($eocrelautoname).    "',
-        eocrelautoaddr1    = '".addslashes($eocrelautoaddr1).   "',
-        eocrelautoaddr2    = '".addslashes($eocrelautoaddr2).   "',
-        eocrelautocity     = '".addslashes($eocrelautocity).    "',
-        eocrelautostpr     = '".addslashes($eocrelautostpr).    "',
-        eocrelautozip      = '".addslashes($eocrelautozip).     "',
-        eocrelautocountry  = '".addslashes($eocrelautocountry). "',
-        eocrelautocase     = '".addslashes($eocrelautocase).    "',
-        eocrelautorcname   = '".addslashes($eocrelautorcname).  "',
-        eocrelautorcphone  = '".addslashes($eocrelautorcphone). "',
-        eocrelempname      = '".addslashes($eocrelempname).     "',
-        eocrelempaddr1     = '".addslashes($eocrelempaddr1).    "',
-        eocrelempaddr2     = '".addslashes($eocrelempaddr2).    "',
-        eocrelempcity      = '".addslashes($eocrelempcity).     "',
-        eocrelempstpr      = '".addslashes($eocrelempstpr).     "',
-        eocrelempzip       = '".addslashes($eocrelempzip).      "',
-        eocrelempcountry   = '".addslashes($eocrelempcountry).  "',
-        eocrelempfile      = '".addslashes($eocrelempfile).     "',
-        eocrelemprcname    = '".addslashes($eocrelemprcname).   "',
-        eocrelemprcphone   = '".addslashes($eocrelemprcphone).  "',
-        eocrelemprcemail   = '".addslashes($eocrelemprcemail).  "',
-        eocrelpregcycle    = '".addslashes($eocrelpregcycle).   "',
-        eocrelpreggravida  = '".addslashes($eocrelpreggravida). "',
-        eocrelpregpara     = '".addslashes($eocrelpregpara).    "',
-        eocrelpregmiscarry = '".addslashes($eocrelpregmiscarry)."',
-        eocrelpregabort    = '".addslashes($eocrelpregabort).   "',
-        eocrelpreglastper  = '".addslashes($eocrelpreglastper). "',
-        eocrelpregconfine  = '".addslashes($eocrelpregconfine). "',
-        eocrelothercomment = '".addslashes($eocrelothercomment)."' 
-        WHERE id='".addslashes($id)."'";
-      break;
-   } // end of action switch...
-
-   $result = $sql->query ($query);
-   if ($debug)  { echo " ( query = \"$query\" ) <BR>"; }
-   if ($result) { echo _("done"); }
-    else        { echo _("ERROR"); }
-   echo "
-     <P>
-     <CENTER>
-      <A HREF=\"manage.php?$_auth&id=$patient\"
-      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-      <A HREF=\"$page_name?$_auth&patient=$patient\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-     </CENTER>
-     <BR>
-   ";
-   freemed_display_box_bottom ();
-   break;
-
-  case "del":
-   freemed_display_box_top (_("Deleting")." "._($record_name));
-   echo "
-    <P>
-    <$STDFONT_B>"._("Deleting")." ...
-    ";
-   $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
-   $result = $sql->query ($query);
-   if ($result) { echo _("done")."\n";    }
-    else        { echo _("ERROR")."\n";   }
-   echo "
-    <$STDFONT_E>
-    <P>
-    <CENTER>
-      <A HREF=\"manage.php?$_auth&id=$patient\"
-      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER> 
-   ";
-   freemed_display_box_bottom ();
-   break;
+	function mod () {
+		$this->prepare();
+		$this->_mod();
+	} // end function episodeOfCare->mod
 
     // view of entire episode (central control screen)
-  case "view": case "display":
+	function display () {
    if ($id<1) {
      freemed_display_box_top (_("ERROR"));
      echo "
@@ -617,15 +535,8 @@
      freemed_display_html_bottom ();
      DIE("");
    } // end checking for ID as valid
-   freemed_display_box_top (_($record_name));
 
-   // create new patient object
-   $this_patient = new Patient ($patient);
-
-   // display header of box with patient information
-   echo freemed_patient_box ($this_patient)." <P> \n";
-
-   $eoc = freemed_get_link_rec($id,"eoc");
+   $eoc = freemed_get_link_rec($id, $this->table_name);
    // display vitals for current episode
    echo "
      <P>
@@ -665,6 +576,7 @@
    $r_name = $record_name; // backup
    $_auth = "proceoc=".urlencode($id);  
    $record_name = "Procedure";
+   $save_module = $module;
    $module = "procedureModule"; // pass for the module loader
    echo freemed_display_itemlist (
      $result,
@@ -689,6 +601,7 @@
      )
    );
    // end of procedures display
+   $module = $save_module;
    
    echo "
    <P>\n";
@@ -708,9 +621,11 @@
      
    $_auth = "pnoteseoc=".urlencode($id);  
    $record_name = "Progress Notes";
+   $save_module = $module;
+   $module = "progressNotes";
    echo freemed_display_itemlist (
      $result,
-     "progress_notes.php",
+     "module_loader.php",
      array (
        _("Date") => "pnotesdt"
      ),
@@ -718,6 +633,7 @@
        ""
      )
    );
+   $module = $save_module;
 
    $record_name = $r_name; // restore from backup var
 
@@ -726,53 +642,36 @@
    echo "
      <P>
      <CENTER>
-      <A HREF=\"$page_name?$_auth&patient=$patient\"
+      <A HREF=\"$this->page_name?$_auth&patient=$patient&module=$module\"
       ><$STDFONT_B>"._("Choose Another $record_name")."<$STDFONT_E></A>
      </CENTER>
      <P>
    ";
-   freemed_display_box_bottom ();
-   break; // end of manage action
+	} // end function episodeOfCare->display
 
-  default: // default action -- menu
-   if ($patient<1) {
-     freemed_display_box_top (_($record_name)." :: "._("ERROR"));
-     echo "
-      <P>
-      <$STDFONT_B>"._("You must specify a patient.")."<$STDFONT_E>
-      <P>
-     ";
-     freemed_display_box_bottom ();
-     freemed_close_db ();
-     freemed_display_html_bottom ();
-     DIE ("");
-   } // kick the bucket if no patient
+	function view () {
+		global $sql;
 
-   freemed_display_box_top ("$record_name");
-   $result = $sql->query ("SELECT * FROM $db_name
+		echo freemed_display_itemlist(
+			$sql->query ("SELECT * FROM $this->table_name
                          WHERE eocpatient='".addslashes($patient)."'
-                         ORDER BY eocstartdate DESC");
+                         ORDER BY eocstartdate DESC"),
+			$this->page_name,
+			array (
+				_("Starting Date") => "eocstartdate",
+				_("Description")   => "eocdescrip"
+			),
+			array (
+				"",
+				_("NO DESCRIPTION")
+			)
+		);
+	} // end function episodeOfCare->view
 
-    $this_patient = new Patient ($patient);
-    echo freemed_patient_box ($this_patient)."
-      <P>
-    ".freemed_display_itemlist(
-      $result,
-      $page_name,
-      array (
-        _("Starting Date") => "eocstartdate",
-	_("Description")   => "eocdescrip"
-      ),
-      array (
-        "",
-	_("NO DESCRIPTION")
-      )
-    );
+} // end class episodeOfCare
 
-   freemed_display_box_bottom ();
-   break;
- } // end master switch
+register_module ("episodeOfCare");
 
- freemed_close_db ();
- freemed_display_html_bottom ();
+} // if not defined
+
 ?>

@@ -7,10 +7,6 @@ if (!defined("__PROGRESS_NOTES_MODULE_PHP__")) {
 
 define (__PROGRESS_NOTES_MODULE_PHP__, true);
 
-include ("lib/freemed.php");
-include ("lib/API.php");
-include ("lib/module_emr.php");
-
 class progressNotes extends freemedEMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
@@ -441,10 +437,6 @@ class progressNotes extends freemedEMRModule {
      //freemed_display_box_bottom ();
 	} // end of case display
 
-	function delete () {
-     echo "DELETE STUB!<BR>\n";
-    } // end function progressNotes->delete()
-     
 	function view () {
 		global $patient;
 		reset ($GLOBALS);

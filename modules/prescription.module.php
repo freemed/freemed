@@ -7,9 +7,6 @@ if (!defined("__PRESCRIPTION_MODULE_PHP__")) {
 
 define(__PRESCRIPTION_MODULE_PHP__, true);
 
-include ("lib/freemed.php");
-include ("lib/API.php");
-
 class prescriptionModule extends freemedEMRModule {
 
 	var $MODULE_NAME = "Prescription";

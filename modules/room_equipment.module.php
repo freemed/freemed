@@ -7,8 +7,6 @@ if (!defined("__ROOM_EQUIPMENT_MODULE_PHP__")) {
 
 define(__ROOM_EQUIPMENT_MODULE_PHP__, true);
 
-include "lib/module_maintenance.php";
-
 class roomEquipmentMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME    = "Room Equipment Maintenance";

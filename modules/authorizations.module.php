@@ -9,8 +9,6 @@ if (!defined("__AUTHORIZATIONS_MODULE_PHP__")) {
 
 define (__AUTHORIZATIONS_MODULE_PHP__, true);
 
-include ("lib/module_emr.php");
-
 class authorizationsModule extends freemedEMRModule {
 
 	var $MODULE_NAME    = "Authorizations";

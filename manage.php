@@ -5,7 +5,9 @@
 
 $page_name = "manage.php";
 include ("lib/freemed.php");
-include ("lib/API.php"); // API functions
+include ("lib/API.php");
+include ("lib/module_emr.php");
+include ("lib/module_maintenance.php");
 
 if ($id != $current_patient)
   SetCookie ("current_patient", $id, time()+$_cookie_expire);
@@ -135,15 +137,6 @@ if ($id<1) {
       }
 
      echo "
-        <TR><TD ALIGN=RIGHT>
-         <$STDFONT_B><B>"._("Episode of Care")."</B> : <$STDFONT_E>
-        </TD><TD ALIGN=LEFT>
-         <A HREF=\"episode_of_care.php?$_auth&patient=$id&action=addform\"
-          ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
-        </TD><TD>
-         <A HREF=\"episode_of_care.php?$_auth&patient=$id\"
-          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
-        </TD></TR>
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>"._("Patient Information")."</B> : <$STDFONT_E>
         </TD><TD> 

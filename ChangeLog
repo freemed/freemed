@@ -3,6 +3,12 @@ freemed project changelog
 
 * Wed Jan 24 2001 rufustfirefly
   - added David Jordan's patch for book_appointment module
+  - updated lib/module_emr.php to allow for less code rekeying and
+    display action
+  - moved episode_of_care.php -> modules/episode_of_care.module.php
+  - removed modules/progress_notes.module.php's delete stub
+  - optimized modules to not use includes ... all including is now done
+    in the module_loader, manage, db_maintenance code
 
 * Tue Jan 23 2001 rufustfirefly
   - slight updates to README

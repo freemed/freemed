@@ -7,9 +7,6 @@ if (!defined("__PROVIDER_STATUS_MODULE_PHP__")) {
 
 define(__PROVIDER_STATUS_MODULE_PHP__, true);
 
-include ("lib/freemed.php");
-include ("lib/API.php");
-
 class providerStatusMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Status Maintenance";
