@@ -918,6 +918,97 @@ class Scheduler {
 		return $maps;
 	} // end method multimap
 
+	// Method: next_available
+	//
+	//	Get next available slot with appropriate parameters.
+	//
+	// Parameters:
+	//
+	//	$_criteria - Hash containing one or more of the following:
+	//	* after    - After a particular hour
+	//	* date     - Date to start the search from
+	//	* days     - Number of days to search (defaults to 4)
+	//	* duration - In minutes (defaults to 15)
+	//	* forceday - Force day to be day of week (1..7 ~ Mon..Sun)
+	//	* location - Room location
+	//	* provider - With a particular provider
+	//	* weekday  - Force weekday (boolean) 
+	//
+	// Returns:
+	//
+	//	array ( date, hour, minute ) or
+	//	array ( false ) if nothing is open
+	//
+	function next_available ( $_criteria ) {
+		// Error checking
+		if ($_criteria['days']<1 or $_criteria['days']>90) {
+			$days = 4;
+		} else {
+			$days = $_criteria['days'];
+		}
+
+		// Get duration
+		$duration = $_criteria['duration'] ? $_criteria['duration'] : 15;
+
+		// Loop through days to create c_days array
+		$i_cur = $_criteria['date'] ? $_criteria['date'] : date('Y-m-d');
+		$c_days[] = $i_cur; // start with current day ...
+		for ($i=1; $i<=$days; $i++) {
+			$i_cur = freemed_get_date_next($i_cur);
+			list ($i_y, $i_m, $i_d) = explode ('-', $i_cur);
+			$i_add = true;
+			// Check for criteria ...
+			if ($_criteria['weekday']) {
+				$dow = strftime("%u", mktime(0,0,0,$i_m,$i_d,$i_y));
+				if ($dow > 5) { $i_cur = false; }
+			}
+			if ($_criteria['forceday']) {
+				$dow = strftime("%u", mktime(0,0,0,$i_m,$i_d,$i_y));
+				if ($dow != $_criteria['forceday']) { $i_cur = false; }
+			}
+			if ($i_add) { $c_days[] = $i_cur; }
+		} // end for i loop for number of days
+
+		// Return false if there are no days available as specified
+		if (count($c_days) < 1) { return array(false); }
+
+		// Create basic SQL criteria
+		if ($_criteria['after']) {
+			$starting_time = $_criteria['after'];
+		} else {
+			$starting_time = freemed::config_value("calshr");
+		}
+		if ($_criteria['location']) {
+			$b_criteria[] = "calfacility = '".addslashes($_criteria['location'])."'";
+		}
+
+		// After we have gotten all of the prospective days, run
+		// some maps to see what we have
+		foreach ($c_days AS $this_day) {
+			$m_criteria = array_merge(
+				$b_criteria,
+				array("caldateof = '".addslashes($this_day)."'")
+			);
+			$map = $this->map(
+				"SELECT * FROM scheduler WHERE ".
+				join(' AND ', $m_criteria)
+			);
+
+			// Loop through the map and use map_fit() queries
+			// to return the first possible fit
+			for($h=$starting_time; $h<freemed::config_value('calehr'); $h++) {
+				for ($m='00'; $m<60; $m+=15) {
+					if ($this->map_fit($map, "$h:$m", $duration)) {
+						return array ($this_day, $h, $m);
+					} // end if map_fit
+				} // end minute loop
+			} // end hour loop
+		} // end for each possible day
+
+		// If all else fails, return array(false)
+		return array (false);
+	} // end method next_available
+
 	// Method: next_time_increment
 	//
 	//	Increment time slot by 15 minutes.
