@@ -1643,17 +1643,15 @@ function fdb_query ($querystring) {
 
 function fm_date_assemble ($datevarname="", $array_index=-1) {
   if ($datevarname=="") return ""; // return nothing if no variable is given
-  eval ("global \$". $datevarname. "_m,
-                \$". $datevarname. "_d,
-                \$". $datevarname. "_y ; "); // get global vars
+  global ${$datevarname."_m"}, ${$datevarname."_d"}, ${$datevarname."_y"};
   if ($array_index == -1) {
-    eval ("\$m = \$".$datevarname."_m ; ");    // month
-    eval ("\$d = \$".$datevarname."_d ; ");    // day
-    eval ("\$y = \$".$datevarname."_y ; ");    // year
+    $m = ${$datevarname."_m"};
+    $d = ${$datevarname."_d"};
+    $y = ${$datevarname."_y"};
   } else {
-    eval ("\$m = \$".$datevarname."_m[$array_index] ; ");  // month
-    eval ("\$d = \$".$datevarname."_d[$array_index] ; ");  // day
-    eval ("\$y = \$".$datevarname."_y[$array_index] ; ");  // year 
+    $m = ${$datevarname."_m"}[$array_index];
+    $d = ${$datevarname."_d"}[$array_index];
+    $y = ${$datevarname."_y"}[$array_index];
   } // end checking for array index
   return $y."-".$m."-".$d;                     // return SQL format date
 } // end function fm_date_assemble
@@ -1665,12 +1663,12 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
   else                     { $suffix="[]";
                              $pos="[$arrayvalue]"; }
   global $lang_months;                 // import month names
-  eval ("global \$". $datevarname. ", \$" .$datevarname."_y, \$".
-         $datevarname."_m, \$".$datevarname."_d ; "); // get global vars
-  eval ("\$w = \$".$datevarname."$pos   ; ");   // whole date
-  eval ("\$m = \$".$datevarname."_m$pos ; ");   // month
-  eval ("\$d = \$".$datevarname."_d$pos ; ");   // day
-  eval ("\$y = \$".$datevarname."_y$pos ; ");   // year
+  global $$datevarname, ${$datevarname."_y"}, 
+    ${$datevarname."_m"}, ${$datevarname."_d"};
+  $w = ${"$datevarname$pos"};
+  $m = ${$datevarname."_m".$pos};
+  $d = ${$datevarname."_d".$pos};
+  $y = ${$datevarname."_y".$pos};
   if (!empty($w)) {
     // if date is not empty, split into $m, $d, $y
     $y = substr ($w, 0, 4);  // split year
@@ -1823,8 +1821,8 @@ function fm_join_from_array ($cur_array) {
 } // end function fm_join_from_array 
 
 function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false) {
-  eval ("global \$".$varname." ; ");       // bring in the variable
-  eval ("\$selected = \$".$varname." ; "); // get selected..?
+  global $$varname; // bring in the variable
+  $selected = $$varname; // get selected..?
   echo "\n<SELECT NAME=\"$varname\">\n";   // show start of select tag 
   if                   ($step==0)    $step = 1;    // bounds checking
   if ( ($min>$max) AND ($step>=0) )  return false; // bounds checking
@@ -1843,23 +1841,20 @@ function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false) {
 function fm_phone_assemble ($phonevarname="", $array_index=-1) {
   $buffer = ""; // we use buffered output for notebook class!
   if ($phonevarname=="") return ""; // return nothing if no variable is given
-  eval ("global \$". $phonevarname. ",
-                \$". $phonevarname. "_1,
-                \$". $phonevarname. "_2,
-                \$". $phonevarname. "_3,
-                \$". $phonevarname. "_4 ; "); // get global vars
+  global $$phonevarname, ${$phonevarname."_1"},
+    ${$phonevarname."_2"}, ${$phonevarname."_3"}, ${$phonevarname."_4"};
   if ($array_index == -1) {
-    eval ("\$w  = \$".$phonevarname."   ; ");    // whole number
-    eval ("\$p1 = \$".$phonevarname."_1 ; ");    // part 1
-    eval ("\$p2 = \$".$phonevarname."_2 ; ");    // part 2
-    eval ("\$p3 = \$".$phonevarname."_3 ; ");    // part 3
-    eval ("\$p4 = \$".$phonevarname."_4 ; ");    // part 4
+    $w  = $$phonevarname;    // whole number
+    $p1 = ${$phonevarname."_1"};    // part 1
+    $p2 = ${$phonevarname."_2"};    // part 2
+    $p3 = ${$phonevarname."_3"};    // part 3
+    $p4 = ${$phonevarname."_4"};    // part 4
   } else {
-    eval ("\$w  = \$".$phonevarname."[$array_index]   ; ");  // whole number
-    eval ("\$p1 = \$".$phonevarname."_1[$array_index] ; ");  // part 1
-    eval ("\$p2 = \$".$phonevarname."_2[$array_index] ; ");  // part 2
-    eval ("\$p3 = \$".$phonevarname."_3[$array_index] ; ");  // part 3
-    eval ("\$p4 = \$".$phonevarname."_4[$array_index] ; ");  // part 4
+    $w  = $$phonevarname[$array_index];  // whole number
+    $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
+    $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
+    $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
+    $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
   } // end checking for array index
   switch (freemed_config_value("phofmt")) {
     case "usa":
@@ -1872,21 +1867,24 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
 
 function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
   if ($phonevarname=="") return false;  // indicate problems
-  if (($arrayvalue+0)==-1) { $suffix="";        
-                             $pos="";                    }
-  else                     { $suffix="[]";
-                             $pos="[$arrayvalue]"; }
+  if (($arrayvalue+0)==-1) { $suffix="";   }     
+  else                     { $suffix="[]"; }
   $formatting = freemed_config_value("phofmt"); // get phone formatting
-  eval ("global \$".$phonevarname.",
-                \$".$phonevarname."_1,
-                \$".$phonevarname."_2,
-                \$".$phonevarname."_3,
-                \$".$phonevarname."_4 ; "); // get global vars
-  eval ("\$w  = \$".$phonevarname."$pos  ; ");   // whole number
-  eval ("\$p1 = \$".$phonevarname."_1$pos ; ");   // part 1
-  eval ("\$p2 = \$".$phonevarname."_2$pos ; ");   // part 2
-  eval ("\$p3 = \$".$phonevarname."_3$pos ; ");   // part 3
-  eval ("\$p4 = \$".$phonevarname."_4$pos ; ");   // part 4
+  global $$phonevarname, ${$phonevarname."_1"}, ${$phonevarname."_2"},
+         ${$phonevarname."_3"}, ${$phonevarname."_4"}; // get global vars
+  if ($array_index == -1) {
+    $w  = $$phonevarname;    // whole number
+    $p1 = ${$phonevarname."_1"};    // part 1
+    $p2 = ${$phonevarname."_2"};    // part 2
+    $p3 = ${$phonevarname."_3"};    // part 3
+    $p4 = ${$phonevarname."_4"};    // part 4
+  } else {
+    $w  = $$phonevarname[$array_index];  // whole number
+    $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
+    $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
+    $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
+    $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
+  } // end checking for array index
   if (!empty($w)) {
     // if date is not empty, split into $m, $d, $y
     switch ($formatting) {
