@@ -50,7 +50,7 @@ if (is_array($handlers)) {
 			$display_buffer .=
 				"<center>\n".
 				"<div class=\"thinbox_noscroll\" style=\"width: 80%; text-align: left; align: center;\">\n".
-				"<div class=\"reverse\" style=\"width: 100%; text-weight: bold; text-align: left; vertical-align: top; \">".prepare($_t)."</div><br />\n".
+				"<div><span class=\"reverse\" style=\"width: 100%; text-weight: bold; text-align: left; vertical-align: top; margin: 1em; padding-left: 1em; padding-right: 1em; -moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px;\"><b>".prepare($_t)."</b></span></div><br />\n".
 				( $_i ? "<span style=\"margin: 5px;\"><img src=\"".$_i."\" border=\"0\" /></span>" : "" ).
 				"<span style=\"vertical-align: top;\">".$_c."</span></div>\n&nbsp;".
 				"</center>\n";
