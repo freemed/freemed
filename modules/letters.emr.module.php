@@ -128,7 +128,13 @@ class lettersModule extends freemedEMRModule {
 	} // end function lettersModule->form
 
 	function display () {
-		global $display_buffer, $id, $title, $return, $SESSION;
+		global $display_buffer, $patient, $action, $id, $title,
+			$return, $SESSION;
+
+		global $print;
+		if ($print) {
+			global $no_template_display; $no_template_display=true;
+		}
 
 		$title = _("View Letter");
 
@@ -158,7 +164,7 @@ class lettersModule extends freemedEMRModule {
 		</TABLE>
 		</DIV>
 		<DIV ALIGN=\"LEFT\" CLASS=\"letterbox\">
-		".prepare($record[lettertext])."
+		".stripslashes(str_replace("\n", "<BR>", htmlentities($record[lettertext])))."
 		</DIV>
 		<P>
 		<DIV ALIGN=\"CENTER\">
@@ -166,7 +172,22 @@ class lettersModule extends freemedEMRModule {
 		$SESSION[current_patient] :
 		"module_loader.php?module=".$this->MODULE_CLASS )."\"
 		>".( ($return=="manage") ? _("Manage Patient") : _("back") ).
-		"</A>
+		"</A> | ".( !$print ?
+		"<A HREF=\"module_loader.php?".
+			"module=".urlencode($this->MODULE_CLASS)."&".
+			"patient=".urlencode($patient)."&".
+			"action=".urlencode($action)."&".
+			"id=".urlencode($id)."&".
+			"return=".urlencode($return)."&".
+			"print=1\">"._("Print View")."</A>" :
+		"<A HREF=\"module_loader.php?".
+			"module=".urlencode($this->MODULE_CLASS)."&".
+			"patient=".urlencode($patient)."&".
+			"action=".urlencode($action)."&".
+			"id=".urlencode($id)."&".
+			"return=".urlencode($return)."&".
+			"print=0\">"._("Standard View")."</A>"
+		)."
 		</DIV>
 		";
 	} // end function lettersModule->display
