@@ -153,6 +153,7 @@ switch ($action) {
 			array(
 				"msgby" => $this_user->user_number, // mark from user
 				"msgfor" => $this_is_for,
+				"msgrecip" => join(',', $my_for),
 				"msgtime" => SQL__NOW, // pass proper timestamp
 				"msgpatient",
 				"msgperson",
@@ -256,6 +257,8 @@ switch ($action) {
 	default:
 	// Set page title
 	$page_title = __("Messages");
+
+	$messages = CreateObject('FreeMED.Messages');
   
 	// Push onto stack
 	page_push();
@@ -352,8 +355,16 @@ switch ($action) {
 				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
 				<td>".$r['msgurgency']."/5 ".
-				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a></td>
+				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a> ".
+				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Fwd: '.$r['msgsubject'])."\">".__("Fwd")."</a></td>
 			</tr>
+			".( $r['msgrecip'] != $r['msgfor'] ? "
+			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
+				<small><em>".__("Sent to:")."
+				".$messages->recipients_to_text($r['msgrecip'])."
+				</em></small>
+			</td></tr>
+			" : "" )."
 			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
 				".( $r['msgsubject'] ? 
 				"<span style=\"border: 1px dotted;\">

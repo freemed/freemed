@@ -50,6 +50,30 @@ class Messages {
 		}
 	} // end method get
 
+	// Method: recipients_to_text
+	//
+	//	Convert a recipients field (comma delimited users) into
+	//	a list of user names.
+	//
+	// Parameters:
+	//
+	//	$recip - 'msgrecip' field
+	//
+	// Returns:
+	//
+	//	Comma-delimited list of user names
+	//
+	function recipients_to_text ( $recip ) {
+		$query = "SELECT * FROM user WHERE ".
+			"FIND_IN_SET(id, '".addslashes($recip)."')";
+		$res = $GLOBALS['sql']->query($query);
+		$a = array ();
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$a[] = prepare($r['userdescrip']);
+		}
+		return join(', ', $a);
+	} // end method recipients_to_text
+
 	// Method: remove
 	//
 	//	Remove a message from the system by its id key
@@ -101,7 +125,8 @@ class Messages {
 		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 				"messages",
 				array(
-					"msgfor"     => $message['physician'],
+					"msgfor"     => $message['user'],
+					"msgrecip"   => $message['user'],
 					"msgpatient" => $message['patient'],
 					"msgperson"  => $message['person'],
 					"msgtext"    => $message['text'],
@@ -158,7 +183,7 @@ class Messages {
 		if ($GLOBALS['sql']->results($result)) {
 			while ($r = $GLOBALS['sql']->fetch_array($result)) {
 				$return[] = array(
-					"physician"  => $r['msgfor'],
+					"user"       => $r['msgfor'],
 					"patient"    => $r['msgpatient'],
 					"person"     => $r['msgperson'],
 					"subject"    => $r['msgsubject'],

@@ -8,11 +8,11 @@ class MessagesTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Messages Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.3';
+	var $MODULE_VERSION = '0.7.1';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.1';
 
 	var $table_name = "messages";
 
@@ -21,6 +21,7 @@ class MessagesTable extends MaintenanceModule {
 			'msgby' => SQL__INT_UNSIGNED(0),
 			'msgtime' => SQL__TIMESTAMP(14),
 			'msgfor' => SQL__INT_UNSIGNED(0),
+			'msgrecip' => SQL__TEXT,
 			'msgpatient' => SQL__INT_UNSIGNED(0),
 			'msgperson' => SQL__VARCHAR(50),
 			'msgurgency' => SQL__INT_UNSIGNED(0),
@@ -71,9 +72,25 @@ class MessagesTable extends MaintenanceModule {
 	function _update () {
 		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Version 0.6.0.1
+		//
+		//	Add msgby to track who sent the message
+		//
 		if (!version_check($version, '0.6.0.1')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN msgby INT UNSIGNED FIRST');
+		}
+
+		// Version 0.7.1
+		//
+		//	Add message recipient tracking for multiples
+		//
+		if (!version_check($version, '0.7.1')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN msgrecip TEXT AFTER msgfor');
+			$sql->query('UPDATE '.$this->table_name.' '.
+				'SET msgrecip=msgfor WHERE id>0');
 		}
 	} // end function _update
 }

@@ -241,7 +241,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			$msg = CreateObject('_FreeMED.Messages');
 			$msg->send(array(
 				'patient' => $_REQUEST['patient'],
-				'physician' => $_REQUEST['notify'],
+				'user' => $_REQUEST['notify'],
 				'urgency' => 4,
 				'text' => __("Fax received for patient").
 					" (".$filename.")"
@@ -306,7 +306,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			$msg = CreateObject('_FreeMED.Messages');
 			$msg->send(array(
 				'patient' => $_REQUEST['patient'],
-				'physician' => $_REQUEST['notify'],
+				'user' => $_REQUEST['notify'],
 				'urgency' => 4,
 				'text' => __("Fax received for patient").
 					" (".$filename.")"
@@ -544,7 +544,9 @@ class UnfiledFaxes extends MaintenanceModule {
 			$tempfile,
 			array (
 				'sender' => INSTALLATION." (".PACKAGENAME." v".DISPLAY_VERSION.")",
-				'subject' => '['.$pages.' '.__("page(s) received").']'
+				'subject' => '['.$pages.' '.__("page(s) received").']',
+				'comments' => __("All pages received.").' '.
+					__("Thank you.")
 			)
 		);
 		$output = $fax->Send($_REQUEST['faxback']);
