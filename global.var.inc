@@ -3,7 +3,7 @@
  // note: global variables for entire freemed code base
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
- // mod : 2000-09-11
+ // mod : 2000-11-14
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
@@ -14,9 +14,9 @@ if (!defined(__GLOBAL_VAR_INC__)) {
 define (__GLOBAL_VAR_INC__, true);
 
     // these variables you should not touch
-  define (PACKAGENAME, "freemed");			// package name
+  define (PACKAGENAME, "freemed");				// package name
   define (CODED_BY, "The Freemed Project");		// coded by tag
-  define (VERSION, "0.2.0-test2 (pre-Phoenix)");	// current version
+  define (VERSION, "0.2.0 (Phoenix)");			// current version
   define (BUGS_EMAIL, "code_bugs@ourexchange.net");	// coder email...
 
   define (BUGS_ADDRESS, "http://sourceforge.net/project/freemed/");
@@ -34,23 +34,19 @@ define (__GLOBAL_VAR_INC__, true);
   define (INSTALLATION, "Stock Freemed Install"); // installation name
   define (LOCALEDIR,	"/usr/share/locale");     // gettext location
   define (DB_HOST, "localhost");	// database (SQL) host location
-  define (PHYSICAL_LOCATION, "/usr/freemed");
+  define (PHYSICAL_LOCATION, "/usr/share/freemed");
   $database="freemed";			// SQL db name (for places
 
-  //$show_top_links=true;                 // do we show links on the top?
-  //$host=chop(`cat /etc/HOSTNAME`); 	// webserver location
-  $host="localhost";                    // skip the eval, speed hack
-  //$physical_loc="/var/freemed";       // physical directory location
-  //$physical_loc=chop(`pwd`);            // get physical dir from "pwd"
-  $physical_loc="/usr/freemed";         // skip the eval, speed hack
-  $database="freemed";			// SQL db name (for places
-					// with multiple iterations...)
-  $base_url="/freemed";			// offset (i.e. http://here/package)
+  $host="localhost";                    // host name for this system
+  $physical_loc=PHYSICAL_LOCATION;      // skip the eval, speed hack
+  $database="freemed";					// SQL db name (for places
+										// with multiple iterations...)
+  $base_url="/freemed";					// offset (i.e. http://here/package)
   $http="http";                         // http for normal, https for SSL
     // these are for the SQL server, since it needs at least one real
     // account to function. please change at will
-  define(DB_USER, "root");		// SQL server username
-  define(DB_PASSWORD, "password");	// SQL server password
+  define(DB_USER, "root");				// SQL server username
+  define(DB_PASSWORD, "password");		// SQL server password
   $default_language="EN";               // default language
 
     // *************************************
