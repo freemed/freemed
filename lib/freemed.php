@@ -32,17 +32,17 @@ define (__FREEMED_PHP__, true);
   define (INSTALLATION, "Stock Freemed Install"); // installation name
   define (LOCALEDIR,	"/usr/share/locale");     // gettext location
   define (DB_HOST, "localhost");	// database (SQL) host location
-  define (DB_NAME, "freemed1");	// database name
-  define (DB_USER, "freemed1");				// SQL server username
-  define (DB_PASSWORD, "freemed1");		// SQL server password
-  define (PHYSICAL_LOCATION, "/home/freemed1/freemed");
+  define (DB_NAME, "freemed");	// database name
+  define (DB_USER, "root");				// SQL server username
+  define (DB_PASSWORD, "password");		// SQL server password
+  define (PHYSICAL_LOCATION, "/usr/freemed");
   $database=DB_HOST;			// SQL db name (for places
 
-  $host="coltrane.forester.com";                    // host name for this system
+  $host="localhost";                    // host name for this system
   $physical_loc=PHYSICAL_LOCATION;      // skip the eval, speed hack
-  $database="freemed1";					// SQL db name (for places
+  $database="freemed";					// SQL db name (for places
 										// with multiple iterations...)
-  $base_url="/freemed1";					// offset (i.e. http://here/package)
+  $base_url="/freemed";					// offset (i.e. http://here/package)
   $http="http";                         // http for normal, https for SSL
   $default_language="EN";               // default language
 

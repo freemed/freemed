@@ -110,6 +110,7 @@
   <CENTER>
    <SELECT NAME=\"action\">
     <OPTION VALUE=\"refresh\"  >Refresh
+    <OPTION VALUE=\"rebill\"  >Rebill
     <OPTION VALUE=\"denialform\"  >Denial
     <OPTION VALUE=\"mistakeform\" >Mistake
     <OPTION VALUE=\"paymentform\" >Payment
@@ -192,20 +193,55 @@
       Added Rebill to ledger.
      </CENTER>
     ";
-    } else {
+    } 
+    // we shouldn't do this unless we ask. fix me.
+    //else {
       // otherwise adjust the amount to 0
-      $query = "UPDATE procrec
-                SET procbalcurrent='0'
-                WHERE id='".addslashes($item)."'";
-      $result = $sql->query ($query);
-      echo "
-       <CENTER>
-        Procedure adjusted to zero.
-       </CENTER>
-      ";
-    } // end of denial rebill check
+    //  $query = "UPDATE procrec
+    //            SET procbalcurrent='0'
+    //            WHERE id='".addslashes($item)."'";
+    //  $result = $sql->query ($query);
+    //  echo "
+    //   <CENTER>
+    //    Procedure adjusted to zero.
+    //   </CENTER>
+    //  ";
+    //} // end of denial rebill check
     $show_submit = false;
     break; // end of denial action
+
+   case "rebill":  // justa rebill
+      $query = "UPDATE procrec
+                SET procbilled='0'
+                WHERE id='".addslashes($item)."'";
+      $result = $sql->query ($query);
+      if (!$result)
+          echo " <CENTER>Failed to set Procedure for rebill.  </CENTER> ";
+      else
+          echo " <CENTER> Procedure set for rebill.  </CENTER> ";
+      $query = "INSERT INTO payrec VALUES (
+                '$cur_date',
+                '0000-00-00',
+                '$patient',
+                '$cur_date',
+                '".REBILL."',
+                '".addslashes($item)."',
+                '0',
+                '0',
+                '0',
+                '',
+                '0',
+                'Rebill',
+                'unlocked',
+                NULL
+              )";
+      $result = $sql->query ($query);
+      if (!$result)
+          echo " <CENTER>Failed to add Rebill to ledger.  </CENTER> ";
+      else
+          echo " <CENTER> Added Rebill to ledger.  </CENTER> ";
+    $show_submit = false;
+   break;
 
    case "payment": // payment action
     echo "<CENTER>\n";
@@ -293,7 +329,7 @@
                 '',
                 '".addslashes($voucher)."',
                 '".addslashes($allowed_difference)."',
-                '',
+                'FEE ADJUSTMENT',
                 'unlocked',
                 NULL
                 )";
@@ -357,37 +393,7 @@
       else
         echo "<$STDFONT_B>Update procedure Failed!!.<$STDFONT_E><BR>\n";
     } // end of checking for any changes
-    if ($payment_resubmit == "yes") {
-      $query = "UPDATE procrec
-                SET procbilled='0'
-                WHERE id='".addslashes($item)."'";
-      $result = $sql->query ($query);
-      if ($result) 
-        echo "<$STDFONT_B>Procedure set for rebill<$STDFONT_E><BR>\n";
-      else
-        echo "<$STDFONT_B>Update procedure rebill Failed!!.<$STDFONT_E><BR>\n";
-      $query = "INSERT INTO payrec VALUES (
-                '$cur_date',
-                '0000-00-00',
-                '$patient',
-                '".fm_date_assemble("date_of_action")."',
-                '".REBILL."',
-                '".addslashes($item)."',
-                '0',
-                '0',
-                '0',
-                '',
-                '0',
-                'Rebill after Payment',
-                'unlocked',
-                NULL
-              )";
-      $result = $sql->query ($query);
-      if ($result) 
-        echo "<$STDFONT_B>Added Rebill to Ledger<$STDFONT_E><BR>\n";
-      else
-        echo "<$STDFONT_B>Add for rebill Failed!!.<$STDFONT_E><BR>\n";
-    }
+
     $show_submit = false;
     break; // end payment action
 
@@ -591,16 +597,6 @@
       <TR>
       <TD COLSPAN=2 ALIGN=RIGHT><$STDFONT_B>Description :<$STDFONT_E></TD> 
       <TD COLSPAN=4><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=40</TD>
-      </TR>
-      <TR>
-       <TD COLSPAN=2 ALIGN=RIGHT>
-        <$STDFONT_B>Resubmit? : <$STDFONT_E>
-       </TD>
-        <TD COLSPAN=4><INPUT TYPE=RADIO NAME=\"payment_resubmit\"
-         VALUE=\"yes\" >Yes &nbsp;&nbsp;
-        <INPUT TYPE=RADIO NAME=\"payment_resubmit\"
-         VALUE=\"no\" CHECKED>No
-       </TD>
       </TR>
       <TR>
        <TD ALIGN=LEFT>

@@ -1,9 +1,20 @@
 freemed project changelog
 ($Id$)
 
+* Tue Jan 16 2001 fforest
+  - accidenty applied my freemed.inc. put that back to the original
+  - fix a bug I intrduced in generate_fixedforms that issued a warning if insured
+    did not have coverage. 
+  - add a rebill option to the manage_payments select list. added the code to handle just
+    a rebill.
+  - removed the rebill option from manage_payments paymentform since there is a seperate option now.
+  - commented out the code in manage_payments that resets the procbalcurrent to 0. We don;t ask the user
+    if they want this. we just doit if they select no on the rebill. I'll make in optional in the next round
+    of updates.
+
 * Wed Jan 09 2001 fforest
   - manage_bills show unpaid proc totals per patient. grand total at end
-  - generate_fixed_forms Added some warning messages to spit out durin
+  - generate_fixed_forms Added some warning messages to spit out 
       during bill generation.
   - manage_payments handling of allowed amt (fee adjust) recoded to act more like
       a deductable but with a twist. Looks better on ledger also.

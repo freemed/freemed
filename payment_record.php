@@ -782,7 +782,7 @@
       case DEDUCTABLE: // deductable 8
        $this_type = "deductable";
        break;
-      case FEEADJUST: // deductable 9 
+      case FEEADJUST: // feeadjust 9 
        $this_type = "Fee Adjust";
        break;
       case PAYMENT: // payment 0

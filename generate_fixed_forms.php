@@ -102,10 +102,10 @@
      flush ();
 
      // make sure patient has prim sec ter or wc insurance
-     if ( ($bill_request_type < 4) AND
-          ($this_patient->payor[$bill_request_type]->local_record["payerinsco"] == 0))
+     $ins_valid = $this_patient->payor[$bill_request_type]->local_record["payerinsco"];
+     if ( ($bill_request_type < 4) AND ($ins_valid == 0) )
      {
-         echo "Warning - Patient does not have insurance of this type";
+         echo "<B>Error - Patient does not have insurance of this type</B><BR>\n";
          flush();
      }
 
