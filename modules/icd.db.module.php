@@ -124,11 +124,11 @@ class IcdMaintenance extends MaintenanceModule {
 		<input class=\"button\" type=\"SUBMIT\" value=\" ".
 			( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
 		<input class=\"button\" type=\"RESET\" value=\" ".__("Clear")." \"/>
-		<input class=\"button\" type=\"SUBMIT\" name=\"submit\" ".
+		<input class=\"button\" type=\"SUBMIT\" name=\"__submit\" ".
 			"value=\"".__("Cancel")."\"/>
 		</div></form>
 		";
-	} // end function IcdMaintenance->form
+	} // end method form
 
 	function view () {
 		global $display_buffer;
