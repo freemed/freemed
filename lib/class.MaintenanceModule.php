@@ -138,14 +138,14 @@ class MaintenanceModule extends BaseModule {
 
 		switch ($action) {
 			case "add":
-				if (!freemed::acl('support', 'add') and !$this->defeat_acl) {
+				if (!$this->acl_access('add') and !$this->defeat_acl) {
 					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 				}
 				$this->add();
 				break;
 
 			case "addform":
-				if (!freemed::acl('support', 'add') and !$this->defeat_acl) {
+				if (!$this->acl_access('add') and !$this->defeat_acl) {
 					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 				}
 				$this->addform();
@@ -153,7 +153,7 @@ class MaintenanceModule extends BaseModule {
 
 			case "del":
 			case "delete":
-				if (!freemed::acl('support', 'delete') and !$this->defeat_acl) {
+				if (!$this->acl_access('delete') and !$this->defeat_acl) {
 					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 				}
 				$this->del();
@@ -161,14 +161,14 @@ class MaintenanceModule extends BaseModule {
 
 			case "mod":
 			case "modify":
-				if (!freemed::acl('support', 'modify') and !$this->defeat_acl) {
+				if (!$this->acl_access('modify') and !$this->defeat_acl) {
 					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 				}
 				$this->mod();
 				break;
 
 			case "modform":
-				if (!freemed::acl('support', 'modify') and !$this->defeat_acl) {
+				if (!$this->acl_access('modify') and !$this->defeat_acl) {
 					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 				}
 				global $id;
@@ -180,7 +180,7 @@ class MaintenanceModule extends BaseModule {
 
 			case "view":
 			default:
-				if (!freemed::acl('support', 'view') and !$this->defeat_acl) {
+				if (!$this->acl_access('view') and !$this->defeat_acl) {
 					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 				}
 				$action = "";
@@ -189,6 +189,15 @@ class MaintenanceModule extends BaseModule {
 		} // end switch action
 	} // end function main
 
+	// Method: acl_access
+	//
+	//	Should be overridden by any module which needs different
+	//	access checks.
+	//
+	function acl_access ( $type ) { 
+		return freemed::acl_patient('support', $type);
+	} // end method acl_access
+	
 	// function display_message
 	function display_message () {
 		global $display_buffer;

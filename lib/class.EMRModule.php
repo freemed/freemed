@@ -251,14 +251,14 @@ class EMRModule extends BaseModule {
 
 		switch ($action) {
 			case "add":
-				if (!freemed::acl_patient('emr', 'add', $patient)) {
+				if (!$this->acl_access('add', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->add();
 				break;
 
 			case "addform":
-				if (!freemed::acl_patient('emr', 'add', $patient)) {
+				if (!$this->acl_access('add', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->addform();
@@ -266,14 +266,14 @@ class EMRModule extends BaseModule {
 
 			case "del":
 			case "delete":
-				if (!freemed::acl_patient('emr', 'delete', $patient)) {
+				if (!$this->acl_access('delete', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->del();
 				break;
 
 			case "lock":
-				if (!freemed::acl_patient('emr', 'lock', $patient)) {
+				if (!$this->acl_access('lock', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->lock();
@@ -281,14 +281,14 @@ class EMRModule extends BaseModule {
 
 			case "mod":
 			case "modify":
-				if (!freemed::acl_patient('emr', 'modify', $patient)) {
+				if (!$this->acl_access('modify', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->mod();
 				break;
 
 			case "modform":
-				if (!freemed::acl_patient('emr', 'modify', $patient)) {
+				if (!$this->acl_access('modify', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->modform();
@@ -299,7 +299,7 @@ class EMRModule extends BaseModule {
 				break;
 
 			case "display";
-				if (!freemed::acl_patient('emr', 'view', $patient)) {
+				if (!$this->acl_access('view', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->display();
@@ -307,7 +307,7 @@ class EMRModule extends BaseModule {
 
 			case "view":
 			default:
-				if (!freemed::acl_patient('emr', 'view', $patient)) {
+				if (!$this->acl_access('view', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
 				$this->view();
@@ -331,6 +331,15 @@ class EMRModule extends BaseModule {
 	//
 	function additional_move ($id, $from, $to) { }
 
+	// Method: acl_access
+	//
+	//	Should be overridden by any module which needs different
+	//	access checks.
+	//
+	function acl_access ( $type, $patient ) { 
+		return freemed::acl_patient('emr', $type, $patient);
+	} // end method acl_access
+	
 	function display_message () {
 		global $display_buffer;
 		if (isset($this->message)) {
