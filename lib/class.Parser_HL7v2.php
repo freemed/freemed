@@ -29,6 +29,15 @@ define ('HL7v2_PD1_PROVIDER', 4);
 	define ('HL7v2_PD1_PROVIDER_LASTNAME', 1);
 	define ('HL7v2_PD1_PROVIDER_FIRSTNAME', 2);
 
+// AIL - Appointment Information Location - NOT USED RIGHT NOW
+
+// AIP - Appointment Information Personnel Resource
+define ('HL7v2_AIP_PROVIDER', 3);
+	define ('HL7v2_AIP_PROVIDER_ID', 0);
+	define ('HL7v2_AIP_PROVIDER_NAME', 1);
+define ('HL7v2_AIP_DATETIME', 6);
+define ('HL7v2_AIP_DURATION', 9);
+
 // SCH
 define ('HL7v2_SCH_DURATION', 9);
 define ('HL7v2_SCH_UNIT', 10);
@@ -36,7 +45,7 @@ define ('HL7v2_SCH_NOTE', 8);
 	define ('HL7v2_SCH_NOTE_SHORT', 0);
 	define ('HL7v2_SCH_NOTE_LONG', 1);
 
-// Class: FreeMED.Parser_HL7v2
+// Class: _FreeMED.Parser_HL7v2
 //
 //	HL7 v2.3 compatible generic parser
 //
@@ -60,17 +69,23 @@ class Parser_HL7v2 {
 	//	to the parser. This is an associative array.
 	//
 	function Parser_HL7v2 ( $message, $_options = NULL ) {
+		syslog(LOG_INFO, 'HL7 parser|Created HL7 parser object');
+		syslog(LOG_INFO, 'HL7 parser| message = '.$message);
+	
 		// Assume separator is a pipe
 		$this->field_separator = '|';
 		if (is_array($_options)) {
 			$this->options = $_options;
 		}
 	
+		syslog (LOG_INFO, 'HL7 parser| length of data = '.strlen($message));
+
 		// Split HL7v2 message into lines
-		$segments = explode("\r", $message);
+		$segments = explode("\n", $message);
 
 		// Fail if there are no or one segments
 		if (count($segments) <= 1) {
+			syslog (LOG_INFO, 'HL7 parser| no segments to parse');
 			return false;
 		}
 
@@ -85,6 +100,7 @@ class Parser_HL7v2 {
 			switch ($type) {
 				case 'MSH':
 				case 'EVN':
+				syslog(LOG_INFO, 'Found '.$type.'segment');
 				call_user_func_array(
 					array(&$this, '_'.$type),
 					array(
@@ -129,9 +145,9 @@ class Parser_HL7v2 {
 	//	Output of the specified handler.
 	//
 	function Handle() {
+		syslog(LOG_INFO, 'HL7 parser|in handle');
 		// Set to handle current method
 		list ($top_level, $type) = explode ('^', $this->MSH['message_type']);
-
 		// Check for an appropriate handler
 		$handler = CreateObject('_FreeMED.Handler_HL7v2_'.$type, $this);
 
@@ -142,10 +158,12 @@ class Parser_HL7v2 {
 					"_FreeMED.Handler_HL7v2_".$type.
 					"</b><br/>\n";
 			}
+			syslog (LOG_INFO, 'HL7 parser|Could not load class _FreeMED.Handler_HL7v2_'.$type);
 			return false;
 		}
 
 		// Run appropriate handler
+		syslog(LOG_INFO, 'HL7 parser|running appropriate handler ('.$type.')');
 		return $handler->Handle();
 	} // end method Handle
 
@@ -260,6 +278,35 @@ class Parser_HL7v2 {
 	function __parse_segment ($segment) {
 		return explode($this->field_separator, $segment);
 	} // end method __parse_segment
+
+	function __date_to_sql ( $date ) {
+		$year = substr($date, 0, 4);
+		$month = substr($date, 4, 2);
+		$day = substr($date, 6, 2);
+		return $year.'-'.$month.'-'.$day;
+	} // end method __date_to_sql
+
+	function __date_to_hour ( $date ) {
+		return substr($date, 8, 2);
+	} // end method __date_to_hour
+
+	function __date_to_minute ( $date ) {
+		return substr($date, 10, 2);
+	} // end method __date_to_minute
+
+	function __pid_to_patient ( $pid_id ) {
+		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."'";
+		$result = $GLOBALS['sql']->query($query);
+		$r = @$GLOBALS['sql']->fetch_array($result);
+		return $r['id'];
+	} // end method __pid_to_patient
+
+	function __aip_to_provider ( $aip_id ) {
+		$query = "SELECT id FROM provider WHERE phyhl7id='".addslashes($aip_id)."'";
+		$result = $GLOBALS['sql']->query($query);
+		$r = @$GLOBALS['sql']->fetch_array($result);
+		return $r['id'];
+	} // end method __aip_to_provider
 
 } // end class Parser_HL7v2
 

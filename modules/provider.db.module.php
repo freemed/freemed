@@ -1,10 +1,6 @@
 <?php
-  // $Id$
-  // note: provider (formerly physician) database services
-  // code: jeff b (jeff@ourexchange.net)
-  //       adam b (gdrago23@yahoo.com)
-  // translation: max k <amk@span.ch>
-  // lic : GPL
+	// $Id$
+	// code: jeff b (jeff@ourexchange.net), adam b (gdrago23@yahoo.com)
 
 LoadObjectDependency('_FreeMED.MaintenanceModule');
 
@@ -12,7 +8,7 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -58,7 +54,8 @@ class ProviderModule extends MaintenanceModule {
         "phyrefcoll",
         "phychargemap",
         "phyidmap",
-	"phyanesth"
+	"phyanesth",
+	"phyhl7id"
 	); // end of variables list
 	var $order_by = 'phylname, phyfname';
 
@@ -123,6 +120,7 @@ class ProviderModule extends MaintenanceModule {
 			'phyidmap' => SQL__TEXT,
 			'phygrpprac' => SQL__INT_UNSIGNED(0),
 			'phyanesth' => SQL__INT_UNSIGNED(0),
+			'phyhl7id' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
 		);
 
@@ -325,7 +323,7 @@ class ProviderModule extends MaintenanceModule {
 				"physsn1", "physsn2", "physsn3", 
 				"phydeg1", "phydeg2", "phydeg3",
 				"physpe1", "physpe2", "physpe3",
-				"phyanesth"
+				"phyanesth", "phyhl7id"
 			),
 			html_form::form_table(array(
 		__("UPIN Number") =>
@@ -376,7 +374,10 @@ class ProviderModule extends MaintenanceModule {
 				__("no") => "0",
 				__("yes") => "1"
 			)
-		)
+		),
+
+		__("HL7 Identifier") =>
+		html_form::text_widget( 'phyhl7id' )
 
 			))
 		);
@@ -546,6 +547,19 @@ class ProviderModule extends MaintenanceModule {
 			array ( "", "" )
 		);
 	} // end function ProviderModule->view()
+
+	function _update ( ) {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Version 0.3
+		//
+		//	Add hl7 id field
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN phyhl7id INT UNSIGNED AFTER phyanesth');
+		}
+	} // end method _update
 
 } // end class ProviderModule
 
