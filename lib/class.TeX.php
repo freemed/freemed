@@ -373,7 +373,7 @@ class TeX {
 		// by HTMLarea JS). For now, we treat them as though they
 		// were paragraph breaks. What is the proper way to handle
 		// these?
-		$text = preg_replace("#\s*<BR\s/><BR\s/>#i", "\n\n\\medskip\n\n", $text);
+		$text = preg_replace("#\s*<BR\s/><BR\s/>#i", "\n\n\\bigskip\n\n", $text);
 		$text = preg_replace("#\s*<BR\s/>#i", " \n\n", $text);
 		$text = preg_replace("#\s*<BR>#i", " \n\n", $text);
 	
