@@ -85,22 +85,22 @@ class IcdMaintenance extends MaintenanceModule {
 		";
 
 	$display_buffer .= html_form::form_table(array(
-		_("Code")." ("._("ICD9").")" =>
+		__("Code")." (".__("ICD9").")" =>
 		html_form::text_widget("icd9code", 10, 6),
 
-		_("Meta Description") =>
+		__("Meta Description") =>
 		html_form::text_widget("icdmetadesc", 10, 30),
 
-		_("Code")." ("._("ICD10").")" =>
+		__("Code")." (".__("ICD10").")" =>
 		html_form::text_widget("icd10code", 10, 7),
 
-		_("Description")." ("._("ICD9").")" =>
+		__("Description")." (".__("ICD9").")" =>
 		html_form::text_widget("icd9descrip", 20, 45),
     
-		_("Description")." ("._("ICD10").")" =>
+		__("Description")." (".__("ICD10").")" =>
 		html_form::text_widget("icd10descrip", 20, 45),
 
-		_("Diagnosis Related Groups") =>
+		__("Diagnosis Related Groups") =>
 		freemed::multiple_choice (
 			"SELECT * FROM diagfamily ORDER BY dfname, dfdescrip",
 			"##dfname## (##dfdescrip##)",
@@ -113,10 +113,10 @@ class IcdMaintenance extends MaintenanceModule {
 		<p/>
 		<div ALIGN=\"CENTER\">
 		<input class=\"button\" type=\"SUBMIT\" value=\" ".
-			( ($action=="addform") ? _("Add") : _("Modify") )." \"/>
-		<input class=\"button\" type=\"RESET\" value=\" "._("Clear")." \"/>
+			( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
+		<input class=\"button\" type=\"RESET\" value=\" ".__("Clear")." \"/>
 		<input class=\"button\" type=\"SUBMIT\" name=\"submit\" ".
-			"value=\""._("Cancel")."\"/>
+			"value=\"".__("Cancel")."\"/>
 		</div></form>
 		";
 	} // end function IcdMaintenance->form
@@ -133,10 +133,10 @@ class IcdMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Code")        => 	"icd9code",
-				_("Description") =>	"icd9descrip"
+				__("Code")        => 	"icd9code",
+				__("Description") =>	"icd9descrip"
 			),
-			array ("", _("NO DESCRIPTION")),
+			array ("", __("NO DESCRIPTION")),
 			"", 
 			"t_page"
 		);

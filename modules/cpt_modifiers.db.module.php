@@ -67,23 +67,23 @@ class CptModifiersMaintenance extends MaintenanceModule {
 		<input TYPE=\"HIDDEN\" NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"module\"   VALUE=\"".prepare($module)."\"/>
 		".html_form::form_table ( array (
-		_("Modifier") =>
+		__("Modifier") =>
 		array(
 			'content' => html_form::text_widget('cptmod', 2)	
 		),
 
-		_("Description") =>
+		__("Description") =>
 		array(
-		    'help' => _("Helpful description of the modifier"),
+		    'help' => __("Helpful description of the modifier"),
 		    'content' => html_form::text_widget('cptmoddescrip', 20, 30)
 		)
 		) )."
 		<p/>
 		<div ALIGN=\"CENTER\">
 		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".
-		( ($action=="addform") ? _("Add") : _("Modify") )." \"/>
+		( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
 		<input class=\"button\" NAME=\"submit\" TYPE=\"SUBMIT\" ".
-			"VALUE=\""._("Cancel")."\"/>
+			"VALUE=\"".__("Cancel")."\"/>
 		</div></form>
 		";
 	} // end function CptModifiersMaintenance->form()
@@ -100,10 +100,10 @@ class CptModifiersMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Modifier")		=>	"cptmod",
-				_("Description")	=>	"cptmoddescrip"
+				__("Modifier")		=>	"cptmod",
+				__("Description")	=>	"cptmoddescrip"
 			),
-			array ("", _("NO DESCRIPTION"))
+			array ("", __("NO DESCRIPTION"))
 		);
 	} // end function CptModifiersMaintenance->view()
 

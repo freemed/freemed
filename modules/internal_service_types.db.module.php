@@ -59,8 +59,8 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
  
 		<p/>
 		<div ALIGN=\"CENTER\">
-		<input TYPE=\"SUBMIT\" VALUE=\" "._("Modify")." \"/>
-		<input TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
+		<input TYPE=\"SUBMIT\" VALUE=\" ".__("Modify")." \"/>
+		<input TYPE=\"RESET\" VALUE=\"".__("Clear")."\"/>
 		</div></form>
 		";
 
@@ -92,7 +92,7 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
 		".html_form::text_widget('intservtype', 20, 50)."</td>
 		<td VALIGN=\"CENTER\">
-		<input TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"/></form></td>
+		<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\"/></form></td>
 		</tr>
 		</table>
 		";

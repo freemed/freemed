@@ -53,10 +53,10 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 				"ORDER BY ".prepare($this->order_field)),
 			$this->page_name,
 			array (
-				_("Code") => "tosname",
-				_("Description") => "tosdescrip"
+				__("Code") => "tosname",
+				__("Description") => "tosdescrip"
 			),
-			array ("", _("NO DESCRIPTION")), "", "t_page"
+			array ("", __("NO DESCRIPTION")), "", "t_page"
 		);
 	} // end function module->view
 
@@ -83,16 +83,16 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>\n";
 
 		$display_buffer .= html_form::form_table(array(
-			_("Type of Service") =>
+			__("Type of Service") =>
 			html_form::text_widget("tosname", 20, 75),
 
-			_("Description") =>
+			__("Description") =>
 			html_form::text_widget("tosdescrip", 25, 200)
 		)).
 			"<div ALIGN=\"CENTER\">\n".
 			"<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".(
-			 ($action=="modform") ? _("Modify") : _("Add"))."\"/>
-			 <input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\" ".
+			 ($action=="modform") ? __("Modify") : __("Add"))."\"/>
+			 <input TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\" ".
 			 "class=\"button\"/>
 			</div></form>
 		";

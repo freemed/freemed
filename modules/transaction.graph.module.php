@@ -15,7 +15,7 @@ class TransactionGraph extends GraphModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function TransactionGraph () {
-		$this->graph_text = _("Select Transaction Graph Dates");
+		$this->graph_text = __("Select Transaction Graph Dates");
 		$this->GraphModule();
 	} // end constructor TransactionGraph
 
@@ -40,7 +40,7 @@ class TransactionGraph extends GraphModule {
 			$display_buffer .= "<a href=\"".$this->AssembleURL(array(
 				'graphmode' => 1,
 				'action' => 'image'
-			))."\" target=\"print\">"._("Printable")."</a>\n";
+			))."\" target=\"print\">".__("Printable")."</a>\n";
 			$display_buffer .= "</div>\n";
 			$display_buffer .= "<p/>\n";
 			$display_buffer .= "<div align=\"center\">\n";
@@ -52,11 +52,11 @@ class TransactionGraph extends GraphModule {
 		} else {
 			$display_buffer .= $this->view();
 			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= _("No Records found")."\n";
+			$display_buffer .= __("No Records found")."\n";
 			$display_buffer .= "</div>\n";
 			$display_buffer .= "<div align=\"center\">\n";
 			$display_buffer .= "<a href=\"reports.php\">".
-				_("Reports")."</a>\n";
+				__("Reports")."</a>\n";
 			$display_buffer .= "</div>\n";
 		}
 	} // end function TransactionGraph->display()
@@ -75,7 +75,7 @@ class TransactionGraph extends GraphModule {
 				"GROUP BY payreccat ORDER BY payreccat";
 		
 		$result = $sql->query($query) or DIE("Query failed");
-		$title = _("Transaction Graph From")." $start_dt "._("To")." $end_dt";
+		$title = __("Transaction Graph From")." $start_dt ".__("To")." $end_dt";
 		if ($sql->num_rows($result) > 0)
 		{
 			while ($row = $sql->fetch_array($result))

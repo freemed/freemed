@@ -46,15 +46,15 @@ class ProviderStatusMaintenance extends MaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
 
     ".html_form::form_table ( array (
-      _("Status") =>
+      __("Status") =>
      "<INPUT TYPE=TEXT NAME=\"phystatus\" SIZE=20 MAXLENGTH=20
        VALUE=\"".prepare($phystatus)."\">"
     ) )."
 
     <P>
     <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" "._("Modify")." \">
-    <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
+    <INPUT TYPE=SUBMIT VALUE=\" ".__("Modify")." \">
+    <INPUT TYPE=RESET  VALUE=\"".__("Clear")."\">
     </CENTER></FORM>
   ";
 
@@ -63,7 +63,7 @@ class ProviderStatusMaintenance extends MaintenanceModule {
     <P>
     <CENTER>
     <A HREF=\"$this->page_name?module=$module\"
-     >"._("Abandon Modification")."</A>
+     >".__("Abandon Modification")."</A>
     </CENTER>
   ";
 	} // end function ProviderStatusMaintenance->form()
@@ -77,7 +77,7 @@ class ProviderStatusMaintenance extends MaintenanceModule {
 				"ORDER BY phystatus"),
 			$this->page_name,
 			array (
-				_("Status") => "phystatus" 
+				__("Status") => "phystatus" 
  			),
 			array (
 				""
@@ -91,7 +91,7 @@ class ProviderStatusMaintenance extends MaintenanceModule {
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($GLOBALS["module"])."\">
     	<INPUT NAME=\"phystatus\" LENGTH=20 MAXLENGTH=30></TD>
-    <TD VALIGN=CENTER><INPUT TYPE=SUBMIT VALUE=\""._("Add")."\"></FORM></TD>
+    <TD VALIGN=CENTER><INPUT TYPE=SUBMIT VALUE=\"".__("Add")."\"></FORM></TD>
     </TR></TABLE>
 
     <P>

@@ -56,10 +56,10 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Code") => "posname",
-				_("Description") => "posdescrip"
+				__("Code") => "posname",
+				__("Description") => "posdescrip"
 			),
-			array ("", _("NO DESCRIPTION"))
+			array ("", __("NO DESCRIPTION"))
 		);
 	} // end function module->view
 
@@ -90,19 +90,19 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>\n";
 
 		$display_buffer .= html_form::form_table(array(
-			_("Place of Service") =>
+			__("Place of Service") =>
 			html_form::text_widget('posname', 20, 75),
 
-			_("Description") =>
+			__("Description") =>
 			html_form::text_widget('posdescrip', 25, 200),
 		));
 
 		$display_buffer .= "
 			<div ALIGN=\"CENTER\">
 			<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".(
-			 ($action=="modform") ? _("Modify") : _("Add"))."\"/>
+			 ($action=="modform") ? __("Modify") : __("Add"))."\"/>
 			<input class=\"button\" TYPE=\"RESET\" VALUE=\"".
-				_("Remove Changes")."\"/>
+				__("Remove Changes")."\"/>
 			</div>
 			</form>
 		";

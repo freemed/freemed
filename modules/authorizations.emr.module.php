@@ -66,8 +66,8 @@ class AuthorizationsModule extends EMRModule {
 	
 		// Set vars for patient management summary
 		$this->summary_vars = array (
-			_("From") => "authdtbegin",
-			_("To")   => "authdtend"
+			__("From") => "authdtbegin",
+			__("To")   => "authdtend"
 		);
 
 		// Run parent constructor
@@ -84,7 +84,7 @@ class AuthorizationsModule extends EMRModule {
        break; // end internal addform
       case "modform":
        if (($patient<1) OR (empty($patient))) {
-         $display_buffer .= _("You must select a patient.")."\n";
+         $display_buffer .= __("You must select a patient.")."\n";
          template_display ();
        }
        $r = freemed::get_link_rec ($id, $this->table_name);
@@ -113,52 +113,52 @@ class AuthorizationsModule extends EMRModule {
 	";
 
 	$display_buffer .= html_form::form_table(array(
-		_("Starting Date") =>
+		__("Starting Date") =>
 		date_entry("authdtbegin"),
 
-		_("Ending Date") =>
+		__("Ending Date") =>
 		date_entry("authdtend"),
 
-		_("Authorization Number") =>
+		__("Authorization Number") =>
 		html_form::text_widget("authnum", 25),
 
-		_("Authorization Type") =>
+		__("Authorization Type") =>
 		html_form::select_widget(
 			"authtype",
 			array(
-				_("NONE SELECTED") => "0",
-				_("physician") => "1",
-				_("insurance company") => "2",
-				_("certificate of medical neccessity") => "3",
-				_("surgical") => "4",
-				_("worker's compensation") => "5",
-				_("consulatation") => "6"
+				__("NONE SELECTED") => "0",
+				__("physician") => "1",
+				__("insurance company") => "2",
+				__("certificate of medical neccessity") => "3",
+				__("surgical") => "4",
+				__("worker's compensation") => "5",
+				__("consulatation") => "6"
 			)
 		),
 
-		_("Authorizing Provider") =>
+		__("Authorizing Provider") =>
 		freemed_display_selectbox (
 		$sql->query("SELECT * FROM physician ORDER BY phylname,phyfname"),
 		"#phylname#, #phyfname#", "authprov"),
 
-		_("Provider Identifier") =>
+		__("Provider Identifier") =>
 		html_form::text_widget("authprovid", 20, 15),
 
-		_("Authorizing Insurance Company") =>
+		__("Authorizing Insurance Company") =>
 		freemed_display_selectbox ( 
 		$sql->query("SELECT * FROM insco ORDER BY insconame,inscostate,inscocity"),
 		"#insconame# (#inscocity#,#inscostate#)", "authinsco"),
 
-		_("Number of Visits") =>
+		__("Number of Visits") =>
 		fm_number_select ("authvisits", 0, 100),
 
-		_("Used Visits") =>
+		__("Used Visits") =>
 		fm_number_select ("authvisitsused", 0, 100),
 
-		_("Remaining Visits") =>
+		__("Remaining Visits") =>
 		fm_number_select ("authvisitsremain", 0, 100),
 
-		_("Comment") =>
+		__("Comment") =>
 		html_form::text_widget("authcomment", 30, 100)
 
 	));
@@ -166,8 +166,8 @@ class AuthorizationsModule extends EMRModule {
 	$display_buffer .= "
        <div ALIGN=\"CENTER\">
        <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"  ".
-         ( ($action=="addform") ? _("Add") : _("Modify"))."  \"/>
-       <input TYPE=\"RESET\" VALUE=\" "._("Clear")." \" class=\"button\"/>
+         ( ($action=="addform") ? __("Add") : __("Modify"))."  \"/>
+       <input TYPE=\"RESET\" VALUE=\" ".__("Clear")." \" class=\"button\"/>
 	<input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\" class=\"button\"/>
        </div>
        </form>

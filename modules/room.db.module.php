@@ -69,34 +69,34 @@ class RoomMaintenance extends MaintenanceModule {
      ( ($action=="addform") ? "add" : "mod" )."\">
   
   ".html_form::form_table ( array (
-    _("Room Name") =>
+    __("Room Name") =>
     "<INPUT TYPE=TEXT NAME=\"roomname\" SIZE=20 MAXLENGTH=20
      VALUE=\"".prepare($roomname)."\">",
 
-    _("Location") =>
+    __("Location") =>
     "<SELECT NAME=\"roompos\">
     ".freemed_display_facilities ("roompos", true)."
     </SELECT>",
 
-    _("Description") =>
+    __("Description") =>
     "<INPUT TYPE=TEXT NAME=\"roomdescrip\" SIZE=20 MAXLENGTH=40
      VALUE=\"".prepare($roomdescrip)."\">",
 
-    _("Default Provider") =>
+    __("Default Provider") =>
     freemed_display_selectbox (
     $sql->query ("SELECT * FROM physician WHERE phyref != 'yes' AND phylname != ''"),
     "#phylname#, #phyfname#",
     "roomdefphy"),
 
-    _("Surgery Equipped") =>
+    __("Surgery Equipped") =>
     "<INPUT TYPE=CHECKBOX NAME=\"roomsurgery\" VALUE=\"y\"
      ".( ($roomsurgery=="y") ? "CHECKED" : "" ).">",
 
-    _("Booking Enabled") =>
+    __("Booking Enabled") =>
     "<INPUT TYPE=CHECKBOX NAME=\"roombooking\" VALUE=\"y\" 
      ".( ($roombooking=="y") ? "CHECKED" : "" ).">",
 
-    _("IP Address") =>
+    __("IP Address") =>
     "<INPUT TYPE=TEXT NAME=\"roomipaddr\" SIZE=16 MAXLENGTH=15
      VALUE=\"".prepare($roomipaddr)."\">"
 
@@ -106,9 +106,9 @@ class RoomMaintenance extends MaintenanceModule {
 		$display_buffer .= "
 	<CENTER>
 	<INPUT TYPE=\"SUBMIT\" VALUE=\" ".
-	( ($action=="addform") ? _("Add") : _("Modify") )." \" CLASS=\"button\"/>
-	<INPUT TYPE=\"RESET\" VALUE=\""._("Clear")."\" CLASS=\"button\"/>
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\""._("Cancel")."\" ".
+	( ($action=="addform") ? __("Add") : __("Modify") )." \" CLASS=\"button\"/>
+	<INPUT TYPE=\"RESET\" VALUE=\"".__("Clear")."\" CLASS=\"button\"/>
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"".__("Cancel")."\" ".
 	"CLASS=\"button\"/>
 	</CENTER></FORM>
 		";
@@ -122,12 +122,12 @@ class RoomMaintenance extends MaintenanceModule {
 				"FROM $this->table_name ORDER BY roomname"),
 			$this->page_name,
 			array (
-				_("Name")		=>	"roomname",
-				_("Description")	=>	"roomdescrip"
+				__("Name")		=>	"roomname",
+				__("Description")	=>	"roomdescrip"
 			),
 			array (
 				"",
-				_("NO DESCRIPTION")
+				__("NO DESCRIPTION")
 			)
 		);
 	} // end function RoomMaintenance->view

@@ -53,10 +53,10 @@ class ClaimtypesMaintenance extends MaintenanceModule {
 				" ORDER BY ".prepare($this->order_field)),
 			$this->page_name,
 			array (
-				_("Code") => "clmtpname",
-				_("Description") => "clmtpdescrip"
+				__("Code") => "clmtpname",
+				__("Description") => "clmtpdescrip"
 			),
-			array ("", _("NO DESCRIPTION")), "", "t_page"
+			array ("", __("NO DESCRIPTION")), "", "t_page"
 		);
 	} // end function module->view
 
@@ -86,14 +86,14 @@ class ClaimtypesMaintenance extends MaintenanceModule {
 		$display_buffer .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
 			<TR><TD ALIGN=RIGHT>
-			 "._("Claim Type")." :
+			 ".__("Claim Type")." :
 			</TD><TD ALIGN=LEFT>
 			 <INPUT TYPE=TEXT NAME=\"clmtpname\" SIZE=20 MAXLENGTH=75
  			  VALUE=\"".prepare($clmtpname)."\">
 			</TD></TR>
 
 			<TR><TD ALIGN=RIGHT>
-			 "._("Description")." :
+			 ".__("Description")." :
 			</TD><TD ALIGN=LEFT>
 			 <INPUT TYPE=TEXT NAME=\"clmtpdescrip\" SIZE=25 MAXLENGTH=200
 			  VALUE=\"".prepare($clmtpdescrip)."\">
@@ -101,8 +101,8 @@ class ClaimtypesMaintenance extends MaintenanceModule {
 
 			<TR><TD ALIGN=CENTER COLSPAN=2>
 			 <INPUT TYPE=SUBMIT VALUE=\"".(
-			 ($action=="modform") ? _("Modify") : _("Add"))."\">
-			 <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
+			 ($action=="modform") ? __("Modify") : __("Add"))."\">
+			 <INPUT TYPE=RESET  VALUE=\"".__("Remove Changes")."\">
 			 </FORM>
 			</TD></TR>
 			</TABLE>
@@ -111,7 +111,7 @@ class ClaimtypesMaintenance extends MaintenanceModule {
 			<P>
 			<CENTER>
 			<A HREF=\"$this->page_name?module=$module&action=view\"
-			>"._("Abandon Modification")."</A>
+			>".__("Abandon Modification")."</A>
 			</CENTER>
 			";
 	} // end function ClaimtypesMaintenance->form

@@ -21,8 +21,8 @@ class LettersModule extends EMRModule {
 	function LettersModule () {
 		// Set vars for patient management summary
 		$this->summary_vars = array (
-			_("Date") => "letterdt",
-			_("To")   => "letterto:physician"
+			__("Date") => "letterdt",
+			__("To")   => "letterto:physician"
 		);
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW;
 
@@ -109,7 +109,7 @@ class LettersModule extends EMRModule {
 			break; // end internal addform
 			case "modform":
 			if (($patient<1) OR (empty($patient))) {
-				$display_buffer .= _("You must select a patient.")."\n";
+				$display_buffer .= __("You must select a patient.")."\n";
 				template_display ();
 			}
 			$r = freemed::get_link_rec ($id, $this->table_name);
@@ -136,10 +136,10 @@ class LettersModule extends EMRModule {
 		";
 
 		$display_buffer .= html_form::form_table(array(
-		_("Date") =>
+		__("Date") =>
 		date_entry("letterdt"),
 
-		_("From") =>
+		__("From") =>
 		freemed_display_selectbox(
 			$sql->query("SELECT * FROM physician WHERE phyref='no' ".
 				"ORDER BY phylname"),
@@ -148,14 +148,14 @@ class LettersModule extends EMRModule {
 		),
 		
 
-		_("To") =>
+		__("To") =>
 		freemed_display_selectbox(
 			$sql->query("SELECT * FROM physician ORDER BY phylname"),
 			"#phylname#, #phyfname#",
 			"letterto"
 		),
 
-		_("Text") =>
+		__("Text") =>
 		html_form::text_area("lettertext", 20, 4),
 
 		));
@@ -172,8 +172,8 @@ class LettersModule extends EMRModule {
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
 		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"  ".
-	         ( ($action=="addform") ? _("Add") : _("Modify"))."  \"/>
-		<input class=\"button\" TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
+	         ( ($action=="addform") ? __("Add") : __("Modify"))."  \"/>
+		<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
 		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\"/>
 		</div>
 		</form>
@@ -187,7 +187,7 @@ class LettersModule extends EMRModule {
 
 		$GLOBALS['__freemed']['no_template_display'] = true;
 
-		$title = _("View Letter");
+		$title = __("View Letter");
 
 		// Get link record
 		$record = freemed::get_link_rec($id, $this->table_name);
@@ -235,15 +235,15 @@ class LettersModule extends EMRModule {
 		<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 				"CELLPADDING=\"2\">
 		<tr>
-			<td ALIGN=\"RIGHT\" WIDTH=\"25%\">"._("Date")."</td>
+			<td ALIGN=\"RIGHT\" WIDTH=\"25%\">".__("Date")."</td>
 			<td ALIGN=\"LEFT\" WIDTH=\"75%\">".$record[letterdt]."</td>
 		</tr>
 		<tr>
-			<TD ALIGN=\"RIGHT\">"._("From")."</TD>
+			<TD ALIGN=\"RIGHT\">".__("From")."</TD>
 			<TD ALIGN=\"LEFT\">".$from->fullName()."</TD>
 		</tr>
 		<tr>
-			<td ALIGN=\"RIGHT\">"._("To")."</td>
+			<td ALIGN=\"RIGHT\">".__("To")."</td>
 			<td ALIGN=\"LEFT\">".$to->fullName()."</td>
 		</tr>
 		</table>
@@ -268,9 +268,9 @@ class LettersModule extends EMRModule {
 			),
 			$this->page_name,
 			array (
-				_("Date") => "letterdt",
-				_("From") => "letterfrom",
-				_("To") => "letterto"
+				__("Date") => "letterdt",
+				__("From") => "letterfrom",
+				__("To") => "letterto"
 			),
 			array ("", "", ""),
 			array (

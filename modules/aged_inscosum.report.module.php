@@ -66,15 +66,15 @@ class AgedInscoReport extends ReportsModule {
 		$display_buffer .= "
 		<table BORDER=\"0\" CELLSPACING=\"2\" CELLPADDING=\"2\" WIDTH=\"100%\">
 		<tr>
-		<td><B>"._("Insurance")."</b></td>
-		<td><B>"._("Phone")."</b></td>
-		<td><B>"._("Patient")."</b></td>
+		<td><B>".__("Insurance")."</b></td>
+		<td><B>".__("Phone")."</b></td>
+		<td><B>".__("Patient")."</b></td>
 		<td ALIGN=\"CENTER\"><b>&lt;30</b></td>
 		<td ALIGN=\"CENTER\"><b>30</b></td>
 		<td ALIGN=\"CENTER\"><b>60</b></td>
 		<td ALIGN=\"CENTER\"><b>90</b></td>
 		<td ALIGN=\"CENTER\"><b>120&gt;</b></td>
-		<td ALIGN=\"CENTER\"><b>"._("Total")."</b></td>
+		<td ALIGN=\"CENTER\"><b>".__("Total")."</b></td>
 		</tr>
 		";
 
@@ -203,7 +203,7 @@ class AgedInscoReport extends ReportsModule {
 		// calc ins totals.
 		$buffer =  "<tr CLASS=\"".(
 			isset($color) ? $color : freemed_alternate() )."\">\n";
-		$buffer .=  "<td><b>"._("Total")."</b></td>\n";
+		$buffer .=  "<td><b>".__("Total")."</b></td>\n";
 		$buffer .=  "<td>&nbsp;</td>\n";
 		$buffer .=  "<td>&nbsp;</td>\n";
 

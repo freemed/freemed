@@ -54,8 +54,8 @@ class ProcedureModule extends EMRModule {
 	function ProcedureModule () {
 		// Set vars for patient management
 		$this->summary_vars = array (
-			_("Date")    => "procdt",
-			_("Comment") => "proccomment"
+			__("Date")    => "procdt",
+			__("Comment") => "proccomment"
 		);
 
 		// Table definition
@@ -141,7 +141,7 @@ class ProcedureModule extends EMRModule {
 
 		// Check for eoc
 		if (check_module("episodeOfCare")) {
-			$related_episode_array = array ( _("Episode of Care") =>
+			$related_episode_array = array ( __("Episode of Care") =>
 				freemed::multiple_choice ("SELECT * FROM eoc ".
 				 "WHERE eocpatient='".addslashes($patient)."' ".
 				 "ORDER BY eocdtlastsimilar DESC",
@@ -166,14 +166,14 @@ class ProcedureModule extends EMRModule {
 								"procauth","proccert","procclmtp"),
 							  date_vars("procdt"),date_vars("procrefdt")),
 		html_form::form_table ( array_merge ( array (
-		  _("Provider") =>
+		  __("Provider") =>
 			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
-		  _("Date of Procedure") =>
+		  __("Date of Procedure") =>
 			fm_date_entry ("procdt"),
 		 ),
 		 $related_episode_array,
 		 array (
-		  _("Procedural Code") =>
+		  __("Procedural Code") =>
 			freemed_display_selectbox(
 			  $sql->query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
 				"#cptcode# (#cptnameint#)", "proccpt").
@@ -181,59 +181,59 @@ class ProcedureModule extends EMRModule {
 				$sql->query("SELECT cptmod,cptmoddescrip,id ".
 				  "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
 				  "#cptmod# (#cptmoddescrip#)", "proccptmod"),
-		  _("Units") =>
+		  __("Units") =>
 			"<INPUT TYPE=TEXT NAME=\"procunits\" VALUE=\"".prepare($procunits)."\" ".
 			"SIZE=10 MAXLENGTH=9>",
-		  _("Diagnosis Code")." 1" =>
+		  __("Diagnosis Code")." 1" =>
 			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
 			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1"),
-		  _("Diagnosis Code")." 2" =>
+		  __("Diagnosis Code")." 2" =>
 			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
 			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag2"),
-		  _("Diagnosis Code")." 3" =>
+		  __("Diagnosis Code")." 3" =>
 			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
 			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag3"),
-		  _("Diagnosis Code")." 4" =>
+		  __("Diagnosis Code")." 4" =>
 			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
 			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4"),
-		  _("Place of Service") =>
+		  __("Place of Service") =>
 			freemed_display_selectbox(
 			  $sql->query("SELECT psrname,psrnote,id FROM facility"),
 			  "#psrname# [#psrnote#]", 
 			  "procpos"
 			),
-		  _("Voucher Number") =>
+		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
-		  _("Authorization") =>
+		  __("Authorization") =>
 			"<SELECT NAME=\"procauth\">\n".
 			"<OPTION VALUE=\"0\" ".
 			( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
 			$auth_r_buffer.
 			"</SELECT>\n",
-		  _("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
-		  _("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
-		  _("Referring Provider") =>
+		  __("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
+		  __("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
+		  __("Referring Provider") =>
 			freemed_display_selectbox (
 			  $sql->query("SELECT phylname,phyfname,id FROM physician 
 						  WHERE phyref='yes'
 						  ORDER BY phylname, phyfname"),
 			  "#phylname#, #phyfname#", "procrefdoc"
 			),
-		  _("Date of Last Visit") =>
+		  __("Date of Last Visit") =>
 			fm_date_entry ("procrefdt"),
-		  _("Comment") =>
+		  __("Comment") =>
 		  	html_form::text_widget('proccomment', 30, 255)
 		) ),
 			// verify
 			array(
-					array ("procdiag1", VERIFY_NONZERO, NULL, _("Must have one diagnosis code")),
-					array ("procphysician", VERIFY_NONZERO, NULL, _("Must Specify physician")),
-					array ("procdt_y", VERIFY_NONZERO, NULL, _("Must Specify Proc Year")),
-					array ("procdt_m", VERIFY_NONZERO, NULL, _("Must Specify proc Month")),
-					array ("procdt_d", VERIFY_NONZERO, NULL, _("Must Specify proc Day")),
-					array ("procpos", VERIFY_NONZERO, NULL, _("Must Specify Place of Service")),
-					array ("procclmtp", VERIFY_NONZERO, NULL, _("Must Specify Type of Claim")),
-					array ("proccpt", VERIFY_NONZERO, NULL, _("Must Specify Procedural code"))
+					array ("procdiag1", VERIFY_NONZERO, NULL, __("Must have one diagnosis code")),
+					array ("procphysician", VERIFY_NONZERO, NULL, __("Must Specify physician")),
+					array ("procdt_y", VERIFY_NONZERO, NULL, __("Must Specify Proc Year")),
+					array ("procdt_m", VERIFY_NONZERO, NULL, __("Must Specify proc Month")),
+					array ("procdt_d", VERIFY_NONZERO, NULL, __("Must Specify proc Day")),
+					array ("procpos", VERIFY_NONZERO, NULL, __("Must Specify Place of Service")),
+					array ("procclmtp", VERIFY_NONZERO, NULL, __("Must Specify Type of Claim")),
+					array ("proccpt", VERIFY_NONZERO, NULL, __("Must Specify Procedural code"))
 				 ) // end of array
 			) // end of array_merge
 		); // end of page one
@@ -256,13 +256,13 @@ class ProcedureModule extends EMRModule {
 		$tert_result = $sql->query($tert_query);
 		$wc_result   = $sql->query($wc_query);
 
-		$wizard->add_page (_("Step Two: Select Coverage"),
+		$wizard->add_page (__("Step Two: Select Coverage"),
 			array("proccurcovid","proccurcovtp","proccov1","proccov2","proccov3","proccov4"),
 			html_form::form_table(array (
-				_("Primary Coverage") =>  freemed_display_selectbox($prim_result,"#insconame#","proccov1"),
-				_("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame#","proccov2"),
-				_("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov3"),
-				_("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov4")
+				__("Primary Coverage") =>  freemed_display_selectbox($prim_result,"#insconame#","proccov1"),
+				__("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame#","proccov2"),
+				__("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov3"),
+				__("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov4")
 				))
 			); // end coverage page	
 
@@ -270,41 +270,41 @@ class ProcedureModule extends EMRModule {
 		$cpt_code = freemed::get_link_rec ($proccpt, "cpt"); // cpt code
 
 
-		$wizard->add_page (_("Step Three: Confirm"),
+		$wizard->add_page (__("Step Three: Confirm"),
 		array ("proccomment","procunits", "procbalorig", "procbillable"),
 		html_form::form_table ( array (
 
-		 _("Procedural Code") =>
+		 __("Procedural Code") =>
 		   prepare($cpt_code["cptcode"]),
 
-		 _("Units") =>
+		 __("Units") =>
 		   prepare($procunits),
 
-		 _("Calculated Accepted Fee") =>
+		 __("Calculated Accepted Fee") =>
 		   $cpt_code_stdfee,
 
-		 _("Calculated Charge") =>
+		 __("Calculated Charge") =>
 		   "<INPUT TYPE=TEXT NAME=\"procbalorig\" SIZE=10 MAXLENGTH=9 ".
 		   "VALUE=\"".prepare($charge)."\">",
 
-		 _("Insurance Billable?") =>
+		 __("Insurance Billable?") =>
 		   "<SELECT NAME=\"procbillable\">
 			<OPTION VALUE=\"0\" ".
-			 ( ($procbillable == 0) ? "SELECTED" : "" ).">"._("Yes")."
+			 ( ($procbillable == 0) ? "SELECTED" : "" ).">".__("Yes")."
 			<OPTION VALUE=\"1\" ".
-			 ( ($procbillable != 0) ? "SELECTED" : "" ).">"._("No")."
+			 ( ($procbillable != 0) ? "SELECTED" : "" ).">".__("No")."
 		   </SELECT>\n",
 
-		 _("Comment") =>
+		 __("Comment") =>
 		   prepare($proccomment)
 		) ),
 			array (
-					array ("procbalorig", VERIFY_NONNULL, NULL, _("Must Specify Amount"))
+					array ("procbalorig", VERIFY_NONNULL, NULL, __("Must Specify Amount"))
 				)
 		);
 
 		// required to get the wizard to validate the previous (last) page
-		$wizard->add_page(_("Click Finish"),array("dummy"),"");
+		$wizard->add_page(__("Click Finish"),array("dummy"),"");
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
@@ -323,7 +323,7 @@ class ProcedureModule extends EMRModule {
 			$proccurcovid = ( ($proccov2) ? $proccov2 : 0 );
 			$proccurcovid = ( ($proccov1) ? $proccov1 : 0 );
 
-			$display_buffer .= "<P><CENTER>"._("Adding")." ... ";
+			$display_buffer .= "<P><CENTER>".__("Adding")." ... ";
 
 			$query = $sql->insert_query 
 				(
@@ -365,15 +365,15 @@ class ProcedureModule extends EMRModule {
 
 				$result = $sql->query ($query);
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
-				if ($result) { $display_buffer .= _("done")."."; }
-				else        { $display_buffer .= _("ERROR");    }
+				if ($result) { $display_buffer .= __("done")."."; }
+				else        { $display_buffer .= __("ERROR");    }
 
 				$this_procedure = $sql->last_record ($result);
 
 				// form add query
 				$display_buffer .= "
 				<BR>
-				"._("Committing to ledger")." ... 
+				".__("Committing to ledger")." ... 
 				";
 				$query = $sql->insert_query(
 					'payrec',
@@ -395,14 +395,14 @@ class ProcedureModule extends EMRModule {
 				);
 				$result = $sql->query ($query);
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
-				if ($result) { $display_buffer .= _("done")."."; }
-				else        { $display_buffer .= _("ERROR");    }
+				if ($result) { $display_buffer .= __("done")."."; }
+				else        { $display_buffer .= __("ERROR");    }
 				$this_procedure = $sql->last_record ($result, $this->table_name);
 
 				// updating patient diagnoses
 				$display_buffer .= "
 				<BR>
-				"._("Updating patient diagnoses")." ...  ";
+				".__("Updating patient diagnoses")." ...  ";
 				$query = $sql->update_query(
 					'patient',
 					array(
@@ -414,17 +414,17 @@ class ProcedureModule extends EMRModule {
 				);
 				$result = $sql->query ($query);
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
-				if ($result) { $display_buffer .= _("done")."."; }
-				else        { $display_buffer .= _("ERROR");    }
+				if ($result) { $display_buffer .= __("done")."."; }
+				else        { $display_buffer .= __("ERROR");    }
 
 				$display_buffer .= "
 				</CENTER>
 				<P>
 				<CENTER>
 				 <A HREF=\"manage.php?id=$patient\"
-				 >"._("Manage Patient")."</A> <B>|</B>
+				 >".__("Manage Patient")."</A> <B>|</B>
 				 <A HREF=\"$this->page_name?module=PaymentModule&action=addform&patient=$patient\"
-				 >"._("Add Payment")."</A> <B>|</B>
+				 >".__("Add Payment")."</A> <B>|</B>
 				 <A HREF=\"$this->page_name?module=$module&action=addform&procvoucher=$procvoucher".
 				  "&patient=$patient&procdt=".fm_date_assemble("procdt").
 				  "&proccpt=$proccpt".
@@ -435,7 +435,7 @@ class ProcedureModule extends EMRModule {
 				  "&procdiag4=$procdiag4".
 				  "&procphysician=$procphysician".
 				  "\"
-				 >"._("Add Another")." "._($record_name)."</A>
+				 >".__("Add Another")." "._($record_name)."</A>
 				</CENTER>
 				<P>
 				";
@@ -455,7 +455,7 @@ class ProcedureModule extends EMRModule {
 			<p/>
 			<div ALIGN=\"CENTER\">
 			 <a HREF=\"manage.php?id=$patient\"
-			 >"._("Manage Patient")."</a> 
+			 >".__("Manage Patient")."</a> 
 			</div>
 			";
 
@@ -498,7 +498,7 @@ class ProcedureModule extends EMRModule {
 		$wizard->add_page ("Step One",
 				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
 			html_form::form_table ( array (
-		  _("Episode of Care") =>
+		  __("Episode of Care") =>
 			freemed::multiple_choice ("SELECT * FROM eoc ".
 				  "WHERE eocpatient='".addslashes($patient)."' ".
 				  "ORDER BY eocdtlastsimilar DESC",
@@ -507,19 +507,19 @@ class ProcedureModule extends EMRModule {
 				 "proceoc",
 				 $proceoc,
 				 false),
-		  _("Voucher Number") =>
+		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
-		  _("Authorization") =>
+		  __("Authorization") =>
 			"<SELECT NAME=\"procauth\">\n".
 			"<OPTION VALUE=\"0\" ".
 			( ($procauth==0) ? "SELECTED" : "" ).">NONE SELECTED\n".
 			$auth_r_buffer.
 			"</SELECT>\n",
-		  _("Certifications") =>
+		  __("Certifications") =>
 		  	freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
-		  _("Claim Type") => 
+		  __("Claim Type") => 
 		  	freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
-		  _("Comment") =>
+		  __("Comment") =>
 		  	html_form::text_widget('proccomment', 30, 512)
 			) ) 
 		); // end of page one
@@ -533,7 +533,7 @@ class ProcedureModule extends EMRModule {
 		if ($wizard->is_done())
 		{
 
-			$display_buffer .= "<P><CENTER>"._("Modifying")." ... ";
+			$display_buffer .= "<P><CENTER>".__("Modifying")." ... ";
 
 			$query = "UPDATE $this->table_name SET
 			proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
@@ -545,16 +545,16 @@ class ProcedureModule extends EMRModule {
 			" WHERE id='$id'";
 			$result = $sql->query ($query);
 			if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
-			if ($result) { $display_buffer .= _("done")."."; }
-			else        { $display_buffer .= _("ERROR");    }
+			if ($result) { $display_buffer .= __("done")."."; }
+			else        { $display_buffer .= __("ERROR");    }
 
 			$display_buffer .= "
 				<P>
 				<CENTER>
 			 	<A HREF=\"$this->page_name?module=$module&patient=$patient\"
-			 	>"._("back")."</A><BR>
+			 	>".__("back")."</A><BR>
 				<A HREF=\"manage.php?id=$patient\"
-				>"._("Manage Patient")."</A>
+				>".__("Manage Patient")."</A>
 				</CENTER>
 				<P>
 			";
@@ -569,7 +569,7 @@ class ProcedureModule extends EMRModule {
 				<P>
 				<CENTER><B>"._(Cancelled)."</B><BR>
 				 <A HREF=\"manage.php?id=$patient\"
-				 >"._("Manage Patient")."</A> 
+				 >".__("Manage Patient")."</A> 
 				";
 
 		} // end cancelled
@@ -587,24 +587,24 @@ class ProcedureModule extends EMRModule {
 
 		$display_buffer .= "
 		<P><CENTER>
-		"._("Deleting")." ...
+		".__("Deleting")." ...
 		";
 		$query = "DELETE FROM $this->table_name WHERE id='$id'";
 		$result = $sql->query ($query);
-		if ($result) { $display_buffer .= "["._("Procedure")."] "; }
-		else        { $display_buffer .= "["._("ERROR")."] ";     }
+		if ($result) { $display_buffer .= "[".__("Procedure")."] "; }
+		else        { $display_buffer .= "[".__("ERROR")."] ";     }
 		$query = "DELETE FROM payrec WHERE payrecproc='".addslashes($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { $display_buffer .= "["._("Payment Record")."] "; }
-		else        { $display_buffer .= "["._("ERROR")."] ";          }
+		if ($result) { $display_buffer .= "[".__("Payment Record")."] "; }
+		else        { $display_buffer .= "[".__("ERROR")."] ";          }
 		$display_buffer .= "
 		</CENTER>
 		<P>
 		<CENTER>
 		 <A HREF=\"$this->page_name?module=$module&patient=$patient\"
-		 >"._("back")."</A> <B>|</B>
+		 >".__("back")."</A> <B>|</B>
 		 <A HREF=\"manage.php?id=$patient\"
-		 >"._("Manage Patient")."</A>
+		 >".__("Manage Patient")."</A>
 		</CENTER>
 		<P>
 		";
@@ -647,7 +647,7 @@ class ProcedureModule extends EMRModule {
 
 		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id",
 		"module") );
-		$wizard->add_page (_("Part One"),
+		$wizard->add_page (__("Part One"),
 			array_merge(array("phyname", "proceoc", "refphyname",
 							  "procunits", 
 							  "diag1", "diag2", "diag3", "diag4",		
@@ -655,9 +655,9 @@ class ProcedureModule extends EMRModule {
 								"psrname","covname","cov1name","cov2name","cov3name","cov4name"),
 							  date_vars("procdt"),date_vars("procrefdt")),
 		html_form::form_table ( array (
-		  _("Provider") => prepare($phyname),
-		  _("Date of Procedure") => prepare($procdt),
-		  _("Episode of Care") =>
+		  __("Provider") => prepare($phyname),
+		  __("Date of Procedure") => prepare($procdt),
+		  __("Episode of Care") =>
 			freemed::multiple_choice ("SELECT * FROM eoc ".
 				 "WHERE eocpatient='".addslashes($patient)."' ".
 				 "ORDER BY eocdtlastsimilar DESC",
@@ -666,22 +666,22 @@ class ProcedureModule extends EMRModule {
 				 "proceoc",
 				 $proceoc,
 				 false),
-		  _("Units") => prepare($procunits), 
-		  _("Diagnosis Code")." 1" => prepare($diag1),
-		  _("Diagnosis Code")." 2" => prepare($diag2),
-		  _("Diagnosis Code")." 3" => prepare($diag3),
-		  _("Diagnosis Code")." 4" => prepare($diag4),
-		  _("Place of Service") => prepare($psrname),
-		  _("Voucher Number") => prepare($procvoucher),
-		  _("Authorization") => prepare($authdt),
-		  _("Referring Provider") => prepare($refphyname),
-		  _("Date of Last Visit") => prepare($procrefdt),
-		  _("Comment") => prepare($proccomment),
-		  _("Current Coverage") => prepare($covname), 
-		  _("Primary Coverage") => prepare($cov1name),
-		  _("Secondary Coverage") => prepare($cov2name),
-		  _("Tertiary Coverage") => prepare($cov3name), 
-		  _("Work Comp Coverage") => prepare($cov4name)
+		  __("Units") => prepare($procunits), 
+		  __("Diagnosis Code")." 1" => prepare($diag1),
+		  __("Diagnosis Code")." 2" => prepare($diag2),
+		  __("Diagnosis Code")." 3" => prepare($diag3),
+		  __("Diagnosis Code")." 4" => prepare($diag4),
+		  __("Place of Service") => prepare($psrname),
+		  __("Voucher Number") => prepare($procvoucher),
+		  __("Authorization") => prepare($authdt),
+		  __("Referring Provider") => prepare($refphyname),
+		  __("Date of Last Visit") => prepare($procrefdt),
+		  __("Comment") => prepare($proccomment),
+		  __("Current Coverage") => prepare($covname), 
+		  __("Primary Coverage") => prepare($cov1name),
+		  __("Secondary Coverage") => prepare($cov2name),
+		  __("Tertiary Coverage") => prepare($cov3name), 
+		  __("Work Comp Coverage") => prepare($cov4name)
 		) )
 		); // end of page one
 
@@ -697,7 +697,7 @@ class ProcedureModule extends EMRModule {
 			<P>
 			<CENTER>
 			 <A HREF=\"$this->page_name?module=$module&patient=$patient\"
-			 >"._("back")."</A>
+			 >".__("back")."</A>
 			</CENTER>
 			<P>
 			";
@@ -719,16 +719,16 @@ class ProcedureModule extends EMRModule {
 			$result,
 			$this->page_name,
 			array ( // control
-			  _("Date of Procedure")	=> "procdt",
-			  _("Procedure Code")	=> "proccpt",
-			  _("Modifier")		=> "proccptmod",
-			  _("Comment")		=> "proccomment"
+			  __("Date of Procedure")	=> "procdt",
+			  __("Procedure Code")	=> "proccpt",
+			  __("Modifier")		=> "proccptmod",
+			  __("Comment")		=> "proccomment"
 			),
 			array ( // blanks
 			  "",
 			  "",
 			  "",
-			  _("NO COMMENT")
+			  __("NO COMMENT")
 			),
 			array ( // xref
 			  "",

@@ -98,7 +98,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
   } // end checking if been here
 
   $book->add_page(
-   _("Contact Information"),
+   __("Contact Information"),
    array("insconame", "inscoalias", "inscoaddr1", "inscoaddr2",
          "inscocity", "inscostate", "inscozip",
 	 phone_vars ("inscophone"),
@@ -108,32 +108,32 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
    
     <TR>
-    <TD ALIGN=RIGHT>"._("Company Name (full)")." : </TD>
+    <TD ALIGN=RIGHT>".__("Company Name (full)")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"insconame\" SIZE=20 MAXLENGTH=50
      VALUE=\"".prepare($insconame)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Company Name (on forms)")." : </TD>
+    <TD ALIGN=RIGHT>".__("Company Name (on forms)")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoalias\" SIZE=20 MAXLENGTH=30
      VALUE=\"".prepare($inscoalias)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Address Line 1")." : </TD>
+    <TD ALIGN=RIGHT>".__("Address Line 1")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoaddr1\" SIZE=30 MAXLENGTH=30
      VALUE=\"".prepare($inscoaddr1)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Address Line 2")." : </TD>
+    <TD ALIGN=RIGHT>".__("Address Line 2")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoaddr2\" SIZE=30 MAXLENGTH=30
      VALUE=\"".prepare($inscoaddr2)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("City").", "._("State")."
-      "._("Zip")." : </TD>
+    <TD ALIGN=RIGHT>".__("City").", ".__("State")."
+      ".__("Zip")." : </TD>
     <TD ALIGN=LEFT>  
     <INPUT TYPE=TEXT NAME=\"inscocity\" SIZE=20 MAXLENGTH=20
      VALUE=\"".prepare($inscocity)."\"><B>,</B>
@@ -145,23 +145,23 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Contact Phone")." : </TD>
+    <TD ALIGN=RIGHT>".__("Contact Phone")." : </TD>
     <TD ALIGN=LEFT>".fm_phone_entry ("inscophone")."</TD>
     </TR>
   
     <TR>
-    <TD ALIGN=RIGHT>"._("Fax Number")." : </TD>
+    <TD ALIGN=RIGHT>".__("Fax Number")." : </TD>
     <TD ALIGN=LEFT>".fm_phone_entry ("inscofax")."</TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Email Address")." : </TD>
+    <TD ALIGN=RIGHT>".__("Email Address")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoemail\" SIZE=20 MAXLENGTH=50
      VALUE=\"".prepare($inscoemail)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Web Site")."
+    <TD ALIGN=RIGHT>".__("Web Site")."
       (<I>http://insco.com</I>) : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscowebsite\" SIZE=15 MAXLENGTH=100
      VALUE=\"".prepare($inscowebsite)."\"></TD>
@@ -172,25 +172,25 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 
 	
   $book->add_page(
-   _("Internal Information"),
+   __("Internal Information"),
    array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod" ),"
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
    
     <TR>
-    <TD ALIGN=RIGHT>"._("NEIC ID")." : </TD>
+    <TD ALIGN=RIGHT>".__("NEIC ID")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoid\" SIZE=11 MAXLENGTH=10
      VALUE=\"".prepare($inscoid)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Insurance Group")." : </TD>
+    <TD ALIGN=RIGHT>".__("Insurance Group")." : </TD>
     <TD ALIGN=LEFT>".freemed_display_selectbox(
       $sql->query("SELECT * FROM inscogroup ORDER BY inscogroup"),
       "#inscogroup#", "inscogroup")."</TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Insurance Type")." : </TD>
+    <TD ALIGN=RIGHT>".__("Insurance Type")." : </TD>
     <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscotype\" SIZE=10 MAXLENGTH=30
      VALUE=\"".prepare($inscotype)."\"></TD>
     </TR>
@@ -202,7 +202,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT>"._("Insurance Modifiers")." : </TD>
+    <TD ALIGN=RIGHT>".__("Insurance Modifiers")." : </TD>
     <TD ALIGN=LEFT>".freemed::multiple_choice ("SELECT * FROM insmod
       ORDER BY insmoddesc", "insmoddesc", "inscomod",
       $inscomod, false)."</TD>
@@ -247,10 +247,10 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 			$sql->query("SELECT * FROM $this->table_name ORDER BY insconame"),
 			$this->page_name,
 			array (
-				_("Name")	=>	"insconame",
-				_("City")	=>	"inscocity",
-				_("State")	=>	"inscostate",
-				_("Group")	=>	"inscogroup"
+				__("Name")	=>	"insconame",
+				__("City")	=>	"inscocity",
+				__("State")	=>	"inscostate",
+				__("Group")	=>	"inscogroup"
 			),
 			array ("", "", ""),
 			array("","","","inscogroup" => "inscogroup"),

@@ -61,8 +61,8 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Physician Group Name") => "phygroupname",
-				_("Default Facility")     => "phygroupfac"
+				__("Physician Group Name") => "phygroupname",
+				__("Default Facility")     => "phygroupfac"
 			),
 			array ("",""),
 			array (
@@ -112,21 +112,21 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
  
 		$display_buffer .= html_form::form_table( array (
 
-			_("Physician Group Name") => 
+			__("Physician Group Name") => 
 				html_form::text_widget('phygroupname', 20, 100),
 		
-			_("Default Facility") => freemed_display_selectbox(
+			__("Default Facility") => freemed_display_selectbox(
 
 					$sql->query("SELECT psrname,psrnote,id FROM facility ORDER BY psrname,psrnote"),
 					"#psrname# [#psrnote#]",
        					"phygroupfac"),
 
-			_("Specialty 1") => freemed_display_selectbox (
+			__("Specialty 1") => freemed_display_selectbox (
 					$sql->query("SELECT * FROM specialties ORDER BY specname,specdesc"),
        					"#specname#, #specdesc#",
 					 "phygroupspe1"),
 
-			_("Physicians") => freemed::multiple_choice(
+			__("Physicians") => freemed::multiple_choice(
 					"SELECT phylname,phyfname,id FROM physician WHERE phylname != '' ORDER BY phylname",
 					"##phylname##, ##phyfname## ##phymname##",
 					"phygroupdocs",
@@ -163,8 +163,8 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\"
 		 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 		<tr CLASS=\"cell_hilite\">
-		<td><b>"._("Insurance Group")."</b></td>
-		<td><b>"._("ID Number")."</b></td>
+		<td><b>".__("Insurance Group")."</b></td>
+		<td><b>".__("ID Number")."</b></td>
 		</tr>
 		$insmap_buf
 		</table>
@@ -175,9 +175,9 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 		$display_buffer .= "<p/>
 		<tr><td ALIGN=\"CENTER\">
 		<input CLASS=\"button\" TYPE=\"SUBMIT\" VALUE=\"".
-		(($action=="modform") ? _("Modify") : _("Add"))."\"/>
-		<input CLASS=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
-		<input CLASS=\"button\" TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+		(($action=="modform") ? __("Modify") : __("Add"))."\"/>
+		<input CLASS=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
+		<input CLASS=\"button\" TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\"/>
 		</form>
 		</td></tr>
 		</table>

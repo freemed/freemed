@@ -202,13 +202,13 @@ class PaymentModule extends EMRModule {
             if ($patient>0) {
                 $this_patient = CreateObject('FreeMED.Patient', $patient);
             } else {
-		$display_buffer .= _("No patient");
+		$display_buffer .= __("No patient");
                 template_display();
 	    }
 
 			$proc_rec = freemed::get_link_rec($procid, "procrec");
 			if (!$proc_rec) {
-				$display_buffer .= _("Error getting procedure");
+				$display_buffer .= __("Error getting procedure");
 				template_display();
 			}
 			$proccovmap = "0:".$proc_rec[proccov1].":".$proc_rec[proccov2].":".
@@ -237,15 +237,15 @@ class PaymentModule extends EMRModule {
             {
             case PAYMENT: // payment (0)
                     $wizard->add_page (
-                        _("Describe the Payment"),
+                        __("Describe the Payment"),
                         array_merge(array ("payrecsource", "payrectype", "payrecamt"), date_vars("payrecdt")),
                         html_form::form_table ( array (
-                                                    _("Payment Source") =>
+                                                    __("Payment Source") =>
                                                                 "<SELECT NAME=\"payrecsource\">"
                         											.$this->insuranceSelectionByType($proccovmap)."
                                                                  </SELECT>",
 
-                                                    _("Payment Type") =>
+                                                    __("Payment Type") =>
                                                                     "<SELECT NAME=\"payrectype\">
                                                                     <OPTION VALUE=\"0\" ".
                                                                     ( ($payrectype==0) ? "SELECTED" : "" ).">cash
@@ -261,10 +261,10 @@ class PaymentModule extends EMRModule {
                                                                     ( ($payrectype==5) ? "SELECTED" : "" ).">EFT
                                                                     </SELECT>",
 
-                                                    _("Date Received") =>
+                                                    __("Date Received") =>
                                                                      fm_date_entry ("payrecdt"),
 
-                                                    _("Payment Amount") =>
+                                                    __("Payment Amount") =>
                                                                       "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=15 ".
                                                                       "VALUE=\"".prepare($payrecamt)."\">\n"
                                                 )
@@ -296,7 +296,7 @@ class PaymentModule extends EMRModule {
 					$payreclink = $this->coverageIDFromType($proccovmap,$payrecsource);
 					// we can make this hidden now also since we know the link amount
 					// fixme when you get a chance.
-                    $second_page_array[_("Insurance Company")] =
+                    $second_page_array[__("Insurance Company")] =
                         $this->insuranceName($payreclink)."
                         <INPUT TYPE=HIDDEN NAME=\"payreclink\" ".
                         "VALUE=\"".prepare($payreclink)."\">\n";
@@ -306,7 +306,7 @@ class PaymentModule extends EMRModule {
                 switch ($payrectype)
                 {
                 case "1": // check
-                    $second_page_array[_("Check Number")] =
+                    $second_page_array[__("Check Number")] =
                         "<INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=20 ".
                         "VALUE=\"".prepare($payrecnum)."\">\n";
                     break;
@@ -314,17 +314,17 @@ class PaymentModule extends EMRModule {
                     $second_page_array[] = "<B>NOT IMPLEMENTED YET!</B><BR>\n";
                     break;
                 case "3": // credit card
-                    $second_page_array[_("Credit Card Number")] =
+                    $second_page_array[__("Credit Card Number")] =
                         "<INPUT TYPE=TEXT NAME=\"payrecnum_1\" SIZE=17 ".
                         "MAXLENGTH=16 VALUE=\"".prepare($payrecnum_1)."\">\n";
 
-                    $second_page_array[_("Expiration Date")] =
+                    $second_page_array[__("Expiration Date")] =
                         fm_number_select ("payrecnum_e1", 1, 12, 1, true).
                         "\n <B>/</B>&nbsp; \n".
                         fm_number_select ("payrecnum_e2", (date("Y")-2), (date("Y")+10), 1);
                     break;
                 case "4": // traveller's check
-                    $second_page_array[_("Cheque Number")] =
+                    $second_page_array[__("Cheque Number")] =
                         "<INPUT TYPE=TEXT NAME=\"payrecnum\" SIZE=21 ".
                         "MAXLENGTH=20 VALUE=\"".prepare($payrecnum)."\">\n";
                     break;
@@ -336,12 +336,12 @@ class PaymentModule extends EMRModule {
                     break;
                 } // end of type switch
 
-                $second_page_array[_("Description")] =
+                $second_page_array[__("Description")] =
                     "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                     "VALUE=\"".prepare($payrecdescrip)."\">\n";
 
                 $wizard->add_page(
-                    _("Step Three").": "._("Specify the Payer"),
+                    __("Step Three").": ".__("Specify the Payer"),
                     array ("payreclink", "payrecdescrip", "payrecnum",
                            "payrecnum_e1", "payrecnum_e2"),
                     html_form::form_table ( $second_page_array )
@@ -349,15 +349,15 @@ class PaymentModule extends EMRModule {
 
 				if ($visitsremain)
 				{
-					$wizard->add_page(_("Handle Authorization"),
+					$wizard->add_page(__("Handle Authorization"),
 						array("updatevists","visitsremain","visitsused"),
 						html_form::form_table( array(
-								_("Update Visits") => "<SELECT NAME=\"updatevisits\">".
-													  "<OPTION VALUE=\"0\">"._("No").
-													  "<OPTION VALUE=\"1\">"._("Yes").
+								__("Update Visits") => "<SELECT NAME=\"updatevisits\">".
+													  "<OPTION VALUE=\"0\">".__("No").
+													  "<OPTION VALUE=\"1\">".__("Yes").
 													  "</SELECT>",
-								_("Remaining Visits") => prepare($visitsremain),
-								_("Used Visits") => prepare($visitsused)
+								__("Remaining Visits") => prepare($visitsremain),
+								__("Used Visits") => prepare($visitsused)
 											))
 								);
 				}
@@ -367,19 +367,19 @@ class PaymentModule extends EMRModule {
             case WITHHOLD: // adjustment (7)
             case DEDUCTABLE: // adjustment (8)
             case ADJUSTMENT: // adjustment (1)
-				$amount_heading[WITHHOLD] = _("Withhold Amount");
-				$amount_heading[ADJUSTMENT] = _("Adjustment Amount");
-				$amount_heading[DEDUCTABLE] = _("Deductable Amount");
-				$title[WITHHOLD] = _("Describe the Withholding");
-				$title[ADJUSTMENT] = _("Describe the Adjustment");
-				$title[DEDUCTABLE] = _("Describe the Deductable");
+				$amount_heading[WITHHOLD] = __("Withhold Amount");
+				$amount_heading[ADJUSTMENT] = __("Adjustment Amount");
+				$amount_heading[DEDUCTABLE] = __("Deductable Amount");
+				$title[WITHHOLD] = __("Describe the Withholding");
+				$title[ADJUSTMENT] = __("Describe the Adjustment");
+				$title[DEDUCTABLE] = __("Describe the Deductable");
                 $wizard->add_page (
-                    _("Step Two").": ".$title[$payreccat],
+                    __("Step Two").": ".$title[$payreccat],
                     array_merge(array ("payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Date Received") =>
+                                                __("Date Received") =>
                                                                  fm_date_entry ("payrecdt"),
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
                                                 "$amount_heading[$payreccat]" =>
@@ -392,16 +392,16 @@ class PaymentModule extends EMRModule {
 
             case FEEADJUST: // adjustment (1)
                 $wizard->add_page (
-                    _("Step Two").": "._("Describe the Adjustment"),
+                    __("Step Two").": ".__("Describe the Adjustment"),
                     array_merge(array ("payrecsource", "payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Insurance Company") =>
+                                                __("Insurance Company") =>
                         										"<SELECT NAME=\"payrecsource\">".
                         										$this->insuranceSelection($proccovmap).
                         										"</SELECT>\n",
-                                                _("Date Received") =>
+                                                __("Date Received") =>
                                                                  fm_date_entry ("payrecdt"),
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
                                                 "Allowed Amount" =>
@@ -413,24 +413,24 @@ class PaymentModule extends EMRModule {
                 break; // end of adjustment
             case REFUND: // refund (2)
                 $wizard->add_page (
-                    _("Step Two").": "._("Describe the Refund"),
+                    __("Step Two").": ".__("Describe the Refund"),
                     array_merge(array ("payrecamt", "payrecdescrip", "payreclink"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Date of Refund") =>
+                                                __("Date of Refund") =>
                                                                   fm_date_entry ("payrecdt"),
 
-                                                _("Destination") =>
+                                                __("Destination") =>
                                                                "<SELECT NAME=\"payreclink\">
                                                                <OPTION VALUE=\"0\" ".
-                                                               ( ($payreclink==0) ? "SELECTED" : "" ).">"._("Apply to Credit")."
+                                                               ( ($payreclink==0) ? "SELECTED" : "" ).">".__("Apply to Credit")."
                                                                <OPTION VALUE=\"1\" ".
-                                                               ( ($payreclink==1) ? "SELECTED" : "" ).">"._("Refund to Patient")."
+                                                               ( ($payreclink==1) ? "SELECTED" : "" ).">".__("Refund to Patient")."
                                                                </SELECT>\n",
 
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
-                                                _("Refund Amount") =>
+                                                __("Refund Amount") =>
                                                                  "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
                                                                  "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
 
@@ -441,16 +441,16 @@ class PaymentModule extends EMRModule {
 
             case COPAY: // copay (11)
                 $wizard->add_page (
-                    _("Step Two").": "._("Describe the Copayment"),
+                    __("Step Two").": ".__("Describe the Copayment"),
                     array_merge(array ("payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Date of Copay") =>
+                                                __("Date of Copay") =>
                                                                   fm_date_entry ("payrecdt"),
 
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
-                                                _("Copay Amount") =>
+                                                __("Copay Amount") =>
                                                                  "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
                                                                  "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
 
@@ -462,22 +462,22 @@ class PaymentModule extends EMRModule {
 
             case DENIAL: // denial (3)
                 $wizard->add_page (
-                    _("Step Two").": "._("Describe the Denial"),
+                    __("Step Two").": ".__("Describe the Denial"),
                     array_merge(array ("payreclink", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Date of Denial") =>
+                                                __("Date of Denial") =>
                                                                   fm_date_entry ("payrecdt"),
 
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n",
 
-                                                _("Adjust to Zero?") =>
+                                                __("Adjust to Zero?") =>
                                                                    "<SELECT NAME=\"payreclink\">
                                                                    <OPTION VALUE=\"0\" ".
-                                                                   ( ($payreclink==0) ? "SELECTED" : "" ).">"._("no")."
+                                                                   ( ($payreclink==0) ? "SELECTED" : "" ).">".__("no")."
                                                                    <OPTION VALUE=\"1\" ".
-                                                                   ( ($payreclink==1) ? "SELECTED" : "" ).">"._("yes")."
+                                                                   ( ($payreclink==1) ? "SELECTED" : "" ).">".__("yes")."
                                                                    </SELECT>\n"
                                             ) )
                 );
@@ -486,13 +486,13 @@ class PaymentModule extends EMRModule {
 
             case WRITEOFF: // writeoff (12)
                 $wizard->add_page (
-                    _("Step Two").": "._("Describe the Writeoff"),
+                    __("Step Two").": ".__("Describe the Writeoff"),
                     array_merge(array ("payreclink", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Date of Writeoff") =>
+                                                __("Date of Writeoff") =>
                                                                   fm_date_entry ("payrecdt"),
 
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n"
                                             ) )
@@ -501,14 +501,14 @@ class PaymentModule extends EMRModule {
                 break; // end of writeoff
             case TRANSFER: // transfer (6)
                 $wizard->add_page (
-                    _("Step Two").": "._("Describe the Transfer"),
+                    __("Step Two").": ".__("Describe the Transfer"),
                     array_merge(array ("payrecsource", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Date of Transfer") =>
+                                                __("Date of Transfer") =>
                                                                   fm_date_entry ("payrecdt"),
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ",
-                                                _("Transfer to") =>
+                                                __("Transfer to") =>
                                                                 "<SELECT NAME=\"payrecsource\">"
                         											.$this->insuranceSelectionByType($proccovmap)."
                                                                  </SELECT>"
@@ -518,12 +518,12 @@ class PaymentModule extends EMRModule {
                 break; // end of denial
             case REBILL: // rebill 4
                 $wizard->add_page(
-                    _("Step Two").": "._("Rebill Information"),
+                    __("Step Two").": ".__("Rebill Information"),
                     array_merge(array ("payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
-                                                _("Date of Rebill") =>
+                                                __("Date of Rebill") =>
                                                                   fm_date_entry ("payrecdt"),
-                                                _("Description") =>
+                                                __("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
                                                                   "VALUE=\"".prepare($payrecdescrip)."\">\n"
                                             ) )
@@ -549,7 +549,7 @@ class PaymentModule extends EMRModule {
 
             if ($wizard->is_done())
             {
-                //$page_title = _("Adding")." "._("$record_name");
+                //$page_title = __("Adding")." ".__("$record_name");
                 //if ($patient>0) $display_buffer .= freemed::patient_box ($this_patient);
                 $display_buffer .= "<CENTER>\n";
                 switch ($payreccat)
@@ -659,7 +659,7 @@ class PaymentModule extends EMRModule {
                 {
                     $payrecdt = fm_date_assemble("payrecdt");
                 }
-                $display_buffer .= _("Adding")." ... \n";
+                $display_buffer .= __("Adding")." ... \n";
 				$query = $sql->insert_query($this->table_name,
 					array(
 						"payrecdtadd" => $cur_date,
@@ -681,16 +681,16 @@ class PaymentModule extends EMRModule {
                 $result = $sql->query($query);
             	if ($result) 
                 { 
-                    $display_buffer .= _("done")."."; 
+                    $display_buffer .= __("done")."."; 
                 }
                 else
                 { 
-                    $display_buffer .= _("ERROR");    
+                    $display_buffer .= __("ERROR");    
                 }
-                $display_buffer .= "  <BR>"._("Modifying procedural charges")." ... \n";
+                $display_buffer .= "  <BR>".__("Modifying procedural charges")." ... \n";
 				$procrec = freemed::get_link_rec($payrecproc,"procrec");	
 				if (!$procrec)
-					$display_buffer .= _("ERROR");
+					$display_buffer .= __("ERROR");
 
 				$proccharges = $procrec[proccharges];
 				$procamtpaid = $procrec[procamtpaid];
@@ -792,8 +792,8 @@ class PaymentModule extends EMRModule {
                 if (!empty($query))
                 {
                     $result = $sql->query($query);
-                    if ($result) { $display_buffer .= _("done")."."; }
-                    else        { $display_buffer .= _("ERROR");    }
+                    if ($result) { $display_buffer .= __("done")."."; }
+                    else        { $display_buffer .= __("ERROR");    }
                 }
                 else
                 { // if there is no query, let the user know we did nothing
@@ -802,10 +802,10 @@ class PaymentModule extends EMRModule {
 			
 				if ($updatevisits)
 				{
-                	$display_buffer .= "  <BR>"._("Modifying Authorized visits")." ... \n";
+                	$display_buffer .= "  <BR>".__("Modifying Authorized visits")." ... \n";
                     $result = $sql->query($auth_query);
-                    if ($result) { $display_buffer .= _("done")."."; }
-                    else        { $display_buffer .= _("ERROR");    }
+                    if ($result) { $display_buffer .= __("done")."."; }
+                    else        { $display_buffer .= __("ERROR");    }
 				}
 
             }  // end processing wizard done
@@ -818,7 +818,7 @@ class PaymentModule extends EMRModule {
             <CENTER>
             <A HREF=\"$this->page_name?been_here=1&viewaction=refresh".
             "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
-            "._("Back")."</A>
+            ".__("Back")."</A>
             </CENTER>
             <P>
             ";
@@ -874,11 +874,11 @@ class PaymentModule extends EMRModule {
                 <CENTER>
                 <P>
                 <B>
-                "._("There are no records for this patient.")."
+                ".__("There are no records for this patient.")."
                 </B>
                 <P>
                 <A HREF=\"manage.php?id=$patient\"
-                >"._("Manage_Patient")."</A>
+                >".__("Manage_Patient")."</A>
                 <P>
                 </CENTER>
                 ";
@@ -889,13 +889,13 @@ class PaymentModule extends EMRModule {
             $display_buffer .= "
             <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
             <TR>
-            <TD><B>"._("Date")."</B></TD>
-            <TD><B>"._("Type")."</B></TD>
-            <TD><B>"._("Description")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Charges")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Payments")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Balance")."</B></TD>
-            <TD ALIGN=RIGHT><B>"._("Action")."</B></TD>
+            <TD><B>".__("Date")."</B></TD>
+            <TD><B>".__("Type")."</B></TD>
+            <TD><B>".__("Description")."</B></TD>
+            <TD ALIGN=RIGHT><B>".__("Charges")."</B></TD>
+            <TD ALIGN=RIGHT><B>".__("Payments")."</B></TD>
+            <TD ALIGN=RIGHT><B>".__("Balance")."</B></TD>
+            <TD ALIGN=RIGHT><B>".__("Action")."</B></TD>
             </TR>
             ";
 
@@ -1046,44 +1046,44 @@ class PaymentModule extends EMRModule {
                 } // end of category switch (for totals)
                 switch ($r["payreccat"]) {
                 case ADJUSTMENT: // adjustments 1
-                    $this_type = _("Adjustment");
+                    $this_type = __("Adjustment");
                     break;
                 case REFUND: // refunds 2
-                    $this_type = _("Refund");
+                    $this_type = __("Refund");
                     break;
                 case DENIAL: // denial 3
-                    $this_type = _("Denial");
+                    $this_type = __("Denial");
                     break;
                 case WRITEOFF: // writeoff 12 
-                    $this_type = _("Writeoff");
+                    $this_type = __("Writeoff");
                     break;
                 case REBILL: // rebill 4
-                    $this_type = _("Rebill");
+                    $this_type = __("Rebill");
                     break;
                 case PROCEDURE: // charge 5
-                    $this_type = _("Charge");
+                    $this_type = __("Charge");
                     break;
                 case TRANSFER: // transfer 6
-                    $this_type = _("Transfer to")." ".$PAYER_TYPES[$r["payrecsource"]];
+                    $this_type = __("Transfer to")." ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 case WITHHOLD: // withhold 7
-                    $this_type = _("Withhold");
+                    $this_type = __("Withhold");
                     break;
                 case DEDUCTABLE: // deductable 8
-                    $this_type = _("Deductable");
+                    $this_type = __("Deductable");
                     break;
                 case FEEADJUST: // feeadjust 9
-                    $this_type = _("Fee Adjust");
+                    $this_type = __("Fee Adjust");
                     break;
                 case BILLED: // billed 10
-                    $this_type = _("Billed")." ".$PAYER_TYPES[$r["payrecsource"]];
+                    $this_type = __("Billed")." ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 case COPAY: // COPAY 11
-                    $this_type = _("Copay");
+                    $this_type = __("Copay");
                     break;
                 case PAYMENT: // payment 0
                 default:  // default is payment
-                    $this_type = _("Payment")." ".$PAYER_TYPES[$r["payrecsource"]];
+                    $this_type = __("Payment")." ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 } // end of categry switch (name)
                 $id              = $r["id"];
@@ -1111,7 +1111,7 @@ class PaymentModule extends EMRModule {
                 //	 ($r[payreclock] != "locked"))
                 //  $display_buffer .= "
                 //  <A HREF=\"$page_name?id=$id&patient=$patient&action=del\"
-                //  >"._("DEL")."</A>
+                //  >".__("DEL")."</A>
                 //  ";
 
                 $display_buffer .= "&nbsp;</TD></TR>";
@@ -1206,10 +1206,10 @@ class PaymentModule extends EMRModule {
                 $display_buffer .= "
                 <p/>
                 <div align=\"CENTER\">
-                <B>"._("All records for this procedure have been deleted.")."</B><BR><BR>
+                <B>".__("All records for this procedure have been deleted.")."</B><BR><BR>
                 <a class=\"button\" HREF=\"$this->page_name?been_here=1&viewaction=refresh".
                 "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
-                "._("Back")."</a>
+                ".__("Back")."</a>
                 </div>
                 <p/>
                 ";
@@ -1220,13 +1220,13 @@ class PaymentModule extends EMRModule {
             $display_buffer .= "
             <p/>
             <div align=\"CENTER\">
-            "._("Confirm delete request or cancel?")."<p/>
+            ".__("Confirm delete request or cancel?")."<p/>
 	    </div>
 	    ".template::link_bar(array(
-	    	_("Confirm") =>
+	    	__("Confirm") =>
 			"$this->page_name?been_here=1&viewaction=mistake".
 			"&action=addform&delete=1&item=$procid&patient=$patient&module=$module",
-		_("Cancel") =>
+		__("Cancel") =>
 			"$this->page_name?been_here=1&viewaction=refresh".
 			"&action=addform&item=$procid&patient=$patient&module=$module"
 		))."
@@ -1260,17 +1260,17 @@ class PaymentModule extends EMRModule {
             <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" WIDTH=\"100%\">
             <tr CLASS=\"thinbox\" style=\"text-size: 8pt;\">
             <td>&nbsp;</td>
-            <td ALIGN=\"LEFT\"><b><small>"._("Date")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>"._("Proc Code")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>"._("Provider")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>"._("Charged")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>"._("Allowed")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>"._("Charges")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>"._("Paid")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>"._("Balance")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>"._("Billed")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>"._("Date Billed")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>"._("View")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>".__("Date")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>".__("Proc Code")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>".__("Provider")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>".__("Charged")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>".__("Allowed")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>".__("Charges")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>".__("Paid")."</small></b></td>
+            <td ALIGN=\"RIGHT\"><b><small>".__("Balance")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>".__("Billed")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>".__("Date Billed")."</small></b></td>
+            <td ALIGN=\"LEFT\"><b><small>".__("View")."</small></b></td>
             </tr>
             ";
 
@@ -1299,7 +1299,7 @@ class PaymentModule extends EMRModule {
                 <td ALIGN=\"RIGHT\"><small>".bcadd ($r['proccharges'], 0, 2)."</small></td>
                 <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procamtpaid'], 0, 2)."</small></td>
                 <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procbalcurrent'], 0, 2)."</small></td>
-                <td ALIGN=\"LEFT\"><small>".(($r['procbilled']) ? _("Yes") : _("No") )."</small></td>
+                <td ALIGN=\"LEFT\"><small>".(($r['procbilled']) ? __("Yes") : __("No") )."</small></td>
                 <td ALIGN=\"LEFT\"><small>".( !empty($r['procdtbilled']) ?
 					prepare($r['procdtbilled']) : "&nbsp;" )."</small></td>
                 <td ALIGN=\"LEFT\"><a class=\"button\" ".
@@ -1315,25 +1315,25 @@ class PaymentModule extends EMRModule {
             <p/>
             <div ALIGN=\"CENTER\">
             <select NAME=\"viewaction\">
-            <option VALUE=\"refresh\"  >"._("Refresh")."</option>
-            <option VALUE=\"rebill\"  >"._("Rebill")."</option>
-            <option VALUE=\"payment\" >"._("Payment")."</option>
-            <option VALUE=\"copay\" >"._("Copay")."</option>
-            <option VALUE=\"adjustment\" >"._("Adjustment")."</option>
-            <option VALUE=\"deductable\" >"._("Deductable")."</option>
-            <option VALUE=\"withhold\" >"._("Withhold")."</option>
-            <option VALUE=\"transfer\">"._("Transfer")."</option>
-            <option VALUE=\"allowedamt\">"._("Allowed Amount")."</option>
-            <option VALUE=\"denial\"  >"._("Denial")."</option>
-            <option VALUE=\"writeoff\"  >"._("Writeoff")."</option>
-            <option VALUE=\"refund\">"._("Refund")."</option>
-            <option VALUE=\"mistake\" >"._("Mistake")."</option>
-            <option VALUE=\"ledgerall\">"._("Ledger")."</option>
-            <option VALUE=\"paidledger\">"._("Ledger Closed")."</option>
-            <option VALUE=\"closed\">"._("Closed")."</option>
+            <option VALUE=\"refresh\"  >".__("Refresh")."</option>
+            <option VALUE=\"rebill\"  >".__("Rebill")."</option>
+            <option VALUE=\"payment\" >".__("Payment")."</option>
+            <option VALUE=\"copay\" >".__("Copay")."</option>
+            <option VALUE=\"adjustment\" >".__("Adjustment")."</option>
+            <option VALUE=\"deductable\" >".__("Deductable")."</option>
+            <option VALUE=\"withhold\" >".__("Withhold")."</option>
+            <option VALUE=\"transfer\">".__("Transfer")."</option>
+            <option VALUE=\"allowedamt\">".__("Allowed Amount")."</option>
+            <option VALUE=\"denial\"  >".__("Denial")."</option>
+            <option VALUE=\"writeoff\"  >".__("Writeoff")."</option>
+            <option VALUE=\"refund\">".__("Refund")."</option>
+            <option VALUE=\"mistake\" >".__("Mistake")."</option>
+            <option VALUE=\"ledgerall\">".__("Ledger")."</option>
+            <option VALUE=\"paidledger\">".__("Ledger Closed")."</option>
+            <option VALUE=\"closed\">".__("Closed")."</option>
             </select>
             <input class=\"button\" TYPE=\"SUBMIT\" ".
-	    "VALUE=\""._("Select Line Item")."\"/>
+	    "VALUE=\"".__("Select Line Item")."\"/>
             <input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
             </div>
             </form>
@@ -1361,7 +1361,7 @@ class PaymentModule extends EMRModule {
 				}
 				else
 				{
-					$returned_string .= "<OPTION VALUE=\"".$i."\">"._("Patient")."\n";
+					$returned_string .= "<OPTION VALUE=\"".$i."\">".__("Patient")."\n";
 				}
 			}
 			return $returned_string;

@@ -50,57 +50,57 @@ class DmeposcertsModule extends CertModule {
 		$certpatient = $patient;
 		$wizard = CreateObject('PHP.wizard', array("certpatient","certtype","been_here", "module", "action", "patient"));
 
-		$wizard->add_page(_("Form"),
+		$wizard->add_page(__("Form"),
 						  array_merge(array("certformnum","certdesc","certstatus","certlenneed","certrental"),
 									date_vars("certinitdate"),date_vars("certrevisedate"),date_vars("certdatesigned") ),
 						  html_form::form_table( array(
-									_("Description") => "<INPUT TYPE=TEXT NAME=\"certdesc\" VALUE=\"".prepare($certdesc)."\"",
-									_("Form Number") => "<SELECT NAME=\"certformnum\">".
-														"<OPTION VALUE=\"".F0602."\">"._("TENS"),
-									_("Cert Status") => "<SELECT NAME=\"certstatus\">".
-                                                        "<OPTION VALUE=\"1\">"._("Initial").
-                                                        "<OPTION VALUE=\"2\">"._("Revision").
-                                                        "<OPTION VALUE=\"3\">"._("Recertification").
+									__("Description") => "<INPUT TYPE=TEXT NAME=\"certdesc\" VALUE=\"".prepare($certdesc)."\"",
+									__("Form Number") => "<SELECT NAME=\"certformnum\">".
+														"<OPTION VALUE=\"".F0602."\">".__("TENS"),
+									__("Cert Status") => "<SELECT NAME=\"certstatus\">".
+                                                        "<OPTION VALUE=\"1\">".__("Initial").
+                                                        "<OPTION VALUE=\"2\">".__("Revision").
+                                                        "<OPTION VALUE=\"3\">".__("Recertification").
                                                         "</SELECT>",
-									_("Date Signed") => fm_date_entry("certdatesigned"),
-									_("Intial date") => fm_date_entry("certinitdate"),
-									_("Revise date") => fm_date_entry("certrevisedate"),
-									_("Length of Need") => fm_number_select("certlenneed",1,99,1),
-									_("Rental?") => "<SELECT NAME=\"certrental\">".
-                                                        "<OPTION VALUE=\"1\">"._("Yes").
-                                                        "<OPTION VALUE=\"0\">"._("No").
-                                                        "<OPTION VALUE=\"0\">"._("Does Not Apply").
+									__("Date Signed") => fm_date_entry("certdatesigned"),
+									__("Intial date") => fm_date_entry("certinitdate"),
+									__("Revise date") => fm_date_entry("certrevisedate"),
+									__("Length of Need") => fm_number_select("certlenneed",1,99,1),
+									__("Rental?") => "<SELECT NAME=\"certrental\">".
+                                                        "<OPTION VALUE=\"1\">".__("Yes").
+                                                        "<OPTION VALUE=\"0\">".__("No").
+                                                        "<OPTION VALUE=\"0\">".__("Does Not Apply").
 														"</SELECT>"
 													  )
 												),
 							array (
-									array ("certdesc", VERIFY_NONNULL, NULL, _("Must Specify Description"))
+									array ("certdesc", VERIFY_NONNULL, NULL, __("Must Specify Description"))
 								  )
 							);
 
 		if ($certformnum == F0602)
 		{
 			// TENS form
-			$wizard->add_page( _("Form 06.02 TENS Part1"),
+			$wizard->add_page( __("Form 06.02 TENS Part1"),
 						  array("question3","question4","question5","question6"),
 						  html_form::form_table( array(
-									_("Chronic, Intractable Pain?") => "<SELECT NAME=\"question3\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Chronic, Intractable Pain?") => "<SELECT NAME=\"question3\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
 														"</SELECT>",
-									_("Months patient had intractable pain?") => fm_number_select("question4",1,99,1),
-									_("Prescribed Conditions?") => "<SELECT NAME=\"question5\">".
-                                                        "<OPTION VALUE=\"1\">"._("Headache").
-                                                        "<OPTION VALUE=\"2\">"._("Visceral abdominal pain").
-                                                        "<OPTION VALUE=\"3\">"._("Pelvic pain").
-                                                        "<OPTION VALUE=\"4\">"._("Temporomandibular joint (TMJ) pain").
-                                                        "<OPTION VALUE=\"5\">"._("None of the above").
+									__("Months patient had intractable pain?") => fm_number_select("question4",1,99,1),
+									__("Prescribed Conditions?") => "<SELECT NAME=\"question5\">".
+                                                        "<OPTION VALUE=\"1\">".__("Headache").
+                                                        "<OPTION VALUE=\"2\">".__("Visceral abdominal pain").
+                                                        "<OPTION VALUE=\"3\">".__("Pelvic pain").
+                                                        "<OPTION VALUE=\"4\">".__("Temporomandibular joint (TMJ) pain").
+                                                        "<OPTION VALUE=\"5\">".__("None of the above").
                                                         "</SELECT>", 
-									_("Documentation of other failed treaments?") => "<SELECT NAME=\"question6\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Documentation of other failed treaments?") => "<SELECT NAME=\"question6\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
                                                         "</SELECT>"
 													)
 												) // end form_table
@@ -108,15 +108,15 @@ class DmeposcertsModule extends CertModule {
 
 			if ($certrental > 0)
 			{
-				$wizard->add_page( _("Form 06.02 TENS Rental"),
+				$wizard->add_page( __("Form 06.02 TENS Rental"),
 								array_merge(array("question1"),date_vars("question2")),
 						  html_form::form_table( array(
-									_("Acute Post-Operative Pain?") => "<SELECT NAME=\"question1\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Acute Post-Operative Pain?") => "<SELECT NAME=\"question1\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
 														"</SELECT>",
-									_("Date of Surgery") => fm_date_entry ("question2")
+									__("Date of Surgery") => fm_date_entry ("question2")
 													)
 												) // end form_table
 								); // end add_page
@@ -124,32 +124,32 @@ class DmeposcertsModule extends CertModule {
 			}
 			else // purchase
 			{
-				$wizard->add_page( _("Form 06.02 TENS Purchase"),
+				$wizard->add_page( __("Form 06.02 TENS Purchase"),
 						  array_merge (array("question7","question10","question11","question12"),
 										date_vars("question8a"), date_vars("question8b"),
 										date_vars("question9") ),
 						  html_form::form_table( array(
-									_("patient received a TENS trial?") => "<SELECT NAME=\"question7\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("patient received a TENS trial?") => "<SELECT NAME=\"question7\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
                                                         "</SELECT>",
-									_("TENS Trial Start Date") => fm_date_entry ("question8a"),
-									_("TENS Trial End Date") => fm_date_entry ("question8b"),
-									_("Reevaluated after TENS Trial") => fm_date_entry ("question9"),
-									_("Usage") => "<SELECT NAME=\"question10\">".
-                                                        "<OPTION VALUE=\"1\">"._("Daily").
-                                                        "<OPTION VALUE=\"2\">"._("3 or More days per Week").
-                                                        "<OPTION VALUE=\"3\">"._("2 days or less per Week").
+									__("TENS Trial Start Date") => fm_date_entry ("question8a"),
+									__("TENS Trial End Date") => fm_date_entry ("question8b"),
+									__("Reevaluated after TENS Trial") => fm_date_entry ("question9"),
+									__("Usage") => "<SELECT NAME=\"question10\">".
+                                                        "<OPTION VALUE=\"1\">".__("Daily").
+                                                        "<OPTION VALUE=\"2\">".__("3 or More days per Week").
+                                                        "<OPTION VALUE=\"3\">".__("2 days or less per Week").
                                                         "</SELECT>",
-									_("Waranted long term use?") => "<SELECT NAME=\"question11\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Waranted long term use?") => "<SELECT NAME=\"question11\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
                                                         "</SELECT>",
-									_("Number of TENS Leads") => "<SELECT NAME=\"question12\">".
-                                                        "<OPTION VALUE=\"2\">"._("2 Leads").
-                                                        "<OPTION VALUE=\"4\">"._("4 Leads").
+									__("Number of TENS Leads") => "<SELECT NAME=\"question12\">".
+                                                        "<OPTION VALUE=\"2\">".__("2 Leads").
+                                                        "<OPTION VALUE=\"4\">".__("4 Leads").
                                                         "</SELECT>"
 													  )
 												) // end form_table
@@ -159,57 +159,57 @@ class DmeposcertsModule extends CertModule {
 
 			}
 /*
-			$wizard->add_page( _("Form 06.02 TENS"),
+			$wizard->add_page( __("Form 06.02 TENS"),
 						  array_merge (array("question1","question3","question4","question5","question6","question7",
 											 "question10","question11","question12"),
 										date_vars("question2"), date_vars("question8a"), date_vars("question8b"),
 										date_vars("question9") ),
 						  html_form::form_table( array(
-									_("Acute Post-Operative Pain?") => "<SELECT NAME=\"question1\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Acute Post-Operative Pain?") => "<SELECT NAME=\"question1\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
 														"</SELECT>",
-									_("Date of Surgery") => fm_date_entry ("question2"),
-									_("Chronic, Intractable Pain?") => "<SELECT NAME=\"question3\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Date of Surgery") => fm_date_entry ("question2"),
+									__("Chronic, Intractable Pain?") => "<SELECT NAME=\"question3\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
 														"</SELECT>",
-									_("Months patient had intractable pain?") => fm_number_select("question4",1,99,1),
-									_("Prescribed Conditions?") => "<SELECT NAME=\"question5\">".
-                                                        "<OPTION VALUE=\"1\">"._("Headache").
-                                                        "<OPTION VALUE=\"2\">"._("Visceral abdominal pain").
-                                                        "<OPTION VALUE=\"3\">"._("Pelvic pain").
-                                                        "<OPTION VALUE=\"4\">"._("Temporomandibular joint (TMJ) pain").
-                                                        "<OPTION VALUE=\"5\">"._("None of the above").
+									__("Months patient had intractable pain?") => fm_number_select("question4",1,99,1),
+									__("Prescribed Conditions?") => "<SELECT NAME=\"question5\">".
+                                                        "<OPTION VALUE=\"1\">".__("Headache").
+                                                        "<OPTION VALUE=\"2\">".__("Visceral abdominal pain").
+                                                        "<OPTION VALUE=\"3\">".__("Pelvic pain").
+                                                        "<OPTION VALUE=\"4\">".__("Temporomandibular joint (TMJ) pain").
+                                                        "<OPTION VALUE=\"5\">".__("None of the above").
                                                         "</SELECT>", 
-									_("Documentation of other failed treaments?") => "<SELECT NAME=\"question6\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Documentation of other failed treaments?") => "<SELECT NAME=\"question6\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
                                                         "</SELECT>",
-									_("patient received a TENS trial?") => "<SELECT NAME=\"question7\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("patient received a TENS trial?") => "<SELECT NAME=\"question7\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
                                                         "</SELECT>",
-									_("TENS Trial Start Date") => fm_date_entry ("question8a"),
-									_("TENS Trial End Date") => fm_date_entry ("question8b"),
-									_("Reevaluated after TENS Trial") => fm_date_entry ("question9"),
-									_("Usage") => "<SELECT NAME=\"question10\">".
-                                                        "<OPTION VALUE=\"1\">"._("Daily").
-                                                        "<OPTION VALUE=\"2\">"._("3 or More days per Week").
-                                                        "<OPTION VALUE=\"3\">"._("2 days or less per Week").
+									__("TENS Trial Start Date") => fm_date_entry ("question8a"),
+									__("TENS Trial End Date") => fm_date_entry ("question8b"),
+									__("Reevaluated after TENS Trial") => fm_date_entry ("question9"),
+									__("Usage") => "<SELECT NAME=\"question10\">".
+                                                        "<OPTION VALUE=\"1\">".__("Daily").
+                                                        "<OPTION VALUE=\"2\">".__("3 or More days per Week").
+                                                        "<OPTION VALUE=\"3\">".__("2 days or less per Week").
                                                         "</SELECT>",
-									_("Waranted long term use?") => "<SELECT NAME=\"question11\">".
-                                                        "<OPTION VALUE=\"Y\">"._("Yes").
-                                                        "<OPTION VALUE=\"N\">"._("No").
-                                                        "<OPTION VALUE=\"D\">"._("Does Not Apply").
+									__("Waranted long term use?") => "<SELECT NAME=\"question11\">".
+                                                        "<OPTION VALUE=\"Y\">".__("Yes").
+                                                        "<OPTION VALUE=\"N\">".__("No").
+                                                        "<OPTION VALUE=\"D\">".__("Does Not Apply").
                                                         "</SELECT>",
-									_("Number of TENS Leads") => "<SELECT NAME=\"question12\">".
-                                                        "<OPTION VALUE=\"2\">"._("2 Leads").
-                                                        "<OPTION VALUE=\"4\">"._("4 Leads").
+									__("Number of TENS Leads") => "<SELECT NAME=\"question12\">".
+                                                        "<OPTION VALUE=\"2\">".__("2 Leads").
+                                                        "<OPTION VALUE=\"4\">".__("4 Leads").
                                                         "</SELECT>"
 													  ) // end array
 												) // end form_table
@@ -221,7 +221,7 @@ class DmeposcertsModule extends CertModule {
 		if ($certformnum == 0)
 		{
 			//add dummy page.
-			$wizard->add_page(_("Dummy"),array("dummy"),"");
+			$wizard->add_page(__("Dummy"),array("dummy"),"");
 
 		}
 
@@ -274,19 +274,19 @@ class DmeposcertsModule extends CertModule {
 							   $this->variables);
 
 			$result = $sql->query($query);
-			if ($result) { $display_buffer .= _("done")."."; }
-			else        { $display_buffer .= _("ERROR");    }
+			if ($result) { $display_buffer .= __("done")."."; }
+			else        { $display_buffer .= __("ERROR");    }
 
 			$display_buffer .= "
 				</CENTER>
 				<P>
 				<CENTER>
 				<A HREF=\"manage.php?id=$patient\"
-				>"._("Manage Patient")."</A> <B>|</B>
+				>".__("Manage Patient")."</A> <B>|</B>
 				<A HREF=\"$this->page_name?module=$module&action=addform".
 				"&patient=$patient".
 				"\"
-				>"._("Add Another")." "._($record_name)."</A>
+				>".__("Add Another")." "._($record_name)."</A>
 				</CENTER>
 				<P>
 			";
@@ -302,7 +302,7 @@ class DmeposcertsModule extends CertModule {
 			<P>
 			<CENTER><B>"._(Cancelled)."</B><BR>
 			 <A HREF=\"manage.php?id=$patient\"
-			 >"._("Manage Patient")."</A>
+			 >".__("Manage Patient")."</A>
 			";
 		} // end cancelled
 
@@ -322,10 +322,10 @@ class DmeposcertsModule extends CertModule {
 
 		$display_buffer .= freemed_display_itemlist($result,
 								 $this->page_name,
-								 array(_("Desc") => "certdesc",
-									   _("Type") => "certtype",
-									   _("Form") => "certformnum"),
-								 array(_("None"),"","")
+								 array(__("Desc") => "certdesc",
+									   __("Type") => "certtype",
+									   __("Form") => "certformnum"),
+								 array(__("None"),"","")
 								);
 									
 	} // end function DmeposcertsModule->view()

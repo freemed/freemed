@@ -108,12 +108,12 @@ class GenerateStatementsModule extends BillingModule {
 				$display_buffer .= "
 				<P>
 				<CENTER>
-				<B>"._("Nothing to Bill!")."</B>
+				<B>".__("Nothing to Bill!")."</B>
 				</CENTER>
 				<P>
 				<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("Return to Statement Generation Menu")."</A>
+				>".__("Return to Statement Generation Menu")."</A>
 				</CENTER>
 				<P>
 				";
@@ -147,7 +147,7 @@ class GenerateStatementsModule extends BillingModule {
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
      	$display_buffer .= "
-      	<B>"._("Processing")." ".$this_patient->fullName()."
+      	<B>".__("Processing")." ".$this_patient->fullName()."
       	</B><BR>\n\n
      	";
      	flush ();
@@ -382,7 +382,7 @@ class GenerateStatementsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <B>"._("Generate Statement Billing")."</B>
+		   <B>".__("Generate Statement Billing")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
@@ -418,7 +418,7 @@ class GenerateStatementsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
+		   <INPUT TYPE=SUBMIT VALUE=\"".__("Go")."\">
 		  </CENTER>
 		 </TD>
 		  <TD><INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\"></TD>

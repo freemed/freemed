@@ -77,7 +77,7 @@ class BackupMaintenance extends MaintenanceModule {
 			<P>
 			<CENTER>
 			<A HREF=\"db_maintenance.php\"
-			 >"._("Return to Maintenance Menu")."</A>
+			 >".__("Return to Maintenance Menu")."</A>
 			</CENTER>
 			<P>
 		";

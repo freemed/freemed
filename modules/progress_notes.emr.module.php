@@ -47,8 +47,8 @@ class ProgressNotes extends EMRModule {
 	
 		// Define variables for EMR summary
 		$this->summary_vars = array (
-			_("Date")        =>	"pnotesdt",
-			_("Description") =>	"pnotesdescrip"
+			__("Date")        =>	"pnotesdt",
+			__("Description") =>	"pnotesdescrip"
 		);
 		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
 
@@ -69,11 +69,11 @@ class ProgressNotes extends EMRModule {
 
 		switch ($action) {
 			case "add": case "addform":
-			$book->set_submit_name(_("Add"));
+			$book->set_submit_name(__("Add"));
 			break;
 
 			case "mod": case "modform":
-			$book->set_submit_name(_("Modify"));
+			$book->set_submit_name(__("Modify"));
 			break;
 		}
      
@@ -91,9 +91,9 @@ class ProgressNotes extends EMRModule {
          //while(list($k,$v)=each($this->variables)) { global ${$v}; }
 
          if (($id<1) OR (strlen($id)<1)) {
-           $page_title = _($this->record_name)." :: "._("ERROR");
+           $page_title = _($this->record_name)." :: ".__("ERROR");
            $display_buffer .= "
-             "._("You must select a patient.")."
+             ".__("You must select a patient.")."
            ";
            template_display();
          }
@@ -103,7 +103,7 @@ class ProgressNotes extends EMRModule {
 	 if ($r['locked'] > 0) {
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
-		"._("This record is locked, and cannot be modified.")."
+		".__("This record is locked, and cannot be modified.")."
 		</div>
 
 		<p/>
@@ -111,9 +111,9 @@ class ProgressNotes extends EMRModule {
 		<div ALIGN=\"CENTER\">
 		".
 		(($return == "manage") ?
-		"<a href=\"manage.php?id=$patient\">"._("Manage Patient")."</a>" :
+		"<a href=\"manage.php?id=$patient\">".__("Manage Patient")."</a>" :
 		"<a href=\"module_loader.php?module=".get_class($this)."\">".
-			_("back")."</a>" )
+			__("back")."</a>" )
 		."\n</div>\n";
 		return false;
 	 }
@@ -130,7 +130,7 @@ class ProgressNotes extends EMRModule {
 	if (check_module("ProgressNotesTemplates") and ($action=='addform')) {
 		// Create picklist widget
 		$pnt_array = array (
-			_("Progress Notes Template") =>
+			__("Progress Notes Template") =>
 			module_function(
 				'ProgressNotesTemplates', 
 				'picklist', 
@@ -153,7 +153,7 @@ class ProgressNotes extends EMRModule {
        // Actual piece
 	$pnoteseoc = sql_squash($pnoteseoc); // for multiple choice (HACK)
        $related_episode_array = array (
-         _("Related Episode(s)") =>
+         __("Related Episode(s)") =>
            freemed::multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
                                   "eocdtlastsimilar FROM eoc WHERE ".
                                   "eocpatient='".addslashes($patient)."'",
@@ -167,14 +167,14 @@ class ProgressNotes extends EMRModule {
 	$related_episode_array = array ("" => "");
      }
      $book->add_page (
-       _("Basic Information"),
+       __("Basic Information"),
        array ("pnotesdoc", "pnotesdescrip", "pnoteseoc", date_vars("pnotesdt")),
        "<input TYPE=\"HIDDEN\" NAME=\"pnt_used\" VALUE=\"\"/>\n".
        html_form::form_table (
         array_merge (
 	$pnt_array,
         array (
-	 _("Provider") =>
+	 __("Provider") =>
 	   freemed_display_selectbox (
             $sql->query ("SELECT * FROM physician ".
 	    	"WHERE phyref != 'yes' AND phylname != '' ".
@@ -183,23 +183,23 @@ class ProgressNotes extends EMRModule {
 	    "pnotesdoc"
 	   ),
 	   
-         _("Description") =>
+         __("Description") =>
 	html_form::text_widget("pnotesdescrip", 25, 100)
 	),
 	$related_episode_array,
 	array (
-         _("Date") => fm_date_entry("pnotesdt") 
+         __("Date") => fm_date_entry("pnotesdt") 
 	 )
         ) // end array_merge	
         )
       ); 
 
      $book->add_page (
-       _("<U>S</U>ubjective"),
+       __("<U>S</U>ubjective"),
        array ("pnotes_S"),
        html_form::form_table (
         array (
-          _("<U>S</U>ubjective") =>
+          __("<U>S</U>ubjective") =>
           "<TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_S)."</TEXTAREA>"
         )
@@ -207,11 +207,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       _("<U>O</U>bjective"),
+       __("<U>O</U>bjective"),
        array ("pnotes_O"),
        html_form::form_table (
         array (
-          _("<U>O</U>bjective") =>
+          __("<U>O</U>bjective") =>
           "<TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_O)."</TEXTAREA>"
         )
@@ -219,11 +219,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       _("<U>A</U>ssessment"),
+       __("<U>A</U>ssessment"),
        array ("pnotes_A"),
        html_form::form_table (
         array (
-          _("<U>A</U>ssessment") =>
+          __("<U>A</U>ssessment") =>
           "<TEXTAREA NAME=\"pnotes_A\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_A)."</TEXTAREA>"
         )
@@ -231,11 +231,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       _("<U>P</U>lan"),
+       __("<U>P</U>lan"),
        array ("pnotes_P"),
        html_form::form_table (
         array (
-          _("<U>P</U>lan") =>
+          __("<U>P</U>lan") =>
           "<TEXTAREA NAME=\"pnotes_P\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_P)."</TEXTAREA>"
         )
@@ -243,11 +243,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       _("<U>I</U>nterval"),
+       __("<U>I</U>nterval"),
        array ("pnotes_I"),
        html_form::form_table (
         array (
-          _("<U>I</U>nterval") =>
+          __("<U>I</U>nterval") =>
           "<TEXTAREA NAME=\"pnotes_I\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_I)."</TEXTAREA>"
         )
@@ -255,11 +255,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       _("<U>E</U>ducation"),
+       __("<U>E</U>ducation"),
        array ("pnotes_E"),
        html_form::form_table (
         array (
-          _("<U>E</U>ducation") =>
+          __("<U>E</U>ducation") =>
           "<TEXTAREA NAME=\"pnotes_E\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_E)."</TEXTAREA>"
         )
@@ -267,11 +267,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       _("P<U>R</U>escription"),
+       __("P<U>R</U>escription"),
        array ("pnotes_R"),
        html_form::form_table (
         array (
-          _("P<U>R</U>escription") =>
+          __("P<U>R</U>escription") =>
           "<TEXTAREA NAME=\"pnotes_R\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_R)."</TEXTAREA>"
         )
@@ -296,7 +296,7 @@ class ProgressNotes extends EMRModule {
        switch ($action) {
         case "addform": case "add":
          $display_buffer .= "
-           <div ALIGN=\"CENTER\"><b>"._("Adding")." ... </b>
+           <div ALIGN=\"CENTER\"><b>".__("Adding")." ... </b>
          ";
            // preparation of values
          $pnotesdtadd = $cur_date;
@@ -329,7 +329,7 @@ class ProgressNotes extends EMRModule {
 
 	case "modform": case "mod":
          $display_buffer .= "
-           <div ALIGN=\"CENTER\"><b>"._("Modifying")." ... </b>
+           <div ALIGN=\"CENTER\"><b>".__("Modifying")." ... </b>
          ";
 	global $patient, $__ISO_SET__, $locked, $id;
 	$query = $sql->update_query (
@@ -359,14 +359,14 @@ class ProgressNotes extends EMRModule {
        $result = $sql->query ($query);
        if ($debug) $display_buffer .= "(query = '$query') ";
        if ($result)
-         $display_buffer .= " <b> "._("done").". </b>\n";
+         $display_buffer .= " <b> ".__("done").". </b>\n";
        else
-         $display_buffer .= " <b> <font COLOR=\"#ff0000\">"._("ERROR")."</font> </b>\n";
+         $display_buffer .= " <b> <font COLOR=\"#ff0000\">".__("ERROR")."</font> </b>\n";
        $display_buffer .= "
         </div>
         <p/>
          <div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
-          >"._("Manage Patient")."</a>
+          >".__("Manage Patient")."</a>
          <b>|</b>
          <a HREF=\"$this->page_name?module=$module&patient=$patient\"
           >"._($this->record_name)."</a>
@@ -375,7 +375,7 @@ class ProgressNotes extends EMRModule {
          $display_buffer .= "
 	 <b>|</b>
 	 <a HREF=\"$this->page_name?module=$module&patient=$patient&action=view&id=$id\"
-	  >"._("View $this->record_name")."</a>
+	  >".__("View $this->record_name")."</a>
 	 ";
        $display_buffer .= "
          </div>
@@ -401,13 +401,13 @@ class ProgressNotes extends EMRModule {
 		foreach ($GLOBALS AS $k => $v) global $$k;
      if (($id<1) OR (strlen($id)<1)) {
        $display_buffer .= "
-         "._("Specify Notes to Display")."
+         ".__("Specify Notes to Display")."
          <p/>
          <div ALIGN=\"CENTER\">
 	 <a HREF=\"$this->page_name?module=$module&patient=$patient\"
-          >"._("back")."</a> |
+          >".__("back")."</a> |
           <a HREF=\"manage.php?id=$patient\"
-          >"._("Manage Patient")."</a>
+          >".__("Manage Patient")."</a>
          </div>
        ";
        template_display();
@@ -426,15 +426,15 @@ class ProgressNotes extends EMRModule {
      if (freemed::user_flag(USER_DATABASE))
        $__MODIFY__ = " |
          <a HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
-          >"._("Modify")."</a>
+          >".__("Modify")."</a>
        "; // add this if they have modify privledges
      $display_buffer .= "
        <P>
        <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
         >"._($this->record_name)."</A> |
         <A HREF=\"manage.php?id=$pnotespat\"
-        >"._("Manage Patient")."</A> |
-        <A HREF=\"patient.php\">"._("Select Patient")."</A> $__MODIFY__
+        >".__("Manage Patient")."</A> |
+        <A HREF=\"patient.php\">".__("Select Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
 
@@ -448,7 +448,7 @@ class ProgressNotes extends EMRModule {
      if (count($pnoteseoc)>0 and is_array($pnoteseoc) and check_module("episodeOfCare")) {
       $display_buffer .= "
        <CENTER>
-        <B>"._("Related Episode(s)")."</B>
+        <B>".__("Related Episode(s)")."</B>
         <BR>
       ";
       for ($i=0;$i<count($pnoteseoc);$i++) {
@@ -487,7 +487,7 @@ class ProgressNotes extends EMRModule {
      if (!empty($pnotes_S)) $display_buffer .= "
        <TABLE BGCOLOR=\"#ffffff\" BORDER=1><TR BGCOLOR=\"$darker_bgcolor\">
        <TD ALIGN=CENTER><CENTER><FONT COLOR=\"#ffffff\">
-        <B>"._("<U>S</U>ubjective")."</B></FONT></CENTER></TD></TR>
+        <B>".__("<U>S</U>ubjective")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_S)))."
        </TD></TR></TABLE>
@@ -495,7 +495,7 @@ class ProgressNotes extends EMRModule {
       if (!empty($pnotes_O)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>"._("<U>O</U>bjective")."</B></FONT></CENTER></TD></TR>
+        <B>".__("<U>O</U>bjective")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_O)))."
        </TD></TR></TABLE>
@@ -503,7 +503,7 @@ class ProgressNotes extends EMRModule {
       if (!empty($pnotes_A)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>"._("<U>A</U>ssessment")."</B></FONT></CENTER></TD></TR>
+        <B>".__("<U>A</U>ssessment")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_A)))."
        </TD></TR></TABLE>
@@ -511,7 +511,7 @@ class ProgressNotes extends EMRModule {
       if (!empty($pnotes_P)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>"._("<U>P</U>lan")."</B></FONT></CENTER></TD></TR>
+        <B>".__("<U>P</U>lan")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_P)))."
        </TD></TR></TABLE>
@@ -519,7 +519,7 @@ class ProgressNotes extends EMRModule {
       if (!empty($pnotes_I)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>"._("<U>I</U>nterval")."</B></FONT></CENTER></TD></TR>
+        <B>".__("<U>I</U>nterval")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=\"#ffffff\"><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_I)))."
        </TD></TR></TABLE>
@@ -527,7 +527,7 @@ class ProgressNotes extends EMRModule {
       if (!empty($pnotes_E)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>"._("<U>E</U>ducation")."</B></FONT></CENTER></TD></TR>
+        <B>".__("<U>E</U>ducation")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".prepare($pnotes_E)."
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_E)))."
@@ -536,7 +536,7 @@ class ProgressNotes extends EMRModule {
       if (!empty($pnotes_R)) $display_buffer .= "
       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>"._("P<U>R</U>escription")."</B></FONT></CENTER></TD></TR>
+        <B>".__("P<U>R</U>escription")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_R)))."
        </TD></TR></TABLE>
@@ -547,8 +547,8 @@ class ProgressNotes extends EMRModule {
        <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
         >"._($this->record_name)."</A> |
         <A HREF=\"manage.php?id=$pnotespat\"
-        >"._("Manage Patient")."</A> |
-        <A HREF=\"patient.php\">"._("Select Patient")."</A> $__MODIFY__
+        >".__("Manage Patient")."</A> |
+        <A HREF=\"patient.php\">".__("Select Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
      ";
@@ -574,12 +574,12 @@ class ProgressNotes extends EMRModule {
 			$result,
 			$this->page_name,
 			array (
-				_("Date")        => "pnotesdt",
-				_("Description") => "pnotesdescrip"
+				__("Date")        => "pnotesdt",
+				__("Description") => "pnotesdescrip"
 			), // array
 			array (
 				"",
-				_("NO DESCRIPTION")
+				__("NO DESCRIPTION")
 			),
 			NULL, NULL, NULL,
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL | ITEMLIST_LOCK

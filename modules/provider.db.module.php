@@ -132,9 +132,9 @@ class ProviderMaintenance extends MaintenanceModule {
 		);
 		switch ($action) {
 			case "add": case "addform":
-				$book->set_submit_name(_("Add")); break;
+				$book->set_submit_name(__("Add")); break;
 			case "mod": case "modform":
-				$book->set_submit_name(_("Modify")); break;
+				$book->set_submit_name(__("Modify")); break;
 		}
   
  		// load the values
@@ -160,31 +160,31 @@ class ProviderMaintenance extends MaintenanceModule {
 		$stat_r = $sql->query("SELECT * FROM phystatus ORDER BY phystatus");
 
 		$book->add_page (
-			_("Primary Information"),
+			__("Primary Information"),
 			array (
 			"phylname", "phyfname", "phytitle", "phymname",
 			"phytitle", "phypracname", "phyid1", "phystatus"
 			),
 			html_form::form_table(array(
-	_("Last Name") =>
+	__("Last Name") =>
 	html_form::text_widget("phylname", 25, 50),
 
-	_("First Name") =>
+	__("First Name") =>
 	html_form::text_widget("phyfname", 25, 50),
 
-	_("Middle Name") =>
+	__("Middle Name") =>
 	html_form::text_widget("phymname", 25, 50),
 
-	_("Title") =>
+	__("Title") =>
 	html_form::text_widget("phytitle", 10),
 
-	_("Practice Name") =>
+	__("Practice Name") =>
 	html_form::text_widget("phypracname", 25, 30),
 
-	_("Internal ID #") =>
+	__("Internal ID #") =>
 	html_form::text_widget("phyid1", 10),
 
-	_("Status") =>
+	__("Status") =>
 	freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
 			))
 		);
@@ -197,19 +197,19 @@ class ProviderMaintenance extends MaintenanceModule {
 				phone_vars("phypager") 
 			),
 			html_form::form_table(array(
-		_("Email Address") =>
+		__("Email Address") =>
 		html_form::text_widget("phyemail", 25, 30),
 
-		_("Cellular Phone #") =>
+		__("Cellular Phone #") =>
 		fm_phone_entry ("phycellular"),
 
-		_("Beeper / Pager #") =>
+		__("Beeper / Pager #") =>
 		fm_phone_entry ("phypager")
 			))
 		);
 
 		$book->add_page (
-			_("Address"),
+			__("Address"),
 			array_merge ( array(
 				"has_second_addr", "phyaddr1a", "phyaddr2a",
 				"phycitya", "phystatea", "phyzipa"),
@@ -217,28 +217,28 @@ class ProviderMaintenance extends MaintenanceModule {
 				phone_vars("phyfaxa")
 			),
 		html_form::form_table(array(
-	_("Primary Address Line 1") =>
+	__("Primary Address Line 1") =>
 	html_form::text_widget("phyaddr1a", 25, 30),
 
-	_("Primary Address Line 2") =>
+	__("Primary Address Line 2") =>
 	html_form::text_widget("phyaddr2a", 25, 30),
 
-	_("Primary Address City") =>
+	__("Primary Address City") =>
 	html_form::text_widget("phycitya", 20),
 
-	_("Primary Address State") =>
+	__("Primary Address State") =>
 	html_form::state_pulldown("phystatea"),
 
-	_("Primary Address Zip") =>
+	__("Primary Address Zip") =>
 	html_form::text_widget("phyzipa", 10),
 
-	_("Primary Address Phone #") =>
+	__("Primary Address Phone #") =>
 	fm_phone_entry ("phyphonea"),
 
-	_("Primary Address Fax #") =>
+	__("Primary Address Fax #") =>
 	fm_phone_entry ("phyfaxa"),
 
-	_("Has Second Address") =>
+	__("Has Second Address") =>
 	"<INPUT TYPE=CHECKBOX NAME=\"has_second_addr\" ".
 	($has_second_addr ? "CHECKED" : "").">" 
 			))
@@ -246,7 +246,7 @@ class ProviderMaintenance extends MaintenanceModule {
 
   if ($has_second_addr)
     $book->add_page (
-      _("Address 2"),
+      __("Address 2"),
       array_merge ( 
 		phone_vars("phyphoneb"),
 		phone_vars("phyfaxb"),
@@ -255,42 +255,42 @@ class ProviderMaintenance extends MaintenanceModule {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-    "._("Secondary Address Line 1")." :
+    ".__("Secondary Address Line 1")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr1b SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr1b\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    "._("Secondary Address Line 2")." :
+    ".__("Secondary Address Line 2")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr2b SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr2b\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    "._("Secondary Address City")." :
+    ".__("Secondary Address City")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phycityb SIZE=20 MAXLENGTH=20
      VALUE=\"$phycityb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    "._("Secondary Address State")." :
+    ".__("Secondary Address State")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phystateb SIZE=6 MAXLENGTH=5
      VALUE=\"$phystateb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    "._("Secondary Address Zip")." :
+    ".__("Secondary Address Zip")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyzipb SIZE=10 MAXLENGTH=10
      VALUE=\"$phyzipb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    "._("Secondary Address Phone #")." :
+    ".__("Secondary Address Phone #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyphoneb")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    "._("Secondary Address Fax #")." :
+    ".__("Secondary Address Fax #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyfaxb")."
     </TD></TR>
@@ -306,7 +306,7 @@ class ProviderMaintenance extends MaintenanceModule {
 		$spec_r = $sql->query($spec_q);
 
 		$book->add_page(
-			_("Personal"),
+			__("Personal"),
 			array (
 				"phyupin", "phyref",
 				"physsn1", "physsn2", "physsn3", 
@@ -315,53 +315,53 @@ class ProviderMaintenance extends MaintenanceModule {
 				"phyanesth"
 			),
 			html_form::form_table(array(
-		_("UPIN Number") =>
+		__("UPIN Number") =>
 		html_form::text_widget("phyupin", 15),
 
-		_("Social Security #") =>
+		__("Social Security #") =>
 		html_form::text_widget("physsn1", 3)." <B>-</B> ".
 		html_form::text_widget("physsn2", 2)." <B>-</B> ".
 		html_form::text_widget("physsn3", 4),
 
-		_("Degree 1") =>
+		__("Degree 1") =>
 		freemed_display_selectbox ($phy_deg_r, 
 			"#degdegree#, #degname#", "phydeg1"),
 
-		_("Degree 2") =>
+		__("Degree 2") =>
 		freemed_display_selectbox ($phy_deg_r, 
 			"#degdegree#, #degname#", "phydeg2"),
 
-		_("Degree 3") =>
+		__("Degree 3") =>
 		freemed_display_selectbox ($phy_deg_r, 
 			"#degdegree#, #degname#", "phydeg3"),
 
-		_("Specialty 1") =>
+		__("Specialty 1") =>
 		freemed_display_selectbox ($spec_r, 
 			"#specname#, #specdesc#", "physpe1"),
 
-		_("Specialty 2") =>
+		__("Specialty 2") =>
 		freemed_display_selectbox ($spec_r, 
 			"#specname#, #specdesc#", "physpe2"),
 
-		_("Specialty 3") =>
+		__("Specialty 3") =>
 		freemed_display_selectbox ($spec_r, 
 			"#specname#, #specdesc#", "physpe3"),
 
-		_("Physician Internal/External") =>
+		__("Physician Internal/External") =>
 		html_form::select_widget(
 			"phyref",
 			array (
-				_("In-House") => "no",
-				_("Referring") => "yes"
+				__("In-House") => "no",
+				__("Referring") => "yes"
 			)
 		),
 
-		_("Anesthesiologist") =>
+		__("Anesthesiologist") =>
 		html_form::select_widget(
 			"phyanesth",
 			array(
-				_("no") => "0",
-				_("yes") => "1"
+				__("no") => "0",
+				__("yes") => "1"
 			)
 		)
 
@@ -389,7 +389,7 @@ class ProviderMaintenance extends MaintenanceModule {
 	global $phyref;
 	if (!($phyref=="yes")) 
   $book->add_page(
-    _("Charge Map"),
+    __("Charge Map"),
     array (
       "phychargemap"
     ),
@@ -401,8 +401,8 @@ class ProviderMaintenance extends MaintenanceModule {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR CLASS=\"cell_hilite\">
-     <TD><B>"._("Internal Type")."</B></TD>
-     <TD><B>"._("Amount")."</B></TD>
+     <TD><B>".__("Internal Type")."</B></TD>
+     <TD><B>".__("Amount")."</B></TD>
     </TR>
     $cmap_buf
     </TABLE>
@@ -426,7 +426,7 @@ class ProviderMaintenance extends MaintenanceModule {
   } // end looping for service types
 
   $book->add_page(
-    _("Insurance IDs"),
+    __("Insurance IDs"),
     array (
       "phyidmap"
     ),
@@ -440,8 +440,8 @@ class ProviderMaintenance extends MaintenanceModule {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR CLASS=\"cell_hilite\">
-     <TD><B>"._("Insurance Group")."</B></TD>
-     <TD><B>"._("ID Number")."</B></TD>
+     <TD><B>".__("Insurance Group")."</B></TD>
+     <TD><B>".__("ID Number")."</B></TD>
     </TR>
     $insmap_buf
     </TABLE>
@@ -474,7 +474,7 @@ class ProviderMaintenance extends MaintenanceModule {
 			} else { // error
       			$display_buffer .= "
    	  			<P ALIGN=CENTER>
-				"._("ERROR")."! \$action=$action!
+				".__("ERROR")."! \$action=$action!
 				</P>
   		  		";
 			} // error handler
@@ -491,7 +491,7 @@ class ProviderMaintenance extends MaintenanceModule {
    <CENTER>
     <TABLE WIDTH=\"100%\">
      <TR><TD ALIGN=RIGHT>
-      "._("Name")." :
+      ".__("Name")." :
      </TD><TD ALIGN=LEFT>
       $phy[phyfname] 
           $phy[phymname] $phy[phylname], $phy[phytitle]
@@ -501,13 +501,13 @@ class ProviderMaintenance extends MaintenanceModule {
    $display_buffer .= "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <A HREF=\"physician.php?action=modform&id=$id\"
-       >"._("Modify")." "._($record_name)."</A>
+       >".__("Modify")." "._($record_name)."</A>
      </TD></TR>
    ";
   $display_buffer .= "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <A HREF=\"physician.php?id=$id\"
-       >"._("back")."</A>
+       >".__("back")."</A>
      </TD></TR>
     </TABLE>
    </CENTER>
@@ -527,8 +527,8 @@ class ProviderMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Last Name") => "phylname",
-				_("First Name") => "phyfname"
+				__("Last Name") => "phylname",
+				__("First Name") => "phyfname"
 			),
 			array ( "", "" )
 		);

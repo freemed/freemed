@@ -44,7 +44,7 @@ class GroupCalendar extends CalendarModule {
 	} // end constructor GroupCalendar	
 
 	function mark_array() {
-		$mark[_("Travel")] = "0";
+		$mark[__("Travel")] = "0";
 		for ($i=1;$i<=8;$i++) {
 			$val = freemed::config_value("cal" . $i);
 			if (!empty($val)) {
@@ -78,7 +78,7 @@ class GroupCalendar extends CalendarModule {
 		if (!isset($mark)) { global $mark; $mark = 0; }
 
 		// Set page title
-		global $page_title; $page_title = _("Group Calendar");
+		global $page_title; $page_title = __("Group Calendar");
 
 		// Get facility for current room
 		global $my_facility;
@@ -151,7 +151,7 @@ class GroupCalendar extends CalendarModule {
 		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
 		 WIDTH=\"100%\">
 		<tr>
-		<td COLSPAN=\"2\"><B>"._("Group Calendar")."</B> for
+		<td COLSPAN=\"2\"><B>".__("Group Calendar")."</B> for
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\"/>
 			".html_form::select_widget(
@@ -166,10 +166,10 @@ class GroupCalendar extends CalendarModule {
 		</td></tr>
 		<tr><td ALIGN=\"CENTER\" COLSPAN=\"2\">
 		<b>".fm_date_print($selected_date)."</b><br/>
-		<i>(".(count($physicians)-1)." "._("physicians").")</i>
+		<i>(".(count($physicians)-1)." ".__("physicians").")</i>
 		</td></tr>
 		<tr>
-		<td>"._("Mark as")."</td>
+		<td>".__("Mark as")."</td>
 		<td>".html_form::select_widget(
 			"mark", $this->mark_array(), array('refresh'=>true)
 		)."</td>
@@ -199,7 +199,7 @@ class GroupCalendar extends CalendarModule {
 			$anresult = $sql->query($anquery);
 			if ($sql->results($anresult)) {
 				$buffer .= "<div CLASS=\"reverse\">\n".
-					"<b>"._("Anesthesiology Coverage").
+					"<b>".__("Anesthesiology Coverage").
 					"</b> : ";
 				unset($cov);
 				while ($anr = $sql->fetch_array($anresult)) {
@@ -231,7 +231,7 @@ class GroupCalendar extends CalendarModule {
 			if ($v >= 0) {
 				$p[$k] = CreateObject('FreeMED.Physician', $v);
 				$buffer .= "<td ALIGN=\"CENTER\"><b>".
-				($v!=0 ? $p[$k]->fullName() : _("Other") ).
+				($v!=0 ? $p[$k]->fullName() : __("Other") ).
 				"</b></td>\n";
 			}
 		}
@@ -328,8 +328,8 @@ class GroupCalendar extends CalendarModule {
 		</div>
 		<br/><br/>
 		<div ALIGN=\"CENTER\">
-		".template::link_button(_("Calendar"), "calendar.php")."
-		".template::link_button(_("Return to Main Menu"), "main.php")."
+		".template::link_button(__("Calendar"), "calendar.php")."
+		".template::link_button(__("Return to Main Menu"), "main.php")."
 		</div>
 		";
 
@@ -369,7 +369,7 @@ class GroupCalendar extends CalendarModule {
 			return freemed::config_value("cal".${$var});
 			break;
 
-			default: return _("Travel"); break;
+			default: return __("Travel"); break;
 		}
 
 	} // end function GroupCalendar->mark_lookup

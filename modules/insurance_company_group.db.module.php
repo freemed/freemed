@@ -53,7 +53,7 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
 			<INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\"  >
 			".html_form::form_table ( array (
-				_("Name") =>
+				__("Name") =>
 					"<INPUT TYPE=TEXT NAME=\"inscogroup\" SIZE=20 MAXLENGTH=20 ".
 					"VALUE=\"".prepare($inscogroup)."\">"
 			) )."
@@ -61,8 +61,8 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 
 		<CENTER>
 			<INPUT TYPE=SUBMIT VALUE=\" ".
-				( ($action=="addform") ? _("Add") : _("Modify") )." \">
-			<INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
+				( ($action=="addform") ? __("Add") : __("Modify") )." \">
+			<INPUT TYPE=RESET  VALUE=\"".__("Clear")."\">
 		</CENTER>
 
 		</FORM>

@@ -53,16 +53,16 @@ class QuestionnaireTemplateMaintenance extends MaintenanceModule {
    switch ($action) {
      case "addform":
       $go = "add";
-      $this_action = _("Add");
+      $this_action = __("Add");
       break;
      case "modform":
       $go = "mod";
-      $this_action = _("Modify");
+      $this_action = __("Modify");
        // check to see if an id was submitted
       if ($id<1) {
-       $page_title = _($record_name)." :: "._("ERROR");
+       $page_title = _($record_name)." :: ".__("ERROR");
        $display_buffer .= "
-         "._("You must select a record to modify.")."
+         ".__("You must select a record to modify.")."
        ";
        template_display();
       } // end of if.. statement checking for id #
@@ -98,13 +98,13 @@ class QuestionnaireTemplateMaintenance extends MaintenanceModule {
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
-     <TD ALIGN=RIGHT>"._("Name of Template")."</TD>
+     <TD ALIGN=RIGHT>".__("Name of Template")."</TD>
       <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"qname\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($qname)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT>"._("Description")."</TD>
+     <TD ALIGN=RIGHT>".__("Description")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"qdescrip\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($qdescrip)."\">
@@ -116,12 +116,12 @@ class QuestionnaireTemplateMaintenance extends MaintenanceModule {
      ALIGN=CENTER>
      <TR CLASS=\"reverse\">
       <TD><FONT COLOR=\"#ffffff\">#</FONT></TD>
-      <TD><FONT_B COLOR=#ffffff><CENTER><B>"._("Ins/Del")."</B></CENTER>
+      <TD><FONT_B COLOR=#ffffff><CENTER><B>".__("Ins/Del")."</B></CENTER>
         </FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Caption")."</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>".__("Caption")."</B></FONT></TD>
       <TD><FONT COLOR=\"#ffffff\"><B>Variable</B></FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Limits")."</B></FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Type")."</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>".__("Limits")."</B></FONT></TD>
+      <TD><FONT COLOR=\"#ffffff\"><B>".__("Type")."</B></FONT></TD>
       <TD><FONT COLOR=\"#ffffff\"><B>Type Formatting</B></FONT></TD>
       <TD><FONT COLOR=\"#ffffff\"><B>Text of Question</B></FONT></TD>
      </TR>
@@ -246,16 +246,16 @@ class QuestionnaireTemplateMaintenance extends MaintenanceModule {
      </TABLE>
      <P>
      <CENTER>
-     <FONT SIZE=\"-1\">"._("Line Insert")." :
+     <FONT SIZE=\"-1\">".__("Line Insert")." :
       <INPUT TYPE=TEXT NAME=\"lineinsert\" VALUE=\"0\"
        SIZE=2 MAXLENGTH=2></FONT>
      </CENTER>
      <BR>
      <CENTER>
      <SELECT NAME=\"action\">
-      <OPTION VALUE=\"$action\">"._("Update")."
+      <OPTION VALUE=\"$action\">".__("Update")."
       <OPTION VALUE=\"".( ($action=="addform") ? "add" : "mod" ).
-		"\">".( ($action=="addform") ? _("Add") : _("Modify") )."
+		"\">".( ($action=="addform") ? __("Add") : __("Modify") )."
       <OPTION VALUE=\"view\">Back to Menu
      </SELECT>
      <INPUT TYPE=SUBMIT VALUE=\"go!\">
@@ -271,11 +271,11 @@ class QuestionnaireTemplateMaintenance extends MaintenanceModule {
 				"ORDER BY qname, qdescrip"),
 			$this->page_name,
 			array (
-				_("Name") => "qname",
-				_("Description") => "qdescrip"
+				__("Name") => "qname",
+				__("Description") => "qdescrip"
 			),
 			array (
-				"", _("NO DESCRIPTION")
+				"", __("NO DESCRIPTION")
 			)
 		);
 	} // end function QuestionnaireTemplateMaintenance->view()

@@ -79,55 +79,55 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		 <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
 		 <TR>
-		  <TD ALIGN=RIGHT>"._("Name of Form")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Name of Form")." : </TD>
 		   <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=40 MAXLENGTH=50
 			VALUE=\"".prepare($ffname)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Page Length")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Page Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffpagelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffpagelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT>"._("Description")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Description")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=40 MAXLENGTH=100
 			VALUE=\"".prepare($ffdescrip)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Line Length")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Line Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"fflinelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($fflinelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT>"._("Loop Repetitions")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Loop Repetitions")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopnum\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopnum)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Check Char")." : <BR>
-						  "._("(<I>example: \"X\"</I>)")."</TD>
+		  <TD ALIGN=RIGHT>".__("Check Char")." : <BR>
+						  ".__("(<I>example: \"X\"</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
 			VALUE=\"".prepare($ffcheckchar)."\"> 
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT>"._("Loop Line Offset")." : <BR>
-					 "._("(<I>\"1\" skips to the next line</I>)")."</TD>
+		  <TD ALIGN=RIGHT>".__("Loop Line Offset")." : <BR>
+					 ".__("(<I>\"1\" skips to the next line</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopoffset\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopoffset)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Type")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Type")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <SELECT NAME=\"fftype\">
 			<OPTION VALUE=\"0\" ".
-			  ( ($fftype==0) ? "SELECTED" : "" ).">"._("Generic")."
+			  ( ($fftype==0) ? "SELECTED" : "" ).">".__("Generic")."
 			<OPTION VALUE=\"1\" ".
-			  ( ($fftype==1) ? "SELECTED" : "" ).">"._("Insurance Claim")."
+			  ( ($fftype==1) ? "SELECTED" : "" ).">".__("Insurance Claim")."
 			<OPTION VALUE=\"2\" ".
-			  ( ($fftype==2) ? "SELECTED" : "" ).">"._("Patient Bill")."
+			  ( ($fftype==2) ? "SELECTED" : "" ).">".__("Patient Bill")."
 			<OPTION VALUE=\"3\" ".
 			  ( ($fftype==3) ? "SELECTED" : "" ).">"."NSF Format"."
 			<OPTION VALUE=\"4\" ".
@@ -137,14 +137,14 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		 </TR>
 		 </TABLE>
 		 <P>
-	 	 <CENTER><INPUT TYPE=SUBMIT VALUE=\""._("Add")."\"></CENTER>
+	 	 <CENTER><INPUT TYPE=SUBMIT VALUE=\"".__("Add")."\"></CENTER>
 		 </FORM>
 		";
 		$display_buffer .= "
 		<P>
 		<CENTER>
 		<A HREF=\"$this->page_name?module=$module\"
-		 >"._("Abandon Modification")."</A>
+		 >".__("Abandon Modification")."</A>
 		</CENTER>
 	  	";
 
@@ -159,7 +159,7 @@ class FixedFormsMaintenance extends MaintenanceModule {
       	if ($id<1) 
 		{
 			$display_buffer .= "
-			 "._("You must select a record to modify.")."
+			 ".__("You must select a record to modify.")."
 			";
 			template_display();
 		}
@@ -246,55 +246,55 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		 <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
 		 <TR>
-		  <TD ALIGN=RIGHT>"._("Name of Form")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Name of Form")." : </TD>
 		   <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=40 MAXLENGTH=50
 			VALUE=\"".prepare($ffname)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Page Length")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Page Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffpagelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffpagelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT>"._("Description")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Description")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=40 MAXLENGTH=100
 			VALUE=\"".prepare($ffdescrip)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Line Length")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Line Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"fflinelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($fflinelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT>"._("Loop Repetitions")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Loop Repetitions")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopnum\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopnum)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Check Char")." : <BR>
-						  "._("(<I>example: \"X\"</I>)")."</TD>
+		  <TD ALIGN=RIGHT>".__("Check Char")." : <BR>
+						  ".__("(<I>example: \"X\"</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
 			VALUE=\"".prepare($ffcheckchar)."\"> 
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT>"._("Loop Line Offset")." : <BR>
-					 "._("(<I>\"1\" skips to the next line</I>)")."</TD>
+		  <TD ALIGN=RIGHT>".__("Loop Line Offset")." : <BR>
+					 ".__("(<I>\"1\" skips to the next line</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopoffset\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopoffset)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT>"._("Type")." : </TD>
+		  <TD ALIGN=RIGHT>".__("Type")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <SELECT NAME=\"fftype\">
 			<OPTION VALUE=\"0\" ".
-			  ( ($fftype==0) ? "SELECTED" : "" ).">"._("Generic")."
+			  ( ($fftype==0) ? "SELECTED" : "" ).">".__("Generic")."
 			<OPTION VALUE=\"1\" ".
-			  ( ($fftype==1) ? "SELECTED" : "" ).">"._("Insurance Claim")."
+			  ( ($fftype==1) ? "SELECTED" : "" ).">".__("Insurance Claim")."
 			<OPTION VALUE=\"2\" ".
-			  ( ($fftype==2) ? "SELECTED" : "" ).">"._("Patient Bill")."
+			  ( ($fftype==2) ? "SELECTED" : "" ).">".__("Patient Bill")."
 			<OPTION VALUE=\"3\" ".
 			  ( ($fftype==3) ? "SELECTED" : "" ).">"."NSF Format"."
 		   </SELECT>
@@ -306,13 +306,13 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		  ALIGN=CENTER>
 		  <TR CLASS=\"reverse\">
 		   <TD>#</TD>
-		   <TD ALIGN=\"CENTER\"><B>"._("Mark")."</B></TD>
-		   <TD><B>"._("Row/Line")."</B></TD>
-		   <TD><B>"._("Column")."</B></TD>
-		   <TD><B>"._("Length")."</B></TD>
-		   <TD><B>"._("Data")."</B></TD>
-		   <TD><B>"._("Format")."</B></TD>
-		   <TD><B>"._("Comment")."</B></TD>
+		   <TD ALIGN=\"CENTER\"><B>".__("Mark")."</B></TD>
+		   <TD><B>".__("Row/Line")."</B></TD>
+		   <TD><B>".__("Column")."</B></TD>
+		   <TD><B>".__("Length")."</B></TD>
+		   <TD><B>".__("Data")."</B></TD>
+		   <TD><B>".__("Format")."</B></TD>
+		   <TD><B>".__("Comment")."</B></TD>
 		  </TR>
 		 ";
 
@@ -458,7 +458,7 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		<P>
 		<CENTER>
 		<A HREF=\"$this->page_name?module=$module\"
-		 >"._("Menu")."</A>
+		 >".__("Menu")."</A>
 		</CENTER>
 	  	";
 
@@ -796,10 +796,10 @@ class FixedFormsMaintenance extends MaintenanceModule {
 				"ORDER BY ffname, ffdescrip"),
 			$this->page_name,
 			array (
-				_("Name")			=>	"ffname",
-				_("Description")	=>	"ffdescrip"
+				__("Name")			=>	"ffname",
+				__("Description")	=>	"ffdescrip"
 			),
-			array ( "", _("NO DESCRIPTION") )
+			array ( "", __("NO DESCRIPTION") )
 		);  
 	} // end function FixedFormsMaintenance->view     
 

@@ -15,7 +15,7 @@ class AcntPaidGraph extends GraphModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function AcntPaidGraph () {
-		$this->graph_text = _("Select Account Paid Graph Dates");
+		$this->graph_text = __("Select Account Paid Graph Dates");
 		$this->graph_opts = array ();
 		$this->GraphModule();
 	} // end constructor AcntPaidGraph
@@ -38,8 +38,8 @@ class AcntPaidGraph extends GraphModule {
 				 "ORDER BY a.procdt";
 		
 		$result = $sql->query($query) or DIE("Query failed");
-		//$display_buffer .= "<CENTER><B>"._("Account Paid Graph From")." $start_dt "._("To")." $end_dt</B><P>";
-		$title = _("Account Paid Graph From")." $start_dt "._("To")." $end_dt";
+		//$display_buffer .= "<CENTER><B>".__("Account Paid Graph From")." $start_dt ".__("To")." $end_dt</B><P>";
+		$title = __("Account Paid Graph From")." $start_dt ".__("To")." $end_dt";
 
 		if ($sql->num_rows($result) > 0)
 		{
@@ -116,11 +116,11 @@ class AcntPaidGraph extends GraphModule {
 		else
 		{
 			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= _("No Records found");
+			$display_buffer .= __("No Records found");
 			$display_buffer .= "</div>\n";
 			$display_buffer .= "<div align=\"center\">\n";
 			$display_buffer .= "<a href=\"reports.php\">".
-				_("Reports")."</a>\n";
+				__("Reports")."</a>\n";
 			$display_buffer .= "</div>\n";
 		}
 

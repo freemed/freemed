@@ -98,22 +98,22 @@ class FacilityMaintenance extends MaintenanceModule {
    } // end internal case
   } // end if not been here
 
-  $book->add_page (_("Primary Information"),
+  $book->add_page (__("Primary Information"),
     array (
 	"psrname", "psraddr1", "psraddr2",
 	"psrcity", "psrstate", "psrzip", "psrcountry"
     ),
     html_form::form_table ( array (
-      _("Facility Name") =>
+      __("Facility Name") =>
 	html_form::text_widget("psrname", 30, 100),
 
-      _("Address (Line 1)") =>
+      __("Address (Line 1)") =>
 	html_form::text_widget("psraddr1", 20, 50),
 
-      _("Address (Line 2)") =>
+      __("Address (Line 2)") =>
 	html_form::text_widget("psraddr2", 20, 50),
 
-      _("City, State, Zip") =>
+      __("City, State, Zip") =>
       "<INPUT TYPE=TEXT NAME=\"psrcity\" SIZE=10 MAXLENGTH=15
        VALUE=\"".prepare($psrcity)."\">
       <INPUT TYPE=TEXT NAME=\"psrstate\" SIZE=4 MAXLENGTH=3
@@ -121,62 +121,62 @@ class FacilityMaintenance extends MaintenanceModule {
       <INPUT TYPE=TEXT NAME=\"psrzip\" SIZE=11 MAXLENGTH=10
        VALUE=\"".prepare($psrzip)."\">",
 
-      _("Country") =>
+      __("Country") =>
       html_form::country_pulldown("psrcountry")
      ) )
     );
 
     $book->add_page (
-      _("Details"),
+      __("Details"),
       array (
         "psrnote", "psrdefphy", "psrein", "psrintext", "psrpos"
       ),
       html_form::form_table ( array (
-        _("Description") =>
+        __("Description") =>
         "<INPUT TYPE=TEXT NAME=\"psrnote\" SIZE=20 MAXLENGTH=40
          VALUE=\"".prepare($psrnote)."\">",
 
-        _("Default Provider") =>
+        __("Default Provider") =>
 	freemed_display_selectbox (
           $sql->query("SELECT * FROM physician WHERE phylname != '' ".
 	  	"ORDER BY phylname,phyfname"),
 	  "#phylname#, #phyfname#",
 	  "psrdefphy" 
 	),
-        _("POS Code") =>
+        __("POS Code") =>
 	freemed_display_selectbox (
           $sql->query("SELECT * FROM pos ORDER BY posname,posdescrip"),
 	  "#posname#, #posdescrip#",
 	  "psrpos" 
 	),
 	
-        _("Employer Identification Number") =>
+        __("Employer Identification Number") =>
 	html_form::text_widget("psrein", 9),
 
-        _("Internal or External Facility") =>
+        __("Internal or External Facility") =>
 	html_form::select_widget(
 		"psrintext",
 		array (
-			_("Internal") => "0",
-			_("External") => "1"
+			__("Internal") => "0",
+			__("External") => "1"
 		)
 	)
 
       ) )
     );
 
-    $book->add_page (_("Contact"),
+    $book->add_page (__("Contact"),
       array (
         array_merge(phone_vars("psrphone"), phone_vars("psrfax")), "psremail"
       ),
       html_form::form_table ( array (
-        _("Phone Number") =>
+        __("Phone Number") =>
         fm_phone_entry ("psrphone"),
 
-      _("Fax Number") =>
+      __("Fax Number") =>
       fm_phone_entry ("psrfax"),
 
-        _("Email Address") =>
+        __("Email Address") =>
 	html_form::text_widget('psremail', 25)
 
      ) )
@@ -212,8 +212,8 @@ class FacilityMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Name")         => "psrname",
-				_("Description")  => "psrnote"
+				__("Name")         => "psrname",
+				__("Description")  => "psrnote"
 			),
 			array ("", " ")
 		);

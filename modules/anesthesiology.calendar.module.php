@@ -38,10 +38,10 @@ class AnesthCalendar extends CalendarModule {
 
 		// Check for calendar modification
 		//if ($submit=="travelbook") $this->bulk_book();
-		if ($submit==_("Book")) $this->single_book();
+		if ($submit==__("Book")) $this->single_book();
 
 		// Check for calendar deletions
-		if ($submit==_("Delete")) $this->delete_date();
+		if ($submit==__("Delete")) $this->delete_date();
 
 		// For extra space, turn off template
 		$GLOBALS['__freemed']['no_template_display'] = true;
@@ -57,7 +57,7 @@ class AnesthCalendar extends CalendarModule {
 		}
 
 		// Set page title
-		global $page_title; $page_title = _("Group Calendar");
+		global $page_title; $page_title = __("Group Calendar");
 
 		// Grab the form and display it.
 		$display_buffer .= $this->displayForm();
@@ -82,7 +82,7 @@ class AnesthCalendar extends CalendarModule {
 		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
 		 WIDTH=\"100%\">
 		<tr>
-		<td COLSPAN=\"2\"><b>"._("Anesthesiology Scheduler")."</b> for
+		<td COLSPAN=\"2\"><b>".__("Anesthesiology Scheduler")."</b> for
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\"/>
 			".html_form::select_widget(
@@ -114,7 +114,7 @@ class AnesthCalendar extends CalendarModule {
 		<table WIDTH=\"100%\" CELLSPACING=\0\" CELLPADDING=\"2\" ".
 		"BORDER=\"0\" CLASS=\"calendar\">
 		<tr><td>
-		"._("Book")."
+		".__("Book")."
 		".html_form::select_widget("anphysician",
 			freemed::query_to_array(
 				"SELECT CONCAT(phylname,', ',".
@@ -123,19 +123,19 @@ class AnesthCalendar extends CalendarModule {
 				"WHERE phyanesth='1' ".
 				"ORDER BY phylname, phyfname"
 			)
-		)." "._("on selected date")."
+		)." ".__("on selected date")."
 		</td>
 		<td>
 		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\" ".
-			"VALUE=\""._("Book")."\"/>
+			"VALUE=\"".__("Book")."\"/>
 		</form>
 		</td></tr>
 		</table>
 		</div>
 		<p/>
 		".template::link_bar(array(
-			_("Calendar") => "calendar.php",
-			_("Return to Main Menu") => "main.php"
+			__("Calendar") => "calendar.php",
+			__("Return to Main Menu") => "main.php"
 		));
 
 		return $buffer;

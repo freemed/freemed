@@ -15,7 +15,7 @@ class ReceivablesGraph extends GraphModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function ReceivablesGraph () {
-		$this->graph_text = _("Select Receivables Graph Dates");
+		$this->graph_text = __("Select Receivables Graph Dates");
 		$this->GraphModule();
 	} // end constructor ReceivablesGraph
 
@@ -40,11 +40,11 @@ class ReceivablesGraph extends GraphModule {
 			)."\" border=\"0\" alt=\"\"/>\n";
 		} else {
 			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= _("No receivables found.")."\n";
+			$display_buffer .= __("No receivables found.")."\n";
 			$display_buffer .= "</div>\n";
 			$display_buffer .= "<div align=\"center\">\n";
 			$display_buffer .= "<a href=\"reports.php\">".
-				_("Reports")."</a>\n";
+				__("Reports")."</a>\n";
 			$display_buffer .= "</div>\n";
 		}
 
@@ -65,8 +65,8 @@ class ReceivablesGraph extends GraphModule {
 	
 		
 		$result = $sql->query($query) or DIE("Query failed");
-		$titleb = _("Receivables Graph From")." $start_dt "._("To")." $end_dt";
-		$titlep = _("Receivables Pie Chart From")." $start_dt "._("To")." $end_dt";
+		$titleb = __("Receivables Graph From")." $start_dt ".__("To")." $end_dt";
+		$titlep = __("Receivables Pie Chart From")." $start_dt ".__("To")." $end_dt";
 		if ($sql->num_rows($result) > 0)
 		{
 			$tot_copay=0;

@@ -48,8 +48,8 @@ class CurrentProblemsModule extends EMRModule {
 			<TABLE BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 			"CELLPADDING=\"2\">
 			<TR CLASS=\"menubar_info\">
-			<TD>"._("Problem")."</TD>
-			<TD>"._("Action")."</TD>
+			<TD>".__("Problem")."</TD>
+			<TD>".__("Action")."</TD>
 			</TR>
 			";
 
@@ -86,7 +86,7 @@ class CurrentProblemsModule extends EMRModule {
 			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
 			prepare($patient)."\"/>
 			".html_form::text_widget("problem", 20, 50)."
-			<input TYPE=\"SUBMIT\" VALUE=\""._("Add")."\" class=\"button\"/>
+			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\"/>
 			</form>
 			</div>
 			";
@@ -123,7 +123,7 @@ class CurrentProblemsModule extends EMRModule {
 
 		$display_buffer .= "
 		<P><CENTER>
-		"._("Adding")." ...
+		".__("Adding")." ...
 		";
 
 		// Update the proper table
@@ -135,8 +135,8 @@ class CurrentProblemsModule extends EMRModule {
 		$result = $sql->query($query);
 
 		// Check for result, etc
-		if ($result) { $display_buffer .= _("done");  }
-		 else        { $display_buffer .= _("ERROR"); }
+		if ($result) { $display_buffer .= __("done");  }
+		 else        { $display_buffer .= __("ERROR"); }
 		$display_buffer .= "</CENTER>\n";
 
 		// If we came from patient management (EMR), return there
@@ -170,7 +170,7 @@ class CurrentProblemsModule extends EMRModule {
 
 		$display_buffer .= "
 		<P><CENTER>
-		"._("Deleting")." ...
+		".__("Deleting")." ...
 		";
 
 		// Update the proper table
@@ -182,8 +182,8 @@ class CurrentProblemsModule extends EMRModule {
 		$result = $sql->query($query);
 
 		// Check for result, etc
-		if ($result) { $display_buffer .= _("done");  }
-		 else        { $display_buffer .= _("ERROR"); }
+		if ($result) { $display_buffer .= __("done");  }
+		 else        { $display_buffer .= __("ERROR"); }
 		$display_buffer .= "</CENTER>\n";
 
 		// If we came from patient management (EMR), return there

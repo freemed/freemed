@@ -69,18 +69,18 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 		<div ALIGN=\"CENTER\">
 		".html_form::form_table(array(
     
-		_("Name") =>
+		__("Name") =>
 		html_form::text_widget('dfname', 20, 100),
 
-		_("Description") =>
+		__("Description") =>
 		html_form::text_widget('dfdescrip', 30, 100)
 
 		))."</div>
 
 		<div ALIGN=\"CENTER\">
 		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".(
- 			($action=='modform') ? _("Modify") : _("Add") )." \"/>
-		<input class=\"button\" TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+ 			($action=='modform') ? __("Modify") : __("Add") )." \"/>
+		<input class=\"button\" TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\"/>
 		</div>
 
 		</form>
@@ -98,10 +98,10 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Name")		=>	"dfname",
-				_("Description")	=>	"dfdescrip"
+				__("Name")		=>	"dfname",
+				__("Description")	=>	"dfdescrip"
 			),
-			array ("", _("NO DESCRIPTION")), 
+			array ("", __("NO DESCRIPTION")), 
 			"", 
 			"t_page"
 		);

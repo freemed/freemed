@@ -144,12 +144,12 @@ class GenerateFormsModule extends BillingModule {
 				$display_buffer .= "
 				<P>
 				<CENTER>
-				<B>"._("Nothing to Bill!")."</B>
+				<B>".__("Nothing to Bill!")."</B>
 				</CENTER>
 				<P>
 				<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("Return to Fixed Forms Generation Menu")."</A>
+				>".__("Return to Fixed Forms Generation Menu")."</A>
 				</CENTER>
 				<P>
 				";
@@ -179,12 +179,12 @@ class GenerateFormsModule extends BillingModule {
 			$display_buffer .= "
 		 	<P>
 		 	<CENTER>
-		  	<B>"._("Nothing set to be marked!")."</B>
+		  	<B>".__("Nothing set to be marked!")."</B>
 		 	</CENTER>
 		 	<P>
 		 	<CENTER>
 		  	<A HREF=\"$this->page_name?module=$module\"
-		  	>"._("Return to Fixed Forms Generation Menu")."</A>
+		  	>".__("Return to Fixed Forms Generation Menu")."</A>
 		 	</CENTER>
 		 	<P>
 			";
@@ -247,11 +247,11 @@ class GenerateFormsModule extends BillingModule {
        			$proc_result = $sql->query ($query);
        			if ($result) 
 				{ 
-					$display_buffer .= _("done").".<BR>\n"; 
+					$display_buffer .= __("done").".<BR>\n"; 
 				}
        			else        
 				{ 
-					$display_buffer .= _("ERROR")."<BR>\n"; 
+					$display_buffer .= __("ERROR")."<BR>\n"; 
 				}
 
 			} // end proces for patient loop
@@ -261,7 +261,7 @@ class GenerateFormsModule extends BillingModule {
       	<P>
       	<CENTER>
        	<A HREF=\"$this->page_name?module=$module\"
-       	>"._("Back")."</A>
+       	>".__("Back")."</A>
       	</CENTER>
       	<P>
      	";
@@ -282,7 +282,7 @@ class GenerateFormsModule extends BillingModule {
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
      	$display_buffer .= "
-      	<B>"._("Processing")." ".$this_patient->fullName()."
+      	<B>".__("Processing")." ".$this_patient->fullName()."
       	</B><BR>\n\n
      	";
      	flush ();
@@ -861,7 +861,7 @@ class GenerateFormsModule extends BillingModule {
    $display_buffer .= "
     <FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
      <CENTER>
-      <B>"._("Preview")."</B>
+      <B>".__("Preview")."</B>
      </CENTER>
      <BR>
      <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
@@ -869,10 +869,10 @@ class GenerateFormsModule extends BillingModule {
     <P>
     <CENTER>
      <SELECT NAME=\"type\">
-      <OPTION VALUE=\"\">"._("Render to Screen")."
+      <OPTION VALUE=\"\">".__("Render to Screen")."
       <OPTION VALUE=\"application/x-rendered-text\">Render to File
      </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
+     <INPUT TYPE=SUBMIT VALUE=\"".__("Get HCFA Rendered Text File")."\">
     </CENTER>
     </FORM>
     <P>
@@ -881,7 +881,7 @@ class GenerateFormsModule extends BillingModule {
    // present the form so that we can mark as billed
    $display_buffer .= "
     <CENTER>
-    <B>"._("Mark as Billed")."</B>
+    <B>".__("Mark as Billed")."</B>
     </CENTER>
     <BR>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
@@ -912,7 +912,7 @@ class GenerateFormsModule extends BillingModule {
    } // end looping for all processed patients
    $display_buffer .= "
     <P>
-    <INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
+    <INPUT TYPE=SUBMIT VALUE=\"".__("Mark as Billed")."\">
     </FORM>
     <P>
    ";
@@ -933,7 +933,7 @@ class GenerateFormsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <B>"._("Generate Insurance Claim Forms")."</B>
+		   <B>".__("Generate Insurance Claim Forms")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
@@ -967,7 +967,7 @@ class GenerateFormsModule extends BillingModule {
 		<TR>
 		 <TD ALIGN=RIGHT>
 		  <CENTER>
-		   "._("Number of Patients")." :"."
+		   ".__("Number of Patients")." :"."
 		  </CENTER>
 		 </TD>
 		 <TD ALIGN=LEFT>
@@ -979,7 +979,7 @@ class GenerateFormsModule extends BillingModule {
 	   $display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  "._("Skip # of Pats to Bill :")."
+		  ".__("Skip # of Pats to Bill :")."
 		 </TD>
 		 <TD ALIGN=LEFT>
 	   ".fm_number_select ("skip", 0, 100)."
@@ -992,10 +992,10 @@ class GenerateFormsModule extends BillingModule {
 			To : 
 		   </TD><TD ALIGN=LEFT>
 			<SELECT NAME=\"bill_request_type\">
-			 <OPTION VALUE=\"1\">"._("1st Insurance")."
-			 <OPTION VALUE=\"2\">"._("2nd Insurance")."
-         <OPTION VALUE=\"3\">"._("3rd Insurance")."
-         <OPTION VALUE=\"4\">"._("Worker's Comp")."
+			 <OPTION VALUE=\"1\">".__("1st Insurance")."
+			 <OPTION VALUE=\"2\">".__("2nd Insurance")."
+         <OPTION VALUE=\"3\">".__("3rd Insurance")."
+         <OPTION VALUE=\"4\">".__("Worker's Comp")."
         </SELECT>
 		<INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
        </TD>
@@ -1004,7 +1004,7 @@ class GenerateFormsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
+		   <INPUT TYPE=SUBMIT VALUE=\"".__("Go")."\">
 		  </CENTER>
 		 </TD>
 		</TR>

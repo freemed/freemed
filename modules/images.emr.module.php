@@ -31,9 +31,9 @@ class PatientImages extends EMRModule {
 
 		// Define variables for EMR summary
 		$this->summary_vars = array (
-			_("Date")        =>	"imagedt",
-			_("Type")        =>	"imagetype",
-			_("Description") =>	"imagedesc"
+			__("Date")        =>	"imagedt",
+			__("Type")        =>	"imagetype",
+			__("Description") =>	"imagedesc"
 		);
 		$this->summary_options |= SUMMARY_VIEW;
 
@@ -77,7 +77,7 @@ class PatientImages extends EMRModule {
 	function add () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module;
 		$display_buffer .= "
-			<div ALIGN=\"CENTER\"><b>"._("Adding")." ... </b>
+			<div ALIGN=\"CENTER\"><b>".__("Adding")." ... </b>
 		";
 
 		// Have to add then update to get file name
@@ -104,16 +104,16 @@ class PatientImages extends EMRModule {
 		}
 
 		if ($result) {
-			$display_buffer .= " <b> "._("done").". </b>\n";
+			$display_buffer .= " <b> ".__("done").". </b>\n";
 		} else {
 			if ($debug) $display_buffer .= "(query = '$query') ";
-			 $display_buffer .= " <b> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </b>\n";
+			 $display_buffer .= " <b> <FONT COLOR=#ff0000>".__("ERROR")."</FONT> </b>\n";
 		}
 		$display_buffer .= "<br/>\n";
 
 		// Update database with proper file name
 		$display_buffer .= "
-			<div ALIGN=\"CENTER\"><b>"._("Updating database")." ... </b>
+			<div ALIGN=\"CENTER\"><b>".__("Updating database")." ... </b>
 		";
 
 		$query = $sql->update_query (
@@ -124,24 +124,24 @@ class PatientImages extends EMRModule {
 		$result = $sql->query ($query);
 
 		if ($result) {
-			$display_buffer .= " <b> "._("done").". </b>\n";
+			$display_buffer .= " <b> ".__("done").". </b>\n";
 		} else {
 			if ($debug) $display_buffer .= "(query = '$query') ";
-			 $display_buffer .= " <b> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </b>\n";
+			 $display_buffer .= " <b> <FONT COLOR=#ff0000>".__("ERROR")."</FONT> </b>\n";
 		}
 
 		$display_buffer .= "
 		</div>
 		<p/>
 		<div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
-		>"._("Manage Patient")."</a>
+		>".__("Manage Patient")."</a>
 		<b>|</b>
 		<a HREF=\"$this->page_name?module=$module&patient=$patient\"
 		>"._($this->record_name)."</a>
 		<b>|</b>
 		<a HREF=\"$this->page_name?module=$module&patient=$patient&".
 		"action=addform\"
-		>"._("Add Another")."</a>
+		>".__("Add Another")."</a>
 		</div>
 		";
 		global $refresh, $manage;
@@ -175,7 +175,7 @@ class PatientImages extends EMRModule {
 		<a HREF=\"";
 		if ($return=="manage") {
 			$display_buffer .= "manage.php?id=$patient\">".
-			_("Manage Patient");
+			__("Manage Patient");
 		} else {
 			$display_buffer .= $this->page_name."?".
 			"module=".urlencode($module)."&".
@@ -212,7 +212,7 @@ class PatientImages extends EMRModule {
 			// Actual piece
 			$imageeoc = sql_squash($imageeoc); // for multiple choice (HACK)
 			$related_episode_array = array (
-			_("Related Episode(s)") =>
+			__("Related Episode(s)") =>
 			freemed::multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
                                   "eocdtlastsimilar FROM eoc WHERE ".
                                   "eocpatient='".addslashes($patient)."'",
@@ -244,36 +244,36 @@ class PatientImages extends EMRModule {
 		$display_buffer .= html_form::form_table(array_merge(
 		array(
 
-			_("Date") =>
+			__("Date") =>
 			date_entry ("imagedt"),
 
-			_("Type of Image") =>
+			__("Type of Image") =>
 			html_form::select_widget(
 				"imagetype",
 				array(
-					_("Insurance Card") => "insurance_card",
-					_("Lab Report") => "lab_report",
-					_("Miscellaneous") => "misc",
-					_("Operative Report") => "op_report",
-					_("Pathology") => "pathology",
-					_("Patient History") => "patient_history",
-					_("Questionnaire") => "questionnaire",
-					_("Radiology") => "radiology",
-					_("Referral") => "referral"
+					__("Insurance Card") => "insurance_card",
+					__("Lab Report") => "lab_report",
+					__("Miscellaneous") => "misc",
+					__("Operative Report") => "op_report",
+					__("Pathology") => "pathology",
+					__("Patient History") => "patient_history",
+					__("Questionnaire") => "questionnaire",
+					__("Radiology") => "radiology",
+					__("Referral") => "referral"
 				)
 			)
 
 		), $related_episode_array,
 		array (
 
-			_("Description") =>
+			__("Description") =>
 			html_form::text_widget("imagedesc", 30, 150),
 
-			_("Attach Image") =>
+			__("Attach Image") =>
 			( (($action=="add") || ($action=="addform")) ?
 			( ($this->IEupload) ? $this->activeXupload() :
 			"<input TYPE=\"FILE\" NAME=\"imageupload\"/>" ) :
-			_("ATTACHED") )
+			__("ATTACHED") )
 
 		)));
 
@@ -281,9 +281,9 @@ class PatientImages extends EMRModule {
 			<div ALIGN=\"CENTER\">
 			<input TYPE=\"SUBMIT\" VALUE=\"".
 			( ($action=="add" || $action=="addform") ?
-			_("Attach Image") : _("Modify") )."\" class=\"button\"/>
+			__("Attach Image") : __("Modify") )."\" class=\"button\"/>
 			<input TYPE=\"SUBMIT\" NAME=\"submit\" ".
-			 "VALUE=\""._("Cancel")."\" class=\"button\"/>
+			 "VALUE=\"".__("Cancel")."\" class=\"button\"/>
 			</div>
 
 		</form></div>
@@ -293,7 +293,7 @@ class PatientImages extends EMRModule {
 	function mod () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module, $id;
 		$display_buffer .= "
-			<div ALIGN=\"CENTER\"><b>"._("Modifying")." ... </b>
+			<div ALIGN=\"CENTER\"><b>".__("Modifying")." ... </b>
 		";
 
 		// Have to add then update to get file name
@@ -311,17 +311,17 @@ class PatientImages extends EMRModule {
 		if ($debug) $display_buffer .= "(query = '$query') ";
 
 		if ($result) {
-			$display_buffer .= " <b> "._("done").". </b>\n";
+			$display_buffer .= " <b> ".__("done").". </b>\n";
 		} else {
 			if ($debug) $display_buffer .= "(query = '$query') ";
-			 $display_buffer .= " <b> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </b>\n";
+			 $display_buffer .= " <b> <FONT COLOR=#ff0000>".__("ERROR")."</FONT> </b>\n";
 		}
 
 		$display_buffer .= "
 		</div>
 		<p/>
 		<div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
-		>"._("Manage Patient")."</a>
+		>".__("Manage Patient")."</a>
 		<b>|</b>
 		<a HREF=\"$this->page_name?module=$module&patient=$patient\"
 		>"._($this->record_name)."</a>
@@ -354,7 +354,7 @@ class PatientImages extends EMRModule {
 			), // array
 			array (
 				"",
-				_("NO DESCRIPTION")
+				__("NO DESCRIPTION")
 			),
 			NULL, NULL, NULL,
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL

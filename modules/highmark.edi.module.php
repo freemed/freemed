@@ -102,14 +102,14 @@ class HighmarkEDIModule extends EDIModule {
                         <TD ALIGN=RIGHT>
                         <INPUT TYPE=RADIO NAME=\"providertyp\" VALUE=\"0\" CHECKED>
                         </TD><TD ALIGN=LEFT>
-                        "._("Physician")."
+                        ".__("Physician")."
                         </TD>
                         </TR>
                         <TR>
                         <TD ALIGN=RIGHT>
                         <INPUT TYPE=RADIO NAME=\"providertyp\" VALUE=\"1\">
                         </TD><TD ALIGN=LEFT>
-                        "._("Physician Group")."
+                        ".__("Physician Group")."
                         </TD>
                         </TR>
                         </TABLE></CENTER>" );
@@ -153,7 +153,7 @@ class HighmarkEDIModule extends EDIModule {
         	<P>
         	<CENTER>
         	<A HREF=\"$this->page_name?module=$module\">
-        	"._("Back")."</A>
+        	".__("Back")."</A>
         	</CENTER>
         	<P>
         	";
@@ -166,7 +166,7 @@ class HighmarkEDIModule extends EDIModule {
         	<P>
         	<CENTER>
         	<A HREF=\"$this->page_name?module=$module\">
-        	"._("Back")."</A>
+        	".__("Back")."</A>
         	</CENTER>
         	<P>
         	";
@@ -181,7 +181,7 @@ class HighmarkEDIModule extends EDIModule {
         	<P>
         	<CENTER>
         	<A HREF=\"$this->page_name?module=$module\">
-        	"._("Back")."</A>
+        	".__("Back")."</A>
         	</CENTER>
         	<P>
         	";
@@ -283,7 +283,7 @@ class HighmarkEDIModule extends EDIModule {
 							      a.proccurcovid = b.id";
 				$provider_result = $sql->query($query);
 				if (!$provider_result) {
-					$display_buffer .= _("ERROR")." - No Physcians";
+					$display_buffer .= __("ERROR")." - No Physcians";
 					template_display();
 				}
 				while($provrow = $sql->fetch_array($provider_result))
@@ -298,12 +298,12 @@ class HighmarkEDIModule extends EDIModule {
 			{
 				$pos = freemed::get_link_rec($providerid[$p],"phygroup");
 				if (!$pos) {
-					$display_buffer .= _("ERROR")." - failed getting facility for group";
+					$display_buffer .= __("ERROR")." - failed getting facility for group";
 					template_display();
 				}
 				$fac = $pos[phygroupfac];
 				if (!$fac) {
-					$display_buffer .= _("ERROR")." -  failed getting facility for group 2";
+					$display_buffer .= __("ERROR")." -  failed getting facility for group 2";
 					template_display();
 				}
 				$query = "SELECT DISTINCT procpatient,proccurcovid
@@ -316,7 +316,7 @@ class HighmarkEDIModule extends EDIModule {
 							      a.proccurcovid = b.id";
 				$provider_result = $sql->query($query);
 				if (!$provider_result) {
-					$display_buffer .= _("ERROR")." - No Physicians";
+					$display_buffer .= __("ERROR")." - No Physicians";
 					template_display();
 				}
 				while($provrow = $sql->fetch_array($provider_result))
@@ -1041,7 +1041,7 @@ class HighmarkEDIModule extends EDIModule {
 		// false says to return a result set
 		$result = $this->GetClaims(false);
 		if (!$result) {
-			$display_buffer .= _("ERROR")." - Query failed";
+			$display_buffer .= __("ERROR")." - Query failed";
 			template_display();
 		}
 

@@ -84,12 +84,12 @@ class RebillByCovModule extends BillingModule {
 			$display_buffer .= "
 			<P>
 			<CENTER>
-			<B>"._("Rebill for ").$insco->local_record[insconame]." "._("Done")."</B>
+			<B>".__("Rebill for ").$insco->local_record[insconame]." ".__("Done")."</B>
 			</CENTER>
 			<P>
 			<CENTER>
 			<A HREF=\"$this->page_name?module=$module\"
-			>"._("Return to Rebill Menu")."</A>
+			>".__("Return to Rebill Menu")."</A>
 			</CENTER>
 			<P>
 			";
@@ -121,7 +121,7 @@ class RebillByCovModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <B>"._("Rebill By Coverage")."</B>
+		   <B>".__("Rebill By Coverage")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
@@ -163,7 +163,7 @@ class RebillByCovModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
+		   <INPUT TYPE=SUBMIT VALUE=\"".__("Go")."\">
 		  </CENTER>
 		 </TD>
 		  <TD><INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\"></TD>

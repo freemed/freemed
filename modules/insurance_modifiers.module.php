@@ -51,19 +51,19 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 		<input TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 
 		".html_form::form_table ( array (
-		_("Modifier") =>
+		__("Modifier") =>
 			html_form::text_widget('insmod', 15),
-		_("Description") =>
+		__("Description") =>
 			html_form::text_widget('insmoddesc', 20, 50)
 		) )."
 
 		<p/>
 		<div ALIGN=\"CENTER\">
 		<input class=\"button\" type=\"SUBMIT\" VALUE=\" ".
-		 ( ($action=="addform") ? _("Add") : _("Modify") )." \"/>
-		<input TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
+		 ( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
+		<input TYPE=\"RESET\" VALUE=\"".__("Clear")."\"/>
 		<input class=\"button\" name=\"submit\" ".
-		"type=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+		"type=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
 		</div></form>
 		<p/>
 		";
@@ -82,20 +82,20 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Modifier") => "insmod",
-				_("Description") => "insmoddesc"
+				__("Modifier") => "insmod",
+				__("Description") => "insmoddesc"
 			),
 			array (
 				"",
-				_("NO DESCRIPTION")
+				__("NO DESCRIPTION")
 			)
 		);  
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
 		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\">
 		 <tr>
-		  <td>"._("Modifier")."</td>
-		  <td>"._("Description")."</td>
+		  <td>".__("Modifier")."</td>
+		  <td>".__("Description")."</td>
 		  <td>&nbsp;</td>
 		 </tr>
 		 <tr VALIGN=\"CENTER\">
@@ -106,7 +106,7 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 		 <td VALIGN=\"CENTER\">
 		  <input TYPE=\"TEXT\" NAME=\"insmoddesc\" SIZE=\"20\"
 		   MAXLENGTH=\"50\"></td>
-		 <td VALIGN=\"CENTER\"><input TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"></form></td>
+		 <td VALIGN=\"CENTER\"><input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\"></form></td>
 		 </tr>
 		</table>
 		</div>

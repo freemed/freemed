@@ -115,8 +115,8 @@ class PrescriptionModule extends EMRModule {
 		}
 
 		$display_buffer .= html_form::form_table(array(
-			_("Drug") => $rxdrug,
-			_("Dosage") => $rxdosage." ".$rxunit." ".$rxinterval
+			__("Drug") => $rxdrug,
+			__("Dosage") => $rxdosage." ".$rxunit." ".$rxinterval
 		));
 	} // end function PrescriptionModule->display
 
@@ -145,14 +145,14 @@ class PrescriptionModule extends EMRModule {
 		$book->set_submit_name(
 			(
 				( ($action=="add") or ($action=="addform") ) ?
-				_("Add") :
-				 _("Modify")
+				__("Add") :
+				 __("Modify")
 			)
 		);
 
 		// Add pages
 		$book->add_page(
-			_("Prescription"),
+			__("Prescription"),
 			array(
 				"rxdtfrom",
 				"rxdrug",
@@ -166,18 +166,18 @@ class PrescriptionModule extends EMRModule {
 				"rxsubstitute"
 			),
 			html_form::form_table(array(
-				_("Starting Date") =>
+				__("Starting Date") =>
 				date_entry("rxdtfrom"),
 
-				_("Drug") =>
+				__("Drug") =>
 				freemed::drug_widget("rxdrug", "myform", "__action"),
 
-				_("Quantity") =>
+				__("Quantity") =>
 				html_form::text_widget(
 					"rxquantity", 10
 				),
 
-				_("Medicine Units") =>
+				__("Medicine Units") =>
 				html_form::text_widget(
 					"rxsize", 10
 				).
@@ -194,11 +194,11 @@ class PrescriptionModule extends EMRModule {
 					)
 				),
 
-				_("Dosage") =>
+				__("Dosage") =>
 				html_form::text_widget(
 					"rxdosage", 10
 				).
-				" "._("in")." ".
+				" ".__("in")." ".
 				html_form::select_widget(
 					"rxform",
 					array(
@@ -223,27 +223,27 @@ class PrescriptionModule extends EMRModule {
 					)
 				),
 
-				_("Refill") =>
+				__("Refill") =>
 				html_form::number_pulldown(
 					"rxrefills", 0, 20
 				)." / ".
 				html_form::text_widget(
 					"rxperrefill", 10
-				)." "._("units"),
+				)." ".__("units"),
 
-				_("Substitution") =>
+				__("Substitution") =>
 				html_form::select_widget(
 					"rxsubstitute",
 					array (
-					_("may not substitute") => "may not substitute",
-					_("may substitute") => "may substitute"
+					__("may not substitute") => "may not substitute",
+					__("may substitute") => "may substitute"
 					)
 				)
 			))
 		);
 
 		$book->add_page(
-			_("Notes"),
+			__("Notes"),
 			array(
 				"rxnote"
 			),
@@ -321,11 +321,11 @@ class PrescriptionModule extends EMRModule {
 			),
 			$this->page_name,
 			array(
-				_("Date") => "rxdtfrom",
-				_("Drug") => "rxdrug",
-				_("Dosage") => "_dosage"
+				__("Date") => "rxdtfrom",
+				__("Drug") => "rxdrug",
+				__("Dosage") => "_dosage"
 			),
-			array("", _("NONE")),
+			array("", __("NONE")),
 			NULL, NULL, NULL,
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);

@@ -77,9 +77,9 @@ class ViewCalendar extends CalendarModule {
 		$display_buffer .= 
 			 "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>\n".
 			 fm_date_entry("jumpdate").
-			 "<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Go")."\"/>\n".
+			 "<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Go")."\"/>\n".
 			 "<a class=\"button\" href=\"calendar.php\">".
-			 	_("Calendar")."</a>\n".
+			 	__("Calendar")."</a>\n".
 			 "</div></form>\n";
 	} // end function module->view
 
@@ -129,10 +129,10 @@ class ViewCalendar extends CalendarModule {
 		$postnote = $row[calpostnote];
 
 		if (empty($prenote))
-			$prenote = _("None");
+			$prenote = __("None");
 
 		if (empty($postnote))
-			$postnote = _("None");
+			$postnote = __("None");
 
 		$calminute = $row["calminute"];
 		$calhour = $row["calhour"];
@@ -144,18 +144,18 @@ class ViewCalendar extends CalendarModule {
 
 		$data = "";	
 		$data = html_form::form_table(array (
-				_("Patient") => $ptname,
-				_("Physician") => $phname,
-				_("Facility") => $facname,
-				_("Room") => $roomname,
-				_("Time") => $time,
-				_("Pre Note") => $prenote,
-				_("Post Note") => $postnote)
+				__("Patient") => $ptname,
+				__("Physician") => $phname,
+				__("Facility") => $facname,
+				__("Room") => $roomname,
+				__("Time") => $time,
+				__("Pre Note") => $prenote,
+				__("Post Note") => $postnote)
 		);
 		$display_buffer .= "<div CLASS=\"letterbox\">$data</div>\n";
 		$display_buffer .= "<div ALIGN=\"CENTER\">\n".
 			"<a HREF=\"javascript:window.close();\">".
-			_("Close")."</a>\n".
+			__("Close")."</a>\n".
 			"</div>\n";
 	
 	} // end display

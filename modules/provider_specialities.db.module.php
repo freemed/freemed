@@ -59,10 +59,10 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Specialty") 			=> 	"specname",
-				_("Specialty Description") 	=> 	"specdesc"
+				__("Specialty") 			=> 	"specname",
+				__("Specialty Description") 	=> 	"specdesc"
 			),
-			array ("", _("NO DESCRIPTION"))
+			array ("", __("NO DESCRIPTION"))
 			)."
 			<CENTER>
 			<TABLE>".
@@ -79,14 +79,14 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
       
    
    <TR><TD ALIGN=RIGHT>   
-    "._("Specialty")." :
+    ".__("Specialty")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=\"specname\" SIZE=10 MAXLENGTH=50 
      VALUE=\"".prepare($specname)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>   
-    "._("Specialty Description")." :
+    ".__("Specialty Description")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=\"specdesc\" SIZE=30 MAXLENGTH=100
      VALUE=\"".prepare($specdesc)."\">
@@ -94,8 +94,8 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
    
    <TR><TD ALIGN=CENTER COLSPAN=2>   
     <INPUT TYPE=SUBMIT VALUE=\"".(($action=="modform") ? 
-      _("Update") : _("Add"))." \">
-    <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
+      __("Update") : __("Add"))." \">
+    <INPUT TYPE=RESET  VALUE=\"".__("Remove Changes")."\">
     </FORM>
    </TD></TR>
    </TABLE>
@@ -105,7 +105,7 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
   if ($action=="modform") $display_buffer .= "
     <CENTER>
     <A HREF=\"$this->page_name?module=$module&action=view\"
-     >"._("Abandon Modification")."</A>
+     >".__("Abandon Modification")."</A>
     </CENTER>
   ";
 	} // end function ProviderSpecialtiesMaintenance->view()

@@ -105,37 +105,37 @@ class CptMaintenance extends MaintenanceModule {
 		} // end checking if been here
 
   $book->add_page (
-    _("Primary Information"),
+    __("Primary Information"),
     array ("cptcode", "cptnameint", "cptnameext", "cptgender",
            "cpttaxed", "cpttype"),
     html_form::form_table (array (
-      _("Procedural Code") =>
+      __("Procedural Code") =>
 	html_form::text_widget("cptcode", 7)." &nbsp;".
 	$book->generate_refresh(),
 
-      _("Internal Description") =>
+      __("Internal Description") =>
       "<INPUT TYPE=TEXT NAME=\"cptnameint\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($cptnameint)."\">",
-      _("External Description") =>
+      __("External Description") =>
       "<INPUT TYPE=TEXT NAME=\"cptnameext\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($cptnameext)."\">",
-      _("Gender Restriction") =>
+      __("Gender Restriction") =>
        "<SELECT NAME=\"cptgender\">
        <OPTION VALUE=\"n\" ".
-         ( ($cptgender=="n") ? "SELECTED" : "" ).">"._("no restriction")."
+         ( ($cptgender=="n") ? "SELECTED" : "" ).">".__("no restriction")."
        <OPTION VALUE=\"f\" ".
-         ( ($cptgender=="f") ? "SELECTED" : "" ).">"._("female only")."
+         ( ($cptgender=="f") ? "SELECTED" : "" ).">".__("female only")."
        <OPTION VALUE=\"m\" ".
-         ( ($cptgender=="m") ? "SELECTED" : "" ).">"._("male only")."
+         ( ($cptgender=="m") ? "SELECTED" : "" ).">".__("male only")."
       </SELECT>",
-      _("Taxed?") =>
+      __("Taxed?") =>
       "<SELECT NAME=\"cpttaxed\">
        <OPTION VALUE=\"n\" ".
-         ( ($cpttaxed=="n") ? "SELECTED" : "" ).">"._("no")."
+         ( ($cpttaxed=="n") ? "SELECTED" : "" ).">".__("no")."
        <OPTION VALUE=\"y\" ".
-         ( ($cpttaxed=="y") ? "SELECTED" : "" ).">"._("yes")."
+         ( ($cpttaxed=="y") ? "SELECTED" : "" ).">".__("yes")."
       </SELECT>",
-      _("Internal Service Types") =>
+      __("Internal Service Types") =>
      freemed_display_selectbox(
        $sql->query("SELECT * FROM intservtype"),
        "#intservtype#",
@@ -144,32 +144,32 @@ class CptMaintenance extends MaintenanceModule {
   );
 
 		$book->add_page (
-			_("Billing Information"),
+			__("Billing Information"),
 			array ("cptrelval", "cptdeftos", "cptdefstdfee"),
 			html_form::form_table(array(
-	_("Relative Value") =>
+	__("Relative Value") =>
 	html_form::text_widget("cptrelval", 9),
 
-	_("Default Type of Service") =>
+	__("Default Type of Service") =>
 	freemed_display_selectbox (
           $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
   	  "#tosname# #tosdescrip#",
 	  "cptdeftos"
 	),
 
-	_("Default Standard Fee") =>
+	__("Default Standard Fee") =>
 	html_form::text_widget("cptdefstdfee", 8)
 			))
 		);
 
   $book->add_page (
-    _("Inclusion/Exclusion"),
+    __("Inclusion/Exclusion"),
     array ("cptreqicd", "cptexcicd", "cptreqcpt", "cptexccpt"),
     "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
      <TD ALIGN=RIGHT>
-      "._("Diagnosis Required")." : 
+      ".__("Diagnosis Required")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed::multiple_choice ("SELECT * FROM icd9 ".
                               "ORDER BY icd9code,icd9descrip",
@@ -182,7 +182,7 @@ class CptMaintenance extends MaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      "._("Diagnosis Excluded")." : 
+      ".__("Diagnosis Excluded")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed::multiple_choice ("SELECT * FROM icd9 ".
                              "ORDER BY icd9code,icd9descrip",
@@ -195,7 +195,7 @@ class CptMaintenance extends MaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      "._("Procedural Codes Required")." : 
+      ".__("Procedural Codes Required")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed::multiple_choice ("SELECT * FROM cpt ".
                               "ORDER BY cptnameint,cptcode",
@@ -208,7 +208,7 @@ class CptMaintenance extends MaintenanceModule {
 
     <TR>
      <TD ALIGN=RIGHT>
-      "._("Procedural Codes Excluded")." : 
+      ".__("Procedural Codes Excluded")." : 
      </TD><TD ALIGN=LEFT>
    ".freemed::multiple_choice ("SELECT * FROM cpt ".
                               "ORDER BY cptcode,cptnameint",
@@ -228,9 +228,9 @@ class CptMaintenance extends MaintenanceModule {
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
       ALIGN=CENTER>
      <TR>
-      <TD><B>"._("Insurance Company")."</B>&nbsp;</TD>
-      <TD><B>"._("Type of Service")."</B>&nbsp;</TD>
-      <TD><B>"._("Standard Fee")."</B></TD>
+      <TD><B>".__("Insurance Company")."</B>&nbsp;</TD>
+      <TD><B>".__("Type of Service")."</B>&nbsp;</TD>
+      <TD><B>".__("Standard Fee")."</B></TD>
      </TR>
     ";
 	$i = 1;
@@ -261,7 +261,7 @@ class CptMaintenance extends MaintenanceModule {
 
 	global $cptdefstdfee;
   $book->add_page (
-    _("Fee Profiles"),
+    __("Fee Profiles"),
     array (""),
     "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2
       ALIGN=CENTER>
@@ -272,14 +272,14 @@ class CptMaintenance extends MaintenanceModule {
 
      <TR>
       <TD ALIGN=RIGHT WIDTH=\"50%\">
-       <B>"._("Procedural Code")."</B> : </TD>
+       <B>".__("Procedural Code")."</B> : </TD>
       <TD ALIGN=LEFT>".prepare($cptcode)."
        <I>(".prepare($cptnameint).")</I></TD>
      </TR>
 
      <TR>
       <TD ALIGN=RIGHT>
-       "._("Default Standard Fee")." : </TD>
+       ".__("Default Standard Fee")." : </TD>
       <TD ALIGN=LEFT>
        ".bcadd($cptdefstdfee,0,2)."
       </TD>
@@ -287,14 +287,14 @@ class CptMaintenance extends MaintenanceModule {
 
      <TR>
       <TD ALIGN=RIGHT>
-       "._("Default Type of Service")." : </TD>
+       ".__("Default Type of Service")." : </TD>
       <TD ALIGN=LEFT>
        ".freemed::get_link_field ($cptdeftos, "tos", "tosname")."</TD>
      </TR>
 
      <TR>
       <TD COLSPAN=2><FONT SIZE=-1><I>
-       "._("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
+       ".__("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
       </I></FONT>
      </TD></TR>
      
@@ -338,21 +338,21 @@ class CptMaintenance extends MaintenanceModule {
   $display_buffer .= "
    <P>
     <CENTER>
-    <B>"._("Current Code")."</B> :
+    <B>".__("Current Code")."</B> :
     <A HREF=\"$page_name?id=$id&action=modform\"
     >".$this_code["cptcode"]."</A>&nbsp;
     <I>(".$this_code["cptnameint"].")</I>
     <BR>
-    <U>"._("Default Standard Fee")."</U> :
+    <U>".__("Default Standard Fee")."</U> :
     ".bcadd($this_code["cptdefstdfee"],0,2)."
     <BR>
-    <U>"._("Default Type of Service")."</U> :
+    <U>".__("Default Type of Service")."</U> :
     ".freemed::get_link_field ($this_code["cptdeftos"], "tos", "tosname")."
     </CENTER> 
    <P>
    <CENTER>
     <FONT SIZE=-1><I>
-     "._("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
+     ".__("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
     </I></FONT> 
    </CENTER>
    <P>
@@ -366,9 +366,9 @@ class CptMaintenance extends MaintenanceModule {
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
     ALIGN=CENTER>
    <TR>
-    <TD><B>"._("Insurance Company")."</B>&nbsp;</TD>
-    <TD><B>"._("Type of Service")."</B>&nbsp;</TD>
-    <TD><B>"._("Standard Fee")."</B></TD>
+    <TD><B>".__("Insurance Company")."</B>&nbsp;</TD>
+    <TD><B>".__("Type of Service")."</B>&nbsp;</TD>
+    <TD><B>".__("Standard Fee")."</B></TD>
    </TR>
   ";
   for ($i=1;$i<=$num_inscos;$i++) { // loop thru inscos
@@ -395,8 +395,8 @@ class CptMaintenance extends MaintenanceModule {
    </TABLE>
    <P>
     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\""._("Modify")."\">
-     <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
+     <INPUT TYPE=SUBMIT VALUE=\"".__("Modify")."\">
+     <INPUT TYPE=RESET  VALUE=\"".__("Clear")."\">
     </CENTER>
    <P>
    </FORM>
@@ -404,23 +404,23 @@ class CptMaintenance extends MaintenanceModule {
   break; // end insurance company profiles form 
 
  case "profile": // modification for the profile form
-  $page_title =  _("Modifying")." "._($record_name);
+  $page_title =  __("Modifying")." "._($record_name);
   $query = "UPDATE $this->table_name SET
             cpttos='".fm_join_from_array($cpttos)."',
             cptstdfee='".fm_join_from_array($cptstdfee)."'
             WHERE id='$id'";
   $display_buffer .= "
    <P>
-   "._("Modifying")." ... 
+   ".__("Modifying")." ... 
   ";
   $result = $sql->query ($query);
-  if ($result) { $display_buffer .= _("done")."."; }
-   else        { $display_buffer .= _("ERROR");    }
+  if ($result) { $display_buffer .= __("done")."."; }
+   else        { $display_buffer .= __("ERROR");    }
   $display_buffer .= "
    <P>
    <CENTER>
     <A HREF=\"$page_name\"
-    >"._("back")."</A>
+    >".__("back")."</A>
    </CENTER>
    <P>
   ";
@@ -438,8 +438,8 @@ class CptMaintenance extends MaintenanceModule {
 				$this->table_name." ORDER BY cptcode"),
 			$this->page_name,
 			array (
-				_("Procedural Code")	=>	"cptcode",
-				_("Internal Description")	=>	"cptnameint"
+				__("Procedural Code")	=>	"cptcode",
+				__("Internal Description")	=>	"cptnameint"
 			),
 			array ("", "")
 		);

@@ -15,9 +15,9 @@ class ChargesGraph extends GraphModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function ChargesGraph () {
-		$this->graph_text = _("Select Charges Graph Dates");
+		$this->graph_text = __("Select Charges Graph Dates");
 		$this->graph_opts = array(
-			_("Chart Type") =>
+			__("Chart Type") =>
 			html_form::select_widget(
 				'type',
 				array('bar', 'pie'),
@@ -41,10 +41,10 @@ class ChargesGraph extends GraphModule {
 		global $type; if (!$type) { $type = 'bar'; }
 
 		$display_buffer .= $this->GetGraphOptions(
-			_("Select Charges Graph Dates"),
+			__("Select Charges Graph Dates"),
 			// Our modifications to the form
 			array(
-				_("Chart Type") =>
+				__("Chart Type") =>
 				html_form::select_widget(
 					'type',
 					array('bar', 'pie'),
@@ -61,7 +61,7 @@ class ChargesGraph extends GraphModule {
 				'action' => 'image',
 				'type' => $type
 			))."\" target=\"print\" class=\"button\" ".
-			">"._("Printable")."</a></div>\n";
+			">".__("Printable")."</a></div>\n";
 		$display_buffer .= "<p/>\n";
 		$display_buffer .= "<img src=\"".$this->AssembleURL(
 			array(
@@ -86,8 +86,8 @@ class ChargesGraph extends GraphModule {
 				 " AND payreccat in($sqlcharges)" : "" );
 
 		$result = $sql->query($query);
-		$titleb = _("Charges Graph From")." $start_dt "._("To")." $end_dt";
-		$titlep = _("Charges Pie Chart From")." $start_dt "._("To")." $end_dt";
+		$titleb = __("Charges Graph From")." $start_dt ".__("To")." $end_dt";
+		$titlep = __("Charges Pie Chart From")." $start_dt ".__("To")." $end_dt";
 		if ($sql->num_rows($result) > 0)
 		{
 			$tot_denial=0;

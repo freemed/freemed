@@ -180,12 +180,12 @@ class BCBSPAMCSIFormsModule extends BillingModule {
 				$display_buffer .= "
 				<P>
 				<CENTER>
-				<B>"._("Nothing to Bill!")."</B>
+				<B>".__("Nothing to Bill!")."</B>
 				</CENTER>
 				<P>
 				<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("Return to Fixed Forms Generation Menu")."</A>
+				>".__("Return to Fixed Forms Generation Menu")."</A>
 				</CENTER>
 				<P>
 				";
@@ -1601,7 +1601,7 @@ class BCBSPAMCSIFormsModule extends BillingModule {
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
      	$display_buffer .= "
-      	<B>"._("Processing")." ".$this_patient->fullName()."
+      	<B>".__("Processing")." ".$this_patient->fullName()."
       	<BR>\n\n
      	";
      	flush ();
@@ -1650,7 +1650,7 @@ class BCBSPAMCSIFormsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <B>"._("Generate BCBS PA NSF Claims")."</B>
+		   <B>".__("Generate BCBS PA NSF Claims")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
@@ -1683,11 +1683,11 @@ class BCBSPAMCSIFormsModule extends BillingModule {
 		</TR>
 		<TR>
 		   <TD ALIGN=RIGHT>
-			"._("Write To File")." :
+			".__("Write To File")." :
 		   </TD><TD ALIGN=LEFT>
 			<SELECT NAME=\"write_to_file\">
-			 <OPTION VALUE=\"0\">"._("No")."
-			 <OPTION VALUE=\"1\">"._("Yes")."
+			 <OPTION VALUE=\"0\">".__("No")."
+			 <OPTION VALUE=\"1\">".__("Yes")."
         </SELECT>
 		<INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
        </TD>
@@ -1697,7 +1697,7 @@ class BCBSPAMCSIFormsModule extends BillingModule {
 		$display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  "._("Userid")."/TD>
+		  ".__("Userid")."/TD>
 		 <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"userid\">
 		 </TD>
@@ -1706,7 +1706,7 @@ class BCBSPAMCSIFormsModule extends BillingModule {
 		$display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  "._("Password")."</TD>
+		  ".__("Password")."</TD>
 		 <TD ALIGN=LEFT>
 		   <INPUT TYPE=PASSWORD NAME=\"password\">
 		 </TD>
@@ -1716,7 +1716,7 @@ class BCBSPAMCSIFormsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
+		   <INPUT TYPE=SUBMIT VALUE=\"".__("Go")."\">
 		  </CENTER>
 		 </TD>
 		</TR>

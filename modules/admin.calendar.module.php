@@ -70,11 +70,11 @@ class AdminCalendar extends CalendarModule {
             $result,
             $this->page_name,
             array (
-                _("Time")  => "caltime",
-                _("Room")  => "calroom",
-				_("Facility") => "calfacility",
-                _("Patient") => "calpatient",
-				_("Physician")  => "calphysician"
+                __("Time")  => "caltime",
+                __("Room")  => "calroom",
+				__("Facility") => "calfacility",
+                __("Patient") => "calpatient",
+				__("Physician")  => "calphysician"
             ),
             array ("", "", "", ""),
 			array(
@@ -115,9 +115,9 @@ class AdminCalendar extends CalendarModule {
 			 "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>\n".
 			 fm_date_entry("jumpdate").
 			 "<input class=\"button\" TYPE=\"SUBMIT\" ".
-			 	"VALUE=\""._("Go")."\"/>\n";
+			 	"VALUE=\"".__("Go")."\"/>\n";
 
-		$display_buffer .= "<a class=\"button\" HREF=\"calendar.php\">"._("Calendar")."</a>\n";
+		$display_buffer .= "<a class=\"button\" HREF=\"calendar.php\">".__("Calendar")."</a>\n";
 		$display_buffer .= "</div></form>\n";
 
 
@@ -165,11 +165,11 @@ class AdminCalendar extends CalendarModule {
             $result,
             $this->page_name,
             array (
-                _("Time")  => "caltime",
-                _("Room")  => "calroom",
-				_("Facility") => "calfacility",
-                _("Patient") => "calpatient",
-				_("Physician")  => "calphysician"
+                __("Time")  => "caltime",
+                __("Room")  => "calroom",
+				__("Facility") => "calfacility",
+                __("Patient") => "calpatient",
+				__("Physician")  => "calphysician"
             ),
             array ("", "", "", ""),
 			array(

@@ -80,11 +80,11 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
    switch ($action) {
      case "addform":
       $go = "add";
-      $this_action = _("Add");
+      $this_action = __("Add");
       break;
      case "modform":
       $go = "mod";
-      $this_action = _("Modify");
+      $this_action = __("Modify");
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
@@ -118,13 +118,13 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
     <TABLE WIDTH=\"100%\" CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
-     <TD ALIGN=RIGHT>"._("Name of Template")."</TD>
+     <TD ALIGN=RIGHT>".__("Name of Template")."</TD>
       <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"prtname\" SIZE=20 MAXLENGTH=50
        VALUE=\"".prepare($prtname)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT>"._("Description")."</TD>
+     <TD ALIGN=RIGHT>".__("Description")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"prtdescrip\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($prtdescrip)."\">
@@ -136,13 +136,13 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
      ALIGN=CENTER>
      <TR CLASS=\"reverse\">
       <TD>#</TD>
-      <TD ALIGN=\"CENTER\"><B>"._("Ins/Del")."</B></TD>
-      <TD><B>"._("Text Name")."</B></TD>
-      <TD><B>"._("Variable")."</B></TD>
-      <TD><B>"._("Limits")."</B></TD>
-      <TD><B>"._("Type")."</B></TD>
-      <TD><B>"._("Type Formatting")."</B></TD>
-      <TD><B>"._("Comment")."</B></TD>
+      <TD ALIGN=\"CENTER\"><B>".__("Ins/Del")."</B></TD>
+      <TD><B>".__("Text Name")."</B></TD>
+      <TD><B>".__("Variable")."</B></TD>
+      <TD><B>".__("Limits")."</B></TD>
+      <TD><B>".__("Type")."</B></TD>
+      <TD><B>".__("Type Formatting")."</B></TD>
+      <TD><B>".__("Comment")."</B></TD>
      </TR>
     ";
 
@@ -265,18 +265,18 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
      </TABLE>
      <P>
      <CENTER>
-     <FONT SIZE=\"-1\">"._("Line Insert")." :
+     <FONT SIZE=\"-1\">".__("Line Insert")." :
       <INPUT TYPE=TEXT NAME=\"lineinsert\" VALUE=\"0\"
        SIZE=2 MAXLENGTH=2></FONT>
      </CENTER>
      <BR>
      <CENTER>
      <SELECT NAME=\"action\">
-      <OPTION VALUE=\"$action\">"._("Update")."
+      <OPTION VALUE=\"$action\">".__("Update")."
       <OPTION VALUE=\"$go\">$this_action
-      <OPTION VALUE=\"view\">"._("Back to Menu")."
+      <OPTION VALUE=\"view\">".__("Back to Menu")."
      </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\""._("go")."\">
+     <INPUT TYPE=SUBMIT VALUE=\"".__("go")."\">
      </CENTER>
     ";
 	} // end function PatientRecordTemplateModule->form()
@@ -289,10 +289,10 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
 				"ORDER BY prtname, prtdescrip"),
 			$this->page_name,
 			array (
-				_("Name")        => "prtname",
-				_("Description") => "prtdescrip"
+				__("Name")        => "prtname",
+				__("Description") => "prtdescrip"
 			),
-			array ( "", _("NO DESCRIPTION"))
+			array ( "", __("NO DESCRIPTION"))
 		);
 	} // end function PatientRecordTemplateMaintenance->view()
 

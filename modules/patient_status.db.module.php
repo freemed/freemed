@@ -52,18 +52,18 @@ class patientStatusMaintenance extends MaintenanceModule {
 
 		".html_form::form_table ( array (
 
-		_("Status") => 
+		__("Status") => 
 		html_form::text_widget('ptstatus', 2),
 
-		_("Description") =>
+		__("Description") =>
 		html_form::text_widget('ptstatusdescrip', 20, 30),
 
 		) )."
 		<p/>
 		<div ALIGN=\"CENTER\">
-		 <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" "._("Modify")." \"/>
-		 <input class=\"button\" TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
-		 <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+		 <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".__("Modify")." \"/>
+		 <input class=\"button\" TYPE=\"RESET\" VALUE=\"".__("Clear")."\"/>
+		 <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
 		</div>
 
 		</form>
@@ -82,11 +82,11 @@ class patientStatusMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Status")		=>	"ptstatus",
-				_("Description")	=>	"ptstatusdescrip"
+				__("Status")		=>	"ptstatus",
+				__("Description")	=>	"ptstatusdescrip"
 			),
 			array (
-				"", _("NO DESCRIPTION")
+				"", __("NO DESCRIPTION")
 			)
 		);  
 		$this->_addform();
@@ -101,13 +101,13 @@ class patientStatusMaintenance extends MaintenanceModule {
 		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"add\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
 		".html_form::form_table ( array (
-			_("Status") =>
+			__("Status") =>
 				html_form::text_widget ("ptstatus", 2),
-			_("Description") =>
+			__("Description") =>
 				html_form::text_widget ("ptstatusdescrip", 20)
 		) )."
 		<br/>	
-		<input TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"/>
+		<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\"/>
 		</form>
 		</div>
 		";

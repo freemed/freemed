@@ -65,11 +65,11 @@ class AgedPatientReport extends ReportsModule {
 		$display_buffer .= "
 		<table BORDER=\"0\" CELLSPACING=\"2\" CELLPADDING=\"2\" WIDTH=\"100%\">
 		<tr>
-		<td><b>"._("Patient")."</b></td>
-		<td><b>"._("Insurance")."</b></td>
-		<td><b>"._("DOS")."</b></td>
-		<td><b>"._("Balance")."</b></td>
-		<td><b>"._("Days Old")."</b></td>
+		<td><b>".__("Patient")."</b></td>
+		<td><b>".__("Insurance")."</b></td>
+		<td><b>".__("DOS")."</b></td>
+		<td><b>".__("Balance")."</b></td>
+		<td><b>".__("Days Old")."</b></td>
 		</tr>
 		";
 
@@ -138,7 +138,7 @@ class AgedPatientReport extends ReportsModule {
 		// calc pat totals.
 		$buffer =  "<tr CLASS=\"".( isset($color) ?
 			$color : freemed_alternate() )."\">\n";
-		$buffer .=  "<td><b>"._("Patient Total")."</b></td>\n";
+		$buffer .=  "<td><b>".__("Patient Total")."</b></td>\n";
 		$buffer .=  "<td>&nbsp;</td>\n";
 		$buffer .=  "<td>&nbsp;</td>\n";
 		$pattot = bcadd($total,0,2);
@@ -153,7 +153,7 @@ class AgedPatientReport extends ReportsModule {
 		// calc pat totals.
 		$buffer =  "<tr CLASS=\"".(
 			isset($color) ? $color : freemed_alternate() )."\">\n";
-		$buffer .=  "<td><b>"._("Grand Total")."</b></td>\n";
+		$buffer .=  "<td><b>".__("Grand Total")."</b></td>\n";
 		$buffer .=  "<td>&nbsp;</td>\n";
 		$buffer .=  "<td>&nbsp;</td>\n";
 		$phytot = bcadd($total,0,2);

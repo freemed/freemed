@@ -52,18 +52,18 @@ class RoomEquipmentMaintenance extends MaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"reqdateadd\" VALUE=\"".prepare($reqdateadd)."\"  >
 
   ".html_form::form_table ( array (
-    _("Name") =>
+    __("Name") =>
     html_form::text_widget('reqname', 20, 100),
 
-    _("Description") =>
+    __("Description") =>
     html_form::text_widget('reqdescrip', 30)
    ) )."  
 
     <P>
     <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" ".( ($action=="addform") ? _("Add") :
-      _("Modify") )." \"  >
-    <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
+    <INPUT TYPE=SUBMIT VALUE=\" ".( ($action=="addform") ? __("Add") :
+      __("Modify") )." \"  >
+    <INPUT TYPE=RESET  VALUE=\" ".__("Clear")." \">
     </CENTER></FORM>
   ";
 
@@ -71,7 +71,7 @@ class RoomEquipmentMaintenance extends MaintenanceModule {
     <P>
     <CENTER>
     <A HREF=\"$page_name\"
-     >"._("Abandon ".( ($action=="addform") ? "Addition" : "Modification" )).
+     >".__("Abandon ".( ($action=="addform") ? "Addition" : "Modification" )).
       "</A>
     </CENTER>
   ";
@@ -89,11 +89,11 @@ class RoomEquipmentMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Name")		=>	"reqname",
-				_("Description")	=>	"reqdescrip"
+				__("Name")		=>	"reqname",
+				__("Description")	=>	"reqdescrip"
 			),
 			array (
-				"", _("NO DESCRIPTION")
+				"", __("NO DESCRIPTION")
 			)
 		);
 	} // end function RoomEquipmentMaintenance->view()

@@ -37,19 +37,19 @@ class UnpaidProceduresReport extends ReportsModule {
                  ";
         $result = $sql->query($query);
  		if (!$result) {
-			$display_buffer .= _("ERROR");
+			$display_buffer .= __("ERROR");
 			template_display();
 		}
 		if ($result) {
     		$display_buffer .= "
       		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=\"100%\">
       		<TR>
-       		<TD><B>"._("Name")."</B></TD>
-       		<TD><B>"._("Payments")."</B></TD>
-       		<TD><B>"._("Ledger")."</B></TD>
-       		<TD><B>"._("Billed")."</B></TD>
-       		<TD><B>"._("Date Billed")."</B></TD>
-	        <TD><B>"._("Balance")."</B></TD>
+       		<TD><B>".__("Name")."</B></TD>
+       		<TD><B>".__("Payments")."</B></TD>
+       		<TD><B>".__("Ledger")."</B></TD>
+       		<TD><B>".__("Billed")."</B></TD>
+       		<TD><B>".__("Date Billed")."</B></TD>
+	        <TD><B>".__("Balance")."</B></TD>
       		</TR>
     		"; // header of box
  			$total_unpaid = 0.00;
@@ -84,10 +84,10 @@ class UnpaidProceduresReport extends ReportsModule {
          				>$prev_lname, $prev_fname</a></td>
                   		<td><a HREF=
                   		\"$this->page_name?id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
-                  		><small>"._("View/Manage")."</small></a></td>
+                  		><small>".__("View/Manage")."</small></a></td>
                   		<td><a HREF=
                   		\"$this->page_name?patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
-                  		><small>"._("Patient Ledger")."</small></a></td>
+                  		><small>".__("Patient Ledger")."</small></a></td>
       					";
 					if (!$billed) {
 						$display_buffer .= "<td CLASS=\"cell_hilite\">&nbsp;NO&nbsp;</td>\n";
@@ -133,10 +133,10 @@ class UnpaidProceduresReport extends ReportsModule {
                   >$prev_lname, $prev_fname</a></td>
                   <td><a HREF=
                   \"$this->page_name?id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
-                  ><small>"._("View/Manage")."</small></a></td>
+                  ><small>".__("View/Manage")."</small></a></td>
                  <td><a HREF=
                  \"$this->page_name?patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
-                 ><small>"._("Patient Ledger")."</small></a></td>
+                 ><small>".__("Patient Ledger")."</small></a></td>
                   ";
                   if (!$billed) {
                       $display_buffer .= "<td CLASS=\"cell_hilite\">&nbsp;NO&nbsp;</td>\n";
@@ -150,7 +150,7 @@ class UnpaidProceduresReport extends ReportsModule {
 
 		// process totals.
              $display_buffer .= "<tr>
-			<td><b>"._("Total")."</b></td>
+			<td><b>".__("Total")."</b></td>
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>

@@ -96,7 +96,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 
  			$result = $this->CheckforInsBills();
             if ($result == 0) {
-			$display_buffer .= _("No patients with this coverage type");
+			$display_buffer .= __("No patients with this coverage type");
 			template_display();
 		}
 		
@@ -104,7 +104,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 			{	
 				$coverage = CreateObject('FreeMED.Coverage', $row[proccurcovid]);
 				if (!$coverage) {
-					$display_buffer .= _("Failed getting coverage");
+					$display_buffer .= __("Failed getting coverage");
 					template_display();
 				}
 				// commercial insurers only
@@ -112,7 +112,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 				{
 					$insmod = freemed::get_link_rec($coverage->covinsco->modifiers[0],"insmod");
 					if (!$insmod) {
-						$display_buffer .= _("Failed getting insurance modifier");
+						$display_buffer .= __("Failed getting insurance modifier");
 						template_display();
 					}
 					if ($insmod[insmod] != "MB")
@@ -180,12 +180,12 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 				$display_buffer .= "
 				<P>
 				<CENTER>
-				<B>"._("Nothing to Bill!")."</B>
+				<B>".__("Nothing to Bill!")."</B>
 				</CENTER>
 				<P>
 				<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("Return to Fixed Forms Generation Menu")."</A>
+				>".__("Return to Fixed Forms Generation Menu")."</A>
 				</CENTER>
 				<P>
 				";
@@ -199,7 +199,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 			$this->MarkBilled();
 			return;
 		}
-		$display_buffer .= _("Something is wrong in generateforms");
+		$display_buffer .= __("Something is wrong in generateforms");
 		template_display();
 
 	}
@@ -1842,7 +1842,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
      	$display_buffer .= "
-      	<B>"._("Processing")." ".$this_patient->fullName()."
+      	<B>".__("Processing")." ".$this_patient->fullName()."
       	<BR>\n\n
      	";
      	flush ();
@@ -1891,7 +1891,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <B>"._("Generate NSF Medicare Claims")."</B>
+		   <B>".__("Generate NSF Medicare Claims")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
@@ -1927,8 +1927,8 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 			Write To File :
 		   </TD><TD ALIGN=LEFT>
 			<SELECT NAME=\"write_to_file\">
-			 <OPTION VALUE=\"0\">"._("No")."
-			 <OPTION VALUE=\"1\">"._("Yes")."
+			 <OPTION VALUE=\"0\">".__("No")."
+			 <OPTION VALUE=\"1\">".__("Yes")."
         </SELECT>
 		<INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
        </TD>
@@ -1938,7 +1938,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 		$display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  "._("Userid")."</TD>
+		  ".__("Userid")."</TD>
 		 <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"userid\">
 		 </TD>
@@ -1947,7 +1947,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 		$display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  "._("Password")."</TD>
+		  ".__("Password")."</TD>
 		 <TD ALIGN=LEFT>
 		   <INPUT TYPE=PASSWORD NAME=\"password\">
 		 </TD>
@@ -1957,7 +1957,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
+		   <INPUT TYPE=SUBMIT VALUE=\"".__("Go")."\">
 		  </CENTER>
 		 </TD>
 		</TR>

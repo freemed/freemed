@@ -53,8 +53,8 @@ class PatientCoveragesModule extends EMRModule {
 		);
 	
 		$this->summary_vars = array (
-			_("Plan") => 'covplanname',
-			_("Date") => 'coveffdt'
+			__("Plan") => 'covplanname',
+			__("Date") => 'coveffdt'
 		);
 
 		// Call parent constructor
@@ -73,7 +73,7 @@ class PatientCoveragesModule extends EMRModule {
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		if ($id<=0) {
-			$display_buffer .= _("ID not valid");
+			$display_buffer .= __("ID not valid");
 			template_display();
 		}
 		//$this->View();
@@ -89,7 +89,7 @@ class PatientCoveragesModule extends EMRModule {
 			// note book ignores globals of 0 (BUG??)
 			$row = freemed::get_link_rec($id,$this->table_name);
 			if (!$row) {
-				$display_buffer .= _("Failed to read coverage table");
+				$display_buffer .= __("Failed to read coverage table");
 				template_display();
 			}
 			while (list($k,$v)=each($row)) 
@@ -105,31 +105,31 @@ class PatientCoveragesModule extends EMRModule {
 		$query = "SELECT * FROM covtypes ORDER BY covtpname";
 		$covtypes_result = $sql->query($query);
 		if (!$covtypes_result) {
-			$display_buffer .= _("Failed to get insurance coverage types");
+			$display_buffer .= __("Failed to get insurance coverage types");
 			template_display();
 		}
 
-		$book->add_page(_("Supply Coverage Information"),
+		$book->add_page(__("Supply Coverage Information"),
 			array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
 			date_vars("covrelinfodt")),
 			html_form::form_table( array (
-										_("Coverage Insurance Type") => 
+										__("Coverage Insurance Type") => 
 											freemed_display_selectbox($covtypes_result,"#covtpname# #covtpdescrip#","covinstp"),
-										_("Provider Accepts Assigment") =>
+										__("Provider Accepts Assigment") =>
 											html_form::select_widget("covprovasgn",array(
-												_("Yes") => "1",
-												_("No") => "0")),
-										_("Assigment Of Benefits") =>
+												__("Yes") => "1",
+												__("No") => "0")),
+										__("Assigment Of Benefits") =>
 											html_form::select_widget("covbenasgn",array(
-												_("Yes") => "1",
-												_("No") => "0")),
-										_("Release Of Information") =>
+												__("Yes") => "1",
+												__("No") => "0")),
+										__("Release Of Information") =>
 											html_form::select_widget("covrelinfo",array(
-												_("Yes") => "1",
-												_("No") => "0",
-												_("Limited") => "2")),
-										_("Release Date Signed") => fm_date_entry("covrelinfodt"),
-										_("Group - Plan Name") => 
+												__("Yes") => "1",
+												__("No") => "0",
+												__("Limited") => "2")),
+										__("Release Date Signed") => fm_date_entry("covrelinfodt"),
+										__("Group - Plan Name") => 
 											"<INPUT TYPE=TEXT NAME=\"covplanname\" SIZE=20 MAXLENGTH=33 ".
                                             "VALUE=\"".prepare($covplanname)."\">"
 																))
@@ -146,18 +146,18 @@ class PatientCoveragesModule extends EMRModule {
 											"<INPUT TYPE=TEXT NAME=\"covpatgrpno\" SIZE=20 MAXLENGTH=30 ".
                                             "VALUE=\"".prepare($covpatgrpno)."\">\n",
 										"Relationship to Insured" => html_form::select_widget("covrel", array (
-															_("Self")    => "S",
-															_("Child")   => "C",
-															_("Husband") => "H",
-															_("Wife")    => "W",
-															_("Child Not Fin") => "D",
-															_("Step Child") => "SC",
-															_("Foster Child") => "FC",
-															_("Ward of Court") => "WC",
-															_("HC Dependent") => "HD",
-															_("Sponsored Dependent") => "SD",
-															_("Medicare Legal Rep") => "LR",
-															_("Other")   => "O" ) )
+															__("Self")    => "S",
+															__("Child")   => "C",
+															__("Husband") => "H",
+															__("Wife")    => "W",
+															__("Child Not Fin") => "D",
+															__("Step Child") => "SC",
+															__("Foster Child") => "FC",
+															__("Ward of Court") => "WC",
+															__("HC Dependent") => "HD",
+															__("Sponsored Dependent") => "SD",
+															__("Medicare Legal Rep") => "LR",
+															__("Other")   => "O" ) )
 										 					 ) 
 													) 
 							); // end add page
@@ -168,27 +168,27 @@ class PatientCoveragesModule extends EMRModule {
 								array_merge(array("covlname", "covfname", "covmname", "covaddr1", "covaddr2", "covcity",
 											"covstate", "covzip", "covsex"), date_vars("covdob")),
 						html_form::form_table ( array (
-							_("Last Name") =>
+							__("Last Name") =>
 								"<INPUT TYPE=TEXT NAME=\"covlname\" SIZE=25 MAXLENGTH=50 ".
 								"VALUE=\"".prepare($covlname)."\">",
 					
-							_("First Name") =>
+							__("First Name") =>
 								"<INPUT TYPE=TEXT NAME=\"covfname\" SIZE=25 MAXLENGTH=50 ".
 								"VALUE=\"".prepare($covfname)."\">",
 
-							_("Middle Name") =>
+							__("Middle Name") =>
 								"<INPUT TYPE=TEXT NAME=\"covmname\" SIZE=25 MAXLENGTH=50 ".
 								"VALUE=\"".prepare($covmname)."\">",
 
-							_("Address Line 1") =>
+							__("Address Line 1") =>
 								"<INPUT TYPE=TEXT NAME=\"covaddr1\" SIZE=25 MAXLENGTH=45 ".
 								"VALUE=\"".prepare($covaddr1)."\">",
 
-							_("Address Line 2") =>
+							__("Address Line 2") =>
 								"<INPUT TYPE=TEXT NAME=\"covaddr2\" SIZE=25 MAXLENGTH=45 ".
 								"VALUE=\"".prepare($covaddr2)."\">",
 
-							_("City").", "._("State").", "._("Zip") =>
+							__("City").", ".__("State").", ".__("Zip") =>
 								"<INPUT TYPE=TEXT NAME=\"covcity\" SIZE=10 MAXLENGTH=45 ".
 								"VALUE=\"".prepare($covcity)."\">\n".
 								"<INPUT TYPE=TEXT NAME=\"covstate\" SIZE=3 MAXLENGTH=2 ".
@@ -196,14 +196,14 @@ class PatientCoveragesModule extends EMRModule {
 								"<INPUT TYPE=TEXT NAME=\"covzip\" SIZE=10 MAXLENGTH=10 ".
 								"VALUE=\"".prepare($covzip)."\">",
 
-							_("Date of Birth") =>
+							__("Date of Birth") =>
 								date_entry("covdob"),
-							_("Gender") =>
+							__("Gender") =>
             					html_form::select_widget("covsex",
                 						array (
-                     						_("Female")        => "f",
-                     						_("Male")          => "m",
-                     						_("Transgendered") => "t"
+                     						__("Female")        => "f",
+                     						__("Male")          => "m",
+                     						__("Transgendered") => "t"
                 								)
             							)
 
@@ -279,16 +279,16 @@ class PatientCoveragesModule extends EMRModule {
 		$result = $sql->query($query);
 		$display_buffer .= "<CENTER>";
 		if ($result)
-			$display_buffer .= _("done").".";
+			$display_buffer .= __("done").".";
 		else
-			$display_buffer .= _("ERROR");
+			$display_buffer .= __("ERROR");
 		$display_buffer .= "</CENTER>";
 		
 		$display_buffer .= "
 			<P>
 			<CENTER>
 			<A HREF=\"$this->page_name?patient=$patient&module=$module\">
-			"._("Back")."</A>
+			".__("Back")."</A>
 			</CENTER>
 			<P>
 			";
@@ -302,7 +302,7 @@ class PatientCoveragesModule extends EMRModule {
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		if ($patient<=0) {
-			$display_buffer .= _("Must Select a patient");
+			$display_buffer .= __("Must Select a patient");
 			template_display();
 		}
 		// 
@@ -320,7 +320,7 @@ class PatientCoveragesModule extends EMRModule {
 						<TD ALIGN=RIGHT>
 						<INPUT TYPE=RADIO NAME=\"coveragetype\" VALUE=\"0\" CHECKED>
 						</TD><TD ALIGN=LEFT>
-						"._("Insurance")."
+						".__("Insurance")."
 						</TD>
 						</TR>
 						</TABLE></CENTER>" );
@@ -331,45 +331,45 @@ class PatientCoveragesModule extends EMRModule {
 			$query = "SELECT * FROM insco ORDER BY insconame";
 			$ins_result = $sql->query($query);
 			if (!$ins_result) {
-				$display_buffer .= _("Failed to get insurance companies");
+				$display_buffer .= __("Failed to get insurance companies");
 				template_display();
 			}
 			$query = "SELECT * FROM covtypes ORDER BY covtpname";
 			$covtypes_result = $sql->query($query);
 			if (!$covtypes_result) {
-				$display_buffer .= _("Failed to get insurance coverage types");
+				$display_buffer .= __("Failed to get insurance coverage types");
 				template_display();
 			}
 			//insurance coverage
 			$wizard->add_page("Select an Insurance Company",
 								array("covinsco"),
 								html_form::form_table( array(
-										_("Insurance Company") => 
+										__("Insurance Company") => 
 										freemed_display_selectbox($ins_result,"#insconame#","covinsco")
 										) )
 							);
 
-			$wizard->add_page(_("Supply Coverage Information"),
+			$wizard->add_page(__("Supply Coverage Information"),
 								array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
 											date_vars("covrelinfodt")),
 								html_form::form_table( array (
-										_("Coverage Insurance Type") => 
+										__("Coverage Insurance Type") => 
 											freemed_display_selectbox($covtypes_result,"#covtpname# #covtpdescrip#","covinstp"),
-										_("Provider Accepts Assigment") =>
+										__("Provider Accepts Assigment") =>
 											html_form::select_widget("covprovasgn",array(
-												_("Yes") => "1",
-												_("No") => "0")),
-										_("Assigment Of Benefits") =>
+												__("Yes") => "1",
+												__("No") => "0")),
+										__("Assigment Of Benefits") =>
 											html_form::select_widget("covbenasgn",array(
-												_("Yes") => "1",
-												_("No") => "0")),
-										_("Release Of Information") =>
+												__("Yes") => "1",
+												__("No") => "0")),
+										__("Release Of Information") =>
 											html_form::select_widget("covrelinfo",array(
-												_("Yes") => "1",
-												_("No") => "0",
-												_("Limited") => "2")),
-										_("Release Date Signed") => fm_date_entry("covrelinfodt"),
-										_("Group - Plan Name") => 
+												__("Yes") => "1",
+												__("No") => "0",
+												__("Limited") => "2")),
+										__("Release Date Signed") => fm_date_entry("covrelinfodt"),
+										__("Group - Plan Name") => 
 											"<INPUT TYPE=TEXT NAME=\"covplanname\" SIZE=20 MAXLENGTH=33 ".
                                             "VALUE=\"".prepare($covplanname)."\">\n"
 																))
@@ -379,34 +379,34 @@ class PatientCoveragesModule extends EMRModule {
 								array_merge( array("covpatgrpno", "covpatinsno", "covreplace", 
 									  "covtype", "covstatus", "covrel"),date_vars("coveffdt")),
 								html_form::form_table( array (
-										_("Start Date") => fm_date_entry("coveffdt"),
-										_("Insurance ID Number") => 
+										__("Start Date") => fm_date_entry("coveffdt"),
+										__("Insurance ID Number") => 
 											"<INPUT TYPE=TEXT NAME=\"covpatinsno\" SIZE=30 MAXLENGTH=30 ".
                                             "VALUE=\"".prepare($covpatinsno)."\">\n",
-										_("Insurance Group Number") => 
+										__("Insurance Group Number") => 
 											"<INPUT TYPE=TEXT NAME=\"covpatgrpno\" SIZE=30 MAXLENGTH=30 ".
                                             "VALUE=\"".prepare($covpatgrpno)."\">\n",
-										_("Insurance Type") => html_form::select_widget("covtype", array (
-															_("Primary") => "1",
-															_("Secondary") => "2",
-															_("Tertiary") => "3",
-															_("Work Comp") => "4" )	),
-										_("Relationship to Insured") => html_form::select_widget("covrel", array (
-															_("Self")    => "S",
-															_("Child")   => "C",
-															_("Husband") => "H",
-															_("Wife")    => "W",
-															_("Child Not Fin") => "D",
-															_("Step Child") => "SC",
-															_("Foster Child") => "FC",
-															_("Ward of Court") => "WC",
-															_("HC Dependent") => "HD",
-															_("Sponsored Dependent") => "SD",
-															_("Medicare Legal Rep") => "LR",
-															_("Other")   => "O" ) ),
-										_("Replace Like Coverage") => html_form::select_widget("covreplace", array (
-															_("No") => "0",
-															_("Yes") => "1" ) )
+										__("Insurance Type") => html_form::select_widget("covtype", array (
+															__("Primary") => "1",
+															__("Secondary") => "2",
+															__("Tertiary") => "3",
+															__("Work Comp") => "4" )	),
+										__("Relationship to Insured") => html_form::select_widget("covrel", array (
+															__("Self")    => "S",
+															__("Child")   => "C",
+															__("Husband") => "H",
+															__("Wife")    => "W",
+															__("Child Not Fin") => "D",
+															__("Step Child") => "SC",
+															__("Foster Child") => "FC",
+															__("Ward of Court") => "WC",
+															__("HC Dependent") => "HD",
+															__("Sponsored Dependent") => "SD",
+															__("Medicare Legal Rep") => "LR",
+															__("Other")   => "O" ) ),
+										__("Replace Like Coverage") => html_form::select_widget("covreplace", array (
+															__("No") => "0",
+															__("Yes") => "1" ) )
 										 					 ) 
 													) 
 							);
@@ -416,27 +416,27 @@ class PatientCoveragesModule extends EMRModule {
 								array_merge(array("covlname", "covfname", "covaddr1", "covaddr2", "covcity",
 											"covstate", "covzip", "covsex"), date_vars("covdob")),
 						html_form::form_table ( array (
-							_("Last Name") =>
+							__("Last Name") =>
 								"<INPUT TYPE=TEXT NAME=\"covlname\" SIZE=25 MAXLENGTH=50 ".
 								"VALUE=\"".prepare($covlname)."\">",
 					
-							_("First Name") =>
+							__("First Name") =>
 								"<INPUT TYPE=TEXT NAME=\"covfname\" SIZE=25 MAXLENGTH=50 ".
 								"VALUE=\"".prepare($covfname)."\">",
 
-							_("Middle Name") =>
+							__("Middle Name") =>
 								"<INPUT TYPE=TEXT NAME=\"covmname\" SIZE=25 MAXLENGTH=50 ".
 								"VALUE=\"".prepare($covmname)."\">",
 
-							_("Address Line 1") =>
+							__("Address Line 1") =>
 								"<INPUT TYPE=TEXT NAME=\"covaddr1\" SIZE=25 MAXLENGTH=45 ".
 								"VALUE=\"".prepare($covaddr1)."\">",
 
-							_("Address Line 2") =>
+							__("Address Line 2") =>
 								"<INPUT TYPE=TEXT NAME=\"covaddr2\" SIZE=25 MAXLENGTH=45 ".
 								"VALUE=\"".prepare($covaddr2)."\">",
 
-							_("City").", "._("State").", "._("Zip") =>
+							__("City").", ".__("State").", ".__("Zip") =>
 								"<INPUT TYPE=TEXT NAME=\"covcity\" SIZE=10 MAXLENGTH=45 ".
 								"VALUE=\"".prepare($covcity)."\">\n".
 								"<INPUT TYPE=TEXT NAME=\"covstate\" SIZE=3 MAXLENGTH=2 ".
@@ -444,14 +444,14 @@ class PatientCoveragesModule extends EMRModule {
 								"<INPUT TYPE=TEXT NAME=\"covzip\" SIZE=10 MAXLENGTH=10 ".
 								"VALUE=\"".prepare($covzip)."\">",
 
-							_("Date of Birth") =>
+							__("Date of Birth") =>
 								date_entry("covdob"),
-							_("Gender") =>
+							__("Gender") =>
             					html_form::select_widget("covsex",
                 						array (
-                     						_("Female")        => "f",
-                     						_("Male")          => "m",
-                     						_("Transgendered") => "t"
+                     						__("Female")        => "f",
+                     						__("Male")          => "m",
+                     						__("Transgendered") => "t"
                 								)
             							)
 
@@ -523,13 +523,13 @@ class PatientCoveragesModule extends EMRModule {
 			// start by replacing existing coverages.
 			if ($covreplace==1) // replace an existing coverage
 			{
-				$display_buffer .= _("Removing old coverage")."<br/>\n";
+				$display_buffer .= __("Removing old coverage")."<br/>\n";
 				$query = "UPDATE coverage SET covstatus='".DELETED."' ".
 					"WHERE covtype='".addslashes($covtype)."' ".
 					"AND covpatient='".addslashes($patient)."'";
 				$updres = $sql->query($query);
 				if (!$updres) {
-					$display_buffer .= _("Error updating coverage status");
+					$display_buffer .= __("Error updating coverage status");
 					template_display();
 				}
 
@@ -537,7 +537,7 @@ class PatientCoveragesModule extends EMRModule {
 
 			// add the coverage
 			$display_buffer .= "<div ALIGN=\"CENTER\">";
-			$display_buffer .= _("Adding")." ... \n";
+			$display_buffer .= __("Adding")." ... \n";
 			$query = $sql->insert_query(
 				$this->table_name,
 				array (
@@ -572,9 +572,9 @@ class PatientCoveragesModule extends EMRModule {
 			);
 			$coverage = $sql->query($query);
 			if ($coverage) {
-				$display_buffer .= _("done").".";
+				$display_buffer .= __("done").".";
 			} else {
-				$display_buffer .= _("ERROR");
+				$display_buffer .= __("ERROR");
 			}
 			$display_buffer .= "</div>";
 
@@ -584,7 +584,7 @@ class PatientCoveragesModule extends EMRModule {
 			<p/>
 			<div ALIGN=\"CENTER\">
 			<a HREF=\"$this->page_name?patient=$patient&module=$module\">
-			"._("Back")."</a>
+			".__("Back")."</a>
 			</div>
 			<p>
 			";
@@ -600,7 +600,7 @@ class PatientCoveragesModule extends EMRModule {
 		if ($patient <= 0) {
 			$display_buffer .= 
 				"<div ALIGN=\"CENTER\">\n".
-				_("You must select a patient before viewing coverages.").
+				__("You must select a patient before viewing coverages.").
 				"</div>\n";
 			template_display();
 		}

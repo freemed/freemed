@@ -60,10 +60,10 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Degree") => "degdegree",
-				_("Description") => "degname"
+				__("Degree") => "degdegree",
+				__("Description") => "degname"
 			),
-			array ( "", _("NO DESCRIPTION") ), "", "d_page"
+			array ( "", __("NO DESCRIPTION") ), "", "d_page"
 		);
   
 		$display_buffer .= "
@@ -75,18 +75,18 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 		<div ALIGN=\"CENTER\">
 		".html_form::form_table(array(
 
-		_("Degree") =>
+		__("Degree") =>
 		html_form::text_widget('degdegree', 10),
 
-		_("Degree Description") =>
+		__("Degree Description") =>
 		html_form::text_widget('degname', 30, 50)
 
 		))."
 		</div>
 		<div align=\"CENTER\">
 		<input TYPE=\"SUBMIT\" VALUE=\"".($action=="modform" ? 
-		_("Update") : _("Add"))." \"/>
-		<input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+		__("Update") : __("Add"))." \"/>
+		<input TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\"/>
 		</div>
 		</form>
 		";

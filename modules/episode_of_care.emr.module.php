@@ -157,22 +157,22 @@ class EpisodeOfCare extends EMRModule {
 		$this->summary_vars = array (
 			"Orig" => "eocstartdate",
 			"Last" => "eocdtlastsimilar",
-			_("Description") => "eocdescrip"
+			__("Description") => "eocdescrip"
 		);
 		$this->summary_options = SUMMARY_VIEW;
 
 		global $action, $submit, $module;
 		if (strtolower($module)==get_class($this)) {
 			switch ($submit) {
-				case _("Add"):
+				case __("Add"):
 					$action = "add";
 					break;
 				
-				case _("Modify"):
+				case __("Modify"):
 					$action = "mod";
 					break;
 				
-				case _("Refresh"):
+				case __("Refresh"):
 				default:
 					// do nothing otherwise
 					break;
@@ -187,7 +187,7 @@ class EpisodeOfCare extends EMRModule {
 		switch ($action) {
 			case "addform":
 			$go = "addform";
-			$this_action = _("Add");
+			$this_action = __("Add");
 			if ($been_here != "yes") {
 				 $eocstartdate = $eocdtlastsimilar = $cur_date;
 			}
@@ -195,11 +195,11 @@ class EpisodeOfCare extends EMRModule {
 
 			case "modform":
 			$go = "modform";
-			$this_action = _("Modify");
+			$this_action = __("Modify");
 			// check to see if an id was submitted
 			if ($id<1) {
-				$page_title =  _("$record_name")." :: "._("ERROR");
-				$display_buffer .= _("Must select record to Modify");
+				$page_title =  __("$record_name")." :: ".__("ERROR");
+				$display_buffer .= __("Must select record to Modify");
 				template_display();
 			} // end of if.. statement checking for id #
 			if ($been_here != "yes") {
@@ -227,64 +227,64 @@ class EpisodeOfCare extends EMRModule {
     <TR>
      <TD COLSPAN=4 ALIGN=CENTER BGCOLOR=\"#777777\">
       <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
-      "._("General Information")."
+      ".__("General Information")."
       </FONT>
      </TD>
     </TR>
     <TR>
-     <TD ALIGN=RIGHT>"._("Description")."</TD>
+     <TD ALIGN=RIGHT>".__("Description")."</TD>
      <TD ALIGN=LEFT>
      ".html_form::text_widget('eocdescrip', 25, 100)."
      </TD>
 ";
   if ($this->this_patient->isFemale()) { $display_buffer .= "
-     <TD ALIGN=RIGHT>"._("Related to Pregnancy")."</TD>
+     <TD ALIGN=RIGHT>".__("Related to Pregnancy")."</TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelpreg\">
        <OPTION VALUE=\"no\"  ".
-         ( ($eocrelpreg=="no") ? "SELECTED" : "" ).">"._("No")."
+         ( ($eocrelpreg=="no") ? "SELECTED" : "" ).">".__("No")."
        <OPTION VALUE=\"yes\" ".
-         ( ($eocrelpreg=="yes") ? "SELECTED" : "" ).">"._("Yes")."
+         ( ($eocrelpreg=="yes") ? "SELECTED" : "" ).">".__("Yes")."
       </SELECT>
      </TD>
   "; } else { $display_buffer .= "
-     <TD ALIGN=RIGHT><I>"._("Related to Pregnancy")."</I></TD>
+     <TD ALIGN=RIGHT><I>".__("Related to Pregnancy")."</I></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=HIDDEN NAME=\"eocrelpreg\" VALUE=\"no\">
-      <I>"._("No")."</I>
+      <I>".__("No")."</I>
      </TD>
   "; } // end checking if female
   $display_buffer .= "  
     </TR><TR>
-     <TD ALIGN=RIGHT>"._("Date of First Occurance")."</TD>
+     <TD ALIGN=RIGHT>".__("Date of First Occurance")."</TD>
       <TD ALIGN=LEFT>
   ".fm_date_entry("eocstartdate")."
      </TD>
-     <TD ALIGN=RIGHT>"._("Related to Employment")."</TD>
+     <TD ALIGN=RIGHT>".__("Related to Employment")."</TD>
       <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelemp\">
        <OPTION VALUE=\"no\"  ".
-         ( ($eocrelemp=="no") ? "SELECTED" : "" ).">"._("No")."
+         ( ($eocrelemp=="no") ? "SELECTED" : "" ).">".__("No")."
        <OPTION VALUE=\"yes\" ".
-         ( ($eocrelemp=="yes") ? "SELECTED" : "" ).">"._("Yes")."
+         ( ($eocrelemp=="yes") ? "SELECTED" : "" ).">".__("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT>"._("Date of Last Similar")."</TD>
+     <TD ALIGN=RIGHT>".__("Date of Last Similar")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocdtlastsimilar")."
      </TD>
-     <TD ALIGN=RIGHT>"._("Related to Automobile")."</TD>
+     <TD ALIGN=RIGHT>".__("Related to Automobile")."</TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelauto\">
        <OPTION VALUE=\"no\"  ".
-         ( ($eocrelauto=="no") ? "SELECTED" : "" ).">"._("No")."
+         ( ($eocrelauto=="no") ? "SELECTED" : "" ).">".__("No")."
        <OPTION VALUE=\"yes\" ".
-         ( ($eocrelauto=="yes") ? "SELECTED" : "" ).">"._("Yes")."
+         ( ($eocrelauto=="yes") ? "SELECTED" : "" ).">".__("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT>"._("Referring Physician")."</TD>
+     <TD ALIGN=RIGHT>".__("Referring Physician")."</TD>
      <TD ALIGN=LEFT>
    ";
    $display_buffer .= freemed_display_selectbox (
@@ -292,17 +292,17 @@ class EpisodeOfCare extends EMRModule {
        ORDER BY phylname,phyfname"),
      "#phylname#, #phyfname#", "eocreferrer")."
      </TD>
-     <TD ALIGN=RIGHT>"._("Related to Other Cause")."</TD>
+     <TD ALIGN=RIGHT>".__("Related to Other Cause")."</TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelother\">
        <OPTION VALUE=\"no\"  ".
-         ( ($eocrelother=="no") ? "SELECTED" : "" ).">"._("No")."
+         ( ($eocrelother=="no") ? "SELECTED" : "" ).">".__("No")."
        <OPTION VALUE=\"yes\" ".
-         ( ($eocrelother=="yes") ? "SELECTED" : "" ).">"._("Yes")."
+         ( ($eocrelother=="yes") ? "SELECTED" : "" ).">".__("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT>"._("Facility")."</TD>
+     <TD ALIGN=RIGHT>".__("Facility")."</TD>
      <TD ALIGN=LEFT>
    ";
    if (empty($eocfacility)) $eocfacility = $_SESSION["default_facility"];
@@ -313,13 +313,13 @@ class EpisodeOfCare extends EMRModule {
        "#psrname# [#psrnote#]", 
        "eocfacility")."
      </TD>
-     <TD ALIGN=RIGHT>"._("State/Province")."</TD>
+     <TD ALIGN=RIGHT>".__("State/Province")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelstpr\" SIZE=5 MAXLENGTH=5
        VALUE=\"".prepare($eocrelstpr)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT>"._("Diagnosis Family")."</TD>
+     <TD ALIGN=RIGHT>".__("Diagnosis Family")."</TD>
      <TD ALIGN=LEFT>
     ";
     // compact and display eocdiagfamily
@@ -329,7 +329,7 @@ class EpisodeOfCare extends EMRModule {
       "eocdiagfamily",
       fm_join_from_array($eocdiagfamily), false)."
      </TD>
-     <TD ALIGN=RIGHT>"._("Episode Type")."</TD>
+     <TD ALIGN=RIGHT>".__("Episode Type")."</TD>
      <TD ALIGN=LEFT>
     ";
     // case statement for eoctype
@@ -341,55 +341,55 @@ class EpisodeOfCare extends EMRModule {
     } // end switch for $eoctype
     $display_buffer .= "
       <SELECT NAME=\"eoctype\">
-       <OPTION VALUE=\"\" >"._("NONE SELECTED")."
+       <OPTION VALUE=\"\" >".__("NONE SELECTED")."
        <OPTION VALUE=\"acute\" ".
-         ( ($eoctype=="acute") ? "SELECTED" : "" ).">"._("acute")."
+         ( ($eoctype=="acute") ? "SELECTED" : "" ).">".__("acute")."
        <OPTION VALUE=\"chronic\" ".
-         ( ($eoctype=="chronic") ? "SELECTED" : "" ).">"._("chronic")."
+         ( ($eoctype=="chronic") ? "SELECTED" : "" ).">".__("chronic")."
        <OPTION VALUE=\"chronic recurrent\" ".
          ( ($eoctype=="chronic recurrent") ? "SELECTED" : "" ).">".
-	 _("chronic recurrent")."
+	 __("chronic recurrent")."
        <OPTION VALUE=\"historical\" ".
-         ( ($eoctype=="historical") ? "SELECTED" : "" ).">"._("historical")."
+         ( ($eoctype=="historical") ? "SELECTED" : "" ).">".__("historical")."
       </SELECT>
      </TD>
     </TR>
 	";
 	$display_buffer .= "
     <TR>
-	<TD ALIGN=RIGHT>"._("Disability Type")."</TD>
+	<TD ALIGN=RIGHT>".__("Disability Type")."</TD>
     <TD ALIGN=LEFT>
       <SELECT NAME=\"eocdistype\">
        <OPTION VALUE=\"0\" ".
-         ( ($eocdistype==0) ? "SELECTED" : "" ).">"._("Unknown")."
+         ( ($eocdistype==0) ? "SELECTED" : "" ).">".__("Unknown")."
        <OPTION VALUE=\"1\" ".
-         ( ($eocdistype==1) ? "SELECTED" : "" ).">"._("LT")."
+         ( ($eocdistype==1) ? "SELECTED" : "" ).">".__("LT")."
        <OPTION VALUE=\"2\" ".
-         ( ($eoctype==2) ? "SELECTED" : "" ).">"._("ST")."
+         ( ($eoctype==2) ? "SELECTED" : "" ).">".__("ST")."
        <OPTION VALUE=\"3\" ".
-         ( ($eocdistype==3) ? "SELECTED" : "" ).">". _("Permanent")."
+         ( ($eocdistype==3) ? "SELECTED" : "" ).">". __("Permanent")."
        <OPTION VALUE=\"4\" ".
-         ( ($eoctype==4) ? "SELECTED" : "" ).">"._("No Disability")."
+         ( ($eoctype==4) ? "SELECTED" : "" ).">".__("No Disability")."
       </SELECT>
 	</TD>
-	<TD ALIGN=RIGHT>"._("Hospital")."</TD>
+	<TD ALIGN=RIGHT>".__("Hospital")."</TD>
     <TD ALIGN=LEFT>
       <SELECT NAME=\"eochospital\">
        <OPTION VALUE=\"0\" ".
-         ( ($eochospital==0) ? "SELECTED" : "" ).">"._("No")."
+         ( ($eochospital==0) ? "SELECTED" : "" ).">".__("No")."
        <OPTION VALUE=\"1\" ".
-         ( ($eochospital==1) ? "SELECTED" : "" ).">"._("Yes")."
+         ( ($eochospital==1) ? "SELECTED" : "" ).">".__("Yes")."
       </SELECT>
 	</TD>
 	</TR>
 	";
 	$display_buffer .= "
     <TR>
-	<TD ALIGN=RIGHT>"._("Disability From Date")."</TD>
+	<TD ALIGN=RIGHT>".__("Disability From Date")."</TD>
     <TD ALIGN=LEFT>
    	    ".fm_date_entry("eocdisfromdt")."
 	</TD>
-	<TD ALIGN=RIGHT>"._("Hospitial Admission Date")."</TD>
+	<TD ALIGN=RIGHT>".__("Hospitial Admission Date")."</TD>
     <TD ALIGN=LEFT>
    	    ".fm_date_entry("eochosadmdt")."
 	</TD>
@@ -397,11 +397,11 @@ class EpisodeOfCare extends EMRModule {
 	";
 	$display_buffer .= "
     <TR>
-	<TD ALIGN=RIGHT>"._("Disability To Date")."</TD>
+	<TD ALIGN=RIGHT>".__("Disability To Date")."</TD>
     <TD ALIGN=LEFT>
    	    ".fm_date_entry("eocdistodt")."
 	</TD>
-	<TD ALIGN=RIGHT>"._("Hospitial Discharge Date")."</TD>
+	<TD ALIGN=RIGHT>".__("Hospitial Discharge Date")."</TD>
     <TD ALIGN=LEFT>
    	    ".fm_date_entry("eochosdischrgdt")."
 	</TD>
@@ -409,7 +409,7 @@ class EpisodeOfCare extends EMRModule {
 	";
 	$display_buffer .= "
     <TR>
-	<TD ALIGN=RIGHT>"._("Disability Back to Work Date")."</TD>
+	<TD ALIGN=RIGHT>".__("Disability Back to Work Date")."</TD>
     <TD ALIGN=LEFT>
    	    ".fm_date_entry("eocdisworkdt")."
 	</TD>
@@ -430,45 +430,45 @@ class EpisodeOfCare extends EMRModule {
      <TR>
      <TD ALIGN=CENTER COLSPAN=4 BGCOLOR=\"#777777\">
       <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
-      "._("Automobile Related Information")."
+      ".__("Automobile Related Information")."
       </FONT>
      </TD>
      </TR>
      <TR>
-     <TD ALIGN=RIGHT>"._("Auto Insurance")."</TD>
+     <TD ALIGN=RIGHT>".__("Auto Insurance")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautoname)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Case Number")."</TD>
+     <TD ALIGN=RIGHT>".__("Case Number")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocase\" SIZE=10 MAXLENGTH=20
        VALUE=\"".prepare($eocrelautocase)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Address (Line 1)")."</TD>
+     <TD ALIGN=RIGHT>".__("Address (Line 1)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr1\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautoaddr1)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Contact Name")."</TD>
+     <TD ALIGN=RIGHT>".__("Contact Name")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautorcname)."\">
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Address (Line 2)")."</TD>
+     <TD ALIGN=RIGHT>".__("Address (Line 2)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr2\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautoaddr2)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Contact Phone")."</TD>
+     <TD ALIGN=RIGHT>".__("Contact Phone")."</TD>
      <TD ALIGN=LEFT>
    ".
    fm_phone_entry("eocrelautorcphone")
    ."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("City, State/Prov, Postal Code")."</TD>
+     <TD ALIGN=RIGHT>".__("City, State/Prov, Postal Code")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocity\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautocity)."\"> <B>,</B>
@@ -477,18 +477,18 @@ class EpisodeOfCare extends EMRModule {
       <INPUT TYPE=TEXT NAME=\"eocrelautozip\" SIZE=11 MAXLENGTH=10
        VALUE=\"".prepare($eocrelautozip)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Email Address")."</TD>
+     <TD ALIGN=RIGHT>".__("Email Address")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcemail\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautorcemail)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Country")."</TD>
+     <TD ALIGN=RIGHT>".__("Country")."</TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelautocountry\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelautocountry)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Time of Accident")."</TD>
+     <TD ALIGN=RIGHT>".__("Time of Accident")."</TD>
      <TD ALIGN=LEFT>
 	 ".fm_time_entry("eocrelautotime")."
      </TD>
@@ -509,43 +509,43 @@ class EpisodeOfCare extends EMRModule {
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
-     "._("Employment Related Information")."
+     ".__("Employment Related Information")."
      </FONT>
      </TD>
      </TR>
      <TR>
-     <TD ALIGN=RIGHT>"._("Name of Employer")."</TD>
+     <TD ALIGN=RIGHT>".__("Name of Employer")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempname)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("File Number")."</TD>
+     <TD ALIGN=RIGHT>".__("File Number")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempfile\" SIZE=10 MAXLENGTH=20
        VALUE=\"".prepare($eocrelempfile)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Address (Line 1)")."</TD>
+     <TD ALIGN=RIGHT>".__("Address (Line 1)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr1\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempaddr1)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Contact Name")."</TD>
+     <TD ALIGN=RIGHT>".__("Contact Name")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcname\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelemprcname)."\">
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Address (Line 2)")."</TD>
+     <TD ALIGN=RIGHT>".__("Address (Line 2)")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr2\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempaddr2)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Contact Phone")."</TD>
+     <TD ALIGN=RIGHT>".__("Contact Phone")."</TD>
      <TD ALIGN=LEFT>
    ".fm_phone_entry("eocrelemprcphone")."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("City, State/Prov, Postal Code")."</TD>
+     <TD ALIGN=RIGHT>".__("City, State/Prov, Postal Code")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempcity\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempcity)."\"> <B>,</B>
@@ -554,13 +554,13 @@ class EpisodeOfCare extends EMRModule {
       <INPUT TYPE=TEXT NAME=\"eocrelempzip\" SIZE=11 MAXLENGTH=10
        VALUE=\"".prepare($eocrelempzip)."\">
      </TD>
-     <TD ALIGN=RIGHT>"._("Email Address")."</TD>
+     <TD ALIGN=RIGHT>".__("Email Address")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcemail\" SIZE=20 MAXLENGTH=100
        VALUE=\"".prepare($eocrelemprcemail)."\">
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Country")."</TD>
+     <TD ALIGN=RIGHT>".__("Country")."</TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelempcountry\" SIZE=10 MAXLENGTH=100
        VALUE=\"".prepare($eocrelempcountry)."\">
@@ -584,38 +584,38 @@ class EpisodeOfCare extends EMRModule {
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
-     "._("Pregnancy Related Information")."
+     ".__("Pregnancy Related Information")."
      </FONT>
      <TR>
-     <TD ALIGN=RIGHT>"._("Length of Cycle")."</TD>
+     <TD ALIGN=RIGHT>".__("Length of Cycle")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select ("eocrelpregcycle", 10, 40)."
      </TD>
-     <TD ALIGN=RIGHT>"._("Last Menstrual Period")."</TD>
+     <TD ALIGN=RIGHT>".__("Last Menstrual Period")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocrelpreglastper")."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Gravida")."</TD>
+     <TD ALIGN=RIGHT>".__("Gravida")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpreggravida", 0, 15)."
      </TD>
-     <TD ALIGN=RIGHT>"._("Date of Confinement")."</TD>
+     <TD ALIGN=RIGHT>".__("Date of Confinement")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocrelpregconfine");
    $display_buffer .= "
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Para")."</TD>
+     <TD ALIGN=RIGHT>".__("Para")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpregpara", 0, 15)."
      </TD>
-     <TD ALIGN=RIGHT>"._("Miscarries")."</TD>
+     <TD ALIGN=RIGHT>".__("Miscarries")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpregmiscarry", 0, 15)."
      </TD>
      </TR><TR>
-     <TD ALIGN=RIGHT>"._("Abortions")."</TD>
+     <TD ALIGN=RIGHT>".__("Abortions")."</TD>
      <TD ALIGN=LEFT>
    ".fm_number_select("eocrelpregabort", 0, 15)."
      </TD>
@@ -637,12 +637,12 @@ class EpisodeOfCare extends EMRModule {
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
-      "._("Other Related Information")."
+      ".__("Other Related Information")."
      </FONT>
      </TD>
      </TR>
      <TR>
-     <TD ALIGN=RIGHT>"._("More Information")."</TD>
+     <TD ALIGN=RIGHT>".__("More Information")."</TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelothercomment\" SIZE=35 MAXLENGTH=100
        VALUE=\"".prepare($eocrelothercomment)."\">
@@ -655,8 +655,8 @@ class EpisodeOfCare extends EMRModule {
      <p/>
      <div ALIGN=\"CENTER\">
      <input name=\"submit\" type=\"submit\" class=\"button\" value=\"".$this_action."\"/>
-     <input name=\"submit\" type=\"submit\" class=\"button\" value=\""._("Refresh")."\"/>
-     <input name=\"submit\" type=\"submit\" class=\"button\" value=\""._("Cancel")."\"/>
+     <input name=\"submit\" type=\"submit\" class=\"button\" value=\"".__("Refresh")."\"/>
+     <input name=\"submit\" type=\"submit\" class=\"button\" value=\"".__("Cancel")."\"/>
      </div>
     ";
 	} // end function EpisodeOfCare->form
@@ -717,14 +717,14 @@ class EpisodeOfCare extends EMRModule {
 		global $record_name, $save_module, $module, $_auth;
 		global $patient;
 		if ($id<1) {
-			$page_title = _("$record_name")." :: "._("ERROR");
+			$page_title = __("$record_name")." :: ".__("ERROR");
 			$display_buffer .= "
 			<P>
-			"._("You must specify an ID to view an Episode!")."
+			".__("You must specify an ID to view an Episode!")."
 			<P>
 			<CENTER>
 			<A HREF=\"manage.php?id=$patient\"
-			>"._("Manage Patient")."</A>
+			>".__("Manage Patient")."</A>
 			</CENTER>
 			";
 			template_display();
@@ -739,10 +739,10 @@ class EpisodeOfCare extends EMRModule {
       ALIGN=CENTER VALIGN=MIDDLE>
      <TR>
       <TD ALIGN=CENTER>
-       "._("Starting Date")."
+       ".__("Starting Date")."
       </TD>
       <TD ALIGN=CENTER>
-       "._("Description")."
+       ".__("Description")."
       </TD>
      </TR>
      <TR>
@@ -776,16 +776,16 @@ class EpisodeOfCare extends EMRModule {
      $result,
      "module_loader.php",
      array (
-       _("Date") => "procdt",
-       _("Procedure") => "proccpt",
+       __("Date") => "procdt",
+       __("Procedure") => "proccpt",
        "" => "proccptmod",
-       _("Comment") => "proccomment"
+       __("Comment") => "proccomment"
      ),
      array (
        "",
        "",
        "",
-       _("NO COMMENT")
+       __("NO COMMENT")
      ),
      array (
        "",
@@ -819,10 +819,10 @@ class EpisodeOfCare extends EMRModule {
 			$result,
 			"module_loader.php",
 			array (
-				_("Date") => "pnotesdt", 
-				_("Description") => "pnotesdescrip"
+				__("Date") => "pnotesdt", 
+				__("Description") => "pnotesdescrip"
 			),
-			array ( "", _("NO DESCRIPTION") )
+			array ( "", __("NO DESCRIPTION") )
 		);
 		$module = $save_module;
 
@@ -835,7 +835,7 @@ class EpisodeOfCare extends EMRModule {
   
 		$r_name = $record_name; // backup
 		$_auth = "imageeoc=".urlencode($id);  
-		$record_name = _("Patient Images");
+		$record_name = __("Patient Images");
 		$save_module = $module;
 		$module = "patientImages"; // pass for the module loader
 		$display_buffer .= freemed_display_itemlist (
@@ -851,12 +851,12 @@ class EpisodeOfCare extends EMRModule {
 			),
 			"module_loader.php",
 			array (
-				_("Date") => "imagedt",
-				_("Description") => "imagedesc"
+				__("Date") => "imagedt",
+				__("Description") => "imagedesc"
 			),
 			array (
 				"",
-				_("NO DESCRIPTION")
+				__("NO DESCRIPTION")
 			)
 		);
 
@@ -870,7 +870,7 @@ class EpisodeOfCare extends EMRModule {
 		<p/>
 		<div ALIGN=\"CENTER\">
 		<a HREF=\"$this->page_name?patient=$patient&module=$module\"
-		>"._("Choose Another $record_name")."</a>
+		>".__("Choose Another $record_name")."</a>
 		</div>
 		<P>
 		";
@@ -890,12 +890,12 @@ class EpisodeOfCare extends EMRModule {
 			),
 			$this->page_name,
 			array (
-				_("Starting Date") => "eocstartdate",
-				_("Description")   => "eocdescrip"
+				__("Starting Date") => "eocstartdate",
+				__("Description")   => "eocdescrip"
 			),
 			array (
 				"",
-				_("NO DESCRIPTION")
+				__("NO DESCRIPTION")
 			)
 		);
 	} // end function EpisodeOfCare->view
