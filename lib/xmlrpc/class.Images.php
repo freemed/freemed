@@ -5,7 +5,7 @@
 
 class Images {
 
-	function attach($params) {
+	function attach($_params) {
 		// Parameters:
 		// 	patient id,
 		//	array(
@@ -19,9 +19,25 @@ class Images {
 		//	)
 	
 		global $sql;
-		
-		//$_param = $params->getParam(0);
-	
+
+		// Decide if we're dealing with an array or not
+		$is_struct = false;
+		foreach ($params AS $k => $v) {
+			if (!is_integer($k)) {
+				$is_struct = true;
+			}
+		}
+
+		if ($is_struct) {
+			// If it's a structure, pass through
+			$params = $_params;
+		} else {
+			foreach ($_params AS $k => $v) {
+				// Recurse into individual pieces
+				Images::attach($v);
+			}
+		}
+
 		// Parse scalar parameters
 		$patient_id = $params["patient_id"];
 		$date = $params["date"];
