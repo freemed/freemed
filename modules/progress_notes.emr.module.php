@@ -9,7 +9,7 @@ class ProgressNotes extends EMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2.1";
+	var $MODULE_VERSION = "0.2.5";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Progress Notes allow physicians and
 		providers to track patient activity through
@@ -44,13 +44,59 @@ class ProgressNotes extends EMRModule {
 			'locked' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
 		);
+		
+		// Printing information
+		$this->print_format = array (
+			array (
+				'title' => __("Date"),
+				'content' => 'pnotesdt',
+				'type' => 'short'
+			),
+			array (
+				'title' => __("Description"),
+				'content' => 'pnotesdescrip',
+				'type' => 'short'
+			),
+			array (
+				'title' => __("Subjective"),
+				'content' => 'pnotes_S',
+				'type' => 'long',
+
+				'condition' => 'isset',
+				'trigger' => 'pnotes_S'
+			),
+			array (
+				'title' => __("Objective"),
+				'content' => 'pnotes_O',
+				'type' => 'long',
+
+				'condition' => 'isset',
+				'trigger' => 'pnotes_O'
+			),
+			array (
+				'title' => __("Assessment"),
+				'content' => 'pnotes_A',
+				'type' => 'long',
+
+				'condition' => 'isset',
+				'trigger' => 'pnotes_A'
+			),
+			array (
+				'title' => __("Plan"),
+				'content' => 'pnotes_P',
+				'type' => 'long',
+
+				'condition' => 'isset',
+				'trigger' => 'pnotes_P'
+			)
+		);
 	
 		// Define variables for EMR summary
 		$this->summary_vars = array (
 			__("Date")        =>	"pnotesdt",
 			__("Description") =>	"pnotesdescrip"
 		);
-		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
+		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_PRINT;
 
 		// Set associations
 		$this->_SetAssociation('EpisodeOfCare');
