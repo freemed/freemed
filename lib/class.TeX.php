@@ -424,6 +424,8 @@ class TeX {
 		// Deal with amphersands, and &quot; &amp; stuff
 		$string = str_replace('&quot;', '\'\'', $string);
 		$string = str_replace('&amp;', '&', $string);
+		$string = str_replace('&lt;', '$<$', $string);
+		$string = str_replace('&gt;', '$>$', $string);
 		$string = str_replace('&', '\&', $string);
 
 		// HTML/SGML specific texts
