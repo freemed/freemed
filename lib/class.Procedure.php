@@ -7,7 +7,7 @@ class Procedure {
 
 	function Procedure ( $id ) {
 		$this->id = $id;
-		$this->local_record = freemed::get_link_rec($id, 'procrec');
+		$this->local_record = freemed::get_link_rec($id, 'procrec', true);
 	} // end constructor Procedure
 
 	function CurrentBalance ( ) {
@@ -51,7 +51,7 @@ class Procedure {
 		if (is_array($proc)) {
 			$_proc = $proc;
 		} else {
-			$_proc = freemed::get_link_rec($proc, 'procrec');
+			$_proc = freemed::get_link_rec($proc, 'procrec', true);
 		}
 
 		// If there is no payer, return true
@@ -112,7 +112,7 @@ class Procedure {
 	//
 	function get_procedure ( $id = NULL ) {
 		if ($id != NULL) {
-			return freemed::get_link_rec($id, 'procrec');
+			return freemed::get_link_rec($id, 'procrec', true);
 		} else {
 			return $this->local_record; 
 		}
