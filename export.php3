@@ -1,8 +1,8 @@
 <?php
- # file: export.php3
- # desc: administrative export module
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: export.php3
+ // desc: administrative export module
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name = "export.php3";
  include ("global.var.inc");
@@ -19,10 +19,10 @@ if ($this_user->getLevel()<$admin_level)
 
 switch ($action) {
  case "export":
-  freemed_display_box_top ("Export Database");
+  freemed_display_box_top (_("Export Database"));
   echo "
    <P>
-   <$STDFONT_B>Exporting Database \"$db\" ... 
+   <$STDFONT_B>"._("Exporting Database")." \"$db\" ... 
   ";
   if (freemed_export_stock_data ($db)) { echo "$Done."; }
    else                                { echo "$ERROR"; }
@@ -31,21 +31,21 @@ switch ($action) {
    <P>
     <CENTER>
     <A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>Export Another Database<$STDFONT_E></A> <B>|</B>
+     ><$STDFONT_B>"._("Export Another Database")."<$STDFONT_E></A> <B>|</B>
     <A HREF=\"admin.php3?$_auth\"
-     ><$STDFONT_B>Return to Administration Menu<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
     </CENTER>
    <P>
   ";
   freemed_display_box_bottom ();
   break;
  default:
-  freemed_display_box_top ("Export Database");
+  freemed_display_box_top (_("Export Database"));
   echo "
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"export\">
     <P>
-    <$STDFONT_B>Select Database to Export : <$STDFONT_E>
+    <$STDFONT_B>"._("Select Database to Export")." : <$STDFONT_E>
     <SELECT NAME=\"db\">
      <OPTION VALUE=\"authorizations\"
                                    >Authorizations (authorizations)
@@ -91,12 +91,12 @@ switch ($action) {
     </SELECT>
     <P>
     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\"Export\">
+     <INPUT TYPE=SUBMIT VALUE=\""._("Export")."\">
     </CENTER>
     <P>
     <CENTER>
      <A HREF=\"admin.php3?$_auth\"
-     ><$STDFONT_B>Return to Administration Menu<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
     </CENTER>
     <P>
    </FORM>

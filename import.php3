@@ -1,8 +1,8 @@
 <?php
- # file: import.php3
- # desc: administrative import module for older databases
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: import.php3
+ // desc: administrative import module for older databases
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name = "import.php3";
  include ("global.var.inc");
@@ -19,33 +19,33 @@ if ($this_user->getLevel()<$admin_level)
 
 switch ($action) {
  case "import":
-  freemed_display_box_top ("Import Database");
+  freemed_display_box_top (_("Import Database"));
   echo "
    <P>
-   <$STDFONT_B>Importing Database \"$db\" ... 
+   <$STDFONT_B>"._("Importing Database")." \"$db\" ... 
   ";
-  if (freemed_import_stock_data ($db)) { echo "$Done."; }
-   else                                { echo "$ERROR"; }
+  if (freemed_import_stock_data ($db)) { echo _("done");  }
+   else                                { echo _("ERROR"); }
   echo "
    <$STDFONT_E>
    <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>Import Another Database<$STDFONT_E></A> <B>|</B>
+     ><$STDFONT_B>"._("Import Another Database")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"admin.php3?$_auth\"
-     ><$STDFONT_B>Return to Administration Menu<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
     </CENTER>
    <P>
   ";
   freemed_display_box_bottom ();
   break;
  default:
-  freemed_display_box_top ("Import Database");
+  freemed_display_box_top (_("Import Database"));
   echo "
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"import\">
     <P>
-    <$STDFONT_B>Select Database to Import : <$STDFONT_E>
+    <$STDFONT_B>"._("Select Database to Import")." : <$STDFONT_E>
     <SELECT NAME=\"db\">
      <OPTION VALUE=\"authorizations\"
                                    >Authorizations (authorizations)
@@ -96,7 +96,7 @@ switch ($action) {
     <P>
     <CENTER>
      <A HREF=\"admin.php3?$_auth\"
-     ><$STDFONT_B>Return to Administration Menu<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
     </CENTER>
     <P>
    </FORM>
