@@ -1,0 +1,38 @@
+1,Medical Care,2001-02-02,2001-02-02,1
+2,Surgery,2000-01-01,2000-01-01,2
+3,Consultation X12,2001-02-02,2001-02-02,5
+4,Diagnostic X-Ray X12,2001-02-02,2001-02-02,6
+5,Diagnostic Lab X12,2001-02-02,2001-02-02,7
+6,Radiation Therapy X12,2001-02-02,2001-02-02,8
+7,Anesthesia X12,2001-02-02,2001-02-02,9
+8,Surgical Assistance X12,2001-02-02,2001-02-02,10
+9,Other Medical X12,2001-02-02,2001-02-02,11
+10,Blood Charges X12,2001-02-02,2001-02-02,12
+11,Used DME X12,2001-02-02,2001-02-02,13
+12,DME Purchase X12,2001-02-02,2001-02-02,14
+13,Ambulatory Service Center Facility X12,2001-02-02,2001-02-02,15
+14,Renal Supplies in Home X12,2001-02-02,2001-02-02,16
+15,Alternate Method Dialysis Payment X12,2001-02-02,2001-02-02,17
+16,Chronic Renal Disease Equipment X12,2001-02-02,2001-02-02,18
+17,Pre Admission Testing X12,2001-02-02,2001-02-02,19
+18,DME Rental X12,2001-02-02,2001-02-02,20
+19,Pneumonia Vaccine X12,2001-02-02,2001-02-02,21
+20,Second Surgical Opinion X12,2001-02-02,2001-02-02,22
+21,Third Surgical Opinion X12,2001-02-02,2001-02-02,23
+22,Other (eg Prescriptions) X12,2001-02-02,2001-02-02,24
+P,PODIATRY-MEDICAID,2000-01-01,2000-01-01,3
+A,SUPPLIES AND MEDICATIONS,2000-01-01,2000-01-01,4
+A,Champus Ambulatory Surgery Prefix,2001-07-02,2001-07-02,30
+I,Champus Inpatient Prefix,2001-07-02,2001-07-02,31
+O,Champus Outpatient Prefix,2001-07-02,2001-07-02,32
+M,Champus Materity Prefix,2001-07-02,2001-07-02,33
+A,Champus DME Suffix,2001-07-02,2001-07-02,34
+B,Champus Drugs Suffix,2001-07-02,2001-07-02,35
+C,Champus Abulatory Surgery Suffix,2001-07-02,2001-07-02,36
+D,Champus Hospice Suffix,2001-07-02,2001-07-02,37
+E,Champus Elective Surgery Suffix,2001-07-02,2001-07-02,38
+F,Champus Materity Suffix,2001-07-02,2001-07-02,39
+G,Champus Dental Suffix,2001-07-02,2001-07-02,40
+H,Champus Mental Health Care Suffix,2001-07-02,2001-07-02,41
+I,Champus Ambulance Suffix,2001-07-02,2001-07-02,42
+J,Champus Disabilities Program Suffix,2001-07-02,2001-07-02,43

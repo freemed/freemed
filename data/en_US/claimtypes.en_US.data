@@ -1,0 +1,13 @@
+1,A,Ambulance,2001-07-09,0000-00-00
+2,B,Anesthesia,2001-07-09,0000-00-00
+3,C,Chiropractic,2001-07-09,0000-00-00
+4,F,Medical,2001-07-09,0000-00-00
+5,G,Occupational Therapy,2001-07-09,0000-00-00
+6,H,Oxygen,2001-07-09,0000-00-00
+7,K,Podiatry,2001-07-09,0000-00-00
+8,L,Physical Therapy,2001-07-09,0000-00-00
+9,M,Speech Language Therapy,2001-07-09,0000-00-00
+10,N,Surgery,2001-07-09,0000-00-00
+11,O,Other,2001-07-09,0000-00-00
+12,Z,Multiple Types of Service,2001-07-09,0000-00-00
+13,99,DME,2001-07-09,0000-00-00
