@@ -1,0 +1,7 @@
+medicare,Medicare,1
+medicaid,Medicaid,2
+champus,Champus,3
+champva,Champva,4
+grouphealth,Group Health Plan,5
+fecablacklung,FECA Black Lung,6
+other,Other Insurance Type (HCFA),7
