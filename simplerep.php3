@@ -58,7 +58,7 @@
 
 // *** main action loop ***
 
-if ($action=="view") {
+if ($action=="display") {
 
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
@@ -144,21 +144,17 @@ if ($patient) {
        ";
              }
 
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
-
   } else {
     echo "\n<B>$No_Records_Found</B>\n";
   }
-
 
   freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");   // DIE, DIE, php3, DIE!
 
-}
-elseif (($action=="addform") AND ($separate_add_section)) {
+} elseif ($action=="addform") {
 
-  freemed_display_box_top ("$Add $record_name", $page_name);
+  freemed_display_box_top (_("Add")." "._($record_name));
 
   echo "
     <BR><BR>
@@ -166,52 +162,52 @@ elseif (($action=="addform") AND ($separate_add_section)) {
     <TR><TD>
     <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
+    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\">
 
-    <$STDFONT_B>$Label :<$STDFONT_E>
+    <$STDFONT_B>"._("Label")." :<$STDFONT_E>
     </TD><TD>
-    <INPUT TYPE=TEXT NAME=sr_label SIZE=30 MAXLENGTH=50 
-     VALUE=\"$sr_label\">
+    <INPUT TYPE=TEXT NAME=\"sr_label\" SIZE=30 MAXLENGTH=50 
+     VALUE=\"".prepare($sr_label)."\">
     </TD></TR>
     <TR><TD>
-    <$STDFONT_B>$Category :<$STDFONT_E>
+    <$STDFONT_B>"._("Category")." : <$STDFONT_E>
     </TD><TD>
-    <INPUT TYPE=TEXT NAME=sr_type SIZE=3 MAXLENGTH=2
-     VALUE=\"$sr_type\">
+    <INPUT TYPE=TEXT NAME=\"sr_type\" SIZE=3 MAXLENGTH=2
+     VALUE=\"".prepare($sr_type)."\">
     </TD></TR>
     <TR><TD>
     <$STDFONT_B>$Text ($Male $Adult): <$STDFONT_E><BR>
     </TD><TD></TD></TR>
     <TR><TD COLSPAN=2>
     <TEXTAREA NAME=\"sr_text\" ROWS=8 COLS=45
-     WRAP=VIRTUAL></TEXTAREA>
+     WRAP=VIRTUAL>".prepare($sr_text)."</TEXTAREA>
     </TD></TR>
     <TR><TD>
     <$STDFONT_B>$Text ($Female $Adult): <$STDFONT_E><BR>
     </TD><TD></TD></TR>
     <TR><TD COLSPAN=2>
     <TEXTAREA NAME=\"sr_textf\" ROWS=8 COLS=45
-     WRAP=VIRTUAL></TEXTAREA>
+     WRAP=VIRTUAL>".prepare($sr_textf)."</TEXTAREA>
     </TD></TR>
     <TR><TD>
     <$STDFONT_B>$Text ($Male $Child): <$STDFONT_E><BR>
     </TD><TD></TD></TR>
     <TR><TD COLSPAN=2>
     <TEXTAREA NAME=\"sr_textcm\" ROWS=8 COLS=45
-    WRAP=VIRTUAL></TEXTAREA>
+    WRAP=VIRTUAL>".prepare($sr_textcm)."</TEXTAREA>
     </TD></TR>
     <TR><TD>
     <$STDFONT_B>$Text ($Female $Child): <$STDFONT_E><BR>
     </TD><TD></TD></TR>
     <TR><TD COLSPAN=2>
     <TEXTAREA NAME=\"sr_textcf\" ROWS=8 COLS=45
-    WRAP=VIRTUAL></TEXTAREA>
+     WRAP=VIRTUAL>".prepare($sr_textcf)."</TEXTAREA>
     </TD></TR>
     </TABLE>
     <BR>
     <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" $Add \"  >
-    <INPUT TYPE=RESET  VALUE=\" $Clear \">
+    <INPUT TYPE=SUBMIT VALUE=\" "._("Add")." \"  >
+    <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
     </CENTER></FORM>
   ";
 
@@ -232,56 +228,40 @@ elseif (($action=="addform") AND ($separate_add_section)) {
 //////////////////////////////////////////////////
 } elseif ($action=="add") {
 
-  freemed_display_box_top("$Adding $record_name", $page_name);
+  freemed_display_box_top(_("Adding")." "._($record_name));
 
   echo "
-    <BR><BR>
-    <$STDFONT_B>$Adding . . . 
+    <P><CENTER>
+    <$STDFONT_B>"._("Adding")." ... 
   ";
-
-    // prepare data: remove the 's, etc from the blob
-
-  $sr_text_blob    = addslashes ($sr_text)   ;
-  $sr_textf_blob   = addslashes ($sr_textf)  ;
-  $sr_textcm_blob  = addslashes ($sr_textcm) ;
-  $sr_textcf_blob  = addslashes ($sr_textcf) ;
 
     // build the query to database backend (usually MySQL):
     // the last value has to be NULL so that it auto
     // increments record numbers.
   $query = "INSERT INTO $db_name VALUES (
-           '$sr_label','$sr_type','$sr_text_blob','$sr_textf_blob','$sr_textcm_blob','$sr_textcf_blob', NULL)" ;
+           '".addslashes($sr_label)."',
+	   '".addslashes($sr_type)."',
+	   '".addslashes($sr_text)."',
+	   '".addslashes($sr_textf)."',
+	   '".addslashes($sr_textcm)."',
+	   '".addslashes($sr_textcf)."',
+	   NULL)" ;
 
     // query the db with new values
   $result = fdb_query($query);
 
-  if ($debug==1) {
-    echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
-    echo $result;      
-    echo "\n<BR><BR><B>QUERY STRING:</B><BR>\n";
-    echo "$query";
-    echo "\n<BR><BR><B>ACTUAL RETURNED RESULT:</B><BR>\n";
-    echo "($result)";
-  }
-
-  if ($result) {
-    echo "
-      <B>$done.</B><$STDFONT_E>
-    ";
-  } else {
-    echo ("<B>$ERROR ($result)</B>\n"); 
-  }
+  if ($result) { echo "<B>"._("done").".</B>"; }
+   else        { echo "<B>"._("ERROR")."</B>"; }
 
   echo "
     <P>
-    <CENTER><A HREF=\"$page_name?$_auth&action=view\"
-     ><$STDFONT_B>$Return_to_reports_menu<$STDFONT_E></A>
+    <CENTER><A HREF=\"$page_name?$_auth\"
+     ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
     </CENTER>
     <P>
   "; // readability fix 19990714
 
 freemed_display_box_bottom (); // display the bottom of the box
-freemed_display_bottom_links ($record_name, $page_name, $_ref);
 freemed_close_db ();
 freemed_display_html_bottom ();
 DIE ("");
@@ -483,7 +463,6 @@ DIE ("");
   ";
 
   freemed_display_box_bottom (); // display box bottom 
-  freemed_display_bottom_links ($record_name, $page_name, $_ref);
 
   freemed_close_db ();
   freemed_display_html_bottom ();
@@ -516,7 +495,6 @@ DIE ("");
      >$Update_Delete_Another</A></CENTER>
   ";
   freemed_display_box_bottom ();
-  freemed_display_bottom_links ($record_name, $page_name, $_ref);
   freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");
@@ -546,7 +524,6 @@ DIE ("");
   ";
 
   freemed_display_box_bottom ();
-  freemed_display_bottom_links ($record_name, $page_name, $_ref);
   freemed_close_db ();
   freemed_display_html_bottom ();
   DIE ("");
@@ -565,7 +542,6 @@ DIE ("");
       <$HEADERFONT_E>
     ";
     freemed_display_box_bottom ();
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
     freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");
@@ -890,7 +866,6 @@ if ($chosenrep==0)
     </P>
   ";
     freemed_display_box_bottom ();
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
     freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");   // DIE, DIE, php3, DIE!
@@ -1534,7 +1509,7 @@ echo "
 
  echo "
     <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
     </P>
   ";
 
@@ -1572,7 +1547,6 @@ echo "
       <$HEADERFONT_E>
     ";
     freemed_display_box_bottom ();
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
     freemed_close_db ();
     freemed_display_html_bottom ();
     DIE ("");
@@ -1587,82 +1561,24 @@ echo "
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
-  $result = fdb_query($query);
-  if ($result) {
-    freemed_display_box_top ($record_name, $_ref, $page_name);
+  freemed_display_box_top ($record_name, $_ref, $page_name);
 
-    if (strlen($_ref)<5) {
-      $_ref="main.php3";
-    } // if no ref, then return to home page...
+  echo freemed_display_itemlist (
+    fdb_query("SELECT * FROM $db_name ORDER BY $order_field"),
+    $page_name,
+    array (
+      _("Label")	=>	"sr_label",
+      _("Category")	=>	"sr_type",
+    ),
+    array (
 
-    freemed_display_actionbar($page_name, $_ref);
+    )
+  );
 
-    echo "
-      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
-      <TR>
-       <TD><B>$Label</B></TD>
-       <TD><B>$Category</B></TD>
-       <TD><B>$Action</B></TD>
-      </TR>
-    "; // header of box
-
-    $_alternate = freemed_bar_alternate_color ();
-
-    while ($r = fdb_fetch_array($result)) {
-
-      $sr_label = $r["sr_label"];
-      $sr_type  = $r["sr_type" ];
-      $id       = $r["id"      ];
-
-        // alternate the bar color
-      $_alternate = freemed_bar_alternate_color ($_alternate);
-
-      if ($debug) {
-        $id_mod = " [$id]"; // if debug, insert ID #
-      } else {
-        $id_mod = ""; // else, let's avoid it...
-      } // end debug clause (like sanity clause)
-
-      echo "
-        <TR BGCOLOR=$_alternate>
-        <TD>$sr_label</TD>
-        <TD><I>$sr_type</I></TD>
-        <TD><A HREF=
-         \"$page_name?$_auth&id=$id&action=modform\"
-         ><FONT SIZE=-1>$lang_MOD$id_mod</FONT></A>
-      ";
-      if (freemed_get_userlevel($LoginCookie)>$delete_level)
-        echo "
-          &nbsp;
-          <A HREF=\"$page_name?$_auth&id=$id&action=del\"
-          ><FONT SIZE=-1>$lang_DEL$id_mod</FONT></A>
-        "; // show delete
-      echo "
-        </TD></TR>
-      ";
-
-    } // while there are no more
-
-
-    echo "
-      </TABLE>
-    "; // end table (fixed 19990617)
-
-    if (strlen($_ref)<5) {
-      $_ref="main.php3";
-    } // if no ref, then return to home page...
-
-
-    freemed_display_actionbar ($page_name, $_ref);
-
-    freemed_display_box_bottom (); // display bottom of the box
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
-
-  } else {
-    echo "\n<B>$No_Records_Found</B>\n";
-  }
+  freemed_display_box_bottom (); // display bottom of the box
 
 } 
 freemed_close_db ();
+freemed_display_html_bottom ();
 
 ?>
