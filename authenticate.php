@@ -7,6 +7,9 @@
 $page_name = "authenticate.php" ;
 include_once ("lib/freemed.php");
 
+//----- Clear old session information
+unset($_SESSION['authdata']);
+
 //----- Disable menu bar
 $GLOBALS['__freemed']['no_menu_bar'] = true;
 
