@@ -11,7 +11,7 @@ class AuthorizationsModule extends EMRModule {
 
 	var $MODULE_NAME    = "Insurance Authorizations";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.1.2";
 	var $MODULE_DESCRIPTION = "
 		Insurance authorizations are used to track whether
 		a patient is authorized by his or her insurance
@@ -70,11 +70,28 @@ class AuthorizationsModule extends EMRModule {
 			__("To")   => "authdtend"
 		);
 
+		$this->form_vars = array (
+			"authdtmod",
+			"authdtbegin",
+			"authdtend",
+			"authnum",
+			"authtype",
+			"authprov",
+			"authprovid",
+			"authinsco",
+			"authvisits",
+			"authvisitsused",
+			"authvisitsremain",
+			"authcomment",
+			"authpatient",
+			"authdtadd"
+		);
+
 		// Run parent constructor
 		$this->EMRModule();
 	} // end constructor AuthorizationsModule
 
-	function form () {
+	function __form () {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
@@ -95,8 +112,6 @@ class AuthorizationsModule extends EMRModule {
        extract ($r);
        break; // end internal modform
      } // end internal action switch
-
-     $pnotesdt     = $cur_date;
 
      $display_buffer .= "
        <P>
@@ -174,6 +189,65 @@ class AuthorizationsModule extends EMRModule {
      ";
 	} // end function AuthorizationsModule->form()
 
+	function form_table () {
+		global $action, $sql;
+
+		if ($action=="addform") {
+			global $authdtbegin;
+			$authdtbegin = date("Y-m-d");
+		}
+		
+		return array (
+			__("Starting Date") =>
+			date_entry("authdtbegin"),
+
+			__("Ending Date") =>
+			date_entry("authdtend"),
+
+			__("Authorization Number") =>
+			html_form::text_widget("authnum", 25),
+
+			__("Authorization Type") =>
+			html_form::select_widget(
+				"authtype",
+				array(
+					__("NONE SELECTED") => "0",
+					__("physician") => "1",
+					__("insurance company") => "2",
+					__("certificate of medical neccessity") => "3",
+					__("surgical") => "4",
+					__("worker's compensation") => "5",
+					__("consulatation") => "6"
+				)
+			),
+
+			__("Authorizing Provider") =>
+			freemed_display_selectbox (
+			$sql->query("SELECT * FROM physician ORDER BY phylname,phyfname"),
+			"#phylname#, #phyfname#", "authprov"),
+	
+			__("Provider Identifier") =>
+			html_form::text_widget("authprovid", 20, 15),
+	
+			__("Authorizing Insurance Company") =>
+			freemed_display_selectbox ( 
+			$sql->query("SELECT * FROM insco ORDER BY insconame,inscostate,inscocity"),
+			"#insconame# (#inscocity#,#inscostate#)", "authinsco"),
+	
+			__("Number of Visits") =>
+			fm_number_select ("authvisits", 0, 100),
+	
+			__("Used Visits") =>
+			fm_number_select ("authvisitsused", 0, 100),
+
+			__("Remaining Visits") =>
+			fm_number_select ("authvisitsremain", 0, 100),
+
+			__("Comment") =>
+			html_form::text_widget("authcomment", 30, 100)
+		);
+	} // end function form_table
+
 	function add () {
 		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $patient;
 		$authdtbegin = fm_date_assemble("authdtbegin");
@@ -201,7 +275,7 @@ class AuthorizationsModule extends EMRModule {
 			$sql->query(
 				"SELECT * ".
 				"FROM ".$this->table_name." ".
-				"WHERE (authpatient='".addslashes($patient)."' ".
+				"WHERE (authpatient='".addslashes($patient)."') ".
 				freemed::itemlist_conditions(false)." ".
 				"ORDER BY authdtbegin,authdtend"
 			),
