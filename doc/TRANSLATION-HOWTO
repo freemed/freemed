@@ -8,7 +8,11 @@ many aspects.
 
 INITIAL TRANSLATION-------------------------------------------------------
 
-TODO: Explain how to generate template files from CVS.
+The first thing you have to do is run the generation program, to generate
+a template for you to translate. This is accomplished with a command like
+the following:
+
+	./scripts/GettextXML_Catalog.pl (lang_locale) (description)
 
 Assign a language abbreviation:
 
@@ -18,23 +22,45 @@ Examples:
 	de = Deutche
 	et cetera
 
+The locale is an uppercase 2-character country code.
+
+Examples:
+	CA = Canada
+	UK = England / United Kingdom
+	FR = France
+	US = United States
+
+The "description" should be something descriptive regarding the language
+and country it is for (American English, etc).
+
 The language files are in this format:
 
-<?xml version="1.0">
-<GettextXML>
+<?xml version="1.0"?>
+<gettextXML lang="en_US">
 
-	<Information>
+        <information>
+                <Application>FreeMED</Application>
+                <ApplicationVersion>0.6.0</ApplicationVersion>
+                <Component>freemed</Component>
+                <ComponentVersion></ComponentVersion>
+                <Locale>en_US</Locale>
+                <LocaleName>American English</LocaleName>
+                <RevisionDate>2006-06-18</RevisionDate>
+                <RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator>some_guy@i18n.org</Translator>
+	</information>
 
-	</Information>
+	<translation>
+		<original>original</original>
+		<translated>translated</translated>
+	</translation>
 
-	<Translation>
-		<Original>original</Original>
-		<Translated>translated</Translated>
-	</Translation>
+</gettextXML>
 
-</GettextXML>
-
-You can then use either a text editor or an XML tool.
+You can then use either a text editor or an XML tool to edit the texts.
+They are generated in locale/language_locale/ (example: locale/en_US).
 
 Send this translation to irv@ourexchange.net or jeff@ourexchange.net so
 that it is included in the distribution. Please ZIP or tarball it prior
@@ -42,5 +68,11 @@ to transmission.
 
 REVISED TRANSLATIONS------------------------------------------------------
 
-TODO: Explain this, since it isn't the same as GNU gettext.
+You need to run the autogeneration script to do this, and provide the same
+locale and locale name as you did when it was initially run. For example:
 
+	cd /usr/share/freemed
+	./scripts/GettextXML_Catalog.pl en_US "American English"
+
+This will cause all translation tables to be updated, while still keeping
+the translated strings that have been done already.
