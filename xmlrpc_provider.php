@@ -11,7 +11,12 @@ if (!file_exists(WEBTOOLS_ROOT.'/class.xmlrpc_server.php'))
 	die("There is no XML-RPC support in this build of phpwebtools!");
 
 // Create seperate XML-RPC object map
-CreateApplicationMap(array('FreeMED' => 'lib/xmlrpc/class.*.php'));
+CreateApplicationMap(array(
+	// Actual XML-RPC methods
+	'FreeMED' => 'lib/xmlrpc/class.*.php',
+	// For internal function calls
+	'_FreeMED' => 'lib/class.*.php'
+));
 
 //----- Create XMLRPC_METHODS
 unset ($XMLRPC_METHODS);
