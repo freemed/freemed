@@ -18,6 +18,6 @@ CREATE TABLE freemed.insco (
     inscotype    INT UNSIGNED,
     inscoassign  INT UNSIGNED,
     inscomod     TEXT,
-    id INT NOT NULL AUTO_INCREMENT
+    id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
 );

@@ -314,7 +314,7 @@ if ($action=="addform") {
   ";
   freemed_multiple_choice ("SELECT * FROM $database.insmod
     ORDER BY insmoddesc", "insmoddesc", "inscomod",
-    $insmod, false);
+    $inscomod, false);
   echo "
     <P>
     <CENTER>
