@@ -5,6 +5,8 @@ freemed project changelog
   - moved facility.php3 -> modules/facility.module.php
   - moved patient_record_template.php3 ->
     modules/patient_record_template.module.php
+  - minor fixes in lib/module_maintenance.php (paper bag stupid!)
+  - moved authorizations.php -> modules/authorizations.php
 
 * Sat Dec 30 2000 fforest
    - fix a few coding errors in generate_fixed_forms and manage_bills

@@ -20,12 +20,11 @@ class freemedEMRModule extends freemedModule {
 	var $order_field;
 	var $form_vars;
 	var $table_name;
-    var $page_name = "module_loader.php"; 
 
 	// contructor method
-	function freemedEMRModule ($nullvar = "") {
+	function freemedEMRModule () {
 		// call parent constructor
-		$this->freemedModule($nullvar);
+		$this->freemedModule();
 	} // end function freemedEMRModule
 
 	// override check_vars method

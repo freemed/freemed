@@ -42,14 +42,6 @@ echo "
       >"._("CPT Codes")."</A>
      <BR>
 
-     <A HREF=\"cptmod.php3?$_auth\"
-      >"._("CPT Modifiers")."</A>
-     <BR>
-
-     <A HREF=\"patient_record_template.php3?$_auth\"
-      >"._("Patient Record Templates")."</A>
-     <BR>
-
      <A HREF=\"diagnosis_family.php3?$_auth\"
       >"._("Diagnosis Families")."</A>
      <BR>

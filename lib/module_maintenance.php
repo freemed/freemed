@@ -7,8 +7,6 @@ if (!defined("__MODULE_MAINTENANCE_PHP__")) {
 
 define (__MODULE_MAINTENANCE_PHP__, true);
 
-include "lib/freemed.php";
-
 // class freemedMaintenanceModule extends freeMedmodule
 class freemedMaintenanceModule extends freemedModule {
 
@@ -20,12 +18,11 @@ class freemedMaintenanceModule extends freemedModule {
 	var $order_field;
 	var $form_vars;
 	var $table_name;
-    var $page_name = "module_loader.php"; 
 
 	// contructor method
-	function freemedMaintenanceModule ($nullvar = "") {
+	function freemedMaintenanceModule () {
 		// call parent constructor
-		$this->freemedModule($nullvar);
+		$this->freemedModule();
 	} // end function freemedMaintenanceModule
 
 	// override check_vars method
@@ -140,7 +137,9 @@ class freemedMaintenanceModule extends freemedModule {
 			$sql->update_query (
 				$this->table_name,
 				$this->variables,
-				array ("id")
+				array (
+					"id"	=>	$id
+				)
 			)
 		);
 

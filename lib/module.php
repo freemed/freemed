@@ -18,9 +18,9 @@ class freemedModule extends module {
 	var $page_name = "module_loader.php";
 
 	// contructor method
-	function freemedModule ($nullvar = "") {
+	function freemedModule () {
 		// call parent constructor
-		$this->module($nullvar);
+		$this->module();
 	} // end constructor freemedModule
 
 	// override check_vars method

@@ -64,15 +64,6 @@ if ($id<1) {
         <TD>&nbsp;</TD>
         </TR>
         <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>"._("Authorizations")." : </B><$STDFONT_E>
-        </TD><TD>
-        <A HREF=\"authorizations.php?$_auth&patient=$id&action=addform\"
-        ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
-        </TD><TD>
-        <A HREF=\"authorizations.php?$_auth&patient=$id\"
-        ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
-        </TD></TR>
-        <TR><TD ALIGN=RIGHT>
          <$STDFONT_B><B>"._("Billing Functions")."</B> : <$STDFONT_E>
         </TD><TD>
          <A HREF=\"payment_record.php?$_auth&patient=$id\"
