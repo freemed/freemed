@@ -9,7 +9,7 @@ all:
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf A* C{H,O,R}* [F-Z]* .ht* *.xml *.inc *.php $(INSTDIR)/$(THISDIR)
+	cp -vf A* C{O,R}* [F-Z]* *.xml *.inc *.php $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
 		make -C $$d install INSTDIR=$(INSTDIR); \
 	done
