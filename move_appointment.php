@@ -18,7 +18,7 @@
 
   // check to see if valid appointment...
   if ($id < 1) {
-    freemed_display_box_top ("Move Appointment :: $ERROR");
+    freemed_display_box_top ("Move Appointment :: "._("ERROR"));
     echo "
      You must provide an appointment to move.
      <P>
@@ -77,7 +77,7 @@ switch ($action) {
 
     <CENTER>
      <B><$STDFONT_B>
-     $Current_Date_is $selected_date
+     "._("Current Date is")." $selected_date
      <$STDFONT_E></B>
     </CENTER>
     <BR>
@@ -86,7 +86,7 @@ switch ($action) {
   if (date_in_the_past($selected_date)==1)
     echo "
       <CENTER><I><FONT SIZE=-2 FACE=\"Arial, Helvetica, Verdana\"
-      >$this_date_occurs_in_the_past</FONT></I></CENTER>
+      >"._("this date occurs in the past")."</FONT></I></CENTER>
       <BR>
     ";
 
@@ -116,23 +116,21 @@ switch ($action) {
   }
 
   echo "
-    <FORM ACTION=\"$page_name\">
+    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"step2\">
-    <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-    <INPUT TYPE=HIDDEN NAME=\"type\"    VALUE=\"$type\">
-    <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"$id\">
+    <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
+    <INPUT TYPE=HIDDEN NAME=\"type\"    VALUE=\"".prepare($type)."\">
+    <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"".prepare($id)."\">
     <INPUT TYPE=HIDDEN NAME=\"selected_date\"
-     VALUE=\"$selected_date\">
+     VALUE=\"".prepare($selected_date)."\">
  
-    <$STDFONT_B>$Room : <$STDFONT_E>
+    <$STDFONT_B>"._("Room")." : <$STDFONT_E>
     <SELECT NAME=\"room\">
-  ";
-  freemed_display_rooms ($room);
-  echo "
+  ".freemed_display_rooms ($room)."
     </SELECT>
 
     <CENTER>
-      <INPUT TYPE=SUBMIT VALUE=\"$Check_Room\">
+      <INPUT TYPE=SUBMIT VALUE=\" "._("Check Room")." \">
     </CENTER>
     </FORM>
     <P>
@@ -398,21 +396,21 @@ switch ($action) {
    if ($facility > 0) {
      $fac_name = freemed_get_link_field ($facility, "facility", "psrname");
    } else {
-     $fac_name = "Default Facility";
+     $fac_name = _("Default Facility");
    } // end checking for facility
 
    if ($debug) $debug_var = "[$room]";
    echo "
-     <FORM ACTION=\"$page_name\">
+     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"add\">
-     <INPUT TYPE=HIDDEN NAME=\"id\"       VALUE=\"$id\">
-     <INPUT TYPE=HIDDEN NAME=\"patient\"  VALUE=\"$patient\">
-     <INPUT TYPE=HIDDEN NAME=\"room\"     VALUE=\"$room\">
-     <INPUT TYPE=HIDDEN NAME=\"facility\" VALUE=\"$facility\">
-     <INPUT TYPE=HIDDEN NAME=\"type\"     VALUE=\"$type\">
-     <INPUT TYPE=HIDDEN NAME=\"selected_date\" VALUE=\"$selected_date\">
-     <INPUT TYPE=HIDDEN NAME=\"hour\"     VALUE=\"$hour\">
-     <INPUT TYPE=HIDDEN NAME=\"minute\"   VALUE=\"$minute\">
+     <INPUT TYPE=HIDDEN NAME=\"id\"       VALUE=\"".prepare($id)."\">
+     <INPUT TYPE=HIDDEN NAME=\"patient\"  VALUE=\"".prepare($patient)."\">
+     <INPUT TYPE=HIDDEN NAME=\"room\"     VALUE=\"".prepare($room)."\">
+     <INPUT TYPE=HIDDEN NAME=\"facility\" VALUE=\"".prepare($facility)."\">
+     <INPUT TYPE=HIDDEN NAME=\"type\"     VALUE=\"".prepare($type)."\">
+     <INPUT TYPE=HIDDEN NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\">
+     <INPUT TYPE=HIDDEN NAME=\"hour\"     VALUE=\"".prepare($hour)."\">
+     <INPUT TYPE=HIDDEN NAME=\"minute\"   VALUE=\"".prepare($minute)."\">
 
      <B>$Facility</B>: $fac_name<BR>
      <B>$Room</B>:     $rm_name $rm_desc<BR>
@@ -455,17 +453,23 @@ switch ($action) {
    freemed_display_box_bottom ();
   break;
  case "add":
-  freemed_display_box_top ("Moving Appointment", $_ref);
-  echo "Moving... ";
-  $query = "UPDATE scheduler SET 
-    caldateof   = '$selected_date',
-    calhour     = '$hour',
-    calminute   = '$minute',
-    calfacility = '$facility',
-    calroom     = '$room',
-    calprenote  = '$note'
-    WHERE id='$id'";
-  $result = fdb_query ($query);
+  freemed_display_box_top ("Moving Appointment");
+  echo "Moving . . . ";
+  $query = $sql->update_query (
+	"scheduler",
+	array (
+    "caldateof"   => $selected_date,
+    "calhour"     => $hour,
+    "calminute"   => $minute,
+    "calfacility" => $facility,
+    "calroom"     => $room,
+    "calprenote"  => $note
+	),
+	array (
+		"id"
+	)
+  );
+  $result = $sql->query ($query);
 
   if ($debug) {
     echo "
@@ -477,7 +481,7 @@ switch ($action) {
     ";
   } // end debug...
   echo "
-    done.
+    "._("done").".
     <BR>
     <CENTER>
   ";

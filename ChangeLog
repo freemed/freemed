@@ -1,13 +1,13 @@
 freemed project changelog
 
 * Thu Dec 28 2000 fforest
-  - admin.php added 2 new tables guarantor and payer. the patient record no longer
-              need to carry this info around
+  - admin.php added 2 new tables guarantor and payer. the patient record no
+    longer need to carry this info around
   - patient.php now using the new tables added above.
-  - generate_fixed_forms using sql joins to get payirecs and procrecs together. changed billing
-                         to use a payer type selected from the menu. only bills for this
-                         payer type will generate. revoced the code for invoice. no longer needed.
-
+  - generate_fixed_forms using sql joins to get payirecs and procrecs together.
+    changed billing to use a payer type selected from the menu. only bills for
+    this payer type will generate. revoced the code for invoice. no longer
+    needed.
 
 * Thu Dec 28 2000 rufustfirefly
   - rehauling db layer today. i think everything that could have been broken
@@ -21,6 +21,13 @@ freemed project changelog
   - added add() and mod() routines in lib/module_maintenance.php, so that
     maintenance modules can use them instead of reinventing the wheel
   - moved physician.php3 -> modules/provider.module.php
+  - moved roomequip.php -> modules/room_equipment.module.php
+  - moved phystatus.php3 -> modules/physician_status.module.php
+  - moved phygroup.php3 -> modules/physician_groups.module.php
+  - moved insurance_modifiers.php3 -> modules/insurance_modifiers.module.php
+  - moved all modules/physician_* to modules/provider_* with language changes
+  - moved degrees.php3 -> modules/provider_certifications.module.php
+  - moved specialties.php -> modules/provider_specialties.module.php
 
 * Wed Dec 27 2000 rufustfirefly
   - started to convert Rx.php3 -> modules/prescription.module.php

@@ -3,19 +3,19 @@
  // note: physician status db functions
  // lic : GPL
 
-if (!defined("__PHYSICIAN_STATUS_MODULE_PHP__")) {
+if (!defined("__PROVIDER_STATUS_MODULE_PHP__")) {
 
-define(__PHYSICIAN_STATUS_MODULE_PHP__, true);
+define(__PROVIDER_STATUS_MODULE_PHP__, true);
 
 include ("lib/freemed.php");
 include ("lib/API.php");
 
-class physicianStatusMaintenance extends freemedMaintenanceModule {
+class providerStatusMaintenance extends freemedMaintenanceModule {
 
-	var $MODULE_NAME    = "Physician Status";
+	var $MODULE_NAME    = "Provider Status Maintenance";
 	var $MODULE_VERSION = "0.1";
 
-	var $record_name    = "Physician Status";
+	var $record_name    = "Provider Status";
 	var $table_name     = "phystatus";
 
 	function add () {
@@ -32,7 +32,7 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
 
 		if ($result) { echo "<B>"._("done").".</B>"; }
 		 else        { echo "<B>"._("ERROR")."</B>"; }
-	} // end function physicianStatusMaintenance->add()
+	} // end function providerStatusMaintenance->add()
 
 	function form () {
 		reset ($GLOBALS);
@@ -69,7 +69,7 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
-	} // end function physicianStatusMaintenance->form()
+	} // end function providerStatusMaintenance->form()
 
 	function mod () {
 		reset ($GLOBALS);
@@ -85,7 +85,7 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
 		if ($result) { echo "<B>"._("done").".</B>"; }
 		 else        { echo "<B>"._("ERROR")."</B>"; }
 
-	} // end function physicianStatusMaintenance->mod()
+	} // end function providerStatusMaintenance->mod()
 
 	/*
 	function delete () {
@@ -102,7 +102,7 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
     <A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
      >"._("back")."</A></CENTER>
 		";
-	} // end function physicianStatusMaintenance->delete()
+	} // end function providerStatusMaintenance->delete()
 	*/
 
 	function view () {
@@ -125,7 +125,7 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
     <TR BGCOLOR=\"".
       ($_alternate = freemed_bar_alternate_color ($_alternate))
     ."\" VALIGN=CENTER>
-    <TD VALIGN=CENTER><FORM ACTION=\"$this->page_name\">
+    <TD VALIGN=CENTER><FORM ACTION=\"$this->page_name\" METHOD=POST>
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($GLOBALS["module"])."\">
     	<INPUT NAME=\"phystatus\" LENGTH=20 MAXLENGTH=30></TD>
@@ -134,11 +134,11 @@ class physicianStatusMaintenance extends freemedMaintenanceModule {
 
     <P>
 		";
-	} // end function physicianStatusMaintenance->view()
+	} // end function providerStatusMaintenance->view()
 
-} // end class physicianStatusMaintenance
+} // end class providerStatusMaintenance
 
-register_module ("physicianStatusMaintenance");
+register_module ("providerStatusMaintenance");
 
 } // end if defined
 

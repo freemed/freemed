@@ -121,9 +121,9 @@
      ";
 
      $phys_q="SELECT * FROM physician ORDER BY phylname,phyfname";
-     $phys_r=fdb_query($phys_q);
+     $phys_r=$sql->query($phys_q);
      $ins_q="SELECT * FROM insco ORDER BY insconame,inscostate,inscocity";
-     $ins_r=fdb_query($ins_q);
+     $ins_r=$sql->query($ins_q);
      
      echo "
        <TR>
@@ -222,7 +222,7 @@
        '0',
        '".addslashes($authcomment)         ."',
        NULL ) "; // actual add query
-     $result = fdb_query ($query);
+     $result = $sql->query ($query);
      if ($result)
        echo " <B> "._("done")." </B>\n";
      else
@@ -256,7 +256,7 @@
        authvisits     = '".addslashes($authvisits)        ."',
        authcomment    = '".addslashes($authcomment)       ."'
        WHERE id='$id'";
-     $result = fdb_query ($query);
+     $result = $sql->query ($query);
      if ($result) echo "<B><$STDFONT_B>"._("done")."<$STDFONT_E></B>\n";
       else echo "<B><$STDFONT_B>"._("ERROR")."<$STDFONT_E></B>\n";
      echo "
@@ -282,8 +282,8 @@
      $query = "SELECT * FROM $db_name
         WHERE (authpatient='".addslashes($patient)."')
         ORDER BY authdtbegin,authdtend";
-     $result = fdb_query ($query);
-     $rows = ( ($result > 0) ? fdb_num_rows ($result) : 0 );
+     $result = $sql->query ($query);
+     $rows = ( ($result > 0) ? $sql->num_rows ($result) : 0 );
 
      $this_patient = new Patient ($patient);
      

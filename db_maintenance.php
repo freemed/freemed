@@ -74,31 +74,11 @@ echo "
       >"._("Insurance Company Groups")."</A>
      <BR>
 
-     <A HREF=\"insurance_modifiers.php3?$_auth\"
-      >"._("Insurance Modifiers")."</A>
-     <BR>
-
      <!-- not ready for prime time yet....
      <A HREF=\"phy_avail_map.php3?$_auth\"
       >"._("Physician Availability Map")."</A>
      <BR>
      -->
-
-     <A HREF=\"degrees.php3?$_auth\"
-      >"._("Physician Degrees")."</A>
-     <BR>
-
-     <A HREF=\"phygroup.php3?$_auth\"
-      >"._("Physician Groups")."</A>
-     <BR>
-
-     <A HREF=\"specialties.php?$_auth\"
-      >"._("Physician")." "._("Specialties")."</A>
-     <BR>
-
-     <A HREF=\"phystatus.php3?$_auth\"
-      >"._("Physician Statuses")."</A>
-     <BR>
 
      <A HREF=\"facility.php3?$_auth\"
       >"._("Place of Service")."</A>
@@ -110,14 +90,6 @@ echo "
 
      <A HREF=\"room.php?$_auth\"
       >"._("Rooms")." (<I>"._("Scheduling Locations")."</I>)</A>
-     <BR>
-
-     <A HREF=\"roomequip.php?$_auth\"
-      >"._("Room Equipment")."</A>
-     <BR>
-
-     <A HREF=\"type_of_service.php?$_auth\"
-      >"._("Type of Service")."</A>
      <BR>
 
      <A HREF=\"simplerep.php3?$_auth\"

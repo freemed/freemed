@@ -91,7 +91,7 @@ switch ($action) {
     "'$cur_date', '$cur_date',  NULL ) ";
 
     // query the db with new values
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) { echo "<B>"._("done").".</B>"; }
    else        { echo "<B>"._("ERROR")."</B>"; }
@@ -126,7 +126,7 @@ switch ($action) {
     "reqdatemod = '$cur_date',  ". 
     "WHERE id='$id'";
 
-  $result = fdb_query($query); // execute query
+  $result = $sql->query($query); // execute query
 
   if ($result) { echo "<B>"._("done").".</B>"; }
    else        { echo "<B>"._("ERROR")."</B>"; }
@@ -147,7 +147,7 @@ switch ($action) {
   freemed_display_box_top (_("Deleting")." "._($record_name));
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $db_name WHERE id='".addslashes($id)."'");
+  $result = $sql->query("DELETE FROM $db_name WHERE id='".addslashes($id)."'");
 
   echo "
     <P><CENTER>
@@ -164,10 +164,10 @@ switch ($action) {
  default:
   $query = "SELECT * FROM $db_name ORDER BY $order_field";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   freemed_display_box_top (_($record_name));
   echo freemed_display_itemlist (
-   fdb_query("SELECT * FROM $db_name ORDER BY $order_field"),
+   $sql->query("SELECT * FROM $db_name ORDER BY $order_field"),
    $page_name,
    array (
      _("Name")		=>	"reqname",

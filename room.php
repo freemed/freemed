@@ -52,7 +52,7 @@ switch ($action) {
 
     _("Default Provider") =>
     freemed_display_selectbox (
-    fdb_query ("SELECT * FROM physician"),
+    $sql->query ("SELECT * FROM physician"),
     "#phylname#, #phyfname#",
     "roomdefphy"),
 
@@ -101,7 +101,7 @@ switch ($action) {
     "'".addslashes($roomipaddr)."',   ".
     " NULL ) ";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) echo "<B>"._("done").".</B><$STDFONT_E>\n";
    else echo "<B>"._("ERROR")." ($result)</B>\n"; 
@@ -134,7 +134,7 @@ switch ($action) {
     "roomipaddr  = '".addslashes($roomipaddr)."'   ". 
     "WHERE id='".addslashes($id)."'";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) echo "<B>"._("done").".</B><$STDFONT_E>\n";
    else echo "<B>"._("ERROR")." ($result)</B>\n"; 
@@ -153,7 +153,7 @@ switch ($action) {
  case "del": case "delete":
   freemed_display_box_top (_("Deleting")." "._($record_name));
 
-  $result = fdb_query("DELETE FROM room WHERE (id = '".addslashes($id)."')");
+  $result = $sql->query("DELETE FROM room WHERE (id = '".addslashes($id)."')");
 
   echo "
     <P>
@@ -171,7 +171,7 @@ switch ($action) {
 
   freemed_display_box_top (_($record_name));
   echo freemed_display_itemlist (
-     fdb_query ("SELECT roomname,roomdescrip,id FROM room ORDER BY roomname"),
+     $sql->query ("SELECT roomname,roomdescrip,id FROM room ORDER BY roomname"),
      $page_name,
      array (
 	_("Name")		=>	"roomname",
