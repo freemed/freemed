@@ -16,7 +16,7 @@ class LanguageRegistry {
 		// Check for serialized file
 		$cache = CreateObject(
 			'PHP.FileSerialize',
-			'./locale/.registry'
+			'data/cache/language_registry'
 		);
 
 		// Is it cached?
@@ -32,7 +32,7 @@ class LanguageRegistry {
 			}
 
 			// Write to cache
-			//$cache->write($this->registry);
+			$cache->write($this->registry);
 		} else {
 			// Read from cache
 			$this->registry = $cache->read();
@@ -41,9 +41,9 @@ class LanguageRegistry {
 
 	function cached () {
 		// Check for non-existant cache file
-		if (!file_exists('./locale/.registry')) {
+		if (!file_exists('data/cache/language_registry')) {
 		/*
-			$touched = touch ('./locale/.registry');
+			$touched = touch ('data/cache/language_registry');
 			if (!$touched) {
 				die(
 				__("FreeMED was unable to create a file to record the language registry.")."<br/>\n".
@@ -61,16 +61,16 @@ class LanguageRegistry {
 
 		// Get cache modification date
 		clearstatcache();
-		$cache_modified = array_element(lstat('./locale/.registry'), 9);
+		$cache_modified = array_element(lstat('data/cache/language_registry'), 9);
 
 		// If the cache is older than the directory
 		if ($cache_modified < $dir_modified) {
-			print "rebuild<br/>\n";
+			//print "rebuild<br/>\n";
 			// Rebuild cache
 			return false;
 		} else {
 			// Otherwise cache is up to date
-			print "fine<br/>\n";
+			//print "fine<br/>\n";
 			return true;
 		}
 	} // end method cached
