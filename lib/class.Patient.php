@@ -101,6 +101,24 @@ class Patient {
 		__("year(s)"), __("month(s)"), __("day(s)"), __("ago"), __("ahead"));
 	} // end function Patient->age
 
+	// Method: Patient->date_of_last_procedure
+	//
+	//	Determine last procedure date for this patient object.
+	//
+	// Returns:
+	//
+	//	SQL date formatted string, or NULL if there is no previous
+	//	procedure date.
+	//
+	function date_of_last_procedure ( ) {
+		$query = "SELECT procdt FROM procrec ".
+			"WHERE procpatient = '".addslashes($this->patient_number)."' ".
+			"ORDER BY procdt DESC";
+		$res = $GLOBALS['sql']->query ( $query );
+		$r = $GLOBALS['sql']->fetch_array ( $res );
+		return $r['procdt'];
+	} // end method date_of_last_procedure
+
 	// Method: Patient->fullName
 	//
 	//	Get the patient's full name.

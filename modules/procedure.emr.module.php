@@ -116,7 +116,7 @@ class ProcedureModule extends EMRModule {
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 
 		if (!$been_here) {
-			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc,$proclabcharges;
+			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc,$proclabcharges,$procrefdt;
 			global $been_here;
 
 			$procunits = "1.0";        // default value for units
@@ -128,6 +128,10 @@ class ProcedureModule extends EMRModule {
 			$procphysician = $this_patient->local_record[ptdoc];
 			$procrefdoc = $this_patient->local_record[ptrefdoc];
 			$proclabcharges = '0.00';
+
+			// Pull the date of last visit from last performed proc
+			$procrefdt = $this_patient->date_of_last_procedure();
+			
 			$been_here = 1;
 		}
 
@@ -253,18 +257,38 @@ class ProcedureModule extends EMRModule {
 			) // end of array_merge
 		); // end of page one
 
-		$prim_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
-						"a.covstatus='".ACTIVE."' AND a.covtype='".PRIMARY."'".
-						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
-		$sec_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
-						"a.covstatus='".ACTIVE."' AND a.covtype='".SECONDARY."'".
-						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
-		$tert_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
-						"a.covstatus='".ACTIVE."' AND a.covtype='".TERTIARY."'".
-						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
-		$wc_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
-						"a.covstatus='".ACTIVE."' AND a.covtype='".WORKCOMP."'".
-						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+		$prim_query = "SELECT a.id,b.insconame, ".
+			"CASE a.covstatus ".
+				"WHEN 2 THEN '(suspended)' ".
+				"ELSE '' ".
+			"END AS note ".
+			"FROM coverage as a,insco as b WHERE ".
+			"FIND_IN_SET(a.covstatus,'0,2') AND a.covtype='".PRIMARY."'".
+			" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+		$sec_query = "SELECT a.id,b.insconame, ".
+			"CASE a.covstatus ".
+				"WHEN 2 THEN '(suspended)' ".
+				"ELSE '' ".
+			"END AS note ".
+			"FROM coverage as a,insco as b WHERE ".
+			"FIND_IN_SET(a.covstatus,'0,2') AND a.covtype='".SECONDARY."'".
+			" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+		$tert_query = "SELECT a.id,b.insconame, ".
+			"CASE a.covstatus ".
+				"WHEN 2 THEN '(suspended)' ".
+				"ELSE '' ".
+			"END AS note ".
+			"FROM coverage as a,insco as b WHERE ".
+			"FIND_IN_SET(a.covstatus,'0,2') AND a.covtype='".TERTIARY."'".
+			" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+		$wc_query = "SELECT a.id,b.insconame, ".
+			"CASE a.covstatus ".
+				"WHEN 2 THEN '(suspended)' ".
+				"ELSE '' ".
+			"END AS note ".
+			"FROM coverage as a,insco as b WHERE ".
+			"FIND_IN_SET(a.covstatus,'0,2') AND a.covtype='".WORKCOMP."'".
+			" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
 
 		$prim_result = $sql->query($prim_query);
 		$sec_result  = $sql->query($sec_query);
@@ -274,10 +298,10 @@ class ProcedureModule extends EMRModule {
 		$wizard->add_page (__("Step Two: Select Coverage"),
 			array("proccurcovid","proccurcovtp","proccov1","proccov2","proccov3","proccov4"),
 			html_form::form_table(array (
-				__("Primary Coverage") =>  freemed_display_selectbox($prim_result,"#insconame#","proccov1"),
-				__("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame#","proccov2"),
-				__("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov3"),
-				__("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov4")
+				__("Primary Coverage") =>  freemed_display_selectbox($prim_result,"#insconame# #note#","proccov1"),
+				__("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame# #note#","proccov2"),
+				__("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame# #note#","proccov3"),
+				__("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame# #note#","proccov4")
 				))
 			); // end coverage page	
 
