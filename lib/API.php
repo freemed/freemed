@@ -899,7 +899,22 @@ class freemed {
 		}
 	} // end function freemed::query_to_array
 
-	// Function freemed::race_widget
+	// Function: freemed::quickform_i18n
+	//
+	//	Perform internationalization (i18n) on an HTML_QuickForm
+	//	PEAR object.
+	//
+	// Parameters:
+	//
+	//	&$object - Object reference
+	//
+	function quickform_i18n ( &$object ) {
+		$object->_requiredNote = '<span style="font-size:80%; color:#ff0000;">*</span><span style="font-size:80%;"> '.__("denotes required field").'</span>';
+		$object->_jsPrefix = __("Invalid information entered.");
+		$object->_jsPostfix = __("Please correct these fields.");
+	} // end method quickform_i18n
+
+	// Function: freemed::race_widget
 	//
 	//	Create HL7 v2.3.1 compliant race widget (table 0005)
 	//
