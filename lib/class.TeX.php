@@ -11,7 +11,21 @@ class TeX {
 	var $_buffer; // Internal buffer for creating TeX file
 	var $options;
 
+	// Variable: $this->stock_macros
+	//
+	//	Associative array defining fixed macros for TeX templates
+	//	which are set by default. The key specifies the name of
+	//	the macro and the value sets the destination.
+	//
+	var $stock_macros;
+
 	function TeX ( $options = NULL ) {
+		$this->stock_macros = array (
+			'PACKAGENAME' => PACKAGENAME,
+			'VERSION' => DISPLAY_VERSION,
+			'INSTALLATION' => INSTALLATION
+		);
+
 		// Pass options to internal array
 		if (is_array($options)) {
 			$this->options = $options;
@@ -98,8 +112,10 @@ class TeX {
 	//	$copies - (optional) Number of copies of the current TeX
 	//	document to print. Defaults to 1.
 	//
-	function PrintTeX ( $copies = 1 ) {
-		$file = $this->RenderToPDF();
+	//	$rendered - (optional) Passed to <RenderToPDF>.
+	//
+	function PrintTeX ( $copies = 1, $rendered = false ) {
+		$file = $this->RenderToPDF($rendered);
 
 		// Render to postscript, since CUPS doesn't like PDF
 		`( cd /tmp; pdf2ps $file $file.ps )`;
@@ -124,27 +140,81 @@ class TeX {
 		return true;
 	} // end method Print
 
-	function RenderDebug ( ) {
-		$buffer .= $this->_CreateTeXHeader();
+	function RenderDebug ( $rendered = false ) {
+		if (!$rendered) { $buffer .= $this->_CreateTeXHeader(); }
 		$buffer .= $this->_buffer;
-		$buffer .= $this->_CreateTeXFooter();
+		if (!$rendered) { $buffer .= $this->_CreateTeXFooter(); }
 		print "<pre>\n";
 		print $buffer;
 		print "</pre>\n";
 	} // end method RenderDebug
 
+	// Method: RenderFromTemplate
+	//
+	//	Renders a TeX document with substitutions from a TeX
+	//	template in the lib/tex/ directory.
+	//
+	// Parameters:
+	//
+	//	$template - Name of the template to be used. For
+	//	lib/tex/rx.tex this would be 'rx';
+	//
+	//	$macros - Associative array of substitutions, in the
+	//	form of the key being the macro name, and the value
+	//	being the value to be substituted for it.
+	//
+	// Returns:
+	//
+	//	TeX document (not rendered into a result format).
+	//
+	function RenderFromTemplate ( $template, $macros ) {
+		if (!file_exists('lib/tex/'.$template.'.tex')) {
+			die("Could not load $template TeX template.");
+		}
+		
+		// Initial load of file
+		$fp = fopen('lib/tex/'.$template.'.tex', 'r');
+		if (!$fp) {
+			die("Could not open $template TeX template.");
+		}
+		$buffer = '';
+		while (!feof($fp)) { $buffer .= fgets($fp, 4096); }
+		fclose ($fp);
+
+		// Form superset
+		$_macros = array_merge($this->stock_macros, $macros);
+
+		// Substitutions
+		foreach ($_macros AS $k => $v) {
+			if (!empty($k) and !empty($v)) {
+				$buffer = str_replace('{{'.$k.'}}', $v, $buffer);
+			} elseif (!empty($k)) {
+				// Broken behavior? Remove missing macros
+				$buffer = str_replace('{{'.$k.'}}', '', $buffer);
+			}
+		}
+
+		// Return processed string
+		return $buffer;
+	} // end method RenderFromTemplate
+
 	// Method: RenderToPDF
 	//
 	//	Render to PDF and get file name of temporary file
+	//
+	// Parameters:
+	//
+	//	$rendered - (optional) Boolean. Set to true if header
+	//	and footer are to be supressed.
 	//
 	// Returns:
 	//
 	//	Name of temporary file.
 	//
-	function RenderToPDF ( ) {
-		$buffer .= $this->_CreateTeXHeader();
+	function RenderToPDF ( $rendered = false ) {
+		if (!$rendered) { $buffer .= $this->_CreateTeXHeader(); }
 		$buffer .= $this->_buffer;
-		$buffer .= $this->_CreateTeXFooter();
+		if (!$rendered) { $buffer .= $this->_CreateTeXFooter(); }
 		
 		$tmp = tempnam('/tmp', 'fmtex');
 
@@ -297,7 +367,7 @@ class TeX {
 
 		// Handle embedded CRs... for now we treat them as line
 		// breaks
-		//$text = str_replace("\n", " \\\\\n", $text);
+		$text = str_replace("\n", " \\\\\n", $text);
 
 		// Do something about <br /> and <br> tags (<br /> are used
 		// by HTMLarea JS). For now, we treat them as though they
@@ -346,9 +416,10 @@ class TeX {
 		$string = str_replace('{', '\{', $string);
 		$string = str_replace('}', '\}', $string);
 
-		// Get rid of #, _
+		// Get rid of #, _, %
 		$string = str_replace('#', '\#', $string);
 		$string = str_replace('_', '\_', $string);
+		$string = str_replace('%', '\%', $string);
 
 		// Deal with amphersands, and &quot; &amp; stuff
 		$string = str_replace('&quot;', '\'\'', $string);
