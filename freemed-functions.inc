@@ -1539,7 +1539,6 @@ function freemed_search_query ($ctrl_array, $ord_array,
     $buf .= " ORDER BY ";
     $buf .= implode(',', $ord_array);
   } // include orderby clause
-  echo $buf."<BR>";
   return fdb_query($buf); 
 } // end function freemed_search_query
 
