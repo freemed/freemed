@@ -97,12 +97,13 @@ foreach ($static_components AS $garbage => $__component) {
 			 CLASS=\"menubar_info\">
 				<B>".__("Time")."</B>
 			</TD><TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
-				<!-- <B>".__("Room")."</B> -->
+				<B>".__("Provider")."</B>
 			</TD><TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
 				<B>".__("Description")."</B>
 			</TD></tr>
 			";
 			while ($appoint_r=$sql->fetch_array($appoint_result)) {
+				$my_phy = CreateObject('FreeMED.Physician', $appoint_r['calphysician']);
 				$panel[__("Appointments")] .= "
 				<tr>
 				<TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
@@ -115,6 +116,7 @@ foreach ($static_components AS $garbage => $__component) {
 					$appoint_r["calminute"]
 				))."</SMALL>
 				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
+				<small>".prepare($my_phy->fullName())."</small>
 				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
 				<SMALL>".prepare(stripslashes($appoint_r["calprenote"]))."</SMALL>
 				</TD></tr>
@@ -369,6 +371,7 @@ foreach ($static_components AS $garbage => $__component) {
 		} // end if there is no result
 		//----- Create the panel
 		if ($this_patient->local_record['ptpcp'] > 0) { $pcp = CreateObject('FreeMED.Physician', $this_patient->local_record['ptpcp']); }
+		if ($this_patient->local_record['ptrefdoc'] > 0) { $refdoc = CreateObject('FreeMED.Physician', $this_patient->local_record['ptrefdoc']); }
 		$modules[__("Patient Information")] = "patient_information";
 		$static_name = __("Patient Information");
 		$panel[__("Patient Information")] .= "
@@ -379,11 +382,11 @@ foreach ($static_components AS $garbage => $__component) {
 			<A HREF=\"patient.php?action=modform&id=$id\" 
 			>".__("Modify")."</A>
 			</TD></tr>
-			<tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
+			<!-- <tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
 				<B>".__("Date of Last Visit")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$dolv."
-			</tr><tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
+			</tr> --><tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
 				<B>".__("Phone Number")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$this_patient->local_record["pthphone"]."
@@ -391,6 +394,12 @@ foreach ($static_components AS $garbage => $__component) {
 			".($this_patient->local_record['ptpcp'] > 0 ? "
 			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("PCP")."</b>:</td> 
 			<td ALIGN=\"LEFT\">".prepare($pcp->fullName())."</td></tr>
+			" : "" )."
+			".($this_patient->local_record['ptrefdoc'] > 0 ? "
+			<!--
+			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("Referring")."</b>:</td> 
+			<td ALIGN=\"LEFT\">".prepare($refdoc->fullName())."</td></tr>
+			-->
 			" : "" )."
 			</table>
 		";
