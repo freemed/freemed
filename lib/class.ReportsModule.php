@@ -3,7 +3,7 @@
  // desc: module prototype for reports
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.ReportsModule');
+LoadObjectDependency('FreeMED.BaseModule');
 
 class ReportsModule extends BaseModule {
 
