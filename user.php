@@ -40,7 +40,7 @@ switch($action) { // master action switch
     if (empty($id)) {
       $action="addform";
     } else {
-     $page_title = __("Modify")." "._($record_name);
+     $page_title = __("Modify User");
     }
   } // first modform if
 
@@ -54,7 +54,7 @@ switch($action) { // master action switch
   if ( ($action=="modform") AND (!$book->been_here()) ) { // catch the empty ID
 
 	// grab record number "id"
-	$r = freemed::get_link_rec ($id, $table_name);
+	$r = freemed::get_link_rec ($_REQUEST['id'], $table_name);
 
 	// Pull into the global scope
 	foreach ($r AS $k => $v) {
@@ -93,7 +93,7 @@ switch($action) { // master action switch
   } // second modform if
   
   if ($action=="addform") {
-    $page_title =  __("Add")." "._($record_name);
+    $page_title =  __("Add User");
     global $userlevel; $userlevel = array( -1 );
   } // addform if
   
@@ -318,7 +318,7 @@ switch($action) { // master action switch
  break;
 
  case "del":
-	$page_title = __("Deleting")." "._($record_name);
+	$page_title = __("Deleting User");
 
     // select only "id" record, and delete
   if ($id != 1)
@@ -359,7 +359,7 @@ switch($action) { // master action switch
 
   $result = $sql->query($query);
   if ($result) {
-    $page_title = _($record_name);
+    $page_title = __("Users");
 
     $display_buffer .= "
      <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
@@ -393,12 +393,10 @@ switch($action) { // master action switch
         // don't allow add or delete on root...
       if ($r[id] != 1) 
         $display_buffer .= "
-         <A HREF=
-         \"$page_name?id=$r[id]&action=modform\"
-         ><FONT SIZE=-1>".__("MOD")."</FONT></A>
-          &nbsp;
-          <A HREF=\"$page_name?id=$r[id]&action=del\"
-          ><FONT SIZE=-1>".__("DEL")."</FONT></A>
+         <a class=\"button\" HREF=\"$page_name?id=$r[id]&action=modform\"
+         ><small>".__("MOD")."</small></a>
+         <a class=\"button\" HREF=\"$page_name?id=$r[id]&action=del\"
+         ><small>".__("DEL")."</small></a>
         "; // show actions...
       else $display_buffer .= "&nbsp; \n";
 
