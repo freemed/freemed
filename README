@@ -128,22 +128,6 @@ Max Klohn (amk@span.ch) -
   reports like you wouldn't believe, as well as things to think
   about, and many database structures...
 
-Chris Beggy (chrisb@kippona.com) -
-  One of the two website maintainers, as well as the admin of
-  our web server, he also codes modules and helps decide
-  important decision stuff.
-
-Francisco Sam Castillo (fsam@proyecto-web.com.mx) -
-  Sam does the other 1/2 of the website maintaining, and is
-  responsible for the layout as well as a lot of the content.
-  his other contributions have been very good, and he is
-  probably going to be doing HTML scripting for the modules
-  when they are ready for him.
-
-Ryan Losh (rklosh@rkl.org) -
-  Returning to the project after a six month absence...runs a billing
-  service that wants to switch from that closed source 800lb gorilla.
-
 John Gage (jgage@epo.som.sunysb.edu) -
   Author of a great anesthesia tracking/report system, and has been
   doing usability and capability testing for freemed.
@@ -152,4 +136,8 @@ Fred Forrester (fforest@netcarrier.com) -
   Current maintainer of the billing code. fred has done a fine job, and
   has added much functionality. as well as cleaning up some of the age-old
   code...
+
+Fred Trotter (ftrotter@synseer.com)
+  Fred (yes, another Fred) has HIPAA audited FreeMED, and has helped
+  revamp the billing system yet again.
 
