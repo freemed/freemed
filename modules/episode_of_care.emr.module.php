@@ -151,6 +151,13 @@ class episodeOfCare extends freemedEMRModule {
 
 			"id"			=> SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
 		);
+
+		// Summary box for management
+		$this->summary_vars = array (
+			"Orig" => "eocstartdate",
+			"Last" => "eocdtlastsimilar",
+			_("Description") => "eocdescrip"
+		);
 	} // end constructor episodeOfCare
 
 	function form () {
