@@ -336,7 +336,7 @@ switch ($action) { // master action switch
         <CENTER>
          <A HREF=\"manage.php3?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-         <A HREF=\"payment_record.php3?$_auth&action=addform&patient=$patient&".
+         <A HREF=\"payment_record.php?$_auth&action=addform&patient=$patient&".
          "procedure=$this_procedure\"
          ><$STDFONT_B>Add Payment<$STDFONT_E></A> <B>|</B>
          <A HREF=\"procedure.php?$_auth&action=addform&procvoucher=$procvoucher".

@@ -44,11 +44,11 @@
     <TD ALIGN=RIGHT>
       <$STDFONT_B><B>"._("Patient Payment")." : </B><$STDFONT_E></TD>
     <TD ALIGN=LEFT>
-     <A HREF=\"payment_record.php3?$_auth&action=addform&patient=$patient\"
+     <A HREF=\"payment_record.php?$_auth&action=addform&patient=$patient\"
      ><$STDFONT_B>"._("Entry")."<$STDFONT_E></A>
     </TD>
     <TD ALIGN=LEFT>
-     <A HREF=\"payment_record.php3?$_auth&action=view&patient=$patient\"
+     <A HREF=\"payment_record.php?$_auth&action=view&patient=$patient\"
      ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
     </TD>
     </TR>" :

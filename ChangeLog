@@ -14,6 +14,9 @@ freemed project changelog
   - moved room.php3 -> room.php
   - moving to CVS Id tag for new files ... also taking out code by: line
     unless other than jeff
+  - moved progress_notes.php3 -> progress_notes.php
+  - moved payment_record.php3 -> payment_record.php
+  - moved logout.php3 -> logout.php
 
 * Wed Dec 6  2000 fforest
   - billing_functions : new menu item to generate patient invoices

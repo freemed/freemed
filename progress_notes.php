@@ -1,11 +1,10 @@
 <?php
- // file: progress_notes.php3
+ // $Id$
  // note: progress notes module for patient management
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
  $record_name = "Progress Notes";
- $page_name   = "progress_notes.php3";
+ $page_name   = "progress_notes.php";
  $db_name     = "pnotes";
  include ("global.var.inc");
  include ("freemed-functions.inc");
@@ -550,7 +549,7 @@
      ";
      echo freemed_display_itemlist(
        $result,
-       "progress_notes.php3",
+       "progress_notes.php",
        array (
          "Date"        => "pnotesdt",
 	 "Description" => "pnotesdescrip"

@@ -1,10 +1,9 @@
 <?php
- // file: logout.php3
+ // $Id$
  // note: sets name/password cookie to null...
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name = "logout.php3";
+  $page_name = "logout.php";
   include ("global.var.inc");
 
     // expire all of the cookies

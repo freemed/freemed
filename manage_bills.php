@@ -59,7 +59,7 @@
          			\"manage_payment_records.php3?$_auth&id=$id&patient=$id&bills=yes\"
          			><FONT SIZE=-1>View/Manage</FONT></A></TD>
         			<TD><A HREF=
-         			\"payment_record.php3?_ref=$page_name&id=$id&patient=$id\"
+         			\"payment_record.php?_ref=$page_name&id=$id&patient=$id\"
          			><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
         			<TD><A HREF=
          			\"procedure.php?$_auth&id=$id&patient=$id\"

@@ -1,10 +1,9 @@
 <?php
- // file: payment_record.php3
+ // $Id$
  // note: ledger/patient payment record functions
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name   = "payment_record.php3";
+ $page_name   = "payment_record.php";
  $record_name = "Patient Ledger Record";
  $db_name     = "payrec";
 
@@ -678,7 +677,7 @@
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"payment_record.php3?$_auth&patient=$patient\"
+     <A HREF=\"payment_record.php?$_auth&patient=$patient\"
      ><$STDFONT_B>View Patient Ledger<$STDFONT_E></A>
     </CENTER>
     <P>

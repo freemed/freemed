@@ -75,10 +75,10 @@ switch ($action) {
         <TR><TD ALIGN=RIGHT>
          <$STDFONT_B><B>"._("Billing Functions")."</B> : <$STDFONT_E>
         </TD><TD>
-         <A HREF=\"payment_record.php3?$_auth&patient=$id\"
+         <A HREF=\"payment_record.php?$_auth&patient=$id\"
          ><$STDFONT_B>Patient Ledger<$STDFONT_E></A>
         </TD><TD>
-         <A HREF=\"payment_record.php3?$_auth&patient=$id&action=addform\"
+         <A HREF=\"payment_record.php?$_auth&patient=$id&action=addform\"
          ><$STDFONT_B>New Record Entry<$STDFONT_E></A>
         </TD>
         </TR>
@@ -187,10 +187,10 @@ switch ($action) {
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>"._("Progress Notes")."</B> : <$STDFONT_E>
         </TD><TD>
-        <A HREF=\"progress_notes.php3?$_auth&action=addform&patient=$id\"
+        <A HREF=\"progress_notes.php?$_auth&action=addform&patient=$id\"
          ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD> 
-        <A HREF=\"progress_notes.php3?$_auth&patient=$id\"
+        <A HREF=\"progress_notes.php?$_auth&patient=$id\"
          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD><TD>
         </TD></TR>

@@ -276,7 +276,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
   if ((strpos($LoginCookie, ":")) and
       ($page_name != "index.php3") and
       ($page_name != "authenticate.php3") and
-      ($page_name != "logout.php3")) 
+      ($page_name != "logout.php")) 
     $this_userlevel = freemed_get_userlevel ($LoginCookie);
 
   if (strlen($ref)<1) {
@@ -324,7 +324,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ";
    }
    echo "
-      ><A HREF=\"logout.php3?_URL=".
+      ><A HREF=\"logout.php?_URL=".
        urlencode(getenv("REQUEST_URI")).
       "\"><IMG SRC=\"img/close-widget.gif\" HEIGHT=16 BORDER=0
       WIDTH=16 ALT=\"["._("exit")."]\"></A>
@@ -334,7 +334,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
   //if ($debug) echo "_ref = $_ref, pg_name = $pg_name<BR>\n";
   if (($page_name != "index.php3") and
       ($page_name != "authenticate.php3") and
-      ($page_name != "logout.php3") and
+      ($page_name != "logout.php") and
       ($page_name != "main.php3") and
       ($_pg_desc != "[HELP]")) {
     // display top of table

@@ -710,7 +710,7 @@
    $record_name = "Progress Notes";
    echo freemed_display_itemlist (
      $result,
-     "progress_notes.php3",
+     "progress_notes.php",
      array (
        _("Date") => "pnotesdt"
      ),
