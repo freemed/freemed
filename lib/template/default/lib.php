@@ -69,6 +69,7 @@ class template {
 		return "<a class=\"".
 			( $options['type'] ? $options['type'] : 'button' ).
 			"\" href=\"".$url."\" ".
+			( (strpos($url, "=print")!==false) ? "target=\"_print\" " : "" ).
 			"onMouseOver=\"window.status=''; return true;\">".
 			prepare($text)."</a>";
 	} // end function template::link_button
@@ -320,17 +321,26 @@ class template {
 	//	$url - Location that should be loaded if this is
 	//	successful
 	//
+	//	$popup - (optional) Boolean, whether this should be
+	//	a popup window.
+	//
 	// Returns:
 	//
 	//	XHTML widget
 	//
-	function summary_print_link($class, $url) {
-		$buffer .= "<a href=\"#\" onClick=\"printWindow=".
+	function summary_print_link($class, $url, $popup=true) {
+		if ($popup) {
+			$buffer .= "<a href=\"#\" onClick=\"printWindow=".
 			"window.open('".$url."', 'printWindow', ".
 			"'width=400,height=200,menubar=no,titlebar=no'); ".
 			"printWindow.opener=self; return true;\" ".
 			"><img SRC=\"lib/template/default/img/summary_print.png\"
 			BORDER=\"0\" ALT=\"".__("Print")."\"/></a>";
+		} else {
+			$buffer .= "<a href=\"".$url."\" target=\"_print\" ".
+			"><img SRC=\"lib/template/default/img/summary_print.png\"
+			BORDER=\"0\" ALT=\"".__("Print")."\"/></a>";
+		}
 		return $buffer;
 	} // end function summary_print_link
 
