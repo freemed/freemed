@@ -124,6 +124,9 @@
      if (!$result or ($result==0))
        die ("Malformed SQL query ($current_patient)");
 
+     // set number of charges to zero
+     $number_of_charges = 0;
+
      // create a new diagnosisSet stack
      $diag_set = new diagnosisSet (); // new stack of size 4
 
@@ -344,7 +347,8 @@
        $itemdate[$j]   = $itemdate_m[$j]  = $itemdate_d[$j]  =
        $itemdate_y[$j] = $itemdate_sy[$j] = $itemcharges[$j] =
        $itemunits[$j]  = $itempos[$j]     = $itemvoucher[$j] =
-       $itemcpt[$j]    = $itemcptmod[$j]  = "";
+       $itemcpt[$j]    = $itemcptmod[$j]  = $itemtos[$j]     =
+       $itemdiagref[$j] = $itemauthnum[$j] = "";
      unset ($ref); // kill referring doc
 
      // grab form information form
@@ -413,7 +417,7 @@
            $itemdate_y[$j]  = $itemdate_sy[$j] = $itemcharges[$j] =
            $itemunits[$j]   = $itempos[$j]     = $itemvoucher[$j] =
            $itemcpt[$j]     = $itemcptmod[$j]  = $itemdiagref[$j] =
-           $itemauthnum[$j] = "";
+           $itemauthnum[$j] = $itemtos[$j]     = "";
        } else {
          // DONT DO ANYTHING IN THIS CASE (PLACEHOLDER)       
        } // end checking if the set will fit
