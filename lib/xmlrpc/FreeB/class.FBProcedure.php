@@ -52,31 +52,41 @@ class FBProcedure {
 		return 0; // kludge ... have to fix this
 	} // end method WeightGrams
 
-	function ProcArray ( $hash ) {
+	function ProcArray ( $billkey ) {
 		// This, provided a "billing number" should ideally return a
 		// subset of what should be billed. For now, we break that
 		// behavior and return everything that needs to be billed.
-		$query = "SELECT id,procpatient FROM procrec WHERE ".
-			"proccurcovtp > 0 AND ".
-			"procbalcurrent > 0 AND ".
-			"procbillable = '0' ".
-			"ORDER BY procpatient,procdt";
-		$result = $GLOBALS['sql']->query($query);
+		//$query = "SELECT id,procpatient FROM procrec WHERE ".
+		//	"proccurcovtp > 0 AND ".
+		//	"procbalcurrent > 0 AND ".
+		//	"procbillable = '0' ".
+		//	"ORDER BY procpatient,procdt";
+		//$result = $GLOBALS['sql']->query($query);
+		//
+		//if (!$GLOBALS['sql']->results($result)) return array ( );
+		//
+		//while ($row = $GLOBALS['sql']->fetch_array($result)) {
+		//	$p[] = $row['id'];
+		//}
+		//
+		//return $p;
 
-		if (!$GLOBALS['sql']->results($result)) return array ( );
-
-		while ($row = $GLOBALS['sql']->fetch_array($result)) {
-			$p[] = $row['id'];
-		}
-
-		return $p;
+		// Deserialize from BillKey, and return the procedures
+		$key = unserialize($billkey);
+		return $key['procedures'];
 	} // end method ProcArray
 
 	function DiagArray ( $proc ) {
 		$p = freemed::get_link_rec($proc, 'procrec');
+
+		// Split out episode of care to be prepended, since we're
+		// using composite keys to do this ...
+		$e = explode (':', $proc['proceoc']);
+		$eoc = $e[0];
+		
 		for ($i=1; $i<=4; $i++) {
 			if ($p['procdiag'.$i] > 0) {
-				$diag[] = $p['procdiag'.$i];
+				$diag[] = $eoc.','.$p['procdiag'.$i];
 			}
 		}
 		return $diag;

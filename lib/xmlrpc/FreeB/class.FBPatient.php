@@ -70,17 +70,17 @@ class FBPatient {
 
 	function PhoneCountry ( $patient ) {
 		// TODO: Broken i18n
-		return '';
+		return '1';
 	} // end method PhoneCountry
 
 	function PhoneArea ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return substr($p['pthphone'], 0, 3);
+		return substr($p->local_record['pthphone'], 0, 3);
 	} // end method PhoneArea
 
 	function PhoneNumber ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return substr($p['pthphone'], 3, 7);
+		return substr($p->local_record['pthphone'], 3, 7);
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $patient ) {
