@@ -22,6 +22,7 @@ $display_buffer .= freemed_patient_box($this_patient);
 foreach ($static_components AS $garbage => $component) {
 	switch ($component) {
 		case "appointments": // Appointments static component
+		include_once("lib/calendar-functions.php");
 		// Add header and strip at top
 		$panel[_("Appointments")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
@@ -37,12 +38,57 @@ foreach ($static_components AS $garbage => $component) {
 			</TD></TR>
 		";
 
-		// Show last few appointments
-		$panel[_("Appointments")] .= "
+		// Get last few appointments
+		$query =
+			"SELECT * FROM scheduler WHERE ".
+			"calpatient='".addslashes($id)."' AND ".
+			"( caldateof > '".date("Y-m-d")."' OR ".
+			  "( caldateof = '".date("Y-m-d")."' AND ".
+			  "  calhour >= '".date("H")."' )".
+			") LIMIT ".$num_summary_items;
+		if ($debug) print "query = $query<BR>\n";
+		$appoint_result = $sql->query($query);
+		if (!$sql->results($appoint_result)) {
+			$panel[_("Appointments")] .= "
 			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER>
-			<B>FIXME! FIXME!</B>
+			<B>"._("NONE")."</B>
 			</TD></TR>
-		";
+			";
+		} else {
+			$panel[_("Appointments")] .= "
+			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER>
+			<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0
+			 BORDER=0><TR>
+			<TD VALIGN=MIDDLE ALIGN=LEFT CLASS=\"menubar_info\">
+				<B>"._("Date")."</B>
+			</TD><TD VALIGN=MIDDLE ALIGN=LEFT
+			 CLASS=\"menubar_info\">
+				<B>"._("Time")."</B>
+			</TD><TD VALIGN=MIDDLE CLASS=\"menubar_info\">
+				<!-- <B>"._("Room")."</B> -->
+			</TD></TR>
+			";
+			while ($appoint_r=$sql->fetch_array($appoint_result)) {
+				$panel[_("Appointments")] .= "
+				<TR>
+				<TD VALIGN=MIDDLE ALIGN=LEFT>
+				".prepare(fm_date_print(
+					$appoint_r["caldateof"]
+				))."
+				</TD><TD VALIGN=MIDDLE ALIGN=LEFT>
+				".prepare(fc_get_time_string(
+					$appoint_r["calhour"]
+				))."
+				</TD></TR>
+				";
+			} // end of looping through results
+			// Show last few appointments
+			$panel[_("Appointments")] .= "
+			</TABLE>
+			</TD></TR>
+			";
+		} // end of checking for results
+		
 
 		// Footer
 		$panel[_("Appointments")] .= "
@@ -86,16 +132,32 @@ foreach ($static_components AS $garbage => $component) {
 		break; // end custom_reports
 
 		case "patient_information":
+		//----- Determine date of last visit
+		$dolv_result = $sql->query(
+			"SELECT * FROM scheduler WHERE ".
+			"id='".addslashes($id)."' AND ".
+			"caldateof < '".date("Y-m-d")."' ".
+			"ORDER BY caldateof DESC"
+		);
+		if (!$sql->results($dolv_result)) {
+			$dolv = _("NONE");
+		} else {
+			$dolv_r = $sql->fetch_array($dolv_result);
+			$dolv = prepare(fm_date_print($dolv_r["caldateof"]));
+		} // end if there is no result
+		//----- Create the panel
 		$panel[_("Patient Information")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\">
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
-			 CLASS=\"menubar_items\">
+			 CLASS=\"menubar_items\" COLSPAN=2>
 			<A HREF=\"patient.php?action=modform&id=$id\" 
 			>"._("Modify")."</A>
 			</TD></TR>
-			<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
-			<B>Vital information goes here?</B>
+			<TR><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
+				<B>"._("Date of Last Visit")."</B> :
+			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
+				".$dolv."
 			</TD></TR></TABLE>
 		";
 		break; // end patient information
