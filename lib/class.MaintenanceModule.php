@@ -3,7 +3,7 @@
  // desc: module prototype
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('_FreeMED.BaseModule');
 
 // Class: FreeMED.MaintenanceModule
 //
@@ -16,11 +16,55 @@ class MaintenanceModule extends BaseModule {
 	var $CATEGORY_NAME = "Database Maintenance";
 	var $CATEGORY_VERSION = "0.2.1";
 
-	// vars to be passed from child modules
-	var $order_field;
+	// Variable: $this->order_field
+	//
+	//	Defines the ORDER BY clause for built-in functions. This
+	//	should be present in all child modules. It is set to 'id'
+	//	by default, which is horrible behavior, and should be
+	//	overridden in all child classes.
+	//
+	var $order_field = 'id';
+
 	var $form_vars;
+
+	// Variable: $this->table_name
+	//
+	//	Defines the name of the SQL table used and/or defined
+	//	by this module. Must be defined for the module to
+	//	function properly if a table definition is used.
+	//
+	// Example:
+	//
+	//	$this->table_name = 'facility';
+	//
 	var $table_name;
+
+	// Variable: $this->widget_hash
+	//
+	//	Specifies the format of the <widget> method. This is
+	//	formatted by having SQL field names surrounded by '##'s.
+	//
+	// Example:
+	//
+	//	$this->widget_hash = '##phylname##, ##phyfname##';
+	//	
 	var $widget_hash;
+
+	// Variable: $this->rpc_field_map
+	//
+	//	Specifies the format of the XML-RPC structures returned by
+	//	the FreeMED.DynamicModule.picklist method. These are passed
+	//	as key => value, where key is the target name of the
+	//	structure item and value is the name of the SQL field. "id"
+	//	is passed as "id" by default. If this array is not
+	//	defined, FreeMED.DynamicModule.picklist will fail for the
+	//	target module.
+	//
+	// Example:
+	//
+	//	$this->rpc_field_map = array ( 'last_name' => 'ptlname' );
+	//
+	var $rpc_field_map;
 
 	// contructor method
 	function MaintenanceModule () {
@@ -168,8 +212,12 @@ class MaintenanceModule extends BaseModule {
 	function addform () { $this->form(); }
 	function modform () { $this->form(); }
 
-	// function form
-	// - add/mod form stub
+	// Method: form
+	//
+	//	Superclass stub for basic add/modify form capabilities.
+	//	Performs no useful task, and should be overridden with
+	//	the methods producing an addition/modification form.
+	//
 	function form () {
 		global $display_buffer;
 		global $action, $id, $sql;
@@ -210,6 +258,43 @@ class MaintenanceModule extends BaseModule {
 			"t_page"
 		);
 	} // end function view
+
+	// Method: picklist
+	//
+	//	Generic picklist for XML-RPC.
+	//
+	// Parameters:
+	//
+	//	$criteria - (optional) Hash of criteria fields to narrow
+	//	the search
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	function picklist ( $criteria = NULL ) {
+		// Do not execute if there is no field map
+		if (!is_array($this->rpc_field_map)) {
+			return false;
+		}
+
+		$result = $GLOBALS['sql']->query("SELECT * FROM ".
+			$this->table_name." ORDER BY ".
+			$this->order_by);
+		if (!$GLOBALS['sql']->results($result)) {
+			return CreateObject('PHP.xmlrpcresp',
+				CreateObject('PHP.xmlrpcval', 'none', 'string')
+			);
+		}
+		return rpc_generate_sql_hash(
+			$this->table_name,
+			array_merge(
+				$this->rpc_field_map,
+				array ( 'id' => 'id' )
+			),
+			'ORDER BY '.$this->order_by
+		);
+	} // end method picklist
 
 	// Method: widget
 	//
@@ -255,15 +340,29 @@ class MaintenanceModule extends BaseModule {
 		return html_form::select_widget($varname, $return);
 	} // end method widget
 
-	// override _setup with create_table
+	// Method: _setup
+	//
+	//	Internal method called by the module superclass, which
+	//	executes initial table creation from <create_table> and
+	//	initial data import from <freemed_import_stock_data>.
+	//
 	function _setup () {
 		global $display_buffer;
 		if (!$this->create_table()) return false;
 		return freemed_import_stock_data ($this->table_name);
 	} // end function _setup
 
-	// function create_table
-	// - used to initially create SQL table
+	// Method: create_table
+	//
+	//	Creates the initial table definition required by this
+	//	module to function properly. Relies on the
+	//	table_definition class variable, and will not execute
+	//	if it is not present.
+	//
+	// Returns:
+	//
+	//	Boolean, false if failed.
+	//
 	function create_table () {
 		global $display_buffer;
 		if (!isset($this->table_definition)) return false;

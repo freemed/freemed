@@ -3,7 +3,7 @@
  // desc: module prototype
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('_FreeMED.BaseModule');
 
 // Class: FreeMED.EMRModule
 //
@@ -20,8 +20,31 @@ class EMRModule extends BaseModule {
 	var $order_fields;
 	var $form_vars;
 	var $table_name;
+
+	// Variable: patient_field
+	//
+	//	Field name that describes the patient. This is used by
+	//	FreeMED's module handler to determine whether a record
+	//	should be displayed in the EMR summary screen.
+	//
+	// Example:
+	//
+	//	$this->patient_field = 'eocpatient';
+	//
 	var $patient_field; // the field that links to the patient ID
-	var $display_format; // how they are displayed
+
+	// Variable: display_format
+	//
+	//	Hash describing the format which is used to display the
+	//	current record by default. It needs to be overridden by
+	//	child classes. It uses '##' seperated values to signify
+	//	variables.
+	//
+	// Example:
+	//
+	//	$this->display_format = '##phylname##, ##phyfname##';
+	//
+	var $display_format;
 
 	// contructor method
 	function EMRModule () {
@@ -56,9 +79,26 @@ class EMRModule extends BaseModule {
 
 	} // end function check_vars
 
-	// function locked
-	// - determines if record id is locked or not, and reacts accordingly
-	//   (use like :  if ($this->locked($id)) return false;         )
+	// Method: locked
+	//
+	// 	Determines if record id is locked or not.
+	//
+	// Parameters:
+	//
+	//	$id - Record id to be checked
+	//
+	//	$quiet - (optional) Boolean. If set to true, this value
+	//	will cause a denial screen to be displayed. Defaults to
+	//	false.
+	//
+	// Returns:
+	//
+	//	Boolean, whether the record is locked or not.
+	//
+	// Example:
+	//
+	//	if ($this->locked($id)) return false;
+	//
 	function locked ($id, $quiet = false) {
 		global $sql, $display_buffer;
 		static $locked;
@@ -190,6 +230,21 @@ class EMRModule extends BaseModule {
 		}
 	} // end function display_message
 
+	// Method: form_table
+	//
+	//	Builds the table used by the add/mod form methods, and
+	//	returns it as an associative array which is passed to
+	//	<html_form::form_table>. By default this returns NULL
+	//	and needs to be overridden by child classes. It is only
+	//	used if the default <form> method is used.
+	//
+	// Returns:
+	//
+	//	Associative array describing form.
+	//
+	// See Also:
+	//	<form>
+	//
 	function form_table () {
 		return NULL;
 	} // end function form_table
@@ -623,8 +678,20 @@ class EMRModule extends BaseModule {
 		return $buffer;
 	} // end function summary
 
-	// function summary_bar
-	// - override this to kill the basic bar
+	// Method: summary_bar
+	//
+	//	Produces the text for the EMR summary bar menu. By
+	//	default it produces View/Manage and Add links. Override
+	//	this function to change the basic EMR summary bar menu.
+	//
+	// Parameters:
+	//
+	//	$patient - Id of current patient
+	//
+	// Returns:
+	//
+	//	XHTML formatted text links.
+	//
 	function summary_bar ($patient) {
 		return "
 		<a HREF=\"module_loader.php?module=".
@@ -722,7 +789,7 @@ class EMRModule extends BaseModule {
 				}
 			} else {
 				// Assume single field if no '##'s
-				$displayed = stripslashes($r['display_format']);
+				$displayed = stripslashes($r[$this->display_format]);
 			}
 
 			// Add to the hash
@@ -733,6 +800,28 @@ class EMRModule extends BaseModule {
 	} // end method EMRModule->picklist
 
 	//------ Internal Printing ----------------------------------------
+
+	// Method: _RenderTeX
+	//
+	//	Internal TeX renderer for the record. By default this
+	//	uses the <print_format> class variable to determine the
+	//	proper format. If another format is to be used, override
+	//	this class.
+	//
+	// Parameters:
+	//
+	//	$TeX - <FreeMED.TeX> object reference. Must be prefixed by
+	//	an amphersand, otherwise changes will be lost!
+	//
+	//	$id - Record id to be printed
+	//
+	// Example:
+	//
+	//	$this->_RenderTeX ( &$TeX, $id );
+	//
+	// See Also:
+	//	<_RenderField>
+	//
 	function _RenderTeX ( $TeX, $id ) {
 		if (is_array($id)) {
 			foreach ($id AS $k => $v) {
@@ -782,6 +871,26 @@ class EMRModule extends BaseModule {
 		}
 	} // end method _RenderTeX
 
+	// Method: _RenderField
+	//
+	//	Render out ##a:b@c## or ##a## type fields. "a" stands for
+	//	the record, "b" stands for the target field, and "c" stands
+	//	for the target table.
+	//
+	// Parameters:
+	//
+	//	$arg - Formatted field
+	//
+	//	$r - Associative array containing record
+	//
+	// Returns:
+	//
+	//	Rendered field
+	//
+	// Example:
+	//
+	//	$return = $this->_RenderField ( '##eocpatient:ptlname@patient##' );
+	//
 	function _RenderField ( $arg, $r = NULL ) {
 		if (!(strpos($arg, '##') === false)) {
 			// We need to deal with the content

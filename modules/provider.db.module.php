@@ -6,13 +6,13 @@
   // translation: max k <amk@span.ch>
   // lic : GPL
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
-class ProviderMaintenance extends MaintenanceModule {
+class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -60,8 +60,21 @@ class ProviderMaintenance extends MaintenanceModule {
         "phyidmap",
 	"phyanesth"
 	); // end of variables list
+	var $order_by = 'phylname, phyfname';
 
-	function ProviderMaintenance () {
+	// XML-RPC field mapping
+	var $rpc_field_map = array (
+		'last_name' => 'phylname',
+		'first_name' => 'phyfname',
+		'middle_name' => 'phymname',
+		'city' => 'phycitya',
+		'state' => 'phystatea',
+		'zip' => 'phyzipa',
+		'practice' => 'phypracname'
+	);
+	var $widget_hash = '##phylname##, ##phyfname## ##phymname##';
+
+	function ProviderModule () {
 		// Table definition
 		$this->table_definition = array (
 			'phylname' => SQL__VARCHAR(52),
@@ -115,7 +128,7 @@ class ProviderMaintenance extends MaintenanceModule {
 
 		// Run parent constructor
 		$this->MaintenanceModule();
-	} // end constructor ProviderMaintenance
+	} // end constructor ProviderModule
 
 	// send 'em to the form for add and mod, due to notebook
 	function add() { $this->form(); }
@@ -479,7 +492,7 @@ class ProviderMaintenance extends MaintenanceModule {
   		  		";
 			} // error handler
 		} // if executing the action
-	} // end function ProviderMaintenance->form()
+	} // end function ProviderModule->form()
 
 	function display () {
 		global $display_buffer;
@@ -512,7 +525,7 @@ class ProviderMaintenance extends MaintenanceModule {
     </TABLE>
    </CENTER>
   ";
-	} // end function ProviderMaintenance->display()
+	} // end function ProviderModule->display()
 
 	function view () {
 		global $display_buffer;
@@ -532,10 +545,10 @@ class ProviderMaintenance extends MaintenanceModule {
 			),
 			array ( "", "" )
 		);
-	} // end function ProviderMaintenance->view()
+	} // end function ProviderModule->view()
 
-} // end class ProviderMaintenance
+} // end class ProviderModule
 
-register_module ("ProviderMaintenance");
+register_module ("ProviderModule");
 
 ?>

@@ -5,6 +5,7 @@
 //----- Load neccesary headers
 define ('SESSION_DISABLE', true);
 include_once ("lib/freemed.php");
+include_once ("lib/i18n.php");
 
 //----- Check for XML-RPC support in PHP build
 if (!file_exists(WEBTOOLS_ROOT.'/class.xmlrpc_server.php'))

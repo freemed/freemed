@@ -3,13 +3,13 @@
  // note: diagnosis family module
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
-class DiagnosisFamilyMaintenance extends MaintenanceModule {
+class DiagnosisFamilyModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Diagnosis Family Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_DESCRIPTION = "
 		Diagnosis families are part of FreeMED's attempt to
 		make practice management more powerful through outcomes
@@ -30,7 +30,13 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 		"dfdescrip"
 	);
 
-	function DiagnosisFamilyMaintenance () {
+	var $rpc_field_map = array (
+		'name' => 'dfname',
+		'description' => 'dfdescrip'
+	);
+	var $widget_hash = '##dfname## (##dfdescrip##)';
+
+	function DiagnosisFamilyModule () {
 		// Table definition
 		$this->table_definition = array (
 			'dfname' => SQL__VARCHAR(100),
@@ -40,7 +46,7 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 
 		// Run parent constructor
 		$this->MaintenanceModule();
-	} // end constructor DiagnosisFamilyMaintenance 
+	} // end constructor DiagnosisFamilyModule 
 
 	function addform () { $this->view(); }
 
@@ -85,7 +91,7 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 
 		</form>
 		";
-	} // end function DiagnosisFamilyMaintenance->modform
+	} // end function DiagnosisFamilyModule->modform
 
 	function view () {
 		global $display_buffer;
@@ -108,10 +114,10 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 
 		// Addition form at the bottom of the page
 		$this->form();
-	} // end function DiagnosisFamilyMaintenance->view
+	} // end function DiagnosisFamilyModule->view
 
-} // end class DiagnosisFamilyMaintenance
+} // end class DiagnosisFamilyModule
 
-register_module ("DiagnosisFamilyMaintenance");
+register_module ("DiagnosisFamilyModule");
 
 ?>

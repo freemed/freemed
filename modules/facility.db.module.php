@@ -5,13 +5,13 @@
  //       small mods by max k <amk@span.ch>
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
-class FacilityMaintenance extends MaintenanceModule {
+class FacilityModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Facility Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_DESCRIPTION = "
 		Facilities are used by FreeMED to describe locations where 
 		services are performed. Any physician/provider can do work 
@@ -43,7 +43,13 @@ class FacilityMaintenance extends MaintenanceModule {
 		"psrpos"
 	);
 
-	function FacilityMaintenance () {
+	var $rpc_field_map = array (
+		"name" => 'psrname',
+		"city" => 'psrcity',
+		"state" => 'psrstate'
+	);
+
+	function FacilityModule () {
 		// Create table definition
 		$this->table_definition = array (
 			'psrname' => SQL__VARCHAR(100),
@@ -67,7 +73,7 @@ class FacilityMaintenance extends MaintenanceModule {
 
 		// Run constructor
 		$this->MaintenanceModule();
-	} // end constructor FacilityMaintenance
+	} // end constructor FacilityModule
 
 	function add () { $this->form(); }
 
@@ -199,7 +205,7 @@ class FacilityMaintenance extends MaintenanceModule {
 
     } // end of internal action switch
   } // end checking if book is displayed
-	} // end function FacilityMaintenance->form()
+	} // end function FacilityModule->form()
 
 	function view () {
 		global $display_buffer;
@@ -218,13 +224,13 @@ class FacilityMaintenance extends MaintenanceModule {
 			),
 			array ("", " ")
 		);
-	} // end function FacilityMaintenance->view()
+	} // end function FacilityModule->view()
 
 	//----- XML-RPC Methods
 	function picklist () {
 		global $sql;
 		$result = $sql->query("SELECT * FROM ".$this->table_name." ".
-			"ORDER BY ".$this->order_fields);
+			"ORDER BY ".$this->order_by);
 		if (!$sql->results($result)) {
 			return CreateObject('PHP.xmlrpcresp',
 				CreateObject('PHP.xmlrpcval', 'error', 'string')
@@ -238,12 +244,12 @@ class FacilityMaintenance extends MaintenanceModule {
 				"state" => 'psrstate',
 				"id"
 			),
-			"ORDER BY ".$this->order_fields
+			"ORDER BY ".$this->order_by
 		);
-	} // end function FacilityMaintenance->picklist
+	} // end function FacilityModule->picklist
 
-} // end class FacilityMaintenance
+} // end class FacilityModule
 
-register_module ("FacilityMaintenance");
+register_module ("FacilityModule");
 
 ?>
