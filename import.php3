@@ -65,7 +65,7 @@ switch ($action) {
      <OPTION VALUE=\"infaxes\"     >Incoming Faxes (infaxes)
      <OPTION VALUE=\"insco\"       >Insurance Companies (insco)
      <OPTION VALUE=\"inscogroyp\"  >Insurance Company Groups (inscogroup)
-     <OPTION VALUE=\"intservtype\" >Internal Service Types (inservtype)
+     <OPTION VALUE=\"intservtype\" >Internal Service Types (intservtype)
      <OPTION VALUE=\"log\"         >Log File (log)
      <OPTION VALUE=\"oldreports\"  >Old Reports (oldreports)
      <OPTION VALUE=\"patimg\"      >Patient Images (patimg)
@@ -84,6 +84,7 @@ switch ($action) {
      <OPTION VALUE=\"simplereport\">Simple Reports (simplereport)
      <OPTION VALUE=\"specialties\" >Specialties (specialties)
      <OPTION VALUE=\"tos\"         >Type of Service (tos)
+     <OPTION VALUE=\"users\"       >User Database (users)
     </SELECT>
     <P>
     <CENTER>
