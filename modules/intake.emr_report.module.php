@@ -35,15 +35,15 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			global $patient,$sql,$pt, $default_facility;
 			$this_patient = new Patient($patient);
 
-			echo "<HTML><BODY BGCOLOR=\"#FFFFFF\">";
-			$sched_result = $sql->query("SELECT MAX(id) AS id FROM scheduler WHERE calpatient='$patient'");
+			echo "<HTML><BODY BGCOLOR=\"#FFFFFF\">\n";
+			$sched_result = $sql->query("SELECT MAX(id) AS id FROM scheduler WHERE calpatient='".addslashes($patient)."'");
 			if ($sql->num_rows($sched_result) > 0)
 			{
 				$sched_row = $sql->fetch_array($sched_result);
 				$schid = $sched_row[id];
 				//echo "schid $schid<BR>";
 				$sched_row = freemed_get_link_rec($schid, "scheduler");
-				$pt[calldate] = $sched_row[caldateof];
+				$pt[calldate] = $sched_row["caldateof"];
 				$calminute = $sched_row["calminute"];
 				$calhour = $sched_row["calhour"];
 				//if ($calminute==0) $calminute="00";
