@@ -39,7 +39,9 @@
 
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
      ALIGN=CENTER>
-    <TR>
+
+    ".($this_patient ?  
+    "<TR>
     <TD ALIGN=RIGHT>
       <$STDFONT_B><B>"._("Patient Payment")." : </B><$STDFONT_E></TD>
     <TD ALIGN=LEFT>
@@ -50,7 +52,15 @@
      <A HREF=\"payment_record.php3?$_auth&action=view&patient=$patient\"
      ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
     </TD>
-    </TR>
+    </TR>" :
+    "<TR>
+     <TD COLSPAN=2 ALIGN=CENTER>
+      <CENTER>
+      <A HREF=\"patient.php3?$_auth\"
+      >"._("Select a Patient")."</A>
+      </CENTER>
+     </TD>
+    </TR>" )."
 
     <TR>
      <TD ALIGN=RIGHT>
