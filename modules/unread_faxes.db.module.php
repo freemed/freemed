@@ -191,7 +191,7 @@ class UnreadFaxes extends MaintenanceModule {
 		$new_id = $GLOBALS['sql']->last_record($query, 'images');
 
 		$new_filename = freemed::image_filename(
-			freemed::secure_filename($_REQUEST['patient']),
+			freemed::secure_filename($rec['urfpatient']),
 			$new_id,
 			'djvu',
 			true
@@ -212,7 +212,7 @@ class UnreadFaxes extends MaintenanceModule {
 		//echo "mkdir -p $dirname";
 		`mv data/fax/unread/$filename $new_filename -f`;
 
-		$GLOBALS['display_buffer'] .= __("Moved fax to unread box.");
+		$GLOBALS['display_buffer'] .= __("Moved fax to scanned documents.");
 
 		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." ".
 			"WHERE id='".addslashes($id)."'");
