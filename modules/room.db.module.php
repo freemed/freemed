@@ -31,6 +31,7 @@ class roomMaintenance extends freemedMaintenanceModule {
 
 	function form () {
 		global $display_buffer;
+    		global $roomdefphy, $roompos;
 		foreach ($GLOBALS as $k => $v) global $$k; 
 
   switch ($action) { // inner switch
@@ -59,7 +60,7 @@ class roomMaintenance extends freemedMaintenanceModule {
 
     _("Location") =>
     "<SELECT NAME=\"roompos\">
-    ".freemed_display_facilities ($roompos, true)."
+    ".freemed_display_facilities ("roompos", true)."
     </SELECT>",
 
     _("Description") =>
