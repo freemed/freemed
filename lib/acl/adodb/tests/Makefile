@@ -1,15 +1,15 @@
 # $Id$
 # $Author$
 
-THISDIR=lib
-SUBDIR=acl perl template xmlrpc
+THISDIR=lib/acl/adodb/tests
+SUBDIR=
 
 all:
 	# Nothing
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf *.php $(INSTDIR)/$(THISDIR)
+	cp -vf *.php *.xml $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
 		make -C $$d install INSTDIR=$(INSTDIR); \
 	done

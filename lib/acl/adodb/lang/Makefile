@@ -1,8 +1,8 @@
 # $Id$
 # $Author$
 
-THISDIR=lib
-SUBDIR=acl perl template xmlrpc
+THISDIR=lib/acl/adodb/lang
+SUBDIR=
 
 all:
 	# Nothing

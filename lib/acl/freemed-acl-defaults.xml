@@ -1,0 +1,740 @@
+<?xml version="1.0"?>
+<schema>
+<!-- Automatically generated SQL dump for ACL -->
+
+	<sql>
+		<query>
+			INSERT INTO acl_acl VALUES (10,'freemed',1,1,'','',1077135593)
+
+		</query>
+		<query>
+			INSERT INTO acl_acl VALUES (11,'freemed',1,1,'','',1077135639)
+
+		</query>
+		<query>
+			INSERT INTO acl_acl VALUES (12,'freemed',1,1,'','Providers have the next greatest access besides Administrators. They can do everything except specific administration tasks',1077135709)
+
+		</query>
+		<query>
+			INSERT INTO acl_acl VALUES (13,'freemed',1,1,'','Schedulers can only view and access the schedule',1077135756)
+
+		</query>
+		<query>
+			INSERT INTO acl_acl VALUES (14,'freemed',1,1,'','Billers have deep access to the system. They can access the billing system, the ledger, the claims management system and the payer database...',1077135887)
+
+		</query>
+		<query>
+			INSERT INTO acl_acl_sections VALUES (10,'freemed',1,'FreeMED',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_acl_sections_seq VALUES (10)
+
+		</query>
+		<query>
+			INSERT INTO acl_acl_seq VALUES (14)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (10,'emr','view',1,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (11,'emr','modify',2,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (12,'emr','create',3,'Create',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (13,'emr','delete',4,'Delete',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (14,'emr','archive',5,'Archive',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (15,'bill','view',1,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (16,'bill','mod',2,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (17,'bill','create',3,'Create',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (18,'bill','delete',4,'Delete',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (19,'sched','view',1,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (20,'sched','create',2,'Create',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (21,'sched','mod',3,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (22,'sched','del',4,'Cancel',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (23,'payeradmin','add',1,'Add',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (24,'payeradmin','mod',2,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (25,'payeradmin','del',3,'Delete',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (26,'payeradmin','view',4,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (27,'supportadmin','view',1,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (28,'supportadmin','create',2,'Create',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (29,'supportadmin','delete',3,'Delete',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (30,'supportadmin','modify',4,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (31,'useradmin','add',1,'Add',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (32,'useradmin','modify',2,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (33,'useradmin','delete',3,'Delete',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (34,'useradmin','view',4,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (35,'report','view',1,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (36,'report','modify',2,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (37,'report','delete',3,'Delete',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (38,'report','add',4,'Add',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (39,'ledger','view',1,'View',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (40,'ledger','add',2,'Add',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (41,'ledger','delete',3,'Delete',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco VALUES (42,'ledger','modify',4,'Modify',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'bill','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'bill','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'bill','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'bill','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'emr','archive')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'emr','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'emr','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'emr','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'emr','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'ledger','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'ledger','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'ledger','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'ledger','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'payeradmin','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'payeradmin','del')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'payeradmin','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'payeradmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'report','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'report','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'report','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'report','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'sched','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'sched','del')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'sched','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'sched','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'supportadmin','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'supportadmin','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'supportadmin','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'supportadmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'useradmin','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'useradmin','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'useradmin','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (10,'useradmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'bill','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'bill','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'bill','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'bill','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'emr','archive')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'emr','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'emr','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'emr','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'emr','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'ledger','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'ledger','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'ledger','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'ledger','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'payeradmin','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'payeradmin','del')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'payeradmin','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'payeradmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'report','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'report','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'report','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'report','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'sched','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'sched','del')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'sched','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'sched','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'supportadmin','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'supportadmin','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'supportadmin','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'supportadmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'useradmin','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'useradmin','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'useradmin','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (11,'useradmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'bill','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'bill','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'bill','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'bill','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'emr','archive')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'emr','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'emr','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'emr','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'emr','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'ledger','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'ledger','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'ledger','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'ledger','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'report','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'report','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'report','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'report','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'sched','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'sched','del')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'sched','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (12,'sched','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (13,'sched','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (13,'sched','del')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (13,'sched','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (13,'sched','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'bill','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'bill','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'bill','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'bill','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'ledger','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'ledger','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'ledger','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'ledger','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'payeradmin','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'payeradmin','del')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'payeradmin','mod')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'payeradmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'report','add')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'report','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'report','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'report','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'supportadmin','create')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'supportadmin','delete')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'supportadmin','modify')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_map VALUES (14,'supportadmin','view')
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (10,'emr',1,'EMR Access',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (11,'bill',2,'Billing Access',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (12,'sched',3,'Scheduling Access',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (13,'payeradmin',4,'Admin Payers',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (14,'supportadmin',5,'Admin Support',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (15,'useradmin',6,'Admin User',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (16,'report',7,'Ledger Access',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections VALUES (17,'ledger',8,'Report Access',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_sections_seq VALUES (17)
+
+		</query>
+		<query>
+			INSERT INTO acl_aco_seq VALUES (42)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro VALUES (10,'users','admin',0,'Admin',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro VALUES (11,'ipaddress','private',1,'Private Address Space',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro VALUES (12,'ipaddress','public',2,'Public Address Space',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro VALUES (13,'ipaddress','localhost',3,'Localhost',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups VALUES (10,0,1,10,'User Groups')
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups VALUES (12,10,2,3,'Administrators')
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups VALUES (13,10,4,5,'Billers')
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups VALUES (14,10,6,7,'Schedulers')
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups VALUES (15,10,8,9,'Provider')
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups_id_seq VALUES (15)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups_map VALUES (10,12)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups_map VALUES (12,15)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups_map VALUES (13,14)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_groups_map VALUES (14,13)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_map VALUES (11,'users','admin')
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_sections VALUES (10,'users',1,'Users',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_sections VALUES (11,'ipaddress',2,'IP Addresses',0)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_sections_seq VALUES (11)
+
+		</query>
+		<query>
+			INSERT INTO acl_aro_seq VALUES (13)
+
+		</query>
+		<query>
+			INSERT INTO acl_phpgacl VALUES ('version','3.3.0b2')
+
+		</query>
+		<query>
+			INSERT INTO acl_phpgacl VALUES ('schema_version','2.1')
+
+		</query>
+	</sql>
+
+</schema>

@@ -1,8 +1,8 @@
 # $Id$
 # $Author$
 
-THISDIR=lib
-SUBDIR=acl perl template xmlrpc
+THISDIR=lib/acl/admin/smarty/libs/plugins
+SUBDIR=
 
 all:
 	# Nothing

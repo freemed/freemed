@@ -15,7 +15,8 @@ define ('__FREEMED_PHP__', true);
     // These variables you should not touch
 define ('PACKAGENAME', "FreeMED");				// package name
 define ('CODED_BY', "The FreeMED Project");		// coded by tag
-define ('VERSION', "0.6.2");	// current version
+define ('VERSION', "0.6.3");	// current version
+define ('DISPLAY_VERSION', "0.7.0b (CVS)");
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
@@ -126,8 +127,9 @@ if (!defined('SESSION_DISABLE')) {
 	// Create object map for FreeMED
 	CreateApplicationMap(array(
 		'FreeMED' => 'lib/class.*.php',
-		// Protected namespace:
-		'_FreeMED' => 'lib/class.*.php'
+		// Protected namespaces:
+		'_FreeMED' => 'lib/class.*.php',
+		'_ACL' => 'lib/acl/*.class.php'
 	));
 
 	//----- Gettext and language settings
@@ -144,6 +146,9 @@ if (!defined('SESSION_DISABLE')) {
 
 	// Load GettextXML routines (most non-session things don't need it).
 	include_once ("lib/i18n.php");
+
+	// Load ACL routines
+	include_once ("lib/acl.php");
 }
 // ***************************************************************
 
