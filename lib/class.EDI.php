@@ -1,12 +1,12 @@
 <?php
- // $Id$
- // desc: module prototype for EDI
- // lic : GPL, v2
+	// $Id$
+	// desc: Electronic Data Interchange
+	// code: Fred Forester (fforest@netcarrier.com), jeff
 
 // CURRENTLY, THIS IS A STUB, AND SHOULD NOT BE USED UNTIL IT IS
 // FLESHED OUT                              -- THE MANAGEMENT :)
 
-// EDI GLOBALS for freemed.php (global_var.inc)
+// EDI GLOBALS for lib/freemed.php
 // these are for testing till the reall stuff can be done
 $BILLING_SERVICE="yes";
 $EDI_VENDOR="EDIVNDID";
@@ -16,13 +16,7 @@ $EDI_INTERCHANGE_RECVR_ID="54771";        // highmark
 $EDI_INTERCHANGE_CNTLNUM="INTCHGCTLNUM";
 $EDI_TESTORPROD = "T";
 
-LoadObjectDependency('FreeMED.BaseModule');
-
-class EDIModule extends BaseModule {
-
-	// override variables
-	var $CATEGORY_NAME = "EDI";
-	var $CATEGORY_VERSION = "0.2";
+class EDI {
 
 	// vars related to this edi class
 	var $record_terminator;
@@ -38,13 +32,15 @@ class EDIModule extends BaseModule {
 	var $testorprod;          // sending test data only T or P
 
 	// contructor method
-	function EDIModule () {
+	function EDI ($_options = NULL) {
 		global $display_buffer;
-		global $BILLING_SERVICE, $EDI_VENDOR, $EDI_SOURCE_NUMBER, $EDI_INTERCHANGE_SENDER_ID;
-        global $EDI_INTERCHANGE_RECVR_ID, $EDI_INTERCHANGE_CNTLNUM, $EDI_TESTORPROD;
-
-		// call parent constructor
-		$this->BaseModule();
+		global $BILLING_SERVICE,
+			$EDI_VENDOR,
+			$EDI_SOURCE_NUMBER,
+			$EDI_INTERCHANGE_SENDER_ID;
+		global $EDI_INTERCHANGE_RECVR_ID,
+			$EDI_INTERCHANGE_CNTLNUM,
+			$EDI_TESTORPROD;
 
 		$this->transaction_reference_number = "0";
 		$this->current_transaction_set = "0000";
@@ -60,65 +56,16 @@ class EDIModule extends BaseModule {
 		$this->interchange_recvrid  = $EDI_INTERCHANGE_RECVR_ID;
 		$this->interchange_cntrlnum = $EDI_INTERCHANGE_CNTLNUM;
 		$this->testorprod = $EDI_TESTORPROD;
+	} // end constructor EDI
 
-
-	} // end function EDIModule
-
-	// override check_vars method
-	function check_vars ($nullvar = "") {
-		global $module;
-		//$display_buffer .= "checkvar of base $module<BR>";
-		if (!isset($module)) 
-		{
-			trigger_error("No Module Defined", E_ERROR);
-		}
-		return true;
-	} // end function check_vars
-
-	// function main
-	// - generic main function
-	function main ($nullvar = "") {
-		global $display_buffer;
-		global $action, $patient;
-
-		if (!isset($this_user))
-			$this->this_user = CreateObject('FreeMED.User');
-
-		switch ($action) {
-
-			case "display";
-				$this->display();
-				break;
-
-			case "view":
-			default:
-				$this->view();
-				break;
-		} // end switch action
-
-	} // end function main
-
-	// ********************** MODULE SPECIFIC ACTIONS *********************
-
-	// function display
-	// by default, a wrapper for view
-	function display () { 
-		$this->view(); 
-	}
-	function view () { 
-		return; 
-	}
-
-	// ********************** EDI SPECIFIC ACTIONS *********************
 	function StartISAHeader() {
 		global $display_buffer;
 		
-		if ( (empty($this->vendorid))    OR
-			 (empty($this->sourceid)) OR
-			 (empty($this->interchange_senderid)) OR
-			 (empty($this->interchange_recvrid)) OR
-			 (empty($this->interchange_cntrlnum)) )
-		{
+		if ( (empty($this->vendorid)) or
+			 (empty($this->sourceid)) or
+			 (empty($this->interchange_senderid)) or
+			 (empty($this->interchange_recvrid)) or
+			 (empty($this->interchange_cntrlnum)) ) {
 				$this->Error("EDI Variables have not been set!!");
 				return false;
 		}
@@ -137,65 +84,58 @@ class EDIModule extends BaseModule {
 
 		
 		// functional group header.
-		
 		$this->start_envelope = $this->start_envelope."GS*HC*";
 		$sourceid = $this->sourceid;
 		$len = strlen($sourceid);
 
-		if ($len < 7)
-		{
+		if ($len < 7) {
 			// zero fill
 			$diff = 7 - $len;
 			$work = "";
-			for ($i=0;$i<$diff;$i++)
-			{
+			for ($i=0;$i<$diff;$i++) {
 				$work .= "0";
 			}
 			$sourceid = $sourceid.$work;
-
 		}
 		$this->start_envelope = $this->start_envelope.$sourceid."*";
-		$this->start_envelope = $this->start_envelope.$this->interchange_recvrid."*";
+		$this->start_envelope = $this->start_envelope.
+			$this->interchange_recvrid."*";
 		$this->start_envelope = $this->start_envelope.gmdate(ymd)."*";
 		$this->start_envelope = $this->start_envelope.gmdate(Hi)."*";
 		// this is the same the transaction seq num. we hard code it assuming
 		// we are not sending more than 1 functional group
-		$this->start_envelope = $this->start_envelope."01*X*003051".$this->record_terminator;
-		
+		$this->start_envelope = $this->start_envelope."01*X*003051".
+			$this->record_terminator;
 		
 		return true;
-	}
+	} // end method StartISAHeader
 
 	function EndISAHeader() {
 		global $display_buffer;
-		$this->end_envelope = $this->end_envelope."GE*".$this->current_transaction_set."*";
+		$this->end_envelope = $this->end_envelope."GE*".
+			$this->current_transaction_set."*";
 		$this->end_envelope .= $this->interchange_cntrlnum;
 		$this->end_envelope .= $this->record_terminator;
 
 		// NOTE: again the functional group number is 1. 
 
-		$this->end_envelope = $this->end_envelope."IEA*01*".$this->interchange_cntrlnum;
+		$this->end_envelope = $this->end_envelope."IEA*01*".
+			$this->interchange_cntrlnum;
 		$this->end_envelope .= $this->record_terminator;
 		return true;
-		
-		
-	
-	}
+	} // end method EndISAHeader
 
 	function EDIOpen() {
 		global $display_buffer;
 		$ret = $this->StartISAHeader();
 		return $ret;
-
-	}
+	} // end method EDIOpen
 
 	function EDIClose() {
 		global $display_buffer;
 		$ret = $this->EndISAHeader();
 		return $ret;
-
-	}
-
+	} // end method EDIClose
 
 	function StartTransaction() {
 		global $display_buffer;
@@ -224,7 +164,8 @@ class EDIModule extends BaseModule {
 		}
 
 		$this->current_transaction_set++;
-		$this->edi_buffer .= "ST*837*".$this->current_transaction_set.$this->record_terminator;
+		$this->edi_buffer .= "ST*837*".
+			$this->current_transaction_set.$this->record_terminator;
 		$this->edi_buffer .= "BGN*00*";
 		$this->edi_buffer .= $this->transaction_reference_number;
 		$this->edi_buffer .= "*";
@@ -243,16 +184,17 @@ class EDIModule extends BaseModule {
 		return true;
 		
 
-	} // end StartTrans
-
+	} // end method StartTransaction
 
 	function EndTransaction() {
 		global $display_buffer;
 		$segcount = "00";
-		$ST_seg = "ST*837*".$this->current_transaction_set.$this->record_terminator;
+		$ST_seg = "ST*837*".
+			$this->current_transaction_set.$this->record_terminator;
 		$gotseg = false;
 
-		$edi_records = explode($this->record_terminator,$this->edi_buffer);
+		$edi_records = explode($this->record_terminator,
+			$this->edi_buffer);
 		$edirec_count = count($edi_records);
 		$edirec_count--;  // subtract the last this->record_terminator.
 
@@ -267,14 +209,11 @@ class EDIModule extends BaseModule {
 		$this->edi_buffer = $this->edi_buffer."SE*".$segcount."*";
 		$this->edi_buffer .= $this->current_transaction_set;
 		$this->edi_buffer .= $this->record_terminator;
-		
-
-	} // end of EndTrans
+	} // end method EndTransaction
 	
-	function RecvrSubmitter($fac) {
+	function RecvrSubmitter ($fac) {
 		global $display_buffer;
 		$entity = ($fac) ? 2 : 1;
-
 
 		if (empty($this->sourceid))
 		{
@@ -286,48 +225,43 @@ class EDIModule extends BaseModule {
 		$this->edi_buffer = $this->edi_buffer.$entity."******94*";
 		$this->edi_buffer .= strtoupper($this->sourceid);
 		$this->edi_buffer .= $this->record_terminator;
-		$this->edi_buffer =  $this->edi_buffer."NM1*40*2******94*865".$this->record_terminator;
+		$this->edi_buffer =  $this->edi_buffer.
+			"NM1*40*2******94*865".$this->record_terminator;
 		return true;
-		
-	} // end of RecvSubmitter
+	} // end method RecvSubmitter
 
-
-    function PutEDITBufferToFile() {
+	function PutEDIBufferToFile() {
 		global $display_buffer;
-		reset ($GLOBALS);
-        while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-		$filename = PHYSICAL_LOCATION_BILLS."/bills-".$cur_date.gmdate("Hi").".data";
+		$filename = PHYSICAL_LOCATION_BILLS.
+			"/bills-".$cur_date.gmdate("Hi").".data";
 		$this->Error("Writing bills to $filename");
 		
-		$fp = fopen($filename,"w");
+		$fp = fopen($filename, "w");
 
-		if (!$fp)
-		{
+		if (!$fp) {
 			$this->Error("Error opening $filename");
 			return;
 		}
 
-		$buffer = $this->start_envelope.$this->edi_buffer.$this->end_envelope;
+		$buffer = $this->start_envelope.
+			$this->edi_buffer.$this->end_envelope;
 		$rc = fwrite($fp,$buffer);
 
-		if ($rc <= 0)
-		{
+		if ($rc <= 0) {
 			$this->Error("Error writing $filename");
 			return;
 		}
 		$this->Error("Wrote bills to $filename");
 		return;
+	} // end method PutEDIBufferToFile() {
 
-
-	} // end putedibuffertofile
-
-
-	function GetEDIBuffer($stream=false) {
+	function GetEDIBuffer ($stream=false) {
 		global $display_buffer;
-		if ($stream)
-		{
-			$buffer = $this->start_envelope.$this->edi_buffer.$this->end_envelope;
+		if ($stream) {
+			$buffer = $this->start_envelope.
+				$this->edi_buffer.$this->end_envelope;
 			return $buffer;
 		}
 
@@ -336,9 +270,7 @@ class EDIModule extends BaseModule {
 		$edirec_count--;  // subtract the last this->record_terminator.
 		$this->Error("info - edi rec count = $edirec_count");
 		$buffer = $buffer.$this->start_envelope."<br>";
-		for ($i=0;$i<$edirec_count;$i++)
-		{
-				
+		for ($i=0;$i<$edirec_count;$i++) {
         		$buffer .= "$edi_records[$i]~<br>";
 		}
 
@@ -346,64 +278,58 @@ class EDIModule extends BaseModule {
 
 		return $buffer;
 
-	} // end getedibuffer
-
+	} // end method GetEDIBuffer
 
 	function GetEDIErrors() {
 		global $display_buffer;
 
-		$edi_records = explode($this->record_terminator,$this->error_buffer);
+		$edi_records = explode($this->record_terminator,
+				$this->error_buffer);
 		$edirec_count = count($edi_records);
 		$edirec_count--;  // subtract the last this->record_terminator.
-		for ($i=0;$i<$edirec_count;$i++)
-		{
-				
+		for ($i=0;$i<$edirec_count;$i++) {
         		$buffer .= "$edi_records[$i]<br>";
 		}
 
 		return $buffer;
-
-	} // end get edierrors
-
+	} // end method GetEDIErrors
 
 	function Error($errormsg) {
 		global $display_buffer;
 		$this->error_buffer .= $errormsg;
 		$this->error_buffer .= $this->record_terminator;
-
 	} // end Error
 	
 	function CleanChar($data) {
 		global $display_buffer;
-			$data = stripslashes($data);
-			$data = str_replace("/"," ",$data);
-			$data = str_replace("'"," ",$data);
-			$data = str_replace("-"," ",$data);
-			$data = str_replace(";"," ",$data);
-			$data = str_replace("(","",$data);
-			$data = str_replace(")","",$data);
-			$data = str_replace(":"," ",$data);
-			$data = str_replace("."," ",$data);
-			$data = str_replace(","," ",$data);
-			$data = trim($data);
-			$data = strtoupper($data);
-			return $data;
-	} // end cleanchar
+		$data = stripslashes($data);
+		$data = str_replace("/"," ",$data);
+		$data = str_replace("'"," ",$data);
+		$data = str_replace("-"," ",$data);
+		$data = str_replace(";"," ",$data);
+		$data = str_replace("(","",$data);
+		$data = str_replace(")","",$data);
+		$data = str_replace(":"," ",$data);
+		$data = str_replace("."," ",$data);
+		$data = str_replace(","," ",$data);
+		$data = trim($data);
+		$data = strtoupper($data);
+		return $data;
+	} // end method CleanChar
 
 	function CleanNumber($data) {
 		global $display_buffer;
-			$data = stripslashes($data);
-			$data = str_replace(".","",$data);
-			$data = str_replace(",","",$data);
-			$data = str_replace("(","",$data);
-			$data = str_replace(")","",$data);
-			$data = str_replace("-","",$data);
-			$data = str_replace(" ","",$data);
-			$data = trim($data);
-			return $data;
-	} // end cleannumber
+		$data = stripslashes($data);
+		$data = str_replace(".","",$data);
+		$data = str_replace(",","",$data);
+		$data = str_replace("(","",$data);
+		$data = str_replace(")","",$data);
+		$data = str_replace("-","",$data);
+		$data = str_replace(" ","",$data);
+		$data = trim($data);
+		return $data;
+	} // end CleanNumber
 
-
-} // end class EDIModule
+} // end class EDI
 
 ?>
