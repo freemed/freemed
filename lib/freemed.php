@@ -118,11 +118,13 @@ if (!defined('SESSION_DISABLE')) {
 	if (is_array($_SESSION)) { extract($_SESSION); }
 
 	// Create object map for FreeMED
-	CreateApplicationMap(array('FreeMED' => 'lib/class.*.php'));
+	CreateApplicationMap(array(
+		'FreeMED' => 'lib/class.*.php',
+		// Protected namespace:
+		'_FreeMED' => 'lib/class.*.php'
+	));
 
-	// Load gettext routines. This can only be done if a session
-	// is running, as it stores several variables in session
-	// tracking.
+	// Load GettextXML routines (most non-session things don't need it).
 	include_once ("lib/i18n.php");
 }
 // ***************************************************************
@@ -152,6 +154,9 @@ $sql = CreateObject (
 		'database' => DB_NAME,
 	)
 );
+
+//----- Create Log target
+openlog("freemed", LOG_PID | LOG_PERROR, LOG_LOCAL0);
 
   // ***************************************************************
 

@@ -1,6 +1,6 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
 define ('INSTALLATION', "Stock Freemed Install"); // installation name
 define ('DB_HOST', "localhost"); // database (SQL) host location
@@ -16,6 +16,45 @@ define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('HTTP', 'http'); // http for normal, https for SSL
 define ('SESSION_PROTECTION', true); // strong session protection?
 $default_language="EN"; // default language
+define ('INIT_ADDR',"127.0.0.1"); // this is the only IP address that can run the init wizard...
+    // Logging settings	
+    // Reasonable defaults!
+define ('LOG_HIPAA', true); // This turns on all the logging required by HIPAA
+		           // Which is alot, but this should be the default
+			   // If you want to configure other log levels you 
+			   // can do so here
+
+    // Useful Tweaks			   
+define ('LOG_LOGIN', true); // This will force logging of login attempts
+
+   // Powerful and dangerous debugging
+define ('LOG_MD5ATTEMPTS', true); // This is a dangerous tool to test authentication
+				 // DO NOT turn this on for a production system
+				// this will put crackable passwords in the logs
+define ('LOG_SQL', true); 	// This logs the SQL Statments that have been entered
+				// This is usefull for debugging why something is messing 
+				// the database!!
+define ('LOG_ERRORS', true);	// This logs major errors, this should be on by default!!
+
+     // Debug Logging DONT CHANGE LEVEL FROM 100 IN A PRODUCTION SYSTEM!!
+			   // This allows developers to have a pretty accurate 
+			   // idea of whats gone....
+			   // I have impleneted log levels
+
+
+// Only define on of these
+//define ('LOG_LEVEL',0);    	// Log level zero logs everything!!(avoid)unless you are Fred or Jeff
+//define ('LOG_LEVEL',1);	   // Log level one logs everything reasonable
+//define ('LOG_LEVEL',2);	   // Log all class traversals 
+//define ('LOG_LEVEL',3);    	   // Log all page traversals (except for certain initiations)
+//define ('LOG_LEVEL',4);	   // Log all database querys, this accelerates database debugging!!
+
+
+//define ('LOG_LEVEL',100);	   // Logs nothing except what is explicitly itemized (like LOG_HIPPA)
+				   // this should be the default when not coding...
+		
+// Set log level
+define('LOG_LEVEL', 100);
 
     // GPG settings
     //
@@ -30,5 +69,7 @@ $default_language="EN"; // default language
 define ('USE_GPG', false);	// encrypt backups? (true/false)
 define ('GPG_PASSPHRASE_LOCATION', PHYSICAL_LOCATION.'/lib/gpg_phrase.php');
 define ('GPG_HOME', "/home/nobody");
+define ('FSF_USERNAME', 'demo');
+define ('FSF_PASSWORD', 'demo');
 
 ?>
