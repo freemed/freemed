@@ -185,7 +185,7 @@ class ProcedureModule extends EMRModule {
 							  date_vars("procdt"),date_vars("procrefdt")),
 		html_form::form_table ( array (
 		  __("Provider") =>
-			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
+			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname# (#phypracname#)", "procphysician"),
 		  __("Date of Procedure") =>
 			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
