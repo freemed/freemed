@@ -4,10 +4,10 @@
  // lic : GPL
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
-include ("lib/freemed.php");
-include ("lib/API.php");
-include ("lib/module.php");
-include ("lib/module_reports.php");
+include_once ("lib/freemed.php");
+include_once ("lib/API.php");
+include_once ("lib/module.php");
+include_once ("lib/module_reports.php");
 
 SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -65,7 +65,7 @@ if (!$module_list->empty_category($category)) {
 	</CENTER>
 	<P>
 	<CENTER>
-		<$STDFONT_B><A HREF=\"main.php?$_auth\"
+		<$STDFONT_B><A HREF=\"main.php\"
 		>"._("Return to Main Menu")."</A><$STDFONT_E>
 	</CENTER>
 	<P>
