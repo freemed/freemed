@@ -144,13 +144,16 @@ if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_R
 	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required for this version of freemed ".
 		"(http://phpwebtools.sourceforge.net/)\n");
 
+  // check for WDDX functions
+//if (!function_exists("wddx_deserialize")) 
+//	die ("WDDX support needs to be compiled into your PHP!");
+
 include_once ("lib/iso-set.php");         // ISO set handler
 include_once ("lib/API.php");             // API functions
 include_once ("lib/containers.php");      // class containers
 include_once ("lib/language-loader.php"); // external language loader
 include_once ("lib/macros.php");          // macros/contants
 include_once ("lib/xml.php");             // XML import/export routines
-include_once ("lib/wddx.php");            // WDDX exchange routines
 
   // ****************** INITIALIZE SQL CONNECTION ******************
 
