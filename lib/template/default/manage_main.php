@@ -241,7 +241,7 @@ foreach ($static_components AS $garbage => $component) {
 				$min  = substr($my_r['msgtime'], 10, 2);
 
 				// Get User object
-				$this_user = CreateObject('FreeMED.User', $my_r[msgfor]);
+				$this_user = CreateObject('FreeMED.User', $my_r['msgby']);
 
 				// Form the panel
 				$panel[__("Messages")] .= "<tr>".
