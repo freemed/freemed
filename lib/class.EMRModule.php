@@ -505,18 +505,17 @@ class EMRModule extends BaseModule {
 		} // end if is array
 
 		// Handle additional hidden variables
-		$form_hidden = '';
-		if (is_array($this->form_hidden)) {
-			foreach ($this->form_hidden AS $k => $v) {
-				if ( (($k+0)>0) or empty($k)) {
-					$k = $v;
-					$v = $_REQUEST[$v];
-				}
-				// TODO: should handle arrays, etc
-				$form_hidden .= "<input type=\"hidden\" ".
-					"name=\"".prepare($k)."\" ".
-					"value=\"".prepare($v)."\" />\n";
+		$this->form_hidden[] = $this->patient_field;
+		$_REQUEST[$this->patient_field] = $_REQUEST['patient'];
+		foreach ($this->form_hidden AS $k => $v) {
+			if ( (($k+0)>0) or empty($k)) {
+				$k = $v;
+				$v = $_REQUEST[$v];
 			}
+			// TODO: should handle arrays, etc
+			$form_hidden .= "<input type=\"hidden\" ".
+				"name=\"".prepare($k)."\" ".
+				"value=\"".prepare($v)."\" />\n";
 		}
 
 		switch ($action) {
@@ -663,6 +662,11 @@ class EMRModule extends BaseModule {
 						case "physician":
 						$p = CreateObject('FreeMED.Physician', ${$p1});
 						${$v} = $p->fullName();
+						break;
+
+						case "user":
+						$__u = CreateObject('FreeMED.User', ${$p1});
+						${$v} = $__u->fullName();
 						break;
 
 						default:
