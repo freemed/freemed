@@ -1325,7 +1325,7 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
 function freemed_open_db ($my_cookie) {
 
   global $LoginCookie, $Entered_incorrect_NamePasswd,
-    $Possible_Cookies_Have_Expired, $base_url, $Login_Screen;
+    $Possible_Cookies_Have_Expired, $Login_Screen;
 
   if ($my_cookie=="") $my_cookie = $LoginCookie;
 
@@ -1347,7 +1347,7 @@ function freemed_open_db ($my_cookie) {
       <I>"._("It is possible that your cookies have expired.")."</I>
       <P>
       </B>
-      <A HREF=\"$base_url\">"._("Return to the Login Screen")."</A>
+      <A HREF=\"".BASE_URL."\">"._("Return to the Login Screen")."</A>
       </CENTER>
       </BODY></HTML>
     ");
