@@ -346,7 +346,7 @@ foreach ($modular_components AS $garbage => $component) {
 	}
 	
 	// End checking for component
-	if ($module_list->check_for($component)) {
+	if ($module_list->check_for($component) and (!$already_set[$component])) {
 		// Execute proper portion and add to panel
 		$modules[__($module_list->get_module_name($component))] =
 			$component;
@@ -365,6 +365,8 @@ foreach ($modular_components AS $garbage => $component) {
 				)
 			)."</td></tr></table>
 		";
+
+		$already_set[$component] = true;
 	} else {
 		// Don't do anything if it doesn't exist
 	} // end checking for component existing
