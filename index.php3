@@ -69,7 +69,7 @@ echo "
 <SELECT NAME=\"_f\">
 ";
 
-freemed_display_facilities ($_f, true, "0");
+echo freemed_display_facilities ($_f, true, "0");
 
 echo "
 </SELECT>
