@@ -1,23 +1,63 @@
 <?php
- // file: patient_record_template.php3	
+ // $Id$
  // desc: patient record template editing engine
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name   = "patient_record_template.php3";
- $record_name = "Patient Record Templates";
- $db_name     = "patrectemplate";
+if (!defined("__PATIENT_RECORD_TEMPLATE_MODULE_PHP__")) {
 
- include ("lib/freemed.php");
- include ("lib/API.php");
+define (__PATIENT_RECORD_TEMPLATE_MODULE_PHP__, true);
 
- freemed_open_db ($LoginCookie);
- freemed_display_html_top ();
- freemed_display_banner ();
+class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 
- switch ($action) {
-  // trying to combine add and modify forms for simplicity
-  case "addform": case "modform":
+	var $MODULE_NAME    = "Patient Record Template Maintenance";
+	var $MODULE_VERSION = "0.1";
+
+	var $record_name    = "Patient Record Templates";
+	var $table_name     = "patrectemplate";
+
+	var $variables = array (
+		"prtname",
+		"prtdescrip",
+		"prtfname",
+		"prtvar",
+		"prtftype",
+		"prtftypefor",
+		"prtfmaxlen",
+		"prtfcom"
+	);
+
+	function patientRecordTemplateMaintenance () {
+		$this->freemedMaintenanceModule();
+	} // end constructor patientRecordTemplateMaintenance
+
+	function add () {
+		global $prtfname, $prtvar, $prtftype, $prtftypefor,
+			$prtfmaxlen, $prtfcom;
+		$prtfname      = fm_join_from_array($prtfname);
+		$prtvar        = fm_join_from_array($prtvar);
+		$prtftype      = fm_join_from_array($prtftype);
+		$prtftypefor   = fm_join_from_array($prtftypefor);
+		$prtfmaxlen    = fm_join_from_array($prtfmaxlen);
+		$prtfcom       = fm_join_from_array($prtfcom);
+		$this->_add();
+	} // end function patientRecordTemplateMaintenance->add()
+
+	function mod () {
+		global $prtfname, $prtvar, $prtftype, $prtftypefor,
+			$prtfmaxlen, $prtfcom;
+		$prtfname      = fm_join_from_array($prtfname);
+		$prtvar        = fm_join_from_array($prtvar);
+		$prtftype      = fm_join_from_array($prtftype);
+		$prtftypefor   = fm_join_from_array($prtftypefor);
+		$prtfmaxlen    = fm_join_from_array($prtfmaxlen);
+		$prtfcom       = fm_join_from_array($prtfcom);
+		$this->_mod();
+	} // end function patientRecordTemplateMaintenance->mod()
+
+	function form () {
+		reset ($GLOBALS);
+		while(list($k,$v)=each($GLOBALS)) global $$k;
+
    switch ($action) {
      case "addform":
       $go = "add";
@@ -26,23 +66,13 @@
      case "modform":
       $go = "mod";
       $this_action = _("Modify");
-       // check to see if an id was submitted
-      if ($id<1) {
-       freemed_display_box_top (_($record_name)." :: "._("ERROR"));
-       echo "
-         You must select a record to modify.
-       ";
-       freemed_display_box_bottom ();
-       freemed_close_db ();
-       freemed_display_html_bottom ();
-       DIE("");
-      } // end of if.. statement checking for id #
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
-        $query  = "SELECT * FROM $db_name WHERE id='".addslashes($id)."'";
-        $result = fdb_query ($query);
-        $r      = fdb_fetch_array ($result);
+        $query  = "SELECT * FROM $this->table_name ".
+			"WHERE id='".addslashes($id)."'";
+        $result = $sql->query ($query);
+        $r      = $sql->fetch_array ($result);
         $prtname      = $r["prtname"     ];
         $prtdescrip   = $r["prtdescrip"  ]; 
         $prtfname     = fm_split_into_array ($r["prtfname"   ]);
@@ -54,7 +84,6 @@
         break;
       } // end checking if we have been here yet...
    } // end of interior switch
-   freemed_display_box_top ("$this_action "._($record_name));
    $cur_line_count = 0; // zero the current line count (displayed)
    $prev_line_total = count ($prtfname); // previous # of lines
      // display the top of the repetitive table
@@ -63,8 +92,9 @@
      $first_insert = true;
    }
    echo "
-    <FORM ACTION=\"$page_name\" METHOD=POST>
+    <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
+     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
      <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
@@ -235,109 +265,26 @@
      <INPUT TYPE=SUBMIT VALUE=\""._("go")."\">
      </CENTER>
     ";
-    freemed_display_box_bottom ();
-   break;
+	} // end function patientRecordTemplateModule->form()
 
-  case "add":
-   freemed_display_box_top (_("Adding")." "._($record_name));
-   echo "
-     <P><CENTER>
-     <$STDFONT_B>"._("Adding")." ...
-   ";
-   $query = "INSERT INTO $db_name VALUES (
-     '".addslashes($prtname)."',
-     '".addslashes($prtdescrip)."',
-     '".addslashes(fm_join_from_array($prtfname)).   "',
-     '".addslashes(fm_join_from_array($prtvar)).     "',
-     '".addslashes(fm_join_from_array($prtftype)).   "',
-     '".addslashes(fm_join_from_array($prtftypefor))."',
-     '".addslashes(fm_join_from_array($prtfmaxlen)). "',
-     '".addslashes(fm_join_from_array($prtfcom)).    "',
-     NULL )";
-   if ($debug) echo " (query = \"$query\") <P>";
-   $result = fdb_query ($query);
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "
-     <$STDFONT_E></CENTER>
-     <P>
-     <CENTER><A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A></CENTER>
-     <BR>
-   ";
-   freemed_display_box_bottom ();
-   break;
+	function view () {
+		global $sql;
+		echo freemed_display_itemlist (
+			$sql->query ("SELECT * FROM $this->table_name ".
+				"ORDER BY prtname, prtdescrip"),
+			$this->page_name,
+			array (
+				_("Name")        => "prtname",
+				_("Description") => "prtdescrip"
+			),
+			array ( "", _("NO DESCRIPTION"))
+		);
+	} // end function patientRecordTemplateMaintenance->view()
 
-  case "mod":
-   freemed_display_box_top (_("Modifying")." "._($record_name));
-   echo "
-     <P><CENTER>
-     <$STDFONT_B>"._("Modifying")." ...
-   ";
+} // end class patientRecordTemplateMaintenance
 
-   // do query
-   $query = "UPDATE $db_name SET
-      prtname       = '".addslashes($prtname)."',
-      prtdescrip    = '".addslashes($prtdescrip)."',
-      prtfname      = '".addslashes(fm_join_from_array($prtfname))."',
-      prtvar        = '".addslashes(fm_join_from_array($prtvar))."',
-      prtftype      = '".addslashes(fm_join_from_array($prtftype))."',
-      prtftypefor   = '".addslashes(fm_join_from_array($prtftypefor))."',
-      prtfmaxlen    = '".addslashes(fm_join_from_array($prtfmaxlen))."',
-      prtfcom       = '".addslashes(fm_join_from_array($prtfcom))."'
-      WHERE id='$id'";
-   $result = fdb_query ($query);
-   if ($debug) echo "query = \"$query\" <BR>";
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "
-    <$STDFONT_E></CENTER>
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER>
-    "; 
-   freemed_display_box_bottom ();
-   break;
+register_module ("patientRecordTemplateMaintenance");
 
-  case "del":
-   freemed_display_box_top (_("Deleting")." "._($record_name));
-   echo "
-    <P><CENTER>
-    <$STDFONT_B>"._("Deleting")." ...
-    ";
-   $query = "DELETE * FROM $db_name WHERE id='".addslashes($id)."'";
-   $result = fdb_query ($query);
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "
-    <$STDFONT_E></CENTER>
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER> 
-   ";
-   freemed_display_box_bottom ();
-   break;
+} // end if not defined
 
-  default: // default action -- menu
-   freemed_display_box_top (_($record_name));
-   echo freemed_display_itemlist (
-     fdb_query ("SELECT * FROM $db_name
-                 ORDER BY prtname, prtdescrip"),
-     $page_name,
-     array (
-       _("Name")		=>	"prtname",
-       _("Description")		=>	"prtdescrip"
-     ),
-     array ( "", _("NO DESCRIPTION"))
-   );
-   freemed_display_box_bottom ();
-   break;
- } // end master switch
-
- freemed_close_db ();
- freemed_display_html_bottom ();
 ?>
