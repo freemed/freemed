@@ -410,6 +410,7 @@ class PrescriptionModule extends EMRModule {
 				substr($ph['phyfaxa'], 0, 3).'-'.
 				substr($ph['phyfaxa'], 3, 3).'-'.
 				substr($ph['phyfaxa'], 6, 4) ),
+			'physiciandea' => $TeX->_SanitizeText($ph['phydea']),
 
 			// rx specific
 			'date' => $TeX->_SanitizeText(fm_date_print($r['rxdtfrom'])),

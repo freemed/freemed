@@ -8,10 +8,10 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_FILE    = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $record_name    = "Provider";
 	var $table_name     = "physician";
@@ -55,7 +55,8 @@ class ProviderModule extends MaintenanceModule {
         "phychargemap",
         "phyidmap",
 	"phyanesth",
-	"phyhl7id"
+	"phyhl7id",
+	"phydea"
 	); // end of variables list
 	var $order_by = 'phylname, phyfname';
 
@@ -78,7 +79,7 @@ class ProviderModule extends MaintenanceModule {
 			'phyfname' => SQL__VARCHAR(50),
 			'phymname' => SQL__VARCHAR(50),
 			'phytitle' => SQL__VARCHAR(10),
-			'phypracname' => SQL__VARCHAR(30),
+			'phypracname' => SQL__VARCHAR(45),
 				// Address 1
 			'phyaddr1a' => SQL__VARCHAR(30),
 			'phyaddr2a' => SQL__VARCHAR(30),
@@ -121,6 +122,7 @@ class ProviderModule extends MaintenanceModule {
 			'phygrpprac' => SQL__INT_UNSIGNED(0),
 			'phyanesth' => SQL__INT_UNSIGNED(0),
 			'phyhl7id' => SQL__INT_UNSIGNED(0),
+			'phydea' => SQL__VARCHAR(16),
 			'id' => SQL__SERIAL
 		);
 
@@ -190,7 +192,7 @@ class ProviderModule extends MaintenanceModule {
 	html_form::text_widget("phytitle", 10),
 
 	__("Practice Name") =>
-	html_form::text_widget("phypracname", 25, 30),
+	html_form::text_widget("phypracname", 45, 45),
 
 	__("Internal ID #") =>
 	html_form::text_widget("phyid1", 10),
@@ -323,7 +325,7 @@ class ProviderModule extends MaintenanceModule {
 				"physsn1", "physsn2", "physsn3", 
 				"phydeg1", "phydeg2", "phydeg3",
 				"physpe1", "physpe2", "physpe3",
-				"phyanesth", "phyhl7id"
+				"phyanesth", "phyhl7id", "phydea"
 			),
 			html_form::form_table(array(
 		__("UPIN Number") =>
@@ -377,7 +379,10 @@ class ProviderModule extends MaintenanceModule {
 		),
 
 		__("HL7 Identifier") =>
-		html_form::text_widget( 'phyhl7id' )
+		html_form::text_widget( 'phyhl7id' ),
+
+		__("DEA Number") =>
+		html_form::text_widget( 'phydea' )
 
 			))
 		);
@@ -555,9 +560,22 @@ class ProviderModule extends MaintenanceModule {
 		// Version 0.3
 		//
 		//	Add hl7 id field
+		//
 		if (!version_check($version, '0.3')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN phyhl7id INT UNSIGNED AFTER phyanesth');
+		}
+
+		// Version 0.3.1
+		//
+		//	Add DEA number for drugs
+		//	Change practice name to max 45 characters
+		//
+		if (!version_check($version, '0.3.1')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN phydea VARCHAR(16) AFTER phyhl7id');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN phypracname phypracname VARCHAR(45)');
 		}
 	} // end method _update
 
