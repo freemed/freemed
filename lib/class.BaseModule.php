@@ -2,13 +2,9 @@
 	// $Id$
 	// lic : GPL, v2
 
-// File: BaseModule
-
-include_once("lib/freemed.php");
-
 LoadObjectDependency('PHP.module');
 
-// Class: BaseModule
+// Class: FreeMED.BaseModule
 //
 //	Basic FreeMED module class. All modules in FreeMED inheirit methods
 //	from this class. It extends the phpwebtools module class.

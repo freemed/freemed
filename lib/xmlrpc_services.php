@@ -61,7 +61,7 @@ function rpc_generate_sql_hash($table, $vars, $clause="") {
 	// Create struct to return
 	$val = CreateObject('PHP.xmlrpcval');
 	$val->addArray($result_array);
-	// NOTE: You don't have to create an xmlrpcresp object because
+	// NOTE - You don't have to create an xmlrpcresp object because
 	// the xmlrpc_server object does it for you. It doesn't *really*
 	// matter, though, since it autodetects the xmlrpcresp wrapper.
 	return CreateObject('PHP.xmlrpcresp', $val);

@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-// Class: FreeB_v1
+// Class: FreeMED.FreeB_v1
 //
 //	Provides an interface to the FreeB billing system, so that all
 //	calls can be abstracted to this class. All of the XML-RPC

@@ -2,6 +2,7 @@
 	// $Id$
 	// $Author$
 
+// Class: FreeMED.Procedure
 class Procedure {
 
 	function Procedure ( $id ) {
