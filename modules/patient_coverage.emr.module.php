@@ -44,7 +44,10 @@ class PatientCoveragesModule extends freemedEMRModule {
 		//$this->View();
 		//$display_buffer .= "<CENTER><P><B>Not Implemented</B></P><BR></CENTER>";
 
-		if (!isset($been_here))
+		$book = new notebook (array ("action", "id", "module", "been_here", "patient"),
+			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
+
+		if (!$book->been_here())
 		{
 			global $been_here;
 			$been_here = 1;
@@ -66,18 +69,15 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 		$query = "SELECT * FROM covtypes ORDER BY covtpname";
 		$covtypes_result = $sql->query($query);
-		if (!covtypes_result) {
+		if (!$covtypes_result) {
 			$display_buffer .= _("Failed to get insurance coverage types");
 			template_display();
 		}
 
-		$book = new notebook (array ("action", "id", "module", "been_here", "patient"),
-			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
-
-			$book->add_page(_("Supply Coverage Information"),
-								array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
-											date_vars("covrelinfodt")),
-								html_form::form_table( array (
+		$book->add_page(_("Supply Coverage Information"),
+			array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
+			date_vars("covrelinfodt")),
+			html_form::form_table( array (
 										_("Coverage Insurance Type") => 
 											freemed_display_selectbox($covtypes_result,"#covtpname# #covtpdescrip#","covinstp"),
 										_("Provider Accepts Assigment") =>
@@ -179,6 +179,12 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 			}
 			
+		if ($book->is_cancelled()) {
+			Header("Location: ".$this->page_name."?".
+				"module=".$this->MODULE_CLASS."&".
+				"patient=".urlencode($patient));
+			die("");
+		}
 
 		if (!$book->is_done())
 		{
