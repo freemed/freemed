@@ -2901,7 +2901,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 			break;
 		case "ymd": default:
 			if ($show_text_days and ($y > 1969)) {
-				return date("D")." ".$y.date("-m-d", $ts);
+				return date("D", $ts)." ".$y.date("-m-d", $ts);
 			} else {
 				return $y.date("-m-d", $ts);
 			}
