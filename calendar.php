@@ -38,7 +38,7 @@ $module_template = "
 // module loader
 $module_list = CreateObject(
 	'PHP.module_list',
-	PACKAGENAME
+	PACKAGENAME,
 	array(
 		'cache_file' => 'data/cache/modules'	
 	)
