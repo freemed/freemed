@@ -15,11 +15,6 @@ side of the image.
 //PHPLOT Version 4.4.6
 //Requires PHP 3.0.2 or later 
 
-if (!defined ("__PHPLOT_PHP__")) {
-
-define ('__PHPLOT_PHP__', true);
-
-
 class PHPlot{
 
 	var $is_inline = 0;			//0 = Sends headers, 1 = sends just raw image data
@@ -2643,7 +2638,5 @@ class PHPlot{
 // $graph = new PHPlot;
 
 // $graph->DrawGraph();
-
-} // end define
 
 ?>
