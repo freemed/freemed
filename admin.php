@@ -1,9 +1,6 @@
 <?php
- // $Id$
- // note: administrative functions
- // code: jeff b (jeff@ourexchange.net)
- //       language support by Max Klohn (amk@span.ch)
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
 $page_name = basename($GLOBALS["$PHP_SELF"]);
 include_once ("lib/freemed.php");
@@ -19,6 +16,7 @@ $config_vars = array (
 	"calehr", // calendar end time
 	"dtfmt", // date format
 	"phofmt", // phone format
+	"drug_widget_type", // type of drug widget present
 	"folded"  // do we fold multipage forms?
 );
 
@@ -138,6 +136,14 @@ if ($action=="cfgform") {
 				__("United States")." (XXX) XXX-XXXX" => "usa",
 				__("France")." (XX) XX XX XX XX" => "fr",
 				__("Unformatted")." XXXXXXXXXX" => "unformatted"
+			)
+		),
+
+		__("Prescription Drug Widget") =>
+		html_form::select_widget("drug_widget_type",
+			array (
+				__("rxlist.com Drug Listing") => 'rxlist',
+				__("Combo with past drugs") => 'combobox'
 			)
 		),
 
@@ -552,16 +558,17 @@ $display_buffer .= "
  </td></tr>
  ";
 
-if ($userdata["user"]==1) // if we are root...
- $display_buffer .= "
-  <tr><td ALIGN=\"RIGHT\">
-   <a HREF=\"admin.php?action=reinit\"
-   ><img SRC=\"img/Gear.gif\" BORDER=\"0\" ALT=\"\"/></a>
-  </TD><TD ALIGN=\"LEFT\">
-  <a HREF=\"admin.php?action=reinit\"
-  >".__("Reinitialize Database")."</a>
-  </td></tr>
- ";
+//----- This is depreciated with the use of the init_wizard
+//if ($userdata["user"]==1) // if we are root...
+// $display_buffer .= "
+//  <tr><td ALIGN=\"RIGHT\">
+//   <a HREF=\"admin.php?action=reinit\"
+//   ><img SRC=\"img/Gear.gif\" BORDER=\"0\" ALT=\"\"/></a>
+//  </TD><TD ALIGN=\"LEFT\">
+//  <a HREF=\"admin.php?action=reinit\"
+//  >".__("Reinitialize Database")."</a>
+//  </td></tr>
+// ";
 
 $display_buffer .= "
   <tr><td ALIGN=\"RIGHT\">

@@ -1,7 +1,6 @@
 <?php
- // $Id$
- // note: prescription db/module functions
- // lic : GPL
+	// $Id$
+	// $Author$
 
 LoadObjectDependency('FreeMED.EMRModule');
 
@@ -9,7 +8,7 @@ class PrescriptionModule extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_DESCRIPTION = "
 		The prescription module allows prescriptions to be written 
 		for patients from any drug in the local formulary or in the 
@@ -88,10 +87,20 @@ class PrescriptionModule extends EMRModule {
 			'id' => SQL__SERIAL
 		);
 
+		switch (freemed::config_value('drug_widget_type')) {
+			case 'combobox':
+			$rxdrug_chosen = html_form::combo_assemble('rxdrug');
+			break; // combobox
+
+			case 'rxlist': default:
+			$rxdrug_chosen = $GLOBALS['rxdrug'];
+			break; // rxlist
+		}
+
 		$this->variables = array (
 			"rxdtfrom" => date_assemble("rxdtfrom"),
 			"rxphy",
-			"rxdrug",
+			"rxdrug" => $rxdrug_chosen,
 			"rxsize",
 			"rxform",
 			"rxdosage",

@@ -1,12 +1,6 @@
 <?php
- // $Id$
- // note: complete list of included functions for all modules
- //       basically to cut down on includes, and make everything
- //       a little easier
- // code: jeff b (jeff@ourexchange.net)
- //       max k <amk@span.ch>
- //       adam (gdrago23@yahoo.com)
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
 if (!defined("__API_PHP__")) {
 
@@ -137,9 +131,22 @@ class freemed {
 	function drug_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
 		global ${$varname};
 
-		// If it is set, show drug name, else widget
-		if (!empty(${$varname})) {
-			return "<INPUT TYPE=\"HIDDEN\" ".
+		// Switch depending on configuration value
+		switch (freemed::config_value('drug_widget_type')) {
+			case 'combobox':
+			return html_form::combo_widget(
+				$varname,
+				$GLOBALS['sql']->distinct_values(
+					'rx', 'rxdrug'
+				)
+			);
+			break; // end case combobox
+			
+			// Keep rxlist as the default setting
+			case 'rxlist': default:
+			// If it is set, show drug name, else widget
+			if (!empty(${$varname})) {
+				return "<INPUT TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\" ".
 				"VALUE=\"".prepare(${$varname})."\"/>".
 				${$varname}." ".
@@ -151,8 +158,8 @@ class freemed {
 				urlencode($formname)."', 'drugPopup'); ".
 				"drugPopup.opener=self; return true;\" ".
 				"VALUE=\"".__("Change")."\"/>";
-		} else {
-			return "<input type=\"HIDDEN\" ".
+			} else {
+				return "<input type=\"HIDDEN\" ".
 				"name=\"".prepare($varname)."\"/>".
 				"<input class=\"button\" type=\"BUTTON\" ".
 				"onClick=\"drugPopup=window.open(".
@@ -163,7 +170,9 @@ class freemed {
 				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"drugPopup.opener=self; return true;\" ".
 				"value=\"".__("Drug Lookup")."\"/>";
-		}
+			}
+			break; // end default action
+		} // end switch
 	} // end function freemed::drug_widget
 
 	// function freemed::get_link_rec
@@ -2507,6 +2516,8 @@ function help_url ( $page = "", $section = "" ) {
 //---------------------------------------------------------------------------
 // Authentication Subsystem
 //---------------------------------------------------------------------------
+
+// TODO: Upgrade basic_authentication to deal with MD5 sums, since we're no longer doing plain text.
 
 function check_basic_authentication () {
 	global $sql;
