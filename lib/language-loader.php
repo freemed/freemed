@@ -107,10 +107,10 @@ while($w = strpos("@".$me, '/')) {
 }
 
 // if there is no $lang variable or whatever present (error handling)
-if (!isset($SESSION["language"])) {
+if (!isset($_SESSION["language"])) {
 	$s_lng = $language;
 } else {
-	$s_lng = $SESSION["language"];
+	$s_lng = $_SESSION["language"];
 }
 
   // old language loader

@@ -682,6 +682,12 @@ function set_up_language($fm_language, $do_search = false) {
            $language, $default_language,
            $fm_notAlias;
 
+    // Check to see if a session is active yet
+    if (!$_COOKIE['language']) { return; }
+
+//    if (!isset($fm_language)) print "not set fm_language<br>\n";
+//    	else print "fm_language = $fm_language<br>\n";
+
     if ($SetupAlready) {
         return;
     }
@@ -689,6 +695,8 @@ function set_up_language($fm_language, $do_search = false) {
 
     if ($do_search && ! $fm_language && isset($HTTP_ACCEPT_LANGUAGE)) {
         $fm_language = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
+    } elseif (!isset($fm_language)) {
+	$fm_language = ( isset($language) ? $language : $default_language );
     }
     
     if (!$fm_language && isset($default_language)) {
@@ -700,19 +708,22 @@ function set_up_language($fm_language, $do_search = false) {
         $fm_notAlias = $languages[$fm_notAlias]['ALIAS'];
     }
 
+    $path = dirname(getenv(PATH_TRANSLATED));
+    chdir($path);
+
     if ( isset($fm_language) &&
          $use_gettext &&
          $fm_language != '' &&
          isset($languages[$fm_notAlias]['CHARSET']) ) {
-        bindtextdomain( 'freemed', '/usr/share/freemed/locale/' );
+        bindtextdomain( 'freemed', './locale/' );
         textdomain( 'freemed' );
-        if ( !ini_get('safe_mode') &&
-             getenv( 'LC_ALL' ) != $fm_notAlias ) {
+        //if ( !ini_get('safe_mode') &&
+        //     getenv( 'LC_ALL' ) != $fm_notAlias ) {
             putenv( "LC_ALL=$fm_notAlias" );
             putenv( "LANG=$fm_notAlias" );
             putenv( "LANGUAGE=$fm_notAlias" );
-        }
-        setlocale(LC_ALL, $fm_notAlias);
+        //}
+        setlocale('LC_ALL', $fm_notAlias);
         $language = $fm_notAlias;
         header( 'Content-Type: text/html; charset=' . $languages[$fm_notAlias]['CHARSET'] );
     }

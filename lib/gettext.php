@@ -9,7 +9,7 @@
  * relies on .po files (can't read .mo easily).
  * Uses the session for caching (speed increase)
  * Possible use in other PHP scripts?  The only SM-specific thing is
- *   $fm_language, I think
+ *   $language, I think
  */
 
 global $gettext_php_domain, $gettext_php_dir, $gettext_php_loaded,
