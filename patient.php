@@ -300,6 +300,7 @@ switch ($action) {
     "._("Number of Other Physicians")." :
     </TD><TD ALIGN=LEFT>
       ".html_form::number_pulldown("num_other_docs", 0, 4)."
+      ".$book->generate_refresh()."
     </TD></TR>
 
     </TABLE>
@@ -512,7 +513,8 @@ switch ($action) {
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy4"),
 
 	_("Number of Other Physicians") =>
-	html_form::number_pulldown("num_other_docs", 0, 4),
+	html_form::number_pulldown("num_other_docs", 0, 4).
+        $book->generate_refresh(),
 
 			_("Blood Type") =>
 			html_form::select_widget(
@@ -892,7 +894,12 @@ switch ($action) {
 
     // Push onto stack
     page_push();
-  
+ 
+    if ($_COOKIE['current_patient'] > 0) {
+      $this_patient = CreateObject('FreeMED.Patient', $_COOKIE['current_patient']);
+      $display_buffer .= freemed::patient_box ($this_patient);
+    }
+ 
     if (freemed::user_flag(USER_DATABASE)) {
       $display_buffer .= "
         <table WIDTH=\"100%\" CLASS=\"reverse\" BORDER=\"0\" CELLSPACING=\"0\"
@@ -932,17 +939,6 @@ switch ($action) {
         </td></tr></table>
       "; // end table statement for bar
     }
-
-    if ($current_patient > 0) {
-      $patient = CreateObject('FreeMED.Patient', $current_patient);
-      $display_buffer .= "
-        <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"0\" ALIGN=\"CENTER\"
-         VALIGN=\"CENTER\" BORDER=\"0\"><tr><td ALIGN=\"CENTER\"><div ALIGN=\"CENTER\">
-	 <a HREF=\"manage.php?id=$current_patient\"
-         >"._("Patient")." : ".$patient->fullName(true)."</a>
-         </div></td></tr></table>
-      ";
-    } // end check for current patient cookie
 
     $display_buffer .= "
       <br/>
