@@ -5,8 +5,6 @@
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-SetCookie ("default_facility", "0", time()-100);
-
 //----- Set page title
 $page_title = PACKAGENAME." "._("Login");
 
