@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Fri Mar 16 2001 rufustfirefly
+  - module_information.php: now fixed table width so things wrap properly
+  - patient.php: semantic break in patient.php fixed
+  - TODO: updated todo
+
 * Fri Mar 16 2001 fforest
    - fixedform.EN.data updated with latest NSF format for commercial
      insurance.

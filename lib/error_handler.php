@@ -9,6 +9,10 @@ define ('__ERROR_HANDLER_PHP__', true);
 
 function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 	switch ($no) {
+		case E_ERROR:
+		case E_PARSE:
+		case E_COMPILE_ERROR:
+		case E_COMPILE_WARNING:
 		case E_CORE_ERROR:
 		case E_CORE_WARNING:
 		case E_USER_ERROR:
@@ -20,7 +24,8 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 				"Installation : ".INSTALLATION."\n".
 				"IP : ".$GLOBALS["SERVER_NAME"]."\n".
 				"Timestamp : ".date("D M d Y h:i a")."\n".
-				"File : ".$file."\n".
+				"Script : ".str_replace(BASE_URL."/", "", $GLOBALS["PHP_SELF"])."\n".
+				"File : ".str_replace(chop(`pwd`)."/", "", $file)."\n".
 				"Line : ".$line."\n".
 				"Error : ".$str."\n";
 
@@ -46,11 +51,12 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 				freemed_display_html_bottom ();
 			DIE("");
 			break;
+		//default: echo "error type : $no<BR>\n"; break;
 	} // end switch
 } // end function freemed_standard_error_handler
 
 // set as default error handler
-error_reporting ( 0 );
+error_reporting ( );
 $original_error_handler = set_error_handler("freemed_standard_error_handler");
 
 } // end checking for __ERROR_HANDLER_PHP__
