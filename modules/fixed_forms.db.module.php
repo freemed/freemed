@@ -282,17 +282,15 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		 <P>
 		 <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
-		  <TR BGCOLOR=\"#000000\">
-		   <TD><FONT COLOR=\"#ffffff\">#</FONT></TD>
-		   <TD><FONT COLOR=\"#ffffff\"><CENTER><B>"._("Mark")."</B></CENTER>
-			 </FONT></TD>
-		   <TD><FONT COLOR=\"#ffffff\"
-			><B>"._("Row/Line")."</B></FONT></TD>
-		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Column")."</B></FONT></TD>
-		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Length")."</B></FONT></TD>
-		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Data")."</B></FONT></TD>
-		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Format")."</B></FONT></TD>
-		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Comment")."</B></FONT></TD>
+		  <TR CLASS=\"reverse\">
+		   <TD>#</TD>
+		   <TD ALIGN=\"CENTER\"><B>"._("Mark")."</B></TD>
+		   <TD><B>"._("Row/Line")."</B></TD>
+		   <TD><B>"._("Column")."</B></TD>
+		   <TD><B>"._("Length")."</B></TD>
+		   <TD><B>"._("Data")."</B></TD>
+		   <TD><B>"._("Format")."</B></TD>
+		   <TD><B>"._("Comment")."</B></TD>
 		  </TR>
 		 ";
 
