@@ -1350,6 +1350,24 @@ msgstr ""
 msgid "Rebill Information"
 msgstr ""
 
+msgid "Record added successfully."
+msgstr ""
+
+msgid "Record addition failed."
+msgstr ""
+
+msgid "Record deleted successfully."
+msgstr ""
+
+msgid "Record deletion failed."
+msgstr ""
+
+msgid "Record modified successfully."
+msgstr ""
+
+msgid "Record modification failed."
+msgstr ""
+
 msgid "Referring Physician"
 msgstr ""
 
