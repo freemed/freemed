@@ -44,6 +44,18 @@ class ClaimsManager extends BillingModule {
 			return $this->claim_event_add( );
 			break; // claim event add
 
+			case __("Post Check"):
+			return $this->post_check_form( );
+			break; // post check
+
+			case __("Mark Billed"):
+			return $this->mark_billed( );
+			break; // mark billed
+
+			case __("Rebill"):
+			return $this->rebill( );
+			break;
+
 			case __("Narrow Search"):
 			case __("Search Claims"):
 			case __("Return to Search"):
@@ -302,7 +314,7 @@ class ClaimsManager extends BillingModule {
 			"style=\"border: 1pt solid;\"><tr>".
 			"<td width=\"65%\" style=\"border: 1pt solid;\">\n".
 			"<center>".
-			"<big><b><u>".__("Search Criteria")."</u></b></big>".
+			"<big><b><u>".__("Claims Criteria")."</u></b></big>".
 			"</center>".
 			"<br/>\n";
 
@@ -444,16 +456,52 @@ class ClaimsManager extends BillingModule {
 		} // end plans
 		$display_buffer .= "</td></tr></table><p/>\n";
 
+		// New form, new buttons
+		$display_buffer .= "<form method=\"post\" name=\"claims\">\n".
+			"<input type=\"hidden\" name=\"module\" value=\"".$_REQUEST['module']."\" />\n".
+			"<input type=\"hidden\" name=\"action\" value=\"".$_REQUEST['action']."\" />\n".
+			"<input type=\"hidden\" name=\"type\" value=\"".$_REQUEST['type']."\" />\n".
+			"<script language=\"javascript\"><!-- \n".
+			"function checkAll ( f, c ) { \n".
+			"	for (var i=0; i < f.elements.length; i++ ) {\n".
+			"		if (f.elements[i].type == 'checkbox') { f.elements[i].checked = c; } \n".
+			"	}\n".
+			"}\n".
+			"--></script>\n";
+		foreach ($_REQUEST['criteria'] AS $k => $v) {
+			$display_buffer .= "<input type=\"hidden\" ".
+				"name=\"criteria[".$k."]\" value=\"".
+				prepare($v)."\" />\n";
+		} // end looping through search criteria
+
+		$display_buffer .= 
+			"<div align=\"center\">\n".
+			__("For checked claims").": ".
+//			"<input type=\"submit\" name=\"submit_action\" ".
+//				"value=\"".__("Post Check")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Rebill")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Mark Billed")."\" />\n".
+			"<input type=\"button\" ".
+				"onClick=\"checkAll(this.form, true);\" ".
+				"value=\"".__("Select All")."\" />\n".
+			"<input type=\"button\" ".
+				"onClick=\"checkAll(this.form, false);\" ".
+				"value=\"".__("Select None")."\" />\n".
+			"</div>\n";
+
 		// Set up the table layout
-		$table->setHeaderContents(0, 0, __("Payer"));
-		$table->setHeaderContents(0, 1, __("Ins ID"));
-		$table->setHeaderContents(0, 2, __("Prov ID"));
-		$table->setHeaderContents(0, 3, __("Patient"));
-		$table->setHeaderContents(0, 4, __("Claim"));
-		$table->setHeaderContents(0, 5, __("Status"));
-		$table->setHeaderContents(0, 6, __("Service Date"));
-		$table->setHeaderContents(0, 7, __("Paid"));
-		$table->setHeaderContents(0, 8, __("Balance"));
+		$table->setHeaderContents(0, 0, ' ');
+		$table->setHeaderContents(0, 1, __("Payer"));
+		$table->setHeaderContents(0, 2, __("Ins ID"));
+		$table->setHeaderContents(0, 3, __("Prov ID"));
+		$table->setHeaderContents(0, 4, __("Patient"));
+		$table->setHeaderContents(0, 5, __("Claim"));
+		$table->setHeaderContents(0, 6, __("Status"));
+		$table->setHeaderContents(0, 7, __("Svc Date"));
+		$table->setHeaderContents(0, 8, __("Paid"));
+		$table->setHeaderContents(0, 9, __("Balance"));
 
 		// Get aging summary
 		//print "<hr/><b>debug criteria : <br/>"; print_r($criteria); print "<hr/>\n";
@@ -463,7 +511,12 @@ class ClaimsManager extends BillingModule {
 		$count = 0;
 		foreach ($matrix AS $hash) {
 			$count = $count + 1;
-			$table->setCellContents($count, 0, 
+			$table->setCellContents($count, 0,
+				'<input type="checkbox" '.
+				'name="check['.prepare($hash['claim']).']" '.
+				( $_REQUEST['check'][$hash['claim']] ? 'checked="checked" ' : '' ).
+				'value="'.prepare($hash['claim']).'" />');
+			$table->setCellContents($count, 1, 
 				'<a href="'.$this->_search_link(array(
 					'patient' => '',
 					'payer' => $hash['payer']
@@ -471,11 +524,11 @@ class ClaimsManager extends BillingModule {
 				__("Filter by this payer").'">'.
 				$hash['payer_name'].
 				'</acronym></a>'); 
-			$table->setCellContents($count, 1, 
-				'<small>'.$hash['insured_id'].'</small>');
 			$table->setCellContents($count, 2, 
-				'<small>'.$hash['id_map']['id'].'</small>');
+				'<small>'.$hash['insured_id'].'</small>');
 			$table->setCellContents($count, 3, 
+				'<small>'.$hash['id_map']['id'].'</small>');
+			$table->setCellContents($count, 4, 
 				'<a href="'.$this->_search_link(array(
 					'patient' => $hash['patient_id'],
 					'payer' => '' // disable payer
@@ -490,35 +543,38 @@ class ClaimsManager extends BillingModule {
 				'patient='.$hash['patient_id'].
 				'">['.__("Ledger").']</a>'); 
 			// Show all claims
-			$table->setCellContents($count, 4, '<a href="'.
+			$table->setCellContents($count, 5, '<a href="'.
 				$this->_detail_link(array(
 					'claim' => $hash['claim']
 				)).'"><acronym TITLE="'.
 				__("View claim details").'">'.
 				$hash['claim'].'</acronym></a>');
-			$table->setCellContents($count, 5, 
-				empty($hash['status']) ? '&nbsp;' :
+			$table->setCellContents($count, 6, 
+				( $hash['billed'] ?
+				'<b><acronym TITLE="'.__("Billed").'">B</acronym></b> ' :
+				'<b><acronym TITLE="'.__("Queued").'">Q</acronym></b> ' ).
+				( empty($hash['status']) ? '&nbsp;' :
 				'<a href="'.
 				$this->_search_link(array(
 					'status' => $hash['status']
 				)).'"><acronym TITLE="'.
 				__("Filter by this status").'">'.
-				$hash['status'].'</acronym></a>');
-			$table->setCellContents($count, 6, 
+				$hash['status'].'</acronym></a>') );
+			$table->setCellContents($count, 7, 
 				'<a href="'.$this->_search_link(array(
 					'date' => $hash['date_of']
 				)).'"><acronym TITLE="'.
 				__("Filter by this date").'">'.
 				$hash['date_of'].'</acronym></a>');
-			$table->setCellContents($count, 7, 
-				bcadd($hash['paid'], 0, 2));
 			$table->setCellContents($count, 8, 
+				bcadd($hash['paid'], 0, 2));
+			$table->setCellContents($count, 9, 
 				bcadd($hash['balance'], 0, 2));
 			$total_balance += $hash['balance'];
 		}
 
 		// Set alignment on money columns
-		for($i=7;$i<=8;$i++) {
+		for($i=8;$i<=9;$i++) {
 			$table->setColAttributes($i, array('align'=>'right'), true);
 		}
 
@@ -693,6 +749,105 @@ class ClaimsManager extends BillingModule {
 		// Dump back to the display buffer
 		$display_buffer .= $form->toHtml();
 	} // end method claim_event_add
+
+	// Method: mark_billed
+	//
+	//	Allow interface to mark claims as being billed.
+	//
+	function mark_billed ( ) {
+		global $display_buffer;
+		$display_buffer .= "<div class=\"section\">".
+			__("Claims Manager").": ".
+			__("Mark Billed")."</div>\n";
+
+		// Perform the actual marking ...
+		//print "<br/><br/><hr/>"; print_r($_REQUEST['check']);
+		$cl = CreateObject('FreeMED.ClaimLog');
+		if (count($_REQUEST['check']) < 1) {
+			$display_buffer .= __("Please select a claim before attempting to mark as billed.");
+		} else {
+			$res = $cl->mark_billed_array($_REQUEST['check']);
+			if ($res) {
+				$display_buffer .= count($_REQUEST['check']).__(" claims were successfully marked as billed").".";
+			} else {
+				$display_buffer .= __("An error occured while attempting to mark these claims as billed.");
+			}
+		}
+
+		// Display button bar
+		$form = CreateObject('PEAR.HTML_QuickForm');
+		freemed::quickform_i18n(&$form);
+		$form->addElement(
+			'hidden', 'module', $_REQUEST['module'] );
+		$form->addElement(
+			'hidden', 'action', $_REQUEST['action'] );
+		$form->addElement(
+			'hidden', 'type', $_REQUEST['type'] );
+		$form->addElement(
+			'hidden', 'claim', $_REQUEST['claim'] );
+		// Hide criteria
+		foreach ($_REQUEST['criteria'] AS $k => $v) {
+			//print "k = $k, v = $v<br/>\n";
+			$form->addElement('hidden', 'criteria['.$k.']', $v);
+		}
+		$submit_buttons[] = &HTML_QuickForm::createElement(
+			'submit', 'submit_action', __("Return to Search"));
+		$submit_buttons[] = &HTML_QuickForm::createElement(
+			'submit', 'submit_action', __("New Search"));
+		$form->addGroup($submit_buttons, null, null, '&nbsp;');
+		$display_buffer .= $form->toHtml();
+	} // end method mark_billed
+
+	// Method: rebill
+	//
+	//	Allow interface to mark claims for rebill.
+	//
+	function rebill ( ) {
+		global $display_buffer;
+		$display_buffer .= "<div class=\"section\">".
+			__("Claims Manager").": ".
+			__("Mark for Rebill")."</div>\n";
+
+		// Perform the actual marking ...
+		//print "<br/><br/><hr/>"; print_r($_REQUEST['check']);
+		$cl = CreateObject('FreeMED.ClaimLog');
+		if (count($_REQUEST['check']) < 1) {
+			$display_buffer .= __("Please select a claim before attempting to mark as billed.");
+		} else {
+			$res = true;
+			foreach ($_REQUEST['check'] AS $k => $v) {
+				$res &= $cl->set_rebill($k, __("Marked for Rebill"));
+			}
+			if ($res) {
+				$display_buffer .= count($_REQUEST['check']).__(" claims were successfully marked for rebill").".";
+			} else {
+				$display_buffer .= __("An error occured while attempting to mark these claims for rebill.");
+			}
+		}
+
+		// Display button bar
+		$form = CreateObject('PEAR.HTML_QuickForm');
+		freemed::quickform_i18n(&$form);
+		$form->addElement(
+			'hidden', 'module', $_REQUEST['module'] );
+		$form->addElement(
+			'hidden', 'action', $_REQUEST['action'] );
+		$form->addElement(
+			'hidden', 'type', $_REQUEST['type'] );
+		$form->addElement(
+			'hidden', 'claim', $_REQUEST['claim'] );
+		// Hide criteria
+		foreach ($_REQUEST['criteria'] AS $k => $v) {
+			//print "k = $k, v = $v<br/>\n";
+			$form->addElement('hidden', 'criteria['.$k.']', $v);
+		}
+		$submit_buttons[] = &HTML_QuickForm::createElement(
+			'submit', 'submit_action', __("Return to Search"));
+		$submit_buttons[] = &HTML_QuickForm::createElement(
+			'submit', 'submit_action', __("New Search"));
+		$form->addGroup($submit_buttons, null, null, '&nbsp;');
+		$display_buffer .= $form->toHtml();
+	} // end method rebill
 
 	// ----- Internal functions
 

@@ -109,6 +109,7 @@ class ClaimLog {
 			"pt.id AS patient_id, ".
 			"p.procdt AS date_of, ".
 			"p.procstatus AS status, ".
+			"p.procbilled AS billed, ".
 			"p.procphysician AS _provider, ".
 			"p.id AS claim, ".
 			"c.covpatinsno AS insured_id, ".
@@ -401,6 +402,7 @@ ORDER BY
 			"p.proccharges AS fee, ".
 			"p.procamtpaid AS paid, ".
 			"p.procbalcurrent AS balance, ".
+			"p.procbilled AS billed, ".
 			"p.id AS proc ".
 			"FROM ".
 				"patient AS pt, ".
@@ -594,6 +596,33 @@ ORDER BY
 		return $result;
 	} // end method mark_billed
 
+	// Method: mark_billed_array
+	//
+	//	Mark all procedures in an array as being billed. The
+	//	billing interface should use this function.
+	//
+	// Parameters:
+	//
+	//	$procs - Array of procedures
+	//
+	// Returns:
+	//
+	//	Boolean, if successful.
+	//
+	function mark_billed_array ( $procs ) {
+		// Create procedure set
+		$set = join(',', $procs);
+		
+		// Perform update to procedure table
+		$query = 'UPDATE procrec SET '.
+			'procbilled = \'1\' '.
+			'WHERE FIND_IN_SET(id, \''.$set.'\')';
+		$GLOBALS['display_buffer'] .= "query = $query<br/>\n";
+		//$result = $GLOBALS['sql']->query ( $query );
+
+		return $result;
+	} // end method mark_billed_array
+
 	// Method: procedure_status_list
 	//
 	//	Get list of all procedure statuses in the system
@@ -661,7 +690,7 @@ ORDER BY
 		);
 		$cl_query = $GLOBALS['sql']->query ( $query );
 
-		return ($pay_query and $cl_query);
+		return ($proc_query and $cl_query);
 	} // end method set_rebill
 
 	//------------------------------------- INTERNAL METHODS ------------
