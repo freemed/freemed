@@ -85,20 +85,26 @@ class Images {
 			fclose($original);
 	
 			// Convert to PBM
-			$command = "`which convert` ".
-				freemed::secure_filename($tempname).".jpg ".
-				$tempname.".pbm";
+			//$command = `which convert`." ".
+			$command = "/usr/bin/convert \"".
+				freemed::secure_filename($tempname).".jpg\" ".
+				"\"".$tempname.".pbm\"";
 			//print "PBM: $command\n";
 			exec($command);
-			unlink($tempname.".jpg");
+			//syslog(LOG_INFO,"XMLRPC|$command");	
+			//if (!file_exists($tempname.".pbm")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
+			//unlink($tempname.".jpg");
 			
 			// Convert to DJVU
-			$command = "`which cjb2` ".
-				$tempname.".pbm ".
-				$tempname.".djvu";
+			//$command = `which cjb2`." ".
+			$command = "/usr/bin/cjb2 ".
+				"\"".$tempname.".pbm\" ".
+				"\"".$tempname.".djvu\"";
 			//print "DJVU: $command\n";
+			//syslog(LOG_INFO,"XMLRPC|$command");	
 			exec($command);
-			unlink($tempname.".pbm");
+			//if (!file_exists($tempname.".djvu")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
+			//unlink($tempname.".pbm");
 	
 			// Add to stack	
 			$djvu[] = $tempname.".djvu";	
@@ -114,23 +120,27 @@ class Images {
 				)
 			);
 		exec ($mkdir_command);
+		//syslog(LOG_INFO,"XMLRPC|$mkdir_command");	
 	
 		// Compile into DJVU final file
-		$command = `which djvm`.' -c '.PHYSICAL_LOCATION.'/'.
+		//$command = `which djvm`.' -c '.PHYSICAL_LOCATION.'/'.
+		$command = "/usr/bin/djvm ".' -c "'.PHYSICAL_LOCATION.'/'.
 			freemed::image_filename(
 				$patient_id,
 				$last_record,
 				'djvu'
-			).' '.join (' ', $djvu);
+			).'" '.join (' ', $djvu);
 		//print "command = $command\n";
 		exec($command);
+		//syslog(LOG_INFO,"XMLRPC|$command");	
+		//if (!file_exists(freemed::image_filename($patient_id, $last_record, 'djvu'))) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
 
 		// Just in cast the prefix is a file, kill that too...
-		@unlink($tempname);
+		//@unlink($tempname);
 
 		// Remove temporary DJVU files
 		foreach ($djvu as $__garbage => $my_file) {
-			unlink($djvu.".djvu");
+			//unlink($djvu.".djvu");
 		}
 
 		// If everything worked, return true
