@@ -20,6 +20,21 @@ if (!is_object($this_user)) $this_user = new User;
 //---- Set page title
 $page_title = PACKAGENAME." "._("Main Menu");
 
+// Check for new messages
+if ($new_messages = $this_user->newMessages()) {
+	$display_buffer .= "
+		<DIV ALIGN=\"CENTER\" VALIGN=\"MIDDLE\" CLASS=\"infobox\">
+		<IMG SRC=\"img/messages_small.gif\" ALT=\"\" ".
+		"WIDTH=16 HEIGHT=16 BORDER=0>
+		<A HREF=\"messages.php\"
+		>You have ".$new_messages." new message(s).</A>
+		<IMG SRC=\"img/messages_small.gif\" ALT=\"\" ".
+		"WIDTH=16 HEIGHT=16 BORDER=0>
+		</DIV>
+	";
+}
+
+// Header for main table
 $display_buffer .= "
   <P>
 
@@ -27,7 +42,7 @@ $display_buffer .= "
    ALIGN=CENTER>
  "; // standard font begin
 
- if ($this_user->getLevel() > $admin_level)
+if (freemed::user_flag(USER_ADMIN))
    $display_buffer .= "
      <TR>
      <TD ALIGN=RIGHT>
@@ -41,7 +56,7 @@ $display_buffer .= "
      </TD></TR>
    ";
 
- if ($this_user->getLevel() > $database_level)
+ if (freemed::user_flag(USER_DATABASE))
    $display_buffer .= "
     <TR>
     <TD ALIGN=RIGHT>
@@ -69,7 +84,7 @@ $display_buffer .= "
    </TD></TR>
  ";
 
- if ($this_user->getLevel() > $database_level)
+ if (freemed::user_flag(USER_DATABASE))
    $display_buffer .= "
     <TR>
     <TD ALIGN=RIGHT>
@@ -82,7 +97,7 @@ $display_buffer .= "
     </TD></TR>
    ";
 
- if ($this_user->isPhysician())
+if ($this_user->isPhysician())
    $display_buffer .= "
     <TR>
     <TD ALIGN=RIGHT>
@@ -100,7 +115,18 @@ $display_buffer .= "
     </TD></TR>
    ";
 
- if ($this_user->getLevel() > $database_level)
+$display_buffer .= "
+    <TR>
+    <TD ALIGN=RIGHT>
+     <A HREF=\"messages.php\"
+     ><IMG SRC=\"img/messages.gif\" BORDER=0 WIDTH=48 HEIGHT=48 ALT=\"\"></A>
+    </TD>
+    <TD ALIGN=LEFT>
+    <A HREF=\"messages.php\">"._("Messages")."</A>
+    </TD></TR>
+";
+
+if (freemed::user_flag(USER_DATABASE))
    $display_buffer .= "
     <TR> 
     <TD ALIGN=RIGHT>
@@ -113,7 +139,7 @@ $display_buffer .= "
     </TD></TR>
    ";
 
- if ($this_user->getLevel() > $database_level)
+ if (freemed::user_flag(USER_DATABASE))
    $display_buffer .= "
     <TR> 
     <TD ALIGN=RIGHT>

@@ -90,9 +90,7 @@ if (freemed_verify_auth() and !is_object($this_user)) {
 if (is_object($this_user)) {
 	print "<TR><TD VALIGN=\"TOP\" ALIGN=\"LEFT\" CLASS=\"menubar_info\">\n";
 	print "<CENTER>\n";
-	print _("User description")." : ".$this_user->getDescription()."\n";
-	print "&nbsp;\n";
-	print _("User level")." : ".$this_user->getLevel()."\n";
+	print _("User")." : ".$this_user->getDescription()."\n";
 	print "</CENTER>\n";
 	print "</TD></TR>\n";
 } // end checking if this_user exists

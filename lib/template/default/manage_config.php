@@ -104,6 +104,11 @@ $book->add_page("Static Components",
 			"static_components", "medical_information", " "
 		),
 
+		_("Messages") =>
+		html_form::checkbox_widget(
+			"static_components", "messages", " "
+		),
+
 		_("Patient Information") =>
 		html_form::checkbox_widget(
 			"static_components", "patient_information", " "

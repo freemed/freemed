@@ -107,3 +107,11 @@ a:hover {
 	background: #ffffff 
 }
 
+/* Informational box. */
+.infobox {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #d9d9ff 
+}
+

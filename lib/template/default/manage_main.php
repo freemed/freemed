@@ -163,6 +163,41 @@ foreach ($static_components AS $garbage => $component) {
 		</TD></TR></TABLE>";
 		break; // end medical_information
 
+		case "messages":
+		$panel[_("Messages")] = "
+		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
+		 CELLPADDING=3 CLASS=\"thinbox\">
+		<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+		 CLASS=\"menubar_items\">
+		<A HREF=\"messages.php?action=addform\">"._("Add")."</A>
+		</TD></TR>
+		<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		<DIV ALIGN=\"CENTER\">
+		<TABLE WIDTH=\"100%\" BORDER=\"0\">
+		";
+		$my_result = $sql->query("SELECT * FROM messages WHERE ".
+			"msgpatient='".urlencode($id)."' ".
+			"ORDER BY msgtime DESC ".
+			"LIMIT ".$num_summary_items);
+		if ($sql->results($my_result)) {
+			while ($my_r = $sql->fetch_array($my_result)) {
+				$panel[_("Messages")] .= "<TR>".
+					"</TR>\n".
+					"<TR><TD COLSPAN=4>".
+					prepare($my_r[msgtext]).
+					"</TD></TR>\n";			
+			}
+		} else {
+			// If there are no messages regarding this patient
+			$panel[_("Messages")] .= "<TR><TD ALIGN=\"CENTER\">".
+			_("There are currently no messages.").
+			"</TD></TR>\n";
+		}
+		$panel[_("Messages")] .= "
+		</TABLE>
+		</TD></TR></TABLE>";
+		break; // end medical_information
+
 		case "photo_id":
 		// If there is a file with that name, show it, else box
 		if (file_exists("img/store/$id.identification.jpg")) {
