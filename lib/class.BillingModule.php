@@ -375,7 +375,7 @@ class BillingModule extends BaseModule {
 			if ($first_procedure == 0)
 			{
 				$prev_key = $this->NewKey($r);
-				$diagset = CreateObject('FreeMED.diagnosisSet');
+				$diagset = CreateObject('FreeMED.diagnosis_set');
 				$first_procedure = 1;
 			}
 
@@ -385,8 +385,6 @@ class BillingModule extends BaseModule {
 			$totprocs++;
 
 			$cur_key = $this->NewKey($r);
-
-
 
 			if (!($diagset->testAddSet ($r[procdiag1], $r[procdiag2],
 										$r[procdiag3], $r[procdiag4])) OR
