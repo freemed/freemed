@@ -67,23 +67,23 @@
    // loop for all patients
    while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
 
-     // pull current patient
-     $current_patient = $b_r[payrecpatient];
+    // pull current patient
+    $current_patient = $b_r[payrecpatient];
 
-     $current_status = fdb_num_rows( fdb_query (
-       "SELECT * FROM $database.procedure
-        WHERE (
-          (procpatient    = '$current_patient') AND
-          (procbilled     = '0') AND
-          (procbalcurrent > '0')
-        )"
-       ) );
-     if ($current_status < 1) {
-       echo "
-        <B>Skipping record # $current_patient</B><BR>
-       ";
-       next; // skip
-     }
+    $current_status = fdb_num_rows( fdb_query (
+      "SELECT * FROM $database.procedure
+       WHERE (
+         (procpatient    = '$current_patient') AND
+         (procbilled     = '0') AND
+         (procbalcurrent > '0')
+       )"
+      ) );
+    if ($current_status < 1) {
+      echo "
+       <B>Skipping record # $current_patient</B><BR>
+      ";
+      next; // skip
+    } else { // begin process patient
 
      // get current patient information
      $this_patient = new Patient ($current_patient);
@@ -454,6 +454,8 @@
      $patient_forms[$pat_processed] = $this_patient->local_record["id"];
      if (($num_patients != 0) and ($pat_processed >= $num_patients))
        $still_going = false;
+
+    } // end of conditional for checking for skip
 
    } // end of while there are no more patients
 
