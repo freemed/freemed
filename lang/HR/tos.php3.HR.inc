@@ -7,9 +7,9 @@
 
   $record_name = "Vrste usluge";
 
-  $Type_of_Service_Name        = "Naziv usluge";
-  $Type_of_Service_Description = "Opis usluge";
+  $phrase[Type_of_Service_Name]        = "Naziv usluge";
+  $phrase[Type_of_Service_Description] = "Opis usluge";
   // 19991013
-  $Name                        = "Ime";
-  $Description                 = "Opis";
+  $phrase[Name]                        = "Ime";
+  $phrase[Description]                 = "Opis";
 ?>

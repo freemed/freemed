@@ -8,9 +8,9 @@
 
   $record_name = "Types de Services (TdS)";
 
-  $Type_of_Service_Name        = "Nom TdS";
-  $Type_of_Service_Description = "Description TdS";
+  $phrase[Type_of_Service_Name]        = "Nom TdS";
+  $phrase[Type_of_Service_Description] = "Description TdS";
   // 19991013
-  $Name                        = "Nom";
-  $Description                 = "Description";
+  $phrase[Name]                        = "Nom";
+  $phrase[Description]                 = "Description";
 ?>

@@ -4,11 +4,12 @@
   # code: jeff b <jeff@univrel.pr.uconn.edu>
   # lic : GPL
   # Translated by Johann KRAUTINGER <j.krau@teleweb.at> 19991004
+  # mod : 20000529 adam b
 
   $record_name = "Art der Dienstleistung (ADD)";
 
-  $Type_of_Service_Name        = "Bezeichnung der Dienstleistung";
+  $phrase[Type_of_Service_Name]        = "Bezeichnung der Dienstleistung";
   #"Type of Service Name";
-  $Type_of_Service_Description = "Beschreibung der Dienstleistung";
+  $phrase[Type_of_Service_Description] = "Beschreibung der Dienstleistung";
   #"Type of Service Description";
 ?>
