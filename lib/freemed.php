@@ -152,6 +152,11 @@ if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_R
 	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required for this version of freemed ".
 		"(http://phpwebtools.sourceforge.net/)\n");
 
+  // ********************** START SESSION **************************
+session_start();
+session_register("SESSION"); // master session storage
+  // ***************************************************************
+
   // check for WDDX functions
 //if (!function_exists("wddx_deserialize")) 
 //	die ("WDDX support needs to be compiled into your PHP!");
@@ -174,11 +179,6 @@ define ('DB_ENGINE', SQL_MYSQL);
 
 $sql = new sql (DB_ENGINE, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
-  // ***************************************************************
-
-  // ********************** START SESSION **************************
-session_start();
-session_register("SESSION"); // master session storage
   // ***************************************************************
 
 } // end checking for __FREEMED_PHP__
