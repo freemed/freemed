@@ -172,6 +172,9 @@ class Authorizations {
 	//
 	//	$set - Array of unvalidated authorization keys
 	//
+	//	$date - (optional) Date to use for range comparison.
+	//	Defaults to the current date.
+	//
 	// Returns:
 	//
 	//	Array of valid authorization keys, or NULL array if
@@ -180,14 +183,14 @@ class Authorizations {
 	// See Also:
 	//	<valid>
 	//
-	function valid_set ( $set ) {
+	function valid_set ( $set, $date = NULL ) {
 		// Check input
 		if (!is_array($set)) { return array ( ); }
 
 		// Start with an empty array in case there are no valids
 		$result = array ( );
 		foreach ($set AS $authorization) {
-			if ($this->valid($authorization)) {
+			if ($this->valid($authorization, $date)) {
 				$result[] = $authorization;
 			} // end checking for valid
 		} // end foreach auth
