@@ -85,6 +85,8 @@ switch($action) { // master action switch
 
 		// Pass _userlevel to userlevel
 		$userlevel = $_userlevel;
+	} else {
+		$userlevel = array (0);
 	}
 
   } // second modform if
