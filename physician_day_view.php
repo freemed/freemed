@@ -12,6 +12,7 @@ include_once ("lib/calendar-functions.php");
 freemed_open_db ();
 
 //----- Check if there is a valid date... if not, assign current date
+if (!empty($selected_date)) $for_date = $selected_date;
 if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
 	substr($for_date, 0, 4))) $for_date = $cur_date;
 
@@ -29,6 +30,10 @@ $display_buffer .= "
    <TD VALIGN=CENTER ALIGN=LEFT>
    <A HREF=\"$page_name?selected_date=$prev_date&physician=$physician\"
     ><FONT COLOR=\"#ffffff\">&lt;</FONT></A>
+   </TD><TD VALIGN=\"CENTER\" ALIGN=\"CENTER\">
+   <A HREF=\"physician_week_view.php?physician=".urlencode($physician)."&".
+	"for_date=".urlencode($for_date)."\"
+	<FONT COLOR=\"#ffffff\">"._("Week View")."</FONT></A>
    </TD><TD VALIGN=CENTER ALIGN=RIGHT>
    <A HREF=\"$page_name?selected_date=$next_date&physician=$physician\"
     ><FONT COLOR=\"#ffffff\">&gt;</FONT></A>
