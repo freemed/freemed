@@ -1,10 +1,22 @@
 freemed project changelog
 ($Id$)
 
-* Fri Mar 16 2001 rufustfirefly
+* Thu Mar 22 2001 rufustfirefly
+  - frmlry.php3 -> old/frmlry.php3
+  - lib/API.php: old help.php3 references moved to help.php
+  - help.php: removed old lib/API.php redundant reference
+  - lib/API.php: cleanups in freemed_display_box_top(), and checking in
+    freemed_display_html_bottom() to see if the box has been closed
+  - payment_record.php: trigger_error() handling for DIE("") breaks
+  - admin.php: removed API.php include
+  - modules/generate_forms.module.php: credit to Fred and trigger_error()
+    implemented
+
+* Wed Mar 21 2001 rufustfirefly
   - module_information.php: now fixed table width so things wrap properly
   - patient.php: semantic break in patient.php fixed
   - TODO: updated todo
+  - index.php: took out lib/API.php include (is included from lib/freemed.php)
 
 * Fri Mar 16 2001 fforest
    - fixedform.EN.data updated with latest NSF format for commercial
