@@ -10,7 +10,7 @@ class InsuranceBilling extends BillingModule {
 	var $MODULE_AUTHOR = "jeff@ourexchange.net";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_HIDDEN = true;
-	var $ICON = "img/insurance.gif";
+	//var $ICON = "img/insurance.gif";
 	
 	var $MODULE_FILE = __FILE__;
 
@@ -18,6 +18,7 @@ class InsuranceBilling extends BillingModule {
 		// Add appropriate handler information
 		$this->_SetHandler('BillingFunctions', 'menu');
 		$this->_SetMetaInformation('BillingFunctionName', __("Insurance Billing"));
+		$this->_SetMetaInformation('BillingFunctionDescription', __("Perform insurance billing using FreeMED's internal rendering system. This option is depreciated."));
 
 		// Call parent constructor
 		$this->BillingModule();
