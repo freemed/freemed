@@ -1,19 +1,16 @@
 <?php
- // $Id$
- // desc: module prototype
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
 LoadObjectDependency('_FreeMED.EMRModule');
 
 class PatientCoveragesModule extends EMRModule {
-
-	// override variables
 	var $MODULE_NAME = "Patient Coverage";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com), Jeff (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
 
 	var $table_name    = "coverage";
 	var $record_name   = "Patient Coverage";
@@ -43,6 +40,7 @@ class PatientCoveragesModule extends EMRModule {
 			'covzip' => SQL__VARCHAR(10),
 			'covdob' => SQL__DATE,
 			'covsex' => SQL__ENUM(array('m', 'f', 't')),
+			'covssn' => SQL__CHAR(9),
 			'covinstp' => SQL__INT_UNSIGNED(0),
 			'covprovasgn' => SQL__INT_UNSIGNED(0),
 			'covbenasgn' => SQL__INT_UNSIGNED(0),
@@ -195,7 +193,7 @@ class PatientCoveragesModule extends EMRModule {
 		{
 			$book->add_page("Modify Insureds Information",
 				array_merge(array("covlname", "covfname", "covmname", "covaddr1", "covaddr2", "covcity",
-					"covstate", "covzip", "covsex"), date_vars("covdob")),
+					"covstate", "covzip", "covsex", "covssn"), date_vars("covdob")),
 				html_form::form_table ( array (
 					__("Last Name") =>
 						"<INPUT TYPE=TEXT NAME=\"covlname\" SIZE=25 MAXLENGTH=50 ".
@@ -225,6 +223,8 @@ class PatientCoveragesModule extends EMRModule {
 
 					__("Date of Birth") =>
 						fm_date_entry("covdob"),
+					__("Social Security Number") =>
+						html_form::text_widget('covssn'),
 					__("Gender") =>
             					html_form::select_widget("covsex",
               						array (
@@ -293,6 +293,7 @@ class PatientCoveragesModule extends EMRModule {
 				'covstate' => $covstate,
 				'covzip' => $covzip,
 				'covrel' => $covrel,
+				'covssn' => $covssn,
 				'covpatinsno' => $covpatinsno,
 				'covpatgrpno' => $covpatgrpno,
 				'covinstp' => $covinstp,
@@ -610,6 +611,7 @@ class PatientCoveragesModule extends EMRModule {
 					"covzip" => $covzip,
 					"covrel" => $covrel,
 					"covsex" => $covsex,
+					'covssn' => $covssn,
 					"covdob" => fm_date_assemble('covdob'),
 					"covinsco" => $covinsco,
 					"coveffdt" => fm_date_assemble('coveffdt'),
@@ -770,6 +772,15 @@ class PatientCoveragesModule extends EMRModule {
 				'ADD COLUMN covschool INT UNSIGNED AFTER covisassigning');
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN covemployer INT UNSIGNED AFTER covschool');
+		}
+
+		// Version 0.3.1
+		//
+		//	Added covssn, which claims manager was depending on.
+		//
+		if (!version_check($version, '0.3.1')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN covssn CHAR(9) AFTER covsex');
 		}
 	} // end method _update
 
