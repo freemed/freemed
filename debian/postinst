@@ -18,10 +18,13 @@ chmod -Rf a+w /usr/share/freemed/{data/{cache,backup},img/store}
 echo "[done]"
 
 # Attempt to create freemed mysql database ... will have no password if
-# it has just been installed
-echo -n "Attempting to create freemed database (no password) ... "
-mysqladmin -u root create freemed 2>&1
-echo "[done]"
+# it has just been installed. Do not run if there is already a freemed
+# version installed.
+if [ ! -d /var/lib/mysql/freemed ]; then \ 
+	echo "Attempting to create freemed database (enter password, or enter if none) ... "; \
+	mysqladmin -u root -p create freemed 2>&1; \
+	echo "[done]"; \
+fi
 
 # Restart apache ...
 echo "Restarting apache to reload configuration files ... "
