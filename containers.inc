@@ -79,11 +79,13 @@ class Patient {
      if (!is_array ($insend)  ) $insend[0]   = $insend;
      
      // reset all pulled arrays
-     reset ($ins); reset ($insno); reset ($insgrp);
-     reset ($insstart); reset ($insend); $count = 0;
-     while (list ($k, $v) = each ($ins)) {
-       if ($v>0) $this->insco[$count] = new InsuranceCompany ($v);
-     } // end looping for inscos
+     if (is_array($ins)) {
+       reset ($ins); reset ($insno); reset ($insgrp);
+       reset ($insstart); reset ($insend); $count = 0;
+       while (list ($k, $v) = each ($ins)) {
+         if ($v>0) $this->insco[$count] = new InsuranceCompany ($v);
+       } // end looping for inscos
+     } // end checking for insurance companies at all  
 
      // callin set as false
      $this->is_callin    = false;
@@ -100,7 +102,8 @@ class Patient {
   } // end constructor Patient
 
   function age ($date_to="") {
-    return date_diff_display ($this->local_record["ptdob"], $date_to,
+    return date_diff_display ($this->local_record["ptdob"],
+      ( ($date_to=="") ? date("Y-m-d") : $date_to ),
       _("year(s)"), _("month(s)"), _("day(s)"), _("ago"), _("ahead"));
   } // end function Patient->age
 
