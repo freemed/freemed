@@ -196,7 +196,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
 				_("Name")         => "psrname",
 				_("Description")  => "psrnote"
 			),
-			array ("", _("NO DESCRIPTION"))
+			array ("", " ")
 		);
 	} // end function facilityMaintenance->view()
 
