@@ -20,7 +20,7 @@ switch ($action) {
 
 	case "addform":
 	// Set page title
-	$page_title = __("Add")." "._($record_name);
+	$page_title = __("Add")." ".__($record_name);
 
 	// Push onto stack
 	page_push();
