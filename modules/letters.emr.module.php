@@ -28,7 +28,7 @@ class LettersModule extends EMRModule {
 			__("To")   => "letterto:physician"
 		);
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW
-			| SUMMARY_PRINT | SUMMARY_LOCK;
+			| SUMMARY_PRINT | SUMMARY_LOCK | SUMMARY_DELETE;
 
 		// For display action, disable patient box for print
 		// but only if we're the correct module
