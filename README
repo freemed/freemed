@@ -1,6 +1,6 @@
 freemed documentation
 from jeff b (jeff@univrel.pr.uconn.edu)
-(c) 1999 by the freemed project under the GPL, v2
+(c) 1999-2001 by the freemed project under the LGPL
 
 ********************************************************************** ERRATA
 * index.php has to be added in /etc/httpd/conf/?????.conf under the
