@@ -29,16 +29,12 @@ class FBDiagnosis {
 
 /*      Function: RelatedToHCFA
 
-        Returns:
-
-        static ' '
+        Returns: eocrelothercomment from the eoc table
 
 */ 
 	function RelatedToHCFA ( $diagkey ) {
-		// TODO: slot 10 in ICD code
 		list ($eoc, $diag) = FBDiagnosis::_ExplodeParameters( $diagkey );
-		return ' '; // hack until we fix the type detection or get
-				// this to actually do something - Jeff
+		return freemed::get_link_field($eoc, 'eoc', 'eocrelothercomment');
 	} // end method RelatedToHCFA
 
 /*      Function: isRelatedToAutoAccident
@@ -153,17 +149,6 @@ class FBDiagnosis {
 		}
 		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00', xmlrpcDateTime);
 	} // end method DateOfFirstOccurrence
-
-
-/*      Function: DateOfFirstSymptom
-
-        This is currently a wrapper to DateOfFirstOccurrence
-
-*/ 
-	function DateOfFirstSymptom ( $diagkey ) {
-		// TODO: Think FreeMED tracks this as date of first occurrence
-		return FBDiagnosis::DateOfFirstOccurrence($diagkey);
-	} // end method DateOfFirstSymptom
 
 
 /*      Function: isFirstOccurence
