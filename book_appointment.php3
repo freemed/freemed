@@ -33,34 +33,17 @@ switch ($action) {
       // AND WHAT DAY WE ARE LOOKING FOR...
 
   freemed_display_box_top ("$Add_Appointment");
-  
-  echo "
-    <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2
-     WIDTH=100% VALIGN=CENTER ALIGN=CENTER><TR>
-    <TD ALIGN=LEFT><A HREF=
-    \"$page_name?$_auth&patient=$patient&selected_date=$prev_wk&type=$type\"
-    ><FONT FACE=\"Arial, Helvetica, Verdana\"
-    >$lang_week</FONT></A>&nbsp;<A HREF=
-    \"$page_name?$_auth&patient=$patient&selected_date=$prev&type=$type\"
-    ><FONT FACE=\"Arial, Helvetica, Verdana\"
-    >$lang_day</FONT></A>&nbsp;$lang_prev</TD>
-    <TD ALIGN=RIGHT>$lang_next&nbsp;<A HREF=
-    \"$page_name?$_auth&patient=$patient&selected_date=$next&type=$type\"
-    ><FONT FACE=\"Arial, Helvetica, Verdana\"
-    >$lang_day</FONT></A>&nbsp;<A HREF=
-    \"$page_name?$_auth&patient=$patient&selected_date=$next_wk&type=$type\"
-    ><FONT FACE=\"Arial, Helvetica, Verdana\"
-    >$lang_week</FONT></A></TD>
-    </TR>
-    </TABLE><BR>
+  fc_generate_calendar_mini($selected_date,
+   "$page_name?$_auth&patient=$patient&room=$room&type=$type");
 
-    <CENTER>
-     <B><FONT FACE=\"Arial, Helvetica, Verdana\">
-     $Current_Date_is ".fm_date_print($selected_date)."
-     </FONT></B>
-    </CENTER>
-    <BR>
-  ";
+  //echo "
+  //  <CENTER>
+  //   <B><FONT FACE=\"Arial, Helvetica, Verdana\">
+  //   $Current_Date_is ".fm_date_print($selected_date)."
+  //   </FONT></B>
+  //  </CENTER>
+  //  <BR>
+  //";
 
   if (date_in_the_past($selected_date))
     echo "
@@ -69,98 +52,6 @@ switch ($action) {
       <BR>
     ";
 
-  if ($patient > 0) {
-    switch ($type) {
-     case "temp":
-      $pt_lname = freemed_get_link_field ($patient, "callin",
-        "cilname");
-      $pt_fname = freemed_get_link_field ($patient, "callin",
-        "cifname");
-      break;
-     case "pat":
-     default:
-      $pt_lname = freemed_get_link_field ($patient, "patient",
-        "ptlname");
-      $pt_fname = freemed_get_link_field ($patient, "patient",
-        "ptfname");
-    }
-    if (strlen($type)<1) $type="pat"; //default type!!
-    echo "
-      <CENTER><B>
-      <FONT FACE=\"Arial, Helvetica, Verdana\">
-      $Current_Patient:
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
-       >$pt_lname, $pt_fname</A>
-      </FONT></B></CENTER>
-      <BR>
-    ";
-  }
-
-  echo "
-    <FORM ACTION=\"$page_name\">
-    <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"step2\">
-    <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-    <INPUT TYPE=HIDDEN NAME=\"type\"    VALUE=\"$type\">
-    <INPUT TYPE=HIDDEN NAME=\"selected_date\"
-     VALUE=\"$selected_date\">
-    <$STDFONT_B>$Room : <$STDFONT_E>
-    <SELECT NAME=\"room\">
-  ";
-  freemed_display_rooms ($room);
-  echo "
-    </SELECT>
-
-    <CENTER>
-      <INPUT TYPE=SUBMIT VALUE=\"$Check_Room\">
-    </CENTER>
-    </FORM>
-    <P>
-  ";
-  if ($type=="pat") {
-   echo "
-    <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
-    </P>
-   ";
-  } elseif ($type="temp") {
-   echo "
-    <CENTER><A HREF=\"call-in.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
-    ";
-  }
-  freemed_display_box_bottom (); // show box bottom
-  break;
- case "step2":
-
-      // STAGE TWO:
-
-      // SHOW CALENDAR FOR ROOM(S) OR EVERYTHING, AND
-      // FIND OUT WHAT TIME...
-
-  freemed_display_box_top ("$Add_Appointment");
-  if ($room < 1) {
-    echo "
-      <CENTER>
-      <B>No room selected</B>
-      </CENTER>
-      <P>
-      <A HREF=\"$page_name?$_auth&patient=$patient&type=$type\"
-       ><$STDFONT_B>$Try_Again<$STDFONT_E></A> |
-    ";
-    if ($type=="pat") {
-      echo "
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-        <P>
-      ";
-    } else {
-      echo "
-        <A HREF=\"call-in.php3?$_auth&id=$patient&action=view\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-        <P>
-      ";
-    } // end checking type
-  } else { // if there is one selected, display name, etc
     $rm_name = freemed_get_link_field ($room, "room",
       "roomname");
     $rm_desc = freemed_get_link_field ($room, "room",
@@ -188,27 +79,6 @@ switch ($action) {
     if ($debug) $debug_var = "[$room]";
 
     echo "
-      <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
-       ALIGN=CENTER WIDTH=100%>
-       <TR><TD ALIGN=LEFT>
-        <A HREF=\"$page_name?$_auth&patient=$patient&type=$type&room=$room&".
-         "action=$action&selected_date=$prev_wk\"
-         ><$STDFONT_B>week<$STDFONT_E></A>
-        <A HREF=\"$page_name?$_auth&patient=$patient&type=$type&room=$room&".
-         "action=$action&selected_date=$prev\"
-         ><$STDFONT_B>day<$STDFONT_E></A>
-        <$STDFONT_B>prev<$STDFONT_E>
-       </TD><TD ALIGN=RIGHT>
-        <$STDFONT_B>next<$STDFONT_E>
-        <A HREF=\"$page_name?$_auth&patient=$patient&type=$type&room=$room&".
-         "action=$action&selected_date=$next\"
-         ><$STDFONT_B>day<$STDFONT_E></A>
-        <A HREF=\"$page_name?$_auth&patient=$patient&type=$type&room=$room&".
-         "action=$action&selected_date=$next_wk\"
-         ><$STDFONT_B>week<$STDFONT_E></A>
-       </TD></TR>
-      </TABLE>
-
       <CENTER>
       <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
        ALIGN=CENTER>
@@ -216,9 +86,12 @@ switch ($action) {
       <TD ALIGN=RIGHT><B>$Patient:</B></TD>
       <TD ALIGN=LEFT>$ptlname, $ptfname $ptmname [".fm_date_print($ptdob).
         " ]</TD></TR>
+      ". (
+       ($room > 0) ? "
       <TR>
       <TD ALIGN=RIGHT><B>$Room:</B></TD>
       <TD ALIGN=LEFT>$rm_name $rm_desc $debug_var</TD></TR>
+        " : "" )."
       <TR>
       <TD ALIGN=RIGHT><B>$Date:</B></TD>
       <TD ALIGN=LEFT>".fm_date_print($selected_date)."</TD></TR>
@@ -233,10 +106,14 @@ switch ($action) {
     echo "
       <P><CENTER>
       <FORM ACTION=\"$page_name\" METHOD=POST>
-       <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"step2\">
-       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-       <INPUT TYPE=HIDDEN NAME=\"selected_date\" VALUE=\"$selected_date\">
-       <INPUT TYPE=HIDDEN NAME=\"type\"    VALUE=\"$type\">
+       <INPUT TYPE=HIDDEN NAME=\"action\"
+        VALUE=\"\">
+       <INPUT TYPE=HIDDEN NAME=\"patient\"
+        VALUE=\"".htmlentities($patient)."\">
+       <INPUT TYPE=HIDDEN NAME=\"selected_date\"
+        VALUE=\"".htmlentities($selected_date)."\">
+       <INPUT TYPE=HIDDEN NAME=\"type\"
+        VALUE=\"".htmlentities($type)."\">
        <SELECT NAME=\"room\">
     ";
     freemed_display_rooms ($room);
@@ -247,6 +124,7 @@ switch ($action) {
       <P>
     ";
 
+  //if ($room > 0) {
     // now, find if it is "booked"
     if ($room > 0) { // only if it is specific
         // generate interference map
@@ -285,7 +163,7 @@ switch ($action) {
             <TR BGCOLOR=$_alternate>
             <TD ALIGN=RIGHT VALIGN=TOP>
             <$STDFONT_B>
-            <A HREF=\"$page_name?$_auth&action=step3&patient=$patient&hour=$i".
+            <A HREF=\"$page_name?$_auth&action=step2&patient=$patient&hour=$i".
             "&minute=00&room=$room&selected_date=$selected_date&type=$type\"
             >$ampm_t $ampm</A><$STDFONT_E></TD><TD ALIGN=CENTER>
           ";
@@ -310,7 +188,7 @@ switch ($action) {
               freemed_config_value("cal_ob")=="enable") {
             echo "
              <$STDFONT_B>
-             <A HREF=\"$page_name?$_auth&action=step3&patient=$patient&".
+             <A HREF=\"$page_name?$_auth&action=step2&patient=$patient&".
              "hour=$i&minute=$j&room=$room&selected_date=$selected_date&".
              "type=$type\"
              ><B>:$j</B></A><$STDFONT_E>&nbsp;
@@ -353,13 +231,13 @@ switch ($action) {
       ";
     } // end checking for type
 
-  } // end if...else for room (whether > 1 or not)
+  //} // end if...else for room (whether > 1 or not)
 
   freemed_display_box_bottom ();
   break; 
- case "step3":
+ case "step2":
 
-      // STAGE THREE:
+      // STAGE TWO:
 
       // ACTUALLY BOOKING SOMETHING... REQUIRES ROOM, HOUR,
       // PATIENT NUMBER, PHYSICIAN, ETC... THIS IS THE
