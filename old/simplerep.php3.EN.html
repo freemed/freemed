@@ -1,0 +1,128 @@
+<html>
+<!--  
+  # file: simplerep.php3.EN.html
+  # note: English help for simple reports (frmlry.php3)
+  # code: max k <amk@span.ch>
+  #       jeff b (jeff@univrel.pr.uconn.edu) -- template
+  # lic : GPL
+  # 
+#############################################################
+-->
+
+<CENTER>
+<H1><B><U>SIMPLE REPORTS</U></B></H1>
+</CENTER>
+
+<P>
+
+<DIV ALIGN=RIGHT>
+<H2>Listing simple report Templates</H2>
+</DIV>
+
+Templates are shown by alphabetic and category order. You should try to keep all the templates of a same kind in the same category, of course...
+
+<P>
+
+You can Choose, Edit, and Delete templates (beware, no further warning, for that one!)
+
+<DIV ALIGN=RIGHT>
+<H2>Writing simple report templates</H2>
+</DIV>
+
+Just enter plain text without markup strings
+<p>
+You must enter four different model texts: One for an adult male, one for an adult female, one for an male child, one for a female child. This ensures gramatically correct output, the program chooses the right text automatically from the patient's sex and age.
+
+<P>
+Some data variables you can use for constructing templates:
+<p>
+<TABLE WIDTH=80% BORDER=1 CELLPADDING=2>
+<TR><TD COLSPAN=2 ALIGN=CENTER><CENTER><B>Patient Variables</B></CENTER></TD></TR>
+
+<TR><TD>$ptlname   </TD><TD>Patient's last name</TD></TR>
+<TR><TD>$ptfname   </TD><TD>Patient's first name</TD></TR>
+<TR><TD>$ptmname   </TD><TD>Patient's middle name</TD></TR>
+<TR><TD>$ptdob     </TD><TD>Patient's birthdate</TD></TR>
+<TR><TD>$ptage     </TD><TD>Patient's age in years</TD></TR>
+<TR><TD>$ptsex     </TD><TD>Patient's sex (Mr.,Mrs.)</TD></TR>
+<TR><TD>$ptaddr1   </TD><TD>Patient's address, first line</TD></TR>
+<TR><TD>$ptaddr2   </TD><TD>Patient's address, second line</TD></TR>
+<TR><TD>$ptcity    </TD><TD>Patient's city</TD></TR>
+<TR><TD>$ptstate   </TD><TD>Patient's state</TD></TR>
+<TR><TD>$ptcountry </TD><TD>Patient's country</TD></TR>
+<TR><TD>$ptzip     </TD><TD>Patient's zip code</TD></TR>
+<TR><TD>$ptfax     </TD><TD>Patient's fax number</TD></TR>
+<TR><TD>$ptfaxext  </TD><TD>Patient's fax number extension</TD></TR>
+<TR><TD>$ptemail   </TD><TD>Patient's e-mail address</TD></TR>
+<TR><TD>$ptid      </TD><TD>Patient's internal id (practice) number</TD></TR>
+<TR><TD>$ptssn     </TD><TD>Patient's social security number</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN=CENTER><CENTER><B>Physician Variables</B></CENTER></TD></TR>
+<TR><TD>$phylname  </TD><TD>Physician's last name</TD></TR>
+<TR><TD>$phyfname  </TD><TD>Physician's first name</TD></TR>
+<TR><TD>$phymname  </TD><TD>Physician's middle name</TD></TR>
+<TR><TD>$phytitle  </TD><TD>Phys. title</TD></TR>
+<TR><TD>$degname1  </TD><TD>Phys. degree 1 (full) </TD></TR>
+<TR><TD>$degdegree1</TD><TR>Phys. degree 1 (abbrev.)</TD></TR>
+<TR><TD>$degname2  </TD><TD>Phys. degree 2 (full)</TD></TR>
+<TR><TD>$degdegree2</TD><TR>Phys. degree 2 (abbrev.)</TD></TR>
+<TR><TD>$degname3  </TD><TD>Phys. degree 3 (full)</TD></TR>
+<TR><TD>$degdegree3</TD><TR>Phys. degree 3 (abbrev.)</TD></TR>
+<TR><TD>$specname1 </TD><TR>Phys. 1st speciality</TD></TR>
+<TR><TD>$specdesc1 </TD><TR>Phys. 1st speciality description</TD></TR>
+<TR><TD>$specname2 </TD><TR>Phys. 2nd speciality</TD></TR>
+<TR><TD>$specdesc2 </TD><TR>Phys. 2nd speciality description</TD></TR>
+<TR><TD>$specname3 </TD><TR>Phys. 3rd speciality</TD></TR>
+<TR><TD>$specdesc3 </TD><TR>Phys. 3rd speciality description</TD></TR>
+<TR><TD>$phypracname</TD><TD>Phys. practice name</TD></TR>
+<TR><TD>$phyaddr1a </TD><TD>Phys. first address first line</TD></TR>
+<TR><TD>$phyaddr2a </TD><TD>Phys. first address second line</TD></TR>
+<TR><TD>$phycitya  </TD><TD>Phys. first address city</TD></TR>
+<TR><TD>$phystatea </TD><TD>Phys. first address state</TD></TR>
+<TR><TD>$phyzipa   </TD><TD>Phys. first address zip code</TD></TR>
+<TR><TD>$phyphonea </TD><TD>Phys. first address phone</TD></TR>
+<TR><TD>$phyfaxa   </TD><TD>Phys. first address fax</TD></TR>
+<TR><TD>$phyaddr1b </TD><TD>Phys. second address first line</TD></TR>
+<TR><TD>$phyaddr2b </TD><TD>Phys. second address second line</TD></TR>
+<TR><TD>$phycityb  </TD><TD>Phys. second address city</TD></TR>
+<TR><TD>$phystateb </TD><TD>Phys. second address state</TD></TR>
+<TR><TD>$phyzipb   </TD><TD>Phys. second address zip code</TD></TR>
+<TR><TD>$phyphoneb </TD><TD>Phys. second address phone</TD></TR>
+<TR><TD>$phyfaxb   </TD><TD>Phys. second address fax</TD></TR>
+<TR><TD>$phyemail  </TD><TD>Phys. e-mail</TD></TR>
+<TR><TD>$phycellular </TD><TD>Phys. cellular phone</TD></TR>
+<TR><TD>$phypager  </TD><TD>Physician's pager</TD></TR>
+<TR><TD>$phyupin   </TD><TD>Physician's US Provider ID number</TD></TR>
+<TR><TD>$physsn    </TD><TD>Physician's Social Security Number</TD></TR>
+<TR><TD>$phyid1    </TD><TD>Phys. internal (practice) ID number</TD></TR>
+
+</TABLE>
+
+
+<P>
+include them literally, without quoting
+<DIV ALIGN=RIGHT>
+<H2>Choosing a report</H2>
+</DIV>
+
+Actually you've got to choose here a template, a physician (the patient's in-house physician is displayed as a default), a facility (the place of service: headers will be generated from that info), a destinatary (many reports are printed out and given out hand-to-hand to the patient) and a delivery method.
+<P>
+<B>Please, Notice that ALL those options must be filled or you'll get strange results</B>
+<P>
+According to the chosen options, you'll get further dropdown choices in the next page too.
+
+<DIV ALIGN=RIGHT>
+<H2>Editing a report</H2>
+</DIV>
+You can edit the place and date line (default: facility's city and current date) as well as the body of the report itself, and the doctor's information.
+
+<P>
+enjoy!
+
+<P ALIGN=RIGHT>
+<I>documentation and module by <A href="mailto:amk@span.ch">Max Klohn</A></I>
+</P>
+
+
+ </body>
+</html>
