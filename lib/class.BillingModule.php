@@ -544,7 +544,7 @@ class BillingModule extends BaseModule {
 		reset ($this->rendorform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
    		#################### TAKE THIS OUT AFTER TESTING #######################
-   		#$display_buffer .= "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
+   		#$display_buffer .= "<PRE>\n".prepare($form_buffer, true)."\n</PRE>\n";
    		########################################################################
 
 		if ($preview)
@@ -556,7 +556,7 @@ class BillingModule extends BaseModule {
 			 </center>
 			 <br/>
 			 <textarea NAME=\"text\" ROWS=\"10\" COLS=\"81\"
-			 >".prepare($this->form_buffer)."</textarea>
+			 >".prepare($this->form_buffer, true)."</textarea>
 			<p/>
 			<div align=\"CENTER\">
 			 <select NAME=\"type\">
