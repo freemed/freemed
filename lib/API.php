@@ -839,7 +839,7 @@ class freemed {
 				"<input class=\"button\" TYPE=\"BUTTON\" ".
 				"onClick=\"document.".$formname.".".
 					$varname.".value = ''; ".
-					"document.myform.submit();\" ".
+					"document.".$formname.".submit();\" ".
 				"VALUE=\"".__("Remove")."\"/>\n";
 		} else {
 			return "<input TYPE=\"HIDDEN\" ".
