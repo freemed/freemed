@@ -330,7 +330,7 @@ class template {
 	//
 	function summary_print_link($class, $url, $popup=true) {
 		if ($popup) {
-			$buffer .= "<a href=\"#\" onClick=\"printWindow=".
+			$buffer .= "<a onClick=\"printWindow=".
 			"window.open('".$url."', 'printWindow', ".
 			"'width=400,height=200,menubar=no,titlebar=no'); ".
 			"printWindow.opener=self; return true;\" ".
