@@ -124,6 +124,13 @@
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
+     <TD COLSPAN=4 ALIGN=CENTER BGCOLOR=\"#777777\">
+      <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+      "._("General Information")."
+      <$STDFONT_E>
+     </TD>
+    </TR>
+    <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocdescrip\" SIZE=25 MAXLENGTH=100
@@ -243,11 +250,15 @@
       <!-- conditional auto table -->
 
      <CENTER>
-     <P>
-      <$STDFONT_B><B>"._("Automobile Related Information")."</B><$STDFONT_E>
-     <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
+     <TR>
+     <TD ALIGN=CENTER COLSPAN=4 BGCOLOR=\"#777777\">
+      <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+      "._("Automobile Related Information")."
+      <$STDFONT_E>
+     </TD>
+     </TR>
      <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Auto Insurance")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -317,11 +328,15 @@
       <!-- conditional employment table -->
 
      <CENTER>
-     <P>
-      <$STDFONT_B><B>"._("Employment Related Information")."</B><$STDFONT_E>
-     <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
+     <TR>
+     <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
+     <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+     "._("Employment Related Information")."
+     <$STDFONT_E>
+     </TD>
+     </TR>
      <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Name of Employer")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -390,30 +405,26 @@
       <!-- conditional pregnancy table -->
 
      <CENTER>
-     <P>
-      <$STDFONT_B><B>"._("Pregnancy Related Information")."</B><$STDFONT_E>
-     <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
      <TR>
+     <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
+     <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+     "._("Pregnancy Related Information")."
+     <$STDFONT_E>
+     <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Length of Cycle")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select ("eocrelpregcycle", 10, 40);
-   echo "
+   ".fm_number_select ("eocrelpregcycle", 10, 40)."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Last Menstrual Period")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_date_entry("eocrelpreglastper");
-   echo "
+   ".fm_date_entry("eocrelpreglastper")."
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Gravida")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select("eocrelpreggravida", 0, 15);
-   echo "
+   ".fm_number_select("eocrelpreggravida", 0, 15)."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Confinement")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -424,22 +435,16 @@
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Para")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select("eocrelpregpara", 0, 15);
-   echo "
+   ".fm_number_select("eocrelpregpara", 0, 15)."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Miscarries")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select("eocrelpregmiscarry", 0, 15);
-   echo "
+   ".fm_number_select("eocrelpregmiscarry", 0, 15)."
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Abortions")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select("eocrelpregabort", 0, 15);
-   echo "
+   ".fm_number_select("eocrelpregabort", 0, 15)."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>&nbsp; <!-- placeholder --><$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -454,11 +459,15 @@
       <!-- conditional other table -->
 
      <CENTER>
-     <P>
-      <$STDFONT_B><B>"._("Other Related Information")."</B><$STDFONT_E>
-     <BR>
      <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
       ALIGN=CENTER>
+     <TR>
+     <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
+     <$STDFONT_B SIZE=\"+1\" COLOR=\"#ffffff\">
+      "._("Other Related Information")."
+     <$STDFONT_E>
+     </TD>
+     </TR>
      <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("More Information")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -719,7 +728,9 @@
                     (proceoc='$id'))
              ORDER BY procdt DESC";
    $result = fdb_query ($query);
-   
+  
+   $r_name = $record_name; // backup
+   $record_name = "Procedure"
    echo freemed_display_itemlist (
      $result,
      "procedure.php3",
@@ -741,7 +752,6 @@
        "cptmod" => "cptmod",
        ""
      ),
-     _("Procedures")
    );
    // end of procedures display
    
@@ -761,6 +771,7 @@
              ORDER BY pnotesdt DESC";
    $result = fdb_query ($query);
      
+   $record_name = "Progress Notes";
    echo freemed_display_itemlist (
      $result,
      "progress_notes.php3",
@@ -770,9 +781,10 @@
      array (
        ""
      ),
-     "", // no xrefs
-     _("Progress Notes")
    );
+
+   $record_name = $r_name; // restore from backup var
+
    // end of progress notes display
    // display management link at the bottom...
    echo "

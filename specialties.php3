@@ -94,11 +94,6 @@ switch($action) { // master action switch
   switch($action) { // inner action
    case "addform": default:
     freemed_display_box_top(_("Add $record_name"), $page_name);
-    echo "
-      <P>
-      <FORM ACTION=\"$page_name\">
-      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\"> 
-    ";
    break;
    case "modform":
     freemed_display_box_top (_("Modify $record_name"), $page_name);
@@ -107,12 +102,6 @@ switch($action) { // master action switch
     $r = fdb_fetch_array($result); // dump into array r[]
     $specname = $r["specname"];
     $specdesc = $r["specdesc"];
-    echo "
-      <P>
-      <FORM ACTION=\"$page_name\">
-      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-      <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
-    ";
    break;
   } // inner action
 
@@ -126,10 +115,19 @@ switch($action) { // master action switch
        _("Specialty") => "specname",
        _("Specialty Description") => "specdesc"
      ),
-     array ("", _("NO DESCRIPTION"))
+     array ("", _("NO DESCRIPTION")), "", "s_page"
    )."
    <CENTER>
-   <TABLE>
+   <TABLE>".
+    (($action=="modform") ? "
+      <FORM ACTION=\"$page_name\">
+      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
+      <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
+      " : "
+      <FORM ACTION=\"$page_name\">
+      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\"> 
+    ")."
+      
    
    <TR><TD ALIGN=RIGHT>   
     <$STDFONT_B>"._("Specialty")." : <$STDFONT_E>

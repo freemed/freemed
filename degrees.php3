@@ -41,7 +41,7 @@ switch($action) {
       _("Degree") => "degdegree",
       _("Description") => "degname"
     ),
-    array ( "", "" )
+    array ( "", _("NO DESCRIPTION") ), "", "d_page"
   );
   
   echo "

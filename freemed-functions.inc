@@ -482,6 +482,7 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
   }
 
   echo "
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">
    <HTML> 
    <HEAD>
      <META HTTP-EQUIV=\"Content-Type\"
@@ -495,16 +496,26 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 } // end function freemed_display_html_top
 
 // function freemed_display_itemlist
-function freemed_display_itemlist ($result, $page_link, $control_list,  
-                                   $blank_list, $xref_list="", $title="")
+function freemed_display_itemlist ($result, $page_link, $control_list, 
+                           $blank_list, $xref_list="", $cur_page_var="")
 {
-  global $_ref, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
-  global $modify_level, $delete_level, $patient;
-
-  if (strlen($title)<1) $title=$record_name;
-
+  global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
+  global $modify_level, $delete_level, $patient, $action;
+  global $page_name, $$cur_page_var, $max_num_res;
+ 
+  $_auth .= "&$cur_page_var=".chop($$cur_page_var);
+ 
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
 
+  if ($$cur_page_var<1) $$cur_page_var=1;
+  $num_pages = ceil(fdb_num_rows($result)/$max_num_res);
+
+  if (strlen($cur_page_var)>0) { // there's an offset
+    for ($i=1;$i<=($$cur_page_var-1)*$max_num_res;$i++) {
+      $herman = fdb_fetch_array($result); // offset the proper number of rows
+    }
+  }
+ 
   $buffer="";
 
   $buffer .= "
@@ -513,13 +524,54 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
     <TR>
      <TD ALIGN=CENTER>
-      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">$title<$STDFONT_E>
+      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">"._("$record_name")."<$STDFONT_E>
      </TD>
-    </TR>
+    </TR>".
+    
+   ( ((strlen($cur_page_var)>0) AND ($num_pages>1)) ? "
+   <TR ALIGN=CENTER><TD BGCOLOR=\"#000000\">
+    <TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0>
+     <FORM METHOD=POST ACTION=\"$page_name?$_auth\">
+    ".
+    
+    (($$cur_page_var>1) ? "
     <TR><TD>
-  ".
-  freemed_display_actionbar()
-  ."
+     <$STDFONT_B COLOR=\"#ffffff\">
+     <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
+     "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
+        "._("Previous")."
+     <$STDFONT_E></A>
+    </TD>
+    " : "" )
+    
+    ."<TD>
+     <$STDFONT_B COLOR=\"#ffffff\">
+     "._("Page ".$$cur_page_var." of $num_pages")."
+     <$STDFONT_E>
+     <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"$action\" >
+     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
+     ".fm_number_select($cur_page_var, 1, $num_pages)."
+     <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
+    </TD>".
+    
+    (($$cur_page_var<$num_pages) ? "
+    <TD>
+     <$STDFONT_B COLOR=\"#ffffff\">
+     <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
+     "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
+        "._("Next")."
+     <$STDFONT_E></A>
+    </TD></TR>
+    " : "" )
+    
+    ."
+     </FORM>
+    </TABLE>
+   </TD></TR>
+    " : "" )
+    
+    ."<TR><TD>
+    ".freemed_display_actionbar()."
     </TD></TR>
     <TR><TD>
   ";
@@ -539,13 +591,15 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   }
   $buffer .= "
       <TD BGCOLOR=\"#000000\">
-       <$STDFONT_B COLOR=\"#ffffff\">Action<$STDFONT_E>
+       <$STDFONT_B COLOR=\"#ffffff\">"._("Action")."<$STDFONT_E>
       </TD>
     </TR>
   ";
-  
+ 
   if (fdb_num_rows($result)>0) 
-   while ($this_result = fdb_fetch_array($result)) {
+   while ($this_result = fdb_fetch_array($result) AND 
+      ((strlen($cur_page_var)>0) ? ($on_this_page < $max_num_res) : (1)) ) {
+    $on_this_page++;
     $first = true; // first item in the list has 'view' link
     $buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
@@ -1755,9 +1809,9 @@ function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false) {
   if ( ($min>$max) AND ($step>=0) )  return false; // bounds checking
   if ( ($min<$max) AND ($step<=0) )  return false; // bounds checking
   for ($i=$min;$i<=$max;$i+=$step) {
-    $buffer .=  "<OPTION VALUE=\"$number\"".
+    $buffer .=  "<OPTION VALUE=\"$i\"".
       ( (("$selected"=="$i") or ($selected==$i)) ? "SELECTED" : "" ).
-      ">".( (($i<10) and ($addz)) ? "0" : "" )."$number\n";
+      ">".( (($i<10) and ($addz)) ? "0" : "" )."$i\n";
   } // end for loop
   $buffer .= "</SELECT>\n"; // end select tag
   return $buffer;

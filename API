@@ -208,7 +208,7 @@ freemed_display_inscogroups (selected)
     created: API epoch or prior (19990609)
 
 freemed_display_itemlist(result pointer, page link, control array, 
-                         blank array[, xref array][, title])
+                         blank array[, xref array][, pagenum varname])
   displays a list of items fetched row-by-row from the result pointer.
   'item name' is the title displayed. 'page link' is the name of the page
   (extension included) that the items can be added/viewed/modified/deleted 
@@ -217,11 +217,12 @@ freemed_display_itemlist(result pointer, page link, control array,
   if the field is blank. (an '&nbsp;' is appended automatically to all
   fields in any case.) if one of the fields is an 'id' field for another
   table, put the table's name in the proper spot in 'xref array' as key and
-  the field's name as value. 'title' is the record's name by default, but
-  can be overridden.
+  the field's name as value. the title displayed is $record_name. 'pagenum
+  varname' is the name of variable containing the current page number. the
+  number of items to a page is set in global.var.inc; it's $max_num_res.
     returns:  buffered text
     created:  20000720 (adam)
-    modified: 20000725 (adam)
+    modified: 20000801 (adam)
 
 freemed_display_phygroups (selected)
   displays the list of physician groups for the innards of a <SELECT> tag
