@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-// Class: TeX
+// Class: FreeMED.TeX
 //
 //	LaTeX rendering class.
 //

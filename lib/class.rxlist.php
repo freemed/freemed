@@ -3,6 +3,9 @@
  // $Author$
  //
  // $Log$
+ // Revision 1.4  2004/02/23 05:50:45  rufustfirefly
+ // NaturalDocs cleanup
+ //
  // Revision 1.3  2003/11/05 04:40:54  rufustfirefly
  // Documentation. (Jeff)
  //
@@ -16,12 +19,25 @@
 if (!defined('__CLASS_RXLIST_PHP__')) {
 define('__CLASS_RXLIST_PHP__', true);
 
-// class: RxList
+// class: FreeMED.RxList
 //
 //	Wrapper for rxlist.com formulary access.
 //
 class RxList {
 
+	// Method: RxList::getPage
+	//
+	//	Gets the web page from rxlist.com pertaining to the
+	//	specified query.
+	//
+	// Parameters:
+	//
+	//	$query - String to search for
+	//
+	// Returns:
+	//
+	//	HTML text of web page.
+	//
 	function getPage ( $query ) {
 		//$url = "http://www.rxlist.com/cgi/rxlist.cgi?drug=".
 		$url = "http://129.250.146.18/cgi/rxlist.cgi?drug=".
