@@ -7,7 +7,10 @@ $page_name   = basename($GLOBALS["PHP_SELF"]);
 include_once ("lib/freemed.php");
 
 // top of page
-freemed_open_db (); // authenticate user
+freemed::connect (); // authenticate user
+
+//---- HIPAA logging
+// Dont seem needed here...
 
 // check for access
 $this_user = CreateObject('FreeMED.User');
@@ -22,7 +25,8 @@ $module_list = CreateObject(
 	'PHP.module_list', 
 	PACKAGENAME, 
 	array(
-		'display_hidden' => true
+		'display_hidden' => true,
+		'cache_file' => 'data/cache/modules'
 	)
 );
 $categories = $module_list->categories();
@@ -61,12 +65,14 @@ if ($categories != NULL) {
 	</div>
 	<p/>
 	<div ALIGN=\"CENTER\">
-	<a HREF=\"admin.php\"
-	>".__("Return to Admin Menu")."</a>
+	".template::link_button(
+		__("Return to Administration Menu"),
+		"admin.php"
+	)."
 	</div>
 	";
 } else {
-	$display_buffer .= "<div ALIGN=\"CENTER\">No categories.</div>\n";
+	$display_buffer .= "<div ALIGN=\"CENTER\">".__("No categories.")."</div>\n";
 } // end checking for categories
 
 // Display the template

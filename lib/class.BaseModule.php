@@ -51,7 +51,7 @@ class BaseModule extends module {
 
 		// Check for existance of separate "record_name"
 		if (!isset($this->record_name)) {
-			$this->record_name = _($this->MODULE_NAME);
+			$this->record_name = __($this->MODULE_NAME);
 		}
 
 		// Globalize record_name and page_title
@@ -112,7 +112,13 @@ class BaseModule extends module {
 
 	function _GetAssociations () {
 		if (!is_array($GLOBALS['__phpwebtools']['GLOBAL_MODULES'])) {
-			$modules = CreateObject('PHP.module_list', PACKAGENAME);
+			$modules = CreateObject(
+				'PHP.module_list',
+				PACKAGENAME,
+				array(
+					'cache_file' => 'data/cache/modules'
+				)
+			);
 		}
 		$associations = array();
 		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {

@@ -9,7 +9,12 @@ include_once ("lib/freemed.php");
 LoadObjectDependency('PHP.module');
 
 //----- Get list of modules
-$module_list = CreateObject('PHP.module_list', PACKAGENAME);
+$module_list = CreateObject('PHP.module_list',
+	PACKAGENAME,
+	array(
+		'cache_file' => 'data/cache/modules'	
+	)
+);
 
 //----- Check for module
 if (!$module_list->check_for($module)) {

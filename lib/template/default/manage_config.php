@@ -129,7 +129,13 @@ $book->add_page("Static Components",
 );
 
 //----- Create module list for modular configuration
-$module_list = CreateObject('PHP.module_list', PACKAGENAME, "modules/");
+$module_list = CreateObject(
+	'PHP.module_list',
+	PACKAGENAME,
+	array(
+		'cache_file' => 'data/cache/modules'	
+	)
+);
 
 //----- This is *so* jimmy rigged... -----
 

@@ -9,7 +9,7 @@ $page_name = "billing_functions.php";
 include ("lib/freemed.php");
 
 //----- Login/authenticate
-freemed_open_db ();
+freemed::connect ();
 
 //----- Create user object
 $this_user = CreateObject('FreeMED.User');
@@ -24,6 +24,9 @@ page_push();
 if ($_SESSION['current_patient'] != 0) {
 	$patient = $_SESSION['current_patient'];
 }
+
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"billingfunctions.php|user $user_to_log accesses patient $patient");}	
 
 $patient_information = "<b>".__("NO PATIENT SPECIFIED")."</b>\n";
 if ($patient>0) {
@@ -71,7 +74,13 @@ if (freemed::user_flag(USER_DATABASE)) {
         	</td>
 		</tr>\n";
 	// modules list
-	$module_list = CreateObject('PHP.module_list', PACKAGENAME);
+	$module_list = CreateObject(
+		'PHP.module_list',
+		PACKAGENAME,
+		array(
+			'cache_file' => 'data/cache/modules'
+		)
+	);
 	$display_buffer .= "<div ALIGN=\"CENTER\"><table>\n";
 	$display_buffer .= $module_list->generate_list($category, 0, $module_template);
 	$display_buffer .= "</table></div>\n";

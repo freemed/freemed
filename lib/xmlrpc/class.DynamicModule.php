@@ -12,7 +12,13 @@ class DynamicModule {
 
 	function picklist ($module, $params=NULL) {
 		// Load module list
-		$module_list = CreateObject('PHP.module_list', PACKAGENAME);
+		$module_list = CreateObject(
+			'PHP.module_list',
+			PACKAGENAME
+			array(
+				'cache_file' => 'data/cache/modules'
+			)
+		);
 
 		// Check for name in hash
 		$resolved = check_module($module);

@@ -8,7 +8,12 @@ $page_name = basename($GLOBALS["REQUEST_URI"]);
 include ("lib/freemed.php");
 
 //----- Login and authenticate
-freemed_open_db ();
+freemed::connect ();
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"db_maintenance.php|user $user_to_log views database manager");}	
+
 
 //----- Set page title
 $page_title = __("Database Maintenance");
@@ -33,32 +38,16 @@ if (!freemed::user_flag(USER_DATABASE)) {
 
 // actual display routine
 
-$display_buffer .= "
-	<div ALIGN=\"CENTER\">
-	<!-- modules that still need to be converted ...
-
-     <A HREF=\"frmlry.php\"
-      >".__("Formulary")."</A>
-     <BR>
-
-     <A HREF=\"phy_avail_map.php\"
-      >".__("Physician Availability Map")."</A>
-     <BR>
-
-     <A HREF=\"simplerep.php\"
-      >".__("Simple Reports")."</A>
-     <BR>
-
-     <A HREF=\"select_printers.php\"
-      >".__("Printers")."</A>
-     <BR>
-
-     -->
-
-"; // end of static listing
+$display_buffer .= "<div ALIGN=\"CENTER\">\n\n";
 
 // module loader
-$module_list = CreateObject('PHP.module_list', PACKAGENAME);
+$module_list = CreateObject(
+	'PHP.module_list',
+	PACKAGENAME,
+	array(
+		'cache_file' => 'data/cache/modules'
+	)
+);
 $all_modules = $module_list->generate_array(
 	$category,
 	0,

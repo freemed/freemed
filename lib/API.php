@@ -263,7 +263,10 @@ class freemed {
 		if (!isset($module_list)) {
 			$module_list = CreateObject(
 				'PHP.module_list',
-				PACKAGENAME
+				PACKAGENAME,
+				array(
+					'cache_file' => 'data/cache/modules'
+				)
 			);
 		}
 
@@ -290,7 +293,10 @@ class freemed {
 		if (!isset($module_list)) {
 			$module_list = CreateObject(
 				'PHP.module_list',
-				PACKAGENAME
+				PACKAGENAME,
+				array(
+					'cache_file' => 'data/cache/modules'
+				)
 			);
 		}
 
@@ -312,7 +318,13 @@ class freemed {
 	// function freemed::module_handler
 	function module_handler ($handler) {
 		// Cache module list object
-		$module_list = CreateObject('PHP.module_list', PACKAGENAME);
+		$module_list = CreateObject(
+			'PHP.module_list',
+			PACKAGENAME,
+			array(
+				'cache_file' => 'data/cache/modules'
+			)
+		);
 
 		// Loop through modules
 		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] as $k => $v) {
@@ -335,7 +347,10 @@ class freemed {
 		if (!isset($module_list)) {
 			$module_list = CreateObject(
 				'PHP.module_list',
-				PACKAGENAME
+				PACKAGENAME,
+				array(
+					'cache_file' => 'data/cache/modules'
+				)
 			);
 		}
 

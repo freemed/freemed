@@ -153,7 +153,13 @@ if ($action=="cfgform") {
 
 	// Check for dynamic components
 	if (!is_object($module_list)) {
-		$module_list = CreateObject('PHP.module_list', PACKAGENAME, 'modules/');
+		$module_list = CreateObject(
+			'PHP.module_list', 
+			PACKAGENAME,
+			array(
+				'cache_file' => 'data/cache/modules'
+			)
+		);
 	}
 	foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
 		if (is_array($v['META_INFORMATION']['global_config'])) {

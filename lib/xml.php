@@ -101,7 +101,10 @@ function freemed_emr_xml_export ( $this_patient ) {
 	// build module list
 	$module_list = CreateObject('PHP.module_list',
 		PACKAGENAME,
-		array('suffix' => '.emr.module.php')
+		array(
+			'cache_file' => 'data/cache/modules'
+			//,'suffix' => '.emr.module.php'
+		)
 	);
 
 	// batch execute modules list to grab emr

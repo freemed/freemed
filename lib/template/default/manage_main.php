@@ -346,7 +346,13 @@ foreach ($static_components AS $garbage => $component) {
 foreach ($modular_components AS $garbage => $component) {
 	// Determine if the class exists
 	if (!is_object($module_list)) {
-		$module_list = CreateObject('PHP.module_list', PACKAGENAME, "modules/");
+		$module_list = CreateObject(
+			'PHP.module_list',
+			PACKAGENAME,
+			array(
+				'cache_file' => 'data/cache/modules'	
+			)
+		);
 	}
 	
 	// End checking for component
@@ -493,7 +499,13 @@ if ($action != "config") {
 
 //----- Add to menu bar
 if (!is_object($module_list)) {
-	$module_list = CreateObject('PHP.module_list', PACKAGENAME, "modules/");
+	$module_list = CreateObject(
+		'PHP.module_list',
+		PACKAGENAME,
+		array(
+			'cache_file' => 'data/cache/modules'
+		)
+	);
 }
 // Form template for menubar
 $menu_bar = array_merge (
