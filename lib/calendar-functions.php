@@ -155,7 +155,6 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_display_day_calendar ($datestring, $querystring = "1 = 1",
     $privacy = false) {
     global $current_imap;  // global interference map
-    global $STDFONT_B, $STDFONT_E;
 
     // first, build the global interference map
     fc_generate_interference_map ($querystring, $datestring, $privacy);
@@ -166,8 +165,8 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       BORDER=0 VALIGN=CENTER ALIGN=CENTER>
       <TR BGCOLOR=#000000><TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER
        VALIGN=CENTER>
-       <$STDFONT_B><B>$datestring</B> - <I>".$current_imap["count"].
-         _("appointment(s)")."</I><$STDFONT_E>
+       <B>$datestring</B> - <I>".$current_imap["count"].
+         _("appointment(s)")."</I>
       </TD></TR>
     ";
 
@@ -182,7 +181,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       // display heading for hour
       echo "
        <TR BGCOLOR=#000000><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%>
-        <$STDFONT_B>$hour<$STDFONT_E>
+        $hour
        </TD><TD BGCOLOR=#ffffff COLSPAN=1>
       "; 
 
@@ -212,14 +211,13 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_display_week_calendar ($datestring, $querystring = "1 = 1",
     $privacy=false) {
     global $current_imap;
-    global $STDFONT_B, $STDFONT_E, $Week_Of;
 
     // form the top of the table
     echo "
       <TABLE WIDTH=100% CELLSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=CENTER
        ALIGN=CENTER BGCOLOR=#000000><TR BGCOLOR=#000000>
        <TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER VALIGN=CENTER>
-       <$STDFONT_B>"._("Week of")." <B>$datestring</B><$STDFONT_E>
+       "._("Week of")." <B>$datestring</B>
        </TD></TR>
     ";
 
@@ -239,7 +237,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       echo "
         <TR BGCOLOR=#000000><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%
          ALIGN=RIGHT>
-         <$STDFONT_B><I>$day_name_text</I><BR>$datestring<$STDFONT_E>
+         <I>$day_name_text</I><BR>$datestring
         </TD><TD BGCOLOR=#ffffff COLSPAN=1>
        ";
 
@@ -294,7 +292,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
   function fc_generate_calendar_mini ($given_date, $this_url) {
     // mostly hacked code from TWIG's calendar
-    global $cur_date, $lang_months, $lang_days, $STDFONT_B, $STDFONT_E;
+    global $cur_date, $lang_months, $lang_days;
 
     // break current day into pieces
     list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
@@ -338,25 +336,23 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
          fc_scroll_prev_month($this_date)
         )
        )."\"
-      <$STDFONT_B>3<$STDFONT_E></A>
+      3</A>
      <A HREF=\"$this_url&selected_date=".fc_scroll_prev_month($this_date)."\"
-      <$STDFONT_B>"._("prev")."<$STDFONT_E></A>
+      "._("prev")."</A>
      </TD>
      <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
-      <$STDFONT_B>
        <B>".htmlentities($lang_months[($this_month+0)])." $this_year</b>
-      <$STDFONT_E>
      </TD>
      <TD ALIGN=RIGHT>
      <A HREF=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
-      <$STDFONT_B>"._("next")."<$STDFONT_E></A>    
+      "._("next")."</A>    
      <A HREF=\"$this_url&selected_date=".
        fc_scroll_next_month(
         fc_scroll_next_month(
          fc_scroll_next_month($this_date)
         )
        )."\"
-      <$STDFONT_B>3<$STDFONT_E></A>
+      3</A>
      </TD>
      </TR>
      <TR>
@@ -365,9 +361,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     for( $i = 1; $i <= 7; $i++) {
      echo "
       <TD BGCOLOR=#cccccc ALIGN=CENTER>
-       <$STDFONT_B>
        <B>".htmlentities($lang_days[$i])."</B>
-       <$STDFONT_E>
       </TD>
      ";
     } // end of day display
@@ -421,7 +415,6 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     echo "
      <TD ALIGN=CENTER BGCOLOR=\"$this_color\">
-      <$STDFONT_B>
     ";
  
         $hilitecolor = (
@@ -434,14 +427,13 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
         echo "
          <A HREF=\"$this_url&selected_date=".
          date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
-         "\"><$STDFONT_B COLOR=$hilitecolor>$dayp<$STDFONT_E></A>
+         "\"><FONT COLOR=\"$hilitecolor\">$dayp</FONT></A>
         ";
    	//if( $dayp       == $cur_day AND
         //    $this_month == $cur_month AND
         //    $this_year  == $cur_year )
         //  { echo "</B></FONT>"; }
       echo "
-        <$STDFONT_E>
        </TD>
       ";
       $day++;
@@ -450,18 +442,17 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     while( $day_row % 7 ) {
    	echo "
-         <TD ALIGN=RIGHT BGCOLOR=#bbbbbb>&nbsp;</TD>
+         <TD ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">&nbsp;</TD>
         ";
    	$day_row += 1;  
     } // end of day row
     echo "
      </TR>
      <TR>
-     <TD COLSPAN=7 ALIGN=RIGHT BGCOLOR=#bbbbbb>
-     <$STDFONT_B>
+     <TD COLSPAN=7 ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">
       <A HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
        $cur_day."\"
-      ><$STDFONT_B>"._("go to today")."<$STDFONT_E></A>
+      >"._("go to today")."</A>
      </TD>
      </TR>
      </TABLE>
@@ -472,7 +463,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_generate_interference_map ($query_part, $this_date, 
                                          $privacy=false) {
     global $current_imap; // global current interference map
-    global $database, $cur_date, $_auth, $sql;
+    global $database, $cur_date, $sql;
 
     // initialize the new array
     $current_imap          = Array (); 
@@ -530,11 +521,11 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       // here define the mapping
       switch ($r["caltype"]) {
        case "pat":  // actual patient
-        $mapping = "<A HREF=\"manage.php?$_auth&id=".$r["calpatient"].
+        $mapping = "<A HREF=\"manage.php?id=".$r["calpatient"].
                    "\">$ptname</A> [$ptdob] [$ptid] - $desc";
         break;
        case "temp": // call-in patient
-        $mapping = "<A HREF=\"call-in.php?$_auth&action=display&id=".
+        $mapping = "<A HREF=\"call-in.php?action=display&id=".
                    $r["calpatient"]."\">$ptname</A> [$ptdob] - $desc";
         break;
       } // end of switch

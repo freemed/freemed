@@ -42,6 +42,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 	// contructor method
 	function HighmarkEDIModule ($nullvar = "") {
+		global $display_buffer;
 		// init vars
 		$this->fac_row = 0;
         $this->CurPatient = 0;
@@ -65,6 +66,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 	function display()
 	{
+		global $display_buffer;
 		return;
 
 	} //end addform
@@ -72,10 +74,11 @@ class HighmarkEDIModule extends freemedEDIModule {
 	function view()
 	{
 		
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		$wizard = new wizard (array("been_here", "module", "action", "patient", "_auth"));
+		$wizard = new wizard (array("been_here", "module", "action", "patient"));
 		
 		$query = "SELECT DISTINCT a.id,a.insconame FROM insco as a,
 						procrec as b,
@@ -98,14 +101,14 @@ class HighmarkEDIModule extends freemedEDIModule {
                         <TD ALIGN=RIGHT>
                         <INPUT TYPE=RADIO NAME=\"providertyp\" VALUE=\"0\" CHECKED>
                         </TD><TD ALIGN=LEFT>
-                        <$STDFONT_B>Physician<$STDFONT_E>
+                        "._("Physician")."
                         </TD>
                         </TR>
                         <TR>
                         <TD ALIGN=RIGHT>
                         <INPUT TYPE=RADIO NAME=\"providertyp\" VALUE=\"1\">
                         </TD><TD ALIGN=LEFT>
-                        <$STDFONT_B>Physician Group<$STDFONT_E>
+                        "._("Physician Group")."
                         </TD>
                         </TR>
                         </TABLE></CENTER>" );
@@ -138,18 +141,18 @@ class HighmarkEDIModule extends freemedEDIModule {
 		
 		if (!$wizard->is_done() and !$wizard->is_cancelled())
         {
-            echo "<CENTER>".$wizard->display()."</CENTER>";
+            $display_buffer .= "<CENTER>".$wizard->display()."</CENTER>";
             return;
         }
 		if ($wizard->is_cancelled())
         {
             // if the wizard was cancelled
-            echo "<CENTER>CANCELLED<BR></CENTER><BR>\n";
-			echo "
+            $display_buffer .= "<CENTER>CANCELLED<BR></CENTER><BR>\n";
+			$display_buffer .= "
         	<P>
         	<CENTER>
-        	<A HREF=\"$this->page_name?_auth=$_auth&module=$module\">
-        	<$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+        	<A HREF=\"$this->page_name?module=$module\">
+        	"._("Back")."</A>
         	</CENTER>
         	<P>
         	";
@@ -157,12 +160,12 @@ class HighmarkEDIModule extends freemedEDIModule {
 		if (!is_array($instobill))
         {
             // if the wizard was cancelled
-            echo "<CENTER>Must Select Insurance<BR></CENTER><BR>\n";
-			echo "
+            $display_buffer .= "<CENTER>Must Select Insurance<BR></CENTER><BR>\n";
+			$display_buffer .= "
         	<P>
         	<CENTER>
-        	<A HREF=\"$this->page_name?_auth=$_auth&module=$module\">
-        	<$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+        	<A HREF=\"$this->page_name?module=$module\">
+        	"._("Back")."</A>
         	</CENTER>
         	<P>
         	";
@@ -172,12 +175,12 @@ class HighmarkEDIModule extends freemedEDIModule {
         {
             // if the wizard was cancelled
 			$msg = ($providertyp) ? "Groups" : "Physicians";
-            echo "<CENTER>Must Select $msg<BR></CENTER><BR>\n";
-			echo "
+            $display_buffer .= "<CENTER>Must Select $msg<BR></CENTER><BR>\n";
+			$display_buffer .= "
         	<P>
         	<CENTER>
-        	<A HREF=\"$this->page_name?_auth=$_auth&module=$module\">
-        	<$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+        	<A HREF=\"$this->page_name?module=$module\">
+        	"._("Back")."</A>
         	</CENTER>
         	<P>
         	";
@@ -253,7 +256,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			}
 		}
 		$providers = count($providerid);
-		//echo "providers $providers $providerid[0]<BR>";
+		//$display_buffer .= "providers $providers $providerid[0]<BR>";
 
 		if (!$this->EDIOpen())
 		{	
@@ -318,9 +321,9 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$this->EDIClose();
 		$stream=false;
 		$buffer = $this->GetEDIBuffer($stream);
-		echo "$buffer";
+		$display_buffer .= "$buffer";
 		$buffer = $this->GetEDIErrors();
-		echo "$buffer";
+		$display_buffer .= "$buffer";
 		
 	
 		// wizard must be done.
@@ -333,8 +336,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 	// START OF EDI CODE
 
 	//
-	function Provider()
-	{
+	function Provider() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -606,8 +609,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 	} // end provider
 
 
-	function Insurer()
-	{
+	function Insurer() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -702,8 +705,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 	}
 
-	function Insured()
-	{
+	function Insured() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -814,8 +817,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 	}
 
-	function Patient()
-	{
+	function Patient() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -953,8 +956,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 	}
 
-	function GetClaims($count=false)
-	{
+	function GetClaims($count=false) {
+		global $display_buffer;
 
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -1002,7 +1005,7 @@ class HighmarkEDIModule extends freemedEDIModule {
                              procbalcurrent > '0'
                            ) ".$xtraorder; 
 
-		echo "query $query<BR>";
+		$display_buffer .= "query $query<BR>";
 
 
 		$result = $sql->query($query);
@@ -1014,8 +1017,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 		return $result;
 
 	}
-    function Claim()
-	{
+    function Claim() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -1059,7 +1062,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			 ($proccount > $loopcount) 				   OR
 			 ($prev_key != $cur_key) )
 			{
-			//	echo "keys prec $prev_key cur $cur_key<BR>";
+			//	$display_buffer .= "keys prec $prev_key cur $cur_key<BR>";
 				if ($prev_key != $cur_key)
 					$prev_key = $cur_key;
 
@@ -1077,12 +1080,12 @@ class HighmarkEDIModule extends freemedEDIModule {
 			}
 
 			// add new stack entry
-			//echo "add stack $proccount<BR>";
+			//$display_buffer .= "add stack $proccount<BR>";
 			$procstack[$proccount] = $row;
 			$proccount++;
 		}
 
-		//echo " proccount $proccount<BR>";
+		//$display_buffer .= " proccount $proccount<BR>";
 		if ($proccount > 0)
 		{
 			$this->GenClaimSegment($procstack);
@@ -1092,8 +1095,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 	} // end Claim
 
-	function GenClaimSegment($procstack)
-	{
+	function GenClaimSegment($procstack) {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -1302,17 +1305,17 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 		}
 
-		//echo "Balance $procbal mindt $mindt maxdt $maxdt<BR>";
+		//$display_buffer .= "Balance $procbal mindt $mindt maxdt $maxdt<BR>";
 		
 	} // end genClaimSegment
 
-	function GenServiceSegment($procstack)
-	{
+	function GenServiceSegment($procstack) {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		$count = count($procstack);
-		//echo "count $count<BR>";
+		//$display_buffer .= "count $count<BR>";
 		// write the service charges	
 
 		//$LX_setno++;
@@ -1381,8 +1384,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 	} // end genServiceSegment
 
 
-	function CLM_Provider_Detail($procstack)
-	{
+	function CLM_Provider_Detail($procstack) {
+		global $display_buffer;
 		// 2310-a rendering provider if processing a physician group
 		// all records in the stack should have the same physician
 		// in each record if the control break is working correctly
@@ -1494,8 +1497,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 		return true;
 	} // end claim provider detail
 
-	function CLM_SecondaryIns($procstack)
-	{
+	function CLM_SecondaryIns($procstack) {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 		// when billing the secondary we need to the provide BOTH
@@ -1647,7 +1650,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$this->edi_buffer = $this->edi_buffer.$insname."*****NI*";
 		$this->edi_buffer = $this->edi_buffer.$inscoid.$this->record_terminator;
 		
-		//echo "addr $insaddr1 $insaddr2 $insname<BR>";
+		//$display_buffer .= "addr $insaddr1 $insaddr2 $insname<BR>";
 
 		$this->edi_buffer = $this->edi_buffer."N3*".$insaddr1;
 		if (!empty($insaddr2))
@@ -1751,8 +1754,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 	// then overridie it here, call the base class, the all the internal functions
 	// provid = id of physician or id of phygroup
 
-	function Generate($patid, $coverageid, $provid, $provtype)
-	{
+	function Generate($patid, $coverageid, $provid, $provtype) {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 	
@@ -1839,7 +1842,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$this->Error("processing $ptlname, $ptfname");
 
 		//$ptdep = $this->CurPatient->ptdep;
-		//echo "ptdep $ptdep<BR>";
+		//$display_buffer .= "ptdep $ptdep<BR>";
 		if ($this_coverage->covdep != 0)   // use this guarantors ins
 		{
 			$this->Guarantor = new Guarantor($this_coverage->covdep);
@@ -1935,8 +1938,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 		return true;
 	}
 
-	function PadNumber($data,$padchar,$len)
-	{
+	function PadNumber($data,$padchar,$len) {
+		global $display_buffer;
 		$strlen = strlen($data);
 		
 		if ($strlen >= $len)
@@ -1949,8 +1952,9 @@ class HighmarkEDIModule extends freemedEDIModule {
 		}
 		
 	}
-	function PadChar($data,$padchar,$len)
-	{
+
+	function PadChar($data,$padchar,$len) {
+		global $display_buffer;
 		$strlen = strlen($data);
 		
 		if ($strlen >= $len)
@@ -1964,8 +1968,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 		
 		
 	}
-	function NewKey($row)
-    {
+	function NewKey($row) {
+		global $display_buffer;
 		if ($this->phygrp_row != 0)
 		{
         	$key = $row[procphysician].$row[proceoc].

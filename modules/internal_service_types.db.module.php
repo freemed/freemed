@@ -20,14 +20,19 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
 		"intservtype"
 	); 
 
+	function internalServiceTypesMaintenance() {
+		$this->freemedMaintenanceModule();
+	} // end constructor internalServiceTypesMaintenance
+
 	function addform () { $this->view(); }
 
 	function modform () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
   if (strlen($id)<1) {
-    echo "
+    $display_buffer .= "
 
      <B><CENTER>Please use the MODIFY form to MODIFY a
        $this->record_name!</B>
@@ -36,9 +41,9 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
      <P>
     ";
 
-    echo "
+    $display_buffer .= "
       <CENTER>
-      <A HREF=\"main.php?$_auth\"
+      <A HREF=\"main.php\"
        >"._("Return to the Main Menu")."</A>
       </CENTER>
     ";
@@ -52,7 +57,7 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
   $r = $sql->fetch_array($result);
   extract ($r);
 
-  echo "
+  $display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
@@ -60,7 +65,7 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
 
     <CENTER>
-    <$STDFONT_B>"._($this->record_name)." : <$STDFONT_E>
+    "._($this->record_name)." :
     <INPUT TYPE=TEXT NAME=\"intservtype\" SIZE=25 MAXLENGTH=50 
      VALUE=\"".prepare($intservtype)."\">
     </CENTER>
@@ -72,20 +77,21 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
     </CENTER></FORM>
   ";
 
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth&module=$module\"
+    <A HREF=\"$this->page_name?module=$module\"
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
 	} // end function internalSericeTypesMaintenance->modform()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT * FROM $this->table_name ORDER BY $this->order_field"),
 			$this->page_name,
 			array (
@@ -94,7 +100,7 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
 			array("")
 		);
  
-		echo "
+		$display_buffer .= "
     <TABLE BGCOLOR=#000000 WIDTH=100% BORDER=0
      CELLSPACING=0 CELLPADDING=3>
     <TR VALIGN=CENTER>

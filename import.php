@@ -3,34 +3,33 @@
  // desc: administrative import module for older databases
  // lic : GPL, v2
 
- $page_name = "import.php";
- include ("lib/freemed.php");
- include ("lib/API.php");
+$page_name = "import.php";
+include ("lib/freemed.php");
+include ("lib/API.php");
 
- freemed_open_db ($LoginCookie);
- $this_user = new User ($LoginCookie);
+freemed_open_db ($LoginCookie);
+$this_user = new User ($LoginCookie);
 
-freemed_display_html_top ();
-freemed_display_banner ();
-
-if ($this_user->getLevel()<$admin_level)
- DIE("$page_name :: You do not have access to this module");
+if ($this_user->getLevel()<$admin_level) {
+	$display_buffer .= "$page_name :: You do not have access to this module";
+	template_display();
+}
 
 switch ($action) {
  case "import":
   freemed_display_box_top (_("Import Database"));
-  echo "
+  $display_buffer .= "
    <P>
    "._("Importing Database")." \"$db\" ... 
   ";
-  if (freemed_import_stock_data ($db)) { echo _("done");  }
-   else                                { echo _("ERROR"); }
-  echo "
+  if (freemed_import_stock_data ($db)) { $display_buffer .= _("done");  }
+   else                                { $display_buffer .= _("ERROR"); }
+  $display_buffer .= "
    <P>
     <CENTER>
-     <A HREF=\"$page_name?$_auth\"
+     <A HREF=\"$page_name\"
      >"._("Import Another Database")."</A> <B>|</B>
-     <A HREF=\"admin.php?$_auth\"
+     <A HREF=\"admin.php\"
      >"._("Return to Administration Menu")."</A>
     </CENTER>
    <P>
@@ -39,7 +38,7 @@ switch ($action) {
   break;
  default:
   freemed_display_box_top (_("Import Database"));
-  echo "
+  $display_buffer .= "
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"import\">
     <P>
@@ -93,17 +92,16 @@ switch ($action) {
     </CENTER>
     <P>
     <CENTER>
-     <A HREF=\"admin.php?$_auth\"
+     <A HREF=\"admin.php\"
      >"._("Return to Administration Menu")."</A>
     </CENTER>
     <P>
    </FORM>
   ";
-  freemed_display_box_bottom ();
   break;
 } // end action switch
 
 freemed_close_db ();
-freemed_display_html_bottom ();
+template_display();
 
 ?>

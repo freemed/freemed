@@ -12,6 +12,7 @@ include_once ("lib/module.php");
 // module types to include ...
 include_once ("lib/module_billing.php");
 include_once ("lib/module_calendar.php");
+include_once ("lib/module_cert.php");
 include_once ("lib/module_edi.php");
 include_once ("lib/module_emr.php");
 include_once ("lib/module_emr_report.php");
@@ -20,25 +21,26 @@ include_once ("lib/module_reports.php");
 
 // top of page
 freemed_open_db ($LoginCookie); // authenticate user
-freemed_display_html_top ();  // generate top of page
 
 // check for access
 $this_user = new User ($LoginCookie);
-if ($this_user->getLevel() < $admin_level) die ("Access Denied");
-
+if ($this_user->getLevel() < $admin_level) {
+	$display_buffer .= _("Access Denied");
+	template_display();
+}
 // top
-freemed_display_box_top (_("Module Information"));
+$page_title = _("Module Information");
 
 $module_list = new module_list (PACKAGENAME);
 $categories = $module_list->categories();
 if ($categories != NULL) {
-	echo "
+	$display_buffer .= "
 	<CENTER>
 	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE ALIGN=CENTER
 	 WIDTH=\"80%\">
 	";
 	foreach ($categories AS $this_category) {
-		echo "
+		$display_buffer .= "
 		<TR>
 			<TD ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#bbbbee\" COLSPAN=4>
 				<B>".prepare($this_category)." (version ".
@@ -57,25 +59,24 @@ if ($categories != NULL) {
 			<TD BGCOLOR=\"#aaaacc\" COLSPAN=4>#description#</TD>
 		</TR>
 		";
-		echo $module_list->generate_list ($this_category, 0, $template);
+		$display_buffer .= $module_list->generate_list ($this_category, 0, $template);
 	} // end of foreach
-	echo "
+	$display_buffer .= "
 	</TABLE>
 	</CENTER>
 	<P>
 	<CENTER>
-	<A HREF=\"admin.php?$_auth\"
+	<A HREF=\"admin.php\"
 	>"._("Return to Admin Menu")."</A>
 	</CENTER>
 	";
 } else {
-	echo "<P>No categories.<P>\n";
+	$display_buffer .= "<P>No categories.<P>\n";
 } // end checking for categories
 
 
 // bottom
-freemed_display_box_bottom (); // display bottom of the box
 freemed_close_db ();
-freemed_display_html_bottom ();
+template_display();
 
 ?>

@@ -13,6 +13,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
         // override variables
         var $MODULE_NAME = "Intake Report";
         var $MODULE_VERSION = "0.1";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
 		// contructor method
         function IntakeReportModule ($nullvar = "") {
@@ -21,27 +22,26 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
         } // end function testModule
 
 
-		function addform()
-		{
+		function addform() {
 			// this function is called when the ADD button is
 			// clicked on the patient menu
 			$this->view();
 		}
-		function view()
-		{
+		function view() {
+			global $display_buffer;
 			// this function is called when the View button is
 			// clicked on the patient menu
 
 			global $patient,$sql,$pt, $default_facility;
 			$this_patient = new Patient($patient);
 
-			echo "<HTML><BODY BGCOLOR=\"#FFFFFF\">\n";
+			$display_buffer .= "<HTML><BODY BGCOLOR=\"#FFFFFF\">\n";
 			$sched_result = $sql->query("SELECT MAX(id) AS id FROM scheduler WHERE calpatient='".addslashes($patient)."'");
 			if ($sql->num_rows($sched_result) > 0)
 			{
 				$sched_row = $sql->fetch_array($sched_result);
 				$schid = $sched_row[id];
-				//echo "schid $schid<BR>";
+				//$display_buffer .= "schid $schid<BR>";
 				$sched_row = freemed_get_link_rec($schid, "scheduler");
 				$pt[calldate] = $sched_row["caldateof"];
 				$calminute = $sched_row["calminute"];
@@ -188,8 +188,8 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			}		
 
 			$buffer = render_fixedForm(3);
-			echo "<PRE>".$buffer."</PRE>";
-			echo "</BODY></HTML>";
+			$display_buffer .= "<PRE>".$buffer."</PRE>";
+			$display_buffer .= "</BODY></HTML>";
 			
 
 		}

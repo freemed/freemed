@@ -49,6 +49,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
 	function mod () { $this->form(); }
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -65,7 +66,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
      while(list($k,$v)=each($this->variables))
      {
             global $$v;
-            //echo "$k $v<BR>";
+            //$display_buffer .= "$k $v<BR>";
      }
      $next_action = "mod";
      $r = freemed_get_link_rec ($id, $this->table_name);
@@ -162,11 +163,11 @@ class facilityMaintenance extends freemedMaintenanceModule {
     );
 
   if (!$book->is_done()) {
-    echo $book->display();
-    echo "
+    $display_buffer .= $book->display();
+    $display_buffer .= "
        <P>
        <CENTER>
-       <A HREF=\"$this->page_name?$_auth&module=$module\"
+       <A HREF=\"$this->page_name?module=$module\"
         >"._("Abandon ".( ($action=="addform") ? "Addition" : "Modification" ))
          ."</A>
        </CENTER>
@@ -188,8 +189,9 @@ class facilityMaintenance extends freemedMaintenanceModule {
 	} // end function facilityMaintenance->form()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT * FROM $this->table_name ".
 				"ORDER BY psrname,psrnote"),
 			$this->page_name,

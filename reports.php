@@ -9,24 +9,23 @@ include_once ("lib/API.php");
 include_once ("lib/module.php");
 include_once ("lib/module_reports.php");
 
-SetCookie ("_ref", $page_name, time()+$_cookie_expire);
+page_push();
 
+// Login/authenticate
 freemed_open_db ($LoginCookie);
-freemed_display_html_top ();
-freemed_display_box_top (_("Reports"));
+$page_title = (_("Reports"));
+
+// Create user object
+if (!is_object($this_user)) $this_user = new User;
 
  // Check for appropriate access level
 if (freemed_get_userlevel ($LoginCookie) < $database_level) { 
-   echo "
+   $display_buffer .= "
       <P>
-      <$HEADERFONT_B>
         "._("You don't have access for this menu.")."
-      <$HEADERFONT_E>
       <P>
     ";
-	freemed_display_box_bottom();
-	freemed_display_html_bottom();
-	die("");
+	template_display();
 } // end if not appropriate userlevel
 
 // information for module loader
@@ -34,15 +33,15 @@ $category = "Reports";
 $template = "
 	<TR>
 	<TD ALIGN=RIGHT>#icon#</TD>
-	<TD ALIGN=LEFT><A HREF=\"module_loader.php?$_auth&module=#class#\"".
-	"><$STDFONT_B>#name#<$STDFONT_E></A></TD>
+	<TD ALIGN=LEFT><A HREF=\"module_loader.php?module=#class#\"".
+	">#name#</A></TD>
 	</TR>
 ";
 
 // module loader
 $module_list = new module_list (PACKAGENAME,".report.module.php");
 if (!$module_list->empty_category($category)) {
-	echo "
+	$display_buffer .= "
 	<P>
 	<CENTER>
 	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
@@ -52,28 +51,26 @@ if (!$module_list->empty_category($category)) {
 	</CENTER>
 	<P>
 	<CENTER>
-		<$STDFONT_B><A HREF=\"main.php?$_auth\"
-		>"._("Return to Main Menu")."</A><$STDFONT_E>
+		<A HREF=\"main.php\"
+		>"._("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";
 } else {
-	echo "
+	$display_buffer .= "
 	<P>
 	<CENTER>
-		<$STDFONT_B>"._("There are no report modules present.")."<$STDFONT_E>
+		"._("There are no report modules present.")."
 	</CENTER>
 	<P>
 	<CENTER>
-		<$STDFONT_B><A HREF=\"main.php\"
-		>"._("Return to Main Menu")."</A><$STDFONT_E>
+		<A HREF=\"main.php\"
+		>"._("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";
 }
 
-freemed_display_box_bottom ();
-freemed_display_html_bottom ();
-freemed_close_db (); // close db
-
+freemed_close_db ();
+template_display();
 ?>

@@ -3,25 +3,23 @@
  // desc: module for call-in patients
  // lic : GPL, v2
 
-  $page_name = "call-in.php";          // page name
-  include ("lib/freemed.php");           // global variables
-  include ("lib/API.php");    // API calls
-  $record_name = _("Call In");          // name of record
-  $db_name = "callin";                  // database name
+$page_name = "call-in.php";          // page name
+include ("lib/freemed.php");           // global variables
+include ("lib/API.php");    // API calls
+$record_name = _("Call In");          // name of record
+$db_name = "callin";                  // database name
 
 freemed_open_db ($LoginCookie);
-freemed_display_html_top ();
-freemed_display_banner ();
 
 switch ($action) {
 
  case "addform":
-  freemed_display_box_top (_("Add")." "._($record_name));
+  $page_title = _("Add")." "._($record_name);
   if (strlen($citookcall)<1) {
     $f_auth = explode (":", $LoginCookie);
     $citookcall = freemed_get_link_field ($f_auth[0], "user", "userdescrip");
   } // if there wasn't one passed to us...
-  echo "
+  $display_buffer .= "
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
@@ -108,7 +106,7 @@ switch ($action) {
     if (!isset($cifacility)) $cifacility=$default_facility; 
       // doesn't seem to hurt, but doesn't seem to do anything...
    
-    echo "
+    $display_buffer .= "
     <TABLE WIDTH=100% BORDER=0 ALIGN=CENTER VALIGN=CENTER
      CELLSPACING=0 CELLPADDING=5>
      <TR>
@@ -138,7 +136,7 @@ switch ($action) {
     }
     $phys_r = $sql->query("SELECT * FROM physician ORDER BY phylname, phyfname");
 
-    echo "
+    $display_buffer .= "
     ".freemed_display_selectbox($phys_r, "#phylname#, #phyfname#", "ciphysician")."
       </TD>
     </TR>
@@ -151,16 +149,15 @@ switch ($action) {
     </FORM>
     <P>
   ";
-  freemed_display_box_bottom ();
   break;
 
  case "add":
-  freemed_display_box_top (_("Adding")." "._("$record_name"));
+  $page_title = _("Adding")." "._("$record_name");
   $cicomplaint = addslashes ($cicomplaint);
   $cicomment   = addslashes ($citookcall);
   $cihphone    = $cihphone1 . $cihphone2 . $cihphone3;
   $ciwphone    = $ciwphone1 . $ciwphone2 . $ciwphone3;
-  echo "\n"._("Adding")." "._("$record_name")." ... \n";
+  $display_buffer .= "\n"._("Adding")." "._("$record_name")." ... \n";
   $query = "INSERT INTO $db_name VALUES (
     '$cilname',
     '$cifname',
@@ -177,26 +174,25 @@ switch ($action) {
     NULL )";
   $result = $sql->query ($query);
 
-  if ($result) echo _("done");
-   else echo _("ERROR");
-  echo " 
+  if ($result) $display_buffer .= _("done");
+   else $display_buffer .= _("ERROR");
+  $display_buffer .= " 
     <P>
     <CENTER>
-     <A HREF=\"patient.php?$_auth\"
+     <A HREF=\"patient.php\"
       >Patient Menu |
-     <A HREF=\"$page_name?$_auth\"
+     <A HREF=\"$page_name\"
       >Call In Menu |
-     <A HREF=\"main.php?$_auth\"
+     <A HREF=\"main.php\"
       >"._("Return to the Main Menu")."
     </CENTER>
     <P>
   ";
-  freemed_display_box_bottom ();
   break;
 
  case "view":
  case "display":
-  freemed_display_box_top (_("$record_name")." "._("View/Manage"));
+  $page_title = _("$record_name")." "._("View/Manage");
   $query   = "SELECT * FROM scheduler WHERE
               ((calpatient='$id') AND (caltype='temp'))
               ORDER BY caldateof, calhour, calminute";
@@ -206,7 +202,7 @@ switch ($action) {
   $cilname = $ciname ["cilname"];
   $cifname = $ciname ["cifname"];
   $cimname = $ciname ["cimname"];
-  echo "
+  $display_buffer .= "
     <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=0 CELLPADDING=2
      VALIGN=CENTER ALIGN=CENTER>
     <TR><TD ALIGN=CENTER BGCOLOR=#000000>
@@ -216,39 +212,38 @@ switch ($action) {
     </TD></TR>
     </TABLE>
     <P>
-    <A HREF=\"show_appointments.php?$_auth&patient=$id&type=temp\"
+    <A HREF=\"show_appointments.php?patient=$id&type=temp\"
      >"._("Show Today's Appointments")."</A>
     <P>
-    <A HREF=\"show_appointments.php?$_auth&patient=$id&type=temp&show=all\"
+    <A HREF=\"show_appointments.php?patient=$id&type=temp&show=all\"
      >"._("Show All Appointments")."</A>
     <P>
-    <A HREF=\"main.php?$_auth\"
+    <A HREF=\"main.php\"
      >"._("Return to the Main Menu")."</A>
     </A>
     <P>
   ";
-  freemed_display_box_bottom ();
   break;
 
  default:
-  freemed_display_box_top (_("$record_name"));
+  $page_title = _("$record_name");
 
-  echo "
+  $display_buffer .= "
     <BR>
     <CENTER>
-     <A HREF=\"$page_name?$_auth&type=old\"
+     <A HREF=\"$page_name?type=old\"
       >"._("Old")."</A> |
-     <A HREF=\"$page_name?$_auth&type=all\"
+     <A HREF=\"$page_name?type=all\"
       >"._("All")."</A> |
-     <A HREF=\"$page_name?$_auth&type=cur\"
+     <A HREF=\"$page_name?type=cur\"
       >"._("Current")."</A>
     </CENTER>
     <BR>
   ";
 
-  echo freemed_display_actionbar ($page_name);
+  $display_buffer .= freemed_display_actionbar ($page_name);
 
-  echo "
+  $display_buffer .= "
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3 VALIGN=CENTER
      ALIGN=CENTER BGCOLOR=\"".($_alternate=freemed_bar_alternate_color())."\">
     <TR>
@@ -295,7 +290,7 @@ switch ($action) {
       $ciphonesep = "<BR>";
     else $ciphonesep = " ";
 
-    echo "
+    $display_buffer .= "
       <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($alternate))."\">
        <TD>$cilname, $cifname$ci_comma $cimname</TD>
        <TD>$cidatestamp</TD>
@@ -304,8 +299,8 @@ switch ($action) {
     ";
 
      // display the convert link
-    echo "
-     <A HREF=\"patient.php?$_auth&action=addform".
+    $display_buffer .= "
+     <A HREF=\"patient.php?action=addform".
         "&ptfname=".rawurlencode ($cifname).
         "&ptlname=".rawurlencode ($cilname).
         "&ptmname=".rawurlencode ($cimname).
@@ -323,19 +318,19 @@ switch ($action) {
     ";
 
       // view link
-    echo "
-     <A HREF=\"$page_name?$_auth&action=display&id=$id\"
+    $display_buffer .= "
+     <A HREF=\"$page_name?action=display&id=$id\"
       ><FONT SIZE=-1>"._("VIEW")."</FONT></A> &nbsp;
     ";
 
      // book link
-    echo "
-     <A HREF=\"book_appointment.php?$_auth&action=&".
+    $display_buffer .= "
+     <A HREF=\"book_appointment.php?action=&".
       "patient=$id&type=temp\"
       ><FONT SIZE=-1>"._("BOOK")."</FONT></A> &nbsp;
     ";
 
-    echo "
+    $display_buffer .= "
         </TD>
       </TR>
     ";
@@ -346,31 +341,30 @@ switch ($action) {
     $ciwphone = "";
   } // end while
 
-  echo "
+  $display_buffer .= "
     </TABLE>
   "; // end of the table
 
-  echo freemed_display_actionbar ($page_name);
+  $display_buffer .= freemed_display_actionbar ($page_name);
 
-  echo "
+  $display_buffer .= "
     <BR>
     <CENTER>
-     <A HREF=\"$page_name?$_auth&type=old\"
+     <A HREF=\"$page_name?type=old\"
       >"._("Old")."</A> |
-     <A HREF=\"$page_name?$_auth&type=all\"
+     <A HREF=\"$page_name?type=all\"
       >"._("All")."</A> |
-     <A HREF=\"$page_name?$_auth&type=cur\"
+     <A HREF=\"$page_name?type=cur\"
       >"._("Current")."</A>
     </CENTER>
     <BR>
   ";
 
-  freemed_display_box_bottom ();
   break;
 
 } // end master switch
 
-freemed_display_html_bottom ();
 freemed_close_db ();
+template_display();
 
 ?>

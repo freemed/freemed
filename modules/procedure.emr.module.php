@@ -54,8 +54,8 @@ class procedureModule extends freemedEMRModule {
 		$this->freemedEMRModule();
 	} // end constructor procedureModule
 
-	function addform()
-	{
+	function addform() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -253,7 +253,7 @@ class procedureModule extends freemedEMRModule {
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
 			// display the wizard
-			echo "<CENTER>".$wizard->display()."</CENTER>\n";
+			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>\n";
 		}
 
 		if ($wizard->is_done())
@@ -267,7 +267,7 @@ class procedureModule extends freemedEMRModule {
 			$proccurcovid = ( ($proccov2) ? $proccov2 : 0 );
 			$proccurcovid = ( ($proccov1) ? $proccov1 : 0 );
 
-			echo "<P><CENTER><$STDFONT_B>"._("Adding")." ... <$STDFONT_E>";
+			$display_buffer .= "<P><CENTER>"._("Adding")." ... ";
 
 			$query = $sql->insert_query 
 				(
@@ -308,16 +308,16 @@ class procedureModule extends freemedEMRModule {
 				);
 
 				$result = $sql->query ($query);
-				if ($debug) echo " (query = $query, result = $result) <BR>\n";
-				if ($result) { echo _("done")."."; }
-				else        { echo _("ERROR");    }
+				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
+				if ($result) { $display_buffer .= _("done")."."; }
+				else        { $display_buffer .= _("ERROR");    }
 
 				$this_procedure = $sql->last_record ($result);
 
 				// form add query
-				echo "
+				$display_buffer .= "
 				<BR>
-				<$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
+				"._("Committing to ledger")." ... 
 				";
 				$query = "INSERT INTO payrec VALUES (
 					'$cur_date',
@@ -335,16 +335,15 @@ class procedureModule extends freemedEMRModule {
 					'unlocked',
 					NULL )";
 				$result = $sql->query ($query);
-				if ($debug) echo " (query = $query, result = $result) <BR>\n";
-				if ($result) { echo _("done")."."; }
-				else        { echo _("ERROR");    }
+				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
+				if ($result) { $display_buffer .= _("done")."."; }
+				else        { $display_buffer .= _("ERROR");    }
 				$this_procedure = $sql->last_record ($result, $this->table_name);
 
 				// updating patient diagnoses
-				echo "
+				$display_buffer .= "
 				<BR>
-				<$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
-				";
+				"._("Updating patient diagnoses")." ...  ";
 				$query = "UPDATE patient SET
 					ptdiag1  = '$procdiag1',
 					ptdiag2  = '$procdiag2',
@@ -352,19 +351,19 @@ class procedureModule extends freemedEMRModule {
 					ptdiag4  = '$procdiag4'
 					WHERE id = '$patient'";
 				$result = $sql->query ($query);
-				if ($debug) echo " (query = $query, result = $result) <BR>\n";
-				if ($result) { echo _("done")."."; }
-				else        { echo _("ERROR");    }
+				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
+				if ($result) { $display_buffer .= _("done")."."; }
+				else        { $display_buffer .= _("ERROR");    }
 
-				echo "
+				$display_buffer .= "
 				</CENTER>
 				<P>
 				<CENTER>
-				 <A HREF=\"manage.php?$_auth&id=$patient\"
-				 ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-				 <A HREF=\"$this->page_name?$_auth&module=PaymentModule&action=addform&patient=$patient\"
-				 ><$STDFONT_B>"._("Add Payment")."<$STDFONT_E></A> <B>|</B>
-				 <A HREF=\"$this->page_name?$_auth&module=$module&action=addform&procvoucher=$procvoucher".
+				 <A HREF=\"manage.php?id=$patient\"
+				 >"._("Manage Patient")."</A> <B>|</B>
+				 <A HREF=\"$this->page_name?module=PaymentModule&action=addform&patient=$patient\"
+				 >"._("Add Payment")."</A> <B>|</B>
+				 <A HREF=\"$this->page_name?module=$module&action=addform&procvoucher=$procvoucher".
 				  "&patient=$patient&procdt=".fm_date_assemble("procdt").
 				  "&proccpt=$proccpt".
 				  "&procpos=$procpos".
@@ -374,7 +373,7 @@ class procedureModule extends freemedEMRModule {
 				  "&procdiag4=$procdiag4".
 				  "&procphysician=$procphysician".
 				  "\"
-				 ><$STDFONT_B>"._("Add Another")." "._($record_name)."<$STDFONT_E></A>
+				 >"._("Add Another")." "._($record_name)."</A>
 				</CENTER>
 				<P>
 				";
@@ -383,19 +382,19 @@ class procedureModule extends freemedEMRModule {
 
 		if ($wizard->is_cancelled())
 		{
-				echo "
+				$display_buffer .= "
 				<P>
 				<CENTER><B>"._(Cancelled)."</B><BR>
-				 <A HREF=\"manage.php?$_auth&id=$patient\"
-				 ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> 
+				 <A HREF=\"manage.php?id=$patient\"
+				 >"._("Manage Patient")."</A> 
 				";
 
 		} // end cancelled
 
 	} // end addform
 
-	function modform()
-	{
+	function modform() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -453,13 +452,13 @@ class procedureModule extends freemedEMRModule {
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
 			// display the wizard
-			echo "<CENTER>".$wizard->display()."</CENTER>\n";
+			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>\n";
 		}
 
 		if ($wizard->is_done())
 		{
 
-			echo "<P><CENTER><$STDFONT_B>"._("Modifying")." ... <$STDFONT_E>";
+			$display_buffer .= "<P><CENTER>"._("Modifying")." ... ";
 
 			$query = "UPDATE $this->table_name SET
 			proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
@@ -470,17 +469,17 @@ class procedureModule extends freemedEMRModule {
 			procauth        = '".addslashes($procauth).     "'".
 			" WHERE id='$id'";
 			$result = $sql->query ($query);
-			if ($debug) echo " (query = $query, result = $result) <BR>\n";
-			if ($result) { echo _("done")."."; }
-			else        { echo _("ERROR");    }
+			if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
+			if ($result) { $display_buffer .= _("done")."."; }
+			else        { $display_buffer .= _("ERROR");    }
 
-			echo "
+			$display_buffer .= "
 				<P>
 				<CENTER>
-			 	<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-			 	><$STDFONT_B>"._("back")."<$STDFONT_E></A><BR>
-				<A HREF=\"manage.php?$_auth&id=$patient\"
-				><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+			 	<A HREF=\"$this->page_name?module=$module&patient=$patient\"
+			 	>"._("back")."</A><BR>
+				<A HREF=\"manage.php?id=$patient\"
+				>"._("Manage Patient")."</A>
 				</CENTER>
 				<P>
 			";
@@ -491,11 +490,11 @@ class procedureModule extends freemedEMRModule {
 
 		if ($wizard->is_cancelled())
 		{
-				echo "
+				$display_buffer .= "
 				<P>
 				<CENTER><B>"._(Cancelled)."</B><BR>
-				 <A HREF=\"manage.php?$_auth&id=$patient\"
-				 ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> 
+				 <A HREF=\"manage.php?id=$patient\"
+				 >"._("Manage Patient")."</A> 
 				";
 
 		} // end cancelled
@@ -506,38 +505,38 @@ class procedureModule extends freemedEMRModule {
 	} // end modform
 
 	
-	function delete () 
-	{
+	function delete () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		echo "
+		$display_buffer .= "
 		<P><CENTER>
-		<$STDFONT_B>"._("Deleting")." ...
+		"._("Deleting")." ...
 		";
 		$query = "DELETE FROM $this->table_name WHERE id='$id'";
 		$result = $sql->query ($query);
-		if ($result) { echo "["._("Procedure")."] "; }
-		else        { echo "["._("ERROR")."] ";     }
+		if ($result) { $display_buffer .= "["._("Procedure")."] "; }
+		else        { $display_buffer .= "["._("ERROR")."] ";     }
 		$query = "DELETE FROM payrec WHERE payrecproc='".addslashes($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { echo "["._("Payment Record")."] "; }
-		else        { echo "["._("ERROR")."] ";          }
-		echo "
-		<$STDFONT_E></CENTER>
+		if ($result) { $display_buffer .= "["._("Payment Record")."] "; }
+		else        { $display_buffer .= "["._("ERROR")."] ";          }
+		$display_buffer .= "
+		</CENTER>
 		<P>
 		<CENTER>
-		 <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-		 ><$STDFONT_B>"._("back")."<$STDFONT_E></A> <B>|</B>
-		 <A HREF=\"manage.php?$_auth?id=$patient\"
-		 ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+		 <A HREF=\"$this->page_name?module=$module&patient=$patient\"
+		 >"._("back")."</A> <B>|</B>
+		 <A HREF=\"manage.php?id=$patient\"
+		 >"._("Manage Patient")."</A>
 		</CENTER>
 		<P>
 		";
 					} // end function procedureModule->delete()
 
-	function display()
-	{
+	function display() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 		while(list($k,$v)=each($this->proc_fields))
@@ -614,15 +613,15 @@ class procedureModule extends freemedEMRModule {
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
 			// display the wizard
-			echo "<CENTER>".$wizard->display()."</CENTER>\n";
+			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>\n";
 		}
 		else
 		{
-			echo "
+			$display_buffer .= "
 			<P>
 			<CENTER>
-			 <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-			 ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+			 <A HREF=\"$this->page_name?module=$module&patient=$patient\"
+			 >"._("back")."</A>
 			</CENTER>
 			<P>
 			";
@@ -631,8 +630,8 @@ class procedureModule extends freemedEMRModule {
 
 	}
 
-	function view() 
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -640,7 +639,7 @@ class procedureModule extends freemedEMRModule {
 				WHERE procpatient='".addslashes($patient)."'
 				ORDER BY procdt DESC";
 		$result = $sql->query ($query);
-		echo freemed_display_itemlist(
+		$display_buffer .= freemed_display_itemlist(
 			$result,
 			$this->page_name,
 			array ( // control
@@ -665,8 +664,8 @@ class procedureModule extends freemedEMRModule {
 	} // end function procedureModule->view()
 
 
-	function GetAuthorizations($patid)
-	{
+	function GetAuthorizations($patid) {
+		global $display_buffer;
 		global $sql;
 		
 		$auth_r_buffer = "";
@@ -688,8 +687,8 @@ class procedureModule extends freemedEMRModule {
 		return $auth_r_buffer;
 	}
 
-	function CalculateCharge($covid,$cptid,$phyid,$patid)  
-	{
+	function CalculateCharge($covid,$cptid,$phyid,$patid)  {
+		global $display_buffer;
 		// id of coverage record, cpt record, physician record
 		// and patient record
 
@@ -718,17 +717,17 @@ class procedureModule extends freemedEMRModule {
 		// step two:
 		//   grab the relative value from the CPT db
 		$relative_value = $cpt_code["cptrelval"];
-		if ($debug) echo " (relative_value = \"$relative_value\")\n";
+		if ($debug) $display_buffer .= " (relative_value = \"$relative_value\")\n";
 
 		// step three:
 		//   calculate the base value
 		$internal_type  = $cpt_code ["cpttype"]; // grab internal type
 		if ($debug) 
-		echo " (inttype = $internal_type) (procphysician = $procphysician) ";
+		$display_buffer .= " (inttype = $internal_type) (procphysician = $procphysician) ";
 		$this_physician = freemed_get_link_rec ($physid, "physician");
 		$charge_map     = fm_split_into_array($this_physician ["phychargemap"]);
 		$base_value     = $charge_map [$internal_type];
-		if ($debug) echo "<BR>base value = \"$base_value\"\n";
+		if ($debug) $display_buffer .= "<BR>base value = \"$base_value\"\n";
 
 		// step four:
 		//   check for patient discount percentage
@@ -736,14 +735,14 @@ class procedureModule extends freemedEMRModule {
 		$percentage = $this_patient->local_record["ptdisc"];
 		if ($percentage>0) { $discount = $percentage / 100; }
 		else              { $discount = 0;                 }
-		if ($debug) echo "<BR>discount = \"$discount\"\n";
+		if ($debug) $display_buffer .= "<BR>discount = \"$discount\"\n";
 
 		// step five:
 		//   calculate formula...
 		$charge = ($base_value * $procunits * $relative_value) - $discount; 
 		if ($charge == 0)
 		$charge = $cpt_code_stdfee;
-		if ($debug) echo " (charge = \"$charge\") \n";
+		if ($debug) $display_buffer .= " (charge = \"$charge\") \n";
 
 		// step six:
 		//   adjust values to proper precision

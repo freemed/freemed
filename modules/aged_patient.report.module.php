@@ -15,8 +15,8 @@ class agedPatientReport extends freemedReportsModule {
 		$this->freemedReportsModule();
 	} // end constructor agedPatientReport
 
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$ages_greater = array(00,30,60,090,00120);
@@ -53,13 +53,13 @@ class agedPatientReport extends freemedReportsModule {
 		$aged_result = $sql->query($query);
 
 		if ($sql->num_rows($aged_result) <= 0)
-			echo "No unpaid procedures found<BR>";
+			$display_buffer .= "No unpaid procedures found<BR>";
 
 		$prevpat = "0";
 		$previnsco = "0";
 		$_alternate = freemed_bar_alternate_color ();
 
-		echo "
+		$display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
 		<TR>
 		<TD><B>"._("Patient")."</B></TD>
@@ -75,7 +75,7 @@ class agedPatientReport extends freemedReportsModule {
 		{
 			$pat = $row[ptlname].$row[ptfname];
 
-			//echo "doc $doc pat $pat<BR>";
+			//$display_buffer .= "doc $doc pat $pat<BR>";
 
 			if ($prevpat != $pat)
 			{
@@ -83,13 +83,13 @@ class agedPatientReport extends freemedReportsModule {
 				{
 					// calc pat totals.
 					$_alternate=freemed_bar_alternate_color ($_alternate);
-					echo $this->pattotals($pattot,$_alternate);
+					$display_buffer .= $this->pattotals($pattot,$_alternate);
 				}
 
 				$prevpat = $pat;
 				//$patrow = freemed_get_link_rec($pat,"patient");
 				$patname = $row[ptlname].", ".$row[ptfname];
-				//echo "patname $patname<BR>";
+				//$display_buffer .= "patname $patname<BR>";
 				$grandtot += $pattot;
 				$pattot = 0;
 				$previnsco="0";
@@ -106,14 +106,14 @@ class agedPatientReport extends freemedReportsModule {
 			}
 
 			$age = $row[procage];
-			echo "<TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color ($_alternate))."\">";
-			echo "<TD>$patname</TD>";
-			echo "<TD>$insconame</TD>";
-			echo "<TD>$row[procdt]</TD>";
+			$display_buffer .= "<TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color ($_alternate))."\">";
+			$display_buffer .= "<TD>$patname</TD>";
+			$display_buffer .= "<TD>$insconame</TD>";
+			$display_buffer .= "<TD>$row[procdt]</TD>";
 			$bal = bcadd($row[procbalcurrent],0,2);
-			echo "<TD ALIGN=RIGHT>$bal</TD>";
-			echo "<TD ALIGN=RIGHT>$age</TD>";
-			echo "</TR>";
+			$display_buffer .= "<TD ALIGN=RIGHT>$bal</TD>";
+			$display_buffer .= "<TD ALIGN=RIGHT>$age</TD>";
+			$display_buffer .= "</TR>";
 			$pattot += $bal;
 			$phyname="&nbsp;";
 			$patname="&nbsp;";
@@ -123,14 +123,14 @@ class agedPatientReport extends freemedReportsModule {
 
 		// calc pat totals.
 		$_alternate=freemed_bar_alternate_color ($_alternate);
-		echo $this->pattotals($pattot,$_alternate);
+		$display_buffer .= $this->pattotals($pattot,$_alternate);
 
 		$grandtot += $pattot;
 
 		// calc grand totals
 		$_alternate=freemed_bar_alternate_color ($_alternate);
-		echo $this->grtotals($grandtot,$_alternate);
-		echo "</TABLE>";
+		$display_buffer .= $this->grtotals($grandtot,$_alternate);
+		$display_buffer .= "</TABLE>";
 				 
 
 	} // end view function

@@ -358,33 +358,32 @@ class Physician {
 
 // class User
 class User {
-  var $local_record;                 // local record
-  var $cookie;                       // actual cookie
-  var $user_number;                  // user number (id)
-  var $user_level;                   // user level (0..9)
-  var $user_name;                    // name of the user
-  var $user_descrip;                 // user description
-  var $user_phy;                     // number of physician 
-  var $perms_fac, $perms_phy, $perms_phygrp;
+	var $local_record;                 // local record
+	var $user_number;                  // user number (id)
+	var $user_level;                   // user level (0..9)
+	var $user_name;                    // name of the user
+	var $user_descrip;                 // user description
+	var $user_phy;                     // number of physician 
+	var $perms_fac, $perms_phy, $perms_phygrp;
 
-  function User ($user_cookie = "") {
-    global $LoginCookie;                   // global Login Cookie
-    if ($user_cookie == "")  $user_cookie = $LoginCookie;
-    $this->cookie       = $user_cookie;    // store cookie
-    $cookie_data        = explode (":", $this->cookie);
-    $this->user_number  = $cookie_data[0];
-    $this->local_record = freemed_get_link_rec ($this->user_number, "user");
-    $this->user_name    = $this->local_record["username"   ];
-    $this->user_descrip = $this->local_record["userdescrip"];
-    $this->user_level   = $this->local_record["userlevel"  ];
-    $this->user_phy     = $this->local_record["userrealphy"];
-    $this->perms_fac    = $this->local_record["userfac"    ]; 
-    $this->perms_phy    = $this->local_record["userphy"    ];
-    $this->perms_phygrp = $this->local_record["userphygrp" ];
+	function User () {
+		global $SESSION; // authorization data
+		extract ($SESSION);
 
-    // special root stuff
-    if ($this->user_number == 1) $this->user_level = 9;
-  } // end function User
+		$this->user_number  = $authdata["user"];
+		$this->local_record = freemed_get_link_rec ($this->user_number,
+			"user");
+		$this->user_name    = $this->local_record["username"   ];
+		$this->user_descrip = $this->local_record["userdescrip"];
+		$this->user_level   = $this->local_record["userlevel"  ];
+		$this->user_phy     = $this->local_record["userrealphy"];
+		$this->perms_fac    = $this->local_record["userfac"    ]; 
+		$this->perms_phy    = $this->local_record["userphy"    ];
+		$this->perms_phygrp = $this->local_record["userphygrp" ];
+
+		// special root stuff
+		if ($this->user_number == 1) $this->user_level = 9;
+	} // end function User
 
   function getDescription ($no_parameters = "") {
     if (empty($this->user_descrip)) return "(no description)";

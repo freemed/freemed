@@ -34,6 +34,7 @@ class testModule extends freemedModule {
 
 	// override main function
 	function main () {
+		global $display_buffer;
 		global $patient;
 
 		$buffer = "";

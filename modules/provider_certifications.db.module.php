@@ -31,6 +31,7 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
 	function form () { $this->view(); }
 
 	function view () {
+		global $display_buffer;
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -41,7 +42,7 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
 		} // modform fetching
 
 		// display the table 
-		echo freemed_display_itemlist(
+		$display_buffer .= freemed_display_itemlist(
 			$sql->query("SELECT * FROM $this->table_name ORDER BY degdegree,degname"),
 			$this->page_name,
 			array (
@@ -51,7 +52,7 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
 			array ( "", _("NO DESCRIPTION") ), "", "d_page"
 		);
   
-		echo "
+		$display_buffer .= "
    <CENTER>
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2>
    <TR><TD ALIGN=RIGHT>
@@ -62,7 +63,7 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"module\"   VALUE=\"".prepare($module)."\"  >
 
   ".(($action=="modform") ? "
-    <$STDFONT_B>"._("Date Last Modified")." : <$STDFONT_E>
+    "._("Date Last Modified")." :
    </TD><TD ALIGN=LEFT>
     $degdate
    </TD></TR>
@@ -70,14 +71,14 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
   " : "")
   
   ."
-    <$STDFONT_B>"._("Degree")." : <$STDFONT_E>
+    "._("Degree")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=degdegree SIZE=11 MAXLENGTH=10
      VALUE=\"$degdegree\">
    </TD></TR>
  
   <TR><TD ALIGN=RIGHT>
-   <$STDFONT_B>"._("Degree Description")." : <$STDFONT_E>
+   "._("Degree Description")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=degname SIZE=30 MAXLENGTH=50
      VALUE=\"$degname\">
@@ -91,14 +92,14 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
   ";
 
   if ($action=="modform") 
-    echo "
+    $display_buffer .= "
    <TR><TD COLSPAN=2 ALIGN=CENTER>
-     <$STDFONT_B><A HREF=\"$page_name?$_auth\">".
-       _("Abandon Modification")."</A><$STDFONT_E>
+     <A HREF=\"$page_name\">".
+       _("Abandon Modification")."</A>
    </TD></TR>
     ";
     
-  echo "
+  $display_buffer .= "
    </FORM>
    </TABLE>
    </CENTER>

@@ -31,6 +31,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
 	} // end constructor questionnaireTemplateMaintenance
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -45,7 +46,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
        // check to see if an id was submitted
       if ($id<1) {
        freemed_display_box_top (_($record_name)." :: "._("ERROR"));
-       echo "
+       $display_buffer .= "
          "._("You must select a record to modify.")."
        ";
        freemed_display_box_bottom ();
@@ -77,7 +78,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
      $insert[0]="ON";
      $first_insert = true;
    }
-   echo "
+   $display_buffer .= "
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
      <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
@@ -122,7 +123,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
            (empty($qftype[$i])) ) { $num_color = "#ff0000"; }
        else                         { $num_color = "#000000"; }
       // print actual record
-      echo "
+      $display_buffer .= "
        <TR BGCOLOR=\"".
         ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
         <TD ALIGN=RIGHT><$STDFONT_B COLOR=\"$num_color\"
@@ -156,7 +157,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
          case "time":    $type_i = "SELECTED"; break;
          default:        $type_n = "SELECTED"; break;
        } // end switch
-       echo "
+       $display_buffer .= "
           <SELECT NAME=\"qftype$brackets\">
            <OPTION VALUE=\"\"        $type_n>none selected
            <OPTION VALUE=\"text\"    $type_t>text
@@ -187,7 +188,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
                                {  $loopfor = $lineinsert  ; }
        else                    {  $loopfor = 1            ; }
       for ($l=0;$l<$loopfor;$l++) {
-       echo "
+       $display_buffer .= "
         <TR BGCOLOR=\"".
        ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
          <TD ALIGN=RIGHT><$STDFONT_B COLOR=\"#ff0000\"
@@ -231,7 +232,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
    } // end of while
 
    // display the bottom of the repetitive table
-   echo "
+   $display_buffer .= "
      </TABLE>
      <P>
      <CENTER>
@@ -253,8 +254,9 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
 	} // end function questionnaireTemplateMaintenance->form()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT * FROM $this->table_name ".
 				"ORDER BY qname, qdescrip"),
 			$this->page_name,

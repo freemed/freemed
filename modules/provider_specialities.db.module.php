@@ -29,6 +29,7 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
 	function form () { $this->view(); }
 
 	function view () {
+		global $display_buffer;
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -39,7 +40,7 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
 			extract($r);
 		} // if this is a modform...
 
-		echo freemed_display_itemlist(
+		$display_buffer .= freemed_display_itemlist(
 			$sql->query ("SELECT * FROM $this->table_name ".
 				( (strlen($_s_val)>0) ?
 					"WHERE $_s_field LIKE '%".addslashes($_s_val)."%' " : "" ).
@@ -66,14 +67,14 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
       
    
    <TR><TD ALIGN=RIGHT>   
-    <$STDFONT_B>"._("Specialty")." : <$STDFONT_E>
+    "._("Specialty")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=\"specname\" SIZE=10 MAXLENGTH=50 
      VALUE=\"".prepare($specname)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>   
-    <$STDFONT_B>"._("Specialty Description")." : <$STDFONT_E>
+    "._("Specialty Description")." :
    </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=\"specdesc\" SIZE=30 MAXLENGTH=100
      VALUE=\"".prepare($specdesc)."\">
@@ -89,11 +90,11 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
    </CENTER>
   ";
   
-  if ($action=="modform") echo "
-    <CENTER><$STDFONT_B>
-    <A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
+  if ($action=="modform") $display_buffer .= "
+    <CENTER>
+    <A HREF=\"$this->page_name?module=$module&action=view\"
      >"._("Abandon Modification")."</A>
-    <$STDFONT_E></CENTER>
+    </CENTER>
   ";
 	} // end function providerSpecialtiesMaintenance->view()
 

@@ -41,8 +41,8 @@ class freemedEDIModule extends freemedModule {
 	var $testorprod;          // sending test data only T or P
 
 	// contructor method
-	function freemedEDIModule () 
-	{
+	function freemedEDIModule () {
+		global $display_buffer;
 		global $BILLING_SERVICE, $EDI_VENDOR, $EDI_SOURCE_NUMBER, $EDI_INTERCHANGE_SENDER_ID;
         global $EDI_INTERCHANGE_RECVR_ID, $EDI_INTERCHANGE_CNTLNUM, $EDI_TESTORPROD;
 
@@ -70,7 +70,7 @@ class freemedEDIModule extends freemedModule {
 	// override check_vars method
 	function check_vars ($nullvar = "") {
 		global $module;
-		//echo "checkvar of base $module<BR>";
+		//$display_buffer .= "checkvar of base $module<BR>";
 		if (!isset($module)) 
 		{
 			trigger_error("No Module Defined", E_ERROR);
@@ -81,6 +81,7 @@ class freemedEDIModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action, $patient, $LoginCookie;
 
 		if (!isset($this_user))
@@ -104,18 +105,16 @@ class freemedEDIModule extends freemedModule {
 
 	// function display
 	// by default, a wrapper for view
-	function display () 
-	{ 
+	function display () { 
 		$this->view(); 
 	}
-	function view () 
-	{ 
+	function view () { 
 		return; 
 	}
 
 	// ********************** EDI SPECIFIC ACTIONS *********************
-	function StartISAHeader()
-	{
+	function StartISAHeader() {
+		global $display_buffer;
 		
 		if ( (empty($this->vendorid))    OR
 			 (empty($this->sourceid)) OR
@@ -170,8 +169,8 @@ class freemedEDIModule extends freemedModule {
 		return true;
 	}
 
-	function EndISAHeader()
-	{
+	function EndISAHeader() {
+		global $display_buffer;
 		$this->end_envelope = $this->end_envelope."GE*".$this->current_transaction_set."*";
 		$this->end_envelope .= $this->interchange_cntrlnum;
 		$this->end_envelope .= $this->record_terminator;
@@ -186,23 +185,23 @@ class freemedEDIModule extends freemedModule {
 	
 	}
 
-	function EDIOpen()
-	{
+	function EDIOpen() {
+		global $display_buffer;
 		$ret = $this->StartISAHeader();
 		return $ret;
 
 	}
 
-	function EDIClose()
-	{
+	function EDIClose() {
+		global $display_buffer;
 		$ret = $this->EndISAHeader();
 		return $ret;
 
 	}
 
 
-	function StartTransaction()
-	{
+	function StartTransaction() {
+		global $display_buffer;
 		$random = rand(1,99);
 		$this->Error("Random = $random");
 		
@@ -250,8 +249,8 @@ class freemedEDIModule extends freemedModule {
 	} // end StartTrans
 
 
-	function EndTransaction()
-	{
+	function EndTransaction() {
+		global $display_buffer;
 		$segcount = "00";
 		$ST_seg = "ST*837*".$this->current_transaction_set.$this->record_terminator;
 		$gotseg = false;
@@ -275,8 +274,8 @@ class freemedEDIModule extends freemedModule {
 
 	} // end of EndTrans
 	
-	function RecvrSubmitter($fac)
-	{
+	function RecvrSubmitter($fac) {
+		global $display_buffer;
 		$entity = ($fac) ? 2 : 1;
 
 
@@ -296,8 +295,8 @@ class freemedEDIModule extends freemedModule {
 	} // end of RecvSubmitter
 
 
-    function PutEDITBufferToFile()
-	{
+    function PutEDITBufferToFile() {
+		global $display_buffer;
 		reset ($GLOBALS);
         while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -327,8 +326,8 @@ class freemedEDIModule extends freemedModule {
 	} // end putedibuffertofile
 
 
-	function GetEDIBuffer($stream=false)
-	{
+	function GetEDIBuffer($stream=false) {
+		global $display_buffer;
 		if ($stream)
 		{
 			$buffer = $this->start_envelope.$this->edi_buffer.$this->end_envelope;
@@ -353,8 +352,8 @@ class freemedEDIModule extends freemedModule {
 	} // end getedibuffer
 
 
-	function GetEDIErrors()
-	{
+	function GetEDIErrors() {
+		global $display_buffer;
 
 		$edi_records = explode($this->record_terminator,$this->error_buffer);
 		$edirec_count = count($edi_records);
@@ -370,15 +369,15 @@ class freemedEDIModule extends freemedModule {
 	} // end get edierrors
 
 
-	function Error($errormsg)
-	{
+	function Error($errormsg) {
+		global $display_buffer;
 		$this->error_buffer .= $errormsg;
 		$this->error_buffer .= $this->record_terminator;
 
 	} // end Error
 	
-	function CleanChar($data)
-	{
+	function CleanChar($data) {
+		global $display_buffer;
 			$data = stripslashes($data);
 			$data = str_replace("/"," ",$data);
 			$data = str_replace("'"," ",$data);
@@ -394,8 +393,8 @@ class freemedEDIModule extends freemedModule {
 			return $data;
 	} // end cleanchar
 
-	function CleanNumber($data)
-	{
+	function CleanNumber($data) {
+		global $display_buffer;
 			$data = stripslashes($data);
 			$data = str_replace(".","",$data);
 			$data = str_replace(",","",$data);

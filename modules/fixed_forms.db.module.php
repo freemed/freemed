@@ -42,13 +42,13 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		$this->freemedMaintenanceModule();
 	} // end constructor fixedFormsMaintenance
 
-	function addform()
-	{
+	function addform() {
+		global $display_buffer;
 		
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		echo "
+		$display_buffer .= "
 		 <FORM ACTION=\"$this->page_name\" METHOD=POST>
 		  <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
 		  <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
@@ -57,47 +57,47 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		 <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
 		 <TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Name of Form")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Name of Form")." : </TD>
 		   <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=40 MAXLENGTH=50
 			VALUE=\"".prepare($ffname)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Page Length")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Page Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffpagelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffpagelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Description")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=40 MAXLENGTH=100
 			VALUE=\"".prepare($ffdescrip)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Line Length")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Line Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"fflinelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($fflinelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Loop Repetitions")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Loop Repetitions")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopnum\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopnum)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Check Char")." : <BR>
-						  "._("(<I>example: \"X\"</I>)")."<$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Check Char")." : <BR>
+						  "._("(<I>example: \"X\"</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
 			VALUE=\"".prepare($ffcheckchar)."\"> 
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Loop Line Offset")." : <BR>
-					 "._("(<I>\"1\" skips to the next line</I>)")."<$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Loop Line Offset")." : <BR>
+					 "._("(<I>\"1\" skips to the next line</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopoffset\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopoffset)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Type")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Type")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <SELECT NAME=\"fftype\">
 			<OPTION VALUE=\"0\" ".
@@ -118,10 +118,10 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 	 	 <CENTER><INPUT TYPE=SUBMIT VALUE=\""._("Add")."\"></CENTER>
 		 </FORM>
 		";
-		echo "
+		$display_buffer .= "
 		<P>
 		<CENTER>
-		<A HREF=\"$this->page_name?$_auth&module=$module\"
+		<A HREF=\"$this->page_name?module=$module\"
 		 >"._("Abandon Modification")."</A>
 		</CENTER>
 	  	";
@@ -129,14 +129,14 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 	}
 
-	function modform()
-	{
+	function modform() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
       	if ($id<1) 
 		{
-			echo "
+			$display_buffer .= "
 			 "._("You must select a record to modify.")."
 			";
 			freemed_display_box_bottom ();
@@ -144,7 +144,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			freemed_display_html_bottom ();
 			DIE("");
 		}
-		//echo "modform<BR>";
+		//$display_buffer .= "modform<BR>";
       	if ($been_here != "yes") 
 		{
          	// now we extract the data, since the record was given...
@@ -196,7 +196,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		if ($editaction=="delete")	
 			$this->DoDelete($row,$col,$len,$data,$format,$comment,$mark,$linecount);
 
-		echo "
+		$display_buffer .= "
 		 <FORM ACTION=\"$this->page_name\" METHOD=POST>
 		  <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
 		  <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
@@ -204,13 +204,13 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		  <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">";
 
 		//$line_total = count($row); 
-        //echo "total $line_total<BR>";
+        //$display_buffer .= "total $line_total<BR>";
 
         //if ($line_total != 0)
         //{
         //  for($i=0;$i<$line_total;$i++)
         //  {
-        //        echo "
+        //        $display_buffer .= "
         //          <INPUT TYPE=HIDDEN NAME=\"row$brackets\" VALUE=\"".prepare($row[$i])."\">
         //          <INPUT TYPE=HIDDEN NAME=\"col$brackets\" VALUE=\"".prepare($col[$i])."\">
         //          <INPUT TYPE=HIDDEN NAME=\"len$brackets\" VALUE=\"".prepare($len[$i])."\">
@@ -223,51 +223,51 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
         //}
 
 
-		echo "
+		$display_buffer .= "
 		 <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
 		 <TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Name of Form")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Name of Form")." : </TD>
 		   <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=40 MAXLENGTH=50
 			VALUE=\"".prepare($ffname)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Page Length")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Page Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffpagelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffpagelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Description")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=40 MAXLENGTH=100
 			VALUE=\"".prepare($ffdescrip)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Line Length")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Line Length")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"fflinelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($fflinelength)."\">
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Loop Repetitions")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Loop Repetitions")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopnum\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopnum)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Check Char")." : <BR>
-						  "._("(<I>example: \"X\"</I>)")."<$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Check Char")." : <BR>
+						  "._("(<I>example: \"X\"</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
 			VALUE=\"".prepare($ffcheckchar)."\"> 
 		  </TD>
 		 </TR><TR>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Loop Line Offset")." : <BR>
-					 "._("(<I>\"1\" skips to the next line</I>)")."<$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Loop Line Offset")." : <BR>
+					 "._("(<I>\"1\" skips to the next line</I>)")."</TD>
 		  <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"ffloopoffset\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopoffset)."\">
 		  </TD>
-		  <TD ALIGN=RIGHT><$STDFONT_B>"._("Type")." : <$STDFONT_E></TD>
+		  <TD ALIGN=RIGHT>"._("Type")." : </TD>
 		  <TD ALIGN=LEFT>
 		   <SELECT NAME=\"fftype\">
 			<OPTION VALUE=\"0\" ".
@@ -286,16 +286,16 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		 <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
 		  <TR BGCOLOR=\"#000000\">
-		   <TD><$STDFONT_B COLOR=\"#ffffff\">#<$STDFONT_E></TD>
-		   <TD><$STDFONT_B COLOR=\"#ffffff\"><CENTER><B>"._("Mark")."</B></CENTER>
-			 <$STDFONT_E></TD>
-		   <TD><$STDFONT_B COLOR=\"#ffffff\"
-			><B>"._("Row/Line")."</B><$STDFONT_E></TD>
-		   <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Column")."</B><$STDFONT_E></TD>
-		   <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Length")."</B><$STDFONT_E></TD>
-		   <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Data")."</B><$STDFONT_E></TD>
-		   <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Format")."</B><$STDFONT_E></TD>
-		   <TD><$STDFONT_B COLOR=\"#ffffff\"><B>"._("Comment")."</B><$STDFONT_E></TD>
+		   <TD><FONT COLOR=\"#ffffff\">#</FONT></TD>
+		   <TD><FONT COLOR=\"#ffffff\"><CENTER><B>"._("Mark")."</B></CENTER>
+			 </FONT></TD>
+		   <TD><FONT COLOR=\"#ffffff\"
+			><B>"._("Row/Line")."</B></FONT></TD>
+		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Column")."</B></FONT></TD>
+		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Length")."</B></FONT></TD>
+		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Data")."</B></FONT></TD>
+		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Format")."</B></FONT></TD>
+		   <TD><FONT COLOR=\"#ffffff\"><B>"._("Comment")."</B></FONT></TD>
 		  </TR>
 		 ";
 
@@ -311,12 +311,12 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			}
 		}
 
-		//echo "maxline $maxlines <BR>";
+		//$display_buffer .= "maxline $maxlines <BR>";
 		if (!isset($start))
 		{
 			$start=0;
 			$last = ($line_total > $maxlines) ? $maxlines : $line_total;
-			//echo "first end $last<BR>";
+			//$display_buffer .= "first end $last<BR>";
 	
 		}
 
@@ -325,10 +325,10 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			// replace file data with screen content
 			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
 
-			//echo "last $last<BR>";
+			//$display_buffer .= "last $last<BR>";
 			$start = $start + $maxlines;
 			$last = $last + $maxlines;
-			//echo "last $last<BR>";
+			//$display_buffer .= "last $last<BR>";
 			if ($start > $line_total)
 			{
 				$start = 0;
@@ -347,10 +347,10 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			// replace file data with screen content
 			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
 
-			//echo "last $last<BR>";
+			//$display_buffer .= "last $last<BR>";
 			$start = $start - $maxlines;
 			$last = $start + $maxlines;
-			//echo "last $last<BR>";
+			//$display_buffer .= "last $last<BR>";
 			if ($start < 0)
 			{
 				$start = 0;
@@ -361,16 +361,16 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			}
 		}
 		
-		//echo "start last $start $last<BR>";
+		//$display_buffer .= "start last $start $last<BR>";
 		if ($line_total != 0)
 		{
 
 			for($i=$start;$i<$last;$i++)
 			{
-				echo "
+				$display_buffer .= "
 				 <TR BGCOLOR=\"".
 				  ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
-				  <TD><$STDFONT_B COLOR=\"$colors[$i]\">".($i+1)."<$STDFONT_E></TD>
+				  <TD><FONT COLOR=\"$colors[$i]\">".($i+1)."</FONT></TD>
 				  <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"mark$brackets\" VALUE=\"$i\"></CENTER></TD>
 				  <TD><INPUT TYPE=TEXT NAME=\"drow$brackets\" SIZE=5
 					MAXLENGTH=3 VALUE=\"".prepare($row[$i])."\"></TD>
@@ -392,7 +392,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		
 
 		// display the bottom of the repetitive table
-		echo "
+		$display_buffer .= "
 		  </TABLE>
 		   <INPUT TYPE=HIDDEN NAME=\"start\" VALUE=\"".prepare($start)."\">
 		   <INPUT TYPE=HIDDEN NAME=\"last\" VALUE=\"".prepare($last)."\">
@@ -402,7 +402,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
         {
           for($i=0;$i<$line_total;$i++)
           {
-                echo "
+                $display_buffer .= "
                   <INPUT TYPE=HIDDEN NAME=\"row$brackets\" VALUE=\"".prepare($row[$i])."\">
                   <INPUT TYPE=HIDDEN NAME=\"col$brackets\" VALUE=\"".prepare($col[$i])."\">
                   <INPUT TYPE=HIDDEN NAME=\"len$brackets\" VALUE=\"".prepare($len[$i])."\">
@@ -413,12 +413,13 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
                   ";
           }
         }
-		echo "
+		$display_buffer .= "
 		  <P>
 		  <CENTER>
-		  <$STDFONT_B SIZE=-1>Line Count :
+		  <FONT SIZE=\"-1\">Line Count :
 		   <INPUT TYPE=TEXT NAME=\"linecount\" VALUE=\"0\"
-			SIZE=2 MAXLENGTH=2><$STDFONT_E>
+			SIZE=2 MAXLENGTH=2>
+		  </FONT>
 		  </CENTER>
 		  <BR>
 		  <CENTER>
@@ -437,10 +438,10 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		  <INPUT TYPE=SUBMIT VALUE=\"go!\">
 		  </CENTER>
 		";
-		echo "
+		$display_buffer .= "
 		<P>
 		<CENTER>
-		<A HREF=\"$this->page_name?$_auth&module=$module\"
+		<A HREF=\"$this->page_name?module=$module\"
 		 >"._("Menu")."</A>
 		</CENTER>
 	  	";
@@ -449,13 +450,13 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 	
 	} // end modform
 
-	function DoDelete(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount)
-	{
+	function DoDelete(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount) {
+		global $display_buffer;
 		$numrows = count($row);
 		if ($numrows == 0)
 			return false;
 	
-		//echo "numrows before $numrows<BR>";
+		//$display_buffer .= "numrows before $numrows<BR>";
 		$n=0;	
 		for ($i=0;$i<$numrows;$i++)
 		{
@@ -469,7 +470,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 				$newcomment[$n] = $comment[$i];
 				$newcolor[$n] = "#000000";
 				$n++;
-				//echo "$i $n <BR>";
+				//$display_buffer .= "$i $n <BR>";
 			}
 		}
 		$row = $newrow;
@@ -479,14 +480,14 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		$format = $newformat;
 		$comment = $newcomment;
 		//$numrows = count($row);
-		//echo "numrows after $numrows<BR>";
+		//$display_buffer .= "numrows after $numrows<BR>";
 		return true;
 		
 		
 	}
 
-	function DoInsertB(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors)
-	{
+	function DoInsertB(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors) {
+		global $display_buffer;
 		// insert before
 		$numrows = count($row);
 		if ($numrows == 0)
@@ -536,7 +537,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			$i++;
 			$n++;
 
-			//echo "$i $n <BR>";
+			//$display_buffer .= "$i $n <BR>";
 			if ($i == $numrows)
 				$gotrows = false;
 		} // end gotrows
@@ -552,8 +553,8 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 	} // end do insert before
 
-	function DoInsert(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors)
-	{
+	function DoInsert(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors) {
+		global $display_buffer;
 		// insert after 
 
 		$numrows = count($row);
@@ -573,7 +574,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			return false;
 		
 
-		//echo "numrows before $numrows<BR>";
+		//$display_buffer .= "numrows before $numrows<BR>";
 
 		$gotrows = true;
 		$i=0;
@@ -605,7 +606,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			}
 			$i++;
 			$n++;
-			//echo "$i $n <BR>";
+			//$display_buffer .= "$i $n <BR>";
 			if ($i == $numrows)
 				$gotrows = false;
 
@@ -619,13 +620,13 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		$colors = $newcolors;
 
 		//$numrows = count($row);
-		//echo "numrows after $numrows<BR>";
+		//$display_buffer .= "numrows after $numrows<BR>";
 		return;
 
 	} //end doinsert
 
-	function DoCopy(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors)
-	{
+	function DoCopy(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors) {
+		global $display_buffer;
 		
 		$numrows = count($row);
 		if ($numrows == 0)
@@ -655,7 +656,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 		$to = ($to - $from) + 1; // num to get
 		
-		//echo "from to after marks $from $to $after $nummarks<BR>";
+		//$display_buffer .= "from to after marks $from $to $after $nummarks<BR>";
 
 		$newrow = array_slice($row,$from,$to);
 		$newcol = array_slice($col,$from,$to);
@@ -666,7 +667,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		$newcolors = array_slice($colors,$from,$to);
 
 		$numnew = count($newrow);
-		//echo "newrows $numnew<BR>";
+		//$display_buffer .= "newrows $numnew<BR>";
 		for ($i=0;$i<$numnew;$i++)
 			$newcolors[$i] = "#ff0000";
 
@@ -681,8 +682,8 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 	}
 
-	function DoResq(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors) 
-	{
+	function DoResq(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors) {
+		global $display_buffer;
 		if ($linecount == 0)
 			return false;
 
@@ -704,7 +705,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		$from = $locations[0];
 		$to = $locations[1];
 		$to++;
-		//echo "from to marks $from $to $nummarks<BR>";
+		//$display_buffer .= "from to marks $from $to $nummarks<BR>";
 
 		// all colors black
 		$numcolors = count($row);
@@ -713,37 +714,38 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 
 		for ($i=$from;$i<$to;$i++)
 		{
-			//echo "row before $row[$i]<BR>";
+			//$display_buffer .= "row before $row[$i]<BR>";
 			$row[$i] += $linecount;
 			$colors[$i] = "#ff0000";  // show red for copied lines
-			//echo "row after $row[$i]<BR>";
+			//$display_buffer .= "row after $row[$i]<BR>";
 
 		}	
 		
 
 	}
 
-	function DoSaveScreen(&$row,&$col,&$len,&$data,&$format,&$comment,&$start,&$last) 
-	{
+	function DoSaveScreen(&$row,&$col,&$len,&$data,&$format,&$comment,&$start,&$last) {
+		global $display_buffer;
 		global $drow,$dcol,$dlen,$ddata,$dformat,$dcomment;
-		//echo "data start $ddata[$start]<BR>";
+		//$display_buffer .= "data start $ddata[$start]<BR>";
 		$screen=0;
 		for ($i=$start;$i<$last;$i++)
 		{
-			//echo "before $data[$i] $ddata[$screen]<BR>";
+			//$display_buffer .= "before $data[$i] $ddata[$screen]<BR>";
 			$col[$i] = $dcol[$screen];
 			$row[$i] = $drow[$screen];
 			$len[$i] = $dlen[$screen];
 			$data[$i] = $ddata[$screen];
 			$format[$i] = $dformat[$screen];
 			$comment[$i] = $dcomment[$screen];
-			//echo "after $data[$i] $ddata[$screen]<BR>";
+			//$display_buffer .= "after $data[$i] $ddata[$screen]<BR>";
 			$screen++;
 		}
 		
 	}
 
 	function add () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		global $ffrow,$ffcol,$fflength,$ffdata,$ffformat,$ffcomment;
@@ -757,6 +759,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 	} // end function fixedFormsMaintenance->add
 
 	function mod () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		global $ffrow,$ffcol,$fflength,$ffdata,$ffformat,$ffcomment;
@@ -770,8 +773,9 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 	} // end function fixedFormsMaintenance->mod
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT * FROM $this->table_name ".
 				"ORDER BY ffname, ffdescrip"),
 			$this->page_name,

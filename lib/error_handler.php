@@ -8,6 +8,8 @@ if (!defined("__ERROR_HANDLER_PHP__")) {
 define ('__ERROR_HANDLER_PHP__', true);
 
 function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
+	global $display_buffer;
+
 	switch ($no) {
 		case E_ERROR:
 		case E_PARSE:
@@ -38,9 +40,9 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 					freemed_display_box_top ();
 			}
 			// currently, show error
-			echo "<PRE>\n$error\n</PRE>\n";
+			$display_buffer .= "<PRE>\n$error\n</PRE>\n";
 			if (BUG_TRACKER) {
-				echo "
+				$display_buffer .= "
 				<P>
 				<CENTER>
 				<FORM ACTION=\"http://www.freemed.org/report_bug.php\" METHOD=POST
@@ -62,9 +64,14 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 					freemed_display_html_bottom ();
 			}
 			
-			DIE("");
+			// Use "template_display" to show the template
+			if (function_exists("template_display")) {
+				template_display();
+			} else {
+				DIE("");
+			} // end checking for template_display
 			break;
-		//default: echo "error type : $no<BR>\n"; break;
+		//default: $display_buffer .= "error type : $no<BR>\n"; break;
 	} // end switch
 } // end function freemed_standard_error_handler
 

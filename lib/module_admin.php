@@ -38,6 +38,7 @@ class freemedAdminModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action;
 
 		switch ($action) {
@@ -64,7 +65,7 @@ class freemedAdminModule extends freemedModule {
 				if (empty($id) or ($id<1)) {
 					freemed_display_box_bottom ();
 					freemed_display_html_bottom ();
-					die ("");
+					template_display();
 				}
 				$this->modform();
 				break;
@@ -81,12 +82,13 @@ class freemedAdminModule extends freemedModule {
 	// function _add
 	// - addition routine (can be overridden if need be)
 	function _add () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Adding")." ...
+			"._("Adding")." ...
 		";
 
 		$result = $sql->query (
@@ -96,15 +98,15 @@ class freemedAdminModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else        { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 	} // end function _add
@@ -113,16 +115,17 @@ class freemedAdminModule extends freemedModule {
 	// function _del
 	// - only override this if you *really* have something weird to do
 	function _del () {
-		global $STDFONT_B, $STDFONT_E, $id, $sql, $module;
-		echo "<P ALIGN=CENTER>".
-			"<$STDFONT_B>"._("Deleting")." . . . \n";
+		global $display_buffer;
+		global $id, $sql, $module;
+		$display_buffer .= "<P ALIGN=CENTER>".
+			_("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { echo _("done"); }
-		 else        { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
-		echo "<$STDFONT_E></P>\n";
-		echo "<P ALIGN=CENTER><$STDFONT_B><A HREF=\"".$this->page_name.
+		if ($result) { $display_buffer .= _("done"); }
+		 else        { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		$display_buffer .= "</P>\n";
+		$display_buffer .= "<P ALIGN=CENTER><A HREF=\"".$this->page_name.
 			"?module=".urlencode($module)."\">"._("back")."</A></P>\n";
 	} // end function _del
 	function del () { $this->_del(); }
@@ -130,12 +133,13 @@ class freemedAdminModule extends freemedModule {
 	// function _mod
 	// - modification routine (override if neccessary)
 	function _mod () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Modifying")." ...
+			"._("Modifying")." ...
 		";
 
 		$result = $sql->query (
@@ -148,15 +152,15 @@ class freemedAdminModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else        { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 	} // end function _mod
@@ -170,6 +174,7 @@ class freemedAdminModule extends freemedModule {
 	// function form
 	// - add/mod form stub
 	function form () {
+		global $display_buffer;
 		global $action, $id, $sql;
 
 		if (is_array($this->form_vars)) {
@@ -194,10 +199,11 @@ class freemedAdminModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
+		global $display_buffer;
 		global $sql;
 		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$result,
 			"module_loader.php",
 			$this->form_vars,

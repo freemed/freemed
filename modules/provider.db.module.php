@@ -68,11 +68,12 @@ class providerMaintenance extends freemedMaintenanceModule {
 	function mod() { $this->form(); }
 
 	function form() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
 		$book = new notebook (
-			array ("action", "_auth", "id", "module"),
+			array ("action", "id", "module"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR,
 			4 
 		);
@@ -109,43 +110,43 @@ class providerMaintenance extends freemedMaintenanceModule {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Last Name")." : <$STDFONT_E>
+    "._("Last Name")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phylname SIZE=25 MAXLENGTH=52
      VALUE=\"".prepare($phylname)."\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("First Name")." : <$STDFONT_E>
+    "._("First Name")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyfname SIZE=25 MAXLENGTH=50
      VALUE=\"".prepare($phyfname)."\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Middle Name")." : <$STDFONT_E>
+    "._("Middle Name")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phymname SIZE=25 MAXLENGTH=50
      VALUE=\"$phymname\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Title")." : <$STDFONT_E>
+    "._("Title")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phytitle SIZE=10 MAXLENGTH=10
      VALUE=\"$phytitle\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Practice Name")." : <$STDFONT_E>
+    "._("Practice Name")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phypracname SIZE=25 MAXLENGTH=30
      VALUE=\"$phypracname\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Internal ID #")." : <$STDFONT_E>
+    "._("Internal ID #")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyid1 SIZE=11 MAXLENGTH=10
      VALUE=\"$phyid1\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Status")." : <$STDFONT_E>
+    "._("Status")." :
     </TD><TD ALIGN=LEFT>
     ".
     freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
@@ -163,18 +164,18 @@ class providerMaintenance extends freemedMaintenanceModule {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT> 
-    <$STDFONT_B>"._("Email Address")." : <$STDFONT_E>
+    "._("Email Address")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
      VALUE=\"$phyemail\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Cellular Phone #")." : <$STDFONT_E>
+    "._("Cellular Phone #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phycellular")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Beeper / Pager #")." : <$STDFONT_E>
+    "._("Beeper / Pager #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phypager")."
     </TD></TR>
@@ -190,49 +191,49 @@ class providerMaintenance extends freemedMaintenanceModule {
      phone_vars("phyfaxa")
     ),
     "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
+   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=\"100%\">
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Address Line 1")." : <$STDFONT_E>
+    "._("Primary Address Line 1")." :
     </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyaddr1a SIZE=25 MAXLENGTH=30
+    <INPUT TYPE=TEXT NAME=\"phyaddr1a\" SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr1a\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Address Line 2")." : <$STDFONT_E>
+    "._("Primary Address Line 2")." :
     </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyaddr2a SIZE=25 MAXLENGTH=30
+    <INPUT TYPE=TEXT NAME=\"phyaddr2a\" SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr2a\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Address City")." : <$STDFONT_E>
+    "._("Primary Address City")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phycitya SIZE=21 MAXLENGTH=20
      VALUE=\"$phycitya\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Address State")." : <$STDFONT_E>
+    "._("Primary Address State")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phystatea SIZE=6 MAXLENGTH=5
      VALUE=\"$phystatea\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Address Zip")." : <$STDFONT_E>
+    "._("Primary Address Zip")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyzipa SIZE=10 MAXLENGTH=10
      VALUE=\"$phyzipa\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Address Phone #")." : <$STDFONT_E>
+    "._("Primary Address Phone #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyphonea")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Address Fax #")." : <$STDFONT_E>
+    "._("Primary Address Fax #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyfaxa")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Has Second Address")." : <$STDFONT_E>
+    "._("Has Second Address")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=CHECKBOX NAME=\"has_second_addr\" ".
     ($has_second_addr ? "CHECKED" : "").">". 
@@ -253,42 +254,42 @@ class providerMaintenance extends freemedMaintenanceModule {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Address Line 1")." : <$STDFONT_E>
+    "._("Secondary Address Line 1")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr1b SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr1b\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Address Line 2")." : <$STDFONT_E>
+    "._("Secondary Address Line 2")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr2b SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr2b\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Address City")." : <$STDFONT_E>
+    "._("Secondary Address City")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phycityb SIZE=20 MAXLENGTH=20
      VALUE=\"$phycityb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Address State")." : <$STDFONT_E>
+    "._("Secondary Address State")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phystateb SIZE=6 MAXLENGTH=5
      VALUE=\"$phystateb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Address Zip")." : <$STDFONT_E>
+    "._("Secondary Address Zip")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyzipb SIZE=10 MAXLENGTH=10
      VALUE=\"$phyzipb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Address Phone #")." : <$STDFONT_E>
+    "._("Secondary Address Phone #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyphoneb")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Secondary Address Fax #")." : <$STDFONT_E>
+    "._("Secondary Address Fax #")." :
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyfaxb")."
     </TD></TR>
@@ -314,13 +315,13 @@ class providerMaintenance extends freemedMaintenanceModule {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-     <$STDFONT_B>"._("UPIN Number")." : <$STDFONT_E>
+     "._("UPIN Number")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyupin SIZE=16 MAXLENGTH=15
      VALUE=\"$phyupin\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Social Security #")." : <$STDFONT_E>
+    "._("Social Security #")." :
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=physsn1 SIZE=4 MAXLENGTH=3
      VALUE=\"$physsn1\"> <B>-</B>
@@ -330,43 +331,43 @@ class providerMaintenance extends freemedMaintenanceModule {
      VALUE=\"$physsn3\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Degree 1")." : <$STDFONT_E>
+    "._("Degree 1")." :
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($phy_deg_r, 
        "#degdegree#, #degname#", "phydeg1")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Degree 2")." : <$STDFONT_E>
+    "._("Degree 2")." :
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($phy_deg_r, 
        "#degdegree#, #degname#", "phydeg2")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Degree 3")." : <$STDFONT_E>
+    "._("Degree 3")." :
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($phy_deg_r, 
        "#degdegree#, #degname#", "phydeg3")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Specialty 1")." : <$STDFONT_E>
+    "._("Specialty 1")." :
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($spec_r, 
        "#specname#, #specdesc#", "physpe1")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Specialty 2")." : <$STDFONT_E>
+    "._("Specialty 2")." :
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($spec_r, 
        "#specname#, #specdesc#", "physpe2")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Specialty 3")." : <$STDFONT_E>
+    "._("Specialty 3")." :
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($spec_r, 
        "#specname#, #specdesc#", "physpe3")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Physician Internal/External")."<$STDFONT_E>
+    "._("Physician Internal/External")."
     </TD><TD ALIGN=LEFT>
     <SELECT NAME=\"phyref\">
       <OPTION VALUE=\"no\" ".
@@ -460,14 +461,12 @@ class providerMaintenance extends freemedMaintenanceModule {
   );
   // now display the thing
   if (!$book->is_done()) {
-    echo "<CENTER>\n".$book->display()."</CENTER>
+    $display_buffer .= "<CENTER>\n".$book->display()."</CENTER>
     <P ALIGN=CENTER>
-     <$STDFONT_B>
-     <A HREF=\"$this->page_name?$_auth&module=$module&action=view\">
+     <A HREF=\"$this->page_name?module=$module&action=view\">
       "._("Abandon ".( (($action=="modform") OR ($action=="mod")) ? 
       "Modification" : "Addition") )."
      </A>
-     <$STDFONT_E>
     ";
 		} else { // submit has been clicked
 			global $phyphonea, $phyfaxa, $phyphoneb, $phyfaxb,
@@ -484,9 +483,9 @@ class providerMaintenance extends freemedMaintenanceModule {
 			} else if ($action=="addform") {
 				$this->_add();
 			} else { // error
-      			echo "
+      			$display_buffer .= "
    	  			<P ALIGN=CENTER>
-				<$STDFONT_B>"._("ERROR")."! \$action=$action!<$STDFONT_E>
+				"._("ERROR")."! \$action=$action!
 				</P>
   		  		";
 			} // error handler
@@ -494,31 +493,32 @@ class providerMaintenance extends freemedMaintenanceModule {
 	} // end function providerMaintenance->form()
 
 	function display () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
 		$phy = freemed_get_link_rec($id, $this->table_name);
-		echo "
+		$display_buffer .= "
    <CENTER>
     <TABLE WIDTH=\"100%\">
      <TR><TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Name")." : <$STDFONT_E>
+      "._("Name")." :
      </TD><TD ALIGN=LEFT>
-      <$STDFONT_B>$phy[phyfname] 
-          $phy[phymname] $phy[phylname], $phy[phytitle]<$STDFONT_E>
+      $phy[phyfname] 
+          $phy[phymname] $phy[phylname], $phy[phytitle]
      </TD></TR>
   ";
   if (freemed_get_userlevel($LoginCookie)>$database_level)
-   echo "
+   $display_buffer .= "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
-      <$STDFONT_B><A HREF=\"physician.php?$_auth&action=modform&id=$id\"
-       >"._("Modify")." "._($record_name)."</A><$STDFONT_E>
+      <A HREF=\"physician.php?action=modform&id=$id\"
+       >"._("Modify")." "._($record_name)."</A>
      </TD></TR>
    ";
-  echo "
+  $display_buffer .= "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
-      <$STDFONT_B><A HREF=\"physician.php?$_auth&id=$id\"
-       >"._("back")."</A><$STDFONT_E>
+      <A HREF=\"physician.php?id=$id\"
+       >"._("back")."</A>
      </TD></TR>
     </TABLE>
    </CENTER>
@@ -526,12 +526,13 @@ class providerMaintenance extends freemedMaintenanceModule {
 	} // end function providerMaintenance->display()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
 
   $phy_q = "SELECT phylname,phyfname,id FROM ".$this->table_name." ".
     "ORDER BY phylname,phyfname";
   $phy_r = $sql->query($phy_q);
-  echo freemed_display_itemlist (
+  $display_buffer .= freemed_display_itemlist (
     $phy_r,
     $this->page_name,
     array (

@@ -13,23 +13,23 @@
  // use in jumping from place A to place B, and eventually put
  // it on the tool bar.
 switch ($location) {
-  case "/aicd": $redirect="icd9.php?$_auth&action=addform"; break;
-  case "/cfg":  $redirect="admin.php?$_auth&action=cfgform"; break;
-  case "/dis":  echo "not yet"; break;
-  case "/icd":  $redirect="icd9.php?$_auth&action=view"; break;
-  case "/init": $redirect="admin.php?$_auth&action=reinit"; break;
-  case "/npat": $redirect="patient.php?$_auth&action=addform"; break;
-  case "/nphy": $redirect="physician.php?$_auth&action=addform"; break;
-  case "/pat":  $redirect="patient.php?$_auth&action=view";
-  case "/phy":  $redirect="physician.php?$_auth&action=view"; break;
-  default:      $redirect="main.php?$_auth"; break;
+  case "/aicd": $redirect="icd9.php?action=addform"; break;
+  case "/cfg":  $redirect="admin.php?action=cfgform"; break;
+  case "/dis":  $display_buffer .= "not yet"; break;
+  case "/icd":  $redirect="icd9.php?action=view"; break;
+  case "/init": $redirect="admin.php?action=reinit"; break;
+  case "/npat": $redirect="patient.php?action=addform"; break;
+  case "/nphy": $redirect="physician.php?action=addform"; break;
+  case "/pat":  $redirect="patient.php?action=view";
+  case "/phy":  $redirect="physician.php?action=view"; break;
+  default:      $redirect="main.php"; break;
 }
 
   // and now the actual redirector
 
 Header("Location: ".COMPLETE_URL."$redirect");
 
-echo "<HTML>
+$display_buffer .= "<HTML>
 <HEAD>
 <TITLE>redirector</TITLE>
 <META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=".COMPLETE_URL."$redirect\"> 

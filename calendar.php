@@ -9,24 +9,18 @@ include ("lib/API.php");
 include ("lib/module.php");
 include ("lib/module_calendar.php");
 
-SetCookie ("_ref", $page_name, time()+$_cookie_expire);
-
-freemed_open_db ($LoginCookie);
-freemed_display_html_top ();
-freemed_display_box_top (_("Calendar"));
+freemed_open_db ();
+$page_title = _("Calendar");
+page_push ();
 
  // Check for appropriate access level
-if (freemed_get_userlevel ($LoginCookie) < $database_level) { 
-   echo "
+if (freemed_get_userlevel () < $database_level) { 
+   $display_buffer .= "
       <P>
-      <$HEADERFONT_B>
         "._("You don't have access for this menu.")."
-      <$HEADERFONT_E>
       <P>
     ";
-	freemed_display_box_bottom();
-	freemed_display_html_bottom();
-	die("");
+	template_display();
 } // end if not appropriate userlevel
 
 // information for module loader
@@ -34,7 +28,7 @@ $category = "Calendar";
 $template = "
 	<TR>
 	<TD ALIGN=RIGHT>#icon#</TD>
-	<TD ALIGN=LEFT><A HREF=\"module_loader.php?$_auth&module=#class#\"".
+	<TD ALIGN=LEFT><A HREF=\"module_loader.php?module=#class#\"".
 	">#name#</A></TD>
 	</TR>
 ";
@@ -42,7 +36,7 @@ $template = "
 // module loader
 $module_list = new module_list (PACKAGENAME,".calendar.module.php");
 if (!$module_list->empty_category($category)) {
-	echo "
+	$display_buffer .= "
 	<P>
 	<CENTER>
 	<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
@@ -52,28 +46,27 @@ if (!$module_list->empty_category($category)) {
 	</CENTER>
 	<P>
 	<CENTER>
-		<A HREF=\"main.php?$_auth\"
+		<A HREF=\"main.php\"
 		>"._("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";
 } else {
-	echo "
+	$display_buffer .= "
 	<P>
 	<CENTER>
 		"._("There are no report modules present.")."
 	</CENTER>
 	<P>
 	<CENTER>
-		<A HREF=\"main.php?$_auth\"
+		<A HREF=\"main.php\"
 		>"._("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";
 }
 
-freemed_display_box_bottom ();
-freemed_display_html_bottom ();
-freemed_close_db (); // close db
+freemed_close_db ();
+template_display ();
 
 ?>

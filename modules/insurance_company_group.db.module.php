@@ -28,6 +28,7 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 	function modform () { $this->form(); }
 
  	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -36,7 +37,7 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 			extract ($r);
 		} // end checking for id
 
-		echo "
+		$display_buffer .= "
 		<P>
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
@@ -61,8 +62,9 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 	} // end function insuranceCompanyGroupMaintenance->form
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT inscogroup,id FROM inscogroup ".
 				"ORDER BY inscogroup"),
 			$this->page_name,

@@ -34,8 +34,9 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 	} // end constructor providerGroupsMaintenance
 
 	function view () {  
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist(
+		$display_buffer .= freemed_display_itemlist(
 			$sql->query("SELECT phygroupname,phygroupfac,id FROM $this->table_name"),
 			$this->page_name,
 			array (
@@ -51,6 +52,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 	} // end function providerGroupsMaintenance->view()
 
 	function form () {
+		global $display_buffer;
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -84,7 +86,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 		$phy_q = "SELECT phylname,phyfname,id FROM physician ORDER BY phylname";
 
 
-		echo "
+		$display_buffer .= "
 			<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=\"100%\">
    <TR><TD ALIGN=CENTER>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
@@ -94,7 +96,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
     <INPUT TYPE=HIDDEN NAME=\"phygroupdtadd\" VALUE=\"".prepare($phygroupdtadd)."\">";
  
-	echo html_form::form_table( array (
+	$display_buffer .= html_form::form_table( array (
 	_("Physician Group Name") => 
 	"<INPUT TYPE=TEXT NAME=phygroupname SIZE=20 MAXLENGTH=100 ".
      "VALUE=\"".prepare($phygroupname)."\">",
@@ -110,13 +112,13 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 		);
 /*
 	 
-    <$STDFONT_B>"._("Physician Group Name")." : <$STDFONT_E>
+    "._("Physician Group Name")." :
     <INPUT TYPE=TEXT NAME=phygroupname SIZE=20 MAXLENGTH=100
      VALUE=\"".prepare($phygroupname)."\">
    </TD></TR>
 
    <TR><TD ALIGN=CENTER>
-    <$STDFONT_B>"._("Default Facility")." : <$STDFONT_E>
+    "._("Default Facility")." :
     ".freemed_display_selectbox($fac_r, "#psrname# [#psrnote#]", 
        "phygroupfac")."
    </TD></TR>
@@ -139,7 +141,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
      </TR>
     ";
   } // end looping for service types
-	echo "<P>
+	$display_buffer .= "<P>
   <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 
    BGCOLOR=\"#000000\"> <!-- black border --><TR><TD>
 
@@ -157,7 +159,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
   </TD></TR></TABLE></CENTER>
 	";
 	// end groupidmap
-	echo "<P>
+	$display_buffer .= "<P>
    <TR><TD ALIGN=CENTER>
     <INPUT TYPE=SUBMIT VALUE=\"".
       (($action=="modform") ? _("Modify") : _("Add"))."\">
@@ -166,10 +168,10 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
    </TD></TR>
    </TABLE>
   ";
-		if ($action=="modform") echo "
+		if ($action=="modform") $display_buffer .= "
 			<CENTER>
-			<$STDFONT_B><A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
-			 >"._("Abandon Modification")."</A><$STDFONT_E>
+			<A HREF=\"$this->page_name?module=$module&action=view\"
+			 >"._("Abandon Modification")."</A>
 			</CENTER>\n";
 	} // end function providerGroupsMaintenance->form()
 

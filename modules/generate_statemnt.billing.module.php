@@ -18,7 +18,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 
 	var $CATEGORY_NAME = "Billing";
-	var $CATEGORY_VERSION = "0";
+	var $CATEGORY_VERSION = "0.1";
 
     var $form_buffer;
     var $pat_processed;
@@ -53,8 +53,8 @@ class GenerateStatementsModule extends freemedBillingModule {
 
 	// override main function
 
-	function addform()
-	{
+	function addform() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -90,7 +90,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 			$result = $sql->query($query);
 			if (!$sql->results($result)) 
 			{
-				echo "No patients to be billed.<BR>\n";
+				$display_buffer .= "No patients to be billed.<BR>\n";
 				freemed_display_box_bottom();
 				freemed_display_html_bottom();
 				DIE("");
@@ -109,15 +109,15 @@ class GenerateStatementsModule extends freemedBillingModule {
 			}
 			else
 			{
-				echo "
+				$display_buffer .= "
 				<P>
 				<CENTER>
-				<$STDFONT_B><B>"._("Nothing to Bill!")."</B><$STDFONT_E>
+				<B>"._("Nothing to Bill!")."</B>
 				</CENTER>
 				<P>
 				<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module\"
-				><$STDFONT_B>"._("Return to Statement Generation Menu")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module\"
+				>"._("Return to Statement Generation Menu")."</A>
 				</CENTER>
 				<P>
 				";
@@ -135,8 +135,8 @@ class GenerateStatementsModule extends freemedBillingModule {
 
 	}
 	
-	function GenerateFixedForms($parmpatient, $parmcovid)
-	{
+	function GenerateFixedForms($parmpatient, $parmcovid) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->renderform_variables);
@@ -150,7 +150,7 @@ class GenerateStatementsModule extends freemedBillingModule {
         if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
-     	echo "
+     	$display_buffer .= "
       	<B>"._("Processing")." ".$this_patient->fullName()."
       	</B><BR>\n\n
      	";
@@ -186,8 +186,8 @@ class GenerateStatementsModule extends freemedBillingModule {
    } // end generateFixed
 
 
-	function Provider($stack)
-	{
+	function Provider($stack) {
+		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 		global $sql;
@@ -199,8 +199,8 @@ class GenerateStatementsModule extends freemedBillingModule {
 		
 	}
 
-	function Facility($stack)
-	{
+	function Facility($stack) {
+		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 		global $sql,$default_facility;
@@ -210,7 +210,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 
 		if ($fac <= 0)
 		{
-			echo "No default facility using procedure POS<BR>";	
+			$display_buffer .= "No default facility using procedure POS<BR>";	
 			$fac = $row[procpos];
 		}
 
@@ -225,8 +225,8 @@ class GenerateStatementsModule extends freemedBillingModule {
 
 	}
 	
-   	function Patient($stack)
-   	{
+   	function Patient($stack) {
+		global $display_buffer;
 		// patient/insurance section is top half of form
 
 		reset ($this->renderform_variables);
@@ -277,8 +277,8 @@ class GenerateStatementsModule extends freemedBillingModule {
 
 	}  // end of Patient
 
-   	function ServiceLines($stack)
-   	{
+   	function ServiceLines($stack) {
+		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 		global $sql;
@@ -352,8 +352,8 @@ class GenerateStatementsModule extends freemedBillingModule {
 		return;		
    	} // end service lines
 
-   function ProcCallBack($stack)
-   {
+   function ProcCallBack($stack) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->renderform_variables);
@@ -375,24 +375,23 @@ class GenerateStatementsModule extends freemedBillingModule {
    }
 
 
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 	
-	    echo "
+	    $display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
 		 VALIGN=MIDDLE ALIGN=CENTER>
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <$STDFONT_B><B>"._("Generate Statement Billing")."</B><$STDFONT_E>
+		   <B>"._("Generate Statement Billing")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
 
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
-		<INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
 		<INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"geninsform\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
@@ -400,7 +399,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 		<TR>
 		 <TD ALIGN=RIGHT>
 		  <CENTER>
-		   <$STDFONT_B>Statement : <$STDFONT_E>
+		   Statement :
 		  </CENTER>
 		 </TD>
      	<TD ALIGN=LEFT>
@@ -409,17 +408,17 @@ class GenerateStatementsModule extends freemedBillingModule {
 	   $result = $sql->query ("SELECT * FROM fixedform WHERE fftype='2'
 							 ORDER BY ffname, ffdescrip");
 	   while ($r = $sql->fetch_array ($result)) {
-		echo "
+		$display_buffer .= "
 		 <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
 		";
 	   } // end looping through results                         
-	   echo "
+	   $display_buffer .= "
 		  </SELECT>
 		 </TD>
     	</TR>
 		";
 
-		echo "
+		$display_buffer .= "
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>

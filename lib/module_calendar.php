@@ -64,7 +64,7 @@ class freemedCalendarModule extends freemedModule {
 			trigger_error( "No Patient Defined", E_ERROR);
 		}
 		// check access to patient
-		if (!freemed_check_access_for_patient($LoginCookie, $patient)) 
+		if (!freemed_check_access_for_patient($patient)) 
 		{
 			trigger_error("User not Authorized for this function", E_USER_ERROR);
 		}
@@ -75,6 +75,7 @@ class freemedCalendarModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action, $patient, $LoginCookie;
 
 		if (!isset($this->this_patient))
@@ -84,7 +85,7 @@ class freemedCalendarModule extends freemedModule {
 
 		// display universal patient box
         if ($patient)
-			echo freemed_patient_box($this->this_patient)."<P>\n";
+			$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
 
 		switch ($action) {
 			case "add":
@@ -136,11 +137,12 @@ class freemedCalendarModule extends freemedModule {
 	// - addition routine
 	function add () { $this->_add(); }
 	function _add () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 	
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Adding")." ...
+			"._("Adding")." ...
 		";
 
 		$result = $sql->query (
@@ -150,15 +152,15 @@ class freemedCalendarModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 
@@ -168,26 +170,28 @@ class freemedCalendarModule extends freemedModule {
 	// - delete function
 	function del () { $this->_del(); }
 	function _del () {
-		global $STDFONT_B, $STDFONT_E, $id, $sql;
-		echo "<P ALIGN=CENTER>".
-			"<$STDFONT_B>"._("Deleting")." . . . \n";
+		global $display_buffer;
+		global $id, $sql;
+		$display_buffer .= "<P ALIGN=CENTER>".
+			_("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { echo _("done"); }
-		 else		 { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
-		echo "<$STDFONT_E></P>\n";
+		if ($result) { $display_buffer .= _("done"); }
+		 else		 { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		$display_buffer .= "</P>\n";
 	} // end function _del
 
 	// function mod
 	// - modification function
 	function mod () { $this->_mod(); }
 	function _mod () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 	
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Modifying")." ...
+			"._("Modifying")." ...
 		";
 
 		$result = $sql->query (
@@ -200,15 +204,15 @@ class freemedCalendarModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 
@@ -226,6 +230,7 @@ class freemedCalendarModule extends freemedModule {
 	// function form
 	// - add/mod form stub
 	function form () {
+		global $display_buffer;
 		global $action, $id, $sql;
 
 		if (is_array($this->form_vars)) {
@@ -250,10 +255,11 @@ class freemedCalendarModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
+		global $display_buffer;
 		global $sql;
 		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$result,
 			"module_loader.php",
 			$this->form_vars,
@@ -267,12 +273,13 @@ class freemedCalendarModule extends freemedModule {
 
 	// trim leading and trailing whitespace
 	function cl_trim ($s) {
+		global $display_buffer;
 	  $ret = eregi_replace ("^[[:space:]]+|[[:space:]]+$","",$s);
 	  return $ret;
 	}
 
-	function setProcessType($type)
-	{
+	function setProcessType($type) {
+		global $display_buffer;
 		$this->ProcessType = $type;
 	}
 
@@ -280,15 +287,15 @@ class freemedCalendarModule extends freemedModule {
 	/*
 	 * function to generate the javascript needed for the popup
 	 */
-	function js_popup($w=500,$h=300)
-	{
-	  global $module, $_auth, $action;
+	function js_popup($w=500,$h=300) {
+		global $display_buffer;
+	  global $module, $action;
 
 	  $buffer = "";
 	  $buffer .= "<script language=\"javascript\">\n";
 	  $buffer .= "<!--\n\n";
 	  $buffer .= "function openWin(id){\n\n";
-	  $buffer .= "  URL = \"$this->page_name?id=\" + id + \"&_auth=".prepare($_auth)."&action=display&module=".prepare($module)."\"\n";
+	  $buffer .= "  URL = \"$this->page_name?id=\" + id + \"&action=display&module=".prepare($module)."\"\n";
 	  $buffer .= "  NAME = \"Event\" + id\n";
 	  $buffer .= "  w = window.open(";
 	  $buffer .= "URL,";
@@ -301,8 +308,8 @@ class freemedCalendarModule extends freemedModule {
 	  return $buffer;
 	}
 
-	function month( $thismonth = "" , $thisyear = "" )
-    {
+	function month( $thismonth = "" , $thisyear = "" ) {
+		global $display_buffer;
 		global $sql;
 
 		if( !$thismonth ){
@@ -340,7 +347,7 @@ class freemedCalendarModule extends freemedModule {
 			   "MONTH(a.caldateof)='" . $this->month_number . "' AND ".
 			   "YEAR(a.caldateof)='" . $this->year ."' ORDER BY day,a.calhour,a.calminute";
 
-		//echo "$query<BR>";
+		//$display_buffer .= "$query<BR>";
 		$result = $sql->query($query);
 
 
@@ -501,7 +508,8 @@ class freemedCalendarModule extends freemedModule {
 	* draws a calendar.
 	*/
 	function draw($draw_array = "") {
-		global $module, $action, $_auth;
+		global $display_buffer;
+		global $module, $action;
 
 	/*
 	* this is a long section which simply gets
@@ -512,7 +520,7 @@ class freemedCalendarModule extends freemedModule {
 	*/
 
 
-	echo $this->js_popup();
+	$display_buffer .= $this->js_popup();
 	if( !$draw_array["textcolor"] ){
 	  $textcolor = "#000000";
 	}
@@ -654,8 +662,8 @@ class freemedCalendarModule extends freemedModule {
 	}
 
 	/* start printout of main calendar table */
-	echo "<!-- begin lucid calendar printout, http://www.luciddesigns.com -->\n";
-	echo "<table cellspacing=\"$cellspacing\" cellpadding=\"$cellpadding\" width=\"$table_width\" height=\"$table_height\" border=\"$table_border\">\n";
+	$display_buffer .= "<!-- begin lucid calendar printout, http://www.luciddesigns.com -->\n";
+	$display_buffer .= "<table cellspacing=\"$cellspacing\" cellpadding=\"$cellpadding\" width=\"$table_width\" height=\"$table_height\" border=\"$table_border\">\n";
 
 	/*
 	 * we need to figure out the cell height and width for each of these.
@@ -675,15 +683,15 @@ class freemedCalendarModule extends freemedModule {
 	 * this prints out the top row, which has the names of the
 	 * days of the week. I consider it a distinct sort of thing.
 	 */
-	echo "<tr>\n";
-	echo "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Sunday</b></font></td>\n";
-	echo "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Monday</b></font></td>\n";
-	echo "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Tuesday</b></font></td>\n";
-	echo "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Wednesday</b></font></td>\n";
-	echo "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Thursday</b></font></td>\n";
-	echo "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Friday</b></font></td>\n";
-	echo "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Saturday</b></font></td>\n";
-	echo "</tr>\n";
+	$display_buffer .= "<tr>\n";
+	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Sunday</b></font></td>\n";
+	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Monday</b></font></td>\n";
+	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Tuesday</b></font></td>\n";
+	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Wednesday</b></font></td>\n";
+	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Thursday</b></font></td>\n";
+	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Friday</b></font></td>\n";
+	$display_buffer .= "  <td bgcolor=\"$bgcolor\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Saturday</b></font></td>\n";
+	$display_buffer .= "</tr>\n";
 
 
 	/*
@@ -694,12 +702,12 @@ class freemedCalendarModule extends freemedModule {
 	for( $i=0 ; $i < $num_of_rows*7 ; $i++ ){
 	  /* start first row */
 	  if( $i==0 ){
-		echo "<tr>\n";
+		$display_buffer .= "<tr>\n";
 	  }
 	  /* break into a new row at the appropriate places */ 
 	  if( $i%7 == 0 && $i != 0){
-		echo "</tr>\n";
-		echo "<tr>\n";
+		$display_buffer .= "</tr>\n";
+		$display_buffer .= "<tr>\n";
 	  }
 
 	  /*
@@ -730,7 +738,7 @@ class freemedCalendarModule extends freemedModule {
 		  else
 		  {
 		  	//$c = $this->month_data[$theday]["id"][$j];
-		  	//echo "id is $c<BR>";
+		  	//$display_buffer .= "id is $c<BR>";
 		  	$theevent .= "<font face=\"$font_face\" size=\"$font_size\">";
 			$theevent .= "<a href=\"javascript:openWin(";
 		  	$theevent .= $this->month_data[$theday]["id"][$j]; 
@@ -749,30 +757,30 @@ class freemedCalendarModule extends freemedModule {
 
 	  if ($this->ProcessType == "ADMIN")
 	  {
-  		  $theday_link = "<A HREF=\"$this->page_name?$_auth&action=display&module=".prepare($module).
+  		  $theday_link = "<A HREF=\"$this->page_name?action=display&module=".prepare($module).
 		  	  "&month=$this->month_number&day=$theday&year=$this->year\"".
 			  ">$theday</A>";
 		  $theday = $theday_link;
 			
 	  }
 
-	  echo "<td bgcolor=\"$bgcolor\" align=\"$table_row_align\" valign=\"$table_row_valign\" height=\"$dates_cell_height\"";
-	  echo "width=\"$dates_cell_width\">";
-	  echo "<font face=\"$font_face\" size=\"$font_size\"";
-	  echo ">$theday<br>\n";
-      echo "$theevent";
-	  echo "</font>";
-	  echo "</td>\n";
+	  $display_buffer .= "<td bgcolor=\"$bgcolor\" align=\"$table_row_align\" valign=\"$table_row_valign\" height=\"$dates_cell_height\"";
+	  $display_buffer .= "width=\"$dates_cell_width\">";
+	  $display_buffer .= "<font face=\"$font_face\" size=\"$font_size\"";
+	  $display_buffer .= ">$theday<br>\n";
+      $display_buffer .= "$theevent";
+	  $display_buffer .= "</font>";
+	  $display_buffer .= "</td>\n";
 	  /* be sure to clear out $theevent */
 	  $theevent = "";
 	  $theevent_info = "";
 	  /* close the last row */
 	  if( $i == $num_of_rows*7-1 ){
-		echo "</tr>\n";
+		$display_buffer .= "</tr>\n";
 	  }
 	}
-	echo "</table>\n";
-	echo "<!-- end lucid calendar printout -->\n"; /* end of calendar printout */
+	$display_buffer .= "</table>\n";
+	$display_buffer .= "<!-- end lucid calendar printout -->\n"; /* end of calendar printout */
 	} /* end draw function */
 
 

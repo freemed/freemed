@@ -27,6 +27,7 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
 	function addform () { $this->view(); }
 
 	function modform () {
+		global $display_buffer;
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 		 // grab record number "id"
@@ -35,7 +36,7 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
 
   $r = $sql->fetch_array($result);
   extract ($r);
-		echo "
+		$display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
@@ -63,18 +64,19 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
     </FORM>
   ";
 
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth\"
+    <A HREF=\"$this->page_name\"
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
 	} // end function patientStatusMaintenance->modform()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
- 		echo freemed_display_itemlist (
+ 		$display_buffer .= freemed_display_itemlist (
  			$sql->query ("SELECT ptstatusdescrip,ptstatus,id ".
 				"FROM $this->table_name ORDER BY ptstatusdescrip,ptstatus"),
 			$this->page_name,
@@ -90,11 +92,11 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
 	} // end function patientStatusMaintenance->view()
 
 	function _addform () {
-		global $module, $_auth;
-		echo "
+		global $display_buffer;
+		global $module;
+		$display_buffer .= "
 		<CENTER>
     	<FORM ACTION=\"$this->page_name\">
-     		<INPUT TYPE=HIDDEN NAME=\"_auth\" VALUE=\"".prepare($_auth)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
 		".html_form::form_table ( array (

@@ -39,6 +39,7 @@ class AdminCalendar extends freemedCalendarModule {
 	} // end constructor AdminCalendar	
 
 	function view () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 
@@ -50,7 +51,7 @@ class AdminCalendar extends freemedCalendarModule {
 		if (isset($jumpdate_y))
 			$jumpdate = fm_date_assemble("jumpdate");
 
-		//echo "jumpdate $jumpdate<BR>";
+		//$display_buffer .= "jumpdate $jumpdate<BR>";
 
 		$year  = substr($jumpdate,0,4);
 		$month = substr($jumpdate,5,2);
@@ -61,10 +62,10 @@ class AdminCalendar extends freemedCalendarModule {
 				 " AND MONTH(caldateof)='".prepare($month)."'".
 				 " ORDER BY calhour,calminute";
 
-		//echo "$query<BR>";
+		//$display_buffer .= "$query<BR>";
 		$result = $sql->query($query);
 
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
             $result,
             $this->page_name,
             array (
@@ -87,9 +88,9 @@ class AdminCalendar extends freemedCalendarModule {
 		//								$this->page_name,
 		//								array("Time" => "caltime"),
 		//								array(""));
-		//echo "$data";
+		//$display_buffer .= "$data";
 		$this->month($month,$year);
-		//echo "<CENTER><B>Calendar For: $this->month_name, $this->year</B></CENTER><br>\n";
+		//$display_buffer .= "<CENTER><B>Calendar For: $this->month_name, $this->year</B></CENTER><br>\n";
 		//$this->draw(array("cellspacing" => "2" , "cellpadding" => "2" ,
         //              "top_row_align" => "center" , "table_height" => "300px" ,
         //              "top_row_cell_height" => 20 , "bgcolor" => "#cccccc" ,
@@ -100,51 +101,53 @@ class AdminCalendar extends freemedCalendarModule {
 		$prevdate = $this->prevyear."-".$this->prevmonth."-01";
 
 		// prev  and next
-		echo "<CENTER>";
-		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
-			"&action=view&module=$module&jumpdate=$prevdate\">Prev</A>";
-		echo "&nbsp;";
-		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
-			"&action=view&module=$module&jumpdate=$nextdate\">Next</A>";
-		echo "</CENTER>";
+		$display_buffer .= "<CENTER>";
+		$display_buffer .= "<A HREF=\"$this->page_name?".
+			"action=view&module=$module&jumpdate=$prevdate\">Prev</A>";
+		$display_buffer .= "&nbsp;";
+		$display_buffer .= "<A HREF=\"$this->page_name?".
+			"action=view&module=$module&jumpdate=$nextdate\">Next</A>";
+		$display_buffer .= "</CENTER>";
 
 		// allow jumping to any year or month
-		echo "<CENTER>";
-		echo "<FORM ACTION=\"$this->page_name\" METHOD=POST>".
+		$display_buffer .= "<CENTER>";
+		$display_buffer .= "<FORM ACTION=\"$this->page_name\" METHOD=POST>".
 			 "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">".
-			 "<INPUT TYPE=HIDDEN NAME=\"_auth\" VALUE=\"".prepare($_auth)."\">".
 			 fm_date_entry("jumpdate").
 			 "<INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">".
 			 "</FORM></CENTER>";
 
-		echo "<CENTER>";
-		echo "<A HREF=\"calendar.php?$_auth\">"._("Menu")."</A>";
-		echo "</CENTER>";
+		$display_buffer .= "<CENTER>";
+		$display_buffer .= "<A HREF=\"calendar.php\">"._("Menu")."</A>";
+		$display_buffer .= "</CENTER>";
 
 
 	} // end function module->view
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 	} // end function AdminCalendar->form
 
 	function addform () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
-		//echo "jumpdate $jumpdate<BR>";
+		//$display_buffer .= "jumpdate $jumpdate<BR>";
 
-		echo "pat $patient cur $current_patient<BR>";
+		$display_buffer .= "pat $patient cur $current_patient<BR>";
 
 		//$wizard = new wizard(
 	} // end function AdminCalendar->form
 
 	function display () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 
-		//echo "year $year  month $month day $day<BR>";
-		//echo "in display<BR>";
+		//$display_buffer .= "year $year  month $month day $day<BR>";
+		//$display_buffer .= "in display<BR>";
 
 		$query = "SELECT id,calfacility,calroom,calpatient,calphysician,".
 				"CONCAT(calhour,\":\",calminute) as caltime FROM ".$this->table_name.
@@ -158,8 +161,8 @@ class AdminCalendar extends freemedCalendarModule {
 		if (!$result)
 			trigger_error("Error reading scheduler table",E_ERROR);
 
-		//echo "$query<BR>";
-		echo freemed_display_itemlist (
+		//$display_buffer .= "$query<BR>";
+		$display_buffer .= freemed_display_itemlist (
             $result,
             $this->page_name,
             array (

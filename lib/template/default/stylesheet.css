@@ -1,0 +1,54 @@
+/*
+ *  $Id$
+ *  freemed external style sheet
+ */
+
+body {
+	background: #ffffff;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	margin-top: 0px;
+	margin-left: 0px;
+	text-decoration: none
+}
+
+/* Equivalent to onMouseOver */
+a:hover {
+	color: white;
+	text-decoration: underline;
+	background-color: blue
+}
+
+/* Main freemed dialog box */
+.mainbox {
+	border: thick black;
+	border-width: thick;
+	border-style: solid;
+	background: #bbbbff 
+}
+
+.menubar {
+	border-width: none;
+	background: #bbbbff 
+}
+
+/* Title portion of menubar */
+.menubar_title {
+	border-width: none;
+	background: #aaaaff
+}
+
+/* Information portion of menubar */
+.menubar_info {
+	border-width: none;
+	background: #9999ff;
+	font-size: 8pt
+}
+
+.menubar_items {
+	border-width: none;
+	background: #ddddff;
+	font-size: 8pt
+}
+

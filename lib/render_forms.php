@@ -47,12 +47,13 @@ class diagnosisSet {
   // function diagnosisSet->numberUnique
   // -- sees how many unique values in an array are *NOT* in the stack
   function numberUnique ($newvals) {
+		global $display_buffer;
     global $debug;
 
     // determine size of new array
     $size_of_new = count ($newvals);
 
-    if ($debug) echo "numberUnique->sizeOfNew = $size_of_new <BR>\n";
+    if ($debug) $display_buffer .= "numberUnique->sizeOfNew = $size_of_new <BR>\n";
 
     // if the stack is empty, they are all unique
     if ($this->stack_size==0) return $size_of_new;
@@ -75,18 +76,20 @@ class diagnosisSet {
   // function diagnosisSet->popValue
   // -- add value to the stack
   function popValue ($val) {
+		global $display_buffer;
     global $debug;
     if (!($this->inStack ($val)) and ($val != 0)) {
       $this->stack_size++;                           // increment the stack size
       $this->internal_stack[$this->stack_size] = $val;
     }
-    if ($debug) echo "stack size = $this->stack_size ($val) <BR>\n";
+    if ($debug) $display_buffer .= "stack size = $this->stack_size ($val) <BR>\n";
   } // end function diagnosisSet->popValue
 
   // function diagnosisSet->testAddSet
   // -- tests to see whether another "set" can be added to the stack
   //    and add it to the stack if there is room
   function testAddSet ($diag1=0, $diag2=0, $diag3=0, $diag4=0) {
+		global $display_buffer;
     global $debug;
     unset ($diag);
     // first determine how many parameters
@@ -96,7 +99,7 @@ class diagnosisSet {
     if ($diag3 > 0) { $flag++; $diag[$flag] = $diag3; }
     if ($diag4 > 0) { $flag++; $diag[$flag] = $diag4; }
 
-    if ($debug) echo "\n$flag diagnoses in this charge<BR>\n";
+    if ($debug) $display_buffer .= "\n$flag diagnoses in this charge<BR>\n";
     flush();
 
     // if there are no diagnoses, then return true
@@ -116,6 +119,7 @@ class diagnosisSet {
   // function diagnosisSet->xrefList
   // -- returns comma delimited list of referenced diag codes
   function xrefList ($diag1=0,$diag2=0,$diag3=0,$diag4=0) {
+		global $display_buffer;
     global $debug;
     // first determine how many parameters
     $diag[1] = $diag1; $diag[2] = $diag2; $diag[3] = $diag3; $diag[4] = $diag4;
@@ -130,7 +134,7 @@ class diagnosisSet {
         $found_array[$num_found] = $pos; // add reference
       } // end if found in stack
     } // end looping through the stack
-    if ($debug) echo "\narray size = ".count($found_array)." <BR>\n";
+    if ($debug) $display_buffer .= "\narray size = ".count($found_array)." <BR>\n";
     if ($num_found > 1) sort ($found_array);
     if ($num_found < 1) return "";
     if ($num_found == 1) return $found_array[1];
@@ -162,6 +166,7 @@ class fixedFormEntry {
 
 // function swap_fixedFormEntry
 function swap_fixedFormEntry (&$ff1, &$ff2) {
+		global $display_buffer;
   // move #1 into temp
   $fft = new fixedFormEntry ($ff1->row, $ff1->col, $ff1->len, $ff1->data,
                              $ff1->format, $ff1->comment);
@@ -184,16 +189,17 @@ function swap_fixedFormEntry (&$ff1, &$ff2) {
 
 // function to render single item, proper length
 function render_FixedFormEntry ($formentry) {
+		global $display_buffer;
   global $debug;
 
   if ($formentry->len < 1) return "";
-  if ($debug) echo "\norig = $formentry->data <BR>\n";
+  if ($debug) $display_buffer .= "\norig = $formentry->data <BR>\n";
   flush();
   $this_evalled = ( (strpos ($formentry->data, "\$") >=0) ?
                      fm_eval ($formentry->data)       :
                      $formentry->data                    );
 
-  if ($debug) echo "\nnew = $this_evalled <BR>\n";
+  if ($debug) $display_buffer .= "\nnew = $this_evalled <BR>\n";
   flush();
   if (strlen ($this_evalled) > $formentry->len) 
   {
@@ -216,9 +222,10 @@ function render_FixedFormEntry ($formentry) {
 } // end function render_FixedFormEntry
 
 function render_fixedForm ($id) {
+		global $display_buffer;
   global $debug;
 
-  if ($debug) echo "\nEntered render_fixedForm<BR>\n";
+  if ($debug) $display_buffer .= "\nEntered render_fixedForm<BR>\n";
   flush ();
 
   $this_form  = freemed_get_link_rec ($id, "fixedform"); // get record
@@ -231,7 +238,7 @@ function render_fixedForm ($id) {
   $comments   = fm_split_into_array ($this_form["ffcomment"]);
   $number_of_entries = count ($rows);
 
-  if ($debug) echo "\nnumber of entries = $number_of_entries<BR>\n";
+  if ($debug) $display_buffer .= "\nnumber of entries = $number_of_entries<BR>\n";
   flush();
 
    // import entries into array
@@ -264,7 +271,7 @@ function render_fixedForm ($id) {
   while ($cur_entry < $number_of_entries) {
     $form_item = $form_entry [$cur_entry]; // import current entry item
 
-    if ($debug) echo "\n$cur_entry out of $number_of_entries <BR>\n";
+    if ($debug) $display_buffer .= "\n$cur_entry out of $number_of_entries <BR>\n";
     flush();
 
      // first, move to proper row if not there
@@ -281,10 +288,10 @@ function render_fixedForm ($id) {
      // actually write the rendered item to the buffer...
     $cur_row = ($form_item->row + $line_off);
     $cur_col = $form_item->col + $form_item->len;
-    if ($debug) echo "\nRendering entry <BR>\n";
+    if ($debug) $display_buffer .= "\nRendering entry <BR>\n";
     flush();
     $buffer .= render_fixedFormEntry ($form_item);
-    if ($debug) echo "\nRendering finished <BR>\n";
+    if ($debug) $display_buffer .= "\nRendering finished <BR>\n";
     flush();
     $cur_entry++; // increment the counter!
   } // while there are more entries, loop
@@ -304,9 +311,10 @@ function render_fixedForm ($id) {
 
 
 function render_fixedRecord ($id,$rectype="") {
+		global $display_buffer;
   global $debug;
 
-  if ($debug) echo "\nEntered render_fixedForm<BR>\n";
+  if ($debug) $display_buffer .= "\nEntered render_fixedForm<BR>\n";
   flush ();
 
   if (empty($rectype))
@@ -323,7 +331,7 @@ function render_fixedRecord ($id,$rectype="") {
   $comments   = fm_split_into_array ($this_form["ffcomment"]);
   $number_of_entries = count ($rows);
 
-  if ($debug) echo "\nnumber of entries = $number_of_entries<BR>\n";
+  if ($debug) $display_buffer .= "\nnumber of entries = $number_of_entries<BR>\n";
   flush();
 
   $x=0;
@@ -379,14 +387,14 @@ function render_fixedRecord ($id,$rectype="") {
     $buffer .= render_fixedFormEntry ($form_item);
 	$cur_col = $form_item->col + $form_item->len;
     $cur_entry++; // increment the counter!
-	//echo "cur_col $cur_col<BR>";
+	//$display_buffer .= "cur_col $cur_col<BR>";
 
   } // while there are more entries, loop
 
   // add trailing CR to buffer
   $buffer = str_pad($buffer,$linelength);
   $buffer .= "\n";
-  //echo "$buffer<BR>";
+  //$display_buffer .= "$buffer<BR>";
   return $buffer;
 
 } // end function render_fixedRecord

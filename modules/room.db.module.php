@@ -30,6 +30,7 @@ class roomMaintenance extends freemedMaintenanceModule {
 	} // end constructor roomMaintenance
 
 	function form () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k; 
 
   switch ($action) { // inner switch
@@ -43,10 +44,9 @@ class roomMaintenance extends freemedMaintenanceModule {
      break; // end of modform 
   } // end inner switch
 
-  echo "
+  $display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
     <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
@@ -87,7 +87,7 @@ class roomMaintenance extends freemedMaintenanceModule {
     )
    ); 
 
-  echo "
+  $display_buffer .= "
     <CENTER>
     <INPUT TYPE=SUBMIT VALUE=\" ".
       ( ($action=="addform") ? _("Add") : _("Modify") )." \">
@@ -97,8 +97,9 @@ class roomMaintenance extends freemedMaintenanceModule {
 	} // end function roomMaintenance->form
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT roomname,roomdescrip,id ".
 				"FROM $this->table_name ORDER BY roomname"),
 			$this->page_name,

@@ -12,6 +12,7 @@ class dmeposcertsModule extends freemedCERTModule {
 
 	var $MODULE_NAME    = "DMEPOS Certification";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_AUTHOR  = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_DESCRIPTION = "
 		Insurance certifications are required by insurance
 		companies for payment of DMEPOS supplies
@@ -41,11 +42,12 @@ class dmeposcertsModule extends freemedCERTModule {
 
 	function addform()
 	{
+		global $display_buffer;
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 		$certtype = DMEPOS;
 		$certpatient = $patient;
-		$wizard = new wizard (array("certpatient","certtype","been_here", "module", "action", "patient", "_auth"));
+		$wizard = new wizard (array("certpatient","certtype","been_here", "module", "action", "patient"));
 
 		$wizard->add_page(_("Form"),
 						  array_merge(array("certformnum","certdesc","certstatus","certlenneed","certrental"),
@@ -224,7 +226,7 @@ class dmeposcertsModule extends freemedCERTModule {
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled())
 		{
-			echo "<CENTER>".$wizard->display()."</CENTER>";
+			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>";
 			return;
 		}
 
@@ -254,8 +256,8 @@ class dmeposcertsModule extends freemedCERTModule {
 				$question8b = fm_date_assemble("question8b");
 				$question9 = fm_date_assemble("question9");
 
-				//echo "desc $certdesc<BR>";
-				//echo "form $certformnum<BR>";
+				//$display_buffer .= "desc $certdesc<BR>";
+				//$display_buffer .= "form $certformnum<BR>";
 
 				// questions start at offset 8
 				$certformdata .= $question1.":".$question2.":".$question3.":".$question4.":".
@@ -263,27 +265,27 @@ class dmeposcertsModule extends freemedCERTModule {
 							":".$question9.":".$question10.":".$question11.":".$question12;
 			}
 
-			//echo "$query<BR>";
+			//$display_buffer .= "$query<BR>";
 
-			//echo "data $certformdata<BR>";
+			//$display_buffer .= "data $certformdata<BR>";
 
 			$query = $sql->insert_query($this->table_name,
 							   $this->variables);
 
 			$result = $sql->query($query);
-			if ($result) { echo _("done")."."; }
-			else        { echo _("ERROR");    }
+			if ($result) { $display_buffer .= _("done")."."; }
+			else        { $display_buffer .= _("ERROR");    }
 
-			echo "
+			$display_buffer .= "
 				</CENTER>
 				<P>
 				<CENTER>
-				<A HREF=\"manage.php?$_auth&id=$patient\"
-				><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
-				<A HREF=\"$this->page_name?$_auth&module=$module&action=addform".
+				<A HREF=\"manage.php?id=$patient\"
+				>"._("Manage Patient")."</A> <B>|</B>
+				<A HREF=\"$this->page_name?module=$module&action=addform".
 				"&patient=$patient".
 				"\"
-				><$STDFONT_B>"._("Add Another")." "._($record_name)."<$STDFONT_E></A>
+				>"._("Add Another")." "._($record_name)."</A>
 				</CENTER>
 				<P>
 			";
@@ -295,11 +297,11 @@ class dmeposcertsModule extends freemedCERTModule {
 
 		if ($wizard->is_cancelled())
 		{
-			echo "
+			$display_buffer .= "
 			<P>
 			<CENTER><B>"._(Cancelled)."</B><BR>
-			 <A HREF=\"manage.php?$_auth&id=$patient\"
-			 ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+			 <A HREF=\"manage.php?id=$patient\"
+			 >"._("Manage Patient")."</A>
 			";
 		} // end cancelled
 
@@ -310,13 +312,14 @@ class dmeposcertsModule extends freemedCERTModule {
 	}
 
 	function view () {
+		global $display_buffer;
 		global $sql,$patient;
 
 		$query = "SELECT * FROM certifications WHERE certpatient='".prepare($patient)."'";
-		//echo "$query<BR>";
+		//$display_buffer .= "$query<BR>";
 		$result = $sql->query($query);
 
-		echo freemed_display_itemlist($result,
+		$display_buffer .= freemed_display_itemlist($result,
 								 $this->page_name,
 								 array(_("Desc") => "certdesc",
 									   _("Type") => "certtype",

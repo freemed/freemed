@@ -5,6 +5,6 @@
 
 Header ("Content-type: ".
      ( empty($type) ? "text/plain" : $type ) );
-echo $text;
+$display_buffer .= $text;
 
 ?>

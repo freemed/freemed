@@ -8,33 +8,27 @@ $page_name = "authenticate.php" ;
 include ("lib/freemed.php");
 include ("lib/API.php");
 
-$connect = freemed_auth_login ($_u, $_p);
+//----- Disable menu bar
+$no_menu_bar = true;
+
+//$connect = freemed_auth_login ($_username, $_password);
+$connect = freemed_verify_auth ();
 if (!$connect) {
-    freemed_display_html_top ();
-    freemed_display_banner ();
     if (!empty($_URL)) $__url_part = "?_URL=".urlencode($_URL);
-    echo "
-      <TABLE BORDER=1 CELLPADDING=4 VALIGN=CENTER ALIGN=CENTER WIDTH=100%
-       BGCOLOR=\"#cccccc\">
-      <TR><TD ALIGN=CENTER>
+    $display_buffer .= "
+       <CENTER>"._("Error")." !</CENTER>
        <P>
-       <$HEADERFONT_B>"._("Error")." !<$HEADERFONT_E>
+       <CENTER>"._("You have entered an incorrect name or password.")."</CENTER>
        <P>
-       "._("You have entered an incorrect name or password.")."
-       <P>
-       <CENTER><A HREF=\"".COMPLETE_URL."$__url_part\"
+       <CENTER><A HREF=\"index.php$__url_part\"
         >"._("Return to the login screen")."</A></CENTER>
-       <P>
-      </TD></TR>
-      </TABLE>
     ";
-    freemed_display_html_bottom ();
-    DIE("");
+    template_display();
 }
 
-$f_user = explode (":", $SessionLoginCookie); 
-SetCookie("_ref",   "",  time()+$_cookie_expire); // clear _ref
-SetCookie("u_lang", $_l, time()+$_cookie_expire);
+//$f_user = explode (":", $SessionLoginCookie); 
+//SetCookie("_ref",   "",  time()+$_cookie_expire); // clear _ref
+//SetCookie("u_lang", $_l, time()+$_cookie_expire);
 
 if (freemed_check_access_for_facility ($SessionLoginCookie, $_f)) {
 	SetCookie("default_facility", "$_f", time()+$_cookie_expire);
@@ -56,7 +50,8 @@ if (!empty($_URL)) {
 	$_jump_page = $_URL;  // if it's there, let 'em jump to it 
 } // end checking for $_URL
 
-echo "
+/*
+$display_buffer .= "
     <HTML>
     <HEAD>
      <TITLE>authentication for ".PACKAGENAME."</TITLE>
@@ -64,9 +59,15 @@ echo "
     </HEAD>
     <BODY BGCOLOR=\"#ffffff\">
   ";
-freemed_display_banner ();
-freemed_display_box_top (_("Authenticating")." ... ");
-echo "
+*/
+
+//----- Set refresh properly
+$refresh = $_jump_page;
+
+//----- Set page title
+$page_title = _("Authenticating")." ... ";
+
+$display_buffer .= "
       <P>
       <CENTER>
         <B>"._("If your browser does not support the REFRESH tag")."
@@ -74,6 +75,8 @@ echo "
       </CENTER>
       <P>
 ";
-freemed_display_box_bottom ();
+
+//----- Load the template
+template_display();
 
 ?>

@@ -37,6 +37,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 	);
 
 	function form () {
+		global $display_buffer;
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -180,7 +181,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
   "); 
   
 		if (!$book->is_done()) {
-			echo $book->display();
+			$display_buffer .= $book->display();
 		} else {
 			switch ($action) {
 				case "add": case "addform":
@@ -203,8 +204,9 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 	} // end function insuranceCompanyMaintenance->form()
 
 	function view () { 
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT * FROM $this->table_name ORDER BY insconame"),
 			$this->page_name,
 			array (

@@ -18,7 +18,7 @@ class GenerateFormsModule extends freemedBillingModule {
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 
 	var $CATEGORY_NAME = "Billing";
-	var $CATEGORY_VERSION = "0";
+	var $CATEGORY_VERSION = "0.1";
 
     var $form_buffer;
     var $pat_processed;
@@ -83,6 +83,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
+		global $display_buffer;
 		global $module;
 		if (!isset($module)) return false;
 		return true;
@@ -90,8 +91,8 @@ class GenerateFormsModule extends freemedBillingModule {
 
 	// override main function
 
-	function addform()
-	{
+	function addform() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -110,7 +111,7 @@ class GenerateFormsModule extends freemedBillingModule {
 				$result = $this->CheckforInsBills(array(PRIMARY,SECONDARY,TERTIARY));
 				if ($result==0)
 				{
-					echo "Nothing to bill for this coverage type.<BR>\n";
+					$display_buffer .= "Nothing to bill for this coverage type.<BR>\n";
 					freemed_display_box_bottom();
 					freemed_display_html_bottom();
 					DIE("");
@@ -129,7 +130,7 @@ class GenerateFormsModule extends freemedBillingModule {
 				$result = $sql->query($query);
 				if (!$sql->results($result)) 
 				{
-					echo "No patients to be billed.<BR>\n";
+					$display_buffer .= "No patients to be billed.<BR>\n";
 					freemed_display_box_bottom();
 					freemed_display_html_bottom();
 					DIE("");
@@ -146,15 +147,15 @@ class GenerateFormsModule extends freemedBillingModule {
 			}
 			else
 			{
-				echo "
+				$display_buffer .= "
 				<P>
 				<CENTER>
-				<$STDFONT_B><B>"._("Nothing to Bill!")."</B><$STDFONT_E>
+				<B>"._("Nothing to Bill!")."</B>
 				</CENTER>
 				<P>
 				<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module\"
-				><$STDFONT_B>"._("Return to Fixed Forms Generation Menu")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module\"
+				>"._("Return to Fixed Forms Generation Menu")."</A>
 				</CENTER>
 				<P>
 				";
@@ -173,23 +174,23 @@ class GenerateFormsModule extends freemedBillingModule {
 	}
 /*
 
-	function MarkBilled()
-	{
+	function MarkBilled() {
+		global $display_buffer;
 
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 	   	if (count($processed)<1) 
 		{
-			echo "
+			$display_buffer .= "
 		 	<P>
 		 	<CENTER>
-		  	<$STDFONT_B><B>"._("Nothing set to be marked!")."</B><$STDFONT_E>
+		  	<B>"._("Nothing set to be marked!")."</B>
 		 	</CENTER>
 		 	<P>
 		 	<CENTER>
-		  	<A HREF=\"$this->page_name?$_auth&module=$module\"
-		  	><$STDFONT_B>"._("Return to Fixed Forms Generation Menu")."<$STDFONT_E></A>
+		  	<A HREF=\"$this->page_name?module=$module\"
+		  	>"._("Return to Fixed Forms Generation Menu")."</A>
 		 	</CENTER>
 		 	<P>
 			";
@@ -198,7 +199,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
      	for ($i=0;$i<count($processed);$i++) 
 		{
-       		echo "
+       		$display_buffer .= "
        		Marking ".$processed[$i]." ...<BR> 
        		";
 			$pat = $processed[$i];
@@ -207,17 +208,17 @@ class GenerateFormsModule extends freemedBillingModule {
 			for ($x=0;$x<$procs;$x++)
 			{
 				$prc = $procids[$pat][$x];
-				//echo "proc $prc for patient $pat<BR>";
+				//$display_buffer .= "proc $prc for patient $pat<BR>";
        			// start of insert loop for billed legder entries
        			$query = "SELECT procbalcurrent,proccurcovid,proccurcovtp FROM procrec";
 				$query .= " WHERE id='".$prc."'";
        			$result = $sql->query($query);
        			if (!$result)
        			{
-       				echo "Mark failed getting procrecs<BR>";
+       				$display_buffer .= "Mark failed getting procrecs<BR>";
        				DIE("Mark failed getting procrecs");
        			}
-				//echo "proc query $query<BR>";
+				//$display_buffer .= "proc query $query<BR>";
        			$bill_tran = $sql->fetch_array($result);
        			$cur_bal = $bill_tran[procbalcurrent];
           		$proc_id = $bill_tran[id];
@@ -239,42 +240,42 @@ class GenerateFormsModule extends freemedBillingModule {
 						"payreclock" => "unlocked"
 						)	
 					);
-				//echo "payrec insert query $query<BR>";
+				//$display_buffer .= "payrec insert query $query<BR>";
            		$pay_result = $sql->query ($query);
            		if ($pay_result)
-               		echo "<$STDFONT_B>Adding Bill Date to ledger.<$STDFONT_E><BR> \n";
+               		$display_buffer .= "Adding Bill Date to ledger.<BR> \n";
            		else
-               		echo "<$STDFONT_B>Failed Adding Bill Date to ledger!!<$STDFONT_E><BR> \n";
+               		$display_buffer .= "Failed Adding Bill Date to ledger!!<BR> \n";
 
        			$query = "UPDATE procrec SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'".
 						 " WHERE id = '".$prc."'";
-				//echo "procrec update query $query<BR>";
+				//$display_buffer .= "procrec update query $query<BR>";
        			$proc_result = $sql->query ($query);
        			if ($result) 
 				{ 
-					echo _("done").".<BR>\n"; 
+					$display_buffer .= _("done").".<BR>\n"; 
 				}
        			else        
 				{ 
-					echo _("ERROR")."<BR>\n"; 
+					$display_buffer .= _("ERROR")."<BR>\n"; 
 				}
 
 			} // end proces for patient loop
 			
      	} // end for processed
-     	echo "
+     	$display_buffer .= "
       	<P>
       	<CENTER>
-       	<A HREF=\"$this->page_name?$_auth&module=$module\"
-       	><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+       	<A HREF=\"$this->page_name?module=$module\"
+       	>"._("Back")."</A>
       	</CENTER>
       	<P>
      	";
 	}
 */
 	
-	function GenerateFixedForms($parmpatient, $parmcovid)
-	{
+	function GenerateFixedForms($parmpatient, $parmcovid) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
@@ -286,7 +287,7 @@ class GenerateFormsModule extends freemedBillingModule {
         if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
-     	echo "
+     	$display_buffer .= "
       	<B>"._("Processing")." ".$this_patient->fullName()."
       	</B><BR>\n\n
      	";
@@ -324,8 +325,7 @@ class GenerateFormsModule extends freemedBillingModule {
    } // end generateFixed
 
 	
-   	function Insurance($stack)
-   	{
+   	function Insurance($stack) {
 
 		$row = $stack[0];
 		if (!$row)
@@ -339,8 +339,8 @@ class GenerateFormsModule extends freemedBillingModule {
 		
 	}
 
-   	function BillPrimary($stack)
-   	{
+   	function BillPrimary($stack) {
+		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 		global $sql;
@@ -374,8 +374,8 @@ class GenerateFormsModule extends freemedBillingModule {
 
 	}
 
-   	function BillSecondary($stack)
-   	{
+   	function BillSecondary($stack) {
+		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 		global $sql;
@@ -429,8 +429,8 @@ class GenerateFormsModule extends freemedBillingModule {
 
 	}
 
-   	function Patient($stack)
-   	{
+   	function Patient($stack) {
+		global $display_buffer;
 		// patient/insurance section is top half of form
 
 		reset ($this->renderform_variables);
@@ -594,7 +594,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		$eocs = explode (":", $row[proceoc]);
 		if (!$eocs[0])
 		{
-		   echo "<B>Warning: No EOC for this Procedure!!</B><BR>\n";
+		   $display_buffer .= "<B>Warning: No EOC for this Procedure!!</B><BR>\n";
 		   flush();
 		}
 
@@ -620,7 +620,7 @@ class GenerateFormsModule extends freemedBillingModule {
 			   ( ( $other == "yes" ) ? $this->formno[ffcheckchar] : " " );
 			$related_other[no] =
 			   ( ( $other == "no" ) ? $this->formno[ffcheckchar] : " " );
-			if ($debug) echo "\n$employment $auto $other<BR>\n";
+			if ($debug) $display_buffer .= "\n$employment $auto $other<BR>\n";
 
 		}
 		else
@@ -649,8 +649,8 @@ class GenerateFormsModule extends freemedBillingModule {
 
 	}  // end of Patient
 
-   	function ServiceLines($stack)
-   	{
+   	function ServiceLines($stack) {
+		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 		global $sql;
@@ -714,12 +714,12 @@ class GenerateFormsModule extends freemedBillingModule {
 
 		$this_facility     = freemed_get_link_rec ($row[procpos], "facility");
 		$pos = $this_facility[psrpos];
-		//echo "pos $pos<BR>";
+		//$display_buffer .= "pos $pos<BR>";
 		$cur_pos = freemed_get_link_rec($pos, "pos");
 		$pos = $cur_pos[posname];
 		if ($pos==0)
 		  $pos=11;
-		//echo "pos $pos<BR>";
+		//$display_buffer .= "pos $pos<BR>";
 		if ($pos > 12) // if done out of office
 		{
 		   $rendfac[name] = $this_facility[psrname];
@@ -757,13 +757,13 @@ class GenerateFormsModule extends freemedBillingModule {
 		$authorized[authnum] = $this_auth[authnum];
 		if (!$this_auth[authnum])
 		{
-		   echo "<B>Warning: Procedure not Authorized!!</B><BR>\n";
+		   $display_buffer .= "<B>Warning: Procedure not Authorized!!</B><BR>\n";
 		   flush();
 		}
 		else
 		if (!date_in_range($cur_date,$this_auth[authdtbegin],$this_auth[authdtend]))
 		{
-		   echo "<B>Warning: Authorization $this_auth[authnum] has expired!!</B><BR>\n";
+		   $display_buffer .= "<B>Warning: Authorization $this_auth[authnum] has expired!!</B><BR>\n";
 		   flush();
 
 		}
@@ -833,8 +833,8 @@ class GenerateFormsModule extends freemedBillingModule {
 		return;		
    	} // end service lines
 
-   function ProcCallBack($stack)
-   {
+   function ProcCallBack($stack) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->renderform_variables);
@@ -854,20 +854,20 @@ class GenerateFormsModule extends freemedBillingModule {
 
    }
 /*
-   function ShowBillsToMark()
-   {
+   function ShowBillsToMark() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->rendorform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
    #################### TAKE THIS OUT AFTER TESTING #######################
-   #echo "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
+   #$display_buffer .= "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
    ########################################################################
 
-   echo "
+   $display_buffer .= "
     <FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
      <CENTER>
-      <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
+      <B>"._("Preview")."</B>
      </CENTER>
      <BR>
      <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
@@ -885,13 +885,12 @@ class GenerateFormsModule extends freemedBillingModule {
    ";
 
    // present the form so that we can mark as billed
-   echo "
+   $display_buffer .= "
     <CENTER>
-    <$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
+    <B>"._("Mark as Billed")."</B>
     </CENTER>
     <BR>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
      <INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"mark\">
      <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
@@ -900,24 +899,24 @@ class GenerateFormsModule extends freemedBillingModule {
    ";
    for ($i=1;$i<=$this->pat_processed;$i++) {
      $this_patient = new Patient ($this->patient_forms[$i]);
-     echo "
+     $display_buffer .= "
        <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
         VALUE=\"".$this->patient_forms[$i]."\" CHECKED>
        ".$this_patient->fullName(false)."
-       (<A HREF=\"manage.php?$_auth&id=$patient_forms[$i]\"
+       (<A HREF=\"manage.php?id=$patient_forms[$i]\"
         >".$this_patient->local_record["ptid"]."</A>) <BR>
      ";
      $pat = $this->patient_forms[$i];
      $patprocs = count($this->patient_procs[$pat]);
-     //echo "procs for $pat is $patprocs<BR>";
+     //$display_buffer .= "procs for $pat is $patprocs<BR>";
      for ($x=0;$x<$patprocs;$x++)
      {
-         echo "<INPUT TYPE=HIDDEN NAME=\"procids[".$pat."][".$x."]\"
+         $display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"procids[".$pat."][".$x."]\"
          VALUE=\"".$this->patient_procs[$pat][$x]."\">\n";
      }
 
    } // end looping for all processed patients
-   echo "
+   $display_buffer .= "
     <P>
     <INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
     </FORM>
@@ -929,24 +928,23 @@ class GenerateFormsModule extends freemedBillingModule {
 */
 
 
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 	
-	    echo "
+	    $display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
 		 VALIGN=MIDDLE ALIGN=CENTER>
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <$STDFONT_B><B>"._("Generate Insurance Claim Forms")."</B><$STDFONT_E>
+		   <B>"._("Generate Insurance Claim Forms")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
 
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
-		<INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
 		<INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"geninsform\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
@@ -954,7 +952,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		<TR>
 		 <TD ALIGN=RIGHT>
 		  <CENTER>
-		   <$STDFONT_B>Claim Form : <$STDFONT_E>
+		   Claim Form :
 		  </CENTER>
 		 </TD>
      	<TD ALIGN=LEFT>
@@ -963,11 +961,11 @@ class GenerateFormsModule extends freemedBillingModule {
 	   $result = $sql->query ("SELECT * FROM fixedform WHERE fftype='1'
 							 ORDER BY ffname, ffdescrip");
 	   while ($r = $sql->fetch_array ($result)) {
-		echo "
+		$display_buffer .= "
 		 <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
 		";
 	   } // end looping through results                         
-	   echo "
+	   $display_buffer .= "
 		  </SELECT>
 		 </TD>
     	</TR>
@@ -975,7 +973,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		<TR>
 		 <TD ALIGN=RIGHT>
 		  <CENTER>
-		   <$STDFONT_B>"._("Number of Patients")." :"." <$STDFONT_E>
+		   "._("Number of Patients")." :"."
 		  </CENTER>
 		 </TD>
 		 <TD ALIGN=LEFT>
@@ -984,20 +982,20 @@ class GenerateFormsModule extends freemedBillingModule {
 		</TR>
 	   ";
 
-	   echo "
+	   $display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  <$STDFONT_B>"._("Skip # of Pats to Bill :")."<$STDFONT_E>
+		  "._("Skip # of Pats to Bill :")."
 		 </TD>
 		 <TD ALIGN=LEFT>
 	   ".fm_number_select ("skip", 0, 100)."
 	   ";
-	   echo "
+	   $display_buffer .= "
 		 </TD>
 		</TR>
 		<TR>
 		   <TD ALIGN=RIGHT>
-			<$STDFONT_B>To : <$STDFONT_E>
+			To : 
 		   </TD><TD ALIGN=LEFT>
 			<SELECT NAME=\"bill_request_type\">
 			 <OPTION VALUE=\"1\">"._("1st Insurance")."

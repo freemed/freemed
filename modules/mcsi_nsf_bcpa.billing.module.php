@@ -18,7 +18,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 
 	var $CATEGORY_NAME = "Billing";
-	var $CATEGORY_VERSION = "0";
+	var $CATEGORY_VERSION = "0.1";
 
 	var $naic_batchid = array("95056", "95199");
 	var $bill_request_type;
@@ -83,8 +83,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 	// override main function
 
-	function addform()
-	{
+	function addform() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -133,7 +133,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 				$count = count($recs);
 				if ($count == 0)
 				{
-					echo "Error No records generated<BR>";
+					$display_buffer .= "Error No records generated<BR>";
 				}
 				
 				//$this->form_buffer = $new_buffer;
@@ -156,15 +156,15 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
         			if (!$fp)
         			{
-            			echo "Error opening $filename<BR>";
+            			$display_buffer .= "Error opening $filename<BR>";
         			}
 
         			$rc = fwrite($fp,$file_buffer);
 
         			if ($rc <= 0)
-            			echo "Error writing $filename<BR>";
+            			$display_buffer .= "Error writing $filename<BR>";
 					else
-						echo "Wrote bills to <A HREF=\"$httpfilename\">$httpfilename</A><BR>";
+						$display_buffer .= "Wrote bills to <A HREF=\"$httpfilename\">$httpfilename</A><BR>";
 
 				}
 
@@ -177,15 +177,15 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			}
 			else
 			{
-				echo "
+				$display_buffer .= "
 				<P>
 				<CENTER>
-				<$STDFONT_B><B>"._("Nothing to Bill!")."</B><$STDFONT_E>
+				<B>"._("Nothing to Bill!")."</B>
 				</CENTER>
 				<P>
 				<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module\"
-				><$STDFONT_B>"._("Return to Fixed Forms Generation Menu")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module\"
+				>"._("Return to Fixed Forms Generation Menu")."</A>
 				</CENTER>
 				<P>
 				";
@@ -204,22 +204,22 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 	}
 
 
-	function Insurer($procstack)
-	{
+	function Insurer($procstack) {
+		global $display_buffer;
 		$bill_request_type = $this->bill_request_type;;
 
 		if ($bill_request_type == PRIMARY)
 			$buffer = $this->BillPrimary($procstack);
 		else
-			echo "Error - BCBSPA Secondary Not supported at this Time<BR>";
+			$display_buffer .= "Error - BCBSPA Secondary Not supported at this Time<BR>";
 			//$buffer = $this->BillSecondary($prockstack);
 		return $buffer;
 
 	}
 
-	function BillSecondary($procstack)
-	{
-		echo "Error - BCBSPA Secondary Not supported at this Time<BR>";
+	function BillSecondary($procstack) {
+		global $display_buffer;
+		$display_buffer .= "Error - BCBSPA Secondary Not supported at this Time<BR>";
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -240,14 +240,14 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$coverage = new Coverage($cov);
 		if (!$coverage)
 		{
-			echo "Error Insurer no coverage<BR>";
+			$display_buffer .= "Error Insurer no coverage<BR>";
 			return;
 		}
 
 		$insco = $coverage->covinsco;
 		if (!$insco)
 		{
-			echo "Error Insurer no insurance<BR>";
+			$display_buffer .= "Error Insurer no insurance<BR>";
 			return;
 		}
 
@@ -255,21 +255,21 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$coverage2 = new Coverage($cov2);
 		if (!$coverage2)
 		{
-			echo "Error Insurer no primary coverage<BR>";
+			$display_buffer .= "Error Insurer no primary coverage<BR>";
 			return;
 		}
 
 		$insco2 = $coverage2->covinsco;
 		if (!$insco2)
 		{
-			echo "Error Insurer no primary insurance<BR>";
+			$display_buffer .= "Error Insurer no primary insurance<BR>";
 			return;
 		}
 
 		$patient = new Patient($pat);
 		if (!$patient)
 		{
-			echo "Error Insurer no patient<BR>";
+			$display_buffer .= "Error Insurer no patient<BR>";
 			return;
 		}
 			
@@ -307,7 +307,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			$guarantor = new Guarantor($coverage2->covdep);
 			if (!$guarantor)
 			{
-				echo "Error Insurer guarantor failed<BR>";
+				$display_buffer .= "Error Insurer guarantor failed<BR>";
 				return;
 			}	
 			$da0[insrdlname] = $this->CleanChar($guarantor->guarlname);
@@ -337,11 +337,11 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
         {
             $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
             if (!$auth_row)
-                echo "Failed to read procauth";
+                $display_buffer .= "Failed to read procauth";
 			$auth_num = $auth_row[authnum];
             if (!$auth_num)
             {
-                echo "Authorization number Invalid";
+                $display_buffer .= "Authorization number Invalid";
                 $auth_num = "AUTHXXXX";
             }
 			$authdtbegin = $auth_row[authdtbegin];
@@ -357,18 +357,18 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 				if (!date_in_range($procdt,$authdtbegin,$authdtend))
  
 				{
-					echo "Warning: Authorization $auth_num has expired for procedure $procdt<BR>";
+					$display_buffer .= "Warning: Authorization $auth_num has expired for procedure $procdt<BR>";
 				}
 				if ($auth_row[authvisitsremain] == 0)
 				{
-					echo "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
+					$display_buffer .= "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
 				}
 			}
 			$da0[authno] = $this->CleanNumber($auth_num);
         }
         else
         {
-            echo "Warning - No Authorization for this procedure<BR>";
+            $display_buffer .= "Warning - No Authorization for this procedure<BR>";
         }
 
 
@@ -477,7 +477,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			$guarantor = new Guarantor($coverage->covdep);
 			if (!$guarantor)
 			{
-				echo "Error Insurer guarantor failed<BR>";
+				$display_buffer .= "Error Insurer guarantor failed<BR>";
 				return;
 			}	
 			$da0[insrdlname] = $this->CleanChar($guarantor->guarlname);
@@ -520,8 +520,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		
 	} // end do secondary bill
 
-	function BillPrimary($procstack)
-	{
+	function BillPrimary($procstack) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -542,14 +542,14 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$coverage = new Coverage($cov);
 		if (!$coverage)
 		{
-			echo "Error Insurer no coverage<BR>";
+			$display_buffer .= "Error Insurer no coverage<BR>";
 			return;
 		}
 
 		$insco = $coverage->covinsco;
 		if (!$insco)
 		{
-			echo "Error Insurer no insurance<BR>";
+			$display_buffer .= "Error Insurer no insurance<BR>";
 			return;
 		}
 
@@ -558,14 +558,14 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			$coverage2 = new Coverage($cov2);
 			if (!$coverage2)
 			{
-				echo "Error Insurer Failed secondary coverage<BR>";
+				$display_buffer .= "Error Insurer Failed secondary coverage<BR>";
 				return;
 			}
 
 			$insco2 = $coverage2->covinsco;
 			if (!$insco2)
 			{
-				echo "Error Insurer Failed secondary insurance<BR>";
+				$display_buffer .= "Error Insurer Failed secondary insurance<BR>";
 				return;
 			}
 		}
@@ -573,7 +573,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$patient = new Patient($pat);
 		if (!$patient)
 		{
-			echo "Error Insurer no patient<BR>";
+			$display_buffer .= "Error Insurer no patient<BR>";
 			return;
 		}
 			
@@ -629,7 +629,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			$guarantor = new Guarantor($coverage->covdep);
 			if (!$guarantor)
 			{
-				echo "Error Insurer guarantor failed<BR>";
+				$display_buffer .= "Error Insurer guarantor failed<BR>";
 				return;
 			}	
 			$da0[insrdlname] = $this->CleanChar($guarantor->guarlname);
@@ -658,11 +658,11 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
         {
             $auth_row = freemed_get_link_rec($row[procauth],"authorizations");
             if (!$auth_row)
-                echo "Failed to read procauth";
+                $display_buffer .= "Failed to read procauth";
 			$auth_num = $auth_row[authnum];
             if (!$auth_num)
             {
-                echo "Authorization number Invalid";
+                $display_buffer .= "Authorization number Invalid";
                 $auth_num = "AUTHXXXX";
             }
 			$authdtbegin = $auth_row[authdtbegin];
@@ -676,18 +676,18 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			
 				if (!date_in_range($procdt,$authdtbegin,$authdtend))
 				{
-					echo "Warning: Authorization $auth_num has expired for procedure $procdt<BR>";
+					$display_buffer .= "Warning: Authorization $auth_num has expired for procedure $procdt<BR>";
 				}
 				if ($auth_row[authvisitsremain] == 0)
 				{
-					echo "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
+					$display_buffer .= "Warning: No Remaining visits for Authorization $auth_num procedure $procdt<BR>";
 				}	
 			}
 			$da0[authno] = $this->CleanNumber($auth_num);
         }
         else
         {
-            echo "Warning - No Authorization for this procedure<BR>";
+            $display_buffer .= "Warning - No Authorization for this procedure<BR>";
         }
 
 		$buffer = "";
@@ -720,8 +720,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		
 	} // end bill for primary
 
-	function ClaimHeader($procstack)
-	{
+	function ClaimHeader($procstack) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		
@@ -738,14 +738,14 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$patient = new Patient($pat);
 		if (!$patient)
 		{
-			echo "Error in claimheader no patient<BR>";
+			$display_buffer .= "Error in claimheader no patient<BR>";
 			return;
 		}
 
 		$coverage = new Coverage($cov);
 		if (!$coverage)
 		{
-			echo "Error. patient coverage invalid<BR>";
+			$display_buffer .= "Error. patient coverage invalid<BR>";
 			return;
 		}
 
@@ -764,7 +764,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		{
 			$guarantor = new Guarantor($coverage->covdep);
 			if (!$guarantor)
-				echo "Error getting guarantor for ca0 record<BR>";
+				$display_buffer .= "Error getting guarantor for ca0 record<BR>";
 			if (!$guarantor->guarsame)
 			{
 				// patient addr is not the same as gurarntor
@@ -797,7 +797,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			// look up the status record.
 			$status = freemed_get_link_field($patient->local_record[ptstatus],"ptstatus","ptstatus");
 			if (!$status)
-				echo "Error failed to get ptstatus<BR>";
+				$display_buffer .= "Error failed to get ptstatus<BR>";
 			if ($status == "HC")
 				$ca0[patstudent] = "N";
 			else
@@ -811,8 +811,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 					elseif ($status == "PT")
 						$ca0[patstudent] = "P";
 					else
-						echo "Error in patient student status<BR>";
-					//echo "year diff $yrdiff<BR>";
+						$display_buffer .= "Error in patient student status<BR>";
+					//$display_buffer .= "year diff $yrdiff<BR>";
 				}
 			}
 
@@ -853,7 +853,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 		if ($count == 0)
 		{
-			echo "Error no procedures in Service<BR?";
+			$display_buffer .= "Error no procedures in Service<BR?";
 			return;
 		}
 
@@ -886,8 +886,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 	} // end patient
 
-	function FileHeader($userid,$password)
-	{
+	function FileHeader($userid,$password) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		unset($GLOBALS[aa0]);
@@ -940,9 +940,9 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		
 	}
 
-	function ProviderHeader($procstack)
-	{
+	function ProviderHeader($procstack) {
 		
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		//unset($GLOBALS[aa0]);
@@ -960,19 +960,19 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$physician = new Physician($doc);
 		if (!$physician)
 		{
-			echo "Error no physician<BR>";
+			$display_buffer .= "Error no physician<BR>";
 			return;
 		}
 		$coverage = new Coverage($cov);
 		if (!$coverage)
 		{
-			echo "Error no coverage<BR>";
+			$display_buffer .= "Error no coverage<BR>";
 			return;
 		}
 		$insco = $coverage->covinsco;
 		if (!$insco)
 		{
-			echo "Error no insco<BR>";
+			$display_buffer .= "Error no insco<BR>";
 			return;
 		}
 		
@@ -994,7 +994,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
             $fac = 0;
             $fac = freemed_get_link_rec($default_facility,"facility");
             if (!$fac)
-                echo "Error getting facility<BR>";
+                $display_buffer .= "Error getting facility<BR>";
             $ba0[taxid] = $this->CleanNumber($fac[psrein]);
             $ba0[idtype] = "E";
 
@@ -1018,7 +1018,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
         if (!$grp)
         {
             $name = $insco->local_record[insconame];
-            echo "Failed getting inscogroup for $name<BR>";
+            $display_buffer .= "Failed getting inscogroup for $name<BR>";
         }
 
         $providerids = explode(":",$physician->local_record[phyidmap]);
@@ -1098,8 +1098,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		
 	}  // end provider
 
-	function ClaimData($procstack)
-	{
+	function ClaimData($procstack) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		unset($GLOBALS[ea0]);
@@ -1110,13 +1110,13 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$coverage = new Coverage($cov);
 		if (!$coverage)
 		{
-			echo "Error no coverage claimdata<BR>";
+			$display_buffer .= "Error no coverage claimdata<BR>";
 			return;
 		}
 		$insco = $coverage->covinsco;
 		if (!$insco)
 		{
-			echo "Error no insco claimdata<BR>";
+			$display_buffer .= "Error no insco claimdata<BR>";
 			return;
 		}
 
@@ -1133,12 +1133,12 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 		$ea0[relinfodt] = $this->CleanNumber($cur_date); // meybe we can get away with this
 
-		//echo "referer $row[procrefdoc]<BR>";
+		//$display_buffer .= "referer $row[procrefdoc]<BR>";
 		if ($row[procrefdoc] != 0)
 		{
 			$refdoc = new Physician($row[procrefdoc]);
 			if (!$refdoc)
-				echo "Error getting referring physician<BR>";
+				$display_buffer .= "Error getting referring physician<BR>";
 			$ea0[refprovupin] = $this->CleanChar($refdoc->local_record[phyupin]);	
 			$ea0[reflname] = $this->CleanChar($refdoc->local_record[phylname]);	
 			$ea1[reffname] = $this->CleanChar($refdoc->local_record[phyfname]);	
@@ -1148,7 +1148,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			if (!$grp)
 			{
 				$name = $insco->local_record[insconame];
-				echo "Failed getting inscogroup for $name<BR>";
+				$display_buffer .= "Failed getting inscogroup for $name<BR>";
 			}
 
 			$providerids = explode(":",$refdoc->local_record[phyidmap]);
@@ -1161,7 +1161,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
         {
             $eoc_row = freemed_get_link_rec($row[proceoc], "eoc");
             if (!$eoc_row)
-                echo "Failed reading eoc record<BR>";
+                $display_buffer .= "Failed reading eoc record<BR>";
 
             if ($eoc_row[eocrelauto] == "yes")
             {
@@ -1192,7 +1192,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
         }
         else
         {
-            echo "Warning - No EOC for this procedure $row[procdt]<BR>";
+            $display_buffer .= "Warning - No EOC for this procedure $row[procdt]<BR>";
         }
 
 		if ($ea0[accident] == "A" OR 
@@ -1213,7 +1213,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		$count = count($procstack);
         if ($count == 0)
         {
-            echo "Error in GenClaimSegment Stack count 0<BR>";
+            $display_buffer .= "Error in GenClaimSegment Stack count 0<BR>";
             return;
         }
 
@@ -1232,11 +1232,11 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 		$diagstack = $diagset->getStack();
         $diagcnt = count($diagstack);
-		//echo "stack count $diagcnt<BR>";
+		//$display_buffer .= "stack count $diagcnt<BR>";
 
         if ($diagcnt == 0)
         {
-            echo "Procedures do not have Diagnosis codes<BR>";
+            $display_buffer .= "Procedures do not have Diagnosis codes<BR>";
             return;
         }
 
@@ -1261,11 +1261,11 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
             // use code from facility
             if ($fac_row[psrpos] == 0)
             {
-                echo "Facility does not have a pos code<BR>";
+                $display_buffer .= "Facility does not have a pos code<BR>";
             }
             $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
-                echo "Failed reading pos table";
+                $display_buffer .= "Failed reading pos table";
             $pos = $cur_pos[posname];
         }
 
@@ -1291,8 +1291,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 	}  // end claimdata
 
-	function ServiceDetail($procstack)
-	{
+	function ServiceDetail($procstack) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		unset ($GLOBALS[fa0]);
@@ -1310,11 +1310,11 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
             // use code from facility
             if ($fac_row[psrpos] == 0)
             {
-                echo "Facility does not have a pos code<BR>";
+                $display_buffer .= "Facility does not have a pos code<BR>";
             }
             $cur_pos = freemed_get_link_rec($fac_row[psrpos], "pos");
             if (!$cur_pos)
-                echo "Failed reading pos table";
+                $display_buffer .= "Failed reading pos table";
             $pos = $cur_pos[posname];
 
         }
@@ -1322,14 +1322,14 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
         {
             // plug with Office code
             $pos="11";
-            echo "Warning: Plugged pos with Office Code 11<BR>";
+            $display_buffer .= "Warning: Plugged pos with Office Code 11<BR>";
         }
 		
 		$count = count($procstack);
 
 		if ($count == 0)
 		{
-			echo "Error no procedures in Service<BR?";
+			$display_buffer .= "Error no procedures in Service<BR?";
 			return;
 		}
 		$buffer = "";
@@ -1352,13 +1352,13 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 			{
 				$itemcptmod  = freemed_get_link_field ($row[proccptmod], "cptmod", "cptmod");
 				if (!$itemcptmod)
-                	echo "Failed reading cptmod table<BR>";
+                	$display_buffer .= "Failed reading cptmod table<BR>";
 				$fa0[cptmod1] = $itemcptmod;
 			}
 
 			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
             if (!$cur_cpt)
-                echo "Failed reading cpt table<BR>";
+                $display_buffer .= "Failed reading cpt table<BR>";
             $cur_insco = $insco->local_record[id];
             $tos_stack = fm_split_into_array ($cur_cpt[cpttos]);
             $tosid = ( ($tos_stack[$cur_insco] < 1) ?
@@ -1366,14 +1366,14 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
                       $tos_stack[$cur_insco] );
 			if ($tosid == 0)
             {
-                echo "No default type of service for this proc $row[procdt]<BR>";
+                $display_buffer .= "No default type of service for this proc $row[procdt]<BR>";
                 $tos = "TOSXXXX";
             }
             else
             {
                 $cur_tos = freemed_get_link_rec($tosid, "tos");
                 if (!$cur_tos)
-                    echo "Failed reading tos table<BR>";
+                    $display_buffer .= "Failed reading tos table<BR>";
                 $tos = $cur_tos[tosname];
             }
 
@@ -1381,7 +1381,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		
 			$cur_cpt = freemed_get_link_rec ($row[proccpt], "cpt");
             if (!$cur_cpt)
-                echo "Failed reading cpt table<BR>";
+                $display_buffer .= "Failed reading cpt table<BR>";
 
             $diagset->testAddSet($row[procdiag1],
                              $row[procdiag2],
@@ -1400,7 +1400,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
             $diag_xref = explode(",",$diag_xref);
 			for ($x=0;$x<count($diag_xref);$x++)
 			{
-				//echo "xref $diag_xref[$x]<BR>";
+				//$display_buffer .= "xref $diag_xref[$x]<BR>";
 				$xoff = $x+1;
 				$var = "diag".$xoff;
 				$fa0[$var] = $diag_xref[$x];
@@ -1417,8 +1417,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 	} // end servicedetail
 
-	function ClaimTrailer($procstack,$buffer)
-	{
+	function ClaimTrailer($procstack,$buffer) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		unset($GLOBALS[xa0]);
@@ -1456,7 +1456,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 		if ($count == 0)
 		{
-			echo "Error no procedures in Service<BR?";
+			$display_buffer .= "Error no procedures in Service<BR?";
 			return;
 		}
 
@@ -1488,8 +1488,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 	} // end claimtrailer
 
-	function ProviderTrailer($procstack, $buffer)
-	{
+	function ProviderTrailer($procstack, $buffer) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->rendorform_variables);
@@ -1525,7 +1525,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 				$fxx++;
 		}
 		$tot++;  // account for this ya0 record
-		//echo "count $tot<BR>";
+		//$display_buffer .= "count $tot<BR>";
 		$ya0[batchreccnt] = $tot;
 		$ya0[svclinecnt] = $fxx;
 		$ya0[batchclmcnt] = $cxx;
@@ -1543,8 +1543,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 	} // end provider trailer
 	
-	function FileTrailer($buffer)
-	{
+	function FileTrailer($buffer) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->rendorform_variables);
@@ -1560,7 +1560,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		//$count = count($recs);
 		//if ($count == 0)
 		//{
-		//	echo "Error getting buffer<BR>";
+		//	$display_buffer .= "Error getting buffer<BR>";
 		//}
 		
 		$za0[filesvclinecnt] = $this->svclinecnt;
@@ -1576,8 +1576,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 
 	} // end file trailer
 
-	function ProcessClaims($procstack)
-	{
+	function ProcessClaims($procstack) {
 
 		$buffer  = $this->ProviderHeader($procstack); // batch header	
 		$buffer .= $this->ClaimHeader($procstack); // claim headers
@@ -1588,8 +1587,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 	}
 
 
-	function GenerateFixedForms($parmpatient, $parmcovid)
-	{
+	function GenerateFixedForms($parmpatient, $parmcovid) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
@@ -1601,7 +1600,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
         if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
-     	echo "
+     	$display_buffer .= "
       	<B>"._("Processing")." ".$this_patient->fullName()."
       	<BR>\n\n
      	";
@@ -1631,8 +1630,8 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 	
 	} // end generateFixed
 
-	function ProcCallBack($stack)
-    {
+	function ProcCallBack($stack) {
+		global $display_buffer;
         $form_buffer = $this->ProcessClaims($stack); // batch trailer
         $form_buffer .= $this->ClaimTrailer($stack,$form_buffer);
         $form_buffer .= $this->ProviderTrailer($stack,$form_buffer);
@@ -1640,24 +1639,23 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
     }
 
 
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 	
-	    echo "
+	    $display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
 		 VALIGN=MIDDLE ALIGN=CENTER>
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <$STDFONT_B><B>"._("Generate BCBS PA NSF Claims")."</B><$STDFONT_E>
+		   <B>"._("Generate BCBS PA NSF Claims")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
 
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
-		<INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
 		<INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"geninsform\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
@@ -1665,7 +1663,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		<TR>
 		 <TD ALIGN=RIGHT>
 		  <CENTER>
-		   <$STDFONT_B>Claim Form : <$STDFONT_E>
+		   Claim Form :
 		  </CENTER>
 		 </TD>
      	<TD ALIGN=LEFT>
@@ -1674,18 +1672,18 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 	   $result = $sql->query ("SELECT * FROM fixedform WHERE id='2'");
 							 //ORDER BY ffname, ffdescrip");
 	   while ($r = $sql->fetch_array ($result)) {
-		echo "
+		$display_buffer .= "
 		 <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
 		";
 	   } // end looping through results                         
 
-	   echo "
+	   $display_buffer .= "
 		 </SELECT>
 		 </TD>
 		</TR>
 		<TR>
 		   <TD ALIGN=RIGHT>
-			<$STDFONT_B>"._("Write To File")." : <$STDFONT_E>
+			"._("Write To File")." :
 		   </TD><TD ALIGN=LEFT>
 			<SELECT NAME=\"write_to_file\">
 			 <OPTION VALUE=\"0\">"._("No")."
@@ -1696,25 +1694,25 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
     	</TR>
 		";
 
-		echo "
+		$display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  <$STDFONT_B>"._("Userid")."<STDFONT_E></TD>
+		  "._("Userid")."/TD>
 		 <TD ALIGN=LEFT>
 		   <INPUT TYPE=TEXT NAME=\"userid\">
 		 </TD>
 		";
 
-		echo "
+		$display_buffer .= "
 		<TR>
 		 <TD ALIGN=RIGHT>
-		  <$STDFONT_B>"._("Password")."<$STDFONT_E></TD>
+		  "._("Password")."</TD>
 		 <TD ALIGN=LEFT>
 		   <INPUT TYPE=PASSWORD NAME=\"password\">
 		 </TD>
 		";
 		
-		echo "
+		$display_buffer .= "
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
@@ -1725,7 +1723,7 @@ class BCBSPAMCSIFormsModule extends freemedBillingModule {
 		";
 		
 
-		echo "
+		$display_buffer .= "
 		</FORM>
 
 		</TABLE>

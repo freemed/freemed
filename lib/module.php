@@ -28,6 +28,12 @@ class freemedModule extends module {
 		$this->module();
 		// call setup
 		$this->setup();
+
+		// Globalize record_name and page_title
+		if (page_name() == $this->page_name) {
+			$GLOBALS["record_name"] = $this->record_name;
+			$GLOBALS["page_title"] = $this->record_name;
+		}
 	} // end constructor freemedModule
 
 	// override check_vars method
@@ -42,20 +48,24 @@ class freemedModule extends module {
 
 	// override header method
 	function header ($nullvar = "") {
+		global $display_buffer, $page_name;
 		global $LoginCookie;
 		freemed_open_db ($LoginCookie);
-		freemed_display_html_top();
-		freemed_display_box_top (_($this->MODULE_NAME));
+		// freemed_display_html_top();
+		// freemed_display_box_top (_($this->MODULE_NAME));
+		$page_name = _($this->MODULE_NAME);
 	} // end function header
 
 	// override footer method
 	function footer ($nullvar = "") {
-		freemed_display_box_bottom();
-		freemed_display_html_bottom();
+		global $display_buffer, $page_name;
+		//freemed_display_box_bottom();
+		//freemed_display_html_bottom();
 	} // end function footer
 
 	// calling function
 	function setup () {
+		global $display_buffer;
 		if (!freemed_module_check($this->MODULE_NAME,$this->MODULE_VERSION)) {
 			// check if it is installed *AT ALL*
 			if (!freemed_module_check($this->MODULE_NAME, "0.0001")) {

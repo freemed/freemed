@@ -10,27 +10,26 @@
  freemed_open_db ($LoginCookie);
  $this_user = new User ($LoginCookie);
 
-freemed_display_html_top ();
-freemed_display_banner ();
-
-if ($this_user->getLevel()<$admin_level)
- DIE("$page_name :: You do not have access to this module");
+if ($this_user->getLevel()<$admin_level) {
+	$display_buffer .= "$page_name :: You do not have access to this module";
+	template_display();
+}
 
 switch ($action) {
  case "export":
   freemed_display_box_top (_("Export Database"));
-  echo "
+  $display_buffer .= "
    <P>
    "._("Exporting Database")." \"$db\" ... 
   ";
-  if (freemed_export_stock_data ($db)) { echo "$Done."; }
-   else                                { echo "$ERROR"; }
-  echo "
+  if (freemed_export_stock_data ($db)) { $display_buffer .= "$Done."; }
+   else                                { $display_buffer .= "$ERROR"; }
+  $display_buffer .= "
    <P>
     <CENTER>
-    <A HREF=\"$page_name?$_auth\"
+    <A HREF=\"$page_name\"
      >"._("Export Another Database")."</A> <B>|</B>
-    <A HREF=\"admin.php?$_auth\"
+    <A HREF=\"admin.php\"
      >"._("Return to Administration Menu")."</A>
     </CENTER>
    <P>
@@ -39,7 +38,7 @@ switch ($action) {
   break;
  default:
   freemed_display_box_top (_("Export Database"));
-  echo "
+  $display_buffer .= "
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"export\">
     <P>
@@ -93,7 +92,7 @@ switch ($action) {
     </CENTER>
     <P>
     <CENTER>
-     <A HREF=\"admin.php?$_auth\"
+     <A HREF=\"admin.php\"
      >"._("Return to Administration Menu")."</A>
     </CENTER>
     <P>
@@ -104,6 +103,6 @@ switch ($action) {
 } // end action switch
 
 freemed_close_db ();
-freemed_display_html_bottom ();
+template_display();
 
 ?>

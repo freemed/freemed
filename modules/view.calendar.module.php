@@ -38,24 +38,25 @@ class ViewCalendar extends freemedCalendarModule {
 	} // end constructor ViewCalendar	
 
 	function view () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 
-		//echo "pat $current_patient<BR>";
+		//$display_buffer .= "pat $current_patient<BR>";
 		if (!$jumpdate)
 			$jumpdate = $cur_date;
 
 		if (isset($jumpdate_y))
 			$jumpdate = fm_date_assemble("jumpdate");
 
-		//echo "jumpdate $jumpdate<BR>";
+		//$display_buffer .= "jumpdate $jumpdate<BR>";
 
 		$year  = substr($jumpdate,0,4);
 		$month = substr($jumpdate,5,2);
 		$day   = substr($jumpdate,8,2);
 
 		$this->month($month,$year);
-		echo "<CENTER><B>Calendar For: $this->month_name, $this->year</B></CENTER><br>\n";
+		$display_buffer .= "<CENTER><B>Calendar For: $this->month_name, $this->year</B></CENTER><br>\n";
 		$this->draw(array("cellspacing" => "2" , "cellpadding" => "2" ,
                       "top_row_align" => "center" , "table_height" => "300px" ,
                       "top_row_cell_height" => 20 , "bgcolor" => "#cccccc" ,
@@ -66,57 +67,58 @@ class ViewCalendar extends freemedCalendarModule {
 		$prevdate = $this->prevyear."-".$this->prevmonth."-01";
 
 		// prev  and next
-		echo "<CENTER>";
-		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
-			"&action=view&module=$module&jumpdate=$prevdate\">Prev</A>";
-		echo "&nbsp;";
-		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
-			"&action=view&module=$module&jumpdate=$nextdate\">Next</A>";
-		echo "</CENTER>";
+		$display_buffer .= "<CENTER>";
+		$display_buffer .= "<A HREF=\"$this->page_name?".
+			"action=view&module=$module&jumpdate=$prevdate\">Prev</A>";
+		$display_buffer .= "&nbsp;";
+		$display_buffer .= "<A HREF=\"$this->page_name".
+			"?action=view&module=$module&jumpdate=$nextdate\">Next</A>";
+		$display_buffer .= "</CENTER>";
 
 		// allow jumping to any year or month
-		echo "<CENTER>";
-		echo "<FORM ACTION=\"$this->page_name\" METHOD=POST>".
+		$display_buffer .= "<CENTER>";
+		$display_buffer .= "<FORM ACTION=\"$this->page_name\" METHOD=POST>".
 			 "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">".
-			 "<INPUT TYPE=HIDDEN NAME=\"_auth\" VALUE=\"".prepare($_auth)."\">".
 			 fm_date_entry("jumpdate").
 			 "<INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">".
 			 "</FORM></CENTER>";
 
-		echo "<CENTER>";
-		echo "<A HREF=\"calendar.php?$_auth\">"._("Menu")."</A>";
-		echo "</CENTER>";
+		$display_buffer .= "<CENTER>";
+		$display_buffer .= "<A HREF=\"calendar.php\">"._("Menu")."</A>";
+		$display_buffer .= "</CENTER>";
 
 	} // end function module->view
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 	} // end function ViewCalendar->form
 
 	// display the pop window when an event is clicked on the calendar
 	function display () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 		//global $ptname, $phname, $facname, $roomname, $time, $prenote, $postnote;
 
-		//echo "id $id<BR>";
+		//$display_buffer .= "id $id<BR>";
 		$query = "SELECT * FROM scheduler WHERE id='".prepare($id)."'";
 		$result = $sql->query($query);	
 		
 		if (!$result)
 		{
-			echo "Error<BR>";
+			$display_buffer .= "Error<BR>";
 			trigger_error("DB Error reading scheduler table",E_ERROR);
 		}
 
 		$row = $sql->fetch_array($result);
-		//echo "row id $row[id]<BR>";
+		//$display_buffer .= "row id $row[id]<BR>";
 		if ($row[calpatient] != 0)
 		{
 			$this_patient = new Patient($row[calpatient]);
 			$ptname = $this_patient->fullname();
-			//echo "$ptname<BR>";
+			//$display_buffer .= "$ptname<BR>";
 		}
 		if ($row[calphysician] != 0)
 		{
@@ -169,7 +171,7 @@ class ViewCalendar extends freemedCalendarModule {
 									_("Pre Note") => $prenote,
 									_("Post Note") => $postnote)
 									);
-		echo "$data";
+		$display_buffer .= "$data";
 	
 	} // end display
 

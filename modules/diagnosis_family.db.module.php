@@ -35,6 +35,7 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 	//function addform () { $this->view(); }
 
 	function modform () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -46,7 +47,7 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
   $r = $sql->fetch_array($result); // dump into array r[]
   extract ($r);
 
-  echo "
+  $display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
@@ -56,13 +57,13 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
     <CENTER><TABLE CELLSPACING=0 CELLPADDING=3 BORDER=0>
 
     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Name")." : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Name")." : </TD>
      <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"dfname\" SIZE=20 MAXLENGTH=100
       VALUE=\"".prepare($dfname)."\"></TD>
     </TR>
 
     <TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")." : <$STDFONT_E></TD>
+     <TD ALIGN=RIGHT>"._("Description")." : </TD>
      <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"dfdescrip\" SIZE=30 MAXLENGTH=100
       VALUE=\"".prepare($dfdescrip)."\"></TD>
     </TR>
@@ -81,15 +82,16 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth&action=view\"
+    <A HREF=\"$this->page_name?action=view\"
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
 	} // end function diagnosisFamilyMaintenance->modform
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ( "SELECT * FROM $this->table_name ".
 				"ORDER BY $this->order_field"),
 		$this->page_name,
@@ -103,10 +105,11 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 
 	
 	function addform() {
-		//global $module, $_auth;
+		global $display_buffer;
+		//global $module;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-		echo "
+		$display_buffer .= "
 			<FORM ACTION=\"$this->page_name\" METHOD=POST>
 			<CENTER>
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">

@@ -18,7 +18,7 @@ class RebillByCovModule extends freemedBillingModule {
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 
 	var $CATEGORY_NAME = "Billing";
-	var $CATEGORY_VERSION = "0";
+	var $CATEGORY_VERSION = "0.1";
 
 
 	// contructor method
@@ -36,8 +36,8 @@ class RebillByCovModule extends freemedBillingModule {
 
 	// override main function
 
-	function addform()
-	{
+	function addform() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -49,15 +49,15 @@ class RebillByCovModule extends freemedBillingModule {
 
 		if ($viewaction=="rebill")
 		{
-			//echo "insco $whichinsco<BR>";
+			//$display_buffer .= "insco $whichinsco<BR>";
 			$insco=0;
 			$insco = new InsuranceCompany($whichinsco);
 			if ($insco==0)
 			{
-				echo "Error getting insco name<BR>";
+				$display_buffer .= "Error getting insco name<BR>";
 				return;
 			}
-			echo "Rebilling ".$insco->local_record[insconame]." ID $whichinsco<BR>";
+			$display_buffer .= "Rebilling ".$insco->local_record[insconame]." ID $whichinsco<BR>";
 			$query = "SELECT a.id FROM procrec as a, coverage as b ".
 					 "WHERE a.procbalcurrent>'0' AND a.procbilled='1' AND a.proccurcovid=b.id ".
 					 "AND b.covinsco='$whichinsco'";
@@ -74,23 +74,23 @@ class RebillByCovModule extends freemedBillingModule {
 			while($row = $sql->fetch_array($result))
 			{
 				$procid = $row[id];
-				//echo "Updateing Proc $procid<BR>";
+				//$display_buffer .= "Updateing Proc $procid<BR>";
 				$updquery = "UPDATE procrec SET procbilled='0' WHERE id='$procid'";
 				$updres = $sql->query($updquery);
 				if (!$updres)
-					echo "Update failed for Procedure $procid<BR>";
+					$display_buffer .= "Update failed for Procedure $procid<BR>";
 			}
-			echo "$numrows Procedures Rebilled<BR>";
+			$display_buffer .= "$numrows Procedures Rebilled<BR>";
 
-			echo "
+			$display_buffer .= "
 			<P>
 			<CENTER>
-			<$STDFONT_B><B>"._("Rebill for ").$insco->local_record[insconame]." "._("Done")."</B><$STDFONT_E>
+			<B>"._("Rebill for ").$insco->local_record[insconame]." "._("Done")."</B>
 			</CENTER>
 			<P>
 			<CENTER>
-			<A HREF=\"$this->page_name?$_auth&module=$module\"
-			><$STDFONT_B>"._("Return to Rebill Menu")."<$STDFONT_E></A>
+			<A HREF=\"$this->page_name?module=$module\"
+			>"._("Return to Rebill Menu")."</A>
 			</CENTER>
 			<P>
 			";
@@ -106,29 +106,28 @@ class RebillByCovModule extends freemedBillingModule {
 	
 
 
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 	
        $query = "SELECT DISTINCT c.id,c.insconame FROM procrec AS a,coverage AS b,insco AS c ".
 			    "WHERE a.procbalcurrent>'0' AND a.proccurcovid>'0' AND a.procbilled='1' ".
 				"AND a.proccurcovid=b.id AND b.covinsco=c.id ORDER BY c.insconame";
-		//echo "$query<BR>";
+		//$display_buffer .= "$query<BR>";
 
-	    echo "
+	    $display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
 		 VALIGN=MIDDLE ALIGN=CENTER>
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>
-		   <$STDFONT_B><B>"._("Rebill By Coverage")."</B><$STDFONT_E>
+		   <B>"._("Rebill By Coverage")."</B>
 		  </CENTER>
 		 </TD>
     	</TR>
 
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
-		<INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
 		<INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"rebill\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
@@ -136,7 +135,7 @@ class RebillByCovModule extends freemedBillingModule {
 		<TR>
 		 <TD ALIGN=RIGHT>
 		  <CENTER>
-		   <$STDFONT_B>Coverage : <$STDFONT_E>
+		   Coverage :
 		  </CENTER>
 		 </TD>
      	<TD ALIGN=LEFT>
@@ -146,22 +145,22 @@ class RebillByCovModule extends freemedBillingModule {
 	   $result = $sql->query ($query);
        if ($sql->num_rows($result) <= 0)
        {
-          echo "Nothing to Bill<BR>";
+          $display_buffer .= "Nothing to Bill<BR>";
 		  return;
        }
 
 	   while ($r = $sql->fetch_array ($result)) {
-		echo "
+		$display_buffer .= "
 		 <OPTION VALUE=\"$r[id]\">".prepare($r[insconame])."
 		";
 	   } // end looping through results                         
-	   echo "
+	   $display_buffer .= "
 		  </SELECT>
 		 </TD>
     	</TR>
 		";
 
-		echo "
+		$display_buffer .= "
 		<TR>
 		 <TD COLSPAN=2>
 		  <CENTER>

@@ -31,6 +31,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 	} // end constructor patientRecordTemplateMaintenance
 
 	function add () {
+		global $display_buffer;
 		global $prtfname, $prtvar, $prtftype, $prtftypefor,
 			$prtfmaxlen, $prtfcom;
 		$prtfname      = fm_join_from_array($prtfname);
@@ -43,6 +44,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 	} // end function patientRecordTemplateMaintenance->add()
 
 	function mod () {
+		global $display_buffer;
 		global $prtfname, $prtvar, $prtftype, $prtftypefor,
 			$prtfmaxlen, $prtfcom;
 		$prtfname      = fm_join_from_array($prtfname);
@@ -55,6 +57,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 	} // end function patientRecordTemplateMaintenance->mod()
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -91,7 +94,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
      $insert[0]="ON";
      $first_insert = true;
    }
-   echo "
+   $display_buffer .= "
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
      <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
@@ -136,7 +139,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
            (empty($prtftype[$i])) ) { $num_color = "#ff0000"; }
        else                         { $num_color = "#000000"; }
       // print actual record
-      echo "
+      $display_buffer .= "
        <TR BGCOLOR=\"".
         ($_alternate = freemed_bar_alternate_color ($_alternate)).
        "\">
@@ -171,7 +174,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
          case "time":    $type_i = "SELECTED"; break;
          default:        $type_n = "SELECTED"; break;
        } // end switch
-       echo "
+       $display_buffer .= "
           <SELECT NAME=\"prtftype$brackets\">
            <OPTION VALUE=\"\"        $type_n>none selected
            <OPTION VALUE=\"text\"    $type_t>text
@@ -202,7 +205,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
                                {  $loopfor = $lineinsert  ; }
        else                    {  $loopfor = 1            ; }
       for ($l=0;$l<$loopfor;$l++) {
-       echo "
+       $display_buffer .= "
         <TR BGCOLOR=\"".
          ($_alternate = freemed_bar_alternate_color ($_alternate)).
 	"\">
@@ -247,7 +250,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
    } // end of while
 
    // display the bottom of the repetitive table
-   echo "
+   $display_buffer .= "
      </TABLE>
      <P>
      <CENTER>
@@ -268,8 +271,9 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 	} // end function patientRecordTemplateModule->form()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT * FROM $this->table_name ".
 				"ORDER BY prtname, prtdescrip"),
 			$this->page_name,

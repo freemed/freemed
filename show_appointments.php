@@ -9,8 +9,6 @@
   include ("lib/calendar-functions.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
-  freemed_display_html_top ();
-  freemed_display_banner ();
 
   if (strlen($selected_date)!=10) {
     $selected_date = $cur_date;
@@ -26,8 +24,8 @@
 
     // display header
   freemed_display_box_top (_("Show Appointments"));
-  if ($patient>0) echo freemed_patient_box ($this_patient);
-  echo "
+  if ($patient>0) $display_buffer .= freemed_patient_box ($this_patient);
+  $display_buffer .= "
     <P>
     <TABLE WIDTH=100% BORDER=0 CELLSPACING=0 CELLPADDING=2
      VALIGN=CENTER ALIGN=CENTER>
@@ -39,12 +37,12 @@
       case "temp":
         $qualifier .= " AND (caltype='temp')";
         $master_patient_link_location =
-          "call-in.php?$_auth&action=display&id=$patient";
+          "call-in.php?action=display&id=$patient";
         break;
       case "pat": case "default":
         $qualifier .= " AND (caltype='pat')";
         $master_patient_link_location =
-          "manage.php?$_auth&id=$patient";
+          "manage.php?id=$patient";
         break;
     } // end switch
   } else { $qualifier = "0 = 0"; }
@@ -52,9 +50,9 @@
   $query = "SELECT * FROM scheduler WHERE (($day_criteria)
     AND ($qualifier)) ORDER BY caldateof, calhour, calminute";
   $result = $sql->query ($query);
-  if ($debug) echo "query=\"$query\"";
+  if ($debug) $display_buffer .= "query=\"$query\"";
   if ($sql->num_rows ($result) < 1) {
-    echo "
+    $display_buffer .= "
       <TR><TD ALIGN=CENTER>
        <$STDFONT_B><I>"._("No appointments today.")."</I><$STDFONT_E>
       </TD></TR>
@@ -63,34 +61,32 @@
    ";
 
    if ($patient>0) { // if there is a patient link
-    echo "
+    $display_buffer .= "
       <CENTER><A HREF=\"$master_patient_link_location$patient\"
        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
-       <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=$type\"
+       <A HREF=\"book_appointment.php?patient=$patient&type=$type\"
        ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A>
       </CENTER>
       <P>
     ";
     } else {
-     echo "
-      <CENTER><A HREF=\"main.php?$_auth\"
+     $display_buffer .= "
+      <CENTER><A HREF=\"main.php?\"
       ><$STDFONT_B>"._("Return to Main Menu")."<$STDFONT_E></A> |
-      <A HREF=\"patient.php?$_auth\"
+      <A HREF=\"patient.php?\"
       ><$STDFONT_B>"._("Choose a Patient")."<$STDFONT_E></A>
       </CENTER>
       <P>
      ";
     }
-    freemed_display_box_bottom ();
-    freemed_display_html_bottom ();
     freemed_close_db ();
-    DIE("");
+    template_display();
   } // end checking if there are any results
   $any_appointments = false;            // until there are, there aren't
   while ($r = $sql->fetch_array ($result)) {
     if (freemed_check_access_for_facility ($LoginCookie, $r["calfacility"])) {
       if (!$any_appointments) // if this is the first appointment...
-        echo "
+        $display_buffer .= "
           <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).
 	   ">
            <TD><$STDFONT_B><B>"._("Time")."</B><$STDFONT_E></TD>
@@ -124,7 +120,7 @@
                    "cifname");
         $ptmname = freemed_get_link_field ($r["calpatient"], "callin",
                    "cimname");
-        $patient_link_location = "call-in.php?$_auth&action=view&".
+        $patient_link_location = "call-in.php?action=view&".
                    "id=$calpatient";
         break;
        case "pat": default:
@@ -134,7 +130,7 @@
                    "ptfname");
         $ptmname = freemed_get_link_field ($r["calpatient"], "patient",
                    "ptmname");
-        $patient_link_location = "manage.php?$_auth&id=$patient";
+        $patient_link_location = "manage.php?id=$patient";
         break;
       } // end of switch (getting proper patient info
 
@@ -151,7 +147,7 @@
       if (strlen($psrname)<1) $psrname = "&nbsp;";
       if ($show=="all") $_date = $r["caldateof"]." <BR>";
       if (freemed_check_access_for_facility ($LoginCookie, $r["calfacility"])){
-       echo "
+       $display_buffer .= "
          <TR BGCOLOR=\"".
           ( ($r["calpatient"]==$current_patient) ?
 	  "#aaaaaa" :
@@ -171,22 +167,22 @@
       } // if there is something here
   } // end the universal while loop
   if (!$any_appointments)
-    echo "
+    $display_buffer .= "
       <TR><TD ALIGN=CENTER>
        <$STDFONT_B><I>"._("No appointments today.")."</I><$STDFONT_E>
       </TD></TR>
       </TABLE>
       <P>
     ";
-  else echo "
+  else $display_buffer .= "
     </TABLE>
     <P>
   ";
   if ($patient>0) // if there is a patient link
-    echo "
+    $display_buffer .= "
       <CENTER><A HREF=\"$master_patient_link_location\"
        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
-       <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=$type\"
+       <A HREF=\"book_appointment.php?patient=$patient&type=$type\"
        ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A>
       </CENTER>
       <P>
@@ -194,6 +190,5 @@
   freemed_display_box_bottom ();
 
 freemed_close_db (); // close the db
-freemed_display_html_bottom (); // show bottom of HTML code
-
+template_display();
 ?>

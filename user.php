@@ -4,27 +4,24 @@
   // code: adam b (gdrago23@yahoo.com) -- near-complete rewrite
   // lic : GPL
   
-  $page_name   = basename($GLOBALS["REQUEST_URI"]);
-  $table_name  = "user";
-  $record_name = "User";
-  $order_field = "id";
+$page_name   = basename($GLOBALS["REQUEST_URI"]);
+$table_name  = "user";
+$record_name = "User";
+$order_field = "id";
 
-  include ("lib/freemed.php");         // load global variables
-  include ("lib/API.php");  // API functions
+include ("lib/freemed.php");         // load global variables
+include ("lib/API.php");  // API functions
 
     // *** authorizing user ***
 
-  freemed_open_db ($LoginCookie); // authenticate user
-
-    // *** initializing page ***
-
-  freemed_display_html_top ();  // generate top of page
-  freemed_display_banner ();    // display package banner
+freemed_open_db ();
 
 $this_user = new User ($LoginCookie);
 
-if ($this_user->user_number != 1)  // if not root...
-  DIE ("$page_name :: access denied");
+if ($this_user->user_number != 1) {  // if not root...
+	$display_buffer .= "$page_name :: access denied\n";
+	template_display();
+}
 
 // *** main action loop ***
 // (default action is "view")
@@ -36,7 +33,7 @@ switch($action) { // master action switch
  case "addform":
   // create new notebook
   $book = new notebook(
-    array ("action", "_auth", "id"),
+    array ("action", "id"),
 	NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR
   );
   
@@ -220,17 +217,17 @@ switch($action) { // master action switch
   );
 
   if (!( $book->is_done() )) {
-    echo "<CENTER>\n".$book->display();
-    echo "
+    $display_buffer .= "<CENTER>\n".$book->display();
+    $display_buffer .= "
      <$STDFONT_B>
-      <A HREF=\"$page_name?$_auth\">"._("Abandon ".
+      <A HREF=\"$page_name\">"._("Abandon ".
        (($action=="add" OR $action=="addform") ? "Addition" : "Modification") )
       ." </A>
      <$STDFONT_E>
     </CENTER>\n";
   } else { // now the add/mod code itself
     if ($action=="mod" || $action=="modform") {
-      echo "
+      $display_buffer .= "
         <P ALIGN=CENTER>
         <$STDFONT_B>"._("Modifying")." . . . 
       ";
@@ -252,7 +249,7 @@ switch($action) { // master action switch
         "WHERE id='".addslashes($id)."'";
     } else { // now the "add" guts
   
-      echo "
+      $display_buffer .= "
         <P ALIGN=CENTER>
         <$STDFONT_B>"._("Adding")." . . . 
       ";
@@ -270,30 +267,28 @@ switch($action) { // master action switch
     } // 'add' guts
 
     if ($userpassword1 != $userpassword2) {
-      echo "
+      $display_buffer .= "
         "._("Error")." !
 	<B>("._("Passwords must match").")</B>
 	<$STDFONT_E>
       ";
-      freemed_display_box_bottom ();
-      freemed_display_html_bottom ();
-      DIE (""); // kill us! kill us!    ya were in Columbine weren't you?
+      template_display();
     } // if the passwords _don't_ match...
 
     if ($id != 1)
       $result = $sql->query($query); // execute query
-    else echo _("You cannot modify root!");
+    else $display_buffer .= _("You cannot modify root!");
 
     if ($result) {
-      echo "
+      $display_buffer .= "
         <B>"._("Done")."</B><$STDFONT_E>
       ";
     } else {
-      echo "<B>"._("Error")." [$query]</B><$STDFONT_E>\n"; 
+      $display_buffer .= "<B>"._("Error")." [$query]</B><$STDFONT_E>\n"; 
     } // end of error reporting clause
-    echo "
+    $display_buffer .= "
         <P ALIGN=CENTER>
-        <A HREF=\"$page_name?$_auth\"
+        <A HREF=\"$page_name?\"
          ><$STDFONT_B>"._("Go back to user menu")."<$STDFONT_E></A>
         <P>
     ";
@@ -311,20 +306,18 @@ switch($action) { // master action switch
     $result = $sql->query("DELETE FROM $table_name
       WHERE (id = \"$id\")");
   else { // if we tried to delete root!!!
-    echo "
+    $display_buffer .= "
       <B><CENTER>"._("You cannot delete root!")."</CENTER></B>
     ";
-    freemed_display_box_bottom ();
-    freemed_display_html_bottom ();
-    DIE("");
+    template_display();
   }
 
-  echo "
+  $display_buffer .= "
     <P ALIGN=CENTER>
     $record_name "._("Deleted")."
     <BR>
     <BR>
-    <A HREF=\"$page_name?$_auth&action=view\"
+    <A HREF=\"$page_name?action=view\"
      >"._("Go back to user menu")."</A>
   ";
   freemed_display_box_bottom ();
@@ -350,7 +343,7 @@ switch($action) { // master action switch
       $_ref="main.php";
     } // if no ref, then return to home page...
 
-    echo "
+    $display_buffer .= "
      <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
       ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
      <TR><TD ALIGN=CENTER>
@@ -360,9 +353,9 @@ switch($action) { // master action switch
      <TR><TD>
     ";
 
-    echo freemed_display_actionbar($page_name, $_ref);
+    $display_buffer .= freemed_display_actionbar($page_name, $_ref);
 
-    echo "
+    $display_buffer .= "
      </TD></TR>
      <TR><TD>
       <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
@@ -373,7 +366,7 @@ switch($action) { // master action switch
     "; // header of box
 
     while ($r = $sql->fetch_array($result)) {
-      echo "
+      $display_buffer .= "
         <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
         <TD><$STDFONT_B>".prepare($r[username])."<$STDFONT_E></TD>
         <TD>
@@ -381,23 +374,23 @@ switch($action) { // master action switch
 
         // don't allow add or delete on root...
       if ($id != 1) 
-        echo "
+        $display_buffer .= "
          <A HREF=
-         \"$page_name?$_auth&id=$r[id]&action=modform\"
+         \"$page_name?id=$r[id]&action=modform\"
          ><FONT SIZE=-1>"._("MOD")."</FONT></A>
           &nbsp;
-          <A HREF=\"$page_name?$_auth&id=$r[id]&action=del\"
+          <A HREF=\"$page_name?id=$r[id]&action=del\"
           ><FONT SIZE=-1>"._("DEL")."</FONT></A>
         "; // show actions...
-      else echo "&nbsp; \n";
+      else $display_buffer .= "&nbsp; \n";
 
-      echo "
+      $display_buffer .= "
         </TD></TR>
       ";
 
     } // while there are no more
 
-    echo "
+    $display_buffer .= "
       </TABLE>
       ".freemed_display_actionbar ($page_name, $_ref)."
      </TD></TR>
@@ -411,12 +404,12 @@ switch($action) { // master action switch
     freemed_display_box_bottom (); // display bottom of the box
 
   } else {
-    echo "\n<B>"._("No record found with that criteria.")."</B>\n";
+    $display_buffer .= "\n<B>"._("No record found with that criteria.")."</B>\n";
   }
 
 } // end master action switch
 
 freemed_close_db(); // always close the database when done!
-freemed_display_html_bottom (); // starting here, combined php3 code areas
+template_display();
 
 ?>

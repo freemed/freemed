@@ -28,12 +28,13 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
 	function addform () { $this->view(); }
 
 	function modform () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$r = freemed_get_link_rec ($id, $this->table_name);
 		extract ($r);
 
-		echo "
+		$display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
@@ -60,10 +61,10 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
     </CENTER></FORM>
 		";
 
-		echo "
+		$display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
+    <A HREF=\"$this->page_name?module=$module&action=view\"
      >"._("Abandon ".( ($action=="addform") ? "Addition" : "Modification" )).
      "</A>
     </CENTER>
@@ -71,9 +72,10 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
 	} // end function insuranceModifiersMaintenance->modform()
 
 	function view () {
-		global $_auth, $sql, $module;
+		global $display_buffer;
+		global $sql, $module;
 
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT * FROM $this->table_name ".
 				"ORDER BY $this->order_field"),
 			$this->page_name,
@@ -86,7 +88,7 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
 				_("NO DESCRIPTION")
 			)
 		);  
-		echo "
+		$display_buffer .= "
    <CENTER>
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
     <TR>
@@ -98,7 +100,6 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
     <TD VALIGN=CENTER><FORM ACTION=\"$this->page_name\" METHOD=POST
      ><INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
       <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-      <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
      <INPUT TYPE=TEXT NAME=\"insmod\" SIZE=15
       MAXLENGTH=16></TD>
     <TD VALIGN=CENTER>

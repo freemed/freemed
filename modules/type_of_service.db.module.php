@@ -32,10 +32,11 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 	} // end constructor typeOfServiceMaintenance	
 
 	function view () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT tosname,tosdescrip,id FROM ".$this->table_name.
 				" ORDER BY ".prepare($this->order_field)),
 			$this->page_name,
@@ -48,6 +49,7 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 	} // end function module->view
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
   		if ($action=="modform") { 
@@ -60,16 +62,16 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 		// display itemlist first
 		$this->view ();
 
-		echo "
+		$display_buffer .= "
 			<FORM ACTION=\"$this->page_name\" METHOD=POST>
 			<INPUT TYPE=HIDDEN NAME=\"tosdtadd\"".prepare($cur_date)."\">
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
 			($action=="modform" ? "mod" : "add")."\">";
 		if ($action=="modform")
-			echo "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
+			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
 
-		echo "
+		$display_buffer .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
 			<TR><TD ALIGN=RIGHT>
 			 <$STDFONT_B>"._("Type of Service")." : <$STDFONT_E>
@@ -93,10 +95,10 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 			</TD></TR>
 			</TABLE>
 		";
-		if ($action=="modform") echo "
+		if ($action=="modform") $display_buffer .= "
 			<P>
 			<CENTER><$STDFONT_B>
-			<A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
+			<A HREF=\"$this->page_name?module=$module&action=view\"
 			>"._("Abandon Modification")."</A>
 			<$STDFONT_E></CENTER>
 			";

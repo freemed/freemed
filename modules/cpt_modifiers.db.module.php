@@ -21,6 +21,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 	);
 
 	function cptModifiersMaintenance () {
+		global $display_buffer;
 			// run constructor
 		$this->freemedMaintenanceModule();
 			// table definition (inside constructor, as outside definitions
@@ -31,13 +32,14 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 			"id"			=>	SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
 		);
 		if ($debug) {
-		global $sql;echo "query = \"".$sql->create_table_query(
+		global $sql;$display_buffer .= "query = \"".$sql->create_table_query(
 			$this->table_name, $this->table_definition).
 			"\"<BR>\n";
 		} // end if $debug
 	} // end constructor cptModifiersMaintenance
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
   switch ($action) { // inner switch
@@ -51,7 +53,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
      break;
   } // end inner switch
 
-  echo "
+  $display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
@@ -75,10 +77,10 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
     </CENTER></FORM>
   ";
 
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
+    <A HREF=\"$this->page_name?module=$module&action=view\"
      >"._("Abandon ".
        ( ($action=="addform") ? "Addition" : "Modification" ))."</A>
     </CENTER>
@@ -86,9 +88,10 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 	} // end function cptModifiersMaintenance->form()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo "View ";
-		echo freemed_display_itemlist (
+		$display_buffer .= "View ";
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT cptmod,cptmoddescrip,id FROM $this->table_name ".
 		((strlen($_s_val)>0)
 		 ? "WHERE 

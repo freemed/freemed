@@ -43,6 +43,7 @@ class freemedBillingModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action;
 
 		switch ($action) {
@@ -69,7 +70,7 @@ class freemedBillingModule extends freemedModule {
 				if (empty($id) or ($id<1)) {
 					freemed_display_box_bottom ();
 					freemed_display_html_bottom ();
-					die ("");
+					template_display();
 				}
 				$this->modform();
 				break;
@@ -86,12 +87,13 @@ class freemedBillingModule extends freemedModule {
 	// function _add
 	// - addition routine (can be overridden if need be)
 	function _add () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Adding")." ...
+			"._("Adding")." ...
 		";
 
 		$result = $sql->query (
@@ -101,15 +103,15 @@ class freemedBillingModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else        { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 	} // end function _add
@@ -118,27 +120,29 @@ class freemedBillingModule extends freemedModule {
 	// function _del
 	// - only override this if you *really* have something weird to do
 	function _del () {
-		global $STDFONT_B, $STDFONT_E, $id, $sql;
-		echo "<P ALIGN=CENTER>".
-			"<$STDFONT_B>"._("Deleting")." . . . \n";
+		global $display_buffer;
+		global $id, $sql;
+		$display_buffer .= "<P ALIGN=CENTER>".
+			_("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { echo _("done"); }
-		 else        { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
-		echo "<$STDFONT_E></P>\n";
+		if ($result) { $display_buffer .= _("done"); }
+		 else        { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		$display_buffer .= "</P>\n";
 	} // end function _del
 	function del () { $this->_del(); }
 
 	// function _mod
 	// - modification routine (override if neccessary)
 	function _mod () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Modifying")." ...
+			"._("Modifying")." ...
 		";
 
 		$result = $sql->query (
@@ -151,15 +155,15 @@ class freemedBillingModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else        { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 	} // end function _mod
@@ -173,6 +177,7 @@ class freemedBillingModule extends freemedModule {
 	// function form
 	// - add/mod form stub
 	function form () {
+		global $display_buffer;
 		global $action, $id, $sql;
 
 		if (is_array($this->form_vars)) {
@@ -197,10 +202,11 @@ class freemedBillingModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
+		global $display_buffer;
 		global $sql;
 		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$result,
 			"module_loader.php",
 			$this->form_vars,
@@ -210,14 +216,14 @@ class freemedBillingModule extends freemedModule {
 		);
 	} // end function view
 
-	function parent()
-	{
-		echo "parent parent<BR>";
+	function parent() {
+		global $display_buffer;
+		$display_buffer .= "parent parent<BR>";
 	}
 
 
-	function MakeDecimal($data,$places)
-	{
+	function MakeDecimal($data,$places) {
+		global $display_buffer;
 		$data = bcadd($data,0,$places);
 		$data = $this->CleanNumber($data);
 		return $data;
@@ -226,8 +232,8 @@ class freemedBillingModule extends freemedModule {
 
 	// NewKey
 	// Create billing control break key
-	function NewKey($row)
-	{
+	function NewKey($row) {
+		global $display_buffer;
 		// if any of these fields change while processing a
         // bill we need to cut a new bill
 
@@ -252,8 +258,8 @@ class freemedBillingModule extends freemedModule {
 
 	// all reporting data must stipped of junk
 	// and all upper cased
-	function CleanChar($data)
-	{
+	function CleanChar($data) {
+		global $display_buffer;
 		$data = stripslashes($data);
 		$data = str_replace("/"," ",$data);
 		$data = str_replace("'"," ",$data);
@@ -274,8 +280,8 @@ class freemedBillingModule extends freemedModule {
 	// all reporting data must stipped of junk
 	// and all upper cased then for number all blanks
 	// removed
-	function CleanNumber($data)
-	{
+	function CleanNumber($data) {
+		global $display_buffer;
 
 		$data = $this->CleanChar($data);
 		$data = str_replace(" ","",$data);
@@ -285,8 +291,8 @@ class freemedBillingModule extends freemedModule {
 	} // end cleannumber
 
 	// see if any insurance bills are due
-	function CheckforInsBills($covtypes="")
-	{
+	function CheckforInsBills($covtypes="") {
+		global $display_buffer;
 		global $sql;
 
 		if (empty($covtypes))
@@ -304,7 +310,7 @@ class freemedBillingModule extends freemedModule {
 
 		}
 		$where .= ")";
-		//echo "$where<BR>";
+		//$display_buffer .= "$where<BR>";
 
 	//		"WHERE (proccurcovtp='".PRIMARY."' OR proccurcovtp='".SECONDARY."')".
 		$query = "SELECT DISTINCT procpatient,proccurcovid,proccurcovtp FROM procrec ".
@@ -320,8 +326,8 @@ class freemedBillingModule extends freemedModule {
 
 	// get a list of bills due for this patient
     // coverage and type
-	function GetProcstoBill($covid,$covtype,$covpatient,$forpat=0)
-	{
+	function GetProcstoBill($covid,$covtype,$covpatient,$forpat=0) {
+		global $display_buffer;
 		global $sql;
 
 		if ($forpat==0) // not doing patient bills
@@ -356,8 +362,8 @@ class freemedBillingModule extends freemedModule {
     // function at every control break passing it the like 
     // procedures in an array. User should suppliy the
     // the ProcCallBack method
-	function Makestack($result,$maxloop)
-	{
+	function Makestack($result,$maxloop) {
+		global $display_buffer;
 		global $sql;
 
 		if (!$result)
@@ -395,7 +401,7 @@ class freemedBillingModule extends freemedModule {
 				if ($prev_key != $cur_key)
 				{
 					$prev_key = $cur_key;
-					//echo "keychange $r[procphysician]<BR>";
+					//$display_buffer .= "keychange $r[procphysician]<BR>";
 				}
 
 				$this->ProcCallBack($procstack);
@@ -435,23 +441,23 @@ class freemedBillingModule extends freemedModule {
 	// mark all the procedures as billed and add a 
 	// billed ledger entry for each procedure 
 
-	function MarkBilled()
-	{
+	function MarkBilled() {
+		global $display_buffer;
 
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 	   	if (count($processed)<1) 
 		{
-			echo "
+			$display_buffer .= "
 		 	<P>
 		 	<CENTER>
-		  	<$STDFONT_B><B>"._("Nothing set to be marked!")."</B><$STDFONT_E>
+		  	<B>"._("Nothing set to be marked!")."</B>
 		 	</CENTER>
 		 	<P>
 		 	<CENTER>
-		  	<A HREF=\"$this->page_name?$_auth&module=$module\"
-		  	><$STDFONT_B>"._("Return to Fixed Forms Generation Menu")."<$STDFONT_E></A>
+		  	<A HREF=\"$this->page_name?module=$module\"
+		  	>"._("Return to Fixed Forms Generation Menu")."</A>
 		 	</CENTER>
 		 	<P>
 			";
@@ -460,7 +466,7 @@ class freemedBillingModule extends freemedModule {
 
      	for ($i=0;$i<count($processed);$i++) 
 		{
-       		echo "
+       		$display_buffer .= "
        		Marking ".$processed[$i]." ...<BR> 
        		";
 			$pat = $processed[$i];
@@ -469,17 +475,17 @@ class freemedBillingModule extends freemedModule {
 			for ($x=0;$x<$procs;$x++)
 			{
 				$prc = $procids[$pat][$x];
-				//echo "proc $prc for patient $pat<BR>";
+				//$display_buffer .= "proc $prc for patient $pat<BR>";
        			// start of insert loop for billed legder entries
        			$query = "SELECT procbalcurrent,proccurcovid,proccurcovtp FROM procrec";
 				$query .= " WHERE id='".$prc."'";
        			$result = $sql->query($query);
        			if (!$result)
        			{
-       				echo "Mark failed getting procrecs<BR>";
+       				$display_buffer .= "Mark failed getting procrecs<BR>";
        				DIE("Mark failed getting procrecs");
        			}
-				//echo "proc query $query<BR>";
+				//$display_buffer .= "proc query $query<BR>";
        			$bill_tran = $sql->fetch_array($result);
        			$cur_bal = $bill_tran[procbalcurrent];
           		$proc_id = $bill_tran[id];
@@ -501,34 +507,34 @@ class freemedBillingModule extends freemedModule {
 						"payreclock" => "unlocked"
 						)	
 					);
-				//echo "payrec insert query $query<BR>";
+				//$display_buffer .= "payrec insert query $query<BR>";
            		$pay_result = $sql->query ($query);
            		if ($pay_result)
-               		echo "<$STDFONT_B>Adding Bill Date to ledger.<$STDFONT_E><BR> \n";
+               		$display_buffer .= "Adding Bill Date to ledger.<BR> \n";
            		else
-               		echo "<$STDFONT_B>Failed Adding Bill Date to ledger!!<$STDFONT_E><BR> \n";
+               		$display_buffer .= "Failed Adding Bill Date to ledger!!<BR> \n";
 
        			$query = "UPDATE procrec SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'".
 						 " WHERE id = '".$prc."'";
-				//echo "procrec update query $query<BR>";
+				//$display_buffer .= "procrec update query $query<BR>";
        			$proc_result = $sql->query ($query);
        			if ($result) 
 				{ 
-					echo _("done").".<BR>\n"; 
+					$display_buffer .= _("done").".<BR>\n"; 
 				}
        			else        
 				{ 
-					echo _("ERROR")."<BR>\n"; 
+					$display_buffer .= _("ERROR")."<BR>\n"; 
 				}
 
 			} // end proces for patient loop
 			
      	} // end for processed
-     	echo "
+     	$display_buffer .= "
       	<P>
       	<CENTER>
-       	<A HREF=\"$this->page_name?$_auth&module=$module\"
-       	><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+       	<A HREF=\"$this->page_name?module=$module\"
+       	>"._("Back")."</A>
       	</CENTER>
       	<P>
      	";
@@ -536,22 +542,22 @@ class freemedBillingModule extends freemedModule {
 
 	
 
-	function ShowBillsToMark($preview=1)
-   	{
+	function ShowBillsToMark($preview=1) {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		reset ($this->rendorform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
    		#################### TAKE THIS OUT AFTER TESTING #######################
-   		#echo "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
+   		#$display_buffer .= "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
    		########################################################################
 
 		if ($preview)
 		{
-			echo "
+			$display_buffer .= "
 			<FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
 			 <CENTER>
-			  <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
+			  <B>"._("Preview")."</B>
 			 </CENTER>
 			 <BR>
 			 <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
@@ -570,13 +576,12 @@ class freemedBillingModule extends freemedModule {
 		}
 
 		// <CENTER>
-		// <$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
+		// <B>"._("Mark as Billed")."</B>
 		// </CENTER>
 		// present the form so that we can mark as billed
-		echo "
+		$display_buffer .= "
 		<BR>
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
-		 <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
 		 <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
 		 <INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"mark\">
 		 <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
@@ -586,27 +591,27 @@ class freemedBillingModule extends freemedModule {
 		for ($i=1;$i<=$this->pat_processed;$i++) 
 		{
 			$this_patient = new Patient ($this->patient_forms[$i]);
-			echo "
+			$display_buffer .= "
 			<INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
 			VALUE=\"".$this->patient_forms[$i]."\" CHECKED>
 			".$this_patient->fullName(false)."
-			(<A HREF=\"manage.php?$_auth&id=$patient_forms[$i]\"
+			(<A HREF=\"manage.php?id=$patient_forms[$i]\"
 			>".$this_patient->local_record["ptid"]."</A>) <BR>
 			";
 
 			$pat = $this->patient_forms[$i];
 			$patprocs = count($this->patient_procs[$pat]);
 
-			//echo "procs for $pat is $patprocs<BR>";
+			//$display_buffer .= "procs for $pat is $patprocs<BR>";
 			for ($x=0;$x<$patprocs;$x++)
 			{
-			 	echo "<INPUT TYPE=HIDDEN NAME=\"procids[".$pat."][".$x."]\"
+			 	$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"procids[".$pat."][".$x."]\"
 			 	VALUE=\"".$this->patient_procs[$pat][$x]."\">\n";
 			}
 
    		} // end looping for all patient procs
 
-		echo "
+		$display_buffer .= "
 		<P>
 		<INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
 		</FORM>
@@ -617,8 +622,8 @@ class freemedBillingModule extends freemedModule {
 	} // end ShowMarkBilled
 
 
-	function GetRelationShip($rel,$type="NSF")
-	{
+	function GetRelationShip($rel,$type="NSF") {
+		global $display_buffer;
 		if ($type=="NSF")
 		{
 			if ($rel == "S")

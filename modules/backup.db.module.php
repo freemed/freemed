@@ -20,65 +20,63 @@ class BackupMaintenance extends freemedMaintenanceModule {
 		//$this->set_icon("img/kfloppy.gif");
 	} // end constructor BackupMaintenance	
 
-	function form()
-	{
-	} // end form
+	function form() { } // end form
 
 	function view () {
-		global $sql,$_auth,$module,$STDFONT_B,$STDFONT_E;
+		global $display_buffer;
+		global $sql,$module;
 
 		$file = DB_NAME.".".gmdate(Ymdhis).".txt";
 		$tmpfile = "/tmp/".$file;
 		$gpgfile = "/tmp/".$file.".gpg";
 		$httpfile = "/bills/".$file;
-		echo "file is $file<BR>";
+		$display_buffer .= "file is $file<BR>";
 
 		$passphrase = GPG_PASSPHRASE_LOCATION;
 		$homedir = GPG_HOME;
 
 		$dumpcmd = "mysqldump -c --add-drop-table --user=".DB_USER." --password=".DB_PASSWORD." ".DB_NAME." >$tmpfile";
-		//$gpgcmd = "echo $passphrase | gpg --homedir=$homedir --passphrase-fd 0 --output $gpgfile  --symmetric $tmpfile";
+		//$gpgcmd = "$display_buffer .= $passphrase | gpg --homedir=$homedir --passphrase-fd 0 --output $gpgfile  --symmetric $tmpfile";
 		$gpgcmd = "gpg --homedir $homedir --batch --passphrase-fd 0 --output $gpgfile  --symmetric $tmpfile < $passphrase";
-		echo "gpg $gpgcmd<BR>";
+		$display_buffer .= "gpg $gpgcmd<BR>";
 
-		//echo "cmd is $cmd<BR>";
+		//$display_buffer .= "cmd is $cmd<BR>";
 		system($dumpcmd);
 
 		if (file_exists($tmpfile))
 		{
-			echo "Backup completed<BR>";
+			$display_buffer .= "Backup completed<BR>";
 			if (USE_GPG=="YES")
 			{
 				system($gpgcmd);
 				if (file_exists($gpgfile))
 				{
-					echo "Encryption completed to $gpgfile<BR>";
+					$display_buffer .= "Encryption completed to $gpgfile<BR>";
 					// NOTE you want to check for an admin user before displaying this 
 					// downloadable link
 					$httpfile = $httpfile.".gpg";
-					echo "Wrote Encrypted Backup to <A HREF=\"$httpfile\">$httpfile</A><BR>";
+					$display_buffer .= "Wrote Encrypted Backup to <A HREF=\"$httpfile\">$httpfile</A><BR>";
 					unlink($tmpfile);
 				}
 				else
-					echo "Error - gpg failed for $gpgfile<BR>";
+					$display_buffer .= "Error - gpg failed for $gpgfile<BR>";
 			}
 			else
 			{
-					echo "Wrote Backup to <A HREF=\"$httpfile\">$httpfile</A><BR>";
+					$display_buffer .= "Wrote Backup to <A HREF=\"$httpfile\">$httpfile</A><BR>";
 				
 
 			}
 			
 		}
 		else
-			echo "Error - dump failed for $file<BR>";
+			$display_buffer .= "Error - dump failed for $file<BR>";
 		
-		echo "
-			<$STDFONT_E>
+		$display_buffer .= "
 			<P>
 			<CENTER>
-			<A HREF=\"db_maintenance.php?$_auth\"
-			 ><$STDFONT_B>"._("Return to Maintenance Menu")."<$STDFONT_E></A>
+			<A HREF=\"db_maintenance.php\"
+			 >"._("Return to Maintenance Menu")."</A>
 			</CENTER>
 			<P>
 		";

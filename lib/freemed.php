@@ -14,13 +14,12 @@ define ('__FREEMED_PHP__', true);
     // these variables you should not touch
 define ('PACKAGENAME', "freemed");				// package name
 define ('CODED_BY', "The Freemed Project");		// coded by tag
-define ('VERSION', "0.2.1.3 (Bread and Butter/CVS)");	// current version
+define ('VERSION', "0.3 (Spoon/CVS)");	// current version
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
 $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
 $cur_date_hash=date("Ymd");		// YYYYMMDD date hash
-$_auth="default_value=yes";		// authentication (KFM fix)
 
    // CHANGE THIS FOR YOUR LOCAL DATE DISPLAY
 $local_date_display="%Y-%m-%d";       // United States
@@ -39,10 +38,12 @@ define ('PHYSICAL_LOCATION', "/usr/freemed");
 define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
 define ('BUG_TRACKER', true);   // set bug tracker on or off
 define ('USE_CSS', true);		// do we use cascading style sheets?
+define ('TEMPLATE', "default");	// set template
 
 define ('HOST', "localhost");             // host name for this system
 define ('BASE_URL', "/freemed");		// offset (i.e. http://here/package)
 define ('HTTP', "http");                // http for normal, https for SSL
+define ('SESSION_PROTECTION', true);	// strong session protection?
 $default_language="EN";               // default language
 
     // GPG settings
@@ -75,7 +76,6 @@ if (strlen($u_lang)==2) $language=$u_lang;
 
     // don't touch these variables either...
 define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
-$_cookie_expire="36000";     // cookies expire in 1 hour
 
 $debug=false;  // true=debug info on, false=debug info off
 $_mail_handler="mailto:";  // where the mail goes...
@@ -108,17 +108,8 @@ $max_num_res = 15;
 
   // now, some all-purpose time savers
   // don't touch unless you -KNOW- what you are doing.
-    // header fonts, begin and end
-$HEADERFONT_B = "CENTER><FONT FACE=\"Arial, Helvetica, Verdana\"><B";
-$HEADERFONT_E = "/B></FONT></CENTER";
-    // standard fonts, begin and end
-$STDFONT_B    = "FONT FACE=\"Arial, Helvetica, Verdana\"";
-$STDFONT_E    = "/FONT";
 
 $brackets     = "[]";
-
-//if ($default_facility>0) {
-// SetCookie ("default_facility", $default_facility, time()+$_cookie_expire); 
 
   // set the maximum timeout...
 set_time_limit (0);
@@ -137,6 +128,9 @@ if (!function_exists("bcadd"))
 	include_once ("lib/bcadd.php");
 if (!function_exists("bindtextdomain"))
 	die ("PHP must be compiled with GNU gettext (--with-gettext)");
+
+  // check for proper template, and load default if not provided
+if (!isset($template)) { $template = TEMPLATE; }
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
@@ -168,6 +162,11 @@ define ('DB_ENGINE', SQL_MYSQL);
 
 $sql = new sql (DB_ENGINE, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
+  // ***************************************************************
+
+  // ********************** START SESSION **************************
+session_start();
+session_register("SESSION"); // master session storage
   // ***************************************************************
 
 } // end checking for __FREEMED_PHP__

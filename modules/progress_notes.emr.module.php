@@ -29,6 +29,7 @@ class progressNotes extends freemedEMRModule {
 	function mod () { $this->form(); }
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -48,11 +49,10 @@ class progressNotes extends freemedEMRModule {
 
          if (($id<1) OR (strlen($id)<1)) {
            //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
-           echo "
+           $display_buffer .= "
              <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
            ";
-           //freemed_display_box_bottom ();
-           DIE("");
+           template_display();
          }
          $r = freemed_get_link_rec ($id, "pnotes");
          foreach ($r AS $k => $v) {
@@ -181,11 +181,11 @@ class progressNotes extends freemedEMRModule {
      );
 
      if (!$book->is_done()) {
-      echo $book->display();
+      $display_buffer .= $book->display();
 
-      echo "
+      $display_buffer .= "
         <CENTER>
-         <A HREF=\"$this->page_name?module=$module&$_auth&patient=$patient\"
+         <A HREF=\"$this->page_name?module=$module&patient=$patient\"
           >"._("Abandon ".( ($action=="addform") ?
  	   "Addition" : "Modification" ))."</A>
         </CENTER>
@@ -193,7 +193,7 @@ class progressNotes extends freemedEMRModule {
      } else {
        switch ($action) {
         case "addform": case "add":
-         echo "
+         $display_buffer .= "
            <CENTER><B>"._("Adding")." ... </B>
          ";
            // preparation of values
@@ -221,7 +221,7 @@ class progressNotes extends freemedEMRModule {
          break;
 
 	case "modform": case "mod":
-         echo "
+         $display_buffer .= "
            <CENTER><B>"._("Modifying")." ... </B>
          ";
          $query = "UPDATE ".$this->table_name." SET
@@ -243,27 +243,27 @@ class progressNotes extends freemedEMRModule {
        } // end inner switch
        // now actually send the query
        $result = $sql->query ($query);
-       if ($debug) echo "(query = '$query') ";
+       if ($debug) $display_buffer .= "(query = '$query') ";
        if ($result)
-         echo " <B> "._("done").". </B>\n";
+         $display_buffer .= " <B> "._("done").". </B>\n";
        else
-         echo " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
-       echo "
+         $display_buffer .= " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
+       $display_buffer .= "
         </CENTER>
         <BR><BR>
-         <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
+         <CENTER><A HREF=\"manage.php?id=$patient\"
           >"._("Manage Patient")."</A>
          <B>|</B>
-         <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
+         <A HREF=\"$this->page_name?module=$module&patient=$patient\"
           >"._($this->record_name)."</A>
 	  ";
        if ($action=="mod" OR $action=="modform")
-         echo "
+         $display_buffer .= "
 	 <B>|</B>
-	 <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient&action=view&id=$id\"
+	 <A HREF=\"$this->page_name?module=$module&patient=$patient&action=view&id=$id\"
 	  >"._("View $this->record_name")."</A>
 	 ";
-       echo "
+       $display_buffer .= "
          </CENTER>
          <BR>
          ";
@@ -275,21 +275,20 @@ class progressNotes extends freemedEMRModule {
 	} // end of function progressNotes->form()
 
 	function display () {
+		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) global $$k;
      if (($id<1) OR (strlen($id)<1)) {
        //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
-       echo "
+       $display_buffer .= "
          "._("Specify Notes to Display")."
          <P>
-         <CENTER><A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
+         <CENTER><A HREF=\"$this->page_name?module=$module&patient=$patient\"
           >"._("back")."</A> |
-          <A HREF=\"manage.php?$_auth&id=$patient\"
+          <A HREF=\"manage.php?id=$patient\"
           >"._("Manage Patient")."</A>
          </CENTER>
        ";
-       //freemed_display_box_bottom ();
-       freemed_display_html_bottom ();
-       DIE("");
+       template_display();
      }
       // if it is legit, grab the data
      $r = freemed_get_link_rec ($id, "pnotes");
@@ -305,14 +304,14 @@ class progressNotes extends freemedEMRModule {
      //freemed_display_box_top (_($this->record_name));
      if (freemed_get_userlevel($LoginCookie)>$database_level)
        $__MODIFY__ = " |
-         <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient&id=$id&action=modform\"
+         <A HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
           >"._("Modify")."</A>
        "; // add this if they have modify privledges
-     echo "
+     $display_buffer .= "
        <P>
-       <CENTER><A HREF=\"$this->page_name?$_auth&module=$module&patient=$pnotespat\"
+       <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
         >"._($this->record_name)."</A> |
-        <A HREF=\"manage.php?$_auth&id=$pnotespat\"
+        <A HREF=\"manage.php?id=$pnotespat\"
         >"._("Manage Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
@@ -324,7 +323,7 @@ class progressNotes extends freemedEMRModule {
        <P>
      ";
      if (count($pnoteseoc)>0 and is_array($pnoteseoc)) {
-      echo "
+      $display_buffer .= "
        <CENTER>
         <B>"._("Related Episode(s)")."</B>
         <BR>
@@ -336,8 +335,8 @@ class progressNotes extends freemedEMRModule {
           $e_desc  = $e_r["eocdescrip"];
           $e_first = $e_r["eocstartdate"];
           $e_last  = $e_r["eocdtlastsimilar"];
-          echo "
-           <A HREF=\"episode_of_care.php3?$_auth&patient=$patient&".
+          $display_buffer .= "
+           <A HREF=\"module_loader.php?module=episodeOfCare&patient=$patient&".
   	   "action=manage&id=$e_id\"
            >$e_desc / $e_first to $e_last</A><BR>
           ";
@@ -349,20 +348,20 @@ class progressNotes extends freemedEMRModule {
             $e_desc  = $epi["eocdescrip"];
             $e_first = $epi["eocstartdate"];
             $e_last  = $epi["eocdtlastsimilar"];
-            echo "
-             <A HREF=\"episode_of_care.php3?$_auth&patient=$patient&".
+            $display_buffer .= "
+           <A HREF=\"module_loader.php?module=episodeOfCare&patient=$patient&".
   	     "action=manage&id=$e_id\"
              >$e_desc / $e_first to $e_last</A><BR>
             ";
 	  } // end fetching
 	} // check if not "ALL"
       } // end looping for all EOCs
-      echo "
+      $display_buffer .= "
        </CENTER>
       ";
      } // end checking for EOC stuff
-     echo "<CENTER>\n";
-     if (!empty($pnotes_S)) echo "
+     $display_buffer .= "<CENTER>\n";
+     if (!empty($pnotes_S)) $display_buffer .= "
        <TABLE BGCOLOR=\"#ffffff\" BORDER=1 WIDTH=400><TR BGCOLOR=\"$darker_bgcolor\">
        <TD ALIGN=CENTER><CENTER><FONT COLOR=\"#ffffff\">
         <B>"._("<U>S</U>ubjective")."</B></FONT></CENTER></TD></TR>
@@ -372,7 +371,7 @@ class progressNotes extends freemedEMRModule {
          </FONT>
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_O)) echo "
+      if (!empty($pnotes_O)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>O</U>bjective")."</B></FONT></CENTER></TD></TR>
@@ -382,7 +381,7 @@ class progressNotes extends freemedEMRModule {
          </FONT>
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_A)) echo "
+      if (!empty($pnotes_A)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>A</U>ssessment")."</B></FONT></CENTER></TD></TR>
@@ -392,7 +391,7 @@ class progressNotes extends freemedEMRModule {
          </FONT>
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_P)) echo "
+      if (!empty($pnotes_P)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>P</U>lan")."</B></FONT></CENTER></TD></TR>
@@ -402,7 +401,7 @@ class progressNotes extends freemedEMRModule {
          </FONT>
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_I)) echo "
+      if (!empty($pnotes_I)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>I</U>nterval")."</B></FONT></CENTER></TD></TR>
@@ -412,7 +411,7 @@ class progressNotes extends freemedEMRModule {
          </FONT>
        </TD></TR></TABLE>
        ";
-      if (!empty($pnotes_E)) echo "
+      if (!empty($pnotes_E)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("<U>E</U>ducation")."</B></FONT></CENTER></TD></TR>
@@ -422,7 +421,7 @@ class progressNotes extends freemedEMRModule {
          </FONT>
        </TD></TR></TABLE> 
        ";
-      if (!empty($pnotes_R)) echo "
+      if (!empty($pnotes_R)) $display_buffer .= "
       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>"._("P<U>R</U>escription")."</B></FONT></CENTER></TD></TR>
@@ -433,11 +432,11 @@ class progressNotes extends freemedEMRModule {
        </TD></TR></TABLE>
       ";
         // back to your regularly sceduled program...
-      echo "
+      $display_buffer .= "
        <P>
-       <CENTER><A HREF=\"$this->page_name?$_auth&module=$module&patient=$pnotespat\"
+       <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
         >"._($this->record_name)."</A> |
-        <A HREF=\"manage.php?$_auth&id=$pnotespat\"
+        <A HREF=\"manage.php?id=$pnotespat\"
         >"._("Manage Patient")."</A> $__MODIFY__
        </CENTER>
        <P>
@@ -447,6 +446,7 @@ class progressNotes extends freemedEMRModule {
 	} // end of case display
 
 	function view () {
+		global $display_buffer;
 		global $patient;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -456,7 +456,7 @@ class progressNotes extends freemedEMRModule {
 			"ORDER BY pnotesdt";
 		$result = $sql->query ($query);
 
-		echo freemed_display_itemlist(
+		$display_buffer .= freemed_display_itemlist(
 			$result,
 			$this->page_name,
 			array (
@@ -468,7 +468,7 @@ class progressNotes extends freemedEMRModule {
 				_("NO DESCRIPTION")
 			)
 		);
-		echo "\n<P>\n";
+		$display_buffer .= "\n<P>\n";
 	} // end function progressNotes->view()
 
 } // end of class progressNotes

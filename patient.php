@@ -5,13 +5,14 @@
  //       some small stuff by: max k <amk@span.ch>
  // lic : GPL, v2
  
-  $page_name="patient.php"; // for help info, later
-  $record_name="Patient";    // compatibility with API functions
-  include ("lib/freemed.php");
-  include ("lib/API.php");
-  include ("lib/calendar-functions.php");
+$page_name="patient.php"; // for help info, later
+$record_name="Patient";    // compatibility with API functions
+include ("lib/freemed.php");
+include ("lib/API.php");
+include ("lib/calendar-functions.php");
 
-  SetCookie ("_ref", $page_name, time()+$_cookie_expire);
+// Create user object
+if (!is_object($this_user)) $this_user = new User;
 
   if ( ($id>0) AND 
        ($action != "addform") AND ($action != "add") AND
@@ -24,14 +25,17 @@
   	$current_patient=0;
   }
 
-  freemed_open_db ($LoginCookie); // authenticate user
+//----- Logon/authenticate
+freemed_open_db ();
 
+//---- Push page onto stack
+page_push();
 
 switch ($action) {
   case "add": case "addform":
   case "mod": case "modform":
     // addform and modform not used due to "notebook"
-   $book = new notebook ( array ("action", "_auth", "id", "been_here"),
+   $book = new notebook ( array ("action", "id", "been_here"),
      NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH, 3);
    $book->set_submit_name (_("OK"));
    switch ($action) {
@@ -253,26 +257,26 @@ switch ($action) {
     <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
 
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("In House Doctor")." : <$STDFONT_E>
+    "._("In House Doctor")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($int_phys_r, "#phylname#, #phyfname#", "ptdoc")."
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Referring Doctor")." : <$STDFONT_E>
+    "._("Referring Doctor")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($ref_phys_r, "#phylname#, #phyfname#", "ptrefdoc")."
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Primary Care Physician")." : <$STDFONT_E>
+    "._("Primary Care Physician")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptpcp")."
     </TD></TR>
 
     ".(($num_other_docs>0) ? "
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Other Physician 1")." : <$STDFONT_E>
+    "._("Other Physician 1")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy1")."
     </TD></TR>
@@ -280,7 +284,7 @@ switch ($action) {
 
     (($num_other_docs>1) ? "
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Other Physician 2")." : <$STDFONT_E>
+    "._("Other Physician 2")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy2")."
     </TD></TR>
@@ -288,7 +292,7 @@ switch ($action) {
 
     (($num_other_docs>2) ? "
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Other Physician 3")." : <$STDFONT_E>
+    "._("Other Physician 3")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy3")."
     </TD></TR>
@@ -296,14 +300,14 @@ switch ($action) {
 
     (($num_other_docs>3) ? "
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Other Physician 4")." : <$STDFONT_E>
+    "._("Other Physician 4")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($disp_phys_result, "#phylname#, #phyfname#", "ptphy4")."
     </TD></TR>
     " : "").
 
     "<TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>"._("Number of Other Physicians")." : <$STDFONT_E>
+    "._("Number of Other Physicians")." :
     </TD><TD ALIGN=LEFT>
       ".html_form::number_pulldown("num_other_docs", 0, 4)."
     </TD></TR>
@@ -325,16 +329,14 @@ switch ($action) {
    );
 
    // show notebook
-   freemed_display_html_top ();
-   freemed_display_banner ();
-   freemed_display_box_top("$record_name $action_name");
+   $page_title = _("Patient")." "._("$action_name");
    if ( ($action=="modform") or ($action=="mod")) {
      $this_patient = new Patient ($id);
-     echo freemed_patient_box ($this_patient);
+     $display_buffer .= freemed_patient_box ($this_patient);
    }
 
    if (!( $book->is_done() )) {
-     echo "<CENTER>\n".$book->display()."</CENTER>\n";
+     $display_buffer .= "<CENTER>\n".$book->display()."</CENTER>\n";
    } else { // if it is done
      switch ($action) {
        case "add": case "addform":
@@ -513,31 +515,30 @@ switch ($action) {
          );
          break; // end mod
      } // end switch for action (done .. actual action)
-     echo "
-      <CENTER><$STDFONT_B><B>".( (($action=="mod") OR ($action=="modform")) ?
+     $display_buffer .= "
+      <CENTER><B>".( (($action=="mod") OR ($action=="modform")) ?
              _("Modifying") : _("Adding") )." ...</B> ";
      $result = $sql->query($query);
-     if ($result) echo _("Done");
-     else echo _("Error");
-     echo "<BR>\n";
+     if ($result) $display_buffer .= _("Done");
+     else $display_buffer .= _("Error");
+     $display_buffer .= "<BR>\n";
 	 if ( ($result) AND ($action=="addform") AND (empty($ptid)) )
 	 {
-		echo "<B>Adding Patient ID ...</B> ";
+		$display_buffer .= "<B>Adding Patient ID ...</B> ";
 		$pid = $sql->last_record($result);
 		$patid = PATID_PREFIX.$pid;
 		$result = $sql->query("UPDATE patient SET ptid='".addslashes($patid)."' ".
 			"WHERE id='".addslashes($pid)."'");
-     	if ($result) echo _("Done");
-     	else echo _("Error");
-		echo "<BR>\n";
+     	if ($result) $display_buffer .= _("Done");
+     	else $display_buffer .= _("Error");
+		$display_buffer .= "<BR>\n";
 		
 	 }
-     echo "
-      <$STDFONT_E>
-      <P><$STDFONT_B>
-      <A HREF=\"manage.php?$_auth&id=".( $action=="addform" ? $pid : $id )."\">
+     $display_buffer .= "
+      <P>
+      <A HREF=\"manage.php?id=".( $action=="addform" ? $pid : $id )."\">
       "._("Manage This Patient")."
-      </A><$STDFONT_E>
+      </A>
       
       </CENTER>
      ";
@@ -547,20 +548,19 @@ switch ($action) {
 
   case "delete":
   case "del":
-    freemed_display_box_top (_("Deleting")." "._($record_name));
-    echo "<CENTER>
-     <P><$STDFONT_B>"._("Deleting")." ... ";
+    $page_title = _("Deleting")." "._($record_name);
+    $display_buffer .= "<CENTER>
+     <P>"._("Deleting")." ... ";
     $query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
     $result = $sql->query ($query);
-    if ($result) { echo _("done")."."; }
-     else        { echo _("ERROR");    }
-    echo "
-     <$STDFONT_E>
+    if ($result) { $display_buffer .= _("done")."."; }
+     else        { $display_buffer .= _("ERROR");    }
+    $display_buffer .= "
      </CENTER>
      <P>
      <CENTER>
-     <A HREF=\"patient.php?$_auth\"
-     ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+     <A HREF=\"patient.php\"
+     >"._("back")."</A>
      </CENTER>
     ";
   break; // end action delete
@@ -609,16 +609,13 @@ switch ($action) {
 
     $result = $sql->query($query); 
 
-      freemed_display_html_top ();
-      freemed_display_banner ();
-      freemed_display_box_top (_("Patients Meeting Criteria")." ".$_crit,
-        $page_name);
+      $page_title = _("Patients Meeting Criteria")." ".$_crit;
 
       if (strlen($_ref)<5) {
         $_ref="main.php";
       } // if no ref, then return to home page...
 
-      echo freemed_display_itemlist(
+      $display_buffer .= freemed_display_itemlist(
         $result,
 	$page_name,
 	array (
@@ -632,11 +629,11 @@ switch ($action) {
 	ITEMLIST_MOD|ITEMLIST_VIEW
       );
 
-      echo "
+      $display_buffer .= "
        <P>
        <CENTER>
-        <A HREF=\"$page_name?$_auth\"
-        ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+        <A HREF=\"$page_name\"
+        >"._("back")."</A>
        </CENTER>
        <P>
        ";
@@ -651,12 +648,10 @@ switch ($action) {
   break;
 
   default: // default action
-    freemed_display_html_top ();
-    freemed_display_banner ();
-    freemed_display_box_top (_("Patients"));
+    $page_title = _("Patients");
   
-    if (freemed_get_userlevel($LoginCookie)>$database_level) {
-      echo "
+    if (freemed_get_userlevel()>$database_level) {
+      $display_buffer .= "
         <TABLE WIDTH=100% BGCOLOR=#000000 BORDER=0 CELLSPACING=0
          CELLPADDING=0 VALIGN=TOP ALIGN=CENTER><TR><TD>
         <FONT FACE=\"Arial, Helvetica, Verdana\" COLOR=#ffffff>
@@ -668,31 +663,31 @@ switch ($action) {
   
           // patched 19990622 for 1 and 0 values...
         if ($_total>1)
-          echo "
+          $display_buffer .= "
             <CENTER>
              <B><I>$_total "._("Patient(s) In System")."</I></B>
             </CENTER>
           ";
         elseif ($_total==0)
-          echo "
+          $display_buffer .= "
             <CENTER>
              <B><I>"._("No Patients In System")."</I></B>
             </CENTER>
           ";
         elseif ($_total==1)
-          echo "
+          $display_buffer .= "
             <CENTER>
             <B><I>"._("One Patient In System")."</I></B>
             </CENTER>
           ";
       } else {
-        echo "
+        $display_buffer .= "
           <CENTER>
            <B><I>"._("No Patients In System")."</I></B>
           </CENTER>
         ";
       } // if there are none...
-      echo "
+      $display_buffer .= "
         </FONT>
         </TD></TR></TABLE>
       "; // end table statement for bar
@@ -700,61 +695,56 @@ switch ($action) {
 
     if ($current_patient>0) {
       $patient = new Patient ($current_patient);
-      echo "
+      $display_buffer .= "
         <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
          VALIGN=CENTER BORDER=0><TR><TD ALIGN=CENTER><CENTER>
-	 <$STDFONT_B><A HREF=\"manage.php?$_auth&id=$current_patient\"
+	 <A HREF=\"manage.php?id=$current_patient\"
          >"._("Patient")." : ".$patient->fullName(true)."</A>
-	 <$STDFONT_E>
          </CENTER></TD></TR></TABLE>
       ";
     } // end check for current patient cookie
 
-    echo "
+    $display_buffer .= "
       <BR>
       <CENTER>
-       <B><$STDFONT_B>"._("Patients By Name")."<$STDFONT_E></B>
+       <B>"._("Patients By Name")."</B>
       <BR>
-      <$STDFONT_B>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=A\">A</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=B\">B</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=C\">C</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=D\">D</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=E\">E</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=A\">A</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=B\">B</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=C\">C</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=D\">D</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=E\">E</A>
   
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=F\">F</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=G\">G</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=H\">H</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=I\">I</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=J\">J</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=F\">F</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=G\">G</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=H\">H</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=I\">I</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=J\">J</A>
   
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=K\">K</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=L\">L</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=M\">M</A>
-      <$STDFONT_E>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=K\">K</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=L\">L</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=M\">M</A>
       <BR>
-      <$STDFONT_B>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=N\">N</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=O\">O</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=P\">P</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=Q\">Q</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=R\">R</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=N\">N</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=O\">O</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=P\">P</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=Q\">Q</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=R\">R</A>
   
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=S\">S</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=T\">T</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=U\">U</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=V\">V</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=W\">W</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=S\">S</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=T\">T</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=U\">U</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=V\">V</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=W\">W</A>
   
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=X\">X</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=Y\">Y</A>
-      <A HREF=\"$page_name?$_auth&action=find&criteria=letter&f1=Z\">Z</A>
-      <$STDFONT_E>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=X\">X</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=Y\">Y</A>
+      <A HREF=\"$page_name?action=find&criteria=letter&f1=Z\">Z</A>
 
       <P>
 
       <FORM ACTION=\"$page_name\" METHOD=POST>
-       <B><$STDFONT_B>"._("Patients Field Search")."<$STDFONT_E></B>
+       <B>"._("Patients Field Search")."</B>
       <BR>
       <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"find\">
       <INPUT TYPE=HIDDEN NAME=\"criteria\" VALUE=\"contains\">
@@ -772,7 +762,7 @@ switch ($action) {
        <OPTION VALUE=\"ptssn\"   >"._("Social Security Number")."
        <OPTION VALUE=\"ptdmv\"   >"._("Driver's License")."
       </SELECT>
-      <I><$STDFONT_B SIZE=\"-1\">"._("contains")."<$STDFONT_E></I>
+      <I><FONT SIZE=\"-1\">"._("contains")."</FONT></I>
       <INPUT TYPE=TEXT NAME=\"f2\" SIZE=15 MAXLENGTH=30>
       <INPUT TYPE=SUBMIT VALUE=\"find\">
       </FORM>
@@ -781,43 +771,36 @@ switch ($action) {
       <FORM ACTION=\"$page_name\" METHOD=POST>
       <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"find\">
       <INPUT TYPE=HIDDEN NAME=\"criteria\" VALUE=\"soundex\">
-      <B><$STDFONT_B>"._("Soundalike Search")."<$STDFONT_E></B><BR>
+      <B>"._("Soundalike Search")."</B><BR>
       <SELECT NAME=\"f1\">
        <OPTION VALUE=\"ptlname\" >"._("Last Name")."
        <OPTION VALUE=\"ptfname\" >"._("First Name")."
       </SELECT>
-        <I><$STDFONT_B SIZE=\"-1\">"._("sounds like")."<$STDFONT_E></I>
+        <I><FONT SIZE=\"-1\">"._("sounds like")."</FONT></I>
       <INPUT TYPE=TEXT NAME=\"f2\" SIZE=15 MAXLENGTH=30>
       <INPUT TYPE=SUBMIT VALUE=\"find\">
       </FORM>
       <P>
 
-      <A HREF=\"$page_name?$_auth&action=find&criteria=all&f1=\"
-       ><$STDFONT_B>"._("Show all Patients")."<$STDFONT_E></A> |
-      <A HREF=\"$page_name?$_auth&action=addform\"
-       ><$STDFONT_B>"._("Add Patient")."<$STDFONT_E></A> |
-      <A HREF=\"call-in.php?$_auth\"
-       ><$STDFONT_B>"._("Call In Menu")."<$STDFONT_E></A>
+      <A HREF=\"$page_name?action=find&criteria=all&f1=\"
+       >"._("Show all Patients")."</A> |
+      <A HREF=\"$page_name?action=addform\"
+       >"._("Add Patient")."</A> |
+      <A HREF=\"call-in.php\"
+       >"._("Call In Menu")."</A>
       <P> 
       </CENTER>
       <CENTER>
-      <A HREF=\"main.php?$_auth\"
-      ><$STDFONT_B>"._("Return to Main Menu")."<$STDFONT_E></A>
+      <A HREF=\"main.php\"
+      >"._("Return to Main Menu")."</A>
       </CENTER>
     ";
-
-    freemed_display_box_bottom (); 
 
     break; // end default action
 } // end action
 
-if ($GLOBALS[FREEMED_BOX] == true)
-{
-	// KLUDGE till this is fixed
-    freemed_display_box_bottom();
-}
 freemed_close_db(); 
-freemed_display_html_bottom ();
+template_display();
 ?>
 
 

@@ -1,6 +1,55 @@
 freemed project changelog
 ($Id$)
 
+* Fri Oct 05 2001 rufustfirefly
+  - UI/Templates/Sessions merge. Huge.
+
+* Thu Oct 04 2001 rufustfirefly
+  *** part of large UI/sessions merge ***
+  - lib/API.php, lib/template/default/menubar.php, manage.php:
+    implemented patient_history jump. currently does not remove
+    duplicates, and just checks that the *last* thing is not
+    the new item. soon to implement this for page jumps...
+  - lib/template/default/template.php, lib/module.php: now
+    displays module/page names in left bar, below version number
+  - TODO... go through physican_*_view.php and either modernize
+    or trash
+  - *.php: removed $_auth (finally... stupid 3 year old kludge)
+  - patient.php, others: removed STDFONT_* stuff
+  - manage.php, lib/template/default/manage.php: moved actual meat
+    of patient management menu to template, so that it can be
+    redefined
+  - lib/module.php: check for module_loader before setting global
+    things haphazardly
+
+* Wed Oct 03 2001 rufustfirefly
+  *** part of large UI/sessions merge ***
+  - lib/API.php, lib/freemed.php: added TEMPLATE define, and $template
+    var so that it can be overridden if declared, added
+    template_display() function so that DIE() calls can display the
+    template easily
+  - lib/error_handler.php: uses template_display() to die out if it
+    has been declared
+  - lib/API.php: commented out most of freemed_{box,html}_{bottom,top}
+    so that the templates can handle everything
+  - *.php, lib/API.php: removed freemed_display_banner() and all
+    calls to it
+  - basically everything: implemented basic sessions for auth and
+    tracking basic user variables. need to implement recent patient
+    pick lists, etc. going to declare "SESSION" variable and work
+    from there.
+  - lib/API.php: added page_push()/page_pop() functions to keep
+    page_history in SESSION, removed all STDFONT tags (finally)
+  - lib/API.php, lib/module.php: fixed longstanding problem that
+    $this->record_name is out of scope for the itemlist function
+    (it's kinda kludgy)
+
+* Tue Oct 02 2001 rufustfirefly
+  *** part of large UI/sessions merge ***
+  - lib/module*php, lib/template/*, modules/*.module.php: moved from
+    echo to $display_buffer... now have to pull out all freemed_
+    {html,box}_{bottom,top}() calls from everywhere. sigh.
+
 * Tue Sep 25 2001 rufustfirefly
   - lang/registry, po/hr.po: added Croatian (Hrvatski) translation
     from Nikola Gotovac (nikola@mamef.mef.hr)

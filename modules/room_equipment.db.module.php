@@ -29,6 +29,7 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
 	} // end constructor roomEquipmentMaintenance
 
 	function form () {
+		global $display_buffer;
 		switch ($action) {
 			case "addform":
 				break;
@@ -38,7 +39,7 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
 				break;
 		} // end switch
  
-		echo "
+		$display_buffer .= "
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
@@ -65,10 +66,10 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
     </CENTER></FORM>
   ";
 
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"$page_name?$_auth\"
+    <A HREF=\"$page_name\"
      >"._("Abandon ".( ($action=="addform") ? "Addition" : "Modification" )).
       "</A>
     </CENTER>
@@ -76,8 +77,9 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
 	} // end function roomEquipmentMaintenance->form()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT * FROM $this->table_name ".
 				"ORDER BY $this->order_field"),
 			$this->page_name,

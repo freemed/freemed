@@ -44,10 +44,11 @@ class cptMaintenance extends freemedMaintenanceModule {
 	function mod () { $this->form(); }
 
 	function form () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 
 		$book = new notebook (
-			array ("action", "_auth", "id", "module"),
+			array ("action", "id", "module"),
 			NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH);
     
   		if (!$book->been_here()) {
@@ -297,7 +298,7 @@ class cptMaintenance extends freemedMaintenanceModule {
  } // end of fee profiles conditional
 
 		if (!$book->is_done()) {
-			echo $book->display();
+			$display_buffer .= $book->display();
 		} else {
 			switch ($action) {
 				case "add": case "addform":
@@ -317,26 +318,26 @@ class cptMaintenance extends freemedMaintenanceModule {
   $cpttos     = fm_split_into_array ($this_code["cpttos"]);
   $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
   freemed_display_box_top (_($record_name));
-  echo "
+  $display_buffer .= "
    <P>
     <CENTER>
-    <$STDFONT_B><B>"._("Current Code")."</B> : <$STDFONT_E>
-    <A HREF=\"$page_name?$_auth&id=$id&action=modform\"
-    ><$STDFONT_B>".$this_code["cptcode"]."<$STDFONT_E></A>&nbsp;
-    <$STDFONT_B><I>(".$this_code["cptnameint"].")</I><$STDFONT_E>
+    <B>"._("Current Code")."</B> :
+    <A HREF=\"$page_name?id=$id&action=modform\"
+    >".$this_code["cptcode"]."</A>&nbsp;
+    <I>(".$this_code["cptnameint"].")</I>
     <BR>
-    <$STDFONT_B><U>"._("Default Standard Fee")."</U> :
-    ".bcadd($this_code["cptdefstdfee"],0,2)."<$STDFONT_E>
+    <U>"._("Default Standard Fee")."</U> :
+    ".bcadd($this_code["cptdefstdfee"],0,2)."
     <BR>
-    <$STDFONT_B><U>"._("Default Type of Service")."</U> :
+    <U>"._("Default Type of Service")."</U> :
     ".freemed_get_link_field ($this_code["cptdeftos"], "tos",
-      "tosname")."<$STDFONT_E>
+      "tosname")."
     </CENTER> 
    <P>
    <CENTER>
-    <$STDFONT_B SIZE=-1><I>
+    <FONT SIZE=-1><I>
      "._("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
-    </I><$STDFONT_E> 
+    </I></FONT> 
    </CENTER>
    <P>
    <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -357,7 +358,7 @@ class cptMaintenance extends freemedMaintenanceModule {
   for ($i=1;$i<=$num_inscos;$i++) { // loop thru inscos
    if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
    $this_insco = new InsuranceCompany ($i);
-   echo "
+   $display_buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
      <TD>".prepare($this_insco->insconame)."</TD>
      <TD>
@@ -374,7 +375,7 @@ class cptMaintenance extends freemedMaintenanceModule {
     </TR>
    ";
   } // end loop thru inscos
-  echo "
+  $display_buffer .= "
    </TABLE>
    <P>
     <CENTER>
@@ -393,19 +394,18 @@ class cptMaintenance extends freemedMaintenanceModule {
             cpttos='".fm_join_from_array($cpttos)."',
             cptstdfee='".fm_join_from_array($cptstdfee)."'
             WHERE id='$id'";
-  echo "
+  $display_buffer .= "
    <P>
-   <$STDFONT_B>"._("Modifying")." ... 
+   "._("Modifying")." ... 
   ";
   $result = $sql->query ($query);
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
-  echo "
-   <$STDFONT_E>
+  if ($result) { $display_buffer .= _("done")."."; }
+   else        { $display_buffer .= _("ERROR");    }
+  $display_buffer .= "
    <P>
    <CENTER>
-    <A HREF=\"$page_name?$_auth\"
-    ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+    <A HREF=\"$page_name\"
+    >"._("back")."</A>
    </CENTER>
    <P>
   ";
@@ -415,10 +415,11 @@ class cptMaintenance extends freemedMaintenanceModule {
 	} // end function cptMaintenance->form()
 
 	function view () {
+		global $display_buffer;
 		global $sql;
 
 		$result = $sql->query ($query);
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query ("SELECT cptcode,cptnameint,id FROM ".
 				$this->table_name." ORDER BY cptcode"),
 			$this->page_name,

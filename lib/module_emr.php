@@ -48,6 +48,7 @@ class freemedEMRModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action, $patient, $LoginCookie;
 
 		if (!isset($this->this_patient))
@@ -56,7 +57,7 @@ class freemedEMRModule extends freemedModule {
 			$this->this_user    = new User ($LoginCookie);
 
 		// display universal patient box
-		echo freemed_patient_box($this->this_patient)."<P>\n";
+		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
 
 		switch ($action) {
 			case "add":
@@ -93,8 +94,9 @@ class freemedEMRModule extends freemedModule {
 	} // end function main
 	
 	function display_message () {
+		global $display_buffer;
 		if (isset($this->message)) {
-			echo "
+			$display_buffer .= "
 			<P>
 			<CENTER>
 			<B>".prepare($this->message)."</B>
@@ -109,6 +111,7 @@ class freemedEMRModule extends freemedModule {
 	// - addition routine
 	function add () { $this->_add(); }
 	function _add () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 
 		$result = $sql->query (
@@ -127,7 +130,8 @@ class freemedEMRModule extends freemedModule {
 	// - delete function
 	function del () { $this->_del(); }
 	function _del () {
-		global $STDFONT_B, $STDFONT_E, $id, $sql;
+		global $display_buffer;
+		global $id, $sql;
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
@@ -140,13 +144,14 @@ class freemedEMRModule extends freemedModule {
 	// - modification function
 	function mod () { $this->_mod(); }
 	function _mod () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 		$result = $sql->query (
 			$sql->update_query (
 				$this->table_name,
 				$this->variables,
 				array (
-					"id"	=>		$id
+					"id" => $id
 				)
 			)
 		);
@@ -167,6 +172,7 @@ class freemedEMRModule extends freemedModule {
 	// function form
 	// - add/mod form stub
 	function form () {
+		global $display_buffer;
 		global $action, $id, $sql;
 
 		if (is_array($this->form_vars)) {
@@ -191,10 +197,11 @@ class freemedEMRModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
+		global $display_buffer;
 		global $sql;
 		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$result,
 			"module_loader.php",
 			$this->form_vars,
@@ -206,6 +213,7 @@ class freemedEMRModule extends freemedModule {
 
 	// this function exports XML for the entire patient record
 	function xml_export () {
+		global $display_buffer;
 		global $patient;
 
 		if (!isset($this->this_patient))

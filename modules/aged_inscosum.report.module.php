@@ -15,8 +15,8 @@ class agedInscoReport extends freemedReportsModule {
 		$this->freemedReportsModule();
 	} // end constructor agedInscoReport
 
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$ages_greater = array(00,30,60,090,00120);
@@ -53,14 +53,14 @@ class agedInscoReport extends freemedReportsModule {
 		$aged_result = $sql->query($query);
 
 		if ($sql->num_rows($aged_result) <= 0)
-			echo "No unpaid procedures found<BR>";
+			$display_buffer .= "No unpaid procedures found<BR>";
 
 		$prevpat = "0";
 		$previns = "0";
 		$numbuckets = 5;
 		$_alternate = freemed_bar_alternate_color ();
 
-		echo "
+		$display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
 		<TR>
 		<TD><B>"._("Insurance")."</B></TD>
@@ -88,7 +88,7 @@ class agedInscoReport extends freemedReportsModule {
 			$insconame = $row[insconame];	
 			$inscoph = $row[inscophone];
 		
-			//echo "pat $pat ins $insconame<BR>";
+			//$display_buffer .= "pat $pat ins $insconame<BR>";
 
 
 			if ($prevpat != $pat)
@@ -97,7 +97,7 @@ class agedInscoReport extends freemedReportsModule {
 				{
 					// calc pat totals.
 					$_alternate=freemed_bar_alternate_color ($_alternate);
-					echo $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
+					$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
 					$patinsph = "&nbsp;";
 				}
 
@@ -117,7 +117,7 @@ class agedInscoReport extends freemedReportsModule {
 				{
 					// calc ins totals.
 					$_alternate=freemed_bar_alternate_color ($_alternate);
-					echo $this->instotals($ins_bucket,$_alternate);
+					$display_buffer .= $this->instotals($ins_bucket,$_alternate);
 
 				}
 				$previns = $insconame;
@@ -151,7 +151,7 @@ class agedInscoReport extends freemedReportsModule {
 
 		// calc pat totals.
 		$_alternate=freemed_bar_alternate_color ($_alternate);
-		echo $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
+		$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
 
 		for ($i=0;$i<$numbuckets;$i++)
 		{
@@ -161,7 +161,7 @@ class agedInscoReport extends freemedReportsModule {
 
 		// calc ins totals.
 		$_alternate=freemed_bar_alternate_color ($_alternate);
-		echo $this->instotals($ins_bucket,$_alternate);
+		$display_buffer .= $this->instotals($ins_bucket,$_alternate);
 
 		for ($i=0;$i<$numbuckets;$i++)
 		{
@@ -170,15 +170,15 @@ class agedInscoReport extends freemedReportsModule {
 		}
 		// calc ins totals.
 		$_alternate=freemed_bar_alternate_color ($_alternate);
-		echo $this->instotals($tot_bucket,$_alternate);
+		$display_buffer .= $this->instotals($tot_bucket,$_alternate);
 
-		echo "</TABLE>";
+		$display_buffer .= "</TABLE>";
 				 
 
 	} // end view function
 
-	function pattotals($insname,$insphone,$total,$patname,$color)
-	{
+	function pattotals($insname,$insphone,$total,$patname,$color) {
+		global $display_buffer;
 		$num = count($total);
 
 		// calc pat totals.
@@ -200,8 +200,7 @@ class agedInscoReport extends freemedReportsModule {
 		return $buffer;
 	}
 
-	function instotals($total,$color)
-	{
+	function instotals($total,$color) {
 		$num = count($total);
 
 		// calc ins totals.

@@ -12,6 +12,7 @@ class covtypesMaintenance extends freemedMaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Coverage Types";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
 	var $record_name = "Coverage Types";
 	var $table_name  = "covtypes";
@@ -32,10 +33,11 @@ class covtypesMaintenance extends freemedMaintenanceModule {
 	} // end constructor covtypesMaintenance	
 
 	function view () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT covtpname,covtpdescrip,id FROM ".$this->table_name.
 				" ORDER BY ".prepare($this->order_field)),
 			$this->page_name,
@@ -48,6 +50,7 @@ class covtypesMaintenance extends freemedMaintenanceModule {
 	} // end function module->view
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k, $v)=each($GLOBALS)) global $$k;
   		if ($action=="modform") { 
@@ -60,26 +63,26 @@ class covtypesMaintenance extends freemedMaintenanceModule {
 		// display itemlist first
 		$this->view ();
 
-		echo "
+		$display_buffer .= "
 			<FORM ACTION=\"$this->page_name\" METHOD=POST>
 			<INPUT TYPE=HIDDEN NAME=\"covtpdtadd\"".prepare($cur_date)."\">
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
 			($action=="modform" ? "mod" : "add")."\">";
 		if ($action=="modform")
-			echo "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
+			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
 
-		echo "
+		$display_buffer .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
 			<TR><TD ALIGN=RIGHT>
-			 <$STDFONT_B>"._("Coverage Type")." : <$STDFONT_E>
+			 "._("Coverage Type")." :
 			</TD><TD ALIGN=LEFT>
 			 <INPUT TYPE=TEXT NAME=\"covtpname\" SIZE=20 MAXLENGTH=75
  			  VALUE=\"".prepare($covtpname)."\">
 			</TD></TR>
 
 			<TR><TD ALIGN=RIGHT>
-			 <$STDFONT_B>"._("Description")." : <$STDFONT_E>
+			 "._("Description")." :
 			</TD><TD ALIGN=LEFT>
 			 <INPUT TYPE=TEXT NAME=\"covtpdescrip\" SIZE=25 MAXLENGTH=200
 			  VALUE=\"".prepare($covtpdescrip)."\">
@@ -93,12 +96,12 @@ class covtypesMaintenance extends freemedMaintenanceModule {
 			</TD></TR>
 			</TABLE>
 		";
-		if ($action=="modform") echo "
+		if ($action=="modform") $display_buffer .= "
 			<P>
-			<CENTER><$STDFONT_B>
-			<A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
+			<CENTER>
+			<A HREF=\"$this->page_name?module=$module&action=view\"
 			>"._("Abandon Modification")."</A>
-			<$STDFONT_E></CENTER>
+			</CENTER>
 			";
 	} // end function covtypesMaintenance->form
 

@@ -24,6 +24,7 @@ class patientDemographicReport extends freemedReportsModule {
 	// generate the report shown in "display".
 
 	function display () {
+		global $display_buffer;
 		global $sql;
 		$query = "SELECT
 			COUNT(*)              AS total_patients,
@@ -32,18 +33,18 @@ class patientDemographicReport extends freemedReportsModule {
 			FROM patient"; 
 		$result = $sql->query ($query);
 		if (!$result) {
-			echo "FAILED (query = \"$query\") <BR>\n";
+			$display_buffer .= "FAILED (query = \"$query\") <BR>\n";
 			return false;
 		} // end if not result
 		extract($sql->fetch_array($result));	
 		
-		echo "
+		$display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
 		 ALIGN=CENTER>
 		";
 
 		foreach ($this->show AS $k => $v) {
-			echo "
+			$display_buffer .= "
 			<TR>
 				<TD ALIGN=RIGHT BGCOLOR=\"#ccccff\">
 					".prepare(_($k))."
@@ -54,7 +55,7 @@ class patientDemographicReport extends freemedReportsModule {
 			";
 		} // end foreach sums
 	
-		echo "
+		$display_buffer .= "
 		</TABLE>
 		";
 	

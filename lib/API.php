@@ -30,57 +30,75 @@ function freemed_bar_alternate_color ($cur_color="")
 } // end function freemed_bar_alternate_color
 
 // function freemed_check_access_for_facility
-function freemed_check_access_for_facility ($f_cookie, $facility_number)
-{
-  $f_auth = explode (":", $f_cookie);  // separate auth data
-  if ($f_auth[0]==1) return true;      // root has all access...
-  $f_fac = freemed_get_link_field ($f_auth[0], "user", "userfac");
-  if ($facility_number == 0) return true; // 19990924 temp patch
-  if ((fm_value_in_string($f_fac, "-1")) OR
-      (fm_value_in_string($f_fac, $facility_number)))
-    return true;                       // if all or present, return true
-  return false;                        // if not, return false
+function freemed_check_access_for_facility ($facility_number) {
+	global $SESSION;
+
+	// Separate out authdata
+	$authdata = $SESSION["authdata"];
+
+	// Root has all access...
+	if ($authdata["user"]==1) return true;
+
+	// Grab the authorizations field
+	$f_fac = freemed_get_link_field ($authdata["user"], "user", "userfac");
+
+	// No facility, assume no access restrictions
+	if ($facility_number == 0) return true;
+
+	if ((fm_value_in_string($f_fac, "-1")) OR
+		(fm_value_in_string($f_fac, $facility_number)))
+		return true;
+
+    	// Default to false
+	return false;
 } // end function freemed_check_access_for_facility
 
 // function freemed_check_access_for_patient
-function freemed_check_access_for_patient ($f_cookie, $patient_number)
-{
-  $f_auth = explode (":", $f_cookie);  // separate auth data
-  if ($f_auth[0]==1) return true;      // root has all access...
-  $f_user   = freemed_get_link_rec ($f_auth[0], "user");
-    // get data records in question for the user
-  $f_fac    = $f_user ["userfac"   ];
-  $f_phy    = $f_user ["userphy"   ];
-  $f_phygrp = $f_user ["userphygrp"];
+function freemed_check_access_for_patient ($patient_number) {
+	global $SESSION;
 
-    // retrieve patient record
-  $f_pat    = freemed_get_link_rec ($patient_number, "patient");
+	// Grab authdata
+	$authdata = $SESSION["authdata"];
 
-    // check for universal access
-  if ((fm_value_in_string ($f_fac,    "-1")) OR
-      (fm_value_in_string ($f_phy,    "-1")) OR
-      (fm_value_in_string ($f_phygrp, "-1")))
-    return true;
+	// Root has all access...
+	if ($authdata["user"]==1) return true;
 
-    // check for physician in any physician fields
-  if (($f_pat["ptpcp"]>0) AND
-      (fm_value_in_string ($f_phy, $f_pat["ptpcp"])))
-    return true;
-  if (($f_pat["ptphy1"]>0) AND
-      (fm_value_in_string ($f_phy, $f_pat["ptphy1"])))
-    return true;
-  if (($f_pat["ptphy2"]>0) AND
-      (fm_value_in_string ($f_phy, $f_pat["ptphy2"])))
-    return true;
-  if (($f_pat["ptphy3"]>0) AND
-      (fm_value_in_string ($f_phy, $f_pat["ptphy3"])))
-    return true;
-  if (($f_pat["ptdoc"]>0) AND
-      (fm_value_in_string ($f_phy, $f_pat["ptdoc"])))
-    return true;
+	// Grab auth information from db
+	$f_user   = freemed_get_link_rec ($authdata["user"], "user");
 
-  return false; // if all else fails, return false
+	// Get data records in question for the user
+	$f_fac    = $f_user ["userfac"   ];
+	$f_phy    = $f_user ["userphy"   ];
+	$f_phygrp = $f_user ["userphygrp"];
 
+	// Retrieve patient record
+	$f_pat    = freemed_get_link_rec ($patient_number, "patient");
+
+	// check for universal access
+	if ((fm_value_in_string ($f_fac,    "-1")) OR
+		(fm_value_in_string ($f_phy,    "-1")) OR
+		(fm_value_in_string ($f_phygrp, "-1")))
+		return true;
+
+	// Check for physician in any physician fields
+	if (($f_pat["ptpcp"]>0) AND
+		(fm_value_in_string ($f_phy, $f_pat["ptpcp"])))
+		return true;
+	if (($f_pat["ptphy1"]>0) AND
+		(fm_value_in_string ($f_phy, $f_pat["ptphy1"])))
+		return true;
+	if (($f_pat["ptphy2"]>0) AND
+		(fm_value_in_string ($f_phy, $f_pat["ptphy2"])))
+		return true;
+	if (($f_pat["ptphy3"]>0) AND
+		(fm_value_in_string ($f_phy, $f_pat["ptphy3"])))
+		return true;
+	if (($f_pat["ptdoc"]>0) AND
+		(fm_value_in_string ($f_phy, $f_pat["ptdoc"])))
+		return true;
+
+    	// Default to false
+	return false;
 } // end function freemed_check_access_for_patient
 
 // function freemed_close_db
@@ -109,8 +127,6 @@ function freemed_config_value ($config_var)
 // function freemed_display_arraylist
 function freemed_display_arraylist ($var_array, $xref_array="")
 {
-  global $STDFONT_B, $STDFONT_E;
-
   $buffer = ""; // return a buffer
   if (!is_array($var_array)) // we've been passed an empty array
     return "";
@@ -127,18 +143,17 @@ function freemed_display_arraylist ($var_array, $xref_array="")
     $first=false;
     $buffer .= "
       <TD ALIGN=CENTER>
-        <$STDFONT_B><B>$key</B><$STDFONT_E>
+        <B>$key</B>
       </TD>
     ";
   } // while... displaying header
   $buffer .= "
       <TD ALIGN=CENTER>
-        <$STDFONT_B>"._("Remove")."<$STDFONT_E>
+        "._("Remove")."
       </TD>
       <TD ALIGN=CENTER>
-        <$STDFONT_B>"._("Modify")." ( "._("None")."
+        "._("Modify")." ( "._("None")."
 	<INPUT TYPE=RADIO NAME=\"".$main."mod\" VALUE=\"-1\" CHECKED> ) 
-	<$STDFONT_E>
       </TD>
      </TR>
   ";
@@ -149,7 +164,7 @@ function freemed_display_arraylist ($var_array, $xref_array="")
   if (!is_array($$main))
     return ($buffer."
       <TR><TD COLSPAN=".(count($var_array)+2)." ALIGN=CENTER>
-        <$STDFONT_B>"._("No Items")."<$STDFONT_E>
+        "._("No Items")."
       </TD></TR>
      </TABLE>"); // make sure it's safe if there are no items
 
@@ -171,9 +186,9 @@ function freemed_display_arraylist ($var_array, $xref_array="")
       if ($this_active)
         $buffer .= "
           <TD ALIGN=CENTER>
-            <$STDFONT_B SIZE=\"-1\">
+            <FONT SIZE=\"-1\">
 	    ".((strlen($item_text)>0) ? $item_text : "&nbsp;")."
-	    <$STDFONT_E>
+	    </FONT>
           </TD>";
       $buffer .= "
         <INPUT TYPE=HIDDEN NAME=\"$val"."[$i]\" VALUE=\"".${$val}[$i]."\">
@@ -195,40 +210,11 @@ function freemed_display_arraylist ($var_array, $xref_array="")
   return $buffer;
 } // end function freemed_display_arraylist
 
-// function freemed_display_banner (page description)
-function freemed_display_banner ($_pg_desc="")
-{
-  global $STDFONT_B, $STDFONT_E,
-         $show_top_links;
-
-  echo " 
-    <CENTER>
-      <!--
-      <B><$STDFONT_B SIZE=+2>
-        --= ".prepare(PACKAGENAME)." v".prepare(VERSION)." $_pg_desc =--
-      <$STDFONT_E></B><BR>
-      <$STDFONT_B>".prepare(INSTALLATION)."<$STDFONT_E>
-  ";
-  if ($show_top_links) echo "
-      <BR>
-      <$STDFONT_B SIZE=-1>
-       <I>homepage : <A HREF=\"http://www.freemed.org\"
-        >http://www.freemed.org</A></I><BR>
-       <I>bugs : <A HREF=\"".prepare(BUGS_ADDRESS)."\"
-        >$bugs_address</A></I>
-      <$STDFONT_E>
-    ";
-  echo "
-      -->
-    </CENTER>
-    <P>
-  ";
-} // end function freemed_display_banner
-
 // function freemed_display_box_bottom
 function freemed_display_box_bottom ($_null="")
 {
   global $debug;
+  /*
 
   //$v = $GLOBALS["FREEMED_BOX"];
   //echo "box var $v<BR>";
@@ -259,16 +245,17 @@ function freemed_display_box_bottom ($_null="")
     ".( (!USE_CSS) ? "</TD></TR></TABLE>" : "" )."
     </CENTER>
   ";
+  */
 } // end function freemed_display_box_bottom
 
 // function freemed_display_box_top
 function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 {
   global $language, $topbar_color, $module,
-   $_auth, $page_name, $action, $id, $patient, $_pg_desc, $_ref,
+   $page_name, $action, $id, $patient, $_pg_desc, $_ref,
    $admin_level, $delete_level, $export_level, $database_level,
-   $menubar_color, $LoginCookie, $STDFONT_B, $STDFONT_E, $current_patient;
-
+   $menubar_color, $LoginCookie, $current_patient;
+/*
   if (!isset($GLOBALS["FREEMED_BOX"])) 
   {
   	$GLOBALS["FREEMED_BOX"] = true;
@@ -300,7 +287,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       ($page_name != "index.php") and
       ($page_name != "authenticate.php") and
       ($page_name != "logout.php")) 
-    $this_userlevel = freemed_get_userlevel ($LoginCookie);
+    $this_userlevel = freemed_get_userlevel ();
 
   if (strlen($ref)<1) {
     $ref = "main.php";
@@ -336,7 +323,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 
     if (($_ref!="index.php") AND ($_ref != $pg_name)) {
       echo "
-         ><A HREF=\"$ref?$_auth\"
+         ><A HREF=\"$ref\"
          ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
          WIDTH=16 ALT=\"["._("back")."]\"></A
       ";
@@ -344,7 +331,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
              ($pg_name != "main.php")) { 
       // stupid ref patch, 19990701
       echo "
-         ><A HREF=\"main.php?$_auth\"
+         ><A HREF=\"main.php\"
          ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
          WIDTH=16 ALT=\"["._("main")."]\"></A
       ";
@@ -445,48 +432,48 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"admin.php\"
-         ><$STDFONT_B SIZE=-1>Admin<$STDFONT_E></A>
+         ><FONT SIZE=-1>Admin</FONT></A>
         </TD>
         "; // end admin
       if ($this_userlevel>$database_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"billing_functions.php?patient=".urlencode($current_patient)."\"
-         ><$STDFONT_B SIZE=-1>Bill<$STDFONT_E></A>
+         ><FONT SIZE=-1>Bill</FONT></A>
         </TD>
        ";
       // no special things needed for callins
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"call-in.php\"
-         ><$STDFONT_B SIZE=-1>Callin<$STDFONT_E></A>
+         ><FONT SIZE=-1>Callin</FONT></A>
         </TD>
         ";
       if ($this_userlevel>$database_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"db_maintenance.php\"
-         ><$STDFONT_B SIZE=-1>DB<$STDFONT_E></A>
+         ><FONT SIZE=-1>DB</FONT></A>
         </TD>
         "; // end db
       if ($this_userlevel>$database_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"$p_link\"
-         ><$STDFONT_B SIZE=-1>Patient<$STDFONT_E></A>
+         ><FONT SIZE=-1>Patient</FONT></A>
         </TD>
         ";
       // no special conditions for help
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
          <A HREF=\"help.php?page_name=".urlencode($page_name)."\"
-         ><$STDFONT_B SIZE=-1>?<$STDFONT_E></A>
+         ><FONT SIZE=-1>?</FONT></A>
         </TD>
         ";
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
         <A HREF=\"main.php\"
-        ><$STDFONT_B SIZE=-1>Main<$STDFONT_E></A>
+        ><FONT SIZE=-1>Main</FONT></A>
         </TD>
        ";
     } // end checking for graphics enabled/disabled
@@ -496,6 +483,9 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      </TABLE>
     ";
   } // end if page (is acceptable for menubar)
+  */
+  global $page_title;
+  $page_title = INSTALLATION.": $box_title";
 } // end function freemed_display_box_top
 
 // function freemed_display_actionbar
@@ -567,21 +557,6 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
     Header("Location: $_refresh_location");
     $_refresh_location = ""; // set to null
   }
-
-  echo "
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">
-   <HTML> 
-   <HEAD>
-     <META HTTP-EQUIV=\"Content-Type\"
-      CONTENT=\"text/html; CHARSET=$__ISO_SET__\">
-     <TITLE>".PACKAGENAME." v".VERSION." $_pg_desc_given
-        - ".prepare(INSTALLATION)."</TITLE>
-     ".( (USE_CSS) ? "<LINK REL=\"StyleSheet\" TYPE=\"text/css\"
-        HREF=\"lib/freemed.css\">" : "" )."
-   </HEAD>
-   <BODY BGCOLOR=\"#ffffff\" ALINK=\"#0000ff\" VLINK=\"#0000ff\"
-    MARGINWIDTH=\"0\" MARGINHEIGHT=\"0\" LEFTMARGIN=\"0\" RIGHTMARGIN=\"0\">
-  ";
 } // end function freemed_display_html_top
 
 // function freemed_display_itemlist
@@ -590,7 +565,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 			   $cur_page_var="this_page",
 			   $index_field="", $flags=-1)
 {
-  global $_ref, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
+  global $_ref, $LoginCookie, $record_name;
   global $modify_level, $delete_level, $patient, $action, $module;
   global $page_name, $$cur_page_var, $max_num_res;
   global $_s_field, $_s_val, $sql;
@@ -614,8 +589,6 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   }
   
 
-  //$_auth .= "&$cur_page_var=".chop($$cur_page_var);
- 
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
 
   $num_pages = ceil($sql->num_rows($result)/$max_num_res);
@@ -635,7 +608,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
     <TR>
      <TD ALIGN=CENTER>
-      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">"._("$record_name")."<$STDFONT_E>
+      <FONT SIZE=+1 COLOR=\"#ffffff\">"._("$record_name")."</FONT>
      </TD>
     </TR>".
     
@@ -647,20 +620,20 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     
     (($$cur_page_var>1) ? "
     <TR><TD>
-     <$STDFONT_B COLOR=\"#ffffff\">
+     <FONT COLOR=\"#ffffff\">
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
-     "&module=$module&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
+     "&module=$module&action=$action\"><FONT COLOR=\"#ffffff\">
         "._("Previous")."
-     <$STDFONT_E></A>
+     </FONT></A>
     </TD>
     " : "" )
     
     ."<TD>
-     <$STDFONT_B COLOR=\"#ffffff\">
+     <FONT COLOR=\"#ffffff\">
      "._("Page ".$$cur_page_var." of $num_pages")."
-     <$STDFONT_E>
+     </FONT>
      <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".prepare($action)."\" >
      <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\" >
      <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
@@ -670,13 +643,13 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     
     (($$cur_page_var<$num_pages) ? "
     <TD>
-     <$STDFONT_B COLOR=\"#ffffff\">
+     <FONT COLOR=\"#ffffff\">
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
-     "&module=$module&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
+     "&module=$module&action=$action\"><FONT COLOR=\"#ffffff\">
         "._("Next")."
-     <$STDFONT_E></A>
+     </FONT></A>
     </TD></TR>
     " : "" )
     
@@ -701,7 +674,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   while (list($k,$v)=each($control_list)) {
     $buffer .= "
       <TD BGCOLOR=\"#000000\">
-       <$STDFONT_B COLOR=\"#ffffff\">$k&nbsp;<$STDFONT_E>
+       <FONT COLOR=\"#ffffff\">$k&nbsp;</FONT>
       </TD>
     ";
   }
@@ -709,7 +682,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   {
   $buffer .= "
       <TD BGCOLOR=\"#000000\">
-       <$STDFONT_B COLOR=\"#ffffff\">"._("Action")."<$STDFONT_E>
+       <FONT COLOR=\"#ffffff\">"._("Action")."</FONT>
       </TD>
 	  </TR>
   ";
@@ -756,14 +729,14 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
         $buffer .= "
       <TD>
         <A HREF=\"$page_link?patient=$patient&action=display&id=".
-	"$this_result[id]&module=$module\"><$STDFONT_B
-	  >$item_text<$STDFONT_E></A>&nbsp;
+	"$this_result[id]&module=$module\"
+	  >$item_text</FONT></A>&nbsp;
       </TD>
         ";
       } else {
         $buffer .= "
       <TD>
-        <$STDFONT_B>$item_text&nbsp;<$STDFONT_E>
+        $item_text&nbsp;
       </TD>
         ";
       }
@@ -776,21 +749,21 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
         <A HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
-	"$this_result[id]\"><$STDFONT_B>"._("VIEW")."<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\">"._("VIEW")."</A>&nbsp;
       ";
     }
-    if (freemed_get_userlevel($LoginCookie)>$database_level AND 
+    if (freemed_get_userlevel()>$database_level AND 
          ($flags & ITEMLIST_MOD)) {
       $buffer .= "
         <A HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
-	"$this_result[id]\"><$STDFONT_B>"._("MOD")."<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\">"._("MOD")."</A>&nbsp;
       ";
     }
-    if (freemed_get_userlevel($LoginCookie)>$delete_level AND
+    if (freemed_get_userlevel()>$delete_level AND
          ($flags & ITEMLIST_DEL)) {
       $buffer .= "
         <A HREF=\"$page_link?patient=$patient&module=$module&action=delete&id=".
-	"$this_result[id]\"><$STDFONT_B>"._("DEL")."<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\">"._("DEL")."</A>&nbsp;
       ";
     }
     
@@ -803,7 +776,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
    $buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
      <TD COLSPAN=".(count($control_list)+1)." ALIGN=CENTER>
-      <$STDFONT_B><I>No "._("$record_name")."</I><$STDFONT_E>
+      <I>No "._($GLOBALS["record_name"])."</I>
      </TD>
     </TR>
    ";
@@ -829,7 +802,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $buffer .= "<OPTION VALUE=\"$c_v\">$c_k\n";
   $buffer .= "
       </SELECT>
-      <$STDFONT_B COLOR=\"#ffffff\"> "._("contains")." <$STDFONT_E>
+      <FONT COLOR=\"#ffffff\"> "._("contains")." </FONT>
       <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
       <INPUT TYPE=HIDDEN NAME=\"$cur_page_var\" VALUE=\"1\">
       <INPUT TYPE=TEXT NAME=\"_s_val\">
@@ -1237,34 +1210,44 @@ function freemed_get_link_field($id="0", $db="", $field="id")
 // function freemed_get_userlevel
 //   returns user level (1-10)
 //   (assumes 1 if not found, 9 if root)
-function freemed_get_userlevel ($f_cookie="")
-{
-  global $LoginCookie, $database, $sql;
+function freemed_get_userlevel ($f_cookie="") {
+	global $database, $sql, $SESSION;
+	static $userlevel;
 
-  if ($f_cookie=="") $f_cookie = $LoginCookie; // 19990920
+	// Extract authdata from SESSION
+	$authdata = $SESSION["authdata"];
 
-  $f_auth = explode (":", $f_cookie);
+	// Check for cached userlevel
+	if (isset($userlevel)) return $userlevel;
 
-  if ($f_auth[0]<1) {
-    return 0; // if no user, return 0
-  } // end checking for null user
+	// Check for null user
+	if (($authdata["user"]<1) or (!isset($authdata["user"]))) {
+		$userlevel = 0;
+		return 0; // if no user, return 0
+	}
 
-  if ($f_auth[0]==1) {
-    return 10; // if root, give superuser access
-  } else {
+	if ($authdata["user"] == 1) {
+		$userlevel = 10;
+		return 10; // if root, give superuser access
+	} else {
+		$result = $sql->query("SELECT * FROM user
+			WHERE id='".addslashes($authdata["user"])."'");
 
-    $result = $sql->query("SELECT * FROM user
-      WHERE id='$f_auth[0]'"); // get query...
+		// Check for improper results, return "unauthorized"
+		if (!$sql->results($result) or ($sql->num_rows($result) != 1)) {
+			$userlevel = 1;
+			return 1;
+		}
 
-    if ($sql->num_rows($result)!=1) {
-      return 1;
-    } // if there is more or less than one answer...
+		// Get results
+		$r = $sql->fetch_array($result);
 
-    $r = $sql->fetch_array($result);
-    $userlevel = $r["userlevel"]; // get the userlevel
-    return $userlevel;  // give it back to everything else...
+		// Set $userlevel (which is cached)
+		$userlevel = $r["userlevel"];
 
-  } // end else loop checking for name
+		// Return the answer...
+		return $userlevel;
+	} // end else loop checking for name
 
 } // end function freemed_get_userlevel
 
@@ -1433,21 +1416,11 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
 // function freemed_open_db
 function freemed_open_db ($my_cookie) {
 
-  global $LoginCookie, $Entered_incorrect_NamePasswd,
-    $Possible_Cookies_Have_Expired, $Login_Screen;
+	global $display_buffer;
 
-  if ($my_cookie=="") $my_cookie = $LoginCookie;
-
-   // new authentication as of 19990701
-  $connect = freemed_verify_auth ($my_cookie);
-
-   // comment out the mess
-  //echo "<!-- ";
- 
-  if ($connect != 1) {
-    freemed_display_html_top ();
-    freemed_display_banner ();
-    DIE ("<!-- -->
+	// Verify
+  if (!freemed_verify_auth()) {
+    $display_buffer .= "<!-- -->
       <CENTER>
       <B>
       <P>
@@ -1458,8 +1431,8 @@ function freemed_open_db ($my_cookie) {
       </B>
       <A HREF=\"".BASE_URL."\">"._("Return to the Login Screen")."</A>
       </CENTER>
-      </BODY></HTML>
-    ");
+    ";
+    template_display();
   } else {
     //if ((strlen($default_facility)>0) AND ($default_facility!=" "))
     //  SetCookie ("default_facility", $default_facility,
@@ -1467,15 +1440,11 @@ function freemed_open_db ($my_cookie) {
     //echo "df = $default_facility <BR>";
   } // end if connected loop
 
-    // begin showing things again
-  //echo " -->";
 } // end function freemed_open_db
 
 // function freemed_patient_box
 //   general purpose patient link/info box
 function freemed_patient_box ($patient_object) {
-  global $STDFONT_B, $STDFONT_E;
-
   // empty buffer
   $buffer = "";
 
@@ -1485,24 +1454,24 @@ function freemed_patient_box ($patient_object) {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
      <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
       <A HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
-      ><$STDFONT_B COLOR=\"#ffffff\" SIZE=\"+1\">".
+      ><FONT COLOR=\"#ffffff\" SIZE=\"+1\">".
        $patient_object->fullName().
-      "<$STDFONT_E></A>
+      "</FONT></A>
      </TD><TD ALIGN=CENTER VALIGN=CENTER>
-      <$STDFONT_B COLOR=\"#ffffff\">
+      <FONT COLOR=\"#ffffff\">
       ".( (!empty($patient_object->local_record["ptid"])) ?
           $patient_object->idNumber() : "(no id)" )."
-      <$STDFONT_E>
+      </FONT>
      </TD><TD ALIGN=CENTER VALIGN=CENTER>
-      <$STDFONT_B COLOR=\"#ffffff\">
+      <FONT COLOR=\"#ffffff\">
       &nbsp;
       <!-- ICON BAR NEEDS TO GO HERE ... TODO -->
-      <$STDFONT_E>
+      </FONT>
      </TD><TD VALIGN=CENTER ALIGN=RIGHT>
-      <$STDFONT_B COLOR=\"#cccccc\">
+      <FONT COLOR=\"#cccccc\">
        ".$patient_object->age()." old, DOB ".
         $patient_object->dateOfBirth()."
-      <$STDFONT_E>
+      </FONT>
      </TD></TR>
     </TABLE>
     </CENTER>
@@ -1632,6 +1601,7 @@ function freemed_auth_db_connect () {
   return $sql;
 } // end function freemed_auth_db_connect
 
+/*
 function freemed_auth_login ($f_username, $f_password) {
   global $SessionLoginCookie, $_cookie_expire, $sql;
 
@@ -1659,27 +1629,77 @@ function freemed_auth_login ($f_username, $f_password) {
     return 1;
   } else return 0;
 } // end function freeemed_auth_login
+*/
 
-function freemed_verify_auth ($f_cookie="") {
-  global $_cookie_expire, $LoginCookie, $debug, $Connection, $sql;
+// freemed_verify_auth:
+//   moved to sessions support as of version 0.3
+function freemed_verify_auth ( ) {
+	global $debug, $Connection, $sql, $REMOTE_ADDR;
+	global $PHP_SELF, $SESSION, $_username, $_password;
 
-  if ($f_cookie=="") $f_cookie = $LoginCookie;
-    // split into user/pw pair
-  $f_auth = explode (":", $f_cookie);
-  SetCookie ("LoginCookie", $f_cookie, time()+$_cookie_expire);
-  $f_connection = freemed_auth_db_connect ();
-  $Connection = $f_connection;  // not cookie -> global (19990921)
-  //if ($debug) echo "f_auth[0] = $f_auth[0], f_auth[1] = $f_auth[1]";
-  if (($f_auth[0]==1) AND ($f_auth[1]==md5(DB_PASSWORD))) return 1;
-  $f_result = $sql->query ("SELECT * FROM user ".
-    "WHERE id = '$f_auth[0]'");
-  if (!$f_result) return 0; // kill
-  $f_row = $sql->fetch_array($f_result); // get result array
-  $md5pw = md5($f_row["userpassword"]);
-  if (($f_row["id"] == $f_auth[0]) AND
-      ($md5pw == $f_auth[1]) AND
-      ($f_auth[0] != "")) return 1;
-  else return 0;
+	// Do we have to check for _username?
+	$check = !empty($_username);
+
+	// Check for authdata array
+	if (is_array($SESSION["authdata"])) {
+		// Check to see if ipaddr is set or not...
+		if (!SESSION_PROTECTION) {
+			return true;
+		} else {
+			if ( isset($SESSION["ipaddr"]) and
+				($SESSION["ipaddr"] == $REMOTE_ADDR) ) {
+				// We're already authorized
+				return true;
+			} else {
+				// IP address has changed, ERROR
+				return false;
+			} // end checking ipaddr
+		} // end checking for SESSION_PROTECTION
+	} elseif ($check) {
+		// Quickly check for root un/pw pair (handle null pw)
+		if ( ($_username=="root") and ($_password==DB_PASSWORD) ) {
+			// Pass the proper session variable
+			$SESSION["authdata"] = array (
+				"username" => $_username,
+				"user" => "1" // superuser id
+			);
+			// Set ipaddr for SESSION_PROTECTION
+			$SESSION["ipaddr"] = $REMOTE_ADDR;
+			// Return back that this is true
+			return true;
+		}
+
+		// Find this user
+  		$result = $sql->query ("SELECT * FROM user ".
+			"WHERE id = '".addslashes($_username)."'");
+
+		// If the user isn't found, false
+		if (!$sql->results($result)) {
+			return false;
+		}
+
+		// Get information
+		$r = $sql->fetch_array ($result);
+
+		// Check password
+		if ($_password == $r["userpassword"]) {
+			// Set session vars
+			$SESSION["authdata"] = array (
+				"username" => $_username,
+				"user" => $r["id"]
+			);
+			// Set ipaddr for SESSION_PROTECTION
+			$SESSION["ipaddr"] = $REMOTE_ADDR;
+
+			// Authorize
+			return true;
+		} else { // check password
+			// Failed password check
+			unset ( $SESSION["authdata"] );
+			unset ( $SESSION["ipaddr"] );
+			return false;
+		} // end check password
+	} // end of checking for authdata array
 } // end function freemed_verify_auth
 
  #
@@ -2203,7 +2223,6 @@ function fm_secure ($orig_string) {
   $this_string = str_replace ("\$db_host",     "", $this_string);
   $this_string = str_replace ("\$database",    "", $this_string);
   $this_string = str_replace ("\$gifhome",     "", $this_string);
-  $this_string = str_replace ("\$_auth",       "", $this_string);
   $this_string = str_replace ("\$db_engine",   "", $this_string);
   $this_string = str_replace ("\$LoginCookie", "", $this_string);
   return $this_string;    // return cleansed string
@@ -2363,6 +2382,164 @@ function fm_time_assemble ($timevarname="") {
     $ap = ${$timevarname."_ap"};
   return $h.":".$m.":".$ap;                     // return SQL format date
 } // end function fm_time_assemble
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+//*********************  TEMPLATE SUPPORT
+
+function template_display ($terminate_on_execute=true) {
+	global $display_buffer; // localize display buffer
+	global $template; // localize template
+	foreach ($GLOBALS AS $k => $v) global $$k;
+
+	if (file_exists("lib/template/".$template."/template.php")) {
+		include_once ("lib/template/".$template."/template.php");
+	} else { // otherwise load the default template
+		include_once ("lib/template/default/template.php");
+	} // end template load
+
+	// Kill everything after this has been displayed
+	if ($terminate_on_execute) die("");
+} // end function template_display
+
+//********************** END TEMPLATE SUPPORT
+
+function page_push () {
+	global $SESSION, $PHP_SELF, $page_title;
+
+	// Import it if it exists
+	if (isset($SESSION["page_history"])) {
+		// Import
+		$page_history = $SESSION["page_history"];
+		$page_history_name = $SESSION["page_history_name"];
+
+		// Check to see if this is the last item on the list...
+		// ... kick out without adding.
+		if (basename($page_history[(count($page_history))]) ==
+			basename($PHP_SELF)) return true;
+	} // end checking for existing history
+
+	// Add to the list of pages
+	$page_history[] = basename($PHP_SELF);
+	$page_history_name[] = $page_title;
+
+	// Reimport into SESSION
+	$SESSION["page_history"] = $page_history;
+	$SESSION["page_history_name"] = $page_history_name;
+} // end function page_push
+
+function page_pop () {
+	global $SESSION;
+
+	// Return false if there is nothing in the list
+	if (!isset($SESSION["page_history"])) return false;
+
+	// Import page_history
+	$page_history = $SESSION["page_history"];
+
+	// Otherwise get the last one and return it ...
+	$to_return = $page_history[(count($page_history)-1)];
+	$to_return_name = $page_history[(count($page_history_name)-1)];
+
+	// .. then remove it from the stack
+	unset($page_history[(count($page_history)-1)]);
+	unset($page_history_name[(count($page_history)-1)]);
+
+	// Reimport into SESSION
+	$SESSION["page_history"] = $page_history;
+	$SESSION["page_history_name"] = $page_history_name;
+
+	// And return value (access as list(x,y) = page_pop())
+	return array ($to_return, $to_return_name);
+} // end function page_pop
+
+function patient_push ($patient) {
+	global $SESSION;
+
+	// Import it if it exists
+	if (isset($SESSION["patient_history"])) {
+		// Import
+		$patient_history = $SESSION["patient_history"];
+
+		// Clean out null entries...
+		foreach ($patient_history AS $k => $v) {
+			if (!$v) unset($patient_history[$k]);
+		} // end foreach
+
+		// Check to see if this is the last item on the list...
+		// ... kick out without adding.
+		if ($patient_history[(count($patient_history))] == $patient) {
+			// Reimport due to cleaning
+			$SESSION["patient_history"] = $patient_history;
+
+			// And we don't have to add it, exit with true
+			return true;
+		} // end checking if we just saw them...
+	} // end checking for existing history
+
+	// Add to the list of pages
+	$patient_history[] = $patient;
+
+	// Reimport into SESSION
+	$SESSION["patient_history"] = $patient_history;
+} // end function patient_push
+
+/*------------------- DON'T THINK THIS IS NEEDED---------------------------
+function patient_pop () {
+	global $SESSION;
+
+	// Return false if there is nothing in the list
+	if (!isset($SESSION["patient_history"])) return false;
+
+	// Import patient_history
+	$patient_history = $SESSION["patient_history"];
+
+	// Otherwise get the last one and return it ...
+	$to_return = $patient_history[(count($patient_history)-1)];
+
+	// .. then remove it from the stack
+	unset($patient_history[(count($patient_history)-1)]);
+
+	// Reimport into SESSION
+	$SESSION["patient_history"] = $patient_history;
+
+	// And return value
+	return $to_return;
+} // end function patient_pop
+-------------------------------- end of unneeded function */
+
+function patient_history_list () {
+	global $SESSION;
+
+	// Return false if there is nothing in the list
+	if (!isset($SESSION["patient_history"])) return false;
+
+	// Import patient_history
+	$patient_history = $SESSION["patient_history"];
+
+	// Check for no patient history
+	if (count($patient_history)<1) return false;
+
+	// Create new empty array
+	unset($history);
+
+	// Loop through array
+	foreach ($patient_history AS $k => $v) {
+		// Get patient information
+		$this_patient = new Patient ($v);
+	
+		// Form Lastname, Firstname, ID list item
+		$key = $this_patient->fullName() . " (".$v.")";
+
+		// Add to new array
+		$history["$key"] = $v;
+	} // end foreach
+
+	// Return generated array
+	return $history;
+} // end function patient_history_list
 
 } // end checking for __API_PHP__
 

@@ -43,8 +43,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             $this->freemedEMRModule($nullvar);
         } // end function testModule
 
-        function addform()
-        {
+        function addform() {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -161,8 +161,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
         } // end addform
 
 
-        function transaction_wizard($procid, $paycat)
-        {
+        function transaction_wizard($procid, $paycat) {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS)) global $$k;
             global $payrecproc, $payreccat;
@@ -172,13 +172,16 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             if ($patient>0) {
                 $this_patient = new Patient($patient);
-            }
-            else
-                DIE("No patient");
+            } else {
+		$display_buffer .= _("No patient");
+                template_display();
+	    }
 
 			$proc_rec = freemed_get_link_rec($procid, "procrec");
-			if (!$proc_rec)
-				DIE("Error getting procedure");
+			if (!$proc_rec) {
+				$display_buffer .= _("Error getting procedure");
+				template_display();
+			}
 			$proccovmap = "0:".$proc_rec[proccov1].":".$proc_rec[proccov2].":".
 							$proc_rec[proccov3].":".$proc_rec[proccov4];
 
@@ -187,13 +190,13 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             // **************** FORM THE WIZARD ***************
             $wizard = new wizard (array("item", "been_here", "module", 
-									     "viewaction", "action", "patient", "_auth"));
+									     "viewaction", "action", "patient"));
 
 
             // ************** SECOND STEP PREP ****************
             // determine closest date if none is provided
             //if (empty($payrecdt) and empty($payrecdt_y))
-            //	echo "date $payrecdt $payrecdt_y $cur_date";
+            //	$display_buffer .= "date $payrecdt $payrecdt_y $cur_date";
             if (empty($payrecdt_y))
 			{
 				global $payrecdt;
@@ -254,7 +257,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     }
                     else
                     {
-                        echo "
+                        $display_buffer .= "
                         <TR><TD COLSPAN=2><CENTER>NOT IMPLEMENTED YET!</CENTER>
                         </TD></TR>
                         ";
@@ -505,21 +508,21 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             if (!$wizard->is_done() and !$wizard->is_cancelled())
             {
-                echo "<CENTER>".$wizard->display()."</CENTER>";
+                $display_buffer .= "<CENTER>".$wizard->display()."</CENTER>";
                 return;
             }
 
             if ($wizard->is_cancelled())
             {
                 // if the wizard was cancelled
-                echo "<CENTER>CANCELLED<BR></CENTER><BR>\n";
+                $display_buffer .= "<CENTER>CANCELLED<BR></CENTER><BR>\n";
             }
 
             if ($wizard->is_done())
             {
                 //freemed_display_box_top (_("Adding")." "._($record_name));
-                //if ($patient>0) echo freemed_patient_box ($this_patient);
-                echo "<CENTER>\n";
+                //if ($patient>0) $display_buffer .= freemed_patient_box ($this_patient);
+                $display_buffer .= "<CENTER>\n";
                 switch ($payreccat)
                 { // begin category case (add)
                 case PAYMENT: // payment category (add) 0
@@ -537,7 +540,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         $payrecnum = chop($payrecnum);
                         break;
                     case "2": // money order
-                        echo "<B>NOT IMPLEMENTED YET!!!</B><BR>\n";
+                        $display_buffer .= "<B>NOT IMPLEMENTED YET!!!</B><BR>\n";
                         break;
                     case "3": // credit card
                         $payrecnum = chop($payrecnum_1). ":".
@@ -550,9 +553,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     case "5": // EFT
                         break;
                     default: // if somebody messed up...
-                        echo "$ERROR!!! payrectype not present<BR>\n";
+                        $display_buffer .= "$ERROR!!! payrectype not present<BR>\n";
                         $payrecnum = ""; // kill!!!
-                        DIE("");
+                        template_display();
                         break;
                     } // end switch payrectype
 
@@ -627,7 +630,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 {
                     $payrecdt = fm_date_assemble("payrecdt");
                 }
-                echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
+                $display_buffer .= _("Adding")." ... \n";
 				$query = $sql->insert_query($this->table_name,
 					array(
 						"payrecdtadd" => $cur_date,
@@ -645,20 +648,20 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 						"payreclock" => "unlocked"
 						));
 
-                if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
+                if ($debug) $display_buffer .= "<BR>(query = \"$query\")<BR>\n";
                 $result = $sql->query($query);
             	if ($result) 
                 { 
-                    echo _("done")."."; 
+                    $display_buffer .= _("done")."."; 
                 }
                 else
                 { 
-                    echo _("ERROR");    
+                    $display_buffer .= _("ERROR");    
                 }
-                echo "  <BR><$STDFONT_B>"._("Modifying procedural charges")." ... <$STDFONT_E>\n";
+                $display_buffer .= "  <BR>"._("Modifying procedural charges")." ... \n";
 				$procrec = freemed_get_link_rec($payrecproc,"procrec");	
 				if (!$procrec)
-					echo _("ERROR");
+					$display_buffer .= _("ERROR");
 
 				$proccharges = $procrec[proccharges];
 				$procamtpaid = $procrec[procamtpaid];
@@ -756,37 +759,37 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                              WHERE id='".addslashes($payrecproc)."'";
                     break;
                 } // end category switch (add)
-                if ($debug) echo "<BR>(query = \"$query\")<BR>\n";
+                if ($debug) $display_buffer .= "<BR>(query = \"$query\")<BR>\n";
                 if (!empty($query))
                 {
                     $result = $sql->query($query);
-                    if ($result) { echo _("done")."."; }
-                    else        { echo _("ERROR");    }
+                    if ($result) { $display_buffer .= _("done")."."; }
+                    else        { $display_buffer .= _("ERROR");    }
                 }
                 else
                 { // if there is no query, let the user know we did nothing
-                    echo "unnecessary";
+                    $display_buffer .= "unnecessary";
                 } // end checking for null query
 			
 				if ($updatevisits)
 				{
-                	echo "  <BR><$STDFONT_B>"._("Modifying Authorized visits")." ... <$STDFONT_E>\n";
+                	$display_buffer .= "  <BR>"._("Modifying Authorized visits")." ... \n";
                     $result = $sql->query($auth_query);
-                    if ($result) { echo _("done")."."; }
-                    else        { echo _("ERROR");    }
+                    if ($result) { $display_buffer .= _("done")."."; }
+                    else        { $display_buffer .= _("ERROR");    }
 				}
 
             }  // end processing wizard done
 
 
             // we send this if cancelled or done.
-            echo "
+            $display_buffer .= "
             </CENTER>
             <P>
             <CENTER>
-            <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=refresh".
+            <A HREF=\"$this->page_name?been_here=1&viewaction=refresh".
             "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
-            <$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+            "._("Back")."</A>
             </CENTER>
             <P>
             ";
@@ -796,29 +799,29 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
         } // wizard code
 
-        function mod()
-        {
-            echo "Mod<BR>";
+        function mod() {
+		global $display_buffer;
+            $display_buffer .= "Mod<BR>";
         }
 
-        function add()
-        {
+        function add() {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
             {
                 global $$k;
-                echo "$$k $v<BR>";
+                $display_buffer .= "$$k $v<BR>";
             }
-            echo "Add<BR>";
+            $display_buffer .= "Add<BR>";
         }
 
-        function ledger($procid=0)
-        {
+        function ledger($procid=0) {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
             {
                 global $$k;
-                //echo "$$k $v<BR>";
+                //$display_buffer .= "$$k $v<BR>";
             }
 
             if ($procid)
@@ -838,25 +841,23 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             $pay_result = $sql->query ($pay_query);
 
             if (!$sql->results($pay_result)) {
-                echo "
+                $display_buffer .= "
                 <CENTER>
                 <P>
-                <B><$STDFONT_B>
+                <B>
                 "._("There are no records for this patient.")."
-                </B><$STDFONT_E>
+                </B>
                 <P>
-                <A HREF=\"manage.php?$_auth&id=$patient\"
-                ><$STDFONT_B>"._("Manage_Patient")."<$STDFONT_E></A>
+                <A HREF=\"manage.php?id=$patient\"
+                >"._("Manage_Patient")."</A>
                 <P>
                 </CENTER>
                 ";
-				freemed_display_box_bottom();
-				freemed_display_html_bottom();
-                DIE(""); // kill!!
+                template_display(); // kill!!
             } // end/if there are no results
 
             // if there is something, show it...
-            echo "
+            $display_buffer .= "
             <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
             <TR>
             <TD><B>"._("Date")."</B></TD>
@@ -877,7 +878,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 $procbalorig     = $r["procbalorig"];
                 $id              = $r["id"];
                 $total_charges  += $procbalorig;
-                echo "
+                $display_buffer .= "
                 <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
                 <TD>$procdate</TD>
                 <TD><I>".( (!empty($r[proccomment])) ?
@@ -895,7 +896,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 </TD>
                 <TD>
                 ";
-                echo "\n   &nbsp;</TD></TR>";
+                $display_buffer .= "\n   &nbsp;</TD></TR>";
             } // wend?
             $prev_proc = "$";
             while ($r = $sql->fetch_array ($pay_result)) {
@@ -928,9 +929,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     } // end of creating total string/color
 
                     // display the total payments
-                    echo "
+                    $display_buffer .= "
                     <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
-                    <TD><B><$STDFONT_B SIZE=-1>SUBTOT<$STDFONT_E></B></TD>
+                    <TD><B><FONT SIZE=\"-1\">SUBTOT</FONT></B></TD>
                     <TD>&nbsp;</TD>
                     <TD>&nbsp;</TD>
                     <TD ALIGN=RIGHT>
@@ -1060,7 +1061,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 } // end of categry switch (name)
                 $id              = $r["id"];
                 if (empty($payrecdescrip)) $payrecdescrip="NO DESCRIPTION";
-                echo "
+                $display_buffer .= "
                 <TR BGCOLOR=\"".
                 ($_alternate = freemed_bar_alternate_color ($_alternate)).
                 "\">
@@ -1083,12 +1084,12 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
                 //if (($this_user->getLevel() > $delete_level) and
                 //	 ($r[payreclock] != "locked"))
-                //  echo "
-                //  <A HREF=\"$page_name?$_auth&id=$id&patient=$patient&action=del\"
-                //  ><$STDFONT_B>"._("DEL")."<$STDFONT_E></A>
+                //  $display_buffer .= "
+                //  <A HREF=\"$page_name?id=$id&patient=$patient&action=del\"
+                //  >"._("DEL")."</A>
                 //  ";
 
-                echo "&nbsp;</TD></TR>";
+                $display_buffer .= "&nbsp;</TD></TR>";
             } // wend?
 
             // process last subtotal
@@ -1107,11 +1108,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             } // end of creating total string/color
 
             // display the total payments
-            echo "
+            $display_buffer .= "
             <TR BGCOLOR=\"".
             ($_alternate = freemed_bar_alternate_color ($_alternate))
 			."\">
-            <TD><B><$STDFONT_B SIZE=\"-1\">SUBTOT<$STDFONT_E></B></TD>
+            <TD><B><FONT SIZE=\"-1\">SUBTOT</FONT></B></TD>
             <TD>&nbsp;</TD>
             <TD>&nbsp;</TD>
             <TD ALIGN=RIGHT>
@@ -1145,11 +1146,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             } // end of creating total string/color
 
             // display the total payments
-            echo "
+            $display_buffer .= "
             <TR BGCOLOR=\"".
             ($_alternate = freemed_bar_alternate_color ($_alternate))
 			."\">
-            <TD><B><$STDFONT_B SIZE=-1>TOTAL<$STDFONT_E></B></TD>
+            <TD><B><FONT SIZE=\"-1\">TOTAL</FONT></B></TD>
             <TD>&nbsp;</TD>
             <TD>&nbsp;</TD>
             <TD ALIGN=RIGHT>
@@ -1168,13 +1169,13 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
         } // end ledger
 
-        function mistake($procid)
-        {
+        function mistake($procid) {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
             {
                 global $$k;
-                //echo "$$k $v<BR>";
+                //$display_buffer .= "$$k $v<BR>";
             }
 
             if (isset($delete))
@@ -1183,13 +1184,13 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 $result = $sql->query($query);
                 $query = "DELETE FROM payrec WHERE payrecproc='".addslashes($procid)."'";
                 $result = $sql->query($query);
-                echo "
+                $display_buffer .= "
                 <P>
                 <CENTER>
                 <B>"._("All records for this procedure have been deleted.")."</B><BR><BR>
-                <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=refresh".
+                <A HREF=\"$this->page_name?been_here=1&viewaction=refresh".
                 "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
-                <$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+                "._("Back")."</A>
                 </CENTER>
                 <P>
                 ";
@@ -1197,16 +1198,16 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             } // end mistake
 
-            echo "
+            $display_buffer .= "
             <P>
             <CENTER>
             "._("Confirm delete request or cancel?")."<P>
-            <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=mistake".
-            "&action=addform&delete=1&item=$procid&patient=$patient&module=$module\">
-            <$STDFONT_B>"._("Confirm")."<$STDFONT_E></A>&nbsp;|&nbsp;
-            <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=refresh".
-            "&action=addform&item=$procid&patient=$patient&module=$module\">
-            <$STDFONT_B>"._("Cancel")."<$STDFONT_E></A>
+            <A HREF=\"$this->page_name?been_here=1&viewaction=mistake".
+            "&action=addform&delete=1&item=$procid&patient=$patient&module=$module\"
+            >"._("Confirm")."</A>&nbsp;|&nbsp;
+            <A HREF=\"$this->page_name?been_here=1&viewaction=refresh".
+            "&action=addform&item=$procid&patient=$patient&module=$module\"
+            >"._("Cancel")."</A>
             </CENTER>
             <P>
             ";
@@ -1214,12 +1215,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
 
         }
-        function view()
-        {
+        function view() {
+		global $display_buffer;
             global $sql,$patient,$module;
 
-            echo "<FORM ACTION=\"$this->page_name\" METHOD=POST>
-            <INPUT TYPE=HIDDEN NAME=\"_auth\"   VALUE=\"$_auth\"  >
+            $display_buffer .= "<FORM ACTION=\"$this->page_name\" METHOD=POST>
             <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
             <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
             <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
@@ -1235,7 +1235,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             $result = $sql->query ($query);
 
-            echo "
+            $display_buffer .= "
             <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
             <TR BGCOLOR=\"#cccccc\">
             <TD>&nbsp;</TD>
@@ -1262,7 +1262,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 $this_cptmod = freemed_get_link_field ($r[proccptmod],
                                                        "cptmod", "cptmod");
                 $this_physician = new Physician ($r[procphysician]);
-                echo "
+                $display_buffer .= "
                 <TR BGCOLOR=".( ($this->item == $r[id]) ?  "#00ffff" :
                                 ($_alternate = freemed_bar_alternate_color ($_alternate))).">
                 <TD>
@@ -1279,14 +1279,14 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 <TD ALIGN=LEFT>".(($r[procbilled]) ? _("Yes") : _("No") )."</TD>
                 <TD ALIGN=LEFT>".( !empty($r[procdtbilled]) ?
 					prepare($r[procdtbilled]) : "&nbsp;" )."</TD>
-                <TD ALIGN LEFT><A HREF=\"$this->page_name?_auth=$_auth&action=addform".
+                <TD ALIGN LEFT><A HREF=\"$this->page_name?action=addform".
                 "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=$r[id]\"
                 >Ledger</A>
                 </TR>
                 ";
             } // end looping for results
 
-            echo "
+            $display_buffer .= "
             </TABLE>
             <P>
             <CENTER>
@@ -1315,8 +1315,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             ";
         } // end view function
 		
-		function insuranceSelectionByType($proccovmap)
-		{
+		function insuranceSelectionByType($proccovmap) {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
 			$returned_string = "";
@@ -1344,8 +1344,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
 		}
 
-		function insuranceName($coverage)
-		{
+		function insuranceName($coverage) {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
 			$insid = freemed_get_link_field($coverage,"coverage","covinsco");
@@ -1354,8 +1354,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
 		}
 
-		function coverageIDFromType($proccovmap, $type)
-		{
+		function coverageIDFromType($proccovmap, $type) {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
 			$cov_ids = explode(":",$proccovmap);
@@ -1363,8 +1363,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 			
 		}
 
-		function insuranceSelection($proccovmap)
-		{
+		function insuranceSelection($proccovmap) {
+		global $display_buffer;
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS))
 			$returned_string = "";
@@ -1386,8 +1386,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 			return $returned_string;
 		}
 
-		function IsAuthorized($proc,&$remain,&$used)
-		{
+		function IsAuthorized($proc,&$remain,&$used) {
+		global $display_buffer;
 			global $sql;
 
 			if ($proc[procauth] == 0)

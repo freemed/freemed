@@ -36,6 +36,7 @@ class icdMaintenance extends freemedMaintenanceModule {
 	} // end constructor icdMaintenance
 
 	function form () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 
   switch ($action) { // internal action switch
@@ -51,7 +52,7 @@ class icdMaintenance extends freemedMaintenanceModule {
     break;
   } // end internal action switch
 
-  echo "
+  $display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
@@ -65,34 +66,34 @@ class icdMaintenance extends freemedMaintenanceModule {
 
     <TR>
     <TD ALIGN=RIGHT WIDTH=\"50%\">
-      <$STDFONT_B>"._("Code")." ("._("ICD9").") : <$STDFONT_E></TD>
+      "._("Code")." ("._("ICD9").") : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icd9code\" SIZE=10 MAXLENGTH=6 
      VALUE=\"".prepare($icd9code)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Meta Description")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Meta Description")." : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icdmetadesc\" SIZE=10 MAXLENGTH=30
      VALUE=\"".prepare($icdmetadesc)."\"></TD>
     </TR>
 
     <TR>
     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Code")." ("._("ICD10").") : <$STDFONT_E></TD>
+      "._("Code")." ("._("ICD10").") : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icd10code\" SIZE=10 MAXLENGTH=7
      VALUE=\"".prepare($icd10code)."\"></TD>
     </TR>
 
     <TR>
     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Description")." ("._("ICD9").") : <$STDFONT_E></TD>
+      "._("Description")." ("._("ICD9").") : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icd9descrip\" SIZE=20 MAXLENGTH=45
      VALUE=\"".prepare($icd9descrip)."\"></TD>
     </TR>
     
     <TR>
     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Description")." ("._("ICD10").") : <$STDFONT_E></TD>
+      "._("Description")." ("._("ICD10").") : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icd10descrip\" SIZE=20 MAXLENGTH=45
      VALUE=\"".prepare($icd10descrip)."\"></TD>
     </TR>
@@ -101,7 +102,7 @@ class icdMaintenance extends freemedMaintenanceModule {
 
     <TR>
     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Diagnosis Related Groups")." : <$STDFONT_E></TD>
+      "._("Diagnosis Related Groups")." : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icddrg\" SIZE=20 MAXLENGTH=45
      VALUE=\"".prepare($icddrg)."\"></TD>
     </TR>
@@ -110,13 +111,13 @@ class icdMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"icdnum\" VALUE=\"0\">
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Amount Billed")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Amount Billed")." : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icdamt\" SIZE=10 MAXLENGTH=12
      VALUE=\"".prepare($icdamt)."\"></TD>
     </TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>"._("Amount Collected")." : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>"._("Amount Collected")." : </TD>
     <TD><INPUT TYPE=TEXT NAME=\"icdcoll\" SIZE=10 MAXLENGTH=12
      VALUE=\"".prepare($icdcoll)."\">
     </TR>
@@ -131,10 +132,10 @@ class icdMaintenance extends freemedMaintenanceModule {
     </CENTER></FORM>
   ";
 
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
+    <A HREF=\"$this->page_name?module=$module&action=view\"
      >".( ($action=="addform") ?
       _("Abandon Addition") : _("Abandon Modification") )."</A>
     </CENTER>
@@ -142,8 +143,9 @@ class icdMaintenance extends freemedMaintenanceModule {
 	} // end function icdMaintenance->form
 
 	function view () {
+		global $display_buffer;
 		global $sql;
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT * FROM $this->table_name ".
 				"ORDER BY $this->order_field"),
 			$this->page_name,

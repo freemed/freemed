@@ -35,7 +35,7 @@ if ($id > 0) {
 Header ("Content-Type: image/jpeg");
 
 // display the actual image data
-echo stripslashes($proper["pidata"]);
+$display_buffer .= stripslashes($proper["pidata"]);
 
 // close database connection
 freemed_close_db ();

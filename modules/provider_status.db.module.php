@@ -15,30 +15,36 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
 	var $record_name    = "Provider Status";
 	var $table_name     = "phystatus";
 
+	function providerStatusMaintenance () {
+		$this->freemedMaintenanceModule();
+	} // end contructor providerStatusMaintenance
+
 	function add () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Adding")." ... \n";
+			"._("Adding")." ... \n";
 
 		$query = "INSERT INTO $this->table_name VALUES ( ".
 			"'".addslashes($phystatus)."',   NULL ) ";
 
 		$result = $sql->query($query);
 
-		if ($result) { echo "<B>"._("done").".</B>"; }
-		 else        { echo "<B>"._("ERROR")."</B>"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>"; }
+		 else        { $display_buffer .= "<B>"._("ERROR")."</B>"; }
 	} // end function providerStatusMaintenance->add()
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
   $r = freemed_get_link_rec ($id, $this->table_name);
   extract ($r);
 
-  echo "
+  $display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
@@ -59,19 +65,20 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
   ";
 
 
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth&module=$module\"
+    <A HREF=\"$this->page_name?module=$module\"
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
 	} // end function providerStatusMaintenance->form()
 
 	function mod () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-		echo "<P><CENTER><$STDFONT_B>"._("Modifying")." ...  ";
+		$display_buffer .= "<P><CENTER>"._("Modifying")." ...  ";
 
 		$query = "UPDATE $this->table_name ".
 			"SET phystatus = '".addslashes($phystatus)."' ". 
@@ -79,33 +86,35 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
 
 		$result = $sql->query($query);
 
-		if ($result) { echo "<B>"._("done").".</B>"; }
-		 else        { echo "<B>"._("ERROR")."</B>"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>"; }
+		 else        { $display_buffer .= "<B>"._("ERROR")."</B>"; }
 
 	} // end function providerStatusMaintenance->mod()
 
 	/*
 	function delete () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$result = $sql->query("DELETE FROM $this->table_name WHERE id='".addslashes($id)."'");
 
-		echo "
+		$display_buffer .= "
     <P><CENTER>
     <I>"._($record_name)." <B>$id</B> "._("Deleted")."<I>.
     </CENTER>
     <P>
     <CENTER>
-    <A HREF=\"$this->page_name?$_auth&module=$module&action=view\"
+    <A HREF=\"$this->page_name?module=$module&action=view\"
      >"._("back")."</A></CENTER>
 		";
 	} // end function providerStatusMaintenance->delete()
 	*/
 
 	function view () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-  		echo freemed_display_itemlist (
+  		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT phystatus,id FROM $this->table_name ".
 				"ORDER BY phystatus"),
 			$this->page_name,
@@ -117,7 +126,7 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
 			)
 		);
     
-		echo "
+		$display_buffer .= "
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3>
     <TR BGCOLOR=\"".
       ($_alternate = freemed_bar_alternate_color ($_alternate))

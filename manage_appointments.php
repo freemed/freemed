@@ -3,51 +3,46 @@
  // desc: routines for managing appointments... for patients (not call-ins)
  // lic : GPL, v2
 
- $page_name = "manage_appointments.php";
- include ("lib/freemed.php");
- include ("lib/API.php");
- include ("lib/calendar-functions.php");
+$page_name = "manage_appointments.php";
+include ("lib/freemed.php");
+include ("lib/API.php");
+include ("lib/calendar-functions.php");
 
- freemed_open_db ($LoginCookie);
- freemed_display_html_top ();
- freemed_display_banner ();
+freemed_open_db ();
 
- if ($patient<1) {
-   freemed_display_box_top ("Manage Appointments :: ERROR");
-   echo "
+if ($patient<1) {
+   $page_title = _("Manage Appointments")." :: "._("ERROR");
+   $display_buffer .= "
      <P>
      "._("You must select a patient.")."
      <P>
      <CENTER>
-      <A HREF=\"patient.php?$_auth\"
-       ><$STDFONT_B>"._("Select a Patient")."<$STDFONT_E></A>
+      <A HREF=\"patient.php\"
+       >"._("Select a Patient")."</A>
      </CENTER>
      <P>
     ";
-   freemed_display_box_bottom ();
-   freemed_display_html_bottom ();
-   DIE("");
- } // end checking for patient
+   template_display();
+} // end checking for patient
 
  switch ($action) {
   case "del":
    freemed_display_box_top ("Deleting Appointment");
-   echo "\n<$STDFONT_B>"._("Deleting")." ... <$STDFONT_E>\n";
+   $display_buffer .= "\n"._("Deleting")." ... \n";
    $query = "DELETE FROM scheduler WHERE id='".addslashes($id)."'";
    $result = $sql->query ($query);
-   if ($result) { echo _("done")."."; }
-    else        { echo _("ERROR");    }
-   echo "
+   if ($result) { $display_buffer .= _("done")."."; }
+    else        { $display_buffer .= _("ERROR");    }
+   $display_buffer .= "
     <P>
     <CENTER>
-     <A HREF=\"$page_name?$_auth&action=view&patient=$patient\"
-     ><$STDFONT_B>"._("Manage Appointments")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"manage.php?$_auth&id=$patient\"
-     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+     <A HREF=\"$page_name?action=view&patient=$patient\"
+     >"._("Manage Appointments")."</A> <B>|</B>
+     <A HREF=\"manage.php?id=$patient\"
+     >"._("Manage Patient")."</A>
     </CENTER>
     <P>
    ";
-   freemed_display_box_bottom ();
    break; // end delete appointment section
   default: // default action is to view appointments
    // grab patient information
@@ -55,13 +50,13 @@
 
    // display top of the box
    freemed_display_box_top (_("Manage Appointments"));
-   echo freemed_patient_box($this_patient)."
+   $display_buffer .= freemed_patient_box($this_patient)."
      <P>
      <CENTER>
-      <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
-       ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
-      <A HREF=\"manage.php?$_auth&id=$patient\"
-       ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+      <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
+       >"._("Book Appointment")."</A> |
+      <A HREF=\"manage.php?id=$patient\"
+       >"._("Manage Patient")."</A>
      </CENTER>
      <P>
     ";
@@ -78,21 +73,21 @@
 
    // check for results
    if ($sql->num_rows($result) < 1) {
-     echo "
+     $display_buffer .= "
        <P>
        <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=2 CELLPADDING=2
         BORDER=0 VALIGN=CENTER ALIGN=CENTER><TR><TD BGCOLOR=#000000
         ALIGN=CENTER VALIGN=CENTER>
-        <$STDFONT_B COLOR=#ffffff>
+        <FONT COLOR=\"#ffffff\">
 	"._("This patient has no appointments.")."
-	<$STDFONT_E>
+	</FONT>
        </TD></TR></TABLE>
        <P>
        <CENTER>
-       <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
-        ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
-       <A HREF=\"manage.php?$_auth&id=$patient\"
-        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+       <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
+        >"._("Book Appointment")."</A> |
+       <A HREF=\"manage.php?id=$patient\"
+        >"._("Manage Patient")."</A>
        </CENTER>
        <P>
       ";
@@ -100,15 +95,15 @@
 
      // first display the top of the table
      $_alternate = freemed_bar_alternate_color ($_alternate);
-     echo "
+     $display_buffer .= "
        <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3 BGCOLOR=#000000
         BORDER=0><TR>
-        <TD><$STDFONT_B COLOR=#cccccc>"._("Date")."<$STDFONT_E></TD>
-        <TD><$STDFONT_B COLOR=#cccccc>Time/Duration<$STDFONT_E></TD>
-        <TD><$STDFONT_B COLOR=#cccccc>Location<$STDFONT_E></TD>
-        <TD><$STDFONT_B COLOR=#cccccc>Note<$STDFONT_E></TD>
-        <TD><$STDFONT_B COLOR=#cccccc>CPT Code<$STDFONT_E></TD> 
-        <TD><$STDFONT_B COLOR=#cccccc>"._("Action")."<$STDFONT_E></TD> 
+        <TD><FONT COLOR=\"#cccccc\">"._("Date")."</FONT></TD>
+        <TD><FONT COLOR=\"#cccccc\">Time/Duration</FONT></TD>
+        <TD><FONT COLOR=\"#cccccc\">Location</FONT></TD>
+        <TD><FONT COLOR=\"#cccccc\">Note</FONT></TD>
+        <TD><FONT COLOR=\"#cccccc\">CPT Code</FONT></TD> 
+        <TD><FONT COLOR=#cccccc>"._("Action")."</FONT></TD> 
        </TR>
       ";
 
@@ -141,7 +136,7 @@
        if (($calcptcode+0)==0) $calcptcode="<B>$NONE_SELECTED</B>";
 
        // actual display
-       echo "
+       $display_buffer .= "
         <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
          <TD>$caldateof</TD>
          <TD><CENTER>$calhour:$calminute<BR>
@@ -149,32 +144,30 @@
          <TD>".( !empty($location)   ? $location   : "&nbsp;" )."</TD>
          <TD>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</TD>
          <TD>$calcptcode</TD>
-         <TD><A HREF=\"$page_name?$_auth&id=$r[id]&action=del&patient=$patient\"
+         <TD><A HREF=\"$page_name?id=$r[id]&action=del&patient=$patient\"
              >"._("DEL")."</A></TD>
         </TR>
         ";
      } // end loop for all occurances (while)
 
      // bottom of the table
-     echo "
+     $display_buffer .= "
        </TABLE>
        <P>
        <CENTER>
-        <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
-         ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
-        <A HREF=\"manage.php?$_auth&id=$patient\"
-         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+        <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
+         >"._("Book Appointment")."</A> |
+        <A HREF=\"manage.php?id=$patient\"
+         >"._("Manage Patient")."</A>
        </CENTER>
        <P>
       ";
 
    } // end checking for results (if)
 
-   // display_bottom of the box
-   freemed_display_box_bottom ();
    break;
  } // end master switch
 
- freemed_close_db ();
- freemed_display_html_bottom ();
+freemed_close_db ();
+template_display();
 ?>

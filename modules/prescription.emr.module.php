@@ -30,12 +30,13 @@ class prescriptionModule extends freemedEMRModule {
 	function view ()   { $this->old_main(); }
 
 	function old_main () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
   switch ($action) { // master action switch
     case "display":
-      echo "
+      $display_buffer .= "
         <P>
         This function has NOT been implemented yet.<BR>
         Please wait and do not flame me yet -jeff
@@ -45,7 +46,7 @@ class prescriptionModule extends freemedEMRModule {
     case "addform":
     case "modform":
       $rxdtfrom = $cur_date;
-      echo "
+      $display_buffer .= "
         <FORM ACTION=\"$this->page_name\" METHOD=POST>
         <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
         <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
@@ -53,36 +54,35 @@ class prescriptionModule extends freemedEMRModule {
 		($action=="addform") ? "add" : "mod" )."\">
         <INPUT TYPE=HIDDEN NAME=\"rxpatient\" VALUE=\"".prepare($patient)."\">
 
-        <$STDFONT_B>$Drug : <$STDFONT_E>
-      ";
+        "._("Drug")." : ";
 
       $rx_r = $sql->query("SELECT * FROM frmlry ORDER BY trdmrkname");
-      echo freemed_display_selectbox (
+      $display_buffer .= freemed_display_selectbox (
         $rx_r, "#trdmrkname#", "rxdrug"
       )."
 
         <P>
 
-        <$STDFONT_B>Dosage : <$STDFONT_E>
+        "._("Dosage")." :
         <INPUT TYPE=TEXT NAME=\"rxdosage\" VALUE=\"$rxdosage\"
          SIZE=20 MAXLENGTH=100>
         <P>
 
-        <$STDFONT_B>"._("Starting Date")." : <$STDFONT_E>
+        "._("Starting Date")." :
      ".fm_date_entry("rxdtfrom")."
         <P>
 
-        <$STDFONT_B>Duration (In Days, 0 = Infinite) : <$STDFONT_E>
+        "._("Duration")." (In Days, 0 = Infinite) :
         <INPUT TYPE=TEXT NAME=\"rxduration\" VALUE=\"$rxduration\"
          SIZE=5 MAXLENGTH=5>
         <P>
 
-        <$STDFONT_B>Refills : <$STDFONT_E>
+        "._("Refills")." :
         <INPUT TYPE=TEXT NAME=\"rxrefills\" VALUE=\"$rxrefills\"
          SIZE=5 MAXLENGTH=4>
         <P>
 
-        <$STDFONT_B>Substitution : <$STDFONT_E>
+        "._("Substitution")." :
         <SELECT NAME=\"rxsubstitute\">
          <OPTION VALUE=\"may not subsitute\">$May_Not_Substitute
          <OPTION VALUE=\"may substitute\"   >$May_Substitute
@@ -97,8 +97,8 @@ class prescriptionModule extends freemedEMRModule {
       ";
       break;
     case "add":
-      echo "
-        <P><$STDFONT_B><B>"._("Adding")." . . . </B><$STDFONT_E>
+      $display_buffer .= "
+        <P><B>"._("Adding")." . . . </B>
       ";
       $rxdtadd = $cur_date;
       //$rxdtfrom = $rxdtfrom_y. "-". $rxdtfrom_m. "-". $rxdtfrom_d;
@@ -116,16 +116,16 @@ class prescriptionModule extends freemedEMRModule {
         '$rxmd5sum',
         NULL ) ";
       $result = $sql->query ($query);
-      if (DEBUG) echo "<BR>query = \"$query\", result = \"$result\"<BR>";
-      if ($result) echo "\n<$STDFONT_B><B>"._("done").".</B><$STDFONT_E>\n";
-       else echo "\n<$STDFONT_B><B>"._("ERROR")."</B><$STDFONT_E>\n";
-      echo "
+      if (DEBUG) $display_buffer .= "<BR>query = \"$query\", result = \"$result\"<BR>";
+      if ($result) $display_buffer .= "\n<B>"._("done").".</B>\n";
+       else $display_buffer .= "\n<B>"._("ERROR")."</B>\n";
+      $display_buffer .= "
         <P>
         <CENTER>
-        <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-         ><$STDFONT_B>Manage Prescriptions<$STDFONT_E></A> |
-        <A HREF=\"manage.php?$_auth&id=$patient\"
-         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+        <A HREF=\"$this->page_name?module=$module&patient=$patient\"
+         >"._("Manage Prescriptions")."</A> |
+        <A HREF=\"manage.php?id=$patient\"
+         >"._("Manage Patient")."</A>
         </CENTER>
         <P>
       ";
@@ -133,12 +133,12 @@ class prescriptionModule extends freemedEMRModule {
     default:
       $ptlname = freemed_get_link_field ($patient, "patient", "ptlname");
       $ptfname = freemed_get_link_field ($patient, "patient", "ptfname");
-      echo "
+      $display_buffer .= "
         <CENTER>
-         <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient&action=addform\"
-         ><$STDFONT_B>"._("Add")." "._($record_name)."<$STDFONT_E></A> |
-         <A HREF=\"manage.php?$_auth&id=$patient\"
-         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+         <A HREF=\"$this->page_name?module=$module&patient=$patient&action=addform\"
+         >"._("Add")." "._($record_name)."</A> |
+         <A HREF=\"manage.php?id=$patient\"
+         >"._("Manage Patient")."</A>
         </CENTER>
         <P>
       ";
@@ -149,16 +149,16 @@ class prescriptionModule extends freemedEMRModule {
 
       if ($num_records < 1) {
         // if there are no prescriptions yet
-        echo "
+        $display_buffer .= "
           <TABLE WIDTH=100% BORDER=0 VALIGN=CENTER ALIGN=CENTER
            CELLSPACING=1 CELLPADDING=1 BGCOLOR=#000000><TR>
-          <TD BGCOLOR=#000000><CENTER><$STDFONT_B COLOR=#ffffff>
+          <TD BGCOLOR=\"#000000\"><CENTER><FONT COLOR=\"#ffffff\">
           <B>No prescriptions for this patient</B></CENTER>
           </TD></TR></TABLE>
         ";
       } else {
         // or else, show them
-        echo "
+        $display_buffer .= "
           <TABLE BORDER=1 CELLSPACING=1 CELLPADDING=1 ALIGN=CENTER
            BGCOLOR=#ffffff VALIGN=CENTER>
         "; // table header
@@ -171,29 +171,29 @@ class prescriptionModule extends freemedEMRModule {
               $rxdtto = freemed_get_date_next ($rxdtto); // increment date
           else
             $rxdtto = "unspecified";
-          echo "
+          $display_buffer .= "
             <TR><TD>
-             <A HREF=\"$page_name?$_auth&patient=$patient&id=$id&action=display\"
-              ><$STDFONT_B>".fm_date_print($rxdtfrom)." / 
-                           ".fm_date_print($rxdtto)." <$STDFONT_E></A>
+             <A HREF=\"$page_name?patient=$patient&id=$id&action=display\"
+              >".fm_date_print($rxdtfrom)." / 
+                           ".fm_date_print($rxdtto)." </A>
               <B>[</B> <A HREF=
-               \"$this->page_name?$_auth&module=$module&id=$rxdrug&action=modform\"
-               ><$STDFONT_B><I>$drug</I><$STDFONT_E></A> <B>]</B>
+               \"$this->page_name?module=$module&id=$rxdrug&action=modform\"
+               ><I>$drug</I></A> <B>]</B>
             </TR></TD>
           "; 
         }
-        echo "
+        $display_buffer .= "
           </TABLE>
         "; // end table
       }
       
-      echo "
+      $display_buffer .= "
         <P>
         <CENTER>
-         <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient&action=addform\"
-         ><$STDFONT_B>"._("Add")." "._($record_name)."<$STDFONT_E></A> |
-         <A HREF=\"manage.php?$_auth&id=$patient\"
-         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+         <A HREF=\"$this->page_name?module=$module&patient=$patient&action=addform\"
+         >"._("Add")." "._($record_name)."</A> |
+         <A HREF=\"manage.php?id=$patient\"
+         >"._("Manage Patient")."</A>
         </CENTER>
         <P>
       ";

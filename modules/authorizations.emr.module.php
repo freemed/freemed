@@ -46,6 +46,7 @@ class authorizationsModule extends freemedEMRModule {
 	} // end constructor authorizationsModule
 
 	function form () {
+		global $display_buffer;
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -55,7 +56,7 @@ class authorizationsModule extends freemedEMRModule {
        break; // end internal addform
       case "modform":
        if (($patient<1) OR (empty($patient))) {
-         echo "
+         $display_buffer .= "
            <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
          ";
          freemed_display_box_bottom ();
@@ -69,7 +70,7 @@ class authorizationsModule extends freemedEMRModule {
 
      $pnotesdt     = $cur_date;
 
-     echo "
+     $display_buffer .= "
        <P>
 
        <FORM ACTION=\"$this->page_name\" METHOD=POST>
@@ -85,7 +86,7 @@ class authorizationsModule extends freemedEMRModule {
         
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Starting Date")." : <$STDFONT_E>
+         "._("Starting Date")." :
         </TD>
         <TD ALIGN=LEFT>
          ".date_entry("authdtbegin")."
@@ -94,7 +95,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Ending Date")." : <$STDFONT_E>
+         "._("Ending Date")." :
         </TD>
         <TD ALIGN=LEFT>
          ".date_entry("authdtend")."
@@ -103,7 +104,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Authorization Number")." : <$STDFONT_E>
+         "._("Authorization Number")." :
         </TD>
         <TD ALIGN=LEFT>
          <INPUT TYPE=TEXT NAME=\"authnum\" SIZE=30
@@ -113,7 +114,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Authorization Type")." : <$STDFONT_E>
+         "._("Authorization Type")." : 
         </TD>
         <TD ALIGN=LEFT>
          <SELECT NAME=\"authtype\">
@@ -142,10 +143,10 @@ class authorizationsModule extends freemedEMRModule {
      $ins_q="SELECT * FROM insco ORDER BY insconame,inscostate,inscocity";
      $ins_r=$sql->query($ins_q);
      
-     echo "
+     $display_buffer .= "
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Authorizing Provider")." : <$STDFONT_E>
+         "._("Authorizing Provider")." :
         </TD>
         <TD ALIGN=LEFT>
      ".
@@ -156,7 +157,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Provider Identifier")." : <$STDFONT_E>
+         "._("Provider Identifier")." :
         </TD>
         <TD ALIGN=LEFT>
          <INPUT TYPE=TEXT NAME=\"authprovid\" SIZE=20 MAXLENGTH=15
@@ -167,7 +168,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Authorizing Insurance Company")." : <$STDFONT_E>
+         "._("Authorizing Insurance Company")." :
         </TD>
         <TD ALIGN=LEFT>
      ".
@@ -179,7 +180,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Number of Visits")." : <$STDFONT_E>
+         "._("Number of Visits")." :
         </TD>
         <TD ALIGN=LEFT>
      ".fm_number_select ("authvisits", 0, 100)."
@@ -188,7 +189,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Used Visits")." : <$STDFONT_E>
+         "._("Used Visits")." :
         </TD>
         <TD ALIGN=LEFT>
      ".fm_number_select ("authvisitsused", 0, 100)."
@@ -197,7 +198,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Remaining Visits")." : <$STDFONT_E>
+         "._("Remaining Visits")." :
         </TD>
         <TD ALIGN=LEFT>
      ".fm_number_select ("authvisitsremain", 0, 100)."
@@ -206,7 +207,7 @@ class authorizationsModule extends freemedEMRModule {
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>"._("Comment")." : <$STDFONT_E>
+         "._("Comment")." :
         </TD>
         <TD ALIGN=LEFT>
          <INPUT TYPE=TEXT NAME=\"authcomment\" SIZE=30 MAXLENGTH=100
@@ -224,10 +225,10 @@ class authorizationsModule extends freemedEMRModule {
        </FORM>
 
        <CENTER>
-        <A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-         ><$STDFONT_B>". 
+        <A HREF=\"$this->page_name?module=$module&patient=$patient\"
+         >". 
 	  ( ($action=="addform") ? _("Abandon Addition") :
-	    _("Abandon Modification") )."<$STDFONT_E></A>
+	    _("Abandon Modification") )."</A>
        </CENTER>
      ";
 	} // end function authorizationsModule->form()
@@ -251,6 +252,7 @@ class authorizationsModule extends freemedEMRModule {
 	} // end function authorizationsModule->mod()
 
 	function view () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -261,29 +263,27 @@ class authorizationsModule extends freemedEMRModule {
      $rows = ( ($result > 0) ? $sql->num_rows ($result) : 0 );
 
      if ($rows < 1) {
-       echo "
+       $display_buffer .= "
          <P>
          <CENTER>
-         <$STDFONT_B>"._("This patient has no authorizations.")."<$STDFONT_E>
+         "._("This patient has no authorizations.")."
          </CENTER>
          <P>
          <CENTER>
-         <A HREF=\"$this->page_name?$_auth&action=addform&module=$module&patient=$patient\"
-          ><$STDFONT_B>"._("Add")." "._("$record_name")."<$STDFONT_E></A>
+         <A HREF=\"$this->page_name?action=addform&module=$module&patient=$patient\"
+          >"._("Add")." "._("$record_name")."</A>
          <B>|</B>
-         <A HREF=\"manage.php?$_auth&id=$patient\"
-          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+         <A HREF=\"manage.php?id=$patient\"
+          >"._("Manage Patient")."</A>
          </CENTER>
          <P>
        ";
-       freemed_display_box_bottom ();
        freemed_close_db ();
-       freemed_display_html_bottom ();
-       DIE("");
+       template_display();
      } // if there are none...
 
        // or else, display them...
-     echo "
+     $display_buffer .= "
        <P>
      ".
      freemed_display_itemlist (

@@ -80,6 +80,7 @@ class episodeOfCare extends freemedEMRModule {
 	} // end constructor episodeOfCare
 
 	function form () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		foreach ($GLOBALS as $k => $v) global $$k;
 
@@ -95,7 +96,7 @@ class episodeOfCare extends freemedEMRModule {
        // check to see if an id was submitted
       if ($id<1) {
        freemed_display_box_top (_("$record_name")." :: "._("ERROR"));
-       echo _("Must select record to Modify");
+       $display_buffer .= _("Must select record to Modify");
        freemed_display_box_bottom ();
        freemed_close_db ();
        freemed_display_html_bottom ();
@@ -113,7 +114,7 @@ class episodeOfCare extends freemedEMRModule {
    } // end of interior switch
 
     // grab important patient information
-    echo "
+    $display_buffer .= "
 	<P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
@@ -136,7 +137,7 @@ class episodeOfCare extends freemedEMRModule {
        VALUE=\"".prepare($eocdescrip)."\">
      </TD>
   ";
-  if ($this->this_patient->isFemale()) { echo "
+  if ($this->this_patient->isFemale()) { $display_buffer .= "
      <TD ALIGN=RIGHT>"._("Related to Pregnancy")."</TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelpreg\">
@@ -146,14 +147,14 @@ class episodeOfCare extends freemedEMRModule {
          ( ($eocrelpreg=="yes") ? "SELECTED" : "" ).">"._("Yes")."
       </SELECT>
      </TD>
-  "; } else { echo "
+  "; } else { $display_buffer .= "
      <TD ALIGN=RIGHT><I>"._("Related to Pregnancy")."</I></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=HIDDEN NAME=\"eocrelpreg\" VALUE=\"no\">
       <I>"._("No")."</I>
      </TD>
   "; } // end checking if female
-  echo "  
+  $display_buffer .= "  
     </TR><TR>
      <TD ALIGN=RIGHT>"._("Date of First Occurance")."</TD>
       <TD ALIGN=LEFT>
@@ -186,7 +187,7 @@ class episodeOfCare extends freemedEMRModule {
      <TD ALIGN=RIGHT>"._("Referring Physician")."</TD>
      <TD ALIGN=LEFT>
    ";
-   echo freemed_display_selectbox (
+   $display_buffer .= freemed_display_selectbox (
      $sql->query("SELECT * FROM physician WHERE phyref='yes'
        ORDER BY phylname,phyfname"),
      "#phylname#, #phyfname#", "eocreferrer")."
@@ -206,7 +207,7 @@ class episodeOfCare extends freemedEMRModule {
    ";
    if (empty($eocfacility)) $eocfacility = $default_facility;
    
-   echo 
+   $display_buffer .= 
      freemed_display_selectbox (
        $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote"),
        "#psrname# [#psrnote#]", 
@@ -222,7 +223,7 @@ class episodeOfCare extends freemedEMRModule {
      <TD ALIGN=LEFT>
     ";
     // compact and display eocdiagfamily
-    echo freemed_multiple_choice ("SELECT * FROM diagfamily
+    $display_buffer .= freemed_multiple_choice ("SELECT * FROM diagfamily
            ORDER BY dfname, dfdescrip", "dfname:dfdescrip", "eocdiagfamily",
            fm_join_from_array($eocdiagfamily), false)."
      </TD>
@@ -236,7 +237,7 @@ class episodeOfCare extends freemedEMRModule {
       case "chronic recurrent": $type_cr = "SELECTED"; break;
       case "historical":        $type_h  = "SELECTED"; break;
     } // end switch for $eoctype
-    echo "
+    $display_buffer .= "
       <SELECT NAME=\"eoctype\">
        <OPTION VALUE=\"\" >"._("NONE SELECTED")."
        <OPTION VALUE=\"acute\" ".
@@ -252,7 +253,7 @@ class episodeOfCare extends freemedEMRModule {
      </TD>
     </TR>
 	";
-	echo "
+	$display_buffer .= "
     <TR>
 	<TD ALIGN=RIGHT>"._("Disability Type")."</TD>
     <TD ALIGN=LEFT>
@@ -280,7 +281,7 @@ class episodeOfCare extends freemedEMRModule {
 	</TD>
 	</TR>
 	";
-	echo "
+	$display_buffer .= "
     <TR>
 	<TD ALIGN=RIGHT>"._("Disability From Date")."</TD>
     <TD ALIGN=LEFT>
@@ -292,7 +293,7 @@ class episodeOfCare extends freemedEMRModule {
 	</TD>
 	</TR>
 	";
-	echo "
+	$display_buffer .= "
     <TR>
 	<TD ALIGN=RIGHT>"._("Disability To Date")."</TD>
     <TD ALIGN=LEFT>
@@ -304,7 +305,7 @@ class episodeOfCare extends freemedEMRModule {
 	</TD>
 	</TR>
 	";
-	echo "
+	$display_buffer .= "
     <TR>
 	<TD ALIGN=RIGHT>"._("Disability Back to Work Date")."</TD>
     <TD ALIGN=LEFT>
@@ -313,12 +314,12 @@ class episodeOfCare extends freemedEMRModule {
 	</TR>
 	";
 	
-	echo "
+	$display_buffer .= "
     </TABLE>
     <P>
    ";
 
-   if ($eocrelauto=="yes") { echo "
+   if ($eocrelauto=="yes") { $display_buffer .= "
       <!-- conditional auto table -->
 
      <CENTER>
@@ -397,7 +398,7 @@ class episodeOfCare extends freemedEMRModule {
 
 
 
-   if ($eocrelemp=="yes") { echo "
+   if ($eocrelemp=="yes") { $display_buffer .= "
       <!-- conditional employment table -->
 
      <CENTER>
@@ -472,7 +473,7 @@ class episodeOfCare extends freemedEMRModule {
    "; } // end of conditional employment info
 
 
-   if ($eocrelpreg=="yes") { echo "
+   if ($eocrelpreg=="yes") { $display_buffer .= "
       <!-- conditional pregnancy table -->
 
      <CENTER>
@@ -500,7 +501,7 @@ class episodeOfCare extends freemedEMRModule {
      <TD ALIGN=RIGHT>"._("Date of Confinement")."</TD>
      <TD ALIGN=LEFT>
    ".fm_date_entry("eocrelpregconfine");
-   echo "
+   $display_buffer .= "
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT>"._("Para")."</TD>
@@ -525,7 +526,7 @@ class episodeOfCare extends freemedEMRModule {
      </CENTER>
    "; } // end of conditional pregnancy info
 
-   if ($eocrelother=="yes") { echo "
+   if ($eocrelother=="yes") { $display_buffer .= "
       <!-- conditional other table -->
 
      <CENTER>
@@ -548,7 +549,7 @@ class episodeOfCare extends freemedEMRModule {
     </TABLE>
     "; } // end of other conditional reason
 
-   echo "
+   $display_buffer .= "
      <P>
      <CENTER>
      <SELECT NAME=\"action\">
@@ -562,6 +563,7 @@ class episodeOfCare extends freemedEMRModule {
 	} // end function episodeOfCare->form
 
 	function prepare () {
+		global $display_buffer;
 		global $eocdiagfamily,
 			$eocstartdate,
 			$eocdtlastsimilar,
@@ -612,14 +614,15 @@ class episodeOfCare extends freemedEMRModule {
 
     // view of entire episode (central control screen)
 	function display () {
+		global $display_buffer;
    if ($id<1) {
      freemed_display_box_top (_("ERROR"));
-     echo "
+     $display_buffer .= "
        <P>
        "._("You must specify an ID to view an Episode!")."
        <P>
        <CENTER>
-        <A HREF=\"manage.php?$_auth&id=$patient\"
+        <A HREF=\"manage.php?id=$patient\"
         >"._("Manage Patient")."</A>
        </CENTER>
      ";
@@ -631,7 +634,7 @@ class episodeOfCare extends freemedEMRModule {
 
    $eoc = freemed_get_link_rec($id, $this->table_name);
    // display vitals for current episode
-   echo "
+   $display_buffer .= "
      <P>
      <!-- Vitals Display Table -->
      <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=1
@@ -671,7 +674,7 @@ class episodeOfCare extends freemedEMRModule {
    $record_name = "Procedure";
    $save_module = $module;
    $module = "procedureModule"; // pass for the module loader
-   echo freemed_display_itemlist (
+   $display_buffer .= freemed_display_itemlist (
      $result,
      "module_loader.php",
      array (
@@ -696,7 +699,7 @@ class episodeOfCare extends freemedEMRModule {
    // end of procedures display
    $module = $save_module;
    
-   echo "
+   $display_buffer .= "
    <P>\n";
    
    // progress notes display
@@ -716,7 +719,7 @@ class episodeOfCare extends freemedEMRModule {
    $record_name = "Progress Notes";
    $save_module = $module;
    $module = "progressNotes";
-   echo freemed_display_itemlist (
+   $display_buffer .= freemed_display_itemlist (
      $result,
      "module_loader.php",
      array (
@@ -732,10 +735,10 @@ class episodeOfCare extends freemedEMRModule {
 
    // end of progress notes display
    // display management link at the bottom...
-   echo "
+   $display_buffer .= "
      <P>
      <CENTER>
-      <A HREF=\"$this->page_name?$_auth&patient=$patient&module=$module\"
+      <A HREF=\"$this->page_name?patient=$patient&module=$module\"
       >"._("Choose Another $record_name")."</A>
      </CENTER>
      <P>
@@ -743,11 +746,12 @@ class episodeOfCare extends freemedEMRModule {
 	} // end function episodeOfCare->display
 
 	function view () {
+		global $display_buffer;
 		//global $sql;
 		reset ($GLOBALS);
 		foreach ($GLOBALS as $k => $v) global $$k;
 
-		echo freemed_display_itemlist(
+		$display_buffer .= freemed_display_itemlist(
 			$sql->query ("SELECT * FROM $this->table_name
                          WHERE eocpatient='".addslashes($patient)."'
                          ORDER BY eocstartdate DESC"),

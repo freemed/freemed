@@ -48,6 +48,7 @@ class freemedCERTModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action, $patient, $LoginCookie;
 
 		if (!isset($this->this_patient))
@@ -56,7 +57,7 @@ class freemedCERTModule extends freemedModule {
 			$this->this_user    = new User ($LoginCookie);
 
 		// display universal patient box
-		echo freemed_patient_box($this->this_patient)."<P>\n";
+		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
 
 		switch ($action) {
 			case "add":
@@ -98,11 +99,12 @@ class freemedCERTModule extends freemedModule {
 	// - addition routine
 	function add () { $this->_add(); }
 	function _add () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 	
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Adding")." ...
+			"._("Adding")." ...
 		";
 
 		$result = $sql->query (
@@ -112,15 +114,15 @@ class freemedCERTModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 
@@ -130,26 +132,28 @@ class freemedCERTModule extends freemedModule {
 	// - delete function
 	function del () { $this->_del(); }
 	function _del () {
-		global $STDFONT_B, $STDFONT_E, $id, $sql;
-		echo "<P ALIGN=CENTER>".
-			"<$STDFONT_B>"._("Deleting")." . . . \n";
+		global $display_buffer;
+		global $id, $sql;
+		$display_buffer .= "<P ALIGN=CENTER>".
+			_("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { echo _("done"); }
-		 else		 { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
-		echo "<$STDFONT_E></P>\n";
+		if ($result) { $display_buffer .= _("done"); }
+		 else		 { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		$display_buffer .= "</P>\n";
 	} // end function _del
 
 	// function mod
 	// - modification function
 	function mod () { $this->_mod(); }
 	function _mod () {
+		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 	
-		echo "
+		$display_buffer .= "
 			<P><CENTER>
-			<$STDFONT_B>"._("Modifying")." ...
+			"._("Modifying")." ...
 		";
 
 		$result = $sql->query (
@@ -162,15 +166,15 @@ class freemedCERTModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
+		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
-		echo "
-			<$STDFONT_E></CENTER>
+		$display_buffer .= "
+			</CENTER>
 			<P>
 			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
+				>"._("back")."</A>
 			</CENTER>
 		";
 
@@ -212,10 +216,11 @@ class freemedCERTModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
+		global $display_buffer;
 		global $sql;
 		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$result,
 			"module_loader.php",
 			$this->form_vars,
@@ -227,6 +232,7 @@ class freemedCERTModule extends freemedModule {
 
 	// this function exports XML for the entire patient record
 	function xml_export () {
+		global $display_buffer;
 		global $patient;
 
 		if (!isset($this->this_patient))

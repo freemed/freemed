@@ -3,14 +3,12 @@
  // desc: physician's weekly calendar view
  // lic : GPL, v2
 
- $page_name="physician_week_view.php";
- include ("lib/freemed.php");
- include ("lib/API.php");
- include ("lib/calendar-functions.php");
+$page_name="physician_week_view.php";
+include ("lib/freemed.php");
+include ("lib/API.php");
+include ("lib/calendar-functions.php");
 
- freemed_open_db ($LoginCookie);
- freemed_display_html_top ();
- freemed_display_banner ();
+freemed_open_db ($LoginCookie);
 
  // check if there is a valid date... if not, assign current date
  if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
@@ -28,14 +26,14 @@
  freemed_display_box_top ("$Physician_Weekly_View");
 
  // display previous/next bar
- echo "
+ $display_buffer .= "
   <TABLE WIDTH=100% BGCOLOR=#000000 VALIGN=TOP ALIGN=CENTER BORDER=0
    CELLSPACING=0 CELLPADDING=2><TR BGCOLOR=#000000>
    <TD VALIGN=CENTER ALIGN=LEFT>
-   <A HREF=\"$page_name?$_auth&for_date=$prev_date&physician=$physician\"
+   <A HREF=\"$page_name?for_date=$prev_date&physician=$physician\"
     ><$STDFONT_B COLOR=#ffffff>$back_one_week<$STDFONT_E></A>
    </TD><TD VALIGN=CENTER ALIGN=RIGHT>
-   <A HREF=\"$page_name?$_auth&for_date=$next_date&physician=$physician\"
+   <A HREF=\"$page_name?for_date=$next_date&physician=$physician\"
     ><$STDFONT_B COLOR=#ffffff>$forward_one_week<$STDFONT_E></A>
    </TD></TR></TABLE>
    <BR>
@@ -44,7 +42,7 @@
  // check if there is a physician specified, and if so, display their
  // name, etc at the top...
  if ($physician<=0) {
-   echo "
+   $display_buffer .= "
      <CENTER><$STDFONT_B>
       <B>$No_Physician_Selected</B>
      <$STDFONT_E></CENTER>
@@ -55,7 +53,7 @@
    $phylname = $phyinfo["phylname"];
    $phyfname = $phyinfo["phyfname"];
    $phymname = $phyinfo["phymname"];
-   echo "
+   $display_buffer .= "
      <CENTER><$STDFONT_B>
       $Physician: $phylname, $phyfname $phymname
      <$STDFONT_E></CENTER>
@@ -64,10 +62,9 @@
  }
 
  // actually display the calendar
- fc_display_week_calendar ($for_date, "calphysician='$physician'");
+fc_display_week_calendar ($for_date, "calphysician='$physician'");
 
  // end everything
- freemed_display_box_bottom ();
- freemed_close_db ();
- freemed_display_html_bottom ();
+freemed_close_db ();
+template_display();
 ?>

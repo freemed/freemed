@@ -38,6 +38,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action;
 
 		switch ($action) {
@@ -64,7 +65,7 @@ class freemedMaintenanceModule extends freemedModule {
 				if (empty($id) or ($id<1)) {
 					freemed_display_box_bottom ();
 					freemed_display_html_bottom ();
-					die ("");
+					template_display();
 				}
 				$this->modform();
 				break;
@@ -78,9 +79,10 @@ class freemedMaintenanceModule extends freemedModule {
 
 	// function display_message
 	function display_message () {
+		global $display_buffer;
 		// if there's a message, display it
 		if (isset($this->message)) {
-			echo "
+			$display_buffer .= "
 			<P>
 			<CENTER>
 			<B>".prepare($this->message)."</B>
@@ -94,6 +96,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function _add
 	// - addition routine (can be overridden if need be)
 	function _add () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -113,6 +116,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function _del
 	// - only override this if you *really* have something weird to do
 	function _del () {
+		global $display_buffer;
 		global $STDFONT_B, $STDFONT_E, $id, $sql, $module;
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
@@ -126,6 +130,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function _mod
 	// - modification routine (override if neccessary)
 	function _mod () {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -153,6 +158,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function form
 	// - add/mod form stub
 	function form () {
+		global $display_buffer;
 		global $action, $id, $sql;
 
 		if (is_array($this->form_vars)) {
@@ -177,10 +183,11 @@ class freemedMaintenanceModule extends freemedModule {
 	// function view
 	// - view stub
 	function view () {
+		global $display_buffer;
 		global $sql;
 		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
 			$this->table_name." ORDER BY ".$this->order_fields);
-		echo freemed_display_itemlist (
+		$display_buffer .= freemed_display_itemlist (
 			$result,
 			"module_loader.php",
 			$this->form_vars,
@@ -192,6 +199,7 @@ class freemedMaintenanceModule extends freemedModule {
 
 	// override _setup with create_table
 	function _setup () {
+		global $display_buffer;
 		if (!$this->create_table()) return false;
 		return freemed_import_stock_data ($this->record_name);
 	} // end function _setup
@@ -199,6 +207,7 @@ class freemedMaintenanceModule extends freemedModule {
 	// function create_table
 	// - used to initially create SQL table
 	function create_table () {
+		global $display_buffer;
 		if (!isset($this->table_definition)) return false;
 		$query = $sql->create_table_query(
 			$this->table_name,

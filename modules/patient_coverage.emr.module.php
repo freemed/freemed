@@ -30,15 +30,17 @@ class PatientCoveragesModule extends freemedEMRModule {
 	//	return true;
 	//} // end function check_vars
 
-	function modform()
-	{
+	function modform() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		if ($id<=0)
-			DIE("ID not valid");
+		if ($id<=0) {
+			$display_buffer .= _("ID not valid");
+			template_display();
+		}
 		//$this->View();
-		//echo "<CENTER><P><B>Not Implemented</B></P><BR></CENTER>";
+		//$display_buffer .= "<CENTER><P><B>Not Implemented</B></P><BR></CENTER>";
 
 		if (!isset($been_here))
 		{
@@ -46,8 +48,10 @@ class PatientCoveragesModule extends freemedEMRModule {
 			$been_here = 1;
 			// note book ignores globals of 0 (BUG??)
 			$row = freemed_get_link_rec($id,$this->table_name);
-			if (!$row)
-				DIE("Failed to read coverage table");
+			if (!$row) {
+				$display_buffer .= _("Failed to read coverage table");
+				template_display();
+			}
 			while (list($k,$v)=each($row)) 
 			{
 				if ( (substr($k,0,3) == "cov") )
@@ -60,8 +64,10 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 		$query = "SELECT * FROM covtypes ORDER BY covtpname";
 		$covtypes_result = $sql->query($query);
-		if (!covtypes_result)
-			DIE("Failed to get insurance coverage types");
+		if (!covtypes_result) {
+			$display_buffer .= _("Failed to get insurance coverage types");
+			template_display();
+		}
 
 		$book = new notebook (array ("action", "id", "module", "been_here", "patient"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
@@ -174,11 +180,11 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 		if (!$book->is_done())
 		{
-			echo "<CENTER>".$book->display()."</CENTER>";
-			echo "
+			$display_buffer .= "<CENTER>".$book->display()."</CENTER>";
+			$display_buffer .= "
 				<P>
 				<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
+				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
 				>"._("Abandon Modification").
 				"</A>
 				</CENTER>
@@ -190,14 +196,13 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 		if (!empty($error_msg))
 		{
-			echo "
+			$display_buffer .= "
    				<P>
    				<CENTER>Entry Error found<BR></CENTER>
    				<CENTER>$error_msg<BR></CENTER>
    				<P>
    				<CENTER>
    				<FORM ACTION=\"$this->page_name\" METHOD=POST>
-   				<INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
    				<INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"modform\">
    				<INPUT TYPE=HIDDEN NAME=\"id\"           VALUE=\"$id\">
    				<INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
@@ -237,18 +242,18 @@ class PatientCoveragesModule extends freemedEMRModule {
 												"covplanname='".addslashes($covplanname)."'".
 				" WHERE id='".addslashes($id)."'";
 		$result = $sql->query($query);
-		echo "<CENTER>";
+		$display_buffer .= "<CENTER>";
 		if ($result)
-			echo _("done").".";
+			$display_buffer .= _("done").".";
 		else
-			echo _("ERROR");
-		echo "</CENTER>";
+			$display_buffer .= _("ERROR");
+		$display_buffer .= "</CENTER>";
 		
-		echo "
+		$display_buffer .= "
 			<P>
 			<CENTER>
-			<A HREF=\"$this->page_name?_auth=$_auth&patient=$patient&module=$module\">
-			<$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+			<A HREF=\"$this->page_name?patient=$patient&module=$module\">
+			"._("Back")."</A>
 			</CENTER>
 			<P>
 			";
@@ -257,19 +262,21 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 	}
 
-	function addform()
-	{
+	function addform() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		if ($patient<=0)
-			DIE("Must Select a patient");
+		if ($patient<=0) {
+			$display_buffer .= _("Must Select a patient");
+			template_display();
+		}
 		// 
 		// wizard 
 		// step 1 guar or insurance
 		// step2/3 select a guar or insurance if a guar then insurance
 		// step4 all other data
-		$wizard = new wizard (array("been_here", "module", "action", "patient", "_auth"));
+		$wizard = new wizard (array("been_here", "module", "action", "patient"));
 
 		// Im leaving this in incase we decide later to break it up more
 		$wizard->add_page("Select Coverage Type",
@@ -279,7 +286,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 						<TD ALIGN=RIGHT>
 						<INPUT TYPE=RADIO NAME=\"coveragetype\" VALUE=\"0\" CHECKED>
 						</TD><TD ALIGN=LEFT>
-						<$STDFONT_B>Insurance<$STDFONT_E>
+						"._("Insurance")."
 						</TD>
 						</TR>
 						</TABLE></CENTER>" );
@@ -289,12 +296,16 @@ class PatientCoveragesModule extends freemedEMRModule {
 			// patient has insurance
 			$query = "SELECT * FROM insco ORDER BY insconame";
 			$ins_result = $sql->query($query);
-			if (!$ins_result)
-				DIE("Failed to get insurance companies");
+			if (!$ins_result) {
+				$display_buffer .= _("Failed to get insurance companies");
+				template_display();
+			}
 			$query = "SELECT * FROM covtypes ORDER BY covtpname";
 			$covtypes_result = $sql->query($query);
-			if (!$covtypes_result)
-				DIE("Failed to get insurance coverage types");
+			if (!$covtypes_result) {
+				$display_buffer .= _("Failed to get insurance coverage types");
+				template_display();
+			}
 			//insurance coverage
 			$wizard->add_page("Select an Insurance Company",
 								array("covinsco"),
@@ -428,13 +439,13 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled())
 		{
-			echo "<CENTER>".$wizard->display()."</CENTER>";
+			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>";
 			return;
 		}
 		if ($wizard->is_cancelled())
 		{
 			// if the wizard was cancelled
-			echo "<CENTER>CANCELLED<BR></CENTER><BR>\n";
+			$display_buffer .= "<CENTER>CANCELLED<BR></CENTER><BR>\n";
 		}
 		// wizard must be done
 
@@ -448,14 +459,13 @@ class PatientCoveragesModule extends freemedEMRModule {
 
 			if (!empty($error_msg))
 			{
-				echo "
+				$display_buffer .= "
       				<P>
       				<CENTER>Entry Error found<BR></CENTER>
       				<CENTER>$error_msg<BR></CENTER>
       				<P>
       				<CENTER>
       				<FORM ACTION=\"$this->page_name\" METHOD=POST>
-       				<INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
        				<INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"addform\">
        				<INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
        				<INPUT TYPE=HIDDEN NAME=\"module\"      VALUE=\"$module\">
@@ -470,12 +480,14 @@ class PatientCoveragesModule extends freemedEMRModule {
 			// start by replacing existing coverages.
 			if ($covreplace==1) // replace an existing coverage
 			{
-				echo "<$STDFONT_B>Removing Old Coverage<BR><$STDFONT_E>\n";
+				$display_buffer .= "Removing Old Coverage<BR>\n";
 				$query = "UPDATE coverage SET covstatus='".DELETED."' WHERE covtype='".addslashes($covtype)."'".
 						 " AND covpatient='".addslashes($patient)."'";
 				$updres = $sql->query($query);
-				if (!$updres)
-					DIE("Error updating coverage status");
+				if (!$updres) {
+					$display_buffer .= _("Error updating coverage status");
+					template_display();
+				}
 
 			}
 
@@ -484,8 +496,8 @@ class PatientCoveragesModule extends freemedEMRModule {
 			$covdob = fm_date_assemble("covdob");
 			$covrelinfodt = fm_date_assemble("covrelinfodt");
 
-			echo "<CENTER>";
-			echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
+			$display_buffer .= "<CENTER>";
+			$display_buffer .= _("Adding")." ... \n";
 			$covstatus = ACTIVE;  // active
 			$query = $sql->insert_query($this->table_name,
 										array (
@@ -517,33 +529,35 @@ class PatientCoveragesModule extends freemedEMRModule {
 										"covrelinfodt" => $covrelinfodt));
 			$coverage = $sql->query($query);
 			if ($coverage)
-				echo _("done").".";
+				$display_buffer .= _("done").".";
 			else
-				echo _("ERROR");
-			echo "</CENTER>";
+				$display_buffer .= _("ERROR");
+			$display_buffer .= "</CENTER>";
 
 		} // end edit for patient insured
 
-		echo "
+		$display_buffer .= "
 			<P>
 			<CENTER>
-			<A HREF=\"$this->page_name?_auth=$_auth&patient=$patient&module=$module\">
-			<$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+			<A HREF=\"$this->page_name?patient=$patient&module=$module\">
+			"._("Back")."</A>
 			</CENTER>
 			<P>
 			";
 
 	} // end addform
 
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		//view brings up the notebook with the correct page first
 		// ie insurance if not a guar
-		if ($patient<=0)
-			DIE("Must Select a patient");
+		if ($patient<=0) {
+			$display_buffer .= _("Must Select a patient");
+			template_display();
+		}
 
 			// patient is the insured
 			$query = "SELECT *,IF(covstatus,\"Deleted\",\"Active\") as covstat,".
@@ -551,10 +565,12 @@ class PatientCoveragesModule extends freemedEMRModule {
 				" FROM $this->table_name WHERE ".
 				"covpatient='$patient' ORDER BY covstatus,covtype";
 			$result = $sql->query($query);
-			if (!$result)
-				DIE("ERROR Failed to read $this->table_name");
+			if (!$result) {
+				$display_buffer .= _("ERROR Failed to read $this->table_name");
+				template_display();
+			}
 
-			echo freemed_display_itemlist($result,
+			$display_buffer .= freemed_display_itemlist($result,
 									 $this->page_name,
 									array("InsCo" => "covinsco",
 										  "Relation" => "covrel",
@@ -578,8 +594,8 @@ class PatientCoveragesModule extends freemedEMRModule {
 	} // end of view function
 
 		
-	function EditInsurance()
-	{
+	function EditInsurance() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 

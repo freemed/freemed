@@ -18,8 +18,8 @@ class unpaidProceduresReport extends freemedReportsModule {
 	// function "view" is used to show a form that would be submitted to
 	// generate the report shown in "display".
 	
-	function view()
-	{
+	function view() {
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -33,13 +33,14 @@ class unpaidProceduresReport extends freemedReportsModule {
                   ORDER BY patient.ptlname
                  ";
         $result = $sql->query($query);
- 		if (!$result)
-			DIE("Error<BR>");
-		if ($result)
-		{
+ 		if (!$result) {
+			$display_buffer .= _("ERROR");
+			template_display();
+		}
+		if ($result) {
      		$_alternate = freemed_bar_alternate_color ();
 
-    		echo "
+    		$display_buffer .= "
       		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
       		<TR>
        		<TD><B>"._("Name")."</B></TD>
@@ -76,26 +77,26 @@ class unpaidProceduresReport extends freemedReportsModule {
 
 				if ($id != $prev_patient)
 				{
-      				echo "
+      				$display_buffer .= "
         				<TR BGCOLOR=\"".
      					($_alternate = freemed_bar_alternate_color ($_alternate))."\">
         				<TD><A HREF=
-         				\"manage.php?$_auth&id=$prev_patient\"
+         				\"manage.php?id=$prev_patient\"
          				>$prev_lname, $prev_fname</A></TD>
                   		<TD><A HREF=
-                  		\"$this->page_name?$_auth&id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
+                  		\"$this->page_name?id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
                   		><FONT SIZE=-1>"._("View/Manage")."</FONT></A></TD>
                   		<TD><A HREF=
-                  		\"$this->page_name?$_auth&patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
+                  		\"$this->page_name?patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
                   		><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
       					";
 					if (!$billed)
-						echo "<TD> <FONT COLOR=#ff0000>&nbsp;NO&nbsp;</FONT></TD>";
+						$display_buffer .= "<TD> <FONT COLOR=#ff0000>&nbsp;NO&nbsp;</FONT></TD>";
 					else
-						echo "<TD>YES</TD>";
-					echo "<TD>$oldest_bill</TD>";
+						$display_buffer .= "<TD>YES</TD>";
+					$display_buffer .= "<TD>$oldest_bill</TD>";
 					$total_unpaid += $patient_balance;  // add to grand total
-                                echo "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
+                                $display_buffer .= "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
 	
 					// reset control break
 
@@ -106,7 +107,7 @@ class unpaidProceduresReport extends freemedReportsModule {
 					$prev_patient = $id;
 					$prev_lname = $ptlname;
 					$prev_fname = $ptfname;
-					echo "</TR>";
+					$display_buffer .= "</TR>";
 				}	
 				$patient_balance += $procbalcurrent;
 				if ($procdtbilled > "0000-00-00")
@@ -124,29 +125,29 @@ class unpaidProceduresReport extends freemedReportsModule {
 
     		} // while there are no more
 			// process last record from control break;
-            echo "
+            $display_buffer .= "
                <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color ($_alternate))."\">
                   <TD><A HREF=
-                  \"manage.php?$_auth&id=$id\"
+                  \"manage.php?id=$id\"
                   >$prev_lname, $prev_fname</A></TD>
                   <TD><A HREF=
-                  \"$this->page_name?$_auth&id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
+                  \"$this->page_name?id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
                   ><FONT SIZE=-1>"._("View/Manage")."</FONT></A></TD>
                  <TD><A HREF=
-                 \"$this->page_name?_auth=$auth&patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
+                 \"$this->page_name?patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
                  ><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
                   ";
                   if (!$billed)
-                      echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
+                      $display_buffer .= "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
                   else
-                      echo "<TD>YES</TD>";
-                  echo "<TD>$oldest_bill</TD>";
+                      $display_buffer .= "<TD>YES</TD>";
+                  $display_buffer .= "<TD>$oldest_bill</TD>";
                   $total_unpaid += $patient_balance;  // add to grand total
-                  echo "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
+                  $display_buffer .= "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
 			// end control break
 
 			// process totals.
-             echo "<TR>
+             $display_buffer .= "<TR>
 			<TD><B>"._("Total")."</B></TD>
 			<TD>&nbsp;</TD>
 			<TD>&nbsp;</TD>
@@ -156,7 +157,7 @@ class unpaidProceduresReport extends freemedReportsModule {
 			</TR>
 			";
 
-	 		echo "
+	 		$display_buffer .= "
       			</TABLE>
     			"; 
 

@@ -8,8 +8,6 @@ include ("lib/freemed.php");
 include ("lib/API.php");
 
 freemed_open_db ($LoginCookie);
-freemed_display_html_top ();
-freemed_display_banner ();
 
  //
  //  eventually, we want to be able to call a
@@ -32,27 +30,27 @@ if ((strlen($page_name)<1) AND (strlen($section)<1)) {
  // if the helpfile doesn't exist, but is enabled, ERROR! out...
 if (!file_exists($_help_name)) {
   freemed_display_box_top (PACKAGENAME." Help System Error");
-  echo "
+  $display_buffer .= "
     <B>The requested help file was not found on this<BR>
        system. It is possible that it has not been<BR>
        implemented, or it is missing from your system.<BR>
     </B>
   ";
   freemed_display_box_bottom ();
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER>
-    <A HREF=\"help.php?$_auth\"
+    <A HREF=\"help.php\"
     >Go to the Help Page</A>
     </CENTER>
   "; // link back to the main help page
-  DIE("");  // and we bite the big one
+  template_display();
 } // if the help file does not exist
 
 freemed_display_box_top (PACKAGENAME." Help System");
 
 if ($debug) {
-  echo "
+  $display_buffer .= "
     page_name = $page_name<BR>
     section = $section<BR>
   ";
@@ -60,9 +58,7 @@ if ($debug) {
 
 include ($_help_name); // include the actual help text
 
-freemed_display_box_bottom (); // end of box
-
-echo "
+$display_buffer .= "
   <P>
   <CENTER>
   <B>If this is in a \"child window\",<BR>
@@ -72,6 +68,6 @@ echo "
 ";
 
 freemed_close_db (); // close db after user authentication
-freemed_display_html_bottom (); // show ending bit...
+template_display();
 
 ?>

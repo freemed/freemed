@@ -5,33 +5,27 @@
  //       language support by Max Klohn (amk@span.ch)
  // lic : GPL, v2
 
- $page_name=basename($GLOBALS["REQUEST_URI"]);
- include ("lib/freemed.php");
+$page_name=basename($GLOBALS["REQUEST_URI"]);
+include ("lib/freemed.php");
 
- SetCookie ("_ref", $page_name, time()+$_cookie_expire);
+SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
- freemed_open_db ($LoginCookie);
- freemed_display_html_top ();
- freemed_display_banner ();
+freemed_open_db ();
 
   // security patch...
-if (freemed_get_userlevel($LoginCookie)<9) {
-  freemed_display_box_top (_("Administration")." :: "._("ERROR"));
-  echo "
+if (freemed_get_userlevel()<9) {
+  $page_title = _("Administration")." :: "._("ERROR");
+  $display_buffer .= "
     <P>
-    <$HEADERFONT_B>
     "._("No Admin Menu Access")."
-    <$HEADERFONT_E>
     <P>
     <CENTER>
-     <A HREF=\"main.php?$_auth\"
+     <A HREF=\"main.php\"
      >"._("Return to the Main Menu")."
     </CENTER>
     <P>
   ";
-  freemed_display_box_bottom ();
-  freemed_display_html_bottom ();
-  DIE("");
+  template_display();
 }
 
 if ($action=="cfgform") {
@@ -112,7 +106,7 @@ if ($action=="cfgform") {
   } // end phone format switch
 
   freemed_display_box_top (PACKAGENAME." Configuration", $page_name);
-  echo "
+  $display_buffer .= "
     <P>
 
     <FORM ACTION=\"".page_name()."\" METHOD=POST>
@@ -214,43 +208,43 @@ if ($action=="cfgform") {
 } elseif ($action=="cfg") {
 
   freemed_display_box_top (PACKAGENAME._("Update Config"), $page_name);
-  echo "
+  $display_buffer .= "
     <P>
   ";
 
   $q = $sql->query("UPDATE config SET
     c_value='".addslashes($icd)."' WHERE c_option='icd'");
-  if (($debug) AND ($q)) echo "ICD = $icd<BR>\n";
+  if (($debug) AND ($q)) $display_buffer .= "ICD = $icd<BR>\n";
 
   $q = $sql->query("UPDATE config SET
     c_value='".addslashes($gfx)."' WHERE c_option='gfx'");
-  if (($debug) AND ($q)) echo "gfx = $gfx<BR>\n";
+  if (($debug) AND ($q)) $display_buffer .= "gfx = $gfx<BR>\n";
 
   $q = $sql->query("UPDATE config SET
     c_value='".addslashes($calshr)."' WHERE c_option='calshr'");
-  if (($debug) AND ($q)) echo "calshr = $calshr<BR>\n";
+  if (($debug) AND ($q)) $display_buffer .= "calshr = $calshr<BR>\n";
 
   $q = $sql->query("UPDATE config SET
     c_value='".addslashes($calehr)."' WHERE c_option='calehr'");
-  if (($debug) AND ($q)) echo "calehr = $calehr<BR>\n";
+  if (($debug) AND ($q)) $display_buffer .= "calehr = $calehr<BR>\n";
 
   $q = $sql->query("UPDATE config SET
     c_value='".addslashes($cal_ob)."' WHERE c_option='cal_ob'");
-  if (($debug) AND ($q)) echo "cal_ob = $cal_ob<BR>\n";
+  if (($debug) AND ($q)) $display_buffer .= "cal_ob = $cal_ob<BR>\n";
 
   $q = $sql->query("UPDATE config SET
     c_value='".addslashes($dtfmt)."' WHERE c_option='dtfmt'");
-  if (($debug) AND ($q)) echo "dtfmt = $dtfmt<BR>\n";
+  if (($debug) AND ($q)) $display_buffer .= "dtfmt = $dtfmt<BR>\n";
 
   $q = $sql->query("UPDATE config SET
     c_value='".addslashes($phofmt)."' WHERE c_option='phofmt'");
-  if (($debug) AND ($q)) echo "phofmt = $phofmt<BR>\n";
+  if (($debug) AND ($q)) $display_buffer .= "phofmt = $phofmt<BR>\n";
 
-  echo "
+  $display_buffer .= "
     <P>
     <CENTER><B>"._("Configuration Complete")."</B></CENTER>
   ";
-  echo "
+  $display_buffer .= "
     <P ALIGN=CENTER>
     <A HREF=\"".page_name()."\"
      >"._("Return To Administration Menu")."</A>
@@ -263,14 +257,14 @@ if ($action=="cfgform") {
     // here, to prevent problems, we ask the user to check that they
     // REALLY want to...
 
-  echo "\n<CENTER>\n";
-  echo _("Are you sure you want to reinitialize the database?")."\n";
-  echo "<BR><U><B>"._("This is an IRREVERSIBLE PROCESS!")."</B></U><BR>\n";
-  echo "\n</CENTER>\n";
+  $display_buffer .= "\n<CENTER>\n";
+  $display_buffer .= _("Are you sure you want to reinitialize the database?")."\n";
+  $display_buffer .= "<BR><U><B>"._("This is an IRREVERSIBLE PROCESS!")."</B></U><BR>\n";
+  $display_buffer .= "\n</CENTER>\n";
 
-  echo "<BR><CENTER>\n";
+  $display_buffer .= "<BR><CENTER>\n";
 
-  echo "
+  $display_buffer .= "
    <FORM ACTION=\"$page_name\" METHOD=POST>
    <INPUT TYPE=CHECKBOX NAME=\"first_time\" VALUE=\"first\">
    <I>"._("First Initialization")."</I><BR>
@@ -299,19 +293,19 @@ if ($action=="cfgform") {
  // stupids don't accidentally click on it and... oops!
 
 //  if ($first_time!="first") {
-//    echo ""._("Erasing old database")."... ";
+//    $display_buffer .= ""._("Erasing old database")."... ";
 //    $sql-drop_db($database) OR
 //      DIE("<B>"._("Error accessing SQL")."</B><BR><BR>\n");
-//    echo "<B>"._("done")."</B><BR>\n";
+//    $display_buffer .= "<B>"._("done")."</B><BR>\n";
 //  }
 
-//  echo ""._("Creating new database")."... ";
+//  $display_buffer .= ""._("Creating new database")."... ";
 //  $sql->create_db($database) OR
 //    DIE("<B>"._("Error accessing SQL")."</B><BR><BR>\n");
-//  echo "<B>"._("done")."</B><BR>\n";
+//  $display_buffer .= "<B>"._("done")."</B><BR>\n";
 
-  echo "<UL>"._("Creating tables")."... \n";
-  echo "$re_load\n";
+  $display_buffer .= "<UL>"._("Creating tables")."... \n";
+  $display_buffer .= "$re_load\n";
 
   // generate test table, if debug is on
   if ($debug) {
@@ -320,7 +314,7 @@ if ($action=="cfgform") {
       name CHAR(10), other CHAR(12), phone INT,
       ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
       PRIMARY KEY (ID))");
-    if ($result) { echo "<LI>"._("test db")." \n"; }
+    if ($result) { $display_buffer .= "<LI>"._("test db")." \n"; }
   } // end debug section
 
   // generate module table
@@ -331,7 +325,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) { echo "<LI>"._("Modules")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Modules")."\n"; }
 
   // generate physician db table
   $result=$sql->query("DROP TABLE physician");
@@ -377,7 +371,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) { echo "<LI>"._("Physicians")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Physicians")."\n"; }
 
   // generate icd9 code table
   $result=$sql->query("DROP TABLE icd9"); 
@@ -395,7 +389,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) { echo "<LI>"._("ICD Codes")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("ICD Codes")."\n"; }
 
   // generate patient database
   $result=$sql->query("DROP TABLE patient");
@@ -479,7 +473,7 @@ if ($action=="cfgform") {
     ptinsgrp3	 VARCHAR(50),
     PRIMARY KEY (id)    
     )");
-  if ($result) { echo "<LI>"._("Patients")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Patients")."\n"; }
 
   $result=$sql->query("DROP TABLE coverage");
   $result=$sql->query("CREATE TABLE coverage (
@@ -512,8 +506,8 @@ if ($action=="cfgform") {
 	covplanname  VARCHAR(33),
     PRIMARY KEY (id)    
   )");
-  if ($result) { echo "<LI>"._("Coverage")."\n"; }
-  else         { echo "<LI>"._("Coverage")." Failed\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Coverage")."\n"; }
+  else         { $display_buffer .= "<LI>"._("Coverage")." Failed\n"; }
 
   // coverage types
   $result=$sql->query("DROP TABLE covtypes");
@@ -525,10 +519,10 @@ if ($action=="cfgform") {
     id             INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY    (id)
   )");
-  if ($result) { echo "<LI>"._("Insurance Coverage Types")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Insurance Coverage Types")."\n"; }
   if ($re_load) {
     if (freemed_import_stock_data("covtypes"))
-      echo "<I>("._("Stock Insurance Coverage Types").")</I> \n ";
+      $display_buffer .= "<I>("._("Stock Insurance Coverage Types").")</I> \n ";
   }
 
   // queries database
@@ -541,10 +535,10 @@ if ($action=="cfgform") {
     PRIMARY KEY    (id),
     KEY qtitle (qtitle)
   )");
-  if ($result) { echo "<LI>"._("Queries")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Queries")."\n"; }
   if ($re_load) {
     if (freemed_import_stock_data("queries"))
-      echo "<I>("._("Stock Queries").")</I> \n ";
+      $display_buffer .= "<I>("._("Stock Queries").")</I> \n ";
   }
 
   // queries database
@@ -557,10 +551,10 @@ if ($action=="cfgform") {
     id             INT(5) NOT NULL AUTO_INCREMENT,
     PRIMARY KEY    (id)
   )");
-  if ($result) { echo "<LI>"._("Insurance Claim Types")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Insurance Claim Types")."\n"; }
   if ($re_load) {
     if (freemed_import_stock_data("claimtypes"))
-      echo "<I>("._("Stock Insurance Claim Types").")</I> \n ";
+      $display_buffer .= "<I>("._("Stock Insurance Claim Types").")</I> \n ";
   }
 
   // generate payer database 
@@ -577,7 +571,7 @@ if ($action=="cfgform") {
     id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
   )");
-  if ($result) { echo "<LI>"._("Payer")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Payer")."\n"; }
 
   // generate guarantor database 
   $result=$sql->query("DROP TABLE guarantor");
@@ -591,7 +585,7 @@ if ($action=="cfgform") {
     id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
   )");
-  if ($result) { echo "<LI>"._("Guarantor")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Guarantor")."\n"; }
 
   // generate proc database (second generation)
   $result=$sql->query("DROP TABLE procrec");
@@ -633,7 +627,7 @@ if ($action=="cfgform") {
     KEY (procpatient),
     PRIMARY KEY (id)
     )");
-  if ($result) { echo "<LI>"._("Procedures")."\n"; }
+  if ($result) { $display_buffer .= "<LI>"._("Procedures")."\n"; }
 
   // generate facility database
   $result=$sql->query("DROP TABLE facility"); 
@@ -656,14 +650,14 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
 	psrpos       INT UNSIGNED,
     PRIMARY KEY (id) )");
-  if ($result) echo "<LI>"._("Facility")."\n"; 
+  if ($result) $display_buffer .= "<LI>"._("Facility")."\n"; 
 
   if ($re_load)
   {
   	$result=$sql->query("INSERT INTO facility VALUES (
    	'Default Facility', '', '', '', '', '', '', '', '$cur_date',
    	'', '', '', '', NULL )");
-  	if ($result) echo "<I>("._("default facility added").")</I> \n"; 
+  	if ($result) $display_buffer .= "<I>("._("default facility added").")</I> \n"; 
   }
 
   // generate room database
@@ -679,13 +673,13 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>"._("Rooms")."\n"; 
+  if ($result) $display_buffer .= "<LI>"._("Rooms")."\n"; 
 
   if ($re_load)
   {
   	$result=$sql->query("INSERT INTO room VALUES (
    	'Default Room', '1', '', '', '', '', '', NULL) ");
-  	if ($result) echo "<I>("._("default room added").")</I> \n";
+  	if ($result) $display_buffer .= "<I>("._("default room added").")</I> \n";
   }
 
   // generate degrees database
@@ -697,12 +691,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>"._("Degrees")."\n"; 
+  if ($result) $display_buffer .= "<LI>"._("Degrees")."\n"; 
 	
   if ($re_load)
   {
   	if (freemed_import_stock_data ("degrees"))
-    		echo "<I>("._("Stock Degree Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Degree Data").")</I> \n";
   }
 
   // generate specialties database
@@ -714,12 +708,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Specialties")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Specialties")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data ("specialties"))
-    		echo "<I>("._("Stock Specialties Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Specialties Data").")</I> \n";
   }
 
   // generate insurance company database
@@ -748,12 +742,12 @@ if ($action=="cfgform") {
     KEY (insconame),
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>"._("Insurance Companies")."\n"; 
+  if ($result) $display_buffer .= "<LI>"._("Insurance Companies")."\n"; 
 
   if ($re_load)
   {
   	if (freemed_import_stock_data ("insco"))
-    		echo "<I>("._("Stock Insurance Company Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Insurance Company Data").")</I> \n";
   }
 
   // generate insurance company groups db
@@ -763,12 +757,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>"._("Insurance Company Groups")."\n"; 
+  if ($result) $display_buffer .= "<LI>"._("Insurance Company Groups")."\n"; 
 
   if ($re_load)
   {
   	if (freemed_import_stock_data ("inscogroup"))
-    		echo "<I>("._("Stock Insurance Company Group Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Insurance Company Group Data").")</I> \n";
   }
 
   // generate CPT (procedural) codes database
@@ -793,12 +787,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("CPT Codes")."\n";
+  if ($result) $display_buffer .= "<LI>"._("CPT Codes")."\n";
 		
   if ($re_load)
   {
   	if (freemed_import_stock_data ("cpt"))
-    		echo "<I>("._("Stock CPT Code Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock CPT Code Data").")</I> \n";
   }
 
   // generate cpt modifier db
@@ -809,12 +803,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("CPT Modifers")."\n";
+  if ($result) $display_buffer .= "<LI>"._("CPT Modifers")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data ("cptmod"))
-    		echo "<I>("._("Stock CPT Modifier Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock CPT Modifier Data").")</I> \n";
   }
 
   // generate physician groups db
@@ -830,7 +824,7 @@ if ($action=="cfgform") {
 	phygroupspe1   INT UNSIGNED,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Physician Groups")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Physician Groups")."\n";
 
   // generate user db
   $result=$sql->query("DROP TABLE user"); 
@@ -850,14 +844,14 @@ if ($action=="cfgform") {
     KEY (username),
     UNIQUE idx_username (username)
     )");
-  if ($result) echo "<LI>"._("Users")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Users")."\n";
 
   if ($re_load)
   {
   	$result=$sql->query("INSERT INTO user VALUES (
     	'root', '$db_password', 'Superuser', '9', '', '-1', '-1', '-1',
     	'', NULL )");
-  	if ($result) echo "<I>[["._("Added Superuser")."]]</I> \n";
+  	if ($result) $display_buffer .= "<I>[["._("Added Superuser")."]]</I> \n";
   }
 
   // generate scheduler table
@@ -879,7 +873,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Scheduler")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Scheduler")."\n";
 
   // generate physician availability map
   $result=$sql->query("DROP TABLE phyavailmap");
@@ -895,7 +889,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Physician Availability Map")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Physician Availability Map")."\n";
 
   // generate insurance company groups db
   $result=$sql->query("DROP TABLE phystatus"); 
@@ -904,7 +898,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>"._("Physician Statuses")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Physician Statuses")."\n";
 
   // generate progress notes db (19990707)
   // * 19991228 - add iso
@@ -928,7 +922,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT, 
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Progress Notes")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Progress Notes")."\n";
 
   // generate payment record db
   $result=$sql->query("DROP TABLE payrec"); 
@@ -950,7 +944,7 @@ if ($action=="cfgform") {
     KEY (payrecpatient),
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Payment Records")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Payment Records")."\n";
 
   // generate formulary database
   $result=$sql->query("DROP TABLE frmlry"); 
@@ -966,12 +960,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Formulary")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Formulary")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data ("frmlry"))
-    		echo "<I>("._("Stock Formulary Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Formulary Data").")</I> \n";
   }
 
   // Rx (prescription) database
@@ -990,7 +984,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Prescriptions")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Prescriptions")."\n";
 
   // generate simple reports table
   $result=$sql->query("DROP TABLE simplereport");
@@ -1004,7 +998,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Simple Reports")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Simple Reports")."\n";
 
   // generate call-in table/db
   $result=$sql->query("DROP TABLE callin");
@@ -1024,7 +1018,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Call-Ins")."\n ";
+  if ($result) $display_buffer .= "<LI>"._("Call-Ins")."\n ";
 
   // generate room equipment inventory db
   $result=$sql->query("DROP TABLE roomequip"); 
@@ -1036,12 +1030,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Room Equipment")."\n ";
+  if ($result) $display_buffer .= "<LI>"._("Room Equipment")."\n ";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("roomequip"))
-    		echo "<I>("._("Stock Room Equipment Data").")</I> \n ";
+    		$display_buffer .= "<I>("._("Stock Room Equipment Data").")</I> \n ";
   }
 
   // generate type of service db
@@ -1054,12 +1048,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Type of Service")."\n ";
+  if ($result) $display_buffer .= "<LI>"._("Type of Service")."\n ";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("tos"))
-    		echo "<I>("._("Stock Type of Service Data").")</I> \n ";
+    		$display_buffer .= "<I>("._("Stock Type of Service Data").")</I> \n ";
   }
 
   // generate place of service db required for x12
@@ -1072,12 +1066,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Place of Service")."\n ";
+  if ($result) $display_buffer .= "<LI>"._("Place of Service")."\n ";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("pos"))
-    		echo "<I>("._("Stock Place of Service Data").")</I> \n ";
+    		$display_buffer .= "<I>("._("Stock Place of Service Data").")</I> \n ";
   }
 
   // generate internal service types db
@@ -1087,12 +1081,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Internal Service Types")."\n ";
+  if ($result) $display_buffer .= "<LI>"._("Internal Service Types")."\n ";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("intservtype"))
-    		echo "<I>("._("Stock Internal Service Types Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Internal Service Types Data").")</I> \n";
   }
 
   // generate patient record template (custom) db
@@ -1109,12 +1103,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Patient Record Templates")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Patient Record Templates")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("patrectemplate"))
-    		echo "<I>("._("Stock Patient Record Template Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Patient Record Template Data").")</I> \n";
   }
 
   // generate questionnaire template (custom) db
@@ -1131,12 +1125,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Questionnaire Templates")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Questionnaire Templates")."\n";
 
   if ($re_load)
   {
   	 if (freemed_import_stock_data("qtemplate"))
-    		echo "<I>("._("Stock Questionnaire Template Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Questionnaire Template Data").")</I> \n";
   } 
   // generate diagnosis family db
   $result=$sql->query("DROP TABLE diagfamily"); 
@@ -1146,12 +1140,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Diagnosis Families")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Diagnosis Families")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("diagfamily"))
-    		echo "<I>("._("Stock Diagnosis Family Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Diagnosis Family Data").")</I> \n";
   }
   // generate patient statuses
   $result=$sql->query("DROP TABLE ptstatus"); 
@@ -1161,12 +1155,12 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Patient Statuses")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Patient Statuses")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("ptstatus"))
-    		echo "<I>("._("Stock Patient Statuses Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Patient Statuses Data").")</I> \n";
   }
   // generate patient record data (custom) db
   $result=$sql->query("DROP TABLE patrecdata"); 
@@ -1180,7 +1174,7 @@ if ($action=="cfgform") {
     KEY (prpatient),
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Patient Record Data")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Patient Record Data")."\n";
 
   // generate action log table db
   $result=$sql->query("DROP TABLE log"); 
@@ -1193,7 +1187,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>"._("Action Log")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Action Log")."\n";
 
   // generate configuration table info
   $result=$sql->query("DROP TABLE config"); 
@@ -1203,24 +1197,24 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>"._("Configuration")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Configuration")."\n";
 
   if ($re_load)
   {
   	if ($sql->query("INSERT INTO config VALUES (
-    	'icd', '9', NULL )"))   if ($debug)   echo "(ICD) \n";
+    	'icd', '9', NULL )"))   if ($debug)   $display_buffer .= "(ICD) \n";
   	if ($sql->query("INSERT INTO config VALUES (
-    	'gfx', '1', NULL )"))   if ($debug)   echo "(graphics) \n";
+    	'gfx', '1', NULL )"))   if ($debug)   $display_buffer .= "(graphics) \n";
   	if ($sql->query("INSERT INTO config VALUES (
-    	'calshr', '$cal_starting_hour', NULL )")) if ($debug) echo "(calshr) \n";
+    	'calshr', '$cal_starting_hour', NULL )")) if ($debug) $display_buffer .= "(calshr) \n";
   	if ($sql->query("INSERT INTO config VALUES (
-    	'calehr', '$cal_ending_hour', NULL )")) if ($debug) echo "(calehr) \n";
+    	'calehr', '$cal_ending_hour', NULL )")) if ($debug) $display_buffer .= "(calehr) \n";
   	if ($sql->query("INSERT INTO config VALUES (
-    	'cal_ob', 'enable', NULL )")) if ($debug) echo "(cal_ob) \n";
+    	'cal_ob', 'enable', NULL )")) if ($debug) $display_buffer .= "(cal_ob) \n";
   	if ($sql->query("INSERT INTO config VALUES (
-    	'dtfmt', 'ymd', NULL )")) if ($debug) echo "(dtfmt) \n";
+    	'dtfmt', 'ymd', NULL )")) if ($debug) $display_buffer .= "(dtfmt) \n";
   	if ($sql->query("INSERT INTO config VALUES (
-    	'phofmt', 'unformatted', NULL )")) if ($debug) echo "(phofmt) \n";
+    	'phofmt', 'unformatted', NULL )")) if ($debug) $display_buffer .= "(phofmt) \n";
   }
 
   // generate incoming faxes table
@@ -1239,7 +1233,7 @@ if ($action=="cfgform") {
     id            INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     );");
-   if ($result) echo "<LI>"._("Incoming Faxes")."\n";
+   if ($result) $display_buffer .= "<LI>"._("Incoming Faxes")."\n";
 
   // generate fax sender lookup table
   $result=$sql->query("DROP TABLE infaxlut"); 
@@ -1249,7 +1243,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     );");
-  if ($result) echo "<LI>"._("Fax Sender Lookup")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Fax Sender Lookup")."\n";
 
    // generate printers table (19991008)
    $result = $sql->query ("DROP TABLE printer"); 
@@ -1261,7 +1255,7 @@ if ($action=="cfgform") {
      id         INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-   if ($result) echo "<LI>"._("Printers")."\n";
+   if ($result) $display_buffer .= "<LI>"._("Printers")."\n";
 
    // generate fixed form table (19991020)
   $result = $sql->query ("DROP TABLE fixedform");
@@ -1283,12 +1277,12 @@ if ($action=="cfgform") {
      id            INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>"._("Fixed Forms")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Fixed Forms")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("fixedform"))
-    		echo "<I>("._("Stock Fixed Forms Data").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Fixed Forms Data").")</I> \n";
   }
   // episode of care
   $result = $sql->query ("DROP TABLE eoc"); 
@@ -1349,7 +1343,7 @@ if ($action=="cfgform") {
      KEY (eocpatient),
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>"._("Episode of Care")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Episode of Care")."\n";
 
   // old reports
   $result = $sql->query ("DROP TABLE oldreports"); 
@@ -1378,7 +1372,7 @@ if ($action=="cfgform") {
      id                        INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>"._("Old Reports")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Old Reports")."\n";
 
   // patient image database
   $result = $sql->query ("DROP TABLE patimg");
@@ -1392,7 +1386,7 @@ if ($action=="cfgform") {
      KEY (pipatient),
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>"._("Patient Images")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Patient Images")."\n";
 
   // authorizations
   $result = $sql->query ("DROP TABLE authorizations"); 
@@ -1415,7 +1409,7 @@ if ($action=="cfgform") {
      KEY (authpatient),
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>"._("Authorizations")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Authorizations")."\n";
 
   // certifications
   $result = $sql->query ("DROP TABLE certifications"); 
@@ -1428,7 +1422,7 @@ if ($action=="cfgform") {
      id                        INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>"._("Certifications")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Certifications")."\n";
   
   // insurance modifiers table
   $result = $sql->query ("DROP TABLE insmod"); 
@@ -1438,21 +1432,21 @@ if ($action=="cfgform") {
      id                        INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>"._("Insurance Modifiers")."\n";
+  if ($result) $display_buffer .= "<LI>"._("Insurance Modifiers")."\n";
 
   if ($re_load)
   {
   	if (freemed_import_stock_data("insmod"))
-    		echo "<I>("._("Stock Insurance Modifiers").")</I> \n";
+    		$display_buffer .= "<I>("._("Stock Insurance Modifiers").")</I> \n";
   }
-  echo "</UL><B>"._("done").".</B><BR>\n";
+  $display_buffer .= "</UL><B>"._("done").".</B><BR>\n";
   
   // now generate "return code" so that we can get back to the
   // admin menu... or perhaps skip that... ??
 
-  echo "
+  $display_buffer .= "
     <BR><BR><CENTER>
-    <A HREF=\"$page_name?$_auth\">
+    <A HREF=\"$page_name\">
      "._("Return to Administration Menu")."</A>
     </CENTER>
   ";
@@ -1464,79 +1458,78 @@ if ($action=="cfgform") {
 freemed_display_box_top(PACKAGENAME." "._("Administration Menu"), $_ref,
 $page_name);
 
-echo "
+$display_buffer .= "
   
   <TABLE WIDTH=100% VALIGN=CENTER ALIGN=CENTER BORDER=0 CELLSPACING=2
    CELLPADDING=0>
  "; // begin standard font
 
-$_userdata = explode (":", $LoginCookie);
+$userdata = $SESSION["authdata"];
 
-echo "
- <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-  <A HREF=\"export.php?$_auth\"
+$display_buffer .= "
+ <TR><TD ALIGN=RIGHT>
+  <A HREF=\"export.php\"
   ><IMG SRC=\"img/kfloppy.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
-  <A HREF=\"export.php?$_auth\"
+  <A HREF=\"export.php\"
   >"._("Export Databases")."</A>
  </TD></TR> 
- <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-  <A HREF=\"import.php?$_auth\"
+ <TR><TD ALIGN=RIGHT>
+  <A HREF=\"import.php\"
   ><IMG SRC=\"img/ark.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
- <A HREF=\"import.php?$_auth\"
+ <A HREF=\"import.php\"
  >"._("Import Databases")."</A>
  </TD></TR>
 ";  
 
- echo "
-    <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"module_information.php?$_auth\"
+ $display_buffer .= "
+    <TR><TD ALIGN=RIGHT>
+     <A HREF=\"module_information.php\"
      ><IMG SRC=\"img/magnify.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
-    <A HREF=\"module_information.php?$_auth\"
+    <A HREF=\"module_information.php\"
      >"._("Module Information")."</A>
     </TD></TR>
  ";
 
-if ($_userdata[0]==1) // if we are root...
- echo "
-  <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-   <A HREF=\"$page_name?$_auth&action=reinit\"
+if ($userdata["user"]==1) // if we are root...
+ $display_buffer .= "
+  <TR><TD ALIGN=RIGHT>
+   <A HREF=\"$page_name?action=reinit\"
    ><IMG SRC=\"img/Gear.gif\" BORDER=0 ALT=\"[*]\"></A>
   </TD><TD ALIGN=LEFT>
-  <A HREF=\"$page_name?$_auth&action=reinit\"
+  <A HREF=\"$page_name?action=reinit\"
   >"._("Reinitialize Database")."</A>
   </TD></TR>
  ";
 
-echo "
-  <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-   <A HREF=\"$page_name?$_auth&action=cfgform\"
+$display_buffer .= "
+  <TR><TD ALIGN=RIGHT>
+   <A HREF=\"$page_name?action=cfgform\"
    ><IMG SRC=\"img/config.gif\" BORDER=0 ALT=\"[*]\"></A>
   </TD><TD ALIGN=LEFT>
-  <A HREF=\"$page_name?$_auth&action=cfgform\"
+  <A HREF=\"$page_name?action=cfgform\"
   >"._("Update Config")."</A>
   </TD></TR>
 ";
 
-if ($_userdata[0]==1)  // if we are root...
-  echo "
-    <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"user.php?$_auth&action=view\"
+if ($userdata["user"]==1) // if we are root...
+  $display_buffer .= "
+    <TR><TD ALIGN=RIGHT>
+     <A HREF=\"user.php?action=view\"
      ><IMG SRC=\"img/monalisa.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
-    <A HREF=\"user.php?$_auth&action=view\"
+    <A HREF=\"user.php?action=view\"
      >"._("User Maintenance")."</A>
     </TD></TR>
   ";
 
-  echo "
-    <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"main.php?$_auth\"
-     ><IMG SRC=\"img/HandPointingLeft.gif\" BORDER=0 ALT=\"[*]\"></A>
+  $display_buffer .= "
+    <TR><TD ALIGN=RIGHT>
+     <IMG SRC=\"img/HandPointingLeft.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
-     <A HREF=\"main.php?$_auth\"
+     <A HREF=\"main.php\"
      ><B>"._("Return to the Main Menu")."</B></A>
     </TD></TR>
     </TABLE>
@@ -1547,12 +1540,13 @@ if ($_userdata[0]==1)  // if we are root...
 
 freemed_close_db(); // close up database
 
-echo "
+$display_buffer .= "
   <P>
   <CENTER>
-  <A HREF=\"main.php?$_auth\">"._("Return to the Main Menu")."</A>
+  <A HREF=\"main.php\">"._("Return to the Main Menu")."</A>
   </CENTER>
 "; // return to main menu tab...
 
-freemed_display_html_bottom (); // ending of document...
+template_display();
+
 ?>

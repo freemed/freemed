@@ -41,6 +41,7 @@ class freemedReportsModule extends freemedModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
+		global $display_buffer;
 		global $action, $patient, $LoginCookie;
 
 		if (!isset($this_user))

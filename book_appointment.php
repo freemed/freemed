@@ -3,28 +3,32 @@
  // note: scheduling module for freemed-project
  // lic : GPL, v2
 
-  $page_name = "book_appointment.php";
-  include ("lib/freemed.php");
-  include ("lib/API.php");
-  include ("lib/calendar-functions.php");
+$page_name = "book_appointment.php";
+include ("lib/freemed.php");
+include ("lib/API.php");
+include ("lib/calendar-functions.php");
 
-  freemed_open_db ($LoginCookie); // authenticate user
-  freemed_display_html_top ();
-  freemed_display_banner ();
+//----- Login/authenticate
+freemed_open_db ();
 
-if ($patient>0) $this_patient = new Patient ($patient, ($type=="temp"));
+//----- Check for current patient
+if ($patient>0) {
+	$this_patient = new Patient ($patient, ($type=="temp"));
+} elseif ($SESSION["current_patient"]>0) {
+	$this_patient = new Patient ($SESSION["current_patient"]);
+}
 
 if (strlen($selected_date)!=10) {
-  $selected_date = $cur_date;
+	$selected_date = $cur_date;
 } // fix date if not correct
 
 // set previous and next date variables...
- $next = freemed_get_date_next ($selected_date);
- $next_wk = $selected_date;
- for ($i=1;$i<=7;$i++) $next_wk = freemed_get_date_next ($next_wk);
- $prev = freemed_get_date_prev ($selected_date);
- $prev_wk = $selected_date;
- for ($i=1;$i<=7;$i++) $prev_wk = freemed_get_date_prev ($prev_wk);
+$next = freemed_get_date_next ($selected_date);
+$next_wk = $selected_date;
+for ($i=1;$i<=7;$i++) $next_wk = freemed_get_date_next ($next_wk);
+$prev = freemed_get_date_prev ($selected_date);
+$prev_wk = $selected_date;
+for ($i=1;$i<=7;$i++) $prev_wk = freemed_get_date_prev ($prev_wk);
 
 switch ($action) {
  case "":
@@ -33,11 +37,11 @@ switch ($action) {
       // BROWSE DATES ON THE CALENDAR TO DECIDE WHERE
       // AND WHAT DAY WE ARE LOOKING FOR...
 
-  freemed_display_box_top (_("Add Appointment"));
+	$page_title = _("Add Appointment");
   //fc_generate_calendar_mini($selected_date,
-  // "$page_name?$_auth&patient=$patient&room=$room&type=$type");
+  // "$page_name?patient=$patient&room=$room&type=$type");
 
-  //echo "
+  //$display_buffer .= "
   //  <CENTER>
   //   <B><FONT FACE=\"Arial, Helvetica, Verdana\">
   //   $Current_Date_is ".fm_date_print($selected_date)."
@@ -47,7 +51,7 @@ switch ($action) {
   //";
 
   if (date_in_the_past($selected_date))
-    echo "
+    $display_buffer .= "
       <CENTER><I><FONT SIZE=-2
       >"._("this date occurs in the past")."</FONT></I></CENTER>
       <BR>
@@ -63,13 +67,13 @@ switch ($action) {
 
     if ($debug) $debug_var = "[$room]";
 
-    echo freemed_patient_box ($this_patient)."
+    $display_buffer .= freemed_patient_box ($this_patient)."
       <P>
       <CENTER>
     ";
     fc_generate_calendar_mini($selected_date,
-     "$page_name?$_auth&patient=$patient&room=$room&type=$type");
-    echo " 
+     "$page_name?patient=$patient&room=$room&type=$type");
+    $display_buffer .= " 
       <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
        ALIGN=CENTER>
       ". (
@@ -85,11 +89,11 @@ switch ($action) {
       </CENTER>
     ";
     if (date_in_the_past($selected_date)) 
-     echo "
+     $display_buffer .= "
       <BR><CENTER><I><FONT SIZE=-2>
       "._("this date occurs in the past")."</FONT></I></CENTER>
      ";
-    echo "
+    $display_buffer .= "
       <P><CENTER>
       <FORM ACTION=\"$page_name\" METHOD=POST>
        <INPUT TYPE=HIDDEN NAME=\"action\"
@@ -117,7 +121,7 @@ switch ($action) {
       fc_generate_interference_map ("calroom='$room'",
          $selected_date);
       if (fc_interference_map_count () < 1) {
-        echo "
+        $display_buffer .= "
           <CENTER>
            <I>"._("The selected room is free all day.")."</I>
           </CENTER>
@@ -127,7 +131,7 @@ switch ($action) {
 
       // display calendar here
 
-      echo "
+      $display_buffer .= "
         <TABLE WIDTH=100% BORDER=1 CELLSPACING=0 CELLPADDING=3
          BGCOLOR=#777777><TR>
         <TD COLSPAN=2><CENTER>
@@ -144,26 +148,26 @@ switch ($action) {
         } else { $ampm = "am"; $ampm_t = $i;}
         if (!fc_check_interference_map($i, "0", $selected_date, false) or
             (freemed_config_value("cal_ob")=="enable")) {
-          echo "
+          $display_buffer .= "
             <TR BGCOLOR=\"".($_alternate =
 	      freemed_bar_alternate_color ($_alternate))."\">
             <TD ALIGN=RIGHT VALIGN=TOP>
-            <A HREF=\"$page_name?$_auth&action=step2&patient=$patient&hour=$i".
+            <A HREF=\"$page_name?action=step2&patient=$patient&hour=$i".
             "&minute=00&room=$room&selected_date=$selected_date&type=$type\"
             >$ampm_t $ampm</A></TD><TD ALIGN=CENTER>
           ";
         } else { // if we _can't_ book here
           $interfere = fc_check_interference_map ($i, "0", $selected_date,
              false);
-          echo "
+          $display_buffer .= "
             <TR BGCOLOR=\"".($_alternate =
 	      freemed_bar_alternate_color ($_alternate))."\">
             <TD ALIGN=RIGHT VALIGN=TOP>
            ";
-          if ($interfere) echo "<I>";
-          echo "$ampm_t $ampm";
-          if ($interfere) echo "</I>";
-          echo "
+          if ($interfere) $display_buffer .= "<I>";
+          $display_buffer .= "$ampm_t $ampm";
+          if ($interfere) $display_buffer .= "</I>";
+          $display_buffer .= "
             </TD><TD ALIGN=CENTER>
           ";
         } // end checking if booked
@@ -171,8 +175,8 @@ switch ($action) {
         for ($j=15;$j<=45;$j+=15) {
           if (!fc_check_interference_map($i, $j, $selected_date, false) or
               freemed_config_value("cal_ob")=="enable") {
-            echo "
-             <A HREF=\"$page_name?$_auth&action=step2&patient=$patient&".
+            $display_buffer .= "
+             <A HREF=\"$page_name?action=step2&patient=$patient&".
              "hour=$i&minute=$j&room=$room&selected_date=$selected_date&".
              "type=$type\"
              ><B>:$j</B></A>&nbsp;
@@ -180,33 +184,33 @@ switch ($action) {
           } else {
             $interfere = fc_check_interference_map($i, $j, $selected_date,
                false);
-            if ($interfere) echo "<I>";
-            echo "<B>:$j</B>";
-            if ($interfere) echo "</I>";
-            echo "&nbsp;\n";
+            if ($interfere) $display_buffer .= "<I>";
+            $display_buffer .= "<B>:$j</B>";
+            if ($interfere) $display_buffer .= "</I>";
+            $display_buffer .= "&nbsp;\n";
           } // end checking for booked?
         } // end for minutes loop
 
-        echo "
+        $display_buffer .= "
           </TD></TR>
         "; // end row
       } // end for loop (hours)
-      echo "
+      $display_buffer .= "
         </TABLE>
       ";
     } // why is this here?
 
     if ($type=="pat") {
-      echo "
+      $display_buffer .= "
         <P>
-        <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
+        <CENTER><A HREF=\"manage.php?id=$patient\"
          >"._("Manage Patient")."</CENTER>
         <P>
       ";
     } else {
-      echo "
+      $display_buffer .= "
         <P>
-        <CENTER><A HREF=\"call-in.php?$_auth&action=view&id=$patient\"
+        <CENTER><A HREF=\"call-in.php?action=view&id=$patient\"
          >"._("Manage Patient")."</CENTER>
         <P>
       ";
@@ -214,7 +218,6 @@ switch ($action) {
 
   //} // end if...else for room (whether > 1 or not)
 
-  freemed_display_box_bottom ();
   break; 
  case "step2":
 
@@ -224,8 +227,8 @@ switch ($action) {
       // PATIENT NUMBER, PHYSICIAN, ETC... THIS IS THE
       // FINAL FORM.
 
-   freemed_display_box_top (_("Add Appointment"));
-   echo freemed_patient_box ($this_patient);
+   $page_title = _("Add Appointment");
+   $display_buffer .= freemed_patient_box ($this_patient);
 
    if (strlen($room)>0) {
      $rm_name = freemed_get_link_field ($room, "room",
@@ -260,7 +263,7 @@ switch ($action) {
    } // end checking for facility
 
    if ($debug) $debug_var = "[$room]";
-   echo "
+   $display_buffer .= "
      <FORM ACTION=\"$page_name\">
      <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"add\">
      <INPUT TYPE=HIDDEN NAME=\"patient\"  VALUE=\"".prepare($patient)."\">
@@ -327,11 +330,10 @@ switch ($action) {
      </CENTER>
      </FORM>
    ";
-   freemed_display_box_bottom ();
   break;
  case "add":
-  freemed_display_box_top (_("Add Appointment"));
-  echo "<CENTER>"._("Adding")." ... ";
+  $page_title = _("Add Appointment");
+  $display_buffer .= "<CENTER>"._("Adding")." ... ";
   $query = "INSERT INTO scheduler VALUES (
     '".addslashes($selected_date)."',
     '".addslashes($type)."',
@@ -349,12 +351,12 @@ switch ($action) {
     NULL )";
   $result = $sql->query ($query);
 
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
+  if ($result) { $display_buffer .= _("done")."."; }
+   else        { $display_buffer .= _("ERROR");    }
 
 	/* FIXME: THIS HAS TO BE UNCOMMENTED
 
-  echo "\n$selected_date, $fac_name, $room_nm";
+  $display_buffer .= "\n$selected_date, $fac_name, $room_nm";
 
   // get patient, room (lab) and selected_date info
   $dj_rm  = freemed_get_link_field ($room, "room", "roomname");
@@ -392,34 +394,33 @@ switch ($action) {
 
   $result = $sql->query ($dj_query);
 
-  if (!$result) echo _("ERROR");
+  if (!$result) $display_buffer .= _("ERROR");
 
 	END OF SECTION THAT HAS TO BE UNCOMMENTED */
 
-  echo "
+  $display_buffer .= "
     </CENTER>
     <P>
     <CENTER>
   ";
   if ($type=="pat") {
-    echo "
-     <A HREF=\"manage.php?$_auth&id=$patient\"
+    $display_buffer .= "
+     <A HREF=\"manage.php?id=$patient\"
      >"._("Manage Patient")."</A>
      </CENTER>
     ";
   } else {
-    echo "
-     <A HREF=\"call-in.php?$_auth&action=display&id=$patient\"
+    $display_buffer .= "
+     <A HREF=\"call-in.php?action=display&id=$patient\"
      >"._("Manage Patient")."</A>
      </CENTER>
     ";
   } // end checking type
 
-  freemed_display_box_bottom ();
   break;
 } // end master switch
 
-  freemed_close_db (); // close the db
-  freemed_display_html_bottom (); // show bottom of HTML code
+freemed_close_db (); // close the db
+template_display();
 
 ?>
