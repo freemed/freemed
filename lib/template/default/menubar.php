@@ -86,7 +86,8 @@ if (is_array($menu_bar)) {
 			"onMouseOut=\"window.status=''; return true;\">".
 			prepare(_($k))."</A>\n";
 		} else { // if there *is* a help string in there
-		print "\t<LI><A HREF=\"#\" ".
+		// Make sure that bad help links aren't displayed
+		if ($v != "help.php") print "\t<LI><A HREF=\"#\" ".
 			"onClick=\"window.open('".$v."', 'Help', ".
 			"'width=600,height=400,resizable=yes');\" ".
 			"onMouseOver=\"window.status='".prepare(_($k))."'; ".
