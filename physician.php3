@@ -491,17 +491,17 @@ switch($action) {
         "phyrefcoll ='$phyrefcoll',  ".
         "phychargemap='".fm_join_from_array($phychargemap)."', ".
         "phyidmap    ='".fm_join_from_array($phyidmap)    ."'  ". 
-        "WHERE id='$id'";
+        "WHERE id='".addslashes($id)."'";
   
       $result = fdb_query($query);
       
       if ($result) {
         echo "
-	<$STDFONT_B>"._("done").".<$STDFONT_E>
+	<B>"._("done").".</B>
 	";
       } else { // error!
         echo "
-	<$STDFONT_B>"._("ERROR")."! [$query, $result]<$STDFONT_E>
+	<B>"._("ERROR")."! [$query, $result]</B>
 	";
       }  
       // finished the mod database call
@@ -594,17 +594,15 @@ switch($action) {
  
  break; // master add/mod[form]
 
- case "delete":
-  freemed_display_box_top(_("Deleting $record_name"));
-  echo "<P ALIGN=CENTER><$STDFONT_B>Deleting...";
-  $query = "DELETE FROM physician WHERE id='$id'";
+ case "del": case "delete":
+  freemed_display_box_top(_("Deleting")." "._($record_name));
+  echo "<P ALIGN=CENTER><$STDFONT_B>"._("Deleting")." ... ";
+  $query = "DELETE FROM physician WHERE id='".addslashes($id)."'";
   $result = fdb_query($query);
-  if ($result) 
-    echo _("done").".";
-  else
-    echo _("ERROR")."! [$query, $result]";
-  echo "<$STDFONT_E>";
+  if ($result) { echo "<B>"._("done").".</B>"; }
+   else        { echo "<B>"._("ERROR")."</B> [$query, $result]"; }
   echo "
+  <$STDFONT_E></P>
   <P ALIGN=CENTER>
   <A HREF=\"$page_name?$_auth\">
   <$STDFONT_B>"._("back")."<$STDFONT_E>
@@ -613,8 +611,8 @@ switch($action) {
   freemed_display_box_bottom();
  break;
 
- case "display" :
-  freemed_display_box_top(_("$record_name View"));
+ case "display":
+  freemed_display_box_top(_($record_name)." "._("View"));
   $phy = freemed_get_link_rec($id, "physician");
   echo "
    <CENTER>
@@ -630,7 +628,7 @@ switch($action) {
    echo "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <$STDFONT_B><A HREF=\"physician.php3?$_auth&action=modform&id=$id\"
-       >"._("Modify $record_name")."</A><$STDFONT_E>
+       >"._("Modify")." "._($record_name)."</A><$STDFONT_E>
      </TD></TR>
    ";
   echo "
@@ -646,7 +644,8 @@ switch($action) {
 
  default:
   freemed_display_box_top("$record_name");
-  $phy_q = "SELECT * FROM physician ORDER BY phylname,phyfname";
+  $phy_q = "SELECT phylname,phyfname,id FROM physician ".
+    "ORDER BY phylname,phyfname";
   $phy_r = fdb_query($phy_q);
   echo freemed_display_itemlist (
     $phy_r,
