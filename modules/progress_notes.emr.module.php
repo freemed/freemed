@@ -1,7 +1,7 @@
 <?php
- // $Id$
- // note: progress notes module for patient management
- // lic : GPL, v2
+	// $Id$
+	// $Author$
+	// lic : GPL, v2
 
 LoadObjectDependency('FreeMED.EMRModule');
 
@@ -9,7 +9,7 @@ class ProgressNotes extends EMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2.5";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Progress Notes allow physicians and
 		providers to track patient activity through
@@ -22,6 +22,8 @@ class ProgressNotes extends EMRModule {
 	var $record_name   = "Progress Notes";
 	var $table_name    = "pnotes";
 	var $patient_field = "pnotespat";
+
+	var $print_template = 'progress_notes';
 
 	function ProgressNotes () {
 		// Table description
@@ -40,88 +42,25 @@ class ProgressNotes extends EMRModule {
 			'pnotes_I' => SQL__TEXT,
 			'pnotes_E' => SQL__TEXT,
 			'pnotes_R' => SQL__TEXT,
+			'pnotessbp' => SQL__INT_UNSIGNED(0),
+			'pnotesdbp' => SQL__INT_UNSIGNED(0),
+			'pnotestemp' => SQL__INT_UNSIGNED(0),
+			'pnotesheartrate' => SQL__INT_UNSIGNED(0),
+			'pnotesresprate' => SQL__INT_UNSIGNED(0),
+			'pnotesweight' => SQL__INT_UNSIGNED(0),
+			'pnotesheight' => SQL__INT_UNSIGNED(0),
+			'pnotesbmi' => SQL__INT_UNSIGNED(0),
 			'iso' => SQL__VARCHAR(15),
 			'locked' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
 		);
 		
-		// Printing information
-		$this->print_format = array (
-			array (
-				'title' => __("Date"),
-				'content' => 'pnotesdt',
-				'type' => 'short'
-			),
-			array (
-				'title' => __("Description"),
-				'content' => 'pnotesdescrip',
-				'type' => 'short'
-			),
-			array (
-				'title' => __("Subjective"),
-				'content' => 'pnotes_S',
-				'type' => 'long',
-
-				'condition' => 'isset',
-				'trigger' => 'pnotes_S'
-			),
-			array (
-				'title' => __("Objective"),
-				'content' => 'pnotes_O',
-				'type' => 'long',
-
-				'condition' => 'isset',
-				'trigger' => 'pnotes_O'
-			),
-			array (
-				'title' => __("Assessment"),
-				'content' => 'pnotes_A',
-				'type' => 'long',
-
-				'condition' => 'isset',
-				'trigger' => 'pnotes_A'
-			),
-			array (
-				'title' => __("Plan"),
-				'content' => 'pnotes_P',
-				'type' => 'long',
-
-				'condition' => 'isset',
-				'trigger' => 'pnotes_P'
-			),
-			array (
-				'title' => __("Interval"),
-				'content' => 'pnotes_I',
-				'type' => 'long',
-
-				'condition' => 'isset',
-				'trigger' => 'pnotes_I'
-			),
-			array (
-				'title' => __("Education"),
-				'content' => 'pnotes_E',
-				'type' => 'long',
-
-				'condition' => 'isset',
-				'trigger' => 'pnotes_E'
-			),
-			array (
-				'title' => __("Rx (Prescription)"),
-				'content' => 'pnotes_R',
-				'type' => 'long',
-
-				'condition' => 'isset',
-				'trigger' => 'pnotes_R'
-			)
-		);
-	
 		// Define variables for EMR summary
 		$this->summary_vars = array (
 			__("Date")        =>	"pnotesdt",
 			__("Description") =>	"pnotesdescrip"
 		);
 		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_PRINT;
-		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
 		$this->summary_order_by = 'pnotesdt DESC,id';
 
 		// Set associations
@@ -141,7 +80,7 @@ class ProgressNotes extends EMRModule {
 
 		$book = CreateObject('PHP.notebook',
 				array ("id", "module", "patient", "action", "return"),
-				NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
+				NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 5);
 
 		switch ($action) {
 			case "add": case "addform":
@@ -318,8 +257,8 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>I</U>nterval") =>
-		freemed::rich_text_area('pnotes_I', 30, 60, true)
-		//html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
+		//freemed::rich_text_area('pnotes_I', 30, 60, true)
+		html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -347,6 +286,38 @@ class ProgressNotes extends EMRModule {
         )
        )
      );
+
+	// Calculate BMI, if it exists
+	if ($_REQUEST['pnotesheight'] > 0) {
+		// English is ( W / H^2 ) * 703
+		// Metric  is ( W / H^2 )
+		$bmi = ($_REQUEST['pnotesweight'] / ( pow($_REQUEST['pnotesheight'],2) ) ) * 703;
+		// And we'll round off to two decimal places
+		$bmi = bcadd($bmi, 0, 2);
+	}
+
+	// Vital signs page
+	$book->add_page(
+		__("Vitals"),
+		array(
+			'pnotessbp',
+			'pnotesdbp',
+			'pnotestemp',
+			'pnotesheartrate',
+			'pnotesresprate',
+			'pnotesweight',
+			'pnotesheight'
+		), html_form::form_table(array(
+			__("Blood Pressure") => html_form::number_pulldown('pnotessbp', 0, 250)."<b>/</b>".
+				html_form::number_pulldown('pnotesdbp', 0, 150),
+			__("Temperature") => html_form::number_pulldown('pnotestemp', 0, 110),
+			__("Heart Rate") => html_form::number_pulldown('pnotesheartrate', 0, 300),
+			__("Respiratory Rate") => html_form::number_pulldown('pnotesresprate', 0, 50),
+			__("Weight") => html_form::number_pulldown('pnotesweight', 0, 650),
+			__("Height") => html_form::number_pulldown('pnotesheight', 0, 84),
+			__("BMI") => prepare($bmi)." &nbsp; <input type=\"submit\" class=\"button\" value=\"".__("Calculate")."\" />"
+		))
+	);
 
 	// Handle cancel action
 	if ($book->is_cancelled()) {
@@ -391,6 +362,14 @@ class ProgressNotes extends EMRModule {
 			"pnotes_I",
 			"pnotes_E",
 			"pnotes_R",
+			'pnotessbp',
+			'pnotesdbp',
+			'pnotestemp',
+			'pnotesheartrate',
+			'pnotesresprate',
+			'pnotesweight',
+			'pnotesheight',
+			'pnotesbmi'	 => $bmi,
 			"locked"         => $locked,
 			"iso"            => $__ISO_SET__
 		)
@@ -455,7 +434,7 @@ class ProgressNotes extends EMRModule {
 	 // Handle returning to patient management screen after add
 	 global $refresh;
 	 if ($GLOBALS['return'] == 'manage') {
-		$refresh = 'manage.php?id='.urlencode($patient);
+		$refresh = 'manage.php?id='.urlencode($patient).'&ts='.urlencode(mktime());
 	 }
      } // end if is done
 
@@ -678,6 +657,108 @@ class ProgressNotes extends EMRModule {
 		$display_buffer .= "\n<p/>\n";
 	} // end function ProgressNotes->view()
 
+	// Print formatting
+	function _print_mapping ($TeX, $id) {
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$pt = freemed::get_link_rec($r['pnotespat'], 'patient');
+		$ph = freemed::get_link_rec($r['pnotesdoc'], 'physician');
+		$phyobj = CreateObject('_FreeMED.Physician', $r['pnotesdoc']);
+		return array (
+			'patient' => $TeX->_SanitizeText($pt['ptlname'].', '.
+				$pt['ptfname'].' '.$pt['ptmname'].' ('.
+				$pt['ptid'].')'),
+			'patientaddress' => $TeX->_SanitizeText($pt['ptaddr1']).' ',
+			'patientcitystatezip' => $TeX->_SanitizeText($pt['ptcity'].', '.$pt['ptstate'].' '.$pt['ptzip']),
+			'patientdob' => $TeX->_SanitizeText(fm_date_print($pt['ptdob'])),
+			'dateofservice' => $TeX->_SanitizeText($r['pnotesdt']),
+			'ssn' => $TeX->_SanitizeText( empty($pt['ptssn']) ?
+				"NONE PROVIDED" :
+				substr($pt['ptssn'], 0, 3).'-'.
+				substr($pt['ptssn'], 3, 2).'-'.
+				substr($pt['ptssn'], 5, 4) ),
+			'physician' => $TeX->_SanitizeText($phyobj->fullName()),
+			'physicianaddress' => $TeX->_SanitizeText($ph['phyaddr1a']),
+			'physiciancitystatezip' => $TeX->_SanitizeText($ph['phycitya'].', '.$ph['phystatea'].' '.$ph['phyzipa']),
+			'physicianphone' => $TeX->_SanitizeText(
+				substr($ph['phyphonea'], 0, 3).'-'.
+				substr($ph['phyphonea'], 3, 3).'-'.
+				substr($ph['phyphonea'], 6, 4) ),
+			'physicianfax' => $TeX->_SanitizeText(
+				substr($ph['phyfaxa'], 0, 3).'-'.
+				substr($ph['phyfaxa'], 3, 3).'-'.
+				substr($ph['phyfaxa'], 6, 4) ),
+			'pnotesSUBJECTIVE' => 
+				( strlen($r['pnotes_S']) > 3 ?
+				'\\sheading{'.__("SUBJECTIVE").'} '.
+				$TeX->_HTMLToRichText($r['pnotes_S']).
+				'\\\\'."\n".'\par'."\n" : "" ),
+			'pnotesOBJECTIVE' => 
+				( strlen($r['pnotes_O']) > 3 ?
+				'\\sheading{'.__("OBJECTIVE").'} '.
+				$TeX->_HTMLToRichText($r['pnotes_O']).
+				'\\\\'."\n".'\par'."\n" : "" ),
+			'pnotesASSESSMENT' => 
+				( strlen($r['pnotes_A']) > 3 ?
+				'\\sheading{'.__("ASSESSMENT").'} '.
+				$TeX->_HTMLToRichText($r['pnotes_A']).
+				'\\\\'."\n".'\par'."\n" : "" ),
+			'pnotesPLAN' => 
+				( strlen($r['pnotes_P']) > 3 ?
+				'\\sheading{'.__("PLAN").'} '.
+				$TeX->_HTMLToRichText($r['pnotes_P']).
+				'\\\\'."\n".'\par'."\n" : "" ),
+			'pnotesINTERVAL' => 
+				( strlen($r['pnotes_I']) > 3 ?
+				$TeX->_HTMLToRichText($r['pnotes_I']).
+				'\\\\'."\n".'\par'."\n" : "" ),
+			'pnotesEDUCATION' => 
+				( strlen($r['pnotes_E']) > 3 ?
+				'\\sheading{'.__("EDUCATION").'} '.
+				$TeX->_HTMLToRichText($r['pnotes_S']).
+				'\\\\'."\n".'\par'."\n" : "" ),
+			'pnotesRX' => 
+				( strlen($r['pnotes_R']) > 3 ?
+				'\\sheading{'.__("Rx").'} '.
+				$TeX->_HTMLToRichText($r['pnotes_R']).
+				'\\\\'."\n".'\par'."\n" : "" ),
+			'pnotesBP' => $TeX->_SanitizeText(
+				$r['pnotessbp'] . ' over ' . $r['pnotesdbp']
+				),
+			'pnotesHEART' => $TeX->_SanitizeText($r['pnotesheartrate']),
+			'pnotesRESP' => $TeX->_SanitizeText($r['pnotesresprate']),
+			'pnotesTEMP' => $TeX->_SanitizeText($r['pnotestemp']),
+			'pnotesWEIGHT' => $TeX->_SanitizeText($r['pnotesweight']),
+			'pnotesHEIGHT' => $TeX->_SanitizeText($r['pnotesheight']),
+			'pnotesBMI' => $TeX->_SanitizeText($r['pnotesbmi'])
+		);
+	} // end method _print_mapping
+
+	function _update() {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+		// Version 0.3
+		//
+		//	Vitals information added
+		//
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotessbp INT UNSIGNED AFTER pnotes_R');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotesdbp INT UNSIGNED AFTER pnotessbp');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotestemp INT UNSIGNED AFTER pnotesdbp');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotesheartrate INT UNSIGNED AFTER pnotestemp');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotesresprate INT UNSIGNED AFTER pnotesheartrate');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotesweight INT UNSIGNED AFTER pnotesresprate');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotesheight INT UNSIGNED AFTER pnotesweight');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN pnotesbmi INT UNSIGNED AFTER pnotesheight');
+		} // end version 0.3 updates
+	} // end _update
 } // end of class ProgressNotes
 
 register_module ("ProgressNotes");

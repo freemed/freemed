@@ -52,8 +52,17 @@ class Physician {
 	//	Text of provider/physician's full name
 	//
 	function fullName () {
+		// Figure out degrees ...
+		for ($i=1; $i<=3; $i++) {
+			if ($this->local_record['phydeg'.$i] > 0) {
+				$d[] = freemed::get_link_field($this->local_record['phydeg'.$i], 'degrees', 'degdegree');
+			}
+		}
+	
 		return $this->phyfname . " " . $this->phymname .
-		( (!empty($this->phymname)) ? " " : "" ) . $this->phylname;
+		( (!empty($this->phymname)) ? " " : "" ) . $this->phylname.
+		// handle degrees
+		( is_array($d) ? ', '.join(', ', $d) : '' );
 	} // end function Physician->fullName
 
 	// Method: Physician->getMapId
