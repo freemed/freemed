@@ -50,17 +50,21 @@ if (!freemed_basic_auth()) {
 	die("Not authorized.");
 }
 
+// Intelligently decide which physician to use
+$__phy = ( ($_REQUEST['physician'] > 0) ?
+		$_REQUEST['physician'] :
+		$GLOBALS['__freemed']['basic_auth_phy'] );
+
 // Figure out name, etc
 switch ($_REQUEST['type']) {
 	default:
-	if ($GLOBALS['__freemed']['basic_auth_phy'] > 0) {
+	if ($__phy > 0) {
 		// Assume that it's for a physician
-		$physician = CreateObject('FreeMED.Physician',
-			$GLOBALS['__freemed']['basic_auth_phy']
-		);
+		$physician = CreateObject('FreeMED.Physician', $__phy);
 		$name = $physician->fullName();
-		$criteria = "calphysician='".addslashes($GLOBALS['__freemed']['basic_auth_phy'])."' AND ".
+		$criteria = "calphysician='".addslashes($__phy)."' AND ".
 			"caldateof >= '".date("Y-m-d")."'";
+		$stamp = date("Ymd") . '.' . $__phy;
 	} else {
 		die('Not enough information provided.');
 	}
