@@ -30,7 +30,7 @@ if (isset($refresh)) {
 ?>
 	<meta HTTP-EQUIV="REFRESH" CONTENT="<?php
 	print $GLOBALS['__freemed']['automatic_refresh'];
-	?>;URL=<?php print basename($REQUEST_URI); ?>">
+	?>;URL=<?php print basename($_SERVER['REQUEST_URI']); ?>">
 <?php
 } // end handle refresh
 ?>
@@ -52,10 +52,23 @@ if (isset($refresh)) {
 
 <!-- define main table -->
 
-<table WIDTH="100%" CELLSPACING="0" CELLPADDING="2"
- VALIGN="MIDDLE" ALIGN="CENTER">
+<table WIDTH="100%" CELLSPACING="0" CELLPADDING="0"
+ style="margin-top: 0px; margin-left: 0px;"
+ VALIGN="TOP" ALIGN="CENTER">
 
 <?php
+
+// Check for _collapse_menu
+if ($_GET['_collapse_menubar'] == '1') {
+	$_SESSION['collapsed_menu'] = true;
+} elseif ($_GET['_collapse_menubar'] == '0') {
+	$_SESSION['collapsed_menu'] = false;
+}
+
+if ($_SESSION['collapsed_menu']) {
+	$GLOBALS['__freemed']['no_menu_bar'] = true;
+}
+
 // To conserve space, turn off the header bar if menu bar
 if ($GLOBALS['__freemed']['no_menu_bar']) {
 ?>
@@ -63,28 +76,69 @@ if ($GLOBALS['__freemed']['no_menu_bar']) {
 <!-- top/header bar -->
 
 <tr>
-	<td COLSPAN="2" ALIGN="LEFT" VALIGN="TOP">
+	<td COLSPAN="1" ALIGN="LEFT" VALIGN="TOP">
 		<!-- <I>Banner goes here.</I> -->
 		<img SRC="lib/template/default/banner.<?php
 		print IMAGE_TYPE; ?>"
 		 WIDTH="300" HEIGHT="40" ALT="freemed" />
+	</td>
+	<td COLSPAN="1" ALIGN="RIGHT" VALIGN="MIDDLE">
+		<?php
+		// Create URL
+		$_expand_url = $_SERVER['REQUEST_URI'];
+		if (strpos($_expand_url, '?') === false) {
+			$_expand_url .= '?_collapse_menubar=0';
+		} else {
+			$_expand_url .= '&_collapse_menubar=0';
+		}
+
+		// Check for _SESSION['collapsed_menu']
+		if ($_SESSION['collapsed_menu']) {
+		print "<a href=\"".$_expand_url."\" ".
+			"onMouseOver=\"window.status='".__("Show Menubar")."'; ".
+			"return true;\" ".
+			"onMouseOut=\"window.status=''; return true;\" ".
+			"style=\"border: 1px solid; background: #ffffff; ".
+			"color: #000000; text-decoration: none; padding: 0px; ".
+			"font-size: 8pt;\" ".
+			">".__("Show Menubar")."</a>\n";
+		}
+		?>
 	</td>
 </tr>
 
 <?php } ?>
 
 <tr>
-	<td COLSPAN="1" VALIGN="TOP" ALIGN="RIGHT" WIDTH="250">
 
-	<!-- menu bar -->
 <?php
 //----- Check to see if we skip displaying this
 if (!$GLOBALS['__freemed']['no_menu_bar']) {
+	$_hide_url = $_SERVER['REQUEST_URI'];
+	if (!(strpos($_hide_url, '_collapse_menubar=0') === false)) {
+		$_hide_url = str_replace('_collapse_menubar=0',
+			'_collapse_menubar=1', $_hide_url);
+	} else {
+		if (strpos($_hide_url, '?') === false) {
+			$_hide_url .= '?_collapse_menubar=1';
+		} else {
+			$_hide_url .= '&_collapse_menubar=1';
+		}
+	}
+
 ?>
+
+	<td COLSPAN="1" VALIGN="TOP" ALIGN="RIGHT" WIDTH="250">
+
+	<!-- menu bar -->
 	<table WIDTH="100%" CELLSPACING="0" CELLPADDING="0"
 	 CLASS="menubar" VALIGN="TOP" ALIGN="CENTER">
 	<tr><td VALIGN="TOP" ALIGN="CENTER" CLASS="menubar_title">
-		<b><?php print INSTALLATION; ?></b>
+		<b><?php print INSTALLATION; ?></b>&nbsp;
+		<a style="border: 1px solid; background: #ffffff; color: #000000; text-decoration: none; padding: 0px; font-size: 8pt;" href="<?php print $_hide_url; ?>"
+		onMouseOver="window.status='<?php
+		print __("Hide Menu"); ?>'; return true;"
+		onMouseOut="window.status=''; return true;">X</a>
 		<br/>
 		<small><?php print PACKAGENAME." v".VERSION; ?></small>
 <?php
@@ -123,13 +177,17 @@ if (is_object($this_user)) {
 	<tr><td VALIGN="BOTTOM" ALIGN="RIGHT" CLASS="menubar_items">
 	<img src="lib/template/default/img/menubar_lower_right.gif" border="0"
 		alt=""/></td></tr></table>
+	
+	</td>
 
 <?php } else { /* if there is *no* menu bar */ ?>
 
-&nbsp;
+<!-- nothing -->
 
 <?php } /* end of checking for no menu bar */ ?>
-	</td> <td COLSPAN="1" VALIGN="TOP" ALIGN="CENTER">
+	<td COLSPAN="<?php 
+		print ( ($GLOBALS['__freemed']['no_menu_bar']) ? '2' : '1' );
+		?>" VALIGN="TOP" ALIGN="CENTER">
 
 	<!-- body -->
 
