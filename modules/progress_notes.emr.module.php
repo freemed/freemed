@@ -122,7 +122,7 @@ class ProgressNotes extends EMRModule {
 		);
 		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_PRINT;
 		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
-		$this->summary_order_by = 'pnotesdt,id';
+		$this->summary_order_by = 'pnotesdt DESC,id';
 
 		// Set associations
 		$this->_SetAssociation('EpisodeOfCare');
@@ -271,7 +271,7 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<u>S</u>ubjective") =>
-		html_form::text_area('pnotes_S', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_S', 30, 60, true)
         )
        )
      );
@@ -282,7 +282,8 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<u>O</u>bjective") =>
-		html_form::text_area('pnotes_O', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_O', 30, 60, true)
+		//html_form::text_area('pnotes_O', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -293,7 +294,8 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>A</U>ssessment") =>
-		html_form::text_area('pnotes_A', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_A', 30, 60, true)
+		//html_form::text_area('pnotes_A', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -304,7 +306,8 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>P</U>lan") =>
-		html_form::text_area('pnotes_P', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_P', 30, 60, true)
+		//html_form::text_area('pnotes_P', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -315,7 +318,8 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>I</U>nterval") =>
-		html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_I', 30, 60, true)
+		//html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -326,18 +330,20 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>E</U>ducation") =>
-		html_form::text_area('pnotes_E', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_E', 30, 60, true)
+		//html_form::text_area('pnotes_E', 'VIRTUAL', 20, 75),
         )
        )
      );
 
      $book->add_page (
-       __("P<U>R</U>escription"),
+       __("Rx"),
        array ("pnotes_R"),
        html_form::form_table (
         array (
           __("P<U>R</U>escription") =>
-		html_form::text_area('pnotes_R', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_R', 30, 60, true)
+		//html_form::text_area('pnotes_R', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -551,21 +557,27 @@ class ProgressNotes extends EMRModule {
        <TABLE BGCOLOR=\"#ffffff\" BORDER=1><TR BGCOLOR=\"$darker_bgcolor\">
        <TD ALIGN=\"CENTER\"><B>".__("<u>S</u>ubjective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_S)))."
+		".( eregi("<[A-Z/]*>", $pnotes_S) ?
+		prepare($pnotes_S) :
+		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_S))) )."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_O)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<U>O</U>bjective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_O)))."
+		".( eregi("<[A-Z/]*>", $pnotes_O) ?
+		prepare($pnotes_O) :
+		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_O))) )."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_A)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<U>A</U>ssessment")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_A)))."
+		".( eregi("<[A-Z/]*>", $pnotes_A) ?
+		prepare($pnotes_A) :
+		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_A))) )."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_P)) $display_buffer .= "
@@ -573,29 +585,35 @@ class ProgressNotes extends EMRModule {
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
         <B>".__("<u>P</u>lan")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_P)))."
+		".( eregi("<[A-Z/]*>", $pnotes_P) ?
+		prepare($pnotes_P) :
+		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_P))) )."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_I)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<u>I</u>nterval")."</B></TD></TR>
        <TR BGCOLOR=\"#ffffff\"><TD>
-           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_I)))."
+		".( eregi("<[A-Z/]*>", $pnotes_I) ?
+		prepare($pnotes_I) :
+		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_I))) )."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_E)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><B>".__("<u>E</u>ducation")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
-           ".prepare($pnotes_E)."
-           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_E)))."
+		".( eregi("<[A-Z/]*>", $pnotes_E) ?
+		prepare($pnotes_E) :
+		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_E))) )."
        </TD></TR></TABLE> 
        ";
       if (!empty($pnotes_R)) $display_buffer .= "
       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><B>".__("P<u>R</u>escription")."</B></TD></TR>
-       <TR BGCOLOR=#ffffff><TD>
-           ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_R)))."
+       <TD ALIGN=CENTER><B>".__("<u>R</u>x")."</B></TD></TR>
+		".( eregi("<[A-Z/]*>", $pnotes_R) ?
+		prepare($pnotes_R) :
+		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_R))) )."
        </TD></TR></TABLE>
       ";
         // back to your regularly sceduled program...
