@@ -211,7 +211,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   // function fc_display_week_calendar
   function fc_display_week_calendar ($datestring, $querystring = "1 = 1",
     $privacy=false) {
-    global $current_imap, $display_buffer;
+    global $current_imap, $display_buffer, $physician;
 
     // form the top of the table
     $display_buffer .=  "
@@ -238,7 +238,9 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       $display_buffer .= "
         <TR BGCOLOR=#000000><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%
          ALIGN=RIGHT>
-         <I>$day_name_text</I><BR>$datestring
+	<A HREF=\"physician_day_view.php?physician=".urlencode($physician)."&".
+	"selected_date=".urlencode($datestring)."\"
+         ><I>$day_name_text</I><BR>$datestring</A>
         </TD><TD BGCOLOR=#ffffff COLSPAN=1>
        ";
 
