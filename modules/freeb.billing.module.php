@@ -417,6 +417,13 @@ class FreeBBillingTransport extends BillingModule {
 				"&billing_action=rebill&key=".urlencode($r['id']).
 				"&action=".$_REQUEST['action']."\" class=\"button\">".
 				__("Rebill")."</a>
+				</td><td><a href=\"".page_name()."?".
+				"module=".urlencode($_REQUEST['module'])."&".
+				"action=".urlencode($_REQUEST['action'])."&".
+				"type=".urlencode($_REQUEST['type'])."&".
+				"billing_action=mark&".
+				"keys=".urlencode(serialize(array($r['id']))).
+				"\" class=\"button\">".__("Mark as Billed")."</a>
 				</td>
 			</tr>
 			";
@@ -696,9 +703,10 @@ class FreeBBillingTransport extends BillingModule {
 
 	function mark ( ) {
 		$claimlog = CreateObject ('FreeMED.ClaimLog');
-		$billkeys = unserialize($_REQUEST['keys']);
+		$billkeys = unserialize(stripslashes($_REQUEST['keys']));
 		$mark = true;
 		foreach ($billkeys AS $key) {
+			//print "marking key $key<br/>\n";
 			$mark &= $claimlog->mark_billed ( $key );
 		}
 		if ($mark) {
@@ -751,7 +759,7 @@ class FreeBBillingTransport extends BillingModule {
 			"action=".urlencode($_REQUEST['action'])."&".
 			"type=".urlencode($_REQUEST['type'])."&".
 			"billing_action=mark&".
-			"keys=".urlencode(serialize($__billkeys)).
+			"keys=".urlencode(serialize(array($_REQUEST['key']))).
 			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
 		return $buffer;
 	} // end method rebillkey
