@@ -91,7 +91,7 @@ A: Try using the commandline clients for your SQL server. (For MySQL, this is
    FreeMED, you may not have created the FreeMED database properly. You can
    log into the administrative console and add the database with the command
    "CREATE DATABASE freemed;". If this still does not allow you to connect,
-   check your username, password, host, and table settings in lib/freemed.php
+   check your username, password, host, and table settings in lib/settings.php
    in your FreeMED installation. If you haven't set these properly, FreeMED
    will be unable to communicate with the SQL backend. If this still does
    not work, there is a chance that the machine or account that FreeMED is
