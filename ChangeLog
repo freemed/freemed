@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Fri Jan 26 2001 rufustfirefly
+  - added fix for null icons in phpwebtools module class (external)
+  - added modules/patient_demographic_report.module.php as a test of the
+    report system
+
 * Fri Jan 26 2001 fforest
   - auth module needed to use authdtadd for add and authdtmod for mod
       also fixed patient id so records added did not have 0 patient.
