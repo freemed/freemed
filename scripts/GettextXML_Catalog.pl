@@ -59,11 +59,12 @@ sub Generate_GettextXML {
 } # end sub Generate_GettextXML
 
 sub Generate_GettextXML_Merged {
-	my ($component, $version, $_mphrases) = @_; @phrases = @$_mphrases;
+	my ($component, $version, $_mphrases) = @_; @mphrases = @$_mphrases;
 
 	my %meta = Translation_Meta_Information($component);
+	
 	my %processed = %{&Merge_From_Translation($component, \@mphrases)};
-	#print "Generate_GettextXML_Merged: ".keys(%processed)." translations imported\n";
+	print "Generate_GettextXML_Merged: ".keys(%processed)." translations imported\n";
 
 	my $revision;
 	if ($meta{'RevisionDate'} eq Current_Date()) {
@@ -464,7 +465,7 @@ while ($template = readdir(DH)) {
 		@template_strings = sort @template_strings;
 		if (File_Exists('template_'.$template)) {
 			my $output = Generate_GettextXML_Merged(
-				"Template",
+				"template_".$template,
 				$version,
 				\@template_strings
 			);
@@ -476,7 +477,7 @@ while ($template = readdir(DH)) {
 			print "\t\t[ merged old translations ]\n";
 		} else {
 			my $output = Generate_GettextXML(
-				"Template",
+				"template_".$template,
 				$version,
 				\@template_strings
 			);
