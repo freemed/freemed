@@ -374,8 +374,8 @@ class ClaimsManager extends BillingModule {
 			array('checked'=>'checked') : null ) );
 		$search_form->addGroup($search_radio, null, 
 			__("Aging"), '&nbsp;');
-		$search_form->addElement('text', 'last_name', __("Last Name"),
-			array ( 'size' => 25, 'maxlength' => '50' ) );
+		$search_form->addElement('text', 'criteria[last_name]',
+			__("Last Name"), array ( 'size' => 25, 'maxlength' => '50' ) );
 		$search_form->addElement(
 			'select', 'criteria[payer]', __("Payer"),
 			array_flip($cl->aging_insurance_companies( )) );
