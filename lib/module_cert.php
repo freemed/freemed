@@ -27,7 +27,7 @@ class freemedCERTModule extends freemedModule {
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
-		global $module, $patient, $LoginCookie;
+		global $module, $patient;
 		if (!isset($module)) 
 		{
 			trigger_error("No Module Defined", E_ERROR);
@@ -37,7 +37,7 @@ class freemedCERTModule extends freemedModule {
 			trigger_error( "No Patient Defined", E_ERROR);
 		}
 		// check access to patient
-		if (!freemed_check_access_for_patient($LoginCookie, $patient)) 
+		if (!freemed_check_access_for_patient($patient)) 
 		{
 			trigger_error("User not Authorized for this function", E_USER_ERROR);
 		}
@@ -49,12 +49,12 @@ class freemedCERTModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient, $LoginCookie;
+		global $action, $patient;
 
 		if (!isset($this->this_patient))
 			$this->this_patient = new Patient ($patient);
 		if (!isset($this->this_user))
-			$this->this_user    = new User ($LoginCookie);
+			$this->this_user    = new User ();
 
 		// display universal patient box
 		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";

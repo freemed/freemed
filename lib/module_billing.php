@@ -7,8 +7,8 @@ if (!defined("__MODULE_BILLING_PHP__")) {
 
 define ('__MODULE_BILLING_PHP__', true);
 
-include "lib/render_forms.php";
-include "lib/calendar-functions.php";
+include_once("lib/render_forms.php");
+include_once("lib/calendar-functions.php");
 
 // class freemedBillingModule extends freeMedmodule
 class freemedBillingModule extends freemedModule {

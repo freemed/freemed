@@ -28,13 +28,13 @@ class freemedReportsModule extends freemedModule {
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
-		global $module, $LoginCookie;
+		global $module;
 		if (!isset($module)) 
 		{
 			trigger_error("Module not Defined", E_ERROR);
 		}
 		// FIXME!!: check access to facility
-		//if (!freemed_check_access_for_patient($LoginCookie, $patient)) return false;
+		//if (!freemed_check_access_for_patient($patient)) return false;
 		return true;
 	} // end function check_vars
 
@@ -42,10 +42,10 @@ class freemedReportsModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient, $LoginCookie;
+		global $action, $patient;
 
 		if (!isset($this_user))
-			$this->this_user    = new User ($LoginCookie);
+			$this->this_user    = new User ();
 
 		switch ($action) {
 

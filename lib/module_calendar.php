@@ -54,7 +54,7 @@ class freemedCalendarModule extends freemedModule {
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
-		global $module, $patient, $LoginCookie;
+		global $module, $patient;
 		if (!isset($module)) 
 		{
 			trigger_error("No Module Defined", E_ERROR);
@@ -76,12 +76,12 @@ class freemedCalendarModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient, $LoginCookie;
+		global $action, $patient;
 
 		if (!isset($this->this_patient))
 			$this->this_patient = new Patient ($patient);
 		if (!isset($this->this_user))
-			$this->this_user    = new User ($LoginCookie);
+			$this->this_user    = new User ();
 
 		// display universal patient box
         if ($patient)

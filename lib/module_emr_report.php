@@ -28,7 +28,7 @@ class freemedEMRReportModule extends freemedModule {
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
-		global $module, $patient, $LoginCookie;
+		global $module, $patient;
 		if (!isset($module)) 
 		{
 			trigger_error("No Module Defined", E_ERROR);
@@ -38,7 +38,7 @@ class freemedEMRReportModule extends freemedModule {
 			trigger_error( "No Patient Defined", E_ERROR);
 		}
 		// check access to patient
-		if (!freemed_check_access_for_patient($LoginCookie, $patient)) 
+		if (!freemed_check_access_for_patient($patient)) 
 		{
 			trigger_error("User not Authorized for this function", E_USER_ERROR);
 		}
@@ -48,8 +48,7 @@ class freemedEMRReportModule extends freemedModule {
 
 		function header($nullvar="") {
 		global $display_buffer;
-            global $LoginCookie;
-            freemed_open_db($LoginCookie);
+            freemed_open_db();
             // don't display the box top
         }
         function footer($nullvar="") {
@@ -62,12 +61,12 @@ class freemedEMRReportModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient, $LoginCookie;
+		global $action, $patient;
 
 		if (!isset($this->this_patient))
 			$this->this_patient = new Patient ($patient);
 		if (!isset($this->this_user))
-			$this->this_user    = new User ($LoginCookie);
+			$this->this_user    = new User ();
 
 		// display universal patient box
 		// no box used since these need to be printable

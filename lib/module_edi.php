@@ -82,10 +82,10 @@ class freemedEDIModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient, $LoginCookie;
+		global $action, $patient;
 
 		if (!isset($this_user))
-			$this->this_user    = new User ($LoginCookie);
+			$this->this_user    = new User ();
 
 		switch ($action) {
 
