@@ -44,11 +44,11 @@ echo "
 ";
 
  // actually open the language registry
- $f_reg = fopen ( PHYSICAL_LOCATION . "/lang/registry", "r");
+ $f_reg = fopen ( "./lang/registry", "r");
  while ($f_line = fgets ($f_reg, 255)) {
    if (substr ($f_line, 0, 1) != "#") { // skip comments
      $f_line_array = explode (":", $f_line);
-     echo " <OPTION VALUE=\"".prepare($f_line_array[0])."\">".
+     echo " <OPTION VALUE=\"".prepare(strtolower($f_line_array[0]))."\">".
        prepare($f_line_array[1])."\n";
    } // end of skipping comments
  } // end while we have more lines to get
