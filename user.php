@@ -91,6 +91,7 @@ switch($action) { // master action switch
   
   if ($action=="addform") {
     $page_title =  _("Add")." "._($record_name);
+    global $userlevel; $userlevel = array( -1 );
   } // addform if
   
   // now the body
@@ -147,31 +148,6 @@ switch($action) { // master action switch
 			USER_DISABLED,
 			"Disabled/Locked Out"
 		),
-/*
-		"<SELECT NAME=\"userlevel\">
-      <OPTION VALUE=\"0\" ".(($userlevel==0) ? "SELECTED" : "")
-        .">"._("Locked out")."
-      <OPTION VALUE=\"1\" ".(($userlevel==1) ? "SELECTED" : "")
-        .">"._("Undefined")."
-      <OPTION VALUE=\"2\" ".(($userlevel==2) ? "SELECTED" : "")
-        .">"._("Undefined")."
-      <OPTION VALUE=\"3\" ".(($userlevel==3) ? "SELECTED" : "")
-        .">"._("Undefined")."
-      <OPTION VALUE=\"4\" ".(($userlevel==4) ? "SELECTED" : "")
-        .">"._("Undefined")."
-      <OPTION VALUE=\"5\" ".(($userlevel==5) ? "SELECTED" : "")
-        .">"._("Delete privileges")."
-      <OPTION VALUE=\"6\" ".(($userlevel==6) ? "SELECTED" : "")
-        .">"._("Undefined")."
-      <OPTION VALUE=\"7\" ".(($userlevel==7) ? "SELECTED" : "")
-        .">"._("Undefined")."
-      <OPTION VALUE=\"8\" ".(($userlevel==8) ? "SELECTED" : "")
-        .">"._("Undefined")."
-      <OPTION VALUE=\"9\" ".(($userlevel==9) ? "SELECTED" : "")
-        .">"._("Superuser")."
-    </SELECT>
-   </TD></TR>
-	*/
     
 		_("User type") =>
 		html_form::select_widget(
@@ -203,8 +179,8 @@ switch($action) { // master action switch
         </B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
-      ".freemed_multiple_choice ("SELECT * FROM facility ORDER BY
-        psrname", "psrname", "userfac", fm_join_from_array($userfac))."
+      ".freemed_multiple_choice (
+	"SELECT CONCAT(psrname, ' (', psrcity, ', ', psrstate, ')') AS myfac FROM facility ORDER BY myfac", "myfac", "userfac", fm_join_from_array($userfac))."
     </TD></TR>
     </TABLE>
    </TD></TR>
@@ -295,7 +271,7 @@ switch($action) { // master action switch
 			"username"     => $username,
 			"userpassword" => $userpassword1,
 			"userdescrip"  => $userdescrip,
-			"userlevel"    => $flags,
+			"userlevel"    => ($flags+0),
 			"usertype"     => $usertype,
 			"userfac"      => sql_squash($userfac),
 			"userphy"      => sql_squash($userphy),
@@ -396,9 +372,9 @@ switch($action) { // master action switch
      </TD></TR>
      <TR><TD>
       <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
-      <TR BGCOLOR=\"#000000\">
-       <TD><FONT COLOR=\"#dddddd\">"._("Username")."</TD></FONT>
-       <TD><FONT COLOR=\"#dddddd\">"._("Action")."</TD></FONT>
+      <TR CLASS=\"reverse\">
+       <TD>"._("Username")."</TD>
+       <TD>"._("Action")."</TD>
       </TR>
     "; // header of box
 
