@@ -3,7 +3,7 @@
   // note: module information
   // lic : GPL
   
-$page_name   = basename($GLOBALS["REQUEST_URI"]);
+$page_name   = basename($GLOBALS["PHP_SELF"]);
 
 include_once ("lib/freemed.php");
 include_once ("lib/API.php");
