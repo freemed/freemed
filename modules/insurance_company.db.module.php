@@ -41,8 +41,9 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
-		$book = new notebook ( array ("action", "_auth", "id", "module"),
-			NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH);
+		$book = CreateObject('PHP.notebook',
+				array ("action", "_auth", "id", "module"),
+				NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH);
 
 	if (!$book->been_here()) {
     switch ($action) {

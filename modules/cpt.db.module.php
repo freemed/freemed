@@ -47,7 +47,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 
-		$book = new notebook (
+		$book = CreateObject('PHP.notebook',
 			array ("action", "id", "module"),
 			NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH);
     
@@ -212,7 +212,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 	$i = 1;
     while ($insrow = $sql->fetch_array($insco_result)) { // loop thru inscos
      if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
-     $this_insco = new InsuranceCompany ($insrow[id]);
+     $this_insco = CreateObject('FreeMED.InsuranceCompany', $insrow[id]);
      $serv_buffer .= "
       <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
        <TD>".prepare($this_insco->insconame)."</TD>
@@ -349,7 +349,7 @@ class cptMaintenance extends freemedMaintenanceModule {
   ";
   for ($i=1;$i<=$num_inscos;$i++) { // loop thru inscos
    if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
-   $this_insco = new InsuranceCompany ($i);
+   $this_insco = CreateObject('FreeMED.InsuranceCompany', $i);
    $display_buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
      <TD>".prepare($this_insco->insconame)."</TD>

@@ -27,7 +27,7 @@ class allergiesModule extends freemedEMRModule {
 		if (isset($GLOBALS[this_patient])) {
 			global $this_patient;
 		} else {
-			$this_patient = new Patient ($patient);
+			$this_patient = CreateObject('FreeMED.Patient', $patient);
 		}
 
 		// Extract allergies
@@ -94,7 +94,7 @@ class allergiesModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get allergies, and extract to an array
 		$allergies = $this_patient->local_record["ptallergies"];
@@ -146,7 +146,7 @@ class allergiesModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get allergies, and extract to an array
 		$allergies = $this_patient->local_record["ptallergies"];

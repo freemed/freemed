@@ -73,7 +73,7 @@ class providerMaintenance extends freemedMaintenanceModule {
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
-		$book = new notebook (
+		$book = CreateObject('PHP.notebook',
 			array ("action", "id", "module"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR,
 			4 

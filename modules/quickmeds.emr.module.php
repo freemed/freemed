@@ -27,7 +27,7 @@ class quickmedsModule extends freemedEMRModule {
 		if (isset($GLOBALS[this_patient])) {
 			global $this_patient;
 		} else {
-			$this_patient = new Patient ($patient);
+			$this_patient = CreateObject('FreeMED.Patient', $patient);
 		}
 
 		// Extract quickmeds
@@ -97,7 +97,7 @@ class quickmedsModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get quickmeds, and extract to an array
 		$quickmeds = $this_patient->local_record["ptquickmeds"];
@@ -149,7 +149,7 @@ class quickmedsModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get quickmeds, and extract to an array
 		$quickmeds = $this_patient->local_record["ptquickmeds"];

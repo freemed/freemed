@@ -279,7 +279,7 @@ class GenerateFormsModule extends freemedBillingModule {
 	    // zero the buffer 
 	    $buffer = "";
      	// get current patient information
-     	$this_patient = new Patient ($parmpatient);
+     	$this_patient = CreateObject('FreeMED.Patient', $parmpatient);
         if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
@@ -289,7 +289,7 @@ class GenerateFormsModule extends freemedBillingModule {
      	";
      	flush ();
 
-		$this_coverage = new Coverage($parmcovid);
+		$this_coverage = CreateObject('FreeMED.Coverage', $parmcovid);
         if (!$this_coverage)
 		{
 			trigger_error("No coverage", E_USER_ERROR);
@@ -342,7 +342,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		global $sql;
 
 		$row = $stack[0];
-		$this_coverage = new Coverage($row[proccurcovid]);
+		$this_coverage = CreateObject('FreeMED.Coverage', $row[proccurcovid]);
         if (!$this_coverage)
 		{
 			trigger_error("No coverage", E_USER_ERROR);
@@ -378,7 +378,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
 		$row = $stack[0];
 
-		$this_coveragep = new Coverage($row[proccov1]);
+		$this_coveragep = CreateObject('FreeMED.Coverage', $row[proccov1]);
         if (!$this_coveragep)
 		{
 			trigger_error("No primary coverage", E_USER_ERROR);
@@ -394,7 +394,7 @@ class GenerateFormsModule extends freemedBillingModule {
 			trigger_error("Insurance company not object", E_USER_ERROR);
 		}
 
-		$this_coverage = new Coverage($row[proccurcovid]);
+		$this_coverage = CreateObject('FreeMED.Coverage', $row[proccurcovid]);
         if (!$this_coverage)
 		{
 			trigger_error("No coverage", E_USER_ERROR);
@@ -436,11 +436,11 @@ class GenerateFormsModule extends freemedBillingModule {
 		$row = $stack[0];
 
 		// get current patient information
-		$this_patient = new Patient ($row[procpatient]);
+		$this_patient = CreateObject('FreeMED.Patient', $row[procpatient]);
 		if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 
-		$this_coverage = new Coverage($row[proccurcovid]);
+		$this_coverage = CreateObject('FreeMED.Coverage', $row[proccurcovid]);
         if (!$this_coverage)
 		{
 			trigger_error("No coverage", E_USER_ERROR);
@@ -548,7 +548,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		if ($this_coverage->covdep > 0) 
 		{
 			// patient is NOT the insured
-			$guarantor = new Guarantor($this_coverage->id);
+			$guarantor = CreateObject('FreeMED.Guarantor', $this_coverage->id);
 			if (!$guarantor)
 				trigger_error("Guarantor information fetch failed", E_USER_ERROR);
 			$guarname[last]    = $guarantor->guarlname;
@@ -653,7 +653,7 @@ class GenerateFormsModule extends freemedBillingModule {
 
 		$row = $stack[0];
 
-		$this_coverage = new Coverage($row[proccurcovid]);
+		$this_coverage = CreateObject('FreeMED.Coverage', $row[proccurcovid]);
         if (!$this_coverage)
 		{
 			trigger_error("No coverage", E_USER_ERROR);
@@ -672,8 +672,8 @@ class GenerateFormsModule extends freemedBillingModule {
 		// fix me
 
 		// doctor link/information
-		$this_physician  = new Physician
-				   ($row["procphysician"]);
+		$this_physician  = CreateObject('FreeMED.Physician',
+				   $row["procphysician"]);
 		$phy[name]       = $this_physician->fullName();
 		$phy[title]       = $this_physician->local_record["phytitle"];
 		$phy[practice]   = $this_physician->practiceName();
@@ -737,7 +737,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		}
 		if ($row[procrefdoc]>0)
 		{
-			$refdoc  = new Physician ($row[procrefdoc]);
+			$refdoc  = CreateObject('FreeMED.Physician', $row[procrefdoc]);
 			$refphy[upin]      = $refdoc->local_record[phyupin];
 			$refphy[name]      = $refdoc->local_record[phyfname].", ".
 							  $refdoc->local_record[phylname];
@@ -776,7 +776,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		   $itemcpt[$j]    = $itemcptmod[$j]  = $itemtos[$j]     =
 		   $itemdiagref[$j] = $itemauthnum[$j] = "";
 		}
-		$diag_set = new diagnosisSet();
+		$diag_set = CreateObject('FreeMED.diagnosis_set');
 
 		$count = count($stack);
 
@@ -894,7 +894,7 @@ class GenerateFormsModule extends freemedBillingModule {
      <INPUT TYPE=HIDDEN NAME=\"billtype\" VALUE=\"$bill_request_type\">
    ";
    for ($i=1;$i<=$this->pat_processed;$i++) {
-     $this_patient = new Patient ($this->patient_forms[$i]);
+     $this_patient = CreateObject('FreeMED.Patient', $this->patient_forms[$i]);
      $display_buffer .= "
        <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
         VALUE=\"".$this->patient_forms[$i]."\" CHECKED>

@@ -76,9 +76,9 @@ class HighmarkEDIModule extends freemedEDIModule {
 		
 		global $display_buffer;
 		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
-		$wizard = new wizard (array("been_here", "module", "action", "patient"));
+		$wizard = CreateObject('PHP.wizard', array("been_here", "module", "action", "patient"));
 		
 		$query = "SELECT DISTINCT a.id,a.insconame FROM insco as a,
 						procrec as b,
@@ -1063,7 +1063,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			{
 				$firstproc=0;
 				$prev_key = $this->NewKey($row);
-				$diagset = new diagnosisSet();
+				$diagset = CreateObject('FreeMED.diagnosis_set');
 			}
 
 	
@@ -1086,7 +1086,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 				$proccount = 0;
 				unset($diagset);
 				unset($procstack);
-				$diagset = new diagnosisSet();
+				$diagset = CreateObject('FreeMED.diagnosis_set');
 				$diagset->testAddSet($row[procdiag1],
 								 $row[procdiag2],
 								 $row[procdiag3],
@@ -1142,7 +1142,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 		$procbal = 0.00;
 
-		$diagset = new diagnosisSet();
+		$diagset = CreateObject('FreeMED.diagnosis_set');
 
 		for ($i=0;$i<$count;$i++)
 		{
@@ -1334,7 +1334,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 		//$LX_setno++;
 
-		$diagset = new diagnosisSet();
+		$diagset = CreateObject('FreeMED.diagnosis_set');
 
 		for ($i=0;$i<$count;$i++)
 		{
@@ -1414,7 +1414,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 			// if billing a grp, the billing providerid is the id for the
 			// group and each physician is considered a rendering provider
 			$ls2310 .= "NM1*82*1*";
-			$physician = new Physician($row[procphysician]);
+			$physician = CreateObject('FreeMED.Physician', $row[procphysician]);
 			if (!$physician)
 			{
 				$this->Error("Physician failed in CLM provider detail");
@@ -1548,7 +1548,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		$row = $procstack[0];
 		
 		$this_coverage = 0;
-		$this_coverage = new Coverage($row[proccov1]);
+		$this_coverage = CreateObject('FreeMED.Coverage', $row[proccov1]);
 		if (!$this_coverage)
 		{
 			$this->Error("Failed to create coverage processing secondary insurer");
@@ -1802,7 +1802,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		//$this->billing_providerid = $provid;
 
 		$this_coverage = 0;
-		$this_coverage = new Coverage($coverageid);
+		$this_coverage = CreateObject('FreeMED.Coverage', $coverageid);
 		if (!$this_coverage)
 		{
 			$this->Error("error in generate coverage class failed");
@@ -1844,7 +1844,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		// gather up the main data here
 
 
-		$this->CurPatient = new Patient($patid);
+		$this->CurPatient = CreateObject('FreeMED.Patient', $patid);
 		if (!$this->CurPatient)
 		{
 			$this->Error("error in Generate Patient class failed");
@@ -1859,7 +1859,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		//$display_buffer .= "ptdep $ptdep<BR>";
 		if ($this_coverage->covdep != 0)   // use this guarantors ins
 		{
-			$this->Guarantor = new Guarantor($this_coverage->covdep);
+			$this->Guarantor = CreateObject('FreeMED.Guarantor', $this_coverage->covdep);
 			if (!$this->Guarantor)
 			{
 				$this->Error("error in Generate Patient Guar class failed ");
@@ -1915,7 +1915,7 @@ class HighmarkEDIModule extends freemedEDIModule {
 		}
 		if ($provtype=="PHY")
 		{
-			$this->Physician = new Physician($provid);
+			$this->Physician = CreateObject('FreeMED.Physician', $provid);
 			if (!$this->Physician)
 			{
 				$this->Error("error in generate: Physician class");

@@ -88,7 +88,7 @@ class ReceivablesGraph extends freemedGraphModule {
 			$grand = bcadd($tot_patpay,$grand,2);
 			$bar_data[] = array("",$tot_patpay,$tot_copay,$tot_inspay,$grand);
 
-			$graph = new PHPlot(900,900); // (x,y) or (w,h)
+			$graph = CreateObject('FreeMED.PHPlot', 900,900); // (x,y) or (w,h)
 
 			// bar
 			$graph->SetPrintImage(0);

@@ -113,13 +113,13 @@ class ViewCalendar extends freemedCalendarModule {
 		//$display_buffer .= "row id $row[id]<BR>";
 		if ($row[calpatient] != 0)
 		{
-			$this_patient = new Patient($row[calpatient]);
+			$this_patient = CreateObject('FreeMED.Patient', $row[calpatient]);
 			$ptname = $this_patient->fullname();
 			//$display_buffer .= "$ptname<BR>";
 		}
 		if ($row[calphysician] != 0)
 		{
-			$this_physician = new Physician($row[calphysician]);
+			$this_physician = CreateObject('FreeMED.Physician', $row[calphysician]);
 			$phname = $this_physician->fullname();
 		}
 		if ($row[calfacility] != 0)

@@ -65,7 +65,7 @@ class groupCalendar extends freemedCalendarModule {
 		global $no_template_display; $no_template_display = true;
 
 		// Create user object
-		if (!is_object($this_user)) $this_user = new User ();
+		if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 		// Check for selected date
 		global $selected_date;
@@ -149,13 +149,14 @@ class groupCalendar extends freemedCalendarModule {
 		<TD COLSPAN=\"2\"><B>"._("Group Calendar")."</B> for
 		<INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\">
-			".freemedCalendar::refresh_select(
+			".html_form::select_widget(
 				"group",
 				freemed::query_to_array(
 					"SELECT phygroupname AS k,".
 					"id AS v FROM phygroup ".
 					"ORDER BY phygroupname"
-				)
+				),
+				array('refresh' => true)
 			)."
 		</TD></TR>
 		<TR><TD ALIGN=\"CENTER\" COLSPAN=\"2\">
@@ -164,8 +165,8 @@ class groupCalendar extends freemedCalendarModule {
 		</TD></TR>
 		<TR>
 		<TD>"._("Mark as")."</TD>
-		<TD>".freemedCalendar::refresh_select(
-			"mark", $this->mark_array()
+		<TD>".html_form::select_widget(
+			"mark", $this->mark_array(), array('refresh'=>true)
 		)."</TD>
 		</TR>
 		</TABLE>
@@ -197,7 +198,7 @@ class groupCalendar extends freemedCalendarModule {
 					"</b> : ";
 				unset($cov);
 				while ($anr = $sql->fetch_array($anresult)) {
-					$my_phy = new Physician($anr['anphysician']);
+					$my_phy = CreateObject('FreeMED.Physician', $anr['anphysician']);
 					$cov[] = $my_phy->fullName().
 					"<A HREF=\"module_loader.php?".
 					"module=".urlencode($this->MODULE_CLASS)."&".
@@ -222,10 +223,10 @@ class groupCalendar extends freemedCalendarModule {
 		<TR><TD COLSPAN=\"2\">&nbsp;</TD>
 		";
 		foreach ($physicians AS $k => $v) {
-			if ($k != -1) $p[$k] = new Physician($v);
+			if ($k!=1)
+				$p[$k] = CreateObject('FreeMED.Physician', $v);
 			$buffer .= "<td ALIGN=\"CENTER\"><b>".
 				($v!=0 ? $p[$k]->fullName() : _("Other") ).
-				//$p[$k]->fullName().
 				"</b></td>\n";
 		}
 		$buffer .= "</TR>\n";

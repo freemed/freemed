@@ -88,7 +88,7 @@ class lettersModule extends freemedEMRModule {
 				// Check for this_user object
 				global $this_user;
 				if (!is_object($this_user)) {
-					$this_user = new User();
+					$this_user = CreateObject('FreeMED.User');
 				}
 
 				// If we're a physician, use us
@@ -182,8 +182,8 @@ class lettersModule extends freemedEMRModule {
 		$record = freemed::get_link_rec($id, $this->table_name);
 
 		// Resolve docs
-		$from = new Physician ($record[letterfrom]);
-		$to   = new Physician ($record[letterto]  );
+		$from = CreateObject('FreeMED.Physician', $record[letterfrom]);
+		$to   = CreateObject('FreeMED.Physician', $record[letterto]  );
 
 		// Create date, address, etc, header
 		$display_buffer .= "

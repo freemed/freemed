@@ -40,8 +40,8 @@ class progressNotes extends freemedEMRModule {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		$book = new notebook (array ("id",
-		"module", "patient", "action"),
+		$book = CreateObject('PHP.notebook',
+		array ("id", "module", "patient", "action"),
 		NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
 		
 		switch ($action) {
@@ -339,7 +339,7 @@ class progressNotes extends freemedEMRModule {
      $pnotespat = $r ["pnotespat"];
      $pnoteseoc = sql_expand ($r["pnoteseoc"]);
 
-     $this->this_patient = new Patient ($pnotespat);
+     $this->this_patient = CreateObject('FreeMED.Patient', $pnotespat);
 
      if (freemed::user_flag(USER_DATABASE))
        $__MODIFY__ = " |

@@ -51,7 +51,9 @@ class RebillByCovModule extends freemedBillingModule {
 		{
 			//$display_buffer .= "insco $whichinsco<BR>";
 			$insco=0;
-			$insco = new InsuranceCompany($whichinsco);
+			$insco = CreateObject('FreeMED.InsuranceCompany',
+				$whichinsco
+			);
 			if ($insco==0)
 			{
 				$display_buffer .= "Error getting insco name<BR>";

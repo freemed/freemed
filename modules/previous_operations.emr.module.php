@@ -27,7 +27,7 @@ class previousOperationsModule extends freemedEMRModule {
 		if (isset($GLOBALS[this_patient])) {
 			global $this_patient;
 		} else {
-			$this_patient = new Patient ($patient);
+			$this_patient = CreateObject('FreeMED.Patient', $patient);
 		}
 
 		// Extract ops
@@ -94,7 +94,7 @@ class previousOperationsModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get ops, and extract to an array
 		$ops = $this_patient->local_record["ptops"];
@@ -146,7 +146,7 @@ class previousOperationsModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get ops, and extract to an array
 		$ops = $this_patient->local_record["ptops"];

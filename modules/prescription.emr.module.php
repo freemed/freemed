@@ -116,7 +116,7 @@ class prescriptionModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Create new notebook
-		$book = new notebook (
+		$book = CreateObject('PHP.notebook',
 			array ("module", "action", "id", "patient", "return"),
 			NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH | NOTEBOOK_NOFORM
 		);

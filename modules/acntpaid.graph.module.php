@@ -120,7 +120,7 @@ class AcntPaidGraph extends freemedGraphModule {
 			}
 			$graph_data[] = array($this_yrmo,$tot[1],$tot[2],$tot[3],$tot[4]);
 			
-			$graph = new PHPlot(1200,600); // (w,h)
+			$graph = CreateObject('FreeMED.PHPlot', 1200, 600); // (w,h)
 			$graph->SetDataValues($graph_data);
 			$graph->SetDataColors(array("yellow","orange","pink","red"));
 			$graph->SetLegend(array('Charges','Payments','Copays','Adjustments')); //Lets have a legend

@@ -27,7 +27,7 @@ class chronicProblemsModule extends freemedEMRModule {
 		if (isset($GLOBALS[this_patient])) {
 			global $this_patient;
 		} else {
-			$this_patient = new Patient ($patient);
+			$this_patient = CreateObject('FreeMED.Patient', $patient);
 		}
 
 		// Extract problems
@@ -46,7 +46,7 @@ class chronicProblemsModule extends freemedEMRModule {
 			<TABLE BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 			"CELLPADDING=\"2\">
 			<TR CLASS=\"menubar_info\">
-			<TD>"._("Medication")."</TD>
+			<TD>"._("Problem")."</TD>
 			<TD>"._("Action")."</TD>
 			</TR>
 			";
@@ -94,7 +94,7 @@ class chronicProblemsModule extends freemedEMRModule {
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get problems, and extract to an array
 		$problems = $this_patient->local_record["ptcproblems"];
@@ -143,10 +143,10 @@ class chronicProblemsModule extends freemedEMRModule {
 	function delete () {
 		global $display_buffer, $return, $patient, $id;
 		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
 		// Get patient object
-		$this_patient = new Patient ($patient);
+		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		// Get problems, and extract to an array
 		$problems = $this_patient->local_record["ptcproblems"];

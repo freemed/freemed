@@ -72,7 +72,7 @@ class procedureModule extends freemedEMRModule {
 			global $been_here;
 
 			$procunits = "1.0";        // default value for units
-			$this_patient = new Patient($patient);
+			$this_patient = CreateObject('FreeMED.Patient', $patient);
 			$procdiag1      = $this_patient->local_record[ptdiag1];
 			$procdiag2      = $this_patient->local_record[ptdiag2];
 			$procdiag3      = $this_patient->local_record[ptdiag3];
@@ -117,7 +117,7 @@ class procedureModule extends freemedEMRModule {
 		} // end checking for eoc
 
 		// ************** BUILD THE WIZARD ****************
-		$wizard = new wizard ( array ("been_here", "action", "patient", "id",
+		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id",
 		"module") );
 		$wizard->add_page ("Step One",
 			array_merge(array("procphysician", "proceoc", "procrefdoc",
@@ -438,7 +438,7 @@ class procedureModule extends freemedEMRModule {
 		$clmtype_result = $sql->query($clmtype_query);
 
 		// ************** BUILD THE WIZARD ****************
-		$wizard = new wizard ( array ("been_here", "action", "patient", "id", "module") );
+		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id", "module") );
 
 		$wizard->add_page ("Step One",
 				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
@@ -589,7 +589,7 @@ class procedureModule extends freemedEMRModule {
 		$covins = freemed::get_link_field($proccurcovid,"coverage","covinsco");
 		$covname = freemed::get_link_field($covins,"insco","insconame");
 
-		$wizard = new wizard ( array ("been_here", "action", "patient", "id",
+		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id",
 		"module") );
 		$wizard->add_page (_("Part One"),
 			array_merge(array("phyname", "proceoc", "refphyname",
@@ -723,7 +723,7 @@ class procedureModule extends freemedEMRModule {
 		//   calculate the standard fee
 		//if ($covid==0)
 		//		return 0;
-		$primary = new Coverage($covid);
+		$primary = CreateObject('FreeMED.Coverage', $covid);
 		$insid = $primary->local_record[covinsco];
 
 		$cpt_code = freemed::get_link_rec ($cptid, "cpt"); // cpt code
@@ -750,7 +750,7 @@ class procedureModule extends freemedEMRModule {
 
 		// step four:
 		//   check for patient discount percentage
-		$this_patient = new Patient($patid);
+		$this_patient = CreateObject('FreeMED.Patient', $patid);
 		$percentage = $this_patient->local_record["ptdisc"];
 		if ($percentage>0) { $discount = $percentage / 100; }
 		else              { $discount = 0;                 }

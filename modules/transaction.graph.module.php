@@ -22,7 +22,7 @@ class TransactionGraph extends freemedGraphModule {
 	{
 		global $display_buffer;
 		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		while (list($k,$v)=each($GLOBALS)) global ${$k};
 	
 		if (!isset($start_dt))
 		{
@@ -64,7 +64,7 @@ class TransactionGraph extends freemedGraphModule {
 			}
 
 			// bar graph
-			$graph = new PHPlot(800,600);
+			$graph = CreateObject('FreeMED.PHPlot', 800, 600);
 			$graph->SetDataValues($graph_data);
 			$graph->SetDataColors(array("yellow"));
 			$graph->SetBackgroundColor("white");

@@ -47,7 +47,7 @@ class dmeposcertsModule extends freemedCERTModule {
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 		$certtype = DMEPOS;
 		$certpatient = $patient;
-		$wizard = new wizard (array("certpatient","certtype","been_here", "module", "action", "patient"));
+		$wizard = CreateObject('PHP.wizard', array("certpatient","certtype","been_here", "module", "action", "patient"));
 
 		$wizard->add_page(_("Form"),
 						  array_merge(array("certformnum","certdesc","certstatus","certlenneed","certrental"),

@@ -144,7 +144,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 	    $buffer = "";
      	// get current patient information
 
-     	$this_patient = new Patient ($parmpatient);
+     	$this_patient = CreateObject('FreeMED.Patient', $parmpatient);
         if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
@@ -191,7 +191,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 		global $sql;
 
 		$row = $stack[0];
-		$doc = new Physician($row[procphysician]);
+		$doc = CreateObject('FreeMED.Physician', $row[procphysician]);
 
 		$stmnt[phyname] = $doc->fullName();
 		
@@ -235,7 +235,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 
 
 		// get current patient information
-		$this_patient = new Patient ($row[procpatient]);
+		$this_patient = CreateObject('FreeMED.Patient', $row[procpatient]);
 		if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 

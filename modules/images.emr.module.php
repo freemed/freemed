@@ -24,7 +24,7 @@ class patientImages extends freemedEMRModule {
 
 	function patientImages () {
 		// Get browser information
-		$browser = new browser_detect();
+		$browser = CreateObject('PHP.browser_detect');
 		if ($browser->BROWSER=="IE") $this->IEupload = true;
 
 		// Define variables for EMR summary

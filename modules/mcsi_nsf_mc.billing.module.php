@@ -108,7 +108,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		
 			while($row = $sql->fetch_array($result))
 			{	
-				$coverage = new Coverage($row[proccurcovid]);
+				$coverage = CreateObject('FreeMED.Coverage', $row[proccurcovid]);
 				if (!$coverage)
 					DIE("Failed getting coverage");
 				// commercial insurers only
@@ -239,7 +239,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$da1[recid] = "XXX";
 		$da2[recid] = "XXX";
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			$display_buffer .= "Error Insurer no coverage<BR>";
@@ -254,7 +254,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		}
 
 		// cov2 is actually the primary coverage
-		$coverage2 = new Coverage($cov2);
+		$coverage2 = CreateObject('FreeMED.Coverage', $cov2);
 		if (!$coverage2)
 		{
 			$display_buffer .= "Error Insurer no primary coverage<BR>";
@@ -268,7 +268,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 			return;
 		}
 
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			$display_buffer .= "Error Insurer no patient<BR>";
@@ -306,7 +306,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		}
 		else
 		{
-			$guarantor = new Guarantor($coverage2->covdep);
+			$guarantor = CreateObject('FreeMED.Guarantor', $coverage2->covdep);
 			if (!$guarantor)
 			{
 				$display_buffer .= "Error Insurer guarantor failed<BR>";
@@ -474,7 +474,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		}
 		else
 		{
-			$guarantor = new Guarantor($coverage->covdep);
+			$guarantor = CreateObject('FreeMED.Guarantor', $coverage->covdep);
 			if (!$guarantor)
 			{
 				$display_buffer .= "Error Insurer guarantor failed<BR>";
@@ -539,7 +539,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$da0[recid] = "DA0";
 		$da2[recid] = "DA2";
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			$display_buffer .= "Error Insurer no coverage<BR>";
@@ -555,7 +555,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		if ($cov2 != 0)
 		{
-			$coverage2 = new Coverage($cov2);
+			$coverage2 = CreateObject('FreeMED.Coverage', $cov2);
 			if (!$coverage2)
 			{
 				$display_buffer .= "Error Insurer Failed secondary coverage<BR>";
@@ -570,7 +570,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 			}
 		}
 
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			$display_buffer .= "Error Insurer no patient<BR>";
@@ -612,7 +612,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		}
 		else
 		{
-			$guarantor = new Guarantor($coverage->covdep);
+			$guarantor = CreateObject('FreeMED.Guarantor', $coverage->covdep);
 			if (!$guarantor)
 			{
 				$display_buffer .= "Error Insurer guarantor failed<BR>";
@@ -765,7 +765,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		$ca0[recid] = "CA0";
 		$cb0[recid] = "XXX";
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			$display_buffer .= "Error in claimheader no patient<BR>";
@@ -850,7 +850,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		if ($patient->local_record[ptempl] == "u")
 			$ca0[patempl] = "9";
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			$display_buffer .= "Error. patient coverage invalid<BR>";
@@ -885,7 +885,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
                 // we assume the guarantor is the responsible party
                 if ($coverage->covdep != 0)
                 {
-                    $guar = new Guarantor($coverage->covdep);
+                    $guar = CreateObject('FreeMED.Guarantor', $coverage->covdep);
                     if (!$guar)
                         $display_buffer .= "Error getting guarantor in CB0 record<BR>";
                     $cb0[respfname] = $this->CleanChar($guar->guarfname);
@@ -979,13 +979,13 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$ba0[recid] = "BA0";
 		$ba1[recid] = "BA1";
 
-		$physician = new Physician($doc);
+		$physician = CreateObject('FreeMED.Physician', $doc);
 		if (!$physician)
 		{
 			$display_buffer .= "Error no physician<BR>";
 			return;
 		}
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			$display_buffer .= "Error no coverage<BR>";
@@ -1129,7 +1129,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		//$display_buffer .= "referer $row[procrefdoc]<BR>";
 		if ($row[procrefdoc] != 0)
 		{
-			$refdoc = new Physician($row[procrefdoc]);
+			$refdoc = CreateObject('FreeMED.Physician', $row[procrefdoc]);
 			if (!$refdoc)
 				$display_buffer .= "Error getting referring physician<BR>";
 			$ea0[refprovupin] = $this->CleanChar($refdoc->local_record[phyupin]);	
@@ -1189,7 +1189,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
             return;
         }
 
-        $diagset = new diagnosisSet();
+        $diagset = CreateObject('FreeMED.diagnosis_set');
         for ($i=0;$i<$count;$i++)
         {
             $prow = $procstack[$i];
@@ -1275,7 +1275,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		$row = $procstack[0];
 
-		$diagset = new diagnosisSet();
+		$diagset = CreateObject('FreeMED.diagnosis_set');
 
 		$pos = 0;
 		$fac_row=0;
@@ -1688,7 +1688,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 	    // zero the buffer 
 	    $buffer = "";
      	// get current patient information
-     	$this_patient = new Patient ($parmpatient);
+     	$this_patient = CreateObject('FreeMED.Patient', $parmpatient);
         if (!$this_patient)
 			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
@@ -1698,7 +1698,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
      	";
      	flush ();
 
-		$this_coverage = new Coverage($parmcovid);
+		$this_coverage = CreateObject('FreeMED.Coverage', $parmcovid);
         if (!$this_coverage)
 		{
 			trigger_error("No coverage", E_USER_ERROR);

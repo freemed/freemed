@@ -44,7 +44,9 @@ class anesthCalendar extends freemedCalendarModule {
 		global $no_template_display; $no_template_display = true;
 
 		// Create user object
-		if (!is_object($this_user)) $this_user = new User ();
+		if (!is_object($this_user)) {
+			$this_user = CreateObject('FreeMED.User');
+		}
 
 		// Check for set anfacility
 		if (!isset($anfacility)) {

@@ -185,7 +185,7 @@ class PaymentModule extends freemedEMRModule {
             $payrecproc = $procid;
 
             if ($patient>0) {
-                $this_patient = new Patient($patient);
+                $this_patient = CreateObject('FreeMED.Patient', $patient);
             } else {
 		$display_buffer .= _("No patient");
                 template_display();
@@ -203,7 +203,7 @@ class PaymentModule extends freemedEMRModule {
 			$this->IsAuthorized($proc_rec,$visitsremain,$visitsused);
 
             // **************** FORM THE WIZARD ***************
-            $wizard = new wizard (array("item", "been_here", "module", 
+            $wizard = CreateObject('PHP.wizard', array("item", "been_here", "module", 
 									     "viewaction", "action", "patient"));
 
 
@@ -1275,7 +1275,7 @@ class PaymentModule extends freemedEMRModule {
                 $this_cptcode = freemed::get_link_field ($r[proccpt], "cpt", "cptcode");
                 $this_cptmod = freemed::get_link_field ($r[proccptmod],
                                                        "cptmod", "cptmod");
-                $this_physician = new Physician ($r[procphysician]);
+                $this_physician = CreateObject('FreeMED.Physician', $r[procphysician]);
                 $display_buffer .= "
                 <TR BGCOLOR=".( ($this->item == $r[id]) ?  "#00ffff" :
                                 ($_alternate = freemed_bar_alternate_color ($_alternate))).">

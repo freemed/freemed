@@ -53,7 +53,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-  $book = new notebook (array ("action", "id", "module"),
+  $book = CreateObject('PHP.notebook', array ("action", "id", "module"),
     NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
 
   // for either add or modify form

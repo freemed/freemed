@@ -33,7 +33,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			// clicked on the patient menu
 
 			global $patient,$sql,$pt, $SESSION;
-			$this_patient = new Patient($patient);
+			$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 			$display_buffer .= "<HTML><BODY BGCOLOR=\"#FFFFFF\">\n";
 			$sched_result = $sql->query("SELECT MAX(id) AS id FROM scheduler WHERE calpatient='".addslashes($patient)."'");
@@ -111,7 +111,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 
 			if ($ptpcp > 0)    // primary 
 			{
-				$this_primdoc = new Physician($ptpcp);
+				$this_primdoc = CreateObject('FreeMED.Physician', $ptpcp);
 				$pt[docname] = "Dr. ".$this_primdoc->fullname();
 				$pt[docaddr1] = $this_primdoc->local_record[phyaddr1a];
 				$pt[doccity] = $this_primdoc->local_record[phycitya];
@@ -123,7 +123,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 
 			if ($ptrefdoc > 0)  // referring doc
 			{
-				$this_refdoc = new Physician($ptrefdoc);
+				$this_refdoc = CreateObject('FreeMED.Physician', $ptrefdoc);
 				$pt[refdocname] = "Dr. ".$this_refdoc->fullname();
 
 				// below not needed at this time.
@@ -137,7 +137,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 
 			if ($ptdoc > 0)  // in house doc
 			{
-				$this_indoc = new Physician($ptdoc);
+				$this_indoc = CreateObject('FreeMED.Physician', $ptdoc);
 				$pt[interdocname] = "Dr. ".$this_indoc->fullname();
 
 				// below not needed at this time.
@@ -152,7 +152,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			$covid = fm_verify_patient_coverage($patient); // get primary;
 			if ($covid > 0)
 			{
-				$coverage = new Coverage($covid);
+				$coverage = CreateObject('FreeMED.Coverage', $covid);
 				//$insco = $coverage->insco;
 				$pt[insname] = $coverage->covinsco->local_record[insconame];
 				$pt[insphone] = $coverage->covinsco->local_record[inscophone];
@@ -166,7 +166,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 
 				if ($coverage->covdep > 0)
 				{
-					$guarantor = new Guarantor($coverage->covdep);
+					$guarantor = CreateObject('FreeMED.Guarantor', $coverage->covdep);
 					// there is a guarantor
 					$pt[ispatient] = " ";
 					$pt[isother] = "X";

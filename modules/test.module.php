@@ -41,7 +41,9 @@ class testModule extends freemedModule {
 		$buffer .= "This is a test of this.";
 
 		if ($patient>0) {
-			$this_patient = new Patient ($patient);
+			$this_patient = CreateObject('FreeMED.Patient', 
+				$patient
+			);
 			$buffer .= freemed_patient_box($this_patient);
 		} // end checking for patient
 

@@ -44,7 +44,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 		//$this->View();
 		//$display_buffer .= "<CENTER><P><B>Not Implemented</B></P><BR></CENTER>";
 
-		$book = new notebook (array ("action", "id", "module", "been_here", "patient"),
+		$book = CreateObject('PHP.notebook', array ("action", "id", "module", "been_here", "patient"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
 
 		if (!$book->been_here())
@@ -284,7 +284,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 		// step 1 guar or insurance
 		// step2/3 select a guar or insurance if a guar then insurance
 		// step4 all other data
-		$wizard = new wizard (array("been_here", "module", "action", "patient"));
+		$wizard = CreateObject('PHP.wizard', array("been_here", "module", "action", "patient"));
 
 		// Im leaving this in incase we decide later to break it up more
 		$wizard->add_page("Select Coverage Type",
