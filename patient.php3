@@ -1268,10 +1268,16 @@ if ($action=="addform") {
       $_ref="main.php3";
     } // if no ref, then return to home page...
 
-    freemed_display_actionbar ($page_name, $_ref); // bottom bar (19990617)
-
+    freemed_display_actionbar ($page_name, $_ref);
+    echo "
+     <P>
+     <CENTER>
+      <A HREF=\"$page_name?$_auth\"
+      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+     </CENTER>
+     <P>
+    ";
     freemed_display_box_bottom (); // display bottom of the box
-    freemed_display_bottom_links ($record_name, $page_name, $_ref);
     // }    
   } else { // result loop
     freemed_display_box_top ("$Patients_meeting_criteria $_crit", $page_name);
