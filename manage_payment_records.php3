@@ -23,12 +23,16 @@
 
  freemed_display_box_top ("$record_name");
 
+ // pull the current physician (main physician)
+ $physician = new Physician ($this_patient->local_record[ptdoc]);
+
  echo "
   <P>
   <CENTER>
    <$STDFONT_B><B>$Patient</B> : 
     <A HREF=\"manage.php3?$_auth&id=$patient\"
-    >".$this_patient->fullName(true)."</A><$STDFONT_E>
+    >".htmlentities($this_patient->fullName(true))."</A><BR>
+    <I>(".htmlentities($physician->fullName()).")</I><$STDFONT_E>
   </CENTER>
   <P>
 
@@ -47,14 +51,13 @@
 
  $result = fdb_query ($query);
 
- #if (!$result) die ("nothing for this patient");
-
  echo "
   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
   <TR BGCOLOR=#cccccc>
    <TD>&nbsp;</TD>
    <TD><B>Date</B></TD>
    <TD><B>Proc Code</B></TD>
+   <TD><B>Provider</B></TD>
    <TD><B>Original Amt</B></TD>
    <TD><B>Amount Paid</B></TD>
    <TD><B>Current Amt</B></TD>
@@ -70,10 +73,11 @@
    $this_cpt = freemed_get_link_field ($r[proccpt], "cpt", "cptnameint"); 
    $this_cptmod = freemed_get_link_field ($r[proccptmod],
      "cptmod", "cptmod"); 
+   $this_physician = new Physician ($r[procphysician]);
    echo "
     <TR BGCOLOR=".(
       ($item == $r[id]) ?
-      "#aaaaaa" : $_alternate
+      "#00ffff" : $_alternate
     ).">
     <TD>
     <INPUT TYPE=RADIO NAME=\"item\" VALUE=\"".htmlentities($r[id])."\"
@@ -82,6 +86,7 @@
          ""                )."></TD>
     <TD>".fm_date_print ($r[procdt])."</TD>
     <TD ALIGN=LEFT>".htmlentities($this_cpt." (".$this_cptmod.")")."</TD>
+    <TD ALIGN=LEFT>".htmlentities($this_physician->fullName())."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procbalorig], 0, 2)."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
     <TD ALIGN=RIGHT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
@@ -93,6 +98,12 @@
   </TABLE>
   <P>
   <CENTER>
+   <SELECT NAME=\"action\">
+    <OPTION VALUE=\"denialform\"  >Denial
+    <OPTION VALUE=\"mistakeform\" >Mistake
+    <OPTION VALUE=\"paymentform\" >Payment
+    <OPTION VALUE=\"transferform\">Transfer
+   </SELECT>
    <INPUT TYPE=SUBMIT VALUE=\"  Select Line Item  \">
   </CENTER>
   </FORM>
@@ -147,6 +158,10 @@
     } // end of denial rebill check
     break; // end of denial action
 
+   case "payment": // payment action
+    echo "manage_payment_records->payment :: stub!! <BR>\n";
+    break; // end payment action
+
    case "transfer": // transfer action
     $query = "UPDATE $database.payrec
               SET payreclink='".addslashes($transfer_to)."'
@@ -198,11 +213,18 @@
     ";
     break; // end mistake action
 
-   default: // default action (display forms)
+   case "denialform": // denial form action
     echo "
      <CENTER>
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
 
+      <TR>
+       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=#aaaaaa>
+       <$HEADERFONT_B>
+        <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"denial\">
+        Denial
+       <$HEADERFONT_E>
+      </TR>
       <TR>
        <TD ALIGN=RIGHT>
         <$STDFONT_B>Date of Action : <$STDFONT_E>
@@ -213,13 +235,6 @@
        </TD>
       </TR>
 
-      <TR>
-       <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=#aaaaaa>
-       <$STDFONT_B>
-        <INPUT TYPE=RADIO NAME=\"action\" VALUE=\"denial\">
-        <B>Denial</B>
-       <$STDFONT_E>
-      </TR>
       <TR>
        <TD ALIGN=RIGHT>
         <$STDFONT_B>Reason : <$STDFONT_E>
@@ -243,6 +258,7 @@
         <INPUT TYPE=TEXT NAME=\"denial_reason_text\" SIZE=25>
        </TD>
       </TR>
+
       <TR>
        <TD ALIGN=RIGHT>
         <$STDFONT_B>Resubmit? : <$STDFONT_E>
@@ -254,12 +270,78 @@
        </TD>
       </TR>
 
+      </TABLE>
+      </CENTER>
+     ";
+    break;
+
+   case "paymentform": // payments form
+    echo "
+     <CENTER>
+     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
+      <TR>
+       <TD COLSPAN=5 ALIGN=LEFT BGCOLOR=#aaaaaa>
+        <$HEADERFONT_B>
+         <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"payment\">
+         Payment
+        <$HEADERFONT_E>
+       </TD>
+      </TR>
+
+
+      <TR>
+       <TD ALIGN=RIGHT>
+        <$STDFONT_B>Voucher<$STDFONT_E>
+       </TD><TD ALIGN=RIGHT>
+        <$STDFONT_B>Withhold<$STDFONT_E>
+       </TD><TD ALIGN=RIGHT>&nbsp;
+        <$STDFONT_B>Deductable<$STDFONT_E>
+       </TD><TD ALIGN=RIGHT>&nbsp;
+        <$STDFONT_B>Adjustment<$STDFONT_E>
+       </TD><TD ALIGN=RIGHT>&nbsp;
+        <$STDFONT_B>Payment Amt<$STDFONT_E>
+       </TD>
+      </TR>
+
+      <TR>
+       <TD ALIGN=RIGHT>
+        <INPUT TYPE=TEXT NAME=\"voucher\"
+         SIZE=8 MAXLENGTH=8
+         VALUE=\"\">
+       </TD><TD ALIGN=RIGHT>
+        <INPUT TYPE=TEXT NAME=\"withhold\"
+         SIZE=8 MAXLENGTH=8
+         VALUE=\"0.00\">
+       </TD><TD ALIGN=RIGHT>&nbsp;
+        <INPUT TYPE=TEXT NAME=\"deductable\"
+         SIZE=8 MAXLENGTH=8
+         VALUE=\"0.00\">
+       </TD><TD ALIGN=RIGHT>&nbsp;
+        <INPUT TYPE=TEXT NAME=\"adjustment\"
+         SIZE=8 MAXLENGTH=8
+         VALUE=\"0.00\">
+       </TD><TD ALIGN=RIGHT>&nbsp;
+        <INPUT TYPE=TEXT NAME=\"payment_amount\"
+         SIZE=8 MAXLENGTH=8
+         VALUE=\"0.00\">
+       </TD>
+      </TR>
+
+      </TABLE>
+      </CENTER>
+    ";
+    break; // end of payments form
+
+   case "transferform":
+    echo "
+     <CENTER>
+     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
       <TR>
        <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=#aaaaaa>
-        <$STDFONT_B>
-         <INPUT TYPE=RADIO NAME=\"action\" VALUE=\"transfer\">
-         <B>Transfer</B> <I>(to another source of payment)</I>
-        <$STDFONT_E>
+        <$HEADERFONT_B>
+         <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"transfer\">
+         Transfer <I>(to another source of payment)</I>
+        <$HEADERFONT_E>
        </TD>
       </TR>
       <TR>
@@ -283,22 +365,31 @@
        </TD>
       </TR>
 
+      </TABLE>
+      </CENTER>
+     ";
+     break;
+
+    case "mistakeform":
+     echo "
+     <CENTER>
+     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
       <TR>
        <TD COLSPAN=2 ALIGN=LEFT BGCOLOR=#aaaaaa>
-        <$STDFONT_B>
-         <INPUT TYPE=RADIO NAME=\"action\" VALUE=\"mistake\">
-         <B>Mistake</B> <I>(deletes record permanently)</I>
-        <$STDFONT_E>
+        <$HEADERFONT_B>
+         <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mistake\">
+         Mistake <I>(deletes record permanently)</I>
+        <$HEADERFONT_E>
        </TD>
       </TR>
-
       <TR>
+       <TD><CENTER>Confirm deletion of record.</CENTER></TD>
       </TR>
+      </TABLE>
+      </CENTER>
+     ";
+     break; // end of mistakeform action
 
-     </TABLE>
-     </CENTER>
-    ";
-    break; // end of default action
 
   } // end master action switch
   echo "
