@@ -132,7 +132,7 @@
 
   case "addform1":
    // determine closest date if none is provided
-   if (empty($payrecdt))
+   if (empty($payrecdt) and empty($payrecdt_y))
      $payrecdt = $cur_date; // by default, the date is now...
 
    // actual display
@@ -140,7 +140,7 @@
 
    // if a patient is provided...
    if ($patient>0) {
-     $payrecsource = 1; // set to patient payment
+     if (empty($payrecsource)) $payrecsource = 1; // set to patient payment
      echo "
       <CENTER>
        <$STDFONT_B>Patient : <$STDFONT_E>
@@ -149,14 +149,6 @@
       </CENTER>
      ";  
    }
-
-   // set proper selected tag for payment source
-   $_prs_0 = $_prs_1 = $_prs_2 = "";
-   switch ($payrecsource) {
-     case "1": $_prs_1 = "SELECTED"; break;
-     case "2": $_prs_2 = "SELECTED"; break;
-     case "0": $_prs_0 = "SELECTED"; break;
-   } // end switch payrecsource 
 
    // addform1 action, top of form/table
    echo "
@@ -182,21 +174,31 @@
      <TR>
       <TD ALIGN=RIGHT><$STDFONT_B>Payment Source : <$STDFONT_E></TD>
       <TD><SELECT NAME=\"payrecsource\">
-       <OPTION VALUE=\"0\" $_prs_0>Insurance Payment 
-       <OPTION VALUE=\"1\" $_prs_1>Patient Payment
-       <OPTION VALUE=\"2\" $_prs_2>Worker's Comp
+       <OPTION VALUE=\"0\" ".
+        ( ($payrecsource==0) ? "SELECTED" : "" ).">Insurance Payment 
+       <OPTION VALUE=\"1\" ".
+        ( ($payrecsource==1) ? "SELECTED" : "" ).">Patient Payment
+       <OPTION VALUE=\"2\" ".
+        ( ($payrecsource==2) ? "SELECTED" : "" ).">Worker's Comp
       </SELECT></TD>
      </TR>
 
      <TR>
       <TD ALIGN=RIGHT><$STDFONT_B>Payment Type : <$STDFONT_E></TD>
       <TD><SELECT NAME=\"payrectype\">
-       <OPTION VALUE=\"0\"         >cash
-       <OPTION VALUE=\"1\" SELECTED>check
-       <OPTION VALUE=\"2\"         >money order
-       <OPTION VALUE=\"3\"         >credit card
-       <OPTION VALUE=\"4\"         >traveller's check
-       <OPTION VALUE=\"5\"         >EFT
+       <OPTION VALUE=\"0\" ".
+        ( ($payrectype==0) ? "SELECTED" : "" ).">cash
+       <OPTION VALUE=\"1\" ".
+        ( ($payrectype==1) ? "SELECTED" : "" ).">check
+       <OPTION VALUE=\"2\" ".
+        ( ($payrectype==2 or empty($payrectype))
+            ? "SELECTED" : "" ).">money order
+       <OPTION VALUE=\"3\" ".
+        ( ($payrectype==3) ? "SELECTED" : "" ).">credit card
+       <OPTION VALUE=\"4\" ".
+        ( ($payrectype==4) ? "SELECTED" : "" ).">traveller's check
+       <OPTION VALUE=\"5\" ".
+        ( ($payrectype==5) ? "SELECTED" : "" ).">EFT
       </SELECT></TD>
      </TR>
 
@@ -228,7 +230,7 @@
      <TD ALIGN=RIGHT><$STDFONT_B>Insurance Company : <$STDFONT_E></TD>
      <TD ALIGN=LEFT><SELECT NAME=\"payreclink\">
    ";
-   freemed_display_insco ();
+   freemed_display_insco ($payreclink);
    echo "
      </SELECT></TD>
      </TR>
@@ -275,7 +277,8 @@
       <TD ALIGN=RIGHT>
        <$STDFONT_B>Refund Amount : <$STDFONT_E>
       </TD><TD ALIGN=LEFT>
-       <INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=9>
+       <INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10
+        MAXLENGTH=9 VALUE=\"$payrecamt\">
       </TD>
      </TR>
 
@@ -284,8 +287,10 @@
        <$STDFONT_B>Destination : <$STDFONT_E>
       </TD><TD ALIGN=LEFT>
        <SELECT NAME=\"payreclink\">
-        <OPTION VALUE=\"0\">Apply to credit
-        <OPTION VALUE=\"1\">Refund to patient
+        <OPTION VALUE=\"0\" ".
+         ( ($payreclink==0) ? "SELECTED" : "" ).">Apply to credit
+        <OPTION VALUE=\"1\" ".
+         ( ($payreclink==1) ? "SELECTED" : "" ).">Refund to patient
        </SELECT>
       </TD>
      </TR>
@@ -315,8 +320,10 @@
        <$STDFONT_B>Adjust to Zero? : <$STDFONT_E>
       </TD><TD ALIGN=LEFT>
        <SELECT NAME=\"payreclink\">
-        <OPTION VALUE=\"0\">no
-        <OPTION VALUE=\"1\">yes
+        <OPTION VALUE=\"0\" ".
+           ( ($payreclink==0) ? "SELECTED" : "" ).">no
+        <OPTION VALUE=\"1\" ".
+           ( ($payreclink==1) ? "SELECTED" : "" ).">yes
        </SELECT>
       </TD>
      </TR>
@@ -353,6 +360,33 @@
    break;
 
   case "addform2":
+   if (empty($payrecamt)) {
+     freemed_display_box_top ("$Add $record_name");
+     echo "
+      <P>
+      You must enter an amount!
+      <P>
+      <CENTER>
+      <FORM ACTION=\"$page_name\" METHOD=POST>
+       <INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
+       <INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"addform1\">
+       <INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
+       <INPUT TYPE=HIDDEN NAME=\"payrecproc\"   VALUE=\"$payrecproc\">
+       <INPUT TYPE=HIDDEN NAME=\"payreccat\"    VALUE=\"$payreccat\">
+       <INPUT TYPE=HIDDEN NAME=\"payrecsource\" VALUE=\"$payrecsource\">
+       <INPUT TYPE=HIDDEN NAME=\"payrectype\"   VALUE=\"$payrectype\">
+       <INPUT TYPE=HIDDEN NAME=\"payrecdt_y\"   VALUE=\"$payrecdt_y\">
+       <INPUT TYPE=HIDDEN NAME=\"payrecdt_m\"   VALUE=\"$payrecdt_m\">
+       <INPUT TYPE=HIDDEN NAME=\"payrecdt_d\"   VALUE=\"$payrecdt_d\">
+       <INPUT TYPE=SUBMIT VALUE=\"  Try Again  \">
+      </FORM>
+      </CENTER>
+     ";
+     freemed_display_box_bottom ();
+     freemed_display_html_bottom ();
+     freemed_close_db ();
+     DIE("");
+   } // end checking for empty payrecamt
    freemed_display_box_top ("$Add $record_name", $_ref, $page_name);
    echo "
     <P>
