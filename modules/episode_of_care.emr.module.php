@@ -162,6 +162,10 @@ class EpisodeOfCare extends EMRModule {
 		global $action, $module;
 		if (strtolower($module)==get_class($this)) {
 			switch ($_REQUEST['submit_action']) {
+				case __("Cancel"):
+					$action = "";
+					break;
+				
 				case __("Add"):
 					$action = "add";
 					break;
