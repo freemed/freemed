@@ -1,6 +1,13 @@
 freemed project changelog
 ($Id$)
 
+* Wed Apr 11 2001 rufustfirefly
+  - lib/macros.php: added ITEMLIST_* macros (Adam left them out)
+  - index.php: committed removal of TT tags
+  - call-in.php, show_appointments.php: removed old .php3 references that
+    were causing problems (thanks to Jeff Honken <jhonken@itconnections.com>
+    for this one)
+
 * Tue Apr 10 2001 fforest
   - patient.php added support for ptstatus
   - data/EN/ptstatus.EN.data added
@@ -11,9 +18,13 @@ freemed project changelog
   - procedure module. was using payer table for insco calc of std fee. 
     fixed to get insco from coverage table. if charge is zero after calculation
     then charge=std_fee to avoid 0 on page 2
-    verify minimum requirements on add/mod. must have atleast:
+    verify minimum requirements on add/mod. must have at least:
     cptcode, 1 diag code, physician, date and pos or you have to try again.
   - removed generate_fixedforms from base dir moved to old
+
+* Mon Apr 09 2001 rufustfirefly
+  - began to implement CSS support, so that we can finally remove those
+    ridiculous STDFONT_{B,E} instances...
 
 * Wed Apr 04 2001 rufustfirefly
   - huge repository move in modules/ for new module scheme
