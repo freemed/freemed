@@ -271,17 +271,20 @@
      } else {
        // if it is someone else, get *their* information
        $guarantor = new Patient ($this_patient->local_record[ptdep]);
+       $guarname[last]    = $guarantor->local_record["ptlname"];
+       $guarname[first]   = $guarantor->local_record["ptfname"];
+       $guarname[middle]  = $guarantor->local_record["ptmname"];
        $guarsex[male]     = ( ($guarantor->ptsex == "m") ?
                                $this_form[ffcheckchar] : " " );
        $guarsex[female]   = ( ($guarantor->ptsex == "f") ?
                                $this_form[ffcheckchar] : " " );
        $guarsex[trans]    = ( ($guarantor->ptsex == "t") ?
                                $this_form[ffcheckchar] : " " );
-       $guaraddr[line1]   = $this_patient->local_record["ptaddr1"  ];
-       $guaraddr[line2]   = $this_patient->local_record["ptaddr2"  ];
-       $guaraddr[city]    = $this_patient->local_record["ptcity"   ];
-       $guaraddr[state]   = $this_patient->local_record["ptstate"  ];
-       $guaraddr[zip]     = $this_patient->local_record["ptzip"    ];
+       $guaraddr[line1]   = $guarantor->local_record["ptaddr1"  ];
+       $guaraddr[line2]   = $guarantor->local_record["ptaddr2"  ];
+       $guaraddr[city]    = $guarantor->local_record["ptcity"   ];
+       $guaraddr[state]   = $guarantor->local_record["ptstate"  ];
+       $guaraddr[zip]     = $guarantor->local_record["ptzip"    ];
 
        $insco[number]     = $guarantor->local_record["ptinsno".
                             ($b_r[payreclink]+1)];
