@@ -26,14 +26,17 @@ class diagnosisSet {
   // -- returns true or false, indicating whether value is in the stack
   function inStack ($val) {
     $found = false;
-    for ($i=1;$i<=($this->stack_size);$i++)
-      if (($this->internal_stack[$i]) == $val) $found = true;
+    for ($i=1;$i<=($this->stack_size);$i++) {
+      if ($this->internal_stack[$i] == $val) $found = $i;
+    }
     return $found;
   } // end function diagnosisSet->inStack
 
   // function diagnosisSet->numberUnique
   // -- sees how many unique values in an array are *NOT* in the stack
   function numberUnique ($newvals) {
+    global $debug;
+
     // determine size of new array
     $size_of_new = count ($newvals);
 
@@ -45,9 +48,10 @@ class diagnosisSet {
 
     // loop to find matches
     $current_uniques = 0;
-    for ($i=0;$i<$size_of_new;$i++) { // loop to count
+    for ($i=1;$i<=$size_of_new;$i++) { // loop to count
       if ((!($this->inStack($newvals[$i]))) and
-          ($newvals[$i] != 0)) $current_uniques++;
+          ($newvals[$i] != 0) and
+          (!empty($newvals[$i]))) $current_uniques++;
     } // end of loop to count...
 
     // return the current number of uniques
@@ -58,8 +62,9 @@ class diagnosisSet {
   // -- add value to the stack
   function popValue ($val) {
     global $debug;
-    $this->stack_size++;                        // increment the stack size
-    $this->internal_stack[$stack_size] = $val;  // add value to the stack
+    $this->stack_size++;                           // increment the stack size
+    if (!($this->inStack ($val)) and ($val != 0))
+      $this->internal_stack[$this->stack_size] = $val;
     if ($debug) echo "stack size = $this->stack_size ($val) <BR>\n";
   } // end function diagnosisSet->popValue
 
@@ -68,11 +73,15 @@ class diagnosisSet {
   //    and add it to the stack if there is room
   function testAddSet ($diag1=0, $diag2=0, $diag3=0, $diag4=0) {
     global $debug;
+    $diag = "";
     // first determine how many parameters
-    $diag[1] = $diag1; $diag[2] = $diag2; $diag[3] = $diag3; $diag[4] = $diag4;
+    if ($diag1 > 0) $diag[1] = $diag1;
+    if ($diag2 > 0) $diag[2] = $diag2;
+    if ($diag3 > 0) $diag[3] = $diag3;
+    if ($diag4 > 0) $diag[4] = $diag4;
     $flag = 0;       // by default, none
     for ($i=1;$i<=4;$i++) {  // loop through diagnoses
-      if (($diag[$i] != 0) and ($flag = ($i - 1))) $flag = $i;
+      if (($diag[$i] != 0) and ($flag == ($i - 1))) $flag = $i;
     } // end of looping through diagnoses
 
     if ($debug) echo "\n$flag diagnoses in this charge<BR>\n";
@@ -82,7 +91,6 @@ class diagnosisSet {
     if ($flag == 0) return true;
 
     // if there is enough room, return true and add
-    echo "max - stack = $this->maximum_stack_size - $this->stack_size <BR>\n";
     if (($this->numberUnique ($diag)) <=
         ($this->maximum_stack_size - $this->$stack_size)) {
       for ($i=1;$i<=$flag;$i++) $this->popValue($diag[$i]);
@@ -101,18 +109,19 @@ class diagnosisSet {
     $diag[1] = $diag1; $diag[2] = $diag2; $diag[3] = $diag3; $diag[4] = $diag4;
     $flag = 0;       // by default, none
     for ($i=1;$i<=4;$i++) {  // loop through diagnoses
-      if (($diag[$i] != 0) and ($flag = ($i - 1))) $flag = $i;
+      if (($diag[$i] != 0) and ($flag == ($i - 1))) $flag = $i;
     } // end of looping through diagnoses
     $num_found = 0; $found_array = "";
     for ($i=1;$i<=$flag;$i++) {
-      if ($this->inStack ($diag[$i])) {
+      if ($pos = $this->inStack ($diag[$i])) {
         $num_found++;                  // increment counter
-        $found_array[$num_found] = $i; // add reference
+        $found_array[$num_found] = $pos; // add reference
       } // end if found in stack
     } // end looping through the stack
-    if (count ($found_array) > 1) sort ($found_array);
-    if (count ($found_array) < 1) return "";
-    if (count ($found_array) == 1) return $found_array[0];
+    if ($debug) echo "\narray size = ".count($found_array)." <BR>\n";
+    if ($num_found > 1) sort ($found_array);
+    if ($num_found < 1) return "";
+    if ($num_found == 1) return $found_array[1];
     return join ($found_array, ","); // join with commas and return    
   } // end function diagnosisSet->xrefList
 
@@ -175,8 +184,9 @@ function render_FixedFormEntry ($formentry) {
   if (strlen ($this_evalled) > $formentry->len) {
     $length_adjusted = substr ($this_evalled, 0, $formentry->len);
   } elseif (strlen ($this_evalled) < $formentry->len) {
-    for ($loop=0;$loop<abs($this_evalled - ($formentry->len));$loop++)
-      $this_evalled .= " ";
+    $this_difference = ($formentry->len) - (strlen($this_evalled));
+    for ($loop=0;$loop<$this_difference;$loop++)
+      { $this_evalled .= " "; if ($debug) echo "\nSPACE<BR>\n"; }
     $length_adjusted = $this_evalled;
   } else { // no change neccesary
     $length_adjusted = $this_evalled;

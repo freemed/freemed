@@ -63,13 +63,13 @@
      $current_patient = $b_r[payrecpatient];
      $this_patient = new Patient ($current_patient);
      echo "
-      <B>Processed ".$this_patient->fullName()." ($current_patient)</B>
+      <B>Processing ".$this_patient->fullName()." ($current_patient)</B>
       <BR>\n\n
      ";
      flush ();
 
      // grab current insurance company
-     $this_insco = $this_patient->insco[($b_r[payreclink] + 1)];
+     $this_insco = $this_patient->insco[($b_r[payreclink])];
 
      //$debug=true;
 
@@ -191,12 +191,29 @@
        ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
 
      // insco information
-     $insco[prefname]   = $this_insco->insconame;
+     $this_insco = new InsuranceCompany (
+            $this_patient->local_record["ptins".($b_r[payreclink]+1)]);
+
+     $insco[number]     = $this_patient->local_record["ptinsno".
+                          ($b_r[payreclink]+1)];
+     $insco[group]      = $this_patient->local_record["ptinsgrp".
+                          ($b_r[payreclink]+1)];
+     
+     $insco[name]       = $this_insco->insconame;
      $insco[line1]      = $this_insco->local_record[inscoaddr1];
      $insco[line2]      = $this_insco->local_record[inscoaddr2];
-     $insco[city]       = $this_insco->local_record[city];
-     $insco[state]      = $this_insco->local_record[state];
-     $insco[zip]        = $this_insco->local_record[zip];
+     $insco[city]       = $this_insco->local_record[inscocity];
+     $insco[state]      = $this_insco->local_record[inscostate];
+     $insco[zip]        = $this_insco->local_record[inscozip];
+
+     // pull facility
+     $this_facility     = freemed_get_link_rec ($default_facility, "facility");
+     $fac[name]         = $this_facility[psrname];
+     $fac[line1]        = $this_facility[psraddr1];
+     $fac[line2]        = $this_facility[psraddr2];
+     $fac[city]         = $this_facility[psrcity];
+     $fac[state]        = $this_facility[psrstate];
+     $fac[zip]          = $this_facility[psrzip];
 
      // current date hashes
      $curdate[mmddyy]   = date ("mdy");
@@ -205,6 +222,15 @@
      $curdate[d]        = date ("d");
      $curdate[sy]       = date ("y");
      $curdate[y]        = date ("Y");
+
+     // pull referring physician information
+     $referring_physician = freemed_get_link_rec (
+        $this_patient->local_record[ptrefdoc], "physician");
+     $refphy[name]      = $referring_physician[phyfname].
+        ( !empty($referring_physician[phymname]) ? " " : "").
+        $referring_physician[phymname]." ".
+        $referring_physician[phylname];
+     $refphy[upin]      = $referring_physician[phyupin];
 
      // check for guarantor information
      if ($this_patient->local_record[ptdep] == 0) {
@@ -216,15 +242,31 @@
      } else {
        // if it is someone else, get *their* information
        $guarantor = new Patient ($this_patient->local_record[ptdep]);
-       ########  NOT COMPLETED YET ###########
+       $guarsex[male]     = ( ($guarantor->ptsex == "m") ?
+                               $this_form[ffcheckchar] : " " );
+       $guarsex[female]   = ( ($guarantor->ptsex == "f") ?
+                               $this_form[ffcheckchar] : " " );
+       $guarsex[trans]    = ( ($guarantor->ptsex == "t") ?
+                               $this_form[ffcheckchar] : " " );
+       $guaraddr[line1]   = $this_patient->local_record["ptaddr1"  ];
+       $guaraddr[line2]   = $this_patient->local_record["ptaddr2"  ];
+       $guaraddr[city]    = $this_patient->local_record["ptcity"   ];
+       $guaraddr[state]   = $this_patient->local_record["ptstate"  ];
+       $guaraddr[zip]     = $this_patient->local_record["ptzip"    ];
+
+       $insco[number]     = $guarantor->local_record["ptinsno".
+                            ($b_r[payreclink]+1)];
+       $insco[group]      = $guarantor->local_record["ptinsgrp".
+                            ($b_r[payreclink]+1)];
+       // PULL INSCO  HERE IF GUARANTOR !!!!!!!!!!!!!!!!!!!!!
+       //       FIIIIIIIIIX MEEEEEEEEEEEE!
      } // end checking for dependant
 
      if ($debug) echo "\nRunning through charges/procedures ... <BR>\n";
-
      flush();
 
      // zero current number of charges
-     $number_of_charges = 0;
+     $number_of_charges = 0; $total_charges = 0; $total_paid = 0;
      // and zero the arrays
      for ($j=0;$j<=$this_form[ffloopnum];$j++)
        $itemdate[$j]   = $itemdate_m[$j]  = $itemdate_d[$j]  =
@@ -262,8 +304,16 @@
          echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
          flush();
 
+         $ptdiag = $diag_set->internal_stack; // get pt diagnoses
+         $current_balance = bcadd ($total_charges - $total_paid, 0, 2);
+         $total_charges   = bcadd ($total_charges, 0, 2);
+         $total_paid      = bcadd ($total_paid,    0, 2);
+
          // drop the current form to the buffer
          $form_buffer .= render_fixedForm ($whichform);
+         $total_paid = $total_charges   =
+                       $current_balance = 0;  // zero the charges
+
          // reset the counter to 1, for the first...
          $number_of_charges = 1;
          // and zero the arrays
@@ -290,7 +340,7 @@
        $itemdate_d  [$number_of_charges] = substr($p[procdt], 8, 2);
        $itemdate_y  [$number_of_charges] = substr($p[procdt], 0, 4);
        $itemdate_sy [$number_of_charges] = substr($p[procdt], 2, 2);
-       $itemcharges [$number_of_charges] = $p[proccharges];
+       $itemcharges [$number_of_charges] = bcadd($p[procbalcurrent],0,2);
        $itemunits   [$number_of_charges] = $p[procunits];
        $itempos     [$number_of_charges] = $p[procpos];
        $itemvoucher [$number_of_charges] = $p[procvoucher];
@@ -302,10 +352,19 @@
        $itemdiagref [$number_of_charges] =
           $diag_set->xrefList ($p[procdiag1], $p[procdiag2],
                                $p[procdiag3], $p[procdiag4]);
+       $total_paid    += $p[procamtpaid];
+       $total_charges += $itemcharges[$number_of_charges];
+       if ($debug) echo "\ndiagref = $itemdiagref[$number_of_charges] <BR>\n";
      } // end of looping for all charges
+
+     $ptdiag = $diag_set->internal_stack; // get pt diagnoses
+     $current_balance = bcadd($total_charges - $total_paid, 0, 2);
+     $total_charges   = bcadd($total_charges, 0, 2);
+     $total_paid      = bcadd($total_paid,    0, 2);
 
      // render last form
      $form_buffer .= render_fixedForm ($whichform);
+     $total_paid = $total_charges = $current_balance = 0;  // zero the charges
 
    } // end of while there are no more patients
 
@@ -314,7 +373,7 @@
    ########################################################################
 
    echo "
-    <FORM ACTION=\"echo.php3\" METHOD=POST>
+    <FORM ACTION=\"echo.php3/hcfa.txt\" METHOD=POST>
      <CENTER>
       <$STDFONT_B><B>Preview</B><$STDFONT_E>
      </CENTER>
@@ -323,6 +382,10 @@
      >".fm_prep($form_buffer)."</TEXTAREA>
     <P>
     <CENTER>
+     <SELECT NAME=\"type\">
+      <OPTION VALUE=\"\">Render to Screen
+      <OPTION VALUE=\"".urlencode("file/text")."\">Render to File
+     </SELECT>
      <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
     </CENTER>
     </FORM>
