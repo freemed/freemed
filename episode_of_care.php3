@@ -664,6 +664,7 @@
    $result = fdb_query ($query);
   
    $r_name = $record_name; // backup
+   $_auth = "proceoc=".urlencode($id);  
    $record_name = "Procedure";
    echo freemed_display_itemlist (
      $result,
@@ -705,6 +706,7 @@
              ORDER BY pnotesdt DESC";
    $result = fdb_query ($query);
      
+   $_auth = "pnoteseoc=".urlencode($id);  
    $record_name = "Progress Notes";
    echo freemed_display_itemlist (
      $result,
