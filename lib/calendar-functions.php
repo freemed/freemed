@@ -166,7 +166,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       BORDER=0 VALIGN=CENTER ALIGN=CENTER>
       <TR BGCOLOR=#000000><TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER
        VALIGN=CENTER>
-       <B>$datestring</B> - <I>".$current_imap["count"].
+       <B>$datestring</B> - <I>".$current_imap["count"]." ".
          _("appointment(s)")."</I>
       </TD></TR>
     ";
