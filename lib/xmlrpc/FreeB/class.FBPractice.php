@@ -54,15 +54,15 @@ class FBPractice {
 	} // end method PhoneExtension
 
 	function PracticeID ( $prac, $pay, $prov ) {
-		$p = freemed::get_link_rec($prov, 'physician');
-		$map = unserialize($p['phyidmap']);
-		return $map[$pay]['id'];
+		$p = freemed::get_link_rec($pay, 'insco');
+		$map = unserialize($p['inscoidmap']);
+		return $map[$prov]['id'];
 	} // end method PracticeID
 
 	function GroupID ( $prac, $pay, $prov ) {
-		$p = freemed::get_link_rec($prov, 'physician');
-		$map = unserialize($p['phyidmap']);
-		return $map[$pay]['group'];
+		$p = freemed::get_link_rec($pay, 'insco');
+		$map = unserialize($p['inscoidmap']);
+		return $map[$prov]['group'];
 	} // end method GroupID
 
 	function isAcceptsAssignment ( $prac ) {
