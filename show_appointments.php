@@ -42,7 +42,7 @@ if ($patient>0) {
 		break;
 
 		case "pat": case "default": default:
-		$qualifier .= " AND (caltype='pat')";
+		$qualifier .= " AND (caltype != 'temp')";
 		$master_patient_link_location =
 			"manage.php?id=$patient";
 		break;
@@ -106,12 +106,13 @@ while ($r = $sql->fetch_array ($result)) {
 	if ($calminute==0) $calminute="00";
 
 	// time checking/creation if/else clause
-	if ($r["calhour"]<12)
-	$_time = $r["calhour"].":".$calminute." am";
-	elseif ($r["calhour"]==12)
-	$_time = $r["calhour"].":".$calminute." pm";
-	else
-	$_time = ($r["calhour"]-12).":".$calminute." pm";
+	if ($r["calhour"]<12) {
+		$_time = $r["calhour"].":".$calminute." am";
+	} elseif ($r["calhour"]==12) {
+		$_time = $r["calhour"].":".$calminute." pm";
+	} else {
+		$_time = ($r["calhour"]-12).":".$calminute." pm";
+	}
 
 	$calpatient = $r["calpatient"];
 	// prepare the patient and physician names

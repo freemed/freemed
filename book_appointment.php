@@ -108,13 +108,13 @@ $form .= "
 		array('refresh' => true)
 	),
 
-	"<SMALL>Rm</SMALL>" =>
+	"<small>Rm</small>" =>
 	html_form::select_widget(
 		"room",
 		( $travel ? array ( _("Travel") => "0" ) :
 		freemed::query_to_array(
 			"SELECT CONCAT(room.roomname,' (',".
-			"facility.psrcity,"."', ',facility.psrstate,')') AS k,".
+			"facility.psrcity,', ',facility.psrstate,')') AS k,".
 			"room.id AS v ".
 			"FROM room,facility ".
 			"WHERE room.roompos=facility.id AND ".
@@ -312,7 +312,7 @@ $form .= "
 if ($process) {
 	// Process form here
 	$page_title = _("Add Appointment");
-	$display_buffer .= "<CENTER>"._("Adding")." ... ";
+	$display_buffer .= "<div ALIGN=\"CENTER\">"._("Adding")." ... ";
 
 	// Travel kludge modifications
 	if ($travel) {
@@ -321,6 +321,9 @@ if ($process) {
 		$calpatient  = 0;
 		$calprenote  = _("Travel");
 	}
+
+	// Get facility from room
+	$facility = freemed::get_link_field($room, "room", "roompos");
 
 	$query = $sql->insert_query(
 		"scheduler",
@@ -344,22 +347,22 @@ if ($process) {
 	if ($result) { $display_buffer .= _("done")."."; }
 	 else        { $display_buffer .= _("ERROR");    }
 
-	$display_buffer .= " </CENTER> <P> <CENTER>\n";
+	$display_buffer .= " </div> <p/> <div ALIGN=\"CENTER\">\n";
 	if (!$travel) {
-		if ($type=="pat") {
-			//$refresh = "manage.php?id=".urlencode($patient);
+		if ($type != "temp") {
+			$refresh = "manage.php?id=".urlencode($patient);
 			$display_buffer .= "
-			<A HREF=\"manage.php?id=$patient\"
-			>"._("Manage Patient")."</A>
-			</CENTER>
+			<a HREF=\"manage.php?id=$patient\"
+			>"._("Manage Patient")."</a>
+			</div>
 			";
 		} else {
-			//$refresh = "call-in.php?action=display&id=".
+			$refresh = "call-in.php?action=display&id=".
 				urlencode($patient);
 			$display_buffer .= "
-			<A HREF=\"call-in.php?action=display&id=$patient\"
-			>"._("Manage Patient")."</A>
-			</CENTER>
+			<a HREF=\"call-in.php?action=display&id=$patient\"
+			>"._("Manage Patient")."</a>
+			</div>
 			";
 		} // end checking type
 	} else {
