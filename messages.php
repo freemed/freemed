@@ -1,6 +1,6 @@
 <?php
- // $Id$
- // lic : GPL, v2
+	// $Id$
+	// lic : GPL, v2
 
 $page_name = "messages.php";          // page name
 include_once ("lib/freemed.php");          // global variables
@@ -46,6 +46,13 @@ switch ($action) {
 	// Set page title
 	$page_title = __("Add")." ".__($record_name);
 
+	// Create a send stamp
+	if (!$_REQUEST['been_here']) {
+		$sendstamp = mktime();
+	} else {
+		$sendstamp = $_REQUEST['send_stamp'];
+	}
+
 	// Push onto stack
 	page_push();
 
@@ -73,6 +80,7 @@ switch ($action) {
 	<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"send_stamp\" VALUE=\"".prepare($sendstamp)."\"/>
 	<div ALIGN=\"CENTER\">
 	".html_form::form_table(array(
 		__("For") =>
@@ -139,6 +147,12 @@ switch ($action) {
 	break; // end action addform
 
 	case "add":
+	// Make sure duplicates are not sent
+	if ($_SESSION['message_send_stamp'][$_REQUEST['send_stamp']]) {
+		trigger_error(__("This message has been sent multiple times."), E_USER_ERROR);
+	} else {
+		$_SESSION['message_send_stamp'][$_REQUEST['send_stamp']] = true;
+	}
 	$page_title = __("Adding")." ".__("Message");
 	$display_buffer .= "\n<div align=\"center\">".
 		__("Adding")." ".__("Message")." ... \n";
