@@ -241,12 +241,12 @@ switch ($action) { // master action switch
   ";
   $query = "INSERT INTO $database.facility VALUES (
     '".addslashes($psrname).         "',
-    '".addslashes($psraddr1).        "',     
+    '".addslashes($psraddr1).        "',
     '".addslashes($psraddr2).        "',
-    '".addslashes($psrcity).         "',      
+    '".addslashes($psrcity).         "',
     '".addslashes($psrstate).        "',
-    '".addslashes($psrzip).          "',       
-    '".addslashes($psrcountry).      "',                 .
+    '".addslashes($psrzip).          "',
+    '".addslashes($psrcountry).      "',
     '".addslashes($psrnote).         "',
     '".addslashes($cur_date).        "', 
     '".addslashes($psrdefphy).       "',
