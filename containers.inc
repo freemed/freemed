@@ -5,10 +5,6 @@
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-// check to see if global vars is loaded...
-if (!defined(PACKAGENAME))
-  DIE("global.var.inc has not been loaded before containers.inc -- fatal");
-
 if (!defined (__CONTAINERS_INC__)) {
 
 define (__CONTAINERS_INC__, true);

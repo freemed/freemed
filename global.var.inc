@@ -11,6 +11,8 @@
 
 if (!defined(__GLOBAL_VAR_INC__)) {
 
+define (__GLOBAL_VAR_INC__, true);
+
     // these variables you should not touch
   define (PACKAGENAME, "freemed");	// package name
   define (CODED_BY, "jeff b");		// coded by tag
