@@ -1,6 +1,16 @@
 freemed project changelog
 ($Id$)
 
+* Wed Jan 24 2001 rufustfirefly
+  - added David Jordan's patch for book_appointment module
+
+* Tue Jan 23 2001 rufustfirefly
+  - slight updates to README
+  - moved icd9.php3 -> modules/icd.module.php
+  - moved fixed_forms.php3 -> modules/fixed_forms.module.php
+  - commented out all static references in db_maintenance module
+  - updated phpwebtools to sort listings of modules...
+
 * Fri Jan 19 2001 rufustfirefly
   - moved diagnosis_family.php3 -> modules/diagnosis_family.module.php
   - fixed insurance company module to have name and version (oops!)

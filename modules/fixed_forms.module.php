@@ -1,22 +1,43 @@
 <?php
- // file: fixed_forms.php3
+ // $Id$
  // desc: fixed type forms editing engine
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name   = "fixed_forms.php3";
- $record_name = "Fixed Form";
- $db_name     = "fixedform";
+if (!defined("__FIXED_FORMS_MODULE_PHP__")) {
 
- include ("lib/freemed.php");
- include ("lib/API.php");
+define (__FIXED_FORMS_MODULE_PHP__, true);
 
- freemed_open_db ($LoginCookie);
- freemed_display_html_top ();
+class fixedFormsMaintenance extends freemedMaintenanceModule {
 
- switch ($action) {
-  // trying to combine add and modify forms for simplicity
-  case "addform": case "modform":
+	var $MODULE_NAME	= "Fixed Forms Maintenance";
+	var $MODULE_VERSION	= "0.1";
+
+	var $record_name	= "Fixed Form";
+	var $table_name		= "fixedform";
+
+	var $variables		= array (
+		"ffname",
+		"ffdescrip",
+		"fftype",
+		"ffpagelength",
+		"fflinelength",
+		"ffloopnum",
+		"ffloopoffset",
+		"ffcheckchar",
+		"ffrow",
+		"ffcol",
+		"fflength",
+		"ffdata",
+		"ffformat",
+		"ffcomment"
+	);
+
+	function fixedFormsMaintenance () {
+		$this->freemedMaintenanceModule();
+	} // end constructor fixedFormsMaintenance
+
+	function form () {
+		foreach ($GLOBALS as $k => $v) global $$k;
    switch ($action) {
      case "addform":
       $go = "add";
@@ -27,7 +48,6 @@
       $this_action = _("Modify");
        // check to see if an id was submitted
       if ($id<1) {
-       freemed_display_box_top (_($record_name)." :: "._("ERROR"));
        echo "
          "._("You must select a record to modify.")."
        ";
@@ -42,20 +62,13 @@
         $query  = "SELECT * FROM $db_name WHERE id='$id'";
         $result = $sql->query ($query);
         $r      = $sql->fetch_array ($result);
-        $ffname       = $r["ffname"      ];
-        $ffdescrip    = $r["ffdescrip"   ];
-        $fftype       = $r["fftype"      ]; 
-        $ffcheckchar  = $r["ffcheckchar" ];
-        $ffpagelength = $r["ffpagelength"];
-        $fflinelength = $r["fflinelength"];
-        $ffloopnum    = $r["ffloopnum"   ];
-        $ffloopoffset = $r["ffloopoffset"];
-        $row          = fm_split_into_array ($r["ffrow"]);
-        $col          = fm_split_into_array ($r["ffcol"]);
-        $len          = fm_split_into_array ($r["fflength"]);
-        $data         = fm_split_into_array ($r["ffdata"]);
-        $format       = fm_split_into_array ($r["ffformat"]);
-        $comment      = fm_split_into_array ($r["ffcomment"]);
+		extract ($r);
+        $row          = fm_split_into_array ($ffrow);
+        $col          = fm_split_into_array ($ffcol);
+        $len          = fm_split_into_array ($fflength);
+        $data         = fm_split_into_array ($ffdata);
+        $format       = fm_split_into_array ($ffformat);
+        $comment      = fm_split_into_array ($ffcomment);
         break;
       } // end checking if we have been here yet...
    } // end of interior switch
@@ -64,7 +77,6 @@
    for ($i=0;$i<=20;$i++) ${"_type_".$i} = "";
    ${"_type_".$fftype} = "SELECTED";
 
-   freemed_display_box_top ("$this_action "._($record_name));
    $cur_line_count = 0; // zero the current line count (displayed)
    $prev_line_total = count ($row); // previous # of lines
      // display the top of the repetitive table
@@ -73,8 +85,9 @@
      $first_insert = true;
    }
    echo "
-    <FORM ACTION=\"$page_name\" METHOD=POST>
+    <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
+     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
      <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
@@ -240,145 +253,48 @@
      <INPUT TYPE=SUBMIT VALUE=\"go!\">
      </CENTER>
     ";
-    freemed_display_box_bottom ();
-   break;
+	} // end function fixedFormsMaintenance->form
 
-  case "add":
-   freemed_display_box_top (_("Adding")." "._($record_name));
-   echo "
-     <CENTER><$STDFONT_B>"._("Adding")." ...
-   ";
-   // check to see if we need to compact into a string...
-   if (count($row)>0) {
-     $row_a     = fm_join_from_array ($row    );
-     $col_a     = fm_join_from_array ($col    );
-     $len_a     = fm_join_from_array ($len    );
-     $data_a    = fm_join_from_array ($data   );
-     $format_a  = fm_join_from_array ($format );
-     $comment_a = fm_join_from_array ($comment);
-   } else {
-     $row_a     = $row;
-     $col_a     = $col;
-     $len_a     = $len;
-     $data_a    = $data;
-     $format_a  = $format;
-     $comment_a = $comment;
-   }
-   $query = "INSERT INTO $db_name VALUES (
-     '".addslashes($ffname)."',
-     '".addslashes($ffdescrip)."',
-     '".addslashes($fftype)."',
-     '".addslashes($ffpagelength)."',
-     '".addslashes($fflinelength)."',
-     '".addslashes($ffloopnum)."',
-     '".addslashes($ffloopoffset)."',
-     '".addslashes($ffcheckchar)."',
-     '".addslashes($row_a)."',
-     '".addslashes($col_a)."',
-     '".addslashes($len_a)."',
-     '".addslashes($data_a)."',
-     '".addslashes($format_a)."',
-     '".addslashes($comment_a)."',
-     NULL )";
-   $result = $sql->query ($query);
-   if ($result) { echo "<B>"._("done").".</B>"; }
-    else        { echo "<B>"._("ERROR")."</B>"; }
-   echo "
-     <$STDFONT_E></CENTER>
-     <P>
-     <CENTER><A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A></CENTER>
-     <BR>
-   ";
-   freemed_display_box_bottom ();
-   break;
+	function add () {
+		foreach ($GLOBALS as $k => $v) global $$k;
+		$GLOBALS["ffrow"    ] = fm_join_from_array ($row    );
+		$GLOBALS["ffcol"    ] = fm_join_from_array ($col    );
+		$GLOBALS["fflength" ] = fm_join_from_array ($len    );
+		$GLOBALS["ffdata"   ] = fm_join_from_array ($data   );
+		$GLOBALS["ffformat" ] = fm_join_from_array ($format );
+		$GLOBALS["ffcomment"] = fm_join_from_array ($comment);
+		$this->_add();
+	} // end function fixedFormsMaintenance->add
 
-  case "mod":
-   freemed_display_box_top (_("Modifying")." "._($record_name));
-   echo "
-     <P><CENTER>
-     <$STDFONT_B>"._("Modifying")." ...
-   ";
+	function mod () {
+		foreach ($GLOBALS as $k => $v) global $$k;
+		$ffrow     = fm_join_from_array ($row    );
+		$ffcol     = fm_join_from_array ($col    );
+		$fflength  = fm_join_from_array ($len    );
+		$ffdata    = fm_join_from_array ($data   );
+		$ffformat  = fm_join_from_array ($format );
+		$ffcomment = fm_join_from_array ($comment);
+		$this->_mod();
+	} // end function fixedFormsMaintenance->mod
 
-   // prepare data for squash
-   $row_a     = fm_join_from_array ($row    );
-   $col_a     = fm_join_from_array ($col    );
-   $len_a     = fm_join_from_array ($len    );
-   $data_a    = fm_join_from_array ($data   );
-   $format_a  = fm_join_from_array ($format );
-   $comment_a = fm_join_from_array ($comment);
+	function view () {
+		global $sql;
+		echo freemed_display_itemlist (
+			$sql->query ("SELECT * FROM $this->table_name ".
+				"ORDER BY ffname, ffdescrip"),
+			$this->page_name,
+			array (
+				_("Name")			=>	"ffname",
+				_("Description")	=>	"ffdescrip"
+			),
+			array ( "", _("NO DESCRIPTION") )
+		);  
+	} // end function fixedFormsMaintenance->view     
 
-   // do query
-   $query = "UPDATE $db_name SET
-      ffname       = '".addslashes($ffname)."',
-      ffdescrip    = '".addslashes($ffdescrip)."',
-      fftype       = '".addslashes($fftype)."',
-      ffpagelength = '".addslashes($ffpagelength)."',
-      fflinelength = '".addslashes($fflinelength)."',
-      ffloopnum    = '".addslashes($ffloopnum)."',
-      ffloopoffset = '".addslashes($ffloopoffset)."',
-      ffcheckchar  = '".addslashes($ffcheckchar)."',
-      ffrow        = '".addslashes($row_a)."',
-      ffcol        = '".addslashes($col_a)."',
-      fflength     = '".addslashes($len_a)."',
-      ffdata       = '".addslashes($data_a)."',
-      ffformat     = '".addslashes($format_a)."',
-      ffcomment    = '".addslashes($comment_a)."'
-      WHERE id='".addslashes($id)."'";
-   $result = $sql->query ($query);
-   if ($debug) echo "query = \"$query\" <BR>";
-   if ($result) { echo "<B>"._("done").".</B>"; }
-    else        { echo "<B>"._("ERROR")."</B>"; }
-   echo "
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER>
-    "; 
-   freemed_display_box_bottom ();
-   break;
+} // end class fixedFormsMaintenance
 
-  case "del": case "delete":
-   freemed_display_box_top (_("Deleting")." "._($record_name));
-   echo "
-    <P><CENTER>
-    <$STDFONT_B>"._("Deleting")." ...
-    ";
-   $query = "DELETE * FROM $db_name WHERE id='".addslashes($id)."'";
-   $result = $sql->query ($query);
-   if ($result) { echo "<B>"._("done").".</B>"; }
-    else        { echo "<B>"._("ERROR")."</B>"; }  
-   echo "
-    <$STDFONT_E>
-    </CENTER>
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER> 
-   ";
-   freemed_display_box_bottom ();
-   break;
+register_module ("fixedFormsMaintenance");
 
-  default: // default action -- menu
-   freemed_display_box_top (_($record_name));
-   $result = $sql->query ("SELECT * FROM $db_name
-                         ORDER BY ffname, ffdescrip");
-   echo freemed_display_itemlist (
-     $sql->query ("SELECT * FROM $db_name ORDER BY ffname, ffdescrip"),
-     $page_name,
-     array (
-	_("Name")		=>	"ffname",
-	_("Description")	=>	"ffdescrip"
-     ),
-     array ( "", _("NO DESCRIPTION") )
-   );  
-     
-   freemed_display_box_bottom ();
-   break;
- } // end master switch
+} // end if not defined
 
- freemed_close_db ();
- freemed_display_html_bottom ();
 ?>

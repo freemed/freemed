@@ -38,39 +38,25 @@ echo "
 	<CENTER>
     <$STDFONT_B>
 
-     <A HREF=\"fixed_forms.php3?$_auth\"
-      >"._("Fixed Forms")."</A>
-     <BR>
+	<!-- modules that still need to be converted ...
 
      <A HREF=\"frmlry.php3?$_auth\"
       >"._("Formulary")."</A>
      <BR>
 
-     <A HREF=\"icd9.php3?$_auth\"
-      >"._("ICD Codes")."</A>
-     <BR>
-
-     <!-- not ready for prime time yet....
      <A HREF=\"phy_avail_map.php3?$_auth\"
       >"._("Physician Availability Map")."</A>
-     <BR>
-     -->
-
-     <A HREF=\"room.php?$_auth\"
-      >"._("Rooms")." (<I>"._("Scheduling Locations")."</I>)</A>
      <BR>
 
      <A HREF=\"simplerep.php3?$_auth\"
       >"._("Simple Reports")."</A>
      <BR>
 
-     <!-- doesn't work right now
      <A HREF=\"select_printers.php3?$_auth\"
       >"._("Printers")."</A>
      <BR>
-     -->
 
-	<B>Dynamic Modules:</B><BR>
+     -->
 
 "; // end of static listing
 
