@@ -22,7 +22,7 @@ switch($action) {
  case "modform": case "mod": // in notebook implementation
   $book = new notebook (
     array ("action", "_auth", "id", "been_here"),
-    NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR );
+    NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR, 4 );
   $book->set_submit_name("OK"); // not sure what this does...
   
   if (($action=="modform") AND (empty($been_here))) { // load the values
