@@ -20,7 +20,7 @@
 switch($action) {
  case "addform": case "add": // 'form' actions not necessary
  case "modform": case "mod": // in notebook implementation
-  $book = new notebook ($page_name,
+  $book = new notebook (
     array ("action", "_auth", "id", "been_here"), true );
   $book->set_submit_name("OK"); // not sure what this does...
   
@@ -91,7 +91,7 @@ switch($action) {
   $stat_r = fdb_query($stat_q); // have the result ready for display_selectbox
 
   $book->add_page (
-    "Primary Information",
+    _("Primary Information"),
     array (
       "phylname", "phyfname", "phytitle", "phymname",
       "phytitle", "phypracname", "phyid1", "phystatus"
@@ -99,43 +99,43 @@ switch($action) {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Last_name : <$STDFONT_E>
+    <$STDFONT_B>"._("Last name")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phylname SIZE=25 MAXLENGTH=52
      VALUE=\"$phylname\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$First_name : <$STDFONT_E>
+    <$STDFONT_B>"._("First name")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyfname SIZE=25 MAXLENGTH=50
      VALUE=\"$phyfname\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Middle_Name : <$STDFONT_E>
+    <$STDFONT_B>"._("Middle Name")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phymname SIZE=25 MAXLENGTH=50
      VALUE=\"$phymname\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Title : <$STDFONT_E>
+    <$STDFONT_B>"._("Title")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phytitle SIZE=10 MAXLENGTH=10
      VALUE=\"$phytitle\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Practice_Name : <$STDFONT_E>
+    <$STDFONT_B>"._("Practice Name")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phypracname SIZE=25 MAXLENGTH=30
      VALUE=\"$phypracname\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Internal_ID # : <$STDFONT_E>
+    <$STDFONT_B>"._("Internal ID #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyid1 SIZE=11 MAXLENGTH=10
      VALUE=\"$phyid1\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Status : <$STDFONT_E>
+    <$STDFONT_B>"._("Status")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".
     freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
@@ -157,18 +157,18 @@ switch($action) {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT> 
-    <$STDFONT_B>$Email_Address : <$STDFONT_E>
+    <$STDFONT_B>"._("Email Address")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
      VALUE=\"$phyemail\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Cellular_Phone # : <$STDFONT_E>
+    <$STDFONT_B>"._("Cellular Phone #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phycellular")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$BeeperPager # : <$STDFONT_E>
+    <$STDFONT_B>"._("Beeper / Pager #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phypager")."
     </TD></TR>
@@ -177,7 +177,7 @@ switch($action) {
   );
  
   $book->add_page (
-    "Address",
+    _("Address"),
     array (
      "phyaddr1a", "phyaddr2a", "phycitya", "phystatea", "phyphonea", "phyzipa",
      "phyphonea_1", "phyphonea_2", "phyphonea_3", "phyphonea_4",
@@ -189,50 +189,50 @@ switch($action) {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Primary_Address_Line 1 : <$STDFONT_E>
+    <$STDFONT_B>"._("Primary Address Line 1")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr1a SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr1a\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Primary_Address_Line 2 : <$STDFONT_E>
+    <$STDFONT_B>"._("Primary Address Line 2")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr2a SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr2a\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Primary_Address_City : <$STDFONT_E>
+    <$STDFONT_B>"._("Primary Address City")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phycitya SIZE=21 MAXLENGTH=20
      VALUE=\"$phycitya\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Primary_Address_State : <$STDFONT_E>
+    <$STDFONT_B>"._("Primary Address State")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phystatea SIZE=6 MAXLENGTH=5
      VALUE=\"$phystatea\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Primary_Address_Zip : <$STDFONT_E>
+    <$STDFONT_B>"._("Primary Address Zip")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyzipa SIZE=10 MAXLENGTH=10
      VALUE=\"$phyzipa\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Primary_Address_Phone # : <$STDFONT_E>
+    <$STDFONT_B>"._("Primary Address Phone #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyphonea")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Primary_Address_Fax # : <$STDFONT_E>
+    <$STDFONT_B>"._("Primary Address Fax #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyfaxa")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>Has Second Address : <$STDFONT_E>
+    <$STDFONT_B>"._("Has Second Address")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=CHECKBOX NAME=\"has_second_addr\" ".
-    ($has_second_addr ? "CHECKED" : "").">". //$book->generate_refresh()."
+    ($has_second_addr ? "CHECKED" : "").">". 
     "</TD></TR>
    </TABLE>
 
@@ -241,7 +241,7 @@ switch($action) {
 
   if ($has_second_addr)
     $book->add_page (
-      "Address 2",
+      _("Address 2"),
       array (
        "phyphoneb_1", "phyphoneb_2", "phyphoneb_3", "phyphoneb_4",
        "phyphoneb_5",
@@ -252,42 +252,42 @@ switch($action) {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Secondary_Address_Line 1 : <$STDFONT_E>
+    <$STDFONT_B>"._("Secondary Address Line 1")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr1b SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr1b\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Secondary_Address_Line 2 : <$STDFONT_E>
+    <$STDFONT_B>"._("Secondary Address Line 2")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyaddr2b SIZE=25 MAXLENGTH=30
      VALUE=\"$phyaddr2b\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Secondary_Address_City : <$STDFONT_E>
+    <$STDFONT_B>"._("Secondary Address City")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phycityb SIZE=20 MAXLENGTH=20
      VALUE=\"$phycityb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Secondary_Address_State : <$STDFONT_E>
+    <$STDFONT_B>"._("Secondary Address State")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phystateb SIZE=6 MAXLENGTH=5
      VALUE=\"$phystateb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Secondary_Address_Zip : <$STDFONT_E>
+    <$STDFONT_B>"._("Secondary Address Zip")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyzipb SIZE=10 MAXLENGTH=10
      VALUE=\"$phyzipb\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Secondary_Address_Phone # : <$STDFONT_E>
+    <$STDFONT_B>"._("Secondary Address Phone #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyphoneb")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Secondary_Address_Fax # : <$STDFONT_E>
+    <$STDFONT_B>"._("Secondary Address Fax #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyfaxb")."
     </TD></TR>
@@ -303,7 +303,7 @@ switch($action) {
   $spec_r = fdb_query($spec_q);
 
   $book->add_page(
-    "Personal",
+    _("Personal"),
     array (
       "phyupin", "phyref",
       "physsn1", "physsn2", "physsn3", 
@@ -313,13 +313,13 @@ switch($action) {
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
     <TR><TD ALIGN=RIGHT>
-     <$STDFONT_B>$UPIN_Number : <$STDFONT_E>
+     <$STDFONT_B>"._("UPIN Number")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=phyupin SIZE=16 MAXLENGTH=15
      VALUE=\"$phyupin\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Social_Security # : <$STDFONT_E>
+    <$STDFONT_B>"._("Social Security #")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=TEXT NAME=physsn1 SIZE=4 MAXLENGTH=3
      VALUE=\"$physsn1\"> <B>-</B>
@@ -329,49 +329,49 @@ switch($action) {
      VALUE=\"$physsn3\">
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Degree 1 : <$STDFONT_E>
+    <$STDFONT_B>"._("Degree 1")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($phy_deg_r, 
        "#degdegree#, #degname#", "phydeg1")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Degree 2 : <$STDFONT_E>
+    <$STDFONT_B>"._("Degree 2")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($phy_deg_r, 
        "#degdegree#, #degname#", "phydeg2")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Degree 3 : <$STDFONT_E>
+    <$STDFONT_B>"._("Degree 3")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($phy_deg_r, 
        "#degdegree#, #degname#", "phydeg3")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Specialty 1 : <$STDFONT_E>
+    <$STDFONT_B>"._("Specialty 1")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($spec_r, 
        "#specname#, #specdesc#", "physpe1")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Specialty 2 : <$STDFONT_E>
+    <$STDFONT_B>"._("Specialty 2")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($spec_r, 
        "#specname#, #specdesc#", "physpe2")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Specialty 3 : <$STDFONT_E>
+    <$STDFONT_B>"._("Specialty 3")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($spec_r, 
        "#specname#, #specdesc#", "physpe3")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>Physician Internal/External<$STDFONT_E>
+    <$STDFONT_B>"._("Physician Internal/External")."<$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <SELECT NAME=\"phyref\">
       <OPTION VALUE=\"no\" ".
-       ( ($phyref != "yes") ? "SELECTED" : "" ).">In-House
+       ( ($phyref != "yes") ? "SELECTED" : "" ).">"._("In-House")."
       <OPTION VALUE=\"yes\" ".
-       ( ($phyref == "yes") ? "SELECTED" : "" ).">Referring
+       ( ($phyref == "yes") ? "SELECTED" : "" ).">"._("Referring")."
     </SELECT>
     </TD></TR>
   
@@ -398,7 +398,7 @@ switch($action) {
   } // end looping for service types
 
   $book->add_page(
-    "Charge Map",
+    _("Charge Map"),
     array (
       "phychargemap"
     ),
@@ -410,8 +410,8 @@ switch($action) {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR BGCOLOR=#aaaaaa>
-     <TD><B>Internal Type</B></TD>
-     <TD><B>Amount</B></TD>
+     <TD><B>"._("Internal Type")."</B></TD>
+     <TD><B>"._("Amount")."</B></TD>
     </TR>
     $cmap_buf
     </TABLE>
@@ -435,7 +435,7 @@ switch($action) {
   } // end looping for service types
 
   $book->add_page(
-    "Insurance IDs",
+    _("Insurance IDs"),
     array (
       "phyidmap"
     ),
@@ -449,8 +449,8 @@ switch($action) {
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR BGCOLOR=#aaaaaa>
-     <TD><B>Insurance Group</B></TD>
-     <TD><B>ID Number</B></TD>
+     <TD><B>"._("Insurance Group")."</B></TD>
+     <TD><B>"._("ID Number")."</B></TD>
     </TR>
     $insmap_buf
     </TABLE>
@@ -458,7 +458,7 @@ switch($action) {
     "
   );
   // now display the thing
-  freemed_display_box_top("$action_name $record_name", $page_name);
+  freemed_display_box_top(_("$action_name $record_name"), $page_name);
   if (!$book->is_done()) {
     echo "<CENTER>\n";
     $book->display();
@@ -466,8 +466,8 @@ switch($action) {
     <P ALIGN=CENTER>
      <$STDFONT_B>
      <A HREF=\"$page_name?$_auth\">
-      Abandon ".( (($action=="modform") OR ($action=="mod")) ? 
-      "Modification" : "Addition")."
+      "._("Abandon ".( (($action=="modform") OR ($action=="mod")) ? 
+      "Modification" : "Addition") )."
      </A>
      <$STDFONT_E>
     ";
@@ -475,7 +475,7 @@ switch($action) {
     if ($action=="modform") {
       echo "
         <P ALIGN=CENTER>
-        <$STDFONT_B>$Modifying . . . <$STDFONT_E>
+        <$STDFONT_B>"._("Modifying")." . . . <$STDFONT_E>
       ";
 
       // reassemble phone #s
@@ -534,18 +534,18 @@ switch($action) {
       
       if ($result) {
         echo "
-	<$STDFONT_B>Done.<$STDFONT_E>
+	<$STDFONT_B>"._("Done").".<$STDFONT_E>
 	";
       } else { // error!
         echo "
-	<$STDFONT_B>Error! [$query, $result]<$STDFONT_E>
+	<$STDFONT_B>"._("Error")."! [$query, $result]<$STDFONT_E>
 	";
       }  
       // finished the mod database call
     } else if ($action=="addform") {
       echo "
     <P ALIGN=CENTER>
-    <$STDFONT_B>$Adding . . . 
+    <$STDFONT_B>"._("Adding")." . . . 
       ";
 
       // assemble phone #s
@@ -605,25 +605,25 @@ switch($action) {
 
       if ($result) {
         echo "
-	<$STDFONT_B>Done.<$STDFONT_E>
+	<$STDFONT_B>"._("Done").".<$STDFONT_E>
 	";
       } else { // error!
         echo "
-	<$STDFONT_B>Error! [$query, $result]<$STDFONT_E>
+	<$STDFONT_B>"._("Error")."! [$query, $result]<$STDFONT_E>
 	";
       }
     
     } else { // error
       echo "
         <P ALIGN=CENTER>
-	<$STDFONT_B>Trouble! \$action=$action!<$STDFONT_E>
+	<$STDFONT_B>"._("Error")."! \$action=$action!<$STDFONT_E>
 	</P>
       ";
     } // error handler
     echo "
     <P ALIGN=CENTER>
     <A HREF=\"$page_name?$_auth\">
-    <$STDFONT_B>Back to $record_name page<$STDFONT_E>
+    <$STDFONT_B>"._("Back to $record_name page")."<$STDFONT_E>
     </A>
     ";
   } // if executing the action
@@ -632,31 +632,32 @@ switch($action) {
  break; // master add/mod[form]
 
  case "delete":
-  freemed_display_box_top("Delete $record_name");
+  freemed_display_box_top(_("Deleting $record_name"));
   echo "<P ALIGN=CENTER><$STDFONT_B>Deleting...";
   $query = "DELETE FROM physician WHERE id='$id'";
   $result = fdb_query($query);
   if ($result) 
-    echo "Done.";
+    echo _("Done").".";
   else
-    echo "Error! [$query, $result]";
+    echo _("Error")."! [$query, $result]";
   echo "<$STDFONT_E>";
   echo "
   <P ALIGN=CENTER>
   <A HREF=\"$page_name?$_auth\">
-  <$STDFONT_B>Back to $record_name page<$STDFONT_E>
+  <$STDFONT_B>"._("Back to $record_name page")."<$STDFONT_E>
   </A>
   ";
   freemed_display_box_bottom();
  break;
 
  case "display" :
-  freemed_display_box_top("$record_name View");
+  freemed_display_box_top(_("$record_name View"));
   $phy = freemed_get_link_rec($id, "physician");
   echo "
+   <CENTER>
     <TABLE WIDTH=\"100%\">
      <TR><TD ALIGN=RIGHT>
-      <$STDFONT_B>Name : <$STDFONT_E>
+      <$STDFONT_B>"._("Name")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <$STDFONT_B>$phy[phyfname] 
           $phy[phymname] $phy[phylname], $phy[phytitle]<$STDFONT_E>
@@ -664,14 +665,15 @@ switch($action) {
 
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <$STDFONT_B><A HREF=\"physician.php3?$_auth&action=modform&id=$id\"
-       >Modify $record_name</A><$STDFONT_E>
+       >"._("Modify $record_name")."</A><$STDFONT_E>
      </TD></TR>
      
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <$STDFONT_B><A HREF=\"physician.php3?$_auth&id=$id\"
-       >Back to $record_name page</A><$STDFONT_E>
+       >"._("Back to $record_name page")."</A><$STDFONT_E>
      </TD></TR>
     </TABLE>
+   </CENTER>
   ";
   freemed_display_box_bottom();
  break;
@@ -684,8 +686,8 @@ switch($action) {
     $phy_r,
     "physician.php3",
     array (
-      "Last Name" => "phylname",
-      "First Name" => "phyfname"
+      _("Last Name") => "phylname",
+      _("First Name") => "phyfname"
     ),
     array (
       "",
