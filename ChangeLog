@@ -1,5 +1,9 @@
 freemed project changelog
 
+* Wed Nov 22 2000 rufustfirefly
+  - fixed calls to fm_date_entry() to echo, since it now returns buffer,
+    in all active modules
+
 * Tue Nov 14 2000 rufustfirefly - Version 0.2
   - fixed up the README to correspond with the final version of 0.2, with
     full installation instructions

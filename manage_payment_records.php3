@@ -345,9 +345,7 @@
        <TD ALIGN=RIGHT>
         <$STDFONT_B>Date of Action : <$STDFONT_E>
        </TD><TD ALIGN=LEFT>
-    ";
-    fm_date_entry ("date_of_action");
-    echo "
+    ".fm_date_entry ("date_of_action")."
        </TD>
       </TR>
 

@@ -286,9 +286,7 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Date of Last Visit")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-  ".
-  fm_date_entry ("procrefdt")
-  ."
+  ".fm_date_entry ("procrefdt")."
      </TD>
     </TR>
 

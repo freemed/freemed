@@ -94,9 +94,7 @@
         <P>
 
         <$STDFONT_B>$Starting_Date : <$STDFONT_E>
-     ";
-     fm_date_entry("rxdtfrom");
-     echo "
+     ".fm_date_entry("rxdtfrom")."
         <P>
 
         <$STDFONT_B>$Duration ($In_Days, $Infinite) : <$STDFONT_E>

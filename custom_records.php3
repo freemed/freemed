@@ -233,7 +233,7 @@
          <INPUT TYPE=HIDDEN NAME=\"answer".$i."_m\" VALUE=\"$this_m\">
          <INPUT TYPE=HIDDEN NAME=\"answer".$i."_d\" VALUE=\"$this_d\">
         ";
-       } else { fm_date_entry("answer$i"); }
+       } else { echo fm_date_entry("answer$i"); }
        break;
       case "select":
        $options = explode(",", $prtftypefor[$i]); // get options
