@@ -129,10 +129,10 @@ class AuthorizationsModule extends EMRModule {
 
 	$display_buffer .= html_form::form_table(array(
 		__("Starting Date") =>
-		date_entry("authdtbegin"),
+		fm_date_entry("authdtbegin"),
 
 		__("Ending Date") =>
-		date_entry("authdtend"),
+		fm_date_entry("authdtend"),
 
 		__("Authorization Number") =>
 		html_form::text_widget("authnum", 25),
@@ -199,10 +199,10 @@ class AuthorizationsModule extends EMRModule {
 		
 		return array (
 			__("Starting Date") =>
-			date_entry("authdtbegin"),
+			fm_date_entry("authdtbegin"),
 
 			__("Ending Date") =>
-			date_entry("authdtend"),
+			fm_date_entry("authdtend"),
 
 			__("Authorization Number") =>
 			html_form::text_widget("authnum", 25),
