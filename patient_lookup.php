@@ -112,14 +112,14 @@ switch ($action) {
 			window.self.close()
 		}
 		</SCRIPT>
-		<DIV ALIGN=\"CENTER\">
+		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::select_widget(
 			"list",	$pick_list
 		)."
-		</DIV>
+		<input TYPE=\"BUTTON\" NAME=\"select\" ".
+		"VALUE=\"Select\" onClick=\"my_process(); return true;\">
+		</div>
 	";
-	$display_buffer .= "<INPUT TYPE=\"BUTTON\" NAME=\"select\" ".
-		"VALUE=\"Select\" onClick=\"my_process(); return true;\">\n";
 	break;
 
 	default:
@@ -127,7 +127,8 @@ switch ($action) {
 		<INPUT TYPE=\"HIDDEN\" NAME=\"varname\" VALUE=\"".prepare($varname)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\">
-		<CENTER>
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\""._("Search")."\">
+		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::form_table(array(
 			"Last Name" =>
 			html_form::text_widget(
@@ -147,17 +148,17 @@ switch ($action) {
 				)
 			)
 		))."
-		</CENTER>
+		<input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+		</div>
 	";
-	$display_buffer .= "<INPUT TYPE=\"SUBMIT\" NAME=\"action\" ".
-		"VALUE=\""._("Search")."\">\n";
 	break;
 } // end switch
 
 //----- End of form
 $display_buffer .= "</FORM>\n";
 
-//----- KLUDGE: Dump display_buffer
-print $display_buffer;
+//----- Display template
+$no_template_display = true;
+template_display();
 
 ?>
