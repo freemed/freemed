@@ -143,7 +143,7 @@ $module_template = "#name#:#class#/";
 $class_hash = $module_list->generate_list ( "Electronic Medical Record",
 	0, $module_template );
 
-print "class_hash = $class_hash<BR>\n";
+//print "class_hash = $class_hash<BR>\n";
 
 // Break apart key/value pairs into array
 $class_array = explode( "/", $class_hash );
