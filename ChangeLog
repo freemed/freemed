@@ -1,6 +1,16 @@
 freemed project changelog
 ($Id$)
 
+* Tue Feb 27 2001 rufustfirefly
+  - lib/module_maintenance.php: now runs freemed_import_stock_data after
+    create_table method in _setup()
+  - lib/module.php: updated setup() to check for update or create status,
+    and new _update() method to handle updates
+  - lib/API.php: used version_check() in freemed_module_check()
+  - lib/macros.php: tidied up file format a little
+  - lib/module_maintenance.php, modules/module_maintenance.module.php:
+    API change in create_table() method, with fixed sql->create_table_query()
+
 * Tue Feb 27 2001 fforest
 	all of these changes are for implementing the new coverage table. and EDI support.
     (EDI is still not fully tested but getting better all the time).

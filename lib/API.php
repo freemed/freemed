@@ -1292,7 +1292,8 @@ function freemed_module_check ($module, $minimum_version="0.01")
 	} // end caching modules config
 
 	// check in cache for version > minimum_version
-	return ($_config["$module"] > $minimum_version);
+	// (return ($_config["$module"] > $minimum_version))
+	return version_check($_config["$module"], $minimum_version);
 } // end function freemed_module_check
 
 // function freemed_module_register

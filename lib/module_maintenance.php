@@ -205,10 +205,22 @@ class freemedMaintenanceModule extends freemedModule {
 	} // end function view
 
 	// override _setup with create_table
-	function _setup () { return $this->create_table(); }
+	function _setup () {
+		if (!$this->create_table()) return false;
+		return freemed_import_stock_data ($this->record_name);
+	} // end function _setup
 
-	// create_table stub
-	function create_table () { return true; }
+	// function create_table
+	// - used to initially create SQL table
+	function create_table () {
+		if (!isset($this->table_definition)) return false;
+		$query = $sql->create_table_query(
+			$this->table_name,
+			$this->table_definition
+		);
+		$result = $sql->query ($query);
+		return !empty($result);
+	} // end function create_table
 
 } // end class freemedMaintenanceModule
 

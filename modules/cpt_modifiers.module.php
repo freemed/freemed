@@ -15,36 +15,27 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 	var $record_name    = "CPT Modifiers";
 	var $table_name     = "cptmod";
 
+	var $variables		= array (
+		"cptmod",
+		"cptmoddescrip"
+	);
+
 	function cptModifiersMaintenance () {
-		// run constructor
+			// run constructor
 		$this->freemedMaintenanceModule();
+			// table definition (inside constructor, as outside definitions
+			// do NOT allow function calls)
+		$this->table_definition = array (
+			"cptmod"		=>	SQL_CHAR(2),
+			"cptmoddescrip"	=>	SQL_VARCHAR(50),
+			"id"			=>	SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+		);
+		if ($debug) {
+		global $sql;echo "query = \"".$sql->create_table_query(
+			$this->table_name, $this->table_definition).
+			"\"<BR>\n";
+		} // end if $debug
 	} // end constructor cptModifiersMaintenance
-
-	function add () {
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-  echo "
-    <P>
-    <$STDFONT_B>"._("Adding")." ... 
-  ";
-
-  $query = "INSERT INTO ".$this->table_name." VALUES ( ".
-    "'$cptmod', '$cptmoddescrip', NULL ) ";
-
-  $result = $sql->query($query);
-
-  if ($result) echo "<B>"._("done").".</B><$STDFONT_E>\n";
-   else echo "<B>"._("ERROR")." ($result)</B>\n"; 
-
-  echo "
-   <P>
-    <CENTER>
-     <A HREF=\"$this->page_name?$_auth&module=$module\"
-     ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER>
-   <P>
-  ";
-	} // end function cptModifiersMaintenance->add()
 
 	function form () {
 		reset ($GLOBALS);
@@ -94,36 +85,6 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
   ";
 	} // end function cptModifiersMaintenance->form()
 
-	function mod () {
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-
-  echo "
-    <P>
-    <$STDFONT_B>"._("Modifying")." ... 
-  ";
-
-  $query = "UPDATE ".$this->table_name." SET ".
-    "cptmod        = '".addslashes($cptmod)."',       ".
-    "cptmoddescrip = '".addslashes($cptmoddescrip)."' ". 
-    "WHERE id='".addslashes($id)."'";
-
-  $result = $sql->query($query);
-
-  if ($result) echo "<B>"._("done").".</B><$STDFONT_E>\n";
-   else echo "<B>"._("ERROR")." ($result)</B>\n"; 
-
-  echo "
-   <P>
-    <CENTER>
-     <A HREF=\"$this->page_name?$_auth&module=$module\"
-     ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-    </CENTER>
-   <P>
-  ";
-	} // end function cptModifiersMaintenance->mod()
-
-
 	function view () {
 		global $sql;
 		echo "View ";
@@ -147,21 +108,6 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
     array ("", _("NO DESCRIPTION"))
   );
 	} // end function cptModifiersMaintenance->view()
-
-	function create_table () {
-		return !empty($sql->query($sql->create_query(
-			$this->record_name,
-			array (
-				//cptmod CHAR(2)
-				"cptmod"		=>		SQL_CHAR(2),
-				//cptmoddescrip VARCHAR(50)
-				"cptmoddescrip"	=>		SQL_VARCHAR(50),
-				//id INT NOT NULL AUTO_INCREMENT
-				"id"			=>		SQL_AUTO_INCREMENT(SQL_INT(0))
-			),
-			array("id")
-		) ) );
-	} // end function cptModifiersMaintenance->create_table()
 
 } // end class cptModifiersMaintenance
 
