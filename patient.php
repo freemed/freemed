@@ -49,11 +49,14 @@ switch ($action) {
          "WHERE ( id = '".prepare($id)."' )");
 
       $r = $sql->fetch_array($result); // dump into array r[]
-	  extract($r); // pull variables in from array
+
+	// Globalize all fields from the form
+	foreach ($r AS $k => $v) {
+		global ${$k};
+		${$k} = stripslashes($v);
+	}
 
         $ptstate      = strtoupper ($ptstate);
-
-        $ptnextofkin  = htmlentities ($ptnextofkin);
 
         // resplit email
         if (strlen($ptemail)>3) {
@@ -78,32 +81,24 @@ switch ($action) {
             "has_insurance"),
 		html_form::form_table ( array (
 			_("Last Name") =>
-				"<INPUT TYPE=TEXT NAME=\"ptlname\" SIZE=25 MAXLENGTH=50 ".
-				"VALUE=\"".prepare($ptlname)."\">",
+				html_form::text_widget("ptlname", 25, 50),
     
 			_("First Name") =>
-				"<INPUT TYPE=TEXT NAME=\"ptfname\" SIZE=25 MAXLENGTH=50 ".
-				"VALUE=\"".prepare($ptfname)."\">",
+				html_form::text_widget("ptfname", 25, 50),
 
 			_("Middle Name") =>
-				"<INPUT TYPE=TEXT NAME=\"ptmname\" SIZE=25 MAXLENGTH=50 ".
-				"VALUE=\"".prepare($ptmname)."\">",
+				html_form::text_widget("ptmname", 25, 50),
 
 			_("Address Line 1") =>
-				"<INPUT TYPE=TEXT NAME=\"ptaddr1\" SIZE=25 MAXLENGTH=45 ".
-				"VALUE=\"".prepare($ptaddr1)."\">",
+				html_form::text_widget("ptaddr1", 25, 45),
 
 			_("Address Line 2") =>
-				"<INPUT TYPE=TEXT NAME=\"ptaddr2\" SIZE=25 MAXLENGTH=45 ".
-				"VALUE=\"".prepare($ptaddr2)."\">",
+				html_form::text_widget("ptaddr2", 25, 45),
 
 			_("City").", "._("State").", "._("Zip") =>
-				"<INPUT TYPE=TEXT NAME=\"ptcity\" SIZE=10 MAXLENGTH=45 ".
-				"VALUE=\"".prepare($ptcity)."\">\n".
+				html_form::text_widget("ptcity", 10, 45)."\n".
 				html_form::state_pulldown("ptstate").
-
-				"<INPUT TYPE=TEXT NAME=\"ptzip\" SIZE=10 MAXLENGTH=10 ".
-				"VALUE=\"".prepare($ptzip)."\">",
+				html_form::text_widget("ptzip", 10),
 
 			_("Date of Birth") =>
 				date_entry("ptdob")
@@ -199,16 +194,13 @@ switch ($action) {
   			freemed_display_selectbox ($ptstatus_r, "#ptstatus#, #ptstatusdescrip", "ptstatus"),
 
 		_("Social Security Number") =>
-			"<INPUT TYPE=TEXT NAME=\"ptssn\" SIZE=9 MAXLENGTH=10 ".
-			"VALUE=\"".prepare($ptssn)."\">",
+			html_form::text_widget("ptssn", 9),
 
 		_("Internal Practice ID #") =>
-			"<INPUT TYPE=TEXT NAME=\"ptid\" SIZE=10 MAXLENGTH=10 ".
-			"VALUE=\"".prepare($ptid)."\">",
+			html_form::text_widget("ptid", 10),
     
 		_("Driver's License (No State)") =>
-			"<INPUT TYPE=TEXT NAME=ptdmv SIZE=10 MAXLENGTH=9 ".
-			"VALUE=\"".prepare($ptdmv)."\">",
+			html_form::text_widget("ptdmv", 9),
        
 		_("Type of Billing") =>
 			html_form::select_widget("ptbilltype",
@@ -315,12 +307,9 @@ switch ($action) {
      _("Notes"),
      array("ptnextofkin"),
      html_form::form_table(array(
-       "" => "
-         <CENTER>
-         <TEXTAREA NAME=\"ptnextofkin\" ROWS=10 COLS=40>".
-	 prepare($ptnextofkin)."</TEXTAREA>
-	 </CENTER>
-	 "
+       "" => "<CENTER>".
+	html_form::text_area("ptnextofkin", "VIRTUAL", 10, 40).
+	"</CENTER>"
      ))
    );
 
@@ -668,7 +657,7 @@ switch ($action) {
     // Push onto stack
     page_push();
   
-    if (freemed_get_userlevel()>$database_level) {
+    if (freemed::user_flag(USER_DATABASE)) {
       $display_buffer .= "
         <TABLE WIDTH=100% BGCOLOR=#000000 BORDER=0 CELLSPACING=0
          CELLPADDING=0 VALIGN=TOP ALIGN=CENTER><TR><TD>
