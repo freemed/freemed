@@ -13,6 +13,8 @@
   freemed_display_html_top ();
   freemed_display_banner ();
 
+if ($patient>0) $this_patient = new Patient ($patient, ($type=="temp"));
+
 if (strlen($selected_date)!=10) {
   $selected_date = $cur_date;
 } // fix date if not correct
@@ -33,8 +35,8 @@ switch ($action) {
       // AND WHAT DAY WE ARE LOOKING FOR...
 
   freemed_display_box_top (_("Add Appointment"));
-  fc_generate_calendar_mini($selected_date,
-   "$page_name?$_auth&patient=$patient&room=$room&type=$type");
+  //fc_generate_calendar_mini($selected_date,
+  // "$page_name?$_auth&patient=$patient&room=$room&type=$type");
 
   //echo "
   //  <CENTER>
@@ -56,22 +58,6 @@ switch ($action) {
       "roomname");
     $rm_desc = freemed_get_link_field ($room, "room",
       "roomdescrip");
-    switch ($type) {
-      case "temp":
-       $ptname = freemed_get_link_rec ($patient, "callin");
-       $ptlname = $ptname ["cilname"];
-       $ptfname = $ptname ["cifname"];
-       $ptmname = $ptname ["cimname"];
-       $ptdob   = $ptname ["cidob"  ];
-       break;
-      case "pat": default:
-       $ptname = freemed_get_link_rec ($patient, "patient");
-       $ptlname = $ptname ["ptlname"];
-       $ptfname = $ptname ["ptfname"];
-       $ptmname = $ptname ["ptmname"]; 
-       $ptdob   = $ptname ["ptdob"  ];
-       break;
-    } // end of switch
 
     if (strlen($rm_desc)<1) { $rm_desc="";               }
      else                   { $rm_desc="(".$rm_desc.")"; }
@@ -80,12 +66,14 @@ switch ($action) {
 
     echo "
       <CENTER>
+      ".freemed_patient_box ($this_patient)."
+      <P>
+    ";
+    fc_generate_calendar_mini($selected_date,
+     "$page_name?$_auth&patient=$patient&room=$room&type=$type");
+    echo " 
       <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
        ALIGN=CENTER>
-      <TR>
-      <TD ALIGN=RIGHT><B>"._("Patient")." : </B></TD>
-      <TD ALIGN=LEFT>$ptlname, $ptfname $ptmname [".fm_date_print($ptdob).
-        " ]</TD></TR>
       ". (
        ($room > 0) ? "
       <TR>
@@ -245,6 +233,7 @@ switch ($action) {
       // FINAL FORM.
 
    freemed_display_box_top (_("Add Appointment"));
+   echo freemed_patient_box ($this_patient);
 
    if (strlen($room)>0) {
      $rm_name = freemed_get_link_field ($room, "room",
@@ -258,21 +247,6 @@ switch ($action) {
      $rm_name = _("NO PREFERENCE");
      $rm_desc = "";
    } // checking if room
-
-   switch ($type) {
-    case "temp":
-     $pt_lname = freemed_get_link_field ($patient, "callin",
-       "cilname");
-     $pt_fname = freemed_get_link_field ($patient, "callin",
-       "cifname");
-     break;
-    case "pat":
-    default:
-     $pt_lname = freemed_get_link_field ($patient, "patient",
-       "ptlname");
-     $pt_fname = freemed_get_link_field ($patient, "patient",
-       "ptfname");
-   }
 
    if ($hour > 11) { 
      $ampm = "pm"; 
@@ -316,9 +290,6 @@ switch ($action) {
      <TD ALIGN=RIGHT><B>"._("Room")."</B>:</TD>
      <TD ALIGN=LEFT>$rm_name $rm_desc</TD></TR>
      <TR>
-     <TD ALIGN=RIGHT><B>"._("Patient")."</B>:</TD>
-     <TD ALIGN=LEFT>$pt_lname, $pt_fname</TD></TR>
-     <TR>
      <TD ALIGN=RIGHT><B>"._("Date")."</B>:</TD>
      <TD ALIGN=LEFT>".fm_date_print($selected_date)."</TD></TR>
      <TR>
@@ -328,15 +299,15 @@ switch ($action) {
      <TR>
      <TD ALIGN=RIGHT><B>"._("Duration")."</B>:</TD>
      <TD ALIGN=LEFT><SELECT NAME=\"duration\">
-       <OPTION VALUE=\"15\" >15 $lang_min_abbrev
-       <OPTION VALUE=\"30\" >30 $lang_min_abbrev
-       <OPTION VALUE=\"45\" >45 $lang_min_abbrev
-       <OPTION VALUE=\"60\" >1 $lang_hour
-       <OPTION VALUE=\"75\" >1$lang_h 15$lang_m
-       <OPTION VALUE=\"90\" >1$lang_h 30$lang_m
-       <OPTION VALUE=\"105\">1$lang_h 45$lang_m
-       <OPTION VALUE=\"120\">2 $lang_hours
-       <OPTION VALUE=\"180\">3 $lang_hours
+       <OPTION VALUE=\"15\" >0:15 
+       <OPTION VALUE=\"30\" >0:30 
+       <OPTION VALUE=\"45\" >0:45 
+       <OPTION VALUE=\"60\" >1:00 
+       <OPTION VALUE=\"75\" >1:15
+       <OPTION VALUE=\"90\" >1:30
+       <OPTION VALUE=\"105\">1:45
+       <OPTION VALUE=\"120\">2:00
+       <OPTION VALUE=\"180\">3:00
       </SELECT></TD></TR>
 
      <TR>
@@ -383,8 +354,7 @@ switch ($action) {
     NULL )";
   $result = fdb_query ($query);
 
-  echo "
-    done.
+  echo _("done").".
     <BR>
     <CENTER>
   ";
