@@ -91,6 +91,17 @@ class freemedEMRModule extends freemedModule {
 				break;
 		} // end switch action
 	} // end function main
+	
+	function display_message () {
+		if (isset($this->message)) {
+			echo "
+			<P>
+			<CENTER>
+			<B>".prepare($this->message)."</B>
+			</CENTER>
+			";
+		}
+	} // end function display_message
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
@@ -99,11 +110,6 @@ class freemedEMRModule extends freemedModule {
 	function add () { $this->_add(); }
 	function _add () {
 		foreach ($GLOBALS as $k => $v) global $$k;
-	
-		echo "
-			<P><CENTER>
-			<$STDFONT_B>"._("Adding")." ...
-		";
 
 		$result = $sql->query (
 			$sql->insert_query (
@@ -112,18 +118,9 @@ class freemedEMRModule extends freemedModule {
 			)
 		);
 
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
-
-		echo "
-			<$STDFONT_E></CENTER>
-			<P>
-			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-			</CENTER>
-		";
-
+		if ($result) $this->message = _("Record added successfully.");
+		 else $this->message = _("Record addition failed.");
+		$this->view(); $this->display_message();
 	} // end function _add
 
 	// function del
@@ -131,14 +128,12 @@ class freemedEMRModule extends freemedModule {
 	function del () { $this->_del(); }
 	function _del () {
 		global $STDFONT_B, $STDFONT_E, $id, $sql;
-		echo "<P ALIGN=CENTER>".
-			"<$STDFONT_B>"._("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { echo _("done"); }
-		 else		 { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
-		echo "<$STDFONT_E></P>\n";
+		if ($result) $this->message = _("Record deleted successfully.");
+		 else $this->message = _("Record deletion failed.");
+		$this->view(); $this->display_message();
 	} // end function _del
 
 	// function mod
@@ -146,12 +141,6 @@ class freemedEMRModule extends freemedModule {
 	function mod () { $this->_mod(); }
 	function _mod () {
 		foreach ($GLOBALS as $k => $v) global $$k;
-	
-		echo "
-			<P><CENTER>
-			<$STDFONT_B>"._("Modifying")." ...
-		";
-
 		$result = $sql->query (
 			$sql->update_query (
 				$this->table_name,
@@ -161,19 +150,9 @@ class freemedEMRModule extends freemedModule {
 				)
 			)
 		);
-
-		if ($result) { echo "<B>"._("done").".</B>\n"; }
-		 else		 { echo "<B>"._("ERROR")."</B>\n"; }
-
-		echo "
-			<$STDFONT_E></CENTER>
-			<P>
-			<CENTER>
-				<A HREF=\"$this->page_name?$_auth&module=$module&patient=$patient\"
-				><$STDFONT_B>"._("back")."<$STDFONT_E></A>
-			</CENTER>
-		";
-
+		if ($result) $this->message = _("Record modified successfully.");
+		 else $this->message = _("Record modification failed.");
+		$this->view(); $this->display_message();
 	} // end function _mod
 
 	// function add/modform
