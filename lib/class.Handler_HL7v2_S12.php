@@ -23,7 +23,7 @@ class Handler_HL7v2_S12 extends Handler_HL7v2 {
 
 			// Use scheduler API
 			$c = CreateObject('_FreeMED.Scheduler');
-			$c->set_appointment(
+			$c->set_appointment(array(
 				'date' => $this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]),
 				'hour' => $this->parser->__date_to_hour($pr[HL7v2_AIP_DATETIME]),
 				'minute' => $this->parser->__date_to_minute($pr[HL7v2_AIP_DATETIME]),
@@ -31,7 +31,8 @@ class Handler_HL7v2_S12 extends Handler_HL7v2 {
 				'patient' => $this->parser->__pid_to_patient($p[HL7v2_PID_ID]),
 				'provider' => $this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]),
 				'note' => $v[HL7v2_SCH_NOTE][HL7v2_SCH_NOTE_LONG]
-			);
+			));
+
 			// Quickly log what has happened
 			syslog(LOG_INFO, 'HL7 parser| accepted S12 appointment creation for patient #'.$this->parser->__pid_to_patient($p[HL7v2_PID_ID]).', provider #'.$this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]));
 		}
