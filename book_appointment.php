@@ -475,7 +475,7 @@ if ($process) {
 				"caldateof" => $_REQUEST['selected_date'],
 				"calhour" => $_REQUEST['hour'],
 				"calminute" => $_REQUEST['minute'],
-				"calduration" => $duration,
+				"calduration" => $_REQUEST['duration'],
 				"calfacility" => $facility,
 				"calroom" => $room,
 				"calprenote" => stripslashes($note),
