@@ -155,12 +155,13 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_display_day_calendar ($datestring, $querystring = "1 = 1",
     $privacy = false) {
     global $current_imap;  // global interference map
+    global $display_buffer;
 
     // first, build the global interference map
     fc_generate_interference_map ($querystring, $datestring, $privacy);
 
     // construct the top of the calendar
-    echo "
+    $display_buffer .= "
      <TABLE WIDTH=100% BGCOLOR=#000000 CELLSPACING=2 CELLPADDING=2
       BORDER=0 VALIGN=CENTER ALIGN=CENTER>
       <TR BGCOLOR=#000000><TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER
@@ -179,7 +180,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
        else            $hour=($h-12)." pm";
 
       // display heading for hour
-      echo "
+      $display_buffer .= "
        <TR BGCOLOR=#000000><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%>
         $hour
        </TD><TD BGCOLOR=#ffffff COLSPAN=1>
@@ -190,18 +191,18 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       for ($i=0; $i<60; $i+=15) {
         if ($i==0) $itxt="00:"; // format time correctly
          else $itxt="$i:";
-        echo "<B>$itxt</B> ".$current_imap["$h:$i"]."<BR>\n";
+        $display_buffer .= "<B>$itxt</B> ".$current_imap["$h:$i"]."<BR>\n";
       } // end of for..(next) minutes loop
 
       // construct the bottom of the hour
-      echo "
+      $display_buffer .= "
        </TD></TR>
       ";
 
     } // end hours "for" loop
 
     // construct the bottom of the calendar
-    echo "
+    $display_buffer .= "
      </TABLE>
     ";
 
@@ -210,10 +211,10 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   // function fc_display_week_calendar
   function fc_display_week_calendar ($datestring, $querystring = "1 = 1",
     $privacy=false) {
-    global $current_imap;
+    global $current_imap, $display_buffer;
 
     // form the top of the table
-    echo "
+    $display_buffer .=  "
       <TABLE WIDTH=100% CELLSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=CENTER
        ALIGN=CENTER BGCOLOR=#000000><TR BGCOLOR=#000000>
        <TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER VALIGN=CENTER>
@@ -234,7 +235,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       $day_name_text = day_of_the_week($datestring, true);
 
       // generate the header for this day...
-      echo "
+      $display_buffer .= "
         <TR BGCOLOR=#000000><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%
          ALIGN=RIGHT>
          <I>$day_name_text</I><BR>$datestring
@@ -268,23 +269,23 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
         } // end minutes loop
 
         if ($hourevents) {
-         echo "
+         $display_buffer .= "
            <LI><B>$hour</B><BR>$hourbody
           ";
         } else {
-         echo " &nbsp; ";
+         $display_buffer .= " &nbsp; ";
         } // end of checking for events...
       } // end hours loop
 
       // generate the footer for this day...
-      echo "
+      $display_buffer .= "
         </UL></TD></TR>
        ";
 
     } // end for loop for days
 
     // generate footer for table
-    echo "
+    $display_buffer .= "
       </TABLE>
      ";
 
@@ -293,6 +294,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
   function fc_generate_calendar_mini ($given_date, $this_url) {
     // mostly hacked code from TWIG's calendar
     global $cur_date, $lang_months, $lang_days;
+    global $display_buffer;
 
     // break current day into pieces
     list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
@@ -316,7 +318,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     $lastday  [8] = $lastday [10] = $lastday [12] = 31;
 
     // generate top of table
-    echo "
+    $display_buffer .= "
      <CENTER>
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
       ALIGN=CENTER>
@@ -329,7 +331,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     ";
 
     // previous month link
-    echo "     
+    $display_buffer .= "     
      <A HREF=\"$this_url&selected_date=".
        fc_scroll_prev_month(
         fc_scroll_prev_month(
@@ -359,13 +361,13 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     ";
     // print days across top
     for( $i = 1; $i <= 7; $i++) {
-     echo "
+     $display_buffer .= "
       <TD BGCOLOR=#cccccc ALIGN=CENTER>
        <B>".htmlentities($lang_days[$i])."</B>
       </TD>
      ";
     } // end of day display
-    echo "
+    $display_buffer .= "
      </TR>
     ";
 
@@ -375,7 +377,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     if( $first_day > 0 ) {
   	while( $day_row < $first_day ) {
-   		echo "  <TD ALIGN=RIGHT BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
+   		$display_buffer .= "  <TD ALIGN=RIGHT BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
    		$day_row += 1;  
   		}
  	} // end while day row < first day
@@ -384,7 +386,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 		{
   		if( ( $day_row % 7 ) == 0) 
 			{
-   			echo " </TR>\n<TR BGCOLOR=\"#bbbbbb\">\n";
+   			$display_buffer .= " </TR>\n<TR BGCOLOR=\"#bbbbbb\">\n";
   			}
 
   		$dayp = $day + 1;
@@ -413,7 +415,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
            "#ccccff" :
            "#bbbbbb" );
 
-    echo "
+    $display_buffer .= "
      <TD ALIGN=CENTER BGCOLOR=\"$this_color\">
     ";
  
@@ -424,7 +426,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
             "#ff0000" : 
             "#0000ff" );
        
-        echo "
+        $display_buffer .= "
          <A HREF=\"$this_url&selected_date=".
          date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
          "\"><FONT COLOR=\"$hilitecolor\">$dayp</FONT></A>
@@ -432,8 +434,8 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
    	//if( $dayp       == $cur_day AND
         //    $this_month == $cur_month AND
         //    $this_year  == $cur_year )
-        //  { echo "</B></FONT>"; }
-      echo "
+        //  { $display_buffer .= "</B></FONT>"; }
+      $display_buffer .= "
        </TD>
       ";
       $day++;
@@ -441,12 +443,12 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     }
 
     while( $day_row % 7 ) {
-   	echo "
+   	$display_buffer .= "
          <TD ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">&nbsp;</TD>
         ";
    	$day_row += 1;  
     } // end of day row
-    echo "
+    $display_buffer .= "
      </TR>
      <TR>
      <TD COLSPAN=7 ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">
@@ -464,6 +466,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
                                          $privacy=false) {
     global $current_imap; // global current interference map
     global $database, $cur_date, $sql;
+    global $display_buffer;
 
     // initialize the new array
     $current_imap          = Array (); 
@@ -611,6 +614,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
   function fc_check_interference_map ($hour, $minute, $check_date, $querystr) {
     global $current_imap; // the interference map
+    global $display_buffer;
 
     // if the interference map isn't for today, generate a new one
     if ($check_date != $current_imap["key"])
