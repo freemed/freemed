@@ -76,10 +76,12 @@ class UnreadFaxes extends MaintenanceModule {
 
 		return array (
 			__("Unread Faxes"),
-			"<a href=\"module_loader.php?module=".urlencode(get_class($this)).
-			"&action=display\">".
-			sprintf(__("You have %d unread faxes"), $r['count']).
-			"</a>"
+			( $r['count']==1 ?
+			__("There is currently 1 unread fax in the system.") :
+			sprintf(__("There are currently %d unread faxes in the system."), $unfiled) )." ".
+			"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\">".
+			"[".__("Read")."]</a>",
+			"img/facsimile_icon.png"
 		); 
 	} // end method MainMenuNotify
 
@@ -162,7 +164,7 @@ class UnreadFaxes extends MaintenanceModule {
 		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
 		<div align=\"center\">
                 <embed SRC=\"data/fax/unread/".$r['urffilename']."\"
-		BORDER=\"0\"
+		BORDER=\"0\" 
 		FLAGS=\"width=100% height=100% passive=yes toolbar=yes keyboard=yes zoom=stretch\"
                 PLUGINSPAGE=\"".COMPLETE_URL."support/\"
                 TYPE=\"image/x.djvu\" WIDTH=\"".
