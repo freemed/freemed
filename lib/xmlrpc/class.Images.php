@@ -105,9 +105,12 @@ class Images {
 		}
 	
 		// Compile into DJVU final file
-		$command = "`which djvm` -c ".PHYSICAL_LOCATION."/img/store/".
-			$patient_id.".".$last_record.".djvu ".
-			join (" ", $djvu);
+		$command = '`which djvm` -c '.PHYSICAL_LOCATION.'/'.
+			freemed::image_filename(
+				$patient_id,
+				$last_record,
+				'djvu
+			).' '.join (' ', $djvu);
 		//print "command = $command\n";
 		exec($command);
 
@@ -133,7 +136,11 @@ class Images {
 		$id      = freemed::secure_filename($id     );
 
 		// Assemble file name
-		$imagefilename = "img/store/".$patient.".".$id.".djvu";
+		$imagefilename = freemed::image_filename(
+			$patient,
+			$id,
+			'djvu'
+		);
 
 		// Read file
 		if (!($fp = fopen($imagefilename, "r"))) {

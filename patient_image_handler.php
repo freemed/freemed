@@ -11,17 +11,23 @@ define ('RESIZE', 800);
  // authenticate user cookie
 freemed_open_db ();
 
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"patient_image_handler.php|user $user_to_log image access");}	
+// To be HIPAA compliant I need to be able to access the patient number
+// for some reason those variables dont work...
+
 //----- Clean all variables
 $patient = freemed::secure_filename($patient);
 $id      = freemed::secure_filename($id     );
-
-//----- Assemble proper file name
-$imagefilename = "img/store/".$patient.".".$id.".djvu";
 
 //----- Use browser detect to determine what kind of image this should be
 $browser = CreateObject('PHP.browser_detect');
 $type = "djvu";
 if (!freemed::support_djvu($browser)) { $type = "jpeg"; }
+
+//----- Assemble proper file name
+$imagefilename = freemed::image_filename($patient, $id, $type);
 
 switch ($type) {
 	case "jpeg":

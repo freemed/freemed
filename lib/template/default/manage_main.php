@@ -31,11 +31,9 @@ foreach ($static_components AS $garbage => $component) {
 		// Add header and strip at top
 		$modules[__("Appointments")] = "appointments";
 		$panel[__("Appointments")] .= "
-			<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
-			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-			 onMouseOut=\"this.className='thinbox'; return true;\"
-			><TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
+			><tr><td COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 			 CLASS=\"menubar_items\">
 			<A HREF=\"book_appointment.php?patient=$id&type=pat\"
 			>".__("Add")."</A> |
@@ -43,7 +41,7 @@ foreach ($static_components AS $garbage => $component) {
 			>".__("View/Manage")."</A> |
 			<A HREF=\"show_appointments.php?patient=$id&type=pat\"
 			>".__("Show Today")."</A>
-			</TD></TR>
+			</TD></tr>
 		";
 
 		// Get last few appointments
@@ -59,15 +57,15 @@ foreach ($static_components AS $garbage => $component) {
 		$appoint_result = $sql->query($query);
 		if (!$sql->results($appoint_result)) {
 			$panel[__("Appointments")] .= "
-			<TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+			<tr><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 			<B>".__("NONE")."</B>
-			</TD></TR>
+			</TD></tr>
 			";
 		} else {
 			$panel[__("Appointments")] .= "
-			<TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
-			<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0
-			 BORDER=0 CLASS=\"thinbox\"><TR>
+			<tr><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+			<table WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0
+			 BORDER=0 CLASS=\"thinbox\"><tr>
 			<TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\"
 			 CLASS=\"menubar_info\">
 				<B>".__("Date")."</B>
@@ -78,11 +76,11 @@ foreach ($static_components AS $garbage => $component) {
 				<!-- <B>".__("Room")."</B> -->
 			</TD><TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
 				<B>".__("Description")."</B>
-			</TD></TR>
+			</TD></tr>
 			";
 			while ($appoint_r=$sql->fetch_array($appoint_result)) {
 				$panel[__("Appointments")] .= "
-				<TR>
+				<tr>
 				<TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
 				<SMALL>".prepare(fm_date_print(
 					$appoint_r["caldateof"]
@@ -95,20 +93,20 @@ foreach ($static_components AS $garbage => $component) {
 				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
 				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
 				<SMALL>".prepare(stripslashes($appoint_r["calprenote"]))."</SMALL>
-				</TD></TR>
+				</TD></tr>
 				";
 			} // end of looping through results
 			// Show last few appointments
 			$panel[__("Appointments")] .= "
-			</TABLE>
-			</TD></TR>
+			</table>
+			</TD></tr>
 			";
 		} // end of checking for results
 		
 
 		// Footer
 		$panel[__("Appointments")] .= "
-			</TABLE>
+			</table>
 		";
 		break; // end appointments
 
@@ -118,14 +116,12 @@ foreach ($static_components AS $garbage => $component) {
 		$modules[__("Custom Records")] = "custom_reports";
 		if ($sql->results($f_results)) {
 			$panel[__("Custom Records")] .= "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
+			<table WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\"
-			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-			 onMouseOut=\"this.className='thinbox'; return true;\">
-			<TR><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER
+			<tr><TD COLSPAN=3 VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
-			</TD></TR>
-			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+			</TD></tr>
+			<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 			<DIV ALIGN=\"CENTER\">
           		<FORM ACTION=\"custom_records.php\" METHOD=POST>
         		<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($id)."\">
@@ -146,18 +142,17 @@ foreach ($static_components AS $garbage => $component) {
 		} else {
 			// Quick null panel
 			$panel[__("Custom Records")] .= "
-				<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-				 CELLPADDING=3 CLASS=\"thinbox\"
-		 		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-				 onMouseOut=\"this.className='thinbox'; return true;\">
-				<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+				<table WIDTH=\"100%\" BORDER=\"0\"
+				 CELLSPACING=\"0\" CELLPADDING=\"3\"
+				 CLASS=\"thinbox\"
+				<tr><TD VALIGN=MIDDLE ALIGN=CENTER
 				 CLASS=\"menubar_items\">
 				<A HREF=\"custom_records.php?patient=$id\" 
 				>".__("View/Manage")."</A>
-				</TD></TR>
-				<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+				</TD></tr>
+				<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 				<B>".__("NONE")."</B>
-				</TD></TR></TABLE>
+				</TD></tr></table>
 			";
 		} // end checking for results
 		break; // end custom_reports
@@ -165,49 +160,45 @@ foreach ($static_components AS $garbage => $component) {
 		case "medical_information":
 		$modules[__("Medical Information")] = "medical_information";
 		$panel[__("Medical Information")] = "
-		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-		 CELLPADDING=3 CLASS=\"thinbox\"
-		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-		 onMouseOut=\"this.className='thinbox'; return true;\">
-		<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+		 CELLPADDING=\"3\" CLASS=\"thinbox\"
+		<tr><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 		 CLASS=\"menubar_items\">
-		(no actions)
-		</TD></TR>
-		<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		(".__("no actions").")
+		</TD></tr>
+		<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
-		<TABLE WIDTH=\"100%\" BORDER=\"0\">
-		<TR><TD ALIGN=\"LEFT\"><B>".__("Blood Type")."</B></TD> 
-		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></TR>
-		</TABLE>
-		</TD></TR></TABLE>";
+		<table WIDTH=\"100%\" BORDER=\"0\">
+		<tr><TD ALIGN=\"LEFT\"><B>".__("Blood Type")."</B></TD> 
+		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></tr>
+		</table>
+		</TD></tr></table>";
 		break; // end medical_information
 
 		case "messages":
 		$modules[__("Messages")] = "messages";
 		$panel[__("Messages")] = "
-		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 		 CELLPADDING=3 CLASS=\"thinbox\"
-		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-		 onMouseOut=\"this.className='thinbox'; return true;\">
-		<TR><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
+		<tr><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 		 CLASS=\"menubar_items\">
 		<A HREF=\"messages.php?action=addform\">".__("Add")."</A>
-		</TD></TR>
-		<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		</TD></tr>
+		<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
-		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\">
+		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\">
 		";
 		$my_result = $sql->query("SELECT * FROM messages WHERE ".
 			"msgpatient='".urlencode($id)."' ".
 			"ORDER BY msgtime DESC ".
 			"LIMIT ".$num_summary_items);
 		if ($sql->results($my_result)) {
-			$panel[__("Messages")] .= "<TR CLASS=\"menubar_info\">".
+			$panel[__("Messages")] .= "<tr CLASS=\"menubar_info\">".
 				"<TD><b>".__("Date")."</b></TD>".
 				"<TD><b>".__("Time")."</b></TD>".
 				"<TD><b>".__("User")."</b></TD>".
 				"<TD><b>".__("Action")."</b></TD>".
-				"</TR>\n";
+				"</tr>\n";
 			while ($my_r = $sql->fetch_array($my_result)) {
 				// Transformations for date and time
 				$y = $m = $d = $hour = $min = '';
@@ -221,7 +212,7 @@ foreach ($static_components AS $garbage => $component) {
 				$this_user = CreateObject('FreeMED.User', $my_r[msgfor]);
 
 				// Form the panel
-				$panel[__("Messages")] .= "<TR>".
+				$panel[__("Messages")] .= "<tr>".
 					"<TD ALIGN=\"LEFT\"><SMALL>$y-$m-$d</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".fc_get_time_string($hour,$min)."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$this_user->getDescription()."</SMALL></TD>".
@@ -229,33 +220,34 @@ foreach ($static_components AS $garbage => $component) {
 					template::summary_delete_link(NULL,
 					"messages.php?action=remove&id=".$my_r['id'].
 					"&return=manage").
-					"</TR>\n".
-					"<TR><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
+					"</tr>\n".
+					"<tr><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
 					prepare($my_r['msgtext']).
-					"</SMALL></TD></TR>\n";			
+					"</SMALL></TD></tr>\n";			
 			}
 		} else {
 			// If there are no messages regarding this patient
-			$panel[__("Messages")] .= "<TR><TD ALIGN=\"CENTER\">".
+			$panel[__("Messages")] .= "<tr><TD ALIGN=\"CENTER\">".
 			__("There are currently no messages.").
-			"</TD></TR>\n";
+			"</TD></tr>\n";
 		}
 		$panel[__("Messages")] .= "
-		</TABLE>
+		</table>
 		</DIV>
-		</TD></TR></TABLE>";
+		</TD></tr></table>";
 		break; // end medical_information
 
 		case "photo_id":
 		// If there is a file with that name, show it, else box
-		if (file_exists("img/store/$id.identification.djvu")) {
+		if (file_exists(freemed::image_filename(
+				$id,
+				'identification',
+				'djvu'))) {
 			$modules[__("Photo ID")] = "photo_id";
 			$panel[__("Photo ID")] = "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\"
-			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-			 onMouseOut=\"this.className='thinbox'; return true;\">
-			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+			 CELLPADDING=\"3\" CLASS=\"thinbox\"
+			<tr><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
 			"return=manage\"
@@ -263,8 +255,8 @@ foreach ($static_components AS $garbage => $component) {
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
 			"action=remove&return=manage\"
 			 >".__("Remove")."</A>
-			</TD></TR>
-			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+			</TD></tr>
+			<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 			<DIV ALIGN=\"CENTER\">
 			<A HREF=\"patient_image_handler.php?".
 			"patient=".urlencode($patient)."&".
@@ -279,28 +271,26 @@ foreach ($static_components AS $garbage => $component) {
 			 PLUGINSPAGE=\"".COMPLETE_URL."support/\"
 			 ></EMBED></A>
 			</DIV>
-			</TD></TR>
-			</TABLE>
+			</TD></tr>
+			</table>
 			";
 
 		} else {
 			$panel[__("Photo ID")] = "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\"
-			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-			 onMouseOut=\"this.className='thinbox'; return true;\">
-			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+			 CELLPADDING=\"3\" CLASS=\"thinbox\"
+			<tr><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 			 CLASS=\"menubar_items\">
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."\"
 			 >".__("Update")."</A>
-			</TD></TR>
-			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+			</TD></tr>
+			<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 			<DIV ALIGN=\"CENTER\">
 			".__("No photographic identification on file.")."
 			<BR><BR>
 			</DIV>
-			</TD></TR>
-			</TABLE>
+			</TD></tr>
+			</table>
 			";
 		}
 		break; // end photo_id
@@ -324,24 +314,22 @@ foreach ($static_components AS $garbage => $component) {
 		//----- Create the panel
 		$modules[__("Patient Information")] = "patient_information";
 		$panel[__("Patient Information")] .= "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\"
-			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-			 onMouseOut=\"this.className='thinbox'; return true;\">
-			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
+			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+			 CELLPADDING=\"3\" CLASS=\"thinbox\"
+			<tr><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\" COLSPAN=2>
 			<A HREF=\"patient.php?action=modform&id=$id\" 
 			>".__("Modify")."</A>
-			</TD></TR>
-			<TR><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
+			</TD></tr>
+			<tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
 				<B>".__("Date of Last Visit")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$dolv."
-			</TR><TR><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
+			</tr><tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
 				<B>".__("Phone Number")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$this_patient->local_record["pthphone"]."
-			</TD></TR></TABLE>
+			</TD></tr></table>
 		";
 		break; // end patient information
 
@@ -365,8 +353,6 @@ foreach ($modular_components AS $garbage => $component) {
 		$panel[__($module_list->get_module_name($component))] .= "
 			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
-		 	 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
-		 	 onMouseOut=\"this.className='thinbox'; return true;\">
 			<tr><td VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 			 CLASS=\"menubar_items\">".
 			module_function($component, "summary_bar", array ( $id )).
@@ -398,8 +384,8 @@ if (count($panel) > 0) {
 
 	// Table header
 	$display_buffer .= "
-	<TABLE WIDTH=\"100%\" CELLSPACING=3 CELLPADDING=0 BORDER=0>
-	<TR VALIGN=MIDDLE ALIGN=CENTER>
+	<table WIDTH=\"100%\" CELLSPACING=\"3\" CELLPADDING=\"0\" BORDER=\"0\">
+	<tr VALIGN=MIDDLE ALIGN=CENTER>
 	";
 
 	$column = 1; reset ($panel);
@@ -410,7 +396,7 @@ if (count($panel) > 0) {
 
 			// Display footer and new header
 			$display_buffer .= "
-			</TR><TR VALIGN=MIDDLE ALIGN=CENTER>
+			</tr><tr VALIGN=MIDDLE ALIGN=CENTER>
 			";
 		}
 
@@ -419,9 +405,9 @@ if (count($panel) > 0) {
 		$display_buffer .= "
 		<TD VALIGN=\"TOP\" ALIGN=\"CENTER\" WIDTH=\"".
 			( (int) (100 / $display_columns) )."%\">
-		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 		 CELLPADDING=\"0\">
-		<TR><TD CLASS=\"reverse\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+		<tr><TD CLASS=\"reverse\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 		<B>".prepare($k)."</B>
 		</TD><TD CLASS=\"reverse\" VALIGN=\"MIDDLE\" ALIGN=\"RIGHT\">
 		<A HREF=\"manage.php?id=".urlencode($id)."&".
@@ -430,10 +416,10 @@ if (count($panel) > 0) {
 		onMouseOut=\"document.images.".$myk."_close.src='lib/template/default/img/close_x.png'; return true;\"
 		><IMG NAME=\"".$myk."_close\"
 		SRC=\"lib/template/default/img/close_x.png\"
-		BORDER=\"0\" ALT=\"X\"></A></TD></TR>
-		<TR><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\" COLSPAN=\"2\">
+		BORDER=\"0\" ALT=\"X\"></A></TD></tr>
+		<tr><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\" COLSPAN=\"2\">
 		<CENTER>$v</CENTER>
-		</TD></TR></TABLE>
+		</TD></tr></table>
 		</TD>
 		";
 
@@ -449,7 +435,7 @@ if (count($panel) > 0) {
 
 	// Table footer
 	$display_buffer .= "
-	</TR></TABLE>
+	</tr></table>
 	";
 
 } else {
@@ -466,7 +452,7 @@ if (count($panel) > 0) {
 // **************************************************** STATIC MODULES
 
 //      $display_buffer .= "
-//        <TR><TD ALIGN=RIGHT>
+//        <tr><TD ALIGN=RIGHT>
 //         <B>Dependent Information</B> : 
 //        </TD><TD ALIGN=LEFT>
 //     ";
@@ -489,7 +475,7 @@ if (count($panel) > 0) {
 //      $display_buffer .= "
 //         <A HREF=\"manage.php?action=view&id=".$this_patient->ptdep."\"
 //         >".__("Guarantor")."</A>
-//	</TD><TD>[".$guarantor->fullName()."]</TD></TR>
+//	</TD><TD>[".$guarantor->fullName()."]</TD></tr>
 //     ";
 //    }
 
@@ -513,42 +499,5 @@ $menu_bar = array_merge (
 		"module_loader.php?module=#class#&patient=$id"
 	)
 );
-
-/*
-$display_buffer .= "
-	<TR><TD ALIGN=RIGHT>
-	<BR>
-    	<B>".__("Certifications")."</B>
-	<BR>
-    	</TD>
-";
-$category = "EMR Certifications";
-$module_template = "
-        <TR><TD ALIGN=RIGHT>
-        <B>#name#</B> : 
-        </TD><TD> 
-        <A HREF=\"module_loader.php?module=#class#&action=addform&patient=$id\"
-         >".__("Add")."</A>
-        </TD><TD> 
-        <A HREF=\"module_loader.php?module=#class#&patient=$id\"
-         >".__("View/Manage")."</A>
-        </TD><TD>
-        </TD></TR>
-
-";
-
-$category = "Electronic Medical Record Report";
-$module_template = "
-        <TR><TD ALIGN=RIGHT>
-        <B>#name#</B> : 
-        </TD>
-		<TD> 
-        <A HREF=\"module_loader.php?module=#class#&patient=$id\"
-         >".__("View")."</A>
-        </TD><TD>
-        </TD></TR>
-
-";
-*/
 
 ?>
