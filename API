@@ -2,7 +2,7 @@ freemed project API
 (c) 1999 by jeff b
 Under the GPL/LGPL version 2
 ..........................................................................
-last updated 2000-07-20
+last updated 2000-07-24
 
                                 *****
                                 NOTE:
@@ -233,16 +233,18 @@ freemed_display_inscogroups (selected)
     returns: none
     created: API epoch or prior (19990609)
 
-freemed_display_itemlist(item name, result pointer, page link,
-                         control array, blank array)
+freemed_display_itemlist(result pointer, page link,
+                         control array, blank array, [xref array])
   displays a list of items fetched row-by-row from the result pointer.
   'item name' is the title displayed. 'page link' is the name of the page
   (extension included) that the items can be added/viewed/modified/deleted 
   from. 'control array' is an associative array: the key is a description
   of the item, the value the database name. 'blank array' is what to display
   if the field is blank. (an '&nbsp;' is appended automatically to all
-  fields in any case.)
-    returns: none
+  fields in any case.) if one of the fields is an 'id' field for another
+  table, put the table's name in the proper spot in 'xref array' as key and
+  the field's name as value.
+    returns: buffered text
     created: 20000720 (adam)
 
 freemed_display_phygroups (selected)
@@ -294,6 +296,16 @@ freemed_display_rooms (selected)
     returns: none
     created: 19990616
     modified: 19990820
+
+freemed_display_selectbox(result pointer, format string[, selected])
+  subsumes all the old freemed_display_foo() functions. returns a buffer.
+  takes a result pointer from outside the function. can be called multiple
+  times in a single page load with the same result pointer (it caches the
+  results.) the format string is a string that includes the column names
+  in the format "#colname#", e.g., "#lastname#, #firstname#". the data is
+  substituted in, and the formatting is maintained.
+    returns: buffered text
+    created: 20000724 (adam b)
 
 freemed_display_simplereports (selected)
   displays the list of simple report templates from the innards of a <SELECT>

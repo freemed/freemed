@@ -1232,6 +1232,50 @@ function freemed_display_phy_specialties ($param)
 
 } // end function freemed_display_phy_specialties
 
+// function freemed_display_selectbox
+function freemed_display_selectbox ($result, $format, $param="")
+{
+  global $$param; // so it knows to put SELECTED on properly
+  static $var; // array of $result-IDs so we only go through them once
+
+  if (!isset($var[$result])) {
+    while ($var[$result][] = fdb_fetch_array($result));
+  } // if we haven't gone through this list yet
+  
+  $buffer = "";
+  if (count($var[$result])<1) { 
+    $buffer .= "NONE";
+    return $buffer; // do nothing!
+  } // if no result
+
+  $buffer .= "
+    <SELECT NAME =\"$param\">
+      <OPTION VALUE=\"0\">NONE SELECTED
+  ";
+  reset($var[$result]); // if we're caching it, we have to reset it!
+  while ( (list($pickle,$item) = each($var[$result])) 
+                                     AND ($item[id])) { // no null values!
+    // START FORMAT-FETCHING
+    $format_array = explode("#",$format); // odd members are variable names!
+    while (list($index,$str) = each($format_array)) {
+      if ( (bcadd($index/2,0,0)) == ($index/2) ) continue; // ignore the evens!
+      $format_array[$index] = $item[$str];// can't just change $str!
+    } // while replacing each variable name
+    $this_format = join("", $format_array); // put it back together
+    // END FORMAT-FETCHING    
+    $buffer .= "
+      <OPTION VALUE=\"$item[id]\" ".
+      ( ($item[id] == $$param) ? "SELECTED" : "" ).
+      ">".fm_prep($this_format)."\n";
+  } // while fetching result
+  $buffer .= "
+    </SELECT>
+  ";
+  
+  return $buffer;
+} // end function freemed_display_selectbox
+
+
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="")
 {
