@@ -185,7 +185,7 @@ foreach ($static_components AS $garbage => $component) {
 		<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
 		<table WIDTH=\"100%\" BORDER=\"0\">
-		".(!empty($this_patient->local_record['ptblood']) ? "
+		".($this_patient->local_record['ptblood'] != '-' ? "
 		<tr><TD ALIGN=\"LEFT\"><B>".__("Blood Type")."</B></TD> 
 		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></tr>
 		" : "" );

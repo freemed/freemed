@@ -326,6 +326,7 @@ switch ($action) {
 			html_form::select_widget(
 				"ptblood",
 				array(
+					"-",
 					"O",
 					"O+",
 					"O-",
@@ -538,6 +539,7 @@ switch ($action) {
 			html_form::select_widget(
 				"ptblood",
 				array(
+					"-",
 					"O",
 					"O+",
 					"O-",
