@@ -79,7 +79,8 @@ class CalendarModule extends BaseModule {
 
 		// display universal patient box
 		if ($patient) {
-			$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
+			// For now, do not display current patient
+			//$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
 		}
 
 		switch ($action) {
