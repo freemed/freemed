@@ -101,6 +101,7 @@ print "Processing $arg_insfile ... ";
 if($debug) {
   print "\n";
 }
+<INSDB>;  # Skip the Medical Manager Header Record
 $inscount = 1;
 @insco1   = @insco2  = @insgrp1  = @insgrp2 =
 @insid1   = @insid2  = @inslinks = @insplan = ();
@@ -146,6 +147,7 @@ if($debug) {
 }
 
 # extract patient db
+<PATDB>; # Skip the Medical Manager Header Record...
 $count        = 1;
 while (<PATDB>) {
   chop;
@@ -177,11 +179,15 @@ while (<PATDB>) {
   $pt_status              = $words[37];
   $pt_icd1                = $words[42];
   $pt_icd2                = $words[43];
-  $pt_icd3                = "";
-  $pt_icd4                = "";
+  $pt_icd3                = $words[51];
+  $pt_icd4                = $words[52];
   $pt_marital_status      = $words[53];
   $pt_employed            = $words[54];
   $pt_employer_name       = $words[55];
+  if($mmVers >= 800) { # Snag the Set Coverage Priority List
+    $pt_1_plan = $words[59];
+    $pt_2_plan = $words[61];
+  }
   
   if (length($pt_last_name)>1) {
     # necessary conversions
@@ -191,16 +197,49 @@ while (<PATDB>) {
     # map the ICD codes properly
     $pt_diag_1 = $icdcodes[$pt_icd1] if (length($pt_icd1)>0);
     $pt_diag_2 = $icdcodes[$pt_icd2] if (length($pt_icd2)>0);
-    $pt_diag_3 = "0";
-    $pt_diag_4 = "0";
+    $pt_diag_3 = $icdcodes[$pt_icd3] if (length($pt_icd3)>0);
+    $pt_diag_4 = $icdcodes[$pt_icd4] if (length($pt_icd4)>0);
 
     # map the insurance companies properly
-    $pt_ins1    = $insco1 [$pt_record_number];
-    $pt_ins2    = $insco2 [$pt_record_number];
-    $pt_insno1  = $insid1 [$pt_record_number];
-    $pt_insno2  = $insid2 [$pt_record_number];
-    $pt_insgrp1 = $insgrp1[$pt_record_number];
-    $pt_insgrp2 = $insgrp2[$pt_record_number];
+    if($mmVers < 800) { # Set Coverage Priority Started in 8.00
+      $pt_ins1    = $insco1 [$pt_record_number];
+      $pt_ins2    = $insco2 [$pt_record_number];
+      $pt_insno1  = $insid1 [$pt_record_number];
+      $pt_insno2  = $insid2 [$pt_record_number];
+      $pt_insgrp1 = $insgrp1[$pt_record_number];
+      $pt_insgrp2 = $insgrp2[$pt_record_number];
+    } else {
+      if($pt_1_plan == $insco1[$pt_record_number]) {
+        $pt_ins1    = $insco1 [$pt_record_number];
+        $pt_insno1  = $insid1 [$pt_record_number];
+        $pt_insgrp1 = $insgrp1[$pt_record_number];
+      } else {
+        if($pt_1_plan == $insco2[$pt_record_number]) {
+          $pt_ins1    = $insco2 [$pt_record_number];
+          $pt_insno1  = $insid2 [$pt_record_number];
+          $pt_insgrp1 = $insgrp2[$pt_record_number];
+        } else {
+          $pt_ins1 = 0;
+          $pt_insno1 = "";
+          $pt_insgrp1 = "";
+        }
+      }
+      if($pt_2_plan == $insco1[$pt_record_number]) {
+        $pt_ins2    = $insco1 [$pt_record_number];
+        $pt_insno2  = $insid1 [$pt_record_number];
+        $pt_insgrp2 = $insgrp1[$pt_record_number];
+      } else {
+        if($pt_2_plan == $insco2 [$pt_record_number]) {
+          $pt_ins2    = $insco2 [$pt_record_number];
+          $pt_insno2  = $insid2 [$pt_record_number];
+          $pt_insgrp2 = $insgrp2[$pt_record_number];
+        } else {
+          $pt_ins2 = 0;
+          $pt_insno2 = "";
+          $pt_insgrp2 = "";
+        }
+      }
+    }
 
     if($mmVers < 900) {
       if($pt_pc) {
