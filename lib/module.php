@@ -57,16 +57,19 @@ class freemedModule extends module {
 	// calling function
 	function setup () {
 		if (!freemed_module_check($this->MODULE_NAME,$this->MODULE_VERSION)) {
-			// register module
-			freemed_module_register($this->MODULE_NAME, $this->MODULE_VERSION);
 			// check if it is installed *AT ALL*
 			if (!freemed_module_check($this->MODULE_NAME, "0.0001")) {
 				// run internal setup routine
-				return $this->_setup();
+				$val = $this->_setup();
 			} else {
 				// run internal update routine
-				return $this->_update();
+				$val = $this->_update();
 			} // end checking to see if installed at all
+
+			// register module
+			freemed_module_register($this->MODULE_NAME, $this->MODULE_VERSION);
+
+			return $val;
 		} // end checking for module
 	} // end function setup
 

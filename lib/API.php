@@ -1344,6 +1344,24 @@ function freemed_module_check ($module, $minimum_version="0.01")
 	return version_check($_config["$module"], $minimum_version);
 } // end function freemed_module_check
 
+// function freemed_module_version
+function freemed_module_version ($module) {
+	static $_config; global $sql;
+
+	// cache all modules  
+	if (!is_array($_config)) {
+		unset ($_config);
+		$query = $sql->query("SELECT * FROM module");
+		while ($r = $sql->fetch_array($query)) {
+			extract ( $r );
+			$_config["$module_name"] = $module_version;
+		} // end of while results
+	} // end caching modules config
+
+	// check in cache for version
+	return $_config["$module"];
+} // end function freemed_module_version
+
 // function freemed_module_register
 function freemed_module_register ($module, $version)
 {
