@@ -2,6 +2,9 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.3  2004/01/07 00:37:56  rufustfirefly
+ // Fixed lingering FreeMED.Login.check problem, due to no MD5() call. (Jeff)
+ //
  // Revision 1.2  2002/12/29 14:23:46  rufustfirefly
  // Fixed scope problem in FreeMED.Login.* namespace.
  //
@@ -25,7 +28,7 @@ class Login {
 			// Check for username/password
 			$query = "SELECT username, userpassword, userrealphy, id FROM user ".
 				"WHERE username='".addslashes($user)."' AND ".
-				"userpassword='".addslashes($pass)."'";
+				"userpassword=MD5('".addslashes($pass)."')";
 			$result = $GLOBALS['sql']->query($query);
 	
 			if (@$GLOBALS['sql']->num_rows($result) == 1) {
