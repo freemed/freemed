@@ -16,7 +16,7 @@ if (!freemed::user_flag(USER_ADMIN)) {
 
 switch ($action) {
  case "import":
-  $page_title = _("Import Database"));
+  $page_title = _("Import Database");
   $display_buffer .= "
    <P>
    "._("Importing Database")." \"$db\" ... 
