@@ -5,7 +5,7 @@
 class FBGlobal {
 	
 	function CurrentDate ( ) {
-		return date("Ymd")."T00:00:00";
+		return CreateObject('PHP.xmlrpcval', date("Ymd")."T00:00:00", xmlrpcDateTime);
 	} // end method CurrentDate
 
 	function getBillKey ( $key ) {

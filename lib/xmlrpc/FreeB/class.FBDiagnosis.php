@@ -74,7 +74,7 @@ class FBDiagnosis {
 	} // end method isRelatedToEmployment
 
 	function DateOfOnset ( $diagkey ) {
-		return FBDiagnosis::DateOfFirstOccurrence($prockey, $diagkey);
+		return FBDiagnosis::DateOfFirstOccurrence($diagkey);
 	} // end method DateOfOnset
 
 	function DateOfFirstOccurrence ( $diagkey ) {
@@ -87,12 +87,15 @@ class FBDiagnosis {
 
 		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
 		list ($y, $m, $d) = explode ('-', $eoc_r['eocstartdate']);
-		return $y.$m.$d.'T00:00:00';
+		if (strlen($y) < 4) { 
+			return CreateObject('PHP.xmlrpcval', '00000000T00:00:00', xmlrpcDateTime); 
+		}
+		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00', xmlrpcDateTime);
 	} // end method DateOfFirstOccurrence
 
 	function DateOfFirstSymptom ( $diagkey ) {
-		// TODO: Actually put this in
-		return FBDiagnosis::DateOfFirstOccurrence($prockey, $diagkey);
+		// TODO: Think FreeMED tracks this as date of first occurrence
+		return FBDiagnosis::DateOfFirstOccurrence($diagkey);
 	} // end method DateOfFirstSymptom
 
 	function isFirstOccurrence ( $diagkey ) {
@@ -141,7 +144,10 @@ class FBDiagnosis {
 
 		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
 		list ($y, $m, $d) = explode ('-', $eoc_r['eocdisfromdt']);
-		return $y.$m.$d.'T00:00:00';
+		if (strlen($y) < 4) { 
+			return CreateObject('PHP.xmlrpcval', '00000000T00:00:00', xmlrpcDateTime); 
+		}
+		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00', xmlrpcDateTime);
 	} // end method DateOfCantWorkStart
 
 	function DateOfCantWorkEnd ( $diagkey ) {
@@ -154,7 +160,10 @@ class FBDiagnosis {
 
 		$eoc_r = freemed::get_link_rec($eoc, 'eoc');
 		list ($y, $m, $d) = explode ('-', $eoc_r['eocdistodt']);
-		return $y.$m.$d.'T00:00:00';
+		if (strlen($y) < 4) { 
+			return CreateObject('PHP.xmlrpcval', '00000000T00:00:00', xmlrpcDateTime); 
+		}
+		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00', xmlrpcDateTime);
 	} // end method DateOfCantWorkEnd
 
 	function LocalUseHCFA ( $diagkey ) {

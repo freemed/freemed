@@ -84,25 +84,25 @@ class FBInsured {
 
 	function PhoneCountry ( $cov ) {
 		// TODO: i18n broken
-		return '';
+		return '1';
 	} // end method PhoneCountry
 
 	function PhoneArea ( $cov ) {
 		$c = freemed::get_link_rec($cov, 'coverage');
 		// TODO: i18n broken
-		return substr($c['covphone'], 0, 3);
+		return CreateObject('PHP.xmlrpcval', substr($c['covphone'], 0, 3), xmlrpcString);
 	} // end method PhoneArea
 
 	function PhoneNumber ( $cov ) {
 		$c = freemed::get_link_rec($cov, 'coverage');
 		// TODO: i18n broken
-		return substr($c['covphone'], 3, 7);
+		return CreateObject('PHP.xmlrpcval', substr($c['covphone'], 3, 7), xmlrpcString);
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $cov ) {
 		$c = freemed::get_link_rec($cov, 'coverage');
 		// TODO: i18n broken
-		return substr($c['covphone'], 7, 4);
+		return CreateObject('PHP.xmlrpcval', substr($c['covphone'], 10, 4), xmlrpcString);
 	} // end method PhoneExtension
 
 	function isEmployed ( $cov ) {
@@ -112,7 +112,7 @@ class FBInsured {
 
 	function EmployerName ( $cov ) {
 		// TODO: don't store this anywhere?
-		return '';
+		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
 	} // end method EmployerName
 
 	function isStudent ( $cov ) {
@@ -122,7 +122,7 @@ class FBInsured {
 
 	function SchoolName ( $cov ) {
 		// TODO: don't store this anywhere?
-		return '';
+		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
 	} // end method SchoolName
 
 	function isAssigning ( $cov ) {

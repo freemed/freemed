@@ -123,9 +123,9 @@ class FBProcedure {
 			case '1': $covnum = 2; break;
 			case '2': $covnum = 3; break;
 			case '3': $covnum = 4; break;
-			default: return false; break;
+			default:  return '0';  break;
 		}
-		if ($p['proccov'.$covnum] < 1) return false;
+		if ($p['proccov'.$covnum] < 1) return '0';
 		$coverage = freemed::get_link_rec($p['proccov'.$covnum], 'coverage');
 
 		// Return the insurance company key
@@ -143,7 +143,7 @@ class FBProcedure {
 			case '4': $covnum = 4; break;
 			case '1': default: $covnum = 1; break;
 		}
-		return freemed::get_link_rec($p['proccov'.$covnum], 'coverage');
+		return $p['proccov'.$covnum];
 	} // end method InsuredKey
 
 	function OtherInsuredKey ( $proc ) {
@@ -154,7 +154,11 @@ class FBProcedure {
 	function BillingContactKey ( $bill, $proc ) {
 		$key_rec = freemed::get_link_rec($bill, 'billkey');
 		$r = unserialize($key_rec['billkey']);
-		return $r['contact'];
+		if (is_array($r['contact'])) {
+			return $r['contact'][0];
+		} else {
+			return $r['contact'];
+		}
 	} // end method BillingContactKey
 
 	function isUsingBillingService ( $proc ) {
@@ -164,7 +168,11 @@ class FBProcedure {
 	function BillingServiceKey ( $bill, $proc ) {
 		$key_rec = freemed::get_link_rec($bill, 'billkey');
 		$r = unserialize($key_rec['billkey']);
-		return $r['service'];
+		if (is_array($r['service'])) {
+			return $r['service'][0];
+		} else {
+			return $r['service'];
+		}
 	} // end method BillingServiceKey
 
 	function isUsingClearingHouse ( $proc ) {
@@ -174,27 +182,31 @@ class FBProcedure {
 	function ClearingHouseKey ( $bill, $proc ) {
 		$key_rec = freemed::get_link_rec($bill, 'billkey');
 		$r = unserialize($key_rec['billkey']);
-		return $r['clearinghouse'];
+		if (is_array($r['clearinghouse'])) {
+			return $r['clearinghouse'][0];
+		} else {
+			return $r['clearinghouse'];
+		}
 	} // end method ClearingHouseKey
 
 	function MedicaidResubmissionCode ( $proc ) {
 		// TODO: STUB
-		return '';
+		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
 	} // end method MedicaidResubmissionCode
 
 	function MedicaidOriginalReference ( $proc ) {
 		// TODO: STUB
-		return '';
+		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
 	} // end method MedicaidOriginalReference
 
 	function HCFALocalUse19 ( $proc ) {
 		// TODO: STUB
-		return '';
+		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
 	} // end method HCFALocalUse19
 
 	function HCFALocalUse10d ( $proc ) {
 		// TODO: STUB
-		return '';
+		return CreateObject('PHP.xmlrpcval', '', xmlrpcString);
 	} // end method HCFALocalUse10d
 
 	function AmountPaid ( $proc ) {
@@ -267,7 +279,10 @@ class FBProcedure {
 	function DateOfServiceStart ( $prockey ) {
 		$p = freemed::get_link_rec($prockey, 'procrec');
 		list ($y, $m, $d) = explode ('-', $p['procdt']);
-		return $y.$m.$d.'T00:00:00';
+		if (strlen($y) < 4) {
+			return CreateObject('PHP.xmlrpcval', '00000000T00:00:00', xmlrpcDateTime);
+		}
+		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00', xmlrpcDateTime);
 	} // end method DateOfServiceStart
 
 	function DateOfServiceEnd ( $prockey ) {
@@ -287,7 +302,10 @@ class FBProcedure {
 		list ($eoc, $__garbage) = explode (':', $p['proceoc']);
 		$e = freemed::get_link_rec($eoc, 'eoc');
 		list ($y, $m, $d) = explode ('-', $e['eochosadmdt']);
-		return $y.$m.$d.'T00:00:00';
+		if (strlen($y) < 4) {
+			return CreateObject('PHP.xmlrpcval', '00000000T00:00:00', xmlrpcDateTime);
+		}
+		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00', xmlrpcDateTime);
 	} // end method DateOfHospitalStart
 
 	function DateOfHospitalEnd ( $prockey ) {
@@ -295,7 +313,10 @@ class FBProcedure {
 		list ($eoc, $__garbage) = explode (':', $p['proceoc']);
 		$e = freemed::get_link_rec($eoc, 'eoc');
 		list ($y, $m, $d) = explode ('-', $e['eochosdischrgdt']);
-		return $y.$m.$d.'T00:00:00';
+		if (strlen($y) < 4) {
+			return CreateObject('PHP.xmlrpcval', '00000000T00:00:00', xmlrpcDateTime);
+		}
+		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00', xmlrpcDateTime);
 	} // end method DateOfHospitalEnd
 
 } // end class FBProcedure

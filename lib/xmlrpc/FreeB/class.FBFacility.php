@@ -38,19 +38,22 @@ class FBFacility {
 	function PhoneArea ( $key ) {
 		// TODO: Need to handle i18n with areas
 		$f = freemed::get_link_field($key, 'facility', 'psrphone');
+		if (strlen($f) < 3) { return '   '; }
 		return substr($f, 0, 3);
 	} // end method PhoneArea
 
 	function PhoneNumber ( $key ) {
 		// TODO: Need to handle i18n with rest of number
 		$f = freemed::get_link_field($key, 'facility', 'psrphone');
+		if (strlen($f) < 3) { return '       '; }
 		return substr($f, 3, 7);
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $key ) {
 		// TODO: Need to handle i18n with rest of number
 		$f = freemed::get_link_field($key, 'facility', 'psrphone');
-		return substr($f, 7, 4);
+		if (strlen($f) < 3) { return '    '; }
+		return substr($f, 10, 4);
 	} // end method PhoneExtension
 
 	function HCFACode ( $fac, $pay ) {

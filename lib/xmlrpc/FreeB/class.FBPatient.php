@@ -70,22 +70,28 @@ class FBPatient {
 
 	function PhoneCountry ( $patient ) {
 		// TODO: Broken i18n
-		return '1';
+		return CreateObject('PHP.xmlrpcval', '1', xmlrpcString);
 	} // end method PhoneCountry
 
 	function PhoneArea ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return substr($p->local_record['pthphone'], 0, 3);
+		return CreateObject('PHP.xmlrpcval',
+			substr($p->local_record['pthphone'], 0, 3),
+			xmlrpcString);
 	} // end method PhoneArea
 
 	function PhoneNumber ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return substr($p->local_record['pthphone'], 3, 7);
+		return CreateObject('PHP.xmlrpcval',
+			substr($p->local_record['pthphone'], 3, 7),
+			xmlrpcString);
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return substr($p->local_record['pthphone'], 10, 4);
+		return CreateObject('PHP.xmlrpcval',
+			substr($p->local_record['pthphone'], 10, 4),
+			xmlrpcString);
 	} // end method PhoneExtension
 
 	function isMale ( $patient ) {
@@ -94,15 +100,18 @@ class FBPatient {
 	} // end method isMale
 
 	function isDead ( $patient ) {
-		// TODO
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return false;
+		return ($p->local_record['ptdead'] == '1');
 	} // end method isDead
 
 	function DateOfDeath ( $patient ) {
-		// TODO
 		$p = CreateObject('_FreeMED.Patient', $patient);
-		return false;
+		list ($y, $m, $d) = explode('-', $p->local_record['ptdeaddt']);
+		if (strlen($y) < 4) {
+			$y = '0000'; $m = '00'; $d = '00';
+		}
+		return CreateObject('PHP.xmlrpcval', $y.$m.$d.'T00:00:00',
+				xmlrpcDateTime);
 	} // end method DateOfDeath
 
 	function isFemale ( $patient ) {
