@@ -47,8 +47,13 @@ class Patient {
 					case 'state': $k = 'ptstate'; break;
 					default: break;
 				}
-				$params[] = 'LCASE('.addslashes($k).') LIKE '.
-					'\'%'.addslashes($v).'%\'';
+				// Handle single patient request
+				if ($k == 'id') {
+					$params[] = 'id = \''.addslashes($v).'\'';
+				} else {
+					$params[] = 'LCASE('.addslashes($k).') LIKE '.
+						'\'%'.addslashes($v).'%\'';
+				}
 			}
 			$query = "SELECT * FROM patient WHERE (".
 				join(' AND ', $params).
