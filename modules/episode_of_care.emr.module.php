@@ -157,7 +157,7 @@ class episodeOfCare extends freemedEMRModule {
 			"Last" => "eocdtlastsimilar",
 			_("Description") => "eocdescrip"
 		);
-		$this->summary_view_link = true;
+		$this->summary_options = SUMMARY_VIEW;
 	} // end constructor episodeOfCare
 
 	function form () {
@@ -797,8 +797,11 @@ class episodeOfCare extends freemedEMRModule {
 		$display_buffer .= freemed_display_itemlist (
 			$result,
 			"module_loader.php",
-			array ( _("Date") => "pnotesdt" ),
-			array ( "" )
+			array (
+				_("Date") => "pnotesdt", 
+				_("Description") => "pnotesdescrip"
+			),
+			array ( "", _("NO DESCRIPTION") )
 		);
 		$module = $save_module;
 
