@@ -54,7 +54,7 @@ if ($id and !$been_here) {
 	$physician = $appt['calphysician'];
 	$patient = $appt['calpatient'];
 	$status = $appt['calstatus'];
-	$note = $appt['calprenote'];
+	$note = stripslashes($appt['calprenote']);
 } elseif (!$been_here and !isset($room)) {
 	// Fudge room, if we have a current facility
 	if ($_COOKIE['default_facility']) {
@@ -135,7 +135,7 @@ $calendar_form .= "
 			"travel=".urlencode($travel)."&".
 			"physician=".urlencode($physician)."&".
 			"duration=".urlencode($duration)."&".
-			"note=".urlencode($note)."&".
+			"note=".urlencode(stripslashes($note))."&".
 			"been_here=1&".
 			"id=".urlencode($id)
 	)."</td>
@@ -382,7 +382,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 				"type=".urlencode($type)."&".
 				"selected_date=".urlencode($date)."&".
 				"id=".urlencode($id)."&".
-				"note=".urlencode($note)."&".
+				"note=".urlencode(stripslashes($note))."&".
 				"patient=".urlencode($patient)."\" ".
 				">".__("Book")."</a></td>\n";
 		} else {
@@ -441,7 +441,7 @@ if ($process) {
 	} else {
 		// Get facility for current room
 		$facility = freemed::get_link_field($room, "room", "roompos");
-		$note = $_REQUEST['note'];
+		$note = stripslashes($_REQUEST['note']);
 	}
 
 	if (!$id) {
@@ -458,7 +458,7 @@ if ($process) {
 				"calpatient" => $patient,	
 				"calcptcode" => $cptcode,
 				"calstatus" => $status,
-				"calprenote" => $note
+				"calprenote" => stripslashes($note)
 			)
 		);
 	} else {
@@ -472,7 +472,7 @@ if ($process) {
 				"calduration" => $duration,
 				"calfacility" => $facility,
 				"calroom" => $room,
-				"calprenote" => $note
+				"calprenote" => stripslashes($note)
 			)
 		);
 	}
