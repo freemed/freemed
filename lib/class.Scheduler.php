@@ -26,6 +26,7 @@ class Scheduler {
 		'calfacility' => 'calfacility',
 		'calroom' => 'calroom',
 		'calphysician' => 'calphysician',
+		'calpatient' => 'calpatient',
 		'calcptcode' => 'calcptcode',
 		'calstatus' => 'calstatus',
 		'calprenote' => 'calprenote',
