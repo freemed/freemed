@@ -575,6 +575,127 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
   ";
 } // end function freemed_display_html_top
 
+// function freemed_display_itemlist
+function freemed_display_itemlist ($title, $result, $page_link, 
+                                   $control_list,  $blank_list)
+{
+  global $_ref, $LoginCookie, $STDFONT_B, $STDFONT_E, $modify_level, $delete_level;
+  global $patient;
+
+  // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
+
+  echo "
+    <!-- Begin itemlist Table -->
+    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
+     ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#555555\">
+    <TR>
+     <TD ALIGN=CENTER>
+      <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">$title<$STDFONT_E>
+     </TD>
+    </TR>
+    <TR><TD>
+  ";
+  freemed_display_actionbar();
+  echo "
+    </TD></TR>
+    <TR><TD>
+  ";
+  // end header
+
+  echo "
+    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
+     ALIGN=CENTER VALIGN=MIDDLE>
+    <TR>
+  ";
+  while (list($k,$v)=each($control_list)) {
+    echo "
+      <TD BGCOLOR=\"#000000\">
+       <$STDFONT_B COLOR=\"#ffffff\">$k<$STDFONT_E>
+      </TD>
+    ";
+  }
+  echo "
+      <TD BGCOLOR=\"#000000\">
+       <$STDFONT_B COLOR=\"#ffffff\">Action<$STDFONT_E>
+      </TD>
+    </TR>
+  ";
+  
+  if (fdb_num_rows($result)>0) 
+   while ($this_result_array = fdb_fetch_array($result)) {
+    $first = true; // first item in the list has 'view' link
+    echo "
+    <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+    ";
+    reset($control_list); // it's already each'd the array, 
+                          // but we have to do it again
+    $field_num=0;
+    while (list($k,$v)=each($control_list)) {
+      $item_text = ( empty($this_result_array[$v])    ?
+                     fm_prep($blank_list[$field_num]) :
+		     fm_prep($this_result_array[$v]) );
+      if ($first) {
+        $first = false;
+	echo "
+      <TD>
+        <A HREF=\"$page_link?$_auth&patient=$patient&action=display&id=".
+	"$this_result_array[id]\"><$STDFONT_B
+	  >$item_text<$STDFONT_E></A>&nbsp;
+      </TD>
+        ";
+      } else {
+	echo "
+      <TD>
+        <$STDFONT_B>$item_text&nbsp;<$STDFONT_E>
+      </TD>
+        ";
+      }
+    $field_num++;
+    } // while each data field
+    // MOD/DEL here
+    echo "
+      <TD>
+    ";
+    if (freemed_get_userlevel($LoginCookie)>$database_level) {
+      echo "
+        <A HREF=\"$page_link?$_auth&patient=$patient&action=modform&id=".
+	"$this_result_array[id]\"><$STDFONT_B>MOD<$STDFONT_E></A>&nbsp;
+      ";
+    }
+    if (freemed_get_userlevel($LoginCookie)>$delete_level) {
+      echo "
+        <A HREF=\"$page_link?$_auth&patient=$patient&action=delete&id=".
+	"$this_result_array[id]\"><$STDFONT_B>DEL<$STDFONT_E></A>&nbsp;
+      ";
+    }
+    
+    echo "&nbsp;</TD>
+    </TR>
+    ";
+   } // while each result-row
+  else { // no items to display
+   echo "
+    <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+     <TD COLSPAN=".(count($control_list)+1)." ALIGN=CENTER>
+      <$STDFONT_B><I>No $title</I><$STDFONT_E>
+     </TD>
+    </TR>
+   ";
+  } // if no items to display
+   
+  echo "
+    </TABLE>
+  ";
+  
+  // footer
+  freemed_display_actionbar();
+  echo "
+    </TD></TR>
+    </TABLE>
+    <!-- End itemlist Table -->
+  ";
+}
+
 // function freemed_display_facilities (selected)
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="")
