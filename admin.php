@@ -534,31 +534,33 @@ $page_title = __("Administration Menu");
 page_push();
 
 $display_buffer .= "
-  <table WIDTH=\"100%\" VALIGN=\"CENTER\" ALIGN=\"CENTER\" BORDER=\"0\"
+  <div align=\"center\">
+  <table WIDTH=\"60%\" VALIGN=\"CENTER\" ALIGN=\"CENTER\" BORDER=\"0\"
    CELLSPACING=\"2\" CELLPADDING=\"0\">
+  <tr><td class=\"DataHead\">".__("Action")."</td></tr>
 "; // begin standard font
 
 $userdata = $_SESSION["authdata"];
 
 $display_buffer .= "
- <tr><td ALIGN=\"RIGHT\">
+ <tr><!-- <td ALIGN=\"RIGHT\">
   <a HREF=\"export.php\"
-  ><img SRC=\"img/kfloppy.gif\" BORDER=\"0\" ALT=\"\"/></a>
+  ><img SRC=\"img/kfloppy.gif\" BORDER=\"0\" ALT=\"\"/> --></a>
  </td><td ALIGN=\"LEFT\">
   <a HREF=\"export.php\"
   >".__("Export Databases")."</a>
  </td></tr> 
- <tr><td ALIGN=\"RIGHT\">
+ <tr><!-- <td ALIGN=\"RIGHT\">
   <a HREF=\"import.php\"
   ><img SRC=\"img/ark.gif\" BORDER=\"0\" ALT=\"\"/></a>
- </td><td ALIGN=\"LEFT\">
+ </td> --><td ALIGN=\"LEFT\">
  <a HREF=\"import.php\"
  >".__("Import Databases")."</a>
  </td></tr>
- <tr><td ALIGN=\"RIGHT\">
+ <tr><!-- <td ALIGN=\"RIGHT\">
   <a HREF=\"module_information.php\"
   ><img SRC=\"img/magnify.gif\" BORDER=\"0\" ALT=\"\"/></A>
- </td><td ALIGN=\"LEFT\">
+ </td> --><td ALIGN=\"LEFT\">
  <a HREF=\"module_information.php\"
   >".__("Module Information")."</a>
  </td></tr>
@@ -577,10 +579,10 @@ $display_buffer .= "
 // ";
 
 $display_buffer .= "
-  <tr><td ALIGN=\"RIGHT\">
+  <tr><!-- <td ALIGN=\"RIGHT\">
    <a HREF=\"admin.php?action=cfgform\"
    ><img SRC=\"img/config.gif\" BORDER=\"0\" ALT=\"\"/></A>
-  </td><td ALIGN=\"LEFT\">
+  </td> --><td ALIGN=\"LEFT\">
   <a HREF=\"admin.php?action=cfgform\"
   >".__("Update Config")."</a>
   </td></tr>
@@ -588,10 +590,10 @@ $display_buffer .= "
 
 if ($userdata["user"] == 1) { // if we are root...
   $display_buffer .= "
-    <tr><td ALIGN=\"RIGHT\">
+    <tr><!-- <td ALIGN=\"RIGHT\">
      <a HREF=\"user.php?action=view\"
      ><img SRC=\"img/monalisa.gif\" BORDER=\"0\" ALT=\"\"/></a>
-    </td><td ALIGN=\"LEFT\">
+    </td> --><td ALIGN=\"LEFT\">
     <a HREF=\"user.php?action=view\"
      >".__("User Maintenance")."</a>
     </td></tr>
@@ -607,10 +609,10 @@ if ($userdata["user"] == 1) { // if we are root...
 			$title = freemed::module_get_value($class, 'MODULE_NAME');
 			$icon = freemed::module_get_value($class, 'ICON');
 			$display_buffer .= "
-			<tr><td ALIGN=\"RIGHT\">
+			<tr><!-- <td ALIGN=\"RIGHT\">
 			<a HREF=\"module_loader.php?module=".urlencode($class).
 			"\"><img src=\"".$icon."\" BORDER=\"0\" ALT=\"\"/></a>
-			</td><td ALIGN=\"LEFT\">
+			</td> --><td ALIGN=\"LEFT\">
 			<a HREF=\"module_loader.php?module=".urlencode($class).
 			"\">".__($title)."</a>
 			</td></tr>
