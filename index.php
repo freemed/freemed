@@ -25,12 +25,27 @@ if(file_exists("/usr/share/phpwebtools/webtools.php")) {
 	"FreeMED cannot find the phpwebtools file webtools.php"."<br/>\n"
 );
 
+define('SKIP_SQL_INIT', true);
 include_once ("lib/freemed.php");
 
 $test = CreateObject('FreeMED.FreeMEDSelfTest');
 
 if (ALWAYS_SELFTEST) {
 	$test->SelfTest();
+}
+
+// Unfortunately, we have to *manually* create the SQL object after selftest
+if (!is_object($sql)) {
+	$sql = CreateObject(
+		'PHP.sql',
+		DB_ENGINE,
+		array(
+			'host' => DB_HOST,
+			'user' => DB_USER,
+			'password' => DB_PASSWORD,
+			'database' => DB_NAME
+		)
+	);
 }
 
 //----- Set page title

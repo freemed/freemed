@@ -35,7 +35,7 @@ $gifhome = PHYSICAL_LOCATION . '/data/fax/incoming';
 //----- Gettext and language settings
 
 if (strlen($u_lang)==2) $language=$u_lang;
-  else $language=$default_language;
+  else $language=DEFAULT_LANGUAGE;
 
 define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
 
@@ -144,16 +144,18 @@ include_once ("lib/xml.php");             // XML import/export routines
 define ('DB_ENGINE', SQL_MYSQL);
 
 //----- Create SQL database object
-$sql = CreateObject (
-	'PHP.sql', 
-	DB_ENGINE,
-	array(
-		'host' => DB_HOST, 
-		'user' => DB_USER, 
-		'password' => DB_PASSWORD, 
-		'database' => DB_NAME,
-	)
-);
+if (!defined('SKIP_SQL_INIT')) {
+	$sql = CreateObject (
+		'PHP.sql', 
+		DB_ENGINE,
+		array(
+			'host' => DB_HOST, 
+			'user' => DB_USER, 
+			'password' => DB_PASSWORD, 
+			'database' => DB_NAME,
+		)
+	);
+}
 
 //----- Create Log target
 openlog("freemed", LOG_PID | LOG_PERROR, LOG_LOCAL0);
