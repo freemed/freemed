@@ -26,7 +26,8 @@ class prescriptionModule extends freemedEMRModule {
 
 		$this->summary_vars = array (
 			"Date From" => "rxdtfrom",
-			"Drug" => "rxdrug"
+			"Drug" => "rxdrug",
+			"Dosage" => "CONCAT(rxsize,' ',rxunit)"
 			//"Crypto Key" => "rxmd5"
 		);
 		// Specialized query bits
@@ -45,6 +46,7 @@ class prescriptionModule extends freemedEMRModule {
 				"solution"
 				)),
 			"rxdosage" => SQL_INT_UNSIGNED(0),
+			"rxsize" => SQL_INT_UNSIGNED(0),
 			"rxunit" => SQL_ENUM(array(
 				"mg",
 				"mg/1cc",
@@ -77,6 +79,8 @@ class prescriptionModule extends freemedEMRModule {
 		$this->variables = array (
 			"rxdtfrom" => date_assemble("rxdtfrom"),
 			"rxdrug",
+			"rxsize",
+			"rxform",
 			"rxdosage",
 			"rxunit",
 			"rxinterval",
@@ -111,20 +115,23 @@ class prescriptionModule extends freemedEMRModule {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global ${$k};
 
-		// If modify, grab old record
-		if (($action=="mod") or ($action=="modform")) {
-			$r = freemed::get_link_rec($id, $this->table_name);
-			foreach ($r AS $k => $v) {
-				global ${$k};
-				${$k} = $v;
-			}
-		}
-
 		// Create new notebook
 		$book = new notebook (
 			array ("module", "action", "id", "patient", "return"),
 			NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH | NOTEBOOK_NOFORM
 		);
+
+		// If modify, grab old record
+		if (($action=="mod") or ($action=="modform")) {
+			if (!$book->been_here()) {
+				$r = freemed::get_link_rec($id, $this->table_name);
+				foreach ($r AS $k => $v) {
+					global ${$k};
+					${$k} = $v;
+				}
+			}
+		}
+
 		$book->set_submit_name(
 			(
 				( ($action=="add") or ($action=="addform") ) ?
@@ -281,7 +288,7 @@ class prescriptionModule extends freemedEMRModule {
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 		$display_buffer .= freemed_display_itemlist(
 			$sql->query("SELECT *,".
-				"CONCAT(rxdosage,' ',rxunit,' ',".
+				"CONCAT(rxsize,' ',rxunit,' ',".
 				"rxinterval) AS _dosage ".
 				"FROM $this->table_name ".
 				"WHERE rxpatient='".addslashes($patient)."' ".
