@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=lib
-SUBDIR=acl perl template xmlrpc
+SUBDIR=acl agata perl template tex xmlrpc
 
 all:
 	# Nothing
