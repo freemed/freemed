@@ -117,7 +117,7 @@ function freemed_display_banner ($_pg_desc="")
       <B><$STDFONT_B SIZE=+2>
         --= ".prepare(PACKAGENAME)." v".prepare(VERSION)." $_pg_desc =--
       <$STDFONT_E></B><BR>
-      <$STDFONT_B>".fm_prep(INSTALLATION)."<$STDFONT_E>
+      <$STDFONT_B>".prepare(INSTALLATION)."<$STDFONT_E>
   ";
   if ($show_top_links) echo "
       <BR>
@@ -199,7 +199,7 @@ function freemed_display_box_bottom ($_null="")
 // function freemed_display_box_top
 function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 {
-  global $language, $topbar_color, $lang_back, $lang_main, $lang_exit,
+  global $language, $topbar_color,
    $_auth, $page_name, $action, $id, $patient, $_pg_desc, $_ref,
    $admin_level, $delete_level, $export_level, $database_level,
    $menubar_color, $LoginCookie, $STDFONT_B, $STDFONT_E, $current_patient;
@@ -259,7 +259,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       echo "
          ><A HREF=\"$ref?$_auth\"
          ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
-         WIDTH=16 ALT=\"[$lang_back]\"></A
+         WIDTH=16 ALT=\"["._("back")."]\"></A
       ";
    } elseif  (($_ref == $pg_name) AND
              ($pg_name != "main.php3")) { 
@@ -267,14 +267,14 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       echo "
          ><A HREF=\"main.php3?$_auth\"
          ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
-         WIDTH=16 ALT=\"[$lang_main]\"></A
+         WIDTH=16 ALT=\"["._("main")."]\"></A
       ";
    }
    echo "
       ><A HREF=\"logout.php3?_URL=".
        urlencode(getenv("REQUEST_URI")).
       "\"><IMG SRC=\"img/close-widget.gif\" HEIGHT=16 BORDER=0
-      WIDTH=16 ALT=\"[$lang_exit]\"></A>
+      WIDTH=16 ALT=\"["._("exit")."]\"></A>
       </TD></TR></TABLE>
     ";
   } // if there is a box title
@@ -551,7 +551,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      <$STDFONT_B COLOR=\"#ffffff\">
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
-       .fm_prep($_s_val)."" : "").
+       .prepare($_s_val)."" : "").
      "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
         "._("Previous")."
      <$STDFONT_E></A>
@@ -573,7 +573,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      <$STDFONT_B COLOR=\"#ffffff\">
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
-       .fm_prep($_s_val)."" : "").
+       .prepare($_s_val)."" : "").
      "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
         "._("Next")."
      <$STDFONT_E></A>
@@ -637,14 +637,14 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
           $xref_item=freemed_get_link_field($this_result[$v],
                                                     $xref_k,$xref_v);
           $item_text = ( (strlen($xref_item)<1) ?
-                         fm_prep($blank_list[$field_num]) :
-                         fm_prep($xref_item) );
+                         prepare($blank_list[$field_num]) :
+                         prepare($xref_item) );
         }
       } // if there are any xrefs in the table
       if (!$is_xref) { // not an xref item 
         $item_text = ( (strlen($this_result[$v])<1)?
-                       fm_prep($blank_list[$field_num])  :
-                       fm_prep($this_result[$v]) ); 
+                       prepare($blank_list[$field_num])  :
+                       prepare($this_result[$v]) ); 
       }
       if ($first) {
         $first = false;
@@ -857,12 +857,12 @@ function freemed_display_ptstatus ($param="", $outer_tags="")
   $result = fdb_query ("SELECT * FROM ptstatus
                         ORDER BY ptstatusdescrip,ptstatus");
   while ($r = fdb_fetch_array ($result)) {
-   $ptstatus        = fm_prep ($r["ptstatus"       ]);
+   $ptstatus        = prepare ($r["ptstatus"       ]);
    $id              =          $r["id"             ] ;
    echo "
     <OPTION VALUE=\"$id\" ".
     ( ($r[id] == $param) ? "SELECTED" : "" ).
-    ">".fm_prep($r[ptstatusdescrip])." ($ptstatus)
+    ">".prepare($r[ptstatusdescrip])." ($ptstatus)
    ";
   } // end while
 
@@ -901,7 +901,7 @@ function freemed_display_phygroups ($param="")
       echo "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($param == $row[id]) ? "SELECTED" : "" ).
-        ">".fm_prep($row[phygroupname])." $debug_var
+        ">".prepare($row[phygroupname])." $debug_var
       "; // end of actual output
     } // while there are more results...
   }
@@ -931,7 +931,7 @@ function freemed_display_physicians ($param="", $intext="")
       $buffer .= "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".fm_prep("$row[phylname], $row[phyfname]")."
+        ">".prepare("$row[phylname], $row[phyfname]")."
       "; // end of actual output
     } // while there are more results...
   }
@@ -960,7 +960,7 @@ function freemed_display_printerlist ($param="")
       echo "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($param == $row[id]) ? "SELECTED" : "" ).
-        ">".fm_prep("$row[prnthost] $row[prntname]")."
+        ">".prepare("$row[prnthost] $row[prntname]")."
       "; // end of actual output
     } // while there are more results...
   }
@@ -989,7 +989,7 @@ function freemed_display_simplereports ($param="")
       echo "
         <OPTION VALUE=\"$_sr_id\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".fm_prep("$row[sr_label], $row[sr_type]")."
+        ">".prepare("$row[sr_label], $row[sr_type]")."
       "; // end of actual output
     } // while there are more results...
   }
@@ -1014,7 +1014,7 @@ function freemed_display_tos ($param)
       echo "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".fm_prep("$row[tosname] $row[tosdescrip]")."
+        ">".prepare("$row[tosname] $row[tosdescrip]")."
       "; // actually show it
     } // while there are more results...
   } // end master loop
@@ -1044,7 +1044,7 @@ function freemed_display_rooms ($param)
         echo "
           <OPTION VALUE=\"$row[id]\" ".
 	  ( ($row[id] == $param) ? "SELECTED" : "" ).
-          ">".fm_prep("$row[roomname] $row[roomdescrip]")."
+          ">".prepare("$row[roomname] $row[roomdescrip]")."
         "; // actually show it
 
     } // while there are more results...
@@ -1088,7 +1088,7 @@ function freemed_display_selectbox ($result, $format, $param="")
     $buffer .= "
       <OPTION VALUE=\"$item[id]\" ".
       ( ($item[id] == $$param) ? "SELECTED" : "" ).
-      ">".fm_prep($this_format)."\n";
+      ">".prepare($this_format)."\n";
   } // while fetching result
   $buffer .= "
     </SELECT>
@@ -1201,7 +1201,7 @@ function freemed_get_link_rec($id="0", $db="")
   }
 
   $result=fdb_query("SELECT * FROM $db WHERE
-    id='$id'"); // get just that record
+    id='".addslashes($id)."'"); // get just that record
   return fdb_fetch_array($result); // return the array
 
 } // end function freemed_get_link_rec
@@ -1282,19 +1282,17 @@ function freemed_inscogroup_display ($param)
   global $NONE_SELECTED, $NO_RESULT_OF_QUERY, $debug;
 
   if ((strlen($param)<1) OR ($param=="0")) {
-    echo "
-      $NONE_SELECTED
-    ";
+    echo " "._("NONE SELECTED")." ";
   } else {
     $query = "SELECT * FROM inscogroup ".
-       "WHERE id='$param'";
+       "WHERE id='".addslashes($param)."'";
     $result = fdb_query ($query);
     if (!$result) {
       echo "$NO_RESULT_OF_QUERY";
       // don't do anything...! 
     } else { // exit if no more
       $row = fdb_fetch_array($result); 
-      echo fm_prep ($row[inscogroup]).
+      echo prepare ($row[inscogroup]).
        ( $debug ? " [ $row[id] ]" : "" )."\n";
     }
   }
@@ -1399,6 +1397,43 @@ function freemed_open_db ($my_cookie) {
   //echo " -->";
 } // end function freemed_open_db
 
+// function freemed_patient_box
+//   general purpose patient link/info box
+function freemed_patient_box ($patient_object) {
+  global $STDFONT_B, $STDFONT_E;
+
+  // empty buffer
+  $buffer = "";
+
+  // top of box
+  $buffer .= "
+    <CENTER>
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5>
+     <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
+      <A HREF=\"manage.php3?id=".urlencode($patient_object->id)."\"
+      ><$STDFONT_B COLOR=\"#ffffff\" SIZE=\"+1\">".
+       $patient_object->fullName().
+      "<$STDFONT_E></A>
+     </TD><TD ALIGN=RIGHT VALIGN=CENTER>
+      <$STDFONT_B COLOR=\"#ffffff\">
+      ".( (!empty($patient_object->local_record["ptid"])) ?
+          $patient_object->idNumber() : "(no id)" )."
+      <$STDFONT_E>
+     </TD></TR>
+     <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT COLSPAN=2>
+      <$STDFONT_B COLOR=\"#cccccc\">
+       ".$patient_object->age()." old, DOB ".
+        $patient_object->dateOfBirth()."
+      <$STDFONT_E>
+     </TD></TR>
+    </TABLE>
+    </CENTER>
+    ";
+  
+  // return buffer
+  return $buffer;
+} // end function freemed_patient_box
+
 // function freemed_search_query()
 //   generates result from in-notebook query
 function freemed_search_query ($ctrl_array, $ord_array, 
@@ -1500,7 +1535,7 @@ function freemed_specialty_display ($param)
       // don't do anything...! 
     } else { // exit if no more
       $row=fdb_fetch_array($result); 
-      echo fm_prep ($row[specdegree]." (".
+      echo prepare ($row[specdegree]." (".
                     $row[specname].")");
     }
   }
@@ -1784,7 +1819,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
       if ($i==$m) { $this_selected="SELECTED"; }
        else       { $this_selected="";         }
       if ($i<10) { $x = "0"; } else { $x = ""; } 
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>$lang_months[$i]\n";
+      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>"._($lang_months[$i])."\n";
      } // end for loop (months) 
      echo "
       </SELECT> <B>-</B>
@@ -1833,7 +1868,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
       if ($i==$m) { $this_selected = "SELECTED"; }
        else       { $this_selected = "";         }
       if ($i<10) { $x = "0"; } else { $x = ""; }
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>$lang_months[$i]\n";
+      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>"._($lang_months[$i])."\n";
      } // end looping for months
      echo "
       </SELECT> <B>-</B>
@@ -1879,14 +1914,14 @@ function fm_htmlize_array ($variable_name, $cur_array) {
   if ($array_length==1) {
     echo "
       <INPUT TYPE=HIDDEN NAME=\"$variable_name\"
-       VALUE=\"".fm_prep($cur_array)."\">
+       VALUE=\"".prepare($cur_array)."\">
      ";
     return true;                       // it printed, return true...
   } // end of array length = 1
   for ($i=0;$i<$array_length;$i++)
     echo "
       <INPUT TYPE=HIDDEN NAME=\"$variable_name\[\]\"
-       VALUE=\"".fm_prep($cur_array[$i])."\">
+       VALUE=\"".prepare($cur_array[$i])."\">
      ";
   return true;                         // be nice, return true
 } // end function fm_htmlize_array
@@ -2075,11 +2110,6 @@ function fm_eval ($orig_string) {
   return $new_string;                          // return
 } // end function fm_eval
 
-// fm_prep -- prepare a string to be viewed as HTML
-function fm_prep ($this_string) {
-  return htmlentities(stripslashes($this_string))."";
-} // end function fm_prep
-
 // fm_secure -- secures strings that are to be evaled by simply removing
 //              all secure varaibles...
 function fm_secure ($orig_string) {
@@ -2094,13 +2124,6 @@ function fm_secure ($orig_string) {
   $this_string = str_replace ("\$LoginCookie", "", $this_string);
   return $this_string;    // return cleansed string
 } // end function fm_secure
-
-// fph -- freemed phrase handler
-function fph ($this_phrase) {
-  global $phrase;
-
-  return fm_prep($phrase[$this_phrase]);
-} // end function fph
 
 } // end checking for __FREEMED_FUNCTIONS_INC__
 
