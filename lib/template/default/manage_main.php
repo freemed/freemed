@@ -11,7 +11,9 @@ if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 if (is_array($this_user->manage_config)) extract($this_user->manage_config);
 
 //----- Check for a *reasonable* refresh time and summary items
-if ($automatic_refresh_time > 14) $automatic_refresh = $automatic_refresh_time;
+if ($automatic_refresh_time > 14) {
+	$GLOBALS['__freemed']['automatic_refresh'] = $automatic_refresh_time;
+}
 if ($num_summary_items < 1) $num_summary_items = 5;
 
 //----- Display patient information box...

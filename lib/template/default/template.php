@@ -10,7 +10,7 @@ if (isset($refresh)) {
 */
 
 // Check for avoiding template
-if (!$no_template_display) {
+if (!$GLOBALS['__freemed']['no_template_display']) {
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
@@ -26,9 +26,11 @@ if (isset($refresh)) {
 ?>
 	<meta HTTP-EQUIV="REFRESH" CONTENT="0;URL=<?php print $refresh; ?>">
 <?php
-} else if (isset($automatic_refresh)) { // handle automatic refreshes
+} else if (isset($GLOBALS['__freemed']['automatic_refresh'])) { // automatic refreshes
 ?>
-	<meta HTTP-EQUIV="REFRESH" CONTENT="<?php print $automatic_refresh; ?>;URL=<?php print basename($REQUEST_URI); ?>">
+	<meta HTTP-EQUIV="REFRESH" CONTENT="<?php
+	print $GLOBALS['__freemed']['automatic_refresh'];
+	?>;URL=<?php print basename($REQUEST_URI); ?>">
 <?php
 } // end handle refresh
 ?>
@@ -42,9 +44,9 @@ if (isset($refresh)) {
  <?php
  /*
 	// Check for close_on_load
-	if ($close_on_load) {
+	if ($GLOBALS['__freemed']['close_on_load']) {
 		print "onLoad=\"window.close(); return true;\"";
-	} elseif (!empty($on_load)) {
+	} elseif (!empty($GLOBALS['__freemed']['on_load'])) {
 		print "onLoad=\"".$on_load."(); return true;\"";
 	}
 */
@@ -72,7 +74,7 @@ if (isset($refresh)) {
 	<!-- menu bar -->
 <?php
 //----- Check to see if we skip displaying this
-if (!$no_menu_bar) {
+if (!$GLOBALS['__freemed']['no_menu_bar']) {
 ?>
 	<table WIDTH="100%" CELLSPACING="0" CELLPADDING="2"
 	 CLASS="menubar" VALIGN="TOP" ALIGN="CENTER">

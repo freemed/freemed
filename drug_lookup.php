@@ -115,7 +115,7 @@ switch ($action) {
 $display_buffer .= "</FORM>\n";
 
 //----- Display template
-$no_template_display = true;
+$GLOBALS['__freemed']['no_template_display'] = true;
 template_display();
 
 ?>

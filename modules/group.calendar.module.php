@@ -62,7 +62,7 @@ class groupCalendar extends freemedCalendarModule {
 		if ($submit=="delanesth") $this->delete_anesth();
 
 		// For extra space, turn off template
-		global $no_template_display; $no_template_display = true;
+		$GLOBALS['__freemed']['no_template_display'] = true;
 
 		// Create user object
 		if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');

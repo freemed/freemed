@@ -5,7 +5,6 @@
 
 $page_name = "logout.php";
 include ("lib/freemed.php");
-include ("lib/API.php");
 
 // Header("Location: ".COMPLETE_URL); // 19990610 - header instead
 //if (strlen($_URL)>0) $__url_part = "?_URL=".urlencode($_URL);
@@ -16,7 +15,7 @@ unset($SESSION["ipaddr"]);
 
 //----- Set template pieces
 $refresh = "index.php";
-$no_menu_bar = true;
+$GLOBALS['__freemed']['no_menu_bar'] = true;
 $page_title = _("Logging Out ... ");
 
 $display_buffer .= "

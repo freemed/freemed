@@ -8,7 +8,7 @@ $page_name = "authenticate.php" ;
 include_once ("lib/freemed.php");
 
 //----- Disable menu bar
-$no_menu_bar = true;
+$GLOBALS['__freemed']['no_menu_bar'] = true;
 
 //----- First, make sure that password is correct if updated
 // Get root password

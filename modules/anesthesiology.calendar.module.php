@@ -41,7 +41,7 @@ class anesthCalendar extends freemedCalendarModule {
 		if ($submit=="delete") $this->delete_date();
 
 		// For extra space, turn off template
-		global $no_template_display; $no_template_display = true;
+		$GLOBALS['__freemed']['no_template_display'] = true;
 
 		// Create user object
 		if (!is_object($this_user)) {

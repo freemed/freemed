@@ -35,7 +35,7 @@ if ($framed!="yes") {
 	<!-- menu bar -->
 <?php
 //----- Check to see if we skip displaying this
-if (!$no_menu_bar) {
+if (!$GLOBALS['__freemed']['no_menu_bar']) {
 ?>
 	<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="2"
 	 CLASS="menubar" VALIGN="TOP" ALIGN="CENTER">

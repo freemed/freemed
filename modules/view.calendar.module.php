@@ -98,7 +98,7 @@ class ViewCalendar extends freemedCalendarModule {
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 		//global $ptname, $phname, $facname, $roomname, $time, $prenote, $postnote;
 
-		global $no_template_display; $no_template_display = true;
+		$GLOBALS['__freemed']['no_template_display'] = true;
 
 		$query = "SELECT * FROM scheduler WHERE id='".prepare($id)."'";
 		$result = $sql->query($query);	

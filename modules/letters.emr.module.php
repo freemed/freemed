@@ -172,9 +172,9 @@ class lettersModule extends freemedEMRModule {
 	function display () {
 		global $display_buffer, $patient, $action, $id, $title,
 			$return, $SESSION;
-
-		global $no_template_display; $no_template_display=true;
 		global $this_patient;
+
+		$GLOBALS['__freemed']['no_template_display'] = true;
 
 		$title = _("View Letter");
 

@@ -315,7 +315,7 @@ class progressNotes extends freemedEMRModule {
 		global $display_buffer;
 
 		// Tell FreeMED not to display a template
-		global $no_template_display; $no_template_display = true;
+		$GLOBALS['__freemed']['no_template_display'] = true;
 		
 		foreach ($GLOBALS AS $k => $v) global $$k;
      if (($id<1) OR (strlen($id)<1)) {
