@@ -1,15 +1,15 @@
 # $Id$
 # $Author$
 
-THISDIR=locale
-SUBDIR=en_US
+THISDIR=locale/en_US
+SUBDIR=doc
 
 all:
 	# Nothing
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf README *.php $(INSTDIR)/$(THISDIR)
+	#cp -vf README *.php $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
 		make -C $$d install INSTDIR=$(INSTDIR); \
 	done

@@ -3331,11 +3331,11 @@ function page_history_list () {
 //	Fully formed URL to the specified help page.
 //
 function help_url ( $page = "", $section = "" ) {
-	global $language, $PHP_SELF;
+	$language = $_SESSION['language'];
 
 	// If there's no page name, substitute in $PHP_SELF
 	if ($page == "") {
-		$page_name = basename($PHP_SELF);
+		$page_name = page_name();
 	} else {
 		$page_name = $page;
 	}
@@ -3346,16 +3346,16 @@ function help_url ( $page = "", $section = "" ) {
 	// Build helpfile name...
 	if (empty($page_name) AND empty($section)) {
 		// Default if nothing is provided
-		$_help_name = "lang/$language/doc/default.$language.html";
+		$_help_name = "locale/$language/doc/default.$language.html";
 	} elseif (!empty($page_name) AND empty($section)) {
 		// If just page name, leave out section
-		$_help_name = "lang/$language/doc/$page_name.$language.html";
+		$_help_name = "locale/$language/doc/$page_name.$language.html";
 	} elseif (!empty($page_name) AND !empty($section)) {
 		// Page name and section provided
-		$_help_name = "lang/$language/doc/$page_name.$section.$language.html";
+		$_help_name = "locale/$language/doc/$page_name.$section.$language.html";
 	} else {
 		// Should never have section with no page name
-		$_help_name = "lang/$language/doc/default.$language.html";
+		$_help_name = "locale/$language/doc/default.$language.html";
 	}
 
 	// Check to see if it exists

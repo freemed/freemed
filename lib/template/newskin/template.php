@@ -73,6 +73,17 @@ if (isset($refresh)) {
 	print "<tr><td valign=\"top\"><b>".PACKAGENAME." v".DISPLAY_VERSION."</b></td>\n";
 	print "<td valign=\"top\">";
 	include "lib/template/newskin/menu.php";
+	if ( ($help_url = help_url()) != "help.php" ) {
+		print "</td><td align=\"left\" valign=\"top\">\n";
+		print "\t<a HREF=\"#\" ".
+		"onClick=\"window.open('".$help_url."', 'Help', ".
+		"'width=600,height=400,resizable=yes');\" ".
+		"onMouseOver=\"window.status='".prepare(__("Help"))."'; ".
+		"return true;\" ".
+		"onMouseOut=\"window.status=''; return true;\">".
+		prepare(__("Help"))."</a>\n";
+	} // end checking for help.php
+
 	print "</td><td align=\"right\" valign=\"top\">".prepare($GLOBALS['page_title'])."</td>";
 	print "</tr>";
 	print "</table>\n";

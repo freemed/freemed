@@ -35,15 +35,17 @@ function help_template_display () {
   //----- Build name without .php
 $page = str_replace(".php", "", $page_name);
 
+$language = $_SESSION['language'];
+
   // build helpfile name...
 if (empty($page) AND empty($section)) {
-	$_help_name = "lang/$language/doc/default.$language.html";
+	$_help_name = "locale/$language/doc/default.$language.html";
 } elseif (!empty($page) AND empty($section)) {
-	$_help_name = "lang/$language/doc/$page.$language.html";
+	$_help_name = "locale/$language/doc/$page.$language.html";
 } elseif (!empty($page) AND !empty($section)) {
-	$_help_name = "lang/$language/doc/$page.$section.$language.html";
+	$_help_name = "locale/$language/doc/$page.$section.$language.html";
 } else {
-	$_help_name = "lang/$language/doc/default.$language.html";
+	$_help_name = "locale/$language/doc/default.$language.html";
 }
 
  // if the helpfile doesn't exist, but is enabled, ERROR! out...
