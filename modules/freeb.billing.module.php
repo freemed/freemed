@@ -366,6 +366,9 @@ class FreeBBillingTransport extends BillingModule {
 		// Create new FreeB instance
 		$freeb = CreateObject('FreeMED.FreeB_v1');
 
+		// Create new ClaimLog instance
+		$claimlog = CreateObject ('FreeMED.ClaimLog');
+
 		// Create Bill Key
 		extract($_REQUEST);
 
@@ -375,6 +378,7 @@ class FreeBBillingTransport extends BillingModule {
 		// If we're doing a single claim, handle seperately
 		if ($single != NULL) {
 			// We always pass these ...
+			print "<br/><br/><hr/>processing single = $single<br/>\n";
 			$billkey['contact'] = $_REQUEST['contact'];
 			$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
 			$billkey['service'] = $_REQUEST['service'];
@@ -387,13 +391,20 @@ class FreeBBillingTransport extends BillingModule {
 				$this->MediaToFormatTarget($single, $media[$single]);
 			$result = $freeb->ProcessBill(
 				$this_billkey,
-				$format[$single],
-				$target[$single],
+				$my_format,
+				$my_target,
 				'SingleProcedure_'.$single
 			);
 			print "DEBUG: format = ".$format[$single]." target = ".$target[$single]."<br/>\n";
 			print "DEBUG: "; print_r($result); print "<br/>\n";
 			$buffer .= "Should have returned $result.<br/>\n";
+			// Add to claimlog
+			$result = $claimlog->log_billing (
+				$this_billkey,
+				$my_format,
+				$my_target,
+				__("FreeB billing run sent")
+			);
 			return $buffer;
 		}
 
@@ -413,7 +424,7 @@ class FreeBBillingTransport extends BillingModule {
 		// not set to be billed in the interface.
 			//	if ($bill[$claim_owner[$my_claim]] == 1) {
 					// Add the procedure to that hash
-					$bill_hash[$hash_key]['procedures'][] = $claim;
+					$bill_hash[$hash_key]['procedures'][] = $my_claim;
 				}
 			//}
 		}
@@ -435,6 +446,13 @@ class FreeBBillingTransport extends BillingModule {
 
 			// ... and send it to FreeB, to see what we get for a result
 			$result = $freeb->ProcessBill($key, $my_format, $my_target);
+			// Add to claimlog
+			$result = $claimlog->log_billing (
+				$key,
+				$my_format,
+				$my_target,
+				__("FreeB billing run sent")
+			);
 
 			// DEBUG: Show what we got
 			print "DEBUG: "; print_r($result); print "<br/>\n";
