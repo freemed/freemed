@@ -13,7 +13,6 @@ class BaseModule extends module {
 
 	// override variables
 	var $PACKAGE_NAME = PACKAGENAME;
-	var $PACKAGE_VERSION = VERSION;
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_DESCRIPTION = "No description.";
 	var $MODULE_VENDOR = "Stock Module";
@@ -247,7 +246,7 @@ class BaseModule extends module {
 				$_REQUEST['printer']
 			);
 			// TODO: Handle direct PDF generation and return here
-			$TeX->PrintTeX(!empty($this->print_template));
+			$TeX->PrintTeX(1, !empty($this->print_template));
 			$GLOBALS['__freemed']['close_on_load'] = true;
 			}
 			break;
