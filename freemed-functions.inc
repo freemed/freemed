@@ -1435,19 +1435,23 @@ function freemed_patient_box ($patient_object) {
   // top of box
   $buffer .= "
     <CENTER>
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5>
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
      <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
       <A HREF=\"manage.php3?id=".urlencode($patient_object->id)."\"
       ><$STDFONT_B COLOR=\"#ffffff\" SIZE=\"+1\">".
        $patient_object->fullName().
       "<$STDFONT_E></A>
-     </TD><TD ALIGN=RIGHT VALIGN=CENTER>
+     </TD><TD ALIGN=CENTER VALIGN=CENTER>
       <$STDFONT_B COLOR=\"#ffffff\">
       ".( (!empty($patient_object->local_record["ptid"])) ?
           $patient_object->idNumber() : "(no id)" )."
       <$STDFONT_E>
-     </TD></TR>
-     <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT COLSPAN=2>
+     </TD><TD ALIGN=CENTER VALIGN=CENTER>
+      <$STDFONT_B COLOR=\"#ffffff\">
+      &nbsp;
+      <!-- ICON BAR NEEDS TO GO HERE ... TODO -->
+      <$STDFONT_E>
+     </TD><TD VALIGN=CENTER ALIGN=RIGHT>
       <$STDFONT_B COLOR=\"#cccccc\">
        ".$patient_object->age()." old, DOB ".
         $patient_object->dateOfBirth()."
@@ -1801,9 +1805,10 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
                              $pos="";                    }
   else                     { $suffix="[]";
                              $pos="[$arrayvalue]"; }
-  global $lang_months;                 // import month names
   global $$datevarname, ${$datevarname."_y"}, 
     ${$datevarname."_m"}, ${$datevarname."_d"};
+  $months = array ("", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
   $w = ${"$datevarname$pos"};
   $m = ${$datevarname."_m".$pos};
   $d = ${$datevarname."_d".$pos};
@@ -1834,86 +1839,59 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
   if (($y>1800) AND ($y<$starting_year)) $starting_year = $y;
   if (($y>1800) AND ($y>$ending_year))   $ending_year   = $y;
 
+  // form the buffers, then assemble
+  $buffer_m = "
+    <SELECT NAME=\"".$datevarname."_m$suffix\">
+     <OPTION VALUE=\"00\" ".
+     ( ($m==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
+  for ($i=1;$i<=12;$i++) {
+   $buffer_m .= "\n<OPTION VALUE=\"".( ($i<10) ? "0" : "" )."$i\" ".
+     ( ($i==$m) ? "SELECTED" : "" ).">"._($months[$i])."\n";
+  } // end for loop (months) 
+  $buffer_m .= "   </SELECT>\n";
+
+  $buffer_d = "
+   <SELECT NAME=\"".$datevarname."_d$suffix\">
+    <OPTION VALUE=\"00\" ".
+    ( ($d==0) ? "SELECTED" : "" ).">NONE
+  ";
+  for ($i=1;$i<=31;$i++) {
+   $buffer_d .= "\n<OPTION VALUE=\"".( ($i<10) ? "0" : "" )."$i\" ".
+     ( ($i==$d) ? "SELECTED" : "" ).">$i\n";
+  } // end looping for days
+  $buffer_d .= "    </SELECT>\n";
+
+  $buffer_y = "
+   <SELECT NAME=\"".$datevarname."_y$suffix\">
+    <OPTION VALUE=\"0000\" ".
+    ( ($y==0) ? "SELECTED" : "" ).">NONE
+  ";
+  for ($i=$starting_year;$i<=$ending_year;$i++) {
+   if ($i==$y) { $this_selected="SELECTED"; }
+    else       { $this_selected="";         }
+   $buffer_y .= "\n<OPTION VALUE=\"$i\" ".
+     ( ($i==$y) ? "SELECTED" : "" ).">$i\n";
+  } // end for look (years)
+  $buffer_y .= "    </SELECT>\n";
+
   // now actually display the input boxes
   switch (freemed_config_value("dtfmt")) {
     case "mdy":
-     echo "
-      <SELECT NAME=\"".$datevarname."_m$suffix\">
-       <OPTION VALUE=\"00\" ".
-       ( ($m==0) ? "SELECTED" : "" ).">NONE
-     ";
-     for ($i=1;$i<=12;$i++) {
-      if ($i==$m) { $this_selected="SELECTED"; }
-       else       { $this_selected="";         }
-      if ($i<10) { $x = "0"; } else { $x = ""; } 
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>"._($lang_months[$i])."\n";
-     } // end for loop (months) 
-     echo "
-      </SELECT> <B>-</B>
-      <SELECT NAME=\"".$datevarname."_d$suffix\">
-       <OPTION VALUE=\"00\" ".
-       ( ($d==0) ? "SELECTED" : "" ).">NONE
-     ";
-     for ($i=1;$i<=31;$i++) {
-      if ($i==$d) { $this_selected="SELECTED"; }
-       else       { $this_selected="";         }
-      if ($i<10) { $x = "0"; } else { $x = ""; }
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>$i\n";
-     } // end for look (days)
-     echo "
-      </SELECT> <B>-</B>
-      <SELECT NAME=\"".$datevarname."_y$suffix\">
-       <OPTION VALUE=\"0000\" ".
-       ( ($y==0) ? "SELECTED" : "" ).">NONE
-     ";
-     for ($i=$starting_year;$i<=$ending_year;$i++) {
-      if ($i==$y) { $this_selected="SELECTED"; }
-       else       { $this_selected="";         }
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>$i\n";
-     } // end for look (years)
-     echo "
-      </SELECT>
-     "; break;
+      return $buffer_m . " <B>-</B> ".
+             $buffer_d . " <B>-</B> ".
+	     $buffer_y;
+      break;
+    case "dmy":
+      return $buffer_d . " <B>-</B> ".
+             $buffer_m . " <B>-</B> ".
+	     $buffer_y;
+      break;
     case "ymd": default:
-     echo "
-      <SELECT NAME=\"".$datevarname."_y$suffix\">
-       <OPTION VALUE=\"0000\" ".
-       ( ($y==0) ? "SELECTED" : "" ).">NONE
-     ";
-     for ($i=$starting_year;$i<=$ending_year;$i++) {
-      if ($i==$y) { $this_selected="SELECTED"; }
-       else       { $this_selected="";         }
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>$i\n";
-     } // end for look (years)
-     echo "
-      </SELECT> <B>-</B>
-      <SELECT NAME=\"".$datevarname."_m$suffix\">
-       <OPTION VALUE=\"00\" ".
-       ( ($m==0) ? "SELECTED" : "" ).">NONE
-     ";
-     for ($i=1;$i<=12;$i++) {
-      if ($i==$m) { $this_selected = "SELECTED"; }
-       else       { $this_selected = "";         }
-      if ($i<10) { $x = "0"; } else { $x = ""; }
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>"._($lang_months[$i])."\n";
-     } // end looping for months
-     echo "
-      </SELECT> <B>-</B>
-      <SELECT NAME=\"".$datevarname."_d$suffix\">
-       <OPTION VALUE=\"00\" ".
-       ( ($d==0) ? "SELECTED" : "" ).">NONE
-     ";
-     for ($i=1;$i<=31;$i++) {
-      if ($i==$d) { $this_selected = "SELECTED"; }
-       else       { $this_selected = "";         }
-      if ($i<10) { $x = "0"; } else { $x = ""; }
-      echo "\n<OPTION VALUE=\"$x$i\" $this_selected>$i\n";
-     } // end looping for days
-     echo "
-      </SELECT>
-     "; break;
+      return $buffer_y . " <B>-</B> ".
+             $buffer_m . " <B>-</B> ".
+	     $buffer_d;
+      break;
   } // end switch for dtfmt config value
-  return true;                         // we exited well!
 } // end function fm_date_entry
 
 function fm_date_print ($actualdate, $show_text_days=false) {
