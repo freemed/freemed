@@ -17,52 +17,40 @@ freemed_display_html_top ();
 freemed_display_banner ();
 
 switch ($action) { // begin master switch
- case "addform":
- case "modform":
-  switch ($action) { // begin inner action switch
-   case "addform":
-    break; // end case addform
-   case "modform":
-    if ($id<1) DIE ("$page_name :: need to have id for modform");
-    $this_record  = freemed_get_link_rec ($id, $db_name);
-    $cptcode      = $this_record ["cptcode"];
-    $cptnameint   = $this_record ["cptnameint"];
-    $cptnameext   = $this_record ["cptnameext"];
-    $cptgender    = $this_record ["cptgender"];
-    $cpttaxed     = $this_record ["cpttaxed"];
-    $cptreqcpt    = fm_split_into_array ($this_record ["cptreqcpt"]);
-    $cptexccpt    = fm_split_into_array ($this_record ["cptexccpt"]);
-    $cptreqicd    = fm_split_into_array ($this_record ["cptreqicd"]);
-    $cptexcicd    = fm_split_into_array ($this_record ["cptexcicd"]);
-    $cptrelval    = bcadd($this_record ["cptrelval"],0,2);
-    $cptdeftos    = $this_record ["cptdeftos"];
-    $cptdefstdfee = $this_record ["cptdefstdfee"];
-    $cptstdfee    = fm_split_into_array ($this_record ["cptstdfee"]);
-    $cpttos       = fm_split_into_array ($this_record ["cpttos"]);
-    $cpttype      = $this_record ["cpttype"];
-    break; // end case modform
-  } // end inner action switch
+ case "addform": case "add":
+ case "modform": case "mod":
+  if (!$been_here) {
+   switch ($action) { // begin inner action switch
+    case "addform":
+     break; // end case addform
+    case "modform":
+     if ($id<1) DIE ("$page_name :: need to have id for modform");
+     $this_record  = freemed_get_link_rec ($id, $db_name);
+     extract ($this_record);
+     $cptreqcpt    = fm_split_into_array ($cptreqcpt);
+     $cptexccpt    = fm_split_into_array ($cptexccpt);
+     $cptreqicd    = fm_split_into_array ($cptreqicd);
+     $cptexcicd    = fm_split_into_array ($cptexcicd);
+     $cptrelval    = bcadd($cptrelval, 0, 2);
+     $cptstdfee    = fm_split_into_array ($cptstdfee);
+     $cpttos       = fm_split_into_array ($cpttos);
+     break; // end case modform
+   } // end inner action switch
+   $been_here = 1; // make sure been here is set now
+  } // end checking if been here
+
   freemed_display_box_top (( ($action=="addform") ? _("Add") : _("Modify") ).
     " "._($record_name));
 
-  if ($action=="modform")
-   echo "
-    <P>
-    <CENTER>
-    <A HREF=\"$page_name?$_auth&id=$id&action=profileform\"
-    ><$STDFONT_B>"._("Fee Profiles")."<$STDFONT_E></A>
-    </CENTER>
-    <P>
-   ";
-
-  echo "
-    <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
-    <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-     ( ($action=="addform") ? "add" : "mod" )."\">
-
-    <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
+  $book = new notebook (
+    array ("action", "_auth", "id", "been_here"),
+    NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH);
+    
+  $book->add_page (
+    _("Primary Information"),
+    array ("cptcode", "cptnameint", "cptnameext", "cptgender",
+           "cpttaxed", "cpttype"),
+    "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
      ALIGN=CENTER>
 
     <TR>
@@ -124,22 +112,22 @@ switch ($action) { // begin master switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Internal Service Types")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"cpttype\">
-       <OPTION VALUE=\"0\">"._("NONE SELECTED")."\n";
-
-  $i_res = fdb_query ("SELECT * FROM intservtype");
-  while ($i_r = fdb_fetch_array ($i_res)) {
-    if ($i_r["id"]==$cpttype) { $this_selected = "SELECTED"; }
-     else                     { $this_selected = "";         }
-    echo "    <OPTION VALUE=\"".$i_r["id"]."\" ".
-      ( ($i_r[id]==$cpttype) ? "SELECTED" : "" ).">".
-         prepare($i_r["intservtype"])."\n";
-  } // end while for intservtype
-  echo "
+     ".freemed_display_selectbox(
+       fdb_query("SELECT * FROM intservtype"),
+       "#intservtype#",
+       "cpttype")."
       </SELECT>
      </TD>
     </TR>
 
+    </TABLE>
+  ");
+
+  $book->add_page (
+    _("Billing Information"),
+    array ("cptrelval", "cptdeftos", "cptdefstdfee"),
+    "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
+     ALIGN=CENTER>
     <TR>
      <TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Relative Value")." : <$STDFONT_E>
@@ -168,6 +156,14 @@ switch ($action) { // begin master switch
      </TD>
     </TR>
 
+    </TABLE>
+  ");
+
+  $book->add_page (
+    _("Inclusion/Exclusion"),
+    array ("cptreqicd", "cptexcicd", "cptreqcpt", "cptexccpt"),
+    "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
+     ALIGN=CENTER>
     <TR>
      <TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Diagnosis Required")." : <$STDFONT_E>
@@ -221,23 +217,96 @@ switch ($action) { // begin master switch
     </TR>
 
     </TABLE>
+  ");
 
-    <P>
-    <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\"".
-       ( ($action=="addform") ? _("Add") : _("Modify") )."\">
-     <INPUT TYPE=RESET VALUE=\""._("Clear")."\">
-    </CENTER>
-    <P>
+  if ( (!empty($cptcode)) and (!empty($cptnameint)) ) {
+    $num_inscos = fdb_num_rows (fdb_query ("SELECT * FROM insco"));
+    $serv_buffer = "
+     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
+      ALIGN=CENTER>
+     <TR>
+      <TD><B>"._("Insurance Company")."</B>&nbsp;</TD>
+      <TD><B>"._("Type of Service")."</B>&nbsp;</TD>
+      <TD><B>"._("Standard Fee")."</B></TD>
+     </TR>
+    ";
+    for ($i=1;$i<=$num_inscos;$i++) { // loop thru inscos
+     if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
+     $this_insco = new InsuranceCompany ($i);
+     $serv_buffer .= "
+      <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+       <TD>".prepare($this_insco->insconame)."</TD>
+       <TD>
+        ".freemed_display_selectbox (
+          fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
+  	  "#tosname# #tosdescrip#",
+	  "cpttos[$i]"
+	  )."
+       </TD>
+       <TD>
+        <INPUT TYPE=TEXT NAME=\"cptstdfee$brackets\" SIZE=10
+         MAXLENGTH=9 VALUE=\"".prepare($cptstdfee[$i])."\">
+       </TD>
+      </TR>
+     ";
+    } // end loop thru inscos
+    $serv_buffer .= "
+     </TABLE>
+    ";
+  $book->add_page (
+    _("Fee Profiles"),
+    array (""),
+    "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2
+      ALIGN=CENTER>
 
-    </FORM>
-  ";
-  freemed_display_box_bottom ();
-  break; // end add/mod form
+      <!-- first values, to push offset to 1 from 0 -->
+      <INPUT TYPE=HIDDEN NAME=\"cpttos$brackets\"    VALUE=\"\">
+      <INPUT TYPE=HIDDEN NAME=\"cptstdfee$brackets\" VALUE=\"\">
 
- case "add": // modify action
-  freemed_display_box_top (_("Adding")." "._($record_name));
-  $query = "INSERT INTO $db_name VALUES (
+     <TR>
+      <TD ALIGN=RIGHT WIDTH=\"50%\">
+       <$STDFONT_B><B>"._("Procedural Code")."</B> : <$STDFONT_E></TD>
+      <TD ALIGN=LEFT><$STDFONT_B>".prepare($cptcode)."<$STDFONT_E>
+       <$STDFONT_B><I>(".prepare($cptnameint).")</I><$STDFONT_E></TD>
+     </TR>
+
+     <TR>
+      <TD ALIGN=RIGHT>
+       <$STDFONT_B>"._("Default Standard Fee")." : <$STDFONT_E></TD>
+      <TD ALIGN=LEFT>
+       <$STDFONT_B>".bcadd($this_code["cptdefstdfee"],0,2)."<$STDFONT_E>
+      </TD>
+     </TR>
+
+     <TR>
+      <TD ALIGN=RIGHT>
+       <$STDFONT_B>"._("Default Type of Service")." : <$STDFONT_E></TD>
+      <TD ALIGN=LEFT>
+       <$STDFONT_B>".freemed_get_link_field ($cptdeftos, "tos",
+        "tosname")."<$STDFONT_E></TD>
+     </TR>
+
+     <TR>
+      <TD COLSPAN=2><$STDFONT_B SIZE=-1><I>
+       "._("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
+      </I><$STDFONT_E>
+     </TD></TR>
+     
+     </TABLE>
+
+     <! -- fee profiles stuff here -->
+     $serv_buffer
+
+  ");
+ } // end of fee profiles conditional
+
+ if (!$book->is_done()) {
+   echo $book->display();
+ } else {
+   switch ($action) {
+     case "add": case "addform":
+      freemed_display_box_top (_("Adding")." "._($record_name));
+      $query = "INSERT INTO $db_name VALUES (
             '".addslashes($cptcode).                        "',
             '".addslashes($cptnameint).                     "',
             '".addslashes($cptnameext).                     "',
@@ -254,31 +323,19 @@ switch ($action) { // begin master switch
             '".addslashes(fm_join_from_array ($cptstdfee)). "',
             '".addslashes(fm_join_from_array ($cpttos)).    "',
             NULL )";
-  echo "
-   <P>
-   <$STDFONT_B>"._("Adding")." ...
-  ";
-  if ($debug) echo " ( query = \"$query\" ) <BR>\n";
-  $result = fdb_query ($query);
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
-  echo "
-   <$STDFONT_E>
-   <P>
-   <CENTER>
-   <A HREF=\"$page_name?$_auth&action=addform\"
-   ><$STDFONT_B>Add Another<$STDFONT_E></A> <B>|</B>
-   <A HREF=\"$page_name?$_auth\"
-   ><$STDFONT_B>"._("back")."<$STDFONT_E>
-   </CENTER>
-   <P>
-  ";
-  freemed_display_box_bottom ();
-  break; // end add action
-
- case "mod": // modify action
-   freemed_display_box_top (_("Modifying")." "._($record_name));
-  $query = "UPDATE $db_name SET
+      echo "
+       <P>
+       <$STDFONT_B>"._("Adding")." ...
+      ";
+      if ($debug) echo " ( query = \"$query\" ) <BR>\n";
+      $result = fdb_query ($query);
+      if ($result) { echo _("done")."."; }
+       else        { echo _("ERROR");    }
+      break; // end action = add
+      
+     case "mod": case "modform": // modify action
+      freemed_display_box_top (_("Modifying")." "._($record_name));
+      $query = "UPDATE $db_name SET
             cptcode      ='".addslashes($cptcode).                        "',
             cptnameint   ='".addslashes($cptnameint).                     "',
             cptnameext   ='".addslashes($cptnameext).                     "',
@@ -295,30 +352,36 @@ switch ($action) { // begin master switch
             cptstdfee    ='".addslashes(fm_join_from_array ($cptstdfee)). "',
             cpttos       ='".addslashes(fm_join_from_array ($cpttos)).    "'
             WHERE id='$id'";
-  echo "
-   <P>
-   <$STDFONT_B>"._("Modifying")." ...
-  ";
-  if ($debug) echo " ( query = \"$query\" ) <BR>\n";
-  $result = fdb_query ($query);
-  if ($result) { echo _("done")."."; }
-   else        { echo _("ERROR");    }
+      echo "
+       <P>
+       <$STDFONT_B>"._("Modifying")." ...
+      ";
+      if ($debug) echo " ( query = \"$query\" ) <BR>\n";
+      $result = fdb_query ($query);
+      if ($result) { echo _("done")."."; }
+       else        { echo _("ERROR");    }
+      break; // end action mod/modform 
+   } // end switch add/modform   
   echo "
    <$STDFONT_E>
    <P>
    <CENTER>
+   <A HREF=\"$page_name?$_auth&action=addform\"
+   ><$STDFONT_B>"._("Add Another")."<$STDFONT_E></A> <B>|</B>
    <A HREF=\"$page_name?$_auth\"
    ><$STDFONT_B>"._("back")."<$STDFONT_E>
    </CENTER>
    <P>
   ";
+  } // end if book done
   freemed_display_box_bottom ();
-  break; // end modify action
+  break; // end add/mod action
 
  case "del": // delete action
   echo "ACTION NOT IMPLEMENTED YET<BR>\n";
   break; // end delete action
 
+/*
  case "profileform": // insurance company profiles form
   $num_inscos = fdb_num_rows (fdb_query ("SELECT * FROM insco"));
   $this_code  = freemed_get_link_rec ($id, $db_name);
@@ -369,9 +432,11 @@ switch ($action) { // begin master switch
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
      <TD>".prepare($this_insco->insconame)."</TD>
      <TD>
-      <SELECT NAME=\"cpttos$brackets\">
-   ".freemed_display_tos ($cpttos[$i])."
-      </SELECT>
+      ".freemed_display_selectbox (
+        fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
+	"#tosname# #tosdescrip#",
+	"cpttos[$i]"
+	)."
      </TD>
      <TD>
       <INPUT TYPE=TEXT NAME=\"cptstdfee$brackets\" SIZE=10
@@ -417,6 +482,7 @@ switch ($action) { // begin master switch
   ";
   freemed_display_box_bottom ();
   break; // end of mod for the profile form
+*/
 
  default: // default action begin
   freemed_display_box_top (_($record_name));
