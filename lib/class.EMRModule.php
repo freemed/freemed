@@ -636,7 +636,7 @@ class EMRModule extends BaseModule {
 				} // end looping through summary vars
 				$buffer .= "
 				<td VALIGN=\"MIDDLE\">
-				".( (!$r['locked'] > 0) ?
+				".( ((!$r['locked'] > 0) or freemed::lock_override()) ?
 				template::summary_modify_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
