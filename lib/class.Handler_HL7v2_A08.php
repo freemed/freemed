@@ -38,6 +38,7 @@ class Handler_HL7v2_A08 extends Handler_HL7v2 {
 				'pthphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_HOME]),
 				'ptwphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_WORK]),
 				'ptssn' => $this->_StripToNumeric($v[HL7v2_PID_SOCIALSECURITY]),
+				'ptarchive' => '0',
 				'ptid' => $v[HL7v2_PID_ID]
 			);
 			if ($GLOBALS['sql']->results($exist_query)) {
