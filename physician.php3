@@ -329,7 +329,7 @@ switch($action) {
     <$STDFONT_B>$Degree 3 : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".freemed_display_selectbox ($phy_deg_r, 
-       "#degdegree#, #degname#", "phydeg2")."
+       "#degdegree#, #degname#", "phydeg3")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>$Specialty 1 : <$STDFONT_E>
@@ -366,7 +366,7 @@ switch($action) {
   );
 
   // cache this outside of the function call (can't abstract that while-loop)
-  $brackets="[]"; // i can't see where they're defined, so i'll do it here
+  // $brackets is defined in global.var.inc
   $cmap_buf="";
   $int_r = fdb_query("SELECT * FROM intservtype");
   while ($i_r = fdb_fetch_array ($int_r)) {
@@ -442,15 +442,164 @@ switch($action) {
   </TD></TR></TABLE></CENTER>
     "
   );
-  
   // now display the thing
   freemed_display_box_top("$action_name $record_name", $page_name);
-  echo "<CENTER>\n";
-  $book->display();
-  echo "</CENTER>\n";
+  if (!$book->is_done()) {
+    echo "<CENTER>\n";
+    $book->display();
+    echo "</CENTER>\n";
+  } else { // submit has been clicked
+    if ($action=="modform") {
+      echo "
+        <P ALIGN=CENTER>
+        <$STDFONT_B>$Modifying . . . <$STDFONT_E>
+      ";
+
+      // reassemble phone #s
+      $phyphonea = fm_phone_assemble ("phyphonea");
+      $phyphoneb = fm_phone_assemble ("phyphoneb");
+      $phyfaxa   = fm_phone_assemble ("phyfaxa");
+      $phyfaxb   = fm_phone_assemble ("phyfaxb");
+      $phycellular = fm_phone_assemble ("phycellular");
+      $phypager    = fm_phone_assemble ("phypager");
+  
+      // reassemble ssn #
+      $physsn    = $physsn1.$physsn2.$physsn3;
+  
+      $query = "UPDATE $db_name SET ".
+        "phylname   ='$phylname',    ".
+        "phyfname   ='$phyfname',    ".
+        "phytitle   ='$phytitle',    ". 
+        "phymname   ='$phymname',    ".     
+        "phypracname='$phypracname', ".
+        "phyaddr1a  ='$phyaddr1a',   ". 
+        "phyaddr2a  ='$phyaddr2a',   ".
+        "phycitya   ='$phycitya',    ".
+        "phystatea  ='$phystatea',   ".
+        "phyzipa    ='$phyzipa',     ". 
+        "phyphonea  ='$phyphonea',   ".
+        "phyfaxa    ='$phyfaxa',     ".
+        "phyaddr1b  ='$phyaddr1b',   ".    
+        "phyaddr2b  ='$phyaddr2b',   ".
+        "phycityb   ='$phycityb',    ".
+        "phystateb  ='$phystateb',   ".
+        "phyzipb    ='$phyzipb',     ".
+        "phyphoneb  ='$phyphoneb',   ".
+        "phyfaxb    ='$phyfaxb',     ".
+        "phyemail   ='$phyemail',    ".
+        "phycellular = '$phycellular', ".
+        "phypager   ='$phypager',    ".
+        "phyupin    ='$phyupin',     ".
+        "physsn     ='$physsn',      ".
+        "phydeg1    ='$phydeg1',     ".
+        "phydeg2    ='$phydeg2',     ".
+        "phydeg3    ='$phydeg3',     ".
+        "physpe1    ='$physpe1',     ".
+        "physpe2    ='$physpe2',     ".
+        "physpe3    ='$physpe3',     ".
+        "phyid1     ='$phyid1',      ".
+        "phystatus  ='$phystatus',   ".
+        "phyref     ='$phyref',      ".
+        "phyrefcount='$phyrefcount', ".
+        "phyrefamt  ='$phyrefamt',   ".
+        "phyrefcoll ='$phyrefcoll',  ".
+        "phychargemap='".fm_join_from_array($phychargemap)."', ".
+        "phyidmap    ='".fm_join_from_array($phyidmap)    ."'  ". 
+        "WHERE id='$id'";
+  
+      $result = fdb_query($query);
+      
+      if ($result) {
+        echo "
+	<$STDFONT_B>Done.<$STDFONT_E>
+	";
+      } else { // error!
+        echo "
+	<$STDFONT_B>Error! [$query, $result]<$STDFONT_E>
+	";
+      }  
+      // finished the mod database call
+    } else if ($action=="addform") {
+      echo "
+    <P ALIGN=CENTER>
+    <$STDFONT_B>$Adding . . . 
+      ";
+
+      // assemble phone #s
+      $phyphonea   = fm_phone_assemble ("phyphonea");
+      $phyphoneb   = fm_phone_assemble ("phyphoneb");
+      $phyfaxa     = fm_phone_assemble ("phyfaxa");
+      $phyfaxb     = fm_phone_assemble ("phyfaxb");
+      $phycellular = fm_phone_assemble ("phycellular");
+      $phypager    = fm_phone_assemble ("phypager");
+
+      // assemble ssn
+      $physsn    = $physsn1.$physsn2.$physsn3;
+
+      // actual query/insert
+      $query = "INSERT INTO $db_name VALUES ( 
+        '$phylname',
+        '$phyfname',
+        '$phytitle',    
+        '$phymname',
+        '$phypracname',
+        '$phyaddr1a',   
+        '$phyaddr2a',
+        '$phycitya',
+        '$phystatea',
+        '$phyzipa',     
+        '$phyphonea',
+        '$phyfaxa',
+        '$phyaddr1b',
+        '$phyaddr2b',
+        '$phycityb',
+        '$phystateb',
+        '$phyzipb',    
+        '$phyphoneb',
+        '$phyfaxb',
+        '$phyemail',   
+        '$phycellular',
+        '$phypager', 
+        '$phyupin',
+        '$physsn',
+        '$phydeg1',    
+        '$phydeg2',
+        '$phydeg3',
+        '".addslashes($physpe1).             "',
+        '".addslashes($physpe2).             "',
+        '".addslashes($physpe3).             "',
+        '".addslashes($phyid1).              "',
+        '".addslashes($phystatus).           "',
+        '".addslashes($phyref).              "',
+        '".addslashes($phyrefcount).         "',
+        '".addslashes($phyrefamt).           "',
+        '".addslashes($phyrefcoll).          "',
+        '".fm_join_from_array($phychargemap)."',
+        '".fm_join_from_array($phyidmap).    "',
+        NULL ) ";
+
+      $result = fdb_query($query);
+
+      if ($result) {
+        echo "
+	<$STDFONT_B>Done.<$STDFONT_E>
+	";
+      } else { // error!
+        echo "
+	<$STDFONT_B>Error! [$query, $result]<$STDFONT_E>
+	";
+      }  
+    } else { // error
+      echo "
+        <P ALIGN=CENTER>
+	<$STDFONT_B>Trouble! \$action=$action!<$STDFONT_E>
+	</P>
+      ";
+    } // error handler
+  } // if executing the action
   freemed_display_box_bottom();
  
- break; // master addform/modform
+ break; // master add/mod[form]
 
  case "display" :
   freemed_display_box_top("$record_name View");
@@ -545,639 +694,9 @@ if ($action=="addform") {
 
 } elseif ($action=="add") {
 
-  freemed_display_box_top ("$Adding_Physician", $page_name);
-
-  echo "
-    <P>
-    <$STDFONT_B>$Adding . . . 
-  ";
-
-  // assemble phone #s
-  $phyphonea   = fm_phone_assemble ("phyphonea");
-  $phyphoneb   = fm_phone_assemble ("phyphoneb");
-  $phyfaxa     = fm_phone_assemble ("phyfaxa");
-  $phyfaxb     = fm_phone_assemble ("phyfaxb");
-  $phycellular = fm_phone_assemble ("phycellular");
-  $phypager    = fm_phone_assemble ("phypager");
-
-  // assemble ssn
-  $physsn    = $physsn1.$physsn2.$physsn3;
-
-    // actual query/insert
-  $query = "INSERT INTO $db_name VALUES ( 
-    '$phylname',
-    '$phyfname',
-    '$phytitle',    
-    '$phymname',
-    '$phypracname',
-    '$phyaddr1a',   
-    '$phyaddr2a',
-    '$phycitya',
-    '$phystatea',
-    '$phyzipa',     
-    '$phyphonea',
-    '$phyfaxa',
-    '$phyaddr1b',
-    '$phyaddr2b',
-    '$phycityb',
-    '$phystateb',
-    '$phyzipb',    
-    '$phyphoneb',
-    '$phyfaxb',
-    '$phyemail',   
-    '$phycellular',
-    '$phypager', 
-    '$phyupin',
-    '$physsn',
-    '$phydeg1',    
-    '$phydeg2',
-    '$phydeg3',
-    '".addslashes($physpe1).             "',    
-    '".addslashes($physpe2).             "',
-    '".addslashes($physpe3).             "',
-    '".addslashes($phyid1).              "',     
-    '".addslashes($phystatus).           "',
-    '".addslashes($phyref).              "',
-    '".addslashes($phyrefcount).         "',
-    '".addslashes($phyrefamt).           "',
-    '".addslashes($phyrefcoll).          "',
-    '".fm_join_from_array($phychargemap)."',     
-    '".fm_join_from_array($phyidmap).    "',         
-     NULL ) ";
-
-  $result = fdb_query($query);
-  
-  if ($debug) {
-    echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
-    echo "$result";
-    echo "\n<BR><BR><B>QUERY STRING:</B><BR>\n";
-    echo "$query";
-    echo "\n<BR><BR><B>ACTUAL RETURNED RESULT:</B><BR>\n";
-    echo "($result)";
-  }
-
-  if ($result) {
-    echo "
-      <B>$Done.</B><$STDFONT_E>
-    ";
-  } else {
-    echo ("<B>$ERROR ($result)</B>\n"); 
-  }
-
-  echo "
-   <P>
-   <CENTER>
-    <A HREF=\"$page_name?$_auth&action=view\"
-    ><$STDFONT_B>Return to $record_name Menu<$STDFONT_E></A>
-   </CENTER>
-  ";
-
-  freemed_display_box_bottom ();
+  // [code ported up top]
 
 } elseif ($action=="modform") {
-
-  freemed_display_box_top ("$Modify_Physician", $page_name);
-
-  if (strlen($id)<1) {
-    echo "
-
-     <B><CENTER>$Please_use_the_MODIFY_form_to_MODIFY_someone !</B>
-     </CENTER>
-
-     <BR><BR>
-    ";
-
-    if ($debug) {
-      echo "
-        ID = [<B>$id</B>]
-        <BR><BR>
-      ";
-    }
-
-    freemed_display_box_bottom ();
-    echo "
-      <CENTER>
-      <A HREF=\"main.php3?$_auth\"
-       >$Return_to_the_Main_Menu</A>
-      </CENTER>
-    ";
-    DIE("");
-  }
-
-  $r = freemed_get_link_rec ($id, $db_name);
-
-  $phylname    = $r["phylname"   ];
-  $phyfname    = $r["phyfname"   ];
-  $phytitle    = $r["phytitle"   ];
-  $phymname    = $r["phymname"   ];
-  $phypracname = $r["phypracname"];
-  $phyaddr1a   = $r["phyaddr1a"  ];
-  $phyaddr2a   = $r["phyaddr2a"  ];
-  $phycitya    = $r["phycitya"   ];
-  $phystatea   = $r["phystatea"  ]; // 19990622
-  $phyzipa     = $r["phyzipa"    ];
-  $phyphonea   = $r["phyphonea"  ];
-  $phyfaxa     = $r["phyfaxa"    ];
-  $phyaddr1b   = $r["phyaddr1b"  ];
-  $phyaddr2b   = $r["phyaddr2b"  ];
-  $phycityb    = $r["phycityb"   ];
-  $phystateb   = $r["phystateb"  ]; // 19990622
-  $phyzipb     = $r["phyzipb"    ];
-  $phyphoneb   = $r["phyphoneb"  ];
-  $phyfaxb     = $r["phyfaxb"    ];
-  $phyemail    = $r["phyemail"   ];
-  $phycellular = $r["phycellular"]; // 19990804
-  $phypager    = $r["phypager"   ]; // 19990804
-  $phyupin     = $r["phyupin"    ];
-  $physsn      = $r["physsn"     ];
-  $phydeg1     = $r["phydeg1"    ]; // 19990830
-  $phydeg2     = $r["phydeg2"    ]; // ..
-  $phydeg3     = $r["phydeg3"    ]; // ..
-  $physpe1     = $r["physpe1"    ];
-  $physpe2     = $r["physpe2"    ];
-  $physpe3     = $r["physpe3"    ];
-  $phyid1      = $r["phyid1"     ];
-  $phystatus   = $r["phystatus"  ];
-  $phyref      = $r["phyref"     ];
-  $phyrefcount = $r["phyrefcount"];
-  $phyrefamt   = $r["phyrefamt"  ];
-  $phyrefcoll  = $r["phyrefcoll" ];
-  $phychargemap = fm_split_into_array( $r[phychargemap] );
-  $phyidmap = fm_split_into_array( $r[phyidmap] );
-
-  // disassemble ssn
-  $physsn1    = substr($physsn,    0, 3);
-  $physsn2    = substr($physsn,    3, 2);
-  $physsn3    = substr($physsn,    5, 4);
-
-  echo "
-    <P>
-    <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\">
-
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
-    <TR><TD>
-    <$STDFONT_B>$Last_name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phylname SIZE=25 MAXLENGTH=52
-     VALUE=\"$phylname\">
-    </TD><TD>
-    <$STDFONT_B>$First_name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyfname SIZE=25 MAXLENGTH=50
-     VALUE=\"$phyfname\">
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Title<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phytitle SIZE=10 MAXLENGTH=10
-     VALUE=\"$phytitle\">
-    </TD><TD>
-    <$STDFONT_B>$Middle_Name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phymname SIZE=25 MAXLENGTH=50
-     VALUE=\"$phymname\">
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Practice_Name<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phypracname SIZE=25 MAXLENGTH=30
-     VALUE=\"$phypracname\">
-    </TD><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
-
-  <TR><TD>
-    <$STDFONT_B>$Internal_ID #<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyid1 SIZE=11 MAXLENGTH=10
-     VALUE=\"$phyid1\">
-    </TD><TD>
-    <$STDFONT_B>$Status <$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phystatus\">
-  ";
-
-  freemed_display_phystatus($phystatus);
-
-  echo "
-    </SELECT>
-    </TD></TR>
-
-    <TR><TD COLSPAN=4><HR></TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Line 1<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr1a SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr1a\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Line 2<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr2a SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr2a\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_City<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phycitya SIZE=21 MAXLENGTH=20
-     VALUE=\"$phycitya\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_State<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phystatea SIZE=6 MAXLENGTH=5
-     VALUE=\"$phystatea\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Zip<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyzipa SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyzipa\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Phone # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyphonea");
-  echo "
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Primary_Address_Fax # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyfaxa");
-  echo "
-    </TD></TR>
-    <TR><TD COLSPAN=4><HR></TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Line 1<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr1b SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr1b\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Line 2<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyaddr2b SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr2b\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_City<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phycityb SIZE=20 MAXLENGTH=20
-     VALUE=\"$phycityb\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_State<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phystateb SIZE=6 MAXLENGTH=5
-     VALUE=\"$phystateb\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Zip<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyzipb SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyzipb\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Phone # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyphoneb");
-  echo "
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Secondary_Address_Fax # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phyfaxb");
-  echo "
-    </TD></TR>
-    <TR><TD COLSPAN=4><HR></TD></TR>
-    <TR><TD> 
-    <$STDFONT_B>$Email_Address<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyemail\">
-    </TD><TD>
-    <$STDFONT_B>$Cellular_Phone # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phycellular");
-  echo "
-    </TD></TR>
-    <TR><TD COLSPAN=2>&nbsp;</TD><TD ALIGN=RIGHT>
-    <$STDFONT_B>$BeeperPager # <$STDFONT_E>
-    </TD><TD>
-  ";
-  fm_phone_entry ("phypager");
-  echo "
-    </TD></TR>
-    <TR><TD>
-     <$STDFONT_B>$UPIN_Number<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyupin SIZE=16 MAXLENGTH=15
-     VALUE=\"$phyupin\">
-    </TD><TD>
-    <$STDFONT_B>$Social_Security # <$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=physsn1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$physsn1\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=physsn2 SIZE=3 MAXLENGTH=2
-     VALUE=\"$physsn2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=physsn3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$physsn3\">
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>$Degree 1<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phydeg1\">
-  ";
-
-  freemed_display_phy_degrees ($phydeg1);
-
-  echo "
-    </SELECT>
-    </TD><TD>
-       ";
-
-  echo "
-    <$STDFONT_B>$Specialty 1<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"physpe1\">
-  ";
-
-  freemed_display_phy_specialties ($physpe1);
-
-  echo "
-    </SELECT>
-    </TD></TR>
-        ";
-
-  echo "
-    <TR><TD>
-    <$STDFONT_B>$Degree 2<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phydeg2\">
-  ";
-
-  freemed_display_phy_degrees ($phydeg2);
-
-  echo "
-    </SELECT>
-    </TD><TD>
-       ";
-
-  echo "
-    <$STDFONT_B>$Specialty 2<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"physpe2\">
-  ";
-
-  freemed_display_phy_specialties ($physpe2);
-
-  echo "
-    </SELECT>
-    </TD></TR>
-       " ;
-
- echo "
-    <TR><TD>
-    <$STDFONT_B>$Degree 3<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phydeg3\">
-      " ;
-
-  freemed_display_phy_degrees ($phydeg3);
-
-  echo "
-    </SELECT>
-    </TD><TD>
-       ";
-  echo "
-    <$STDFONT_B>$Specialty 3<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"physpe3\">
-  ";
-
-  freemed_display_phy_specialties ($physpe3);
-
-  echo "
-     </SELECT>
-    </TD></TR>
-    <TR><TD>
-    <$STDFONT_B>Physician Internal/External<$STDFONT_E>
-    </TD><TD>
-    <SELECT NAME=\"phyref\">
-      <OPTION VALUE=\"no\" ".
-       ( ($phyref != "yes") ? "SELECTED" : "" ).">In-House
-      <OPTION VALUE=\"yes\" ".
-       ( ($phyref == "yes") ? "SELECTED" : "" ).">Referring
-    </SELECT>
-    </TD><TD>&nbsp;</TD><TD>&nbsp</TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Number_of_Referrals<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyrefcount SIZE=10 MAXLENGTH=10
-     VALUE=\"".fm_prep($phyrefcount)."\">
-     </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Referral_Amount ($S_charged)<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=phyrefamt SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyrefamt\">
-    </TD></TR>
-    <TR><TD>&nbsp;</TD><TD COLSPAN=2>
-    <$STDFONT_B>$Referral_Amount ($S_received)<$STDFONT_E>
-    </TD><TD>
-    <INPUT TYPE=TEXT NAME=\"phyrefcoll\" SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyrefcoll\">
-    </TD></TR></TABLE>
-
-    <P>
-
-    <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=1
-     VALIGN=MIDDLE ALIGN=CENTER><TR><TD>
-
-    <CENTER>
-     <$STDFONT_B><B>Unit Relative Value Charges</B><$STDFONT_E>
-    </CENTER>
-
-    <!-- hide record zero, since it isn't used... -->
-    <INPUT TYPE=HIDDEN NAME=\"phychargemap$brackets\" VALUE=\"0\">
-
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
-     ALIGN=CENTER>
-    <TR BGCOLOR=#aaaaaa>
-     <TD><B>Internal Type</B></TD>
-     <TD><B>Amount</B></TD>
-    </TR>
-  ";
-  $_alternate = freemed_bar_alternate_color ();  
-  $i_res = fdb_query("SELECT * FROM intservtype");
-  while ($i_r = fdb_fetch_array ($i_res)) {
-    $_alternate = freemed_bar_alternate_color ($_alternate);  
-    $i_id = $i_r ["id"];
-    echo "
-     <TR BGCOLOR=$_alternate>
-      <TD>".fm_prep($i_r["intservtype"])."</TD>
-      <TD>
-       <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
-        SIZE=10 MAXLENGTH=9 VALUE=\"".$phychargemap[$i_id]."\">
-      </TD>
-     </TR>
-    ";
-  } // end looping for service types
-  echo "
-    </TABLE>
-
-    </TR></TABLE>
-
-    <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=1
-     VALIGN=MIDDLE ALIGN=CENTER><TR><TD>
-
-    <CENTER>
-     <$STDFONT_B><B>Insurance ID #s by Group</B><$STDFONT_E>
-    </CENTER>
-
-    <!-- hide record zero, since it isn't used... -->
-    <INPUT TYPE=HIDDEN NAME=\"phyidmap$brackets\" VALUE=\"0\">
-
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
-     ALIGN=CENTER>
-    <TR BGCOLOR=#aaaaaa>
-     <TD><B>Insurance Group</B></TD>
-     <TD><B>ID Number</B></TD>
-    </TR>
-  ";
-  $_alternate = freemed_bar_alternate_color ();  
-  $i_res = fdb_query("SELECT * FROM inscogroup");
-  while ($i_r = fdb_fetch_array ($i_res)) {
-    $_alternate = freemed_bar_alternate_color ($_alternate);  
-    $i_id = $i_r ["id"];
-    echo "
-     <TR BGCOLOR=$_alternate>
-      <TD>".fm_prep($i_r["inscogroup"])."</TD>
-      <TD>
-       <INPUT TYPE=TEXT NAME=\"phyidmap$brackets\"
-        SIZE=15 MAXLENGTH=30 VALUE=\"".$phyidmap[$i_id]."\">
-      </TD>
-     </TR>
-    ";
-  } // end looping for service types
-  echo "
-    </TABLE>
-
-    </TR></TABLE>
-
-    <BR>
-    <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" $Update \">
-    <INPUT TYPE=RESET  VALUE=\"$Clear\">
-    </CENTER></FORM>
-  ";
-
-  freemed_display_box_bottom ();
-
-  echo "
-    <BR>
-    <CENTER>
-     <A HREF=\"$page_name?$_auth&action=view\"
-      >$Abandon_Modification</A>
-    </CENTER>
-  "; // abandon modification
-
-} elseif ($action=="mod") {
-
-   #      M O D I F Y - R O U T I N E
-
-  freemed_display_box_top ("$Modifying_Physician", $page_name);
-
-  echo "
-    <P>
-    <CENTER><$STDFONT_B>$Modifying . . . <$STDFONT_E> 
-  ";
-
-  // reassemble phone #s
-  $phyphonea = fm_phone_assemble ("phyphonea");
-  $phyphoneb = fm_phone_assemble ("phyphoneb");
-  $phyfaxa   = fm_phone_assemble ("phyfaxa");
-  $phyfaxb   = fm_phone_assemble ("phyfaxb");
-  $phycellular = fm_phone_assemble ("phycellular");
-  $phypager    = fm_phone_assemble ("phypager");
-
-  // reassemble ssn #
-  $physsn    = $physsn1.$physsn2.$physsn3;
-
-  $query = "UPDATE $db_name SET ".
-    "phylname   ='$phylname',    ".
-    "phyfname   ='$phyfname',    ".
-    "phytitle   ='$phytitle',    ". 
-    "phymname   ='$phymname',    ".     
-    "phypracname='$phypracname', ".
-    "phyaddr1a  ='$phyaddr1a',   ". 
-    "phyaddr2a  ='$phyaddr2a',   ".
-    "phycitya   ='$phycitya',    ".
-    "phystatea  ='$phystatea',   ".
-    "phyzipa    ='$phyzipa',     ". 
-    "phyphonea  ='$phyphonea',   ".
-    "phyfaxa    ='$phyfaxa',     ".
-    "phyaddr1b  ='$phyaddr1b',   ".    
-    "phyaddr2b  ='$phyaddr2b',   ".
-    "phycityb   ='$phycityb',    ".
-    "phystateb  ='$phystateb',   ".
-    "phyzipb    ='$phyzipb',     ".
-    "phyphoneb  ='$phyphoneb',   ".
-    "phyfaxb    ='$phyfaxb',     ".
-    "phyemail   ='$phyemail',    ".
-    "phycellular = '$phycellular', ".
-    "phypager   ='$phypager',    ".
-    "phyupin    ='$phyupin',     ".
-    "physsn     ='$physsn',      ".
-    "phydeg1    ='$phydeg1',     ".
-    "phydeg2    ='$phydeg2',     ".
-    "phydeg3    ='$phydeg3',     ".
-    "physpe1    ='$physpe1',     ".
-    "physpe2    ='$physpe2',     ".
-    "physpe3    ='$physpe3',     ".
-    "phyid1     ='$phyid1',      ".
-    "phystatus  ='$phystatus',   ".
-    "phyref     ='$phyref',      ".
-    "phyrefcount='$phyrefcount', ".
-    "phyrefamt  ='$phyrefamt',   ".
-    "phyrefcoll ='$phyrefcoll',  ".
-    "phychargemap='".fm_join_from_array($phychargemap)."', ".
-    "phyidmap    ='".fm_join_from_array($phyidmap)    ."'  ". 
-    "WHERE id='$id'";
-
-  $result = fdb_query($query);
-  if ($debug) {
-    echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
-    echo $result;
-    echo "\n<BR><BR><B>QUERY STRING:</B><BR>\n";
-    echo "$query";
-    echo "\n<BR><BR><B>ACTUAL RETURNED RESULT:</B><BR>\n";
-    echo "($result)";
-  }
-
-  if ($result) {
-    echo "
-      <B>$Done.</B></CENTER>
-    ";
-  } else {
-    echo ("<B>$ERROR ($result)</B></CENTER>\n"); 
-  }
-
-  echo "
-   <P>
-   <CENTER>
-    <A HREF=\"$page_name?$_auth\"
-    ><$STDFONT_B>Return to $record_name Menu<$STDFONT_E></A>
-   </CENTER>
-   <P>
-  ";
-
-  freemed_display_box_bottom ();
 
 } elseif ($action=="del") {
 
