@@ -117,10 +117,7 @@ $display_buffer .= "
       </FONT>
     ";
   }
-?>
-</CENTER>
 
-<?php 
 //----- Use template
 template_display();
 ?>
