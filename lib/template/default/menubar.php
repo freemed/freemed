@@ -93,6 +93,24 @@ if (is_object($this_user)) {
 	";
 	}
 }
+// Define handler for menu
+LoadObjectDependency('PHP.module');
+$handlers = freemed::module_handler('MenuNotifyItems');
+if (is_array($handlers)) {
+	foreach ($handlers AS $class => $handler) {
+		$reply = module_function($class, $handler);
+		// We return an array of (text, link) if there is something
+		if (is_array($reply)) {
+			list ($text, $link) = $reply;
+			GettextXML::textdomain(strtolower($class));
+			print "
+		<tr><td colspan=\"2\" align=\"center\" valign=\"middle\">
+		<small><a href=\"".$link."\">".prepare($text)."</a></small>
+		</td></tr>
+			";
+		}
+	}
+}
 
 if ($patient_history or $page_history or $new_messages or $language_bar) {
 	print "
