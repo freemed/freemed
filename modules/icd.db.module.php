@@ -39,20 +39,25 @@ class icdMaintenance extends freemedMaintenanceModule {
 		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 
-  switch ($action) { // internal action switch
-   case "addform":
-    break;
-   case "modform":
-    if (!$been_here) {
-      extract(freemed_get_link_rec ($id,$this->table_name));
-      $icdamt        = bcadd($icdamt, 0,2);
-      $icdcoll       = bcadd($icdcoll,0,2);
-      $been_here=1;
-    }
+		switch ($action) { // internal action switch
+		case "addform":
+			break;
+		case "modform":
+			if (!$been_here) {
+			$r = freemed_get_link_rec ($id,$this->table_name);
+			foreach ($r AS $k => $v) {
+				global ${$k};
+				${$k} = stripslashes($v);
+			}
+			$icddrg = sql_expand($icddrg);
+			$icdamt        = bcadd($icdamt, 0,2);
+			$icdcoll       = bcadd($icdcoll,0,2);
+			$been_here=1;
+			}
     break;
   } // end internal action switch
 
-  $display_buffer .= "
+	$display_buffer .= "
     <P>
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
@@ -60,86 +65,45 @@ class icdMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
     <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
     <INPUT TYPE=HIDDEN NAME=\"module\"    VALUE=\"".prepare($module)."\">
+	";
 
-    <TABLE WIDTH=100% BORDER=0 CELLSPACING=2 CELLPADDING=2
-     VALIGN=MIDDLE ALIGN=CENTER>
+	$display_buffer .= html_form::form_table(array(
+		_("Code")." ("._("ICD9").")" =>
+		html_form::text_widget("icd9code", 10, 6),
 
-    <TR>
-    <TD ALIGN=RIGHT WIDTH=\"50%\">
-      "._("Code")." ("._("ICD9").") : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icd9code\" SIZE=10 MAXLENGTH=6 
-     VALUE=\"".prepare($icd9code)."\"></TD>
-    </TR>
+		_("Meta Description") =>
+		html_form::text_widget("icdmetadesc", 10, 30),
 
-    <TR>
-    <TD ALIGN=RIGHT>"._("Meta Description")." : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icdmetadesc\" SIZE=10 MAXLENGTH=30
-     VALUE=\"".prepare($icdmetadesc)."\"></TD>
-    </TR>
+		_("Code")." ("._("ICD10").")" =>
+		html_form::text_widget("icd10code", 10, 7),
 
-    <TR>
-    <TD ALIGN=RIGHT>
-      "._("Code")." ("._("ICD10").") : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icd10code\" SIZE=10 MAXLENGTH=7
-     VALUE=\"".prepare($icd10code)."\"></TD>
-    </TR>
-
-    <TR>
-    <TD ALIGN=RIGHT>
-      "._("Description")." ("._("ICD9").") : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icd9descrip\" SIZE=20 MAXLENGTH=45
-     VALUE=\"".prepare($icd9descrip)."\"></TD>
-    </TR>
+		_("Description")." ("._("ICD9").")" =>
+		html_form::text_widget("icd9descrip", 20, 45),
     
-    <TR>
-    <TD ALIGN=RIGHT>
-      "._("Description")." ("._("ICD10").") : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icd10descrip\" SIZE=20 MAXLENGTH=45
-     VALUE=\"".prepare($icd10descrip)."\"></TD>
-    </TR>
+		_("Description")." ("._("ICD10").")" =>
+		html_form::text_widget("icd10descrip", 20, 45),
 
-    <!-- date of entry = $cur_date -->
+		_("Diagnosis Related Groups") =>
+		freemed_multiple_choice (
+			"SELECT * FROM diagfamily ORDER BY dfname, dfdescrip",
+			"dfname:dfdescrip",
+			"icddrg",
+			fm_join_from_array($icddrg)
+		)
+	));
 
-    <TR>
-    <TD ALIGN=RIGHT>
-      "._("Diagnosis Related Groups")." : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icddrg\" SIZE=20 MAXLENGTH=45
-     VALUE=\"".prepare($icddrg)."\"></TD>
-    </TR>
-
+	$display_buffer .= "
+	<P>
+	<CENTER>
     <!-- initially, number of times used is 0 -->
-    <INPUT TYPE=HIDDEN NAME=\"icdnum\" VALUE=\"0\">
+    <INPUT TYPE=HIDDEN NAME=\"icdnum\" VALUE=\"".prepare($icdnum)."\">
 
-    <TR>
-    <TD ALIGN=RIGHT>"._("Amount Billed")." : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icdamt\" SIZE=10 MAXLENGTH=12
-     VALUE=\"".prepare($icdamt)."\"></TD>
-    </TR>
-
-    <TR>
-    <TD ALIGN=RIGHT>"._("Amount Collected")." : </TD>
-    <TD><INPUT TYPE=TEXT NAME=\"icdcoll\" SIZE=10 MAXLENGTH=12
-     VALUE=\"".prepare($icdcoll)."\">
-    </TR>
-
-    </TABLE>
-
-    <P>
-    <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" ".
+	<INPUT TYPE=SUBMIT VALUE=\" ".
       ( ($action=="addform") ? _("Add") : _("Modify") )." \">
-    <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-    </CENTER></FORM>
-  ";
-
-  $display_buffer .= "
-    <P>
-    <CENTER>
-    <A HREF=\"$this->page_name?module=$module&action=view\"
-     >".( ($action=="addform") ?
-      _("Abandon Addition") : _("Abandon Modification") )."</A>
-    </CENTER>
-  ";
+	<INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\">
+	</CENTER></FORM>
+		";
 	} // end function icdMaintenance->form
 
 	function view () {
@@ -150,8 +114,8 @@ class icdMaintenance extends freemedMaintenanceModule {
 				"ORDER BY $this->order_field"),
 			$this->page_name,
 			array (
-				_("Code")			=> 	"icd9code",
-				_("Description")	=>	"icd9descrip"
+				_("Code")        => 	"icd9code",
+				_("Description") =>	"icd9descrip"
 			),
 			array ("", _("NO DESCRIPTION")), "", "t_page"
 		);
