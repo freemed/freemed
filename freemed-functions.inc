@@ -6,7 +6,7 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   #       max k <amk@span.ch>
   # lic : GPL, v2
-  # ver : 20000105
+  # ver : 20000115
 
 $__freemed_functions__ = true;
 
@@ -2099,13 +2099,10 @@ function fm_button ($b_text) {
 
 // fm_eval -- evaluate string variables (with security checks, of course)
 function fm_eval ($orig_string) {
-  // import _ALL_ global variables...
-  for (reset($GLOBALS); $key = key($GLOBALS); next ($GLOBALS)) {
-    // eval ($key . " = \"" . $GLOBALS[$key] . "\"" ; ");
-    if (($key != "GLOBALS") AND ($key != "key")) {
-     eval ("global \$".$key." ; "); // much simpler than above method
-    } // end if not...
-  } // end for/next insert of global variables
+  // import all global variables
+  // (thanks to jb@as220.org for this one)
+  while (list($k,$v) = each ($GLOBALS))
+   if (!isset($$k)) global $$k;
   $this_string = $orig_string;                 // transfer to internal var
   $this_string = fm_secure ($this_string);     // secure the string
   eval ("\$this_string = \"$this_string\";");  // evaluate
