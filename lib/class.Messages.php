@@ -125,7 +125,7 @@ class Messages {
 		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 			"messages",
 			array(
-				"msgby"      => $this_user->user_number,
+				"msgby"      => ( $message['system'] ? 0 : $this_user->user_number ),
 				"msgfor"     => $message['user'],
 				"msgrecip"   => $message['user'],
 				"msgpatient" => $message['patient'],
