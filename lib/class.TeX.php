@@ -18,6 +18,19 @@ class TeX {
 		}
 	} // end constructor
 
+	// Method: AddLongItem
+	//
+	//	Add a large item to a FreeMED report document
+	//
+	// Parameters:
+	//
+	//	$title - The text title of the specified item
+	//
+	//	$item - HTML marked up "rich text" to be displayed
+	//
+	// See Also:
+	//	<AddLongItems>
+	//
 	function AddLongItem ( $title, $item ) {
 		$CRLF = "\n"; 
 		$this->_buffer .= '\\section*{\\headingbox{'.
@@ -26,6 +39,19 @@ class TeX {
 			$CRLF;
 	} // end method AddLongItem
 
+	// Method: AddLongItems
+	//
+	//	Adds multiple "long items" to a FreeMED report
+	//	document
+	//
+	// Parameters:
+	//
+	//	$items - Associative array where keys represent the
+	//	titles of the items and values represent their texts
+	//
+	// See Also:
+	//	<AddLongItem>
+	//
 	function AddLongItems ( $items ) {
 		if (!is_array($items)) return false;
 		foreach ($items AS $title => $item) {
@@ -168,13 +194,25 @@ class TeX {
 		// Sanitize all but HTML markers
 		$text = $this->_SanitizeText($orig, true);
 
+		// Thanks to Adam for the Perl regular expressions to
+		// do all of this work ....
+
+		// Deal with whitespace
+		$text = preg_replace("#<\s*#i", '<', $text);
+		$text = preg_replace("#\s*>#i", '>', $text);
+		$text = preg_replace(""#<[^>\S]*/\s*#i", '</', $text);
+
+		// Format paragraph breaks properly
+		$text = preg_replace("#\s*<P>#i", "\n\n", $text);
+
 		// Format tags, one by one
-		// NOTE ... FIXME!!!!
-		//$text = eregi_replace ('<b>[[:alnum:]]<\/b>', '{\\textbf \\1}', $text);
-		// Finally, change \n\n into \para and \n into \\
-		//$text = str_replace ("\n\n", "\n\\para\n", $text);
-		//$text = str_replace ("\n", " \\\\\n", $text);
-		
+		$text = preg_replace("#<B>(.*?)</B>#i", '\textbf{$1}', $text);
+		$text = preg_replace("#<I>(.*?)</I>#i", '\textit{$1}', $text);
+		$text = preg_replace("#<U>(.*?)</U>#i", '\underline{$1}', $text);
+	
+		// Remove all tags we can't understand
+		$text = preg_replace("#<[^>]*?>#i", '', $text);
+	
 		return $text;
 	} // end method _HTMLToRichText
 
