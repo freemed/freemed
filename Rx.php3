@@ -79,13 +79,13 @@
         <P>
 
         <$STDFONT_B>$Drug : <$STDFONT_E>
-        <SELECT NAME=\"rxdrug\">
       ";
 
-      freemed_display_drugs ($rxdrug);
+      $rx_r = fdb_query("SELECT * FROM frmlry ORDER BY trdmrkname");
+      echo freemed_display_selectbox (
+        $rx_r, "#trdmrkname#", "rxdrug"
+      )."
 
-      echo "
-        </SELECT>
         <P>
 
         <$STDFONT_B>$Dosage : <$STDFONT_E>
