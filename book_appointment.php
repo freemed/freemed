@@ -43,7 +43,7 @@ for ($i=1;$i<=7;$i++) $prev_wk = freemed_get_date_prev ($prev_wk);
 
 //----- Display patient management bar if not travel
 if (!$travel) {
-	$display_buffer .= freemed_patient_box($this_patient);
+	$display_buffer .= freemed::patient_box($this_patient);
 } else {
 	// Display travel bar
 	$display_buffer .= "

@@ -8,7 +8,6 @@ $page_name   = "custom_records.php";
 $record_name = "Custom Records";
 $table_name  = "patrecdata";
 include_once ("lib/freemed.php");
-include_once ("lib/API.php");
 
 //----- Login/authenticate
 freemed_open_db ();
@@ -27,11 +26,11 @@ if ($patient<1) {
    <P>
   ";
   template_display();
- } // end checking if patient is provided
+} // end checking if patient is provided
 
- $this_patient = CreateObject('FreeMED.Patient', $patient);
+$this_patient = CreateObject('FreeMED.Patient', $patient);
 
- if ( (($action=="addform") or ($action=="modform") or
+if ( (($action=="addform") or ($action=="modform") or
        ($action=="add")     or ($action=="mod"    ))
       AND ($form<1)) {
   $page_title = _($record_name)." :: "._("ERROR");
@@ -48,9 +47,9 @@ if ($patient<1) {
    <P>
   ";
   template_display();
- } // end checking for valud form
+} // end checking for valud form
 
- switch ($action) {
+switch ($action) {
   case "addform":
   case "modform":
    switch($action) {
@@ -66,6 +65,7 @@ if ($patient<1) {
      $form = $form_template;   // to allow us to pass it as hidden
      if ($patient != $r["prpatient"]) {
        // FINISH THIS LATER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       	die ("access violation");
      } // end if patient does not "own" record
      $prdata = $r["prdata"]; // get the actual data
      $this_data = fm_split_into_array ($prdata);
@@ -94,7 +94,7 @@ if ($patient<1) {
    } // end interior action switch
    $page_title = (($action=="addform") ? _("Add") : _("Modify")).
      " "._($record_name); 
-   $display_buffer .= freemed_patient_box($this_patient)."
+   $display_buffer .= freemed::patient_box($this_patient)."
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
@@ -427,8 +427,7 @@ if ($patient<1) {
                          WHERE prpatient='".addslashes($patient)."'
                          ORDER BY prdtadd DESC");
    if (($result==0) or ($sql->num_rows($result)<1)) {
-     $display_buffer .= "
-      ".freemed_patient_box($this_patient)."
+     $display_buffer .= freemed::patient_box($this_patient)."
       <P>
       <CENTER>
        <B>"._("No records for this patient.")."</B>
@@ -462,8 +461,7 @@ if ($patient<1) {
       ";
      template_display();
    } // end checking if no result
-   $display_buffer .= "
-     ".freemed_patient_box($this_patient)."
+   $display_buffer .= freemed::patient_box($this_patient)."
      <P>
      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0
       VALIGN=MIDDLE ALIGN=CENTER> 
@@ -515,7 +513,9 @@ if ($patient<1) {
     <P>
     "; // end table
    break;
- } // end master action switch
+} // end master action switch
 
+//----- Display page template
 template_display();
+
 ?>

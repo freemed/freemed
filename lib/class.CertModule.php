@@ -53,7 +53,7 @@ class CertModule extends BaseModule {
 			$this->this_user    = CreateObject('FreeMED.User');
 
 		// display universal patient box
-		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
+		$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
 
 		switch ($action) {
 			case "add":

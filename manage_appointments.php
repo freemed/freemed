@@ -49,7 +49,7 @@ if ($patient<1) {
 
    // display top of the box
    $page_title = _("Manage Appointments");
-   $display_buffer .= freemed_patient_box($this_patient)."
+   $display_buffer .= freemed::patient_box($this_patient)."
      <p/>
      <div ALIGN=\"CENTER\">
       <A HREF=\"book_appointment.php?patient=$patient&type=pat\"

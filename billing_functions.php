@@ -25,7 +25,7 @@ if ($SESSION["current_patient"] != 0) $patient = $SESSION["current_patient"];
 $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
 if ($patient>0) {
 	$this_patient = CreateObject('FreeMED.Patient', $patient);
-	$patient_information = freemed_patient_box ($this_patient);
+	$patient_information = freemed::patient_box ($this_patient);
 } // if there is a patient
 
 //

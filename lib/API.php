@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.54  2002/12/15 07:28:46  rufustfirefly
+ // Moved freemed_patient_box to freemed::patient_box (and other small fixes)
+ //
  // Revision 1.53  2002/12/12 17:10:57  rufustfirefly
  // Made entire patient box clickable, and hilights with mouseover.
  //
@@ -282,6 +285,44 @@ class freemed {
 		// check in cache for version
 		return $_config["$module"];
 	} // end function freemed::module_version
+
+	function patient_box ($patient_object) {
+		// empty buffer
+		$buffer = "";
+
+		// top of box
+		$buffer .= "
+    <div ALIGN=\"CENTER\">
+    <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"5\" WIDTH=\"100%\">
+     <tr CLASS=\"patientbox\"
+	onMouseOver=\"this.className='patientbox_hilite'; patientboxlink.className='patientbox_hilite'; return true;\"
+	onMouseOut=\"this.className='patientbox'; patientboxlink.className='patientbox'; return true;\"
+	onClick=\"window.location='manage.php?id=".
+		urlencode($patient_object->id)."'; return true;\"
+      ><td VALIGN=\"CENTER\" ALIGN=\"LEFT\">
+      <a HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
+       CLASS=\"patientbox\" NAME=\"patientboxlink\"><big>".
+       $patient_object->fullName().
+      "</big></a>
+     </td><td ALIGN=\"CENTER\" VALIGN=\"CENTER\">
+      ".( (!empty($patient_object->local_record["ptid"])) ?
+          $patient_object->idNumber() : "(no id)" )."
+     </td><td ALIGN=\"CENTER\" VALIGN=\"CENTER\">
+      &nbsp;
+      <!-- ICON BAR NEEDS TO GO HERE ... TODO -->
+     </td><td VALIGN=\"CENTER\" ALIGN=\"RIGHT\">
+      <font COLOR=\"#cccccc\">
+       ".$patient_object->age()." old, DOB ".
+        $patient_object->dateOfBirth()."
+      </font>
+     </td></tr>
+    </table>
+    </div>
+		";
+  
+		// return buffer
+		return $buffer;
+	} // end function freemed::patient_box
 
 	function patient_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
 		global ${$varname};
@@ -1395,61 +1436,18 @@ function freemed_open_db ($my_cookie) {
 
 	// Verify
 	if (!freemed_verify_auth()) {
-		$display_buffer .= "<!-- -->
-      <CENTER>
-      <B>
-      <P>
-      "._("You have entered an incorrect username or password.")."
-      <BR><BR>
-      <I>"._("It is possible that your cookies have expired.")."</I>
-      <P>
-      </B>
-      <A HREF=\"index.php\">"._("Return to the Login Screen")."</A>
-      </CENTER>
+		$display_buffer .= "
+      <div ALIGN=\"CENTER\">
+      <b>"._("You have entered an incorrect username or password.")."</b>
+      <br/><br/>
+      <b><i>"._("It is possible that your cookies have expired.")."</i></b>
+      <p/>
+      <a HREF=\"index.php\">"._("Return to the Login Screen")."</a>
+      </div>
 		";
 		template_display();
 	} // end if connected loop
 } // end function freemed_open_db
-
-// function freemed_patient_box
-//   general purpose patient link/info box
-function freemed_patient_box ($patient_object) {
-	// empty buffer
-	$buffer = "";
-
-	// top of box
-	$buffer .= "
-    <CENTER>
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
-     <TR CLASS=\"patientbox\"
-	onMouseOver=\"this.className='patientbox_hilite'; patientboxlink.className='patientbox_hilite'; return true;\"
-	onMouseOut=\"this.className='patientbox'; patientboxlink.className='patientbox'; return true;\"
-	onClick=\"window.location='manage.php?id=".
-		urlencode($patient_object->id)."'; return true;\"
-      ><TD VALIGN=\"CENTER\" ALIGN=\"LEFT\">
-      <A HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
-       CLASS=\"patientbox\" NAME=\"patientboxlink\"><FONT SIZE=\"+1\">".
-       $patient_object->fullName().
-      "</FONT></A>
-     </TD><TD ALIGN=CENTER VALIGN=CENTER>
-      ".( (!empty($patient_object->local_record["ptid"])) ?
-          $patient_object->idNumber() : "(no id)" )."
-     </TD><TD ALIGN=CENTER VALIGN=CENTER>
-      &nbsp;
-      <!-- ICON BAR NEEDS TO GO HERE ... TODO -->
-     </TD><TD VALIGN=CENTER ALIGN=RIGHT>
-      <FONT COLOR=\"#cccccc\">
-       ".$patient_object->age()." old, DOB ".
-        $patient_object->dateOfBirth()."
-      </FONT>
-     </TD></TR>
-    </TABLE>
-    </CENTER>
-	";
-  
-	// return buffer
-	return $buffer;
-} // end function freemed_patient_box
 
 // function freemed_search_query()
 //   generates result from in-notebook query

@@ -20,7 +20,7 @@ if ($automatic_refresh_time > 14) {
 if ($num_summary_items < 1) $num_summary_items = 5;
 
 //----- Display patient information box...
-$display_buffer .= freemed_patient_box($this_patient);
+$display_buffer .= freemed::patient_box($this_patient);
 
 //----- Suck in management panels
 //-- Static first...

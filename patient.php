@@ -541,7 +541,7 @@ switch ($action) {
    $page_title = _("Patient")." "._("$action_name");
    if ( ($action=="modform") or ($action=="mod")) {
      $this_patient = CreateObject('FreeMED.Patient', $id);
-     $display_buffer .= freemed_patient_box ($this_patient);
+     $display_buffer .= freemed::patient_box ($this_patient);
    }
 	// Handle cancel action
 	if ($book->is_cancelled()) {

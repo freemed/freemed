@@ -25,7 +25,7 @@ if ($patient>0) {
     // display header
 $page_title = _("Show Appointments");
 
-if ($patient>0) $display_buffer .= freemed_patient_box ($this_patient);
+if ($patient>0) $display_buffer .= freemed::patient_box ($this_patient);
 $display_buffer .= "
     <P>
     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2

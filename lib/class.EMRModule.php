@@ -53,7 +53,7 @@ class EMRModule extends BaseModule {
 
 		// display universal patient box
 		if (!$this->disable_patient_box) {
-		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
+		$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
 		}
 
 		// Handle cancel action from submit

@@ -67,7 +67,7 @@ class EMRReportModule extends BaseModule {
 
 		// display universal patient box
 		// no box used since these need to be printable
-		//$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
+		//$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
 
 		switch ($action) {
 			case "add":

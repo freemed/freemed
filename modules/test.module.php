@@ -42,7 +42,7 @@ class TestModule extends BaseModule {
 			$this_patient = CreateObject('FreeMED.Patient', 
 				$patient
 			);
-			$buffer .= freemed_patient_box($this_patient);
+			$buffer .= freemed::patient_box($this_patient);
 		} // end checking for patient
 
 		return $buffer;
