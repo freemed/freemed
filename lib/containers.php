@@ -9,7 +9,6 @@ if (!defined ("__CONTAINERS_PHP__")) {
 define (__CONTAINERS_PHP__, true);
 
 // class Payer
-
 class Payer {
   var $local_record;                // stores basic record
   var $id;                          // record ID for insurance company
@@ -34,11 +33,11 @@ class Payer {
 	$this->payerenddt = $this->local_record[payerenddt];	
 	$this->inscoid = $this->local_record[payerinsco];	
 
-  } // end constructor InsuranceCompany
+  } // end constructor Payer
 
-} // end class InsuranceCompany
+} // end class Payer
+
 // class InsuranceCompany
-
 class InsuranceCompany {
   var $local_record;                // stores basic record
   var $id;                          // record ID for insurance company
@@ -61,7 +60,6 @@ class InsuranceCompany {
 } // end class InsuranceCompany
 
 // class Patient
-
 class Patient {
   var $local_record;                // stores basic patient record
   var $ptlname, $ptfname, $ptmname; // name variables
@@ -262,7 +260,6 @@ class Patient {
 } // end class Patient
 
 // class Physician
-
 class Physician {
   var $local_record;                 // stores basic record
   var $id;                           // record ID for physician
@@ -298,7 +295,6 @@ class Physician {
 } // end class Physician
 
 // class User
-
 class User {
   var $local_record;                 // local record
   var $cookie;                       // actual cookie
