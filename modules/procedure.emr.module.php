@@ -456,7 +456,7 @@ class ProcedureModule extends EMRModule {
 				// Deduct from authorization, if there is one
 				// specified
 				if ($_REQUEST['procauth'] > 0) {
-					$a = CreateObject('FreeMED.Authorization');
+					$a = CreateObject('FreeMED.Authorizations');
 					// Check for valid first
 					if ($a->valid($_REQUEST['procauth'], fm_date_assemble('procdt'))) {
 						if ($a->use_authorization($_REQUEST['procauth'])) {
