@@ -9,7 +9,7 @@
 
 ( \
 	cd /usr/share/freemed/scripts/fax_import/; \
-	for f in /var/spool/hylafax/recvq/*.tif; do \
+	for f in /var/spool/hylafax/recvq/*.tiff; do \
 		mv $f .; \
 		./import_fax.pl `basename $f`; \
 	done \
