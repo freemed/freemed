@@ -6,7 +6,7 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   #       max k <amk@span.ch>
   # lic : GPL, v2
-  # ver : 2000-01-22
+  # ver : 2000-01-24
 
 $__freemed_functions__ = true;
 
@@ -920,9 +920,9 @@ function freemed_display_physicians ($param="", $intext="")
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.physician ORDER BY ".
-     "phylname, phyfname".
-     ( ($intext != "") ? " WHERE phyref='$intext'" : "" );
+  $query = "SELECT * FROM $database.physician ".
+     ( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
+     "ORDER BY phylname,phyfname";
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
