@@ -192,6 +192,7 @@ function render_FixedFormEntry ($formentry) {
   $this_evalled = ( (strpos ($formentry->data, "\$") >=0) ?
                      fm_eval ($formentry->data)       :
                      $formentry->data                    );
+
   if ($debug) echo "\nnew = $this_evalled <BR>\n";
   flush();
   if (strlen ($this_evalled) > $formentry->len) 
@@ -200,14 +201,6 @@ function render_FixedFormEntry ($formentry) {
   } 
   elseif (strlen ($this_evalled) < $formentry->len) 
   {
-    //$this_difference = ($formentry->len) - (strlen($this_evalled));
-    //for ($loop=0;$loop<$this_difference;$loop++)
-    //{ 
-	//	if ($formentry->format=="N")
-	//		$this_evalled = "0".$this_evalled;
-	//	else
-	//		$this_evalled .= " "; 
-    //} //if ($debug) echo "\nSPACE<BR>\n"; 
 
 	if ($formentry->format=="N")
 		$this_evalled = str_pad($this_evalled,$formentry->len,"0",STR_PAD_LEFT); // fill zeros to left 
@@ -308,6 +301,95 @@ function render_fixedForm ($id) {
   // send the buffer back to the calling routine
   return $buffer."\n";
 } // end function render_fixedForm
+
+
+function render_fixedRecord ($id,$rectype="") {
+  global $debug;
+
+  if ($debug) echo "\nEntered render_fixedForm<BR>\n";
+  flush ();
+
+  if (empty($rectype))
+      return "";
+
+  $this_form  = freemed_get_link_rec ($id, "fixedform"); // get record
+  $linelength = $this_form ["fflinelength"];
+  $pagelength = $this_form ["ffpagelength"];
+  $rows       = fm_split_into_array ($this_form["ffrow"    ]);
+  $cols       = fm_split_into_array ($this_form["ffcol"    ]);
+  $lens       = fm_split_into_array ($this_form["fflength" ]);
+  $datas      = fm_split_into_array ($this_form["ffdata"   ]);
+  $formats    = fm_split_into_array ($this_form["ffformat" ]);
+  $comments   = fm_split_into_array ($this_form["ffcomment"]);
+  $number_of_entries = count ($rows);
+
+  if ($debug) echo "\nnumber of entries = $number_of_entries<BR>\n";
+  flush();
+
+  $x=0;
+   // import entries into array
+  for ($i=0;$i<$number_of_entries;$i++) 
+  {
+		if ($rows[$i] != $rectype)
+			continue;
+    	$form_entry [$x] = new fixedFormEntry ($rows[$i],    $cols[$i],
+                                           $lens[$i],    $datas[$i],
+                                           $formats[$i], $comments[$i]);
+		$x++;
+  } // end for loop
+
+/*
+  //THIS DOESN'T WORK !!! SOMEONE DO AN INSERTION SORT!!!
+  //   BEGIN FUBAR'D CODE -----------------------------------
+  // bubble sort so that everything else works
+
+
+  for ($i=($number_of_entries-1);$i>=0;$i--) {
+   for ($j=1;$j<=$i;$j++) {
+    $a = $form_entry [$i-1]; $b = $form_entry [$i];
+    if ( ($a->rows > $b->rows) or
+         (($a->rows <= $b->rows) and ($a->cols > $b->cols)) )
+     swap_fixedFormEntry ($form_entry [$i-1], $form_entry [$i]);
+   } // end inner bubble sort routine
+  } // end outer bubble sort routine
+   //  END OF HUGE BLOCK OF FUBAR'D CODE -------------------- 
+*/
+
+  $cur_row    = 1;  // reset row
+  $cur_col    = 1;  // reset col
+  $cur_entry  = 0;  // start with the first entry
+  $buffer     = ""; // clear buffer
+
+  $number_of_entries = count($form_entry);
+  // loop through all entries
+  while ($cur_entry < $number_of_entries) 
+  {
+    $form_item = $form_entry [$cur_entry]; // import current entry item
+
+
+	if ($form_item->col > $cur_col)
+	{
+		$fillcnt = $form_item->col - $cur_col;
+		$paddat = "";
+		$paddat = str_pad($paddat,$fillcnt);
+		$buffer .= $paddat;
+		$cur_col = $form_item->col;
+	}	
+
+    $buffer .= render_fixedFormEntry ($form_item);
+	$cur_col = $form_item->col + $form_item->len;
+    $cur_entry++; // increment the counter!
+	//echo "cur_col $cur_col<BR>";
+
+  } // while there are more entries, loop
+
+  // add trailing CR to buffer
+  $buffer = str_pad($buffer,$linelength);
+  $buffer .= "\n";
+  //echo "$buffer<BR>";
+  return $buffer;
+
+} // end function render_fixedRecord
 
 
 } // end checking for __RENDER_FORMS_PHP__

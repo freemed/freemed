@@ -1,6 +1,15 @@
 freemed project changelog
 ($Id$)
 
+* Fir Mar 23 2001 fforest
+  - fixedform_EN.data update with new requirements for
+    commercial and Medicare NSF record layouts
+  - lib/render_forms add new function render_fixedRecord. This allows
+    a single NSF record to be generate by record type so we don;t have to 
+    generate an entire form. major performance boost for NSF generation
+  - modules/mcsi_nsf_ci major updates. All commercial claim submissions now work.
+  - modules/mcsi_nsf_mc major updates. Should be correct but still untested.
+
 * Thu Mar 22 2001 rufustfirefly
   - frmlry.php3 -> old/frmlry.php3
   - lib/API.php: old help.php3 references moved to help.php
