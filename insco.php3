@@ -692,6 +692,56 @@ if ($action=="addform") {
     "; // do bottom of the table
 
     freemed_display_actionbar ();
+    if ($disp) {
+     echo "\n <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 ALIGN=CENTER><TR>\n";
+     if ($prev) {
+      echo "
+       <TD VALIGN=MIDDLE>
+       &nbsp;
+       <A HREF=\"$page_name?$_auth&action=$action&start=".
+       abs($start-($max_num_res))."\"
+       >prev</A>
+       &nbsp;
+       </TD>
+      ";
+     } else {
+      echo "<TD VALIGN=MIDDLE>&nbsp;prev&nbsp;</TD>\n";
+     } // end checking for prev
+     echo "
+      <TD VALIGN=MIDDLE>
+      <FORM ACTION=\"$page_name\" METHOD=POST>
+       <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
+       <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"$action\">
+       <SELECT NAME=\"start\">
+     ";
+     for ($i=1;$i<=$total_num_res_pages;$i++) {
+      if ($i==$this_page) { $this_selected = "SELECTED"; }
+       else               { $this_selected = "";         }
+      $v = abs(($i - 1) * $max_num_res)+1;
+      echo "<OPTION VALUE=\"$v\" $this_selected>$i of $total_num_res_pages\n";
+     } // end of if loop
+     echo "
+       </SELECT>
+      </TD><TD VALIGN=MIDDLE>
+       <INPUT TYPE=SUBMIT VALUE=\"go\">
+      </FORM>
+      </TD>
+     ";
+     if ($next) {
+      echo "
+       <TD VALIGN=MIDDLE>
+       &nbsp;
+       <A HREF=\"$page_name?$_auth&action=$action&start=".
+       abs($start+($max_num_res))."\"
+       >next</A>
+       &nbsp;</TD>
+      ";
+     } else {
+      echo "<TD VALIGN=MIDDLE>&nbsp;next&nbsp;</TD>\n";
+     } // end checking for next
+     echo "\n</TR></TABLE><BR>\n";
+    } // end checking for disp
+
     freemed_display_box_bottom ();
   } else {
     echo "\n<B>no inscos found with that criteria.</B>\n";
