@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Tue Sep 25 2001 rufustfirefly
+  - lang/registry, po/hr.po: added Croatian (Hrvatski) translation
+    from Nikola Gotovac (nikola@mamef.mef.hr)
+
 * Thu Sep 06 2001 rufustfirefly
   - data/EN/fixedform.EN.data, lib/module_billing.php,
     modules/{generate_statemnt,rebill_bycov}.billing.module.php:
