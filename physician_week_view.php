@@ -18,9 +18,6 @@ page_push();
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"physician_week_view.php|user $user_to_log ");}	
 
-
-
-
 // check if there is a valid date... if not, assign current date
 if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
 	substr($for_date, 0, 4))) $for_date = $cur_date;
@@ -49,6 +46,12 @@ $display_buffer .= "
    </TD></TR></TABLE>
    <BR>
 ";
+
+// Check for us being a physician
+$this_user = CreateObject('FreeMED.User');
+if ($this_user->isPhysician() and ($physician < 1)) {
+	$physician = $this_user->getPhysician();
+}
 
 // check if there is a physician specified, and if so, display their
 // name, etc at the top...
