@@ -70,7 +70,6 @@ class Parser_HL7v2 {
 	//
 	function Parser_HL7v2 ( $message, $_options = NULL ) {
 		syslog(LOG_INFO, 'HL7 parser|Created HL7 parser object');
-		syslog(LOG_INFO, 'HL7 parser| message = '.$message);
 	
 		// Assume separator is a pipe
 		$this->field_separator = '|';
@@ -93,6 +92,9 @@ class Parser_HL7v2 {
 		$count = 0;
 		foreach ($segments AS $__garbage => $segment) {
 			$count++;
+
+			// Log segment
+			syslog(LOG_INFO, 'HL7 parser| segment['.$count.'] = '.$message);
 
 			// Determine segment ID
 			$type = substr($segment, 0, 3);
