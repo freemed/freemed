@@ -111,6 +111,7 @@ function freemed_display_banner ($_pg_desc="")
 
   echo " 
     <CENTER>
+      <!--
       <B><$STDFONT_B SIZE=+2>
         --= ".prepare(PACKAGENAME)." v".prepare(VERSION)." $_pg_desc =--
       <$STDFONT_E></B><BR>
@@ -126,6 +127,7 @@ function freemed_display_banner ($_pg_desc="")
       <$STDFONT_E>
     ";
   echo "
+      -->
     </CENTER>
     <P>
   ";
@@ -226,7 +228,8 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
     $ref = "main.php3";
   } // if there is no ref
 
-  if ($_pg_desc=="[HELP]") $width = "WIDTH=75%";
+  //if ($_pg_desc=="[HELP]") $width = "WIDTH=75%";
+  $width="WIDTH=100%";
 
   if ($page_name=="index.php3") { $b_b = "<B>"; $b_e = "</B>"; }
 
@@ -245,7 +248,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
        VALIGN=TOP BORDER=0><TR BGCOLOR=$topbar_color>
        <TD BGCOLOR=$topbar_color>
        <CENTER><FONT FACE=\"Arial, Helvetica, Verdana\"
-        SIZE=+1 COLOR=#ffffff>$b_b$box_title$b_e</FONT></CENTER>
+        SIZE=+1 COLOR=#ffffff>$b_b".INSTALLATION.": $box_title$b_e</FONT></CENTER>
       </TD>
       <TD BGCOLOR=$topbar_color ALIGN=RIGHT WIDTH=32 
     ";
@@ -456,7 +459,8 @@ function freemed_display_html_bottom ($_null="")
 
   echo "
     <CENTER>
-      <I><FONT SIZE=-2 COLOR=#555555>$lang_coded_by
+      <I><FONT SIZE=-2 COLOR=#555555>".PACKAGENAME." ".
+      VERSION." $lang_coded_by
         <A HREF=\"$_mail_handler".BUGS_EMAIL."\">".CODED_BY."</A>
       </FONT></I>
     </CENTER>
@@ -485,7 +489,8 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
      <TITLE>".PACKAGENAME." v".VERSION." $_pg_desc_given
         - ".prepare(INSTALLATION)."</TITLE>
    </HEAD>
-   <BODY BGCOLOR=#ffffff ALINK=#0000ff VLINK=0000ff>
+   <BODY BGCOLOR=\"#ffffff\" ALINK=\"#0000ff\" VLINK=\"#0000ff\"
+    MARGINWIDTH=\"0\" MARGINHEIGHT=\"0\" LEFTMARGIN=\"0\" RIGHTMARGIN=\"0\">
   ";
 } // end function freemed_display_html_top
 

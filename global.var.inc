@@ -3,7 +3,7 @@
  // note: global variables for entire freemed code base
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
- // mod : 2000-07-25
+ // mod : 2000-07-30
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
@@ -14,10 +14,10 @@ if (!defined(__GLOBAL_VAR_INC__)) {
 define (__GLOBAL_VAR_INC__, true);
 
     // these variables you should not touch
-  define (PACKAGENAME, "freemed");	// package name
-  define (CODED_BY, "jeff b");		// coded by tag
-  define (VERSION, "0.2pre20000725");	// current version number
-  define (BUGS_EMAIL, "code_bugs@test.pr.uconn.edu");	// coder email...
+  define (PACKAGENAME, "freemed");			// package name
+  define (CODED_BY, "The Freemed Project");		// coded by tag
+  define (VERSION, "0.2pre20000730");	// current version number
+  define (BUGS_EMAIL, "code_bugs@ourexchange.net");	// coder email...
 
   $bugs_address="http://www.freemed.org/keystone/visitor.php3";
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)

@@ -24,7 +24,7 @@ switch($action) {
     array ("action", "_auth", "id", "been_here"), true );
   $book->set_submit_name("OK"); // not sure what this does...
   
-  if (($action=="modform") AND (!$been_here)) { // load the values
+  if (($action=="modform") AND (empty($been_here))) { // load the values
     $r = freemed_get_link_rec ($id, $db_name);
 
     $phylname    = $r["phylname"   ];
@@ -89,7 +89,7 @@ switch($action) {
   
   $stat_q = "SELECT * FROM phystatus ORDER BY phystatus";
   $stat_r = fdb_query($stat_q); // have the result ready for display_selectbox
-  
+
   $book->add_page (
     "Primary Information",
     array (
@@ -144,7 +144,7 @@ switch($action) {
    </TABLE>
     "
   );
- 
+
   $book->add_page (
     "Contact",
     array (
@@ -232,8 +232,8 @@ switch($action) {
     <$STDFONT_B>Has Second Address : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     <INPUT TYPE=CHECKBOX NAME=\"has_second_addr\" ".
-    ($has_second_addr ? "CHECKED" : "").">".$book->generate_refresh()."
-    </TD></TR>
+    ($has_second_addr ? "CHECKED" : "").">". //$book->generate_refresh()."
+    "</TD></TR>
    </TABLE>
 
     "

@@ -200,7 +200,7 @@ switch ($action) { // begin master switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Diagnosis Excluded : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-   "freemed_multiple_choice ("SELECT * FROM icd9
+   ".freemed_multiple_choice ("SELECT * FROM icd9
                               ORDER BY icd9code,icd9descrip",
                              "icd9code:icd9descrip",
                              "cptexcicd",
