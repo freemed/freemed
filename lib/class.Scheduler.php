@@ -556,8 +556,8 @@ class Scheduler {
 		$buffer .= "<td colspan=\"1\">&nbsp;</td>\n".
 		"</tr><tr>\n".
 		"<td COLSPAN=\"9\" ALIGN=\"RIGHT\" class=\"button_style\">\n".
-		"<a HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
-		$cur_day."\" class=\"button_text\" ".
+		"<a HREF=\"$this_url&selected_date=".date('Y-m-d').
+		"\" class=\"button_text\" ".
 		"><small>".__("go to today")."</small></a>\n".
 		"</td></tr></table></center>\n";
 		return $buffer;
