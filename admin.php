@@ -7,7 +7,6 @@
 
  $page_name=basename($GLOBALS["REQUEST_URI"]);
  include ("lib/freemed.php");
- include ("lib/API.php"); // include generic functions
 
  SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
