@@ -129,26 +129,45 @@ if ($action=="auth") {
 		// then this is just an honest mistake!!
 	}
 	
-	// here I enter the new admin account into the database!!
+	// Here I enter the new admin account into the database!!
 	$display_buffer .= __("Database Password Accepted")."... <br/>\n";
 
-// these should eventually be connected to a die() command!!
-$this_user = CreateObject('FreeMED.User');
-
-$md5_pass = md5($_REQUEST['_adminpassword1']);
-	
-$this_user->init($md5_pass);
+	// These should eventually be connected to a die() command!!
+	$this_user = CreateObject('FreeMED.User');
+	$md5_pass = md5($_REQUEST['_adminpassword1']);
+	$this_user->init($md5_pass);
 
 	$display_buffer .= "
 <div ALIGN=\"LEFT\">	
 ".__("User table created.")."<br/>
 ".__("Admin password set.")."<br/>
-".__("You will now be returned to the the login prompt.")."<br/>
-".__("You can login using:")."<br/><br/>
-username=admin <br/>
-password=WHAT_YOU_JUST_ENTERED <br/><br/>
-replace WHAT_YOU_JUST_ENTERED with the admin password that you just created <BR>
-</div>";
+	";
+
+	// Create module table
+	$this_module = CreateObject('FreeMED.BaseModule');
+	$this_module->init();
+	$display_buffer .= __("Dynamic modules database initialized.")."<br/>\n";
+
+	// Create config table
+	$this_config = CreateObject('FreeMED.GeneralConfig');
+	$this_config->init();
+	$display_buffer .= __("FreeMED configuration database initialized.")."<br/>\n";
+
+	// Load all modules
+	$this_ml = freemed::module_cache();
+	$display_buffer .= __("All modules initialized.")."<br/>\n";
+
+	$display_buffer .= "
+	".__("You will now be returned to the the login prompt.")."<br/>
+	".__("You can login using:")."<br/><br/>
+	username=admin <br/>
+	password=WHAT_YOU_JUST_ENTERED <br/><br/>
+	replace WHAT_YOU_JUST_ENTERED with the admin password that you just created <BR>
+	</div>
+	<br/>
+	<div align=\"center\">
+	<a href=\"index.php\" class=\"button\">".__("Return to Login")."</a>
+	</div>";
   	header("Refresh: 30;url=index.php");	
 	template_display();
 }
