@@ -311,7 +311,7 @@ class ProgressNotes extends EMRModule {
 		), html_form::form_table(array(
 			__("Blood Pressure") => html_form::number_pulldown('pnotessbp', 0, 250)."<b>/</b>".
 				html_form::number_pulldown('pnotesdbp', 0, 150),
-			__("Temperature") => html_form::number_pulldown('pnotestemp', 0, 110),
+			__("Temperature") => html_form::number_pulldown('pnotestemp', 0, 110, .1),
 			__("Heart Rate") => html_form::number_pulldown('pnotesheartrate', 0, 300),
 			__("Respiratory Rate") => html_form::number_pulldown('pnotesresprate', 0, 50),
 			__("Weight") => html_form::number_pulldown('pnotesweight', 0, 650),
@@ -671,7 +671,7 @@ class ProgressNotes extends EMRModule {
 			'patientaddress' => $TeX->_SanitizeText($pt['ptaddr1']).' ',
 			'patientcitystatezip' => $TeX->_SanitizeText($pt['ptcity'].', '.$pt['ptstate'].' '.$pt['ptzip']),
 			'patientdob' => $TeX->_SanitizeText(fm_date_print($pt['ptdob'])),
-			'dateofservice' => $TeX->_SanitizeText($r['pnotesdt']),
+			'dateofservice' => $TeX->_SanitizeText(fm_date_print($r['pnotesdt'])),
 			'ssn' => $TeX->_SanitizeText( empty($pt['ptssn']) ?
 				"NONE PROVIDED" :
 				substr($pt['ptssn'], 0, 3).'-'.
