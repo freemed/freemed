@@ -15,7 +15,7 @@ page_push ();
 freemed_open_db ();
 
 //----- Create user object
-if (!is_object($this_user)) $this_user = new User;
+if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 //---- Set page title
 $page_title = PACKAGENAME." "._("Main Menu");

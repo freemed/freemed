@@ -52,9 +52,9 @@ class freemedCERTModule extends freemedModule {
 		global $action, $patient;
 
 		if (!isset($this->this_patient))
-			$this->this_patient = new Patient ($patient);
+			$this->this_patient = CreateObject('FreeMED.Patient', $patient);
 		if (!isset($this->this_user))
-			$this->this_user    = new User ();
+			$this->this_user    = CreateObject('FreeMED.User');
 
 		// display universal patient box
 		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
@@ -235,8 +235,10 @@ class freemedCERTModule extends freemedModule {
 		global $display_buffer;
 		global $patient;
 
-		if (!isset($this->this_patient))
-			$this->this_patient = new Patient ($patient);
+		if (!isset($this->this_patient)) {
+			$this->this_patient = CreateObject('FreeMED.Patient',
+				$patient);
+		}
 
 		return $this->xml_generate($this->this_patient);
 	} // end function freemedCERTModule->xml_export

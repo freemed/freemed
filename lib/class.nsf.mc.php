@@ -57,7 +57,7 @@ class NSFMC extends NSF {
 
 		$row = $procstack[0];
 		$cov = $row[proccov2];
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "ERROR- No coverage in Secondary<BR>";
@@ -143,7 +143,7 @@ class NSFMC extends NSF {
 		$row = $procstack[0];
 		$cov = $row[proccov1];
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "ERROR- No coverage in Medicare Primary<BR>";
@@ -215,21 +215,21 @@ class NSFMC extends NSF {
 		$doc = $row[procphysician];
 		$cb0[recid] = "XXX";
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error in claimheader no coverage<BR>";
 			return;
 		}
 
-		$physician = new Physician($doc);
+		$physician = CreateObject('FreeMED.Physician', $doc);
 		if (!$physician)
 		{
 			echo "Error in claimheader no physician<BR>";
 			return;
 		}
 
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			echo "Error in claimheader no patient<BR>";
@@ -277,7 +277,7 @@ class NSFMC extends NSF {
 			// we assume the guarantor is the responsible party
 			if ($coverage->covdep != 0)
 			{
-				$guar = new Guarantor($coverage->covdep);
+				$guar = CreateObject('FreeMED.Guarantor', $coverage->covdep);
 				if (!$guar)
 					echo "ERROR - Guarantor Failed in CB0 record<BR>";
 
@@ -337,13 +337,13 @@ class NSFMC extends NSF {
 		$row = $procstack[0]; // all rows are the same
 		$doc = $row[procphysician];
 		$cov = $row[proccurcovid];
-		$physician = new Physician($doc);
+		$physician = CreateObject('FreeMED.Physician', $doc);
 		if (!$physician)
 		{
 			echo "Error no physician<BR>";
 			return;
 		}
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error no coverage<BR>";
@@ -425,7 +425,7 @@ class NSFMC extends NSF {
 		$cov = $row[proccurcovid];
 
 /*
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error ServiceDetail no coverage<BR>";

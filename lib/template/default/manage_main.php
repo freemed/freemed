@@ -5,7 +5,7 @@
  // lic : GPL, v2
 
 //----- Pull configuration for this user
-if (!is_object($this_user)) $this_user = new User;
+if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 //----- Extract all configuration data
 if (is_array($this_user->manage_config)) extract($this_user->manage_config);
@@ -200,7 +200,7 @@ foreach ($static_components AS $garbage => $component) {
 				$min  = substr($my_r[msgtime], 10, 2);
 
 				// Get Physician object
-				$this_physician = new Physician ($my_r[msgfor]);
+				$this_physician = CreateObject('FreeMED.Physician', $my_r[msgfor]);
 
 				// Form the panel
 				$panel[_("Messages")] .= "<TR>".
@@ -329,7 +329,7 @@ foreach ($static_components AS $garbage => $component) {
 foreach ($modular_components AS $garbage => $component) {
 	// Determine if the class exists
 	if (!is_object($module_list))
-		$module_list = new module_list (PACKAGENAME, ".emr.module.php");
+		$module_list = CreateObject('PHP.module_list', PACKAGENAME, ".emr.module.php");
 	
 	// End checking for component
 	if ($module_list->check_for($component)) {
@@ -453,7 +453,7 @@ if (count($panel) > 0) {
 //	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]
 //        ";
 //      } else {
-//      $guarantor = new Patient ($this_patient->ptdep);
+//      $guarantor = CreateObject('FreeMED.Patient',$this_patient->ptdep);
 //      $display_buffer .= "
 //         <A HREF=\"manage.php?action=view&id=".$this_patient->ptdep."\"
 //         >"._("Guarantor")."</A>
@@ -468,7 +468,7 @@ if ($action != "config") {
 
 
 //----- Add to menu bar
-$module_list = new module_list (PACKAGENAME, ".emr.module.php");
+$module_list = CreateObject('PHP.module_list', PACKAGENAME, ".emr.module.php");
 // Form template for menubar
 $menu_bar = array_merge (
 	$menu_bar,

@@ -72,7 +72,7 @@ class NSFBCPA extends NSF {
 
 		$row = $procstack[0];
 		$cov = $row[proccov2];
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "ERROR- No coverage in Secondary<BR>";
@@ -168,7 +168,7 @@ class NSFBCPA extends NSF {
 		$row = $procstack[0];
 		$cov = $row[proccov1];
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "ERROR- No coverage in Medicare Primary<BR>";
@@ -236,14 +236,14 @@ class NSFBCPA extends NSF {
 		$cov = $row[proccurcovid];
 		$pat = $row[procpatient];	
 
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			echo "Error in claimheader no patient<BR>";
 			return;
 		}
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error. patient coverage invalid ClaimHeader<BR>";
@@ -312,12 +312,12 @@ class NSFBCPA extends NSF {
 		$row = $procstack[0]; // all rows are the same
 		$doc = $row[procphysician];
 		$cov = $row[proccurcovid];
-		$physician = new Physician($doc);
+		$physician = CreateObject('FreeMED.Physician', $doc);
 		if (!$physician) {
 			echo "Error no physician<BR>";
 			return;
 		}
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage) {
 			echo "Error no coverage<BR>";
 			return;

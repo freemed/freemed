@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.51  2002/11/04 05:10:28  rufustfirefly
+ // Updates for phpwebtools 0.3 object loader.
+ //
  // Revision 1.50  2002/09/26 18:25:19  rufustfirefly
  // Additional DjVu support.
  // CSS fixes.
@@ -279,21 +282,21 @@ class freemed {
 
 		// If it is set, show patient name, else widget
 		if (${$varname} > 0) {
-			$this_patient = new Patient (${$varname});	
-			return "<INPUT TYPE=\"HIDDEN\" ".
+			$this_patient = CreateObject('FreeMED.Patient', ${$varname});	
+			return "<input TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\" ".
-				"VALUE=\"".prepare(${$varname})."\">".
+				"VALUE=\"".prepare(${$varname})."\"/>".
 				$this_patient->fullName()." ".
-				"<INPUT TYPE=\"BUTTON\" ".
+				"<input TYPE=\"BUTTON\" ".
 				"onClick=\"patientPopup=window.open(".
 				"'patient_lookup.php?varname=".
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'patientPopup'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Change")."\">";
+				"VALUE=\""._("Change")."\"/>";
 		} else {
-			return "<INPUT TYPE=\"HIDDEN\" ".
+			return "<input TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\">".
 				"<INPUT TYPE=\"BUTTON\" ".
 				"onClick=\"patientPopup=window.open(".
@@ -302,7 +305,7 @@ class freemed {
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'patientPopup'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Patient Lookup")."\">";
+				"VALUE=\""._("Patient Lookup")."\"/>";
 		}
 	} // end function freemed::patient_widget
 
@@ -2351,7 +2354,7 @@ function patient_history_list () {
 	// Loop through array
 	foreach ($patient_history AS $k => $v) {
 		// Get patient information
-		$this_patient = new Patient ($v);
+		$this_patient = CreateObject('FreeMED.Patient', $v);
 	
 		// Form Lastname, Firstname, ID list item
 		$key = $this_patient->fullName() . " (".$v.")";

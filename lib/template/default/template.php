@@ -38,7 +38,17 @@ if (isset($refresh)) {
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
  ALINK="#000000" VLINK="#000000" LINK="#000000"
- MARGINWIDTH="0" MARGINHEIGHT="0" LEFTMARGIN="0" RIGHTMARGIN="0">
+ MARGINWIDTH="0" MARGINHEIGHT="0" LEFTMARGIN="0" RIGHTMARGIN="0"
+ <?php
+ /*
+	// Check for close_on_load
+	if ($close_on_load) {
+		print "onLoad=\"window.close(); return true;\"";
+	} elseif (!empty($on_load)) {
+		print "onLoad=\"".$on_load."(); return true;\"";
+	}
+*/
+ ?>>
 
 <!-- define main table -->
 
@@ -83,7 +93,7 @@ if (isset($page_title)) {
 <?php
 //----- Create user object if it doesn't exist and we're logged in
 if (freemed_verify_auth() and !is_object($this_user)) {
-	$this_user = new User;
+	$this_user = CreateObject('FreeMED.User');
 } // end check to see if we're logged in
 
 //----- Generate session information portion of the bar

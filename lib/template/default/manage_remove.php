@@ -3,7 +3,7 @@
 	// $Author$
 
 // Import user object (if it doesn't exist)
-if (!is_object($this_user)) { $this_user = new User (); }
+if (!is_object($this_user)) { $this_user = CreateObject('FreeMED.User'); }
 
 // Split apart pieces
 if (count($this_user->manage_config) > 0) {

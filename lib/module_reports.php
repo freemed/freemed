@@ -45,7 +45,7 @@ class freemedReportsModule extends freemedModule {
 		global $action, $patient;
 
 		if (!isset($this_user))
-			$this->this_user    = new User ();
+			$this->this_user = CreateObject('FreeMED.User');
 
 		switch ($action) {
 

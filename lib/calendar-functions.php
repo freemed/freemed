@@ -660,7 +660,7 @@ class freemedCalendar {
 		}
 
 		// Get patient information
-		$my_patient = new Patient ($my_event[calpatient],
+		$my_patient = CreateObject('FreeMED.Patient', $my_event[calpatient],
 			($my_event[caltype]=="temp"));
 
 		return "<A HREF=\"".(($my_event[caltype]=="temp") ?
@@ -786,20 +786,8 @@ class freemedCalendar {
 		return $return;
 	} // end method freemedCalendar::next_time
 
-	function refresh_select ( $varname, $values ) {
-		global ${$varname};
-		$buffer = "<SELECT NAME=\"".prepare($varname)."\" ".
-			"onChange=\"this.form.submit(); return true;\">\n";
-		foreach ($values AS $k => $v) {
-			if ( (is_integer($k) and ($values[($k+0)] == $v))
-				 or empty($k)) $k = $v;
-			$buffer .= html_form::select_option (
-				$varname, $v, $k
-			)."\n";
-		}
-		$buffer .= "</SELECT>\n";
-		return $buffer;
-	} // end method freemedCalendar::refresh_select
+	// function refresh_select obsolete.
+	// use html_form::select_widget(varname,values,array('refresh'=>true))
 
 	function refresh_text_widget ( $varname, $len, $_max=-1 ) {
 		global ${$varname};

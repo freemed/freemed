@@ -79,9 +79,9 @@ class freemedCalendarModule extends freemedModule {
 		global $action, $patient;
 
 		if (!isset($this->this_patient))
-			$this->this_patient = new Patient ($patient);
+			$this->this_patient = CreateObject('FreeMED.Patient', $patient);
 		if (!isset($this->this_user))
-			$this->this_user    = new User ();
+			$this->this_user    = CreateObject('FreeMED.User');
 
 		// display universal patient box
         if ($patient)

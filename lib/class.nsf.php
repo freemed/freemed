@@ -107,7 +107,7 @@ class NSF
 		$da1[recid] = "XXX";
 		$da2[recid] = "XXX";
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error Insurer no coverage covid".$row[proccov2]." procid ".$row[id]."<BR>";
@@ -121,7 +121,7 @@ class NSF
 			return;
 		}
 
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			echo "Error Insurer no patient<BR>";
@@ -170,7 +170,7 @@ class NSF
 		}
 		else
 		{
-			$guarantor = new Guarantor($coverage->covdep);
+			$guarantor = CreateObject('FreeMED.Guarantor', $coverage->covdep);
 			if (!$guarantor)
 			{
 				echo "Error Insurer guarantor failed<BR>";
@@ -242,7 +242,7 @@ class NSF
 
 		$da0[recid] = "DA0";
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error Insurer no coverage<BR>";
@@ -256,7 +256,7 @@ class NSF
 			return;
 		}
 
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			echo "Error Insurer no patient<BR>";
@@ -308,7 +308,7 @@ class NSF
 		}
 		else
 		{
-			$guarantor = new Guarantor($coverage->covdep);
+			$guarantor = CreateObject('FreeMED.Guarantor', $coverage->covdep);
 			if (!$guarantor)
 			{
 				echo "Error Insurer guarantor failed<BR>";
@@ -397,21 +397,21 @@ class NSF
 
 		$ca0[recid] = "CA0";
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error in claimheader no coverage<BR>";
 			return;
 		}
 
-		$physician = new Physician($doc);
+		$physician = CreateObject('FreeMED.Physician', $doc);
 		if (!$physician)
 		{
 			echo "Error in claimheader no physician<BR>";
 			return;
 		}
 
-		$patient = new Patient($pat);
+		$patient = CreateObject('FreeMED.Patient', $pat);
 		if (!$patient)
 		{
 			echo "Error in claimheader no patient<BR>";
@@ -536,13 +536,13 @@ class NSF
 		$ba0[recid] = "BA0";
 		$ba1[recid] = "BA1";
 
-		$physician = new Physician($doc);
+		$physician = CreateObject('FreeMED.Physician', $doc);
 		if (!$physician)
 		{
 			echo "Error no physician<BR>";
 			return;
 		}
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error no coverage<BR>";
@@ -658,7 +658,7 @@ class NSF
 
 		$cov = $row[proccurcovid];
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error no coverage ClaimData<BR>";
@@ -698,7 +698,7 @@ class NSF
 		//echo "referer $row[procrefdoc]<BR>";
 		if ($row[procrefdoc] != 0)
 		{
-			$refdoc = new Physician($row[procrefdoc]);
+			$refdoc = CreateObject('FreeMED.Physician', $row[procrefdoc]);
 			if (!$refdoc)
 				echo "Error getting referring physician<BR>";
 			$ea0[refprovupin] = $this->CleanChar($refdoc->local_record[phyupin]);	
@@ -778,7 +778,7 @@ class NSF
             return;
         }
 
-        $diagset = new diagnosisSet();
+        $diagset = CreateObject('FreeMED.diagnosis_set');
         for ($i=0;$i<$count;$i++)
         {
             $prow = $procstack[$i];
@@ -860,7 +860,7 @@ class NSF
 			$ea1[recid] = "EA1";
 			$ea1[patcntl] = $ca0[patcntl];
 
-			$atnddoc = new Physician($row[procatnddoc]);
+			$atnddoc = CreateObject('FreeMED.Physician', $row[procatnddoc]);
 			if (!$atnddoc)
 			echo "Error getting attending physician<BR>";
 			$ea1[supvprovupin] = $this->CleanChar($atnddoc->local_record[phyupin]);
@@ -884,7 +884,7 @@ class NSF
 		$doc = $row[procphysician];
 		$cov = $row[proccurcovid];
 
-		$coverage = new Coverage($cov);
+		$coverage = CreateObject('FreeMED.Coverage', $cov);
 		if (!$coverage)
 		{
 			echo "Error ServiceDetail no coverage<BR>";
@@ -898,7 +898,7 @@ class NSF
 			return;
 		}
 
-		$physician = new Physician($doc);
+		$physician = CreateObject('FreeMED.Physician', $doc);
 		if (!$physician)
 		{
 			echo "Error in ServiceDetail no physician<BR>";
@@ -923,7 +923,7 @@ class NSF
 
 		$payerid = $this->CleanNumber($insco->local_record[inscoid]);
 
-		$diagset = new diagnosisSet();
+		$diagset = CreateObject('FreeMED.diagnosis_set');
 
 		$fa0[recid] = "FA0";
 		$fa0[patcntl] = $ca0[patcntl];

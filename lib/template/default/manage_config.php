@@ -5,7 +5,7 @@
  // lic : GPL, v2
 
 //----- Load the user object
-if (!is_object($this_user)) $this_user = new User;
+if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 //----- Override title for this page
 $page_title = _("Management Configuration");
@@ -14,7 +14,7 @@ $page_title = _("Management Configuration");
 $menu_bar[_("Configuration Help")] = help_url("manage.php", "configure");
 
 //----- Create configuration notebook
-$book = new notebook (
+$book = CreateObject('PHP.notebook',
 	array(
 		"action", // so that we remain in configure
 		"id" // to keep manage remembering the patient
@@ -129,7 +129,7 @@ $book->add_page("Static Components",
 );
 
 //----- Create module list for modular configuration
-$module_list = new module_list ( PACKAGENAME, ".emr.module.php" );
+$module_list = CreateObject('PHP.module_list', PACKAGENAME, ".emr.module.php");
 
 //----- This is *so* jimmy rigged... -----
 

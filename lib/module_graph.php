@@ -7,9 +7,6 @@ if (!defined("__MODULE_GRAPH_PHP__")) {
 
 define ('__MODULE_GRAPH_PHP__', true);
 
-// Include proper functions for graphing
-include_once ("class.phplot.php");
-
 // class freemedGraphModule extends freeMedmodule
 class freemedGraphModule extends freemedModule {
 

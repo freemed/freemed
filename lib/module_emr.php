@@ -50,9 +50,9 @@ class freemedEMRModule extends freemedModule {
 		global $action, $patient, $submit, $return;
 
 		if (!isset($this->this_patient))
-			$this->this_patient = new Patient ($patient);
+			$this->this_patient = CreateObject('FreeMED.Patient', $patient);
 		if (!isset($this->this_user))
-			$this->this_user    = new User ();
+			$this->this_user    = CreateObject('FreeMED.User');
 
 		// display universal patient box
 		if (!$this->disable_patient_box) {
@@ -261,7 +261,7 @@ class freemedEMRModule extends freemedModule {
 						switch ($p2) {
 						case "phy":
 						case "physician":
-						$p = new Physician (${$p1});
+						$p = CreateObject('FreeMED.Physician', ${$p1});
 						${$v} = $p->fullName();
 						break;
 
@@ -346,7 +346,7 @@ class freemedEMRModule extends freemedModule {
 		global $patient;
 
 		if (!isset($this->this_patient))
-			$this->this_patient = new Patient ($patient);
+			$this->this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		return $this->xml_generate($this->this_patient);
 	} // end function freemedEMRModule->xml_export

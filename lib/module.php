@@ -9,6 +9,8 @@ define ('__MODULE_PHP__', true);
 
 include_once("lib/freemed.php");
 
+LoadObjectDependency('PHP.module');
+
 // class freemedModule extends module
 class freemedModule extends module {
 

@@ -372,13 +372,13 @@ class freemedBillingModule extends freemedModule {
 		$first_procedure = 0;
 		$proccount=0;
 		$totprocs = 0;
-    	$diagset = new diagnosisSet();
+    		$diagset = CreateObject('FreeMED.diagnosis_set');
 		while ($r = $sql->fetch_array ($result)) 
 		{
 			if ($first_procedure == 0)
 			{
 				$prev_key = $this->NewKey($r);
-				$diagset = new diagnosisSet();
+				$diagset = CreateObject('FreeMED.diagnosisSet');
 				$first_procedure = 1;
 			}
 
@@ -409,7 +409,7 @@ class freemedBillingModule extends freemedModule {
 				unset ($diagset);
 				unset ($procstack);
 				$proccount=0;
-				$diagset = new diagnosisSet ();
+				$diagset = CreateObject('FreeMED.diagnosis_set');
 				$test_AddSet = $diagset->testAddSet ($r[procdiag1], 
 								$r[procdiag2], 
 								$r[procdiag3], 
@@ -590,7 +590,7 @@ class freemedBillingModule extends freemedModule {
 		";
 		for ($i=1;$i<=$this->pat_processed;$i++) 
 		{
-			$this_patient = new Patient ($this->patient_forms[$i]);
+			$this_patient = CreateObject('FreeMED.Patient', $this->patient_forms[$i]);
 			$display_buffer .= "
 			<INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
 			VALUE=\"".$this->patient_forms[$i]."\" CHECKED>
