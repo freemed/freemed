@@ -110,17 +110,17 @@ class Images {
 				freemed::image_filename(
 					$patient_id,
 					$last_record,
-					'djvu
+					'djvu'
 				)
 			);
 		exec ($mkdir_command);
 	
 		// Compile into DJVU final file
-		$command = '`which djvm` -c '.PHYSICAL_LOCATION.'/'.
+		$command = `which djvm`.' -c '.PHYSICAL_LOCATION.'/'.
 			freemed::image_filename(
 				$patient_id,
 				$last_record,
-				'djvu
+				'djvu'
 			).' '.join (' ', $djvu);
 		//print "command = $command\n";
 		exec($command);
