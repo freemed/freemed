@@ -104,7 +104,9 @@ class UnfiledFaxes extends MaintenanceModule {
                 <embed SRC=\"data/fax/unfiled/".$r['ufffilename']."\"
 		BORDER=\"0\"
                 PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-                TYPE=\"image/x.djvu\" WIDTH=\"600\" HEIGHT=\"600\"></embed>
+                TYPE=\"image/x.djvu\" WIDTH=\"".
+		( $GLOBALS['__freemed']['Mozilla'] ? '600' : '100%' ).
+		"\" HEIGHT=\"600\"></embed>
 
 		</div>
 		<div align=\"center\">

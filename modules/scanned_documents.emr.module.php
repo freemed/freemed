@@ -174,7 +174,9 @@ class ScannedDocuments extends EMRModule {
 		"patient=".urlencode($patient)."&".
 		"id=".urlencode($id)."\" BORDER=\"0\"
 		PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-		TYPE=\"image/x.djvu\" WIDTH=\"100%\" HEIGHT=\"600\"></embed>
+		TYPE=\"image/x.djvu\" WIDTH=\"".
+		( $GLOBALS['__freemed']['Mozilla'] ? '600' : '100%' ).
+		"\" HEIGHT=\"600\"></embed>
 		</div>
 		<div ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<a class=\"button\" HREF=\"";

@@ -106,6 +106,13 @@ if ( !defined("WEBTOOLS_VERSION") or
 		"(http://phpwebtools.sourceforge.net/)\n");
 }
 
+// Quick IE/Gecko browser check
+if (ereg('MSIE ([0-9].[0-9]{1,2})',$_SERVER['HTTP_USER_AGENT'])) {
+	$GLOBALS['__freemed']['IE'] = true;
+} elseif (ereg('Mozilla/([0-9].[0-9]{1,2})',$_SERVER['HTTP_USER_AGENT'])) {
+	$GLOBALS['__freemed']['Mozilla'] = true;
+}
+
 // ********************** START SESSION **************************
 if (!defined('SESSION_DISABLE')) {
 	// This is *only* disabled when XML-RPC calls are being made,
@@ -115,6 +122,7 @@ if (!defined('SESSION_DISABLE')) {
 	session_register(
 		'authdata',
 		'current_patient',
+		'default_facility',
 		'ipaddr',
 		'page_history',
 		'page_history_name',
