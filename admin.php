@@ -20,7 +20,16 @@ $config_vars = array (
 	"calehr", // calendar end time
 	"dtfmt", // date format
 	"phofmt", // phone format
-	"folded"  // do we fold multipage forms?
+	"folded",  // do we fold multipage forms?
+	// Calendar Highlighting
+	"cal1",
+	"cal2",
+	"cal3",
+	"cal4",
+	"cal5",
+	"cal6",
+	"cal7",
+	"cal8"
 );
 
 if (!freemed::user_flag(USER_ADMIN)) {
@@ -144,7 +153,32 @@ if ($action=="cfgform") {
 				_("yes") => "yes",
 				_("no")  => "no"
 			)
-		)
+		),
+
+		_("Calendar Category")." 1" =>
+		html_form::text_widget( "cal1", 20, 50 ),
+
+		_("Calendar Category")." 2" =>
+		html_form::text_widget( "cal2", 20, 50 ),
+
+		_("Calendar Category")." 3" =>
+		html_form::text_widget( "cal3", 20, 50 ),
+
+		_("Calendar Category")." 4" =>
+		html_form::text_widget( "cal4", 20, 50 ),
+
+		_("Calendar Category")." 5" =>
+		html_form::text_widget( "cal5", 20, 50 ),
+
+		_("Calendar Category")." 6" =>
+		html_form::text_widget( "cal6", 20, 50 ),
+
+		_("Calendar Category")." 7" =>
+		html_form::text_widget( "cal7", 20, 50 ),
+
+		_("Calendar Category")." 8" =>
+		html_form::text_widget( "cal8", 20, 50 )
+
 	));
 
 	$display_buffer .= "
@@ -825,6 +859,7 @@ if ($action=="cfgform") {
     calstatus         INT UNSIGNED,
     calprenote        VARCHAR(100),
     calpostnote       TEXT,
+    calmark           INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
@@ -1172,6 +1207,22 @@ if ($action=="cfgform") {
     	'phofmt', 'unformatted', NULL )")) if ($debug) $display_buffer .= "(phofmt) \n";
   	if ($sql->query("INSERT INTO config VALUES (
     	'folded', 'yes', NULL )")) if ($debug) $display_buffer .= "(folded) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal1', '', NULL )")) if ($debug) $display_buffer .= "(cal1) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal2', '', NULL )")) if ($debug) $display_buffer .= "(cal2) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal3', '', NULL )")) if ($debug) $display_buffer .= "(cal3) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal4', '', NULL )")) if ($debug) $display_buffer .= "(cal4) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal5', '', NULL )")) if ($debug) $display_buffer .= "(cal5) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal6', '', NULL )")) if ($debug) $display_buffer .= "(cal6) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal7', '', NULL )")) if ($debug) $display_buffer .= "(cal7) \n";
+  	if ($sql->query("INSERT INTO config VALUES (
+    	'cal8', '', NULL )")) if ($debug) $display_buffer .= "(cal8) \n";
   }
 
   // generate incoming faxes table
