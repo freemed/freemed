@@ -530,7 +530,7 @@ switch ($action) { // master action switch
             '".addslashes($procbillable). "',
             '".addslashes($procauth).     "',
             '".addslashes($procrefdoc).   "',
-            '".addslashes($procrefdt).    "',
+            '".fm_date_assemble("procrefdt")."',
             NULL )";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
@@ -631,7 +631,7 @@ switch ($action) { // master action switch
             procauth        = '".addslashes($procauth).     "',
             procbillable    = '".addslashes($procbillable). "',
             procrefdoc      = '".addslashes($procrefdoc).   "',
-            procrefdt       = '".addslashes($procrefdt).    "'
+            procrefdt       = '".fm_date_assemble("procrefdt")."'
             WHERE id='$id'";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
