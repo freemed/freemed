@@ -111,7 +111,20 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 	print menu_bar_cell(__("Administration Menu"), "admin.php");
 	print menu_bar_cell(__("Billing Functions"), "billing_functions.php");
 	print menu_bar_cell(__("Calendar"), "calendar.php");
-	print menu_bar_cell(__("Call-In"), "call-in.php");
+	print "\t<tr>\n".
+		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
+		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
+		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
+		"onClick=\"window.location='call-in.php'; return true;\"".
+		"><a href=\"call-in.php\">".
+		prepare(__("Call-In"))."</a></td>\n".
+		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
+		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
+		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
+		"onClick=\"window.location='call-in.php?action=addform'; return true;\"".
+		"><a href=\"call-in.php?action=addform\">".
+		prepare(__("New"))."</a></td>\n".
+		"\t</tr>\n";
 	print menu_bar_cell(__("Database Maintenance"), "db_maintenance.php");
 	print "\t<tr>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
