@@ -52,7 +52,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"book_appointment.php|user $user_to_
 
 // Check for current physician, if not, use default
 if (!isset($physician) and $this_user->isPhysician()) {
-	$physician = $this_user->getPhysician();
+	$_REQUEST['physician'] = $physician = $this_user->getPhysician();
 }
 
 // If we have an ID present and we haven't been here, pull from database
@@ -88,7 +88,7 @@ if ($_REQUEST['id'] and !$been_here) {
 }
 
 // Set duration to :15 by default
-if (!isset($duration)) { $duration = 15; }
+if (!isset($duration)) { $_REQUEST['duration'] = $duration = 15; }
 
 if (strlen($selected_date) != 10) {
 	$selected_date = date('Y-m-d');
