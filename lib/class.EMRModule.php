@@ -590,7 +590,7 @@ class EMRModule extends BaseModule {
 		// Check to see if there *are* any...
 		if ($sql->num_rows($result) < 1) {
 			// If not, let the world know
-			$buffer .= "<b>".__("NONE")."</b>\n";
+			$buffer .= "<b>".__("No data entered.")."</b>\n";
 		} else { // checking for results
 			// Or loop and display
 			$buffer .= "
