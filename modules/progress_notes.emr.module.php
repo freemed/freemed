@@ -211,7 +211,9 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<u>S</u>ubjective") =>
-		freemed::rich_text_area('pnotes_S', 30, 60, true)
+		freemed::rich_text_area('pnotes_S', 30, 60, true),
+	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
+	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
         )
        )
      );
@@ -224,6 +226,8 @@ class ProgressNotes extends EMRModule {
           __("<u>O</u>bjective") =>
 		freemed::rich_text_area('pnotes_O', 30, 60, true)
 		//html_form::text_area('pnotes_O', 'VIRTUAL', 20, 75),
+	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
+	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
         )
        )
      );
@@ -236,6 +240,8 @@ class ProgressNotes extends EMRModule {
           __("<U>A</U>ssessment") =>
 		freemed::rich_text_area('pnotes_A', 30, 60, true)
 		//html_form::text_area('pnotes_A', 'VIRTUAL', 20, 75),
+	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
+	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
         )
        )
      );
@@ -248,6 +254,8 @@ class ProgressNotes extends EMRModule {
           __("<U>P</U>lan") =>
 		freemed::rich_text_area('pnotes_P', 30, 60, true)
 		//html_form::text_area('pnotes_P', 'VIRTUAL', 20, 75),
+	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
+	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
         )
        )
      );
@@ -260,6 +268,8 @@ class ProgressNotes extends EMRModule {
           __("<U>I</U>nterval") =>
 		freemed::rich_text_area('pnotes_I', 30, 60, true)
 		//html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
+	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
+	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
         )
        )
      );
@@ -272,6 +282,8 @@ class ProgressNotes extends EMRModule {
           __("<U>E</U>ducation") =>
 		freemed::rich_text_area('pnotes_E', 30, 60, true)
 		//html_form::text_area('pnotes_E', 'VIRTUAL', 20, 75),
+	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
+	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
         )
        )
      );
@@ -284,6 +296,8 @@ class ProgressNotes extends EMRModule {
           __("P<U>R</U>escription") =>
 		freemed::rich_text_area('pnotes_R', 30, 60, true)
 		//html_form::text_area('pnotes_R', 'VIRTUAL', 20, 75),
+	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
+	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
         )
        )
      );
