@@ -47,7 +47,7 @@ class BackupMaintenance extends MaintenanceModule {
 		if (file_exists($tmpfile))
 		{
 			$display_buffer .= "Backup completed<BR>";
-			if (USE_GPG=="YES")
+			if (USE_GPG)
 			{
 				system($gpgcmd);
 				if (file_exists($gpgfile))

@@ -37,9 +37,8 @@ define ('DB_USER', "root");				// SQL server username
 define ('DB_PASSWORD', "password");		// SQL server password
 define ('PHYSICAL_LOCATION', "/usr/share/freemed");
 define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
-define ('BUG_TRACKER', true);   // set bug tracker on or off
-define ('USE_CSS', true);		// do we use cascading style sheets?
-define ('TEMPLATE', "default");	// set template
+define ('BUG_TRACKER', false);   // set bug tracker on or off
+define ('TEMPLATE', "default");	// set default template
 
 define ('HOST', 'localhost');             // host name for this system
 define ('BASE_URL', '/freemed');		// offset (i.e. http://here/package)
@@ -57,7 +56,7 @@ $default_language="EN";               // default language
     // use GPG to encrypt a file, run it twice
     // you should now have /home/nobody/.gpg
 
-define ('USE_GPG', 'NO');	// encrypt backups? (YES|NO)
+define ('USE_GPG', false);	// encrypt backups? (true/false)
 define ('GPG_PASSPHRASE_LOCATION', PHYSICAL_LOCATION.'/lib/gpg_phrase.php');
 define ('GPG_HOME', "/home/nobody");
 
@@ -118,23 +117,23 @@ if (strstr($HTTP_USER_AGENT, "Lynx")) {
 
   // ****************** CHECK FOR PHP MODULES **********************
 
-// if there's no bcmath module, use fake bcadd() function
+  // If there's no bcmath module, use fake bcadd() function
 if (!function_exists("bcadd")) include_once ("lib/bcadd.php");
 
-  // check for proper template, and load default if not provided
+  // Check for proper template, and load default if not provided
 if (!isset($template)) { $template = TEMPLATE; }
 
  // Include library for template
-if (file_exists("lib/template/".$template."/lib.php"))
+if (file_exists("lib/template/".$template."/lib.php")) {
 	include_once("lib/template/".$template."/lib.php");
-else include_once("lib/template/default/lib.php");
+} else { include_once("lib/template/default/lib.php"); }
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
 include_once ("lib/error_handler.php");   // internal error handler
 include_once ("/usr/share/phpwebtools/webtools.php"); // webtools toolkit
 
-define ('WEBTOOLS_REQUIRED', "0.4.0");   // version of phpwebtools required
+define ('WEBTOOLS_REQUIRED', '0.4.0');   // version of phpwebtools required
 
   // version check for webtools
 if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) )
