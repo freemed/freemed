@@ -496,7 +496,8 @@
    for ($i=1;$i<=$pat_processed;$i++) {
      $this_patient = new Patient ($patient_forms[$i]);
      echo "
-       <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" CHECKED>
+       <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
+        VALUE=\"".$patient_forms[$i]."\" CHECKED>
        ".$this_patient->fullName(false)."
        (<A HREF=\"manage.php3?$_auth&id=$patient_forms[$i]\"
         >".$this_patient->local_record["ptid"]."</A>) <BR>
