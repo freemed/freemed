@@ -23,7 +23,7 @@ class Tickler {
 		ob_start();
 
 		// Load all 'Tickler' handlers
-		$reply = freemed::handler_breakpoint('Tickler', $params);
+		$reply = freemed::handler_breakpoint('Tickler', array($params));
 
 		// Make sure to send back whatever messages we generated
 		$return = ob_get_contents();
