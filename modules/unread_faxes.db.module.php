@@ -114,13 +114,23 @@ class UnreadFaxes extends MaintenanceModule {
                         $this->page_name,
                         array (
                                 __("Date")        => "urfdate",
-                                __("File name")   => "urffilename"
+				__("Patient")     => "urfpatient",
+				" "               => "urfpatient",
+				__("Description") => "urfnote"
                         ), // array
                         array (
                                 "",
+				"",
+				"",
                                 __("NO DESCRIPTION")
                         ),
-                        NULL, NULL, NULL,
+			array (
+				"",
+				"patient" => "ptlname",
+				"patient " => "ptfname",
+				""
+			),
+                        NULL, NULL,
                         ITEMLIST_VIEW | ITEMLIST_DEL
                 );
                 $display_buffer .= "\n<p/>\n";
@@ -221,9 +231,9 @@ class UnreadFaxes extends MaintenanceModule {
 		// Move actual file to new location
 		//echo "mv data/fax/unread/$filename $new_filename -f<br/>\n";
 		$dirname = dirname($new_filename);
-		`mkdir -p $dirname`;
+		`mkdir -p "$dirname"`;
 		//echo "mkdir -p $dirname";
-		`mv data/fax/unread/$filename $new_filename -f`;
+		`mv "data/fax/unread/$filename" "$new_filename" -f`;
 
 		$GLOBALS['display_buffer'] .= __("Moved fax to scanned documents.");
 
