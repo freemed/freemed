@@ -1,17 +1,19 @@
 <?php
  // note: patient database functions
- // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // code: jeff b (jeff@ourexchange.net)
  //       adam b (gdrago23@yahoo.com)
  //       some small stuff by: max k <amk@span.ch>
  // lic : GPL, v2
  
-$page_name="patient.php"; // for help info, later
-$record_name="Patient";    // compatibility with API functions
-include ("lib/freemed.php");
-include ("lib/calendar-functions.php");
+$page_name = "patient.php"; // for help info, later
+$record_name = "Patient";   // compatibility with API functions
+include_once ("lib/freemed.php");
+include_once ("lib/calendar-functions.php");
 
 // Create user object
-if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
+if (!is_object($this_user)) {
+	$this_user = CreateObject('FreeMED.User');
+}
 
 if ( ($id>0) AND 
        ($action != "addform") AND ($action != "add") AND
@@ -332,9 +334,9 @@ switch ($action) {
      _("Notes"),
      array("ptnextofkin"),
      html_form::form_table(array(
-       "" => "<CENTER>".
+       "" => "<div ALIGN=\"CENTER\">".
 	html_form::text_area("ptnextofkin", "VIRTUAL", 10, 40).
-	"</CENTER>"
+	"</div>"
      ))
    );
 
@@ -559,7 +561,7 @@ switch ($action) {
 	}
 
    if (!( $book->is_done() )) {
-     $display_buffer .= "<CENTER>\n".$book->display()."</CENTER>\n";
+     $display_buffer .= "<div ALIGN=\"CENTER\">\n".$book->display()."</div>\n";
    } else { // if it is done
      switch ($action) {
        case "add": case "addform":
@@ -731,22 +733,22 @@ switch ($action) {
          break; // end mod
      } // end switch for action (done .. actual action)
      $display_buffer .= "
-      <CENTER><B>".( (($action=="mod") OR ($action=="modform")) ?
-             _("Modifying") : _("Adding") )." ...</B> ";
+      <div ALIGN=\"CENTER\"><b>".( (($action=="mod") OR ($action=="modform")) ?
+             _("Modifying") : _("Adding") )." ...</b> ";
      $result = $sql->query($query);
      if ($result) $display_buffer .= _("Done");
      else $display_buffer .= _("Error");
-     $display_buffer .= "<BR>\n";
+     $display_buffer .= "<br/>\n";
 	 if ( ($result) AND ($action=="addform") AND (empty($ptid)) )
 	 {
-		$display_buffer .= "<B>"._("Adding Patient ID")." ...</B> ";
+		$display_buffer .= "<b>"._("Adding Patient ID")." ...</b> ";
 		$pid = $sql->last_record($result);
 		$patid = PATID_PREFIX.$pid;
 		$result = $sql->query("UPDATE patient SET ptid='".addslashes($patid)."' ".
 			"WHERE id='".addslashes($pid)."'");
      	if ($result) $display_buffer .= _("Done");
      	else $display_buffer .= _("Error");
-		$display_buffer .= "<BR>\n";
+		$display_buffer .= "<br/>\n";
 		
 	 }
 
@@ -754,12 +756,12 @@ switch ($action) {
 	$refresh = "manage.php?id=".( $action=="addform" ? $pid : $id );
 
      $display_buffer .= "
-      <P>
-      <A HREF=\"manage.php?id=".( $action=="addform" ? $pid : $id )."\">
+      <p/>
+      <a HREF=\"manage.php?id=".( $action=="addform" ? $pid : $id )."\">
       "._("Manage This Patient")."
-      </A>
+      </a>
       
-      </CENTER>
+      </div>
      ";
    } // end checking if done
 
@@ -768,19 +770,19 @@ switch ($action) {
   case "delete":
   case "del":
     $page_title = _("Deleting")." "._($record_name);
-    $display_buffer .= "<CENTER>
-     <P>"._("Deleting")." ... ";
+    $display_buffer .= "<div ALIGN=\"CENTER\">
+     <p/>"._("Deleting")." ... ";
     $query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
     $result = $sql->query ($query);
     if ($result) { $display_buffer .= _("done")."."; }
      else        { $display_buffer .= _("ERROR");    }
     $display_buffer .= "
-     </CENTER>
-     <P>
-     <CENTER>
-     <A HREF=\"patient.php\"
-     >"._("back")."</A>
-     </CENTER>
+     </div>
+     <p/>
+     <div ALIGN=\"CENTER\">
+     <a HREF=\"patient.php\"
+     >"._("back")."</a>
+     </div>
     ";
   break; // end action delete
 
@@ -789,35 +791,41 @@ switch ($action) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (ptlname LIKE '".addslashes($f1)."%') ".
+	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = _("Last Names")." (".prepare($f1).")";
         break;
       case "contains":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (".addslashes($f1)." LIKE '%".addslashes($f2)."%') ".
+	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = _("Searching for")." \"".prepare($f2)."\"";
         break;
       case "soundex":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (soundex(".addslashes($f1).") = soundex('".addslashes($f2)."')) ".
+	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = "Sounds Like \"".prepare($f2)."\"";
         break;
       case "all":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
+	 freemed::itemlist_conditions().
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = "\""._("All Patients")."\"";
         break;
       case "dependants":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (ptdep = '".addslashes($f1)."') ".
+	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = _("Dependents");
         break;
       case "guarantor":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (id = '".addslashes($f1)."') ".
+	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = _("Guarantor");
         break;
@@ -836,7 +844,7 @@ switch ($action) {
 		// Grab the data
 		$_r = $sql->fetch_array($result);
 		// Form refresh string to pass to template
-		$refresh = "manage.php?id=$_r[id]";
+		$refresh = "manage.php?id=".urlencode($_r['id']);
 		// Reset data so that the display works (in case of no refresh)
 		$sql->data_seek($result, 0);
 	} // end checking for single patient jump
@@ -862,12 +870,11 @@ switch ($action) {
       );
 
       $display_buffer .= "
-       <P>
-       <CENTER>
-        <A HREF=\"$page_name\"
-        >"._("back")."</A>
-       </CENTER>
-       <P>
+       <p/>
+       <div ALIGN=\"CENTER\">
+        <a HREF=\"$page_name\">"._("back")."</a>
+       </div>
+       <p/>
        ";
   break; // end action find
  
@@ -888,154 +895,159 @@ switch ($action) {
   
     if (freemed::user_flag(USER_DATABASE)) {
       $display_buffer .= "
-        <TABLE WIDTH=100% BGCOLOR=#000000 BORDER=0 CELLSPACING=0
-         CELLPADDING=0 VALIGN=TOP ALIGN=CENTER><TR><TD>
-        <FONT FACE=\"Arial, Helvetica, Verdana\" COLOR=#ffffff>
+        <table WIDTH=\"100%\" CLASS=\"reverse\" BORDER=\"0\" CELLSPACING=\"0\"
+         CELLPADDING=\"0\" VALIGN=\"TOP\" ALIGN=\"CENTER\"><tr><td>
       ";
       $result = $sql->query ("SELECT COUNT(*) FROM patient");
       if ($result) {
         $_res   = $sql->fetch_array ($result);
         $_total = $_res[0];               // total number in db
   
-          // patched 19990622 for 1 and 0 values...
         if ($_total>1)
           $display_buffer .= "
-            <CENTER>
-             <B><I>$_total "._("Patient(s) In System")."</I></B>
-            </CENTER>
+            <div ALIGN=\"CENTER\">
+             <b><i>$_total "._("Patient(s) In System")."</i></b>
+            </div>
           ";
         elseif ($_total==0)
           $display_buffer .= "
-            <CENTER>
-             <B><I>"._("No Patients In System")."</I></B>
-            </CENTER>
+            <div ALIGN=\"CENTER\">
+             <b><i>"._("No Patients In System")."</i></b>
+            </div>
           ";
         elseif ($_total==1)
           $display_buffer .= "
-            <CENTER>
-            <B><I>"._("One Patient In System")."</I></B>
-            </CENTER>
+            <div ALIGN=\"CENTER\">
+            <b><i>"._("One Patient In System")."</i></b>
+            </div>
           ";
       } else {
         $display_buffer .= "
-          <CENTER>
-           <B><I>"._("No Patients In System")."</I></B>
-          </CENTER>
+          <div ALIGN=\"CENTER\">
+           <b><i>"._("No Patients In System")."</i></b>
+          </div>
         ";
       } // if there are none...
       $display_buffer .= "
-        </FONT>
-        </TD></TR></TABLE>
+        </td></tr></table>
       "; // end table statement for bar
     }
 
-    if ($current_patient>0) {
+    if ($current_patient > 0) {
       $patient = CreateObject('FreeMED.Patient', $current_patient);
       $display_buffer .= "
-        <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
-         VALIGN=CENTER BORDER=0><TR><TD ALIGN=CENTER><CENTER>
-	 <A HREF=\"manage.php?id=$current_patient\"
-         >"._("Patient")." : ".$patient->fullName(true)."</A>
-         </CENTER></TD></TR></TABLE>
+        <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"0\" ALIGN=\"CENTER\"
+         VALIGN=\"CENTER\" BORDER=\"0\"><tr><td ALIGN=\"CENTER\"><div ALIGN=\"CENTER\">
+	 <a HREF=\"manage.php?id=$current_patient\"
+         >"._("Patient")." : ".$patient->fullName(true)."</a>
+         </div></td></tr></table>
       ";
     } // end check for current patient cookie
 
     $display_buffer .= "
-      <BR>
-      <CENTER>
-       <B>"._("Patients By Name")."</B>
-      <BR>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=A\">A</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=B\">B</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=C\">C</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=D\">D</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=E\">E</A>
+      <br/>
+      <div ALIGN=\"CENTER\">
+       <b>"._("Patients By Name")."</b>
+      <br/>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=A\">A</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=B\">B</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=C\">C</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=D\">D</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=E\">E</a>
   
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=F\">F</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=G\">G</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=H\">H</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=I\">I</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=J\">J</A>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=F\">F</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=G\">G</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=H\">H</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=I\">I</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=J\">J</a>
   
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=K\">K</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=L\">L</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=M\">M</A>
-      <BR>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=N\">N</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=O\">O</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=P\">P</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=Q\">Q</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=R\">R</A>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=K\">K</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=L\">L</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=M\">M</a>
+      <br/>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=N\">N</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=O\">O</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=P\">P</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=Q\">Q</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=R\">R</a>
   
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=S\">S</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=T\">T</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=U\">U</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=V\">V</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=W\">W</A>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=S\">S</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=T\">T</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=U\">U</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=V\">V</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=W\">W</a>
   
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=X\">X</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=Y\">Y</A>
-      <A HREF=\"$page_name?action=find&criteria=letter&f1=Z\">Z</A>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=X\">X</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=Y\">Y</a>
+      <a HREF=\"$page_name?action=find&criteria=letter&f1=Z\">Z</a>
 
-      <P>
+      <p/>
 
-      <FORM ACTION=\"$page_name\" METHOD=POST>
-       <B>"._("Patients Field Search")."</B>
-      <BR>
-      <INPUT TYPE=HIDDEN NAME=\"action\"   VALUE=\"find\">
-      <INPUT TYPE=HIDDEN NAME=\"criteria\" VALUE=\"contains\">
-      <SELECT NAME=\"f1\">
-       <OPTION VALUE=\"ptlname\" SELECTED>"._("Last Name")."
-       <OPTION VALUE=\"ptfname\" >"._("First Name")."
-       <OPTION VALUE=\"ptdob\"   >"._("Date of Birth")."
-       <OPTION VALUE=\"ptid\"    >"._("Internal Practice ID")."
-       <OPTION VALUE=\"ptcity\"  >"._("City")."
-       <OPTION VALUE=\"ptstate\" >"._("State")."
-       <OPTION VALUE=\"ptzip\"   >"._("Zip")."
-       <OPTION VALUE=\"pthphone\">"._("Home Phone")."
-       <OPTION VALUE=\"ptwphone\">"._("Work Phone")."
-       <OPTION VALUE=\"ptemail\" >"._("Email Address")."
-       <OPTION VALUE=\"ptssn\"   >"._("Social Security Number")."
-       <OPTION VALUE=\"ptdmv\"   >"._("Driver's License")."
-      </SELECT>
-      <I><FONT SIZE=\"-1\">"._("contains")."</FONT></I>
-      <INPUT TYPE=TEXT NAME=\"f2\" SIZE=15 MAXLENGTH=30>
-      <INPUT TYPE=SUBMIT VALUE=\"find\">
-      </FORM>
-      <P>
+      <form ACTION=\"$page_name\" METHOD=\"POST\">
+       <b>"._("Patients Field Search")."</b>
+      <br/>
+      <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"find\"/>
+      <input TYPE=\"HIDDEN\" NAME=\"criteria\" VALUE=\"contains\"/>
+      ".html_form::select_widget(
+        'f1',
+	array(
+          _("Last Name") => 'ptlname',
+	  _("First Name") => 'ptfname',
+	  _("Date of Birth") => 'ptdob',
+	  _("Internal Practice ID") => 'ptid',
+	  _("City") => 'ptcity',
+	  _("State") => 'ptstate',
+	  _("Zip") => 'ptzip',
+	  _("Home Phone") => 'pthphone',
+	  _("Work Phone") => 'ptwphone',
+	  _("Email Address") => 'ptemail',
+	  _("Social Security Number") => 'ptssn',
+	  _("Driver's License") => 'ptdmv'
+	)
+      )."	
+      <i><small>"._("contains")."</small></i>
+      ".html_form::text_widget('f2', 15, 30)."
+      <input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+      </form>
+      <p/>
 
-      <FORM ACTION=\"$page_name\" METHOD=POST>
-      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"find\">
-      <INPUT TYPE=HIDDEN NAME=\"criteria\" VALUE=\"soundex\">
-      <B>"._("Soundalike Search")."</B><BR>
-      <SELECT NAME=\"f1\">
-       <OPTION VALUE=\"ptlname\" >"._("Last Name")."
-       <OPTION VALUE=\"ptfname\" >"._("First Name")."
-      </SELECT>
-        <I><FONT SIZE=\"-1\">"._("sounds like")."</FONT></I>
-      <INPUT TYPE=TEXT NAME=\"f2\" SIZE=15 MAXLENGTH=30>
-      <INPUT TYPE=SUBMIT VALUE=\"find\">
-      </FORM>
-      <P>
+      <form ACTION=\"$page_name\" METHOD=\"POST\">
+      <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"find\"/>
+      <input TYPE=\"HIDDEN\" NAME=\"criteria\" VALUE=\"soundex\"/>
+      <b>"._("Soundalike Search")."</b><br/>
+      ".html_form::select_widget(
+        "f1",
+	array(
+          _("Last Name") => 'ptlname',
+	  _("First Name") => 'ptfname'
+	)
+      )."
+        <i><small>"._("sounds like")."</small></i>
+      ".html_form::text_widget('f2', 15, 30)."
+      <input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+      </form>
+      <p/>
 
-      <A HREF=\"$page_name?action=find&criteria=all&f1=\"
-       >"._("Show all Patients")."</A> |
-      <A HREF=\"$page_name?action=addform\"
-       >"._("Add Patient")."</A> |
-      <A HREF=\"call-in.php\"
-       >"._("Call In Menu")."</A>
-      <P> 
-      </CENTER>
-      <CENTER>
-      <A HREF=\"main.php\"
-      >"._("Return to Main Menu")."</A>
-      </CENTER>
+      <a HREF=\"$page_name?action=find&criteria=all&f1=\"
+       >"._("Show all Patients")."</a> |
+      <a HREF=\"$page_name?action=addform\"
+       >"._("Add Patient")."</a> |
+      <a HREF=\"call-in.php\"
+       >"._("Call In Menu")."</a>
+      </div>
+      <p/> 
+      <div ALIGN=\"CENTER\">
+      <a HREF=\"main.php\"
+      >"._("Return to Main Menu")."</a>
+      </div>
     ";
 
     break; // end default action
 } // end action
 
+//----- Display the template
 template_display();
+
 ?>
 
 
