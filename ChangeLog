@@ -1,6 +1,20 @@
 freemed project changelog
 ($Id$)
 
+* Tue Apr 10 2001 fforest
+  - patient.php added support for ptstatus
+  - data/EN/ptstatus.EN.data added
+  - API remove old guarantor/payor table functions
+    changed verify_coverage to return the id of the coverage record as 
+    opposed to just returing true (needed for procedure module)
+  - msci_nsc_ci started adding support for Champus claims (not complete tho)
+  - procedure module. was using payer table for insco calc of std fee. 
+    fixed to get insco from coverage table. if charge is zero after calculation
+    then charge=std_fee to avoid 0 on page 2
+    verify minimum requirements on add/mod. must have atleast:
+    cptcode, 1 diag code, physician, date and pos or you have to try again.
+  - removed generate_fixedforms from base dir moved to old
+
 * Wed Apr 04 2001 rufustfirefly
   - huge repository move in modules/ for new module scheme
     -- billing

@@ -75,7 +75,7 @@
     echo "<CENTER><TABLE>\n";
     echo $module_list->generate_list($catagory, 0, $template);
     echo "</TABLE></CENTER>\n";
-	$catagory = "EDI";
+	$catagory = "X12";
 	$template = "
 		<TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>#name#</B> : <$STDFONT_E>

@@ -144,6 +144,9 @@ switch ($action) {
 		) )
      );
 
+   	 $ptstatus_r = $sql->query("SELECT ptstatus,ptstatusdescrip,id
+                            FROM ptstatus
+                            ORDER BY ptstatus");
      $book->add_page(
        _("Personal"),
        array (
@@ -184,6 +187,9 @@ switch ($action) {
 					"Unknown"   => "u"
 				)
 			),
+		_("Patient Status") => 
+  			freemed_display_selectbox ($ptstatus_r, "#ptstatus#, #ptstatusdescrip", "ptstatus"),
+
 		_("Social Security Number") =>
 			"<INPUT TYPE=TEXT NAME=\"ptssn\" SIZE=9 MAXLENGTH=10 ".
 			"VALUE=\"".prepare($ptssn)."\">",
@@ -464,7 +470,7 @@ switch ($action) {
 	   "ptdtlpay    ='$ptdtlpay',     ".
 	   "ptamtlpay   ='$ptpaytype',    ".
 	   "ptstatus    ='$ptstatus',     ".
-	   "ptytdchg    ='$ptstatus',     ".
+	   "ptytdchg    ='0',             ".   // ytd charges
 	   "ptar        ='$ptar',         ".
 	   "ptextinf    ='$ptextinf',     ".
 	   "ptdisc      ='$ptdisc',       ".

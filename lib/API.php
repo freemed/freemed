@@ -2154,29 +2154,6 @@ function fm_secure ($orig_string) {
   return $this_string;    // return cleansed string
 } // end function fm_secure
 
-function fm_get_active_payerids ($ptid=0)
-{
-        global $database, $sql, $cur_date;
-        $result = 0;
-	if ($ptid == 0)
-           return $result;
-        $query = "SELECT id FROM payer WHERE ";
-        $query .= "payerpatient='$ptid' AND payerstatus='0' ";
-        $query .= "AND payerstartdt<='$cur_date' AND payerenddt>='$cur_date'";
-        $result = $sql->query($query);
-        if (!$result)
-           return $result;  // not an array!
-        $sub=0;
-        while ($rec = $sql->fetch_array($result))
-        {
-            $ins_id[$sub] = $rec["id"];
-            $sub++;
-        }
-		if ($sub == 0)
-			return 0;
-        return $ins_id;
-
-}
 
 function fm_get_active_coverage ($ptid=0)
 {
@@ -2199,9 +2176,9 @@ function fm_get_active_coverage ($ptid=0)
 			return 0;
         return $ins_id;
 
-}
+} // end get active coverages
 
-function fm_verify_patient_coverage($ptid=0,$coveragetype=0)
+function fm_verify_patient_coverage($ptid=0,$coveragetype=PRIMARY)
 {
         global $database, $sql, $cur_date;
         $result = 0;
@@ -2213,36 +2190,15 @@ function fm_verify_patient_coverage($ptid=0,$coveragetype=0)
         $query = "SELECT id FROM coverage WHERE ";
         $query .= "covpatient='$ptid' AND covstatus='0' AND covtype='$coveragetype' ";
         $result = $sql->query($query);
-		$ret = ($result) ? $sql->num_rows($result) : 0;
+		if (!$result)
+			return 0;
+		if (!$sql->num_rows($result))
+			return 0;
+		$row = $sql->fetch_array($result);
+		$ret = $row[id];
 		return $ret;
 }
 
-function fm_get_active_guarids ($ptid=0)
-{
-        global $database, $sql, $cur_date;
-        $result = 0;
-		if ($ptid == 0)
-           return $result;
-        $query = "SELECT id FROM guarantor WHERE ";
-        $query .= "guarpatient='$ptid' AND guarstatus='0' ";
-        $query .= "AND guarstartdt<='$cur_date' AND guarenddt>='$cur_date'";
-        $result = $sql->query($query);
-        if (!$result)
-		{
-            return $result;  // not an array!
-		}
-        $sub=0;
-        while ($rec = $sql->fetch_array($result))
-        {
-            $guar_id[$sub] = $rec["id"];
-            $sub++;
-        }
-		if ($sub == 0)
-			return 0;
-        return $guar_id;
-
-
-} // end get_active_payerids
 
 } // end checking for __API_PHP__
 

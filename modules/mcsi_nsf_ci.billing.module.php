@@ -30,6 +30,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
     var $subno = "000000";
     var $pat_processed;
     var $formno;
+    var $insmod;
 
 	var $record_types = array(
 		"aa0" => "1",
@@ -116,11 +117,14 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 					$insmod = freemed_get_link_rec($coverage->covinsco->modifiers[0],"insmod");
 					if (!$insmod)
 						DIE("Failed getting insurance modifier");
-					if ($insmod[insmod] != "CI")
-						continue;
+					if ( ($insmod[insmod] == "CI") OR ($insmod[insmod] == "CH") )
+					{
+						$this->insmod = $insmod[insmod];
+						$this->bill_request_type = $row[proccurcovtp];
+						$this->GenerateFixedForms($row[procpatient], $row[proccurcovid]);
+
+					}
 				}
-				$this->bill_request_type = $row[proccurcovtp];
-				$this->GenerateFixedForms($row[procpatient], $row[proccurcovid]);
 			}
 	
 			if (!empty($this->form_buffer))
@@ -274,6 +278,14 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$da0[patgrpno] = $this->CleanNumber($coverage2->covpatgrpno);
 		$da0[assign] = "Y";
 		$da0[patsigsrc] = "C";
+
+		if ($this->insmod == "CH") // champus
+		{
+			//for champus we need to put the military treatment
+  			// facility number for partnership claims in the ppoid field
+			//$da0[ppoid]
+			echo "ERROR Champus Military facility number not yet supported<BR>";
+		}
 
 		if ($coverage2->covreldep == "S")
 			$da0[patrel] = "01";
@@ -558,7 +570,20 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$da0[patcntl] = $ca0[patcntl];
 		
 		$da0[clmfileind] = "P";
-		$da0[clmsource] = "F";
+		$da0[clmsource] = "F";  // assume commercial
+	
+		if ($this->insmod == "CH")
+        {
+			$da0[clmsource] = "H";
+			// champus requires da0[instypcd] here
+			$fac_row=0;
+			$fac_row = freemed_get_link_rec($row[procpos], "facility");
+
+        	if ($fac_row)
+        	{
+				$da0[ppoid] = $fac_row[psrein];
+			}
+		}
 
 		//$da0[instypcd] = $insco->modifiers[0];
 		$da0[payerid] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
@@ -696,9 +721,25 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$row = $procstack[0]; // all rows are the same
 		$cov = $row[proccurcovid];
 		$pat = $row[procpatient];
+		$doc = $row[procphysician];
 
 		$ca0[recid] = "CA0";
-		$cb0[recid] = "XXX";
+		$cb0[recid] = "CB0";  // only required for champus
+
+		$coverage = new Coverage($cov);
+		if (!$coverage)
+		{
+			echo "Error in claimheader no coverage<BR>";
+			return;
+		}
+
+		$physician = new Physician($doc);
+		if (!$physician)
+		{
+			echo "Error in claimheader no physician<BR>";
+			return;
+		}
+
 		$patient = new Patient($pat);
 		if (!$patient)
 		{
@@ -734,6 +775,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         if ($patient->ptmarital == "widowed") 
      		$ca0[patmarital] = "W";
 
+		$ca0[patstudent] = "N";  // default not student
 		if ($patient->local_record[ptstatus] == 0)
 		{
 			$ca0[patstudent] = "N";
@@ -750,7 +792,11 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 			{
 				$datediff = date_diff($patient->local_record[ptdob]);
 				$yrdiff = $datediff[0];
-				echo "year diff $yrdiff<BR>";
+				if ( ($yrdiff > 18) AND ($status == "FT") )
+					$ca0[patstudent] = "F";
+				if ( ($yrdiff > 18) AND ($status == "PT") )
+					$ca0[patstudent] = "P";
+				//echo "year diff $yrdiff<BR>";
 			}
 
 		}
@@ -788,17 +834,59 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$ca0[othrins] = $othrins;
 
+		// asseume commercial
 		$ca0[clmeditind] = "F"; // comercial filing
+
+		if ($this->insmod == "CH")
+		{
+			$ca0[clmeditind] = "H"; // champus filing
+			$ca0[origin] = $this->CleanNumber($physician->local_record[phyzipa]);
+			$ca0[billprno] = $ba0[taxid];
+		}
+
 		$ca0[clmtype] = " ";
 
 		// need origin codes champus provider id if payer is REG06
 
 		// cb0 is required for champus (REG06) if the patient is
-        // under 18 at the time of service. difference between patdob and the highest date of service
+        // under 18 at the time of service. difference between patdob and the lowest date of service
 		// is < 18
 
 		$buffer = "";		
    		$buffer  = render_fixedRecord ($whichform,$this->record_types["ca0"]);
+
+		if ($this->insmod == "CH")
+		{
+			// cut cb0 record for champus only. 
+			// required if patient is under 18 and the time of the oldest date of service
+			$svcdate = $row[procdt]; // since ordered by date this should be oldest
+			$datediff = date_diff($patient->local_record[ptdob],$svcdate);
+			$diffyr = $datediff[0];
+			if (diffyr < 18)
+			{
+				$cb0[patcntl] = $ca0[patcntl];
+				// we assume the guarantor is the responsible party
+				if ($coverage->covdep != 0)
+				{
+					$guar = new Guarantor($coverage->covdep);
+					if (!$guar)
+						echo "Error getting guarantor in CB0 record<BR>";
+					$cb0[respfname] = $this->CleanChar($guar->guarfname);
+					$cb0[resplname] = $this->CleanChar($guar->guarlname);
+   					$buffer  .= render_fixedRecord ($whichform,$this->record_types["cb0"]);
+					
+				}
+				else
+				{
+					echo "Error in Champus CB0 record for Procedure $row[procdt]<BR>";
+					echo "Under aged patient does not have Guarantor<BR>";
+				}
+								
+
+			}
+
+		}
+
 		return $buffer;
 
 	} // end patient
@@ -820,7 +908,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$aa0[createdt] = $this->CleanNumber($cur_date);
 		$aa0[recvrid] = "MIXED";  // file contains claims for multiple payers
-		$aa0[recvrtype] = "F";
+        if ($this->insmod == "CH")
+			$aa0[recvrtype] = "H"; // champus
+		else
+			$aa0[recvrtype] = "F"; // commercial
 		$aa0[nsfverno] = "00301";
 		$aa0[testprod] = "TEST";
 		$aa0[password] = "FORESTER";
@@ -1005,6 +1096,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$ea0[accident] = "N";
 		$ea0[symptomind] = "0";
 		$ea0[relinfoind] = "Y";
+		$ea0[provassign] = "A";  // provider accepts assigmnent
+
+		// NOTE champus needs this but no sure where to get it
+		//$ea0[speclpgm]
 
 		//echo "referer $row[procrefdoc]<BR>";
 		if ($row[procrefdoc] != 0)
@@ -1248,6 +1343,20 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
                              $row[procdiag4]);
 
 			$fa0[cpt] = $cur_cpt[cptcode];
+
+			if ($this->insmod == "CH")
+			{	
+				// champus does wierd shit this so we have a seperate 
+                // routine to figure it out
+				$fa0[tos] = $this->ChampusTOS($fa0[cpt],$fa0[pos],$fa0[cptmod1]);
+				// champus also wants the referring provider upin here
+				// if there is one.
+				if ($row[procrefdoc] != 0)
+				{
+					$fa0[refprid] = $ea0[refprovupin];
+				}
+
+			}
 			$data = $this->MakeDecimal($row[procbalorig],2);
 			$fa0[charges] = $data;
 
@@ -1265,6 +1374,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
    			$buffer .= render_fixedRecord ($whichform,$this->record_types["fa0"]);
 			unset ($GLOBALS[fa0]);
 			global $fa0;
+			// champus requires the fb1 record but it's not implemented yet
 
 		}
 		return $buffer;
@@ -1495,6 +1605,117 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 		$this->form_buffer .= $form_buffer;
 	}
 
+	function ChampusTOS($cpt,$posi, $cptmod)
+	{
+		if ($pos == "24") // Ambulatory Surgery
+			$pos1="A";
+		if ($pos == "21") // Inpatient
+			$pos1="I";
+		if ($pos == "22") // Outpatient
+			$pos1="O";
+
+		if ( ($ctp >= "59000") AND ($cpt <= "59899") )
+		{
+			$pos1="M";
+			$pos2="9";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "99341") AND ($cpt <= "99353") )
+		{
+			$pos2="9";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "97010") AND ($cpt <= "99353") )
+		{
+			$pos2="9";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "97010") AND ($cpt <= "97799") )
+		{
+			$pos2="9";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "90801") AND ($cpt <= "90899") )
+		{
+			$pos2="9";
+			return $pos1.$pos2;
+		}
+		if ($ctpmod == "29")
+		{
+			$pos2="9";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "99221") AND ($cpt <= "99238") )
+		{
+			$pos2="9";
+			return $pos1.$pos2;
+		}
+		if ($ctpmod == "80")
+		{
+			$pos2="8";
+			return $pos1.$pos2;
+		}
+		if ($ctpmod == "30")
+		{
+			$pos2="7";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "77261") AND ($cpt <= "77799") )
+		{
+			$pos2="6";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "79000") AND ($cpt <= "79999") )
+		{
+			$pos2="6";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "80002") AND ($cpt <= "89399") )
+		{
+			$pos2="5";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "70010") AND ($cpt <= "79999") )
+		{
+			$pos2="4";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "99241") AND ($cpt <= "99275") )
+		{
+			$pos2="3";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "10040") AND ($cpt <= "58999") )
+		{
+			$pos2="2";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "60000") AND ($cpt <= "69979") )
+		{
+			$pos2="2";
+			return $pos1.$pos2;
+		}
+		if ( ($ctp >= "90700") AND ($cpt <= "99499") )
+		{
+			$pos2="1";
+			return $pos1.$pos2;
+		}
+		$cptletter = substr($cpt,0,1);
+		$cptletter = strtoupper($cptletter);
+		if ($cptletter = "J")
+		{
+			$pos2="1";
+			return $pos1.$pos2;
+		}
+		if ($ctpmod == "26")
+		{
+			$pos2="4";
+			return $pos1.$pos2;
+		}
+		
+		
+
+	} //end champus TOS
 
 	function view()
 	{

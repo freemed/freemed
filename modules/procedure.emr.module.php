@@ -120,10 +120,18 @@ class procedureModule extends freemedEMRModule {
 
   // step one:
   //   calculate the standard fee
-  $this_insco = new InsuranceCompany ($this->this_patient->payer[0]->local_record["payerinsnsco"]);
+  $insid = 0;
+  $cov = fm_verify_patient_coverage($patient,PRIMARY);
+  if ($cov > 0)
+  {
+      $primary = new Coverage($cov);
+	  $insid = $primary->local_record[covinsco];
+  }
+  //$this_insco = new InsuranceCompany ($this->this_patient->payer[0]->local_record["payerinsnsco"]);
   $cpt_code = freemed_get_link_rec ($proccpt, "cpt"); // cpt code
   $cpt_code_fees = fm_split_into_array ($cpt_code["cptstdfee"]);
-  $cpt_code_stdfee = $cpt_code[$this_insco->id]; // grab proper std fee
+  //$cpt_code_stdfee = $cpt_code[$this_insco->id]; // grab proper std fee
+  $cpt_code_stdfee = $cpt_code[$insid]; // grab proper std fee
   if (empty($cpt_code_stdfee) or ($cpt_code_stdfee==0))
     $cpt_code_stdfee = $cpt_code["cptdefstdfee"]; // if none, do default
   $cpt_code_stdfee = bcadd ($cpt_code_stdfee, 0, 2);
@@ -153,6 +161,8 @@ class procedureModule extends freemedEMRModule {
   // step five:
   //   calculate formula...
   $charge = ($base_value * $procunits * $relative_value) - $discount; 
+  if ($charge == 0)
+	$charge = $cpt_code_stdfee;
   if ($debug) echo " (charge = \"$charge\") \n";
 
   // step six:
@@ -270,6 +280,53 @@ class procedureModule extends freemedEMRModule {
     echo "<CENTER>".$wizard->display()."</CENTER>\n";
   } else if ($wizard->is_done()) {
     // process add/mod here
+    $error_msg = "";
+    // verify minimum requirements for a proc
+
+    if ( (empty($proccpt)) OR ($proccpt == 0) )
+	{
+		$error_msg = "Must select a cpt code<BR>";
+	}
+    if ( (empty($procdiag1)) OR ($procdiag1 == 0) )
+	{
+		$error_msg = "Must select a Diagnosis code<BR>";
+	}
+    if ( (empty($procphysician)) OR ($procphysician == 0) )
+	{
+		$error_msg = "Must select a Physician<BR>";
+	}
+    if ( (empty($procdt)) OR ($procdt == 0) )
+	{
+		$error_msg = "Must Specify a Procedure Date<BR>";
+	}
+    if ( (empty($procpos)) OR ($procpos == 0) )
+	{
+		$error_msg = "Must Specify a Place of Service<BR>";
+	}
+
+	if (!empty($error_msg))
+	{
+		 if ($action == "add" OR $action=="addform")
+  			$action="addform";
+         else
+            $action="modform";
+		 echo "<CENTER>";
+		 echo "$error_msg<BR>".
+         "<A HREF=\"$this->page_name?$_auth&module=$module&action=addform&procvoucher=$procvoucher".
+          "&patient=$patient&procdt=".fm_date_assemble("procdt").
+	      "&proccpt=$proccpt".
+	      "&procpos=$procpos".
+          "&procdiag1=$procdiag1".
+          "&procdiag2=$procdiag2".
+          "&procdiag3=$procdiag3".
+          "&procdiag4=$procdiag4".
+          "&procphysician=$procphysician".
+          "\">Try Again</A>".
+		 "</CENTER>";
+		 DIE("<CENTER>Errors Found</CENTER>");
+
+	}
+
     echo "
       <P><CENTER>
       <$STDFONT_B>".
@@ -415,6 +472,8 @@ class procedureModule extends freemedEMRModule {
          ><$STDFONT_B>"._("Add Payment")."<$STDFONT_E></A> <B>|</B>
          <A HREF=\"$this->page_name?$_auth&module=$module&action=addform&procvoucher=$procvoucher".
           "&patient=$patient&procdt=".fm_date_assemble("procdt").
+	      "&proccpt=$proccpt".
+	      "&procpos=$procpos".
           "&procdiag1=$procdiag1".
           "&procdiag2=$procdiag2".
           "&procdiag3=$procdiag3".

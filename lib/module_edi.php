@@ -24,7 +24,7 @@ define ('__MODULE_EDI_PHP__', true);
 class freemedEDIModule extends freemedModule {
 
 	// override variables
-	var $CATEGORY_NAME = "Electronic Data Interchange";
+	var $CATEGORY_NAME = "EDI";
 	var $CATEGORY_VERSION = "0.1";
 
 	// vars related to this edi class
