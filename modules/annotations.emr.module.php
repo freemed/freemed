@@ -92,8 +92,8 @@ class Annotations extends EMRModule {
 	function view ( ) {
 		global $sql; global $display_buffer; global $patient;
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT DATE(atimestamp) AS ts, ".
-				"amodule, auser FROM ".$this->table_name." ".
+			$sql->query("SELECT DATE_FORMAT(atimestamp, '%d %M %Y %H:%i') AS ts, ".
+				"amodule, auser, id FROM ".$this->table_name." ".
 				"WHERE apatient='".addslashes($patient)."' ".
 				freemed::itemlist_conditions(false)." ".
 				"ORDER BY atimestamp DESC"),
