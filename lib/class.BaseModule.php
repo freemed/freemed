@@ -136,7 +136,7 @@ class BaseModule extends module {
 				<td width=\"50\">
 				<input type=\"radio\" 
 				 name=\"print_method\"
-				 value=\"printer\" checked=\"checked\"
+				 value=\"printer\" checked
 				 id=\"print_method_printer\" /></td>
 				<td
 				>".__("Printer")."</td>
@@ -160,6 +160,7 @@ class BaseModule extends module {
 				 <input type=\"radio\"
 				  name=\"print_method\"
 				  value=\"browser\"
+				  checked=\"checked\" 
 				  id=\"print_method_browser\" /></td>
 				 <td colspan=\"2\">".__("Browser-Based")."</td>
 			</tr>
@@ -174,23 +175,27 @@ class BaseModule extends module {
 			return true;
 		}
 
-		list ($title, $heading, $physician) = $this->_TeX_Information();
-
-		// Create TeX object for patient
-		$TeX = CreateObject('FreeMED.TeX', array (
-			'title' => $title,
-			'heading' => $heading,
-			'physician' => $physician
-		));
-
-		// Actual renderer for formatting array
-		if ($this->print_template) {
-			$TeX->_buffer = $TeX->RenderFromTemplate(
-				$this->print_template,
-				$this->_print_mapping($TeX, $_REQUEST['id'])
-			);
+		if ($render = $this->print_override($_REQUEST['id'])) {
+			// Handle this elsewhere
 		} else {
-			$this->_RenderTex(&$TeX, $_REQUEST['id']);
+			list ($title, $heading, $physician) = $this->_TeX_Information();
+
+			// Create TeX object for patient
+			$TeX = CreateObject('FreeMED.TeX', array (
+				'title' => $title,
+				'heading' => $heading,
+				'physician' => $physician
+			));
+
+			// Actual renderer for formatting array
+			if ($this->print_template) {
+				$TeX->_buffer = $TeX->RenderFromTemplate(
+					$this->print_template,
+					$this->_print_mapping($TeX, $_REQUEST['id'])
+				);
+			} else {
+				$this->_RenderTex(&$TeX, $_REQUEST['id']);
+			}
 		}
 
 		global $display_buffer;
@@ -209,7 +214,11 @@ class BaseModule extends module {
 		switch ($_pm) {
 			// Handle direct to browser
 			case 'browser':
-			$file = $TeX->RenderToPDF(!empty($this->print_template));
+			if ($render) {
+				$file = $render;
+			} else {
+				$file = $TeX->RenderToPDF(!empty($this->print_template));
+			}
 			ob_start();
 			readfile($file);
 			$contents = ob_get_contents();
@@ -219,12 +228,18 @@ class BaseModule extends module {
 			Header('Content-Length: '.strlen($contents));
 			Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
 			print $contents;
+			flush();
 			//print "file = $file<br/>\n";
+			unlink($file);
 			die();
 			break;
 
 			case 'fax':
-			$file = $TeX->RenderToPDF(!empty($this->print_template));
+			if ($render) {
+				$file = $render;
+			} else {
+				$file = $TeX->RenderToPDF(!empty($this->print_template));
+			}
 			$fax = CreateObject('_FreeMED.Fax', $file, array (
 				'sender' => PACKAGENAME.' v'.DISPLAY_VERSION
 				));
@@ -235,20 +250,25 @@ class BaseModule extends module {
 
 			// Handle actual printer
 			case 'printer': 
-			if (false) {
-				$display_buffer .= "<pre>\n".
-					$TeX->RenderDebug().
-					"</pre>\n(You must disable this to print)";
+			if ($render) {
+				$_p = CreateObject('PHP.PrinterWrapper');
+				$_p->PrintFile($_REQUEST['printer'], $render);
+				unlink($render);
 			} else {
-			$TeX->SetPrinter(
-				CreateObject('PHP.PrinterWrapper'),
-				//$user->getManageConfig('default_printer')
-				$_REQUEST['printer']
-			);
-			// TODO: Handle direct PDF generation and return here
-			$TeX->PrintTeX(1, !empty($this->print_template));
-			$GLOBALS['__freemed']['close_on_load'] = true;
+				// DEBUG:
+				//$display_buffer .= "<pre>\n".
+				//	$TeX->RenderDebug().
+				//	"</pre>\n(You must disable this to print)";
+				//template_display();
+				$TeX->SetPrinter(
+					CreateObject('PHP.PrinterWrapper'),
+					//$user->getManageConfig('default_printer')
+					$_REQUEST['printer']
+				);
+				// TODO: Handle direct PDF generation and return here
+				$TeX->PrintTeX(1, !empty($this->print_template));
 			}
+			$GLOBALS['__freemed']['close_on_load'] = true;
 			break;
 
 			default:
@@ -357,6 +377,23 @@ class BaseModule extends module {
 
 	//----- Internal module functions
 
+	// Method: print_override
+	//
+	//	Use this to replace the default printing behavior of the
+	//	system.
+	//
+	// Parameters:
+	//
+	//	$id - Record ID to be "printed" as a PDF.
+	//
+	// Returns:
+	//
+	//	Filename of PDF file containing render.
+	//
+	function print_override ( $id ) {
+		return false; // STUB, so we don't use it most of the time
+	} // end method print_override
+
 	// Method: BaseModule->_GetAssociations
 	//
 	//	Get a list of associations for the current module.
@@ -399,7 +436,7 @@ class BaseModule extends module {
 		$this->META_INFORMATION['__associations']["$with"] = get_class($this);
 	} // end method BaseModule->_SetAssociation
 
-	// Method: BaseModule->_SetAssociation
+	// Method: BaseModule->_SetHandler
 	//
 	//	Attaches the current module to the specified system
 	//	handler.
