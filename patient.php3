@@ -871,7 +871,7 @@ switch ($action) {
        <P>
        <CENTER>
         <A HREF=\"$page_name?$_auth\"
-        ><$STDFONT_B>"._("Return_to $record_name Menu")."<$STDFONT_E></A>
+        ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
        </CENTER>
        <P>
        ";
@@ -1179,7 +1179,7 @@ if ($action=="addform") {
     echo "
       <CENTER>
       <A HREF=\"main.php3?$_auth\"
-       >$Return_to_the $Main_menu</A>
+       >"._("Return to the Main Menu")."</A>
       </CENTER>
     ";
     DIE("");
@@ -1369,11 +1369,11 @@ if ($action=="addform") {
   echo "
     <BR><BR>
     <CENTER>
-    <A HREF=\"$page_name?$_auth\">$Return_to_the
-     $Patient_menu</A>
+    <A HREF=\"$page_name?$_auth\">".
+     _("back")."</A>
     <BR><BR>
-    <A HREF=\"main.php3?$_auth\">$Return_to_the
-    $Main Menu</A></CENTER>
+    <A HREF=\"main.php3?$_auth\"
+     >_("Return to the Main Menu")."</A></CENTER>
   ";
 
 } elseif ($action=="find") {
@@ -1533,7 +1533,7 @@ if ($action=="addform") {
      <P>
      <CENTER>
       <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
      </CENTER>
      <P>
     ";
@@ -1700,7 +1700,8 @@ if ($action=="addform") {
   echo "
     <P>
     <CENTER>
-    <A HREF=\"main.php3?$_auth\">$Return_to $Main_menu</A>
+    <A HREF=\"main.php3?$_auth\"
+     >"._("Return to the Main Menu")."</A>
     </CENTER>
   "; // close out with return to main menu tags
 }
