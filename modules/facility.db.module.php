@@ -11,7 +11,7 @@ class FacilityMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Facility Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_DESCRIPTION = "
 		Facilities are used by FreeMED to describe locations where 
 		services are performed. Any physician/provider can do work 
@@ -90,7 +90,9 @@ class FacilityMaintenance extends MaintenanceModule {
      foreach ($this->variables AS $k => $v) { global ${$k}; }
      $next_action = "mod";
      $r = freemed::get_link_rec ($id, $this->table_name);
-     extract ($r);
+     foreach ($r as $k => $v) {
+     	global ${$k}; ${$k} = $v;
+     }
      break;
    } // end internal case
   } // end if not been here
@@ -174,6 +176,12 @@ class FacilityMaintenance extends MaintenanceModule {
 
      ) )
     );
+
+                // Handle cancel action
+        if ($book->is_cancelled()) {
+                Header("Location: ".page_name()."?module=".$this->MODULE_CLASS);
+		die();
+	}
 
   if (!$book->is_done()) {
     $display_buffer .= $book->display();
