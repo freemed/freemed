@@ -472,7 +472,8 @@ if ($process) {
 				"calduration" => $duration,
 				"calfacility" => $facility,
 				"calroom" => $room,
-				"calprenote" => stripslashes($note)
+				"calprenote" => stripslashes($note),
+				"calphysician" => $_REQUEST['physician']
 			)
 		);
 	}
