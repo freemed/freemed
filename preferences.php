@@ -24,6 +24,24 @@ if ($submit==__("Cancel")) {
 
 //----- Define USER_OPTIONS
 $USER_OPTIONS = array (
+	__("Skip Printer Selection") =>
+	array (
+		'var' => 'printnoselect',
+		'widget' =>
+		'html_form::select_widget("printnoselect", '.
+			'array ('.
+				'__("no") => "0", '.
+				'__("yes") => "1" '.
+			') )'
+	),
+
+	__("Default Printer") =>
+	array (
+		'var' => 'default_printer',
+		'widget' =>
+		'freemed::printers_widget("default_printer")'
+	),
+
 	__("Booking Refresh") =>
 	array (
 		'var' => 'booking_refresh',
@@ -217,7 +235,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 	}
 
 	// And use header to move back to action=(nothing)
-	//$refresh = "preferences.php";
+	$refresh = "preferences.php";
 	break; // end user
 
 

@@ -370,6 +370,26 @@ class EMRModule extends BaseModule {
 	// - generate print view
 	function printaction ( ) { $this->_print(); }
 	function _print ( ) {
+		// Check for selected printer
+		if (!freemed::config_value('printnoselect') and !isset($_REQUEST['printer'])) {
+			// select printer form
+			global $display_buffer;
+			$display_buffer .= "
+			<form action=\"".$this->page_name."\" method=\"post\">
+			<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
+			<input type=\"hidden\" name=\"action\" value=\"".prepare($_REQUEST['action'])."\"/>
+			<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
+			<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\"/>
+			".html_form::form_table(array(
+				__("Printer") => freemed::printers_widget('printer')
+			))."
+			<div align=\"center\">
+			<input type=\"submit\" value=\"".__("Print")."\"/>
+			</div>
+			</form>
+			";
+			return true;
+		}
 		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
 		$patient = CreateObject('FreeMED.Patient', $_REQUEST['patient']);
 		$user = CreateObject('FreeMED.User');
@@ -687,7 +707,7 @@ class EMRModule extends BaseModule {
 				} // end if print
 			}
 		}
-	} // end method $id
+	} // end method _RenderTeX
 
 } // end class EMRModule
 
