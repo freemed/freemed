@@ -11,6 +11,8 @@ $appversion = `cat lib/freemed.php | grep \\'VERSION\\' | awk -F\\" '{ print \$2
 $locale = shift || 'template';
 $locale_name = shift || '';
 
+sub Trim { my $s = shift; $s =~ s/^\s+//; $s =~ s/\s+$//; return $s }
+
 sub Current_Date {
 	my ($mon, $day, $year);
 	(undef, undef, $mon, $day, $year, undef, undef, undef) = gmtime();
@@ -33,12 +35,12 @@ sub Generate_GettextXML {
 		"<gettextXML lang=\"".$locale."\">\n\n".
 		"\t<information>\n".
 		"\t\t<Application>FreeMED</Application>\n".
-		"\t\t<ApplicationVersion>$appversion</ApplicationVersion>\n".
+		"\t\t<ApplicationVersion>".Trim($appversion)."</ApplicationVersion>\n".
 		"\t\t<Component>".HtmlEntities($component)."</Component>\n".
 		"\t\t<ComponentVersion>".HtmlEntities($version)."</ComponentVersion>\n".
-		"\t\t<Locale>".HtmlEntities($locale)."</Locale>\n".
-		"\t\t<LocaleName>".HtmlEntities($locale_name)."</LocaleName>\n".
-		"\t\t<RevisionDate>".Current_Date()."</RevisionDate>\n".
+		"\t\t<Locale>".Trim(HtmlEntities($locale))."</Locale>\n".
+		"\t\t<LocaleName>".Trim(HtmlEntities($locale_name))."</LocaleName>\n".
+		"\t\t<RevisionDate>".Trim(Current_Date())."</RevisionDate>\n".
 		"\t\t<RevisionCount>1</RevisionCount>\n".
 		"\t\t<Generator>GettextXML</Generator>\n".
 		"\t\t<ContentTransferEncoding>8bit</ContentTransferEncoding>\n".
@@ -48,7 +50,7 @@ sub Generate_GettextXML {
 
 	foreach $phrase (@phrases) {
 		$output .= "\t<translation>\n";
-		$output .= "\t\t<original>".HtmlEntities(StripSlashes($phrase))."</original>\n";
+		$output .= "\t\t<original>".Trim(HtmlEntities(StripSlashes($phrase)))."</original>\n";
 		$output .= "\t\t<translated></translated>\n";
 		$output .= "\t</translation>\n\n";
 	}
@@ -79,23 +81,23 @@ sub Generate_GettextXML_Merged {
 		"<gettextXML lang=\"".$locale."\">\n\n".
 		"\t<information>\n".
 		"\t\t<Application>FreeMED</Application>\n".
-		"\t\t<ApplicationVersion>$appversion</ApplicationVersion>\n".
-		"\t\t<Component>".HtmlEntities($component)."</Component>\n".
-		"\t\t<ComponentVersion>".HtmlEntities($version)."</ComponentVersion>\n".
-		"\t\t<Locale>".HtmlEntities($locale)."</Locale>\n".
-		"\t\t<LocaleName>".HtmlEntities($locale_name)."</LocaleName>\n".
-		"\t\t<RevisionDate>".Current_Date()."</RevisionDate>\n".
-		"\t\t<RevisionCount>".$revision."</RevisionCount>\n".
-		"\t\t<Generator>".$meta{'Generator'}."</Generator>\n".
+		"\t\t<ApplicationVersion>".Trim($appversion)."</ApplicationVersion>\n".
+		"\t\t<Component>".Trim(HtmlEntities($component))."</Component>\n".
+		"\t\t<ComponentVersion>".Trim(HtmlEntities($version))."</ComponentVersion>\n".
+		"\t\t<Locale>".Trim(HtmlEntities($locale))."</Locale>\n".
+		"\t\t<LocaleName>".Trim(HtmlEntities($locale_name))."</LocaleName>\n".
+		"\t\t<RevisionDate>".Trim(Current_Date())."</RevisionDate>\n".
+		"\t\t<RevisionCount>".Trim($revision)."</RevisionCount>\n".
+		"\t\t<Generator>".Trim($meta{'Generator'})."</Generator>\n".
 		"\t\t<ContentTransferEncoding>8bit</ContentTransferEncoding>\n".
-		"\t\t<Translator>".$meta{'Translator'}."</Translator>\n".
+		"\t\t<Translator>".Trim($meta{'Translator'})."</Translator>\n".
 		"\t</information>\n".
 		"\n";
 
 	foreach $phrase (@mphrases) {
 		$output .= "\t<translation>\n";
-		$output .= "\t\t<original>".HtmlEntities(StripSlashes($phrase))."</original>\n";
-		$output .= "\t\t<translated>".HtmlEntities($processed{$phrase})."</translated>\n";
+		$output .= "\t\t<original>".Trim(HtmlEntities(StripSlashes($phrase)))."</original>\n";
+		$output .= "\t\t<translated>".Trim(HtmlEntities($processed{$phrase}))."</translated>\n";
 		$output .= "\t</translation>\n\n";
 	}
 
