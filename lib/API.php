@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.49  2002/07/08 15:23:27  rufustfirefly
+ // Added freemed::drug_widget() and small default_facility fix.
+ //
  // Revision 1.48  2002/06/25 17:20:24  rufustfirefly
  // moved version to 0.4 (Betafish),
  // added support for disabling sessions (for XML-RPC),
@@ -134,6 +137,37 @@ class freemed {
 		// Return from cache
 		return $_config["$config_var"];
 	} // end function freemed::config_value
+
+	function drug_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
+		global ${$varname};
+
+		// If it is set, show drug name, else widget
+		if (!empty(${$varname})) {
+			return "<INPUT TYPE=\"HIDDEN\" ".
+				"NAME=\"".prepare($varname)."\" ".
+				"VALUE=\"".prepare(${$varname})."\">".
+				${$varname}." ".
+				"<INPUT TYPE=\"BUTTON\" ".
+				"onClick=\"drugPopup=window.open(".
+				"'drug_lookup.php?varname=".
+				urlencode($varname)."&submitname=".
+				urlencode($submitname)."&formname=".
+				urlencode($formname)."', 'drugPopup'); ".
+				"drugPopup.opener=self; return true;\" ".
+				"VALUE=\""._("Change")."\">";
+		} else {
+			return "<INPUT TYPE=\"HIDDEN\" ".
+				"NAME=\"".prepare($varname)."\">".
+				"<INPUT TYPE=\"BUTTON\" ".
+				"onClick=\"drugPopup=window.open(".
+				"'drug_lookup.php?varname=".
+				urlencode($varname)."&submitname=".
+				urlencode($submitname)."&formname=".
+				urlencode($formname)."', 'drugPopup'); ".
+				"drugPopup.opener=self; return true;\" ".
+				"VALUE=\""._("Drug Lookup")."\">";
+		}
+	} // end function freemed::drug_widget
 
 	// function freemed::get_link_rec
 	//   return the entire record as an array for
@@ -978,14 +1012,14 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 // function freemed_display_facilities (selected)
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="", $by_array="") {
-	global $default_facility, $sql;
+	global $SESSION, $sql;
 
 	// Check for default or passed facility
 	if ($param != "") {
 		global ${$param};
 		$facility = ${$param};
 	} else {
-		$facility = $default_facility;
+		$facility = $SESSION["default_facility"];
 	}
 
 	$buffer = "";
