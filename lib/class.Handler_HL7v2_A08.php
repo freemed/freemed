@@ -25,7 +25,9 @@ class Handler_HL7v2_A08 extends Handler_HL7v2 {
 
 			// Select matching PV1 segment (hack?)
 			$pv1 = $this->parser->message['PV1'][$k];
-			syslog(LOG_INFO, 'HL7 parser| PV1 - for ID #'.$pv1[HL7v2_PV1_REFERRING][HL7v2_PV1_REFERRING_ID].' found '.$this->parser->__composite_to_provider($pv1[HL7v2_PV1_REFERRING]));
+			if ($pv1[HL7v2_PV1_REFERRING][HL7v2_PV1_REFERRING_ID]) {
+				syslog(LOG_INFO, 'HL7 parser| PV1 - for ID #'.$pv1[HL7v2_PV1_REFERRING][HL7v2_PV1_REFERRING_ID].' found '.$this->parser->__composite_to_provider($pv1[HL7v2_PV1_REFERRING]));
+			}
 			
 			// Create array of variables
 			$variables = array (
@@ -43,10 +45,13 @@ class Handler_HL7v2_A08 extends Handler_HL7v2 {
 				'pthphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_HOME]),
 				'ptwphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_WORK]),
 				'ptssn' => $this->_StripToNumeric($v[HL7v2_PID_SOCIALSECURITY]),
-				'ptrefdoc' => $this->parser->__composite_to_provider($pv1[HL7v2_PV1_REFERRING]),
 				'ptarchive' => '0',
 				'ptid' => $v[HL7v2_PID_ID]
 			);
+			// Don't put referrers in who aren't specified
+			if ($pv1[HL7v2_PV1_REFERRING]) {
+				$variables['ptrefdoc'] = $this->parser->__composite_to_provider($pv1[HL7v2_PV1_REFERRING]);
+			}
 			if ($GLOBALS['sql']->results($exist_query)) {
 				// Exists, proceed with A08
 				$query = $GLOBALS['sql']->update_query(
