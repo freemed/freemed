@@ -49,6 +49,15 @@ class template {
 			"pbox_book_appointment.".IMAGE_TYPE."\" border=\"0\" ".
 			"width=\"16\" height=\"16\" ".
 			"alt=\"".__("Book Appointment")."\"/></a></td>\n".
+			"<td><a href=\"patient.php\" ".
+			"onMouseOver=\"window.status='".__("Choose Another Patient")."'; return true;\" ".
+			"onMouseOut=\"window.status=''; return true;\"".
+			"><img src=\"lib/template/".(
+				file_exists("lib/template/".$GLOBALS['template']."/img/magnifying_glass.".IMAGE_TYPE) ?
+				$GLOBALS['template'] : 'default' )."/img/".
+			"magnifying_glass.".IMAGE_TYPE."\" border=\"0\" ".
+			"width=\"16\" height=\"16\" ".
+			"alt=\"".__("Choose Another Patient")."\"/></a></td>\n".
 			
 			"</tr></table>\n";
 		return $buffer;
