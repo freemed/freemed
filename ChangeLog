@@ -1,4 +1,14 @@
 freemed project changelog
+* Wed Nov 29 2000 fforest
+  - added procamtallowed to procrec
+  - allow manage_payments to handle an allowed amount (fee schedule adjustment). update payrec with 
+    paytype 6. not procedure cat in payrec and type 6 is a feee adjust. changed some field titles
+    now shows if procedure has been billed. added refresh option to dropbox to allow screen
+    refresh after changes.
+  - payment_records changed to show a fee adjust
+  - added file manage_biils.php3. gives a view of unpaid procs from billing menu. from there
+    user can navigate to patient, manage_payments or payment_records.
+  - 
 
 * Wed Nov 22 2000 rufustfirefly
   - fixed calls to fm_date_entry() to echo, since it now returns buffer,
