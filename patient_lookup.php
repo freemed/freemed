@@ -130,17 +130,17 @@ switch ($action) {
 		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".__("Search")."\">
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::form_table(array(
-			"Last Name" =>
+			__("Last Name") =>
 			html_form::text_widget(
 				"last_name", 20
 			),
 			
-			"First Name" =>
+			__("First Name") =>
 			html_form::text_widget(
 				"first_name", 20
 			),
 
-			"City" =>
+			__("City") =>
 			html_form::combo_widget(
 				"city",
 				$sql->distinct_values(
