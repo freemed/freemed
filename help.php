@@ -29,15 +29,18 @@ function help_template_display () {
  //  because they are coded in plain HTML, they can be
  //  linked.
 
+  //----- Build name without .php
+$page = str_replace(".php", "", $page_name);
+
   // build helpfile name...
-if (empty($page_name) AND empty($section)) {
-  $_help_name = "lang/$language/doc/default.$language.html";
-} elseif (!empty($page_name) AND empty($section)) {
-  $_help_name = "lang/$language/doc/$page_name.$language.html";
-} elseif (!empty($page_name) AND !empty($section)) {
-  $_help_name = "lang/$language/doc/$page_name.$section.$language.html";
+if (empty($page) AND empty($section)) {
+	$_help_name = "lang/$language/doc/default.$language.html";
+} elseif (!empty($page) AND empty($section)) {
+	$_help_name = "lang/$language/doc/$page.$language.html";
+} elseif (!empty($page) AND !empty($section)) {
+	$_help_name = "lang/$language/doc/$page.$section.$language.html";
 } else {
-  $_help_name = "lang/$language/doc/default.$language.html";
+	$_help_name = "lang/$language/doc/default.$language.html";
 }
 
  // if the helpfile doesn't exist, but is enabled, ERROR! out...
@@ -64,7 +67,7 @@ $page_title =  PACKAGENAME." Help System";
 
 if ($debug) {
 	$display_buffer .= "
-	page_name = $page_name<BR>
+	page_name = $page<BR>
 	section = $section<BR>
 	";
 } // debug stuff

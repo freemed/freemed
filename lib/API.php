@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.40  2001/11/21 21:03:42  rufustfirefly
+ // removed .php from help file names
+ //
  // Revision 1.39  2001/11/21 15:19:22  rufustfirefly
  // freemed_verify_auth() - showstopper fixed for non-root login
  //
@@ -2025,6 +2028,9 @@ function help_url ( $page = "", $section = "" ) {
 	} else {
 		$page_name = $page;
 	}
+
+	// Produce name by removing .php
+	$page_name = str_replace(".php", "", $page_name);
 
 	// Build helpfile name...
 	if (empty($page_name) AND empty($section)) {
