@@ -17,7 +17,7 @@ freemed_open_db ();
 
 $this_user = new User ();
 
-if ($this_user->user_number != 1) {  // if not root...
+if (!freemed::user_flag(USER_ROOT)) {  // if not root...
 	$display_buffer .= "$page_name :: access denied\n";
 	template_display();
 }
@@ -53,9 +53,14 @@ switch($action) { // master action switch
   
   if ( ($action=="modform") AND (!$book->been_here()) ) { // catch the empty ID
 
-      // grab record number "id"
-    $r = freemed_get_link_rec ($id, $table_name);
-    extract ($r);
+	// grab record number "id"
+	$r = freemed_get_link_rec ($id, $table_name);
+
+	// Pull into the global scope
+	foreach ($r AS $k => $v) {
+		global ${$k};
+		${$k} = stripslashes($v);
+	}
 
 	// expand the arrays
 	$userphy    = sql_expand ( $userphy );
@@ -63,7 +68,24 @@ switch($action) { // master action switch
 	$userphygrp = sql_expand ( $userphygrp );
 
 	// make sure default & verify are the same, so no errors
-    $userpassword1 = $userpassword2 = $userpassword;
+	$userpassword1 = $userpassword2 = $userpassword;
+
+	// Use userlevel to determine flags
+	if ($userlevel > 0) {
+		$power = 0; unset ($_userlevel);
+		while (pow(2,$power) <= $userlevel) {
+			// Check and add if so
+			if (pow(2, $power) & $userlevel) {
+				// Add it...
+				$_userlevel[(pow(2,$power))] = pow(2,$power);
+			}
+			// Increment the current power...
+			$power++;
+		} // end looping...
+
+		// Pass _userlevel to userlevel
+		$userlevel = $_userlevel;
+	}
 
   } // second modform if
   
@@ -85,42 +107,48 @@ switch($action) { // master action switch
       "username", "userpassword", "userpassword1", "userpassword2", 
       "userdescrip", "userlevel", "usertype", "userrealphy"
     ),
-    "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2>
-   
-   
-   <TR><TD ALIGN=RIGHT>
-    "._("Username")." :
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"username\" SIZE=17 MAXLENGTH=16
-     VALUE=\"".prepare($username)."\">
-   </TD></TR>
+	html_form::form_table(array(
 
-   <TR><TD ALIGN=RIGHT>
-    "._("Password")." : 
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=PASSWORD NAME=\"userpassword1\" SIZE=17 MAXLENGTH=16 
-     VALUE=\"".prepare($userpassword1)."\">
-   </TD></TR>
+		_("Username") =>
+		html_form::text_widget("username", 16),
+
+		_("Password") =>
+		"<INPUT TYPE=PASSWORD NAME=\"userpassword1\" SIZE=17 MAXLENGTH=16 
+     VALUE=\"".prepare($userpassword1)."\">",
    
-   <TR><TD ALIGN=RIGHT>
-    "._("Password (Verify)")." :
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=PASSWORD NAME=\"userpassword2\" SIZE=17 MAXLENGTH=16 
-     VALUE=\"".prepare($userpassword2)."\">
-   </TD></TR>
+		_("Password (Verify)") =>
+		"<INPUT TYPE=PASSWORD NAME=\"userpassword2\" SIZE=17 MAXLENGTH=16 
+     VALUE=\"".prepare($userpassword2)."\">",
 
-   <TR><TD ALIGN=RIGHT>
-    "._("Description")." : 
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"userdescrip\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($userdescrip)."\">
-   </TD></TR>
+		_("Description") =>
+		html_form::text_widget("userdescrip", 20, 50),
 
-   <TR><TD ALIGN=RIGHT>
-    "._("User level")." : 
-   </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"userlevel\">
+		_("User level") =>
+		html_form::checkbox_widget(
+			"userlevel",
+			USER_ADMIN,
+			"Administrator"
+		).
+		"<BR>\n".
+		html_form::checkbox_widget(
+			"userlevel",
+			USER_DATABASE,
+			"Database Access"
+		).
+		"<BR>\n".
+		html_form::checkbox_widget(
+			"userlevel",
+			USER_DELETE,
+			"Delete Permission"
+		).
+		"<BR>\n".
+		html_form::checkbox_widget(
+			"userlevel",
+			USER_DISABLED,
+			"Disabled/Locked Out"
+		),
+/*
+		"<SELECT NAME=\"userlevel\">
       <OPTION VALUE=\"0\" ".(($userlevel==0) ? "SELECTED" : "")
         .">"._("Locked out")."
       <OPTION VALUE=\"1\" ".(($userlevel==1) ? "SELECTED" : "")
@@ -143,26 +171,21 @@ switch($action) { // master action switch
         .">"._("Superuser")."
     </SELECT>
    </TD></TR>
+	*/
     
-   <TR><TD ALIGN=RIGHT>
-    "._("User type")." :
-   </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"usertype\">
-      <OPTION VALUE=\"phy\"  ".(($usertype=="phy") ? "SELECTED" : "").">
-              "._("Physician")."
-      <OPTION VALUE=\"misc\"  ".(($usertype=="misc") ? "SELECTED" : "").">
-              "._("Miscellaneous")."
-    </SELECT>
-   </TD></TR>
-    
-   <TR><TD ALIGN=RIGHT>
-    "._("Actual Physician").":
-   </TD><TD ALIGN=LEFT>
-    ".freemed_display_selectbox($phy_r, "#phylname#, #phyfname#", "userrealphy")."
-   </TD></TR>
-   
-   </TABLE>
-    "
+		_("User type") =>
+		html_form::select_widget(
+			"usertype",
+			array(
+				_("Physician") => "phy",
+				_("Miscellaneous") => "misc"
+			)
+		),
+
+		_("Actual Physician") =>
+		freemed_display_selectbox($phy_r, "#phylname#, #phyfname#", "userrealphy")
+
+	))
   );
 
   $book->add_page(
@@ -218,14 +241,24 @@ switch($action) { // master action switch
    "
   );
 
+	// Handle "Cancel"
+	if ($book->is_cancelled()) {
+		Header("Location: ".$page_name);
+		die("");
+	}
+
   if (!( $book->is_done() )) {
     $display_buffer .= "<CENTER>\n".$book->display();
-    $display_buffer .= "
-      <A HREF=\"$page_name\">"._("Abandon ".
-       (($action=="add" OR $action=="addform") ? "Addition" : "Modification") )
-      ." </A>
-    </CENTER>\n";
   } else { // now the add/mod code itself
+
+	// Assemble flags
+	$flags = 0;
+	if (is_array($userlevel)) {
+		foreach($userlevel AS $k => $v) {
+			$flags |= $v;
+		}
+	}
+
     if ($action=="mod" || $action=="modform") {
       $display_buffer .= "
         <P ALIGN=CENTER>
@@ -241,7 +274,7 @@ switch($action) { // master action switch
 			"username"     => $username,
 			"userpassword" => $userpassword1,
 			"userdescrip"  => $userdescrip,
-			"userlevel"    => $userlevel,
+			"userlevel"    => $flags,
 			"usertype"     => $usertype,
 			"userfac"      => sql_squash($userfac),
 			"userphy"      => sql_squash($userphy),
@@ -262,7 +295,7 @@ switch($action) { // master action switch
 			"username"     => $username,
 			"userpassword" => $userpassword1,
 			"userdescrip"  => $userdescrip,
-			"userlevel"    => $userlevel,
+			"userlevel"    => $flags,
 			"usertype"     => $usertype,
 			"userfac"      => sql_squash($userfac),
 			"userphy"      => sql_squash($userphy),
@@ -296,6 +329,8 @@ switch($action) { // master action switch
          >"._("Go back to user menu")."</A>
         <P>
     ";
+	// Set automatic refresh
+	$refresh = $page_name;
   
   } // if 'done'
 
@@ -323,6 +358,10 @@ switch($action) { // master action switch
     <A HREF=\"$page_name?action=view\"
      >"._("Go back to user menu")."</A>
   ";
+
+	// Set automatic refresh
+	$refresh = $page_name."?action=view";
+  
  break;
 
  default:
@@ -334,7 +373,8 @@ switch($action) { // master action switch
 	//       OR MAKE IT A MODULE, INHEIRITING FROM THE MAINTENANCE
 	//       MODULE
 
-  $query = "SELECT * FROM $table_name ORDER BY $order_field";
+  $query = "SELECT * FROM ".addslashes($table_name)." ".
+	"ORDER BY ".addslashes($order_field);
 
   $result = $sql->query($query);
   if ($result) {
