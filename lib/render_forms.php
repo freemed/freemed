@@ -13,6 +13,15 @@ define ('__RENDER_FORMS_PHP__', true);
 // ********* FIXED FORMS SECTION **********
 // ****************************************
 
+// User defined sort function for rows and columns
+function objbyrowcol ( $a, $b ) {
+	// If the rows are the same, use the columns for comparison
+	if ($a->row == $b->row)
+		return ( ($a->col < $b->col) ? -1 : 1 );
+	// Otherwise sort by the rows
+	return ( ($a->row < $b->row) ? -1 : 1 );
+} // end function objbyrowcol
+
 class diagnosisSet {
 	var $internal_stack;      // internal "stack" of codes
 	var $stack_size;          // number currently in queue
@@ -276,19 +285,8 @@ function render_fixedForm ($id) {
 		);
 	} // end for loop
 
-  /* THIS DOESN'T WORK !!! SOMEONE DO AN INSERTION SORT!!!
-     BEGIN FUBAR'D CODE -----------------------------------
-  // bubble sort so that everything else works
-
-  for ($i=($number_of_entries-1);$i>=0;$i--) {
-   for ($j=1;$j<=$i;$j++) {
-    $a = $form_entry [$i-1]; $b = $form_entry [$i];
-    if ( ($a->rows > $b->rows) or
-         (($a->rows <= $b->rows) and ($a->cols > $b->cols)) )
-     swap_fixedFormEntry ($form_entry [$i-1], $form_entry [$i]);
-   } // end inner bubble sort routine
-  } // end outer bubble sort routine
-     END OF HUGE BLOCK OF FUBAR'D CODE -------------------- */
+	// Sort by using user defined sort function
+	usort($form_entry, "objbyrowcol");     
 
 	$cur_row    = 1;  // reset row
 	$cur_col    = 1;  // reset col
@@ -348,94 +346,78 @@ function render_fixedForm ($id) {
 
 
 function render_fixedRecord ($id,$rectype="") {
-		global $display_buffer;
-  global $debug;
+	global $display_buffer;
+	global $debug;
 
-  if ($debug) $display_buffer .= "\nEntered render_fixedForm<BR>\n";
-  flush ();
+	if ($debug) $display_buffer .= "\nEntered render_fixedForm<BR>\n";
+	flush ();
 
-  if (empty($rectype))
-      return "";
+	if (empty($rectype)) return "";
 
-  $this_form  = freemed_get_link_rec ($id, "fixedform"); // get record
-  $linelength = $this_form ["fflinelength"];
-  $pagelength = $this_form ["ffpagelength"];
-  $rows       = fm_split_into_array ($this_form["ffrow"    ]);
-  $cols       = fm_split_into_array ($this_form["ffcol"    ]);
-  $lens       = fm_split_into_array ($this_form["fflength" ]);
-  $datas      = fm_split_into_array ($this_form["ffdata"   ]);
-  $formats    = fm_split_into_array ($this_form["ffformat" ]);
-  $comments   = fm_split_into_array ($this_form["ffcomment"]);
-  $number_of_entries = count ($rows);
+	$this_form  = freemed_get_link_rec ($id, "fixedform"); // get record
+	$linelength = $this_form ["fflinelength"];
+	$pagelength = $this_form ["ffpagelength"];
+	$rows       = fm_split_into_array ($this_form["ffrow"    ]);
+	$cols       = fm_split_into_array ($this_form["ffcol"    ]);
+	$lens       = fm_split_into_array ($this_form["fflength" ]);
+	$datas      = fm_split_into_array ($this_form["ffdata"   ]);
+	$formats    = fm_split_into_array ($this_form["ffformat" ]);
+	$comments   = fm_split_into_array ($this_form["ffcomment"]);
+	$number_of_entries = count ($rows);
 
-  if ($debug) $display_buffer .= "\nnumber of entries = $number_of_entries<BR>\n";
-  flush();
+	if ($debug) $display_buffer .= "\nnumber of entries = $number_of_entries<BR>\n";
+	flush();
 
-  $x=0;
-   // import entries into array
-  for ($i=0;$i<$number_of_entries;$i++) 
-  {
+	$x=0;
+	// import entries into array
+	for ($i=0;$i<$number_of_entries;$i++) {
 		if ($rows[$i] != $rectype)
 			continue;
-    	$form_entry [$x] = new fixedFormEntry ($rows[$i],    $cols[$i],
-                                           $lens[$i],    $datas[$i],
-                                           $formats[$i], $comments[$i]);
+	    	$form_entry [$x] = new fixedFormEntry (
+			$rows[$i],
+			$cols[$i],
+			$lens[$i],
+			$datas[$i],
+			$formats[$i],
+			$comments[$i]
+		);
 		$x++;
-  } // end for loop
+	} // end for loop
 
-/*
-  //THIS DOESN'T WORK !!! SOMEONE DO AN INSERTION SORT!!!
-  //   BEGIN FUBAR'D CODE -----------------------------------
-  // bubble sort so that everything else works
+	// Sort by row and column using user-defined function
+	usort($form_entry, "objbyrowcol");
 
+	$cur_row    = 1;  // reset row
+	$cur_col    = 1;  // reset col
+	$cur_entry  = 0;  // start with the first entry
+	$buffer     = ""; // clear buffer
 
-  for ($i=($number_of_entries-1);$i>=0;$i--) {
-   for ($j=1;$j<=$i;$j++) {
-    $a = $form_entry [$i-1]; $b = $form_entry [$i];
-    if ( ($a->rows > $b->rows) or
-         (($a->rows <= $b->rows) and ($a->cols > $b->cols)) )
-     swap_fixedFormEntry ($form_entry [$i-1], $form_entry [$i]);
-   } // end inner bubble sort routine
-  } // end outer bubble sort routine
-   //  END OF HUGE BLOCK OF FUBAR'D CODE -------------------- 
-*/
+	$number_of_entries = count($form_entry);
+	// loop through all entries
+	while ($cur_entry < $number_of_entries) {
+		// Import current entry item
+		$form_item = $form_entry [$cur_entry];
 
-  $cur_row    = 1;  // reset row
-  $cur_col    = 1;  // reset col
-  $cur_entry  = 0;  // start with the first entry
-  $buffer     = ""; // clear buffer
+		if ($form_item->col > $cur_col) {
+			$fillcnt = $form_item->col - $cur_col;
+			$paddat = "";
+			$paddat = str_pad($paddat,$fillcnt);
+			$buffer .= $paddat;
+			$cur_col = $form_item->col;
+		}	
 
-  $number_of_entries = count($form_entry);
-  // loop through all entries
-  while ($cur_entry < $number_of_entries) 
-  {
-    $form_item = $form_entry [$cur_entry]; // import current entry item
+		$buffer .= render_fixedFormEntry ($form_item);
+		$cur_col = $form_item->col + $form_item->len;
+		$cur_entry++; // increment the counter!
+		//$display_buffer .= "cur_col $cur_col<BR>";
+	  } // while there are more entries, loop
 
-
-	if ($form_item->col > $cur_col)
-	{
-		$fillcnt = $form_item->col - $cur_col;
-		$paddat = "";
-		$paddat = str_pad($paddat,$fillcnt);
-		$buffer .= $paddat;
-		$cur_col = $form_item->col;
-	}	
-
-    $buffer .= render_fixedFormEntry ($form_item);
-	$cur_col = $form_item->col + $form_item->len;
-    $cur_entry++; // increment the counter!
-	//$display_buffer .= "cur_col $cur_col<BR>";
-
-  } // while there are more entries, loop
-
-  // add trailing CR to buffer
-  $buffer = str_pad($buffer,$linelength);
-  $buffer .= "\n";
-  //$display_buffer .= "$buffer<BR>";
-  return $buffer;
-
+	// add trailing CR to buffer
+	$buffer = str_pad($buffer,$linelength);
+	$buffer .= "\n";
+	//$display_buffer .= "$buffer<BR>";
+	return $buffer;
 } // end function render_fixedRecord
-
 
 } // end checking for __RENDER_FORMS_PHP__
 
