@@ -118,6 +118,34 @@ class Patient {
 
 } // end class Patient
 
+// class Physician
+
+class Physician {
+  var $local_record;                 // stores basic record
+  var $id;                           // record ID for physician
+  var $phylname,$phyfname,$phymname; // name of physician
+
+  function Physician ($physician = 0) {
+    global $database;
+
+    if ($physician==0) return false;    // error checking
+    $this->local_record = freemed_get_link_rec ($physician, "physician");
+    $this->phylname     = $this->local_record["phylname"];
+    $this->phyfname     = $this->local_record["phyfname"];
+    $this->phymname     = $this->local_record["phymname"];
+  } // end constructor Physician
+
+  function fullName () {
+    return $this->phyfname . " " . $this->phymname .
+      ( (!empty($this->phymname)) ? " " : "" ) . $this->phylname;
+  } // end function fullName
+
+  function practiceName () {
+    return $this->local_record["phypracname"];
+  } // end function practiceName
+
+} // end class Physician
+
 // class User
 
 class User {
