@@ -675,7 +675,7 @@
    echo "
      <P>
       <CENTER>
-      <$STDFONT_B><B>$Patient</B><$STDFONT_E> :
+      <$STDFONT_B>$Patient<$STDFONT_E> :
       <A HREF=\"manage.php3?$_auth&id=$patient\"
       ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
       </CENTER>
@@ -686,11 +686,27 @@
 
    // procedures display
    echo "
-     <P>
-      <CENTER>
-       <$STDFONT_B><B>Procedures</B><$STDFONT_E>
-      </CENTER>
-     <P>
+     <!-- Outer Table -->
+     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
+      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
+     <TR><TD ALIGN=CENTER>
+       <$STDFONT_B COLOR=\"#ffffff\" SIZE=+1>Procedures<$HEADERFONT_E>
+     </TD></TR>
+     <TR><TD>
+   ";
+
+   freemed_display_actionbar("procedure.php3");
+   echo "
+     <TR><TD>
+     
+     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
+      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
+     <TR>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Date<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Procedure<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Comment<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Action<$STDFONT_E></TD>
+     </TR>
    ";
    // special jimmy-rigged query to find in 3d array...
    $query = "SELECT * FROM procrec
@@ -700,44 +716,83 @@
                     (proceoc='$id'))
              ORDER BY procdt DESC";
    $result = fdb_query ($query);
+   $_alternate=freemed_bar_alternate_color($_alternate);
    if (($result) and (fdb_num_rows($result)>0)) { // if there is a result
-    echo "<CENTER>\n";
     while ($r = fdb_fetch_array ($result)) {
-     $p_id = $r["id"];
-     $p_dt = $r["procdt"];
-     $p_co = $r["proccomment"];
+     $p_id     = $r["id"];
+     $p_cpt    = $r["proccpt"];
+     $p_cptmod = $r["proccptmod"];
+     $p_dt     = $r["procdt"]; // date
+     $p_co     = fm_prepare($r["proccomment"]);
      if (empty($p_co)) { $p_co = "NO DESCRIPTION"; }
      if (strlen ($p_co)>50) $p_co = substr ($p_co, 0, 50)."...";
+     $_alternate=freemed_bar_alternate_color($_alternate);
      echo "
-       <A HREF=\"procedure.php3?$_auth&id=$p_id&action=view&".
-        "patient=$patient\"
-       ><$STDFONT_B>$p_dt<$STDFONT_E></A> - ".fm_prep ($p_co)."<BR>
+       <TR>
+        <TD>
+         <A HREF=\"procedure.php3?$_auth&id=$p_id&action=view&".
+         "patient=$patient\"
+         ><$STDFONT_B>$p_dt<$STDFONT_E></A> - ".fm_prep ($p_co)."<BR>
+        </TD>
+	<TD>
+         <$STDFONT_B>$p_cpt_name<$STDFONT_E>
+	</TD>
+	<TD>
+	 <$STDFONT_B>$p_co<$STDFONT_E>
+	</TD>
+     ";
+     if (freemed_get_userlevel($LoginCookie)>$database_level)
+       echo "
+	  <A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=modform&".
+          "patient=$patient\"
+          ><$STDFONT_B>MOD<$STDFONT_E></A>
+       ";
+     if (freemed_get_userlevel($LoginCookie)>$delete_level)
+       echo "
+	  &nbsp;<A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=display&".
+          "patient=$patient\"
+          ><$STDFONT_B>DEL<$STDFONT_E></A>
+       ";
+     echo "
+	&nbsp;
+	</TD>
+       </TR>
      ";
     } // end of while
-    echo "</CENTER>\n";
+    echo "</TABLE>\n";
    } else { // if there is no result
     echo "
-     <CENTER>
-      <$STDFONT_B>No Procedures<$STDFONT_E>
-     </CENTER>
+     <TR><TD ALIGN=CENTER BGCOLOR=$_alternate COLSPAN=4>
+      <$STDFONT_B><I>No Procedures</I><$STDFONT_E>
+     </TD></TR></TABLE>
     ";
    } // end if/else for result
+   freemed_display_actionbar("procedure.php3");
    echo "
-     <P>
-     <CENTER>
-      <$STDFONT_B><A HREF=\"procedure.php3?$_auth&action=addform".
-       "&patient=$patient\">Add a Procedure</A><$STDFONT_E>
-     </CENTER>
+     </TD></TR></TABLE><!-- End Outer Table -->
    ";
    // end of procedures display
-
+   echo "<BR>\n";
    // progress notes display
    echo "
-     <P>
-      <CENTER>
-       <$STDFONT_B><B>Progress Notes</B><$STDFONT_E>
-      </CENTER>
-     <P>
+     <!-- Outer Table -->
+     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
+      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
+     <TR><TD ALIGN=CENTER>
+       <$STDFONT_B COLOR=\"#ffffff\" SIZE=+1>Progress Notes<$HEADERFONT_E>
+     </TD></TR>
+     <TR><TD>
+   ";
+   freemed_display_actionbar("progress_notes.php3");
+   echo "
+     <TR><TD>
+     
+     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
+      ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
+     <TR>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Date<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Action<$STDFONT_E></TD>
+     </TR>
    ";
    // special jimmy-rigged query to find in 3d array...
    $result = 0;
@@ -750,30 +805,48 @@
              ORDER BY pnotesdt DESC";
    $result = fdb_query ($query);
    if (($result) and (fdb_num_rows($result)>0)) { // if there is a result
-    echo "<CENTER>\n";
     while ($r = fdb_fetch_array ($result)) {
      $p_id = $r["id"];
      $p_dt = $r["pnotesdt"];
+     $_alternate=freemed_bar_alternate_color($_alternate);
      echo "
-       <A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=display&".
-       "patient=$patient\"
-       ><$STDFONT_B>$p_dt ($p_id)<$STDFONT_E></A><BR>
+      <TR BGCOLOR=$_alternate>
+        <TD>
+	  <A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=display&".
+          "patient=$patient\"
+          ><$STDFONT_B>$p_dt ($p_id)<$STDFONT_E></A>
+        </TD>
+	<TD>
+     ";
+     if (freemed_get_userlevel($LoginCookie)>$database_level)
+       echo "
+	  <A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=modform&".
+          "patient=$patient\"
+          ><$STDFONT_B>MOD<$STDFONT_E></A>
+       ";
+     if (freemed_get_userlevel($LoginCookie)>$delete_level)
+       echo "
+	  &nbsp;<A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=display&".
+          "patient=$patient\"
+          ><$STDFONT_B>DEL<$STDFONT_E></A>
+       ";
+     echo "
+	&nbsp;
+	</TD>
+      </TR>
      ";
     } // end of while
-    echo "</CENTER>\n";
    } else { // if there is no result
     echo "
-     <CENTER>
-      <$STDFONT_B>No Progress Notes<$STDFONT_E>
-     </CENTER>
+     <TR BGCOLOR=$_alternate><TD COLSPAN=2 ALIGN=CENTER>
+      <$STDFONT_B><I>No Progress Notes</I><$STDFONT_E>
+     </TD></TR>
     ";
    } // end if/else for result
+   echo "</TABLE>\n";
+   freemed_display_actionbar("progress_notes.php3");
    echo "
-     <P>
-     <CENTER>
-      <$STDFONT_B><A HREF=\"progress_notes.php3?$_auth&action=addform".
-       "&patient=$patient\">Add Progress Notes</A><$STDFONT_E>
-     </CENTER>
+     </TD></TR></TABLE><!-- End Outer Table -->
    ";
    // end of progress notes display
 
@@ -782,9 +855,7 @@
      <P>
      <CENTER>
       <A HREF=\"$page_name?$_auth&patient=$patient\"
-      ><$STDFONT_B>Choose $record_name<$STDFONT_E></A> <B>|</B>
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
-      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+      ><$STDFONT_B>Choose Another $record_name<$STDFONT_E></A>
      </CENTER>
      <P>
    ";
