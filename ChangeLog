@@ -3,6 +3,10 @@ freemed project changelog
 * Wed Dec 13 2000 rufustfirefly
   - started implementing new phpwebtools 0.2 PHP module loader classes and
     functions -- beginning of a new era in PHP application development
+  - created modules/ directory with test module and awful port of
+    type_of_service module to new style. should make intermediate classes,
+    then extend *them* for the maintenance modules, to allow for less coding
+    and more sweet goodness.
 
 * Tue Dec 12 2000 rufustfirefly
   - moved payment_record.php over to using the wizard class

@@ -252,7 +252,7 @@ function freemed_display_box_bottom ($_null="")
 // function freemed_display_box_top
 function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 {
-  global $language, $topbar_color,
+  global $language, $topbar_color, $module,
    $_auth, $page_name, $action, $id, $patient, $_pg_desc, $_ref,
    $admin_level, $delete_level, $export_level, $database_level,
    $menubar_color, $LoginCookie, $STDFONT_B, $STDFONT_E, $current_patient;
@@ -557,7 +557,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 			   $index_field="", $flags=-1)
 {
   global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
-  global $modify_level, $delete_level, $patient, $action;
+  global $modify_level, $delete_level, $patient, $action, $module;
   global $page_name, $$cur_page_var, $max_num_res;
   global $_s_field, $_s_val;
 
@@ -606,7 +606,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
-     "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
+     "&module=$module&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
         "._("Previous")."
      <$STDFONT_E></A>
     </TD>
@@ -616,8 +616,9 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      <$STDFONT_B COLOR=\"#ffffff\">
      "._("Page ".$$cur_page_var." of $num_pages")."
      <$STDFONT_E>
-     <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"$action\" >
-     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
+     <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".prepare($action)."\" >
+     <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\" >
+     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
      ".fm_number_select($cur_page_var, 1, $num_pages)."
      <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
     </TD>".
@@ -628,7 +629,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
-     "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
+     "&module=$module&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
         "._("Next")."
      <$STDFONT_E></A>
     </TD></TR>
@@ -705,7 +706,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
         $buffer .= "
       <TD>
         <A HREF=\"$page_link?$_auth&patient=$patient&action=display&id=".
-	"$this_result[id]\"><$STDFONT_B
+	"$this_result[id]&module=$module\"><$STDFONT_B
 	  >$item_text<$STDFONT_E></A>&nbsp;
       </TD>
         ";
@@ -724,21 +725,21 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     ";
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
-        <A HREF=\"$page_link?$_auth&patient=$patient&action=view&id=".
+        <A HREF=\"$page_link?$_auth&module=$module&patient=$patient&action=view&id=".
 	"$this_result[id]\"><$STDFONT_B>"._("VIEW")."<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$database_level AND 
          ($flags & ITEMLIST_MOD)) {
       $buffer .= "
-        <A HREF=\"$page_link?$_auth&patient=$patient&action=modform&id=".
+        <A HREF=\"$page_link?$_auth&module=$module&patient=$patient&action=modform&id=".
 	"$this_result[id]\"><$STDFONT_B>"._("MOD")."<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$delete_level AND
          ($flags & ITEMLIST_DEL)) {
       $buffer .= "
-        <A HREF=\"$page_link?$_auth&patient=$patient&action=delete&id=".
+        <A HREF=\"$page_link?$_auth&patient=$patient&module=$module&action=delete&id=".
 	"$this_result[id]\"><$STDFONT_B>"._("DEL")."<$STDFONT_E></A>&nbsp;
       ";
     }
