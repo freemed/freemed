@@ -221,7 +221,15 @@ class UnreadFaxes extends MaintenanceModule {
 			"WHERE id='".addslashes($id)."'");
 
 		global $refresh;
-		$refresh = $page_name."?module=".get_class($this);
+		//$refresh = $page_name."?module=".get_class($this);
+
+		$GLOBALS['display_buffer'] = '<br/>'.
+			template::link_bar(array(
+				__("View Patient Record") =>
+				'manage.php?id='.urlencode($rec['urfpatient']),
+				__("Return to Unread Fax Menu") =>
+				$this->page_name.'?module='.get_class($this)
+			));
 	} // end method mod
 
 } // end class UnreadFaxes
