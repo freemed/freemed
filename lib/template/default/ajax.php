@@ -12,7 +12,15 @@ ob_start();
 ?>
 
 <!-- Hidden div tag -->
-<style type="text/css">.hiddendiv { display: none; }</style>
+<style type="text/css">
+.hiddendiv {
+	display: none;
+	font-size: 10pt;
+	border-left: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-right: 1px solid #000000;
+}
+</style>
 
 <!-- Javascript libraries for AJAX -->
 <script language="javascript" src="lib/template/default/stringTokenizer.js"></script>
@@ -66,7 +74,7 @@ function x_<?php print $name; ?>_populate(data) {
 				try {
 					var _k = innerTokenizer.nextToken();
 					var _v = innerTokenizer.nextToken();
-					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: '+myColor+';"><a style="hiddendivchoice" onClick="x_<?php print $name; ?>_set_field(\'' + _k + '\', ' + _v + ');">' + _k + '</a></div>\n';
+					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: '+myColor+';" onClick="x_<?php print $name; ?>_set_field(\'' + _k + '\', ' + _v + ');"><span>' + _k + '</span></div>\n';
 				} catch (e) {}
 			} else {
 				document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: '+myColor+';">' + _this_one + '</div>\n';
@@ -77,9 +85,12 @@ function x_<?php print $name; ?>_populate(data) {
 }
 </script>
 
-<input type="text" id="<?php print $name; ?>_text" size="50" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; }" value="<?php if (${$name}) { print $obj->to_text(${$name}); } ?>" autocomplete="off" />
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><input type="text" id="<?php print $name; ?>_text" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; }" value="<?php if (${$name}) { print $obj->to_text(${$name}); } ?>" autocomplete="off" />
 <input type="hidden" id="<?php print $name; ?>" name="<?php print $name; ?>" value="<?php if (${$name}) { print htmlentities(${$name}); } ?>" />
-<div id="<?php print $name; ?>_hiddendiv" class="hiddendiv"></div>
+</td></tr>
+<tr><td width="300"><div id="<?php print $name; ?>_hiddendiv" class="hiddendiv"></div></td></tr>
+</table>
 <?php
 	$buffer .= ob_get_contents();
 	ob_end_clean();
