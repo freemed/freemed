@@ -245,8 +245,7 @@ switch ($action) {
       } else {
       $guarantor = new Patient ($this_patient->ptdep);
       echo "
-         <A HREF=\"patient.php3?$_auth&action=find&criteria=guarantor&".
-         "f1=".$this_patient->ptdep."\"
+         <A HREF=\"manage.php3?$_auth&action=view&id=".$this_patient->ptdep."\"
          ><$STDFONT_B>Guarantor<$STDFONT_E></A>
 	</TD><TD><$STDFONT_B>[".$guarantor->fullName()."]<$STDFONT_E></TD></TR>
       ";
