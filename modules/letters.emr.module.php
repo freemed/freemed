@@ -205,7 +205,7 @@ class LettersModule extends EMRModule {
 		),
 
 		__("Text") =>
-		html_form::text_area("lettertext", 20, 4),
+		html_form::text_area("lettertext", 'VIRTUAL', 25, 70),
 
 		)));
 
