@@ -23,6 +23,10 @@ class patientImages extends freemedEMRModule {
 	var $order_by      = "imagedt";
 
 	function patientImages () {
+		// Get browser information
+		$browser = new browser_detect();
+		if ($browser->BROWSER=="IE") $this->IEupload = true;
+
 		// Define variables for EMR summary
 		$this->summary_vars = array (
 			_("Date")        =>	"imagedt",
@@ -48,7 +52,29 @@ class patientImages extends freemedEMRModule {
 
 		// call parent constructor
 		$this->freemedEMRModule();
-	} // end constructor progressNotes
+	} // end constructor patientImages
+
+	function activeXupload () {
+		global $display_buffer;
+		$buffer .= "
+		<SCRIPT LANGUAGE=\"VBScript\">
+		<!--
+		Sub ScanControl_ScanComplete(FileName)
+			document.myform.imageupload.focus()
+			document.myform.ScanControl.PasteName()
+		End Sub
+		-->
+		</SCRIPT>
+		<OBJECT ID=\"ScanControl\"
+			CLASSID=\"CLSID:4A72D130-BBAD-45BD-AB11-E506466200EA\"
+			CODEBASE=\"./lib/webscanner.cab#version=1,0,0,20\">
+			<!-- CODEBASE=\"http://www.internext.co.za/stefan/webtwain/WebScanner.CAB#version=1,0,0,20\"> -->
+		</OBJECT>
+		<BR/>
+		<INPUT TYPE=\"FILE\" NAME=\"imageupload\">
+		";
+		return $buffer;
+	} // end function patientImages->activeXupload
 
 	function add () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module;
@@ -169,7 +195,7 @@ $debug = true;
 		$display_buffer .= "
 		<DIV ALIGN=\"CENTER\">
 		<FORM METHOD=\"POST\" ACTION=\"module_loader.php\" ".
-		"ENCTYPE=\"multipart/form-data\">
+		"ENCTYPE=\"multipart/form-data\" NAME=\"myform\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"module\" ".
 		"VALUE=\"".prepare($module)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"id\" ".
@@ -192,8 +218,12 @@ $debug = true;
 				"imagetype",
 				array(
 					_("Insurance Card") => "insurance_card",
+					_("Lab Report") => "lab_report",
 					_("Miscellaneous") => "misc",
+					_("Pathology") => "pathology",
+					_("Patient History") => "patient_history",
 					_("Questionnaire") => "questionnaire",
+					_("Radiology") => "radiology",
 					_("Referral") => "referral"
 				)
 			)
@@ -206,7 +236,8 @@ $debug = true;
 
 			_("Attach Image") =>
 			( (($action=="add") || ($action=="addform")) ?
-			"<INPUT TYPE=\"FILE\" NAME=\"imageupload\">" :
+			( ($this->IEupload) ? $this->activeXupload() :
+			"<INPUT TYPE=\"FILE\" NAME=\"imageupload\">" ) :
 			_("ATTACHED") )
 
 		)));
