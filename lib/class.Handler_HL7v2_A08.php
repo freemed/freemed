@@ -7,6 +7,7 @@ LoadObjectDependency('_FreeMED.Handler_HL7v2');
 class Handler_HL7v2_A08 extends Handler_HL7v2 {
 
 	function Handle () {
+		syslog(LOG_INFO, 'HL7 parser| Entered A08 parser');
 		if (!is_object($this->parser)) {
 			die('Handler_HL7v2_A08: parser object not present');
 		}
@@ -37,6 +38,7 @@ class Handler_HL7v2_A08 extends Handler_HL7v2 {
 				'pthphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_HOME]),
 				'ptwphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_WORK]),
 				'ptssn' => $this->_StripToNumeric($v[HL7v2_PID_SOCIALSECURITY]),
+				'ptid' => $v[HL7v2_PID_ID]
 			);
 			if ($GLOBALS['sql']->results($exist_query)) {
 				// Exists, proceed with A08
@@ -53,6 +55,7 @@ class Handler_HL7v2_A08 extends Handler_HL7v2 {
 				);
 			}
 			//print "query = $query<br>\n";
+			syslog(LOG_INFO, 'HL7 parser| query = '.$query);
 			$result = $GLOBALS['sql']->query($query);
 		}
 	} // end method Handle
