@@ -237,6 +237,7 @@
      $fac[city]         = $this_facility[psrcity];
      $fac[state]        = $this_facility[psrstate];
      $fac[zip]          = $this_facility[psrzip];
+     $fac[ein]          = $this_facility[psrein];
 
      // current date hashes
      $curdate[mmddyy]   = date ("mdy");
