@@ -2,6 +2,7 @@ freemed project changelog
 ($Id$)
 
 * Thu Apr 19 2001 fforest
+  - data/EN/fixedform.EN.data now contains the intake report
   - README add httpd.conf requirement for Alias /tmp /bills
   - manage.php added code to load the new emr_report module
   - module_loader added include for module_emr_report.php
