@@ -20,8 +20,8 @@ class AgedPatientReport extends ReportsModule {
 
 	function view() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
 		$ages_greater = array(00,30,60,090,00120);
 		$ages_lesseq  = array(30,60,90,120,99999);
 
@@ -34,42 +34,43 @@ class AgedPatientReport extends ReportsModule {
 		//		 "ORDER BY procphysician,procpatient,proccurcovid,procage";
 
 	
-		$query = "SELECT 
-				d.insconame,
-				b.ptlname,
-				a.procbalcurrent,
-				a.procdt,
-				b.ptfname,
-				e.id,
-				TO_DAYS(CURRENT_DATE)-TO_DAYS(a.procdt) as procage
-				FROM procrec as a, patient as b, insco as d, coverage as e
-				WHERE 
-				a.procbalcurrent>'0' AND 
-				a.procbillable='0'  AND
-				a.procpatient=b.id AND
-				a.proccurcovid=e.id AND
-				e.covinsco=d.id
-				ORDER BY b.ptlname,d.insconame,procage
-		";
-
+		$query = "SELECT ".
+				"d.insconame AS insconame, ".
+				"a.procbalcurrent AS procbalcurrent, ".
+				"a.procdt AS procdt, ".
+				"b.ptlname AS ptlname, ".
+				"b.ptfname AS ptfname, ".
+				"e.id AS id, ".
+				"TO_DAYS(CURRENT_DATE)-TO_DAYS(a.procdt) as procage ".
+				"FROM procrec as a, patient as b, ".
+					"insco as d, coverage as e ".
+				"WHERE ".
+				"a.procbalcurrent>'0' AND ".
+				"a.procbillable='0' AND ".
+				"a.procpatient=b.id AND ".
+				"a.proccurcovid=e.id AND ".
+				"e.covinsco=d.id ".
+				"ORDER BY b.ptlname,d.insconame,procage";
 
 		$aged_result = $sql->query($query);
 
-		if ($sql->num_rows($aged_result) <= 0)
-			$display_buffer .= "No unpaid procedures found<BR>";
+		if ($sql->num_rows($aged_result) <= 0) {
+			$display_buffer .= "No unpaid procedures found\n<p/>\n";
+			return false;
+		}
 
 		$prevpat = "0";
 		$previnsco = "0";
 
 		$display_buffer .= "
-		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
-		<TR>
-		<TD><B>"._("Patient")."</B></TD>
-		<TD><B>"._("Insurance")."</B></TD>
-		<TD><B>"._("DOS")."</B></TD>
-		<TD><B>"._("Balance")."</B></TD>
-		<TD><B>"._("Days Old")."</B></TD>
-		</TR>
+		<table BORDER=\"0\" CELLSPACING=\"2\" CELLPADDING=\"2\" WIDTH=\"100%\">
+		<tr>
+		<td><b>"._("Patient")."</b></td>
+		<td><b>"._("Insurance")."</b></td>
+		<td><b>"._("DOS")."</b></td>
+		<td><b>"._("Balance")."</b></td>
+		<td><b>"._("Days Old")."</b></td>
+		</tr>
 		";
 
 
@@ -84,37 +85,35 @@ class AgedPatientReport extends ReportsModule {
 				if ($prevpat != "0") // not first time thru
 				{
 					// calc pat totals.
-					$display_buffer .= $this->pattotals($pattot,$_alternate);
+					$display_buffer .= $this->pattotals($pattot);
 				}
 
 				$prevpat = $pat;
 				//$patrow = freemed::get_link_rec($pat,"patient");
-				$patname = $row[ptlname].", ".$row[ptfname];
+				$patname = $row['ptlname'].", ".$row['ptfname'];
 				//$display_buffer .= "patname $patname<BR>";
 				$grandtot += $pattot;
 				$pattot = 0;
 				$previnsco="0";
-
-
 			}
 
-			if ($previnsco != $row[insconame])
+			if ($previnsco != $row['insconame'])
 			{
 				//$covrec = freemed::get_link_rec($row[proccurcovid],"coverage");
 				//$insco = freemed::get_link_rec($covrec[covinsco],"insco");
-				$insconame = $row[insconame];	
-				$previnsco = $row[insconame];
+				$insconame = $row['insconame'];	
+				$previnsco = $row['insconame'];
 			}
 
 			$age = $row[procage];
-			$display_buffer .= "<TR CLASS=\"".freemed_alternate()."\">";
-			$display_buffer .= "<TD>$patname</TD>";
-			$display_buffer .= "<TD>$insconame</TD>";
-			$display_buffer .= "<TD>$row[procdt]</TD>";
-			$bal = bcadd($row[procbalcurrent],0,2);
-			$display_buffer .= "<TD ALIGN=RIGHT>$bal</TD>";
-			$display_buffer .= "<TD ALIGN=RIGHT>$age</TD>";
-			$display_buffer .= "</TR>";
+			$display_buffer .= "<tr CLASS=\"".freemed_alternate()."\">\n";
+			$display_buffer .= "<td>$patname</td>\n";
+			$display_buffer .= "<td>$insconame</td>\n";
+			$display_buffer .= "<td>".$row['procdt']."</td>\n";
+			$bal = bcadd($row['procbalcurrent'],0,2);
+			$display_buffer .= "<td ALIGN=\"RIGHT\">$bal</td>\n";
+			$display_buffer .= "<td ALIGN=\"RIGHT\">$age</td>\n";
+			$display_buffer .= "</tr>";
 			$pattot += $bal;
 			$phyname="&nbsp;";
 			$patname="&nbsp;";
@@ -123,13 +122,13 @@ class AgedPatientReport extends ReportsModule {
 		}
 
 		// calc pat totals.
-		$display_buffer .= $this->pattotals($pattot,$_alternate);
+		$display_buffer .= $this->pattotals($pattot);
 
 		$grandtot += $pattot;
 
 		// calc grand totals
-		$display_buffer .= $this->grtotals($grandtot,$_alternate);
-		$display_buffer .= "</TABLE>";
+		$display_buffer .= $this->grtotals($grandtot);
+		$display_buffer .= "</table>";
 				 
 
 	} // end view function
@@ -137,30 +136,30 @@ class AgedPatientReport extends ReportsModule {
 	function pattotals($total,$color)
 	{
 		// calc pat totals.
-		$buffer =  "<TR CLASS=\"".( isset($color) ?
-			$color : freemed_alternate() )."\">";
-		$buffer .=  "<TD><B>"._("Patient Total")."</B></TD>";
-		$buffer .=  "<TD>&nbsp;</TD>";
-		$buffer .=  "<TD>&nbsp;</TD>";
+		$buffer =  "<tr CLASS=\"".( isset($color) ?
+			$color : freemed_alternate() )."\">\n";
+		$buffer .=  "<td><b>"._("Patient Total")."</b></td>\n";
+		$buffer .=  "<td>&nbsp;</td>\n";
+		$buffer .=  "<td>&nbsp;</td>\n";
 		$pattot = bcadd($total,0,2);
-		$buffer .=  "<TD ALIGN=RIGHT><B>$pattot</B></TD>";
-		$buffer .=  "<TD ALIGN=RIGHT>&nbsp;</TD>";
-		$buffer .=  "</TR>";
+		$buffer .=  "<td ALIGN=RIGHT><b>$pattot</b></td>\n";
+		$buffer .=  "<td ALIGN=\"RIGHT\">&nbsp;</td>\n";
+		$buffer .=  "</tr>\n";
 		return $buffer;
 	}
 
 	function grtotals($total,$color)
 	{
 		// calc pat totals.
-		$buffer =  "<TR CLASS=\"".(
+		$buffer =  "<tr CLASS=\"".(
 			isset($color) ? $color : freemed_alternate() )."\">\n";
-		$buffer .=  "<TD><B>"._("Grand Total")."</B></TD>";
-		$buffer .=  "<TD>&nbsp;</TD>";
-		$buffer .=  "<TD>&nbsp;</TD>";
+		$buffer .=  "<td><b>"._("Grand Total")."</b></td>\n";
+		$buffer .=  "<td>&nbsp;</td>\n";
+		$buffer .=  "<td>&nbsp;</td>\n";
 		$phytot = bcadd($total,0,2);
-		$buffer .=  "<TD ALIGN=RIGHT><B>$phytot</B></TD>";
-		$buffer .=  "<TD ALIGN=RIGHT>&nbsp;</TD>";
-		$buffer .=  "</TR>";
+		$buffer .=  "<td ALIGN=\"RIGHT\"><b>$phytot</b></td>\n";
+		$buffer .=  "<td ALIGN=\"RIGHT\">&nbsp;</td>\n";
+		$buffer .=  "</tr>\n";
 		return $buffer;
 	}
 

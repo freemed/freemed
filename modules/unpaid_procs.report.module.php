@@ -3,7 +3,7 @@
  // desc: patient demographic report module
  // lic : LGPL
 
-LoadObjectDependency('FreeMED.ReportModule');
+LoadObjectDependency('FreeMED.ReportsModule');
 
 class UnpaidProceduresReport extends ReportsModule {
 
@@ -49,7 +49,7 @@ class UnpaidProceduresReport extends ReportsModule {
        		<TD><B>"._("Ledger")."</B></TD>
        		<TD><B>"._("Billed")."</B></TD>
        		<TD><B>"._("Date Billed")."</B></TD>
-            <TD><B>"._("Balance")."</B></TD>
+	        <TD><B>"._("Balance")."</B></TD>
       		</TR>
     		"; // header of box
  			$total_unpaid = 0.00;
@@ -59,16 +59,15 @@ class UnpaidProceduresReport extends ReportsModule {
                 $billed = 1;
 			while ($r = $sql->fetch_array($result)) 
 			{
-
-      			$id        = $r["id"        ] ;
-      			$ptlname  = $r["ptlname"  ] ;
-      			$ptfname  = $r["ptfname"  ] ;
+      				$id = $r["id"        ] ;
+      				$ptlname  = $r["ptlname"  ] ;
+      				$ptfname  = $r["ptfname"  ] ;
 				$procbalcurrent = $r["procbalcurrent"];
 				$procbilled = $r["procbilled"];
 				$procdtbilled = $r["procdtbilled"];
 				if ($prev_patient=="$$") // first time
 				{
-					$prev_patient = $id;
+					$prev_patient = $r['id'];
 					$prev_lname = $ptlname;
 					$prev_fname = $ptfname;
 					$oldest_bill = "0000-00-00";
@@ -76,27 +75,28 @@ class UnpaidProceduresReport extends ReportsModule {
 
         		// alternate the bar color
 
-				if ($id != $prev_patient)
+				if ($r['id'] != $prev_patient)
 				{
       				$display_buffer .= "
-        				<TR CLASS=\"".freemed_alternate()."\">
-        				<TD><A HREF=
+        				<tr CLASS=\"".freemed_alternate()."\">
+        				<td><a HREF=
          				\"manage.php?id=$prev_patient\"
-         				>$prev_lname, $prev_fname</A></TD>
-                  		<TD><A HREF=
+         				>$prev_lname, $prev_fname</a></td>
+                  		<td><a HREF=
                   		\"$this->page_name?id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
-                  		><FONT SIZE=-1>"._("View/Manage")."</FONT></A></TD>
-                  		<TD><A HREF=
+                  		><small>"._("View/Manage")."</small></a></td>
+                  		<td><a HREF=
                   		\"$this->page_name?patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
-                  		><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
+                  		><small>"._("Patient Ledger")."</small></a></td>
       					";
-					if (!$billed)
-						$display_buffer .= "<TD> <FONT COLOR=#ff0000>&nbsp;NO&nbsp;</FONT></TD>";
-					else
-						$display_buffer .= "<TD>YES</TD>";
-					$display_buffer .= "<TD>$oldest_bill</TD>";
+					if (!$billed) {
+						$display_buffer .= "<td CLASS=\"cell_hilite\">&nbsp;NO&nbsp;</td>\n";
+					} else {
+						$display_buffer .= "<td>YES</td>\n";
+					}
+					$display_buffer .= "<td>$oldest_bill</td>\n";
 					$total_unpaid += $patient_balance;  // add to grand total
-                                $display_buffer .= "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
+                                $display_buffer .= "<td ALIGN=\"RIGHT\">".bcadd($patient_balance,0,2)."</td>\n";
 	
 					// reset control break
 
@@ -110,56 +110,56 @@ class UnpaidProceduresReport extends ReportsModule {
 					$display_buffer .= "</TR>";
 				}	
 				$patient_balance += $procbalcurrent;
-				if ($procdtbilled > "0000-00-00")
+				if ($procdtbilled != "0000-00-00")
 				{
-					if ($oldest_bill == "0000-00-00")
+					if ($oldest_bill == "0000-00-00") {
 						$oldest_bill = $procdtbilled;
-					else
-					if ($procdtbilled < $oldest_bill)
+					} elseif ($procdtbilled < $oldest_bill) {
 						$oldest_bill = $procdtbilled;
+					}
 				}
 
 				// it only takes 1 unbilled to show NO
-				if (!$procbilled)
+				if (!$procbilled) {
 					$billed = 0;
+				}
 
     		} // while there are no more
 			// process last record from control break;
             $display_buffer .= "
-               <TR CLASS=\"".freemed_alternate()."\">
-                  <TD><A HREF=
+               <tr CLASS=\"".freemed_alternate()."\">
+                  <td><a HREF=
                   \"manage.php?id=$id\"
-                  >$prev_lname, $prev_fname</A></TD>
-                  <TD><A HREF=
+                  >$prev_lname, $prev_fname</a></td>
+                  <td><a HREF=
                   \"$this->page_name?id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
-                  ><FONT SIZE=-1>"._("View/Manage")."</FONT></A></TD>
-                 <TD><A HREF=
+                  ><small>"._("View/Manage")."</small></a></td>
+                 <td><a HREF=
                  \"$this->page_name?patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
-                 ><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
+                 ><small>"._("Patient Ledger")."</small></a></td>
                   ";
-                  if (!$billed)
-                      $display_buffer .= "<TD> <FONT COLOR=#ff0000>&nbsp;NO&nbsp;</FONT></TD>";
-                  else
-                      $display_buffer .= "<TD>YES</TD>";
-                  $display_buffer .= "<TD>$oldest_bill</TD>";
+                  if (!$billed) {
+                      $display_buffer .= "<td CLASS=\"cell_hilite\">&nbsp;NO&nbsp;</td>\n";
+                  } else {
+                      $display_buffer .= "<td>YES</td>\n";
+		  }
+                  $display_buffer .= "<td>$oldest_bill</td>\n";
                   $total_unpaid += $patient_balance;  // add to grand total
-                  $display_buffer .= "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
+                  $display_buffer .= "<td ALIGN=\"RIGHT\">".bcadd($patient_balance,0,2)."</td>\n";
 			// end control break
 
-			// process totals.
-             $display_buffer .= "<TR>
-			<TD><B>"._("Total")."</B></TD>
-			<TD>&nbsp;</TD>
-			<TD>&nbsp;</TD>
-			<TD>&nbsp;</TD>
-			<TD>&nbsp;</TD>
-			<TD ALIGN=RIGHT><FONT COLOR=#ff0000>".bcadd($total_unpaid,0,2)."</TD>
+		// process totals.
+             $display_buffer .= "<tr>
+			<td><b>"._("Total")."</b></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td ALIGN=\"RIGHT\" CLASS=\"cell_hilite\">".bcadd($total_unpaid,0,2)."</td>
 			</TR>
 			";
 
-	 		$display_buffer .= "
-      			</TABLE>
-    			"; 
+	 		$display_buffer .= "</TABLE>\n"; 
 
 		} // end of result set
 

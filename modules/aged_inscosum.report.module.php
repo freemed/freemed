@@ -20,8 +20,8 @@ class AgedInscoReport extends ReportsModule {
 
 	function view() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
 		$ages_greater = array(00,30,60,090,00120);
 		$ages_lesseq  = array(30,60,90,120,99999);
 
@@ -34,47 +34,48 @@ class AgedInscoReport extends ReportsModule {
 		//		 "ORDER BY procphysician,procpatient,proccurcovid,procage";
 
 	
-		$query = "SELECT 
-				d.insconame,
-				d.inscophone
-				b.ptlname,
-				a.procbalcurrent,
-				b.ptfname,
-				e.id,
-				TO_DAYS(CURRENT_DATE)-TO_DAYS(a.procdt) as procage
-				FROM procrec as a, patient as b, insco as d, coverage as e
-				WHERE 
-				a.procbalcurrent>'0' AND 
-				a.procbillable='0'  AND
-				a.procpatient=b.id AND
-				a.proccurcovid=e.id AND
-				e.covinsco=d.id
-				ORDER BY d.insconame,b.ptlname
-		";
-
+		$query = "SELECT ".
+				"d.insconame AS insconame, ".
+				"d.inscophone AS inscophone, ".
+				"a.procbalcurrent AS procbalcurrent, ".
+				"b.ptlname AS ptlname, ".
+				"b.ptfname AS ptfname, ".
+				"e.id AS id, ".
+				"TO_DAYS(CURRENT_DATE)-TO_DAYS(a.procdt) as procage ".
+				"FROM procrec as a, patient as b, ".
+					"insco as d, coverage as e ".
+				"WHERE ".
+				"a.procbalcurrent>'0' AND ".
+				"a.procbillable='0' AND ".
+				"a.procpatient=b.id AND ".
+				"a.proccurcovid=e.id AND ".
+				"e.covinsco=d.id ".
+				"ORDER BY d.insconame,b.ptlname";
 
 		$aged_result = $sql->query($query);
 
-		if ($sql->num_rows($aged_result) <= 0)
-			$display_buffer .= "No unpaid procedures found<BR>";
+		if ($sql->num_rows($aged_result) <= 0) {
+			$display_buffer .= "No unpaid procedures found\n<p/>\n";
+			return false;
+		}
 
 		$prevpat = "0";
 		$previns = "0";
 		$numbuckets = 5;
 
 		$display_buffer .= "
-		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
-		<TR>
-		<TD><B>"._("Insurance")."</B></TD>
-		<TD><B>"._("Phone")."</B></TD>
-		<TD><B>"._("Patient")."</B></TD>
-		<TD ALIGN=CENTER><B>&lt;30</B></TD>
-		<TD ALIGN=CENTER><B>30</B></TD>
-		<TD ALIGN=CENTER><B>60</B></TD>
-		<TD ALIGN=CENTER><B>90</B></TD>
-		<TD ALIGN=CENTER><B>120&gt;</B></TD>
-		<TD ALIGN=CENTER><B>Total</B></TD>
-		</TR>
+		<table BORDER=\"0\" CELLSPACING=\"2\" CELLPADDING=\"2\" WIDTH=\"100%\">
+		<tr>
+		<td><B>"._("Insurance")."</b></td>
+		<td><B>"._("Phone")."</b></td>
+		<td><B>"._("Patient")."</b></td>
+		<td ALIGN=\"CENTER\"><b>&lt;30</b></td>
+		<td ALIGN=\"CENTER\"><b>30</b></td>
+		<td ALIGN=\"CENTER\"><b>60</b></td>
+		<td ALIGN=\"CENTER\"><b>90</b></td>
+		<td ALIGN=\"CENTER\"><b>120&gt;</b></td>
+		<td ALIGN=\"CENTER\"><b>"._("Total")."</b></td>
+		</tr>
 		";
 
 		for ($i=0;$i<$numbuckets;$i++)
@@ -86,19 +87,18 @@ class AgedInscoReport extends ReportsModule {
 
 		while($row = $sql->fetch_array($aged_result))
 		{
-			$pat = $row[ptlname].", ".$row[ptfname];
-			$insconame = $row[insconame];	
-			$inscoph = $row[inscophone];
+			$pat = $row['ptlname'].", ".$row['ptfname'];
+			$insconame = $row['insconame'];	
+			$inscoph = $row['inscophone'];
 		
 			//$display_buffer .= "pat $pat ins $insconame<BR>";
-
 
 			if ($prevpat != $pat)
 			{
 				if ($prevpat != "0") // not first time thru
 				{
 					// calc pat totals.
-					$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
+					$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat);
 					$patinsph = "&nbsp;";
 				}
 
@@ -117,7 +117,7 @@ class AgedInscoReport extends ReportsModule {
 				if ($previns != "0")
 				{
 					// calc ins totals.
-					$display_buffer .= $this->instotals($ins_bucket,$_alternate);
+					$display_buffer .= $this->instotals($ins_bucket);
 
 				}
 				$previns = $insconame;
@@ -133,24 +133,25 @@ class AgedInscoReport extends ReportsModule {
 			}
 
 
-			$age = $row[procage];
-			$bal = bcadd($row[procbalcurrent],0,2);
+			$age = $row['procage'];
+			$bal = bcadd($row['procbalcurrent'], 0, 2);
 
-			if ($age < 30)
+			if ($age < 30) {
 				$pat_bucket[0] += $bal;
-			elseif ($age < 60)
+			} elseif ($age < 60) {
 				$pat_bucket[1] += $bal;
-			elseif ($age < 90)
+			} elseif ($age < 90) {
 				$pat_bucket[2] += $bal;
-			elseif ($age < 120)
+			} elseif ($age < 120) {
 				$pat_bucket[3] += $bal;
-			else
+			} else {
 				$pat_bucket[4] += $bal;
+			}
 				
 		}
 
 		// calc pat totals.
-		$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
+		$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat);
 
 		for ($i=0;$i<$numbuckets;$i++)
 		{
@@ -159,7 +160,7 @@ class AgedInscoReport extends ReportsModule {
 		}
 
 		// calc ins totals.
-		$display_buffer .= $this->instotals($ins_bucket,$_alternate);
+		$display_buffer .= $this->instotals($ins_bucket);
 
 		for ($i=0;$i<$numbuckets;$i++)
 		{
@@ -167,11 +168,9 @@ class AgedInscoReport extends ReportsModule {
 			$ins_bucket[$i] = 0;
 		}
 		// calc ins totals.
-		$display_buffer .= $this->instotals($tot_bucket,$_alternate);
+		$display_buffer .= $this->instotals($tot_bucket);
 
-		$display_buffer .= "</TABLE>";
-				 
-
+		$display_buffer .= "</table>\n";
 	} // end view function
 
 	function pattotals($insname,$insphone,$total,$patname,$color) {
@@ -179,48 +178,47 @@ class AgedInscoReport extends ReportsModule {
 		$num = count($total);
 
 		// calc pat totals.
-		$buffer =  "<TR CLASS=\"".(
+		$buffer =  "<tr CLASS=\"".(
 			isset($color) ? $color : freemed_alternate() )."\">\n";
-		$buffer .=  "<TD>$insname</TD>\n";
-		$buffer .=  "<TD>$insphone</TD>\n";
-		$buffer .=  "<TD>$patname</TD>\n";
+		$buffer .=  "<td>$insname</td>\n";
+		$buffer .=  "<td>$insphone</td>\n";
+		$buffer .=  "<td>$patname</td>\n";
 
 		$pattot = 0;
 		for ($i=0;$i<$num;$i++)
 		{
-			$bal = bcadd($total[$i],0,2);
-			$buffer .=  "<TD ALIGN=RIGHT>$bal</TD>\n";
+			$bal = bcadd($total[$i], 0, 2);
+			$buffer .=  "<td ALIGN=\"RIGHT\">$bal</td>\n";
 			$pattot += $bal;
 		}
-		$pattot = bcadd($pattot,0,2);
-		$buffer .=  "<TD ALIGN=RIGHT>$pattot</TD>\n";
-		$buffer .=  "</TR>\n";
+		$pattot = bcadd($pattot, 0, 2);
+		$buffer .=  "<td ALIGN=\"RIGHT\">$pattot</td>\n";
+		$buffer .=  "</tr>\n";
 		return $buffer;
-	}
+	} // end function AgedInscoReport->pattotals
 
 	function instotals($total,$color) {
 		$num = count($total);
 
 		// calc ins totals.
-		$buffer =  "<TR CLASS=\"".(
+		$buffer =  "<tr CLASS=\"".(
 			isset($color) ? $color : freemed_alternate() )."\">\n";
-		$buffer .=  "<TD><B>"._("Total")."</B></TD>\n";
-		$buffer .=  "<TD>&nbsp;</TD>\n";
-		$buffer .=  "<TD>&nbsp;</TD>\n";
+		$buffer .=  "<td><b>"._("Total")."</b></td>\n";
+		$buffer .=  "<td>&nbsp;</td>\n";
+		$buffer .=  "<td>&nbsp;</td>\n";
 
 		$pattot = 0;
 		for ($i=0;$i<$num;$i++)
 		{
 			$bal = bcadd($total[$i],0,2);
-			$buffer .=  "<TD ALIGN=RIGHT><B>$bal</B></TD>\n";
+			$buffer .=  "<td ALIGN=\"RIGHT\"><b>$bal</b></td>\n";
 			$pattot += $bal;
 		}
 		$pattot = bcadd($pattot,0,2);
-		$buffer .=  "<TD ALIGN=RIGHT><B>$pattot</B></TD>\n";
-		$buffer .=  "</TR>\n";
+		$buffer .=  "<td ALIGN=\"RIGHT\"><b>$pattot</b></td>\n";
+		$buffer .=  "</tr>\n";
 		return $buffer;
-	}
-
+	} // end function AgedInscoReport->instotals
 
 } // end class AgedInscoReport
 
