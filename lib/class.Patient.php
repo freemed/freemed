@@ -150,6 +150,12 @@ class Patient {
 		} // end if for checking for date of birth
 	} // end function Patient->fullName
 
+	function to_text ( ) {
+		return $this->ptlname.", ".$this->ptfname." ".
+			$this->ptmname." [ ".$this->ptdob." ] ".
+			$this->ptid;
+	} // end method to_text
+
 	// Method: Patient->dateOfBirth
 	//
 	//	Determine patient's date of birth.
