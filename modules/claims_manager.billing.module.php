@@ -74,7 +74,9 @@ class ClaimsManager extends BillingModule {
 
 		$search_form->setDefaults(array(
 			'criteria[payer]' => '',
+			'criteria[plan]' => '',
 			'criteria[last_name]' => '',
+			'criteria[first_name]' => '',
 			'criteria[patient]' => '',
 			'criteria[aging]' => ''
 		));
@@ -102,15 +104,44 @@ class ClaimsManager extends BillingModule {
 		);
 		$aging_form->addGroup($payer_group, null, null, '&nbsp;');
 		*/
+
+		$search_form->addElement(
+			'header', '', __("Payer Criteria") );
+		
 		$cl = CreateObject('FreeMED.ClaimLog');
 		$search_form->addElement(
 			'select', 'criteria[payer]', __("Payer"),
 			array_flip($cl->aging_insurance_companies( )) );
 
+		// Plan name
+		$search_form->addElement(
+			'select', 'criteria[plan]', __("Plan Name"),
+			array_flip ( $cl->aging_insurance_plans ( ) ) );
+
+		$search_form->addElement(
+			'header', '', __("Patient Criteria") );
+	
+		$patient_element[] = &HTML_QuickForm::createElement(
+			'text', 'criteria[last_name]', __("Last Name"),
+			array ( 'size' => 25, 'maxlength' => '50' ) );
+		$patient_element[] = &HTML_QuickForm::createElement(
+			'text', 'criteria[first_name]', __("First Name"),
+			array ( 'size' => 25, 'maxlength' => '50' ) );
+		$search_form->addGroup($patient_element, null, 
+			__("Name (Last, First)"), '&nbsp;');
+
+		$search_form->addElement(
+			'header', '', __("Claim Criteria") );
+		
 		// Sort by procedure status
 		$search_form->addElement(
-			'select', 'criteria[status]', __("Status"),
+			'select', 'criteria[status]', __("Claim Status"),
 			$cl->procedure_status_list ( ) );
+
+		// Date of service
+		$search_form->addElement(
+			'static', 'criteria[date]', __("Date of Service"),
+			fm_date_entry('criteria[date]') );
 
 		// Add search/submit group
 		$submit_group[] = &HTML_QuickForm::createElement(
@@ -170,11 +201,13 @@ class ClaimsManager extends BillingModule {
 			$count = $count + 1;
 			$table->setCellContents($count, 0, 
 				'<a href="'.$this->_search_link(array(
+					'date' => '', // clear date
 					'payer' => $hash['payer_id']
 				)).'">'.$payer.'</a>');
 			// Set agings
 			$table->setCellContents($count, 1,
 				'<a href="'.$this->_search_link(array(
+					'date' => '', // clear date
 					'payer' => $hash['payer_id'],
 					'aging' => '0-30'
 				)).'">'.
@@ -184,6 +217,7 @@ class ClaimsManager extends BillingModule {
 				($hash['0-30']['claims']+0).'</i>');
 			$table->setCellContents($count, 3,
 				'<a href="'.$this->_search_link(array(
+					'date' => '', // clear date
 					'payer' => $hash['payer_id'],
 					'aging' => '31-60'
 				)).'">'.
@@ -193,6 +227,7 @@ class ClaimsManager extends BillingModule {
 				($hash['31-60']['claims']+0).'</i>');
 			$table->setCellContents($count, 5,
 				'<a href="'.$this->_search_link(array(
+					'date' => '', // clear date
 					'payer' => $hash['payer_id'],
 					'aging' => '61-90'
 				)).'">'.
@@ -202,6 +237,7 @@ class ClaimsManager extends BillingModule {
 				($hash['61-90']['claims']+0).'</i>');
 			$table->setCellContents($count, 7,
 				'<a href="'.$this->_search_link(array(
+					'date' => '', // clear date
 					'payer' => $hash['payer_id'],
 					'aging' => '91-120'
 				)).'">'.
@@ -211,6 +247,7 @@ class ClaimsManager extends BillingModule {
 				($hash['91-120']['claims']+0).'</i>');
 			$table->setCellContents($count, 9,
 				'<a href="'.$this->_search_link(array(
+					'date' => '', // clear date
 					'payer' => $hash['payer_id'],
 					'aging' => '120+'
 				)).'">'.
@@ -254,10 +291,14 @@ class ClaimsManager extends BillingModule {
 			'style' => 'border: 1px solid; border-color: #000000;'	
 		));
 
+		foreach ($_REQUEST['criteria'] AS $k => $v) {
+//			print "(criteria) k = $k, v = $v<hr/>\n";
+		}
+
 		//----- Create main table
 		$display_buffer .= "<table border=\"0\" width=\"90%\" ".
 			"style=\"border: 1pt solid;\"><tr>".
-			"<td width=\"70%\" style=\"border: 1pt solid;\">\n".
+			"<td width=\"65%\" style=\"border: 1pt solid;\">\n".
 			"<center>".
 			"<big><b><u>".__("Search Criteria")."</u></b></big>".
 			"</center>".
@@ -326,12 +367,12 @@ class ClaimsManager extends BillingModule {
 
 		//----- Process criteria arguments ...
 		$display_buffer .= "<td valign=\"top\" align=\"right\" ".
-			"width=\"30%\" style=\"border: 1pt solid;\">\n".
+			"width=\"35%\" style=\"border: 1pt solid;\">\n".
 			"<center>".
 			"<big><b><u>".__("Current Criteria")."</u></b></big>".
 			"</center>".
 			"<br/>\n";
-		if ($_REQUEST['criteria']['patient'] and !$_REQUEST['criteria']['last_name']) {
+		if ($_REQUEST['criteria']['patient'] and !$_REQUEST['criteria']['last_name'] and !$_REQUEST['criteria']['first_name']) {
 			$patient = CreateObject('FreeMED.Patient', 
 				$_REQUEST['criteria']['patient']);
 			$display_buffer .= "<b>".__("Patient").":".
@@ -359,6 +400,14 @@ class ClaimsManager extends BillingModule {
 				))."\" class=\"remove_link\">X</a><br/>\n";
 			$criteria['last_name'] = $_REQUEST['criteria']['last_name'];
 		} // last name
+		if ($_REQUEST['criteria']['first_name']) {
+			$display_buffer .= "<b>".__("First Name like").":".
+				"</b> ".$_REQUEST['criteria']['first_name']."</b> ".
+				"<a href=\"".$this->_search_link(array(
+					'first_name' => ''	
+				))."\" class=\"remove_link\">X</a><br/>\n";
+			$criteria['first_name'] = $_REQUEST['criteria']['first_name'];
+		} // first name
 		if ($_REQUEST['criteria']['aging']) {
 			$display_buffer .= "<b>".__("Aged Claims").
 				": </b>".$_REQUEST['criteria']['aging']." ".
@@ -366,7 +415,7 @@ class ClaimsManager extends BillingModule {
 					'aging' => ''	
 				))."\" class=\"remove_link\">X</a><br/>\n";
 			$criteria['aging'] = $_REQUEST['criteria']['aging'];
-		}
+		} // end aging
 		if ($_REQUEST['criteria']['date']) {
 			$display_buffer .= "<b>".__("Procedures On").
 				": </b>".$_REQUEST['criteria']['date']." ".
@@ -374,7 +423,7 @@ class ClaimsManager extends BillingModule {
 					'date' => ''	
 				))."\" class=\"remove_link\">X</a><br/>\n";
 			$criteria['date'] = $_REQUEST['criteria']['date'];
-		}
+		} // end date
 		if ($_REQUEST['criteria']['status']) {
 			$display_buffer .= "<b>".__("Status").
 				": </b>".$_REQUEST['criteria']['status']." ".
@@ -382,7 +431,15 @@ class ClaimsManager extends BillingModule {
 					'status' => ''	
 				))."\" class=\"remove_link\">X</a><br/>\n";
 			$criteria['status'] = $_REQUEST['criteria']['status'];
-		}
+		} // end status
+		if ($_REQUEST['criteria']['plan']) {
+			$display_buffer .= "<b>".__("Plan").
+				": </b>".$_REQUEST['criteria']['plan']." ".
+				"<a href=\"".$this->_search_link(array(
+					'plan' => ''	
+				))."\" class=\"remove_link\">X</a><br/>\n";
+			$criteria['plan'] = $_REQUEST['criteria']['plan'];
+		} // end plans
 		$display_buffer .= "</td></tr></table><p/>\n";
 
 		// Set up the table layout
@@ -395,6 +452,7 @@ class ClaimsManager extends BillingModule {
 		$table->setHeaderContents(0, 6, __("Balance"));
 
 		// Get aging summary
+		//print "<hr/><b>debug criteria : <br/>"; print_r($criteria); print "<hr/>\n";
 		$matrix = $cl->aging_report_qualified ( $criteria );
 		//print "what is the matrix? "; print_r($matrix); print "<hr/>\n";
 
@@ -422,7 +480,9 @@ class ClaimsManager extends BillingModule {
 			$table->setCellContents($count, 2, '<a href="'.
 				$this->_detail_link(array(
 					'claim' => $hash['claim']
-				)).'">'.$hash['claim'].'</a>');
+				)).'"><acronym TITLE="'.
+				__("View claim details").'">'.
+				$hash['claim'].'</acronym></a>');
 			$table->setCellContents($count, 3, 
 				empty($hash['status']) ? '&nbsp;' :
 				'<a href="'.

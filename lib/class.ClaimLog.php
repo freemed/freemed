@@ -80,6 +80,10 @@ class ClaimLog {
 				if ($v) $q[] = "pt.id = '".addslashes($v)."'";
 				break; // end patient case
 
+				case 'first_name':
+				if ($v) $q[] = "pt.ptfname LIKE '%".addslashes($v)."%'";
+				break; // end first name
+
 				case 'last_name':
 				if ($v) $q[] = "pt.ptlname LIKE '%".addslashes($v)."%'";
 				break; // end last name
@@ -87,6 +91,10 @@ class ClaimLog {
 				case 'payer':
 				if ($v) $q[] = "c.covinsco = '".addslashes($v)."'";
 				break; // end payer case
+
+				case 'plan':
+				if ($v) $q[] = "c.covplanname = '".addslashes($v)."'";
+				break;
 
 				case 'status':
 				if ($v) $q[] = "p.procstatus = '".addslashes($v)."'";
@@ -274,7 +282,17 @@ ORDER BY
 	// Method: aging_insurance_companies
 	//
 	//	Get a picklist of all insurance companies which have
-	//	outstanding balances in the system.
+	//	outstanding balances in the system. Can be limited by
+	//	provider, if optional parameter is given.
+	//
+	// Parameters:
+	//
+	//	$provider - (optional) Provider/physician id key to limit
+	//	the search. Defaults to disabled.
+	//
+	// Returns:
+	//
+	//	Associative array of payers.
 	//
 	function aging_insurance_companies ( $provider = NULL ) {
 		$query = "SELECT CONCAT(i.insconame, ' (', ".
@@ -301,6 +319,41 @@ ORDER BY
 		}
 		return $return;
 	} // end method aging_insurance_companies
+
+	// Method: aging_insurance_plans
+	//
+	//	Get a picklist of all insurance plans which have
+	//	outstanding balances in the system. Can be narrowed
+	//	to only search by one payer.
+	//
+	// Parameters:
+	//
+	//	$payer - (optional) Insurance company id key to limit
+	//	the search. Defaults to disabled.
+	//
+	// Returns:
+	//
+	//	Associative array of plan names.
+	//
+	function aging_insurance_plans ( $payer = NULL ) {
+		$query = "SELECT ".
+				"DISTINCT(c.covplanname) AS plan ".
+			"FROM ".
+				"procrec AS p, coverage AS c ".
+			"WHERE ".
+				"p.proccurcovid=c.id AND ".
+				// Handle by payer
+				( $payer>0 ? "c.covinsco='".addslashes($payer)."' AND " : "" ).
+				"p.procbalcurrent > 0 ".
+			"ORDER BY plan";
+		//print "query = \"$query\"<br/>\n";
+		$result = $GLOBALS['sql']->query ( $query );
+		$return = array ( '----' => '' );
+		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			$return[$r['plan']] = $r['plan'];
+		}
+		return $return;
+	} // end method aging_insurance_plans
 
 	// Method: claim_information
 	//
