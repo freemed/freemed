@@ -1842,23 +1842,28 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
   $buffer = ""; // we use buffered output for notebook class!
   if ($phonevarname=="") return ""; // return nothing if no variable is given
   global $$phonevarname, ${$phonevarname."_1"},
-    ${$phonevarname."_2"}, ${$phonevarname."_3"}, ${$phonevarname."_4"};
+    ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
+    ${$phonevarname."_4"}, ${$phonevarname."_5"};
   if ($array_index == -1) {
     $w  = $$phonevarname;    // whole number
     $p1 = ${$phonevarname."_1"};    // part 1
     $p2 = ${$phonevarname."_2"};    // part 2
     $p3 = ${$phonevarname."_3"};    // part 3
     $p4 = ${$phonevarname."_4"};    // part 4
+    $p5 = ${$phonevarname."_5"};    // part 4
   } else {
     $w  = $$phonevarname[$array_index];  // whole number
     $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
     $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
     $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
     $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
+    $p5 = ${$phonevarname."_5"}[$array_index];  // part 4
   } // end checking for array index
   switch (freemed_config_value("phofmt")) {
     case "usa":
      return $p1.$p2.$p3.$p4;        // assemble number and put it all together
+    case "fr":
+     return $p1.$p2.$p3.$p4.$p5;    // assemble number and put it all together
     case "unformatted":
     default:
      return $w;                     // return whole number...
@@ -1870,20 +1875,23 @@ function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
   if (($arrayvalue+0)==-1) { $suffix="";   }     
   else                     { $suffix="[]"; }
   $formatting = freemed_config_value("phofmt"); // get phone formatting
-  global $$phonevarname, ${$phonevarname."_1"}, ${$phonevarname."_2"},
-         ${$phonevarname."_3"}, ${$phonevarname."_4"}; // get global vars
+  global $$phonevarname, ${$phonevarname."_1"},	 // get global vars
+         ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
+	 ${$phonevarname."_4"}, ${$phonevarname."_5"}; 
   if ($array_index == -1) {
     $w  = $$phonevarname;    // whole number
     $p1 = ${$phonevarname."_1"};    // part 1
     $p2 = ${$phonevarname."_2"};    // part 2
     $p3 = ${$phonevarname."_3"};    // part 3
     $p4 = ${$phonevarname."_4"};    // part 4
+    $p5 = ${$phonevarname."_5"};    // part 5
   } else {
     $w  = $$phonevarname[$array_index];  // whole number
     $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
     $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
     $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
     $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
+    $p5 = ${$phonevarname."_5"}[$array_index];  // part 5
   } // end checking for array index
   if (!empty($w)) {
     // if date is not empty, split into $m, $d, $y
@@ -1893,6 +1901,13 @@ function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
        $p2 = substr($w,  3, 3); // prefix
        $p3 = substr($w,  6, 4); // local number
        $p4 = substr($w, 10, 4); // extention
+       break;
+      case "fr":
+       $p1 = substr($w, 0, 2); 
+       $p2 = substr($w, 2, 2); 
+       $p3 = substr($w, 4, 2); 
+       $p4 = substr($w, 6, 2); 
+       $p5 = substr($w, 8, 2); 
        break;
       case "unformatted":
       default:
@@ -1914,12 +1929,40 @@ function fm_phone_entry ($phonevarname="", $arrayvalue=-1) {
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."_4$suffix\" SIZE=5
        MAXLENGTH=4 VALUE=\"$p4\">
      "; break;
+    case "fr":
+     $buffer .= "
+      <B>(</B>
+      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_1$suffix\" SIZE=3
+       MAXLENGTH=2 VALUE=\"$p1\"> <B>)</B>
+      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_2$suffix\" SIZE=3
+       MAXLENGTH=2 VALUE=\"$p2\"> 
+      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_3$suffix\" SIZE=3
+       MAXLENGTH=2 VALUE=\"$p3\">
+      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_4$suffix\" SIZE=3
+       MAXLENGTH=2 VALUE=\"$p4\">
+      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_5$suffix\" SIZE=3
+       MAXLENGTH=2 VALUE=\"$p4\">
+     "; break;
     case "unformatted": 
     default:
      $buffer .= "
       <INPUT TYPE=TEXT NAME=\"".$phonevarname."$suffix\" SIZE=15
        MAXLENGTH=16 VALUE=\"$w\">
      "; break;
+  } // end switch for dtfmt config value
+  return $buffer;                         // we exited well!
+} // end function fm_phone_entry
+
+function fm_split_into_array ($original_string) {
+  return explode (":", $original_string);
+} // end function fm_split_into_array
+
+function fm_value_in_array ($cur_array, $value) {
+  if (count ($cur_array) < 0) return false; // avoid errors
+  $found = false; // initially presume that it is not there
+  for ($c=0;$c<count($cur_array);$c++) // loop through array
+    if ($cur_array[$c]==$value)        // if there is a match...
+      $found=true;
   } // end switch for dtfmt config value
   return $buffer;                         // we exited well!
 } // end function fm_phone_entry
