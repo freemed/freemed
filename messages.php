@@ -372,7 +372,7 @@ switch ($action) {
 				"<span style=\"border: 1px dotted;\">
 				<b>".prepare($r['msgsubject'])."</b></span> ".
 				"&nbsp; <span>" : "" )."
-				<i>".prepare($r['msgtext'])."</i>
+				<i>".str_replace("\n", "<br/>\n", prepare($r['msgtext']))."</i>
 				".( $r['msgsubject'] ? "</span>" : "" )."
 			</td></tr>
 			";
