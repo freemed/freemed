@@ -447,6 +447,11 @@
          $ref[mmddyyyy]  = $ref[m]."-".$ref[d]."-".$ref[y]; 
        }
 
+       // kill zeros in ref dates
+       $ref[y] = ( ($ref[y]>0) ? $ref[y] : "" );
+       $ref[d] = ( ($ref[d]>0) ? $ref[d] : "" );
+       $ref[m] = ( ($ref[m]>0) ? $ref[m] : "" );
+
        $itemdate    [$number_of_charges] = $p[procdt];
        $itemdate_m  [$number_of_charges] = substr($p[procdt],     5, 2);
        $itemdate_d  [$number_of_charges] = substr($p[procdt],     8, 2);
