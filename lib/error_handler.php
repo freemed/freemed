@@ -37,7 +37,7 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 				$display_buffer .= "
 				<P>
 				<CENTER>
-				<FORM ACTION=\"http://www.freemed.org/report_bug.php\" METHOD=POST
+				<FORM ACTION=\"http://freemed.ourexchange.net/report_bug.php\" METHOD=POST
 				TARGET=\"bug_report\">
 				<INPUT TYPE=HIDDEN NAME=\"report\" VALUE=\"".
 				prepare($error)."\">
