@@ -82,7 +82,7 @@ class GroupCalendar extends CalendarModule {
 
 		// Get facility for current room
 		global $my_facility;
-		$my_facility = $SESSION["default_facility"];
+		$my_facility = $_SESSION["default_facility"];
 
 		// Determine if a physician group is set, if not, default
 		global $group;
@@ -195,7 +195,7 @@ class GroupCalendar extends CalendarModule {
 			// Check for someone covering this day
 			$anquery = "SELECT * FROM anesth WHERE ".
 				"andate='".addslashes($selected_date)."' AND ".
-				"anfacility='".addslashes($SESSION['default_facility'])."'";
+				"anfacility='".addslashes($_SESSION['default_facility'])."'";
 			$anresult = $sql->query($anquery);
 			if ($sql->results($anresult)) {
 				$buffer .= "<div CLASS=\"reverse\">\n".
@@ -228,11 +228,12 @@ class GroupCalendar extends CalendarModule {
 		<TR><TD COLSPAN=\"2\">&nbsp;</TD>
 		";
 		foreach ($physicians AS $k => $v) {
-			if ($k!=1)
+			if ($v >= 0) {
 				$p[$k] = CreateObject('FreeMED.Physician', $v);
-			$buffer .= "<td ALIGN=\"CENTER\"><b>".
+				$buffer .= "<td ALIGN=\"CENTER\"><b>".
 				($v!=0 ? $p[$k]->fullName() : _("Other") ).
 				"</b></td>\n";
+			}
 		}
 		$buffer .= "</TR>\n";
 
@@ -326,10 +327,10 @@ class GroupCalendar extends CalendarModule {
 		</TABLE>
 		</DIV>
 		<BR><BR>
-		<DIV ALIGN=\"CENTER\">
-		<A HREF=\"calendar.php\">"._("Calendar")."</A> |
-		<A HREF=\"main.php\">"._("Return to Main Menu")."</A>
-		</DIV>
+		<div ALIGN=\"CENTER\" class=\"thinbox_noscroll\">
+		<a HREF=\"calendar.php\">"._("Calendar")."</a> |
+		<a HREF=\"main.php\">"._("Return to Main Menu")."</a>
+		</div>
 		";
 
 		return $buffer;
