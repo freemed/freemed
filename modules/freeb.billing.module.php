@@ -477,7 +477,7 @@ class FreeBBillingTransport extends BillingModule {
 		// If we're doing a single claim, handle seperately
 		if ($single != NULL) {
 			// We always pass these ...
-			print "<br/><br/><hr/>processing single = $single<br/>\n";
+			//print "<br/><br/><hr/>processing single = $single<br/>\n";
 			$billkey['contact'] = $_REQUEST['contact'];
 			$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
 			$billkey['service'] = $_REQUEST['service'];
@@ -505,7 +505,7 @@ class FreeBBillingTransport extends BillingModule {
 				$result."<br/>\n";
 			//print "DEBUG: format = ".$format[$single]." target = ".$target[$single]."<br/>\n";
 			//print "DEBUG: "; print_r($result); print "<br/>\n";
-			$buffer .= "Should have returned $result.<br/>\n";
+			//$buffer .= "Should have returned $result.<br/>\n";
 			// Add to claimlog
 			$result = $claimlog->log_billing (
 				$this_billkey,
@@ -513,9 +513,15 @@ class FreeBBillingTransport extends BillingModule {
 				$my_target,
 				__("FreeB billing run sent")
 			);
-			/*
-			$mark = $claimlog->mark_billed ( $this_billkey );
-			*/
+			/* $mark = $claimlog->mark_billed ( $this_billkey ); */
+			$buffer .= __("If you are satisfied with your bills, mark them as sent.")."<br/>".
+			"<a href=\"".page_name()."?".
+			"module=".urlencode($_REQUEST['module'])."&".
+			"action=".urlencode($_REQUEST['action'])."&".
+			"type=".urlencode($_REQUEST['type'])."&".
+			"keys=".urlencode(serialize($__billkeys)).
+			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
+
 			return $buffer;
 		}
 
@@ -526,10 +532,11 @@ class FreeBBillingTransport extends BillingModule {
 			list ($my_format, $my_target) =
 				$this->MediaToFormatTarget($my_claim, $media[$single]);
 			$hash_key = $my_format.'__'.$my_target;
-			print "hash key = $hash_key<br/>\n";
+			//print "hash key = $hash_key<br/>\n";
 
 			// Only process if the claim is to be billed
-			if ($to_bill == 1) {
+			// (also check for null hash key)
+			if (($to_bill == 1) and ($hash_key != '__')) {
 				// And the patient is supposed to be billed
 		//TODO Jeff, this check does not belong here. It should not display a claim that is 
 		// not set to be billed in the interface.
