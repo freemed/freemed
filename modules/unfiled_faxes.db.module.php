@@ -143,7 +143,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			return result;
 		}
 		</script>
-		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\" id=\"myform\" onSubmit=\"return validate(this);\">
+		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\" id=\"myform\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
 		<input type=\"hidden\" name=\"action\" value=\"view\"/>
@@ -172,12 +172,16 @@ class UnfiledFaxes extends MaintenanceModule {
 		</div>
 		<div align=\"center\">
 		<input type=\"submit\" name=\"submit_action\" ".
+		"onClick=\"return validate(this.form);\" ".
 		"class=\"button\" value=\"".__("Send to Provider")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
+		"onClick=\"return validate(this.form);\" ".
 		"class=\"button\" value=\"".__("File without First Page")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
+		"onClick=\"return validate(this.form);\" ".
 		"class=\"button\" value=\"".__("File Directly")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
+		"onClick=\"return validate(this.form);\" ".
 		"class=\"button\" value=\"".__("File Directly without First Page")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Split Batch")."\"/>
