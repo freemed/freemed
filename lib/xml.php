@@ -14,6 +14,17 @@ if (!defined ("__XML_PHP__")) {
 
 define ('__XML_PHP__', true);
 
+// internal function
+function xmlptval( $tag, $val, $tab=2 ) {
+	global $__this_patient;
+	unset ($tabs);
+	for ($i=1;$i<=$tab;$i++) $tabs .= "\t";
+	if (isset($__this_patient->local_record["$val"])) {
+		return $tabs."<".stripslashes($tag)." VALUE=\"".
+			prepare($__this_patient->local_record["$val"])."\"/>\n";
+	}
+} // end fucntion xmlptval
+
 function freemed_emr_xml_export ( $this_patient ) {
 
 	// WARNING: This is *still* untested code, and may or may not
@@ -22,6 +33,8 @@ function freemed_emr_xml_export ( $this_patient ) {
 
 	// Also, please note that $this_patient is a patient object,
 	// not a patient identifier.
+
+	global $__this_patient; $__this_patient = $this_patient;
 
 	// clear emr_xml
 	$emr_xml = "";
@@ -33,37 +46,45 @@ function freemed_emr_xml_export ( $this_patient ) {
 	$emr_xml .= "<Patient PID=\"".prepare($this_patient->pid)."\" ".
 		"Version=\"".prepare($this_patient->version)."\">\n";
 	$emr_xml .= "\t<Name>\n";
-	$emr_xml .= "\t\t<First>".prepare($this_patient->ptfname)."</First>\n";
-	$emr_xml .= "\t\t<Middle>".prepare($this_patient->ptmname)."</Middle>\n";
-	$emr_xml .= "\t\t<Last>".prepare($this_patient->ptlname)."</Last>\n";
+	$emr_xml .= "\t\t<First VALUE=\"".prepare($this_patient->ptfname).
+		"\"/>\n";
+	$emr_xml .= "\t\t<Middle VALUE=\"".prepare($this_patient->ptmname).
+		"\"/>\n";
+	$emr_xml .= "\t\t<Last VALUE=\"".prepare($this_patient->ptlname).
+		"\"/>\n";
 	$emr_xml .= "\t</Name>\n";
 
 	$emr_xml .= "\t<Contact>\n";
-	if (!empty($this_patient->local_record["ptaddr1"]))
-		$emr_xml .= "\t\t<Street>".prepare(
-			$this_patient->local_record["ptaddr1"]).
-			"</Street>\n";
-	if (!empty($this_patient->local_record["ptaddr2"]))
-		$emr_xml .= "\t\t<Street>".prepare(
-			$this->patient->local_record["ptaddr2"]).
-			"</Street>\n";
-	$emr_xml .= "\t\t<City>".prepare(
-		$this_patient->local_record["ptcity"])."</City>\n";
-	$emr_xml .= "\t\t<StateProvince>".prepare(
-		$this_patient->local_record["ptstate"])."</StateProvince>\n";
-	$emr_xml .= "\t\t<PostalCode>".prepare(
-		$this_patient->local_record["ptzip"])."</PostalCode>\n";
-	$emr_xml .= "\t\t<Email>".prepare(
-		$this_patient->local_record["ptemail"])."</Email>\n";
-	if (!empty($this_patient->local_record["pthphone"]))
-		$emr_xml .= "\t\t<PhoneNumber Location=\"Home\">".prepare(
-			$this->patient->local_record["pthphone"]).
-			"</PhoneNumber>\n";
-	if (!empty($this_patient->local_record["ptwphone"]))
-		$emr_xml .= "\t\t<PhoneNumber Location=\"Work\">".prepare(
-			$this->patient->local_record["ptwphone"]).
-			"</PhoneNumber>\n";
+	$emr_xml .= xmlptval("Street", "ptaddr1");
+	$emr_xml .= xmlptval("Street", "ptaddr2");
+	$emr_xml .= xmlptval("City", "ptcity");
+	$emr_xml .= xmlptval("StateProvince", "ptstate");
+	$emr_xml .= xmlptval("PostalCode", "ptzip");
+	$emr_xml .= xmlptval("Country", "ptcountry");
+	$emr_xml .= xmlptval("Email", "ptemail");
+	$emr_xml .= xmlptval("PhoneNumber Location=\"Home\"", "pthphone");
+	$emr_xml .= xmlptval("PhoneNumber Location=\"Work\"", "ptwphone");
+	$emr_xml .= xmlptval("PhoneNumber Location=\"Facsimile\"", "ptfax");
+	$emr_xml .= xmlptval("NextOfKin", "ptnextofkin");
 	$emr_xml .= "\t</Contact>\n";
+
+	$emr_xml .= "\n<!-- need to categorize these -->\n\n";
+
+	$emr_xml .= "\t<Personal>\n";
+	$emr_xml .= xmlptval("DateOfBirth", "ptdob");
+	$emr_xml .= xmlptval("Gender", "ptsex");
+	$emr_xml .= xmlptval("SocialSecurityNumber", "ptssn");
+	$emr_xml .= xmlptval("DriversLicence", "ptdmv");
+	$emr_xml .= xmlptval("MaritalStatus", "ptmarital");
+	$emr_xml .= "\t</Personal>\n";
+
+	$emr_xml .= "\t<Latest>\n";
+	$emr_xml .= xmlptval("DateOfLastVisit", "ptdol");
+	$emr_xml .= xmlptval("Diagnosis", "ptdiag1");
+	$emr_xml .= xmlptval("Diagnosis", "ptdiag2");
+	$emr_xml .= xmlptval("Diagnosis", "ptdiag3");
+	$emr_xml .= xmlptval("Diagnosis", "ptdiag4");
+	$emr_xml .= "\t</Latest>\n";
 
 	$emr_xml .= "\n<!-- ancillary generated section begin -->\n";
 
