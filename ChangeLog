@@ -23,6 +23,7 @@ freemed project changelog
   - moved move_appointment.php3 -> move_appointment.php3
   - moved physician_day_view.php3 -> physician_day_view.php
   - moved physician_week_view.php3 -> physician_week_view.php
+  - moved freemed-mail-functions.inc -> lib/mail-functions.php
 
 * Thu Dec 21 2000 rufustfirefly
   - more work on typeOfServiceMaintenance, now using module_maintenance.php

@@ -66,7 +66,7 @@
 
   include ("global.var.inc") ;             // load global variables
   include ("freemed-functions.inc") ;      // API functions
-//  include ("freemed-mail-functions.inc") ; // Mailing functions
+//  include ("lib/mail-functions.php") ; // Mailing functions
 
     // *** setting _ref cookie ***
     // if you are going to be "chaining" out from this

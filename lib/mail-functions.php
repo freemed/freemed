@@ -1,14 +1,14 @@
 <?php
- // file: freemed-mail-functions.inc
+ // $Id$
  // desc: functions/classes to allow inline mailing
  // code: Sascha Schumann <sascha@schumann.cx>,
  //       Tobias Ratschiller <tobias@dnet.it>,
  //       jeff b <jeff@univrel.pr.uconn.edu>
  // lic : GPL, v2
 
-if (!defined (__FREEMED_MAIL_FUNCTIONS_INC__)) {
+if (!defined (__MAIL_FUNCTIONS_PHP__)) {
 
-define (__FREEMED_MAIL_FUNCTIONS_INC__, true);
+define (__MAIL_FUNCTIONS_PHP__, true);
 
  // Class mail_message
  // formerly: Class mime_mail
@@ -120,6 +120,6 @@ class mail_message {
                                       
   */
 
-} // end checking for __FREEMED_MAIL_FUNCTIONS_INC__
+} // end checking for __MAIL_FUNCTIONS_PHP__
 
 ?>
