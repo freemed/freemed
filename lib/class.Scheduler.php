@@ -360,6 +360,7 @@ class Scheduler {
 	function find_date_appointments ( $date, $provider = -1 ) {
 		$query = "SELECT * FROM scheduler WHERE ".
 			"(caldateof = '".addslashes($date)."' ".
+			"AND calstatus != 'cancelled' ".
 			( $provider != -1 ? 
 				"AND calphysician = '".prepare($provider)."'" :
 				"" ).
@@ -381,8 +382,10 @@ class Scheduler {
 	//	information.
 	//
 	function find_group_appointments ( $group_id ) {
-		$query = "SELECT * FROM scheduler WHERE ".
-			"( calgroupid = '".addslashes($group_id)."' ) ".
+		$query = "SELECT * FROM scheduler WHERE ( ".
+			"calgroupid = '".addslashes($group_id)."' ".
+			"AND calstatus != 'cancelled' ".
+			" ) ".
 			"ORDER BY caldateof, calhour, calminute";
 		return $this->_query_to_result_array ( $query );
 	} // end method find_group_appointments
@@ -1028,7 +1031,7 @@ class Scheduler {
 		foreach ($c_days AS $this_day) {
 			$m_criteria = array_merge(
 				$b_criteria,
-				array("caldateof = '".addslashes($this_day)."'")
+				array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'")
 			);
 			$map = $this->map(
 				"SELECT * FROM scheduler WHERE ".
