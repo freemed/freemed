@@ -21,6 +21,10 @@ switch ($action) {
   // Push onto stack
   page_push();
 
+  // Check for default physician
+  $ciphysician = ($this_user->isPhysician() ? $this_user->getPhysician() :
+    0 );
+
   // ... continue ...
   if (strlen($citookcall)<1) {
     $citookcall = $this_user->getDescription();
@@ -37,7 +41,7 @@ switch ($action) {
 
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2
      VALIGN=TOP ALIGN=CENTER>
-    <TR><TD COLSPAN=2 ALIGN=CENTER>
+    <TR VALIGN=\"TOP\"><TD COLSPAN=2 ALIGN=CENTER VALIGN=\"TOP\">
       <B><FONT COLOR=#000000>"._("Name")."</FONT></B>
     </TD></TR>
     <TR>
@@ -108,8 +112,7 @@ switch ($action) {
     <P>
     ";
     
-    $fac_r = $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote");
-    if (!isset($cifacility)) $cifacility=$default_facility; 
+    if (!isset($cifacility)) $cifacility=$SESSION["default_facility"]; 
       // doesn't seem to hurt, but doesn't seem to do anything...
    
     $display_buffer .= "
@@ -128,7 +131,9 @@ switch ($action) {
      <TR>
       <TD ALIGN=RIGHT><FONT>"._("Facility")." </FONT></TD>
       <TD>
-      ".freemed_display_selectbox ($fac_r, "#psrname# [#psrnote#]", "cifacility")."
+      ".freemed_display_selectbox (
+      $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote"),
+      "#psrname# [#psrnote#]", "cifacility")."
       </TD>
      </TR>
      <TR>
