@@ -1183,7 +1183,9 @@ if ($action=="addform") {
           <TD><$STDFONT_B>$ptlname<$STDFONT_E></TD>
           <TD><$STDFONT_B>$ptfname<$STDFONT_E></TD>
           <TD><$STDFONT_B>$ptdob<$STDFONT_E></TD>
-          <TD><$STDFONT_B>$ptid<$STDFONT_E></TD>
+          <TD><$STDFONT_B>".
+            ( !empty($ptid) ? $ptid : "&nbsp;" ) .
+           "<$STDFONT_E></TD>
           <TD>
         ";
         //if (freemed_get_userlevel ($LoginCookie)>$delete_level) {
