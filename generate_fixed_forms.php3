@@ -514,14 +514,15 @@
          Marking $processed[$i] ... 
        ";
        $query = "UPDATE $database.procedure
-                 SET procbilled = 1
+                 SET procbilled = '1'
                  WHERE (
-                   (procpatient = '".$processed[$i]."') AND
-                   (procbilled  = 0)
+                   (procpatient    = '".$processed[$i]."') AND
+                   (procbilled     = 0) AND
+                   (procbalcurrent > 0)
                  )";
        $result = fdb_query ($query);
-       if ($result) { echo "$Done."; }
-        else        { echo "$ERROR"; }
+       if ($result) { echo "$Done.<BR>\n"; }
+        else        { echo "$ERROR<BR>\n"; }
      }
      echo "
       <P>
