@@ -30,10 +30,16 @@ switch ($action) {
 	// Set default urgency to 3
 	if (!isset($msgurgency)) { $msgurgency = 3; }
 
+	// If !been_here and there's a current patient, use them
+	if ((!$been_here) and $SESSION["current_patient"]>0) {
+		$msgpatient = $SESSION["current_patient"];
+	}
+
 	$display_buffer .= "
 	<P>
 	<FORM NAME=\"myform\" ACTION=\"$page_name\" METHOD=POST>
 	<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
+	<INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
 	<CENTER>
 	".html_form::form_table(array(
 		_("For") =>
