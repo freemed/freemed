@@ -34,6 +34,7 @@ class FreeBBillingTransport extends BillingModule {
 		// Set appropriate associations
 		$this->_SetHandler('BillingFunctions', 'transport');
 		$this->_SetMetaInformation('BillingFunctionName', __("FreeB Billing System"));
+		$this->_SetMetaInformation('BillingFunctionDescription', __("Use the FreeB formatting and transport system to send insurance claims electronically or generate paper claims."));
 
 		// Call parent constructor
 		$this->BillingModule();
@@ -395,8 +396,13 @@ class FreeBBillingTransport extends BillingModule {
 				$my_target,
 				'SingleProcedure_'.$single
 			);
-			print "DEBUG: format = ".$format[$single]." target = ".$target[$single]."<br/>\n";
-			print "DEBUG: "; print_r($result); print "<br/>\n";
+
+			$buffer .= "<div class=\"section\">".
+				__("FreeB Billing Sent")."</div><br/>\n";
+			$buffer .= __("Result file returned was")." ".
+				$result."<br/>\n";
+			//print "DEBUG: format = ".$format[$single]." target = ".$target[$single]."<br/>\n";
+			//print "DEBUG: "; print_r($result); print "<br/>\n";
 			$buffer .= "Should have returned $result.<br/>\n";
 			// Add to claimlog
 			$result = $claimlog->log_billing (
@@ -431,10 +437,13 @@ class FreeBBillingTransport extends BillingModule {
 
 		// Once we have created these hashes, we loop through the list
 		// of them and process each one
+		$buffer .= "<div class=\"section\">".
+			__("FreeB Billing Sent")."</div><br/>\n";
 		foreach ($bill_hash AS $my_key => $billkey) {
 			// Get format and target
 			list ($my_format, $my_target) = explode ('__', $my_key);
-			print "processing key = $my_key<br/>\n";
+			//print "processing key = $my_key<br/>\n";
+			if ($my_format and $my_target) {
 
 			// Add contact, clearinghouse, and service info
 			$billkey['contact'] = $_REQUEST['contact'];
@@ -446,6 +455,8 @@ class FreeBBillingTransport extends BillingModule {
 
 			// ... and send it to FreeB, to see what we get for a result
 			$result = $freeb->ProcessBill($key, $my_format, $my_target);
+			$buffer = __("Result file returned was")." ".
+				$result."<br/>\n";
 			// Add to claimlog
 			$result = $claimlog->log_billing (
 				$key,
@@ -455,10 +466,12 @@ class FreeBBillingTransport extends BillingModule {
 			);
 
 			// DEBUG: Show what we got
-			print "DEBUG: "; print_r($result); print "<br/>\n";
+		//	print "DEBUG: "; print_r($result); print "<br/>\n";
+
+			} // end verifying format and target
 		}
 
-		$buffer .= "This should show something here eventually.<br/>\n";
+		//$buffer .= "This should show something here eventually.<br/>\n";
 
 		return $buffer;
 	} // end method process
