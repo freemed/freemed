@@ -68,7 +68,7 @@ class providerMaintenance extends freemedMaintenanceModule {
 	function mod() { $this->form(); }
 
 	function form() {
-		global $display_buffer;
+		global $display_buffer, $action;
 		reset ($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -77,171 +77,120 @@ class providerMaintenance extends freemedMaintenanceModule {
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR,
 			4 
 		);
-		$book->set_submit_name("OK"); // not sure what this does...
+		switch ($action) {
+			case "add": case "addform":
+				$book->set_submit_name(_("Add")); break;
+			case "mod": case "modform":
+				$book->set_submit_name(_("Modify")); break;
+		}
   
-  if (($action=="modform") AND (!$book->been_here())) { // load the values
-    reset ($this->variables);
-    while(list($k,$v)=each($this->variables))
-        global $$v;
-	global $physsn1,$physsn2,$physsn3;
+ 		// load the values
+		if (($action=="modform") AND (!$book->been_here())) {
+			reset ($this->variables);
+			while(list($k,$v)=each($this->variables)) global ${$v};
+			global $physsn1,$physsn2,$physsn3;
 
-    $r = freemed_get_link_rec ($id, $this->table_name);
-    extract ($r);
-    $phychargemap = fm_split_into_array( $r[phychargemap] );
-    $phyidmap = fm_split_into_array( $r[phyidmap] );
+			$r = freemed_get_link_rec ($id, $this->table_name);
+			extract ($r);
+			$phychargemap = fm_split_into_array( $r[phychargemap] );
+			$phyidmap = fm_split_into_array( $r[phyidmap] );
 
-    // disassemble ssn
-    $physsn1    = substr($physsn,    0, 3);
-    $physsn2    = substr($physsn,    3, 2);
-    $physsn3    = substr($physsn,    5, 4);
+			// disassemble ssn
+			$physsn1    = substr($physsn,    0, 3);
+			$physsn2    = substr($physsn,    3, 2);
+			$physsn3    = substr($physsn,    5, 4);
 
-    if (strlen($phyaddr1b)>0) $has_second_addr=true;
-  } // fetch the data first time through
+			if (strlen($phyaddr1b)>0) $has_second_addr=true;
+		} // fetch the data first time through
   
-  $stat_q = "SELECT * FROM phystatus ORDER BY phystatus";
-  $stat_r = $sql->query($stat_q); // have the result ready for display_selectbox
+		// have the result ready for display_selectbox
+		$stat_q = "SELECT * FROM phystatus ORDER BY phystatus";
+		$stat_r = $sql->query($stat_q);
 
-  $book->add_page (
-    _("Primary Information"),
-    array (
-      "phylname", "phyfname", "phytitle", "phymname",
-      "phytitle", "phypracname", "phyid1", "phystatus"
-    ),
-    "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
-    <TR><TD ALIGN=RIGHT>
-    "._("Last Name")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phylname SIZE=25 MAXLENGTH=52
-     VALUE=\"".prepare($phylname)."\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("First Name")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyfname SIZE=25 MAXLENGTH=50
-     VALUE=\"".prepare($phyfname)."\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Middle Name")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phymname SIZE=25 MAXLENGTH=50
-     VALUE=\"$phymname\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Title")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phytitle SIZE=10 MAXLENGTH=10
-     VALUE=\"$phytitle\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Practice Name")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phypracname SIZE=25 MAXLENGTH=30
-     VALUE=\"$phypracname\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Internal ID #")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyid1 SIZE=11 MAXLENGTH=10
-     VALUE=\"$phyid1\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Status")." :
-    </TD><TD ALIGN=LEFT>
-    ".
-    freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
-    ."
-    </TD></TR>
-   </TABLE>
-    "
-  );
+		$book->add_page (
+			_("Primary Information"),
+			array (
+			"phylname", "phyfname", "phytitle", "phymname",
+			"phytitle", "phypracname", "phyid1", "phystatus"
+			),
+			html_form::form_table(array(
+	_("Last Name") =>
+	html_form::text_widget("phylname", 25, 50),
 
-  $book->add_page (
-    "Contact",
-    array_merge ( array(
-     "phyemail"), phone_vars("phycellular"), phone_vars("phypager") 
-	),
-    "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
-    <TR><TD ALIGN=RIGHT> 
-    "._("Email Address")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyemail\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Cellular Phone #")." :
-    </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("phycellular")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Beeper / Pager #")." :
-    </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("phypager")."
-    </TD></TR>
-   </TABLE>
-    "
-  );
+	_("First Name") =>
+	html_form::text_widget("phyfname", 25, 50),
 
-  $book->add_page (
-    _("Address"),
-    array_merge ( array(
-     "has_second_addr", "phyaddr1a", "phyaddr2a", "phycitya", "phystatea", "phyzipa"),
-     phone_vars("phyphonea"),
-     phone_vars("phyfaxa")
-    ),
-    "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=\"100%\">
-    <TR><TD ALIGN=RIGHT>
-    "._("Primary Address Line 1")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"phyaddr1a\" SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr1a\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Primary Address Line 2")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=\"phyaddr2a\" SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyaddr2a\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Primary Address City")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phycitya SIZE=21 MAXLENGTH=20
-     VALUE=\"$phycitya\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Primary Address State")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phystatea SIZE=6 MAXLENGTH=5
-     VALUE=\"$phystatea\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Primary Address Zip")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyzipa SIZE=10 MAXLENGTH=10
-     VALUE=\"$phyzipa\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Primary Address Phone #")." :
-    </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("phyphonea")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Primary Address Fax #")." :
-    </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("phyfaxa")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Has Second Address")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=CHECKBOX NAME=\"has_second_addr\" ".
-    ($has_second_addr ? "CHECKED" : "").">". 
-    "</TD></TR>
-   </TABLE>
+	_("Middle Name") =>
+	html_form::text_widget("phymname", 25, 50),
 
-    "
-  );
+	_("Title") =>
+	html_form::text_widget("phytitle", 10),
+
+	_("Practice Name") =>
+	html_form::text_widget("phypracname", 25, 30),
+
+	_("Internal ID #") =>
+	html_form::text_widget("phyid1", 10),
+
+	_("Status") =>
+	freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
+			))
+		);
+
+		$book->add_page (
+			"Contact",
+			array_merge (
+				array( "phyemail"),
+				phone_vars("phycellular"),
+				phone_vars("phypager") 
+			),
+			html_form::form_table(array(
+		_("Email Address") =>
+		html_form::text_widget("phyemail", 25, 30),
+
+		_("Cellular Phone #") =>
+		fm_phone_entry ("phycellular"),
+
+		_("Beeper / Pager #") =>
+		fm_phone_entry ("phypager")
+			))
+		);
+
+		$book->add_page (
+			_("Address"),
+			array_merge ( array(
+				"has_second_addr", "phyaddr1a", "phyaddr2a",
+				"phycitya", "phystatea", "phyzipa"),
+				phone_vars("phyphonea"),
+				phone_vars("phyfaxa")
+			),
+		html_form::form_table(array(
+	_("Primary Address Line 1") =>
+	html_form::text_widget("phyaddr1a", 25, 30),
+
+	_("Primary Address Line 2") =>
+	html_form::text_widget("phyaddr2a", 25, 30),
+
+	_("Primary Address City") =>
+	html_form::text_widget("phycitya", 20),
+
+	_("Primary Address State") =>
+	html_form::state_pulldown("phystatea"),
+
+	_("Primary Address Zip") =>
+	html_form::text_widget("phyzipa", 10),
+
+	_("Primary Address Phone #") =>
+	fm_phone_entry ("phyphonea"),
+
+	_("Primary Address Fax #") =>
+	fm_phone_entry ("phyfaxa"),
+
+	_("Has Second Address") =>
+	"<INPUT TYPE=CHECKBOX NAME=\"has_second_addr\" ".
+	($has_second_addr ? "CHECKED" : "").">" 
+			))
+		);
 
   if ($has_second_addr)
     $book->add_page (
@@ -297,90 +246,64 @@ class providerMaintenance extends freemedMaintenanceModule {
       "
     ); // second address page
 
-  $phy_deg_q = "SELECT * FROM degrees ORDER BY ".
-               "degdegree, degname";
-  $phy_deg_r = $sql->query($phy_deg_q);
-  $spec_q = "SELECT * FROM specialties ORDER BY ".
-            "specname, specdesc";
-  $spec_r = $sql->query($spec_q);
+		$phy_deg_q = "SELECT * FROM degrees ORDER BY ".
+			"degdegree, degname";
+		$phy_deg_r = $sql->query($phy_deg_q);
+		$spec_q = "SELECT * FROM specialties ORDER BY ".
+			"specname, specdesc";
+		$spec_r = $sql->query($spec_q);
 
-  $book->add_page(
-    _("Personal"),
-    array (
-      "phyupin", "phyref",
-      "physsn1", "physsn2", "physsn3", 
-      "phydeg1", "phydeg2", "phydeg3",
-      "physpe1", "physpe2", "physpe3"
-    ),
-    "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
-    <TR><TD ALIGN=RIGHT>
-     "._("UPIN Number")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyupin SIZE=16 MAXLENGTH=15
-     VALUE=\"$phyupin\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Social Security #")." :
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=physsn1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$physsn1\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=physsn2 SIZE=3 MAXLENGTH=2
-     VALUE=\"$physsn2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=physsn3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$physsn3\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Degree 1")." :
-    </TD><TD ALIGN=LEFT>
-    ".freemed_display_selectbox ($phy_deg_r, 
-       "#degdegree#, #degname#", "phydeg1")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Degree 2")." :
-    </TD><TD ALIGN=LEFT>
-    ".freemed_display_selectbox ($phy_deg_r, 
-       "#degdegree#, #degname#", "phydeg2")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Degree 3")." :
-    </TD><TD ALIGN=LEFT>
-    ".freemed_display_selectbox ($phy_deg_r, 
-       "#degdegree#, #degname#", "phydeg3")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Specialty 1")." :
-    </TD><TD ALIGN=LEFT>
-    ".freemed_display_selectbox ($spec_r, 
-       "#specname#, #specdesc#", "physpe1")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Specialty 2")." :
-    </TD><TD ALIGN=LEFT>
-    ".freemed_display_selectbox ($spec_r, 
-       "#specname#, #specdesc#", "physpe2")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Specialty 3")." :
-    </TD><TD ALIGN=LEFT>
-    ".freemed_display_selectbox ($spec_r, 
-       "#specname#, #specdesc#", "physpe3")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    "._("Physician Internal/External")."
-    </TD><TD ALIGN=LEFT>
-    <SELECT NAME=\"phyref\">
-      <OPTION VALUE=\"no\" ".
-       ( ($phyref != "yes") ? "SELECTED" : "" ).">"._("In-House")."
-      <OPTION VALUE=\"yes\" ".
-       ( ($phyref == "yes") ? "SELECTED" : "" ).">"._("Referring")."
-    </SELECT>
-    </TD></TR>
-  
+		$book->add_page(
+			_("Personal"),
+			array (
+				"phyupin", "phyref",
+				"physsn1", "physsn2", "physsn3", 
+				"phydeg1", "phydeg2", "phydeg3",
+				"physpe1", "physpe2", "physpe3"
+			),
+			html_form::form_table(array(
+		_("UPIN Number") =>
+		html_form::text_widget("phyupin", 15),
 
-   </TABLE>
-    "
-  );
+		_("Social Security #") =>
+		html_form::text_widget("physsn1", 3)." <B>-</B> ".
+		html_form::text_widget("physsn2", 2)." <B>-</B> ".
+		html_form::text_widget("physsn3", 4),
+
+		_("Degree 1") =>
+		freemed_display_selectbox ($phy_deg_r, 
+			"#degdegree#, #degname#", "phydeg1"),
+
+		_("Degree 2") =>
+		freemed_display_selectbox ($phy_deg_r, 
+			"#degdegree#, #degname#", "phydeg2"),
+
+		_("Degree 3") =>
+		freemed_display_selectbox ($phy_deg_r, 
+			"#degdegree#, #degname#", "phydeg3"),
+
+		_("Specialty 1") =>
+		freemed_display_selectbox ($spec_r, 
+			"#specname#, #specdesc#", "physpe1"),
+
+		_("Specialty 2") =>
+		freemed_display_selectbox ($spec_r, 
+			"#specname#, #specdesc#", "physpe2"),
+
+		_("Specialty 3") =>
+		freemed_display_selectbox ($spec_r, 
+			"#specname#, #specdesc#", "physpe3"),
+
+		_("Physician Internal/External") =>
+		html_form::select_widget(
+			"phyref",
+			array (
+				_("In-House") => "no",
+				_("Referring") => "yes"
+			)
+		)
+			))
+		);
 
   // cache this outside of the function call (can't abstract that while-loop)
   // $brackets is defined in lib/freemed.php
@@ -459,15 +382,15 @@ class providerMaintenance extends freemedMaintenanceModule {
   </TD></TR></TABLE></CENTER>
     "
   );
-  // now display the thing
-  if (!$book->is_done()) {
-    $display_buffer .= "<CENTER>\n".$book->display()."</CENTER>
-    <P ALIGN=CENTER>
-     <A HREF=\"$this->page_name?module=$module&action=view\">
-      "._("Abandon ".( (($action=="modform") OR ($action=="mod")) ? 
-      "Modification" : "Addition") )."
-     </A>
-    ";
+		// Handle cancel action
+		if ($book->is_cancelled()) {
+			Header("Location: ".page_name()."?module=".$this->MODULE_CLASS);
+			die("");
+		}
+		// now display the thing
+		if (!$book->is_done()) {
+			$display_buffer .= "<CENTER>\n".$book->display().
+				"</CENTER>\n";
 		} else { // submit has been clicked
 			global $phyphonea, $phyfaxa, $phyphoneb, $phyfaxb,
 				$phycellular, $phypager, $physsn;
