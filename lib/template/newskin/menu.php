@@ -52,7 +52,7 @@ include (dirname(__FILE__)."/lib/layersmenu.inc.php");
 	//----- Derive pieces of menu bar
 
 $patient_history = patient_history_list();
-ksort($patient_history);
+if (is_array($patient_history)) ksort($patient_history);
 $page_history = page_history_list();
 
 	// System menu

@@ -3249,7 +3249,7 @@ function patient_push ($patient) {
 //
 function patient_history_list () {
 	// Return false if there is nothing in the list
-	if (!isset($_SESSION['patient_history'])) return false;
+	if (!is_array($_SESSION['patient_history'])) return false;
 
 	// Import patient_history
 	$patient_history = $_SESSION['patient_history'];
@@ -3293,7 +3293,7 @@ function patient_history_list () {
 //
 function page_history_list () {
 	// Return false if there is nothing in the list
-	if (!isset($_SESSION['page_history'])) return false;
+	if (!is_array($_SESSION['page_history'])) return false;
 
 	// Import patient_history
 	$page_history = $_SESSION['page_history'];
