@@ -28,11 +28,9 @@ switch ($action) {
   case "add": case "addform":
   case "mod": case "modform":
     // addform and modform not used due to "notebook"
-   $book = new notebook ($page_name,
-     array ("action", "_auth", "id", "been_here"),
-     true                         // common bar...
-     );
-   $book->set_submit_name ("OK");
+   $book = new notebook ( array ("action", "_auth", "id", "been_here"),
+     NOTEBOOK_COMMON_BAR);
+   $book->set_submit_name (_("OK"));
    switch ($action) {
      case "add": case "addform":
       if (empty($been_here)) {
@@ -132,7 +130,7 @@ switch ($action) {
    $book->add_page (
      "Primary Information",
      array ("ptlname", "ptfname", "ptmname",
-            "ptdob", "ptdob_m", "ptdob_d", "ptdob_y",
+            date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
             "has_insurance"),
      "
@@ -183,6 +181,12 @@ switch ($action) {
      VALUE=\"".prepare($ptstate)."\"> 
     <INPUT TYPE=TEXT NAME=\"ptzip\" SIZE=10 MAXLENGTH=10
      VALUE=\"".prepare($ptzip)."\">
+    </TD></TR>
+
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>Date of Birth : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".date_entry("ptdob")."
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
