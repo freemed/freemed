@@ -43,6 +43,11 @@ define ('COPAY',                11);
 define ('PATWRITEOFF',          12);  // not used yet
 define ('INSWRITEOFF',          13);  // not used yet
 
+// itemlist macros
+define ('ITEMLIST_VIEW',        1);
+define ('ITEMLIST_MOD',         2);
+define ('ITEMLIST_DEL',         4);
+
 } // end checking for __MACROS_PHP__
 
 ?>
