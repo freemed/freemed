@@ -44,7 +44,7 @@ class progressNotes extends freemedEMRModule {
          $pnotesdt     = $cur_date;
          break; // end addform
         case "modform":
-         while(list($k,$v)=each($this->variables)) { global $$v; }
+         //while(list($k,$v)=each($this->variables)) { global $$v; }
 
          if (($id<1) OR (strlen($id)<1)) {
            //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
@@ -55,6 +55,9 @@ class progressNotes extends freemedEMRModule {
            DIE("");
          }
          $r = freemed_get_link_rec ($id, "pnotes");
+         foreach ($r AS $k => $v) {
+           global $$k; $$k = stripslashes($v);
+         }
   	 	 extract ($r);
          break; // end modform
       } // end internal switch
@@ -224,6 +227,7 @@ class progressNotes extends freemedEMRModule {
          $query = "UPDATE ".$this->table_name." SET
           pnotespat      = '".addslashes($patient)."',
           pnoteseoc      = '".addslashes(sql_squash($pnoteseoc))."',
+          pnotesdoc      = '".addslashes($pnotesdoc)."',
           pnotesdt       = '".addslashes(fm_date_assemble("pnotesdt"))."',
           pnotesdtmod    = '".addslashes($cur_date)."',
           pnotes_S       = '".addslashes($pnotes_S)."',

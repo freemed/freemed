@@ -1,6 +1,18 @@
 freemed project changelog
 ($Id$)
 
+* Tue Jun 05 2001 rufustfirefly
+  - patient.php: fixed passing of email in notebook
+  - modules/progress_notes.emr.module.php: modify now works properly
+
+* Mon Jun 04 2001 rufustfirefly
+  - lib/API.php, patient.php: some fixes for there being no good
+    array flattening in php, as well as update moving to
+    update_query wrapper. phone number handling supposedly fixed. :)
+
+* Thu May 31 2001 rufustfirefly
+  - lib/xml.php - stubs for XML import and export functions
+
 * Mon May 21 2001 rufustfirefly
   - updated german translation from Dr. Roesler
 

@@ -125,7 +125,9 @@ switch ($action) {
          "ptwphone_1", "ptwphone_2", "ptwphone_3", "ptwphone_4", "ptwphone_5",
 	  // phone_vars("ptfax")
          "ptfax",
-         "ptfax_1", "ptfax_2", "ptfax_3", "ptfax_4", "ptfax_5"
+         "ptfax_1", "ptfax_2", "ptfax_3", "ptfax_4", "ptfax_5",
+          // email address portions
+         "ptemail1", "ptemail2"
          ),
 		html_form::form_table ( array (
 
@@ -555,7 +557,7 @@ switch ($action) {
     switch ($criteria) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (ptlname LIKE '$".addslashes(f1)."%') ".
+         "WHERE (ptlname LIKE '".addslashes($f1)."%') ".
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = _("Last Names")." (".prepare($f1).")";
         break;
