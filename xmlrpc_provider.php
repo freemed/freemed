@@ -14,6 +14,8 @@ if (!file_exists(WEBTOOLS_ROOT.'/class.xmlrpc_server.php'))
 CreateApplicationMap(array(
 	// Actual XML-RPC methods
 	'FreeMED' => 'lib/xmlrpc/class.*.php',
+	'FreeB'   => 'lib/xmlrpc/FreeB/class.*.php',
+
 	// For internal function calls
 	'_FreeMED' => 'lib/class.*.php'
 ));

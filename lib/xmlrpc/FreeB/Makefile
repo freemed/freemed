@@ -1,8 +1,8 @@
 # $Id$
 # $Author$
 
-THISDIR=lib/xmlrpc
-SUBDIR=FreeB
+THISDIR=lib/xmlrpc/FreeB
+SUBDIR=
 
 all:
 	# Nothing
