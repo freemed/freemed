@@ -77,7 +77,24 @@ class Messages {
 		return CreateObject('PHP.xmlrpcval', $res, 'boolean');
 	} // end method send
 
-	// View all messages for this person
+	function unread ( ) {
+		global $sql;
+
+		// Perform search
+		$query = "SELECT COUNT(*) AS my_count FROM messages WHERE ".
+			"msgfor='".addslashes($GLOBALS['__freemed']['basic_auth_id'])."'".
+			" AND msgread='0'";
+		$result = $sql->query($query);
+
+		if ($sql->results($result)) {
+			$r = $sql->fetch_array($result);
+			//syslog(LOG_INFO, "FreeMED.Messages.unread: should return ".$r['my_count']);
+			return CreateObject('PHP.xmlrpcval', $r['my_count']+0, 'int');
+		}
+
+		return CreateObject('PHP.xmlrpcval', 0, 'int');
+	} // end method unread
+		
 	function view ($unread_only=false) {
 		global $sql;
 
@@ -113,7 +130,7 @@ class Messages {
 		} else {
 			return CreateObject('PHP.xmlrpcval', false, 'boolean');
 		}
-	} // end method get
+	} // end method view
 
 } // end class Messages
 
