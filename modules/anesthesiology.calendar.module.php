@@ -54,7 +54,7 @@ class AnesthCalendar extends CalendarModule {
 
 		// Check for set anfacility
 		if (!isset($anfacility)) {
-			$anfacility = $SESSION['default_facility'];
+			$anfacility = $_SESSION['default_facility'];
 		}
 
 		// Set page title
