@@ -32,7 +32,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manageappointment.php|user $user_to
 
  switch ($action) {
   case "del":
-   $page_title = "Deleting Appointment";
+   $page_title = __("Deleting Appointment");
    $display_buffer .= "\n".__("Deleting")." ... \n";
    $query = "DELETE FROM scheduler WHERE id='".addslashes($id)."'";
    $result = $sql->query ($query);
@@ -44,6 +44,8 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manageappointment.php|user $user_to
      __("Manage Patient") =>
      "manage.php?id=$patient" )).
     "<p/>\n";
+    // By default, we return to patient emr view
+    $refresh = "manage.php?id=".urlencode($patient);
    break; // end delete appointment section
   default: // default action is to view appointments
    // grab patient information
