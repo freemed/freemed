@@ -429,6 +429,15 @@ if (count($panel) > 0) {
 	</TR></TABLE>
 	";
 
+} else {
+	// Display warning if no panels
+	$display_buffer .= "
+	<p/>
+	<div align=\"CENTER\">
+	<b>"._("Please configure panels through \"Configure\" in the sidebar.")."</b>
+	</div>
+	<p/>
+	";
 } // end checking for *any* panels
 
 // **************************************************** STATIC MODULES
