@@ -5,16 +5,16 @@
  // lic : GPL, v2
 
 $page_name   = "custom_records.php";
-$record_name = "Custom Records";
+$record_name = __("Custom Records");
 $table_name  = "patrecdata";
 include_once ("lib/freemed.php");
 
 //----- Login/authenticate
-freemed_open_db ();
+freemed::connect ();
 
 // Check for no patient provided
 if ($patient<1) {
-  $page_title = _($record_name)." :: ".__("ERROR");
+  $page_title = $record_name." :: ".__("ERROR");
   $display_buffer .= "
    <p/>
    <b>".__("You must select a patient.")."</b>
@@ -28,12 +28,18 @@ if ($patient<1) {
   template_display();
 } // end checking if patient is provided
 
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"custom_records.php|user $user_to_log accesses patient $patient");}	
+
+
+
 $this_patient = CreateObject('FreeMED.Patient', $patient);
 
 if ( (($action=="addform") or ($action=="modform") or
        ($action=="add")     or ($action=="mod"    ))
       AND ($form<1)) {
-  $page_title = _($record_name)." :: ".__("ERROR");
+  $page_title = $record_name." :: ".__("ERROR");
   $display_buffer .= "
    <p/>
    <div align=\"CENTER\">
@@ -59,7 +65,7 @@ switch ($action) {
      break;
     case "modform":
      $this_action = "mod";
-     $result = $sql->query ("SELECT * FROM $table_name WHERE id='$id'");
+     $result = $sql->query ("SELECT * FROM $table_name WHERE id='".addslashes($id)."'");
      $r = $sql->fetch_array ($result);
      $form_template = $r["prtemplate"];
      $form = $form_template;   // to allow us to pass it as hidden
@@ -93,7 +99,7 @@ switch ($action) {
      break;
    } // end interior action switch
    $page_title = (($action=="addform") ? __("Add") : __("Modify")).
-     " "._($record_name); 
+     " ".$record_name; 
    $display_buffer .= freemed::patient_box($this_patient)."
     <p/>
     <form ACTION=\"".$page_name."\" METHOD=\"POST\">
@@ -397,7 +403,7 @@ switch ($action) {
       break;
    } // end inner action switch 
    $page_title =  ( ($action=="add") ? __("Adding") : __("Modifying")).
-     " "._($record_name);
+     " ".$record_name;
    $display_buffer .= "
      <p/><div align=\"CENTER\">
      ".( ($action=="add") ? __("Adding") : __("Modifying") )." ... 
@@ -413,7 +419,7 @@ switch ($action) {
 		__("Manage Patient") =>
 		"manage.php?id=".urlencode($patient),
 
-		__("View/Modify")." "._($record_name) =>
+		__("View/Modify")." ".$record_name =>
 		$page_name."?patient=".urlencode($patient)
     ))."
     <p/>
@@ -421,7 +427,7 @@ switch ($action) {
    break;
 
   default: // default view is listing...
-   $page_title = _($record_name);
+   $page_title = $record_name;
    $result = $sql->query ("SELECT * FROM ".$table_name." ".
                          "WHERE prpatient='".addslashes($patient)."' ".
                          "ORDER BY prdtadd DESC");
