@@ -322,6 +322,9 @@ class providerMaintenance extends freemedMaintenanceModule {
     ";
   } // end looping for service types
 
+	// Check for referring physician
+	global $phyref;
+	if (!($phyref=="yes")) 
   $book->add_page(
     _("Charge Map"),
     array (
@@ -431,7 +434,7 @@ class providerMaintenance extends freemedMaintenanceModule {
           $phy[phymname] $phy[phylname], $phy[phytitle]
      </TD></TR>
   ";
-  if (freemed_get_userlevel()>$database_level)
+  if (freemed::user_flag(USER_DATABASE))
    $display_buffer .= "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <A HREF=\"physician.php?action=modform&id=$id\"
