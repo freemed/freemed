@@ -52,22 +52,28 @@ class FBProvider {
 
 	function PhoneCountry ( $provider ) {
 		// TODO: i18n fix
-		return '';
+		return '1';
 	} // end method PhoneCountry
 
 	function PhoneArea ( $provider ) {
 		$p = CreateObject('_FreeMED.Physician', $provider);
-		return substr($p->local_record['phyphonea'], 0, 3);
+		$n = substr($p->local_record['phyphonea'], 0, 3);
+		if (!$n) { return '000'; }
+		return $n;
 	} // end method PhoneArea
 
 	function PhoneNumber ( $provider ) {
 		$p = CreateObject('_FreeMED.Physician', $provider);
-		return substr($p->local_record['phyphonea'], 3, 7);
+		$n = substr($p->local_record['phyphonea'], 3, 7);
+		if (!$n) { return '0000000'; }
+		return $n;
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $provider ){
 		$p = CreateObject('_FreeMED.Physician', $provider);
-		return substr($p->local_record['phyphonea'], 7, 4);
+		$n = substr($p->local_record['phyphonea'], 10, 4);
+		if (!$n) { return '0000'; }
+		return $n;
 	} // end method PhoneExtension
 
 	function SocialSecurityNumber ( $provider ) {
@@ -83,7 +89,7 @@ class FBProvider {
 	function IPN ( $provider ) {
 		//$p = CreateObject('_FreeMED.Physician', $provider);
 		// TODO: What is an IPN?
-		return '';
+		return ' ';
 	} // end method IPN
 
 } // end class FBProvider

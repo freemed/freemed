@@ -31,23 +31,28 @@ class FBBillingService {
 
 	function PhoneCountry ( $key ) {
 		$r = freemed::get_link_rec($key, 'bservice');
-		return '';
+		return '1';
 	} // end method PhoneCountry
 
 	function PhoneArea ( $key ) {
 		$r = freemed::get_link_rec($key, 'bservice');
-		return substr($r['bsphone'], 0, 3);
+		$n = substr($r['bsphone'], 0, 3);
+		if (!$n) { return '000'; }
+		return $n;
 	} // end method PhoneArea
 
 	function PhoneNumber ( $key ) {
 		$r = freemed::get_link_rec($key, 'bservice');
-		return substr($r['bsphone'], 3, 7);
-		return '';
+		$n = substr($r['bsphone'], 3, 7);
+		if (!$n) { return '0000000'; }
+		return $n;
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $key ) {
 		$r = freemed::get_link_rec($key, 'bservice');
-		return substr($r['bsphone'], 10, 4);
+		$n = substr($r['bsphone'], 10, 4);
+		if (!$n) { return '0000'; }
+		return $n;
 	} // end method PhoneExtension
 
 	function ETIN ( $key ) {

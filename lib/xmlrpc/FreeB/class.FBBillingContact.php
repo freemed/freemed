@@ -42,22 +42,28 @@ class FBBillingContact {
 	function PhoneCountry ( $key ) {
 		$r = freemed::get_link_rec($key, 'bcontact');
 		// TODO: Fix i18n
-		return '';
+		return '1';
 	} // end method PhoneCountry
 
 	function PhoneArea ( $key ) {
 		$r = freemed::get_link_rec($key, 'bcontact');
-		return substr($r['bcphone'], 0, 3);
+		$n = substr($r['bcphone'], 0, 3);
+		if (!$n) { return '000'; }
+		return $n;
 	} // end method PhoneArea
 
 	function PhoneNumber ( $key ) {
 		$r = freemed::get_link_rec($key, 'bcontact');
-		return substr($r['bcphone'], 3, 7);
+		$n = substr($r['bcphone'], 3, 7);
+		if (!$n) { return '0000000'; }
+		return $n;
 	} // end method PhoneNumber
 
 	function PhoneExtension ( $key ) {
 		$r = freemed::get_link_rec($key, 'bcontact');
-		return substr($r['bcphone'], 10, 4);
+		$n = substr($r['bcphone'], 10, 4);
+		if (!$n) { return '0000'; }
+		return $n;
 	} // end method PhoneExtension
 
 } // end class FBBillingContact

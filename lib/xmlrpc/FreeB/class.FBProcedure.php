@@ -134,43 +134,40 @@ class FBProcedure {
 		$p = freemed::get_link_rec($procedure, 'procrec');
 		// Where is the bill going, by coverage
 		switch ($p['proccurcovtp']) {
-			case '1': $covnum = 1; break;
 			case '2': $covnum = 2; break;
 			case '3': $covnum = 3; break;
 			case '4': $covnum = 4; break;
-			default: return false; break;
+			case '1': default: $covnum = 1; break;
 		}
 		return freemed::get_link_rec($p['proccov'.$covnum], 'coverage');
 	} // end method InsuredKey
 
 	function OtherInsuredKey ( $proc ) {
 		// TODO: Not sure where we would get this from.
-		return false;
+		return 0;
 	} // end method OtherInsuredKey
 
-	function BillingContactKey ( $proc ) {
-		// TODO: STUB
-		return '';
+	function BillingContactKey ( $bill, $proc ) {
+		$r = unserialize($bill);
+		return $bill['contact'];
 	} // end method BillingContactKey
 
 	function isUsingBillingService ( $proc ) {
-		// TODO: STUB
-		return false;
+		return true;
 	} // end method isUsingBillingService
 
-	function BillingServiceKey ( $proc ) {
-		// TODO: STUB
-		return '';
+	function BillingServiceKey ( $bill, $proc ) {
+		$r = unserialize($bill);
+		return $bill['service'];
 	} // end method BillingServiceKey
 
 	function isUsingClearingHouse ( $proc ) {
-		// TODO: STUB
-		return false;
+		return true;
 	} // end method isUsingClearingHouse
 
-	function ClearingHouseKey ( $proc ) {
-		// TODO: STUB
-		return '';
+	function ClearingHouseKey ( $bill, $proc ) {
+		$r = unserialize($bill);
+		return $bill['clearinghouse'];
 	} // end method ClearingHouseKey
 
 	function MedicaidResubmissionCode ( $proc ) {

@@ -9,10 +9,10 @@ class FBPayer {
 		return $i['insconame'];
 	} // end method Name
 
-	function NationalPlanID ( $key ) {
+	function ID ( $key ) {
 		$i = freemed::get_link_rec($key, 'insco');
 		return $i['inscoid'];
-	} // end method NationalPlanID
+	} // end method ID
 
 	function Attn ( $key ) {
 		// TODO: Add this to the database (STUB STUB)
