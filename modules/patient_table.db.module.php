@@ -1,7 +1,7 @@
 <?php
- // $Id$
- // $Author$
- // note: stub module for patient table definition
+	// $Id$
+	// $Author$
+	// note: stub module for patient table definition
 
 LoadObjectDependency('FreeMED.MaintenanceModule');
 
@@ -9,11 +9,11 @@ class PatientTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Patient Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.1';
+	var $MODULE_VERSION = '0.6.2';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
 
 	var $table_name = "patient";
 
@@ -108,6 +108,7 @@ class PatientTable extends MaintenanceModule {
 			'ptops' => SQL__TEXT,
 			'ptrace' => SQL__INT_UNSIGNED(0),
 			'ptreligion' => SQL__INT_UNSIGNED(0),
+			'ptarchive' => SQL__INT_UNSIGNED(0),
 			'iso' => SQL__VARCHAR(15),
 			'id' => SQL__SERIAL
 		);
@@ -143,6 +144,10 @@ class PatientTable extends MaintenanceModule {
 		}
 		*/
 
+		// Version 0.6.1
+		//
+		//	Added HL7 race and religion fields (ptrace,ptreligion)
+		//
 		if (!version_check($version, '0.6.1')) {
 			// HL7-compliant race field
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
@@ -151,6 +156,19 @@ class PatientTable extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN ptreligion INT UNSIGNED AFTER pttimestamp');
 		} // end 0.6.1 upgrade
+
+		// Version 0.6.2
+		//
+		//	Added patient archive flag (ptarchive)
+		//
+		if (!version_check($version, '0.6.2')) {
+			// Archive
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN ptarchive INT UNSIGNED AFTER ptreligion');
+			// Stupid mysql needs everything to be set to 0
+			// by default.
+			$sql->query('UPDATE '.$this->table.' SET ptarchive=\'0\'');
+		} // end 0.6.2 upgrade
 	} // end function _update
 }
 

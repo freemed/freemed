@@ -606,6 +606,7 @@ switch ($action) {
 	 $query = $sql->insert_query (
            "patient",
            array (
+	     "ptarchive" => '0',
              "ptdtadd" => date("Y-m-d"),
 	     "ptdob" => fm_date_assemble ("ptdob"),
              "ptbal",
@@ -786,16 +787,21 @@ switch ($action) {
 
   case "delete":
   case "del":
-    $page_title = __("Deleting")." ".__($record_name);
+    $page_title = __("Archiving Patient");
     $display_buffer .= "<div ALIGN=\"CENTER\">
-     <p/>".__("Deleting")." ... ";
-    $query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
+     <p/>".__("Archiving")." ... ";
+    //$query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
+    $query = $sql->update_query(
+	'patient',
+	array( 'ptarchive' => '1' ),
+	array( 'id' => $id )
+    );
     $result = $sql->query ($query);
     if ($result) { $display_buffer .= __("done")."."; }
      else        { $display_buffer .= __("ERROR");    }
 	// Take care of scheduler entries
-    $query = "DELETE FROM scheduler WHERE calpatient='".addslashes($id)."'";
-    $result = $sql->query ($query);
+    //$query = "DELETE FROM scheduler WHERE calpatient='".addslashes($id)."'";
+    //$result = $sql->query ($query);
     $display_buffer .= "
      </div>
     ";
@@ -811,6 +817,7 @@ switch ($action) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (ptlname LIKE '".addslashes($f1)."%') ".
+	" AND ptarchive != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = __("Last Names")." (".prepare($f1).")";
@@ -818,6 +825,7 @@ switch ($action) {
       case "contains":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (".addslashes($f1)." LIKE '%".addslashes($f2)."%') ".
+	" AND ptarchive != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = __("Searching for")." \"".prepare($f2)."\"";
@@ -825,6 +833,7 @@ switch ($action) {
       case "soundex":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (soundex(".addslashes($f1).") = soundex('".addslashes($f2)."')) ".
+	" AND ptarchive != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = "Sounds Like \"".prepare($f2)."\"";
@@ -843,29 +852,17 @@ switch ($action) {
 	$query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (ptlname LIKE '".addslashes($last)."%') ".
          " AND (ptfname LIKE '".addslashes($first)."%') ".
+	 " AND ptarchive != '1' ".
 	 freemed::itemlist_conditions(false).
 	 " ORDER BY ptlname, ptfname, ptdob";
 	$_crit = __("Patient Name")." \"".prepare($_REQUEST['f1'])."\"";
         break;
       case "all":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-	 freemed::itemlist_conditions().
+	" WHERE ptarchive != '1' ".
+	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = "\"".__("All Patients")."\"";
-        break;
-      case "dependants":
-        $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (ptdep = '".addslashes($f1)."') ".
-	 freemed::itemlist_conditions(false).
-         "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = __("Dependents");
-        break;
-      case "guarantor":
-        $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (id = '".addslashes($f1)."') ".
-	 freemed::itemlist_conditions(false).
-         "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = __("Guarantor");
         break;
       default:
         $_crit = "";
