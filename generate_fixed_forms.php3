@@ -56,8 +56,11 @@
    // zero form buffer
    $form_buffer = "";
 
+   $pats_processed = 0;
+   $still_going    = true;
+
    // loop for all patients
-   while ($b_r = fdb_fetch_array ($b_result)) {
+   while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
 
      // get current patient
      $current_patient = $b_r[payrecpatient];
@@ -366,6 +369,10 @@
      $form_buffer .= render_fixedForm ($whichform);
      $total_paid = $total_charges = $current_balance = 0;  // zero the charges
 
+     $pat_processed++;
+     if (($num_patients != 0) and ($pat_processed >= $num_patients))
+       $still_going = false;
+
    } // end of while there are no more patients
 
    #################### TAKE THIS OUT AFTER TESTING #######################
@@ -384,7 +391,7 @@
     <CENTER>
      <SELECT NAME=\"type\">
       <OPTION VALUE=\"\">Render to Screen
-      <OPTION VALUE=\"".urlencode("file/text")."\">Render to File
+      <OPTION VALUE=\"file/text\">Render to File
      </SELECT>
      <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
     </CENTER>
@@ -430,6 +437,19 @@
    } // end looping through results                         
    echo "
       </SELECT>
+     </TD>
+    </TR>
+
+    <TR>
+     <TD ALIGN=RIGHT>
+      <CENTER>
+       <$STDFONT_B>Number of Patients : <$STDFONT_E>
+      </CENTER>
+     </TD>
+     <TD ALIGN=LEFT>
+   ";
+   fm_number_select ("num_patients", 0, 20);
+   echo "
      </TD>
     </TR>
 
