@@ -972,7 +972,7 @@ function pre_screen ( ) {
 			$_REQUEST['hour'],
 			$_REQUEST['minute']
 			),
-		__("Duration") => $_REQUEST['duration'].' m',
+		__("Duration") => $_REQUEST['duration'].' min',
 		__("Patient") => $patient->fullName(),
 		__("Provider") => $provider->fullName(),
 		__("Place of Service") => module_function (
@@ -997,7 +997,7 @@ function pre_screen ( ) {
 				"ORDER BY k"
 			) )
 		),
-		__("Note") => html_form::text_widget('note')
+		__("Note") => html_form::text_widget('note', 40)
 	));
 	$buffer .= "<div align=\"center\">\n";
 	$buffer .= "<input type=\"submit\" name=\"stage\" ".
