@@ -23,5 +23,7 @@
   define (REBILL,               4);
   define (PROCEDURE,            5);
   define (TRANSFER,             6);
+  define (WITHHOLD,             7);
+  define (DEDUCTABLE,           8);
 
 ?>
