@@ -46,16 +46,19 @@ if (is_array($handlers)) {
 		$reply = module_function ($class, $handler);
 		if (is_array($reply)) {
 			// Array format is (title, content)
-			list ($_t, $_c) = $reply;
+			list ($_t, $_c, $_i) = $reply;
 			$display_buffer .=
-				"<div class=\"thinbox_noscroll\" style=\"width: 100%; text-align: left;\">\n".
-				"<div class=\"reverse\" style=\"width: 100%; text-weight: bold; text-align: left;\">".prepare($_t)."</div><br />\n".
-				$_c."</div>\n&nbsp;";
+				"<center>\n".
+				"<div class=\"thinbox_noscroll\" style=\"width: 80%; text-align: left; align: center;\">\n".
+				"<div class=\"reverse\" style=\"width: 100%; text-weight: bold; text-align: left; vertical-align: top; \">".prepare($_t)."</div><br />\n".
+				( $_i ? "<span style=\"margin: 5px;\"><img src=\"".$_i."\" border=\"0\" /></span>" : "" ).
+				"<span style=\"vertical-align: top;\">".$_c."</span></div>\n&nbsp;".
+				"</center>\n";
 		} else {
 			// Flat, in a box, already formatted
 			if ($reply) {
-				$display_buffer .= "<div class=\"thinbox_noscroll\" style=\"width: 100%;\">\n".
-				$reply."</div>\n&nbsp;\n";
+				$display_buffer .= "<center><div class=\"thinbox_noscroll\" style=\"width: 80%; align: center;\">\n".
+				$reply."</div>\n&nbsp;</center>\n";
 			}
 		}
 	} // end foreach handlers

@@ -61,7 +61,8 @@ class MessagesTable extends MaintenanceModule {
 			return array (
 				__("Unread Messages"),
 				sprintf(__("You have %s unread messages."), $c).
-				" <a href=\"messages.php\">[".__("View")."]</a>"
+				" <a href=\"messages.php\">[".__("View")."]</a>",
+				"img/envelope_icon.png"
 			);
 		} else {
 			// Don't show up if there are no unread messages

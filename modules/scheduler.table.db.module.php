@@ -82,7 +82,8 @@ class SchedulerTable extends MaintenanceModule {
 
 			return array (
 				__("Patient Scheduler"),
-				sprintf(__("You have %s<b>%d</b> appointment(s) today%s and %s<b>%d</b> appointment(s) this week%s."), "<a href=\"physician_day_view.php?physician=".urlencode($GLOBALS['this_user']->getPhysician())."\">",  $day_count, "</a>", "<a href=\"physician_week_view.php?physician=".urlencode($GLOBALS['this_user']->getPhysician())."\">", $week_count, "</a>")
+				sprintf(__("You have %s<b>%d</b> appointment(s) today%s and %s<b>%d</b> appointment(s) this week%s."), "<a href=\"physician_day_view.php?physician=".urlencode($GLOBALS['this_user']->getPhysician())."\">",  $day_count, "</a>", "<a href=\"physician_week_view.php?physician=".urlencode($GLOBALS['this_user']->getPhysician())."\">", $week_count, "</a>"),
+				"img/calendar_icon.png"
 				//"You have <a href=\"physician_day_view.php\">".$day_count." appointent(s) today</a> and <a href=\"physician_week_view.php\">".$week_count." appointment(s) this week</a>."
 				//"You have <a href=\"physician_day_view.php\">15 appointent(s) today</a> and <a href=\"physician_week_view.php\">47 appointment(s) this week</a>."
 			);
@@ -100,7 +101,8 @@ class SchedulerTable extends MaintenanceModule {
 			// Figure out appointments for this week
 			return array (
 				__("Patient Scheduler"),
-				sprintf(__("There are %s appointments scheduled for today."), "<b>$day_count</b>")
+				sprintf(__("There are %s appointments scheduled for today."), "<b>$day_count</b>"),
+				"img/calendar_icon.png"
 			);
 		}
 	} // end method MainMenuAppointments
