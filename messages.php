@@ -315,8 +315,12 @@ switch ($action) {
 		$sent_by = __("FreeMED Messaging System");
 	}
 
+	if ($m['msgpatient']) {
+		$patientobj = CreateObject('FreeMED.Patient', $m['msgpatient']);
+	}
+
 	$display_buffer .= "
-	<table border=\"0\" style=\"border: 1px black dotted; width: 75%; background: #cccccc; padding: .5em;\">
+	<table border=\"0\" style=\"border: 1px black dotted; width: 99%; background: #cccccc; padding: .5em;\">
 	<tr>
 		<td width=\"150\"><b>".__("Date")."</b></td>
 		<td>".freemed::sql2date($m['msgtime'])."</td>
@@ -333,6 +337,11 @@ switch ($action) {
 		<td><b>".__("Subject")."</b></td>
 		<td>".prepare($m['msgsubject'])."</td>
 	</tr>
+	".( $m['msgpatient'] ? "
+	<tr>
+		<td><b>".__("Patient")."</b></td>
+		<td><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>".prepare($patientobj->fullName().'</td><td><span style="color: #555555; padding-left: 1.5em;"><i>DOB: '.fm_date_print($patientobj->local_record['ptdob']).'</i></span></td></tr><tr><td>'.$patientobj->local_record['ptid'].'</td><td><span style="padding-left: 1.5em;">'.$patientobj->phoneNumber())."</span></td></tr></table></td>
+	</tr> " : "" )."
 	</table>
 	<div style=\"padding: 1em; width: 75%;\">
 	".prepare(str_replace("\n", "<br/>\n", $m['msgtext']))."</td>
