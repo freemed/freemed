@@ -133,10 +133,11 @@ define (__GLOBAL_VAR_INC__, true);
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
   include ("webtools.php");            // webtools toolkit
-  include ("iso-set.inc");             // ISO set handler
-  include ("containers.inc");          // class containers
-  include ("language-loader.inc");     // external language loader
-  include ("macros.inc");              // macros/contants
+  include ("lib/iso-set.php");         // ISO set handler
+  include ("lib/containers.php");      // class containers
+  include ("lib/language-loader.php"); // external language loader
+  include ("lib/macros.php");          // macros/contants
+  include ("lib/module.php");          // loadable module support (phpwebtools)
 
   // ***************************************************************
 

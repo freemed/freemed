@@ -24,7 +24,7 @@
   } // if there is a patient
 
    // here is the actual guts of the menu
-  if ($this_user->getLevel() > $database_level) 
+  if ($this_user->getLevel() > $database_level) {
    echo "
     <$STDFONT_B>
 
@@ -93,14 +93,24 @@
     <P>
 
     <$STDFONT_E>
-  ";
-  else echo "
+    ";
+
+    // modules list
+    $module_list = new module_list (PACKAGENAME);
+    echo "<CENTER>\n";
+    echo $module_list->generate_list("Billing", 0,
+      "<A HREF=\"module_loader.php?$_auth&module=#class#\"".
+      ">#name#</A><BR>\n");
+    echo "</CENTER>\n";
+  } else { 
+    echo "
       <P>
       <$HEADERFONT_B>
         "._("You don't have access for this menu.")."
       <$HEADERFONT_E>
       <P>
     ";
+  }
 
   freemed_display_box_bottom ();
   freemed_display_html_bottom ();

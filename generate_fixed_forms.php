@@ -6,7 +6,7 @@
  $page_name = "generate_fixed_forms.php";
  include ("global.var.inc");
  include ("freemed-functions.inc");
- include ("render_forms.inc");
+ include ("lib/render_forms.php");
 
  freemed_open_db ($LoginCookie);
 

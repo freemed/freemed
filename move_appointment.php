@@ -1,13 +1,12 @@
 <?php
-  # file: move_appointment.php3
-  # note: move an appointment
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL, v2
+ // $Id$
+ // note: move an appointment
+ // lic : GPL, v2
 
-  $page_name = "move_appointment.php3";
+  $page_name = "move_appointment.php";
   include ("global.var.inc");
   include ("freemed-functions.inc");
-  include ("freemed-calendar-functions.inc");
+  include ("lib/calendar-functions.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();

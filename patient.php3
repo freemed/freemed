@@ -10,7 +10,7 @@
   $record_name="Patient";    // compatibility with API functions
   include ("global.var.inc");
   include ("freemed-functions.inc");
-  include ("freemed-calendar-functions.inc");
+  include ("lib/calendar-functions.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 

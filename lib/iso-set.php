@@ -1,13 +1,11 @@
 <?php
- // file: iso-set.inc
+ // $Id$
  // note: ISO set checking, included by global.var.inc
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
- // mod : 2000-07-25
 
-if (!defined (__ISO_SET_INC__)) {
+if (!defined (__ISO_SET_PHP__)) {
 
-define (__ISO_SET_INC__, true);
+define (__ISO_SET_PHP__, true);
 
   // ISO Handler
   switch ($language) {
@@ -68,6 +66,6 @@ define (__ISO_SET_INC__, true);
       $__ISO_SET__ = "iso-8859-1"; break;    // english ISO set (8859-1)
   } // end ISO handler switch
 
-} // end checking for __ISO_SET_INC__
+} // end checking for __ISO_SET_PHP__
 
 ?>

@@ -1,13 +1,12 @@
 <?php
- // file: show_appointments.php3
+ // $Id$
  // note: show appointments
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name = "show_appointments.php3";
+  $page_name = "show_appointments.php";
   include ("global.var.inc");
   include ("freemed-functions.inc");
-  include ("freemed-calendar-functions.inc");
+  include ("lib/calendar-functions.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();

@@ -275,7 +275,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
   // speed hack
   if ((strpos($LoginCookie, ":")) and
       ($page_name != "index.php3") and
-      ($page_name != "authenticate.php3") and
+      ($page_name != "authenticate.php") and
       ($page_name != "logout.php")) 
     $this_userlevel = freemed_get_userlevel ($LoginCookie);
 
@@ -333,7 +333,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
   } // if there is a box title
   //if ($debug) echo "_ref = $_ref, pg_name = $pg_name<BR>\n";
   if (($page_name != "index.php3") and
-      ($page_name != "authenticate.php3") and
+      ($page_name != "authenticate.php") and
       ($page_name != "logout.php") and
       ($page_name != "main.php3") and
       ($_pg_desc != "[HELP]")) {
@@ -385,7 +385,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      if ($is_physician)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"physician_day_view.php3?$_auth&physician=$physician_number\"
+        <A HREF=\"physician_day_view.php?$_auth&physician=$physician_number\"
         ><IMG SRC=\"img/karm-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Day View]\"></A>
        </TD>

@@ -1,10 +1,9 @@
 <?php
- // file: import.php3
+ // $Id$
  // desc: administrative import module for older databases
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name = "import.php3";
+ $page_name = "import.php";
  include ("global.var.inc");
  include ("freemed-functions.inc");
 

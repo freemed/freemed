@@ -1,15 +1,14 @@
 <?php
-  // file: specialties.php3
+  // $Id$
   // note: physician/provider specialties db
-  // code: jeff b (jeff@univrel.pr.uconn.edu) -- template
-  //       adam b (gdrago23@yahoo.com) -- complete rewrite
+  // code: adam b (gdrago23@yahoo.com) -- complete rewrite
   // lic : GPL, v2
 
     // *** local variables section ***
     // complete these to reflect the data for this
     // module.
 
-  $page_name="specialties.php3";      // for help info, later
+  $page_name="specialties.php";       // for help info, later
   $db_name  ="specialties";           // get this from jeff
   $record_name="Specialty";           // such as Room for Rooms module
                                       // or "CPT Modifiers" for cptmod

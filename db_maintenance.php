@@ -85,7 +85,7 @@ if (freemed_get_userlevel ($LoginCookie) > $database_level) {
       >"._("Physician Groups")."</A>
      <BR>
 
-     <A HREF=\"specialties.php3?$_auth\"
+     <A HREF=\"specialties.php?$_auth\"
       >"._("Physician")." "._("Specialties")."</A>
      <BR>
 

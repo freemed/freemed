@@ -1,12 +1,11 @@
 <?php
- // file: freemed-calendar-functions.inc
+ // $Id$
  // note: calendar functions for the freemed project
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-if (!defined (__FREEMED_CALENDAR_FUNCTIONS_INC__)) {
+if (!defined (__CALENDAR_FUNCTIONS_PHP__)) {
 
-define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
+define (__CALENDAR_FUNCTIONS_PHP__, true);
 
   // freemed_get_date_prev (in freemed-functions.inc)
   // -- returns date before provided date
@@ -612,6 +611,6 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
     return (int)$current_imap["count"];    
   } // end function fc_interference_map_count
 
-} // end checking for __FREEMED_CALENDAR_FUNCTIONS_INC__
+} // end checking for __CALENDAR_FUNCTIONS_PHP__
 
 ?>

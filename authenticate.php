@@ -1,9 +1,8 @@
 <?php
- // file: authenticate.php3
+ // $Id$
  // note: sets name/password cookie
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL
- // modif for languages max k <amk@span.ch> <19990807>
+ // code: jeff b <jeff@univrel.pr.uconn.edu>, max k <amk@span.ch>
 
   $page_name = "authenticate.php3" ;
   include ("global.var.inc");

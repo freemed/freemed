@@ -1,15 +1,14 @@
 <?php
- // file: render_forms.inc
+ // $Id$
  // desc: form rendering functions
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
  include ("global.var.inc");
  include ("freemed-functions.inc");
 
-if (!defined (__RENDER_FORMS_INC__)) {
+if (!defined (__RENDER_FORMS_PHP__)) {
 
-define (__RENDER_FORMS_INC__, true);
+define (__RENDER_FORMS_PHP__, true);
 
 // ****************************************
 // ********* FIXED FORMS SECTION **********
@@ -294,6 +293,6 @@ function render_fixedForm ($id) {
   return $buffer."\n";
 } // end function render_fixedForm
 
-} // end checking for __RENDER_FORMS_INC__
+} // end checking for __RENDER_FORMS_PHP__
 
 ?>

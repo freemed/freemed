@@ -1302,17 +1302,17 @@ $_userdata = explode (":", $LoginCookie);
 
 echo "
  <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-  <A HREF=\"export.php3?$_auth\"
+  <A HREF=\"export.php?$_auth\"
   ><IMG SRC=\"img/kfloppy.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
-  <A HREF=\"export.php3?$_auth\"
+  <A HREF=\"export.php?$_auth\"
   ><$STDFONT_B>"._("Export Databases")."<$STDFONT_E></A>
  </TD></TR> 
  <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-  <A HREF=\"import.php3?$_auth\"
+  <A HREF=\"import.php?$_auth\"
   ><IMG SRC=\"img/ark.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
- <A HREF=\"import.php3?$_auth\"
+ <A HREF=\"import.php?$_auth\"
  ><$STDFONT_B>"._("Import Databases")."<$STDFONT_E></A>
  </TD></TR>
 ";  
@@ -1341,10 +1341,10 @@ echo "
 if ($_userdata[0]==1)  // if we are root...
   echo "
     <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"user.php3?$_auth&action=view\"
+     <A HREF=\"user.php?$_auth&action=view\"
      ><IMG SRC=\"img/monalisa.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
-    <A HREF=\"user.php3?$_auth&action=view\"
+    <A HREF=\"user.php?$_auth&action=view\"
      ><$STDFONT_B>"._("User Maintenance")."<$STDFONT_E></A>
     </TD></TR>
   ";

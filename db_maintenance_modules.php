@@ -7,7 +7,6 @@ $page_name = basename($GLOBALS["REQUEST_URI"]);
 
 include ("global.var.inc");
 include ("freemed-functions.inc");
-include ("module.php");
 
 freemed_open_db ($LoginCookie);
 freemed_display_html_top ();

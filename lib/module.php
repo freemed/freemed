@@ -20,7 +20,7 @@ class freemedModule extends module {
 	function freemedModule ($nullvar = "") {
 		// call parent constructor
 		$this->module($nullvar);
-	} // end fnction freemedModule
+	} // end constructor freemedModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {

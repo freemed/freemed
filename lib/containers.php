@@ -1,13 +1,12 @@
 <?php
- // file: containers.inc
+ // $Id$
  // desc: class containers for objects used by freemed ... to avoid any
  //       problems with repetitive database access
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-if (!defined (__CONTAINERS_INC__)) {
+if (!defined (__CONTAINERS_PHP__)) {
 
-define (__CONTAINERS_INC__, true);
+define (__CONTAINERS_PHP__, true);
 
 // class InsuranceCompany
 
@@ -252,6 +251,6 @@ class User {
 
 } // end class User
 
-} // end checking for __CONTAINERS_INC__
+} // end checking for __CONTAINERS_PHP__
 
 ?>

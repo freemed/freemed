@@ -1,13 +1,13 @@
 <?php  
- // file: language-loader.inc
+ // $Id$
  // desc: language loader for freemed
  // code: Ergin Soysal, MD (soysal@pleksus.net.tr)
  //       minor mods from jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-if (!defined (__LANGUAGE_LOADER_INC__)) {
+if (!defined (__LANGUAGE_LOADER_PHP__)) {
 
-define (__LANGUAGE_LOADER_INC__, true);
+define (__LANGUAGE_LOADER_PHP__, true);
 
 # Created to allow multilingual support
 # 1. if you call a file with lang parameter:
@@ -121,6 +121,6 @@ define (__LANGUAGE_LOADER_INC__, true);
   bindtextdomain (PACKAGENAME, LOCALEDIR);
   textdomain (PACKAGENAME);
 
-} // end checking for __LANGUAGE_LOADER_INC__
+} // end checking for __LANGUAGE_LOADER_PHP__
 
 ?>

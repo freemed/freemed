@@ -1,10 +1,9 @@
 <?php
- // file: book_appointment.php3
+ // $Id$
  // note: scheduling module for freemed-project
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name = "book_appointment.php3";
+  $page_name = "book_appointment.php";
   include ("global.var.inc");
   include ("freemed-functions.inc");
   include ("freemed-calendar-functions.inc");

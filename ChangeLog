@@ -1,5 +1,29 @@
 freemed project changelog
 
+* Tue Dec 26 2000 rufustfirefly
+  - updated README to suggest bware_cache and Zend Optimizer
+  - added module listing of "Billing" category to billing_functions.php
+  - moved show_appointments.php3 -> show_appointments.php
+  - moved authenticate.php3 -> authenticate.php
+  - moved import.php3 -> import.php
+  - moved export.php3 -> export.php
+  - moved user.php3 -> user.php
+  - moved specialties.php3 -> specialties.php
+  - moved manage_appointments.php3 -> manage_appointments.php
+  - moved book_appointment.php3 -> book_appointment.php
+  - created lib/ for all libraries
+  - moved render_forms.inc -> lib/render_forms.php
+  - moved iso-set.inc -> lib/iso-set.php
+  - moved macros.inc -> lib/macros.php
+  - moved language-loader.inc -> lib/language-loader.php
+  - moved containers.inc -> lib/containers.php
+  - moved module.php -> lib/module.php
+  - moved module_maintenance.php -> lib/module_maintenance.php
+  - moved freemed-calendar-functions.inc -> lib/calendar-functions.php
+  - moved move_appointment.php3 -> move_appointment.php3
+  - moved physician_day_view.php3 -> physician_day_view.php
+  - moved physician_week_view.php3 -> physician_week_view.php
+
 * Thu Dec 21 2000 rufustfirefly
   - more work on typeOfServiceMaintenance, now using module_maintenance.php
     for the prototype

@@ -8,7 +8,7 @@ if (!defined(__TYPE_OF_SERVICE_MODULE_PHP__)) {
 
 define (__TYPE_OF_SERVICE_MODULE_PHP__, true);
 
-include "module_maintenance.php";
+include "lib/module_maintenance.php";
 
 class typeOfServiceMaintenance extends freemedMaintenanceModule {
 

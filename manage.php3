@@ -51,15 +51,15 @@ switch ($action) {
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>"._("Appointments")."</B> : <$STDFONT_E>
         </TD><TD>
-        <A HREF=\"book_appointment.php3?$_auth&patient=$id&type=pat\"
+        <A HREF=\"book_appointment.php?$_auth&patient=$id&type=pat\"
          ><$STDFONT_B>"._("Add")."<$STDFONT_E></A> 
         </TD><TD>
-        <A HREF=\"manage_appointments.php3?$_auth&patient=$id\"
+        <A HREF=\"manage_appointments.php?$_auth&patient=$id\"
          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A><BR>
         </TD><TD>
         </TD></TR>
         <TR><TD>&nbsp;</TD>
-        <TD><A HREF=\"show_appointments.php3?$_auth&patient=$id&type=pat\"
+        <TD><A HREF=\"show_appointments.php?$_auth&patient=$id&type=pat\"
          ><$STDFONT_B>"._("Show Today")."<$STDFONT_E></A></TD>
         <TD>&nbsp;</TD>
         </TR>

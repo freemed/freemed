@@ -5,7 +5,6 @@
 
 include "global.var.inc";
 include "freemed-functions.inc";
-include "module.php";
 
 // get list of modules
 $module_list = new module_list (PACKAGENAME);

@@ -1,13 +1,12 @@
 <?php
- // file: manage_appointments.php3
+ // $Id$
  // desc: routines for managing appointments... for patients (not call-ins)
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name = "manage_appointments.php3";
+ $page_name = "manage_appointments.php";
  include ("global.var.inc");
  include ("freemed-functions.inc");
- include ("freemed-calendar-functions.inc");
+ include ("lib/calendar-functions.php");
 
  freemed_open_db ($LoginCookie);
  freemed_display_html_top ();
@@ -59,7 +58,7 @@
    echo freemed_patient_box($this_patient)."
      <P>
      <CENTER>
-      <A HREF=\"book_appointment.php3?$_auth&patient=$patient&type=pat\"
+      <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
        ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
       <A HREF=\"manage.php3?$_auth&id=$patient\"
        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
@@ -90,7 +89,7 @@
        </TD></TR></TABLE>
        <P>
        <CENTER>
-       <A HREF=\"book_appointment.php3?$_auth&patient=$patient&type=pat\"
+       <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
         ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
        <A HREF=\"manage.php3?$_auth&id=$patient\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
@@ -161,7 +160,7 @@
        </TABLE>
        <P>
        <CENTER>
-        <A HREF=\"book_appointment.php3?$_auth&patient=$patient&type=pat\"
+        <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
          ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
         <A HREF=\"manage.php3?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>

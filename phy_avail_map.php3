@@ -1,9 +1,9 @@
 <?php
-  # file: phy_avail_map.php3
-  # note: physician availability map -- for lunches, etc
-  # code: I'm-So-Lazy-That-I-Use-The-Template
-  #       jeff b (jeff@univrel.pr.uconn.edu) -- template
-  # lic : GPL
+ // file: phy_avail_map.php3
+ // note: physician availability map -- for lunches, etc
+ // code: I'm-So-Lazy-That-I-Use-The-Template
+ //       jeff b (jeff@univrel.pr.uconn.edu) -- template
+ // lic : GPL
 
     // *** local variables section ***
     // complete these to reflect the data for this
@@ -24,7 +24,7 @@
 
   include ("global.var.inc");         // load global variables
   include ("freemed-functions.inc");  // API functions
-  include ("freemed-calendar-functions.inc"); // calendar API functions
+  include ("lib/calendar-functions.php"); // calendar API functions
 
     // *** authenticate user ***
 

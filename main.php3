@@ -90,15 +90,15 @@ echo "
    echo "
     <TR>
     <TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"physician_day_view.php3?$_auth&physician=".
+     <A HREF=\"physician_day_view.php?$_auth&physician=".
       $this_user->getPhysician()."\"
      ><IMG SRC=\"img/karm.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"physician_day_view.php3?$_auth&physician=".
+    <A HREF=\"physician_day_view.php?$_auth&physician=".
       $this_user->getPhysician()."\"
      >"._("Day View")."</A><BR>
-    <A HREF=\"physician_week_view.php3?$_auth&physician=".
+    <A HREF=\"physician_week_view.php?$_auth&physician=".
       $this_user->getPhysician()."\"
      >"._("Week View")."</A>
     </TD></TR>

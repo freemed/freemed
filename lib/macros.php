@@ -1,12 +1,11 @@
 <?php
- // file: macros.inc
+ // $Id$
  // note: macros for commonly used constants
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-if (!defined(__MACROS_INC__)) {
+if (!defined(__MACROS_PHP__)) {
 
-define (__MACROS_INC__, true);
+define (__MACROS_PHP__, true);
 
   // *****************************
   //    payment related macros
@@ -28,6 +27,6 @@ define (__MACROS_INC__, true);
   define (WITHHOLD,             7);
   define (DEDUCTABLE,           8);
 
-} // end checking for __MACROS_INC__
+} // end checking for __MACROS_PHP__
 
 ?>

@@ -1,10 +1,9 @@
 <?php
- // file: export.php3
+ // $Id$
  // desc: administrative export module
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name = "export.php3";
+ $page_name = "export.php";
  include ("global.var.inc");
  include ("freemed-functions.inc");
 

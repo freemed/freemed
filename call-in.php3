@@ -217,10 +217,10 @@ switch ($action) {
     </TD></TR>
     </TABLE>
     <P>
-    <A HREF=\"show_appointments.php3?$_auth&patient=$id&type=temp\"
+    <A HREF=\"show_appointments.php?$_auth&patient=$id&type=temp\"
      ><$STDFONT_B>"._("Show Today's Appointments")."<$STDFONT_E></A>
     <P>
-    <A HREF=\"show_appointments.php3?$_auth&patient=$id&type=temp&show=all\"
+    <A HREF=\"show_appointments.php?$_auth&patient=$id&type=temp&show=all\"
      ><$STDFONT_B>"._("Show All Appointments")."<$STDFONT_E></A>
     <P>
     <A HREF=\"main.php3?$_auth\"

@@ -1,8 +1,7 @@
 <?php
-  // file: user.php3
+  // $Id$
   // note: user module...
-  // code: jeff b (jeff@univrel.pr.uconn.edu) -- template
-  //       adam b (gdrago23@yahoo.com) -- near-complete rewrite
+  // code: adam b (gdrago23@yahoo.com) -- near-complete rewrite
   // lic : GPL
   
   $page_name  = basename($GLOBALS["REQUEST_URI"]);

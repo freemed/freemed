@@ -13,6 +13,9 @@ from jeff b (jeff@univrel.pr.uconn.edu)
   will change as soon as the database is capable of holding live data)
 * code is annotated with an author if the primary author is other than
   jeff b <jeff@univrel.pr.uconn.edu>
+* since freemed involves a fairly hefty codebase, php optimizing tricks,
+  such as the bware_cache module or the Zend Optimizer should be used to
+  minimize load times.
 
 **************************************************************** INSTALLATION
 
