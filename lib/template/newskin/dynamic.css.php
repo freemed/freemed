@@ -191,11 +191,11 @@ div.menu div.menuItemSep {
 <?php } ?>
 .main {
 	top: 20px;
-	padding: 20px;
+	padding: 5px;
 	/* try not to overflow past the edges */
 	<?php if ($Gecko) {
 		print "\twidth: auto;\n";	
-		print "\theight: 102%;\n";	
+		print "\theight: auto;\n";	
 	} elseif ($IE) {
 		print "\theight: 90%;\n";
 	} else {

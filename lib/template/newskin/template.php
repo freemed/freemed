@@ -75,7 +75,10 @@ if (isset($refresh)) {
 <?php if (!$GLOBALS['__freemed']['no_menu_bar']) {
 	print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ".
 		"width=\"100%\">\n";
-	print "<tr><td valign=\"top\"><b>".PACKAGENAME." v".DISPLAY_VERSION."</b></td>\n";
+		print "<tr><td align=\"left\" valign=\"top\"><span>".
+		"<img src=\"img/freemed_logo_16x16.png\" border=\"0\" ".
+		"width=\"16\" height=\"16\" alt=\"\" /></span>\n".
+		"<span><b>".PACKAGENAME." v".DISPLAY_VERSION."</b></span></td>\n";
 	print "<td valign=\"top\">";
 	include "lib/template/newskin/menu.php";
 	if ( ($help_url = help_url()) != "help.php" ) {
@@ -89,7 +92,7 @@ if (isset($refresh)) {
 		prepare(__("Help"))."</a>\n";
 	} // end checking for help.php
 
-	print "</td><td align=\"right\" valign=\"top\">".prepare($GLOBALS['page_title'])."</td>";
+	print "</td><td align=\"right\" valign=\"top\">".prepare($GLOBALS['page_title'])."&nbsp;&nbsp;</td>";
 	print "</tr>";
 	print "</table>\n";
 } else { ?>
@@ -101,12 +104,13 @@ if (isset($refresh)) {
 </div>
 
 <!-- body -->
+<br/><br/>
 
 <div class="main" id="main">
-	<br/>
 	<?php print $display_buffer; ?>
-	<br/><br/>
 </div>
+
+<br/><br/>
 
 <?php
 	// Handle HTMLarea objects, if they exist
