@@ -139,7 +139,8 @@ class RebillByCovModule extends BillingModule {
 		<FORM ACTION=\"$this->page_name\" METHOD=POST>
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
 		<INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"rebill\">
-		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
+		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($_REQUEST['module'])."\">
+		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($_REQUEST['type'])."\">
 
 		<TR>
 		 <TD ALIGN=RIGHT>
