@@ -38,9 +38,9 @@ function freemed_basic_auth () {
 		}
 	} else {
 		// Otherwise return fault for no authorization
-		$authed = false;
-		$GLOBALS['__freemed']['basic_auth_id'] = 0;
-		$GLOBALS['__freemed']['basic_auth_phy'] = 0;
+		Header("WWW-Authenticate: Basic realm=\"".prepare(PACKAGENAME." v".VERSION." vCalendar")."\"");
+		Header("HTTP/1.0 401 Unauthorized");
+		die();
 	}
 	return $authed;
 } // function freemed_basic_auth
