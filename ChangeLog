@@ -1,6 +1,28 @@
 freemed project changelog
 ($Id$)
 
+* Tue Jul 10 2001 rufustfirefly
+  Released 0.2.1.3 (Bread and Butter/CVS)
+  - lib/freemed.php, lib/bcadd.php: added fake function to perform
+    bcadd() function without bcmath (warning: HACK)
+  - modules/intake.emr_report.module.php: small fix for security
+  - lib/modules_emr.php, lib/modules_maintenance.php: significant
+    speed hack for user interaction; no longer has separate
+    add/mod/del confirmation screens
+  - test_xml.php: added test generation routine for XML (this is a
+    security hole, as record #1 is visible using this. erase it if
+    you don't need it)
+  - po/freemed.pot: updated po template with changes from modules
+  - doc/TRANSLATION-HOWTO: added gettext howto
+  - lib/freemed.php: supposedly fixed Lynx caching problem
+  NOTE: FreeMED's database structures, especially the core EMR, are
+    going to be changing *rapidly* after this release.
+
+* Thu Jun 21 2001 rufustfirefly
+  - modules/cpt.db.module.php: form() action fixed, needed to have
+    a reset() call before while(each(GLOBALS)), used foreach(GLOBALS)
+    instead
+
 * Wed Jun 20 2001 rufustfirefly
   - modules/provider.db.module.php: fix in modification of phone #
     fields (David Jordan)
