@@ -389,10 +389,48 @@ class TeX {
 		$text = preg_replace("#<[^>]*?>#i", '', $text);
 
 		// Sanitize out quotes
-		$string = str_replace('"', '\'\'', $string);
+		$text = $this->_ReplaceQuotes($text);
 	
 		return $text;
 	} // end method _HTMLToRichText
+
+	// Method: _ReplaceQuotes
+	//
+	//	Replace quotes with proper beginning and ending quotation
+	//	marks, TeX-style.
+	//
+	// Parameters:
+	//
+	//	$string - String to be mucked with.
+	//
+	// Returns:
+	//
+	//	TeX-quoted string
+	//
+	function _ReplaceQuotes ( $string ) {
+		// Skip if there are no quotes
+		if (strpos($string, '"') === false) { return $string; }
+
+		$quotetype = 0;
+		for ($i=0; $i<strlen($string); $i++) {
+			if (substr($string, $i, 1) == '"') {
+				switch ($quotetype) {
+					case 0:
+					$output .= '``';
+					$quotetype = 1;
+					break;
+
+					case 1:
+					$output .= '\'\'';
+					$quotetype = 0;
+					break;
+				}
+			} else {
+				$output .= substr($string, $i, 1);
+			}
+		}
+		return $output;
+	} // end method _ReplaceQuotes
 
 	// Method: _SanitizeText
 	//
@@ -431,7 +469,7 @@ class TeX {
 		$string = str_replace('+', '$+$', $string);
 
 		// Deal with amphersands, and &quot; &amp; stuff
-		$string = str_replace('&quot;', '\'\'', $string);
+		$string = str_replace('&quot;', '"', $string);
 		$string = str_replace('&amp;', '&', $string);
 		$string = str_replace('&lt;', '$<$', $string);
 		$string = str_replace('&gt;', '$>$', $string);
@@ -443,7 +481,7 @@ class TeX {
 			// This one isn't *really* right, since there are
 			// technically opening and closing quotes, but it
 			// will do for now.
-			$string = str_replace('"', '\'\'', $string);
+			$string = $this->_ReplaceQuotes($string);
 
 			$string = str_replace('<', '\<', $string);
 			$string = str_replace('>', '\>', $string);
