@@ -20,6 +20,7 @@ class freemedCalendarModule extends freemedModule {
 	var $table_name;
 
     // calendar specific data
+	var $ProcessType = "VIEW";
 	var $SECONDS_PER_DAY = 86400; // 60*60*24
 	var $months_hash = array( "01" => "January",
 								"02" => "February",
@@ -260,6 +261,12 @@ class freemedCalendarModule extends freemedModule {
 	  return $ret;
 	}
 
+	function setProcessType($type)
+	{
+		$this->ProcessType = $type;
+	}
+
+
 	/*
 	 * function to generate the javascript needed for the popup
 	 */
@@ -471,6 +478,7 @@ class freemedCalendarModule extends freemedModule {
 	* draws a calendar.
 	*/
 	function draw($draw_array = "") {
+		global $module, $action, $_auth;
 
 	/*
 	* this is a long section which simply gets
@@ -677,6 +685,7 @@ class freemedCalendarModule extends freemedModule {
 	  $theday = $this->_get_date_by_counter($i,$this->month_number, $this->year);
 
 
+
 	  /*
 	   * if there's an event for this day, get it.
 	   * otherwise, set to "" string
@@ -687,18 +696,40 @@ class freemedCalendarModule extends freemedModule {
 	  {
 		for( $j=0 ; $j <  count($this->month_data[$theday]["event_title"]) ; $j++ )
 		{
-		  //$c = $this->month_data[$theday]["id"][$j];
-		  //echo "id is $c<BR>";
-		  $theevent .= "<font face=\"$font_face\" size=\"$font_size\"><a href=\"javascript:openWin(";
-		  $theevent .= $this->month_data[$theday]["id"][$j]; 
-		  $theevent .= ")\">";
-     	  $theevent .= $this->month_data[$theday]["event_title"][$j]; 
-		  $theevent .= "</a></font><br><br>";
+		  if ($this->ProcessType == "ADMIN")
+		  {
+			$theevent .= $this->month_data[$theday]["event_title"][$j]."<BR>";
+
+		  }
+		  else
+		  {
+		  	//$c = $this->month_data[$theday]["id"][$j];
+		  	//echo "id is $c<BR>";
+		  	$theevent .= "<font face=\"$font_face\" size=\"$font_size\"><a href=\"javascript:openWin(";
+		  	$theevent .= $this->month_data[$theday]["id"][$j]; 
+		  	$theevent .= ")\">";
+     	  	$theevent .= $this->month_data[$theday]["event_title"][$j]; 
+		  	$theevent .= "</a></font><br><br>\n";
+		  }
 		}
 	  }
 
 
-	  echo "  <td bgcolor=\"$bgcolor\" align=\"$table_row_align\" valign=\"$table_row_valign\" height=\"$dates_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\">$theday<br>$theevent</font></td>\n";
+	  if ($this->ProcessType == "ADMIN")
+	  {
+  		  $theday_link = "<A HREF=\"$this->page_name?$_auth&action=display&module=".prepare($module).
+		  	  "&month=$this->month_number&day=$theday&year=$this->year\"".
+			  ">$theday</A>";
+		  $theday = $theday_link;
+			
+	  }
+
+	  echo "<td bgcolor=\"$bgcolor\" align=\"$table_row_align\" valign=\"$table_row_valign\" height=\"$dates_cell_height\"";
+	  echo "width=\"$dates_cell_width\">";
+	  echo "<font face=\"$font_face\" size=\"$font_size\"";
+	  echo ">$theday<br>\n";
+      echo "$theevent</font>";
+	  echo "</td>\n";
 	  /* be sure to clear out $theevent */
 	  $theevent = "";
 	  /* close the last row */

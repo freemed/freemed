@@ -15,6 +15,7 @@ class AdminCalendar extends freemedCalendarModule {
 
 	var $record_name = "Scheduler";
 	var $table_name  = "scheduler";
+	var $order_field = "calhour,calminute";
 
 	var $variables = array (
 		"caldateof",
@@ -44,6 +45,8 @@ class AdminCalendar extends freemedCalendarModule {
 		if (!$year) $year = date("Y");
 		if (!$month) $month = date("m");
 
+		$this->SetProcessType("ADMIN");
+
 		$this->month($month,$year);
 		echo "<CENTER><B>Calendar For: $this->month_name, $this->year</B></CENTER><br>\n";
 		$this->draw(array("cellspacing" => "2" , "cellpadding" => "2" ,
@@ -53,10 +56,10 @@ class AdminCalendar extends freemedCalendarModule {
                       "font_size" => "-1") );
 
 		echo "<CENTER>";
-		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
+		echo "<A HREF=\"$this->page_name?$_auth".
 			"&action=view&module=$module&month=$this->prevmonth&year=$this->prevyear\">Prev</A>";
 		echo "&nbsp;";
-		echo "<A HREF=\"$this->page_name?_auth=".prepare($_auth).
+		echo "<A HREF=\"$this->page_name?$_auth".
 			"&action=view&module=$module&month=$this->nextmonth&year=$this->nextyear\">Next</A>";
 		echo "</CENTER>";
 
@@ -71,7 +74,45 @@ class AdminCalendar extends freemedCalendarModule {
 	} // end function AdminCalendar->form
 
 	function display () {
-		echo "in display<BR>";
+		reset ($GLOBALS);
+		while (list($k, $v)=each($GLOBALS)) global $$k;
+
+		//echo "year $year  month $month day $day<BR>";
+		//echo "in display<BR>";
+
+		$query = "SELECT id,calfacility,calroom,calpatient,calphysician,".
+				"CONCAT(calhour,\":\",calminute) as caltime FROM ".$this->table_name.
+                " WHERE MONTH(caldateof)='".$month."' AND".
+                " YEAR(caldateof)='".$year."' AND".
+				" DAYOFMONTH(caldateof)='".$day."'".
+                " ORDER BY caltime";
+
+		$result = $sql->query($query);
+
+		if (!$result)
+			trigger_error("Error reading scheduler table",E_ERROR);
+
+		//echo "$query<BR>";
+		echo freemed_display_itemlist (
+            $result,
+            $this->page_name,
+            array (
+                _("Time")  => "caltime",
+                _("Room")  => "calroom",
+				_("Facility") => "calfacility",
+                _("Patient") => "calpatient",
+				_("Physician")  => "calphysician"
+            ),
+            array ("", "", "", ""),
+			array(
+				  "",
+				  "room"    => "roomname",
+				  "facility" => "psrname",
+				  "patient" => "ptlname",
+				  "physician" => "phylname"
+			     )	
+        );
+		
 	} // end display
 
 } // end of class AdminCalendar

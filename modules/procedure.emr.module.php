@@ -131,7 +131,7 @@ class procedureModule extends freemedEMRModule {
   $cpt_code = freemed_get_link_rec ($proccpt, "cpt"); // cpt code
   $cpt_code_fees = fm_split_into_array ($cpt_code["cptstdfee"]);
   //$cpt_code_stdfee = $cpt_code[$this_insco->id]; // grab proper std fee
-  $cpt_code_stdfee = $cpt_code[$insid]; // grab proper std fee
+  $cpt_code_stdfee = $cpt_code_fees[$insid]; // grab proper std fee
   if (empty($cpt_code_stdfee) or ($cpt_code_stdfee==0))
     $cpt_code_stdfee = $cpt_code["cptdefstdfee"]; // if none, do default
   $cpt_code_stdfee = bcadd ($cpt_code_stdfee, 0, 2);

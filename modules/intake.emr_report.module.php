@@ -45,16 +45,17 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 				$sched_row = freemed_get_link_rec($schid, "scheduler");
 				$pt[calldate] = $sched_row[caldateof];
 				$calminute = $sched_row["calminute"];
-				if ($calminute==0) $calminute="00";
+				$calhour = $sched_row["calhour"];
+				//if ($calminute==0) $calminute="00";
 
 				// time checking/creation if/else clause
-				if ($sched_row["calhour"]<12)
-					$_time = $sched_row["calhour"].":".$calminute." AM";
-				elseif ($sched_row["calhour"]==12)
-					$_time = $sched_row["calhour"].":".$calminute." PM";
-				else
-					$_time = ($r["calhour"]-12).":".$calminute." PM";
-				$pt[calltime] = $_time;
+				//if ($sched_row["calhour"]<12)
+				//	$_time = $sched_row["calhour"].":".$calminute." AM";
+				//elseif ($sched_row["calhour"]==12)
+				//	$_time = $sched_row["calhour"].":".$calminute." PM";
+				//else
+				//	$_time = ($r["calhour"]-12).":".$calminute." PM";
+				$pt[calltime] = fc_get_time_string($calhour,$calminute);
 			}
 			else
 			{

@@ -84,6 +84,19 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
      else       {  return strftime ("%A", $this_timestamp);  }
   } // end function day_of_the_week
 
+  function fc_get_time_string($hour,$minute)
+  {
+	if ($minute==0) $minute="00";
+
+	// time checking/creation if/else clause
+	if ($hour<12)
+		$_time = $hour.":".$minute." AM";
+	elseif ($hour == 12)
+		$_time = $hour.":".$minute." PM";
+	else
+		$_time = ($hour-12).":".$minute." PM";
+	return $_time;
+  }
   // function fc_scroll_prev_month
   function fc_scroll_prev_month ($given_date="") {
     global $cur_date;

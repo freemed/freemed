@@ -120,16 +120,18 @@ class ViewCalendar extends freemedCalendarModule {
 			$postnote = _("None");
 
 		$calminute = $row["calminute"];
-		if ($calminute==0) $calminute="00";
+		$calhour = $row["calhour"];
+
+		//if ($calminute==0) $calminute="00";
 
 		// time checking/creation if/else clause
-		if ($row["calhour"]<12)
-			$_time = $row["calhour"].":".$calminute." AM";
-		elseif ($row["calhour"]==12)
-			$_time = $row["calhour"].":".$calminute." PM";
-		else
-			$_time = ($r["calhour"]-12).":".$calminute." PM";
-		$time = $_time;	
+		//if ($row["calhour"]<12)
+		//	$_time = $row["calhour"].":".$calminute." AM";
+		//elseif ($row["calhour"]==12)
+		//	$_time = $row["calhour"].":".$calminute." PM";
+		//else
+		//	$_time = ($r["calhour"]-12).":".$calminute." PM";
+		$time = fc_get_time_string($calhour,$calminute);
 		
 
 		$data = "";	
