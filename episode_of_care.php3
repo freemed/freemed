@@ -44,7 +44,7 @@
         $r      = fdb_fetch_array ($result);
 
         $eocpatient         = $r["eocpatient"      ];
-        $eocdescrip         = fm_prep($r["eocdescrip"]);
+        $eocdescrip         = prepare($r["eocdescrip"]);
         $eocstartdate       = $r["eocstartdate"    ];
         $eocdtlastsimilar   = $r["eocdtlastsimilar"];
         $eocreferrer        = $r["eocreferrer"     ];
@@ -54,26 +54,26 @@
         $eocrelemp          = $r["eocrelemp"       ];
         $eocrelauto         = $r["eocrelauto"      ];
         $eocrelother        = $r["eocrelother"     ];
-        $eocrelstpr         = fm_prep($r["eocrelstpr"]);
-        $eocrelautoname     = fm_prep($r["eocrelautoname"]);
-        $eocrelautoaddr1    = fm_prep($r["eocrelautoaddr1"]);
-        $eocrelautoaddr2    = fm_prep($r["eocrelautoaddr2"]);
-        $eocrelautocity     = fm_prep($r["eocrelautocity"]);
-        $eocrelautostpr     = fm_prep($r["eocrelautostpr"]);
-        $eocrelautozip      = fm_prep($r["eocrelautozip"]);
-        $eocrelautocountry  = fm_prep($r["eocrelautocountry"]);
-        $eocrelautocase     = fm_prep($r["eocrelautocase"]);
-        $eocrelautorcname   = fm_prep($r["eocrelautorcname"]);
+        $eocrelstpr         = prepare($r["eocrelstpr"]);
+        $eocrelautoname     = prepare($r["eocrelautoname"]);
+        $eocrelautoaddr1    = prepare($r["eocrelautoaddr1"]);
+        $eocrelautoaddr2    = prepare($r["eocrelautoaddr2"]);
+        $eocrelautocity     = prepare($r["eocrelautocity"]);
+        $eocrelautostpr     = prepare($r["eocrelautostpr"]);
+        $eocrelautozip      = prepare($r["eocrelautozip"]);
+        $eocrelautocountry  = prepare($r["eocrelautocountry"]);
+        $eocrelautocase     = prepare($r["eocrelautocase"]);
+        $eocrelautorcname   = prepare($r["eocrelautorcname"]);
         $eocrelautorcphone  = $r["eocrelautorcphone"];
-        $eocrelempname      = fm_prep($r["eocrelempname"]);
-        $eocrelempaddr1     = fm_prep($r["eocrelempaddr1"]);
-        $eocrelempaddr2     = fm_prep($r["eocrelempaddr2"]);
-        $eocrelempcity      = fm_prep($r["eocrelempcity"]);
-        $eocrelempstpr      = fm_prep($r["eocrelempstpr"]);
-        $eocrelempzip       = fm_prep($r["eocrelempzip"]);
-        $eocrelempcountry   = fm_prep($r["eocrelempcountry"]);
-        $eocrelempfile      = fm_prep($r["eocrelempfile"]);
-        $eocrelemprcname    = fm_prep($r["eocrelemprcname"]);
+        $eocrelempname      = prepare($r["eocrelempname"]);
+        $eocrelempaddr1     = prepare($r["eocrelempaddr1"]);
+        $eocrelempaddr2     = prepare($r["eocrelempaddr2"]);
+        $eocrelempcity      = prepare($r["eocrelempcity"]);
+        $eocrelempstpr      = prepare($r["eocrelempstpr"]);
+        $eocrelempzip       = prepare($r["eocrelempzip"]);
+        $eocrelempcountry   = prepare($r["eocrelempcountry"]);
+        $eocrelempfile      = prepare($r["eocrelempfile"]);
+        $eocrelemprcname    = prepare($r["eocrelemprcname"]);
         $eocrelemprcphone   = $r["eocrelemprcphone"];
         $eocrelpregcycle    = $r["eocrelpregcycle"];
         $eocrelpreggravida  = $r["eocrelpreggravida"];
@@ -82,7 +82,7 @@
         $eocrelpregabort    = $r["eocrelpregabort"];
         $eocrelpreglastper  = $r["eocrelpreglastper"];
         $eocrelpregconfine  = $r["eocrelpregconfine"];
-        $eocrelothercomment = fm_prep($r["eocrelothercomment"]);
+        $eocrelothercomment = prepare($r["eocrelothercomment"]);
         $eoctype            = $r["eoctype"];
         break;
       } // end checking if we have been here yet...
@@ -134,7 +134,7 @@
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocdescrip\" SIZE=25 MAXLENGTH=100
-       VALUE=\"".fm_prep($eocdescrip)."\">
+       VALUE=\"".prepare($eocdescrip)."\">
      </TD>
   ";
   if ($this_patient->isFemale()) { echo "
@@ -712,7 +712,7 @@
        <$STDFONT_B>$eoc[eocstartdate]<$STDFONT_E>
       </TD>
       <TD ALIGN=CENTER>
-       <$STDFONT_B>".fm_prep($eoc[eocdescrip])."<$STDFONT_E>
+       <$STDFONT_B>".prepare($eoc[eocdescrip])."<$STDFONT_E>
       </TD>
      </TR>
      </TABLE>
@@ -730,7 +730,7 @@
    $result = fdb_query ($query);
   
    $r_name = $record_name; // backup
-   $record_name = "Procedure"
+   $record_name = "Procedure";
    echo freemed_display_itemlist (
      $result,
      "procedure.php3",
@@ -751,7 +751,7 @@
        "cpt" => "cptcode",
        "cptmod" => "cptmod",
        ""
-     ),
+     )
    );
    // end of procedures display
    
@@ -780,7 +780,7 @@
      ),
      array (
        ""
-     ),
+     )
    );
 
    $record_name = $r_name; // restore from backup var

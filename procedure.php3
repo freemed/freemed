@@ -17,16 +17,16 @@
  freemed_display_banner ();
 
 if ($patient<1) {
-  freemed_display_box_top ("$record_name :: $ERROR");
+  freemed_display_box_top (_($record_name)." :: "._("ERROR"));
   echo "
    <P>
    <CENTER>
-   <$STDFONT_B>You must select a patient!<$STDFONT_E>
+   <$STDFONT_B>"._("You must select a patient.")."<$STDFONT_E>
    </CENTER>
    <P>
    <CENTER>
     <A HREF=\"patient.php3?$_auth\"
-    ><$STDFONT_B>Select a Patient<$STDFONT_E></A>
+    ><$STDFONT_B>"._("Select a Patient")."<$STDFONT_E></A>
    </CENTER>
    <P>
   ";
@@ -40,8 +40,6 @@ switch ($action) { // master action switch
  case "addform": case "modform": // add or modify form
   switch ($action) { // inner action switch
    case "addform":
-    $next_action = "addform2";
-    $this_action = "$Add";
     $procunits = "1.0";        // default value for units
     $procdiag1      = $this_patient->local_record[ptdiag1];
     $procdiag2      = $this_patient->local_record[ptdiag2];
@@ -49,8 +47,6 @@ switch ($action) { // master action switch
     $procdiag4      = $this_patient->local_record[ptdiag4];
     break; // end of addform (inner)
    case "modform":
-    $next_action = "modform2";
-    $this_action = "$Modify";
     $this_data = freemed_get_link_rec ($id, $db_name);
     // extract all of the data
     $procpatient    = $this_data["procpatient"   ];
@@ -81,17 +77,14 @@ switch ($action) { // master action switch
   $phys_query = "SELECT * FROM physician WHERE phyref='no' ".
                 "ORDER BY phylname,phyfname";
   $phys_result = fdb_query($phys_query);
-  freemed_display_box_top ("$this_action $record_name");
+  freemed_display_box_top ( ( ($action=="addform") ? _("Add") : _("Modify") ).
+   " "._($record_name));
   echo "
     <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
     <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">
-    <P>
-    <CENTER>
-     <$STDFONT_B>$Patient : <$STDFONT_E>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-    </CENTER>
+    ".freemed_patient_box($this_patient)."
+    
     <P>
 
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
@@ -307,9 +300,11 @@ switch ($action) { // master action switch
 
     <P>
     <CENTER>
-     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"$next_action\">
-     <INPUT TYPE=SUBMIT VALUE=\"$this_action\">
-     <INPUT TYPE=RESET  VALUE=\"$Clear\"> 
+     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
+       ( ($action=="addform") ? "addform2" : "modform2" )."\">
+     <INPUT TYPE=SUBMIT VALUE=\"".
+       ( ($action=="addform") ? _("Add") : _("Modify") )."\">
+     <INPUT TYPE=RESET  VALUE=\""._("Clear")."\"> 
     </CENTER>
     </FORM>
   ";
@@ -329,13 +324,7 @@ switch ($action) { // master action switch
      break;
   } // internal action switch (addform2,modform2)
   freemed_display_box_top ("$record_name Confirm");
-  echo "
-   <P>
-    <CENTER>
-     <$STDFONT_B>$Patient : <$STDFONT_E>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-    </CENTER>
+  echo freemed_patient_box($this_patient)."
    <P>
 
    <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -719,16 +708,7 @@ switch ($action) { // master action switch
             WHERE procpatient='$patient'
             ORDER BY procdt DESC";
   $result = fdb_query ($query);
-  echo "
-    <P>
-    <CENTER>
-     <$STDFONT_B>Patient : <$STDFONT_E>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-    </CENTER>
-    <P>
-  ";
-
+  echo freemed_patient_box($this_patient)."\n<P>\n";
   echo freemed_display_itemlist(
     $result,
     "procedure.php3",
