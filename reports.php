@@ -49,6 +49,11 @@ if (!$module_list->empty_category($category)) {
     </TABLE>
 	</CENTER>
 	<P>
+	<CENTER>
+		<$STDFONT_B><A HREF=\"main.php?$_auth\"
+		>"._("Return to Main Menu")."</A><$STDFONT_E>
+	</CENTER>
+	<P>
 	";
 } else {
 	echo "
