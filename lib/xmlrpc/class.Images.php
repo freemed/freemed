@@ -162,7 +162,26 @@ class Images {
 		);
 	} // end method attach
 
-	function get($patient, $id) {
+	// Method: get
+	//
+	//	Fetch image
+	//
+	// Parameters:
+	//
+	//	$patient - Record ID of patient
+	//
+	//	$id - images table ID or "identification"
+	//
+	//	$convert_to - (optional) String or boolean false. Determines
+	//	format for optional conversion. Defaults to false.
+	//	* bmp - Windows bitmap format
+	//	* jpeg - JPEG image format
+	//
+	// Returns:
+	//
+	//	Image binary data
+	//
+	function get($patient, $id, $convert_to = false) {
 		global $sql;
 
 		// Secure parameters
@@ -183,13 +202,48 @@ class Images {
 			);
 		} else {
 			$buffer = "";
-			while (!feof($fp)) {
-				$buffer .= fgets($fp, 4096);
-			}
-			fclose($fp);
-			return CreateObject('PHP.xmlrpcresp',
-				CreateObject('PHP.xmlrpcval', $buffer, 'base64')
-			);
+			if ($convert_to) {
+				fclose ($fp);
+				$temp = tempnam("/tmp", "fmImg");
+
+				switch ($convert_to) {
+					case 'bmp':
+						$e = 'dib'; break;
+					case 'jpg':
+					case 'jpeg':
+					default: 
+						$e = 'jpg'; break;
+				}
+
+				// Convert to EPS then JPEG
+				`/usr/bin/djvups -format=eps -color=yes "$imagefilename" > "$temp.eps"`;
+				`/usr/bin/convert "$temp.eps" "$temp.$e"`;
+
+				// Handle inability to open image
+				if (!($fp = fopen($temp.".".$e, "r"))) {
+					return CreateObject('PHP.xmlrpcresp',
+						CreateObject('PHP.xmlrpcval', false, 'boolean')
+					);
+				}
+				while (!feof($fp)) {
+					$buffer .= fgets($fp, 4096);
+				}
+				fclose($fp);
+				unlink($temp);
+				unlink($temp.".eps");
+				unlink($temp.".".$e);
+				return CreateObject('PHP.xmlrpcresp',
+					CreateObject('PHP.xmlrpcval', $buffer, 'base64')
+				);
+			} else {
+				while (!feof($fp)) {
+					$buffer .= fgets($fp, 4096);
+				}
+				fclose($fp);
+				return CreateObject('PHP.xmlrpcresp',
+					CreateObject('PHP.xmlrpcval', $buffer, 'base64')
+				);
+			} // end of checking for convert_to_jpeg
 		}
 	} // end method get
 
