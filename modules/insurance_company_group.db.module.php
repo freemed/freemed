@@ -77,7 +77,7 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 				"ORDER BY inscogroup"),
 			$this->page_name,
 			array (
-				_($this->record_name)		=>	"inscogroup"
+				__($this->record_name)		=>	"inscogroup"
 			),
 			array (
 				""
