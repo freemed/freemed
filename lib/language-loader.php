@@ -98,17 +98,20 @@ define ('__LANGUAGE_LOADER_PHP__', true);
   } 
  
  
- $me=$PHP_SELF;
- $dir="";
+$me=$PHP_SELF;
+$dir="";
  
- while($w=strpos("@".$me, '/'))
- {
-    $dir .= substr($me, 0, $w);
-    $me=substr($me, $w, strlen($me));
- }
+while($w = strpos("@".$me, '/')) {
+	$dir .= substr($me, 0, $w);
+	$me = substr($me, $w, strlen($me));
+}
 
-  // if there is no $lang variable or whatever present (error handling)
-  if (strlen($s_lng) != 2)  $s_lng = $language;
+// if there is no $lang variable or whatever present (error handling)
+if (!isset($SESSION["language"])) {
+	$s_lng = $language;
+} else {
+	$s_lng = $SESSION["language"];
+}
 
   // old language loader
   //if (file_exists("lang/$s_lng/API.$s_lng.inc"))
@@ -116,10 +119,21 @@ define ('__LANGUAGE_LOADER_PHP__', true);
   //if (file_exists("lang/$s_lng/$me.$s_lng.inc"))
   //  include ("lang/$s_lng/$me.$s_lng.inc");
 
-  // gettext bindings
-  putenv ("LANG=".strtolower($s_lng));
-  bindtextdomain (PACKAGENAME, LOCALEDIR);
-  textdomain (PACKAGENAME);
+//----- Change directory to the script directory
+#chdir(dirname(getenv($PATH_TRANSLATED)));
+
+//----- Set the current language to s_lng
+putenv ("LANG=".strtolower($s_lng));
+putenv ("LC_ALL=".strtolower($s_lng));
+putenv ("LC_CTYPE=".strtolower($s_lng));
+$new_locale = setlocale(LC_ALL, $s_lng);
+#if (!$new_locale) DIE("could not change to $s_lng locale");
+//print "s_lng = $s_lng<BR>\n";
+
+//----- Bind to the proper domain
+bindtextdomain ("freemed", "/home/jeff/public_html/freemed/locale/");
+textdomain ("freemed");
+//print "bindtextdomain (".PACKAGENAME.", ./locale)<BR>\n";
 
 } // end checking for __LANGUAGE_LOADER_PHP__
 
