@@ -436,6 +436,7 @@ class TeX {
 		$string = str_replace('&lt;', '$<$', $string);
 		$string = str_replace('&gt;', '$>$', $string);
 		$string = str_replace('&', '\&', $string);
+		$string = str_replace('&nbsp;', '\\ ', $string);
 
 		// HTML/SGML specific texts
 		if (!$skip_html) {
