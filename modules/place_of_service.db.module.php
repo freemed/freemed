@@ -108,6 +108,20 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 		";
 	} // end function PlaceOfServiceMaintenance->form
 
+	function widget ( $varname ) {
+		global $sql;
+		$result = array ();
+		$query = $sql->query("SELECT * FROM ".$this->table_name." ".
+			"ORDER BY posname, posdescrip");
+		while ($r = $sql->fetch_array($query)) {
+			$result[stripslashes($r['posname'].' '.$r['posdescrip'])] = $r['id'];
+		}
+		return html_form::select_widget(
+			$varname,
+			$result
+		);
+	} // end method widget
+
 } // end of class PlaceOfServiceMaintenance
 
 register_module ("PlaceOfServiceMaintenance");
