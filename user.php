@@ -15,8 +15,6 @@ include_once("lib/freemed.php");         // load global variables
 
 freemed_open_db ();
 
-
-
 $this_user = CreateObject('FreeMED.User');
 
 if (!freemed::user_flag(USER_ROOT)) {  // if not admin...
@@ -108,7 +106,9 @@ switch($action) { // master action switch
   
   if ($action=="addform") {
     $page_title =  __("Add User");
-    global $userlevel; $userlevel = array( -1 );
+    if (!$book->been_here()) {
+      global $userlevel; $userlevel = array( -1 );
+    }
   } // addform if
   
   // now the body
