@@ -843,7 +843,8 @@ class freemed {
 				"'patient_lookup.php?varname=".
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
-				urlencode($formname)."', 'patientPopup'); ".
+				urlencode($formname)."', 'patientPopup', ".
+				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"patientPopup.opener=self; return true;\" ".
 				"VALUE=\"".__("Patient Lookup")."\" ".
 				"class=\"button\" />";
