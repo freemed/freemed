@@ -28,7 +28,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 			// do NOT allow function calls)
 		$this->table_definition = array (
 			"cptmod"		=>	SQL_CHAR(2),
-			"cptmoddescrip"	=>	SQL_VARCHAR(50),
+			"cptmoddescrip"		=>	SQL_VARCHAR(50),
 			"id"			=>	SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
 		);
 		if ($debug) {
