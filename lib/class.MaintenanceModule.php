@@ -18,7 +18,10 @@ class MaintenanceModule extends BaseModule {
 
 	// contructor method
 	function MaintenanceModule () {
-		// call parent constructor
+		// Set reference for itemlist to be parent menu
+		$GLOBALS['_ref'] = 'db_maintenance.php';
+
+		// Call parent constructor
 		$this->BaseModule();
 	} // end function MaintenanceModule
 

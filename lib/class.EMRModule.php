@@ -19,7 +19,12 @@ class EMRModule extends BaseModule {
 
 	// contructor method
 	function EMRModule () {
-		// call parent constructor
+		// Check for patient, if so, then set _ref appropriately
+		if ($GLOBALS['patient'] > 0) {
+			$GLOBALS['_ref'] = "manage.php?id=".urlencode($GLOBALS['patient']);
+		}
+	
+		// Call parent constructor
 		$this->BaseModule();
 	} // end function EMRModule
 
