@@ -94,7 +94,7 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 			html_form::text_widget('posname', 20, 75),
 
 			_("Description") =>
-			html_form::text_widget('posname', 25, 200),
+			html_form::text_widget('posdescrip', 25, 200),
 		));
 
 		$display_buffer .= "
