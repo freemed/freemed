@@ -1,6 +1,9 @@
 freemed project changelog
 ($Id$)
 
+* Sun Apr 29 2001 rufustfirefly
+  - manage_bills.php: fixed error in 1st SQL query, small optimizations
+
 * Thu Apr 19 2001 fforest
   - data/EN/fixedform.EN.data now contains the intake report
   - README add httpd.conf requirement for Alias /tmp /bills

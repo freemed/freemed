@@ -25,7 +25,8 @@
                   procrec.procbalcurrent,patient.ptlname,patient.ptfname,
                   patient.id
                   FROM procrec,patient 
-                  WHERE procbalcurrent>'0' AND procrec.procpatient = patient.id
+                  WHERE procrec.procbalcurrent > '0'
+                    AND procrec.procpatient = patient.id
                   ORDER BY patient.ptlname
                  ";
         $result = $sql->query($query);
@@ -33,7 +34,7 @@
 		DIE("Error<BR>");
 	if ($result)
 	{
-		freemed_display_box_top($record_name, $_ref, $page_name);
+		freemed_display_box_top($record_name);
 		freemed_display_actionbar($page_name, $_ref);
 
     		echo "
@@ -75,10 +76,11 @@
 			if ($id != $prev_patient)
 			{
         			// alternate the bar color
-     				$_alternate = freemed_bar_alternate_color ($_alternate);
 
       				echo "
-        				<TR BGCOLOR=$_alternate>
+        				<TR BGCOLOR=\"".
+     				($_alternate = freemed_bar_alternate_color ($_alternate))
+						."\">
         				<TD><A HREF=
          				\"manage.php?$_auth&id=$prev_patient\"
          				>$prev_lname, $prev_fname</A></TD>
@@ -128,9 +130,10 @@
 
     		} // while there are no more
 		// process last record from control break;
-		$_alternate = freemed_bar_alternate_color ($_alternate);
                 echo "
-                  <TR BGCOLOR=$_alternate>
+        		  <TR BGCOLOR=\"".
+     				($_alternate = freemed_bar_alternate_color ($_alternate))
+						."\">
                   <TD><A HREF=
                   \"manage.php?$_auth&id=$id\"
                   >$prev_lname, $prev_fname</A></TD>
@@ -165,22 +168,16 @@
 		</TR>
 		";
 
-
 	 	echo "
       		</TABLE>
     		"; 
-	
 		
 		freemed_display_box_bottom();
 
-
-
 	} // end of result set
         break;
-	
 
  }  // end action
-
 
  freemed_display_html_bottom ();
  freemed_close_db ();
