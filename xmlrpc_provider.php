@@ -18,8 +18,10 @@ CreateApplicationMap(array(
 	'FreeB'   => 'lib/xmlrpc/FreeB/class.*.php',
 
 	// For internal function calls
-	'_FreeMED' => 'lib/class.*.php'
+	'_FreeMED' => 'lib/class.*.php',
+	'_ACL' => 'lib/acl/*.class.php'
 ));
+include_once("lib/acl.php");
 
 //----- Create XMLRPC_METHODS
 unset ($XMLRPC_METHODS);
