@@ -70,8 +70,7 @@ switch ($_REQUEST['action']) {
 		die();
 	} else {
 		$display_buffer .= 
-		"<b>".__("Welcome to the FreeMED Billing System!")."</b><br/> ".
-		__("Please select the type of billing you wish to perform.").
+		"<div class=\"section\">".__("FreeMED Billing System")."</div><br/> ".
 		"<p/>\n";
 	}
 
@@ -81,8 +80,10 @@ switch ($_REQUEST['action']) {
 		
 		// Get title from meta information
 		$title = freemed::module_get_meta($class, 'BillingFunctionName');
+		$desc = freemed::module_get_meta($class, 'BillingFunctionDescription');
 		// Add to the list
-		$types[__($title)] = $class;
+		$types[$title] = $class;
+		$description[$title] = $desc;
 
 		if ($icon = freemed::module_get_value($class, 'ICON')) {
 			$icons[__($title)] = $icon;
@@ -96,18 +97,26 @@ switch ($_REQUEST['action']) {
 	ksort($types);
 
 	// Display
-	$display_buffer .= "<table align=\"center\" border=\"0\">\n";
+	$display_buffer .= "<table align=\"center\" border=\"0\" ".
+		"cellspacing=\"0\" cellpadding=\"3\">\n".
+		"<th class=\"reverse\">\n".
+		"<td class=\"reverse\">".__("Action")."</td>\n".
+		"<td class=\"reverse\">".__("Description")."</td>\n".
+		"</th>\n";
 	foreach ($types AS $name => $link) {
-		$display_buffer .= "<tr><td>".
+		$display_buffer .= "<tr><td valign=\"top\">".
 			( isset($icons[$name]) ?
 			"<a href=\"billing_functions.php?".
 			"action=type&type=".urlencode($link)."\"".
 			"><img src=\"".$icons[$name]."\" border=\"0\" ".
 			"alt=\"\"/></a>" :
 			"&nbsp;" ).
-			"</td><td><a href=\"billing_functions.php?".
+			"</td><td valign=\"top\">".
+			"<a href=\"billing_functions.php?".
 			"action=type&type=".urlencode($link)."\"".
-			">".$name."</a></td></tr>\n";
+			">".$name."</a></td>\n".
+			"<td valign=\"top\">".$description[$name].
+			"</td></tr>\n";
 	}
 	$display_buffer .= "</table>\n";
 	
