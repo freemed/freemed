@@ -467,11 +467,13 @@ class MaintenanceModule extends BaseModule {
 	//	$conditions - (optional) Additional clauses for SQL WHERE.
 	//	defaults to none.
 	//
+	//	$field - (optional) Field to return as value. Defaults to
+	//	id.
 	// Returns:
 	//
 	//	XHTML-compliant picklist widget.
 	//
-	function widget ( $varname, $conditions = false ) {
+	function widget ( $varname, $conditions = false, $field = 'id' ) {
 		$query = "SELECT * FROM ".$this->table_name." WHERE ( 1 = 1) ".
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).
 			"ORDER BY ".$this->order_field;
@@ -491,7 +493,7 @@ class MaintenanceModule extends BaseModule {
 			} else {
 				$key = $this->widget_hash;
 			}
-			$return[$key] = $r['id'];
+			$return[$key] = $r[$field];
 		}
 		return html_form::select_widget($varname, $return);
 	} // end method widget

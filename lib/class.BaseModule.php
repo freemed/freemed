@@ -152,7 +152,7 @@ class BaseModule extends module {
 				 value=\"fax\"
 				 id=\"print_method_fax\" /></td>
 				<td>".__("Fax")."</td>
-				<td>".$this->fax_widget('fax_number', $_REQIEST['id'])."</td>
+				<td>".$this->fax_widget('fax_number', $_REQUEST['id'])."</td>
 			</tr>
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
