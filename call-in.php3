@@ -195,6 +195,7 @@ switch ($action) {
   freemed_display_box_bottom ();
   break;
 
+ case "view":
  case "display":
   freemed_display_box_top (_("$record_name")." "._("View/Manage"));
   $query   = "SELECT * FROM scheduler WHERE
