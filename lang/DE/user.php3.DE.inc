@@ -5,6 +5,7 @@
   # Translation by Johann KRAUTINGER <j.krau@teleweb.at> 19991004
   # mod: 19990917
   # mod: 20000407 by schwindp
+  # mod: 20000528 by adam b (uses phrase[])
 
   $record_name                  = "Benutzer";
 
