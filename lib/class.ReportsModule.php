@@ -52,6 +52,15 @@ class ReportsModule extends BaseModule {
 			case "view":
 			default:
 				$this->view();
+				// Create return links
+				$display_buffer .= "
+				<div class=\"infobox\" align=\"center\">
+				<a href=\"reports.php\"
+				>"._("Reports")."</a> |
+				<a href=\"main.php\"
+				>"._("Return to Main Menu")."</a>
+				</div>
+				";
 				break;
 		} // end switch action
 
