@@ -90,9 +90,7 @@ function freemed_close_db ($_null=" ")
 // function freemed_config_value
 function freemed_config_value ($config_var)
 {
-  global $database;
-
-  $query = fdb_query("SELECT * FROM $database.config
+  $query = fdb_query("SELECT * FROM config
     WHERE (c_option='$config_var')");
 
   if ($query < 1) return ""; // fix for config db not being there...
@@ -449,20 +447,17 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 //   display <SELECT>-type list of CPT codes
 function freemed_display_cptcodes ($param)
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED, $SELECTED;
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM $database.cpt
+  $result = fdb_query ("SELECT * FROM cpt
     ORDER BY cptcode, cptnameint");
   if (!$result) {
     // don't do anything...
   } else { // 
     while ($row=fdb_fetch_array($result)) {
-      if ($param == $row["id"]) 
-        $selected_var = " $SELECTED";
-      else $selected_var = "";
       $cpt_name = $row["cptnameint"];
       $cpt_code = $row["cptcode"   ];
       $cpt_id   = $row["id"];
@@ -480,20 +475,17 @@ function freemed_display_cptcodes ($param)
 //   display <SELECT>-type list of CPT modifiers
 function freemed_display_cptmods ($param)
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED, $SELECTED;
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM $database.cptmod
+  $result = fdb_query ("SELECT * FROM cptmod
     ORDER BY cptmod, cptmoddescrip");
   if (!$result) {
     // don't do anything...
   } else { // 
     while ($row=fdb_fetch_array($result)) {
-      if ($param == $row["id"]) 
-        $selected_var = " $SELECTED";
-      else $selected_var = "";
       $cpt_mod  = $row["cptmod"       ];
       $cpt_desc = $row["cptmoddescrip"];
       $cpt_id   = $row["id"];
@@ -503,8 +495,9 @@ function freemed_display_cptmods ($param)
       else $debug_var = "";
 
       echo "
-        <OPTION VALUE=\"$cpt_id\" $selected_var
-         >$cpt_mod ($cpt_desc) $debug_var
+        <OPTION VALUE=\"$cpt_id\" ".
+	 ( ($param == $row[id]) ? "SELECTED" : "" ).
+         ".>$cpt_mod ($cpt_desc) $debug_var
       "; // actually show it
     } // while there are more results...
   } // end master loop
@@ -514,20 +507,17 @@ function freemed_display_cptmods ($param)
 //   display <SELECT>-type list of drugs
 function freemed_display_drugs ($param)
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM $database.frmlry
+  $result = fdb_query ("SELECT * FROM frmlry
     ORDER BY trdmrkname");
   if (!$result) {
     // don't do anything...
   } else { // 
     while ($row=fdb_fetch_array($result)) {
-      if ($param == $row["id"]) 
-        $selected_var = " $SELECTED";
-      else $selected_var = "";
       $d_name = $row["trdmrkname"];
       $d_id   = $row["id"        ];
 
@@ -536,8 +526,9 @@ function freemed_display_drugs ($param)
       else $debug_var = "";
 
       echo "
-        <OPTION VALUE=\"$d_id\" $selected_var
-         >$d_name $debug_var
+        <OPTION VALUE=\"$d_id\" ".
+	( ($param == $row[id]) ? "SELECTED" : "" ).
+        .">$d_name $debug_var
       "; // actually show it
     } // while there are more results...
   } // end master loop
@@ -588,7 +579,7 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="")
 {
-  global $default_facility, $NONE_SELECTED, $database;
+  global $default_facility, $NONE_SELECTED;
 
   switch ($intext) {
    case "0": // internal
@@ -607,7 +598,7 @@ function freemed_display_facilities ($param="", $default_load = false,
     <OPTION VALUE=\"0\"".
      ( ($param == 0) ? " SELECTED" : "" ).">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.facility
+  $query = "SELECT * FROM facility
             $intextquery
             ORDER BY psrname,psrnote";
   $result = fdb_query ($query);
@@ -644,7 +635,7 @@ function freemed_display_facilities ($param="", $default_load = false,
 // function freemed_display_icdcodes (selected)
 function freemed_display_icdcodes ($param="", $outer_tags="")
 {
-  global $database, $NONE_SELECTED;
+  global $NONE_SELECTED;
 
   if (!empty($outer_tags))
    echo "
@@ -652,7 +643,7 @@ function freemed_display_icdcodes ($param="", $outer_tags="")
    ";
 
   // first, get whether its ICD9 or ICD10 preferred
-  $i_result = fdb_query("SELECT * FROM $database.config WHERE
+  $i_result = fdb_query("SELECT * FROM config WHERE
     c_option='icd'");
   $i_r = fdb_fetch_array($i_result);
   $_icd = $i_r["c_value"];
@@ -669,10 +660,10 @@ function freemed_display_icdcodes ($param="", $outer_tags="")
 
     // select order by which type we are using
   if ($_icd=="9") {
-    $query = "SELECT * FROM $database.icd9 ORDER BY ".
+    $query = "SELECT * FROM icd9 ORDER BY ".
        "icd9code";
   } elseif ($_icd=="10") {
-    $query = "SELECT * FROM $database.icd9 ORDER BY ".
+    $query = "SELECT * FROM icd9 ORDER BY ".
        "icd10code";
   }
 
@@ -723,20 +714,17 @@ function freemed_display_icdcodes ($param="", $outer_tags="")
 //   display <SELECT>-type list of insurance companies
 function freemed_display_insco ($param="0")
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM $database.insco
+  $result = fdb_query ("SELECT * FROM insco
     ORDER BY insconame,inscostate,inscocity");
   if (!$result) {
     // don't do anything...
   } else { // 
     while ($row=fdb_fetch_array($result)) {
-      if ($param == $row["id"]) 
-        $selected_var = " $SELECTED";
-      else $selected_var = "";
       $i_name = $row["insconame"];
       $i_id   = $row["id"];
 
@@ -745,8 +733,9 @@ function freemed_display_insco ($param="0")
       else $debug_var = "";
 
       echo "
-        <OPTION VALUE=\"$i_id\" $selected_var
-         >$i_name ($row[inscocity],$row[inscostate]) $debug_var
+        <OPTION VALUE=\"$i_id\" ".
+	( ($param == $row[id]) ? "SELECTED" : "" )
+        .">$i_name ($row[inscocity],$row[inscostate]) $debug_var
       "; // actually show it
     } // while there are more results...
   } // end master loop
@@ -755,7 +744,7 @@ function freemed_display_insco ($param="0")
 // function freemed_display_inscogroups (selected)
 function freemed_display_inscogroups ($param="")
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   // list doctors in SELECT/OPTION tag list, and
   // leave doctor selected who is in param
@@ -763,28 +752,14 @@ function freemed_display_inscogroups ($param="")
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
 
-  $query = "SELECT * FROM $database.inscogroup ORDER BY ".
+  $query = "SELECT * FROM inscogroup ORDER BY ".
      "inscogroup";
 
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more docs
-    while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0")) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      $_ic_group = $row["inscogroup"];
-      $_ic_id    = $row["id"];
-
-      // bug fix 19990525 postrelease
-      if ($_ic_id!=$param) {
-        $selected_var = "";
-      }
-
+    while ($row = fdb_fetch_array($result)) {
       if ($debug) {
         $debug_var = "[$_ic_id]";
       } else {
@@ -792,8 +767,9 @@ function freemed_display_inscogroups ($param="")
       } // end debug clause
 
       echo "
-        <OPTION VALUE=\"$_ic_id\" $selected_var 
-         >$_ic_group $debug_var
+        <OPTION VALUE=\"$row[id]\" ".
+	( ($param == $row[id]) ? "SELECTED" : "" )
+        .">".htmlentities($row[inscogroup])." $debug_var
       "; // end of actual output
     } // while there are more results...
   } // end of master if clause
@@ -804,22 +780,21 @@ function freemed_display_inscogroups ($param="")
 //   list with $param selected
 function freemed_display_ptstatus ($param="", $outer_tags="")
 {
-  global $NONE_SELECTED, $database;
+  global $NONE_SELECTED;
   if (!empty($outer_tags))
    echo "
     <SELECT NAME=\"$outer_tags\">
      <OPTION VALUE=\"0\">$NONE_SELECTED
    "; // end outer tags...
-  $result = fdb_query ("SELECT * FROM $database.ptstatus
+  $result = fdb_query ("SELECT * FROM ptstatus
                         ORDER BY ptstatusdescrip,ptstatus");
   while ($r = fdb_fetch_array ($result)) {
    $ptstatus        = fm_prep ($r["ptstatus"       ]);
-   $ptstatusdescrip = fm_prep ($r["ptstatusdescrip"]);
    $id              =          $r["id"             ] ;
-   if ($id==$param) { $this_selected = " SELECTED"; }
-    else            { $this_selected = ""         ; }
    echo "
-    <OPTION VALUE=\"$id\"$this_selected>$ptstatusdescrip ($ptstatus)
+    <OPTION VALUE=\"$id\" ".
+    ( ($r[id] == $param) ? "SELECTED" : "" ).
+    ">".fm_prep($r[ptstatusdescrip])." ($ptstatus)
    ";
   } // end while
 
@@ -834,31 +809,20 @@ function freemed_display_ptstatus ($param="", $outer_tags="")
 //   list with $param selected
 function freemed_display_phygroups ($param="")
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
   
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.phygroups ORDER BY ".
+  $query = "SELECT * FROM phygroups ORDER BY ".
      "phygroupname";
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more docs
     while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0")) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
       $_pg_name = $row["phygroupname"];
       $_pg_id   = $row["id"];
-
-      // bug fix 19990525 postrelease
-      if ($_pg_id!=$param) {
-        $selected_var = "";
-      }
 
       if ($debug) {
         $debug_var = "[$_pg_id]";
@@ -867,8 +831,9 @@ function freemed_display_phygroups ($param="")
       } // end debug clause
 
       echo "
-        <OPTION VALUE=\"$_pg_id\" $selected_var 
-         >$_pg_name $debug_var
+        <OPTION VALUE=\"$row[id]\" ".
+	( ($param == $row[id]) ? "SELECTED" : "" ).
+        ">".fm_prep($row[phygroupname])." $debug_var
       "; // end of actual output
     } // while there are more results...
   }
@@ -878,13 +843,13 @@ function freemed_display_phygroups ($param="")
 // function freemed_display_phystatus (selected)
 function freemed_display_phystatus ($param="")
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
 
-  $query = "SELECT * FROM $database.phystatus ORDER BY ".
+  $query = "SELECT * FROM phystatus ORDER BY ".
      "phystatus";
 
   $result = fdb_query ($query);
@@ -892,29 +857,10 @@ function freemed_display_phystatus ($param="")
     // don't do anything...! 
   } else { // exit if no more docs
     while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0")) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      $_ic_group = $row["phystatus"];
-      $_ic_id    = $row["id"];
-
-      // bug fix 19990525 postrelease
-      if ($_ic_id!=$param) {
-        $selected_var = "";
-      }
-
-      if ($debug) {
-        $debug_var = "[$_ic_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
       echo "
-        <OPTION VALUE=\"$_ic_id\" $selected_var 
-         >$_ic_group $debug_var
+        <OPTION VALUE=\"$row[id]\" ".
+	( ($row[id] == $param) ? "SELECTED" : "" ).
+        ">".fm_prep($row[phystatus])."
       "; // end of actual output
     } // while there are more results...
   } // end of master if clause
@@ -925,14 +871,14 @@ function freemed_display_phystatus ($param="")
 //   list with $param selected
 function freemed_display_physicians ($param="", $intext="")
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   // list doctors in SELECT/OPTION tag list, and
   // leave doctor selected who is in param
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.physician ".
+  $query = "SELECT * FROM physician ".
      ( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
      "ORDER BY phylname,phyfname";
   $result = fdb_query ($query);
@@ -940,30 +886,10 @@ function freemed_display_physicians ($param="", $intext="")
     // don't do anything...! 
   } else { // exit if no more docs
     while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0")) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      $_doc_lname = $row["phylname"];
-      $_doc_fname = $row["phyfname"];
-      $_doc_id    = $row["id"];
-
-      // bug fix 19990525 postrelease
-      if ($_doc_id!=$param) {
-        $selected_var = "";
-      }
-
-      if ($debug) {
-        $debug_var = "[$_doc_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
       echo "
-        <OPTION VALUE=\"$_doc_id\" $selected_var 
-         >$_doc_lname, $_doc_fname $debug_var
+        <OPTION VALUE=\"$row[id]\" ".
+	( ($row[id] == $param) ? "SELECTED" : "" ).
+        ">".fm_prep("$row[phylname], $row[phyfname]")."
       "; // end of actual output
     } // while there are more results...
   }
@@ -974,46 +900,24 @@ function freemed_display_physicians ($param="", $intext="")
 // displays printers from the database
 function freemed_display_printerlist ($param="")
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   // list printers in SELECT/OPTION tag list, and
   // leave printer selected who is in param
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.printer ORDER BY ".
+  $query = "SELECT * FROM printer ORDER BY ".
      "prnthost, prntname";
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more printers
     while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0")) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      $_prnt_name  = $row ["prntname"  ];
-      $_prnt_host  = $row ["prnthost"  ];
-      $_prnt_aclvl = $row ["prntaclvl" ];
-      $_prnt_desc  = $row ["prntdesc"  ];
-      $_prnt_id    = $row ["id"        ];
-
-      // bug fix 19990525 postrelease
-      if ($_prnt_name!=$param) {
-        $selected_var = "";
-      }
-
-      if ($debug) {
-        $debug_var = "[$_prnt_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
       echo "
-        <OPTION VALUE=\"$_prnt_id\" $selected_var 
-         >$_prnt_host $_prnt_name $debug_var
+        <OPTION VALUE=\"$row[id]\" ".
+	( ($param == $row[id]) ? "SELECTED" : "" ).
+        ">".fm_prep("$row[prnthost] $row[prntname]")."
       "; // end of actual output
     } // while there are more results...
   }
@@ -1025,44 +929,24 @@ function freemed_display_printerlist ($param="")
 //   list with $param selected
 function freemed_display_simplereports ($param="")
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   // list templates in SELECT/OPTION tag list, and
   // leave report selected who is in param
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.simplereport ORDER BY ".
+  $query = "SELECT * FROM simplereport ORDER BY ".
      "sr_type, sr_label";
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more docs
     while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0")) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      $_sr_label  = $row["sr_label"];
-      $_sr_type   = $row["sr_type" ];
-      $_sr_id     = $row["id"      ];
-
-      // bug fix 19990525 postrelease
-      if ($_doc_id!=$param) {
-        $selected_var = "";
-      }
-
-      if ($debug) {
-        $debug_var = "[$_sr_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
       echo "
-        <OPTION VALUE=\"$_sr_id\" $selected_var 
-         >$_sr_label, $_sr_type $debug_var
+        <OPTION VALUE=\"$_sr_id\" ".
+	( ($row[id] == $param) ? "SELECTED" : "" ).
+        ">".fm_prep("$row[sr_label], $row[sr_type]")."
       "; // end of actual output
     } // while there are more results...
   }
@@ -1073,35 +957,21 @@ function freemed_display_simplereports ($param="")
 //   display <SELECT>-type list of types of service
 function freemed_display_tos ($param)
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM $database.tos
+  $result = fdb_query ("SELECT * FROM tos
     ORDER BY tosname,tosdescrip");
   if (!$result) {
     // don't do anything...
   } else { // 
     while ($row=fdb_fetch_array($result)) {
-      if ($param == $row["id"]) 
-        $selected_var = " $SELECTED";
-      else $selected_var = "";
-      $t_name = $row["tosname"];
-      $t_desc = $row["tosdescrip"];
-      $t_id   = $row["id"];
-
-      if (strlen($t_desc)<1) 
-        $t_desc = "";
-      else $t_desc = "[$t_desc]";
-
-      if ($debug) 
-        $debug_var = "[$t_id]";
-      else $debug_var = "";
-
       echo "
-        <OPTION VALUE=\"$t_id\" $selected_var
-         >$t_name $t_desc $debug_var
+        <OPTION VALUE=\"$row[id]\" ".
+	( ($row[id] == $param) ? "SELECTED" : "" ).
+        ">".fm_prep("$row[tosname] $row[tosdescrip]")."
       "; // actually show it
     } // while there are more results...
   } // end master loop
@@ -1111,33 +981,17 @@ function freemed_display_tos ($param)
 //   display <SELECT>-type list of rooms
 function freemed_display_rooms ($param)
 {
-  global $default_facility, $LoginCookie, $NONE_SELECTED, $database,
-    $SELECTED;
+  global $default_facility, $LoginCookie, $NONE_SELECTED; 
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $result = fdb_query ("SELECT * FROM $database.room
+  $result = fdb_query ("SELECT * FROM room
     ORDER BY roomname, roomdescrip");
   if (!$result) {
     // don't do anything...
   } else { // 
     while ($row=fdb_fetch_array($result)) {
-      if ($param == $row["id"]) 
-        $selected_var = " $SELECTED";
-      else $selected_var = "";
-      $rm_name = $row["roomname"];
-      $rm_pos  = $row["roompos"];
-      $rm_desc = $row["roomdescrip"];
-      $rm_id   = $row["id"];
-
-      if (strlen($rm_desc)<1) $rm_desc = ""; 
-      else $rm_desc = "[$rm_desc]";
-
-      if ($debug)
-        $debug_var = "[$rm_id]";
-      else $debug_var = "";
-
       $f_auth=explode(":", $LoginCookie);
 
       if ((freemed_check_access_for_facility ($LoginCookie, $rm_pos)) OR
@@ -1145,8 +999,9 @@ function freemed_display_rooms ($param)
        if ((($default_facility>0) AND ($rm_pos == $default_facility)) OR
             ($default_facility<1) OR ($rm_pos<1))
         echo "
-          <OPTION VALUE=\"$rm_id\" $selected_var
-           >$rm_name $rm_desc $debug_var
+          <OPTION VALUE=\"$row[id]\" ".
+	  ( ($row[id] == $param) ? "SELECTED" : "" ).
+          ">".fm_prep("$row[roomname] $row[roomdescrip]")."
         "; // actually show it
 
     } // while there are more results...
@@ -1159,39 +1014,24 @@ function freemed_display_rooms ($param)
 //   formerly freemed_display_phy_specialties
 function freemed_display_phy_degrees ($param)
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED;
 
   // list degrees in SELECT/OPTION tag list, and
   // leave degrees selected that are in param
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.degrees ORDER BY ".
+  $query = "SELECT * FROM degrees ORDER BY ".
      "degdegree, degname";
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more
     while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param == $row["id"])) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      $_deg_degree = $row["degdegree"];
-      $_deg_name   = $row["degname"];
-      $_deg_id     = $row["id"];
-
-      if ($debug) {
-        $debug_var = "[$_deg_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
       echo "
-        <OPTION VALUE=\"$_deg_id\" $selected_var 
-         >$_deg_degree, $_deg_name $debug_var
+        <OPTION VALUE=\"$_deg_id\" ".
+	( ($row[id] == $param) ? "SELECTED" : "" ).
+        ">".fm_prep("$row[degdegree], $row[degname]")."
       "; // end of actual output
     } // while there are more results...
   }
@@ -1202,42 +1042,26 @@ function freemed_display_phy_degrees ($param)
 //   display <SELECT>-type list of physician specialties
 function freemed_display_phy_specialties ($param)
 {
-  global $NONE_SELECTED, $SELECTED, $database;
+  global $NONE_SELECTED; 
 
   // list degrees in SELECT/OPTION tag list, and
   // leave degrees selected that are in param
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.specialties ORDER BY ".
+  $query = "SELECT * FROM specialties ORDER BY ".
      "specname, specdesc";
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
   } else { // exit if no more
     while ($row=fdb_fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param == $row["id"])) {
-        $selected_var = " $SELECTED";
-      } else {
-        $selected_var = ""; // or not...
-      } // end of checking if selected
-
-      $_spec_name = $row["specname"];
-      $_spec_desc = $row["specdesc"];
-      $_spec_id   = $row["id"];
-
-      if (strlen($_spec_desc)>0) $__comma = ", ";
-        else $__comma = "";
-
-      if ($debug) {
-        $debug_var = "[$_spec_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
       echo "
-        <OPTION VALUE=\"$_spec_id\" $selected_var 
-         >$_spec_name$__comma $_spec_desc $debug_var
+        <OPTION VALUE=\"$row[id]\" ".
+	( ($row[id] == $param) ? "SELECTED" : "" ).
+        ">".fm_prep($row[specname].(
+	 ( (!empty($row[specdesc])) ? ", " : " " ).
+  	  $row[specdesc])."
       "; // end of actual output
     } // while there are more results...
   }
@@ -1247,7 +1071,7 @@ function freemed_display_phy_specialties ($param)
 // function freemed_export_stock_data
 function freemed_export_stock_data ($table_name, $file_name="")
 {
-  global $physical_loc, $default_language, $cur_date_hash, $database,
+  global $physical_loc, $default_language, $cur_date_hash, 
          $debug;
 
   $physical_file = $physical_loc . "/data/" . $default_language . "/" .
@@ -1257,7 +1081,7 @@ function freemed_export_stock_data ($table_name, $file_name="")
 
   #if (file_exists ($physical_file)) { return false; } // fix this later
 
-  $query = "SELECT * FROM $database.$table_name
+  $query = "SELECT * FROM $table_name
             INTO OUTFILE '$physical_file'
             FIELDS TERMINATED BY ','
             OPTIONALLY ENCLOSED BY ''
@@ -1347,7 +1171,7 @@ function freemed_get_link_rec($id="0", $db="")
     return "";
   }
 
-  $result=fdb_query("SELECT * FROM $database.$db WHERE
+  $result=fdb_query("SELECT * FROM $db WHERE
     id='$id'"); // get just that record
   return fdb_fetch_array($result); // return the array
 
@@ -1387,7 +1211,7 @@ function freemed_get_userlevel ($f_cookie="")
     return 10; // if root, give superuser access
   } else {
 
-    $result = fdb_query("SELECT * FROM $database.user
+    $result = fdb_query("SELECT * FROM user
       WHERE id='$f_auth[0]'"); // get query...
 
     if (fdb_num_rows($result)!=1) {
@@ -1406,7 +1230,7 @@ function freemed_get_userlevel ($f_cookie="")
 //  import stock data from data/$language directory
 function freemed_import_stock_data ($table_name)
 {
-  global $physical_loc, $default_language, $database;
+  global $physical_loc, $default_language;
 
   $physical_file = $physical_loc . "/data/" . $default_language . "/" .
     $table_name . "." . $default_language . ".data";
@@ -1414,7 +1238,7 @@ function freemed_import_stock_data ($table_name)
   if (!file_exists($physical_file)) return false;
 
   $query = "LOAD DATA LOCAL INFILE '$physical_file' INTO
-            TABLE $database.$table_name
+            TABLE $table_name
             FIELDS TERMINATED BY ','";
            
   $result = fdb_query ($query); // try doing it
@@ -1426,50 +1250,36 @@ function freemed_import_stock_data ($table_name)
 //   displays inscogroup entry in text format
 function freemed_inscogroup_display ($param)
 {
-  global $NONE_SELECTED, $database, $NO_RESULT_OF_QUERY, $SELECTED, $debug;
+  global $NONE_SELECTED, $NO_RESULT_OF_QUERY, $SELECTED, $debug;
 
   if ((strlen($param)<1) OR ($param=="0")) {
     echo "
       $NONE_SELECTED
     ";
   } else {
-    $query = "SELECT * FROM $database.inscogroup ".
+    $query = "SELECT * FROM inscogroup ".
        "WHERE id='$param'";
     $result = fdb_query ($query);
     if (!$result) {
       echo "$NO_RESULT_OF_QUERY";
       // don't do anything...! 
     } else { // exit if no more
-      $row=fdb_fetch_array($result); 
-      $_icg_id   = $row["id"];
-      $_icg_name = $row["inscogroup"];
-  
-      if ($_icg_id!=$param) {
-        $selected_var = "";
-      }
-  
-      if ($debug) {
-        $debug_var = "[$_icg_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
-      echo "
-         $_icg_name $debug_var
-      "; // end of actual output
+      $row = fdb_fetch_array($result); 
+      echo fm_prep ($row[inscogroup]).(
+       ( $debug ? " [ $row[id] ]" : "" )."\n";
     }
   }
 } // end function freemed_inscogroup_display
 
 // function freemed_log
 function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
-  global $LoginCookie, $database, $cur_date;
+  global $LoginCookie, $cur_date;
 
   if (empty($f_cookie)) $f_cookie = $LoginCookie;
 
   $f_auth = explode (":", $f_cookie);
   $f_user = $f_auth [0];  // extract the user number
-  $query = "INSERT INTO $database.log VALUES ( '$cur_date',
+  $query = "INSERT INTO log VALUES ( '$cur_date',
     '$f_user', '$db_name', '$record_number', '$comment', NULL )";
   $result = fdb_query ($query); // perform addition
   return true;  // return true
@@ -1479,17 +1289,17 @@ function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
 function freemed_multiple_choice ($sql_query, $display_field, $select_name,
   $blob_data, $display_all=true)
 {
-  global $database, $SELECTED, $lang_ALL; 
+  global $lang_ALL; 
 
   $brackets = "[]";
   $result = fdb_query ($sql_query); // check
-  if (fm_value_in_string ($blob_data, -1)) $all_selected = $SELECTED;
-   else $all_selected = "";
+  $all_selected = fm_value_in_string ($blob_data, -1);
   echo " 
     <SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
   ";
   if ($display_all) echo "
-      <OPTION VALUE=\"-1\" $all_selected> $lang_ALL
+      <OPTION VALUE=\"-1\" ".
+       ($all_selected ? "SELECTED" : "").">".fm_prep($lang_ALL)."
   "; // if there is nothing...
 
   if ( fdb_num_rows($result) > 0) 
@@ -1510,7 +1320,9 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
     if (fm_value_in_string ($blob_data, $id)) $selected = $SELECTED;
       else $selected = "";
     echo "
-      <OPTION VALUE=\"$id\" $selected>$displayed $debuginfo
+      <OPTION VALUE=\"$id\" ".
+       ( (fm_value_in_string ($blob_data, id)) ? "SELECTED" : "" ).
+       ">$displayed $debuginfo
     ";
   } // end while
   echo "
@@ -1563,14 +1375,15 @@ function freemed_open_db ($my_cookie) {
 //   displays specialty db entry in text format
 function freemed_specialty_display ($param)
 {
-  global $NONE_SELECTED, $database, $SELECTED;
+  global $NONE_SELECTED, $SELECTED;
 
   if ((strlen($param)<1) OR ($param=="0")) {
     echo "
       $NONE_SELECTED
     ";
   } else {
-    $query = "SELECT * FROM $database.specialty ".
+    $query = "SELECT * FROM specialty ".
+       p
        "WHERE id='$param'";
     $result = fdb_query ($query);
     if (!$result) {
@@ -1578,23 +1391,8 @@ function freemed_specialty_display ($param)
       // don't do anything...! 
     } else { // exit if no more
       $row=fdb_fetch_array($result); 
-      $_spe_degree = $row["specdegree"];
-      $_spe_name   = $row["specname"];
-      $_spe_id     = $row["id"];
-  
-      if ($_spe_id!=$param) {
-        $selected_var = "";
-      }
-  
-      if ($debug) {
-        $debug_var = "[$_spe_id]";
-      } else {
-        $debug_var = "";
-      } // end debug clause
-
-      echo "
-         $_spe_degree ($_spe_name) $debug_var
-      "; // end of actual output
+      echo fm_prep ($row[specdegree]." (".
+                    $row[specname].")");
     }
   }
 } // end function freemed_specialty_display
@@ -1607,15 +1405,15 @@ function freemed_specialty_display ($param)
   // a root "backdoor", so as to allow for setup...
 
 function freemed_auth_db_connect () {
-  global $Connection, $db_host, $db_user, $db_password;
-  $Connection = fdb_connect ($db_host, $db_user, $db_password);
+  global $Connection; // , $db_user, $db_password;
+  $Connection = fdb_connect (DB_HOST, DB_USER, DB_PASSWORD);
   return $Connection;
 } // end function freemed_auth_db_connect
 
 function freemed_auth_login ($f_username, $f_password) {
-  global $SessionLoginCookie, $db_password, $_cookie_expire, $database;
+  global $SessionLoginCookie, $_cookie_expire;
 
-  if (($f_username=="root") AND ($f_password==$db_password)) {
+  if (($f_username=="root") AND ($f_password==DB_PASSWORD)) {
     $md5pw = md5($f_password);
     $f_connection = freemed_auth_db_connect ();
     SetCookie("LoginCookie", "1:$md5pw", time()+$_cookie_expire);
@@ -1624,7 +1422,7 @@ function freemed_auth_login ($f_username, $f_password) {
   } // endif for root case loop
   $f_connection = freemed_auth_db_connect ();
   $f_result = fdb_query ("SELECT * FROM ".
-    "$database.user WHERE username='$f_username'");
+    "user WHERE username='$f_username'");
   if (!$f_result) return 0; // then fail
   $f_row = fdb_fetch_array ($f_result);
   if (($f_row["username"] == $f_username) AND
@@ -1641,8 +1439,7 @@ function freemed_auth_login ($f_username, $f_password) {
 } // end function freeemed_auth_login
 
 function freemed_verify_auth ($f_cookie="") {
-  global $_cookie_expire, $LoginCookie, $database, $debug, $Connection,
-         $db_password;
+  global $_cookie_expire, $LoginCookie, $debug, $Connection;
 
   if ($f_cookie=="") $f_cookie = $LoginCookie;
     // split into user/pw pair
@@ -1651,8 +1448,8 @@ function freemed_verify_auth ($f_cookie="") {
   $f_connection = freemed_auth_db_connect ();
   $Connection = $f_connection;  // not cookie -> global (19990921)
   //if ($debug) echo "f_auth[0] = $f_auth[0], f_auth[1] = $f_auth[1]";
-  if (($f_auth[0]==1) AND ($f_auth[1]==md5($db_password))) return 1;
-  $f_result = fdb_query ("SELECT * FROM $database.user ".
+  if (($f_auth[0]==1) AND ($f_auth[1]==md5(DB_PASSWORD))) return 1;
+  $f_result = fdb_query ("SELECT * FROM user ".
     "WHERE id = '$f_auth[0]'");
   if (!$f_result) return 0; // kill
   $f_row = fdb_fetch_array($f_result); // get result array
@@ -1674,8 +1471,7 @@ function freemed_verify_auth ($f_cookie="") {
  #            and added msql compatibility
 
 function fdb_affected_rows ($result = "0") {
-  global $db_engine;
-  switch (strtolower($db_engine)) {
+  switch (strtolower(DB_ENGINE)) {
     case "odbc": return odbc_num_rows ($result); break;
     case "postgres": return pg_NumRows (); break;
     case "mysql":
@@ -1684,8 +1480,8 @@ function fdb_affected_rows ($result = "0") {
 } // end function fdb_affected_rows
 
 function fdb_close ($null = "") {
-  global $Connection, $db_engine;
-  switch (strtolower($db_engine)) {
+  global $Connection;
+  switch (strtolower(DB_ENGINE)) {
     case "odbc":     return odbc_close ($Connection); break;
     case "postgres": return pg_Close ($Connection);   break;
     case "msql":     return msql_close ();            break;
@@ -1695,21 +1491,29 @@ function fdb_close ($null = "") {
 } // end function fdb_close
 
 function fdb_connect ($db_host, $user, $password) {
-  global $db_engine, $db_user, $db_password;
-  switch (strtolower($db_engine)) {
+  switch (strtolower(DB_ENGINE)) {
     case "odbc": return odbc_pconnect ($host, $user, $password); break;
-    case "postgres": return pg_Connect ("host=$db_host ".
-                                         "user=$user ".
-                                         "password=$password");  break;
-    case "msql":     return msql_pconnect ($db_host);            break;
+    case "postgres": return pg_Connect ("dbname=$database".
+                                        "host=".DB_HOST." ".
+                                        "user=".DB_USER." ".
+                                        "password=".DB_PASSWORD);break;
+    case "msql":
+      $Connection = msql_pconnect (DB_HOST);
+      if ($Connection) msql_select_db ($database, $Connection);
+      return $Connection;
+      break;
     case "mysql":
-    default: return mysql_pconnect ($db_host, $user, $password); break;
+    default:
+      $Connection = mysql_pconnect ($db_host, $user, $password);
+      if ($Connection) mysql_select_db ($database, $Connection);
+      return $Connection;
+      break;
   } // end switch
 } // end function fdb_connect
 
 function fdb_create_db ($created_name) {
-  global $Connection, $db_engine;
-  switch (strtolower($db_engine)) {
+  global $Connection;
+  switch (strtolower(DB_ENGINE)) {
     case "odbc": return odbc_exec ($Connection, "CREATE DATABASE ".
       "$created_name"); break;
     case "postgres": return pg_Exec ($Connection, "CREATE DATABASE ".
@@ -1720,8 +1524,8 @@ function fdb_create_db ($created_name) {
 } // end function fdb_create_db
 
 function fdb_drop_db ($dropped_name) {
-  global $db_engine, $Connection;
-  switch (strtolower($db_engine)) {
+  global $Connection;
+  switch (strtolower(DB_ENGINE)) {
     case "odbc": return odbc_exec ($Connection, "DROP DATABASE ".
       "$dropped_name"); break;
     case "postgres": return pg_Exec ($Connection, "DROP DATABASE ".
@@ -1732,9 +1536,9 @@ function fdb_drop_db ($dropped_name) {
 } // end function fdb_drop_db
 
 function fdb_fetch_array ($result) {
-  global $db_engine, $Connection;
+  global $Connection;
   if ($result<1) return array();
-  switch (strtolower($db_engine)) {
+  switch (strtolower(DB_ENGINE)) {
     case "odbc": 
       // thanks to Giannugo Rabellino <nemorino@opera.it>'s
       // SQL Abstraction library for this one...
@@ -1756,13 +1560,13 @@ function fdb_fetch_array ($result) {
 } // end function fdb_fetch_array
 
 function fdb_last_record ($last_result="") {
-  global $db_engine, $database, $Connection, $result;
+  global $Connection, $result;
   if ($last_result=="") $last_result = $result;
-  switch (strtolower($db_engine)) {
+  switch (strtolower(DB_ENGINE)) {
     case "msql":    return msql_insert_id ();                      break;
     case "odbc":    DIE("fdb_last_record:: ODBC not implemented"); break;
       //return fdb_num_rows (
-      //        fdb_query ("SELECT * FROM $database.$tablename") );  break;
+      //        fdb_query ("SELECT * FROM $tablename") );  break;
       
     case "postgres":               return pg_getlastoid ($result); break;
     case "mysql"   :
@@ -1773,8 +1577,7 @@ function fdb_last_record ($last_result="") {
 } // end function fdb_last_record
 
 function fdb_num_rows ($result) {
-  global $db_engine;
-  switch (strtolower($db_engine)) {
+  switch (strtolower(DB_ENGINE)) {
     case "odbc":     return odbc_num_rows  ($result);  break;
     case "postgres": return pg_NumRows     ($result);  break;
     case "msql":     return msql_num_rows  ($result);  break;
@@ -1784,8 +1587,8 @@ function fdb_num_rows ($result) {
 } // end function fdb_num_rows
 
 function fdb_query ($querystring) {
-  global $db_engine, $Connection;
-  switch (strtolower($db_engine)) {
+  global $Connection, $database;
+  switch (strtolower(DB_ENGINE)) {
     case "odbc": 
       return odbc_execute ( odbc_prepare ($Connection, $querystring) );
       break;
@@ -1795,7 +1598,8 @@ function fdb_query ($querystring) {
       return msql_query ($querystring, $Connection);
       break;
     case "mysql": 
-    default: return mysql_query ($querystring); break;
+    default:
+      return mysql_query ($querystring); break;
   } // end switch
 } // end function fdb_query
 
