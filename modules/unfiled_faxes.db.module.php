@@ -579,10 +579,14 @@ class UnfiledFaxes extends MaintenanceModule {
 		if ($unfiled > 0) {
 			return array (
 				__("Unfiled Faxes"),
-				sprintf(__("There are currently %d unfiled faxes in the system."), $unfiled)."&nbsp;".
-				"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\" class=\"reverse\">".
+				( $unfiled==1 ?
+				__("There is currently 1 unfiled fax in the system.") :
+				sprintf(__("There are currently %d unfiled fax(es) in the system."), $unfiled) ).
+				"&nbsp; &nbsp; ".
+				"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\">".
 				"<img src=\"lib/template/default/add.png\" ".
-				"border=\"0\" alt=\"[".__("File")."]\" /></a>"
+				"border=\"0\" alt=\"[".__("File")."]\" /></a>",
+				"img/facsimile_icon.png"
 			);
 		} else {
 			// For now, we're just going to return nothing so that
@@ -590,7 +594,8 @@ class UnfiledFaxes extends MaintenanceModule {
 			return false;
 			return array (
 				__("Unfiled Faxes"),
-				__("There are no unfiled faxes at this time.")
+				__("There are no unfiled faxes at this time."),
+				"img/facsimile_icon.png"
 			);
 		}
 	} // end method notify
