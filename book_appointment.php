@@ -42,6 +42,14 @@ if ($travel) {
 //----- Create scheduler object
 $scheduler = CreateObject('FreeMED.Scheduler');
 
+//----- Ledger and checking for collections, only if patient
+if ($_REQUEST['type'] != 'temp') {
+	$ledger = CreateObject('FreeMED.Ledger');
+	$collections = $ledger->collection_warning($_REQUEST['patient']);
+} else {
+	$collections = false;
+}
+
 //----- Check ACLs
 if (!freemed::acl('schedule', 'book')) {
 	trigger_error(__("You do not have permission to book an appointment."), E_USER_ERROR);
@@ -180,7 +188,8 @@ switch ($_REQUEST['stage']) {
 	( $_REQUEST['type'] == 'temp' ?
 	$this_patient->fullName().
 	"<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\" />" :
-	freemed::patient_widget("patient") ),
+	freemed::patient_widget("patient").
+	scheduler_collection_warning($collections) ),
 
 	"<small>".__("Template")."</small>" =>
 	module_function(
@@ -1014,5 +1023,16 @@ function pre_screen ( ) {
 	*/
 	return $buffer;
 } // end function pre_screen
+
+function scheduler_collection_warning ( $amt ) {
+	if ($amt) {
+		return "<br>\n".
+		"<span>".
+		"<small><b>[ \$$amt ".__("in collection")."]</b></small>".
+		"</span>";
+	} else {
+		return "";
+	}
+} // end method scheduler_collection_warning
 
 ?>

@@ -144,6 +144,30 @@ class Ledger {
 		return $return;
 	} // end method aging_report_qualified
 
+	// Method: collection_warning
+	//
+	//	Determine if the selected patient is in collections
+	//	status (>180 days unpaid).
+	//
+	// Parameters:
+	//
+	//	$pid - Patient record id
+	//
+	// Returns:
+	//
+	//	Amount in collections, or a testing false value (0)?
+	//
+	function collection_warning ( $pid ) {
+		$res = $GLOBALS['sql']->query(
+		       	"SELECT	sum(procbalcurrent) AS outstanding ".
+			"FROM procrec ".
+			"WHERE TO_DAYS(NOW())-TO_DAYS(procdt) > 180 ".
+			"AND procpatient='".addslashes($pid)."'");
+		$r = $GLOBALS['sql']->fetch_array($res);
+		if ($r['outstanding']) { return bcadd($r['outstanding'],0,2); }
+		return false; // fall through to this
+	} // end method collection_warning
+	
 	// Method: get_list
 	//
 	//	Get a list of ledger items from the system
