@@ -71,7 +71,9 @@
      $current_patient = $b_r[payrecpatient];
      $this_patient = new Patient ($current_patient);
      echo "
-      <B>Processing ".$this_patient->fullName()." ($current_patient)</B>
+      <B>Processing ".$this_patient->fullName()."
+        (<A HREF=\"manage.php3?$auth&id=$current_patient\"
+         >".$this_patient->local_record[ptid]."</A>)</B>
       <BR>\n\n
      ";
      flush ();
