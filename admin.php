@@ -195,7 +195,7 @@ if ($action=="cfgform") {
 	}
 
 	if ($book->is_done()) {
-		$page_title = __("Update Config");
+		$page_title = __("System Configuration");
 		$display_buffer .= "<p/>\n";
 
 		// Check for dynamic components for config_vars
@@ -584,7 +584,7 @@ $display_buffer .= "
    ><img SRC=\"img/config.gif\" BORDER=\"0\" ALT=\"\"/></A>
   </td> --><td ALIGN=\"LEFT\">
   <a HREF=\"admin.php?action=cfgform\"
-  >".__("Update Config")."</a>
+  >".__("System Configuration")."</a>
   </td></tr>
 ";
 
