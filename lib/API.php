@@ -820,7 +820,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   $buffer .= "
     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0>
     <TR BGCOLOR=\"#000000\">
-    <FORM METHOD=POST ACTION=\"$page_name\">
+    <FORM METHOD=POST ACTION=\"".prepare($page_name)."\">
      <TD ALIGN=CENTER>
       <SELECT NAME=\"_s_field\">
   ";
@@ -830,6 +830,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   $buffer .= "
       </SELECT>
       <$STDFONT_B COLOR=\"#ffffff\"> "._("contains")." <$STDFONT_E>
+      <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
       <INPUT TYPE=HIDDEN NAME=\"$cur_page_var\" VALUE=\"1\">
       <INPUT TYPE=TEXT NAME=\"_s_val\">
       <INPUT TYPE=SUBMIT VALUE=\""._("Search")."\">

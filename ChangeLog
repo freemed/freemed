@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Wed Jun 20 2001 rufustfirefly
+  - modules/provider.db.module.php: fix in modification of phone #
+    fields (David Jordan)
+  - lib/API.php: fix for search box not passing $module
+
 * Thu Jun 14 2001 rufustfirefly
   - general include -> include_once overhaul for many modules,
     but never enough

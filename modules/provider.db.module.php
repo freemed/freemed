@@ -61,13 +61,6 @@ class providerMaintenance extends freemedMaintenanceModule {
 	function providerMaintenance () {
 		foreach ($GLOBALS AS $k => $v) global $$k;
 		$this->freemedMaintenanceModule();
-		$phyphonea	= fm_phone_assemble("phyphonea");
-		$phyfaxa	= fm_phone_assemble("phyfaxa");
-		$phyphoneb	= fm_phone_assemble("phyphoneb");
-		$phyfaxb	= fm_phone_assemble("phyfaxb");
-		$phycellular= fm_phone_assemble("phycellular");
-		$phypager	= fm_phone_assemble("phypager");
-		$physsn		= $GLOBALS["physsn1"].$GLOBALS["physsn2"].$GLOBALS["physsn3"];
 	} // end constructor providerMaintenance
 
 	// send 'em to the form for add and mod, due to notebook
@@ -477,6 +470,15 @@ class providerMaintenance extends freemedMaintenanceModule {
      <$STDFONT_E>
     ";
 		} else { // submit has been clicked
+			global $phyphonea, $phyfaxa, $phyphoneb, $phyfaxb,
+				$phycellular, $phypager, $physsn;
+			$phyphonea	= fm_phone_assemble("phyphonea");
+			$phyfaxa	= fm_phone_assemble("phyfaxa");
+			$phyphoneb	= fm_phone_assemble("phyphoneb");
+			$phyfaxb	= fm_phone_assemble("phyfaxb");
+			$phycellular= fm_phone_assemble("phycellular");
+			$phypager	= fm_phone_assemble("phypager");
+			$physsn		= $GLOBALS["physsn1"].$GLOBALS["physsn2"].$GLOBALS["physsn3"];
   			if ($action=="modform") {
 				$this->_mod();
 			} else if ($action=="addform") {
