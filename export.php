@@ -79,6 +79,7 @@ switch ($action) {
      <OPTION VALUE=\"printer\"     >Printers (printer)
      <OPTION VALUE=\"procedure\"   >Procedures (procedure)
      <OPTION VALUE=\"pnotes\"      >Progress Notes (pnotes)
+     <OPTION VALUE=\"queries\"     >Query Maker (queries)
      <OPTION VALUE=\"scheduler\"   >Scheduler (scheduler)
      <OPTION VALUE=\"simplereport\">Simple Reports (simplereport)
      <OPTION VALUE=\"specialties\" >Specialties (specialties)
