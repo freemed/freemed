@@ -199,8 +199,8 @@
      $other = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
      $related_other[yes] =
        ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
-     $related_other[yes] =
-       ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
+     $related_other[no] =
+       ( ( $other == "n" ) ? $this_form[ffcheckchar] : " " );
 
      // insco information
      $this_insco = new InsuranceCompany (
@@ -247,8 +247,8 @@
      $curdate[mmddyyyy] = date ("m d Y");
      $curdate[m]        = date ("m");
      $curdate[d]        = date ("d");
-     $curdate[sy]       = date ("y");
      $curdate[y]        = date ("Y");
+     $curdate[sy]       = substr ($curdate[y], 2, 2);
 
      // pull referring physician information
      //$referring_physician = freemed_get_link_rec (
@@ -392,7 +392,7 @@
        $itemdate_sy [$number_of_charges] = substr($p[procdt], 2, 2);
        $itemcharges [$number_of_charges] = bcadd($p[procbalcurrent],0,2);
        $itemunits   [$number_of_charges] = $p[procunits];
-       $itempos     [$number_of_charges] = $p[procpos];
+       $itempos     [$number_of_charges] = "11";  // KLUDGE!! KLUDGE!!
        $itemvoucher [$number_of_charges] = $p[procvoucher];
        $itemcpt     [$number_of_charges] = $cur_cpt[cptcode];
        $itemtos     [$number_of_charges] =
