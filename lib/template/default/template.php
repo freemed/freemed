@@ -38,6 +38,7 @@ if (isset($refresh)) {
 	<meta http-equiv="Pragma" content="no-cache" />
 	<link REL="StyleSheet" TYPE="text/css"
 		HREF="lib/template/default/stylesheet.css" />
+<?php if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; } ?>
 </head>
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
@@ -253,6 +254,8 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 <div NAME="copyright" ALIGN="CENTER">
 	&copy; 1999-<?php print date("Y"); ?> by the FreeMED Software Foundation
 </div>
+
+<?php if ($GLOBALS['__freemed']['footer']) { print $GLOBALS['__freemed']['footer']; } ?>
 
 </body>
 </html>

@@ -50,6 +50,7 @@ if (isset($refresh)) {
 	<link REL="StyleSheet" TYPE="text/css"
 		HREF="lib/template/newskin/dynamic.css.php" />
 	<link rel="stylesheet" href="lib/template/newskin/layersmenu-newskin.css" type="text/css"></link>
+<?php if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; } ?>
 </head>
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
@@ -164,6 +165,8 @@ if (is_object($this_user)) {
 ?>
 </span>
 </div>
+
+<?php if ($GLOBALS['__freemed']['footer']) { print $GLOBALS['__freemed']['footer']; } ?>
 
 </body>
 </html>
