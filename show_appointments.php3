@@ -59,7 +59,7 @@
 
    if ($patient>0) { // if there is a patient link
     echo "
-      <CENTER><A HREF=\"$master_patient_link_location\"
+      <CENTER><A HREF=\"$master_patient_link_location$patient\"
        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> |
        <A HREF=\"book_appointment.php3?$_auth&patient=$patient&type=$type\"
        ><$STDFONT_B>Book an Appointment<$STDFONT_E></A>
