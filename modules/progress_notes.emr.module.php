@@ -692,36 +692,36 @@ class ProgressNotes extends EMRModule {
 				( strlen($r['pnotes_S']) > 3 ?
 				'\\sheading{'.__("SUBJECTIVE").'} '.
 				$TeX->_HTMLToRichText($r['pnotes_S']).
-				'\\\\'."\n".'\par'."\n" : "" ),
+				"\n".'\\par'."\n" : "" ),
 			'pnotesOBJECTIVE' => 
 				( strlen($r['pnotes_O']) > 3 ?
 				'\\sheading{'.__("OBJECTIVE").'} '.
 				$TeX->_HTMLToRichText($r['pnotes_O']).
-				'\\\\'."\n".'\par'."\n" : "" ),
+				"\n".'\\par'."\n" : "" ),
 			'pnotesASSESSMENT' => 
 				( strlen($r['pnotes_A']) > 3 ?
 				'\\sheading{'.__("ASSESSMENT").'} '.
 				$TeX->_HTMLToRichText($r['pnotes_A']).
-				'\\\\'."\n".'\par'."\n" : "" ),
+				"\n".'\\par'."\n" : "" ),
 			'pnotesPLAN' => 
 				( strlen($r['pnotes_P']) > 3 ?
 				'\\sheading{'.__("PLAN").'} '.
 				$TeX->_HTMLToRichText($r['pnotes_P']).
-				'\\\\'."\n".'\par'."\n" : "" ),
+				"\n".'\\par'."\n" : "" ),
 			'pnotesINTERVAL' => 
 				( strlen($r['pnotes_I']) > 3 ?
 				$TeX->_HTMLToRichText($r['pnotes_I']).
-				'\\\\'."\n".'\par'."\n" : "" ),
+				"\n".'\\par'."\n" : "" ),
 			'pnotesEDUCATION' => 
 				( strlen($r['pnotes_E']) > 3 ?
 				'\\sheading{'.__("EDUCATION").'} '.
 				$TeX->_HTMLToRichText($r['pnotes_S']).
-				'\\\\'."\n".'\par'."\n" : "" ),
+				"\n".'\\par'."\n" : "" ),
 			'pnotesRX' => 
 				( strlen($r['pnotes_R']) > 3 ?
 				'\\sheading{'.__("Rx").'} '.
 				$TeX->_HTMLToRichText($r['pnotes_R']).
-				'\\\\'."\n".'\par'."\n" : "" ),
+				"\n".'\\par'."\n" : "" ),
 			'pnotesBP' => $TeX->_SanitizeText(
 				$r['pnotessbp'] . ' over ' . $r['pnotesdbp']
 				),
