@@ -31,12 +31,12 @@ class ReceivablesGraph extends GraphModule {
 		if ($sql->num_rows($result) > 0) {
 			$this->view();
 			$display_buffer .= "<p/>\n";
-			$display_buffer .= "<img src=\"".$this->AssembleURL(
+			$display_buffer .= "<center><img src=\"".$this->AssembleURL(
 				array (
 					'graphmode' => 1,
 					'action' => 'image'
 				)
-			)."\" border=\"0\" alt=\"\"/>\n";
+			)."\" border=\"0\" alt=\"\"/></center>\n";
 		} else {
 			$display_buffer .= "<div align=\"center\">\n";
 			$display_buffer .= __("No receivables found.")."\n";
@@ -63,7 +63,7 @@ class ReceivablesGraph extends GraphModule {
 				 "AND (payreccat='".PAYMENT."' OR payreccat='".COPAY."') ";
 	
 		
-		$result = $sql->query($query) or DIE("Query failed");
+		$result = $sql->query($query);// or DIE("Query failed");
 		$titleb = __("Receivables Graph From")." $start_dt ".__("To")." $end_dt";
 		$titlep = __("Receivables Pie Chart From")." $start_dt ".__("To")." $end_dt";
 		if ($sql->num_rows($result) > 0)
@@ -76,15 +76,16 @@ class ReceivablesGraph extends GraphModule {
 				$copay=0;
 				$patpay=0;
 				$inspay=0;
-				if ($row[payrecsource] == PATIENT)
-				{
-					if ($row[payreccat] == COPAY)
+				if ($row[payrecsource] == 0) {
+					if ($row[payreccat] == COPAY) {
 						$copay = bcadd($row[payrecamt],0,2);
-					if ($row[payreccat] == PAYMENT)
+					}
+					if ($row[payreccat] == PAYMENT) {
 						$patpay = bcadd($row[payrecamt],0,2);
-				}
-				else
+					}
+				} else {
 					$inspay = bcadd($row[payrecamt],0,2);
+				}
 
 				$pie_data[] = array("",$inspay,$copay,$patpay);
 				$tot_copay = bcadd($tot_copay,$copay,2);
@@ -111,8 +112,12 @@ class ReceivablesGraph extends GraphModule {
 			$graph->SetVertTickIncrement(10000);
 			$graph->SetLegend(array("Patient","Copay","Insurance","Total"));
 			$graph->DrawGraph();
-			//$graph->PrintImage();
+			$graph->PrintImage();
 
+			return;
+
+			// FOR NOW, DISABLE THE FOLLOWING ...
+			
 			// pie chart
 			//$graph->SetNewPlotAreaPixels(100,500,350,500); works below bar
 			$graph->SetTitle($titlep);
