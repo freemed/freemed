@@ -9,7 +9,7 @@ class TransactionGraph extends GraphModule {
 
 	var $MODULE_NAME = "Transaction Graph";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.22";
+	var $MODULE_VERSION = "0.2.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
