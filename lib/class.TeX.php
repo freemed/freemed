@@ -435,7 +435,6 @@ class TeX {
 
 			$string = str_replace('<', '\<', $string);
 			$string = str_replace('>', '\>', $string);
-			$string = str_replace('/', '\/', $string);
 		}
 
 		// Return processed string
