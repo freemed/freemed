@@ -48,7 +48,7 @@ class PreviousOperationsModule extends EMRModule {
 			<TABLE BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 			"CELLPADDING=\"2\">
 			<TR CLASS=\"menubar_info\">
-			<TD>"._("Medication")."</TD>
+			<TD>"._("Operation")."</TD>
 			<TD>"._("Action")."</TD>
 			</TR>
 			";
