@@ -502,7 +502,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
   global $modify_level, $delete_level, $patient, $action;
   global $page_name, $$cur_page_var, $max_num_res;
- 
+
+  // pull current page name
+  if (empty ($page_link)) {
+    $page_link = basename($GLOBALS["REQUEST_URI"]);
+  } // end of pull current page name
+
   $_auth .= "&$cur_page_var=".chop($$cur_page_var);
  
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
