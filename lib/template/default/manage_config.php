@@ -89,7 +89,7 @@ $book->add_page("General",
 );
 
 //----- Static (non-modular) configuration
-if (!defined($static_components)) $static_components[] = NULL;
+if (!isset($static_components)) $static_components = array();
 $book->add_page("Static Components",
 	array ( "static_components" ),
 	"<center>\n".
