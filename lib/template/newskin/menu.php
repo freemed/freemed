@@ -72,6 +72,7 @@ $page_history = page_history_list();
 	menu_item(__("Call-In"), "call-in.php", 2);
 	menu_item(__("Reports"), "reports.php", 2);
 	menu_item(__("Support Data"), "db_maintenance.php", 2);
+	menu_item(__("Utilities"), "utilities.php", 2);
 
 	// User menu
 	sub_menu(__("User"), 1);

@@ -182,6 +182,7 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		prepare(__("New"))."</a></td>\n".
 		"\t</tr>\n";
 	print menu_bar_cell(__("Reports"), "reports.php");
+	print menu_bar_cell(__("Utilities"), "utilities.php");
 ?>
 </table>
 
