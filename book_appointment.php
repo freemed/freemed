@@ -837,8 +837,8 @@ function generate_calendar_mini ($scheduler, $given_date) {
 	$buffer .= "<td colspan=\"1\">&nbsp;</td>\n".
 	"</tr><tr>\n".
 	"<td COLSPAN=\"9\" ALIGN=\"RIGHT\" class=\"button_style\">\n".
-	"<a HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
-	$cur_day."\" class=\"button_text\" ".
+	"<a onClick=\"goToDate('".date("Y-m-d") .
+         "'); document.myform.submit();\" class=\"button_text\" ".
 	"><small>".__("go to today")."</small></a>\n".
 	"</td></tr></table></center>\n";
 	return $buffer;
@@ -1027,7 +1027,7 @@ function pre_screen ( ) {
 function scheduler_collection_warning ( $amt ) {
 	if ($amt) {
 		return "<br>\n".
-		"<span>".
+		"<span style=\"color: #ff0000;\">".
 		"<small><b>[ \$$amt ".__("in collection")."]</b></small>".
 		"</span>";
 	} else {
