@@ -29,8 +29,8 @@ class GeneralConfig {
 		$stock_config = array (
 			'icd9' => '9',
 			'gfx' => '1',
-			'calshr' => $cal_starting_hour,
-			'calehr' => $cal_ending_hour,
+			'calshr' => '8',
+			'calehr' => '16',
 			'cal_ob' => 'enable',
 			'dtfmt' => 'ymd',
 			'phofmt' => 'unformatted',

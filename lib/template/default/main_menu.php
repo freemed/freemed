@@ -34,20 +34,6 @@ if ($new_messages = $this_user->newMessages()) {
 	";
 }
 
-// Display calendar settings warning, if active
-if (freemed::config_value('calshr')<1 or freemed::config_value('calehr')<1) {
-	$display_buffer .= "
-	<p/>
-	<div align=\"center\">
-	<i>
-	<b>".__("Please set the scheduler beginning and ending times in the configuration in the Administration menu.")."</b><br/>
-	(".__("The scheduler will not function properly until you have done so.").")
-	</i>
-	</div>
-	";
-}
-
-
 //----- New static menu system goes down here ....
 
 //----- Define handler for main menu
