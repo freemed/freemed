@@ -433,12 +433,12 @@
        }
 
        $itemdate    [$number_of_charges] = $p[procdt];
-       $itemdate_m  [$number_of_charges] = substr($p[procdt], 5, 2);
-       $itemdate_d  [$number_of_charges] = substr($p[procdt], 8, 2);
-       $itemdate_y  [$number_of_charges] = substr($p[procdt], 0, 4);
-       $itemdate_sy [$number_of_charges] = substr($p[procdt], 2, 2);
-       $itemcharges [$number_of_charges] = bcadd($p[procbalorig],0,2);
-       $itemunits   [$number_of_charges] = $p[procunits];
+       $itemdate_m  [$number_of_charges] = substr($p[procdt],     5, 2);
+       $itemdate_d  [$number_of_charges] = substr($p[procdt],     8, 2);
+       $itemdate_y  [$number_of_charges] = substr($p[procdt],     0, 4);
+       $itemdate_sy [$number_of_charges] = substr($p[procdt],     2, 2);
+       $itemcharges [$number_of_charges] = bcadd($p[procbalorig], 0, 2);
+       $itemunits   [$number_of_charges] = bcadd($p[procunits],   0, 0);
        $itempos     [$number_of_charges] = "11";  // KLUDGE!! KLUDGE!!
        $itemvoucher [$number_of_charges] = $p[procvoucher];
        $itemcpt     [$number_of_charges] = $cur_cpt[cptcode];
