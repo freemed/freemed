@@ -12,6 +12,7 @@ class Djvu {
 
 	function Djvu ( $filename ) {
 		$this->filename = $filename;
+		if (!file_exists($filename)) { die ("Djvu: file does not exist \"$filename\""); }
 	} // end constructor
 
 	// Method: NumberOfPages
@@ -125,6 +126,69 @@ class Djvu {
 		}
 		return $pages;
 	} // end method StoredChunks
+
+	// Method: ToPDF
+	//
+	//	Convert DjVu document to a PDF document.
+	//
+	// Parameters:
+	//
+	//	$to_file - (optional) Boolean, for the function to dump
+	//	contents to a file, then return the file name. If false,
+	//	returns a string containing the PDF file data. Defaults
+	//	to false.
+	//
+	// Returns:
+	//
+	//	PDF file data or file name, depending on parameters
+	//
+	function ToPDF ( $to_file = false ) {
+		$filename = $this->filename;
+
+		$t = tempnam('/tmp', 'fmdjvu');
+		for ($p=1; $p<=$this->NumberOfPages(); $p++) {
+			// No conversion ...
+			$temp_cmd = "djvups -page=$p \"$filename\" > \"".$t.".page".$p.".ps\"";
+			$out = `$temp_cmd`;
+			//syslog(LOG_INFO, "Djvu debug | $temp_cmd");
+			
+			$params[] = $t.'.page'.$p.'.ps';
+		}
+	
+		// Merge with psmerge
+		//$merge_temp_cmd = "psmerge -o".$t.".ps ".join(" ", $params);
+		$merge_temp_cmd = "cat ".join(" ", $params)." > ".$t.".ps";
+		$out = `$merge_temp_cmd`;
+		//syslog(LOG_INFO, "Djvu debug | $merge_temp_cmd");
+
+		// Convert to PDF
+		$convert_temp_cmd = "ps2pdf $t.ps $t.pdf";
+		$out = `$convert_temp_cmd`;
+		//syslog(LOG_INFO, "Djvu debug | $convert_temp_cmd");
+
+		// If this is sent to a file, skip the rest of the logic
+		if ($to_file) {
+			unlink ($t);
+			unlink ($t.'.ps');
+			foreach ($params AS $f) { unlink($f); }
+			return $t.'.pdf';
+		}
+
+		ob_start();
+		readfile($t.'.pdf');
+		$c = ob_get_contents();
+		ob_end_clean();
+
+		unlink ($t);
+		unlink ($t.'.ps');
+		unlink ($t.'.pdf');
+		foreach ($params AS $f) {
+			unlink($f);
+		}
+		
+		return $c;
+	} // end method ToPDF
+
 } // end class Djvu
 
 ?>
