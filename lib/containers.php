@@ -458,6 +458,16 @@ class User {
 		return $this->manage_config["$key"];
 	} // end function getManageConfig
 
+	// Messages
+	function newMessages () {
+		global $sql;
+		$result = $sql->query("SELECT * FROM messages WHERE ".
+			"msgfor='".$this->user_phy."' AND ".
+			"msgread='0'");
+		if (!$sql->results($result)) return false;
+		return $sql->num_rows($result);
+	} // end function newMessages
+
 } // end class User
 
 } // end checking for __CONTAINERS_PHP__
