@@ -22,7 +22,7 @@ class Images {
 
 		// Decide if we're dealing with an array or not
 		$is_struct = false;
-		foreach ($params AS $k => $v) {
+		foreach ($_params AS $k => $v) {
 			if (!is_integer($k)) {
 				$is_struct = true;
 			}
