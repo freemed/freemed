@@ -294,7 +294,12 @@ switch ($action) {
 				<td>".$r['msgurgency']."/5</td>
 			</tr>
 			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
+				".( $r['msgsubject'] ? 
+				"<span style=\"border: 1px dotted;\">
+				<b>".prepare($r['msgsubject'])."</b></span> ".
+				"&nbsp; <span>" : "" )."
 				<i>".prepare($r['msgtext'])."</i>
+				".( $r['msgsubject'] ? "</span>" : "" )."
 			</td></tr>
 			";
 		}
