@@ -20,6 +20,7 @@ class MaintenanceModule extends BaseModule {
 	var $order_field;
 	var $form_vars;
 	var $table_name;
+	var $widget_hash;
 
 	// contructor method
 	function MaintenanceModule () {
@@ -209,6 +210,50 @@ class MaintenanceModule extends BaseModule {
 			"t_page"
 		);
 	} // end function view
+
+	// Method: widget
+	//
+	//	Generic widget code to allow a picklist-based widget for
+	//	simple modules. Should be overridden for more complex tasks.
+	//
+	//	This function uses $this->widget_hash, which contains field
+	//	names surrounded by '##'s.
+	//
+	// Parameters:
+	//
+	//	$varname - Name of the variable that the widget's data is
+	//	passed in.
+	//
+	//	$conditions - (optional) Additional clauses for SQL WHERE.
+	//	defaults to none.
+	//
+	// Returns:
+	//
+	//	XHTML-compliant picklist widget.
+	//
+	function widget ( $varname, $conditions = false ) {
+		$query = "SELECT * FROM ".$this->table_name." WHERE ( 1 = 1) ".
+			( $conditions ? "AND ( ".$conditions." ) " : "" ).
+			"ORDER BY ".$this->order_field;
+		$result = $GLOBALS['sql']->query($query);
+		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			if (!(strpos($this->widget_hash, "##") === false)) {
+				$key = '';
+				$hash_split = explode('##', $this->widget_hash);
+				foreach ($hash_split AS $_k => $_v) {
+					if (!($_k & 1)) {
+						$key .= prepare($_k);
+					} else {
+						$key .= prepare($r[$_k]);
+					}
+				}
+			} else {
+				$key = $this->widget_hash;
+			}
+			$return[$key] = $r['id'];
+		}
+		return html_form::select_widget($varname, $return);
+	} // end method widget
 
 	// override _setup with create_table
 	function _setup () {
