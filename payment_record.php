@@ -136,8 +136,7 @@
        <OPTION VALUE=\"1\" ".
         ( ($payrectype==1) ? "SELECTED" : "" ).">check
        <OPTION VALUE=\"2\" ".
-        ( ($payrectype==2 or empty($payrectype))
-            ? "SELECTED" : "" ).">money order
+        ( ($payrectype==2) ? "SELECTED" : "" ).">money order
        <OPTION VALUE=\"3\" ".
         ( ($payrectype==3) ? "SELECTED" : "" ).">credit card
        <OPTION VALUE=\"4\" ".

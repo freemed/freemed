@@ -3,6 +3,10 @@
  // desc: module prototype
  // lic : GPL, v2
 
+if (!defined(__MODULE_PHP__)) {
+
+define (__MODULE_PHP__, true);
+
 include "global.var.inc";
 
 // class freemedModule extends module
@@ -40,5 +44,7 @@ class freemedModule extends module {
 	} // end function footer
 
 } // end class freemedModule
+
+} // end if not defined
 
 ?>

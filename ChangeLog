@@ -1,5 +1,13 @@
 freemed project changelog
 
+* Thu Dec 21 2000 rufustfirefly
+  - more work on typeOfServiceMaintenance, now using module_maintenance.php
+    for the prototype
+
+* Thu Dec 14 2000 rufustfirefly
+  - moved module.php inside if(!defined())'s
+  - added module_maintenance.php for category classification
+
 * Wed Dec 13 2000 rufustfirefly
   - started implementing new phpwebtools 0.2 PHP module loader classes and
     functions -- beginning of a new era in PHP application development
