@@ -487,14 +487,22 @@ class ProcedureModule extends EMRModule {
 
 		if (!$been_here)
 		{
-			while(list($k,$v)=each($this->proc_fields))
-			{
+			while(list($k,$v)=each($this->proc_fields)) {
 				global ${$v};
 			}
 			$this_data = freemed::get_link_rec ($id, $this->table_name);
 			extract ($this_data); // extract all of this data
 
 			global $been_here;
+			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
+			$procunits = "1.0";        // default value for units
+			$this_patient = CreateObject('FreeMED.Patient', $patient);
+			$procdiag1      = $this_patient->local_record[ptdiag1];
+			$procdiag2      = $this_patient->local_record[ptdiag2];
+			$procdiag3      = $this_patient->local_record[ptdiag3];
+			$procdiag4      = $this_patient->local_record[ptdiag4];
+			$procphysician = $this_patient->local_record[ptdoc];
+			$procrefdoc = $this_patient->local_record[ptrefdoc];
 			$been_here = 1;
 		}
 
@@ -505,14 +513,31 @@ class ProcedureModule extends EMRModule {
 		$clmtype_query = "SELECT id,clmtpname,clmtpdescrip FROM claimtypes";
 		$clmtype_result = $sql->query($clmtype_query);
 
-		// ************** BUILD THE WIZARD ****************
-		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", "patient", "id", "module", "return") );
-		$wizard->set_cancel_name(__("Cancel"));
-		$wizard->set_finish_name(__("Finish"));
-		$wizard->set_previous_name(__("Previous"));
-		$wizard->set_next_name(__("Next"));
-		$wizard->set_refresh_name(__("Refresh"));
-		$wizard->set_revise_name(__("Revise"));
+		foreach ($GLOBALS AS $k => $v) global ${$k};
+
+		$phys_query = "SELECT * FROM physician WHERE phyref!='yes' ".
+					  "ORDER BY phylname,phyfname";
+		$phys_result = $sql->query($phys_query);
+
+		if (empty ($procdt)) $procdt = $cur_date; // show current date
+		$icd_type = freemed::config_value("icd"); // '9' or '10'
+		if ( (($icd_type+0) != 9) and (($icd_type+0) != 10) ) {
+			// Default to 9 if nothing is selected.
+			// TODO: Fix this broken behavior
+			$icd_type = 9;
+		}
+		$cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
+		$cptmod_result = $sql->query($cptmod_query);
+		$icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
+		$icd_result = $sql->query($icd_query);
+
+		$cert_query = "SELECT id,certdesc FROM certifications WHERE certpatient='$patient'";
+		$cert_result = $sql->query($cert_query);
+		$clmtype_query = "SELECT id,clmtpname,clmtpdescrip FROM claimtypes";
+		$clmtype_result = $sql->query($clmtype_query);
+
+
+		$auth_r_buffer = $this->GetAuthorizations($patient);
 
 		// Determine if we have EOC support
 		$__episode_of_care = $__episode_of_care_widget = '';
@@ -523,84 +548,327 @@ class ProcedureModule extends EMRModule {
 				array('proceoc', $patient));
 		}
 
+		// ************** BUILD THE WIZARD ****************
+		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", 
+			"patient", "id", "module", "return") );
+		$wizard->set_cancel_name(__("Cancel"));
+		$wizard->set_finish_name(__("Finish"));
+		$wizard->set_previous_name(__("Previous"));
+		$wizard->set_next_name(__("Next"));
+		$wizard->set_refresh_name(__("Refresh"));
+		$wizard->set_revise_name(__("Revise"));
+
 		$wizard->add_page (__("Step One"),
-				array("proceoc", "proccomment", "procauth", "procvoucher", "proccert", "procclmtp"),
-			html_form::form_table ( array (
+			array_merge(array("procphysician", "proceoc", "procrefdoc",
+							  "proccpt", "proccptmod", "procunits", 
+							  "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
+							  "procpos", "procvoucher","proccomment",
+								"procauth","proccert","procclmtp"),
+							  date_vars("procdt"),date_vars("procrefdt")),
+		html_form::form_table ( array (
+		  __("Provider") =>
+			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
+		  __("Date of Procedure") =>
+			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
+		  __("Procedural Code") =>
+			freemed_display_selectbox(
+			  $sql->query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
+				"#cptcode# (#cptnameint#)", "proccpt").
+			  freemed_display_selectbox(
+				$sql->query("SELECT cptmod,cptmoddescrip,id ".
+				  "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
+				  "#cptmod# (#cptmoddescrip#)", "proccptmod"),
+		  __("Units") =>
+		  	html_form::text_widget('procunits', 9),
+		  __("Diagnosis Code")." 1" =>
+			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1"),
+		  __("Diagnosis Code")." 2" =>
+			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag2"),
+		  __("Diagnosis Code")." 3" =>
+			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag3"),
+		  __("Diagnosis Code")." 4" =>
+			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
+			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4"),
+		  __("Place of Service") =>
+			freemed_display_selectbox(
+			  $sql->query("SELECT psrname,psrnote,id FROM facility"),
+			  "#psrname# [#psrnote#]", 
+			  "procpos"
+			),
 		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  __("Authorization") =>
 			"<select NAME=\"procauth\">\n".
 			"<option VALUE=\"0\" ".
 			( ($procauth==0) ? "SELECTED" : "" ).">".
-				__("NONE SELECTED")."</option>\n".
+			__("NONE SELECTED")."</option>\n".
 			$auth_r_buffer.
 			"</select>\n",
-		  __("Certifications") =>
-		  	freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
-		  __("Claim Type") => 
-		  	freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
+		  __("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
+		  __("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
+		  __("Referring Provider") =>
+			freemed_display_selectbox (
+			  $sql->query("SELECT phylname,phyfname,id FROM physician 
+						  WHERE phyref='yes'
+						  ORDER BY phylname, phyfname"),
+			  "#phylname#, #phyfname#", "procrefdoc"
+			),
+		  __("Date of Last Visit") =>
+			fm_date_entry ("procrefdt"),
 		  __("Comment") =>
-		  	html_form::text_widget('proccomment', 30, 512)
-			) ) 
+		  	html_form::text_widget('proccomment', 30, 255)
+		),
+			// verify
+			array(
+					array ("procdiag1", VERIFY_NONZERO, NULL, __("Must have one diagnosis code")),
+					array ("procphysician", VERIFY_NONZERO, NULL, __("Must Specify physician")),
+					array ("procdt_y", VERIFY_NONZERO, NULL, __("Must Specify Proc Year")),
+					array ("procdt_m", VERIFY_NONZERO, NULL, __("Must Specify proc Month")),
+					array ("procdt_d", VERIFY_NONZERO, NULL, __("Must Specify proc Day")),
+					array ("procpos", VERIFY_NONZERO, NULL, __("Must Specify Place of Service")),
+					array ("procclmtp", VERIFY_NONZERO, NULL, __("Must Specify Type of Claim")),
+					array ("proccpt", VERIFY_NONZERO, NULL, __("Must Specify Procedural code"))
+				 ) // end of array
+			) // end of array_merge
 		); // end of page one
+
+		$prim_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
+						"a.covstatus='".ACTIVE."' AND a.covtype='".PRIMARY."'".
+						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+		$sec_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
+						"a.covstatus='".ACTIVE."' AND a.covtype='".SECONDARY."'".
+						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+		$tert_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
+						"a.covstatus='".ACTIVE."' AND a.covtype='".TERTIARY."'".
+						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+		$wc_query = "SELECT a.id,b.insconame FROM coverage as a,insco as b WHERE ".
+						"a.covstatus='".ACTIVE."' AND a.covtype='".WORKCOMP."'".
+						" AND covpatient='".prepare($patient)."' AND a.covinsco=b.id";
+
+		$prim_result = $sql->query($prim_query);
+		$sec_result  = $sql->query($sec_query);
+		$tert_result = $sql->query($tert_query);
+		$wc_result   = $sql->query($wc_query);
+
+		$wizard->add_page (__("Step Two: Select Coverage"),
+			array("proccurcovid","proccurcovtp","proccov1","proccov2","proccov3","proccov4"),
+			html_form::form_table(array (
+				__("Primary Coverage") =>  freemed_display_selectbox($prim_result,"#insconame#","proccov1"),
+				__("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame#","proccov2"),
+				__("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov3"),
+				__("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame#","proccov4")
+				))
+			); // end coverage page	
+
+		$charge = $this->CalculateCharge($proccov1,$proccpt,$procphysician,$patient);
+		$cpt_code = freemed::get_link_rec ($proccpt, "cpt"); // cpt code
+
+
+		$wizard->add_page (__("Step Three: Confirm"),
+		array ("proccomment","procunits", "procbalorig", "procbillable"),
+		html_form::form_table ( array (
+
+		 __("Procedural Code") =>
+		   prepare($cpt_code["cptcode"]),
+
+		 __("Units") =>
+		   prepare($procunits),
+
+		 __("Calculated Accepted Fee") =>
+		   $cpt_code_stdfee,
+
+		 __("Calculated Charge") =>
+		   "<input TYPE=\"TEXT\" NAME=\"procbalorig\" SIZE=\"10\" ".
+		   "MAXLENGTH=\"9\" VALUE=\"".prepare($charge)."\"/>",
+
+		 __("Insurance Billable?") =>
+		   "<select NAME=\"procbillable\">
+			<option VALUE=\"0\" ".
+			 ( ($procbillable == 0) ? "SELECTED" : "" ).">".__("Yes")."</option>
+			<option VALUE=\"1\" ".
+			 ( ($procbillable != 0) ? "SELECTED" : "" ).">".__("No")."</option>
+		   </select>\n",
+
+		 __("Comment") =>
+		   prepare($proccomment)
+		) ),
+		array (
+			array ("procbalorig", VERIFY_NONNULL, NULL, __("Must Specify Amount"))
+			)
+		);
+
+		// required to get the wizard to validate the previous (last) page
+		$wizard->add_page(__("Click Finish"),array("dummy"),"");
 
 		if (!$wizard->is_done() and !$wizard->is_cancelled()) 
 		{
 			// display the wizard
-			$display_buffer .= "<div align=\"CENTER\">".$wizard->display()."</div>\n";
+			$display_buffer .= "<CENTER>".$wizard->display()."</CENTER>\n";
 		}
 
 		if ($wizard->is_done())
 		{
+			$proccurcovtp = ( ($proccov4) ? WORKCOMP : 0 );
+			$proccurcovtp = ( ($proccov3) ? TERTIARY : 0 );
+			$proccurcovtp = ( ($proccov2) ? SECONDARY : 0 );
+			$proccurcovtp = ( ($proccov1) ? PRIMARY : 0 );
+			$proccurcovid = ( ($proccov4) ? $proccov4 : 0 );
+			$proccurcovid = ( ($proccov3) ? $proccov3 : 0 );
+			$proccurcovid = ( ($proccov2) ? $proccov2 : 0 );
+			$proccurcovid = ( ($proccov1) ? $proccov1 : 0 );
 
-			$display_buffer .= "<p><div align=\"CENTER\">".__("Modifying")." ... ";
+			$display_buffer .= "<P><CENTER>".__("Modifying")." ... ";
 
-			$query = $sql->update_table_quer(
-				$this->table_name,
-				array (
-					'proceoc',
-					'procvoucher',
-					'proccomment',
-					'proccert',
-					'procclmtp',
-					'procauth'
-				), array ('id' => $id)
-			);
-			$result = $sql->query ($query);
-			if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
-			if ($result) { $display_buffer .= __("done")."."; }
-			else        { $display_buffer .= __("ERROR");    }
+			$query = $sql->update_query 
+				(
+					$this->table_name,
+					array (
+					"procpatient"   =>  $patient,
+					"proceoc",
+					"proccpt",
+					"proccptmod",
+					"procdiag1",
+					"procdiag2",
+					"procdiag3",
+					"procdiag4",
+					"proccharges"       =>  $procbalorig,
+					"procunits",
+					"procvoucher",
+					"procphysician",
+					"procdt"            =>  fm_date_assemble("procdt"),
+					"procpos",
+					"proccomment",
+					"procbalorig",
+					"procbalcurrent"    =>  $procbalorig,
+					"procamtpaid"       =>  "0",
+					"procbilled"        =>  "0",
+					"procbillable",
+					"procauth",
+					"proccert",
+					"procrefdoc",
+					"procrefdt"         =>  fm_date_assemble("procrefdt"),
+					"proccurcovid"        =>  $proccurcovid,
+					"proccurcovtp"        =>  $proccurcovtp,
+					"proccov1"        =>  $proccov1,
+					"proccov2"        =>  $proccov2,
+					"proccov3"        =>  $proccov3,
+					"proccov4"        =>  $proccov4,
+					"procclmtp"        =>  $procclmtp
+					),
+					array ('id' => $id)
+				);
 
-			$display_buffer .= "
+				$result = $sql->query ($query);
+				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
+				if ($result) { $display_buffer .= __("done")."."; }
+				else        { $display_buffer .= __("ERROR");    }
+
+				// form mod query
+				$display_buffer .= "
+				<br/>
+				".__("Committing to ledger")." ... 
+				";
+				$query = $sql->update_query(
+					'payrec',
+					array(
+						'payrecdtmod' => date('Y-m-d'),
+						'payrecdt' => fm_date_assemble("procdt"),
+						'payrecsource' => $proccurcovtp,
+						'payreclink' => $proccurcovid,
+						'payrectype' => '0',
+						'payrecnum' => '',
+						'payrecamt' => $procbalorig,
+						'payrecdescrip' => $proccomment,
+						'payreclock' => 'unlocked'
+					),
+					array (
+						'payrecproc' => $id,
+						'payreccat' => PROCEDURE,
+						'payrectype' => '0'
+					)
+				);
+				$result = $sql->query ($query);
+				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
+				if ($result) { $display_buffer .= __("done")."."; }
+				else        { $display_buffer .= __("ERROR");    }
+
+				// updating patient diagnoses
+				$display_buffer .= "
+				<BR>
+				".__("Updating patient diagnoses")." ...  ";
+				$query = $sql->update_query(
+					'patient',
+					array(
+						'ptdiag1' => $procdiag1,
+						'ptdiag2' => $procdiag2,
+						'ptdiag3' => $procdiag3,
+						'ptdiag4' => $procdiag4
+					), array ('id' => $patient)
+				);
+				$result = $sql->query ($query);
+				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
+				if ($result) { $display_buffer .= __("done")."."; }
+				else        { $display_buffer .= __("ERROR");    }
+
+				$display_buffer .= "
+				</div>
 				<p/>
 				<div align=\"CENTER\">
 				".template::link_bar(array(
-				__("back") =>
-			 	$this->page_name."?module=$module&patient=$patient",
-				__("Manage Patient") =>
-				"manage.php?id=".urlencode($patient)
+					__("Manage Patient") =>
+					"manage.php?id=".urlencode($patient),
+
+					__("Add Payment") =>
+				 	$this->page_name."?module=PaymentModule&action=addform&patient=".urlencode($patient),
+
+					__("Add Another") =>
+				$this->page_name."?module=".urlencode($module).
+				"&action=addform".
+				  "&procvoucher=".urlencode($procvoucher).
+				  "&patient=".urlencode($patient).
+				  "&procdt=".fm_date_assemble("procdt").
+				  "&proccpt=$proccpt".
+				  "&procpos=$procpos".
+				  "&procdiag1=$procdiag1".
+				  "&procdiag2=$procdiag2".
+				  "&procdiag3=$procdiag3".
+				  "&procdiag4=$procdiag4".
+				  "&procphysician=".urlencode($procphysician)
 				))."
 				</div>
 				<p/>
-			";
+				";
 
-
-
-		} // end wizard is done
+			global $refresh;
+			if ($GLOBALS['return'] == 'manage') {
+				$refresh = 'manage.php?id='.urlencode($patient);
+			}
+		
+		} // end wizard done
 
 		if ($wizard->is_cancelled())
 		{
-				$display_buffer .= "
-				<p/>
-				<div align=\"CENTER\"><b>".__("Cancelled")."</b>
-				<br/>
-				 <a class=\"button\"
-				 HREF=\"manage.php?id=".urlencode($patient)."\"
-				 >".__("Manage Patient")."</A> 
-				</div>
-				";
+			$display_buffer .= "
+			<p/>
+			<div ALIGN=\"CENTER\"><b>"._(Cancelled)."</b></div>
+			<p/>
+			<div ALIGN=\"CENTER\">
+			 <a HREF=\"manage.php?id=$patient\"
+			 >".__("Manage Patient")."</a> 
+			</div>
+			";
+
+			global $refresh;
+			if ($GLOBALS['return'] == 'manage') {
+				$refresh = 'manage.php?id='.urlencode($patient);
+			}
+		
 		} // end cancelled
+
 	} // end modform
 	
 	function delete () {
