@@ -22,6 +22,53 @@ class Ledger {
 		return $this->_query_to_result_array ( $query, true );
 	} // end method get_list
 
+	// Method: next_coverage
+	//
+	//	Determine if there is another coverage that this should
+	//	be moved to, based on the current coverage, and whether
+	//	it should be moved to the patient or is not able to be
+	//	billed any further
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure id key
+	//
+	// Returns:
+	//
+	//	Coverage type for next round of coverage, 0 if the rest
+	//	of the bill has to be handled by the patient, or -1 if
+	//	the rest of the bill is unbillable.
+	//
+	function next_coverage ( $proc ) {
+		// Get procedure record
+		$this_procedure = freemed::get_link_rec($proc, 'procrec');
+		$current_type = $this_procedure['proccurcovtp'];
+		for ($i=1; $i<=4; $i++) {
+			// Determine if a certain coverage exists
+			$cov_exist[$i] = ($this_procedure['proccov'.$i] > 0);
+		}
+
+		// If this is set to be patient billed *NOW* and it
+		// won't go through, it is garbage.
+		if ($current_type == 0) { return -1; }
+
+		// If we haven't run out of possible coverage slots yet...
+		if ($current_type < 4) {
+			// If a next coverage exists ...
+			if ($cov_exists[($current_type + 1)]) {
+				// Return next coverage slot
+				return ($current_type + 1);
+			} else {
+				// Move billing to patient for remainder
+				return 0;
+			} // end checking for next coverage exists
+		} else {
+			// If we're on the 4th slot, move to patient
+			return 0;
+		} // end checking for running out of slots
+
+	} // end method next_coverage
+
 /* ---------------- FIX / REMOVE --------------------------------------------
 	// Method -- post_adjustment
 	function post_adjustment ( $procedure, $category,
