@@ -101,6 +101,16 @@ class template {
 		return $buffer;
 	} // end function summary_modify_link
 
+	function summary_print_link($class, $url) {
+		$buffer .= "<a href=\"#\" onClick=\"printWindow=".
+			"window.open('".$url."', 'printWindow', ".
+			"'width=400,height=200,menubar=no,titlebar=no'); ".
+			"printWindow.opener=self; return true;\" ".
+			"><img SRC=\"lib/template/default/img/summary_print.png\"
+			BORDER=\"0\" ALT=\"".__("Print")."\"/></a>";
+		return $buffer;
+	} // end function summary_print_link
+
 	function summary_view_link($class, $url, $newwindow = false) {
 		$buffer .= "<a HREF=\"".$url."\" ".
 			//"class=\"button\" ".

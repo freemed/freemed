@@ -14,7 +14,7 @@ class EMRModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Electronic Medical Record";
-	var $CATEGORY_VERSION = "0.3";
+	var $CATEGORY_VERSION = "0.4";
 
 	// vars to be passed from child modules
 	var $order_fields;
@@ -101,6 +101,10 @@ class EMRModule extends BaseModule {
 		global $display_buffer;
 		global $action, $patient, $__submit, $return;
 
+		if ($action=='print') {
+			$this->disable_patient_box = true;
+		}
+
 		// Pull current patient from session if needed
 		if (!isset($patient)) {
 			$patient = $_SESSION['current_patient'];
@@ -157,6 +161,10 @@ class EMRModule extends BaseModule {
 
 			case "modform":
 				$this->modform();
+				break;
+
+			case "print":
+				$this->printaction();
 				break;
 
 			case "display";
@@ -358,6 +366,59 @@ class EMRModule extends BaseModule {
 		}
 	} // end function _mod
 
+	// function print
+	// - generate print view
+	function printaction ( ) { $this->_print(); }
+	function _print ( ) {
+		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		$patient = CreateObject('FreeMED.Patient', $_REQUEST['patient']);
+		$user = CreateObject('FreeMED.User');
+		if ($user->isPhysician()) {
+			$phy = $user->getPhysician();
+		} else {
+			$phy = $patient->local_record['patphy'];
+		}
+		$physician = CreateObject('FreeMED.Physician', $phy);
+
+		// Create TeX object for patient
+		$TeX = CreateObject('FreeMED.TeX', array (
+			'title' => __($this->record_name),
+			'heading' => $patient->fullName().' ('.$patient->local_record['ptid'].')',
+			'physician' => $physician->fullName()
+		));
+
+		// Actual renderer for formatting array
+		$this->_RenderTex(&$TeX, $_REQUEST['id']);
+
+		global $display_buffer;
+
+		// Turn off the template
+		$GLOBALS['__freemed']['no_template_display'] = true;
+
+		// Get appropriate printer from user settings
+		global $this_user;
+		if (!is_object($this_user)) {
+			$this_user = CreateObject('FreeMED.User');
+		}
+		$printer = CreateObject('PHP.PrinterWrapper');
+
+		$display_buffer .= __("Printing")." ... <br/>\n";
+
+		if (true) {
+			$display_buffer .= "<pre>\n".
+				$TeX->RenderDebug().
+				"</pre>\n(You must disable this to print)";
+		} else {
+		$TeX->SetPrinter(
+			CreateObject('PHP.PrinterWrapper'),
+			$user->getManageConfig('default_printer')
+		);
+		// TODO: Handle direct PDF generation and return here
+		$TeX->PrintTeX(1);
+		$GLOBALS['__freemed']['close_on_load'] = true;
+		} // remove this line to print, along with if thru else
+	} // end function print
+
 	// function summary
 	// - show summary view of last few items
 	function summary ($patient, $items) {
@@ -455,7 +516,14 @@ class EMRModule extends BaseModule {
 				
 				"\n".( (($this->summary_options & SUMMARY_LOCK) and
 				($r['locked'] > 0)) ?
-				template::summary_locked_link($this) : "" )."
+				template::summary_locked_link($this) : "" ).
+
+				// Printing stuff
+				"\n".( ($this->summary_options & SUMMARY_PRINT) ?
+				template::summary_print_link($this,
+				"module_loader.php?module=".
+				get_class($this)."&patient=$patient&".
+				"action=print&id=".$r['id']) : "" )."
 				</td>
 				</tr>
 				";
@@ -575,6 +643,51 @@ class EMRModule extends BaseModule {
 		
 		return $results;
 	} // end method EMRModule->picklist
+
+	//------ Internal Printing ----------------------------------------
+	function _RenderTeX ( $TeX, $id ) {
+		if (is_array($id)) {
+			foreach ($id AS $k => $v) {
+				$buffer .= _RenderTeX ( $TeX, $v );
+			}
+			return $buffer;
+		} else {
+			if (!$id) return false;
+
+			// Get record from ID
+			$r = freemed::get_link_rec($id, $this->table_name);
+
+			// Loop through parts
+			foreach ($this->print_format AS $garbage => $f) {
+				$print = true;
+				if (isset($f['condition'])) {
+					switch ($f['condition']) {
+						case 'isset':
+						if (!$r[$f['trigger']]) {
+							$print = false;
+						}
+						break;
+					}
+				}
+
+				if ($print) {
+					switch ($f['type']) {
+						case 'short':
+						$TeX->AddShortItems(array(
+							$f['title'] => $r[$f['content']]
+						));
+						break;
+					
+						case 'long':
+						$TeX->AddLongItems(array(
+							$f['title'] => $r[$f['content']]
+						));
+						break;
+					} // end switch by type
+				} // end if print
+			}
+		}
+	} // end method $id
 
 } // end class EMRModule
 
