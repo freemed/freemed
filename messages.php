@@ -192,7 +192,7 @@ switch ($action) {
 	} else {
 		// Do nothing.
 	}
-	// NOTE: There is no "break", as this is meant to mark them
+	// NOTE - There is no "break", as this is meant to mark them
 	// then display again...
 
 	default:
