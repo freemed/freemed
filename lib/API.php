@@ -2702,14 +2702,14 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 
 	// Check for use case to use special date widget
 	if (freemed::config_user_value('date_widget_type') == 'js') {
-		#static $already_js;
+		static $already_js;
 		if (!$already_js) {
-			$buffer .= "<link rel=\"Stylesheet\" type=\"text/css\" href=\"lib/template/default/calendar-system.css\"></link>\n";
-			$buffer .= "<script language=\"javascript\" ".
+			$header .= "<link rel=\"Stylesheet\" type=\"text/css\" href=\"lib/template/default/calendar-system.css\"></link>\n";
+			$header .= "<script language=\"javascript\" ".
 				"src=\"lib/template/default/calendar_stripped.js\"></script>\n";
-			$buffer .= "<script language=\"javascript\" ".
+			$header .= "<script language=\"javascript\" ".
 				"src=\"lib/template/default/calendar-en.js\"></script>\n";
-			$buffer .= "<script language=\"javascript\" ".
+			$header .= "<script language=\"javascript\" ".
 				"src=\"lib/template/default/calendar-setup_stripped.js\"></script>\n";
 			$already_js = true;
 		}
@@ -2722,6 +2722,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 		);
 		$buffer .= "
 		<img src=\"lib/template/default/img/calendar_widget.gif\" border=\"0\" id=\"".$datevarname."_img\" />
+		";
+		$footer .= "
 		<script type=\"text/javascript\">
 		Calendar.setup({
 			inputField	:	\"".$datevarname."_cal\",
@@ -2734,6 +2736,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 		});
 		</script>
 		";
+		$GLOBALS['__freemed']['header'] .= $header;
+		$GLOBALS['__freemed']['footer'] .= $footer;
 		return $buffer;
 	}
 
@@ -2896,7 +2900,11 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 			}
 			break;
 		case "ymd": default:
-			return $y.date("-m-d", $ts);
+			if ($show_text_days and ($y > 1969)) {
+				return date("D")." ".$y.date("-m-d", $ts);
+			} else {
+				return $y.date("-m-d", $ts);
+			}
 			break; 
 	} // end switch
 } // end function fm_date_print
