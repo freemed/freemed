@@ -1,9 +1,9 @@
 <?php
- // note: patient database functions
- // code: jeff b (jeff@ourexchange.net)
- //       adam b (gdrago23@yahoo.com)
- //       some small stuff by: max k <amk@span.ch>
- // lic : GPL, v2
+	// $Id$
+	// $Author$
+	//  and  adam b (gdrago23@yahoo.com)
+	// some small stuff by: max k <amk@span.ch>
+	// lic : GPL, v2
  
 $page_name = "patient.php"; // for help info, later
 $record_name = "Patient";   // compatibility with API functions
@@ -467,13 +467,13 @@ switch ($action) {
 		__("Employment Status") =>
 			html_form::select_widget("ptempl",
 				array (
-					__("Yes")    => "y",
-					__("No")     => "n",
-					"Part Time" => "p",
-					"Self"      => "s",
-					"Retired"   => "r",
-					"Military"  => "m",
-					"Unknown"   => "u"
+					__("Yes")       => "y",
+					__("No")        => "n",
+					__("Part Time") => "p",
+					__("Self")      => "s",
+					__("Retired")   => "r",
+					__("Military")  => "m",
+					__("Unknown")   => "u"
 				)
 			),
 		__("Patient Status") => 
@@ -816,7 +816,7 @@ switch ($action) {
     switch ($criteria) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (ptlname LIKE '".addslashes($f1)."%') ".
+         "WHERE (UCASE(ptlname) LIKE '".addslashes(strtoupper($f1))."%') ".
 	" AND ptarchive != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
@@ -824,7 +824,7 @@ switch ($action) {
         break;
       case "contains":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (".addslashes($f1)." LIKE '%".addslashes($f2)."%') ".
+         "WHERE (UCASE(".addslashes($f1).") LIKE '%".addslashes(strtoupper($f2))."%') ".
 	" AND ptarchive != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
@@ -850,8 +850,8 @@ switch ($action) {
 		list ($first, $last) = explode(' ', $_REQUEST['f1']);
 	}
 	$query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (ptlname LIKE '".addslashes($last)."%') ".
-         " AND (ptfname LIKE '".addslashes($first)."%') ".
+         "WHERE (UCASE(ptlname) LIKE '".addslashes(strtoupper($last))."%') ".
+         " AND (UCASE(ptfname) LIKE '".addslashes(strtoupper($first))."%') ".
 	 " AND ptarchive != '1' ".
 	 freemed::itemlist_conditions(false).
 	 " ORDER BY ptlname, ptfname, ptdob";
