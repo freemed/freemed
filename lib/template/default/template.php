@@ -86,10 +86,14 @@ if ($GLOBALS['__freemed']['no_menu_bar']) {
 		<?php
 		// Create URL
 		$_expand_url = $_SERVER['REQUEST_URI'];
-		if (strpos($_expand_url, '?') === false) {
-			$_expand_url .= '?_collapse_menubar=0';
-		} else {
-			$_expand_url .= '&_collapse_menubar=0';
+		if (!(strpos($_expand_url, '_collapse_menubar=1') === false)) {
+			$_expand_url = str_replace('_collapse_menubar=1',
+				'_collapse_menubar=0', $_expand_url);
+			if (strpos($_expand_url, '?') === false) {
+				$_expand_url .= '?_collapse_menubar=0';
+			} else {
+				$_expand_url .= '&_collapse_menubar=0';
+			}
 		}
 
 		// Check for _SESSION['collapsed_menu']
