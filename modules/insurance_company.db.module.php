@@ -8,7 +8,7 @@ class InsuranceCompany extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Companies";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.2";
+	var $MODULE_VERSION = "0.3.3";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
@@ -317,7 +317,7 @@ class InsuranceCompany extends MaintenanceModule {
 		//
 		//	Add inscodefformat and inscodeftarget mappings
 		//
-		if (!version_check ( $version, '0.3.1' )) {
+		if (!version_check ( $version, '0.3.3' )) {
 			$GLOBALS['sql']->query(
 				'ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap'
@@ -325,6 +325,14 @@ class InsuranceCompany extends MaintenanceModule {
 			$GLOBALS['sql']->query(
 				'ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformatE'
 			);
 		}
 
