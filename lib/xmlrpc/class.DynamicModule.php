@@ -47,7 +47,7 @@ class DynamicModule {
 		}
 
 		// Run proper module
-		return module_function($module, 'picklist', $params);
+		return module_function($module, 'picklist', array($params));
 	} // end method picklist
 
 	// ----- Internal functions -----------------------------------------
