@@ -1,0 +1,106 @@
+;
+;	FreeMED Patient Statement
+;	Agata Report Format
+;	$Id$
+;
+;	jeff@ourexchange.net
+;
+;
+;	Fields:
+; 1   - Patient Name
+; 2   - Internal ID
+; 3   - Patient ID Key
+; 4   - Total Balance
+; 5   - Practice Name
+; 6-8 - Address Lines
+; 9   - Provider Name
+; 10  - Total Amount Paid
+; 11  - Total Charges
+; 12  - Office Phone Number
+; 13  - Patient Name (Label Formatted)
+; 14  - Patient Address
+; 15  - Patient City, State, Zip
+
+Select:CONCAT(pat.ptlname,', ', pat.ptfname, ' ', pat.ptmname) AS patient_name, pat.ptid AS internal_id, pat.id AS patient_id, ROUND(SUM(proc.procbalcurrent),2) AS total_balance, phy.phypracname AS practice_name, phy.phyaddr1a AS address_1, phy.phyaddr2a AS address_2, CONCAT(phy.phycitya,', ',phy.phystatea,' ',phy.phyzipa) AS csz, CONCAT(phy.phylname, ', ', phy.phyfname, ' ', phy.phymname) AS physician_name, ROUND(SUM(proc.procamtpaid),2) AS total_paid, ROUND(SUM(proc.proccharges),2) AS total_charges, CONCAT('(',SUBSTRING(phy.phyphonea FROM 1 FOR 3),') ',SUBSTRING(phy.phyphonea FROM 4 FOR 3),'-',SUBSTRING(phy.phyphonea FROM 7 FOR 4)) AS office_phone, CONCAT(pat.ptfname,' ',pat.ptmname, IF(LENGTH(pat.ptmname)>0,'. ', ''), pat.ptlname) AS patient_label_name, pat.ptaddr1 AS patient_address, CONCAT(pat.ptcity,', ',pat.ptstate,' ',pat.ptzip) AS patient_csz
+From:patient AS pat, procrec AS proc, physician AS phy
+Where:proc.procpatient = pat.id and proc.procbalcurrent > 0 and proc.proccurcovtp = '0' and pat.ptdoc = phy.id
+Group by:pat.id
+Order by:patient_name
+%%: 
+&&: 
+
+@Graph Title:
+@Graph Titlex:
+@Graph Titley:
+@GraphIntroduction:
+
+@MergeSpacing:10
+@MergeTopMargin:20
+@MergeLeftMargin:10
+@MergeText:#setfan14 #tab400 Patient Statement
+@MergeText:$fan10
+@MergeText:$line1
+@MergeText:#tab20 Pay To #tab400 Patient #tab460 $var1
+@MergeText:#tab40 $var5 #tab400 ID #tab460 $var2
+@MergeText:#tab40 $var6 #tab400 Amount Due #tab460 $var4
+@MergeText:#tab40 $var8 #tab400 Amount Paid #tab460 _________
+@MergeText:#setfan08 #tab400 Bill Generated on $weekday, $monthname $day, $year
+@MergeText:$fan10
+@MergeText:
+@MergeText:#tab20 Provider
+@MergeText:#tab40 $var9
+@MergeText:#setfan08 #tab400 Payment Type
+@MergeText:#setfan08 #tab410 _ #tab425 Check #tab480 _ #tab490 Discover
+@MergeText:#setfan08 #tab410 _ #tab425 Visa #tab480 _ #tab490 Other
+@MergeText:#setfan08 #tab410 _ #tab425 MasterCard #tab480 _______________
+@MergeText:
+@MergeText:#setfan10 #tab080 $var13 #setfan08 #tab400 Account No #tab460 _____________________
+@MergeText:#setfan10 #tab080 $var14 #setfan08 #tab400 Expiration Date #tab460 _____________________
+@MergeText:#setfan10 #tab080 $var15 #setfan08 #tab400 Signature #tab460 _____________________
+@MergeText:#setfan08 #tab400 Date #tab460 _____________________
+@MergeText:$fan10
+@MergeText:
+@MergeText:
+@MergeText:$fan14
+@MergeText:#tab20 Charges
+@MergeText:$fan10
+@MergeText:$line2
+@MergeText:#tab20 Date #tab100 CPT #tab250 Comment #tab500 Amount 
+@MergeText:$line1
+@MergeText:
+@MergeText:>>>SUB-SQL
+@MergeText:#tab20 $subfield1 #tab100 $subfield2 #tab250 $subfield3 #tab500 $subfield4
+@MergeText:
+@MergeText:<<<SUB-SQL
+@MergeText:$line1
+@MergeText:#tab400 Total Charges #tab500 $var11
+@MergeText:$line2
+@MergeText:
+@MergeText:
+@MergeText:$fan14
+@MergeText:#tab20 Payments
+@MergeText:$fan10
+@MergeText:$line2
+@MergeText:#tab20 Date #tab100 Payment Type #tab250 Comment #tab500 Amount
+@MergeText:$line1
+@MergeText:
+@MergeText:>>>SUB-SQL
+@MergeText:#tab20 $subfield1 #tab100 $subfield2 #tab250 $subfield3 #tab500 $subfield4
+@MergeText:
+@MergeText:<<<SUB-SQL
+@MergeText:$line1
+@MergeText:#tab400 Total Payments #tab500 $var10
+@MergeText:$line2
+@MergeText:
+@MergeText:
+@MergeText:#setfan08 #tab80 If you have any questions about your bill, please call our office during regular business hours at $var12.
+@MergeText:
+
+; Sub-query 1 - Determine charges (procedures) for patient $var3
+@SubQuery:SELECT DATE_FORMAT(proc.procdt, '%b %e, %Y') AS procedure_date, CONCAT(cpt.cptcode,'/',cpt.cptnameint) AS cpt, proc.proccomment AS comment, ROUND(proc.proccharges,2) AS balance FROM patient AS pat, procrec AS proc, cpt AS cpt WHERE cpt.id = proc.proccpt AND pat.id = '$var3' AND proc.procpatient = pat.id AND proc.proccurcovtp = '0' ORDER BY proc.procdt DESC
+
+; Sub-query 2 - Determine payments for patient $var3
+@SubQuery:SELECT DATE_FORMAT(p.payrecdt, '%b %e, %Y') AS payment_date, CASE p.payreccat WHEN 0 THEN 'Payment' WHEN 1 THEN 'Adjustment' WHEN 11 THEN 'Copay' ELSE '--' END AS category, p.payrecdescrip AS comment, IF((p.payrecamt<0),CONCAT('(',ROUND(p.payrecamt,2),')'),ROUND(p.payrecamt,2)) AS amount, proc.procbalcurrent AS procedure_balance FROM payrec AS p, procrec AS proc WHERE proc.procbalcurrent > 0 AND p.payrecpatient = '$var3' AND p.payrecproc = proc.id AND FIND_IN_SET(p.payreccat, '0,1,7,8,11') ORDER BY p.payrecdt DESC
+
+@LabelText:
+
