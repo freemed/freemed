@@ -96,7 +96,7 @@
    } // end interior action switch
    freemed_display_box_top ( (($action=="addform") ? _("Add") : _("Modify")).
      " "._($record_name)); 
-   echo "
+   echo freemed_patient_box($this_patient)."
     <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
@@ -123,11 +123,6 @@
       <CENTER>
       <$STDFONT_B COLOR=#cccccc><B>".prepare($f_r["prtname"])."</B><$STDFONT_E>
       </CENTER>
-     </TD>
-    </TR>
-    <TR>
-     <TD COLSPAN=2>
-     ".freemed_patient_box($this_patient)."
      </TD>
     </TR>
    ";
