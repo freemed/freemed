@@ -159,6 +159,17 @@
         Procedure set for rebill.
        </CENTER>
       ";
+    } else {
+      // otherwise adjust the amount to 0
+      $query = "UPDATE $database.procrec
+                SET procbalcurrent='0'
+                WHERE id='".addslashes($item)."'";
+      $result = fdb_query ($query);
+      echo "
+       <CENTER>
+        Procedure adjusted to zero.
+       </CENTER>
+      ";
     } // end of denial rebill check
     $show_submit = false;
     break; // end of denial action
