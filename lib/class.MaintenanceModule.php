@@ -359,14 +359,41 @@ class MaintenanceModule extends BaseModule {
 				break;
 
 			case "modform":
-				$result = $sql->query ("SELECT * FROM ".$this->table_name.
-					" WHERE ( id = '".prepare($id)."' )");
-				$r = $sql->fetch_array ($result);
-				extract ($r);
+				$r = freemed::get_link_rec($id, $this->table_name);
+				foreach ($r AS $k => $v) {
+					global ${$k};
+					${$k} = stripslashes($v);
+				}
 				break;
 		} // end of switch action
-		
+		$display_buffer .= "<form method=\"post\">\n".
+			"<input type=\"hidden\" name=\"action\" value=\"".
+				( $action == "addform" ? "add" : "mod" )."\" />\n".
+			"<input type=\"hidden\" name=\"module\" ".
+				"value=\"".prepare(get_class($this))."\" />\n".
+			( $action == "modform" ? "<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\" />\n" : "" );
+		$display_buffer .= html_form::form_table($this->generate_form());
+		$display_buffer .= "<div align=\"center\">\n".
+			"<input type=\"submit\" name=\"__submit\" value=\"".(
+				$action == "addform" ?
+					__("Add") :
+					__("Modify")
+				)."\"/>\n".
+			"<input type=\"submit\" name=\"__submit\" value=\"".__("Cancel")."\" />\n".
+			"</div>\n".	
+			"</form>\n";
 	} // end function form
+
+	// Method: generate_form
+	//
+	//	Returns an array of form elements to be passed to
+	//	<html_form::form_table> which are to be used in an add or
+	//	modify form. This should be overridden, and has no use
+	//	if <form> is overridden.
+	//
+	function generate_form ( ) {
+		die("generate form should never be called without being overridden");
+	} // end method generate_form
 
 	// function view
 	// - view stub

@@ -560,7 +560,7 @@ class EMRModule extends BaseModule {
 				foreach ($this->summary_vars AS $k => $v) {
 					if (!(strpos($v, ":")===false)) {
 						// Split it up
-						list ($p1, $p2) = explode(":", $v);
+						list ($p1, $p2, $p3) = explode(":", $v);
 					
 						switch ($p2) {
 						case "phy":
@@ -570,8 +570,9 @@ class EMRModule extends BaseModule {
 						break;
 
 						default:
-							${$v} = $p1;
-							break;
+						// use fields ...
+						${$v} = freemed::get_link_field(${$p1}, $p2, $p3);
+						break;
 						}
 					}
 					$buffer .= "
