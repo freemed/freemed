@@ -69,7 +69,7 @@ switch ($action) {
         <A HREF=\"authorizations.php3?$_auth&patient=$id&action=addform\"
         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD>
-        <A HREF=\"authorizations.php3?$_auth&patient=$id&action=view\"
+        <A HREF=\"authorizations.php3?$_auth&patient=$id\"
         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD></TR>
         <TR><TD ALIGN=RIGHT>
@@ -195,6 +195,10 @@ switch ($action) {
         </TD><TD>
         </TD></TR>
 
+        <!--
+
+	  // this is commented out until we can make it work properly
+
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>"._("Reports and Certificates")."</B> : <$STDFONT_E>
         </TD><TD>
@@ -203,31 +207,17 @@ switch ($action) {
         </TD><TD>
         </TD><TD>
         </TD></TR>
+        -->
+	
         </TABLE>
-      ";
 
-      // guarantor or dependant -- ?
-      //if (!$this_patient->isDependent()) {
-      //  echo "
-      //    <A HREF=\"patient.php3?$_auth&action=find&criteria=dependants&f1=$id\"
-      //     ><$STDFONT_B>$Show_Dependants<$STDFONT_E></A>
-      //    <BR>
-      //  ";
-      //} else {
-      //  echo "
-      //    <A HREF=\"patient.php3?$_auth&action=find&criteria=guarantor&f1=$id\"
-      //    ><$STDFONT_B>$Show_Guarantor<$STDFONT_E></A>
-      //    <BR>
-      //  ";
-      //} // end of checking for dependency
-      echo "
-          <CENTER>
-          <A HREF=\"patient.php3?$_auth\"
-           ><$STDFONT_B>"._("Select Another Patient")."<$STDFONT_E></A>
-          </CENTER>
-          <P>
+        <CENTER>
+        <A HREF=\"patient.php3?$_auth\"
+         ><$STDFONT_B>"._("Select Another Patient")."<$STDFONT_E></A>
         </CENTER>
-      ";
+        <P>
+      </CENTER>
+     ";
     } // if there is an ID specified
     
     freemed_display_box_bottom ();
