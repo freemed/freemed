@@ -339,7 +339,7 @@ switch ($action) {
   break;
  case "add":
   freemed_display_box_top (_("Add Appointment"));
-  echo "<$STDFONT_B>"._("Adding")." ... ";
+  echo "<CENTER><$STDFONT_B>"._("Adding")." ... ";
   $query = "INSERT INTO scheduler VALUES (
     '".addslashes($selected_date)."',
     '".addslashes($type)."',
@@ -357,8 +357,12 @@ switch ($action) {
     NULL )";
   $result = fdb_query ($query);
 
-  echo _("done").".
-    <BR>
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
+
+  echo "
+    <$STDFONT_E></CENTER>
+    <P>
     <CENTER>
   ";
   if ($type=="pat") {

@@ -82,7 +82,7 @@ switch ($action) { // master action switch
   echo "
     <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-    <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">
+    <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
     ".freemed_patient_box($this_patient)."
     
     <P>
@@ -92,7 +92,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Provider : <$STDFONT_E>
+      <$STDFONT_B>"._("Provider")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
   freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician")
@@ -102,7 +102,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Date of Procedure : <$STDFONT_E>
+      <$STDFONT_B>"._("Date of Procedure")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ";
   if (empty ($procdt)) $procdt = $cur_date; // show current date
@@ -112,7 +112,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Episode of Care : <$STDFONT_E>
+      <$STDFONT_B>"._("Episode of Care")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".freemed_multiple_choice ("SELECT * FROM eoc
                               WHERE eocpatient='$patient'
@@ -135,7 +135,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>CPT Code/Modifier : <$STDFONT_E>
+      <$STDFONT_B>"._("Procedural Code")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
   freemed_display_selectbox(
@@ -149,7 +149,8 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>&nbsp;</TD><TD ALIGN=LEFT>
   ".
   freemed_display_selectbox(
-    fdb_query("SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip"),
+    fdb_query("SELECT cptmod,cptmoddescrip,id ".
+    "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
     "#cptmod# (#cptmoddescrip#)", "proccptmod")
   ."
      </TD>
@@ -157,16 +158,16 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Units : <$STDFONT_E>
+      <$STDFONT_B>"._("Units")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"procunits\" VALUE=\"$procunits\"
+      <INPUT TYPE=TEXT NAME=\"procunits\" VALUE=\"".prepare($procunits)."\"
        SIZE=10 MAXLENGTH=9>
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Diagnosis Code 1 : <$STDFONT_E>
+      <$STDFONT_B>"._("Diagnosis Code")." 1 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
   freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
@@ -177,7 +178,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Diagnosis Code 2 : <$STDFONT_E>
+      <$STDFONT_B>"._("Diagnosis Code")." 2 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
   freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
@@ -188,7 +189,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Diagnosis Code 3 : <$STDFONT_E>
+      <$STDFONT_B>"._("Diagnosis Code")." 3 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
   freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
@@ -199,7 +200,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Diagnosis Code 4 : <$STDFONT_E>
+      <$STDFONT_B>"._("Diagnosis Code")." 4 : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
   freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
@@ -210,7 +211,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Place of Service : <$STDFONT_E>
+      <$STDFONT_B>"._("Place of Service")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox(
       fdb_query("
@@ -225,7 +226,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Type of Service : <$STDFONT_E>
+      <$STDFONT_B>"._("Type of Service")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <SELECT NAME=\"proctos\">
   ";
@@ -237,16 +238,16 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Voucher Number : <$STDFONT_E>
+      <$STDFONT_B>"._("Voucher Number")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"$procvoucher\"
+      <INPUT TYPE=TEXT NAME=\"procvoucher\" VALUE=\"".prepare($procvoucher)."\"
        SIZE=20>
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Authorization : <$STDFONT_E>
+      <$STDFONT_B>"._("Authorization")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <SELECT NAME=\"procauth\">
        <OPTION VALUE=\"0\" ".
@@ -270,7 +271,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Referring Provider : <$STDFONT_E>
+      <$STDFONT_B>"._("Referring Provider")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ";
   $phy_r = fdb_query("SELECT phylname,phyfname,id FROM physician 
@@ -283,7 +284,7 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Date of Last Visit : <$STDFONT_E>
+      <$STDFONT_B>"._("Date of Last Visit")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
   fm_date_entry ("procrefdt")
@@ -293,9 +294,9 @@ switch ($action) { // master action switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Comment : <$STDFONT_E>
+      <$STDFONT_B>"._("Comment")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"$proccomment\"
+      <INPUT TYPE=TEXT NAME=\"proccomment\" VALUE=\"".prepare($proccomment)."\"
        SIZE=30 MAXLENGTH=512>
      </TD>
     </TR>
@@ -429,23 +430,23 @@ switch ($action) { // master action switch
 
    <TR>
     <TD ALIGN=RIGHT>
-     <$STDFONT_B>Procedural Code : <$STDFONT_E>
+     <$STDFONT_B>"._("Procedural Code")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>".fm_prep($cpt_code["cptcode"])."<$STDFONT_E>
+     <$STDFONT_B>".prepare($cpt_code["cptcode"])."<$STDFONT_E>
     </TD>
    </TR>
 
    <TR>
     <TD ALIGN=RIGHT>
-     <$STDFONT_B>Units : <$STDFONT_E>
+     <$STDFONT_B>"._("Units")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>".fm_prep($procunits)."<$STDFONT_E>
+     <$STDFONT_B>".prepare($procunits)."<$STDFONT_E>
     </TD>
    </TR>
 
    <TR>
     <TD ALIGN=RIGHT>
-     <$STDFONT_B>Calculated Accepted Fee : <$STDFONT_E>
+     <$STDFONT_B>"._("Calculated Accepted Fee")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
      <$STDFONT_B>$cpt_code_stdfee<$STDFONT_E>
     </TD>
@@ -453,31 +454,31 @@ switch ($action) { // master action switch
 
    <TR>
     <TD ALIGN=RIGHT>
-     <$STDFONT_B>Calculated Charge : <$STDFONT_E>
+     <$STDFONT_B>"._("Calculated Charge")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
      <INPUT TYPE=TEXT NAME=\"procbalorig\" SIZE=10 MAXLENGTH=9
-      VALUE=\"".fm_prep($charge)."\">
+      VALUE=\"".prepare($charge)."\">
     </TD>
    </TR>
 
    <TR>
     <TD ALIGN=RIGHT>
-     <$STDFONT_B>Insurance Billable? : <$STDFONT_E>
+     <$STDFONT_B>"._("Insurance Billable?")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
      <SELECT NAME=\"procbillable\">
       <OPTION VALUE=\"0\" ".
-       ( ($procbillable == 0) ? "SELECTED" : "" ).">yes
+       ( ($procbillable == 0) ? "SELECTED" : "" ).">"._("Yes")."
       <OPTION VALUE=\"1\" ".
-       ( ($procbillable != 0) ? "SELECTED" : "" ).">no
+       ( ($procbillable != 0) ? "SELECTED" : "" ).">"._("No")."
      </SELECT>
     </TD>
    </TR>
 
    <TR>
     <TD ALIGN=RIGHT>
-     <$STDFONT_B>Comment : <$STDFONT_E>
+     <$STDFONT_B>"._("Comment")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-     <$STDFONT_B>".fm_prep($proccomment)."<$STDFONT_E>
+     <$STDFONT_B>".prepare($proccomment)."<$STDFONT_E>
     </TD>
    </TR>
 
@@ -486,7 +487,7 @@ switch ($action) { // master action switch
    <P>
    <CENTER>
     <INPUT TYPE=SUBMIT VALUE=\"$this_action\">
-    <INPUT TYPE=RESET  VALUE=\"$Clear\">
+    <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
    </CENTER>
 
    </FORM>
@@ -496,10 +497,10 @@ switch ($action) { // master action switch
   break; // addform/modform confirm action (addform2,modform2)
 
  case "add": // add action
-  freemed_display_box_top ("$Adding $record_name");
+  freemed_display_box_top (_("Adding")." "._($record_name));
   echo "
     <P>
-    <$STDFONT_B>$Adding ... <$STDFONT_E>
+    <$STDFONT_B>"._("Adding")." ... <$STDFONT_E>
   ";
 
   // form add query
@@ -530,15 +531,15 @@ switch ($action) { // master action switch
             NULL )";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
 
   $this_procedure = fdb_last_record ();
 
   // form add query
   echo "
     <P>
-    <$STDFONT_B>Committing to ledger ... <$STDFONT_E>
+    <$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
   ";
   $query = "INSERT INTO payrec VALUES (
             '$cur_date',
@@ -557,14 +558,14 @@ switch ($action) { // master action switch
             NULL )";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
   $this_procedure = fdb_last_record ($result, $db_name);
   
     // updating patient diagnoses
   echo "
     <P>
-    <$STDFONT_B>Updating patient diagnoses ... <$STDFONT_E>
+    <$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
   ";
   $query = "UPDATE patient SET
             ptdiag1  = '$procdiag1',
@@ -574,14 +575,14 @@ switch ($action) { // master action switch
             WHERE id = '$patient'";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
   
   echo "
     <P>
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> <B>|</B>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"payment_record.php3?$_auth&action=addform&patient=$patient&".
      "procedure=$this_procedure\"
      ><$STDFONT_B>Add Payment<$STDFONT_E></A> <B>|</B>
@@ -601,10 +602,10 @@ switch ($action) { // master action switch
   break; // end of add action
 
  case "mod": // modify action
-  freemed_display_box_top ("$Modifying $record_name");
+  freemed_display_box_top (_("Modifying")." "._($record_name));
   echo "
     <P>
-    <$STDFONT_B>$Modifying ... <$STDFONT_E>
+    <$STDFONT_B>"._("Modifying")." ... <$STDFONT_E>
   ";
   // form add query
   $query = "UPDATE $db_name SET
@@ -631,11 +632,11 @@ switch ($action) { // master action switch
             WHERE id='$id'";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
   echo "
     <P>
-    <$STDFONT_B>Updating patient ledger ... <$STDFONT_E>
+    <$STDFONT_B>"._("Committing to ledger")." ... <$STDFONT_E>
   ";
   // form add query
   $query = "UPDATE payrec SET
@@ -647,13 +648,13 @@ switch ($action) { // master action switch
             WHERE ( (payreccat='5') AND (payrecproc='$id') )";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
 
     // updating patient diagnoses
   echo "
     <P>
-    <$STDFONT_B>Updating patient diagnoses ... <$STDFONT_E>
+    <$STDFONT_B>"._("Updating patient diagnoses")." ... <$STDFONT_E>
   ";
   $query = "UPDATE patient SET
             ptdiag1  = '$procdiag1',
@@ -663,14 +664,14 @@ switch ($action) { // master action switch
             WHERE id = '$patient'";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
 
   echo "
     <P>
     <CENTER>
      <A HREF=\"manage.php3?$_auth&id=$patient\"
-     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
     <P>
   ";
@@ -678,28 +679,28 @@ switch ($action) { // master action switch
   break; // end of modify action
 
  case "del": // delete action
-  freemed_display_box_top ("$Deleting $record_name");
+  freemed_display_box_top (_("Deleting")." "._($record_name));
   echo "
    <P>
-   <$STDFONT_B>$Deleting $record_name ...
+   <$STDFONT_B>"._("Deleting")." ...
   ";
   $query = "DELETE FROM $db_name WHERE id='$id'";
   $result = fdb_query ($query);
-  if ($result) { echo "[record] "; }
-   else        { echo "[$ERROR] "; }
-  $query = "DELETE FROM payrec WHERE payrecproc='$id'
+  if ($result) { echo "["._("Procedure")."] "; }
+   else        { echo "["._("ERROR")."] ";     }
+  $query = "DELETE FROM payrec WHERE payrecproc='".addslashes($id)."'
             AND payreccat='5'"; // delete record in payrec db
   $result = fdb_query ($query);
-  if ($result) { echo "[payrec] "; }
-   else        { echo "[$ERROR] "; }
+  if ($result) { echo "["._("Payment Record")."] "; }
+   else        { echo "["._("ERROR")."] ";          }
   echo "
    <$STDFONT_E>
    <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>Return to Procedures<$STDFONT_E></A> <B>|</B>
+     ><$STDFONT_B>"._("back")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"manage.php3?$_auth?id=$patient\"
-     ><$STDFONT_B>Manage Patient<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
    <P>
   ";
@@ -707,9 +708,9 @@ switch ($action) { // master action switch
   break; // end of delete section
 
  default: // default action (master switch)
-  freemed_display_box_top ("$record_name");
+  freemed_display_box_top (_($record_name));
   $query = "SELECT * FROM $db_name
-            WHERE procpatient='$patient'
+            WHERE procpatient='".addslashes($patient)."'
             ORDER BY procdt DESC";
   $result = fdb_query ($query);
   echo freemed_patient_box($this_patient)."\n<P>\n";
@@ -717,16 +718,16 @@ switch ($action) { // master action switch
     $result,
     "procedure.php3",
     array ( // control
-      "Date of Procedure" => "procdt",
-      "Procedure Code"    => "proccpt",
-      "Modifier"          => "proccptmod",
-      "Comment"           => "proccomment"
+      _("Date of Procedure")	=> "procdt",
+      _("Procedure Code")	=> "proccpt",
+      _("Modifier")		=> "proccptmod",
+      _("Comment")		=> "proccomment"
     ),
     array ( // blanks
       "",
       "",
       "",
-      "NO COMMENT"
+      _("NO COMMENT")
     ),
     array ( // xref
       "",
