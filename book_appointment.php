@@ -110,7 +110,8 @@ switch ($action) {
 	"facility.psrcity AS poscity,facility.psrstate AS posstate,".
 	"facility.psrname AS posname,room.id AS id ".
 	"FROM room,facility ".
-	"WHERE room.roompos=facility.id ORDER BY roomname"),
+	"WHERE room.roompos=facility.id AND room.roombooking='y' ".
+	"ORDER BY roomname"),
       "#roomname# (#posname#/#poscity#,#posstate#)",
       "room"
     )."
