@@ -118,8 +118,13 @@ switch ($action) {
        _("Contact"),
        array (
          "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip",
-	 "ptcountry", phone_vars("pthphone"), phone_vars("ptwphone"),
-	 phone_vars("ptfax")
+	 "ptcountry",
+          // phone_vars("pthphone"),
+         "pthphone1", "pthphone2", "pthphone3", "pthphone4", "pthphone5",
+          // phone_vars("ptwphone"),
+         "ptwphone1", "ptwphone2", "ptwphone3", "ptwphone4", "ptwphone5",
+	  // phone_vars("ptfax")
+         "ptfax1", "ptfax2", "ptfax3", "ptfax4", "ptfax5"
          ),
 		html_form::form_table ( array (
 
@@ -425,78 +430,72 @@ switch ($action) {
 	 //reset($t_vars);while ($i=next($t_vars)) 
 	 //                 if (is_array($$i)) $$i = implode(':', $$i);
          //$ptins{start,end} already fm_date_assemble'd
-	 $ptdtmod  = $cur_date; // set modification date to current date
-	 $pthphone = fm_phone_assemble ("pthphone");
-	 $ptwphone = fm_phone_assemble ("ptwphone");
-	 $ptfax    = fm_phone_assemble ("ptfax");
-	 $ptdob       = fm_date_assemble("ptdob"); // assemble date of birth
-	 $ptnextofkin = addslashes ($ptnextofkin); // 19990728 next of kin add
-	 $ptstate  = strtoupper ($ptstate); // knock state to upper case
 	 // reassemble email
 	 if ((strlen($ptemail1)>1) AND (strlen($ptemail2)>3))
 	   $ptemail = $ptemail1 . "@" . $ptemail2;
-	 $query = "UPDATE patient SET ".
-	   "ptdtmod     ='$ptdtmod',      ".
-	   "ptdob       ='$ptdob',        ".
-	   "ptbal       ='$ptbal',        ".
-	   "ptbalfwd    ='$ptbalfwd',     ".
-	   "ptunapp     ='$ptunapp',      ".
-	   "ptrefdoc    ='$ptrefdoc',     ".
-	   "ptpcp       ='$ptpcp',        ".
-	   "ptphy1      ='$ptphy1',       ".
-	   "ptphy2      ='$ptphy2',       ".
-	   "ptphy3      ='$ptphy3',       ".
-	   "ptphy4      ='$ptphy4',       ".
-	   "ptbilltype  ='$ptbilltype',   ".
-	   "ptbudg      ='$ptbudg',       ".
-	   "ptdoc       ='$ptdoc',        ".
-	   "ptlname     ='$ptlname',      ".
-	   "ptfname     ='$ptfname',      ".
-	   "ptmname     ='$ptmname',      ".
-	   "ptaddr1     ='$ptaddr1',      ".
-	   "ptaddr2     ='$ptaddr2',      ".
-	   "ptcity      ='$ptcity',       ".
-	   "ptstate     ='$ptstate',      ".
-	   "ptzip       ='$ptzip',        ".
-	   "ptcountry   ='$ptcountry',    ". // 19990728 country add
-	   "pthphone    ='$pthphone',     ".
-	   "ptwphone    ='$ptwphone',     ".
-	   "ptfax       ='$ptfax',        ".
-	   "ptemail     ='$ptemail',      ".
-	   "ptsex       ='$ptsex',        ".
-	   "ptdob       ='$ptdob',        ".
-	   "ptssn       ='$ptssn',        ".
-	   "ptdmv       ='$ptdmv',        ".
-	   "ptdtlpay    ='$ptdtlpay',     ".
-	   "ptamtlpay   ='$ptpaytype',    ".
-	   "ptstatus    ='$ptstatus',     ".
-	   "ptytdchg    ='0',             ".   // ytd charges
-	   "ptar        ='$ptar',         ".
-	   "ptextinf    ='$ptextinf',     ".
-	   "ptdisc      ='$ptdisc',       ".
-	   "ptdol       ='$ptdol',        ".
-	   "ptdiag1     ='$ptdiag1',      ".
-	   "ptdiag2     ='$ptdiag2',      ".
-	   "ptdiag3     ='$ptdiag3',      ".
-	   "ptdiag4     ='$ptdiag4',      ".
-	   "ptid        ='$ptid',         ".
-	   "pthistbal   ='$pthistbal',    ".
-	   "ptmarital   ='$ptmarital',    ".
-	   "ptempl      ='$ptempl',       ".
-	   "ptemp1      ='$ptemp1',       ".
-	   "ptemp2      ='$ptemp2',       ".
-	   "ptguar      ='$ptguar',       ". // guars and ins's
-	   "ptguarstart ='$ptguarstart',  ". // are collapsed arrays
-	   "ptguarend   ='$ptguarend',    ".
-	   "ptrelguar   ='$ptrelguar',    ".
-	   "ptins       ='$ptins',        ".
-	   "ptinsno     ='$ptinsno',      ".
-	   "ptinsgrp    ='$ptinsgrp',     ".
-	   "ptinsstart  ='$ptinsstart',   ". // are collapsed arrays
-	   "ptinsend    ='$ptinsend',     ".
-	   "ptnextofkin ='$ptnextofkin',  ". // 19990728 next of kin add
-	   "iso         ='iso'            ". // 19991228
-	   "WHERE id='$id'";
+	 $query = $sql->update_query (
+           "patient",
+           array (
+             "ptdtmod" => date("Y-m-d"),
+	     "ptdob" => fm_date_assemble ("ptdob"),
+             "ptbal",
+             "ptbalfwd",
+             "ptunapp",
+             "ptrefdoc",
+             "ptpcp",
+             "ptphy1",
+             "ptphy2",
+             "ptphy3",
+             "ptphy4",
+             "ptbilltype",
+             "ptbudg",
+             "ptdoc",
+             "ptlname",
+             "ptfname",
+             "ptmname",
+             "ptaddr1",
+             "ptaddr2",
+             "ptcity",
+             "ptstate" => strtoupper ($ptstate),
+             "ptzip",
+             "ptcountry",
+             "pthphone"  => fm_phone_assemble ("pthphone"),
+             "ptwphone"  => fm_phone_assemble ("ptwphone"),
+             "ptfax" => fm_phone_assemble ("ptfax"),
+             "ptemail",
+             "ptsex",
+             "ptssn",
+             "ptdmv",
+             "ptdtlpay",
+             "ptamtlpay" => $ptpaytype,
+             "ptstatus",
+             "ptytdchg",
+             "ptar",
+             "ptextinf",
+             "ptdisc",
+             "ptdiag1",
+             "ptdiag2",
+             "ptdiag3",
+             "ptdiag4",
+             "ptid",
+             "pthistbal",
+             "ptmarital",
+             "ptempl",
+             "ptemp1",
+             "ptemp2",
+             "ptguar",
+             "ptguarstart",
+             "ptguarend",
+             "ptrelguar",
+             "ptins",
+             "ptinsno",
+             "ptinsgrp",
+             "ptinsstart",
+             "ptinsend",
+             "ptnextofkin",
+             "iso"
+            ), array ( "id" => $id )
+         );
          break; // end mod
      } // end switch for action (done .. actual action)
      echo "
@@ -555,38 +554,38 @@ switch ($action) {
     switch ($criteria) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (ptlname LIKE '$f1%') ".
+         "WHERE (ptlname LIKE '$".addslashes(f1)."%') ".
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = "Last Names ($f1)";
+        $_crit = _("Last Names")." (".prepare($f1).")";
         break;
       case "contains":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE ($f1 LIKE '%$f2%') ".
+         "WHERE (".addslashes($f1)." LIKE '%".addslashes($f2)."%') ".
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = "Searching for \"$f2\"";
+        $_crit = _("Searching for")." \"".prepare($f2)."\"";
         break;
       case "soundex":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (soundex($f1) = soundex('$f2')) ".
+         "WHERE (soundex(".addslashes($f1).") = soundex('".addslashes($f2)."')) ".
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = "Sounds Like \"$f2\"";
+        $_crit = "Sounds Like \"".prepare($f2)."\"";
         break;
       case "all":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = "\"All Patients\"";
+        $_crit = "\""._("All Patients")."\"";
         break;
       case "dependants":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (ptdep = '$f1') ".
+         "WHERE (ptdep = '".addslashes($f1)."') ".
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = "Dependents";
+        $_crit = _("Dependents");
         break;
       case "guarantor":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-         "WHERE (id = '$f1') ".
+         "WHERE (id = '".addslashes($f1)."') ".
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = "Guarantor";
+        $_crit = _("Guarantor");
         break;
       default:
         $_crit = "";
@@ -597,7 +596,7 @@ switch ($action) {
 
       freemed_display_html_top ();
       freemed_display_banner ();
-      freemed_display_box_top (_("$Patients_meeting_criteria $_crit"),
+      freemed_display_box_top (_("Patients Meeting Criteria")." ".$_crit),
         $page_name);
 
       if (strlen($_ref)<5) {
@@ -639,7 +638,7 @@ switch ($action) {
   default: // default action
     freemed_display_html_top ();
     freemed_display_banner ();
-    freemed_display_box_top (_("Patients"), $_ref, $page_name);
+    freemed_display_box_top (_("Patients"));
   
     if (freemed_get_userlevel($LoginCookie)>$database_level) {
       echo "
