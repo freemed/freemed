@@ -14,9 +14,24 @@ if (count($this_user->manage_config) > 0) {
 	template_display();
 } // end split apart pieces
 
-// Run through them and unset "module"
-foreach ($config['modular_components'] AS $k => $v) { if ($v == $module) unset($config['modular_components'][$k]); }
-foreach ($config['static_components'] AS $k => $v) { if ($v == $module) unset($config['static_components'][$k]); }
+// Figure out whether it is moved up or down
+switch ($action) {
+	case 'moveup': $modifier = -1; break;
+	case 'movedown': $modifier = 1; break;
+	default: trigger_error("Should never get here!");
+} // end action
+
+// Run through them and modify level of module
+foreach ($config['modular_components'] AS $k => $v) {
+	if ($v['module'] == $module) {
+	       	$config['modular_components'][$k][order] += $modifier;
+	}
+}
+foreach ($config['static_components'] AS $k => $v) {
+	if ($v['static'] == $module) {
+	       	$config['static_components'][$k][order] += $modifier;
+	}
+}
 
 // Write to usermanageopt
 $result = $sql->query($sql->update_query(

@@ -41,6 +41,13 @@ switch ($action) {
 	break; // end config action
 
 	// Remove
+	case "moveup": case "movedown":
+	if (file_exists("lib/template/".$template."/manage_move.php"))
+		include("lib/template/".$template."/manage_move.php");
+	else include("lib/template/default/manage_move.php");
+	break; // end moveup/movedown action
+
+	// Remove
 	case "remove":
 	if (file_exists("lib/template/".$template."/manage_remove.php"))
 		include("lib/template/".$template."/manage_remove.php");

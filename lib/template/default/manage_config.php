@@ -13,6 +13,25 @@ $page_title = __("Management Configuration");
 //----- Add menu help item for this
 $menu_bar[__("Configuration Help")] = help_url("manage.php", "configure");
 
+// Special widgets for priority, etc
+function my_checkbox_widget ( $varname, $value, $actual ) {
+	return "<input TYPE=\"CHECKBOX\" NAME=\"".$varname."\" ".
+		"VALUE=\"".$value."\" ".
+		( ( $value == $actual ) ? "checked=\"CHECKED\" " : "" ).
+		"/>\n";
+}
+function my_select_widget ( $varname, $values, $actual ) {
+	$buffer = "<select name=\"".$varname."\">\n";
+	foreach ($values AS $k => $v) {
+		if ( (is_integer($k) and ($values[($k+0)] == $v)) or empty($k) ) { $k = $v; }
+		$buffer .= "<option value=\"".prepare($v)."\" ".
+			( ($v == $actual) ? "selected=\"selected\" " : "" ).
+			">".prepare($k)."</option>\n";
+	}
+	$buffer .= "</select>\n";
+	return $buffer;
+}
+
 //----- Create configuration notebook
 $book = CreateObject('PHP.notebook',
 	array(
@@ -30,6 +49,7 @@ if (!$book->been_here()) {
 		extract($this_user->manage_config);
 	} // end checking for config
 } // end pulling out old values
+//print "<pre>"; print_r($this_user->manage_config); die("</pre>");
 
 //----- Define list of configuration vars
 $config_vars = array (
@@ -39,6 +59,8 @@ $config_vars = array (
 	"static_components",
 	"modular_components"
 );
+
+//print_r($_REQUEST); die();
 
 //----- Basic configuration for management
 $book->add_page("General",
@@ -95,33 +117,123 @@ $book->add_page("Static Components",
 	"<center>\n".
 	html_form::form_table(array(
 		__("Appointments") =>
-		html_form::checkbox_widget(
-			"static_components", "appointments", " "
+		my_checkbox_widget(
+			"static_components[appointments][static]", "appointments", $static_components[appointments]['static']
+		).
+		my_select_widget (
+			"static_components[appointments][order]",
+			array (
+				'1',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9'
+			),
+			$static_components[appointments][order]
 		),
 
 		__("Custom Reports") =>
-		html_form::checkbox_widget(
-			"static_components", "custom_reports", " "
+		my_checkbox_widget(
+			"static_components[custom_reports][static]", "custom_reports", $static_components[custom_reports]['static']
+		).
+		my_select_widget (
+			"static_components[custom_reports][order]",
+			array (
+				'1',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9'
+			),
+			$static_components[custom_reports][order]
 		),
 
 		__("Medical Information") =>
-		html_form::checkbox_widget(
-			"static_components", "medical_information", " "
+		my_checkbox_widget(
+			"static_components[medical_information][static]", "medical_information", $static_components[medical_information]['static']
+		).
+		my_select_widget (
+			"static_components[medical_information][order]",
+			array (
+				'1',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9'
+			),
+			$static_components[medical_information][order]
 		),
 
 		__("Messages") =>
-		html_form::checkbox_widget(
-			"static_components", "messages", " "
+		my_checkbox_widget(
+			"static_components[messages][static]", "messages", $static_components[messages]['static']
+		).
+		my_select_widget (
+			"static_components[messages][order]",
+			array (
+				'1',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9'
+			),
+			$static_components[messages][order]
 		),
 
 		__("Patient Information") =>
-		html_form::checkbox_widget(
-			"static_components", "patient_information", " "
+		my_checkbox_widget(
+			"static_components[patient_information][static]", "patient_information", $static_components[patient_information]['static']
+		).
+		my_select_widget (
+			"static_components[patient_information][order]",
+			array (
+				'1',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9'
+			),
+			$static_components[patient_information][order]
 		),
 
 		__("Photographic Identification") =>
-		html_form::checkbox_widget(
-			"static_components", "photo_id", " "
+		my_checkbox_widget(
+			"static_components[photo_id][static]", "photo_id", $static_components[photo_id]['static']
+		).
+		my_select_widget (
+			"static_components[photo_id][order]",
+			array (
+				'1',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9'
+			),
+			$static_components[photo_id][order]
 		)
 
 	)).
@@ -160,9 +272,27 @@ foreach($class_array AS $k => $class_pair) {
 		list ($key, $val) = explode (":", $class_pair);
 		// Add it
 		//$classes["$key"] = $val; // this would be for anything else
+		if (!isset($modular_components[$val][order])) {
+			$modular_components[$val][order] = 5;
+		}
 		$modules_to_choose[__($key)] =
-			html_form::checkbox_widget (
-				"modular_components", $val, " "
+			my_checkbox_widget (
+				"modular_components[$val][module]", $val, $modular_components[$val][module]
+			).
+			my_select_widget (
+				"modular_components[$val][order]",
+				array (
+					'1',
+					'2',
+					'3',
+					'4',
+					'5',
+					'6',
+					'7',
+					'8',
+					'9'
+				),
+				$modular_components[$val][order]
 			);
 	} // end checking for empties
 } // end while loop
@@ -186,24 +316,43 @@ if (!$book->is_done()) {
 	$display_buffer .= "</center>\n";
 } else { // checking if book is done
 	// This is *really* fun. Make the appropriate hashes...
-	foreach ($config_vars AS $__lotta_garbage_var__ => $opt) {
-		if (is_array(${$opt})) {
-			// Start off array hash and add name
-			$final_hash .= "/".$opt."=";
-			foreach (${$opt} AS $gargage_too => $v) {
-				// Add actual array item and separator
-				$final_hash .= ":".$v;
-			} // inner loop
-		} else { // if it is an array
-			// Create scalar hash portion
-			$final_hash .= "/".$opt."=".${$opt};
-		} // end if is_array opt
-	} // end looping through config_vars
+	foreach ($config_vars AS $opt) {
+		switch ($opt) {
+			case 'modular_components':
+			unset($a);
+			foreach (${$opt} AS $v) { 
+				if ($v[module]) {
+					//print "<b>"; print_r($v); print"</b><br/>\n";
+					$a[] = $v;
+				}
+			}
+			$mc[$opt] = $a;
+			break;
+			
+			case 'static_components':
+			unset($a);
+			foreach (${$opt} AS $v) { 
+				if ($v['static']) {
+					//print "<b>"; print_r($v); print"</b><br/>\n";
+					$a[] = $v;
+				}
+			}
+			$mc[$opt] = $a;
+			break;
 
+			default:
+			$mc[$opt] = ${$opt};
+			break;
+		}
+		//print $opt." ";
+		//print_r($mc[$opt]); print "<br/>\n";
+		$mc[$opt] = ${$opt};
+	} // end looping through config_vars
+	
 	// Form SQL query
 	$query = $sql->update_query ( 
 		"user",
-		array ( "usermanageopt" => $final_hash ),
+		array ( "usermanageopt" => serialize($mc) ),
 		array ( "id" => $this_user->user_number )
 	);
 

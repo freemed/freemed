@@ -63,7 +63,7 @@ class User {
 		if ($this->user_number == 1) $this->user_level = 9;
 
 		// Map configuration vars
-		$this->mapConfiguration();
+		$this->manage_config = unserialize($this->local_record['usermanageopt']);
 	} // end function User
 
 	// method: User->getDescription
@@ -132,41 +132,6 @@ class User {
 		$result = $sql->query($my_query);
 	} // end function setPassword
 
-	// Method: User->mapConfiguration
-	//
-	//	Map all user configuration variables from the user table
-	//	into the object. This is called by the constructor.
-	//
-	function mapConfiguration () {
-		// Start with usermanageopt
-		$usermanageopt = $this->local_record["usermanageopt"];
-
-		// Check if set...
-		if (empty($usermanageopt)) return false;
-
-		// Split out by "/"'s
-		$usermanageopt_array = explode("/", $usermanageopt);
-
-		// Pull pairs one by one
-		foreach ($usermanageopt_array AS $garbage => $opt) {
-			// Check if not empty..
-			if (!empty($opt)) {
-				// Explode pairs by "="
-				list ($key, $val) = explode ("=", $opt);
-
-				// Map to global manage_config map
-				if ( !(strpos($val, ":") === false) ) {
-					// Handle arrays
-					$this->manage_config["$key"] =
-						explode(":", $val);
-				} else {
-					// Handle scalar
-					$this->manage_config["$key"] = $val;
-				} // end mapping
-			} // end checking for empties
-		} // end looping through
-	} // end function User->mapConfiguration
-
 	// Method: User->getManageConfig
 	//
 	//	Retrieve a user configuration variable by key.
@@ -195,33 +160,14 @@ class User {
 	//	$val - Configuration value to set.
 	//
 	function setManageConfig ($new_key, $new_val) {
-		// First, make sure it's mapped properly
-		$this->mapConfiguration();
-
 		// Now, set extra value(s)
 		$this->manage_config["$new_key"] = $new_val;
-
-		// Create hash
-		foreach ($this->manage_config AS $k => $v) {
-			$hash_array[$k] = $k."=";
-			if (is_array($v)) {
-				// Handle array (no hash as of yet, maybe
-				// when we move to serialize)
-				$hash_array[$k] .= join(":", $v);
-			} else {
-				// Handle scalar
-				$hash_array[$k] .= str_replace(':', '\:', $v);
-			}
-		}
-		
-		// Combine elements
-		$hash = join("/", $hash_array);
 
 		// Set part of record
 		$query = $GLOBALS['sql']->update_query(
 			'user',
 			array(
-				'usermanageopt' => $hash
+				'usermanageopt' => serialize($this->manage_config)
 			), array ('id' => $this->user_number)
 		);
 		$result = $GLOBALS['sql']->query($query);

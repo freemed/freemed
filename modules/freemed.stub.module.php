@@ -11,7 +11,7 @@ class FreeMED_Package extends MaintenanceModule {
 
 	var $MODULE_NAME = 'FreeMED';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.3.2';
+	var $MODULE_VERSION = '0.7.1';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -71,6 +71,64 @@ class FreeMED_Package extends MaintenanceModule {
 				'ALTER TABLE insco '.
 				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformate'
 			);
+		}
+
+		// Version 0.7.1
+		//
+		//	User configuration change ... no tables, just formats
+		//
+		if (!version_check($version, '0.7.1')) {
+			$all = $GLOBALS['sql']->query('SELECT * FROM user');
+			while ($r = $GLOBALS['sql']->fetch_array($all)) {
+				if (!empty($r['usermanageopt'])) {
+					$a = explode('/', $r['usermanageopt']);
+					unset ($c);
+					foreach ($a AS $opt) {
+						if (!empty($opt)) {
+							list ($k, $v) = explode('=', $opt);
+							if ( !(strpos($v, ':') === false) ) {
+								$c["$k"] = explode(':', $v);
+							} else {
+								$c["$k"] = $v;
+							}
+							switch ($k) {
+								case 'modular_components':
+								foreach ($c["$k"] AS $comp) {
+									$_c[$comp] = array (
+										'module' => $comp,
+										'order' => 5
+									);
+								}
+								$c["$k"] = $_c;
+								break;
+									
+								case 'static_components':
+								foreach ($c["$k"] AS $comp) {
+									$_c[$comp] = array (
+										'static' => $comp,
+										'order' => 5
+									);
+								}
+								$c["$k"] = $_c;
+								break;
+									
+								default: break;
+							}
+						}
+					}
+
+					// Map this to serialized data and replace
+					$GLOBALS['sql']->query(
+						$GLOBALS['sql']->update_query(
+							'user',
+							array(
+								'usermanageopt' => serialize($c)
+							),
+							array('id'=>$r['id'])
+						)
+					);
+				}
+			}
 		}
 	} // end method _update
 }

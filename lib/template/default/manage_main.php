@@ -38,9 +38,17 @@ if (!is_object($module_list)) {
 	
 //----- Suck in management panels
 //-- Static first...
-foreach ($static_components AS $garbage => $component) {
-	if (!$already_set[$component]) {
-	switch ($component) {
+foreach ($static_components AS $garbage => $__component) {
+	if (is_array($__component)) {
+		$component = $__component;
+	} else {
+		$component = array (
+			'static' => $__component,
+			'order'  => '5'
+		);
+	}
+	if (!$already_set[$component['static']]) {
+	switch ($component['static']) {
 		case "appointments": // Appointments static component
 		// Add header and strip at top
 		$modules[__("Appointments")] = "appointments";
@@ -124,6 +132,7 @@ foreach ($static_components AS $garbage => $component) {
 		$panel[__("Appointments")] .= "
 			</table>
 		";
+		$static_name = __("Appointments");
 		break; // end appointments
 
 		case "custom_reports":
@@ -171,6 +180,7 @@ foreach ($static_components AS $garbage => $component) {
 				</TD></tr></table>
 			";
 		} // end checking for results
+		$static_name = __("Custom Reports");
 		break; // end custom_reports
 
 		case "medical_information":
@@ -206,6 +216,7 @@ foreach ($static_components AS $garbage => $component) {
 		$panel[__("Medical Information")] .= "
 		</table>
 		</TD></tr></table>";
+		$static_name = __("Medical Information");
 		break; // end medical_information
 
 		case "messages":
@@ -277,11 +288,13 @@ foreach ($static_components AS $garbage => $component) {
 		</table>
 		</DIV>
 		</TD></tr></table>";
+		$static_name = __("Messages");
 		break; // end medical_information
 
 		case "photo_id":
 		// If there is a file with that name, show it, else box
 		//print "filename = ".freemed::image_filename($id, 'identification', 'djvu')."<br>";
+		$static_name = __("Photo ID");
 		if (file_exists(freemed::image_filename(
 				$id,
 				'identification',
@@ -357,6 +370,7 @@ foreach ($static_components AS $garbage => $component) {
 		//----- Create the panel
 		if ($this_patient->local_record['ptpcp'] > 0) { $pcp = CreateObject('FreeMED.Physician', $this_patient->local_record['ptpcp']); }
 		$modules[__("Patient Information")] = "patient_information";
+		$static_name = __("Patient Information");
 		$panel[__("Patient Information")] .= "
 			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
@@ -387,25 +401,34 @@ foreach ($static_components AS $garbage => $component) {
 	} // end component switch
 	} // end checking for already set
 
-	$already_set[$component] = true;
+	$already_set[$component['static']] = true;
+	$ms[$static_name] = $component;
 } // end static components
 
 //-- ... then modular
-foreach ($modular_components AS $garbage => $component) {
+foreach ($modular_components AS $garbage => $__component) {
 	// End checking for component
-	if ($module_list->check_for($component) and (!$already_set[$component])) {
+	if (is_array($__component)) {
+		$component = $__component;
+	} else {
+		$component = array (
+			'module' => $__component,
+			'order'  => '5'
+		);
+	}
+	if ($module_list->check_for($component['module']) and (!$already_set[$component['module']])) {
 		// Execute proper portion and add to panel
-		$modules[__($module_list->get_module_name($component))] =
-			$component;
-		$panel[__($module_list->get_module_name($component))] .= "
+		$modules[__($module_list->get_module_name($component['module']))] =
+			$component['module'];
+		$panel[__($module_list->get_module_name($component['module']))] .= "
 			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
 			<tr><td VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 			 CLASS=\"menubar_items\">".
-			module_function($component, "summary_bar", array ( $id )).
+			module_function($component['module'], "summary_bar", array ( $id )).
 			"</td></tr>
 			<tr><td ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-			".module_function($component, "summary",
+			".module_function($component['module'], "summary",
 				array (
 					$id, // patient ID
 					$num_summary_items // items per panel
@@ -413,7 +436,8 @@ foreach ($modular_components AS $garbage => $component) {
 			)."</td></tr></table>
 		";
 
-		$already_set[$component] = true;
+		$already_set[$component['module']] = true;
+		$ms[__($module_list->get_module_name($component['module']))] = $component;
 	} else {
 		// Don't do anything if it doesn't exist
 	} // end checking for component existing
@@ -427,9 +451,18 @@ if (count($panel) > 0) {
 
 //----- Display tables
 
-if (count($panel) > 0) {
+function __sort_panels ($a, $b) {
+	if ($a['order'] == $b['order']) {
+	       	$c_a = isset($a['module']) ? $a['module'] : $a['static'];
+	       	$c_b = isset($b['module']) ? $b['module'] : $b['static'];
+		return ($c_a < $c_b) ? -1 : 1;
+	}
+	return ($a['order'] < $b['order']) ? -1 : 1;
+}
+
+if (count($ms) > 0) {
 	// Sort by panel names
-	ksort($panel);
+	uasort($ms, '__sort_panels');
 
 	// Table header
 	$display_buffer .= "
@@ -437,8 +470,10 @@ if (count($panel) > 0) {
 	<tr VALIGN=MIDDLE ALIGN=CENTER>
 	";
 
-	$column = 1; reset ($panel);
-	foreach ($panel AS $k => $v) {
+	$column = 1; reset ($ms);
+	foreach ($ms AS $k => $_v) {
+		$v = $panel[$k];
+		
 		// Check to see if we're on a new row yet
 		if ($column > $display_columns) {
 			$column = 1;
@@ -459,6 +494,22 @@ if (count($panel) > 0) {
 		<tr><TD CLASS=\"reverse\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 		<B>".prepare($k)."</B>
 		</TD><TD CLASS=\"reverse\" VALIGN=\"MIDDLE\" ALIGN=\"RIGHT\">
+		".( ($ms[$k][order] > 1) ? "
+		<A HREF=\"manage.php?id=".urlencode($id)."&".
+		"action=moveup&module=".urlencode($modules[$k])."\"
+		onMouseOver=\"document.images.".$myk."_up.src='lib/template/default/img/move_up_pressed.png'; return true;\"
+		onMouseOut=\"document.images.".$myk."_up.src='lib/template/default/img/move_up.png'; return true;\"
+		><IMG NAME=\"".$myk."_up\"
+		SRC=\"lib/template/default/img/move_up.png\"
+		BORDER=\"0\" ALT=\"X\"></A>" : "" ).
+		( ($ms[$k][order] < 9) ? "
+		<A HREF=\"manage.php?id=".urlencode($id)."&".
+		"action=movedown&module=".urlencode($modules[$k])."\"
+		onMouseOver=\"document.images.".$myk."_down.src='lib/template/default/img/move_down_pressed.png'; return true;\"
+		onMouseOut=\"document.images.".$myk."_down.src='lib/template/default/img/move_down.png'; return true;\"
+		><IMG NAME=\"".$myk."_down\"
+		SRC=\"lib/template/default/img/move_down.png\"
+		BORDER=\"0\" ALT=\"X\"></A>" : "" )."
 		<A HREF=\"manage.php?id=".urlencode($id)."&".
 		"action=remove&module=".urlencode($modules[$k])."\"
 		onMouseOver=\"document.images.".$myk."_close.src='lib/template/default/img/close_x_pressed.png'; return true;\"
