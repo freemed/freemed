@@ -80,8 +80,12 @@ class Patient {
      
      // reset all pulled arrays
      if (is_array($ins)) {
-       reset ($ins); reset ($insno); reset ($insgrp);
-       reset ($insstart); reset ($insend); $count = 0;
+       reset ($ins);
+       if (is_array($insno))    reset ($insno);
+       if (is_array($insgrp))   reset ($insgrp);
+       if (is_array($insstart)) reset ($insstart);
+       if (is_array($insend))   reset ($insend);
+       $count = 0;
        while (list ($k, $v) = each ($ins)) {
          if ($v>0) $this->insco[$count] = new InsuranceCompany ($v);
        } // end looping for inscos
