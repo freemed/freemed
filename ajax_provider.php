@@ -33,7 +33,9 @@ function lookup ( $module, $parameter, $patient = NULL ) {
 	while ($r = $GLOBALS['sql']->fetch_array( $res ) ) {
 		$count++;
 		if ($count < $limit) {
-			$return[] = trim(_result_to_hash($r, $hash)).'@'.$r['id'];
+			$_res = trim(_result_to_hash($r, $hash));
+			$_res = addslashes($_res);
+			$return[] = $_res.'@'.$r['id'];
 		}
 	}
 	if ($count >= $limit) { $return[] = " ... "; }
