@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.55  2002/12/25 05:08:43  rufustfirefly
+ // Remember default facility by machine, using cookies.
+ //
  // Revision 1.54  2002/12/15 07:28:46  rufustfirefly
  // Moved freemed_patient_box to freemed::patient_box (and other small fixes)
  //
@@ -793,10 +796,10 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 
 	if ($this_page_name=="") $this_page_name = $page_name;
 
-	if (!empty($__ref)) {
-		$_ref="main.php";
-	  } // if no ref, then return to home page...
+	// No reference, return to homepage
+	if (empty($__ref)) { $_ref="main.php"; }
 
+	// Assume return to management if nothing else
 	if ($GLOBALS["return"] == "manage") {
 		$__ref = "manage.php?id=$patient";
 	}
@@ -1012,21 +1015,21 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
         <A HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
-	"$this_result[id]\">"._("VIEW")."</A>&nbsp;
+	urlencode($this_result['id'])."\">"._("VIEW")."</A>&nbsp;
       ";
     }
     if (freemed::user_flag(USER_DATABASE) AND 
-         ($flags & ITEMLIST_MOD)) {
+         ($flags & ITEMLIST_MOD) AND (!$this_result['locked'])) {
       $buffer .= "
         <A HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
-	"$this_result[id]\">"._("MOD")."</A>&nbsp;
+	urlencode($this_result['id'])."\">"._("MOD")."</A>&nbsp;
       ";
     }
     if (freemed::user_flag(USER_DELETE) AND
-         ($flags & ITEMLIST_DEL)) {
+         ($flags & ITEMLIST_DEL) AND (!$this_result['locked'])) {
       $buffer .= "
         <A HREF=\"$page_link?patient=$patient&module=$module&action=delete&id=".
-	"$this_result[id]\">"._("DEL")."</A>&nbsp;
+	urlencode($this_result['id'])."\">"._("DEL")."</A>&nbsp;
       ";
     }
     
@@ -1096,11 +1099,12 @@ function freemed_display_facilities ($param="", $default_load = false,
 	global $SESSION, $sql;
 
 	// Check for default or passed facility
-	if ($param != "") {
-		global ${$param};
-		$facility = ${$param};
+	if ($GLOBALS[$param] > 0) {
+		// Only set this if $param is a legal value
+		$facility = $GLOBALS[$param];
 	} else {
-		$facility = $SESSION["default_facility"];
+		// Otherwise set via cookie
+		$facility = $_COOKIE["default_facility"] + 0;
 	}
 
 	$buffer = "";

@@ -45,9 +45,11 @@ if (!$connect) {
 }
 
 if (freemed_check_access_for_facility ($_f)) {
-	$SESSION["default_facility"] = $_f;
+	SetCookie('default_facility', $_f);
+	$_COOKIE['default_facility'] = $SESSION['default_facility'] = $_f;
 } else {
-	$SESSION["default_facility"] = 0;
+	SetCookie('default_facility', 0);
+	$_COOKIE['default_facility'] = $SESSION['default_facility'] = 0;
 }
 
 //----- Determine "language session variable, if set
