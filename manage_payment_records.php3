@@ -135,8 +135,8 @@
                 '0',
                 '',
                 '0',     
-                #  (above is payrecamt)
-                '".addslashes((
+                ". // (above is payrecamt)
+                "'".addslashes((
                    (empty($denial_reason)) ?
                    $denial_reason_text :
                    $denial_reason ))."',
@@ -208,7 +208,7 @@
                 '',
                 '',
                 '".addslashes($voucher)."',
-                '".addslashes($withhold)."',
+                '".addslashes($deductable)."',
                 '',
                 'unlocked',
                 NULL
@@ -228,7 +228,7 @@
                 '',
                 '',
                 '".addslashes($voucher)."',
-                '".addslashes($withhold)."',
+                '".addslashes($adjustment)."',
                 '',
                 'unlocked',
                 NULL
@@ -248,7 +248,7 @@
                 '',
                 '',
                 '".addslashes($voucher)."',
-                '".addslashes($withhold)."',
+                '".addslashes($payment_amount)."',
                 '',
                 'unlocked',
                 NULL
