@@ -56,7 +56,7 @@ class prescriptionModule extends freemedEMRModule {
     case "modform":
       $rxdtfrom = $cur_date;
       $display_buffer .= "
-        <FORM ACTION=\"$this->page_name\" METHOD=POST>
+        <FORM ACTION=\"".$this->page_name."\" METHOD=POST>
         <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
         <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
         <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".(
@@ -182,7 +182,7 @@ class prescriptionModule extends freemedEMRModule {
             $rxdtto = "unspecified";
           $display_buffer .= "
             <TR><TD>
-             <A HREF=\"$page_name?patient=$patient&id=$id&action=display\"
+             <A HREF=\"$this->page_name?patient=$patient&id=$id&action=display\"
               >".fm_date_print($rxdtfrom)." / 
                            ".fm_date_print($rxdtto)." </A>
               <B>[</B> <A HREF=
