@@ -123,20 +123,21 @@ class Messages {
 
 		// Insert the appropriate record
 		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
-				"messages",
-				array(
-					"msgfor"     => $message['user'],
-					"msgrecip"   => $message['user'],
-					"msgpatient" => $message['patient'],
-					"msgperson"  => $message['person'],
-					"msgtext"    => $message['text'],
-					"msgsubject" => $message['subject'],
-					"msgurgency" => $message['urgency'],
-					"msgread"    => '0',
-					"msgunique"  => mktime(),
-					"msgtime"    => SQL__NOW
-				)
-			));
+			"messages",
+			array(
+				"msgby"      => $this_user->user_number,
+				"msgfor"     => $message['user'],
+				"msgrecip"   => $message['user'],
+				"msgpatient" => $message['patient'],
+				"msgperson"  => $message['person'],
+				"msgtext"    => $message['text'],
+				"msgsubject" => $message['subject'],
+				"msgurgency" => $message['urgency'],
+				"msgread"    => '0',
+				"msgunique"  => mktime(),
+				"msgtime"    => SQL__NOW
+			)
+		));
 		return $result;
 	} // end method send
 
