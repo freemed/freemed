@@ -158,7 +158,7 @@ msgstr ""
 msgid "Reinitialize Database"
 msgstr ""
 
-msgid "Are you sure you want to reinitialize the database?\n"
+msgid "Are you sure you want to reinitialize the database?"
 msgstr ""
 
 msgid "This is an IRREVERSIBLE PROCESS!"
@@ -1052,6 +1052,9 @@ msgstr ""
 msgid "Return to the Login Screen"
 msgstr ""
 
+msgid "ADD"
+msgstr ""
+
 msgid "RETURN TO MENU"
 msgstr ""
 
@@ -1239,10 +1242,10 @@ msgid "Old"
 msgstr ""
 
 msgid "All"
-msgid ""
+msgstr ""
 
 msgid "Current"
-msgid ""
+msgstr ""
 
 msgid "Date of Call"
 msgstr ""
@@ -1287,7 +1290,7 @@ msgid "Back"
 msgstr ""
 
 msgid "Marking"
-msgid ""
+msgstr ""
 
 msgid "Fixed Forms Generation"
 msgstr ""
@@ -1386,6 +1389,30 @@ msgid "ICD9"
 msgstr ""
 
 msgid "ICD10"
+msgstr ""
+
+msgid "<U>S</U>ubjective"
+msgstr ""
+
+msgid "<U>O</U>bjective"
+msgstr ""
+
+msgid "<U>A</U>ssessment"
+msgstr ""
+
+msgid "<U>P</U>lan"
+msgstr ""
+
+msgid "<U>I</U>nterval"
+msgstr ""
+
+msgid "<U>E</U>ducation"
+msgstr ""
+
+msgid "P<U>R</U>escription"
+msgstr ""
+
+msgid "Related Episode(s)"
 msgstr ""
 
 # END

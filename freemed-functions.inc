@@ -760,21 +760,21 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=view&id=".
-	"$this_result[id]\"><$STDFONT_B>VIEW<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\"><$STDFONT_B>"._("VIEW")."<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$database_level AND 
          ($flags & ITEMLIST_MOD)) {
       $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=modform&id=".
-	"$this_result[id]\"><$STDFONT_B>MOD<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\"><$STDFONT_B>"._("MOD")."<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$delete_level AND
          ($flags & ITEMLIST_DEL)) {
       $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=delete&id=".
-	"$this_result[id]\"><$STDFONT_B>DEL<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\"><$STDFONT_B>"._("DEL")."<$STDFONT_E></A>&nbsp;
       ";
     }
     
