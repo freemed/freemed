@@ -116,7 +116,9 @@ class Messages {
 
 	// Method: view
 	//
-	//	Get all messages for this user
+	//	Get all messages for this user or patient. Use
+	//	<view_per_user> and <view_per_patient> instead of
+	//	using this function directly.
 	//
 	// Parameters:
 	//
@@ -124,19 +126,33 @@ class Messages {
 	//	that are unread, or if false to return all messages whether
 	//	they have been read or not. Defaults to false.
 	//
+	//	$patient - (optional) Which patient to view messages for.
+	//	This causes the search criteria to be per patient, not
+	//	per user. This is wrapped by <view_per_patient>.
+	//
 	// Returns:
 	//
 	//	Array of associative arrays containing message information,
 	//	or boolean false if there are no messages.
 	//
-	function view ($unread_only=false) {
+	// See Also:
+	//	<view_per_patient>
+	//	<view_per_user>
+	//
+	function view ($unread_only=false, $patient=NULL) {
 		global $this_user;
 		if (!is_object($this_user)) $this_user = CreateObject('_FreeMED.User');
 
 		// Perform search
-		$query = "SELECT * FROM messages WHERE ".
+		if ($patient != NULL) {
+			$query = "SELECT * FROM messages WHERE ".
+			"msgpatient='".addslashes($patient)."'".
+			($unread_only ? " AND msgread='0'" : "" );
+		} else {
+			$query = "SELECT * FROM messages WHERE ".
 			"msgfor='".addslashes($this_user->user_number)."'".
 			($unread_only ? " AND msgread='0'" : "" );
+		}
 		$result = $GLOBALS['sql']->query($query);
 
 		if ($GLOBALS['sql']->results($result)) {
@@ -157,7 +173,51 @@ class Messages {
 		} else {
 			return false;
 		}
-	} // end method get
+	} // end method view
+
+	// Method: view_per_patient
+	//
+	//	Get all messages associated with a patient
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id key
+	//
+	//	$unread_only - (optional) Boolean, restrict to unread
+	//	messages only. Defaults to false.
+	//
+	// Returns:
+	//
+	//	Array of associative arrays containing message information.
+	//
+	// See Also:
+	//	<view>
+	//	<view_per_user>
+	//
+	function view_per_patient ( $patient, $unread_only = false ) {
+		return $this->view ( $unread_only, $patient );
+	} // end method view_per_patient
+
+	// Method: view_per_user
+	//
+	//	Get all messages associated with the current user
+	//
+	// Parameters:
+	//
+	//	$unread_only - (optional) Boolean, restrict to unread
+	//	messages only. Defaults to false.
+	//
+	// Returns:
+	//
+	//	Array of associative arrays containing message information.
+	//
+	// See Also:
+	//	<view>
+	//	<view_per_patient>
+	//
+	function view_per_user ( $unread_only = false ) {
+		return $this->view ( $unread_only );
+	} // end method view_per_user
 
 } // end class Messages
 
