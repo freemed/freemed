@@ -15,8 +15,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
         var $MODULE_VERSION = "0.1";
 
         var $item;
-		var $view_query = "!='0'";
-		var $view_closed = "='0'";
+		var $view_query = "!='0'";  // by default see unpaid and overpaid
+		var $view_closed = "='0'";  // see paid procedures when closed is selected
+		var $view_unpaid = ">'0'";  // we use this when being called from the unpaid procs report
 		var $table_name = "payrec";
 
 		var $variables = array(
@@ -47,6 +48,15 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             reset ($GLOBALS);
             while (list($k,$v)=each($GLOBALS)) global $$k;
 
+
+			// special circumstances when being called from the unpaid
+			// reports module
+			if ($viewaction=="unpaidledger")  
+			{
+				$this->view_query = $this->view_updaid;
+				$this->ledger();
+				return;
+			}
 
             if (!$been_here)
             {
@@ -749,7 +759,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             else
             {
                 $pay_query  = "SELECT * FROM payrec AS a, procrec AS b
-                              WHERE b.procbalcurrent != '0' AND
+                              WHERE b.procbalcurrent".$this->view_query." AND
                               b.id = a.payrecproc AND
                               a.payrecpatient='".addslashes($patient)."'
                               ORDER BY payrecproc,payrecdt,a.id";

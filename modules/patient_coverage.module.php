@@ -516,8 +516,10 @@ class PatientCoveragesModule extends freemedEMRModule {
 		if ($this_patient->ptdep == 0)
 		{
 			// patient is the insured
-			$query = "SELECT * FROM $this->payer_table WHERE 
-				payerpatient='$patient' ORDER BY payertype, payerstatus";
+			$query = "SELECT *,IF(payerstatus,\"Deleted\",\"Active\") as payerstat,".
+				"IFNULL(ELT(payertype,\"Secondary\",\"Tertiary\",\"WorkComp\"),\"Primary\") as payertp".
+				" FROM $this->payer_table WHERE ".
+				"payerpatient='$patient' ORDER BY payerstatus,payertype";
 			$result = $sql->query($query);
 			if (!$result)
 				DIE("ERROR Failed to read $this->payer_table");
@@ -529,8 +531,8 @@ class PatientCoveragesModule extends freemedEMRModule {
 										  "EndDate"   => "payerenddt",
 										  "Group" => "payerpatientgrp",
 										  "ID"    => "payerpatientinsno",
-										  "Type"  => "payertype",
-										  "Status" => "payerstatus"),
+										  "Status" => "payerstat",
+										  "Type"  => "payertp"),
 									array("","","","","","",""),
 									array("insco" => "insconame",
 											"",
@@ -547,7 +549,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 		else
 		{ 
 			// guar holds the insurance
-			$query = "SELECT * FROM $this->guar_table WHERE 
+			$query = "SELECT *,IF(guarstatus,\"Deleted\",\"Active\") as guarstat FROM $this->guar_table WHERE 
 				guarpatient='$patient'";
 			$result = $sql->query($query);
 			if (!$result)
@@ -559,7 +561,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 										   "Relation" => "guarrel",
 										   "StartDate" => "guarstartdt",
 										   "EndDate" => "guarenddt",
-										   "Status" => "guarstatus"),
+										   "Status" => "guarstat"),
 									 array("","","","",""),
 									 array("patient" => "ptlname",
 											"","","","")
