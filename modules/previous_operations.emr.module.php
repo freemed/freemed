@@ -71,6 +71,12 @@ class PreviousOperationsModule extends EMRModule {
 			$buffer .= "
 			</table>
 			";
+		} else {
+			$buffer .= "
+			<div ALIGN=\"CENTER\">
+			<b>".__("No data entered.")."</b>
+			</div>
+			";
 		}
 
 		$buffer .= "
