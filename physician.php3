@@ -144,16 +144,42 @@ switch($action) {
    </TABLE>
     "
   );
-  
+ 
   $book->add_page (
-    "Contact/Address",
+    "Contact",
+    array (
+     "phyemail", "phycellular", "phypager",
+     "phycellular_1", "phycellular_2", "phycellular_3", "phycellular_4",
+     "phypager_1", "phypager_2", "phypager_3", "phypager_4"
+    ),
+    "
+   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
+    <TR><TD ALIGN=RIGHT> 
+    <$STDFONT_B>$Email_Address : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
+     VALUE=\"$phyemail\">
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$Cellular_Phone # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phycellular")."
+    </TD></TR>
+    <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>$BeeperPager # : <$STDFONT_E>
+    </TD><TD ALIGN=LEFT>
+    ".fm_phone_entry ("phypager")."
+    </TD></TR>
+   </TABLE>
+    "
+  );
+ 
+  $book->add_page (
+    "Address",
     array (
      "phyaddr1a", "phyaddr2a", "phycitya", "phystatea", "phyphonea", "phyzipa",
      "phyphonea_1", "phyphonea_2", "phyphonea_3", "phyphonea_4",
      "phyfaxa_1", "phyfaxa_2", "phyfaxa_3", "phyfaxa_4", "phyfaxa", 
-     "phyemail", "phycellular", "phypager",
-     "phycellular_1", "phycellular_2", "phycellular_3", "phycellular_4",
-     "phypager_1", "phypager_2", "phypager_3", "phypager_4",
      "has_second_addr"
     ),
     "
@@ -197,23 +223,6 @@ switch($action) {
     <$STDFONT_B>$Primary_Address_Fax # : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
     ".fm_phone_entry ("phyfaxa")."
-    </TD></TR>
-    <TR><TD COLSPAN=2><HR></TD></TR>
-    <TR><TD ALIGN=RIGHT> 
-    <$STDFONT_B>$Email_Address : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=phyemail SIZE=25 MAXLENGTH=30
-     VALUE=\"$phyemail\">
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$Cellular_Phone # : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("phycellular")."
-    </TD></TR>
-    <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>$BeeperPager # : <$STDFONT_E>
-    </TD><TD ALIGN=LEFT>
-    ".fm_phone_entry ("phypager")."
     </TD></TR>
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>Has Second Address : <$STDFONT_E>
