@@ -1,6 +1,6 @@
 FreeMED documentation
-from jeff b (jeff@univrel.pr.uconn.edu)
-(c) 1999-2001 by the freemed project under the GPL/LGPL
+from jeff b (jeff@ourexchange.net)
+(c) 1999-2002 by the freemed project under the GPL/LGPL
 
 ********************************************************************** ERRATA
 * index.php has to be added in /etc/httpd/conf/?????.conf under the
@@ -12,7 +12,7 @@ from jeff b (jeff@univrel.pr.uconn.edu)
   reinitialize the database to get the new parts up and running. (this
   will change as soon as the database is capable of holding live data)
 * Code is annotated with an author if the primary author is other than
-  jeff b <jeff@univrel.pr.uconn.edu>
+  jeff b <jeff@ourexchange.net>
 * Since freemed involves a fairly hefty codebase, php optimizing tricks,
   such as the bware_cache module or the Zend Optimizer should be used to
   minimize load times. APC is also available (apc.communityconnect.com)
@@ -84,9 +84,25 @@ from jeff b (jeff@univrel.pr.uconn.edu)
    then initialize the database again, which will create the proper tables and
    information. You may now use freemed. Congratulations!
 
-********************************************************* current coders/staff
 
-Jeff (jeff@univrel.pr.uconn.edu) -
+************************************************************* TROUBLESHOOTING
+
+Q: I get an SQL connection error. What's wrong?
+A: Try using the commandline clients for your SQL server. (For MySQL, this is
+   simply "mysql -u (user) -p") If this works and you still can't log in with
+   FreeMED, you may not have created the FreeMED database properly. You can
+   log into the administrative console and add the database with the command
+   "CREATE DATABASE freemed;". If this still does not allow you to connect,
+   check your username, password, host, and table settings in lib/freemed.php
+   in your FreeMED installation. If you haven't set these properly, FreeMED
+   will be unable to communicate with the SQL backend. If this still does
+   not work, there is a chance that the machine or account that FreeMED is
+   using does not have proper access rights on the SQL server. Please consult
+   your SQL server documentation if this is the case.
+
+******************************************************** current coders/staff
+
+Jeff (jeff@ourexchange.net) -
   Most of the code in the codebase is Jeff's. If you have any
   problems with something non-billing related, he's probably
   the person you want to speak to.
@@ -128,3 +144,4 @@ Fred Forrester (fforest@netcarrier.com) -
   Current maintainer of the billing code. fred has done a fine job, and
   has added much functionality. as well as cleaning up some of the age-old
   code...
+
