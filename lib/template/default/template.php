@@ -34,6 +34,8 @@ if (isset($refresh)) {
 <?php
 } // end handle refresh
 ?>
+	<meta http-equiv="Expires" content="Mon, 26 Jul 1997 05:00:00 GMT" />
+	<meta http-equiv="Pragma" content="no-cache" />
 	<link REL="StyleSheet" TYPE="text/css"
 		HREF="lib/template/default/stylesheet.css" />
 </head>
