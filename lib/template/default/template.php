@@ -99,7 +99,7 @@ if (isset($page_title)) {
 	</td></tr>
 <?php
 //----- Create user object if it doesn't exist and we're logged in
-if (freemed_verify_auth() and !is_object($this_user)) {
+if (freemed::verify_auth() and !is_object($this_user)) {
 	$this_user = CreateObject('FreeMED.User');
 } // end check to see if we're logged in
 

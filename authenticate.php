@@ -30,7 +30,7 @@ if ($sql->results($result)) {
 } // end checking for results
 
 //$connect = freemed_auth_login ($_username, $_password);
-$connect = freemed_verify_auth ();
+$connect = freemed::verify_auth ();
 if (!$connect) {
     if (!empty($_URL)) $__url_part = "?_URL=".urlencode($_URL);
     $display_buffer .= "
@@ -46,15 +46,15 @@ if (!$connect) {
 
 if (freemed_check_access_for_facility ($_f)) {
 	SetCookie('default_facility', $_f);
-	$_COOKIE['default_facility'] = $SESSION['default_facility'] = $_f;
+	$_COOKIE['default_facility'] = $_SESSION['default_facility'] = $_f;
 } else {
 	SetCookie('default_facility', 0);
-	$_COOKIE['default_facility'] = $SESSION['default_facility'] = 0;
+	$_COOKIE['default_facility'] = $_SESSION['default_facility'] = 0;
 }
 
 //----- Determine "language session variable, if set
 if ($_l != $default_language) {
-	$SESSION["language"] = $_l;
+	$_SESSION['language'] = $_l;
 }
 
 // Header("Location: ".COMPLETE_URL."/main.php");
@@ -88,6 +88,6 @@ $display_buffer .= "
 
 //----- Load the template
 template_display();
-//print "session[language] = ".$SESSION["language"].", s_lng = $s_lng<BR>\n";
+//print "session[language] = ".$_SESSION['language'].", s_lng = $s_lng<BR>\n";
 
 ?>

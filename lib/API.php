@@ -91,27 +91,28 @@ class freemed {
 		if (!empty(${$varname})) {
 			return "<INPUT TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\" ".
-				"VALUE=\"".prepare(${$varname})."\">".
+				"VALUE=\"".prepare(${$varname})."\"/>".
 				${$varname}." ".
-				"<INPUT TYPE=\"BUTTON\" ".
+				"<input class=\"button\" TYPE=\"BUTTON\" ".
 				"onClick=\"drugPopup=window.open(".
 				"'drug_lookup.php?varname=".
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'drugPopup'); ".
 				"drugPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Change")."\">";
+				"VALUE=\""._("Change")."\"/>";
 		} else {
-			return "<INPUT TYPE=\"HIDDEN\" ".
-				"NAME=\"".prepare($varname)."\">".
-				"<INPUT TYPE=\"BUTTON\" ".
+			return "<input type=\"HIDDEN\" ".
+				"name=\"".prepare($varname)."\"/>".
+				"<input class=\"button\" type=\"BUTTON\" ".
 				"onClick=\"drugPopup=window.open(".
 				"'drug_lookup.php?varname=".
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
-				urlencode($formname)."', 'drugPopup'); ".
+				urlencode($formname)."', 'drugPopup', ".
+				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"drugPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Drug Lookup")."\">";
+				"value=\""._("Drug Lookup")."\"/>";
 		}
 	} // end function freemed::drug_widget
 
@@ -284,20 +285,22 @@ class freemed {
 				"'patient_lookup.php?varname=".
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
-				urlencode($formname)."', 'patientPopup'); ".
+				urlencode($formname)."', 'patientPopup', ".
+				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Change")."\"/>";
+				"VALUE=\""._("Change")."\" class=\"button\"/>";
 		} else {
 			return "<input TYPE=\"HIDDEN\" ".
-				"NAME=\"".prepare($varname)."\">".
-				"<INPUT TYPE=\"BUTTON\" ".
+				"NAME=\"".prepare($varname)."\"/>".
+				"<input TYPE=\"BUTTON\" ".
 				"onClick=\"patientPopup=window.open(".
 				"'patient_lookup.php?varname=".
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'patientPopup'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Patient Lookup")."\"/>";
+				"VALUE=\""._("Patient Lookup")."\" ".
+				"class=\"button\" />";
 		}
 	} // end function freemed::patient_widget
 
@@ -452,6 +455,86 @@ class freemed {
 		} // end else loop checking for name
 	} // end function user_flag
 
+	function verify_auth ( ) {
+		global $debug, $Connection, $sql;
+
+		// Associate "SESSION" with proper session variable
+		$PHP_SELF = $_SERVER['PHP_SELF'];
+ 
+		// Do we have to check for _username?
+		$check = !empty($_REQUEST['_username']);
+	
+		// Check for authdata array
+		if (is_array($GLOBALS['authdata'])) {
+			// Check to see if ipaddr is set or not...
+			if (!SESSION_PROTECTION) {
+				return true;
+			} else {
+				if ( !empty($GLOBALS['ipaddr']) ) {
+					if ($GLOBALS['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
+						// We're already authorized
+						return true;
+					} else {
+						// IP address has changed, ERROR
+						unset($GLOBALS['ipaddr']);
+						return false;
+					} // end checking ipaddr
+				} else {
+					// Force check if no ip address is present. This
+					// should get around null IPs getting set by
+					// accident without compromising security.
+					$check = true;
+				} // end if isset ipaddr
+			} // end checking for SESSION_PROTECTION
+		} 
+		
+		if ($check) {
+			// Quickly check for root un/pw pair (handle null pw)
+			if ( ($_REQUEST['_username'] == 'root') and 
+					($_REQUEST['_password'] == DB_PASSWORD) ) {
+				// Pass the proper session variable
+				$GLOBALS['authdata'] = array (
+					"username" => $_REQUEST['_username'],
+					"user" => "1" // superuser id
+				);
+				// Set ipaddr for SESSION_PROTECTION
+				$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+	
+				// Return back that this is true
+				return true;
+			}
+	
+			// Find this user
+  			$result = $sql->query ("SELECT * FROM user ".
+				"WHERE username = '".addslashes($_REQUEST['_username'])."'");
+	
+			// If the user isn't found, false
+			if (!$sql->results($result)) { return false; }
+	
+			// Get information
+			$r = $sql->fetch_array ($result);
+	
+			// Check password
+			if ($_REQUEST['_password'] == $r['userpassword']) {
+				// Set session vars
+				$GLOBALS['authdata'] = array (
+					"username" => $_REQUEST['_username'],
+					"user" => $r['id']
+				);
+				// Set ipaddr for SESSION_PROTECTION
+				$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+	
+				// Authorize
+				return true;
+			} else { // check password
+				// Failed password check
+				unset ( $GLOBALS['authdata'] );
+				unset ( $GLOBALS['ipaddr'] );
+				return false;
+			} // end check password
+		} // end of checking for authdata array
+	} // end method freemed::verify_auth
+
 } // end namespace/class freemed
 
 class EMRi {
@@ -459,11 +542,16 @@ class EMRi {
 	var $EMRi_server_host;
 	var $EMRi_server_port;
 	var $EMRi_server_uri;
+	var $EMRi_user;
+	var $EMRi_password;
 
 	function EMRi () {
 		$this->get_server_name();
 		// FIXME: Kludge for fqdn
 		$this->fqdn = 'test';
+		// FIXME: EXTREME KLUDGE for testing purposes only!
+		$this->EMRi_user = 'root';
+		$this->EMRi_password = 'password';
 	} // end constructor EMRi
 
 	// TODO: finish EMRi linking functions
@@ -503,23 +591,38 @@ class EMRi {
 	} // end method EMRi->host_method
 
 	function server_method ($method, $argv) {
+		static $client;
+	
 		// Make sure we're connected
 		if (!isset($this->EMRi_server_host)) $this->get_server_name();
 
-		// Call the proper function on the server
-		return xu_rpc_http_concise(array(
-			'method' => $method,
-			'args'   => $argv,
-			'host'   => $this->EMRi_server_host,
-			'port'   => $this->EMRi_server_port,
-			'uri'    => $this->EMRi_server_uri,
-			'debug'  => 0,
-			'output' => NULL,
+		// Check for prexisting client
+		if (!is_object($client)) {
+			$client = CreateObject(
+				'PHP.xmlrpc_client',
+				$this->EMRi_server_uri, // URI
+				$this->EMRi_server_host, // HOST
+				$this->EMRi_server_port // PORT
+			);
+			$client->setDebug();
+		}
 
-			// FIXME: These should be pulled from the database
-			'user'   => 'root',
-			'pass'   => 'password'
-		));
+		// Set proper credentials
+		$client->setCredentials($this->EMRi_user, $this->EMRi_password);
+
+		// TODO: Pre-call argument processing
+
+		// Call with function
+		$response = $client->send (
+			CreateObject(
+				'PHP.xmlrpcmsg',
+				$method,
+				$argv // arguments
+			)
+		);
+
+		// Return deserialized version
+		return $response->deserialize();
 	} // end method EMRi->server_method
 
 	//-------------------------------------------------------------------
@@ -643,91 +746,6 @@ function freemed_check_access_for_facility ($facility_number) {
 	return false;
 } // end function freemed_check_access_for_facility
 
-// function freemed_display_arraylist
-function freemed_display_arraylist ($var_array, $xref_array="") {
-  $buffer = ""; // return a buffer
-  if (!is_array($var_array)) // we've been passed an empty array
-    return "";
-  
-  $buffer .= "
-    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=1>
-  ";
-  $first = true;
-  $buffer .= "<TR>";
-  while (list($key, $val)=each($var_array)) { // for each variable
-    if ($first) $main=$val; // first item is index...
-    global ${$val}; // global all the arrays, remember to
-                  // use ${$foo}[0] for subscripts!
-    $first = false;
-    $buffer .= "
-      <TD ALIGN=CENTER>
-        <B>$key</B>
-      </TD>
-    ";
-  } // while... displaying header
-  $buffer .= "
-      <TD ALIGN=CENTER>
-        "._("Remove")."
-      </TD>
-      <TD ALIGN=CENTER>
-        "._("Modify")." ( "._("None")."
-	<INPUT TYPE=RADIO NAME=\"".$main."mod\" VALUE=\"-1\" CHECKED> ) 
-      </TD>
-     </TR>
-  ";
-
-  global ${$main."_active"}; // e.g., 'ptins_active', is set outside func
-  // use ${$foo}[0] for arrays!!
-
-  if (!is_array(${$main}))
-    return ($buffer."
-      <TR><TD COLSPAN=".(count($var_array) + 2)." ALIGN=CENTER>
-        "._("No Items")."
-      </TD></TR>
-     </TABLE>"); // make sure it's safe if there are no items
-
-  reset(${$main});
-  while(list($i, $mainval) = each(${$main})) {
-    if (!isset($mainval)) {echo "{[$i]}";continue;} // skip if removed
-    $this_active = ${$main."_active"}[$i]; // is this item active?
-    if ($this_active)
-      $buffer .= "<tr CLASS=\"".freemed_alternate()."\">";
-      
-    reset($var_array); if (is_array($xref_array)) reset($xref_array);
-    while (list($key,$val)=each($var_array)) { // each variable
-      $item_text = ${$val}[$i];
-      if (is_array($xref_array)) {
-        list($x_key, $x_val) = each($xref_array);
-	if (strlen($x_val) > 0)
-          $item_text=freemed::get_link_field(${$val}[$i], $x_key, $x_val);
-      } // grab the xref if necessary
-      if ($this_active)
-        $buffer .= "
-          <TD ALIGN=CENTER>
-            <FONT SIZE=\"-1\">
-	    ".((strlen($item_text)>0) ? $item_text : "&nbsp;")."
-	    </FONT>
-          </TD>";
-      $buffer .= "
-        <INPUT TYPE=HIDDEN NAME=\"$val"."[$i]\" VALUE=\"".${$val}[$i]."\">
-      "; // always add the hidden tags!
-    } // while each variable
-    
-    if ($this_active)
-      $buffer .= "
-      <TD ALIGN=CENTER>
-        <INPUT TYPE=CHECKBOX NAME=\"".$main."del[$i]\">
-      </TD>
-      <TD ALIGN=CENTER>
-        <INPUT TYPE=RADIO NAME=\"".$main."mod\" VALUE=\"$i\"> 
-      </TD>
-     </TR>";
-  } // for each item in the stack
-  
-  $buffer .= "</TABLE>";
-  return $buffer;
-} // end function freemed_display_arraylist
-
 // function freemed_display_actionbar
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
 	global $page_name, $patient, $_ref, $module;
@@ -752,21 +770,21 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 	global $template;
 
 	$buffer .= "
-    <TABLE CLASS=\"reverse\" WIDTH=\"100%\" BORDER=0
-     CELLSPACING=0 CELLPADDING=3>
-    <TR CLASS=\"reverse\">
-    <TD ALIGN=LEFT><A HREF=\"$this_page_name?module=".urlencode($module)."&".
+    <table CLASS=\"reverse\" WIDTH=\"100%\" BORDER=\"0\"
+     CELLSPACING=\"0\" CELLPADDING=\"3\">
+    <tr CLASS=\"reverse\">
+    <td ALIGN=\"LEFT\"><a HREF=\"$this_page_name?module=".urlencode($module)."&".
 	"action=addform".
      ( !empty($patient) ? "&patient=".urlencode($patient) : "" )."\"
 	onMouseOver=\"window.status='"._("Add")."'; return true;\"
 	onMouseOut=\"window.status=''; return true;\"
-	CLASS=\"reverse\"><SMALL><B><IMG NAME=\"add_$globaladdcounter\"
+	CLASS=\"reverse\"><small><b><img NAME=\"add_$globaladdcounter\"
 	SRC=\"lib/template/$template/img/add.png\" BORDER=\"0\"
-	ALT=\"["._("Add")."]\"></B></SMALL></A></TD>
-    <TD WIDTH=\"30%\">&nbsp;</TD>
-    <TD ALIGN=RIGHT><A HREF=\"$__ref\" CLASS=\"reverse\"
-     ><SMALL><B>"._("RETURN TO MENU")."</B></SMALL></A></TD>
-    </TR></TABLE>
+	ALT=\"["._("Add")."]\"/></b></small></a></td>
+    <td WIDTH=\"30%\">&nbsp;</td>
+    <td ALIGN=\"RIGHT\"><a HREF=\"$__ref\" CLASS=\"reverse\"
+     ><small><b>"._("RETURN TO MENU")."</b></small></a></td>
+    </tr></table>
   	";
 	return $buffer;
 
@@ -961,8 +979,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     if (freemed::user_flag(USER_DATABASE) AND 
          ($flags & ITEMLIST_MOD) AND (!$this_result['locked'])) {
       $buffer .= "
-        <A HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
-	urlencode($this_result['id'])."\">"._("MOD")."</A>&nbsp;
+        <a HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
+	urlencode($this_result['id'])."\">"._("MOD")."</a>&nbsp;
       ";
     }
     if (freemed::user_flag(USER_DELETE) AND
@@ -1029,11 +1047,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	$control_list
       )."
       "._("contains")."
-      <input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
-      <input TYPE=\"HIDDEN\" NAME=\"$cur_page_var\" VALUE=\"1\"/>
+      <input class=\"button\" TYPE=\"HIDDEN\" NAME=\"module\"
+       VALUE=\"".prepare($module)."\"/>
+      <input class=\"button\" TYPE=\"HIDDEN\" NAME=\"$cur_page_var\" VALUE=\"1\"/>
       ".html_form::text_widget('_s_val', 20)."
-      <input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\"/>
-      <input TYPE=\"BUTTON\" VALUE=\""._("Reset")."\"
+      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Search")."\"/>
+      <input class=\"button\" TYPE=\"BUTTON\" VALUE=\""._("Reset")."\"
        onClick=\"this.form._s_val.value=''; this.form.submit(); return true;\"/>
      </td>
     </form>
@@ -1091,22 +1110,22 @@ function freemed_display_facilities ($param="", $default_load = false,
 
 	// list doctors in SELECT/OPTION tag list, and
 	// leave doctor selected who is in param
-	$buffer .= "<OPTION VALUE=\"0\"".
-		( ($param == 0) ? " SELECTED" : "" ).">"._("NONE SELECTED").
-		"\n";
+	$buffer .= "<option VALUE=\"0\"".
+		( ($param == 0) ? " selected" : "" ).">"._("NONE SELECTED").
+		"</option>\n";
 	$query = "SELECT * FROM facility ".$intextquery.
 		"ORDER BY psrname,psrnote";
 	$result = $sql->query ($query);
 	if (!$result) return false;
 
 	while ($row = $sql->fetch_array($result)) {
-		$buffer .= "<OPTION VALUE=\"".prepare($row[id]).
+		$buffer .= "<option VALUE=\"".prepare($row[id]).
 			"\" ".
-			( ($row[id]==$facility) ? "SELECTED" : "" ).">".
+			( ($row[id]==$facility) ? "selected" : "" ).">".
 			prepare($row[psrname]." (".$row[psrcity].", ".
 				$row[psrstate].")").
 			( ($debug) ? "[".$row[psrnote]."]" :
-			"" )."\n";
+			"" )."</option>\n";
 	} // while there are more results...
 	return $buffer;
 } // end function freemed_display_facilities
@@ -1120,7 +1139,7 @@ function freemed_display_physicians ($param, $intext="") {
 	// list doctors in SELECT/OPTION tag list, and
 	// leave doctor selected who is in param
 	$buffer .= "
-		<OPTION VALUE=\"0\">"._("NONE SELECTED")."
+		<option VALUE=\"0\">"._("NONE SELECTED")."</option>
 	";
 	$query = "SELECT * FROM physician ".
 		( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
@@ -1131,9 +1150,9 @@ function freemed_display_physicians ($param, $intext="") {
 	} else { // exit if no more docs
 		while ($row = $sql->fetch_array($result)) {
 			$buffer .= "
-			<OPTION VALUE=\"$row[id]\" ".
-			( ($row[id] == $param) ? "SELECTED" : "" ).
-			">".prepare("$row[phylname], $row[phyfname]")."
+			<option VALUE=\"$row[id]\" ".
+			( ($row[id] == $param) ? "selected" : "" ).
+			">".prepare("$row[phylname], $row[phyfname]")."</option>
 			"; // end of actual output
 		} // while there are more results...
 	}
@@ -1186,13 +1205,14 @@ function freemed_display_selectbox ($result, $format, $param="") {
 	$buffer = "";
 	if ($count["$result"]<1) { 
 		$buffer .= _("NONE")." ".
-			"<INPUT TYPE=HIDDEN NAME=\"$param\" VALUE=\"0\">";
+			"<input TYPE=\"HIDDEN\" NAME=\"".prepare($param)."\" ".
+			"VALUE=\"0\"/>\n";
 		return $buffer; // do nothing!
 	} // if no result
 
 	$buffer .= "
-		<SELECT NAME=\"$param\">
-		<OPTION VALUE=\"0\">"._("NONE SELECTED")."
+		<select NAME=\"$param\">
+		<option VALUE=\"0\">"._("NONE SELECTED")."</option>
 	";
 	
 	reset($var["$result"]); // if we're caching it, we have to reset it!
@@ -1212,12 +1232,12 @@ function freemed_display_selectbox ($result, $format, $param="") {
 		// END FORMAT-FETCHING    
 
 		$buffer .= "
-		<OPTION VALUE=\"$item[id]\" ".
-		( ($item[id] == $$param) ? "SELECTED" : "" ).
-		">".prepare($this_format)."\n";
+		<option VALUE=\"$item[id]\" ".
+		( ($item[id] == $$param) ? "selected" : "" ).
+		">".prepare($this_format)."</option>\n";
 	} // while fetching result
 	$buffer .= "
-	</SELECT>
+	</select>
 	";
   
 	return $buffer;
@@ -1249,6 +1269,116 @@ function freemed_export_stock_data ($table_name, $file_name="") {
 
 	return $result;
 } // end function freemed_export_stock_data
+
+// function freemed_get_userlevel
+//   returns user level (1-10)
+//   (assumes 1 if not found, 9 if root)
+function freemed_get_userlevel ( $param = "" ) {
+	die("called freemed_get_userlevel: obsolete STUB");
+}
+
+// function freemed_import_stock_data
+//  import stock data from data/$language directory
+function freemed_import_stock_data ($table_name) {
+	global $default_language, $sql;
+
+	// Produce a physical location
+	$physical_file = PHYSICAL_LOCATION . "/data/" . $default_language .
+		"/" .  $table_name . "." . $default_language . ".data";
+
+	// Die if the phile doesn't exist
+	if (!file_exists($physical_file)) return false;
+
+	// Create the query
+	$query = "LOAD DATA LOCAL INFILE '$physical_file' INTO
+		TABLE $table_name
+		FIELDS TERMINATED BY ','";
+           
+	$result = $sql->query ($query); // try doing it
+
+	return $result; // send the results home...
+} // end function freemed_import_stock_data
+
+// function freemed_log
+/*
+ TODO: FIX ME!
+function freemed_log ($db_name, $record_number, $comment) {
+	global $cur_date, $sql;
+
+	$f_auth = explode (":", $f_cookie);
+	$f_user = $f_auth [0];  // extract the user number
+
+	$query = "INSERT INTO log VALUES ( '$cur_date',
+	$f_user', '$db_name', '$record_number', '$comment', NULL )";
+	$result = $sql->query ($query); // perform addition
+	return true;  // return true
+} // end function freemed_log
+*/
+
+// function freemed_multiple_choice
+function freemed_multiple_choice ($sql_query, $display_field, $select_name,
+  $blob_data, $display_all=true) {
+	global $sql;
+	$buffer = "";
+
+	$brackets = "[]";
+	$result = $sql->query ($sql_query); // check
+	$all_selected = fm_value_in_string ($blob_data, "-1");
+
+	$buffer .= " 
+	<select NAME=\"$select_name$brackets\" multiple SIZE=\"5\">
+	";
+	if ($display_all) $buffer .= "
+		<option VALUE=\"-1\" ".
+		($all_selected ? "selected" : "").">"._("ALL")."</option>
+	"; // if there is nothing...
+
+	if ( $sql->results ($result) ) 
+		while ($r = $sql->fetch_array ($result)) {
+			if (strpos ($display_field, ":")) {
+				$displayed = ""; // set as null
+				$split_display_field = explode (":", $display_field);
+				for ($sl=0; $sl<sizeof($split_display_field); $sl++) {
+					$displayed .= stripslashes($r[$split_display_field[$sl]]);
+					// If not the last, insert separator
+					if ($sl < (sizeof ($split_display_field) - 1))
+						$displayed .= ", "; 
+				}
+			} else { // if it is only one field
+				$displayed = stripslashes($r[$display_field]);
+			} // end if-else displayed loop
+		$id = $r["id"];
+		$buffer .= "
+		<option VALUE=\"".prepare($id)."\" ".
+		( (fm_value_in_string ($blob_data, $id)) ? "selected" : "" ).
+		">$displayed".( $debug ? " [$r[id]]" : "" )."</option>\n";
+	} // end while
+	$buffer .= " </select>\n"; // end the select tag
+	return $buffer;
+} // end function freemed_multiple_choice
+
+// function freemed_open_db
+function freemed_open_db () {
+	global $display_buffer;
+
+	// Verify
+	if (!freemed::verify_auth()) {
+		$display_buffer .= "
+      <div ALIGN=\"CENTER\">
+      <b>"._("You have entered an incorrect username or password.")."</b>
+      <br/><br/>
+      <b><i>"._("It is possible that your cookies have expired.")."</i></b>
+      <p/>
+      <a HREF=\"index.php\">"._("Return to the Login Screen")."</a>
+      </div>
+		";
+		template_display();
+	} // end if connected loop
+} // end function freemed_open_db
+
+//---------------------------------------------------------------------------
+// Time and Date Functions
+//---------------------------------------------------------------------------
 
 // function freemed_get_date_next
 //  return the next valid date (YYYY-MM-DD)
@@ -1310,292 +1440,6 @@ function freemed_get_date_prev ($cur_dt) {
 		return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
 	} // end checking for first day
 } // end function freemed_get_date_prev
-
-// function freemed_get_userlevel
-//   returns user level (1-10)
-//   (assumes 1 if not found, 9 if root)
-function freemed_get_userlevel ( $param = "" ) {
-	die("called freemed_get_userlevel: obsolete STUB");
-}
-
-// function freemed_import_stock_data
-//  import stock data from data/$language directory
-function freemed_import_stock_data ($table_name) {
-	global $default_language, $sql;
-
-	// Produce a physical location
-	$physical_file = PHYSICAL_LOCATION . "/data/" . $default_language .
-		"/" .  $table_name . "." . $default_language . ".data";
-
-	// Die if the phile doesn't exist
-	if (!file_exists($physical_file)) return false;
-
-	// Create the query
-	$query = "LOAD DATA LOCAL INFILE '$physical_file' INTO
-		TABLE $table_name
-		FIELDS TERMINATED BY ','";
-           
-	$result = $sql->query ($query); // try doing it
-
-	return $result; // send the results home...
-} // end function freemed_import_stock_data
-
-// function freemed_log
-/*
- TODO: FIX ME!
-function freemed_log ($db_name, $record_number, $comment) {
-	global $cur_date, $sql;
-
-	$f_auth = explode (":", $f_cookie);
-	$f_user = $f_auth [0];  // extract the user number
-
-	$query = "INSERT INTO log VALUES ( '$cur_date',
-	$f_user', '$db_name', '$record_number', '$comment', NULL )";
-	$result = $sql->query ($query); // perform addition
-	return true;  // return true
-} // end function freemed_log
-*/
-
-// function freemed_multiple_choice
-function freemed_multiple_choice ($sql_query, $display_field, $select_name,
-  $blob_data, $display_all=true) {
-	global $sql;
-	$buffer = "";
-
-	$brackets = "[]";
-	$result = $sql->query ($sql_query); // check
-	$all_selected = fm_value_in_string ($blob_data, "-1");
-
-	$buffer .= " 
-	<SELECT NAME=\"$select_name$brackets\" MULTIPLE SIZE=5>
-	";
-	if ($display_all) $buffer .= "
-		<OPTION VALUE=\"-1\" ".
-		($all_selected ? "SELECTED" : "").">"._("ALL")."
-	"; // if there is nothing...
-
-	if ( $sql->results ($result) ) 
-		while ($r = $sql->fetch_array ($result)) {
-			if (strpos ($display_field, ":")) {
-				$displayed = ""; // set as null
-				$split_display_field = explode (":", $display_field);
-				for ($sl=0; $sl<sizeof($split_display_field); $sl++) {
-					$displayed .= stripslashes($r[$split_display_field[$sl]]);
-					// If not the last, insert separator
-					if ($sl < (sizeof ($split_display_field) - 1))
-						$displayed .= ", "; 
-				}
-			} else { // if it is only one field
-				$displayed = stripslashes($r[$display_field]);
-			} // end if-else displayed loop
-		$id = $r["id"];
-		$buffer .= "
-		<OPTION VALUE=\"".prepare($id)."\" ".
-		( (fm_value_in_string ($blob_data, $id)) ? "SELECTED" : "" ).
-		">$displayed".( $debug ? " [$r[id]]" : "" )."\n";
-	} // end while
-	$buffer .= " </SELECT>\n"; // end the select tag
-	return $buffer;
-} // end function freemed_multiple_choice
-
-// function freemed_open_db
-function freemed_open_db ($my_cookie) {
-	global $display_buffer;
-
-	// Verify
-	if (!freemed_verify_auth()) {
-		$display_buffer .= "
-      <div ALIGN=\"CENTER\">
-      <b>"._("You have entered an incorrect username or password.")."</b>
-      <br/><br/>
-      <b><i>"._("It is possible that your cookies have expired.")."</i></b>
-      <p/>
-      <a HREF=\"index.php\">"._("Return to the Login Screen")."</a>
-      </div>
-		";
-		template_display();
-	} // end if connected loop
-} // end function freemed_open_db
-
-// function freemed_search_query()
-//   generates result from in-notebook query
-function freemed_search_query ($ctrl_array, $ord_array, 
-                           $db = "", $id_var = "id")
-{
-  global $db_name, $sql;
-  if (strlen($id_var)<1) { } else {
-    if (is_array($id_var)) {
-      while (list($k,$v) = each($id_var)) {
-        global ${$v};
-        $_id_[]=${$v};
-      }
-    } else {
-      global ${$id_var};
-      $_id_=${$id_var};
-    } // import the id-list
-  } // if id-vars exist
-  
-  $buf = "";
-  if (strlen($db)<1) $db=$db_name;
-  
-  $buf .= "SELECT * FROM ".addslashes($db)." WHERE (1>0) ";
-  
-  $first_field=true;
-  if (is_array($_id_)) { // array case
-    $buf .= "AND (";
-    while (list($k,$v) = each($_id_)) {
-      if ($first_field) {
-        $first_field = false;
-      } else {
-        if (strlen($v)>0) $buf .= " OR ";
-      } // end checking for first field
-      if (strlen($v)>0) $buf .= "(id = '".$v."')";
-    } // while each id to check
-    $buf .= ")";
-  } else if (strlen($_id_>0)) { // end array case
-    $buf .= " AND (id = '".$_id_."') ";
-  } else { // non-array case
-    $has_id = false;
-  } // end non-id case
- 
-  $kill_it=true;
-  $ctrl_array[""]="swedishchefborkborkbork"; // kludge to avoid 'Warning:'
-  while (list($k,$v) = each($ctrl_array)) {
-    if (strlen($k)>0) $kill_it=false;
-  }
-  if ($kill_it) unset($ctrl_array);
-  else if (!$has_id) $buf .= "AND (";
- 
-  if (is_array($ctrl_array) AND count($ctrl_array)>0 AND strlen($_id_)>1) 
-    $buf .= " OR (";
-
-  $first_field = true;
-  if (is_array($ctrl_array)) {
-    reset($ctrl_array);
-    while ( is_array($ctrl_array) AND 
-           (list($fieldval, $fieldname) = each($ctrl_array)) ) { // the rest
-      if (strlen($fieldval)>0) { // if it's an activated query
-        if ($first_field) {
-          $first_field = false;
-        } else {
-          $buf .= " AND ";
-        }
-        $buf .= " (
-          $fieldname LIKE '%$fieldval%' OR
-          $fieldname LIKE '$fieldval%' OR
-          $fieldname LIKE '%$fieldval' OR
-          $fieldname = '%$fieldval%'
-        ) ";
-      } // checking for active query
-    } // while each in ctrl_array
-    $buf .= " ) ";
-  } // control array in place
-
-  // KLUDGE TO KEEP FROM LISTING EVERYTHING
-  if (!is_array($ctrl_array) AND (!$has_id)) {
-    $buf .= " AND (1<0) ";
-  } // we don't want to list *all* of them, now do we...
-
-  if (count($ord_array)>0) { 
-    $buf .= " ORDER BY ";
-    $buf .= implode(',', $ord_array);
-  } // include orderby clause
-  return $sql->query($buf); 
-} // end function freemed_search_query
-
-
-  // USER AUTHENTICATION FUNCTIONS (19990701)
-
-  // these are from px.skylar.com, and not mine
-  // but they are heavily modified to work with
-  // a root "backdoor", so as to allow for setup...
-
-// freemed_verify_auth:
-//   moved to sessions support as of version 0.3
-function freemed_verify_auth ( ) {
-	global $debug, $Connection, $sql;
-
-	// Associate "SESSION" with proper session variable
-	$PHP_SELF = $_SERVER['PHP_SELF'];
- 
-	// Do we have to check for _username?
-	$check = !empty($_REQUEST['_username']);
-
-	// Check for authdata array
-	if (is_array($GLOBALS['authdata'])) {
-		// Check to see if ipaddr is set or not...
-		if (!SESSION_PROTECTION) {
-			return true;
-		} else {
-			if ( !empty($GLOBALS['ipaddr']) ) {
-				if ($GLOBALS['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
-					// We're already authorized
-					return true;
-				} else {
-					// IP address has changed, ERROR
-					unset($GLOBALS['ipaddr']);
-					return false;
-				} // end checking ipaddr
-			} else {
-				// Force check if no ip address is present. This
-				// should get around null IPs getting set by
-				// accident without compromising security.
-				$check = true;
-			} // end if isset ipaddr
-		} // end checking for SESSION_PROTECTION
-	} 
-	
-	if ($check) {
-		// Quickly check for root un/pw pair (handle null pw)
-		if ( ($_REQUEST['_username'] == 'root') and 
-				($_REQUEST['_password'] == DB_PASSWORD) ) {
-			// Pass the proper session variable
-			$GLOBALS['authdata'] = array (
-				"username" => $_REQUEST['_username'],
-				"user" => "1" // superuser id
-			);
-			// Set ipaddr for SESSION_PROTECTION
-			$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
-
-			// Return back that this is true
-			return true;
-		}
-
-		// Find this user
-  		$result = $sql->query ("SELECT * FROM user ".
-			"WHERE username = '".addslashes($_REQUEST['_username'])."'");
-
-		// If the user isn't found, false
-		if (!$sql->results($result)) { return false; }
-
-		// Get information
-		$r = $sql->fetch_array ($result);
-
-		// Check password
-		if ($_REQUEST['_password'] == $r['userpassword']) {
-			// Set session vars
-			$GLOBALS['authdata'] = array (
-				"username" => $_REQUEST['_username'],
-				"user" => $r['id']
-			);
-			// Set ipaddr for SESSION_PROTECTION
-			$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
-
-			// Authorize
-			return true;
-		} else { // check password
-			// Failed password check
-			unset ( $GLOBALS['authdata'] );
-			unset ( $GLOBALS['ipaddr'] );
-			return false;
-		} // end check password
-	} // end of checking for authdata array
-} // end function freemed_verify_auth
-
-  //
-  //  FUNCTIONS FOR DEALING WITH MISCELLANEOUS STUFF
-  //  (19990722)
-  //
 
 function fm_date_assemble ($datevarname="", $array_index=-1) {
 	// Check for variable name
@@ -1766,9 +1610,9 @@ function fm_htmlize_array ($variable_name, $cur_array) {
 
 	// Loop through the array
 	for ($i=0; $i<$array_length; $i++)
-		$buffer .= "\t<INPUT TYPE=HIDDEN NAME=\"".
+		$buffer .= "\t<input TYPE=\"HIDDEN\" NAME=\"".
 		prepare($variable_name)."[".prepare($i)."]\" ".
-		"VALUE=\"".prepare($cur_array[$i])."\">\n";
+		"VALUE=\"".prepare($cur_array[$i])."\"/>\n";
 
 	// Dump back the hash
 	return $buffer;
@@ -1779,7 +1623,6 @@ function fm_make_string_array($string) {
 	if (!strpos($string,":"))
 		return $string.":";
 	return $string;
-
 } // end function fm_make_string_array
 
 function fm_join_from_array ($cur_array) {
@@ -1800,7 +1643,7 @@ function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false, $sub
 	$selected = ${$varname};
 
 	// Start header
-	$buffer = "\n\t<SELECT NAME=\"".prepare($varname)."\" ".
+	$buffer = "\n\t<select NAME=\"".prepare($varname)."\" ".
 		( $submit_on_blur ?
 		"onChange=\"this.form.submit(); return true;\"" :
 		"" ).">\n";
@@ -1813,14 +1656,14 @@ function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false, $sub
 	if ( ($min<$max) AND ($step<=0) )  return false;
 
 	for ($i=$min; $i<=$max; $i+=$step) {
-		$buffer .=  "\t\t<OPTION VALUE=\"$i\"".
+		$buffer .=  "\t\t<option VALUE=\"$i\"".
 			( (("$selected"=="$i") or ($selected==$i)) ?
-			"SELECTED" : "" ).
-			">".( (($i<10) and ($addz)) ? "0" : "" )."$i\n";
+			"selected" : "" ).
+			">".( (($i<10) and ($addz)) ? "0" : "" )."$i</option>\n";
 	} // end for loop
 
 	// Footer
-	$buffer .= "\t</SELECT>\n";
+	$buffer .= "\t</select>\n";
 
   	// Return buffer
 	return $buffer;
@@ -1931,55 +1774,59 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
   switch ($formatting) {
     case "usa":
      $buffer .= "
-      <B>(</B>
-      <input TYPE=TEXT NAME=\"".$phonevarname."_1$suffix\" SIZE=4
-       MAXLENGTH=3 VALUE=\"$p1\"
+      <b>(</b>
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_1$suffix\" SIZE=\"4\"
+       MAXLENGTH=\"3\" VALUE=\"$p1\"
        onKeyup=\"autoskip(this, ".$phonevarname."_2$suffix); return true;\"
-       > <B>)</B>
-      <input TYPE=TEXT NAME=\"".$phonevarname."_2$suffix\" SIZE=4
-       MAXLENGTH=3 VALUE=\"$p2\"
+       /> <b>)</b>
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_2$suffix\" SIZE=\"4\"
+       MAXLENGTH=\"3\" VALUE=\"$p2\"
        onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
-       > <B>-</B>
-      <input TYPE=TEXT NAME=\"".$phonevarname."_3$suffix\" SIZE=5
-       MAXLENGTH=4 VALUE=\"$p3\"
+       /> <b>-</b>
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_3$suffix\" SIZE=\"5\"
+       MAXLENGTH=\"4\" VALUE=\"$p3\"
        onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
-       > <I>ext.</I>
-      <input TYPE=TEXT NAME=\"".$phonevarname."_4$suffix\" SIZE=5
-       MAXLENGTH=4 VALUE=\"$p4\">
+       /> <i>ext.</i>
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_4$suffix\" SIZE=\"5\"
+       MAXLENGTH=\"4\" VALUE=\"$p4\"/>
      "; break;
     case "fr":
      $buffer .= "
       <B>(</B>
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_1$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p1\"
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_1$suffix\" SIZE=\"3\"
+       MAXLENGTH=\"2\" VALUE=\"$p1\"
        onKeyup=\"autoskip(this, ".$phonevarname."_2$suffix); return true;\"
-       > <B>)</B>
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_2$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p2\"
+       /> <b>)</b>
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_2$suffix\" SIZE=\"3\"
+       MAXLENGTH=\"2\" VALUE=\"$p2\"
        onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
-       > 
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_3$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p3\"
+       /> 
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_3$suffix\" SIZE=\"3\"
+       MAXLENGTH=\"2\" VALUE=\"$p3\"
        onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
-       >
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_4$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p4\"
+       />
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_4$suffix\" SIZE=\"3\"
+       MAXLENGTH=\"2\" VALUE=\"$p4\"
        onKeyup=\"autoskip(this, ".$phonevarname."_5$suffix); return true;\"
-       >
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."_5$suffix\" SIZE=3
-       MAXLENGTH=2 VALUE=\"$p5\"
-       >
+       />
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_5$suffix\" SIZE=\"3\"
+       MAXLENGTH=\"2\" VALUE=\"$p5\"
+       />
      "; break;
     case "unformatted": 
     default:
      $buffer .= "
-      <INPUT TYPE=TEXT NAME=\"".$phonevarname."$suffix\" SIZE=15
-       MAXLENGTH=16 VALUE=\"$w\">
+      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."$suffix\" SIZE=\"15\"
+       MAXLENGTH=\"16\" VALUE=\"$w\"/>
      "; break;
   } // end switch for dtfmt config value
 
   return $buffer;                         // we exited well!
 } // end function fm_phone_entry
+
+//---------------------------------------------------------------------------
+// Variable Manipulation Functions
+//---------------------------------------------------------------------------
 
 function fm_split_into_array ($original_string) {
 	// If there is nothing to split, return nothing
@@ -2068,6 +1915,9 @@ function fm_secure ($orig_string) {
 	return $this_string;
 } // end function fm_secure
 
+//---------------------------------------------------------------------------
+// Patient Coverage Functions
+//---------------------------------------------------------------------------
 
 function fm_get_active_coverage ($ptid=0) {
 	global $sql;
@@ -2121,55 +1971,9 @@ function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
 	return $row[id];
 } // end function fm_verify_patient_coverage
 
-// function freemed_display_selectbox_array
-function freemed_display_selectbox_array ($result, $format, $name="", $param="")
-{
-  global $$param; // so it knows to put SELECTED on properly
-  static $var; // array of $result-IDs so we only go through them once
-  static $count; // count of results
-  global $sql; // for database connection
-
-  if (!isset($var["$result"])) {
-    if ($result) {
-      $count["$result"] = $sql->num_rows($result);
-      while ($var["$result"][] = $sql->fetch_array($result));
-    } // non-empty result
-  } // if we haven't gone through this list yet
- 
-  $buffer = "";
-  if ($count["$result"]<1) { 
-    $buffer .= _("NONE")."
-      <INPUT TYPE=HIDDEN NAME=\"$name\" VALUE=\"0\">";
-    return $buffer; // do nothing!
-  } // if no result
-
-  $buffer .= "
-    <SELECT NAME=\"$name\">
-      <OPTION VALUE=\"0\">"._("NONE SELECTED")."
-  ";
-  reset($var["$result"]); // if we're caching it, we have to reset it!
-  while ( (list($pickle,$item) = each($var["$result"])) 
-                                     AND ($item[id])) { // no null values!
-    // START FORMAT-FETCHING
-    $format_array = explode("#",$format); // odd members are variable names!
-    while (list($index,$str) = each($format_array)) {
-      if ( !($index & 1) ) continue; // ignore the evens!
-      $format_array[$index] = $item[$str];// can't just change $str!
-    } // while replacing each variable name
-    $this_format = join("", $format_array); // put it back together
-    // END FORMAT-FETCHING    
-    $buffer .= "
-      <OPTION VALUE=\"$item[id]\" ".
-      ( ($item[id] == $$param) ? "SELECTED" : "" ).
-      ">".prepare($this_format)."\n";
-  } // while fetching result
-  $buffer .= "
-    </SELECT>
-  ";
-  
-  return $buffer;
-} // end function freemed_display_selectbox_array
-
+//---------------------------------------------------------------------------
+// Time-related Functions
+//---------------------------------------------------------------------------
 
 function fm_time_entry ($timevarname="") {
   if ($timevarname=="") return false;  // indicate problems
@@ -2231,42 +2035,14 @@ function fm_time_assemble ($timevarname="") {
   return $h.":".$m.":".$ap;                     // return SQL format date
 } // end function fm_time_assemble
 
-function freemed_display_dbs ($defdb) {
-	global $sql, $DB_NAMES;
-
-	// Figure out how many databases we have in the list
-	$numdbs = count ($DB_NAMES);
-
-	// If there aren't any or the array is empty, die out here
-	if ($numdbs <= 0) {
-		print "ERROR: Database list is empty<BR>\n";
-		return false;
-	}
-
-	// Initialize buffer
-	$buffer = "";
-
-	// Loop through all instances of databases
-	for ($i=0; $i<$numdbs; $i++) {
-		// Add the option
-		$buffer .= "<OPTION VALUE=\"".prepare($i)." ".
-			( ($i == $defdb) ? "SELECTED" : "" ).
-			">".prepare($DB_NAMES[$i])."\n";
-	}
-
-	return $buffer;
-} // end function freemed_display_dbs
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-
-//*********************  TEMPLATE SUPPORT
+//---------------------------------------------------------------------------
+// Template-related Functions
+//---------------------------------------------------------------------------
 
 function template_display ($terminate_on_execute=true) {
 	global $display_buffer; // localize display buffer
 	global $template; // localize template
-	foreach ($GLOBALS AS $k => $v) global $$k;
+	foreach ($GLOBALS AS $k => $v) global ${$k};
 
 	if (file_exists("lib/template/".$template."/template.php")) {
 		include_once ("lib/template/".$template."/template.php");
