@@ -59,7 +59,7 @@ switch ($action) {
 
 	default:
 		// Browser check
-		$browser = new browser_detect();
+		$browser = CreateObject('PHP.browser_detect');
 		$IEupload = false;
 		if ($browser->BROWSER=="IE") { $IEupload = true; }
 

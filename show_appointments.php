@@ -5,7 +5,6 @@
 
 $page_name = "show_appointments.php";
 include ("lib/freemed.php");
-include ("lib/API.php");
 include ("lib/calendar-functions.php");
 
 //----- Login/authenticate
@@ -20,7 +19,7 @@ if ($show=="all") { $day_criteria = "0 = 0";                   }
 
 //----- Create patient object
 if ($patient>0) {
-	$this_patient = new Patient ($patient, ($type=="temp"));
+	$this_patient = CreateObject('FreeMED.Patient', $patient, ($type=="temp"));
 } // end generating this_patient object
 
     // display header

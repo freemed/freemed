@@ -5,12 +5,11 @@
 
 $page_name = "call-in.php";          // page name
 include ("lib/freemed.php");           // global variables
-include ("lib/API.php");    // API calls
 $record_name = _("Call In");          // name of record
 $db_name = "callin";                  // database name
 
 freemed_open_db ();
-$this_user = new User ();
+$this_user = CreateObject('FreeMED.User');
 
 switch ($action) {
 

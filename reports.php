@@ -19,7 +19,7 @@ $page_title = _("Reports");
 page_push();
 
 //----- Create user object
-if (!is_object($this_user)) $this_user = new User;
+if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
  // Check for appropriate access level
 if (!freemed::user_flag(USER_DATABASE)) {
@@ -42,7 +42,7 @@ $module_template = "
 ";
 
 // module loader
-$module_list = new module_list (PACKAGENAME,".report.module.php");
+$module_list = CreateObject('PHP.module_list', PACKAGENAME,".report.module.php");
 if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
 	<P>

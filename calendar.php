@@ -35,7 +35,7 @@ $module_template = "
 ";
 
 // module loader
-$module_list = new module_list (PACKAGENAME,".calendar.module.php");
+$module_list = CreateObject('PHP.module_list', PACKAGENAME,".calendar.module.php");
 if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
 	<P>

@@ -12,7 +12,7 @@ include ("lib/calendar-functions.php");
 freemed_open_db ();
 
 //----- Set current user
-$this_user = new User ();
+$this_user = CreateObject('FreeMED.User');
 
 //----- Check for current patient
 if ($travel) {
@@ -98,18 +98,19 @@ $form .= "
 	".html_form::form_table(array(
 	
 	"<SMALL>Phy</SMALL>" =>
-	freemedCalendar::refresh_select(
+	html_form::select_widget(
 		"physician", 
 		freemed::query_to_array(
 			"SELECT phylname,phyfname, ".
 			"CONCAT(phylname,', ',phyfname) AS k,".
 			"id AS v FROM physician ".
 			"ORDER BY phylname,phyfname"
-		)
+		),
+		array('refresh' => true)
 	),
 
 	"<SMALL>Rm</SMALL>" =>
-	freemedCalendar::refresh_select(
+	html_form::select_widget(
 		"room",
 		( $travel ? array ( _("Travel") => "0" ) :
 		freemed::query_to_array(
@@ -121,7 +122,8 @@ $form .= "
 			"room.roombooking='y' ".
 			"ORDER BY k"
 		)
-		)
+		),
+		array('refresh' => true)
 	),
 
 	"<SMALL>Dur</SMALL>" =>

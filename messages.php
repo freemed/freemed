@@ -10,9 +10,8 @@ $db_name = "messages";                // database name
 
 //----- Open the database, etc
 freemed_open_db ();
-$this_user = new User ();
+$this_user = CreateObject('FreeMED.User');
 
-// Kludge to set action to add
 if ($submit_action==" "._("Add")." ") { $action = "add"; }
 
 switch ($action) {

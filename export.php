@@ -3,14 +3,13 @@
  // desc: administrative export module
  // lic : GPL, v2
 
- $page_name = "export.php";
- include ("lib/freemed.php");
- include ("lib/API.php");
+$page_name = "export.php";
+include ("lib/freemed.php");
 
- freemed_open_db ();
- $this_user = new User ();
+freemed_open_db ();
+$this_user = CreateObject('FreeMED.User');
 
-if ($this_user->getLevel()<$admin_level) {
+if (!freemed::user_flag(USER_ADMIN)) {
 	$display_buffer .= "$page_name :: You do not have access to this module";
 	template_display();
 }

@@ -14,7 +14,7 @@ include ("lib/module_billing.php");
 freemed_open_db ();
 
 //----- Create user object
-$this_user = new User ();
+$this_user = CreateObject('FreeMED.User');
 
 //----- Set page title
 $page_title = _("Billing Functions");
@@ -27,7 +27,7 @@ if ($SESSION["current_patient"] != 0) $patient = $SESSION["current_patient"];
 
 $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
   if ($patient>0) {
-    $this_patient = new Patient ($patient);
+    $this_patient = CreateObject('FreeMED.Patient', $patient);
     $patient_information =
       freemed_patient_box ($this_patient);
   } // if there is a patient
@@ -74,7 +74,7 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
         </TD>
 		</TR>";
     // modules list
-    $module_list = new module_list (PACKAGENAME, ".billing.module.php");
+    $module_list = CreateObject('PHP.module_list', PACKAGENAME, ".billing.module.php");
     $display_buffer .= "<CENTER><TABLE>\n";
     $display_buffer .= $module_list->generate_list($catagory, 0, $module_template);
     $display_buffer .= "</TABLE></CENTER>\n";
@@ -89,7 +89,7 @@ $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
         </TD>
 		</TR>";
     // modules list
-    //$module_list2 = new module_list (PACKAGENAME);
+    //$module_list2 = CreateObject('PHP.module_list', PACKAGENAME);
     $display_buffer .= "<CENTER><TABLE>\n";
     $display_buffer .= $module_list->generate_list($catagory, 0, $module_template);
     $display_buffer .= "</TABLE></CENTER>\n";

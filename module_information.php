@@ -6,7 +6,6 @@
 $page_name   = basename($GLOBALS["PHP_SELF"]);
 
 include_once ("lib/freemed.php");
-include_once ("lib/API.php");
 include_once ("lib/module.php");
 
 // module types to include ...
@@ -24,15 +23,15 @@ include_once ("lib/module_reports.php");
 freemed_open_db (); // authenticate user
 
 // check for access
-$this_user = new User ();
-if ($this_user->getLevel() < $admin_level) {
+$this_user = CreateObject('FreeMED.User');
+if (!freemed::user_flag(USER_ADMIN)) {
 	$display_buffer .= _("Access Denied");
 	template_display();
 }
 // top
 $page_title = _("Module Information");
 
-$module_list = new module_list (PACKAGENAME);
+$module_list = CreateObject('PHP.module_list', PACKAGENAME);
 $categories = $module_list->categories();
 if ($categories != NULL) {
 	$display_buffer .= "

@@ -16,7 +16,7 @@ include ("lib/API.php");
 
 //----- Generic page opening stuff
 freemed_open_db ();
-$this_user = new User ();
+$this_user = CreateObject('FreeMED.User');
 
 //----- Set title (default, can be overridden in lib/template/*/main_menu.php)
 $page_title = PACKAGENAME." "._("Main Menu");

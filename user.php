@@ -15,7 +15,7 @@ include_once("lib/freemed.php");         // load global variables
 
 freemed_open_db ();
 
-$this_user = new User ();
+$this_user = CreateObject('FreeMED.User');
 
 if (!freemed::user_flag(USER_ROOT)) {  // if not root...
 	$display_buffer .= "$page_name :: access denied\n";
@@ -31,7 +31,7 @@ switch($action) { // master action switch
  case "modform":
  case "addform":
   // create new notebook
-  $book = new notebook(
+  $book = CreateObject('PHP.notebook', 
     array ("action", "id"),
 	NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR
   );

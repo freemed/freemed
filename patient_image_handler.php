@@ -19,7 +19,7 @@ $id      = freemed::secure_filename($id     );
 $imagefilename = "img/store/".$patient.".".$id.".djvu";
 
 //----- Use browser detect to determine what kind of image this should be
-$browser = new browser_detect();
+$browser = CreateObject('PHP.browser_detect');
 $type = "djvu";
 if (!freemed::support_djvu($browser)) { $type = "jpeg"; }
 

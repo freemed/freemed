@@ -7,7 +7,7 @@ include_once("lib/freemed.php");
 
 //----- Open database, authenticate, etc
 freemed_open_db ();
-$this_user = new User ();
+$this_user = CreateObject('FreeMED.User');
 
 //----- Check for process
 if ($action==_("Search")) {

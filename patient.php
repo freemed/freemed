@@ -12,7 +12,7 @@ include ("lib/API.php");
 include ("lib/calendar-functions.php");
 
 // Create user object
-if (!is_object($this_user)) $this_user = new User;
+if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 if ( ($id>0) AND 
        ($action != "addform") AND ($action != "add") AND
@@ -31,7 +31,7 @@ switch ($action) {
   case "add": case "addform":
   case "mod": case "modform":
     // addform and modform not used due to "notebook"
-   $book = new notebook ( array ("action", "id", "been_here"),
+   $book = CreateObject('PHP.notebook', array ("action", "id", "been_here"),
      NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH, 3);
    switch ($action) {
      case "add": case "addform":
@@ -541,7 +541,7 @@ switch ($action) {
    // show notebook
    $page_title = _("Patient")." "._("$action_name");
    if ( ($action=="modform") or ($action=="mod")) {
-     $this_patient = new Patient ($id);
+     $this_patient = CreateObject('FreeMED.Patient', $id);
      $display_buffer .= freemed_patient_box ($this_patient);
    }
 	// Handle cancel action
@@ -931,7 +931,7 @@ switch ($action) {
     }
 
     if ($current_patient>0) {
-      $patient = new Patient ($current_patient);
+      $patient = CreateObject('FreeMED.Patient', $current_patient);
       $display_buffer .= "
         <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
          VALIGN=CENTER BORDER=0><TR><TD ALIGN=CENTER><CENTER>
