@@ -234,14 +234,18 @@ class Agata {
 		fclose($fp);
 		$lines = explode("\n", $buffer);
 		foreach ($lines AS $_garbage => $line) {
-			if (eregi('##[A-Za-z=\., ]*##', $line)) {
+			if (eregi('##[A-Za-z=\.\/, ]*##', $line)) {
 				// Process meta line
 				//print "meta line = $line\n";
 				$chunks = explode('##', $line);
 				$meta = explode(',', $chunks[1]);
 				foreach ($meta AS $garbage => $info) {
 					list ($k, $v) = explode('=', $info);
-					$return[$k] = $v;
+					if (strpos($v, '/') !== false) {
+						$return[$k] = explode('/', $v);
+					} else {
+						$return[$k] = $v;
+					}
 				}
 				return $return;
 			}
