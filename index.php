@@ -7,7 +7,6 @@
 
   $page_name = "index.php";
   include ("lib/freemed.php");
-  include ("lib/API.php");
 
   SetCookie ("default_facility", "0", time()-100);
 
