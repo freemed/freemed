@@ -69,17 +69,17 @@ class FBPayer {
 		// Do a search for medicare A
 		$q = $GLOBALS['sql']->query('SELECT * FROM insmod '.
 			'WHERE insmod = \'MA\'');
-		$r = $GLOBALS['sql']->fetch_array($i_q);
+		$r = $GLOBALS['sql']->fetch_array($q);
 		foreach ($mods AS $k => $v) {
-			if ($v == $r['insmod']) return true;
+			if ($v == $r['id']) return true;
 		}
 
 		// Do a search for medicare B
 		$q = $GLOBALS['sql']->query('SELECT * FROM insmod '.
 			'WHERE insmod = \'MB\'');
-		$r = $GLOBALS['sql']->fetch_array($i_q);
+		$r = $GLOBALS['sql']->fetch_array($q);
 		foreach ($mods AS $k => $v) {
-			if ($v == $r['insmod']) return true;
+			if ($v == $r['id']) return true;
 		}
 
 		// If neither one found, return false
@@ -93,9 +93,9 @@ class FBPayer {
 		// Do a search for Champus
 		$q = $GLOBALS['sql']->query('SELECT * FROM insmod '.
 			'WHERE insmod = \'CH\'');
-		$r = $GLOBALS['sql']->fetch_array($i_q);
+		$r = $GLOBALS['sql']->fetch_array($q);
 		foreach ($mods AS $k => $v) {
-			if ($v == $r['insmod']) return true;
+			if ($v == $r['id']) return true;
 		}
 
 		// If not found, return false
@@ -113,9 +113,9 @@ class FBPayer {
 		// Do a search for Champus
 		$q = $GLOBALS['sql']->query('SELECT * FROM insmod '.
 			'WHERE insmod = \'MC\'');
-		$r = $GLOBALS['sql']->fetch_array($i_q);
+		$r = $GLOBALS['sql']->fetch_array($q);
 		foreach ($mods AS $k => $v) {
-			if ($v == $r['insmod']) return true;
+			if ($v == $r['id']) return true;
 		}
 
 		// If not found, return false
@@ -129,9 +129,9 @@ class FBPayer {
 		// Do a search for Champus
 		$q = $GLOBALS['sql']->query('SELECT * FROM insmod '.
 			'WHERE insmod = \'BL\'');
-		$r = $GLOBALS['sql']->fetch_array($i_q);
+		$r = $GLOBALS['sql']->fetch_array($q);
 		foreach ($mods AS $k => $v) {
-			if ($v == $r['insmod']) return true;
+			if ($v == $r['id']) return true;
 		}
 
 		// If not found, return false
@@ -145,9 +145,9 @@ class FBPayer {
 		// Do a search for Champus
 		$q = $GLOBALS['sql']->query('SELECT * FROM insmod '.
 			'WHERE insmod = \'FI\'');
-		$r = $GLOBALS['sql']->fetch_array($i_q);
+		$r = $GLOBALS['sql']->fetch_array($q);
 		foreach ($mods AS $k => $v) {
-			if ($v == $r['insmod']) return true;
+			if ($v == $r['id']) return true;
 		}
 
 		// If not found, return false
