@@ -6,6 +6,12 @@
 class Parser_HL7v2 {
 
 	var $field_separator;
+	var $map;
+	var $message;
+	var $message_type;
+
+	var $MSH;
+	var $EVN;
 
 	function Parser_HL7v2 ( $message, $_options = NULL ) {
 		// Assume separator is a pipe
@@ -23,7 +29,10 @@ class Parser_HL7v2 {
 		}
 
 		// Loop through messages
+		$count = 0;
 		foreach ($segments AS $__garbage => $segment) {
+			$count++;
+
 			// Determine segment ID
 			$type = substr($segment, 0, 3);
 
@@ -40,10 +49,15 @@ class Parser_HL7v2 {
 						)
 					)
 				);
+				$this->map[$count]['type'] = $type;
+				$this->map[$count]['position'] = 0;
 				break;
 
 				default:
 				$this->__default_segment_parser($segment);
+				$this->map[$count]['type'] = $type;
+				$this->map[$count]['position'] = count($this->message[$type]);
+				break;
 			} // end switch type
 		}
 
