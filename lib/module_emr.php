@@ -233,7 +233,7 @@ class freemedEMRModule extends freemedModule {
 				";
 			} // end foreach summary_vars
 			$buffer .= "
-				<TD VALIGN=MIDDLE CLASS=\"menubar_info\">
+				<TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
 				<B>"._("Action")."</B>
 				</TD>
 			</TR>
@@ -244,21 +244,26 @@ class freemedEMRModule extends freemedModule {
 
 				// Use $this->summary_vars
 				$buffer .= "
-				<TR VALIGN=MIDDLE>
+				<TR VALIGN=\"MIDDLE\">
 				";
 				foreach ($this->summary_vars AS $k => $v) {
 					$buffer .= "
-					<TD VALIGN=MIDDLE>
-					".prepare($$v)."
+					<TD VALIGN=\"MIDDLE\">
+					<SMALL>".prepare(${$v})."</SMALL>
 					</TD>
 					";
 				} // end looping through summary vars
 				$buffer .= "
-				<TD VALIGN=MIDDLE>
+				<TD VALIGN=\"MIDDLE\">
 				<A HREF=\"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
 				"action=modform&id=$r[id]\"
-				>"._("MOD")."</A>
+				><SMALL>"._("Modify")."</SMALL></A>
+				".( $this->summary_view_link ?
+				"| <A HREF=\"module_loader.php?module=".
+				get_class($this)."&patient=$patient&".
+				"action=display&id=$r[id]\"
+				><SMALL>"._("View")."</SMALL></A>" : "" )."
 				</TD>
 				</TR>
 				";
