@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Wed Feb 07 2001 rufustfirefly
+  - cleaning up modules/payment.module.php a little in the addform section
+    to have nbsp;'s for proper rendering
+
 * Wed Feb 07 2001 fforest
     more bug fixes like previously. mostly global variable issues
     $db_name to this->table_name etc.

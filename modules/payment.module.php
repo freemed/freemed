@@ -700,7 +700,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 $pay_query  = "SELECT * FROM payrec AS a, procrec AS b
                               WHERE b.procbalcurrent != '0' AND
                               b.id = a.payrecproc AND
-                              a.payrecpatient='$patient'
+                              a.payrecpatient='".addslashes($patient)."'
                               ORDER BY payrecproc,payrecdt";
             }
             $pay_result = $sql->query ($pay_query);
@@ -710,7 +710,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 <CENTER>
                 <P>
                 <B><$STDFONT_B>
-                There are no records for this patient.
+                "._("There are no records for this patient.")."
                 </B><$STDFONT_E>
                 <P>
                 <A HREF=\"manage.php?$_auth&id=$patient\"
@@ -718,6 +718,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 <P>
                 </CENTER>
                 ";
+				freemed_display_box_bottom();
+				freemed_display_html_bottom();
                 DIE(""); // kill!!
             } // end/if there are no results
 
@@ -742,22 +744,22 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             while ($r = $sql->fetch_array ($chg_result)) {
                 $procdate        = fm_date_print ($r["procdt"]);
-                $proccomment     = prepare ($r["proccomment"]);
                 $procbalorig     = $r["procbalorig"];
                 $id              = $r["id"];
                 $total_charges  += $procbalorig;
                 echo "
                 <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
                 <TD>$procdate</TD>
-                <TD><I>$proccomment</I></TD>
+                <TD><I>".( (!empty($r[proccomment])) ?
+					prepare($r[proccomment]) : "&nbsp;" )."</I></TD>
                 <TD>charge</TD>
                 <TD ALIGN=RIGHT>
-                <FONT COLOR=#ff0000>
+                <FONT COLOR=\"#ff0000\">
                 <TT><B>".bcadd($procbalorig, 0, 2)."</B></TT>
                 </FONT>
                 </TD>
                 <TD ALIGN=RIGHT>
-                <FONT COLOR=$paycolor>
+                <FONT COLOR=\"$paycolor\">
                 <TT>&nbsp;</TT>
                 </FONT>
                 </TD>
@@ -786,7 +788,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $proc_total = bcadd ($proc_total, 0, 2);
                     if ($proc_total<0)
                     {
-                        $prc_total = "<FONT COLOR=#000000>".
+                        $prc_total = "<FONT COLOR=\"#000000\">".
                                      bcadd (-$proc_total, 0, 2)."</FONT>";
                     }
                     else
@@ -796,14 +798,13 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     } // end of creating total string/color
 
                     // display the total payments
-                    $_alternate = freemed_bar_alternate_color ($_alternate);
                     echo "
                     <TR BGCOLOR=$_alternate>
                     <TD><B><$STDFONT_B SIZE=-1>SUBTOT<$STDFONT_E></B></TD>
                     <TD>&nbsp;</TD>
                     <TD>&nbsp;</TD>
                     <TD ALIGN=RIGHT>
-                    <FONT COLOR=#ff0000><TT>".bcadd($proc_charges,0,2)."</TT></FONT>
+                    <FONT COLOR=\"#ff0000\"><TT>".bcadd($proc_charges,0,2)."</TT></FONT>
                     </TD>
                     <TD ALIGN=RIGHT>
                     <TT>".bcadd($proc_payments,0,2)."</TT>
@@ -813,7 +814,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     </TD>
                     <TD>&nbsp;</TD>
                     </TR>
-                    <TR BGCOLOR=$_alternate>
+                    <TR BGCOLOR=\".
+                    ($_alternate = freemed_bar_alternate_color ($_alternate))
+					.\">
                     <TD COLSPAN=7>&nbsp;</TD>
                     </TR>
                     ";
@@ -951,24 +954,25 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             $proc_total = bcadd ($proc_total, 0, 2);
             if ($proc_total<0)
             {
-                $prc_total = "<FONT COLOR=#000000>".
+                $prc_total = "<FONT COLOR=\"#000000\">".
                              bcadd (-$proc_total, 0, 2)."</FONT>";
             }
             else
             {
-                $prc_total = "-<FONT COLOR=#ff0000>".
+                $prc_total = "-<FONT COLOR=\"#ff0000\">".
                              bcadd (-$proc_total, 0, 2)."</FONT>";
             } // end of creating total string/color
 
             // display the total payments
-            $_alternate = freemed_bar_alternate_color ($_alternate);
             echo "
-            <TR BGCOLOR=$_alternate>
-            <TD><B><$STDFONT_B SIZE=-1>SUBTOT<$STDFONT_E></B></TD>
+            <TR BGCOLOR=\"".
+            ($_alternate = freemed_bar_alternate_color ($_alternate))
+			."\">
+            <TD><B><$STDFONT_B SIZE=\"-1\">SUBTOT<$STDFONT_E></B></TD>
             <TD>&nbsp;</TD>
             <TD>&nbsp;</TD>
             <TD ALIGN=RIGHT>
-            <FONT COLOR=#ff0000><TT>".bcadd($proc_charges,0,2)."</TT></FONT>
+            <FONT COLOR=\"#ff0000\"><TT>".bcadd($proc_charges,0,2)."</TT></FONT>
             </TD>
             <TD ALIGN=RIGHT>
             <TT>".bcadd($proc_payments,0,2)."</TT>
@@ -978,7 +982,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             </TD>
             <TD>&nbsp;</TD>
             </TR>
-            <TR BGCOLOR=$_alternate>
+            <TR BGCOLOR=\"$_alternate\">
             <TD COLSPAN=7>&nbsp;</TD>
             </TR>
             ";
@@ -996,9 +1000,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             } // end of creating total string/color
 
             // display the total payments
-            $_alternate = freemed_bar_alternate_color ($_alternate);
             echo "
-            <TR BGCOLOR=$_alternate>
+            <TR BGCOLOR=\"".
+            ($_alternate = freemed_bar_alternate_color ($_alternate))
+			."\">
             <TD><B><$STDFONT_B SIZE=-1>TOTAL<$STDFONT_E></B></TD>
             <TD>&nbsp;</TD>
             <TD>&nbsp;</TD>
@@ -1035,7 +1040,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 echo "
                 <P>
                 <CENTER>
-                <B>All Records for this Procedure deleted</B><BR><BR>
+                <B>All records for this procedure have been deleted.</B><BR><BR>
                 <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=refresh".
                 "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
                 <$STDFONT_B>"._("Back")."<$STDFONT_E></A>
@@ -1049,7 +1054,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             echo "
             <P>
             <CENTER>
-            Confirm Delete Request or Cancel<BR><BR>
+            Confirm delete request or cancel?<P>
             <A HREF=\"$this->page_name?_auth=$_auth&been_here=1&viewaction=mistake".
             "&action=addform&delete=1&item=$procid&patient=$patient&module=$module\">
             <$STDFONT_B>"._("Confirm")."<$STDFONT_E></A>&nbsp;|&nbsp;
@@ -1078,7 +1083,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             $line_item_count = 0;
 
             $query = "SELECT * FROM procrec
-                     WHERE ( (procpatient = '$patient') AND
+                     WHERE ( (procpatient = '".addslashes($patient)."') AND
                      (procbalcurrent !='0') )
                      ORDER BY procdt";
 
@@ -1101,8 +1106,6 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             </TR>
             ";
 
-            $_alternate = freemed_bar_alternate_color ();
-
             // loop for all "line items"
             while ($r = $sql->fetch_array ($result))
             {
@@ -1116,18 +1119,19 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 <TR BGCOLOR=".( ($this->item == $r[id]) ?  "#00ffff" :
                                 ($_alternate = freemed_bar_alternate_color ($_alternate))).">
                 <TD>
-                <INPUT TYPE=RADIO NAME=\"item\" VALUE=\"".htmlentities($r[id])."\"
+                <INPUT TYPE=RADIO NAME=\"item\" VALUE=\"".prepare($r[id])."\"
                 ".( ($r[id] == $this->item) ?  "CHECKED": "" )."></TD>
                 <TD ALIGN=LEFT>".fm_date_print ($r[procdt])."</TD>
-                <TD ALIGN=LEFT>".htmlentities($this_cptcode." (".$this_cpt.")")."</TD>
-                <TD ALIGN=LEFT>".htmlentities($this_physician->fullName())."</TD>
+                <TD ALIGN=LEFT>".prepare($this_cptcode." (".$this_cpt.")")."</TD>
+                <TD ALIGN=LEFT>".prepare($this_physician->fullName())."&nbsp;</TD>
                 <TD ALIGN=LEFT>".bcadd ($r[procbalorig], 0, 2)."</TD>
                 <TD ALIGN=LEFT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
                 <TD ALIGN=LEFT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
                 <TD ALIGN=LEFT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
                 <TD ALIGN=LEFT>".(($r[procbilled]) ? "Yes" : "No")."</TD>
-                <TD ALIGN=LEFT>".htmlentities($r[procdtbilled])."</TD>
-                <TD ALIGN LEFT><A HREF=\"$this->page?_auth=$_auth&action=addform".
+                <TD ALIGN=LEFT>".( !empty($r[procdtbilled]) ?
+					prepare($r[procdtbilled]) : "&nbsp;" )."</TD>
+                <TD ALIGN LEFT><A HREF=\"$this->page_name?_auth=$_auth&action=addform".
                 "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=$r[id]\"
                 >Ledger</A>
                 </TR>
