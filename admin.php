@@ -40,8 +40,11 @@ if (freemed_get_userlevel()<9) {
 
 if ($action=="cfgform") {
 
-  // this is the frontend to the config
-  // database.
+	// this is the frontend to the config
+	// database.
+
+	// Add help link for cfgform
+	$menu_bar["Configuration Help"] = help_url("admin.php", "cfgform");
 
 	//----- Pull in all configuration variables
 	reset ($config_vars);
