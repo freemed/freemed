@@ -14,7 +14,6 @@ define ('__API_PHP__', true);
 
 // namespace/class freemed
 class freemed {
-
 	// function freemed::check_access_for_facility
 	function check_access_for_facility ($facility_number) {
 		global $_SESSION;
@@ -45,10 +44,12 @@ class freemed {
 		if ($_user == 0) {
 			// Grab authdata
 			$_authdata = $_SESSION['authdata'];
-
 			$user = $_authdata['user'];
+		} else {
+			$user = $_user;
 		}
-
+		
+		//eventually logging should include different messages for all returns here...
 		// Root has all access...
 		if ($user == 1) return true;
 	
@@ -62,7 +63,6 @@ class freemed {
 	
 		// Retrieve patient record
 		$f_pat    = freemed::get_link_rec ($patient_number, "patient");
-	
 		// check for universal access
 		if ((fm_value_in_string ($f_fac,    "-1")) OR
 			(fm_value_in_string ($f_phy,    "-1")) OR
@@ -112,6 +112,27 @@ class freemed {
 		// Return from cache
 		return $_config["$config_var"];
 	} // end function freemed::config_value
+
+	function connect () {
+		global $display_buffer;
+
+		// Verify
+		if (!freemed::verify_auth()) {
+			$display_buffer .= "
+			<div ALIGN=\"CENTER\">
+			<b>".__("You have entered an incorrect username or password.")."</b>
+			<br/><br/>
+			<b><i>".__("It is possible that your cookies have expired.")."</i></b>
+			<p/>
+			".template::link_button(
+				__("Return to the Login Screen"),
+				"index.php"
+			)."
+			</div>
+			";
+			template_display();
+		} // end if connected loop
+	} // end function freemed::connect
 
 	function drug_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
 		global ${$varname};
@@ -203,6 +224,18 @@ class freemed {
 		}
 	} // end function freemed::itemlist_conditions
 
+	// function freemed::image_filename
+	function image_filename($patient, $record, $type, $img_store = true) {
+		$m = md5($patient);
+		return ($img_store ? 'img/store/' : '' ).
+			$m[0].$m[1].'/'.
+			$m[2].$m[3].'/'.
+			$m[4].$m[5].'/'.
+			$m[6].$m[7].'/'.
+			substr($m, -(strlen($m)-8)).
+			'.'.$type;
+	} // end function::image_filename
+
 	// function freemed::module_check
 	function module_check ($module, $minimum_version="0.01")
 	{
@@ -221,6 +254,60 @@ class freemed {
 		// check in cache for version > minimum_version
 		return version_check($_config["$module"], $minimum_version);
 	} // end function freemed::module_check
+
+	// function freemed::module_get_value
+	function module_get_value ($module, $key) {
+		static $module_list;
+
+		// Cache module list object
+		if (!isset($module_list)) {
+			$module_list = CreateObject(
+				'PHP.module_list',
+				PACKAGENAME
+			);
+		}
+
+		// Not in the list, then we just skip it
+		if (!$module_list->check_for($module)) {
+			return false;
+		}
+
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] as $k => $v) {
+			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
+				return $v[$key];
+			}
+		}
+
+		// If all else fails, return false
+		return false;
+	} // end function freemed::module_get_value
+
+	// function freemed::module_get_meta
+	function module_get_meta ($module, $key) {
+		static $module_list;
+
+		// Cache module list object
+		if (!isset($module_list)) {
+			$module_list = CreateObject(
+				'PHP.module_list',
+				PACKAGENAME
+			);
+		}
+
+		// Not in the list, then we just skip it
+		if (!$module_list->check_for($module)) {
+			return false;
+		}
+
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] as $k => $v) {
+			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
+				return $v['META_INFORMATION'][$key];
+			}
+		}
+
+		// If all else fails, return false
+		return false;
+	} // end function freemed::module_get_meta
 
 	// function freemed::module_lookup
 	// - lookup by the actual class name of the module
@@ -435,6 +522,61 @@ class freemed {
 		return $this_array;
 	} // end function freemed::query_to_array
 
+	function race_widget ( $varname ) {
+		// HL7 v2.3.1 compliant race widget (table 0005)
+		return html_form::select_widget($varname,
+			array (
+				__("unknown race") => '7',
+				__("Hispanic, white") => '1',
+				__("Hispanic, black") => '2',
+				__("American Indian or Alaska Native") => '3',
+				__("Black, not of Hispanic origin") => '4',
+				__("Asian or Pacific Islander") => '5',
+				__("White, not of Hispanic origin") => '6'
+			)
+		);
+	} // end function freemed::race_widget
+
+	function religion_widget ( $varname ) {
+		// HL7 v2.3.1 compliant race widget (table 0006)
+		return html_form::select_widget($varname,
+			array (
+				__("Catholic") => '0',
+				__("Jewish") => '1',
+				__("Eastern Orthodox") => '2',
+				__("Baptist") => '3',
+				__("Methodist") => '4',
+				__("Lutheran") => '5',
+				__("Presbyterian") => '6',
+				__("United Church of God") => '7',
+				__("Episcopalian") => '8',
+				__("Adventist") => '9',
+				__("Assembly of God") => '10',
+				__("Brethren") => '11',
+				__("Christian Scientist") => '12',
+				__("Church of Christ") => '13',
+				__("Church of God") => '14',
+				__("Disciples of Christ") => '15',
+				__("Evangelical Covenant") => '16',
+				__("Friends") => '17',
+				__("Jehovah's Witness") => '18',
+				__("Latter-Day Saints") => '19',
+				__("Islam") => '20',
+				__("Nazarene") => '21',
+				__("Other") => '22',
+				__("Pentecostal") => '23',
+				__("Protestant, Other") => '24',
+				__("Protestant, No Denomenation") => '25',
+				__("Reformed") => '26',
+				__("Salvation Army") => '27',
+				__("Unitarian; Universalist") => '28',
+				__("Unknown/No preference") => '29',
+				__("Native American") => '30',
+				__("Buddhist") => '31'
+			)
+		);
+	} // end function freemed::religion_widget
+
 	function secure_filename ( $filename ) {
 		// Items to remove
 		$secure_these = array (
@@ -485,8 +627,12 @@ class freemed {
 			case "jpg":
 			case "jpeg":
 				// Simple JPEG handler: copy
-				$name = $patient_id.".".$type.".djvu";
-				copy ($image, "./img/store/$name");
+				$name = freemed::image_filename(
+					$patient_id,
+					$type,
+					'djvu'
+				);
+				copy ($image, "./".$name);
 				return $name;
 				break; // end handle JPEGs
 			*/
@@ -498,17 +644,35 @@ class freemed {
 				$command = "/usr/X11R6/bin/convert ".
 					freemed::secure_filename($image).
 					" ".PHYSICAL_LOCATION."/".
-					"img/store/".$name.".pbm";
+					freemed::image_filename(
+						$patient_id,
+						$type,
+						'djvu.pbm'
+					);
 				exec ($command);
 				// Convert to DJVU
 				$command = "/usr/bin/cjb2 ".
 					PHYSICAL_LOCATION."/".
-					"img/store/".$name.".pbm ".
+					freemed::image_filename(
+						$patient_id,
+						$type,
+						'djvu.pbm'
+					)." ".
 					PHYSICAL_LOCATION."/".
-					"img/store/".$name;
+					freemed::image_filename(
+						$patient_id,
+						$type,
+						'djvu'
+					);
 				exec ($command);
 				// Remove PBM
-				unlink(PHYSICAL_LOCATION."/img/store/".$name.".pbm");
+				unlink(PHYSICAL_LOCATION.
+					freemed::image_filename(
+						$patient_id,
+						$type,
+						'djvu.pbm'
+					)
+				);
 				return $name;
 				break; // end handle others
 		} // end checking by extension
@@ -605,21 +769,6 @@ class freemed {
 		} 
 		
 		if ($check) {
-			// Quickly check for root un/pw pair (handle null pw)
-			if ( ($_REQUEST['_username'] == 'root') and 
-					($_REQUEST['_password'] == DB_PASSWORD) ) {
-				// Pass the proper session variable
-				$_SESSION['authdata'] = array (
-					"username" => $_REQUEST['_username'],
-					"user" => "1" // superuser id
-				);
-				// Set ipaddr for SESSION_PROTECTION
-				$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
-	
-				// Return back that this is true
-				return true;
-			}
-	
 			// Find this user
   			$result = $sql->query ("SELECT * FROM user ".
 				"WHERE username = '".addslashes($_REQUEST['_username'])."'");
@@ -629,9 +778,30 @@ class freemed {
 	
 			// Get information
 			$r = $sql->fetch_array ($result);
+
+			$login_md5=md5($_REQUEST['_password']);
+
+			$user=$_REQUEST['_username'];
+
+			if((LOGLEVEL<1)||(LOG_HIPAA || LOG_LOGIN))
+			{
+			syslog(LOG_INFO,"API.php|verify_auth login attempt $user ");
+			}
+
+			$db_pass=$r['userpassword'];		
+
+	//		This is insecure and should not be used
+	//		It is here for debugging purposes only...
+	//		if(LOG_MD5||(LOGLEVEL<1)) // Md5 password Logging
+	//		{
+	//		syslog(LOG_INFO,"API.php|verify_auth Password entered__ $login_md5 ");
+	//		}
+
+			
+
 	
 			// Check password
-			if ($_REQUEST['_password'] == $r['userpassword']) {
+			if ($login_md5 == $r['userpassword']) {
 				// Set session vars
 				$_SESSION['authdata'] = array (
 					"username" => $_REQUEST['_username'],
@@ -641,11 +811,13 @@ class freemed {
 				$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 	
 				// Authorize
+				if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"API.php|verify_auth successful login");}		
 				return true;
 			} else { // check password
 				// Failed password check
 				unset ( $_SESSION['authdata'] );
 				unset ( $_SESSION['ipaddr'] );
+	                       if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"API.php|verify_auth failed login");	}	
 				return false;
 			} // end check password
 		} // end of checking for authdata array
@@ -1009,13 +1181,11 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $on_this_page++;
     $first = true; // first item in the list has 'view' link
     $buffer .= "
-    <tr CLASS=\"".($my = freemed_alternate())."\" ".
-    "onMouseOver=\"this.className='cell_hilite'; return true;\" ".
-    "onMouseOut=\"this.className='".$my."'; return true;\" ".
+    <tr CLASS=\"".freemed_alternate()."\" ".
     ( ($flags & ITEMLIST_VIEW) ?
-      "onClick=\"window.location='$page_link?module=$module&patient=$patient&".
-      "action=view&id=".urlencode($this_result['id'])."'; return true;\" " : "" ).
-    ">
+    "onClick=\"window.location='$page_link?module=$module&patient=$patient&".
+    "action=view&id=".urlencode($this_result['id'])."'; return true;\" " :
+    "" ).">
     ";
     reset($control_list); // it's already each'd the arrays, 
     if (is_array($xref_list)) 
@@ -1388,16 +1558,12 @@ function freemed_import_stock_data ($table_name) {
 	$physical_file = PHYSICAL_LOCATION . "/data/" . $language .
 		"/" .  $table_name . "." . $language . ".data";
 
-	print "physical file = $physical_file<br/>";
-
 	// Die if the phile doesn't exist
 	if (!file_exists($physical_file)) return false;
 
-	return;
-
 	// Create the query
-	$query = "LOAD DATA LOCAL INFILE '$physical_file' INTO ".
-		"TABLE ".$table_name." ".
+	$query = "LOAD DATA LOCAL INFILE '".addslashes($physical_file)."' ".
+		"INTO TABLE ".addslashes($table_name)." ".
 		"FIELDS TERMINATED BY ','";
            
 	$result = $sql->query ($query); // try doing it
@@ -1405,42 +1571,10 @@ function freemed_import_stock_data ($table_name) {
 	return $result; // send the results home...
 } // end function freemed_import_stock_data
 
-// function freemed_log
-/*
- TODO: FIX ME!
-function freemed_log ($db_name, $record_number, $comment) {
-	global $cur_date, $sql;
-
-	$f_auth = explode (":", $f_cookie);
-	$f_user = $f_auth [0];  // extract the user number
-
-	$query = "INSERT INTO log VALUES ( '$cur_date',
-	$f_user', '$db_name', '$record_number', '$comment', NULL )";
-	$result = $sql->query ($query); // perform addition
-	return true;  // return true
-} // end function freemed_log
-*/
-
 // function freemed_open_db
+// --- simply backwards compatibility stub for freemed::connect
 function freemed_open_db () {
-	global $display_buffer;
-
-	// Verify
-	if (!freemed::verify_auth()) {
-		$display_buffer .= "
-		<div ALIGN=\"CENTER\">
-		<b>".__("You have entered an incorrect username or password.")."</b>
-		<br/><br/>
-		<b><i>".__("It is possible that your cookies have expired.")."</i></b>
-		<p/>
-		".template::link_button(
-			__("Return to the Login Screen"),
-			"index.php"
-		)."
-		</div>
-		";
-		template_display();
-	} // end if connected loop
+	freemed::connect();
 } // end function freemed_open_db
 
 //---------------------------------------------------------------------------
@@ -1894,6 +2028,12 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
 //---------------------------------------------------------------------------
 // Variable Manipulation Functions
 //---------------------------------------------------------------------------
+
+// I am tired of trying to log stuff
+// These all need an entry and log exit for log level 0
+// Fred Trotter....
+
+
 
 function fm_split_into_array ($original_string) {
 	// If there is nothing to split, return nothing

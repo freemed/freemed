@@ -108,6 +108,28 @@ class BaseModule extends module {
 		return $result;
 	} // end method BaseModule->init
 
+	//----- Internal module functions
+
+	function _GetAssociations () {
+		if (!is_array($GLOBALS['__phpwebtools']['GLOBAL_MODULES'])) {
+			$modules = CreateObject('PHP.module_list', PACKAGENAME);
+		}
+		$associations = array();
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
+			$a = $v['META_INFORMATION']['__associations'];
+			foreach ($a as $_k => $_v) {
+				if (strtolower($_k) == strtolower($this->MODULE_CLASS)) {
+					$associations[] = $_v;
+				}
+			}
+		}
+		return $associations;
+	} // end method BaseModule->_GetAssociations
+
+	function _SetAssociation ($with) {
+		$this->META_INFORMATION['__associations']["$with"] = get_class($this);
+	} // end method BaseModule->_SetAssociation
+
 } // end class BaseModule
 
 ?>
