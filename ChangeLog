@@ -5,6 +5,7 @@ freemed project changelog
   - lib/API boxtop and boxbotton checks for incorrect calling sequence
   - index.php left in commented out test code for above
   - patient.php circumvent error caused by API change above
+  - lib/freemed.php  add include for lib/API.php
 
 * Fri Mar 23 2001 fforest
   - fixedform_EN.data update with new requirements for
