@@ -42,6 +42,15 @@ a:hover {
 	background: #bbbbff 
 }
 
+/* Box for itemlist function in API */
+.itemlistbox {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #d9d9ff 
+}
+
 .menubar {
 	border-width: none;
 	background: #bbbbff 
@@ -66,11 +75,15 @@ a:hover {
 	font-size: 8pt
 }
 
+/* Class for reversed table cells.
+   NOTE: Your A tags must also contain a CLASS="reverse" entry. */
 .reverse {
 	border-width: none;
 	background: #000055;
-	color: #ffffff
+	color: #ffffff;
 }
+A.reverse:visited { color: #ffffff }
+A.reverse:link { color: #ffffff }
 
 .calendar {
 	border: thin black;
@@ -80,7 +93,8 @@ a:hover {
 	background: #ffffff 
 }
 
-.calcell {
+/* These are the alternating ledger-looking lines. */
+.cell {
 	border: thin black;
 	border-width: thin;
 	border-style: solid;
@@ -88,7 +102,7 @@ a:hover {
 	background: #cccccc 
 }
 
-.calcell_alt {
+.cell_alt {
 	border: thin black;
 	border-width: thin;
 	border-style: solid;
@@ -110,6 +124,64 @@ a:hover {
 	border-style: solid;
 	overflow: scroll;
 	background: #ffffff 
+}
+
+/* Calendar marking colors; these are defined as different labels in config */
+
+.calmark1 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #ffd08c
+}
+
+.calmark2 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #d8ff84
+}
+
+.calmark3 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #7fffae
+}
+
+.calmark4 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #9fefff
+}
+
+.calmark5 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #9dc9ff
+}
+
+.calmark6 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #9aa4ff
+}
+
+.calmark7 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #eec5ff
+}
+
+.calmark8 {
+	border: thin grey;
+	border-width: thin;
+	border-style: solid;
+	background: #ffffff
 }
 
 /* Informational box. */
