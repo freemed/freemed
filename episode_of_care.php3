@@ -554,7 +554,7 @@
         eocrelpreglastper  = '".addslashes($eocrelpreglastper). "',
         eocrelpregconfine  = '".addslashes($eocrelpregconfine). "',
         eocrelothercomment = '".addslashes($eocrelothercomment)."' 
-        WHERE id='$id'";
+        WHERE id='".addslashes($id)."'";
       break;
    } // end of action switch...
 
@@ -581,7 +581,7 @@
     <P>
     <$STDFONT_B>"._("Deleting")." ...
     ";
-   $query = "DELETE FROM $db_name WHERE id='$id'";
+   $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
    $result = fdb_query ($query);
    if ($result) { echo _("done")."\n";    }
     else        { echo _("ERROR")."\n";   }
@@ -656,10 +656,10 @@
    // procedures display
    // special jimmy-rigged query to find in 3d array...
    $query = "SELECT * FROM procrec
-             WHERE ((proceoc LIKE '$id:%') OR
-                    (proceoc LIKE '%:$id') OR
-                    (proceoc LIKE '%:$id:%') OR
-                    (proceoc='$id'))
+             WHERE ((proceoc LIKE '".addslashes($id).":%') OR
+                    (proceoc LIKE '%:".addslashes($id)."') OR
+                    (proceoc LIKE '%:".addslashes($id).":%') OR
+                    (proceoc='".addslashes($id)."'))
              ORDER BY procdt DESC";
    $result = fdb_query ($query);
   
@@ -698,11 +698,11 @@
    // special jimmy-rigged query to find in 3d array...
    $result = 0;
    $query = "SELECT * FROM pnotes
-             WHERE ((pnotespat='$patient') AND
-                    ((pnoteseoc LIKE '$id:%') OR
-                    (pnoteseoc LIKE '%:$id') OR
-                    (pnoteseoc LIKE '%:$id:%') OR
-                    (pnoteseoc='$id')))
+             WHERE ((pnotespat='".addslashes($patient)."') AND
+                    ((pnoteseoc LIKE '".addslashes($id).":%') OR
+                    (pnoteseoc LIKE '%:".addslashes($id)."') OR
+                    (pnoteseoc LIKE '%:".addslashes($id).":%') OR
+                    (pnoteseoc='".addslashes($id)."')))
              ORDER BY pnotesdt DESC";
    $result = fdb_query ($query);
      
@@ -750,7 +750,7 @@
 
    freemed_display_box_top ("$record_name");
    $result = fdb_query ("SELECT * FROM $db_name
-                         WHERE eocpatient='$patient'
+                         WHERE eocpatient='".addslashes($patient)."'
                          ORDER BY eocstartdate DESC");
 
     $this_patient = new Patient ($patient);
