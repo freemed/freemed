@@ -8,7 +8,7 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.2";
+	var $MODULE_VERSION = "0.3.3";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -123,7 +123,7 @@ class ProviderModule extends MaintenanceModule {
 			'phyidmap' => SQL__TEXT,
 			'phygrpprac' => SQL__INT_UNSIGNED(0),
 			'phyanesth' => SQL__INT_UNSIGNED(0),
-			'phyhl7id' => SQL__INT_UNSIGNED(0),
+			'phyhl7id' => SQL__VARCHAR(16),
 			'phydea' => SQL__VARCHAR(16),
 			'id' => SQL__SERIAL
 		);
@@ -592,6 +592,16 @@ class ProviderModule extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN phypracein VARCHAR(16) AFTER phypracname');
 		}
+
+		// Version 0.3.3
+		//
+		//	HL7 ID needs to be alpha
+		//
+		if (!version_check($version, '0.3.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN phyhl7id phyhl7id VARCHAR(16)');
+		}
+
 	} // end method _update
 
 } // end class ProviderModule
