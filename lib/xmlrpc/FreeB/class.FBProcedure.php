@@ -48,7 +48,11 @@ class FBProcedure {
 		return freemed::get_link_field($procedure, 'procrec', 'procunits');
 	} // end method CPTUnits
 
-	function GetProcArray ( $hash ) {
+	function WeightGrams ( $procedure ) {
+		return 0; // kludge ... have to fix this
+	} // end method WeightGrams
+
+	function ProcArray ( $hash ) {
 		// This, provided a "billing number" should ideally return a
 		// subset of what should be billed. For now, we break that
 		// behavior and return everything that needs to be billed.
@@ -66,9 +70,9 @@ class FBProcedure {
 		}
 
 		return $p;
-	} // end method GetProcArray
+	} // end method ProcArray
 
-	function GetDiagArray ( $proc ) {
+	function DiagArray ( $proc ) {
 		$p = freemed::get_link_rec($proc, 'procrec');
 		for ($i=1; $i<=4; $i++) {
 			if ($p['procdiag'.$i] > 0) {
@@ -76,7 +80,7 @@ class FBProcedure {
 			}
 		}
 		return $diag;
-	} // end method GetDiagArray
+	} // end method DiagArray
 
 	function PatientKey ( $proc ) {
 		$p = freemed::get_link_rec($proc, 'procrec');
@@ -115,7 +119,7 @@ class FBProcedure {
 	} // end method SecondPayerKey
 
 	function InsuredKey ( $procedure ) {
-		// NOTE: This is actually the coverage key, since we don't
+		// This is actually the coverage key, since we don't
 		// have a separate database table for insured people.
 		$p = freemed::get_link_rec($procedure, 'procrec');
 		// Where is the bill going, by coverage
@@ -134,20 +138,50 @@ class FBProcedure {
 		return false;
 	} // end method OtherInsuredKey
 
-	function AgentContactKey ( $proc ) {
+	function BillingContactKey ( $proc ) {
 		// TODO: STUB
 		return '';
-	} // end method AgentContactKey
+	} // end method BillingContactKey
 
-	function AgentBillingServiceKey ( $proc ) {
+	function isUsingBillingService ( $proc ) {
 		// TODO: STUB
-		return '';
-	} // end method AgentBillingServiceKey
+		return false;
+	} // end method isUsingBillingService
 
-	function AgentClearingHouseKey ( $proc ) {
+	function BillingServiceKey ( $proc ) {
 		// TODO: STUB
 		return '';
-	} // end method AgentClearingHouseKey
+	} // end method BillingServiceKey
+
+	function isUsingClearingHouse ( $proc ) {
+		// TODO: STUB
+		return false;
+	} // end method isUsingClearingHouse
+
+	function ClearingHouseKey ( $proc ) {
+		// TODO: STUB
+		return '';
+	} // end method ClearingHouseKey
+
+	function MedicaidResubmissionCode ( $proc ) {
+		// TODO: STUB
+		return '';
+	} // end method MedicaidResubmissionCode
+
+	function MedicaidOriginalReference ( $proc ) {
+		// TODO: STUB
+		return '';
+	} // end method MedicaidOriginalReference
+
+	function HCFALocalUse19 ( $proc ) {
+		// TODO: STUB
+		return '';
+	} // end method HCFALocalUse19
+
+	function HCFALocalUse10d ( $proc ) {
+		// TODO: STUB
+		return '';
+	} // end method HCFALocalUse10d
 
 	function AmountPaid ( $proc ) {
 		$query = "SELECT SUM(proccharges) AS charges FROM procrec ".
@@ -156,6 +190,11 @@ class FBProcedure {
 		$r = $GLOBALS['sql']->fetch_array($query);
 		return $r['charges'];
 	} // end method AmountPaid
+
+	function ProviderKey ( $procedure ) {
+		$p = freemed::get_link_rec($procedure, 'procrec');
+		return $p['procphysician'];
+	} // end method ProviderKey
 
 	function FacilityKey ( $procedure ) {
 		$p = freemed::get_link_rec($procedure, 'procrec');

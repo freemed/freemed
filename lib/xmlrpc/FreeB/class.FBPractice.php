@@ -47,6 +47,12 @@ class FBPractice {
 		return substr($f, 3, 7);
 	} // end method PhoneNumber
 
+	function PhoneExtension ( $key ) {
+		// TODO: Need to handle i18n with rest of number
+		$f = freemed::get_link_field($key, 'facility', 'psrphone');
+		return substr($f, 10, 4);
+	} // end method PhoneExtension
+
 	function PracticeID ( $prac, $pay, $prov ) {
 		$p = freemed::get_link_rec($prov, 'physician');
 		$map = unserialize($p['phyidmap']);
@@ -62,6 +68,15 @@ class FBPractice {
 	function isAcceptsAssignment ( $prac ) {
 		return true;
 	} // end method isAcceptsAssignment
+
+	function X12Id ( $payer ) {
+		return ''; // stub
+	} // end method X12Id
+
+	function X12IdType ( $prac ) {
+		// fixme - hardcoded 0B value
+		return '0B';
+	} // end method X12IdType
 
 } // end class FBPractice
 

@@ -7,9 +7,17 @@ class FBBillingContact {
 	// WARNING: Everything here is a STUB, since we don't really have
 	// "Billing Contacts" in the system.
 
-	function Name ( $key ) {
+	function FirstName ( $key ) {
 		return '';
-	} // end method Name
+	} // end method FirstName
+
+	function MiddleName ( $key ) {
+		return '';
+	} // end method MiddleName
+
+	function LastName ( $key ) {
+		return '';
+	} // end method FirstName
 
 	function StreetAddress ( $key ) {
 		return '';

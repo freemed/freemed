@@ -43,9 +43,17 @@ class FBClearingHouse {
 		return '';
 	} // end method PhoneExtension
 
-	function TIN ( $key ) {
+	function ETIN ( $key ) {
 		return '';
-	} // end method TIN
+	} // end method ETIN
+
+	function X12GSSenderID ( $key ) {
+		return '';
+	} // end method X12GSSenderID
+
+	function X12GSReceiverID ( $key ) {
+		return '';
+	} // end method X12GSReceiverID
 
 } // end class FBClearingHouse
 

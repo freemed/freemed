@@ -47,6 +47,12 @@ class FBFacility {
 		return substr($f, 3, 7);
 	} // end method PhoneNumber
 
+	function PhoneExtension ( $key ) {
+		// TODO: Need to handle i18n with rest of number
+		$f = freemed::get_link_field($key, 'facility', 'psrphone');
+		return substr($f, 7, 4);
+	} // end method PhoneExtension
+
 	function HCFACode ( $fac, $pay ) {
 		// TODO: This is probably wrong
 		$code = freemed::get_link_field($fac, 'facility', 'psrpos');

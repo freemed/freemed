@@ -43,6 +43,10 @@ class FBBillingService {
 		return '';
 	} // end method PhoneExtension
 
+	function ETIN ( $key ) {
+		return '';
+	} // end method ETIN
+
 	function TIN ( $key ) {
 		return '';
 	} // end method TIN

@@ -4,6 +4,11 @@
 
 class FBPatient {
 
+	function Account ( $patient ) {
+		$p = CreateObject('_FreeMED.Patient', $patient);
+		return $p->local_record['ptid'];
+	} // end method Account
+
 	function FirstName ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
 		return $p->local_record['ptfname'];
@@ -78,10 +83,27 @@ class FBPatient {
 		return substr($p['pthphone'], 3, 7);
 	} // end method PhoneNumber
 
+	function PhoneExtension ( $patient ) {
+		$p = CreateObject('_FreeMED.Patient', $patient);
+		return substr($p['pthphone'], 7, 4);
+	} // end method PhoneExtension
+
 	function isMale ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
 		return (strtoupper($p->local_record['ptgender']) == 'M');
 	} // end method isMale
+
+	function isDead ( $patient ) {
+		// TODO
+		$p = CreateObject('_FreeMED.Patient', $patient);
+		return false;
+	} // end method isDead
+
+	function DateOfDeath ( $patient ) {
+		// TODO
+		$p = CreateObject('_FreeMED.Patient', $patient);
+		return false;
+	} // end method DateOfDeath
 
 	function isFemale ( $patient ) {
 		$p = CreateObject('_FreeMED.Patient', $patient);
@@ -131,10 +153,10 @@ class FBPatient {
 		return $count;
 	} // end method CoverageCount
 
-	function ReferringPhysicianKey ( $patient ) {
+	function ReferringProviderKey ( $patient ) {
 		$p = freemed::get_link_rec($patient, 'patient');
 		return $p['ptrefdoc'];
-	} // end method ReferringPhysicianKey
+	} // end method ReferringProviderKey
 
 	function isChildOfInsured ( $pat, $cov ) {
 		$c = freemed::get_link_rec($cov, 'coverage');
@@ -169,6 +191,11 @@ class FBPatient {
 			($c['covrel'] == 'C') or
 			($c['covrel'] == 'DV'));
 	} // end method isOtherOfInsured
+
+	function X12InsuredRelationship ( $pat, $cov ) {
+		$c = freemed::get_link_rec($cov, 'coverage');
+		return $c['covrel'];
+	} // end method X12InsuredRelationship
 
 } // end class FBPatient
 

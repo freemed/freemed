@@ -67,6 +67,11 @@ class FBInsured {
 		return $c['covplanname'];
 	} // end method GroupName
 
+	function GroupNumber ( $cov ) {
+		$c = freemed::get_link_rec($cov, 'coverage');
+		return $c['covpatgrpno'];
+	} // end method GroupNumber
+
 	function IsMale ( $cov ) {
 		$c = freemed::get_link_rec($cov, 'coverage');
 		return (strtoupper($c['covsex']) == 'M');
@@ -93,6 +98,12 @@ class FBInsured {
 		// TODO: i18n broken
 		return substr($c['covphone'], 3, 7);
 	} // end method PhoneNumber
+
+	function PhoneExtension ( $cov ) {
+		$c = freemed::get_link_rec($cov, 'coverage');
+		// TODO: i18n broken
+		return substr($c['covphone'], 7, 4);
+	} // end method PhoneExtension
 
 	function isEmployed ( $cov ) {
 		// TODO: don't store this anywhere?

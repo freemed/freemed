@@ -12,10 +12,10 @@ class FBDiagnosis {
 		return freemed::get_link_field($diagkey, 'icd', 'icd10code');
 	} // end method ICD10Code
 
-	function isRelatedToHCFA ( $prockey, $diagkey ) {
+	function RelatedToHCFA ( $prockey, $diagkey ) {
 		// TODO: slot 10 in ICD code
 		return '';
-	} // end method isRelatedToHCFA
+	} // end method RelatedToHCFA
 
 	function isRelatedToAutoAccident ( $prockey, $diagkey ) {
 		// Get related EOC

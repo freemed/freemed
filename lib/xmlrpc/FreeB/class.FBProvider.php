@@ -2,8 +2,19 @@
 	// $Id$
 	// $Author$
 
+
+// Class: FreeB.FBProvider
+//
+//	XML-RPC provider-related methods.
+//
+
 class FBProvider {
 
+	// Function: FBProvider::LastName
+	//
+	//	Returns the last name of the provider referenced by its
+	//	parameter.
+	//
 	function LastName ( $provider ) {
 		$p = CreateObject('_FreeMED.Physician', $provider);
 		return $p->local_record['phylname'];
@@ -46,13 +57,18 @@ class FBProvider {
 
 	function PhoneArea ( $provider ) {
 		$p = CreateObject('_FreeMED.Physician', $provider);
-		return substr($p->local_record['phyzipa'], 0, 3);
+		return substr($p->local_record['phyphonea'], 0, 3);
 	} // end method PhoneArea
 
 	function PhoneNumber ( $provider ) {
 		$p = CreateObject('_FreeMED.Physician', $provider);
-		return substr($p->local_record['phyzipa'], 3, 7);
+		return substr($p->local_record['phyphonea'], 3, 7);
 	} // end method PhoneNumber
+
+	function PhoneExtension ( $provider ){
+		$p = CreateObject('_FreeMED.Physician', $provider);
+		return substr($p->local_record['phyphonea'], 7, 4);
+	} // end method PhoneExtension
 
 	function SocialSecurityNumber ( $provider ) {
 		$p = CreateObject('_FreeMED.Physician', $provider);

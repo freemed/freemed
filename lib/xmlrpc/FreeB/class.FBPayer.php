@@ -178,6 +178,16 @@ class FBPayer {
 		return true;
 	} // end method isHCFACondensed
 
+	function X12SecondaryMedicareCode ( $key ) {
+		return ''; // need to fix this kludge
+	} // end method X12SecondaryAMedicareCode
+
+	function X12ClaimType ( $key ) {
+		$i = freemed::get_link_rec($key, 'insco');
+		$mods = explode (':', $i['inscomod']);
+		return freemed::get_link_field($mods[0], 'insmod', 'insmod');
+	} // end method X12ClaimType
+
 } // end class FBPayer
 
 ?>
