@@ -1,50 +1,50 @@
 <?php
-  # file: simplerep_plaintext_email.php3
-  # version: 19991103
-  #
-  # note: This module uses Basser Lout for hyhenating text from 
-  # the simplerep module. Unlike simplerep_lout.php3 it only outputs
-  # plaintext
-  # It accepts being passed the following parameters and content :
-  #
-  # $sr_label         : name of the original template used
-  #
-  # $patient          : current patient's unique id
-  #
-  # $suppress_headers : self-explaining. if == "yes", no headers
-  #                     allows for using preprinted paper
-  # $header_line_1    : headers come from the facility information
-  # $header_line_2
-  # $header_line_3
-  # $header_line_4
-  # $header_line_5
-  #
-  # $dest_line_1      : destinatary informations
-  # $dest_line_2
-  # $dest_line_3
-  # $dest_line_4
-  #
-  # $date_line        : contains the date and place of origin
-  #
-  # $sr_text          : the text of the report itself
-  #
-  # $signature_line_1 : Name and abbreviated titles
-  # $signature_line_2 : additional specialities if set
-  #
-  # $ptdoc            : signing physician database id
-  # $ptid1            : signing physician internal (facility) id
-  #
-  #
-  # code: max k <amk@span.ch>
-  #       jeff b (jeff@univrel.pr.uconn.edu) -- template
-  # lic : GPL
-  # 
-  # please note that you _can_ remove the comments down below,
-  # but everything above here should remain untouched. please
-  # do _not_ remove my name or address from this file, since I
-  # have worked very hard on it. the license must also always
-  # remain GPL.                                     -- jeff b
-  #
+ // file: simplerep_plaintext_email.php3
+ // version: 1999-11-03
+ //
+ // note: This module uses Basser Lout for hyhenating text from 
+ // the simplerep module. Unlike simplerep_lout.php3 it only outputs
+ // plaintext
+ // It accepts being passed the following parameters and content :
+ //
+ // $sr_label         : name of the original template used
+ //
+ // $patient          : current patient's unique id
+ //
+ // $suppress_headers : self-explaining. if == "yes", no headers
+ //                     allows for using preprinted paper
+ // $header_line_1    : headers come from the facility information
+ // $header_line_2
+ // $header_line_3
+ // $header_line_4
+ // $header_line_5
+ //
+ // $dest_line_1      : destinatary informations
+ // $dest_line_2
+ // $dest_line_3
+ // $dest_line_4
+ //
+ // $date_line        : contains the date and place of origin
+ //
+ // $sr_text          : the text of the report itself
+ //
+ // $signature_line_1 : Name and abbreviated titles
+ // $signature_line_2 : additional specialities if set
+ //
+ // $ptdoc            : signing physician database id
+ // $ptid1            : signing physician internal (facility) id
+ //
+ //
+ // code: max k <amk@span.ch>
+ //       jeff b (jeff@univrel.pr.uconn.edu) -- template
+ // lic : GPL
+ // 
+ // please note that you _can_ remove the comments down below,
+ // but everything above here should remain untouched. please
+ // do _not_ remove my name or address from this file, since I
+ // have worked very hard on it. the license must also always
+ // remain GPL.                                     -- jeff b
+ //
 
 
     // *** local variables section ***
@@ -223,7 +223,7 @@ $fileclose = fclose ( $fr )                      ;
 
 //    $mail = new mail_message()                                  ;
 //    $mail->from = "\"$signature_line_1\" <$email_replyto_addr>" ;
-//    $mail->headers = "X-Mailer: PHP$phpversion/$packagename$version\n" ;
+//    $mail->headers = "X-Mailer: PHP$phpversion/".PACKAGENAME.VERSION."\n" ;
 //    $mail->to = "\"$dest_line_1\" <$email_dest_addr>"           ;
 //    $mail->subject = "$sr_label"                                ;
 //    $mail->body = "$message"                                    ;
@@ -236,7 +236,7 @@ $fileclose = fclose ( $fr )                      ;
    $mailed = mail ( "\"$dest_line_1\" <$email_dest_addr>", 
                     "$subject", 
                     "$message", 
-                    "From: \"$signature_line_1\" <$email_replyto_addr>\nReply-To: $email_replyto_addr\nMIME-Version: 1.0\nContent-Type: TEXT/PLAIN; charset=\"$__ISO_SET__\"\nContent-Transfer-Encoding: 8bit\nX-Mailer: PHP$phpversion/$packagename$version\n" ) ;
+                    "From: \"$signature_line_1\" <$email_replyto_addr>\nReply-To: $email_replyto_addr\nMIME-Version: 1.0\nContent-Type: TEXT/PLAIN; charset=\"$__ISO_SET__\"\nContent-Transfer-Encoding: 8bit\nX-Mailer: PHP$phpversion/".PACKAGENAME.VERSION."\n" ) ;
 
 /// ----------------- new code with sendmail
 
@@ -253,7 +253,7 @@ $fileclose = fclose ( $fr )                      ;
 // fwrite ( $fs, "MIME-Version: 1.0\n" )                                  ;
 // fwrite ( $fs, "Content-Type: TEXT/PLAIN; charset=\"$__ISO_SET__\"\n" ) ;
 // fwrite ( $fs, "Content-Transfer-Encoding: 8bit\n" )                    ;
-// fwrite ( $fs, "X-Mailer: PHP$phpversion/$packagename$version\n" )      ;
+// fwrite ( $fs, "X-Mailer: PHP$phpversion/".PACKAGENAME.VERSION."\n" )      ;
 // fwrite ( $fs, "\n" )                                                   ;
 // fwrite ( $fs, "$sr_pt" )                                               ;
 // fwrite ( $fs, "\n" )                                                   ;

@@ -1,8 +1,8 @@
 <?php
-  # file: logout.php3
-  # note: sets name/password cookie to null...
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL
+ // file: logout.php3
+ // note: sets name/password cookie to null...
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
   $page_name = "logout.php3";
   include ("global.var.inc");
@@ -21,7 +21,7 @@
   echo "
     <HTML>
     <HEAD>
-     <TITLE>logout for $packagename</TITLE>
+     <TITLE>logout for ".PACKAGENAME."</TITLE>
      <META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$base_url$__url_part\">
     </HEAD>
     <BODY BGCOLOR=#ffffff>

@@ -1,11 +1,15 @@
 <?php
- # file: render_forms.inc
- # desc: form rendering functions
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: render_forms.inc
+ // desc: form rendering functions
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
- if (!$__global_var__)        include ("global.var.inc");
- if (!$__freemed_functions__) include ("freemed-functions.inc");
+ include ("global.var.inc");
+ include ("freemed-functions.inc");
+
+if (!defined (__RENDER_FORMS_INC__)) {
+
+define (__RENDER_FORMS_INC__, true);
 
 // ****************************************
 // ********* FIXED FORMS SECTION **********
@@ -289,5 +293,7 @@ function render_fixedForm ($id) {
   // send the buffer back to the calling routine
   return $buffer."\n";
 } // end function render_fixedForm
+
+} // end checking for __RENDER_FORMS_INC__
 
 ?>

@@ -1,9 +1,9 @@
 <?php
- # file: admin.php3
- # note: administrative functions
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- #       language support by Max Klohn (amk@span.ch)
- # lic : GPL, v2
+ // file: admin.php3
+ // note: administrative functions
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ //       language support by Max Klohn (amk@span.ch)
+ // lic : GPL, v2
 
  $page_name="admin.php3"; // for help, later
  include "global.var.inc";
@@ -111,7 +111,7 @@ if ($action=="cfgform") {
     default:              $_phofmt_uf = "SELECTED"; break;
   } // end phone format switch
 
-  freemed_display_box_top ("$packagename Configuration", $page_name);
+  freemed_display_box_top (PACKAGENAME." Configuration", $page_name);
   echo "
     <P>
 
@@ -212,7 +212,7 @@ if ($action=="cfgform") {
 
 } elseif ($action=="cfg") {
 
-  freemed_display_box_top ("$packagename $Update_config", $page_name);
+  freemed_display_box_top (PACKAGENAME." $Update_config", $page_name);
   echo "
     <P>
   ";

@@ -1,9 +1,9 @@
 <?php
-  # file: authenticate.php3
-  # note: sets name/password cookie
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL
-  # modif for languages max k <amk@span.ch> <19990807>
+ // file: authenticate.php3
+ // note: sets name/password cookie
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL
+ // modif for languages max k <amk@span.ch> <19990807>
 
   $page_name = "authenticate.php3" ;
   include ("global.var.inc");
@@ -60,7 +60,7 @@
   echo "
     <HTML>
     <HEAD>
-     <TITLE>authentication for $packagename</TITLE>
+     <TITLE>authentication for ".PACKAGENAME."</TITLE>
      <META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$_jump_page\">
     </HEAD>
     <BODY BGCOLOR=#ffffff>

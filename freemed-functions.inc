@@ -7,8 +7,7 @@
  //       max k <amk@span.ch>
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
- // ver : 2000-04-19
-
+ // ver : 2000-07-25
 
 if (!defined(__FREEMED_FUNCTIONS_INC__)) {
 
@@ -107,15 +106,15 @@ function freemed_config_value ($config_var)
 // function freemed_display_banner (page description)
 function freemed_display_banner ($_pg_desc="")
 {
-  global $packagename, $version, $STDFONT_B, $STDFONT_E, $bugs_address,
-         $installation, $show_top_links;
+  global $STDFONT_B, $STDFONT_E, $bugs_address,
+         $show_top_links;
 
   echo " 
     <CENTER>
       <B><$STDFONT_B SIZE=+2>
-        --= $packagename v$version $_pg_desc =--
+        --= ".prepare(PACKAGENAME)." v".prepare(VERSION)." $_pg_desc =--
       <$STDFONT_E></B><BR>
-      <$STDFONT_B>".fm_prep($installation)."<$STDFONT_E>
+      <$STDFONT_B>".fm_prep(INSTALLATION)."<$STDFONT_E>
   ";
   if ($show_top_links) echo "
       <BR>
@@ -482,7 +481,7 @@ function freemed_display_cptcodes ($param)
 //   display <SELECT>-type list of CPT modifiers
 function freemed_display_cptmods ($param)
 {
-  global $NONE_SELECTED, $SELECTED;
+  global $NONE_SELECTED;
 
   echo "
     <OPTION VALUE=\"0\">$NONE_SELECTED
@@ -544,12 +543,12 @@ function freemed_display_drugs ($param)
 // function freemed_display_html_bottom
 function freemed_display_html_bottom ($_null="")
 {
-  global $_mail_handler, $bugs_email, $lang_coded_by, $coded_by;
+  global $_mail_handler, $lang_coded_by;
 
   echo "
     <CENTER>
       <I><FONT SIZE=-2 COLOR=#555555>$lang_coded_by
-        <A HREF=\"$_mail_handler$bugs_email\">$coded_by</A>
+        <A HREF=\"$_mail_handler".BUGS_EMAIL."\">".CODED_BY."</A>
       </FONT></I>
     </CENTER>
     </BODY>
@@ -560,8 +559,7 @@ function freemed_display_html_bottom ($_null="")
 // function freemed_display_html_top
 function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 {
-  global $packagename, $version, $__ISO_SET__, $_pg_desc,
-         $installation;
+  global $__ISO_SET__, $_pg_desc;
 
   if ($_pg_desc_given=="") $_pg_desc_given = $_pg_desc;
 
@@ -575,8 +573,8 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
    <HEAD>
      <META HTTP-EQUIV=\"Content-Type\"
       CONTENT=\"text/html; CHARSET=$__ISO_SET__\">
-     <TITLE>$packagename v$version $_pg_desc_given
-        - ".fm_prep($installation)."</TITLE>
+     <TITLE>".PACKAGENAME." v".VERSION." $_pg_desc_given
+        - ".prepare(INSTALLATION)."</TITLE>
    </HEAD>
    <BODY BGCOLOR=#ffffff ALINK=#0000ff VLINK=0000ff>
   ";

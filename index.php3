@@ -14,7 +14,7 @@
   freemed_display_html_top ();
   freemed_display_banner ();
 
-  freemed_display_box_top("$packagename $Login", "index.php3");
+  freemed_display_box_top(PACKAGENAME." $Login", "index.php3");
 
 echo "
 <P>
@@ -126,7 +126,7 @@ echo "
   if ($debug) {
     echo "
       <BR><FONT SIZE=-2>
-      <A HREF=\"CHANGELOG\">CHANGELOG for $version</A>
+      <A HREF=\"CHANGELOG\">CHANGELOG for ".VERSION."</A>
       </FONT>
     ";
   } // 19990602 -- show changelog link

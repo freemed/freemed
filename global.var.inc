@@ -12,10 +12,11 @@
 if (!defined(__GLOBAL_VAR_INC__)) {
 
     // these variables you should not touch
-  $packagename="freemed";		// package name
-  $coded_by="jeff b";			// coded by tag
-  $version="0.2pre20000725";            // current version number
-  $bugs_email="code_bugs@test.pr.uconn.edu";	// coder email...
+  define (PACKAGENAME, "freemed");	// package name
+  define (CODED_BY, "jeff b");		// coded by tag
+  define (VERSION, "0.2pre20000725");	// current version number
+  define (BUGS_EMAIL, "code_bugs@test.pr.uconn.edu";	// coder email...
+
   $bugs_address="http://www.freemed.org/keystone/visitor.php3";
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
   $cur_date_hash=date("Ymd");		// YYYYMMDD date hash
@@ -28,7 +29,7 @@ if (!defined(__GLOBAL_VAR_INC__)) {
     // **********************************
     // ***** customizable variables *****
     // **********************************
-  $installation="Stock Freemed Install"; // installation name
+  define (INSTALLATION, "Stock Freemed Install"); // installation name
   $show_top_links=true;                 // do we show links on the top?
   //$host=chop(`cat /etc/HOSTNAME`); 	// webserver location
   $host="localhost";                    // skip the eval, speed hack
@@ -127,6 +128,7 @@ if (!defined(__GLOBAL_VAR_INC__)) {
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
+  include ("webtools.php");            // webtools toolkit
   include ("iso-set.inc");             // ISO set handler
   include ("containers.inc");          // class containers
   include ("language-loader.inc");     // external language loader

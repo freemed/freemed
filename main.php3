@@ -1,9 +1,9 @@
 <?php
- # file: main.php3
- # note: main menu module
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL
- # translated by max k <amk@span.ch>
+ // file: main.php3
+ // note: main menu module
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL
+ // translated by max k <amk@span.ch>
 
  $page_name="main.php3";
  include ("global.var.inc");
@@ -21,7 +21,7 @@
  freemed_display_html_top ();
  freemed_display_banner ();
 
-freemed_display_box_top("$packagename $Main_menu", "index.php3");
+freemed_display_box_top(PACKAGENAME." $Main_menu", "index.php3");
 
 echo "
   <P>
@@ -133,7 +133,7 @@ echo "
   <TD ALIGN=RIGHT>
   </TD>
   <TD ALIGN=LEFT>
-  <B><A HREF=\"logout.php3\">$Logout_of $packagename</A>
+  <B><A HREF=\"logout.php3\">$Logout_of ."PACKAGENAME</A>
   </B>
   </TD></TR>
   </TABLE>
