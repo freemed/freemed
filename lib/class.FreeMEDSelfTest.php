@@ -1,14 +1,15 @@
 <?php
-    // $Id$
-    // $Author$
-    // code: fred trotter (ftrotter@synseer.com)
-    // lic: GPL, v2
+	// $Id$
+	// $Author$
+	// code: fred trotter (ftrotter@synseer.com)
+	// lic: GPL, v2
 
 class FreeMEDSelfTest {
 
 	function FreeMEDSelfTest () {
-		// Check for skipping this entire thing
-		if (file_exists('data/cache/healthy')) {
+		// Check for skipping this entire thing, but only if we are
+		// configured to always check the system.
+		if (file_exists('data/cache/healthy') and !ALWAYS_SELFTEST) {
 			// Healthy installation, skipping
 			return true;
 		} else {
