@@ -1,8 +1,8 @@
 <?php
- # file: generate_fixed_forms.php3
- # desc: generate fixed forms
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: generate_fixed_forms.php3
+ // desc: generate fixed forms
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name = "generate_fixed_forms.php3";
  include ("global.var.inc");
@@ -43,7 +43,7 @@
      echo "
       <P>
       <CENTER>
-       <$STDFONT_B>Nothing to be billed.<$STDFONT_E>
+       <$STDFONT_B>"._("There is nothing to be billed.")."<$STDFONT_E>
       </CENTER>
       <P>
      ";
@@ -94,7 +94,7 @@
      // get current patient information
      $this_patient = new Patient ($current_patient);
      echo "
-      <B>Processing ".$this_patient->fullName()."
+      <B>"._("Processing")." ".$this_patient->fullName()."
         (<A HREF=\"manage.php3?$auth&id=$current_patient\"
          >".$this_patient->local_record[ptid]."</A>)</B>
       <BR>\n\n
@@ -132,7 +132,7 @@
      // create a new diagnosisSet stack
      $diag_set = new diagnosisSet (); // new stack of size 4
 
-     if ($debug) echo "\nBuilding patient information...<BR>\n";
+     if ($debug) echo "\n"._("Building patient information")."...<BR>\n";
 
      // pull in proper variables
      $ptname[last]    = $this_patient->ptlname;
@@ -366,7 +366,7 @@
      // queue all entries
      while ($r = fdb_fetch_array ($result)) {
        $p = freemed_get_link_rec ($r[payrecproc], "procrec");
-       if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
+       if ($debug) echo "\n"._("Retrieved procedure")." $r[payrecproc] <BR>\n";
        flush();
 
        if ($p[procbalcurrent]<=0) {
@@ -498,24 +498,24 @@
    } // end of while there are no more patients
 
    #################### TAKE THIS OUT AFTER TESTING #######################
-   #echo "<PRE>\n".fm_prep($form_buffer)."\n</PRE>\n";
+   #echo "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
    ########################################################################
 
    echo "
     <FORM ACTION=\"echo.php3/form.txt\" METHOD=POST>
      <CENTER>
-      <$STDFONT_B><B>Preview</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
      </CENTER>
      <BR>
      <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
-     >".fm_prep($form_buffer)."</TEXTAREA>
+     >".prepare($form_buffer)."</TEXTAREA>
     <P>
     <CENTER>
      <SELECT NAME=\"type\">
-      <OPTION VALUE=\"\">Render to Screen
-      <OPTION VALUE=\"application/x-rendered-text\">Render to File
+      <OPTION VALUE=\"\">"._("Render to Screen")."
+      <OPTION VALUE=\"application/x-rendered-text\">"._("Render to File")."
      </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
+     <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
     </CENTER>
     </FORM>
     <P>
@@ -524,11 +524,11 @@
    // present the form so that we can mark as billed
    echo "
     <CENTER>
-    <$STDFONT_B><B>Mark as Billed</B><$STDFONT_E>
+    <$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
     </CENTER>
     <BR>
     <FORM ACTION=\"$page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
+     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mark\">
    ";
    for ($i=1;$i<=$pat_processed;$i++) {
@@ -543,7 +543,7 @@
    } // end looping for all processed patients
    echo "
     <P>
-    <INPUT TYPE=SUBMIT VALUE=\"Mark as Billed\">
+    <INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
     </FORM>
     <P>
    ";
@@ -552,24 +552,24 @@
    break; // end of action geninsform
 
   case "mark": // mark as billed action
-   freemed_display_box_top ("Mark Forms as Billed");
+   freemed_display_box_top (_("Mark as Billed"));
    if (count($processed)<1) {
     echo "
      <P>
      <CENTER>
-      <$STDFONT_B><B>Nothing set to be marked!</B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Nothing set to be marked!")."</B><$STDFONT_E>
      </CENTER>
      <P>
      <CENTER>
       <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
      </CENTER>
      <P>
     ";
    } else {
      for ($i=0;$i<count($processed);$i++) {
        echo "
-         Marking ".$processed[$i]." ... 
+         "._("Marking")." ".$processed[$i]." ... 
        ";
        $query = "UPDATE procrec
                  SET procbilled = '1'
@@ -586,7 +586,7 @@
       <P>
       <CENTER>
        <A HREF=\"$page_name?$_auth\"
-       ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
+       ><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
       </CENTER>
       <P>
      ";
@@ -595,7 +595,7 @@
    break; // end of mark as billed action
 
   default:
-   freemed_display_box_top ("Fixed Forms Generation Menu");
+   freemed_display_box_top (_("Fixed Forms Generation"));
    echo "
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
      VALIGN=MIDDLE ALIGN=CENTER>
@@ -603,19 +603,19 @@
     <TR>
      <TD COLSPAN=2>
       <CENTER>
-       <$STDFONT_B><B>Generate Insurance Claim Forms</B><$STDFONT_E>
+       <$STDFONT_B><B>"._("Generate Insurance Claim Forms")."</B><$STDFONT_E>
       </CENTER>
      </TD>
     </TR>
 
     <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
+    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"geninsform\">
 
     <TR>
      <TD ALIGN=RIGHT>
       <CENTER>
-       <$STDFONT_B>Claim Form : <$STDFONT_E>
+       <$STDFONT_B>"._("Claim Form")." : <$STDFONT_E>
       </CENTER>
      </TD>
      <TD ALIGN=LEFT>
@@ -625,7 +625,7 @@
                          ORDER BY ffname, ffdescrip");
    while ($r = fdb_fetch_array ($result)) {
     echo "
-     <OPTION VALUE=\"$r[id]\">".fm_prep($r[ffname])."
+     <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
     ";
    } // end looping through results                         
    echo "
@@ -636,31 +636,27 @@
     <TR>
      <TD ALIGN=RIGHT>
       <CENTER>
-       <$STDFONT_B>Number of Patients : <$STDFONT_E>
+       <$STDFONT_B>"._("Number of Patients")." : <$STDFONT_E>
       </CENTER>
      </TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select ("num_patients", 0, 200);
-   echo "
+   ".fm_number_select ("num_patients", 0, 200)."
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Skip # of Pats to Bill : <$STDFONT_E>
+      <$STDFONT_B>"._("Skip # of Pats to Bill")." : <$STDFONT_E>
      </TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select ("skip", 0, 100);
-   echo "
+   ".fm_number_select ("skip", 0, 100)."
      </TD>
     </TR>
 
     <TR>
      <TD COLSPAN=2>
       <CENTER>
-       <INPUT TYPE=SUBMIT VALUE=\"go\">
+       <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
       </CENTER>
      </TD>
     </TR>

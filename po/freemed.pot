@@ -1169,4 +1169,142 @@ msgstr ""
 msgid "This patient has no authorizations."
 msgstr ""
 
+msgid "back"
+msgstr ""
+
+msgid "exit"
+msgstr ""
+
+msgid "NO PATIENT SPECIFIED"
+msgstr ""
+
+msgid "Patient Payment"
+msgstr ""
+
+msgid "Generate Insurance Billing"
+msgstr ""
+
+msgid "Add Appointment"
+msgstr ""
+
+msgid "this date occurs in the past"
+msgstr ""
+
+msgid "Change Room"
+msgstr ""
+
+msgid "The selected room is free all day."
+msgstr ""
+
+msgid "TIME"
+msgstr ""
+
+msgid "NO PREFERENCE"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Commit Booking"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+msgid "Middle"
+msgstr ""
+
+msgid "First"
+msgstr ""
+
+msgid "Took Call"
+msgstr ""
+
+msgid "Complaint"
+msgstr ""
+
+msgid "Show Today's Appointments"
+msgstr ""
+
+msgid "Show All Appointments"
+msgstr ""
+
+msgid "Old"
+msgstr ""
+
+msgid "All"
+msgid ""
+
+msgid "Current"
+msgid ""
+
+msgid "Date of Call"
+msgstr ""
+
+msgid "Home/Work Phone"
+msgstr ""
+
+msgid "VIEW"
+msgstr ""
+
+msgid "BOOK"
+msgstr ""
+
+msgid "There is nothing to be billed."
+msgstr ""
+
+msgid "Processing"
+msgstr ""
+
+msgid "Building patient information"
+msgstr ""
+
+msgid "Retrieved procedure"
+msgstr ""
+
+msgid "Preview"
+msgstr ""
+
+msgid "Render to Screen"
+msgstr ""
+
+msgid "Render to File"
+msgstr ""
+
+msgid "Get Rendered Text File"
+msgstr ""
+
+msgid "Mark as Billed"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Marking"
+msgid ""
+
+msgid "Fixed Forms Generation"
+msgstr ""
+
+msgid "Generate Insurance Claim Forms"
+msgstr ""
+
+msgid "Claim Form"
+msgstr ""
+
+msgid "Number of Patients"
+msgstr ""
+
+msgid "Skip # of Pats to Bill"
+msgstr ""
+
+msgid "Nothing set to be marked!"
+msgstr ""
+
 # END
