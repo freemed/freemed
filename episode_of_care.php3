@@ -722,6 +722,13 @@
      </CENTER>
     ";
    } // end if/else for result
+   echo "
+     <P>
+     <CENTER>
+      <$STDFONT_B><A HREF=\"procedure.php3?$_auth&action=addform".
+       "&patient=$patient\">Add a Procedure</A><$STDFONT_E>
+     </CENTER>
+   ";
    // end of procedures display
 
    // progress notes display
@@ -761,6 +768,13 @@
      </CENTER>
     ";
    } // end if/else for result
+   echo "
+     <P>
+     <CENTER>
+      <$STDFONT_B><A HREF=\"progress_notes.php3?$_auth&action=addform".
+       "&patient=$patient\">Add a Procedure</A><$STDFONT_E>
+     </CENTER>
+   ";
    // end of progress notes display
 
    // display management link at the bottom...
