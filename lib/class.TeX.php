@@ -306,6 +306,9 @@ class TeX {
 		$string = str_replace('{', '\{', $string);
 		$string = str_replace('}', '\}', $string);
 
+		// Get rid of #
+		$string = str_replace('#', '\#', $string);
+
 		// HTML/SGML specific texts
 		if (!$skip_html) {
 			$string = str_replace('<', '\<', $string);
