@@ -97,6 +97,8 @@ class AgataMerge extends AgataCore
     $line2 = "2 setlinewidth  \n {$this->LeftMargin} \$lin moveto \n $LineLen \$lin lineto \n stroke \n";
     $line3 = "3 setlinewidth  \n {$this->LeftMargin} \$lin moveto \n $LineLen \$lin lineto \n stroke \n";
 
+    $pagebreak = "PAGEBREAK\n";
+
     $copy  = "\251"; // Copyright
     $s14   = "\274"; // 1/4
     $s12   = "\275"; // 1/2
@@ -180,6 +182,15 @@ class AgataMerge extends AgataCore
           eval ("\$Line = \"$Line\";");
         }
 
+        // Decide whether we need to skip pages here
+	if ($lin <= $this->TopMargin or substr($Line, 0, 9)=='PAGEBREAK') {
+	  // End page
+          fwrite($fd, "showpage \n");
+          $page ++;
+          fwrite($fd, '%%Page: ' . $page . ' ' . $page . "\n");
+          $lin = $this->PageHeight - $this->TopMargin;
+        }
+      
 	if (substr($Line, 0, 2) == "//") //COMENTARIO
         {
           fwrite($fd, "%" . $Line . "\n");
@@ -261,6 +272,15 @@ class AgataMerge extends AgataCore
 
 		eval ("\$Line_ = \"$Line\";");
 		
+                // Decide whether we need to skip pages here
+                if ($lin <= $this->TopMargin or substr($Line, 0, 9)=='PAGEBREAK') {
+                  // End page
+                  fwrite($fd, "showpage \n");
+                  $page ++;
+                  fwrite($fd, '%%Page: ' . $page . ' ' . $page . "\n");
+                  $lin = $this->PageHeight - $this->TopMargin;
+                }
+      
 		if (strpos($Line_, '#set') > 0)
 		{
 		  $this->Format($fd, $lin, $Line_);
