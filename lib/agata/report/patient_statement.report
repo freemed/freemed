@@ -23,7 +23,7 @@
 
 Select:CONCAT(pat.ptlname,', ', pat.ptfname, ' ', pat.ptmname) AS patient_name, pat.ptid AS internal_id, pat.id AS patient_id, ROUND(SUM(proc.procbalcurrent),2) AS total_balance, phy.phypracname AS practice_name, phy.phyaddr1a AS address_1, phy.phyaddr2a AS address_2, CONCAT(phy.phycitya,', ',phy.phystatea,' ',phy.phyzipa) AS csz, CONCAT(phy.phylname, ', ', phy.phyfname, ' ', phy.phymname) AS physician_name, ROUND(SUM(proc.procamtpaid),2) AS total_paid, ROUND(SUM(proc.proccharges),2) AS total_charges, CONCAT('(',SUBSTRING(phy.phyphonea FROM 1 FOR 3),') ',SUBSTRING(phy.phyphonea FROM 4 FOR 3),'-',SUBSTRING(phy.phyphonea FROM 7 FOR 4)) AS office_phone, CONCAT(pat.ptfname,' ',pat.ptmname, IF(LENGTH(pat.ptmname)>0,'. ', ''), pat.ptlname) AS patient_label_name, pat.ptaddr1 AS patient_address, CONCAT(pat.ptcity,', ',pat.ptstate,' ',pat.ptzip) AS patient_csz
 From:patient AS pat, procrec AS proc, physician AS phy
-Where:proc.procpatient = pat.id and proc.procbalcurrent > 0 and proc.proccurcovtp = '0' and pat.ptdoc = phy.id
+Where:proc.procpatient = pat.id and proc.procbalcurrent > 0 and proc.proccurcovtp = '0' and pat.ptdoc = phy.id and ('where' = 'where')
 Group by:pat.id
 Order by:patient_name
 %%: 
@@ -39,7 +39,7 @@ Order by:patient_name
 @MergeLeftMargin:10
 @MergeText:#setfan14 #tab400 Patient Statement
 @MergeText:$fan10
-@MergeText:$line1
+@MergeText:$line3
 @MergeText:#tab20 Pay To #tab400 Patient #tab460 $var1
 @MergeText:#tab40 $var5 #tab400 ID #tab460 $var2
 @MergeText:#tab40 $var6 #tab400 Amount Due #tab460 $var4
@@ -73,7 +73,7 @@ Order by:patient_name
 @MergeText:
 @MergeText:<<<SUB-SQL
 @MergeText:$line1
-@MergeText:#tab400 Total Charges #tab500 $var11
+@MergeText:#setfab10 #tab400 Total Charges #setfan10 #tab500 $var11
 @MergeText:$line2
 @MergeText:
 @MergeText:
@@ -89,9 +89,10 @@ Order by:patient_name
 @MergeText:
 @MergeText:<<<SUB-SQL
 @MergeText:$line1
-@MergeText:#tab400 Total Payments #tab500 $var10
+@MergeText:#setfab10 #tab400 Total Payments #setfan10 #tab500 $var10
 @MergeText:$line2
 @MergeText:
+@MergeText:#setfab10 #tab400 Amount Due #tab500 $var4
 @MergeText:
 @MergeText:#setfan08 #tab80 If you have any questions about your bill, please call our office during regular business hours at $var12.
 @MergeText:
