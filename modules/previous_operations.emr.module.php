@@ -82,7 +82,7 @@ class PreviousOperationsModule extends EMRModule {
 			"manage\"/>
 			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
 			prepare($patient)."\"/>
-			".html_form::text_widget("op", 20, 50)."
+			".html_form::text_widget("op", 75)."
 			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\"/>
 			</form>
 			</div>

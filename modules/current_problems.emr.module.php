@@ -85,7 +85,7 @@ class CurrentProblemsModule extends EMRModule {
 			"manage\"/>
 			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
 			prepare($patient)."\"/>
-			".html_form::text_widget("problem", 20, 50)."
+			".html_form::text_widget("problem", 75)."
 			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\"/>
 			</form>
 			</div>
