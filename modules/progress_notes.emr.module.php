@@ -69,10 +69,28 @@ class progressNotes extends freemedEMRModule {
       } // end internal switch
      } // end checking if been here
 
+     // Check episode of care dependency
+     if(check_module("episodeOfCare")) {
+       // Actual piece
+       $related_episode_array = array (
+         _("Related Episode(s)") =>
+           freemed_multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
+                                  "eocdtlastsimilar FROM eoc WHERE ".
+                                  "eocpatient='$patient'",
+                                  "eocdescrip:eocstartdate:eocdtlastsimilar",
+                                  "pnoteseoc",
+                                  $pnoteseoc,
+                                  false),
+        );
+     } else {
+        // Put in blank array instead
+	$related_episode_array = array ("" => "");
+     }
      $book->add_page (
        _("Basic Information"),
        array ("pnotesdoc", "pnotesdescrip", "pnoteseoc", date_vars("pnotesdt")),
        html_form::form_table (
+        array_merge (
         array (
 	 _("Provider") =>
 	   freemed_display_selectbox (
@@ -83,19 +101,13 @@ class progressNotes extends freemedEMRModule {
 	   
          _("Description") =>
 	  "<INPUT TYPE=TEXT NAME=\"pnotesdescrip\" SIZE=25 MAXLENGTH=100
-	    VALUE=\"".prepare($pnotesdescrip)."\">\n",
-	   
-         _("Related Episode(s)") =>
-           freemed_multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
-                                  "eocdtlastsimilar FROM eoc WHERE ".
-                                  "eocpatient='$patient'",
-                                  "eocdescrip:eocstartdate:eocdtlastsimilar",
-                                  "pnoteseoc",
-                                  $pnoteseoc,
-                                  false),
-				  
+	    VALUE=\"".prepare($pnotesdescrip)."\">\n"
+	),
+	$related_episode_array,
+	array (
          _("Date") => fm_date_entry("pnotesdt") 
 	 )
+        ) // end array_merge	
         )
       ); 
 
@@ -277,6 +289,10 @@ class progressNotes extends freemedEMRModule {
 
 	function display () {
 		global $display_buffer;
+
+		// Tell FreeMED not to display a template
+		global $no_template_display; $no_template_display = true;
+		
 		foreach ($GLOBALS AS $k => $v) global $$k;
      if (($id<1) OR (strlen($id)<1)) {
        $display_buffer .= "
@@ -311,7 +327,7 @@ class progressNotes extends freemedEMRModule {
        <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
         >"._($this->record_name)."</A> |
         <A HREF=\"manage.php?id=$pnotespat\"
-        >"._("Manage Patient")."</A> $__MODIFY__
+        >"._("Manage Patient")."</A>
        </CENTER>
        <P>
 
@@ -321,7 +337,8 @@ class progressNotes extends freemedEMRModule {
        </CENTER>
        <P>
      ";
-     if (count($pnoteseoc)>0 and is_array($pnoteseoc)) {
+     // Check for EOC stuff
+     if (count($pnoteseoc)>0 and is_array($pnoteseoc) and check_module("episodeOfCare")) {
       $display_buffer .= "
        <CENTER>
         <B>"._("Related Episode(s)")."</B>
@@ -440,14 +457,19 @@ class progressNotes extends freemedEMRModule {
        </CENTER>
        <P>
      ";
-
 	} // end of case display
 
 	function view () {
 		global $display_buffer;
-		global $patient;
+		global $patient, $action;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
+
+		// Check for "view" action (actually display)
+		if ($action=="view") {
+			$this->display();
+			return NULL;
+		}
 
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE (pnotespat='".addslashes($patient)."') ".
@@ -464,7 +486,9 @@ class progressNotes extends freemedEMRModule {
 			array (
 				"",
 				_("NO DESCRIPTION")
-			)
+			),
+			NULL, NULL, NULL,
+			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
 		$display_buffer .= "\n<P>\n";
 	} // end function progressNotes->view()
