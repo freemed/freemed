@@ -1,0 +1,6 @@
+freemed project changelog
+
+* Tue Oct 17 2000 rufustfirefly - Version 0.2_pre2
+  - now processes lang/registry, ignoring comment lines
+  - added lang/registry to replace old language registry system
+  - started new changelog

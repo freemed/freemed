@@ -41,19 +41,16 @@ echo "
  <OPTION VALUE=\"$language\">"._("Default Language")."
 ";
 
- // if the language registry does not exist, recreate it
- $fix_dir_perms=`chmod a+w $physical_loc/lang/reg/`;
- if (!file_exists ("$physical_loc/lang/reg/registry")) {
-   system (" ( cd $physical_loc/lang/reg; cat ?? > registry ) ");
-   if (!file_exists ("$physical_loc/lang/reg/registry")) 
-     echo "<OPTION VALUE=\"\">"._("LANGUAGE REGISTRY BUILD FAILED")."</OPTION>";
- }
  // actually open the language registry
- $f_reg = fopen ("$physical_loc/lang/reg/registry", "r");
+ $f_reg = fopen ("$physical_loc/lang/registry", "r");
  while ($f_line = fgets ($f_reg, 255)) {
-   $f_line_array = explode (":", $f_line);
-   echo " <OPTION VALUE=\"$f_line_array[0]\">$f_line_array[1]\n";
- }
+   if (substr ($f_line, 0, 1) != "#") { // skip comments
+     $f_line_array = explode (":", $f_line);
+     echo " <OPTION VALUE=\"".prepare($f_line_array[0])."\">".
+       prepare($f_line_array[1])."\n";
+   } // end of skipping comments
+ } // end while we have more lines to get
+ fclose ($f_reg);
 
 echo "
 </SELECT>
@@ -67,11 +64,7 @@ echo "
 <TT>"._("Facility")." : </TT>
 </TD><TD ALIGN=LEFT>
 <SELECT NAME=\"_f\">
-";
-
-echo freemed_display_facilities ($_f, true, "0");
-
-echo "
+".freemed_display_facilities ($_f, true, "0")."
 </SELECT>
 </TD></TR>
 ";
@@ -102,9 +95,9 @@ echo "
   if ($debug) {
     echo "
       <TABLE WIDTH=100% BORDER=0 CELLSPACING=0 CELLPADDING=0
-       VALIGN=BOTTOM ALIGN=CENTER BGCOLOR=#000000>
-      <TR><TD BGCOLOR=#000000>
-      <CENTER><B><FONT COLOR=#ffffff SIZE=-2>"._("DEBUG_IS_ON")."</FONT></B></CENTER>
+       VALIGN=BOTTOM ALIGN=CENTER BGCOLOR=\"#000000\">
+      <TR><TD BGCOLOR=\"#000000\">
+      <CENTER><B><FONT COLOR=\"#ffffff\" SIZE=-2>"._("DEBUG_IS_ON")."</FONT></B></CENTER>
       </TD></TR></TABLE>
     ";
   }
@@ -129,7 +122,7 @@ echo "
       <A HREF=\"CHANGELOG\">CHANGELOG for ".VERSION."</A>
       </FONT>
     ";
-  } // 19990602 -- show changelog link
+  }
 ?>
 </CENTER>
 
