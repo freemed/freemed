@@ -28,7 +28,7 @@ if (isset($refresh)) {
 <?php
 } else if (isset($automatic_refresh)) { // handle automatic refreshes
 ?>
-	<META HTTP-EQUIV="REFRESH" CONTENT="<?php print $automatic_refresh; ?>;URL=<?php print $REQUEST_URI; ?>">
+	<META HTTP-EQUIV="REFRESH" CONTENT="<?php print $automatic_refresh; ?>;URL=<?php print basename($REQUEST_URI); ?>">
 <?php
 } // end handle refresh
 ?>
