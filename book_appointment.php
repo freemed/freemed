@@ -46,6 +46,18 @@ if ($id and !$been_here) {
 	$patient = $appt['calpatient'];
 	$status = $appt['calstatus'];
 	$note = $appt['calprenote'];
+} elseif (!$been_here and !isset($room)) {
+	// Fudge room, if we have a current facility
+	if ($_COOKIE['default_facility']) {
+		// Get first room from there
+		$result = $sql->query("SELECT * FROM room ".
+			"WHERE roompos='".addslashes(
+			$_COOKIE['default_facility'])."'");
+		if ($sql->results($result)) {
+			$r = $sql->fetch_array($result);
+			$room = $r['id'];
+		}
+	}
 }
 
 if (strlen($selected_date)!=10) {
