@@ -1,5 +1,12 @@
 freemed project changelog
 
+* Wed Dec 27 2000 rufustfirefly
+  - started to convert Rx.php3 -> modules/prescription.module.php
+  - modified EMR core module to check for access to current patient
+  - set up stock del() function in maintenance module prototype instead of
+    stub
+  - removed db_maintenance_modules.php and folded into standard maint module
+
 * Tue Dec 26 2000 rufustfirefly
   - updated README to suggest bware_cache and Zend Optimizer
   - added module listing of "Billing" category to billing_functions.php

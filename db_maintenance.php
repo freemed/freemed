@@ -1,8 +1,7 @@
 <?php
  // $Id$
- // note: where all of the database maintenance routines are
- //       called from, to save space on the main menu
- // lic : GPL, v2
+ // note: database maintenance modules
+ // lic : GPL
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
 include ("lib/freemed.php");
@@ -14,9 +13,29 @@ freemed_open_db ($LoginCookie);
 freemed_display_html_top ();
 freemed_display_box_top (_("Database Maintenance"));
 
- // here is the actual guts of the menu
-if (freemed_get_userlevel ($LoginCookie) > $database_level) { 
- echo "
+// information for module loader
+$category = "Database Maintenance";
+$template = "<A HREF=\"module_loader.php?$_auth&module=#class#\"".
+	">#name#</A><BR>\n";
+
+ // Check for appropriate access level
+if (freemed_get_userlevel ($LoginCookie) < $database_level) { 
+   echo "
+      <P>
+      <$HEADERFONT_B>
+        "._("You don't have access for this menu.")."
+      <$HEADERFONT_E>
+      <P>
+    ";
+	freemed_display_box_bottom();
+	freemed_display_html_bottom();
+	die("");
+} // end if not appropriate userlevel
+
+// actual display routine
+
+echo "
+	<CENTER>
     <$STDFONT_B>
 
      <A HREF=\"cpt.php3?$_auth\"
@@ -61,10 +80,6 @@ if (freemed_get_userlevel ($LoginCookie) > $database_level) {
 
      <A HREF=\"internal_service_type.php3?$_auth\"
       >"._("Internal Service Types")."</A>
-     <BR>
-
-     <A HREF=\"patient_status.php3?$_auth\"
-      >"._("Patient Statuses")."</A>
      <BR>
 
      <A HREF=\"physician.php3?$_auth\"
@@ -123,17 +138,19 @@ if (freemed_get_userlevel ($LoginCookie) > $database_level) {
      <BR>
      -->
 
+	<B>Dynamic Modules:</B><BR>
+
+"; // end of static listing
+
+// module loader
+$module_list = new module_list (PACKAGENAME);
+echo $module_list->generate_list($category, 0, $template);
+
+// display end of listing
+echo "
     <$STDFONT_E>
-  ";
-  } else  { 
-   echo "
-      <P>
-      <$HEADERFONT_B>
-        "._("You don't have access for this menu.")."
-      <$HEADERFONT_E>
-      <P>
-    ";
-  } // end of checking for perms
+	</CENTER>
+";
 
 freemed_display_box_bottom ();
 freemed_display_html_bottom ();

@@ -30,9 +30,11 @@ class freemedEMRModule extends freemedModule {
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
-		global $module, $patient;
+		global $module, $patient, $LoginCookie;
 		if (!isset($module)) return false;
 		if ($patient < 1) return false;
+		// check access to patient
+		if (!freemed_check_access_for_patient($LoginCookie, $patient)) return false;
 		return true;
 	} // end function check_vars
 

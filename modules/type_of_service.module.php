@@ -149,7 +149,6 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 	// now all of the sql things serve as a wrapper to this
 	function add ()    { $this->sql(); }
 	function mod ()    { $this->sql(); }
-	function delete () { $this->sql(); }
 
 } // end of class typeOfServiceMaintenance
 

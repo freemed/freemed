@@ -60,6 +60,12 @@ class freemedMaintenanceModule extends freemedModule {
 				break;
 
 			case "modform":
+				global $id;
+				if (empty($id) or ($id<1)) {
+					freemed_display_box_bottom ();
+					freemed_display_html_bottom ();
+					die ("");
+				}
 				$this->modform();
 				break;
 
@@ -78,8 +84,17 @@ class freemedMaintenanceModule extends freemedModule {
 	} // end function add
 
 	// function del
-	// - delete stub
+	// - only override this if you *really* have something weird to do
 	function del () {
+		global $STDFONT_B, $STDFONT_E, $id;
+		echo "<P ALIGN=CENTER>".
+			"<$STDFONT_B>"._("Deleting")." . . . \n";
+		$query = "DELETE FROM $this->table_name ".
+			"WHERE id = '".prepare($id)."'";
+		$result = fdb_query ($query);
+		if ($result) { echo _("done"); }
+		 else        { echo "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		echo "<$STDFONT_E></P>\n";
 	} // end function del
 
 	// function mod
