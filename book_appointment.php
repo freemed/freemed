@@ -466,9 +466,9 @@ if ($process) {
 		$result = $scheduler->move_appointment(
 			$id,
 			array (
-				"caldateof" => $selected_date,
-				"calhour" => $hour,
-				"calminute" => $minute,
+				"caldateof" => $_REQUEST['selected_date'],
+				"calhour" => $_REQUEST['hour'],
+				"calminute" => $_REQUEST['minute'],
 				"calduration" => $duration,
 				"calfacility" => $facility,
 				"calroom" => $room,
