@@ -995,11 +995,11 @@ switch ($action) {
       <SELECT NAME=\"f1\">
        <OPTION VALUE=\"ptlname\" SELECTED>"._("Last Name")."
        <OPTION VALUE=\"ptfname\" >"._("First Name")."
-       <OPTION VALUE=\"ptdob\"   >"._("Date of birth")."
+       <OPTION VALUE=\"ptdob\"   >"._("Date of Birth")."
        <OPTION VALUE=\"ptid\"    >"._("Internal Practice ID")."
        <OPTION VALUE=\"ptcity\"  >"._("City")."
        <OPTION VALUE=\"ptstate\" >"._("State")."
-       <OPTION VALUE=\"ptzip\"   >"._("Zip Code")."
+       <OPTION VALUE=\"ptzip\"   >"._("Zip")."
        <OPTION VALUE=\"pthphone\">"._("Home Phone")."
        <OPTION VALUE=\"ptwphone\">"._("Work Phone")."
        <OPTION VALUE=\"ptemail\" >"._("Email Address")."
