@@ -6,7 +6,7 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   #       max k <amk@span.ch>
   # lic : GPL, v2
-  # ver : 2000-01-20
+  # ver : 2000-01-22
 
 $__freemed_functions__ = true;
 
@@ -911,7 +911,7 @@ function freemed_display_phystatus ($param="")
 // function freemed_display_physicians
 //   displays physicians selectable in <SELECT>
 //   list with $param selected
-function freemed_display_physicians ($param="")
+function freemed_display_physicians ($param="", $intext="")
 {
   global $NONE_SELECTED, $database, $SELECTED;
 
@@ -921,7 +921,8 @@ function freemed_display_physicians ($param="")
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
   $query = "SELECT * FROM $database.physician ORDER BY ".
-     "phylname, phyfname";
+     "phylname, phyfname".
+     ( ($intext != "") ? "WHERE phyref='$intext'" : "" );
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
