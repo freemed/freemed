@@ -663,7 +663,6 @@ switch ($action) {
        <OPTION VALUE=\"ptemail\" >$Email_address
        <OPTION VALUE=\"ptssn\"   >$Social_security_number
        <OPTION VALUE=\"ptdmv\"   >$Drivers_license
-       <OPTION VALUE=\"ptacct\"  >$Patient_account_number
       </SELECT>
       <I>$CONTAINS</I>
       <INPUT TYPE=TEXT NAME=\"f2\" SIZE=15 MAXLENGTH=30>
