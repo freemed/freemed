@@ -59,6 +59,16 @@ class TeX {
 		}
 	} // end method AddLongItems
 
+	// Method: AddShortItems
+	//
+	//	Adds multiple "short items" to a FreeMED report
+	//	document
+	//
+	// Parameters:
+	//
+	//	$items - Associative array where keys represent the
+	//	titles of the items and values represent their texts
+	//
 	function AddShortItems ( $items, $_options = NULL ) {
 		$CRLF = "\n"; 
 		$this->_buffer .= '\\begin{description}'.$CRLF;
@@ -71,6 +81,16 @@ class TeX {
 		$this->_buffer .= $CRLF;
 	} // end method AddShortItems
 
+	// Method: PrintTeX
+	//
+	//	Prints a certain number of copies of the current TeX
+	//	document.
+	//
+	// Parameters:
+	//
+	//	$copies - (optional) Number of copies of the current TeX
+	//	document to print. Defaults to 1.
+	//
 	function PrintTeX ( $copies = 1 ) {
 		$file = $this->RenderToPDF();
 
@@ -140,6 +160,17 @@ class TeX {
 		return ($tmp.'.pdf');
 	} // end method RenderToPDF
 
+	// Method: SetPrinter
+	//
+	//	Sets the printer and printer wrapper for this TeX document
+	//	to use when printing.
+	//
+	// Parameters:
+	//
+	//	$wrapper - PHP.PrinterWrapper object
+	//
+	//	$printer - Text name of the printer to use
+	//
 	function SetPrinter ( $wrapper, $printer ) {
 		$this->wrapper = $wrapper;
 		$this->printer = $printer;

@@ -692,16 +692,21 @@ class EMRModule extends BaseModule {
 				}
 
 				if ($print) {
+					if (!(strpos($f['content'], '##') === false)) {
+						$content = $f['content'];
+					} else {
+						$content = $r[$f['content']];
+					}
 					switch ($f['type']) {
 						case 'short':
 						$TeX->AddShortItems(array(
-							$f['title'] => $r[$f['content']]
+							$f['title'] => $this->_RenderField($content)
 						));
 						break;
 					
 						case 'long':
 						$TeX->AddLongItems(array(
-							$f['title'] => $r[$f['content']]
+							$f['title'] => $this->_RenderField($content)
 						));
 						break;
 					} // end switch by type
@@ -709,6 +714,40 @@ class EMRModule extends BaseModule {
 			}
 		}
 	} // end method _RenderTeX
+
+	function _RenderField ( $arg, $r = NULL ) {
+		if (!(strpos($arg, '##') === false)) {
+			// We need to deal with the content
+			$displayed = '';
+			$f_split = explode ('##', $arg);
+			foreach ($f_split AS $f_k => $f_v) {
+				if (!($f_k & 1)) {
+					// Outside of '##'s
+					$displayed .= $f_v;
+				} else {
+					// Inside ... process
+					if (!(strpos($f_v, ':') === false)) {
+						// Process as ##a:b@c##
+						list ($a, $_b) = explode (':', $f_v);
+						list ($b, $c) = explode ('@', $_b);
+						$f_r = $GLOBALS['sql']->query(
+							'SELECT '.$c.'.'.$b.' AS result '.
+							'FROM '.$c.', '.$this->table_name.' '.
+							'WHERE '.$this->table_name.'.'.$a.' = '.$c.'.id'
+						);
+						$displayed .= $f_r['result'];
+					} else {
+						// Simple field replacement
+						$displayed .= $r[$f_v];
+					}
+				}
+			}
+			return $displayed;
+		} else {
+			// No processing required. Return as is.
+			return $arg;
+		}
+	} // end method _RenderField
 
 } // end class EMRModule
 
