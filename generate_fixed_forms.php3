@@ -79,11 +79,24 @@
      // queue all entries
      while ($r = fdb_fetch_array ($result)) {
        $number_of_charges++; // increment number of charges
+       ////populate an array of fixed form entries, too
+       ////this array will be written to as everything is processed
+       ////except it should be done on a per-patient basis.
 
        // get the current procedure
        #if ($r[payrecproc] > 0)
          $p = freemed_get_link_rec ($r[payrecproc], "procedure");
        flush ();
+
+       ////if there's room, pull another procedure:
+       //// @ are enough diagnosis spots left for the nonrepeated diags?
+       //// @ are we above the bottom of the form (is this proc number
+       ////   six or less?
+
+       ////when procedures are pulled in, create/modify fixed form entries
+       ////for each procedure (say we have line 44, char 2, len 12, $cptcode,
+       ////this would become l45, ch2, len12 $procedure_2[cptcode] or however
+       ////it's coded.
 
        // pull into current array
        $itemdate    [$number_of_charges] = $p[procdt];
@@ -237,6 +250,12 @@
        for ($i=0;$i<$total_number_forms;$i++) {
          $starting_number = ( ($i==0) ? 0 : ($i*$this_form[ffloopnum])+1 );
          $form_buffer .= render_fixedForm ($whichform, $starting_number);
+       ////here we'll render mr. form based on our generated entry array.
+       ////extra items will be appended (i assume) so we'll have to sort the
+       ////form *after* it's put together.
+
+       ////mark items on the form as billed. go back and check for more
+       ////items for this patient. then more patients and so on. yum.
        } // end for/loop for number of forms
      } // end checking for number of charges
    } // end of while there are no more patients
