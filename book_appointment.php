@@ -13,6 +13,13 @@ freemed::connect ();
 //----- Set current user
 $this_user = CreateObject('FreeMED.User');
 
+//----- Check for booking refresh
+if ($_COOKIE['booking_refresh'] == '0') {
+	$refresh_disable = true;
+} else {
+	$refresh_disable = false;
+}
+
 //----- Check for current patient
 if ($travel) {
 	// Kludge travel, patient = 0
@@ -26,7 +33,7 @@ if ($travel) {
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
-if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"bookappointment.php|user $user_to_log accesses patient $patient");}	
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"book_appointment.php|user $user_to_log accesses patient $patient");}	
 
 
 // Check for current physician, if not, use default
@@ -57,6 +64,10 @@ if ($id and !$been_here) {
 			$r = $sql->fetch_array($result);
 			$room = $r['id'];
 		}
+	}
+	if ($_COOKIE['default_room']) {
+		// print "default_room = ".$_COOKIE['default_room'];
+		$room = $_COOKIE['default_room'];
 	}
 }
 
@@ -89,13 +100,13 @@ if (!$travel) {
 
 //----- Create form
 if (date_in_the_past($selected_date)) {
-	$form .= "
+	$calendar_form .= "
 		<div ALIGN=\"CENTER\"><i><font SIZE=\"-2\"
 		>".__("this date occurs in the past")."</font></i>
 		</div>
 	";
 }
-$form .= "
+$calendar_form .= "
 	<form ACTION=\"".page_name()."\" METHOD=\"POST\">
 	<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
@@ -110,7 +121,7 @@ $form .= "
 ";
 
 //----- Add mini calendar to the top
-$form .= "
+$calendar_form .= "
 	<tr><td>".fc_generate_calendar_mini(
 		$selected_date,
 		"$page_name?".
@@ -127,7 +138,7 @@ $form .= "
 ";
 
 //----- Room/Physician/etc selection
-$form .= "
+$calendar_form .= "
 	<td align=\"LEFT\">
 	".html_form::form_table(array(
 	
@@ -144,7 +155,7 @@ $form .= "
 			),
 			array(__("Other") => "0")
 		),
-		array('refresh' => true)
+		array('refresh' => ( $refresh_disable ? false : true ))
 	),
 
 	"<small>".__("Rm")."</small>" =>
@@ -161,7 +172,7 @@ $form .= "
 			"ORDER BY k"
 		)
 		),
-		array('refresh' => true)
+		array('refresh' => ( $refresh_disable ? false : true ))
 	),
 
 	"<small>".__("Dur")."</small>" =>
@@ -199,11 +210,13 @@ $form .= "
 			"7:30" => 450,
 			"8:00" => 480	
 		),
-		array('refresh' => true)
+		array('refresh' => ( $refresh_disable ? false : true ))
 	),
 
 	"<small>".__("Note")."</small>" =>
-	freemedCalendar::refresh_text_widget("note", 25)
+	( $refresh_disable ?
+	html_form::text_widget('note', 25) :
+	freemedCalendar::refresh_text_widget("note", 25) )
 
 	), "", "", "")."
 
@@ -225,6 +238,25 @@ if ($room > 0) {
 	$rm_desc = $_room['roomdescrip'];
 }
 
+// We split this into a subroutine so we can call it more than once
+function display_booking_calendar ($date) {
+	foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
+//----- Generate a multiple mapping index (multimap)
+$maps = freemedCalendar::multimap(
+	"SELECT * FROM scheduler WHERE ( ".
+		"calphysician='".addslashes($physician)."' OR ".
+		"calroom='".addslashes($room)."' ) AND ".
+		"caldateof='".addslashes($date)."'",
+		( isset($id) ? $id : -1 )
+);
+
+//----- Create blank map for time references
+$blank_map = freemedCalendar::map_init();
+
+//----- Set how many columns we need
+$columns = count($maps);
+
 $form .= "
 	<tr><td COLSPAN=\"2\">
 	<!-- begin calendar display -->
@@ -236,21 +268,6 @@ $form .= "
 		<td COLSPAN=\"".($columns + 1)."\">&nbsp;</td>
 	</tr>
 ";
-
-//----- Generate a multiple mapping index (multimap)
-$maps = freemedCalendar::multimap(
-	"SELECT * FROM scheduler WHERE ( ".
-		"calphysician='".addslashes($physician)."' OR ".
-		"calroom='".addslashes($room)."' ) AND ".
-		"caldateof='".addslashes($selected_date)."'",
-		( isset($id) ? $id : -1 )
-);
-
-//----- Create blank map for time references
-$blank_map = freemedCalendar::map_init();
-
-//----- Set how many columns we need
-$columns = count($maps);
 
 // Loop through the hours
 for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("calehr"); $c_hour++) {
@@ -338,7 +355,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 				"physician=".urlencode($physician)."&".
 				"duration=".urlencode($duration)."&".
 				"type=".urlencode($type)."&".
-				"selected_date=".urlencode($selected_date)."&".
+				"selected_date=".urlencode($date)."&".
 				"id=".urlencode($id)."&".
 				"note=".urlencode($note)."&".
 				"patient=".urlencode($patient)."'; ".
@@ -353,7 +370,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 				"physician=".urlencode($physician)."&".
 				"duration=".urlencode($duration)."&".
 				"type=".urlencode($type)."&".
-				"selected_date=".urlencode($selected_date)."&".
+				"selected_date=".urlencode($date)."&".
 				"id=".urlencode($id)."&".
 				"note=".urlencode($note)."&".
 				"patient=".urlencode($patient)."\" ".
@@ -375,11 +392,20 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 $form .= "
 	</table>
 ";
+	return $form;
+} // end function display_booking_calendar
 
 //} // end of checking for room & physician
 
+$day = $selected_date;
+for ($i = 1; $i <= 5; $i++) {
+	$calendar_form .= "<div align=\"center\">".fm_date_print($day, true)."</div>\n";
+	$calendar_form .= display_booking_calendar($day);
+	$day = freemed_get_date_next($day);
+}
+
 //----- End of page
-$form .= "
+$calendar_form .= "
 	</table>
 ";
 
@@ -478,7 +504,7 @@ if ($process) {
 		$refresh = "main.php";
 	}
 } else {
-	$display_buffer .= $form;
+	$display_buffer .= $calendar_form;
 } // done checking for processing
 
 //----- Display the actual page
