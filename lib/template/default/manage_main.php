@@ -360,9 +360,9 @@ foreach ($modular_components AS $garbage => $component) {
 	// End checking for component
 	if ($module_list->check_for($component)) {
 		// Execute proper portion and add to panel
-		$modules[_($module_list->get_module_name($component))] =
+		$modules[__($module_list->get_module_name($component))] =
 			$component;
-		$panel[_($module_list->get_module_name($component))] .= "
+		$panel[__($module_list->get_module_name($component))] .= "
 			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
 		 	 onMouseOver=\"this.className='thinbox_hilite'; return true;\"

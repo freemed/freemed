@@ -57,16 +57,18 @@ if ($page_history) {
 } // end checking for page history
 
 // Check for new messages in bar
-if ($new_messages = $this_user->newMessages()) {
+if (is_object($this_user)) {
+	if ($new_messages = $this_user->newMessages()) {
 	print "
 	<tr><td colspan=\"2\" align=\"center\" valign=\"middle\">
 	<img src=\"img/messages_small.gif\" alt=\"\" ".
 	"width=\"16\" height=\"16\" border=\"0\"/>
-	<small>".$new_messages." "._("new message(s)")."</small>
+	<small>".$new_messages." ".__("new message(s)")."</small>
 	<img src=\"img/messages_small.gif\" alt=\"\" ".
 	"width=\"16\" height=\"16\" border=\"0\"/>
 	</td></tr>
 	";
+	}
 }
 
 if ($patient_history or $page_history or $new_messages) {
@@ -162,7 +164,7 @@ if (is_array($menu_bar)) {
 	foreach ($menu_bar AS $k => $v) {
 		if ($v != NULL) {
 		if (strpos($v, "help.php")===false) {
-			print menu_bar_cell(_($k), $v);
+			print menu_bar_cell(__($k), $v);
 		} else { // if there *is* a help string in there
 		// Make sure that bad help links aren't displayed
 		if ($v != "help.php") print "\t<LI><A HREF=\"#\" ".
@@ -171,7 +173,7 @@ if (is_array($menu_bar)) {
 			"onMouseOver=\"window.status='".prepare(_($k))."'; ".
 			"return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\">".
-			prepare(_($k))."</A>\n";
+			prepare(__($k))."</A>\n";
 		} // end checking for help.php
 		} // end checking for null
 	} // end foreach

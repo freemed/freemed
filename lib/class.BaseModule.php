@@ -47,7 +47,7 @@ class BaseModule extends module {
 	function _header ($nullvar = "") {
 		global $display_buffer, $page_name;
 		freemed_open_db ();
-		$page_name = _($this->MODULE_NAME);
+		$page_name = __($this->MODULE_NAME);
 
 		// Check for existance of separate "record_name"
 		if (!isset($this->record_name)) {

@@ -896,7 +896,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      ALIGN=\"CENTER\" VALIGN=\"MIDDLE\" CLASS=\"itemlistbox\">
     <tr>
      <td ALIGN=\"CENTER\">
-      <big><b>"._($record_name)."</b></big>
+      <big><b>".__($record_name)."</b></big>
      </td>
     </tr>".
     
@@ -1561,7 +1561,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	for ($i=1;$i<=12;$i++) {
 		$buffer_m .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
 			"$i\" ".  ( ($i==$m) ? "SELECTED" : "" ).
-			">"._($months[$i])."</option>\n";
+			">".__($months[$i])."</option>\n";
 	} // end for loop (months) 
 	$buffer_m .= "\t</select>\n";
 
@@ -1573,7 +1573,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 		$buffer_d .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
 			"$i\" ".( ($i==$d) ? "SELECTED" : "" ).">$i</option>\n";
 	} // end looping for days
-	$buffer_d .= "\t</selectg\n";
+	$buffer_d .= "\t</select>\n";
 
 	// Year buffer
 	$buffer_y = "\t<select NAME=\"".$datevarname."_y$suffix\">\n".
@@ -1609,18 +1609,18 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	$y  = substr ($actualdate, 0, 4);        // extract year
 	$m  = substr ($actualdate, 5, 2);        // extract month
 	$d  = substr ($actualdate, 8, 2);        // extract day
-	$ts = mktime (0, 0, 0, $m, $d, $y);      // generate timestamp
+	$ts = mktime (0, 0, 0, $m, $d, date("Y"));      // generate timestamp
 
 	// Return depending on configuration format
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
-			return date(($show_text_days ? "D" : "")."M d, Y", $ts);
+			return date(($show_text_days ? "D" : "")."M d, ", $ts).$y;
 			break;
 		case "dmy":
-			return date(($show_text_days ? "D" : "")."d M, Y", $ts);
+			return date(($show_text_days ? "D" : "")."d M, ", $ts).$y;
 			break;
 		case "ymd": default:
-			return date("Y-m-d", $ts);
+			return $y.date("-m-d", $ts);
 			break; 
 	} // end switch
 } // end function fm_date_print
