@@ -16,6 +16,13 @@ class SystemReports extends ReportsModule {
 	function display () {
 		$agata = CreateObject('_FreeMED.Agata');
 		$meta = $agata->_ReadMetaInformation($_REQUEST['report'].'.report');
+		// Handle split dates if we have them:
+		if (isset($_REQUEST['by_y'])) {
+			$by = freemed::date_assemble('by');
+		} else {
+			$by = $_REQUEST['by'];
+		}
+		
 		// Serve it up
 		switch ($meta['type']) {
 			case 'merge':
@@ -23,7 +30,7 @@ class SystemReports extends ReportsModule {
 				'Merge',
 				$_REQUEST['report'],
 				$meta['name'],
-				array('##BY##' => addslashes($_REQUEST['by']))
+				array('##BY##' => addslashes($by))
 			);
 			switch ($_REQUEST['format']) {
 				case 'ps':
@@ -41,7 +48,7 @@ class SystemReports extends ReportsModule {
 				$_REQUEST['format'],
 				$_REQUEST['report'],
 				$meta['name'],
-				array('##BY##' => addslashes(fm_date_assemble('by')))
+				array('##BY##' => addslashes($by))
 			);
 			$agata->ServeReport();
 			break;
