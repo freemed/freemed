@@ -97,6 +97,8 @@ class ProgressNotes extends EMRModule {
 			__("Description") =>	"pnotesdescrip"
 		);
 		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_PRINT;
+		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
+		$this->summary_order_by = 'pnotesdt,id';
 
 		// Set associations
 		$this->_SetAssociation('EpisodeOfCare');
