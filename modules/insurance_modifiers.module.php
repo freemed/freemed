@@ -26,9 +26,9 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 	function InsuranceModifiersMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'insmod' => SQL_VARCHAR(15),
-			'insmoddesc' => SQL_VARCHAR(50),
-			'id' => SQL_SERIAL
+			'insmod' => SQL__VARCHAR(15),
+			'insmoddesc' => SQL__VARCHAR(50),
+			'id' => SQL__SERIAL
 		);
 
 		// Run parent constructor

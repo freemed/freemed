@@ -23,10 +23,10 @@ class QmakerReport extends ReportsModule {
 		// Since this needs its own table for queries, lets
 		// create a table definition.
 		$this->table_definition = array (
-			'qdatabase' => SQL_NOT_NULL(SQL_VARCHAR(250)),
-			'qquery' => SQL_TEXT,
-			'qtitle' => SQL_NOT_NULL(SQL_VARCHAR(255)),
-			'id' => SQL_SERIAL
+			'qdatabase' => SQL__NOT_NULL(SQL__VARCHAR(250)),
+			'qquery' => SQL__TEXT,
+			'qtitle' => SQL__NOT_NULL(SQL__VARCHAR(255)),
+			'id' => SQL__SERIAL
 		);
 		// Define keys for this table (id is automagically
 		// merged into this).

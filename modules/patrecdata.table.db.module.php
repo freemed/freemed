@@ -19,12 +19,12 @@ class PatRecDataTable extends MaintenanceModule {
 
 	function PatRecDataTable () {
 		$this->table_definition = array (
-			'prpatient' => SQL_INT_UNSIGNED(0),
-			'prtemplate' => SQL_INT_UNSIGNED(0),
-			'prdtadd' => SQL_DATE,
-			'prdtmod' => SQL_DATE,
-			'prdata' => SQL_TEXT,
-			'id' => SQL_SERIAL
+			'prpatient' => SQL__INT_UNSIGNED(0),
+			'prtemplate' => SQL__INT_UNSIGNED(0),
+			'prdtadd' => SQL__DATE,
+			'prdtmod' => SQL__DATE,
+			'prdata' => SQL__TEXT,
+			'id' => SQL__SERIAL
 		);
 
 		// Call parent constructor

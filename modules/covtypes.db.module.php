@@ -32,11 +32,11 @@ class CovtypesMaintenance extends MaintenanceModule {
 
 		// Table definition
 		$this->table_definition = array (
-			'covtpname' => SQL_VARCHAR(5),
-			'covtpdescrip' => SQL_VARCHAR(60),
-			'covtpdtadd' => SQL_DATE,
-			'covtpdtmod' => SQL_DATE,
-			'id' => SQL_SERIAL
+			'covtpname' => SQL__VARCHAR(5),
+			'covtpdescrip' => SQL__VARCHAR(60),
+			'covtpdtadd' => SQL__DATE,
+			'covtpdtmod' => SQL__DATE,
+			'id' => SQL__SERIAL
 		);
 		
 		// Run parent constructor

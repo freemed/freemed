@@ -29,10 +29,10 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 
 		// Table definition
 		$this->table_definition = array (
-			'degdegree' => SQL_CHAR(10),
-			'degname' => SQL_VARCHAR(50),
-			'degdate' => SQL_DATE,
-			'id' => SQL_SERIAL
+			'degdegree' => SQL__CHAR(10),
+			'degname' => SQL__VARCHAR(50),
+			'degdate' => SQL__DATE,
+			'id' => SQL__SERIAL
 		);
 
 		// Run constructor

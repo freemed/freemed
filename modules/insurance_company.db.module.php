@@ -41,26 +41,26 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 	function InsuranceCompanyMaintenance() {
 		// Table definition
 		$this->table_definition = array (
-			'inscodtadd' => SQL_DATE,
-			'inscodtmod' => SQL_DATE,
-			'insconame' => SQL_NOT_NULL(SQL_VARCHAR(50)),
-			'inscoalias' => SQL_VARCHAR(30),
-			'inscoaddr1' => SQL_VARCHAR(45),
-			'inscoaddr2' => SQL_VARCHAR(45),
-			'inscocity' => SQL_VARCHAR(30),
-			'inscostate' => SQL_CHAR(3),
-			'inscozip' => SQL_VARCHAR(10),
-			'inscophone' => SQL_VARCHAR(16),
-			'inscofax' => SQL_VARCHAR(16),
-			'inscocontact' => SQL_VARCHAR(100),
-			'inscoid' => SQL_CHAR(10),
-			'inscowebsite' => SQL_VARCHAR(100),
-			'inscoemail' => SQL_VARCHAR(50),
-			'inscogroup' => SQL_INT_UNSIGNED(0),
-			'inscotype' => SQL_INT_UNSIGNED(0),
-			'inscoassign' => SQL_INT_UNSIGNED(0),
-			'inscomod' => SQL_TEXT,
-			'id' => SQL_SERIAL
+			'inscodtadd' => SQL__DATE,
+			'inscodtmod' => SQL__DATE,
+			'insconame' => SQL__NOT_NULL(SQL__VARCHAR(50)),
+			'inscoalias' => SQL__VARCHAR(30),
+			'inscoaddr1' => SQL__VARCHAR(45),
+			'inscoaddr2' => SQL__VARCHAR(45),
+			'inscocity' => SQL__VARCHAR(30),
+			'inscostate' => SQL__CHAR(3),
+			'inscozip' => SQL__VARCHAR(10),
+			'inscophone' => SQL__VARCHAR(16),
+			'inscofax' => SQL__VARCHAR(16),
+			'inscocontact' => SQL__VARCHAR(100),
+			'inscoid' => SQL__CHAR(10),
+			'inscowebsite' => SQL__VARCHAR(100),
+			'inscoemail' => SQL__VARCHAR(50),
+			'inscogroup' => SQL__INT_UNSIGNED(0),
+			'inscotype' => SQL__INT_UNSIGNED(0),
+			'inscoassign' => SQL__INT_UNSIGNED(0),
+			'inscomod' => SQL__TEXT,
+			'id' => SQL__SERIAL
 		);
 	
 		// Run parent constructor

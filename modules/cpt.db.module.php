@@ -42,23 +42,23 @@ class CptMaintenance extends MaintenanceModule {
 	function CptMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'cptcode' => SQL_CHAR(7),
-			'cptnameint' => SQL_VARCHAR(50),
-			'cptnameext' => SQL_VARCHAR(50),
-			'cptgender' => SQL_ENUM(array('n', 'm', 'f')),
-			'cpttaxed' => SQL_ENUM(array('n', 'y')),
-			'cpttype' => SQL_INT_UNSIGNED(0),
-			'cptreqcpt' => SQL_TEXT,
-			'cptexccpt' => SQL_TEXT,
-			'cptreqicd' => SQL_TEXT,
-			'cptexcicd' => SQL_TEXT,
-			'cptrelval' => SQL_REAL,
-			'cptdeftos' => SQL_INT_UNSIGNED(0),
-			'cptdefstdfee' => SQL_REAL,
-			'cptstdfee' => SQL_TEXT,
-			'cpttos' => SQL_TEXT,
-			'cpttosprfx' => SQL_TEXT,
-			'id' => SQL_SERIAL
+			'cptcode' => SQL__CHAR(7),
+			'cptnameint' => SQL__VARCHAR(50),
+			'cptnameext' => SQL__VARCHAR(50),
+			'cptgender' => SQL__ENUM(array('n', 'm', 'f')),
+			'cpttaxed' => SQL__ENUM(array('n', 'y')),
+			'cpttype' => SQL__INT_UNSIGNED(0),
+			'cptreqcpt' => SQL__TEXT,
+			'cptexccpt' => SQL__TEXT,
+			'cptreqicd' => SQL__TEXT,
+			'cptexcicd' => SQL__TEXT,
+			'cptrelval' => SQL__REAL,
+			'cptdeftos' => SQL__INT_UNSIGNED(0),
+			'cptdefstdfee' => SQL__REAL,
+			'cptstdfee' => SQL__TEXT,
+			'cpttos' => SQL__TEXT,
+			'cpttosprfx' => SQL__TEXT,
+			'id' => SQL__SERIAL
 		);
 	
 		// Run parent constructor

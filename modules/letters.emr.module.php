@@ -46,14 +46,14 @@ class LettersModule extends EMRModule {
 
 		// Table definition
 		$this->table_definition = array (
-			"letterdt" => SQL_DATE,
-			"lettereoc" => SQL_TEXT,
-			"letterfrom" => SQL_VARCHAR(150),
-			"letterto" => SQL_VARCHAR(150),
-			"lettertext" => SQL_TEXT,
-			"lettersent" => SQL_INT_UNSIGNED(0),
-			"letterpatient" => SQL_INT_UNSIGNED(0),
-			"id" => SQL_SERIAL
+			"letterdt" => SQL__DATE,
+			"lettereoc" => SQL__TEXT,
+			"letterfrom" => SQL__VARCHAR(150),
+			"letterto" => SQL__VARCHAR(150),
+			"lettertext" => SQL__TEXT,
+			"lettersent" => SQL__INT_UNSIGNED(0),
+			"letterpatient" => SQL__INT_UNSIGNED(0),
+			"id" => SQL__SERIAL
 		);
 
 		// Set associations
@@ -224,7 +224,7 @@ class LettersModule extends EMRModule {
 			"VALUE=\"".
 	         ( ($action=="addform") ? __("Add") : __("Modify"))."\"/>
 		<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
-		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\"/>
+		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"__submit\" VALUE=\"Cancel\"/>
 		</div>
 		</form>
 		";

@@ -32,11 +32,11 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 
 		// Table definition
 		$this->table_definition = array (
-			'posname' => SQL_VARCHAR(75),
-			'posdescrip' => SQL_VARCHAR(200),
-			'posdtadd' => SQL_DATE,
-			'posdtmod' => SQL_DATE,
-			'id' => SQL_SERIAL
+			'posname' => SQL__VARCHAR(75),
+			'posdescrip' => SQL__VARCHAR(200),
+			'posdtadd' => SQL__DATE,
+			'posdtmod' => SQL__DATE,
+			'id' => SQL__SERIAL
 		);
 		
 		// Run parent constructor

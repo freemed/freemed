@@ -47,21 +47,21 @@ class AuthorizationsModule extends EMRModule {
 	function AuthorizationsModule () {
 		// Table definition
 		$this->table_definition = array (
-			'authdtadd' => SQL_DATE,
-			'authdtmod' => SQL_DATE,
-			'authpatient' => SQL_INT_UNSIGNED(0),
-			'authdtbegin' => SQL_DATE,
-			'authdtend' => SQL_DATE,
-			'authnum' => SQL_VARCHAR(25),
-			'authtype' => SQL_INT_UNSIGNED(0),
-			'authprov' => SQL_INT_UNSIGNED(0),
-			'authprovid' => SQL_VARCHAR(20),
-			'authinsco' => SQL_INT_UNSIGNED(0),
-			'authvisits' => SQL_INT_UNSIGNED(0),
-			'authvisitsused' => SQL_INT_UNSIGNED(0),
-			'authvisitsremain' => SQL_INT_UNSIGNED(0),
-			'authcomment' => SQL_VARCHAR(100),
-			'id' => SQL_SERIAL
+			'authdtadd' => SQL__DATE,
+			'authdtmod' => SQL__DATE,
+			'authpatient' => SQL__INT_UNSIGNED(0),
+			'authdtbegin' => SQL__DATE,
+			'authdtend' => SQL__DATE,
+			'authnum' => SQL__VARCHAR(25),
+			'authtype' => SQL__INT_UNSIGNED(0),
+			'authprov' => SQL__INT_UNSIGNED(0),
+			'authprovid' => SQL__VARCHAR(20),
+			'authinsco' => SQL__INT_UNSIGNED(0),
+			'authvisits' => SQL__INT_UNSIGNED(0),
+			'authvisitsused' => SQL__INT_UNSIGNED(0),
+			'authvisitsremain' => SQL__INT_UNSIGNED(0),
+			'authcomment' => SQL__VARCHAR(100),
+			'id' => SQL__SERIAL
 		);
 	
 		// Set vars for patient management summary

@@ -26,23 +26,23 @@ class ProgressNotes extends EMRModule {
 	function ProgressNotes () {
 		// Table description
 		$this->table_definition = array (
-			'pnotesdt' => SQL_DATE,
-			'pnotesdtadd' => SQL_DATE,
-			'pnotesdtmod' => SQL_DATE,
-			'pnotespat' => SQL_INT_UNSIGNED(0),
-			'pnotesdescrip' => SQL_VARCHAR(100),
-			'pnotesdoc' => SQL_INT_UNSIGNED(0),
-			'pnoteseoc' => SQL_INT_UNSIGNED(0),
-			'pnotes_S' => SQL_TEXT,
-			'pnotes_O' => SQL_TEXT,
-			'pnotes_A' => SQL_TEXT,
-			'pnotes_P' => SQL_TEXT,
-			'pnotes_I' => SQL_TEXT,
-			'pnotes_E' => SQL_TEXT,
-			'pnotes_R' => SQL_TEXT,
-			'iso' => SQL_VARCHAR(15),
-			'locked' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_SERIAL
+			'pnotesdt' => SQL__DATE,
+			'pnotesdtadd' => SQL__DATE,
+			'pnotesdtmod' => SQL__DATE,
+			'pnotespat' => SQL__INT_UNSIGNED(0),
+			'pnotesdescrip' => SQL__VARCHAR(100),
+			'pnotesdoc' => SQL__INT_UNSIGNED(0),
+			'pnoteseoc' => SQL__INT_UNSIGNED(0),
+			'pnotes_S' => SQL__TEXT,
+			'pnotes_O' => SQL__TEXT,
+			'pnotes_A' => SQL__TEXT,
+			'pnotes_P' => SQL__TEXT,
+			'pnotes_I' => SQL__TEXT,
+			'pnotes_E' => SQL__TEXT,
+			'pnotes_R' => SQL__TEXT,
+			'iso' => SQL__VARCHAR(15),
+			'locked' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
 		);
 	
 		// Define variables for EMR summary

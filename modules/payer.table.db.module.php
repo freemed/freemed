@@ -19,15 +19,15 @@ class PayerTable extends MaintenanceModule {
 
 	function PayerTable () {
 		$this->table_definition = array (
-			'payerinsco' => SQL_INT_UNSIGNED(0),
-			'payerstartdt' => SQL_TEXT,
-			'payerenddt' => SQL_TEXT,
-			'payerpatient' => SQL_INT_UNSIGNED(0),
-			'payerpatientgtp' => SQL_VARCHAR(50),
-			'payerpatientinsno' => SQL_VARCHAR(50),
-			'payertype' => SQL_INT(0),
-			'payerstatus' => SQL_INT(0),
-			'id' => SQL_SERIAL
+			'payerinsco' => SQL__INT_UNSIGNED(0),
+			'payerstartdt' => SQL__TEXT,
+			'payerenddt' => SQL__TEXT,
+			'payerpatient' => SQL__INT_UNSIGNED(0),
+			'payerpatientgtp' => SQL__VARCHAR(50),
+			'payerpatientinsno' => SQL__VARCHAR(50),
+			'payertype' => SQL__INT(0),
+			'payerstatus' => SQL__INT(0),
+			'id' => SQL__SERIAL
 		);
 
 		// Call parent constructor

@@ -161,21 +161,21 @@ class User {
 		$result = $sql->query($sql->create_table_query(
 			'user',
 			array(
-				'username' => SQL_NOT_NULL(SQL_CHAR(16)),
-				'userpassword' => SQL_NOT_NULL(SQL_CHAR(32)),
-				'userdescrip' => SQL_VARCHAR(50),
-				'userlevel' => SQL_INT_UNSIGNED(0),
-				'usertype' => SQL_ENUM (array(
+				'username' => SQL__NOT_NULL(SQL__VARCHAR(16)),
+				'userpassword' => SQL__NOT_NULL(SQL__VARCHAR(32)),
+				'userdescrip' => SQL__VARCHAR(50),
+				'userlevel' => SQL__INT_UNSIGNED(0),
+				'usertype' => SQL__ENUM (array(
 					"phy",
 					"misc",
 					"super"
 				)),
-				'userfac' => SQL_BLOB,
-				'userphy' => SQL_BLOB,
-				'userphygrp' => SQL_BLOB,
-				'userrealphy' => SQL_INT_UNSIGNED(0),
-				'usermanageopt' => SQL_BLOB,
-				'id' => SQL_SERIAL
+				'userfac' => SQL__BLOB,
+				'userphy' => SQL__BLOB,
+				'userphygrp' => SQL__BLOB,
+				'userrealphy' => SQL__INT_UNSIGNED(0),
+				'usermanageopt' => SQL__BLOB,
+				'id' => SQL__SERIAL
 			), array ('id', 'username')
 		));
 

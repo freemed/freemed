@@ -30,14 +30,14 @@ class RoomMaintenance extends MaintenanceModule {
 	function RoomMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'roomname' => SQL_VARCHAR(20),
-			'roompos' => SQL_INT_UNSIGNED(0),
-			'roomdescrip' => SQL_VARCHAR(40),
-			'roomdefphy' => SQL_INT_UNSIGNED(0),
-			'roomsurgery' => SQL_ENUM(array('y', 'n')),
-			'roombooking' => SQL_ENUM(array('y', 'n')),
-			'roomipaddr' => SQL_VARCHAR(15),
-			'id' => SQL_SERIAL
+			'roomname' => SQL__VARCHAR(20),
+			'roompos' => SQL__INT_UNSIGNED(0),
+			'roomdescrip' => SQL__VARCHAR(40),
+			'roomdefphy' => SQL__INT_UNSIGNED(0),
+			'roomsurgery' => SQL__ENUM(array('y', 'n')),
+			'roombooking' => SQL__ENUM(array('y', 'n')),
+			'roomipaddr' => SQL__VARCHAR(15),
+			'id' => SQL__SERIAL
 		);
 
 		// Run constructor

@@ -24,8 +24,8 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 	function InternalServiceTypesMaintenance() {
 		// Table definition
 		$this->table_definition = array (
-			'intservtype' => SQL_VARCHAR(50),
-			'id' => SQL_SERIAL
+			'intservtype' => SQL__VARCHAR(50),
+			'id' => SQL__SERIAL
 		);
 
 		// Run parent constructor

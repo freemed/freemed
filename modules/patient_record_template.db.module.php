@@ -31,15 +31,15 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
 	function PatientRecordTemplateMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'prtname' => SQL_VARCHAR(100),
-			'prtdescrip' => SQL_VARCHAR(100),
-			'prtfname' => SQL_TEXT,
-			'prtvar' => SQL_TEXT,
-			'prtftype' => SQL_TEXT,
-			'prtftypefor' => SQL_TEXT,
-			'prtfmaxlen' => SQL_TEXT,
-			'prtfcom' => SQL_TEXT,
-			'id' => SQL_SERIAL
+			'prtname' => SQL__VARCHAR(100),
+			'prtdescrip' => SQL__VARCHAR(100),
+			'prtfname' => SQL__TEXT,
+			'prtvar' => SQL__TEXT,
+			'prtftype' => SQL__TEXT,
+			'prtftypefor' => SQL__TEXT,
+			'prtfmaxlen' => SQL__TEXT,
+			'prtfcom' => SQL__TEXT,
+			'id' => SQL__SERIAL
 		);
 
 		// Run parent constructor

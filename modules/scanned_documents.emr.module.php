@@ -39,13 +39,13 @@ class ScannedDocuments extends EMRModule {
 
 		// Define table
 		$this->table_definition = array (
-			"imagedt"	=>	SQL_DATE,
-			"imagepat"	=>	SQL_INT_UNSIGNED(0),
-			"imagetype"	=>	SQL_VARCHAR(50),
-			"imagedesc"	=>	SQL_VARCHAR(150),
-			"imageeoc"	=>	SQL_TEXT,
-			"imagefile"	=>	SQL_VARCHAR(100),
-			"id"		=>	SQL_SERIAL
+			"imagedt"	=>	SQL__DATE,
+			"imagepat"	=>	SQL__INT_UNSIGNED(0),
+			"imagetype"	=>	SQL__VARCHAR(50),
+			"imagedesc"	=>	SQL__VARCHAR(150),
+			"imageeoc"	=>	SQL__TEXT,
+			"imagefile"	=>	SQL__VARCHAR(100),
+			"id"		=>	SQL__SERIAL
 		);
 
 		// Set associations

@@ -18,10 +18,10 @@ class Debug {
 		$result=$sql->query($sql->create_table_query(
 			'test',
 			array(
-				'name' => SQL_CHAR(10),
-				'other' => SQL_CHAR(12),
-				'phone' => SQL_INT(0),
-				'id' => SQL_SERIAL
+				'name' => SQL__CHAR(10),
+				'other' => SQL__CHAR(12),
+				'phone' => SQL__INT(0),
+				'id' => SQL__SERIAL
 			),array('id')
 		));
 

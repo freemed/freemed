@@ -43,20 +43,20 @@ class PaymentModule extends EMRModule {
 	function PaymentModule ($nullvar = "") {
 		// Table definition
 		$this->table_definition = array (
-			'payrecdtadd' => SQL_DATE,
-			'payrecdtmod' => SQL_DATE,
-			'payrecpatient' => SQL_INT_UNSIGNED(0),
-			'payrecdt' => SQL_DATE,
-			'payreccat' => SQL_INT_UNSIGNED(0),
-			'payrecproc' => SQL_INT_UNSIGNED(0),
-			'payrecsource' => SQL_INT_UNSIGNED(0),
-			'payreclink' => SQL_INT_UNSIGNED(0),
-			'payrectype' => SQL_INT_UNSIGNED(0),
-			'payrecnum' => SQL_VARCHAR(100),
-			'payrecamt' => SQL_REAL,
-			'payrecdescrip' => SQL_TEXT,
-			'payreclock' => SQL_ENUM(array('unlocked', 'locked')),
-			'id' => SQL_SERIAL
+			'payrecdtadd' => SQL__DATE,
+			'payrecdtmod' => SQL__DATE,
+			'payrecpatient' => SQL__INT_UNSIGNED(0),
+			'payrecdt' => SQL__DATE,
+			'payreccat' => SQL__INT_UNSIGNED(0),
+			'payrecproc' => SQL__INT_UNSIGNED(0),
+			'payrecsource' => SQL__INT_UNSIGNED(0),
+			'payreclink' => SQL__INT_UNSIGNED(0),
+			'payrectype' => SQL__INT_UNSIGNED(0),
+			'payrecnum' => SQL__VARCHAR(100),
+			'payrecamt' => SQL__REAL,
+			'payrecdescrip' => SQL__TEXT,
+			'payreclock' => SQL__ENUM(array('unlocked', 'locked')),
+			'id' => SQL__SERIAL
 		);
 	
 		// Summary box information

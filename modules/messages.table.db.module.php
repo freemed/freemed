@@ -19,15 +19,15 @@ class MessagesTable extends MaintenanceModule {
 
 	function MessagesTable () {
 		$this->table_definition = array (
-			'msgtime' => SQL_TIMESTAMP(14),
-			'msgfor' => SQL_INT_UNSIGNED(0),
-			'msgpatient' => SQL_INT_UNSIGNED(0),
-			'msgperson' => SQL_VARCHAR(50),
-			'msgurgency' => SQL_INT_UNSIGNED(0),
-			'msgsubject' => SQL_VARCHAR(75),
-			'msgtext' => SQL_TEXT,
-			'msgread' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_SERIAL
+			'msgtime' => SQL__TIMESTAMP(14),
+			'msgfor' => SQL__INT_UNSIGNED(0),
+			'msgpatient' => SQL__INT_UNSIGNED(0),
+			'msgperson' => SQL__VARCHAR(50),
+			'msgurgency' => SQL__INT_UNSIGNED(0),
+			'msgsubject' => SQL__VARCHAR(75),
+			'msgtext' => SQL__TEXT,
+			'msgread' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
 		);
 
 		// Call parent constructor

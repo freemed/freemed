@@ -32,11 +32,11 @@ class ClaimtypesMaintenance extends MaintenanceModule {
 
 		// Define table definition
 		$this->table_definition = array (
-			'clmtpname' => SQL_VARCHAR(5),
-			'clmtpdescrip' => SQL_VARCHAR(60),
-			'clmtpdtadd' => SQL_DATE,
-			'clmtpdtmod' => SQL_DATE,
-			'id' => SQL_SERIAL
+			'clmtpname' => SQL__VARCHAR(5),
+			'clmtpdescrip' => SQL__VARCHAR(60),
+			'clmtpdtadd' => SQL__DATE,
+			'clmtpdtmod' => SQL__DATE,
+			'id' => SQL__SERIAL
 		);
 
 		// Run constructor

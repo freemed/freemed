@@ -6,12 +6,7 @@
 class GeneralConfig {
 
 	function GeneralConfig () {
-	
-		return(TRUE);
-
-		//doesnt really do much...
-
-
+		return true;
 	} // end constructor Debug
 
 	function init() {
@@ -20,13 +15,14 @@ class GeneralConfig {
 
 		$result=$sql->query("DROP TABLE config"); 
 		$result=$sql->query($sql->create_table_query(
-		'config',
-		array (
-			'c_option' => SQL_CHAR(6),
-			'c_value' => SQL_VARCHAR(100),
-			'id' => SQL_SERIAL
-			), array ('id')
-		));
+			'config',
+			array (
+				'c_option' => SQL__CHAR(6),
+				'c_value' => SQL__VARCHAR(100),
+				'id' => SQL__SERIAL
+				), array ('id')
+			)
+		);
 		if ($result) $display_buffer .= "<li>".__("Configuration")."</li>\n";
 
 			$stock_config = array (
@@ -59,12 +55,8 @@ class GeneralConfig {
 				}
 		}
 
-
 		return($result);
-
-
-	}
-
+	} // end method init
 
 } // end class Debug
 

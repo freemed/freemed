@@ -24,8 +24,8 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 	function InsuranceCompanyGroupMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'inscogroup' => SQL_VARCHAR(50),
-			'id' => SQL_SERIAL
+			'inscogroup' => SQL__VARCHAR(50),
+			'id' => SQL__SERIAL
 		);
 	
 		// Run parent constructor

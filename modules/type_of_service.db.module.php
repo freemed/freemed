@@ -28,11 +28,11 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 
 	function TypeOfServiceMaintenance () {
 		$this->table_definition = array (
-			'tosname' => SQL_VARCHAR(75),
-			'tosdescrip' => SQL_VARCHAR(200),
-			'tosdtadd' => SQL_DATE,
-			'tosdtmod' => SQL_DATE,
-			'id' => SQL_SERIAL
+			'tosname' => SQL__VARCHAR(75),
+			'tosdescrip' => SQL__VARCHAR(200),
+			'tosdtadd' => SQL__DATE,
+			'tosdtmod' => SQL__DATE,
+			'id' => SQL__SERIAL
 		);
 	
 		global $tosdtmod; $tosdtmod = date("Y-m-d");

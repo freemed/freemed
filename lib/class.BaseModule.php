@@ -46,7 +46,7 @@ class BaseModule extends module {
 	// override header method
 	function _header ($nullvar = "") {
 		global $display_buffer, $page_name;
-		freemed_open_db ();
+		freemed::connect ();
 		$page_name = __($this->MODULE_NAME);
 
 		// Check for existance of separate "record_name"
@@ -100,9 +100,9 @@ class BaseModule extends module {
 		$result = $sql->query($sql->create_table_query(
 			'module',
 			array(
-				'module_name' => SQL_VARCHAR(100),
-				'module_version' => SQL_VARCHAR(50),
-				'id' => SQL_SERIAL
+				'module_name' => SQL__VARCHAR(100),
+				'module_version' => SQL__VARCHAR(50),
+				'id' => SQL__SERIAL
 			), array('id')
 		));
 		return $result;

@@ -33,9 +33,9 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 	function DiagnosisFamilyMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'dfname' => SQL_VARCHAR(100),
-			'dfdescrip' => SQL_VARCHAR(100),
-			'id' => SQL_SERIAL
+			'dfname' => SQL__VARCHAR(100),
+			'dfdescrip' => SQL__VARCHAR(100),
+			'id' => SQL__SERIAL
 		);
 
 		// Run parent constructor

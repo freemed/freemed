@@ -23,6 +23,7 @@ class FacilityMaintenance extends MaintenanceModule {
 
 	var $record_name    = "Facility";
 	var $table_name     = "facility";
+	var $order_by       = "psrname";
 
 	var $variables = array (
 		"psrname",
@@ -45,23 +46,23 @@ class FacilityMaintenance extends MaintenanceModule {
 	function FacilityMaintenance () {
 		// Create table definition
 		$this->table_definition = array (
-			'psrname' => SQL_VARCHAR(100),
-			'psraddr1' => SQL_VARCHAR(50),
-			'psraddr2' => SQL_VARCHAR(50),
-			'psrcity' => SQL_VARCHAR(50),
-			'psrstate' => SQL_CHAR(3),
-			'psrzip' => SQL_CHAR(10),
-			'psrcountry' => SQL_VARCHAR(50),
-			'psrnote' => SQL_VARCHAR(40),
-			'psrdateentry' => SQL_DATE,
-			'psrdefphy' => SQL_INT_UNSIGNED(0),
-			'psrphone' => SQL_VARCHAR(16),
-			'psrfax' => SQL_VARCHAR(16),
-			'psremail' => SQL_VARCHAR(25),
-			'psrein' => SQL_VARCHAR(9),
-			'psrintext' => SQL_INT_UNSIGNED(0),
-			'psrpos' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_SERIAL
+			'psrname' => SQL__VARCHAR(100),
+			'psraddr1' => SQL__VARCHAR(50),
+			'psraddr2' => SQL__VARCHAR(50),
+			'psrcity' => SQL__VARCHAR(50),
+			'psrstate' => SQL__CHAR(3),
+			'psrzip' => SQL__CHAR(10),
+			'psrcountry' => SQL__VARCHAR(50),
+			'psrnote' => SQL__VARCHAR(40),
+			'psrdateentry' => SQL__DATE,
+			'psrdefphy' => SQL__INT_UNSIGNED(0),
+			'psrphone' => SQL__VARCHAR(16),
+			'psrfax' => SQL__VARCHAR(16),
+			'psremail' => SQL__VARCHAR(25),
+			'psrein' => SQL__VARCHAR(9),
+			'psrintext' => SQL__INT_UNSIGNED(0),
+			'psrpos' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
 		);
 
 		// Run constructor
@@ -86,11 +87,7 @@ class FacilityMaintenance extends MaintenanceModule {
      $next_action = "add";
      break; // end internal addform
     case "modform": // internal modform
-     while(list($k,$v)=each($this->variables))
-     {
-            global $$v;
-            //$display_buffer .= "$k $v<BR>";
-     }
+     foreach ($this->variables AS $k => $v) { global ${$k}; }
      $next_action = "mod";
      $r = freemed::get_link_rec ($id, $this->table_name);
      extract ($r);
@@ -114,12 +111,9 @@ class FacilityMaintenance extends MaintenanceModule {
 	html_form::text_widget("psraddr2", 20, 50),
 
       __("City, State, Zip") =>
-      "<INPUT TYPE=TEXT NAME=\"psrcity\" SIZE=10 MAXLENGTH=15
-       VALUE=\"".prepare($psrcity)."\">
-      <INPUT TYPE=TEXT NAME=\"psrstate\" SIZE=4 MAXLENGTH=3
-       VALUE=\"".prepare($psrstate)."\">
-      <INPUT TYPE=TEXT NAME=\"psrzip\" SIZE=11 MAXLENGTH=10
-       VALUE=\"".prepare($psrzip)."\">",
+      html_form::text_widget("psrcity", 10, 15)." ".
+      html_form::text_widget("psrstate", 3)." ".
+      html_form::text_widget("psrzip", 10),
 
       __("Country") =>
       html_form::country_pulldown("psrcountry")
@@ -133,8 +127,7 @@ class FacilityMaintenance extends MaintenanceModule {
       ),
       html_form::form_table ( array (
         __("Description") =>
-        "<INPUT TYPE=TEXT NAME=\"psrnote\" SIZE=20 MAXLENGTH=40
-         VALUE=\"".prepare($psrnote)."\">",
+	html_form::text_widget("psrnote", 20, 40),
 
         __("Default Provider") =>
 	freemed_display_selectbox (
@@ -218,6 +211,28 @@ class FacilityMaintenance extends MaintenanceModule {
 			array ("", " ")
 		);
 	} // end function FacilityMaintenance->view()
+
+	//----- XML-RPC Methods
+	function picklist () {
+		global $sql;
+		$result = $sql->query("SELECT * FROM ".$this->table_name." ".
+			"ORDER BY ".$this->order_fields);
+		if (!$sql->results($result)) {
+			return CreateObject('PHP.xmlrpcresp',
+				CreateObject('PHP.xmlrpcval', 'error', 'string')
+			);
+		}
+		return rpc_generate_sql_hash(
+			$this->table_name,
+			array (
+				"name" => 'psrname',
+				"city" => 'psrcity',
+				"state" => 'psrstate',
+				"id"
+			),
+			"ORDER BY ".$this->order_fields
+		);
+	} // end function FacilityMaintenance->picklist
 
 } // end class FacilityMaintenance
 

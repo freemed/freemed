@@ -35,14 +35,14 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 
 		// Table definition
 		$this->table_definition = array (
-			'phygroupname' => SQL_VARCHAR(100),
-			'phygroupfac' => SQL_INT_UNSIGNED(0),
-			'phygroupdtadd' => SQL_DATE,
-			'phygroupdtmod' => SQL_DATE,
-			'phygroupidmap' => SQL_TEXT,
-			'phygroupdocs' => SQL_TEXT,
-			'phygroupspe1' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_SERIAL
+			'phygroupname' => SQL__VARCHAR(100),
+			'phygroupfac' => SQL__INT_UNSIGNED(0),
+			'phygroupdtadd' => SQL__DATE,
+			'phygroupdtmod' => SQL__DATE,
+			'phygroupidmap' => SQL__TEXT,
+			'phygroupdocs' => SQL__TEXT,
+			'phygroupspe1' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
 		);
 
 		// Run constructor

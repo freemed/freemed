@@ -28,9 +28,9 @@ class CptModifiersMaintenance extends MaintenanceModule {
 			// table definition (inside constructor, as outside definitions
 			// do NOT allow function calls)
 		$this->table_definition = array (
-			"cptmod"		=>	SQL_CHAR(2),
-			"cptmoddescrip"		=>	SQL_VARCHAR(50),
-			"id"			=>	SQL_SERIAL
+			"cptmod"		=>	SQL__CHAR(2),
+			"cptmoddescrip"		=>	SQL__VARCHAR(50),
+			"id"			=>	SQL__SERIAL
 		);
 		if ($debug) {
 		global $sql;$display_buffer .= "query = \"".$sql->create_table_query(

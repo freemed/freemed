@@ -44,22 +44,22 @@ class PrescriptionModule extends EMRModule {
 
 		// Table definition
 		$this->table_definition = array (
-			'rxdtadd' => SQL_DATE,
-			'rxdtmod' => SQL_DATE,
-			'rxphy' => SQL_INT_UNSIGNED(0),
-			'rxpatient' => SQL_INT_UNSIGNED(0),
-			'rxdtfrom' => SQL_DATE,
-			'rxdrug' => SQL_VARCHAR(150),
-			'rxform' => SQL_ENUM(array(
+			'rxdtadd' => SQL__DATE,
+			'rxdtmod' => SQL__DATE,
+			'rxphy' => SQL__INT_UNSIGNED(0),
+			'rxpatient' => SQL__INT_UNSIGNED(0),
+			'rxdtfrom' => SQL__DATE,
+			'rxdrug' => SQL__VARCHAR(150),
+			'rxform' => SQL__ENUM(array(
 				"suspension",
 				"tablet",
 				"capsule",
 				"solution"
 				)),
-			'rxdosage' => SQL_INT_UNSIGNED(0),
-			'rxquantity' => SQL_INT_UNSIGNED(0),
-			'rxsize' => SQL_INT_UNSIGNED(0),
-			'rxunit' => SQL_ENUM(array(
+			'rxdosage' => SQL__INT_UNSIGNED(0),
+			'rxquantity' => SQL__INT_UNSIGNED(0),
+			'rxsize' => SQL__INT_UNSIGNED(0),
+			'rxunit' => SQL__ENUM(array(
 				"mg",
 				"mg/1cc",
 				"mg/2cc",
@@ -68,7 +68,7 @@ class PrescriptionModule extends EMRModule {
 				"mg/5cc",
 				"g"
 				)),
-			'rxinterval' => SQL_ENUM(array(
+			'rxinterval' => SQL__ENUM(array(
 				"b.i.d.",
 				"t.i.d.",
 				"q.i.d.",
@@ -79,13 +79,13 @@ class PrescriptionModule extends EMRModule {
 				"q. 8h",
 				"q.d."
 				)),
-			'rxsubstitute' => SQL_ENUM(array(
+			'rxsubstitute' => SQL__ENUM(array(
 				"may substitute", "may not substitute"
 				)),
-			'rxrefills' => SQL_INT_UNSIGNED(0),
-			'rxperrefill' => SQL_INT_UNSIGNED(0),
-			'rxnote' => SQL_TEXT,
-			'id' => SQL_SERIAL
+			'rxrefills' => SQL__INT_UNSIGNED(0),
+			'rxperrefill' => SQL__INT_UNSIGNED(0),
+			'rxnote' => SQL__TEXT,
+			'id' => SQL__SERIAL
 		);
 
 		$this->variables = array (

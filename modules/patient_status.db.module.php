@@ -25,9 +25,9 @@ class patientStatusMaintenance extends MaintenanceModule {
 	function PatientStatusMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'ptstatus' => SQL_CHAR(3),
-			'ptstatusdescrip' => SQL_VARCHAR(30),
-			'id' => SQL_SERIAL
+			'ptstatus' => SQL__CHAR(3),
+			'ptstatusdescrip' => SQL__VARCHAR(30),
+			'id' => SQL__SERIAL
 		);
 
 		// Run parent constructor

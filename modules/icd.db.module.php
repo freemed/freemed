@@ -44,17 +44,17 @@ class IcdMaintenance extends MaintenanceModule {
 			'))'
 		));
 		$this->table_definition = array (
-			'icd9code' => SQL_VARCHAR(6),
-			'icd10code' => SQL_VARCHAR(7),
-			'icd9descrip' => SQL_VARCHAR(45),
-			'icd10descrip' => SQL_VARCHAR(45),
-			'icdmetadesc' => SQL_VARCHAR(30),
-			'icdng' => SQL_DATE,
-			'icddrg' => SQL_DATE,
-			'icdnum' => SQL_INT_UNSIGNED(0),
-			'icdamt' => SQL_REAL,
-			'icdcoll' => SQL_REAL,
-			'id' => SQL_SERIAL
+			'icd9code' => SQL__VARCHAR(6),
+			'icd10code' => SQL__VARCHAR(7),
+			'icd9descrip' => SQL__VARCHAR(45),
+			'icd10descrip' => SQL__VARCHAR(45),
+			'icdmetadesc' => SQL__VARCHAR(30),
+			'icdng' => SQL__DATE,
+			'icddrg' => SQL__DATE,
+			'icdnum' => SQL__INT_UNSIGNED(0),
+			'icdamt' => SQL__REAL,
+			'icdcoll' => SQL__REAL,
+			'id' => SQL__SERIAL
 		);
 	
 		$this->MaintenanceModule();

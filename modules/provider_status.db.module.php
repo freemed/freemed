@@ -22,8 +22,8 @@ class ProviderStatusMaintenance extends MaintenanceModule {
 	function ProviderStatusMaintenance () {
 		// Define database table
 		$this->table_definition = array (
-			"phystatus" => SQL_VARCHAR(30),
-			"id" => SQL_SERIAL
+			"phystatus" => SQL__VARCHAR(30),
+			"id" => SQL__SERIAL
 		);
 
 		// Call parent constructor

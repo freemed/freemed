@@ -27,10 +27,10 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
 	function ProviderSpecialtiesMaintenance () {
 		// Table definition
 		$this->table_definition = array (
-			'specname' => SQL_VARCHAR(50),
-			'specdesc' => SQL_VARCHAR(100),
-			'specdatestamp' => SQL_DATE,
-			'id' => SQL_SERIAL
+			'specname' => SQL__VARCHAR(50),
+			'specdesc' => SQL__VARCHAR(100),
+			'specdatestamp' => SQL__DATE,
+			'id' => SQL__SERIAL
 		);
 	
 		// Call parent constructor

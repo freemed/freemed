@@ -19,21 +19,21 @@ class SchedulerTable extends MaintenanceModule {
 
 	function SchedulerTable () {
 		$this->table_definition = array (
-			'caldateof' => SQL_DATE,
-			'caltype' => SQL_ENUM(array('temp', 'pat')),
-			'calhour' => SQL_INT_UNSIGNED(0),
-			'calminute' => SQL_INT_UNSIGNED(0),
-			'calduration' => SQL_INT_UNSIGNED(0),
-			'calfacility' => SQL_INT_UNSIGNED(0),
-			'calroom' => SQL_INT_UNSIGNED(0),
-			'calphysician' => SQL_INT_UNSIGNED(0),
-			'calpatient' => SQL_INT_UNSIGNED(0),
-			'calcptcode' => SQL_INT_UNSIGNED(0),
-			'calstatus' => SQL_INT_UNSIGNED(0),
-			'calprenote' => SQL_VARCHAR(100),
-			'calpostnote' => SQL_TEXT,
-			'calmark' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_SERIAL
+			'caldateof' => SQL__DATE,
+			'caltype' => SQL__ENUM(array('temp', 'pat')),
+			'calhour' => SQL__INT_UNSIGNED(0),
+			'calminute' => SQL__INT_UNSIGNED(0),
+			'calduration' => SQL__INT_UNSIGNED(0),
+			'calfacility' => SQL__INT_UNSIGNED(0),
+			'calroom' => SQL__INT_UNSIGNED(0),
+			'calphysician' => SQL__INT_UNSIGNED(0),
+			'calpatient' => SQL__INT_UNSIGNED(0),
+			'calcptcode' => SQL__INT_UNSIGNED(0),
+			'calstatus' => SQL__INT_UNSIGNED(0),
+			'calprenote' => SQL__VARCHAR(100),
+			'calpostnote' => SQL__TEXT,
+			'calmark' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
 		);
 
 		// Call parent constructor
@@ -67,6 +67,6 @@ class SchedulerTable extends MaintenanceModule {
 	} // end function _update
 }
 
-register_module('SchedulerTable');
+register_module("SchedulerTable");
 
 ?>

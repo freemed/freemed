@@ -19,19 +19,19 @@ class CallinTable extends MaintenanceModule {
 
 	function CallinTable () {
 		$this->table_definition = array (
-			'cilname' => SQL_VARCHAR(50),
-			'cifname' => SQL_VARCHAR(50),
-			'cimname' => SQL_VARCHAR(50),
-			'cihphone' => SQL_VARCHAR(16),
-			'ciwphone' => SQL_VARCHAR(16),
-			'cidob' => SQL_DATE,
-			'cicomplaint' => SQL_TEXT,
-			'cidatestamp' => SQL_DATE,
-			'cifacility' => SQL_INT_UNSIGNED(0),
-			'ciphysician' => SQL_INT_UNSIGNED(0),
-			'citookcall' => SQL_VARCHAR(50),
-			'cipatient' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_SERIAL
+			'cilname' => SQL__VARCHAR(50),
+			'cifname' => SQL__VARCHAR(50),
+			'cimname' => SQL__VARCHAR(50),
+			'cihphone' => SQL__VARCHAR(16),
+			'ciwphone' => SQL__VARCHAR(16),
+			'cidob' => SQL__DATE,
+			'cicomplaint' => SQL__TEXT,
+			'cidatestamp' => SQL__DATE,
+			'cifacility' => SQL__INT_UNSIGNED(0),
+			'ciphysician' => SQL__INT_UNSIGNED(0),
+			'citookcall' => SQL__VARCHAR(50),
+			'cipatient' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
 		);
 
 		// Call parent constructor

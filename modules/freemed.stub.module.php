@@ -1,37 +1,26 @@
 <?php
- // $Id$
- // $Author$
- // note: stub module for certifications table definition
+	// $Id$
+	// $Author$
+	// note: stub module for FreeMED installation
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('FreeMED.BaseModule');
 
-class CertificationsTable extends MaintenanceModule {
+class FreeMED_Package extends BaseModule {
 
-	var $MODULE_NAME = 'Certifications Table';
+	var $MODULE_NAME = 'FreeMED';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.0';
+	var $MODULE_VERSION = VERSION;
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = VERSION;
 
-	var $table_name = "certifications";
-
-	function CertificationsTable () {
-		$this->table_definition = array (
-			'certpatient' => SQL__INT_UNSIGNED(0),
-			'certtype' => SQL__INT_UNSIGNED(0),
-			'certformnum' => SQL__INT_UNSIGNED(0),
-			'certdesc' => SQL__VARCHAR(20),
-			'certformdata' => SQL__TEXT,
-			'id' => SQL__SERIAL
-		);
-
+	function FreeMED_Package () {
 		// Call parent constructor
-		$this->MaintenanceModule();
-	} // end constructor CertificationsTable
+		$this->BaseModule();
+	} // end constructor FreeMED_Package
 
-	// Use _update to update table definitions with new versions
+	// Use _update to perform upgrade-specific activities.
 	function _update () {
 		$version = freemed::module_version($this->MODULE_NAME);
 		/* 
@@ -58,6 +47,6 @@ class CertificationsTable extends MaintenanceModule {
 	} // end function _update
 }
 
-register_module('CertificationsTable');
+register_module('FreeMED_Package');
 
 ?>

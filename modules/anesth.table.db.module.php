@@ -19,10 +19,10 @@ class AnesthTable extends MaintenanceModule {
 
 	function AnesthTable () {
 		$this->table_definition = array (
-			'andate' => SQL_DATE,
-			'anphysician' => SQL_INT_UNSIGNED(0),
-			'anfacility' => SQL_INT_UNSIGNED(0),
-			'id' => SQL_SERIAL
+			'andate' => SQL__DATE,
+			'anphysician' => SQL__INT_UNSIGNED(0),
+			'anfacility' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
 		);
 
 		// Call parent constructor
