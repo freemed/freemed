@@ -178,8 +178,32 @@ if (is_object($this_user)) {
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
 		"HREF=\"lib/template/newskin/stylesheet.css\"/>\n".
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
-		"HREF=\"lib/template/newskin/dynamic.css.php\" />\n".
-		"</head>\n".
+		"HREF=\"lib/template/newskin/dynamic.css.php\" />\n";
+	if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
+		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n";
+		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n";
+		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/dialog.js\"></script>\n";
+		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/popupwin.js\"></script>\n";
+		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"lib/template/default/htmlarea/htmlarea.css\" />\n";
+		print "<script type=\"text/javascript\">\n".
+			"function initEditor () {\n";
+		$count = 0;
+		print "//HTMLArea.loadPlugin(\"TableOperations\");\n".
+			"//HTMLArea.loadPlugin(\"SpellChecker\");\n";
+		foreach ($GLOBALS['__freemed']['rich_text_areas'] as $k => $v) {
+			print "editor".$count." = new HTMLArea(\"".$v."\");\n".
+				"//editor".$count.".registerPlugin(\"TableOperations\");\n".
+			"//editor".$count.".registerPlugin(\"SpellChecker\");\n".
+			"editor".$count.".generate();\n";
+			$count += 1;
+		}
+		//print "var x = alert('built htmlareas');\n".
+		print "return true;\n".
+		"}\n";
+		print "\n\ninitEditor();\n";
+		print "</script>\n";
+		}
+	print "</head>\n".
 		"<body";
 	// Check for close_on_load
 	if ($GLOBALS['__freemed']['close_on_load']) {
@@ -189,7 +213,7 @@ if (is_object($this_user)) {
 	}
 	print "><div class=\"main\">\n";
 	print $display_buffer;
-	print "</div></body>\n".
-		"</html>\n";
+	print "</div>\n";
+	print "</body></html>\n";
 } // end checking for "no_template_display"
 ?>
