@@ -216,6 +216,32 @@ if (is_object($this_user)) {
 <!-- master table end -->
 </table>
 
+<?php
+	// Handle HTMLarea objects, if they exist
+if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/dialog.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/popupwin.js\"></script>\n";
+	print "<link rel=\"stylesheet\" type=\"text/css\" href=\"lib/template/default/htmlarea/htmlarea.css\" />\n";
+	print "<script type=\"text/javascript\">\n".
+		"HTMLArea.loadPlugin(\"TableOperations\");\n".
+		"HTMLArea.loadPlugin(\"SpellChecker\");\n".
+		"function initEditor () {\n";
+	$count = 0;
+	foreach ($GLOBALS['__freemed']['rich_text_areas'] as $k => $v) {
+		print "editor".$count." = new HTMLArea(\"".$v."\");\n".
+			"editor".$count.".registerPlugin(\"TableOperations\");\n".
+			"editor".$count.".registerPlugin(\"SpellChecker\");\n".
+			"editor".$count.".generate();\n";
+		$count += 1;
+	}
+	print "return false;\n".
+		"}\n".
+		"</script>\n";
+}
+?>
+
 <!-- copyright notice -->
 <p/>
 <div NAME="copyright" ALIGN="CENTER">
@@ -243,6 +269,29 @@ if (is_object($this_user)) {
 		print " onLoad=\"".$GLOBALS['__freemed']['on_load']."(); return true;\"";
 	}
 	print ">\n";
+	// Handle HTMLarea objects, if they exist
+	if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/dialog.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/popupwin.js\"></script>\n";
+	print "<link rel=\"stylesheet\" type=\"text/css\" href=\"lib/template/default/htmlarea/htmlarea.css\" />\n";
+	print "<script type=\"text/javascript\">\n".
+		"HTMLArea.loadPlugin(\"TableOperations\");\n".
+		"HTMLArea.loadPlugin(\"SpellChecker\");\n".
+		"function initEditor () {\n";
+	$count = 0;
+	foreach ($GLOBALS['__freemed']['rich_text_areas'] as $k => $v) {
+		print "editor".$count." = new HTMLArea(\"".$v."\");\n".
+			"editor".$count.".registerPlugin(\"TableOperations\");\n".
+			"editor".$count.".registerPlugin(\"SpellChecker\");\n".
+			"editor".$count.".generate();\n";
+		$count += 1;
+	}
+	print "return false;\n".
+		"}\n".
+		"</script>\n";
+	}
 	print $display_buffer;
 	print "</body>\n".
 		"</html>\n";

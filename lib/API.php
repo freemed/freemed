@@ -1040,6 +1040,7 @@ class freemed {
 		// notebooks, where even if something is generated, it isn't
 		// always displayed.
 		if (!$_jsset or $force_js) {
+		/*
 			$buffer .= 
 			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n".
 			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n".
@@ -1053,19 +1054,13 @@ class freemed {
 				"href=\"lib/template/default/htmlarea/htmlarea.css\" />\n";
 				    
 			$_jsset = true;
+			*/
 		}
 
-		// Add code for activating the editor on this widget
-		$buffer .= "\n\n".
-			"<script type=\"text/javascript\">\n".
-			"function initEditor () {\n".
-			"editor = new HTMLArea(\"".$varname."\");\n".
-			"editor.registerPlugin(\"TableOperations\");\n".
-			"editor.registerPlugin(\"SpellChecker\");\n".
-			"editor.generate();\n".
-			"return false;\n".
-			"}\n".
-			"</script>\n\n";
+		// For this, we're just going to add the name of this
+		// widget to the list, and we'll generate this on the
+		// fly from elsewhere in the template.
+		$GLOBALS['__freemed']['rich_text_areas'][] = $varname;
 
 		// Set this to be what we do
 		$GLOBALS['__freemed']['on_load'] = 'initEditor';
