@@ -33,7 +33,7 @@ class RoomMaintenance extends MaintenanceModule {
 			'roomname' => SQL_VARCHAR(20),
 			'roompos' => SQL_INT_UNSIGNED(0),
 			'roomdescrip' => SQL_VARCHAR(40),
-			'roomdefphy' => SQL_INT_UNSIGNED,
+			'roomdefphy' => SQL_INT_UNSIGNED(0),
 			'roomsurgery' => SQL_ENUM(array('y', 'n')),
 			'roombooking' => SQL_ENUM(array('y', 'n')),
 			'roomipaddr' => SQL_VARCHAR(15),

@@ -41,7 +41,7 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 			'phygroupdtmod' => SQL_DATE,
 			'phygroupidmap' => SQL_TEXT,
 			'phygroupdocs' => SQL_TEXT,
-			'phygroupspe1' => SQL_INT_UNSIGNED,
+			'phygroupspe1' => SQL_INT_UNSIGNED(0),
 			'id' => SQL_SERIAL
 		);
 
