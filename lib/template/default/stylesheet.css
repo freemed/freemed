@@ -269,3 +269,11 @@ A.patientbox_hilite:link { color: #000000 }
 	background: #d9d9ff 
 }
 
+/* Buttons */
+.button {
+	border: 1px solid;
+	border-color: #000000;
+	/* background-color: #ccccff; */
+	background-color: #ffffff;
+}
+
