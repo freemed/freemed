@@ -10,6 +10,25 @@ include_once ("lib/freemed.php");
 //----- Disable menu bar
 $no_menu_bar = true;
 
+//----- First, make sure that password is correct if updated
+// Get root password
+$result = $sql->query ( "SELECT userpassword FROM user WHERE id='1'");
+// If there are results, process (exception for first "boot")
+if ($sql->results($result)) {
+	// Extract information
+	$r = $sql->fetch_array($query);
+
+	// If it doesn't match...
+	if (stripslashes($r[userpassword]) != DB_PASSWORD) {
+		// ... execute update query to *make* it match.
+		$update_result = $sql->query($sql->update_query(
+			"user",
+			array ( "userpassword" => DB_PASSWORD ),
+			array ( "id" => 1 )
+		));
+	} // end checking for matching
+} // end checking for results
+
 //$connect = freemed_auth_login ($_username, $_password);
 $connect = freemed_verify_auth ();
 if (!$connect) {
