@@ -140,7 +140,7 @@ class AgataMerge extends AgataCore
     fwrite($fd, "/Arial findfont 10 scalefont setfont \n");
     $page = 0;
 
-    for ($x=0; $x<=count($this->Query); $x++)
+    for ($x=0; $x<count($this->Query); $x++)
     {
       $QueryLine = $this->Query[$x];
 
