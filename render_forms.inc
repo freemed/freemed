@@ -60,7 +60,7 @@ class diagnosisSet {
 
     // loop to find matches
     $current_uniques = 0;
-    for ($i=1;$i<=$size_of_new;$i++) { // loop to count
+    for ($i=0;$i<=$size_of_new;$i++) { // loop to count
       if ((!($this->inStack($newvals[$i]))) and
           ($newvals[$i] != 0) and
           (!empty($newvals[$i]))) $current_uniques++;
@@ -102,7 +102,7 @@ class diagnosisSet {
 
     // if there is enough room, return true and add
     if (($this->numberUnique ($diag)) <
-        (($this->maximum_stack_size) - ($this->$stack_size))) {
+        (($this->maximum_stack_size) - ($this->stack_size))) {
       for ($i=1;$i<=$flag;$i++) $this->popValue($diag[$i]);
       return true;
     } // end of true return for add
