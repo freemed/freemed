@@ -440,11 +440,13 @@ class EMRModule extends BaseModule {
 				break;
 
 			case "modform":
-				$r = freemed::get_link_rec($id, $this->table_name);
-				foreach ($r as $k => $v) {
-					global ${$k};
-					${$k} = $v;
-				}
+				if ($this->table_name) {
+					$r = freemed::get_link_rec($id, $this->table_name);
+					foreach ($r as $k => $v) {
+						global ${$k};
+						${$k} = $v;
+					}
+				} // end checking for table name
 
 				// Check for record locking
 				if ($this->locked($id)) return false;
