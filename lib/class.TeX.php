@@ -162,18 +162,19 @@ class TeX {
 	//	$template - Name of the template to be used. For
 	//	lib/tex/rx.tex this would be 'rx';
 	//
-	//	$macros - Associative array of substitutions, in the
-	//	form of the key being the macro name, and the value
-	//	being the value to be substituted for it.
+	//	$rec - Associative array of primary record data.
 	//
 	// Returns:
 	//
 	//	TeX document (not rendered into a result format).
 	//
-	function RenderFromTemplate ( $template, $macros ) {
+	function RenderFromTemplate ( $template, $rec ) {
 		if (!file_exists('lib/tex/'.$template.'.tex')) {
 			die("Could not load $template TeX template.");
 		}
+
+		// Set iffi status to false
+		$this->iffi = false;
 		
 		// Initial load of file
 		$fp = fopen('lib/tex/'.$template.'.tex', 'r');
@@ -184,18 +185,22 @@ class TeX {
 		while (!feof($fp)) { $buffer .= fgets($fp, 4096); }
 		fclose ($fp);
 
-		// Form superset
-		$_macros = array_merge($this->stock_macros, $macros);
-
-		// Substitutions
-		foreach ($_macros AS $k => $v) {
-			if (!empty($k) and !empty($v)) {
-				$buffer = str_replace('{{'.$k.'}}', $v, $buffer);
-			} elseif (!empty($k)) {
-				// Broken behavior? Remove missing macros
-				$buffer = str_replace('{{'.$k.'}}', '', $buffer);
-			}
-		}
+		// Second-generation macros
+		// 	**macro**
+		if (!(strpos($buffer, '**') === false)) {
+			$chunks = explode('**', $buffer);
+			$buffer = ''; // overwrite what we had
+			foreach ($chunks AS $k => $v) {
+				if (!($k & 1)) {
+					// Non macro, copy verbosely
+					if (!$this->iffi) { $buffer .= $v; }
+				} else {
+					// Call out to buffer function
+					$tmp = $this->_ParseTag($rec, $v);
+					if (!$this->iffi) { $buffer .= $tmp; }
+				}
+			} // end foreach
+		} // end checking if there are macros
 
 		// Return processed string
 		return $buffer;
@@ -233,7 +238,7 @@ class TeX {
 
 		// Remove intermediary step file(s)
 		unlink($tmp);
-		unlink($tmp.'.ltx');
+		//unlink($tmp.'.ltx');
 		unlink($tmp.'.log');
 		unlink($tmp.'.aux');
 
@@ -403,6 +408,94 @@ class TeX {
 
 		return $text;
 	} // end method _HTMLToRichText
+
+	// Method: _ParseTag
+	//
+	//	Parse appropriate information from tag to convert into output
+	//	data to be passed back to TeX.
+	//
+	// Parameters:
+	//
+	//	$rec - Associative array of data to be used for processing.
+	//
+	//	$tag - Text of the tag to be processed.
+	//
+	// Returns:
+	//
+	//	TeX formatted text.
+	//
+	function _ParseTag ( $rec, $tag ) {
+		// Seperate the tag by : seperated parameters
+		$params = explode ( ':', $tag );
+
+		// Deal with this by the first parameter, explaining type
+		switch ($params[0]) {
+			case 'if':
+				// Format:
+				//	if:(conditiontype):(var):(test?)
+				// Needs to be broken with a 'fi' tag
+				switch ($params[1]) {
+					case 'not':
+					if ($rec[$params[2]]) { $this->iffi = true; }
+					break;
+
+					default:
+					if (!$rec[$params[2]]) { $this->iffi = true; }
+					break;
+				}
+				return ''; // need to send blanks back
+				break; // end if
+
+			case 'fi':
+				// Format:
+				//	fi
+				// Breaks an 'if' tag
+				$this->iffi = false;
+				return ''; // need to send blanks back
+				break; // end if
+
+			case 'method':
+				// Format:
+				//	method:(class):(method):(objparameter)
+				$obj = CreateObject('_FreeMED.'.$params[1], $rec[$params[3]]);
+				if (method_exists($obj, $params[2])) {
+					return call_user_method($params[2], $obj);
+				}
+				return '';
+				break; // end method
+
+			case 'field':
+				// Format:
+				//	field:(fieldname)
+				return $this->_HTMLToRichText($rec[$params[1]]);
+				break; // end field
+
+			case 'link':
+				// Format:
+				//	link:(fieldname):(table):(targetfield):(optionalformatting)
+				$linkrec = freemed::get_link_rec($rec[$params[1]], $params[2]);
+				switch ($params[4]) {
+					case 'date':
+					return $this->_SanitizeText(fm_date_print($linkrec[$params[3]]));
+					break;
+
+					case 'phone':
+					$ph = $linkrec[$params[3]];
+					return $this->_SanitizeText('('.substr($ph, 0, 3).') '.substr($ph, 3, 3).'-'.substr($ph, 6, 4));
+					break;
+
+					default:
+					return $this->_HTMLToRichText($linkrec[$params[3]]);
+					break;
+				} // end optional formatting switch
+				break; // end field
+
+			default: // unhandled
+				return "(unhandled tag)";
+				break;
+		} // end case params
+		die("Should never reach here");
+	} // end method _ParseTag
 
 	// Method: _ReplaceQuotes
 	//

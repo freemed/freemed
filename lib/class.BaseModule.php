@@ -189,9 +189,14 @@ class BaseModule extends module {
 
 			// Actual renderer for formatting array
 			if ($this->print_template) {
+				if ($this->table_name) {
+					$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+				} else {
+					$rec = array ( 'id' => $_REQUEST['id'] );
+				}
 				$TeX->_buffer = $TeX->RenderFromTemplate(
 					$this->print_template,
-					$this->_print_mapping($TeX, $_REQUEST['id'])
+					$rec
 				);
 			} else {
 				$this->_RenderTex(&$TeX, $_REQUEST['id']);
