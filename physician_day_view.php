@@ -10,6 +10,12 @@ include_once ("lib/calendar-functions.php");
 //----- Login/authenticate
 freemed_open_db ();
 
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"physician_day_view.php|user $user_to_log ");}	
+
+
+
 //----- Check if there is a valid date... if not, assign current date
 if (!empty($selected_date)) $for_date = $selected_date;
 if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),

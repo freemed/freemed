@@ -24,8 +24,22 @@ if (($id<1) AND ($current_patient>0)) { $id = $current_patient; }
 
 // Check for access to current medical record
 if (!freemed::check_access_for_patient($id)) {
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manage.php|user $user_to_log accesses patient $patient failed! user does not have access");}	
+
+
+	
 	trigger_error("User not authorized for this function", E_USER_ERROR);
 }
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manage.php|user $user_to_log accesses patient $id");}	
+
+
+
 
 $page_title = __("Manage Patient");
 

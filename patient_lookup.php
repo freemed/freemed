@@ -9,6 +9,13 @@ include_once("lib/freemed.php");
 freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"patientlookup.php|user $user_to_log views patient list GLOBAL ACCESS");}	
+
+
+
+
 //----- Check for process
 if ($action==__("Search")) {
 	$GLOBALS['__freemed']['on_load'] = 'process';
