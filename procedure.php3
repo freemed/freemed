@@ -538,7 +538,7 @@ switch ($action) { // master action switch
             payrecpatient = '$patient',
             payrecdt      = '".fm_date_assemble("procdt")."',
             payrecamt     = '$procbalorig',
-            payreccomment = '".addslashes($proccomment)."'
+            payrecdescrip = '".addslashes($proccomment)."'
             WHERE ( (payreccat='5') AND (payrecproc='$id') )";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
