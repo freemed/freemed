@@ -3,10 +3,28 @@
  *  freemed external style sheet
  */
 
-body { background: #ffffff; color: #000000 }
+body {
+	background: #ffffff;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	margin-top: 0px;
+	margin-left: 0px;
+	text-decoration: none
+}
 
+/* Equivalent to onMouseOver */
+a:hover {
+	color: white;
+	text-decoration: underline;
+	background-color: blue
+}
+
+/* Main freemed dialog box */
 .mainbox {
-	border: thick dashed #ff0000;
+	border: thick black;
 	border-width: thick;
+	border-style: solid;
 	background: #dddddd 
 }
+
