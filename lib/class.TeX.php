@@ -20,10 +20,13 @@ class TeX {
 	var $stock_macros;
 
 	function TeX ( $options = NULL ) {
+		global $this_user;
+		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
 		$this->stock_macros = array (
 			'PACKAGENAME' => PACKAGENAME,
 			'VERSION' => DISPLAY_VERSION,
-			'INSTALLATION' => INSTALLATION
+			'INSTALLATION' => INSTALLATION,
+			'usernumber' => $this_user->user_number()
 		);
 
 		// Pass options to internal array
