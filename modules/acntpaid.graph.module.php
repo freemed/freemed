@@ -1,7 +1,5 @@
 <?php
- // $Id$
- // desc: aged bills report
- // lic : LGPL
+	// $Id$
 
 LoadObjectDependency('_FreeMED.GraphModule');
 
@@ -61,7 +59,7 @@ class AcntPaidGraph extends GraphModule {
 				$balorig = bcadd($row[procbalorig],0,2);
 				$paid = bcadd($row[procamtpaid],0,2);
 				//$charges = bcadd($row[proccharges],0,2);
-				$charges = bcsub($balorig,$row[proccharges],2);
+				$charges = bcadd($balorig,-$row[proccharges],2);
 				$balance = bcadd($row[procbalcurrent],0,2);
 			
 				$tmpbal = bcadd($charges,$paid,2);
@@ -83,7 +81,7 @@ class AcntPaidGraph extends GraphModule {
 					$copay_amt = bcadd($copay_amt,0,2);
 				}
 				
-				$paid = bcsub($paid,$copay_amt,2);	
+				$paid = bcadd($paid,-$copay_amt,2);	
 				// gather data for graph
 				if ($firstrec)
 				{
