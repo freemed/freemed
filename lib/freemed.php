@@ -117,6 +117,7 @@ if (ereg('MSIE ([0-9].[0-9]{1,2})',$_SERVER['HTTP_USER_AGENT'])) {
 if (!defined('SESSION_DISABLE')) {
 	// This is *only* disabled when XML-RPC calls are being made,
 	// etc, so that it does not require information it can't get.
+	session_cache_limiter('public');
 	session_start();
 
 	session_register(
