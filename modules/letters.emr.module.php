@@ -9,7 +9,7 @@ class LettersModule extends EMRModule {
 
 	var $MODULE_NAME    = "Letters";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -65,8 +65,6 @@ class LettersModule extends EMRModule {
 	} // end constructor LettersModule
 
 	function add () {
-		global $HTTP_POST_FILES;
-
 		// Check for submit as add, else drop
 		if ($_REQUEST['my_submit'] != __("Add")) {
 			global $action; $action = "addform";
@@ -74,8 +72,8 @@ class LettersModule extends EMRModule {
 		}
 
 		// Check for uploaded msworddoc
-		if (!empty($HTTP_POST_FILES["msworddoc"]["tmp_name"]) and file_exists($HTTP_POST_FILES["msworddoc"]["tmp_name"])) {
-			$doc = $HTTP_POST_FILES["msworddoc"]["tmp_name"];
+		if (!empty($_FILES["msworddoc"]["tmp_name"]) and file_exists($_FILES["msworddoc"]["tmp_name"])) {
+			$doc = $_FILES["msworddoc"]["tmp_name"];
 
 			// Convert to the temporary file
 			$__command = "/usr/bin/wvWare -x /usr/share/wv/wvText.xml \"$doc\"";
@@ -341,9 +339,9 @@ class LettersModule extends EMRModule {
 	function _update() {
 		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
-		if (!version_check($version, '0.3')) {
+		if (!version_check($version, '0.3.1')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				 'ADD COLUMN lettereoc AFTER letterdt');
+				 'ADD COLUMN lettereoc TEXT AFTER letterdt');
 		}
 	} // end method _update
 
