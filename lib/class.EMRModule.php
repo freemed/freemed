@@ -844,7 +844,7 @@ class EMRModule extends BaseModule {
 			"( ".$this->patient_field.
 				" = '".addslashes($patient)."') ".
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).
-			"ORDER BY ".$this->order_field;
+			( $this->order_field ? "ORDER BY ".$this->order_field : "" );
 		$result = $GLOBALS['sql']->query($query);
 		$return[__("NONE SELECTED")] = "";
 		while ($r = $GLOBALS['sql']->fetch_array($result)) {
