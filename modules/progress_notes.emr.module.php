@@ -9,7 +9,7 @@ class ProgressNotes extends EMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2.1";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Progress Notes allow physicians and
 		providers to track patient activity through
@@ -51,6 +51,10 @@ class ProgressNotes extends EMRModule {
 			__("Description") =>	"pnotesdescrip"
 		);
 		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
+
+		// Set associations
+		$this->_SetAssociation('EpisodeOfCare');
+		$this->_SetMetaInformation('EpisodeOfCareVar', 'pnoteseoc');
 
 		// Call parent constructor
 		$this->EMRModule();
@@ -151,16 +155,11 @@ class ProgressNotes extends EMRModule {
      // Check episode of care dependency
      if(check_module("EpisodeOfCare")) {
        // Actual piece
+       global $pnoteseoc;
 	$pnoteseoc = sql_squash($pnoteseoc); // for multiple choice (HACK)
        $related_episode_array = array (
          __("Related Episode(s)") =>
-           freemed::multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
-                                  "eocdtlastsimilar FROM eoc WHERE ".
-                                  "eocpatient='".addslashes($patient)."'",
-                                  "##eocdescrip## (##eocstartdate## to ##eocdtlastsimilar##)",
-                                  "pnoteseoc",
-                                  $pnoteseoc,
-                                  false),
+	 module_function('EpisodeOfCare','widget',array('pnoteseoc', $patient))
         );
      } else {
         // Put in blank array instead
@@ -551,7 +550,7 @@ class ProgressNotes extends EMRModule {
      ";
 	} // end of case display
 
-	function view () {
+	function view ($condition = false) {
 		global $display_buffer;
 		global $patient, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
@@ -564,6 +563,8 @@ class ProgressNotes extends EMRModule {
 
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE (pnotespat='".addslashes($patient)."') ".
+			freemed::itemlist_conditions(false)." ".
+			( $condition ? 'AND '.$condition : '' )." ".
 			"ORDER BY pnotesdt";
 		$result = $sql->query ($query);
 

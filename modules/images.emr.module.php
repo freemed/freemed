@@ -10,7 +10,7 @@ class PatientImages extends EMRModule {
 
 	var $MODULE_NAME = "Patient Images";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.2";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
@@ -48,7 +48,11 @@ class PatientImages extends EMRModule {
 			"id"		=>	SQL_SERIAL
 		);
 
-		// call parent constructor
+		// Set associations
+		$this->_SetAssociation('EpisodeOfCare');
+		$this->_SetMetaInformation('EpisodeOfCareVar', 'imageeoc');
+
+		// Call parent constructor
 		$this->EMRModule();
 	} // end constructor PatientImages
 
@@ -107,7 +111,7 @@ class PatientImages extends EMRModule {
 			$display_buffer .= " <b> ".__("done").". </b>\n";
 		} else {
 			if ($debug) $display_buffer .= "(query = '$query') ";
-			 $display_buffer .= " <b> <FONT COLOR=#ff0000>".__("ERROR")."</FONT> </b>\n";
+			 $display_buffer .= " <b> <font COLOR=\"#ff0000\">".__("ERROR")."</font> </b>\n";
 		}
 		$display_buffer .= "<br/>\n";
 
@@ -151,8 +155,11 @@ class PatientImages extends EMRModule {
 	function del () {
 		// Delete actual image
 		global $id, $patient;
-		unlink("img/store/".freemed::secure_filename($patient).
-			".".freemed::secure_filename($id).".djvu");
+		unlink(freemed::image_filename(
+			freemed::secure_filename($patient),
+			freemed::secure_filename($id),
+			'djvu'
+		));
 
 		// Run stock deletion routine
 		$this->_del();
@@ -321,7 +328,7 @@ class PatientImages extends EMRModule {
 		";
  	} // end method PatientImages->mod
 
-	function view () {
+	function view ($condition = false) {
 		global $display_buffer;
 		global $patient, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
@@ -337,6 +344,7 @@ class PatientImages extends EMRModule {
 				"SELECT * FROM ".$this->table_name." ".
 				"WHERE (imagepat='".addslashes($patient)."') ".
 				freemed::itemlist_conditions(false)." ".
+				( $condition ? 'AND '.$condition : '' )." ".
 				"ORDER BY imagedt"
 			),
 			$this->page_name,

@@ -9,7 +9,7 @@ class EpisodeOfCare extends EMRModule {
 
 	var $MODULE_NAME = "Episode of Care";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_DESCRIPTION = "
 		Episode of care is another portion of FreeMED
 		designed to help with outcomes management. Any
@@ -79,9 +79,7 @@ class EpisodeOfCare extends EMRModule {
 	);
 
 	function EpisodeOfCare () {
-		$this->EMRModule();
-
-		// define create query
+		// Table definition
 		$this->table_definition = array (
 			"eocpatient"		=> SQL_NOT_NULL(SQL_INT_UNSIGNED(0)),
 			"eocdescrip"		=> SQL_VARCHAR(100),
@@ -155,8 +153,8 @@ class EpisodeOfCare extends EMRModule {
 
 		// Summary box for management
 		$this->summary_vars = array (
-			"Orig" => "eocstartdate",
-			"Last" => "eocdtlastsimilar",
+			__("Orig") => "eocstartdate",
+			__("Last") => "eocdtlastsimilar",
 			__("Description") => "eocdescrip"
 		);
 		$this->summary_options = SUMMARY_VIEW;
@@ -178,6 +176,9 @@ class EpisodeOfCare extends EMRModule {
 					break;
 			}
 		}
+
+		// Run parent constructor
+		$this->EMRModule();
 	} // end constructor EpisodeOfCare
 
 	function form () {
@@ -215,7 +216,7 @@ class EpisodeOfCare extends EMRModule {
 
 // grab important patient information
 	$display_buffer .= "
-	<P>
+	<p/>
 	<form ACTION=\"$this->page_name\" METHOD=\"POST\">
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"yes\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
@@ -417,16 +418,16 @@ class EpisodeOfCare extends EMRModule {
 	";
 	
 	$display_buffer .= "
-    </TABLE>
-    <P>
+    </table>
+    <p/>
    ";
 
    if ($eocrelauto=="yes") { $display_buffer .= "
       <!-- conditional auto table -->
 
      <CENTER>
-     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
-      ALIGN=CENTER>
+     <table WIDTH=\"100%\" CELLPSPACING=\"2\" CELLPADDING=\"2\" BORDER=\"0\"
+      VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
      <TR>
      <TD ALIGN=CENTER COLSPAN=4 BGCOLOR=\"#777777\">
       <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
@@ -493,7 +494,7 @@ class EpisodeOfCare extends EMRModule {
 	 ".fm_time_entry("eocrelautotime")."
      </TD>
      </TR>
-     </TABLE>
+     </table>
      </CENTER>
    "; } // end of conditional auto info
 
@@ -504,8 +505,8 @@ class EpisodeOfCare extends EMRModule {
       <!-- conditional employment table -->
 
      <CENTER>
-     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
-      ALIGN=CENTER>
+     <table WIDTH=\"100%\" CELLPSPACING=\"2\" CELLPADDING=\"2\" BORDER=\"0\"
+      VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
@@ -570,7 +571,7 @@ class EpisodeOfCare extends EMRModule {
        &nbsp; <!-- placeholder -->
      </TD>
      </TR>
-     </TABLE>
+     </table>
      </CENTER>
    "; } // end of conditional employment info
 
@@ -579,8 +580,8 @@ class EpisodeOfCare extends EMRModule {
       <!-- conditional pregnancy table -->
 
      <CENTER>
-     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
-      ALIGN=CENTER>
+     <table WIDTH=\"100%\" CELLPSPACING=\"2\" CELLPADDING=\"2\" BORDER=\"0\"
+      VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
@@ -624,7 +625,7 @@ class EpisodeOfCare extends EMRModule {
        &nbsp; <!-- placeholder -->
      </TD>
      </TR>
-     </TABLE>
+     </table>
      </CENTER>
    "; } // end of conditional pregnancy info
 
@@ -632,8 +633,8 @@ class EpisodeOfCare extends EMRModule {
       <!-- conditional other table -->
 
      <CENTER>
-     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
-      ALIGN=CENTER>
+     <table WIDTH=\"100%\" CELLPSPACING=\"2\" CELLPADDING=\"2\" BORDER=\"0\"
+      VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
      <TR>
      <TD ALIGN=CENTER BGCOLOR=\"#777777\" COLSPAN=4>
      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">
@@ -648,7 +649,7 @@ class EpisodeOfCare extends EMRModule {
        VALUE=\"".prepare($eocrelothercomment)."\">
      </TD>
      </TR>
-    </TABLE>
+    </table>
     "; } // end of other conditional reason
 
    $display_buffer .= "
@@ -716,6 +717,7 @@ class EpisodeOfCare extends EMRModule {
 		global $display_buffer, $id, $sql;
 		global $record_name, $save_module, $module, $_auth;
 		global $patient;
+
 		if ($id<1) {
 			$page_title = __("$record_name")." :: ".__("ERROR");
 			$display_buffer .= "
@@ -735,28 +737,67 @@ class EpisodeOfCare extends EMRModule {
 		$display_buffer .= "
 		<P>
 		<!-- Vitals Display Table -->
-     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=1
-      ALIGN=CENTER VALIGN=MIDDLE>
-     <TR>
-      <TD ALIGN=CENTER>
+     <table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"1\"
+      ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+     <tr>
+      <td ALIGN=\"CENTER\">
        ".__("Starting Date")."
-      </TD>
-      <TD ALIGN=CENTER>
+      </td>
+      <td ALIGN=\"CENTER\">
        ".__("Description")."
-      </TD>
-     </TR>
-     <TR>
-      <TD ALIGN=CENTER>
-       $eoc[eocstartdate]
-      </TD>
-      <TD ALIGN=CENTER>
-       ".prepare($eoc[eocdescrip])."
-      </TD>
-     </TR>
-     </TABLE>
+      </td>
+     </tr>
+     <tr>
+      <td ALIGN=\"CENTER\">
+       ".prepare($eoc['eocstartdate'])."
+      </td>
+      <td ALIGN=\"CENTER\">
+       ".prepare($eoc['eocdescrip'])."
+      </td>
+     </tr>
+     </table>
      <!-- End Vitals Display Table -->
 		<P>
 		";
+
+		// DEBUG
+		global $record_name, $_auth, $module;
+		foreach ($this->_GetAssociations() as $_garbage => $m) {
+			// Backup settings
+			$save_module = $module;
+			$r_name = $record_name;
+
+			// Fudge information to pass along
+			$var = freemed::module_get_meta($m, 'EpisodeOfCareVar');
+			$_auth = $var."=".urlencode($id); 
+			$module = $m;
+			$record_name = freemed::module_get_value($m, 'MODULE_NAME');
+
+			// Run actual module view, with doctored query
+			module_function($m, 'view',
+				array(
+				"(($var LIKE '".addslashes($id).":%') OR ".
+				"($var LIKE '%:".addslashes($id)."') OR ".
+				"($var LIKE '%:".addslashes($id).":%') OR ".
+				"($var='".addslashes($id)."'))"
+				)
+			);
+
+			// Restore
+			$module = $save_module;
+			$record_name = $r_name;
+
+			$display_buffer .= "<p/>\n";
+		}
+		
+		/*
+
+		* Everything below is old static EOC modules code. It has
+		* been replaced by the few lines of code above. To be EOC
+		* ready, a module needs to allow passing of query parts
+		* via the view() method, and needs to set the appropriate
+		* association and meta information for EpisodeOfCareVar.
+
 		// procedures display
 		// special jimmy-rigged query to find in 3d array...
 		$query = "SELECT * FROM procrec
@@ -863,14 +904,16 @@ class EpisodeOfCare extends EMRModule {
 		// end of procedures display
 		$module = $save_module;
 		$record_name = $r_name; // restore from backup var
-   
 		// end of progress notes display
-		// display management link at the bottom...
+  
+		*/
+
+		// Display management link at the bottom...
 		$display_buffer .= "
 		<p/>
 		<div ALIGN=\"CENTER\">
 		<a HREF=\"$this->page_name?patient=$patient&module=$module\"
-		>".__("Choose Another $record_name")."</a>
+		 class=\"button\">".__("Select Another")."</a>
 		</div>
 		<P>
 		";

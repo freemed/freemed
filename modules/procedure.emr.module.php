@@ -9,7 +9,7 @@ class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -95,6 +95,10 @@ class ProcedureModule extends EMRModule {
 			'procclmtp' => SQL_INT_UNSIGNED(0),
 			'id' => SQL_SERIAL
 		);
+		
+		// Set associations
+		$this->_SetAssociation('EpisodeOfCare');
+		$this->_SetMetaInformation('EpisodeOfCareVar', 'proceoc');
 
 		// Call parent constructor
 		$this->EMRModule();
@@ -424,12 +428,15 @@ class ProcedureModule extends EMRModule {
 				".template::link_bar(array(
 					__("Manage Patient") =>
 					"manage.php?id=".urlencode($patient),
+
 					__("Add Payment") =>
 				 	$this->page_name."?module=PaymentModule&action=addform&patient=".urlencode($patient),
+
 					__("Add Another") =>
 				$this->page_name."?module=".urlencode($module).
-				"&action=addform&procvoucher=".urlencode($procvoucher).
-				  "&patient=".urlencode($patient)."
+				"&action=addform".
+				  "&procvoucher=".urlencode($procvoucher).
+				  "&patient=".urlencode($patient).
 				  "&procdt=".fm_date_assemble("procdt").
 				  "&proccpt=$proccpt".
 				  "&procpos=$procpos".
@@ -437,7 +444,7 @@ class ProcedureModule extends EMRModule {
 				  "&procdiag2=$procdiag2".
 				  "&procdiag3=$procdiag3".
 				  "&procdiag4=$procdiag4".
-				  "&procphysician=".urlencode($procphysician),
+				  "&procphysician=".urlencode($procphysician)
 				))."
 				</div>
 				<p/>
@@ -707,7 +714,7 @@ class ProcedureModule extends EMRModule {
 		}
 	}
 
-	function view() {
+	function view ($condition = false) {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
@@ -716,6 +723,7 @@ class ProcedureModule extends EMRModule {
 				"SELECT * FROM ".$this->table_name." ".
 				"WHERE procpatient='".addslashes($patient)."' ".
 				freemed::itemlist_conditions(false)." ".
+				( $condition ? 'AND '.$condition : '' )." ".
 				"ORDER BY procdt DESC"
 			),
 			$this->page_name,
