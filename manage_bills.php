@@ -20,10 +20,17 @@
  { // master action switch
   case "list":
    // procduce a list only. Don't acutally process any bills
-	$result = $sql->query ("SELECT DISTINCT patient.*
-				FROM patient,procrec 
-				WHERE patient.id = procrec.procpatient 
-				AND procrec.procbalcurrent > 0 ORDER BY ptlname");
+
+        $query = "SELECT procrec.procbilled,procrec.procdtbilled,
+                  procrec.procbalcurrent,patient.ptlname,patient.ptfname,
+                  patient.id
+                  FROM procrec,patient 
+                  WHERE procbalcurrent>'0' AND procrec.procpatient = patient.id
+                  ORDER BY patient.ptlname
+                 ";
+        $result = $sql->query($query);
+ 	if (!$result)
+		DIE("Error<BR>");
 	if ($result)
 	{
 		freemed_display_box_top($record_name, $_ref, $page_name);
@@ -36,66 +43,119 @@
                 <TD COLSPAN=2 ALIGN=CENTER><B>Billing Functions</B></TD>
        		<TD><B>Procedures</B></TD>
        		<TD><B>Billed</B></TD>
+       		<TD><B>Date Billed</B></TD>
                 <TD><B>Balance</B></TD>
       		</TR>
     		"; // header of box
  		$total_unpaid = 0.00;
+                // setup control break
+                $prev_patient="$$";
+                $patient_balance = 0.00;
+                $billed = 1;
      		$_alternate = freemed_bar_alternate_color ();
 		while ($r = $sql->fetch_array($result)) 
 		{
 
+      			$id        = $r["id"        ] ;
       			$ptlname  = $r["ptlname"  ] ;
       			$ptfname  = $r["ptfname"  ] ;
-      			$id        = $r["id"        ] ;
+			$procbalcurrent = $r["procbalcurrent"];
+			$procbilled = $r["procbilled"];
+			if ($prev_patient=="$$") // first time
+			{
+				$prev_patient = $id;
+				$prev_lname = $ptlname;
+				$prev_fname = $ptfname;
+				$oldest_bill = "0000-00-00";
+			}
 
         		// alternate the bar color
 
-      			echo "
-        			<TR BGCOLOR=\"".(
-     			$_alternate = freemed_bar_alternate_color ($_alternate)
-					)."\">
-        			<TD><A HREF=
-         			\"patient.php?$_auth&id=$id&action=display\"
-         			>$ptlname, $ptfname</A></TD>
-        			<TD><A HREF=
-         			\"manage_payment_records.php?$_auth&id=$id&patient=$id&bills=yes\"
-         			><FONT SIZE=-1>View/Manage</FONT></A></TD>
-        			<TD><A HREF=
-         			\"payment_record.php?_ref=$page_name&id=$id&patient=$id\"
-         			><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
-        			<TD><A HREF=
-         			\"module_loader.php?$_auth&module=procedureModule&id=$id&patient=$id\"
-         			><FONT SIZE=-1>View/Manage</FONT></A></TD>
-      				";
- 			// see if all procs are billed. if not then show No
-         		$billed_result = $sql->query("SELECT COUNT(*) FROM procrec where
-                                                        procpatient='$id' AND procbilled='0'
-                                                        AND procbalcurrent>'0'");
-                        $billed = $sql->fetch_array($billed_result);
-                        if ($billed)
-                        {
-                                if ($billed[0] > 0)
-                                        echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
-                                else
-                                        echo "<TD>YES</TD>";
-                        
+			if ($id != $prev_patient)
+			{
+        			// alternate the bar color
+     				$_alternate = freemed_bar_alternate_color ($_alternate);
+
+      				echo "
+        				<TR BGCOLOR=$_alternate>
+        				<TD><A HREF=
+         				\"manage.php?$_auth&id=$prev_patient\"
+         				>$prev_lname, $prev_fname</A></TD>
+        				<TD><A HREF=
+         				\"manage_payment_records.php?$_auth&id=$prev_patient&patient=$prev_patient&bills=yes\"
+         				><FONT SIZE=-1>View/Manage</FONT></A></TD>
+        				<TD><A HREF=
+         				\"payment_record.php?_ref=$page_name&patient=$prev_patient\"
+         				><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
+        				<TD><A HREF=
+         				\"procedure.php?$_auth&id=$id&patient=$prev_patient\"
+         				><FONT SIZE=-1>View/Manage</FONT></A></TD>
+      					";
+				if (!$billed)
+					echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
+				else
+					echo "<TD>YES</TD>";
+				echo "<TD>$oldest_bill</TD>";
+				$total_unpaid += $patient_balance;  // add to grand total
+                                echo "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
+	
+				// reset control break
+
+				$patient_balance = 0.00;				
+				//$oldest_bill = $procdtbilled;
+				$oldest_bill = "0000-00-00";
+				$billed = 1;
+				$prev_patient = $id;
+				$prev_lname = $ptlname;
+				$prev_fname = $ptfname;
+				echo "</TR>";
+			}	
+			$patient_balance += $procbalcurrent;
+			if ($procdtbilled > "0000-00-00")
+			{
+				if ($oldest_bill == "0000-00-00")
+					$oldest_bill = $procdtbilled;
+				else
+				if ($procdtbilled < $oldest_bill)
+					$oldest_bill = $procdtbilled;
 			}
-			$billed_result = $sql->query("SELECT SUM(procbalcurrent)
-                                                       FROM procrec WHERE
-                                                       procpatient='$id'
-                                                       AND procbalcurrent>'0'");
-                        $billed = $sql->fetch_array($billed_result);
-                        if ($billed)
-                        {
-                                 $total_unpaid += $billed[0];
-                                 echo "<TD ALIGN=RIGHT>".bcadd($billed[0],0,2)."</TD>";
-                        }
+
+			// it only takes 1 unbilled to show NO
+			if (!$procbilled)
+				$billed = 0;
 
 
     		} // while there are no more
+		// process last record from control break;
+		$_alternate = freemed_bar_alternate_color ($_alternate);
+                echo "
+                  <TR BGCOLOR=$_alternate>
+                  <TD><A HREF=
+                  \"manage.php?$_auth&id=$id\"
+                  >$prev_lname, $prev_fname</A></TD>
+                  <TD><A HREF=
+                  \"manage_payment_records.php?$_auth&id=$prev_patient&patient=$prev_patient&bills=yes\"
+                  ><FONT SIZE=-1>View/Manage</FONT></A></TD>
+                  <TD><A HREF=
+                  \"payment_record.php?_ref=$page_name&patient=$prev_patient\"
+                  ><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
+                  <TD><A HREF=
+                  \"procedure.php?$_auth&id=$id&patient=$prev_patient\"
+                  ><FONT SIZE=-1>View/Manage</FONT></A></TD>
+                  ";
+                  if (!$billed)
+                      echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
+                  else
+                      echo "<TD>YES</TD>";
+                  echo "<TD>$oldest_bill</TD>";
+                  $total_unpaid += $patient_balance;  // add to grand total
+                  echo "<TD ALIGN=RIGHT>".bcadd($patient_balance,0,2)."</TD>";
+		// end control break
 
+		// process totals.
                 echo "<TR>
 		<TD><B>Total</B></TD>
+		<TD>&nbsp;</TD>
 		<TD>&nbsp;</TD>
 		<TD>&nbsp;</TD>
 		<TD>&nbsp;</TD>
@@ -107,7 +167,7 @@
 
 	 	echo "
       		</TABLE>
-    		"; // end table (fixed 19990617)
+    		"; 
 	
 		
 		freemed_display_box_bottom();

@@ -103,7 +103,7 @@ class diagnosisSet {
     if ($flag == 0) return true;
 
     // if there is enough room, return true and add
-    if (($this->numberUnique ($diag)) <
+    if (($this->numberUnique ($diag)) <=
         (($this->maximum_stack_size) - ($this->stack_size))) {
       for ($i=1;$i<=$flag;$i++) $this->popValue($diag[$i]);
       return true;

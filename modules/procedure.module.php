@@ -79,7 +79,7 @@ class procedureModule extends freemedEMRModule {
 
   // step one:
   //   calculate the standard fee
-  $this_insco = new InsuranceCompany ($this->this_patient->local_record["ptinsco1"]);
+  $this_insco = new InsuranceCompany ($this->this_patient->payer[0]->local_record["payerinsnsco"]);
   $cpt_code = freemed_get_link_rec ($proccpt, "cpt"); // cpt code
   $cpt_code_fees = fm_split_into_array ($cpt_code["cptstdfee"]);
   $cpt_code_stdfee = $cpt_code[$this_insco->id]; // grab proper std fee
@@ -264,7 +264,9 @@ class procedureModule extends freemedEMRModule {
             '".addslashes($procauth).     "',
             '".addslashes($procrefdoc).   "',
             '".fm_date_assemble("procrefdt")."',
-            NULL )";
+            NULL,
+            NULL,
+            '0000-00-00')";
 
       $result = $sql->query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";

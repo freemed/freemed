@@ -1,6 +1,25 @@
 freemed project changelog
 ($Id$)
 
+* Wed Jan 24 2001 fforest
+  - admin.php added procdtbilled to procrec
+  - genereate_fixed_forms.php fix bug in insurance validation
+      re arranged code to allow a new bill to be generated when a procs eoc or auth
+      changes. this ensures auth,eoc and procs aren't miss billed.
+      mark billed now generates payrec entried with payreccat of BILLED for each proc marked.
+  - manage_bills.php - re written as a control break to make dtbilled processing easier. 
+        the date billed on the screen shows the oldest date of a proc set.
+  - manage_payment_records.php no show procdtbilled for procs. 
+        transfer type ledger entries now capture transferto as payreclink and the procbalcurrent
+        is copied to the payrecamt.
+  - payment_records.php  add code to show the new BILLED ledger entries. also show who was billed.
+           transfers now show transferred to value as prim,sec etc.
+  - macros.php added PAYER_TYPES array and BILLED define.
+  - render_forms.php  fix a bug in diagnosis counting in testAdd function
+  - prescription_module. fix include error.
+  - procedure_module fix to get insurer from new patient container values.
+      use '0000-00-00' for dtbilled when proc is added.
+
 * Wed Jan 24 2001 rufustfirefly
   - added David Jordan's patch for book_appointment module
   - updated lib/module_emr.php to allow for less code rekeying and
@@ -42,6 +61,7 @@ freemed project changelog
 * Tue Jan 16 2001 rufustfirefly
   - cpt.php3 -> modules/cpt.module.php
 
+>>>>>>> 1.37
 * Tue Jan 16 2001 fforest
   - accidenty applied my freemed.inc. put that back to the original
   - fix a bug I intrduced in generate_fixedforms that issued a warning if

@@ -6,6 +6,7 @@
  $page_name = "generate_fixed_forms.php";
  include ("lib/freemed.php");
  include ("lib/API.php");
+ include ("lib/calendar-functions.php");
  include ("lib/render_forms.php");
 
  freemed_open_db ($LoginCookie);
@@ -102,7 +103,7 @@
      flush ();
 
      // make sure patient has prim sec ter or wc insurance
-     $ins_valid = $this_patient->payor[$bill_request_type]->local_record["payerinsco"];
+     $ins_valid = $this_patient->payer[$bill_request_type]->local_record["payerinsco"];
      if ( ($bill_request_type < 4) AND ($ins_valid == 0) )
      {
          echo "<B>Error - Patient does not have insurance of this type</B><BR>\n";
@@ -118,20 +119,20 @@
      }
 
 
-     $result = $sql->query ("SELECT a.*,b.* FROM payrec AS a,
-                                           procrec AS b 
-                           WHERE ( 
-                             a.payreccat = '5' AND
-                             a.payreclink = '$bill_request_type' AND
-                             a.payrecpatient = '$current_patient' AND
-                             a.payrecproc = b.id AND
-                             b.procbillable = '0' AND
-                             b.procbilled = '0' AND
-                             b.procbalcurrent > '0'
-                           ) ORDER BY a.payrecpatient,a.payrecdt");
+     //$result = $sql->query ("SELECT a.*,b.* FROM payrec AS a,
+     //                                      procrec AS b 
+     //                      WHERE ( 
+     //                        a.payreccat = '5' AND
+     //                        a.payreclink = '$bill_request_type' AND
+     //                        a.payrecpatient = '$current_patient' AND
+     //                        a.payrecproc = b.id AND
+     //                        b.procbillable = '0' AND
+     //                        b.procbilled = '0' AND
+     //                        b.procbalcurrent > '0'
+     //                      ) ORDER BY a.payrecpatient,a.payrecdt");
 
-     if (!$result or ($result==0))
-       die ("Malformed SQL query ($current_patient)");
+     //if (!$result or ($result==0))
+     //  die ("Malformed SQL query ($current_patient)");
 
      // set number of charges to zero
      $number_of_charges = 0;
@@ -238,23 +239,23 @@
      // what is this related to?
 	// We print these for default. we check the eoc later is this code
 	// and coded values will replace the default
-     $employment = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
-     $related_employment[yes] =
-       ( ( $employment == "y" ) ? $this_form[ffcheckchar] : " " );
-     $related_employment[no]  =
-       ( ( $employment == "n" ) ? $this_form[ffcheckchar] : " " );
-     $auto = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
-     $related_auto[yes] =
-       ( ( $auto == "y" ) ? $this_form[ffcheckchar] : " " );
-     $related_auto[no]  =
-       ( ( $auto == "n" ) ? $this_form[ffcheckchar] : " " );
-     $related_auto[state] =    // FIIIIIIIX  MEEEEEEEEEE!!!
-       ( ( $auto == "y" ) ? $eoc_state_name : "  " );
-     $other = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
-     $related_other[yes] =
-       ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
-     $related_other[no] =
-       ( ( $other == "n" ) ? $this_form[ffcheckchar] : " " );
+     //$employment = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+     //$related_employment[yes] =
+     //  ( ( $employment == "y" ) ? $this_form[ffcheckchar] : " " );
+     //$related_employment[no]  =
+     //  ( ( $employment == "n" ) ? $this_form[ffcheckchar] : " " );
+     //$auto = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+     //$related_auto[yes] =
+     //  ( ( $auto == "y" ) ? $this_form[ffcheckchar] : " " );
+     //$related_auto[no]  =
+     //  ( ( $auto == "n" ) ? $this_form[ffcheckchar] : " " );
+     //$related_auto[state] =    // FIIIIIIIX  MEEEEEEEEEE!!!
+     //  ( ( $auto == "y" ) ? $eoc_state_name : "  " );
+     //$other = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+     //$related_other[yes] =
+     //  ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
+     //$related_other[no] =
+     //  ( ( $other == "n" ) ? $this_form[ffcheckchar] : " " );
 
      // insco information
      if ($this_patient->ptdep == 0) {
@@ -379,40 +380,39 @@
      unset ($diag_set);
      $diag_set = new diagnosisSet ();
 
+     //
+     // grab all the procedure for this patient
+     //
+     $result = $sql->query ("SELECT a.*,b.* FROM payrec AS a,
+                                           procrec AS b
+                           WHERE (
+                             a.payreccat = '5' AND
+                             a.payreclink = '$bill_request_type' AND
+                             a.payrecpatient = '$current_patient' AND
+                             a.payrecproc = b.id AND
+                             b.procbillable = '0' AND
+                             b.procbilled = '0' AND
+                             b.procbalcurrent > '0'
+                           ) ORDER BY b.proceoc,b.procauth,b.procdt");
+
+     if (!$result or ($result==0))
+       die ("Malformed SQL query ($current_patient)");
+
      // queue all entries
      $first_procedure = 0;
      while ($r = $sql->fetch_array ($result)) {
        //$p = freemed_get_link_rec ($r[payrecproc], "procrec");
-       if (first_procedure == 0)
+       if ($first_procedure == 0)
        {
-           $eocs = explode (":", $r[proceoc]);
-           if ($eocs[0])
-           {
-	        $eoc = freemed_get_link_rec ($eocs[0], "eoc");
-     	        // what is this related to?
-                $employment = $eoc[eocrelemp]; 
-                $related_employment[yes] =
-                   ( ( $employment == "yes" ) ? $this_form[ffcheckchar] : " " );
-                $related_employment[no]  =
-                   ( ( $employment == "no" ) ? $this_form[ffcheckchar] : " " );
-                $auto = $eoc[eocrelauto]; 
-                $related_auto[yes] =
-                   ( ( $auto == "yes" ) ? $this_form[ffcheckchar] : " " );
-                $related_auto[no]  =
-                   ( ( $auto == "no" ) ? $this_form[ffcheckchar] : " " );
-                $related_auto[state] =    // FIIIIIIIX  MEEEEEEEEEE!!!
-                   ( ( $auto == "yes" ) ? $eoc[eocrelautostpr] : "  " );
-                $other = $eoc[eocrelother]; 
-                $related_other[yes] =
-                   ( ( $other == "yes" ) ? $this_form[ffcheckchar] : " " );
-                $related_other[no] =
-                   ( ( $other == "no" ) ? $this_form[ffcheckchar] : " " );
-		$first_procedure = 1;
-       	        if ($debug) echo "\n$employment $auto $other<BR>\n";
-		
-	    
-           }
-       }	
+	   $prev_auth = $r["procauth"];
+           $prev_eoc = $r["proceoc"];
+           $prev_key = $prev_eoc.$prev_auth;
+           $first_procedure = 1;
+       }
+	
+       $cur_auth = $r["procauth"];
+       $cur_eoc = $r["proceoc"];
+       $cur_key = $cur_eoc.$cur_auth;
 
        if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
        flush();
@@ -436,11 +436,17 @@
 
        if ($debug) echo "\nCurrent stack size = $diag_set->stack_size <BR>\n";
        if (!($diag_set->testAddSet ($r[procdiag1], $r[procdiag2],
-                                    $r[procdiag3], $r[procdiag4])) or
-            ($number_of_charges > $this_form[ffloopnum]         )){
+                                    $r[procdiag3], $r[procdiag4])) OR
+            ($number_of_charges > $this_form[ffloopnum]         )  OR
+            ($prev_key != $cur_key) )
+       {
+         if ($prev_key != $cur_key)
+         {
+              $prev_key = $cur_key;
+         }
          if ($debug) echo "\nNew form time ... <BR>\n";
          // echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
-         flush();
+         //flush();
 
          $ptdiag          = $diag_set->getStack();     // get pt diagnoses
          $current_balance = bcadd ($total_charges - $total_paid, 0, 2);
@@ -458,8 +464,14 @@
          $number_of_charges = 1;
 
          // reset the diag_set array
-         //unset ($diag_set);
-         //$diag_set = new diagnosisSet ();
+         unset ($diag_set);
+         $diag_set = new diagnosisSet ();
+         $test_AddSet = $diag_set->testAddSet ($r[procdiag1], 
+						$r[procdiag2], 
+						$r[procdiag3], 
+						$r[procdiag4]);
+         if (!$test_AddSet)
+            DIE("AddSet failed!!");
 
          // and zero the arrays
          for ($j=0;$j<=$this_form[ffloopnum];$j++)
@@ -483,15 +495,73 @@
        $this_auth = freemed_get_link_rec ($r[procauth], "authorizations");
        $authorized[authnum] = $this_auth[authnum];
 
+       if (!$this_auth[authnum])
+       {
+           echo "<B>Warning: Procedure not Authorized!!</B><BR>\n";
+           flush();
+       }
+       else
        if (!date_in_range($cur_date,$this_auth[authdtbegin],$this_auth[authdtend]))
        {
-           if (!$this_auth[authnum])
-               echo "<B>Warning - Procedure not Authorized!!</B><BR>\n";
-           else
-               echo "<B>Warning - Authorization $this_auth[authnum] has expired!!</B><BR>\n";
+           echo "<B>Warning: Authorization $this_auth[authnum] has expired!!</B><BR>\n";
            flush();
 
        }
+
+       // eoc start
+       // see if eoc exists else issue warning
+       $eocs = explode (":", $r[proceoc]);
+       if (!$eocs[0])
+       {
+           echo "<B>Warning: No EOC for this Procedure!!</B><BR>\n";
+           flush();
+       }
+       // if we have an eoc use it else set the defaults to no
+       if ($eocs[0])
+       {
+            $eoc = freemed_get_link_rec ($eocs[0], "eoc");
+            // what is this related to?
+            $employment = $eoc[eocrelemp];
+            $related_employment[yes] =
+               ( ( $employment == "yes" ) ? $this_form[ffcheckchar] : " " );
+            $related_employment[no]  =
+               ( ( $employment == "no" ) ? $this_form[ffcheckchar] : " " );
+            $auto = $eoc[eocrelauto];
+            $related_auto[yes] =
+               ( ( $auto == "yes" ) ? $this_form[ffcheckchar] : " " );
+            $related_auto[no]  =
+               ( ( $auto == "no" ) ? $this_form[ffcheckchar] : " " );
+            $related_auto[state] =    // FIIIIIIIX  MEEEEEEEEEE!!!
+               ( ( $auto == "yes" ) ? $eoc[eocrelautostpr] : "  " );
+            $other = $eoc[eocrelother];
+            $related_other[yes] =
+               ( ( $other == "yes" ) ? $this_form[ffcheckchar] : " " );
+            $related_other[no] =
+               ( ( $other == "no" ) ? $this_form[ffcheckchar] : " " );
+            if ($debug) echo "\n$employment $auto $other<BR>\n";
+
+       }
+       else
+       {     // plug defaults if no eoc is present
+           $employment = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+           $related_employment[yes] =
+             ( ( $employment == "y" ) ? $this_form[ffcheckchar] : " " );
+           $related_employment[no]  =
+             ( ( $employment == "n" ) ? $this_form[ffcheckchar] : " " );
+           $auto = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+           $related_auto[yes] =
+             ( ( $auto == "y" ) ? $this_form[ffcheckchar] : " " );
+           $related_auto[no]  =
+             ( ( $auto == "n" ) ? $this_form[ffcheckchar] : " " );
+           $related_auto[state] =    // FIIIIIIIX  MEEEEEEEEEE!!!
+             ( ( $auto == "y" ) ? $eoc_state_name : "  " );
+           $other = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+           $related_other[yes] =
+             ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
+           $related_other[no] =
+             ( ( $other == "n" ) ? $this_form[ffcheckchar] : " " );
+       }
+        // eoc end
 
        if ($r[procrefdoc]>0) {
          $ref_physician  = new Physician ($r[procrefdoc]);
@@ -590,6 +660,7 @@
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mark\">
+     <INPUT TYPE=HIDDEN NAME=\"billtype\" VALUE=\"$bill_request_type\">
    ";
    for ($i=1;$i<=$pat_processed;$i++) {
      $this_patient = new Patient ($patient_forms[$i]);
@@ -629,10 +700,47 @@
    } else {
      for ($i=0;$i<count($processed);$i++) {
        echo "
-         Marking ".$processed[$i]." ... 
+         Marking ".$processed[$i]." ...<BR> 
        ";
+       // start of insert loop for billed legder entries
+       $query = "SELECT id,procbalcurrent FROM procrec
+                 WHERE procpatient='".$processed[$i]."' AND procbilled='0' AND procbalcurrent>'0'";
+       $result = $sql->query($query);
+       if (!$result)
+       {
+         echo "Mark failed getting procrecs<BR>";
+         DIE("Mark failed getting procrecs");
+       }
+       while ($bill_tran = $sql->fetch_array($result))
+       {
+          $cur_bal = $bill_tran[procbalcurrent];
+            $proc_id = $bill_tran[id];
+          $query = "INSERT INTO payrec VALUES (
+              '".addslashes($cur_date)."',
+                '0000-00-00',
+                '".addslashes($processed[$i])."',
+              '".addslashes($cur_date)."',
+                '".BILLED."',
+                '".addslashes($proc_id)."',
+                '0',
+                '".addslashes($billtype)."',
+                '0',
+                '',
+                '".addslashes($cur_bal)."',
+              'Billed',
+                'unlocked',
+                NULL
+              )";
+            $pay_result = $sql->query ($query);
+            if ($pay_result)
+                echo "<$STDFONT_B>$Adding Bill Date to ledger.<$STDFONT_E><BR> \n";
+            else
+                echo "<$STDFONT_B>$Failed Adding Bill Date to ledger!!<$STDFONT_E><BR> \n";
+
+       }
+       // end of insert loop for billed legder entries
        $query = "UPDATE procrec
-                 SET procbilled = '1'
+                 SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'
                  WHERE (
                    (procpatient    = '".$processed[$i]."') AND
                    (procbilled     = '0') AND

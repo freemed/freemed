@@ -733,6 +733,9 @@
        $proc_charges   += $charge; 
        break;
       case TRANSFER: // transfer 6
+       $payment         = "&nbsp;";
+       $charge          = "&nbsp;";
+       break;
       case WITHHOLD: // withhold 7
       case DEDUCTABLE: // deductable 8
        $pay_color       = "#000000";
@@ -747,6 +750,10 @@
        $payment         = "&nbsp;";
        $total_charges  += $charge;
        $proc_charges   += $charge; 
+       break;
+      case BILLED: // billed on 10
+       $payment         = "&nbsp;";
+       $charge          = "&nbsp;";
        break;
       case ADJUSTMENT: // adjustments 1
       case PAYMENT: default: // default is payments 0
@@ -774,7 +781,7 @@
        $this_type = "charge";
        break;
       case TRANSFER: // transfer 6
-       $this_type = "transfer";
+       $this_type = $PAYER_TYPES[$r["payreclink"]]; 
        break;
       case WITHHOLD: // withhold 7
        $this_type = "withhold";
@@ -784,6 +791,9 @@
        break;
       case FEEADJUST: // feeadjust 9 
        $this_type = "Fee Adjust";
+       break;
+      case BILLED: // billed 10
+       $this_type = $PAYER_TYPES[$r["payreclink"]];
        break;
       case PAYMENT: // payment 0
       default:  // default is payment
@@ -889,6 +899,7 @@
      <TD ALIGN=RIGHT>
       <B><TT>$pat_total</TT></B>
     </TD>
+     <TD>&nbsp;</TD>
     </TR>
    ";
 

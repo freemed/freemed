@@ -65,6 +65,7 @@
    <TD ALIGN=LEFT><B>Paid</B></TD>
    <TD ALIGN=LEFT><B>Balance</B></TD>
    <TD ALIGN=LEFT><B>Billed</B></TD>
+   <TD ALIGN=LEFT><B>Date Billed</B></TD>
    <TD ALIGN=LEFT><B>View</B></TD>
   </TR>
  ";
@@ -98,6 +99,7 @@
     <TD ALIGN=LEFT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
     <TD ALIGN=LEFT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
     <TD ALIGN=LEFT>".(($r[procbilled]) ? "Yes" : "No")."</TD>
+    <TD ALIGN=LEFT>".htmlentities($r[procdtbilled])."</TD>
     <TD ALIGN LEFT><A HREF=\"payment_record.php?_ref=$page_name&patient=$patient&byproc=$r[id]\"
     >Ledger</A>
     </TR>
@@ -406,11 +408,23 @@
                 payreccat='".PROCEDURE."'
               )";
     $result = $sql->query ($query);
-    echo "
-     <CENTER>
-      Item transfered.
-     </CENTER>
-    ";
+    if ($result)
+        echo "<CENTER> Item transfered.</CENTER>";
+    else
+    {
+        echo "<CENTER>Failed to transfer procedure.</CENTER>";
+        DIE("Failed to transfer procedure.");
+    }
+    // get procbal so the transfer knows how much we transferred.
+    $query = "SELECT procbalcurrent FROM procrec WHERE id='$item'";
+    $result = $sql->query ($query);
+    if (!$result)
+    {
+        echo "<CENTER>Failed to read procedure balance.</CENTER>";
+        DIE("Failed to read procedure balance.");
+    }
+    $rec = $sql->fetch_array($result);
+    $procbal = $rec[0];
     $query = "INSERT INTO payrec VALUES (
                 '$cur_date',
                 '0000-00-00',
@@ -419,20 +433,23 @@
                 '".TRANSFER."',
                 '".addslashes($item)."',
                 '0',
-                '0',
+                '".addslashes($transfer_to)."',
                 '0',
                 '',
-                '0',     
+                '".addslashes($procbal)."',     
                 'TRANSFER',
                 'unlocked',
                 NULL 
               )";
     $result = $sql->query ($query);
-    echo "
-     <CENTER>
-      Added transfer.
-     </CENTER>
-    ";
+    if (!$result)
+    {
+        echo "<CENTER>Failed to transfer to ledger.</CENTER>";
+        DIE("Failed to add transfer to ledger.");
+    }
+    else
+        echo "<CENTER>Added transfer to ledger.</CENTER>";
+
     if ($transfer_resubmit == "yes") {
       $query = "UPDATE procrec
                 SET procbilled='0'

@@ -11,6 +11,8 @@ define (__MACROS_PHP__, true);
   //    payment related macros
   // *****************************
 
+  $PAYER_TYPES = array("Primary","Secondary","Tertiary","WorkComp","Patient");
+
   define (PAYMENT_TARGET_INS1,  0);
   define (PAYMENT_TARGET_INS2,  1);
   define (PAYMENT_TARGET_INS3,  2);
@@ -27,6 +29,8 @@ define (__MACROS_PHP__, true);
   define (WITHHOLD,             7);
   define (DEDUCTABLE,           8);
   define (FEEADJUST,            9);
+  define (BILLED,               10);
+  define (WRITEOFF,             11);
 
 } // end checking for __MACROS_PHP__
 

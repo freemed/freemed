@@ -530,6 +530,7 @@ if ($action=="cfgform") {
     procrefdt              DATE,
     id INT NOT NULL AUTO_INCREMENT,
     procamtallowed         REAL,
+    procdtbilled	   TEXT,
     KEY (procpatient),
     PRIMARY KEY (id)
     )");
