@@ -7,6 +7,21 @@ $_pg_desc = "[HELP]"; // show that we are a help page...
 include_once ("lib/freemed.php");
 freemed_open_db ();
 
+// Declare help_template_display()
+function help_template_display () {
+	global $display_buffer;
+	global $template;
+	foreach ($GLOBALS AS $k => $v) global ${$k};
+
+	if (file_exists("lib/template/".$template."/template.help.php")) {
+		include_once("lib/template/".$template."/template.help.php");
+	} else {
+		include_once("lib/template/default/template.help.php");
+	} // end checking for template
+
+	die();
+} // end function help_template_display
+
  //
  //  eventually, we want to be able to call a
  //  statement like include "doc/$page_name.$section.php3"
@@ -27,43 +42,45 @@ if ((strlen($page_name)<1) AND (strlen($section)<1)) {
 
  // if the helpfile doesn't exist, but is enabled, ERROR! out...
 if (!file_exists($_help_name)) {
-  $page_title = PACKAGENAME." Help System Error";
-  $display_buffer .= "
+	unset($_help_name); // so that it doesn't come back...
+	$page_title = PACKAGENAME." Help System Error";
+	$display_buffer .= "
     <B>The requested help file was not found on this<BR>
        system. It is possible that it has not been<BR>
        implemented, or it is missing from your system.<BR>
     </B>
-  ";
-  $display_buffer .= "
+	";
+	$display_buffer .= "
     <P>
     <CENTER>
     <A HREF=\"help.php\"
     >Go to the Help Page</A>
     </CENTER>
-  "; // link back to the main help page
-  template_display();
+	"; // link back to the main help page
+	help_template_display();
 } // if the help file does not exist
 
 $page_title =  PACKAGENAME." Help System";
 
 if ($debug) {
-  $display_buffer .= "
-    page_name = $page_name<BR>
-    section = $section<BR>
-  ";
+	$display_buffer .= "
+	page_name = $page_name<BR>
+	section = $section<BR>
+	";
 } // debug stuff
 
-include ($_help_name); // include the actual help text
-
+/*
 $display_buffer .= "
-  <P>
-  <CENTER>
-  <B>If this is in a \"child window\",<BR>
-  please close it or minimize it to<BR>
-  return to </B>
-  </CENTER>
+	<P>
+	<CENTER>
+	<B>If this is in a \"child window\",<BR>
+	please close it or minimize it to<BR>
+	return to </B>
+	</CENTER>
 ";
+*/
 
-template_display();
+//----- Display the actual help template
+help_template_display();
 
 ?>
