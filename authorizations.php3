@@ -2,6 +2,7 @@
  // file: authorizations.php3
  // note: patient authorizations module
  // code: jeff b (jeff@univrel.pr.uconn.edu)
+ //       adam b (gdrago23@yahoo.com)
  // lic : GPL, v2
 
  $record_name = "Authorizations";
@@ -66,9 +67,9 @@
      $this_patient = new Patient ($patient);
 
      echo "
-       <P>
-       <$HEADERFONT_B>$Patient: <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A><$HEADERFONT_E>
+       <P ALIGN=CENTER>
+       <$STDFONT_B>$Patient: <A HREF=\"manage.php3?$_auth&id=$patient\"
+         >".$this_patient->fullName(true)."</A><$STDFONT_E>
        <P>
 
        <FORM ACTION=\"$page_name\" METHOD=POST>
@@ -135,17 +136,22 @@
          </SELECT>
         </TD>
        </TR>
+     ";
 
+     $phys_q="SELECT * FROM physician ORDER BY phylname,phyfname";
+     $phys_r=fdb_query($phys_q);
+     $ins_q="SELECT * FROM insco ORDER BY insconame,inscostate,inscocity";
+     $ins_r=fdb_query($ins_q);
+     
+     echo "
        <TR>
         <TD ALIGN=RIGHT>
          <$STDFONT_B>Authorizing Provider : <$STDFONT_E><BR>
         </TD>
         <TD ALIGN=LEFT>
-         <SELECT NAME=\"authprov\">
-     ";
-     freemed_display_physicians ($authprov);
-     echo "
-         </SELECT>
+     ".
+     freemed_display_selectbox ($phys_r, "#phylname#, #phyfname#", "authprov")
+     ."
         </TD>
        </TR>
 
@@ -166,7 +172,8 @@
         </TD>
         <TD ALIGN=LEFT>
      ".
-     freemed_display_insco ($authinsco)
+     freemed_display_selectbox ($ins_r, 
+       "#insconame# (#inscocity#,#inscostate#)", "authinsco")
      ."
         </TD>
        </TR>
@@ -341,64 +348,18 @@
        <$STDFONT_E>
        </CENTER>
        <P>
-     ";
-     freemed_display_actionbar();
-     echo "
-       <P>
-       <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
-        ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
-       <TR>
-        <TD><$STDFONT_B COLOR=\"#ffffff\">Dates<$STDFONT_E></TD>
-        <TD><$STDFONT_B COLOR=\"#ffffff\">&nbsp;<$STDFONT_E></TD>
-        <TD><$STDFONT_B COLOR=\"#ffffff\">$Action<$STDFONT_E></TD>
-       </TR>
-     ";
-     while ($r = fdb_fetch_array ($result)) {
-       $id         = $r[id];
-       $_alternate = freemed_bar_alternate_color ($_alternate);
-       echo "
-        <TR BGCOLOR=$_alternate>
-         <TD>
-          <$STDFONT_B>$r[authdtbegin] / $r[authdtend]<$STDFONT_E>
-         </TD>
-         <TD>
-          <$STDFONT_B>RESERVED FOR FUTURE USE<$STDFONT_E>
-         </TD>
-         <TD>
-       ";
-       if (freemed_get_userlevel($LoginCookie)>$database_level)
-         echo "
-           &nbsp;
-           <A HREF=\"$page_name?$_auth&action=modform&patient=$patient&id=$id\"
-            >MOD</A>
-         ";
-       if (freemed_get_userlevel($LoginCookie)>$delete_level)
-         echo "
-           &nbsp;
-           <A HREF=\"$page_name?$_auth&action=del&patient=$patient&id=$id\"
-            >DEL</A>
-         ";
-       echo "
-         </TD>
-        </TR>
-       ";
-     } // end master while fetch loop
-     echo "
-       </TABLE>";
-     
-     freemed_display_actionbar();
-     
-     echo "
-       <P>
-       <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-       <B>|</B>
-       <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-        ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
-       </CENTER>
-       <P>
-     ";
+     ".
+     freemed_display_itemlist (
+       $result,
+       "authorizations.php3",
+       array (
+         "Dates" => "authdtbegin",
+	 "<FONT COLOR=\"#000000\">_</FONT>" => 
+	    "", // &nbsp; doesn't work, dunno why
+	 "&nbsp;"  => "authdtend"
+       ),
+       array ("", "/", "")
+     );
      freemed_display_box_bottom ();
      break;
  } // end master action switch
