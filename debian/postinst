@@ -23,6 +23,15 @@ echo -n "Attempting to create freemed database (no password) ... "
 mysqladmin -u root create freemed 2>&1
 echo "[done]"
 
+# Restart apache ...
+echo "Restarting apache to reload configuration files ... "
+if [ -f /etc/init.d/apache ]; then \
+	/etc/init.d/apache restart; \
+fi
+if [ -f /etc/init.d/apache-ssl ]; then \
+	/etc/init.d/apache-ssl restart; \
+fi
+
 #DEBHELPER#
 
 exit 0
