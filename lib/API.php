@@ -1956,7 +1956,7 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
   } // end switch for formatting
 } // end function fm_phone_assemble
 
-function fm_phone_entry ($phonevarname="", $array_index=-1) {
+function fm_phone_entry ($phonevarname="", $array_index=-1, $ext=true) {
   if ($phonevarname=="") return false;  // indicate problems
   if (($array_index+0)==-1) { $suffix="";   }     
    else                     { $suffix="[]"; }
@@ -2041,10 +2041,9 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
       <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_3$suffix\" SIZE=\"5\"
        MAXLENGTH=\"4\" VALUE=\"$p3\"
        onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
-       /> <i>ext.</i>
+       />".( $ext ? " <i>ext.</i>
       <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_4$suffix\" SIZE=\"5\"
-       MAXLENGTH=\"4\" VALUE=\"$p4\"/>
-     "; break;
+       MAXLENGTH=\"4\" VALUE=\"$p4\"/>" : "" ); break;
     case "fr":
      $buffer .= "
       <B>(</B>
