@@ -72,6 +72,10 @@ class ClaimLog {
 				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).")";
 				break; // end aging case
 
+				case 'billed':
+				if (!empty($v)) { $q[] = "p.procbilled = '".addslashes($v)."'"; }
+				break; // end billed case
+
 				case 'date':
 				if ($v) $q[] = "p.procdt = '".addslashes($v)."'";
 				break; // end date
@@ -387,6 +391,7 @@ ORDER BY
 		$query = "SELECT ".
 			"CONCAT(pt.ptlname, ', ', pt.ptfname, ".
 				"' ', pt.ptmname) AS patient_name, ".
+			"pt.id AS patient_id, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
 				"i.inscostate) AS payer_name, ".
 			"d.icd9code AS diagnosis, ".
@@ -403,6 +408,7 @@ ORDER BY
 			"p.procamtpaid AS paid, ".
 			"p.procbalcurrent AS balance, ".
 			"p.procbilled AS billed, ".
+			"p.procdt AS service_date, ".
 			"p.id AS proc ".
 			"FROM ".
 				"patient AS pt, ".

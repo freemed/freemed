@@ -46,7 +46,11 @@ class ClaimsManager extends BillingModule {
 
 			case __("Post Check"):
 			return $this->post_check_form( );
-			break; // post check
+			break; // post check form
+
+			case __("Post"):
+			return $this->post_check( );
+			break; // actual post check
 
 			case __("Mark Billed"):
 			return $this->mark_billed( );
@@ -92,7 +96,8 @@ class ClaimsManager extends BillingModule {
 			'criteria[last_name]' => '',
 			'criteria[first_name]' => '',
 			'criteria[patient]' => '',
-			'criteria[aging]' => ''
+			'criteria[aging]' => '',
+			'criteria[billed]' => ''
 		));
 
 		$aging_radio[] = &HTML_QuickForm::createElement(
@@ -148,9 +153,15 @@ class ClaimsManager extends BillingModule {
 			'header', '', __("Claim Criteria") );
 		
 		// Sort by procedure status
+		//$search_form->addElement(
+		//	'select', 'criteria[status]', __("Claim Status"),
+		//	$cl->procedure_status_list ( ) );
 		$search_form->addElement(
-			'select', 'criteria[status]', __("Claim Status"),
-			$cl->procedure_status_list ( ) );
+			'select', 'criteria[billed]', __("Billing Status"),
+			array (
+				'0' => __("Queued"),
+				'1' => __("Billed")
+			));
 
 		// Date of service
 		$search_form->addElement(
@@ -430,6 +441,16 @@ class ClaimsManager extends BillingModule {
 				))."\" class=\"remove_link\">X</a><br/>\n";
 			$criteria['aging'] = $_REQUEST['criteria']['aging'];
 		} // end aging
+		if ($_REQUEST['criteria']['billed'] == '0' or $_REQUEST['criteria']['billed'] == '1') {
+			$display_buffer .= "<b>".__("Billing Status").
+				": </b>".( $_REQUEST['criteria']['billed'] ?
+				__("Billed") :
+				__("Queued") )." ".
+				"<a href=\"".$this->_search_link(array(
+					'billed' => ''	
+				))."\" class=\"remove_link\">X</a><br/>\n";
+			$criteria['billed'] = $_REQUEST['criteria']['billed'];
+		} // end billed
 		if ($_REQUEST['criteria']['date']) {
 			$display_buffer .= "<b>".__("Procedures On").
 				": </b>".$_REQUEST['criteria']['date']." ".
@@ -477,8 +498,8 @@ class ClaimsManager extends BillingModule {
 		$display_buffer .= 
 			"<div align=\"center\">\n".
 			__("For checked claims").": ".
-//			"<input type=\"submit\" name=\"submit_action\" ".
-//				"value=\"".__("Post Check")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Post Check")."\" />\n".
 			"<input type=\"submit\" name=\"submit_action\" ".
 				"value=\"".__("Rebill")."\" />\n".
 			"<input type=\"submit\" name=\"submit_action\" ".
@@ -848,6 +869,265 @@ class ClaimsManager extends BillingModule {
 		$form->addGroup($submit_buttons, null, null, '&nbsp;');
 		$display_buffer .= $form->toHtml();
 	} // end method rebill
+
+	function post_check () {
+		global $display_buffer;
+
+		// Display heading
+		$display_buffer .= "<div class=\"section\">".
+			__("Claims Manager").': '.
+			__("Post Checks")."</div>\n";
+
+		$display_buffer .= "<form method=\"post\">\n".
+			"<input type=\"hidden\" name=\"module\" value=\"".$_REQUEST['module']."\" />\n".
+			"<input type=\"hidden\" name=\"type\" value=\"".$_REQUEST['type']."\" />\n".
+			"<input type=\"hidden\" name=\"action\" value=\"".$_REQUEST['action']."\" />\n".
+			"";
+
+		// Retain all criteria (hidden)
+		if (is_array($_REQUEST['criteria'])) {
+			foreach ($_REQUEST['criteria'] AS $k => $v) {
+				$display_buffer .= "<input type=\"hidden\" name=\"criteria[".$k."]\" value=\"".prepare($v)."\" />\n";
+			}
+		}
+
+		// Pass all checked claims back to the engine
+		if (is_array($_REQUEST['check'])) {
+			foreach ($_REQUEST['check'] AS $k => $v) {
+				$display_buffer .= "<input type=\"hidden\" name=\"check[".$k."]\" value=\"".prepare($v)."\" />\n";
+			}
+		}
+
+		// TODO: Verify that the amounts are not over the total check amt, etc
+			
+		// Create ledger and claimlog
+		$l = CreateObject('FreeMED.Ledger');
+		$cl = CreateObject('FreeMED.ClaimLog');
+			
+		// Loop through the posted checks
+		foreach ($_REQUEST['post'] AS $k => $v) {
+			// Get original procedure values
+			$proc = freemed::get_link_rec($k, 'procrec', true);
+
+			// Check for payment
+			if ($_REQUEST['pay'][$k] > 0) {
+				// Post check to ledger
+				$l->post_payment_check (
+					$k,
+					$proc['proccurcovid'],
+					$_REQUEST['c_checkno'],
+					($_REQUEST['pay'][$k] + 0),
+					__("Payment from Payer")
+				);
+				
+				// Record in individual claim log
+				$cl->log_event (
+					$k,
+					array (
+						'action' => __("Check Received"),
+						'comment' => sprintf(__("Check #%s"), $_REQUEST['c_checkno'])
+					)
+				);
+			} // end if pay > 0
+
+			// Check for copay
+			if ($_REQUEST['copay'][$k] > 0) {
+				$l->post_copay (
+					$k,
+					($_REQUEST['copay'][$k] + 0),
+					__("Copay")
+				);
+
+				// Record in individual claim log
+				$cl->log_event (
+					$k,
+					array (
+						'action' => __("Copay")
+					)
+				);
+			} // end if copay > 0
+
+			// Determine disallowed amount manually 
+			if (($_REQUEST['pay'][$k]+$_REQUEST['copay'][$k]) > 0) {
+				// Where is this going?
+				$where = $l->next_coverage($k);
+			
+				// Move to the next coverage in the ledger
+				$l->move_to_next_coverage (
+					$k,
+					// Calculate disallow ...
+					$proc['procbalcurrent'] - (
+						$_REQUEST['pay'][$k] +
+						$_REQUEST['copay'][$k]
+					)
+				);
+
+				switch ($where) {
+					case -1: // crap, has nowhere to go
+					$cl->log_event (
+						$k,
+						array (
+							'action' => __("Junk"),
+							'comment' => __("Claim has nowhere to go ... no more coverages")
+						)
+					);
+					break; // -1
+					
+					case 0: // onus on patient
+					$cl->log_event (
+						$k,
+						array (
+							'action' => __("Patient Pay"),
+							'comment' => __("Moved to patient responsibility")
+						)
+					);
+					break; // 0
+
+					default: // somewhere else
+					$cl->log_event (
+						$k,
+						array (
+							'action' => __("Coverage"),
+							'comment' => sprintf(__("Moved to coverage %s"), $where)
+						)
+					);
+					break; // default
+				} // end switch where
+			} // end if disallowed amount
+		} // end foreach post var
+
+		// Show buttons at the bottom
+		$display_buffer .= "<div align=\"center\">\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Return to Search")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("New Search")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Aging Summary")."\" />\n".
+			"</div>\n".
+			"</form>\n";
+	} // end method post_check
+
+	function post_check_form () {
+		global $display_buffer;
+
+		// Display heading
+		$display_buffer .= "<div class=\"section\">".
+			__("Claims Manager").': '.
+			__("Post Checks")."</div>\n";
+
+		$display_buffer .= "<form method=\"post\">\n".
+			"<input type=\"hidden\" name=\"module\" value=\"".$_REQUEST['module']."\" />\n".
+			"<input type=\"hidden\" name=\"type\" value=\"".$_REQUEST['type']."\" />\n".
+			"<input type=\"hidden\" name=\"action\" value=\"".$_REQUEST['action']."\" />\n".
+			"";
+
+		// Retain all criteria (hidden)
+		if (is_array($_REQUEST['criteria'])) {
+			foreach ($_REQUEST['criteria'] AS $k => $v) {
+				$display_buffer .= "<input type=\"hidden\" name=\"criteria[".$k."]\" value=\"".prepare($v)."\" />\n";
+			}
+		}
+
+		// Pass all checked claims back to the engine
+		if (is_array($_REQUEST['check'])) {
+			foreach ($_REQUEST['check'] AS $k => $v) {
+				$display_buffer .= "<input type=\"hidden\" name=\"check[".$k."]\" value=\"".prepare($v)."\" />\n";
+			}
+		}
+			
+		// Pull default for payer if it exists
+		global $c_payer;
+		if ($_REQUEST['criteria']['payer']) {
+			$c_payer = $_REQUEST['criteria']['payer'];
+		}
+
+		$cl = CreateObject('FreeMED.ClaimLog');
+		$display_buffer .= html_form::form_table(array(
+		
+			__("Payer") => html_form::select_widget(
+				'c_payer',
+				$cl->aging_insurance_companies( )
+				),
+
+			__("Check Number") => html_form::text_widget( 'c_checkno' ),
+
+			__("Total Amount") => html_form::text_widget( 'c_total' )
+
+			));
+
+		// Display claims table
+		$table = CreateObject('PEAR.HTML_Table', array (
+			'width' => '90%',
+			'cellspacing' => '0',
+			'style' => 'border: 1px solid; border-color: #000000;'	
+		));
+
+		// Set up the table layout
+		$table->setHeaderContents(0, 0, __("Patient"));
+		$table->setHeaderContents(0, 1, __("Claim"));
+		$table->setHeaderContents(0, 2, __("CPT"));
+		$table->setHeaderContents(0, 3, __("Service Date"));
+		$table->setHeaderContents(0, 4, __("Paid"));
+		$table->setHeaderContents(0, 5, __("Outstanding"));
+		$table->setHeaderContents(0, 6, __("Payment"));
+		$table->setHeaderContents(0, 7, __("Copay"));
+		$table->setHeaderContents(0, 8, __("Disallowances"));
+
+		$count = 0;
+		foreach ($_REQUEST['check'] AS $c) {
+			$ci = $cl->claim_information($c);
+			// Deal with null claims by skipping them
+			if ($ci['patient_id']) {
+				$count = $count + 1;
+				$table->setCellContents($count, 0, 
+					'<a href="manage.php?id='.$ci['patient_id']
+					.'">'.$ci['patient_name'].'</a>'.
+					'<input type="hidden" name="post['.$c.']" value="'.$c.'" />');
+				$table->setCellContents($count, 1, $ci['proc']);
+				$table->setCellContents($count, 2, $ci['cpt_cote']);
+				$table->setCellContents($count, 3, $ci['service_date']);
+				$table->setCellContents($count, 4, bcadd($ci['paid'],0,2));
+				$table->setCellContents($count, 5, bcadd($ci['balance'],0,2));
+				$table->setCellContents($count, 6, '<input type="text" id="id_pay_'.$c.'" name="pay['.$c.']" value="0" '.
+					'onChange="this.form.id_dis_'.$c.'.value = eval(this.form.id_pay_'.$c.'.value) + eval(this.form.id_copay_'.$c.'.value); return true;" '.
+					'/>');
+				$table->setCellContents($count, 7, '<input type="text" id="id_copay_'.$c.'" name="copay['.$c.']" value="0" '.
+					'onChange="this.form.id_dis_'.$c.'.value = eval(this.form.id_pay_'.$c.'.value) + eval(this.form.id_copay_'.$c.'.value); return true;" '.
+					'/>');
+				$table->setCellContents($count, 8, '<input type="text" id="id_dis_'.$c.'" name="dis['.$c.']" value="0" disable="true" />');
+			}
+		}
+
+		// Set alignment on money columns
+		for($i=4;$i<=8;$i++) {
+			$table->setColAttributes($i, array('align'=>'right'), true);
+		}
+
+		// Set alternating row hilighting
+		$table->altRowAttributes( 
+			1, 
+			array( 'class' => 'cell_alt' ),
+			array( 'class' => 'cell' ),
+			false
+		);
+
+		$table->updateAllAttributes(array( 'style' => 'border: 0px 1px 0px 1px; border-color: #000000;' ) );
+
+		$display_buffer .= $table->toHtml();
+
+		$display_buffer .= "<div align=\"center\">\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Post")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Return to Search")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("New Search")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Aging Summary")."\" />\n".
+			"</div>\n".
+			"</form>\n";
+	} // end method post_check_form
 
 	// ----- Internal functions
 

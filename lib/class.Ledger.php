@@ -75,7 +75,7 @@ class Ledger {
 	//
 	function next_coverage ( $proc ) {
 		// Get procedure record
-		$this_procedure = freemed::get_link_rec($proc, 'procrec');
+		$this_procedure = freemed::get_link_rec($proc, 'procrec', true);
 		$current_type = $this_procedure['proccurcovtp'];
 		for ($i=1; $i<=4; $i++) {
 			// Determine if a certain coverage exists
@@ -144,7 +144,7 @@ class Ledger {
 
 		// Adjust internal proccurcovid
 		if ($type > 0) {
-			$query = "SELECT proccov'.($type + 0)." AS ".
+			$query = "SELECT proccov".($type + 0)." AS ".
 				"coverage FROM procrec WHERE ".
 				"id = '".addslashes($proc)."'";
 			$result = $GLOBALS['sql']->query($query);
@@ -673,7 +673,7 @@ class Ledger {
 	//
 	function unpostable ( $amount, $comment ) {
 		$cl = CreateObject('_FreeMED.ClaimLog');
-		retiurn $cl->log_event ( 0, array(
+		return $cl->log_event ( 0, array(
 			'comment' => '$'.bcadd($amount,0,2).' '.
 				__("Unpostable")." (".$comment.")"
 			)
