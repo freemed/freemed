@@ -76,7 +76,7 @@ class GroupCalendar extends CalendarModule {
 			'html_form::text_widget("cal8", 20, 50)'
 		));
 
-		// run constructor
+		// Run constructor
 		$this->CalendarModule();
 	} // end constructor GroupCalendar	
 
@@ -143,7 +143,7 @@ class GroupCalendar extends CalendarModule {
 		$physician_list = explode(":", $my_group[phygroupdocs]);
 
 		// Map all physicians in this group
-		unset($map);
+		unset($map); $map = freemedCalendar::map_init();
 		foreach ($physician_list AS $_garbage_ => $phy) {
 			if ($phy>0) {
 			// Create map
@@ -188,7 +188,7 @@ class GroupCalendar extends CalendarModule {
 		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
 		 WIDTH=\"100%\">
 		<tr>
-		<td COLSPAN=\"2\"><B>".__("Group Calendar")."</B> for
+		<td COLSPAN=\"2\"><b>".__("Group Calendar")."</b>"." ".__("for")."
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\"/>
 			".html_form::select_widget(
@@ -298,11 +298,10 @@ class GroupCalendar extends CalendarModule {
 
 				// Loop through physicians
 				foreach ($physicians AS $_g => $this_phy) {
-					
 					// If there is an event, display
-					if ($map[$this_phy][$idx]['span'] == 0) {
+					if (($map[$this_phy][$idx]['span']+0) == 0) {
 						// skip this
-					} elseif ($map[$this_phy][$idx]['link'] != 0) {
+					} elseif (($map[$this_phy][$idx]['link']+0) != 0) {
 						$buffer .= "<td COLSPAN=\"1\" ".
 							"ROWSPAN=\"".$map[$this_phy][$idx]['span']."\" ".
 							"ALIGN=\"LEFT\" ".
@@ -315,7 +314,7 @@ class GroupCalendar extends CalendarModule {
 								"action=".urlencode($action)."&".
 								"selected_date=".urlencode($selected_date)."&".
 								"group=".urlencode($group)."&".
-								"id=".$map[$this_phy][$idx][link]."&".
+								"id=".$map[$this_phy][$idx]['link']."&".
 								"submit=delappt#hour".$c_hour,
 								"<img SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\" ".
 								"alt=\"".__("DEL")."\"/>",
