@@ -1,8 +1,7 @@
 <?php
- // file: db_maintenance.php3
+ // $Id$
  // note: where all of the database maintenance routines are
  //       called from, to save space on the main menu
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
@@ -102,7 +101,7 @@ if (freemed_get_userlevel ($LoginCookie) > $database_level) {
       >"._("Questionnaire Templates")."</A>
      <BR>
 
-     <A HREF=\"room.php3?$_auth\"
+     <A HREF=\"room.php?$_auth\"
       >"._("Rooms")." (<I>"._("Scheduling Locations")."</I>)</A>
      <BR>
 

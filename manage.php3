@@ -176,10 +176,10 @@ switch ($action) {
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>".("Procedures")."</B> : <$STDFONT_E>
         </TD><TD>
-        <A HREF=\"procedure.php3?$_auth&action=addform&patient=$id\"
+        <A HREF=\"procedure.php?$_auth&action=addform&patient=$id\"
          ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD> 
-        <A HREF=\"procedure.php3?$_auth&patient=$id\"
+        <A HREF=\"procedure.php?$_auth&patient=$id\"
          ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
          </TD><TD>
          </TD></TR>

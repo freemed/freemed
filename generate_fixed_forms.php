@@ -1,10 +1,9 @@
 <?php
- // file: generate_fixed_forms.php3
+ // $Id$
  // desc: generate fixed forms
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name = "generate_fixed_forms.php3";
+ $page_name = "generate_fixed_forms.php";
  include ("global.var.inc");
  include ("freemed-functions.inc");
  include ("render_forms.inc");

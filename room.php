@@ -1,10 +1,9 @@
 <?php
- // file: room.php3
+ // $Id$
  // note: room database functions
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name="room.php3"; // for help info, later
+  $page_name="room.php"; // for help info, later
   $record_name="Room";
   include "global.var.inc";
   include "freemed-functions.inc"; // API functions

@@ -1,10 +1,9 @@
 <?php
- // file: procedure.php3
+ // $Id$
  // desc: procedure database interface
- // code: jeff b (jeff@univrel.pr.uconn.edu), adam
  // lic : GPL, v2
 
- $page_name   = "procedure.php3";
+ $page_name   = "procedure.php";
  $db_name     = "procrec";
  $record_name = "Procedure";
  include ("global.var.inc");
@@ -340,7 +339,7 @@ switch ($action) { // master action switch
          <A HREF=\"payment_record.php3?$_auth&action=addform&patient=$patient&".
          "procedure=$this_procedure\"
          ><$STDFONT_B>Add Payment<$STDFONT_E></A> <B>|</B>
-         <A HREF=\"procedure.php3?$_auth&action=addform&procvoucher=$procvoucher".
+         <A HREF=\"procedure.php?$_auth&action=addform&procvoucher=$procvoucher".
           "&patient=$patient&procdt=".fm_date_assemble("procdt").
           "&procdiag1=$procdiag1".
           "&procdiag2=$procdiag2".
@@ -467,7 +466,7 @@ switch ($action) { // master action switch
   echo freemed_patient_box($this_patient)."\n<P>\n";
   echo freemed_display_itemlist(
     $result,
-    "procedure.php3",
+    "procedure.php",
     array ( // control
       _("Date of Procedure")	=> "procdt",
       _("Procedure Code")	=> "proccpt",

@@ -1,10 +1,10 @@
 <?php
- // file: manage_bills.php3 
- // desc: manga patients bills
- // code: Fred Forester fforest@netcarrier.com 
+ // $Id$
+ // desc: manage patients bills
+ // code: Fred Forester <fforest@netcarrier.com>
  // lic : GPL, v2
 
- $page_name = "manage_bills.php3";
+ $page_name = "manage_bills.php";
  $db_name = "procrec";
  $record_name = "Procrec";
  include ("global.var.inc");
@@ -62,7 +62,7 @@
          			\"payment_record.php3?_ref=$page_name&id=$id&patient=$id\"
          			><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
         			<TD><A HREF=
-         			\"procedure.php3?$_auth&id=$id&patient=$id\"
+         			\"procedure.php?$_auth&id=$id&patient=$id\"
          			><FONT SIZE=-1>View/Manage</FONT></A></TD>
       				";
  			// see if all procs are billed. if not then show No

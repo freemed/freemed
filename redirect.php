@@ -1,7 +1,6 @@
 <?php
- // file: redirect.php3
+ // $Id$
  // note: redirector for /DIS, etc...
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL
 
  include ("freemed-functions.inc"); // API functions (19990610)

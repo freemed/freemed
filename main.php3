@@ -49,11 +49,11 @@ echo "
    echo "
     <TR>
     <TD ALIGN=RIGHT>
-     <A HREF=\"billing_functions.php3?$_auth\"
+     <A HREF=\"billing_functions.php?$_auth\"
      ><IMG SRC=\"img/CashRegister.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"billing_functions.php3?$_auth\"
+    <A HREF=\"billing_functions.php?$_auth\"
      >"._("Billing Functions")."</A>
     </TD></TR>
    ";
@@ -76,12 +76,12 @@ echo "
  if ($this_user->getLevel() > $database_level)
    echo "
     <TR>
-    <TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"db_maintenance.php3?$_auth\"
+    <TD ALIGN=RIGHT BGCOLOR=\"#dddddd\">
+     <A HREF=\"db_maintenance.php?$_auth\"
      ><IMG SRC=\"img/Database.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"db_maintenance.php3?$_auth\"
+    <A HREF=\"db_maintenance.php?$_auth\"
      >"._("Database Maintenance")."</A>
     </TD></TR>
    ";
@@ -141,7 +141,7 @@ echo "
 
 // redirection "Quickjump" box 
 echo "
-<FORM ACTION=\"redirect.php3?$_auth\">
+<FORM ACTION=\"redirect.php?$_auth\">
   <CENTER>
   <B><FONT SIZE=-1>"._("Quickjump")."</FONT></B><BR>
   <INPUT TYPE=TEXT NAME=\"location\" VALUE=\"/\" SIZE=5>

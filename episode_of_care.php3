@@ -668,7 +668,7 @@
    $record_name = "Procedure";
    echo freemed_display_itemlist (
      $result,
-     "procedure.php3",
+     "procedure.php",
      array (
        _("Date") => "procdt",
        _("Procedure") => "proccpt",

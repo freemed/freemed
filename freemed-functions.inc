@@ -361,7 +361,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      if ($this_userlevel>$database_level)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"billing_functions.php3?$_auth&patient=$current_patient\"
+        <A HREF=\"billing_functions.php?$_auth&patient=$current_patient\"
         ><IMG SRC=\"img/CashRegister-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Billing]\"></A>
        </TD>
@@ -377,7 +377,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      if ($this_userlevel>$database_level)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"db_maintenance.php3?$_auth\"
+        <A HREF=\"db_maintenance.php?$_auth\"
         ><IMG SRC=\"img/Database-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Database]\"></A>
        </TD>
@@ -425,7 +425,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       if ($this_userlevel>$database_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"billing_functions.php3?$_auth&patient=$current_patient\"
+         <A HREF=\"billing_functions.php?$_auth&patient=$current_patient\"
          ><$STDFONT_B SIZE=-1>Bill<$STDFONT_E></A>
         </TD>
        ";
@@ -439,7 +439,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       if ($this_userlevel>$database_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"db_maintenance.php3?$_auth\"
+         <A HREF=\"db_maintenance.php?$_auth\"
          ><$STDFONT_B SIZE=-1>DB<$STDFONT_E></A>
         </TD>
         "; // end db

@@ -789,7 +789,7 @@
      ";
      if ($this_user->getLevel() > $database_level)
       echo "
-       <A HREF=\"procedure.php3?$_auth&id=$id&patient=$patient&action=view\"
+       <A HREF=\"procedure.php?$_auth&id=$id&patient=$patient&action=view\"
        ><$STDFONT_B>VIEW<$STDFONT_E></A>
       "; 
      echo "\n   &nbsp;</TD></TR>";

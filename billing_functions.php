@@ -1,11 +1,10 @@
 <?php
- // file: billing_functions.php3
+ // $Id$
  // note: all billing functions accessable from this menu, which is called
  //       by the main menu
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name = "billing_functions.php3";
+  $page_name = "billing_functions.php";
   include ("global.var.inc");
   include ("freemed-functions.inc");
 
@@ -66,7 +65,7 @@
      <TD ALIGN=RIGHT>
       <$STDFONT_B><B>"._("Generate Insurance Billing")." : </B><$STDFONT_E>
      </TD><TD ALIGN=LEFT COLSPAN=2>
-      <A HREF=\"generate_fixed_forms.php3?$_auth\"
+      <A HREF=\"generate_fixed_forms.php?$_auth\"
       ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
      </TD>
     </TR>
@@ -75,7 +74,7 @@
       <TD ALIGN=RIGHT>
        <$STDFONT_B><B>Generate Patient Invoices : </B><$STDFONT_E>
       </TD><TD ALIGN=LEFT COLSPAN=2>
-       <A HREF=\"generate_fixed_forms.php3?$_auth&action=invoice\"
+       <A HREF=\"generate_fixed_forms.php?$_auth&action=invoice\"
        ><$STDFONT_B>Menu<$STDFONT_E></A>
       </TD>
      </TR>
@@ -84,7 +83,7 @@
      <TD ALIGN=RIGHT>
       <$STDFONT_B><B>Unpaid Procedures  : </B><$STDFONT_E>
      </TD><TD ALIGN=LEFT COLSPAN=2>
-      <A HREF=\"manage_bills.php3?$_auth&action=list\"
+      <A HREF=\"manage_bills.php?$_auth&action=list\"
       ><$STDFONT_B>View<$STDFONT_E></A>
      </TD>
     </TR>

@@ -216,7 +216,7 @@ if ($patient) {
   echo "
     <BR><BR>
     <CENTER>
-    <A HREF=\"db_maintenance.php3?$_auth\"
+    <A HREF=\"db_maintenance.php?$_auth\"
      >$Abandon_Addition</A>
     </CENTER>
   ";
