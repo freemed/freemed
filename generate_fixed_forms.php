@@ -1,5 +1,4 @@
 <?php
-
  // $Id$
  // desc: generate fixed forms
  // lic : GPL, v2
@@ -8,7 +7,6 @@
  include ("lib/freemed.php");
  include ("lib/API.php");
  include ("lib/render_forms.php");
-
 
  freemed_open_db ($LoginCookie);
 
@@ -623,14 +621,14 @@
                    (procbalcurrent > '0')
                  )";
        $result = $sql->query ($query);
-       if ($result) { echo "$Done.<BR>\n"; }
-        else        { echo "$ERROR<BR>\n"; }
+       if ($result) { echo _("done").".<BR>\n"; }
+        else        { echo _("ERROR")."<BR>\n"; }
      }
      echo "
       <P>
       <CENTER>
        <A HREF=\"$page_name?$_auth\"
-       ><$STDFONT_B>"._(Back")."<$STDFONT_E></A>
+       ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
       </CENTER>
       <P>
      ";
@@ -654,7 +652,7 @@
     </TR>
 
     <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
+    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"geninsform\">
 
     <TR>
@@ -685,9 +683,7 @@
       </CENTER>
      </TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select ("num_patients", 0, 200);
-   echo "
+   ".fm_number_select ("num_patients", 0, 200)."
      </TD>
     </TR>
 
@@ -696,9 +692,7 @@
       <$STDFONT_B>"._("Skip # of Pats to Bill :")."<$STDFONT_E>
      </TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_number_select ("skip", 0, 100);
-   echo "
+   ".fm_number_select ("skip", 0, 100)."
      </TD>
     </TR>
     <TR>
@@ -706,11 +700,11 @@
         <$STDFONT_B>To : <$STDFONT_E>
        </TD><TD ALIGN=LEFT>
         <SELECT NAME=\"bill_request_type\">
-         <OPTION VALUE=\"0\">_("1st Insurance")\n
-         <OPTION VALUE=\"1\">_("2nd Insurance")\n
-         <OPTION VALUE=\"2\">_("3rd Insurance")\n
-         <OPTION VALUE=\"3\">_("Worker's Comp")\n
-         <OPTION VALUE=\"4\">_("Patient")
+         <OPTION VALUE=\"0\">"._("1st Insurance")."
+         <OPTION VALUE=\"1\">"._("2nd Insurance")."
+         <OPTION VALUE=\"2\">"._("3rd Insurance")."
+         <OPTION VALUE=\"3\">"._("Worker's Comp")."
+         <OPTION VALUE=\"4\">"._("Patient")."
         </SELECT>
        </TD>
     </TR>
@@ -733,4 +727,5 @@
 
  freemed_close_db ();
  freemed_display_html_bottom ();
+
 ?>

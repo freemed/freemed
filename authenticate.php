@@ -64,7 +64,7 @@
      <TITLE>authentication for ".PACKAGENAME."</TITLE>
      <META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$_jump_page\">
     </HEAD>
-    <BODY BGCOLOR=#ffffff>
+    <BODY BGCOLOR=\"#ffffff\">
   ";
   freemed_display_banner ();
   freemed_display_box_top (_("Authenticating")." ... ");

@@ -1,5 +1,8 @@
 freemed project changelog
 
+* Fri Dec 29 2000 rufustfirefly
+  - small i18n fixes and buffer rewrites in generate_fixed_forms.php
+
 * Thu Dec 28 2000 fforest
   - admin.php added 2 new tables guarantor and payer. the patient record no
     longer need to carry this info around
