@@ -1,6 +1,6 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
 // TODO migrate all password setting to use setPassword
 //	write checkPassword
@@ -76,32 +76,26 @@ class User {
 		return ($this->user_phy != 0);
 	} // end function isPhysician
 
-	function setPassword($password,$user_id)
-	{
-	global $sql;
+	function setPassword ($password, $user_id) {
+		global $sql;
 
-	if($user_id=="")
-	{
-	if((LOGLEVEL<1)||LOG_ERRORS){syslog(LOG_INFO,"class.User.php|setPassword| no user id!!");}
-		return false;
-	}
+		if ($user_id == "") {
+			if((LOGLEVEL<1)||LOG_ERRORS){syslog(LOG_INFO,"class.User.php|setPassword| no user id!!");}
+			return false;
+		}
 
-
-	$md5_password=md5($password);
+		$md5_password=md5($password);
 		
-	$my_query=$sql->update_query(
-		"user",
-		array ("userpassword" => $md5_password),
-		array ("id" => $user_id)
+		$my_query = $sql->update_query(
+			"user",
+			array (
+				"userpassword" => $md5_password
+			), array ("id" => $user_id)
 		);
-	if((LOGLEVEL<1)||LOG_SQL){syslog(LOG_INFO,"setPassword query=$my_query");}	
+		if((LOGLEVEL<1)||LOG_SQL){syslog(LOG_INFO,"setPassword query=$my_query");}	
 
-
-	$result = $sql->query($my_query);
-
-
-	}
-
+		$result = $sql->query($my_query);
+	} // end function setPassword
 
 	function mapConfiguration () {
 		// Start with usermanageopt
@@ -136,6 +130,39 @@ class User {
 	function getManageConfig ($key) {
 		return $this->manage_config["$key"];
 	} // end function getManageConfig
+
+	function setManageConfig ($new_key, $new_val) {
+		// First, make sure it's mapped properly
+		$this->mapConfiguration();
+
+		// Now, set extra value(s)
+		$this->manage_config["$new_key"] = $new_val;
+
+		// Create hash
+		foreach ($this->manage_config AS $k => $v) {
+			$hash_array[$k] = $k."=";
+			if (is_array($v)) {
+				// Handle array (no hash as of yet, maybe
+				// when we move to serialize)
+				$hash_array[$k] .= join(":", $v);
+			} else {
+				// Handle scalar
+				$hash_array[$k] .= str_replace(':', '\:', $v);
+			}
+		}
+		
+		// Combine elements
+		$hash = join("/", $hash_array);
+
+		// Set part of record
+		$query = $GLOBALS['sql']->update_query(
+			'user',
+			array(
+				'usermanageopt' => $hash
+			), array ('id' => $this->user_number)
+		);
+		$result = $GLOBALS['sql']->query($query);
+	} // end function setManageConfig
 
 	// Messages
 	function newMessages () {

@@ -98,30 +98,23 @@ switch ($action) {
 
 		if ($current_md5 == $r['userpassword']) 	
 		{
-			if($new_password1==$new_password2)
-			{
-				$display_buffer=$display_buffer."This worked";
+			if($new_password1 == $new_password2) {
+				//$display_buffer = $display_buffer."This worked";
 				$this_user = CreateObject('FreeMED.User');
-				$this_user->setPassword($new_password1,$uid);
-				
-// change the password
-			}
-			else
-			{
+				$this_user->setPassword($new_password1, $uid);
+				// change the password
+			} else {
 				// print error passwords dont match
-				$display_buffer= "The new passwords you entered dont match<BR>";
+				$display_buffer= __("The new passwords you entered do not match.")."<br/>\n";
 			}
 			
 
-		}
-		else
-		{
+		} else {
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log attempt to change password failed.");}	
 
-
-			$display_buffer = "The password you entered was incorrect";
+			$display_buffer = __("The password you entered was incorrect.");
 		}
 
 	$refresh = $page_name;
@@ -194,6 +187,10 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 	";
 	// Loop through template options
 	foreach ($USER_OPTIONS AS $k => $v) {
+		// Extract option
+		global ${$v['var']};
+		${$v['var']} = $this_user->getManageConfig($v['var']);
+		// Form widget
 		eval('$form_parts[$k] = '.$v['widget'].';');
 	}
 	// Display form_parts
@@ -215,13 +212,12 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 	foreach ($USER_OPTIONS AS $k => $v) {
 		if (isset($_REQUEST[$v['var']])) {
 			// Keep cookie for a year (find better way to do this)
-			SetCookie($v['var'], $_REQUEST[$v['var']], time()+(60*60*24*365));
-			$_COOKIE[$v['var']] = $_REQUEST[$v['var']];
+			$this_user->setManageConfig($v['var'], $_REQUEST[$v['var']]);
 		}
 	}
 
 	// And use header to move back to action=(nothing)
-	$refresh = "preferences.php";
+	//$refresh = "preferences.php";
 	break; // end user
 
 
@@ -248,9 +244,6 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 	<a class=\"button\" href=\"main.php\">".__("Return to Main Menu")."</a>
 	</div>
 	";
-	foreach ($_COOKIE AS $k => $v) {
-		print "cookie[$k] = $v<br>\n";
-	}
 	break;
 } // end action
 

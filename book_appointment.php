@@ -14,7 +14,7 @@ freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
 
 //----- Check for booking refresh
-if ($_COOKIE['booking_refresh'] == '0') {
+if ($this_user->getManageConfig('booking_refresh') == '0') {
 	$refresh_disable = true;
 } else {
 	$refresh_disable = false;
@@ -65,13 +65,12 @@ if ($id and !$been_here) {
 			$room = $r['id'];
 		}
 	}
-	if ($_COOKIE['default_room']) {
-		// print "default_room = ".$_COOKIE['default_room'];
-		$room = $_COOKIE['default_room'];
+	if ($this_user->getManageConfig('default_room')) {
+		$room = $this_user->getManageConfig('default_room');
 	}
 }
 
-if (strlen($selected_date)!=10) {
+if (strlen($selected_date) != 10) {
 	$selected_date = $cur_date;
 } // fix date if not correct
 
