@@ -47,7 +47,7 @@ class freemedEMRModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient;
+		global $action, $patient, $submit;
 
 		if (!isset($this->this_patient))
 			$this->this_patient = new Patient ($patient);
@@ -56,6 +56,14 @@ class freemedEMRModule extends freemedModule {
 
 		// display universal patient box
 		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
+
+		// Handle cancel action from submit
+		if ($submit==_("Cancel")) {
+			Header("Location: ".$this->page_name.
+				"?module=".urlencode($this->MODULE_CLASS).
+				"&patient=".urlencode($patient));
+			die("");
+		}
 
 		switch ($action) {
 			case "add":
@@ -195,14 +203,14 @@ class freemedEMRModule extends freemedModule {
 	// function summary
 	// - show summary view of last few items
 	function summary ($patient, $items) {
-		global $sql, $display_buffer;
+		global $sql, $display_buffer, $patient;
 
 		// get last $items results
 		$query = "SELECT *".
 			( (count($this->summary_query)>0) ? 
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
-			"WHERE $this->patient_field='".addslashes($patient)."' ".
+			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			"ORDER BY id DESC LIMIT ".addslashes($items);
 		$result = $sql->query($query);
 
@@ -249,7 +257,7 @@ class freemedEMRModule extends freemedModule {
 				<TD VALIGN=MIDDLE>
 				<A HREF=\"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=modform\"
+				"action=modform&id=$r[id]\"
 				>"._("MOD")."</A>
 				</TD>
 				</TR>
