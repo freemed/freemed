@@ -56,7 +56,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
     // function to see if in the past (returns 1)
   function date_in_the_past ($datestamp) {
-    global $cur_date;
+    $cur_date = date("Y-m-d");
  
     $y_c = substr ($cur_date, 0, 4);
     $m_c = substr ($cur_date, 5, 2);
@@ -64,9 +64,21 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     $y   = substr ($datestamp, 0, 4);
     $m   = substr ($datestamp, 5, 2);
     $d   = substr ($datestamp, 8, 2);
-    if ($y<$y_c) return true;
-    elseif ($m<$m_c) return true;
-    elseif ($d<$d_c) return true;
+    if ($y < $y_c) {
+	return true;
+    } elseif ($y > $y_c) {
+	return false;
+    }
+    if ($m < $m_c) {
+	return true;
+    } elseif ($m > $m_c) {
+	return false;
+    }
+    if ($d < $d_c) {
+	return true;
+    } elseif ($d > $d_c) {
+	return false;
+    }
     else return false;
   }
 
