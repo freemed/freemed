@@ -1,5 +1,10 @@
 freemed project changelog
 
+* Sat Dec 30 2000 fforest
+   - fix a few coding errors in generate_fixed_forms and manage_bills
+   - lib/API.php fixed htmlize_array
+   - lib/calender-functions  fix date_in_range to return true if in range.
+
 * Fri Dec 29 2000 rufustfirefly
   - small i18n fixes and buffer rewrites in generate_fixed_forms.php
 

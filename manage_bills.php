@@ -39,6 +39,7 @@
       		</TR>
     		"; // header of box
 
+     		$_alternate = freemed_bar_alternate_color ();
 		while ($r = $sql->fetch_array($result)) 
 		{
 
@@ -50,7 +51,7 @@
 
       			echo "
         			<TR BGCOLOR=\"".(
-     			$_alternate = freemed_bar_alternate_color ()
+     			$_alternate = freemed_bar_alternate_color ($_alternate)
 					)."\">
         			<TD><A HREF=
          			\"patient.php?$_auth&id=$id&action=display\"

@@ -628,7 +628,7 @@
       <P>
       <CENTER>
        <A HREF=\"$page_name?$_auth\"
-       ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+       ><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
       </CENTER>
       <P>
      ";
@@ -686,13 +686,17 @@
    ".fm_number_select ("num_patients", 0, 200)."
      </TD>
     </TR>
+   ";
 
+   echo "
     <TR>
      <TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Skip # of Pats to Bill :")."<$STDFONT_E>
      </TD>
      <TD ALIGN=LEFT>
    ".fm_number_select ("skip", 0, 100)."
+   ";
+   echo "
      </TD>
     </TR>
     <TR>

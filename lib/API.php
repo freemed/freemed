@@ -1856,20 +1856,23 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 
 function fm_htmlize_array ($variable_name, $cur_array) {
   $array_length = count ($cur_array);
-  if ($array_length==0) return false;  // if nothing, false!
-  if ($array_length==1) {
-    echo "
-      <INPUT TYPE=HIDDEN NAME=\"$variable_name\"
-       VALUE=\"".prepare($cur_array)."\">
-     ";
-    return true;                       // it printed, return true...
-  } // end of array length = 1
+  if ($array_length==0)
+  {
+      return $buffer;  // if nothing, false!
+  }
+  //$buffer = "";
+  //if ($array_length==1) {
+  //  $buffer .= " <INPUT TYPE=HIDDEN NAME=\"$variable_name\"
+  //     VALUE=\"".prepare($cur_array)."\">
+  //   ";
+  //  return $buffer;                       // it printed, return true...
+  //} // end of array length = 1
   for ($i=0;$i<$array_length;$i++)
-    echo "
-      <INPUT TYPE=HIDDEN NAME=\"$variable_name\[\]\"
+    $buffer .= "
+      <INPUT TYPE=HIDDEN NAME=\"$variable_name"."[$i]\"
        VALUE=\"".prepare($cur_array[$i])."\">
      ";
-  return true;                         // be nice, return true
+  return $buffer;                         // be nice, return true
 } // end function fm_htmlize_array
 
 function fm_join_from_array ($cur_array) {

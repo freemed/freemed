@@ -26,6 +26,20 @@ define (__CALENDAR_FUNCTIONS_PHP__, true);
     $cur_m   = substr ($checkdate, 5, 2);
     $cur_d   = substr ($checkdate, 8, 2);
 
+    $end = $end_y;
+    $end .= $end_m;
+    $end .= $end_d;
+    $start = $begin_y;
+    $start .= $begin_m;
+    $start .= $begin_d;
+    $current = $cur_y;
+    $current .= $cur_m;
+    $current .= $cur_d;
+
+    if ( ($current >= $begin) AND ($current <= $end) )
+	return true;
+    return false;
+
     // check to see if it is before the beginning
     if     ($cur_y<$begin_y) return false;
     elseif ($cur_m<$begin_m) return false;
