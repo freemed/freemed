@@ -8,18 +8,20 @@ class RoomMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Room Maintenance";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $record_name = "Room";
 	var $table_name = "room";
+	var $order_field = 'roomname';
 
 	var $variables  = array (
 		"roomname",
 		"roompos",
 		"roomdescrip",
+		"roomequipment",
 		"roomdefphy",
 		"roomsurgery",
 		"roombooking",
@@ -33,6 +35,7 @@ class RoomMaintenance extends MaintenanceModule {
 			'roompos' => SQL__INT_UNSIGNED(0),
 			'roomdescrip' => SQL__VARCHAR(40),
 			'roomdefphy' => SQL__INT_UNSIGNED(0),
+			'roomequipment' => SQL__BLOB,
 			'roomsurgery' => SQL__ENUM(array('y', 'n')),
 			'roombooking' => SQL__ENUM(array('y', 'n')),
 			'roomipaddr' => SQL__VARCHAR(15),
@@ -43,82 +46,60 @@ class RoomMaintenance extends MaintenanceModule {
 		$this->MaintenanceModule();
 	} // end constructor RoomMaintenance
 
-	function form () {
-		global $display_buffer;
-    		global $roomdefphy, $roompos;
-		foreach ($GLOBALS as $k => $v) global $$k; 
+	function generate_form () {
+		return array (
+			__("Room Name") =>
+			html_form::text_widget('roomname', array('length'=>20)),
 
-  switch ($action) { // inner switch
-    case "addform":
-      // do nothing
-     break; // end of addform
+			__("Location") =>
+			"<SELECT NAME=\"roompos\">".
+			freemed_display_facilities ("roompos", true).
+			"</SELECT>",
 
-    case "modform":
-     $r = freemed::get_link_rec ($id, $this->table_name);
-     extract ($r);
-     break; // end of modform 
-  } // end inner switch
+			__("Description") =>
+			html_form::text_widget('roomdescrip', array('length'=>40)),
 
-  $display_buffer .= "
-    <P>
-    <FORM ACTION=\"$this->page_name\" METHOD=\"POST\">
-    <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
-    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-     ( ($action=="addform") ? "add" : "mod" )."\">
-  
-  ".html_form::form_table ( array (
-    __("Room Name") =>
-    "<INPUT TYPE=TEXT NAME=\"roomname\" SIZE=20 MAXLENGTH=20
-     VALUE=\"".prepare($roomname)."\">",
+			__("Default Provider") =>
+			freemed_display_selectbox (
+			$GLOBALS['sql']->query ("SELECT * FROM physician WHERE phyref != 'yes' AND phylname != ''"),
+			"#phylname#, #phyfname#",
+			"roomdefphy"),
 
-    __("Location") =>
-    "<SELECT NAME=\"roompos\">
-    ".freemed_display_facilities ("roompos", true)."
-    </SELECT>",
+			__("Equipment") =>
+			module_function(
+				'RoomEquipment',
+				'widget',
+				array (
+					'roomequipment',
+					false,
+					'id',
+					array ('multiple' => 5)
+				)
+			),
 
-    __("Description") =>
-    "<INPUT TYPE=TEXT NAME=\"roomdescrip\" SIZE=20 MAXLENGTH=40
-     VALUE=\"".prepare($roomdescrip)."\">",
+			//__("Surgery Equipped") =>
+			//"<INPUT TYPE=CHECKBOX NAME=\"roomsurgery\" VALUE=\"y\"
+			//".( ($roomsurgery=="y") ? "CHECKED" : "" ).">",
 
-    __("Default Provider") =>
-    freemed_display_selectbox (
-    $sql->query ("SELECT * FROM physician WHERE phyref != 'yes' AND phylname != ''"),
-    "#phylname#, #phyfname#",
-    "roomdefphy"),
+			//__("Booking Enabled") =>
+			//"<INPUT TYPE=CHECKBOX NAME=\"roombooking\" VALUE=\"y\" 
+			//".( ($roombooking=="y") ? "CHECKED" : "" ).">",
 
-    __("Surgery Equipped") =>
-    "<INPUT TYPE=CHECKBOX NAME=\"roomsurgery\" VALUE=\"y\"
-     ".( ($roomsurgery=="y") ? "CHECKED" : "" ).">",
-
-    __("Booking Enabled") =>
-    "<INPUT TYPE=CHECKBOX NAME=\"roombooking\" VALUE=\"y\" 
-     ".( ($roombooking=="y") ? "CHECKED" : "" ).">",
-
-    __("IP Address") =>
-    "<INPUT TYPE=TEXT NAME=\"roomipaddr\" SIZE=16 MAXLENGTH=15
-     VALUE=\"".prepare($roomipaddr)."\">"
-
-    )
-   ); 
-
-		$display_buffer .= "
-	<CENTER>
-	<INPUT TYPE=\"SUBMIT\" VALUE=\" ".
-	( ($action=="addform") ? __("Add") : __("Modify") )." \" CLASS=\"button\"/>
-	<INPUT TYPE=\"RESET\" VALUE=\"".__("Clear")."\" CLASS=\"button\"/>
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"".__("Cancel")."\" ".
-	"CLASS=\"button\"/>
-	</CENTER></FORM>
-		";
-	} // end function RoomMaintenance->form
+			__("IP Address") =>
+			html_form::text_widget('roomipaddr', array('length'=>16))
+		); 
+	} // end method generate_form
 
 	function view () {
 		global $display_buffer;
 		global $sql;
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query ("SELECT roomname,roomdescrip,id ".
-				"FROM $this->table_name ORDER BY roomname"),
+			$sql->query (
+				"SELECT roomname,roomdescrip,id ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY ".$this->order_field
+			),
 			$this->page_name,
 			array (
 				__("Name")		=>	"roomname",
@@ -129,7 +110,20 @@ class RoomMaintenance extends MaintenanceModule {
 				__("NO DESCRIPTION")
 			)
 		);
-	} // end function RoomMaintenance->view
+	} // end method view
+
+	function _update ( ) {
+		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Version 0.2
+		//
+		//	Added room equipment (roomequipment)
+		//
+		if (!version_check($version, '0.2')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
+				' ADD COLUMN roomequipment BLOB AFTER roomdefphy');
+		}
+	} // end method _update
 
 } // end class RoomMaintenance
 
