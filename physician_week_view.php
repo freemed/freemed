@@ -30,6 +30,15 @@ $next_date = freemed_get_date_next ($for_date);
 for ($i=1; $i<=6; $i++)
 	$next_date = freemed_get_date_next ($next_date);
 
+// Get week days
+unset($week);
+$week[] = $for_date;
+$n = $for_date;
+for ($i=1; $i<=6; $i++) {
+	$n = freemed_get_date_next($n);
+	$week[] = $n;
+}
+
 //----- Set page title
 $page_title = __("Physician Weekly View");
 
@@ -75,10 +84,73 @@ if ($physician<=0) {
 	";
 }
 
-//----- Actually display the calendar
-fc_display_week_calendar ($for_date,
-	"calphysician='".addslashes($physician)."'"
-);
+//----- Create the maps
+$scheduler = CreateObject('FreeMED.Scheduler');
+foreach ($week AS $this_date) {
+	$map[$this_date] = $scheduler->multimap("SELECT * FROM ".
+		"scheduler WHERE calphysician='".addslashes($physician)."' ".
+		"AND caldateof='".addslashes($this_date)."'");
+	if ($map[$this_date][0]['count'] !== 0) {
+		$temp = $map[$this_date];
+		unset ($map[$this_date]);
+		$map[$this_date][] = $temp;
+	}
+	if (count($map[$this_date]) == 0) {
+		$map[$this_date][0] = $scheduler->map_init();
+	}
+} // and creating maps foreach
+
+$display_buffer .= "<table border=\"0\"><tr>\n".
+	"<td colspan=\"2\">&nbsp;</td>\n";
+foreach ($week AS $this_date) {
+	$display_buffer .= "<td ALIGN=\"LEFT\" ".
+		"STYLE=\"border: 1px solid; \" ".
+		"COLSPAN=\"".count($map[$this_date])."\"><b>".
+		"<a href=\"physician_day_view.php?".
+		"selected_date=".urlencode($this_date)."&".
+		"physician=".urlencode($_REQUEST['physician'])."\"".
+		">".$this_date."</a></b></td>\n";
+} // end foreach week
+$display_buffer .= "</tr>\n";
+
+// Loop through the day
+for ($c_hour=freemed::config_value('calshr');
+		$c_hour<freemed::config_value('calehr');
+		$c_hour++) {
+	$display_buffer .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ".
+		"ROWSPAN=\"4\" CLASS=\"calcell_hour\" WIDTH=\"7%\">".
+		"<a NAME=\"hour".$c_hour."\" /><b>".
+		$scheduler->display_hour($c_hour)."</b></td>\n";
+	for ($c_min='00'; $c_min<60; $c_min+=15) {
+		$idx = $c_hour.':'.$c_min;
+		$display_buffer .= ( ($c_min>0) ? "<tr>" : "" ).
+			"<td>".$c_min."</td>\n";
+		foreach ($week AS $day) {
+			foreach ($map[$day] AS $map_key => $cur_map) {
+				$event = false;
+				if (($cur_map[$idx]['span']+0)==0) {
+					$event = true;
+				} elseif (($cur_map[$idx]['link']+0)!=0) {
+					$event = true;
+					$display_buffer .= "<td COLSPAN=\"1\" ".
+					"ROWSPAN=\"".$cur_map[$idx]['span']."\" ".
+					"ALIGN=\"LEFT\" ".
+					"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
+					$scheduler->event_calendar_print(
+						$cur_map[$idx]['link'],
+						true
+					)."</td>\n";
+				} else {
+					$display_buffer .= "<td COLSPAN=\"1\" ".
+					"CLASS=\"cell\" ALIGN=\"LEFT\" ".
+					"VALIGN=\"MIDDLE\">&nbsp;</td>\n";
+				}
+			} // foreach map
+		} // end foreach week
+	} // end looping minutes for
+	$display_buffer .= "</tr>\n";
+} // end looping hours for
+$display_buffer .= "</table>\n";
 
 //----- End and display everything
 template_display();

@@ -236,11 +236,14 @@ class Scheduler {
 	//
 	//	$event - scheduler table event id number.
 	//
+	//	$short - (optional) boolean, whether to shorten the
+	//	view for a concise output. Defaults to false.
+	//
 	// Returns:
 	//
 	//	XHTML formatted calendar event.
 	//
-	function event_calendar_print ( $event ) {
+	function event_calendar_print ( $event, $short = false ) {
 		global $sql;
 
 		// Get event
@@ -256,7 +259,8 @@ class Scheduler {
 		$my_patient = CreateObject('_FreeMED.Patient', $my_event['calpatient'],
 			($my_event['caltype']=="temp"));
 
-		return "<a HREF=\"".(($my_event['caltype']=="temp") ?
+		if (!$short) {
+			return "<a HREF=\"".(($my_event['caltype']=="temp") ?
 				"call-in.php?action=display&id=" :
 				"manage.php?id=" ).
 			$my_patient->id."\"".
@@ -271,6 +275,20 @@ class Scheduler {
 			"<br/>&nbsp;&nbsp;<i>".
 			prepare(stripslashes($my_event[calprenote])).
 			"</i>\n" : "" );
+		} else {
+			return "<a HREF=\"".(($my_event['caltype']=="temp") ?
+				"call-in.php?action=display&id=" :
+				"manage.php?id=" ).
+			$my_patient->id."\"".
+			"><acronym TITLE=\"".prepare(stripslashes($my_event[calprenote]))."\">".
+			"<small>".
+			trim($my_patient->fullName()).
+			"</small>".
+			"</acronym></a> ".
+			"<acronym TITLE=\"".prepare(stripslashes($my_event[calprenote]))."\">".
+			"<small>(".$my_event['calduration']."m)</small>".
+			"</acronym>\n";
+		}
 	} // end method event_calendar_print
 
 	// Method: event_special

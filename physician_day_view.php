@@ -79,11 +79,50 @@ if (empty($selected_date)) $selected_date = date("Y-m-d");
 //----- Call API function to generate miniature calendar
 $display_buffer .= fc_generate_calendar_mini ($selected_date, "$page_name?physician=$physician");
 
-//----- Actually display the day calendar
-fc_display_day_calendar ($selected_date,
-	"calphysician='".addslashes($physician)."'"
-);
+//----- Create multimap
+$scheduler = CreateObject('FreeMED.Scheduler');
+unset($map);
+$map = $scheduler->multimap("SELECT * FROM scheduler WHERE ".
+	"calphysician='".$physician."' AND ".
+	"caldateof='".$selected_date."'");
 
-//----- Display and end
+//----- Display table
+$display_buffer .= "<table>\n";
+for ($c_hour=freemed::config_value('calshr');
+		$c_hour<freemed::config_value('calehr');
+		$c_hour++) {
+	$display_buffer .= "
+	<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
+	"CLASS=\"calcell_hour\" WIDTH=\"7%\"
+	><a NAME=\"hour".$c_hour."\" /><b>".
+	$scheduler->display_hour($c_hour)."</b></td>
+	";
+	
+	for ($c_min="00"; $c_min<60; $c_min+=15) {
+		$idx = $c_hour . ':' . $c_min;
+		$display_buffer .= ( ($c_min>0) ? '<tr>' : '' ).
+			"<td>:".$c_min."</td>\n";
+		foreach ($map AS $map_key => $cur_map) {
+			$event = false;
+			if (($cur_map[$idx]['span']+0) == 0) {
+				$event = true;
+			} elseif (($cur_map[$idx]['link']+0) != 0) {
+				$event = true;
+				$display_buffer .= "<td COLSPAN=\"1\" ".
+				"ROWSPAN=\"".$cur_map[$idx]['span']."\" ".
+				"ALIGN=\"LEFT\" ".
+				"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
+				$scheduler->event_calendar_print($cur_map[$idx]['link']).
+				"</td>\n";
+			} else {
+				$buffer .= "<td COLSPAN=\"1\" CLASS=\"cell\" ".
+				"ALIGN=\"LEFT\" VALIGN=\"MIDDLE\">&nbsp;</td>\n";
+			}
+		} // end foreach map
+	} // end c_min for loop
+	$display_buffer .= "</tr>\n";
+} // end c_hour for loop		
+$display_buffer .= "</table>\n";
+
 template_display();
 ?>
