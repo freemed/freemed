@@ -40,7 +40,7 @@ function freemed_basic_auth () {
 		// Check for username/password
 		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
 			"WHERE username='".addslashes($user)."' AND ".
-			"userpassword='".addslashes($pass)."'";
+			"userpassword=MD5('".addslashes($pass)."')";
 		$result = $sql->query($query);
 
 		if (@$sql->num_rows($result) == 1) {
