@@ -120,7 +120,7 @@ class FreeBBillingTransport extends BillingModule {
 
 		// Start master form
 		$buffer .= "
-		<form action=\"billing_functions.php\" method=\"post\">
+		<form action=\"".page_name()."\" method=\"post\">
 		<input type=\"hidden\" name=\"type\" value=\"".get_class($this)."\" />
 		<input type=\"hidden\" name=\"billing_action\" value=\"".$_REQUEST['billing_action']."\" />
 		<input type=\"hidden\" name=\"action\" value=\"type\" />
@@ -329,7 +329,7 @@ class FreeBBillingTransport extends BillingModule {
 
 		<tr>
 		<td>
-		<a href=\"billing_functions.php?type=".get_class($this).
+		<a href=\"".page_name()."?type=".get_class($this).
 			"&billing_action=billing&action=type\"
 			>".__("Perform Billing")."</a></td>
 		<td>
@@ -339,7 +339,7 @@ class FreeBBillingTransport extends BillingModule {
 
 		<tr>
 		<td>
-		<a href=\"billing_functions.php?type=".get_class($this).
+		<a href=\"".page_name()."?type=".get_class($this).
 			"&billing_action=rebill_menu&action=type\"
 			>".__("Rebill")."</a></td>
 		<td>
@@ -349,7 +349,7 @@ class FreeBBillingTransport extends BillingModule {
 
 		<tr>
 		<td>
-		<a href=\"billing_functions.php?type=".get_class($this).
+		<a href=\"".page_name()."?type=".get_class($this).
 			"&billing_action=reports&action=type\"
 			>".__("Show Reports")."</a></td>
 		<td>
