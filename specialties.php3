@@ -1,8 +1,7 @@
 <?php
   // file: specialties.php3
   // note: physician/provider specialties db
-  // code: mr-jeff-is-too-lazy-to-not-use-the-template ;)
-  //       jeff b (jeff@univrel.pr.uconn.edu) -- template
+  // code: jeff b (jeff@univrel.pr.uconn.edu) -- template
   //       adam b (gdrago23@yahoo.com) -- complete rewrite
   // lic : GPL, v2
 
@@ -38,41 +37,43 @@ switch($action) { // master action switch
  case "delete":
   switch ($action) {
    case "add":
-    freemed_display_box_top(_("Adding $record_name"), $page_name);
+    freemed_display_box_top(_("Adding")." "._($record_name));
     echo "
       <P>
       <CENTER>
       <$STDFONT_B>"._("Adding").". . .
     ";
     $query = "INSERT INTO $db_name VALUES ( ".
-      "'$specname', '$specdesc', '$cur_date',  NULL ) ";
+      "'".addslashes($specname)."', ".
+      "'".addslashes($specdesc)."', ".
+      "'".addslashes($cur_date)."',  NULL ) ";
    break;
    case "mod":
-    freemed_display_box_top(_("Modifying $record_name"), $page_name);
+    freemed_display_box_top(_("Modifying")." "._($record_name));
     echo "
       <P>
       <CENTER>
       <$STDFONT_B>"._("Modifying").". . .
     ";
     $query = "UPDATE $db_name SET ".
-      "specname = '$specname', ".
-      "specdesc = '$specdesc'  ". 
+      "specname = '".addslashes($specname)."', ".
+      "specdesc = '".addslashes($specdesc)."'  ". 
       "WHERE id='$id'";
    break;
    case "delete":
-    freemed_display_box_top(_("Deleting $record_name"), $page_name);
+    freemed_display_box_top(_("Deleting")." "._($record_name));
     echo "
       <P>
       <CENTER>
       <$STDFONT_B>"._("Deleting").". . .
     ";
-    $query = "DELETE FROM $db_name WHERE id='$id'";
+    $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
    break;
   } // inner action switch
   $result = fdb_query($query);
   if ($result) {
     echo "
-      <B>"._("Done").".</B><$STDFONT_E>
+      <B>"._("done").".</B><$STDFONT_E>
     ";
   } else {
     echo ("<B>"._("ERROR")." ($result)</B><$STDFONT_E>"); 
@@ -80,11 +81,10 @@ switch($action) { // master action switch
   echo "
     <P>
     <CENTER><A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>"._("Return to $record_name Menu")."<$STDFONT_E></A>
+     ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
     </CENTER>
     <P>
-  "; // readability fix 19990714
-
+  ";
   freemed_display_box_bottom();
  break;
 
@@ -93,15 +93,14 @@ switch($action) { // master action switch
  case "modform":
   switch($action) { // inner action
    case "addform": default:
-    freemed_display_box_top(_("Add $record_name"), $page_name);
+    freemed_display_box_top(_("Add")." "._($record_name));
    break;
    case "modform":
-    freemed_display_box_top (_("Modify $record_name"), $page_name);
+    freemed_display_box_top (_("Modify")." "._($record_name));
     $result = fdb_query("SELECT * FROM $db_name ".
-      "WHERE ( id = '$id' )");
+      "WHERE ( id = '".addslashes($id)."' )");
     $r = fdb_fetch_array($result); // dump into array r[]
-    $specname = $r["specname"];
-    $specdesc = $r["specdesc"];
+    extract($r);
    break;
   } // inner action
 
@@ -116,8 +115,8 @@ switch($action) { // master action switch
      $list_r,
      $page_name,
      array (
-       _("Specialty") => "specname",
-       _("Specialty Description") => "specdesc"
+       _("Specialty") 			=> 	"specname",
+       _("Specialty Description") 	=> 	"specdesc"
      ),
      array ("", _("NO DESCRIPTION")), "", "s_page"
    )."
@@ -126,7 +125,7 @@ switch($action) { // master action switch
     (($action=="modform") ? "
       <FORM ACTION=\"$page_name\">
       <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-      <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
+      <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
       " : "
       <FORM ACTION=\"$page_name\">
       <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\"> 
@@ -136,15 +135,15 @@ switch($action) { // master action switch
    <TR><TD ALIGN=RIGHT>   
     <$STDFONT_B>"._("Specialty")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=specname SIZE=10 MAXLENGTH=50 
-     VALUE=\"$specname\">
+    <INPUT TYPE=TEXT NAME=\"specname\" SIZE=10 MAXLENGTH=50 
+     VALUE=\"".prepare($specname)."\">
    </TD></TR>
 
    <TR><TD ALIGN=RIGHT>   
     <$STDFONT_B>"._("Specialty Description")." : <$STDFONT_E>
    </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=specdesc SIZE=30 MAXLENGTH=100
-     VALUE=\"$specdesc\">
+    <INPUT TYPE=TEXT NAME=\"specdesc\" SIZE=30 MAXLENGTH=100
+     VALUE=\"".prepare($specdesc)."\">
    </TD></TR>
    
    <TR><TD ALIGN=CENTER COLSPAN=2>   
