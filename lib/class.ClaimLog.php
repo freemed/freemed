@@ -548,24 +548,30 @@ ORDER BY
 	//
 	//	Boolean, if successful.
 	//
-	function mark_billed ( $billkey ) {
-		// Get the actual bill key
-		$this_billkey = unserialize (
-			freemed::get_link_field (
-				$billkey,
-				'billkey',
-				'billkey'
-			)
-		);
+	function mark_billed ( $billkeys ) {
+		$keys = array();
+		$_billkeys = is_array($billkeys) ? $billkeys : array($billkeys);
+		foreach ($_billkeys AS $something => $billkey) {
+			print "processing $billkey<br/>\n";
+			// Get the actual bill key
+			$this_billkey = unserialize (
+				freemed::get_link_field (
+					$billkey,
+					'billkey',
+					'billkey'
+				)
+			);
+			$keys = array_merge($keys, $this_billkey['procedures']);
+		}
 
 		// Create procedure set
-		$set = join(',', $this_billkey['procedures']);
-
+		$set = join(',', $keys);
 		
 		// Perform update to procedure table
 		$query = 'UPDATE procrec SET '.
 			'procbilled = \'1\' '.
 			'WHERE FIND_IN_SET(id, \''.$set.'\')';
+		//print "query = $query<br/>\n";
 		$result = $GLOBALS['sql']->query ( $query );
 
 		return $result;

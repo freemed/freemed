@@ -113,8 +113,6 @@ class FreeBBillingTransport extends BillingModule {
 
 		// Get FreeB formats and information
 		$freeb = CreateObject('FreeMED.FreeB_v1');
-		//$freeb_formats = $freeb->FormatList();
-		//$freeb_targets = $freeb->TargetList();
 
 		// Start master form
 		$buffer .= "
@@ -129,13 +127,13 @@ class FreeBBillingTransport extends BillingModule {
 		$patients_to_bill = $this->PatientsToBill();
 
 		// If there are none, decide where to go from here
-		if (count($patients_to_bill) < 1) {
+		if (!$patients_to_bill) {
 			$buffer .= "
 			<div align=\"center\">
 			".__("There are no patients to bill.")."
 			</div>
 			";
-			return false;
+			return $buffer;
 		}	
 
 		// Show clearinghouse, etc info
@@ -519,6 +517,7 @@ class FreeBBillingTransport extends BillingModule {
 			"module=".urlencode($_REQUEST['module'])."&".
 			"action=".urlencode($_REQUEST['action'])."&".
 			"type=".urlencode($_REQUEST['type'])."&".
+			"billing_action=mark&".
 			"keys=".urlencode(serialize($__billkeys)).
 			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
 
@@ -601,6 +600,7 @@ class FreeBBillingTransport extends BillingModule {
 			"module=".urlencode($_REQUEST['module'])."&".
 			"action=".urlencode($_REQUEST['action'])."&".
 			"type=".urlencode($_REQUEST['type'])."&".
+			"billing_action=mark&".
 			"keys=".urlencode(serialize($__billkeys)).
 			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
 
@@ -608,7 +608,9 @@ class FreeBBillingTransport extends BillingModule {
 	} // end method process
 
 	function mark ( ) {
+		$claimlog = CreateObject ('FreeMED.ClaimLog');
 		$billkeys = unserialize($_REQUEST['keys']);
+		$mark = true;
 		foreach ($billkeys AS $key) {
 			$mark &= $claimlog->mark_billed ( $key );
 		}
@@ -711,7 +713,7 @@ class FreeBBillingTransport extends BillingModule {
 		
 		// Simple hack to make sure that no results return no answers
 		if (!$GLOBALS['sql']->results($result)) {
-			return array ();
+			return false;
 		}
 
 		$return = array ();
