@@ -85,9 +85,18 @@ class SchedulerTable extends MaintenanceModule {
 		} else {
 			// If not a physician, give number of appointments
 			// for the current facility if there is one
+			$day_result = $GLOBALS['sql']->query(
+				"SELECT COUNT(*) AS day_count FROM scheduler WHERE ".
+				"caldateof = '".date('Y-m-d')."' ".
+				( $_SESSION['default_facility'] ?
+					"AND calfacility='".addslashes($_SESSION['default_facility'])."' " : "" )
+			);
+			extract($GLOBALS['sql']->fetch_array($day_result));
+
+			// Figure out appointments for this week
 			return array (
 				__("Patient Scheduler"),
-				__("There are <b>15</b> appointments scheduled for today.")
+				sprintf(__("There are %s appointments scheduled for today."), "<b>$day_count</b>")
 			);
 		}
 	} // end method MainMenuAppointments
