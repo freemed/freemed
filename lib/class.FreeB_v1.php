@@ -99,6 +99,33 @@ class FreeB_v1 {
 		return $this->_call ( 'FreeB.Protocol.version', NULL );
 	} // end method ProtocolVersion
 
+	// Method: StoreBillKey
+	//
+	//	Stores the billing key in a temporary table to hold the
+	//	data for FreeB to use.
+	//
+	// Parameters:
+	//
+	//	$billkey - Data to be serialized
+	//
+	// Returns:
+	//
+	//	Table key for billkey, which can be passed to FreeB
+	//
+	function StoreBillKey ( $billkey ) {
+		$query = $GLOBALS['sql']->insert_query (
+			'billkey',
+			array (
+				'billkeydate' => date('Y-m-d'),
+				'billkey' => serialize($billkey)
+			)
+		);
+		$result = $GLOBALS['sql']->query($query);
+		$id = $GLOBALS['sql']->last_record($result, 'billkey');
+		syslog(LOG_INFO, 'FreeB_v1.StoreBillKey| new key = '.$id);
+		return $id;
+	} // end method StoreBillKey
+
 	// Method: TargetList
 	//
 	//	Retrieve the list of targets that the connected FreeB

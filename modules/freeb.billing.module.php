@@ -56,6 +56,10 @@ class FreeBBillingTransport extends BillingModule {
 				return $this->billing();
 				break;
 
+			case 'rebill':
+				return $this->rebillkey();
+				break;
+
 			// By default, we show the form with information
 			// regarding what is going on.
 			default:
@@ -355,8 +359,9 @@ class FreeBBillingTransport extends BillingModule {
 
 			// Create single array of stuff
 			$billkey['procedures'][] = $single;
+			$this_billkey = $freeb->StoreBillKey( $billkey );
 			$result = $freeb->ProcessBill(
-				serialize($billkey),
+				$this_billkey,
 				$format[$single],
 				$target[$single],
 				'SingleProcedure_'.$single
@@ -397,7 +402,7 @@ class FreeBBillingTransport extends BillingModule {
 			$billkey['service'] = $_REQUEST['service'];
 
 			// Lastly, we serialize the bill key
-			$key = serialize($billkey);
+			$key = $freeb->StoreBillKey($billkey);
 
 			// ... and send it to FreeB, to see what we get for a result
 			$result = $freeb->ProcessBill($key, $my_format, $my_target, $my_key);
@@ -411,6 +416,18 @@ class FreeBBillingTransport extends BillingModule {
 		return $buffer;
 	} // end method process
 
+	function rebillkey ( ) {
+		$key = $_REQUEST['key'];
+
+		$freeb = CreateObject('FreeMED.FreeB_v1');
+		$this_billkey = $freeb->StoreBillKey( $billkey );
+		$result = $freeb->ProcessBill(
+			$key,
+			'hcfa', //$format[$single],
+			'txt' //$target[$single]
+		);
+		return $result;
+	} // end method rebillkey
 
 	//--------------------------------------------------------------------
 	// Helper and other internal functions

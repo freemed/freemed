@@ -71,8 +71,12 @@ class FBProcedure {
 		//
 		//return $p;
 
-		// Deserialize from BillKey, and return the procedures
-		$key = unserialize($billkey);
+		// Deserialize from BillKey, and return the procedures...
+		// This is kept in a special table, with important information
+		// regarding if the bill was sent, etc.
+		$key_rec = freemed::get_link_rec($billkey, 'billkey');
+		$key = unserialize($key_rec['billkey']);
+		syslog(LOG_INFO, 'FBProcedure.ProcArray| size = '.count($key['procedures']));
 		return $key['procedures'];
 	} // end method ProcArray
 
@@ -148,7 +152,8 @@ class FBProcedure {
 	} // end method OtherInsuredKey
 
 	function BillingContactKey ( $bill, $proc ) {
-		$r = unserialize($bill);
+		$key_rec = freemed::get_link_rec($bill, 'billkey');
+		$r = unserialize($key_rec['billkey']);
 		return $bill['contact'];
 	} // end method BillingContactKey
 
@@ -157,7 +162,8 @@ class FBProcedure {
 	} // end method isUsingBillingService
 
 	function BillingServiceKey ( $bill, $proc ) {
-		$r = unserialize($bill);
+		$key_rec = freemed::get_link_rec($bill, 'billkey');
+		$r = unserialize($key_rec['billkey']);
 		return $bill['service'];
 	} // end method BillingServiceKey
 
@@ -166,7 +172,8 @@ class FBProcedure {
 	} // end method isUsingClearingHouse
 
 	function ClearingHouseKey ( $bill, $proc ) {
-		$r = unserialize($bill);
+		$key_rec = freemed::get_link_rec($bill, 'billkey');
+		$r = unserialize($key_rec['billkey']);
 		return $bill['clearinghouse'];
 	} // end method ClearingHouseKey
 
