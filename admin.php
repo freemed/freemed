@@ -23,7 +23,7 @@ $config_vars = array (
 );
 
   // security patch...
-if (freemed_get_userlevel()<9) {
+if (!freemed::user_flag(USER_ADMIN)) {
   $page_title = _("Administration")." :: "._("ERROR");
   $display_buffer .= "
     <P>
@@ -322,13 +322,13 @@ if ($action=="cfgform") {
     ptbal        REAL,
     ptbalfwd     REAL,
     ptunapp      REAL,
-    ptdoc        INT UNSIGNED,
-    ptrefdoc     INT UNSIGNED,
-    ptpcp        INT UNSIGNED,
-    ptphy1       INT UNSIGNED,
-    ptphy2       INT UNSIGNED,
-    ptphy3       INT UNSIGNED,
-    ptphy4       INT UNSIGNED,
+    ptdoc        VARCHAR(150),
+    ptrefdoc     VARCHAR(150),
+    ptpcp        VARCHAR(150),
+    ptphy1       VARCHAR(150),
+    ptphy2       VARCHAR(150),
+    ptphy3       VARCHAR(150),
+    ptphy4       VARCHAR(150),
     ptbilltype   ENUM(\"sta\",\"mon\",\"chg\") NOT NULL,
     ptbudg       REAL,
     ptlname      VARCHAR(50),
@@ -382,7 +382,6 @@ if ($action=="cfgform") {
     ptinsend     TEXT,
     ptnextofkin  TEXT,
     iso          VARCHAR(15),
-    id INT NOT NULL AUTO_INCREMENT,
     ptdep        INT UNSIGNED,
     ptins1 	 INT UNSIGNED,
     ptins2  	 INT UNSIGNED,
@@ -396,6 +395,7 @@ if ($action=="cfgform") {
     ptinsgrp3	 VARCHAR(50),
     ptdead       INT UNSIGNED,
     ptdeaddt     DATE,
+    id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
   if ($result) { $display_buffer .= "<LI>"._("Patients")."\n"; }
@@ -526,9 +526,9 @@ if ($action=="cfgform") {
     proccharges            REAL,
     procunits              REAL,
     procvoucher            VARCHAR(25),
-    procphysician          INT UNSIGNED,
+    procphysician          VARCHAR(150),
     procdt                 DATE,
-    procpos                INT UNSIGNED,
+    procpos                VARCHAR(150),
     proccomment            TEXT,
     procbalorig            REAL,
     procbalcurrent         REAL,
@@ -536,9 +536,8 @@ if ($action=="cfgform") {
     procbilled             INT UNSIGNED,
     procbillable           INT UNSIGNED,
     procauth               INT UNSIGNED,
-    procrefdoc             INT UNSIGNED,
+    procrefdoc             VARCHAR(150),
     procrefdt              DATE,
-    id INT NOT NULL AUTO_INCREMENT,
     procamtallowed         REAL,
     procdtbilled	       TEXT,
     proccurcovid		   INT UNSIGNED,
@@ -549,6 +548,7 @@ if ($action=="cfgform") {
     proccov4			   INT UNSIGNED,
     proccert               INT UNSIGNED,
     procclmtp              INT UNSIGNED,
+    id INT NOT NULL AUTO_INCREMENT,
     KEY (procpatient),
     PRIMARY KEY (id)
     )");
@@ -743,10 +743,10 @@ if ($action=="cfgform") {
     phygroupfac    INT UNSIGNED,
     phygroupdtadd  DATE,
     phygroupdtmod  DATE,
-    id INT NOT NULL AUTO_INCREMENT,
 	phygroupidmap  TEXT,
 	phygroupdocs   TEXT,
 	phygroupspe1   INT UNSIGNED,
+    id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
   if ($result) $display_buffer .= "<LI>"._("Physician Groups")."\n";
@@ -780,7 +780,7 @@ if ($action=="cfgform") {
     			"username" => "root",
 			"userpassword" => DB_PASSWORD,
 			"userdescrip" => "Superuser",
-			"userlevel" => 9,
+			"userlevel" => USER_ROOT,
 			"usertype" => "misc",
 			"userfac" => "-1",
 			"userphy" => "-1",
@@ -1230,7 +1230,7 @@ if ($action=="cfgform") {
      eocstartdate              DATE,
      eocdtlastsimilar          DATE,
      eocreferrer               INT UNSIGNED,
-     eocfacility               INT UNSIGNED,
+     eocfacility               VARCHAR(150),
      eocdiagfamily             TEXT,
      eocrelpreg                ENUM (\"no\", \"yes\") NOT NULL,
      eocrelemp                 ENUM (\"no\", \"yes\") NOT NULL,
