@@ -110,6 +110,26 @@ class Scheduler {
 		return $result;
 	} // end method copy_group_appointment
 
+	// Method: date_add
+	//
+	//	Addition method for date. Adds days to starting date.
+	//
+	// Parameters:
+	//
+	//
+	// Returns:
+	//
+	//	Date in SQL date format.
+	//
+	function date_add ( $starting, $interval ) {
+		if ($interval < 1) { return $starting; }
+		$q = $GLOBALS['sql']->query("SELECT DATE_ADD('".
+			addslashes($starting)."', INTERVAL ".
+			($interval+0)." DAY) AS mydate");
+		extract($GLOBALS['sql']->fetch_array($q));
+		return $mydate;
+	} // end method date_add
+
 	// Method: date_in_range
 	//
 	//	Determine if a date falls between a beginning and end date.
@@ -932,12 +952,13 @@ class Scheduler {
 	//	* forceday - Force day to be day of week (1..7 ~ Mon..Sun)
 	//	* location - Room location
 	//	* provider - With a particular provider
+	//	* single   - Provide single answer
 	//	* weekday  - Force weekday (boolean) 
 	//
 	// Returns:
 	//
-	//	array ( date, hour, minute ) or
-	//	array ( false ) if nothing is open
+	//	array ( of array ( date, hour, minute ) )
+	//	false if nothing is open
 	//
 	function next_available ( $_criteria ) {
 		// Error checking
@@ -952,19 +973,32 @@ class Scheduler {
 
 		// Loop through days to create c_days array
 		$i_cur = $_criteria['date'] ? $_criteria['date'] : date('Y-m-d');
-		$c_days[] = $i_cur; // start with current day ...
+		$i_add = true;
+		list ($i_y, $i_m, $i_d) = explode ('-', $i_cur);
+		// Check for criteria ...
+		if ($_criteria['weekday']) {
+			$dow = strftime("%u", mktime(0,0,0,$i_m,$i_d,$i_y));
+			if ($dow > 5) { $i_add = false; }
+		}
+		if ($_criteria['forceday']) {
+			$dow = strftime("%u", mktime(0,0,0,$i_m,$i_d,$i_y));
+//			print "current day = $i_cur, dow = $dow<br/>\n";
+			if ($dow != $_criteria['forceday']) { $i_add = false; }
+		}
+		if ($i_add) { $c_days[] = $i_cur; } // start with current?
 		for ($i=1; $i<=$days; $i++) {
-			$i_cur = freemed_get_date_next($i_cur);
+			$i_cur = $this->date_add($i_cur, 1);
 			list ($i_y, $i_m, $i_d) = explode ('-', $i_cur);
 			$i_add = true;
 			// Check for criteria ...
 			if ($_criteria['weekday']) {
 				$dow = strftime("%u", mktime(0,0,0,$i_m,$i_d,$i_y));
-				if ($dow > 5) { $i_cur = false; }
+				if ($dow > 5) { $i_add = false; }
 			}
 			if ($_criteria['forceday']) {
 				$dow = strftime("%u", mktime(0,0,0,$i_m,$i_d,$i_y));
-				if ($dow != $_criteria['forceday']) { $i_cur = false; }
+//				print "current day = $i_cur, dow = $dow<br/>\n";
+				if ($dow != $_criteria['forceday']) { $i_add = false; }
 			}
 			if ($i_add) { $c_days[] = $i_cur; }
 		} // end for i loop for number of days
@@ -999,14 +1033,23 @@ class Scheduler {
 			for($h=$starting_time; $h<freemed::config_value('calehr'); $h++) {
 				for ($m='00'; $m<60; $m+=15) {
 					if ($this->map_fit($map, "$h:$m", $duration)) {
-						return array ($this_day, $h, $m);
+						if ($_criteria['single']) {
+							return array ($this_day, $h, $m);
+						} else {
+							$found = true;
+							$res[] = array ($this_day, $h, $m);
+						}
 					} // end if map_fit
 				} // end minute loop
 			} // end hour loop
 		} // end for each possible day
 
-		// If all else fails, return array(false)
-		return array (false);
+		// If all else fails, return array(false), otherwise results
+		if (!$found) {
+			return false;
+		} else {
+			return $res;
+		}
 	} // end method next_available
 
 	// Method: next_time_increment
