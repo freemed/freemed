@@ -130,13 +130,13 @@ foreach ($static_components AS $garbage => $component) {
           		<FORM ACTION=\"custom_records.php\" METHOD=POST>
         		<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($id)."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
-			<SELECT NAME=\"form\">
+			<select NAME=\"form\">
 			";
 			while ($f_r = $sql->fetch_array ($f_results)) 
-			$panel[_("Custom Records")] .= "<OPTION VALUE=\"".$f_r["id"]."\">".
-				$f_r["prtname"]."\n"; 
+			$panel[_("Custom Records")] .= "<option VALUE=\"".$f_r["id"]."\">".
+				$f_r["prtname"]."</option>\n"; 
 			$panel[_("Custom Records")] .= "
-				</SELECT>
+				</select>
 				<INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
 				</FORM>
 				</DIV>
@@ -367,10 +367,10 @@ foreach ($modular_components AS $garbage => $component) {
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"module_loader.php?module=".
-			$component."&patient=$id\" 
+			$component."&patient=$id&return=manage\" 
 			>"._("View/Manage")."</A> |
 			<A HREF=\"module_loader.php?module=".
-			$component."&patient=$id&action=addform\" 
+			$component."&patient=$id&action=addform&return=manage\" 
 			>"._("Add")."</A>
 			</TD></TR>
 			<TR><TD ALIGN=CENTER VALIGN=MIDDLE>

@@ -138,7 +138,7 @@ A.patientbox_hilite:link { color: #000000 }
 	border-width: thin;
 	border-style: solid;
 	overflow: scroll;
-	background: #cccccc; 
+	background: #aaaaff; 
 	padding: 1pt
 }
 
@@ -147,7 +147,7 @@ A.patientbox_hilite:link { color: #000000 }
 	border-width: thin;
 	border-style: solid;
 	overflow: scroll;
-	background: #aaaaaa;
+	background: #9999ff;
 	padding: 1pt
 }
 
