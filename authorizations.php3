@@ -188,7 +188,7 @@
 
        <CENTER>
        <INPUT TYPE=SUBMIT VALUE=\"  ".
-         ( ($action=="addform" ? _("Add") : _("Modify"))."  \">
+         ( ($action=="addform") ? _("Add") : _("Modify"))."  \">
        <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
        </CENTER>
        </FORM>
@@ -196,8 +196,8 @@
        <CENTER>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
          ><$STDFONT_B>". 
-	  ( ($action="addform") ? _("Abandon Addition") :
-	    _("Abandon Modification"))."<$STDFONT_E></A>
+	  ( ($action=="addform") ? _("Abandon Addition") :
+	    _("Abandon Modification") )."<$STDFONT_E></A>
        </CENTER>
      ";
      freemed_display_box_bottom ();
@@ -247,7 +247,7 @@
      break;
 
    case "mod":
-     freemed_display_box_top (_("Modifying")." "._("$record_name"))
+     freemed_display_box_top (_("Modifying")." "._("$record_name"));
      echo "<B><$STDFONT_B>"._("Modifying")." . . . <$STDFONT_E></B>\n";
      $query = "UPDATE $db_name SET
        authdtmod      = '$cur_date',
@@ -268,10 +268,10 @@
        <P>
        <CENTER>
         <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>"_("Manage Patient")."<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
         <B>|</B>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
-         ><$STDFONT_B>"_("View/Modify")." "._("$record_name")."<$STDFONT_E></A>
+         ><$STDFONT_B>"._("View/Modify")." "._("$record_name")."<$STDFONT_E></A>
         <BR>
         <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"
          ><$STDFONT_B>"._("Add")." "._("$record_name")."<$STDFONT_E></A>
