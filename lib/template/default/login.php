@@ -43,7 +43,7 @@ while ($f_line = fgets ($f_reg, 255)) {
 	if (substr ($f_line, 0, 1) != "#") { // skip comments
 		$f_line_array = explode (":", $f_line);
 		$display_buffer .= " <option VALUE=\"".
-				prepare(strtolower($f_line_array[0]))."\">".
+				prepare($f_line_array[0])."\">".
 				prepare($f_line_array[1])."</option>\n";
 	} // end of skipping comments
 } // end while we have more lines to get
@@ -79,8 +79,8 @@ if (!empty($_URL))
 $display_buffer .= "
 </table>
 <div ALIGN=\"CENTER\">
-  <input TYPE=\"SUBMIT\" VALUE=\""._("Enter the database")."\"/>
-  <input TYPE=\"RESET\"  VALUE=\""._("Clear")."\"/>
+  <input TYPE=\"SUBMIT\" VALUE=\""._("Sign In")."\" CLASS=\"button\" />
+  <input TYPE=\"RESET\"  VALUE=\""._("Clear")."\" CLASS=\"button\" />
 </div>
 </form>
 ";
