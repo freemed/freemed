@@ -57,7 +57,7 @@ if ($page_history) {
 } // end checking for page history
 
 // Language bar
-if ($_COOKIE['language_bar']) {
+if (defined('ALWAYS_LANGUAGE_BAR') or ($_COOKIE['language_bar']==1)) {
 	$langugage_bar = true;
 	$registry = CreateObject('FreeMED.LanguageRegistry');
 	print "
