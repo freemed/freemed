@@ -60,7 +60,7 @@ $display_buffer .= "
 "._("Facility")." :
 </TD><TD ALIGN=LEFT>
 <SELECT NAME=\"_f\">
-".freemed_display_facilities ($_f, true, "0")."
+".freemed_display_facilities ("_f", true, "0")."
 </SELECT>
 </TD></TR>
 ";
