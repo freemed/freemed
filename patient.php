@@ -10,6 +10,9 @@ $record_name = "Patient";   // compatibility with API functions
 include_once ("lib/freemed.php");
 include_once ("lib/calendar-functions.php");
 
+// Make sure we return to here from itemlist
+$_ref = "patient.php";
+
 // Create user object
 if (!is_object($this_user)) {
 	$this_user = CreateObject('FreeMED.User');
