@@ -103,6 +103,17 @@ class Images {
 			// Add to stack	
 			$djvu[] = $tempname.".djvu";	
 		}
+
+		// Make proper directory
+		$mkdir_command = "mkdir -p ".PHYSICAL_LOCATION.'/'.
+			dirname(
+				freemed::image_filename(
+					$patient_id,
+					$last_record,
+					'djvu
+				)
+			);
+		exec ($mkdir_command);
 	
 		// Compile into DJVU final file
 		$command = '`which djvm` -c '.PHYSICAL_LOCATION.'/'.
