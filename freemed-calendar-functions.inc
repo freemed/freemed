@@ -67,6 +67,38 @@
      else       {  return strftime ("%A", $this_timestamp);  }
   } // end function day_of_the_week
 
+  // function fc_scroll_prev_month
+  function fc_scroll_prev_month ($given_date="") {
+    global $cur_date;
+    $this_date = (
+     (empty($given_date) or !strpos($given_date, "-")) ?
+     $cur_date :
+     $given_date );
+    list ($y, $m, $d) = explode ("-", $this_date);
+    $m--;
+    if ($m < 1) { $m = 12; $y--; }
+    if (!checkdate ($m, $d, $y)) {;
+      if ($d > 28) $d = 28; // be safe for February...
+    }
+    return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
+  } // end function fc_scroll_prev_month
+
+  // function fc_scroll_next_month
+  function fc_scroll_next_month ($given_date="") {
+    global $cur_date;
+    $this_date = (
+     (empty($given_date) or !strpos($given_date, "-")) ?
+     $cur_date :
+     $given_date );
+    list ($y, $m, $d) = explode ("-", $this_date);
+    $m++;
+    if ($m > 12) { $m -= 12; $y++; }
+    if (!checkdate ($m, $d, $y)) {
+      $d = 28; // be safe for February...
+    }
+    return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
+  } // end function fc_scroll_next_month
+
   // function fc_starting_hour
   // -- returns starting hour of booking
   function fc_starting_hour () {
@@ -246,10 +278,6 @@
 
     // break day into pieces
     list ($this_year, $this_month, $this_day) = explode ("-", $this_date);
-    if (($this_month < 10) and (strlen($this_day)==1))
-      $this_month = "0".$this_month;
-    if (($this_day   < 10) and (strlen($this_day)==1))
-      $this_day   = "0".$this_day  ;
 
     // Figure out the last day of the month
     $lastday  [4] = $lastday [6] = $lastday [9] = $lastday [11] = 30;
@@ -261,37 +289,44 @@
 
     // generate top of table
     echo "
+     <CENTER>
+     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
+      ALIGN=CENTER>
+     <TR>
+
+     </TR>
      <TABLE BORDER=0 CELLSPACING=0>
       <TR BGCOLOR=>
        <TD ALIGN=LEFT>
     ";
 
     // previous month link
-    $prev_year  = $this_year;
-    $prev_month = $this_month - 1;
-    if( $prev_month <  1) { $prev_month = $prev_month + 12; $prev_year--; }
-    if (($prev_month < 10) and (strlen($prev_month)==1))
-      $prev_month = "0".$prev_month;
-    echo "
-     <A HREF=\"$this_url&selected_date=".$prev_year."-".$prev_month."-".
-      $this_day."\"
+    echo "     
+     <A HREF=\"$this_url&selected_date=".
+       fc_scroll_prev_month(
+        fc_scroll_prev_month(
+         fc_scroll_prev_month($this_date)
+        )
+       )."\"
+      <$STDFONT_B>3<$STDFONT_E></A>
+     <A HREF=\"$this_url&selected_date=".fc_scroll_prev_month($this_date)."\"
       <$STDFONT_B>prev<$STDFONT_E></A>
      </TD>
      <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
       <$STDFONT_B>
-       <B>".htmlentities($lang_months[$this_month])." $this_year</b>
+       <B>".htmlentities($lang_months[($this_month+0)])." $this_year</b>
       <$STDFONT_E>
      </TD>
      <TD ALIGN=RIGHT>
-    ";
-    $next_year  = $this_year;
-    $next_month = $this_month + 1;
-    if ($next_month > 12) { $next_month = $next_month - 12; $next_year++; }
-    if ($next_month < 10) $next_month = "0".$next_month;
-    echo "
-     <A HREF=\"$this_url&selected_date=".$next_year."-".$next_month."-".
-      $this_day."\"
-      <$STDFONT_B>next<$STDFONT_E></A>
+     <A HREF=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
+      <$STDFONT_B>next<$STDFONT_E></A>    
+     <A HREF=\"$this_url&selected_date=".
+       fc_scroll_next_month(
+        fc_scroll_next_month(
+         fc_scroll_next_month($this_date)
+        )
+       )."\"
+      <$STDFONT_B>3<$STDFONT_E></A>
      </TD>
      </TR>
      <TR>
@@ -316,7 +351,7 @@
 
     if( $first_day > 0 ) {
   	while( $day_row < $first_day ) {
-   		echo "  <TD ALIGN=RIGHT BGCOLOR=#bbbbbb>&nbsp;</td>\n";
+   		echo "  <TD ALIGN=RIGHT BGCOLOR=#dfdfdf>&nbsp;</td>\n";
    		$day_row += 1;  
   		}
  	} // end while day row < first day
@@ -349,20 +384,27 @@
 		//	$bgcolor = $config["cellcolor"]; 
 		//	$txtcolor = $config["celltext"]; 
 		//	}
+        $this_color = (
+	  ( $dayp == $this_day ) ?
+           "#ccccff" :
+           "#bbbbbb" );
+
     echo "
-     <TD ALIGN=CENTER BGCOLOR=#bbbbbb>
+     <TD ALIGN=CENTER BGCOLOR=$this_color>
       <$STDFONT_B>
     ";
  
-	if( $dayp       == $cur_day AND
+        $hilitecolor = (
+	  ( $dayp       == $cur_day AND
             $this_month == $cur_month AND
-            $this_year  == $cur_year )
-          { $hilitecolor = "#ff0000"; } 
-        else { $hilitecolor = "#0000ff"; }
+            $this_year  == $cur_year ) ?
+            "#ff0000" : 
+            "#0000ff" );
        
         echo "
-         <A HREF=\"$this_url&selected_date=".$this_year."-".$this_month."-".
-          $dayp."\"><$STDFONT_B COLOR=$hilitecolor>$dayp<$STDFONT_E></A>
+         <A HREF=\"$this_url&selected_date=".
+         date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
+         "\"><$STDFONT_B COLOR=$hilitecolor>$dayp<$STDFONT_E></A>
         ";
    	//if( $dayp       == $cur_day AND
         //    $this_month == $cur_month AND
@@ -393,6 +435,7 @@
      </TD>
      </TR>
      </TABLE>
+     </CENTER>
     ";
   } // end function fc_generate_calendar_mini
 
