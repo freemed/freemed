@@ -1,3 +1,11 @@
+freemed (0.7.0-0.0.3) stable; urgency=low
+
+  * Released beta 3 for 0.7.0.
+  * Handles previous installs (upgrades) properly.
+  * Allows password entry for MySQL server during init.
+
+ -- Jeff Buchbinder <jeff@freemedsoftware.com>  Thu, 25 Mar 2004 13:30:00 -0500
+
 freemed (0.7.0-0.0.2.1) stable; urgency=low
 
   * Fixed dependencies oops.
