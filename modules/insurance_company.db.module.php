@@ -120,71 +120,40 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 	 phone_vars ("inscophone"),
 	 phone_vars ("inscofax"),
          "inscoemail", "inscowebsite"
-	 ),"
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
+	 ),html_form::form_table(array(
    
-    <TR>
-    <TD ALIGN=RIGHT>".__("Company Name (full)")." : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"insconame\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($insconame)."\"></TD>
-    </TR>
+    __("Company Name (full)") =>
+    html_form::text_widget('insconame', 50),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Company Name (on forms)")." : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoalias\" SIZE=20 MAXLENGTH=30
-     VALUE=\"".prepare($inscoalias)."\"></TD>
-    </TR>
+    __("Company Name (on forms)") =>
+    html_form::text_widget('inscoalias', 30),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Address Line 1")." : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoaddr1\" SIZE=30 MAXLENGTH=30
-     VALUE=\"".prepare($inscoaddr1)."\"></TD>
-    </TR>
+    __("Address Line 1") =>
+    html_form::text_widget('inscoaddr1', 30),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Address Line 2")." : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoaddr2\" SIZE=30 MAXLENGTH=30
-     VALUE=\"".prepare($inscoaddr2)."\"></TD>
-    </TR>
+    __("Address Line 2") =>
+    html_form::text_widget('inscoaddr2', 30),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("City").", ".__("State")."
-      ".__("Zip")." : </TD>
-    <TD ALIGN=LEFT>  
-    <INPUT TYPE=TEXT NAME=\"inscocity\" SIZE=20 MAXLENGTH=20
-     VALUE=\"".prepare($inscocity)."\"><B>,</B>
-    <INPUT TYPE=TEXT NAME=\"inscostate\" SIZE=4 MAXLENGTH=3
-     VALUE=\"".prepare($inscostate)."\">
-    <INPUT TYPE=TEXT NAME=\"inscozip\" SIZE=10 MAXLENGTH=10
-     VALUE=\"".prepare($inscozip)."\">
-    </TD> 
-    </TR>
+    __("City").", ".
+	__("State")." ".
+        __("Zip") =>
+    html_form::text_widget('inscocity', 20).'<b>,</b> '.
+    html_form::text_widget('inscostate', 3).' '.
+    html_form::text_widget('inscozip', 10),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Contact Phone")." : </TD>
-    <TD ALIGN=LEFT>".fm_phone_entry ("inscophone")."</TD>
-    </TR>
+    __("Contact Phone") =>
+    fm_phone_entry ("inscophone"),
   
-    <TR>
-    <TD ALIGN=RIGHT>".__("Fax Number")." : </TD>
-    <TD ALIGN=LEFT>".fm_phone_entry ("inscofax")."</TD>
-    </TR>
+    __("Fax Number") =>
+    fm_phone_entry ("inscofax"),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Email Address")." : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscoemail\" SIZE=20 MAXLENGTH=50
-     VALUE=\"".prepare($inscoemail)."\"></TD>
-    </TR>
+    __("Email Address") =>
+    html_form::text_widget('inscoemail', 50),
 
-    <TR>
-    <TD ALIGN=RIGHT>".__("Web Site")."
-      (<I>http://insco.com</I>) : </TD>
-    <TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=\"inscowebsite\" SIZE=15 MAXLENGTH=100
-     VALUE=\"".prepare($inscowebsite)."\"></TD>
-    </TR>
+    __("Web Site")."(<I>http://insco.com</I>)" =>
+    html_form::text_widget('inscowebsite', 100)
 
-    </TABLE>
-  ");
+  )));
 
 	
   $book->add_page(
