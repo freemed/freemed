@@ -42,6 +42,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 
 	function form () {
 		while (list($k,$v)=each($GLOBALS)) global $$k;
+		global $sql;
 
 		$book = new notebook (
 			array ("action", "_auth", "id", "module"),
