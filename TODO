@@ -2,26 +2,36 @@ freemed-project TODO list
 by jeff b (jeff@univrel.pr.uconn.edu)
 (c) 1999 under the GPL, version 2
 
+* = proposed
+- = done
+/ = in progress
+
+20010316 -------------------------------------------------------
+ * implement single view for EMR modules for a patient
+ * EDI feedback processing (Fred)
+ * distributed records handling
+ * fax support (probably in phpwebtools)
+
 20010125 -------------------------------------------------------
- * step up loadable module support to allow for more module types
+ - step up loadable module support to allow for more module types
  * code optimizing
  * much API documentation needs to be done
 
 20000405 -------------------------------------------------------
  * perhaps move to mcal as soon as libmcal stabilizes (this should
    be easier now that jeff is developing libmcal as well)
- * move from .php3 -> .php for the futures' sake
+ - move from .php3 -> .php for the futures' sake
  * rehash generate_fixed_forms.php3 to be nice
  * XML/HL7 generation routines for billing
  * sync across installs for patients
 
 19990708 -------------------------------------------------------
- * implement payments and billing databases, with structures
+ - implement payments and billing databases, with structures
  * rehash patient database into usable form, removing all legacy
    code, symbols, etc, and redoing for current work
  * implement scheduling using vCalendar interface, so as to work
    with PalmPilots, etc
- * insurance payments related dbs and tie-ins, possibly with API
+ - insurance payments related dbs and tie-ins, possibly with API
    revisions
  * clarify terms
  * begin writing man pages in separated "file" format...
