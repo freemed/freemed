@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.41  2002/04/04 18:21:03  rufustfirefly
+ // itemlist now allows for auto-refreshed select in logical order, config_value works properly, facility dropdown displays city and state, fm_number_select() had extra onChange parameter added (false by default)
+ //
  // Revision 1.40  2001/11/21 21:03:42  rufustfirefly
  // removed .php from help file names
  //
@@ -135,7 +138,7 @@ function freemed_config_value ($config_var) {
 		// Loop through results
 		while ($r = $sql->fetch_array($query)) {
 			$_config[stripslashes($r[c_option])] =
-				stripslashes($c_value);
+				stripslashes($r[c_value]);
 		} // end of looping through results
 	} // end of caching
 
@@ -336,12 +339,13 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     
     ."<TD>
      <FONT COLOR=\"#ffffff\">
-     "._("Page ".$$cur_page_var." of $num_pages")."
+     "._("Page"). 
+     fm_number_select($cur_page_var, 1, $num_pages, 1, false, true).
+	" of ".$num_pages."
      </FONT>
      <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".prepare($action)."\" >
      <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\" >
      <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-     ".fm_number_select($cur_page_var, 1, $num_pages)."
      <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
     </TD>".
     
@@ -536,6 +540,14 @@ function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="", $by_array="") {
 	global $default_facility, $sql;
 
+	// Check for default or passed facility
+	if ($param != "") {
+		global ${$param};
+		$facility = ${$param};
+	} else {
+		$facility = $default_facility;
+	}
+
 	$buffer = "";
 
 	switch ($intext) {
@@ -567,9 +579,9 @@ function freemed_display_facilities ($param="", $default_load = false,
 	while ($row = $sql->fetch_array($result)) {
 		$buffer .= "<OPTION VALUE=\"".prepare($row[id]).
 			"\" ".
-			( ( ($row[id]==$default_facility) and
-			($default_facility >0) ) ?  "SELECTED" : "" ).">".
-			prepare($row[psrname]).
+			( ($row[id]==$facility) ? "SELECTED" : "" ).">".
+			prepare($row[psrname]." (".$row[psrcity].", ".
+				$row[psrstate].")").
 			( ($debug) ? "[".$row[psrnote]."]" :
 			"" )."\n";
 	} // while there are more results...
@@ -1432,14 +1444,17 @@ function fm_join_from_array ($cur_array) {
 	return implode ($cur_array, ":");
 } // end function fm_join_from_array 
 
-function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false) {
+function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false, $submit_on_blur = false) {
 	global ${$varname}; // bring in the variable
 
 	// Pull into local scope
 	$selected = ${$varname};
 
 	// Start header
-	$buffer = "\n\t<SELECT NAME=\"".prepare($varname)."\">\n";
+	$buffer = "\n\t<SELECT NAME=\"".prepare($varname)."\" ".
+		( $submit_on_blur ?
+		"onChange=\"this.form.submit(); return true;\"" :
+		"" ).">\n";
 
 	// Check to make sure step isn't illegal
 	if ($step==0) $step = 1;
