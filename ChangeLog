@@ -1,6 +1,24 @@
 freemed project changelog
 ($Id$)
 
+* Thu Oct 18 2001 rufustfirefly
+  - whole lot of files: removed $LoginCookie
+  - lib/render_forms.php: prettified and recommented API
+  - lib/calendar-functions.php: removed extra "echo"s -> display_buffer
+  - lib/template/default/manage_main.php: added working appointment
+    static EMR box, set patient information to display date of last
+    visit
+  - README: updated readme a little
+  - (setup wizard): made template selection available
+    NOTE: anything annotated (setup wizard) has not been merged into
+    the CVS tree yet
+  - wddx_provider.php, lib/wddx_services.php: added WDDX service
+    provider for EMRi and other such functions...
+  - lib/template/default/template.php: fixed automatic refresh to use
+    REQUEST_URI instead of PHP_SELF to find full page name with vars
+  - lib/template/default/manage_config.php: configuration now refreshes
+    on success back to management screen
+
 * Wed Oct 17 2001 rufustfirefly
   - doc/API -> old/API
   - doc/API: starting fresh on the API documentation
