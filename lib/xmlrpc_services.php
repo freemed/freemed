@@ -2,6 +2,9 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.3  2002/11/03 20:35:58  rufustfirefly
+ // Removed some kruft, and added a new helper function.
+ //
  // Revision 1.2  2002/08/17 14:59:41  rufustfirefly
  // Updated XML-RPC services to scan lib/xmlrpc/ for additional functions.
  // Removed old kruft.
@@ -15,34 +18,6 @@
 
 //----- Unset server methods
 unset($XMLRPC_METHODS);
-
-// array rpc_capability ( void )
-//   This function is a clone of IMAP's CAPABILITY function,
-//   in that it reports what it is capable of doing, as an array.
-function rpc_capability () {
-	// Set the capabilities
-	$capabilities = array (
-		"capability",
-		"ping"
-	);
-
-	// Create blank xmlrpcval
-	$val = new xmlrpcval ();
-
-	// Add the capabilities array to that...
-	$okay = $val->addArray ( $capabilities );
-
-	// Return the appropriate array
-	return xmlrpcresp ( $val );
-} // end function rpc_capability
-$XMLRPC_METHODS["freemed.capability"] = array (
-	"function" => "rpc_capability",
-	"signature" => array ( $xmlrpcArray ),
-	"docstring" =>
-		"Provides the capabilities of the current server."
-);
-
-// TODO: Implement module pull for functions (??????.rpc.module.php, perhaps)
 
 // Internal function for preparing raw values for XML-RPC transport
 function rpc_prepare ($value) {
@@ -58,6 +33,53 @@ function rpc_register ($method, $doc='') {
 		'docstring' => $doc
 	);
 }
+
+function rpc_generate_sql_hash($table, $vars, $clause="") {
+	// This function converts a table (and associative array of
+	// table member names) into an xmlrpcresp object that can
+	// be directly returned.
+	global $sql;
+
+	$result = $sql->query("SELECT * FROM ".$table." ".$clause);
+	if (!$sql->results($result)) {
+		return CreateObject('PHP.xmlrpcresp',
+			CreateObject('PHP.xmlrpcval')
+		);
+	}
+
+	$result_array = array();
+
+	// Loop through results
+	while ($r = $sql->fetch_array($result)) {
+		$element = CreateObject('PHP.xmlrpcval');
+		$temp = array ();
+
+		// Build from hash
+		foreach ($vars AS $k => $v) {
+			if ( (($k+0)>0) or (empty($k)) ) {
+				$k = $v;
+				$v = xmlrpc_php_encode(stripslashes($r["$k"]));
+			} else {
+				//$k = $k;
+				// TODO: Handle "formed" responses, delimited
+				// by ##'s ....
+				$v = xmlrpc_php_encode(stripslashes($r["$v"]));
+			}
+			// Add to _temp
+			$_temp["$k"] = $v;
+		}
+		$element->addStruct($_temp);
+		$result_array[] = $element; unset($element); unset($_temp);
+	}
+
+	// Create struct to return
+	$val = CreateObject('PHP.xmlrpcval');
+	$val->addArray($result_array);
+	// NOTE: You don't have to create an xmlrpcresp object because
+	// the xmlrpc_server object does it for you. It doesn't *really*
+	// matter, though, since it autodetects the xmlrpcresp wrapper.
+	return CreateObject('PHP.xmlrpcresp', $val);
+} // end function rpc_generate_sql_hash
 
 //----- XMLRPC Function Definitions ----------------------------------------
 
@@ -76,16 +98,18 @@ function EMRi_Information_auth($params) {
 	}
 
 	// Create struct to return
-	$val = new xmlrpcval();
+	$val = CreateObject('PHP.xmlrpcval');
 	$val->addStruct(array(
 		"user" => xmlrpc_php_encode($user),
 		"pass" => xmlrpc_php_encode($pass)
 	));
-	return new xmlrpcresp($val);
+	return CreateObject('PHP.xmlrpcresp', $val);
 } rpc_register("EMRi.Information.auth");
 
 function EMRi_Information_hostname($params) {
-	return new xmlrpcresp(new xmlrpcval(trim(`hostname`), "string"));
+	return CreateObject('PHP.xmlrpcresp',
+		CreateObject('PHP.xmlrpcval', trim(`hostname`), "string")
+	);
 } rpc_register("EMRi.Information.hostname");
 
 ?>
