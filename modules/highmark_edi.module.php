@@ -13,6 +13,8 @@ class HighmarkEDIModule extends freemedEDIModule {
 	// override variables
 	var $MODULE_NAME = "Highmark EDI";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 	var $CATEGORY_NAME = "EDI";
 	var $CATEGORY_VERSION = "0.1";

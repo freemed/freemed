@@ -9,6 +9,7 @@ class UnpaidProceduresReport extends freemedReportsModule {
 
 	var $MODULE_NAME = "Unpaid Procedures Report";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
 	var $show = array (
 		"Total Patients"	=>		"total_patients",
@@ -58,7 +59,6 @@ class UnpaidProceduresReport extends freemedReportsModule {
                 $prev_patient="$$";
                 $patient_balance = 0.00;
                 $billed = 1;
-     		$_alternate = freemed_bar_alternate_color ();
 			while ($r = $sql->fetch_array($result)) 
 			{
 
@@ -80,11 +80,9 @@ class UnpaidProceduresReport extends freemedReportsModule {
 
 				if ($id != $prev_patient)
 				{
-        			// alternate the bar color
-     				$_alternate = freemed_bar_alternate_color ($_alternate);
-
       				echo "
-        				<TR BGCOLOR=$_alternate>
+        				<TR BGCOLOR=\"".
+     					($_alternate = freemed_bar_alternate_color ())."\">
         				<TD><A HREF=
          				\"manage.php?$_auth&id=$prev_patient\"
          				>$prev_lname, $prev_fname</A></TD>
@@ -131,9 +129,8 @@ class UnpaidProceduresReport extends freemedReportsModule {
 
     		} // while there are no more
 			// process last record from control break;
-			$_alternate = freemed_bar_alternate_color ($_alternate);
-                echo "
-                  <TR BGCOLOR=$_alternate>
+            echo "
+               <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color ($_alternate))."\">
                   <TD><A HREF=
                   \"manage.php?$_auth&id=$id\"
                   >$prev_lname, $prev_fname</A></TD>

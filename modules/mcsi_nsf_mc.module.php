@@ -13,6 +13,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 	// override variables
 	var $MODULE_NAME = "MCSI NSF Medicare";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 

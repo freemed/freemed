@@ -798,8 +798,6 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             </TR>
             ";
 
-            $_alternate = freemed_bar_alternate_color ();
-
             $total_payments = 0.00; // initially no payments
             $total_charges  = 0.00; // initially no charges
 
@@ -860,7 +858,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
                     // display the total payments
                     echo "
-                    <TR BGCOLOR=$_alternate>
+                    <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
                     <TD><B><$STDFONT_B SIZE=-1>SUBTOT<$STDFONT_E></B></TD>
                     <TD>&nbsp;</TD>
                     <TD>&nbsp;</TD>
@@ -1052,7 +1050,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             </TD>
             <TD>&nbsp;</TD>
             </TR>
-            <TR BGCOLOR=\"$_alternate\">
+            <TR BGCOLOR=\"".
+            ($_alternate = freemed_bar_alternate_color ($_alternate))
+			."\">
             <TD COLSPAN=7>&nbsp;</TD>
             </TR>
             ";

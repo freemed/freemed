@@ -187,15 +187,15 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
                                {  $loopfor = $lineinsert  ; }
        else                    {  $loopfor = 1            ; }
       for ($l=0;$l<$loopfor;$l++) {
-       $_alternate = freemed_bar_alternate_color ($_alternate);
        echo "
-        <TR BGCOLOR=\"$_alternate\">
+        <TR BGCOLOR=\"".
+       ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
          <TD ALIGN=RIGHT><$STDFONT_B COLOR=\"#ff0000\"
           >".($cur_line_count+1)."<$STDFONT_E></TD>
          <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"ins$brackets\"
-              VALUE=\"$cur_line_count\">
+              VALUE=\"".prepare($cur_line_count)."\">
              <INPUT TYPE=CHECKBOX NAME=\"del$brackets\"
-              VALUE=\"$cur_line_count\"></CENTER></TD>
+              VALUE=\"".prepare($cur_line_count)."\"></CENTER></TD>
          <TD><INPUT TYPE=TEXT NAME=\"qfname$brackets\" SIZE=15
            MAXLENGTH=100 VALUE=\"\"></TD>
          <TD><INPUT TYPE=TEXT NAME=\"qvar$brackets\" SIZE=10

@@ -17,7 +17,7 @@ class testModule extends freemedModule {
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 
 	var $CATEGORY_NAME = "Test Category";
-	var $CATEGORY_VERSION = "0";
+	var $CATEGORY_VERSION = "0.1";
 
 	// contructor method
 	function testModule ($nullvar = "") {
