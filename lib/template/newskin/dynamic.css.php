@@ -59,6 +59,7 @@ body {
 /* #bottom: copyright notice container */
 #bottom {
 	background-color: #ffffff;
+	left: 0px;
 	bottom: 0px;
 	border: 1px solid;
 	border-color: #000000 #ffffff #ffffff #ffffff;
