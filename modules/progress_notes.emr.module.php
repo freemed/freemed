@@ -27,7 +27,7 @@ class progressNotes extends freemedEMRModule {
 		// Define variables for EMR summary
 		$this->summary_vars = array (
 			_("Date")        =>	"pnotesdt",
-			_("Description") =>	"pnotesdesc"
+			_("Description") =>	"pnotesdescrip"
 		);
 	} // end constructor progressNotes
 
@@ -56,8 +56,11 @@ class progressNotes extends freemedEMRModule {
 		if (!$book->been_here()) {
       switch ($action) { // internal switch
         case "addform":
-         if ($this->this_user->isPhysician()) // check if we are a physician
- 	  $pnotesdoc = $this->this_user->getPhysician(); // if so, set as default
+ 	// check if we are a physician
+         if ($this->this_user->isPhysician()) {
+		global $pnotesdoc;
+ 		$pnotesdoc = $this->this_user->getPhysician(); // if so, set as default
+	}
          $pnotesdt     = $cur_date;
          break; // end addform
         case "modform":
