@@ -10,6 +10,9 @@ if (!is_object($this_user)) $this_user = new User;
 //----- Override title for this page
 $page_title = _("Management Configuration");
 
+//----- Add menu help item for this
+$menu_bar[_("Configuration Help")] = help_url("manage.php", "configure");
+
 //----- Create configuration notebook
 $book = new notebook (
 	array(
