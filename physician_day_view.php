@@ -23,48 +23,51 @@ $next_date = freemed_get_date_next ($for_date);
 $page_title = _("Physician Daily View");
 
 //----- Display previous/next bar
- $display_buffer .= "
+$display_buffer .= "
   <TABLE WIDTH=\"100%\" BGCOLOR=\"#000000\" VALIGN=TOP ALIGN=CENTER BORDER=0
    CELLSPACING=0 CELLPADDING=2><TR BGCOLOR=\"#000000\">
    <TD VALIGN=CENTER ALIGN=LEFT>
    <A HREF=\"$page_name?selected_date=$prev_date&physician=$physician\"
-    ><FONT COLOR=\"#ffffff\">$back_one_day</FONT></A>
+    ><FONT COLOR=\"#ffffff\">&lt;</FONT></A>
    </TD><TD VALIGN=CENTER ALIGN=RIGHT>
    <A HREF=\"$page_name?selected_date=$next_date&physician=$physician\"
-    ><FONT COLOR=\"#ffffff\">$forward_one_day</FONT></A>
+    ><FONT COLOR=\"#ffffff\">&gt;</FONT></A>
    </TD></TR></TABLE>
    <P>
- ";
+";
 
- // check if there is a physician specified, and if so, display their
- // name, etc at the top...
- if ($physician<=0) {
-   $display_buffer .= "
+// check if there is a physician specified, and if so, display their
+// name, etc at the top...
+if ($physician<=0) {
+	$display_buffer .= "
      <CENTER>
       <B>"._("No Physician Selected")."</B>
      </CENTER>
      <BR>
-   ";
- } else {
-   $phyinfo  = freemed_get_link_rec ($physician, "physician");
-   $phylname = $phyinfo["phylname"];
-   $phyfname = $phyinfo["phyfname"];
-   $phymname = $phyinfo["phymname"];
-   $display_buffer .= "
+	";
+} else {
+	$phyinfo  = freemed_get_link_rec ($physician, "physician");
+	$phylname = $phyinfo["phylname"];
+	$phyfname = $phyinfo["phyfname"];
+	$phymname = $phyinfo["phymname"];
+	$display_buffer .= "
      <CENTER>
-      <B>"._("Physician").")."" : </B>
+      <B>"._("Physician")." : </B>
        $phylname, $phyfname $phymname
      </CENTER>
      <BR>
-   ";
- }
+	";
+}
 
-fc_generate_calendar_mini ($selected_date,
-  "$page_name?physician=$physician");
+//----- Quick fix for first load
+if (empty($selected_date)) $selected_date = date("Y-m-d");
 
- // actually display the calendar
+//----- Call API function to generate miniature calendar
+fc_generate_calendar_mini ($selected_date, "$page_name?physician=$physician");
+
+//----- Actually display the day calendar
 fc_display_day_calendar ($selected_date, "calphysician='$physician'");
 
- // end everything
+//----- Display and end
 template_display();
 ?>
