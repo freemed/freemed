@@ -1,6 +1,18 @@
 freemed project changelog
 ($Id$)
 
+* Mon Feb 26 2001 rufustfirefly
+  - added VERSION freemed_module_check (MODULE_NAME[,MODULE_VERSION]) to
+    lib/API.php
+  - added setup() to lib/module.php
+  - added module table to admin.php
+  - added BOOL freemed_module_register (MODULE_NAME,MODULE_VERSION) to
+    lib/API.php
+  - module API now calls for create_table method in maintenance modules
+    (wrapped by _setup()), using $sql->create_query()
+  - modules/cpt_modifiers.module.php is now the first module to have the
+    create_table method instituted
+
 * Tue Feb 20 2001 fforest
 	added unpaid_procs_report.module to the reports catagory.
     changed coverage module to enum the status and type codes as

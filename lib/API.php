@@ -1276,6 +1276,45 @@ function freemed_log ($f_cookie="", $db_name, $record_number, $comment) {
   return true;  // return true
 } // end function freemed_log
 
+// function freemed_module_check
+function freemed_module_check ($module, $minimum_version="0.01")
+{
+	static $_config; global $sql;
+
+	// cache all modules  
+	if (!is_array($_config)) {
+		unset ($_config);
+		$query = $sql->query("SELECT * FROM module");
+		while ($r = $sql->fetch_array($query)) {
+			extract ( $r );
+			$_config["$module_name"] = $module_version;
+		} // end of while results
+	} // end caching modules config
+
+	// check in cache for version > minimum_version
+	return ($_config["$module"] > $minimum_version);
+} // end function freemed_module_check
+
+// function freemed_module_register
+function freemed_module_register ($module, $version)
+{
+	global $sql;
+
+	// check for modules  
+	if (!freemed_module_check($module, $version)) {
+		$query = $sql->query($sql->insert_query(
+			"module",
+			array(
+				"module_name"		=>	$module,
+				"module_version"	=>	$version
+			)
+		));
+		return (!empty($query));
+	} // end caching modules config
+
+	return true;
+} // end function freemed_module_register
+
 // function freemed_multiple_choice
 function freemed_multiple_choice ($sql_query, $display_field, $select_name,
   $blob_data, $display_all=true)

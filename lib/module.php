@@ -26,6 +26,8 @@ class freemedModule extends module {
 	function freemedModule () {
 		// call parent constructor
 		$this->module();
+		// call setup
+		$this->setup();
 	} // end constructor freemedModule
 
 	// override check_vars method
@@ -48,6 +50,19 @@ class freemedModule extends module {
 		freemed_display_box_bottom();
 		freemed_display_html_bottom();
 	} // end function footer
+
+	// calling function
+	function setup () {
+		if (!freemed_module_check($this->MODULE_NAME,$this->MODULE_VERSION)) {
+				// register module
+			freemed_module_register($this->MODULE_NAME, $this->MODULE_VERSION);
+				// run internal setup routine
+			return $this->_setup();
+		} // end checking for module
+	} // end function setup
+
+	// _setup (in this case, wrapped in classes...)
+	function _setup () { return true; }
 
 } // end class freemedModule
 

@@ -324,6 +324,16 @@ if ($action=="cfgform") {
     if ($result) { echo "<LI>"._("test db")." \n"; }
   } // end debug section
 
+  // generate module table
+  $result=$sql->query("DROP TABLE module"); 
+  $result=$sql->query("CREATE TABLE module (
+    module_name     VARCHAR(100),
+    module_version  VARCHAR(50),
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)    
+    )");
+  if ($result) { echo "<LI>"._("Modules")."\n"; }
+
   // generate physician db table
   $result=$sql->query("DROP TABLE physician");
   $result=$sql->query("CREATE TABLE physician (

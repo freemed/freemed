@@ -148,6 +148,21 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
   );
 	} // end function cptModifiersMaintenance->view()
 
+	function create_table () {
+		return !empty($sql->query($sql->create_query(
+			$this->record_name,
+			array (
+				//cptmod CHAR(2)
+				"cptmod"		=>		SQL_CHAR(2),
+				//cptmoddescrip VARCHAR(50)
+				"cptmoddescrip"	=>		SQL_VARCHAR(50),
+				//id INT NOT NULL AUTO_INCREMENT
+				"id"			=>		SQL_AUTO_INCREMENT(SQL_INT(0))
+			),
+			array("id")
+		) ) );
+	} // end function cptModifiersMaintenance->create_table()
+
 } // end class cptModifiersMaintenance
 
 register_module ("cptModifiersMaintenance");

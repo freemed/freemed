@@ -204,6 +204,12 @@ class freemedMaintenanceModule extends freemedModule {
 		);
 	} // end function view
 
+	// override _setup with create_table
+	function _setup () { return $this->create_table(); }
+
+	// create_table stub
+	function create_table () { return true; }
+
 } // end class freemedMaintenanceModule
 
 } // end if not defined
