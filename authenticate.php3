@@ -72,8 +72,8 @@
   echo "
       <P>
       <CENTER>
-        <B>"._("If your browser does not support the REFRESH tag, click
-        <A HREF=\"$_jump_page\">here</A>").".</B>
+        <B>"._("If your browser does not support the REFRESH tag")."
+        <A HREF=\"$_jump_page\">"._("click here")."</A></B>
       </CENTER>
       <P>
   ";
