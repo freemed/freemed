@@ -8,6 +8,12 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.45  2002/05/07 21:30:19  rufustfirefly
+ // added methods freemed::secure_filename, freemed::store_image,
+ // started populating EMRi class with calls to EMRi server (much kludgy
+ // stuff in there now, but coming along nice) using lib/xmlrpc_epi_utils.php
+ // and the xmlrpc-epi-php library extension
+ //
  // Revision 1.44  2002/04/05 23:49:00  rufustfirefly
  // new booking system. almost works ;)
  //
@@ -233,6 +239,74 @@ class freemed {
 		return $this_array;
 	} // end function freemed::query_to_array
 
+	function secure_filename ( $filename ) {
+		// Items to remove
+		$secure_these = array (
+			"\\",
+			".",
+			"/",
+			"|"
+		);
+
+		// Pass to internal variable
+		$this_filename = $filename;
+
+		// Perform replacements
+		foreach ( $secure_these AS $drek => $secure_var ) {
+			$this_filename = str_replace (
+				"\$".$secure_var,
+				"",
+				$this_filename
+			);
+		}
+
+		// Return secured filename
+		return $this_filename;
+	} // end function freemed::secure_filename
+
+	function store_image ( $patient_id=0, $varname, $type="identification" ) {
+		global $HTTP_POST_FILES, ${$varname};
+
+		// Check for valid patient id
+		if ($patient_id < 1) return false;
+
+		// Determine extension
+		$file_parts = explode (".", $HTTP_POST_FILES[$varname]["name"]);
+		$ext = $file_parts[count($file_parts)-1];
+
+		// If there is no extension, die
+		if (strlen($ext) < 3) return false;
+
+		// Get temporary name
+		$image = $HTTP_POST_FILES[$varname]["tmp_name"];
+
+		// If temp name doesn't exist, return false
+		if (empty($image)) return false;
+
+		// Process depending on 
+		switch (strtolower($ext)) {
+			case "jpg":
+			case "jpeg":
+				// Simple JPEG handler: copy
+				$name = $patient_id.".".$type.".jpg";
+				copy ($image, "img/store/$name");
+				return $name;
+				break; // end handle JPEGs
+
+			default:
+				// More complex: use imagemagick
+				$name = $patient_id.".".$type.".jpg";
+				//copy ($image, $image.".$ext");
+				$command = "/usr/X11R6/bin/convert ".
+					freemed::secure_filename($image).
+					" ".PHYSICAL_LOCATION."/".
+					"img/store/".$name;
+				exec ($command);
+				return $name;
+				break; // end handle others
+		} // end checking by extension
+	} // end function freemed::store_image
+
 	function user_flag ( $flag ) {
 		global $database, $sql, $SESSION;
 		static $userlevel;
@@ -284,13 +358,122 @@ class freemed {
 
 } // end namespace/class freemed
 
+// Make sure XMLRPC Utils are loaded
+include_once("lib/xmlrpc_epi_utils.php");
 
 class EMRi {
+	// EMRi Server information
+	var $EMRi_server_host;
+	var $EMRi_server_port;
+	var $EMRi_server_uri;
+
+	function EMRi () {
+		$this->get_server_name();
+		// FIXME: Kludge for fqdn
+		$this->fqdn = 'test';
+	} // end constructor EMRi
 
 	// TODO: finish EMRi linking functions
 	function get_link_rec ( $url ) {
 		die("STUB: EMRi::get_link_rec()");
-	} // end method EMRi::get_link_rec
+	} // end method EMRi->get_link_rec
+
+	function get_server_name () {
+		// This should actually get the best EMRi server.
+		// Barring that, we assign static
+		$this->EMRi_server_host = 'localhost';
+		$this->EMRi_server_port = '3674';
+		$this->EMRi_server_uri  = '/RPC2';
+	} // end method EMRi->get_server_name
+
+	//----- Method calls for hosts and servers ---------------------------
+
+	function host_method ($fqdn, $method, $argv) {
+		// Make sure we're connected
+		if (!isset($this->EMRi_server_host)) $this->get_server_name();
+
+		// Call the proper function on the server
+		return xu_rpc_http_concise(array(
+			'method' => $method,
+			'args'   => $argv,
+			'host'   => $this->EMRi_server_host,
+			'port'   => $this->EMRi_server_port,
+			'uri'    => $this->EMRi_server_uri,
+			'debug'  => 1,
+			'output' => NULL,
+
+			// FIXME: These should be pulled from the database
+			'user'   => 'root',
+			'pass'   => 'password'
+		));
+	} // end method EMRi->host_method
+
+	function server_method ($method, $argv) {
+		// Make sure we're connected
+		if (!isset($this->EMRi_server_host)) $this->get_server_name();
+
+		// Call the proper function on the server
+		return xu_rpc_http_concise(array(
+			'method' => $method,
+			'args'   => $argv,
+			'host'   => $this->EMRi_server_host,
+			'port'   => $this->EMRi_server_port,
+			'uri'    => $this->EMRi_server_uri,
+			'debug'  => 0,
+			'output' => NULL,
+
+			// FIXME: These should be pulled from the database
+			'user'   => 'root',
+			'pass'   => 'password'
+		));
+	} // end method EMRi->server_method
+
+	//-------------------------------------------------------------------
+
+
+	//----- Authenticate methods ----------------------------------------
+
+	function authenticate_user ($user, $pass) {
+		// Call EMRi.Authentication.user on server
+		return $this->server_method(
+			"EMRi.Authentication.user",
+			array(
+				$user,
+				$pass
+			)
+		);
+	} // end method EMRi->authenticate_user
+
+	function patient_index ($pid) {
+		// If it's an array, send the array, if not,
+		// send an array wrapper for the scalar value
+		if (!is_array($pid)) {
+			$patients = array ($pid);			
+		} else {
+			$patients = $pid;
+		}
+
+		foreach ($patients AS $k => $v) {
+			// Process scalar
+			$this_patient = freemed::get_link_rec($v,"patient");
+
+			// Add to param
+			$param[] = array (
+				'fqdn'       => $this->fqdn,
+				'pid'        => $this_patient['ptssn'],
+				'last_name'  => $this_patient['ptlname'],
+				'first_name' => $this_patient['ptfname'],
+				'version'    => $this_patient['version']
+			);
+			
+		}
+
+		// Call the method
+		return $this->server_method(
+			"EMRi.Patient.index",
+			array($param)
+		);
+	} // end method EMRi->patient_index
 
 } // end namespace/class EMRi
 
