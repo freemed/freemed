@@ -1,25 +1,19 @@
 <?php
  // $Id$
  // desc: patient demographic report module
- // lic : GPL
+ // lic : LGPL
 
 if (!defined("__UNPAID_PROCEDURES_REPORT_MODULE_PHP__")) {
 
-class UnpaidProceduresReport extends freemedReportsModule {
+class unpaidProceduresReport extends freemedReportsModule {
 
 	var $MODULE_NAME = "Unpaid Procedures Report";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
-	var $show = array (
-		"Total Patients"	=>		"total_patients",
-		"Total Males"		=>		"total_male",
-		"Total Females"		=>		"total_female"
-	);
-
-	function UnpaidProceduresReport () {
+	function unpaidProceduresReport () {
 		$this->freemedReportsModule();
-	} // end constructor UnpaidProceduresReport
+	} // end constructor unpaidProceduresReport
 
 	// function "view" is used to show a form that would be submitted to
 	// generate the report shown in "display".
@@ -48,12 +42,12 @@ class UnpaidProceduresReport extends freemedReportsModule {
     		echo "
       		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
       		<TR>
-       		<TD><B>Name</B></TD>
-       		<TD><B>Payments</B></TD>
-       		<TD><B>Ledger</B></TD>
-       		<TD><B>Billed</B></TD>
-       		<TD><B>Date Billed</B></TD>
-            <TD><B>Balance</B></TD>
+       		<TD><B>"._("Name")."</B></TD>
+       		<TD><B>"._("Payments")."</B></TD>
+       		<TD><B>"._("Ledger")."</B></TD>
+       		<TD><B>"._("Billed")."</B></TD>
+       		<TD><B>"._("Date Billed")."</B></TD>
+            <TD><B>"._("Balance")."</B></TD>
       		</TR>
     		"; // header of box
  			$total_unpaid = 0.00;
@@ -90,10 +84,10 @@ class UnpaidProceduresReport extends freemedReportsModule {
          				>$prev_lname, $prev_fname</A></TD>
                   		<TD><A HREF=
                   		\"$this->page_name?$_auth&id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
-                  		><FONT SIZE=-1>View/Manage</FONT></A></TD>
+                  		><FONT SIZE=-1>"._("View/Manage")."</FONT></A></TD>
                   		<TD><A HREF=
                   		\"$this->page_name?_auth=$auth&patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
-                  		><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
+                  		><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
       					";
 					if (!$billed)
 						echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
@@ -137,10 +131,10 @@ class UnpaidProceduresReport extends freemedReportsModule {
                   >$prev_lname, $prev_fname</A></TD>
                   <TD><A HREF=
                   \"$this->page_name?$_auth&id=$prev_patient&patient=$prev_patient&module=PaymentModule&action=addform\"
-                  ><FONT SIZE=-1>View/Manage</FONT></A></TD>
+                  ><FONT SIZE=-1>"._("View/Manage")."</FONT></A></TD>
                  <TD><A HREF=
                  \"$this->page_name?_auth=$auth&patient=$prev_patient&module=PaymentModule&action=addform&viewaction=unpaidledger\"
-                 ><FONT SIZE=-1>Patient Ledger</FONT></A></TD>
+                 ><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
                   ";
                   if (!$billed)
                       echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
@@ -153,7 +147,7 @@ class UnpaidProceduresReport extends freemedReportsModule {
 
 			// process totals.
              echo "<TR>
-			<TD><B>Total</B></TD>
+			<TD><B>"._("Total")."</B></TD>
 			<TD>&nbsp;</TD>
 			<TD>&nbsp;</TD>
 			<TD>&nbsp;</TD>
@@ -172,7 +166,7 @@ class UnpaidProceduresReport extends freemedReportsModule {
 
 } // end class freemedReportsModule
 
-register_module ("UnpaidProceduresReport");
+register_module ("unpaidProceduresReport");
 
 } // end if not defined
 
