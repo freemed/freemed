@@ -369,7 +369,7 @@ class ProgressNotes extends EMRModule {
           >".__("Manage Patient")."</a>
          <b>|</b>
          <a HREF=\"$this->page_name?module=$module&patient=$patient\"
-          >"._($this->record_name)."</a>
+          >".__($this->record_name)."</a>
 	  ";
        if ($action=="mod" OR $action=="modform")
          $display_buffer .= "
