@@ -587,13 +587,13 @@ function freemed_display_itemlist ($result, $page_link,
   global $modify_level, $delete_level, $patient;
 
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
-  
+
   $buffer="";
 
   $buffer .= "
     <!-- Begin itemlist Table -->
     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
-     ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#555555\">
+     ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
     <TR>
      <TD ALIGN=CENTER>
       <$STDFONT_B SIZE=+1 COLOR=\"#ffffff\">$record_name<$STDFONT_E>
@@ -628,13 +628,14 @@ function freemed_display_itemlist ($result, $page_link,
   ";
   
   if (fdb_num_rows($result)>0) 
-   while ($this_result_array = fdb_fetch_array($result)) {
+   while ($this_result = fdb_fetch_array($result)) {
     $first = true; // first item in the list has 'view' link
     $buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
     ";
-    reset($control_list); // it's already each'd the array, 
-                          // but we have to do it again
+    reset($control_list); // it's already each'd the arrays, 
+    if (is_array($xref_list)) 
+      reset($xref_list);    // but we have to do it again for the next iteration
     $field_num=0;
     while (list($k,$v)=each($control_list)) {
       $is_xref=false;
@@ -663,7 +664,7 @@ function freemed_display_itemlist ($result, $page_link,
         $buffer .= "
       <TD>
         <A HREF=\"$page_link?$_auth&patient=$patient&action=display&id=".
-	"$this_result_array[id]\"><$STDFONT_B
+	"$this_result[id]\"><$STDFONT_B
 	  >$item_text<$STDFONT_E></A>&nbsp;
       </TD>
         ";
@@ -683,13 +684,13 @@ function freemed_display_itemlist ($result, $page_link,
     if (freemed_get_userlevel($LoginCookie)>$database_level) {
       $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=modform&id=".
-	"$this_result_array[id]\"><$STDFONT_B>MOD<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\"><$STDFONT_B>MOD<$STDFONT_E></A>&nbsp;
       ";
     }
     if (freemed_get_userlevel($LoginCookie)>$delete_level) {
       $buffer .= "
         <A HREF=\"$page_link?$_auth&patient=$patient&action=delete&id=".
-	"$this_result_array[id]\"><$STDFONT_B>DEL<$STDFONT_E></A>&nbsp;
+	"$this_result[id]\"><$STDFONT_B>DEL<$STDFONT_E></A>&nbsp;
       ";
     }
     

@@ -917,10 +917,7 @@
        ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
       </CENTER>
       <P>
-    ";
-
-    freemed_display_itemlist(
-      "Episode of Care",
+    ".freemed_display_itemlist(
       $result,
       "episode_of_care.php3",
       array (
@@ -928,7 +925,7 @@
 	"Description"   => "eocdescrip"
       ),
       array (
-        "",
+      "",
 	"NO DESCRIPTION"
       )
     );
