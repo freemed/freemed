@@ -3131,10 +3131,12 @@ function fm_phone_entry ($phonevarname="", $array_index=-1, $ext=true) {
       <b>(</b>
       <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_1$suffix\" SIZE=\"4\"
        MAXLENGTH=\"3\" VALUE=\"$p1\"
+       onFocus=\"if (!this.value) { this.value='".freemed::config_value('default_area_code')."'; } return true;\" 
        onKeyup=\"autoskip(this, ".$phonevarname."_2$suffix); return true;\"
        /> <b>)</b>
       <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_2$suffix\" SIZE=\"4\"
        MAXLENGTH=\"3\" VALUE=\"$p2\"
+       onFocus=\"if (!".$phonevarname."_1.value) { ".$phonevarname."_1.value='".freemed::config_value('default_area_code')."'; } return true;\" 
        onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
        /> <b>-</b>
       <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_3$suffix\" SIZE=\"5\"

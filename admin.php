@@ -16,6 +16,7 @@ $config_vars = array (
 	"calehr", // calendar end time
 	"dtfmt", // date format
 	"phofmt", // phone format
+	"default_area_code", // default area code
 	"drug_widget_type", // type of drug widget present
 	"date_widget_type", // type of date widget present
 	"folded", // do we fold multipage forms?
@@ -135,6 +136,9 @@ if ($action=="cfgform") {
 				__("Unformatted")." XXXXXXXXXX" => "unformatted"
 			)
 		),
+
+		__("Default Area Code") =>
+		html_form::text_widget('default_area_code', 3),
 
 		__("Prescription Drug Widget") =>
 		html_form::select_widget("drug_widget_type",
