@@ -19,6 +19,7 @@ class AcntPaidGraph extends freemedGraphModule {
 
 	function view()
 	{
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 	
@@ -34,12 +35,13 @@ class AcntPaidGraph extends freemedGraphModule {
 		}
 
 		$tl = _("Select Account Paid Graph Dates");
-		echo $this->GetGraphOptions($tl);
+		$display_buffer .= $this->GetGraphOptions($tl);
 
 	}
 
 	function display()
 	{
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -56,7 +58,7 @@ class AcntPaidGraph extends freemedGraphModule {
 				 "ORDER BY a.procdt";
 		
 		$result = $sql->query($query) or DIE("Query failed");
-		//echo "<CENTER><B>"._("Account Paid Graph From")." $start_dt "._("To")." $end_dt</B><P>";
+		//$display_buffer .= "<CENTER><B>"._("Account Paid Graph From")." $start_dt "._("To")." $end_dt</B><P>";
 		$title = _("Account Paid Graph From")." $start_dt "._("To")." $end_dt";
 
 		if ($sql->num_rows($result) > 0)
@@ -105,7 +107,7 @@ class AcntPaidGraph extends freemedGraphModule {
 				}
 				if ($this_yrmo != substr($row[procdt],0,7))
 				{
-					//echo "yrmo $this_yrmo<BR>";
+					//$display_buffer .= "yrmo $this_yrmo<BR>";
 					$graph_data[] = array($this_yrmo,$tot[1],$tot[2],$tot[3],$tot[4]);
 					$this_yrmo = substr($row[procdt],0,7);
 					unset($tot);
@@ -133,7 +135,7 @@ class AcntPaidGraph extends freemedGraphModule {
 		}
 		else
 		{
-			echo _("No Records found");
+			$display_buffer .= _("No Records found");
 		}
 
 	} // end display

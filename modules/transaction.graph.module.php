@@ -20,6 +20,7 @@ class TransactionGraph extends freemedGraphModule {
 
 	function view()
 	{
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 	
@@ -35,12 +36,13 @@ class TransactionGraph extends freemedGraphModule {
 		}
 		
 		$tl = _("Select Transaction Graph Dates");
-		echo $this->GetGraphOptions($tl);
+		$display_buffer .= $this->GetGraphOptions($tl);
 
 	}
 
 	function display()
 	{
+		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
@@ -83,7 +85,7 @@ class TransactionGraph extends freemedGraphModule {
 		}
 		else
 		{
-			echo _("No Records found");
+			$display_buffe .= _("No Records found");
 		}
 
 	} // end display
