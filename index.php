@@ -18,19 +18,16 @@ $page_name = "index.php";
 // In order to accomblish this jeff uses phpwebtools, so I have moved to check for php webtools
 // to this file...
 
-/*
 if(file_exists("/usr/share/phpwebtools/webtools.php")) {
 	require_once("/usr/share/phpwebtools/webtools.php");
-}else die (
+} else die (
 	"FreeMED requires that phpwebtools be installed at /usr/share/phpwebtools."."<br/>\n".
 	"FreeMED cannot find the phpwebtools file webtools.php"."<br/>\n"
 );
-*/
-
-CreateApplicationMap(array( 'FreeMED' => 'lib/class.*.php' ));
-$test = CreateObject('FreeMED.FreeMEDSelfTest');
 
 include_once ("lib/freemed.php");
+
+$test = CreateObject('FreeMED.FreeMEDSelfTest');
 
 if (ALWAYS_SELFTEST) {
 	$test->SelfTest();
