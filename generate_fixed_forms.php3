@@ -58,8 +58,9 @@
      $current_patient = $b_r[payrecpatient];
      $this_patient = new Patient ($current_patient);
      echo "
-      <LI>Processing ".$this_patient->fullName." ($current_patient)
+      <LI>Processed ".$this_patient->fullName()." ($current_patient)
      ";
+     flush ();
 
      // zero current number of charges
      $number_of_charges = 0;
@@ -68,19 +69,28 @@
      $result = fdb_query ("SELECT * FROM $database.payrec
                            WHERE ( 
                              payreccat = '5' AND
-                             payrecbilled = '0' AND
+                             payreclink = '0' AND
                              payrecpatient = '$current_patient'
                            ) ORDER BY payrecpatient,payrecdt");
+
+     if (!$result or ($result==0))
+       die ("Malformed SQL query ($current_patient)");
 
      // queue all entries
      while ($r = fdb_fetch_array ($result)) {
        $number_of_charges++; // increment number of charges
 
        // get the current procedure
-       $p = fdb_fetch_array ($r[payrecproc], "procedure");
+       #if ($r[payrecproc] > 0)
+         $p = freemed_get_link_rec ($r[payrecproc], "procedure");
+       flush ();
 
        // pull into current array
        $itemdate    [$number_of_charges] = $p[procdt];
+       $itemdate_m  [$number_of_charges] = substr($p[procdt], 5, 2);
+       $itemdate_d  [$number_of_charges] = substr($p[procdt], 8, 2);
+       $itemdate_y  [$number_of_charges] = substr($p[procdt], 0, 4);
+       $itemdate_sy [$number_of_charges] = substr($p[procdt], 2, 2);
        $itemcharges [$number_of_charges] = $p[proccharges];
        $itemunits   [$number_of_charges] = $p[procunits];
        $itempos     [$number_of_charges] = $p[procpos];
@@ -112,6 +122,7 @@
                            $this_form[ffcheckchar] : " " );
      $ptsex[trans]    = ( ($this_patient->ptsex == "t") ?
                            $this_form[ffcheckchar] : " " );
+     $ptid            = $this_patient->local_record["ptid"];
 
      // relationship to guarantor
      $ptreldep[self]   = ( ($this_patient->ptreldep == "S") ?
@@ -143,6 +154,14 @@
        ( ($this_patient->ptmarital == "separated") ?
           $this_form[ffcheckchar] : " " );
 
+     // employment status
+     $ptemployed[yes] =
+       ( ($this_patient->isEmployed) ?
+          $this_form[ffcheckchar] : " " );
+     $ptemployed[no] =
+       ( !($this_patient->isEmployed) ?
+          $this_form[ffcheckchar] : " " );
+
      // address information
      $ptaddr[line1]   = $this_patient->local_record["ptaddr1"  ];
      $ptaddr[line2]   = $this_patient->local_record["ptaddr2"  ];
@@ -150,12 +169,54 @@
      $ptaddr[state]   = $this_patient->local_record["ptstate"  ];
      $ptaddr[zip]     = $this_patient->local_record["ptzip"    ];
      $ptaddr[country] = $this_patient->local_record["ptcountry"];
+     $ptphone[full]   = $this_patient->local_record["pthphone" ];
+
+     // doctor link/information
+     $this_physician  = new Physician
+                        ($this_patient->local_record["ptdoc"]);
+     $phy[name]       = $this_physician->fullName();
+     $phy[practice]   = $this_physician->practiceName();
+     $phy[addr1]      = $this_physician->local_record["phyaddr1a"];
+     $phy[addr2]      = $this_physician->local_record["phyaddr2a"];
+     $phy[city]       = $this_physician->local_record["phycitya" ];
+     $phy[state]      = $this_physician->local_record["phystatea"];
+     $phy[zip]        = $this_physician->local_record["phyzipa"  ];
+     $phy[phone]      = $this_physician->local_record["phyphonea"];
+
+     // what is this related to?
+     $employment = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+     $related_employment[yes] =
+       ( ( $employment == "y" ) ? $this_form[ffcheckchar] : " " );
+     $related_employment[no]  =
+       ( ( $employment == "n" ) ? $this_form[ffcheckchar] : " " );
+     $auto = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+     $related_auto[yes] =
+       ( ( $auto == "y" ) ? $this_form[ffcheckchar] : " " );
+     $related_auto[no]  =
+       ( ( $auto == "n" ) ? $this_form[ffcheckchar] : " " );
+     $related_auto[state] =    // FIIIIIIIX  MEEEEEEEEEE!!!
+       ( ( $auto == "y" ) ? $eoc_state_name : "  " );
+     $other = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
+     $related_other[yes] =
+       ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
+     $related_other[yes] =
+       ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
+
+     // current date hashes
+     $curdate[mmddyy]   = date ("mdy");
+     $curdate[mmddyyyy] = date ("mdY");
+     $curdate[m]        = date ("m");
+     $curdate[d]        = date ("d");
+     $curdate[sy]       = date ("y");
+     $curdate[y]        = date ("Y");
 
      // check for guarantor information
      if ($this_patient->local_record[ptdep] == 0) {
        // if self insured, transfer data to guarantor arrays
        $guarname      = $ptname;  // assign name information
        $guaraddr      = $ptaddr;  // assign address information
+       $guardob       = $ptdob;   // assign date of birth info
+       $guarsex       = $ptsex;   // assign gender information
      } else {
        // if it is someone else, get *their* information
        $guarantor = new Patient ($this_patient->local_record[ptdep]);
@@ -164,8 +225,10 @@
 
      // generate form
      $this_form = freemed_get_link_rec ($whichform, "fixedform");
-     if ($number_of_charges <= $this_form[ffloopnum]) {
-       echo " (single form render) ";
+     if (($number_of_charges <= $this_form[ffloopnum]) OR
+          ($this_form[ffloopnum] == 0)) {
+       echo " (single form render) \n";
+       flush ();
        $form_buffer .= render_fixedForm ($whichform);
      } else {
        echo " (multiple form render) ";
@@ -179,8 +242,23 @@
    } // end of while there are no more patients
 
    #################### TAKE THIS OUT AFTER TESTING #######################
-   echo "<PRE>\n".fm_prep($form_buffer)."\n</PRE>\n";
+   #echo "<PRE>\n".fm_prep($form_buffer)."\n</PRE>\n";
    ########################################################################
+
+   echo "
+    <FORM ACTION=\"echo.php3\" METHOD=POST>
+     <CENTER>
+      <$STDFONT_B><B>Preview</B><$STDFONT_E>
+     </CENTER>
+     <BR>
+     <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
+     >".fm_prep($form_buffer)."</TEXTAREA>
+    <P>
+    <CENTER>
+     <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
+    </CENTER>
+    </FORM>
+   ";
 
    freemed_display_box_bottom ();
    break; // end of action geninsform

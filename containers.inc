@@ -108,6 +108,10 @@ class Patient {
     return ($this->ptdep != 0);
   } // end function Patient->isDependent
 
+  function isEmployed ($no_parameters = "") {
+    return ($this->ptempl == "y");
+  } // end function Patient->isEmployed
+
   function isFemale ($no_parameters = "") {
     return ($this->ptsex == "f");
   } // end function Patient->isFemale

@@ -4,7 +4,8 @@
  # code: jeff b (jeff@univrel.pr.uconn.edu)
  # lic : GPL, v2
 
- Header ("Content-type: text/plain");
+ Header ("Content-type: ".
+      ( empty($type) ? "text/plain" : $type ) );
  echo $text;
 
 ?>

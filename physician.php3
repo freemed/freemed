@@ -545,6 +545,7 @@ if ($action=="addform") {
   $phyrefcount = $r["phyrefcount"];
   $phyrefamt   = $r["phyrefamt"  ];
   $phyrefcoll  = $r["phyrefcoll" ];
+  $phychargemap = fm_split_into_array( $r[phychargemap] );
 
   // disassemble ssn
   $physsn1    = substr($physsn,    0, 3);
@@ -853,7 +854,7 @@ if ($action=="addform") {
   freemed_display_phy_specialties ($physpe3);
 
   echo "
-    </SELECT>
+     </SELECT>
     </TD></TR>
     <TR><TD>
     <$STDFONT_B>$Reference<$STDFONT_E>
@@ -882,6 +883,41 @@ if ($action=="addform") {
     <INPUT TYPE=TEXT NAME=phyrefcoll SIZE=10 MAXLENGTH=10
      VALUE=\"$phyrefcoll\">
     </TD></TR></TABLE>
+    <P>
+    <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=1
+     VALIGN=MIDDLE ALIGN=CENTER><TR><TD>
+
+    <CENTER>
+     <$STDFONT_B><B>Unit Relative Value Charges</B><$STDFONT_E>
+    </CENTER>
+
+    <!-- hide record zero, since it isn't used... -->
+    <INPUT TYPE=HIDDEN NAME=\"phychargemap$brackets\" VALUE=\"0\">
+
+    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
+     ALIGN=CENTER>
+    <TR BGCOLOR=#aaaaaa>
+     <TD><B>Internal Type</B></TD>
+     <TD><B>Amount</B></TD>
+    </TR>
+  ";
+  $_alternate = freemed_bar_alternate_color ();  
+  $i_res = fdb_query("SELECT * FROM $database.intservtype");
+  while ($i_r = fdb_fetch_array ($i_res)) {
+    $_alternate = freemed_bar_alternate_color ($_alternate);  
+    $i_id = $i_r ["id"];
+    echo "
+     <TR BGCOLOR=$_alternate>
+      <TD>".fm_prep($i_r["intservtype"])."</TD>
+      <TD>
+       <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
+        SIZE=10 MAXLENGTH=9 VALUE=\"".$phychargemap[$i_id]."\">
+      </TD>
+     </TR>
+    ";
+  } // end looping for service types
+  echo "
+    </TABLE>
 
     <BR>
     <CENTER>
@@ -958,7 +994,8 @@ if ($action=="addform") {
     "phyref     ='$phyref',      ".
     "phyrefcount='$phyrefcount', ".
     "phyrefamt  ='$phyrefamt',   ".
-    "phyrefcoll ='$phyrefcoll'   ". 
+    "phyrefcoll ='$phyrefcoll',  ".
+    "phychargemap='".fm_join_from_array($phychargemap)."' ". 
     "WHERE id='$id'";
 
   $result = fdb_query($query);

@@ -2102,8 +2102,9 @@ function fm_eval ($orig_string) {
   // import all global variables
   // (thanks to jb@as220.org for this one)
   reset ($GLOBALS);
+  //for ($i=0;$i<100;$i++) next ($GLOBALS); // skip the drek
   while (list($k,$v) = each ($GLOBALS))
-   if (!isset($$k)) $$k = $GLOBALS[$k];
+   if (!isset($$k)) global $$k;                // $$k = $GLOBALS[$k];
   $loc_string = $orig_string;                  // transfer to internal var
   $sec_string = fm_secure ($loc_string);       // secure the string
   eval ("\$new_string = \"$sec_string\";");    // evaluate

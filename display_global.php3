@@ -3,8 +3,10 @@
 
 echo "<B>GLOBAL ARRAY: </B> <P>";
 
+$count = 1;
 for (reset($GLOBALS);$key = key($GLOBALS); next($GLOBALS)) {
-  echo "GLOBALS[$key] = ".$GLOBALS[$key]." <BR>";
+  echo "$count / GLOBALS[$key] = ".$GLOBALS[$key]." <BR>";
+  $count++;
 }
 
 ?>
