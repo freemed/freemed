@@ -151,6 +151,7 @@ class FreeMED_Package extends MaintenanceModule {
 				if (($r['userrealphy'] > 0) and ($r['usertype'] == 'phy')) { $a['provider'] = 'provider'; }
 
 				// Form and execute query
+				if (!is_array($a)) { $a = array($a); }
 				$new_query = $sql->update_query(
 					'user',
 					array ( 'userlevel' => join(',', $a) ),
