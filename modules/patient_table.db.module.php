@@ -9,7 +9,7 @@ class PatientTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Patient Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.0';
+	var $MODULE_VERSION = '0.6.1';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -106,6 +106,8 @@ class PatientTable extends MaintenanceModule {
 			'ptproblems' => SQL_TEXT,
 			'ptcproblems' => SQL_TEXT,
 			'ptops' => SQL_TEXT,
+			'ptrace' => SQL_INT_UNSIGNED(0),
+			'ptreligion' => SQL_INT_UNSIGNED(0),
 			'iso' => SQL_VARCHAR(15),
 			'id' => SQL_SERIAL
 		);
@@ -138,6 +140,15 @@ class PatientTable extends MaintenanceModule {
 				'ADD COLUMN fakefield AFTER ptglucose');
 		}
 		*/
+
+		if (!version_check($version, '0.6.1')) {
+			// HL7-compliant race field
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN ptrace INT UNSIGNED AFTER pttimestamp');
+			// HL7-compliant religion field
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN ptreligion INT UNSIGNED AFTER pttimestamp');
+		} // end 0.6.1 upgrade
 	} // end function _update
 }
 
