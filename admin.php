@@ -13,23 +13,13 @@ freemed_open_db ();
 
 //----- Set configuration variables
 $config_vars = array (
-	"icd", // icd9 option
 	"gfx", // gfx option (graphics enhanced)
 	"cal_ob", // calendar overbooking
 	"calshr", // calendar start time
 	"calehr", // calendar end time
 	"dtfmt", // date format
 	"phofmt", // phone format
-	"folded",  // do we fold multipage forms?
-	// Calendar Highlighting
-	"cal1",
-	"cal2",
-	"cal3",
-	"cal4",
-	"cal5",
-	"cal6",
-	"cal7",
-	"cal8"
+	"folded"  // do we fold multipage forms?
 );
 
 if (!freemed::user_flag(USER_ADMIN)) {
@@ -53,33 +43,37 @@ if ($action=="cfgform") {
 	// database.
 
 	// Add help link for cfgform
-	$menu_bar["Configuration Help"] = help_url("admin.php", "cfgform");
+	$menu_bar[__("Configuration Help")] = help_url("admin.php", "cfgform");
+
+	//----- Create notebook widget
+	$book = CreateObject('PHP.notebook',
+		array('action'),
+		NOTEBOOK_TABS_LEFT | NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH
+	);
+	$book->set_submit_name(__("Configure"));
+	$book->set_refresh_name(__("Refresh"));
+	$book->set_cancel_name(__("Cancel"));
 
 	//----- Pull in all configuration variables
-	reset ($config_vars);
-	foreach ($config_vars AS $_garbage => $v) {
-		${$v} = freemed::config_value($v);
+	if (!$book->been_here()) {
+		$query = "SELECT * FROM config";
+		$result = $sql->query($query);
+		while ($r = $sql->fetch_array($result)) {
+			extract($r);
+			${$c_option} = stripslashes($c_value);
+		}
+
+		//----- Push page onto the stack
+		page_push();
 	}
 
-	//----- Push page onto the stack
-	page_push();
-
 	$page_title = "Configuration";
-	$display_buffer .= "
-		<p/>
 
-		<form ACTION=\"".page_name()."\" METHOD=\"POST\">
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"cfg\"/>
-	";
-
-	$display_buffer .= html_form::form_table(array(
-		__("ICD Code Type") =>
-    		html_form::select_widget("icd",
-    			array (
-				"ICD9"  => "9",
-				"ICD10" => "10"
-			)
-		),
+	// Form static portion of configuration array
+	$book->add_page(
+		__("Standard Config"),
+		array($config_vars),
+		html_form::form_table(array(
 
 		__("Graphics Enhanced") =>
 		html_form::select_widget("gfx",
@@ -153,68 +147,88 @@ if ($action=="cfgform") {
 				__("yes") => "yes",
 				__("no")  => "no"
 			)
-		),
+		)
+		))
+	);
 
-		__("Calendar Category")." 1" =>
-		html_form::text_widget( "cal1", 20, 50 ),
-
-		__("Calendar Category")." 2" =>
-		html_form::text_widget( "cal2", 20, 50 ),
-
-		__("Calendar Category")." 3" =>
-		html_form::text_widget( "cal3", 20, 50 ),
-
-		__("Calendar Category")." 4" =>
-		html_form::text_widget( "cal4", 20, 50 ),
-
-		__("Calendar Category")." 5" =>
-		html_form::text_widget( "cal5", 20, 50 ),
-
-		__("Calendar Category")." 6" =>
-		html_form::text_widget( "cal6", 20, 50 ),
-
-		__("Calendar Category")." 7" =>
-		html_form::text_widget( "cal7", 20, 50 ),
-
-		__("Calendar Category")." 8" =>
-		html_form::text_widget( "cal8", 20, 50 )
-
-	));
-
-	$display_buffer .= "
-		<p/>
-
-		<div ALIGN=\"CENTER\">
-		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".__("Configure")."\"/>
-		<input class=\"button\" TYPE=\"RESET\" VALUE=\"".__("Reset")."\"/>
-		</div>
-		</form>
-	";
-
-} elseif ($action=="cfg") {
-
-	$page_title = __("Update Config");
-	$display_buffer .= "<p/>\n";
-
-	//----- Commit all configuration variables
-	foreach ($config_vars AS $_garbage => $v) {
-		$q = "UPDATE config SET ".
-			"c_value='".addslashes(${$v})."' ".
-			"WHERE c_option='".addslashes($v)."'";
-		$query = $sql->query($q);
-		if (($debug) AND ($q))
-			$display_buffer .= "$config = ${$v}<br/>\n";
+	// Check for dynamic components
+	$module_list = CreateObject('PHP.module_list', PACKAGENAME, 'modules/');
+	foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
+		if (is_array($v['META_INFORMATION']['global_config'])) {
+			$this_one = $v['META_INFORMATION']['global_config'];
+			foreach ($this_one AS $gc_k => $gc_v) {
+				// If we find ::'s... (for function)
+				if (!(strpos($gc_v, '::') === false)) {
+					$command = '$this_one["'.$gc_k.'"] = '.$gc_v.';';
+					//print "eval : ".$command."<br/>\n";
+					eval($command);
+				} else {
+					$this_one["$gc_k"] = $gc_v;
+				}
+			}
+			$book->add_page(
+				__($v['MODULE_NAME']),
+				$v['META_INFORMATION']['global_config_vars'],
+				html_form::form_table($this_one)
+			);
+		}
 	}
 
+	if ($book->is_done()) {
+		$page_title = __("Update Config");
+		$display_buffer .= "<p/>\n";
 
-	$display_buffer .= "
-		<p/>
-		<div ALIGN=\"CENTER\"><b>".__("Configuration Complete")."</b></div>
-		<p/><div ALIGN=\"CENTER\">
-		<a class=\"button\" HREF=\"".page_name()."\"
-		>".__("Return To Administration Menu")."</a>
-		</div>
-	";
+		// Check for dynamic components for config_vars
+		$module_list = CreateObject('PHP.module_list', PACKAGENAME, 'modules/');
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
+			if (is_array($v['META_INFORMATION']['global_config_vars'])) {
+				$config_vars = array_merge (
+					$config_vars,
+					$v['META_INFORMATION']['global_config_vars']
+				);
+			}
+		}
+
+		//----- Commit all configuration variables
+		foreach ($config_vars AS $_garbage => $v) {
+			$_q = "SELECT * FROM config WHERE ".
+				"c_option='".addslashes($v)."'";
+			$_r = $sql->query($_q);
+			if (!$sql->results($_r)) {
+				$q = $sql->insert_query(
+					'config',
+					array (
+						'c_option' => $v,
+						'c_value' => ${$v}
+					)
+				);
+			} else {
+				$q = $sql->update_query(
+					'config',
+					array ('c_value' => ${$v}),
+					array('c_option' => $v)
+				);
+			}
+			$query = $sql->query($q);
+			if (($debug) AND ($q))
+				$display_buffer .= "$v = ${$v}<br/>\n";
+			}
+
+
+		$display_buffer .= "
+			<p/>
+			<div ALIGN=\"CENTER\"><b>".__("Configuration Complete")."</b></div>
+			<p/><div ALIGN=\"CENTER\">
+			<a class=\"button\" HREF=\"".page_name()."\"
+			>".__("Return To Administration Menu")."</a>
+			</div>
+		";
+	} elseif ($book->is_cancelled()) {
+		Header("Location: ".page_name());
+		die();
+	} else {
+		$display_buffer .= $book->display();
+	}
 
 } elseif ($action=="reinit") {
 	$page_title = __("Reinitialize Database");
@@ -407,22 +421,13 @@ if ($action=="cfgform") {
 	if ($re_load)
 	{
 		$stock_config = array (
-			'icd9' => '9',
 			'gfx' => '1',
 			'calshr' => $cal_starting_hour,
 			'calehr' => $cal_ending_hour,
 			'cal_ob' => 'enable',
 			'dtfmt' => 'ymd',
 			'phofmt' => 'unformatted',
-			'folded' => 'yes',
-			'cal1' => '',
-			'cal2' => '',
-			'cal3' => '',
-			'cal4' => '',
-			'cal5' => '',
-			'cal6' => '',
-			'cal7' => '',
-			'cal8' => '',
+			'folded' => 'yes'
 		);
 		foreach ($stock_config AS $key => $val) {
 			if (!is_integer($key)) {
