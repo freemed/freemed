@@ -59,6 +59,11 @@
    $pats_processed = 0;
    $still_going    = true;
 
+   // skip kludge
+   if ($skip > 0)
+     for ($i=1;$i<=$skip;$i++)
+       $null_me = fdb_fetch_array ($b_result);
+
    // loop for all patients
    while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
 
@@ -449,6 +454,17 @@
      <TD ALIGN=LEFT>
    ";
    fm_number_select ("num_patients", 0, 20);
+   echo "
+     </TD>
+    </TR>
+
+    <TR>
+     <TD ALIGN=RIGHT>
+      <$STDFONT_B>Skip # of Pats to Bill : <$STDFONT_E>
+     </TD>
+     <TD ALIGN=LEFT>
+   ";
+   fm_number_select ("skip", 0, 100);
    echo "
      </TD>
     </TR>
