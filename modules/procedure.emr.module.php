@@ -513,7 +513,7 @@ class ProcedureModule extends EMRModule {
 		{
 			$display_buffer .= "
 			<p/>
-			<div ALIGN=\"CENTER\"><b>"._(Cancelled)."</b></div>
+			<div ALIGN=\"CENTER\"><b>".__("Cancelled")."</b></div>
 			<p/>
 			<div ALIGN=\"CENTER\">
 			 <a HREF=\"manage.php?id=$patient\"
@@ -933,7 +933,7 @@ class ProcedureModule extends EMRModule {
 		{
 			$display_buffer .= "
 			<p/>
-			<div ALIGN=\"CENTER\"><b>"._(Cancelled)."</b></div>
+			<div ALIGN=\"CENTER\"><b>".__("Cancelled")."</b></div>
 			<p/>
 			<div ALIGN=\"CENTER\">
 			 <a HREF=\"manage.php?id=$patient\"
