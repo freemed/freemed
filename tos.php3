@@ -127,7 +127,7 @@ switch($action) {
       "'$tosname', '$tosdescrip', '$cur_date', '$cur_date', NULL ) ";
    break;
    case "mod":
-    freemed_display_box_top (_("Modifying")." "._("$record_name")), $page_name);
+    freemed_display_box_top (_("Modifying")." "._("$record_name"));
     echo "
       <P ALIGN=CENTER>
       <$STDFONT_B>"._("Modifying")." . . . 
