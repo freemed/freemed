@@ -395,9 +395,12 @@ class AccountsReceivable extends BillingModule {
 				__("Filter by this patient").'">'.
 				'<small>'.
 				$this->_lookup_patient($hash['patient_id']).
-				'</small></acronym></a> '.
+				'</small></acronym></a> ['.
 				'<a href="manage.php?id='.$hash['patient_id'].
-				'">['.__("EMR").']</a>'); 
+				'"><small>'.__("EMR").'</small></a> | '.
+				'<a href="module_loader.php?patient='.$hash['patient_id'].
+				'&module=paymentmodule'.
+				'"><small>'.__("Ledger").'</small></a>]'); 
 			// Show all items
 			$table->setCellContents($count, 5, '<a href="'.
 				$this->_detail_link(array(
