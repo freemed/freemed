@@ -161,7 +161,7 @@ class episodeOfCare extends freemedEMRModule {
 	} // end constructor episodeOfCare
 
 	function form () {
-		global $display_buffer;
+		global $display_buffer, $SESSION;
 		reset ($GLOBALS);
 		foreach ($GLOBALS as $k => $v) global $$k;
 
@@ -283,7 +283,7 @@ class episodeOfCare extends freemedEMRModule {
      <TD ALIGN=RIGHT>"._("Facility")."</TD>
      <TD ALIGN=LEFT>
    ";
-   if (empty($eocfacility)) $eocfacility = $default_facility;
+   if (empty($eocfacility)) $eocfacility = $SESSION["default_facility"];
    
    $display_buffer .= 
      freemed_display_selectbox (

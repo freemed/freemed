@@ -32,7 +32,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			// this function is called when the View button is
 			// clicked on the patient menu
 
-			global $patient,$sql,$pt, $default_facility;
+			global $patient,$sql,$pt, $SESSION;
 			$this_patient = new Patient($patient);
 
 			$display_buffer .= "<HTML><BODY BGCOLOR=\"#FFFFFF\">\n";
@@ -64,10 +64,10 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			
 			}
 
-			if ($default_facility > 0)
+			if ($SESSION["default_facility"] > 0)
 			{
 				$fac_row = 0;
-				$fac_row = freemed::get_link_rec($default_facility,"facility");
+				$fac_row = freemed::get_link_rec($SESSION["default_facility"],"facility");
 				if ($fac_row)
 				{
 					$pt[facility] = $fac_row[psrname]." "."Intake Report";

@@ -201,10 +201,10 @@ class GenerateStatementsModule extends freemedBillingModule {
 		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
-		global $sql,$default_facility;
+		global $sql, $SESSION;
 		
 		$row = $stack[0];
-		$fac = $default_facility;
+		$fac = $SESSION["default_facility"];
 
 		if ($fac <= 0)
 		{

@@ -1012,7 +1012,7 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 	function ProviderHeader($procstack) {
 		
-		global $display_buffer;
+		global $display_buffer, $SESSION;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		unset($GLOBALS[aa0]);
@@ -1059,10 +1059,10 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         // incremented as used then saved when done.
 		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
 
-		if ($default_facility != 0)
+		if ($SESSION["default_facility"] != 0)
 		{
 			$fac = 0;
-			$fac = freemed::get_link_rec($default_facility,"facility");
+			$fac = freemed::get_link_rec($SESSION["default_facility"] ,"facility");
 			if (!$fac)
 				$display_buffer .= "Error getting facility<BR>";
 			$ba0[posname] = $this->CleanChar($fac[psrname]);
