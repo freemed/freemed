@@ -1010,17 +1010,35 @@ class freemed {
 
 	// Function: freemed::rich_text_area
 	//
+	//	Creates a rich text editing widget (HTML)
 	//
 	// Parameters:
+	//
+	//	$varname - Name of variable to store the data in
+	//
+	//	$rows - (optional) Vertical size of text area. Defaults to
+	//	10 lines.
+	//
+	//	$cols - (optional) Horizontal size of text area. Defaults to
+	//	60 characters.
+	//
+	//	$force_js - (optional) Force Javascript to be displayed
+	//	every time. Defaults to false.
 	//
 	// Returns:
 	//
 	//	XHTML-compliant rich text area widget
-	function rich_text_area ( $varname, $wrap="ON", $rows=10, $cols=60 ) {
+	function rich_text_area ( $varname, $rows=10, $cols=60, $force_js=false ) {
 		static $_jsset;
 
+		// For compatibility with html_form::text_area()
+		$wrap = 'VIRTUAL';
+
 		// Handle initial setting of includes, etc
-		if (!$_jsset) {
+		// If force_js is set, we put this in anyway for things like
+		// notebooks, where even if something is generated, it isn't
+		// always displayed.
+		if (!$_jsset or $force_js) {
 			$buffer .= 
 			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n".
 			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n".
