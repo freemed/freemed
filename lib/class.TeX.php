@@ -325,6 +325,11 @@ class TeX {
 		// Sanitize all but HTML markers
 		$text = $this->_SanitizeText($orig, true);
 
+		// Remove ending <br /><br /> from Gecko (thanks to Volker)
+		if (substr($text, -13) == "<br /><br />\n") {
+			$text = substr($text, 0, strlen($text)-13);
+		}
+
 		// Thanks to Adam for the Perl regular expressions to
 		// do all of this work ....
 
