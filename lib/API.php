@@ -41,15 +41,19 @@ class freemed {
 	} // end function freemed::check_access_for_facility
 
 	// function freemed::check_access_for_patient
-	function check_access_for_patient ($patient_number) {
-		// Grab authdata
-		$_authdata = $_SESSION['authdata'];
+	function check_access_for_patient ($patient_number, $_user=0) {
+		if ($_user == 0) {
+			// Grab authdata
+			$_authdata = $_SESSION['authdata'];
+
+			$user = $_authdata['user'];
+		}
 
 		// Root has all access...
-		if ($_authdata["user"] == 1) return true;
+		if ($user == 1) return true;
 	
 		// Grab auth information from db
-		$f_user   = freemed::get_link_rec ($_authdata["user"], "user");
+		$f_user   = freemed::get_link_rec ($user, "user");
 	
 		// Get data records in question for the user
 		$f_fac    = $f_user ["userfac"   ];
@@ -217,6 +221,35 @@ class freemed {
 		// check in cache for version > minimum_version
 		return version_check($_config["$module"], $minimum_version);
 	} // end function freemed::module_check
+
+	// function freemed::module_lookup
+	// - lookup by the actual class name of the module
+	function module_lookup ($module) {
+		static $module_list;
+
+		// Cache module list object
+		if (!isset($module_list)) {
+			$module_list = CreateObject(
+				'PHP.module_list',
+				PACKAGENAME
+			);
+		}
+
+		// Not in the list, then we just skip it
+		if (!$module_list->check_for($module)) {
+			return false;
+		}
+
+		// Use protected __phpwebtools array to get module name
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] as $k => $v) {
+			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
+				return $v['MODULE_NAME'];
+			}
+		}
+
+		// If all else fails, return false
+		return false;
+	} // end function freemed::module_lookup
 
 	// function freemed::module_register
 	function module_register ($module, $version) {
@@ -976,7 +1009,13 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $on_this_page++;
     $first = true; // first item in the list has 'view' link
     $buffer .= "
-    <tr CLASS=\"".freemed_alternate()."\">
+    <tr CLASS=\"".($my = freemed_alternate())."\" ".
+    "onMouseOver=\"this.className='cell_hilite'; return true;\" ".
+    "onMouseOut=\"this.className='".$my."'; return true;\" ".
+    ( ($flags & ITEMLIST_VIEW) ?
+      "onClick=\"window.location='$page_link?module=$module&patient=$patient&".
+      "action=view&id=".urlencode($this_result['id'])."'; return true;\" " : "" ).
+    ">
     ";
     reset($control_list); // it's already each'd the arrays, 
     if (is_array($xref_list)) 
@@ -1349,13 +1388,17 @@ function freemed_import_stock_data ($table_name) {
 	$physical_file = PHYSICAL_LOCATION . "/data/" . $language .
 		"/" .  $table_name . "." . $language . ".data";
 
+	print "physical file = $physical_file<br/>";
+
 	// Die if the phile doesn't exist
 	if (!file_exists($physical_file)) return false;
 
+	return;
+
 	// Create the query
-	$query = "LOAD DATA LOCAL INFILE '$physical_file' INTO
-		TABLE $table_name
-		FIELDS TERMINATED BY ','";
+	$query = "LOAD DATA LOCAL INFILE '$physical_file' INTO ".
+		"TABLE ".$table_name." ".
+		"FIELDS TERMINATED BY ','";
            
 	$result = $sql->query ($query); // try doing it
 
