@@ -13,31 +13,16 @@ unset($_SESSION['authdata']);
 //----- Disable menu bar
 $GLOBALS['__freemed']['no_menu_bar'] = true;
 
-//----- First, make sure that password is correct if updated
-// Get root password
-$result = $sql->query ( "SELECT userpassword FROM user WHERE id='1'");
-// If there are results, process (exception for first "boot")
-if ($sql->results($result)) {
-	// Extract information
-	$r = $sql->fetch_array($query);
-
-	// If it doesn't match...
-	if ((stripslashes($r['userpassword']) != DB_PASSWORD) and ($r['username']=="root")) {
-		// ... execute update query to *make* it match.
-		$update_result = $sql->query($sql->update_query(
-			"user",
-			array ( "userpassword" => DB_PASSWORD ),
-			array ( "id" => 1 )
-		));
-	} // end checking for matching
-} // end checking for results
+//Fred Trotter
+// The firstboot sequence has been taken care of by healthcheck
+// That handles intial admin creation!!
 
 //$connect = freemed_auth_login ($_username, $_password);
 $connect = freemed::verify_auth ();
 if (!$connect) {
     if (!empty($_URL)) $__url_part = "?_URL=".urlencode($_URL);
     $display_buffer .= "
-       <div ALIGN=\"CENTER\">".__("Error")." !</div>
+       <div ALIGN=\"CENTER\">".__("ERROR")."!</div>
        <p/>
        <div ALIGN=\"CENTER\">".__("You have entered an incorrect name or password.")."</div>
        <p/>
@@ -56,7 +41,7 @@ if (freemed::check_access_for_facility ($_f)) {
 }
 
 //----- Determine "language session variable, if set
-//if ($_l != $default_language) {
+//if ($_l != DEFAULT_LANGUAGE) {
 $_SESSION['language'] = $_l;
 SetCookie('language', $_l);
 //}
