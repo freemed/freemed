@@ -913,6 +913,21 @@ if ($action=="addform") {
     </SELECT>
     <P>
 
+    <$STDFONT_B>Relation to Guarantor : <$STDFONT_E>
+    <SELECT NAME=\"ptreldep\">
+     <OPTION VALUE=\"S\" ".
+      ( ($ptreldep=="S") ? "SELECTED" : "" ).">Self
+     <OPTION VALUE=\"C\" ".
+      ( ($ptreldep=="C") ? "SELECTED" : "" ).">Child
+     <OPTION VALUE=\"H\" ".
+      ( ($ptreldep=="H") ? "SELECTED" : "" ).">Husband
+     <OPTION VALUE=\"W\" ".
+      ( ($ptreldep=="W") ? "SELECTED" : "" ).">Wife
+     <OPTION VALUE=\"O\" ".
+      ( ($ptreldep=="O") ? "SELECTED" : "" ).">Other
+    </SELECT>
+    <P>
+
     <$STDFONT_B>$Next_of_kin_information : <$STDFONT_E><BR>
     <TEXTAREA NAME=\"ptnextofkin\" ROWS=4 COLS=25 WRAP=VIRTUAL
      >$ptnextofkin</TEXTAREA>
