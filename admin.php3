@@ -17,16 +17,16 @@
 
   // security patch...
 if (freemed_get_userlevel($LoginCookie)<9) {
-  freemed_display_box_top ("Administration :: $ERROR");
+  freemed_display_box_top (_("Administration")." :: "._("ERROR"));
   echo "
     <P>
     <$HEADERFONT_B>
-    $No_admin_menu_access
+    "._("No Admin Menu Access")."
     <$HEADERFONT_E>
     <P>
     <CENTER>
      <A HREF=\"main.php3?$_auth\"
-     ><$STDFONT_B>Return to the Main Menu<$STDFONT_E>
+     ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E>
     </CENTER>
     <P>
   ";
@@ -46,9 +46,9 @@ if ($action=="cfgform") {
   $c_r = fdb_fetch_array($c_result);
   $icd = $c_r["c_value"];
   if ($icd=="10") {
-    $_icd_10 = "$SELECTED";
+    $_icd_10 = "SELECTED";
   } else {
-    $_icd_9  = "$SELECTED";
+    $_icd_9  = "SELECTED";
   } // default is icd9
 
     // gfx option (graphics enhanced)
@@ -57,42 +57,42 @@ if ($action=="cfgform") {
   $c_r = fdb_fetch_array($c_result);
   $gfx = $c_r["c_value"];
   if ($gfx=="1") {
-    $_gfx_1 = "$SELECTED";
+    $_gfx_1 = "SELECTED";
   } else {
-    $_gfx_9  = "$SELECTED";
+    $_gfx_9  = "SELECTED";
   } // default is disabled
 
   $cal_ob = freemed_config_value ("cal_ob");
   switch ($cal_ob) {
-    case "enable":  $_cal_ob_e = "$SELECTED"; break;
+    case "enable":  $_cal_ob_e = "SELECTED"; break;
     case "disable":
-           default: $_cal_ob_d = "$SELECTED"; break;
+           default: $_cal_ob_d = "SELECTED"; break;
   }
 
   $calshr = freemed_config_value ("calshr"); // get starting time
   switch ($calshr) {
-    case  "4": $_cal_s4  = "$SELECTED"; break;
-    case  "5": $_cal_s5  = "$SELECTED"; break;
-    case  "6": $_cal_s6  = "$SELECTED"; break;
-    case  "7": $_cal_s7  = "$SELECTED"; break;
-    case  "8": $_cal_s8  = "$SELECTED"; break;
-    case  "9": $_cal_s9  = "$SELECTED"; break;
-    case "10": $_cal_s10 = "$SELECTED"; break;
-    case "11": $_cal_s11 = "$SELECTED"; break;
-    case "12": $_cal_s12 = "$SELECTED"; break;
-    default  : $_cal_sd  = "$SELECTED"; break;
+    case  "4": $_cal_s4  = "SELECTED"; break;
+    case  "5": $_cal_s5  = "SELECTED"; break;
+    case  "6": $_cal_s6  = "SELECTED"; break;
+    case  "7": $_cal_s7  = "SELECTED"; break;
+    case  "8": $_cal_s8  = "SELECTED"; break;
+    case  "9": $_cal_s9  = "SELECTED"; break;
+    case "10": $_cal_s10 = "SELECTED"; break;
+    case "11": $_cal_s11 = "SELECTED"; break;
+    case "12": $_cal_s12 = "SELECTED"; break;
+    default  : $_cal_sd  = "SELECTED"; break;
   } // end starting time switch
 
   $calehr = freemed_config_value ("calehr"); // get ending time
   switch ($calehr) {
-    case "14": $_cal_e14 = "$SELECTED"; break;
-    case "15": $_cal_e15 = "$SELECTED"; break;
-    case "16": $_cal_e16 = "$SELECTED"; break;
-    case "17": $_cal_e17 = "$SELECTED"; break;
-    case "18": $_cal_e18 = "$SELECTED"; break;
-    case "19": $_cal_e19 = "$SELECTED"; break;
-    case "20": $_cal_e20 = "$SELECTED"; break;
-    default:   $_cal_ed  = "$SELECTED"; break;
+    case "14": $_cal_e14 = "SELECTED"; break;
+    case "15": $_cal_e15 = "SELECTED"; break;
+    case "16": $_cal_e16 = "SELECTED"; break;
+    case "17": $_cal_e17 = "SELECTED"; break;
+    case "18": $_cal_e18 = "SELECTED"; break;
+    case "19": $_cal_e19 = "SELECTED"; break;
+    case "20": $_cal_e20 = "SELECTED"; break;
+    default:   $_cal_ed  = "SELECTED"; break;
   } // end ending time switch
 
   $dtfmt = freemed_config_value ("dtfmt"); // get date format
@@ -123,7 +123,7 @@ if ($action=="cfgform") {
      VALIGN=MIDDLE ALIGN=CENTER>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>$Icd_code_type : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT><$STDFONT_B>"._("ICD Code Type")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"icd\">
      <OPTION VALUE=\"9\"  $_icd_9 > 9
@@ -132,16 +132,16 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>$Graphics_enhanced : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT><$STDFONT_B>"._("Graphics Enhanced")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"gfx\">
-     <OPTION VALUE=\"0\" $_gfx_0>$Disabled
-     <OPTION VALUE=\"1\" $_gfx_1>$Enabled
+     <OPTION VALUE=\"0\" $_gfx_0>"._("Disabled")."
+     <OPTION VALUE=\"1\" $_gfx_1>"._("Enabled")."
     </SELECT>
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>$Scheduling_start_time : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT><$STDFONT_B>"._("Scheduling Start Time")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"calshr\">
      <OPTION VALUE=\"\"  $_cal_sd>$DEFAULT
@@ -156,7 +156,7 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>$Scheduling_end_time : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT><$STDFONT_B>"._("Scheduling End Time")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"calehr\">
      <OPTION VALUE=\"\"  $_cal_ed>$DEFAULT
@@ -171,16 +171,16 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>$Calendar_overbooking : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT><$STDFONT_B>"._("Calendar Overbooking")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"cal_ob\">
-     <OPTION VALUE=\"enable\"  $_cal_ob_e>$Enabled
-     <OPTION VALUE=\"disable\" $_cal_ob_d>$Disabled
+     <OPTION VALUE=\"enable\"  $_cal_ob_e>"._("Enabled")."
+     <OPTION VALUE=\"disable\" $_cal_ob_d>"._("Disabled")."
     </SELECT>
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>Date Format : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT><$STDFONT_B>"._("Date Format")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"dtfmt\">
      <OPTION VALUE=\"ymd\"  $_dtfmt_ymd>YYYY-MM-DD
@@ -191,12 +191,12 @@ if ($action=="cfgform") {
     </TD></TR>
 
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B>Phone Number Format : <$STDFONT_E></TD>
+    <TD ALIGN=RIGHT><$STDFONT_B>"._("Phone Number Format")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>
     <SELECT NAME=\"phofmt\">
-     <OPTION VALUE=\"usa\"         $_phofmt_us>United States (XXX) XXX-XXXX
-     <OPTION VALUE=\"fr\"          $_phofmt_fr>France (XX) XX XX XX XX
-     <OPTION VALUE=\"unformatted\" $_phofmt_uf>Unformatted XXXXXXXXXXXXXXXX
+     <OPTION VALUE=\"usa\"         $_phofmt_us>"._("United States")." (XXX) XXX-XXXX
+     <OPTION VALUE=\"fr\"          $_phofmt_fr>"._("France")." (XX) XX XX XX XX
+     <OPTION VALUE=\"unformatted\" $_phofmt_uf>"._("Unformatted")." XXXXXXXXXXXXXXXX
     </SELECT>
     </TD></TR>
 
@@ -205,8 +205,8 @@ if ($action=="cfgform") {
     <P>
 
     <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" $Configure \">
-    <INPUT TYPE=RESET  VALUE=\"   $Reset   \">
+    <INPUT TYPE=SUBMIT VALUE=\" "._("Configure")." \">
+    <INPUT TYPE=RESET  VALUE=\"   "._("Reset")."   \">
     </CENTER>
     </FORM>
   ";
@@ -214,7 +214,7 @@ if ($action=="cfgform") {
 
 } elseif ($action=="cfg") {
 
-  freemed_display_box_top (PACKAGENAME." $Update_config", $page_name);
+  freemed_display_box_top (PACKAGENAME._("Update Config"), $page_name);
   echo "
     <P>
   ";
@@ -249,39 +249,39 @@ if ($action=="cfgform") {
 
   echo "
     <P>
-    <CENTER><B>$Configuration_complete</B></CENTER>
+    <CENTER><B>"._("Configuration Complete")."</B></CENTER>
   ";
   echo "
     <P ALIGN=CENTER>
     <A HREF=\"$page_name?$_auth\"
-     >$Return_adm_menu</A>
+     >"._("Return To Administration Menu")."</A>
   ";
   freemed_display_box_bottom ();
 
 } elseif ($action=="reinit") {
-  freemed_display_box_top ("$Reinitialize_database", $page_name);
+  freemed_display_box_top (_("Reinitialize Database"), $page_name);
   
     # here, to prevent problems, we ask the user to check that they
     # REALLY want to...
 
-  echo "$Are_you_sure  $Reinitialize_database ?\n";
-  echo "<BR><U><B>$Irreversable_process</B></U><BR>\n";
+  echo _("Are you sure you want to reinitialize the database?\n");
+  echo "<BR><U><B>"._("This is an IRREVERSIBLE PROCESS!")."</B></U><BR>\n";
 
   echo "<BR><CENTER>\n";
 
   echo "
    <FORM ACTION=\"$page_name\" METHOD=POST>
    <INPUT TYPE=CHECKBOX NAME=\"first_time\" VALUE=\"first\">
-   <I>$First_initialization</I><BR>
+   <I>"._("First Initialization")."</I><BR>
    <INPUT TYPE=HIDDEN NAME=action VALUE=\"reinit_sure\">
    <TABLE BORDER=0 ALIGN=CENTER><TR><TD>
-   <INPUT TYPE=SUBMIT VALUE=\"  $Continue  \">
+   <INPUT TYPE=SUBMIT VALUE=\""._("Continue")."\">
    </FORM>
 
    </TD><TD>
 
    <FORM ACTION=\"$page_name\" METHOD=POST>
-   <INPUT TYPE=SUBMIT VALUE=\"   $Cancel   \">
+   <INPUT TYPE=SUBMIT VALUE=\""._("Cancel")."\">
    </FORM>
 
    </TD></TR></TABLE>
@@ -296,18 +296,18 @@ if ($action=="cfgform") {
   # stupids don't accidentally click on it and... oops!
 
   if ($first_time!="first") {
-    echo "<$STDFONT_B>$Erasing_old_db ... ";
+    echo "<$STDFONT_B>"._("Erasing old database")."... ";
     fdb_drop_db($database) OR
-      DIE("<B>$Error_accessing_sql</B><$STDFONT_E><BR><BR>\n");
-    echo "<B>$Done</B><$STDFONT_E><BR>\n";
+      DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
+    echo "<B>"._("Done")."</B><$STDFONT_E><BR>\n";
   }
 
-  echo "<$STDFONT_B>$Creating_new_db ... ";
+  echo "<$STDFONT_B>"._("Creating new database")."... ";
   fdb_create_db($database) OR
-    DIE("<B>$Error_accessing_sql</B><$STDFONT_E><BR><BR>\n");
-  echo "<B>$Done</B><$STDFONT_E><BR>\n";
+    DIE("<B>"._("Error accessing SQL")."</B><$STDFONT_E><BR><BR>\n");
+  echo "<B>"._("Done")."</B><$STDFONT_E><BR>\n";
 
-  echo "<$STDFONT_B><UL>$Creating_tables ... \n";
+  echo "<$STDFONT_B><UL>"._("Creating tables")."... \n";
 
   // generate test table, if debug is on
   if ($debug) {
@@ -315,7 +315,7 @@ if ($action=="cfgform") {
       name CHAR(10), other CHAR(12), phone INT,
       ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
       PRIMARY KEY (ID))");
-    if ($result) { echo "<LI>test db \n"; }
+    if ($result) { echo "<LI>"._("test db")." \n"; }
   } // end debug section
 
   // generate physician db table
@@ -361,7 +361,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) { echo "<LI>physician db \n"; }
+  if ($result) { echo "<LI>"._("Physicians")."\n"; }
 
   // generate icd9 code table
   $result=fdb_query("CREATE TABLE icd9 (
@@ -378,7 +378,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) { echo "<LI>icd9 code db \n"; }
+  if ($result) { echo "<LI>"._("ICD Codes")."\n"; }
 
   // generate patient database
   $result=fdb_query("CREATE TABLE patient (
@@ -387,6 +387,7 @@ if ($action=="cfgform") {
     ptbal        REAL,
     ptbalfwd     REAL,
     ptunapp      REAL,
+    ptdoc        INT UNSIGNED,
     ptrefdoc     INT UNSIGNED,
     ptpcp        INT UNSIGNED,
     ptphy1       INT UNSIGNED,
@@ -395,7 +396,6 @@ if ($action=="cfgform") {
     ptphy4       INT UNSIGNED,
     ptbilltype   ENUM(\"sta\",\"mon\",\"chg\") NOT NULL,
     ptbudg       REAL,
-    ptdoc        INT UNSIGNED,
     ptlname      VARCHAR(50),
     ptfname      VARCHAR(50),
     ptmname      VARCHAR(50),
@@ -436,27 +436,25 @@ if ($action=="cfgform") {
     ptempl       ENUM(\"y\",\"n\") NOT NULL,
     ptemp1       INT UNSIGNED,
     ptemp2       INT UNSIGNED,
-    ptdep        INT UNSIGNED,
-    ptreldep     CHAR(1),
-    ptins1       INT UNSIGNED,
-    ptins2       INT UNSIGNED,
-    ptins3       INT UNSIGNED,
-    ptinsno1     VARCHAR(50),
-    ptinsno2     VARCHAR(50),
-    ptinsno3     VARCHAR(50),
-    ptinsgrp1    VARCHAR(50),
-    ptinsgrp2    VARCHAR(50),
-    ptinsgrp3    VARCHAR(50),
+    ptguar       TEXT,
+    ptrelguar    TEXT,
+    ptguarstart  TEXT,
+    ptguarend    TEXT,
+    ptins        TEXT,
+    ptinsno      TEXT,
+    ptinsgrp     TEXT,
+    ptinsstart   TEXT,
+    ptinsend     TEXT,
     ptnextofkin  TEXT,
     iso          VARCHAR(15),
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) { echo "<LI>patient db \n"; }
+  if ($result) { echo "<LI>"._("Patients")."\n"; }
 
   // generate proc database (second generation)
   $result=fdb_query("CREATE TABLE procrec (
-    procpatient            INT UNSIGNED,
+    procpatient            INT UNSIGNED NOT NULL,
     proceoc                TEXT,
     proccpt                INT UNSIGNED,
     proccptmod             INT UNSIGNED,
@@ -480,9 +478,10 @@ if ($action=="cfgform") {
     procrefdoc             INT UNSIGNED,
     procrefdt              DATE,
     id INT NOT NULL AUTO_INCREMENT,
+    KEY (procpatient),
     PRIMARY KEY (id)
     )");
-  if ($result) { echo "<LI>procedure db \n"; }
+  if ($result) { echo "<LI>"._("Procedures")."\n"; }
 
   // generate facility database
   $result=fdb_query("CREATE TABLE facility (
@@ -503,11 +502,11 @@ if ($action=="cfgform") {
     psrintext    INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id) )");
-  if ($result) echo "<LI>facility db \n"; 
+  if ($result) echo "<LI>"._("Facility")."\n"; 
   $result=fdb_query("INSERT INTO facility VALUES (
    'Default Facility', '', '', '', '', '', '', '', '$cur_date',
    '', '', '', '', NULL )");
-  if ($result) echo "<I>(default facility added)</I> \n"; 
+  if ($result) echo "<I>("._("default facility added").")</I> \n"; 
 
   // generate room database
   $result=fdb_query("CREATE TABLE room (
@@ -521,10 +520,10 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>room db \n"; 
+  if ($result) echo "<LI>"._("Rooms")."\n"; 
   $result=fdb_query("INSERT INTO room VALUES (
    'Default Room', '1', '', '', '', '', '', NULL) ");
-  if ($result) echo "<I>(default room added)</I> \n";
+  if ($result) echo "<I>("._("default room added").")</I> \n";
 
   // generate degrees database
   $result=fdb_query("CREATE TABLE degrees (
@@ -534,9 +533,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>degrees db \n"; 
+  if ($result) echo "<LI>"._("Degrees")."\n"; 
   if (freemed_import_stock_data ("degrees"))
-    echo "<I>(degrees data)</I> \n";
+    echo "<I>("._("Stock Degree Data").")</I> \n";
 
   // generate specialties database
   $result=fdb_query("CREATE TABLE specialties (
@@ -546,15 +545,15 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>specialties db \n";
+  if ($result) echo "<LI>"._("Specialties")."\n";
   if (freemed_import_stock_data ("specialties"))
-    echo "<I>(specialties data)</I> \n";
+    echo "<I>("._("Stock Specialties Data").")</I> \n";
 
   // generate insurance company database
   $result=fdb_query("CREATE TABLE insco (
     inscodtadd   DATE,
     inscodtmod   DATE,
-    insconame    VARCHAR(50),
+    insconame    VARCHAR(50) NOT NULL,
     inscoalias   VARCHAR(30),
     inscoaddr1   VARCHAR(45),
     inscoaddr2   VARCHAR(45),
@@ -572,11 +571,12 @@ if ($action=="cfgform") {
     inscoassign  INT UNSIGNED,
     inscomod     TEXT,
     id INT NOT NULL AUTO_INCREMENT,
+    KEY (insconame),
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>insurance company db \n"; 
+  if ($result) echo "<LI>"._("Insurance Companies")."\n"; 
   if (freemed_import_stock_data ("insco"))
-    echo "<I>(insurance company data)</I> \n";
+    echo "<I>("._("Stock Insurance Company Data").")</I> \n";
 
   // generate insurance company groups db
   $result=fdb_query("CREATE TABLE inscogroup (
@@ -584,9 +584,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>insurance co groups db \n"; 
+  if ($result) echo "<LI>"._("Insurance Company Groups")."\n"; 
   if (freemed_import_stock_data ("inscogroup"))
-    echo "<I>(insurance company group data)</I> \n";
+    echo "<I>("._("Stock Insurance Company Group Data").")</I> \n";
 
   // generate CPT (procedural) codes database
   $result=fdb_query("CREATE TABLE cpt (
@@ -608,9 +608,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>cpt codes db \n";
+  if ($result) echo "<LI>"._("CPT Codes")."\n";
   if (freemed_import_stock_data ("cpt"))
-    echo "<I>(cpt data)</I> \n";
+    echo "<I>("._("Stock CPT Code Data").")</I> \n";
 
   // generate cpt modifier db (19990605)
   $result=fdb_query("CREATE TABLE cptmod (
@@ -619,9 +619,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>cpt modifers db \n";
+  if ($result) echo "<LI>"._("CPT Modifers")."\n";
   if (freemed_import_stock_data ("cptmod"))
-    echo "<I>(cpt modifier data)</I> \n";
+    echo "<I>("._("Stock CPT Modifier Data").")</I> \n";
 
   // generate physician groups db (19990625)
   $result=fdb_query("CREATE TABLE phygroup (
@@ -632,7 +632,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>phygroup db \n";
+  if ($result) echo "<LI>"._("Physician Groups")."\n";
 
   // generate user db
   $result=fdb_query("CREATE TABLE user (
@@ -651,12 +651,12 @@ if ($action=="cfgform") {
     KEY (username),
     UNIQUE idx_username (username)
     )");
-  if ($result) echo "<LI>user db \n";
+  if ($result) echo "<LI>"._("Users")."\n";
 
   $result=fdb_query("INSERT INTO user VALUES (
     'root', '$db_password', 'Superuser', '9', '', '-1', '-1', '-1',
     '', NULL )");
-  if ($result) echo "<I>[[added superuser]]</I> \n";
+  if ($result) echo "<I>[["._("Added Superuser")."]]</I> \n";
 
   // generate scheduler table
   $result=fdb_query("CREATE TABLE scheduler (
@@ -676,7 +676,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>scheduler db \n";
+  if ($result) echo "<LI>"._("Scheduler")."\n";
 
   // generate physician availability map
   $result=fdb_query("CREATE TABLE phyavailmap (
@@ -691,7 +691,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>physician availability map db \n";
+  if ($result) echo "<LI>"._("Physician Availability Map")."\n";
 
   // generate insurance company groups db
   $result=fdb_query("CREATE TABLE phystatus (
@@ -699,7 +699,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>insurance co groups db \n";
+  if ($result) echo "<LI>"._("Physician Statuses")."\n";
 
   // generate progress notes db (19990707)
   // * 19991228 - add iso
@@ -720,13 +720,13 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT, 
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>progress notes db \n";
+  if ($result) echo "<LI>"._("Progress Notes")."\n";
 
   // generate payment record db
   $result=fdb_query("CREATE TABLE payrec (
     payrecdtadd   DATE,
     payrecdtmod   DATE,
-    payrecpatient INT UNSIGNED,
+    payrecpatient INT UNSIGNED NOT NULL,
     payrecdt      DATE,
     payreccat     INT UNSIGNED,
     payrecproc    INT UNSIGNED,
@@ -737,10 +737,11 @@ if ($action=="cfgform") {
     payrecamt     REAL,
     payrecdescrip TEXT,
     payreclock    ENUM (\"unlocked\", \"locked\") NOT NULL,
-    id INT NOT NULL AUTO_INCREMENT, 
+    id INT NOT NULL AUTO_INCREMENT,
+    KEY (payrecpatient),
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>payment record db \n";
+  if ($result) echo "<LI>"._("Payment Records")."\n";
 
   // generate formulary database (19990714)
   // date mod/add added 19990719 - jeff b
@@ -756,9 +757,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>formulary db \n";
+  if ($result) echo "<LI>"._("Formulary")."\n";
   if (freemed_import_stock_data ("frmlry"))
-    echo "<I>(formulary data)</I> \n";
+    echo "<I>("._("Stock Formulary Data").")</I> \n";
 
   // Rx (prescription) database (19990723)
   $result=fdb_query("CREATE TABLE rx (
@@ -775,7 +776,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>prescription db \n";
+  if ($result) echo "<LI>"._("Prescriptions")."\n";
 
   // generate simple reports table (19990810)
   $result=fdb_query("CREATE TABLE simplereport (
@@ -788,7 +789,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>simple reports db \n";
+  if ($result) echo "<LI>"._("Simple Reports")."\n";
 
   // generate call-in table/db (19990824)
   $result=fdb_query("CREATE TABLE callin (
@@ -807,7 +808,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>call-in db \n ";
+  if ($result) echo "<LI>"._("Call-Ins")."\n ";
 
   // generate room equipment inventory db
   $result=fdb_query("CREATE TABLE roomequip (
@@ -818,9 +819,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>room equipment db \n ";
+  if ($result) echo "<LI>"._("Room Equipment")."\n ";
   if (freemed_import_stock_data("roomequip"))
-    echo "<I>(room equipment data)</I> \n ";
+    echo "<I>("._("Stock Room Equipment Data").")</I> \n ";
 
   // generate type of service db (19990922)
   $result=fdb_query("CREATE TABLE tos (
@@ -831,9 +832,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>type of service (TOS) db \n ";
+  if ($result) echo "<LI>"._("Type of Service")."\n ";
   if (freemed_import_stock_data("tos"))
-    echo "<I>(type of service data)</I> \n ";
+    echo "<I>("._("Stock Type of Service Data").")</I> \n ";
 
   // generate internal service types db (19991231)
   $result=fdb_query("CREATE TABLE intservtype (
@@ -841,9 +842,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>internal service types db \n ";
+  if ($result) echo "<LI>"._("Internal Service Types")."\n ";
   if (freemed_import_stock_data("intservtype"))
-    echo "<I>(internal service types data)</I> \n";
+    echo "<I>("._("Stock Internal Service Types Data").")</I> \n";
 
   // generate patient record template (custom) db
   $result=fdb_query("CREATE TABLE patrectemplate (
@@ -858,9 +859,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>patient record template db \n";
+  if ($result) echo "<LI>"._("Patient Record Templates")."\n";
   if (freemed_import_stock_data("patrectemplate"))
-    echo "<I>(patient record template data)</I> \n";
+    echo "<I>("._("Stock Patient Record Template Data").")</I> \n";
 
   // generate questionnaire template (custom) db
   $result=fdb_query("CREATE TABLE qtemplate (
@@ -875,9 +876,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>questionnaire template db \n";
+  if ($result) echo "<LI>"._("Questionnaire Templates")."\n";
   if (freemed_import_stock_data("qtemplate"))
-    echo "<I>(questionnaire template data)</I> \n";
+    echo "<I>("._("Stock Questionnaire Template Data").")</I> \n";
  
   // generate diagnosis family db (19991029)
   $result=fdb_query("CREATE TABLE diagfamily (
@@ -886,9 +887,9 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>diagnosis family db \n";
+  if ($result) echo "<LI>"._("Diagnosis Families")."\n";
   if (freemed_import_stock_data("diagfamily"))
-    echo "<I>(diagnosis family data)</I> \n";
+    echo "<I>("._("Stock Diagnosis Family Data").")</I> \n";
 
   // generate patient statuses
   $result=fdb_query("CREATE TABLE ptstatus (
@@ -897,21 +898,22 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>patient statuses db \n";
+  if ($result) echo "<LI>"._("Patient Statuses")."\n";
   if (freemed_import_stock_data("ptstatus"))
-    echo "<I>(patient statuses data)</I> \n";
+    echo "<I>("._("Stock Patient Statuses Data").")</I> \n";
 
   // generate patient record data (custom) db
   $result=fdb_query("CREATE TABLE patrecdata (
-    prpatient      INT UNSIGNED,
+    prpatient      INT UNSIGNED NOT NULL,
     prtemplate     INT UNSIGNED,
     prdtadd        DATE,
     prdtmod        DATE,
     prdata         TEXT,
     id INT NOT NULL AUTO_INCREMENT,
+    KEY (prpatient),
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>patient record data db \n";
+  if ($result) echo "<LI>"._("Patient Record Data")."\n";
 
   // generate action log table db
   $result=fdb_query("CREATE TABLE log (
@@ -923,7 +925,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     )");
-  if ($result) echo "<LI>action log db \n";
+  if ($result) echo "<LI>"._("Action Log")."\n";
 
   // generate configuration table info (updated 19991007)
   $result=fdb_query("CREATE TABLE config (
@@ -932,7 +934,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
-  if ($result) echo "<LI>config db \n";
+  if ($result) echo "<LI>"._("Configuration")."\n";
 
   if (fdb_query("INSERT INTO config VALUES (
     'icd', '9', NULL )"))   if ($debug)   echo "(ICD) \n";
@@ -964,7 +966,7 @@ if ($action=="cfgform") {
     id            INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     );");
-   if ($result) echo "<LI>incoming faxes db \n";
+   if ($result) echo "<LI>"._("Incoming Faxes")."\n";
 
   // generate fax sender lookup table (19990924)
   $result=fdb_query("CREATE TABLE infaxlut (
@@ -973,7 +975,7 @@ if ($action=="cfgform") {
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)
     );");
-  if ($result) echo "<LI>fax sender lookup db \n";
+  if ($result) echo "<LI>"._("Fax Sender Lookup")."\n";
 
    // generate printers table (19991008)
    $result = fdb_query ("CREATE TABLE printer (
@@ -984,7 +986,7 @@ if ($action=="cfgform") {
      id         INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-   if ($result) echo "<LI>printers db \n";
+   if ($result) echo "<LI>"._("Printers")."\n";
 
    // generate fixed form table (19991020)
   $result = fdb_query ("CREATE TABLE fixedform (
@@ -1005,13 +1007,13 @@ if ($action=="cfgform") {
      id            INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>fixed forms db \n";
+  if ($result) echo "<LI>"._("Fixed Forms")."\n";
   if (freemed_import_stock_data("fixedform"))
-    echo "<I>(fixed forms data)</I> \n";
+    echo "<I>("._("Stock Fixed Forms Data").")</I> \n";
 
   // episode of care
   $result = fdb_query ("CREATE TABLE eoc (
-     eocpatient                INT UNSIGNED,
+     eocpatient                INT UNSIGNED NOT NULL,
      eocdescrip                VARCHAR(100),
      eocstartdate              DATE,
      eocdtlastsimilar          DATE,
@@ -1057,9 +1059,10 @@ if ($action=="cfgform") {
      eocrelpregconfine         DATE,
      eocrelothercomment        VARCHAR(100),
      id                        INT NOT NULL AUTO_INCREMENT,
+     KEY (eocpatient),
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>episode of care db \n";
+  if ($result) echo "<LI>"._("Episode of Care")."\n";
 
   // old reports
   $result = fdb_query ("CREATE TABLE oldreports (
@@ -1087,25 +1090,26 @@ if ($action=="cfgform") {
      id                        INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>old reports db \n";
+  if ($result) echo "<LI>"._("Old Reports")."\n";
 
   // patient image database
   $result = fdb_query ("CREATE TABLE patimg (
-     pipatient                 INT UNSIGNED,
+     pipatient                 INT UNSIGNED NOT NULL,
      pilink                    INT UNSIGNED,
      pidate                    INT UNSIGNED,
      pitype                    ENUM (\"picture\", \"xray\") NOT NULL,
      pidata                    BLOB, 
      id                        INT NOT NULL AUTO_INCREMENT,
+     KEY (pipatient),
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>patient images db \n";
+  if ($result) echo "<LI>"._("Patient Images")."\n";
 
   // authorizations
   $result = fdb_query ("CREATE TABLE authorizations (
      authdtadd                 DATE,
      authdtmod                 DATE,
-     authpatient               INT UNSIGNED,
+     authpatient               INT UNSIGNED NOT NULL,
      authdtbegin               DATE,
      authdtend                 DATE,
      authnum                   VARCHAR(25),
@@ -1118,9 +1122,10 @@ if ($action=="cfgform") {
      authvisitsremain          INT UNSIGNED,
      authcomment               VARCHAR(100),
      id                        INT NOT NULL AUTO_INCREMENT,
+     KEY (authpatient),
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>authorizations db \n";
+  if ($result) echo "<LI>"._("Authorizations")."\n";
 
   // insurance modifiers table
   $result = fdb_query ("CREATE TABLE insmod (
@@ -1129,11 +1134,11 @@ if ($action=="cfgform") {
      id                        INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
-  if ($result) echo "<LI>insurance modifiers db \n";
+  if ($result) echo "<LI>"._("Insurance Modifiers")."\n";
   if (freemed_import_stock_data("insmod"))
-    echo "<I>(insurance modifiers data)</I> \n";
+    echo "<I>("._("Stock Insurance Modifiers").")</I> \n";
 
-  echo "</UL><B>done</B><$STDFONT_E><BR>\n";
+  echo "</UL><B>"._("Done").".</B><$STDFONT_E><BR>\n";
   
   // now generate "return code" so that we can get back to the
   // admin menu... or perhaps skip that... ??
@@ -1141,7 +1146,7 @@ if ($action=="cfgform") {
   echo "
     <BR><BR><CENTER>
     <A HREF=\"$page_name?$_auth\">
-     <$STDFONT_B>$Return_adm_menu<$STDFONT_E></A>
+     <$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
     </CENTER>
   ";
 
@@ -1149,7 +1154,7 @@ if ($action=="cfgform") {
 
   // actual menu code for admin menu goes here \/
 
-freemed_display_box_top("$package_name $Administration_menu", $_ref,
+freemed_display_box_top(PACKAGENAME." "._("Administration Menu"), $_ref,
 $page_name);
 
 echo "
@@ -1166,14 +1171,14 @@ echo "
   ><IMG SRC=\"img/kfloppy.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
   <A HREF=\"export.php3?$_auth\"
-  ><$STDFONT_B>Export Databases<$STDFONT_E></A>
+  ><$STDFONT_B>"._("Export Databases")."<$STDFONT_E></A>
  </TD></TR> 
  <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
   <A HREF=\"import.php3?$_auth\"
   ><IMG SRC=\"img/ark.gif\" BORDER=0 ALT=\"[*]\"></A>
  </TD><TD ALIGN=LEFT>
  <A HREF=\"import.php3?$_auth\"
- ><$STDFONT_B>Import Databases<$STDFONT_E></A>
+ ><$STDFONT_B>"._("Import Databases")."<$STDFONT_E></A>
  </TD></TR>
 ";  
 
@@ -1184,7 +1189,7 @@ if ($_userdata[0]==1) // if we are root...
    ><IMG SRC=\"img/Gear.gif\" BORDER=0 ALT=\"[*]\"></A>
   </TD><TD ALIGN=LEFT>
   <A HREF=\"$page_name?$_auth&action=reinit\"
-  ><$STDFONT_B>$Reinitialize_database<$STDFONT_E></A>
+  ><$STDFONT_B>"._("Reinitialize Database")."<$STDFONT_E></A>
   </TD></TR>
  ";
 
@@ -1194,7 +1199,7 @@ echo "
    ><IMG SRC=\"img/config.gif\" BORDER=0 ALT=\"[*]\"></A>
   </TD><TD ALIGN=LEFT>
   <A HREF=\"$page_name?$_auth&action=cfgform\"
-  ><$STDFONT_B>$Update_config<$STDFONT_E></A>
+  ><$STDFONT_B>"._("Update Config")."<$STDFONT_E></A>
   </TD></TR>
 ";
 
@@ -1205,7 +1210,7 @@ if ($_userdata[0]==1)  // if we are root...
      ><IMG SRC=\"img/monalisa.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
     <A HREF=\"user.php3?$_auth&action=view\"
-     ><$STDFONT_B>$User_maintenance<$STDFONT_E></A>
+     ><$STDFONT_B>"._("User Maintenance")."<$STDFONT_E></A>
     </TD></TR>
   ";
 
@@ -1215,7 +1220,7 @@ if ($_userdata[0]==1)  // if we are root...
      ><IMG SRC=\"img/HandPointingLeft.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
      <A HREF=\"main.php3?$_auth\"
-     ><B><$STDFONT_B>$Return_main_menu<$STDFONT_E></B></A>
+     ><B><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></B></A>
     </TD></TR>
     </TABLE><$STDFONT_E>
   "; // end standard font
@@ -1229,7 +1234,7 @@ echo "
   <P>
   <$STDFONT_B>
   <CENTER>
-  <A HREF=\"main.php3?$_auth\">$Return_main_menu</A>
+  <A HREF=\"main.php3?$_auth\">"._("Return to the Main Menu")."</A>
   </CENTER>
   <$STDFONT_E>
 "; // return to main menu tab...
