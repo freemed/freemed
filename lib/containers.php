@@ -166,6 +166,15 @@ class Patient {
 			$this->local_record = freemed_get_link_rec (
 				$patient_number, "patient"
 			);
+
+			// Check for null ID, then trigger error
+			if (!isset($this->local_record[id]))
+				trigger_error ("Patient container: ".
+					"invalid patient ID specified!",
+					E_USER_ERROR
+				);
+
+			
 			// pull records
 			$this->ptlname      = $this->local_record["ptlname"  ];
 			$this->ptfname      = $this->local_record["ptfname"  ];
