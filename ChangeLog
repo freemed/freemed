@@ -1,6 +1,15 @@
 freemed project changelog
 ($Id$)
 
+* Tue Oct 23 2001 rufustfirefly
+  - billing_functions.php, lib/template/default/menubar.php: now properly
+    uses SESSION["current_patient"] for billing functions (thanks to
+    Kris Nackaerts <K.Nackaerts@exeter.ac.uk>)
+  - user.php: corrected actionbar "RETURN TO MENU" link (thanks to
+    Kris Nackaerts)
+  - book_appointment.php: if using SESSION[current_patient], be sure to
+    set $type explicitly
+
 * Thu Oct 18 2001 rufustfirefly
   - whole lot of files: removed $LoginCookie
   - lib/render_forms.php: prettified and recommented API
