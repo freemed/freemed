@@ -134,7 +134,7 @@ echo "
     <TR> 
     <TD ALIGN=RIGHT BGCOLOR=#dddddd>
      <A HREF=\"calendar.php?$_auth\"
-     ><IMG SRC=\"img/reports.gif\" BORDER=0 ALT=\"\"></A>
+     ><IMG SRC=\"img/clock.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"calendar.php?$_auth\"
