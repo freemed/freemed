@@ -1,0 +1,48 @@
+%%
+%%	$Id$
+%%	$Author$
+%%
+%%	FreeMED TeX Template
+%%	Patient Correspondence
+%%
+
+\documentclass{article}
+
+% No normal header, footer, etc
+\usepackage[top=0.5in,left=0.7in,right=0.7in,bottom=1.2in,nohead,nofoot]{geometry}
+% Relative size package
+\usepackage{relsize}
+
+\begin{document}
+
+% Deal with the document "header". For now, we're just looking at a one-time
+% only display. FIXME: Migrate this to a header.
+\begin{center}
+	{\relsize{1}\textbf{Associates in Surgery and Gastroenterology}} \\
+%	{\relsize{-1}\textsl{{{physician}}}} \\
+	\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
+	\textsl{Phone: {{physicianphone}} Fax: {{physicianfax}}}
+\end{center}
+
+\flushleft
+
+\  \\
+
+\today \\
+
+\  \\
+
+{{patient}} \\
+{{patientaddress}} \\
+{{patientcitystatezip}} \\
+
+\  \\
+
+{{body}}
+
+\  \\
+
+{{physician}} \\
+{{practice}}
+
+\end{document}

@@ -328,10 +328,31 @@ class PatientCorrespondence extends EMRModule {
 		$pt = freemed::get_link_rec($r[$this->patient_field], 'patient');
 		$phyobj = CreateObject('_FreeMED.Physician', $r['letterfrom']);
 		$phf = freemed::get_link_rec($r['letterfrom'], 'physician');
+
+		// Figure out prefix
+		if ($pt['ptsex'] != 'f') {
+			$prefix = 'Mr. ';
+		} else {
+			switch ($pt['ptmarital']) {
+				case 'married':
+				case 'widowed':
+				case 'separated':
+				case 'divorced':
+					$prefix = 'Mrs. ';
+					break;
+
+				case 'single':
+				default:
+					$prefix = 'Ms. ';
+					break;
+			}
+		} // end creating name prefix for patient
+		
 		return array (
 			'date' => $TeX->_SanitizeText( fm_date_print($r['letterdt'], true) ),
-			'patient' => $TeX->_SanitizeText($pt['ptfname'].
-				' '. $pt['ptmname'] . ' ' . $pt['ptlname']),
+			'patient' => $TeX->_SanitizeText(
+				$prefix . $pt['ptfname'] .  ' ' . 
+				$pt['ptmname'] . ' ' . $pt['ptlname']),
 			'patientaddress' => $TeX->_SanitizeText($pt['ptaddr1']),
 			'patientcitystatezip' => $TeX->_SanitizeText($pt['ptcity'].', '.$pt['ptstate'].' '.$pt['ptzip']),
 			'dateofbirth' => $TeX->_SanitizeText(fm_date_print($pt['ptdob'])),
