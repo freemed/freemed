@@ -161,8 +161,8 @@ class User {
 		$result = $sql->query($sql->create_table_query(
 			'user',
 			array(
-				'username' => SQL_VARCHAR(16),
-				'userpassword' => SQL_VARCHAR(32),
+				'username' => SQL_NOT_NULL(SQL_CHAR(16)),
+				'userpassword' => SQL_NOT_NULL(SQL_CHAR(32)),
 				'userdescrip' => SQL_VARCHAR(50),
 				'userlevel' => SQL_INT_UNSIGNED(0),
 				'usertype' => SQL_ENUM (array(
