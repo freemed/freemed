@@ -127,8 +127,9 @@ class GroupCalendar extends CalendarModule {
 		if ($group < 1) {
 			// Find first group that is defined for this fac
 			$query = "SELECT * FROM phygroup ".
+				( $my_facility > 0 ?
 				"WHERE phygroupfac='".
-				addslashes($my_facility)."'";
+				addslashes($my_facility)."'" : "" );
 			$result = $sql->query($query);
 			if ($sql->results($result)) {
 				$r = $sql->fetch_array($result);
