@@ -1,29 +1,6 @@
 <?php
  // $Id$
  // $Author$
- // $Log$
- // Revision 1.6  2002/12/11 20:38:13  rufustfirefly
- // Bugfix and working sync for phpwebtools 0.4.0 module_list/cache support.
- //
- // Revision 1.5  2002/11/06 13:55:45  rufustfirefly
- // Pass the user and real physician info so it can be used by methods.
- //
- // Revision 1.4  2002/11/03 20:41:14  rufustfirefly
- // Changes for phpwebtools 0.3 XML-RPC support.
- //
- // Revision 1.3  2002/08/17 14:59:40  rufustfirefly
- // Updated XML-RPC services to scan lib/xmlrpc/ for additional functions.
- // Removed old kruft.
- //
- // Revision 1.2  2002/08/06 14:11:11  rufustfirefly
- // XMLRPC services now working with basic authentication and methods
- //
- // Revision 1.1  2001/12/14 16:35:38  rufustfirefly
- // renamed from soap_* to xmlrpc_* (since it's really XMLRPC, not SOAP)
- //
- // Revision 1.1  2001/11/20 15:02:45  rufustfirefly
- // added SOAP/XMLRPC services provider
- //
 
 //----- Load neccesary headers
 define ('SESSION_DISABLE', true);
