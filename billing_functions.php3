@@ -1,9 +1,9 @@
 <?php
-  # file: billing_functions.php3
-  # note: all billing functions accessable from this menu, which is called
-  #       by the main menu
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL, v2
+ // file: billing_functions.php3
+ // note: all billing functions accessable from this menu, which is called
+ //       by the main menu
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
   $page_name = "billing_functions.php3";
   include ("global.var.inc");
@@ -15,16 +15,13 @@
   $this_user = new User ($LoginCookie);
 
   freemed_display_html_top ();
-  freemed_display_banner ();
-  freemed_display_box_top ("Billing Functions");
+  freemed_display_box_top (_("Billing Functions"));
 
-  $patient_information = "<$STDFONT_B><B>NO PATIENT SPECIFIED</B><$STDFONT_E>";
+  $patient_information = "<$STDFONT_B><B>"._("NO PATIENT SPECIFIED")."</B><$STDFONT_E>";
   if ($patient>0) {
     $this_patient = new Patient ($patient);
-    $patient_information = 
-      "<$STDFONT_B><B>$Patient : </B><$STDFONT_E>
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
-       ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>\n";
+    $patient_information =
+      freemed_patient_box ($this_patient);
   } // if there is a patient
 
    // here is the actual guts of the menu
@@ -43,23 +40,24 @@
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
-    <TD ALIGN=RIGHT><$STDFONT_B><B>Patient Payment : </B><$STDFONT_E></TD>
+    <TD ALIGN=RIGHT>
+      <$STDFONT_B><B>"._("Patient Payment")." : </B><$STDFONT_E></TD>
     <TD ALIGN=LEFT>
      <A HREF=\"payment_record.php3?$_auth&action=addform&patient=$patient\"
-     ><$STDFONT_B>Entry<$STDFONT_E></A>
+     ><$STDFONT_B>"._("Entry")."<$STDFONT_E></A>
     </TD>
     <TD ALIGN=LEFT>
      <A HREF=\"payment_record.php3?$_auth&action=view&patient=$patient\"
-     ><$STDFONT_B>View<$STDFONT_E></A>
+     ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
     </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B><B>Generate Insurance Billing : </B><$STDFONT_E>
+      <$STDFONT_B><B>"._("Generate Insurance Billing")." : </B><$STDFONT_E>
      </TD><TD ALIGN=LEFT COLSPAN=2>
       <A HREF=\"generate_fixed_forms.php3?$_auth\"
-      ><$STDFONT_B>Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("Menu")."<$STDFONT_E></A>
      </TD>
     </TR>
 
@@ -71,7 +69,7 @@
   else echo "
       <P>
       <$HEADERFONT_B>
-        You don't have access to this menu.
+        "._("You don't have access for this menu.")."
       <$HEADERFONT_E>
       <P>
     ";
