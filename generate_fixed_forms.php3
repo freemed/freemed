@@ -31,8 +31,13 @@
                            FROM $database.payrec
                            WHERE (
                              payreccat = '5' AND
-                             payreclink = '0'
+                             payreclink < '3'
                            ) ORDER BY payrecpatient");
+   // 0 = 1st insurance
+   // 1 = 2nd insurance
+   // 2 = 3rd insurance
+   // 3 = workers' comp
+   // 4 = patient/guarantor
 
    if (!$b_result or (fdb_num_rows($b_result)<1)) {
      echo "
@@ -63,13 +68,16 @@
      ";
      flush ();
 
-     $debug=true;
+     // grab current insurance company
+     $this_insco = $this_patient->insco[($b_r[payreclink] + 1)];
+
+     //$debug=true;
 
      // decide which ones we are generating
      $result = fdb_query ("SELECT * FROM $database.payrec
                            WHERE ( 
                              payreccat = '5' AND
-                             payreclink = '0' AND
+                             payreclink < '3' AND
                              payrecpatient = '$current_patient'
                            ) ORDER BY payrecpatient,payrecdt");
 
@@ -182,6 +190,14 @@
      $related_other[yes] =
        ( ( $other == "y" ) ? $this_form[ffcheckchar] : " " );
 
+     // insco information
+     $insco[prefname]   = $this_insco->insconame;
+     $insco[line1]      = $this_insco->local_record[inscoaddr1];
+     $insco[line2]      = $this_insco->local_record[inscoaddr2];
+     $insco[city]       = $this_insco->local_record[city];
+     $insco[state]      = $this_insco->local_record[state];
+     $insco[zip]        = $this_insco->local_record[zip];
+
      // current date hashes
      $curdate[mmddyy]   = date ("mdy");
      $curdate[mmddyyyy] = date ("mdY");
@@ -263,6 +279,12 @@
        // pull into current array
        if ($debug) echo "\nnumber of charges = $number_of_charges <BR>\n";
        flush();
+       $cur_cpt = freemed_get_link_rec ($p[proccpt], "cpt");
+       $tos_stack = fm_split_into_array ($cur_cpt[cpttos]);
+       $this_tos = ( ($tos_stack[$cur_insco] < 1) ?
+                      $cur_cpt[cptdeftos] :
+                      $tos_stack[$cur_insco] );
+
        $itemdate    [$number_of_charges] = $p[procdt];
        $itemdate_m  [$number_of_charges] = substr($p[procdt], 5, 2);
        $itemdate_d  [$number_of_charges] = substr($p[procdt], 8, 2);
@@ -272,8 +294,9 @@
        $itemunits   [$number_of_charges] = $p[procunits];
        $itempos     [$number_of_charges] = $p[procpos];
        $itemvoucher [$number_of_charges] = $p[procvoucher];
-       $itemcpt     [$number_of_charges] =
-          freemed_get_link_field ($p[proccpt], "cpt", "cptcode");
+       $itemcpt     [$number_of_charges] = $cur_cpt[cptcode];
+       $itemtos     [$number_of_charges] =
+          freemed_get_link_field ($this_tos, "tos", "tosname");
        $itemcptmod  [$number_of_charges] =
           freemed_get_link_field ($p[proccptmod], "cptmod", "cptmod");
        $itemdiagref [$number_of_charges] =

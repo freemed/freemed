@@ -110,8 +110,9 @@ class diagnosisSet {
         $found_array[$num_found] = $i; // add reference
       } // end if found in stack
     } // end looping through the stack
-    sort ($found_array);
+    if (count ($found_array) > 1) sort ($found_array);
     if (count ($found_array) < 1) return "";
+    if (count ($found_array) == 1) return $found_array[0];
     return join ($found_array, ","); // join with commas and return    
   } // end function diagnosisSet->xrefList
 
@@ -166,7 +167,9 @@ function render_FixedFormEntry ($formentry) {
   if ($formentry->len < 1) return "";
   if ($debug) echo "\norig = $formentry->data <BR>\n";
   flush();
-  $this_evalled = fm_eval ($formentry->data);
+  $this_evalled = ( (strpos ($formentry->data, "\$") >=0) ?
+                     fm_eval ($formentry->data)       :
+                     $formentry->data                    );
   if ($debug) echo "\nnew = $this_evalled <BR>\n";
   flush();
   if (strlen ($this_evalled) > $formentry->len) {
