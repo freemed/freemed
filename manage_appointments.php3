@@ -30,6 +30,25 @@
  } // end checking for patient
 
  switch ($action) {
+  case "del":
+   freemed_display_box_top ("$Deleting Appointment");
+   echo "\n<$STDFONT_B>$Deleting ... <$STDFONT_E>\n";
+   $query = "DELETE FROM $database.scheduler WHERE id='$id'";
+   $result = fdb_query ($query);
+   if ($result) { echo "$Done."; }
+    else        { echo "$ERROR"; }
+   echo "
+    <P>
+    <CENTER>
+     <A HREF=\"$page_name?$_auth&action=view&patient=$patient\"
+     ><$STDFONT_B>Manage Appointments<$STDFONT_E></A> <B>|</B>
+     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+    </CENTER>
+    <P>
+   ";
+   freemed_display_box_bottom ();
+   break; // end delete appointment section
   default: // default action is to view appointments
    // grab patient information
    $ptname = freemed_get_link_rec ($patient, "patient");
@@ -98,6 +117,7 @@
         <TD><$STDFONT_B COLOR=#cccccc>Location<$STDFONT_E></TD>
         <TD><$STDFONT_B COLOR=#cccccc>Note<$STDFONT_E></TD>
         <TD><$STDFONT_B COLOR=#cccccc>CPT Code<$STDFONT_E></TD> 
+        <TD><$STDFONT_B COLOR=#cccccc>$Action<$STDFONT_E></TD> 
        </TR>
       ";
 
@@ -147,6 +167,8 @@
          <TD>$location</TD>
          <TD>$calprenote</TD>
          <TD>$calcptcode</TD>
+         <TD><A HREF=\"$page_name?$_auth&id=$r[id]&action=del&patient=$patient\"
+             >$lang_DEL</A></TD>
         </TR>
         ";
      } // end loop for all occurances (while)
