@@ -446,12 +446,14 @@ class ClaimsManager extends BillingModule {
 
 		// Set up the table layout
 		$table->setHeaderContents(0, 0, __("Payer"));
-		$table->setHeaderContents(0, 1, __("Patient"));
-		$table->setHeaderContents(0, 2, __("Claim"));
-		$table->setHeaderContents(0, 3, __("Status"));
-		$table->setHeaderContents(0, 4, __("Service Date"));
-		$table->setHeaderContents(0, 5, __("Paid"));
-		$table->setHeaderContents(0, 6, __("Balance"));
+		$table->setHeaderContents(0, 1, __("Ins ID"));
+		$table->setHeaderContents(0, 2, __("Prov ID"));
+		$table->setHeaderContents(0, 3, __("Patient"));
+		$table->setHeaderContents(0, 4, __("Claim"));
+		$table->setHeaderContents(0, 5, __("Status"));
+		$table->setHeaderContents(0, 6, __("Service Date"));
+		$table->setHeaderContents(0, 7, __("Paid"));
+		$table->setHeaderContents(0, 8, __("Balance"));
 
 		// Get aging summary
 		//print "<hr/><b>debug criteria : <br/>"; print_r($criteria); print "<hr/>\n";
@@ -470,6 +472,10 @@ class ClaimsManager extends BillingModule {
 				$hash['payer_name'].
 				'</acronym></a>'); 
 			$table->setCellContents($count, 1, 
+				'<small>'.$hash['insured_id'].'</small>');
+			$table->setCellContents($count, 2, 
+				'<small>'.$hash['id_map']['id'].'</small>');
+			$table->setCellContents($count, 3, 
 				'<a href="'.$this->_search_link(array(
 					'patient' => $hash['patient_id'],
 					'payer' => '' // disable payer
@@ -484,13 +490,13 @@ class ClaimsManager extends BillingModule {
 				'patient='.$hash['patient_id'].
 				'">['.__("Ledger").']</a>'); 
 			// Show all claims
-			$table->setCellContents($count, 2, '<a href="'.
+			$table->setCellContents($count, 4, '<a href="'.
 				$this->_detail_link(array(
 					'claim' => $hash['claim']
 				)).'"><acronym TITLE="'.
 				__("View claim details").'">'.
 				$hash['claim'].'</acronym></a>');
-			$table->setCellContents($count, 3, 
+			$table->setCellContents($count, 5, 
 				empty($hash['status']) ? '&nbsp;' :
 				'<a href="'.
 				$this->_search_link(array(
@@ -498,21 +504,21 @@ class ClaimsManager extends BillingModule {
 				)).'"><acronym TITLE="'.
 				__("Filter by this status").'">'.
 				$hash['status'].'</acronym></a>');
-			$table->setCellContents($count, 4, 
+			$table->setCellContents($count, 6, 
 				'<a href="'.$this->_search_link(array(
 					'date' => $hash['date_of']
 				)).'"><acronym TITLE="'.
 				__("Filter by this date").'">'.
 				$hash['date_of'].'</acronym></a>');
-			$table->setCellContents($count, 5, 
+			$table->setCellContents($count, 7, 
 				bcadd($hash['paid'], 0, 2));
-			$table->setCellContents($count, 6, 
+			$table->setCellContents($count, 8, 
 				bcadd($hash['balance'], 0, 2));
 			$total_balance += $hash['balance'];
 		}
 
 		// Set alignment on money columns
-		for($i=5;$i<=6;$i++) {
+		for($i=7;$i<=8;$i++) {
 			$table->setColAttributes($i, array('align'=>'right'), true);
 		}
 

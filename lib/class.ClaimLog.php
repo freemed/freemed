@@ -109,10 +109,13 @@ class ClaimLog {
 			"pt.id AS patient_id, ".
 			"p.procdt AS date_of, ".
 			"p.procstatus AS status, ".
+			"p.procphysician AS _provider, ".
 			"p.id AS claim, ".
+			"c.covpatinsno AS insured_id, ".
 			"c.covinsco AS payer, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
 				"i.inscostate, ')') AS payer_name, ".
+			"i.inscoidmap AS id_map, ".
 			"p.procamtpaid AS paid, ".
 			"p.procbalcurrent AS balance ".
 			"FROM ".
@@ -130,6 +133,16 @@ class ClaimLog {
 		$result = $GLOBALS['sql']->query ( $query );
 		$return = array ( );
 		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			// Make sure to deserialize the id map, since
+			// we can't actually extract values from it using
+			// SQL regex's, or if we could, it would be a
+			// huge waste of processor time...
+			if (is_array(@unserialize($r['id_map']))) {
+				$id_map = unserialize($r['id_map']);
+				$r['id_map'] = $id_map[$r['_provider']];
+			} else {
+				$id_map = array ();
+			}
 			$return[] = $r;
 			 // patient, claims, paid, balance, ratio
 		} 
