@@ -9,7 +9,7 @@
   include ("freemed-functions.inc");
 
   freemed_open_db ($LoginCookie);
-  freemed_display_html_top (); # $_pg_desc);
+  freemed_display_html_top ();
   freemed_display_banner ();
 
  //
@@ -31,7 +31,7 @@ if ((strlen($page_name)<1) AND (strlen($section)<1)) {
 }
 
  // if the helpfile doesn't exist, but is enabled, ERROR! out...
-if (!file_exists($_help_name) AND ($_hf==1)) {
+if (!file_exists($_help_name)) {
   freemed_display_box_top ("$package_name Help System Error");
   echo "
     <B>The requested help file was not found on this<BR>
@@ -41,9 +41,10 @@ if (!file_exists($_help_name) AND ($_hf==1)) {
   ";
   freemed_display_box_bottom ();
   echo "
-    <BR><BR>
+    <P>
     <CENTER>
-    <A HREF=\"help.php3?$_auth\">Go to the Help Page</A>
+    <A HREF=\"help.php3?$_auth\"
+    ><$STDFONT_B>Go to the Help Page<$STDFONT_E></A>
     </CENTER>
   "; // link back to the main help page
   DIE("");  // and we bite the big one
@@ -55,57 +56,14 @@ echo "
   <$STDFONT_B>
 "; // standard font -- begin
 
-if ($debug==1) {
+if ($debug) {
   echo "
     page_name = $page_name<BR>
     section = $section<BR>
   ";
 } // debug stuff
 
-
-if ($_hf!=1) { // begin if not helpfile loop
-switch ($page_name) {
-
-  case "admin.php3":
-    switch ($section) {
-      default:
-      break;
-    } // end admin "section"
-    break;
-
-  case "main.php3":
-    switch ($section) {
-      default:
-        echo "
-          <CENTER><U>The Main Menu</U></CENTER>
-          <P>
-          The main menu is the central point from<BR>
-          where all parts of the $packagename package<BR>
-          can be reached.<BR>
-          <P>
-          The \"<B>QuickJump</B>\" box at the bottom of<BR>
-          the main menu allows you to quickly jump to<BR>
-          any module or function if you know its slash<BR>
-          equivalent. (i.e. <B>/npat</B> = New Patient)<BR>
-        ";
-      break;
-    } // end main menu section
-    break;
-
-  default:
-    // what if called improperly? show info
-    echo "
-      <TT>
-      Product Name : $packagename<BR>
-      Version      : $version<BR>
-      <BR><BR>
-    ";
-    break;
-
-} // help case loop for which module help is on
-} else { // help file if loop
-  include ($_help_name);
-} // end helpfile if loop
+include ($_help_name); // include the actual help text
 
 freemed_display_box_bottom (); // end of box
 

@@ -68,7 +68,6 @@
   $db_engine="mysql";
 
   $debug=false;  // true=debug info on, false=debug info off
-  $_hf=true;     // true=help files on, false=help files off
   $_mail_handler="mailto:";  // where the mail goes...
     // the _mail_handler variable is so that we can farm
     // this mail to some mail hook in a program.
