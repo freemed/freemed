@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.39  2001/11/21 15:19:22  rufustfirefly
+ // freemed_verify_auth() - showstopper fixed for non-root login
+ //
  // Revision 1.38  2001/11/19 21:28:43  rufustfirefly
  // adaptations to help system
  //
@@ -1186,7 +1189,7 @@ function freemed_verify_auth ( ) {
 
 		// Find this user
   		$result = $sql->query ("SELECT * FROM user ".
-			"WHERE id = '".addslashes($_username)."'");
+			"WHERE username = '".addslashes($_username)."'");
 
 		// If the user isn't found, false
 		if (!$sql->results($result)) {
