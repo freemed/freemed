@@ -32,9 +32,6 @@ class UnfiledFaxes extends MaintenanceModule {
 		));
 		$this->_SetMetaInformation('global_config', array(
 			__("Recipient(s)") =>
-			//'html_form::select_widget("uffax_user", '.
-			//	'module_function ( "UnfiledFaxes", '.
-			//	'"user_select" ) )'
 			'freemed::multiple_choice ( '.
 				'"SELECT CONCAT(username, \' (\', userdescrip, \')\') '.
 				'AS descrip, id FROM user ORDER BY descrip", "descrip", '.
@@ -171,7 +168,8 @@ class UnfiledFaxes extends MaintenanceModule {
 					),
 				"#username# (#userdescrip#)",
 				"notify"
-			)
+			),
+			__("Fax Confirmation #") => html_form::text_widget("faxback")
 		))."
 		</div>
 		<div align=\"center\">
@@ -192,6 +190,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
+		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently delete this fax?"))."')) { this.form.submit(); } else { return false; }\" ".
 		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
 		<br/><br/><br/>
@@ -230,6 +229,13 @@ class UnfiledFaxes extends MaintenanceModule {
 		$id = $_REQUEST['id'];
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);
+
+		// Catch multiple people using the same fax
+		if (!file_exists('data/fax/unfiled/'.$filename)) {
+			trigger_error(__("Fax file does not exist!"));
+		}
+
+		if (!empty($_REQUEST['faxback'])) { $this->faxback(); }
 
 		if ($_REQUEST['notify']+0 > 0) {
 			$msg = CreateObject('_FreeMED.Messages');
@@ -288,6 +294,13 @@ class UnfiledFaxes extends MaintenanceModule {
 		$id = $_REQUEST['id'];
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);
+
+		// Catch multiple people using the same fax
+		if (!file_exists('data/fax/unfiled/'.$filename)) {
+			trigger_error(__("Fax file does not exist!"));
+		}
+
+		if (!empty($_REQUEST['faxback'])) { $this->faxback(); }
 
 		if ($_REQUEST['notify']+0 > 0) {
 			$msg = CreateObject('_FreeMED.Messages');
@@ -511,6 +524,34 @@ class UnfiledFaxes extends MaintenanceModule {
 		print $djvu->GetPageThumbnail($_REQUEST['page']);
 		die();
 	} // end method get_pageview
+
+	function faxback ( ) {
+		global $display_buffer;
+	
+		$id = $_REQUEST['id'];
+		$rec = freemed::get_link_rec($id, $this->table_name);
+		$filename = freemed::secure_filename($rec['ufffilename']);
+
+		// Analyze File
+		$djvu = CreateObject('_FreeMED.Djvu', 
+			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			$filename);
+		$pages = $djvu->NumberOfPages();
+
+		// Fax the first page back
+		$tempfile = $djvu->GetPage(1, false, true);
+		$fax = CreateObject('_FreeMED.Fax',
+			$tempfile,
+			array (
+				'sender' => INSTALLATION." (".PACKAGENAME." v".DISPLAY_VERSION.")",
+				'subject' => '['.$pages.' '.__("page(s) received").']'
+			)
+		);
+		$output = $fax->Send($_REQUEST['faxback']);
+		unlink($tempfile);
+
+		$display_buffer .= __("Confirmation fax sent.");
+	} // end method faxback
 
 	function notify ( ) {
 		// Check to see if we're the person who is supposed to be
