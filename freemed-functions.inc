@@ -6,7 +6,7 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   #       max k <amk@span.ch>
   # lic : GPL, v2
-  # ver : 2000-01-17
+  # ver : 2000-01-20
 
 $__freemed_functions__ = true;
 
@@ -2113,10 +2113,12 @@ function fm_eval ($orig_string) {
   reset ($GLOBALS);
   //for ($i=0;$i<100;$i++) next ($GLOBALS); // skip the drek
   while (list($k,$v) = each ($GLOBALS))
-   if (!isset($$k)) global $$k;                // $$k = $GLOBALS[$k];
+   if (!isset($$k)) $$k = $GLOBALS[$k];        // $$k = $GLOBALS[$k];
   $loc_string = $orig_string;                  // transfer to internal var
   $sec_string = fm_secure ($loc_string);       // secure the string
   eval ("\$new_string = \"$sec_string\";");    // evaluate
+  while (list($k,$v) = each ($GLOBALS))
+   if ($k != "GLOBALS") unset ($$k);           // destroy the variables
   return $new_string;                          // return
 } // end function fm_eval
 
