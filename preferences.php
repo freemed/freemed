@@ -2,7 +2,7 @@
  // $Id$
  // $Author$
 
-$page_name = basename($GLOBALS["PHP_SELF"]);
+$page_name = basename($_SERVER["PHP_SELF"]);
 include_once ("lib/freemed.php");
 
 //----- Login/authenticate
@@ -61,11 +61,74 @@ switch ($action) {
 	template_display();
 	break;
 
+	case "templateform":
+	// Include proper template file
+	if (file_exists("./lib/template/".$template."/id.php")) {
+		include_once ("./lib/template/".$template."/id.php");
+	} else {
+		include_once ("./lib/template/default/id.php");
+	}
+	
+	// Form header
+	$display_buffer .= "
+		<form action=\"preferences.php\" method=\"post\">
+		<input type=\"hidden\" name=\"action\" value=\"template\"/>
+	";
+	// Loop through template options
+	foreach ($TEMPLATE_OPTIONS AS $k => $v) {
+		// Handle selects
+		if (is_array($v['options'])) {
+			$form_parts[$v['name']] = html_form::select_widget(
+				$v['var'],
+				$v['options']
+			);
+		}
+	}
+	// Display form_parts
+	$display_buffer .= html_form::form_table($form_parts)."\n";
+	$display_buffer .= "
+		<div align=\"center\">
+		<input type=\"submit\" name=\"submit\" class=\"button\" value=\"".
+			_("Set Options")."\"/>
+		<input type=\"submit\" name=\"submit\" class=\"button\" value=\"".
+			_("Cancel")."\"/>
+		</div>
+		</form>
+	";
+	break; // end templateform
+
+
+	case "template":
+	// Include proper template file
+	if (file_exists("./lib/template/".$template."/id.php")) {
+		include_once ("./lib/template/".$template."/id.php");
+	} else {
+		include_once ("./lib/template/default/id.php");
+	}
+	
+	// Loop through variables, and set them properly
+	foreach ($TEMPLATE_OPTIONS AS $k => $v) {
+		if (isset(${$v['var']})) {
+			// Keep cookie for a year (find better way to do this)
+			SetCookie($v['var'], ${$v['var']}, time()+(60*60*24*365));
+		}
+	}
+
+	// And use header to move back to action=(nothing)
+	$refresh = "preferences.php";
+	break; // end template
+
+
 	default: // display menu
 	$display_buffer .= "
 	<div align=\"center\">
 	<a href=\"preferences.php?action=passwordform\"
 	>"._("Change Password")."</a>
+	</div>
+
+	<div align=\"center\">
+	<a href=\"preferences.php?action=templateform\"
+	>"._("Change Template Options")."</a>
 	</div>
 
 	<p/>
