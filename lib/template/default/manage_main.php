@@ -482,7 +482,7 @@ if (count($panel) > 0) {
 	$display_buffer .= "
 	<p/>
 	<div align=\"CENTER\">
-	<b>".__("Please configure panels through \"Configure\" in the sidebar.")."</b>
+	<b>".__("Please configure panels through the \"Configure\" option of the patients menu.")."</b>
 	</div>
 	<p/>
 	";
