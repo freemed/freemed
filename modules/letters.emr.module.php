@@ -176,7 +176,7 @@ class LettersModule extends EMRModule {
 				module_function(
 					'EpisodeOfCare',
 					'widget',
-					array('letterteoc', $patient)
+					array('lettereoc', $patient)
 				)
 			);
 		} else {
