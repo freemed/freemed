@@ -18,10 +18,10 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-	{\relsize{1}\textbf{{{practice}}}} \\
-%	{\relsize{-1}\textsl{{{physician}}}} \\
-	\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
-	\textsl{Phone: {{physicianphone}} Fax: {{physicianfax}}}
+	{\relsize{1}\textbf{**link:letterfrom:physician:phypracname**}} \\
+%	{\relsize{-1}\textsl{**method:Physician:fullName:letterfrom**}} \\
+	\textsl{**link:letterfrom:physician:phyaddr1a**, **link:letterfrom:physician:phycitya**, **link:letterfrom:physician:phystatea** **link:letterfrom:physician:phyzipa** } \\
+	\textsl{phone **link:letterfrom:physician:phyphonea:phone** fax **link:letterfrom:physician:phyfaxa:phone**}
 \end{center}
 
 \flushleft
@@ -32,17 +32,17 @@
 
 \  \\
 
-{{patient}} \\
-{{patientaddress}} \\
-{{patientcitystatezip}} \\
+**method:Patient:fullName:letterpatient**	\\
+**link:letterpatient:patient:ptaddr1**		\\
+**link:letterpatient:patient:ptcity**, **link:letterpatient:patient:ptstate** **link:letterpatient:patient:ptzip** \\
 
 \  \\
 
-{{body}}
+**field:lettertext**
 
 \  \\
 
-{{physician}} \\
-{{practice}}
+**method:Physician:fullName:letterfrom** \\
+**link:letterfrom:physician:phypracname**
 
 \end{document}
