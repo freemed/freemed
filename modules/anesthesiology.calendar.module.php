@@ -82,14 +82,15 @@ class anesthCalendar extends freemedCalendarModule {
 		<TD COLSPAN=\"2\"><B>"._("Anesthesiology Scheduler")."</B> for
 		<INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\">
-			".freemedCalendar::refresh_select(
+			".html_form::select_widget(
 				"anfacility",
 				freemed::query_to_array(
 					"SELECT CONCAT(psrname,' (',".
 					"psrcity,', ',psrstate,')') AS k,".
 					"id AS v FROM facility ".
 					"ORDER BY psrname,psrstate,psrcity"
-				)
+				),
+				array('refresh' => true)
 			)."
 		</TD></TR>
 		</TABLE>
