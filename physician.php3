@@ -929,7 +929,7 @@ if ($action=="addform") {
 
   echo "
     <P>
-    <$STDFONT_B>$Modifying . . . <$STDFONT_E> 
+    <CENTER><$STDFONT_B>$Modifying . . . <$STDFONT_E> 
   ";
 
   // reassemble phone #s
@@ -996,10 +996,10 @@ if ($action=="addform") {
 
   if ($result) {
     echo "
-      <B>$Done.</B>
+      <B>$Done.</B></CENTER>
     ";
   } else {
-    echo ("<B>$ERROR ($result)</B>\n"); 
+    echo ("<B>$ERROR ($result)</B></CENTER>\n"); 
   }
 
   echo "
@@ -1022,7 +1022,7 @@ if ($action=="addform") {
 
   echo "
     <BR><BR>
-    <I>$Physician $id deleted<I>.
+    <I>$Physician $id deleted</I>.
   ";
   if ($debug) {
     echo "
@@ -1190,13 +1190,13 @@ if ($action=="addform") {
     <TR><TD>
     <$STDFONT_B>$Primary_Address_Phone # : <$STDFONT_E>
     </TD><TD>
-    ".fm_date_display("phyphonea")."
+    ".fm_phone_assemble("phyphonea")."
      <!-- ($phyphonea1) $phyphonea2-$phyphonea3 -->
     </TD></TR>
     <TR><TD>
     <$STDFONT_B>$Primary_Address_Fax # : <$STDFONT_E>
     </TD><TD>
-    ($phyfaxa1) $phyfaxa2-$phyfaxa3
+    ".fm_phone_assemble("phyfaxa")."
     </TD></TR>
 
   ";
