@@ -167,7 +167,7 @@ class PatientTable extends MaintenanceModule {
 				'ADD COLUMN ptarchive INT UNSIGNED AFTER ptreligion');
 			// Stupid mysql needs everything to be set to 0
 			// by default.
-			$sql->query('UPDATE '.$this->table.' SET ptarchive=\'0\'');
+			$sql->query('UPDATE '.$this->table_name.' SET ptarchive=\'0\'');
 		} // end 0.6.2 upgrade
 	} // end function _update
 }
