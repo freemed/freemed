@@ -1148,4 +1148,25 @@ msgstr ""
 msgid "Contact Information"
 msgstr ""
 
+msgid "Authorization Number"
+msgstr ""
+
+msgid "Authorization Type"
+msgstr ""
+
+msgid "Provider Identifier"
+msgstr ""
+
+msgid "Authorizing Provider"
+msgstr ""
+
+msgid "Authorizing Insurance Company"
+msgstr ""
+
+msgid "Number of Visits"
+msgstr ""
+
+msgid "This patient has no authorizations."
+msgstr ""
+
 # END
