@@ -360,7 +360,7 @@ switch ($action) {
 	 //reset($t_vars);while ($i=next($t_vars)) 
 	 //                 $$i = fm_join_from_array($$i);
 
-	 $query = $sql->update_query (
+	 $query = $sql->insert_query (
            "patient",
            array (
              "ptdtadd" => date("Y-m-d"),
@@ -422,86 +422,6 @@ switch ($action) {
              "ptnextofkin",
              "iso" => $__ISO_SET__
             ) );
-
-
-/*	    
-         $query = "INSERT INTO patient VALUES (
-           '$ptdtadd',
-           '$ptdtmod',
-           '$ptbal',
-           '$ptbalfwd',
-           '$ptunapp',
-           '$ptdoc',
-           '$ptrefdoc',
-           '$ptpcp',
-           '$ptphy1',
-           '$ptphy2',
-           '$ptphy3',
-           '$ptphy4',
-           '$ptbilltype',
-           '$ptbudg',
-           '$ptlname',
-           '$ptfname',
-           '$ptmname',
-           '$ptaddr1',
-           '$ptaddr2',
-           '$ptcity',
-           '$ptstate',
-           '$ptzip',
-           '$ptcountry',
-           '$pthphone',
-           '$ptwphone',
-           '$ptfax',
-           '$ptemail',
-           '$ptsex',
-           '$ptdob',
-           '$ptssn',
-           '$ptdmv',
-           '$ptdtlpay',
-           '$ptamtlpay',
-           '$ptpaytype',
-           '$ptdtbill',
-           '$ptamtbill',
-           '$ptstatus',
-           '$ptytdchg',
-           '$ptar',
-           '$ptextinf',
-           '$ptdisc',
-           '$ptdol',
-           '$ptdiag1',
-           '$ptdiag2',
-           '$ptdiag3',
-           '$ptdiag4',
-           '$ptid',
-           '$pthistbal',
-           '$ptmarital',
-           '$ptempl',
-           '$ptemp1',
-           '$ptemp2',
-           '$ptguar',
-           '$ptrelguar',
-           '$ptguarstart',
-           '$ptguarend',
-           '$ptins',
-           '$ptinsno',
-           '$ptinsgrp',
-           '$ptinsstart',
-           '$ptinsend',
-           '$ptnextofkin',
-           '$__ISO_SET__',
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL,
-           NULL) ";
-*/
 	 break; // end add
 
        case "mod": case "modform":
