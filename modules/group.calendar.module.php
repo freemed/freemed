@@ -160,6 +160,13 @@ class GroupCalendar extends CalendarModule {
 					"scheduler WHERE calphysician='".
 					addslashes($phy)."' AND caldateof='".
 					addslashes($selected_date)."'");
+
+				// Deal with null calendar
+				if ($map[$phy][0]['count'] !== 0) {
+					$temp = $map[$phy];
+					unset ($map[$phy]);
+					$map[$phy][] = $temp;
+				}
 				$physicians[] = $phy;
 
 				// Increment the multimap counter
