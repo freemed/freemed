@@ -9,7 +9,7 @@ $page_title = PACKAGENAME." ".__("Login");
 
 $display_buffer .= "
 <div ALIGN=\"CENTER\">
-	<i>version ".VERSION."</i>
+	<i>".__("version")." ".VERSION."</i>
 </div>
 
 <p/>
@@ -33,26 +33,11 @@ $display_buffer .= "
 <tr><td ALIGN=\"RIGHT\">
 ".__("Language")." :
 </td><td ALIGN=\"LEFT\">
-<select NAME=\"_l\">
- <option VALUE=\"$language\">".__("Default Language")."</option>
 ";
 
-// actually open the language registry
-$f_reg = fopen ( "./lang/registry", "r");
-while ($f_line = fgets ($f_reg, 255)) {
-	if (substr ($f_line, 0, 1) != "#") { // skip comments
-		$f_line_array = explode (":", $f_line);
-		$display_buffer .= " <option VALUE=\"".
-				prepare($f_line_array[0])."\">".
-				prepare($f_line_array[1])."</option>\n";
-	} // end of skipping comments
-} // end while we have more lines to get
-fclose ($f_reg);
-
-$display_buffer .= "
-</select>
-</tr>
-";
+// Create a language registry object
+$lregistry = CreateObject('FreeMED.LanguageRegistry');
+$display_buffer .= $lregistry->widget('_l')."</td></tr>\n";
 
 if ($sql->query ("SELECT * FROM config")) {
 	$display_buffer .= "
