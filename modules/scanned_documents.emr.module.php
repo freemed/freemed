@@ -10,7 +10,7 @@ class ScannedDocuments extends EMRModule {
 
 	var $MODULE_NAME = "Scanned Documents";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.4";
+	var $MODULE_VERSION = "0.4.1";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
@@ -36,7 +36,7 @@ class ScannedDocuments extends EMRModule {
 			__("Category")	  =>	"imagecat",
 			__("Description") =>	"imagedesc"
 		);
-		$this->summary_options |= SUMMARY_VIEW;
+		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
 
 		// Define table
 		$this->table_definition = array (
@@ -48,6 +48,7 @@ class ScannedDocuments extends EMRModule {
 			"imageeoc"	=>	SQL__TEXT,
 			"imagefile"	=>	SQL__VARCHAR(100),
 			"imagephy"	=>	SQL__INT_UNSIGNED(0),
+			"locked"	=>	SQL__INT_UNSIGNED(0),
 			"id"		=>	SQL__SERIAL
 		);
 
@@ -162,7 +163,13 @@ class ScannedDocuments extends EMRModule {
 
 	function del () {
 		// Delete actual image
-		global $id, $patient;
+		global $id, $patient, $display_buffer;
+
+		if ($this->locked($id)) {
+			$display_buffer .= __("Record is locked.");
+			return false;
+		}
+		
 		unlink(freemed::image_filename(
 			freemed::secure_filename($patient),
 			freemed::secure_filename($id),
@@ -214,6 +221,10 @@ class ScannedDocuments extends EMRModule {
 			case "mod": case "modform":
 			global $id;
 			$r = freemed::get_link_rec($id, $this->table_name);
+			if ($r['locked']) {
+				$display_buffer .= __("Record is locked.");
+				return false;
+			}
 			foreach ($r AS $k => $v) {
 				global ${$k};
 				${$k} = sql_expand($v);
@@ -293,6 +304,11 @@ class ScannedDocuments extends EMRModule {
 
 	function mod () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module, $id;
+		if ($this->locked($id)) {
+			$display_buffer .= __("Record is locked.");
+			return false;
+		}
+		
 		$display_buffer .= "
 			<div ALIGN=\"CENTER\"><b>".__("Modifying")." ... </b>
 		";
@@ -363,7 +379,7 @@ class ScannedDocuments extends EMRModule {
 				__("NO DESCRIPTION")
 			),
 			NULL, NULL, NULL,
-			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
+			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL | ITEMLIST_LOCK
 		);
 		$display_buffer .= "\n<p/>\n";
 	} // end function ScannedDocuments->view()
@@ -378,7 +394,13 @@ class ScannedDocuments extends EMRModule {
 		return html_form::select_widget(
 			$varname,
 			array (
-				__("Insurance Card") => "insurance_card",
+				__("Operative Report") => "op_report/misc",
+					"- ".__("Colonoscopy") => "op_report/colonoscopy",
+					"- ".__("Endoscopy") => "op_report/endoscopy",
+				__("Miscellaneous") => "misc/misc",
+					"- ".__("Consult") => "misc/consult",
+					"- ".__("Discharge Summary") => "misc/discharge_summary",
+					"- ".__("History and Physical") => "misc/history_and_physical",
 				__("Lab Report") => "lab_report/misc",
 					"- ".__("CBC") => "lab_report/cbc",
 					"- ".__("C8") => "lab_report/c8",
@@ -387,13 +409,6 @@ class ScannedDocuments extends EMRModule {
 					"- ".__("UA") => "lab_report/ua",
 					"- ".__("Thyroid Profile") => "lab_report/thyroid_profile",
 				__("Letters") => "letters/misc",
-				__("Miscellaneous") => "misc/misc",
-					"- ".__("Consult") => "misc/consult",
-					"- ".__("Discharge Summary") => "misc_discharge_summary",
-					"- ".__("History and Physical") => "misc/history_and_physical",
-				__("Operative Report") => "op_report/misc",
-					"- ".__("Colonoscopy") => "op_report/colonoscopy",
-					"- ".__("Endoscopy") => "op_report/endoscopy",
 				__("Pathology") => "pathology/misc",
 				__("Patient History") => "patient_history/misc",
 				__("Questionnaire") => "questionnaire/misc",
@@ -403,6 +418,7 @@ class ScannedDocuments extends EMRModule {
 					"- ".__("Abdominal CT Reports") => "radiology/abdominal_ct_reports",
 					"- ".__("Chest CT Reports") => "radiology/chest_ct_reports",
 					"- ".__("Mammogram Reports") => "radiology/mammogram_reports",
+				__("Insurance Card") => "insurance_card",
 				__("Referral") => "referral/misc"
 			)
 		);
@@ -426,6 +442,15 @@ class ScannedDocuments extends EMRModule {
 		if (!version_check($version, '0.4')) {
 			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
 				' ADD COLUMN imagephy INT UNSIGNED AFTER imagefile');
+		}
+
+		// Version 0.4.1
+		//
+		//	Add locking
+		//
+		if (!version_check($version, '0.4.1')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
+				' ADD COLUMN locked INT UNSIGNED AFTER imagephy');
 		}
 	} // end method _update
 
