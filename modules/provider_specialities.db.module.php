@@ -49,7 +49,7 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
 				_("Specialty") 			=> 	"specname",
 				_("Specialty Description") 	=> 	"specdesc"
 			),
-			array ("", _("NO DESCRIPTION")), "", "s_page"
+			array ("", _("NO DESCRIPTION"))
 			)."
    <CENTER>
    <TABLE>".
