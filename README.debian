@@ -4,7 +4,91 @@
 # Copyright (C) 1999, Ryan Losh.  May be freely distributed under the GNU
 # GPL version 2.0.
 #
+# Modified 2000-02-18 by Ryan Losh.  Updated for "frozen-potato" version
+# of Debian GNU/Linux...
+#
 # Modified 19990929 by jeff b with new corrections for setup
+
+/-----------------\
+|18 February 2000 |
+\-----------------/
+-----------------------
+Step 1) Download & Install
+-----------------------
+	Install the following packages (All except mysql-server & mysql-
+	client are packages in Debian, proper.  The mysql packages are
+	in the "non-free" section.)
+
+	* apache
+	* mysql-client
+	* mysql-server
+	* php3
+	* php3-mysql
+	* (Any packages the above depend on.  dselect is your friend!)
+
+	Download and install Free Med.  The FHS suggests that it
+	should go under /usr/local.
+
+	# cd /usr/local
+	# tar xvfz /tmp/freemed-???.tar.gz
+		OR
+	# bzcat /tmp/freemed-???.tar.bz2 | tar xvf -
+
+-----------------------
+Step 3) Configure Apache & php3
+-----------------------
+	1) Add a freemed alias to your /etc/apache/srm.cnf file.  I added
+	   mine to the end of the file.  The following makes it so that
+	   pointing your browser at http://localhost/freemed/
+	   invokes freemed...
+
+Alias /freemed /usr/local/freemed
+AddType application/x-httpd-php3 .php3 .phtml .php .inc
+
+	   Change the DirectoryIndex line to the following:
+DirectoryIndex index.html index.php3
+
+	2) Edit your /etc/apache/access.conf file.  I added the following
+	   lines to the end...
+
+<Directory /usr/local/freemed>
+Options Indexes Includes ExecCGI MultiViews FollowSymLinks
+AllowOverride ALL
+Order allow,deny
+allow from all
+</Directory>
+
+	3) Edit your /etc/php3/apache/php3.ini, and add the following in
+	   the "Dynamic Extensions" section...
+
+extension=mysql.so
+
+	4) Stop and re-start apache...
+
+	# /etc/init.d/apache restart
+
+	5) Insure that the lang/reg directory is world writable:
+
+	# chmod 777 /usr/local/freemed/lang/reg
+
+-----------------------
+Step 4) Configure Freemed
+-----------------------
+	1) Edit the global.var.inc file in the freemed directory...
+	   change the following variables to appropriate values...
+
+	   $db_password
+	   $host
+	   $database
+
+	2) Create the freemed database...
+	   $ mysqladmin -u root -p create freemed
+	   
+
+---------------------------------------------------------------------------
+Everything below this should be considered out-dated, and should
+be deleted...RKL 18 February 2000.
+---------------------------------------------------------------------------
 
 /-------------\
 |18 June 1999 |
