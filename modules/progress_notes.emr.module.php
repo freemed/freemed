@@ -715,7 +715,7 @@ class ProgressNotes extends EMRModule {
 			'pnotesEDUCATION' => 
 				( strlen($r['pnotes_E']) > 3 ?
 				'\\sheading{'.__("EDUCATION").'} '.
-				$TeX->_HTMLToRichText($r['pnotes_S']).
+				$TeX->_HTMLToRichText($r['pnotes_E']).
 				"\n".'\\par'."\n" : "" ),
 			'pnotesRX' => 
 				( strlen($r['pnotes_R']) > 3 ?
