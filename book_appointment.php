@@ -70,6 +70,9 @@ if ($id and !$been_here) {
 	}
 }
 
+// Set duration to :15 by default
+if (!isset($duration)) { $duration = 15; }
+
 if (strlen($selected_date) != 10) {
 	$selected_date = $cur_date;
 } // fix date if not correct
@@ -346,19 +349,26 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 		if ($fit) {
 			$form .= "<td colspan=\"1\" align=\"CENTER\"".
 				" class=\"calendar_book_link\" ".
-				"onClick=\"window.location='".
-				page_name()."?process=1&".
-				"hour=".urlencode($c_hour)."&".
-				"minute=".urlencode($c_min)."&".
-				"room=".urlencode($room)."&".
-				"physician=".urlencode($physician)."&".
-				"duration=".urlencode($duration)."&".
-				"type=".urlencode($type)."&".
-				"selected_date=".urlencode($date)."&".
-				"id=".urlencode($id)."&".
-				"note=".urlencode($note)."&".
-				"patient=".urlencode($patient)."'; ".
-				"return true;\" ".
+				//----------------------------------------
+				// If the following portion of code is
+				// uncommented, the system will double
+				// book from most browsers. Might have
+				// to either-or the link and the
+				// onClick to solve the problem. -Jeff
+				//----------------------------------------
+				//"onClick=\"window.location='".
+				//page_name()."?process=1&".
+				//"hour=".urlencode($c_hour)."&".
+				//"minute=".urlencode($c_min)."&".
+				//"room=".urlencode($room)."&".
+				//"physician=".urlencode($physician)."&".
+				//"duration=".urlencode($duration)."&".
+				//"type=".urlencode($type)."&".
+				//"selected_date=".urlencode($date)."&".
+				//"id=".urlencode($id)."&".
+				//"note=".urlencode($note)."&".
+				//"patient=".urlencode($patient)."'; ".
+				//"return true;\" ".
 				"onMouseOver=\"window.status='".__("Book an appointment at this time")."'; return true;\" ".
 				"onMouseOut=\"window.status=''; return true;\"".
 				">".
