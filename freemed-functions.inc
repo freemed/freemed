@@ -1491,8 +1491,16 @@ function freemed_search_query ($ctrl_array, $ord_array,
   } else { // end array case
     $buf .= "(id = '".$_id_."') ";
   } // non-array case
-  
+ 
+  $kill_it=true;
+  $ctrl_array[""]="swedishchefborkborkbork"; // kludge to avoid 'Warning:'
+  while (list($k,$v) = each($ctrl_array)) {
+    if (strlen($k)>0) $kill_it=false;
+  }
+  if ($kill_it) unset($ctrl_array);
+ 
   if (is_array($ctrl_array) AND count($ctrl_array)>0) $buf .= " OR (";
+    else $buf .= ")";
   $first_field = true;
   while ( is_array($ctrl_array) AND 
          (list($fieldval, $fieldname) = each($ctrl_array)) ) { // the rest
