@@ -40,6 +40,7 @@ page_push();
 switch ($action) {
   case "add": case "addform":
   case "mod": case "modform":
+   $cache = freemed::module_cache(); // load module cache just in case
     // addform and modform not used due to "notebook"
    $book = CreateObject('PHP.notebook', array ("action", "id", "been_here", "ci"),
      NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH, 3);
@@ -319,7 +320,7 @@ switch ($action) {
 
 	$book->add_page(
 		__("Medical"),
-		array("ptblood"),
+		array("ptblood", "ptpharmacy"),
 		html_form::form_table(array(
 			__("Blood Type") =>
 			html_form::select_widget(
@@ -338,6 +339,12 @@ switch ($action) {
 					"AB+",
 					"AB-"
 				)
+			),
+
+			__("Preferred Pharmacy") =>
+			module_function('pharmacymaintenance',
+				'widget',
+				'ptpharmacy'
 			)
 		))
 	);
@@ -545,6 +552,11 @@ switch ($action) {
 					"AB-"
 				)
 			),
+			__("Preferred Pharmacy") =>
+			module_function('pharmacymaintenance',
+				'widget',
+				'ptpharmacy'
+			),
        __("Next of Kin") =>
 	html_form::text_area("ptnextofkin", "VIRTUAL", 10, 40)
      ))
@@ -665,6 +677,7 @@ switch ($action) {
              "ptinsend",
              "ptnextofkin",
              "ptblood",
+	     "ptpharmacy",
              "pttimestamp" => '',
              "ptemriversion" => '1',
              "iso" => $__ISO_SET__
@@ -740,6 +753,7 @@ switch ($action) {
              "ptinsend",
              "ptnextofkin",
              "ptblood",
+	     "ptpharmacy",
              "pttimestamp" => '',
              "iso"
             ), array ( "id" => $id )
