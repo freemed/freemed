@@ -152,7 +152,9 @@ if ($action=="cfgform") {
 	);
 
 	// Check for dynamic components
-	$module_list = CreateObject('PHP.module_list', PACKAGENAME, 'modules/');
+	if (!is_object($module_list)) {
+		$module_list = CreateObject('PHP.module_list', PACKAGENAME, 'modules/');
+	}
 	foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
 		if (is_array($v['META_INFORMATION']['global_config'])) {
 			$this_one = $v['META_INFORMATION']['global_config'];
@@ -179,7 +181,9 @@ if ($action=="cfgform") {
 		$display_buffer .= "<p/>\n";
 
 		// Check for dynamic components for config_vars
-		$module_list = CreateObject('PHP.module_list', PACKAGENAME, 'modules/');
+		if (!is_object($module_list)) {
+			$module_list = CreateObject('PHP.module_list', PACKAGENAME, 'modules/');
+		}
 		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
 			if (is_array($v['META_INFORMATION']['global_config_vars'])) {
 				$config_vars = array_merge (
