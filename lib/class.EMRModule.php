@@ -72,9 +72,9 @@ class EMRModule extends BaseModule {
 			".(
 				($GLOBALS['return'] == "manage") ?
 				"<a href=\"manage.php?id=".urlencode($GLOBALS['patient']).
-					"\">"._("Manage Patient")."</a>" :
+					"\">".__("Manage Patient")."</a>" :
 				"<a href=\"module_loader.php?module=".
-					get_class($this)."\">"._("back")."</a>"
+					get_class($this)."\">".__("back")."</a>"
 			)."
 			</div>
 			";
@@ -101,7 +101,7 @@ class EMRModule extends BaseModule {
 		}
 
 		// Handle cancel action from submit
-		if ($submit==_("Cancel")) {
+		if ($submit==__("Cancel")) {
 			if ($return=="manage") {
 			Header("Location: manage.php?".
 				"id=".urlencode($patient));
@@ -179,8 +179,8 @@ class EMRModule extends BaseModule {
 			)
 		);
 
-		if ($result) $this->message = _("Record added successfully.");
-		 else $this->message = _("Record addition failed.");
+		if ($result) $this->message = __("Record added successfully.");
+		 else $this->message = __("Record addition failed.");
 		$this->view(); $this->display_message();
 
 		// Check for return to management screen
@@ -203,8 +203,8 @@ class EMRModule extends BaseModule {
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) $this->message = _("Record deleted successfully.");
-		 else $this->message = _("Record deletion failed.");
+		if ($result) $this->message = __("Record deleted successfully.");
+		 else $this->message = __("Record deletion failed.");
 		$this->view(); $this->display_message();
 
 		// Check for return to management screen
@@ -233,8 +233,8 @@ class EMRModule extends BaseModule {
 				)
 			)
 		);
-		if ($result) $this->message = _("Record modified successfully.");
-		 else $this->message = _("Record modification failed.");
+		if ($result) $this->message = __("Record modified successfully.");
+		 else $this->message = __("Record modification failed.");
 		$this->view(); $this->display_message();
 
 		// Check for return to management screen
@@ -303,8 +303,8 @@ class EMRModule extends BaseModule {
 				)
 			)
 		);
-		if ($result) $this->message = _("Record locked successfully.");
-			else $this->message = _("Record locking failed.");
+		if ($result) $this->message = __("Record locked successfully.");
+			else $this->message = __("Record locking failed.");
 		$this->view(); $this->display_message();
 
 		// Check for return to management screen
@@ -331,7 +331,7 @@ class EMRModule extends BaseModule {
 		// Check to see if there *are* any...
 		if ($sql->num_rows($result) < 1) {
 			// If not, let the world know
-			$buffer .= "<b>"._("NONE")."</b>\n";
+			$buffer .= "<b>".__("NONE")."</b>\n";
 		} else { // checking for results
 			// Or loop and display
 			$buffer .= "
@@ -348,7 +348,7 @@ class EMRModule extends BaseModule {
 			} // end foreach summary_vars
 			$buffer .= "
 				<td VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
-				<b>"._("Action")."</b>
+				<b>".__("Action")."</b>
 				</td>
 			</tr>
 			";
@@ -429,10 +429,10 @@ class EMRModule extends BaseModule {
 		return "
 		<a HREF=\"module_loader.php?module=".
 		get_class($this)."&patient=".urlencode($patient).
-		"&return=manage\">"._("View/Manage")."</a> |
+		"&return=manage\">".__("View/Manage")."</a> |
 		<a HREF=\"module_loader.php?module=".
 		get_class($this)."&patient=".urlencode($patient).
-		"&action=addform&return=manage\">"._("Add")."</a>
+		"&action=addform&return=manage\">".__("Add")."</a>
 		";
 	} // end function summary_bar
 
@@ -447,7 +447,7 @@ class EMRModule extends BaseModule {
 			$result,
 			"module_loader.php",
 			$this->form_vars,
-			array ("", _("NO DESCRIPTION")),
+			array ("", __("NO DESCRIPTION")),
 			"",
 			"t_page"
 		);
@@ -456,7 +456,7 @@ class EMRModule extends BaseModule {
 	// override _setup with create_table
 	function _setup () {
 		if (!$this->create_table()) return false;
-		return freemed_import_stock_data ($this->record_name);
+		return freemed_import_stock_data ($this->table_name);
 	} // end function _setup
 
 	// function create_table

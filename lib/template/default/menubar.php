@@ -24,10 +24,11 @@ if ($patient_history or $page_history) {
 }
 if ($patient_history) {
 	print "
-	<tr><td ALIGN=\"RIGHT\">
+	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
 	<form ACTION=\"manage.php\" METHOD=\"POST\">
-	".html_form::select_widget("id", $patient_history)."
-	</td><td ALIGN=\"CENTER\">
+	".html_form::select_widget("id", $patient_history,
+		array ('style' => 'width: 100%;', 'refresh' => true))."
+	</td><td align=\"CENTER\" valign=\"MIDDLE\">
 	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/magnifying_glass.".
 	IMAGE_TYPE."\"
 		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Manage]\"/>
@@ -42,10 +43,11 @@ if ($page_history) {
 	
 	// Show the actual pick list
 	print "
-	<tr><td ALIGN=\"RIGHT\">
+	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
 	<form ACTION=\"redirect.php\" METHOD=\"POST\">
-	".html_form::select_widget("location", $page_history)."
-	</td><td ALIGN=\"CENTER\">
+	".html_form::select_widget("location", $page_history,
+		array ('style' => 'width: 100%;', 'refresh' => true))."
+	</td><td align=\"CENTER\" valign=\"MIDDLE\">
 	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/forward.".
 	IMAGE_TYPE."\"
 		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Jump to page]\"/>
@@ -54,7 +56,20 @@ if ($page_history) {
 	";
 } // end checking for page history
 
-if ($patient_history or $page_history) {
+// Check for new messages in bar
+if ($new_messages = $this_user->newMessages()) {
+	print "
+	<tr><td colspan=\"2\" align=\"center\" valign=\"middle\">
+	<img src=\"img/messages_small.gif\" alt=\"\" ".
+	"width=\"16\" height=\"16\" border=\"0\"/>
+	<small>".$new_messages." "._("new message(s)")."</small>
+	<img src=\"img/messages_small.gif\" alt=\"\" ".
+	"width=\"16\" height=\"16\" border=\"0\"/>
+	</td></tr>
+	";
+}
+
+if ($patient_history or $page_history or $new_messages) {
 	print "
 	</table>
 	";
@@ -68,11 +83,11 @@ if ($patient_history or $page_history) {
 
 <table CLASS="menubar" WIDTH="100%" BORDER="0">
 <?php
-	print menu_bar_cell(_("Administration Menu"), "admin.php");
-	print menu_bar_cell(_("Billing Functions"), "billing_functions.php");
-	print menu_bar_cell(_("Calendar"), "calendar.php");
-	print menu_bar_cell(_("Call-In"), "call-in.php");
-	print menu_bar_cell(_("Database Maintenance"), "db_maintenance.php");
+	print menu_bar_cell(__("Administration Menu"), "admin.php");
+	print menu_bar_cell(__("Billing Functions"), "billing_functions.php");
+	print menu_bar_cell(__("Calendar"), "calendar.php");
+	print menu_bar_cell(__("Call-In"), "call-in.php");
+	print menu_bar_cell(__("Database Maintenance"), "db_maintenance.php");
 	print "\t<tr>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
@@ -81,7 +96,7 @@ if ($patient_history or $page_history) {
 		"><a href=\"messages.php\" ".
 		"onMouseOver=\"this.className='menubar_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
-		">".prepare(_("Messages"))."</a></td>\n".
+		">".prepare(__("Messages"))."</a></td>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
@@ -89,7 +104,7 @@ if ($patient_history or $page_history) {
 		"<a href=\"messages.php?action=addform\" ".
 		"onMouseOver=\"this.className='menubar_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
-		">".prepare(_("Add"))."</a></td>\n".
+		">".prepare(__("Add"))."</a></td>\n".
 		"\t</tr>\n";
 	print "\t<tr>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
@@ -97,15 +112,15 @@ if ($patient_history or $page_history) {
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='patient.php'; return true;\"".
 		"><a href=\"patient.php\">".
-		prepare(_("Patients"))."</a></td>\n".
+		prepare(__("Patients"))."</a></td>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='patient.php?action=addform'; return true;\"".
 		"><a href=\"patient.php?action=addform\">".
-		prepare(_("New"))."</a></td>\n".
+		prepare(__("New"))."</a></td>\n".
 		"\t</tr>\n";
-	print menu_bar_cell(_("Reports"), "reports.php");
+	print menu_bar_cell(__("Reports"), "reports.php");
 ?>
 </table>
 
@@ -124,15 +139,15 @@ if ( ($help_url = help_url()) != "help.php" ) {
 		"onClick=\"window.open('".$help_url."', 'Help', 'width=600,height=400,".
 			"resizable=yes'); return true;\" ".
 		"><a href=\"#\">".
-		prepare(_("Help"))."</a></td>\n".
+		prepare(__("Help"))."</a></td>\n".
 		"\t</tr>\n";
 }
 
 	// Create the rest of the stock menubar entries
 
-	print menu_bar_cell(_("Preferences"), "preferences.php");
-	print menu_bar_cell(_("Return to Main Menu"), "main.php");
-	print menu_bar_cell(_("Logout"), "logout.php");
+	print menu_bar_cell(__("Preferences"), "preferences.php");
+	print menu_bar_cell(__("Return to Main Menu"), "main.php");
+	print menu_bar_cell(__("Logout"), "logout.php");
 ?>
 </table>
 <!-- new functions come *after* everything else -->

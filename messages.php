@@ -112,12 +112,10 @@ switch ($action) {
 	else $display_buffer .= __("ERROR");
 	$display_buffer .= " 
 	<p/>
-	<div ALIGN=\"CENTER\">
-	<a HREF=\"messages.php\"
-	>".__("Messages")."</a> |
-	<a HREF=\"main.php\"
-	>".__("Return to the Main Menu")."</A>
-	</div>
+	".template::link_bar(array(
+	__("Messages") => "messages.php",
+	__("Return to the Main Menu") => "main.php"
+	))."
 	<p/>
 	";
 	break; // end action add

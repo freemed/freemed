@@ -88,7 +88,7 @@ class BillingModule extends BaseModule {
 
 		$display_buffer .= "
 			<P><CENTER>
-			"._("Adding")." ...
+			".__("Adding")." ...
 		";
 
 		$result = $sql->query (
@@ -98,15 +98,15 @@ class BillingModule extends BaseModule {
 			)
 		);
 
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>".__("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>".__("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</CENTER>
 			<P>
 			<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("back")."</A>
+				>".__("back")."</A>
 			</CENTER>
 		";
 	} // end function _add
@@ -118,12 +118,12 @@ class BillingModule extends BaseModule {
 		global $display_buffer;
 		global $id, $sql;
 		$display_buffer .= "<P ALIGN=CENTER>".
-			_("Deleting")." . . . \n";
+			__("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { $display_buffer .= _("done"); }
-		 else        { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		if ($result) { $display_buffer .= __("done"); }
+		 else        { $display_buffer .= "<FONT COLOR=\"#ff0000\">".__("ERROR")."</FONT>"; }
 		$display_buffer .= "</P>\n";
 	} // end function _del
 	function del () { $this->_del(); }
@@ -137,7 +137,7 @@ class BillingModule extends BaseModule {
 
 		$display_buffer .= "
 			<P><CENTER>
-			"._("Modifying")." ...
+			".__("Modifying")." ...
 		";
 
 		$result = $sql->query (
@@ -150,15 +150,15 @@ class BillingModule extends BaseModule {
 			)
 		);
 
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>".__("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>".__("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</CENTER>
 			<P>
 			<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("back")."</A>
+				>".__("back")."</A>
 			</CENTER>
 		";
 	} // end function _mod
@@ -205,7 +205,7 @@ class BillingModule extends BaseModule {
 			$result,
 			"module_loader.php",
 			$this->form_vars,
-			array ("", _("NO DESCRIPTION")),
+			array ("", __("NO DESCRIPTION")),
 			"",
 			"t_page"
 		);
@@ -449,12 +449,12 @@ class BillingModule extends BaseModule {
 			$display_buffer .= "
 		 	<P>
 		 	<CENTER>
-		  	<B>"._("Nothing set to be marked!")."</B>
+		  	<B>".__("Nothing set to be marked!")."</B>
 		 	</CENTER>
 		 	<P>
 		 	<CENTER>
 		  	<A HREF=\"$this->page_name?module=$module\"
-		  	>"._("Return to Fixed Forms Generation Menu")."</A>
+		  	>".__("Return to Fixed Forms Generation Menu")."</A>
 		 	</CENTER>
 		 	<P>
 			";
@@ -517,11 +517,11 @@ class BillingModule extends BaseModule {
        			$proc_result = $sql->query ($query);
        			if ($result) 
 				{ 
-					$display_buffer .= _("done").".<BR>\n"; 
+					$display_buffer .= __("done").".<BR>\n"; 
 				}
        			else        
 				{ 
-					$display_buffer .= _("ERROR")."<BR>\n"; 
+					$display_buffer .= __("ERROR")."<BR>\n"; 
 				}
 
 			} // end proces for patient loop
@@ -531,7 +531,7 @@ class BillingModule extends BaseModule {
       	<P>
       	<CENTER>
        	<A HREF=\"$this->page_name?module=$module\"
-       	>"._("Back")."</A>
+       	>".__("Back")."</A>
       	</CENTER>
       	<P>
      	";
@@ -554,7 +554,7 @@ class BillingModule extends BaseModule {
 			$display_buffer .= "
 			<FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
 			 <CENTER>
-			  <B>"._("Preview")."</B>
+			  <B>".__("Preview")."</B>
 			 </CENTER>
 			 <BR>
 			 <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
@@ -562,10 +562,10 @@ class BillingModule extends BaseModule {
 			<P>
 			<CENTER>
 			 <SELECT NAME=\"type\">
-			  <OPTION VALUE=\"\">"._("Render to Screen")."
+			  <OPTION VALUE=\"\">".__("Render to Screen")."
 			  <OPTION VALUE=\"application/x-rendered-text\">Render to File
 			 </SELECT>
-			 <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
+			 <INPUT TYPE=SUBMIT VALUE=\"".__("Get HCFA Rendered Text File")."\">
 			</CENTER>
 			</FORM>
 			<P>
@@ -573,7 +573,7 @@ class BillingModule extends BaseModule {
 		}
 
 		// <CENTER>
-		// <B>"._("Mark as Billed")."</B>
+		// <B>".__("Mark as Billed")."</B>
 		// </CENTER>
 		// present the form so that we can mark as billed
 		$display_buffer .= "
@@ -611,7 +611,7 @@ class BillingModule extends BaseModule {
 
 		$display_buffer .= "
 		<P>
-		<INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
+		<INPUT TYPE=SUBMIT VALUE=\"".__("Mark as Billed")."\">
 		</FORM>
 		<P>
 		";

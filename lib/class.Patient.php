@@ -72,7 +72,7 @@ class Patient {
 	function age ($date_to="") {
 		return date_diff_display ($this->local_record["ptdob"],
 		( ($date_to=="") ? date("Y-m-d") : $date_to ),
-		_("year(s)"), _("month(s)"), _("day(s)"), _("ago"), _("ahead"));
+		__("year(s)"), __("month(s)"), __("day(s)"), __("ago"), __("ahead"));
 	} // end function Patient->age
 
 	function fullName ($with_dob = false) {

@@ -329,6 +329,7 @@ class GroupCalendar extends CalendarModule {
 		<br/><br/>
 		<div ALIGN=\"CENTER\">
 		".template::link_button(__("Calendar"), "calendar.php")."
+		".template::link_button(__("Select a Patient"), "patient.php")."
 		".template::link_button(__("Return to Main Menu"), "main.php")."
 		</div>
 		";

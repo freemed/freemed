@@ -195,11 +195,11 @@ class ProgressNotes extends EMRModule {
       ); 
 
      $book->add_page (
-       __("<U>S</U>ubjective"),
+       __("<u>S</u>ubjective"),
        array ("pnotes_S"),
        html_form::form_table (
         array (
-          __("<U>S</U>ubjective") =>
+          __("<u>S</u>ubjective") =>
           "<TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_S)."</TEXTAREA>"
         )
@@ -207,11 +207,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       __("<U>O</U>bjective"),
+       __("<u>O</u>bjective"),
        array ("pnotes_O"),
        html_form::form_table (
         array (
-          __("<U>O</U>bjective") =>
+          __("<u>O</u>bjective") =>
           "<TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
          WRAP=VIRTUAL>".prepare($pnotes_O)."</TEXTAREA>"
         )
@@ -423,20 +423,19 @@ class ProgressNotes extends EMRModule {
 
      $this->this_patient = CreateObject('FreeMED.Patient', $pnotespat);
 
-     if (freemed::user_flag(USER_DATABASE))
-       $__MODIFY__ = " |
-         <a HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
-          >".__("Modify")."</a>
-       "; // add this if they have modify privledges
      $display_buffer .= "
-       <P>
-       <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
-        >"._($this->record_name)."</A> |
-        <A HREF=\"manage.php?id=$pnotespat\"
-        >".__("Manage Patient")."</A> |
-        <A HREF=\"patient.php\">".__("Select Patient")."</A> $__MODIFY__
-       </CENTER>
-       <P>
+       <p/>
+       ".template::link_bar(array(
+        __("Progress Notes") =>
+       $this->page_name."?module=$module&patient=$pnotespat",
+        __("Manage Patient") =>
+       "manage.php?id=$pnotespat",
+	__("Select Patient") =>
+        "patient.php",
+	( freemed::user_flag(USER_DATABASE) ? __("Modify") : "" ) =>
+        $this->page_name."?module=$module&patient=$patient&id=$id&action=modform"
+       ))."
+       <p/>
 
        <CENTER>
         <B>Relevant Date : </B>
@@ -486,24 +485,21 @@ class ProgressNotes extends EMRModule {
      $display_buffer .= "<CENTER>\n";
      if (!empty($pnotes_S)) $display_buffer .= "
        <TABLE BGCOLOR=\"#ffffff\" BORDER=1><TR BGCOLOR=\"$darker_bgcolor\">
-       <TD ALIGN=CENTER><CENTER><FONT COLOR=\"#ffffff\">
-        <B>".__("<U>S</U>ubjective")."</B></FONT></CENTER></TD></TR>
+       <TD ALIGN=\"CENTER\"><B>".__("<u>S</u>ubjective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_S)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_O)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("<U>O</U>bjective")."</B></FONT></CENTER></TD></TR>
+       <TD ALIGN=CENTER><B>".__("<U>O</U>bjective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_O)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_A)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("<U>A</U>ssessment")."</B></FONT></CENTER></TD></TR>
+       <TD ALIGN=CENTER><B>".__("<U>A</U>ssessment")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_A)))."
        </TD></TR></TABLE>
@@ -511,23 +507,21 @@ class ProgressNotes extends EMRModule {
       if (!empty($pnotes_P)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("<U>P</U>lan")."</B></FONT></CENTER></TD></TR>
+        <B>".__("<u>P</u>lan")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_P)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_I)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("<U>I</U>nterval")."</B></FONT></CENTER></TD></TR>
+       <TD ALIGN=CENTER><B>".__("<u>I</u>nterval")."</B></TD></TR>
        <TR BGCOLOR=\"#ffffff\"><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_I)))."
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_E)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("<U>E</U>ducation")."</B></FONT></CENTER></TD></TR>
+       <TD ALIGN=CENTER><B>".__("<u>E</u>ducation")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".prepare($pnotes_E)."
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_E)))."
@@ -535,22 +529,25 @@ class ProgressNotes extends EMRModule {
        ";
       if (!empty($pnotes_R)) $display_buffer .= "
       <TABLE BGCOLOR=#ffffff BORDER=1><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("P<U>R</U>escription")."</B></FONT></CENTER></TD></TR>
+       <TD ALIGN=CENTER><B>".__("P<u>R</u>escription")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
            ".stripslashes(str_replace("\n", "<BR>", htmlentities($pnotes_R)))."
        </TD></TR></TABLE>
       ";
         // back to your regularly sceduled program...
       $display_buffer .= "
-       <P>
-       <CENTER><A HREF=\"$this->page_name?module=$module&patient=$pnotespat\"
-        >"._($this->record_name)."</A> |
-        <A HREF=\"manage.php?id=$pnotespat\"
-        >".__("Manage Patient")."</A> |
-        <A HREF=\"patient.php\">".__("Select Patient")."</A> $__MODIFY__
-       </CENTER>
-       <P>
+       <p/>
+       ".template::link_bar(array(
+        __("Progress Notes") =>
+       $this->page_name."?module=$module&patient=$pnotespat",
+        __("Manage Patient") =>
+       "manage.php?id=$pnotespat",
+	__("Select Patient") =>
+        "patient.php",
+	( freemed::user_flag(USER_DATABASE) ? __("Modify") : "" ) =>
+        $this->page_name."?module=$module&patient=$patient&id=$id&action=modform"
+       ))."
+       <p/>
      ";
 	} // end of case display
 

@@ -138,7 +138,7 @@ class CalendarModule extends BaseModule {
 	
 		$display_buffer .= "
 			<p/><div align=\"CENTER\">
-			"._("Adding")." ...
+			".__("Adding")." ...
 		";
 
 		$result = $sql->query (
@@ -148,15 +148,15 @@ class CalendarModule extends BaseModule {
 			)
 		);
 
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>".__("done").".</B>\n"; }
+		 else		 { $display_buffer .= "<B>".__("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</div>
 			<p/>
 			<div align=\"CENTER\">
 				<a class=\"button\" HREF=\"$this->page_name?module=$module&patient=$patient\"
-				>"._("back")."</a>
+				>".__("back")."</a>
 			</div>
 		";
 
@@ -169,12 +169,12 @@ class CalendarModule extends BaseModule {
 		global $display_buffer;
 		global $id, $sql;
 		$display_buffer .= "<P ALIGN=CENTER>".
-			_("Deleting")." . . . \n";
+			__("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { $display_buffer .= _("done"); }
-		 else		 { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		if ($result) { $display_buffer .= __("done"); }
+		 else		 { $display_buffer .= "<FONT COLOR=\"#ff0000\">".__("ERROR")."</FONT>"; }
 		$display_buffer .= "</P>\n";
 	} // end function _del
 
@@ -187,7 +187,7 @@ class CalendarModule extends BaseModule {
 	
 		$display_buffer .= "
 			<P><CENTER>
-			"._("Modifying")." ...
+			".__("Modifying")." ...
 		";
 
 		$result = $sql->query (
@@ -200,15 +200,15 @@ class CalendarModule extends BaseModule {
 			)
 		);
 
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>".__("done").".</B>\n"; }
+		 else		 { $display_buffer .= "<B>".__("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</CENTER>
 			<P>
 			<CENTER>
 				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
-				>"._("back")."</A>
+				>".__("back")."</A>
 			</CENTER>
 		";
 
@@ -259,7 +259,7 @@ class CalendarModule extends BaseModule {
 			$result,
 			"module_loader.php",
 			$this->form_vars,
-			array ("", _("NO DESCRIPTION")),
+			array ("", __("NO DESCRIPTION")),
 			"",
 			"t_page"
 		);

@@ -167,7 +167,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       <TR CLASS=\"reverse\"><TD CLASS=\"calcell\" COLSPAN=2 ALIGN=\"CENTER\"
        VALIGN=\"CENTER\">
        <B>$datestring</B> - <I>".$current_imap["count"]." ".
-         _("appointment(s)")."</I>
+         __("appointment(s)")."</I>
       </TD></TR>
     ";
 
@@ -175,9 +175,9 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     $alt = true;
     for ($h=fc_starting_hour();$h<=fc_ending_hour();$h++) {
       // calculate proper way to display hour
-      if      ($h== 0) $hour=_("midnight");
+      if      ($h== 0) $hour=__("midnight");
        elseif ($h< 12) $hour="$h am";
-       elseif ($h==12) $hour=_("noon");
+       elseif ($h==12) $hour=__("noon");
        else            $hour=($h-12)." pm";
 
 	// Alternate cells
@@ -226,7 +226,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       <TABLE WIDTH=100% CELLSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=CENTER
        ALIGN=CENTER BGCOLOR=#000000><TR BGCOLOR=#000000>
        <TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER VALIGN=CENTER>
-       "._("Week of")." <B>$datestring</B>
+       ".__("Week of")." <B>$datestring</B>
        </TD></TR>
     ";
 
@@ -349,14 +349,14 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
        )."\"
       >3</A>
      <A HREF=\"$this_url&selected_date=".fc_scroll_prev_month($this_date)."\"
-      ><SMALL>"._("prev")."</SMALL></A>
+      ><SMALL>".__("prev")."</SMALL></A>
      </TD>
      <TD COLSPAN=5 ALIGN=CENTER BGCOLOR=#ffffff>
        <B>".htmlentities(date("M",mktime(0,0,0,($this_month+1),0,0)))." $this_year</b>
      </TD>
      <TD ALIGN=RIGHT BGCOLOR=\"#ffffff\">
      <A HREF=\"$this_url&selected_date=".fc_scroll_next_month($this_date)."\"
-      ><SMALL>"._("next")."</SMALL></A>    
+      ><SMALL>".__("next")."</SMALL></A>    
      <A HREF=\"$this_url&selected_date=".
        fc_scroll_next_month(
         fc_scroll_next_month(
@@ -462,7 +462,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
      <TD COLSPAN=7 ALIGN=RIGHT BGCOLOR=\"#bbbbbb\">
       <A HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
        $cur_day."\"
-      >"._("go to today")."</A>
+      >".__("go to today")."</A>
      </TD>
      </TR>
      </TABLE>
@@ -682,7 +682,7 @@ class freemedCalendar {
 				return freemed::config_value("cal". $mapping );
 				break;
 
-			default: return _("Travel"); break;
+			default: return __("Travel"); break;
 		}
 	}
 

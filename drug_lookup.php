@@ -87,7 +87,8 @@ switch ($action) {
 		</script>
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::select_widget(
-			"list",	$pick_list
+			"list",	$pick_list,
+			array('refresh' => true)
 		)."
 		<input class=\"button\" TYPE=\"BUTTON\" NAME=\"select\" ".
 		"VALUE=\"Select\" onClick=\"my_process(); return true;\">

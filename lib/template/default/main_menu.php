@@ -17,7 +17,7 @@ freemed_open_db ();
 if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 //---- Set page title
-$page_title = PACKAGENAME." "._("Main Menu");
+$page_title = PACKAGENAME." ".__("Main Menu");
 
 // Check for new messages
 if ($new_messages = $this_user->newMessages()) {
@@ -50,7 +50,7 @@ if (freemed::user_flag(USER_ADMIN))
         ALT=\"\"></TD>
      <TD ALIGN=LEFT>
      <A HREF=\"admin.php\"
-      >"._("Administration Menu")."</A>
+      >".__("Administration Menu")."</A>
      </A>
      </TD></TR>
    ";
@@ -64,7 +64,7 @@ if (freemed::user_flag(USER_DATABASE))
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"billing_functions.php\"
-     >"._("Billing Functions")."</A>
+     >".__("Billing Functions")."</A>
     </TD></TR>
    ";
 
@@ -75,11 +75,11 @@ if (freemed::user_flag(USER_DATABASE))
     ><IMG SRC=\"img/Text.gif\" BORDER=0 ALT=\"\"></A>
    </TD>
    <TD ALIGN=LEFT>
-   <B>"._("Call In")." : &nbsp;</B>
+   <B>".__("Call In")." : &nbsp;</B>
    <A HREF=\"call-in.php?action=addform\"
-    >"._("Entry")."</A> |
+    >".__("Entry")."</A> |
    <A HREF=\"call-in.php\"
-    >"._("Menu")."</A>
+    >".__("Menu")."</A>
    </TD></TR>
  ";
 
@@ -92,7 +92,7 @@ if (freemed::user_flag(USER_DATABASE))
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"db_maintenance.php\"
-     >"._("Database Maintenance")."</A>
+     >".__("Database Maintenance")."</A>
     </TD></TR>
    ";
 
@@ -107,10 +107,10 @@ if ($this_user->isPhysician())
     <TD ALIGN=LEFT>
     <A HREF=\"physician_day_view.php?physician=".
       $this_user->getPhysician()."\"
-     >"._("Day View")."</A><BR>
+     >".__("Day View")."</A><BR>
     <A HREF=\"physician_week_view.php?physician=".
       $this_user->getPhysician()."\"
-     >"._("Week View")."</A>
+     >".__("Week View")."</A>
     </TD></TR>
    ";
 
@@ -121,7 +121,7 @@ $display_buffer .= "
      ><IMG SRC=\"img/messages.gif\" BORDER=0 WIDTH=48 HEIGHT=48 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"messages.php\">"._("Messages")."</A>
+    <A HREF=\"messages.php\">".__("Messages")."</A>
     </TD></TR>
 ";
 
@@ -134,7 +134,7 @@ if (freemed::user_flag(USER_DATABASE))
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"patient.php\"
-     >"._("Patient Functions")."</A>
+     >".__("Patient Functions")."</A>
     </TD></TR>
    ";
 
@@ -147,7 +147,7 @@ if (freemed::user_flag(USER_DATABASE))
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"reports.php\"
-     >"._("Reports")."</A>
+     >".__("Reports")."</A>
     </TD></TR>
    ";
 
@@ -160,7 +160,7 @@ if (freemed::user_flag(USER_DATABASE))
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"calendar.php\"
-     >"._("Calendar")."</A>
+     >".__("Calendar")."</A>
     </TD></TR>
    ";
 
@@ -177,13 +177,13 @@ $display_buffer .= "
    <A HREF=\"#\"
    onClick=\"window.open('help.php?page_name=$page_name', 'Help', ".
    "'width=600,height=400,resizable=yes');\"
-   >"._("Main Menu Help")."</A>
+   >".__("Main Menu Help")."</A>
   </TD></TR>
   <TR>
   <TD ALIGN=RIGHT>
   </TD>
   <TD ALIGN=LEFT>
-  <B><A HREF=\"logout.php\">"._("Logout of")." ".PACKAGENAME."</A>
+  <B><A HREF=\"logout.php\">".__("Logout of")." ".PACKAGENAME."</A>
   </B>
   </TD></TR>
   </TABLE>

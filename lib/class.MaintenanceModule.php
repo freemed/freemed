@@ -42,7 +42,7 @@ class MaintenanceModule extends BaseModule {
 		global $action, $submit;
 
 		// Handle a "Cancel" button being pushed
-		if ($submit==_("Cancel")) {
+		if ($submit==__("Cancel")) {
 			$action = "";
 			$this->view();
 			return NULL;
@@ -112,8 +112,8 @@ class MaintenanceModule extends BaseModule {
 			)
 		);
 
-		if ($result) $this->message = _("Record added successfully.");
-			else $this->message = _("Record addition failed.");
+		if ($result) $this->message = __("Record added successfully.");
+			else $this->message = __("Record addition failed.");
 		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _add
@@ -127,8 +127,8 @@ class MaintenanceModule extends BaseModule {
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $GLOBALS['sql']->query ($query);
-		if ($result) $this->message = _("Record deleted successfully.");
-			else $this->message = _("Record deletion failed.");
+		if ($result) $this->message = __("Record deleted successfully.");
+			else $this->message = __("Record deletion failed.");
 		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _del
@@ -150,8 +150,8 @@ class MaintenanceModule extends BaseModule {
 			)
 		);
 
-		if ($result) $this->message = _("Record modified successfully.");
-			else $this->message = _("Record modification failed.");
+		if ($result) $this->message = __("Record modified successfully.");
+			else $this->message = __("Record modification failed.");
 		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _mod
@@ -199,7 +199,7 @@ class MaintenanceModule extends BaseModule {
 			),
 			"module_loader.php",
 			$this->form_vars,
-			array ("", _("NO DESCRIPTION")),
+			array ("", __("NO DESCRIPTION")),
 			"",
 			"t_page"
 		);
@@ -209,7 +209,7 @@ class MaintenanceModule extends BaseModule {
 	function _setup () {
 		global $display_buffer;
 		if (!$this->create_table()) return false;
-		return freemed_import_stock_data ($this->record_name);
+		return freemed_import_stock_data ($this->table_name);
 	} // end function _setup
 
 	// function create_table

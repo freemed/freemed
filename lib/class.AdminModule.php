@@ -83,7 +83,7 @@ class AdminModule extends BaseModule {
 
 		$display_buffer .= "
 			<P><CENTER>
-			"._("Adding")." ...
+			".__("Adding")." ...
 		";
 
 		$result = $sql->query (
@@ -93,15 +93,15 @@ class AdminModule extends BaseModule {
 			)
 		);
 
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>".__("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>".__("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</CENTER>
 			<P>
 			<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("back")."</A>
+				>".__("back")."</A>
 			</CENTER>
 		";
 	} // end function _add
@@ -113,15 +113,15 @@ class AdminModule extends BaseModule {
 		global $display_buffer;
 		global $id, $sql, $module;
 		$display_buffer .= "<P ALIGN=CENTER>".
-			_("Deleting")." . . . \n";
+			__("Deleting")." . . . \n";
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
-		if ($result) { $display_buffer .= _("done"); }
-		 else        { $display_buffer .= "<FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT>"; }
+		if ($result) { $display_buffer .= __("done"); }
+		 else        { $display_buffer .= "<FONT COLOR=\"#ff0000\">".__("ERROR")."</FONT>"; }
 		$display_buffer .= "</P>\n";
 		$display_buffer .= "<P ALIGN=CENTER><A HREF=\"".$this->page_name.
-			"?module=".urlencode($module)."\">"._("back")."</A></P>\n";
+			"?module=".urlencode($module)."\">".__("back")."</A></P>\n";
 	} // end function _del
 	function del () { $this->_del(); }
 
@@ -134,7 +134,7 @@ class AdminModule extends BaseModule {
 
 		$display_buffer .= "
 			<P><CENTER>
-			"._("Modifying")." ...
+			".__("Modifying")." ...
 		";
 
 		$result = $sql->query (
@@ -147,15 +147,15 @@ class AdminModule extends BaseModule {
 			)
 		);
 
-		if ($result) { $display_buffer .= "<B>"._("done").".</B>\n"; }
-		 else        { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
+		if ($result) { $display_buffer .= "<B>".__("done").".</B>\n"; }
+		 else        { $display_buffer .= "<B>".__("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
 			</CENTER>
 			<P>
 			<CENTER>
 				<A HREF=\"$this->page_name?module=$module\"
-				>"._("back")."</A>
+				>".__("back")."</A>
 			</CENTER>
 		";
 	} // end function _mod
@@ -202,7 +202,7 @@ class AdminModule extends BaseModule {
 			$result,
 			"module_loader.php",
 			$this->form_vars,
-			array ("", _("NO DESCRIPTION")),
+			array ("", __("NO DESCRIPTION")),
 			"",
 			"t_page"
 		);

@@ -1,20 +1,6 @@
 <?php
  // $Id$
  // $Author$
- // $Log$
- // Revision 1.3  2002/11/03 20:35:58  rufustfirefly
- // Removed some kruft, and added a new helper function.
- //
- // Revision 1.2  2002/08/17 14:59:41  rufustfirefly
- // Updated XML-RPC services to scan lib/xmlrpc/ for additional functions.
- // Removed old kruft.
- //
- // Revision 1.1  2001/12/14 16:35:41  rufustfirefly
- // renamed from soap_* to xmlrpc_* (since it's really XMLRPC, not SOAP)
- //
- // Revision 1.1  2001/11/20 21:59:06  rufustfirefly
- // WDDX/XMLRPC services
- //
 
 //----- Unset server methods
 unset($XMLRPC_METHODS);

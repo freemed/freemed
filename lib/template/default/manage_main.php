@@ -29,8 +29,8 @@ foreach ($static_components AS $garbage => $component) {
 		case "appointments": // Appointments static component
 		include_once("lib/calendar-functions.php");
 		// Add header and strip at top
-		$modules[_("Appointments")] = "appointments";
-		$panel[_("Appointments")] .= "
+		$modules[__("Appointments")] = "appointments";
+		$panel[__("Appointments")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
 			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
@@ -38,11 +38,11 @@ foreach ($static_components AS $garbage => $component) {
 			><TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 			 CLASS=\"menubar_items\">
 			<A HREF=\"book_appointment.php?patient=$id&type=pat\"
-			>"._("Add")."</A> |
+			>".__("Add")."</A> |
 			<A HREF=\"manage_appointments.php?patient=$id\"
-			>"._("View/Manage")."</A> |
+			>".__("View/Manage")."</A> |
 			<A HREF=\"show_appointments.php?patient=$id&type=pat\"
-			>"._("Show Today")."</A>
+			>".__("Show Today")."</A>
 			</TD></TR>
 		";
 
@@ -58,30 +58,30 @@ foreach ($static_components AS $garbage => $component) {
 		if ($debug) print "query = $query<BR>\n";
 		$appoint_result = $sql->query($query);
 		if (!$sql->results($appoint_result)) {
-			$panel[_("Appointments")] .= "
+			$panel[__("Appointments")] .= "
 			<TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
-			<B>"._("NONE")."</B>
+			<B>".__("NONE")."</B>
 			</TD></TR>
 			";
 		} else {
-			$panel[_("Appointments")] .= "
+			$panel[__("Appointments")] .= "
 			<TR><TD COLSPAN=\"3\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
 			<TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0
 			 BORDER=0 CLASS=\"thinbox\"><TR>
 			<TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\"
 			 CLASS=\"menubar_info\">
-				<B>"._("Date")."</B>
+				<B>".__("Date")."</B>
 			</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\"
 			 CLASS=\"menubar_info\">
-				<B>"._("Time")."</B>
+				<B>".__("Time")."</B>
 			</TD><TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
-				<!-- <B>"._("Room")."</B> -->
+				<!-- <B>".__("Room")."</B> -->
 			</TD><TD VALIGN=\"MIDDLE\" CLASS=\"menubar_info\">
-				<B>"._("Description")."</B>
+				<B>".__("Description")."</B>
 			</TD></TR>
 			";
 			while ($appoint_r=$sql->fetch_array($appoint_result)) {
-				$panel[_("Appointments")] .= "
+				$panel[__("Appointments")] .= "
 				<TR>
 				<TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
 				<SMALL>".prepare(fm_date_print(
@@ -99,7 +99,7 @@ foreach ($static_components AS $garbage => $component) {
 				";
 			} // end of looping through results
 			// Show last few appointments
-			$panel[_("Appointments")] .= "
+			$panel[__("Appointments")] .= "
 			</TABLE>
 			</TD></TR>
 			";
@@ -107,7 +107,7 @@ foreach ($static_components AS $garbage => $component) {
 		
 
 		// Footer
-		$panel[_("Appointments")] .= "
+		$panel[__("Appointments")] .= "
 			</TABLE>
 		";
 		break; // end appointments
@@ -115,9 +115,9 @@ foreach ($static_components AS $garbage => $component) {
 		case "custom_reports":
 		$f_results = $sql->query("SELECT * FROM patrectemplate ".
 			"ORDER BY prtname");
-		$modules[_("Custom Records")] = "custom_reports";
+		$modules[__("Custom Records")] = "custom_reports";
 		if ($sql->results($f_results)) {
-			$panel[_("Custom Records")] .= "
+			$panel[__("Custom Records")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\"
 			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
@@ -133,19 +133,19 @@ foreach ($static_components AS $garbage => $component) {
 			<select NAME=\"form\">
 			";
 			while ($f_r = $sql->fetch_array ($f_results)) 
-			$panel[_("Custom Records")] .= "<option VALUE=\"".$f_r["id"]."\">".
+			$panel[__("Custom Records")] .= "<option VALUE=\"".$f_r["id"]."\">".
 				$f_r["prtname"]."</option>\n"; 
-			$panel[_("Custom Records")] .= "
+			$panel[__("Custom Records")] .= "
 				</select>
 				<input class=\"button\" TYPE=\"SUBMIT\" ".
-				"VALUE=\""._("Add")."\"/>
+				"VALUE=\"".__("Add")."\"/>
 				</form>
 				</div>
 				</td></tr></table>
 			";
 		} else {
 			// Quick null panel
-			$panel[_("Custom Records")] .= "
+			$panel[__("Custom Records")] .= "
 				<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 				 CELLPADDING=3 CLASS=\"thinbox\"
 		 		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
@@ -153,18 +153,18 @@ foreach ($static_components AS $garbage => $component) {
 				<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 				 CLASS=\"menubar_items\">
 				<A HREF=\"custom_records.php?patient=$id\" 
-				>"._("View/Manage")."</A>
+				>".__("View/Manage")."</A>
 				</TD></TR>
 				<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
-				<B>"._("NONE")."</B>
+				<B>".__("NONE")."</B>
 				</TD></TR></TABLE>
 			";
 		} // end checking for results
 		break; // end custom_reports
 
 		case "medical_information":
-		$modules[_("Medical Information")] = "medical_information";
-		$panel[_("Medical Information")] = "
+		$modules[__("Medical Information")] = "medical_information";
+		$panel[__("Medical Information")] = "
 		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 		 CELLPADDING=3 CLASS=\"thinbox\"
 		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
@@ -176,22 +176,22 @@ foreach ($static_components AS $garbage => $component) {
 		<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
 		<TABLE WIDTH=\"100%\" BORDER=\"0\">
-		<TR><TD ALIGN=\"LEFT\"><B>"._("Blood Type")."</B></TD> 
+		<TR><TD ALIGN=\"LEFT\"><B>".__("Blood Type")."</B></TD> 
 		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></TR>
 		</TABLE>
 		</TD></TR></TABLE>";
 		break; // end medical_information
 
 		case "messages":
-		$modules[_("Messages")] = "messages";
-		$panel[_("Messages")] = "
+		$modules[__("Messages")] = "messages";
+		$panel[__("Messages")] = "
 		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 		 CELLPADDING=3 CLASS=\"thinbox\"
 		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
 		 onMouseOut=\"this.className='thinbox'; return true;\">
 		<TR><TD VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
 		 CLASS=\"menubar_items\">
-		<A HREF=\"messages.php?action=addform\">"._("Add")."</A>
+		<A HREF=\"messages.php?action=addform\">".__("Add")."</A>
 		</TD></TR>
 		<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
@@ -202,11 +202,11 @@ foreach ($static_components AS $garbage => $component) {
 			"ORDER BY msgtime DESC ".
 			"LIMIT ".$num_summary_items);
 		if ($sql->results($my_result)) {
-			$panel[_("Messages")] .= "<TR CLASS=\"menubar_info\">".
-				"<TD><b>"._("Date")."</b></TD>".
-				"<TD><b>"._("Time")."</b></TD>".
-				"<TD><b>"._("User")."</b></TD>".
-				"<TD><b>"._("Action")."</b></TD>".
+			$panel[__("Messages")] .= "<TR CLASS=\"menubar_info\">".
+				"<TD><b>".__("Date")."</b></TD>".
+				"<TD><b>".__("Time")."</b></TD>".
+				"<TD><b>".__("User")."</b></TD>".
+				"<TD><b>".__("Action")."</b></TD>".
 				"</TR>\n";
 			while ($my_r = $sql->fetch_array($my_result)) {
 				// Transformations for date and time
@@ -221,7 +221,7 @@ foreach ($static_components AS $garbage => $component) {
 				$this_user = CreateObject('FreeMED.User', $my_r[msgfor]);
 
 				// Form the panel
-				$panel[_("Messages")] .= "<TR>".
+				$panel[__("Messages")] .= "<TR>".
 					"<TD ALIGN=\"LEFT\"><SMALL>$y-$m-$d</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".fc_get_time_string($hour,$min)."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$this_user->getDescription()."</SMALL></TD>".
@@ -236,11 +236,11 @@ foreach ($static_components AS $garbage => $component) {
 			}
 		} else {
 			// If there are no messages regarding this patient
-			$panel[_("Messages")] .= "<TR><TD ALIGN=\"CENTER\">".
-			_("There are currently no messages.").
+			$panel[__("Messages")] .= "<TR><TD ALIGN=\"CENTER\">".
+			__("There are currently no messages.").
 			"</TD></TR>\n";
 		}
-		$panel[_("Messages")] .= "
+		$panel[__("Messages")] .= "
 		</TABLE>
 		</DIV>
 		</TD></TR></TABLE>";
@@ -249,8 +249,8 @@ foreach ($static_components AS $garbage => $component) {
 		case "photo_id":
 		// If there is a file with that name, show it, else box
 		if (file_exists("img/store/$id.identification.djvu")) {
-			$modules[_("Photo ID")] = "photo_id";
-			$panel[_("Photo ID")] = "
+			$modules[__("Photo ID")] = "photo_id";
+			$panel[__("Photo ID")] = "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\"
 			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
@@ -259,17 +259,17 @@ foreach ($static_components AS $garbage => $component) {
 			 CLASS=\"menubar_items\">
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
 			"return=manage\"
-			 >"._("Update")."</A> |
+			 >".__("Update")."</A> |
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."&".
 			"action=remove&return=manage\"
-			 >"._("Remove")."</A>
+			 >".__("Remove")."</A>
 			</TD></TR>
 			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 			<DIV ALIGN=\"CENTER\">
 			<A HREF=\"patient_image_handler.php?".
 			"patient=".urlencode($patient)."&".
 			"id=identification\" TARGET=\"new\"
-			onMouseOver=\"window.status='"._("Enlarge image")."'; return true;\"
+			onMouseOver=\"window.status='".__("Enlarge image")."'; return true;\"
 			onMouseOut=\"window.status=''; return true;\"
 			><EMBED SRC=\"patient_image_handler.php?".
 			"patient=".urlencode($id)."&id=identification\"
@@ -284,7 +284,7 @@ foreach ($static_components AS $garbage => $component) {
 			";
 
 		} else {
-			$panel[_("Photo ID")] = "
+			$panel[__("Photo ID")] = "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\"
 			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
@@ -292,11 +292,11 @@ foreach ($static_components AS $garbage => $component) {
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\">
 			<A HREF=\"photo_id.php?patient=".urlencode($id)."\"
-			 >"._("Update")."</A>
+			 >".__("Update")."</A>
 			</TD></TR>
 			<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 			<DIV ALIGN=\"CENTER\">
-			"._("No photographic identification on file.")."
+			".__("No photographic identification on file.")."
 			<BR><BR>
 			</DIV>
 			</TD></TR>
@@ -316,14 +316,14 @@ foreach ($static_components AS $garbage => $component) {
 			"ORDER BY caldateof DESC, calhour DESC"
 		);
 		if (!$sql->results($dolv_result)) {
-			$dolv = _("NONE");
+			$dolv = __("NONE");
 		} else {
 			$dolv_r = $sql->fetch_array($dolv_result);
 			$dolv = prepare(fm_date_print($dolv_r["caldateof"]));
 		} // end if there is no result
 		//----- Create the panel
-		$modules[_("Patient Information")] = "patient_information";
-		$panel[_("Patient Information")] .= "
+		$modules[__("Patient Information")] = "patient_information";
+		$panel[__("Patient Information")] .= "
 			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
 			 CELLPADDING=3 CLASS=\"thinbox\"
 			 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
@@ -331,14 +331,14 @@ foreach ($static_components AS $garbage => $component) {
 			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\" COLSPAN=2>
 			<A HREF=\"patient.php?action=modform&id=$id\" 
-			>"._("Modify")."</A>
+			>".__("Modify")."</A>
 			</TD></TR>
 			<TR><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
-				<B>"._("Date of Last Visit")."</B> :
+				<B>".__("Date of Last Visit")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$dolv."
 			</TR><TR><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
-				<B>"._("Phone Number")."</B> :
+				<B>".__("Phone Number")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$this_patient->local_record["pthphone"]."
 			</TD></TR></TABLE>
@@ -457,7 +457,7 @@ if (count($panel) > 0) {
 	$display_buffer .= "
 	<p/>
 	<div align=\"CENTER\">
-	<b>"._("Please configure panels through \"Configure\" in the sidebar.")."</b>
+	<b>".__("Please configure panels through \"Configure\" in the sidebar.")."</b>
 	</div>
 	<p/>
 	";
@@ -482,20 +482,20 @@ if (count($panel) > 0) {
 //      else
 //        $display_buffer .= "
 //	 <A HREF=\"patient.php?action=find&criteria=".
-//	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]
+//	 "dependants&f1=$id\">".__("Dependents")."</A> [$num_deps]
 //        ";
 //      } else {
 //      $guarantor = CreateObject('FreeMED.Patient',$this_patient->ptdep);
 //      $display_buffer .= "
 //         <A HREF=\"manage.php?action=view&id=".$this_patient->ptdep."\"
-//         >"._("Guarantor")."</A>
+//         >".__("Guarantor")."</A>
 //	</TD><TD>[".$guarantor->fullName()."]</TD></TR>
 //     ";
 //    }
 
 // Add configure to the menu bar
 if ($action != "config") {
-	$menu_bar[_("Configure")] = "manage.php?id=$id&action=config";
+	$menu_bar[__("Configure")] = "manage.php?id=$id&action=config";
 }
 
 
@@ -518,7 +518,7 @@ $menu_bar = array_merge (
 $display_buffer .= "
 	<TR><TD ALIGN=RIGHT>
 	<BR>
-    	<B>"._("Certifications")."</B>
+    	<B>".__("Certifications")."</B>
 	<BR>
     	</TD>
 ";
@@ -528,10 +528,10 @@ $module_template = "
         <B>#name#</B> : 
         </TD><TD> 
         <A HREF=\"module_loader.php?module=#class#&action=addform&patient=$id\"
-         >"._("Add")."</A>
+         >".__("Add")."</A>
         </TD><TD> 
         <A HREF=\"module_loader.php?module=#class#&patient=$id\"
-         >"._("View/Manage")."</A>
+         >".__("View/Manage")."</A>
         </TD><TD>
         </TD></TR>
 
@@ -544,7 +544,7 @@ $module_template = "
         </TD>
 		<TD> 
         <A HREF=\"module_loader.php?module=#class#&patient=$id\"
-         >"._("View")."</A>
+         >".__("View")."</A>
         </TD><TD>
         </TD></TR>
 

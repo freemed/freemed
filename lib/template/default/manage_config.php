@@ -8,10 +8,10 @@
 if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 //----- Override title for this page
-$page_title = _("Management Configuration");
+$page_title = __("Management Configuration");
 
 //----- Add menu help item for this
-$menu_bar[_("Configuration Help")] = help_url("manage.php", "configure");
+$menu_bar[__("Configuration Help")] = help_url("manage.php", "configure");
 
 //----- Create configuration notebook
 $book = CreateObject('PHP.notebook',
@@ -48,10 +48,10 @@ $book->add_page("General",
 		"num_summary_items"
 	),
 	html_form::form_table(array(
-		_("Automatic Refresh Time") =>
+		__("Automatic Refresh Time") =>
 		html_form::select_widget("automatic_refresh_time",
 			array (
-				_("NONE") => "0",
+				__("NONE") => "0",
 				"1m" => "60",
 				"2m" => "120",
 				"5m" => "300",
@@ -61,7 +61,7 @@ $book->add_page("General",
 			)
 		),
 
-		_("Columns in Display") =>
+		__("Columns in Display") =>
 		html_form::select_widget("display_columns",
 			array (
 				"1" => "1",
@@ -70,7 +70,7 @@ $book->add_page("General",
 			)
 		),
 
-		_("Number of Summary Items") =>
+		__("Number of Summary Items") =>
 		html_form::select_widget("num_summary_items",
 			array (
 				"1"  => "1",
@@ -94,32 +94,32 @@ $book->add_page("Static Components",
 	array ( "static_components" ),
 	"<CENTER>\n".
 	html_form::form_table(array(
-		_("Appointments") =>
+		__("Appointments") =>
 		html_form::checkbox_widget(
 			"static_components", "appointments", " "
 		),
 
-		_("Custom Reports") =>
+		__("Custom Reports") =>
 		html_form::checkbox_widget(
 			"static_components", "custom_reports", " "
 		),
 
-		_("Medical Information") =>
+		__("Medical Information") =>
 		html_form::checkbox_widget(
 			"static_components", "medical_information", " "
 		),
 
-		_("Messages") =>
+		__("Messages") =>
 		html_form::checkbox_widget(
 			"static_components", "messages", " "
 		),
 
-		_("Patient Information") =>
+		__("Patient Information") =>
 		html_form::checkbox_widget(
 			"static_components", "patient_information", " "
 		),
 
-		_("Photographic Identification") =>
+		__("Photographic Identification") =>
 		html_form::checkbox_widget(
 			"static_components", "photo_id", " "
 		)
@@ -154,7 +154,7 @@ foreach($class_array AS $k => $class_pair) {
 		list ($key, $val) = explode (":", $class_pair);
 		// Add it
 		//$classes["$key"] = $val; // this would be for anything else
-		$modules_to_choose[_("$key")] =
+		$modules_to_choose[__("$key")] =
 			html_form::checkbox_widget (
 				"modular_components", $val, " "
 			);
@@ -206,16 +206,16 @@ if (!$book->is_done()) {
 		// Set automatic refresh on success...
 		$refresh = "manage.php?action=menu&id=$id";
 		// Display the page just in case...
-		$display_buffer .= _("Updated configuration");
+		$display_buffer .= __("Updated configuration");
 		$display_buffer .= "
 			<P>
 			<CENTER>
 			<A HREF=\"manage.php?action=menu&id=$id\"
-			>"._("Manage Patient")."</A>
+			>".__("Manage Patient")."</A>
 			</CENTER>
 		";
 	} else {
-		$display_buffer .= _("ERROR")." (query=\"".prepare($query)."\"";
+		$display_buffer .= __("ERROR")." (query=\"".prepare($query)."\"";
 		template_display();
 	}
 } // end checking if book is done

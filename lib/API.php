@@ -125,7 +125,7 @@ class freemed {
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'drugPopup'); ".
 				"drugPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Change")."\"/>";
+				"VALUE=\"".__("Change")."\"/>";
 		} else {
 			return "<input type=\"HIDDEN\" ".
 				"name=\"".prepare($varname)."\"/>".
@@ -137,7 +137,7 @@ class freemed {
 				urlencode($formname)."', 'drugPopup', ".
 				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"drugPopup.opener=self; return true;\" ".
-				"value=\""._("Drug Lookup")."\"/>";
+				"value=\"".__("Drug Lookup")."\"/>";
 		}
 	} // end function freemed::drug_widget
 
@@ -285,7 +285,7 @@ class freemed {
 		$buffer .= "<select NAME=\"".$select_name."[]\" multiple SIZE=\"5\">\n";
 		if ($display_all) {
 			$buffer .= "<option VALUE=\"-1\" ".
-			($all_selected ? "selected" : "").">"._("ALL")."</option>\n";
+			($all_selected ? "selected" : "").">".__("ALL")."</option>\n";
 		}
 	
 		if ( $sql->results ($result) ) {
@@ -370,7 +370,7 @@ class freemed {
 				urlencode($formname)."', 'patientPopup', ".
 				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Change")."\"/>";
+				"VALUE=\"".__("Change")."\"/>";
 		} else {
 			return "<input TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\"/>".
@@ -381,7 +381,7 @@ class freemed {
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'patientPopup'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Patient Lookup")."\" ".
+				"VALUE=\"".__("Patient Lookup")."\" ".
 				"class=\"button\" />";
 		}
 	} // end function freemed::patient_widget
@@ -834,14 +834,14 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
     <td ALIGN=\"LEFT\"><a HREF=\"$this_page_name?module=".urlencode($module)."&".
 	"action=addform".
      ( !empty($patient) ? "&patient=".urlencode($patient) : "" )."\"
-	onMouseOver=\"window.status='"._("Add")."'; return true;\"
+	onMouseOver=\"window.status='".__("Add")."'; return true;\"
 	onMouseOut=\"window.status=''; return true;\"
 	CLASS=\"reverse\"><small><b><img NAME=\"add_$globaladdcounter\"
 	SRC=\"lib/template/$template/img/add.png\" BORDER=\"0\"
-	ALT=\"["._("Add")."]\"/></b></small></a></td>
+	ALT=\"[".__("Add")."]\"/></b></small></a></td>
     <td WIDTH=\"30%\">&nbsp;</td>
     <td ALIGN=\"RIGHT\"><a HREF=\"$__ref\" CLASS=\"reverse\"
-     ><small><b>"._("RETURN TO MENU")."</b></small></a></td>
+     ><small><b>".__("RETURN TO MENU")."</b></small></a></td>
     </tr></table>
   	";
 	return $buffer;
@@ -908,7 +908,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     
     ((${$cur_page_var} > 1) ? "
     <tr><td>".template::link_button(
-        _("Previous"),
+        __("Previous"),
         "$page_name?$cur_page_var=".(${$cur_page_var}-1).
         ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
         .prepare($_s_val)."" : "").
@@ -917,18 +917,18 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     " : "" )
     
     ."<td CLASS=\"reverse\">
-     "._("Page"). 
+     ".__("Page"). 
      fm_number_select($cur_page_var, 1, $num_pages, 1, false, true).
 	" of ".$num_pages."
      <input TYPE=\"HIDDEN\" NAME=\"action\"  VALUE=\"".prepare($action)."\"/>
      <input TYPE=\"HIDDEN\" NAME=\"module\"  VALUE=\"".prepare($module)."\"/>
      <input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
-     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Go")."\"/>
+     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Go")."\"/>
     </td>".
     
     ((${$cur_page_var} < $num_pages) ? "
     <td>".template::link_button(
-        _("Next"),
+        __("Next"),
         "$page_name?$cur_page_var=".(${$cur_page_var}+1).
         ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
         .prepare($_s_val)."" : "").
@@ -963,7 +963,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   }
   if ($flags != 0) {
   $buffer .= "
-      <td CLASS=\"reverse\">"._("Action")."</td>
+      <td CLASS=\"reverse\">".__("Action")."</td>
 	  </tr>
   ";
   } else {
@@ -1029,7 +1029,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     if ($flags & ITEMLIST_VIEW) {
       $buffer .= "
         <a HREF=\"$page_link?module=$module&patient=$patient&action=view&id=".
-	urlencode($this_result['id'])."\" class=\"button\">"._("VIEW")."</a>
+	urlencode($this_result['id'])."\" class=\"button\">".__("VIEW")."</a>
       ";
     }
     if (freemed::user_flag(USER_DATABASE) AND 
@@ -1037,7 +1037,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
       $buffer .= "
         <a class=\"button\" ".
 	"HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
-	urlencode($this_result['id'])."\">"._("MOD")."</a>
+	urlencode($this_result['id'])."\">".__("MOD")."</a>
       ";
     }
     if (freemed::user_flag(USER_DELETE) AND
@@ -1045,12 +1045,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	$buffer .= html_form::confirm_link_widget(
         	"$page_link?patient=$patient&module=$module&action=delete&id=".
 				urlencode($this_result['id']),
-	 	_("DEL"),
+	 	__("DEL"),
 		array(
 			'confirm_text' =>
-			_("Are you sure you want to delete this record?"),
+			__("Are you sure you want to delete this record?"),
 
-			'text' => _("Delete"),
+			'text' => __("Delete"),
 			'class' => 'button'
 		)
 	)."\n";
@@ -1061,12 +1061,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	$buffer .= html_form::confirm_link_widget(
         	"$page_link?patient=$patient&module=$module&action=lock&id=".
 				urlencode($this_result['id']),
-	 	_("LOCK"),
+	 	__("LOCK"),
 		array(
 			'confirm_text' =>
-			_("Are you sure you want to lock this record?"),
+			__("Are you sure you want to lock this record?"),
 
-			'text' => _("Lock"),
+			'text' => __("Lock"),
 			'class' => 'button'
 		)
 	)."\n";
@@ -1105,13 +1105,13 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
         "_s_field",
 	$control_list
       )."
-      "._("contains")."
+      ".__("contains")."
       <input class=\"button\" TYPE=\"HIDDEN\" NAME=\"module\"
        VALUE=\"".prepare($module)."\"/>
       <input class=\"button\" TYPE=\"HIDDEN\" NAME=\"$cur_page_var\" VALUE=\"1\"/>
       ".html_form::text_widget('_s_val', 20)."
-      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Search")."\"/>
-      <input class=\"button\" TYPE=\"BUTTON\" VALUE=\""._("Reset")."\"
+      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\"/>
+      <input class=\"button\" TYPE=\"BUTTON\" VALUE=\"".__("Reset")."\"
        onClick=\"this.form._s_val.value=''; this.form.submit(); return true;\"/>
      </td>
     </form>
@@ -1170,7 +1170,7 @@ function freemed_display_facilities ($param="", $default_load = false,
 	// list doctors in SELECT/OPTION tag list, and
 	// leave doctor selected who is in param
 	$buffer .= "<option VALUE=\"0\"".
-		( ($param == 0) ? " selected" : "" ).">"._("NONE SELECTED").
+		( ($param == 0) ? " selected" : "" ).">".__("NONE SELECTED").
 		"</option>\n";
 	$query = "SELECT * FROM facility ".$intextquery.
 		"ORDER BY psrname,psrnote";
@@ -1198,7 +1198,7 @@ function freemed_display_physicians ($param, $intext="") {
 	// list doctors in SELECT/OPTION tag list, and
 	// leave doctor selected who is in param
 	$buffer .= "
-		<option VALUE=\"0\">"._("NONE SELECTED")."</option>
+		<option VALUE=\"0\">".__("NONE SELECTED")."</option>
 	";
 	$query = "SELECT * FROM physician ".
 		( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
@@ -1228,7 +1228,7 @@ function freemed_display_printerlist ($param)
   // list printers in SELECT/OPTION tag list, and
   // leave printer selected who is in param
   echo "
-    <OPTION VALUE=\"0\">"._("NONE SELECTED")."
+    <OPTION VALUE=\"0\">".__("NONE SELECTED")."
   ";
   $query = "SELECT * FROM printer ORDER BY ".
      "prnthost, prntname";
@@ -1263,7 +1263,7 @@ function freemed_display_selectbox ($result, $format, $param="") {
  
 	$buffer = "";
 	if ($count["$result"]<1) { 
-		$buffer .= _("NONE")." ".
+		$buffer .= __("NONE")." ".
 			"<input TYPE=\"HIDDEN\" NAME=\"".prepare($param)."\" ".
 			"VALUE=\"0\"/>\n";
 		return $buffer; // do nothing!
@@ -1271,7 +1271,7 @@ function freemed_display_selectbox ($result, $format, $param="") {
 
 	$buffer .= "
 		<select NAME=\"$param\">
-		<option VALUE=\"0\">"._("NONE SELECTED")."</option>
+		<option VALUE=\"0\">".__("NONE SELECTED")."</option>
 	";
 	
 	reset($var["$result"]); // if we're caching it, we have to reset it!
@@ -1386,12 +1386,12 @@ function freemed_open_db () {
 	if (!freemed::verify_auth()) {
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
-		<b>"._("You have entered an incorrect username or password.")."</b>
+		<b>".__("You have entered an incorrect username or password.")."</b>
 		<br/><br/>
-		<b><i>"._("It is possible that your cookies have expired.")."</i></b>
+		<b><i>".__("It is possible that your cookies have expired.")."</i></b>
 		<p/>
 		".template::link_button(
-			_("Return to the Login Screen"),
+			__("Return to the Login Screen"),
 			"index.php"
 		)."
 		</div>
@@ -1557,7 +1557,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	// Month buffer
 	$buffer_m = "\t<select NAME=\"".$datevarname."_m$suffix\">\n".
 		"\t\t<option VALUE=\"00\" ".
-		( ($m==0) ? "SELECTED" : "" ).">"._("NONE")."</option>\n";
+		( ($m==0) ? "SELECTED" : "" ).">".__("NONE")."</option>\n";
 	for ($i=1;$i<=12;$i++) {
 		$buffer_m .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
 			"$i\" ".  ( ($i==$m) ? "SELECTED" : "" ).
@@ -1568,7 +1568,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	// Day buffer
 	$buffer_d = "\t<select NAME=\"".$datevarname."_d$suffix\">\n".
 		"\t\t<option VALUE=\"00\" ".
-		( ($d==0) ? "SELECTED" : "" ).">"._("NONE")."</option>\n";
+		( ($d==0) ? "SELECTED" : "" ).">".__("NONE")."</option>\n";
 	for ($i=1;$i<=31;$i++) {
 		$buffer_d .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
 			"$i\" ".( ($i==$d) ? "SELECTED" : "" ).">$i</option>\n";
@@ -1578,7 +1578,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	// Year buffer
 	$buffer_y = "\t<select NAME=\"".$datevarname."_y$suffix\">\n".
 		"\t\t<option VALUE=\"0000\" ".
-		( ($y==0) ? "SELECTED" : "" ).">"._("NONE")."</option>\n";
+		( ($y==0) ? "SELECTED" : "" ).">".__("NONE")."</option>\n";
 	for ($i=$starting_year;$i<=$ending_year;$i++) {
 		$buffer_y .= "\n\t\t<option VALUE=\"$i\" ".
 			( ($i==$y) ? "SELECTED" : "" ).">$i</option>\n";
@@ -2027,8 +2027,8 @@ function fm_time_entry ($timevarname="") {
 	  $$timevarname = "00:00:AM";
       ${$timevarname."_h"} = "00";
 	  ${$timevarname."_m"} = "00";
-	  ${$timevarname."_ap"} = _("AM");
-	  $ap = _("AM");
+	  ${$timevarname."_ap"} = __("AM");
+	  $ap = __("AM");
   }
 
   //echo ${$timevarname."_h"}."<BR>";
@@ -2040,9 +2040,9 @@ function fm_time_entry ($timevarname="") {
   $buffer_m = fm_number_select($timevarname."_m",0,59);
   $buffer_ap = "<select NAME=\"$timevarname"."_ap"."\">".
 	"<option VALUE=\"AM\" ".
-		( $ap=="AM" ? "SELECTED" : "").">". _("AM")."</option>\n".
+		( $ap=="AM" ? "SELECTED" : "").">". __("AM")."</option>\n".
 	"<option VALUE=\"PM\" ".
-		( $ap=="PM" ? "SELECTED" : "").">". _("PM")."</option>\n";
+		( $ap=="PM" ? "SELECTED" : "").">". __("PM")."</option>\n";
    
   return $buffer_h.$buffer_m.$buffer_ap;
   
@@ -2161,6 +2161,9 @@ function patient_history_list () {
 
 	// Import patient_history
 	$patient_history = $_SESSION['patient_history'];
+
+	// Sort by alpha
+	ksort($patient_history);
 
 	// Check for no patient history
 	if (count($patient_history)<1) return false;

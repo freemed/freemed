@@ -41,7 +41,7 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 				TARGET=\"bug_report\">
 				<INPUT TYPE=HIDDEN NAME=\"report\" VALUE=\"".
 				prepare($error)."\">
-				<INPUT TYPE=SUBMIT VALUE=\""._("Submit Bug Report")."\">
+				<INPUT TYPE=SUBMIT VALUE=\"".__("Submit Bug Report")."\">
 				</FORM>
 				</CENTER>
 				";

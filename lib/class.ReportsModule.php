@@ -55,9 +55,9 @@ class ReportsModule extends BaseModule {
 				// Create return links
 				$display_buffer .= 
 				template::link_bar(array(
-				_("Reports") =>
+				__("Reports") =>
 				"reports.php",
-				_("Return to Main Menu") =>
+				__("Return to Main Menu") =>
 				"main.php"
 				));
 				break;

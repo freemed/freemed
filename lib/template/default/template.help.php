@@ -57,10 +57,10 @@ if (isset($page_title)) {
 		<UL>
 		<LI><A HREF="help.php?page_name=main.php&framed=yes"
 			TARGET="help_frame"
-			><?php print _("Main Menu"); ?></A>
+			><?php print __("Main Menu"); ?></A>
 		<LI><A HREF="#"
 			onClick="window.close();"
-			><?php print _("Close this Window"); ?></A>
+			><?php print __("Close this Window"); ?></A>
 		</UL>
 	</TD></TR></TABLE>
 

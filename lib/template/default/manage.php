@@ -5,8 +5,8 @@
  // lic : GPL, v2
 
 //----- Use "current_patient" SESSION variable if it's there
-if (!$id and ($_COOKIE['current_patient']>0)) {
-	$id = $_COOKIE['current_patient'];
+if (!$id and ($_SESSION['current_patient']>0)) {
+	$id = $_SESSION['current_patient'];
 }
 
 //----- Load the Patient object
@@ -21,10 +21,10 @@ if ($id<1) {
   // if someone needs to 1st go to the patient menu
 	$display_buffer .= "
         <p/>
-        <div ALIGN=\"CENTER\"><b>"._("You must select a patient.")."</b></div>
+        <div ALIGN=\"CENTER\"><b>".__("You must select a patient.")."</b></div>
         <p/>
         <div ALIGN=\"CENTER\">
-        <a HREF=\"patient.php\">"._("Select a Patient")."</a>
+        <a HREF=\"patient.php\">".__("Select a Patient")."</a>
         </div>
         <p/>
 	";

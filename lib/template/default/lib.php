@@ -37,13 +37,14 @@ class template {
 			
 			// Icon for patient appointments
 			"<td><a href=\"book_appointment.php?patient=".urlencode($patient).
-			"\" onMouseOver=\"window.status='"._("Book Appointment")."'; ".
+			"&type=pat".
+			"\" onMouseOver=\"window.status='".__("Book Appointment")."'; ".
 				"return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\"".
 			"><img src=\"lib/template/".$GLOBALS['template']."/img/".
 			"pbox_book_appointment.".IMAGE_TYPE."\" border=\"0\" ".
 			"width=\"16\" height=\"16\" ".
-			"alt=\""._("Book Appointment")."\"/></a></td>\n".
+			"alt=\"".__("Book Appointment")."\"/></a></td>\n".
 			
 			"</tr></table>\n";
 		return $buffer;
@@ -52,12 +53,12 @@ class template {
 	function summary_delete_link($class, $url) {
 		$buffer .= html_form::confirm_link_widget($url,
 			"<img SRC=\"lib/template/default/img/summary_delete.png\"
-			BORDER=\"0\" ALT=\""._("Delete")."\"/>",
+			BORDER=\"0\" ALT=\"".__("Delete")."\"/>",
 			array(
 				'confirm_text' =>
-				_("Are you sure you want to delete this?"),
+				__("Are you sure you want to delete this?"),
 
-				'text' => _("Delete"),
+				'text' => __("Delete"),
 				//'class' => 'button'
 			)
 		);
@@ -67,12 +68,12 @@ class template {
 	function summary_lock_link($class, $url) {
 		$buffer .= html_form::confirm_link_widget($url,
 			"<img SRC=\"lib/template/default/img/summary_lock.png\"
-			BORDER=\"0\" ALT=\""._("Lock")."\"/>",
+			BORDER=\"0\" ALT=\"".__("Lock")."\"/>",
 			array(
 				'confirm_text' =>
-				_("Are you sure you want to lock this record?"),
+				__("Are you sure you want to lock this record?"),
 
-				'text' => _("Lock"),
+				'text' => __("Lock"),
 				//'class' => 'button'
 			)
 		);
@@ -81,10 +82,10 @@ class template {
 
 	function summary_locked_link($class, $url) {
 		$buffer .= "<a onClick=\"var a=alert('".
-			_("This record has been locked, and can no longer be modified.").
+			__("This record has been locked, and can no longer be modified.").
 			"'); return true;\"
 			><img SRC=\"lib/template/default/img/summary_locked.png\"
-			BORDER=\"0\" ALT=\""._("Locked")."\"/></a>\n";
+			BORDER=\"0\" ALT=\"".__("Locked")."\"/></a>\n";
 		return $buffer;
 	} // end function summary_locked_link
 
@@ -92,7 +93,7 @@ class template {
 		$buffer .= "<a href=\"".$url."\" ".
 			//"class=\"button\" ".
 			"><img SRC=\"lib/template/default/img/summary_modify.png\"
-			BORDER=\"0\" ALT=\""._("Modify")."\"/></a>";
+			BORDER=\"0\" ALT=\"".__("Modify")."\"/></a>";
 		return $buffer;
 	} // end function summary_modify_link
 
@@ -101,7 +102,7 @@ class template {
 			//"class=\"button\" ".
 			( $newwindow ? "TARGET=\"".$class."_view\"" : ""
 			)."><img SRC=\"lib/template/default/img/summary_view.png\"
-			BORDER=\"0\" ALT=\""._("View")."\"/></a>";
+			BORDER=\"0\" ALT=\"".__("View")."\"/></a>";
 		return $buffer;
 	} // end function summary_modify_link
 

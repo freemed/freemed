@@ -27,7 +27,7 @@ class GraphModule extends ReportsModule {
 		global $action, $submit;
 
 		// Handle Cancel button
-		if ($submit == _("Cancel")) {
+		if ($submit == __("Cancel")) {
 			global $refresh; $refresh = 'reports.php';
 			return false;
 		}
@@ -122,10 +122,10 @@ class GraphModule extends ReportsModule {
 		// Add defaults
 		$opts = array_merge(
 			array(
-			_("Start Date") =>
+			__("Start Date") =>
 			fm_date_entry("start_dt"),
 
-			_("End Date") => 
+			__("End Date") => 
 			fm_date_entry("end_dt")
 			), $opts);
 
@@ -144,9 +144,9 @@ class GraphModule extends ReportsModule {
 
 		<div align=\"CENTER\">
 		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\"
-			value=\""._("Graph")."\"/>
+			value=\"".__("Graph")."\"/>
 		<input class=\"button\" type=\"SUBMIT\" name=\"submit\"
-			value=\""._("Cancel")."\"/>
+			value=\"".__("Cancel")."\"/>
 		</form>
 		</div>
         ";

@@ -107,7 +107,7 @@ if (freemed::verify_auth() and !is_object($this_user)) {
 if (is_object($this_user)) {
 	print "<tr><td VALIGN=\"TOP\" ALIGN=\"LEFT\" CLASS=\"menubar_info\">\n";
 	print "<center>\n";
-	print _("User")." : ".$this_user->getDescription()."\n";
+	print __("User")." : ".$this_user->getDescription()."\n";
 	print "</center>\n";
 	print "</td></tr>\n";
 } // end checking if this_user exists

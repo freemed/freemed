@@ -25,10 +25,12 @@ class BaseModule extends module {
 
 	// contructor method
 	function BaseModule () {
-		// call parent constructor
+		// Call parent constructor
 		$this->module();
-		// call setup
+		// Call setup
 		$this->setup();
+		// Load language files, if necessary
+		GettextXML::textdomain(strtolower(get_class($this)));
 	} // end constructor BaseModule
 
 	// override check_vars method

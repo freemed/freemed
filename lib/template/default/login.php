@@ -5,7 +5,7 @@
  // lic : GPL, v2
 
 //----- Set page title
-$page_title = PACKAGENAME." "._("Login");
+$page_title = PACKAGENAME." ".__("Login");
 
 $display_buffer .= "
 <div ALIGN=\"CENTER\">
@@ -22,19 +22,19 @@ $display_buffer .= "
  VALUE=\"01234567890123456789012345678901234567890
         01234567890123456789012345678901234567890
         01234567890123456789012345678901234567890\"/>
-"._("Username")." :
+".__("Username")." :
 </TD><TD ALIGN=\"LEFT\">
 <input TYPE=\"TEXT\" NAME=\"_username\" LENGTH=\"20\" MAXLENGTH=\"32\"/>
 </td></tr>
 <tr><td ALIGN=\"RIGHT\">
-"._("Password")." :
+".__("Password")." :
 </td><td>
 <input TYPE=\"PASSWORD\" NAME=\"_password\" LENGTH=\"20\" MAXLENGTH=\"32\"/></td></tr> 
 <tr><td ALIGN=\"RIGHT\">
-"._("Language")." :
+".__("Language")." :
 </td><td ALIGN=\"LEFT\">
 <select NAME=\"_l\">
- <option VALUE=\"$language\">"._("Default Language")."</option>
+ <option VALUE=\"$language\">".__("Default Language")."</option>
 ";
 
 // actually open the language registry
@@ -57,7 +57,7 @@ $display_buffer .= "
 if ($sql->query ("SELECT * FROM config")) {
 	$display_buffer .= "
 	<tr><td ALIGN=\"RIGHT\">
-	"._("Facility")." :
+	".__("Facility")." :
 	</td><td ALIGN=\"LEFT\">
 	<select NAME=\"_f\">
 	".freemed_display_facilities ("_f", true, "0")."
@@ -69,18 +69,18 @@ if ($sql->query ("SELECT * FROM config")) {
 if (!empty($_URL))
  $display_buffer .= "
   <tr><td ALIGN=\"RIGHT\">
-   <b>"._("Resume")." : </b>
+   <b>".__("Resume")." : </b>
   </td><td ALIGN=\"LEFT\">
-   <input TYPE=\"RADIO\" NAME=\"_URL\" VALUE=\"$_URL\" CHECKED/>"._("Resume")."<br/>
-   <input TYPE=\"RADIO\" NAME=\"_URL\" VALUE=\"\"/>"._("Reset Resume")."
+   <input TYPE=\"RADIO\" NAME=\"_URL\" VALUE=\"$_URL\" CHECKED/>".__("Resume")."<br/>
+   <input TYPE=\"RADIO\" NAME=\"_URL\" VALUE=\"\"/>".__("Reset Resume")."
   </td></tr>
  ";
 
 $display_buffer .= "
 </table>
 <div ALIGN=\"CENTER\">
-  <input TYPE=\"SUBMIT\" VALUE=\""._("Sign In")."\" CLASS=\"button\" />
-  <input TYPE=\"RESET\"  VALUE=\""._("Clear")."\" CLASS=\"button\" />
+  <input TYPE=\"SUBMIT\" VALUE=\"".__("Sign In")."\" CLASS=\"button\" />
+  <input TYPE=\"RESET\"  VALUE=\"".__("Clear")."\" CLASS=\"button\" />
 </div>
 </form>
 ";
@@ -91,7 +91,7 @@ if ($debug) {
 	 VALIGN=\"BOTTOM\" ALIGN=\"CENTER\" BGCOLOR=\"#000000\">
 	<tr><td BGCOLOR=\"#000000\">
 	<div ALIGN=\"CENTER\">
-      	<b><font COLOR=\"#ffffff\" SIZE=\"-2\">"._("DEBUG IS ON")."</font></b>
+      	<b><font COLOR=\"#ffffff\" SIZE=\"-2\">".__("DEBUG IS ON")."</font></b>
 	</div>
 	</td></tr></table>
 	";
