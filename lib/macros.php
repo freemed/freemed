@@ -86,6 +86,10 @@ define ('ITEMLIST_VIEW',        1);
 define ('ITEMLIST_MOD',         2);
 define ('ITEMLIST_DEL',         4);
 
+// Flags for EMR summaries
+define ('SUMMARY_VIEW',			1);
+define ('SUMMARY_VIEW_NEWWINDOW',	2);
+
 } // end checking for __MACROS_PHP__
 
 ?>
