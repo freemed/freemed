@@ -66,18 +66,21 @@ class FreeB_v1 {
 	//
 	//	$target - Target for the current queue of bills
 	//
+	//	$safe_key - Sanitized version of bill key, so
+	//	we have something to refer to.
+	//
 	// Returns:
 	//
 	//	Result code.
 	//
-	function ProcessBill ( $key, $format, $target ) {
+	function ProcessBill ( $key, $format, $target, $safe_key ) {
 		return $this->_call (
 			'FreeB.Bill.process', 
 			array (
 				CreateObject('PHP.xmlrpcval', $key, 'string'),
 				CreateObject('PHP.xmlrpcval', $format, 'string'),
 				CreateObject('PHP.xmlrpcval', $target, 'string'),
-				CreateObject('PHP.xmlrpcval', date("Ymd"), 'string')
+				CreateObject('PHP.xmlrpcval', $safe_key, 'string')
 			)
 		);
 	} // end method ProcessBill
