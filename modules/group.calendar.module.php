@@ -202,6 +202,12 @@ class GroupCalendar extends CalendarModule {
 
 		// Display header
 		$buffer .= "
+		<div ALIGN=\"CENTER\">
+		".template::link_button(__("Calendar"), "calendar.php")."
+		".template::link_button(__("Select a Patient"), "patient.php")."
+		".template::link_button(__("Return to Main Menu"), "main.php")."
+		</div>
+		<br/><br/>
 		<!-- mini calendar -->
 		<div align=\"CENTER\">
 		<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\2\" ".
@@ -395,12 +401,6 @@ class GroupCalendar extends CalendarModule {
 		// Display footer
 		$buffer .= "
 		</table>
-		</div>
-		<br/><br/>
-		<div ALIGN=\"CENTER\">
-		".template::link_button(__("Calendar"), "calendar.php")."
-		".template::link_button(__("Select a Patient"), "patient.php")."
-		".template::link_button(__("Return to Main Menu"), "main.php")."
 		</div>
 		";
 
