@@ -125,7 +125,7 @@
 
      // relationship to guarantor
      $ptreldep[self]   = ( (($this_patient->ptreldep == "S") or
-                            ($this_patient->local_record[ptdep] == 0)) ?
+                            ($this_patient->local_record["ptdep"] == 0)) ?
                             $this_form[ffcheckchar] : " " );
      $ptreldep[child]  = ( ($this_patient->ptreldep == "C") ?
                             $this_form[ffcheckchar] : " " );
