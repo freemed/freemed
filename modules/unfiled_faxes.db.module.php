@@ -80,14 +80,21 @@ class UnfiledFaxes extends MaintenanceModule {
 		global $display_buffer, $id;
 
 		switch ($_REQUEST['submit_action']) {
-			case __("File"):
+			case __("Send to Provider"):
 			case __("File without First Page"):
 			$this->mod();
 			return false;
+			break;
+
+			case __("File Directly"):
+			$new_id = $this->mod_direct();
+			return false;
+			break;
 
 			case __("Delete"):
 			$this->del();
 			return false;
+			break;
 		}
 
 		$result = $GLOBALS['sql']->query("SELECT * FROM ".
@@ -115,9 +122,11 @@ class UnfiledFaxes extends MaintenanceModule {
 		</div>
 		<div align=\"center\">
 		<input type=\"submit\" name=\"submit_action\" ".
-		"class=\"button\" value=\"".__("File")."\"/>
+		"class=\"button\" value=\"".__("Send to Provider")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("File without First Page")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("File Directly")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
@@ -170,7 +179,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		`mv data/fax/unfiled/$filename data/fax/unread/$filename -f`;
 
 		// Insert new table query in unread
-		$GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 			'unreadfax',
 			array (
 				"urfdate" => $_REQUEST['date'],
@@ -181,6 +190,7 @@ class UnfiledFaxes extends MaintenanceModule {
 				"urfnote" => $_REQUEST['note']
 			)
 		));
+		$new_id = $GLOBALS['sql']->last_record($result);
 
 		$GLOBALS['display_buffer'] .= __("Moved fax to unread box.");
 		$GLOBALS['display_buffer'] .= '<p>'.
@@ -194,7 +204,69 @@ class UnfiledFaxes extends MaintenanceModule {
 		global $refresh;
 		$refresh = $this->page_name . "?".
 			"module=".urlencode(get_class($this));
+
+		return $new_id;
 	} // end method mod
+
+	function mod_direct ($_id = -1) {
+		$id = $_REQUEST['id'];
+		$rec = freemed::get_link_rec($id, $this->table_name);
+		$filename = freemed::secure_filename($rec['ufffilename']);
+
+		// Extract type and category
+		list ($type, $cat) = explode('/', $_REQUEST['type']);
+		
+		// Insert new table query in unread
+		$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+			'images',
+			array (
+				"imagedt" => $_REQUEST['date'],
+				"imagepat" => $_REQUEST['patient'],
+				"imagetype" => $type,
+				"imagecat" => $cat,
+				"imagedesc" => $_REQUEST['note']
+			)
+		));
+		$new_id = $GLOBALS['sql']->last_record($query, 'images');
+
+		$new_filename = freemed::image_filename(
+			freemed::secure_filename($_REQUEST['patient']),
+			$new_id,
+			'djvu',
+			true
+		);
+
+		$query = $GLOBALS['sql']->update_query(
+			'images',
+			array ( 'imagefile' => $new_filename ),
+			array ( 'id' => $new_id )
+		);
+		$result = $GLOBALS['sql']->query( $query );
+		syslog(LOG_INFO, "UnfiledFax| query = $query, result = $result");
+
+		// Move actual file to new location
+		//echo "mv data/fax/unfiled/$filename $new_filename -f<br/>\n";
+		$dirname = dirname($new_filename);
+		`mkdir -p $dirname`;
+		//echo "mkdir -p $dirname";
+		`mv data/fax/unfiled/$filename $new_filename -f`;
+
+		$GLOBALS['display_buffer'] .= __("Moved fax to scanned documents.");
+
+		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." ".
+			"WHERE id='".addslashes($id)."'");
+
+		global $refresh;
+		//$refresh = $page_name."?module=".get_class($this);
+
+		$GLOBALS['display_buffer'] = '<br/>'.
+			template::link_bar(array(
+				__("View Patient Record") =>
+				'manage.php?id='.urlencode($_REQUEST['patient']),
+				__("Return to Unfiled Fax Menu") =>
+				$this->page_name.'?module='.get_class($this)
+			));
+	} // end method mod_direct
 
 	function notify ( ) {
 		// Check to see if we're the person who is supposed to be

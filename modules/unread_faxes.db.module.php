@@ -176,8 +176,12 @@ class UnreadFaxes extends MaintenanceModule {
 		";
 	} // end method display
 
-	function mod () {
-		$id = $_REQUEST['id'];
+	function mod ($_id = -1) {
+		if ($id > 0) {
+			$id = $_id;
+		} else {
+			$id = $_REQUEST['id'];
+		}
 		$rec = freemed::get_link_rec($id, $this->table_name);
 
 		$filename = freemed::secure_filename($rec['urffilename']);
@@ -228,13 +232,15 @@ class UnreadFaxes extends MaintenanceModule {
 		global $refresh;
 		//$refresh = $page_name."?module=".get_class($this);
 
-		$GLOBALS['display_buffer'] = '<br/>'.
-			template::link_bar(array(
-				__("View Patient Record") =>
-				'manage.php?id='.urlencode($rec['urfpatient']),
-				__("Return to Unread Fax Menu") =>
-				$this->page_name.'?module='.get_class($this)
-			));
+		if ($id == -1) {
+			$GLOBALS['display_buffer'] = '<br/>'.
+				template::link_bar(array(
+					__("View Patient Record") =>
+					'manage.php?id='.urlencode($rec['urfpatient']),
+					__("Return to Unread Fax Menu") =>
+					$this->page_name.'?module='.get_class($this)
+				));
+		}
 	} // end method mod
 
 } // end class UnreadFaxes
