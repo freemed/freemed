@@ -1,14 +1,14 @@
 <?php
- // $Id$
- // note: ISO set checking, included by lib/freemed.php
- // lic : GPL, v2
+	// $Id$
+	// note: ISO set checking, included by lib/freemed.php
+	// lic : GPL, v2
 
 if (!defined ("__ISO_SET_PHP__")) {
 
 define ('__ISO_SET_PHP__', true);
 
 // ISO Handler
-switch ($language) {
+switch (strtoupper(substr($language, 0, 2))) {
     case "CS":   // CS - czech
     case "HU":   // HU - hungarian
     case "PL":   // PL - polish
