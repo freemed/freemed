@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Fri Mar 30 2001 rufustfirefly
+  Released 0.2.1 (Persephone/CVS)
+  - committed old error checking patch in insurance billing module
+
 * Mon Mar 26 2001 fforest
   - lib/API boxtop and boxbotton checks for incorrect calling sequence
   - index.php left in commented out test code for above

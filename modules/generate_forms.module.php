@@ -13,6 +13,7 @@ class GenerateFormsModule extends freemedBillingModule {
 	// override variables
 	var $MODULE_NAME = "Generate Insurance Billing";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 
 	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
 
@@ -23,7 +24,7 @@ class GenerateFormsModule extends freemedBillingModule {
     var $pat_processed;
     var $patient_forms;
     var $patient_cov;
-	var $rendorform_variables = array(
+	var $renderform_variables = array(
 		"ptname",
 		"ptdob",
 		"ptsex",
@@ -106,7 +107,10 @@ class GenerateFormsModule extends freemedBillingModule {
 				$result = $sql->query($query);
 				if (!$sql->results($result)) 
 				{
-					DIE("No patients with this coverage type");
+					echo "No patients with this coverage type.<BR>\n";
+					freemed_display_box_bottom();
+					freemed_display_html_bottom();
+					DIE("");
 				}
 			
 				while($row = $sql->fetch_array($result))
@@ -122,7 +126,10 @@ class GenerateFormsModule extends freemedBillingModule {
 				$result = $sql->query($query);
 				if (!$sql->results($result)) 
 				{
-					DIE("No patients to be Billed");
+					echo "No patients to be billed.<BR>\n";
+					freemed_display_box_bottom();
+					freemed_display_html_bottom();
+					DIE("");
 				}
 			
 				while($row = $sql->fetch_array($result))
@@ -158,7 +165,7 @@ class GenerateFormsModule extends freemedBillingModule {
 			$this->MarkBilled();
 			return;
 		}
-		DIE("Something is wrong in generateforms");
+		trigger_error("Bad action passed in generateforms module", E_USER_ERROR);
 
 	}
 
@@ -197,7 +204,7 @@ class GenerateFormsModule extends freemedBillingModule {
        		if (!$result)
        		{
        			echo "Mark failed getting procrecs<BR>";
-       			DIE("Mark failed getting procrecs");
+       			trigger_error("Mark failed getting procrecs", E_USER_ERROR);
        		}
        		while ($bill_tran = $sql->fetch_array($result))
        		{
@@ -255,7 +262,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-		while (list($k,$v)=each($this->rendorform_variables)) global $$v;
+		while (list($k,$v)=each($this->renderform_variables)) global $$v;
 
 
 	    // zero the buffer and counter
@@ -312,10 +319,7 @@ class GenerateFormsModule extends freemedBillingModule {
      	// get current patient information
      	$this_patient = new Patient ($parmpatient);
         if (!$this_patient)
-		{
-			echo "Error no patient $current_patient<BR>";
-			DIE("No Patient");
-		}
+			trigger_error("Failed retrieving patient", E_USER_ERROR);
 			
      	echo "
       	<B>"._("Processing")." ".$this_patient->fullName()."
@@ -326,10 +330,7 @@ class GenerateFormsModule extends freemedBillingModule {
         if (!$this_coverage)
 		{
 			if ($bill_request_type != 0)
-			{
-				echo "Error Coverage failure<BR>";
-				DIE("No Coverage");
-			}
+				trigger_error("No coverage", E_USER_ERROR);
 		}
 		
      	// grab current insurance company
@@ -465,18 +466,12 @@ class GenerateFormsModule extends freemedBillingModule {
         if (!$this_insco)
 		{
 			if ($bill_request_type != 0)
-			{
-				echo "Error insco failure<BR>";
-				DIE("No Insurance");
-			}
+				trigger_error("Insurance company date fetch failed", E_USER_ERROR);
 		}
 		if (!is_object($this_insco))
 		{
 			if ($bill_request_type != 0)
-			{
-				echo "Error insco failure<BR>";
-				DIE("No Insurance");
-			}
+				trigger_error("Bill request type != 0", E_USER_ERROR);
 		}
      	// insco information
      	//if ($this_patient->ptdep == 0) {
@@ -568,10 +563,7 @@ class GenerateFormsModule extends freemedBillingModule {
        // if it is someone else, get *their* information
 	   $guarantor = new Guarantor($this_coverage->id);
 	   if (!$guarantor)
-	   {
-		   echo "Guarantor failed<BR>";
-		   DIE("Guarantor failed");
-	   }	   
+			trigger_error("Guarantor information fetch failed", E_USER_ERROR);
        $guarname[last]    = $guarantor->guarlname;
        $guarname[first]   = $guarantor->guarfname;
        $guarname[middle]  = $guarantor->guarmname;
@@ -727,7 +719,7 @@ class GenerateFormsModule extends freemedBillingModule {
 						$r[procdiag3], 
 						$r[procdiag4]);
          if (!$test_AddSet)
-            DIE("AddSet failed!!");
+            trigger_error("AddSet failed in generateforms module", E_USER_ERROR);
 
          // and zero the arrays
          for ($j=0;$j<=$this_form[ffloopnum];$j++)
@@ -916,7 +908,7 @@ class GenerateFormsModule extends freemedBillingModule {
    {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-		while (list($k,$v)=each($this->rendorform_variables)) global $$v;
+		while (list($k,$v)=each($this->renderform_variables)) global $$v;
    #################### TAKE THIS OUT AFTER TESTING #######################
    #echo "<PRE>\n".prepare($form_buffer)."\n</PRE>\n";
    ########################################################################
