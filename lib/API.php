@@ -1458,6 +1458,28 @@ class freemed {
 		return $support;
 	} // end function freemed::support_djvu
 
+	// Function: freemed::template_file
+	//
+	//	Resolve file to existing either in default template or
+	//	current template.
+	//
+	// Parameters:
+	//
+	//	$file - Filename, relative to the template structure
+	//	(login_form.php would resolve to lib/template/*/login_form.php)
+	//
+	// Returns:
+	//
+	//	Fully qualified template path (lib/template/*/*)
+	//
+	function template_file ( $file ) {
+		if (file_exists('lib/template/'.$GLOBALS['template'].'/'.$file)) {
+			return 'lib/template/'.$GLOBALS['template'].'/'.$file;
+		} else {
+			return 'lib/template/default/'.$file;
+		}
+	} // end function freemed::template_file
+
 	// Function: freemed::user_flag
 	//
 	//	Determine if a particular user flag is set for the current
