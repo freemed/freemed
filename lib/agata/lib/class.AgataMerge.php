@@ -303,10 +303,10 @@ class AgataMerge extends AgataCore
     fclose($fd);
     Wait::Off();
 
-    OpenReport($this->FileName, $this->agataConfig);
-
     if ($this->posAction)
     {
+      // If this isn't in here, it borks on no GTK GUI
+      OpenReport($this->FileName, $this->agataConfig);
       $obj = &$this->posAction[0];
       $att = &$this->posAction[1];
                                                                                                                  

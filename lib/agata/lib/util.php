@@ -283,6 +283,7 @@
     }
     else
     {
+    	// GUI
       Dialog::Aviso(Trans::Translate('Viewer for this file is not defined'));
     }
   }
