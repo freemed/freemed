@@ -42,12 +42,12 @@ if (! isset($gettext_php_short_circuit)) {
 }
 
 function gettext_php_load_strings() {
-    global $freemed_language, $gettext_php_translateStrings,
+    global $language, $gettext_php_translateStrings,
         $gettext_php_domain, $gettext_php_dir, $gettext_php_loaded,
         $gettext_php_loaded_language, $gettext_php_short_circuit;
     
     /*
-     * $freemed_language gives 'en' for English, 'de' for German,
+     * $language gives 'en' for English, 'de' for German,
      * etc.  I didn't wanna use getenv or similar, but you easily could
      * change my code to do that. 
      */
@@ -59,7 +59,7 @@ function gettext_php_load_strings() {
     $filename = $gettext_php_dir;
     if (substr($filename, -1) != '/')
         $filename .= '/';
-    $filename .= $freemed_language . '/LC_MESSAGES/' . 
+    $filename .= $language . '/LC_MESSAGES/' . 
         $gettext_php_domain . '.po';
     
     $file = @fopen($filename, 'r');
@@ -67,7 +67,7 @@ function gettext_php_load_strings() {
         /* Uh-ho -- we can't load the file.  Just fake it.  :-)
            This is also for English, which doesn't use translations */
         $gettext_php_loaded = true;
-        $gettext_php_loaded_language = $freemed_language;
+        $gettext_php_loaded_language = $language;
         /* Avoid fuzzy matching when we didn't load strings */
         $gettext_php_short_circuit = true;  
         return;
@@ -132,16 +132,16 @@ function gettext_php_load_strings() {
     fclose($file);
     
     $gettext_php_loaded = true;
-    $gettext_php_loaded_language = $freemed_language;
+    $gettext_php_loaded_language = $language;
 }
 
 function _($str) {
     global $gettext_php_loaded, $gettext_php_translateStrings, 
-        $freemed_language, $gettext_php_loaded_language,
+        $language, $gettext_php_loaded_language,
         $gettext_php_short_circuit;
     
     if (! $gettext_php_loaded || 
-        $gettext_php_loaded_language != $freemed_language) {
+        $gettext_php_loaded_language != $language) {
         gettext_php_load_strings();
     }
     

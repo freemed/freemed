@@ -679,7 +679,7 @@ function set_up_language($fm_language, $do_search = false) {
 
     static $SetupAlready = 0;
     global $HTTP_ACCEPT_LANGUAGE, $use_gettext, $languages,
-           $freemed_language, $freemed_default_language,
+           $language, $default_language,
            $fm_notAlias;
 
     if ($SetupAlready) {
@@ -691,9 +691,9 @@ function set_up_language($fm_language, $do_search = false) {
         $fm_language = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
     }
     
-    if (!$fm_language && isset($freemed_default_language)) {
-        $freemed_language = $freemed_default_language;
-        $fm_language = $freemed_default_language;
+    if (!$fm_language && isset($default_language)) {
+        $language = $default_language;
+        $fm_language = $default_language;
     }
     $fm_notAlias = $fm_language;
     while (isset($languages[$fm_notAlias]['ALIAS'])) {
@@ -704,7 +704,7 @@ function set_up_language($fm_language, $do_search = false) {
          $use_gettext &&
          $fm_language != '' &&
          isset($languages[$fm_notAlias]['CHARSET']) ) {
-        bindtextdomain( 'freemed', '../locale/' );
+        bindtextdomain( 'freemed', '/usr/share/freemed/locale/' );
         textdomain( 'freemed' );
         if ( !ini_get('safe_mode') &&
              getenv( 'LC_ALL' ) != $fm_notAlias ) {
@@ -713,7 +713,7 @@ function set_up_language($fm_language, $do_search = false) {
             putenv( "LANGUAGE=$fm_notAlias" );
         }
         setlocale(LC_ALL, $fm_notAlias);
-        $freemed_language = $fm_notAlias;
+        $language = $fm_notAlias;
         header( 'Content-Type: text/html; charset=' . $languages[$fm_notAlias]['CHARSET'] );
     }
 }
@@ -746,10 +746,10 @@ function set_my_charset(){
 
 /* ------------------------------ main --------------------------- */
 
-global $freemed_language, $languages, $use_gettext;
+global $language, $languages, $use_gettext;
 
-if (! isset($freemed_language)) {
-    $freemed_language = '';
+if (! isset($language)) {
+    $language = '';
 }
 
 /* This array specifies the available languages. */
