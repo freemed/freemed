@@ -29,6 +29,9 @@ class AgataMerge extends AgataCore
     $this->TopMargin = $TopMargin;
     $this->Spacing = $Spacing;
     $this->Paging = $Paging;
+
+    $this->PageHeight = 792; // Letter=792, A4=840 (inches * 72)
+    $this->PageWidth  = 612; // Letter=612, A4=?   (inches * 72)
   }
 
   function MergePS($textMerge, $SubQueries)
@@ -103,7 +106,7 @@ class AgataMerge extends AgataCore
     $iesp   = "\277"; // Interrogação Espanhol
     $mame   = "\261"; // Mais ou Menos
     $reco   = "\256"; // Registrado
-    
+   
     $year = date('Y');
     $month = date('m');
     $day = date('d');
@@ -124,6 +127,7 @@ class AgataMerge extends AgataCore
 
     Wait::On();
 
+    global $fd;
     $fd = fopen ($this->FileName, "w");
     $TX = "/sem {gsave  /Arial-Bold findfont 10 scalefont setfont (texto negrito) show /Arial-Bold findfont 10 scalefont setfont grestore} def";
 
@@ -158,7 +162,7 @@ class AgataMerge extends AgataCore
         fwrite($fd, '(' . Trans::Translate('Page') . ": $page ) show \n ");
       }
 
-      $lin = 840 - $this->TopMargin;
+      $lin = $this->PageHeight - $this->TopMargin;
 
       fwrite($fd, "{$this->LeftMargin} $lin moveto \n ");
       $lineN = 0;
@@ -223,7 +227,12 @@ class AgataMerge extends AgataCore
             unset(${'subfield'.$i});
 	  }
         }
-        elseif (((strpos($Line, '#tab') > 0) || (substr($Line,0,1) =='#')) && (!$Is_SubSQL))
+        elseif (eregi('#set', $Line))
+	{
+	  $this->Format($fd, $lin, $Line);
+	  $lin -= $diff;
+	}
+        elseif (ereg('#tab', $Line) && (!$Is_SubSQL))
         {
 	  $this->Tab($fd, $lin, $Line);
 	  $lin -= $diff;
@@ -246,7 +255,12 @@ class AgataMerge extends AgataCore
 
 		eval ("\$Line_ = \"$Line\";");
 		
-		if ((strpos($Line_, '#tab') > 0) || (substr($Line_,0,1) =='#'))
+		if (strpos($Line_, '#set') > 0)
+		{
+		  $this->Format($fd, $lin, $Line_);
+		  $lin -= $diff;
+		}
+		elseif ((strpos($Line_, '#tab') > 0) || (substr($Line_,0,1) =='#'))
 		{
 		  $this->Tab($fd, $lin, $Line_);
 		  $lin -= $diff;
@@ -302,20 +316,72 @@ class AgataMerge extends AgataCore
     return true;
   }
   
+  function Format($fd, $lin, $Line)
+  {
+    if (ereg('#set', $Line))
+    {
+      $pos = strpos($Line, '#set');
+      $endpos = strpos($Line, ' ', $pos);
+      $format = trim(substr($Line, $pos+4, ($endpos-$pos)-4));// take out "#'
+      $line1 = trim(substr($Line, 0, $pos));
+      $line2 = trim(substr($Line, $endpos));
+      //print "format: line = $Line\n";
+      //print "format: line1 = $line1, line2 = $line2, pos = $pos, endpos = $endpos, format = $format\n";
+
+      if ($line1)
+        fwrite($fd, "($line1) show \n ");
+
+      // Magic lines
+      fwrite($fd, $this->FormatRewriteCallback($format));
+      //print "  - control($format) = ".$control[$format]."\n";
+      
+      if (($line2) and ereg('#tab', $line2))
+      {
+        if (ereg('#set', $line2) and (strpos($line2, '#set') < strpos($line2, '#tab')))
+	{
+	  //print "format: calling format on line fragment $line2\n";
+          $this->Format($fd, $lin, $line2);
+	}
+	else
+	{
+          //print "format: calling tab on fragment $line2 \n";
+          $this->Tab($fd, $lin, $line2);
+	}
+      }	
+      else
+      {
+        fwrite($fd, "($line2) show \n ");
+      }
+      
+        //fwrite($fd, "($line2) show \n ");
+    }
+  }
+
+
   function Tab($fd, $lin, $Line)
   {
-    if ((strpos($Line, '#tab') > 0) || (substr($Line,0,1) =='#'))
+    if (ereg('#tab', $Line))
     {
       $pos = strpos($Line,  '#tab');
       $line1 = trim(substr($Line, 0, $pos));
       $line2 = trim(substr($Line, $pos+7));
+      //print "tab: line1 = $line1, line2 = $line2, format = $format\n";
 
       if ($line1)
         fwrite($fd, "($line1) show \n ");
       fwrite($fd, substr($Line, $pos+4, 3) . " $lin moveto \n ");
-      
-      if (($line2) && ((strpos($line2, '#tab') > 0) || (substr($line2,0,1) =='#')))
+     
+     //print "line2 = $line2, pos(#set) = ".strpos($line2,'#set').", pos(#tab) = ".strpos($line2, '#tab')."\n";
+      if (($line2) and ereg('#set', $line2))
+      {
+	//print "tab: calling format on line fragment $line2\n";
+        $this->Format($fd, $lin, $line2);
+      }
+      elseif (($line2) && ((strpos($line2, '#tab') > 0) || (substr($line2,0,1) =='#')))
+      {
+	//print "tab: calling tab on line fragment $line2\n";
         $this->Tab($fd, $lin, $line2);
+      }
       else
       {
         fwrite($fd, "($line2) show \n ");
@@ -338,5 +404,54 @@ class AgataMerge extends AgataCore
 
     HelpWindow::HelpText($HelpLines, Trans::Translate('HowTo: SubQueries'));
   }
+
+  function FormatRewriteCallback ( $format ) {
+    // Do a basic lookup for font strings
+    $font_lookup = array (
+    'fan08' => "/Arial findfont 8 scalefont setfont\n",
+    'fan10' => "/Arial findfont 10 scalefont setfont\n",
+    'fan12' => "/Arial findfont 12 scalefont setfont\n",
+    'fan14' => "/Arial findfont 14 scalefont setfont\n",
+    'fan16' => "/Arial findfont 16 scalefont setfont\n",
+    'fan18' => "/Arial findfont 18 scalefont setfont\n",
+
+    'fab10' => "/Arial-bold findfont 10 scalefont setfont\n",
+    'fab12' => "/Arial-bold findfont 12 scalefont setfont\n",
+    'fab14' => "/Arial-bold findfont 14 scalefont setfont\n",
+    'fab16' => "/Arial-bold findfont 16 scalefont setfont\n",
+    'fab18' => "/Arial-bold findfont 18 scalefont setfont\n",
+
+    'ftn10'  => "/Times findfont 10 scalefont setfont\n",
+    'ftn12'  => "/Times findfont 12 scalefont setfont\n",
+    'ftn14'  => "/Times findfont 14 scalefont setfont\n",
+    'ftn16'  => "/Times findfont 16 scalefont setfont\n",
+    'ftn18'  => "/Times findfont 18 scalefont setfont\n",
+
+    'ftb10'  => "/Times-bold findfont 10 scalefont setfont\n",
+    'ftb12'  => "/Times-bold findfont 12 scalefont setfont\n",
+    'ftb14'  => "/Times-bold findfont 14 scalefont setfont\n",
+    'ftb16'  => "/Times-bold findfont 16 scalefont setfont\n",
+    'ftb18'  => "/Times-bold findfont 18 scalefont setfont\n",
+
+    'fcn10'  => "/Courier findfont 10 scalefont setfont\n",
+    'fcn12'  => "/Courier findfont 12 scalefont setfont\n",
+    'fcn14'  => "/Courier findfont 14 scalefont setfont\n",
+    'fcn16'  => "/Courier findfont 16 scalefont setfont\n",
+    'fcn18'  => "/Courier findfont 18 scalefont setfont\n",
+
+    'fcb10'  => "/Courier-bold findfont 10 scalefont setfont\n",
+    'fcb12'  => "/Courier-bold findfont 12 scalefont setfont\n",
+    'fcb14'  => "/Courier-bold findfont 14 scalefont setfont\n",
+    'fcb16'  => "/Courier-bold findfont 16 scalefont setfont\n",
+    'fcb18'  => "/Courier-bold findfont 18 scalefont setfont\n",
+    );
+    foreach ($font_lookup AS $k => $v) {
+      if ($k == $format) { return $v; }
+    }
+    // Additional callback rules go here
+    return '';
+  } // end method FormatRewriteCallback
+
 }
+
 ?>
