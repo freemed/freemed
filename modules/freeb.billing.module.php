@@ -414,10 +414,12 @@ class FreeBBillingTransport extends BillingModule {
 			// Only process if the claim is to be billed
 			if ($to_bill == 1) {
 				// And the patient is supposed to be billed
-				if ($bill[$claim_owner[$claim]] == 1) {
+		//TODO Jeff, this check does not belong here. It should not display a claim that is 
+		// not set to be billed in the interface.
+		//	if ($bill[$claim_owner[$claim]] == 1) {
 					// Add the procedure to that hash
 					$bill_hash[$hash_key]['procedures'][] = $claim;
-				}
+		//	}
 			}
 		}
 
