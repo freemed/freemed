@@ -26,7 +26,7 @@ class TeX {
 			'PACKAGENAME' => PACKAGENAME,
 			'VERSION' => DISPLAY_VERSION,
 			'INSTALLATION' => INSTALLATION,
-			'usernumber' => $this_user->user_number()
+			'usernumber' => $this_user->user_number
 		);
 
 		// Pass options to internal array
