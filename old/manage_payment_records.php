@@ -10,7 +10,6 @@
  include ("lib/freemed.php");
  include ("lib/API.php");
 
- freemed_open_db ($LoginCookie);
  $this_user = new User ($LoginCookie);
 
  freemed_display_html_top ();
@@ -18,9 +17,9 @@
 
  // create patient object
  if ($patient>0) { $this_patient = new Patient ($patient); }
-  else           { DIE("NO PATIENT PROVIDED!");            }
+  else           { trigger_error("No patient provided.", E_USER_ERROR); }
 
- freemed_display_box_top ("$record_name");
+ freemed_display_box_top (_("$record_name"));
 
  // pull the current physician (main physician)
  $physician = new Physician ($this_patient->local_record[ptdoc]);
@@ -29,8 +28,7 @@
   <P>
 
   <FORM ACTION=\"$page_name\" METHOD=POST>
-   <INPUT TYPE=HIDDEN NAME=\"_auth\"   VALUE=\"$_auth\"  >
-   <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
+   <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
  ";
 
  // initialize line item count
@@ -116,9 +114,8 @@
  if ($item > 0) {
   echo "
    <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"   VALUE=\"$_auth\">
-    <INPUT TYPE=HIDDEN NAME=\"item\"    VALUE=\"$item\">
-    <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
+    <INPUT TYPE=HIDDEN NAME=\"item\"    VALUE=\"".prepare($item)."\">
+    <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
   ";
 
   // decide whether to show submit button
@@ -127,46 +124,49 @@
   switch ($action) {
 
    case "denial": // denial action
-    $query = "INSERT INTO payrec VALUES (
-                '".addslashes($cur_date)."',
-                '0000-00-00',
-                '".addslashes($patient)."',
-                '".fm_date_assemble("date_of_action")."',
-                '3',
-                '".addslashes($item)."',
-                '0',
-                '0',
-                '0',
-                '',
-                '0',     
-                ". // (above is payrecamt)
-                "'".addslashes((
-                   (empty($denial_reason)) ?
-                   $denial_reason_text :
-                   $denial_reason ))."',
-                'unlocked',
-                NULL 
-              )";
+    $query = $sql->insert_query(
+      "payrec",
+      array (
+        "payrecdtadd"         =>  $cur_date,
+        "pacrecpatient"       =>  $patient,
+        "payrecdt"            =>  fm_date_assemble("date_of_action"),
+        "payreccat"           =>  "3",
+        "payrecproc"          =>  $item,
+        "payrecdescrip"       =>  html_form::combo_assemble("denial_reason"),
+        "payreclock"          =>  "unlocked"
+      )
+    );
     $result = $sql->query ($query);
-    echo "
-     <CENTER>
-      Added denial.
-     </CENTER>
-    ";
+    if (!$result) trigger_error("Could not add denial.", E_USER_ERROR);
+    echo "<CENTER>Added denial.</CENTER>\n";
+
+    // ----- handle denial resubmission -----
     if ($denial_resubmit == "yes") {
+      /*
+           OLD--------------------------------
       $query = "UPDATE procrec
                 SET procbilled='0'
                 WHERE id='".addslashes($item)."'";
+           -----------------------------------
+      */
+      $query = $sql->update_query(
+        "procrec",
+        array (
+          "procbilled"   =>  0
+        ),
+        array (
+          "id"           =>  $item
+        )
+      );
       $result = $sql->query ($query);
-      echo "
-       <CENTER>
-        Procedure set for rebill.
-       </CENTER>
-      ";
+      if (!$result) trigger_error("Could not set rebill.", E_USER_ERROR);
+      echo "<CENTER>Procedure set for rebill.</CENTER>\n";
+      /*
+           OLD--------------------------------
       $query = "INSERT INTO payrec VALUES (
-                '$cur_date',
+                '".addslashes($cur_date)."',
                 '0000-00-00',
-                '$patient',
+                '".addslashes($patient)."',
                 '".fm_date_assemble("date_of_action")."',
                 '".REBILL."',
                 '".addslashes($item)."',
@@ -179,6 +179,20 @@
                 'unlocked',
                 NULL
               )";
+           -----------------------------------
+        */
+    $query = $sql->insert_query(
+      "payrec",
+      array (
+        "payrecdtadd"        =>  $cur_date,
+        "payrecpatient"      =>  $patient,
+        "payrecdt"           =>  fm_date_assemble("date_of_action"),
+        "payreccat"          =>  REBILL,
+        "payrecproc"         =>  $item,
+        "payrecdescrip"      =>  "Rebill after denial",
+        "payreclock"         =>  "unlocked"
+      )
+    );
     $result = $sql->query ($query);
     echo "
      <CENTER>
@@ -203,19 +217,32 @@
     break; // end of denial action
 
    case "rebill":  // justa rebill
+      /*
+           OLD---------------------------------------
       $query = "UPDATE procrec
                 SET procbilled='0'
                 WHERE id='".addslashes($item)."'";
+           ------------------------------------------
+      */
+      $query = $sql->update_query(
+        "procrec",
+        array (
+          "procbilled"   =>  0
+        ),
+        array (
+          "id"           =>  $item
+        )
+      );
       $result = $sql->query ($query);
       if (!$result)
-          echo " <CENTER>Failed to set Procedure for rebill.  </CENTER> ";
+          trigger_error("Failed to set procedure for rebill.", E_USER_ERROR);
       else
-          echo " <CENTER> Procedure set for rebill.  </CENTER> ";
+          echo "<CENTER>Procedure set for rebill.</CENTER>\n";
       $query = "INSERT INTO payrec VALUES (
-                '$cur_date',
+                '".addslashes($cur_date)."',
                 '0000-00-00',
-                '$patient',
-                '$cur_date',
+                '".addslashes($patient)."',
+                '".addslashes($cur_date)."',
                 '".REBILL."',
                 '".addslashes($item)."',
                 '0',
@@ -229,9 +256,9 @@
               )";
       $result = $sql->query ($query);
       if (!$result)
-          echo " <CENTER>Failed to add Rebill to ledger.  </CENTER> ";
+          trigger_error("Failed to add Rebill to ledger.", E_USER_ERROR);
       else
-          echo " <CENTER> Added Rebill to ledger.  </CENTER> ";
+          echo " <CENTER>Added Rebill to ledger. </CENTER> ";
     $show_submit = false;
    break;
 
@@ -255,7 +282,7 @@
                 NULL
                 )";
       $result = $sql->query ($query); 
-      if ($result) echo "<$STDFONT_B>$Adding withhold <$STDFONT_E><BR> \n";
+      if ($result) echo "<$STDFONT_B>"._("Adding")." withhold <$STDFONT_E><BR> \n";
     } // end of withhold check
     if ($deductable > 0) {
       $query = "INSERT INTO $db_name VALUES (
@@ -275,7 +302,7 @@
                 NULL
                 )";
       $result = $sql->query ($query); 
-      if ($result) echo "<$STDFONT_B>$Adding deductable.<$STDFONT_E><BR> \n";
+      if ($result) echo "<$STDFONT_B>"._("Adding")." deductable.<$STDFONT_E><BR> \n";
     } // end of deductable check
     if ($adjustment > 0) {
       $query = "INSERT INTO $db_name VALUES (
@@ -300,12 +327,10 @@
 
     if ($allowed_amount > 0)
     {
-      $query = "SELECT procbalorig FROM procrec WHERE id='$item'";
+      $query = "SELECT procbalorig FROM procrec WHERE id='".addslashes($item)."'";
       $result = $sql->query ($query);
       if (!$result)
-      {
-            DIE ("$page_name :: DB error reading procedure");
-      }
+            trigger_error("Error reading procedure from database", E_USER_ERROR);
       $rec = $sql->fetch_array($result);
       $allowed_difference = $rec[0] - abs($allowed_amount);
       
@@ -401,18 +426,12 @@
     if ($result)
         echo "<CENTER> Item transfered.</CENTER>";
     else
-    {
-        echo "<CENTER>Failed to transfer procedure.</CENTER>";
-        DIE("Failed to transfer procedure.");
-    }
+        trigger_error("Failed to transfer procedure.", E_USER_ERROR);
     // get procbal so the transfer knows how much we transferred.
     $query = "SELECT procbalcurrent FROM procrec WHERE id='$item'";
     $result = $sql->query ($query);
     if (!$result)
-    {
-        echo "<CENTER>Failed to read procedure balance.</CENTER>";
-        DIE("Failed to read procedure balance.");
-    }
+        trigger_error("Failed to read procedure balance.", E_USER_ERROR);
     $rec = $sql->fetch_array($result);
     $procbal = $rec[0];
     $query = "INSERT INTO payrec VALUES (
@@ -433,10 +452,7 @@
               )";
     $result = $sql->query ($query);
     if (!$result)
-    {
-        echo "<CENTER>Failed to transfer to ledger.</CENTER>";
-        DIE("Failed to add transfer to ledger.");
-    }
+        trigger_error("Failed to add transfer to ledger.", E_USER_ERROR);
     else
         echo "<CENTER>Added transfer to ledger.</CENTER>";
 
@@ -451,9 +467,9 @@
        </CENTER>
       ";
       $query = "INSERT INTO payrec VALUES (
-                '$cur_date',
+                '".addslashes($cur_date)."',
                 '0000-00-00',
-                '$patient',
+                '".addslashes($patient)."',
                 '".fm_date_assemble("date_of_action")."',
                 '".REBILL."',
                 '".addslashes($item)."',
@@ -534,16 +550,15 @@
                       WHERE payreccat='3'
                       ORDER BY payrecdescrip";
      $denial_result = $sql->query ($denial_query);
-     if ($denial_result and ($sql->num_rows($denial_result)>0)) {
+     unset($reasons); // to hold everything
+     if ($sql->results($denial_result)) {
        while ($denial_r = $sql->fetch_array ($denial_result)) {
         if (!empty ($denial_r[payrecdescrip]))
-         echo "     <OPTION VALUE=\"".htmlentities($denial_r[payrecdescrip]).
-              "\">".htmlentities($denial_r[payrecdescrip])."\n";
+          $reasons[] = $denial_r[payrecdescrip];
        } // end looping for all denial comments
      } // end checking for any results at all
+     echo html_form::combo_widget("denial_reason", $reasons);
      echo "
-        </SELECT>
-        <INPUT TYPE=TEXT NAME=\"denial_reason_text\" SIZE=25>
        </TD>
       </TR>
 
@@ -754,7 +769,7 @@
  } // end checking for action not refresh
 
  freemed_display_box_bottom ();
-
  freemed_close_db ();
  freemed_display_html_bottom ();
+
 ?>
