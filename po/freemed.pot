@@ -1121,4 +1121,31 @@ msgstr ""
 msgid "go to today"
 msgstr ""
 
+msgid "Logging Out ... "
+msgstr ""
+
+msgid "NEIC ID"
+msgstr ""
+
+msgid "Web Site"
+msgstr ""
+
+msgid "Company Name (full)"
+msgstr ""
+
+msgid "Company Name (on forms)"
+msgstr ""
+
+msgid "Place of Service"
+msgstr ""
+
+msgid "Scheduling Locations"
+msgstr ""
+
+msgid "You don't have access for this menu."
+msgstr ""
+
+msgid "Contact Information"
+msgstr ""
+
 # END
