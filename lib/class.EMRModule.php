@@ -29,6 +29,11 @@ class EMRModule extends BaseModule {
 		if ($GLOBALS['patient'] > 0) {
 			$GLOBALS['_ref'] = "manage.php?id=".urlencode($GLOBALS['patient']);
 		}
+
+		// summary_order_by
+		if (!isset($this->summary_order_by)) {
+			$this->summary_order_by = 'id';
+		}
 	
 		// Call parent constructor
 		$this->BaseModule();
@@ -364,7 +369,7 @@ class EMRModule extends BaseModule {
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY id DESC LIMIT ".addslashes($items);
+			"ORDER BY ".$this->summary_order_by." DESC LIMIT ".addslashes($items);
 		$result = $sql->query($query);
 
 		// Check to see if there *are* any...
