@@ -503,7 +503,12 @@ class freemed {
 				urlencode($formname)."', 'patientPopup', ".
 				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\"".__("Change")."\"/>";
+				"VALUE=\"".__("Change")."\"/>\n".
+				"<input class=\"button\" TYPE=\"BUTTON\" ".
+				"onClick=\"document.".$formname.".".
+					$varname.".value = ''; ".
+					"document.myform.submit();\" ".
+				"VALUE=\"".__("Remove")."\"/>\n";
 		} else {
 			return "<input TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\"/>".
