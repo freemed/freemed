@@ -230,13 +230,21 @@
        ( ( $other == "n" ) ? $this_form[ffcheckchar] : " " );
 
      // insco information
-     $this_insco = new InsuranceCompany (
-            $this_patient->local_record["ptins".($b_r[payreclink]+1)]);
-
-     $insco[number]     = $this_patient->local_record["ptinsno".
-                          ($b_r[payreclink]+1)];
-     $insco[group]      = $this_patient->local_record["ptinsgrp".
-                          ($b_r[payreclink]+1)];
+     if ($this_patient->local_record[ptdep] == 0) {
+       $this_insco = new InsuranceCompany (
+              $this_patient->local_record["ptins".($b_r[payreclink]+1)]);
+       $insco[number]     = $this_patient->local_record["ptinsno".
+                            ($b_r[payreclink]+1)];
+       $insco[group]      = $this_patient->local_record["ptinsgrp".
+                            ($b_r[payreclink]+1)];
+     } else { // if there *is* a guarantor
+       $this_insco = new InsuranceCompany (
+              $guarantor->local_record["ptins".($b_r[payreclink]+1)]);
+       $insco[number]     = $guarantor->local_record["ptinsno".
+                            ($b_r[payreclink]+1)];
+       $insco[group]      = $guarantor->local_record["ptinsgrp".
+                            ($b_r[payreclink]+1)];
+     } // end checking for insco
      
      $insco[name]       = $this_insco->inscoalias;
      $insco[line1]      = $this_insco->local_record[inscoaddr1];
