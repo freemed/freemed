@@ -13,6 +13,104 @@ class ClaimLog {
 	// STUB constructor
 	function ClaimLog ( ) { }
 
+	// Method: aging_summary_full
+	//
+	//	Provide aging summary grouped by payer, for the common
+	//	age ranges (0-30, 31-60, 61-90, 91-120, 120+)
+	//
+	// Parameters:
+	//
+	//	$provider - (optional) Provider id key if the search is to
+	//	be restricted by provider. Defaults to disable.
+	//
+	// Return:
+	//
+	//	Multidimensional array containing aging information.
+	//
+	// See Also:
+	//	<aging_summary_range>
+	//
+	function aging_summary_full ( $provider = 0 ) {
+		$p = $provider;
+		$summary['0-30'] = $this->aging_summary_range(0, 30, $p);
+		$summary['31-60'] = $this->aging_summary_range(31, 60, $p);
+		$summary['61-90'] = $this->aging_summary_range(61, 90, $p);
+		$summary['91-120'] = $this->aging_summary_range(91, 120, $p);
+		$summary['120+'] = $this->aging_summary_range(121, 100000, $p);
+
+		// Re-sort everything into some kind of sense
+		foreach ($summary AS $k => $_v) {
+			foreach ($_v AS $v) {
+				$key = $v['payer'];
+			//	print "v = "; print_r($v)."\n";
+			//	print "v[payer] = ".$v['payer']."\n";
+				$result[$key]['paid'] += $v['paid'];
+				$result[$key]['total_amount'] += $v['balance'];
+				$result[$key]['total_claims'] += $v['claims'];
+				$result[$key][$k]['amount'] = $v['balance'];
+				$result[$key][$k]['claims'] = $v['claims'];
+			}
+		}
+		return $result;
+	} // end method aging_summary_full
+
+	// Method: aging_summary_range
+	//
+	//	Provide an "aging summary" (with number of claims and
+	//	amount due) for a range of ages. Can be restricted by
+	//	provider.
+	//
+	// Parameters:
+	//
+	//	$lower - Lower aging range in days.
+	//
+	//	$upper - Upper aging range in days.
+	//
+	//	$provider - (optional) Provider to restrict search by.
+	//	Defaults to disabled.
+	//
+	// Returns:
+	//
+	//	Array of associative arrays containing aging information.
+	//
+	// See Also:
+	//	<aging_summary_full>
+	//
+	function aging_summary_range ( $lower, $upper, $provider = 0 ) {
+		$query = "SELECT i.insconame AS payer,".
+			"COUNT(p.id) AS claims, ".
+			"SUM(p.procamtpaid) AS paid, ".
+			"SUM(p.procbalcurrent) AS balance, ".
+			// support ratio of paid $ to not paid $
+			"1 / (SUM(p.procamtpaid) / SUM(p.procbalcurrent)) AS ratio ".
+			"FROM procrec AS p, coverage AS c, insco AS i ".
+			"WHERE p.proccurcovid=c.id AND ".
+			// Handle narrowing by provider
+			( $provider > 0 ? "p.procphy = '".addslashes($provider)."' AND " : "" ).
+			"c.covinsco=i.id AND ".
+			// lower bounds
+			"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($lower).") AND ".
+			// upper bounds
+			"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).") ".
+			"GROUP BY i.id";
+		//print "query = \"$query\"<br/>\n";
+		$result = $GLOBALS['sql']->query ( $query );
+		$return = array ( );
+		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			$return[] = $r;
+			 // payer, claims, paid, balance, ratio
+		} 
+		return $return;
+	} // end method aging_summary_range
+
+/*
+SELECT i.insconame AS payer, COUNT(p.id) AS claims, 
+SUM(p.procamtpaid) AS paid, 
+SUM(p.procbalcurrent) AS balance, 
+1 / (SUM(p.procamtpaid) / SUM(p.procbalcurrent)) AS r_money
+FROM procrec AS p, coverage AS c, insco AS i WHERE p.proccurcovid=c.id AND c.covinsco=i.id AND (TO_DAYS(NOW()) - TO_DAYS(p.procdt)) <= 90 GROUP BY i.id;
+*/
+
 	// Method: log_billing
 	//
 	//	Recursively log all procedures from a particular billkey
