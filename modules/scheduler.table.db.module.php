@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // $Author$
- // note: stub module for scheduler table definition
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class SchedulerTable extends MaintenanceModule {
 

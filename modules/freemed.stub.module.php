@@ -5,7 +5,7 @@
 	//       tables, like "module", "config" and "user" to be updated with
 	//       versioning.
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class FreeMED_Package extends MaintenanceModule {
 

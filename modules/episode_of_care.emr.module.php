@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // desc: episode of care database module
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class EpisodeOfCare extends EMRModule {
 

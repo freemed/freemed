@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // desc: aged bills report
- // lic : LGPL
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.GraphModule');
+LoadObjectDependency('_FreeMED.GraphModule');
 
 class ReceivablesGraph extends GraphModule {
 

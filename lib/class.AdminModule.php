@@ -3,7 +3,7 @@
  // desc: module prototype
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('_FreeMED.BaseModule');
 
 // Class: FreeMED.AdminModule
 //

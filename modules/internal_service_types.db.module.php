@@ -2,7 +2,7 @@
  // $Id$
  // lic : GPL
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class InternalServiceTypesMaintenance extends MaintenanceModule {
 

@@ -3,7 +3,7 @@
  // desc: patient record template editing engine
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class PatientRecordTemplateMaintenance extends MaintenanceModule {
 

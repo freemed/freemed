@@ -1,10 +1,8 @@
 <?php
- // $Id$
- // $Author$
- // note: images module for patient management
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class ScannedDocuments extends EMRModule {
 

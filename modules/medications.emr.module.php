@@ -2,7 +2,7 @@
 	// $Id$
 	// lic : GPL, v2
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class MedicationsModule extends EMRModule {
 

@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class UnreadFaxes extends MaintenanceModule {
 

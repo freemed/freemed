@@ -1,8 +1,8 @@
 <?php
 	// $Id$
-	// lic : GPL, v2
+	// $Author$
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class AllergiesModule extends EMRModule {
 

@@ -3,7 +3,7 @@
  // $Author$
  // note: stub module for anesth table definition
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class AnesthTable extends MaintenanceModule {
 

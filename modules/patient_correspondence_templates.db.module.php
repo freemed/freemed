@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class PatientCorrespondenceTemplates extends MaintenanceModule {
 	var $MODULE_NAME = 'Patient Correspondence Templates';

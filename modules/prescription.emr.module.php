@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class PrescriptionModule extends EMRModule {
 

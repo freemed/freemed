@@ -3,7 +3,7 @@
 	// $Author$
 	// note: external system billing keys
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class BillKey extends MaintenanceModule {
 

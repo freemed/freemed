@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // $Author$
- // note: stub module for callin table definition
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class CallinTable extends MaintenanceModule {
 

@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // $Author$
- // note: stub module for ******* table definition
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class PayerTable extends MaintenanceModule {
 

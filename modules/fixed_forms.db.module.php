@@ -3,7 +3,7 @@
  // desc: fixed type forms editing engine
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class FixedFormsMaintenance extends MaintenanceModule {
 

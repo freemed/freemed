@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // note: room database functions
- // lic : GPL, v2
-
-LoadObjectDependency('FreeMED.MaintenanceModule');
+	// $Id$
+	// $Author$
+ 
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class RoomMaintenance extends MaintenanceModule {
 

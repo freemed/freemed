@@ -5,7 +5,7 @@
 
  // TODO: STILL NEED TO INTEGRATE REST OF FRED'S CHANGES TO THIS MODULE
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class CptMaintenance extends MaintenanceModule {
 

@@ -3,7 +3,7 @@
  // desc: patient demographic report module
  // lic : GPL
 
-LoadObjectDependency('FreeMED.ReportsModule');
+LoadObjectDependency('_FreeMED.ReportsModule');
 
 class PatientDemographicReport extends ReportsModule {
 

@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.ReportsModule');
+LoadObjectDependency('_FreeMED.ReportsModule');
 
 class SystemReports extends ReportsModule {
 

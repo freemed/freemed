@@ -3,7 +3,7 @@
  // desc: aged bills report
  // lic : LGPL
 
-LoadObjectDependency('FreeMED.ReportsModule');
+LoadObjectDependency('_FreeMED.ReportsModule');
 
 class AgedPatientReport extends ReportsModule {
 

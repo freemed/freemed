@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.BillingModule');
+LoadObjectDependency('_FreeMED.BillingModule');
 
 class RemittBillingTransport extends BillingModule {
 

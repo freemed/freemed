@@ -3,7 +3,7 @@
  // note: physician status db functions
  // lic : GPL
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class ProviderStatusMaintenance extends MaintenanceModule {
 

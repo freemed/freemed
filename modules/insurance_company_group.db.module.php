@@ -3,7 +3,7 @@
  // note: insurance company group(s) functions
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 

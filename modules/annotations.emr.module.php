@@ -1,9 +1,8 @@
 <?php
 	// $Id$
 	// $Author$
-	// lic : GPL, v2
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class Annotations extends EMRModule {
 

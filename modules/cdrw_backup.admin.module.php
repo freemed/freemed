@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.AdminModule');
+LoadObjectDependency('_FreeMED.AdminModule');
 
 class CDRWBackup extends AdminModule {
 

@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // note: room equipment database
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class RoomEquipmentMaintenance extends MaintenanceModule {
 

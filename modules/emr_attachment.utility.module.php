@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.UtilityModule');
+LoadObjectDependency('_FreeMED.UtilityModule');
 
 class EMRAttachments extends UtilityModule {
 

@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // desc: module prototype for reports
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('_FreeMED.BaseModule');
 
 class ReportsModule extends BaseModule {
 

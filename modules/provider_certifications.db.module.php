@@ -1,9 +1,8 @@
 <?php
-  // $Id$
-  // note: provider certification database functions
-  // lic : GPL
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class ProviderCertificationsMaintenance extends MaintenanceModule {
 

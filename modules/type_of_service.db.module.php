@@ -4,7 +4,7 @@
   // code: adam b (gdrago23@yahoo.com) -- modified a lot
   // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class TypeOfServiceMaintenance extends MaintenanceModule {
 

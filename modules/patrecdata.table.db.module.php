@@ -3,7 +3,7 @@
  // $Author$
  // note: stub module for patrecdata table definition
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class PatRecDataTable extends MaintenanceModule {
 

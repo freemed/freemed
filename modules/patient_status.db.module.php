@@ -3,7 +3,7 @@
  // note: patient status functions
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class patientStatusMaintenance extends MaintenanceModule {
 

@@ -6,7 +6,7 @@
  // converted to freemed by fforest
  // lic : LGPL
 
-LoadObjectDependency('FreeMED.ReportsModule');
+LoadObjectDependency('_FreeMED.ReportsModule');
 
 class QmakerReport extends ReportsModule {
 

@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // note: letters of referral, etc
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class LettersModule extends EMRModule {
 

@@ -5,7 +5,7 @@
   //       adam b (gdrago23@yahoo.com) -- redesign and update
   // lic : GPL
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class ProviderGroupsMaintenance extends MaintenanceModule {
 	var $MODULE_NAME    = "Provider Groups Maintenance";

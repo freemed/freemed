@@ -1,10 +1,8 @@
 <?php
-  // $Id$
-  // note: place of service (TOS) database module
-  // code: adam b (gdrago23@yahoo.com) -- modified a lot
-  // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class PlaceOfServiceMaintenance extends MaintenanceModule {
 

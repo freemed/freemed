@@ -1,5 +1,6 @@
 <?php
 	// $Id$
+	// $Author$
 
 LoadObjectDependency('_FreeMED.BillingModule');
 

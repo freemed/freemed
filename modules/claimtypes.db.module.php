@@ -4,7 +4,7 @@
   // code: Fred Forester (fforest@netcarrier.com) -- modified a lot
   // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class ClaimtypesMaintenance extends MaintenanceModule {
 

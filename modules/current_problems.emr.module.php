@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // desc: current list of problems
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class CurrentProblemsModule extends EMRModule {
 

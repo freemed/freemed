@@ -1,10 +1,8 @@
 <?php
- // $Id$
- // $Author$
- // note: Anesthesiology Calendar Module /w Admin
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.CalendarModule');
+LoadObjectDependency('_FreeMED.CalendarModule');
 
 class AnesthCalendar extends CalendarModule {
 

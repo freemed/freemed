@@ -1,10 +1,8 @@
 <?php
 	// $Id$
 	// $Author$
-	// note: Physician Group Calendar
-	// lic : GPL, v2
 
-LoadObjectDependency('FreeMED.CalendarModule');
+LoadObjectDependency('_FreeMED.CalendarModule');
 
 class GroupCalendar extends CalendarModule {
 

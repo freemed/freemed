@@ -5,7 +5,7 @@
  //       adam b (gdrago23@yahoo.com)
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class AuthorizationsModule extends EMRModule {
 

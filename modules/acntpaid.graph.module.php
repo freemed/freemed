@@ -3,7 +3,7 @@
  // desc: aged bills report
  // lic : LGPL
 
-LoadObjectDependency('FreeMED.GraphModule');
+LoadObjectDependency('_FreeMED.GraphModule');
 
 class AcntPaidGraph extends GraphModule {
 

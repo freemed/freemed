@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('_FreeMED.BaseModule');
 
 class UtilityModule extends BaseModule {
 

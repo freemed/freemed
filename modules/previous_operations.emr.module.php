@@ -1,9 +1,8 @@
 <?php
- // $Id$
- // desc: previous operations summary module
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.EMRModule');
 
 class PreviousOperationsModule extends EMRModule {
 

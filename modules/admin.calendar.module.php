@@ -1,10 +1,8 @@
 <?php
-  // $Id$
-  // note: calendar admin
-  // code: fred forester fforest@netcarrier.com
-  // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.CalendarModule');
+LoadObjectDependency('_FreeMED.CalendarModule');
 
 class AdminCalendar extends CalendarModule {
 

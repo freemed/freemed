@@ -1,9 +1,9 @@
 <?php
- // $Id$
- // $Author$
- // note: stub module for certifications table definition
+	// $Id$
+	// $Author$
+	// note: stub module for certifications table definition
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class CertificationsTable extends MaintenanceModule {
 

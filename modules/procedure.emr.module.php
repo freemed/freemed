@@ -1,7 +1,6 @@
 <?php
 	// $Id$
 	// $Author$
-	// lic : GPL, v2
 
 LoadObjectDependency('_FreeMED.EMRModule');
 

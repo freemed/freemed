@@ -1,8 +1,8 @@
 <?php
- // $Id$
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
-LoadObjectDependency('FreeMED.ReportsModule');
+LoadObjectDependency('_FreeMED.ReportsModule');
 
 class GraphModule extends ReportsModule {
 	// contructor method

@@ -2,7 +2,7 @@
  // $Id$
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('_FreeMED.BaseModule');
 
 class CertModule extends BaseModule {
 

@@ -3,7 +3,7 @@
 	// $Author$
 	// note: stub module for patient table definition
 
-LoadObjectDependency('FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class PatientTable extends MaintenanceModule {
 
