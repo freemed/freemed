@@ -22,17 +22,16 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-	{\relsize{1}\textbf{{{INSTALLATION}}}} \\
-	{\relsize{-1}\textsl{{{physician}}}} \\
-	\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
-	\textsl{phone {{physicianphone}} fax {{physicianfax}}}
+        {\relsize{1}\textbf{**link:pnotesdoc:physician:phypracname**}} \\
+        {\relsize{-1}\textsl{**method:Physician:fullName:pnotesdoc**}} \\
+        \textsl{**link:pnotesdoc:physician:phyaddr1a**, **link:pnotesdoc:physician:phycitya**, **link:pnotesdoc:physician:phystatea** **link:pnotesdoc:physician:phyzipa** } \\
+        \textsl{phone **link:pnotesdoc:physician:phyphonea:phone** fax **link:pnotesdoc:physician:phyfaxa:phone**}
 \end{center}
 
-
-{{physician}}, MD \\
+**method:Physician:fullName:pnotesdoc** \\
 \begin{tabular}{ll}
-	NAME:	&	{{patient}}	\\
-	DOB:	&	{{patientdob}}	\\
+	NAME:	&	**method:Patient:fullName:pnotespat**	\\
+	DOB:	&	**link:patientdob:patient:ptdob:date**	\\
 	DATE:	&	\today
 \end{tabular}
 
@@ -42,27 +41,62 @@
 
 % Nice fixed block with \cr's in between them
 \begin{tabular}{ll}
-\sheading{BMI} & {{pnotesBMI}} \\
-\sheading{Height} & {{pnotesHEIGHT}} \\
-\sheading{Weight} & {{pnotesWEIGHT}} \\
-\sheading{Blood Pressure} & {{pnotesBP}} \\
-\sheading{Heart Rate} & {{pnotesHEART}} \\
-\sheading{Respiratory Rate} & {{pnotesRESP}}
+**if:exists:pnotesbmi**
+\sheading{BMI} & **field:pnotesbmi** \\
+**fi**
+**if:exists:pnotesheight**
+\sheading{Height} & **field:pnotesheight** \\
+**fi**
+**if:exists:pnotesweight**
+\sheading{Weight} & **field:pnotesweight** \\
+**fi**
+**if:exists:pnotessbp**
+\sheading{Blood Pressure} & **field:pnotessbp** over **field:pnotesdbp** \\
+**fi**
+**if:exists:pnotesheartrate**
+\sheading{Heart Rate} & **field:pnotesheartrate** \\
+**fi**
+**if:exists:pnotesresprate**
+\sheading{Respiratory Rate} & **field:pnotesresprate** \\
+**fi**
+\  &  \  
 \end{tabular} \\
 \par
 
-{{pnotesSUBJECTIVE}}
 
-{{pnotesOBJECTIVE}}
+**if:exists:pnotes_S**
+\sheading{SUBJECTIVE} **field:pnotes_S**
+\par
+**fi**
 
-{{pnotesASSESSMENT}}
+**if:exists:pnotes_O**
+\sheading{OBJECTIVE} **field:pnotes_O**
+\par
+**fi**
 
-{{pnotesPLAN}}
+**if:exists:pnotes_A**
+\sheading{ASSESSMENT} **field:pnotes_A**
+\par
+**fi**
 
-{{pnotesINTERVAL}}
+**if:exists:pnotes_P**
+\sheading{PLAN} **field:pnotes_P**
+\par
+**fi**
 
-{{pnotesEDUCATION}}
+**if:exists:pnotes_I**
+\sheading{INTERVAL} **field:pnotes_I**
+\par
+**fi**
 
-{{pnotesRX}}
+**if:exists:pnotes_E**
+\sheading{EDUCATION} **field:pnotes_E**
+\par
+**fi**
+
+**if:exists:pnotes_R**
+\sheading{RX} **field:pnotes_R**
+\par
+**fi**
 
 \end{document}
