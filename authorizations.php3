@@ -307,7 +307,7 @@
      $query = "SELECT * FROM $database.$db_name WHERE (authpatient='$patient')
         ORDER BY authdtbegin,authdtend";
      $result = fdb_query ($query);
-     $rows = fdb_num_rows ($result);
+     $rows = ( ($result > 0) ? fdb_num_rows ($result) : 0 );
 
      $this_patient = new Patient ($patient);
      
@@ -381,13 +381,13 @@
          echo "
            &nbsp;
            <A HREF=\"$page_name?$_auth&action=modform&patient=$patient&id=$id\"
-            >$MOD</A>
+            >MOD</A>
          ";
        if (freemed_get_userlevel($LoginCookie)>$delete_level)
          echo "
            &nbsp;
            <A HREF=\"$page_name?$_auth&action=del&patient=$patient&id=$id\"
-            >$DEL</A>
+            >DEL</A>
          ";
        echo "
          </TD>
