@@ -233,11 +233,17 @@ class MaintenanceModule extends BaseModule {
 		// scope, then set their values
 		if (is_array($_param)) {
 			foreach ($_param AS $k => $v) {
-				global ${$k};
-				${$k} = $v;
+				global ${$k}; ${$k} = $v;
+				$_REQUEST[$k] = $v;
 				//print "mapped $k to $v\n";
 			}
 		}
+
+		// If we're an XML-RPC process, need to re-call the
+		// constructor ...
+		//if ($GLOBALS['XMLRPC_SERVER']) { 
+		$this->{get_class($this)}();
+		//}
 
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->insert_query (
@@ -352,6 +358,10 @@ class MaintenanceModule extends BaseModule {
 				${$k} = $v;
 			}
 		}
+
+		// If we're an XML-RPC process, need to re-call the
+		// constructor ...
+		if ($GLOBALS['XMLRPC_SERVER']) { $this->{$this->get_class()}(); }
 
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
@@ -498,7 +508,7 @@ class MaintenanceModule extends BaseModule {
 		$query = "SELECT * FROM ".$this->table_name.
 			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
 			( $this->order_field ? " ORDER BY ".$this->order_field : "" );
-		syslog(LOG_INFO, $query);
+		//syslog(LOG_INFO, $query);
 		$result = $GLOBALS['sql']->query($query);
 		if (!$GLOBALS['sql']->results($result)) {
 			return CreateObject('PHP.xmlrpcresp',

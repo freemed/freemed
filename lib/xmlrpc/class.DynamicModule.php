@@ -87,6 +87,8 @@ class DynamicModule {
 		// Translate hash from meta-information associated with
 		// the module
 		$trans_table = freemed::module_get_meta($module, 'rpc_field_map');
+		/*
+		 // FOR NOW DISABLE MAPPING, USE RAW FIELDS
 		foreach ($param AS $k => $v) {
 			// If there is a mapping, pass it through to the
 			// hash for a real parameter ... if not, it's probably
@@ -98,6 +100,17 @@ class DynamicModule {
 				//print "discarded bad mapping $k\n";
 			}
 		}
+		*/
+
+		// Publish fields as given to _REQUEST, to hack around any
+		// bizarre requests for field names ... this probably needs
+		// very badly to be fixed or standardized in some way.
+		$hash = $param;
+		// SHOULD BE DONE IN MaintenanceModule and/or EMRModule
+		//foreach ($hash AS $k => $v) {
+		//	global ${$k}; ${$k} = $v;
+		//	$_REQUEST[$k] = $v;
+		//}
 
 		// Run proper module method, determined by type parameter
 		return module_function($module, '_'.$type, array($hash));
