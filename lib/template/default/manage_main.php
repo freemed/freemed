@@ -10,8 +10,9 @@ if (!is_object($this_user)) $this_user = new User;
 //----- Extract all configuration data
 if (is_array($this_user->manage_config)) extract($this_user->manage_config);
 
-//----- Check for a *reasonable* refresh time
+//----- Check for a *reasonable* refresh time and summary items
 if ($automatic_refresh_time > 14) $automatic_refresh = $automatic_refresh_time;
+if ($num_summary_items < 1) $num_summary_items = 5;
 
 //----- Display patient information box...
 $display_buffer .= freemed_patient_box($this_patient);
@@ -129,7 +130,7 @@ foreach ($modular_components AS $garbage => $component) {
 			".module_function($component, "summary",
 				array (
 					$id, // patient ID
-					5 // hardcode 5 items for now
+					$num_summary_items // items per panel
 				)
 			)."</TD></TR></TABLE>
 		";

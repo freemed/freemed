@@ -32,6 +32,7 @@ if (!$book->been_here()) {
 $config_vars = array (
 	"automatic_refresh_time",
 	"display_columns",
+	"num_summary_items",
 	"static_components",
 	"modular_components"
 );
@@ -40,7 +41,8 @@ $config_vars = array (
 $book->add_page("General",
 	array (
 		"automatic_refresh_time",
-		"display_columns"
+		"display_columns",
+		"num_summary_items"
 	),
 	html_form::form_table(array(
 		_("Automatic Refresh Time") =>
@@ -62,6 +64,22 @@ $book->add_page("General",
 				"1" => "1",
 				"2" => "2",
 				"3" => "3"
+			)
+		),
+
+		_("Number of Summary Items") =>
+		html_form::select_widget("num_summary_items",
+			array (
+				"1"  => "1",
+				"2"  => "2",
+				"3"  => "3",
+				"4"  => "4",
+				"5"  => "5",
+				"6"  => "6",
+				"7"  => "7",
+				"8"  => "8",
+				"9"  => "9",
+				"10" => "10"
 			)
 		)
 	))
