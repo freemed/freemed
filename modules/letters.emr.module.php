@@ -12,7 +12,7 @@ class LettersModule extends EMRModule {
 	var $MODULE_VERSION = "0.3.2";
 	var $MODULE_FILE    = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $record_name    = "Letters";
 	var $table_name     = "letters";
@@ -47,30 +47,6 @@ class LettersModule extends EMRModule {
 			"lettertext",
 			"letterpatient" => $patient,
 			"locked" => '0' // needed for when it is added
-		);
-
-		// Print format
-		$this->print_format = array (
-			array (
-				'title' => __("Date"),
-				'content' => 'letterdt',
-				'type' => 'short'
-			),
-			array (
-				'title' => __("From"),
-				'content' => '##letterfrom:phylname@physician##, ##letterfrom:phyfname@physician##',
-				'type' => 'short'
-			),
-			array (
-				'title' => __("To"),
-				'content' => '##letterfrom:phylname@physician##, ##letterfrom:phyfname@physician##',
-				'type' => 'short'
-			),
-			array (
-				'title' => '',
-				'content' => 'lettertext',
-				'type' => 'long'
-			)
 		);
 
 		// Table definition
@@ -369,6 +345,37 @@ class LettersModule extends EMRModule {
 			ITEMLIST_LOCK | ITEMLIST_MOD | ITEMLIST_DEL
 		);
 	} // end function LettersModule->view()
+
+	function _print_mapping ($TeX, $id) {
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$pt = freemed::get_link_rec($r[$this->patient_field], 'patient');
+		$phyobj = CreateObject('_FreeMED.Physician', $r['letterfrom']);
+		$phf = freemed::get_link_rec($r['letterfrom'], 'physician');
+		$pht = freemed::get_link_rec($r['letterto'], 'physician');
+		return array (
+			'date' => $TeX->_SanitizeText( fm_date_print($r['letterdt'], true) ),
+			'patient' => $TeX->_SanitizeText($pt['ptfname'].
+				' '. $pt['ptmname'] . ' ' . $pt['ptlname']),
+			'from' => $TeX->_SanitizeText(
+				'Dr '.$phf['phyfname'].' '.$phf['phylname']
+				),
+			'to' => $TeX->_SanitizeText(
+				'Dr '.$pht['phyfname'].' '.$pht['phylname']
+				),
+			'body' => $TeX->_HTMLToRichText($r['lettertext']),
+			'physician' => $TeX->_SanitizeText($phyobj->fullName()),
+			'physicianaddress' => $TeX->_SanitizeText($ph['phyaddr1a']),
+			'physiciancitystatezip' => $TeX->_SanitizeText($ph['phycitya'].', '.$ph['phystatea'].' '.$ph['phyzipa']),
+			'physicianphone' => $TeX->_SanitizeText(
+				substr($ph['phyphonea'], 0, 3).'-'.
+				substr($ph['phyphonea'], 3, 3).'-'.
+				substr($ph['phyphonea'], 6, 4) ),
+			'physicianfax' => $TeX->_SanitizeText(
+				substr($ph['phyfaxa'], 0, 3).'-'.
+				substr($ph['phyfaxa'], 3, 3).'-'.
+				substr($ph['phyfaxa'], 6, 4) )
+		);
+	} // end method _print_mapping
 
 	// ----- Internal update
 
