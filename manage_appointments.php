@@ -24,6 +24,12 @@ if ($patient<1) {
    template_display();
 } // end checking for patient
 
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manageappointment.php|user $user_to_log accesses patient $patient");}	
+
+
+
  switch ($action) {
   case "del":
    $page_title = "Deleting Appointment";
@@ -134,9 +140,10 @@ if ($patient<1) {
          <td>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</td>
          <td>$calcptcode</td>
          <td><a href=\"book_appointment.php?id=".urlencode($r['id']).
-		"&type=pat\" class=\"button\">".__("MOD")."</a>
-             <a href=\"$page_name?id=$r[id]&action=del&patient=$patient\"
-             class=\"button\">".__("DEL")."</a></td>
+	 	"&patient=".urlencode($patient)."\"
+		class=\"button\">".__("Move")."</a>
+		<a href=\"$page_name?id=$r[id]&action=del&patient=$patient\"
+		class=\"button\">".__("Delete")."</a></td>
         </tr>
         ";
      } // end loop for all occurances (while)
