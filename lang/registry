@@ -1,8 +1,0 @@
-# lang/registry:
-#	This is freemed's language registry.
-#	format: [abbreviation]:[language]
-#	Lines starting with a "#" will be ignored
-en:English
-es:Espagnole
-de:Deutsch
-hr:Hrvatski
