@@ -10,7 +10,6 @@
   $record_name="Patient";    // compatibility with API functions
   include ("global.var.inc");
   include ("freemed-functions.inc");
-  include ("webtools.php"); // webtools
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 

@@ -12,7 +12,6 @@
 
   include "global.var.inc";
   include "freemed-functions.inc"; // API functions
-  include "webtools.php";
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();
