@@ -833,22 +833,22 @@ if ($action=="addform") {
   <!--
     <$STDFONT_B>Diagnosis Code 1 : <$STDFONT_E>
   ";
-  freemed_display_icdcodes($ptdiag1, "ptdiag1");
+  //freemed_display_icdcodes($ptdiag1, "ptdiag1");
   echo "
     <BR>
     <$STDFONT_B>Diagnosis Code 2 : <$STDFONT_E>
   ";
-  freemed_display_icdcodes($ptdiag2, "ptdiag2");
+  //freemed_display_icdcodes($ptdiag2, "ptdiag2");
   echo "
     <BR>
     <$STDFONT_B>Diagnosis Code 3 : <$STDFONT_E>
   ";
-  freemed_display_icdcodes($ptdiag3, "ptdiag3");
+  //freemed_display_icdcodes($ptdiag3, "ptdiag3");
   echo "
     <BR>
     <$STDFONT_B>Diagnosis Code 4 : <$STDFONT_E>
   ";
-  freemed_display_icdcodes($ptdiag4, "ptdiag4");
+  //freemed_display_icdcodes($ptdiag4, "ptdiag4");
   echo "
     <BR>
   -->
