@@ -19,6 +19,7 @@ class IcdMaintenance extends MaintenanceModule {
 	var $table_name 	 = "icd9";
 	var $record_name	 = "ICD9 Code";
 	var $order_field	 = "icd9code,icdnum";
+	var $widget_hash	 = "##icd9code## ##icd9descrip##";
 
 	var $variables = array (
 		"icd9code",
