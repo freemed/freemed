@@ -18,7 +18,8 @@ $config_vars = array (
 	"phofmt", // phone format
 	"drug_widget_type", // type of drug widget present
 	"date_widget_type", // type of date widget present
-	"folded"  // do we fold multipage forms?
+	"folded", // do we fold multipage forms?
+	"fax_nocover" // remove cover page?
 );
 
 if (!freemed::user_flag(USER_ADMIN)) {
@@ -163,7 +164,16 @@ if ($action=="cfgform") {
 				__("yes") => "yes",
 				__("no")  => "no"
 			)
+		),
+
+		__("Fax Cover Page") =>
+		html_form::select_widget("fax_nocover",
+			array (
+				__("Attach Cover Page") => "0",
+				__("No Cover Page")  => "1"
+			)
 		)
+		
 		))
 	);
 

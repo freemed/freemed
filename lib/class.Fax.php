@@ -91,6 +91,8 @@ class Fax {
 
 		// Form command
 		$cmd = 'sendfax  '.
+			( freemed::config_value('fax_nocover') ?
+				'-n ' : '' ).
 				'-f "'.$this->options['sender'].'" '.
 				'-s "'.$this->options['size'].'" '.
 				'-r "'.$this->options['subject'].'" '.
