@@ -115,6 +115,29 @@ class Handler_HL7v2 {
 		return $target;
 	} // end method _StripToNumeric
 
+	// Method: Handler_HL7v2->_FixPhoneNumber
+	//
+	//	Make sure phone number has area code when pulling into
+	//	system.
+	//
+	//	WARNING! THIS MAY NOT WORK OUTSIDE THE UNITED STATES!
+	//
+	// Parameters:
+	//
+	//	$phone - Original phone number
+	//
+	// Returns:
+	//
+	//	Phone number, possibly with system default area code.
+	//
+	function _FixPhoneNumber ($phone) {
+		if (strlen($phone) == 7) {
+			return freemed::config_value('default_area_code').$phone;
+		} else {
+			return $phone;
+		}
+	} // end method _FixPhoneNumber
+
 } // end class Handler_HL7v2
 
 ?>

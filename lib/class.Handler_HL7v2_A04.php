@@ -42,8 +42,8 @@ class Handler_HL7v2_A04 extends Handler_HL7v2 {
 				'ptstate' => $v[HL7v2_PID_ADDRESS][HL7v2_PID_ADDRESS_STATE],
 				'ptzip' => $v[HL7v2_PID_ADDRESS][HL7v2_PID_ADDRESS_ZIPCODE],
 				//'ptcountry' => $this->parser->PID['patient']['country'],
-				'pthphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_HOME]),
-				'ptwphone' => $this->_StripToNumeric($v[HL7v2_PID_PHONE_WORK]),
+				'pthphone' => $this->_FixPhoneNumber($this->_StripToNumeric($v[HL7v2_PID_PHONE_HOME])),
+				'ptwphone' => $this->_FixPhoneNumber($this->_StripToNumeric($v[HL7v2_PID_PHONE_WORK])),
 				'ptssn' => $this->_StripToNumeric($v[HL7v2_PID_SOCIALSECURITY]),
 				'ptarchive' => '0',
 				'ptid' => $v[HL7v2_PID_ID]
