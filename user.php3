@@ -374,7 +374,7 @@ switch($action) { // master action switch
     while ($r = fdb_fetch_array($result)) {
       echo "
         <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
-        <TD><$STDFONT_B>".fm_prep($r[username])."<$STDFONT_E></TD>
+        <TD><$STDFONT_B>".prepare($r[username])."<$STDFONT_E></TD>
         <TD>
       ";
 
