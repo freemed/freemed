@@ -18,13 +18,16 @@ class FreeBBillingTransport extends BillingModule {
 
 		// Set configuration variables (username/password)
 		$this->_SetMetaInformation('global_config_vars', array (
-			'freeb_server', 'freeb_port', 'freeb_protocol'
+			'freeb_server', 'freeb_port', 'freeb_protocol',
+			'freeb_path'
 		));
 		$this->_SetMetaInformation('global_config', array (
 			__("FreeB Server Hostname") =>
 			'html_form::text_widget("freeb_server", 20, 50)',
 			__("FreeB Server Port") =>
-			'html_form::password_widget("freeb_port", 6)',
+			'html_form::text_widget("freeb_port", 6)',
+			__("FreeB Server Port") =>
+			'html_form::text_widget("freeb_path", 20, 50)',
 			__("Transport Protocol") =>
 			'html_form::select_widget("freeb_protocol", array ( '.
 				'"http" => "http", '.
@@ -158,9 +161,9 @@ class FreeBBillingTransport extends BillingModule {
 			<td class=\"DataHead\" width=\"15%\">".__("Patient")."</td>
 			<td class=\"DataHead\" width=\"35%\">&nbsp;</td>
 			<td class=\"DataHead\" width=\"15%\" align=\"center\">
-				<input type=\"checkbox\" onClick=\"alert('FIXME!'); return true;\"/>".__("Select None")."</td>
+				<!-- <input type=\"checkbox\" onClick=\"alert('FIXME!'); return true;\"/>".__("Select None")." -->&nbsp;</td>
 			<td class=\"DataHead\" width=\"15%\" align=\"center\">
-				<input type=\"checkbox\" onClick=\"alert('FIXME!'); return true;\"/>".__("Select All")."</td>
+				<!-- <input type=\"checkbox\" onClick=\"alert('FIXME!'); return true;\"/>".__("Select All")." -->&nbsp;</td>
 			<td class=\"DataHead\" width=\"20%\" align=\"center\">
 				<input type=\"submit\" name=\"__submit\" value=\"".__("Submit Claims")."\" /></td>
 		</td></thead>
