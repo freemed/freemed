@@ -144,6 +144,11 @@ class UnreadFaxes extends MaintenanceModule {
 			return false;
 		}
 
+		if ($_REQUEST['submit_action'] == __("Delete")) {
+			$this->del();
+			return false;
+		}
+
 		$result = $GLOBALS['sql']->query("SELECT * FROM ".
 			$this->table_name." WHERE id='".addslashes($_REQUEST['id'])."'");
 		$r = $GLOBALS['sql']->fetch_array($result);
@@ -181,6 +186,9 @@ class UnreadFaxes extends MaintenanceModule {
 		"class=\"button\" value=\"".__("Sign")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
+		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently remove this fax?"))."')) { return validate(this.form); } else { return false; }\" ".
+		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
 		</form>
 		";
