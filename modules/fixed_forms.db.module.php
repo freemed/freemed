@@ -9,7 +9,7 @@ class FixedFormsMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME	= "Fixed Forms Maintenance";
 	var $MODULE_AUTHOR	= "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION	= "0.1";
+	var $MODULE_VERSION	= "0.2";
 	var $MODULE_DESCRIPTION = "
 		Fixed forms can be used when generating fixed-column
 		reports and text output. These are mainly used with
@@ -78,49 +78,49 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		  <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">
 		 <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
-		 <TR>
-		  <TD ALIGN=RIGHT>".__("Name of Form")." : </TD>
-		   <TD ALIGN=LEFT>
-		   <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=40 MAXLENGTH=50
+		 <tr>
+		  <td ALIGN=\"RIGHT\">".__("Name of Form")." : </td>
+		   <td ALIGN=\"LEFT\">
+		   <INPUT TYPE=\"TEXT\" NAME=\"ffname\" SIZE=40 MAXLENGTH=50
 			VALUE=\"".prepare($ffname)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Page Length")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		  <td ALIGN=\"RIGHT\">".__("Page Length")." : </td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffpagelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffpagelength)."\">
-		  </TD>
-		 </TR><TR>
-		  <TD ALIGN=RIGHT>".__("Description")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		 </tr><tr>
+		  <td ALIGN=\"RIGHT\">".__("Description")." : </td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=40 MAXLENGTH=100
 			VALUE=\"".prepare($ffdescrip)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Line Length")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		  <td ALIGN=\"RIGHT\">".__("Line Length")." : </td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"fflinelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($fflinelength)."\">
-		  </TD>
-		 </TR><TR>
-		  <TD ALIGN=RIGHT>".__("Loop Repetitions")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		 </tr><tr>
+		  <td ALIGN=\"RIGHT\">".__("Loop Repetitions")." : </td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffloopnum\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopnum)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Check Char")." : <BR>
-						  ".__("(<I>example: \"X\"</I>)")."</TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		  <td ALIGN=\"RIGHT\">".__("Check Char")." : <BR>
+						  ".__("(<I>example: \"X\"</I>)")."</td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
 			VALUE=\"".prepare($ffcheckchar)."\"> 
-		  </TD>
-		 </TR><TR>
-		  <TD ALIGN=RIGHT>".__("Loop Line Offset")." : <BR>
-					 ".__("(<I>\"1\" skips to the next line</I>)")."</TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		 </tr><tr>
+		  <td ALIGN=\"RIGHT\">".__("Loop Line Offset")." : <BR>
+					 ".__("(<I>\"1\" skips to the next line</I>)")."</td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffloopoffset\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffloopoffset)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Type")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		  <td ALIGN=RIGHT>".__("Type")." : </td>
+		  <td ALIGN=LEFT>
 		   <SELECT NAME=\"fftype\">
 			<OPTION VALUE=\"0\" ".
 			  ( ($fftype==0) ? "SELECTED" : "" ).">".__("Generic")."
@@ -133,41 +133,34 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			<OPTION VALUE=\"4\" ".
 			  ( ($fftype==4) ? "SELECTED" : "" ).">"."EMR Report"."
 		   </SELECT>
-		  </TD>
-		 </TR>
-		 </TABLE>
-		 <P>
-	 	 <CENTER><INPUT TYPE=SUBMIT VALUE=\"".__("Add")."\"></CENTER>
-		 </FORM>
+		  </td>
+		 </tr>
+		 </table>
+		 <p/>
+	 	 <div align=\"CENTER\">
+		 <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\"/>
+		 <input class=\"button\" type=\"submit\" name=\"submit\" value=\"".__("Cancel")."\"/>
+		 </div>
+		 </form>
 		";
-		$display_buffer .= "
-		<P>
-		<CENTER>
-		<A HREF=\"$this->page_name?module=$module\"
-		 >".__("Abandon Modification")."</A>
-		</CENTER>
-	  	";
-
-
 	}
 
 	function modform() {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-      	if ($id<1) 
-		{
+	    	if ($id<1) {
 			$display_buffer .= "
 			 ".__("You must select a record to modify.")."
 			";
 			template_display();
 		}
 		//$display_buffer .= "modform<BR>";
-      	if ($been_here != "yes") 
-		{
+	      	if ($been_here != "yes") {
          	// now we extract the data, since the record was given...
-        	$query  = "SELECT * FROM $this->table_name WHERE id='$id'";
+	        	$query  = "SELECT * FROM ".
+				$this->table_name." ".
+				"WHERE id='".addslashes($id)."'";
 			$result = $sql->query ($query);
 			$r      = $sql->fetch_array ($result);
 			extract ($r); 
@@ -184,8 +177,13 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			$colors = array_pad($colors,$numcolors,"#000000");
 		} // end checking if we have been here yet...
 
+		if ($editaction==__("Cancel")) {
+			$action = '';
+			$this->view();
+			return;
+		}
 
-		if ($editaction=="save")
+		if ($editaction==__("Save"))
 		{
 			// replace file data with screen content
 			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
@@ -193,7 +191,7 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			return;
 		}
 
-		if ($editaction=="copyform")
+		if ($editaction==__("Copy Form"))
 		{
 			$ffdescrip = $ffdescrip." Copy";
 			$ffname = $ffname." Copy";
@@ -204,26 +202,28 @@ class FixedFormsMaintenance extends MaintenanceModule {
    		for ($i=0;$i<=20;$i++) ${"_type_".$i} = "";
    			${"_type_".$fftype} = "SELECTED";
 
-		if ($editaction=="insert")
+		//print "editaction = ".$editaction."<br/>\n";
+		if ($editaction==__("Insert After"))
 			$this->DoInsert($row,$col,$len,$data,$format,$comment,$mark,$linecount,$colors);
-		if ($editaction=="insertb")
+		if ($editaction==__("Insert Before"))
 			$this->DoInsertB($row,$col,$len,$data,$format,$comment,$mark,$linecount,$colors);
-		if ($editaction=="copy")	
+		if ($editaction==__("Copy"))	
 			$this->DoCopy($row,$col,$len,$data,$format,$comment,$mark,$linecount,$colors);
-		if ($editaction=="reseq")	
+		if ($editaction==__("Resequence"))	
 			$this->DoResq($row,$col,$len,$data,$format,$comment,$mark,$linecount,$colors);
-		if ($editaction=="delete")	
-			$this->DoDelete($row,$col,$len,$data,$format,$comment,$mark,$linecount);
+		if ($editaction==_("Delete"))	
+			$this->DoDelete($row,$col,$len,$data,$format,$comment,$mark,$linecount,$colors);
 
+		//print "count(row) = ".count($row)."<br/>\n";
 		$display_buffer .= "
-		 <FORM ACTION=\"$this->page_name\" METHOD=POST>
-		  <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
-		  <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-		  <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\""."modform"."\">
-		  <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">";
+		 <form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		  <INPUT TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"yes\"/>
+		  <INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		  <INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\""."modform"."\"/>
+		  <INPUT TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"$id\"/>\n";
 
 		//$line_total = count($row); 
-        //$display_buffer .= "total $line_total<BR>";
+        //$display_buffer .= "total $line_total<br/>";
 
         //if ($line_total != 0)
         //{
@@ -245,100 +245,95 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		$display_buffer .= "
 		 <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
 		  ALIGN=CENTER>
-		 <TR>
-		  <TD ALIGN=RIGHT>".__("Name of Form")." : </TD>
-		   <TD ALIGN=LEFT>
+		 <tr>
+		  <td ALIGN=\"RIGHT\">".__("Name of Form")." : </td>
+		   <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=40 MAXLENGTH=50
 			VALUE=\"".prepare($ffname)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Page Length")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		  <td ALIGN=\"RIGHT\">".__("Page Length")." : </td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffpagelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($ffpagelength)."\">
-		  </TD>
-		 </TR><TR>
-		  <TD ALIGN=RIGHT>".__("Description")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		 </tr><tr>
+		  <td ALIGN=\"RIGHT\">".__("Description")." : </td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=40 MAXLENGTH=100
 			VALUE=\"".prepare($ffdescrip)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Line Length")." : </TD>
-		  <TD ALIGN=LEFT>
+		  </td>
+		  <td ALIGN=\"RIGHT\">".__("Line Length")." : </td>
+		  <td ALIGN=\"LEFT\">
 		   <INPUT TYPE=TEXT NAME=\"fflinelength\" SIZE=5 MAXLENGTH=5
 			VALUE=\"".prepare($fflinelength)."\">
-		  </TD>
-		 </TR><TR>
-		  <TD ALIGN=RIGHT>".__("Loop Repetitions")." : </TD>
-		  <TD ALIGN=LEFT>
-		   <INPUT TYPE=TEXT NAME=\"ffloopnum\" SIZE=5 MAXLENGTH=5
-			VALUE=\"".prepare($ffloopnum)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Check Char")." : <BR>
-						  ".__("(<I>example: \"X\"</I>)")."</TD>
-		  <TD ALIGN=LEFT>
-		   <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
-			VALUE=\"".prepare($ffcheckchar)."\"> 
-		  </TD>
-		 </TR><TR>
-		  <TD ALIGN=RIGHT>".__("Loop Line Offset")." : <BR>
-					 ".__("(<I>\"1\" skips to the next line</I>)")."</TD>
-		  <TD ALIGN=LEFT>
-		   <INPUT TYPE=TEXT NAME=\"ffloopoffset\" SIZE=5 MAXLENGTH=5
-			VALUE=\"".prepare($ffloopoffset)."\">
-		  </TD>
-		  <TD ALIGN=RIGHT>".__("Type")." : </TD>
-		  <TD ALIGN=LEFT>
-		   <SELECT NAME=\"fftype\">
-			<OPTION VALUE=\"0\" ".
-			  ( ($fftype==0) ? "SELECTED" : "" ).">".__("Generic")."
-			<OPTION VALUE=\"1\" ".
-			  ( ($fftype==1) ? "SELECTED" : "" ).">".__("Insurance Claim")."
-			<OPTION VALUE=\"2\" ".
-			  ( ($fftype==2) ? "SELECTED" : "" ).">".__("Patient Bill")."
-			<OPTION VALUE=\"3\" ".
-			  ( ($fftype==3) ? "SELECTED" : "" ).">"."NSF Format"."
-		   </SELECT>
-		  </TD>
-		 </TR>
-		 </TABLE>
-		 <P>
-		 <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
-		  ALIGN=CENTER>
-		  <TR CLASS=\"reverse\">
-		   <TD>#</TD>
-		   <TD ALIGN=\"CENTER\"><B>".__("Mark")."</B></TD>
-		   <TD><B>".__("Row/Line")."</B></TD>
-		   <TD><B>".__("Column")."</B></TD>
-		   <TD><B>".__("Length")."</B></TD>
-		   <TD><B>".__("Data")."</B></TD>
-		   <TD><B>".__("Format")."</B></TD>
-		   <TD><B>".__("Comment")."</B></TD>
-		  </TR>
+		  </td>
+		 </tr><tr>
+		  <td ALIGN=\"RIGHT\">".__("Loop Repetitions")." : </td>
+		  <td ALIGN=\"LEFT\">
+		   <input TYPE=\"TEXT\" NAME=\"ffloopnum\" SIZE=\"5\" ".
+		   	"MAXLENGTH=\"5\" VALUE=\"".prepare($ffloopnum)."\"/>
+		  </td>
+		  <td ALIGN=\"RIGHT\">".__("Check Char")." : <BR>
+						  ".__("(<I>example: \"X\"</I>)")."</td>
+		  <td ALIGN=\"LEFT\">
+		   <input TYPE=\"TEXT\" NAME=\"ffcheckchar\" SIZE=\"2\" ".
+		   	"MAXLENGTH=\"1\" VALUE=\"".prepare($ffcheckchar)."\"/> 
+		  </td>
+		 </tr><tr>
+		  <td ALIGN=RIGHT>".__("Loop Line Offset")." : <BR>
+					 ".__("(<I>\"1\" skips to the next line</I>)")."</td>
+		  <td ALIGN=\"LEFT\">
+		  ".html_form::text_widget('ffloopoffset', 5)."
+		  </td>
+		  <td ALIGN=\"RIGHT\">".__("Type")." : </td>
+		  <td ALIGN=\"LEFT\">
+		  ".html_form::select_widget(
+		  	'fftype',
+			array(
+				__("Generic") => '0',
+				__("Insurance Claim") => '1',
+				__("Patient Bill") => '2',
+				__("NSF Format") => '3',
+				__("EMR Report") => '4'
+			)
+		  )."
+		  </td>
+		 </tr>
+		 </table>
+		 <p/>
+		 <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\"
+		  BORDER=\"0\" VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+		  <tr CLASS=\"reverse\">
+		   <td>#</td>
+		   <td ALIGN=\"CENTER\"><b>".__("Mark")."</b></td>
+		   <td><b>".__("Row/Line")."</b></td>
+		   <td><b>".__("Column")."</b></td>
+		   <td><b>".__("Length")."</b></td>
+		   <td><b>".__("Data")."</b></td>
+		   <td><b>".__("Format")."</b></td>
+		   <td><b>".__("Comment")."</b></td>
+		  </tr>
 		 ";
 
 
 		
    		$line_total = count($row); // previous # of lines
-		if ($editaction=="refresh")
-		{
+		if ($editaction==__("Refresh")) {
 			//make all black
-			for ($i=0;$i<$line_total;$i++)
-			{
+			for ($i=0;$i<$line_total;$i++) {
 				$colors[$i] = "#000000";
 			}
 		}
 
 		//$display_buffer .= "maxline $maxlines <BR>";
-		if (!isset($start))
-		{
+		if (!isset($start)) {
 			$start=0;
 			$last = ($line_total > $maxlines) ? $maxlines : $line_total;
 			//$display_buffer .= "first end $last<BR>";
 	
 		}
 
-		if ($editaction=="next")
-		{
+		if ($editaction==__("Next")) {
 			// replace file data with screen content
 			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
 
@@ -346,20 +341,17 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			$start = $start + $maxlines;
 			$last = $last + $maxlines;
 			//$display_buffer .= "last $last<BR>";
-			if ($start > $line_total)
-			{
+			if ($start > $line_total) {
 				$start = 0;
 				$last = ($line_total > $maxlines) ? $maxlines : $line_total;
-			
-			}
-			else
-			if ($last > $line_total)
-			{
-				$last = $line_total;
+			} else {
+				if ($last > $line_total) {
+					$last = $line_total;
+				}
 			}
 		}
 
-		if ($editaction=="prev")
+		if ($editaction==__("Previous"))
 		{
 			// replace file data with screen content
 			$this->DoSaveScreen($row,$col,$len,$data,$format,$comment,$start,$last);
@@ -385,22 +377,22 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			for($i=$start;$i<$last;$i++)
 			{
 				$display_buffer .= "
-				 <TR CLASS=\"".freemed_alternate()."\">
-				  <TD><FONT COLOR=\"$colors[$i]\">".($i+1)."</FONT></TD>
-				  <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"mark$brackets\" VALUE=\"$i\"></CENTER></TD>
-				  <TD><INPUT TYPE=TEXT NAME=\"drow$brackets\" SIZE=5
-					MAXLENGTH=3 VALUE=\"".prepare($row[$i])."\"></TD>
-				  <TD><INPUT TYPE=TEXT NAME=\"dcol$brackets\" SIZE=5
-					MAXLENGTH=3 VALUE=\"".prepare($col[$i])."\"></TD>
-				  <TD><INPUT TYPE=TEXT NAME=\"dlen$brackets\" SIZE=5
-					MAXLENGTH=3 VALUE=\"".prepare($len[$i])."\"></TD>
-				  <TD><INPUT TYPE=TEXT NAME=\"ddata$brackets\" SIZE=20
-					MAXLENGTH=100 VALUE=\"".prepare($data[$i])."\"></TD>
-				  <TD><INPUT TYPE=TEXT NAME=\"dformat$brackets\" SIZE=5
-					MAXLENGTH=100 VALUE=\"".prepare($format[$i])."\"></TD>
-				  <TD><INPUT TYPE=TEXT NAME=\"dcomment$brackets\" SIZE=20
-					MAXLENGTH=100 VALUE=\"".prepare($comment[$i])."\"></TD>
-				 </TR>
+				 <tr CLASS=\"".freemed_alternate()."\">
+				  <td><FONT COLOR=\"$colors[$i]\">".($i+1)."</FONT></td>
+				  <td align=\"CENTER\"><input TYPE=\"CHECKBOX\" NAME=\"mark$brackets\" VALUE=\"$i\"/></td>
+				  <td><INPUT TYPE=TEXT NAME=\"drow$brackets\" SIZE=5
+					MAXLENGTH=3 VALUE=\"".prepare($row[$i])."\"></td>
+				  <td><INPUT TYPE=TEXT NAME=\"dcol$brackets\" SIZE=5
+					MAXLENGTH=3 VALUE=\"".prepare($col[$i])."\"></td>
+				  <td><INPUT TYPE=TEXT NAME=\"dlen$brackets\" SIZE=5
+					MAXLENGTH=3 VALUE=\"".prepare($len[$i])."\"></td>
+				  <td><INPUT TYPE=TEXT NAME=\"ddata$brackets\" SIZE=20
+					MAXLENGTH=100 VALUE=\"".prepare($data[$i])."\"></td>
+				  <td><INPUT TYPE=TEXT NAME=\"dformat$brackets\" SIZE=5
+					MAXLENGTH=100 VALUE=\"".prepare($format[$i])."\"></td>
+				  <td><INPUT TYPE=TEXT NAME=\"dcomment$brackets\" SIZE=20
+					MAXLENGTH=100 VALUE=\"".prepare($comment[$i])."\"></td>
+				 </tr>
 				 ";
 			}
 			
@@ -430,61 +422,55 @@ class FixedFormsMaintenance extends MaintenanceModule {
           }
         }
 		$display_buffer .= "
-		  <P>
+		  <p/>
 		  <CENTER>
-		  <FONT SIZE=\"-1\">Line Count :
+		  <small>".__("Line Count")." : </small>
 		   <INPUT TYPE=TEXT NAME=\"linecount\" VALUE=\"0\"
 			SIZE=2 MAXLENGTH=2>
-		  </FONT>
 		  </CENTER>
-		  <BR>
-		  <CENTER>
-		  <SELECT NAME=\"editaction\">
-		   <OPTION VALUE=\"next\">Next
-		   <OPTION VALUE=\"prev\">Prev
-		   <OPTION VALUE=\"refresh\">Refresh
-		   <OPTION VALUE=\"copy\">Copy After
-		   <OPTION VALUE=\"reseq\">ReSequence
-		   <OPTION VALUE=\"insert\">Insert After
-		   <OPTION VALUE=\"insertb\">Insert Before
-		   <OPTION VALUE=\"delete\">Delete
-		   <OPTION VALUE=\"copyform\">Copy form
-		   <OPTION VALUE=\"save\">Save
-		  </SELECT>
-		  <INPUT TYPE=SUBMIT VALUE=\"go!\">
-		  </CENTER>
+		  <div align=\"CENTER\">
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Previous")."\"/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Copy After")."\"/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Resequence")."\"/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Delete")."\"/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Insert Before")."\"/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Insert After")."\"/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Next")."\"/>
+		  <br/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Save")."\"/>
+		  <input class=\"button\" type=\"submit\" name=\"editaction\"
+		   value=\"".__("Cancel")."\"/>
+		  </div>
 		";
-		$display_buffer .= "
-		<P>
-		<CENTER>
-		<A HREF=\"$this->page_name?module=$module\"
-		 >".__("Menu")."</A>
-		</CENTER>
-	  	";
-
-
 	
 	} // end modform
 
-	function DoDelete(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount) {
+	function DoDelete(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount, &$colors) {
 		global $display_buffer;
 		$numrows = count($row);
-		if ($numrows == 0)
+		if ($numrows == 0) {
 			return false;
+		}
 	
 		//$display_buffer .= "numrows before $numrows<BR>";
 		$n=0;	
-		for ($i=0;$i<$numrows;$i++)
-		{
-			if (!fm_value_in_array($mark,$i))
-			{
+		for ($i=0;$i<$numrows;$i++) {
+			if (!fm_value_in_array($mark,$i)) {
 				$newrow[$n] = $row[$i];
 				$newcol[$n] = $col[$i];
 				$newlen[$n] = $len[$i];
 				$newdata[$n] = $data[$i];
 				$newformat[$n] = $format[$i];
 				$newcomment[$n] = $comment[$i];
-				$newcolor[$n] = "#000000";
+				$newcolor[$n] = $colors[$i]; //"#000000";
 				$n++;
 				//$display_buffer .= "$i $n <BR>";
 			}
@@ -495,19 +481,18 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		$data = $newdata;
 		$format = $newformat;
 		$comment = $newcomment;
+		$colors = $newcolor;
 		//$numrows = count($row);
 		//$display_buffer .= "numrows after $numrows<BR>";
 		return true;
-		
-		
 	}
 
 	function DoInsertB(&$row,&$col,&$len,&$data,&$format,&$comment,&$mark,&$linecount,&$colors) {
 		global $display_buffer;
 		// insert before
 		$numrows = count($row);
-		if ($numrows == 0)
-		{
+		//print "numrows = $numrows<br/>\n";
+		if ($numrows == 0) {
 			$row[0] = "0";
 			$col[0] = "0";
 			$len[0] = "0";
@@ -518,19 +503,16 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			return true;
 		}
 
-		if ($linecount == 0)
+		if ($linecount == 0) {
 			return false;
+		}
 
 		$gotrows = true;
 		$i=0;
 		$n=0;
-		while($gotrows)
-		{
-
-			if (fm_value_in_array($mark,$i))  // got a hit!
-			{
-				for ($x=0;$x<$linecount;$x++)
-				{
+		while($gotrows) {
+			if (fm_value_in_array($mark,$i)) {  // got a hit!
+				for ($x=0; $x<$linecount; $x++) {
 					$newrow[$n] = "0";
 					$newcol[$n] = "0";
 					$newlen[$n] = "0";
@@ -540,7 +522,6 @@ class FixedFormsMaintenance extends MaintenanceModule {
 					$newcolors[$n] = "#ff0000";  // show insert as red
 					$n++;
 				}
-
 			}
 
 			$newrow[$n] = $row[$i];
@@ -554,8 +535,9 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			$n++;
 
 			//$display_buffer .= "$i $n <BR>";
-			if ($i == $numrows)
+			if ($i == $numrows) {
 				$gotrows = false;
+			}
 		} // end gotrows
 
 		$row = $newrow;
@@ -757,7 +739,6 @@ class FixedFormsMaintenance extends MaintenanceModule {
 			//$display_buffer .= "after $data[$i] $ddata[$screen]<BR>";
 			$screen++;
 		}
-		
 	}
 
 	function add () {
@@ -775,11 +756,11 @@ class FixedFormsMaintenance extends MaintenanceModule {
 	} // end function FixedFormsMaintenance->add
 
 	function mod () {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		global $ffrow,$ffcol,$fflength,$ffdata,$ffformat,$ffcomment;
 		$ffrow     = fm_join_from_array ($row    );
+		//print "row (".count($row).") : "; print_r($row); print "<br/>\n";
+		//print "ffrow (".count($ffrow).") : "; print_r($ffrow); print "<br/>\n";
 		$ffcol     = fm_join_from_array ($col    );
 		$fflength  = fm_join_from_array ($len    );
 		$ffdata    = fm_join_from_array ($data   );
