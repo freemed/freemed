@@ -9,48 +9,58 @@ class ReceivablesGraph extends GraphModule {
 
 	var $MODULE_NAME = "Receivables Graph";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function ReceivablesGraph () {
+		$this->graph_text = _("Select Receivables Graph Dates");
 		$this->GraphModule();
 	} // end constructor ReceivablesGraph
 
-	function view()
-	{
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-	
-		if (!isset($start_dt))
-		{
-			global $start_dt;
-			$start_dt=$cur_date;
-		}
-		if (!isset($end_dt))
-		{
-			global $end_dt;
-			$end_dt=$cur_date;
-		}
+	function display() {
+		global $sql, $display_buffer;
+		$start_dt = fm_date_assemble("start_dt");
+		$end_dt = fm_date_assemble("end_dt");
 
-		$tl = _("Select Receivables Graph Dates");
-		$display_buffer .= $this->GetGraphOptions($tl);
+		$query = "SELECT payrecamt,payrecsource,payreccat FROM payrec ".
+				 "WHERE payrecdt>='".addslashes($start_dt)."' ".
+				 "AND payrecdt<='".addslashes($end_dt)."' ".
+				 "AND (payreccat='".PAYMENT."' OR payreccat='".COPAY."') ";
+		$result = $sql->query($query) or DIE("Query failed");
+		if ($sql->num_rows($result) > 0) {
+			$this->view();
+			$display_buffer .= "<p/>\n";
+			$display_buffer .= "<img src=\"".$this->AssembleURL(
+				array (
+					'graphmode' => 1,
+					'action' => 'image'
+				)
+			)."\" border=\"0\" alt=\"\"/>\n";
+		} else {
+			$display_buffer .= "<div align=\"center\">\n";
+			$display_buffer .= _("No receivables found.")."\n";
+			$display_buffer .= "</div>\n";
+			$display_buffer .= "<div align=\"center\">\n";
+			$display_buffer .= "<a href=\"reports.php\">".
+				_("Reports")."</a>\n";
+			$display_buffer .= "</div>\n";
+		}
 
 	}
 
-	function display()
+	function image()
 	{
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$start_dt = fm_date_assemble("start_dt");
 		$end_dt = fm_date_assemble("end_dt");
 
 		$query = "SELECT payrecamt,payrecsource,payreccat FROM payrec ".
-				 "WHERE payrecdt>='$start_dt' AND payrecdt<='$end_dt' ".
+				 "WHERE payrecdt>='".addslashes($start_dt)."' ".
+				 "AND payrecdt<='".addslashes($end_dt)."' ".
 				 "AND (payreccat='".PAYMENT."' OR payreccat='".COPAY."') ";
 	
 		
@@ -88,12 +98,12 @@ class ReceivablesGraph extends GraphModule {
 			$grand = bcadd($tot_patpay,$grand,2);
 			$bar_data[] = array("",$tot_patpay,$tot_copay,$tot_inspay,$grand);
 
-			$graph = CreateObject('FreeMED.PHPlot', 900,900); // (x,y) or (w,h)
+			$graph = CreateObject('FreeMED.PHPlot',500,500); // (x,y) or (w,h)
 
 			// bar
 			$graph->SetPrintImage(0);
 			$graph->SetTitle($titleb);
-			$graph->SetNewPlotAreaPixels(100,100,350,800);
+			$graph->SetNewPlotAreaPixels(100,100,350,500);
 			$graph->SetPlotType('bars');
 			$graph->SetDataValues($bar_data);
 			$graph->SetDrawDataLabels('1');
@@ -105,7 +115,7 @@ class ReceivablesGraph extends GraphModule {
 			//$graph->PrintImage();
 
 			// pie chart
-			//$graph->SetNewPlotAreaPixels(100,600,350,800); works below bar
+			//$graph->SetNewPlotAreaPixels(100,500,350,500); works below bar
 			$graph->SetTitle($titlep);
 			$graph->SetNewPlotAreaPixels(500,100,800,400); 
 			$graph->SetPlotType('pie');
@@ -117,12 +127,7 @@ class ReceivablesGraph extends GraphModule {
 			$graph->DrawGraph();
 			$graph->PrintImage();
 		}
-		else
-		{
-			$display_buffer .= _("No Records found");
-		}
-
-	} // end display
+	} // end image
 
 } // end class ReceivablesGraph
 

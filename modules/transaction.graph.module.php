@@ -9,48 +9,70 @@ class TransactionGraph extends GraphModule {
 
 	var $MODULE_NAME = "Transaction Graph";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.22";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function TransactionGraph () {
+		$this->graph_text = _("Select Transaction Graph Dates");
 		$this->GraphModule();
 	} // end constructor TransactionGraph
 
-	function view()
-	{
+	function display () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global ${$k};
-	
-		if (!isset($start_dt))
-		{
-			global $start_dt;
-			$start_dt=$cur_date;
-		}
-		if (!isset($end_dt))
-		{
-			global $end_dt;
-			$end_dt=$cur_date;
-		}
-		
-		$tl = _("Select Transaction Graph Dates");
-		$display_buffer .= $this->GetGraphOptions($tl);
-	}
-
-	function display() {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$start_dt = fm_date_assemble("start_dt");
 		$end_dt = fm_date_assemble("end_dt");
 
-		$query = "SELECT SUM(payrecamt) as payrectot,payreccat,payrecpatient FROM payrec ".
-				 "WHERE payrecdt>='$start_dt' AND payrecdt<='$end_dt' ".
-				 "GROUP BY payreccat ORDER BY payreccat";
-	
+		$query = "SELECT SUM(payrecamt) as payrectot,payreccat,payrecpatient ".
+				"FROM payrec ".
+				"WHERE payrecdt>='".addslashes($start_dt)."' ".
+				"AND payrecdt<='".addslashes($end_dt)."' ".
+				"GROUP BY payreccat ORDER BY payreccat";
+		
+		$result = $sql->query($query) or DIE("Query failed");
+		if ($sql->num_rows($result) > 0) {
+			$display_buffer .= $this->view();
+			$display_buffer .= "<p/>\n";
+			$display_buffer .= "<div align=\"center\">\n";
+			$display_buffer .= "<a href=\"".$this->AssembleURL(array(
+				'graphmode' => 1,
+				'action' => 'image'
+			))."\" target=\"print\">"._("Printable")."</a>\n";
+			$display_buffer .= "</div>\n";
+			$display_buffer .= "<p/>\n";
+			$display_buffer .= "<div align=\"center\">\n";
+			$display_buffer .= "<img src=\"".$this->AssembleURL(array(
+				'graphmode' => 1,
+				'action' => 'image'
+			))."\" border=\"0\" alt=\"\"/>\n";
+			$display_buffer .= "</div>\n";
+		} else {
+			$display_buffer .= $this->view();
+			$display_buffer .= "<div align=\"center\">\n";
+			$display_buffer .= _("No Records found")."\n";
+			$display_buffer .= "</div>\n";
+			$display_buffer .= "<div align=\"center\">\n";
+			$display_buffer .= "<a href=\"reports.php\">".
+				_("Reports")."</a>\n";
+			$display_buffer .= "</div>\n";
+		}
+	} // end function TransactionGraph->display()
+
+	function image () {
+		global $display_buffer;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
+		$start_dt = fm_date_assemble("start_dt");
+		$end_dt = fm_date_assemble("end_dt");
+
+		$query = "SELECT SUM(payrecamt) as payrectot,payreccat,payrecpatient ".
+				"FROM payrec ".
+				"WHERE payrecdt>='".addslashes($start_dt)."' ".
+				"AND payrecdt<='".addslashes($end_dt)."' ".
+				"GROUP BY payreccat ORDER BY payreccat";
 		
 		$result = $sql->query($query) or DIE("Query failed");
 		$title = _("Transaction Graph From")." $start_dt "._("To")." $end_dt";
@@ -81,11 +103,7 @@ class TransactionGraph extends GraphModule {
 			$graph->PrintImage();
 */
 		}
-		else
-		{
-			$display_buffe .= _("No Records found");
-		}
-	} // end method TransactionGraph->display
+	} // end method TransactionGraph->image
 
 } // end class TransactionGraph
 

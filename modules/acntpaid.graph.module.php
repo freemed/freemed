@@ -8,43 +8,22 @@ LoadObjectDependency('FreeMED.GraphModule');
 class AcntPaidGraph extends GraphModule {
 
 	var $MODULE_NAME = "Account Paid Graph";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function AcntPaidGraph () {
+		$this->graph_text = _("Select Account Paid Graph Dates");
+		$this->graph_opts = array ();
 		$this->GraphModule();
 	} // end constructor AcntPaidGraph
-
-	function view()
-	{
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-	
-		if (!isset($start_dt))
-		{
-			global $start_dt;
-			$start_dt=$cur_date;
-		}
-		if (!isset($end_dt))
-		{
-			global $end_dt;
-			$end_dt=$cur_date;
-		}
-
-		$tl = _("Select Account Paid Graph Dates");
-		$display_buffer .= $this->GetGraphOptions($tl);
-
-	}
 
 	function display()
 	{
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$start_dt = fm_date_assemble("start_dt");
 		$end_dt = fm_date_assemble("end_dt");
@@ -52,7 +31,9 @@ class AcntPaidGraph extends GraphModule {
 		$query = "SELECT a.id,a.procdt,a.procbalorig,a.procbalcurrent,a.procamtpaid,".
 				 "a.proccharges,b.id as pid,b.ptfname,b.ptlname,b.ptid ".
 				 "FROM procrec AS a, patient AS b ".
-				 "WHERE a.procdt>='$start_dt' AND a.procdt<='$end_dt' AND a.procbalcurrent='0' ".
+				 "WHERE a.procdt>='".addslashes($start_dt)."' ".
+				 "AND a.procdt<='".addslashes($end_dt)."' ".
+				 "AND a.procbalcurrent='0' ".
 				 "AND a.procpatient=b.id ".
 				 "ORDER BY a.procdt";
 		
@@ -134,7 +115,13 @@ class AcntPaidGraph extends GraphModule {
 		}
 		else
 		{
+			$display_buffer .= "<div align=\"center\">\n";
 			$display_buffer .= _("No Records found");
+			$display_buffer .= "</div>\n";
+			$display_buffer .= "<div align=\"center\">\n";
+			$display_buffer .= "<a href=\"reports.php\">".
+				_("Reports")."</a>\n";
+			$display_buffer .= "</div>\n";
 		}
 
 	} // end display
