@@ -3,7 +3,7 @@ by jeff b (jeff@univrel.pr.uconn.edu)
 Copyright 1999 under the GPL, version 2.
 
 Created       : 19990615
-Last Modified : 19991119
+Last Modified : 20000126
 
 Any statements of compatibility are listed here without
 explicit or implicit guarantee of functionality, but
@@ -60,6 +60,10 @@ Netscape Communicator v4.6 [Linux] - Seems to work as well
 
 Opera v3.6 [Windows 32-bit] - functions seemingly perfectly,
   and doesn't crash as much as netscape! (19991018)
+
+Opera v4.0a Technology Preview 2 [i386 Linux] - works well
+  besides some broken things in the patient module and some
+  very un-frumulent rendering. (20000126)
 
 StarOffice Built-In Web Browser v5.1 [Linux] - Works well.
   Can log in. Rendering is dirt slow, due to the engine,
