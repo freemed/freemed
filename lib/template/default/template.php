@@ -85,10 +85,11 @@ if ($GLOBALS['__freemed']['no_menu_bar']) {
 	<td COLSPAN="1" ALIGN="RIGHT" VALIGN="MIDDLE">
 		<?php
 		// Create URL
-		$_expand_url = $_SERVER['REQUEST_URI'];
+		$_expand_url = basename($_SERVER['REQUEST_URI']);
 		if (!(strpos($_expand_url, '_collapse_menubar=1') === false)) {
 			$_expand_url = str_replace('_collapse_menubar=1',
-				'_collapse_menubar=0', $_expand_url);
+				'', $_expand_url);
+			$_expand_url = str_replace('?&', '?', $_expand_url);
 			if (strpos($_expand_url, '?') === false) {
 				$_expand_url .= '?_collapse_menubar=0';
 			} else {
@@ -118,10 +119,10 @@ if ($GLOBALS['__freemed']['no_menu_bar']) {
 <?php
 //----- Check to see if we skip displaying this
 if (!$GLOBALS['__freemed']['no_menu_bar']) {
-	$_hide_url = $_SERVER['REQUEST_URI'];
+	$_hide_url = basename($_SERVER['REQUEST_URI']);
 	if (!(strpos($_hide_url, '_collapse_menubar=0') === false)) {
-		$_hide_url = str_replace('_collapse_menubar=0',
-			'_collapse_menubar=1', $_hide_url);
+		$_hide_url = str_replace('?&', '?', $_hide_url);
+		$_hide_url = str_replace('_collapse_menubar=0', '', $_hide_url);
 	} else {
 		if (strpos($_hide_url, '?') === false) {
 			$_hide_url .= '?_collapse_menubar=1';

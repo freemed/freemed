@@ -37,7 +37,7 @@ a:hover {
 	background: #d9d9ff 
 }
 
-.thinbox_hilite {
+.thinbox:hover {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
@@ -148,13 +148,40 @@ A.patientbox:link { color: #ffffff }
 	padding: 1pt
 }
 
-.cell_hilite {
+.cell_hilite, .cell:hover, .cell_alt:hover {
 	border: thin black;
 	border-width: thin;
 	border-style: solid;
 	overflow: scroll;
 	background: #0000ff;
 	color: #ffffff
+}
+
+.calcell {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #aaaaff; 
+	padding: 1pt
+}
+
+.calcell:hover, .calcell_alt:hover, .calendar_book_link:hover {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #5555ff; 
+	padding: 1pt
+}
+
+.calcell_alt {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #9999ff;
+	padding: 1pt
 }
 
 .calcell_hour {
