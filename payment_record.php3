@@ -623,7 +623,7 @@
       break; // end refund category (add)
 
      case "3": // denial category (add)
-      $amount_left = freemed_get_link_field ($payrecproc, "procedure",
+      $amount_left = freemed_get_link_field ($payrecproc, "procrec",
                                              "procbalcurrent");
       $payrecamt   = -(abs($amount_left));
       break; // end denial category (add)
