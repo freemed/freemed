@@ -83,6 +83,10 @@ class Annotations extends EMRModule {
 		}
 	}
 
+	// Keep people from trying to modify these ...
+	function modform() { $this->view(); }
+	function mod() { $this->add(); }
+
 	function form_table ( ) {
 		return array (
 			__("Annotation") =>
