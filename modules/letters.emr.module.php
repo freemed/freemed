@@ -16,7 +16,6 @@ class lettersModule extends freemedEMRModule {
 	var $record_name    = "Letters";
 	var $table_name     = "letters";
 	var $patient_field  = "letterpatient";
-	var $summary_view_link = true;
 
 	function lettersModule () {
 		// Set vars for patient management summary
@@ -24,6 +23,14 @@ class lettersModule extends freemedEMRModule {
 			_("Date") => "letterdt",
 			_("To")   => "letterto:physician"
 		);
+		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW;
+
+		// For display action, disable patient box for print
+		// but only if we're the correct module
+		global $action, $module;
+		if (($action=="display") and (strtolower($module)==get_class($this))) {
+			$this->disable_patient_box = true;
+		}
 
 		// Variables for add/mod
 		global $patient;
@@ -47,6 +54,29 @@ class lettersModule extends freemedEMRModule {
 		);
 		$this->freemedEMRModule();
 	} // end constructor lettersModule
+
+	function add () {
+		global $HTTP_POST_FILES;
+
+		// Check for uploaded msworddoc
+		if (!empty($HTTP_POST_FILES["msworddoc"]["tmp_name"]) and file_exists($HTTP_POST_FILES["msworddoc"]["tmp_name"])) {
+			$doc = $HTTP_POST_FILES["msworddoc"]["tmp_name"];
+
+			// Convert to the temporary file
+			$__command = "/usr/bin/wvWare -x /usr/share/wv/wvText.xml \"$doc\"";
+			$output = `$__command`;
+
+			// Read temporary file into lettertext
+			global $lettertext;
+			$lettertext = $output;
+
+			// Remove uploaded document
+			unlink($doc);
+		} // end checking for uploaded msworddoc
+
+		// Call wrapped function
+		$this->_add();
+	} // end function lettersModule->add
 
 	function form () {
 		global $display_buffer;
@@ -82,13 +112,16 @@ class lettersModule extends freemedEMRModule {
 		} // end internal action switch
 
 		$display_buffer .= "
-		<P>
-	<FORM ACTION=\"$this->page_name\" METHOD=POST>
-	<INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".
-		( ($action=="addform") ? "add" : "mod" )."\">
-	<INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"".prepare($id)."\">
-	<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-	<INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\">
+		<p/>
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\" ".
+		"ENCTYPE=\"multipart/form-data\">
+		<input TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" ".
+		"VALUE=\"1000000\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\"  VALUE=\"".
+			( ($action=="addform") ? "add" : "mod" )."\"\>
+		<input TYPE=\"HIDDEN\" NAME=\"id\"      VALUE=\"".prepare($id)."\"\>
+		<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"\>
+		<input TYPE=\"HIDDEN\" NAME=\"module\"  VALUE=\"".prepare($module)."\"\>
 		";
 
 		$display_buffer .= html_form::form_table(array(
@@ -115,15 +148,24 @@ class lettersModule extends freemedEMRModule {
 		html_form::text_area("lettertext", 20, 4),
 
 		));
+
+		// Check for Word document attachment ...
+		if (($action=="add") or ($action=="addform")) {
+			$display_buffer .= "
+			<div ALIGN=\"CENTER\">
+			<input TYPE=\"FILE\" NAME=\"msworddoc\"/>
+			</div>
+			";
+		}
  
 		$display_buffer .= "
-       <CENTER>
-       <INPUT TYPE=SUBMIT VALUE=\"  ".
-         ( ($action=="addform") ? _("Add") : _("Modify"))."  \">
-       <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\">
-       </CENTER>
-       </FORM>
+		<div ALIGN=\"CENTER\">
+		<input TYPE=SUBMIT VALUE=\"  ".
+	         ( ($action=="addform") ? _("Add") : _("Modify"))."  \"/>
+		<input TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
+		<input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\"/>
+		</div>
+		</form>
 		";
 	} // end function lettersModule->form
 
@@ -131,10 +173,8 @@ class lettersModule extends freemedEMRModule {
 		global $display_buffer, $patient, $action, $id, $title,
 			$return, $SESSION;
 
-		global $print;
-		if ($print) {
-			global $no_template_display; $no_template_display=true;
-		}
+		global $no_template_display; $no_template_display=true;
+		global $this_patient;
 
 		$title = _("View Letter");
 
@@ -145,50 +185,61 @@ class lettersModule extends freemedEMRModule {
 		$from = new Physician ($record[letterfrom]);
 		$to   = new Physician ($record[letterto]  );
 
+		// Create date, address, etc, header
 		$display_buffer .= "
-		<DIV ALIGN=\"CENTER\" CLASS=\"infobox\">
-		<TABLE BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
+		<!-- padding for letterhead -->
+		&nbsp;<br/>
+		&nbsp;<br/>
+		&nbsp;<br/>
+		&nbsp;<br/>
+		&nbsp;<br/>
+		&nbsp;<br/>
+		<table width=\"100%\" border=\"0\" cellspacing=\"0\"
+		 cellpadding=\"2\" valign=\"top\">
+		<tr>
+				<!-- date header -->
+			<td width=\"50%\">&nbsp;</td>
+			<td width=\"50%\" align=\"left\">".fm_date_print($record[letterdt])."</td>
+		</tr>
+		<tr>
+				<!-- padding -->
+			<td colspan=\"2\"> &nbsp; </td>
+		</tr>
+		<tr>
+			<td align=\"left\">
+				<!-- physician information -->
+				
+			</td>
+			<td align=\"left\">
+					<!-- patient information -->
+				<u>Re: ".$this->this_patient->fullName()."</u><br/>
+				<u>DOB: ".$this->this_patient->dateOfBirth()."</u>
+			</td>
+		</tr>
+		</table>
+		";
+
+		$display_buffer .= "
+		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
+		<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 		"CELLPADDING=\"2\">
-		<TR>
-			<TD ALIGN=\"RIGHT\" WIDTH=\"25%\">"._("Date")."</TD>
-			<TD ALIGN=\"LEFT\" WIDTH=\"75%\">".$record[letterdt]."</TD>
-		</TR>
-		<TR>
+		<tr>
+			<td ALIGN=\"RIGHT\" WIDTH=\"25%\">"._("Date")."</td>
+			<td ALIGN=\"LEFT\" WIDTH=\"75%\">".$record[letterdt]."</td>
+		</tr>
+		<tr>
 			<TD ALIGN=\"RIGHT\">"._("From")."</TD>
 			<TD ALIGN=\"LEFT\">".$from->fullName()."</TD>
-		</TR>
-		<TR>
-			<TD ALIGN=\"RIGHT\">"._("To")."</TD>
-			<TD ALIGN=\"LEFT\">".$to->fullName()."</TD>
-		</TR>
-		</TABLE>
-		</DIV>
-		<DIV ALIGN=\"LEFT\" CLASS=\"letterbox\">
-		".stripslashes(str_replace("\n", "<BR>", htmlentities($record[lettertext])))."
-		</DIV>
-		<P>
-		<DIV ALIGN=\"CENTER\">
-		<A HREF=\"".( ($return=="manage") ? "manage.php?id=".
-		$SESSION[current_patient] :
-		"module_loader.php?module=".$this->MODULE_CLASS )."\"
-		>".( ($return=="manage") ? _("Manage Patient") : _("back") ).
-		"</A> | ".( !$print ?
-		"<A HREF=\"module_loader.php?".
-			"module=".urlencode($this->MODULE_CLASS)."&".
-			"patient=".urlencode($patient)."&".
-			"action=".urlencode($action)."&".
-			"id=".urlencode($id)."&".
-			"return=".urlencode($return)."&".
-			"print=1\">"._("Print View")."</A>" :
-		"<A HREF=\"module_loader.php?".
-			"module=".urlencode($this->MODULE_CLASS)."&".
-			"patient=".urlencode($patient)."&".
-			"action=".urlencode($action)."&".
-			"id=".urlencode($id)."&".
-			"return=".urlencode($return)."&".
-			"print=0\">"._("Standard View")."</A>"
-		)."
-		</DIV>
+		</tr>
+		<tr>
+			<td ALIGN=\"RIGHT\">"._("To")."</td>
+			<td ALIGN=\"LEFT\">".$to->fullName()."</td>
+		</tr>
+		</table>
+		</div>
+		<div ALIGN=\"LEFT\" CLASS=\"letterbox\">
+		".stripslashes(str_replace("\n", "<br/>", htmlentities($record[lettertext])))."
+		</div>
 		";
 	} // end function lettersModule->display
 
@@ -205,26 +256,26 @@ class lettersModule extends freemedEMRModule {
 
 	if ($rows < 1) {
 		$display_buffer .= "
-         <P>
-         <CENTER>
+         <p/>
+         <div ALIGN=\"CENTER\">
          "._("This patient has no letters.")."
-         </CENTER>
-         <P>
-         <CENTER>
-         <A HREF=\"$this->page_name?action=addform&module=$module&patient=$patient\"
-          >"._("Add")." "._("$record_name")."</A>
-         <B>|</B>
-         <A HREF=\"manage.php?id=$patient\"
-          >"._("Manage Patient")."</A>
-         </CENTER>
-         <P>
+         </div>
+         <p/>
+         <div ALIGN=\"CENTER\">
+         <a HREF=\"$this->page_name?action=addform&module=$module&patient=$patient\"
+          >"._("Add")." "._("$record_name")."</a>
+         <b>|</b>
+         <a HREF=\"manage.php?id=$patient\"
+          >"._("Manage Patient")."</a>
+         </div>
+         <p/>
 		";
 		template_display();
 	} // if there are none...
 
 	// or else, display them...
 	$display_buffer .= "
-		<P>".
+		<p/>".
 		freemed_display_itemlist (
 			$result,
 			$this->page_name,
