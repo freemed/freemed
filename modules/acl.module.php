@@ -7,17 +7,17 @@ LoadObjectDependency('_FreeMED.MaintenanceModule');
 class ACL extends MaintenanceModule {
 	// __("Access Control Lists")
 	var $MODULE_NAME = 'Access Control Lists';
-	var $MODULE_VERSION = '0.7.2';
+	var $MODULE_VERSION = '0.8.0';
 	var $MODULE_DESCRIPTION = "Access Control Lists give granular access control to every part of the FreeMED system. This module is a wrapper for the phpgacl package.";
 
 	var $MODULE_HIDDEN = true;
 	var $MODULE_FILE = __FILE__;
 
 	function ACL ( ) {
-		$this->_SetMetaInformation('global_config_vars', array ( 'acl', 'acl_patient' ) );
+		$this->_SetMetaInformation('global_config_vars', array ( 'acl_enable', 'acl_patient' ) );
 		$this->_SetMetaInformation('global_config', array (
 			__("Enable ACL System") =>
-			'html_form::select_widget("acl", '.
+			'html_form::select_widget("acl_enable", '.
 				'array ( '.
 					'"'.__("no").'" => "0", '.
 					'"'.__("yes").'" => "1", '.
@@ -277,6 +277,21 @@ class ACL extends MaintenanceModule {
 
 	function _update ( ) {
 		$version = freemed::module_version($this->MODULE_NAME);
+
+		// Version 0.7.3
+		//
+		//	Fix namespace collision in admin configuration
+		//
+		if (!version_check($version, '0.7.3')) {
+			$GLOBALS['sql']->query('UPDATE config '.
+				'SET c_option = \'acl_enable\' '.
+				'WHERE c_option = \'acl\'');
+		}
+
+		// Version 0.8.0
+		//
+		//	Perform actual table changes for ACL
+		//
 		if (!version_check($version, '0.8.0')) {
 			$this->_drop_old_tables();
 			$this->_setup();
