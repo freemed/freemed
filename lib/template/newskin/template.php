@@ -92,6 +92,34 @@ if (isset($refresh)) {
 	<br/><br/>
 </div>
 
+<?php
+	// Handle HTMLarea objects, if they exist
+if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/dialog.js\"></script>\n";
+	print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/popupwin.js\"></script>\n";
+	print "<link rel=\"stylesheet\" type=\"text/css\" href=\"lib/template/default/htmlarea/htmlarea.css\" />\n";
+	print "<script type=\"text/javascript\">\n".
+		"function initEditor () {\n";
+	$count = 0;
+	print "//HTMLArea.loadPlugin(\"TableOperations\");\n".
+		"//HTMLArea.loadPlugin(\"SpellChecker\");\n";
+	foreach ($GLOBALS['__freemed']['rich_text_areas'] as $k => $v) {
+		print "editor".$count." = new HTMLArea(\"".$v."\");\n".
+			"//editor".$count.".registerPlugin(\"TableOperations\");\n".
+			"//editor".$count.".registerPlugin(\"SpellChecker\");\n".
+			"editor".$count.".generate();\n";
+		$count += 1;
+	}
+	//print "var x = alert('built htmlareas');\n".
+	print "return true;\n".
+		"}\n";
+	print "\n\ninitEditor();\n";
+	print "</script>\n";
+}
+?>
+
 <!-- copyright notice -->
 <br/><br/>
 <div id="bottom" align="CENTER" style="width: 100%;">
