@@ -27,12 +27,13 @@ class prescriptionModule extends freemedEMRModule {
 		$this->summary_vars = array (
 			"Date From" => "rxdtfrom",
 			"Drug" => "rxdrug",
-			"Dosage" => "CONCAT(rxsize,' ',rxunit)"
+			"Dosage" => "_dosage"
 			//"Crypto Key" => "rxmd5"
 		);
 		// Specialized query bits
 		$this->summary_query = array (
-			"MD5(id) AS rxmd5"
+			"MD5(id) AS rxmd5",
+			"CONCAT(rxsize, ' ', rxunit, ' ', rxform, ' ', rxinterval) AS _dosage"
 		);
 
 		// Table definition
@@ -273,6 +274,13 @@ class prescriptionModule extends freemedEMRModule {
 			$this->prepare();
 			$this->mod();
 			break;
+		}
+
+		// Handle return to management
+		if ($return=="manage") {
+			Header("Location: manage.php?".
+				"id=".urlencode($patient));
+			die("");
 		}
 	} // end function prescriptionModule->form
 
