@@ -110,11 +110,11 @@ if ($action=="add") {
 
     <$STDFONT_B>Modifier : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=\"insmod\" SIZE=16 MAXLENGTH=15 
-     VALUE=\"".fm_prep($r[insmod])."\">
+     VALUE=\"".prepare($r[insmod])."\">
 
     <$STDFONT_B>Description : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=\"insmoddesc\" SIZE=20 MAXLENGTH=50 
-     VALUE=\"".fm_prep($r[insmoddesc])."\">
+     VALUE=\"".prepare($r[insmoddesc])."\">
 
     <P>
     <CENTER>
@@ -252,8 +252,8 @@ if ($action=="add") {
 
       echo "
         <TR BGCOLOR=$_alternate>
-        <TD>".fm_prep($r[insmod])."</TD>
-        <TD>".fm_prep($r[insmoddesc])."</TD>
+        <TD>".prepare($r[insmod])."</TD>
+        <TD>".prepare($r[insmoddesc])."</TD>
         <TD><A HREF=
          \"$page_name?$_auth&id=$id&action=modform\"
          ><FONT SIZE=-1>$lang_MOD$id_mod</FONT></A>

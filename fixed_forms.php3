@@ -84,7 +84,7 @@
      <TD ALIGN=RIGHT><$STDFONT_B>Name of Form : <$STDFONT_E></TD>
       <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffname\" SIZE=20 MAXLENGTH=50
-       VALUE=\"".fm_prep($ffname)."\">
+       VALUE=\"".prepare($ffname)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>Page Length : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -95,7 +95,7 @@
      <TD ALIGN=RIGHT><$STDFONT_B>Description : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffdescrip\" SIZE=20 MAXLENGTH=100
-       VALUE=\"".fm_prep($ffdescrip)."\">
+       VALUE=\"".prepare($ffdescrip)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>Line Length : <$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -112,7 +112,7 @@
                      (<I>ex: \"X\"</I>)<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"ffcheckchar\" SIZE=2 MAXLENGTH=1
-       VALUE=\"".fm_prep($ffcheckchar)."\"> 
+       VALUE=\"".prepare($ffcheckchar)."\"> 
      </TD>
     </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>Loop Line Offset : <BR>
@@ -165,17 +165,17 @@
             <INPUT TYPE=CHECKBOX NAME=\"del$brackets\"
              VALUE=\"$cur_line_count\"></CENTER></TD>
         <TD><INPUT TYPE=TEXT NAME=\"row$brackets\" SIZE=5
-          MAXLENGTH=3 VALUE=\"".fm_prep($row[$i])."\"></TD>
+          MAXLENGTH=3 VALUE=\"".prepare($row[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"col$brackets\" SIZE=5
-          MAXLENGTH=3 VALUE=\"".fm_prep($col[$i])."\"></TD>
+          MAXLENGTH=3 VALUE=\"".prepare($col[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"len$brackets\" SIZE=5
-          MAXLENGTH=3 VALUE=\"".fm_prep($len[$i])."\"></TD>
+          MAXLENGTH=3 VALUE=\"".prepare($len[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"data$brackets\" SIZE=15
-          MAXLENGTH=100 VALUE=\"".fm_prep($data[$i])."\"></TD>
+          MAXLENGTH=100 VALUE=\"".prepare($data[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"format$brackets\" SIZE=5
-          MAXLENGTH=100 VALUE=\"".fm_prep($format[$i])."\"></TD>
+          MAXLENGTH=100 VALUE=\"".prepare($format[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"comment$brackets\" SIZE=15
-          MAXLENGTH=100 VALUE=\"".fm_prep($comment[$i])."\"></TD>
+          MAXLENGTH=100 VALUE=\"".prepare($comment[$i])."\"></TD>
        </TR>
        ";
        $cur_line_count++;
@@ -383,8 +383,8 @@
     // loop for all
     while ($r = fdb_fetch_array ($result)) {
       $_alternate = freemed_bar_alternate_color ($_alternate);
-      $ffname     = fm_prep($r["ffname"   ]);
-      $ffdescrip  = fm_prep($r["ffdescrip"]);
+      $ffname     = prepare($r["ffname"   ]);
+      $ffdescrip  = prepare($r["ffdescrip"]);
       $id         =         $r["id"       ] ;
 
       echo "
