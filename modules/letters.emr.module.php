@@ -61,6 +61,12 @@ class LettersModule extends EMRModule {
 	function add () {
 		global $HTTP_POST_FILES;
 
+		// Check for submit as add, else drop
+		if ($_REQUEST['my_submit'] != __("Add")) {
+			global $action; $action = "addform";
+			return $this->form();
+		}
+
 		// Check for uploaded msworddoc
 		if (!empty($HTTP_POST_FILES["msworddoc"]["tmp_name"]) and file_exists($HTTP_POST_FILES["msworddoc"]["tmp_name"])) {
 			$doc = $HTTP_POST_FILES["msworddoc"]["tmp_name"];
@@ -119,12 +125,16 @@ class LettersModule extends EMRModule {
 			}
 			extract ($r);
 			break; // end internal modform
+
+			default:
+			print "BAD!<br/>\n";
+			break;
 		} // end internal action switch
 
 		$display_buffer .= "
 		<p/>
 		<form ACTION=\"$this->page_name\" METHOD=\"POST\" ".
-		"ENCTYPE=\"multipart/form-data\">
+		"ENCTYPE=\"multipart/form-data\" name=\"my_form\">
 		<input TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" ".
 		"VALUE=\"1000000\">
 		<input TYPE=\"HIDDEN\" NAME=\"action\"  VALUE=\"".
@@ -135,7 +145,29 @@ class LettersModule extends EMRModule {
 		<input TYPE=\"HIDDEN\" NAME=\"return\"  VALUE=\"".prepare($return)."\"\>
 		";
 
-		$display_buffer .= html_form::form_table(array(
+		if (check_module("LettersTemplates") and ($action=="addform")) {
+			// Create widget
+			$lt_array = array (
+				__("Letters Template") =>
+				module_function(
+					'LettersTemplates',
+					'picklist',
+					array('lt', 'my_form')
+				)
+			);
+
+			// Check for used
+			module_function(
+				'LettersTemplates',
+				'retrieve',
+				array('lt')
+			);
+		} else {
+			$lt_array = array ('' => '');
+		}
+
+		$display_buffer .= html_form::form_table(array_merge(
+		$lt_array, array(
 		__("Date") =>
 		date_entry("letterdt"),
 
@@ -158,7 +190,7 @@ class LettersModule extends EMRModule {
 		__("Text") =>
 		html_form::text_area("lettertext", 20, 4),
 
-		));
+		)));
 
 		// Check for Word document attachment ...
 		if (($action=="add") or ($action=="addform")) {
@@ -171,7 +203,8 @@ class LettersModule extends EMRModule {
  
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
-		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"  ".
+		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
+			"VALUE=\"  ".
 	         ( ($action=="addform") ? __("Add") : __("Modify"))."  \"/>
 		<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
 		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\"/>
