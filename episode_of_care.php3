@@ -687,7 +687,7 @@
    // procedures display
    echo "
      <!-- Outer Table -->
-     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
+     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=3
       ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
      <TR><TD ALIGN=CENTER>
        <$STDFONT_B COLOR=\"#ffffff\" SIZE=+1>Procedures<$HEADERFONT_E>
@@ -702,10 +702,10 @@
      <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
       ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
      <TR>
-      <TD><$STDFONT_B COLOR=\"#ffffff\">Date<$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=\"#ffffff\">Procedure<$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=\"#ffffff\">Comment<$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=\"#ffffff\">Action<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Date&nbsp;<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Procedure&nbsp;<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Comment&nbsp;<$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=\"#ffffff\">Action&nbsp;<$STDFONT_E></TD>
      </TR>
    ";
    // special jimmy-rigged query to find in 3d array...
@@ -723,33 +723,35 @@
      $p_cpt    = $r["proccpt"];
      $p_cptmod = $r["proccptmod"];
      $p_dt     = $r["procdt"]; // date
-     $p_co     = fm_prepare($r["proccomment"]);
+     $p_co     = $r["proccomment"];
+     $p_cpt_name = freemed_get_link_field($p_cpt,"cpt","cptcode");
      if (empty($p_co)) { $p_co = "NO DESCRIPTION"; }
      if (strlen ($p_co)>50) $p_co = substr ($p_co, 0, 50)."...";
      $_alternate=freemed_bar_alternate_color($_alternate);
      echo "
-       <TR>
+       <TR BGCOLOR=$_alternate>
         <TD>
          <A HREF=\"procedure.php3?$_auth&id=$p_id&action=view&".
          "patient=$patient\"
-         ><$STDFONT_B>$p_dt<$STDFONT_E></A> - ".fm_prep ($p_co)."<BR>
+         ><$STDFONT_B>$p_dt<$STDFONT_E></A>
         </TD>
 	<TD>
-         <$STDFONT_B>$p_cpt_name<$STDFONT_E>
+         <$STDFONT_B>$p_cpt_name&nbsp;<$STDFONT_E>
 	</TD>
 	<TD>
 	 <$STDFONT_B>$p_co<$STDFONT_E>
 	</TD>
+	<TD>
      ";
      if (freemed_get_userlevel($LoginCookie)>$database_level)
        echo "
-	  <A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=modform&".
+	  <A HREF=\"procedure.php3?$_auth&id=$p_id&action=modform&".
           "patient=$patient\"
           ><$STDFONT_B>MOD<$STDFONT_E></A>
        ";
      if (freemed_get_userlevel($LoginCookie)>$delete_level)
        echo "
-	  &nbsp;<A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=display&".
+	  &nbsp;<A HREF=\"procedure.php3?$_auth&id=$p_id&action=delete&".
           "patient=$patient\"
           ><$STDFONT_B>DEL<$STDFONT_E></A>
        ";
@@ -776,7 +778,7 @@
    // progress notes display
    echo "
      <!-- Outer Table -->
-     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
+     <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=3
       ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#000000\">
      <TR><TD ALIGN=CENTER>
        <$STDFONT_B COLOR=\"#ffffff\" SIZE=+1>Progress Notes<$HEADERFONT_E>
@@ -826,7 +828,7 @@
        ";
      if (freemed_get_userlevel($LoginCookie)>$delete_level)
        echo "
-	  &nbsp;<A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=display&".
+	  &nbsp;<A HREF=\"progress_notes.php3?$_auth&id=$p_id&action=delete&".
           "patient=$patient\"
           ><$STDFONT_B>DEL<$STDFONT_E></A>
        ";
