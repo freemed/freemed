@@ -5,6 +5,12 @@ freemed project changelog
   - removed modules/intake.emr.report
   - added modules/intake.emr_report
   - change manage.php to load .emr_report
+  - API.php fix display_itemlist to handle paging
+    correclty when called from a module by pulling from
+    REQUEST_URI
+  - new fixedform default data updates to intake report
+  - intake.emr_reports module. add code to print the 
+    facility info header.
 
 * Mon Apr 30 2001 rufustfirefly
   - manage_bills.php: moved this module to old

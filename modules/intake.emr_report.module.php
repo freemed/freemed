@@ -32,7 +32,7 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			// this function is called when the View button is
 			// clicked on the patient menu
 
-			global $patient,$sql,$pt;
+			global $patient,$sql,$pt, $default_facility;
 			$this_patient = new Patient($patient);
 
 			echo "<HTML><BODY BGCOLOR=\"#FFFFFF\">";
@@ -60,6 +60,29 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			{
 				$pt[calldate] = "N/A";
 				$pt[calltime] = "N/A";
+			
+			}
+
+			if ($default_facility > 0)
+			{
+				$fac_row = 0;
+				$fac_row = freemed_get_link_rec($default_facility,"facility");
+				if ($fac_row)
+				{
+					$pt[facility] = $fac_row[psrname]." "."Intake Report";
+					$facaddr = $fac_row[psraddr1];
+					$facaddr2 = $fac_row[psraddr2];
+					if (!empty($facaddr2))
+						$facaddr = $facaddr.", ".$facaddr2;
+
+					$facaddr = $facaddr." ".$fac_row[psrcity].", ".$fac_row[psrstate]." ".$fac_row[psrzip];
+					$pt[facaddr] = $facaddr;
+					$facphone = $fac_row[psrphone];
+					$facfax = $fac_row[psrfax];
+					if (!empty($facfax))
+						$facphone = $facphone." FAX ".$facfax;
+					$pt[facphone] = $facphone;
+				}
 			
 			}
 

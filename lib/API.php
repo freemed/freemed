@@ -605,6 +605,15 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $page_link = $parts[0];
   } // end of pull current page name
 
+  if ( (isset($module)) AND (!empty($module)) )
+  {
+	// if we are in a module pull the module loader
+    // name for paging
+    $parts = explode("?", basename($GLOBALS["REQUEST_URI"]));
+    $page_name = $parts[0];
+  }
+  
+
   $_auth .= "&$cur_page_var=".chop($$cur_page_var);
  
   // TODO: make sure $control_list is an array, verify the inputs, yadda yadda
