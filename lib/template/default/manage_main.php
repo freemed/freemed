@@ -180,12 +180,37 @@ foreach ($static_components AS $garbage => $component) {
 			"ORDER BY msgtime DESC ".
 			"LIMIT ".$num_summary_items);
 		if ($sql->results($my_result)) {
+			$panel[_("Messages")] .= "<TR CLASS=\"menubar_info\">".
+				"<TD>"._("Date")."</TD>".
+				"<TD>"._("Time")."</TD>".
+				"<TD>"._("Physician")."</TD>".
+				"<TD>"._("Action")."</TD>".
+				"</TR>\n";
 			while ($my_r = $sql->fetch_array($my_result)) {
+				// Transformations for date and time
+				$y = $m = $d = $hour = $min = '';
+				$y = substr($my_r[msgtime], 0, 4);
+				$m = substr($my_r[msgtime], 4, 2);
+				$d = substr($my_r[msgtime], 6, 2);
+				$hour = substr($my_r[msgtime], 8, 2);
+				$min  = substr($my_r[msgtime], 10, 2);
+
+				// Get Physician object
+				$this_physician = new Physician ($my_r[msgfor]);
+
+				// Form the panel
 				$panel[_("Messages")] .= "<TR>".
+					"<TD ALIGN=\"LEFT\">$y-$m-$d</TD>".
+					"<TD ALIGN=\"LEFT\">".fc_get_time_string($hour,$min)."</TD>".
+					"<TD ALIGN=\"LEFT\"><SMALL>".$this_physician->fullName()."</SMALL></TD>".
+					"<TD ALIGN=\"LEFT\"><A HREF=\"".
+					"messages.php?action=del&id=".$my_r[id].
+					"&return=manage".
+					"\"><SMALL>"._("Delete")."</SMALL></A>".
 					"</TR>\n".
-					"<TR><TD COLSPAN=4>".
+					"<TR><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
 					prepare($my_r[msgtext]).
-					"</TD></TR>\n";			
+					"</SMALL></TD></TR>\n";			
 			}
 		} else {
 			// If there are no messages regarding this patient
