@@ -41,23 +41,18 @@ from jeff b (jeff@univrel.pr.uconn.edu)
 
    which will extract the .tar.gz file to /usr/share/freemed/.
 
-5) Create the phpwebtools symbolic link by:
-
-   # cd /usr/share/freemed
-   # ln -s /etc/httpd/php/webtools.php .
-
-6) Edit the /usr/share/freemed/lib/freemed.php file to make sure that all
+5) Edit the /usr/share/freemed/lib/freemed.php file to make sure that all
    settings are correct for your machine. (There is a setup wizard in the
    works that performs this step for you, using a web browser.)
 
-7) Edit your Apache configuration files to associate .php, .inc, and .php3
+6) Edit your Apache configuration files to associate .php, .inc, and .php3
    files with php, as well as setting index.php3 to be one of the default
    indexes. Also set up access and a directory alias for freemed. This is
    accomplished with the following lines:
 
-   DirectoryIndex index.php3 index.php (et cetera...)
+   DirectoryIndex index.php index.php3 (et cetera...)
 
-   AddType application/x-httpd-php3 .php3 .phtml .php
+   AddType application/x-httpd-php .php .phtml .php3
 
    Alias /tmp /bills                     
    Alias /freemed /usr/share/freemed
@@ -69,25 +64,25 @@ from jeff b (jeff@univrel.pr.uconn.edu)
      allow from all
    </Directory>
 
-8) HUP apache (killall -1 httpd) to force it to reload its configuration
+7) HUP apache (killall -1 httpd) to force it to reload its configuration
    files.
 
-9) Create the database with the command "mysqladmin -p create freemed"
+8) Create the database with the command "mysqladmin -p create freemed"
    (if you are using MySQL). (The setup wizard also does this.) Please
    note that if you do not give FreeMED's MySQL user permission to the
    FreeMED database, it will generate an error. Check MySQL's manual for
    the "GRANT" command for more information on this.
 
-10) Try to load http://localhost/freemed/ in your web browser. If no error
-    messages occur, login in as "root" with the password being your database
-    password. This will bring up a version of freemed that can be used to
-    setup the database structures, but little else. Go to the "Administration"
-    Menu, and select "Reinitialize Database". When prompted, check the
-    "First Initialization" checkbox, and then click the "Continue" button.
-    Due to a fairly dumb bug, you have to go back to the Admin menu, click
-    on "Reinitialize Database" *again*, but do not select "First Initialization"
-    then initialize the database again, which will create the proper tables and
-    information. You may now use freemed. Congratulations!
+9) Try to load http://localhost/freemed/ in your web browser. If no error
+   messages occur, login in as "root" with the password being your database
+   password. This will bring up a version of freemed that can be used to
+   setup the database structures, but little else. Go to the "Administration"
+   Menu, and select "Reinitialize Database". When prompted, check the
+   "First Initialization" checkbox, and then click the "Continue" button.
+   Due to a fairly dumb bug, you have to go back to the Admin menu, click
+   on "Reinitialize Database" *again*, but do not select "First Initialization"
+   then initialize the database again, which will create the proper tables and
+   information. You may now use freemed. Congratulations!
 
 ********************************************************* current coders/staff
 
