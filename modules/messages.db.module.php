@@ -1,7 +1,6 @@
 <?php
 	// $Id$
 	// $Author$
-	// note: stub module for messages table definition
 
 LoadObjectDependency('FreeMED.MaintenanceModule');
 
@@ -9,11 +8,11 @@ class MessagesTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Messages Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.0.1';
+	var $MODULE_VERSION = '0.6.3';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
 
 	var $table_name = "messages";
 
@@ -31,9 +30,27 @@ class MessagesTable extends MaintenanceModule {
 			'id' => SQL__SERIAL
 		);
 
+		// Add main menu handler item
+		$this->_SetHandler('MainMenu', 'UnreadMessages');
+
 		// Call parent constructor
 		$this->MaintenanceModule();
 	} // end constructor MessagesTable
+
+	function UnreadMessages ( ) {
+		// Ask the API how many messages we have
+		$m = CreateObject('FreeMED.Messages');
+		if (($c = count($m->view_per_user(true))) > 0) {
+			return array (
+				__("Unread Messages"),
+				sprintf(__("You have %s unread messages."), $c).
+				" <a href=\"messages.php\">[".__("View")."]</a>"
+			);
+		} else {
+			// Don't show up if there are no unread messages
+			return false;
+		}
+	} // end method UnreadMessages
 
 	// Use _update to update table definitions with new versions
 	function _update () {
