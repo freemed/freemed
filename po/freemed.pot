@@ -1415,4 +1415,13 @@ msgstr ""
 msgid "Related Episode(s)"
 msgstr ""
 
+msgid "Manage Appointments"
+msgstr ""
+
+msgid "Book Appointment"
+msgstr ""
+
+msgid "This patient has no appointments."
+msgstr ""
+
 # END
