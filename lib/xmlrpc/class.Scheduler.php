@@ -14,6 +14,11 @@ class Scheduler {
 		if (!empty($caldateof))
 			$query[] = "caldateof='".addslashes($caldateof)."'";
 	
+		// "after"
+		$after = $params["after"];
+		if (!empty($after))
+			$query[] = "caldateof >= '".addslashes($after)."'";
+	
 		// "facility"
 		$calfacility = $params["facility"];
 		if (!empty($calfacility))
@@ -21,7 +26,7 @@ class Scheduler {
 
 		// "patient"
 		$calpatient = $params["patient"];
-		if (!empty($calfacility))
+		if (!empty($calpatient))
 			$query[] = "calpatient='".addslashes($calpatient)."'";
 
 		// "physician"
