@@ -19,7 +19,7 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 	var $record_name    = "Provider Group";
 	var $order_field    = "phygroupname";
 
-	var $variables      = array (
+	var $variables = array (
 		"phygroupname",
 		"phygroupfac",
 		"phygroupdtadd",
@@ -30,9 +30,9 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 	);
 
 	function ProviderGroupsMaintenance () {
-		global $phygroupdtmod, $cur_date;
-		$this->MaintenanceModule();
+		global $phygroupdtmod;
 		$phygroupdtmod = date("Y-m-d");
+		$this->MaintenanceModule();
 	} // end constructor ProviderGroupsMaintenance
 
 	function view () {  
@@ -60,8 +60,7 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 
 	function form () {
 		global $display_buffer;
-		reset($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// too much data for this now
 		//$this->view();
@@ -72,8 +71,8 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 					$action="addform";
 					break;
 				}
-				while(list($k,$v)=each($this->variables)) {global ${$v};}
-				$r = freemed::get_link_rec($id,$this->table_name);
+				foreach ($this->variables AS $k => $v) { global ${$v}; }
+				$r = freemed::get_link_rec($id, $this->table_name);
 				extract ($r);
 				$phygroupidmap  = fm_split_into_array($phygroupidmap);
 				//$phygroupdocs = fm_split_into_array($phygroupdocs);
@@ -86,99 +85,89 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 
 		// set date of addition if not set 
 		if (!isset($phygroupdtadd)) $phygroupdtadd = $cur_date;
- 
-		$fac_r = $sql->query("SELECT psrname,psrnote,id FROM facility ORDER BY psrname,psrnote");
-		$spec_r = $sql->query("SELECT * FROM specialties ORDER BY specname,specdesc");
-		$phy_q = "SELECT phylname,phyfname,id FROM physician ORDER BY phylname";
-
 
 		$display_buffer .= "
-			<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=\"100%\">
-   <TR><TD ALIGN=CENTER>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-      (($action=="modform") ? "mod" : "add")."\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
-    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-    <INPUT TYPE=HIDDEN NAME=\"phygroupdtadd\" VALUE=\"".prepare($phygroupdtadd)."\">";
+		<table CELLSPACING=\"0\" CELLPADDING=\"0\" BORDER=\"0\" WIDTH=\"100%\">
+		<tr><td ALIGN=\"CENTER\">
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+		  (($action=="modform") ? "mod" : "add")."\"> 
+		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"phygroupdtadd\" VALUE=\"".prepare($phygroupdtadd)."\"/>";
  
-	$display_buffer .= html_form::form_table( array (
-	_("Physician Group Name") => 
-	"<INPUT TYPE=TEXT NAME=phygroupname SIZE=20 MAXLENGTH=100 ".
-     "VALUE=\"".prepare($phygroupname)."\">",
-	_("Default Facility") => freemed_display_selectbox($fac_r, 
-														"#psrname# [#psrnote#]",
-       													"phygroupfac"),
-	_("Specialty 1") => freemed_display_selectbox ($spec_r,
-       												"#specname#, #specdesc#",
-													 "phygroupspe1"),
+		$display_buffer .= html_form::form_table( array (
 
-	_("Physicians") => freemed_multiple_choice($phy_q,"phylname:phyfname","phygroupdocs",$phygroupdocs,false)
-			)
-		);
-/*
-	 
-    "._("Physician Group Name")." :
-    <INPUT TYPE=TEXT NAME=phygroupname SIZE=20 MAXLENGTH=100
-     VALUE=\"".prepare($phygroupname)."\">
-   </TD></TR>
+			_("Physician Group Name") => 
+				html_form::text_widget('phygroupname', 20, 100),
+		
+			_("Default Facility") => freemed_display_selectbox(
 
-   <TR><TD ALIGN=CENTER>
-    "._("Default Facility")." :
-    ".freemed_display_selectbox($fac_r, "#psrname# [#psrnote#]", 
-       "phygroupfac")."
-   </TD></TR>
-	";
-*/
+					$sql->query("SELECT psrname,psrnote,id FROM facility ORDER BY psrname,psrnote"),
+					"#psrname# [#psrnote#]",
+       					"phygroupfac"),
 
-	// handle groupidmap (just like phyidmap)
+			_("Specialty 1") => freemed_display_selectbox (
+					$sql->query("SELECT * FROM specialties ORDER BY specname,specdesc"),
+       					"#specname#, #specdesc#",
+					 "phygroupspe1"),
 
-  $insmap_buf = ""; // cache the output, as above
-  $i_res = $sql->query("SELECT * FROM inscogroup");
-  while ($i_r = $sql->fetch_array ($i_res)) {
-    $i_id = $i_r ["id"];
-    $insmap_buf .= "
-     <TR CLASS=\"".freemed_alternate()."\">
-      <TD>".prepare($i_r["inscogroup"])."</TD>
-      <TD>
-       <INPUT TYPE=TEXT NAME=\"phygroupidmap$brackets\"
-        SIZE=15 MAXLENGTH=30 VALUE=\"".$phygroupidmap[$i_id]."\">
-      </TD>
-     </TR>
-    ";
-  } // end looping for service types
-	$display_buffer .= "<P>
-  <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 
-   CLASS=\"reverse\"> <!-- black border --><TR><TD>
+			_("Physicians") => freemed_multiple_choice(
+					"SELECT phylname,phyfname,id FROM physician WHERE phylname != '' ORDER BY phylname",
+					"phylname:phyfname",
+					"phygroupdocs",
+					$phygroupdocs,
+					false)
+		) );
 
-    <!-- hide record zero, since it isn't used... -->
-    <INPUT TYPE=HIDDEN NAME=\"phygroupidmap$brackets\" VALUE=\"0\">
+		// handle groupidmap (just like phyidmap)
+		$insmap_buf = ""; // cache the output, as above
+		$i_res = $sql->query("SELECT * FROM inscogroup");
+		while ($i_r = $sql->fetch_array ($i_res)) {
+			$i_id = $i_r ["id"];
+			$insmap_buf .= "
+			<tr CLASS=\"".freemed_alternate()."\">
+			 <td>".prepare($i_r["inscogroup"])."</td>
+			 <td>
+			  <input TYPE=\"TEXT\" NAME=\"phygroupidmap$brackets\"
+			   SIZE=\"15\" MAXLENGTH=\"30\" ".
+			   "VALUE=\"".$phygroupidmap[$i_id]."\"/>
+			 </td>
+			</tr>
+			";
+		} // end looping for service types
 
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
-     ALIGN=CENTER>
-    <TR CLASS=\"cell_hilite\">
-     <TD><B>"._("Insurance Group")."</B></TD>
-     <TD><B>"._("ID Number")."</B></TD>
-    </TR>
-    $insmap_buf
-    </TABLE>
-  </TD></TR></TABLE></CENTER>
-	";
-	// end groupidmap
-	$display_buffer .= "<P>
-   <TR><TD ALIGN=CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\"".
-      (($action=="modform") ? _("Modify") : _("Add"))."\">
-    <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
-    </FORM>
-   </TD></TR>
-   </TABLE>
-  ";
-		if ($action=="modform") $display_buffer .= "
-			<CENTER>
-			<A HREF=\"$this->page_name?module=$module&action=view\"
-			 >"._("Abandon Modification")."</A>
-			</CENTER>\n";
+		if (!empty($insmap_buf)) $display_buffer .= "
+		<p/>
+		<div ALIGN=\"CENTER\">
+		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\" 
+		CLASS=\"reverse\" ALIGN=\"CENTER\"> <!-- black border --><tr><td>
+
+		<!-- hide record zero, since it isn't used... -->
+		<input TYPE=\"HIDDEN\" NAME=\"phygroupidmap$brackets\" VALUE=\"0\"/>
+
+		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\"
+		 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+		<tr CLASS=\"cell_hilite\">
+		<td><b>"._("Insurance Group")."</b></td>
+		<td><b>"._("ID Number")."</b></td>
+		</tr>
+		$insmap_buf
+		</table>
+		</td></tr></table></div>
+		";
+		// end groupidmap
+
+		$display_buffer .= "<p/>
+		<tr><td ALIGN=\"CENTER\">
+		<input CLASS=\"button\" TYPE=\"SUBMIT\" VALUE=\"".
+		(($action=="modform") ? _("Modify") : _("Add"))."\"/>
+		<input CLASS=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+		<input CLASS=\"button\" TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+		</form>
+		</td></tr>
+		</table>
+		";
 	} // end function ProviderGroupsMaintenance->form()
 
 } // end class ProviderGroupsMaintenance
