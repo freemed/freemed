@@ -12,7 +12,7 @@ class ProviderMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -88,7 +88,7 @@ class ProviderMaintenance extends MaintenanceModule {
 				// Misc
 			'phyemail' => SQL__VARCHAR(50),
 			'phycellular' => SQL__VARCHAR(16),
-			'phypage' => SQL__VARCHAR(16),
+			'phypager' => SQL__VARCHAR(16),
 			'phyupin' => SQL__VARCHAR(15),
 			'physsn' => SQL__CHAR(9),
 				// Degrees
