@@ -1,3 +1,9 @@
+freemed (0.7.0-0.1) stable; urgency=low
+
+  * Released final release of 0.7.0.
+
+ -- Jeff Buchbinder <jeff@freemedsoftware.com>  Fri, 28 May 2004 10:00:00 -0500
+
 freemed (0.7.0-0.0.4) stable; urgency=low
 
   * Released beta 4 for 0.7.0.
