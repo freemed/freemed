@@ -4,7 +4,10 @@
 
 //----- All of the replacements in the help texts
 $help_replacements = array (
-	"FreeMED"	=>	"<B>FreeMED</B>"
+	// Bolding
+	"FreeMED"	=>	"<B>FreeMED</B>",
+	// Abbreviations
+	"EMR"		=>	"<ACRONYM TITLE=\"Electronic Medical Record\">EMR</ACRONYM>"
 );
 
 ?>
