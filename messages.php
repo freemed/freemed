@@ -38,7 +38,8 @@ switch ($action) {
 	".html_form::form_table(array(
 		_("For") =>
 		freemed_display_selectbox(
-			$sql->query("SELECT * FROM physician WHERE phyref='no'"),
+			$sql->query("SELECT * FROM physician WHERE ".
+				"phyref != 'yes'"),
 			"#phylname#, #phyfname#",
 			"msgfor"
 		),
