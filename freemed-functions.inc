@@ -6,7 +6,7 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   #       max k <amk@span.ch>
   # lic : GPL, v2
-  # ver : 2000-01-24
+  # ver : 2000-01-26
 
 $__freemed_functions__ = true;
 
@@ -585,9 +585,21 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
 } // end function freemed_display_html_top
 
 // function freemed_display_facilities (selected)
-function freemed_display_facilities ($param="", $default_load = false)
+function freemed_display_facilities ($param="", $default_load = false,
+                                     $intext="")
 {
   global $default_facility, $NONE_SELECTED, $database;
+
+  switch ($intext) {
+   case "0": // internal
+    $intextquery = "WHERE psrintext='0'";
+    break;
+   case "1": // external
+    $intextquery = "WHERE psrintext='1'";
+    break;
+   default:
+    $intextquery = "";
+  }
 
   // list doctors in SELECT/OPTION tag list, and
   // leave doctor selected who is in param
@@ -595,8 +607,9 @@ function freemed_display_facilities ($param="", $default_load = false)
     <OPTION VALUE=\"0\"".
      ( ($param == 0) ? " SELECTED" : "" ).">$NONE_SELECTED
   ";
-  $query = "SELECT * FROM $database.facility ORDER BY ".
-     "psrname, psrnote";
+  $query = "SELECT * FROM $database.facility
+            $intextquery
+            ORDER BY psrname,psrnote";
   $result = fdb_query ($query);
   if (!$result) {
     // don't do anything...! 
@@ -614,7 +627,6 @@ function freemed_display_facilities ($param="", $default_load = false)
 
       if (($_psr_id==$default_facility) AND ($default_facility>0))
             { $selected_var = " $SELECTED"; }
-       else { $selected_var = "";           }
 
       if (strlen($_psr_note)<1) $__psr_note = "";
         else $__psr_note = "[$_psr_note]";

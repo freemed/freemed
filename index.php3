@@ -17,7 +17,6 @@
   freemed_display_box_top("$packagename $Login", "index.php3");
 
 echo "
-
 <P>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=2>
 <TR><TD ALIGN=RIGHT>
@@ -70,7 +69,7 @@ echo "
 <SELECT NAME=\"_f\">
 ";
 
-freemed_display_facilities ($_f, true);
+freemed_display_facilities ($_f, true, "0");
 
 echo "
 </SELECT>

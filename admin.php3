@@ -500,6 +500,7 @@ if ($action=="cfgform") {
     psrfax       VARCHAR(16),
     psremail     VARCHAR(25),
     psrein       VARCHAR(9),
+    psrintext    INT UNSIGNED,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id) )");
   if ($result) echo "<LI>facility db \n"; 
