@@ -75,6 +75,32 @@ class ReportsModule extends BaseModule {
 	// - view stub
 	function view () { }
 
+	// override _setup with create_table
+	// Note: This has almost *no* application outside of limited
+	//       tables that things like the qmaker reports module use.
+	function _setup () {
+		global $display_buffer;
+		if (!$this->create_table()) return false;
+		return freemed_import_stock_data ($this->table_name);
+	} // end function _setup
+
+	// function create_table
+	// - used to initially create SQL table
+	function create_table () {
+		global $display_buffer;
+		if (!isset($this->table_definition)) return false;
+		$query = $GLOBALS['sql']->create_table_query(
+			$this->table_name,
+			$this->table_definition,
+			( is_array($this->table_keys) ?
+				array_merge(array("id"), $this->table_keys) :
+				array("id")
+			)
+		);
+		$result = $GLOBALS['sql']->query ($query);
+		return !empty($result);
+	} // end function create_table
+
 } // end class ReportsModule
 
 ?>
