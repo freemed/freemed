@@ -4,7 +4,6 @@
 
 $page_name = "messages.php";          // page name
 include_once ("lib/freemed.php");          // global variables
-include_once ("lib/calendar-functions.php");
 $record_name = __("Messages");         // name of record
 $db_name = "messages";                // database name
 
@@ -12,6 +11,9 @@ define ('PAGE_ROLL', 5);
 
 //----- Open the database, etc
 freemed::connect ();
+
+//----- Create scheduler
+if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
@@ -288,7 +290,7 @@ switch ($action) {
 					"NAME=\"mark[".$r['id']."]\" ".
 					"VALUE=\"".prepare($r['id'])."\"/></td>
 				<td>$y-$m-$d</td>
-				<td>".fc_get_time_string($hour,$min)."</td>
+				<td>".$scheduler->get_time_string($hour,$min)."</td>
 				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
 				<td>".$r['msgurgency']."/5</td>

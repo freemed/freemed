@@ -5,7 +5,6 @@
 
 $page_name = "book_appointment.php";
 include ("lib/freemed.php");
-include ("lib/calendar-functions.php");
 
 //----- Login/authenticate
 freemed::connect ();
@@ -30,6 +29,9 @@ if ($travel) {
 	$this_patient = CreateObject('FreeMED.Patient', $_COOKIE["current_patient"]);
 	$type = "pat"; // kludge to keep real patient for this
 }
+
+//----- Create scheduler object
+$scheduler = CreateObject('FreeMED.Scheduler');
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
@@ -101,7 +103,7 @@ if (!$travel) {
 }
 
 //----- Create form
-if (date_in_the_past($selected_date)) {
+if ($scheduler->date_in_the_past($selected_date)) {
 	$calendar_form .= "
 		<div ALIGN=\"CENTER\"><i><font SIZE=\"-2\"
 		>".__("this date occurs in the past")."</font></i>
@@ -124,7 +126,7 @@ $calendar_form .= "
 
 //----- Add mini calendar to the top
 $calendar_form .= "
-	<tr><td>".fc_generate_calendar_mini(
+	<tr><td>".$scheduler->generate_calendar_mini(
 		$selected_date,
 		"$page_name?".
 			"patient=".urlencode($patient)."&".
@@ -216,9 +218,8 @@ $calendar_form .= "
 	),
 
 	"<small>".__("Note")."</small>" =>
-	( $refresh_disable ?
-	html_form::text_widget('note', 30, 100) :
-	freemedCalendar::refresh_text_widget("note", 30, 100) )
+	html_form::text_widget('note', array ('size' => 30, 'maxlenth' => 100,
+		'refresh' => !$refresh_disable ) )
 
 	), "", "", "")."
 
@@ -245,7 +246,7 @@ function display_booking_calendar ($date) {
 	foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 //----- Generate a multiple mapping index (multimap)
-$maps = freemedCalendar::multimap(
+$maps = $scheduler->multimap(
 	"SELECT * FROM scheduler WHERE ( ".
 		"calphysician='".addslashes($physician)."' OR ".
 		"calroom='".addslashes($room)."' ) AND ".
@@ -254,7 +255,7 @@ $maps = freemedCalendar::multimap(
 );
 
 //----- Create blank map for time references
-$blank_map = freemedCalendar::map_init();
+$blank_map = $scheduler->map_init();
 
 //----- Set how many columns we need
 $columns = count($maps);
@@ -276,7 +277,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 	// Display beginning of row/hour
 	$form .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
 		"CLASS=\"calcell_hour\"><b>".
-		freemedCalendar::display_hour($c_hour)."</b></td>\n";
+		$scheduler->display_hour($c_hour)."</b></td>\n";
 
 	// Loop through the minutes
 	for ($c_min="00"; $c_min<60; $c_min+=15) {
@@ -301,7 +302,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 		// Loop through all maps
 		for($cur_map=0; $cur_map<$columns; $cur_map++) {
 			// Check for fitting
-			if (!freemedCalendar::map_fit($maps[$cur_map], $idx, $duration, $id)) {
+			if (!$scheduler->map_fit($maps[$cur_map], $idx, $duration, $id)) {
 				$fit = false;
 			}
 			
@@ -322,7 +323,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 				$maps[$cur_map][$idx]['selected'] ?
 				'calcell_selected' : $cell_class )."\" ".
 				"rowspan=\"".($maps[$cur_map][$idx]['span']).
-				"\">".freemedCalendar::event_calendar_print(
+				"\">".$scheduler->event_calendar_print(
 					$maps[$cur_map][$idx]['link']
 				)."</td>\n";
 			} else {
@@ -341,7 +342,7 @@ for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("cal
 		}
 
 		// Quick check to see if this will fit on a blank map
-		if (!freemedCalendar::map_fit($blank_map, $idx, $duration)) {
+		if (!$scheduler->map_fit($blank_map, $idx, $duration)) {
 			$fit = false;
 		}
 
@@ -443,8 +444,7 @@ if ($process) {
 	}
 
 	if (!$id) {
-		$query = $sql->insert_query(
-			"scheduler",
+		$result = $scheduler->set_appointment(
 			array (
 				"caldateof" => $selected_date,
 				"caltype" => $type,
@@ -462,29 +462,19 @@ if ($process) {
 		);
 	} else {
 		// Perform move
-		$query = $sql->update_query(
-			"scheduler",
+		$result = $scheduler->move_appointment(
+			$id,
 			array (
 				"caldateof" => $selected_date,
-				"caltype" => $type,
 				"calhour" => $hour,
 				"calminute" => $minute,
 				"calduration" => $duration,
 				"calfacility" => $facility,
 				"calroom" => $room,
-				"calphysician" => $physician,
-				"calpatient" => $patient,	
-				"calcptcode" => $cptcode,
-				"calstatus" => $status,
 				"calprenote" => $note
-			),
-			array (
-				"id" => $id
 			)
 		);
 	}
-	$result = $sql->query ($query);
-
 	if ($result) { $display_buffer .= __("done")."."; }
 	 else        { $display_buffer .= __("ERROR");    }
 

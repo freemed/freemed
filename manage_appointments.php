@@ -5,9 +5,11 @@
 
 $page_name = "manage_appointments.php";
 include_once ("lib/freemed.php");
-include_once ("lib/calendar-functions.php");
 
 freemed::connect ();
+
+// Create scheduler object
+$scheduler = CreateObject('FreeMED.Scheduler');
 
 if ($patient<1) {
    $page_title = __("Manage Appointments")." :: ".__("ERROR");
@@ -135,7 +137,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manageappointment.php|user $user_to
        $display_buffer .= "
         <tr CLASS=\"".(freemed_alternate())."\">
          <td>$caldateof</td>
-         <td ALIGN=\"CENTER\">".freemedCalendar::display_time(
+         <td ALIGN=\"CENTER\">".$scheduler->display_time(
 		$calhour,$calminute)."<br/>
              (".$hours."h ".$minutes."m)</td>
          <td>".( !empty($location)   ? $location   : "&nbsp;" )."</td>

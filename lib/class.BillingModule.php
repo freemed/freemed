@@ -4,7 +4,6 @@
  // lic : GPL, v2
 
 include_once("lib/render_forms.php");
-include_once("lib/calendar-functions.php");
 
 LoadObjectDependency('FreeMED.BaseModule');
 

@@ -1,12 +1,10 @@
 <?php
- // $Id$
- // $Author$
- // note: Physician Group Calendar
- // lic : GPL, v2
+	// $Id$
+	// $Author$
+	// note: Physician Group Calendar
+	// lic : GPL, v2
 
 LoadObjectDependency('FreeMED.CalendarModule');
-
-include_once('lib/calendar-functions.php');
 
 class GroupCalendar extends CalendarModule {
 
@@ -106,6 +104,9 @@ class GroupCalendar extends CalendarModule {
 		// For extra space, turn off template
 		$GLOBALS['__freemed']['no_template_display'] = true;
 
+		// Create scheduler object
+		$scheduler = CreateObject('FreeMED.Scheduler');
+
 		// Create user object
 		if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
@@ -143,11 +144,11 @@ class GroupCalendar extends CalendarModule {
 		$physician_list = explode(":", $my_group[phygroupdocs]);
 
 		// Map all physicians in this group
-		unset($map); $map = freemedCalendar::map_init();
+		unset($map); $map = $scheduler->map_init();
 		foreach ($physician_list AS $_garbage_ => $phy) {
 			if ($phy>0) {
 			// Create map
-			$map[$phy] = freemedCalendar::map("SELECT * FROM ".
+			$map[$phy] = $scheduler->map("SELECT * FROM ".
 				"scheduler WHERE calphysician='".
 				addslashes($phy)."' AND caldateof='".
 				addslashes($selected_date)."'");
@@ -156,7 +157,7 @@ class GroupCalendar extends CalendarModule {
 		}
 
 		// Create "other" map
-		$map[0] = freemedCalendar::map(
+		$map[0] = $scheduler->map(
 				"SELECT * FROM scheduler WHERE ".
 				"calphysician='0' AND ".
 				"caldateof='".addslashes($selected_date)."' "
@@ -173,8 +174,10 @@ class GroupCalendar extends CalendarModule {
 		// Globalize everything
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 
-		global $selected_date, $template, $mark;
+		global $selected_date, $template, $mark, $scheduler;
 		if (empty($selected_date)) $selected_date = date("Y-m-d");
+
+		if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
 		// Display header
 		$buffer .= "
@@ -214,7 +217,7 @@ class GroupCalendar extends CalendarModule {
 		</table>
 		</form>
 		</td>
-		<td>".fc_generate_calendar_mini(
+		<td>".$scheduler->generate_calendar_mini(
 				$selected_date,
 				"module_loader.php?".
 					"module=".urlencode($module)."&".
@@ -283,7 +286,7 @@ class GroupCalendar extends CalendarModule {
 			<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
 			"CLASS=\"calcell_hour\" WIDTH=\"7%\"
 			><a NAME=\"hour$c_hour\" /><b>".
-			freemedCalendar::display_hour($c_hour)."</b></td>
+			$scheduler->display_hour($c_hour)."</b></td>
 			";
 
 			for ($c_min="00"; $c_min<60; $c_min+=15) {
@@ -306,7 +309,7 @@ class GroupCalendar extends CalendarModule {
 							"ROWSPAN=\"".$map[$this_phy][$idx]['span']."\" ".
 							"ALIGN=\"LEFT\" ".
 							"CLASS=\"calmark".($map[$this_phy][$idx]['mark']+0)."\">".
-							freemedCalendar::event_calendar_print(
+							$scheduler->event_calendar_print(
 								$map[$this_phy][$idx]['link']
 							).html_form::confirm_link_widget(
 								"module_loader.php?".
@@ -334,7 +337,7 @@ class GroupCalendar extends CalendarModule {
 							60 => "1:00"
 						);
 						foreach ($check as $k => $v) {
-							if (freemedCalendar::map_fit(
+							if ($scheduler->map_fit(
 									$map[$this_phy],
 									$idx,
 									$k)) { 
@@ -421,11 +424,12 @@ class GroupCalendar extends CalendarModule {
 	function travel_book() {
 		// Globalize
 		foreach ($GLOBALS AS $k => $v) global ${$k};
-		global $mark;
+		global $mark, $scheduler;
+
+		if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
 		// Insert a travel entry in the appropriate spot
-		$query = $sql->insert_query(
-			$this->table_name,
+		$result = $scheduler->set_appointment(
 			array(
 				"caldateof" => $selected_date,
 				"calphysician" => $physician,
@@ -442,7 +446,8 @@ class GroupCalendar extends CalendarModule {
 				"calmark" => $mark
 			)
 		);
-		$result = $sql->query($query);
+
+		return $result;
 	} // end function GroupCalendar->travel_book
 
 } // end class GroupCalendar

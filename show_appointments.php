@@ -5,7 +5,6 @@
 
 $page_name = "show_appointments.php";
 include ("lib/freemed.php");
-include ("lib/calendar-functions.php");
 
 //----- Login/authenticate
 freemed::connect ();

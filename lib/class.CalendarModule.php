@@ -1,9 +1,6 @@
 <?php
- // $Id$
- // desc: module prototype
- // lic : GPL, v2
-
-include_once('lib/calendar-functions.php');
+	// $Id$
+	// $Author$
 
 LoadObjectDependency('FreeMED.BaseModule');
 
@@ -308,7 +305,9 @@ class CalendarModule extends BaseModule {
 
 	function month( $thismonth = "" , $thisyear = "" ) {
 		global $display_buffer;
-		global $sql;
+		global $sql, $scheduler;
+
+		if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
 		if( !$thismonth ){
 		  $thismonth = date("m");
@@ -365,7 +364,7 @@ class CalendarModule extends BaseModule {
 			$this->month_data[$tmp["day"]]["event_title"][] = prepare($calnote);
 			$wrkh = $tmp[calhour];
 			$wrkm = $tmp[calminute];
-			$this->month_data[$tmp["day"]]["time"][] = fc_get_time_string($wrkh,$wrkm);
+			$this->month_data[$tmp["day"]]["time"][] = $scheduler->get_time_string($wrkh,$wrkm);
 			$this->month_data[$tmp["day"]]["room"][] = prepare($calroom);
 			$this->month_data[$tmp["day"]]["patient"][] = prepare($ptlname).", ".prepare($ptfname);
 			$this->month_data[$tmp["day"]]["patient_id"][] = prepare($tmp['ptid']);

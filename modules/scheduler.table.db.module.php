@@ -52,9 +52,6 @@ class SchedulerTable extends MaintenanceModule {
 			// If physician, give links to daily and weekly
 			// schedules, as well as a total of appointments
 
-			// Include calendar functions, if we need them
-			include_once ("lib/calendar-functions.php");
-
 			// Get day that is one week from today
 			$begin_date = date("Y-m-d");
 			$end_date   = $begin_date;

@@ -9,10 +9,12 @@ if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 //----- Make sure all module functions are loaded
 LoadObjectDependency('PHP.module');
-include_once('lib/calendar-functions.php');
 
 //----- Extract all configuration data
 if (is_array($this_user->manage_config)) extract($this_user->manage_config);
+
+//----- Load scheduler functions
+if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
 //----- Check for a *reasonable* refresh time and summary items
 if ($automatic_refresh_time > 14) {
@@ -40,7 +42,6 @@ foreach ($static_components AS $garbage => $component) {
 	if (!$already_set[$component]) {
 	switch ($component) {
 		case "appointments": // Appointments static component
-		include_once("lib/calendar-functions.php");
 		// Add header and strip at top
 		$modules[__("Appointments")] = "appointments";
 		$panel[__("Appointments")] .= "
@@ -99,7 +100,7 @@ foreach ($static_components AS $garbage => $component) {
 					$appoint_r["caldateof"]
 				))."</SMALL>
 				</TD><TD VALIGN=\"MIDDLE\" ALIGN=\"LEFT\">
-				<SMALL>".prepare(fc_get_time_string(
+				<SMALL>".prepare($scheduler->get_time_string(
 					$appoint_r["calhour"],
 					$appoint_r["calminute"]
 				))."</SMALL>
@@ -244,7 +245,7 @@ foreach ($static_components AS $garbage => $component) {
 				// Form the panel
 				$panel[__("Messages")] .= "<tr>".
 					"<TD ALIGN=\"LEFT\"><SMALL>$y-$m-$d</SMALL></TD>".
-					"<TD ALIGN=\"LEFT\"><SMALL>".fc_get_time_string($hour,$min)."</SMALL></TD>".
+					"<TD ALIGN=\"LEFT\"><SMALL>".$scheduler->get_time_string($hour,$min)."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$this_user->getDescription()."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\">".
 					html_form::confirm_link_widget(

@@ -6,8 +6,6 @@
 
 LoadObjectDependency('FreeMED.CalendarModule');
 
-include_once('lib/calendar-functions.php');
-
 class AnesthCalendar extends CalendarModule {
 
 	var $MODULE_NAME = "Anesthesiology Calendar";
@@ -67,8 +65,10 @@ class AnesthCalendar extends CalendarModule {
 		// Globalize everything
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 
-		global $selected_date, $template, $mark;
+		global $selected_date, $template, $mark, $scheduler;
 		if (empty($selected_date)) $selected_date = date("Y-m-d");
+
+		if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
 		// Display header
 		$buffer .= "
@@ -98,7 +98,7 @@ class AnesthCalendar extends CalendarModule {
 		</td></tr>
 		</table>
 		</td>
-		<td>".fc_generate_calendar_mini(
+		<td>".$scheduler->generate_calendar_mini(
 				$selected_date,
 				"module_loader.php?".
 					"module=".urlencode($module)."&".
