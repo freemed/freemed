@@ -389,7 +389,7 @@
                                     $p[procdiag3], $p[procdiag4])) or
             ($number_of_charges > $this_form[ffloopnum]         )){
          if ($debug) echo "\nNew form time ... <BR>\n";
-         echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
+         // echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
          flush();
 
          $ptdiag          = $diag_set->getStack();     // get pt diagnoses
