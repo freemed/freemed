@@ -1,8 +1,8 @@
 <?php
- # file: cpt.php3
- # desc: CPT (procedural codes) database
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: cpt.php3
+ // desc: CPT (procedural codes) database
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name = "cpt.php3";
  $record_name = "CPT Codes";
@@ -21,12 +21,8 @@ switch ($action) { // begin master switch
  case "modform":
   switch ($action) { // begin inner action switch
    case "addform":
-    $next_action = "add";
-    $this_action = "$Add";
     break; // end case addform
    case "modform":
-    $next_action = "mod";
-    $this_action = "$Modify";
     if ($id<1) DIE ("$page_name :: need to have id for modform");
     $this_record  = freemed_get_link_rec ($id, $db_name);
     $cptcode      = $this_record ["cptcode"];
@@ -46,107 +42,98 @@ switch ($action) { // begin master switch
     $cpttype      = $this_record ["cpttype"];
     break; // end case modform
   } // end inner action switch
-  freemed_display_box_top ("$this_action $record_name");
-
-  // gender switch
-  $gender_n = $gender_f = $gender_m = "";
-  switch ($cptgender) {
-    case "f": $gender_f = "SELECTED"; break;
-    case "m": $gender_m = "SELECTED"; break;
-    case "n":
-    default:  $gender_n = "SELECTED"; break;
-  } // end of gender switch
-
-  // taxed switch
-  $taxed_n = $taxed_y = "";
-  switch ($cpttaxed) {
-    case "y": $taxed_y = "SELECTED"; break;
-    case "n":
-    default:  $taxed_n = "SELECTED"; break;
-  } // end of taxed switch
+  freemed_display_box_top (( ($action=="addform") ? _("Add") : _("Modify") ).
+    " "._($record_name));
 
   if ($action=="modform")
    echo "
     <P>
     <CENTER>
     <A HREF=\"$page_name?$_auth&id=$id&action=profileform\"
-    ><$STDFONT_B>Fee Profiles Modification<$STDFONT_E></A>
+    ><$STDFONT_B>"._("Fee Profiles")."<$STDFONT_E></A>
     </CENTER>
     <P>
    ";
 
   echo "
     <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
-    <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"$id\">
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"$next_action\">
+    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
+    <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
+    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
+     ( ($action=="addform") ? "add" : "mod" )."\">
 
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
      ALIGN=CENTER>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Procedural Code : <$STDFONT_E>
+      <$STDFONT_B>"._("Procedural Code")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"cptcode\" SIZE=8 MAXLENGTH=7
-        VALUE=\"$cptcode\">
+        VALUE=\"".prepare($cptcode)."\">
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Internal Description : <$STDFONT_E>
+      <$STDFONT_B>"._("Internal Description")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"cptnameint\" SIZE=20 MAXLENGTH=50
-       VALUE=\"$cptnameint\">
+       VALUE=\"".prepare($cptnameint)."\">
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>External Description : <$STDFONT_E>
+      <$STDFONT_B>"._("External Description")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"cptnameext\" SIZE=20 MAXLENGTH=50
-       VALUE=\"$cptnameext\">
+       VALUE=\"".prepare($cptnameext)."\">
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Gender Restriction : <$STDFONT_E>
+      <$STDFONT_B>"._("Gender Restriction")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <SELECT NAME=\"cptgender\">
-       <OPTION VALUE=\"n\" $gender_n>no restriction
-       <OPTION VALUE=\"f\" $gender_f>female only
-       <OPTION VALUE=\"m\" $gender_m>male only
+       <OPTION VALUE=\"n\" ".
+         ( ($cptgender=="n") ? "SELECTED" : "" ).">"._("no restriction")."
+       <OPTION VALUE=\"f\" ".
+         ( ($cptgender=="f") ? "SELECTED" : "" ).">"._("female only")."
+       <OPTION VALUE=\"m\" ".
+         ( ($cptgender=="m") ? "SELECTED" : "" ).">"._("male only")."
       </SELECT>
      </TD>
     </TR>
-
+    
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Taxed? : <$STDFONT_E>
+      <$STDFONT_B>"._("Taxed?")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <SELECT NAME=\"cpttaxed\">
-       <OPTION VALUE=\"n\" $taxed_n>no
-       <OPTION VALUE=\"y\" $taxed_y>yes
+       <OPTION VALUE=\"n\" ".
+         ( ($cpttaxed=="n") ? "SELECTED" : "" ).">"._("no")."
+       <OPTION VALUE=\"y\" ".
+         ( ($cpttaxed=="y") ? "SELECTED" : "" ).">"._("yes")."
       </SELECT>
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Internal Procedure Type : <$STDFONT_E>
+      <$STDFONT_B>"._("Internal Service Types")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <SELECT NAME=\"cpttype\">
-       <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
+       <OPTION VALUE=\"0\">"._("NONE SELECTED")."\n";
+
   $i_res = fdb_query ("SELECT * FROM intservtype");
   while ($i_r = fdb_fetch_array ($i_res)) {
     if ($i_r["id"]==$cpttype) { $this_selected = "SELECTED"; }
      else                     { $this_selected = "";         }
-    echo "    <OPTION VALUE=\"".$i_r["id"]."\" $this_selected>".
-         fm_prep($i_r["intservtype"])."\n";
+    echo "    <OPTION VALUE=\"".$i_r["id"]."\" ".
+      ( ($i_r[id]==$cpttype) ? "SELECTED" : "" ).">".
+         prepare($i_r["intservtype"])."\n";
   } // end while for intservtype
   echo "
       </SELECT>
@@ -155,37 +142,35 @@ switch ($action) { // begin master switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Relative Value : <$STDFONT_E>
+      <$STDFONT_B>"._("Relative Value")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"cptrelval\" SIZE=10 MAXLENGTH=9
-       VALUE=\"$cptrelval\">
+       VALUE=\"".prepare($cptrelval)."\">
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Default Type of Service : <$STDFONT_E>
+      <$STDFONT_B>"._("Default Type of Service")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <SELECT NAME=\"cptdeftos\">
-  ";
-  freemed_display_tos ($cptdeftos);
-  echo "
+  ".freemed_display_tos ($cptdeftos)."
       </SELECT>
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Default Standard Fee : <$STDFONT_E>
+      <$STDFONT_B>"._("Default Standard Fee")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"cptdefstdfee\" SIZE=10 MAXLENGTH=8
-       VALUE=\"$cptdefstdfee\">
+       VALUE=\"".prepare($cptdefstdfee)."\">
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Diagnosis Required : <$STDFONT_E>
+      <$STDFONT_B>"._("Diagnosis Required")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM icd9
                                ORDER BY icd9code,icd9descrip",
@@ -198,7 +183,7 @@ switch ($action) { // begin master switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Diagnosis Excluded : <$STDFONT_E>
+      <$STDFONT_B>"._("Diagnosis Excluded")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM icd9
                               ORDER BY icd9code,icd9descrip",
@@ -211,7 +196,7 @@ switch ($action) { // begin master switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Procedural Codes Required : <$STDFONT_E>
+      <$STDFONT_B>"._("Procedural Codes Required")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM cpt
                                ORDER BY cptnameint,cptcode",
@@ -224,7 +209,7 @@ switch ($action) { // begin master switch
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>Procedural Codes Excluded : <$STDFONT_E>
+      <$STDFONT_B>"._("Procedural Codes Excluded")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
    ".freemed_multiple_choice ("SELECT * FROM cpt
                                ORDER BY cptcode,cptnameint",
@@ -239,8 +224,9 @@ switch ($action) { // begin master switch
 
     <P>
     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\"$this_action\">
-     <INPUT TYPE=RESET VALUE=\"$Clear\">
+     <INPUT TYPE=SUBMIT VALUE=\"".
+       ( ($action=="addform") ? _("Add") : _("Modify") )."\">
+     <INPUT TYPE=RESET VALUE=\""._("Clear")."\">
     </CENTER>
     <P>
 
@@ -250,7 +236,7 @@ switch ($action) { // begin master switch
   break; // end add/mod form
 
  case "add": // modify action
-  freemed_display_box_top ("$Adding $record_name");
+  freemed_display_box_top (_("Adding")." "._($record_name));
   $query = "INSERT INTO $db_name VALUES (
             '".addslashes($cptcode).                        "',
             '".addslashes($cptnameint).                     "',
@@ -270,12 +256,12 @@ switch ($action) { // begin master switch
             NULL )";
   echo "
    <P>
-   <$STDFONT_B>$Adding ...
+   <$STDFONT_B>"._("Adding")." ...
   ";
   if ($debug) echo " ( query = \"$query\" ) <BR>\n";
   $result = fdb_query ($query);
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
   echo "
    <$STDFONT_E>
    <P>
@@ -283,7 +269,7 @@ switch ($action) { // begin master switch
    <A HREF=\"$page_name?$_auth&action=addform\"
    ><$STDFONT_B>Add Another<$STDFONT_E></A> <B>|</B>
    <A HREF=\"$page_name?$_auth\"
-   ><$STDFONT_B>Return to the CPT Codes Menu<$STDFONT_E>
+   ><$STDFONT_B>"._("back")."<$STDFONT_E>
    </CENTER>
    <P>
   ";
@@ -291,7 +277,7 @@ switch ($action) { // begin master switch
   break; // end add action
 
  case "mod": // modify action
-   freemed_display_box_top ("$Modifying $record_name");
+   freemed_display_box_top (_("Modifying")." "._($record_name));
   $query = "UPDATE $db_name SET
             cptcode      ='".addslashes($cptcode).                        "',
             cptnameint   ='".addslashes($cptnameint).                     "',
@@ -311,18 +297,18 @@ switch ($action) { // begin master switch
             WHERE id='$id'";
   echo "
    <P>
-   <$STDFONT_B>$Modifying ...
+   <$STDFONT_B>"._("Modifying")." ...
   ";
   if ($debug) echo " ( query = \"$query\" ) <BR>\n";
   $result = fdb_query ($query);
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
   echo "
    <$STDFONT_E>
    <P>
    <CENTER>
    <A HREF=\"$page_name?$_auth\"
-   ><$STDFONT_B>Return to the CPT Codes Menu<$STDFONT_E>
+   ><$STDFONT_B>"._("back")."<$STDFONT_E>
    </CENTER>
    <P>
   ";
@@ -338,7 +324,7 @@ switch ($action) { // begin master switch
   $this_code  = freemed_get_link_rec ($id, $db_name);
   $cpttos     = fm_split_into_array ($this_code["cpttos"]);
   $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
-  freemed_display_box_top ("$record_name");
+  freemed_display_box_top (_($record_name));
   echo "
    <P>
     <CENTER>
@@ -347,18 +333,17 @@ switch ($action) { // begin master switch
     ><$STDFONT_B>".$this_code["cptcode"]."<$STDFONT_E></A>&nbsp;
     <$STDFONT_B><I>(".$this_code["cptnameint"].")</I><$STDFONT_E>
     <BR>
-    <$STDFONT_B><U>Default Standard Fee</U> :
+    <$STDFONT_B><U>"._("Default Standard Fee")."</U> :
     ".bcadd($this_code["cptdefstdfee"],0,2)."<$STDFONT_E>
     <BR>
-    <$STDFONT_B><U>Default Type of Service</U> :
+    <$STDFONT_B><U>"._("Default Type of Service")."</U> :
     ".freemed_get_link_field ($this_code["cptdeftos"], "tos",
       "tosname")."<$STDFONT_E>
     </CENTER> 
    <P>
    <CENTER>
     <$STDFONT_B SIZE=-1><I>
-     Please note that selecting \"0\" or \"NONE SELECTED\"<BR>
-     will cause the default values to be used.
+     "._("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
     </I><$STDFONT_E> 
    </CENTER>
    <P>
@@ -372,29 +357,25 @@ switch ($action) { // begin master switch
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
     ALIGN=CENTER>
    <TR>
-    <TD><B>Insurance Company</B>&nbsp;</TD>
-    <TD><B>Type of Service</B>&nbsp;</TD>
-    <TD><B>Standard Fee</B></TD>
+    <TD><B>"._("Insurance Company")."</B>&nbsp;</TD>
+    <TD><B>"._("Type of Service")."</B>&nbsp;</TD>
+    <TD><B>"._("Standard Fee")."</B></TD>
    </TR>
   ";
-  $_alternate = freemed_bar_alternate_color ();
   for ($i=1;$i<=$num_inscos;$i++) { // loop thru inscos
    if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
    $this_insco = new InsuranceCompany ($i);
-   $_alternate = freemed_bar_alternate_color ($_alternate);
    echo "
-    <TR BGCOLOR=$_alternate>
-     <TD>".fm_prep($this_insco->insconame)."</TD>
+    <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+     <TD>".prepare($this_insco->insconame)."</TD>
      <TD>
       <SELECT NAME=\"cpttos$brackets\">
-   ";
-   freemed_display_tos ($cpttos[$i]);
-   echo "
+   ".freemed_display_tos ($cpttos[$i])."
       </SELECT>
      </TD>
      <TD>
       <INPUT TYPE=TEXT NAME=\"cptstdfee$brackets\" SIZE=10
-       MAXLENGTH=9 VALUE=\"".fm_prep($cptstdfee[$i])."\">
+       MAXLENGTH=9 VALUE=\"".prepare($cptstdfee[$i])."\">
      </TD>
     </TR>
    ";
@@ -403,8 +384,8 @@ switch ($action) { // begin master switch
    </TABLE>
    <P>
     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\"$Modify\">
-     <INPUT TYPE=RESET  VALUE=\"$Clear\">
+     <INPUT TYPE=SUBMIT VALUE=\""._("Modify")."\">
+     <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
     </CENTER>
    <P>
    </FORM>
@@ -413,24 +394,24 @@ switch ($action) { // begin master switch
   break; // end insurance company profiles form 
 
  case "profile": // modification for the profile form
-  freemed_display_box_top ("$Modifying $record_name");
+  freemed_display_box_top (_("Modifying")." "._($record_name));
   $query = "UPDATE $db_name SET
             cpttos='".fm_join_from_array($cpttos)."',
             cptstdfee='".fm_join_from_array($cptstdfee)."'
             WHERE id='$id'";
   echo "
    <P>
-   <$STDFONT_B>$Modifying ... 
+   <$STDFONT_B>"._("Modifying")." ... 
   ";
   $result = fdb_query ($query);
-  if ($result) { echo "$Done."; }
-   else        { echo "$ERROR"; }
+  if ($result) { echo _("done")."."; }
+   else        { echo _("ERROR");    }
   echo "
    <$STDFONT_E>
    <P>
    <CENTER>
     <A HREF=\"$page_name?$_auth\"
-    ><$STDFONT_B>Return to $record_name Menu<$STDFONT_E></A>
+    ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
    </CENTER>
    <P>
   ";
@@ -438,48 +419,18 @@ switch ($action) { // begin master switch
   break; // end of mod for the profile form
 
  default: // default action begin
-  freemed_display_box_top ("$record_name");
-  $query = "SELECT * FROM $db_name
-            ORDER BY cptcode";
+  freemed_display_box_top (_($record_name));
+  $query = "SELECT cptcode,cptnameint,id FROM $db_name ORDER BY cptcode";
   $result = fdb_query ($query);
-  freemed_display_actionbar ();
-  $_alternate = freemed_bar_alternate_color ();
-  echo "
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
-    ALIGN=CENTER>
-   <TR>
-    <TD><B>CPT Code</B></TD>
-    <TD><B>Internal Name</B></TD>
-    <TD><B>Action</B></TD>
-   </TR>
-  ";
-  while ($r = fdb_fetch_array ($result)) {
-    $_alternate = freemed_bar_alternate_color ($_alternate);
-    echo "
-     <TR BGCOLOR=$_alternate>
-      <TD><$STDFONT_B>".$r["cptcode"]."<$STDFONT_E></TD>
-      <TD><$STDFONT_B><I>".$r["cptnameint"]."</I><$STDFONT_E></TD>
-      <TD>
-    ";
-    if (($this_user->getLevel())>$database_level)
-     echo "
-      <A HREF=\"$page_name?$_auth&id=".$r["id"]."&action=modform\"
-      ><$STDFONT_B SIZE=-2>$lang_MOD<$STDFONT_E></A> &nbsp;
-     ";
-    if (($this_user->getLevel())>$delete_level)
-     echo "
-      <A HREF=\"$page_name?$_auth&id=".$r["id"]."&action=del\"
-      ><$STDFONT_B SIZE=-2>$lang_DEL<$STDFONT_E></A> &nbsp;
-     ";
-    echo "&nbsp;
-      </TD>
-     </TR>
-    ";
-  } // end while looping for fetch array
-  echo "
-   </TABLE>
-  ";
-  freemed_display_actionbar ();
+  echo freemed_display_itemlist (
+    $result,
+    $page_name,
+    array (
+      _("Procedural Code")	=>	"cptcode",
+      _("Internal Name")	=>	"cptnameint"
+    ),
+    array ("", "")
+  );
   freemed_display_box_bottom ();
   break; // default action end
 } // end master switch
