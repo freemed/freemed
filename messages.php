@@ -8,6 +8,8 @@ include_once ("lib/calendar-functions.php");
 $record_name = _("Messages");         // name of record
 $db_name = "messages";                // database name
 
+define ('PAGE_ROLL', 5);
+
 //----- Open the database, etc
 freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
@@ -176,6 +178,19 @@ switch ($action) {
 	// Check for proper "old" value
 	if (!isset($old) or ($old < 0) or ($old > 1)) $old = 0;
 
+	// Determine how many messages there are
+	$paging = false;
+	$p_result = $sql->query(
+		"SELECT * FROM messages ".
+		"WHERE msgfor='".$this_user->user_number."' AND ".
+		"msgread='".addslashes($old)."' ".
+		"ORDER BY msgtime DESC"
+	);
+	if ($sql->results($p_result)) {
+		$total_results = $sql->num_rows($p_result);
+		$paging = ($total_results > PAGE_ROLL);
+	}
+
 	$display_buffer .= "<div ALIGN=\"CENTER\" CLASS=\"infobox\">\n".
 		"<a HREF=\"messages.php?action=addform\">".
 		_("Add Message")."</a> | \n".
@@ -193,7 +208,9 @@ switch ($action) {
 	$query = "SELECT * FROM messages ".
 		"WHERE msgfor='".$this_user->user_number."' AND ".
 		"msgread='".addslashes($old)."' ".
-		"ORDER BY msgtime DESC";
+		"ORDER BY msgtime DESC ".
+		"LIMIT ".addslashes($start + 0).",".addslashes(PAGE_ROLL + 0);
+		// this should be LIMIT (page roll) OFFSET (start)
 	$result = $sql->query($query);
 
 	if (!$sql->results($result)) {
@@ -216,16 +233,17 @@ switch ($action) {
 			<td><b>"._("Urgency")."</b></td>
 		</tr>
 		";
+
 		while ($r = $sql->fetch_array($result)) {
 			// Determine who we're looking at by number
 			if ($r['msgpatient'] > 0) {
 				$this_patient = CreateObject('FreeMED.Patient',
 						$r['msgpatient']);
-				$r[from] = "<a HREF=\"manage.php?id=".
+				$r['from'] = "<a HREF=\"manage.php?id=".
 					$r['msgpatient']."\">".
 					$this_patient->fullName()."</a>";
 			} else {
-				$r[from] = stripslashes($r['msgperson']);
+				$r['from'] = stripslashes($r['msgperson']);
 			}
 
 			// Convert from timestamp to time/date
@@ -254,7 +272,32 @@ switch ($action) {
 		}
 		$display_buffer .= "
 		</table></div>
+		";
 
+		// Create paging links
+		if ($paging) {
+			$display_buffer .= "<p/><div ALIGN=\"CENTER\" ".
+				"CLASS=\"infobox\">\n";
+			$pages = ceil($total_results / PAGE_ROLL);
+			$display_buffer .= "&nbsp; ";
+			for ($i = 1; $i <= $pages; $i++) {
+				$display_buffer .= (
+					(($i-1)*PAGE_ROLL) != ($start+0) ?
+					"<a href=\"".page_name().
+					"?start=".urlencode(($i-1) * PAGE_ROLL)."&".
+					"old=".urlencode($old+0)."\">"
+					: "" ).
+					"<b>".$i."</b>".(
+					(($i-1)*PAGE_ROLL) != ($start+0) ?
+					"</a>" : "" ).
+					" &nbsp; ";
+					
+			}
+			$display_buffer .= "</div><p/>\n";
+		}
+
+		// Create buttons
+		$display_buffer .= "
 		<script LANGUAGE=\"JavaScript\"><!--
 		// Quick script to mark all as read if the button is pressed
 		function selectAll(myform) {
