@@ -79,11 +79,21 @@ if (is_array($menu_bar)) {
 	print "<UL>\n";
 	foreach ($menu_bar AS $k => $v) {
 		if ($v != NULL) {
+		if (strpos($v, "help.php")===false) {
 		print "\t<LI><A HREF=\"".$v."\" ".
 			"onMouseOver=\"window.status='".prepare(_($k))."'; ".
 			"return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\">".
 			prepare(_($k))."</A>\n";
+		} else { // if there *is* a help string in there
+		print "\t<LI><A HREF=\"#\" ".
+			"onClick=\"window.open('".$v."', 'Help', ".
+			"'width=600,height=400,resizable=yes');\" ".
+			"onMouseOver=\"window.status='".prepare(_($k))."'; ".
+			"return true;\" ".
+			"onMouseOut=\"window.status=''; return true;\">".
+			prepare(_($k))."</A>\n";
+		} // end checking for help.php
 		} // end checking for null
 	} // end foreach
 	print "</UL>\n";

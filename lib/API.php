@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.38  2001/11/19 21:28:43  rufustfirefly
+ // adaptations to help system
+ //
  // Revision 1.37  2001/10/18 20:41:51  rufustfirefly
  // removed more dead code
  //
@@ -110,13 +113,6 @@ function freemed_check_access_for_patient ($patient_number) {
     	// Default to false
 	return false;
 } // end function freemed_check_access_for_patient
-
-// function freemed_close_db
-function freemed_close_db ($_null=" ")
-{
-  global $sql;
-  //$sql->close(); // close the link
-} // end function freemed_close_db
 
 // function freemed_config_value
 function freemed_config_value ($config_var) {
@@ -531,61 +527,47 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 
 // function freemed_display_facilities (selected)
 function freemed_display_facilities ($param="", $default_load = false,
-                                     $intext="")
-{
-  global $default_facility, $sql;
+                                     $intext="", $by_array="") {
+	global $default_facility, $sql;
 
-  $buffer = "";
+	$buffer = "";
 
-  switch ($intext) {
-   case "0": // internal
-    $intextquery = "WHERE psrintext='0'";
-    break;
-   case "1": // external
-    $intextquery = "WHERE psrintext='1'";
-    break;
-   default:
-    $intextquery = "";
-  }
+	switch ($intext) {
+		case "0": // internal
+			$intextquery = "WHERE psrintext='0'";
+			break;
+		case "1": // external
+			$intextquery = "WHERE psrintext='1'";
+			break;
+		default:
+			$intextquery = "";
+	}
 
-  // list doctors in SELECT/OPTION tag list, and
-  // leave doctor selected who is in param
-  $buffer .= "
-    <OPTION VALUE=\"0\"".
-     ( ($param == 0) ? " SELECTED" : "" ).">"._("NONE SELECTED")."
-  ";
-  $query = "SELECT * FROM facility
-            $intextquery
-            ORDER BY psrname,psrnote";
-  $result = $sql->query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more docs
-    while ($row=$sql->fetch_array($result)) {
-      if ((strlen($param)>0) AND ($param != "0") AND
-          ($param == $row["id"])) 
-        $selected_var = " SELECTED";
-      else
-        $selected_var = ""; // or not...
+	// Check for "by_array"
+	if (is_array($by_array)) {
+		$intextquery .= " AND id IN ( ".implode(",", $by_array)." ) ";
+	} // end checking for by_array
 
-      $_psr_name = stripslashes($row["psrname"]);
-      $_psr_note = $row["psrnote"];
-      $_psr_id   = $row["id"];
+	// list doctors in SELECT/OPTION tag list, and
+	// leave doctor selected who is in param
+	$buffer .= "<OPTION VALUE=\"0\"".
+		( ($param == 0) ? " SELECTED" : "" ).">"._("NONE SELECTED").
+		"\n";
+	$query = "SELECT * FROM facility ".$intextquery.
+		"ORDER BY psrname,psrnote";
+	$result = $sql->query ($query);
+	if (!$result) return false;
 
-      if (($_psr_id==$default_facility) AND ($default_facility>0))
-            { $selected_var = " SELECTED"; }
-
-      if (strlen($_psr_note)<1) $__psr_note = "";
-        else $__psr_note = "[$_psr_note]";
-
-      $buffer .= "
-        <OPTION VALUE=\"$_psr_id\" $selected_var 
-         >$_psr_name $__psr_note ".
-         ( $debug ? "[$_psr_id]" : "" )."
-      "; // end of actual output
-    } // while there are more results...
-  }
-  return $buffer;
+	while ($row = $sql->fetch_array($result)) {
+		$buffer .= "<OPTION VALUE=\"".prepare($row[id]).
+			"\" ".
+			( ( ($row[id]==$default_facility) and
+			($default_facility >0) ) ?  "SELECTED" : "" ).">".
+			prepare($row[psrname]).
+			( ($debug) ? "[".$row[psrnote]."]" :
+			"" )."\n";
+	} // while there are more results...
+	return $buffer;
 } // end function freemed_display_facilities
 
 // function freemed_display_physicians
@@ -644,32 +626,6 @@ function freemed_display_printerlist ($param)
     } // while there are more results...
   }
 } // end function freemed_display_printerlist
-
-// ---------------  19990815
-// function freemed_display_simplereports
-//   displays simple reports templates selectable in <SELECT>
-//   list with $param selected
-function freemed_display_simplereports ($param="") {
-  // list templates in SELECT/OPTION tag list, and
-  // leave report selected who is in param
-  echo "
-    <OPTION VALUE=\"0\">"._("NONE SELECTED")."
-  ";
-  $query = "SELECT * FROM simplereport ORDER BY ".
-     "sr_type, sr_label";
-  $result = $sql->query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more docs
-    while ($row=$sql->fetch_array($result)) {
-      echo "
-        <OPTION VALUE=\"$_sr_id\" ".
-	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".prepare("$row[sr_label], $row[sr_type]")."
-      "; // end of actual output
-    } // while there are more results...
-  }
-} // end function freemed_display_simplereports
 
 // function freemed_display_selectbox
 function freemed_display_selectbox ($result, $format, $param="") {
@@ -786,7 +742,7 @@ function freemed_get_date_next ($cur_dt) {
 // function freemed_get_date_prev
 //   returns the previous date
 function freemed_get_date_prev ($cur_dt) {
-	global $cur_date;
+	$cur_date = date ("Y-m-d");
 
 	$y = substr ($cur_dt, 0, 4); // year
 	$m = substr ($cur_dt, 5, 2); // month
@@ -818,27 +774,36 @@ function freemed_get_date_prev ($cur_dt) {
 //   return the entire record as an array for
 //   a link
 function freemed_get_link_rec($id="0", $table="") {
-	global $database, $sql;
+	global $sql, $_cache;
 
-	if (empty($table)) {
-		return "";
+	// If no database is available, trigger error
+	if (empty($table))
+		trigger_error ("freemed_get_link_rec: no table provided",
+			E_USER_ERROR);
+
+	// Check to see if it's cached
+	if (!isset($_cache[$table][$id])) {
+		// Perform the actual query
+		$result = $sql->query("SELECT * FROM ".addslashes($table)." ".
+			"WHERE id='".addslashes($id)."'");
+		// Fetch the array from the result into cache
+		$_cache[$table][$id] = $sql->fetch_array($result);
 	}
 
-	$result = $sql->query("SELECT * FROM ".addslashes($table)." WHERE".
-		" id='".addslashes($id)."'"); // get just that record
-	return $sql->fetch_array($result); // return the array
-
+	// Return member from cache
+	return $_cache[$table][$id];
 } // end function freemed_get_link_rec
 
 // function freemed_get_link_field
 //   return a particular field from a link...
-function freemed_get_link_field($id, $db, $field="id") {
-	global $database;
-
-	if (strlen($db)<1) { return NULL; }
+function freemed_get_link_field($id, $table, $field="id") {
+	// Die if no table was passed
+	if (empty($table))
+		trigger_error ("freemed_get_link_field: no table provided",
+			E_USER_ERROR);
 
 	// Retrieve the entire record
-	$this_array = freemed_get_link_rec($id, $db);
+	$this_array = freemed_get_link_rec($id, $table);
 
 	// Return just the key asked for
 	return $this_array["$field"];
@@ -942,7 +907,6 @@ function freemed_module_check ($module, $minimum_version="0.01")
 	} // end caching modules config
 
 	// check in cache for version > minimum_version
-	// (return ($_config["$module"] > $minimum_version))
 	return version_check($_config["$module"], $minimum_version);
 } // end function freemed_module_check
 
@@ -1030,7 +994,6 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
 
 // function freemed_open_db
 function freemed_open_db ($my_cookie) {
-
 	global $display_buffer;
 
 	// Verify
@@ -1099,12 +1062,12 @@ function freemed_search_query ($ctrl_array, $ord_array,
   if (strlen($id_var)<1) { } else {
     if (is_array($id_var)) {
       while (list($k,$v) = each($id_var)) {
-        global $$v;
-        $_id_[]=$$v;
+        global ${$v};
+        $_id_[]=${$v};
       }
     } else {
-      global $$id_var;
-      $_id_=$$id_var;
+      global ${$id_var};
+      $_id_=${$id_var};
     } // import the id-list
   } // if id-vars exist
   
@@ -1176,39 +1139,12 @@ function freemed_search_query ($ctrl_array, $ord_array,
   return $sql->query($buf); 
 } // end function freemed_search_query
 
-// function freemed_specialty_display
-//   displays specialty db entry in text format
-function freemed_specialty_display ($param)
-{
-  if ((strlen($param)<1) OR ($param=="0")) {
-    echo _("NONE SELECTED")."\n";
-  } else {
-    $query = "SELECT * FROM specialty ".
-       "WHERE id='$param'";
-    $result = $sql->query ($query);
-    if (!$result) {
-      echo "$NO_RESULT_OF_QUERY";
-      // don't do anything...! 
-    } else { // exit if no more
-      $row=$sql->fetch_array($result); 
-      echo prepare ($row[specdegree]." (".
-                    $row[specname].")");
-    }
-  }
-} // end function freemed_specialty_display
-
 
   // USER AUTHENTICATION FUNCTIONS (19990701)
 
   // these are from px.skylar.com, and not mine
   // but they are heavily modified to work with
   // a root "backdoor", so as to allow for setup...
-
-function freemed_auth_db_connect () {
-  global $Connection, $sql; // , $db_user, $db_password;
-  // $Connection = $sql->connect (DB_HOST, DB_USER, DB_PASSWORD);
-  return $sql;
-} // end function freemed_auth_db_connect
 
 // freemed_verify_auth:
 //   moved to sessions support as of version 0.3
@@ -1281,337 +1217,243 @@ function freemed_verify_auth ( ) {
 	} // end of checking for authdata array
 } // end function freemed_verify_auth
 
- #
- # FREEMED DB WRAPPERS SECTION
- #   Added 19990714 -- allows use of other databases besides MySQL by
- #   making all database access the same, specified by a variable in
- #   lib/freemed.php...
- #
- # 19990722 - Merged functions from Gianugo Rabellino's SQL
- #            Abstraction Library (SAL) from px.skylar.com
- #            and added msql compatibility
-
-function fdb_affected_rows ($result = "0") {
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc": return odbc_num_rows ($result); break;
-    case "postgres": return pg_NumRows (); break;
-    case "mysql":
-    default: return mysql_affected_rows (); break;
-  } // end switch
-} // end function fdb_affected_rows
-
-/*
-function fdb_close ($null = "") {
-  global $Connection;
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc":     return odbc_close ($Connection); break;
-    case "postgres": return pg_Close ($Connection);   break;
-    case "msql":     return msql_close ();            break;
-    case "mysql":
-    default:         return mysql_close ();           break;
-  } // end switch
-} // end function fdb_close
-
-function fdb_connect ($db_host, $user, $password) {
-  global $database;
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc": return odbc_pconnect ($host, $user, $password); break;
-    case "postgres": return pg_Connect ("dbname=$database".
-                                        "host=".DB_HOST." ".
-                                        "user=".DB_USER." ".
-                                        "password=".DB_PASSWORD);break;
-    case "msql":
-      $Connection = msql_pconnect (DB_HOST);
-      if ($Connection) msql_select_db ($database, $Connection);
-      return $Connection;
-      break;
-    case "mysql":
-    default:
-      $Connection = mysql_pconnect (DB_HOST, DB_USER, DB_PASSWORD);
-      if ($Connection) mysql_select_db ($database, $Connection);
-      return $Connection;
-      break;
-  } // end switch
-} // end function fdb_connect
-
-function fdb_create_db ($created_name) {
-  global $Connection;
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc": return odbc_exec ($Connection, "CREATE DATABASE ".
-      "$created_name"); break;
-    case "postgres": return pg_Exec ($Connection, "CREATE DATABASE ".
-      "$created_name"); break;
-    case "mysql":
-    default: return mysql_create_db ($created_name); break;
-  } // end switch
-} // end function fdb_create_db
-
-function fdb_drop_db ($dropped_name) {
-  global $Connection;
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc": return odbc_exec ($Connection, "DROP DATABASE ".
-      "$dropped_name"); break;
-    case "postgres": return pg_Exec ($Connection, "DROP DATABASE ".
-      "$dropped_name"); break;
-    case "mysql":
-    default: return mysql_drop_db ($dropped_name); break;
-  } // end switch
-} // end function fdb_drop_db
-
-function fdb_fetch_array ($result) {
-  global $Connection;
-  if ($result<1) return array();
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc": 
-      // thanks to Giannugo Rabellino <nemorino@opera.it>'s
-      // SQL Abstraction library for this one...
-      $row = array (); $res_array = array ();
-      $res_array = odbc_fetch_row ($result, $Connection);
-      $nf = count($result+2); // field numbering starts at 1
-      for ($count=1; $count<$nf; $count++) {
-        $field_name  = odbc_field_name ($result, $count);
-        $field_value = odbc_result ($result, $field_name);
-        $row[$field_name] = $field_value;
-      } // end for loop
-      return $row; // send back jimmie-rigged row array...
-      break;
-    case "postgres": return pg_Fetch_Array    ($result); break;
-    case "msql":     return msql_fetch_array  ($result); break;
-    case "mysql": 
-    default:         return mysql_fetch_array ($result); break;
-  } // end switch
-} // end function fdb_fetch_array
-
-function fdb_last_record ($last_result="") {
-  global $Connection, $result;
-  if ($last_result=="") $last_result = $result;
-  switch (strtolower(DB_ENGINE)) {
-    case "msql":    return msql_insert_id ();                      break;
-    case "odbc":    DIE("fdb_last_record:: ODBC not implemented"); break;
-      //return fdb_num_rows (
-      //        fdb_query ("SELECT * FROM $tablename") );  break;
-      
-    case "postgres":               return pg_getlastoid ($result); break;
-    case "mysql"   :
-    default:
-      return mysql_insert_id ();
-      break;
-  } // end switch
-} // end function fdb_last_record
-
-function fdb_num_rows ($result) {
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc":     return odbc_num_rows  ($result);  break;
-    case "postgres": return pg_NumRows     ($result);  break;
-    case "msql":     return msql_num_rows  ($result);  break;
-    case "mysql":
-    default:         return mysql_num_rows ($result);  break;
-  } // end switch
-} // end function fdb_num_rows
-
-function fdb_query ($querystring) {
-  global $Connection, $database;
-  switch (strtolower(DB_ENGINE)) {
-    case "odbc": 
-      return odbc_execute ( odbc_prepare ($Connection, $querystring) );
-      break;
-    case "postgres": 
-      return pg_exec ($Connection, $querystring); break;
-    case "msql":
-      return msql_query ($querystring, $Connection);
-      break;
-    case "mysql": 
-    default:
-      return mysql_query ($querystring); break;
-  } // end switch
-} // end function fdb_query
-
-*/
-
   //
   //  FUNCTIONS FOR DEALING WITH MISCELLANEOUS STUFF
   //  (19990722)
   //
 
 function fm_date_assemble ($datevarname="", $array_index=-1) {
-  if ($datevarname=="") return ""; // return nothing if no variable is given
-  global ${$datevarname."_m"}, ${$datevarname."_d"}, ${$datevarname."_y"};
-  if ($array_index == -1) {
-    $m = ${$datevarname."_m"};
-    $d = ${$datevarname."_d"};
-    $y = ${$datevarname."_y"};
-  } else {
-    $m = ${$datevarname."_m"}[$array_index];
-    $d = ${$datevarname."_d"}[$array_index];
-    $y = ${$datevarname."_y"}[$array_index];
-  } // end checking for array index
-  return $y."-".$m."-".$d;                     // return SQL format date
+	// Check for variable name
+	if ($datevarname=="")
+		trigger_error ("fm_date_assemble: no variable name given",
+			E_USER_ERROR);
+
+	// Import into local scope
+	global ${$datevarname."_m"}, ${$datevarname."_d"}, ${$datevarname."_y"};
+
+	// Decide where they come from if they are from an array
+	if ($array_index == -1) {
+		$m = ${$datevarname."_m"};
+		$d = ${$datevarname."_d"};
+		$y = ${$datevarname."_y"};
+	} else {
+		$m = ${$datevarname."_m"}[$array_index];
+		$d = ${$datevarname."_d"}[$array_index];
+		$y = ${$datevarname."_y"}[$array_index];
+	} // end checking for array index
+
+	// Return assembled string in SQL format
+	return $y."-".$m."-".$d;
 } // end function fm_date_assemble
 
 function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
-  if ($datevarname=="") return false;  // indicate problems
-  if (($arrayvalue+0)==-1) { $suffix="";        
-                             $pos="";                    }
-  else                     { $suffix="[]";
-                             $pos="[$arrayvalue]"; }
-  global $$datevarname, ${$datevarname."_y"}, 
-    ${$datevarname."_m"}, ${$datevarname."_d"};
-  $months = array ("", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
-  $w = ${"$datevarname$pos"};
-  $m = ${$datevarname."_m".$pos};
-  $d = ${$datevarname."_d".$pos};
-  $y = ${$datevarname."_y".$pos};
-  if (!empty($w)) {
-    // if date is not empty, split into $m, $d, $y
-    $y = substr ($w, 0, 4);  // split year
-    $m = substr ($w, 5, 2);  // split month
-    $d = substr ($w, 8, 2);  // split day
-  } elseif (empty($y) and empty($m) and empty($d)) {
-    $y = date ("Y")+0;
-    $m = date ("m")+0;
-    $d = date ("d")+0;
-  } // end if not empty whole date
+	if ($datevarname=="") return false;  // indicate problems
 
-  switch ($pre_epoch) {
-    case true:
-     $starting_year = (date("Y")-120);
-     $ending_year   = (date("Y")+20);
-     break;
-    case false: default:
-     $starting_year = (date("Y")-10);
-     $ending_year   = (date("Y")+20);
-     break;
-  } // end switch for pre_epoch
+	// Determine array "suffix"
+	if (($arrayvalue+0)==-1) { $suffix=""; $pos=""; }
+	  else { $suffix="[]"; $pos="[$arrayvalue]"; }
 
-  // just in case, for legacy dates...
-  if (($y>1800) AND ($y<$starting_year)) $starting_year = $y;
-  if (($y>1800) AND ($y>$ending_year))   $ending_year   = $y;
+	// Import into local scope present values
+	global $$datevarname, ${$datevarname."_y"}, 
+	  ${$datevarname."_m"}, ${$datevarname."_d"};
 
-  // form the buffers, then assemble
-  $buffer_m = "
-    <SELECT NAME=\"".$datevarname."_m$suffix\">
-     <OPTION VALUE=\"00\" ".
-     ( ($m==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
-  for ($i=1;$i<=12;$i++) {
-   $buffer_m .= "\n<OPTION VALUE=\"".( ($i<10) ? "0" : "" )."$i\" ".
-     ( ($i==$m) ? "SELECTED" : "" ).">"._($months[$i])."\n";
-  } // end for loop (months) 
-  $buffer_m .= "   </SELECT>\n";
+	// Set months
+	$months = array (
+		"", // null so that 1 = Jan, not 0 = Jan
+		"Jan",
+		"Feb",
+		"Mar",
+		"Apr",
+		"May",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dec"
+	);
 
-  $buffer_d = "
-   <SELECT NAME=\"".$datevarname."_d$suffix\">
-    <OPTION VALUE=\"00\" ".
-    ( ($d==0) ? "SELECTED" : "" ).">NONE
-  ";
-  for ($i=1;$i<=31;$i++) {
-   $buffer_d .= "\n<OPTION VALUE=\"".( ($i<10) ? "0" : "" )."$i\" ".
-     ( ($i==$d) ? "SELECTED" : "" ).">$i\n";
-  } // end looping for days
-  $buffer_d .= "    </SELECT>\n";
+	// For brevity, import into single letter variables
+	$w = ${$datevarname.$pos};
+	$m = ${$datevarname."_m".$pos};
+	$d = ${$datevarname."_d".$pos};
+	$y = ${$datevarname."_y".$pos};
 
-  $buffer_y = "
-   <SELECT NAME=\"".$datevarname."_y$suffix\">
-    <OPTION VALUE=\"0000\" ".
-    ( ($y==0) ? "SELECTED" : "" ).">NONE
-  ";
-  for ($i=$starting_year;$i<=$ending_year;$i++) {
-   if ($i==$y) { $this_selected="SELECTED"; }
-    else       { $this_selected="";         }
-   $buffer_y .= "\n<OPTION VALUE=\"$i\" ".
-     ( ($i==$y) ? "SELECTED" : "" ).">$i\n";
-  } // end for look (years)
-  $buffer_y .= "    </SELECT>\n";
+	// Determine *where the date is coming from...
+	if (!empty($w)) {
+		// If the whole is set... split into parts and use that
+		$y = substr ($w, 0, 4);  // split year
+		$m = substr ($w, 5, 2);  // split month
+		$d = substr ($w, 8, 2);  // split day
+	} elseif (empty($y) and empty($m) and empty($d)) {
+		// If there is no whole and no parts, use current date
+		$y = date ("Y")+0;
+		$m = date ("m")+0;
+		$d = date ("d")+0;
+	} // end if not empty whole date
 
-  // now actually display the input boxes
-  switch (freemed_config_value("dtfmt")) {
-    case "mdy":
-      return $buffer_m . " <B>-</B> ".
-             $buffer_d . " <B>-</B> ".
-	     $buffer_y;
-      break;
-    case "dmy":
-      return $buffer_d . " <B>-</B> ".
-             $buffer_m . " <B>-</B> ".
-	     $buffer_y;
-      break;
-    case "ymd": default:
-      return $buffer_y . " <B>-</B> ".
-             $buffer_m . " <B>-</B> ".
-	     $buffer_d;
-      break;
-  } // end switch for dtfmt config value
+	// Determine what the range should be
+	switch ($pre_epoch) {
+		case true:
+			$starting_year = (date("Y")-120);
+			$ending_year   = (date("Y")+20);
+			break;
+		case false: default:
+			$starting_year = (date("Y")-10);
+			$ending_year   = (date("Y")+20);
+			break;
+	} // end switch for pre_epoch
+
+	// If the dates are legacy, reasonable and out of range, accept
+	if (($y>1800) AND ($y<$starting_year)) $starting_year = $y;
+	if (($y>1800) AND ($y>$ending_year))   $ending_year   = $y;
+
+	// Form the buffers, then assemble
+
+	// Month buffer
+	$buffer_m = "\t<SELECT NAME=\"".$datevarname."_m$suffix\">\n".
+		"\t\t<OPTION VALUE=\"00\" ".
+		( ($m==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
+	for ($i=1;$i<=12;$i++) {
+		$buffer_m .= "\n\t\t<OPTION VALUE=\"".( ($i<10) ? "0" : "" ).
+			"$i\" ".  ( ($i==$m) ? "SELECTED" : "" ).
+			">"._($months[$i])."\n";
+	} // end for loop (months) 
+	$buffer_m .= "\t</SELECT>\n";
+
+	// Day buffer
+	$buffer_d = "\t<SELECT NAME=\"".$datevarname."_d$suffix\">\n".
+		"\t\t<OPTION VALUE=\"00\" ".
+		( ($d==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
+	for ($i=1;$i<=31;$i++) {
+		$buffer_d .= "\n\t\t<OPTION VALUE=\"".( ($i<10) ? "0" : "" ).
+			"$i\" ".( ($i==$d) ? "SELECTED" : "" ).">$i\n";
+	} // end looping for days
+	$buffer_d .= "\t</SELECT>\n";
+
+	// Year buffer
+	$buffer_y = "\t<SELECT NAME=\"".$datevarname."_y$suffix\">\n".
+		"\t\t<OPTION VALUE=\"0000\" ".
+		( ($y==0) ? "SELECTED" : "" ).">"._("NONE")."\n";
+	for ($i=$starting_year;$i<=$ending_year;$i++) {
+		$buffer_y .= "\n\t\t<OPTION VALUE=\"$i\" ".
+			( ($i==$y) ? "SELECTED" : "" ).">$i\n";
+	} // end for look (years)
+	$buffer_y .= "\t</SELECT>\n";
+
+	// now actually display the input boxes
+	switch (freemed_config_value("dtfmt")) {
+		case "mdy":
+			return $buffer_m . " <B>-</B> ".
+			$buffer_d . " <B>-</B> ".
+			$buffer_y;
+			break;
+		case "dmy":
+			return $buffer_d . " <B>-</B> ".
+			$buffer_m . " <B>-</B> ".
+			$buffer_y;
+			break;
+		case "ymd": default:
+			return $buffer_y . " <B>-</B> ".
+			$buffer_m . " <B>-</B> ".
+			$buffer_d;
+			break;
+	} // end switch for dtfmt config value
 } // end function fm_date_entry
 
 function fm_date_print ($actualdate, $show_text_days=false) {
-  global $lang_months, $lang_days;
-  $y  = substr ($actualdate, 0, 4);        // extract year
-  $m  = substr ($actualdate, 5, 2);        // extract month
-  $d  = substr ($actualdate, 8, 2);        // extract day
-  $ts = mktime (0, 0, 0, $m, $d, $y);      // generate timestamp
+	global $lang_months, $lang_days;
 
-  $mt = $lang_months[($m+0)];              // month           (text)
-  $wt = $lang_days[1 + (date("w", $ts))];  // day of the week (text)
-  // decide if we show the week days names...
-  if ($show_text_days) { $week = $wt.", "; }
-   else                { $week = " ";      }
-  switch (freemed_config_value("dtfmt")) {
-    case "mdy":           return chop($week.$mt." ".$d.", ".$y); break;
-    case "dmy":           return chop($week.$d." ".$mt.", ".$y); break;
-    case "ymd": default:  return chop($y."-".$m."-".$d);         break; 
-  } // end switch
+	$y  = substr ($actualdate, 0, 4);        // extract year
+	$m  = substr ($actualdate, 5, 2);        // extract month
+	$d  = substr ($actualdate, 8, 2);        // extract day
+	$ts = mktime (0, 0, 0, $m, $d, $y);      // generate timestamp
+	$mt = $lang_months[($m+0)];              // month           (text)
+	$wt = $lang_days[1 + (date("w", $ts))];  // day of the week (text)
+
+	// decide if we show the week days names...
+	if ($show_text_days) { $week = $wt.", "; }
+	  else               { $week = " ";      }
+	
+	// Return depending on configuration format
+	switch (freemed_config_value("dtfmt")) {
+		case "mdy":
+			return chop($week.$mt." ".$d.", ".$y);
+			break;
+		case "dmy":
+			return chop($week.$d." ".$mt.", ".$y);
+			break;
+		case "ymd": default:
+			return chop($y."-".$m."-".$d);
+			break; 
+	} // end switch
 } // end function fm_date_print
 
 function fm_htmlize_array ($variable_name, $cur_array) {
-  $array_length = count ($cur_array);
-  if ($array_length==0)
-  {
-      return $buffer;  // if nothing, false!
-  }
-  //$buffer = "";
-  //if ($array_length==1) {
-  //  $buffer .= " <INPUT TYPE=HIDDEN NAME=\"$variable_name\"
-  //     VALUE=\"".prepare($cur_array)."\">
-  //   ";
-  //  return $buffer;                       // it printed, return true...
-  //} // end of array length = 1
-  for ($i=0;$i<$array_length;$i++)
-    $buffer .= "
-      <INPUT TYPE=HIDDEN NAME=\"$variable_name"."[$i]\"
-       VALUE=\"".prepare($cur_array[$i])."\">
-     ";
-  return $buffer;                         // be nice, return true
+	// Cache the length of the array
+	$array_length = count ($cur_array);
+
+	// If there is nothing in the array, return nothing
+	if ($array_length==0) { return ""; }
+
+	// Loop through the array
+	for ($i=0; $i<$array_length; $i++)
+		$buffer .= "\t<INPUT TYPE=HIDDEN NAME=\"".
+		prepare($variable_name)."[".prepare($i)."]\" ".
+		"VALUE=\"".prepare($cur_array[$i])."\">\n";
+
+	// Dump back the hash
+	return $buffer;
 } // end function fm_htmlize_array
 
-function fm_make_string_array($string)
-{
+function fm_make_string_array($string) {
 	// ensure string ends in :
 	if (!strpos($string,":"))
 		return $string.":";
 	return $string;
 
-}
+} // end function fm_make_string_array
+
 function fm_join_from_array ($cur_array) {
-  if (count($cur_array)==0) return ""; // error checking
-  if (!is_array($cur_array)) return "$cur_array";  // error checking
-  return implode ($cur_array, ":");
+	// If there is nothing, return nothing
+	if (count($cur_array)==0) return "";
+
+	// If it is scalar, return the value
+	if (!is_array($cur_array)) return "$cur_array";
+
+	// Otherwise compact it with ":" as the separator character
+	return implode ($cur_array, ":");
 } // end function fm_join_from_array 
 
 function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false) {
-  global $$varname; // bring in the variable
-  $selected = $$varname; // get selected..?
-  $buffer = "";
-  $buffer .= "\n<SELECT NAME=\"".prepare($varname)."\">\n";
-  if                   ($step==0)    $step = 1;    // bounds checking
-  if ( ($min>$max) AND ($step>=0) )  return false; // bounds checking
-  if ( ($min<$max) AND ($step<=0) )  return false; // bounds checking
-  for ($i=$min;$i<=$max;$i+=$step) {
-    $buffer .=  "<OPTION VALUE=\"$i\"".
-      ( (("$selected"=="$i") or ($selected==$i)) ? "SELECTED" : "" ).
-      ">".( (($i<10) and ($addz)) ? "0" : "" )."$i\n";
-  } // end for loop
-  $buffer .= "</SELECT>\n"; // end select tag
-  return $buffer;
+	global ${$varname}; // bring in the variable
+
+	// Pull into local scope
+	$selected = ${$varname};
+
+	// Start header
+	$buffer = "\n\t<SELECT NAME=\"".prepare($varname)."\">\n";
+
+	// Check to make sure step isn't illegal
+	if ($step==0) $step = 1;
+
+	// Check to see if parameters are legal
+	if ( ($min>$max) AND ($step>=0) )  return false;
+	if ( ($min<$max) AND ($step<=0) )  return false;
+
+	for ($i=$min; $i<=$max; $i+=$step) {
+		$buffer .=  "\t\t<OPTION VALUE=\"$i\"".
+			( (("$selected"=="$i") or ($selected==$i)) ?
+			"SELECTED" : "" ).
+			">".( (($i<10) and ($addz)) ? "0" : "" )."$i\n";
+	} // end for loop
+
+	// Footer
+	$buffer .= "\t</SELECT>\n";
+
+  	// Return buffer
+	return $buffer;
 } // end function fm_number_select
 
 function fm_phone_assemble ($phonevarname="", $array_index=-1) {
@@ -1738,118 +1580,144 @@ function fm_phone_entry ($phonevarname="", $array_index=-1) {
 } // end function fm_phone_entry
 
 function fm_split_into_array ($original_string) {
-  return explode (":", $original_string);
+	// If there is nothing to split, return nothing
+	if (empty($original_string)) return "";
+
+	// Split and return
+	return explode (":", $original_string);
 } // end function fm_split_into_array
 
 function fm_value_in_array ($cur_array, $value) {
-  if (count ($cur_array) < 0) return false; // avoid errors (from old code)
-  //if (!is_array ($cur_array)) return ($cur_array == $value);
-  $found = false; // initially presume that it is not there
-  for ($c=0;$c<count($cur_array);$c++) // loop through array
-    if ($cur_array[$c]==$value)        // if there is a match...
-      $found = true;                   // return true.
-  return $found; // send value back to program
+	// If there is no array, it obviously does not have the value
+	if (count ($cur_array) < 0) return false;
+
+	// Not sure about this...
+	//if (!is_array ($cur_array)) return ($cur_array == $value);
+
+	// loop through array
+	for ($c=0;$c<count($cur_array);$c++)
+		if ($cur_array[$c]==$value) // if there is a match...
+			return true; // return true.
+
+	// Return false if we didn't find it
+	return false;
 } // end function fm_split_into_array
 
 function fm_value_in_string ($cur_string, $value) {
+	// Check for ":" separator indicating hash'd array
+	if ( strpos ($cur_string, ":") > 0 ) {
+		// Split it out...
+		$this_array = fm_split_into_array ($cur_string);
+		// ... then use fm_value_in_array to return the value
+		return fm_value_in_array ($this_array, $value);
+	} // end checking for ":"
 
-  if ( strpos ($cur_string, ":") > 0 )
-	{
-    	$this_array = fm_split_into_array ($cur_string);
-  		return fm_value_in_array ($this_array, $value);
-	}
+	// Otherwise do a simple substring match check
+	if (strstr($cur_string,$value) != "") return true;
 
-	if (strstr($cur_string,$value) != "")
-		return true;
+	// If it hasn't been found, return false
 	return false;
-  
 } // end function fm_value_in_string
-
-function fm_button ($b_text) {
-  //$enc_b_text = urlencode ($b_text);
-  // echo "<IMG SRC=\"generate_button.php3?".urlencode($enc_b_text)."\"".
-  //     " ALT=\"".htmlentities($b_text)."\">";
-  // 19990921 -- try this instead:
-  echo "
-    <TABLE CELLPADDING=1 CELLSPACING=0 BORDER=0 ALIGN=CENTER VALIGN=CENTER
-     ><TR><TD BGCOLOR=#000000><FONT COLOR=#cccccc FACE=\"Arial, Verdana\"
-     SIZE=-1><B>$b_text</B></FONT></TD></TR></TABLE>&nbsp;
-  "; 
-}
 
 // fm_eval -- evaluate string variables (with security checks, of course)
 function fm_eval ($orig_string) {
-  // import all global variables
-  // (thanks to jb@as220.org for this one)
-  reset ($GLOBALS);
-  //for ($i=0;$i<100;$i++) next ($GLOBALS); // skip the drek
-  while (list($k,$v) = each ($GLOBALS))
-   if (!isset($$k)) $$k = $GLOBALS[$k];        // $$k = $GLOBALS[$k];
-  $loc_string = $orig_string;                  // transfer to internal var
-  $sec_string = fm_secure ($loc_string);       // secure the string
-  eval ("\$new_string = \"$sec_string\";");    // evaluate
-  while (list($k,$v) = each ($GLOBALS))
-   if ($k != "GLOBALS") unset ($$k);           // destroy the variables
-  return $new_string;                          // return
+	// Import all global variables
+	foreach ($GLOBALS AS $k => $v) global ${$k};
+
+	// Transfer to internal variable
+	$loc_string = $orig_string;
+
+	// Secure the string so that kiddies don't mess anything up
+	$sec_string = fm_secure ($loc_string);
+
+	// Use eval to pull in the proper variables
+	eval ("\$new_string = \"$sec_string\";");
+
+	// Return the processed string
+	return $new_string;
 } // end function fm_eval
 
 // fm_secure -- secures strings that are to be evaled by simply removing
 //              all secure varaibles...
 function fm_secure ($orig_string) {
-  $this_string = "$orig_string";  // pass to internal variable
-  $this_string = str_replace ("\$db_user",     "", $this_string);
-  $this_string = str_replace ("\$db_password", "", $this_string);
-  $this_string = str_replace ("\$db_host",     "", $this_string);
-  $this_string = str_replace ("\$database",    "", $this_string);
-  $this_string = str_replace ("\$gifhome",     "", $this_string);
-  $this_string = str_replace ("\$db_engine",   "", $this_string);
-  return $this_string;    // return cleansed string
+	// Variables to secure
+	$secure_these = array (
+		"db_user",
+		"db_password",
+		"db_host",
+		"database",
+		"gifhome",
+		"db_engine"
+	);
+
+	// Pass to internal variable
+	$this_string = "$orig_string"; 
+
+	// Perform replacements
+	foreach ( $secure_these AS $drek => $secure_var ) {
+		$this_string = str_replace (
+			"\$".$secure_var,
+			"",
+			$this_string
+		);
+	}
+
+	// Return secured string
+	return $this_string;
 } // end function fm_secure
 
 
-function fm_get_active_coverage ($ptid=0)
-{
-        global $database, $sql, $cur_date;
-        $result = 0;
-	if ($ptid == 0)
-           return $result;
-        $query = "SELECT id FROM coverage WHERE ";
-        $query .= "covpatient='$ptid' AND covstatus='".ACTIVE."' ";
-        $result = $sql->query($query);
-        if (!$result)
-           return $result;  // not an array!
-        $sub=0;
-        while ($rec = $sql->fetch_array($result))
-        {
-            $ins_id[$sub] = $rec["id"];
-            $sub++;
-        }
-		if ($sub == 0)
-			return 0;
+function fm_get_active_coverage ($ptid=0) {
+	global $sql;
+
+	// Initialize results
+	$result = 0;
+
+	// If no patient ID was given, return 0
+	if ($ptid == 0) return 0;
+
+	// Form and perform query
+	$query = "SELECT id FROM coverage WHERE ".
+		"covpatient='".addslashes($ptid)."' ".
+		"AND covstatus='".ACTIVE."'";
+	$result = $sql->query($query);
+
+	// If nothing was returned, return 0
+	if (!$result) return $result;
+
+	// Pull in id's for all pertinent records
+        while ($rec = $sql->fetch_array($result)) $ins_id[] = $rec["id"];
+
+	// If nothing was done, nothing return 0
+	if (!isset($ins_id)) return 0;
+
+	// Return the array of coverages
         return $ins_id;
+} // end function fm_get_active_coverages
 
-} // end get active coverages
+function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
+	global $sql, $cur_date;
 
-function fm_verify_patient_coverage($ptid=0,$coveragetype=PRIMARY)
-{
-        global $database, $sql, $cur_date;
-        $result = 0;
-		if ($ptid == 0)
-           return $result;
+	// Initialize result
+	$result = 0;
+
+	// Check for ptid, otherwise return 0
+	if ($ptid == 0) return 0;
 	
-		// default coveragetype is primary	
+	// default coveragetype is primary	
+	$query = "SELECT id FROM coverage WHERE ".
+		"covpatient='".addslashes($ptid)."' AND ".
+		"covstatus='".ACTIVE."' AND ".
+		"covtype='".addslashes($coveragetype)."'";
+	$result = $sql->query($query);
 
-        $query = "SELECT id FROM coverage WHERE ";
-        $query .= "covpatient='$ptid' AND covstatus='".ACTIVE."' AND covtype='$coveragetype' ";
-        $result = $sql->query($query);
-		if (!$result)
-			return 0;
-		if (!$sql->num_rows($result))
-			return 0;
-		$row = $sql->fetch_array($result);
-		$ret = $row[id];
-		return $ret;
-}
+	// Check for results, otherwise return 0
+	if (!$sql->results($result)) return 0;
+		
+	// Return the id
+	$row = $sql->fetch_array($result);
+	return $row[id];
+} // end function fm_verify_patient_coverage
 
 // function freemed_display_selectbox_array
 function freemed_display_selectbox_array ($result, $format, $name="", $param="")
@@ -1961,6 +1829,32 @@ function fm_time_assemble ($timevarname="") {
   return $h.":".$m.":".$ap;                     // return SQL format date
 } // end function fm_time_assemble
 
+function freemed_display_dbs ($defdb) {
+	global $sql, $DB_NAMES;
+
+	// Figure out how many databases we have in the list
+	$numdbs = count ($DB_NAMES);
+
+	// If there aren't any or the array is empty, die out here
+	if ($numdbs <= 0) {
+		print "ERROR: Database list is empty<BR>\n";
+		return false;
+	}
+
+	// Initialize buffer
+	$buffer = "";
+
+	// Loop through all instances of databases
+	for ($i=0; $i<$numdbs; $i++) {
+		// Add the option
+		$buffer .= "<OPTION VALUE=\"".prepare($i)." ".
+			( ($i == $defdb) ? "SELECTED" : "" ).
+			">".prepare($DB_NAMES[$i])."\n";
+	}
+
+	return $buffer;
+} // end function freemed_display_dbs
+
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
@@ -2061,30 +1955,6 @@ function patient_push ($patient) {
 	$SESSION["patient_history"] = $patient_history;
 } // end function patient_push
 
-/*------------------- DON'T THINK THIS IS NEEDED---------------------------
-function patient_pop () {
-	global $SESSION;
-
-	// Return false if there is nothing in the list
-	if (!isset($SESSION["patient_history"])) return false;
-
-	// Import patient_history
-	$patient_history = $SESSION["patient_history"];
-
-	// Otherwise get the last one and return it ...
-	$to_return = $patient_history[(count($patient_history)-1)];
-
-	// .. then remove it from the stack
-	unset($patient_history[(count($patient_history)-1)]);
-
-	// Reimport into SESSION
-	$SESSION["patient_history"] = $patient_history;
-
-	// And return value
-	return $to_return;
-} // end function patient_pop
--------------------------------- end of unneeded function */
-
 function patient_history_list () {
 	global $SESSION;
 
@@ -2142,6 +2012,50 @@ function page_history_list () {
 	// Return generated array
 	return array_reverse($history);
 } // end function page_history_list
+
+function help_url ( $page = "", $section = "" ) {
+	global $language, $PHP_SELF;
+
+	// If there's no page name, substitute in $PHP_SELF
+	if ($page == "") {
+		$page_name = basename($PHP_SELF);
+	} else {
+		$page_name = $page;
+	}
+
+	// Build helpfile name...
+	if (empty($page_name) AND empty($section)) {
+		// Default if nothing is provided
+		$_help_name = "lang/$language/doc/default.$language.html";
+	} elseif (!empty($page_name) AND empty($section)) {
+		// If just page name, leave out section
+		$_help_name = "lang/$language/doc/$page_name.$language.html";
+	} elseif (!empty($page_name) AND !empty($section)) {
+		// Page name and section provided
+		$_help_name = "lang/$language/doc/$page_name.$section.$language.html";
+	} else {
+		// Should never have section with no page name
+		$_help_name = "lang/$language/doc/default.$language.html";
+	}
+
+	// Check to see if it exists
+	if (!file_exists($_help_name)) {
+		// Try to pass it back thru with just the page if section bites
+		if (!empty($section)) {
+			return help_url ($page_name);
+		} else {
+			// If it doesn't exist, don't pass it...
+			return "help.php";
+		}
+	} else {
+		if ($section != "") {
+			return "help.php?page_name=".urlencode($page_name)."&".
+				"section=".urlencode($section);
+		} else {
+			return "help.php?page_name=".urlencode($page_name);
+		}
+	}
+} // end function help_url
 
 } // end checking for __API_PHP__
 

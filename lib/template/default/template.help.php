@@ -26,16 +26,6 @@ if ($framed!="yes") {
 <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="2"
  VALIGN="MIDDLE" ALIGN="CENTER">
 
-<!-- top/header bar -->
-
-<!--
-<TR>
-	<TD COLSPAN="2" ALIGN="LEFT" VALIGN="TOP">
-		<B>Help</B>
-	</TD>
-</TR>
--->
-
 <TR>
 	<TD COLSPAN="1" VALIGN="TOP" ALIGN="RIGHT" WIDTH="20%">
 
@@ -86,7 +76,7 @@ if (isset($page_title)) {
 		<!-- actual framed content -->
 		<IFRAME NAME="help_frame" SRC="help.php?<?php
 			print "page_name=".urlencode($page_name)."&".
-			"framed=yes";
+			"section=".urlencode($section)."&framed=yes";
 		?>" WIDTH="450" HEIGHT="350" SCROLL="AUTO"></IFRAME>
 <?php
 } else {
