@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.42  2002/04/05 15:13:09  rufustfirefly
+ // added initial freemed namespace (heavy TODO), added freemed::user_flag(flag), implemented user flags, removed freemed_get_userlevel()
+ //
  // Revision 1.41  2002/04/04 18:21:03  rufustfirefly
  // itemlist now allows for auto-refreshed select in logical order, config_value works properly, facility dropdown displays city and state, fm_number_select() had extra onChange parameter added (false by default)
  //
@@ -33,6 +36,60 @@
 if (!defined("__API_PHP__")) {
 
 define ('__API_PHP__', true);
+
+// namespace/class freemed
+class freemed {
+
+	function user_flag ( $flag ) {
+		global $database, $sql, $SESSION;
+		static $userlevel;
+
+		// Extract authdata from SESSION
+		$authdata = $SESSION["authdata"];
+
+		// Check for cached userlevel
+		if (isset($userlevel)) { return ($userlevel & $flag); }
+
+		// Check for null user
+		if (($authdata["user"]<1) or (!isset($authdata["user"]))) {
+			$userlevel = 0;
+			return false; // if no user, return 0
+		}
+
+		if ($authdata["user"] == 1) {
+			// Anything but disabled user, return true
+			if ($flag == USER_DISABLED) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			$result = $sql->query("SELECT * FROM user
+				WHERE id='".addslashes($authdata["user"])."'");
+
+			// Check for improper results, return "unauthorized"
+			if (!$sql->results($result) or ($sql->num_rows($result) != 1)) {
+				// Set so that nothing works
+				$userlevel = USER_DISABLED;
+				if ($flag == USER_DISABLED) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			// Get results
+			$r = $sql->fetch_array($result);
+
+			// Set $userlevel (which is cached)
+			$userlevel = $r["userlevel"];
+
+			// Return the answer...
+			return ($userlevel & $flag);
+		} // end else loop checking for name
+	} // end function user_flag
+
+} // end namespace/class freemed
 
 // function freemed_bar_alternate_color
 function freemed_bar_alternate_color ($cur_color="") {
@@ -460,14 +517,14 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	"$this_result[id]\">"._("VIEW")."</A>&nbsp;
       ";
     }
-    if (freemed_get_userlevel()>$database_level AND 
+    if (freemed::user_flag(USER_DATABASE) AND 
          ($flags & ITEMLIST_MOD)) {
       $buffer .= "
         <A HREF=\"$page_link?module=$module&patient=$patient&action=modform&id=".
 	"$this_result[id]\">"._("MOD")."</A>&nbsp;
       ";
     }
-    if (freemed_get_userlevel()>$delete_level AND
+    if (freemed::user_flag(USER_DELETE) AND
          ($flags & ITEMLIST_DEL)) {
       $buffer .= "
         <A HREF=\"$page_link?patient=$patient&module=$module&action=delete&id=".
@@ -830,46 +887,9 @@ function freemed_get_link_field($id, $table, $field="id") {
 // function freemed_get_userlevel
 //   returns user level (1-10)
 //   (assumes 1 if not found, 9 if root)
-function freemed_get_userlevel ($f_cookie="") {
-	global $database, $sql, $SESSION;
-	static $userlevel;
-
-	// Extract authdata from SESSION
-	$authdata = $SESSION["authdata"];
-
-	// Check for cached userlevel
-	if (isset($userlevel)) return $userlevel;
-
-	// Check for null user
-	if (($authdata["user"]<1) or (!isset($authdata["user"]))) {
-		$userlevel = 0;
-		return 0; // if no user, return 0
-	}
-
-	if ($authdata["user"] == 1) {
-		$userlevel = 10;
-		return 10; // if root, give superuser access
-	} else {
-		$result = $sql->query("SELECT * FROM user
-			WHERE id='".addslashes($authdata["user"])."'");
-
-		// Check for improper results, return "unauthorized"
-		if (!$sql->results($result) or ($sql->num_rows($result) != 1)) {
-			$userlevel = 1;
-			return 1;
-		}
-
-		// Get results
-		$r = $sql->fetch_array($result);
-
-		// Set $userlevel (which is cached)
-		$userlevel = $r["userlevel"];
-
-		// Return the answer...
-		return $userlevel;
-	} // end else loop checking for name
-
-} // end function freemed_get_userlevel
+function freemed_get_userlevel ( $param = "" ) {
+	die("called freemed_get_userlevel: obsolete STUB");
+}
 
 // function freemed_import_stock_data
 //  import stock data from data/$language directory
