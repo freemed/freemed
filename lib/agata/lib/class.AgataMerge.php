@@ -176,7 +176,7 @@ class AgataMerge extends AgataCore
       $lineN = 0;
       foreach ($Lines as $Line)
       {
-        if ((strlen($Lines)>0) && (!$Is_SubSQL))
+        if ((strlen($Line)>0) && (!$Is_SubSQL))
         {
           $lineN ++;
           eval ("\$Line = \"$Line\";");
