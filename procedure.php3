@@ -5,7 +5,7 @@
  # lic : GPL, v2
 
  $page_name   = "procedure.php3";
- $db_name     = "procedure";
+ $db_name     = "procrec";
  $record_name = "Procedure";
  include ("global.var.inc");
  include ("freemed-functions.inc");  // API
@@ -506,7 +506,7 @@ switch ($action) { // master action switch
   ";
 
   // form add query
-  $query = "INSERT INTO $database.procrec VALUES (
+  $query = "INSERT INTO $database.$db_name VALUES (
             '$patient',
             '".addslashes(fm_join_from_array($proceoc))."',
             '$proccpt',
@@ -610,7 +610,7 @@ switch ($action) { // master action switch
     <$STDFONT_B>$Modifying ... <$STDFONT_E>
   ";
   // form add query
-  $query = "UPDATE $database.procrec SET
+  $query = "UPDATE $database.$db_name SET
             procpatient     = '$patient',
             proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
             proccpt         = '$proccpt',
