@@ -67,6 +67,174 @@ class BaseModule extends module {
 	function footer ($nullvar = "") {
 	} // end function footer
 
+	// Method: printaction
+	//
+	//	Basic printing functionality
+	//
+	function printaction ( ) { $this->_print(); }
+
+	// Method: _print
+	//
+	//	Provides basic printing interface
+	//
+	function _print ( ) {
+		// Turn off the template
+		$GLOBALS['__freemed']['no_template_display'] = true;
+
+		// Check for selected printer
+		if (!freemed::config_value('printnoselect') and !isset($_REQUEST['printer'])) {
+			// select printer form
+			global $display_buffer;
+			$display_buffer .= "
+			<form action=\"".$this->page_name."\" method=\"post\"
+			 name=\"myform\">
+			<div class=\"PrintContainer\">
+			<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
+			<input type=\"hidden\" name=\"type\" value=\"".prepare($_REQUEST['type'])."\"/>
+			<input type=\"hidden\" name=\"action\" value=\"".prepare($_REQUEST['action'])."\"/>
+			<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
+			<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\"/>
+			<table border=\"0\" width=\"98%\" cellspacing=\"0\">
+			<tr class=\"PrintContainerItem\"
+			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
+
+				<td width=\"50\">
+				<input type=\"radio\" 
+				 name=\"print_method\"
+				 value=\"printer\" checked=\"checked\"
+				 id=\"print_method_printer\" /></td>
+				<td
+				>".__("Printer")."</td>
+				<td>".freemed::printers_widget('printer')."</td>
+			</tr>
+			<tr class=\"PrintContainerItem\"
+			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
+				<td width=\"50\">
+				<input type=\"radio\"
+				 name=\"print_method\"
+				 value=\"fax\"
+				 id=\"print_method_fax\" /></td>
+				<td>".__("Fax")."</td>
+				<td>".html_form::text_widget('fax_number',
+					array(
+						'length' => '12'
+					)
+				)."</td>
+			</tr>
+			<tr class=\"PrintContainerItem\"
+			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
+				 <td width=\"50\">
+				 <input type=\"radio\"
+				  name=\"print_method\"
+				  value=\"browser\"
+				  id=\"print_method_browser\" /></td>
+				 <td colspan=\"2\">".__("Browser-Based")."</td>
+			</tr>
+			</table>
+			<div align=\"center\">
+			<input type=\"submit\" value=\"".__("Print")."\"
+			 class=\"button\" />
+			</div>
+			</div>
+			</form>
+			";
+			return true;
+		}
+
+		list ($title, $heading, $physician) = $this->_TeX_Information();
+
+		// Create TeX object for patient
+		$TeX = CreateObject('FreeMED.TeX', array (
+			'title' => $title,
+			'heading' => $heading,
+			'physician' => $physician
+		));
+
+		// Actual renderer for formatting array
+		$this->_RenderTex(&$TeX, $_REQUEST['id']);
+
+		global $display_buffer;
+
+		// Get appropriate printer from user settings
+		global $this_user;
+		if (!is_object($this_user)) {
+			$this_user = CreateObject('FreeMED.User');
+		}
+		$printer = CreateObject('PHP.PrinterWrapper');
+
+		$display_buffer .= __("Printing")." ... <br/>\n";
+
+		// Figure out print method
+		$_pm = $_REQUEST['print_method'];
+		switch ($_pm) {
+			// Handle direct to browser
+			case 'browser':
+			Header('Content-Type: application/x-freemed-print-pdf');
+			$file = $TeX->RenderToPDF();
+			//print "file = $file<br/>\n";
+			readfile($file);
+			die();
+			break;
+
+			case 'fax':
+			$display_buffer .= "<pre>\n".
+				$TeX->RenderDebug().
+				"</pre>\n(You must disable this to print)";
+			break;
+
+			// Handle actual printer
+			case 'printer': 
+			if (false) {
+				$display_buffer .= "<pre>\n".
+					$TeX->RenderDebug().
+					"</pre>\n(You must disable this to print)";
+			} else {
+			$TeX->SetPrinter(
+				CreateObject('PHP.PrinterWrapper'),
+				//$user->getManageConfig('default_printer')
+				$_REQUEST['printer']
+			);
+			// TODO: Handle direct PDF generation and return here
+			$TeX->PrintTeX(1);
+			$GLOBALS['__freemed']['close_on_load'] = true;
+			}
+			break;
+
+			default:
+			print "print_method = ".$_pm."<br/>\n";
+			break;
+		}
+	} // end function print
+
+	// Method: _TeX_Information
+	//
+	//	Callback to provide information to the TeX renderer about
+	//	formatting.
+	//
+	// Returns:
+	//
+	//	Array ( title, heading, physician )
+	//
+	function _TeX_Information ( ) {
+		// abstract
+		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		$patient = CreateObject('FreeMED.Patient', $_REQUEST['patient']);
+		$user = CreateObject('FreeMED.User');
+		if ($user->isPhysician()) {
+			$phy = $user->getPhysician();
+		} else {
+			$phy = $patient->local_record['patphy'];
+		}
+		$physician_object = CreateObject('FreeMED.Physician', $phy);
+		$title = __($this->record_name);
+		$heading = $patient->fullName().' ('.$patient->local_record['ptid'].')';
+		$physician = $physician_object->fullName();
+		return array ($title, $heading, $physician);
+	} // end method _TeX_Information
+
 	// Method: BaseModule->setup
 	//
 	//	Overrides the internal phpwebtools setup method. This causes
