@@ -9,13 +9,14 @@ class EMRModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Electronic Medical Record";
-	var $CATEGORY_VERSION = "0.2";
+	var $CATEGORY_VERSION = "0.3";
 
 	// vars to be passed from child modules
 	var $order_field;
 	var $form_vars;
 	var $table_name;
 	var $patient_field; // the field that links to the patient ID
+	var $display_format; // how they are displayed
 
 	// contructor method
 	function EMRModule () {
@@ -89,6 +90,11 @@ class EMRModule extends BaseModule {
 	function main ($nullvar = "") {
 		global $display_buffer;
 		global $action, $patient, $submit, $return;
+
+		// Pull current patient from session if needed
+		if (!isset($patient)) {
+			$patient = $_SESSION['current_patient'];
+		}
 
 		if (!isset($this->this_patient))
 			$this->this_patient = CreateObject('FreeMED.Patient', $patient);
@@ -489,6 +495,48 @@ class EMRModule extends BaseModule {
 	} // end function EMRModule->xml_export
 
 	function xml_generate ($patient) { return ""; } // stub 
+
+	// ----- XML-RPC Functions -----------------------------------------
+	function picklist ($patient) {
+		global $sql;
+
+		// Check for access violation from user
+		$user_id = $GLOBALS['__freemed']['basic_auth_id'];
+
+		if (!freemed::check_for_access($patient, $user_id)) {
+			// TODO: Set to return XML-RPC error
+			return false;
+		}
+
+		$result = $sql->query(
+			"SELECT * FROM ".$this->table_name." ".
+			"WHERE ".$this->patient_field."='".
+				addslashes($patient)."' ".
+			"ORDER BY ".$this->order_field
+		);
+
+		while ($r = $sql->fetch_array($result)) {
+			if (!(strpos($this->display_format, '##') === false)) {
+				$displayed = '';
+				$split = explode('##', $this->display_format);
+				foreach ($split as $_k => $_v) {
+					if (!($_k & 1)) {
+						$displayed .= $_v;
+					} else {
+						$displayed .= prepare($r[$_v]);
+					}
+				}
+			} else {
+				// Assume single field if no '##'s
+				$displayed = stripslashes($r['display_format']);
+			}
+
+			// Add to the hash
+			$results["$displayed"] = $r['id'];
+		}
+		
+		return $results;
+	} // end method EMRModule->picklist
 
 } // end class EMRModule
 
