@@ -46,9 +46,22 @@ class FacilityModule extends MaintenanceModule {
 	);
 
 	var $rpc_field_map = array (
-		"name" => 'psrname',
-		"city" => 'psrcity',
-		"state" => 'psrstate'
+		'name' => 'psrname',
+		'address_1' => 'psraddr1',
+		'address_2' => 'psraddr2',
+		'city' => 'psrcity',
+		'state' => 'psrstate',
+		'zip' => 'psrzip',
+			'zip_code' => 'psrzip',
+		'country' => 'psrcountry',
+		'note' => 'psrnote',
+		'default_provider' => 'psrdefphy',
+		'phone' => 'psrphone',
+		'fax' => 'psrfax',
+		'email' => 'psremail',
+		'ein' => 'psrein',
+		'internal' => 'psrintext',
+		'place_of_service' => 'psrpos'
 	);
 
 	function FacilityModule () {
