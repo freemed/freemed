@@ -73,7 +73,10 @@ from jeff b (jeff@univrel.pr.uconn.edu)
    files.
 
 9) Create the database with the command "mysqladmin -p create freemed"
-   (if you are using MySQL). (The setup wizard also does this.)
+   (if you are using MySQL). (The setup wizard also does this.) Please
+   note that if you do not give FreeMED's MySQL user permission to the
+   FreeMED database, it will generate an error. Check MySQL's manual for
+   the "GRANT" command for more information on this.
 
 10) Try to load http://localhost/freemed/ in your web browser. If no error
     messages occur, login in as "root" with the password being your database
