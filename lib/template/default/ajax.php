@@ -86,7 +86,7 @@ function x_<?php print $name; ?>_populate(data) {
 </script>
 
 <table border="0" cellspacing="0" cellpadding="0">
-<tr><td><input type="text" id="<?php print $name; ?>_text" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; }" value="<?php if (${$name}) { print $obj->to_text(${$name}); } ?>" autocomplete="off" />
+<tr><td><input type="text" id="<?php print $name; ?>_text" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; document.getElementById('<?php print $name; ?>').value = 0; }" value="<?php if (${$name}) { print $obj->to_text(${$name}); } ?>" autocomplete="off" />
 <input type="hidden" id="<?php print $name; ?>" name="<?php print $name; ?>" value="<?php if (${$name}) { print htmlentities(${$name}); } ?>" />
 </td></tr>
 <tr><td width="300"><div id="<?php print $name; ?>_hiddendiv" class="hiddendiv"></div></td></tr>
