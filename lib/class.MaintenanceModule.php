@@ -71,6 +71,9 @@ class MaintenanceModule extends BaseModule {
 		// Set reference for itemlist to be parent menu
 		$GLOBALS['_ref'] = 'db_maintenance.php';
 
+		// Store the rpc map in the meta information
+		$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
+
 		// Call parent constructor
 		$this->BaseModule();
 	} // end function MaintenanceModule
@@ -149,11 +152,39 @@ class MaintenanceModule extends BaseModule {
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
-	// function _add
-	// - addition routine (can be overridden if need be)
-	function _add () {
+	// Method: _add
+	//
+	//	Basic superclass addition routine.
+	//
+	// Parameters:
+	//
+	//	$_param - (optional) Associative array of values. If
+	//	specified, _add will run quiet. The associative array
+	//	is in the format of sql_name => sql_value.
+	//
+	// Returns:
+	//
+	//	Nothing if there are no parameters. If $_param is
+	//	specified, _add will return the id number if successful
+	//	or false if unsuccessful.
+	//
+	// See Also:
+	//	<add>
+	//
+	function _add ($_param = NULL) {
+		//print "param = "; print_r($_param); print "\n";
 		global $display_buffer, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
+		// If there are parameters, import them into the global
+		// scope, then set their values
+		if (is_array($_param)) {
+			foreach ($_param AS $k => $v) {
+				global ${$k};
+				${$k} = $v;
+				//print "mapped $k to $v\n";
+			}
+		}
 
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->insert_query (
@@ -162,33 +193,112 @@ class MaintenanceModule extends BaseModule {
 			)
 		);
 
-		if ($result) $this->message = __("Record added successfully.");
-			else $this->message = __("Record addition failed.");
+		if ($result) {
+			$this->message = __("Record added successfully.");
+			if (is_array($_param)) { return $GLOBALS['sql']->last_record($result); }
+		} else {
+			$this->message = __("Record addition failed.");
+			if (is_array($_param)) { return false; }
+		}
 		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _add
+
+	// Method: add
+	//
+	//	Wrapper for _add. This exists so that FreeMED modules
+	//	can override the basic add functionality while still
+	//	having access to the low-level functionality.
+	//
+	// See Also:
+	//	<_add>
+	//
 	function add () { $this->_add(); }
 
-	// function _del
-	// - only override this if you *really* have something weird to do
-	function _del () {
+	// Method: _del
+	//
+	//	Basic superclass deletion routine.
+	//
+	// Parameters:
+	//
+	//	$_param - (optional) Id number for the record to
+	//	be deleted. 
+	//
+	// Returns:
+	//
+	//	Nothing if there are no parameters. If $_param is
+	//	specified, _del will return boolean true or false
+	//	depending on whether it is successful.
+	//
+	// See Also:
+	//	<del>
+	//
+	function _del ($_id = -1) {
 		global $display_buffer;
 		global $id, $module, $action;
+
+		// Override with parameter, if present
+		if ($_id > 0) { $id = $_id; }
+
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $GLOBALS['sql']->query ($query);
-		if ($result) $this->message = __("Record deleted successfully.");
-			else $this->message = __("Record deletion failed.");
+
+		// If we were passed a parameter, we don't go to doing
+		// anything fancy, just return a true or false.
+		if ($result) {
+			$this->message = __("Record deleted successfully.");
+			if ($_id > 0) { return true; }
+		} else {
+			$this->message = __("Record deletion failed.");
+			if ($_id > 0) { return true; }
+		}
 		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _del
+
+	// Method: del
+	//
+	//	Wrapper for _del. This exists so that FreeMED modules
+	//	can override the basic del while still
+	//	having access to the low-level functionality.
+	//
+	// See Also:
+	//	<_del>
+	//
 	function del () { $this->_del(); }
 
-	// function _mod
-	// - modification routine (override if neccessary)
-	function _mod () {
+	// Method: _mod
+	//
+	//	Basic superclass modification routine.
+	//
+	// Parameters:
+	//
+	//	$_param - (optional) Associative array of values. If
+	//	specified, _mod will run quiet. The associative array
+	//	is in the format of sql_name => sql_value.
+	//
+	// Returns:
+	//
+	//	Nothing if there are no parameters. If $_param is
+	//	specified, _mod will return boolean true or false
+	//	depending on whether it is successful.
+	//
+	// See Also:
+	//	<mod>
+	//
+	function _mod ($_param = NULL) {
 		global $display_buffer, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
+		// If there are parameters, import them into the global
+		// scope, then set their values
+		if (is_array($_param)) {
+			foreach ($_param AS $k => $v) {
+				global ${$k};
+				${$k} = $v;
+			}
+		}
 
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
@@ -200,11 +310,29 @@ class MaintenanceModule extends BaseModule {
 			)
 		);
 
-		if ($result) $this->message = __("Record modified successfully.");
-			else $this->message = __("Record modification failed.");
+		// If we were passed a parameter, we don't go to doing
+		// anything fancy, just return a true or false.
+		if ($result) {
+			$this->message = __("Record modified successfully.");
+			if (is_array($_param)) { return true; }
+		} else {
+			$this->message = __("Record modification failed.");
+			if (is_array($_param)) { return false; }
+		}
+
 		$action = "";
 		$this->view(); $this->display_message();
 	} // end function _mod
+
+	// Method: mod
+	//
+	//	Wrapper for _mod. This exists so that FreeMED modules
+	//	can override the basic mod while still
+	//	having access to the low-level functionality.
+	//
+	// See Also:
+	//	<_mod>
+	//
 	function mod() { $this->_mod(); }
 
 	// function add/modform
