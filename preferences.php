@@ -22,6 +22,38 @@ if ($submit==__("Cancel")) {
 	unset($action);
 }
 
+//----- Define USER_OPTIONS
+$USER_OPTIONS = array (
+	__("Booking Refresh") =>
+	array (
+		'var' => 'booking_refresh',
+		'widget' =>
+		'html_form::select_widget("booking_refresh", '.
+			'array ('.
+				'__("enable") => "1", '.
+				'__("disable") => "0" '.
+			') )'
+	),
+
+	__("Default Room") =>
+	array(
+		'var' => 'default_room',
+		'widget' => "
+	        html_form::select_widget(
+                	'default_room',
+	                freemed::query_to_array(
+	                        \"SELECT CONCAT(room.roomname,' (',\".
+	                        \"facility.psrcity,', ',facility.psrstate,')') AS k,\".
+	                        \"room.id AS v \".
+	                        \"FROM room,facility \".
+	                        \"WHERE room.roompos=facility.id AND \".
+	                        \"room.roombooking='y' \".
+	                        \"ORDER BY k\"
+	                )
+        	)"
+	)
+);
+
 switch ($action) {
 	case "passwordform":
 	$display_buffer .= "
@@ -145,13 +177,52 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 	foreach ($TEMPLATE_OPTIONS AS $k => $v) {
 		if (isset(${$v['var']})) {
 			// Keep cookie for a year (find better way to do this)
-			SetCookie($v['var'], ${$v['var']}, time()+(60*60*24*365));
+			SetCookie($v['var'], $_REQUEST[$v['var']], time()+(60*60*24*365));
 		}
 	}
 
 	// And use header to move back to action=(nothing)
 	$refresh = "preferences.php";
 	break; // end template
+
+
+	case "userform":
+	// Form header
+	$display_buffer .= "
+		<form action=\"preferences.php\" method=\"post\">
+		<input type=\"hidden\" name=\"action\" value=\"user\"/>
+	";
+	// Loop through template options
+	foreach ($USER_OPTIONS AS $k => $v) {
+		eval('$form_parts[$k] = '.$v['widget'].';');
+	}
+	// Display form_parts
+	$display_buffer .= html_form::form_table($form_parts)."\n";
+	$display_buffer .= "
+		<div align=\"center\">
+		<input type=\"submit\" name=\"submit\" class=\"button\" value=\"".
+			__("Set Options")."\"/>
+		<input type=\"submit\" name=\"submit\" class=\"button\" value=\"".
+			__("Cancel")."\"/>
+		</div>
+		</form>
+	";
+	break; // end userform
+
+
+	case "user":
+	// Loop through variables, and set them properly
+	foreach ($USER_OPTIONS AS $k => $v) {
+		if (isset($_REQUEST[$v['var']])) {
+			// Keep cookie for a year (find better way to do this)
+			SetCookie($v['var'], $_REQUEST[$v['var']], time()+(60*60*24*365));
+			$_COOKIE[$v['var']] = $_REQUEST[$v['var']];
+		}
+	}
+
+	// And use header to move back to action=(nothing)
+	$refresh = "preferences.php";
+	break; // end user
 
 
 	default: // display menu
@@ -166,12 +237,20 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 	>".__("Change Template Options")."</a>
 	</div>
 
+	<div align=\"center\">
+	<a href=\"preferences.php?action=userform\"
+	>".__("Change User Options")."</a>
+	</div>
+
 	<p/>
 
 	<div align=\"center\">
 	<a class=\"button\" href=\"main.php\">".__("Return to Main Menu")."</a>
 	</div>
 	";
+	foreach ($_COOKIE AS $k => $v) {
+		print "cookie[$k] = $v<br>\n";
+	}
 	break;
 } // end action
 
