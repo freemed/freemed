@@ -94,23 +94,12 @@ class UnfiledFaxes extends MaintenanceModule {
 			$this->table_name." WHERE id='".addslashes($_REQUEST['id'])."'");
 		$r = $GLOBALS['sql']->fetch_array($result);
 		$display_buffer .= "
-		<br/><br/><br/>
 		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
 		<input type=\"hidden\" name=\"action\" value=\"view\"/>
 		<input type=\"hidden\" name=\"date\" value=\"".prepare($r['uffdate'])."\"/>
 		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
-		<div align=\"center\">
-                <embed SRC=\"data/fax/unfiled/".$r['ufffilename']."\"
-		BORDER=\"0\"
-		FLAGS=\"width=100% height=100% passive=yes toolbar=yes keyboard=yes zoom=stretch\"
-                PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-                TYPE=\"image/x.djvu\" WIDTH=\"".
-		( $GLOBALS['__freemed']['Mozilla'] ? '800' : '100%' ).
-		"\" HEIGHT=\"800\"></embed>
-
-		</div>
 		<div align=\"center\">
 		".html_form::form_table(array(
 			__("Date") => $r['uffdate'],
@@ -134,6 +123,17 @@ class UnfiledFaxes extends MaintenanceModule {
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
+		<br/><br/><br/>
+		<div align=\"center\">
+                <embed SRC=\"data/fax/unfiled/".$r['ufffilename']."\"
+		BORDER=\"0\"
+		FLAGS=\"width=100% height=100% passive=yes toolbar=yes keyboard=yes zoom=stretch\"
+                PLUGINSPAGE=\"".COMPLETE_URL."support/\"
+                TYPE=\"image/x.djvu\" WIDTH=\"".
+		( $GLOBALS['__freemed']['Mozilla'] ? '800' : '100%' ).
+		"\" HEIGHT=\"800\"></embed>
+		</div>
+
 		</form>
 		";
 	} // end method display
@@ -186,7 +186,6 @@ class UnfiledFaxes extends MaintenanceModule {
 		$GLOBALS['display_buffer'] .= '<p>'.
 			'<a href="'.$this->page_name.'?module='.get_class($this).'" class="button">'.__("File Another Fax").'</a>'.
 			'</p>';
-
 
 		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." ".
 			"WHERE id='".addslashes($id)."'");
