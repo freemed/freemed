@@ -271,9 +271,49 @@ A.patientbox_hilite:link { color: #000000 }
 
 /* Buttons */
 .button {
+	font-size: 9pt;
 	border: 1px solid;
 	border-color: #000000;
-	/* background-color: #ccccff; */
 	background-color: #ffffff;
+	color: #000000;
+
+	/* For all button links */
+	padding: 2px 4px 2px 4px;
+	text-decoration: none;
+}
+
+.button:hover {
+	font-size: 9pt;
+	border: 1px dotted;
+	border-color: #ffffff;
+	background-color: #cccccc;
+	color: #000000;
+
+	padding: 2px 4px 2px 4px;
+	text-decoration: none;
+}
+
+/* Small Buttons */
+.button_small {
+	font-size: 7pt;
+	border: 1px solid;
+	border-color: #000000;
+	background-color: #ffffff;
+	color: #000000;
+
+	/* For all button links */
+	padding: 0px;
+	text-decoration: none;
+}
+
+.button_small:hover {
+	font-size: 7pt;
+	border: 1px dotted;
+	border-color: #ffffff;
+	background-color: #cccccc;
+	color: #000000;
+
+	padding: 0px;
+	text-decoration: none;
 }
 
