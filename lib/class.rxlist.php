@@ -3,6 +3,9 @@
  // $Author$
  //
  // $Log$
+ // Revision 1.2  2002/08/06 13:49:08  rufustfirefly
+ // updated rxlist class for changes in RxList.com
+ //
  // Revision 1.1  2002/07/08 14:42:25  rufustfirefly
  // RxList.com prescription "module" for formulary
  //
@@ -97,8 +100,9 @@ class RxList {
 				$ending = "</font>";
 				$record = $pos;
 			}
-			// Handle the ending
-			if (!(strpos($tokens[$pos], "Get A Price") === false)){
+			// Handle the ending (assume when all fields are set
+			// that we're done)
+			if (isset($hash["drug_class"]) and isset($hash["brand_name"]) and isset($hash["generic_name"])) {
 				// Reset record
 				$record = false;
 				// Add hash to all
@@ -130,7 +134,7 @@ class RxList {
 } // end if not defined
 /*
 // TEST CRAP HERE
-$page = RxList::getPage("aceto");
+$page = RxList::getPage("ace");
 $tokens = RxList::parse2tokens($page);
 $hash = RxList::tokens2hash($tokens);
 foreach ($hash AS $k => $v) {
