@@ -25,6 +25,15 @@ if ( ($id>0) AND
 //----- Logon/authenticate
 freemed_open_db ();
 
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"patient.php|user $user_to_log accesses");}	
+// In order to be compliant I need to be able to log which patient is viewed here
+// $id $patient and $current_patient dont seem to work
+
+
+
+
 //---- Push page onto stack
 page_push();
 
@@ -34,6 +43,8 @@ switch ($action) {
     // addform and modform not used due to "notebook"
    $book = CreateObject('PHP.notebook', array ("action", "id", "been_here"),
      NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH, 3);
+   $book->set_cancel_name(__("Cancel"));
+   $book->set_refresh_name(__("Refresh"));
    switch ($action) {
      case "add": case "addform":
 	$book->set_submit_name (__("Add"));
@@ -176,7 +187,7 @@ switch ($action) {
 					__("Married")   => "married",
 					__("Divorced")  => "divorced",
 					__("Separated") => "separated",
-					__("Widowed")   => "widowed"
+					__("Widowed")   => "widowed",
 				)
 			),
 	
@@ -185,11 +196,11 @@ switch ($action) {
 				array (
 					__("Yes")    => "y",
 					__("No")     => "n",
-					"Part Time" => "p",
-					"Self"      => "s",
-					"Retired"   => "r",
-					"Military"  => "m",
-					"Unknown"   => "u"
+					__("Part Time") => "p",
+					__("Self")     => "s",
+					__("Retired")  => "r",
+					__("Military") => "m",
+					__("Unknown")  => "u"
 				)
 			),
 		__("Patient Status") => 
@@ -266,7 +277,7 @@ switch ($action) {
 
     ".(($num_other_docs>0) ? "
     <TR><TD ALIGN=RIGHT>
-    ".__("Other Physician 1")." :
+    ".__("Other Physician")." 1 :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy1")."
     </TD></TR>
@@ -274,7 +285,7 @@ switch ($action) {
 
     (($num_other_docs>1) ? "
     <TR><TD ALIGN=RIGHT>
-    ".__("Other Physician 2")." :
+    ".__("Other Physician")." 2 :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy2")."
     </TD></TR>
@@ -282,7 +293,7 @@ switch ($action) {
 
     (($num_other_docs>2) ? "
     <TR><TD ALIGN=RIGHT>
-    ".__("Other Physician 3")." :
+    ".__("Other Physician")." 3 :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy3")."
     </TD></TR>
@@ -500,16 +511,16 @@ switch ($action) {
 	__("Primary Care Physician") =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptpcp"),
 
-	(($num_other_docs>0) ? __("Other Physician 1") : "" ) =>
+	(($num_other_docs>0) ? __("Other Physician")." 1" : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy1"),
 
-	(($num_other_docs>1) ? __("Other Physician 2") : "" ) =>
+	(($num_other_docs>1) ? __("Other Physician")." 2" : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy2"),
 
-	(($num_other_docs>2) ? __("Other Physician 3") : "" ) =>
+	(($num_other_docs>2) ? __("Other Physician")." 3" : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy3"),
 
-	(($num_other_docs>3) ? __("Other Physician 4") : "" ) =>
+	(($num_other_docs>3) ? __("Other Physician")." 4" : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy4"),
 
 	__("Number of Other Physicians") =>
@@ -542,7 +553,7 @@ switch ($action) {
 	} // end checking for folded
 
    // show notebook
-   $page_title = __("Patient")." ".__("$action_name");
+   $page_title = __("Patient")." ".$action_name;
    if ( ($action=="modform") or ($action=="mod")) {
      $this_patient = CreateObject('FreeMED.Patient', $id);
      $display_buffer .= freemed::patient_box ($this_patient);
