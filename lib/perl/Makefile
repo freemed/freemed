@@ -1,15 +1,15 @@
 # $Id$
 # $Author$
 
-THISDIR=lib
-SUBDIR=perl template xmlrpc
+THISDIR=lib/perl
+SUBDIR=Config Frontier XML
 
 all:
 	# Nothing
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf *.php $(INSTDIR)/$(THISDIR)
+	#cp -vf *.php $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
 		make -C $$d install INSTDIR=$(INSTDIR); \
 	done

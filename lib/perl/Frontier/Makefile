@@ -1,22 +1,22 @@
 # $Id$
 # $Author$
 
-THISDIR=lib
-SUBDIR=perl template xmlrpc
+THISDIR=lib/perl/Frontier
+SUBDIR=
 
 all:
-	# Nothing
+	# STUB
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf *.php $(INSTDIR)/$(THISDIR)
-	for d in $(SUBDIR); do \
+	cp -vf *.pm $(INSTDIR)/$(THISDIR)
+	@for d in $(SUBDIR); do \
 		make -C $$d install INSTDIR=$(INSTDIR); \
 	done
 
 clean:
-	# Nothing
+	# STUB
 
 dist-clean:
-	# Nothing
+	# STUB
 
