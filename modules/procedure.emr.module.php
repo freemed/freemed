@@ -14,6 +14,7 @@ class procedureModule extends freemedEMRModule {
 
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
+	var $patient_field = "procpatient";
 	var $proc_fields = array(
 		"procpatient",
 		"proceoc",
