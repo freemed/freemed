@@ -40,6 +40,7 @@ class Scheduler {
 		'minute' => 'calminute',
 		'duration' => 'calduration',
 		'facility' => 'calfacility',
+		'patient' => 'calpatient',
 		'room' => 'calroom',
 		'physician' => 'calphysician',
 			'provider' => 'calphysician',
