@@ -501,7 +501,7 @@ class Remitt {
 			// FIXME: THESE ARE NOT RIGHT ANYMORE
 		$buffer .= $this->_tag('x12id', $f['psrx12id'], true);
 		$buffer .= $this->_tag('x12idtype', $f['psrx12idtype'], true);
-		$buffer .= $this->_tag('ein', $f['physsn'], true);
+		$buffer .= $this->_tag('ein', ( $f['phypracein'] ? $f['phypracein'] : $f['physsn'] ), true);
 
 		$buffer .= "</practice>\n";
 		return $buffer;

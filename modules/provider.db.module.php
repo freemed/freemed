@@ -8,7 +8,7 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.1";
+	var $MODULE_VERSION = "0.3.2";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -21,6 +21,7 @@ class ProviderModule extends MaintenanceModule {
         "phytitle",
         "phymname",
         "phypracname",
+	"phypracein",
         "phyaddr1a",
         "phyaddr2a",
         "phycitya",
@@ -80,6 +81,7 @@ class ProviderModule extends MaintenanceModule {
 			'phymname' => SQL__VARCHAR(50),
 			'phytitle' => SQL__VARCHAR(10),
 			'phypracname' => SQL__VARCHAR(45),
+			'phypracein' => SQL_VARCHAR(16),
 				// Address 1
 			'phyaddr1a' => SQL__VARCHAR(30),
 			'phyaddr2a' => SQL__VARCHAR(30),
@@ -176,7 +178,8 @@ class ProviderModule extends MaintenanceModule {
 			__("Primary Information"),
 			array (
 			"phylname", "phyfname", "phytitle", "phymname",
-			"phytitle", "phypracname", "phyid1", "phystatus"
+			"phytitle", "phypracname", "phyid1", "phystatus",
+			"phypracein"
 			),
 			html_form::form_table(array(
 	__("Last Name") =>
@@ -193,6 +196,9 @@ class ProviderModule extends MaintenanceModule {
 
 	__("Practice Name") =>
 	html_form::text_widget("phypracname", 45, 45),
+
+	__("Practice EIN") =>
+	html_form::text_widget("phypracein", 16, 16),
 
 	__("Internal ID #") =>
 	html_form::text_widget("phyid1", 10),
@@ -576,6 +582,15 @@ class ProviderModule extends MaintenanceModule {
 				'ADD COLUMN phydea VARCHAR(16) AFTER phyhl7id');
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN phypracname phypracname VARCHAR(45)');
+		}
+
+		// Version 0.3.2
+		//
+		//	Add practice EIN number
+		//
+		if (!version_check($version, '0.3.2')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN phypracein VARCHAR(16) AFTER phypracname');
 		}
 	} // end method _update
 
