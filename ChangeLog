@@ -1,7 +1,12 @@
 freemed project changelog
 ($Id$)
 
-* Fir Mar 23 2001 fforest
+* Mon Mar 26 2001 fforest
+  - lib/API boxtop and boxbotton checks for incorrect calling sequence
+  - index.php left in commented out test code for above
+  - patient.php circumvent error caused by API change above
+
+* Fri Mar 23 2001 fforest
   - fixedform_EN.data update with new requirements for
     commercial and Medicare NSF record layouts
   - lib/render_forms add new function render_fixedRecord. This allows

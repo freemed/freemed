@@ -133,6 +133,7 @@ if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_R
 		"(http://phpwebtools.sourceforge.net/)\n");
 
 include ("lib/iso-set.php");         // ISO set handler
+include ("lib/API.php");             // API functions
 include ("lib/containers.php");      // class containers
 include ("lib/language-loader.php"); // external language loader
 include ("lib/macros.php");          // macros/contants

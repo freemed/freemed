@@ -7,8 +7,11 @@
 
   $page_name = "index.php";
   include ("lib/freemed.php");
+  //include ("lib/API.php");
 
   SetCookie ("default_facility", "0", time()-100);
+
+  //$GLOBALS[FREEMED_BOX] = false;  // set for first time thru
 
   freemed_display_html_top ();
   freemed_display_banner ();
@@ -122,4 +125,8 @@ echo "
 ?>
 </CENTER>
 
-<?php freemed_display_html_bottom() ?>
+<?php 
+//echo "at bottom<BR>";
+freemed_display_box_bottom();
+freemed_display_html_bottom(); 
+?>

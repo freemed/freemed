@@ -791,7 +791,11 @@ switch ($action) {
     break; // end default action
 } // end action
 
-freemed_display_box_bottom();
+if ($GLOBALS[FREEMED_BOX] == true)
+{
+	// KLUDGE till this is fixed
+    freemed_display_box_bottom();
+}
 freemed_close_db(); 
 freemed_display_html_bottom ();
 ?>

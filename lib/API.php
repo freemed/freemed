@@ -230,7 +230,16 @@ function freemed_display_box_bottom ($_null="")
 {
   global $debug;
 
-  if (!isset($GLOBALS["FREEMED_BOX"])) return false;
+  //$v = $GLOBALS["FREEMED_BOX"];
+  //echo "box var $v<BR>";
+  //if (!isset($GLOBALS["FREEMED_BOX"])) return false;
+  if ($GLOBALS["FREEMED_BOX"] == false) 
+  {
+    trigger_error("Multiple freemed_display_box_bottom instances!", E_USER_ERROR);
+  }
+  $GLOBALS["FREEMED_BOX"] = false;
+  //$v = $GLOBALS["FREEMED_BOX"];
+  //echo "box var after $v<BR>";
 
   if ($debug) {
     echo "
@@ -260,7 +269,12 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
    $admin_level, $delete_level, $export_level, $database_level,
    $menubar_color, $LoginCookie, $STDFONT_B, $STDFONT_E, $current_patient;
 
-  if (isset($GLOBALS["FREEMED_BOX"])) {
+  if (!isset($GLOBALS["FREEMED_BOX"])) 
+  {
+  	$GLOBALS["FREEMED_BOX"] = true;
+  } // check for existing box
+  elseif ($GLOBALS["FREEMED_BOX"] == true) 
+  {
     trigger_error("Multiple freemed_display_box_top instances!", E_USER_ERROR);
   } // check for existing box
 
@@ -521,8 +535,9 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 function freemed_display_html_bottom ($_null="")
 {
   global $_mail_handler, $lang_coded_by;
-
-  if (isset($GLOBALS["FREEMED_BOX"])) {
+  //$v = $GLOBALS["FREEMED_BOX"];
+  //echo "box var html bot $v<BR>";
+  if ($GLOBALS["FREEMED_BOX"] == true) {
     trigger_error("Page ended without displaying box bottom!", E_USER_ERROR);
   } // check for existing box
 
