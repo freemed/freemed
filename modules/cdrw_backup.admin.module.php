@@ -10,7 +10,7 @@ class CDRWBackup extends AdminModule {
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_AUTHOR = "jeff@ourexchange.net";
 	var $MODULE_HIDDEN = true;
-	var $ICON = "img/insurance.gif";
+	var $ICON = "img/cdrw_backup.gif";
 
 	var $MODULE_FILE = __FILE__;
 
@@ -68,7 +68,7 @@ class CDRWBackup extends AdminModule {
 		$buffer .= "<br/><br/>\n".
 			"<div align=\"center\">\n".
 			"<a href=\"admin.php\" class=\"button\"".
-			">".__("Return to Administration Menu")."</a>
+			">".__("Return to Administration Menu")."</a>\n";
 		return $buffer;
 	} // end method action
 
