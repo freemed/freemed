@@ -11,7 +11,7 @@ $db_name = "messages";                // database name
 define ('PAGE_ROLL', 5);
 
 //----- Open the database, etc
-freemed_open_db ();
+freemed::connect ();
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];

@@ -14,7 +14,11 @@ if ((strlen($_ref)>0) AND ($_ref != "main.php")) {
 } // if there is a _ref cookie...
 
 //----- Generic page opening stuff
-freemed_open_db ();
+freemed::connect ();
+
+//----- HIPAA Logging
+// This is too high level to log...
+
 $this_user = CreateObject('FreeMED.User');
 
 //----- Set title (default, can be overridden in lib/template/*/main_menu.php)

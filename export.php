@@ -6,13 +6,24 @@
 $page_name = "export.php";
 include ("lib/freemed.php");
 
-freemed_open_db ();
+freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
 
 if (!freemed::user_flag(USER_ADMIN)) {
 	$display_buffer .= "$page_name :: You do not have access to this module";
 	template_display();
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"export.php|user $user_to_log access failed, user does not posses ADMIN privileges");}	
+
 }
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"export.php|user $user_to_log export GLOBAL ACCESS");}
+// Note this access needs logged to finer degree.
+// But this will meet HIPAA requirments.	
 
 switch ($action) {
  case "export":

@@ -17,7 +17,7 @@ $id = $_REQUEST['id'];
 patient_push($id);
 
 //----- Login/authenticate
-freemed_open_db ();
+freemed::connect ();
 
 //----- Determine ID
 if (($id<1) AND ($_COOKIE['current_patient']>0)) { $id = $_COOKIE['current_patient']; }

@@ -11,7 +11,7 @@ include_once ("lib/freemed.php");
 page_push ();
 
 //---- DB and authenticate
-freemed_open_db ();
+freemed::connect ();
 
 //----- Create user object
 if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');

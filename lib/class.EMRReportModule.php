@@ -43,10 +43,9 @@ class EMRReportModule extends BaseModule {
 
 	} // end function check_vars
 
-		function header($nullvar="") {
+	function header($nullvar="") {
 		global $display_buffer;
-            freemed_open_db();
-            // don't display the box top
+		freemed::connect();
 	
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
@@ -54,6 +53,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"EMRReportModule.php|user $user_to_l
 
 
         }
+	
         function footer($nullvar="") {
 		global $display_buffer;
             // dont display the bottom

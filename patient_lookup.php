@@ -6,7 +6,7 @@ $page_name = "patient_lookup.php";
 include_once("lib/freemed.php");
 
 //----- Open database, authenticate, etc
-freemed_open_db ();
+freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
 
 //------HIPAA Logging

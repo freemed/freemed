@@ -7,7 +7,7 @@ $page_name = "manage_appointments.php";
 include_once ("lib/freemed.php");
 include_once ("lib/calendar-functions.php");
 
-freemed_open_db ();
+freemed::connect ();
 
 if ($patient<1) {
    $page_title = __("Manage Appointments")." :: ".__("ERROR");

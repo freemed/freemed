@@ -6,13 +6,22 @@
 $page_name = "import.php";
 include ("lib/freemed.php");
 
-freemed_open_db ();
+freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
 
 if (!freemed::user_flag(USER_ADMIN)) {
 	$display_buffer .= "$page_name :: You do not have access to this module";
 	template_display();
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"import.php|user $user_to_log attempt to access import failed, user does not have ADMIN privileges");}	
 }
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"import.php|user $user_to_log import access GLOBAL ACCESS");}	
+
+
 
 switch ($action) {
  case "import":

@@ -5,7 +5,10 @@
 
 $_pg_desc = "[HELP]"; // show that we are a help page...
 include_once ("lib/freemed.php");
-freemed_open_db ();
+freemed::connect ();
+
+//----HIPAA Logging
+// Doesnt seem needed here...
 
 // Declare help_template_display()
 function help_template_display () {
