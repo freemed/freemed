@@ -4,7 +4,7 @@
  // desc: contains identifying information about the template
 
 $TEMPLATE_NAME = "New Skin";
-$TEMPLATE_DESC = "FreeMED DHTML Test Skin (0.6)";
+$TEMPLATE_DESC = "FreeMED DHTML Skin (0.7.x)";
 $TEMPLATE_AUTHOR = "jeff b";
 $TEMPLATE_OPTIONS = array (
 	array(
