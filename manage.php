@@ -4,7 +4,7 @@
  // lic : GPL, v2
 
 $page_name = "manage.php";
-include ("lib/freemed.php");
+include_once ("lib/freemed.php");
 
 //----- Set current patient cookie if it's not set...
 if ($id != $_SESSION['current_patient']) {
@@ -13,13 +13,14 @@ if ($id != $_SESSION['current_patient']) {
 }
 
 //----- Push patient onto list
+$id = $_REQUEST['id'];
 patient_push($id);
 
 //----- Login/authenticate
 freemed_open_db ();
 
 //----- Determine ID
-if (($id<1) AND ($current_patient>0)) { $id = $current_patient; }
+if (($id<1) AND ($_COOKIE['current_patient']>0)) { $id = $_COOKIE['current_patient']; }
  elseif (($id<1) and ($patient>0))    { $id = $patient;         }
 
 // Check for access to current medical record
