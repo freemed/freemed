@@ -2630,7 +2630,7 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	$y  = substr ($actualdate, 0, 4);        // extract year
 	$m  = substr ($actualdate, 5, 2);        // extract month
 	$d  = substr ($actualdate, 8, 2);        // extract day
-	$ts = mktime (0, 0, 0, $m, $d, 2000); // generate timestamp (fake year)
+	$ts = mktime (0, 0, 0, $m, $d, $y<1970 ? 2000 : $y); // generate timestamp (fake year)
 
 	$lang_months = array (
 		'',
@@ -2651,10 +2651,10 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	// Return depending on configuration format
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
-			return date(($show_text_days ? "D" : "")." F d, ", $ts).$y;
+			return date(($show_text_days and ($y > 1969) ? "D" : "")." F d, ", $ts).$y;
 			break;
 		case "dmy":
-			if ($show_text_days) {
+			if ($show_text_days and ($y > 1969)) {
 				return $d." ".$lang_months[0+$m].", ".$y;
 			} else {
 				return date("d M, ", $ts).$y;
@@ -2977,7 +2977,8 @@ function fm_value_in_string ($cur_string, $value) {
 	} // end checking for ":"
 
 	// Otherwise do a simple substring match check
-	if (strstr($cur_string,$value) != "") return true;
+	//if (strstr($cur_string,$value) != "") return true;
+	if (trim($cur_string) == trim($value)) { return true; }
 
 	// If it hasn't been found, return false
 	return false;
