@@ -73,9 +73,12 @@ class AppointmentTemplates extends MaintenanceModule {
 		__("Required Equipment") => module_function(
 			'RoomEquipment',
 			'widget',
-			false,
-			'id',
-			array ( 'multiple' => 5 )
+			array(
+				'atequipment',
+				false,
+				'id',
+				array ( 'multiple' => 5 )
+			)
 		)
 
 		) )."
