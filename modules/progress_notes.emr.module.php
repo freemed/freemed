@@ -100,7 +100,8 @@ class ProgressNotes extends EMRModule {
 		global $pnotesdoc;
  		$pnotesdoc = $this->this_user->getPhysician(); // if so, set as default
 	}
-         $pnotesdt     = $cur_date;
+	 global $pnotesdt;
+         $pnotesdt     = date("Y-m-d");
          break; // end addform
         case "modform":
          //while(list($k,$v)=each($this->variables)) { global ${$v}; }
