@@ -82,13 +82,6 @@ $_mail_handler="mailto:";  // where the mail goes...
     // the _mail_handler variable is so that we can farm
     // this mail to some mail hook in a program.
 
-    // colors
-$bar_start_color="#dddddd";
-$bar_alt_color  ="#ffffff";
-$topbar_color   ="#0022cf";
-$darker_bgcolor ="#777777";
-$menubar_color  ="#bbbbbb";
-
   // related to the calendar --
   //   times are given in 24 hour format, then reformatted for
   //   am and pm by the program
@@ -145,7 +138,17 @@ if (!defined('SESSION_DISABLE')) {
 	// This is *only* disabled when XML-RPC calls are being made,
 	// etc, so that it does not require information it can't get.
 	session_start();
-	session_register("SESSION"); // master session storage
+	session_register(
+		'authdata',
+		'ipaddr',
+		'language',
+		'page_history',
+		'page_history_name',
+		'patient_history'
+	);
+
+	// Bring session and request variables into the global scope.
+	if (is_array($_SESSION)) { extract($_SESSION); }
 
 	// Create object map for FreeMED
 	CreateApplicationMap(array('FreeMED' => 'lib/class.*.php'));
@@ -154,7 +157,7 @@ if (!defined('SESSION_DISABLE')) {
 	// is running, as it stores several variables in session
 	// tracking.
 	include_once ("lib/i18n.php");
-	set_up_language($SESSION['language']);
+	set_up_language($_SESSION['language']);
 }
 // ***************************************************************
 
@@ -172,7 +175,16 @@ include_once ("lib/xml.php");             // XML import/export routines
     //   SQL_MSQL     - mSQL backend
 define ('DB_ENGINE', SQL_MYSQL);
 
-$sql = CreateObject ('PHP.sql', DB_ENGINE, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+$sql = CreateObject (
+	'PHP.sql', 
+	DB_ENGINE,
+	array(
+		'host' => DB_HOST, 
+		'user' => DB_USER, 
+		'password' => DB_PASSWORD, 
+		'database' => DB_NAME,
+	)
+);
 
   // ***************************************************************
 
