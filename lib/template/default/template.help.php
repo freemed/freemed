@@ -83,7 +83,65 @@ if (isset($page_title)) {
 	// Actual content display
 	print "<DIV CLASS=\"interior\">\n";
 	if (isset($_help_name)) {
-		require($_help_name);
+		// Read in the entire file instead of:
+		//require($_help_name);
+		$help_buffer = "";
+
+		// Read entire file into buffer
+		$fp = fopen($_help_name, "r");
+		while (!feof($fp)) $help_buffer .= fgets($fp, 4096);
+		fclose($fp);
+
+		//----- Perform substitutions...
+	
+		// Split into an array
+		$help_array = explode("%%", $help_buffer);
+	
+		// Loop through array
+		for ($i=0; $i<count($help_array); $i++) {
+			// If it's odd, you have to process it
+			if ( ($i % 2) == 1 ) {
+				// Odds need substitution, so...
+
+				// Break by commas
+				$this_element = explode(",", $help_array[$i]);
+
+				// Check count
+				switch(count($this_element)) {
+					case 1: // page_name
+					print "<A HREF=\"help.php?page_name=".
+					urlencode($this_element[0]).
+					"&framed=yes\" TARGET=\"help_frame\"".
+					"><I>?</I></A>";
+					break; // end 1 param
+				
+					case 2: // title,page_name
+					print "<A HREF=\"help.php?page_name=".
+					urlencode($this_element[1]).
+					"&framed=yes\" TARGET=\"help_frame\"".
+					"><I>".prepare($this_element[0]).
+					"</I></A>";
+					break; // end 2 param
+				
+					case 3: // title,page_name,section
+					print "<A HREF=\"help.php?page_name=".
+					urlencode($this_element[1]).
+					"&section=".urlencode($this_element[2]).
+					"&framed=yes\" TARGET=\"help_frame\"".
+					"><I>".prepare($this_element[0]).
+					"</I></A>";
+					break; // end 3 param
+				
+					default:
+					print("ERROR! Contact your FreeMED ".
+					"maintainer!<BR>\n");
+					break;
+				} // end switch
+			} else { // checking for odds
+				// If it's even, display it
+				print ($help_array[$i]);
+			} // end checking for odds
+		} // end looping through array
 	} else {
 		print $display_buffer;
 	}
