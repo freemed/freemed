@@ -148,7 +148,7 @@ class UnreadFaxes extends MaintenanceModule {
 		<div align=\"center\">
                 <embed SRC=\"data/fax/unread/".$r['urffilename']."\"
 		BORDER=\"0\"
-		FLAGS=\"width=100% height=100% passive=yes zoom=stretch\"
+		FLAGS=\"width=100% height=100% passive=yes toolbar=yes keyboard=yes zoom=stretch\"
                 PLUGINSPAGE=\"".COMPLETE_URL."support/\"
                 TYPE=\"image/x.djvu\" WIDTH=\"".
 		( $GLOBALS['__freemed']['Mozilla'] ? '800' : '100%' ).
