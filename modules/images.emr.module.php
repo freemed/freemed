@@ -33,7 +33,7 @@ class patientImages extends freemedEMRModule {
 			_("Type")        =>	"imagetype",
 			_("Description") =>	"imagedesc"
 		);
-		$this->summary_view_link = true;
+		$this->summary_options |= SUMMARY_VIEW;
 
 		// Define table
 		$this->table_definition = array (
@@ -54,24 +54,24 @@ class patientImages extends freemedEMRModule {
 		$this->freemedEMRModule();
 	} // end constructor patientImages
 
-	function activeXupload () {
+	function activeXupload ($name) {
 		global $display_buffer;
 		$buffer .= "
-		<SCRIPT LANGUAGE=\"VBScript\">
+		<script LANGUAGE=\"VBScript\">
 		<!--
 		Sub ScanControl_ScanComplete(FileName)
 			document.myform.imageupload.focus()
 			document.myform.ScanControl.PasteName()
 		End Sub
 		-->
-		</SCRIPT>
-		<OBJECT ID=\"ScanControl\"
+		</script>
+		<object ID=\"ScanControl\"
 			CLASSID=\"CLSID:4A72D130-BBAD-45BD-AB11-E506466200EA\"
-			CODEBASE=\"./lib/webscanner.cab#version=1,0,0,20\">
+			CODEBASE=\"./support/webscanner.cab#version=1,0,0,20\">
 			<!-- CODEBASE=\"http://www.internext.co.za/stefan/webtwain/WebScanner.CAB#version=1,0,0,20\"> -->
-		</OBJECT>
-		<BR/>
-		<INPUT TYPE=\"FILE\" NAME=\"imageupload\">
+		</object>
+		<br/>
+		<input TYPE=\"FILE\" NAME=\"imageupload\"/>
 		";
 		return $buffer;
 	} // end function patientImages->activeXupload
@@ -100,8 +100,6 @@ class patientImages extends freemedEMRModule {
 		$last_record = $sql->last_record($result, $this->table_name);
 
 		// Handle upload
-		global $HTTP_POST_FILES;
-$debug = true;
 		if (!($imagefilename = freemed::store_image($patient,
 				"imageupload", $last_record))) {
 			print "FAILED TO UPLOAD!\n";
@@ -113,8 +111,13 @@ $debug = true;
 			if ($debug) $display_buffer .= "(query = '$query') ";
 			 $display_buffer .= " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
 		}
+		$display_buffer .= "<BR>\n";
 
 		// Update database with proper file name
+		$display_buffer .= "
+			<CENTER><B>"._("Updating database")." ... </B>
+		";
+
 		$query = $sql->update_query (
 			$this->table_name,
 			array ( "imagefile" => $imagefilename ),
@@ -137,17 +140,49 @@ $debug = true;
 		<B>|</B>
 		<A HREF=\"$this->page_name?module=$module&patient=$patient\"
 		>"._($this->record_name)."</A>
+		<B>|</B>
+		<A HREF=\"$this->page_name?module=$module&patient=$patient&".
+		"action=addform\"
+		>"._("Add Another")."</A>
 		";
+		global $refresh, $manage;
+		if ($return=="manage") {
+			$refresh = "manage.php?id=".$patient;
+		}
  	} // end method patientImages->add
 
+	function del () {
+		// Delete actual image
+		global $id, $patient;
+		unlink("img/store/".freemed::secure_filename($patient).
+			".".freemed::secure_filename($id).".djvu");
+
+		// Run stock deletion routine
+		$this->_del();
+	} // end function patientImages->del
+
 	function display () {
-		global $sql, $id, $patient, $display_buffer;
+		global $sql, $id, $patient, $display_buffer, $return;
 		if (!$patient or !$id) return false;
 		$display_buffer .= "
 		<DIV ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-		<IMG SRC=\"patient_image_handler.php?".
+		<EMBED SRC=\"patient_image_handler.php?".
 		"patient=".urlencode($patient)."&".
-		"id=".urlencode($id)."\" BORDER=\"0\">
+		"id=".urlencode($id)."\" BORDER=\"0\"
+		PLUGINSPAGE=\"".COMPLETE_URL."support/\"
+		TYPE=\"image/x.djvu\" WIDTH=\"100%\" HEIGHT=\"600\"></EMBED>
+		</DIV>
+		<DIV ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		<A HREF=\"";
+		if ($return=="manage") {
+			$display_buffer .= "manage.php?id=$patient\">".
+			_("Manage Patient");
+		} else {
+			$display_buffer .= $this->page_name."?".
+			"module=".urlencode($module)."&".
+			"action=view\">". _($record_name);
+		}
+		$display_buffer .= "</A>
 		</DIV>
 		";
 	} // end function patientImages->display
@@ -220,6 +255,7 @@ $debug = true;
 					_("Insurance Card") => "insurance_card",
 					_("Lab Report") => "lab_report",
 					_("Miscellaneous") => "misc",
+					_("Operative Report") => "op_report",
 					_("Pathology") => "pathology",
 					_("Patient History") => "patient_history",
 					_("Questionnaire") => "questionnaire",
