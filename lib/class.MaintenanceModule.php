@@ -229,24 +229,6 @@ class MaintenanceModule extends BaseModule {
 		return !empty($result);
 	} // end function create_table
 
-	// function _PrepareGlobalConfigVars
-	// - creates hash values for global configuration variables that
-	//   are not set, so as to allow the widgets to read the correct
-	//   values
-	// caveats: This has no support for "CHECKED"-type input controls
-	//   because of the way it functions.
-	function _PrepareGlobalConfigVars() {
-		if (is_array($this->META_INFORMATION['global_config_vars'])) {
-			foreach ($this->META_INFORMATION['global_config_vars'] as $k => $v) {
-				global ${$v};
-				// Check for is set?
-				if (!isset(${$v})) {
-					${$v} = '##'.$v.'##';
-				}
-			}
-		}
-	} // end function _PrepareGlobalConfigVars
-
 } // end class MaintenanceModule
 
 ?>
