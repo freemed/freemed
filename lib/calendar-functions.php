@@ -670,7 +670,7 @@ class freemedCalendar {
 				urlencode($my_event['id'])."&".
 				"type=".$my_event['caltype']."\" ".
 			">".__("Move")."</a>".
-			" ( phy = ".$my_event['calphysician']." ) ".
+			//" ( phy = ".$my_event['calphysician']." ) ".
 			( !empty($my_event['calprenote']) ?
 			"<br/>&nbsp;&nbsp;<i>".
 			prepare(stripslashes($my_event[calprenote])).
