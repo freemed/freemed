@@ -214,8 +214,8 @@ $calendar_form .= "
 
 	"<small>".__("Note")."</small>" =>
 	( $refresh_disable ?
-	html_form::text_widget('note', 25) :
-	freemedCalendar::refresh_text_widget("note", 25) )
+	html_form::text_widget('note', 30, 100) :
+	freemedCalendar::refresh_text_widget("note", 30, 100) )
 
 	), "", "", "")."
 
