@@ -9,7 +9,7 @@ class ProgressNotes extends EMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Progress Notes allow physicians and
 		providers to track patient activity through
@@ -44,7 +44,7 @@ class ProgressNotes extends EMRModule {
 			'pnotes_R' => SQL__TEXT,
 			'pnotessbp' => SQL__INT_UNSIGNED(0),
 			'pnotesdbp' => SQL__INT_UNSIGNED(0),
-			'pnotestemp' => SQL__INT_UNSIGNED(0),
+			'pnotestemp' => SQL__REAL,
 			'pnotesheartrate' => SQL__INT_UNSIGNED(0),
 			'pnotesresprate' => SQL__INT_UNSIGNED(0),
 			'pnotesweight' => SQL__INT_UNSIGNED(0),
@@ -258,8 +258,8 @@ class ProgressNotes extends EMRModule {
        html_form::form_table (
         array (
           __("<U>I</U>nterval") =>
-		//freemed::rich_text_area('pnotes_I', 30, 60, true)
-		html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
+		freemed::rich_text_area('pnotes_I', 30, 60, true)
+		//html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
         )
        )
      );
@@ -311,7 +311,7 @@ class ProgressNotes extends EMRModule {
 		), html_form::form_table(array(
 			__("Blood Pressure") => html_form::number_pulldown('pnotessbp', 0, 250)."<b>/</b>".
 				html_form::number_pulldown('pnotesdbp', 0, 150),
-			__("Temperature") => html_form::number_pulldown('pnotestemp', 0, 110, .1),
+			__("Temperature") => html_form::number_pulldown('pnotestemp', 90, 108, .1, false),
 			__("Heart Rate") => html_form::number_pulldown('pnotesheartrate', 0, 300),
 			__("Respiratory Rate") => html_form::number_pulldown('pnotesresprate', 0, 50),
 			__("Weight") => html_form::number_pulldown('pnotesweight', 0, 650),
@@ -759,6 +759,14 @@ class ProgressNotes extends EMRModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN pnotesbmi INT UNSIGNED AFTER pnotesheight');
 		} // end version 0.3 updates
+		// Version 0.3.1
+		//
+		//	Temperature should be a REAL
+		//
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN pnotestemp pnotestemp REAL');
+		} // end version 0.3.1 update
 	} // end _update
 } // end of class ProgressNotes
 
