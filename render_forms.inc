@@ -22,6 +22,15 @@ class diagnosisSet {
     $this->stack_size         = 0;            // empty the stack
   } // end constructor diagnosisSet
 
+  // function diagnosisSet->getStack
+  // -- returns the actual codes in an array
+  function getStack ($null_value = "") {
+    for ($i=1;$i<=($this->stack_size);$i++)
+      $figured_stack[$i] = freemed_get_link_field (
+       $this->internal_stack[$i], "icd9", "icd9name");
+    return $figured_stack;
+  } // end function getStack
+
   // function diagnosisSet->inStack
   // -- returns true or false, indicating whether value is in the stack
   function inStack ($val) {

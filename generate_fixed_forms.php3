@@ -307,7 +307,7 @@
          echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
          flush();
 
-         $ptdiag = $diag_set->internal_stack; // get pt diagnoses
+         $ptdiag = $diag_set->getStack();     // get pt diagnoses
          $current_balance = bcadd ($total_charges - $total_paid, 0, 2);
          $total_charges   = bcadd ($total_charges, 0, 2);
          $total_paid      = bcadd ($total_paid,    0, 2);
