@@ -449,6 +449,7 @@ class MaintenanceModule extends BaseModule {
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).
 			"ORDER BY ".$this->order_field;
 		$result = $GLOBALS['sql']->query($query);
+		$return[__("NONE SELECTED")] = "";
 		while ($r = $GLOBALS['sql']->fetch_array($result)) {
 			if (!(strpos($this->widget_hash, "##") === false)) {
 				$key = '';
