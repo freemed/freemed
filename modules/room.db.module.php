@@ -28,6 +28,19 @@ class RoomMaintenance extends MaintenanceModule {
 	);
 
 	function RoomMaintenance () {
+		// Table definition
+		$this->table_definition = array (
+			'roomname' => SQL_VARCHAR(20),
+			'roompos' => SQL_INT_UNSIGNED(0),
+			'roomdescrip' => SQL_VARCHAR(40),
+			'roomdefphy' => SQL_INT_UNSIGNED,
+			'roomsurgery' => SQL_ENUM(array('y', 'n')),
+			'roombooking' => SQL_ENUM(array('y', 'n')),
+			'roomipaddr' => SQL_VARCHAR(15),
+			'id' => SQL_SERIAL
+		);
+
+		// Run constructor
 		$this->MaintenanceModule();
 	} // end constructor RoomMaintenance
 
@@ -71,7 +84,7 @@ class RoomMaintenance extends MaintenanceModule {
 
     _("Default Provider") =>
     freemed_display_selectbox (
-    $sql->query ("SELECT * FROM physician"),
+    $sql->query ("SELECT * FROM physician WHERE phyref != 'yes' AND phylname != ''"),
     "#phylname#, #phyfname#",
     "roomdefphy"),
 
@@ -93,9 +106,10 @@ class RoomMaintenance extends MaintenanceModule {
 		$display_buffer .= "
 	<CENTER>
 	<INPUT TYPE=\"SUBMIT\" VALUE=\" ".
-	( ($action=="addform") ? _("Add") : _("Modify") )." \">
-	<INPUT TYPE=\"RESET\" VALUE=\""._("Clear")."\">
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\""._("Cancel")."\">
+	( ($action=="addform") ? _("Add") : _("Modify") )." \" CLASS=\"button\"/>
+	<INPUT TYPE=\"RESET\" VALUE=\""._("Clear")."\" CLASS=\"button\"/>
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\""._("Cancel")."\" ".
+	"CLASS=\"button\"/>
 	</CENTER></FORM>
 		";
 	} // end function RoomMaintenance->form

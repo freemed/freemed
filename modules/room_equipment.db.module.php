@@ -25,13 +25,14 @@ class RoomEquipmentMaintenance extends MaintenanceModule {
 	);
 
 	function RoomEquipmentMaintenance () {
-		global $cur_date;
+		global $reqdatemod;
+		$reqdatemod = date("Y-m-d");
 		$this->MaintenanceModule();
-		$reqdatemod = $cur_date;
 	} // end constructor RoomEquipmentMaintenance
 
 	function form () {
 		global $display_buffer;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		switch ($action) {
 			case "addform":
 				break;
@@ -43,7 +44,7 @@ class RoomEquipmentMaintenance extends MaintenanceModule {
  
 		$display_buffer .= "
     <P>
-    <FORM ACTION=\"$page_name\" METHOD=POST>
+    <FORM ACTION=\"".$this->page_name."\" METHOD=\"POST\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
      ( ($action=="addform") ? "add" : "mod" )."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\"  >
@@ -52,12 +53,10 @@ class RoomEquipmentMaintenance extends MaintenanceModule {
 
   ".html_form::form_table ( array (
     _("Name") =>
-    "<INPUT TYPE=TEXT NAME=\"reqname\" SIZE=20 MAXLENGTH=100
-     VALUE=\"".prepare($reqname)."\">",
+    html_form::text_widget('reqname', 20, 100),
 
     _("Description") =>
-    "<INPUT TYPE=TEXT NAME=\"reqdescrip\" SIZE=30
-     VALUE=\"".prepare($reqdescrip)."\">"
+    html_form::text_widget('reqdescrip', 30)
    ) )."  
 
     <P>
@@ -82,11 +81,15 @@ class RoomEquipmentMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		global $sql;
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT * FROM $this->table_name ".
-				"ORDER BY $this->order_field"),
+			$sql->query(
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY ".$this->order_field
+			),
 			$this->page_name,
 			array (
-				_("Name")			=>	"reqname",
+				_("Name")		=>	"reqname",
 				_("Description")	=>	"reqdescrip"
 			),
 			array (

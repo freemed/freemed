@@ -1050,7 +1050,7 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
 	}
 
 	function ProviderHeader($procstack) {
-		global $display_buffer, $SESSION;
+		global $display_buffer;
 		
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -1098,10 +1098,10 @@ class MedicareNJPAMCSIFormsModule extends BillingModule {
         // incremented as used then saved when done.
 		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
 
-		if ($SESSION["default_facility"] != 0)
+		if ($_SESSION["default_facility"] != 0)
         {
             $fac = 0;
-            $fac = freemed::get_link_rec($SESSION["default_facility"], "facility");
+            $fac = freemed::get_link_rec($_SESSION["default_facility"], "facility");
             if (!$fac)
                 $display_buffer .= "Error getting facility<BR>";
             $ba0[taxid] = $this->CleanNumber($fac[psrein]);

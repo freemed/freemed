@@ -72,20 +72,20 @@ class PreviousOperationsModule extends EMRModule {
 		}
 
 		$buffer .= "
-			<DIV ALIGN=\"CENTER\">
-			<FORM ACTION=\"module_loader.php\" METHOD=\"POST\">
-			<INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".
-			prepare($this->MODULE_CLASS)."\">
-			<INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-			"add\">
-			<INPUT TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".
-			"manage\">
-			<INPUT TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
-			prepare($patient)."\">
+			<div ALIGN=\"CENTER\">
+			<form ACTION=\"module_loader.php\" METHOD=\"POST\">
+			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".
+			prepare($this->MODULE_CLASS)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+			"add\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".
+			"manage\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
+			prepare($patient)."\"/>
 			".html_form::text_widget("op", 20, 50)."
-			<INPUT TYPE=\"SUBMIT\" VALUE=\""._("Add")."\">
-			</FORM>
-			</DIV>
+			<input TYPE=\"SUBMIT\" VALUE=\""._("Add")."\" class=\"button\"/>
+			</form>
+			</div>
 			";
 		return $buffer;
 	} // end function PreviousOperationsModule->summary

@@ -14,8 +14,8 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
-	var $record_name    = "Provider Certifications";
-	var $table_name 	= "degrees";
+	var $record_name = "Provider Certifications";
+	var $table_name = "degrees";
 
 	var $variables      = array (
 		"degdegree",
@@ -24,27 +24,40 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 	);
 
 	function ProviderCertificationsMaintenance () {
-		global $cur_date, $deg_date;
-		$this->MaintenanceModule();
+		global $deg_date;
 		$degdate = date("Y-m-d");
+
+		// Table definition
+		$this->table_definition = array (
+			'degdegree' => SQL_CHAR(10),
+			'degname' => SQL_VARCHAR(50),
+			'degdate' => SQL_DATE,
+			'id' => SQL_SERIAL
+		);
+
+		// Run constructor
+		$this->MaintenanceModule();
 	} // end constructor ProviderCertificationsMaintenance
 
 	function form () { $this->view(); }
 
 	function view () {
 		global $display_buffer;
-		reset($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		if ($action=="modform") {
-			$result = $sql->query("SELECT * FROM $this->table_name WHERE id='$id'");
-			$r = $sql->fetch_array($result); // dump into array r[]
+			$r = freemed::get_link_rec($id, $this->table_name);
 			extract ($r);
 		} // modform fetching
 
 		// display the table 
 		$display_buffer .= freemed_display_itemlist(
-			$sql->query("SELECT * FROM $this->table_name ORDER BY degdegree,degname"),
+			$sql->query(
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY degdegree,degname"
+			),
 			$this->page_name,
 			array (
 				_("Degree") => "degdegree",
@@ -54,57 +67,29 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 		);
   
 		$display_buffer .= "
-   <CENTER>
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2>
-   <TR><TD ALIGN=RIGHT>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".(($action=="modform") ? 
-                                                   "mod" : "add")."\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
-    <INPUT TYPE=HIDDEN NAME=\"module\"   VALUE=\"".prepare($module)."\"  >
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".(($action=="modform") ? 
+				"mod" : "add")."\"/> 
+		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		<div ALIGN=\"CENTER\">
+		".html_form::form_table(array(
 
-  ".(($action=="modform") ? "
-    "._("Date Last Modified")." :
-   </TD><TD ALIGN=LEFT>
-    $degdate
-   </TD></TR>
-   <TR><TD ALIGN=RIGHT>
-  " : "")
-  
-  ."
-    "._("Degree")." :
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=degdegree SIZE=11 MAXLENGTH=10
-     VALUE=\"$degdegree\">
-   </TD></TR>
- 
-  <TR><TD ALIGN=RIGHT>
-   "._("Degree Description")." :
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=degname SIZE=30 MAXLENGTH=50
-     VALUE=\"$degname\">
-   </TD></TR>
+		_("Degree") =>
+		html_form::text_widget('degdegree', 10),
 
-   <TR><TD COLSPAN=2 ALIGN=CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\"".($action=="modform" ? 
-        _("Update") : _("Add"))." \">
-    <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
-   </TD></TR>
-  ";
+		_("Degree Description") =>
+		html_form::text_widget('degname', 30, 50)
 
-  if ($action=="modform") 
-    $display_buffer .= "
-   <TR><TD COLSPAN=2 ALIGN=CENTER>
-     <A HREF=\"$page_name\">".
-       _("Abandon Modification")."</A>
-   </TD></TR>
-    ";
-    
-  $display_buffer .= "
-   </FORM>
-   </TABLE>
-   </CENTER>
-    ";
+		))."
+		</div>
+		<div align=\"CENTER\">
+		<input TYPE=\"SUBMIT\" VALUE=\"".($action=="modform" ? 
+		_("Update") : _("Add"))." \"/>
+		<input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+		</div>
+		</form>
+		";
 	} // end function ProviderCertificationsMaintenance->view()
 
 } // end class ProviderCertificationsMaintenance

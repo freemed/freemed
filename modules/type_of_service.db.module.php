@@ -32,7 +32,7 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 			'tosdescrip' => SQL_VARCHAR(200),
 			'tosdtadd' => SQL_DATE,
 			'tosdtmod' => SQL_DATE,
-			'id' => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			'id' => SQL_SERIAL
 		);
 	
 		global $tosdtmod; $tosdtmod = date("Y-m-d");
@@ -90,9 +90,10 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 			html_form::text_widget("tosdescrip", 25, 200)
 		)).
 			"<div ALIGN=\"CENTER\">\n".
-			"<input TYPE=\"SUBMIT\" VALUE=\"".(
+			"<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".(
 			 ($action=="modform") ? _("Modify") : _("Add"))."\"/>
-			 <input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+			 <input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\" ".
+			 "class=\"button\"/>
 			</div></form>
 		";
 	} // end function TypeOfServiceMaintenance->form

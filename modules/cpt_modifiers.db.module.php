@@ -30,7 +30,7 @@ class CptModifiersMaintenance extends MaintenanceModule {
 		$this->table_definition = array (
 			"cptmod"		=>	SQL_CHAR(2),
 			"cptmoddescrip"		=>	SQL_VARCHAR(50),
-			"id"			=>	SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			"id"			=>	SQL_SERIAL
 		);
 		if ($debug) {
 		global $sql;$display_buffer .= "query = \"".$sql->create_table_query(
@@ -43,7 +43,7 @@ class CptModifiersMaintenance extends MaintenanceModule {
 	} // end constructor CptModifiersMaintenance
 
 	function form () {
-		global $display_buffer;
+		global $display_buffer, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		switch ($action) { // inner switch
 			case "addform":
@@ -52,13 +52,16 @@ class CptModifiersMaintenance extends MaintenanceModule {
 			case "modform":
 			if ($id<1) trigger_error ("NO ID", E_USER_ERROR);
 			$r = freemed::get_link_rec ($id, $this->table_name);
-			extract ($r);
+			foreach ($r AS $k => $v) {
+				global ${$k};
+				${$k} = $v;
+			}
 			break;
 		} // end inner switch
 
 		$display_buffer .= "
 		<p/>
-		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<form ACTION=\"".$this->page_name."\" METHOD=\"POST\">
 		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
 		( ($action=="addform") ? "add" : "mod" )."\"/> 
 		<input TYPE=\"HIDDEN\" NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
@@ -77,9 +80,10 @@ class CptModifiersMaintenance extends MaintenanceModule {
 		) )."
 		<p/>
 		<div ALIGN=\"CENTER\">
-		<input TYPE=SUBMIT VALUE=\" ".
+		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".
 		( ($action=="addform") ? _("Add") : _("Modify") )." \"/>
-		<input TYPE=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+		<input class=\"button\" NAME=\"submit\" TYPE=\"SUBMIT\" ".
+			"VALUE=\""._("Cancel")."\"/>
 		</div></form>
 		";
 	} // end function CptModifiersMaintenance->form()

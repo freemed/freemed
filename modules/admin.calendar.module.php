@@ -102,25 +102,23 @@ class AdminCalendar extends CalendarModule {
 		$prevdate = $this->prevyear."-".$this->prevmonth."-01";
 
 		// prev  and next
-		$display_buffer .= "<CENTER>";
-		$display_buffer .= "<A HREF=\"$this->page_name?".
-			"action=view&module=$module&jumpdate=$prevdate\">Prev</A>";
+		$display_buffer .= "<form ACTION=\"$this->page_name\" METHOD=\"POST\">\n";
+		$display_buffer .= "<div align=\"CENTER\">";
+		$display_buffer .= "<a class=\"button\" HREF=\"$this->page_name?".
+			"action=view&module=$module&jumpdate=$prevdate\">Prev</a>\n";
 		$display_buffer .= "&nbsp;";
-		$display_buffer .= "<A HREF=\"$this->page_name?".
-			"action=view&module=$module&jumpdate=$nextdate\">Next</A>";
-		$display_buffer .= "</CENTER>";
+		$display_buffer .= "<a class=\"button\" HREF=\"$this->page_name?".
+			"action=view&module=$module&jumpdate=$nextdate\">Next</a>\n";
 
 		// allow jumping to any year or month
-		$display_buffer .= "<CENTER>";
-		$display_buffer .= "<FORM ACTION=\"$this->page_name\" METHOD=POST>".
-			 "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">".
+		$display_buffer .= " ".
+			 "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>\n".
 			 fm_date_entry("jumpdate").
-			 "<INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">".
-			 "</FORM></CENTER>";
+			 "<input class=\"button\" TYPE=\"SUBMIT\" ".
+			 	"VALUE=\""._("Go")."\"/>\n";
 
-		$display_buffer .= "<CENTER>";
-		$display_buffer .= "<A HREF=\"calendar.php\">"._("Menu")."</A>";
-		$display_buffer .= "</CENTER>";
+		$display_buffer .= "<a class=\"button\" HREF=\"calendar.php\">"._("Calendar")."</a>\n";
+		$display_buffer .= "</div></form>\n";
 
 
 	} // end function module->view

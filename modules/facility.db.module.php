@@ -43,6 +43,28 @@ class FacilityMaintenance extends MaintenanceModule {
 	);
 
 	function FacilityMaintenance () {
+		// Create table definition
+		$this->table_definition = array (
+			'psrname' => SQL_VARCHAR(100),
+			'psraddr1' => SQL_VARCHAR(50),
+			'psraddr2' => SQL_VARCHAR(50),
+			'psrcity' => SQL_VARCHAR(50),
+			'psrstate' => SQL_CHAR(3),
+			'psrzip' => SQL_CHAR(10),
+			'psrcountry' => SQL_VARCHAR(50),
+			'psrnote' => SQL_VARCHAR(40),
+			'psrdateentry' => SQL_DATE,
+			'psrdefphy' => SQL_INT_UNSIGNED(0),
+			'psrphone' => SQL_VARCHAR(16),
+			'psrfax' => SQL_VARCHAR(16),
+			'psremail' => SQL_VARCHAR(25),
+			'psrein' => SQL_VARCHAR(9),
+			'psrintext' => SQL_INT_UNSIGNED(0),
+			'psrpos' => SQL_INT_UNSIGNED(0),
+			'id' => SQL_SERIAL
+		);
+
+		// Run constructor
 		$this->MaintenanceModule();
 	} // end constructor FacilityMaintenance
 
@@ -116,7 +138,8 @@ class FacilityMaintenance extends MaintenanceModule {
 
         _("Default Provider") =>
 	freemed_display_selectbox (
-          $sql->query("SELECT * FROM physician ORDER BY phylname,phyfname"),
+          $sql->query("SELECT * FROM physician WHERE phylname != '' ".
+	  	"ORDER BY phylname,phyfname"),
 	  "#phylname#, #phyfname#",
 	  "psrdefphy" 
 	),
@@ -161,14 +184,6 @@ class FacilityMaintenance extends MaintenanceModule {
 
   if (!$book->is_done()) {
     $display_buffer .= $book->display();
-    $display_buffer .= "
-       <P>
-       <CENTER>
-       <A HREF=\"$this->page_name?module=$module\"
-        >"._("Abandon ".( ($action=="addform") ? "Addition" : "Modification" ))
-         ."</A>
-       </CENTER>
-    ";
   } else {
     $psrphone = fm_phone_assemble("psrphone");
     $psrfax   = fm_phone_assemble("psrfax");

@@ -31,6 +31,14 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 	);
 
 	function DiagnosisFamilyMaintenance () {
+		// Table definition
+		$this->table_definition = array (
+			'dfname' => SQL_VARCHAR(100),
+			'dfdescrip' => SQL_VARCHAR(100),
+			'id' => SQL_SERIAL
+		);
+
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor DiagnosisFamilyMaintenance 
 
@@ -50,16 +58,16 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 			}
 		}
 
-  $display_buffer .= "
-    <p/>
-    <form ACTION=\"$this->page_name\" METHOD=\"POST\">
-    <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-    	( ($action=='modform') ? 'mod' : 'add' )."\"/>
-    <input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
-    <input TYPE=\"HIDDEN\" NAME=\"id\"     VALUE=\"".prepare($id)."\"/>
+		$display_buffer .= "
+		<p/>
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+			( ($action=='modform') ? 'mod' : 'add' )."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 
-    <div ALIGN=\"CENTER\">
-    ".html_form::form_table(array(
+		<div ALIGN=\"CENTER\">
+		".html_form::form_table(array(
     
 		_("Name") =>
 		html_form::text_widget('dfname', 20, 100),
@@ -67,22 +75,16 @@ class DiagnosisFamilyMaintenance extends MaintenanceModule {
 		_("Description") =>
 		html_form::text_widget('dfdescrip', 30, 100)
 
-     ))."</div>
+		))."</div>
 
-     <div ALIGN=\"CENTER\">
-      <input TYPE=\"SUBMIT\" VALUE=\" ".(
-      	($action=='modform') ? _("Modify") : _("Add") )." \"/>
-      <input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
-    </div>
+		<div ALIGN=\"CENTER\">
+		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".(
+ 			($action=='modform') ? _("Modify") : _("Add") )." \"/>
+		<input class=\"button\" TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+		</div>
 
-    </FORM>
-
-    <P>
-    <CENTER>
-    <A HREF=\"$this->page_name?action=view\"
-     >"._("Abandon Modification")."</A>
-    </CENTER>
-  ";
+		</form>
+		";
 	} // end function DiagnosisFamilyMaintenance->modform
 
 	function view () {

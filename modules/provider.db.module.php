@@ -62,7 +62,58 @@ class ProviderMaintenance extends MaintenanceModule {
 	); // end of variables list
 
 	function ProviderMaintenance () {
-		foreach ($GLOBALS AS $k => $v) global ${$k};
+		// Table definition
+		$this->table_definition = array (
+			'phylname' => SQL_VARCHAR(52),
+			'phyfname' => SQL_VARCHAR(50),
+			'phymname' => SQL_VARCHAR(50),
+			'phytitle' => SQL_VARCHAR(10),
+			'phypracname' => SQL_VARCHAR(30),
+				// Address 1
+			'phyaddr1a' => SQL_VARCHAR(30),
+			'phyaddr2a' => SQL_VARCHAR(30),
+			'phycitya' => SQL_VARCHAR(20),
+			'phystatea' => SQL_CHAR(5),
+			'phyzipa' => SQL_VARCHAR(10),
+			'phyphonea' => SQL_VARCHAR(16),
+			'phyfaxa' => SQL_VARCHAR(16),
+				// Address 2
+			'phyaddr1b' => SQL_VARCHAR(30),
+			'phyaddr2b' => SQL_VARCHAR(30),
+			'phycityb' => SQL_VARCHAR(20),
+			'phystateb' => SQL_CHAR(5),
+			'phyzipb' => SQL_VARCHAR(10),
+			'phyphoneb' => SQL_VARCHAR(16),
+			'phyfaxb' => SQL_VARCHAR(16),
+				// Misc
+			'phyemail' => SQL_VARCHAR(50),
+			'phycellular' => SQL_VARCHAR(16),
+			'phypage' => SQL_VARCHAR(16),
+			'phyupin' => SQL_VARCHAR(15),
+			'physsn' => SQL_CHAR(9),
+				// Degrees
+			'phydeg1' => SQL_INT_UNSIGNED(0),
+			'phydeg2' => SQL_INT_UNSIGNED(0),
+			'phydeg3' => SQL_INT_UNSIGNED(0),
+				// Specialties
+			'physpe1' => SQL_INT_UNSIGNED(0),
+			'physpe2' => SQL_INT_UNSIGNED(0),
+			'physpe3' => SQL_INT_UNSIGNED(0),
+				// Misc
+			'phyid1' => SQL_CHAR(10),
+			'phystatus' => SQL_INT_UNSIGNED(0),
+			'phyref' => SQL_ENUM(array('yes', 'no')),
+			'phyrefcount' => SQL_INT_UNSIGNED(0),
+			'phyrefamt' => SQL_REAL,
+			'phyrefcoll' => SQL_REAL,
+			'phychargemap' => SQL_TEXT,
+			'phyidmap' => SQL_TEXT,
+			'phygrpprac' => SQL_INT_UNSIGNED(0),
+			'phyanesth' => SQL_INT_UNSIGNED(0),
+			'id' => SQL_SERIAL
+		);
+
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor ProviderMaintenance
 
@@ -98,16 +149,15 @@ class ProviderMaintenance extends MaintenanceModule {
 			$phyidmap = fm_split_into_array( $r[phyidmap] );
 
 			// disassemble ssn
-			$physsn1    = substr($physsn,    0, 3);
-			$physsn2    = substr($physsn,    3, 2);
-			$physsn3    = substr($physsn,    5, 4);
+			$physsn1    = substr($physsn, 0, 3);
+			$physsn2    = substr($physsn, 3, 2);
+			$physsn3    = substr($physsn, 5, 4);
 
 			if (strlen($phyaddr1b)>0) $has_second_addr=true;
 		} // fetch the data first time through
   
 		// have the result ready for display_selectbox
-		$stat_q = "SELECT * FROM phystatus ORDER BY phystatus";
-		$stat_r = $sql->query($stat_q);
+		$stat_r = $sql->query("SELECT * FROM phystatus ORDER BY phystatus");
 
 		$book->add_page (
 			_("Primary Information"),

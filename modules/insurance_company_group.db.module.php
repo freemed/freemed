@@ -22,6 +22,13 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 	);
 
 	function InsuranceCompanyGroupMaintenance () {
+		// Table definition
+		$this->table_definition = array (
+			'inscogroup' => SQL_VARCHAR(50),
+			'id' => SQL_SERIAL
+		);
+	
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor InsuranceCompanyGroupMaintenance
 

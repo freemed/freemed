@@ -60,7 +60,8 @@ class ChargesGraph extends GraphModule {
 				'graphmode' => 1,
 				'action' => 'image',
 				'type' => $type
-			))."\" target=\"print\">"._("Printable")."</a></div>\n";
+			))."\" target=\"print\" class=\"button\" ".
+			">"._("Printable")."</a></div>\n";
 		$display_buffer .= "<p/>\n";
 		$display_buffer .= "<img src=\"".$this->AssembleURL(
 			array(

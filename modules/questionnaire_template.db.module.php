@@ -29,6 +29,20 @@ class QuestionnaireTemplateMaintenance extends MaintenanceModule {
 	);
 
 	function QuestionnaireTemplateMaintenance () {
+		// Table definition
+		$this->table_definition = array (
+			'qname' => SQL_VARCHAR(100),
+			'qdescrip' => SQL_VARCHAR(100),
+			'qfname' => SQL_TEXT,
+			'qvar' => SQL_TEXT,
+			'qftype' => SQL_TEXT,
+			'qftypefor' => SQL_TEXT,
+			'qfmaxlen' => SQL_TEXT,
+			'qftext' => SQL_TEXT,
+			'id' => SQL_SERIAL
+		);
+
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor QuestionnaireTemplateMaintenance
 

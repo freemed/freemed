@@ -41,6 +41,26 @@ class FixedFormsMaintenance extends MaintenanceModule {
 	);
 
 	function FixedFormsMaintenance () {
+		// Table definition
+		$this->table_definition = array (
+			'ffname' => SQL_VARCHAR(50),
+			'ffdescrip' => SQL_VARCHAR(100),
+			'fftype' => SQL_INT_UNSIGNED(0),
+			'ffpagelength' => SQL_INT_UNSIGNED(0),
+			'fflinelength' => SQL_INT_UNSIGNED(0),
+			'ffloopnum' => SQL_INT_UNSIGNED(0),
+			'ffloopoffset' => SQL_INT_UNSIGNED(0),
+			'ffcheckchar' => SQL_CHAR(1),
+			'ffrow' => SQL_TEXT,
+			'ffcol' => SQL_TEXT,
+			'fflength' => SQL_TEXT,
+			'ffdata' => SQL_TEXT,
+			'ffformat' => SQL_TEXT,
+			'ffcomment' => SQL_TEXT,
+			'id' => SQL_SERIAL
+		);
+	
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor FixedFormsMaintenance
 

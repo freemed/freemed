@@ -23,6 +23,14 @@ class patientStatusMaintenance extends MaintenanceModule {
 	);
 
 	function PatientStatusMaintenance () {
+		// Table definition
+		$this->table_definition = array (
+			'ptstatus' => SQL_CHAR(3),
+			'ptstatusdescrip' => SQL_VARCHAR(30),
+			'id' => SQL_SERIAL
+		);
+
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor PatientStatusMaintenance
 
@@ -32,46 +40,34 @@ class patientStatusMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		 // grab record number "id"
-  		$result = $sql->query("SELECT * FROM $this->table_name WHERE
-    		(id='".addslashes($id)."')");
+		$r = freemed::get_link_rec($id, $this->table_name);
+		extract($r);
 
-  $r = $sql->fetch_array($result);
-  extract ($r);
 		$display_buffer .= "
-    <P>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
+		<p/>
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"mod\"/> 
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/> 
+		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 
-    ".html_form::form_table ( array (
+		".html_form::form_table ( array (
 
-    _("Status") =>
-    "<INPUT TYPE=TEXT NAME=\"ptstatus\" SIZE=3 MAXLENGTH=2
-     VALUE=\"".prepare($ptstatus)."\">",
+		_("Status") => 
+		html_form::text_widget('ptstatus', 2),
 
-    _("Description") =>
-    "<INPUT TYPE=TEXT NAME=\"ptstatusdescrip\" SIZE=20 MAXLENGTH=30
-     VALUE=\"".prepare($ptstatusdescrip)."\">"
+		_("Description") =>
+		html_form::text_widget('ptstatusdescrip', 20, 30),
 
-    ) )."
+		) )."
+		<p/>
+		<div ALIGN=\"CENTER\">
+		 <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" "._("Modify")." \"/>
+		 <input class=\"button\" TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
+		 <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+		</div>
 
-    <P>
-    <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\" "._("Modify")." \">
-     <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
-    </CENTER>
-
-    </FORM>
-  ";
-
-  $display_buffer .= "
-    <P>
-    <CENTER>
-    <A HREF=\"$this->page_name\"
-     >"._("Abandon Modification")."</A>
-    </CENTER>
-  ";
+		</form>
+		";
 	} // end function PatientStatusMaintenance->modform()
 
 	function view () {
@@ -86,7 +82,7 @@ class patientStatusMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_("Status")			=>	"ptstatus",
+				_("Status")		=>	"ptstatus",
 				_("Description")	=>	"ptstatusdescrip"
 			),
 			array (

@@ -43,7 +43,7 @@ class LettersModule extends EMRModule {
 			"letterpatient" => $patient
 		);
 
-		// The current table definition
+		// Table definition
 		$this->table_definition = array (
 			"letterdt" => SQL_DATE,
 			"letterfrom" => SQL_VARCHAR(150),
@@ -51,8 +51,10 @@ class LettersModule extends EMRModule {
 			"lettertext" => SQL_TEXT,
 			"lettersent" => SQL_INT_UNSIGNED(0),
 			"letterpatient" => SQL_INT_UNSIGNED(0),
-			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			"id" => SQL_SERIAL
 		);
+
+		// Run parent constructor
 		$this->EMRModule();
 	} // end constructor LettersModule
 
@@ -169,10 +171,10 @@ class LettersModule extends EMRModule {
  
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
-		<input TYPE=SUBMIT VALUE=\"  ".
+		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"  ".
 	         ( ($action=="addform") ? _("Add") : _("Modify"))."  \"/>
-		<input TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
-		<input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\"/>
+		<input class=\"button\" TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
+		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\"/>
 		</div>
 		</form>
 		";
@@ -180,7 +182,7 @@ class LettersModule extends EMRModule {
 
 	function display () {
 		global $display_buffer, $patient, $action, $id, $title,
-			$return, $SESSION;
+			$return;
 		global $this_patient;
 
 		$GLOBALS['__freemed']['no_template_display'] = true;

@@ -96,7 +96,7 @@ class GroupCalendar extends CalendarModule {
 				$r = $sql->fetch_array($result);
 				$group = $r[id];
 			} else {
-				print "LOST. KLUDGED.<BR>\n";
+				// print "LOST. KLUDGED.<BR>\n";
 				$group = 1; // KLUDGE
 			}
 		}
@@ -142,18 +142,18 @@ class GroupCalendar extends CalendarModule {
 		// Display header
 		$buffer .= "
 		<!-- mini calendar -->
-		<DIV ALIGN=\"CENTER\">
-		<TABLE WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\2\" ".
+		<div align=\"CENTER\">
+		<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\2\" ".
 		"BORDER=\"0\">
-		<TR>
-		<TD ALIGN=\"LEFT\" VALIGN=\"TOP\" CLASS=\"thinbox\">
-		<FORM ACTION=\"module_loader.php\" METHOD=\"POST\">
-		<TABLE BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
+		<tr>
+		<td ALIGN=\"LEFT\" VALIGN=\"TOP\" CLASS=\"thinbox\">
+		<form ACTION=\"module_loader.php\" METHOD=\"POST\">
+		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
 		 WIDTH=\"100%\">
-		<TR>
-		<TD COLSPAN=\"2\"><B>"._("Group Calendar")."</B> for
-		<INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\">
+		<tr>
+		<td COLSPAN=\"2\"><B>"._("Group Calendar")."</B> for
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\"/>
 			".html_form::select_widget(
 				"group",
 				freemed::query_to_array(
@@ -163,28 +163,28 @@ class GroupCalendar extends CalendarModule {
 				),
 				array('refresh' => true)
 			)."
-		</TD></TR>
-		<TR><TD ALIGN=\"CENTER\" COLSPAN=\"2\">
-		<B>".fm_date_print($selected_date)."</B><BR>
-		<I>(".(count($physicians)-1)." "._("physicians").")</I>
-		</TD></TR>
-		<TR>
-		<TD>"._("Mark as")."</TD>
-		<TD>".html_form::select_widget(
+		</td></tr>
+		<tr><td ALIGN=\"CENTER\" COLSPAN=\"2\">
+		<b>".fm_date_print($selected_date)."</b><br/>
+		<i>(".(count($physicians)-1)." "._("physicians").")</i>
+		</td></tr>
+		<tr>
+		<td>"._("Mark as")."</td>
+		<td>".html_form::select_widget(
 			"mark", $this->mark_array(), array('refresh'=>true)
-		)."</TD>
-		</TR>
-		</TABLE>
-		</FORM>
-		</TD>
-		<TD>".fc_generate_calendar_mini(
+		)."</td>
+		</tr>
+		</table>
+		</form>
+		</td>
+		<td>".fc_generate_calendar_mini(
 				$selected_date,
 				"module_loader.php?".
 					"module=".urlencode($module)."&".
 					"group=".urlencode($group)."&".
 					"action=".urlencode($action)."&".
 					"mark=".urlencode($mark)
-		)."</TD></TR>
+		)."</td></tr>
 		</TABLE>
 		</DIV>
 		<BR>
@@ -213,7 +213,7 @@ class GroupCalendar extends CalendarModule {
 					"facility=".urlencode($my_facility)."&".
 					"id=".urlencode($my_phy->id)."&".
 					"submit=delanesth#hour".$c_hour."\"".
-					"><IMG SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\"></A>\n";
+					"><img SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\"/></a>\n";
 				}
 				$buffer .= join(", ", $cov);
 				$buffer .= "</div>\n";
@@ -225,7 +225,7 @@ class GroupCalendar extends CalendarModule {
 		<div ALIGN=\"CENTER\">
 		<table WIDTH=\"100%\" CELLSPACING=\0\" CELLPADDING=\"2\" ".
 		"BORDER=\"0\" CLASS=\"calendar\">
-		<TR><TD COLSPAN=\"2\">&nbsp;</TD>
+		<tr><td COLSPAN=\"2\">&nbsp;</td>
 		";
 		foreach ($physicians AS $k => $v) {
 			if ($v >= 0) {
@@ -235,7 +235,7 @@ class GroupCalendar extends CalendarModule {
 				"</b></td>\n";
 			}
 		}
-		$buffer .= "</TR>\n";
+		$buffer .= "</tr>\n";
 
 		// Loop through hours
 		for ($c_hour=freemed::config_value("calshr");
@@ -243,10 +243,10 @@ class GroupCalendar extends CalendarModule {
 				$c_hour++) {
 			// Beginning of hour row
 			$buffer .= "
-			<TR><TD VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
+			<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
 			"CLASS=\"calcell_hour\" WIDTH=\"7%\"
-			><A NAME=\"hour$c_hour\" /><B>".
-			freemedCalendar::display_hour($c_hour)."</B></TD>
+			><a NAME=\"hour$c_hour\" /><b>".
+			freemedCalendar::display_hour($c_hour)."</b></td>
 			";
 
 			for ($c_min="00"; $c_min<60; $c_min+=15) {
@@ -255,8 +255,8 @@ class GroupCalendar extends CalendarModule {
 
 				// Start with table headers
 				$buffer .= "
-				".( ($c_min>0) ? "<TR>" : "" ).
-				"<TD>:".$c_min."</TD>
+				".( ($c_min>0) ? "<tr>" : "" ).
+				"<td>:".$c_min."</td>
 				";
 
 				// Loop through physicians
@@ -266,7 +266,7 @@ class GroupCalendar extends CalendarModule {
 					if ($map[$this_phy][$idx][span] == 0) {
 						// skip this
 					} elseif ($map[$this_phy][$idx][link] != 0) {
-						$buffer .= "<TD COLSPAN=\"1\" ".
+						$buffer .= "<td COLSPAN=\"1\" ".
 							"ROWSPAN=\"".$map[$this_phy][$idx][span]."\" ".
 							"ALIGN=\"LEFT\" ".
 							"CLASS=\"calmark".($map[$this_phy][$idx][mark]+0)."\">".
@@ -279,23 +279,23 @@ class GroupCalendar extends CalendarModule {
 							"group=".urlencode($group)."&".
 							"id=".$map[$this_phy][$idx][link]."&".
 							"submit=delappt#hour".$c_hour."\"
-							><IMG SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\"></A>".
-							"</TD>\n";
+							><img SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\"/></a>".
+							"</td>\n";
 					} else {
 						// Handle empty event
-						$buffer .= "<TD COLSPAN=\"1\" CLASS=\"cell\" ALIGN=\"LEFT\" VALIGN=\"MIDDLE\">\n";
+						$buffer .= "<td COLSPAN=\"1\" CLASS=\"cell\" ALIGN=\"LEFT\" VALIGN=\"MIDDLE\">\n";
 						$check = array (
-							15 => "0_15",
-							30 => "0_30",
-							45 => "0_45",
-							60 => "1_00"
+							15 => "0:15",
+							30 => "0:30",
+							45 => "0:45",
+							60 => "1:00"
 						);
 						foreach ($check as $k => $v) {
 							if (freemedCalendar::map_fit(
 									$map[$this_phy],
 									$idx,
 									$k)) { 
-								$buffer .= "<A HREF=\"".
+								$buffer .= template::link_button($v,
 									"module_loader.php?".
 									"module=".$this->MODULE_CLASS."&".
 									"selected_date=".urlencode($selected_date)."&".
@@ -306,12 +306,12 @@ class GroupCalendar extends CalendarModule {
 									"minute=".urlencode($c_min)."&".
 									"mark=".urlencode($mark)."&".
 									"submit=travelbook#hour".
-									$c_hour."\"".
-									"><IMG SRC=\"lib/template/$template/img/cal_".
-									$v.".png\" BORDER=\"0\"></A>";
+									$c_hour, 
+									array('type' => 'button_small')).
+									"&nbsp;";
 							} // end if fit
 						} // end foreach
-						$buffer .= "</TD>\n";
+						$buffer .= "</td>\n";
 					}
 
 				} // end loop thru physicians
@@ -319,17 +319,17 @@ class GroupCalendar extends CalendarModule {
 			} // end loop through minutes
 
 			// End of hour/row
-			$buffer .= "</TR>\n";
+			$buffer .= "</tr>\n";
 		} // end loop through hours
 
 		// Display footer
 		$buffer .= "
-		</TABLE>
-		</DIV>
-		<BR><BR>
-		<div ALIGN=\"CENTER\" class=\"thinbox_noscroll\">
-		<a HREF=\"calendar.php\">"._("Calendar")."</a> |
-		<a HREF=\"main.php\">"._("Return to Main Menu")."</a>
+		</table>
+		</div>
+		<br/><br/>
+		<div ALIGN=\"CENTER\">
+		".template::link_button(_("Calendar"), "calendar.php")."
+		".template::link_button(_("Return to Main Menu"), "main.php")."
 		</div>
 		";
 

@@ -27,10 +27,20 @@ class ClaimtypesMaintenance extends MaintenanceModule {
 	);
 
 	function ClaimtypesMaintenance () {
-		// run constructor
-		$this->MaintenanceModule();
 		global $clmtpdtmod;
 		$clmtpdtmod = date("Y-m-d");
+
+		// Define table definition
+		$this->table_definition = array (
+			'clmtpname' => SQL_VARCHAR(5),
+			'clmtpdescrip' => SQL_VARCHAR(60),
+			'clmtpdtadd' => SQL_DATE,
+			'clmtpdtmod' => SQL_DATE,
+			'id' => SQL_SERIAL
+		);
+
+		// Run constructor
+		$this->MaintenanceModule();
 	} // end constructor ClaimtypesMaintenance	
 
 	function view () {

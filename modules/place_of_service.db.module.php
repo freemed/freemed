@@ -27,10 +27,20 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 	);
 
 	function PlaceOfServiceMaintenance () {
-		// run constructor
-		$this->MaintenanceModule();
 		global $posdtmod, $posdtadd;
 		$posdtmod = $posdtadd = date("Y-m-d");
+
+		// Table definition
+		$this->table_definition = array (
+			'posname' => SQL_VARCHAR(75),
+			'posdescrip' => SQL_VARCHAR(200),
+			'posdtadd' => SQL_DATE,
+			'posdtmod' => SQL_DATE,
+			'id' => SQL_SERIAL
+		);
+		
+		// Run parent constructor
+		$this->MaintenanceModule();
 	} // end constructor PlaceOfServiceMaintenance	
 
 	function view () {
@@ -63,7 +73,8 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 			extract ($r);
 		} // if loading values
 		if ($action=="addform") {
-			$GLOBALS['posdtadd'] = date("Y-m-d");
+			global $posdtadd;
+			$posdtadd = date("Y-m-d");
 		}
 
 		// display itemlist first
@@ -88,19 +99,13 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 
 		$display_buffer .= "
 			<div ALIGN=\"CENTER\">
-			<input TYPE=\"SUBMIT\" VALUE=\"".(
+			<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".(
 			 ($action=="modform") ? _("Modify") : _("Add"))."\"/>
-			<input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+			<input class=\"button\" TYPE=\"RESET\" VALUE=\"".
+				_("Remove Changes")."\"/>
 			</div>
 			</form>
 		";
-		if ($action=="modform") $display_buffer .= "
-			<p/>
-			<div ALIGN=\"CENTER\">
-			<a HREF=\"$this->page_name?module=$module&action=view\"
-			>"._("Abandon Modification")."</a>
-			</div>
-			";
 	} // end function PlaceOfServiceMaintenance->form
 
 } // end of class PlaceOfServiceMaintenance

@@ -21,7 +21,38 @@ class PatientCoveragesModule extends EMRModule {
 
 	// contructor method
 	function PatientCoveragesModule ($nullvar = "") {
-		// call parent constructor
+		// Table definition
+		$this->table_definition = array (
+			'covdtadd' => SQL_DATE,
+			'covdtmod' => SQL_DATE,
+			'covpatient' => SQL_INT_UNSIGNED(0),
+			'coveffdt' => SQL_TEXT,
+			'covinsco' => SQL_INT_UNSIGNED(0),
+			'covpatinsno' => SQL_VARCHAR(50),
+			'covpatgrpno' => SQL_VARCHAR(50),
+			'covtype' => SQL_INT_UNSIGNED(0),
+			'covstatus' => SQL_INT_UNSIGNED(0),
+			'covrel' => SQL_CHAR(2),
+			'covlname' => SQL_VARCHAR(50),
+			'covfname' => SQL_VARCHAR(50),
+			'covmname' => SQL_CHAR(1),
+			'covaddr1' => SQL_VARCHAR(25),
+			'covaddr2' => SQL_VARCHAR(25),
+			'covcity' => SQL_VARCHAR(25),
+			'covstate' => SQL_CHAR(3),
+			'covzip' => SQL_VARCHAR(10),
+			'covdob' => SQL_DATE,
+			'covsex' => SQL_ENUM(array('m', 'f', 't')),
+			'covinstp' => SQL_INT_UNSIGNED(0),
+			'covprovasgn' => SQL_INT_UNSIGNED(0),
+			'covbenasgn' => SQL_INT_UNSIGNED(0),
+			'covrelinfo' => SQL_INT_UNSIGNED(0),
+			'covrelinfodt' => SQL_DATE,
+			'covplanname' => SQL_VARCHAR(33),
+			'id' => SQL_SERIAL
+		);
+	
+		// Call parent constructor
 		$this->EMRModule($nullvar);
 	} // end function PatientCoveragesModule
 
@@ -43,7 +74,7 @@ class PatientCoveragesModule extends EMRModule {
 		//$this->View();
 		//$display_buffer .= "<CENTER><P><B>Not Implemented</B></P><BR></CENTER>";
 
-		$book = CreateObject('PHP.notebook', array ("action", "id", "module", "been_here", "patient"),
+		$book = CreateObject('PHP.notebook', array ("action", "id", "module", "been_here", "patient", "return"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
 
 		if (!$book->been_here())
@@ -283,7 +314,7 @@ class PatientCoveragesModule extends EMRModule {
 		// step 1 guar or insurance
 		// step2/3 select a guar or insurance if a guar then insurance
 		// step4 all other data
-		$wizard = CreateObject('PHP.wizard', array("been_here", "module", "action", "patient"));
+		$wizard = CreateObject('PHP.wizard', array("been_here", "module", "action", "patient", "return"));
 
 		// Im leaving this in incase we decide later to break it up more
 		$wizard->add_page("Select Coverage Type",
@@ -453,7 +484,7 @@ class PatientCoveragesModule extends EMRModule {
 		{
 			// if the wizard was cancelled
 			global $refresh;
-			if ($GLOBALS['return'] == 'manage') {
+			if ($_REQUEST['return'] == 'manage') {
 				$refresh = "manage.php?id=".urlencode($patient);
 			} else {
 				$refresh = $this->page_name."?module=".

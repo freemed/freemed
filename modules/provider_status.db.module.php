@@ -23,7 +23,7 @@ class ProviderStatusMaintenance extends MaintenanceModule {
 		// Define database table
 		$this->table_definition = array (
 			"phystatus" => SQL_VARCHAR(30),
-			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			"id" => SQL_SERIAL
 		);
 
 		// Call parent constructor

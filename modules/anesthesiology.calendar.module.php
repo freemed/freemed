@@ -34,15 +34,14 @@ class AnesthCalendar extends CalendarModule {
 
 	function view () {
 		global $display_buffer, $anfacility;
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global ${$k};
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// Check for calendar modification
 		//if ($submit=="travelbook") $this->bulk_book();
-		if ($submit=="book") $this->single_book();
+		if ($submit==_("Book")) $this->single_book();
 
 		// Check for calendar deletions
-		if ($submit=="delete") $this->delete_date();
+		if ($submit==_("Delete")) $this->delete_date();
 
 		// For extra space, turn off template
 		$GLOBALS['__freemed']['no_template_display'] = true;
@@ -74,18 +73,18 @@ class AnesthCalendar extends CalendarModule {
 		// Display header
 		$buffer .= "
 		<!-- mini calendar -->
-		<DIV ALIGN=\"CENTER\">
-		<TABLE WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\2\" ".
+		<div ALIGN=\"CENTER\">
+		<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\2\" ".
 		"BORDER=\"0\">
-		<TR>
-		<TD ALIGN=\"LEFT\" VALIGN=\"TOP\" CLASS=\"thinbox\">
-		<FORM ACTION=\"module_loader.php\" METHOD=\"POST\">
-		<TABLE BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
+		<tr>
+		<td ALIGN=\"LEFT\" VALIGN=\"TOP\" CLASS=\"thinbox\">
+		<form ACTION=\"module_loader.php\" METHOD=\"POST\">
+		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
 		 WIDTH=\"100%\">
-		<TR>
-		<TD COLSPAN=\"2\"><B>"._("Anesthesiology Scheduler")."</B> for
-		<INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\">
+		<tr>
+		<td COLSPAN=\"2\"><b>"._("Anesthesiology Scheduler")."</b> for
+		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\"/>
 			".html_form::select_widget(
 				"anfacility",
 				freemed::query_to_array(
@@ -96,25 +95,25 @@ class AnesthCalendar extends CalendarModule {
 				),
 				array('refresh' => true)
 			)."
-		</TD></TR>
-		</TABLE>
-		</TD>
-		<TD>".fc_generate_calendar_mini(
+		</td></tr>
+		</table>
+		</td>
+		<td>".fc_generate_calendar_mini(
 				$selected_date,
 				"module_loader.php?".
 					"module=".urlencode($module)."&".
 					"anfacility=".urlencode($anfacility)."&".
 					"action=".urlencode($action)
-		)."</TD></TR>
-		</TABLE>
-		</DIV>
-		<BR>
+		)."</td></tr>
+		</table>
+		</div>
+		<br/>
 
 		<!-- full calendar -->
-		<DIV ALIGN=\"CENTER\">
-		<TABLE WIDTH=\"100%\" CELLSPACING=\0\" CELLPADDING=\"2\" ".
+		<div ALIGN=\"CENTER\">
+		<table WIDTH=\"100%\" CELLSPACING=\0\" CELLPADDING=\"2\" ".
 		"BORDER=\"0\" CLASS=\"calendar\">
-		<TR><TD>
+		<tr><td>
 		"._("Book")."
 		".html_form::select_widget("anphysician",
 			freemed::query_to_array(
@@ -125,19 +124,19 @@ class AnesthCalendar extends CalendarModule {
 				"ORDER BY phylname, phyfname"
 			)
 		)." "._("on selected date")."
-		</TD>
-		<TD>
-		<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"book\">
-		</FORM>
-		</TD></TR>
-		</TABLE>
-		</DIV>
-		<BR><BR>
-		<DIV ALIGN=\"CENTER\">
-		<A HREF=\"calendar.php\">"._("Calendar")."</A> |
-		<A HREF=\"main.php\">"._("Return to Main Menu")."</A>
-		</DIV>
-		";
+		</td>
+		<td>
+		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\" ".
+			"VALUE=\""._("Book")."\"/>
+		</form>
+		</td></tr>
+		</table>
+		</div>
+		<p/>
+		".template::link_bar(array(
+			_("Calendar") => "calendar.php",
+			_("Return to Main Menu") => "main.php"
+		));
 
 		return $buffer;
 	} // end function AnesthCalendar->displayForm
@@ -146,7 +145,7 @@ class AnesthCalendar extends CalendarModule {
 
 	// Book single day of anesthesiologist
 	function single_book() {
-		foreach ($GLOBALS AS $k => $v) global ${$k};
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// Determine if day is already booked for this person,
 		// if so, change it.

@@ -27,10 +27,20 @@ class CovtypesMaintenance extends MaintenanceModule {
 	);
 
 	function CovtypesMaintenance () {
-		// run constructor
-		$this->MaintenanceModule();
 		global $covtpdtmod;
 		$covtpdtmod = date("Y-m-d");
+
+		// Table definition
+		$this->table_definition = array (
+			'covtpname' => SQL_VARCHAR(5),
+			'covtpdescrip' => SQL_VARCHAR(60),
+			'covtpdtadd' => SQL_DATE,
+			'covtpdtmod' => SQL_DATE,
+			'id' => SQL_SERIAL
+		);
+		
+		// Run parent constructor
+		$this->MaintenanceModule();
 	} // end constructor CovtypesMaintenance	
 
 	function view () {

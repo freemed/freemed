@@ -690,9 +690,9 @@ class GenerateFormsModule extends BillingModule {
 		 ($this_physician->getMapId($this_insco->local_record[inscogroup]))
 		 );
 
-		if ($SESSION["default_facility"]>0)
+		if ($_SESSION["default_facility"]>0)
 		{
-		   $dfltfac = freemed::get_link_rec($SESSION["default_facility"],"facility");
+		   $dfltfac = freemed::get_link_rec($_SESSION["default_facility"],"facility");
 		   $taxid = $dfltfac[psrein];
 		   $boxein = "X";
 		   $boxssn = "";

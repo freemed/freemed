@@ -83,7 +83,7 @@ class PrescriptionModule extends EMRModule {
 			'rxrefills' => SQL_INT_UNSIGNED(0),
 			'rxperrefill' => SQL_INT_UNSIGNED(0),
 			'rxnote' => SQL_TEXT,
-			'id' => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			'id' => SQL_SERIAL
 		);
 
 		$this->variables = array (

@@ -32,7 +32,7 @@ class IntakeReportModule extends EMRReportModule {
 		// this function is called when the View button is
 		// clicked on the patient menu
 
-		global $patient,$sql,$pt, $SESSION;
+		global $patient,$sql,$pt;
 		$this_patient = CreateObject('FreeMED.Patient', $patient);
 
 		$display_buffer .= "<HTML><BODY BGCOLOR=\"#FFFFFF\">\n";
@@ -59,9 +59,9 @@ class IntakeReportModule extends EMRReportModule {
 			$pt[calltime] = "N/A";
 		
 		}
-		if ($SESSION["default_facility"] > 0) {
+		if ($_SESSION["default_facility"] > 0) {
 			$fac_row = 0;
-			$fac_row = freemed::get_link_rec($SESSION["default_facility"],"facility");
+			$fac_row = freemed::get_link_rec($_SESSION["default_facility"],"facility");
 			if ($fac_row) {
 				$pt[facility] = $fac_row[psrname]." "."Intake Report";
 				$facaddr = $fac_row[psraddr1];

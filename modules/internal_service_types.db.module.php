@@ -22,6 +22,13 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 	); 
 
 	function InternalServiceTypesMaintenance() {
+		// Table definition
+		$this->table_definition = array (
+			'intservtype' => SQL_VARCHAR(50),
+			'id' => SQL_SERIAL
+		);
+
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor InternalServiceTypesMaintenance
 
@@ -31,58 +38,32 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-  if (strlen($id)<1) {
-    $display_buffer .= "
+		 // grab record number "id"
+		$r = freemed::get_link_rec($id, $this->table_name);
+		foreach ($r AS $k => $v) {
+			global ${$k};
+			${$k} = stripslashes($v);
+		}
 
-     <B><CENTER>Please use the MODIFY form to MODIFY a
-       $this->record_name!</B>
-     </CENTER>
+		$display_buffer .= "
+		<p/>
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"/> 
+		<input TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"/> 
+		<input TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 
-     <P>
-    ";
-
-    $display_buffer .= "
-      <CENTER>
-      <A HREF=\"main.php\"
-       >"._("Return to the Main Menu")."</A>
-      </CENTER>
-    ";
-    template_display();
-  }
-
-    // grab record number "id"
-  $r = freemed::get_link_rec($id, $this->table_name);
-  foreach ($r AS $k => $v) {
-    global ${$k};
-    ${$k} = stripslashes($v);
-  }
-
-  $display_buffer .= "
-    <p/>
-    <FORM ACTION=\"$this->page_name\" METHOD=\"POST\">
-    <input TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"/> 
-    <input TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"/> 
-    <input TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
-
-    <div ALIGN=\"CENTER\">
-    "._($this->record_name)." :
-    ".html_form::text_widget('intservtype', 25, 50)."
-    </div>
+		<div ALIGN=\"CENTER\">
+		"._($this->record_name)." :
+		".html_form::text_widget('intservtype', 25, 50)."
+		</div>
  
-    <p/>
-    <div ALIGN=\"CENTER\">
-    <input TYPE=\"SUBMIT\" VALUE=\" "._("Modify")." \"/>
-    <input TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
-    </div></form>
-  ";
+		<p/>
+		<div ALIGN=\"CENTER\">
+		<input TYPE=\"SUBMIT\" VALUE=\" "._("Modify")." \"/>
+		<input TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
+		</div></form>
+		";
 
-  $display_buffer .= "
-    <P>
-    <CENTER>
-    <A HREF=\"$this->page_name?module=$module\"
-     >"._("Abandon Modification")."</A>
-    </CENTER>
-  ";
 	} // end function InternalSericeTypesMaintenance->modform()
 
 	function view () {

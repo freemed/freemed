@@ -11,6 +11,7 @@ class PatientTable extends MaintenanceModule {
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
 	var $MODULE_VERSION = '0.6.0';
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -106,7 +107,7 @@ class PatientTable extends MaintenanceModule {
 			'ptcproblems' => SQL_TEXT,
 			'ptops' => SQL_TEXT,
 			'iso' => SQL_VARCHAR(15),
-			'id' => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+			'id' => SQL_SERIAL
 		);
 
 		// Call parent constructor

@@ -14,9 +14,9 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
-	var $table_name  ="insmod";
-	var $record_name="Insurance Modifiers";
-	var $order_field="insmoddesc";
+	var $table_name = "insmod";
+	var $record_name = "Insurance Modifiers";
+	var $order_field = "insmoddesc";
  
 	var $variables = array (
 		"insmod",
@@ -24,6 +24,14 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 	);
  
 	function InsuranceModifiersMaintenance () {
+		// Table definition
+		$this->table_definition = array (
+			'insmod' => SQL_VARCHAR(15),
+			'insmoddesc' => SQL_VARCHAR(50),
+			'id' => SQL_SERIAL
+		);
+
+		// Run parent constructor
 		$this->MaintenanceModule();
 	} // end constructor InsuranceModifiersMaintenance
 
@@ -31,45 +39,33 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 
 	function modform () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		$r = freemed::get_link_rec ($id, $this->table_name);
 		extract ($r);
 
 		$display_buffer .= "
-    <P>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"> 
-    <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\">
+		<p/>
+		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+		<input TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"/> 
+		<input TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"/> 
+		<input TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 
-    ".html_form::form_table ( array (
+		".html_form::form_table ( array (
+		_("Modifier") =>
+			html_form::text_widget('insmod', 15),
+		_("Description") =>
+			html_form::text_widget('insmoddesc', 20, 50)
+		) )."
 
-    _("Modifier") =>
-    "<INPUT TYPE=TEXT NAME=\"insmod\" SIZE=16 MAXLENGTH=15 
-     VALUE=\"".prepare($insmod)."\">",
-
-    _("Description") =>
-    "<INPUT TYPE=TEXT NAME=\"insmoddesc\" SIZE=20 MAXLENGTH=50 
-     VALUE=\"".prepare($insmoddesc)."\">"
-
-    ) )."
-
-    <P>
-    <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" ".
-     ( ($action=="addform") ? _("Add") : _("Modify") )." \">
-    <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
-    </CENTER></FORM>
-		";
-
-		$display_buffer .= "
-    <P>
-    <CENTER>
-    <A HREF=\"$this->page_name?module=$module&action=view\"
-     >"._("Abandon ".( ($action=="addform") ? "Addition" : "Modification" )).
-     "</A>
-    </CENTER>
+		<p/>
+		<div ALIGN=\"CENTER\">
+		<input class=\"button\" type=\"SUBMIT\" VALUE=\" ".
+		 ( ($action=="addform") ? _("Add") : _("Modify") )." \"/>
+		<input TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
+		<input class=\"button\" name=\"submit\" ".
+		"type=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+		</div></form>
+		<p/>
 		";
 	} // end function InsuranceModifiersMaintenance->modform()
 
@@ -78,12 +74,16 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 		global $sql, $module;
 
 		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT * FROM $this->table_name ".
-				"ORDER BY $this->order_field"),
+			$sql->query(
+				"SELECT * ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY ".$this->order_field
+			),
 			$this->page_name,
 			array (
-				_("Modifier")		=>	"insmod",
-				_("Description")	=>	"insmoddesc"
+				_("Modifier") => "insmod",
+				_("Description") => "insmoddesc"
 			),
 			array (
 				"",
@@ -91,26 +91,25 @@ class InsuranceModifiersMaintenance extends MaintenanceModule {
 			)
 		);  
 		$display_buffer .= "
-   <CENTER>
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
-    <TR>
-     <TD>"._("Modifier")."</TD>
-     <TD>"._("Description")."</TD>
-     <TD>&nbsp;</TD>
-    </TR>
-    <TR VALIGN=CENTER>
-    <TD VALIGN=CENTER><FORM ACTION=\"$this->page_name\" METHOD=POST
-     ><INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
-      <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-     <INPUT TYPE=TEXT NAME=\"insmod\" SIZE=15
-      MAXLENGTH=16></TD>
-    <TD VALIGN=CENTER>
-     <INPUT TYPE=TEXT NAME=\"insmoddesc\" SIZE=20
-      MAXLENGTH=50></TD>
-    <TD VALIGN=CENTER><INPUT TYPE=SUBMIT VALUE=\""._("Add")."\"></FORM></TD>
-    </TR>
-   </TABLE>
-   </CENTER>
+		<div ALIGN=\"CENTER\">
+		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\">
+		 <tr>
+		  <td>"._("Modifier")."</td>
+		  <td>"._("Description")."</td>
+		  <td>&nbsp;</td>
+		 </tr>
+		 <tr VALIGN=\"CENTER\">
+		 <td VALIGN=\"CENTER\"><FORM ACTION=\"$this->page_name\" METHOD=\"POST\">
+		  <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"add\"/>
+		  <input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		  <input TYPE=\"TEXT\" NAME=\"insmod\" SIZE=\"15\" MAXLENGTH=\"16\"></td>
+		 <td VALIGN=\"CENTER\">
+		  <input TYPE=\"TEXT\" NAME=\"insmoddesc\" SIZE=\"20\"
+		   MAXLENGTH=\"50\"></td>
+		 <td VALIGN=\"CENTER\"><input TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"></form></td>
+		 </tr>
+		</table>
+		</div>
 		";
 	} // end function InsuranceModifiersMaintenance->view()
 

@@ -65,39 +65,28 @@ class ViewCalendar extends CalendarModule {
 		$prevdate = $this->prevyear."-".$this->prevmonth."-01";
 
 		// prev  and next
-		$display_buffer .= "<CENTER>";
-		$display_buffer .= "<A HREF=\"$this->page_name?".
-			"action=view&module=$module&jumpdate=$prevdate\">Prev</A>";
+		$display_buffer .= "<form ACTION=\"$this->page_name\" METHOD=\"POST\">\n";
+		$display_buffer .= "<div align=\"CENTER\" valign=\"MIDDLE\">\n";
+		$display_buffer .= "<a class=\"button\" HREF=\"$this->page_name?".
+			"action=view&module=$module&jumpdate=$prevdate\">Prev</a>\n";
 		$display_buffer .= "&nbsp;";
-		$display_buffer .= "<A HREF=\"$this->page_name".
-			"?action=view&module=$module&jumpdate=$nextdate\">Next</A>";
-		$display_buffer .= "</CENTER>";
+		$display_buffer .= "<a class=\"button\" HREF=\"$this->page_name".
+			"?action=view&module=$module&jumpdate=$nextdate\">Next</a>\n";
 
 		// allow jumping to any year or month
-		$display_buffer .= "<CENTER>";
-		$display_buffer .= "<FORM ACTION=\"$this->page_name\" METHOD=POST>".
-			 "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">".
+		$display_buffer .= 
+			 "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>\n".
 			 fm_date_entry("jumpdate").
-			 "<INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">".
-			 "</FORM></CENTER>";
-
-		$display_buffer .= "<CENTER>";
-		$display_buffer .= "<A HREF=\"calendar.php\">"._("Menu")."</A>";
-		$display_buffer .= "</CENTER>";
-
+			 "<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Go")."\"/>\n".
+			 "<a class=\"button\" href=\"calendar.php\">".
+			 	_("Calendar")."</a>\n".
+			 "</div></form>\n";
 	} // end function module->view
-
-	function form () {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global $$k;
-	} // end function ViewCalendar->form
 
 	// display the pop window when an event is clicked on the calendar
 	function display () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 		//global $ptname, $phname, $facname, $roomname, $time, $prenote, $postnote;
 
 		$GLOBALS['__freemed']['no_template_display'] = true;
@@ -150,26 +139,19 @@ class ViewCalendar extends CalendarModule {
 
 		//if ($calminute==0) $calminute="00";
 
-		// time checking/creation if/else clause
-		//if ($row["calhour"]<12)
-		//	$_time = $row["calhour"].":".$calminute." AM";
-		//elseif ($row["calhour"]==12)
-		//	$_time = $row["calhour"].":".$calminute." PM";
-		//else
-		//	$_time = ($r["calhour"]-12).":".$calminute." PM";
+		// Time formatting
 		$time = fc_get_time_string($calhour,$calminute);
-		
 
 		$data = "";	
 		$data = html_form::form_table(array (
-									_("Patient") => $ptname,
-									_("Physician") => $phname,
-									_("Facility") => $facname,
-									_("Room") => $roomname,
-									_("Time") => $time,
-									_("Pre Note") => $prenote,
-									_("Post Note") => $postnote)
-									);
+				_("Patient") => $ptname,
+				_("Physician") => $phname,
+				_("Facility") => $facname,
+				_("Room") => $roomname,
+				_("Time") => $time,
+				_("Pre Note") => $prenote,
+				_("Post Note") => $postnote)
+		);
 		$display_buffer .= "<div CLASS=\"letterbox\">$data</div>\n";
 		$display_buffer .= "<div ALIGN=\"CENTER\">\n".
 			"<a HREF=\"javascript:window.close();\">".

@@ -45,6 +45,25 @@ class AuthorizationsModule extends EMRModule {
 	);
 
 	function AuthorizationsModule () {
+		// Table definition
+		$this->table_definition = array (
+			'authdtadd' => SQL_DATE,
+			'authdtmod' => SQL_DATE,
+			'authpatient' => SQL_INT_UNSIGNED(0),
+			'authdtbegin' => SQL_DATE,
+			'authdtend' => SQL_DATE,
+			'authnum' => SQL_VARCHAR(25),
+			'authtype' => SQL_INT_UNSIGNED(0),
+			'authprov' => SQL_INT_UNSIGNED(0),
+			'authprovid' => SQL_VARCHAR(20),
+			'authinsco' => SQL_INT_UNSIGNED(0),
+			'authvisits' => SQL_INT_UNSIGNED(0),
+			'authvisitsused' => SQL_INT_UNSIGNED(0),
+			'authvisitsremain' => SQL_INT_UNSIGNED(0),
+			'authcomment' => SQL_VARCHAR(100),
+			'id' => SQL_SERIAL
+		);
+	
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			_("From") => "authdtbegin",
@@ -89,6 +108,7 @@ class AuthorizationsModule extends EMRModule {
        <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
        <INPUT TYPE=HIDDEN NAME=\"authpatient\" VALUE=\"".prepare($patient)."\">
        <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\">
+       <INPUT TYPE=HIDDEN NAME=\"return\"  VALUE=\"".prepare($return)."\">
 
 	";
 
@@ -144,13 +164,13 @@ class AuthorizationsModule extends EMRModule {
 	));
  
 	$display_buffer .= "
-       <CENTER>
-       <INPUT TYPE=SUBMIT VALUE=\"  ".
-         ( ($action=="addform") ? _("Add") : _("Modify"))."  \">
-       <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\">
-       </CENTER>
-       </FORM>
+       <div ALIGN=\"CENTER\">
+       <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"  ".
+         ( ($action=="addform") ? _("Add") : _("Modify"))."  \"/>
+       <input TYPE=\"RESET\" VALUE=\" "._("Clear")." \" class=\"button\"/>
+	<input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\" class=\"button\"/>
+       </div>
+       </form>
      ";
 	} // end function AuthorizationsModule->form()
 

@@ -199,10 +199,10 @@ class GenerateStatementsModule extends BillingModule {
 		global $display_buffer;
 		reset ($this->renderform_variables);
 		while (list($k,$v)=each($this->renderform_variables)) global $$v;
-		global $sql, $SESSION;
+		global $sql;
 		
 		$row = $stack[0];
-		$fac = $SESSION["default_facility"];
+		$fac = $_SESSION["default_facility"];
 
 		if ($fac <= 0)
 		{
