@@ -233,6 +233,13 @@ switch ($action) {
   ";
   break;
 
+	// deletes should fall through
+ case "del":
+ if ($id>0) {
+	$sql->query("DELETE FROM callin WHERE id='".addslashes($id)."'");
+ }
+ // no break
+
  default:
   // Set page title
   $page_title = $record_name;
@@ -329,7 +336,10 @@ switch ($action) {
 
       __("Book") =>
      "book_appointment.php?action=&".
-      "patient=$id&type=temp"
+      "patient=$id&type=temp",
+
+      __("Delete") =>
+	"call-in.php?id=".urlencode($id)."&action=del"
     ), array('align' => 'LEFT'));
 
     $display_buffer .= "
