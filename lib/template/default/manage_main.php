@@ -231,6 +231,7 @@ foreach ($static_components AS $garbage => $component) {
 				"<TD><b>".__("Date")."</b></TD>".
 				"<TD><b>".__("Time")."</b></TD>".
 				"<TD><b>".__("Sender")."</b></TD>".
+				"<TD><b>".__("Recipient")."</b></TD>".
 				"<TD><b>".__("Action")."</b></TD>".
 				"</tr>\n";
 			while ($my_r = $sql->fetch_array($my_result)) {
@@ -242,11 +243,15 @@ foreach ($static_components AS $garbage => $component) {
 				$hour = substr($my_r['msgtime'], 8, 2);
 				$min  = substr($my_r['msgtime'], 10, 2);
 
+				$phyfrom = CreateObject('FreeMED.User', $my_r['msgby']);
+				$phyto = CreateObject('FreeMED.User', $my_r['msgfor']);
+
 				// Form the panel
 				$panel[__("Messages")] .= "<tr>".
 					"<TD ALIGN=\"LEFT\"><SMALL>$y-$m-$d</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$scheduler->get_time_string($hour,$min)."</SMALL></TD>".
-					"<TD ALIGN=\"LEFT\"><SMALL>".$this_user->getDescription()."</SMALL></TD>".
+					"<TD ALIGN=\"LEFT\"><SMALL>".$phyfrom->getDescription()."</SMALL></TD>".
+					"<TD ALIGN=\"LEFT\"><SMALL>".$phyto->getDescription()."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\">".
 					html_form::confirm_link_widget(
 					"messages.php?action=remove&id=".$my_r['id'].
