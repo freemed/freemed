@@ -466,8 +466,26 @@ class TeX {
 
 			case 'field':
 				// Format:
-				//	field:(fieldname)
-				return $this->_HTMLToRichText($rec[$params[1]]);
+				//	field:(fieldname):(optionalformatting)
+				switch ($params[2]) {
+					case 'html':
+					return '\dohtml'."\n".
+						'<html>'."\n".
+						$rec[$params[1]]."\n".
+						'</html>'."\n";
+					break;
+
+					case 'date':
+					return $this->_SanitizeText(fm_date_print($rec[$params[1]]));
+					break;
+
+					case 'phone':
+					return $this->_SanitizeText('('.substr($rec[$params[1]], 0, 3).') '.substr($rec[$params[1]], 3, 3).'-'.substr($rec[$params[1]], 6, 4));
+
+					default:
+					return $this->_HTMLToRichText($rec[$params[1]]);
+					break;
+				}
 				break; // end field
 
 			case 'link':
@@ -482,6 +500,9 @@ class TeX {
 					case 'phone':
 					$ph = $linkrec[$params[3]];
 					return $this->_SanitizeText('('.substr($ph, 0, 3).') '.substr($ph, 3, 3).'-'.substr($ph, 6, 4));
+					break;
+
+					case 'multiple':
 					break;
 
 					default:
