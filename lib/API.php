@@ -851,6 +851,36 @@ class freemed {
 		}
 	} // end function freemed::patient_widget
 
+	// Function: freemed::printers_widget
+	//
+	//	Create XHTML widget to represent printer selection
+	//
+	// Parameters:
+	//
+	//	$varname - Name of the variable which will hold the
+	//	data returned by this widget
+	//
+	// Returns:
+	//
+	//	XHTML compliant widget code
+	//
+	function printers_widget ( $varname ) {
+		global $this_user;
+		if (!is_object($this_user)) {
+			$this_user = CreateObject('FreeMED.User');
+		}
+
+		static $_driver;
+		if (!isset($_driver)) {
+			$_driver = CreateObject('PHP.PrinterWrapper');
+		}
+
+		return html_form::select_widget(
+			$varname,
+			$_driver->driver->GetPrinters()
+		);
+	} // end function freemed::printers_widget
+
 	// Function: freemed::query_to_array
 	//
 	//	Dumps the output of an SQL query to a multidimentional
@@ -2384,41 +2414,13 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	if (freemed::config_value('date_widget_type') == 'js') {
 		#static $already_js;
 		if (!$already_js) {
-			$buffer .= "<link rel=\"stylesheet\" type=\"text/css\" ".
-				"media=\"all\" ".
-				"href=\"lib/template/default/calendar-system.css\"></link>\n";
+			$buffer .= "<link rel=\"Stylesheet\" type=\"text/css\" href=\"lib/template/default/calendar-system.css\"></link>\n";
 			$buffer .= "<script language=\"javascript\" ".
 				"src=\"lib/template/default/calendar_stripped.js\"></script>\n";
 			$buffer .= "<script language=\"javascript\" ".
 				"src=\"lib/template/default/calendar-en.js\"></script>\n";
 			$buffer .= "<script language=\"javascript\" ".
 				"src=\"lib/template/default/calendar-setup_stripped.js\"></script>\n";
-			$buffer .= "
-			<script language=\"javascript\">
-			var calendar = null;
-			function selected (cal, date) {
-				cal.sel.value = date;
-			}
-			function closeHandler(cal) {
-				cal.hide();
-			}
-			function showCalendar(id) {
-			var el = document.getElementById(id);
-			if (calendar != null) {
-				calendar.hide();
-				calendar.parseDate(el.value);
-			} else {
-				var cal = new Calendar(true, null, selected, closeHandler);
-				calendar = cal;
-				cal.setRange(1900, 2070);
-				calendar.create();
-			}
-			calendar.sel = el;
-			calendar.showAtElement(el);
-			return false;
-			}
-			</script>
-			";
 			$already_js = true;
 		}
 		$buffer .= html_form::text_widget (
@@ -2429,15 +2431,18 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 			)
 		);
 		$buffer .= "
+		<img src=\"lib/template/default/img/calendar_widget.gif\" border=\"0\" id=\"".$datevarname."_img\" />
 		<script type=\"text/javascript\">
 		Calendar.setup({
 			inputField	:	\"".$datevarname."_cal\",
-			ifFormat	:	\"y-dd-mm\",
-			singleClick	:	true
+			ifFormat	:	'%Y-%m-%d',
+			daFormat	:	'Y-d-m',
+			singleClick	:	true,
+			".( !empty(${$datevarname}) ?
+			"date		:	'".${$datevarname}."'," : '' )."
+			button		:	\"".$datevarname."_img\"
 		});
 		</script>
-		<img src=\"lib/template/default/img/calendar_widget.gif\" border=\"0\" ".
-			"onClick=\"return showCalendar('".$datevarname."_cal');\" />
 		";
 		return $buffer;
 	}
