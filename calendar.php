@@ -19,12 +19,8 @@ $page_title = _("Calendar");
 page_push ();
 
  // Check for appropriate access level
-if (freemed_get_userlevel () < $database_level) { 
-   $display_buffer .= "
-      <P>
-        "._("You don't have access for this menu.")."
-      <P>
-    ";
+if (!freemed::user_flag(USER_DATABASE)) {
+	$display_buffer .= " <P>"._("You don't have access for this menu.")."</P>\n";
 	template_display();
 } // end if not appropriate userlevel
 
