@@ -364,17 +364,18 @@ class freemed {
 	//	associated handlers. None are passed by default.
 	//
 	function handler_breakpoint ( $name, $params = NULL ) {
-		LoadObjectDependency('PHP.module');
 		$handlers = freemed::module_handler($name);
 		if (is_array($handlers)) {
 			foreach ($handlers AS $class => $handler) {
 				if ($params != NULL) {
-					$reply = module_function ($class, $handler, $params);
+					$reply[] = module_function ($class, $handler, $params);
 				} else {
-					$reply = module_function ($class, $handler);
+					$reply[] = module_function ($class, $handler);
 				}
 			}
+			return $reply;
 		}
+		return false;
 	} // end function freemed::handler_breakpoint
 
 	// Function: freemed::itemlist_conditions

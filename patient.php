@@ -767,6 +767,8 @@ switch ($action) {
       <div ALIGN=\"CENTER\"><b>".( (($action=="mod") OR ($action=="modform")) ?
              __("Modifying") : __("Adding") )." ...</b> ";
      $result = $sql->query($query);
+     if ($action == 'addform') { $pid = $sql->last_record($result); }
+     if ($action == 'modform') { $pid = $id; }
      if ($result) $display_buffer .= __("Done");
      else $display_buffer .= __("Error");
      $display_buffer .= "<br/>\n";
@@ -822,8 +824,10 @@ switch ($action) {
       
       </div>
      ";
+     // Handle breakpoints
+     	if ($action=='addform') { freemed::handler_breakpoint('PatientAdd', array ($pid)); }
+     	if ($action=='modform') { freemed::handler_breakpoint('PatientModify', array ($pid)); }
    } // end checking if done
-
    break; // end action add/mod
 
   case "delete":
@@ -840,6 +844,7 @@ switch ($action) {
     $result = $sql->query ($query);
     if ($result) { $display_buffer .= __("done")."."; }
      else        { $display_buffer .= __("ERROR");    }
+    freemed::handler_breakpoint('PatientDelete', array ($pid));
 	// Take care of scheduler entries
     //$query = "DELETE FROM scheduler WHERE calpatient='".addslashes($id)."'";
     //$result = $sql->query ($query);
