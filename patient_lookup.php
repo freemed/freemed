@@ -61,6 +61,11 @@ switch ($action) {
 
 	$query = "SELECT * FROM patient WHERE ".implode(" AND ", $wheres)." ".
 		"ORDER BY ptlname, ptfname, ptcity";
+	if ($_REQUEST['id'] > 0) {
+		$query = "SELECT * FROM patient ".
+			"WHERE id='".addslashes($_REQUEST['id'])."' ".
+			"ORDER BY ptlname, ptfname, ptcity";
+	}
 	$result = $sql->query($query);
 
 	// If no results, die right here
@@ -189,6 +194,19 @@ switch ($action) {
 				"city",
 				$sql->distinct_values(
 					"patient", "ptcity"
+				)
+			),
+
+			__("Recent") =>
+			html_form::select_widget(
+				"id",
+				array_merge(
+					array ( '----' => 0 ),
+					patient_history_list()
+				),
+				array (
+					'style' => 'width: 220px;',
+					'refresh' => true
 				)
 			)
 		))."

@@ -979,7 +979,7 @@ class freemed {
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'patientPopup', ".
-				"'width=400,height=200,menubar=no,titlebar=no'); ".
+				"'width=450,height=250,menubar=no,titlebar=no'); ".
 				"patientPopup.opener=self; return true;\" ".
 				"VALUE=\"".__("Change")."\"/>\n".
 				"<input class=\"button\" TYPE=\"BUTTON\" ".
@@ -996,7 +996,7 @@ class freemed {
 				urlencode($varname)."&submitname=".
 				urlencode($submitname)."&formname=".
 				urlencode($formname)."', 'patientPopup', ".
-				"'width=400,height=200,menubar=no,titlebar=no'); ".
+				"'width=450,height=250,menubar=no,titlebar=no'); ".
 				"patientPopup.opener=self; return true;\" ".
 				"VALUE=\"".__("Patient Lookup")."\" ".
 				"class=\"button\" />";
