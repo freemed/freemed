@@ -20,17 +20,17 @@ class CalendarModule extends BaseModule {
 	var $ProcessType = "VIEW";
 	var $SECONDS_PER_DAY = 86400; // 60*60*24
 	var $months_hash = array( "01" => "January",
-								"02" => "February",
-								"03" => "March",
-								"04" => "April",
-								"05" => "May",
-								"06" => "June",
-								"07" => "July",
-								"08" => "August",
-								"09" => "September",
-								"10" => "October",
-								"11" => "November",
-								"12" => "December" );
+			"02" => "February",
+			"03" => "March",
+			"04" => "April",
+			"05" => "May",
+			"06" => "June",
+			"07" => "July",
+			"08" => "August",
+			"09" => "September",
+			"10" => "October",
+			"11" => "November",
+			"12" => "December" );
 
 	var $month_name;
 	var $month_number;
@@ -79,8 +79,9 @@ class CalendarModule extends BaseModule {
 			$this->this_user    = CreateObject('FreeMED.User');
 
 		// display universal patient box
-        if ($patient)
+		if ($patient) {
 			$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
+		}
 
 		switch ($action) {
 			case "add":
@@ -133,10 +134,10 @@ class CalendarModule extends BaseModule {
 	function add () { $this->_add(); }
 	function _add () {
 		global $display_buffer;
-		foreach ($GLOBALS as $k => $v) global $$k;
+		foreach ($GLOBALS as $k => $v) { global ${$k}; }
 	
 		$display_buffer .= "
-			<P><CENTER>
+			<p/><div align=\"CENTER\">
 			"._("Adding")." ...
 		";
 
@@ -151,12 +152,12 @@ class CalendarModule extends BaseModule {
 		 else		 { $display_buffer .= "<B>"._("ERROR")."</B>\n"; }
 
 		$display_buffer .= "
-			</CENTER>
-			<P>
-			<CENTER>
-				<A HREF=\"$this->page_name?module=$module&patient=$patient\"
-				>"._("back")."</A>
-			</CENTER>
+			</div>
+			<p/>
+			<div align=\"CENTER\">
+				<a class=\"button\" HREF=\"$this->page_name?module=$module&patient=$patient\"
+				>"._("back")."</a>
+			</div>
 		";
 
 	} // end function _add
@@ -651,9 +652,9 @@ class CalendarModule extends BaseModule {
 
 	  if ($this->ProcessType == "ADMIN")
 	  {
-  		  $theday_link = "<A HREF=\"$this->page_name?action=display&module=".prepare($module).
+  		  $theday_link = "<a HREF=\"$this->page_name?action=display&module=".prepare($module).
 		  	  "&month=$this->month_number&day=$theday&year=$this->year\"".
-			  ">$theday</A>";
+			  ">$theday</a>";
 		  $theday = $theday_link;
 			
 	  }

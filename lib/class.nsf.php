@@ -523,7 +523,6 @@ class NSF
 	function ProviderHeader($procstack)
 	{
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-		$SESSION = &$_SESSION['SESSION'];
 		
 		//unset($GLOBALS[ba0]);
 		//unset($GLOBALS[ba1]);
@@ -565,11 +564,11 @@ class NSF
 		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
 
 		$ba0[taxid] = "";
-		if ($SESSION["default_facility"] != 0)
+		if ($_SESSION['default_facility'] != 0)
 		{
 			$fac = 0;
 			$fac = freemed::get_link_rec(
-				$SESSION["default_facility"],
+				$_SESSION['default_facility'],
 				"facility"
 			);
 			if (!$fac)
@@ -1205,52 +1204,47 @@ class NSF
    		$zabuffer = render_fixedRecord ($this->formno,$this->record_types["za0"]);
 		$new_buffer = $buffer.$zabuffer;
 		return $new_buffer;
-
-
 	} // end file trailer
 
 	// convert int to float
 	// then strip out the "."
 	function MakeDecimal($data,$places)
-    {
-        $data = bcadd($data,0,$places);
-        $data = $this->CleanNumber($data);
-        return $data;
-    }
+	{
+		$data = bcadd($data,0,$places);
+		$data = $this->CleanNumber($data);
+		return $data;
+	}
 
 	// all reporting data must stipped of junk
     // and all upper cased
-    function CleanChar($data)
-    {
-        $data = stripslashes($data);
-        $data = str_replace("/"," ",$data);
-        $data = str_replace("'"," ",$data);
-        $data = str_replace("-"," ",$data);
-        $data = str_replace(";"," ",$data);
-        $data = str_replace("(","",$data);
-        $data = str_replace(")","",$data);
-        $data = str_replace(":"," ",$data);
-        $data = str_replace("."," ",$data);
-        $data = str_replace(","," ",$data);
-        $data = trim($data);
-        $data = strtoupper($data);
-            return $data;
-
-    } // end cleanchar
+	function CleanChar($data)
+	{
+		$data = stripslashes($data);
+		$data = str_replace("/"," ",$data);
+		$data = str_replace("'"," ",$data);
+		$data = str_replace("-"," ",$data);
+		$data = str_replace(";"," ",$data);
+		$data = str_replace("(","",$data);
+		$data = str_replace(")","",$data);
+		$data = str_replace(":"," ",$data);
+		$data = str_replace("."," ",$data);
+		$data = str_replace(","," ",$data);
+		$data = trim($data);
+		$data = strtoupper($data);
+		return $data;
+	} // end cleanchar
 
 
     // all reporting data must stipped of junk
     // and all upper cased then for number all blanks
     // removed
-    function CleanNumber($data)
-    {
-
-        $data = $this->CleanChar($data);
-        $data = str_replace(" ","",$data);
-        $data = trim($data);
-        return $data;
-
-    } // end cleannumber
+	function CleanNumber($data)
+	{
+		$data = $this->CleanChar($data);
+		$data = str_replace(" ","",$data);
+		$data = trim($data);
+		return $data;
+	} // end cleannumber
 
 	
 	function GetRelationShip($rel,$type="NSF")
