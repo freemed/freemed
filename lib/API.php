@@ -172,7 +172,7 @@ function freemed_display_arraylist ($var_array, $xref_array="")
         $buffer .= "
           <TD ALIGN=CENTER>
             <$STDFONT_B SIZE=\"-1\">
-	    ".((strlen($item_text)>1) ? $item_text : "&nbsp;")."
+	    ".((strlen($item_text)>0) ? $item_text : "&nbsp;")."
 	    <$STDFONT_E>
           </TD>";
       $buffer .= "
