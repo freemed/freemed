@@ -7,6 +7,10 @@
 //----- Load the Patient object
 $this_patient = new Patient ($id);
 
+//----- Use "current_patient" SESSION variable if it's there
+if (!$id and ($SESSION["current_patient"]>0))
+	$id = $SESSION["current_patient"];
+
 if ($id<1) {
   // if someone needs to 1st go to the patient menu
       $display_buffer .= "
