@@ -8,7 +8,14 @@ include ("lib/freemed.php");
 include ("lib/calendar-functions.php");
 
 //----- Login/authenticate
-freemed_open_db ();
+freemed::connect ();
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"showappointment.php|user $user_to_log");}	
+
+
+
 
 if (strlen($selected_date)!=10) {
 	$selected_date = $cur_date;
@@ -27,9 +34,9 @@ $page_title = __("Show Appointments");
 
 if ($patient>0) $display_buffer .= freemed::patient_box ($this_patient);
 $display_buffer .= "
-    <P>
-    <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0 CELLPADDING=2
-     VALIGN=CENTER ALIGN=CENTER>
+    <p/>
+    <table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
+     VALIGN=\"CENTER\" ALIGN=\"CENTER\">
 ";
 
 if ($patient>0) { 
@@ -57,10 +64,10 @@ $result = $sql->query ($query);
 if ($debug) $display_buffer .= "query=\"$query\"";
 if ($sql->num_rows ($result) < 1) {
 	$display_buffer .= "
-      <TR><TD ALIGN=CENTER>
+      <tr><td ALIGN=\"CENTER\">
        <I>".__("No appointments today.")."</I>
-      </TD></TR>
-      </TABLE>
+      </td></tr>
+      </table>
       <P>
 	";
 
@@ -152,20 +159,20 @@ while ($r = $sql->fetch_array ($result)) {
 	if ($show=="all") $_date = $r["caldateof"]." <BR>";
 	if (freemed::check_access_for_facility ($r["calfacility"])){
        $display_buffer .= "
-         <TR CLASS=\"".
+         <tr CLASS=\"".
           ( ($r["calpatient"]==$current_patient) ?
 	  "#aaaaaa" :
 	  (freemed_alternate()) )."\">
-          <TD>$_date$_time</TD>
-	  <TD><A HREF=\"$patient_link_location\"
+          <td>$_date$_time</td>
+	  <td><A HREF=\"$patient_link_location\"
           ><FONT".
 	   ( ($r["calpatient"]==$current_patient) ?
 	     " COLOR=\"#ffffff\"" : "" )
-	  .">$ptlname, $ptfname $ptmname</FONT></A></TD>
-          <TD>$phylname, $phyfname</TD>         
-          <TD>$psrname</TD>         
-          <TD>$roomname</TD>
-         </TR>
+	  .">$ptlname, $ptfname $ptmname</FONT></A></td>
+          <td>$phylname, $phyfname</td>         
+          <td>$psrname</td>         
+          <td>$roomname</td>
+         </tr>
 		"; // only display if we have access...
 		} // end of if...
 	} // if there is something here
@@ -173,14 +180,14 @@ while ($r = $sql->fetch_array ($result)) {
 
 if (!$any_appointments)
 	$display_buffer .= "
-      <TR><TD ALIGN=CENTER>
+      <tr><td ALIGN=\"CENTER\">
        <I>".__("No appointments today.")."</I>
-      </TD></TR>
-      </TABLE>
+      </td></tr>
+      </table>
       <P>
 	";
 else $display_buffer .= "
-    </TABLE>
+    </table>
     <P>
 	";
 
