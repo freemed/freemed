@@ -240,9 +240,6 @@ foreach ($static_components AS $garbage => $component) {
 				$hour = substr($my_r['msgtime'], 8, 2);
 				$min  = substr($my_r['msgtime'], 10, 2);
 
-				// Get User object
-				$this_user = CreateObject('FreeMED.User', $my_r['msgby']);
-
 				// Form the panel
 				$panel[__("Messages")] .= "<tr>".
 					"<TD ALIGN=\"LEFT\"><SMALL>$y-$m-$d</SMALL></TD>".
