@@ -1,6 +1,44 @@
 freemed project changelog
 ($Id$)
 
+* Mon Dec 10 2001 rufustfirefly
+  - modules/prescription.emr.module.php: fixed bum links and problem
+    in phpwebtools' module::check_module() (Vincent Meyer)
+
+* Fri Dec 07 2001 rufustfirefly
+  - lib/template/default/template.php: now shows display_buffer even
+    if no_template_display is true
+  - modules/progress_notes.emr.module.php: VIEW action renabled
+  - billing_functions.php: now passes $patient instead of $id as
+    value of $patient to modules
+
+* Thu Dec 06 2001 rufustfirefly
+  - modules/prescription.emr.module.php: fixed bad link in old_main()
+    (Dr Vincent Meyer)
+  - modules/progress_notes.emr.module.php: display() stops template
+    display for printouts (Dr Vincent Meyer)
+
+* Fri Nov 30 2001 rufustfirefly
+  - modules/procedure.emr.module.php: dynamically adds and removes EOC
+    portion
+
+* Thu Nov 29 2001 rufustfirefly
+  - authenticate.php: added special case to update root password in
+    the database if DB_PASSWORD changes (thx to Volker Bradley)
+  - custom_records.php: fixed parse error at line 17, added return
+    link to manage patient if you try to add a record with no template
+  - modules/progress_notes.emr.module.php: dynamically adds and removes
+    EOC field depending on whether the EOC module is installed
+
+* Wed Nov 21 2001 rufustfirefly
+  - lib/API.php: freemed_verify_auth() showstopper fixed for non-root
+    login
+  - lib/template/default/help.macros.php: started to add acronyms to
+    list of macros (HTML 4.01)
+  - lang/EN/doc/patient.php.EN.html: more documentation
+  - lang/EN/doc/*.php*.EN.html -> lang/EN/doc/*.EN.html (removed .php)
+    also in lib/API.php and help.php
+
 * Tue Nov 20 2001 rufustfirefly
   - scripts/convert/medical_manager/patfile.pl: CVS tags and fixed
     version number
