@@ -22,11 +22,10 @@ while ($original = shift) {
 	my $dir = substr($md5hash, 0, 2) . '/' .
 		substr($md5hash, 2, 2). '/' .
 		substr($md5hash, 4, 2). '/' .
-		substr($md5hash, 6, 2);
+		substr($md5hash, 6, 2). '/' .
+		substr($md5hash, 8, 24);
 	
-	my $filename = substr($md5hash, 8, 24). '.' .
-		$record . '.' .
-		$type;
+	my $filename = $record . '.' . $type;
 
 	print "mkdir -p $dir\n";
 	print "mv -v $original $dir/$filename\n";
