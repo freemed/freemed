@@ -50,7 +50,7 @@ if ($patient_history or $page_history) {
 ?>
 <UL>
 	<LI><A HREF="admin.php"><?php print _("Administration Menu"); ?></A>
-	<LI><A HREF="billing_functions.php"
+	<LI><A HREF="billing_functions.php?patient=<?php print $SESSION["current_patient"]; ?>"
 		><?php print _("Billing Functions"); ?></A>
 	<LI><A HREF="db_maintenance.php"
 		><?php print _("Database Maintenance"); ?></A>

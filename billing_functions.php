@@ -22,6 +22,9 @@ $page_title = _("Billing Functions");
 //----- Add page to stack
 page_push();
 
+//----- Check for "current_patient" in SESSION
+if ($SESSION["current_patient"] != 0) $patient = $SESSION["current_patient"];
+
 $patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
   if ($patient>0) {
     $this_patient = new Patient ($patient);
