@@ -68,6 +68,10 @@ class FreeBBillingTransport extends BillingModule {
 				return $this->rebillkey();
 				break;
 
+			case 'rebill_menu':
+				return $this->rebill_menu();
+				break;
+
 			case 'reports':
 				return $this->reports();
 				break;
@@ -171,7 +175,7 @@ class FreeBBillingTransport extends BillingModule {
 		// Loop for patients
 		foreach ($patients_to_bill AS $__garbage => $p) {
 			// Default on first (!been_here) to check patient...
-			if (!$been_here) {
+			if (!$_REQUEST['been_here']) {
 				$patients[$p] = 1; // not sure what this does
 				$bill[$p] = 1;
 			}
@@ -277,7 +281,7 @@ class FreeBBillingTransport extends BillingModule {
 				foreach ($these_claims AS $__garbage => $c) {
 					// On first load, assume that all claims
 					// are being submitted...
-					if (!$been_here) {
+					if (!$_REQUEST['been_here']) {
 						$claim[$c] = 1;
 						$claim_owner[$c] = $p;
 						// HACK! Should not always be X12
@@ -285,18 +289,10 @@ class FreeBBillingTransport extends BillingModule {
 						$coverage[$c] = $curcov;
 						// These default to values used by the default
 						$this_coverage = CreateObject('FreeMED.Coverage', $curcov);
+						//print "media for $c set to electronic<br/>\n";
 						$media[$c] = 'electronic';
 						//$format[$c] = $this_coverage->covinsco->local_record['inscodefformat'];
 						//$target[$c] = $this_coverage->covinsco->local_record['inscodeftarget'];
-						// Look 'em up, if not, x12/txt is the default for now
-						/*
-						if (!$format[$c]) {
-							$format[$c] = 'x12';
-						}
-						if (!$target[$c]) {
-							$target[$c] = 'txt';
-						}
-						*/
 					}
 
 					// ... and notebook-style hide their
@@ -344,6 +340,16 @@ class FreeBBillingTransport extends BillingModule {
 		<tr>
 		<td>
 		<a href=\"billing_functions.php?type=".get_class($this).
+			"&billing_action=rebill_menu&action=type\"
+			>".__("Rebill")."</a></td>
+		<td>
+		".__("Select a previous billing to rebill.")."
+		</td>
+		</tr>
+
+		<tr>
+		<td>
+		<a href=\"billing_functions.php?type=".get_class($this).
 			"&billing_action=reports&action=type\"
 			>".__("Show Reports")."</a></td>
 		<td>
@@ -354,6 +360,70 @@ class FreeBBillingTransport extends BillingModule {
 		";
 		return $buffer;
 	} // end method menu
+
+	function rebill_menu ( ) {
+		$buffer = '';
+
+		$query = "SELECT * FROM billkey ORDER BY id DESC LIMIT 50";
+		$result = $GLOBALS['sql']->query($query);
+
+		$buffer .= "<div class=\"section\">".__("Rebill Claims")."</div><br/>\n";
+
+		if (!$GLOBALS['sql']->results($result)) {
+			$buffer .= "
+			<div align=\"center\">
+			".__("There are no billing runs to rebill.")."
+			</div>
+			";
+			return $buffer;
+		}
+
+		$buffer .= "
+		<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
+		<tr>
+			<td class=\"DataHead\">".__("Date Billed")."&nbsp;&nbsp;&nbsp;</td>
+			<td class=\"DataHead\">".__("Procedures")."</td>
+			<td class=\"DataHead\">&nbsp;</td>
+		</tr>
+		";
+		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			$bk = unserialize($r['billkey']);
+
+			$buffer .= "
+			<tr>
+				<td>".$r['billkeydate']."</td>
+				<td align=\"right\">";
+
+			// Loop through procedures
+			foreach ($bk['procedures'] AS $_g => $proc) {
+				if ($proc > 0) {
+					$_q = "SELECT proc.procdt AS procdt, CONCAT(pt.ptlname, ".
+					"', ', pt.ptfname, ' ', pt.ptmname) AS patient_name, ".
+					"pt.id AS patient_id ".
+					"FROM procrec AS proc, patient AS pt ".
+					"WHERE proc.procpatient=pt.id AND ".
+					"proc.id='".addslashes($proc)."'";
+					$_r = $GLOBALS['sql']->query($_q);
+					$this_proc = $GLOBALS['sql']->fetch_array($_r);
+					$buffer .= $this_proc['procdt']." <a href=\"".
+					"manage.php?id=".urlencode($this_proc['patient_id']).
+					"\">".prepare($this_proc['patient_name'])."</a><br/>\n";
+				}
+			}
+			
+			$buffer .= "
+				</td><td>
+				<a href=\"".page_name()."?type=".get_class($this).
+				"&billing_action=rebill&key=".urlencode($r['id']).
+				"&action=".$_REQUEST['action']."\" class=\"button\">".
+				__("Rebill")."</a>
+				</td>
+			</tr>
+			";
+		}
+		$buffer .= "</table>";
+		return $buffer;
+	} // end method rebill_menu
 
 	function reports ( ) {
 		$buffer = '';
@@ -489,7 +559,8 @@ class FreeBBillingTransport extends BillingModule {
 
 			// Get format and target from default
 			list ($my_format, $my_target) =
-				$this->MediaToFormatTarget($single, $media[$single]);
+				$this->MediaToFormatTarget($single, $_REQUEST['media'][$single]);
+				
 			$result = $freeb->ProcessBill(
 				$this_billkey,
 				$my_format,
@@ -537,7 +608,7 @@ class FreeBBillingTransport extends BillingModule {
 		foreach ($claim AS $my_claim => $to_bill) {
 			// First, form hash key
 			list ($my_format, $my_target) =
-				$this->MediaToFormatTarget($my_claim, $media[$single]);
+				$this->MediaToFormatTarget($my_claim, $_REQUEST['media'][$my_claim]);
 			$hash_key = $my_format.'__'.$my_target;
 			//print "hash key = $hash_key<br/>\n";
 
@@ -561,7 +632,7 @@ class FreeBBillingTransport extends BillingModule {
 		foreach ($bill_hash AS $my_key => $billkey) {
 			// Get format and target
 			list ($my_format, $my_target) = explode ('__', $my_key);
-			//print "processing key = $my_key<br/>\n";
+			print "processing key = $my_key<br/>\n";
 			if ($my_format and $my_target) {
 
 			// Add contact, clearinghouse, and service info
@@ -587,7 +658,7 @@ class FreeBBillingTransport extends BillingModule {
 			// Add to claimlog
 			$result = $claimlog->log_billing (
 				$key,
-				my_format,
+				$my_format,
 				$my_target,
 				__("FreeB billing run sent")
 			);
@@ -600,7 +671,7 @@ class FreeBBillingTransport extends BillingModule {
 			*/
 
 			// DEBUG: Show what we got
-		//	print "DEBUG: "; print_r($result); print "<br/>\n";
+			//print "DEBUG: "; print_r($result); print "<br/>\n";
 
 			} // end verifying format and target
 		}
@@ -636,19 +707,53 @@ class FreeBBillingTransport extends BillingModule {
 			$buffer .=  __("Bills were not able to be marked as billed.");
 		}
 		return $buffer;
-	} // end method rebillkey
+	} // end method mark
 
 	function rebillkey ( ) {
-		$billkey = $_REQUEST['key'];
-
 		$freeb = CreateObject('FreeMED.FreeB_v1');
-		$this_billkey = $freeb->StoreBillKey( $billkey );
+		$claimlog = CreateObject('FreeMED.ClaimLog');
+	
+		// Get format and target from claimlog
+		$query = "SELECT * FROM claimlog WHERE ".
+			"clbillkey='".addslashes($_REQUEST['key'])."'";
+		$result = $GLOBALS['sql']->query($query);
+		$r = $GLOBALS['sql']->fetch_array($result);
+	
 		$result = $freeb->ProcessBill(
-			$key,
-			$format[$single],
-			$target[$single]
+			$_REQUEST['key'],
+			$r['clformat'],
+			$r['cltarget']
 		);
-		return $result;
+		
+		$buffer .= "<div class=\"section\">".
+			__("FreeB Billing Sent")."</div><br/>\n";
+		$buffer .= __("Result file returned was")." ".
+			"<a href=\"".page_name()."?".
+			"module=".$_REQUEST['module']."&".
+			"type=".$_REQUEST['type']."&".
+			"action=".$_REQUEST['action']."&".
+			"billing_action=display_report&".
+			"file_type=report&".
+			"report=".urlencode(basename($result)) . "\" ".
+			"target=\"_view\">".
+			prepare(basename($result)) . "</a><br/>\n";
+		// Add to claimlog
+		$result = $claimlog->log_billing (
+			$_REQUEST['key'],
+			$r['clformat'],
+			$r['cltarget'],
+			__("FreeB billing run sent")
+		);
+		/* $mark = $claimlog->mark_billed ( $this_billkey ); */
+		$buffer .= __("If you are satisfied with your bills, mark them as sent.")."<br/>".
+			"<a href=\"".page_name()."?".
+			"module=".urlencode($_REQUEST['module'])."&".
+			"action=".urlencode($_REQUEST['action'])."&".
+			"type=".urlencode($_REQUEST['type'])."&".
+			"billing_action=mark&".
+			"keys=".urlencode(serialize($__billkeys)).
+			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
+		return $buffer;
 	} // end method rebillkey
 
 	//--------------------------------------------------------------------
@@ -657,16 +762,22 @@ class FreeBBillingTransport extends BillingModule {
 
 	function MediaToFormatTarget ( $claim, $media ) {
 		global $coverage;
-		$this_coverage = CreateObject('FreeMED.Coverage', $coverage[$claim]);
+		$cov = $_REQUEST['coverage'][$claim] ? $_REQUEST['coverage'][$claim] :
+			$coverage[$claim];
+		$this_coverage = CreateObject('FreeMED.Coverage', $cov);
 		switch ($media) {
 			case 'paper':
 			$format = $this_coverage->covinsco->local_record['inscodefformat'];
 			$target = $this_coverage->covinsco->local_record['inscodeftarget'];
 			break;
 
-			case 'electronic': default:
+			case 'electronic':
 			$format = $this_coverage->covinsco->local_record['inscodefformate'];
 			$target = $this_coverage->covinsco->local_record['inscodeftargete'];
+			break;
+
+			default:
+			// This should *not* happen
 			break;
 		}
 		return array ($format, $target);
@@ -699,6 +810,7 @@ class FreeBBillingTransport extends BillingModule {
 
 		// Get the "default" coverage, and set $default_coverage to it
 		$default_coverage = $rec['proccurcovid'];
+		//print "default_coverage = $default_coverage<br/>\n";
 
 		// Return coverages
 		return $coverage;

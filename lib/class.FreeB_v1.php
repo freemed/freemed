@@ -21,7 +21,7 @@ class FreeB_v1 {
 		$this->protocol = freemed::config_value('freeb_protocol');
 
 		// If this isn't set, default to localhost parameters
-		if (empty($this->server)) {
+		if (empty($this->server) or empty($this->path) or empty($this->port)) {
 			$this->server = 'localhost';
 			$this->port = '18081';
 			$this->path = '/RPC2';
