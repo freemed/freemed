@@ -88,6 +88,30 @@ class ProgressNotes extends EMRModule {
 
 				'condition' => 'isset',
 				'trigger' => 'pnotes_P'
+			),
+			array (
+				'title' => __("Interval"),
+				'content' => 'pnotes_I',
+				'type' => 'long',
+
+				'condition' => 'isset',
+				'trigger' => 'pnotes_I'
+			),
+			array (
+				'title' => __("Education"),
+				'content' => 'pnotes_E',
+				'type' => 'long',
+
+				'condition' => 'isset',
+				'trigger' => 'pnotes_E'
+			),
+			array (
+				'title' => __("Rx (Prescription)"),
+				'content' => 'pnotes_R',
+				'type' => 'long',
+
+				'condition' => 'isset',
+				'trigger' => 'pnotes_R'
 			)
 		);
 	
