@@ -119,7 +119,8 @@ class procedureModule extends freemedEMRModule {
   $charge = bcadd ($charge, 0, 2);
 
   // ************** BUILD THE WIZARD ****************
-  $wizard = new wizard ( array ("been_here", "action", "patient", "id") );
+  $wizard = new wizard ( array ("been_here", "action", "patient", "id",
+	"module") );
   
   $wizard->add_page ("Step One",
     array ("procphysician", date_vars("procdt"), "proceoc",
@@ -240,41 +241,42 @@ class procedureModule extends freemedEMRModule {
     switch ($action) {
      case "addform": case "add":
        // form add query
-      $query = "INSERT INTO $this->table_name VALUES (
-            '$patient',
-            '".addslashes(fm_join_from_array($proceoc))."',
-            '$proccpt',
-            '$proccptmod',
-            '$procdiag1',
-            '$procdiag2',
-            '$procdiag3',
-            '$procdiag4',
-            '".addslashes($proccharges).  "',
-            '".addslashes($procunits).    "',
-            '".addslashes($procvoucher).  "',
-            '$procphysician',
-            '".fm_date_assemble("procdt")."',
-            '$procpos',
-            '".addslashes($proccomment).  "',
-            '$procbalorig',
-            '$procbalorig',
-            '0',
-            '0',
-            '".addslashes($procbillable). "',
-            '".addslashes($procauth).     "',
-            '".addslashes($procrefdoc).   "',
-            '".fm_date_assemble("procrefdt")."',
-            NULL,
-            NULL,
-            '0000-00-00')";
-
+      $query = $sql->insert_query (
+		$this->table_name,
+		array (
+            "procpatient"	=>	$patient,
+            "proceoc",
+			"proccpt",
+            "proccptmod",
+            "procdiag1",
+            "procdiag2",
+            "procdiag3",
+            "procdiag4",
+            "proccharges",
+            "procunits",
+            "procvoucher",
+            "procphysician",
+            "procdt"			=>	fm_date_assemble("procdt"),
+            "procpos",
+            "proccomment",
+            "procbalorig",
+            "procbalcurrent"	=>	$procbalorig,
+            "procamtpaid"		=>	"0",
+            "procbilled"		=>	"0",
+            "procbillable",
+            "procauth",
+            "procrefdoc",
+            "procrefdt"			=>	fm_date_assemble("procrefdt")
+		)
+	);
+	$debug=true;
       $result = $sql->query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
       if ($result) { echo _("done")."."; }
        else        { echo _("ERROR");    }
 
-      echo "FIX THIS!!";
-      $this_procedure = $sql->last_record ();
+      //echo "FIX THIS!!";
+      $this_procedure = $sql->last_record ($result);
 
       // form add query
       echo "

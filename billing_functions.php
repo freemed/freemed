@@ -7,6 +7,8 @@
   $page_name = "billing_functions.php";
   include ("lib/freemed.php");
   include ("lib/API.php");
+  include ("lib/module_emr.php");
+  include ("lib/module_maintenance.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 

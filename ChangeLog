@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Thu Jan 25 2001 rufustfirefly
+  - fixed procedure module to pass "module" variable in wizard
+  - added includes to billing functions modules so that the module loader
+    doesn't complain
+
 * Wed Jan 24 2001 fforest
   - admin.php added procdtbilled to procrec
   - genereate_fixed_forms.php fix bug in insurance validation
