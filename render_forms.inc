@@ -71,7 +71,7 @@ function render_FixedFormEntry ($formentry) {
 function render_fixedForm ($id, $offset=0) {
   global $loop;
 
-  $this_form  = freemed_get_link_rec ($id, "fixedforms"); // get record
+  $this_form  = freemed_get_link_rec ($id, "fixedform"); // get record
   $pagelength = $this_form ["ffpagelength"];
   $rows       = fm_split_into_array ($this_form["ffrow"    ]);
   $cols       = fm_split_into_array ($this_form["ffcol"    ]);
@@ -80,6 +80,7 @@ function render_fixedForm ($id, $offset=0) {
   $formats    = fm_split_into_array ($this_form["ffformat" ]);
   $comments   = fm_split_into_array ($this_form["ffcomment"]);
   $number_of_entries = count ($rows);
+
    // import entries into array
   for ($i=0;$i<$number_of_entries;$i++) {
     $form_entry [$i] = new fixedFormEntry ($rows[$i],    $cols[$i],
@@ -132,7 +133,7 @@ function render_fixedForm ($id, $offset=0) {
         $line_off = 0;
       } // end of checking for recursive
 
-    } elseif ($in_loop and (!strpos($next_item->format, "L")) {
+    } elseif ($in_loop and (!strpos($next_item->format, "L"))) {
       // if we are in the loop, but have reached the end...
       // if we have not reached the count, skip back
       if ($recursive < $this_form[ffloopnum]) {
