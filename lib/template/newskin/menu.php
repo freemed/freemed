@@ -26,6 +26,7 @@ if (is_array($handlers)) {
 	foreach ($handlers AS $class => $handler) {
 		$reply = module_function($class, $handler);
 		if (is_array($reply)) {
+			list ($text, $link) = $reply;
 			$__handle[$text] = $link;
 		}
 	}
