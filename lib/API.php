@@ -256,7 +256,7 @@ function freemed_display_box_bottom ($_null="")
 
   echo "
     </TD></TR></TABLE>
-    </TD></TR></TABLE>
+    ".( (!USE_CSS) ? "</TD></TR></TABLE>" : "" )."
     </CENTER>
   ";
 } // end function freemed_display_box_bottom
@@ -313,16 +313,19 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 
   echo "
     <CENTER>
+    ".( (!USE_CSS) ? "
     <TABLE BGCOLOR=\"#000000\" CELLSPACING=0 CELLPADDING=2 ALIGN=CENTER
      BORDER=0 VALIGN=MIDDLE WIDTH=\"100%\"><TR><TD BGCOLOR=\"#000000\">
+    " : "" )."
 
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 ALIGN=CENTER
-     VALIGN=CENTER BGCOLOR=\"#dddddd\" WIDTH=\"100%\"><TR><TD>
+     VALIGN=CENTER BGCOLOR=\"#dddddd\" WIDTH=\"100%\" CLASS=\"mainbox\"
+    ><TR><TD>
   ";
 
   if (!empty($box_title)) {
     echo "
-      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
+      <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
        VALIGN=TOP BORDER=0><TR BGCOLOR=\"$topbar_color\">
        <TD BGCOLOR=\"$topbar_color\">
        <CENTER><FONT FACE=\"Arial, Helvetica, Verdana\"
@@ -573,6 +576,8 @@ function freemed_display_html_top ($_refresh_location="", $_pg_desc_given="")
       CONTENT=\"text/html; CHARSET=$__ISO_SET__\">
      <TITLE>".PACKAGENAME." v".VERSION." $_pg_desc_given
         - ".prepare(INSTALLATION)."</TITLE>
+     ".( (USE_CSS) ? "<LINK REL=\"StyleSheet\" TYPE=\"text/css\"
+        HREF=\"lib/freemed.css\">" : "" )."
    </HEAD>
    <BODY BGCOLOR=\"#ffffff\" ALINK=\"#0000ff\" VLINK=\"#0000ff\"
     MARGINWIDTH=\"0\" MARGINHEIGHT=\"0\" LEFTMARGIN=\"0\" RIGHTMARGIN=\"0\">

@@ -1,0 +1,12 @@
+/*
+ *  $Id$
+ *  freemed external style sheet
+ */
+
+body { background: #ffffff; color: #000000 }
+
+.mainbox {
+	border: thick dashed #ff0000;
+	border-width: thick;
+	background: #dddddd 
+}
