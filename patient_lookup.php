@@ -13,16 +13,13 @@ $this_user = CreateObject('FreeMED.User');
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"patientlookup.php|user $user_to_log views patient list GLOBAL ACCESS");}	
 
-
-
-
 //----- Check for process
 if ($action==__("Search")) {
 	$GLOBALS['__freemed']['on_load'] = 'process';
 }
 
 //----- Form header
-$display_buffer .= "<CENTER><FORM NAME=\"lookup\" ACTION=\"".$page_name."\" ".
+$display_buffer .= "<CENTER><form NAME=\"lookup\" ACTION=\"".$page_name."\" ".
 	"METHOD=\"POST\">\n";
 
 //----- Master action switch
@@ -44,7 +41,24 @@ switch ($action) {
 		$wheres[] = "ptcity = '".addslashes(
 			html_form::combo_assemble("city"))."'";
 
-	$query = "SELECT * FROM patient WHERE ".implode(", ", $wheres).
+	// smart query
+	if (!empty($smart)) {
+		// decide if we're last, first or first last
+        	if (!(strpos($_REQUEST['smart'], ',')===false)) {
+        	        // last, first
+        	        list ($last, $first) = explode(',', $_REQUEST['smart']);
+        	        $last = trim($last);
+        	        $first = trim($first);
+        	} else {
+        	        // first last
+        	        list ($first, $last) = explode(' ', $_REQUEST['smart']);
+        	}
+		unset($wheres);
+		$wheres[] = "ptfname LIKE '".addslashes($first)."%'";
+		$wheres[] = "ptlname LIKE '".addslashes($last)."%'";
+	}
+
+	$query = "SELECT * FROM patient WHERE ".implode(" AND ", $wheres).
 		"ORDER BY ptlname, ptfname, ptcity";
 	$result = $sql->query($query);
 
@@ -137,6 +151,11 @@ switch ($action) {
 		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".__("Search")."\">
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::form_table(array(
+			__("Smart Lookup") =>
+			html_form::text_widget(
+				"smart", 40
+			),
+			
 			__("Last Name") =>
 			html_form::text_widget(
 				"last_name", 20
