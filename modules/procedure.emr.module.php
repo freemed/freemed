@@ -135,10 +135,6 @@ class ProcedureModule extends EMRModule {
 			$been_here = 1;
 		}
 
-		$phys_query = "SELECT * FROM physician WHERE phyref!='yes' ".
-					  "ORDER BY phylname,phyfname";
-		$phys_result = $sql->query($phys_query);
-
 		if (empty ($procdt)) $procdt = $cur_date; // show current date
 		$icd_type = freemed::config_value("icd"); // '9' or '10'
 		if ( (($icd_type+0) != 9) and (($icd_type+0) != 10) ) {
@@ -148,8 +144,6 @@ class ProcedureModule extends EMRModule {
 		}
 		$cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
 		$cptmod_result = $sql->query($cptmod_query);
-		$icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
-		$icd_result = $sql->query($icd_query);
 
 		$cert_query = "SELECT id,certdesc FROM certifications WHERE certpatient='$patient'";
 		$cert_result = $sql->query($cert_query);
@@ -188,7 +182,8 @@ class ProcedureModule extends EMRModule {
 							  date_vars("procdt"),date_vars("procrefdt")),
 		html_form::form_table ( array (
 		  __("Provider") =>
-			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname# (#phypracname#)", "procphysician"),
+			//freemed_display_selectbox ($phys_result, "#phylname#, #phyfname# (#phypracname#)", "procphysician"),
+			module_function('providermodule', 'widget', array ('procphysician')),
 		  __("Date of Procedure") =>
 			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
@@ -203,23 +198,15 @@ class ProcedureModule extends EMRModule {
 		  __("Units") =>
 		  	html_form::text_widget('procunits', 9),
 		  __("Diagnosis Code")." 1" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1"),
+			module_function('icdmaintenance', 'widget', array ('procdiag1')),
 		  __("Diagnosis Code")." 2" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag2"),
+			module_function('icdmaintenance', 'widget', array ('procdiag2')),
 		  __("Diagnosis Code")." 3" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag3"),
+			module_function('icdmaintenance', 'widget', array ('procdiag3')),
 		  __("Diagnosis Code")." 4" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4"),
+			module_function('icdmaintenance', 'widget', array ('procdiag4')),
 		  __("Place of Service") =>
-			freemed_display_selectbox(
-			  $sql->query("SELECT psrname,psrnote,id FROM facility"),
-			  "#psrname# [#psrnote#]", 
-			  "procpos"
-			),
+			module_function('facilitymodule', 'widget', array ('procpos')),
 		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  __("Authorization") =>
@@ -232,12 +219,7 @@ class ProcedureModule extends EMRModule {
 		  __("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
 		  __("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  __("Referring Provider") =>
-			freemed_display_selectbox (
-			  $sql->query("SELECT phylname,phyfname,id FROM physician 
-						  WHERE phyref='yes'
-						  ORDER BY phylname, phyfname"),
-			  "#phylname#, #phyfname#", "procrefdoc"
-			),
+			module_function('providermodule', 'widget', array ('procrefdoc')),
 		  __("Date of Last Visit") =>
 			fm_date_entry ("procrefdt"),
 		  __("Comment") =>
@@ -587,10 +569,6 @@ class ProcedureModule extends EMRModule {
 
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 
-		$phys_query = "SELECT * FROM physician WHERE phyref!='yes' ".
-					  "ORDER BY phylname,phyfname";
-		$phys_result = $sql->query($phys_query);
-
 		if (empty ($procdt)) $procdt = $cur_date; // show current date
 		$icd_type = freemed::config_value("icd"); // '9' or '10'
 		if ( (($icd_type+0) != 9) and (($icd_type+0) != 10) ) {
@@ -639,7 +617,7 @@ class ProcedureModule extends EMRModule {
 							  date_vars("procdt"),date_vars("procrefdt")),
 		html_form::form_table ( array (
 		  __("Provider") =>
-			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
+			module_function('providermodule', 'widget', array ('procphysician')),
 		  __("Date of Procedure") =>
 			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
@@ -654,23 +632,15 @@ class ProcedureModule extends EMRModule {
 		  __("Units") =>
 		  	html_form::text_widget('procunits', 9),
 		  __("Diagnosis Code")." 1" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag1"),
+			module_function('icdmaintenance', 'widget', array ('procdiag1')),
 		  __("Diagnosis Code")." 2" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag2"),
+			module_function('icdmaintenance', 'widget', array ('procdiag2')),
 		  __("Diagnosis Code")." 3" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag3"),
+			module_function('icdmaintenance', 'widget', array ('procdiag3')),
 		  __("Diagnosis Code")." 4" =>
-			freemed_display_selectbox ($icd_result, (($icd_type=="9") ? 
-			  "#icd9code# (#icd9descrip#)" : "#icd10code# (#icd10descrip#)"), "procdiag4"),
+			module_function('icdmaintenance', 'widget', array ('procdiag4')),
 		  __("Place of Service") =>
-			freemed_display_selectbox(
-			  $sql->query("SELECT psrname,psrnote,id FROM facility"),
-			  "#psrname# [#psrnote#]", 
-			  "procpos"
-			),
+			module_function('facilitymodule', 'widget', array ('procpos')),
 		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  __("Authorization") =>
@@ -683,12 +653,7 @@ class ProcedureModule extends EMRModule {
 		  __("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
 		  __("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  __("Referring Provider") =>
-			freemed_display_selectbox (
-			  $sql->query("SELECT phylname,phyfname,id FROM physician 
-						  WHERE phyref='yes'
-						  ORDER BY phylname, phyfname"),
-			  "#phylname#, #phyfname#", "procrefdoc"
-			),
+			module_function('providermodule', 'widget', array ('procrefdoc')),
 		  __("Date of Last Visit") =>
 			fm_date_entry ("procrefdt"),
 		  __("Comment") =>
