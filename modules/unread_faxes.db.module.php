@@ -233,8 +233,8 @@ class UnreadFaxes extends MaintenanceModule {
 		global $refresh;
 		//$refresh = $page_name."?module=".get_class($this);
 
-		if ($id == -1) {
-			$GLOBALS['display_buffer'] = '<br/>'.
+		if ($_id == -1) {
+			$GLOBALS['display_buffer'] .= '<br/>'.
 				template::link_bar(array(
 					__("View Patient Record") =>
 					'manage.php?id='.urlencode($rec['urfpatient']),
