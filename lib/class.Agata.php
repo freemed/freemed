@@ -55,7 +55,8 @@ class Agata {
 			'/agata/report/'.$report.'.report' );
 
 		if ($rpt) {
-			list($block, $breaks, $__garbage) = $rpt;
+			//print_r($rpt);
+			list($block, $breaks, $merge, $subquery) = $rpt;
 			$sqldef = $core->BlockToSql($block);
 
 			$connection = CreateObject('Agata.Connection');
@@ -73,22 +74,40 @@ class Agata {
 				require(dirname(__FILE__).'/agata/config.php');
 
 				// Create the proper report object
-				$obj = CreateObject('Agata.Agata'.$format,
-					$db,
-					$agataConfig,
-					$output,
-					$query,
-					$breaks,
-					false,
-					true,
-					false,
-					$title
-				);
+				if ($format != 'Merge') {
+					$obj = CreateObject('Agata.Agata'.$format,
+						$db,
+						$agataConfig,
+						$output,
+						$query,
+						$breaks,
+						false,
+						true,
+						false,
+						$title
+					);
+					$obj->Process ( );
+				} else {
+					$obj = CreateObject('Agata.AgataMerge',
+						$db,
+						$agataConfig,
+						$output, // filename
+						$query, // currentquery
+						null, // posaction
+						'10', // left margin
+						'20', // top margin
+						'10', // spacing
+						false // paging
+					);
+					$obj->MergePs( 
+						join("\n", $merge),
+						$subquery
+					);
+				}
 				if (!is_object($obj)) {
 					unlink($output);
 					return false;
 				}
-				$obj->Process ( );
 				$connection->Close ( );
 
 				// Read file into buffer
@@ -114,6 +133,27 @@ class Agata {
 		} // end if rpt
 	} // end method CreateReport
 
+	// Method: ReportToFile
+	//
+	//	Moves a completed report to a specified filename.
+	//
+	// Parameters:
+	//
+	//	$filename - Target file name
+	//
+	// Returns:
+	//
+	//	Boolean, if successful
+	//
+	function ReportToFile ( $filename ) {
+		if (!$this->report_file) { return false; }
+		$fp = fopen ( $filename, 'w' );
+		if (!$fp) { return $fp; }
+		fwrite($fp, $this->report_file);
+		fclose($fp);
+		return true;
+	} // end method ReportToFile
+
 	// Method: ServeReport
 	//
 	//	Get report MIME type based on stored information
@@ -125,12 +165,37 @@ class Agata {
 	function ServeReport ( ) {
 		switch ($this->report_format) {
 			case 'Pdf':  $c = 'application/x-pdf'; break;
+			case 'Ps':   $c = 'application/x-ps'; break;
 			case 'Html': $c = 'text/html'; break;
+
+			// Merge outputs Postscript for now
+			case 'Merge': $c = 'application/x-ps'; break;
 		}
 		if ($c) { Header('Content-type: '.$c); }
 		print $this->report_file;
 		die();
 	} // end method ServeReport
+
+	// Method: ServeMergeAsPDF
+	//
+	//	Serves a merge file (which natively outputs in Postscript)
+	//	as a PDF.
+	//
+	// Returns:
+	//
+	//	Content-type header MIME type
+	//
+	function ServeMergeAsPDF ( ) {
+		Header('Content-type: application/x-pdf');
+		// Convert using ps2pdf
+		$tmp = tempnam('/tmp', 'fm_agata');
+		$this->ReportToFile($tmp);
+		system("ps2pdf $tmp $tmp.pdf");
+		readfile($tmp.'.pdf');
+		unlink ($tmp);
+		unlink ($tmp.'.pdf');
+		die();
+	} // end method ServeMergeAsPDF
 
 } // end class Agata
 
