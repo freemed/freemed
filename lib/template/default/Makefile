@@ -9,7 +9,7 @@ all:
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf *.css *.gif *.php *.png $(INSTDIR)/$(THISDIR)
+	cp -vf *.js *.css *.gif *.php *.png $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
 		make -C $$d install INSTDIR=$(INSTDIR); \
 	done
