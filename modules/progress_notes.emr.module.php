@@ -32,7 +32,11 @@ class progressNotes extends freemedEMRModule {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		if (!$been_here) {
+		$book = new notebook (array ("id",
+		"module", "patient", "action"),
+		NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
+     
+		if (!$book->been_here()) {
       switch ($action) { // internal switch
         case "addform":
          if ($this->this_user->isPhysician()) // check if we are a physician
@@ -40,10 +44,7 @@ class progressNotes extends freemedEMRModule {
          $pnotesdt     = $cur_date;
          break; // end addform
         case "modform":
-         while(list($k,$v)=each($this->variables))
-         {
-            global $$v;
-         }
+         while(list($k,$v)=each($this->variables)) { global $$v; }
 
          if (($id<1) OR (strlen($id)<1)) {
            //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
@@ -57,19 +58,14 @@ class progressNotes extends freemedEMRModule {
   	 	 extract ($r);
          break; // end modform
       } // end internal switch
-      $been_here = 1;
      } // end checking if been here
 
      //freemed_display_box_top (( (($action=="addform") or ($action=="add")) ?
      //  _("Add") : _("Modify") )." "._($this->record_name));
 
-     $book = new notebook (array ("been_here", "id",
-       "module", "patient", "action"),
-       NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
-     
      $book->add_page (
        _("Basic Information"),
-       array ("pnoteseoc", date_vars("pnotesdt")),
+       array ("pnotesdoc", "pnotesdescrip", "pnoteseoc", date_vars("pnotesdt")),
        html_form::form_table (
         array (
 	 _("Provider") =>
@@ -238,7 +234,7 @@ class progressNotes extends freemedEMRModule {
           pnotes_E       = '".addslashes($pnotes_E)."',
           pnotes_R       = '".addslashes($pnotes_R)."',
           iso            = '$__ISO_SET__'
-          WHERE id='$id'";
+          WHERE id='".addslashes($id)."'";
 	 break;
        } // end inner switch
        // now actually send the query
