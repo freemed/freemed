@@ -182,6 +182,9 @@ if (!$book->is_done()) {
 
 	// Display results of query
 	if ($result = $sql->query ($query)) {
+		// Set automatic refresh on success...
+		$refresh = "manage.php?action=menu&id=$id";
+		// Display the page just in case...
 		$display_buffer .= _("Updated configuration");
 		$display_buffer .= "
 			<P>
