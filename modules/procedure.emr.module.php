@@ -57,7 +57,11 @@ class ProcedureModule extends EMRModule {
 		// Set vars for patient management
 		$this->summary_vars = array (
 			__("Date")    => "procdt",
-			__("Comment") => "proccomment"
+			__("Comment") => "proccomment",
+			__("Charges") => "_charges"
+		);
+		$this->summary_query = array (
+			"ROUND(procbalorig,2) AS _charges"
 		);
 
 		// Table definition
