@@ -22,6 +22,8 @@ class prescriptionModule extends freemedEMRModule {
 	var $patient_field  = "rxpatient";
 
 	function prescriptionModule () {
+		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW;
+
 		$this->summary_vars = array (
 			"Date From" => "rxdtfrom",
 			"Drug" => "rxdrug"
@@ -86,6 +88,22 @@ class prescriptionModule extends freemedEMRModule {
 		);
 		$this->freemedEMRModule();
 	} // end constructor prescriptionModule
+
+	function display () {
+		global $display_buffer, $sql, $id, $patient;
+
+		// Get all parts of the display
+		$r = freemed::get_link_rec($id, $this->table_name);
+		foreach ($r AS $k => $v) {
+			global ${$k};
+			${$k} = $v;
+		}
+
+		$display_buffer .= html_form::form_table(array(
+			_("Drug") => $rxdrug,
+			_("Dosage") => $rxdosage." ".$rxunit." ".$rxinterval
+		));
+	} // end function prescriptionModule->display
 
 	function form () {
 		global $display_buffer, $sql, $action, $id, $patient,

@@ -55,7 +55,8 @@ class providerMaintenance extends freemedMaintenanceModule {
         "phyrefamt",
         "phyrefcoll",
         "phychargemap",
-        "phyidmap"
+        "phyidmap",
+	"phyanesth"
 	); // end of variables list
 
 	function providerMaintenance () {
@@ -259,7 +260,8 @@ class providerMaintenance extends freemedMaintenanceModule {
 				"phyupin", "phyref",
 				"physsn1", "physsn2", "physsn3", 
 				"phydeg1", "phydeg2", "phydeg3",
-				"physpe1", "physpe2", "physpe3"
+				"physpe1", "physpe2", "physpe3",
+				"phyanesth"
 			),
 			html_form::form_table(array(
 		_("UPIN Number") =>
@@ -301,7 +303,17 @@ class providerMaintenance extends freemedMaintenanceModule {
 				_("In-House") => "no",
 				_("Referring") => "yes"
 			)
+		),
+
+		_("Anesthesiologist") =>
+		html_form::select_widget(
+			"phyanesth",
+			array(
+				_("no") => "0",
+				_("yes") => "1"
+			)
 		)
+
 			))
 		);
 
