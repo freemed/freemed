@@ -549,7 +549,7 @@ class PaymentModule extends EMRModule {
 
             if ($wizard->is_done())
             {
-                //$page_title = __("Adding")." ".__("$record_name");
+                //$page_title = __("Adding")." ".__($record_name);
                 //if ($patient>0) $display_buffer .= freemed::patient_box ($this_patient);
                 $display_buffer .= "<CENTER>\n";
                 switch ($payreccat)

@@ -8,8 +8,15 @@ include ("lib/freemed.php");           // global variables
 $record_name = __("Call In");          // name of record
 $db_name = "callin";                  // database name
 
-freemed_open_db ();
+freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
+
+//------HIPAA Logging
+$user_to_log=$_SESSION['authdata']['user'];
+if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"call-in.php|user $user_to_log views callin");}	
+
+
+
 
 if ($_REQUEST['submit'] == __("Cancel")) {
 	Header('Location: main.php');
@@ -21,7 +28,7 @@ switch ($action) {
 
  case "addform":
   // Set page title
-  $page_title = __("Add")." "._($record_name);
+  $page_title = __("Add")." ".$record_name;
 
   // Push onto stack
   page_push();
@@ -160,8 +167,8 @@ switch ($action) {
   break;
 
  case "add":
-  $page_title = __("Adding")." ".__("$record_name");
-  $display_buffer .= "\n".__("Adding")." ".__("$record_name")." ... \n";
+  $page_title = __("Adding")." ".$record_name;
+  $display_buffer .= "\n".__("Adding")." ".$record_name." ... \n";
   $query = $sql->insert_query(
   	"callin",
 	array (
@@ -196,7 +203,7 @@ switch ($action) {
 
  case "view":
  case "display":
-  $page_title = __("$record_name")." ".__("View/Manage");
+  $page_title = $record_name." ".__("View/Manage");
   $query   = "SELECT * FROM scheduler WHERE
               ((calpatient='$id') AND (caltype='temp'))
               ORDER BY caldateof, calhour, calminute";
@@ -228,7 +235,7 @@ switch ($action) {
 
  default:
   // Set page title
-  $page_title = __("$record_name");
+  $page_title = $record_name;
   
   // Push onto stack
   page_push();

@@ -199,7 +199,7 @@ class EpisodeOfCare extends EMRModule {
 			$this_action = __("Modify");
 			// check to see if an id was submitted
 			if ($id<1) {
-				$page_title =  __("$record_name")." :: ".__("ERROR");
+				$page_title =  __($record_name)." :: ".__("ERROR");
 				$display_buffer .= __("Must select record to Modify");
 				template_display();
 			} // end of if.. statement checking for id #
@@ -715,11 +715,11 @@ class EpisodeOfCare extends EMRModule {
     // view of entire episode (central control screen)
 	function display () {
 		global $display_buffer, $id, $sql;
-		global $record_name, $save_module, $module, $_pass;
+		global $save_module, $module, $_pass;
 		global $patient;
 
 		if ($id<1) {
-			$page_title = __("$record_name")." :: ".__("ERROR");
+			$page_title = __($this->record_name)." :: ".__("ERROR");
 			$display_buffer .= "
 			<P>
 			".__("You must specify an ID to view an Episode!")."
