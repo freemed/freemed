@@ -16,7 +16,7 @@ if (!$GLOBALS['__freemed']['no_template_display']) {
 <html>
 <head>
 	<title><?php print prepare(PACKAGENAME) . " v". VERSION . " - " .
-		( !empty($page_title) ? $page_title." - " : "" ) .
+		( !empty($GLOBALS['page_title']) ? $GLOBALS['page_title']." - " : "" ) .
 		prepare(INSTALLATION); ?></title>
 	<meta HTTP-EQUIV="Content-Type" 
 		CONTENT="text/html; CHARSET=<?php print $__ISO_SET__; ?>">
@@ -85,14 +85,14 @@ if (!$GLOBALS['__freemed']['no_menu_bar']) {
 	 CLASS="menubar" VALIGN="TOP" ALIGN="CENTER">
 	<tr><td VALIGN="TOP" ALIGN="CENTER" CLASS="menubar_title">
 		<b><?php print INSTALLATION; ?></b>
-		<br>
+		<br/>
 		<small><?php print PACKAGENAME." v".VERSION; ?></small>
 <?php
 //----- Add page title text if it exists
-if (isset($page_title)) {
+if (isset($GLOBALS['page_title'])) {
 	print "
-		<br>
-		".prepare($page_title)."
+		<br/>
+		".prepare($GLOBALS['page_title'])."
 	";
 } // end isset page_title
 ?>
