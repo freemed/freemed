@@ -3,18 +3,18 @@
  // desc: module loader
  // lic : GPL, v2
 
-include "lib/freemed.php";
-include "lib/API.php";
-include "lib/module.php";
+include_once "lib/freemed.php";
+include_once "lib/API.php";
+include_once "lib/module.php";
 
 // module loaders
-include "lib/module_billing.php";
-include "lib/module_edi.php";
-include "lib/module_emr.php";
-include "lib/module_emr_report.php";
-include "lib/module_maintenance.php";
-include "lib/module_reports.php";
-include "lib/module_calendar.php";
+include_once "lib/module_billing.php";
+include_once "lib/module_edi.php";
+include_once "lib/module_emr.php";
+include_once "lib/module_emr_report.php";
+include_once "lib/module_maintenance.php";
+include_once "lib/module_reports.php";
+include_once "lib/module_calendar.php";
 
 // get list of modules
 $module_list = new module_list (PACKAGENAME);

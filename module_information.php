@@ -5,18 +5,18 @@
   
 $page_name   = basename($GLOBALS["REQUEST_URI"]);
 
-include ("lib/freemed.php");
-include ("lib/API.php");
-include ("lib/module.php");
+include_once ("lib/freemed.php");
+include_once ("lib/API.php");
+include_once ("lib/module.php");
 
 // module types to include ...
-include ("lib/module_billing.php");
-include ("lib/module_calendar.php");
-include ("lib/module_edi.php");
-include ("lib/module_emr.php");
-include ("lib/module_emr_report.php");
-include ("lib/module_maintenance.php");
-include ("lib/module_reports.php");
+include_once ("lib/module_billing.php");
+include_once ("lib/module_calendar.php");
+include_once ("lib/module_edi.php");
+include_once ("lib/module_emr.php");
+include_once ("lib/module_emr_report.php");
+include_once ("lib/module_maintenance.php");
+include_once ("lib/module_reports.php");
 
 // top of page
 freemed_open_db ($LoginCookie); // authenticate user
