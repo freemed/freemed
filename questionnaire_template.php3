@@ -1,8 +1,8 @@
 <?php
- # file: questionnaire_template.php3	
- # desc: questionnaire template editing engine
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL, v2
+ // file: questionnaire_template.php3	
+ // desc: questionnaire template editing engine
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $page_name   = "questionnaire_template.php3";
  $record_name = "Questionnaire Templates";
@@ -21,16 +21,16 @@
    switch ($action) {
      case "addform":
       $go = "add";
-      $this_action = "$Add";
+      $this_action = _("Add");
       break;
      case "modform":
       $go = "mod";
-      $this_action = "$Modify";
+      $this_action = _("Modify");
        // check to see if an id was submitted
       if ($id<1) {
-       freemed_display_box_top ("$record_name :: $ERROR");
+       freemed_display_box_top (_($record_name)." :: "._("ERROR"));
        echo "
-         You must select a record to modify.
+         "._("You must select a record to modify.")."
        ";
        freemed_display_box_bottom ();
        freemed_close_db ();
@@ -54,7 +54,7 @@
         break;
       } // end checking if we have been here yet...
    } // end of interior switch
-   freemed_display_box_top ("$this_action $record_name");
+   freemed_display_box_top ("$this_action "._($record_name));
    $cur_line_count = 0; // zero the current line count (displayed)
    $prev_line_total = count ($qfname); // previous # of lines
      // display the top of the repetitive table
@@ -65,20 +65,20 @@
    echo "
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
-     <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">
+     <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
      <TD ALIGN=RIGHT><$STDFONT_B>Name of Template<$STDFONT_E></TD>
       <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"qname\" SIZE=20 MAXLENGTH=50
-       VALUE=\"".fm_prep($qname)."\">
+       VALUE=\"".prepare($qname)."\">
      </TD>
     </TR><TR>
-     <TD ALIGN=RIGHT><$STDFONT_B>Description<$STDFONT_E></TD>
+     <TD ALIGN=RIGHT><$STDFONT_B>"._("Description")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"qdescrip\" SIZE=20 MAXLENGTH=100
-       VALUE=\"".fm_prep($qdescrip)."\">
+       VALUE=\"".prepare($qdescrip)."\">
      </TD>
     </TR><TR>
     </TABLE>
@@ -87,12 +87,12 @@
      ALIGN=CENTER>
      <TR BGCOLOR=#000000>
       <TD><$STDFONT_B COLOR=#ffffff>#<$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><CENTER><B>Ins/Del</B></CENTER>
+      <TD><$STDFONT_B COLOR=#ffffff><CENTER><B>"._("Ins/Del")."</B></CENTER>
         <$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Caption</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=#ffffff><B>"._("Caption")."</B><$STDFONT_E></TD>
       <TD><$STDFONT_B COLOR=#ffffff><B>Variable</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Limits</B><$STDFONT_E></TD>
-      <TD><$STDFONT_B COLOR=#ffffff><B>Type</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=#ffffff><B>"._("Limits")."</B><$STDFONT_E></TD>
+      <TD><$STDFONT_B COLOR=#ffffff><B>"._("Type")."</B><$STDFONT_E></TD>
       <TD><$STDFONT_B COLOR=#ffffff><B>Type Formatting</B><$STDFONT_E></TD>
       <TD><$STDFONT_B COLOR=#ffffff><B>Text of Question</B><$STDFONT_E></TD>
      </TR>
@@ -106,9 +106,9 @@
            (empty($qftype[$i])) ) { $num_color = "#ff0000"; }
        else                         { $num_color = "#000000"; }
       // print actual record
-      $_alternate = freemed_bar_alternate_color ($_alternate);
       echo "
-       <TR BGCOLOR=\"$_alternate\">
+       <TR BGCOLOR=\"".
+        ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
         <TD ALIGN=RIGHT><$STDFONT_B COLOR=\"$num_color\"
          >".($cur_line_count+1)."<$STDFONT_E></TD>
         <TD><CENTER>
@@ -117,11 +117,11 @@
             <INPUT TYPE=CHECKBOX NAME=\"del$brackets\"
              VALUE=\"$cur_line_count\"></CENTER></TD>
         <TD><INPUT TYPE=TEXT NAME=\"qfname$brackets\" SIZE=15
-          MAXLENGTH=100 VALUE=\"".fm_prep($qfname[$i])."\"></TD>
+          MAXLENGTH=100 VALUE=\"".prepare($qfname[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"qvar$brackets\" SIZE=10
-          MAXLENGTH=20 VALUE=\"".fm_prep($qvar[$i])."\"></TD>
+          MAXLENGTH=20 VALUE=\"".prepare($qvar[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"qfmaxlen$brackets\" SIZE=5
-          MAXLENGTH=20 VALUE=\"".fm_prep($qfmaxlen[$i])."\"></TD>
+          MAXLENGTH=20 VALUE=\"".prepare($qfmaxlen[$i])."\"></TD>
         <TD>
        ";
        // figure out what it should be...
@@ -156,9 +156,9 @@
           </SELECT>
         </TD>
         <TD><INPUT TYPE=TEXT NAME=\"qftypefor$brackets\" SIZE=25
-          MAXLENGTH=1000 VALUE=\"".fm_prep($qftypefor[$i])."\"></TD>
+          MAXLENGTH=1000 VALUE=\"".prepare($qftypefor[$i])."\"></TD>
         <TD><INPUT TYPE=TEXT NAME=\"qftext$brackets\" SIZE=25
-          MAXLENGTH=1000 VALUE=\"".fm_prep($qftext[$i])."\"></TD>
+          MAXLENGTH=1000 VALUE=\"".prepare($qftext[$i])."\"></TD>
        </TR>
        ";
        $cur_line_count++;
@@ -226,7 +226,7 @@
      <BR>
      <CENTER>
      <SELECT NAME=\"action\">
-      <OPTION VALUE=\"$action\">Update
+      <OPTION VALUE=\"$action\">"._("Update")."
       <OPTION VALUE=\"$go\">$this_action
       <OPTION VALUE=\"view\">Back to Menu
      </SELECT>
@@ -239,7 +239,8 @@
   case "add":
    freemed_display_box_top ("$Adding $record_name");
    echo "
-     $Adding ...
+     <P><CENTER>
+     <$STDFONT_B>"._("Adding")." ...
    ";
    $query = "INSERT INTO $db_name VALUES (
      '".addslashes($qname)."',
@@ -253,22 +254,23 @@
      NULL )";
    if ($debug) echo " (query = \"$query\") <P>";
    $result = fdb_query ($query);
-   if ($result) { echo "$Done."; }
-    else        { echo "$ERROR"; }
+   if ($result) { echo _("done")."."; }
+    else        { echo _("ERROR");    }
    echo "
+     <$STDFONT_E></CENTER>
      <P>
      <CENTER><A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A></CENTER>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A></CENTER>
      <BR>
    ";
    freemed_display_box_bottom ();
    break;
 
   case "mod":
-   freemed_display_box_top ("$Modifying $record_name");
+   freemed_display_box_top (_("Modifying")." "._($record_name));
    echo "
-     <P>
-     <$STDFONT_B>$Modifying ...
+     <P><CENTER>
+     <$STDFONT_B>"._("Modifying")." ...
    ";
 
    // do query
@@ -284,115 +286,53 @@
       WHERE id='$id'";
    $result = fdb_query ($query);
    if ($debug) echo "query = \"$query\" <BR>";
-   if ($result) { echo "$Done. <$STDFONT_E>";  }
-    else        { echo "$ERROR! <$STDFONT_E>"; }
+   if ($result) { echo _("done")."."; }
+    else        { echo _("ERROR");    }
    echo "
+    <$STDFONT_E></CENTER>
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
     </CENTER>
     "; 
    freemed_display_box_bottom ();
    break;
 
   case "del":
-   freemed_display_box_top ("$Deleting $record_name");
+   freemed_display_box_top (_("Deleting")." "._($record_name));
    echo "
-    <P>
-    <$STDFONT_B>$Deleting ...
+    <P><CENTER>
+    <$STDFONT_B>"._("Deleting")." ...
     ";
-   $query = "DELETE * FROM $db_name WHERE id='$id'";
+   $query = "DELETE * FROM $db_name WHERE id='".addslashes($id)."'";
    $result = fdb_query ($query);
-   if ($result) { echo "$Done\n";    }
-    else        { echo "$ERROR\n";   }
+   if ($result) { echo _("done")."."; }
+    else        { echo _("ERROR");    }
    echo "
-    <$STDFONT_E>
+    <$STDFONT_E></CENTER>
     <P>
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
     </CENTER> 
    ";
    freemed_display_box_bottom ();
    break;
 
   default: // default action -- menu
-   freemed_display_box_top ("$record_name");
-   $result = fdb_query ("SELECT * FROM $db_name
-                         ORDER BY qname, qdescrip");
-   if (fdb_num_rows($result)>0) {
-
-    // display action bar
-    freemed_display_actionbar ();
-
-    // display table top
-    echo "
-      <P>
-      <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3 BORDER=0
-       BGCOLOR=#000000 VALIGN=MIDDLE ALIGN=CENTER>
-      <TR BGCOLOR=#000000>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>Name<$STDFONT_E></TD>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>Description<$STDFONT_E></TD>
-       <TD BGCOLOR=#000000>
-        <$STDFONT_B COLOR=#ffffff>Action<$STDFONT_E></TD>
-      </TR>
-     ";
-
-    // loop for all
-    while ($r = fdb_fetch_array ($result)) {
-      $_alternate = freemed_bar_alternate_color ($_alternate);
-      $qname     = fm_prep($r["qname"   ]);
-      $qdescrip  = fm_prep($r["qdescrip"]);
-      $id        =         $r["id"      ] ;
-
-      echo "
-        <TR BGCOLOR=\"$_alternate\">
-         <TD><B>$qname</B></TD>
-         <TD><I>$qdescrip</I></TD>
-         <TD>
-       ";
-
-      if (freemed_get_userlevel($LoginCookie)>$database_level)
-       echo "
-        <A HREF=\"$page_name?$_auth&action=modform&id=$id\"
-         ><$STDFONT_B SIZE=-1>$lang_MOD<$STDFONT_E></A>
-       ";
-
-      if (freemed_get_userlevel($LoginCookie)>$delete_level)
-       echo "
-        <A HREF=\"$page_name?$_auth&action=del&id=$id\"
-         ><$STDFONT_B SIZE=-1>$lang_DEL<$STDFONT_E></A>
-       ";
-
-      echo "
-         &nbsp;</TD>
-        </TR>
-       ";
-    } // end of while loop 
-
-    // display table bottom
-    echo "
-      </TABLE>
-      <P>
-     ";
- 
-    // display bottom action bar
-    freemed_display_actionbar ();
-   } else { // if there aren't any records, tell us so
-    echo "
-      <P>
-      <CENTER>
-       <B><$STDFONT_B>There are no records.<$STDFONT_E></B>
-       <P>
-       <A HREF=\"$page_name?$_auth&action=addform\"
-        ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
-      </CENTER>
-      <P>
-    ";
-   }
+   freemed_display_box_top (_($record_name));
+   echo freemed_display_itemlist (
+     fdb_query ("SELECT * FROM $db_name ORDER BY qname, qdescrip"),
+     $page_name,
+     array (
+       _("Name")	=>	"qname",
+       _("Description")	=>	"qdescrip"
+     ),
+     array (
+       "", _("NO DESCRIPTION")
+     )
+   );
    freemed_display_box_bottom ();
    break;
  } // end master switch
