@@ -56,12 +56,8 @@ class ViewCalendar extends freemedCalendarModule {
 		$day   = substr($jumpdate,8,2);
 
 		$this->month($month,$year);
-		$display_buffer .= "<CENTER><B>Calendar For: $this->month_name, $this->year</B></CENTER><br>\n";
-		$this->draw(array("cellspacing" => "2" , "cellpadding" => "2" ,
-                      "top_row_align" => "center" , "table_height" => "300px" ,
-                      "top_row_cell_height" => 20 , "bgcolor" => "#cccccc" ,
-                      "row_align" => "left" , "row_valign" => "top" ,
-                      "font_size" => "-1") );
+		$display_buffer .= "<CENTER><B>Calendar for $this->month_name $this->year</B></CENTER><br>\n";
+		$this->draw();
 
 		$nextdate = $this->nextyear."-".$this->nextmonth."-01";
 		$prevdate = $this->prevyear."-".$this->prevmonth."-01";
@@ -102,7 +98,8 @@ class ViewCalendar extends freemedCalendarModule {
 		while (list($k, $v)=each($GLOBALS)) global $$k;
 		//global $ptname, $phname, $facname, $roomname, $time, $prenote, $postnote;
 
-		//$display_buffer .= "id $id<BR>";
+		global $no_template_display; $no_template_display = true;
+
 		$query = "SELECT * FROM scheduler WHERE id='".prepare($id)."'";
 		$result = $sql->query($query);	
 		
@@ -171,7 +168,11 @@ class ViewCalendar extends freemedCalendarModule {
 									_("Pre Note") => $prenote,
 									_("Post Note") => $postnote)
 									);
-		$display_buffer .= "$data";
+		$display_buffer .= "<div CLASS=\"letterbox\">$data</div>\n";
+		$display_buffer .= "<div ALIGN=\"CENTER\">\n".
+			"<a HREF=\"javascript:window.close();\">".
+			_("Close")."</a>\n".
+			"</div>\n";
 	
 	} // end display
 
