@@ -730,11 +730,13 @@ class EMRModule extends BaseModule {
 						// Process as ##a:b@c##
 						list ($a, $_b) = explode (':', $f_v);
 						list ($b, $c) = explode ('@', $_b);
-						$f_r = $GLOBALS['sql']->query(
+						$f_q = $GLOBALS['sql']->query(
 							'SELECT '.$c.'.'.$b.' AS result '.
 							'FROM '.$c.', '.$this->table_name.' '.
-							'WHERE '.$this->table_name.'.'.$a.' = '.$c.'.id'
+							'WHERE '.$this->table_name.'.'.$a.' = '.$c.'.id AND '.
+							$this->table_name.'.id = '.$_REQUEST['id']
 						);
+						$f_r = $GLOBALS['sql']->fetch_array($f_q);
 						$displayed .= $f_r['result'];
 					} else {
 						// Simple field replacement
