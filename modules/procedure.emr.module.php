@@ -176,7 +176,7 @@ class procedureModule extends freemedEMRModule {
 		array_merge(array("procphysician", "proceoc", "procrefdoc",
 						  "proccpt", "proccptmod", "procunits", 
 					      "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
-					      "procpos", "procvoucher", 
+					      "procpos", "procvoucher","proccomment",
 							"procauth"),
 						  date_vars("procdt"),date_vars("procrefdt")),
     html_form::form_table ( array (
@@ -246,7 +246,7 @@ class procedureModule extends freemedEMRModule {
   ); // end of page one
 
   $wizard->add_page ("Step Two: Confirm",
-    array ("procunits", "procbalorig", "procbillable"),
+    array ("proccomment","procunits", "procbalorig", "procbillable"),
     html_form::form_table ( array (
 
      _("Procedural Code") =>
@@ -377,7 +377,7 @@ class procedureModule extends freemedEMRModule {
     	$$var = $covmap[$i];
 	  } 
 
-		
+	
       $query = $sql->insert_query (
 		$this->table_name,
 		array (
@@ -571,8 +571,7 @@ class procedureModule extends freemedEMRModule {
   $result = $sql->query ($query);
   if ($result) { echo "["._("Procedure")."] "; }
    else        { echo "["._("ERROR")."] ";     }
-  $query = "DELETE FROM payrec WHERE payrecproc='".addslashes($id)."'
-            AND payreccat='5'"; // delete record in payrec db
+  $query = "DELETE FROM payrec WHERE payrecproc='".addslashes($id)."'";
   $result = $sql->query ($query);
   if ($result) { echo "["._("Payment Record")."] "; }
    else        { echo "["._("ERROR")."] ";          }

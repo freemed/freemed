@@ -107,7 +107,7 @@ class GenerateFormsModule extends freemedBillingModule {
 			$this->pat_processed = 0;
 			if ($bill_request_type > 0)
 			{
-				$result = $this->CheckforInsBills();
+				$result = $this->CheckforInsBills(array(PRIMARY,SECONDARY,TERTIARY));
 				if ($result==0)
 				{
 					echo "Nothing to bill for this coverage type.<BR>\n";
@@ -679,6 +679,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		$this_physician  = new Physician
 				   ($row["procphysician"]);
 		$phy[name]       = $this_physician->fullName();
+		$phy[title]       = $this_physician->local_record["phytitle"];
 		$phy[practice]   = $this_physician->practiceName();
 		if (empty($phy[practice]))
 			$phy[practice] = $phy[name];
@@ -735,6 +736,7 @@ class GenerateFormsModule extends freemedBillingModule {
 		   $rendfac[city] = "";
 		   $rendfac[state] = "";
 		   $rendfac[zip] = "";
+		   $rendfac[ein] = "";
 
 		}
 		if ($row[procrefdoc]>0)

@@ -284,12 +284,30 @@ class freemedBillingModule extends freemedModule {
 	} // end cleannumber
 
 	// see if any insurance bills are due
-	function CheckforInsBills()
+	function CheckforInsBills($covtypes="")
 	{
 		global $sql;
 
+		if (empty($covtypes))
+			$covs = array(PRIMARY,SECONDARY);
+		else
+			$covs = $covtypes;
+
+		$c = count($covs);
+		$where = "WHERE (";
+		for ($i=0;$i<$c;$i++)
+		{
+			if ($i != 0)
+				$where .= " OR ";
+			$where .= "proccurcovtp='".$covs[$i]."'";
+
+		}
+		$where .= ")";
+		//echo "$where<BR>";
+
+	//		"WHERE (proccurcovtp='".PRIMARY."' OR proccurcovtp='".SECONDARY."')".
 		$query = "SELECT DISTINCT procpatient,proccurcovid,proccurcovtp FROM procrec ".
-			"WHERE (proccurcovtp='".PRIMARY."' OR proccurcovtp='".SECONDARY."')".
+			$where.
 			" AND procbilled='0' AND procbillable='0' AND procbalcurrent>'0'";
 		$result = $sql->query($query);
 		if (!$sql->results($result))

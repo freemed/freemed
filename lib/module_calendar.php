@@ -113,6 +113,16 @@ class freemedCalendarModule extends freemedModule {
 				$this->display();
 				break;
 
+			// admin functions
+
+			case "book";
+				$this->book();
+				break;
+
+			case "manage";
+				$this->manage();
+				break;
+
 			case "view":
 			default:
 				$this->view();
@@ -323,9 +333,14 @@ class freemedCalendarModule extends freemedModule {
 		/*
 		 * month data
 		 */
-		$query = "SELECT id,DAYOFMONTH(caldateof) as day, calprenote FROM scheduler WHERE
-			   MONTH(caldateof)='" . $this->month_number . "' AND
-			   YEAR(caldateof)='" . $this->year ."' ORDER BY day";
+		$query = "SELECT a.calprenote,a.calhour,a.calminute,a.id,DAYOFMONTH(a.caldateof) AS day, b.roomname,".
+				"c.ptlname,c.ptfname ".
+				"FROM scheduler AS a, room AS b, patient AS c ".
+				"WHERE a.calroom = b.id AND a.calpatient = c.id AND ".
+			   "MONTH(a.caldateof)='" . $this->month_number . "' AND ".
+			   "YEAR(a.caldateof)='" . $this->year ."' ORDER BY day,a.calhour,a.calminute";
+
+		//echo "$query<BR>";
 		$result = $sql->query($query);
 
 
@@ -335,11 +350,19 @@ class freemedCalendarModule extends freemedModule {
 
 		while ($tmp = $sql->fetch_array($result)) 
    	    {
+		  $calroom = $tmp["roomname"];
 		  $calnote = $tmp["calprenote"];
+		  $ptlname = $tmp["ptlname"];
+		  $ptfname = $tmp["ptfname"];
 		  if( empty($calnote ))
 				$calnote = "No Comment";
 			$this->month_data[$tmp["day"]]["id"][] = $tmp["id"];
-			$this->month_data[$tmp["day"]]["event_title"][] = $calnote;
+			$this->month_data[$tmp["day"]]["event_title"][] = prepare($calnote);
+			$wrkh = $tmp[calhour];
+			$wrkm = $tmp[calminute];
+			$this->month_data[$tmp["day"]]["time"][] = fc_get_time_string($wrkh,$wrkm);
+			$this->month_data[$tmp["day"]]["room"][] = prepare($calroom);
+			$this->month_data[$tmp["day"]]["patient"][] = prepare($ptlname).", ".prepare($ptfname);
 		}
 	  } // end function month
 	
@@ -692,24 +715,33 @@ class freemedCalendarModule extends freemedModule {
 	   */
 
 	  $theevent = "";
+	  $theevent_info = "";
 	  if( $this->month_data[$theday]["event_title"][0] )
 	  {
 		for( $j=0 ; $j <  count($this->month_data[$theday]["event_title"]) ; $j++ )
 		{
 		  if ($this->ProcessType == "ADMIN")
 		  {
-			$theevent .= $this->month_data[$theday]["event_title"][$j]."<BR>";
-
+			$theevent .= $this->month_data[$theday]["time"][$j]." - ";
+			$theevent .= $this->month_data[$theday]["room"][$j]."<BR>";
+			$theevent .= "&nbsp;&nbsp;".$this->month_data[$theday]["patient"][$j]."<BR>";
+			$theevent .= "&nbsp;&nbsp;".$this->month_data[$theday]["event_title"][$j]."<BR>";
 		  }
 		  else
 		  {
 		  	//$c = $this->month_data[$theday]["id"][$j];
 		  	//echo "id is $c<BR>";
-		  	$theevent .= "<font face=\"$font_face\" size=\"$font_size\"><a href=\"javascript:openWin(";
+		  	$theevent .= "<font face=\"$font_face\" size=\"$font_size\">";
+			$theevent .= "<a href=\"javascript:openWin(";
 		  	$theevent .= $this->month_data[$theday]["id"][$j]; 
 		  	$theevent .= ")\">";
-     	  	$theevent .= $this->month_data[$theday]["event_title"][$j]; 
-		  	$theevent .= "</a></font><br><br>\n";
+			$theevent .= $this->month_data[$theday]["time"][$j]." - ";
+     	  	$theevent .= $this->month_data[$theday]["room"][$j]."<BR>"; 
+     	  	//$theevent .= "&nbsp;&nbsp;".$this->month_data[$theday]["patient"][$j]."<BR>"; 
+     	  	//$theevent .= "&nbsp;&nbsp".$this->month_data[$theday]["event_title"][$j]; 
+		  	$theevent .= "</a></font>\n";
+     	  	$theevent .= "&nbsp;&nbsp;".$this->month_data[$theday]["patient"][$j]."<BR>"; 
+     	  	$theevent .= "&nbsp;&nbsp".$this->month_data[$theday]["event_title"][$j]."<BR>"; 
 		  }
 		}
 	  }
@@ -728,10 +760,12 @@ class freemedCalendarModule extends freemedModule {
 	  echo "width=\"$dates_cell_width\">";
 	  echo "<font face=\"$font_face\" size=\"$font_size\"";
 	  echo ">$theday<br>\n";
-      echo "$theevent</font>";
+      echo "$theevent";
+	  echo "</font>";
 	  echo "</td>\n";
 	  /* be sure to clear out $theevent */
 	  $theevent = "";
+	  $theevent_info = "";
 	  /* close the last row */
 	  if( $i == $num_of_rows*7-1 ){
 		echo "</tr>\n";

@@ -1,6 +1,17 @@
 freemed project changelog
 ($Id$)
 
+* Wed May 16 2001 fforest
+  - billing_module Checkforinsbills can now take an 
+    array of covtypes as a parm
+  - lots of work on the new calendar stuff but admin is still
+    not there. The old stuff still works:)
+  - cpt.db.maint ugly bug in fee profiles while 
+    running the insco list. it assumed the insco id would be
+    in seqence with no gaps?
+  - generate_forms now pass parms to Checkforinsbills
+  - procedure module dropping proccomment
+  - 
 * Wed May 09 2001 rufustfirefly
   Released 0.2.1.2 (Thelonious/CVS)
 

@@ -211,7 +211,7 @@ class cptMaintenance extends freemedMaintenanceModule {
   ");
 
   if ( (!empty($cptcode)) and (!empty($cptnameint)) ) {
-    $num_inscos = $sql->num_rows ($sql->query ("SELECT * FROM insco"));
+	$insco_result = $sql->query ("SELECT * FROM insco");
     $serv_buffer = "
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
       ALIGN=CENTER>
@@ -221,9 +221,10 @@ class cptMaintenance extends freemedMaintenanceModule {
       <TD><B>"._("Standard Fee")."</B></TD>
      </TR>
     ";
-    for ($i=1;$i<=$num_inscos;$i++) { // loop thru inscos
+	$i = 1;
+    while ($insrow = $sql->fetch_array($insco_result)) { // loop thru inscos
      if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
-     $this_insco = new InsuranceCompany ($i);
+     $this_insco = new InsuranceCompany ($insrow[id]);
      $serv_buffer .= "
       <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
        <TD>".prepare($this_insco->insconame)."</TD>
@@ -240,6 +241,7 @@ class cptMaintenance extends freemedMaintenanceModule {
        </TD>
       </TR>
      ";
+	  $i++; // next cptstdfee
     } // end loop thru inscos
     $serv_buffer .= "
      </TABLE>

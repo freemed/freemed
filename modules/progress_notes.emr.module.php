@@ -54,7 +54,7 @@ class progressNotes extends freemedEMRModule {
            DIE("");
          }
          $r = freemed_get_link_rec ($id, "pnotes");
-  	 extract ($r);
+  	 	 extract ($r);
          break; // end modform
       } // end internal switch
       $been_here = 1;

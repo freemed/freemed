@@ -194,7 +194,6 @@ class PatientCoveragesModule extends freemedEMRModule {
 												"covzip='".addslashes($covzip)."',".
 												"covrel='".addslashes($covrel)."',".
 												"covpatinsno='".addslashes($covpatinsno)."',".
-												"covstatus='".addslashes($covstatus)."',".
 												"covpatgrpno='".addslashes($covpatgrpno)."'".
 				" WHERE id='".addslashes($id)."'";
 		$result = $sql->query($query);
