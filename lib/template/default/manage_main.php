@@ -360,26 +360,21 @@ foreach ($modular_components AS $garbage => $component) {
 		$modules[_($module_list->get_module_name($component))] =
 			$component;
 		$panel[_($module_list->get_module_name($component))] .= "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
-			 CELLPADDING=3 CLASS=\"thinbox\"
+			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
+			 CELLPADDING=\"3\" CLASS=\"thinbox\"
 		 	 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
 		 	 onMouseOut=\"this.className='thinbox'; return true;\">
-			<TR><TD VALIGN=MIDDLE ALIGN=CENTER
-			 CLASS=\"menubar_items\">
-			<A HREF=\"module_loader.php?module=".
-			$component."&patient=$id&return=manage\" 
-			>"._("View/Manage")."</A> |
-			<A HREF=\"module_loader.php?module=".
-			$component."&patient=$id&action=addform&return=manage\" 
-			>"._("Add")."</A>
-			</TD></TR>
-			<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+			<tr><td VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
+			 CLASS=\"menubar_items\">".
+			module_function($component, "summary_bar", array ( $id )).
+			"</td></tr>
+			<tr><td ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 			".module_function($component, "summary",
 				array (
 					$id, // patient ID
 					$num_summary_items // items per panel
 				)
-			)."</TD></TR></TABLE>
+			)."</td></tr></table>
 		";
 	} else {
 		// Don't do anything if it doesn't exist

@@ -423,6 +423,19 @@ class EMRModule extends BaseModule {
 		return $buffer;
 	} // end function summary
 
+	// function summary_bar
+	// - override this to kill the basic bar
+	function summary_bar ($patient) {
+		return "
+		<a HREF=\"module_loader.php?module=".
+		get_class($this)."&patient=".urlencode($patient).
+		"&return=manage\">"._("View/Manage")."</a> |
+		<a HREF=\"module_loader.php?module=".
+		get_class($this)."&patient=".urlencode($patient).
+		"&action=addform&return=manage\">"._("Add")."</a>
+		";
+	} // end function summary_bar
+
 	// function view
 	// - view stub
 	function view () {
