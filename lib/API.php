@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.47  2002/06/11 20:43:56  rufustfirefly
+ // added freemed::patient_widget(), fixed fm_display_date
+ //
  // Revision 1.46  2002/05/08 20:50:48  rufustfirefly
  // added option for secure client for EMRi server, added EMRi->patient_search
  // method
@@ -226,6 +229,38 @@ class freemed {
 		// check in cache for version
 		return $_config["$module"];
 	} // end function freemed::module_version
+
+	function patient_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
+		global ${$varname};
+
+		// If it is set, show patient name, else widget
+		if (${$varname} > 0) {
+			$this_patient = new Patient (${$varname});	
+			return "<INPUT TYPE=\"HIDDEN\" ".
+				"NAME=\"".prepare($varname)."\" ".
+				"VALUE=\"".prepare(${$varname})."\">".
+				$this_patient->fullName()." ".
+				"<INPUT TYPE=\"BUTTON\" ".
+				"onClick=\"patientPopup=window.open(".
+				"'patient_lookup.php?varname=".
+				urlencode($varname)."&submitname=".
+				urlencode($submitname)."&formname=".
+				urlencode($formname)."', 'patientPopup'); ".
+				"patientPopup.opener=self; return true;\" ".
+				"VALUE=\""._("Change")."\">";
+		} else {
+			return "<INPUT TYPE=\"HIDDEN\" ".
+				"NAME=\"".prepare($varname)."\">".
+				"<INPUT TYPE=\"BUTTON\" ".
+				"onClick=\"patientPopup=window.open(".
+				"'patient_lookup.php?varname=".
+				urlencode($varname)."&submitname=".
+				urlencode($submitname)."&formname=".
+				urlencode($formname)."', 'patientPopup'); ".
+				"patientPopup.opener=self; return true;\" ".
+				"VALUE=\""._("Patient Lookup")."\">";
+		}
+	} // end function freemed::patient_widget
 
 	function query_to_array ( $query ) {
 		global $sql;
@@ -1648,29 +1683,21 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 } // end function fm_date_entry
 
 function fm_date_print ($actualdate, $show_text_days=false) {
-	global $lang_months, $lang_days;
-
 	$y  = substr ($actualdate, 0, 4);        // extract year
 	$m  = substr ($actualdate, 5, 2);        // extract month
 	$d  = substr ($actualdate, 8, 2);        // extract day
 	$ts = mktime (0, 0, 0, $m, $d, $y);      // generate timestamp
-	$mt = $lang_months[($m+0)];              // month           (text)
-	$wt = $lang_days[1 + (date("w", $ts))];  // day of the week (text)
 
-	// decide if we show the week days names...
-	if ($show_text_days) { $week = $wt.", "; }
-	  else               { $week = " ";      }
-	
 	// Return depending on configuration format
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
-			return chop($week.$mt." ".$d.", ".$y);
+			return date(($show_text_days ? "D" : "")."M d, Y", $ts);
 			break;
 		case "dmy":
-			return chop($week.$d." ".$mt.", ".$y);
+			return date(($show_text_days ? "D" : "")."d M, Y", $ts);
 			break;
 		case "ymd": default:
-			return chop($y."-".$m."-".$d);
+			return date("Y-m-d", $ts);
 			break; 
 	} // end switch
 } // end function fm_date_print
