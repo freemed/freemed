@@ -1,6 +1,15 @@
 freemed project changelog
 ($Id$)
 
+* Thu Jun 14 2001 rufustfirefly
+  - general include -> include_once overhaul for many modules,
+    but never enough
+  - lib/xml.php: working on EMR generation code; more of the record
+    is being generated
+  - lang/registry: added spanish and german to language registry
+  - index.php: fixed language registry read
+  - module*.php: include -> include_once
+
 * Wed Jun 13 2001 rufustfirefly
   - TODO: updated todo list to be a little bit more current
   - doc/MODULE_API: added initial modular API documentation
