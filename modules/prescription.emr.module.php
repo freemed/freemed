@@ -8,7 +8,7 @@ class PrescriptionModule extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.1";
+	var $MODULE_VERSION = "0.3.3";
 	var $MODULE_DESCRIPTION = "
 		The prescription module allows prescriptions to be written 
 		for patients from any drug in the local formulary or in the 
@@ -23,7 +23,8 @@ class PrescriptionModule extends EMRModule {
 	var $patient_field  = "rxpatient";
 
 	function PrescriptionModule () {
-		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW;
+		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW |
+			SUMMARY_LOCK;
 
 		$this->summary_vars = array (
 			__("Date From") => "rxdtfrom",
@@ -84,6 +85,7 @@ class PrescriptionModule extends EMRModule {
 			'rxrefills' => SQL__INT_UNSIGNED(0),
 			'rxperrefill' => SQL__INT_UNSIGNED(0),
 			'rxnote' => SQL__TEXT,
+			'locked' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
 		);
 
@@ -111,7 +113,8 @@ class PrescriptionModule extends EMRModule {
 			"rxsubstitute",
 			"rxrefills",
 			"rxperrefill",
-			"rxnote"
+			"rxnote",
+			"locked" => '0'
 		);
 		$this->EMRModule();
 	} // end constructor PrescriptionModule
@@ -355,7 +358,7 @@ class PrescriptionModule extends EMRModule {
 			),
 			array("", __("NONE")),
 			NULL, NULL, NULL,
-			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
+			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL | ITEMLIST_LOCK
 		);
 	} // end function PrescriptionModule->view
 
@@ -366,6 +369,17 @@ class PrescriptionModule extends EMRModule {
 		if (!version_check($version, '0.3')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN rxphy INT UNSIGNED AFTER rxdtfrom');
+		}
+		// Version 0.3.3
+		//
+		//	Add prescription locking
+		//
+		if (!version_check($version, '0.3.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN locked INT UNSIGNED AFTER rxnote');
+			// Patch existing data to be unlocked
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'locked = \'0\'');
 		}
 	} // end function PrescriptionModule->_update
 
