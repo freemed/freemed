@@ -8,6 +8,11 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.50  2002/09/26 18:25:19  rufustfirefly
+ // Additional DjVu support.
+ // CSS fixes.
+ // Bug fixes.
+ //
  // Revision 1.49  2002/07/08 15:23:27  rufustfirefly
  // Added freemed::drug_widget() and small default_facility fix.
  //
@@ -363,27 +368,45 @@ class freemed {
 
 		// Process depending on 
 		switch (strtolower($ext)) {
+			/*
 			case "jpg":
 			case "jpeg":
 				// Simple JPEG handler: copy
-				$name = $patient_id.".".$type.".jpg";
-				copy ($image, "img/store/$name");
+				$name = $patient_id.".".$type.".djvu";
+				copy ($image, "./img/store/$name");
 				return $name;
 				break; // end handle JPEGs
+			*/
 
 			default:
 				// More complex: use imagemagick
-				$name = $patient_id.".".$type.".jpg";
-				//copy ($image, $image.".$ext");
+				$name = $patient_id.".".$type.".djvu";
+				// Convert to PBM
 				$command = "/usr/X11R6/bin/convert ".
 					freemed::secure_filename($image).
 					" ".PHYSICAL_LOCATION."/".
+					"img/store/".$name.".pbm";
+				exec ($command);
+				// Convert to DJVU
+				$command = "/usr/bin/cjb2 ".
+					PHYSICAL_LOCATION."/".
+					"img/store/".$name.".pbm ".
+					PHYSICAL_LOCATION."/".
 					"img/store/".$name;
 				exec ($command);
+				// Remove PBM
+				unlink(PHYSICAL_LOCATION."/img/store/".$name.".pbm");
 				return $name;
 				break; // end handle others
 		} // end checking by extension
 	} // end function freemed::store_image
+
+	function support_djvu ( $browser ) {
+		// Assume true
+		$support = true;
+
+		return $support;
+	} // end function freemed::support_djvu
 
 	function user_flag ( $flag ) {
 		global $database, $sql, $SESSION;
@@ -719,21 +742,30 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 		$_ref="main.php";
 	  } // if no ref, then return to home page...
 
+	if ($GLOBALS["return"] == "manage") {
+		$__ref = "manage.php?id=$patient";
+	}
+
     // show the actual bar, build with page_name reference
     // and global variables
+	global $globaladdcounter; $globaladdcounter++;
+	global $template;
+
 	$buffer .= "
-    <TABLE BGCOLOR=\"#000000\" WIDTH=\"100%\" BORDER=0
+    <TABLE CLASS=\"reverse\" WIDTH=\"100%\" BORDER=0
      CELLSPACING=0 CELLPADDING=3>
-    <TR BGCOLOR=\"#000000\">
+    <TR CLASS=\"reverse\">
     <TD ALIGN=LEFT><A HREF=\"$this_page_name?module=".urlencode($module)."&".
 	"action=addform".
-     ( !empty($patient) ? "&patient=".urlencode($patient) : "" )
-     ."\"><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
-     SIZE=-1><B>"._("ADD")."</B></FONT></A></TD>
+     ( !empty($patient) ? "&patient=".urlencode($patient) : "" )."\"
+	onMouseOver=\"window.status='"._("Add")."'; return true;\"
+	onMouseOut=\"window.status=''; return true;\"
+	CLASS=\"reverse\"><SMALL><B><IMG NAME=\"add_$globaladdcounter\"
+	SRC=\"lib/template/$template/img/add.png\" BORDER=\"0\"
+	ALT=\"["._("Add")."]\"></B></SMALL></A></TD>
     <TD WIDTH=\"30%\">&nbsp;</TD>
-    <TD ALIGN=RIGHT><A HREF=\"$__ref\"
-     ><FONT COLOR=\"#ffffff\" FACE=\"Arial, Helvetica, Verdana\"
-     SIZE=-1><B>"._("RETURN TO MENU")."</B></FONT></A></TD>
+    <TD ALIGN=RIGHT><A HREF=\"$__ref\" CLASS=\"reverse\"
+     ><SMALL><B>"._("RETURN TO MENU")."</B></SMALL></A></TD>
     </TR></TABLE>
   	";
 	return $buffer;
@@ -785,38 +817,35 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 
   $buffer .= "
     <!-- Begin itemlist Table -->
-    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
-     ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
+    <TABLE WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\"
+     ALIGN=\"CENTER\" VALIGN=\"MIDDLE\" CLASS=\"itemlistbox\">
     <TR>
-     <TD ALIGN=CENTER>
-      <FONT SIZE=+1 COLOR=\"#ffffff\">"._("$record_name")."</FONT>
+     <TD ALIGN=\"CENTER\">
+      <BIG><B>"._("$record_name")."</B></BIG>
      </TD>
     </TR>".
     
    ( ((strlen($cur_page_var)>0) AND ($num_pages>1)) ? "
-   <TR ALIGN=CENTER><TD BGCOLOR=\"#000000\">
+   <TR ALIGN=CENTER><TD CLASS=\"reverse\">
     <TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0>
      <FORM METHOD=POST ACTION=\"$page_name\">
     ".
     
     (($$cur_page_var>1) ? "
     <TR><TD>
-     <FONT COLOR=\"#ffffff\">
-     <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
+     <A CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
-     "&module=$module&action=$action\"><FONT COLOR=\"#ffffff\">
+     "&module=$module&action=$action\">
         "._("Previous")."
-     </FONT></A>
+     </A>
     </TD>
     " : "" )
     
-    ."<TD>
-     <FONT COLOR=\"#ffffff\">
+    ."<TD CLASS=\"reverse\">
      "._("Page"). 
      fm_number_select($cur_page_var, 1, $num_pages, 1, false, true).
 	" of ".$num_pages."
-     </FONT>
      <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".prepare($action)."\" >
      <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\" >
      <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
@@ -825,13 +854,12 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     
     (($$cur_page_var<$num_pages) ? "
     <TD>
-     <FONT COLOR=\"#ffffff\">
-     <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
+     <A CLASS=\"reverse\" HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
      ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
        .prepare($_s_val)."" : "").
-     "&module=$module&action=$action\"><FONT COLOR=\"#ffffff\">
+     "&module=$module&action=$action\">
         "._("Next")."
-     </FONT></A>
+     </A>
     </TD></TR>
     " : "" )
     
@@ -850,27 +878,25 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 
   $buffer .= "
     <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
-     ALIGN=CENTER VALIGN=MIDDLE>
+     ALIGN=\"CENTER\" ALIGN=\"MIDDLE\">
     <TR>
   ";
   while (list($k,$v)=each($control_list)) {
     $buffer .= "
-      <TD BGCOLOR=\"#000000\">
-       <FONT COLOR=\"#ffffff\">$k&nbsp;</FONT>
+      <TD CLASS=\"reverse\">
+       $k&nbsp;
       </TD>
     ";
   }
   if ($flags != 0)
   {
   $buffer .= "
-      <TD BGCOLOR=\"#000000\">
-       <FONT COLOR=\"#ffffff\">"._("Action")."</FONT>
-      </TD>
+      <TD CLASS=\"reverse\">"._("Action")."</TD>
 	  </TR>
   ";
   }
   else
-  	$buffer .= "<TD BGCOLOR=\"#000000\"></TD></TR>";
+  	$buffer .= "<TD CLASS=\"reverse\"></TD></TR>";
  
   if ($sql->num_rows($result)>0) 
    while ($this_result = $sql->fetch_array($result) AND 
@@ -973,10 +999,10 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   // searchbox
  if ($num_pages>1) {
   $buffer .= "
-    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0>
-    <TR BGCOLOR=\"#000000\">
-    <FORM METHOD=POST ACTION=\"".prepare($page_name)."\">
-     <TD ALIGN=CENTER>
+    <TABLE WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\">
+    <TR CLASS=\"reverse\">
+    <FORM METHOD=\"POST\" ACTION=\"".prepare($page_name)."\">
+     <TD ALIGN=\"CENTER\">
       <SELECT NAME=\"_s_field\">
   ";
   reset($control_list);
@@ -984,11 +1010,11 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     $buffer .= "<OPTION VALUE=\"$c_v\">$c_k\n";
   $buffer .= "
       </SELECT>
-      <FONT COLOR=\"#ffffff\"> "._("contains")." </FONT>
-      <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-      <INPUT TYPE=HIDDEN NAME=\"$cur_page_var\" VALUE=\"1\">
-      <INPUT TYPE=TEXT NAME=\"_s_val\">
-      <INPUT TYPE=SUBMIT VALUE=\""._("Search")."\">
+      "._("contains")."
+      <INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
+      <INPUT TYPE=\"HIDDEN\" NAME=\"$cur_page_var\" VALUE=\"1\">
+      <INPUT TYPE=\"TEXT\" NAME=\"_s_val\">
+      <INPUT TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
      </TD>
     </FORM>
     </TR>
@@ -1331,21 +1357,19 @@ function freemed_multiple_choice ($sql_query, $display_field, $select_name,
 				$displayed = ""; // set as null
 				$split_display_field = explode (":", $display_field);
 				for ($sl=0; $sl<sizeof($split_display_field); $sl++) {
-					$displayed .= $r[$split_display_field[$sl]];
+					$displayed .= stripslashes($r[$split_display_field[$sl]]);
 					// If not the last, insert separator
 					if ($sl < (sizeof ($split_display_field) - 1))
 						$displayed .= ", "; 
 				}
 			} else { // if it is only one field
-				$displayed = $r[$display_field];
+				$displayed = stripslashes($r[$display_field]);
 			} // end if-else displayed loop
 		$id = $r["id"];
-		if ($debug) $debuginfo = " [$id] ";
 		$buffer .= "
 		<OPTION VALUE=\"".prepare($id)."\" ".
 		( (fm_value_in_string ($blob_data, $id)) ? "SELECTED" : "" ).
-		">$displayed $debuginfo
-		";
+		">$displayed".( $debug ? " [$r[id]]" : "" )."\n";
 	} // end while
 	$buffer .= " </SELECT>\n"; // end the select tag
 	return $buffer;
@@ -1659,7 +1683,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 			$ending_year   = (date("Y")+20);
 			break;
 		case false: default:
-			$starting_year = (date("Y")-10);
+			$starting_year = (date("Y")-20);
 			$ending_year   = (date("Y")+20);
 			break;
 	} // end switch for pre_epoch
@@ -2422,12 +2446,12 @@ function check_basic_authentication () {
 	global $sql;
 
 	// Build array of users
-	$query = "SELECT username, userpass, userlevel FROM users";
+	$query = "SELECT username, userpassword, userlevel FROM user";
 	$result = $sql->query($query);
 	if ($sql->results($result)) {
 		while ($r = $sql->fetch_array($result)) {
 			$users[(stripslashes($r[username]))] =
-				stripslashes($r[userpass]);
+				stripslashes($r[userpassword]);
 		} // end looping thru results
 	} // end no results
 
