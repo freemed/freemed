@@ -322,7 +322,7 @@ class freemed {
 				"NAME=\"".prepare($varname)."\" ".
 				"VALUE=\"".prepare(${$varname})."\"/>".
 				$this_patient->fullName()." ".
-				"<input TYPE=\"BUTTON\" ".
+				"<input class=\"button\" TYPE=\"BUTTON\" ".
 				"onClick=\"patientPopup=window.open(".
 				"'patient_lookup.php?varname=".
 				urlencode($varname)."&submitname=".
@@ -330,7 +330,7 @@ class freemed {
 				urlencode($formname)."', 'patientPopup', ".
 				"'width=400,height=200,menubar=no,titlebar=no'); ".
 				"patientPopup.opener=self; return true;\" ".
-				"VALUE=\""._("Change")."\" class=\"button\"/>";
+				"VALUE=\""._("Change")."\"/>";
 		} else {
 			return "<input TYPE=\"HIDDEN\" ".
 				"NAME=\"".prepare($varname)."\"/>".
@@ -906,10 +906,10 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
      "._("Page"). 
      fm_number_select($cur_page_var, 1, $num_pages, 1, false, true).
 	" of ".$num_pages."
-     <input TYPE=HIDDEN NAME=\"action\"  VALUE=\"".prepare($action)."\"/>
-     <input TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\"/>
-     <input TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
-     <input TYPE=SUBMIT VALUE=\""._("Go")."\"/>
+     <input TYPE=\"HIDDEN\" NAME=\"action\"  VALUE=\"".prepare($action)."\"/>
+     <input TYPE=\"HIDDEN\" NAME=\"module\"  VALUE=\"".prepare($module)."\"/>
+     <input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
+     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Go")."\"/>
     </td>".
     
     ((${$cur_page_var} < $num_pages) ? "
@@ -1058,8 +1058,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     
     
     $buffer .= "
-      &nbsp;</TD>
-    </TR>
+      &nbsp;</td>
+    </tr>
     ";
    } // while each result-row
   else { // no items to display
