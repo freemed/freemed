@@ -124,6 +124,25 @@ class Coverage {
 		return $this->local_record;
 	} // end method get_coverage
 
+	// Method: get_payers
+	//
+	//	Get entire list of payers for the system
+	//
+	// Returns:
+	//
+	//	Array of payer id keys
+	//
+	function get_payers ( ) {
+		$query = "SELECT insconame, inscocity, inscostate, id ".
+			"FROM insco ORDER BY insconame, inscocity, ".
+			"inscostate";
+		$result = $GLOBALS['sql']->query( $query );
+		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			$payers[] = $r['id'];
+		} // end while there are no more
+		return $payers;
+	} // end method get_payers
+
 } // end class Coverage
 
 ?>
