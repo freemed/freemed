@@ -449,97 +449,6 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 
 } // end function freemed_display_actionbar
 
-// function freemed_display_cptcodes
-//   display <SELECT>-type list of CPT codes
-function freemed_display_cptcodes ($param)
-{
-  global $NONE_SELECTED, $SELECTED;
-
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $result = fdb_query ("SELECT * FROM cpt
-    ORDER BY cptcode, cptnameint");
-  if (!$result) {
-    // don't do anything...
-  } else { // 
-    while ($row=fdb_fetch_array($result)) {
-      $cpt_name = $row["cptnameint"];
-      $cpt_code = $row["cptcode"   ];
-      $cpt_id   = $row["id"];
-
-      echo "
-        <OPTION VALUE=\"$cpt_id\" ".
-         ( ($param==$row[id]) ? "SELECTED" : "" ) .
-         ">$cpt_code ($cpt_name) ".
-         ( $debug ? "[$cpt_id]" : "" )."\n";
-    } // while there are more results...
-  } // end master loop
-} // end function freemed_display_cptcodes
-
-// function freemed_display_cptmods
-//   display <SELECT>-type list of CPT modifiers
-function freemed_display_cptmods ($param)
-{
-  global $NONE_SELECTED;
-
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $result = fdb_query ("SELECT * FROM cptmod
-    ORDER BY cptmod, cptmoddescrip");
-  if (!$result) {
-    // don't do anything...
-  } else { // 
-    while ($row=fdb_fetch_array($result)) {
-      $cpt_mod  = $row["cptmod"       ];
-      $cpt_desc = $row["cptmoddescrip"];
-      $cpt_id   = $row["id"];
-
-      if ($debug) 
-        $debug_var = "[$cpt_id]";
-      else $debug_var = "";
-
-      echo "
-        <OPTION VALUE=\"$cpt_id\" ".
-	 ( ($param == $row[id]) ? "SELECTED" : "" ).
-         ".>$cpt_mod ($cpt_desc) $debug_var
-      "; // actually show it
-    } // while there are more results...
-  } // end master loop
-} // end function freemed_display_cptmods
-
-// function freemed_display_drugs
-//   display <SELECT>-type list of drugs
-function freemed_display_drugs ($param)
-{
-  global $NONE_SELECTED;
-
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $result = fdb_query ("SELECT * FROM frmlry
-    ORDER BY trdmrkname");
-  if (!$result) {
-    // don't do anything...
-  } else { // 
-    while ($row=fdb_fetch_array($result)) {
-      $d_name = $row["trdmrkname"];
-      $d_id   = $row["id"        ];
-
-      if ($debug) 
-        $debug_var = "[$d_id]";
-      else $debug_var = "";
-
-      echo "
-        <OPTION VALUE=\"$d_id\" ".
-	( ($param == $row[id]) ? "SELECTED" : "" ).
-        ">$d_name $debug_var
-      "; // actually show it
-    } // while there are more results...
-  } // end master loop
-} // end function freemed_display_drugs
-
 // function freemed_display_html_bottom
 function freemed_display_html_bottom ($_null="")
 {
@@ -1004,33 +913,6 @@ function freemed_display_phygroups ($param="")
   }
 } // end function freemed_display_phygroups
 
-
-// function freemed_display_phystatus (selected)
-function freemed_display_phystatus ($param="")
-{
-  global $NONE_SELECTED;
-
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-
-  $query = "SELECT * FROM phystatus ORDER BY ".
-     "phystatus";
-
-  $result = fdb_query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more docs
-    while ($row=fdb_fetch_array($result)) {
-      echo "
-        <OPTION VALUE=\"$row[id]\" ".
-	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".fm_prep($row[phystatus])."
-      "; // end of actual output
-    } // while there are more results...
-  } // end of master if clause
-} // end function freemed_display_phystatus
-
 // function freemed_display_physicians
 //   displays physicians selectable in <SELECT>
 //   list with $param selected
@@ -1174,35 +1056,6 @@ function freemed_display_rooms ($param)
     } // while there are more results...
   } // end master loop
 } // end function freemed_display_rooms
-
-// function freemed_display_phy_specialties
-//   display <SELECT>-type list of physician specialties
-function freemed_display_phy_specialties ($param)
-{
-  global $NONE_SELECTED; 
-
-  // list degrees in SELECT/OPTION tag list, and
-  // leave degrees selected that are in param
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $query = "SELECT * FROM specialties ORDER BY ".
-     "specname, specdesc";
-  $result = fdb_query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more
-    while ($row=fdb_fetch_array($result)) {
-      echo "
-        <OPTION VALUE=\"$row[id]\" ".
-	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".fm_prep($row[specname].
-	 ( (!empty($row[specdesc])) ? ", " : " " ).
-  	  $row[specdesc])."\n";
-    } // while there are more results...
-  }
-
-} // end function freemed_display_phy_specialties
 
 // function freemed_display_selectbox
 function freemed_display_selectbox ($result, $format, $param="")

@@ -159,23 +159,6 @@ freemed_display_box_top (box title [, pass _ref])
     created: API epoch or prior (19990609)
     modified: 19991129
 
-freemed_display_cptcodes (selected)
-  displays <SELECT>-box style CPT codes pulldown
-    returns: none
-    created: 19990722
-
-freemed_display_cptmods (selected)
-  displays <SELECT>-box style CPT modifiers pulldown
-  * 19991224 -- changed order and sorting for ease of use
-    returns: none
-    created: 19990722
-    modified: 19991224
-
-freemed_display_drugs (selected)
-  displays <SELECT>-box style formulary (drugs) pulldown
-    returns: none
-    created: 19990723
-
 freemed_display_facilities (selected [, default value on])
   this displays the innards of a SELECT tag set for the listing of
   facilities. if the optional second parameter is used, it will
@@ -262,18 +245,6 @@ freemed_display_physicians (selected)
   (same as freemed_display_icdcodes)
     returns: none
     created: 19990610
-
-freemed_display_phystatus (selected)
-  displays the list of physician statuses for the innards of a <SELECT>
-  tag set. (same as freemed_display_icdcodes).
-    returns: none
-    created: API epoch or prior (19990609)
-
-freemed_display_phy_specialties (selected)
-  displays the list of physician specialties for the innards
-  of a tag set.
-    returns: none
-    created: 19990830
 
 freemed_display_ptstatus (selected[, tag var name])
   displays patient statuses in select tag, and will display the
