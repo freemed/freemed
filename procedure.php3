@@ -528,6 +528,8 @@ switch ($action) { // master action switch
             '0',
             '".addslashes($procbillable). "',
             '".addslashes($procauth).     "',
+            '".addslashes($procrefdoc).   "',
+            '".addslashes($procrefdt).    "',
             NULL )";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
@@ -626,7 +628,9 @@ switch ($action) { // master action switch
             procbalorig     = '".addslashes($procbalorig).  "',
             proccomment     = '".addslashes($proccomment).  "',
             procauth        = '".addslashes($procauth).     "',
-            procbillable    = '".addslashes($procbillable). "'
+            procbillable    = '".addslashes($procbillable). "',
+            procrefdoc      = '".addslashes($procrefdoc).   "',
+            procrefdt       = '".addslashes($procrefdt).    "'
             WHERE id='$id'";
   $result = fdb_query ($query);
   if ($debug) echo " (query = $query, result = $result) <BR>\n";
