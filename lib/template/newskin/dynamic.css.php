@@ -39,8 +39,8 @@ body {
 	text-decoration: none;
 	<?php if ($Gecko) {
 		// Weird gecko size adjustments
-		print "\theight: 80%;\n";
-		print "\twidth: 100%;\n";
+		print "\theight: 85%;\n";
+		print "\twidth: auto;\n";
 	} elseif ($IE) {
 		// Even weirder IE adjustments
 		print "\theight: 80%;\n";
