@@ -22,6 +22,40 @@ class Ledger {
 		return $this->_query_to_result_array ( $query, true );
 	} // end method get_list
 
+	// Method: move_to_next_coverage
+	//
+	//	Moves a procedure to the next available coverage.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure id key
+	//
+	//	$disallow - (optional) Disallowment amount that cannot
+	//	be passed to the patient if coverages run out.
+	//
+	// Returns:
+	//
+	//	Boolean, successful
+	//
+	// See Also:
+	//	<next_coverage>
+	//
+	function move_to_next_coverage ( $proc, $disallow = NULL ) {
+		// Get next coverage
+		$next = $this->next_coverage ( $proc );
+
+		// Decide what to do based on what it is
+		if ($next < 0) {
+			// What do we do? Can't rebill!
+			// FIXME
+		} elseif ($next == 0) {
+			// Patient responsibility
+			return $this->queue_for_rebill($proc, 0, $disallow );
+		} else {
+			return $this->queue_for_rebill($proc, $next);
+		} // end decide
+	} // end method move_to_next_coverage
+
 	// Method: next_coverage
 	//
 	//	Determine if there is another coverage that this should
@@ -68,6 +102,70 @@ class Ledger {
 		} // end checking for running out of slots
 
 	} // end method next_coverage
+
+	// Method: queue_for_rebill
+	//
+	//	Set a procedure to be rebilled at the next billing, moving
+	//	it to be associated to the proper coverage.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure id key
+	//
+	//	$type - Coverage number (0 - 4)
+	//
+	//	$disallow - (optional) Disallowment amount that cannot
+	//	be passed to the patient.
+	//
+	// Returns:
+	//
+	//	Boolean, successful
+	//
+	function queue_for_rebill ( $proc, $type, $disallow = NULL ) {
+		// If passing to a patient, handle disallowments
+		if (($type == 0) and $disallow) {
+			$query = "UPDATE procrec ".
+				"SET procbilled = '0', ".
+				"proccurcovtp = '".addslashes($type)."', ".
+				"procbalcurrent = procbalcurrent - ".
+				( $disallow + 0 )." ".
+				"WHERE id = '".addslashes($proc)."'";
+		} else {
+			$query = $GLOBALS['sql']->insert_query(
+				'procrec',
+				array (
+					'procbilled' => '0',
+					'proccurcovtp' => $type
+				),
+				array ( 'id' => $proc )
+			);
+		}
+		$result = $GLOBALS['sql']->query ( $query );
+
+		// Adjust internal proccurcovid
+		if ($type > 0) {
+			$query = "SELECT proccov'.($type + 0)." AS ".
+				"coverage FROM procrec WHERE ".
+				"id = '".addslashes($proc)."'";
+			$result = $GLOBALS['sql']->query($query);
+			extract($GLOBALS['sql']->fetch_array($result));
+		} else {
+			$coverage = 0;
+		}
+
+		// Update the current coverage id
+		$query = $GLOBALS['sql']->insert_query(
+			'procrec',
+			array (
+				'proccurcovid' => $coverage
+			),
+			array ( 'id' => $proc )
+		);
+		$result &= $GLOBALS['sql']->query ( $query );
+			
+		return $result;
+	} // end method queue_for_rebill
+
 
 /* ---------------- FIX / REMOVE --------------------------------------------
 	// Method -- post_adjustment
@@ -557,6 +655,30 @@ class Ledger {
 
 		return ($proc_result and $pay_result);
 	} // end method post_writeoff
+
+	// Method: unpostable
+	//
+	//	Adds an "unpostable" sum to the global claim log. Currently
+	//	updates the "global" event log (where procedure = 0).
+	//
+	// Parameters:
+	//
+	//	$amount - Unpostable amount
+	//
+	//	$comment - Text comment (with check number, etc)
+	//
+	// Returns:
+	//
+	//	Boolean, succesful
+	//
+	function unpostable ( $amount, $comment ) {
+		$cl = CreateObject('_FreeMED.ClaimLog');
+		retiurn $cl->log_event ( 0, array(
+			'comment' => '$'.bcadd($amount,0,2).' '.
+				__("Unpostable")." (".$comment.")"
+			)
+		);
+	} // end method unpostable
 
 	//------------------------------------- INTERNAL METHODS ------------
 
