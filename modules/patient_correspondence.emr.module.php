@@ -27,7 +27,7 @@ class PatientCorrespondence extends EMRModule {
 			__("From")   => "letterfrom:physician"
 		);
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW
-			| SUMMARY_PRINT | SUMMARY_LOCK;
+			| SUMMARY_PRINT | SUMMARY_LOCK | SUMMARY_DELETE;
 
 		// For display action, disable patient box for print
 		// but only if we're the correct module
@@ -331,31 +331,39 @@ class PatientCorrespondence extends EMRModule {
 		$phf = freemed::get_link_rec($r['letterfrom'], 'physician');
 
 		// Figure out prefix
-		if ($pt['ptsex'] != 'f') {
-			$prefix = 'Mr. ';
+		if ($pt['ptsalut']) {
+			$prefix = $pt['ptsalut'].'. ';
 		} else {
-			switch ($pt['ptmarital']) {
-				case 'married':
-				case 'widowed':
-				case 'separated':
-				case 'divorced':
-					$prefix = 'Mrs. ';
-					break;
+			if ($pt['ptsex'] != 'f') {
+				$prefix = 'Mr. ';
+			} else {
+				switch ($pt['ptmarital']) {
+					case 'married':
+					case 'widowed':
+					case 'separated':
+					case 'divorced':
+						$prefix = 'Mrs. ';
+						break;
 
-				case 'single':
-				default:
-					$prefix = 'Ms. ';
-					break;
+					case 'single':
+					default:
+						$prefix = 'Ms. ';
+						break;
+				}
 			}
 		} // end creating name prefix for patient
 		
 		return array (
 			'date' => $TeX->_SanitizeText( fm_date_print($r['letterdt'], true) ),
 			'patient' => $TeX->_SanitizeText(
+				$this->uc(
 				$prefix . $pt['ptfname'] .  ' ' . 
-				$pt['ptmname'] . ' ' . $pt['ptlname']),
-			'patientaddress' => $TeX->_SanitizeText($pt['ptaddr1']),
-			'patientcitystatezip' => $TeX->_SanitizeText($pt['ptcity'].', '.$pt['ptstate'].' '.$pt['ptzip']),
+				$pt['ptmname'] . ' ' . $pt['ptlname'])),
+			'patientqualifier' => $TeX->_SanitizeText( $prefix ),
+			'patientlastname' => $TeX->_SanitizeText(
+				ucfirst ( strtolower ( $pt['ptlname'] ) ) ),
+			'patientaddress' => $TeX->_SanitizeText($this->uc($pt['ptaddr1'])),
+			'patientcitystatezip' => $TeX->_SanitizeText(ucfirst(strtolower($pt['ptcity'])).', '.$pt['ptstate'].' '.$pt['ptzip']),
 			'dateofbirth' => $TeX->_SanitizeText(fm_date_print($pt['ptdob'])),
 			'from' => $TeX->_SanitizeText(
 				'Dr '.$phf['phyfname'].' '.$phf['phylname']
@@ -375,6 +383,14 @@ class PatientCorrespondence extends EMRModule {
 				substr($phf['phyfaxa'], 6, 4) ),
 		);
 	} // end method _print_mapping
+
+	function uc ( $string ) {
+		$a = explode(' ', $string);
+		foreach ($a as $k => $v) {
+			$a[$k] = ucfirst(strtolower($v));
+		}
+		return join(' ', $a);
+	}
 
 	// ----- Internal update
 

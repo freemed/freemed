@@ -89,11 +89,23 @@ switch ($action) {
    // ** DISPLAY ADD/MOD ***
    $book->add_page (
      __("Primary Information"),
-     array ("ptlname", "ptfname", "ptmname",
+     array ("ptlname", "ptfname", "ptmname", "ptsalut",
             date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
             "has_insurance"),
 		html_form::form_table ( array (
+			__("Salutation") =>
+				html_form::select_widget(
+					"ptsalut",
+					array (
+						"--" => "",
+						"Mr" => "Mr",
+						"Mrs" => "Mrs",
+						"Ms" => "Ms",
+						"Dr" => "Dr"
+					)
+				),
+
 			__("Last Name") =>
 				html_form::text_widget("ptlname", 25, 50),
     
@@ -386,7 +398,7 @@ switch ($action) {
 
    $book->add_page (
      __("Patient"),
-     array ("ptlname", "ptfname", "ptmname",
+     array ("ptlname", "ptfname", "ptmname", "ptsalut",
             date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
             "has_insurance",
@@ -412,6 +424,18 @@ switch ($action) {
          ),
 
 		html_form::form_table ( array (
+			__("Salutation") =>
+				html_form::select_widget(
+					"ptsalut",
+					array (
+						"--" => "",
+						"Mr" => "Mr",
+						"Mrs" => "Mrs",
+						"Ms" => "Ms",
+						"Dr" => "Dr"
+					)
+				),
+
 			__("Last Name") =>
 				html_form::text_widget("ptlname", 25, 50),
     
@@ -636,6 +660,7 @@ switch ($action) {
              "ptbilltype",
              "ptbudg",
              "ptdoc",
+	     "ptsalut",
              "ptlname",
              "ptfname",
              "ptmname",
@@ -712,6 +737,7 @@ switch ($action) {
              "ptbilltype",
              "ptbudg",
              "ptdoc",
+	     "ptsalut",
              "ptlname",
              "ptfname",
              "ptmname",

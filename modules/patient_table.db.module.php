@@ -9,11 +9,11 @@ class PatientTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Patient Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.0';
+	var $MODULE_VERSION = '0.7.1';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.1';
 
 	var $table_name = "patient";
 
@@ -34,6 +34,7 @@ class PatientTable extends MaintenanceModule {
 			// TODO: ptbilltype should be SQL__NOT_NULL (test this)
 			'ptbilltype' => SQL__ENUM(array('sta', 'mon', 'chg')),
 			'ptbudg' => SQL__REAL,
+			'ptsalut' => SQL__VARCHAR(8),
 			'ptlname' => SQL__VARCHAR(50),
 			'ptfname' => SQL__VARCHAR(50),
 			'ptmname' => SQL__VARCHAR(50),
@@ -179,6 +180,15 @@ class PatientTable extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN ptpharmacy INT UNSIGNED AFTER ptops');
 		} // end 0.7.0 upgrade
+
+		// Version 0.7.1
+		//
+		//	Added patient salutation (Dr, Mr, Mrs, Ms)
+		//
+		if (!version_check($version, '0.7.1')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN ptsalut VARCHAR(8) AFTER ptbudg');
+		} // end 0.7.1 upgrade
 	} // end function _update
 }
 
