@@ -101,8 +101,8 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
 		);
  
 		$display_buffer .= "
-    <TABLE BGCOLOR=#000000 WIDTH=100% BORDER=0
-     CELLSPACING=0 CELLPADDING=3>
+    <TABLE CLASS=\"reverse\" WIDTH=\"100%\" BORDER=\"0\"
+     CELLSPACING=\"0\" CELLPADDING=\"3\">
     <TR VALIGN=CENTER>
     <TD VALIGN=CENTER><FORM ACTION=\"$this->page_name\" METHOD=POST
      ><INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
