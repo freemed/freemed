@@ -253,7 +253,7 @@ class Scheduler {
 		}
 
 		// Get patient information
-		$my_patient = CreateObject('FreeMED.Patient', $my_event['calpatient'],
+		$my_patient = CreateObject('_FreeMED.Patient', $my_event['calpatient'],
 			($my_event['caltype']=="temp"));
 
 		return "<a HREF=\"".(($my_event['caltype']=="temp") ?
@@ -829,7 +829,7 @@ class Scheduler {
 		$result = $sql->query($query);
 
 		// If nothing, return empty map
-		if (!$sql->results($result)) return $map;
+		if (!$sql->results($result)) return $maps[0];
 
 		// Run through query
 		while ($r = $sql->fetch_array($result)) {
@@ -846,6 +846,11 @@ class Scheduler {
 			$cur_map = 0; $mapped = false;
 			while (!$mapped) {
 				if (!$this->map_fit($maps[$cur_map], $idx, $c['calduration'])) {
+					// Check for recursion ....
+					if ($cur_map > 10) {
+						syslog(LOG_INFO, "Scheduler| appointment recursion detected for scheduler record #".$c['id']);
+						$mapped = true; // skip
+					}
 					// Move to the next map
 					$cur_map++;
 					if (!is_array($maps[$cur_map])) {
