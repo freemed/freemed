@@ -1,12 +1,11 @@
 <?php
- // file: custom_records.php3
+ // $Id$
  // desc: custom patient records engine
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
- $page_name   = "custom_records.php3";
+ $page_name   = "custom_records.php";
  $record_name = "Custom Records";
- $db_name     = "patrecdata";
+ $table_name  = "patrecdata";
 
  include ("lib/freemed.php");
  include ("lib/API.php");
@@ -62,7 +61,7 @@
      break;
     case "modform":
      $this_action = "mod";
-     $result = $sql->query ("SELECT * FROM $db_name WHERE id='$id'");
+     $result = $sql->query ("SELECT * FROM $table_name WHERE id='$id'");
      $r = $sql->fetch_array ($result);
      $template = $r["prtemplate"];
      $form = $template;   // to allow us to pass it as hidden
@@ -237,7 +236,7 @@
        break;
       case "select":
        $options = explode(",", $prtftypefor[$i]); // get options
-       if (count($options)<1) { echo "$ERROR!\n"; break; }
+       if (count($options)<1) { echo _("ERROR")."\n"; break; }
        if (!$leftright) {
         echo "\n<SELECT NAME=\"answer$i\">\n";
         for ($each_option=0;$each_option<count($options);$each_option++) {
@@ -384,7 +383,7 @@
    // do action specific things
    switch ($action) {
      case "add":
-      $query = "INSERT INTO $db_name VALUES (
+      $query = "INSERT INTO $table_name VALUES (
                 '".addslashes($patient).  "',
                 '".addslashes($form).     "',
                 '$cur_date',
@@ -393,7 +392,7 @@
                 NULL )";
       break;
      case "mod":
-      $query = "UPDATE $db_name SET
+      $query = "UPDATE $table_name SET
                 prpatient  = '".addslashes($patient)  ."',
                 prtemplate = '".addslashes($form)     ."',
                 prdtmod    = '$cur_date',
@@ -427,7 +426,7 @@
 
   default: // default view is listing...
    freemed_display_box_top (_($record_name));
-   $result = $sql->query ("SELECT * FROM $db_name
+   $result = $sql->query ("SELECT * FROM $table_name
                          WHERE prpatient='".addslashes($patient)."'
                          ORDER BY prdtadd DESC");
    if (($result==0) or ($sql->num_rows($result)<1)) {
@@ -435,7 +434,7 @@
       ".freemed_patient_box($this_patient)."
       <P>
       <CENTER>
-       <B><$STDFONT_B>$No_records_for_this_patient<$STDFONT_E></B>
+       <B><$STDFONT_B>"._("No records for this patient.")."<$STDFONT_E></B>
       </CENTER>
       <P>
       <CENTER>

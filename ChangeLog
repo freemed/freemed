@@ -28,6 +28,13 @@ freemed project changelog
   - removed modules/progress_notes.module.php's delete stub
   - optimized modules to not use includes ... all including is now done
     in the module_loader, manage, db_maintenance code
+  - moved echo.php3 -> echo.php
+  - removed legacy:
+    _TEMPLATE_.php3
+    display_global.php3
+    image-handler.php3
+  - moved custom_records.php3 -> custom_records.php
+  - moved generate_button.php3 -> generate_button.php
 
 * Tue Jan 23 2001 rufustfirefly
   - slight updates to README

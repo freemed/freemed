@@ -632,7 +632,7 @@
    ########################################################################
 
    echo "
-    <FORM ACTION=\"echo.php3/form.txt\" METHOD=POST>
+    <FORM ACTION=\"echo.php/form.txt\" METHOD=POST>
      <CENTER>
       <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
      </CENTER>
