@@ -77,8 +77,8 @@ function x_<?php print $name; ?>_populate(data) {
 }
 </script>
 
-<input type="text" id="<?php print $name; ?>_text" size="50" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; }" value="<?php if (${$name}) { print $obj->to_text(${$name}); } ?>" />
-<input type="hidden" id="<?php print $name; ?>" name="<?php print $name; ?>" value="" />
+<input type="text" id="<?php print $name; ?>_text" size="50" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; }" value="<?php if (${$name}) { print $obj->to_text(${$name}); } ?>" autocomplete="off" />
+<input type="hidden" id="<?php print $name; ?>" name="<?php print $name; ?>" value="<?php if (${$name}) { print htmlentities(${$name}); } ?>" />
 <div id="<?php print $name; ?>_hiddendiv" class="hiddendiv"></div>
 <?php
 	$buffer .= ob_get_contents();
