@@ -36,7 +36,7 @@ class LettersModule extends EMRModule {
 		// Variables for add/mod
 		global $patient;
 		$this->variables = array (
-			"letterdt" => date_assemble("letterdt"),
+			"letterdt" => fm_date_assemble("letterdt"),
 			"lettereoc",
 			"letterfrom",
 			"letterto",
@@ -186,7 +186,7 @@ class LettersModule extends EMRModule {
 		$display_buffer .= html_form::form_table(array_merge(
 		$lt_array, $eoc_array, array(
 		__("Date") =>
-		date_entry("letterdt"),
+		fm_date_entry("letterdt"),
 
 		__("From") =>
 		freemed_display_selectbox(
@@ -205,7 +205,8 @@ class LettersModule extends EMRModule {
 		),
 
 		__("Text") =>
-		html_form::text_area("lettertext", 'VIRTUAL', 25, 70),
+		//html_form::text_area("lettertext", 'VIRTUAL', 25, 70),
+		freemed::rich_text_area('lettertext', 25, 70)
 
 		)));
 

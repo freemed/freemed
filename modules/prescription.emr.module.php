@@ -98,7 +98,7 @@ class PrescriptionModule extends EMRModule {
 		}
 
 		$this->variables = array (
-			"rxdtfrom" => date_assemble("rxdtfrom"),
+			"rxdtfrom" => fm_date_assemble("rxdtfrom"),
 			"rxphy",
 			"rxdrug" => $rxdrug_chosen,
 			"rxsize",
@@ -187,7 +187,7 @@ class PrescriptionModule extends EMRModule {
 			),
 			html_form::form_table(array(
 				__("Starting Date") =>
-				date_entry("rxdtfrom"),
+				fm_date_entry("rxdtfrom"),
 
 				__("Physician") =>
 				freemed_display_selectbox(

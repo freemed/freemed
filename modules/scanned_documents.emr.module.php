@@ -88,7 +88,7 @@ class ScannedDocuments extends EMRModule {
 		$query = $sql->insert_query (
 			$this->table_name,
 			array (
-				"imagedt" => date_assemble("imagedt"),
+				"imagedt" => fm_date_assemble("imagedt"),
 				"imagepat" => $patient,
 				"imagetype",
 				"imagedesc",
@@ -245,7 +245,7 @@ class ScannedDocuments extends EMRModule {
 		array(
 
 			__("Date") =>
-			date_entry ("imagedt"),
+			fm_date_entry ("imagedt"),
 
 			__("Type of Image") =>
 			html_form::select_widget(
@@ -300,7 +300,7 @@ class ScannedDocuments extends EMRModule {
 		$query = $sql->update_query (
 			$this->table_name,
 			array (
-				"imagedt" => date_assemble("imagedt"),
+				"imagedt" => fm_date_assemble("imagedt"),
 				"imagepat" => $patient,
 				"imagetype",
 				"imagedesc",
