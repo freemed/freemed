@@ -46,7 +46,7 @@ $GLOBALS['__freemed']['on_load'] = 'changeFocus';
 $display_buffer .= "
       <script language=\"Javascript\">
 	function changeFocus() {
-		document.forms.pfsearch.f2.focus();
+		document.forms.ssearch.smart.focus();
 		return true;
 	}
       </script>
@@ -134,13 +134,13 @@ $display_buffer .= "
       </form>
       <p/>
 
-      <form ACTION=\"$page_name\" METHOD=\"POST\">
+      <form ACTION=\"$page_name\" METHOD=\"POST\" name=\"ssearch\">
        <b>".__("Patient Smart Search")."</b>
       <br/>
       <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"find\"/>
       <input TYPE=\"HIDDEN\" NAME=\"criteria\" VALUE=\"smart\"/>
 	<small><i>".__("Name ('last, first' or 'first last')")."</i></small>
-      ".html_form::text_widget('f1', 30, 60)."
+      ".html_form::text_widget('f1', array('length'=>30,'id'=>'smart'))."
       <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\">
 	</form>
 	<p/>
