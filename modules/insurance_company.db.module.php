@@ -8,7 +8,7 @@ class InsuranceCompany extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Companies";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.4";
+	var $MODULE_VERSION = "0.3.4.1";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
@@ -295,7 +295,7 @@ class InsuranceCompany extends MaintenanceModule {
 			array ("", "", ""),
 			array("","","","inscogroup" => "inscogroup"),
 			"", "",
-			ITEMLIST_MOD|ITEMLIST_VIEW
+			ITEMLIST_MOD|ITEMLIST_VIEW|ITEMLIST_DEL
 		);
 	} // end function InsuranceCompany->view()
 
@@ -317,7 +317,7 @@ class InsuranceCompany extends MaintenanceModule {
 		//
 		//	Add inscodefformat and inscodeftarget mappings
 		//
-		if (!version_check ( $version, '0.3.3' )) {
+		if (!version_check ( $version, '0.3.4.1' )) {
 			$GLOBALS['sql']->query(
 				'ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap'
