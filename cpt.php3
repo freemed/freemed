@@ -141,8 +141,11 @@ switch ($action) { // begin master switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>"._("Default Type of Service")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"cptdeftos\">
-  ".freemed_display_tos ($cptdeftos)."
+        ".freemed_display_selectbox (
+          fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
+  	  "#tosname# #tosdescrip#",
+	  "cpttos[$i]"
+	  )."
       </SELECT>
      </TD>
     </TR>
