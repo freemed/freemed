@@ -85,27 +85,36 @@ class Images {
 			$original = fopen($tempname.".jpg", "w");
 			fwrite($original, $file);
 			fclose($original);
-	
-			// Convert to PBM
-			//$command = `which convert`." ".
-			$command = "/usr/bin/convert \"".
-				freemed::secure_filename($tempname).".jpg\" ".
-				"\"".$tempname.".pbm\"";
-			//print "PBM: $command\n";
-			exec($command);
-			syslog(LOG_INFO,"XMLRPC|$command");	
-			//if (!file_exists($tempname.".pbm")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
-			//unlink($tempname.".jpg");
-			
-			// Convert to DJVU
-			//$command = `which cjb2`." ".
-			$command = "/usr/bin/".
-				( $color ? 'c44' : 'cjb2' )." ".
-				"\"".$tempname.".pbm\" ".
-				"\"".$tempname.".djvu\"";
-			//print "DJVU: $command\n";
-			syslog(LOG_INFO,"XMLRPC|$command");	
-			exec($command);
+
+			if (!$color) {
+				// Convert to PBM and do B&W
+				//$command = `which convert`." ".
+				$command = "/usr/bin/convert \"".
+					freemed::secure_filename($tempname).".jpg\" ".
+					"\"".$tempname.".pbm\"";
+				//print "PBM: $command\n";
+				exec($command);
+				syslog(LOG_INFO,"XMLRPC|$command");	
+				//if (!file_exists($tempname.".pbm")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
+				//unlink($tempname.".jpg");
+				
+				// Convert to DJVU
+				//$command = `which cjb2`." ".
+					$command = "/usr/bin/cjb2 ".
+					"\"".$tempname.".pbm\" ".
+					"\"".$tempname.".djvu\"";
+				//print "DJVU: $command\n";
+				syslog(LOG_INFO,"XMLRPC|$command");	
+				exec($command);
+			} else {
+				// Convert to DJVU in color
+				$command = "/usr/bin/c44 ".
+					"\"".$tempname.".jpg\" ".
+					"\"".$tempname.".djvu\"";
+				//print "DJVU: $command\n";
+				syslog(LOG_INFO,"XMLRPC|$command");	
+			}
+
 			if (!file_exists($tempname.".djvu")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
 			//unlink($tempname.".pbm");
 	
