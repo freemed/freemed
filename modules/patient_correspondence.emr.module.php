@@ -93,12 +93,10 @@ class PatientCorrespondence extends EMRModule {
 		$this->_add();
 
 		// If this is management, refresh properly
-		/*
 		if ($GLOBALS['return'] == 'manage') {
 			global $refresh, $patient;
 			$refresh = "manage.php?id=".urlencode($patient);
 		}
-		*/
 	} // end method add
 
 	function form () {
