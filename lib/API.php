@@ -2,13 +2,37 @@
 	// $Id$
 	// $Author$
 
+// File: Core API
+//
+//	This is the main FreeMED API, which contains the bulk of FreeMED's
+//	commonly used functions. The rest of the functions are located in
+//	classes which are called dynamically using CreateObject(). It is
+//	located in lib/API.php.
+//
+
 if (!defined("__API_PHP__")) {
 
 define ('__API_PHP__', true);
 
 // namespace/class freemed
 class freemed {
-	// function freemed::check_access_for_facility
+	// Function: freemed::check_access_for_facility
+	//
+	//	Checks to see if the current user has access to the specified
+	//	facility.
+	//
+	// Parameters:
+	//
+	//	$facility_number - the database id of the facility in question
+	//
+	// Returns:
+	//
+	//	$access - boolean value, whether access is granted
+	//
+	// See Also:
+	//
+	//	<freemed::check_access_for_patient>
+	//
 	function check_access_for_facility ($facility_number) {
 		global $_SESSION;
 
@@ -33,7 +57,27 @@ class freemed {
 		return false;
 	} // end function freemed::check_access_for_facility
 
-	// function freemed::check_access_for_patient
+	// Function: freemed::check_access_for_patient
+	//
+	//	Checks to see whether the current user has access to the
+	//	specified patient.
+	//
+	// Parameters:
+	//
+	//	$patient_number - The database identifier for the patient
+	//
+	//	$user (optional) - The database identifier for the current
+	//	user. (This should be used when dealing with XML-RPC or
+	//	another protocol which does not use cookie-based authentication.
+	//
+	// Returns:
+	//
+	//	$access - boolean, whether access is granted
+	//
+	// See Also:
+	//
+	//	<freemed::check_access_for_facility>
+	//
 	function check_access_for_patient ($patient_number, $_user=0) {
 		if ($_user == 0) {
 			// Grab authdata
@@ -84,7 +128,20 @@ class freemed {
 		return false;
 	} // end function freemed::check_access_for_patient
 
-	// function freemed::config_value
+	// Function: freemed::config_value
+	//
+	//	Retrieves a configuration value from FreeMED's centralized
+	//	configuration database table.
+	//
+	// Parameters:
+	//
+	//	$key - The name of the configuration value desired.
+	//
+	// Returns:
+	//
+	//	$value - The value of the configuration key, or NULL if the
+	//	key is not found.
+	//
 	function config_value ($config_var) {
 		static $_config;
 		global $sql;
@@ -107,6 +164,13 @@ class freemed {
 		return $_config["$config_var"];
 	} // end function freemed::config_value
 
+	// Function: freemed::connect
+	//
+	//	Master function to run authentication routines for the
+	//	current used. This method should be called at the beginning
+	//	of every standalone FreeMED script when dealing with standard
+	//	session based authentication.
+	//
 	function connect () {
 		global $display_buffer;
 
@@ -127,7 +191,27 @@ class freemed {
 			template_display();
 		} // end if connected loop
 	} // end function freemed::connect
-
+	
+	// Function: freemed::drug_widget
+	//
+	//	Creates a drug selection widget.
+	//
+	// Parameters:
+	//
+	//	$varname - Name of the variable which should contain the
+	//	drug name.
+	//
+	//	$formname (optional) - Name of the form that contains this
+	//	widget. Defaults to "myform".
+	//
+	//	$submitname (optional) - Name of the variable that is used
+	//	to pass data between the child window and the parent window.
+	//	Defaults to "submit_action".
+	//
+	// Returns:
+	//
+	//	$widget - XHTML compliant widget code
+	//
 	function drug_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
 		global ${$varname};
 
@@ -175,9 +259,26 @@ class freemed {
 		} // end switch
 	} // end function freemed::drug_widget
 
-	// function freemed::get_link_rec
-	//   return the entire record as an array for
-	//   a link
+	// Function: freemed::get_link_rec
+	//
+	//	Get a database table record by its "id" field.
+	//
+	// Parameters:
+	//
+	//	$id - Value of the id field requested.
+	//
+	//	$table - Name of the FreeMED database table.
+	//
+	// Returns:
+	//
+	//	$rec - Associative array / hash containing key and value
+	//	pairs, where the key is the name of the database table
+	//	field, and its associated value is the value found in the
+	//	database.
+	//
+	// See Also:
+	//	<freemed::get_link_field>
+	//
 	function get_link_rec($id="0", $table="") {
 		global $sql, $_cache;
 
@@ -204,8 +305,26 @@ class freemed {
 		return $_cache[$table][$id];
 	} // end function freemed::get_link_rec
 
-	// function freemed::get_link_field
-	//   return a particular field from a link...
+	// Function: freemed::get_link_field
+	//
+	//	Return a single field from a particular database table
+	//	from its "id" field.
+	//
+	// Parameters:
+	//
+	//	$id - Value of the id field requested.
+	//
+	//	$table - Name of the FreeMED database table.
+	//
+	//	$field - Name of the field in the database table.
+	//
+	// Returns:
+	//
+	//	$val - Scalar value of the database table field.
+	//
+	// See Also:
+	//	<freemed::get_link_rec>
+	//
 	function get_link_field($id, $table, $field="id") {
 		// Die if no table was passed
 		if (empty($table))
@@ -215,12 +334,29 @@ class freemed {
 		// Retrieve the entire record
 		$this_array = freemed::get_link_rec($id, $table);
 
+		// TODO: Get this to automatically deserialize serialized
+		// data so that we can transparently get arrays. Probably
+		// would break some phenomenal amount of code.
+
 		// Return just the key asked for
 		return $this_array["$field"];
 	} // end function freemed::get_link_field
 
-	// function freemed::itemlist_conditions
-	// - use with freemed::display_itemlist
+	// Function: freemed::itemlist_conditions
+	//
+	//	Creates an SQL "WHERE" clause based on search information
+	//	provided by <freemed::display_itemlist>, as used by most
+	//	of FreeMED's modules.
+	//
+	// Parameters:
+	//
+	//	$where (optional) - Boolean value, whether a "WHERE" should
+	//	be prepended to the returned query. Defaults to true.
+	//
+	// Returns:
+	//
+	// 	$clause - SQL query "WHERE" clause
+	//
 	function itemlist_conditions($where = true) {
 		if (strlen($GLOBALS['_s_val']) > 0) {
 			$field = addslashes($GLOBALS['_s_field']);
@@ -233,7 +369,26 @@ class freemed {
 		}
 	} // end function freemed::itemlist_conditions
 
-	// function freemed::image_filename
+	// Function: freemed::image_filename
+	//
+	//	Resolves a stored document's full path based on the qualifiers
+	//	presented.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient identifier
+	//
+	//	$record - Record identifier of the "images" table
+	//
+	//	$type - File type (usually "djvu")
+	//
+	//	$img_store (optional) - Boolean, whether or not
+	//	the relative pathname will be prepended (usually "img/store/").
+	//
+	// Returns:
+	//
+	//	The relative path and file name of the image.
+	//
 	function image_filename($patient, $record, $type, $img_store = true) {
 		$m = md5($patient);
 		return ($img_store ? 'img/store/' : '' ).
@@ -245,7 +400,24 @@ class freemed {
 			'/'.$record.'.'.$type;
 	} // end function::image_filename
 
-	// function freemed::module_check
+	// Function: freemed::module_check
+	//
+	//	Determines whether a module is installed in the system,
+	//	and optionally whether it is above a certain minimum
+	//	versioning number.
+	//
+	// Parameters:
+	//
+	//	$module - Name of the module
+	//
+	//	$minimum_version (optional) - The minimum allowable version
+	//	of the specified module. If this is not specified, any
+	//	version will return true.
+	//
+	// Returns:
+	//
+	//	$installed - Boolean, whether the module is installed
+	//
 	function module_check ($module, $minimum_version="0.01")
 	{
 		static $_config; global $sql;
@@ -264,7 +436,24 @@ class freemed {
 		return version_check($_config["$module"], $minimum_version);
 	} // end function freemed::module_check
 
-	// function freemed::module_get_value
+	// Function: freemed::module_get_value
+	//
+	//	Gets a cached module value (such as "MODULE_NAME", etc)
+	//	from the module cache.
+	//
+	// Parameters:
+	//
+	//	$module - Name of the module
+	//
+	//	$key - Variable name in question
+	//
+	// Returns:
+	//
+	//	$val - Value of the variable name in question 
+	//
+	// See Also:
+	//	<freemed::module_get_meta>
+	//
 	function module_get_value ($module, $key) {
 		// Get module list object
 		$module_list = freemed::module_cache();
@@ -284,7 +473,25 @@ class freemed {
 		return false;
 	} // end function freemed::module_get_value
 
-	// function freemed::module_get_meta
+	// Function: freemed::module_get_meta
+	//
+	//	Gets cached metainformation for the specified module in
+	//	the module cache. Acts as a wrapper for
+	//	<freemed::module_get_value>.
+	//
+	// Parameters:
+	//
+	//	$module - Name of the module
+	//
+	//	$key - Hash index of the metainformation in question
+	//
+	// Returns:
+	//
+	//	$val - Value of the metainformation in question 
+	//
+	// See Also:
+	//	<freemed::module_get_value>
+	//
 	function module_get_meta ($module, $key) {
 		$module_list = freemed::module_cache();
 
@@ -303,7 +510,16 @@ class freemed {
 		return false;
 	} // end function freemed::module_get_meta
 
-	// function freemed::module_cache
+	// Function: freemed::module_cache
+	//
+	//	Provides global access to a PHP.module_list object with
+	//	cached module information.
+	//
+	// Returns:
+	//
+	//	$cache - An object (PHP.module_list) containing the
+	//	cached module information.
+	//
 	function module_cache () {
 		static $_cache;
 		if (!isset($_cache)) {
@@ -318,7 +534,19 @@ class freemed {
 		return $_cache;
 	} // end function freemed::module_cache
 
-	// function freemed::module_handler
+	// Function: freemed::module_handler
+	//
+	//	Returns the list of modules associated with a certain handler.
+	//
+	// Parameters:
+	//
+	//	$handler - Scalar name of the handler. This is case sensitive.
+	//
+	// Returns:
+	//
+	//	$modules - Array of modules which are associated with the
+	//	specified handler.
+	//
 	function module_handler ($handler) {
 		// Get module list object
 		$module_list = freemed::module_cache();
@@ -335,8 +563,19 @@ class freemed {
 		return $handler_data;
 	} // end function freemed::module_handler
 
-	// function freemed::module_lookup
-	// - lookup by the actual class name of the module
+	// Function: freemed::module_lookup
+	//
+	//	Lookup the module name as needed by FreeMED's module calls,
+	//	but by the class name of the module.
+	//
+	// Parameters:
+	//
+	//	$class - Class name of the module
+	//
+	// Returns:
+	//
+	//	$module - MODULE_NAME of the specified module.
+	//
 	function module_lookup ($module) {
 		// Get module list object
 		$module_list = freemed::module_cache();
@@ -357,7 +596,18 @@ class freemed {
 		return false;
 	} // end function freemed::module_lookup
 
-	// function freemed::module_register
+	// Function: freemed::module_register
+	//
+	//	Registers module or newer version of module in FreeMED's
+	//	global module registry.
+	//
+	// Parameters:
+	//
+	//	$module - Name of module (must be resolved using
+	//	freemed::module_lookup, or by using MODULE_NAME).
+	//
+	//	$version - Version of module to register.
+	//
 	function module_register ($module, $version) {
 		global $sql;
 
@@ -393,7 +643,16 @@ class freemed {
 		return true;
 	} // end function freemed::module_register
 
-	// function freemed::module_version
+	// Function: freemed::module_version
+	//
+	//	Get the current version number of a particular module in
+	//	FreeMED from the module database table.
+	//
+	// Parameters:
+	//
+	//	$module - Name of module (must be resolved using
+	//	freemed::module_lookup, or by using MODULE_NAME).
+	//
 	function module_version ($module) {
 		static $_config; global $sql;
 
@@ -411,7 +670,32 @@ class freemed {
 		return $_config["$module"];
 	} // end function freemed::module_version
 
-	// function multiple_choice (previously freemed_multiple_choice)
+	// Function: freemed::multiple_choice
+	//
+	//	Create a multiple-choice widget
+	//
+	// Parameters:
+	//
+	//	$sql_query
+	//
+	//	$display_field - Hash of the field display format, with
+	//	'##' surrounding the members of the table. (For example:
+	//	'##phylname##, ##phyfname##' from a query on the physician
+	//	table would print their last name and first name separated
+	//	by a comma.)
+	//
+	//	$select_name - Name of the variable that the widget is
+	//	specifying.
+	//
+	//	$blob_data - The actual compressed data string which contains
+	//	the array of values.
+	//
+	//	$display_all (optional)
+	//
+	// Returns:
+	//
+	//	XHTML-compliant multiple choice widget code.
+	//
 	function multiple_choice ($sql_query, $display_field, $select_name,
 			$blob_data, $display_all=true) {
 		global $sql;
@@ -452,7 +736,20 @@ class freemed {
 		return $buffer;
 	} // end function freemed::multiple_choice
 
-
+	// Function: freemed::patient_box
+	//
+	//	Create a "patient box" with quick access to various patient
+	//	functions.
+	//
+	// Parameters:
+	//
+	//	$patient_object - An object of type 'FreeMED.Patient' which
+	//	encapsulates the selected patient's data.
+	//
+	// Returns:
+	//
+	//	XHTML compliant patient box widget code.
+	//
 	function patient_box ($patient_object) {
 		// Catch to make sure it's an actual object
 		if (!is_object($patient_object)) return NULL;
@@ -494,6 +791,26 @@ class freemed {
 		return $buffer;
 	} // end function freemed::patient_box
 
+	// Function: freemed::patient_widget
+	//
+	//	Create a patient selection widget
+	//
+	// Parameters:
+	//
+	//	$varname - The name of the variable that this widget
+	//	contains data for.
+	//
+	//	$formname (optional) - Name of the form that this widget is
+	//	contained in. Defaults to "myform".
+	//
+	//	$submitname (optional) - The name of the submit button which
+	//	is passed to the child window that is created. Defaults to
+	//	"submit_action".
+	//
+	// Returns:
+	//
+	//	XHTML compliant patient selection widget code.
+	//
 	function patient_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
 		global ${$varname};
 
@@ -533,6 +850,19 @@ class freemed {
 		}
 	} // end function freemed::patient_widget
 
+	// Function: freemed::query_to_array
+	//
+	//	Dumps the output of an SQL query to a multidimentional
+	//	hashed array.
+	//
+	// Parameters:
+	//
+	//	$query - Text SQL query
+	//
+	// Returns:
+	//
+	//	Multidimentional hashed array.
+	//
 	function query_to_array ( $query ) {
 		global $sql;
 		unset ($this_array);
@@ -541,14 +871,34 @@ class freemed {
 
 		if (!$sql->results($result)) return array("" => "");
 
+		$index = 0;
 		while ($r = $sql->fetch_array($result)) {
-			$this_array[(stripslashes($r[k]))] =
-				stripslashes($r[v]);
+			foreach ($r AS $k => $v) {
+				$this_array[$index][(stripslashes($k))] =
+					stripslashes($v);
+			}
+			$index++;
 		}
 
-		return $this_array;
+		if ($index == 1) {
+			return $this_array[0];
+		} else {
+			return $this_array;
+		}
 	} // end function freemed::query_to_array
 
+	// Function freemed::race_widget
+	//
+	//	Create HL7 v2.3.1 compliant race widget (table 0005)
+	//
+	// Parameters:
+	//
+	//	$varname - Name of the variable which contains this data.
+	//
+	// Returns:
+	//
+	//	$widget - XHTML compliant race widget code.
+	//
 	function race_widget ( $varname ) {
 		// HL7 v2.3.1 compliant race widget (table 0005)
 		return html_form::select_widget($varname,
@@ -564,6 +914,18 @@ class freemed {
 		);
 	} // end function freemed::race_widget
 
+	// Function freemed::religion_widget
+	//
+	//	Create HL7 v2.3.1 compliant religion widget (table 0006)
+	//
+	// Parameters:
+	//
+	//	$varname - Name of the variable which contains this data.
+	//
+	// Returns:
+	//
+	//	$widget - XHTML compliant religion widget code.
+	//
 	function religion_widget ( $varname ) {
 		// HL7 v2.3.1 compliant race widget (table 0006)
 		return html_form::select_widget($varname,
@@ -604,6 +966,18 @@ class freemed {
 		);
 	} // end function freemed::religion_widget
 
+	// Function: freemed::secure_filename
+	//
+	//	Remove potentially hazardous characters from filenames
+	//
+	// Parameters:
+	//
+	//	$original - Original filename
+	//
+	// Returns:
+	//
+	//	$sanitized - Sanitized filename
+	//
 	function secure_filename ( $filename ) {
 		// Items to remove
 		$secure_these = array (
@@ -629,6 +1003,29 @@ class freemed {
 		return $this_filename;
 	} // end function freemed::secure_filename
 
+	// Function: freemed::store_image
+	//
+	//	Stores posted file in scanned document image store.
+	//
+	// Parameters:
+	//
+	//	$patient_id - Patient identifier from the patient table.
+	//	Do not pass a patient object.
+	//
+	//	$varname - The variable name describing the file that was
+	//	posted using the HTTP POST method.
+	//
+	//	$type - (optional) This is either 'identification' in the
+	//	case of an identifying photograph, or the record number
+	//	of this document in the scanned documents table
+	//
+	//	$encoding - (optional) Type of DjVu encoding. Currently
+	//	'cjb2' and 'c44' encodings are supported.
+	//
+	// Returns:
+	//
+	//	Name of file if successful.
+	//
 	function store_image ( $patient_id=0, $varname, $type="identification", $encoding='cjb2' ) {
 		global ${$varname};
 
@@ -740,6 +1137,18 @@ class freemed {
 		} // end checking by extension
 	} // end function freemed::store_image
 
+	// Function: freemed::support_djvu
+	//
+	//	Determines whether the current browser supports DjVu.
+	//
+	// Parameters:
+	//
+	//	$browser - PHP.browser_detect object.
+	//
+	// Returns:
+	//
+	//	Boolean, whether DjVu is supported or not.
+	//
 	function support_djvu ( $browser ) {
 		// Assume true
 		$support = true;
@@ -747,6 +1156,20 @@ class freemed {
 		return $support;
 	} // end function freemed::support_djvu
 
+	// Function: freemed::user_flag
+	//
+	//	Determine if a particular user flag is set for the current
+	//	user.
+	//
+	// Parameters:
+	//
+	//	$flag - The flag in question. This should be something
+	//	like USER_ADMIN, USER_DELETE, etc.
+	//
+	// Returns:
+	//
+	//	True if the flag is set for the current user.
+	//
 	function user_flag ( $flag ) {
 		global $database, $sql;
 		static $userlevel;
@@ -796,6 +1219,15 @@ class freemed {
 		} // end else loop checking for name
 	} // end function user_flag
 
+	// Function: freemed::verify_auth
+	//
+	//	Determines if the current user is authenticated when dealing
+	//	with PHP sessions. This is not used for basic authentication.
+	//
+	// Returns:
+	//
+	//	True if the current session is authenticated.
+	//
 	function verify_auth ( ) {
 		global $debug, $Connection, $sql;
 
@@ -1047,7 +1479,21 @@ class EMRi {
 
 //------------------ NON NAMESPACE FUNCTIONS ---------------------
 
-// function freemed_alternate
+// Function: freemed_alternate
+//
+//	Create alternating texts. Used mostly for alternating
+//	row displays, either as CLASS tags or as BGCOLOR tags.
+//
+// Parameters:
+//
+//	$elements - Array of elements which are to be alternated
+//	between. Defaults to array ('cell', 'cell_alt').
+//
+// Returns:
+//
+//	The next element in the circular loop of the presented
+//	array.
+//
 function freemed_alternate ($_elements) {
 	static $_pos;
 
@@ -1071,7 +1517,23 @@ function freemed_alternate ($_elements) {
 	return $elements[$_pos];
 } // end function freemed_alternate
 
-// function freemed_display_actionbar
+// Function: freemed_display_actionbar
+//
+//	Creates the ADD/RETURN TO MENU bar present in most FreeMED
+//	modules.
+//
+// Parameters:
+//
+//	$page_name - (optional) Name of the current page.
+//
+//	$ref - (optional) Name of the referring page. If this is not
+//	explicitly set, the global variable '_ref' acts as the
+//	default value.
+//
+// Returns:
+//
+//	XHTML compliant actionbar widget.
+//
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
 	global $page_name, $patient, $_ref, $_pass, $module;
 
@@ -1114,7 +1576,46 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 
 } // end function freemed_display_actionbar
 
-// function freemed_display_itemlist
+// Function: freemed_display_itemlist
+//
+//	Creates a paginated list display based on formatting data for
+//	a particular result set. This should be used in conjunction
+//	with <freemed::itemlist_conditions> to produce a proper
+//	SQL query.
+//
+// Parameters:
+//
+//	$result - SQL query passed to the display.
+//
+//	$page_link - Current page name.
+//
+//	$control_list - List of column names and database table column
+//	names, as an associative array. (Example: array (
+//	__("Date") => 'procdt', __("Procedure Code") => 'proccpt' ) )
+//
+//	$blank_list - Array of values for the columns describing what a
+//	blank entry should be displayed as.
+//
+//	$xref_list - (optional) Associative array describing cross
+//	table references. For example, if your column 'proccpt'
+//	described a CPT code, you could use 'cpt' => 'cptcode' to
+//	describe the table name ('cpt') and the column to be displayed
+//	name ('cptcode'), which would be determined by the value of
+//	the corresponding column in $control_list.
+//
+//	$cur_page_var - (optional) Pagination tracking variable. The
+//	default is 'this_page'.
+//
+//	$index_field - (optional) Currently this is unused, and should
+//	be passed as '' or NULL.
+//
+//	$flags - (optional) Bitfield of operators, such as ITEMLIST_MOD |
+//	ITEMLIST_DEL.
+//
+// Returns:
+//
+//	XHTML compliant item listing with search widgets.
+//
 function freemed_display_itemlist ($result, $page_link, $control_list, 
                            $blank_list, $xref_list="",
 			   $cur_page_var="this_page",
@@ -1407,7 +1908,28 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   return $buffer; // gotta remember this part!
 }
 
-// function freemed_display_facilities (selected)
+// Function: freemed_display_facilities
+//
+//	Creates an XHTML facility selection widget.
+//
+// Parameters:
+//
+//	$varname - Name of the global variable containing the data for this
+//	widget.
+//
+//	$default_load - (optional) Depreciated.
+//
+//	$internal_external - (optional) Exclusively internal or external
+//	facilities. If this is passed at all, "0" selects internal
+//	facilities and "1" selects external facilities.
+//
+//	$by_array - (optional) Array of facility id numbers to limit the
+//	selection to.
+//
+// Returns:
+//
+//	XHTML compliant facility selection widget.
+//
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="", $by_array="") {
 	global $sql, $_COOKIE;
@@ -1463,10 +1985,9 @@ function freemed_display_facilities ($param="", $default_load = false,
 	return $buffer;
 } // end function freemed_display_facilities
 
-// function freemed_display_physicians
-//   displays physicians selectable in <SELECT>
-//   list with $param selected
 function freemed_display_physicians ($param, $intext="") {
+	die ("freemed_display_physicians - DEPRECIATED");
+/*
 	$buffer = "";
 
 	// list doctors in SELECT/OPTION tag list, and
@@ -1490,6 +2011,7 @@ function freemed_display_physicians ($param, $intext="") {
 		} // while there are more results...
 	}
 	return $buffer;
+*/
 } // end function freemed_display_physicians
 
 ///////////////////////////////////////////////////
@@ -1520,7 +2042,23 @@ function freemed_display_printerlist ($param)
   }
 } // end function freemed_display_printerlist
 
-// function freemed_display_selectbox
+// Function: freemed_display_selectbox
+//
+//	Create an XHTML selection box
+//
+// Parameters:
+//
+//	$result - SQL query result
+//
+//	$format - Format hash for the display box (result field names
+//	surrounded by '##'s)
+//
+//	$varname - Name of the variable to store the selected data in.
+//
+// Returns:
+//
+//	XHTML compliant selection widget.
+//
 function freemed_display_selectbox ($result, $format, $param="") {
 	global ${$param}; // so it knows to put SELECTED on properly
 	global $sql; // for database connection
@@ -1576,7 +2114,14 @@ function freemed_display_selectbox ($result, $format, $param="") {
 	return $buffer;
 } // end function freemed_display_selectbox
 
-// function freemed_export_stock_data
+// Function: freemed_export_stock_data
+//
+//	Export FreeMED database table to a file
+//
+// Parameters:
+//
+//	$table_name - Name of the SQL table to export
+//
 function freemed_export_stock_data ($table_name, $file_name="") {
 	global $sql, $debug;
 
@@ -1610,8 +2155,14 @@ function freemed_get_userlevel ( $param = "" ) {
 	die("called freemed_get_userlevel: obsolete STUB");
 }
 
-// function freemed_import_stock_data
-//  import stock data from data/$language directory
+// Function: freemed_import_stock_data
+//
+//	Import an SQL table into FreeMED
+//
+// Parameters:
+//
+//	$table_name - Name of the SQL table to import
+//
 function freemed_import_stock_data ($table_name) {
 	global $sql;
 
@@ -1642,8 +2193,18 @@ function freemed_open_db () {
 // Time and Date Functions
 //---------------------------------------------------------------------------
 
-// function freemed_get_date_next
-//  return the next valid date (YYYY-MM-DD)
+// Function: freemed_get_date_next
+//
+//	Get next valid SQL format date (YYYY-MM-DD)
+//
+// Parameters:
+//
+//	$date - Starting date
+//
+// Returns:
+//
+//	Next date.
+//
 function freemed_get_date_next ($cur_dt) {
 	global $cur_date;
 
@@ -1672,8 +2233,18 @@ function freemed_get_date_next ($cur_dt) {
 	} // end checking roll day
 } // end function freemed_get_date_next
 
-// function freemed_get_date_prev
-//   returns the previous date
+// Function: freemed_get_date_prev
+//
+//	Get previous date in SQL format (YYYY-MM-DD)
+//
+// Parameters:
+//
+//	$date - Starting date
+//
+// Returns:
+//
+//	Previous date.
+//
 function freemed_get_date_prev ($cur_dt) {
 	$cur_date = date ("Y-m-d");
 
@@ -1703,6 +2274,21 @@ function freemed_get_date_prev ($cur_dt) {
 	} // end checking for first day
 } // end function freemed_get_date_prev
 
+// Function: fm_date_assemble
+//
+//	Assemble seperate date fields into single SQL format date hash
+//
+// Parameters:
+//
+//	$varname - Name of the date variable
+//
+//	$array_index - (optional) Array index of $varname that should
+//	contain the result data.
+//
+// Returns:
+//
+//	SQL formated date string.
+//
 function fm_date_assemble ($datevarname="", $array_index=-1) {
 	// Check for variable name
 	if ($datevarname=="")
@@ -1733,6 +2319,25 @@ function fm_date_assemble ($datevarname="", $array_index=-1) {
 	return $y."-".$m."-".$d;
 } // end function fm_date_assemble
 
+// Function: fm_date_entry
+//
+//	Creates XHTML-compliant date selection widget
+//
+// Parameters:
+//
+//	$varname - Variable name to contain the result data.
+//
+//	$pre_epoch - (optional) Whether the date selection widget should
+//	contain years more than 20 in the past. Defaults to false.
+//
+//	$array_index - (optional) Array index for varname to determine
+//	which element of the array is being used. Defaults to no array
+//	index.
+//
+// Returns:
+//
+//	XHTML-compliant date selection widget.
+//
 function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	if ($datevarname=="") return false;  // indicate problems
 
@@ -1926,6 +2531,21 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	} // end switch for dtfmt config value
 } // end function fm_date_entry
 
+// Function: fm_date_print
+//
+//	Create a nicely formatted date display
+//
+// Parameters:
+//
+//	$date - SQL formated date
+//
+//	$show_text_days - (optional) Whether or not to show the day names
+//	as text names. Defaults to false.
+//
+// Returns:
+//
+//	Formatted date display.
+//
 function fm_date_print ($actualdate, $show_text_days=false) {
 	$y  = substr ($actualdate, 0, 4);        // extract year
 	$m  = substr ($actualdate, 5, 2);        // extract month
@@ -1946,6 +2566,20 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	} // end switch
 } // end function fm_date_print
 
+// Function: fm_htmlize_array
+//
+//	Convert array to XHTML input type=HIDDEN tags
+//
+// Parameters:
+//
+//	$varname - Variable name to put the data in
+//
+//	$cur_array - Actual data to be stored
+//
+// Returns:
+//
+//	XHTML input type=HIDDEN tags
+//
 function fm_htmlize_array ($variable_name, $cur_array) {
 	// Cache the length of the array
 	$array_length = count ($cur_array);
@@ -1981,6 +2615,30 @@ function fm_join_from_array ($cur_array) {
 	return implode ($cur_array, ":");
 } // end function fm_join_from_array 
 
+// Function: fm_number_select
+//
+//	Create an XHTML compliant number selection widget
+//
+// Parameters:
+//
+//	$varname - Name of the variable to store this data in
+//
+//	$min - (optional) Minimum value. Defaults to 0.
+//
+//	$max - (optional) Maximum value. Defaults to 10.
+//
+//	$step - (optional) Incrementing value. Defaults to 1.
+//
+//	$add_zero - (optional) Prepend zeros to values under 10. Defaults
+//	to false.
+//
+//	$submit_on_blur - (optional) Submit the form when focus on the
+//	widget is lost. Defaults to false.
+//
+// Returns:
+//
+//	XHTML-compliant number selection widget
+//
 function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false, $submit_on_blur = false) {
 	global ${$varname}; // bring in the variable
 
@@ -2396,6 +3054,15 @@ function fm_time_assemble ($timevarname="") {
 // Template-related Functions
 //---------------------------------------------------------------------------
 
+// Function: template_display
+//
+//	Display the current template
+//
+// Parameters:
+//
+//	$terminate - (optional) End script execution on termination of
+//	function. Defaults to true.
+//
 function template_display ($terminate_on_execute=true) {
 	global $display_buffer; // localize display buffer
 	global $template; // localize template
@@ -2413,6 +3080,10 @@ function template_display ($terminate_on_execute=true) {
 
 //********************** END TEMPLATE SUPPORT
 
+// Function: page_push
+//
+//	Push page onto global history stack.
+//
 function page_push () {
 	global $page_title;
 	$page_history = $_SESSION['page_history'];
@@ -2435,6 +3106,10 @@ function page_push () {
 	$_SESSION['page_history'] = $_page_history;
 } // end function page_push
 
+// Function: page_pop
+//
+//	Pop off page from global history stack.
+//
 function page_pop () {
 	// Return false if there is nothing in the list
 	if (!isset($_SESSION['page_history'])) return false;
@@ -2458,6 +3133,10 @@ function page_pop () {
 	return array ($to_return, $to_return_name);
 } // end function page_pop
 
+// Function: patient_push
+//
+//	Push patient onto global history stack.
+//
 function patient_push ($patient) {
 	// Import it if it exists
 	if (isset($_SESSION['patient_history'])) {
@@ -2488,6 +3167,14 @@ function patient_push ($patient) {
 	$_SESSION['patient_history'] = $patient_history;
 } // end function patient_push
 
+// Function: patient_history_list
+//
+//	Get global history list for patients
+//
+// Returns:
+//
+//	Array of patients in global history list.
+//
 function patient_history_list () {
 	// Return false if there is nothing in the list
 	if (!isset($_SESSION['patient_history'])) return false;
@@ -2524,6 +3211,14 @@ function patient_history_list () {
 	return array_reverse($history);
 } // end function patient_history_list
 
+// Function: page_history_list
+//
+//	Get global history list for pages
+//
+// Returns:
+//
+//	Array of pages in global history list.
+//
 function page_history_list () {
 	// Return false if there is nothing in the list
 	if (!isset($_SESSION['page_history'])) return false;
@@ -2549,6 +3244,20 @@ function page_history_list () {
 	return array_reverse($history);
 } // end function page_history_list
 
+// Function: help_url
+//
+//	Contruct a help link from the specified page and section
+//
+// Parameters:
+//
+//	$page - (optional) Name of the page that this relates to.
+//
+//	$section - (optional) Subsection of the page.
+//
+// Returns:
+//
+//	Fully formed URL to the specified help page.
+//
 function help_url ( $page = "", $section = "" ) {
 	global $language, $PHP_SELF;
 
@@ -2602,6 +3311,16 @@ function help_url ( $page = "", $section = "" ) {
 
 // TODO: Upgrade basic_authentication to deal with MD5 sums, since we're no longer doing plain text.
 
+// Function: check_basic_authentication
+//
+//	Check current basic authentication against users in the database.
+//	This function is broken until phpwebtools is upgraded to support
+//	MD5-based basic authentication verification.
+//
+// Returns:
+//
+//	Boolean value, whether user is properly authenticated.
+//
 function check_basic_authentication () {
 	global $sql;
 

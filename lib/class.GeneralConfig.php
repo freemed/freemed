@@ -2,12 +2,17 @@
 	// $Id$
 	// $Author$
 
+// Class: FreeMED.GeneralConfig
 class GeneralConfig {
 
 	function GeneralConfig () {
 		return true;
 	} // end constructor GeneralConfig
 
+	// Method: GeneralConfig->init
+	//
+	//	Create initial configuration table.
+	//
 	function init() {
 		global $sql;
 
@@ -38,6 +43,7 @@ class GeneralConfig {
 			'cal6' => '',
 			'cal7' => '',
 			'cal8' => '',
+			'date_widget_type' => 'js'
 		);
 		foreach ($stock_config AS $key => $val) {
 			if (!is_integer($key)) {

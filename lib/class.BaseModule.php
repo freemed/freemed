@@ -1,13 +1,18 @@
 <?php
- // $Id$
- // desc: module prototype
- // lic : GPL, v2
+	// $Id$
+	// lic : GPL, v2
+
+// File: BaseModule
 
 include_once("lib/freemed.php");
 
 LoadObjectDependency('PHP.module');
 
-// class freemedModule extends module
+// Class: BaseModule
+//
+//	Basic FreeMED module class. All modules in FreeMED inheirit methods
+//	from this class. It extends the phpwebtools module class.
+//
 class BaseModule extends module {
 
 	// override variables
@@ -23,7 +28,7 @@ class BaseModule extends module {
 	// All FreeMED modules use this one loader
 	var $page_name = "module_loader.php";
 
-	// contructor method
+	// Method: BaseModule constructor
 	function BaseModule () {
 		// Call parent constructor
 		$this->module();
@@ -33,7 +38,7 @@ class BaseModule extends module {
 		GettextXML::textdomain(strtolower(get_class($this)));
 	} // end constructor BaseModule
 
-	// override check_vars method
+	// Method: BaseModule->check_vars
 	function check_vars ($nullvar = "") {
 		global $module;
 		if (!isset($module))
@@ -43,7 +48,7 @@ class BaseModule extends module {
 		return true;
 	} // end function check_vars
 
-	// override header method
+	// Method: BaseModule->_header
 	function _header ($nullvar = "") {
 		global $display_buffer, $page_name;
 		freemed::connect ();
@@ -62,11 +67,16 @@ class BaseModule extends module {
 	} // end function _header
 	function header ( ) { $this->_header(); }
 
-	// override footer method
+	// Method: BaseModule->_footer
 	function footer ($nullvar = "") {
 	} // end function footer
 
-	// calling function
+	// Method: BaseModule->setup
+	//
+	//	Overrides the internal phpwebtools setup method. This causes
+	//	FreeMED to run either _setup() on first run, or _update()
+	//	if the module has an older version installed.
+	//
 	function setup () {
 		global $display_buffer;
 		if (!freemed::module_check($this->MODULE_NAME,$this->MODULE_VERSION)) {
@@ -92,6 +102,12 @@ class BaseModule extends module {
 	// _update (in this case, wrapped in classes...)
 	function _update () { return true; }
 
+	// Method: BaseModule->init
+	//
+	//	Initializes the module table in the database. This should
+	//	only be called by the setup routines in FreeMED, otherwise
+	//	it poses a major system risk.
+	//
 	function init($test) {
 		global $sql;
 	
@@ -110,6 +126,14 @@ class BaseModule extends module {
 
 	//----- Internal module functions
 
+	// Method: BaseModule->_GetAssociations
+	//
+	//	Get a list of associations for the current module.
+	//
+	// Returns:
+	//
+	//	Array of associations made to this module.
+	//
 	function _GetAssociations () {
 		if (!is_array($GLOBALS['__phpwebtools']['GLOBAL_MODULES'])) {
 			$modules = CreateObject(
@@ -132,10 +156,31 @@ class BaseModule extends module {
 		return $associations;
 	} // end method BaseModule->_GetAssociations
 
+	// Method: BaseModule->_SetAssociation
+	//
+	//	Creates an association with another module.
+	//
+	// Parameters:
+	//
+	//	$with - Module name (class name) of module to associate with.
+	//
 	function _SetAssociation ($with) {
 		$this->META_INFORMATION['__associations']["$with"] = get_class($this);
 	} // end method BaseModule->_SetAssociation
 
+	// Method: BaseModule->_SetAssociation
+	//
+	//	Attaches the current module to the specified system
+	//	handler.
+	//
+	// Parameters:
+	//
+	//	$handler - Name of the system handler. Please note that
+	//	this is case sensitive.
+	//
+	//	$method - Method that will be called by the specified handler.
+	//	This is 'handler' by default.
+	//
 	function _SetHandler ($handler, $method = 'handler') {
 		$this->META_INFORMATION['__handler']["$handler"] = $method;
 	} // end method BaseModule->_SetHandler

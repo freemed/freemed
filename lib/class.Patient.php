@@ -2,7 +2,10 @@
  // $Id$
  // $Author$
 
-// class Patient
+// class: FreeMED.Patient
+//
+//	Patient object container.
+//
 class Patient {
 	var $local_record;                // stores basic patient record
 	var $ptlname, $ptfname, $ptmname; // name variables
@@ -16,6 +19,16 @@ class Patient {
 	var $is_callin;                   // flag for call ins
 	var $ptid;			  // local practice ID (chart num)
 
+	// method: Patient constructor
+	//
+	// Parameters:
+	//
+	//	$patient_number - Database table identifier for the
+	//	specified patient.
+	//
+	//	$is_callin - (optional) Boolean flag to specify if the
+	//	patient is a "call-in" patient. Defaults to false.
+	//
 	function Patient ($patient_number, $is_callin = false) { // constructor
 		// if the patient number is an error
 		if ($patient_number<1) return false;
@@ -69,12 +82,38 @@ class Patient {
 		} // end if/else for is_callin
 	} // end constructor Patient
 
+	// Method: Patient->age
+	//
+	//	Produces a user-friendly age description.
+	//
+	// Parameters:
+	//
+	//	$date_to - (optional) Date to which the age is being
+	//	calculated. Defaults to today.
+	//
+	// Returns:
+	//
+	//	Text string describing the patient's age.
+	//
 	function age ($date_to="") {
 		return date_diff_display ($this->local_record["ptdob"],
 		( ($date_to=="") ? date("Y-m-d") : $date_to ),
 		__("year(s)"), __("month(s)"), __("day(s)"), __("ago"), __("ahead"));
 	} // end function Patient->age
 
+	// Method: Patient->fullName
+	//
+	//	Get the patient's full name.
+	//
+	// Parameters:
+	//
+	//	$with_dob - (optional) Boolean flag to determine if date
+	//	of birth is included in the output. Defaults to false.
+	//
+	// Returns:
+	//
+	//	Text string containing patient's full name.
+	//
 	function fullName ($with_dob = false) {
 		if (!$with_dob) {
 			return $this->ptlname.", ".$this->ptfname." ".
@@ -85,22 +124,63 @@ class Patient {
 		} // end if for checking for date of birth
 	} // end function Patient->fullName
 
+	// Method: Patient->dateOfBirth
+	//
+	//	Determine patient's date of birth.
+	//
+	// Returns:
+	//
+	//	String representation of patient's date of birth, using
+	//	<fm_date_print> format.
+	//
 	function dateOfBirth ($no_parameters = "") {
 		return fm_date_print ($this->ptdob);
 	} // end function Patient->dateOfBirth
 
+	// Method: Patient->idNumber
+	//
+	//	Determine patient's database table id number.
+	//
+	// Returns:
+	//
+	//	SQL table id number for this patient object.
+	//
 	function idNumber ($no_parameters = "") {
 		return ($this->ptid);
 	} // end func idNumber
 
+	// Method: Patient->isEmployed
+	//
+	//	Determine patient's employment status.
+	//
+	// Returns:
+	//
+	//	Boolean value, whether patient is employed.
+	//
 	function isEmployed ($no_parameters = "") {
 		return ($this->ptempl == "y");
 	} // end function Patient->isEmployed
 
+	// Method: Patient->isFemale
+	//
+	//	Determine whether patient is female.
+	//
+	// Returns:
+	//
+	//	Boolean value, whether patient is female.
+	//
 	function isFemale ($no_parameters = "") {
 		return ($this->ptsex == "f");
 	} // end function Patient->isFemale
 
+	// Method: Patient->isMale
+	//
+	//	Determine whether patient is male.
+	//
+	// Returns:
+	//
+	//	Boolean value, whether patient is male.
+	//
 	function isMale ($no_parameters = "") {
 		return ($this->ptsex == "m");
 	} // end function Patient->isMale

@@ -2,8 +2,21 @@
 	// $Id$
 	// $Author$
 
+// Class: FreeMED.vCalendarEvent
+//
+//	Class to encapsulate a single vCalendar event.
+//
 class vCalendarEvent {
 
+	// Method: vCalendarEvent constructor
+	//
+	// Parameters:
+	//
+	//	$event - If passed as a number, this denotes the scheduler
+	//	table identifier. If passed as an array, this is the record
+	//	from the scheduler table, as returned by
+	//	<freemed::get_link_rec>.
+	//
 	function vCalendarEvent ( $_event ) {
 		// Based on array or not, do we import?
 		if (is_array($_event)) {
@@ -22,6 +35,14 @@ class vCalendarEvent {
 		$this->note = $event['calprenote'];
 	} // end constructor vCalendarEvent
 
+	// Method: vCalendarEvent->generate
+	//
+	//	Produce the text of a singular vCalendar event.
+	//
+	// Returns:
+	//
+	//	vCalendar event to be included in vCalendar export.
+	//
 	function generate ( ) {
 		$buffer .= "BEGIN:VEVENT\n".
 			"SUMMARY:".$this->note."\n".
@@ -33,6 +54,15 @@ class vCalendarEvent {
 		return $buffer;
 	} // end method vCalendarEvent->generate
 
+	// Method: vCalendarEvent->description
+	//
+	//	Form a proper description of the event so that it is
+	//	human-readable.
+	//
+	// Returns:
+	//
+	//	Human readable event description.
+	//
 	function description ( ) {
 		// Get patient information
 		$patient = CreateObject('FreeMED.Patient', $this->patient);
@@ -41,6 +71,7 @@ class vCalendarEvent {
 		return $this->_txt2vcal($buffer);
 	} // end method vCalendarEvent->description
 
+	// Method: vCalendarEvent->start_time
 	function start_time ( ) {
 		return $this->_ts2vcal(mktime(
 			$this->hour,
@@ -52,6 +83,7 @@ class vCalendarEvent {
 		));
 	} // end method vCalendarEvent->start_time
 
+	// Method: vCalendarEvent->end_time
 	function end_time ( ) {
 		// Calculate the end hour and minute
 		$hour = $this->hour;
@@ -79,10 +111,42 @@ class vCalendarEvent {
 
 	// ----- Internal methods
 
+	// Method: vCalendarEvent->_ts2vcal
+	//
+	//	Internal method to convert timestamps into vCalendar
+	//	format times.
+	//
+	// Parameters:
+	//
+	//	$timestamp - UNIX timestamp
+	//
+	// Returns:
+	//
+	//	vCalendar format date.
+	//
+	// See Also:
+	//	vCalendar->_txt2vcal
+	//
 	function _ts2vcal ( $timestamp ) {
 		return date ( "Ymd\THi00", $timestamp );
 	} // end method vCalendarEvent->_ts2vcal
 
+	// Method: vCalendarEvent->_text2vcal
+	//
+	//	Internal method to convert regular text into vCalendar
+	//	formatted text. vCalendar uses MIME-style line breaks.
+	//
+	// Parameters:
+	//
+	//	$text - Standard text.
+	//
+	// Returns:
+	//
+	//	vCalendar format text.
+	//
+	// See Also:
+	//	vCalendar->_ts2vcal
+	//
 	function _txt2vcal ( $text ) {
 		return str_replace ("\n", "=0D=0A=", $text);
 	} // end method vCalendarEvent->_txt2vcal

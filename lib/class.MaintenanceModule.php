@@ -5,6 +5,11 @@
 
 LoadObjectDependency('FreeMED.BaseModule');
 
+// Class: FreeMED.MaintenanceModule
+//
+//	Database table maintenance module superclass. This is descended
+//	from <BaseModule>.
+//
 class MaintenanceModule extends BaseModule {
 
 	// override variables
@@ -140,6 +145,13 @@ class MaintenanceModule extends BaseModule {
 		global $display_buffer, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
+		print $GLOBALS['sql']->update_query (
+				$this->table_name,
+				$this->variables,
+				array (
+					"id"	=>	$id
+				)
+			)."<br/>\n";
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
 				$this->table_name,

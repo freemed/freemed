@@ -5,6 +5,11 @@
 
 LoadObjectDependency('FreeMED.BaseModule');
 
+// Class: FreeMED.AdminModule
+//
+//	Administration module superclass. This is descended from
+//	<BaseModule>.
+//
 class AdminModule extends BaseModule {
 
 	// override variables

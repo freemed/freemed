@@ -2,6 +2,14 @@
 	// $Id$
 	// $Author$
 
+// Class: FreeMED.Coverage
+//
+//	Class encapsulating insurance coverage. This class is rather
+//	unique in FreeMED, as FreeMED looks at patients as objects, and
+//	their insurance data as a completely ancillary table, with all
+//	insurance information being completely separate from the core
+//	electronic medical record.
+//
 class Coverage {
 	var $local_record;                // stores basic record
 	var $id;                          // record ID for insurance company
@@ -17,6 +25,13 @@ class Coverage {
 
 	// insureds info only if rel is not "S"elf
 
+	// Method: Coverage constructor
+	//
+	// Parameters:
+	//
+	//	$coverageid - Database table identifier for the
+	//	specified coverage.
+	//
 	function Coverage ($coverageid = "") {
 		if ($coverageid=="" OR $coverageid==0) return false;
 
@@ -51,6 +66,21 @@ class Coverage {
 
 	} // end constructor Coverage
 
+	// Method: Coverage->GetProceduresToBill
+	//
+	//	Returns the list of procedures that should be billed
+	//	based on the information given.
+	//
+	// Parameters:
+	//
+	//	$pat - (optional)
+	//
+	//	$id - (optional)
+	//
+	//	$type - (optional)
+	//
+	//	$forpat - (optional)
+	//
 	function GetProceduresToBill ( $pat=-1, $id=-1, $type=-1, $forpat=0 ) {
 		global $display_buffer;
 		//print "GetProceduresToBill (pat = $pat, id = $id, type = $type, forpat = $forpat)\n";

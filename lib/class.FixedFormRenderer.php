@@ -4,6 +4,7 @@
 
 LoadObjectDependency('FreeMED.FormRenderer');
 
+// Class: FreeMED.FixedFormRenderer
 class FixedFormRenderer extends FormRenderer {
 
 	function FixedFormRenderer ( ) {
@@ -173,7 +174,8 @@ class FixedFormRenderer extends FormRenderer {
 		$query = "SELECT DISTINCT procpatient FROM procrec WHERE ".
 			( ($req != -1) ? 
 			"proccurcovtp='".addslashes($req)."' AND " : "" ).
-			"procbalcurrent > 0";
+			"procbalcurrent > 0 AND ".
+			"procbillable = '0'";
 		$result = $GLOBALS['sql']->query($query);
 
 		// Send back a false if there are no patients to bill
@@ -187,6 +189,35 @@ class FixedFormRenderer extends FormRenderer {
 		return $pats;
 	} // end method _GetPatientsToInsuranceBill
 
+	function _GetProceduresArray ( $req = -1 ) {
+		global $procids;
+		$query = "SELECT DISTINCT procpatient FROM procrec WHERE ".
+			( ($req != -1) ? 
+			"proccurcovtp='".addslashes($req)."' AND " : "" ).
+			"procbalcurrent > 0";
+		$result = $GLOBALS['sql']->query($query);
+
+		// Send back a false if there are no patients to bill
+		if (!$GLOBALS['sql']->results($result)) { return false; }
+
+		// Aggregate into an array
+		$pats = array ();
+		while ($row = $GLOBALS['sql']->fetch_array($result)) {
+			$temp = array ();
+			$s_query = "SELECT id FROM procrec WHERE ".
+				( ($req != -1) ? 
+				"proccurcovtp='".addslashes($req)."' AND " : "" ).
+				"procbalcurrent > 0 AND ".
+				"procpatient='".addslashes($row['procpatient'])."'";
+			$s_result = $GLOBALS['sql']->query($s_query);
+			while ($s_r = $GLOBALS['sql']->fetch_array($s_result)) {
+				//print "procedure $s_r[id] added to $row[procpatient]<br/>\n";
+				$temp[] = $s_r['id'];
+			}
+			$procids[$row['procpatient']] = $temp;
+		}
+	} // end method _GetPatientsToInsuranceBill
+
 	function _RenderEntry ( $entry ) {
 		global $display_buffer, $debug;
 
@@ -198,8 +229,8 @@ class FixedFormRenderer extends FormRenderer {
 
 		// Speed hack: only "evaluate" if it contains a "$"
 		$this_evalled = ( (strpos($entry->data, '$') !== false) ?
-			fm_eval ($entry->data) :
-			$entry->data );
+			stripslashes(fm_eval ($entry->data)) :
+			stripslashes($entry->data) );
 
 		// Debug
 		if ($debug) print "old = $entry->data, new = $this_evalled\n";

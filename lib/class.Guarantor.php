@@ -1,8 +1,11 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
-// class Guarantor
+// Class: FreeMED.Guarantor
+//
+//	Class container for source of patient payment (another person.)
+//
 class Guarantor {
 	var $local_record;                // stores basic record
 	var $id;                          // record ID for insurance company
@@ -18,6 +21,12 @@ class Guarantor {
 	var $guardob;
 	var $guarsame;
 
+	// Method: Guarantor constructor
+	//
+	// Parameters:
+	//
+	//	$coverageid - Coverage database table identifier.
+	//
 	function Guarantor ($coverageid = "") {
 		if ($coverageid=="") return false;    // error checking
 

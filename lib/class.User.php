@@ -8,7 +8,10 @@
 // 	verify that there are no md5 calls outside of this class!!
 
 
-// class User
+// class: FreeMED.User
+//
+//	Class container for FreeMED user information.
+//
 class User {
 	var $local_record;                 // local record
 	var $user_number;                  // user number (id)
@@ -19,6 +22,14 @@ class User {
 	var $manage_config; // configuration for patient management
 	var $perms_fac, $perms_phy, $perms_phygrp;
 
+	// method: User constructor
+	//
+	// Parameters:
+	//
+	//	$param - (optional) Specify user identification number.
+	//	If not specified, the system will default to using
+	//	cookie session data to supply it.
+	//
 	function User ($param=NULL) {
 		if ($param == NULL) {
 			$this->user_number = $_SESSION['authdata']['user'];
@@ -55,8 +66,16 @@ class User {
 		$this->mapConfiguration();
 	} // end function User
 
+	// method: User->getDescription
+	//
+	//	Retrieve description of current user. (Usually their name)
+	//
+	// Returns:
+	//
+	//	Description of the current user object.
+	//
 	function getDescription ($no_parameters = "") {
-		if (empty($this->user_descrip)) return "(no description)";
+		if (empty($this->user_descrip)) return __("(no description)");
 		return ($this->user_descrip);
 	} // end function getDescription
 
@@ -68,10 +87,26 @@ class User {
 		return ($this->user_phy)+0;
 	} // end function getPhysician
 
+	// Method: User->getName
+	//
+	//	Retrieves the user name. This is their login name.
+	//
+	// Returns:
+	//
+	//	User name for user.
+	//
 	function getName ($no_parameters = "") {
 		return ($this->user_name);
 	} // end function getName
 
+	// method: User->isPhysician
+	//
+	//	Determines if the user is classified as a physician/provider.
+	//
+	// Returns:
+	//
+	//	Boolean, true if they are a physician/provider.
+	//
 	function isPhysician ($no_parameters = "") {
 		return ($this->user_phy != 0);
 	} // end function isPhysician
@@ -97,6 +132,11 @@ class User {
 		$result = $sql->query($my_query);
 	} // end function setPassword
 
+	// Method: User->mapConfiguration
+	//
+	//	Map all user configuration variables from the user table
+	//	into the object. This is called by the constructor.
+	//
 	function mapConfiguration () {
 		// Start with usermanageopt
 		$usermanageopt = $this->local_record["usermanageopt"];
@@ -127,10 +167,33 @@ class User {
 		} // end looping through
 	} // end function User->mapConfiguration
 
+	// Method: User->getManageConfig
+	//
+	//	Retrieve a user configuration variable by key.
+	//
+	// Parameters:
+	//
+	//	$key - Configuration key to retrieve.
+	//
+	// Returns:
+	//
+	//	Value of the specified key.
+	//
 	function getManageConfig ($key) {
 		return $this->manage_config["$key"];
 	} // end function getManageConfig
 
+	// Method: User->getManageConfig
+	//
+	//	Set a user configuration variable by key to a particular
+	//	value.
+	//
+	// Parameters:
+	//
+	//	$key - Configuration key to set.
+	//
+	//	$val - Configuration value to set.
+	//
 	function setManageConfig ($new_key, $new_val) {
 		// First, make sure it's mapped properly
 		$this->mapConfiguration();
@@ -164,7 +227,15 @@ class User {
 		$result = $GLOBALS['sql']->query($query);
 	} // end function setManageConfig
 
-	// Messages
+	// Method: User->newMessages
+	//
+	//	Determines how many new unread messages exist in the system
+	//	for this user.
+	//
+	// Returns:
+	//
+	//	Number of unread messages in the system for this user.
+	//
 	function newMessages () {
 		global $sql;
 		$result = $sql->query("SELECT * FROM messages WHERE ".
@@ -174,10 +245,17 @@ class User {
 		return $sql->num_rows($result);
 	} // end function newMessages
 
-	// Fred Trotter
-	// creates database and populates it with "Required Data"
-	// This is not "default" or "usefull starting" data
-	// it is the data that is required to run FreeMED!!
+	// Method: User->init
+	//
+	//	Creates user database table and populates it with
+	//	required data. This is not "default" or "useful
+	//	starting" data, it is the data that is required
+	//	to run FreeMED.
+	//
+	// Parameters:
+	//
+	//	$adminpassword - New administrative password.
+	//
 	function init($adminpassword) {
 		global $sql;
 

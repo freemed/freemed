@@ -1,8 +1,11 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
-// class Payer
+// Class: FreeMED.Payer
+//
+//	Class container for a "payer" in the system.
+//
 class Payer {
 	var $local_record;                // stores basic record
 	var $id;                          // record ID for insurance company
@@ -14,6 +17,12 @@ class Payer {
 	var $payerenddt;
 	var $inscoid;			// pointer to corresponding insco.
 
+	// Method: Payer constructor
+	//
+	// Parameters:
+	//
+	//	$payerid - Database table identifier for the specified payer.
+	//
 	function Payer ($payerid = "") {
 		if ($payerid=="") return false;    // error checking
 

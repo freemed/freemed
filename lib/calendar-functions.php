@@ -1,20 +1,37 @@
 <?php
- // $Id$
- // note: calendar functions for the freemed project
- // lic : GPL, v2
+	// $Id$
+	// calendar functions for the freemed project
+	// lic : GPL, v2
+
+// File: Calendar API
+//
+//	Calendar and date related functions. These are not included
+//	unless needed.
 
 if (!defined ("__CALENDAR_FUNCTIONS_PHP__")) {
 
 define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
-  // freemed_get_date_prev (in freemed-functions.inc)
-  // -- returns date before provided date
-
-  // freemed_get_date_next (in freemed-functions.inc)
-  // -- returns date after provided date
-
     // function to see if a date is in a particular range
-  function date_in_range ($checkdate, $dtbegin, $dtend) {
+
+// Function: date_in_range
+//
+//	Determine if a date falls between a beginning and end date.
+//
+// Parameters:
+//
+//	$checkdate - Date to check. Should be in ANSI SQL date format
+//	(YYYY-MM-DD).
+//
+//	$dtbegin - Beginning of time span to compare against.
+//
+//	$dtend - Ending of time span to compare against.
+//
+// Returns:
+//
+//	Boolean value, whether date falls between specified dates.
+//
+function date_in_range ($checkdate, $dtbegin, $dtend) {
     // split all dates into component parts
     $begin_y = substr ($dtbegin,   0, 4);
     $begin_m = substr ($dtbegin,   5, 2);
@@ -54,8 +71,19 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
     return true;
   } // end function date_in_range
 
-    // function to see if in the past (returns 1)
-  function date_in_the_past ($datestamp) {
+// Function: date_in_the_past
+//
+//	Check to see if date is in the past
+//
+// Parameters:
+//
+//	$date - SQL formatted date string (YYYY-MM-DD)
+//
+// Returns:
+//
+//	Boolean, true if date is past, false if date is present or future.
+//
+function date_in_the_past ($datestamp) {
     $cur_date = date("Y-m-d");
  
     $y_c = substr ($cur_date, 0, 4);
@@ -80,11 +108,24 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 	return false;
     }
     else return false;
-  }
+}
 
-  // function day_of_the_week
-  // -- returns text name of day of the week
-  function day_of_the_week ($this_date="", $short=false) {
+// Function: day_of_the_week
+//
+//	Get the text name of a day of the week
+//
+// Parameters:
+//
+//	$this_date - (optional) Date to examine. Defaults to the current
+//	date.
+//
+//	$short - (optional) Return short date format. Defaults to false.
+//
+// Returns:
+//
+//	Text string describing the day of the week.
+//
+function day_of_the_week ($this_date="", $short=false) {
     global $cur_date;
 
     if ($this_date == "") $this_date = $cur_date;
@@ -94,10 +135,23 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
                        substr($this_date, 0, 4));
     if ($short) {  return strftime ("%a", $this_timestamp);  }
      else       {  return strftime ("%A", $this_timestamp);  }
-  } // end function day_of_the_week
+} // end function day_of_the_week
 
-  function fc_get_time_string($hour,$minute)
-  {
+// Function: fc_get_time_string
+//
+//	Form a human readable time string from an hour and a minute.
+//
+// Parameters:
+//
+//	$hour - Hour in 24 hour format (0 to 24).
+//
+//	$minute - Minutes (0 to 60).
+//
+// Returns:
+//
+//	Formatted time string.
+//
+function fc_get_time_string ( $hour, $minute ) {
 	if ($minute==0) $minute="00";
 
 	// time checking/creation if/else clause
@@ -108,63 +162,102 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 	else
 		$_time = ($hour-12).":".$minute." PM";
 	return $_time;
-  }
-  // function fc_scroll_prev_month
-  function fc_scroll_prev_month ($given_date="") {
-    global $cur_date;
-    $this_date = (
-     (empty($given_date) or !strpos($given_date, "-")) ?
-     $cur_date :
-     $given_date );
-    list ($y, $m, $d) = explode ("-", $this_date);
-    $m--;
-    if ($m < 1) { $m = 12; $y--; }
-    if (!checkdate ($m, $d, $y)) {;
-      if ($d > 28) $d = 28; // be safe for February...
-    }
-    return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
-  } // end function fc_scroll_prev_month
+}
 
-  // function fc_scroll_next_month
-  function fc_scroll_next_month ($given_date="") {
-    global $cur_date;
-    $this_date = (
-     (empty($given_date) or !strpos($given_date, "-")) ?
-     $cur_date :
-     $given_date );
-    list ($y, $m, $d) = explode ("-", $this_date);
-    $m++;
-    if ($m > 12) { $m -= 12; $y++; }
-    if (!checkdate ($m, $d, $y)) {
-      $d = 28; // be safe for February...
-    }
-    return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
-  } // end function fc_scroll_next_month
+// Function: fc_scroll_prev_month
+//
+//	Scroll a given date back by a month
+//
+// Parameters:
+//
+//	$given_date - (optional) Date to scroll back from in SQL date
+//	format (YYYY-MM-DD). Defaults to current date.
+//
+// Returns:
+//
+//	SQL formatted date string for a date approximately one month
+//	previous to the given date.
+//
+function fc_scroll_prev_month ($given_date="") {
+	$cur_date = date("Y-m-d");
+	$this_date = (
+		(empty($given_date) or !strpos($given_date, "-")) ?
+		$cur_date :
+		$given_date );
+	list ($y, $m, $d) = explode ("-", $this_date);
+	$m--;
+	if ($m < 1) { $m = 12; $y--; }
+	if (!checkdate ($m, $d, $y)) {;
+		if ($d > 28) $d = 28; // be safe for February...
+	}
+	return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
+} // end function fc_scroll_prev_month
 
-  // function fc_starting_hour
-  // -- returns starting hour of booking
-  function fc_starting_hour () {
-    global $cal_starting_hour;
+// Function: fc_scroll_next_month
+//
+//	Scroll a given date forward by a month
+//
+// Parameters:
+//
+//	$given_date - (optional) Date to scroll forward from in SQL date
+//	format (YYYY-MM-DD). Defaults to current date.
+//
+// Returns:
+//
+//	SQL formatted date string for a date approximately one month
+//	after the given date.
+//
+function fc_scroll_next_month ($given_date="") {
+	$cur_date = date("Y-m-d");
+	$this_date = (
+		(empty($given_date) or !strpos($given_date, "-")) ?
+		$cur_date :
+		$given_date );
+	list ($y, $m, $d) = explode ("-", $this_date);
+	$m++;
+	if ($m > 12) { $m -= 12; $y++; }
+	if (!checkdate ($m, $d, $y)) {
+		$d = 28; // be safe for February...
+	}
+	return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
+} // end function fc_scroll_next_month
 
-    if (freemed::config_value("calshr")=="")
-      return $cal_starting_hour;
-    else return freemed::config_value ("calshr");
-  } // end function fc_starting_hour
+// Function: fc_starting_hour
+//
+//	Retrieve starting hour for booking in the scheduler.
+//
+// Returns:
+//
+//	Starting hour of booking for the scheduler.
+//
+function fc_starting_hour () {
+	global $cal_starting_hour;
 
-  // function fc_ending_hour
-  // -- returns ending hour of booking
-  function fc_ending_hour () {
-    global $cal_ending_hour;
+	if (freemed::config_value("calshr")=="")
+		return $cal_starting_hour;
+	else return freemed::config_value ("calshr");
+} // end function fc_starting_hour
 
-    if (freemed::config_value("calehr")=="")
-      return $cal_ending_hour;
-    else return freemed::config_value ("calehr");
-  } // end function fc_ending_hour
+// Function: fc_ending_hour
+//
+//	Retrieve ending hour for booking in the scheduler.
+//
+// Returns:
+//
+//	Ending hour of booking for the scheduler.
+//
+function fc_ending_hour () {
+	global $cal_ending_hour;
 
-  // function fc_display_day_calendar
-  // -- displays calendar for current day where $querystring
-  // -- is the criteria (like calphysician='1') or something...
-  function fc_display_day_calendar ($datestring, $querystring = "1 = 1",
+	if (freemed::config_value("calehr")=="")
+		return $cal_ending_hour;
+	else return freemed::config_value ("calehr");
+} // end function fc_ending_hour
+
+// function fc_display_day_calendar
+// -- displays calendar for current day where $querystring
+// -- is the criteria (like calphysician='1') or something...
+function fc_display_day_calendar ($datestring, $querystring = "1 = 1",
     $privacy = false) {
     global $current_imap;  // global interference map
     global $display_buffer;
@@ -226,10 +319,10 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
      </TABLE>
     ";
 
-  } // end function fc_display_day_calendar
+} // end function fc_display_day_calendar
 
-  // function fc_display_week_calendar
-  function fc_display_week_calendar ($datestring, $querystring = "1 = 1",
+// function fc_display_week_calendar
+function fc_display_week_calendar ($datestring, $querystring = "1 = 1",
     $privacy=false) {
     global $current_imap, $display_buffer, $physician;
 
@@ -311,7 +404,7 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
       </TABLE>
      ";
 
-  } // end function fc_display_week_calendar
+} // end function fc_display_week_calendar
 
 function fc_generate_calendar_mini ($given_date, $this_url) {
 	// mostly hacked code from TWIG's calendar
@@ -466,9 +559,31 @@ function fc_generate_calendar_mini ($given_date, $this_url) {
      </center>
     ";
 	return $buffer;
-  } // end function fc_generate_calendar_mini
+} // end function fc_generate_calendar_mini
 
-  function fc_generate_interference_map ($query_part, $this_date, 
+// Function: fc_generate_interference_map
+//
+//	Create an "interference map" which allows the system to
+//	determine which appointments may conflict with others
+//	based on several criteria.
+//
+// Parameters:
+//
+//	$query_part - SQL qualifiers to narrow the search parameters.
+//	Example: "calphysician='2'"
+//
+//	$this_date - Date that the interference map is being generated
+//	for, in SQL date format (YYYY-MM-DD).
+//
+//	$privacy - (optional) If this is specified, only the initials
+//	of the patients in question will be displayed. Defaults to
+//	false.
+//
+// Returns:
+//
+//	Multidimentional hash/array (interference map).
+//
+function fc_generate_interference_map ($query_part, $this_date, 
                                          $privacy=false) {
     global $current_imap; // global current interference map
     global $cur_date, $sql;
@@ -598,9 +713,28 @@ function fc_generate_calendar_mini ($given_date, $this_url) {
     // date is this interference map
     $current_imap["key"] = "$this_date";
 
-  } // end function fc_generate_interference_map
+} // end function fc_generate_interference_map
 
-  function fc_check_interference_map ($hour, $minute, $check_date, $querystr) {
+// Function: fc_check_interference_map
+//
+//	Check to see whether an entry exists in a particular interference
+//	map.
+//
+// Parameters:
+//
+//	$hour -
+//
+//	$minute -
+//
+//	$check_date -
+//
+//	$query_string -
+//
+// Returns:
+//
+//	Boolean, true if an entry exists, false if it does not.
+//
+function fc_check_interference_map ($hour, $minute, $check_date, $querystr) {
     global $current_imap; // the interference map
     global $display_buffer;
 
@@ -614,15 +748,29 @@ function fc_generate_calendar_mini ($given_date, $this_url) {
     // return boolean true or false depending on what is there
     // (over 7 because of stupid "&nbsp;")
     return (strlen($current_imap["$hour:$minute"]) > 7);
-  } // end function fc_check_interference_map
+} // end function fc_check_interference_map
 
-  function fc_interference_map_count ($_null_="") {
-    global $current_imap;
-    return (int)$current_imap["count"];    
-  } // end function fc_interference_map_count
+function fc_interference_map_count ($_null_="") {
+	global $current_imap;
+	return (int)$current_imap["count"];    
+} // end function fc_interference_map_count
+
+// Class: freemedCalendar
 
 class freemedCalendar {
 
+	// Method: freemedCalendar::display_hour
+	//
+	//	Creates AM/PM user-friendly hour display.
+	//
+	// Parameters:
+	//
+	//	$hour - Hour in 0..24 military format.
+	//
+	// Returns:
+	//
+	//	AM/PM display of hour
+	//
   	function display_hour ( $hour ) {
 		// time checking/creation if/else clause
 		if ($hour<12)
@@ -633,6 +781,20 @@ class freemedCalendar {
 			return ($hour-12)." PM";
   	} // end method freemedCalendar::display_hour
 
+	// Method: freemedCalendar::display_time
+	//
+	//	Creates AM/PM user-friendly time display.
+	//
+	// Parameters:
+	//
+	//	$hour - Hour in 0..24 military format.
+	//
+	//	$minute - Minute in 0..60 format.
+	//
+	// Returns:
+	//
+	//	User-friendly AM/PM display of time.
+	//
 	function display_time ( $hour, $minute ) {
 		$m = ($minute<10 ? '0' : '').($minute+0);
 		if ($hour<12)
@@ -644,6 +806,18 @@ class freemedCalendar {
 		
 	} // end method freemedCalendar::display_time
 
+	// Function: freemedCalendar::event_calendar_print
+	//
+	//	Display calendar event from scheduler.
+	//
+	// Parameters:
+	//
+	//	$event - scheduler table event id number.
+	//
+	// Returns:
+	//
+	//	XHTML formatted calendar event.
+	//
 	function event_calendar_print ( $event ) {
 		global $sql;
 
@@ -677,6 +851,20 @@ class freemedCalendar {
 			"</i>\n" : "" );
 	} // end method freemedCalendar::event_calendar_print
 
+	// Method: freemedCalendar::event_special
+	//
+	//	Return proper names for special event mappings, as per the
+	//	group calendar and Travel.
+	//
+	// Parameters:
+	//
+	//	$mapping - Special id mapping. This is usually a number from
+	//	0 to 8.
+	//
+	// Returns:
+	//
+	//	Text name of specified mapping.
+	//
 	function event_special ( $mapping ) {
 		switch ($mapping) {
 			case 1: case 2: case 3: case 4:
@@ -688,7 +876,23 @@ class freemedCalendar {
 		}
 	}
 
-	// method map: returns a map (associative array)
+	// Method: freemedCalendar::map
+	//
+	//	Creates a scheduler map. This is the 2nd generation of
+	//	the depreciated interference map.
+	//
+	// Parameters:
+	//
+	//	$query - SQL query string.
+	//
+	// Returns:
+	//
+	//	"map" associative multi-dimentional array containing
+	//	scheduling interference data.
+	//
+	// See Also:
+	//	<freemedCalendar::map_fit>
+	//	<freemedCalendar::map_init>
 	function map ( $query ) {
 		global $sql;
 
@@ -738,6 +942,35 @@ class freemedCalendar {
 		return $map;
 	} // end method freemedCalendar::map
 
+	// Method: freemedCalendar::map_fit
+	//
+	//	Determine whether an appointment of the specified duration
+	//	at the specified time will fit in the specified map.
+	//
+	// Parameters:
+	//
+	//	$map - Scheduler "map" as generated by
+	//	<freemedCalendar::map>.
+	//
+	//	$time - Time string specifying the time of the appointment
+	//	to check. Should be in format HH:MM.
+	//
+	//	$duration - (optional) Duration of the appointment in
+	//	minutes. This is 15 by default.
+	//
+	//	$id - (optional) If this is specified it shows the
+	//	pre-existing scheduler id for an appointment, so that if
+	//	it is being moved, it does not conflict with itself.
+	//
+	// Returns:
+	//
+	//	Boolean, whether specified appointment fits into the
+	//	specified map.
+	//
+	// See Also:
+	//	<freemedCalendar::map>
+	//	<freemedCalendar::map_init>
+	//
 	function map_fit ( $map, $time, $duration=15, $id = -1 ) {
 		// If this is already booked, return false
 		if ($map[$time]['span'] == 0) { return false; }
@@ -772,6 +1005,17 @@ class freemedCalendar {
 		return true;
 	} // end method freemedCalendar::map
 
+	// Method: freemedCalendar::map_init
+	//
+	//	Creates a blank scheduler map.
+	//
+	// Returns:
+	//
+	//	Blank scheduler map (associative array).
+	//
+	// See Also:
+	//	<freemedCalendar::map>
+	//	<freemedCalendar::map_fit>
 	function map_init () {
 		$map = array ( );
 		$map['count'] = 0;
@@ -789,6 +1033,26 @@ class freemedCalendar {
 		return $map;
 	} // end method freemedCalendar::map_init
 
+	// Method: freemedCalendar::multimap
+	//
+	//	Creates 3rd generation multiple scheduling map. This is
+	//	used to automatically create additional columns due to
+	//	overlapping and overbooking.
+	//
+	// Parameters:
+	//
+	//	$query - SQL query string describing options.
+	//
+	//	$selected - (optional) Scheduler table id of selected
+	//	appointment. If this is not specified, no appointment
+	//	will be selected by default.
+	//
+	// Returns:
+	//
+	//	Multimap (associative array).
+	//
+	// See Also:
+	//	<freemedCalendar::map>
 	function multimap ( $query, $selected = -1 ) {
 		global $sql;
 
@@ -861,6 +1125,18 @@ class freemedCalendar {
 		return $maps;
 	} // end method freemedCalendar::multimap
 
+	// Method: freemedCalendar::next_time
+	//
+	//	Increment time slot by 15 minutes.
+	//
+	// Parameters:
+	//
+	//	$time - Time in HH:MM format.
+	//
+	// Returns:
+	//
+	//	Next time slot in HH:MM format.
+	//
 	function next_time ( $time ) {
 		// Split into time components
 		list ($h, $m) = explode (":", $time);

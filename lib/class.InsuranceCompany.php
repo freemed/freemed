@@ -1,8 +1,11 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
-// class InsuranceCompany
+// Class: FreeMED.InsuranceCompany
+//
+//	Class container for Insurance Company.
+//
 class InsuranceCompany {
 	var $local_record;           // stores basic record
 	var $id;                     // record ID for insurance company
@@ -10,6 +13,12 @@ class InsuranceCompany {
 	var $inscoalias;             // insurance company alias (for forms)
 	var $modifiers;              // modifiers array
 
+	// Method: InsuranceCompany constructor
+	//
+	// Parameters:
+	//
+	//	$insco - Database table identifier for insurance company.
+	//
 	function InsuranceCompany ($insco = 0) {
 		if ($insco==0) return false;    // error checking
 
@@ -33,6 +42,7 @@ class InsuranceCompany {
 			$this->local_record["inscomod"]
 		);
 	} // end constructor InsuranceCompany
+
 } // end class InsuranceCompany
 
 ?>

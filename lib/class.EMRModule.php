@@ -5,6 +5,11 @@
 
 LoadObjectDependency('FreeMED.BaseModule');
 
+// Class: FreeMED.EMRModule
+//
+//	Electronic Medical Record module superclass. It is descended from
+//	<BaseModule>.
+//
 class EMRModule extends BaseModule {
 
 	// override variables

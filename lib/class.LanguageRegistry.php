@@ -4,6 +4,11 @@
 
 LoadObjectDependency('PHP.GettextXML');
 
+// Class: FreeMED.LanguageRegistry
+//
+//	Class to handle FreeMED's language registry, built from entries
+//	in FreeMED's "locale" folder. These are in the GettextXML format.
+//
 class LanguageRegistry {
 
 	function LanguageRegistry () {
@@ -39,6 +44,15 @@ class LanguageRegistry {
 		}
 	} // end constructor LanguageRegistry
 
+	// Method: LanguageRegistry->cached
+	//
+	//	Determine if the language registry cache is up to date.
+	//
+	// Returns:
+	//
+	//	Boolean, true if data is up to date, false if recaching
+	//	is necessary.
+	//
 	function cached () {
 		// Check for non-existant cache file
 		if (!file_exists('data/cache/language_registry')) {
@@ -75,6 +89,16 @@ class LanguageRegistry {
 		}
 	} // end method cached
 
+	// Method: LanguageRegistry->register
+	//
+	//	Register a language directory with the FreeMED language
+	//	registry.
+	//
+	// Parameters:
+	//
+	//	$dir - Directory. This should be a subdirectory of
+	//	FreeMED's "locale" folder.
+	//
 	function register ($dir) {
 		if (!file_exists('./locale/'.$dir.'/freemed.xml')) {
 			print "COULD NOT INDEX $dir<br/>\n";
@@ -90,6 +114,21 @@ class LanguageRegistry {
 		$this->registry[$meta['LocaleName']] = $meta['Locale'];
 	} // end method register
 
+	// Method: LanguageRegistry->widget
+	//
+	//	Create a language selection widget based on the current
+	//	language registry.
+	//
+	// Parameters:
+	//
+	//	$varname - Variable name to store the data
+	//
+	//	$options - Options, as passed to html_form::select_widget
+	//
+	// Returns:
+	//
+	//	XHTML-formatted language selection widget
+	//
 	function widget ($varname, $_options = NULL) {
 		return html_form::select_widget(
 			$varname,

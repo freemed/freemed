@@ -3,6 +3,9 @@
  // $Author$
  //
  // $Log$
+ // Revision 1.3  2003/11/05 04:40:54  rufustfirefly
+ // Documentation. (Jeff)
+ //
  // Revision 1.2  2002/08/06 13:49:08  rufustfirefly
  // updated rxlist class for changes in RxList.com
  //
@@ -13,6 +16,10 @@
 if (!defined('__CLASS_RXLIST_PHP__')) {
 define('__CLASS_RXLIST_PHP__', true);
 
+// class: RxList
+//
+//	Wrapper for rxlist.com formulary access.
+//
 class RxList {
 
 	function getPage ( $query ) {
@@ -34,6 +41,20 @@ class RxList {
 		} // end checking for successful open
 	} // end function RxList::getPage
 
+	// Method: RxList::get_list
+	//
+	//	Retrieves the appropriate rxlist.com formulary list, based
+	//	on the drug criteria provided.
+	//
+	// Parameters:
+	//
+	//	$query - Text to search in the rxlist.com formulary for.
+	//
+	// Returns:
+	//
+	//	Associative array (meant to be passed to phpwebtools'
+	//	html_form::select_widget) containing the results.
+	//
 	function get_list ( $query ) {
 		$page = RxList::getPage($query);
 		$tokens = RxList::parse2tokens($page);

@@ -1,17 +1,34 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
-/*
-	This function is meant to be a drop-in replacement for those
-	people who don't have bcmath functionality in their PHP
-	distribution. It probably has problems, and the best solution
-	is to build yourself a version with bcmath support. Barring
-	this, you can use this hack.
+// File: bcadd
+//
+//	This function is meant to be a drop-in replacement for those
+//	people who don't have bcmath functionality in their PHP
+//	distribution. It probably has problems, and the best solution
+//	is to build yourself a version with bcmath support. Barring
+//	this, you can use this hack. (Jeff)
+//
 
-		- Jeff
-*/
-
+// Function: bcadd
+//
+//	Provides bcadd functionality (from bcmath extension) without
+//	having to load bcmath PHP extension.
+//
+// Parameters:
+//
+//	$left - First number to add.
+//
+//	$right - Second number to add.
+//
+//	$scale - Number of digits of precision desired after the
+//	decimal point. 0 will produce an integer.
+//
+// Returns:
+//
+//	left and right added together with a precision of scale.
+//
 function bcadd ($left, $right, $scale) {
 	// first add the two numbers
 	$sum = (double)($left + $right);
