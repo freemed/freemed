@@ -817,7 +817,7 @@ switch ($action) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (UCASE(ptlname) LIKE '".addslashes(strtoupper($f1))."%') ".
-	" AND ptarchive != '1' ".
+	" AND ptarchive+0 != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = __("Last Names")." (".prepare($f1).")";
@@ -825,7 +825,7 @@ switch ($action) {
       case "contains":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (UCASE(".addslashes($f1).") LIKE '%".addslashes(strtoupper($f2))."%') ".
-	" AND ptarchive != '1' ".
+	" AND ptarchive+0 != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = __("Searching for")." \"".prepare($f2)."\"";
@@ -833,7 +833,7 @@ switch ($action) {
       case "soundex":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (soundex(".addslashes($f1).") = soundex('".addslashes($f2)."')) ".
-	" AND ptarchive != '1' ".
+	" AND ptarchive+0 != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = "Sounds Like \"".prepare($f2)."\"";
@@ -852,14 +852,14 @@ switch ($action) {
 	$query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (UCASE(ptlname) LIKE '".addslashes(strtoupper($last))."%') ".
          " AND (UCASE(ptfname) LIKE '".addslashes(strtoupper($first))."%') ".
-	 " AND ptarchive != '1' ".
+	 " AND ptarchive+0 != '1' ".
 	 freemed::itemlist_conditions(false).
 	 " ORDER BY ptlname, ptfname, ptdob";
 	$_crit = __("Patient Name")." \"".prepare($_REQUEST['f1'])."\"";
         break;
       case "all":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
-	" WHERE ptarchive != '1' ".
+	" WHERE ptarchive+0 != '1' ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = "\"".__("All Patients")."\"";
