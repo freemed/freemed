@@ -111,7 +111,7 @@ switch ($action) {
 				html_form::text_widget("ptzip", 10),
 
 			__("Date of Birth") =>
-				date_entry("ptdob")
+				fm_date_entry("ptdob", true)
 
 
 		) )
@@ -421,7 +421,7 @@ switch ($action) {
 				html_form::text_widget("ptzip", 10),
 
 			__("Date of Birth") =>
-				date_entry("ptdob"),
+				fm_date_entry("ptdob", true),
 
 			__("Country") =>
 				html_form::country_pulldown("ptcountry"),
