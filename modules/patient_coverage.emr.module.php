@@ -394,7 +394,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 			if ($covreplace==1) // replace an existing coverage
 			{
 				echo "<$STDFONT_B>Removing Old Coverage<BR><$STDFONT_E>\n";
-				$query = "UPDATE coverage SET covstatus='".DELETED."' WHERE covtype='".addslashes($covtype)."'";
+				$query = "UPDATE coverage SET covstatus='".DELETED."' WHERE covtype='".addslashes($covtype)."' AND covpatient='".addslashes($patient)."'";
 				$updres = $sql->query($query);
 				if (!$updres)
 					DIE("Error updating coverage status");
