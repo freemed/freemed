@@ -2621,13 +2621,33 @@ function fm_date_print ($actualdate, $show_text_days=false) {
 	$d  = substr ($actualdate, 8, 2);        // extract day
 	$ts = mktime (0, 0, 0, $m, $d, date("Y"));      // generate timestamp
 
+	$lang_months = array (
+		'',
+		__("Jan"),
+		__("Feb"),
+		__("Mar"),
+		__("Apr"),
+		__("May"),
+		__("Jun"),
+		__("Jul"),
+		__("Aug"),
+		__("Sep"),
+		__("Oct"),
+		__("Nov"),
+		__("Dec")
+	);
+
 	// Return depending on configuration format
 	switch (freemed::config_value("dtfmt")) {
 		case "mdy":
 			return date(($show_text_days ? "D" : "")." M d, ", $ts).$y;
 			break;
 		case "dmy":
-			return date(($show_text_days ? "D" : "")."d M, ", $ts).$y;
+			if ($show_text_days) {
+				return $d." ".$lang_months[0+substr($m)].", ".$y;
+			} else {
+				return date("d M, ", $ts).$y;
+			}
 			break;
 		case "ymd": default:
 			return $y.date("-m-d", $ts);

@@ -371,6 +371,21 @@ class Scheduler {
 			__("Fri"),
 			__("Sat")
 		);
+		$lang_months = array (
+			'',
+			__("Jan"),
+			__("Feb"),
+			__("Mar"),
+			__("Apr"),
+			__("May"),
+			__("Jun"),
+			__("Jul"),
+			__("Aug"),
+			__("Sep"),
+			__("Oct"),
+			__("Nov"),
+			__("Dec")
+		);
 
     // break current day into pieces
     list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
@@ -415,7 +430,7 @@ class Scheduler {
       class=\"button_text\"><small>".__("prev")."</small></a>
      </td>
      <td COLSPAN=\"5\" ALIGN=\"CENTER\">
-       <b>".htmlentities(date("M",mktime(0,0,0,($this_month+1),0,0)))." $this_year</b>
+       <b>".prepare($lang_months[0+$this_month])." ".$this_year."</b>
      </td>
      <td ALIGN=\"RIGHT\" colspan=\"2\">
      <a href=\"$this_url&selected_date=".$this->scroll_next_month($this_date)."\"
