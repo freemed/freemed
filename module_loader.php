@@ -13,7 +13,7 @@ $module_list = CreateObject('PHP.module_list', PACKAGENAME);
 
 //----- Check for module
 if (!$module_list->check_for($module)) {
-	$display_buffer .= "module \"$module\" not found";
+	$display_buffer .= "Module \"$module\" not found<br/>\n";
 	template_display();
 } // end of checking for module
 

@@ -1,5 +1,6 @@
 <?php
  // $Id$
+ // $Author$
  // note: all billing functions accessable from this menu, which is called
  //       by the main menu
  // lic : GPL, v2
@@ -20,9 +21,11 @@ $page_title = _("Billing Functions");
 page_push();
 
 //----- Check for "current_patient" in $_SESSION
-if ($_SESSION['current_patient'] != 0) $patient = $_SESSION['current_patient'];
+if ($_SESSION['current_patient'] != 0) {
+	$patient = $_SESSION['current_patient'];
+}
 
-$patient_information = "<B>"._("NO PATIENT SPECIFIED")."</B>";
+$patient_information = "<b>"._("NO PATIENT SPECIFIED")."</b>\n";
 if ($patient>0) {
 	$this_patient = CreateObject('FreeMED.Patient', $patient);
 	$patient_information = freemed::patient_box ($this_patient);
@@ -32,69 +35,53 @@ if ($patient>0) {
 // payment links removed till billing module is
 // complete. use manage to make payments
 //
+
    // here is the actual guts of the menu
 if (freemed::user_flag(USER_DATABASE)) {
-   $display_buffer .= "
-    <p/>
+	$display_buffer .= "
+	<p/>
 
-    <div ALIGN=\"CENTER\">
-    $patient_information
-    </div>
+	<div ALIGN=\"CENTER\">
+	$patient_information
+	</div>
 
-    <p/>
+	<p/>
 
-    <table BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=\"MIDDLE\"
-     ALIGN=\"CENTER\">
-    ".($this_patient ? "" :
-    "<tr>
-     <td COLSPAN=2 ALIGN=\"CENTER\">
-      <div>
-      <a HREF=\"patient.php\"
-      >"._("Select a Patient")."</a>
-      </div>
-     </td>
-    </tr>" )."
-    </table> 
-    <p/>
-    ";
-	$catagory = "Billing";
+	<table border=\"0\" CELLSPACING=\"2\" CELLPADDING=\"2\"
+	 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+	".($this_patient ? "" :
+	"<tr>
+		<td COLSPAN=\"2\" ALIGN=\"CENTER\">
+		<div>
+			<a class=\"button\" href=\"patient.php\"
+			>"._("Select a Patient")."</a>
+		</div>
+		</td>
+	</tr>" )."
+	</table> 
+	<p/>
+	";
+
+	$category = "Billing";
 	$module_template = "
-		<tr><td ALIGN=\"RIGHT\">
-        <b>#name#</b> : 
-        </td>
-        <td>
-        <a HREF=\"module_loader.php?module=#class#&patient=$patient\"
-         >"._("Menu")."</a>
-        </td>
-		</tr>";
-    // modules list
-    $module_list = CreateObject('PHP.module_list', PACKAGENAME);
-    $display_buffer .= "<div ALIGN=\"CENTER\"><table>\n";
-    $display_buffer .= $module_list->generate_list($catagory, 0, $module_template);
-    $display_buffer .= "</table></div>\n";
-	$catagory = "X12";
-	$module_template = "
-		<tr><td ALIGN=\"RIGHT\">
-        <b>#name#</b> : 
-        </td>
-        <td>
-        <a HREF=\"module_loader.php?module=#class#&patient=$patient\"
-         >"._("Menu")."</a>
-        </td>
-		</tr>";
-    // modules list
-    //$module_list2 = CreateObject('PHP.module_list', PACKAGENAME);
-    $display_buffer .= "<div ALIGN=\"CENTER\"><table>\n";
-    $display_buffer .= $module_list->generate_list($catagory, 0, $module_template);
-    $display_buffer .= "</table></div>\n";
-
-  } else { 
-    $display_buffer .= "
-      <p/>
-        "._("You don't have access for this menu.")."
-      <p/>
-    ";
-  }
+		<tr>
+        	<td>
+        	<a HREF=\"module_loader.php?module=#class#&patient=$patient\"
+        	>#name#</a>
+        	</td>
+		</tr>\n";
+	// modules list
+	$module_list = CreateObject('PHP.module_list', PACKAGENAME);
+	$display_buffer .= "<div ALIGN=\"CENTER\"><table>\n";
+	$display_buffer .= $module_list->generate_list($category, 0, $module_template);
+	$display_buffer .= "</table></div>\n";
+} else { 
+	$display_buffer .= "
+	<p/>
+	"._("You don't have access for this menu.")."
+	<p/>
+	";
+}
 
 //----- Finish template display
 template_display ();

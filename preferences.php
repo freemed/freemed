@@ -134,7 +134,7 @@ switch ($action) {
 	<p/>
 
 	<div align=\"center\">
-	<a href=\"main.php\">"._("Return to Main Menu")."</a>
+	<a class=\"button\" href=\"main.php\">"._("Return to Main Menu")."</a>
 	</div>
 	";
 	break;
