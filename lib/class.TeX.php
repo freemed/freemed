@@ -33,10 +33,17 @@ class TeX {
 	//
 	function AddLongItem ( $title, $item ) {
 		$CRLF = "\n"; 
-		$this->_buffer .= '\\section*{\\headingbox{'.
-			$this->_SanitizeText($title).'}}'.$CRLF.
-			$this->_HTMLToRichText($item).$CRLF.
-			$CRLF;
+		// Handle no item title
+		if (empty($title)) {
+			$this->_buffer .= '\\section*{}'.$CRLF.
+				$this->_HTMLToRichText($item).$CRLF.
+				$CRLF;
+		} else {
+			$this->_buffer .= '\\section*{\\headingbox{'.
+				$this->_SanitizeText($title).'}}'.$CRLF.
+				$this->_HTMLToRichText($item).$CRLF.
+				$CRLF;
+		}
 	} // end method AddLongItem
 
 	// Method: AddLongItems
@@ -261,20 +268,32 @@ class TeX {
 		$text = preg_replace("#<I>(.*?)</I>#i", '\textit{$1}', $text);
 		$text = preg_replace("#<U>(.*?)</U>#i", '\underline{$1}', $text);
 
+		// Switch BR and SPAN tags (fix for HTMLArea JS)
+		$text = preg_replace("#<BR\s/></SPAN>#i", "</span><br />", $text);
+		$text = preg_replace("#<BR\s/></SPAN>#i", "</span><br />", $text);
+		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\"><BR\s/>#i", "<br /><span style=\"font-weight: bold;\">", $text);
+
 		// Also do "SPAN" tags, which are put out by HTMLarea JS
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\">(.*?)</SPAN>#i", '\textbf{$1}', $text);
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-STYLE:\sITALIC\;\">(.*?)</SPAN>#i", '\textit{$1}', $text);
 		$text = preg_replace("#<SPAN\sSTYLE=\"TEXT\-DECORATION:\sUNDERLINE\;\">(.*?)</SPAN>#i", '\underline{$1}', $text);
-	
+
+		// Handle embedded CRs... for now we treat them as line
+		// breaks
+		//$text = str_replace("\n", " \\\\\n", $text);
+
 		// Do something about <br /> and <br> tags (<br /> are used
 		// by HTMLarea JS). For now, we treat them as though they
 		// were paragraph breaks. What is the proper way to handle
 		// these?
-		$text = preg_replace("#\s*<BR\s/>#i", "\n\n", $text);
-		$text = preg_replace("#\s*<BR>#i", "\n\n", $text);
+		$text = preg_replace("#\s*<BR\s/>#i", " \n\n", $text);
+		$text = preg_replace("#\s*<BR>#i", " \n\n", $text);
 	
 		// Remove all tags we can't understand
 		$text = preg_replace("#<[^>]*?>#i", '', $text);
+
+		// Sanitize out quotes
+		$string = str_replace('"', '\'\'', $string);
 	
 		return $text;
 	} // end method _HTMLToRichText
@@ -297,20 +316,29 @@ class TeX {
 	//	Text that can be cleanly inserted into TeX code.
 	//
 	function _SanitizeText ( $text, $skip_html=false ) {
-		$string = $text;
+		$string = stripslashes($text);
 
 		// First, sanitize escape character
 		$string = str_replace('\\', '\\\\', $string);
+
+		// Get rid of \r character
+		$string = str_replace("\r", "", $string);
 
 		// Sanitize {, }
 		$string = str_replace('{', '\{', $string);
 		$string = str_replace('}', '\}', $string);
 
-		// Get rid of #
+		// Get rid of #, _
 		$string = str_replace('#', '\#', $string);
+		$string = str_replace('_', '\_', $string);
 
 		// HTML/SGML specific texts
 		if (!$skip_html) {
+			// This one isn't *really* right, since there are
+			// technically opening and closing quotes, but it
+			// will do for now.
+			$string = str_replace('"', '\'\'', $string);
+
 			$string = str_replace('<', '\<', $string);
 			$string = str_replace('>', '\>', $string);
 			$string = str_replace('/', '\/', $string);
