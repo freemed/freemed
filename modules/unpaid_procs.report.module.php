@@ -138,7 +138,7 @@ class unpaidProceduresReport extends freemedReportsModule {
                  ><FONT SIZE=-1>"._("Patient Ledger")."</FONT></A></TD>
                   ";
                   if (!$billed)
-                      $display_buffer .= "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
+                      $display_buffer .= "<TD> <FONT COLOR=#ff0000>&nbsp;NO&nbsp;</FONT></TD>";
                   else
                       $display_buffer .= "<TD>YES</TD>";
                   $display_buffer .= "<TD>$oldest_bill</TD>";
