@@ -47,12 +47,12 @@ class Ledger {
 				break;
 
 			case FEEADJUST:
-				/* TODO: logic is 
-				$allowed = $this_procedure['proccharges'] -
-						$this_procedure['payrecamt'];
-				$charges = $allowed;
-				$current_balance = $charges - $amount_paid;
-				*/
+				// TODO: logic is 
+				//$allowed = $this_procedure['proccharges'] -
+				//		$this_procedure['payrecamt'];
+				//$charges = $allowed;
+				//$current_balance = $charges - $amount_paid;
+				//
 				break;
 
 			case WRITEOFF:
