@@ -61,7 +61,10 @@ class PaymentModule extends EMRModule {
 		// Summary box information
 		$this->summary_vars = array (
 			"Date" => "payrecdt",
-			"Amount" => "payrecamt"
+			"Amount" => "_amount"
+		);
+		$this->summary_query = array (
+			"CASE (CAST(payrecamt AS CHAR) LIKE '%.%') WHEN 1 THEN CONCAT('\$', CAST(payrecamt AS CHAR)) ELSE CONCAT('\$', CAST(payrecamt AS CHAR), '.00') END AS _amount"
 		);
 
 		// Call parent constructor
