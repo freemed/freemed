@@ -4,6 +4,7 @@
   # lic : GPL, v2
   # Adaptation by max k <amk@span.ch>
   # Translated by Johann KRAUTINGER <j.krau@teleweb.at> 19991004
+  # Mod : 20000407
 
   $record_name                   = "Patient";
 
@@ -40,7 +41,7 @@
   $Drivers_license               = "Führerschein";
   $No_state                      = "keiner";
   #"No State";
-  $Referring_doctor              = "Referring Doctor (nicht übersetzt)";
+  $Referring_doctor              = "Überweisender Arzt";
   $Primary_care_physician        = "behandelnder Arzt";
   #"Primary Care Physician";
   $Other                         = "Andere";

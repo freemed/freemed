@@ -26,7 +26,7 @@
   $Adding                  = "wird hinzugefügt"; #"Adding"
   $Clear                   = "Löschen";
     // 19990917
-  $Return_to               = "Zürück";
+  $Return_to               = "Zurück";
   $Main_Menu               = "Haupt Menü";
   $Modify                  = "Erneuern";
   $Modifying               = "wird erneuert";
@@ -47,7 +47,7 @@
   $lang_ALL                = "ALLES";
   // 19990921
   $lang_ADD                = "HINZU";
-  $lang_MOD                = "NEU";
+  $lang_MOD                = "ÄND";
   $lang_DEL                = "LÖSCHE";
   // 19990922
   $No_Record_Found         = "Es wurde kein DB-Name mit diesen Kriterien
