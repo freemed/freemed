@@ -303,6 +303,31 @@ switch ($action) {
     </TABLE>
      ");    
 
+	$book->add_page(
+		_("Medical"),
+		array("ptblood"),
+		html_form::form_table(array(
+			_("Blood Type") =>
+			html_form::select_widget(
+				"ptblood",
+				array(
+					"O",
+					"O+",
+					"O-",
+					"A",
+					"A+",
+					"A-",
+					"B",
+					"B+",
+					"B-",
+					"AB",
+					"AB+",
+					"AB-"
+				)
+			)
+		))
+	);
+
    $book->add_page(
      _("Notes"),
      array("ptnextofkin"),
@@ -424,6 +449,9 @@ switch ($action) {
              "ptinsstart",
              "ptinsend",
              "ptnextofkin",
+             "ptblood",
+             "pttimestamp" => '',
+             "ptemriversion" => '1',
              "iso" => $__ISO_SET__
             ) );
 	 break; // end add
@@ -496,6 +524,8 @@ switch ($action) {
              "ptinsstart",
              "ptinsend",
              "ptnextofkin",
+             "ptblood",
+             "pttimestamp" => '',
              "iso"
             ), array ( "id" => $id )
          );
