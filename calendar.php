@@ -9,6 +9,11 @@ include_once ("lib/freemed.php");
 //----- Login/authenticate
 freemed::connect ();
 
+//----- Check ACLs
+if (!freemed::acl('schedule', 'view')) {
+	trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+}
+
 //----- HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"calendar.php|user $user_to_log views calendar");}	
@@ -18,12 +23,6 @@ $page_title = __("Calendar");
 
 //----- Push page onto stack
 page_push ();
-
- // Check for appropriate access level
-if (!freemed::user_flag(USER_DATABASE)) {
-	$display_buffer .= " <P>".__("You don't have access for this menu.")."</P>\n";
-	template_display();
-} // end if not appropriate userlevel
 
 // information for module loader
 $category = "Calendar";

@@ -11,13 +11,29 @@ function freemed_standard_error_handler ($no, $str, $file, $line, $context) {
 	global $display_buffer;
 
 	switch ($no) {
+		// Access errors use this macro
+		case E_USER_ERROR:
+			$display_buffer .= "<div align=\"center\">".
+				"<b>".prepare($str)."</b></div>\n".
+				"<p/>\n".
+				"<div align=\"center\">".
+				"<a href=\"main.php\" class=\"button\">".__("Back")."</a>".
+				"</div>\n";
+		
+			// Use "template_display" to show the template
+			if (function_exists("template_display")) {
+				template_display();
+			} else {
+				DIE($display_buffer);
+			} // end checking for template_display
+			break;
+
 		case E_ERROR:
 		case E_PARSE:
 		case E_COMPILE_ERROR:
 		case E_COMPILE_WARNING:
 		case E_CORE_ERROR:
 		case E_CORE_WARNING:
-		case E_USER_ERROR:
 		case E_USER_WARNING:
 			$error =
 				"Package : ".PACKAGENAME."\n".

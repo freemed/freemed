@@ -48,6 +48,9 @@ switch ($action) {
    $book->set_refresh_name(__("Refresh"));
    switch ($action) {
      case "add": case "addform":
+     	if (!freemed::acl('emr', 'add')) {
+		trigger_error(__("You don't have access to do that."), E_USER_ERROR);
+	}
 	$book->set_submit_name (__("Add"));
       if ( !$book->been_here() ) {
         // $ins_disp_inactive=false; // TODO! not implemented
@@ -56,6 +59,9 @@ switch ($action) {
       break; // end internal add
 
      case "mod": case "modform":
+     	if (!freemed::acl_patient('emr', 'modify', $id)) {
+		trigger_error(__("You don't have access to do that."), E_USER_ERROR);
+	}
 	$book->set_submit_name (__("Modify"));
       if ( !$book->been_here() ) {
       $result = $sql->query("SELECT * FROM patient ".
@@ -858,6 +864,9 @@ switch ($action) {
 
   case "delete":
   case "del":
+     	if (!freemed::acl_patient('emr', 'delete', $id)) {
+		trigger_error(__("You don't have access to do that."), E_USER_ERROR);
+	}
     $page_title = __("Archiving Patient");
     $display_buffer .= "<div ALIGN=\"CENTER\">
      <p/>".__("Archiving")." ... ";
@@ -885,6 +894,9 @@ switch ($action) {
   break; // end action delete
 
   case "find":
+     	if (!freemed::acl_patient('emr', 'view', $id)) {
+		trigger_error(__("You don't have access to do that."), E_USER_ERROR);
+	}
     switch ($criteria) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".

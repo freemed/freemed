@@ -14,9 +14,8 @@ freemed::connect (); // authenticate user
 
 // check for access
 $this_user = CreateObject('FreeMED.User');
-if (!freemed::user_flag(USER_ADMIN)) {
-	$display_buffer .= __("Access Denied");
-	template_display();
+if (!freemed::acl('admin', 'menu')) {
+	trigger_error(__("Access Denied"), E_USER_ERROR);
 }
 // top
 $page_title = __("Module Information");

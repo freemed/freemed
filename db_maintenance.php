@@ -10,6 +10,12 @@ include ("lib/freemed.php");
 //----- Login and authenticate
 freemed::connect ();
 
+//----- Check ACLs
+if (!freemed::acl('support', 'menu')) {
+	print "no support menu access";
+	trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+}
+
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"db_maintenance.php|user $user_to_log views database manager");}	
@@ -25,16 +31,6 @@ page_push();
 $category = "Support Data";
 $module_template = "<a HREF=\"module_loader.php?module=#class#\"".
 	">#name#</a><br/>\n";
-
- // Check for appropriate access level
-if (!freemed::user_flag(USER_DATABASE)) {
-	$display_buffer .= "
-	<p/>
-        ".__("You don't have access for this menu.")."
-	<p/>
-	";
-	template_display();
-} // end if not appropriate userlevel
 
 // actual display routine
 

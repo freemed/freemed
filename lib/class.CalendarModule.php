@@ -83,6 +83,11 @@ class CalendarModule extends BaseModule {
 			//$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
 		}
 
+		// ACL check
+		if (!freemed::acl('schedule', 'view')) {
+			trigger_error(__("You do not have permission to do that."));
+		}
+
 		switch ($action) {
 			case "add":
 				$this->add();

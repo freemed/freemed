@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -15,9 +15,10 @@ $path = dirname(__FILE__);
 include("$path/../adodb-exceptions.inc.php");
 include("$path/../adodb.inc.php");	
 
+echo "<h3>PHP ".PHP_VERSION."</h3>\n";
 try {
 
-$dbt = 'oci8';
+$dbt = 'mysqli';
 
 switch($dbt) {
 case 'oci8':
@@ -27,6 +28,11 @@ case 'oci8':
 default:
 case 'mysql':
 	$db = NewADOConnection("mysql");
+	$db->Connect('localhost','root','','test');
+	break;
+	
+case 'mysqli':
+	$db = NewADOConnection("mysqli");
 	$db->Connect('localhost','root','','test');
 	break;
 }
@@ -50,7 +56,8 @@ $rs = $db->Execute("select bad from badder");
 
 } catch (exception $e) {
 	adodb_pr($e);
-	$e = adodb_backtrace($e->trace);
+	echo "<h3>adodb_backtrace:</h3>\n";
+	$e = adodb_backtrace($e->gettrace());
 }
 
 ?>

@@ -17,17 +17,45 @@ freemed::connect ();
 
 $this_user = CreateObject('FreeMED.User');
 
-if (!freemed::user_flag(USER_ROOT)) {  // if not admin...
-	$display_buffer .= "$page_name :: access denied\n";
-	template_display();
-//------HIPAA Logging
-$user_to_log=$_SESSION['authdata']['user'];
-if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"user.php|user access failed, user is not admin");}	
+if (!freemed::acl('admin', 'user')) {
+	//------HIPAA Logging
+	$user_to_log=$_SESSION['authdata']['user'];
+	if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"user.php|user access failed, user is not admin");}	
+	trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 }
 
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"user.php|user $user_to_log manage users");}	
+
+//----- Function for ACL widget
+function my_acl_widget ( $varname ) {
+	global ${$varname};
+	$buffer .= "<select NAME=\"".$varname."[]\" SIZE=\"10\" MULTIPLE=\"multiple\">\n";
+
+	// Grab from ACL
+	$query = "SELECT id, section_value, value, order_value, name ".
+		"FROM acl_aro ".
+		"WHERE section_value='user'";
+	$res = $GLOBALS['sql']->query($query);
+	while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		$selected = false;
+		if (is_array(${$varname})) {
+			foreach (${$varname} AS $v) {
+				if ($v == $r['value']) {
+					$selected = true;
+				}
+			}
+		}
+		$buffer .= "<option value=\"".prepare($r['value'])."\" ".
+			( $selected ? "SELECTED" : "" ).">".
+			prepare($r['name']).
+			"</option>\n";
+	}
+	
+	$buffer .= "</select>\n";
+	return $buffer;
+} // end function my_acl_widget
 
 // *** main action loop ***
 // (default action is "view")
@@ -77,26 +105,11 @@ switch($action) { // master action switch
 	// make sure default & verify are the same, so no errors
 	$userpassword1 = $userpassword2 = $userpassword;
 
-	// Use userlevel to determine flags
-	if ($userlevel > 0) {
-		$power = 0; unset ($_userlevel);
-		while (pow(2,$power) <= $userlevel) {
-			// Check and add if so
-			if (pow(2, $power) & $userlevel) {
-				// Add it...
-				$_userlevel[(pow(2,$power))] = pow(2,$power);
-			}
-			// Increment the current power...
-			$power++;
-		} // end looping...
-
-		// Pass _userlevel to userlevel
-		$userlevel = $_userlevel;
-	} else {
-		// Kludge for html_form::checkbox_widget to detect array
-		$userlevel = array ( 0 );
+	// Use userlevel to determine ACL AROs
+	if (!(strpos($userlevel, ',') === false)) {
+		// Explode out components if we found a comma
+		$userlevel = explode (',', $userlevel);
 	}
-
   } // second modform if
   
   if ($action=="addform") {
@@ -118,7 +131,7 @@ switch($action) { // master action switch
     __("User"),
     array ( 
       "username", "userpassword", "userpassword1", "userpassword2", 
-      "userdescrip", "userlevel", "usertype", "userrealphy"
+      "userdescrip", "usertype", "userrealphy"
     ),
 	html_form::form_table(array(
 
@@ -136,31 +149,6 @@ switch($action) { // master action switch
 		__("Description") =>
 		html_form::text_widget("userdescrip", 20, 50),
 
-		__("User level") =>
-		html_form::checkbox_widget(
-			"userlevel",
-			USER_ADMIN,
-			"Administrator"
-		).
-		"<BR>\n".
-		html_form::checkbox_widget(
-			"userlevel",
-			USER_DATABASE,
-			"Database Access"
-		).
-		"<BR>\n".
-		html_form::checkbox_widget(
-			"userlevel",
-			USER_DELETE,
-			"Delete Permission"
-		).
-		"<BR>\n".
-		html_form::checkbox_widget(
-			"userlevel",
-			USER_DISABLED,
-			"Disabled/Locked Out"
-		),
-    
 		__("User type") =>
 		html_form::select_widget(
 			"usertype",
@@ -173,6 +161,15 @@ switch($action) { // master action switch
 		__("Actual Physician") =>
 		freemed_display_selectbox($phy_r, "#phylname#, #phyfname#", "userrealphy")
 
+	))
+  );
+
+  $book->add_page (
+	__("Access Control Lists"),
+	array ( "userlevel" ),
+	html_form::form_table(array(
+		__("ACL") =>
+		my_acl_widget ( 'userlevel' )
 	))
   );
 
@@ -242,11 +239,8 @@ switch($action) { // master action switch
 	// Assemble flags
 	$flags = 0;
 	if (is_array($userlevel)) {
-		foreach($userlevel AS $k => $v) {
-			$flags |= $v;
-		}
+		$userlevel = join(',', $userlevel);
 	}
-
 
 	//Fred Trotter
 	// in either case below we need the md5hash
@@ -280,7 +274,7 @@ switch($action) { // master action switch
 			"username"     => $username,
 			"userpassword" => $_pass,
 			"userdescrip"  => $userdescrip,
-			"userlevel"    => ($flags+0),
+			"userlevel"    => $userlevel,
 			"usertype"     => $usertype,
 			"userfac"      => sql_squash(array_unique($userfac)),
 			"userphy"      => sql_squash(array_unique($userphy)),
@@ -301,7 +295,7 @@ switch($action) { // master action switch
 			"username"     => $username,
 			"userpassword" => $md5_pass,
 			"userdescrip"  => $userdescrip,
-			"userlevel"    => ($flags+0),
+			"userlevel"    => $userlevel,
 			"usertype"     => $usertype,
 			"userfac"      => sql_squash($userfac),
 			"userphy"      => sql_squash($userphy),
@@ -324,9 +318,20 @@ switch($action) { // master action switch
       template_display();
     } // if the passwords _don't_ match...
 
-    if ($id != 1)
+    if ($id != 1) {
       $result = $sql->query($query); // execute query
-    else $display_buffer .= __("You cannot modify admin!");
+    } else { trigger_error(__("You cannot modify admin!"), E_USER_ERROR); }
+
+    // Add breakpoints for user add and modify
+    switch ($action) {
+      case 'add': case 'addform':
+      freemed::handler_breakpoint( 'UserAdd', array ( $sql->last_record($result) ) );
+      break;
+
+      case 'mod': case 'modform':
+      freemed::handler_breakpoint( 'UserModify', array ( $_REQUEST['id'] ) );
+      break;
+    } // end breakpoint switch
 
     if ($result) {
       $display_buffer .= " <B>".__("Done")."</B> ";
@@ -357,10 +362,7 @@ switch($action) { // master action switch
     $result = $sql->query("DELETE FROM $table_name ".
     	"WHERE id='".addslashes($id)."'");
   else { // if we tried to delete admin!!!
-    $display_buffer .= "
-      <b><center>".__("You cannot delete admin!")."</center></b>
-    ";
-    template_display();
+    trigger_error(__("You cannot delete admin!"), E_USER_ERROR);
   }
 
   $display_buffer .= "

@@ -34,6 +34,9 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manageappointment.php|user $user_to
 
  switch ($action) {
   case "del":
+   if (!freemed::acl('schedule', 'delete')) {
+     trigger_error(__("You do not have permission to delete appointments."));
+   }
    $page_title = __("Deleting Appointment");
    $display_buffer .= "\n".__("Deleting")." ... \n";
    $query = "DELETE FROM scheduler WHERE id='".addslashes($id)."'";

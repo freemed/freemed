@@ -11,7 +11,7 @@ class FreeMED_Package extends MaintenanceModule {
 
 	var $MODULE_NAME = 'FreeMED';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.1';
+	var $MODULE_VERSION = '0.7.2';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -130,6 +130,35 @@ class FreeMED_Package extends MaintenanceModule {
 				}
 			}
 		}
+
+		// Version 0.7.2
+		//
+		//	ACL changes to user table, with automagic conversion
+		//
+		if (!version_check($version, '0.7.2')) {
+			// Alter user table format
+			$sql->query('ALTER TABLE user CHANGE COLUMN userlevel userlevel BLOB');
+
+			// Loop through all users
+			$q = $sql->query('SELECT * FROM user');
+			while ($r = $sql->fetch_array($q)) {
+				// Convert flags to "something,something" format
+				unset ($a);
+				// Guess which ACL groups
+				if ($r['userlevel'] & USER_ROOT) { $a['admin'] = 'admin'; }
+				if ($r['userlevel'] & USER_ADMIN) { $a['admin'] = 'admin'; }
+				if ($r['userlevel'] & USER_DATABASE) { $a['entry'] = 'entry'; }
+				if (($r['userrealphy'] > 0) and ($r['usertype'] == 'phy')) { $a['provider'] = 'provider'; }
+
+				// Form and execute query
+				$new_query = $sql->update_query(
+					'user',
+					array ( 'userlevel' => join(',', $a) ),
+					array ( 'id' => $r['id'] )
+				);
+				$sql->query($new_query);
+			} // end while
+		} // end 0.7.2
 	} // end method _update
 }
 

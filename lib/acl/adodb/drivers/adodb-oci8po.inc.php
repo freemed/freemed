@@ -1,11 +1,11 @@
 <?php
 /*
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim. All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
 
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Portable version of oci8 driver, to make it more similar to other database drivers.
   The main differences are
@@ -16,6 +16,9 @@ V4.11 27 Jan 2004  (c) 2000-2004 John Lim. All rights reserved.
    Should some emulation of RecordCount() be implemented?
   
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 include_once(ADODB_DIR.'/drivers/adodb-oci8.inc.php');
 
@@ -35,14 +38,14 @@ class ADODB_oci8po extends ADODB_oci8 {
 		return '?';
 	}
 	
-	function Prepare($sql)
+	function Prepare($sql,$cursor=false)
 	{
 		$sqlarr = explode('?',$sql);
 		$sql = $sqlarr[0];
 		for ($i = 1, $max = sizeof($sqlarr); $i < $max; $i++) {
 			$sql .=  ':'.($i-1) . $sqlarr[$i];
 		} 
-		return ADODB_oci8::Prepare($sql);
+		return ADODB_oci8::Prepare($sql,$cursor);
 	}
 	
 	// emulate handling of parameters ? ?, replacing with :bind0 :bind1

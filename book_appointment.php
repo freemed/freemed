@@ -33,6 +33,11 @@ if ($travel) {
 //----- Create scheduler object
 $scheduler = CreateObject('FreeMED.Scheduler');
 
+//----- Check ACLs
+if (!freemed::acl('schedule', 'book')) {
+	trigger_error(__("You do not have permission to book an appointment."), E_USER_ERROR);
+}
+
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"book_appointment.php|user $user_to_log accesses patient $patient");}	

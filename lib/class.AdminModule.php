@@ -33,19 +33,8 @@ class AdminModule extends BaseModule {
 		if (!isset($module)) {
 			trigger_error("Module not Defined", E_ERROR);
 		}
-		if (!freemed::user_flag(USER_ADMIN)) {
-			$page_title = __("Administration")." :: ".__("ERROR");
-			$display_buffer .= "
-			<p/>
-			<div ALIGN=\"CENTER\">".__("No administrative access!")."</div>	
-			<p/>
-			<div ALIGN=\"CENTER\">
-			<a class=\"button\" HREF=\"main.php\"
-			>".__("Return to the Main Menu")."</a>
-			</div>
-			<p/>
-			";
-			template_display();
+		if (!freemed::acl('admin', 'menu')) {
+			trigger_error(__("No administrative access!"), E_USER_ERROR);
 		}
 		return true;
 	} // end function check_vars

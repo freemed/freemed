@@ -9,6 +9,11 @@ include ("lib/freemed.php");
 //----- Login/authenticate
 freemed::connect ();
 
+//----- Check ACLs
+if (!freemed::acl('schedule', 'view')) {
+	trigger_error(__("You do not have permission to view appointments."), E_USER_ERROR);
+}
+
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"showappointment.php|user $user_to_log");}	

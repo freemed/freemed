@@ -23,6 +23,11 @@ if ($_SESSION['current_patient'] != 0) {
 	$patient = $_SESSION['current_patient'];
 }
 
+//----- Check ACLs
+if (!freemed::acl('bill', 'menu')) {
+	trigger_error(__("You don't have access to do that."), E_USER_ERROR);
+}
+
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"billingfunctions.php|user $user_to_log accesses patient $patient");}	
 
@@ -32,13 +37,6 @@ if ($patient>0) {
 	$patient_information = freemed::patient_box ($this_patient);
 } // if there is a patient
 
-// Deny if no access
-if (!freemed::user_flag(USER_DATABASE)) {
-	$display_buffer .= __("Access denied").".<br/>\n";
-	template_display();
-	die();
-}
-	
 // This section is the start of "Billing v1.0". We are using "handlers"
 // to assign different types of billing, and from there, we will 
 

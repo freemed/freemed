@@ -112,7 +112,7 @@ switch ($_POST['action']) {
 				//showarray($$type_array);
 			}
 			
-			$show_axo = !empty($selected_axo_groups) OR !empty($options_selected_axo);
+			$show_axo = (!empty($selected_axo_groups) OR !empty($options_selected_axo));
 		} else {
 			$gacl_api->debug_text('NOT EDITING ACL');
 			$allow=1;

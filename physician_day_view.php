@@ -14,6 +14,11 @@ freemed::connect ();
 $page_title = __("Physician Daily View");
 page_push();
 
+//----- Check ACLs
+if (!freemed::acl('schedule', 'view')) {
+	trigger_error(__("You do not have permission to do that."));
+}
+
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"physician_day_view.php|user $user_to_log ");}	

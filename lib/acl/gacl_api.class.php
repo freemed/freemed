@@ -771,7 +771,7 @@ class gacl_api extends gacl {
 				//$where_query['ar1'] = 'ar.acl_id=a.id';
 				$where_query['ar2'] = '(ar.section_value='. $this->db->quote($aro_section_value) .' AND ar.value IN (\''. implode ('\',\'', $aro_value_array) .'\'))';
 
-				if (is_array($axo_array)) {
+				if (is_array($axo_array) AND count($axo_array) > 0) {
 					foreach ($axo_array as $axo_section_value => $axo_value_array) {
 						$this->debug_text("is_conflicting_acl(): AXO Section Value: $axo_section_value AXO VALUE: $axo_value_array");
 
@@ -783,7 +783,8 @@ class gacl_api extends gacl {
 
 						$this->debug_text("is_conflicting_acl(): Search: ACO Section: $aco_section_value ACO Value: $aco_value_array ARO Section: $aro_section_value ARO Value: $aro_value_array AXO Section: $axo_section_value AXO Value: $axo_value_array");
 
-						$where_query['ax1'] = 'ax.acl_id=x.id';
+						//$where_query['ax1'] = 'ax.acl_id=x.id';
+						$where_query['ax1'] = 'ax.acl_id=a.id';
 						$where_query['ax2'] = '(ax.section_value='. $this->db->quote($axo_section_value) .' AND ax.value IN (\''. implode ('\',\'', $axo_value_array) .'\'))';
 
 						$where  = 'WHERE ' . implode(' AND ', $where_query);
@@ -880,7 +881,7 @@ class gacl_api extends gacl {
 		}
 
 		//Check for conflicting ACLs.
-		if ($this->is_conflicting_acl($aco_array,$aro_array, NULL, NULL, NULL, array($acl_id)) ) {
+		if ($this->is_conflicting_acl($aco_array,$aro_array,$aro_group_ids,$axo_array,$axo_group_ids,array($acl_id))) {
 			$this->debug_text("add_acl(): Detected possible ACL conflict, not adding ACL!");
 			return false;
 		}
@@ -1199,7 +1200,7 @@ class gacl_api extends gacl {
 								$spacing = substr($level, 0, -8) .'|- ';
 							}
 						} else {
-							$spacing = $prefix;
+							$spacing = $level;
 						}
 
 						$next = $level .'|&nbsp; ';
@@ -1244,10 +1245,10 @@ class gacl_api extends gacl {
 
 	/*======================================================================*\
 		Function:	get_group_id()
-		Purpose:	Gets the group_id given the name.
+		Purpose:	Gets the group_id given the name or value.
 						Will only return one group id, so if there are duplicate names, it will return false.
 	\*======================================================================*/
-	function get_group_id($name = null, $group_type = 'ARO') {
+	function get_group_id($value = NULL, $name = NULL, $group_type = 'ARO') {
 
 		$this->debug_text("get_group_id(): Name: $name");
 
@@ -1261,13 +1262,19 @@ class gacl_api extends gacl {
 		}
 
 		$name = trim($name);
+		$value = trim($value);
 
-		if (empty($name) ) {
-			$this->debug_text("get_group_id(): name ($name) is empty, this is required");
+		if (empty($name) AND empty($value) ) {
+			$this->debug_text("get_group_id(): name and value, at least one is required");
 			return false;
 		}
 
-		$query = "SELECT id FROM $table WHERE name='$name'";
+		$query = 'SELECT id FROM '. $table .' WHERE ';
+		if ( !empty($value) ) {
+		  $query .= ' value='. $this->db->quote($value);
+		} else {
+		  $query .= ' name='. $this->db->quote($name);
+		}
 		$rs = $this->db->Execute($query);
 
 		if (!is_object($rs)) {
@@ -1332,7 +1339,7 @@ class gacl_api extends gacl {
 		}
 
 		$query .= '
-				ORDER BY	g1.name';
+				ORDER BY	g1.value';
 
 		return $this->db->GetCol($query);
 	}
@@ -1361,7 +1368,7 @@ class gacl_api extends gacl {
 			return false;
 		}
 
-		$query  = 'SELECT id, parent_id, name, lft, rgt FROM '. $table .' WHERE id='. $group_id;
+		$query  = 'SELECT id, parent_id, value, name, lft, rgt FROM '. $table .' WHERE id='. $group_id;
 		//$rs = $this->db->Execute($query);
 		$row = $this->db->GetRow($query);
 
@@ -1493,8 +1500,11 @@ class gacl_api extends gacl {
 	/*======================================================================*\
 		Function:	add_group()
 		Purpose:	Inserts a group, defaults to be on the "root" branch.
+				Since v3.3.x you can only create one group with Parent_ID=0
+				So, its a good idea to create a "Virtual Root" group with Parent_ID=0
+				Then assign other groups to that.
 	\*======================================================================*/
-	function add_group($name, $parent_id=0, $group_type='ARO') {
+	function add_group($value, $name, $parent_id=0, $group_type='ARO') {
 
 		switch(strtolower(trim($group_type))) {
 			case 'axo':
@@ -1507,7 +1517,7 @@ class gacl_api extends gacl {
 				break;
 		}
 
-		$this->debug_text("add_group(): Name: $name Parent ID: $parent_id Group Type: $group_type");
+		$this->debug_text("add_group(): Name: $name Value: $value Parent ID: $parent_id Group Type: $group_type");
 
 		$name = trim($name);
 
@@ -1588,7 +1598,7 @@ class gacl_api extends gacl {
 			}
 		}
 
-		$query = 'INSERT INTO '. $table .' (id,parent_id,name,lft,rgt) VALUES ('. $insert_id .','. $parent_id .','. $this->db->quote($name) .','. $parent_rgt .','. ($parent_rgt + 1) .')';
+		$query = 'INSERT INTO '. $table .' (id,parent_id,name,value,lft,rgt) VALUES ('. $insert_id .','. $parent_id .','. $this->db->quote($name) .','. $this->db->quote($value) .','. $parent_rgt .','. ($parent_rgt + 1) .')';
 		$rs = $this->db->Execute($query);
 
 		if (!is_object($rs)) {
@@ -1808,8 +1818,8 @@ class gacl_api extends gacl {
 		Function:	edit_group()
 		Purpose:	Edits a group
 	\*======================================================================*/
-	function edit_group($group_id, $name=NULL, $parent_id=NULL, $group_type='ARO') {
-		$this->debug_text("edit_group(): ID: $group_id Name: $name Parent ID: $parent_id Group Type: $group_type");
+	function edit_group($group_id, $value=NULL, $name=NULL, $parent_id=NULL, $group_type='ARO') {
+		$this->debug_text("edit_group(): ID: $group_id Name: $name Value: $value Parent ID: $parent_id Group Type: $group_type");
 
 		switch(strtolower(trim($group_type))) {
 			case 'axo':
@@ -1835,7 +1845,7 @@ class gacl_api extends gacl {
 		$name = trim($name);
 
 		// don't set name if it is unchanged
-		if ($name == $curr[2]) {
+		if ($name == $curr[3]) {
 			unset($name);
 		}
 
@@ -1878,6 +1888,11 @@ class gacl_api extends gacl {
 		// update parent_id if it is specified.
 		if (!empty($parent_id)) {
 			$set[] = 'parent_id='. $parent_id;
+		}
+
+		// update value if it is specified.
+		if (!empty($value)) {
+			$set[] = 'value='. $this->db->quote($value);
 		}
 
 		if (empty($set)) {
@@ -2051,7 +2066,7 @@ class gacl_api extends gacl {
 			$query = 'SELECT count(*) FROM '. $table .' WHERE parent_id='. $group_id;
 			$child_count = $this->db->GetOne($query);
 
-			if ($child_count > 1 && $reparent_children) {
+			if (($child_count > 1) AND $reparent_children) {
 				$this->debug_text ('del_group (): You cannot delete the root group and reparent children, this would create multiple root groups.');
 				$this->db->RollbackTrans();
 				return FALSE;
@@ -2543,7 +2558,7 @@ class gacl_api extends gacl {
 					defaults to only get direct parents.
 	\*======================================================================*/
 	function get_object_groups($object_id, $object_type = 'ARO', $option = 'NO_RECURSE') {
-		$this->debug_text('get_object_groups(): Object ID: '. $group_id .' Object Type: '. $object_type .' Option: '. $option);
+		$this->debug_text('get_object_groups(): Object ID: '. $object_id .' Object Type: '. $object_type .' Option: '. $option);
 
 		switch(strtolower(trim($object_type))) {
 			case 'axo':
@@ -2699,17 +2714,17 @@ class gacl_api extends gacl {
 			case 'aco':
 				$object_type = 'aco';
 				$table = $this->_db_table_prefix .'aco';
-				$object_map_table = 'aco_map';
+				$object_map_table = $this->_db_table_prefix .'aco_map';
 				break;
 			case 'aro':
 				$object_type = 'aro';
 				$table = $this->_db_table_prefix .'aro';
-				$object_map_table = 'aro_map';
+				$object_map_table = $this->_db_table_prefix .'aro_map';
 				break;
 			case 'axo':
 				$object_type = 'axo';
 				$table = $this->_db_table_prefix .'axo';
-				$object_map_table = 'axo_map';
+				$object_map_table = $this->_db_table_prefix .'axo_map';
 				break;
 		}
 

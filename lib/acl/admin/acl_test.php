@@ -47,7 +47,7 @@ while (list(,$row) = @each(&$rows)) {
 	$access = &$acl_result['allow'];
 	$return_value = &$acl_result['return_value'];
 
-	$acl_check_time = ($acl_check_end_time - $acl_check_begin_time) * 100;
+	$acl_check_time = ($acl_check_end_time - $acl_check_begin_time) * 1000;
 	$total_acl_check_time += $acl_check_time;
 
 	if ($aco_section_name != $tmp_aco_section_name OR $aco_name != $tmp_aco_name) {

@@ -9,14 +9,11 @@ include ("lib/freemed.php");
 freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
 
-if (!freemed::user_flag(USER_ADMIN)) {
-	$display_buffer .= "$page_name :: You do not have access to this module";
-	template_display();
-
-//------HIPAA Logging
-$user_to_log=$_SESSION['authdata']['user'];
-if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"export.php|user $user_to_log access failed, user does not posses ADMIN privileges");}	
-
+if (!freemed::acl('admin', 'menu')) {
+	//------HIPAA Logging
+	$user_to_log=$_SESSION['authdata']['user'];
+	if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"import.php|user $user_to_log attempt to access import failed, user does not have ADMIN privileges");}	
+	trigger_error(__("You do not have access to import functions."), E_USER_ERROR);
 }
 
 //------HIPAA Logging

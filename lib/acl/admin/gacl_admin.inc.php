@@ -31,23 +31,25 @@
 require_once(dirname(__FILE__).'/../gacl.class.php');
 require_once(dirname(__FILE__).'/../gacl_api.class.php');
 
+// FreeMED patch: load defaults from FreeMED
+require_once(dirname(__FILE__).'/../../settings.php');
 
 $gacl_options = array(
-			'debug' => FALSE,
-			'items_per_page' => 100,
-			'max_select_box_items' => 100,
-			'max_search_return_items' => 200,
-			'db_type' => 'mysql',
-			'db_host' => 'localhost',
-			'db_user' => 'root',
-			'db_password' => 'password',
-			'db_name' => 'freemed',
-			'db_table_prefix' => 'acl_',
-			'caching' => FALSE,
-			'force_cache_expire' => TRUE,
-								'cache_dir' => '/tmp/phpgacl_cache',
-								'cache_expire_time' => 600
-							);
+		'debug' => FALSE,
+		'items_per_page' => 100,
+		'max_select_box_items' => 100,
+		'max_search_return_items' => 200,
+		'db_type' => 'mysql',
+		'db_host' => DB_HOST ,
+		'db_user' => DB_USER,
+		'db_password' => DB_PASSWORD,
+		'db_name' => DB_NAME,
+		'db_table_prefix' => 'acl_', //DO NOT USE "_"
+		'caching' => FALSE,
+		'force_cache_expire' => TRUE,
+		'cache_dir' => '/tmp/phpgacl_cache',
+		'cache_expire_time' => 600
+	);
 
 
 $gacl_api = new gacl_api($gacl_options);

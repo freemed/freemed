@@ -9,7 +9,7 @@ all:
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf *.txt *.php $(INSTDIR)/$(THISDIR)
+	cp -vf *.txt *.php *.zip $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
 		make -C $$d install INSTDIR=$(INSTDIR); \
 	done

@@ -4,6 +4,9 @@ Mike Benoit <ipso@snappymail.ca>
 Dan Cech <dcech@phpwerx.net>
     Implemented the MPTT code, '_group_' feature, and ACL checks in the test suite.
     
+Gordon Luk <gluk@dfafunds.com>
+    Native ACL_Check module for Perl.     
+
 Ben Margolin <ben@prince.org>
     Caught and fixed several bugs.
 

@@ -153,6 +153,9 @@ class EMRModule extends BaseModule {
 		global $sql, $display_buffer;
 		static $locked;
 
+		// If there is no table_name, we can skip this altogether
+		if (empty($this->table_name)) { return false; }
+
 		if (!isset($locked)) {
 			$query = "SELECT * FROM ".$this->table_name." WHERE ".
 				"id='".addslashes($id)."' AND (locked > 0)";
@@ -228,28 +231,46 @@ class EMRModule extends BaseModule {
 
 		switch ($action) {
 			case "add":
+				if (!freemed::acl_patient('emr', 'add', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->add();
 				break;
 
 			case "addform":
+				if (!freemed::acl_patient('emr', 'add', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->addform();
 				break;
 
 			case "del":
 			case "delete":
+				if (!freemed::acl_patient('emr', 'delete', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->del();
 				break;
 
 			case "lock":
+				if (!freemed::acl_patient('emr', 'lock', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->lock();
 				break;
 
 			case "mod":
 			case "modify":
+				if (!freemed::acl_patient('emr', 'modify', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->mod();
 				break;
 
 			case "modform":
+				if (!freemed::acl_patient('emr', 'modify', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->modform();
 				break;
 
@@ -258,11 +279,17 @@ class EMRModule extends BaseModule {
 				break;
 
 			case "display";
+				if (!freemed::acl_patient('emr', 'view', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->display();
 				break;
 
 			case "view":
 			default:
+				if (!freemed::acl_patient('emr', 'view', $patient)) {
+					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+				}
 				$this->view();
 				break;
 		} // end switch action

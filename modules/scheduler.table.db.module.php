@@ -47,6 +47,8 @@ class SchedulerTable extends MaintenanceModule {
 	} // end constructor SchedulerTable
 
 	function MainMenuAppointments ( ) {
+		if (!freemed::acl('schedule', 'view')) { return false; }
+	
 		// Decide if this user is a physician or not...
 		if (!is_object($GLOBALS['this_user'])) {
 			$GLOBALS['this_user'] = CreateObject('FreeMED.User');

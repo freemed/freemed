@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-if (freemed::user_flag(USER_DATABASE)) {
+if (freemed::acl('emr', 'view')) {
       $display_buffer .= "
         <table WIDTH=\"100%\" CLASS=\"reverse\" BORDER=\"0\" CELLSPACING=\"0\"
          CELLPADDING=\"0\" VALIGN=\"TOP\" ALIGN=\"CENTER\"><tr><td>

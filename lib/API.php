@@ -16,6 +16,115 @@ define ('__API_PHP__', true);
 
 // namespace/class freemed
 class freemed {
+	// Function: freemed::acl
+	//
+	//	Query ACL for a particular resource.
+	//
+	// Parameters:
+	//
+	//	$category - Which category of ARO is being queried. Examples
+	//	would be things like 'admin', 'bill', 'schedule', et cetera.
+	//
+	//	$permission - Resource being queried. This would be things
+	//	like 'add', 'modify', 'view', 'delete', et cetera.
+	//
+	//	$axo_group - (optional) AXO group to be searched on. Note
+	//	that valid groups are things like 'patient'.
+	//
+	//	$axo_item - (optional) AXO item. This would be the patient
+	//	ID key for a patient, or something else for another AXO
+	//	group.
+	//
+	// Returns:
+	//
+	//	Boolean, depending on whether the resource is allowed or denied.
+	//
+	function acl ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
+		// For now, we test with just the user group specified. We
+		// can expand to do internet addresses, et cetera, from
+		// inside this.
+
+		// Derive user group(s)
+		global $this_user;
+		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
+
+		// Split groups up into array
+		$groups = explode(',', $this_user->local_record['userlevel']);
+
+		// Add "group" with the current user ARO object
+		$groups[] = 'user_'.$this_user->user_number;
+
+		// Loop for each one
+		foreach ($groups as $user_group) {
+			//global $display_buffer; $display_buffer .= "group = $user_group<br/>\n";
+			// Test most granular to least granular
+			if ($axo_group AND $axo_item) {
+				// Query with AXO
+				$a = $GLOBALS['acl']->acl_query (
+					$category,
+					$permission,
+					'user',
+					$user_group,
+					$axo_group,
+					$axo_item
+				);
+				if ($a['allow'] == 1) { return true; }
+			} else {
+				// Query, no AXO
+				$a = $GLOBALS['acl']->acl_query (
+					$category,
+					$permission,
+					'user',
+					$user_group
+				);
+				if ($a['allow'] == 1) { return true; }
+			}
+		} // end foreach user group
+
+		// If all else fails, return false
+		return false;
+	} // end function freemed::acl
+
+	// Function: freemed::acl_patient
+	//
+	//	Check ACLs, optionally with patient access. Note that this
+	//	function behaves exactly like <freemed::acl> if the
+	//	acl_patient configuration value is disabled.
+	//
+	// Parameters:
+	//
+	//	$category - Which category of ARO is being queried. Examples
+	//	would be things like 'admin', 'bill', 'schedule', et cetera.
+	//
+	//	$permission - Resource being queried. This would be things
+	//	like 'add', 'modify', 'view', 'delete', et cetera.
+	//
+	//	$pid - Patient id number (record id) for patient being
+	//	checked.
+	//
+	// Returns:
+	//
+	//	Boolean, whether access is granted.
+	//
+	// See Also:
+	//	<freemed::acl>
+	//
+	function acl_patient ( $category, $permission, $pid ) {
+		if (freemed::config_value('acl_patient')) {
+			// Advanced check for patient ACL as well
+			$r_acl = freemed::acl($category, $permission);
+			$p_acl = freemed::acl($category, $permission, 'patient', 'patient_'.$pid);
+			// Decide on combination of regular and patient ACLs
+			if ($p_acl == 1) {
+				return true;
+			}
+			return false;
+		} else {
+			// Basic perms check
+			return freemed::acl($category, $permission);
+		}
+	} // end function freemed::acl_patient
+
 	// Function: freemed::check_access_for_facility
 	//
 	//	Checks to see if the current user has access to the specified
@@ -2019,7 +2128,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	urlencode($this_result['id'])."\" class=\"button\">".__("VIEW")."</a>
       ";
     }
-    if (freemed::user_flag(USER_DATABASE) AND 
+    if (freemed::acl('support', 'modify') AND 
          ($flags & ITEMLIST_MOD) AND (!$this_result['locked'])) {
       $buffer .= "
         <a HREF=\"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
@@ -2027,7 +2136,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	urlencode($this_result['id'])."\" class=\"button\">".__("MOD")."</a>
       ";
     }
-    if (freemed::user_flag(USER_DELETE) AND
+    if (freemed::acl('support', 'delete') AND
          ($flags & ITEMLIST_DEL) AND (!$this_result['locked'])) {
 	$buffer .= html_form::confirm_link_widget(
         	"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
@@ -2044,7 +2153,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	)."\n";
 
     }
-    if (freemed::user_flag(USER_DELETE) AND
+    if (freemed::acl('support', 'delete') AND
          ($flags & ITEMLIST_LOCK) AND ($this_result['locked']=='0')) {
 	$buffer .= html_form::confirm_link_widget(
         	"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).

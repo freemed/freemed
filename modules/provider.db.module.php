@@ -522,11 +522,11 @@ class ProviderModule extends MaintenanceModule {
           $phy[phymname] $phy[phylname], $phy[phytitle]
      </TD></TR>
   ";
-  if (freemed::user_flag(USER_DATABASE))
+  if (freemed::acl('support', 'modify'))
    $display_buffer .= "
      <TR><TD COLSPAN=2 ALIGN=CENTER>
       <A HREF=\"physician.php?action=modform&id=$id\"
-       >".__("Modify")." "._($record_name)."</A>
+       >".__("Modify")." ".$record_name."</A>
      </TD></TR>
    ";
   $display_buffer .= "

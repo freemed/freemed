@@ -66,12 +66,22 @@ $page_history = page_history_list();
 	// Main menu
 
 	sub_menu (__("Main"), 1);
-	menu_item(__("Administration Menu"), "admin.php", 2);
-	menu_item(__("Billing Functions"), "billing_functions.php", 2);
-	menu_item(__("Calendar"), "calendar.php", 2);
+	if (freemed::acl('admin', 'menu')) {
+		menu_item(__("Administration Menu"), "admin.php", 2);
+	}
+	if (freemed::acl('bill', 'menu')) {
+		menu_item(__("Billing Functions"), "billing_functions.php", 2);
+	}
+	if (freemed::acl('schedule', 'view')) {
+		menu_item(__("Calendar"), "calendar.php", 2);
+	}
 	menu_item(__("Call-In"), "call-in.php", 2);
-	menu_item(__("Reports"), "reports.php", 2);
-	menu_item(__("Support Data"), "db_maintenance.php", 2);
+	if (freemed::acl('report', 'menu')) {
+		menu_item(__("Reports"), "reports.php", 2);
+	}
+	if (freemed::acl('support', 'menu')) {
+		menu_item(__("Support Data"), "db_maintenance.php", 2);
+	}
 	menu_item(__("Utilities"), "utilities.php", 2);
 
 	// User menu
@@ -101,7 +111,9 @@ $page_history = page_history_list();
 	// Patient menu
 
 	sub_menu(__("Patients"), 1);
-	menu_item(__("New"), "patient.php?action=addform", 2);
+	if (freemed::acl('emr', 'add')) {
+		menu_item(__("New"), "patient.php?action=addform", 2);
+	}
 	menu_item(__("Select"), "patient.php", 2);
 	if ($patient_history) {
 		menu_item(__("Configure"),

@@ -23,14 +23,9 @@ page_push();
 if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
  // Check for appropriate access level
-if (!freemed::user_flag(USER_DATABASE)) {
-   $display_buffer .= "
-	<p/>
-        ".__("You don't have access for this menu.")."
-	<p/>
-    ";
-	template_display();
-} // end if not appropriate userlevel
+if (!freemed::acl('report', 'menu')) {
+	trigger_error(__("You don't have access for this menu."), E_USER_ERROR);
+} // end checking ACLs
 
 //----- Load template with reports menu
 if (file_exists("./lib/template/".$template."/reports_menu.php")) {

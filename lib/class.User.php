@@ -215,7 +215,7 @@ class User {
 				'username' => SQL__NOT_NULL(SQL__VARCHAR(16)),
 				'userpassword' => SQL__NOT_NULL(SQL__VARCHAR(32)),
 				'userdescrip' => SQL__VARCHAR(50),
-				'userlevel' => SQL__INT_UNSIGNED(0),
+				'userlevel' => SQL__BLOB,
 				'usertype' => SQL__ENUM (array(
 					"phy",
 					"misc",

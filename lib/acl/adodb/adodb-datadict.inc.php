@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -16,6 +16,10 @@
 /*
 	Test script for parser
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
+
 function Lens_ParseTest()
 {
 $str = "`zcol ACOL` NUMBER(32,2) DEFAULT 'The \"cow\" (and Jim''s dog) jumps over the moon' PRIMARY, INTI INT AUTO DEFAULT 0";
@@ -162,6 +166,7 @@ class ADODB_DataDict {
 	var $addCol = ' ADD';
 	var $alterCol = ' ALTER COLUMN';
 	var $dropCol = ' DROP COLUMN';
+	var $nameRegex = '\w';
 	var $schema = false;
 	var $serverInfo = array();
 	var $autoIncrement = false;
@@ -184,19 +189,19 @@ class ADODB_DataDict {
 		return $this->connection->MetaTables();
 	}
 	
-	function &MetaColumns($tab,$schema=false,$upper=true)
+	function &MetaColumns($tab, $upper=true, $schema=false)
 	{
-		return $this->connection->MetaColumns($tab,$schema,$upper);
+		return $this->connection->MetaColumns($this->TableName($tab), $upper, $schema);
 	}
 	
 	function &MetaPrimaryKeys($tab,$owner=false,$intkey=false)
 	{
-		return $this->connection->MetaPrimaryKeys($tab.$owner,$intkey);
+		return $this->connection->MetaPrimaryKeys($this->TableName($tab), $owner, $intkey);
 	}
 	
 	function &MetaIndexes($table, $primary = false, $owner = false)
 	{
-		return $this->connection->MetaIndexes($table, $primary, $owner);
+		return $this->connection->MetaIndexes($this->TableName($table), $primary, $owner);
 	}
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
@@ -204,14 +209,31 @@ class ADODB_DataDict {
 		return ADORecordSet::MetaType($t,$len,$fieldobj);
 	}
 	
-	function NameQuote($name)
+	function NameQuote($name = NULL)
 	{
+		if (!is_string($name)) {
+			return FALSE;
+		}
+		
+		$name = trim($name);
+		
 		if ( !is_object($this->connection) ) {
 			return $name;
 		}
 		
-		$replace = $this->connection->nameQuote .'$1'. $this->connection->nameQuote;
-		return preg_replace('/^`([^`]+)`$/', $replace, $name);
+		$quote = $this->connection->nameQuote;
+		
+		// if name is of the form `name`, quote it
+		if ( preg_match('/^`(.+)`$/', $name, $matches) ) {
+			return $quote . $matches[1] . $quote;
+		}
+		
+		// if name contains special characters, quote it
+		if ( !preg_match('/^[' . $this->nameRegex . ']+$/', $name) ) {
+			return $quote . $name . $quote;
+		}
+		
+		return $name;
 	}
 	
 	function TableName($name)
@@ -239,7 +261,7 @@ class ADODB_DataDict {
 				$rez = 1;
 			}
 		}
-		return 2;
+		return $rez;
 	}
 	
 	/*
@@ -283,12 +305,20 @@ class ADODB_DataDict {
 	*/
 	function CreateIndexSQL($idxname, $tabname, $flds, $idxoptions = false)
 	{
+		if (!is_array($flds)) {
+			$flds = explode(',',$flds);
+		}
+		
+		foreach($flds as $key => $fld) {
+			$flds[$key] = $this->NameQuote($fld);
+		}
+		
 		return $this->_IndexSQL($this->NameQuote($idxname), $this->TableName($tabname), $flds, $this->_Options($idxoptions));
 	}
 	
 	function DropIndexSQL ($idxname, $tabname = NULL)
 	{
-		return array(sprintf($this->dropIndex, $this->NameQuote($idxname)));
+		return array(sprintf($this->dropIndex, $this->NameQuote($idxname), $this->TableName($tabname)));
 	}
 	
 	function SetSchema($schema)
@@ -301,7 +331,7 @@ class ADODB_DataDict {
 		$tabname = $this->TableName ($tabname);
 		$sql = array();
 		list($lines,$pkey) = $this->_GenFields($flds);
-		$alter = 'ALTER TABLE ' . $tabname . ' ' . $this->addCol . ' ';
+		$alter = 'ALTER TABLE ' . $tabname . $this->addCol . ' ';
 		foreach($lines as $v) {
 			$sql[] = $alter . $v;
 		}
@@ -313,7 +343,7 @@ class ADODB_DataDict {
 		$tabname = $this->TableName ($tabname);
 		$sql = array();
 		list($lines,$pkey) = $this->_GenFields($flds);
-		$alter = 'ALTER TABLE ' . $tabname . ' ' . $this->alterCol . ' ';
+		$alter = 'ALTER TABLE ' . $tabname . $this->alterCol . ' ';
 		foreach($lines as $v) {
 			$sql[] = $alter . $v;
 		}
@@ -325,9 +355,9 @@ class ADODB_DataDict {
 		$tabname = $this->TableName ($tabname);
 		if (!is_array($flds)) $flds = explode(',',$flds);
 		$sql = array();
-		$alter = 'ALTER TABLE ' . $tabname . ' ' . $this->dropCol . ' ';
+		$alter = 'ALTER TABLE ' . $tabname . $this->dropCol . ' ';
 		foreach($flds as $v) {
-			$sql[] = $alter . $v;
+			$sql[] = $alter . $this->NameQuote($v);
 		}
 		return $sql;
 	}
@@ -445,6 +475,7 @@ class ADODB_DataDict {
 				return false;
 			}
 			
+			$fid = strtoupper(preg_replace('/^`(.+)`$/', '$1', $fname));
 			$fname = $this->NameQuote($fname);
 			
 			if (!strlen($ftype)) {
@@ -487,11 +518,10 @@ class ADODB_DataDict {
 			$suffix = $this->_CreateSuffix($fname,$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint,$funsigned);
 			
 			$fname = str_pad($fname,16);
-			$lines[] = "$fname $ftype$suffix";
+			$lines[$fid] = $fname.' '.$ftype.$suffix;
 			
 			if ($fautoinc) $this->autoIncrement = true;
 		} // foreach $flds
-		
 		
 		return array($lines,$pkey);
 	}
@@ -536,7 +566,7 @@ class ADODB_DataDict {
 		}
 		
 		$unique = isset($idxoptions['UNIQUE']) ? ' UNIQUE' : '';
-		
+	
 		$s = 'CREATE' . $unique . ' INDEX ' . $idxname . ' ON ' . $tabname . ' ';
 		
 		if ( isset($idxoptions[$this->upperName]) )
@@ -610,45 +640,34 @@ class ADODB_DataDict {
 		}
 		return $newopts;
 	}
-
-
-/*
-"Florian Buzin [ easywe ]" <florian.buzin@easywe.de>
-
-This function changes/adds new fields to your table. You  
- dont have to know if the col is new or not. It will check on its 
-own.
-
-*/
-	function ChangeTableSQL($tablename, $flds,$tableoptions=false)
+	
+	/*
+	"Florian Buzin [ easywe ]" <florian.buzin@easywe.de>
+	
+	This function changes/adds new fields to your table. You don't
+	have to know if the col is new or not. It will check on its own.
+	*/
+	function ChangeTableSQL($tablename, $flds, $tableoptions = false)
 	{
-		$tabname = $this->TableName ($tablename);
-		
-		$conn = &$this->connection;
-		if (!is_object ($conn)) {
-			return false;
+		// check table exists
+		$cols = &$this->MetaColumns($tablename);
+		if ( empty($cols)) { 
+			return $this->CreateTableSQL($tablename, $flds, $tableoptions);
 		}
 		
-		$colarr = &$conn->MetaColumns($tabname);
-		if (!$colarr) {
-			return $this->CreateTableSQL($tablename,$flds,$tableoptions);
-		}
-		
-		foreach($colarr as $col) {
-			$cols[strtoupper($col->name)] = " ALTER ";
-		}
-		
-		$sql = array();
+		// already exists, alter table instead
 		list($lines,$pkey) = $this->_GenFields($flds);
+		$alter = 'ALTER TABLE ' . $this->TableName($tablename);
+		$sql = array();
 		
-		foreach($lines as $v) {
-			$f = explode(" ",$v);
-			if(!empty($cols[strtoupper($f[0])])){
-				$sql[] = "ALTER TABLE $tabname $this->alterCol $v";
-			}else{
-				$sql[] = "ALTER TABLE $tabname $this->addCol $v";
+		foreach ( $lines as $id => $v ) {
+			if ( isset($cols[$id]) && is_object($cols[$id]) ) {
+				$sql[] = $alter . $this->alterCol . ' ' . $v;
+			} else {
+				$sql[] = $alter . $this->addCol . ' ' . $v;
 			}
 		}
+		
 		return $sql;
 	}
 } // class

@@ -10,6 +10,11 @@ $db_name = "callin";                  // database name
 freemed::connect ();
 $this_user = CreateObject('FreeMED.User');
 
+//----- Check ACLs
+if (!freemed::acl('schedule', 'book')) {
+	trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+}
+
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"call-in.php|user $user_to_log views callin");}	

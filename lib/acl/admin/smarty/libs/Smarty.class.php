@@ -22,25 +22,12 @@
  * Smarty mailing list. Send a blank e-mail to
  * smarty-general-subscribe@lists.php.net
  *
- * You may contact the authors of Smarty by e-mail at:
- * monte@ispi.net
- * andrei@php.net
- *
- * Or, write to:
- * Monte Ohrt
- * Director of Technology, ispi
- * 237 S. 70th suite 220
- * Lincoln, NE 68510
- *
- * The latest version of Smarty can be obtained from:
- * http://smarty.php.net/
- *
  * @link http://smarty.php.net/
- * @copyright 2001-2003 ispi of Lincoln, Inc.
+ * @copyright 2001-2004 ispi of Lincoln, Inc.
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.6.1
+ * @version 2.6.3
  */
 
 /* $Id$ */
@@ -244,8 +231,7 @@ class Smarty
                                                                'true','false'),
                                     'INCLUDE_ANY'     => false,
                                     'PHP_TAGS'        => false,
-                                    'MODIFIER_FUNCS'  => array('count'),
-                                    'ALLOW_CONSTANTS' => false
+                                    'MODIFIER_FUNCS'  => array('count')
                                    );
 
     /**
@@ -307,7 +293,7 @@ class Smarty
      * @var boolean
      *
      */
-    var $use_sub_dirs          = true;
+    var $use_sub_dirs          = false;
 
     /**
      * This is a list of the modifiers to apply to all template variables.
@@ -413,13 +399,6 @@ class Smarty
  * @access private
  */
     /**
-     * error messages. true/false
-     *
-     * @var boolean
-     */
-    var $_error_msg            = false;
-
-    /**
      * where assigned template vars are kept
      *
      * @var array
@@ -480,7 +459,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.6.1';
+    var $_version              = '2.6.3';
 
     /**
      * current template inclusion depth
@@ -957,10 +936,10 @@ class Smarty
         if (!isset($compile_id))
             $compile_id = $this->compile_id;
 
-    if (!isset($tpl_file))
-        $compile_id = null;
+        if (!isset($tpl_file))
+            $compile_id = null;
 
-    $_auto_id = $this->_get_auto_id($cache_id, $compile_id);
+        $_auto_id = $this->_get_auto_id($cache_id, $compile_id);
 
         if (!empty($this->cache_handler_func)) {
             return call_user_func_array($this->cache_handler_func,
@@ -985,18 +964,7 @@ class Smarty
      */
     function clear_all_cache($exp_time = null)
     {
-        if (!empty($this->cache_handler_func)) {
-            $dummy = null;
-            call_user_func_array($this->cache_handler_func,
-                           array('clear', &$this, &$dummy, null, null, null, $exp_time));
-        } else {
-            $_params = array('auto_base' => $this->cache_dir,
-                            'auto_source' => null,
-                            'auto_id' => null,
-                            'exp_time' => $exp_time);
-            require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.rm_auto.php');
-            return smarty_core_rm_auto($_params, $this);
-        }
+        return $this->clear_cache(null, null, null, $exp_time);
     }
 
 
@@ -1456,7 +1424,6 @@ class Smarty
 
             return true;
         } else {
-            $this->trigger_error($smarty_compiler->_error_msg);
             return false;
         }
 
@@ -1496,6 +1463,7 @@ class Smarty
         $smarty_compiler->secure_dir        = $this->secure_dir;
         $smarty_compiler->security_settings = $this->security_settings;
         $smarty_compiler->trusted_dir       = $this->trusted_dir;
+        $smarty_compiler->use_sub_dirs      = $this->use_sub_dirs;
         $smarty_compiler->_reg_objects      = &$this->_reg_objects;
         $smarty_compiler->_plugins          = &$this->_plugins;
         $smarty_compiler->_tpl_vars         = &$this->_tpl_vars;
@@ -1559,6 +1527,8 @@ class Smarty
         $_params = array('resource_name' => $params['resource_name']) ;
         if (isset($params['resource_base_path']))
             $_params['resource_base_path'] = $params['resource_base_path'];
+        else
+            $_params['resource_base_path'] = $this->template_dir;
 
         if ($this->_parse_resource_name($_params)) {
             $_resource_type = $_params['resource_type'];
@@ -1657,13 +1627,7 @@ class Smarty
             if (!preg_match("/^([\/\\\\]|[a-zA-Z]:[\/\\\\])/", $params['resource_name'])) {
                 // relative pathname to $params['resource_base_path']
                 // use the first directory where the file is found
-                if (isset($params['resource_base_path'])) {
-                    $_resource_base_path = (array)$params['resource_base_path'];
-                } else {
-                    $_resource_base_path = (array)$this->template_dir;
-                    $_resource_base_path[] = '.';
-                }
-                foreach ($_resource_base_path as $_curr_path) {
+                foreach ((array)$params['resource_base_path'] as $_curr_path) {
                     $_fullpath = $_curr_path . DIRECTORY_SEPARATOR . $params['resource_name'];
                     if (file_exists($_fullpath) && is_file($_fullpath)) {
                         $params['resource_name'] = $_fullpath;
@@ -1678,6 +1642,9 @@ class Smarty
                     }
                 }
                 return false;
+            } else {
+                /* absolute path */
+                return file_exists($params['resource_name']);
             }
         } elseif (empty($this->_plugins['resource'][$params['resource_type']])) {
             $_params = array('type' => $params['resource_type']);
@@ -1736,39 +1703,15 @@ class Smarty
      * @param integer $lines
      * @return string
      */
-    function _read_file($filename, $start=null, $lines=null)
+    function _read_file($filename)
     {
-        if (!($fd = @fopen($filename, 'r'))) {
+        if ( file_exists($filename) && ($fd = @fopen($filename, 'rb')) ) {
+            $contents = ($size = filesize($filename)) ? fread($fd, $size) : '';
+            fclose($fd);
+            return $contents;
+        } else {
             return false;
         }
-        flock($fd, LOCK_SH);
-        if ($start == null && $lines == null) {
-            // read the entire file
-            $contents = fread($fd, filesize($filename));
-        } else {
-            if ( $start > 1 ) {
-                // skip the first lines before $start
-                for ($loop=1; $loop < $start; $loop++) {
-                    fgets($fd, 65536);
-                }
-            }
-            if ( $lines == null ) {
-                // read the rest of the file
-                while (!feof($fd)) {
-                    $contents .= fgets($fd, 65536);
-                }
-            } else {
-                // read up to $lines lines
-                for ($loop=0; $loop < $lines; $loop++) {
-                    $contents .= fgets($fd, 65536);
-                    if (feof($fd)) {
-                        break;
-                    }
-                }
-            }
-        }
-        fclose($fd);
-        return $contents;
     }
 
     /**
@@ -1805,11 +1748,12 @@ class Smarty
         if(isset($auto_source)) {
             // make source name safe for filename
             $_filename = urlencode(basename($auto_source));
-            $_crc32 = crc32($auto_source) . $_compile_dir_sep;
+            $_crc32 = sprintf("%08X", crc32($auto_source));
             // prepend %% to avoid name conflicts with
             // with $params['auto_id'] names
-            $_crc32 = '%%' . substr($_crc32,0,3) . $_compile_dir_sep . '%%' . $_crc32;
-            $_return .= $_crc32 . $_filename;
+            $_crc32 = substr($_crc32, 0, 2) . $_compile_dir_sep .
+                      substr($_crc32, 0, 3) . $_compile_dir_sep . $_crc32;
+            $_return .= '%%' . $_crc32 . '%%' . $_filename;
         }
 
         return $_return;
@@ -1864,13 +1808,12 @@ class Smarty
         if(isset($file) && isset($line)) {
             $info = ' ('.basename($file).", line $line)";
         } else {
-            $info = null;
+            $info = '';
         }
         if (isset($tpl_line) && isset($tpl_file)) {
-            trigger_error("Smarty error: [in " . $tpl_file . " line " .
-                          $tpl_line . "]: $error_msg$info", $error_type);
+            $this->trigger_error('[in ' . $tpl_file . ' line ' . $tpl_line . "]: $error_msg$info", $error_type);
         } else {
-            trigger_error("Smarty error: $error_msg$info", $error_type);
+            $this->trigger_error($error_msg . $info, $error_type);
         }
     }
 

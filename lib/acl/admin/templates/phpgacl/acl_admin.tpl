@@ -68,7 +68,7 @@
             </td>
             <td>
               [ <a href="javascript: location.href = 'edit_objects.php?object_type=aro&section_value=' + document.acl_admin.aro_section.options[document.acl_admin.aro_section.selectedIndex].value + '&return_page={$return_page}';">Edit</a> ]
-              [ <a href="#" onClick="window.open('object_search.php?src_form=acl_admin&object_type=aro&section_value=' + document.acl_admin.aro_section.options[document.acl_admin.aro_section.selectedIndex].value + '&return_page={$return_page}','','status=yes,width=400,height=400','','status=yes,width=400,height=400');">Search</a> ]
+              [ <a href="#" onClick="window.open('object_search.php?src_form=acl_admin&object_type=aro&section_value=' + document.acl_admin.aro_section.options[document.acl_admin.aro_section.selectedIndex].value + '&return_page={$return_page}','','status=yes,width=400,height=400');return false;">Search</a> ]
               <br />
               <select name="aro[]" tabindex="0" size="10" width="200" multiple>
               </select>
@@ -99,14 +99,14 @@
             </th>
           </tr>
 
-          <tr id="axo_row1" {if $show_axo!=TRUE}class="hide"{/if}>
+          <tr id="axo_row1" {if !$show_axo}class="hide"{/if}>
             <th>Sections</th>
             <th>Access eXtension Objects</th>
             <th>&nbsp;</th>
             <th>Selected</th>
             <th>Groups</th>
           </tr>
-          <tr valign="top" align="center" id="axo_row2" {if $show_axo!=TRUE}class="hide"{/if}>
+          <tr valign="top" align="center" id="axo_row2" {if !$show_axo}class="hide"{/if}>
             <td>
               [ <a href="edit_object_sections.php?object_type=axo&return_page={$return_page}">Edit</a> ]
               <br />
@@ -116,7 +116,7 @@
             </td>
             <td>
               [ <a href="javascript: location.href = 'edit_objects.php?object_type=axo&section_value=' + document.acl_admin.axo_section.options[document.acl_admin.axo_section.selectedIndex].value + '&return_page={$return_page}';">Edit</a> ]
-              [ <a href="#" onClick="window.open('object_search.php?src_form=acl_admin&object_type=axo&section_value=' + document.acl_admin.axo_section.options[document.acl_admin.axo_section.selectedIndex].value + '&return_page={$return_page}','','status=yes,width=400,height=400','','status=yes,width=400,height=400');">Search</a> ]
+              [ <a href="#" onClick="window.open('object_search.php?src_form=acl_admin&object_type=axo&section_value=' + document.acl_admin.axo_section.options[document.acl_admin.axo_section.selectedIndex].value + '&return_page={$return_page}','','status=yes,width=400,height=400');return false;">Search</a> ]
               <br />
               <select name="axo[]" tabindex="0" size="10" width="200" multiple>
               </select>

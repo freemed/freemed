@@ -25,7 +25,31 @@ class MaintenanceModule extends BaseModule {
 	//
 	var $order_field = 'id';
 
+	// Variable: $this->form_vars
+	//
+	//	List of form variables which need to be used in the
+	//	add or modify forms.
+	//
+	// Example:
+	//
+	//	$this->form_vars = array ( 'ptfname', 'ptlname' );
+	//
+	// See Also:
+	//	<form>
+	//
 	var $form_vars;
+
+	// Variable: $this->defeat_acl
+	//
+	//	Turns of ACL checking for 'support' modules. This is
+	//	useful for modules that are used with their own internal
+	//	access controls. Defaults to false.
+	//
+	// Example:
+	//
+	//	$this->defeat_acl = true;
+	//
+	var $defeat_acl = false;
 
 	// Variable: $this->table_name
 	//
@@ -103,24 +127,39 @@ class MaintenanceModule extends BaseModule {
 
 		switch ($action) {
 			case "add":
+				if (!freemed::acl('support', 'add') and !$this->defeat_acl) {
+					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+				}
 				$this->add();
 				break;
 
 			case "addform":
+				if (!freemed::acl('support', 'add') and !$this->defeat_acl) {
+					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+				}
 				$this->addform();
 				break;
 
 			case "del":
 			case "delete":
+				if (!freemed::acl('support', 'delete') and !$this->defeat_acl) {
+					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+				}
 				$this->del();
 				break;
 
 			case "mod":
 			case "modify":
+				if (!freemed::acl('support', 'modify') and !$this->defeat_acl) {
+					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+				}
 				$this->mod();
 				break;
 
 			case "modform":
+				if (!freemed::acl('support', 'modify') and !$this->defeat_acl) {
+					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+				}
 				global $id;
 				if (empty($id) or ($id<1)) {
 					template_display();
@@ -130,6 +169,9 @@ class MaintenanceModule extends BaseModule {
 
 			case "view":
 			default:
+				if (!freemed::acl('support', 'view') and !$this->defeat_acl) {
+					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+				}
 				$action = "";
 				$this->view();
 				break;

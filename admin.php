@@ -23,22 +23,15 @@ $config_vars = array (
 	"fax_nocover" // remove cover page?
 );
 
-if (!freemed::user_flag(USER_ADMIN)) {
-	$page_title = __("Administration")." :: ".__("ERROR");
-	$display_buffer .= "
-	<p/>
-	<div ALIGN=\"CENTER\">".__("No Admin Menu Access")."</div>
-	<p/>
-	<div ALIGN=\"CENTER\">
-	<a class=\"button\" HREF=\"main.php\"
-	>".__("Return to the Main Menu")."</a>
-	</div>
-	<p/>
-	";
-	template_display();
+if (!freemed::acl('admin', 'menu')) {
+	trigger_error(__("You don't have access to the administration menu."), E_USER_ERROR);
 }
 
 if ($action=="cfgform") {
+	// Check ACLs
+	if (!freemed::acl('admin', 'config')) {
+		trigger_error(__("You do not have access to system configuration."));
+	}
 
 	// this is the frontend to the config
 	// database.
@@ -272,277 +265,6 @@ if ($action=="cfgform") {
 		$display_buffer .= $book->display();
 	}
 
-} elseif ($action=="reinit") {
-	$page_title = __("Reinitialize Database");
-  
-    // here, to prevent problems, we ask the user to check that they
-    // REALLY want to...
-
-  $display_buffer .= "\n<div ALIGN=\"CENTER\">\n";
-  $display_buffer .= __("Are you sure you want to reinitialize the database?")."\n";
-  $display_buffer .= "<br/><u><b>".__("This is an IRREVERSIBLE PROCESS!")."</b></u><br/>\n";
-  $display_buffer .= "\n</div>\n";
-
-  $display_buffer .= "<br/><div ALIGN=\"CENTER\">\n";
-
-  $display_buffer .= "
-   <form ACTION=\"admin.php\" METHOD=\"POST\">
-   <input TYPE=\"CHECKBOX\" NAME=\"first_time\" VALUE=\"first\"/>
-   <i>".__("First Initialization")."</i><br/>
-   <input TYPE=\"CHECKBOX\" NAME=\"re_load\" VALUE=\"reload\"/>
-   <i>".__("Reload Stock Data")."</i><br/>
-   <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"reinit_sure\"/>
-   <table BORDER=\"0\" ALIGN=\"CENTER\"><tr><td>
-   <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Continue")."\"/>
-   </form>
-
-   </td><td>
-
-   <form ACTION=\"admin.php\" METHOD=\"POST\">
-   <input class=\"button\" name=\"submit\" TYPE=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
-   </form>
-
-   </td></tr></table>
-   </div>
-  ";
-
-} elseif ($action=="reinit_sure") {
-	// here we actually put the reinitialization (read - wiping
-	// and creating the database structure again) code... so that
-	// stupids don't accidentally click on it and... oops!
-
-	// Notice that all of the possible essential table definitions
-	// (except for module) have been moved out of admin. This is
-	// to increase ease of upgrade, etc. They are in hidden
-	// modules.
-
-	$display_buffer .= "<ul>".__("Creating tables")."... \n";
-	$display_buffer .= "$re_load\n";
-
-	// generate test table, if debug is on
-
-	// Fred Trotter
-	// Moved to the new class.Debug
-	if ($debug) {
-		$this_debug = CreateObject('FreeMED.Debug');
-		$result=$this_debug->init();
-
-		if ($result) { $display_buffer .= "<li>".__("test db")."</li>\n"; }
-
-	} // end debug section
-
-	// Generate module table
-	// Fred Trotter
-	// New reference to BaseModule...
-
-	$this_module = CreateObject('FreeMED.BaseModule');
-	$result = $this_module->init();
-
-	if ($result) { $display_buffer .= "<li>".__("Modules")."</li>\n"; }
-
-	// Generate user db
-	// Fred Trotter
-	// In order to seperate database access from super user access in freemed
-	// from the database user and password I need to first recover the password
-	// for the new "admin" user account and reuse it in the new database
-		
-	$result=$sql->query("SELECT * FROM user".
-		"WHERE username = 'admin' AND id = 1");
-	$r = $sql->fetch_array ($result);
-	
-        $admin_password=$r['userpassword'];
-
-	$this_user = CreateObject('FreeMED.User');
-	$result = $this_user->init($admin_password);
-
-	/*
-		eventually wrapper should handle...
-		PRIMARY KEY (id),
-		UNIQUE idx_id (id),
-		KEY (username),
-		UNIQUE idx_username (username)
-	*/
-	if ($result) $display_buffer .= "<li>".__("Users")."</li>\n";
-
-
-  	if ($result) $display_buffer .= "<li><i>[[".
-		__("Added admin")."]]</i></li>\n";
-
-/**********************************************************************
-
-  // generate physician availability map
-  $result=$sql->query("DROP TABLE phyavailmap");
-  $result=$sql->query("CREATE TABLE phyavailmap (
-    pamdatefrom      DATE,
-    pamdateto        DATE,
-    pamtimefromhour  INT UNSIGNED,
-    pamtimefrommin   INT UNSIGNED,
-    pamtimetohour    INT UNSIGNED,
-    pamtimetomin     INT UNSIGNED,
-    pamphysician     INT UNSIGNED,
-    pamcomment       VARCHAR(75),
-    id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id)
-    )");
-  if ($result) $display_buffer .= "<li>".__("Physician Availability Map")."</li>\n";
-
-  // generate room equipment inventory db
-  $result=$sql->query("DROP TABLE roomequip"); 
-  $result=$sql->query("CREATE TABLE roomequip (
-    reqname         VARCHAR(100),
-    reqdescrip      TEXT,
-    reqdateadd      DATE,
-    reqdatemod      DATE,
-    id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id)
-    )");
-  if ($result) $display_buffer .= "<li>".__("Room Equipment")."</li>\n";
-
-  if ($re_load)
-  {
-  	if (freemed_import_stock_data("roomequip"))
-    		$display_buffer .= "<I>(".__("Stock Room Equipment Data").")</I> \n ";
-  }
-*/
-
-/**********************************************************************
- May need this later, but for now, don't use
- **********************************************************************
-	// generate action log table db
-	$result=$sql->query("DROP TABLE log"); 
-	$result=$sql->query($sql->create_table_query(
-		'log',
-		array (
-			'datestamp' => SQL_DATE,
-			'user' => SQL_INT_UNSIGNED(0),
-			'db_name' => SQL_VARCHAR(20),
-			'rec_num' => SQL_INT_UNSIGNED(0),
-			'comment' => SQL_TEXT,
-			'id' => SQL_SERIAL
-		), array ('id')
-	));
-	if ($result) $display_buffer .= "<li>".__("Action Log")."</li>\n";
-
-**********************************************************************/
-
-	//----- Initialize configuration
-	$this_config = CreateObject('FreeMED.GeneralConfig');
-	$result = $this_config->init();
-
-/********************************************************************
- ***** Fax tables... need to be reenabled
- ********************************************************************
-
-  // generate incoming faxes table
-  $result=$sql->query("DROP TABLE infaxes"); 
-  $result=$sql->query("CREATE TABLE infaxes (
-    infcode	  VARCHAR(5),  
-    infsender	  VARCHAR(50),
-    inftotpages	  INT UNSIGNED,
-    infthispage	  INT UNSIGNED,
-    inftimestamp  TIMESTAMP,
-    infimage	  VARCHAR(50),
-    inforward	  ENUM(\"no\",\"yes\") NOT NULL,		
-    infack	  ENUM(\"no\",\"yes\") NOT NULL,
-    infptid	  VARCHAR(10),
-    infphysid	  VARCHAR(10),
-    id            INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id)
-    );");
-   if ($result) $display_buffer .= "<li>".__("Incoming Faxes")."</li>\n";
-
-  // generate fax sender lookup table
-  $result=$sql->query("DROP TABLE infaxlut"); 
-  $result=$sql->query("CREATE TABLE infaxlut (
-    lutsender VARCHAR(50),
-    lutname   VARCHAR(50),
-    id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id)
-    );");
-  if ($result) $display_buffer .= "<li>".__("Fax Sender Lookup")."</li>\n";
-
- *******************************************************************
- Printer table
- *******************************************************************
-
-   // generate printers table (19991008)
-   $result = $sql->query ("DROP TABLE printer"); 
-   $result = $sql->query ("CREATE TABLE printer (
-     prntname   VARCHAR(50),
-     prnthost   VARCHAR(50),
-     prntaclvl  ENUM(\"9\",\"8\",\"7\",\"6\",\"5\",\"4\",\"3\",\"2\",\"1\",\"0\") NOT NULL,
-     prntdesc   VARCHAR(100),
-     id         INT NOT NULL AUTO_INCREMENT,
-     PRIMARY KEY (id)
-     );");
-   if ($result) $display_buffer .= "<li>".__("Printers")."</li>\n";
-
- ********************************************************************
- ***** Simple reports ... support needs to be added again
- ********************************************************************
-
-  // generate simple reports table
-  $result=$sql->query("DROP TABLE simplereport");
-  $result=$sql->query("CREATE TABLE simplereport (
-    sr_label       VARCHAR(50),
-    sr_type        INT UNSIGNED,
-    sr_text        TEXT,
-    sr_textf       TEXT,
-    sr_textcm      TEXT,
-    sr_textcf      TEXT,
-    id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id)
-    )");
-  if ($result) $display_buffer .= "<li>".__("Simple Reports")."</li>\n";
-
-  // old reports
-  $result = $sql->query ("DROP TABLE oldreports"); 
-  $result = $sql->query ("CREATE TABLE oldreports (
-     oldrep_timestamp          DATE,
-     oldrep_label              VARCHAR(50),
-     oldrep_type               INT UNSIGNED,
-     oldrep_sender             INT UNSIGNED,
-     oldrep_delivery           VARCHAR(20),
-     oldrep_author             INT UNSIGNED,
-     oldrep_dateline           VARCHAR(100),
-     oldrep_header1            VARCHAR(100),
-     oldrep_header2            VARCHAR(100),
-     oldrep_header3            VARCHAR(100),
-     oldrep_header4            VARCHAR(100),
-     oldrep_header5            VARCHAR(100),
-     oldrep_header6            VARCHAR(100),
-     oldrep_header7            VARCHAR(100),
-     oldrep_dest1              VARCHAR(100),
-     oldrep_dest2              VARCHAR(100),
-     oldrep_dest3              VARCHAR(100),
-     oldrep_dest4              VARCHAR(100),
-     oldrep_signature1         VARCHAR(100),
-     oldrep_signature2         VARCHAR(100),
-     oldrep_text               TEXT,
-     id                        INT NOT NULL AUTO_INCREMENT,
-     PRIMARY KEY (id)
-     );");
-  if ($result) $display_buffer .= "<li>".__("Old Reports")."</li>\n";
-
-********************************************************************/
-
-	// Initial module load
-	$modules = CreateObject('PHP.module_list', PACKAGENAME);
-
-	// now generate "return code" so that we can get back to the
-	// admin menu... or perhaps skip that... ??
-	$display_buffer .= "</ul><b>".__("done").".</b><br/>\n";
-  
-	$display_buffer .= "
-	<p/>
-	<div ALIGN=\"CENTER\">
-	".template::link_button(
-		__("Return to Administration Menu"),
-		"admin.php"
-	)."
-	</div>
-	";
-
 } else {
 
   // actual menu code for admin menu goes here \/
@@ -598,6 +320,7 @@ $display_buffer .= "
 //  </td></tr>
 // ";
 
+if (freemed::acl('admin', 'config')) {
 $display_buffer .= "
   <tr><!-- <td ALIGN=\"RIGHT\">
    <a HREF=\"admin.php?action=cfgform\"
@@ -607,8 +330,10 @@ $display_buffer .= "
   >".__("System Configuration")."</a>
   </td></tr>
 ";
+}
 
-if ($userdata["user"] == 1) { // if we are root...
+if (freemed::acl('admin', 'user')) {
+//if ($userdata["user"] == 1) { // if we are root...
   $display_buffer .= "
     <tr><!-- <td ALIGN=\"RIGHT\">
      <a HREF=\"user.php?action=view\"

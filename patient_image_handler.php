@@ -11,6 +11,11 @@ define ('RESIZE', 800);
 //----- Authenticate user cookie
 freemed::connect ();
 
+//----- Check ACLs
+if (!freemed::acl('patient', 'view')) {
+	trigger_error(__("You don't have access to do that."), E_USER_ERROR);
+}
+
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"patient_image_handler.php|user $user_to_log image access");}	

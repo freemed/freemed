@@ -497,7 +497,7 @@ class ProgressNotes extends EMRModule {
        "manage.php?id=$pnotespat",
 	__("Select Patient") =>
         "patient.php",
-	( freemed::user_flag(USER_DATABASE) ? __("Modify") : "" ) =>
+	( freemed::acl_patient('emr', 'modify', $patient) ? __("Modify") : "" ) =>
         $this->page_name."?module=$module&patient=$patient&id=$id&action=modform"
        ))."
        <p/>
@@ -631,7 +631,7 @@ class ProgressNotes extends EMRModule {
        "manage.php?id=$pnotespat",
 	__("Select Patient") =>
         "patient.php",
-	( freemed::user_flag(USER_DATABASE) ? __("Modify") : "" ) =>
+	( freemed::acl_patient('emr', 'modify', $patient) ? __("Modify") : "" ) =>
         $this->page_name."?module=$module&patient=$patient&id=$id&action=modform"
        ))."
        <p/>

@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  * phpGACL - Generic Access Control List
  * Copyright (C) 2002,2003 Mike Benoit
@@ -35,40 +37,63 @@ if ( !defined('ADODB_DIR') ) {
 	define('ADODB_DIR', dirname(__FILE__).'/adodb');
 }
 
+/**
+* phpGACL main class
+*/
 class gacl {
-
-	// --- Private properties ---
-
 	/*
-	 * Enable Debug output.
-	 */
+	--- Private properties ---
+	*/
+	/** @var boolean Enables Debug output if true */
 	var $_debug = FALSE;
 
 	/*
-	 * Database configuration.
-	 */
+	--- Database configuration. ---
+	*/
+	/** @var string Prefix for all the phpgacl tables in the database */
 	var $_db_table_prefix = 'gacl_';
-	var $_db_type = 'mysql'; //mysql, postgres7, sybase, oci8po See here for more: http://php.weblogs.com/adodb_manual#driverguide
+
+	/** @var string The database type, based on available ADODB connectors - mysql, postgres7, sybase, oci8po See here for more: http://php.weblogs.com/adodb_manual#driverguide */
+	var $_db_type = 'mysql';
+
+	/** @var string The database server */
 	var $_db_host = 'localhost';
+
+	/** @var string The database user name */
 	var $_db_user = 'root';
+
+	/** @var string The database user password */
 	var $_db_password = '';
+
+	/** @var string The database name */
 	var $_db_name = 'gacl';
+
+	/** @var object An ADODB database connector object */
 	var $_db = '';
 
 	/*
 	 * NOTE: 	This cache must be manually cleaned each time ACL's are modified.
 	 * 		Alternatively you could wait for the cache to expire.
 	 */
-	var $_caching = FALSE;
-	var $_force_cache_expire = TRUE;
-	var $_cache_dir = '/tmp/phpgacl_cache'; // NO trailing slash
-	var $_cache_expire_time=600; //600 == Ten Minutes
 
-	// switch to put acl_check into '_group_' mode
+	/** @var boolean Caches queries if true */
+	var $_caching = FALSE;
+
+	/** @var boolean Force cache to expire */
+	var $_force_cache_expire = TRUE;
+
+	/** @var string The directory for cache file to eb written (ensure write permission are set) */
+	var $_cache_dir = '/tmp/phpgacl_cache'; // NO trailing slash
+
+	/** @var int The time for the cache to expire in seconds - 600 == Ten Minutes */
+	var $_cache_expire_time=600;
+
+	/** @var string A switch to put acl_check into '_group_' mode */
 	var $_group_switch = '_group_';
 
-	/*
+	/**
 	 * Constructor
+	 * @param array An arry of options to oeverride the class defaults
 	 */
 	function gacl($options = NULL) {
 
@@ -125,10 +150,11 @@ class gacl {
 		return true;
 	}
 
-	/*======================================================================*\
-		Function:   $gacl_api->debug_text()
-		Purpose:    Prints debug text if debug is enabled.
-	\*======================================================================*/
+	/**
+	* Prints debug text if debug is enabled.
+	* @param string THe text to output
+	* @return boolean Always returns true
+	*/
 	function debug_text($text) {
 
 		if ($this->_debug) {
@@ -138,10 +164,11 @@ class gacl {
 		return true;
 	}
 
-	/*======================================================================*\
-		Function:   $gacl_api->debug_db()
-		Purpose:    Prints database debug text if debug is enabled.
-	\*======================================================================*/
+	/**
+	* Prints database debug text if debug is enabled.
+	* @param string The name of the function calling this method
+	* @return string Returns an error message
+	*/
 	function debug_db($function_name = '') {
 		if ($function_name != '') {
 			$function_name .= ' (): ';
@@ -150,32 +177,52 @@ class gacl {
 		return $this->debug_text ($function_name .'database error: '. $this->db->ErrorMsg() .' ('. $this->db->ErrorNo() .')');
 	}
 
-	/*======================================================================*\
-		Function:   acl_check()
-		Purpose:	Function that wraps the actual acl_query() function.
-						It is simply here to return TRUE/FALSE accordingly.
-	\*======================================================================*/
-	function acl_check($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value=NULL, $axo_value=NULL, $root_aro_group_id=NULL, $root_axo_group_id=NULL) {
-		$acl_result = $this->acl_query($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value, $axo_value, $root_aro_group_id, $root_axo_group_id);
+	/**
+	* Wraps the actual acl_query() function.
+	*
+	* It is simply here to return TRUE/FALSE accordingly.
+	* @param string The ACO section value
+	* @param string The ACO value
+	* @param string The ARO section value
+	* @param string The ARO section
+	* @param string The AXO section value (optional)
+	* @param string The AXO section value (optional)
+	* @param integer The group id of the ARO ??Mike?? (optional)
+	* @param integer The group id of the AXO ??Mike?? (optional)
+	* @return mixed Generally a zero (0) or (1) or the extended return value of the ACL
+	*/
+	function acl_check($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value=NULL, $axo_value=NULL, $root_aro_group=NULL, $root_axo_group=NULL) {
+		$acl_result = $this->acl_query($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value, $axo_value, $root_aro_group, $root_axo_group);
 
 		return $acl_result['allow'];
 	}
 
-	/*======================================================================*\
-		Function:   acl_return_value()
-		Purpose:	Function that wraps the actual acl_query() function.
-						Quick access to the return value of an ACL.
-	\*======================================================================*/
-	function acl_return_value($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value=NULL, $axo_value=NULL, $root_aro_group_id=NULL, $root_axo_group_id=NULL) {
-		$acl_result = $this->acl_query($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value, $axo_value, $root_aro_group_id, $root_axo_group_id);
+	/**
+	* Wraps the actual acl_query() function.
+	*
+	* Quick access to the return value of an ACL.
+	* @param string The ACO section value
+	* @param string The ACO value
+	* @param string The ARO section value
+	* @param string The ARO section
+	* @param string The AXO section value (optional)
+	* @param string The AXO section value (optional)
+	* @param integer The group id of the ARO ??Mike?? (optional)
+	* @param integer The group id of the AXO ??Mike?? (optional)
+	* @return mixed Generally a zero (0) or (1) or the extended return value of the ACL
+	*/
+	function acl_return_value($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value=NULL, $axo_value=NULL, $root_aro_group=NULL, $root_axo_group=NULL) {
+		$acl_result = $this->acl_query($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value, $axo_value, $root_aro_group, $root_axo_group);
 
 		return $acl_result['return_value'];
 	}
 
-	/*======================================================================*\
-		Function:   array_acl_query()
-		Purpose:	Handles ACL lookups over arrays of AROs
-					Returns the same data format as inputted.
+	/**
+	* Handles ACL lookups over arrays of AROs
+	* @param string The ACO section value
+	* @param string The ACO value
+	* @param array An named array of arrays, each element in the format aro_section_value=>array(aro_value1,aro_value1,...)
+	* @return mixed The same data format as inputted.
 	\*======================================================================*/
 	function acl_check_array($aco_section_value, $aco_value, $aro_array) {
 		/*
@@ -207,15 +254,22 @@ class gacl {
 
 	}
 
-	/*======================================================================*\
-		Function:   acl_query()
-		Purpose:	Main function that does the actual ACL lookup.
-						Returns as much information as possible about the ACL so other functions
-						can trim it down and omit unwanted data.
-	\*======================================================================*/
-	function acl_query($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value=NULL, $axo_value=NULL, $root_aro_group_id=NULL, $root_axo_group_id=NULL, $debug=NULL) {
-
-		$cache_id = 'acl_query_'.$aco_section_value.'-'.$aco_value.'-'.$aro_section_value.'-'.$aro_value.'-'.$axo_section_value.'-'.$axo_value.'-'.$root_aro_group_id.'-'.$root_axo_group_id.'-'.$debug;
+	/**
+	* The Main function that does the actual ACL lookup.
+	* @param string The ACO section value
+	* @param string The ACO value
+	* @param string The ARO section value
+	* @param string The ARO section
+	* @param string The AXO section value (optional)
+	* @param string The AXO section value (optional)
+	* @param integer The group id of the ARO ??Mike?? (optional)
+	* @param integer The group id of the AXO ??Mike?? (optional)
+	* @param boolean Debug the operation if true (optional)
+	* @return array Returns as much information as possible about the ACL so other functions can trim it down and omit unwanted data.
+	*/
+	function acl_query($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value=NULL, $axo_value=NULL, $root_aro_group=NULL, $root_axo_group=NULL, $debug=NULL) {
+				
+		$cache_id = 'acl_query_'.$aco_section_value.'-'.$aco_value.'-'.$aro_section_value.'-'.$aro_value.'-'.$axo_section_value.'-'.$axo_value.'-'.$root_aro_group.'-'.$root_axo_group.'-'.$debug;
 
 		$retarr = $this->get_cache($cache_id);
 
@@ -223,14 +277,14 @@ class gacl {
 			/*
 			 * Grab all groups mapped to this ARO/AXO
 			 */
-			$aro_group_ids = $this->acl_get_groups($aro_section_value, $aro_value, $root_aro_group_id, 'ARO');
+			$aro_group_ids = $this->acl_get_groups($aro_section_value, $aro_value, $root_aro_group, 'ARO');
 
 			if (is_array($aro_group_ids) AND !empty($aro_group_ids)) {
 				$sql_aro_group_ids = implode(',', $aro_group_ids);
 			}
 
 			if ($axo_section_value != '' AND $axo_value != '') {
-				$axo_group_ids = $this->acl_get_groups($axo_section_value, $axo_value, $root_axo_group_id, 'AXO');
+				$axo_group_ids = $this->acl_get_groups($axo_section_value, $axo_value, $root_axo_group, 'AXO');
 
 				if (is_array($axo_group_ids) AND !empty($axo_group_ids)) {
 					$sql_axo_group_ids = implode(',', $axo_group_ids);
@@ -410,11 +464,14 @@ class gacl {
 		return $retarr;
 	}
 
-	/*======================================================================*\
-		Function:   acl_get_groups()
-		Purpose:	Grabs all groups mapped to an ARO. You can also specify a root_group_id for subtree'ing.
-	\*======================================================================*/
-	function acl_get_groups($section_value, $value, $root_group_id=NULL, $group_type='ARO') {
+	/**
+	* Grabs all groups mapped to an ARO. You can also specify a root_group for subtree'ing.
+	* @param string The section value or the ARO or ACO
+	* @param string The value of the ARO or ACO
+	* @param integer The group id of the group to start at (optional)
+	* @param string The type of group, either ARO or AXO (optional)
+	*/
+	function acl_get_groups($section_value, $value, $root_group=NULL, $group_type='ARO') {
 
 		switch(strtolower($group_type)) {
 			case 'axo':
@@ -434,7 +491,7 @@ class gacl {
 		//$profiler->startTimer( "acl_get_groups()");
 
 		//Generate unique cache id.
-		$cache_id = 'acl_get_groups_'.$section_value.'-'.$value.'-'.$root_group_id.'-'.$group_type;
+		$cache_id = 'acl_get_groups_'.$section_value.'-'.$value.'-'.$root_group.'-'.$group_type;
 
 		$retarr = $this->get_cache($cache_id);
 
@@ -449,7 +506,7 @@ class gacl {
 					FROM		' . $group_table . ' g1,' . $group_table . ' g2';
 
 				$where = '
-					WHERE		g1.id=' . $value;
+					WHERE		g1.value=' . $this->db->quote( $value );
 			} else {
 				$query .= '
 					FROM		'. $object_table .' o,'. $group_map_table .' gm,'. $group_table .' g1,'. $group_table .' g2';
@@ -466,13 +523,13 @@ class gacl {
 			 * This essentially creates a virtual "subtree" and ignores all outside groups.
 			 * Useful for sites like sourceforge where you may seperate groups by "project".
 			 */
-			if (isset($root_group_id)) {
+			if ( $root_group != '') {
 				//It is important to note the below line modifies the tables being selected.
 				//This is the reason for the WHERE variable.
 				$query .= ','. $group_table .' g3';
 
 				$where .= '
-						AND		g3.id='. $root_group_id .'
+						AND		g3.value='. $root_group .'
 						AND		((g2.lft BETWEEN g3.lft AND g1.lft) AND (g2.rgt BETWEEN g1.rgt AND g3.rgt))';
 			} else {
 				$where .= '
@@ -504,11 +561,12 @@ class gacl {
 		return $retarr;
 	}
 
-	/*======================================================================*\
-		Function:   get_cache()
-		Purpose:	Uses PEAR's Cache_Lite package to grab cached arrays, objects, variables etc...
-						using unserialize() so it can handle more then just text string.
-	\*======================================================================*/
+	/**
+	* Uses PEAR's Cache_Lite package to grab cached arrays, objects, variables etc...
+	* using unserialize() so it can handle more then just text string.
+	* @param string The id of the cached object
+	* @return mixed The cached object, otherwise FALSE if the object identifier was not found
+	*/
 	function get_cache($cache_id) {
 
 		$this->debug_text("get_cache(): on ID: $cache_id");
@@ -520,11 +578,12 @@ class gacl {
 		return false;
 	}
 
-	/*======================================================================*\
-		Function:   put_cache()
-		Purpose:	Uses PEAR's Cache_Lite package to write cached arrays, objects, variables etc...
-						using serialize() so it can handle more then just text string.
-	\*======================================================================*/
+	/**
+	* Uses PEAR's Cache_Lite package to write cached arrays, objects, variables etc...
+	* using serialize() so it can handle more then just text string.
+	* @param mixed A variable to cache
+	* @param string The id of the cached variable
+	*/
 	function put_cache($data, $cache_id) {
 
 		$this->debug_text("put_cache(): Cache MISS on ID: $cache_id");

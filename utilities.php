@@ -25,8 +25,8 @@ if ($_SESSION['current_patient'] != 0) {
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"utilities.php|user $user_to_log accesses patient $patient");}	
 
-// Deny if no access
-if (!freemed::user_flag(USER_ADMIN)) {
+// Deny if no access (check ACLs)
+if (!freemed::acl('admin', 'menu')) {
 	$display_buffer .= __("Access denied").".<br/>\n";
 	template_display();
 	die();
