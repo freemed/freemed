@@ -1062,7 +1062,7 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
      ( !empty($patient) ? "&patient=".urlencode($patient) : "" )."\"
 	onMouseOver=\"window.status='".__("Add")."'; return true;\"
 	onMouseOut=\"window.status=''; return true;\"
-	CLASS=\"reverse\"><small><b>".__("ADD")."</b></small></a></td>
+	><small><b>".__("ADD")."</b></small></a></td>
     <td WIDTH=\"30%\">&nbsp;</td>
     <td ALIGN=\"RIGHT\"><a HREF=\"$__ref\" CLASS=\"reverse\"
      ><small><b>".__("RETURN TO MENU")."</b></small></a></td>

@@ -10,7 +10,7 @@ body {
 	font-size: 10pt;
 	margin-top: 0px;
 	margin-left: 0px;
-	text-decoration: none
+	text-decoration: none;
 }
 
 /* Equivalent to onMouseOver */
@@ -79,7 +79,7 @@ a:hover {
 }
 
 /* Information portion of menubar */
-.menubar_info {
+.menubar_info, .menubar_info a {
 	border-width: none;
 	background: #9999ff;
 	font-size: 8pt
@@ -98,27 +98,29 @@ a:hover {
 	font-size: 8pt
 }
 
-/* Class for reversed table cells.
-   NOTE: Your A tags must also contain a CLASS="reverse" entry. */
-.reverse {
+/* Class for reversed table cells. */
+.reverse, .reverse a {
 	border-width: none;
 	background: #000055;
 	color: #ffffff;
 }
-A.reverse:visited { color: #ffffff }
-A.reverse:link { color: #ffffff }
+.reverse a:visited, .reverse a:link { color: #ffffff }
 
 .patientbox {
 	border-width: none;
 	background: #000055;
 	color: #ffffff;
 }
-A.patientbox:visited { color: #ffffff }
-A.patientbox:link { color: #ffffff }
+.patientbox a:visited, .patientbox a:link { color: #ffffff }
 .patientbox:hover {
 	border-width: none;
 	background: #5555ff;
-	color: #00000;
+	color: #000000;
+}
+.patientbox:hover a {
+	background: #5555ff;
+	color: #000000;
+	
 }
 
 .calendar {
@@ -212,20 +214,51 @@ A.patientbox:link { color: #ffffff }
 }
 
 /* Mini-calendar classes */
-.calendar_mini_cell, a.calendar_mini_cell {
-	border: 0px;
-	padding: 2px;
+.calendar_mini {
+	border: 1px solid;
+	border-color: #000000;
+	background: #dfdfdf;
+	color: #000000;
+}
+.calendar_mini_cell {
 	background: #dddddd;
 	color: #000000;
 	font-size: small;
 	text-decoration: none;
+	border: 1px;
 }
-.calendar_mini_cell:hover, a.calendar_mini_cell:hover {
+.calendar_mini_cell a {
+	background: #dddddd;
+	color: #000000;
+	font-size: small;
+	text-decoration: none;
 	border: 0px;
-	padding: 2px;
+}
+.calendar_mini_cell:hover, .calendar_mini_cell a:hover {
 	background: #ffffff;
 	color: #000000;
 	font-size: small;
+	text-decoration: none;
+}
+.calendar_mini_cell { border-color: #ffffff; }
+.calendar_mini_cell:hover { border-color: #000000; }
+.calendar_mini_selected, .calendar_mini_selected:hover {
+	border: thin black;
+	border-width: thin;
+	border-style: solid;
+	overflow: scroll;
+	background: #8888cc; 
+	padding: 1px;
+	text-decoration: none;
+}
+.calendar_mini_selected a {
+	border: 0;
+	color: #ffffff;
+	text-decoration: none;
+}
+.calendar_mini_selected a:hover {
+	border: 0;
+	color: #ffffff;
 	text-decoration: none;
 }
 
