@@ -584,6 +584,9 @@ class CalendarModule extends BaseModule {
 	 * this prints out the top row, which has the names of the
 	 * days of the week. I consider it a distinct sort of thing.
 	 */
+	$table_top_row_align="CENTER";
+	$table_top_row_valign="BOTTOM";
+	$dates_cell_width=floor(100/7)."%";
 	$display_buffer .= "<tr>\n";
 	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Sunday</b></font></td>\n";
 	$display_buffer .= "  <td class=\"cell\" align=\"$table_top_row_align\" valign=\"$table_top_row_valign\" height=\"$table_top_row_cell_height\" width=\"$dates_cell_width\"><font face=\"$font_face\" size=\"$font_size\"><b>Monday</b></font></td>\n";
@@ -664,7 +667,7 @@ class CalendarModule extends BaseModule {
 	  }
 
 	  $display_buffer .= "<td class=\"cell_alt\" align=\"$table_row_align\" valign=\"TOP\" height=\"$dates_cell_height\"";
-	  $display_buffer .= "width=\"$dates_cell_width\">";
+	  $display_buffer .= " width=\"$dates_cell_width\">";
 	  $display_buffer .= "<small>$theday<br>\n";
 	$display_buffer .= "$theevent";
 	  $display_buffer .= "</small>";
