@@ -107,6 +107,22 @@ switch ($action) {
 	";
 	break; // end action add
 
+	case "del": case "delete":
+	// Perform deletion
+	$result = $sql->query("DELETE FROM messages WHERE id='".
+		addslashes($id)."'");
+
+	// Check if we return to management
+	if ($return=="manage") {
+		Header("Location: manage.php?id=".$SESSION["current_patient"]);
+		die("");
+	} else {
+		// Otherwise refresh to messages screen
+		Header("Location: messages.php");
+		die("");
+	}
+	break; // end action del
+
 	case "mark";
 	if (is_array($mark)) {
 		$query = "UPDATE messages SET msgread = '1', ".
