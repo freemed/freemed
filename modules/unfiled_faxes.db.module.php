@@ -7,7 +7,7 @@ LoadObjectDependency('FreeMED.MaintenanceModule');
 class UnfiledFaxes extends MaintenanceModule {
 
 	var $MODULE_NAME = "Unfiled Faxes";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "jeff@ourexchange.net";
 	var $MODULE_FILE = __FILE__;
 	var $PACKAGE_MINIMUM_VERSION = "0.6.2";
@@ -116,19 +116,10 @@ class UnfiledFaxes extends MaintenanceModule {
 			__("Date") => $r['uffdate'],
 			__("Patient") => freemed::patient_widget("patient"),
 			__("Physician") => freemed_display_selectbox ($GLOBALS['sql']->query("SELECT * FROM physician WHERE phyref='no' ORDER BY phylname,phyfname"), "#phylname#, #phyfname#", "physician"),
-			__("Type") => html_form::select_widget(
-				"type",
-				array(
-					__("Insurance Card") => "insurance_card",
-                                        __("Lab Report") => "lab_report",
-                                        __("Miscellaneous") => "misc",
-                                        __("Operative Report") => "op_report",
-                                        __("Pathology") => "pathology",
-                                        __("Patient History") => "patient_history",
-                                        __("Questionnaire") => "questionnaire",
-                                        __("Radiology") => "radiology",
-                                        __("Referral") => "referral"
-				)
+			__("Type") => module_function(
+				'ScannedDocuments',
+				'tc_widget',
+				array('type')
 			),
 			__("Note") => html_form::text_widget("note", array('length'=>150))
 		))."

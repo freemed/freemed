@@ -181,13 +181,18 @@ class UnreadFaxes extends MaintenanceModule {
 		$rec = freemed::get_link_rec($id, $this->table_name);
 
 		$filename = freemed::secure_filename($rec['urffilename']);
+
+		// Extract type and category
+		list ($type, $cat) = explode('/', $rec['urftype']);
+		
 		// Insert new table query in unread
 		$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 			'images',
 			array (
 				"imagedt" => $rec['urfdate'],
 				"imagepat" => $rec['urfpatient'],
-				"imagetype" => $rec['urftype'],
+				"imagetype" => $type,
+				"imagecat" => $cat,
 				"imagedesc" => $rec['urfnote']
 			)
 		));
