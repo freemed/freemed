@@ -273,6 +273,11 @@ class TeX {
 		$text = preg_replace("#<BR\s/></SPAN>#i", "</span><br />", $text);
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\"><BR\s/>#i", "<br /><span style=\"font-weight: bold;\">", $text);
 
+		// Remove empty tags from HTMLarea malformatting
+		$text = str_replace('<span style="font-weight: bold;"></span>', '', $text);
+		$text = str_replace('<span style="font-style: italic;"></span>', '', $text);
+		$text = str_replace('<span style="font-decoration: underline;"></span>', '', $text);
+
 		// Also do "SPAN" tags, which are put out by HTMLarea JS
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\">(.*?)</SPAN>#i", '\textbf{$1}', $text);
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-STYLE:\sITALIC\;\">(.*?)</SPAN>#i", '\textit{$1}', $text);
@@ -286,6 +291,7 @@ class TeX {
 		// by HTMLarea JS). For now, we treat them as though they
 		// were paragraph breaks. What is the proper way to handle
 		// these?
+		$text = preg_replace("#\s*<BR\s/><BR\s/>#i", "\n\n\\medskip\n\n", $text);
 		$text = preg_replace("#\s*<BR\s/>#i", " \n\n", $text);
 		$text = preg_replace("#\s*<BR>#i", " \n\n", $text);
 	
