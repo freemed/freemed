@@ -67,7 +67,7 @@ if ($sql->num_rows ($result) < 1) {
 
 	if ($patient>0) { // if there is a patient link
 		$display_buffer .= "
-      <CENTER><A HREF=\"$master_patient_link_location$patient\"
+      <CENTER><A HREF=\"$master_patient_link_location\"
        >"._("Manage Patient")."</A> |
        <A HREF=\"book_appointment.php?patient=$patient&type=$type\"
        >"._("Book Appointment")."</A>
