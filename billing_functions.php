@@ -1,9 +1,7 @@
 <?php
- // $Id$
- // $Author$
- // note: all billing functions accessable from this menu, which is called
- //       by the main menu
- // lic : GPL, v2
+	// $Id$
+	// $Author$
+	// lic : GPL, v2
 
 $page_name = "billing_functions.php";
 include ("lib/freemed.php");
@@ -34,63 +32,86 @@ if ($patient>0) {
 	$patient_information = freemed::patient_box ($this_patient);
 } // if there is a patient
 
-//
-// payment links removed till billing module is
-// complete. use manage to make payments
-//
-
-   // here is the actual guts of the menu
-if (freemed::user_flag(USER_DATABASE)) {
-	$display_buffer .= "
-	<p/>
-
-	<div ALIGN=\"CENTER\">
-	$patient_information
-	</div>
-
-	<p/>
-
-	<table border=\"0\" CELLSPACING=\"2\" CELLPADDING=\"2\"
-	 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
-	".($this_patient ? "" :
-	"<tr>
-		<td COLSPAN=\"2\" ALIGN=\"CENTER\">
-		<div>
-			<a class=\"button\" href=\"patient.php\"
-			>".__("Select a Patient")."</a>
-		</div>
-		</td>
-	</tr>" )."
-	</table> 
-	<p/>
-	";
-
-	$category = "Billing";
-	$module_template = "
-		<tr>
-        	<td>
-        	<a HREF=\"module_loader.php?module=#class#&patient=$patient\"
-        	>#name#</a>
-        	</td>
-		</tr>\n";
-	// modules list
-	$module_list = CreateObject(
-		'PHP.module_list',
-		PACKAGENAME,
-		array(
-			'cache_file' => 'data/cache/modules'
-		)
-	);
-	$display_buffer .= "<div ALIGN=\"CENTER\"><table>\n";
-	$display_buffer .= $module_list->generate_list($category, 0, $module_template);
-	$display_buffer .= "</table></div>\n";
-} else { 
-	$display_buffer .= "
-	<p/>
-	".__("You don't have access for this menu.")."
-	<p/>
-	";
+// Deny if no access
+if (!freemed::user_flag(USER_DATABASE)) {
+	$display_buffer .= __("Access denied").".<br/>\n";
+	template_display();
+	die();
 }
+	
+// This section is the start of "Billing v1.0". We are using "handlers"
+// to assign different types of billing, and from there, we will 
+
+LoadObjectDependency('PHP.module');
+
+switch ($_REQUEST['action']) {
+	case 'type':
+	// Execute handler
+	$module_handlers = freemed::module_handler('BillingFunctions');
+	$display_buffer .= module_function($_REQUEST['type'], $module_handlers[$_REQUEST['type']]);
+	// Display closing information for return to menu
+	$display_buffer .= "
+	<p/>
+	<div align=\"center\">
+		<a href=\"billing_functions.php\" class=\"button\"
+		>".__("Return to")." ".
+		__("Billing Functions")."</a>
+	</div>
+	";
+	break; // end case 'type'
+
+	default:
+	//----- Determine handlers for billing types
+	$type_handlers = freemed::module_handler('BillingFunctions');
+	if (!is_array($type_handlers)) {
+		$display_buffer .= __("Your FreeMED installation has no billing handlers defined. This should not happen.")."<br/>\n";
+		template_display();
+		die();
+	} else {
+		$display_buffer .= 
+		"<b>".__("Welcome to the FreeMED Billing System!")."</b><br/> ".
+		__("Please select the type of billing you wish to perform.").
+		"<p/>\n";
+	}
+
+	foreach ($type_handlers AS $class => $handler) {
+		// Load proper GettextXML definitions for this class
+		GettextXML::textdomain(strtolower($class));
+		
+		// Get title from meta information
+		$title = freemed::module_get_meta($class, 'BillingFunctionName');
+		// Add to the list
+		$types[__($title)] = $class;
+
+		if ($icon = freemed::module_get_value($class, 'ICON')) {
+			$icons[__($title)] = $icon;
+		} else {
+			unset($icons[__($title)]);
+		}
+	}
+
+	// Sort & unique values
+	$types = array_unique($types);
+	ksort($types);
+
+	// Display
+	$display_buffer .= "<table align=\"center\" border=\"0\">\n";
+	foreach ($types AS $name => $link) {
+		$display_buffer .= "<tr><td>".
+			( isset($icons[$name]) ?
+			"<a href=\"billing_functions.php?".
+			"action=type&type=".urlencode($link)."\"".
+			"><img src=\"".$icons[$name]."\" border=\"0\" ".
+			"alt=\"\"/></a>" :
+			"&nbsp;" ).
+			"</td><td><a href=\"billing_functions.php?".
+			"action=type&type=".urlencode($link)."\"".
+			">".$name."</a></td></tr>\n";
+	}
+	$display_buffer .= "</table>\n";
+	
+	break; // end of default action
+} // end of master action switch
 
 //----- Finish template display
 template_display ();
