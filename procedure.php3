@@ -212,11 +212,14 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Place of Service : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procpos\">
-  ";
-  freemed_display_facilities ($procpos);
-  echo "
-      </SELECT>
+  ".freemed_display_selectbox(
+      fdb_query("
+        SELECT psrname,psrnote,id
+        FROM facility
+      "),
+      "#psrname# [#psrnote#]", 
+      "procpos"
+    )."
      </TD>
     </TR>
 
@@ -269,11 +272,12 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Referring Provider : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"procrefdoc\">
   ";
-  freemed_display_physicians ($procrefdoc, "yes");
-  echo "
-      </SELECT>
+  $phy_r = fdb_query("SELECT phylname,phyfname,id FROM physician 
+                      WHERE phyref='yes'
+                      ORDER BY phylname, phyfname");
+  echo
+  freemed_display_selectbox ($phy_r, "#phylname#, #phyfname#", "procrefdoc")."
      </TD>
     </TR>
 
@@ -281,9 +285,9 @@ switch ($action) { // master action switch
      <TD ALIGN=RIGHT>
       <$STDFONT_B>Date of Last Visit : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
-  ";
-  fm_date_entry ("procrefdt");
-  echo "
+  ".
+  fm_date_entry ("procrefdt")
+  ."
      </TD>
     </TR>
 
@@ -337,7 +341,7 @@ switch ($action) { // master action switch
     <!-- embed all important variables -->
     <INPUT TYPE=HIDDEN NAME=\"procpatient\" VALUE=\"$procpatient\">
     <INPUT TYPE=HIDDEN NAME=\"proceoc\" VALUE=\"".
-        fm_prep(fm_join_from_array($proceoc))."\">
+        prepare(fm_join_from_array($proceoc))."\">
     <INPUT TYPE=HIDDEN NAME=\"proccpt\" VALUE=\"$proccpt\">
     <INPUT TYPE=HIDDEN NAME=\"proccptmod\" VALUE=\"$proccptmod\">
     <INPUT TYPE=HIDDEN NAME=\"procdiag1\" VALUE=\"$procdiag1\">
@@ -347,24 +351,24 @@ switch ($action) { // master action switch
     <INPUT TYPE=HIDDEN NAME=\"proccharges\" VALUE=\"$proccharges\">
     <INPUT TYPE=HIDDEN NAME=\"procunits\" VALUE=\"$procunits\">
     <INPUT TYPE=HIDDEN NAME=\"procvoucher\" VALUE=\"".
-        fm_prep($procvoucher)."\">
+        prepare($procvoucher)."\">
     <INPUT TYPE=HIDDEN NAME=\"procphysician\" VALUE=\"$procphysician\">
     <INPUT TYPE=HIDDEN NAME=\"procdt_y\" VALUE=\"$procdt_y\">
     <INPUT TYPE=HIDDEN NAME=\"procdt_d\" VALUE=\"$procdt_d\">
     <INPUT TYPE=HIDDEN NAME=\"procdt_m\" VALUE=\"$procdt_m\">
     <INPUT TYPE=HIDDEN NAME=\"procpos\"  VALUE=\"$procpos\">
     <INPUT TYPE=HIDDEN NAME=\"proccomment\" VALUE=\"".
-       fm_prep($proccomment)."\">
+       prepare($proccomment)."\">
     <INPUT TYPE=HIDDEN NAME=\"procauth\" VALUE=\"".
-       fm_prep($procauth)."\">
+       prepare($procauth)."\">
     <INPUT TYPE=HIDDEN NAME=\"procrefdoc\" VALUE=\"".
-       fm_prep($procrefdoc)."\">
+       prepare($procrefdoc)."\">
     <INPUT TYPE=HIDDEN NAME=\"procrefdt_y\" VALUE=\"".
-       fm_prep($procrefdt_y)."\">
+       prepare($procrefdt_y)."\">
     <INPUT TYPE=HIDDEN NAME=\"procrefdt_m\" VALUE=\"".
-       fm_prep($procrefdt_m)."\">
+       prepare($procrefdt_m)."\">
     <INPUT TYPE=HIDDEN NAME=\"procrefdt_d\" VALUE=\"".
-       fm_prep($procrefdt_d)."\">
+       prepare($procrefdt_d)."\">
 
     <!-- calculate charges and allow change here -->
   ";
