@@ -141,8 +141,10 @@ foreach ($static_components AS $garbage => $component) {
 		$dolv_result = $sql->query(
 			"SELECT * FROM scheduler WHERE ".
 			"id='".addslashes($id)."' AND ".
-			"caldateof < '".date("Y-m-d")."' ".
-			"ORDER BY caldateof DESC"
+			"(caldateof < '".date("Y-m-d")."' OR ".
+			"(caldateof = '".date("Y-m-d")."' AND ".
+			"calhour < '".date("H")."'))".
+			"ORDER BY caldateof DESC, calhour DESC"
 		);
 		if (!$sql->results($dolv_result)) {
 			$dolv = _("NONE");
