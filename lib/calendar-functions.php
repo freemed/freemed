@@ -189,9 +189,9 @@ define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
       // display heading for hour
       $display_buffer .= "
-       <TR CLASS=\"reverse\"><TD BGCOLOR=#cccccc COLSPAN=1 WIDTH=20%>
-        $hour
-       </TD><TD CLASS=\"cell".($alt ? "_alt" : "" )."\" COLSPAN=1>
+       <tr CLASS=\"reverse\"><TD BGCOLOR=\"#cccccc\" COLSPAN=\"1\" ".
+       "WIDTH=\"20%\">$hour</td>
+       <td CLASS=\"calcell".($alt ? "_alt" : "" )."\" COLSPAN=\"1\">
       "; 
 
       // display data in fifteen minute increments, by dumping the
@@ -413,18 +413,13 @@ function fc_generate_calendar_mini ($given_date, $this_url) {
 
   		$dayp = $day + 1;
 
-        $this_color = (
-	  ( $dayp == $this_day ) ?
-           "#ccccff" :
-           "#bbbbbb" );
-
- 
         $thisclass = (
 	  ( $dayp       == $cur_day AND
             $this_month == $cur_month AND
             $this_year  == $cur_year ) ?
             "calendar_mini_selected" : 
-            "calendar_mini_cell" );
+	  ( $dayp       == $this_day ?
+	    "calendar_mini_current" : "calendar_mini_cell" ) );
        
 	$buffer .= "<td align=\"RIGHT\" class=\"".$thisclass."\">\n";
 
@@ -658,15 +653,15 @@ class freemedCalendar {
 				"manage.php?id=" ).
 			$my_patient->id."\"".
 			">".trim($my_patient->fullName())."</a> ".
-			"(".$my_event['calduration']."m)\n".
+			"(".$my_event['calduration']."m)<br/>\n".
 			"<a href=\"book_appointment.php?id=".
 				urlencode($my_event['id'])."&".
 				"type=".$my_event['caltype']."\" ".
-			" class=\"button\">".__("Move")."</a>".
+			">".__("Move")."</a>".
 			( !empty($my_event['calprenote']) ?
-			"<br/>&nbsp;&nbsp;<small><i>".
+			"<br/>&nbsp;&nbsp;<i>".
 			prepare(stripslashes($my_event[calprenote])).
-			"</i></small>\n" : "" );
+			"</i>\n" : "" );
 	} // end method freemedCalendar::event_calendar_print
 
 	function event_special ( $mapping ) {
