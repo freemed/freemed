@@ -1,17 +1,17 @@
 <?php
-  # file: redirect.php3
-  # note: redirector for /DIS, etc...
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL
+ // file: redirect.php3
+ // note: redirector for /DIS, etc...
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL
 
-  include ("freemed-functions.inc"); // API functions (19990610)
+ include ("freemed-functions.inc"); // API functions (19990610)
 
-  // then we do an if... else clause to loop through
-  // any other instances, and put them here....
+ // then we do an if... else clause to loop through
+ // any other instances, and put them here....
 
-  // at some point, we should document this table, for ease of
-  // use in jumping from place A to place B, and eventually put
-  // it on the tool bar.
+ // at some point, we should document this table, for ease of
+ // use in jumping from place A to place B, and eventually put
+ // it on the tool bar.
 switch ($location) {
   case "/aicd": $redirect="icd9.php3?$_auth&action=addform"; break;
   case "/cfg":  $redirect="admin.php3?$_auth&action=cfgform"; break;
@@ -27,8 +27,6 @@ switch ($location) {
 
   // and now the actual redirector
 
-  // new as of 19990609 for HTTP/1.1 compliant servers like
-  // our good friend Apache.
 Header("Location: $complete_url$redirect");
 
 echo "<HTML>
@@ -37,8 +35,8 @@ echo "<HTML>
 <META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$complete_url$redirect\"> 
 </HEAD> 
 <BODY>
-<CENTER><B>If your browser does not support the REFRESH tag,
-click <A HREF=\"$redirect\">here</A>.</B>
+<CENTER><B>"._("If your browser does not support the REFRESH tag")."
+<A HREF=\"$redirect\">"._("click here")."</A>.</B>
 </CENTER>
 </BODY></HTML>
 ";
