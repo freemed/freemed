@@ -339,7 +339,8 @@ switch ($action) { // master action switch
   // step three:
   //   calculate the base value
   $internal_type  = $cpt_code ["cpttype"]; // grab internal type
-  echo " (inttype = $internal_type) (procphysician = $procphysician) ";
+  if ($debug) 
+    echo " (inttype = $internal_type) (procphysician = $procphysician) ";
   $this_physician = freemed_get_link_rec ($procphysician, "physician");
   $charge_map     = fm_split_into_array($this_physician ["phychargemap"]);
   $base_value     = $charge_map [$internal_type];
