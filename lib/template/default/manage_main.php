@@ -218,9 +218,15 @@ foreach ($static_components AS $garbage => $component) {
 					"<TD ALIGN=\"LEFT\"><SMALL>".fc_get_time_string($hour,$min)."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$this_user->getDescription()."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\">".
-					template::summary_delete_link(NULL,
+					html_form::confirm_link_widget(
 					"messages.php?action=remove&id=".$my_r['id'].
-					"&return=manage").
+					"&return=manage", 
+					"<img SRC=\"lib/template/default/img/summary_delete.png\" BORDER=\"0\" ALT=\"".__("Delete")."\"/>",
+					array(
+						'confirm_text' =>
+						__("Messages should NOT be deleted. Are you sure you want to delete this message?"),
+						'text' => __("Delete")
+					)).
 					"</tr>\n".
 					"<tr><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
 					prepare($my_r['msgtext']).
