@@ -8,7 +8,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Company Maintenance";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.1";
+	var $MODULE_VERSION = "0.3.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
@@ -38,7 +38,9 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 		"inscoidmap",
 		// Billing related information
 		"inscodefformat",
-		"inscodeftarget"
+		"inscodeftarget",
+		"inscodefformate",
+		"inscodeftargete"
 	);
 
 	function InsuranceCompanyMaintenance() {
@@ -66,6 +68,8 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 			'inscoidmap' => SQL__TEXT,
 			'inscodefformat' => SQL__VARCHAR(50),
 			'inscodeftarget' => SQL__VARCHAR(50),
+			'inscodefformate' => SQL__VARCHAR(50),
+			'inscodeftargete' => SQL__VARCHAR(50),
 			'id' => SQL__SERIAL
 		);
 	
@@ -159,7 +163,8 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
   $book->add_page(
    __("Internal Information"),
    array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod",
-	'inscodefformat', 'inscodeftarget' ),
+	'inscodefformat', 'inscodeftarget', 
+	'inscodefformate', 'inscodeftargete' ),
 	html_form::form_table(array(
     __("NEIC ID") =>
     "<INPUT TYPE=TEXT NAME=\"inscoid\" SIZE=11 MAXLENGTH=10
@@ -183,11 +188,17 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
       ORDER BY insmoddesc", "insmoddesc", "inscomod",
       $inscomod, false),
 
-	__("Default Billing Format") =>
+	__("Default Paper Billing Format") =>
 	html_form::select_widget('inscodefformat', $freeb->FormatList()),
 
-	__("Default Billing Target") =>
-	html_form::select_widget('inscodeftarget', $freeb->TargetList())
+	__("Default Paper Billing Target") =>
+	html_form::select_widget('inscodeftarget', $freeb->TargetList()),
+
+	__("Default Electronic Billing Format") =>
+	html_form::select_widget('inscodefformate', $freeb->FormatList()),
+
+	__("Default Electronic Billing Target") =>
+	html_form::select_widget('inscodeftargete', $freeb->TargetList())
 
 		))
 	);
@@ -288,16 +299,22 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
+
 		// Version 0.3
+		//
 		//	Move phyidmap to be mapped in insco table (inscoidmap)
+		//
 		if (!version_check ( $version, '0.3' )) {
 			$GLOBALS['sql']->query(
 				'ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN inscoidmap TEXT AFTER inscomod'
 			);
 		}
+
 		// Version 0.3.1
+		//
 		//	Add inscodefformat and inscodeftarget mappings
+		//
 		if (!version_check ( $version, '0.3.1' )) {
 			$GLOBALS['sql']->query(
 				'ALTER TABLE '.$this->table_name.' '.
@@ -306,6 +323,21 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 			$GLOBALS['sql']->query(
 				'ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat'
+			);
+		}
+
+		// Version 0.3.2
+		//
+		//	Add inscodef{format,target}e for electronic mappings
+		//
+		if (!version_check ( $version, '0.3.2' )) {
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget'
+			);
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformate'
 			);
 		}
 	} // end method _update
