@@ -195,6 +195,17 @@ switch ($action) {
 		"onClick=\"window.self.close(); return true;\" />
 		</div>
 	";
+
+	// Make sure that it uses the smart search for focus
+	$GLOBALS['__freemed']['on_load'] = 'changeFocus';
+	$display_buffer .= "
+	<script language=\"Javascript\">
+	function changeFocus() {
+		document.forms.lookup.smart.focus();
+		return true;
+	}
+	</script>
+	";
 	break;
 } // end switch
 
