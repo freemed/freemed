@@ -120,16 +120,19 @@ class UnfiledFaxes extends MaintenanceModule {
 		$result = $GLOBALS['sql']->query("SELECT * FROM ".
 			$this->table_name." WHERE id='".addslashes($_REQUEST['id'])."'");
 		$r = $GLOBALS['sql']->fetch_array($result);
+		if (!$_REQUEST['been_here']) {
+			global $date;
+			$date = $r['uffdate'];
+		}
 		$display_buffer .= "
 		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
 		<input type=\"hidden\" name=\"action\" value=\"view\"/>
-		<input type=\"hidden\" name=\"date\" value=\"".prepare($r['uffdate'])."\"/>
 		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
 		<div align=\"center\">
 		".html_form::form_table(array(
-			__("Date") => $r['uffdate'],
+			__("Date") => fm_date_entry('date'),
 			__("Patient") => freemed::patient_widget("patient"),
 			__("Physician") => freemed_display_selectbox ($GLOBALS['sql']->query("SELECT * FROM physician WHERE phyref='no' ORDER BY phylname,phyfname"), "#phylname#, #phyfname#", "physician"),
 			__("Type") => module_function(
@@ -223,7 +226,7 @@ class UnfiledFaxes extends MaintenanceModule {
 
 		// Move actual file to new location
 		//echo "mv data/fax/unfiled/$filename data/fax/unread/$filename -f";
-		`mv data/fax/unfiled/$filename data/fax/unread/$filename -f`;
+		if ($filename) { `mv data/fax/unfiled/$filename data/fax/unread/$filename -f`; }
 
 		// Insert new table query in unread
 		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
@@ -259,6 +262,17 @@ class UnfiledFaxes extends MaintenanceModule {
 		$id = $_REQUEST['id'];
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);
+
+		if ($_REQUEST['notify']+0 > 0) {
+			$msg = CreateObject('_FreeMED.Messages');
+			$msg->send(array(
+				'patient' => $_REQUEST['patient'],
+				'physician' => $_REQUEST['notify'],
+				'urgency' => 4,
+				'text' => __("Fax received for patient").
+					" (".$filename.")"
+			));
+		}
 
 		if ($remove_first) {
 			$command = "/usr/bin/djvm -d ".
@@ -305,7 +319,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		$dirname = dirname($new_filename);
 		`mkdir -p $dirname`;
 		//echo "mkdir -p $dirname";
-		`mv data/fax/unfiled/$filename $new_filename -f`;
+		if ($filename) { `mv data/fax/unfiled/$filename $new_filename -f`; }
 
 		$GLOBALS['display_buffer'] .= __("Moved fax to scanned documents.");
 
