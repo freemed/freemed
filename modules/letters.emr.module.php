@@ -328,7 +328,11 @@ class LettersModule extends EMRModule {
 		</table>
 		</div>
 		<div ALIGN=\"LEFT\" CLASS=\"letterbox\">
-		".stripslashes(str_replace("\n", "<br/>", htmlentities($record[lettertext])))."
+		".stripslashes(str_replace("\n", "<br/>", 
+			eregi('<[A-Z]*', $record['lettertext']) ?
+			$record['lettertext'] :
+			htmlentities($record['lettertext'])
+			))."
 		</div>
 		";
 	} // end function LettersModule->display
