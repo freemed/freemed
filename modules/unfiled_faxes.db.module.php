@@ -181,6 +181,10 @@ class UnfiledFaxes extends MaintenanceModule {
 		));
 
 		$GLOBALS['display_buffer'] .= __("Moved fax to unread box.");
+		$GLOBALS['display_buffer'] .= '<p>'.
+			'<a href="'.$this->page_name.'?module='.get_class($this).'">'.__("File Another Fax").'</a>'.
+			'</p>';
+
 
 		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." ".
 			"WHERE id='".addslashes($id)."'");
