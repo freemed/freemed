@@ -2,20 +2,13 @@
  // $Id$
  // lic : GPL, v2
 
-LoadObjectDependency('FreeMED.BaseModule');
+LoadObjectDependency('FreeMED.ReportsModule');
 
-class GraphModule extends BaseModule {
-
-	// override variables
-	var $CATEGORY_NAME = "Graph";
-	var $CATEGORY_VERSION = "0.2";
-
-	// vars to be passed from child modules
-
+class GraphModule extends ReportsModule {
 	// contructor method
 	function GraphModule () {
-		// call parent constructor
-		$this->BaseModule();
+		// Call parent constructor
+		$this->ReportsModule();
 	} // end function GraphModule
 
 	// override check_vars method
@@ -31,11 +24,20 @@ class GraphModule extends BaseModule {
 	// function main
 	// - generic main function
 	function main ($nullvar = "") {
-		global $action;
+		global $action, $submit;
+
+		// Handle Cancel button
+		if ($submit == _("Cancel")) {
+			global $refresh; $refresh = 'reports.php';
+			return false;
+		}
 
 		switch ($action) {
 			case "display":
 				$this->display();
+				break;
+			case "image":
+				$this->image();
 				break;
 			case "view":
 			default:
@@ -46,8 +48,7 @@ class GraphModule extends BaseModule {
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 	function header() {
-		global $graphmode;
-		if ($graphmode) {
+		if ($_REQUEST['graphmode']) {
 			// don't display the box top
 			freemed_open_db();
 			return;
@@ -56,41 +57,99 @@ class GraphModule extends BaseModule {
 	} // end function header
 
 	function footer() {
-		global $graphmode, $display_buffer;
+		global $display_buffer;
 
 		// dont display the bottom
-		if ($graphmode) return;
-		$display_buffer .= "<P><CENTER><A HREF=\"reports.php\">"._("Reports Menu")."</A></CENTER>\n";
-		template_display();
+		if ($_REQUEST['graphmode']) {
+			return;
+		} else {
+			template_display();
+		}
 	} // end function footer
 
-	function GetGraphOptions($title) {
+	function _view () {
+		global $display_buffer, $start_dt, $end_dt;
+
+		if (!isset($start_dt)) {
+			// Default to one year ago
+			list ($y, $m, $d) = explode("-", date("Y-m-d"));
+			$start_dt = date("Y-m-d", mktime(0,0,0,$m,$d,$y-1));
+		}
+
+		if (!isset($end_dt)) {
+			// Default to current date
+			$end_dt = date("Y-m-d");
+		}
+
+		$display_buffer .= $this->GetGraphOptions(
+			$this->graph_text,
+			$this->graph_opts
+		);
+	}
+	function view() { $this->_view(); }
+
+	function AssembleURL($opts='') {
+		$__req = array_merge($_GET, $_POST);
+		if (is_array($opts)) {
+			foreach ($opts AS $k => $v) {
+				if (is_integer($k)) {
+					global $v;
+					$__req["$v"] = ${$v};
+				} else {
+					$__req["$k"] = $v;
+				}
+			}
+		}
+
+		// Go through each one and make it all proper-like
+		foreach ($__req AS $k => $v) {
+			$___req[] = $k."=".urlencode($v);
+		}
+		
+		// Form url
+		return $this->page_name."?".join('&', $___req);
+	}
+
+	function GetGraphOptions($title, $_opts=array()) {
 		global $action, $module, $start_dt, $end_dt;
 
+		if (is_array($_opts)) {
+			$opts = $_opts;
+		} else {
+			$opts = array();
+		}
+
+		// Add defaults
+		$opts = array_merge(
+			array(
+			_("Start Date") =>
+			fm_date_entry("start_dt"),
+
+			_("End Date") => 
+			fm_date_entry("end_dt")
+			), $opts);
+
 		$buffer = "
-		<CENTER>
-        <B>".$title."</B>
-        <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
-         VALIGN=MIDDLE ALIGN=CENTER>
+		<div ALIGN=\"CENTER\">
+		<b>".$title."</b>
+		</div>
 
-        <FORM ACTION=\"".$this->page_name."\" METHOD=POST>
-        	<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"display\">
-        	<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
-		<INPUT TYPE=HIDDEN NAME=\"graphmode\" VALUE=\"1\">
+	        <form ACTION=\"".$this->page_name."\" METHOD=\"POST\">
+        	<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"display\"/>
+        	<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
 
-		<TR>
-		<TD>"._("Start Date").": </TD>
-		<TD>".fm_date_entry("start_dt")."</TD>
-		<TD>"._("End Date").": </TD>
-		<TD>".fm_date_entry("end_dt")."</TD>
-		</TR>
-		<TR>
-		<TD COLSPAN=\"5\" ALIGN=\"CENTER\"><INPUT TYPE=\"SUBMIT\" NAME=\"Submit\" VALUE=\"Submit\"></TD>
-		</FORM>
-		</TABLE> 
-		</CENTER>
+		<div align=\"CENTER\">
+		".html_form::form_table($opts)."
+		</div>
+
+		<div align=\"CENTER\">
+		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"submit\"
+			value=\""._("Graph")."\"/>
+		<input class=\"button\" type=\"SUBMIT\" name=\"submit\"
+			value=\""._("Cancel")."\"/>
+		</form>
+		</div>
         ";
-
 		return $buffer;
 
 	} // end function GetGraphOptions

@@ -42,7 +42,7 @@ class BaseModule extends module {
 	} // end function check_vars
 
 	// override header method
-	function header ($nullvar = "") {
+	function _header ($nullvar = "") {
 		global $display_buffer, $page_name;
 		freemed_open_db ();
 		$page_name = _($this->MODULE_NAME);
@@ -57,11 +57,11 @@ class BaseModule extends module {
 			$GLOBALS['record_name'] = $this->record_name;
 			$GLOBALS['page_title'] = $this->record_name;
 		}
-	} // end function header
+	} // end function _header
+	function header ( ) { $this->_header(); }
 
 	// override footer method
 	function footer ($nullvar = "") {
-		global $display_buffer, $page_name;
 	} // end function footer
 
 	// calling function
