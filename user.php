@@ -285,9 +285,8 @@ switch($action) { // master action switch
     else $display_buffer .= _("You cannot modify root!");
 
     if ($result) {
-      $display_buffer .= "
-        <B>"._("Done")."</B>
-      ";
+      $display_buffer .= " <B>"._("Done")."</B> ";
+      $refresh_location = "user.php";
     } else {
       $display_buffer .= "<B>"._("Error")." [$query]</B>\n"; 
     } // end of error reporting clause
