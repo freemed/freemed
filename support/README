@@ -1,0 +1,24 @@
+$Id$
+$Author$
+
+The following packages are included in this distribution, which may
+have licensing that is different from the main FreeMED package:
+
+	webscanner.cab: ActiveX scanner control for TWAIN-compliant
+		scanners. Only works under IE. Donationware.
+		(The official name of the package is "WebTWAIN
+		ActiveX Control".) Please donate some money to the
+		developer by visiting
+		http://www.internext.co.za/stefan/donate.asp?
+			PName=WebTWAIN&PID=42843
+		so that he can continue to develop this applet.
+
+	linux/djvulibre: linux viewer package for DjVu file format.
+		Uses the GPL.
+
+	mac/DjVu3.5: Mac browser plugin for pre-OSX and OSX machines.
+		Closed source, but free for download.
+
+	win/DjVuWebBrowserPlugin: Windows browser plugin. Closed
+		source, but free for download.
+
