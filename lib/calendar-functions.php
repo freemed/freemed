@@ -637,11 +637,12 @@ function fc_generate_interference_map ($query_part, $this_date,
 	$mapping = freemedCalendar::event_calendar_print($r[id]);
 
       // map the name
-      $current_imap["$calhour:$calminute"] .= $mapping;
+      $current_imap["$calhour:$calminute"] .= "<FONT SIZE=\"-1\">".
+      	$mapping."</FONT>\n";
 
       // now, remap the current mapping for italics or whatever to
       // show a continuing appt
-      $mapping = "<I><FONT SIZE=-1>$mapping (con't)</FONT></I>";
+      $mapping = "<I><FONT SIZE=\"-1\">$mapping (con't)</FONT></I>";
 
       // now the part that no one wants to do -- mapping to all of
       // the times after the starting time...
