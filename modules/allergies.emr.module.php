@@ -1,7 +1,6 @@
 <?php
- // $Id$
- // desc: allergies
- // lic : GPL, v2
+	// $Id$
+	// lic : GPL, v2
 
 LoadObjectDependency('FreeMED.EMRModule');
 
@@ -9,190 +8,100 @@ class AllergiesModule extends EMRModule {
 
 	var $MODULE_NAME = "Allergies";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Allergies";
-	// Dummy array for prototype:
-	var $summary_items = array ( 1,2,3 );
+	var $table_name = 'allergies';
+	var $patient_field = 'patient';
 
 	function AllergiesModule () {
+		$this->table_definition = array (
+			'allergy' => SQL__VARCHAR(150),
+			'severity' => SQL__VARCHAR(150),
+			'patient' => SQL__INT_UNSIGNED(0),
+			'id' => SQL__SERIAL
+		);
+
+		$this->variables = array (
+			'allergy' => html_form::combo_assemble('allergy'),
+			'severity' => html_form::combo_assemble('severity'),
+			'patient'
+		);
+
+		$this->summary_vars = array (
+			__("Allergy") => 'allergy',
+			__("Reaction") => 'severity'
+		);
+		$this->summary_options = SUMMARY_DELETE;
+
 		// call parent constructor
 		$this->EMRModule();
 	} // end constructor AllergiesModule
 
-	// The EMR box; probably the most important part of this module
-	function summary ($patient, $dummy_items) {
-		// Get patient object from global scope (if it exists)
-		if (isset($GLOBALS[this_patient])) {
-			global $this_patient;
-		} else {
-			$this_patient = CreateObject('FreeMED.Patient', $patient);
-		}
+	function form_table ( ) {
+		return array (
+			__("Allergy") =>
+			html_form::combo_widget(
+				'allergy',
+				$GLOBALS['sql']->distinct_values('allergies','allergy')
+			),
 
-		// Extract allergies
-		$allergies = $this_patient->local_record["ptallergies"];
-
-		// Check to see if it's set (show listings if it is)
-		if (strlen($allergies)>3) {
-			// Form an array
-			$my_allergies = sql_expand($allergies);
-			if (!is_array($my_allergies)) {
-				$my_allergies = array ($my_allergies);
-			}
-
-			// Show menu bar
-			$buffer .= "
-			<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
-			"CELLPADDING=\"2\">
-			<tr CLASS=\"menubar_info\">
-			<td><b>".__("Allergy")."</b></td>
-			<td><b>".__("Action")."</b></td>
-			</tr>
-			";
-
-			// Loop thru and display allergies
-			foreach ($my_allergies AS $k => $v) {
-				$buffer .= "
-				<tr>
-				<td ALIGN=\"LEFT\"><small>".prepare($v)."</small></td>
-				<td ALIGN=\"LEFT\">".
-				template::summary_delete_link($this,
-				"module_loader.php?module=AllergiesModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
-				"</td></tr>
-				";
-			} // end looping thru allergies
-
-			// End table
-			$buffer .= "
-			</table>
-			";
-		}
-
-		$buffer .= "
-			<div ALIGN=\"CENTER\">
-			<form ACTION=\"module_loader.php\" METHOD=\"POST\">
-			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".
-			prepare($this->MODULE_CLASS)."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-			"add\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".
-			"manage\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
-			prepare($patient)."\"/>
-			".html_form::text_widget("allergy", 20, 50)."
-			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\"/>
-			</form>
-			</div>
-			";
-		return $buffer;
-	} // end function AllergiesModule->summary
-
-	function summary_bar () { }
-
-	function add () {
-		global $display_buffer, $return, $patient, $allergy;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		// Get patient object
-		$this_patient = CreateObject('FreeMED.Patient', $patient);
-
-		// Get allergies, and extract to an array
-		$allergies = $this_patient->local_record["ptallergies"];
-		$my_allergies = sql_expand($allergies);
-		if (!is_array($my_allergies)) {
-			$my_allergies = array ($my_allergies);
-		}
-
-		// Add a new member to the array
-		$my_allergies[] = $allergy;
-
-		// Remove empties
-		foreach ($my_allergies AS $k => $v) {
-			if (empty($v)) unset($my_allergies[$k]);
-		}
-
-		// Recombine into a single variable
-		$allergies = sql_squash($my_allergies);
-
-		$display_buffer .= "
-		<P><CENTER>
-		".__("Adding")." ...
-		";
-
-		// Update the proper table
-		$query = $sql->update_query (
-			"patient",
-			array ( "ptallergies" => $allergies ),
-			array ( "id" => $patient )
+			__("Reaction") =>
+			html_form::combo_widget(
+				'severity',
+				$GLOBALS['sql']->distinct_values('allergies','severity')
+			)
 		);
-		$result = $sql->query($query);
+	} // end method form_table
 
-		// Check for result, etc
-		if ($result) { $display_buffer .= __("done");  }
-		 else        { $display_buffer .= __("ERROR"); }
-		$display_buffer .= "</CENTER>\n";
-
-		// If we came from patient management (EMR), return there
-		if ($return=="manage") {
-			Header("Location: manage.php?id=".urlencode($patient));
-			die("");
-		}
-	} // end function AllergiesModule->add()
-
-	function del() { $this->delete(); }
-	function delete () {
-		global $display_buffer, $return, $patient, $id;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		// Get patient object
-		$this_patient = CreateObject('FreeMED.Patient', $patient);
-
-		// Get allergies, and extract to an array
-		$allergies = $this_patient->local_record["ptallergies"];
-		$my_allergies = sql_expand($allergies);
-		if (!is_array($my_allergies)) {
-			$my_allergies = array ($my_allergies);
-		}
-
-		// Unset the proper member of the array
-		unset ($my_allergies[$id]);
-
-		// Recombine into a single variable
-		$allergies = sql_squash($my_allergies);
-
-		$display_buffer .= "
-		<P><CENTER>
-		".__("Deleting")." ...
-		";
-
-		// Update the proper table
-		$query = $sql->update_query (
-			"patient",
-			array ( "ptallergies" => $allergies ),
-			array ( "id" => $patient )
+	function view ( ) {
+		global $sql; global $display_buffer; global $patient;
+		$display_buffer .= freemed_display_itemlist (
+			$sql->query("SELECT * FROM ".$this->table_name." ".
+				"WHERE patient='".addslashes($patient)."' ".
+				freemed::itemlist_conditions(false)." ".
+				"ORDER BY allergy"),
+			$this->page_name,
+			array(
+				__("Allergy") => 'allergy',
+				__("Reaction") => 'severity'
+			),
+			array('', __("Not specified")) //blanks
 		);
-		$result = $sql->query($query);
+	} // end method view
 
-		// Check for result, etc
-		if ($result) { $display_buffer .= __("done");  }
-		 else        { $display_buffer .= __("ERROR"); }
-		$display_buffer .= "</CENTER>\n";
-
-		// If we came from patient management (EMR), return there
-		if ($return=="manage") {
-			Header("Location: manage.php?id=".urlencode($patient));
-			die("");
-		}
-	} // end function AllergiesModule->delete()
-
-	function view() {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-		$display_buffer .= "TODO: Listing for allergies here\n";
-	} // end function AllergiesModule->view()
+	// Update
+	function _update ( ) {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+		// Version 0.2
+		//
+		//	Migrated to seperate table ...
+		//
+		if (!version_check($version, '0.2')) {
+			// Create new table
+			$sql->query($sql->create_table_query($this->table_name, $this->table_definition, array('id')));
+			// Migrate old entries
+			$q = $sql->query("SELECT ptallergies,id FROM patient WHERE LENGTH(ptallergies) > 3");
+			if ($sql->results($q)) {
+				while ($r = $sql->fetch_array($q)) {
+					$e = sql_expand($r['ptallergies']);
+					foreach ($e AS $a) {
+						$sql->query($sql->insert_query(
+							$this->table_name,
+							array(
+								'allergy' => $a,								'severity' => '',
+								'patient' => $r['id']	
+							)
+						));
+					} // end foreach entry
+				} // end loop through patient entries
+			} // end checking for results
+		}	
+	} // end method _update
 
 } // end class AllergiesModule
 
