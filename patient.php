@@ -7,8 +7,8 @@
  
   $page_name="patient.php"; // for help info, later
   $record_name="Patient";    // compatibility with API functions
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
   include ("lib/calendar-functions.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
@@ -86,10 +86,10 @@ switch ($action) {
    if (!isset($num_inscos))
    { 
        // first time through
-       $ins_result = sql->query("SELECT COUNT(*) FROM payer WHERE payerpatient='$current_patient'");
+       $ins_result = $sql->query("SELECT COUNT(*) FROM payer WHERE payerpatient='$current_patient'");
        if ($ins_result)
        {
-           $ins_data = sql->fetch_array($ins_result);
+           $ins_data = $sql->fetch_array($ins_result);
            if ($ins_data)
            {
                if ($ins_data[0] > 0)
@@ -101,10 +101,10 @@ switch ($action) {
        }
        else
        {
-           $ins_result = sql->query("SELECT COUNT(*) FROM guarantor WHERE guarpatient='$current_patient'");
+           $ins_result = $sql->query("SELECT COUNT(*) FROM guarantor WHERE guarpatient='$current_patient'");
            if ($ins_result)
            {
-               $ins_data = sql->fetch_array($ins_result);
+               $ins_data = $sql->fetch_array($ins_result);
                if ($ins_data)
                {
                    if ($ins_data[0] > 0)
@@ -427,7 +427,7 @@ switch ($action) {
                         '$payerpatientinsno_',
                         '$payertype_',
                         '0',NULL)";
-        	$payer_result = sql->query($query);
+        	$payer_result = $sql->query($query);
 		if (!$payer_result)
 		{
              		$payer_error_msg = "$query ";
@@ -456,7 +456,7 @@ switch ($action) {
 					payerpatientgrp = '$payerpatientinsgrp_',
 					payertype = '$payertype_'
 					WHERE id = '$payerid[$payerinscomod]'";
-            $payer_result = sql->query($query);
+            $payer_result = $sql->query($query);
 	    if (!$payer_result)
 	    {
              		$payer_error_msg = "$query ";
@@ -476,7 +476,7 @@ switch ($action) {
         	if ($payerinscodel[$arr_idx]) 
         	{
            		$query = "UPDATE payer SET payerstatus='1' WHERE id='$payerid[$arr_idx]'";
-          		$payer_result = sql->query($query);
+          		$payer_result = $sql->query($query);
 	  		if (!$payer_result)
 		 	{
              		    $payer_error_msg = "$query ";
@@ -499,12 +499,12 @@ switch ($action) {
     // refresh the array from the db 
 
     $query = "SELECT * FROM payer WHERE payerpatient='$current_patient'";
-    $payer_result = sql->query($query);
+    $payer_result = $sql->query($query);
 
     if ($payer_result)
     {
 	$arr_idx = 0;
-	while($payer_rec = sql->fetch_array($payer_result))
+	while($payer_rec = $sql->fetch_array($payer_result))
         {
 		$payerinsco[$arr_idx] 		= $payer_rec[payerinsco];
 		$payerpatientinsno[$arr_idx] 	= $payer_rec[payerpatientinsno];
@@ -684,7 +684,7 @@ switch ($action) {
                         '".fm_date_assemble("guarenddt_")."',
                         '0',
 			NULL)";
-        	$guar_result = sql->query($query);
+        	$guar_result = $sql->query($query);
 		if (!$guar_result)
 		{
              	    $guar_error_msg = "$query ";
@@ -704,7 +704,7 @@ switch ($action) {
 					guarenddt = '".fm_date_assemble("guarenddt_")."',
 					guarrel = '$guarrel_'
 					WHERE id = '$guarid[$guarguarmod]'";
-            $guar_result = sql->query($query);
+            $guar_result = $sql->query($query);
 	    if (!$guar_result)
 	    {
                $guar_error_msg = "$query ";
@@ -723,7 +723,7 @@ switch ($action) {
         	if ($guarguardel[$arr_idx]) 
         	{
            		$query = "UPDATE guarantor SET guarstatus='1' WHERE id='$guarid[$arr_idx]'";
-          		$guar_result = sql->query($query);
+          		$guar_result = $sql->query($query);
 	  		if (!$guar_result)
 	    		{
                			$guar_error_msg = "$query ";
@@ -746,12 +746,12 @@ switch ($action) {
     // refresh the array from the db 
 
     $query = "SELECT * FROM guarantor WHERE guarpatient='$current_patient'";
-    $guar_result = sql->query($query);
+    $guar_result = $sql->query($query);
 
     if ($guar_result)
     {
 	$arr_idx = 0;
-	while($guar_rec = sql->fetch_array($guar_result))
+	while($guar_rec = $sql->fetch_array($guar_result))
         {
 		$guarpatient[$arr_idx] 	= $guar_rec[guarpatient];
 		$guarguar[$arr_idx] 	= $guar_rec[guarguar];

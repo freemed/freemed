@@ -45,7 +45,7 @@
                                  b.procbillable = '0' AND
                                  b.procbilled = '0')";
   
-   $b_result = sql->query($query);
+   $b_result = $sql->query($query);
    //  echo "
    //   <P>
    //   <CENTER>
@@ -77,7 +77,7 @@
    $current_skip   = 0;
 
    // loop for all patients
-   while (($b_r = sql->fetch_array ($b_result)) and ($still_going)) {
+   while (($b_r = $sql->fetch_array ($b_result)) and ($still_going)) {
 
     // pull current patient
     $current_patient = $b_r[payrecpatient];
@@ -112,7 +112,7 @@
      }
 
 
-     $result = sql->query ("SELECT a.*,b.* FROM payrec AS a,
+     $result = $sql->query ("SELECT a.*,b.* FROM payrec AS a,
                                            procrec AS b 
                            WHERE ( 
                              a.payreccat = '5' AND
@@ -375,7 +375,7 @@
 
      // queue all entries
      $first_procedure = 0;
-     while ($r = sql->fetch_array ($result)) {
+     while ($r = $sql->fetch_array ($result)) {
        //$p = freemed_get_link_rec ($r[payrecproc], "procrec");
        if (first_procedure == 0)
        {
@@ -622,7 +622,7 @@
                    (procbilled     = '0') AND
                    (procbalcurrent > '0')
                  )";
-       $result = sql->query ($query);
+       $result = $sql->query ($query);
        if ($result) { echo "$Done.<BR>\n"; }
         else        { echo "$ERROR<BR>\n"; }
      }
@@ -666,9 +666,9 @@
      <TD ALIGN=LEFT>
       <SELECT NAME=\"whichform\">
    ";
-   $result = sql->query ("SELECT * FROM fixedform WHERE fftype='1'
+   $result = $sql->query ("SELECT * FROM fixedform WHERE fftype='1'
                          ORDER BY ffname, ffdescrip");
-   while ($r = sql->fetch_array ($result)) {
+   while ($r = $sql->fetch_array ($result)) {
     echo "
      <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
     ";
