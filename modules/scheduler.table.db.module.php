@@ -28,7 +28,7 @@ class SchedulerTable extends MaintenanceModule {
 			'calphysician' => SQL__INT_UNSIGNED(0),
 			'calpatient' => SQL__INT_UNSIGNED(0),
 			'calcptcode' => SQL__INT_UNSIGNED(0),
-			'calstatus' => SQL__INT_UNSIGNED(0),
+			'calstatus' => SQL__ENUM(array('scheduled','confirmed','attended','cancelled','noshow','tenative')),
 			'calprenote' => SQL__VARCHAR(250),
 			'calpostnote' => SQL__TEXT,
 			'calmark' => SQL__INT_UNSIGNED(0),
@@ -153,6 +153,9 @@ class SchedulerTable extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN calstatus '.
 				'calstatus ENUM(\'scheduled\',\'confirmed\',\'attended\',\'cancelled\',\'noshow\',\'tenative\')');
+			$sql->query('UPDATE '.$this->table_name.' '.
+				'SET calstatus=\'scheduled\' '.
+				'WHERE id>0');
 		}
 	} // end function _update
 }
