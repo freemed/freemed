@@ -37,6 +37,13 @@ switch ($action) {
 	else include("lib/template/default/manage_config.php");
 	break; // end config action
 
+	// Remove
+	case "remove":
+	if (file_exists("lib/template/".$template."/manage_remove.php"))
+		include("lib/template/".$template."/manage_remove.php");
+	else include("lib/template/default/manage_remove.php");
+	break; // end remove action
+
 	// Default action is display/list
 	default:
 	if (file_exists("lib/template/".$template."/manage_main.php"))
