@@ -51,8 +51,8 @@ class User {
 			$this->local_record = $GLOBALS['__freemed']['cache']['user'][$this->user_number];
 		}
 
-		$this->user_name    = $this->local_record["username"   ];
-		$this->user_descrip = $this->local_record["userdescrip"];
+		$this->user_name    = stripslashes($this->local_record["username"]);
+		$this->user_descrip = stripslashes($this->local_record["userdescrip"]);
 		$this->user_level   = $this->local_record["userlevel"  ];
 		$this->user_phy     = $this->local_record["userrealphy"];
 		$this->perms_fac    = $this->local_record["userfac"    ]; 
