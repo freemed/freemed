@@ -599,6 +599,10 @@ switch ($action) {
    freemed_display_html_top ();
    freemed_display_banner ();
    freemed_display_box_top("$record_name $action_name");
+   if ( ($action=="modform") or ($action=="mod")) {
+     $this_patient = new Patient ($id);
+     echo freemed_patient_box ($this_patient);
+   }
 
    if (!( $book->is_done() )) {
      echo "<CENTER>\n".$book->display()."</CENTER>\n";
