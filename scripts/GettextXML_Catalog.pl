@@ -4,8 +4,8 @@
 
 use XML::RAX;
 
-$VERSION = "0.1";
-$appversion = "0.6.0";
+$VERSION = "0.1.1";
+$appversion = `cat lib/freemed.php | grep \\'VERSION\\' | awk -F\\" '{ print \$2; }'`;
 
 # Get parameters
 $locale = shift || 'template';
