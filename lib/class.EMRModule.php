@@ -97,6 +97,17 @@ class EMRModule extends BaseModule {
 			$GLOBALS['_ref'] = "manage.php?id=".urlencode($GLOBALS['patient']);
 		}
 
+		// Add meta information for patient_field, if it exists
+		if (isset($this->patient_field)) {
+			$this->_SetMetaInformation('patient_field', $this->patient_field);
+		}
+		if (isset($this->table_name)) {
+			$this->_SetMetaInformation('table_name', $this->table_name);
+		}
+		if (!empty($this->widget_hash)) {
+			$this->_SetMetaInformation('widget_hash', $this->widget_hash);
+		}
+
 		// Call parent constructor
 		$this->BaseModule();
 	} // end function EMRModule
