@@ -7,7 +7,7 @@ if (!defined("__MODULE_PHP__")) {
 
 define ('__MODULE_PHP__', true);
 
-include "lib/freemed.php";
+include_once("lib/freemed.php");
 
 // class freemedModule extends module
 class freemedModule extends module {
