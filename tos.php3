@@ -43,46 +43,11 @@
 // (default action is "view")
 
 switch($action) {
- case "add":
-  freemed_display_box_top("$Adding $record_name", $page_name);
-
-  echo "
-    <P ALIGN=CENTER>
-    <$STDFONT_B>$Adding . . . 
-  ";
-
-    // build the query to database backend (usually MySQL):
-    // the last value has to be NULL so that it auto
-    // increments record numbers.
-  $query = "INSERT INTO $db_name VALUES ( ".
-    "'$tosname', '$tosdescrip', '$cur_date', '$cur_date', NULL ) ";
-
-    // query the db with new values
-  $result = fdb_query($query);
-
-  if ($result) {
-    echo "
-      <B>$Done.</B><$STDFONT_E>
-    ";
-  } else {
-    echo ("<B>$ERROR ($result)</B>\n"); 
-  }
-
-  echo "
-    <P>
-    <CENTER><A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
-    </CENTER>
-    <P>
-  "; // readability fix 19990714
-
-  freemed_display_box_bottom (); // display the bottom of the box
- break;
-
+ default:
  case "addform":
  case "modform":
-  freemed_display_box_top ((($action=="addform") ? "$Add" : "$Modify")
-                           ."$record_name", $page_name);
+  freemed_display_box_top ( _( (($action=="addform") ? "Add" : "Modify")
+                           ." $record_name"), $page_name);
 
   // if there _IS_ an ID tag presented, we must extract the record
   // from the database, and proverbially "fill in the blanks"
@@ -98,123 +63,10 @@ switch($action) {
     $tosdescrip = $r["tosdescrip"];
   } // if loading values
 
-  echo "
-    <P>
-    <FORM ACTION=\"$page_name\">
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-    ($action=="modform" ? "mod" : "add")."\">";
-  if ($action=="modform") echo "
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >";
-
-  echo "
-   <TABLE>
-   <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>Type of Service Name : <$STDFONT_E>
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=tosname SIZE=20 MAXLENGTH=75
-     VALUE=\"$tosname\">
-   </TD></TR>
-
-   <TR><TD ALIGN=RIGHT>
-    <$STDFONT_B>Type of Service Description : <$STDFONT_E>
-   </TD><TD ALIGN=LEFT>
-    <INPUT TYPE=TEXT NAME=tosdescrip SIZE=25 MAXLENGTH=200
-     VALUE=\"$tosdescrip\">
-   </TD></TR>
-
-   <TR><TD ALIGN=CENTER COLSPAN=2>
-    <INPUT TYPE=SUBMIT VALUE=\" Add/Modify \">
-    <INPUT TYPE=RESET  VALUE=\"$Remove_Changes\">
-    </FORM>
-   </TD></TR>
-   </TABLE>
-  ";
-
-  freemed_display_box_bottom (); // show the bottom of the box
-
-  echo "
-    <P>
-    <CENTER>
-    <A HREF=\"$page_name?$_auth&action=view\"
-     >$Abandon_Modification</A>
-    </CENTER>
-  ";
-  break;
-  case "mod":
-
-   #      M O D I F Y - R O U T I N E
-
-  freemed_display_box_top ("$Modifying $record_name", $page_name);
-
-  echo "
-    <P ALIGN=CENTER>
-    <$STDFONT_B>$Modifying . . . 
-  ";
-
-    // build update query:
-    // only set the values that need to be
-    // changed... for example, don't set the
-    // creation date in a modify. also,
-    // remember the commas...
-  $query = "UPDATE $db_name SET ".
-    "tosname    = '$tosname',    ".
-    "tosdescrip = '$tosdescrip', ".
-    "tosdtmod   = '$cur_date'    ". 
-    "WHERE id='$id'";
-
-  $result = fdb_query($query); // execute query
-
-  if ($result) {
-    echo "
-      <B>$Done.</B><$STDFONT_E>
-    ";
-  } else {
-    echo ("<B>$ERROR ($result)</B>\n"); 
-  } // end of error reporting clause
-
-  echo "
-    <P>
-    <CENTER><A HREF=\"$page_name?$_auth\"
-     ><$STDFONT_B>$Return_to $record_name $Menu<$STDFONT_E></A>
-    </CENTER>
-    <P>
-  "; // usability patch 19990714
-
-  freemed_display_box_bottom (); // display box bottom 
- break;
-
- case "delete":
-  freemed_display_box_top ("$Deleting $record_name", $page_name);
-
-    // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $db_name
-    WHERE (id = \"$id\")");
-
-  echo "
-    <BR>
-    <$STDFONT_B>$record_name <B>$id</B> $Deleted.<$STDFONT_E>
-    <BR>
-  ";
-  if ($debug==1) {
-    echo "
-      <BR><B>RESULT:</B><BR>
-      $result<BR><BR>
-    ";
-  }
-  echo "
-    <BR><CENTER>
-    <A HREF=\"$page_name?$_auth&action=view\"
-     >$Update_Delete_Another</A></CENTER>
-  ";
-  freemed_display_box_bottom ();
- break;
-
- default:
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
   $result = fdb_query($query);
-  freemed_display_box_top ($record_name, $_ref, $page_name);
 
   if (strlen($_ref)<5) {
     $_ref="main.php3";
@@ -224,36 +76,106 @@ switch($action) {
     $result,
     "tos.php3",
     array (
-      "Code" => "tosname",
-      "Description" => "tosdescrip"
+      _("Code") => "tosname",
+      _("Description") => "tosdescrip"
     ),
-    array ("", "NO DESCRIPTION")
+    array ("", _("NO DESCRIPTION")), "", "t_page"
   );
-    
-    // now, we put the add table part...
-    // uncomment if needed.
+  echo "
+    <FORM ACTION=\"$page_name\">
+    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
+    ($action=="modform" ? "mod" : "add")."\">";
+  if ($action=="modform") echo "
+    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >";
 
   echo "
-   <TABLE CELLSPACING=0 CELLPADDING=3 BORDER=0>
-    <TR BGCOLOR=".($_alt=freemed_bar_alternate_color($_alt))." VALIGN=CENTER>
-    <TD VALIGN=CENTER><FORM ACTION=\"$page_name\"
-     ><INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
-     <INPUT TYPE=TEXT NAME=\"tosname\" SIZE=5
-      MAXLENGTH=75></TD>
-    <TD VALIGN=CENTER>
-     <INPUT TYPE=TEXT NAME=\"tosdescrip\" SIZE=30
-      MAXLENGTH=200></TD>
-    <TD VALIGN=CENTER><INPUT TYPE=SUBMIT VALUE=\"ADD\"></FORM></TD>
-    </TR>
+   <TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
+   <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>"._("Type of Service")." : <$STDFONT_E>
+   </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=tosname SIZE=20 MAXLENGTH=75
+     VALUE=\"$tosname\">
+   </TD></TR>
+
+   <TR><TD ALIGN=RIGHT>
+    <$STDFONT_B>"._("Description")." : <$STDFONT_E>
+   </TD><TD ALIGN=LEFT>
+    <INPUT TYPE=TEXT NAME=tosdescrip SIZE=25 MAXLENGTH=200
+     VALUE=\"$tosdescrip\">
+   </TD></TR>
+
+   <TR><TD ALIGN=CENTER COLSPAN=2>
+    <INPUT TYPE=SUBMIT VALUE=\"".(
+      ($action=="modform") ? _("Modify") : _("Add"))."\">
+    <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
+    </FORM>
+   </TD></TR>
    </TABLE>
   ";
+  if ($action=="modform") echo "
+    <P>
+    <CENTER><$STDFONT_B>
+    <A HREF=\"$page_name?$_auth&action=view\"
+     >"._("Abandon Modification")."</A>
+    <$STDFONT_E></CENTER>
+    ";
 
-  if (strlen($_ref)<5) {
-    $_ref="main.php3";
-  } // if no ref, then return to home page...
+  freemed_display_box_bottom (); // show the bottom of the box
 
-  freemed_display_box_bottom (); // display bottom of the box
-  break;
+ break;
+ 
+ case "add":
+ case "mod":
+ case "delete":
+  switch($action) { // inner actionswitch
+   case "add":
+    freemed_display_box_top(_("Adding $record_name"), $page_name);
+    echo "
+      <P ALIGN=CENTER>
+      <$STDFONT_B>"._("Adding")." . . . 
+    ";
+    $query = "INSERT INTO $db_name VALUES ( ".
+      "'$tosname', '$tosdescrip', '$cur_date', '$cur_date', NULL ) ";
+   break;
+   case "mod":
+    freemed_display_box_top (_("Modifying $record_name"), $page_name);
+    echo "
+      <P ALIGN=CENTER>
+      <$STDFONT_B>"._("Modifying")." . . . 
+    ";
+    $query = "UPDATE $db_name SET ".
+      "tosname    = '$tosname',    ".
+      "tosdescrip = '$tosdescrip', ".
+      "tosdtmod   = '$cur_date'    ". 
+      "WHERE id='$id'";
+   break;
+   case "delete":
+    freemed_display_box_top (_("Deleting $record_name"), $page_name);
+    echo "
+      <P ALIGN=CENTER>
+      <$STDFONT_B>"._("Deleting")." . . . 
+    ";
+    $query = "DELETE FROM $db_name WHERE (id = \"$id\")";
+   break;
+  } // inner actionswitch
+  $result = fdb_query($query);
+  if ($result) {
+    echo "
+      <B>"._("Done").".</B><$STDFONT_E>
+    ";
+  } else {
+    echo ("<B>"._("ERROR")." ($result)</B>\n"); 
+  }
+  echo "
+    <P>
+    <CENTER><A HREF=\"$page_name?$_auth\"
+     ><$STDFONT_B>"._("Return to $record_name Menu")."<$STDFONT_E></A>
+    </CENTER>
+    <P>
+  "; // readability fix 19990714
+
+  freemed_display_box_bottom (); // display the bottom of the box
+ break;
 } // end master switch
 
 freemed_close_db(); // always close the database when done!
