@@ -51,7 +51,7 @@ switch($action) {
   } // inner add/mod[form] switch
   
   $stat_q = "SELECT * FROM phystatus ORDER BY phystatus";
-  $stat_r = fdb_query($stat_q); // have the result ready for display_selectbox
+  $stat_r = $sql->query($stat_q); // have the result ready for display_selectbox
 
   $book->add_page (
     _("Primary Information"),
@@ -260,10 +260,10 @@ switch($action) {
 
   $phy_deg_q = "SELECT * FROM degrees ORDER BY ".
                "degdegree, degname";
-  $phy_deg_r = fdb_query($phy_deg_q);
+  $phy_deg_r = $sql->query($phy_deg_q);
   $spec_q = "SELECT * FROM specialties ORDER BY ".
             "specname, specdesc";
-  $spec_r = fdb_query($spec_q);
+  $spec_r = $sql->query($spec_q);
 
   $book->add_page(
     _("Personal"),
@@ -346,8 +346,8 @@ switch($action) {
   // cache this outside of the function call (can't abstract that while-loop)
   // $brackets is defined in lib/freemed.php
   $cmap_buf="";
-  $int_r = fdb_query("SELECT * FROM intservtype");
-  while ($i_r = fdb_fetch_array ($int_r)) {
+  $int_r = $sql->query("SELECT * FROM intservtype");
+  while ($i_r = $sql->fetch_array ($int_r)) {
     $i_id = $i_r ["id"];
     $cmap_buf .= "
      <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color ($_alternate)).">
@@ -383,8 +383,8 @@ switch($action) {
   );
 
   $insmap_buf = ""; // cache the output, as above
-  $i_res = fdb_query("SELECT * FROM inscogroup");
-  while ($i_r = fdb_fetch_array ($i_res)) {
+  $i_res = $sql->query("SELECT * FROM inscogroup");
+  while ($i_r = $sql->fetch_array ($i_res)) {
     $i_id = $i_r ["id"];
     $insmap_buf .= "
      <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
@@ -493,7 +493,7 @@ switch($action) {
         "phyidmap    ='".fm_join_from_array($phyidmap)    ."'  ". 
         "WHERE id='".addslashes($id)."'";
   
-      $result = fdb_query($query);
+      $result = $sql->query($query);
       
       if ($result) {
         echo "
@@ -564,7 +564,7 @@ switch($action) {
         '".fm_join_from_array($phyidmap).    "',
         NULL ) ";
 
-      $result = fdb_query($query);
+      $result = $sql->query($query);
 
       if ($result) {
         echo "
@@ -598,7 +598,7 @@ switch($action) {
   freemed_display_box_top(_("Deleting")." "._($record_name));
   echo "<P ALIGN=CENTER><$STDFONT_B>"._("Deleting")." ... ";
   $query = "DELETE FROM physician WHERE id='".addslashes($id)."'";
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   if ($result) { echo "<B>"._("done").".</B>"; }
    else        { echo "<B>"._("ERROR")."</B> [$query, $result]"; }
   echo "
@@ -646,7 +646,7 @@ switch($action) {
   freemed_display_box_top("$record_name");
   $phy_q = "SELECT phylname,phyfname,id FROM physician ".
     "ORDER BY phylname,phyfname";
-  $phy_r = fdb_query($phy_q);
+  $phy_r = $sql->query($phy_q);
   echo freemed_display_itemlist (
     $phy_r,
     "physician.php3",

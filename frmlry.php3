@@ -147,7 +147,7 @@ if ($action=="addform") {
     "'$ind1', '$ind2', '$ind3', NULL ) ";
 
     // query the db with new values
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($debug==1) {
     echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
@@ -212,7 +212,7 @@ if ($action=="addform") {
   // from the database, and proverbially "fill in the blanks"
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $db_name ".
+  $result = $sql->query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
@@ -220,7 +220,7 @@ if ($action=="addform") {
     echo " <B>RESULT</B> = [$result]<BR><BR> ";
   }
 
-  $r = fdb_fetch_array($result); // dump into array r[]
+  $r = $sql->fetch_array($result); // dump into array r[]
 
     $frmlrydtadd = $r["frmlrydtadd"];
     $class       = $r["class"      ];
@@ -309,7 +309,7 @@ if ($action=="addform") {
     "ind3        = '$ind3'          ".
     "WHERE id='$id'";
 
-  $result = fdb_query($query); // execute query
+  $result = $sql->query($query); // execute query
 
   if ($debug==1) {
     echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
@@ -344,7 +344,7 @@ if ($action=="addform") {
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $db_name
+  $result = $sql->query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -375,7 +375,7 @@ if ($action=="addform") {
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   if ($result) {
     freemed_display_box_top ($record_name, $_ref, $page_name);
 
@@ -416,7 +416,7 @@ if ($action=="addform") {
 
     $_alternate = freemed_bar_alternate_color ();
 
-    while ($r = fdb_fetch_array($result)) {
+    while ($r = $sql->fetch_array($result)) {
 
     $class      = $r["class"     ];
     $gnrcname   = $r["gnrcname"  ];

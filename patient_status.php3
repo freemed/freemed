@@ -28,7 +28,7 @@ switch ($action) {
            '".addslashes($ptstatusdescrip)."',
             NULL ) ";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) { echo "<B>"._("done").".</B>"; }
    else        { echo "<B>"._("ERROR")."</B>"; }
@@ -118,7 +118,7 @@ switch ($action) {
      ptstatusdescrip = '".addslashes($ptstatusdescrip)."'  
      WHERE id='".addslashes($id)."'";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) { echo "<B>"._("done").".</B>"; }
    else        { echo "<B>"._("ERROR")."</B>"; }
@@ -140,7 +140,7 @@ switch ($action) {
  case "del": case "delete":
   freemed_display_box_top (_("Deleting")." "._($record_name));
 
-  $result = fdb_query("DELETE FROM $db_name WHERE id='".addslashes($id)."'");
+  $result = $sql->query("DELETE FROM $db_name WHERE id='".addslashes($id)."'");
 
   echo "
     <P>
@@ -158,10 +158,10 @@ switch ($action) {
   $query = "SELECT * FROM $db_name 
             ORDER BY ptstatusdescrip, ptstatus";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   freemed_display_box_top (_($record_name));
   echo freemed_display_itemlist (
-    fdb_query ("SELECT ptstatusdescrip,ptstatus,id FROM $db_name
+    $sql->query ("SELECT ptstatusdescrip,ptstatus,id FROM $db_name
       ORDER BY ptstatusdescrip,ptstatus"),
     $page_name,
     array (

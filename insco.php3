@@ -123,7 +123,7 @@ switch ($action) {
     <TR>
     <TD ALIGN=RIGHT><$STDFONT_B>"._("Insurance Group")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>".freemed_display_selectbox(
-      fdb_query("SELECT inscogroup FROM inscogroup ORDER BY inscogroup"),
+      $sql->query("SELECT inscogroup FROM inscogroup ORDER BY inscogroup"),
       "#inscogroup#", "inscogroup")."</TD>
     </TR>
 
@@ -212,7 +212,7 @@ switch ($action) {
     echo "
      <CENTER><$STDFONT_B>".( (($action=="mod") OR ($action=="modform")) ?
        _("Modifying") : _("Adding") )." ... ";
-    $result = fdb_query ($query);
+    $result = $sql->query ($query);
     echo ( ($result) ? _("done") : _("ERROR") )."
      <$STDFONT_E>
      <P>
@@ -228,7 +228,7 @@ switch ($action) {
  case "del":
   freemed_display_box_top(_("Deleting")." $record_name", $page_name);
 
-  $result = fdb_query("DELETE FROM $db_name WHERE id = '".prepare($id)."'");
+  $result = $sql->query("DELETE FROM $db_name WHERE id = '".prepare($id)."'");
 
   echo "
     <P>
@@ -313,7 +313,7 @@ switch ($action) {
  default: // default action
   freemed_display_box_top(_("Insurance Companies"));
   echo freemed_display_itemlist(
-    fdb_query("SELECT * FROM $db_name ORDER BY insconame"),
+    $sql->query("SELECT * FROM $db_name ORDER BY insconame"),
     $page_name,
     array (
      _("Name")	=>	"insconame",

@@ -63,7 +63,7 @@ if ($action=="display") {
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   if ($result) {
     freemed_display_box_top ($record_name, $_ref, $page_name);
 
@@ -84,7 +84,7 @@ if ($action=="display") {
 
     $_alternate = freemed_bar_alternate_color ();
 
-    while ($r = fdb_fetch_array($result)) {
+    while ($r = $sql->fetch_array($result)) {
 
       $sr_label = $r["sr_label"];
       $sr_type  = $r["sr_type" ];
@@ -248,7 +248,7 @@ if ($patient) {
 	   NULL)" ;
 
     // query the db with new values
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) { echo "<B>"._("done").".</B>"; }
    else        { echo "<B>"._("ERROR")."</B>"; }
@@ -306,7 +306,7 @@ DIE ("");
   // from the database, and proverbially "fill in the blanks"
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $db_name ".
+  $result = $sql->query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
@@ -314,7 +314,7 @@ DIE ("");
     echo " <B>RESULT</B> = [$result]<BR><BR> ";
   }
 
-  $r = fdb_fetch_array($result); // dump into array r[]
+  $r = $sql->fetch_array($result); // dump into array r[]
 
     // this dumps the result of the query (the record to
     // be modified) into the variables with those names,
@@ -435,7 +435,7 @@ DIE ("");
     "sr_textcf = '$sr_textcf_blob' ".
     "WHERE id='$id'";
 
-  $result = fdb_query($query); // execute query
+  $result = $sql->query($query); // execute query
 
   if ($debug==1) {
     echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
@@ -475,7 +475,7 @@ DIE ("");
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $db_name
+  $result = $sql->query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -901,11 +901,11 @@ if ($chosenrep==0)
 
 // fetch the template data selected in $chosenrep
 
-  $result = fdb_query("SELECT * FROM $db_name ".
+  $result = $sql->query("SELECT * FROM $db_name ".
     "WHERE ( id = '$chosenrep' )");
 
                   
-  $r = fdb_fetch_array($result); // dump into array r[]
+  $r = $sql->fetch_array($result); // dump into array r[]
 
   $sr_label   = $r["sr_label"]                     ;
   $sr_type    = $r["sr_type" ]                     ;
@@ -1564,7 +1564,7 @@ echo "
   freemed_display_box_top ($record_name, $_ref, $page_name);
 
   echo freemed_display_itemlist (
-    fdb_query("SELECT * FROM $db_name ORDER BY $order_field"),
+    $sql->query("SELECT * FROM $db_name ORDER BY $order_field"),
     $page_name,
     array (
       _("Label")	=>	"sr_label",

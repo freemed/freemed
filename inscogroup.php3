@@ -26,7 +26,7 @@ switch ($action) {
   $query = "INSERT INTO inscogroup VALUES ( ".
     "'".addslashes($inscogroup)."',   NULL ) ";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) 
     echo "<B>"._("done").".</B><$STDFONT_E>\n";
@@ -92,7 +92,7 @@ switch ($action) {
     "inscogroup = '".addslashes($inscogroup)."' ". 
     "WHERE id='".addslashes($id)."'";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) 
     echo "<B>"._("done").".</B><$STDFONT_E>\n";
@@ -110,7 +110,7 @@ switch ($action) {
  case "del": case "delete":
   freemed_display_box_top (_("Deleting")." "._($record_name));
 
-  $result = fdb_query("DELETE FROM inscogroup
+  $result = $sql->query("DELETE FROM inscogroup
     WHERE (id = '".addslashes($id)."')");
 
   echo "
@@ -133,7 +133,7 @@ switch ($action) {
   freemed_display_box_top (_($record_name));
 
   echo freemed_display_itemlist (
-    fdb_query ("SELECT inscogroup,id FROM inscogroup ORDER BY inscogroup"),
+    $sql->query ("SELECT inscogroup,id FROM inscogroup ORDER BY inscogroup"),
     $page_name,
     array (
 	_($record_name)		=>	"inscogroup"

@@ -54,7 +54,7 @@ switch ($action) {
     NULL ) ";
 
     // query the db with new values
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) {
     echo "
@@ -98,10 +98,10 @@ switch ($action) {
   }
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $db_name ".
+  $result = $sql->query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
-  $r = fdb_fetch_array($result); // dump into array r[]
+  $r = $sql->fetch_array($result); // dump into array r[]
   extract ($r);
 
   echo "
@@ -161,7 +161,7 @@ switch ($action) {
     "dfdescrip = '".prepare($dfdescrip)."'  ". 
     "WHERE id='$id'";
 
-  $result = fdb_query($query); // execute query
+  $result = $sql->query($query); // execute query
 
   if ($result) {
     echo "
@@ -186,7 +186,7 @@ switch ($action) {
   freemed_display_box_top (_("Deleting")." "._($record_name));
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $db_name
+  $result = $sql->query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -209,7 +209,7 @@ switch ($action) {
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   if ($result) {
     freemed_display_box_top (_($record_name));
     echo freemed_display_itemlist (

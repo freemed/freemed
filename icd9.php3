@@ -162,7 +162,7 @@ switch ($action) {
     " NULL ) ";
 
     // query the db with new values
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($result) {
     echo "<B>"._("done").".</B><$STDFONT_E>\n";
@@ -194,7 +194,7 @@ switch ($action) {
     "icdcoll     ='".addslashes($icdcoll)."'      ". 
     "WHERE id='".addslashes($id)."'";
 
-  $result = fdb_query($query); // execute query
+  $result = $sql->query($query); // execute query
 
   if ($result)  echo _("done")."<$STDFONT_E>\n";
     else { echo _("ERROR")." ($result)<$STDFONT_E>\n"; } 
@@ -206,7 +206,7 @@ switch ($action) {
   freemed_display_box_top (_("Deleting")." "._($record_name));
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $db_name
+  $result = $sql->query("DELETE FROM $db_name
     WHERE (id = '".addslashes($id)."')");
 
   echo "
@@ -230,7 +230,7 @@ switch ($action) {
   freemed_display_box_top (_($record_name));
     
   echo freemed_display_itemlist (
-    fdb_query("SELECT * FROM $db_name ORDER BY $order_field"),
+    $sql->query("SELECT * FROM $db_name ORDER BY $order_field"),
     $page_name,
     array (
       _("Code")		=> 	"icd9code",

@@ -2,6 +2,9 @@ freemed project changelog
 ($Id$)
 
 * Tue Jan 09 2001 fforest
+   - change all fdb_ to $sql->
+
+* Tue Jan 09 2001 fforest
    - containers for patient have been updated to support the new guarantor/payer tables.
    - other files changed to get inscos and payers using the new fields in patient class.
    - Link to payment records added to manage_payments screen to display ledger transactions

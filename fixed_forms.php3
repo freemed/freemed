@@ -40,8 +40,8 @@
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
         $query  = "SELECT * FROM $db_name WHERE id='$id'";
-        $result = fdb_query ($query);
-        $r      = fdb_fetch_array ($result);
+        $result = $sql->query ($query);
+        $r      = $sql->fetch_array ($result);
         $ffname       = $r["ffname"      ];
         $ffdescrip    = $r["ffdescrip"   ];
         $fftype       = $r["fftype"      ]; 
@@ -280,7 +280,7 @@
      '".addslashes($format_a)."',
      '".addslashes($comment_a)."',
      NULL )";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
    if ($result) { echo "<B>"._("done").".</B>"; }
     else        { echo "<B>"._("ERROR")."</B>"; }
    echo "
@@ -325,7 +325,7 @@
       ffformat     = '".addslashes($format_a)."',
       ffcomment    = '".addslashes($comment_a)."'
       WHERE id='".addslashes($id)."'";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
    if ($debug) echo "query = \"$query\" <BR>";
    if ($result) { echo "<B>"._("done").".</B>"; }
     else        { echo "<B>"._("ERROR")."</B>"; }
@@ -346,7 +346,7 @@
     <$STDFONT_B>"._("Deleting")." ...
     ";
    $query = "DELETE * FROM $db_name WHERE id='".addslashes($id)."'";
-   $result = fdb_query ($query);
+   $result = $sql->query ($query);
    if ($result) { echo "<B>"._("done").".</B>"; }
     else        { echo "<B>"._("ERROR")."</B>"; }  
    echo "
@@ -363,10 +363,10 @@
 
   default: // default action -- menu
    freemed_display_box_top (_($record_name));
-   $result = fdb_query ("SELECT * FROM $db_name
+   $result = $sql->query ("SELECT * FROM $db_name
                          ORDER BY ffname, ffdescrip");
    echo freemed_display_itemlist (
-     fdb_query ("SELECT * FROM $db_name ORDER BY ffname, ffdescrip"),
+     $sql->query ("SELECT * FROM $db_name ORDER BY ffname, ffdescrip"),
      $page_name,
      array (
 	_("Name")		=>	"ffname",

@@ -62,8 +62,8 @@
      break;
     case "modform":
      $this_action = "mod";
-     $result = fdb_query ("SELECT * FROM $db_name WHERE id='$id'");
-     $r = fdb_fetch_array ($result);
+     $result = $sql->query ("SELECT * FROM $db_name WHERE id='$id'");
+     $r = $sql->fetch_array ($result);
      $template = $r["prtemplate"];
      $form = $template;   // to allow us to pass it as hidden
      if ($patient != $r["prpatient"]) {
@@ -107,7 +107,7 @@
    ";
 
    // now, here's the heart of the whole routine...
-   $f_r = fdb_fetch_array (fdb_query ("SELECT * FROM patrectemplate
+   $f_r = $sql->fetch_array ($sql->query ("SELECT * FROM patrectemplate
                       WHERE id='$template'"));
    $prtfname    = fm_split_into_array ($f_r["prtfname"   ]);
    $prtftype    = fm_split_into_array ($f_r["prtftype"   ]);
@@ -162,13 +162,13 @@
         case "cpt":
         case "cptcodes":
 	 $cpt_q = "SELECT * FROM cpt ORDER BY cptcode, cptnameint";
-	 $cpt_r = fdb_query($cpt_q);
+	 $cpt_r = $sql->query($cpt_q);
 	 echo freemed_display_selectbox(
 	   $cpt_q, "#cptcode# (#cptnameint#)", "this_answer");
          break;
         case "cptmod":
 	 $cptmod_q = "SELECT * FROM cptmod ORDER BY cptmod, cptmoddescrip";
-	 $cptmod_r = fdb_query($cptmod_q);
+	 $cptmod_r = $sql->query($cptmod_q);
 	 echo freemed_display_selectbox(
 	   $cptmod_q, "#cptmod# (#cptmoddescrip#)", "this_answer");
          break;
@@ -176,14 +176,14 @@
         case "facility":
         case "pos":
 	 $fac_q = "SELECT * FROM facility ORDER BY psrname, psrnote";
-	 $fac_r = fdb_query($fac_q);
+	 $fac_r = $sql->query($fac_q);
 	 echo freemed_display_selectbox(
 	   $fac_r, "#psrname# [#psrnote#]", "this_answer");
          break;
         case "frmlry":
         case "drugs":
 	 $frm_q = "SELECT * FROM frmlry ORDER BY trdmrkname";
-	 $frm_r = fdb_query($frm_q);
+	 $frm_r = $sql->query($frm_q);
 	 echo freemed_display_selectbox(
 	   $frm_r, "#trdmrkname#", "this_answer");
          break;
@@ -191,7 +191,7 @@
         case "physician":
         case "phy":
 	 $doc_q = "SELECT * FROM physician ORDER BY phylname, phyfname";
-	 $doc_r = fdb_query($doc_q);
+	 $doc_r = $sql->query($doc_q);
 	 echo freemed_display_selectbox(
 	   $doc_r, "#phylname#, #phyfname#", "this_answer");
          break;
@@ -408,7 +408,7 @@
      <$STDFONT_B>".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
     ";
    if ($debug)    echo "<BR>(query = \"$query\")<BR>\n";
-   $result = fdb_query ($query); // send the prepared query through
+   $result = $sql->query ($query); // send the prepared query through
    if ($result) { echo _("done").".\n"; }
     else        { echo _("ERROR")."\n"; }
    echo "
@@ -427,10 +427,10 @@
 
   default: // default view is listing...
    freemed_display_box_top (_($record_name));
-   $result = fdb_query ("SELECT * FROM $db_name
+   $result = $sql->query ("SELECT * FROM $db_name
                          WHERE prpatient='".addslashes($patient)."'
                          ORDER BY prdtadd DESC");
-   if (($result==0) or (fdb_num_rows($result)<1)) {
+   if (($result==0) or ($sql->num_rows($result)<1)) {
      echo "
       ".freemed_patient_box($this_patient)."
       <P>
@@ -445,9 +445,9 @@
        <SELECT NAME=\"form\">
         <OPTION VALUE=\"\">"._("NONE SELECTED")."
      ";
-     $f_result = fdb_query ("SELECT * FROM patrectemplate
+     $f_result = $sql->query ("SELECT * FROM patrectemplate
                              ORDER BY prtname");
-     while ($f_r = fdb_fetch_array ($f_result)) {
+     while ($f_r = $sql->fetch_array ($f_result)) {
        echo "<OPTION VALUE=\"".$f_r["id"]."\">".$f_r["prtname"]."\n";
      } // end of this internal loop
      echo "
@@ -481,7 +481,7 @@
       </TR>
     ";
    $_alternate = freemed_bar_alternate_color ($_alternate);
-   while ($r = fdb_fetch_array ($result)) {
+   while ($r = $sql->fetch_array ($result)) {
      $dtadd    = $r["prdtadd"   ];
      $template = $r["prtemplate"];
      $id       = $r["id"        ];

@@ -169,7 +169,7 @@ if (($action=="addform") AND ($separate_add_section)) {
     "'$prntname', '$prnthost', '$prntaclvl', '$prntdesc', NULL ) ";
 
     // query the db with new values
-  $result = fdb_query($query);
+  $result = $sql->query($query);
 
   if ($debug==1) {
     echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
@@ -237,7 +237,7 @@ if (($action=="addform") AND ($separate_add_section)) {
   // from the database, and proverbially "fill in the blanks"
 
     // grab record number "id"
-  $result = fdb_query("SELECT * FROM $db_name ".
+  $result = $sql->query("SELECT * FROM $db_name ".
     "WHERE ( id = '$id' )");
 
     // display for debugging purposes
@@ -245,7 +245,7 @@ if (($action=="addform") AND ($separate_add_section)) {
     echo " <B>$RESULT</B> = [$result]<BR><BR> ";
   }
 
-  $r = fdb_fetch_array($result); // dump into array r[]
+  $r = $sql->fetch_array($result); // dump into array r[]
 
     // this dumps the result of the query (the record to
     // be modified) into the variables with those names,
@@ -376,7 +376,7 @@ if (($action=="addform") AND ($separate_add_section)) {
     "prntdesc='$prntdesc' ".
     "WHERE id='$id' ";
 
-  $result = fdb_query($query); // execute query
+  $result = $sql->query($query); // execute query
 
   if ($debug==1) {
     echo "\n<BR><BR><B>QUERY RESULT:</B><BR>\n";
@@ -411,7 +411,7 @@ if (($action=="addform") AND ($separate_add_section)) {
   freemed_display_box_top ("$Deleting $record_name", $page_name);
 
     // select only "id" record, and delete
-  $result = fdb_query("DELETE FROM $db_name
+  $result = $sql->query("DELETE FROM $db_name
     WHERE (id = \"$id\")");
 
   echo "
@@ -469,7 +469,7 @@ if (($action=="addform") AND ($separate_add_section)) {
   $query = "SELECT * FROM $db_name ".
    "ORDER BY $order_field";
 
-  $result = fdb_query($query);
+  $result = $sql->query($query);
   if ($result) {
     freemed_display_box_top ($record_name, $_ref, $page_name);
 
@@ -506,7 +506,7 @@ if (($action=="addform") AND ($separate_add_section)) {
 
     $_alternate = freemed_bar_alternate_color ();
 
-    while ($r = fdb_fetch_array($result)) {
+    while ($r = $sql->fetch_array($result)) {
 
       $prntname  = $r["prntname"  ] ;
       $prnthost  = $r["prnthost"  ] ;

@@ -79,7 +79,7 @@ switch ($action) { // begin master switch
       </SELECT>",
       _("Internal Service Types") =>
      freemed_display_selectbox(
-       fdb_query("SELECT * FROM intservtype"),
+       $sql->query("SELECT * FROM intservtype"),
        "#intservtype#",
        "cpttype")
        ))
@@ -104,7 +104,7 @@ switch ($action) { // begin master switch
       <$STDFONT_B>"._("Default Type of Service")." : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
         ".freemed_display_selectbox (
-          fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
+          $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
   	  "#tosname# #tosdescrip#",
 	  "cpttos[$i]"
 	  )."
@@ -185,7 +185,7 @@ switch ($action) { // begin master switch
   ");
 
   if ( (!empty($cptcode)) and (!empty($cptnameint)) ) {
-    $num_inscos = fdb_num_rows (fdb_query ("SELECT * FROM insco"));
+    $num_inscos = $sql->num_rows ($sql->query ("SELECT * FROM insco"));
     $serv_buffer = "
      <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
       ALIGN=CENTER>
@@ -203,7 +203,7 @@ switch ($action) { // begin master switch
        <TD>".prepare($this_insco->insconame)."</TD>
        <TD>
         ".freemed_display_selectbox (
-          fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
+          $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
   	  "#tosname# #tosdescrip#",
 	  "cpttos[$i]"
 	  )."
@@ -319,7 +319,7 @@ switch ($action) { // begin master switch
       if ($debug) echo " ( query = \"$query\" ) <BR>\n";
       break; // end action mod/modform 
    } // end switch add/modform   
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if ($result) { echo _("done")."."; }
   else         { echo _("ERROR");    }
   echo "
@@ -341,7 +341,7 @@ switch ($action) { // begin master switch
   freemed_display_box_top (_("Deleting")." "._($record_name));
   echo "<P ALIGN=CENTER><$STDFONT_B>"._("Deleting")." ... ";
   $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if ($result) { echo "<B>"._("done").".</B>"; }
    else        { echo "<B>"._("ERROR")."</B>"; }
   echo "
@@ -356,7 +356,7 @@ switch ($action) { // begin master switch
 
 /*
  case "profileform": // insurance company profiles form
-  $num_inscos = fdb_num_rows (fdb_query ("SELECT * FROM insco"));
+  $num_inscos = $sql->num_rows ($sql->query ("SELECT * FROM insco"));
   $this_code  = freemed_get_link_rec ($id, $db_name);
   $cpttos     = fm_split_into_array ($this_code["cpttos"]);
   $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
@@ -406,7 +406,7 @@ switch ($action) { // begin master switch
      <TD>".prepare($this_insco->insconame)."</TD>
      <TD>
       ".freemed_display_selectbox (
-        fdb_query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
+        $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
 	"#tosname# #tosdescrip#",
 	"cpttos[$i]"
 	)."
@@ -441,7 +441,7 @@ switch ($action) { // begin master switch
    <P>
    <$STDFONT_B>"._("Modifying")." ... 
   ";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   if ($result) { echo _("done")."."; }
    else        { echo _("ERROR");    }
   echo "
@@ -460,7 +460,7 @@ switch ($action) { // begin master switch
  default: // default action begin
   freemed_display_box_top (_($record_name));
   $query = "SELECT cptcode,cptnameint,id FROM $db_name ORDER BY cptcode";
-  $result = fdb_query ($query);
+  $result = $sql->query ($query);
   echo freemed_display_itemlist (
     $result,
     $page_name,
