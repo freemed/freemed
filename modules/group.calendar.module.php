@@ -142,23 +142,33 @@ class GroupCalendar extends CalendarModule {
 
 		// Select all the physicians in the group
 		$my_group = freemed::get_link_rec($group, "phygroup");
-		$physician_list = explode(":", $my_group[phygroupdocs]);
+		$physician_list = explode(",", $my_group[phygroupdocs]);
 
 		// Map all physicians in this group
-		unset($map); $map = $scheduler->map_init();
+		unset($map); 
+		$this->display_columns = 0;
 		foreach ($physician_list AS $_garbage_ => $phy) {
 			if ($phy>0) {
 			// Create map
-			$map[$phy] = $scheduler->map("SELECT * FROM ".
-				"scheduler WHERE calphysician='".
-				addslashes($phy)."' AND caldateof='".
-				addslashes($selected_date)."'");
-			$physicians[] = $phy;
+				$map[$phy] = $scheduler->multimap("SELECT * FROM ".
+					"scheduler WHERE calphysician='".
+					addslashes($phy)."' AND caldateof='".
+					addslashes($selected_date)."'");
+				$physicians[] = $phy;
+
+				// Increment the multimap counter
+				//print count($map[$phy])." columns for phy #$phy<br/>\n";
+				$this->display_columns += count($map[$phy]);
+
+				// Ensure that a single column is displayed
+				if (count($map[$phy]) == 0) {
+					$map[$phy][0] = $scheduler->map_init();
+				}
 			} // end if phy>0
 		}
 
 		// Create "other" map
-		$map[0] = $scheduler->map(
+		$map[0] = $scheduler->multimap(
 				"SELECT * FROM scheduler WHERE ".
 				"calphysician='0' AND ".
 				"caldateof='".addslashes($selected_date)."' "
@@ -166,6 +176,10 @@ class GroupCalendar extends CalendarModule {
 				//addslashes($my_facility)."'"
 		);
 		$physicians[] = 0;
+		$this->display_columns += count($map[0]);
+		if (count($map[0]) == 0) {
+			$map[0][0] = $scheduler->map_init();
+		}
 
 		// Finally display the calendar
 		$display_buffer .= $this->displayCalendar($physicians, $map);
@@ -226,9 +240,9 @@ class GroupCalendar extends CalendarModule {
 					"action=".urlencode($action)."&".
 					"mark=".urlencode($mark)
 		)."</td></tr>
-		</TABLE>
-		</DIV>
-		<BR>
+		</table>
+		</div>
+		<br/>
 		";
 
 		// Add anesthesia display if that module is installed
@@ -264,17 +278,19 @@ class GroupCalendar extends CalendarModule {
 		$buffer .= "
 		<!-- full calendar -->
 		<div ALIGN=\"CENTER\">
-		<table WIDTH=\"100%\" CELLSPACING=\0\" CELLPADDING=\"2\" ".
+		<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" ".
 		"BORDER=\"0\" CLASS=\"calendar\">
 		<tr><td COLSPAN=\"2\">&nbsp;</td>
 		";
 		foreach ($physicians AS $k => $v) {
 			if ($v >= 0) {
 				$p[$k] = CreateObject('FreeMED.Physician', $v);
-				$buffer .= "<td ALIGN=\"CENTER\"><b>".
-				($v!=0 ? $p[$k]->fullName() : __("Other") ).
-				"</b></td>\n";
 			}
+			$buffer .= "<td ALIGN=\"LEFT\" ".
+			"STYLE=\"border: 1px solid; \" ".
+			"COLSPAN=\"".count($map[$v])."\"><b>".
+			($v!=0 ? $p[$k]->fullName() : __("Other") ).
+			"</b></td>\n";
 		}
 		$buffer .= "</tr>\n";
 
@@ -302,23 +318,27 @@ class GroupCalendar extends CalendarModule {
 
 				// Loop through physicians
 				foreach ($physicians AS $_g => $this_phy) {
+					foreach ($map[$this_phy] AS $map_key => $cur_map) {
 					// If there is an event, display
-					if (($map[$this_phy][$idx]['span']+0) == 0) {
+					$event = false;
+					if (($cur_map[$idx]['span']+0) == 0) {
 						// skip this
-					} elseif (($map[$this_phy][$idx]['link']+0) != 0) {
+						$event = true;
+					} elseif (($cur_map[$idx]['link']+0) != 0) {
+						$event = true;
 						$buffer .= "<td COLSPAN=\"1\" ".
-							"ROWSPAN=\"".$map[$this_phy][$idx]['span']."\" ".
+							"ROWSPAN=\"".$cur_map[$idx]['span']."\" ".
 							"ALIGN=\"LEFT\" ".
-							"CLASS=\"calmark".($map[$this_phy][$idx]['mark']+0)."\">".
+							"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
 							$scheduler->event_calendar_print(
-								$map[$this_phy][$idx]['link']
+								$cur_map[$idx]['link']
 							).html_form::confirm_link_widget(
 								"module_loader.php?".
 								"module=".urlencode($this->MODULE_CLASS)."&".
 								"action=".urlencode($action)."&".
 								"selected_date=".urlencode($selected_date)."&".
 								"group=".urlencode($group)."&".
-								"id=".$map[$this_phy][$idx]['link']."&".
+								"id=".$cur_map[$idx]['link']."&".
 								"submit=delappt#hour".$c_hour,
 								"<img SRC=\"lib/template/$template/img/cal_x.png\" BORDER=\"0\" ".
 								"alt=\"".__("DEL")."\"/>",
@@ -338,10 +358,7 @@ class GroupCalendar extends CalendarModule {
 							60 => "1:00"
 						);
 						foreach ($check as $k => $v) {
-							if ($scheduler->map_fit(
-									$map[$this_phy],
-									$idx,
-									$k)) { 
+							if ($scheduler->map_fit( $cur_map, $idx, $k)) {
 								$buffer .= template::link_button($v,
 									"module_loader.php?".
 									"module=".$this->MODULE_CLASS."&".
@@ -359,8 +376,8 @@ class GroupCalendar extends CalendarModule {
 							} // end if fit
 						} // end foreach
 						$buffer .= "</td>\n";
-					}
-
+					} // end if/else
+					} // end for each current map
 				} // end loop thru physicians
 
 			} // end loop through minutes
