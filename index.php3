@@ -1,9 +1,9 @@
 <?php
-  # file: index.php3
-  # note: login screen... maybe move to login.php3??
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  #       Max Klohn (amk@span.ch)
-  # lic : GPL
+ // file: index.php3
+ // note: login screen... maybe move to login.php3??
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ //       Max Klohn (amk@span.ch)
+ // lic : GPL, v2
 
   $page_name = "index.php3";
   include "global.var.inc";
@@ -60,7 +60,7 @@ echo "
 </TR>
 ";
 
-fdb_connect ($db_host, $db_user, $db_password);
+$Connection = fdb_connect (DB_HOST, DB_USER, DB_PASSWORD);
 if (fdb_query ("SELECT * FROM config")) {
 echo "
 <TR><TD ALIGN=RIGHT>
