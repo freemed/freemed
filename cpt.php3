@@ -270,7 +270,6 @@ switch ($action) { // begin master switch
  } else {
    switch ($action) {
      case "add": case "addform":
-      freemed_display_box_top (_("Adding")." "._($record_name));
       $query = "INSERT INTO $db_name VALUES (
             '".addslashes($cptcode).                        "',
             '".addslashes($cptnameint).                     "',
@@ -338,8 +337,21 @@ switch ($action) { // begin master switch
   freemed_display_box_bottom ();
   break; // end add/mod action
 
- case "del": // delete action
-  echo "ACTION NOT IMPLEMENTED YET<BR>\n";
+ case "del": case "delete": // delete action
+  freemed_display_box_top (_("Deleting")." "._($record_name));
+  echo "<P ALIGN=CENTER><$STDFONT_B>"._("Deleting")." ... ";
+  $query = "DELETE FROM $db_name WHERE id='".addslashes($id)."'";
+  $result = fdb_query ($query);
+  if ($result) { echo "<B>"._("done").".</B>"; }
+   else        { echo "<B>"._("ERROR")."</B>"; }
+  echo "
+   <$STDFONT_E></P>
+   <CENTER>
+    <A HREF=\"$page_name?$_auth\"
+    ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
+   </CENTER>
+  ";
+  freemed_display_box_bottom ();
   break; // end delete action
 
 /*
