@@ -447,3 +447,21 @@ a:hover {
 	text-decoration: none;
 }
 
+/* Printing stuff */
+.PrintContainer {
+	border: 1px solid;
+	border-color: #bbbbbb #000000 #000000 #bbbbbb;
+	background-color: #d5d5d5;
+	color: #000000;
+	padding: 2px;
+}
+
+.PrintContainerItem {
+	background: #d5d5d5;
+	color: #000000;
+}
+
+.PrintContainerItemSelected {
+	background: #aaaaaa;
+	color: #000000;
+}

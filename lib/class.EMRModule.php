@@ -378,16 +378,47 @@ class EMRModule extends BaseModule {
 			// select printer form
 			global $display_buffer;
 			$display_buffer .= "
-			<form action=\"".$this->page_name."\" method=\"post\">
+			<form action=\"".$this->page_name."\" method=\"post\"
+			 name=\"myform\">
+			<div class=\"PrintContainer\">
 			<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
 			<input type=\"hidden\" name=\"action\" value=\"".prepare($_REQUEST['action'])."\"/>
 			<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 			<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\"/>
-			".html_form::form_table(array(
-				__("Printer") => freemed::printers_widget('printer')
-			))."
+			<table border=\"0\" width=\"98%\" cellspacing=\"0\">
+			<tr class=\"PrintContainerItem\"
+			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
+				 onClick=\"document.form.myform.print_method_printer.select(); return true;\">
+
+				<td width=\"50\">
+				<input type=\"radio\" name=\"print_method\"
+				 value=\"printer\" checked=\"checked\"
+				 id=\"print_method_printer\" />
+				<td
+				>".__("Printer")."</td>
+				<td>".freemed::printers_widget('printer')."</td>
+			</tr>
+			<tr class=\"PrintContainerItem\"
+			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
+				 onClick=\"document.forms[0].print_method_fax.value='1'; return true;\">
+
+				<td width=\"50\">
+				<input type=\"radio\" name=\"print_method\"
+				 value=\"fax\" id=\"print_method_fax\" />
+				<td>".__("Fax")."</td>
+				<td>".html_form::text_widget('fax_number',
+					array(
+						'length' => '12'
+					)
+				)."</td>
+			</tr>
+			</table>
 			<div align=\"center\">
-			<input type=\"submit\" value=\"".__("Print")."\"/>
+			<input type=\"submit\" value=\"".__("Print")."\"
+			 class=\"button\" />
+			</div>
 			</div>
 			</form>
 			";
