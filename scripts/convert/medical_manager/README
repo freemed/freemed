@@ -1,0 +1,11 @@
+scripts/convert/medical_manager
+documentation by jeff b (jeff@univrel.pr.uconn.edu)
+
+This directory contains scripts to convert Medical Manager 7.1 databases/
+tables into freemed's import format. These scripts are provided without
+guarantee of functionality, although it would please me greatly if they
+worked properly.
+
+They require Perl 5.00x, and will not work without a proper perl interpreter,
+also they have only been tested under Linux 2.2.x, so there is no guarantee
+that they will work under Wintel systems, etc.
