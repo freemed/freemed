@@ -15,14 +15,9 @@ body {
 
 /* Equivalent to onMouseOver */
 a:hover {
-	color: white;
+	color: #ffffff;
 	text-decoration: underline;
-	background-color: blue
-}
-
-/* Menu bar */
-ul:menubar {
-	list-style-type: none
+	background-color: #0000ff
 }
 
 /* Main freemed dialog box */
@@ -47,7 +42,7 @@ ul:menubar {
 	border-width: thin;
 	border-style: solid;
 	overflow: scroll;
-	background: #d9d9d9 
+	background: #9999ff
 }
 
 .thinbox_noscroll {
@@ -90,9 +85,16 @@ ul:menubar {
 	font-size: 8pt
 }
 
+/* Menubar items and hilighting */
 .menubar_items {
 	border-width: none;
 	background: #b8b8ff;
+	font-size: 8pt
+}
+
+.menubar_items_hilite {
+	border-width: none;
+	background: #9999ff;
 	font-size: 8pt
 }
 

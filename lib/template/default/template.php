@@ -57,6 +57,11 @@ if (isset($refresh)) {
 <table WIDTH="100%" CELLSPACING="0" CELLPADDING="2"
  VALIGN="MIDDLE" ALIGN="CENTER">
 
+<?php
+// To conserve space, turn off the header bar if menu bar
+if ($GLOBALS['__freemed']['no_menu_bar']) {
+?>
+
 <!-- top/header bar -->
 
 <tr>
@@ -68,15 +73,17 @@ if (isset($refresh)) {
 	</td>
 </tr>
 
+<?php } ?>
+
 <tr>
-	<td COLSPAN="1" VALIGN="TOP" ALIGN="RIGHT" WIDTH="20%">
+	<td COLSPAN="1" VALIGN="TOP" ALIGN="RIGHT" WIDTH="250">
 
 	<!-- menu bar -->
 <?php
 //----- Check to see if we skip displaying this
 if (!$GLOBALS['__freemed']['no_menu_bar']) {
 ?>
-	<table WIDTH="100%" CELLSPACING="0" CELLPADDING="2"
+	<table WIDTH="100%" CELLSPACING="0" CELLPADDING="0"
 	 CLASS="menubar" VALIGN="TOP" ALIGN="CENTER">
 	<tr><td VALIGN="TOP" ALIGN="CENTER" CLASS="menubar_title">
 		<b><?php print INSTALLATION; ?></b>
@@ -114,7 +121,10 @@ if (is_object($this_user)) {
 	include_once("lib/template/default/menubar.php");
 
 ?>
-	</td></tr></table>
+	</td></tr>
+	<tr><td VALIGN="BOTTOM" ALIGN="RIGHT" CLASS="menubar_items">
+	<img src="lib/template/default/img/menubar_lower_right.gif" border="0"
+		alt=""/></td></tr></table>
 
 <?php } else { /* if there is *no* menu bar */ ?>
 

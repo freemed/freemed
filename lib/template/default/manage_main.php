@@ -182,7 +182,7 @@ foreach ($static_components AS $garbage => $component) {
 		case "messages":
 		$modules[_("Messages")] = "messages";
 		$panel[_("Messages")] = "
-		<TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=0
+		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 		 CELLPADDING=3 CLASS=\"thinbox\"
 		 onMouseOver=\"this.className='thinbox_hilite'; return true;\"
 		 onMouseOut=\"this.className='thinbox'; return true;\">
@@ -192,7 +192,7 @@ foreach ($static_components AS $garbage => $component) {
 		</TD></TR>
 		<TR><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
-		<TABLE WIDTH=\"100%\" BORDER=\"0\">
+		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\">
 		";
 		$my_result = $sql->query("SELECT * FROM messages WHERE ".
 			"msgpatient='".urlencode($id)."' ".
@@ -200,10 +200,10 @@ foreach ($static_components AS $garbage => $component) {
 			"LIMIT ".$num_summary_items);
 		if ($sql->results($my_result)) {
 			$panel[_("Messages")] .= "<TR CLASS=\"menubar_info\">".
-				"<TD>"._("Date")."</TD>".
-				"<TD>"._("Time")."</TD>".
-				"<TD>"._("User")."</TD>".
-				"<TD>"._("Action")."</TD>".
+				"<TD><b>"._("Date")."</b></TD>".
+				"<TD><b>"._("Time")."</b></TD>".
+				"<TD><b>"._("User")."</b></TD>".
+				"<TD><b>"._("Action")."</b></TD>".
 				"</TR>\n";
 			while ($my_r = $sql->fetch_array($my_result)) {
 				// Transformations for date and time
