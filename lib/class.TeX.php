@@ -321,9 +321,18 @@ class TeX {
 	// Returns:
 	//
 	//	LaTeX-style rich text
+	//
 	function _HTMLToRichText ( $orig ) {
 		// Sanitize all but HTML markers
 		$text = $this->_SanitizeText($orig, true);
+		$text = str_replace('\\\\', '\\', $text); // kill double slashes
+
+		// Remove leading CRs if present (mucks with the formatting)
+		if (substr($text, 0, 1) == "\n") {
+			while (substr($text, 0, 1) == "\n") {
+				$text = substr($text, -(strlen($text) - 1));
+			}
+		}
 
 		// Remove ending <br /><br /> from Gecko (thanks to Volker)
 		if (substr($text, -13) == "<br /><br />\n") {
@@ -347,8 +356,9 @@ class TeX {
 		$text = preg_replace("#<U>(.*?)</U>#i", '\underline{$1}', $text);
 
 		// Switch BR and SPAN tags (fix for HTMLArea JS)
-		$text = preg_replace("#<BR\s/></SPAN>#i", "</span><br />", $text);
-		$text = preg_replace("#<BR\s/></SPAN>#i", "</span><br />", $text);
+		while (preg_match("#<BR\s/></SPAN>#i", $text)) {
+			$text = preg_replace("#<BR\s/></SPAN>#i", "</span><br />", $text);
+		}
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\"><BR\s/>#i", "<br /><span style=\"font-weight: bold;\">", $text);
 
 		// Remove empty tags from HTMLarea malformatting
@@ -373,10 +383,6 @@ class TeX {
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\sTEXT\-DECORATION:\sUNDERLINE\;\">(.*?)</SPAN>#i", '\textbf{\underline{$1}}', $text);
 		$text = preg_replace("#<SPAN\sSTYLE=\"TEXT\-DECORATION:\sUNDERLINE\;\sFONT\-WEIGHT:\sBOLD\;\">(.*?)</SPAN>#i", '\textbf{\underline{$1}}', $text);
 
-		// Handle embedded CRs... for now we treat them as line
-		// breaks
-		$text = str_replace("\n", "\\  \\\\\n", $text);
-
 		// Do something about <br /> and <br> tags (<br /> are used
 		// by HTMLarea JS). For now, we treat them as though they
 		// were paragraph breaks. What is the proper way to handle
@@ -391,6 +397,10 @@ class TeX {
 		// Sanitize out quotes
 		$text = $this->_ReplaceQuotes($text);
 	
+		// Handle embedded CRs... for now we treat them as line
+		// breaks
+		$text = str_replace("\n", "\\  \\\\\n", $text);
+
 		return $text;
 	} // end method _HTMLToRichText
 
@@ -458,9 +468,11 @@ class TeX {
 		// Get rid of \r character
 		$string = str_replace("\r", "", $string);
 
-		// Sanitize {, }
+		// Sanitize {, }, [, ]
 		$string = str_replace('{', '\{', $string);
 		$string = str_replace('}', '\}', $string);
+		$string = str_replace('[', '\[', $string);
+		$string = str_replace(']', '\]', $string);
 
 		// Get rid of #, _, %, +
 		$string = str_replace('#', '\#', $string);
@@ -474,6 +486,7 @@ class TeX {
 		$string = str_replace('&lt;', '$<$', $string);
 		$string = str_replace('&gt;', '$>$', $string);
 		$string = str_replace('&', '\&', $string);
+		$string = str_replace('$', '\$', $string);
 		$string = str_replace('&nbsp;', '\\ ', $string);
 
 		// HTML/SGML specific texts
