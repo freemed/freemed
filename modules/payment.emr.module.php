@@ -6,7 +6,7 @@ LoadObjectDependency('_FreeMED.EMRModule');
 
 class PaymentModule extends EMRModule {
 
-	var $MODULE_NAME    = "Payments";
+	var $MODULE_NAME    = "Transactions";
 	var $MODULE_AUTHOR  = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
@@ -61,9 +61,25 @@ class PaymentModule extends EMRModule {
 		// Summary box information
 		$this->summary_vars = array (
 			"Date" => "payrecdt",
+			"Type" => "_type",
 			"Amount" => "_amount"
 		);
 		$this->summary_query = array (
+			"CASE payreccat ".
+				"WHEN 0 THEN '".addslashes(__("Payment"))."' ".
+				"WHEN 1 THEN '".addslashes(__("Adjustment"))."' ".
+				"WHEN 2 THEN '".addslashes(__("Refund"))."' ".
+				"WHEN 3 THEN '".addslashes(__("Denial"))."' ".
+				"WHEN 4 THEN '".addslashes(__("Rebill"))."' ".
+				"WHEN 5 THEN '".addslashes(__("Charge"))."' ".
+				"WHEN 6 THEN '".addslashes(__("Transfer"))."' ".
+				"WHEN 7 THEN '".addslashes(__("Withholding"))."' ".
+				"WHEN 8 THEN '".addslashes(__("Deductable"))."' ".
+				"WHEN 9 THEN '".addslashes(__("Fee Adjustment"))."' ".
+				"WHEN 10 THEN '".addslashes(__("Billed"))."' ".
+				"WHEN 11 THEN '".addslashes(__("Copayment"))."' ".
+				"WHEN 12 THEN '".addslashes(__("Writeoff"))."' ".
+				"ELSE '".__("Unknown")."' END AS _type",
 			"CASE (CAST(payrecamt AS CHAR) LIKE '%.%') WHEN 1 THEN CONCAT('\$', CAST(payrecamt AS CHAR)) ELSE CONCAT('\$', CAST(payrecamt AS CHAR), '.00') END AS _amount"
 		);
 
