@@ -35,13 +35,23 @@ class progressNotes extends freemedEMRModule {
 	function mod () { $this->form(); }
 
 	function form () {
-		global $display_buffer;
+		global $display_buffer, $sql, $pnoteseoc;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
 		$book = new notebook (array ("id",
 		"module", "patient", "action"),
 		NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
+		
+		switch ($action) {
+			case "add": case "addform":
+			$book->set_submit_name(_("Add"));
+			break;
+
+			case "mod": case "modform":
+			$book->set_submit_name(_("Modify"));
+			break;
+		}
      
 		if (!$book->been_here()) {
       switch ($action) { // internal switch
@@ -72,11 +82,12 @@ class progressNotes extends freemedEMRModule {
      // Check episode of care dependency
      if(check_module("episodeOfCare")) {
        // Actual piece
+	$pnoteseoc = sql_squash($pnoteseoc); // for multiple choice (HACK)
        $related_episode_array = array (
          _("Related Episode(s)") =>
            freemed_multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
                                   "eocdtlastsimilar FROM eoc WHERE ".
-                                  "eocpatient='$patient'",
+                                  "eocpatient='".addslashes($patient)."'",
                                   "eocdescrip:eocstartdate:eocdtlastsimilar",
                                   "pnoteseoc",
                                   $pnoteseoc,
@@ -100,8 +111,7 @@ class progressNotes extends freemedEMRModule {
 	   ),
 	   
          _("Description") =>
-	  "<INPUT TYPE=TEXT NAME=\"pnotesdescrip\" SIZE=25 MAXLENGTH=100
-	    VALUE=\"".prepare($pnotesdescrip)."\">\n"
+	html_form::text_widget("pnotesdescrip", 25, 100)
 	),
 	$related_episode_array,
 	array (
@@ -195,16 +205,16 @@ class progressNotes extends freemedEMRModule {
        )
      );
 
+	// Handle cancel action
+	if ($book->is_cancelled()) {
+		Header("Location: ".$this->page_name."?".
+			"module=".$this->MODULE_CLASS."&".
+			"patient=".$patient);
+		die("");
+	}
+
      if (!$book->is_done()) {
       $display_buffer .= $book->display();
-
-      $display_buffer .= "
-        <CENTER>
-         <A HREF=\"$this->page_name?module=$module&patient=$patient\"
-          >"._("Abandon ".( ($action=="addform") ?
- 	   "Addition" : "Modification" ))."</A>
-        </CENTER>
-      ";
      } else {
        switch ($action) {
         case "addform": case "add":
