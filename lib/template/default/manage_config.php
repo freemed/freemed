@@ -110,6 +110,21 @@ $book->add_page("General",
 	))
 );
 
+// Defaults for static components
+$_scs = array (
+	'appointments',
+	'custom_reports',
+	'medical_information',
+	'messages',
+	'patient_information',
+	'photo_id'
+);
+foreach ($_scs AS $this_component) {
+	if (!isset($static_components[$this_component][order])) {
+		$static_components[$this_component][order] = 5;
+	}
+}
+
 //----- Static (non-modular) configuration
 if (!isset($static_components)) $static_components = array();
 $book->add_page("Static Components",
