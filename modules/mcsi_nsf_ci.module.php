@@ -757,6 +757,15 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
             echo "Warning - No Authorization for this procedure<BR>";
         }
 
+		$da1[recid] = "DA1";
+		$da1[seqno] = "01";
+		$da1[patcntl] = $ca0[patcntl];
+		$da1[payeraddr1] = $this->CleanChar($insco->local_record[inscoaddr1]);
+		$da1[payeraddr2] = $this->CleanChar($insco->local_record[inscoaddr2]);
+		$da1[payercity] = $this->CleanChar($insco->local_record[inscocity]);
+		$da1[payerstate] = $this->CleanChar($insco->local_record[inscostate]);
+		$da1[payerzip] = $this->CleanNumber($insco->local_record[inscozip]);
+
 		$da2[recid] = "DA2";
 		$da2[seqno] = "01";
 		$da2[patcntl] = $ca0[patcntl];
@@ -768,6 +777,12 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
 
 		$buffer = "";
    		$buffer  = render_fixedRecord ($whichform,$this->record_types["da0"]);
+    
+		if ($da0[payerid] == "PAPER")
+		{ 
+        	$buffer  .= render_fixedRecord ($whichform,$this->record_types["da1"]);
+		}
+
    		$buffer .= render_fixedRecord ($whichform,$this->record_types["da2"]);
 		return $buffer;
 
@@ -994,8 +1009,21 @@ class CommercialMCSIFormsModule extends freemedBillingModule {
         // incremented as used then saved when done.
 		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
 
-		$ba0[taxid] = $this->CleanNumber($physician->local_record[physsn]);
-		$ba0[idtype] = "S";
+		if ($default_facility != 0)
+		{
+			$fac = 0;
+			$fac = freemed_get_link_rec($default_facility,"facility");
+			if (!$fac)
+				echo "Error getting facility<BR>";
+			$ba0[taxid] = $this->CleanNumber($fac[psrein]);
+			$ba0[idtype] = "E";
+			
+		}
+		else
+		{
+			$ba0[taxid] = $this->CleanNumber($physician->local_record[physsn]);
+			$ba0[idtype] = "S";
+		}
 
 		// other id's are dependant on the ins NAIC no
 

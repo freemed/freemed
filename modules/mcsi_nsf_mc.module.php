@@ -156,7 +156,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 						$file_buffer .= "\n";
 					}
 					//$filename = PHYSICAL_LOCATION_BILLS."/mcsi_comm_bills-".$cur_date.gmdate("Hi").".data";
-					$filename = "/tmp/mcsi_comm_bills-".$cur_date.gmdate("Hi").".data";
+					$filename = "/tmp/mcsi_medicare_bills-".$cur_date.gmdate("Hi").".data";
         			$fp = fopen($filename,"w");
 
         			if (!$fp)
@@ -689,7 +689,7 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 		$da0[instypcd] = "MP";  // medicare primary
 		//$da0[instypcd] = $insco->modifiers[0];
 		$da0[payerid] = $this->CleanNumber($insco->local_record[inscoid]); // NAIC #
-		//$da0[payername] = $this->CleanChar($insco->insconame);
+		$da0[payername] = $this->CleanChar($insco->insconame);
 		//$da0[patgrpno] = $this->CleanNumber($coverage->covpatgrpno);
 		$da0[assign] = "Y";
 		$da0[patsigsrc] = "C";
@@ -781,6 +781,19 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		$buffer = "";
    		$buffer  = render_fixedRecord ($whichform,$this->record_types["da0"]);
+
+		if ($da0[payerid] == "PAPER")
+		{
+			$da1[recid] = "DA1";
+			$da1[seqno] = "01";
+			$da1[patcntl] = $ca0[patcntl];
+			$da1[payeraddr1] = $this->CleanChar($insco->local_record[inscoaddr1]);
+			$da1[payeraddr2] = $this->CleanChar($insco->local_record[inscoaddr2]);
+			$da1[payercity] = $this->CleanChar($insco->local_record[inscocity]);
+			$da1[payerstate] = $this->CleanChar($insco->local_record[inscostate]);
+			$da1[payerzip] = $this->CleanNumber($insco->local_record[inscozip]);
+   			$buffer  .= render_fixedRecord ($whichform,$this->record_types["da1"]);
+		}
 
 		if ($da0[patrel] != "01")
 		{
@@ -1059,8 +1072,21 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
         // incremented as used then saved when done.
 		$ba0[batchid] = $this->batchid;  // only used once for 30 days!!!
 
-		$ba0[taxid] = $this->CleanNumber($physician->local_record[physsn]);
-		$ba0[idtype] = "S";
+		if ($default_facility != 0)
+        {
+            $fac = 0;
+            $fac = freemed_get_link_rec($default_facility,"facility");
+            if (!$fac)
+                echo "Error getting facility<BR>";
+            $ba0[taxid] = $this->CleanNumber($fac[psrein]);
+            $ba0[idtype] = "E";
+
+        }
+        else
+        {
+            $ba0[taxid] = $this->CleanNumber($physician->local_record[physsn]);
+            $ba0[idtype] = "S";
+        }
 
 		// other id's are dependant on the ins NAIC no
 

@@ -6,6 +6,10 @@ freemed project changelog
   - index.php left in commented out test code for above
   - patient.php circumvent error caused by API change above
   - lib/freemed.php  add include for lib/API.php
+  - mcsi_nsf_ci and mc needed DA1 record when submitting paper claims
+    to MCSI. use psrein if available else physsn
+  - provider.module fix loss of physsn after a mod. 
+    fix link for Abandon to this->page_name
 
 * Fri Mar 23 2001 fforest
   - fixedform_EN.data update with new requirements for

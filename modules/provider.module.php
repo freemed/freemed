@@ -92,6 +92,7 @@ class providerMaintenance extends freemedMaintenanceModule {
     {
         global $$v;
     }
+	global $physsn1,$physsn2,$physsn3;
 
     $r = freemed_get_link_rec ($id, $this->table_name);
     extract ($r);
@@ -481,7 +482,7 @@ class providerMaintenance extends freemedMaintenanceModule {
     echo "<CENTER>\n".$book->display()."</CENTER>
     <P ALIGN=CENTER>
      <$STDFONT_B>
-     <A HREF=\"$page_name?$_auth\">
+     <A HREF=\"$this->page_name?$_auth&module=$module&action=view\">
       "._("Abandon ".( (($action=="modform") OR ($action=="mod")) ? 
       "Modification" : "Addition") )."
      </A>
