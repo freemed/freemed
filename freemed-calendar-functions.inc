@@ -141,7 +141,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
       <TR BGCOLOR=#000000><TD BGCOLOR=#ffffff COLSPAN=2 ALIGN=CENTER
        VALIGN=CENTER>
        <$STDFONT_B><B>$datestring</B> - <I>".$current_imap["count"].
-         " _("appointment(s)")."</I><$STDFONT_E>
+         _("appointment(s)")."</I><$STDFONT_E>
       </TD></TR>
     ";
 
@@ -435,7 +435,7 @@ define (__FREEMED_CALENDAR_FUNCTIONS_INC__, true);
      <$STDFONT_B>
       <A HREF=\"$this_url&selected_date=".$cur_year."-".$cur_month."-".
        $cur_day."\"
-      ><$STDFONT_B>"_("go to today")."<$STDFONT_E></A>
+      ><$STDFONT_B>"._("go to today")."<$STDFONT_E></A>
      </TD>
      </TR>
      </TABLE>
