@@ -45,9 +45,9 @@ switch ($action) {
 		);
 		if (!$imagefilename) {
 			$display_buffer .= "
-			<DIV ALIGN=\"CENTER\">
+			<div ALIGN=\"CENTER\">
 			"._("Failed to attach the image.")."
-			</DIV>
+			</div>
 			";
 			break;
 		} else {
@@ -64,36 +64,36 @@ switch ($action) {
 
 		// Show widget
 		$display_buffer .= "
-		<DIV ALIGN=\"CENTER\">
+		<div ALIGN=\"CENTER\">
 		"._("Attach Photographic Identification")."
-		</DIV>
-		<DIV ALIGN=\"CENTER\">
-		<FORM METHOD=\"POST\" NAME=\"form\" ENCTYPE=\"multipart/form-data\" ACTION=\"".page_name()."\" NAME=\"myform\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" VALUE=\"10000000\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"upload\">
+		</div>
+		<div ALIGN=\"CENTER\">
+		<form METHOD=\"POST\" NAME=\"form\" ENCTYPE=\"multipart/form-data\" ACTION=\"".page_name()."\" NAME=\"myform\">
+		<input TYPE=\"HIDDEN\" NAME=\"MAX_FILE_SIZE\" VALUE=\"10000000\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"upload\"/>
 		";
 		if ($IEupload) {
 			$display_buffer .= "
-			<SCRIPT LANGUAGE=\"VBScript\">
+			<script LANGUAGE=\"VBScript\">
 			<!--
 			Sub ScanControl_ScanComplete(FileName)
 				document.myform.userfile.focus()
 				document.myform.ScanControl.PasteName()
 			End Sub
 			-->
-			</SCRIPT>
-			<OBJECT ID=\"ScanControl\"
+			</script>
+			<object ID=\"ScanControl\"
 			CLASSID=\"CLSID:4A72D130-BBAD-45BD-AB11-E506466200EA\"
 			CODEBASE=\"./lib/webscanner.cab#version=1,0,0,20\">
-			</OBJECT><BR/>
+			</object><br/>
 			";
 		}
 		$display_buffer .= "
-		<INPUT TYPE=\"FILE\" NAME=\"userfile\">
-		<INPUT TYPE=\"SUBMIT\" VALUE=\""._("Attach Image")."\">
-		</FORM>
-		</DIV>
+		<input TYPE=\"FILE\" NAME=\"userfile\"/>
+		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Attach Image")."\"/>
+		</form>
+		</div>
 		";
 		break; // end default
 }

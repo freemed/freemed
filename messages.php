@@ -32,8 +32,8 @@ switch ($action) {
 	if (!isset($msgurgency)) { $msgurgency = 3; }
 
 	// If !been_here and there's a current patient, use them
-	if ((!$been_here) and $SESSION["current_patient"]>0) {
-		$msgpatient = $SESSION["current_patient"];
+	if ((!$been_here) and $_COOKIE['current_patient']>0) {
+		$msgpatient = $_COOKIE['current_patient'];
 	}
 
 	$display_buffer .= "
@@ -81,8 +81,9 @@ switch ($action) {
 
 	<p/>
 	<div ALIGN=\"CENTER\">
-	<input TYPE=\"SUBMIT\" NAME=\"submit_action\" VALUE=\" "._("Add")." \" />
-	<input TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
+	<input class=\"button\" TYPE=\"SUBMIT\" ".
+	"NAME=\"submit_action\" VALUE=\" "._("Add")." \" />
+	<input class=\"button\" TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
 	</div>
 	</form>
 	<p/>
@@ -128,7 +129,7 @@ switch ($action) {
 
 	// Check if we return to management
 	if ($return=="manage") {
-		Header("Location: manage.php?id=".$SESSION["current_patient"]);
+		Header("Location: manage.php?id=".$_COOKIE['current_patient']);
 		die("");
 	} else {
 		// Otherwise refresh to messages screen
@@ -147,7 +148,7 @@ switch ($action) {
 
 	// Check if we return to management
 	if ($return=="manage") {
-		Header("Location: manage.php?id=".$SESSION["current_patient"]);
+		Header("Location: manage.php?id=".$_COOKIE['current_patient']);
 		die("");
 	} else {
 		// Otherwise refresh to messages screen
@@ -191,18 +192,14 @@ switch ($action) {
 		$paging = ($total_results > PAGE_ROLL);
 	}
 
-	$display_buffer .= "<div ALIGN=\"CENTER\" CLASS=\"infobox\">\n".
-		"<a HREF=\"messages.php?action=addform\">".
-		_("Add Message")."</a> | \n".
-		( ($old != 1) ?
-			"<a HREF=\"messages.php?old=1\">".
-			_("Old Messages")."</a> | \n" :
-			"<a HREF=\"messages.php?old=0\">".
-			_("New Messages")."</a> | \n"
-		).
-		"<a HREF=\"main.php\">".
-		_("Main Menu")."</a>\n".
-		"</div>\n";
+	$display_buffer .= 
+		template::link_bar(array(
+		_("Add Message") =>
+		"messages.php?action=addform",
+		( ($old != 1) ? _("Old Messages") : _("New Messages") ) =>
+		( ($old != 1) ? "messages.php?old=1" : "messages.php?old=0" ),
+		_("Main Menu") =>
+		"main.php" ));
 
 	// View list of messages for this doctor
 	$query = "SELECT * FROM messages ".
@@ -314,27 +311,24 @@ switch ($action) {
 		<div ALIGN=\"CENTER\">
 			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"mark\"/>
 			<input TYPE=\"BUTTON\" VALUE=\""._("Select All")."\" ".
-			"onClick=\"selectAll(this.form); return true;\"/>
+			"onClick=\"selectAll(this.form); return true;\" ".
+			"class=\"button\"/>
 			".( ($old==0) ?
-			"<input TYPE=\"SUBMIT\" VALUE=\""._("Mark as Read")."\"/>" :"")."
+			"<input class=\"button\" TYPE=\"SUBMIT\" ".
+				"VALUE=\""._("Mark as Read")."\"/>" :"")."
 			</form>
 		</div>
 		";
 	}
 
-	$display_buffer .= "<div ALIGN=\"CENTER\" CLASS=\"infobox\">\n".
-		"<a HREF=\"messages.php?action=addform\">".
-		_("Add Message")."</a> | \n".
-		( ($old != 1) ?
-			"<a HREF=\"messages.php?old=1\">".
-			_("Old Messages")."</a> | \n" :
-			"<a HREF=\"messages.php?old=0\">".
-			_("New Messages")."</a> | \n"
-		).
-		"<a HREF=\"main.php\">".
-		_("Main Menu")."</a>\n".
-		"</div>\n";
-
+	$display_buffer .= 
+		template::link_bar(array(
+		_("Add Message") =>
+		"messages.php?action=addform",
+		( ($old != 1) ? _("Old Messages") : _("New Messages") ) =>
+		( ($old != 1) ? "messages.php?old=1" : "messages.php?old=0" ),
+		_("Main Menu") =>
+		"main.php" ));
 	break;
 
 } // end master switch

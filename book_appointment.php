@@ -19,8 +19,8 @@ if ($travel) {
 	$patient = 0; $type = "pat"; $room = 0;
 } elseif ($patient>0) {
 	$this_patient = CreateObject('FreeMED.Patient', $patient, ($type=="temp"));
-} elseif ($SESSION["current_patient"]>0) {
-	$this_patient = CreateObject('FreeMED.Patient', $SESSION["current_patient"]);
+} elseif ($_COOKIE["current_patient"]>0) {
+	$this_patient = CreateObject('FreeMED.Patient', $_COOKIE["current_patient"]);
 	$type = "pat"; // kludge to keep real patient for this
 }
 
@@ -103,6 +103,7 @@ $form .= "
 			"SELECT phylname,phyfname, ".
 			"CONCAT(phylname,', ',phyfname) AS k,".
 			"id AS v FROM physician ".
+			"WHERE phylname != '' ".
 			"ORDER BY phylname,phyfname"
 		),
 		array('refresh' => true)
@@ -148,10 +149,12 @@ $form .= "
 
 	), "", "", "")."
 
-	<DIV ALIGN=\"CENTER\"><INPUT TYPE=\"SUBMIT\" VALUE=\"Refresh\"></DIV>
+	<div ALIGN=\"CENTER\">
+		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"Refresh\"/>
+	</div>
 
-	</TD>
-	</TR>
+	</td>
+	</tr>
 ";
 
 //----- Generate calendar

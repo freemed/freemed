@@ -37,8 +37,8 @@ switch ($action) {
 	))."
 	</div>
 	<div align=\"center\">
-	<input type=\"submit\" name=\"submit\" value=\""._("Update")."\"/>
-	<input type=\"submit\" name=\"submit\" value=\""._("Cancel")."\"/>
+	<input class=\"button\" type=\"submit\" name=\"submit\" value=\""._("Update")."\"/>
+	<input class=\"button\" type=\"submit\" name=\"submit\" value=\""._("Cancel")."\"/>
 	</div>
 	</form>
 	";

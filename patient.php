@@ -780,11 +780,6 @@ switch ($action) {
      else        { $display_buffer .= _("ERROR");    }
     $display_buffer .= "
      </div>
-     <p/>
-     <div ALIGN=\"CENTER\">
-     <a HREF=\"patient.php\"
-     >"._("back")."</a>
-     </div>
     ";
   break; // end action delete
 
@@ -871,13 +866,7 @@ switch ($action) {
 	ITEMLIST_MOD|ITEMLIST_VIEW
       );
 
-      $display_buffer .= "
-       <p/>
-       <div ALIGN=\"CENTER\">
-        <a HREF=\"$page_name\">"._("back")."</a>
-       </div>
-       <p/>
-       ";
+      $display_buffer .= "<p/>\n";
   break; // end action find
  
   case "display":
@@ -1003,7 +992,7 @@ switch ($action) {
       )."	
       <i><small>"._("contains")."</small></i>
       ".html_form::text_widget('f2', 15, 30)."
-      <input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
       </form>
       <p/>
 
@@ -1020,22 +1009,26 @@ switch ($action) {
       )."
         <i><small>"._("sounds like")."</small></i>
       ".html_form::text_widget('f2', 15, 30)."
-      <input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
       </form>
       <p/>
+      </div>
 
-      <a HREF=\"$page_name?action=find&criteria=all&f1=\"
-       >"._("Show all Patients")."</a> |
-      <a HREF=\"$page_name?action=addform\"
-       >"._("Add Patient")."</a> |
-      <a HREF=\"call-in.php\"
-       >"._("Call In Menu")."</a>
-      </div>
+      ".template::link_bar(array(
+      		_("Show All Patients") =>
+      		"$page_name?action=find&criteria=all&f1=",
+
+       		_("Add Patient") =>
+      		"$page_name?action=addform",
+
+      		_("Call In Menu") =>
+      		"call-in.php",
+
+		_("Return to Main Menu") =>
+		"main.php"
+      ))."
+
       <p/> 
-      <div ALIGN=\"CENTER\">
-      <a HREF=\"main.php\"
-      >"._("Return to Main Menu")."</a>
-      </div>
     ";
 
     break; // end default action

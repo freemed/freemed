@@ -16,13 +16,13 @@ freemed_open_db ();
 if ($patient<1) {
   $page_title = _($record_name)." :: "._("ERROR");
   $display_buffer .= "
-   <P>
-   <B>"._("You must select a patient.")."</B>
-   <P>
-   <CENTER>
-    <A HREF=\"patient.php\"
-     >"._("Select a Patient")."</A> 
-   </CENTER>
+   <p/>
+   <b>"._("You must select a patient.")."</b>
+   <p/>
+   <div ALIGN=\"CENTER\">
+    <a class=\"button\" HREF=\"patient.php\"
+     >"._("Select a Patient")."</a> 
+   </div>
    <P>
   ";
   template_display();
@@ -35,16 +35,16 @@ if ( (($action=="addform") or ($action=="modform") or
       AND ($form<1)) {
   $page_title = _($record_name)." :: "._("ERROR");
   $display_buffer .= "
-   <P>
-   <CENTER>
-    <B>"._("You must select a template.")."</B>
-   </CENTER>
-   <P>
-   <CENTER>
-   <A HREF=\"manage.php?id=".urlencode($patient)."\"
-    >"._("Manage Patient")."</A> 
-   </CENTER>
-   <P>
+   <p/>
+   <div align=\"CENTER\">
+    <b>"._("You must select a template.")."</b>
+   </div>
+   <p/>
+   <div align=\"CENTER\">
+   <a class=\"button\" HREF=\"manage.php?id=".urlencode($patient)."\"
+    >"._("Manage Patient")."</a> 
+   </div>
+   <p/>
   ";
   template_display();
 } // end checking for valud form
@@ -95,13 +95,13 @@ switch ($action) {
    $page_title = (($action=="addform") ? _("Add") : _("Modify")).
      " "._($record_name); 
    $display_buffer .= freemed::patient_box($this_patient)."
-    <P>
-    <FORM ACTION=\"$page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-     <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"".prepare($id)."\">
-     <INPUT TYPE=HIDDEN NAME=\"form\"    VALUE=\"".prepare($form)."\">
-    <TABLE WIDTH=100% BORDER=0 CELLSPACING=2 CELLPADDING=5
-     VALIGN=MIDDLE ALIGN=CENTER>
+    <p/>
+    <form ACTION=\"".$page_name."\" METHOD=\"POST\">
+     <input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
+     <input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
+     <input TYPE=\"HIDDEN\" NAME=\"form\" VALUE=\"".prepare($form)."\"/>
+    <table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"2\" CELLPADDING=\"5\"
+     VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
    ";
 
    // now, here's the heart of the whole routine...
@@ -116,31 +116,28 @@ switch ($action) {
 
    // function name
    $display_buffer .= "
-    <TR BGCOLOR=#000000>
-     <TD COLSPAN=2>
-      <CENTER>
-      <FONT COLOR=#cccccc><B>".prepare($f_r["prtname"])."</B></FONT>
-      </CENTER>
-     </TD>
-    </TR>
+    <tr class=\"reverse\">
+     <td COLSPAN=\"2\" align=\"center\">
+      <b>".prepare($f_r["prtname"])."</b>
+     </td>
+    </tr>
    ";
 
    for ($i=0;$i<$number_of_questions;$i++) {
-     $this_question = prepare(chop($prtfname[$i]));
      $this_type     = $prtftype[$i]; // get the type of question
      // begin the row...
      if ($prtftype[$i] != "heading") {
       $display_buffer .= "
-       <TR>
-       <TD ALIGN=RIGHT>
-        <B>$this_question</B>
-       </TD>
-       <TD ALIGN=LEFT>
+       <tr>
+       <td ALIGN=\"RIGHT\">
+        <b>".prepare(chop($this_question))."</b>
+       </td>
+       <td ALIGN=\"LEFT\">
       ";
      } else {
       $display_buffer .= "
-       <TR>
-       <TD ALIGN=CENTER VALIGN=MIDDLE COLSPAN=2 BGCOLOR=#bbbbbb>
+       <tr>
+       <td ALIGN=\"CENTER\" VALIGN=\"MIDDLE\" COLSPAN=\"2\" BGCOLOR=\"#bbbbbb\">
       ";
      } // end if/else for heading
      $this_answer = ${"answer".$i};
@@ -226,10 +223,10 @@ switch ($action) {
         $this_m = substr($this_answer, 5, 2);
         $this_d = substr($this_answer, 8, 2);
         $display_buffer .= "
-         <I>".prepare($this_answer)."</I>
-         <INPUT TYPE=HIDDEN NAME=\"answer".$i."_y\" VALUE=\"$this_y\">
-         <INPUT TYPE=HIDDEN NAME=\"answer".$i."_m\" VALUE=\"$this_m\">
-         <INPUT TYPE=HIDDEN NAME=\"answer".$i."_d\" VALUE=\"$this_d\">
+         <i>".prepare($this_answer)."</i>
+         <input TYPE=\"HIDDEN\" NAME=\"answer".$i."_y\" VALUE=\"$this_y\"/>
+         <input TYPE=\"HIDDEN\" NAME=\"answer".$i."_m\" VALUE=\"$this_m\"/>
+         <input TYPE=\"HIDDEN\" NAME=\"answer".$i."_d\" VALUE=\"$this_d\"/>
         ";
        } else { $display_buffer .= fm_date_entry("answer$i"); }
        break;
@@ -237,37 +234,37 @@ switch ($action) {
        $options = explode(",", $prtftypefor[$i]); // get options
        if (count($options)<1) { $display_buffer .= _("ERROR")."\n"; break; }
        if (!$leftright) {
-        $display_buffer .= "\n<SELECT NAME=\"answer$i\">\n";
+        $display_buffer .= "\n<select NAME=\"answer$i\">\n";
         for ($each_option=0;$each_option<count($options);$each_option++) {
           $options[$each_options] = chop($option[$each_option]);
           if ($this_answer==$options[$each_option]) { $select = "SELECTED"; }
            else                                     { $select = "";         }
           if (!empty($options[$each_option]))
-          $display_buffer .= "<OPTION VALUE=\"".$options[$each_option]."\" $select>".
-              $options[$each_option]."\n"; // display the option
+          $display_buffer .= "<option VALUE=\"".$options[$each_option]."\" $select>".
+              $options[$each_option]."</option>\n"; // display the option
         } // end for
-        $display_buffer .= "\n</SELECT>\n";
+        $display_buffer .= "\n</select>\n";
        } else { // if it _is_ left&right
-        $display_buffer .= "\n<B>L</B>&nbsp;<SELECT NAME=\"answer".$i."_l\">\n";
+        $display_buffer .= "\n<b>L</b>&nbsp;<select NAME=\"answer".$i."_l\">\n";
         for ($each_option=0;$each_option<count($options);$each_option++) {
           $options[$each_option] = chop($options[$each_option]);
           if ($this_answer_l==$options[$each_option]) { $select = "SELECTED"; }
            else                                       { $select = "";         }
           if (!empty($options[$each_option]))
-           $display_buffer .= "<OPTION VALUE=\"".$options[$each_option]."\" $select>".
-                 $options[$each_option]."\n"; // display the option
+           $display_buffer .= "<option VALUE=\"".$options[$each_option]."\" $select>".
+                 $options[$each_option]."</option>\n"; // display the option
         } // end for
-        $display_buffer .= "\n</SELECT>\n";
-        $display_buffer .= "\n&nbsp;<B>R</B>&nbsp;<SELECT NAME=\"answer".$i."_r\">\n";
+        $display_buffer .= "\n</select>\n";
+        $display_buffer .= "\n&nbsp;<b>R</b>&nbsp;<select NAME=\"answer".$i."_r\">\n";
         for ($each_option=0;$each_option<count($options);$each_option++) {
           $options[$each_option] = chop($options[$each_option]);
           if ($this_answer_r==$options[$each_option]) { $select = "SELECTED"; }
            else                                       { $select = "";         }
           if (!empty($options[$each_option]))
-           $display_buffer .= "<OPTION VALUE=\"".$options[$each_option]."\" $select>".
-                 $options[$each_option]."\n"; // display the option
+           $display_buffer .= "<option VALUE=\"".$options[$each_option]."\" $select>".
+                 $options[$each_option]."</option>\n"; // display the option
         } // end for
-        $display_buffer .= "\n</SELECT>\n";
+        $display_buffer .= "\n</select>\n";
        } // end left/right clause
        break;
       case "text":
@@ -278,8 +275,8 @@ switch ($action) {
          $size      = $prtfmaxlen[$i] + 1; // convert to number, KFM +1 fix
          $maxlength = $size - 1;           // recalc maximum length
        }
-       $display_buffer .= "<INPUT TYPE=TEXT NAME=\"answer$i\" SIZE=$size MAXLENGTH=$maxlength
-              VALUE=\"".prepare($this_answer)."\">\n";
+       $display_buffer .= "<input TYPE=\"TEXT\" NAME=\"answer$i\" SIZE=\"$size\" ".
+              "MAXLENGTH=\"$maxlength\" VALUE=\"".prepare($this_answer)."\"/>\n";
        break;
       case "phone":
        $display_buffer .= fm_phone_entry ("answer$i");
@@ -287,14 +284,15 @@ switch ($action) {
       case "heading":
        $display_buffer .= "
         ".prepare($prtfname[$i])."
-        <INPUT TYPE=HIDDEN NAME=\"answer$i\" VALUE=\"\">
+        <input TYPE=\"HIDDEN\" NAME=\"answer$i\" VALUE=\"\"/>
        ";
        break;
       case "check": // checkbox
        if (empty($prtftypefor[$i])) {
          if (strtolower($this_answer)=="on") { $this_checked = "CHECKED"; }
           else                               { $this_checked = "";        }
-         $display_buffer .= "<INPUT TYPE=CHECKBOX NAME=\"answer$i\" $this_checked>\n";
+         $display_buffer .= "<input TYPE=\"CHECKBOX\" NAME=\"answer$i\" ".
+	       "$this_checked/>\n";
        } else { // if it is _not_ empty...
          $params = explode (",", $prtftypefor[$i]);
          for ($cb=0;$cb<count($params);$cb++) {
@@ -302,8 +300,8 @@ switch ($action) {
            if (fm_value_in_array($this_answer, $params[$cb]))
                                              { $this_checked = "CHECKED"; }
            else                              { $this_checked = "";        }
-           $display_buffer .= "<INPUT TYPE=CHECKBOX NAME=\"answer$i$brackets\" ".
-                "VALUE=\"".$params[$cb]."\" $this_checked>".$params[$cb].
+           $display_buffer .= "<input TYPE=\"CHECKBOX\" NAME=\"answer$i$brackets\" ".
+                "VALUE=\"".$params[$cb]."\" $this_checked/>".$params[$cb].
                 "&nbsp;\n";
          } // end of "for" loop 
        } // end of checking for formatting field empty
@@ -314,24 +312,24 @@ switch ($action) {
      } // end switch for this_type
      // end the row...
      $display_buffer .= "
-       </TD>
-      </TR>
+       </td>
+      </tr>
      "; 
    } // end $i for loop (loop for display questions
 
    $display_buffer .= "
-     </TABLE>
-     <P>
-     <CENTER>
-     <SELECT NAME=\"action\">
-      <OPTION VALUE=\"".( ($action=="addform") ? "add" : "mod" )."\">".
-        ( ($action=="addform") ? _("Add") : _("Modify") )."
-      <OPTION VALUE=\"\">"._("back")."
-     </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
-     </CENTER>
-    </FORM>
-    <P>
+     </table>
+     <p/>
+     <div align=\"CENTER\">
+     <select NAME=\"action\">
+      <option VALUE=\"".( ($action=="addform") ? "add" : "mod" )."\">".
+        ( ($action=="addform") ? _("Add") : _("Modify") )."</option>
+      <option VALUE=\"\">"._("back")."</option>
+     </select>
+     <input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\""._("Go")."\"/>
+     </div>
+    </form>
+    <p/>
    ";
    break; // end add/modform
 
@@ -381,19 +379,19 @@ switch ($action) {
    // do action specific things
    switch ($action) {
      case "add":
-      $query = "INSERT INTO $table_name VALUES (
-                '".addslashes($patient).  "',
-                '".addslashes($form).     "',
-                '$cur_date',
+      $query = "INSERT INTO ".$table_name." VALUES (
+                '".addslashes($patient)."',
+                '".addslashes($form)."',
+                '".date("Y-m-d")."',
                 '',
                 '".addslashes($this_data)."',
                 NULL )";
       break;
      case "mod":
       $query = "UPDATE $table_name SET
-                prpatient  = '".addslashes($patient)  ."',
-                prtemplate = '".addslashes($form)     ."',
-                prdtmod    = '$cur_date',
+                prpatient  = '".addslashes($patient)."',
+                prtemplate = '".addslashes($form)."',
+                prdtmod    = '".date("Y-m-d")."',
                 prdata     = '".addslashes($this_data)."'
                 WHERE   id = '$id'";
       break;
@@ -401,117 +399,118 @@ switch ($action) {
    $page_title =  ( ($action=="add") ? _("Adding") : _("Modifying")).
      " "._($record_name);
    $display_buffer .= "
-     <P><CENTER>
+     <p/><div align=\"CENTER\">
      ".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
     ";
-   if ($debug)    $display_buffer .= "<BR>(query = \"$query\")<BR>\n";
+   if ($debug)    $display_buffer .= "<br/>(query = \"$query\")<br/>\n";
    $result = $sql->query ($query); // send the prepared query through
    if ($result) { $display_buffer .= _("done").".\n"; }
     else        { $display_buffer .= _("ERROR")."\n"; }
    $display_buffer .= "
-    </CENTER>
-    <P>
-    <CENTER>
-     <A HREF=\"manage.php?id=".urlencode($patient)."\"
-      >"._("Manage Patient")."</A> | 
-     <A HREF=\"$page_name?patient=".urlencode($patient)."\"
-      >"._("View/Modify")." "._($record_name)."</A>
-    </CENTER>
-    <P>
+    </div>
+    <p/>
+    ".template::link_bar(array(
+		_("Manage Patient") =>
+		"manage.php?id=".urlencode($patient),
+
+		_("View/Modify")." "._($record_name) =>
+		$page_name."?patient=".urlencode($patient)
+    ))."
+    <p/>
     ";
    break;
 
   default: // default view is listing...
    $page_title = _($record_name);
-   $result = $sql->query ("SELECT * FROM $table_name
-                         WHERE prpatient='".addslashes($patient)."'
-                         ORDER BY prdtadd DESC");
-   if (($result==0) or ($sql->num_rows($result)<1)) {
+   $result = $sql->query ("SELECT * FROM ".$table_name." ".
+                         "WHERE prpatient='".addslashes($patient)."' ".
+                         "ORDER BY prdtadd DESC");
+   if (!$sql->results($result)) {
      $display_buffer .= freemed::patient_box($this_patient)."
-      <P>
-      <CENTER>
-       <B>"._("No records for this patient.")."</B>
-      </CENTER>
-      <P>
-      <CENTER>
-      <FORM ACTION=\"$page_name\" METHOD=POST>
-       <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"addform\">
-       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-       <SELECT NAME=\"form\">
-        <OPTION VALUE=\"\">"._("NONE SELECTED")."
+      <p/>
+      <div align=\"CENTER\">
+       <b>"._("No records for this patient.")."</b>
+      </div>
+      <p/>
+      <div align=\"CENTER\">
+      <FORM ACTION=\"$page_name\" METHOD=\"POST\">
+       <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\"/>
+       <input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
+       <select NAME=\"form\">
+        <option VALUE=\"\">"._("NONE SELECTED")."</option>
      ";
-     $f_result = $sql->query ("SELECT * FROM patrectemplate
-                             ORDER BY prtname");
+     $f_result = $sql->query ("SELECT * FROM patrectemplate ".
+                             "ORDER BY prtname");
      while ($f_r = $sql->fetch_array ($f_result)) {
-       $display_buffer .= "<OPTION VALUE=\"".$f_r["id"]."\">".$f_r["prtname"]."\n";
+       $display_buffer .= "<option VALUE=\"".$f_r["id"]."\">".$f_r["prtname"].
+             "</option>\n";
      } // end of this internal loop
      $display_buffer .= "
-       </SELECT>
-       <INPUT TYPE=SUBMIT VALUE=\""._("Add")."\">
-      </FORM>
-      </CENTER>
-      <P>
-      <CENTER>
-       <A HREF=\"manage.php?id=$patient\"
-        >"._("Manage Patient")."</A> |
-       <A HREF=\"main.php\"
-        >"._("Return to the Main Menu")."</A>
-      </CENTER>
-      <P>
+       </select>
+       <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"/>
+      </form>
+      </div>
+      <p/>".template::link_bar(array(
+		_("Manage Patient") =>
+		"manage.php?id=$patient",
+
+		_("Return to the Main Menu") =>
+		"main.php"
+      ))."<p/>
       ";
      template_display();
    } // end checking if no result
    $display_buffer .= freemed::patient_box($this_patient)."
-     <P>
-     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0
-      VALIGN=MIDDLE ALIGN=CENTER> 
-      <TR CLASS=\"reverse\">
-       <TD><b>"._("Date Added")."</b></TD>
-       <TD><b>"._("Form")."</b></TD>
-       <TD><b>"._("Action")."</b></TD>
-      </TR>
+     <p/>
+     <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\"
+      VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"> 
+      <tr CLASS=\"reverse\">
+       <td><b>"._("Date Added")."</b></td>
+       <td><b>"._("Form")."</b></td>
+       <td><b>"._("Action")."</b></td>
+      </tr>
     ";
+    while ($r = $sql->fetch_array($result)) {
      $dtadd    = $r["prdtadd"   ];
      $form_template = $r["prtemplate"];
      $id       = $r["id"        ];
      $formname = freemed::get_link_field ($form_template, "patrectemplate",
                                          "prtname");
      $display_buffer .= "
-      <TR CLASS=\"".freemed_alternate()."\">
-       <TD>$dtadd</TD>
-       <TD>".prepare($formname)."</TD>
-       <TD>
+      <tr CLASS=\"".freemed_alternate()."\">
+       <td>$dtadd</td>
+       <td>".prepare($formname)."</td>
+       <td>
       ";
      if (0==0)
       $display_buffer .= "
-       <A HREF=\"$page_name?id=$id&patient=$patient&".
+       <a class=\"button\" HREF=\"$page_name?id=$id&patient=$patient&".
         "form=$form_template&action=modform\"
-       ><FONT SIZE=-1>"._("MOD")."</FONT></A>
+       >"._("MOD")."</a>
       ";
 
      if (freemed::user_flag(USER_DELETE))
       $display_buffer .= "
-       <A HREF=\"$page_name?id=$id&patient=$patient&action=del\"
-       ><FONT SIZE=-1>"._("DEL")."</FONT></A>
+       <a class=\"button\" HREF=\"$page_name?id=$id&patient=$patient&action=del\"
+       >"._("DEL")."</a>
       ";
 
      $display_buffer .= "
        &nbsp;
-       </TD> 
-      </TR>
+       </td> 
+      </tr>
       ";
    } // end while loop
    $display_buffer .= "
-    </TABLE>
-    <P>
-    <CENTER>
-     <A HREF=\"manage.php?id=$patient\"
-     >"._("Manage Patient")."</A> |
-     <A HREF=\"main.php\"
-     >"._("Return to the Main Menu")."</A>
-    </CENTER>
-    <P>
-    "; // end table
+    </table>
+    <p/>".template::link_bar(array(
+		_("Manage Patient") =>
+		"manage.php?id=$patient",
+
+		_("Return to the Main Menu") =>
+		"main.php"
+      ))."<p/>
+    ";
    break;
 } // end master action switch
 

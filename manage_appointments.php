@@ -4,22 +4,22 @@
  // lic : GPL, v2
 
 $page_name = "manage_appointments.php";
-include ("lib/freemed.php");
-include ("lib/calendar-functions.php");
+include_once ("lib/freemed.php");
+include_once ("lib/calendar-functions.php");
 
 freemed_open_db ();
 
 if ($patient<1) {
    $page_title = _("Manage Appointments")." :: "._("ERROR");
    $display_buffer .= "
-     <P>
+     <p/>
      "._("You must select a patient.")."
-     <P>
-     <CENTER>
-      <A HREF=\"patient.php\"
-       >"._("Select a Patient")."</A>
-     </CENTER>
-     <P>
+     <p/>
+     <div align=\"CENTER\">
+      <a HREF=\"patient.php\" class=\"button\"
+       >"._("Select a Patient")."</a>
+     </div>
+     <p/>
     ";
    template_display();
 } // end checking for patient
@@ -32,16 +32,12 @@ if ($patient<1) {
    $result = $sql->query ($query);
    if ($result) { $display_buffer .= _("done")."."; }
     else        { $display_buffer .= _("ERROR");    }
-   $display_buffer .= "
-    <P>
-    <CENTER>
-     <A HREF=\"$page_name?action=view&patient=$patient\"
-     >"._("Manage Appointments")."</A> <B>|</B>
-     <A HREF=\"manage.php?id=$patient\"
-     >"._("Manage Patient")."</A>
-    </CENTER>
-    <P>
-   ";
+   $display_buffer .= "<p/>\n".template::link_bar(array(
+     _("Manage Appointments") =>
+     "$page_name?action=view&patient=$patient",
+     _("Manage Patient") =>
+     "manage.php?id=$patient" )).
+    "<p/>\n";
    break; // end delete appointment section
   default: // default action is to view appointments
    // grab patient information
@@ -49,16 +45,13 @@ if ($patient<1) {
 
    // display top of the box
    $page_title = _("Manage Appointments");
-   $display_buffer .= freemed::patient_box($this_patient)."
-     <p/>
-     <div ALIGN=\"CENTER\">
-      <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
-       >"._("Book Appointment")."</A> |
-      <A HREF=\"manage.php?id=$patient\"
-       >"._("Manage Patient")."</A>
-     </div>
-     <p/>
-    ";
+   $display_buffer .= freemed::patient_box($this_patient).
+     "<p/>\n".template::link_bar(array(
+       _("Book Appointment") =>
+      "book_appointment.php?patient=$patient&type=pat",
+       _("Manage Patient") =>
+      "manage.php?id=$patient"
+      ))."<p/>\n";
 
    // form the query
    $query = "SELECT * FROM scheduler WHERE (
@@ -79,16 +72,13 @@ if ($patient<1) {
         ALIGN=\"CENTER\"><TR><TD CLASS=\"reverse\"
         ALIGN=CENTER VALIGN=CENTER>
 	"._("This patient has no appointments.")."
-       </td></tr></table>
-       <p/>
-       <CENTER>
-       <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
-        >"._("Book Appointment")."</A> |
-       <A HREF=\"manage.php?id=$patient\"
-        >"._("Manage Patient")."</A>
-       </CENTER>
-       <P>
-      ";
+       </td></tr></table>".
+       "<p/>\n".template::link_bar(array(
+       _("Book Appointment") =>
+      "book_appointment.php?patient=$patient&type=pat",
+       _("Manage Patient") =>
+      "manage.php?id=$patient"
+      ))."<p/>\n";
    } else { // if there are results...
 
      // first display the top of the table
@@ -135,33 +125,29 @@ if ($patient<1) {
 
        // actual display
        $display_buffer .= "
-        <TR CLASS=\"".(freemed_alternate())."\">
-         <TD>$caldateof</TD>
-         <TD ALIGN=\"CENTER\">".freemedCalendar::display_time(
-		$calhour,$calminute)."<BR>
-             (".$hours."h ".$minutes."m)</TD>
-         <TD>".( !empty($location)   ? $location   : "&nbsp;" )."</TD>
-         <TD>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</TD>
-         <TD>$calcptcode</TD>
-         <TD><A HREF=\"$page_name?id=$r[id]&action=del&patient=$patient\"
-             >"._("DEL")."</A></TD>
-        </TR>
+        <tr CLASS=\"".(freemed_alternate())."\">
+         <td>$caldateof</td>
+         <td ALIGN=\"CENTER\">".freemedCalendar::display_time(
+		$calhour,$calminute)."<br/>
+             (".$hours."h ".$minutes."m)</td>
+         <td>".( !empty($location)   ? $location   : "&nbsp;" )."</td>
+         <td>".( !empty($calprenote) ? $calprenote : "&nbsp;" )."</td>
+         <td>$calcptcode</td>
+         <td><a href=\"$page_name?id=$r[id]&action=del&patient=$patient\"
+             class=\"button\">"._("DEL")."</a></td>
+        </tr>
         ";
      } // end loop for all occurances (while)
 
      // bottom of the table
      $display_buffer .= "
-       </table>
-       <p/>
-       <div ALIGN=\"CENTER\">
-        <A HREF=\"book_appointment.php?patient=$patient&type=pat\"
-         >"._("Book Appointment")."</A> |
-        <A HREF=\"manage.php?id=$patient\"
-         >"._("Manage Patient")."</A>
-       </div>
-       <p/>
-      ";
-
+       </table>".
+       "<p/>\n".template::link_bar(array(
+       _("Book Appointment") =>
+      "book_appointment.php?patient=$patient&type=pat",
+       _("Manage Patient") =>
+      "manage.php?id=$patient"
+      ))."<p/>\n";
    } // end checking for results (if)
 
    break;

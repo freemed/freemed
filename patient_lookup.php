@@ -11,7 +11,7 @@ $this_user = CreateObject('FreeMED.User');
 
 //----- Check for process
 if ($action==_("Search")) {
-	$display_buffer .= "<BODY onLoad=\"process(); return true;\">\n";
+	$GLOBALS['__freemed']['on_load'] = 'process';
 }
 
 //----- Form header
@@ -148,14 +148,14 @@ switch ($action) {
 				)
 			)
 		))."
-		<input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+		<input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\" class=\"button\"/>
 		</div>
 	";
 	break;
 } // end switch
 
 //----- End of form
-$display_buffer .= "</FORM>\n";
+$display_buffer .= "</form>\n";
 
 //----- Display template
 $GLOBALS['__freemed']['no_template_display'] = true;

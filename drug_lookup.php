@@ -12,11 +12,12 @@ $this_user = CreateObject('FreeMED.User');
 
 //----- Check for process
 if ($action==_("Search")) {
-	$display_buffer .= "<BODY onLoad=\"process(); return true;\">\n";
+	$GLOBALS['__freemed']['on_load'] = 'process';
 }
 
 //----- Form header
-$display_buffer .= "<CENTER><FORM NAME=\"lookup\" ACTION=\"".$page_name."\" ".
+$display_buffer .= "<div ALIGN=\"CENTER\">".
+	"<form NAME=\"lookup\" ACTION=\"".$page_name."\" ".
 	"METHOD=\"POST\">\n";
 
 //----- Master action switch
@@ -38,7 +39,7 @@ switch ($action) {
 	// Handle immediate passing and closing
 	if (count($list) == 1) {
 		$display_buffer .= "
-		<SCRIPT LANGUAGE=\"Javascript\">
+		<script language=\"Javascript\">
 		function process () {
 			var our_value = '".prepare($drug[0])."'
 
@@ -55,7 +56,7 @@ switch ($action) {
 			// Close the window
 			window.self.close()
 		}
-		</SCRIPT>
+		</script>
 		We should be '".prepare($drug[0])."'.
 		";
 		
@@ -67,7 +68,7 @@ switch ($action) {
 	}
 
 	$display_buffer .= "
-		<SCRIPT LANGUAGE=\"Javascript\">
+		<script language=\"Javascript\">
 		function my_process () {
 			// Pass the variable
 			opener.document.".prepare($formname).".".prepare($varname).
@@ -83,12 +84,12 @@ switch ($action) {
 			// Close the window
 			window.self.close()
 		}
-		</SCRIPT>
+		</script>
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::select_widget(
 			"list",	$pick_list
 		)."
-		<input TYPE=\"BUTTON\" NAME=\"select\" ".
+		<input class=\"button\" TYPE=\"BUTTON\" NAME=\"select\" ".
 		"VALUE=\"Select\" onClick=\"my_process(); return true;\">
 		</div>
 	";
@@ -96,23 +97,23 @@ switch ($action) {
 
 	default:
 	$display_buffer .= "
-		<INPUT TYPE=\"HIDDEN\" NAME=\"varname\" VALUE=\"".prepare($varname)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\">
-		<INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\""._("Search")."\">
+		<input TYPE=\"HIDDEN\" NAME=\"varname\" VALUE=\"".prepare($varname)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\""._("Search")."\">
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 			"._("Drug")." :
 			<input TYPE=\"TEXT\" NAME=\"drug\" ".
-			"VALUE=\"".prepare($drug)."\">
+			"VALUE=\"".prepare($drug)."\"/>
 			<input TYPE=\"SUBMIT\" NAME=\"action\" ".
-			"VALUE=\""._("Search")."\">
+			"VALUE=\""._("Search")."\" class=\"button\"/>
 		</div>
 	";
 	break;
 } // end switch
 
 //----- End of form
-$display_buffer .= "</FORM>\n";
+$display_buffer .= "</form>\n";
 
 //----- Display template
 $GLOBALS['__freemed']['no_template_display'] = true;

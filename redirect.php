@@ -31,16 +31,15 @@ switch ($location) {
   // and now the actual redirector
 Header("Location: $location");
 
-$display_buffer .= "<HTML>
-<HEAD>
-<TITLE>redirector</TITLE>
-<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$location\"> 
-</HEAD> 
-<BODY>
-<CENTER><B>"._("If your browser does not support the REFRESH tag")."
-<A HREF=\"$redirect\">"._("click here")."</A>.</B>
-</CENTER>
-</BODY></HTML>
+$display_buffer .= "<html>
+<head>
+<title>redirector</TITLE>
+<meta HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$location\"> 
+</head> 
+<body>
+<div ALIGN=\"CENTER\"><b>"._("If your browser does not support the REFRESH tag")."
+<a HREF=\"$redirect\">"._("click here")."</a>.</b></div>
+</body></html>
 ";
 
 ?>

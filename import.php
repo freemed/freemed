@@ -87,7 +87,7 @@ switch ($action) {
     </SELECT>
     <P>
     <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\"Import\">
+     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Import")."\"/>
     </CENTER>
     <P>
     <CENTER>

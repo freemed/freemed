@@ -182,7 +182,7 @@ switch($action) { // master action switch
         </B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
-      ".freemed_multiple_choice (
+      ".freemed::multiple_choice (
 	"SELECT CONCAT(psrname, ' (', psrcity, ', ', psrstate, ')') AS myfac FROM facility ORDER BY myfac", "myfac", "userfac", fm_join_from_array($userfac))."
     </TD></TR>
     </TABLE>
@@ -195,8 +195,8 @@ switch($action) { // master action switch
       <B>"._("Authorized physicians")."</B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
-      ".freemed_multiple_choice ("SELECT * FROM physician ORDER BY phylname, 
-        phyfname, phymname", "phylname:phyfname", "userphy", 
+      ".freemed::multiple_choice ("SELECT * FROM physician ORDER BY phylname, 
+        phyfname, phymname", "##phylname##, ##phyfname## ##phymname##", "userphy", 
 		fm_join_from_array($userphy))."
     </TD></TR>
     </TABLE>
@@ -209,7 +209,7 @@ switch($action) { // master action switch
     <B>"._("Authorized physician groups")."</B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
-      ".freemed_multiple_choice ("SELECT * FROM phygroup ORDER BY
+      ".freemed::multiple_choice ("SELECT * FROM phygroup ORDER BY
         phygroupname", "phygroupname", "userphygrp", 
 		fm_join_from_array($userphygrp))."
     </TD></TR>

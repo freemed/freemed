@@ -11,6 +11,12 @@ $db_name = "callin";                  // database name
 freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
+if ($_REQUEST['submit'] == _("Cancel")) {
+	Header('Location: main.php');
+	$refresh = "main.php";
+	template_display();
+}
+
 switch ($action) {
 
  case "addform":
@@ -29,174 +35,162 @@ switch ($action) {
     $citookcall = $this_user->getDescription();
   } // if there wasn't one passed to us...
   $display_buffer .= "
-    <P>
-    <FORM ACTION=\"$page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
+    <p/>
+    <form ACTION=\"$page_name\" METHOD=\"POST\">
+     <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"add\"/>
 
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2
-     VALIGN=CENTER ALIGN=CENTER><TR><TD>
+    <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
+     VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"><tr><td>
 
       <!-- form fitting box for both tables -->
 
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2
-     VALIGN=TOP ALIGN=CENTER>
-    <TR VALIGN=\"TOP\"><TD COLSPAN=2 ALIGN=CENTER VALIGN=\"TOP\">
-      <B><FONT COLOR=#000000>"._("Name")."</FONT></B>
-    </TD></TR>
-    <TR>
-     <TD WIDTH=30% ALIGN=RIGHT
-     ><FONT COLOR=#444444>"._("Last")."</FONT></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"cilname\" SIZE=20 MAXLENGTH=50
-          VALUE=\"".prepare($cilname)."\"></TD>
-    </TR>
-    <TR>
-     <TD WIDTH=30% ALIGN=RIGHT
-     ><FONT COLOR=#444444>"._("First")."</FONT></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"cifname\" SIZE=20 MAXLENGTH=50
-          VALUE=\"".prepare($cifname)."\"></TD>
-    </TR>
-    <TR>
-     <TD WIDTH=30% ALIGN=RIGHT
-     ><FONT COLOR=#444444>"._("Middle")."</FONT></TD>
-     <TD><INPUT TYPE=TEXT NAME=\"cimname\" SIZE=20 MAXLENGTH=50
-          VALUE=\"$cimname\"></TD>
-    </TR>
-    </TABLE>
+    <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
+     VALIGN=\"TOP\" ALIGN=\"CENTER\">
+    <tr VALIGN=\"TOP\"><td COLSPAN=\"2\" ALIGN=\"CENTER\" VALIGN=\"TOP\">
+      <b>"._("Name")."</b>
+    </td></tr>
+    <tr>
+     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">"._("Last")."</td>
+     <td><INPUT TYPE=TEXT NAME=\"cilname\" SIZE=20 MAXLENGTH=50
+          VALUE=\"".prepare($cilname)."\"></td>
+    </tr>
+    <tr>
+     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">"._("First")."</td>
+     <td><INPUT TYPE=TEXT NAME=\"cifname\" SIZE=\"20\" MAXLENGTH=\"50\"
+          VALUE=\"".prepare($cifname)."\"></td>
+    </tr>
+    <tr>
+     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">"._("Middle")."</td>
+     <td><INPUT TYPE=TEXT NAME=\"cimname\" SIZE=20 MAXLENGTH=50
+          VALUE=\"$cimname\"></td>
+    </tr>
+    </table>
 
-    </TD><TD>
+    </td><td>
 
-    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=TOP
-     ALIGN=CENTER BGCOLOR=\"$darker_bgcolor\">
-    <TR><TD COLSPAN=2 ALIGN=CENTER>
-     <B><FONT COLOR=#ffffff>"._("Contact Information")."</FONT></B>
-    </TD></TR>
-    <TR>
-     <TD WIDTH=40% ALIGN=RIGHT>
-     <FONT COLOR=#cccccc>"._("Home Phone")." &nbsp;
-      </FONT></TD>
-     <TD><B>(</B> <INPUT TYPE=TEXT NAME=\"cihphone1\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($cihphone1)."\">
-         <B>)</B> <INPUT TYPE=TEXT NAME=\"cihphone2\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($cihphone2)."\">
-         <B>-</B> <INPUT TYPE=TEXT NAME=\"cihphone3\" SIZE=5 MAXLENGTH=4
-                   VALUE=\"".prepare($cihphone3)."\">
-     </TD>
-    </TR>
-    <TR>
-     <TD WIDTH=40% ALIGN=RIGHT>
-     <FONT COLOR=#cccccc>"._("Work Phone")." &nbsp;
-      </FONT></TD>
-     <TD><B>(</B> <INPUT TYPE=TEXT NAME=\"ciwphone1\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($ciwphone1)."\">
-         <B>)</B> <INPUT TYPE=TEXT NAME=\"ciwphone2\" SIZE=4 MAXLENGTH=3
-                   VALUE=\"".prepare($ciwphone2)."\">
-         <B>-</B> <INPUT TYPE=TEXT NAME=\"ciwphone3\" SIZE=5 MAXLENGTH=4
-                   VALUE=\"".prepare($ciwphone3)."\">
-     </TD>
-    </TR>
-    <TR>
-     <TD WIDTH=40% ALIGN=RIGHT>
-     <FONT COLOR=#cccccc>"._("Took Call")." &nbsp;
-      </FONT></TD>
-    <TD>
-     <INPUT TYPE=TEXT NAME=\"citookcall\" SIZE=25 MAXLENGTH=50
-      VALUE=\"".prepare($citookcall)."\">
-    </TD>
-    </TR>
-    </TABLE>
+    <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\" VALIGN=\"TOP\"
+     ALIGN=\"CENTER\" CLASS=\"reverse\">
+    <tr><td COLSPAN=\"2\" ALIGN=\"CENTER\">
+     <b>"._("Contact Information")."</b>
+    </td></tr>
+    <tr>
+     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">"._("Home Phone")." &nbsp;</td>
+     <td><b>(</b> <input TYPE=\"TEXT\" NAME=\"cihphone1\" SIZE=4 MAXLENGTH=3
+                   VALUE=\"".prepare($cihphone1)."\"/>
+         <b>)</b> <input TYPE=\"TEXT\" NAME=\"cihphone2\" SIZE=4 MAXLENGTH=3
+                   VALUE=\"".prepare($cihphone2)."\"/>
+         <b>-</b> <input TYPE=\"TEXT\" NAME=\"cihphone3\" SIZE=5 MAXLENGTH=4
+                   VALUE=\"".prepare($cihphone3)."\"/>
+     </td>
+    </tr>
+    <tr>
+     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">"._("Work Phone")." &nbsp;</td>
+     <td><b>(</b> <input TYPE=\"TEXT\" NAME=\"ciwphone1\" SIZE=4 MAXLENGTH=3
+                   VALUE=\"".prepare($ciwphone1)."\"/>
+         <b>)</b> <input TYPE=\"TEXT\" NAME=\"ciwphone2\" SIZE=4 MAXLENGTH=3
+                   VALUE=\"".prepare($ciwphone2)."\"/>
+         <b>-</b> <input TYPE=\"TEXT\" NAME=\"ciwphone3\" SIZE=5 MAXLENGTH=4
+                   VALUE=\"".prepare($ciwphone3)."\"/>
+     </td>
+    </tr>
+    <tr>
+     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">"._("Took Call")." &nbsp;</td>
+    <td><input TYPE=\"TEXT\" NAME=\"citookcall\" SIZE=\"25\" MAXLENGTH=\"50\"
+      VALUE=\"".prepare($citookcall)."\"/></td>
+    </tr>
+    </table>
 
      <!-- now, end of form fitting table... -->
-    </TD></TR></TABLE>
+    </td></tr></table>
 
-    <P>
+    <p/>
     ";
     
-    if (!isset($cifacility)) $cifacility=$SESSION["default_facility"]; 
+    if (!isset($cifacility)) $cifacility=$_SESSION['default_facility']; 
       // doesn't seem to hurt, but doesn't seem to do anything...
    
     $display_buffer .= "
-    <TABLE WIDTH=100% BORDER=0 ALIGN=CENTER VALIGN=CENTER
-     CELLSPACING=0 CELLPADDING=5>
-     <TR>
-      <TD ALIGN=RIGHT><FONT>"._("Date of Birth")."</FONT></TD>
-      <TD>".fm_date_entry("cidob")."</TD>
-     </TR>
-     <TR>
-      <TD ALIGN=RIGHT><FONT>"._("Complaint")." </FONT></TD>
-      <TD><TEXTAREA NAME=\"cicomplaint\" ROWS=4 COLS=40
-           WRAP=VIRTUAL>".prepare($cicomplaint)."</TEXTAREA>
-      </TD>
-     </TR>
-     <TR>
-      <TD ALIGN=RIGHT><FONT>"._("Facility")." </FONT></TD>
-      <TD>
+    <table WIDTH=\"100%\" BORDER=\"0\" ALIGN=\"CENTER\" VALIGN=\"CENTER\"
+     CELLSPACING=\"0\" CELLPADDING=\"5\">
+     <tr>
+      <td ALIGN=\"RIGHT\">"._("Date of Birth")."</td>
+      <td>".fm_date_entry("cidob")."</td>
+     </tr>
+     <tr>
+      <td ALIGN=\"RIGHT\">"._("Complaint")."</td>
+      <td><textarea NAME=\"cicomplaint\" ROWS=\"4\" COLS=\"40\"
+           WRAP=\"VIRTUAL\">".prepare($cicomplaint)."</textarea>
+      </td>
+     </tr>
+     <tr>
+      <td ALIGN=\"RIGHT\">"._("Facility")."</td>
+      <td>
       ".freemed_display_selectbox (
       $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote"),
       "#psrname# [#psrnote#]", "cifacility")."
-      </TD>
-     </TR>
-     <TR>
-      <TD ALIGN=RIGHT><FONT>"._("Physician")." </FONT></TD>
-      <TD>
+      </td>
+     </tr>
+     <tr>
+      <td ALIGN=\"RIGHT\">"._("Physician")."</td>
+      <td>
     ";
 
     if ($ciphysician < 1) {
       $ciphysician = freemed::get_link_field ($default_facility, "facility",
         "psrdefphy");
     }
-    $phys_r = $sql->query("SELECT * FROM physician ORDER BY phylname, phyfname");
 
     $display_buffer .= "
-    ".freemed_display_selectbox($phys_r, "#phylname#, #phyfname#", "ciphysician")."
-      </TD>
-    </TR>
-    </TABLE>
-    <P>
-    <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\" "._("Add")." \"  >
-     <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
-    </CENTER>
-    </FORM>
-    <P>
+    ".freemed_display_selectbox(
+		$sql->query("SELECT * FROM physician WHERE phylname != '' ".
+				"ORDER BY phylname, phyfname"),
+		"#phylname#, #phyfname#", "ciphysician")."
+      </td>
+    </tr>
+    </table>
+    <p/>
+    <div ALIGN=\"CENTER\">
+     <input class=\"button\" name=\"submit\" TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"/>
+     <input class=\"button\" TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
+     <input class=\"button\" name=\"submit\" TYPE=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+    </div>
+    </form>
+    <p/>
   ";
   break;
 
  case "add":
   $page_title = _("Adding")." "._("$record_name");
-  $cicomplaint = addslashes ($cicomplaint);
-  $cicomment   = addslashes ($citookcall);
-  $cihphone    = $cihphone1 . $cihphone2 . $cihphone3;
-  $ciwphone    = $ciwphone1 . $ciwphone2 . $ciwphone3;
   $display_buffer .= "\n"._("Adding")." "._("$record_name")." ... \n";
-  $query = "INSERT INTO $db_name VALUES (
-    '$cilname',
-    '$cifname',
-    '$cimname',
-    '$cihphone',
-    '$ciwphone',
-    '".fm_date_assemble("cidob")."',
-    '$cicomplaint',
-    '$cur_date',
-    '$default_facility',
-    '$ciphysician',
-    '$citookcall',
-    '0',
-    NULL )";
+  $query = $sql->insert_query(
+  	"callin",
+	array (
+		'cilname',
+		'cifname',
+		'cimname',
+		'cihphone' => $cihphone1 . $cihphone2 . $cihphone3,
+		'ciwphone' => $ciwphone1 . $ciwphone2 . $ciwphone3,
+		'cidob' => fm_date_assemble('cidob'),
+		'cicomplaint',
+		'cidatestamp' => date('Y-m-d'),
+		'cifacility' => $default_facility,
+		'ciphysician',
+		'citookcall',
+		'cipatient' => '0'
+	)
+  );
   $result = $sql->query ($query);
 
   if ($result) $display_buffer .= _("done");
    else $display_buffer .= _("ERROR");
   $display_buffer .= " 
-    <P>
-    <CENTER>
-     <A HREF=\"patient.php\"
-      >Patient Menu |
-     <A HREF=\"$page_name\"
-      >Call In Menu |
-     <A HREF=\"main.php\"
-      >"._("Return to the Main Menu")."
-    </CENTER>
-    <P>
+    <p/>
+    <div ALIGN=\"CENTER\">
+     <a HREF=\"patient.php\">Patient Menu</a> |
+     <A HREF=\"call-in.php\">Call In Menu</a> |
+     <A HREF=\"main.php\">"._("Return to the Main Menu")."</a>
+    </div>
+    <p/>
   ";
   break;
 
@@ -213,23 +207,22 @@ switch ($action) {
   $cifname = $ciname ["cifname"];
   $cimname = $ciname ["cimname"];
   $display_buffer .= "
-    <TABLE WIDTH=100% CLASS=\"reverse\" CELLSPACING=0 CELLPADDING=2
-     VALIGN=CENTER ALIGN=CENTER>
-    <TR><TD ALIGN=CENTER CLASS=\"reverse\">
-      <B>$cilname, $cifname $cimname</B> : $rows "._("Appointments")."
-    </TD></TR>
-    </TABLE>
-    <P>
-    <A HREF=\"show_appointments.php?patient=$id&type=temp\"
-     >"._("Show Today's Appointments")."</A>
-    <P>
-    <A HREF=\"show_appointments.php?patient=$id&type=temp&show=all\"
-     >"._("Show All Appointments")."</A>
-    <P>
-    <A HREF=\"main.php\"
-     >"._("Return to the Main Menu")."</A>
-    </A>
-    <P>
+    <table WIDTH=\"100%\" CLASS=\"reverse\" CELLSPACING=\"0\" CELLPADDING=\"2\"
+     VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
+    <tr><td ALIGN=\"CENTER\" class=\"reverse\">
+      <b>$cilname, $cifname $cimname</b> : $rows "._("Appointments")."
+    </td></tr>
+    </table>
+    <p/>
+    <a HREF=\"show_appointments.php?patient=$id&type=temp\"
+     >"._("Show Today's Appointments")."</a>
+    <p/>
+    <a HREF=\"show_appointments.php?patient=$id&type=temp&show=all\"
+     >"._("Show All Appointments")."</a>
+    <p/>
+    <a HREF=\"main.php\"
+     >"._("Return to the Main Menu")."</a>
+    <p/>
   ";
   break;
 
@@ -240,30 +233,26 @@ switch ($action) {
   // Push onto stack
   page_push();
 
-  $display_buffer .= "
-    <BR>
-    <CENTER>
-     <A HREF=\"$page_name?type=old\"
-      >"._("Old")."</A> |
-     <A HREF=\"$page_name?type=all\"
-      >"._("All")."</A> |
-     <A HREF=\"$page_name?type=cur\"
-      >"._("Current")."</A>
-    </CENTER>
-    <BR>
-  ";
+  $display_buffer .= template::link_bar(array(
+		_("Old") =>
+		"$page_name?type=old",
+		_("All") =>
+		"$page_name?type=all",
+		_("Current") =>
+		"$page_name?type=cur"
+	))."<p/>\n";
 
   $display_buffer .= freemed_display_actionbar ($page_name);
 
   $display_buffer .= "
-    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=3 VALIGN=CENTER
-     ALIGN=CENTER CLASS=\"".freemed_alternate()."\">
-    <TR>
-     <TD><B>"._("Name")."</B></TD>
-     <TD><B>"._("Date of Call")."</B></TD>
-     <TD><B>"._("Home/Work Phone")."</B></TD>
-     <TD><B>"._("Action")."</B></TD>
-    </TR> 
+    <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"3\" VALIGN=\"CENTER\"
+     ALIGN=\"CENTER\" CLASS=\"".freemed_alternate()."\">
+    <tr>
+     <td><b>"._("Name")."</b></td>
+     <td><b>"._("Date of Call")."</b></td>
+     <td><b>"._("Home/Work Phone")."</b></td>
+     <td><b>"._("Action")."</b></td>
+    </tr> 
   ";
 
     // checks to make sure this hasn't been entered yet...
@@ -299,20 +288,21 @@ switch ($action) {
                   substr ($ciwphone_raw, 6, 4);
       else $ciwphone = "";
     if ((strlen($ciwphone)>0) and (strlen($cihphone)>0))
-      $ciphonesep = "<BR>";
+      $ciphonesep = "<br/>";
     else $ciphonesep = " ";
 
     $display_buffer .= "
-      <TR CLASS=\"".freemed_alternate()."\">
-       <TD>$cilname, $cifname$ci_comma $cimname</TD>
-       <TD>$cidatestamp</TD>
-       <TD>$ciwphone $ciphonesep $cihphone&nbsp;</TD>
-       <TD>
+      <tr CLASS=\"".freemed_alternate()."\">
+       <td>$cilname, $cifname$ci_comma $cimname</td>
+       <td>$cidatestamp</td>
+       <td>$ciwphone $ciphonesep $cihphone&nbsp;</td>
+       <td align=\"left\">
     ";
 
      // display the convert link
-    $display_buffer .= "
-     <A HREF=\"patient.php?action=addform".
+    $display_buffer .= template::link_bar(array(
+        _("Enter") =>
+     "patient.php?action=addform".
         "&ptfname=".rawurlencode ($cifname).
         "&ptlname=".rawurlencode ($cilname).
         "&ptmname=".rawurlencode ($cimname).
@@ -325,30 +315,23 @@ switch ($action) {
         "&ptdob1=".rawurlencode (substr($cidob, 0, 4)).
         "&ptdob2=".rawurlencode (substr($cidob, 5, 2)).
         "&ptdob3=".rawurlencode (substr($cidob, 8, 2)).
-        "&ci="     . $id.
-        "\"><FONT SIZE=-1>ENTER</FONT></A> &nbsp;
-    ";
+        "&ci="     . $id,
 
-      // view link
-    $display_buffer .= "
-     <A HREF=\"$page_name?action=display&id=$id\"
-      ><FONT SIZE=-1>"._("VIEW")."</FONT></A> &nbsp;
-    ";
+      _("View") =>
+     "$page_name?action=display&id=$id",
 
-     // book link
-    $display_buffer .= "
-     <A HREF=\"book_appointment.php?action=&".
-      "patient=$id&type=temp\"
-      ><FONT SIZE=-1>"._("BOOK")."</FONT></A> &nbsp;
-    ";
+      _("Book") =>
+     "book_appointment.php?action=&".
+      "patient=$id&type=temp"
+    ), array('align' => 'LEFT'));
 
     $display_buffer .= "
-        </TD>
-      </TR>
-      <TR>
-        <TD COLSPAN=4 CLASS=\"infobox\"><CENTER><I>".
-	prepare($cicomplaint)."</I></CENTER></TD>
-      </TR>
+        </td>
+      </tr>
+      <tr>
+        <td COLSPAN=\"4\" CLASS=\"infobox\" ALIGN=\"CENTER\"><i>".
+	prepare($cicomplaint)."</i></td>
+      </tr>
     ";
 
     } // if there was no access for the facility
@@ -358,24 +341,19 @@ switch ($action) {
   } // end while
 
   $display_buffer .= "
-    </TABLE>
+    </table>
   "; // end of the table
 
   $display_buffer .= freemed_display_actionbar ($page_name);
 
-  $display_buffer .= "
-    <BR>
-    <CENTER>
-     <A HREF=\"$page_name?type=old\"
-      >"._("Old")."</A> |
-     <A HREF=\"$page_name?type=all\"
-      >"._("All")."</A> |
-     <A HREF=\"$page_name?type=cur\"
-      >"._("Current")."</A>
-    </CENTER>
-    <BR>
-  ";
-
+  $display_buffer .= "<p/>\n".template::link_bar(array(
+		_("Old") =>
+		"$page_name?type=old",
+		_("All") =>
+		"$page_name?type=all",
+		_("Current") =>
+		"$page_name?type=cur"
+	));
   break;
 
 } // end master switch
