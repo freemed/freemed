@@ -515,6 +515,28 @@ class MaintenanceModule extends BaseModule {
 		);
 	} // end method picklist
 
+	// Method: distinct
+	//
+	//	Provide a list of distinct values for a particular field.
+	//
+	// Parameters:
+	//
+	//	$field - Name of field to provide distinct values for.
+	//
+	// Returns:
+	//
+	//	Array of distinct values, or false if the field name is
+	//	invalid.
+	//
+	function distinct ( $field ) {
+		$found = false;
+		foreach ($this->distinct_values AS $v) {
+			if ($v == $field) { $found = true; }
+		}
+		if (!$found) { return false; }
+		return $GLOBALS['sql']->distinct_values($this->table_name, $field);
+	} // end method distinct
+
 	// Method: widget
 	//
 	//	Generic widget code to allow a picklist-based widget for

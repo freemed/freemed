@@ -50,6 +50,21 @@ class DynamicModule {
 		return module_function($module, 'picklist', array($params));
 	} // end method picklist
 
+	function distinct ($module, $param) {
+		// Load module list
+		$module_list = freemed::module_cache();
+
+		// Check for name in hash
+		$resolved = check_module($module);
+		if (!$resolved) {
+			// TODO: Return error
+			return false;	
+		}
+
+		// Run proper module
+		return module_function($module, 'distinct', array($param));
+	} // end method distinct
+
 	// ----- Internal functions -----------------------------------------
 
 	function _addmod ($type, $module, $param) {
