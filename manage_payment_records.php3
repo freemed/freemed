@@ -116,13 +116,17 @@
     <INPUT TYPE=HIDDEN NAME=\"item\"    VALUE=\"$item\">
     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
   ";
+
+  // decide whether to show submit button
+  $show_submit = true;
+
   switch ($action) {
 
    case "denial": // denial action
     $query = "INSERT INTO $database.payrec VALUES (
-                '$cur_date',
+                '".addslashes($cur_date)."',
                 '0000-00-00',
-                '$patient',
+                '".addslashes($patient)."',
                 '".fm_date_assemble("date_of_action")."',
                 '3',
                 '".addslashes($item)."',
@@ -156,10 +160,109 @@
        </CENTER>
       ";
     } // end of denial rebill check
+    $show_submit = false;
     break; // end of denial action
 
    case "payment": // payment action
-    echo "manage_payment_records->payment :: stub!! <BR>\n";
+    echo "<CENTER>\n";
+    if ($withhold > 0) {
+      $query = "INSERT INTO $database.$db_name VALUES (
+                '".addslashes($cur_date)."',
+                '',
+                '".addslashes($patient)."',
+                '".fm_date_assemble("date_of_action")."',
+                '".WITHHOLD."',
+                '".addslashes($item)."',
+                '0',
+                '',
+                '',
+                '".addslashes($voucher)."',
+                '".addslashes($withhold)."',
+                '',
+                'unlocked',
+                NULL
+                )";
+      $result = fdb_query ($query); 
+      if ($result) echo "<$STDFONT_B>$Adding withhold <$STDFONT_E><BR> \n";
+    } // end of withhold check
+    if ($deductable > 0) {
+      $query = "INSERT INTO $database.$db_name VALUES (
+                '".addslashes($cur_date)."',
+                '',
+                '".addslashes($patient)."',
+                '".fm_date_assemble("date_of_action")."',
+                '".DEDUCTABLE."',
+                '".addslashes($item)."',
+                '0',
+                '',
+                '',
+                '".addslashes($voucher)."',
+                '".addslashes($withhold)."',
+                '',
+                'unlocked',
+                NULL
+                )";
+      $result = fdb_query ($query); 
+      if ($result) echo "<$STDFONT_B>$Adding deductable.<$STDFONT_E><BR> \n";
+    } // end of deductable check
+    if ($adjustment > 0) {
+      $query = "INSERT INTO $database.$db_name VALUES (
+                '".addslashes($cur_date)."',
+                '',
+                '".addslashes($patient)."',
+                '".fm_date_assemble("date_of_action")."',
+                '".ADJUSTMENT."',
+                '".addslashes($item)."',
+                '0',
+                '',
+                '',
+                '".addslashes($voucher)."',
+                '".addslashes($withhold)."',
+                '',
+                'unlocked',
+                NULL
+                )";
+      $result = fdb_query ($query); 
+      if ($result) echo "<$STDFONT_B>$Adding adjustment.<$STDFONT_E><BR> \n";
+    } // end of adjustment check
+    if ($payment_amount > 0) {
+      $query = "INSERT INTO $database.$db_name VALUES (
+                '".addslashes($cur_date)."',
+                '',
+                '".addslashes($patient)."',
+                '".fm_date_assemble("date_of_action")."',
+                '".PAYMENT."',
+                '".addslashes($item)."',
+                '0',
+                '',
+                '',
+                '".addslashes($voucher)."',
+                '".addslashes($withhold)."',
+                '',
+                'unlocked',
+                NULL
+                )";
+      $result = fdb_query ($query); 
+      if ($result) echo "<$STDFONT_B>$Adding payment.<$STDFONT_E><BR> \n";
+    } // end of payment amount check
+    // calculate the amounts
+    $total_deducts  = $total_payments = 0;
+    $total_deducts  = (abs($withhold) + abs($deductable) + abs($adjustment));
+    $total_payments = $payment_amount;
+    if (($total_charges != 0) or ($total_payments != 0)) {
+      $query = "UPDATE $database.procrec
+                SET procbalcurrent = 
+                      procbalcurrent - '".addslashes(
+                        ($total_deducts + $total_payments))."',
+                    procamtpaid    =
+                      procamtpaid + '".addslashes($total_payments)."'
+                WHERE id='".addslashes($item)."'";
+      $result = fdb_query ($query);
+      if ($result) 
+        echo "<$STDFONT_B>Updated procedure record.<$STDFONT_E><BR>\n";
+    } // end of checking for any changes
+    echo "</CENTER>\n";
+    $show_submit = false;
     break; // end payment action
 
    case "transfer": // transfer action
@@ -197,6 +300,7 @@
       Added transfer.
      </CENTER>
     ";
+    $show_submit = false;
     break; // end of transfer action
 
    case "mistake": // mistake action
@@ -211,6 +315,7 @@
       Item $item removed (with references).
      </CENTER>
     ";
+    $show_submit = false;
     break; // end mistake action
 
    case "denialform": // denial form action
@@ -390,14 +495,14 @@
      ";
      break; // end of mistakeform action
 
-
   } // end master action switch
   echo "
     <P>
 
-    <CENTER>
+    ".( ($show_submit) ?
+    "<CENTER>
     <INPUT TYPE=SUBMIT VALUE=\"  Execute Action  \">
-    </CENTER>
+    </CENTER>" : "" )."
 
    </FORM>
   ";
