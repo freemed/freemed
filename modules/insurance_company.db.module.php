@@ -178,6 +178,12 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 
     </TABLE>
   "); 
+		// Handle cancel
+		if ($book->is_cancelled()) {
+			Header("Location: ".$this->page_name."?".
+				"module=".urlencode($this->MODULE_CLASS));
+			die("");
+		}
   
 		if (!$book->is_done()) {
 			$display_buffer .= $book->display();
