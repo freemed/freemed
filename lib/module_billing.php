@@ -595,7 +595,8 @@ class freemedBillingModule extends freemedModule {
 			<INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
 			VALUE=\"".$this->patient_forms[$i]."\" CHECKED>
 			".$this_patient->fullName(false)."
-			(<A HREF=\"manage.php?id=$patient_forms[$i]\"
+			(<A HREF=\"manage.php?id=".
+			urlencode($this->patient_forms[$i])."\"
 			>".$this_patient->local_record["ptid"]."</A>) <BR>
 			";
 
