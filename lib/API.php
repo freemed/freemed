@@ -292,21 +292,21 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
     $ref = "main.php";
   } // if there is no ref
 
-  //if ($_pg_desc=="[HELP]") $width = "WIDTH=75%";
-  $width="WIDTH=\"100%\"";
-
   if ($page_name=="index.php") { $b_b = "<B>"; $b_e = "</B>"; }
+
+  // if this is a module, set the page_name to $module
+  if (!empty($module)) $page_name = $module;
 
   echo "
     <CENTER>
     <TABLE BGCOLOR=\"#000000\" CELLSPACING=0 CELLPADDING=2 ALIGN=CENTER
-     BORDER=0 VALIGN=MIDDLE $width><TR><TD BGCOLOR=\"#000000\">
+     BORDER=0 VALIGN=MIDDLE WIDTH=\"100%\"><TR><TD BGCOLOR=\"#000000\">
 
     <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 ALIGN=CENTER
      VALIGN=CENTER BGCOLOR=\"#dddddd\" WIDTH=\"100%\"><TR><TD>
   ";
 
-  if (strlen($box_title)>0) {
+  if (!empty($box_title)) {
     echo "
       <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
        VALIGN=TOP BORDER=0><TR BGCOLOR=\"$topbar_color\">
@@ -410,7 +410,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      // nothing else needed for help, either
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"help.php3?$_auth&page_name=$page_name\"
+        <A HREF=\"help.php?$_auth&page_name=$page_name\"
          TARGET=\"__HELP__\"><IMG SRC=\"img/readme-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Help]\"></A>
        </TD>
@@ -462,7 +462,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       // no special conditions for help
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"help.php3?$_auth&page_name=$page_name\"
+         <A HREF=\"help.php?$_auth&page_name=$page_name\"
          ><$STDFONT_B SIZE=-1>?<$STDFONT_E></A>
         </TD>
         ";
@@ -521,6 +521,10 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
 function freemed_display_html_bottom ($_null="")
 {
   global $_mail_handler, $lang_coded_by;
+
+  if (isset($GLOBALS["FREEMED_BOX"])) {
+    trigger_error("Page ended without displaying box bottom!", E_USER_ERROR);
+  } // check for existing box
 
   echo "
     <CENTER>
