@@ -1472,4 +1472,61 @@ msgstr ""
 msgid "Internal or External Facility"
 msgstr ""
 
+msgid "Provider"
+msgstr ""
+
+msgid "Date of Procedure"
+msgstr ""
+
+msgid "Units"
+msgstr ""
+
+msgid "Diagnosis Code"
+msgstr ""
+
+msgid "Voucher Number"
+msgstr ""
+
+msgid "Authorization"
+msgstr ""
+
+msgid "Referring Provider"
+msgstr ""
+
+msgid "Date of Last Visit"
+msgstr ""
+
+msgid "Calculated Accepted Fee"
+msgstr ""
+
+msgid "Calculated Charge"
+msgstr ""
+
+msgid "Insurance Billable?"
+msgstr ""
+
+msgid "Committing to ledger"
+msgstr ""
+
+msgid "Updating patient diagnoses"
+msgstr ""
+
+msgid "Procedure Code"
+msgstr ""
+
+msgid "Room"
+msgstr ""
+
+msgid "Show Appointments"
+msgstr ""
+
+msgid "No appointments today."
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
 # END
