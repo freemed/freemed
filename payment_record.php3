@@ -712,7 +712,26 @@
   case "del":
    if ($this_user->getLevel() < $delete_level)
     die ("$page_name :: You don't have permission to do this");
-   echo "<BR>NOT IMPLEMENTED!\n";
+   freemed_display_box_top ("$Deleting $record_name");
+   echo "
+    <P>
+    <$STDFONT_B>$Deleting ... <$STDFONT_E>
+   ";
+   $query = "DELETE FROM $database.$db_name WHERE id='$id'";
+   $result = fdb_query ($query);
+   if ($result) { echo "$Done."; }
+    else        { echo "$ERROR"; }
+   echo "
+    <P>
+    <CENTER>
+     <A HREF=\"$page_name?$_auth&patient=$patient\"
+     ><$STDFONT_B>Return to $record_name Menu<$STDFONT_E></A> <B>|</B>
+     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+    </CENTER>
+    <P>
+   ";
+   freemed_display_box_bottom ();
    break;
 
   default:
@@ -877,7 +896,8 @@
        <TD>
      ";
 
-     if ($this_user->getLevel() > $delete_level)
+     if (($this_user->getLevel() > $delete_level) and
+         ($r[payreclock] != "locked"))
       echo "
        <A HREF=\"$page_name?$_auth&id=$id&patient=$patient&action=del\"
        ><$STDFONT_B>$lang_DEL<$STDFONT_E></A>

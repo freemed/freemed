@@ -309,9 +309,16 @@ if ($action=="addform") {
 
     <$STDFONT_B>Relation to Guarantor : <$STDFONT_E>
     <SELECT NAME=\"ptreldep\">
-     <OPTION VALUE=\"S\">Self
-     <OPTION VALUE=\"C\">Child
-     <OPTION VALUE=\"?\">FINISH THIS!
+     <OPTION VALUE=\"S\" ".
+      ( ($ptreldep=="S") ? "SELECTED" : "" ).">Self
+     <OPTION VALUE=\"C\" ".
+      ( ($ptreldep=="C") ? "SELECTED" : "" ).">Child
+     <OPTION VALUE=\"H\" ".
+      ( ($ptreldep=="H") ? "SELECTED" : "" ).">Husband
+     <OPTION VALUE=\"W\" ".
+      ( ($ptreldep=="W") ? "SELECTED" : "" ).">Wife
+     <OPTION VALUE=\"O\" ".
+      ( ($ptreldep=="O") ? "SELECTED" : "" ).">Other
     </SELECT>
     <P>
 

@@ -632,7 +632,7 @@
     <P>
     <$STDFONT_B>$Deleting ...
     ";
-   $query = "DELETE * FROM $database.$db_name WHERE id='$id'";
+   $query = "DELETE FROM $database.$db_name WHERE id='$id'";
    $result = fdb_query ($query);
    if ($result) { echo "$Done\n";    }
     else        { echo "$ERROR\n";   }
@@ -853,7 +853,7 @@
 
       if (freemed_get_userlevel($LoginCookie)>$delete_level)
        echo "
-        <A HREF=\"$page_name?$_auth&action=del&id=$id\"
+        <A HREF=\"$page_name?$_auth&action=del&id=$id&patient=$patient\"
          ><$STDFONT_B SIZE=-1>$lang_DEL<$STDFONT_E></A>
        ";
 
