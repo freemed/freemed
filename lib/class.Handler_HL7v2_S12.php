@@ -31,7 +31,7 @@ class Handler_HL7v2_S12 extends Handler_HL7v2 {
 				'duration' => ($pr[HL7v2_AIP_DURATION]+0),
 				'patient' => $this->parser->__pid_to_patient($p[HL7v2_PID_ID]),
 				'provider' => $this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]),
-				'note' => $v[HL7v2_SCH_NOTE][HL7v2_SCH_NOTE_LONG]
+				'note' => $v[HL7v2_SCH_EXTNOTE][HL7v2_SCH_EXTNOTE_LONG]
 			));
 
 			// Quickly log what has happened

@@ -44,6 +44,9 @@ define ('HL7v2_SCH_UNIT', 10);
 define ('HL7v2_SCH_NOTE', 8);
 	define ('HL7v2_SCH_NOTE_SHORT', 0);
 	define ('HL7v2_SCH_NOTE_LONG', 1);
+define ('HL7v2_SCH_EXTNOTE', 7);
+	define ('HL7v2_SCH_EXTNOTE_SHORT', 0);
+	define ('HL7v2_SCH_EXTNOTE_LONG', 1);
 
 // Class: _FreeMED.Parser_HL7v2
 //
@@ -94,7 +97,7 @@ class Parser_HL7v2 {
 			$count++;
 
 			// Log segment
-			syslog(LOG_INFO, 'HL7 parser| segment['.$count.'] = '.$message);
+			syslog(LOG_INFO, 'HL7 parser| segment['.$count.'] = '.$segment);
 
 			// Determine segment ID
 			$type = substr($segment, 0, 3);
@@ -102,7 +105,7 @@ class Parser_HL7v2 {
 			switch ($type) {
 				case 'MSH':
 				case 'EVN':
-				syslog(LOG_INFO, 'Found '.$type.'segment');
+				syslog(LOG_INFO, $type.' segment found');
 				call_user_func_array(
 					array(&$this, '_'.$type),
 					array(

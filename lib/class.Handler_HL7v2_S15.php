@@ -28,13 +28,13 @@ class Handler_HL7v2_S15 extends Handler_HL7v2 {
 			// Use scheduler API
 			$c = CreateObject('_FreeMED.Scheduler');
 			$query = "DELETE FROM scheduler WHERE ".
-				"type = 'pat', ". // hardcode as patient
-				"date = '".addslashes($this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]))."' ,".
-				"hour = '".addslashes($this->parser->__date_to_hour($pr[HL7v2_AIP_DATETIME]))."', ".
-				"minute = '".addslashes($this->parser->__date_to_minute($pr[HL7v2_AIP_DATETIME]))."', ".
-				//"duration = '".addslashes($pr[HL7v2_AIP_DURATION]+0)."', ".
-				//provider = $this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]),
-				"patient = '".addslashes($this->parser->__pid_to_patient($p[HL7v2_PID_ID]))."'";
+				"caltype = 'pat', ". // hardcode as patient
+				"caldateof = '".addslashes($this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]))."' ,".
+				"calhour = '".addslashes($this->parser->__date_to_hour($pr[HL7v2_AIP_DATETIME]))."', ".
+				"calminute = '".addslashes($this->parser->__date_to_minute($pr[HL7v2_AIP_DATETIME]))."', ".
+				//"calduration = '".addslashes($pr[HL7v2_AIP_DURATION]+0)."', ".
+				//calprovider = $this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]),
+				"calpatient = '".addslashes($this->parser->__pid_to_patient($p[HL7v2_PID_ID]))."'";
 			$result = $GLOBALS['sql']->query($query);
 
 			// Quickly log what has happened
