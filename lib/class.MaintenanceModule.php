@@ -455,9 +455,9 @@ class MaintenanceModule extends BaseModule {
 				$hash_split = explode('##', $this->widget_hash);
 				foreach ($hash_split AS $_k => $_v) {
 					if (!($_k & 1)) {
-						$key .= prepare($_k);
+						$key .= prepare($_v);
 					} else {
-						$key .= prepare($r[$_k]);
+						$key .= prepare($r[$_v]);
 					}
 				}
 			} else {
