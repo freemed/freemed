@@ -1,0 +1,3 @@
+<Files *>
+deny from *
+</Files>
