@@ -174,7 +174,7 @@ function freemed_display_bottom_links ($phy_name="", $pg_name="", $ref="")
 // function freemed_display_box_bottom
 function freemed_display_box_bottom ($_null="")
 {
-  global $debug, $DEBUG_IS_ON;
+  global $debug;
 
   if ($debug) {
     echo "
@@ -182,7 +182,7 @@ function freemed_display_box_bottom ($_null="")
       <TABLE WIDTH=100% BORDER=0 CELLSPACING=0 CELLPADDING=0
        BGCOLOR=#ff0000 VALIGN=BOTTOM ALIGN=CENTER>
       <TR><TD BGCOLOR=#ff0000>
-      <CENTER><B><FONT SIZE=-2 COLOR=#ffffff>$DEBUG_IS_ON</FONT>
+      <CENTER><B><FONT SIZE=-2 COLOR=#ffffff>"._("DEBUG IS ON")."</FONT>
       </B></CENTER>
       </TD></TR></TABLE>
 
@@ -421,7 +421,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
 
 // function freemed_display_actionbar
 function freemed_display_actionbar ($this_page_name="", $__ref="") {
-  global $lang_ADD, $RETURN_TO_MENU, $page_name, $patient, $_ref, $_auth;
+  global $page_name, $patient, $_ref, $_auth;
 
   $buffer = "";
 
@@ -442,11 +442,11 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
     <TD ALIGN=LEFT><A HREF=\"$this_page_name?$_auth&action=addform".
      ( !empty($patient) ? "&patient=$patient" : "" )
      ."\"><FONT COLOR=#ffffff FACE=\"Arial, Helvetica, Verdana\"
-     SIZE=-1><B>$lang_ADD</B></FONT></A></TD>
+     SIZE=-1><B>"._("ADD")."</B></FONT></A></TD>
     <TD WIDTH=30%>&nbsp;</TD>
     <TD ALIGN=RIGHT><A HREF=\"$__ref?$_auth\"
      ><FONT COLOR=#ffffff FACE=\"Arial, Helvetica, Verdana\"
-     SIZE=-1><B>$RETURN_TO_MENU</B></FONT></A></TD>
+     SIZE=-1><B>"._("RETURN TO MENU")."</B></FONT></A></TD>
     </TR></TABLE>
   ";
 
@@ -769,7 +769,7 @@ function freemed_display_facilities ($param="", $default_load = false,
   // leave doctor selected who is in param
   echo "
     <OPTION VALUE=\"0\"".
-     ( ($param == 0) ? " SELECTED" : "" ).">$NONE_SELECTED
+     ( ($param == 0) ? " SELECTED" : "" ).">"._("NONE SELECTED")."
   ";
   $query = "SELECT * FROM facility
             $intextquery
@@ -790,7 +790,7 @@ function freemed_display_facilities ($param="", $default_load = false,
       $_psr_id   = $row["id"];
 
       if (($_psr_id==$default_facility) AND ($default_facility>0))
-            { $selected_var = " $SELECTED"; }
+            { $selected_var = " SELECTED"; }
 
       if (strlen($_psr_note)<1) $__psr_note = "";
         else $__psr_note = "[$_psr_note]";
@@ -1336,7 +1336,7 @@ function freemed_import_stock_data ($table_name)
 //   displays inscogroup entry in text format
 function freemed_inscogroup_display ($param)
 {
-  global $NONE_SELECTED, $NO_RESULT_OF_QUERY, $SELECTED, $debug;
+  global $NONE_SELECTED, $NO_RESULT_OF_QUERY, $debug;
 
   if ((strlen($param)<1) OR ($param=="0")) {
     echo "
@@ -1436,12 +1436,12 @@ function freemed_open_db ($my_cookie) {
       <CENTER>
       <B>
       <P>
-      $Entered_incorrect_NamePasswd
+      "._("You have entered an incorrect username or password.")."
       <BR><BR>
-      <I>$Possible_Cookies_Have_Expired
+      <I>"._("It is possible that your cookies have expired.")."</I>
       <P>
       </B>
-      <A HREF=\"$base_url\">$Login_Screen</A>
+      <A HREF=\"$base_url\">"._("Return to the Login Screen")."</A>
       </CENTER>
       </BODY></HTML>
     ");
@@ -1546,12 +1546,8 @@ function freemed_search_query ($ctrl_array, $ord_array,
 //   displays specialty db entry in text format
 function freemed_specialty_display ($param)
 {
-  global $NONE_SELECTED, $SELECTED;
-
   if ((strlen($param)<1) OR ($param=="0")) {
-    echo "
-      $NONE_SELECTED
-    ";
+    echo _("NONE SELECTED")."\n";
   } else {
     $query = "SELECT * FROM specialty ".
        "WHERE id='$param'";
