@@ -46,16 +46,76 @@ class Procedure {
 		return $total_charges - $total_payments;
 	} // end method CurrentBalance
 
+	// Method: check_for_payer
+	function check_for_payer ( $proc, $payer ) {
+		if (is_array($proc)) {
+			$_proc = $proc;
+		} else {
+			$_proc = freemed::get_link_rec($proc, 'procrec');
+		}
+
+		// If there is no payer, return true
+		if (!$payer) { return true; }
+
+		if ($_proc['proc'] == $payer) { return true; }
+
+//		print $_proc['id']." != ".$payer."<br/>\n";
+		return true; // KLUDGE FOR TESTING
+		return false;
+	} // end method
+
+	// Method: get_open_procedures_by_date_and_patient
+	//
+	//	Get open procedures by date and patient id criteria
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id key
+	//
+	//	$date - Date to limit. If none (or a NULL date), date
+	//	is disregarded.
+	//
+	// Returns:
+	//
+	//	Array of procedure keys
+	//
+	function get_open_procedures_by_date_and_patient ( $patient, $date ) {
+		static $_cache;
+		if (!isset($_cache[$patient][$date])) {
+		$query = "SELECT * FROM procrec ".
+			"WHERE ".
+			( $date ? "procdt='".addslashes($date)."' AND " :
+			"" )." procpatient='".addslashes($patient)."'";
+		//print "query = $query<br/>\n";
+		$result = $GLOBALS['sql']->query ( $query );
+		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			$procedures[] = $r;
+		}
+		$_cache[$patient][$date] = $procedures;
+		}
+		return $_cache[$patient][$date];
+	} // end method get_open_procedures_by_date_and_patient
+	
+
 	// Method: get_procedure
 	//
-	//	Get procedure record from the current object
+	//	Get procedure record from the current object, or retrieve
+	//	a procedure object based on a passed key.
+	//
+	// Parameters:
+	//
+	//	$id - (optional) Procedure id key
 	//
 	// Returns:
 	//
 	//	Associative array containing procedure record information.
 	//
-	function get_procedure ( ) {
-		return $this->local_record;
+	function get_procedure ( $id = NULL ) {
+		if ($id != NULL) {
+			return freemed::get_link_rec($id, 'procrec');
+		} else {
+			return $this->local_record; 
+		}
 	} // end method get_procedure
 
 } // end class Procedure
