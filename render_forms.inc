@@ -286,7 +286,7 @@ function render_fixedForm ($id) {
      $buffer .= "\n";
 
   // send the buffer back to the calling routine
-  return $buffer;
+  return $buffer."\n";
 } // end function render_fixedForm
 
 ?>
