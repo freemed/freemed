@@ -1,6 +1,6 @@
 <?php
- // $Id$
- // lic : GPL, v2
+	// $Id$
+	// $Author$
 
 LoadObjectDependency('FreeMED.BillingModule');
 
@@ -9,17 +9,22 @@ class RebillByCovModule extends BillingModule {
 	// override variables
 	var $MODULE_NAME = "Rebill By Coverage";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $ICON = "img/rebill.gif";
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.1';
 
 	var $CATEGORY_NAME = "Billing";
 	var $CATEGORY_VERSION = "0.1";
 
-
 	// contructor method
 	function RebillByCovModule ($nullvar = "") {
+		// Handler for the billing menu
+		$this->_SetHandler('BillingFunctions', 'view');
+		$this->_SetMetaInformation('BillingFunctionName', __("Rebill by Coverage"));
+		
 		// call parent constructor
 		$this->BillingModule($nullvar);
 	} // end function RebillByCovModule
@@ -38,14 +43,12 @@ class RebillByCovModule extends BillingModule {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 
-		if (!$been_here)
-		{
+		if (!$been_here) {
 			$this->view();
 			return;
 		}
 
-		if ($viewaction=="rebill")
-		{
+		if ($viewaction=="rebill") {
 			//$display_buffer .= "insco $whichinsco<BR>";
 			$insco=0;
 			$insco = CreateObject('FreeMED.InsuranceCompany',
@@ -115,6 +118,12 @@ class RebillByCovModule extends BillingModule {
 				"AND a.proccurcovid=b.id AND b.covinsco=c.id ORDER BY c.insconame";
 		//$display_buffer .= "$query<BR>";
 
+	$result = $sql->query ($query);
+	if (!$sql->results($result)) {
+        	$display_buffer .= __("There is nothing to rebill at this time.")."<br/>\n";
+		return;
+	}
+
 	    $display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
 		 VALIGN=MIDDLE ALIGN=CENTER>
@@ -141,13 +150,6 @@ class RebillByCovModule extends BillingModule {
       	<SELECT NAME=\"whichinsco\">
    		";
 		
-	   $result = $sql->query ($query);
-       if ($sql->num_rows($result) <= 0)
-       {
-          $display_buffer .= "Nothing to Bill<BR>";
-		  return;
-       }
-
 	   while ($r = $sql->fetch_array ($result)) {
 		$display_buffer .= "
 		 <OPTION VALUE=\"$r[id]\">".prepare($r[insconame])."
