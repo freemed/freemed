@@ -80,13 +80,13 @@ class PharmacyMaintenance extends MaintenanceModule {
 		<input TYPE=\"HIDDEN\" NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"module\"   VALUE=\"".prepare($module)."\"/>
 		".html_form::form_table ( array (
-		__("Pharmacy Name") => html_form::text_widget('phname'),
-		__("Address Line 1") => html_form::text_widget('phaddr1'),
-		__("Address Line 2") => html_form::text_widget('phaddr2'),
+		__("Pharmacy Name") => html_form::text_widget('phname', 50),
+		__("Address Line 1") => html_form::text_widget('phaddr1', 150),
+		__("Address Line 2") => html_form::text_widget('phaddr2', 150),
 		__("City, State Zip") =>
-			html_form::text_widget('phcity')."<b>,</b> ".
+			html_form::text_widget('phcity', 50)."<b>,</b> ".
 			html_form::state_pulldown('phstpr')."&nbsp;".
-			html_form::text_widget('phzip'),
+			html_form::text_widget('phzip', 10),
 
 		__("Preferred Transmission") =>
 			html_form::select_widget('phmethod', array(
