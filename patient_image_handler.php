@@ -17,12 +17,35 @@ $id      = freemed::secure_filename($id     );
 //----- Assemble proper file name
 $imagefilename = "img/store/".$patient.".".$id.".jpg";
 
-if (!file_exists($imagefilename)) { die(""); }
+//----- Set RESIZE
+define ('RESIZE', 800);
+
+//----- Load image or form error string if unloadable
+$image = @ImageCreateFromJpeg($imagefilename);
+if (!$image) {
+	$im = ImageCreate(150, 30);
+	$bgc = ImageColorAllocate($im, 255, 255, 255);
+	$tc  = ImageColorAllocate($im, 0, 0, 0);
+	ImageFilledRectangle($im, 0, 0, 150, 30, $bgc);
+	ImageString($im, 1, 5, 5, "Error loading $id", $tc);
+} else {
+	// Check to see if it's over 600 pixels wide
+	if ((ImageSX($image) > RESIZE) and !$no_resize) {
+		$old = $image;
+		$image = @ImageCreate(RESIZE, ((int) RESIZE * (ImageSY($old) / ImageSX($old) )));
+		ImageCopyResized($image, $old, 0, 0, 0, 0,
+			RESIZE, ((int) RESIZE * (ImageSY($old) / ImageSX($old) )),
+			ImageSX($old), ImageSY($old)
+		);
+	}
+}
 
 // display header for content type
 Header ("Content-Type: image/jpeg");
 
 // display the actual image data
-print readfile($imagefilename);
+//print readfile($imagefilename);
+ImageJpeg($image, '', 20);
+ImageDestroy($image);
 
 ?>
