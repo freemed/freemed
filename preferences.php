@@ -24,6 +24,17 @@ if ($submit==__("Cancel")) {
 
 //----- Define USER_OPTIONS
 $USER_OPTIONS = array (
+	__("Messaging: Forget recent patient") =>
+	array (
+		'var' => 'msgforgetpatient',
+		'widget' =>
+		'html_form::select_widget("msgforgetpatient", '.
+			'array ('.
+				'__("no") => "0", '.
+				'__("yes") => "1" '.
+			') )'
+	),
+
 	__("Skip Printer Selection") =>
 	array (
 		'var' => 'printnoselect',

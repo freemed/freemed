@@ -56,13 +56,15 @@ switch ($action) {
 	if (!isset($msgurgency)) { $msgurgency = 3; }
 
 	// If !been_here and there's a current patient, use them
-	if ((!$been_here) and $_COOKIE['current_patient']>0) {
-		$msgpatient = $_COOKIE['current_patient'];
+	if ($this_user->getManageConfig('msgforgetpatient') != 1) {
+		if ((!$been_here) and $_COOKIE['current_patient']>0) {
+			$msgpatient = $_COOKIE['current_patient'];
 
-		// Persistent EMR patient bar/box if we came from there
-		$display_buffer .= freemed::patient_box(
-			CreateObject('FreeMED.Patient', $msgpatient)
-		);
+			// Persistent EMR patient bar/box if we came from there
+			$display_buffer .= freemed::patient_box(
+				CreateObject('FreeMED.Patient', $msgpatient)
+			);
+		}
 	}
 
 	$display_buffer .= "
