@@ -284,7 +284,7 @@ if ($patient<1) {
        break;
       case "heading":
        $display_buffer .= "
-        <$HEADERFONT_B>".prepare($prtfname[$i])."<$HEADERFONT_E>
+        ".prepare($prtfname[$i])."
         <INPUT TYPE=HIDDEN NAME=\"answer$i\" VALUE=\"\">
        ";
        break;

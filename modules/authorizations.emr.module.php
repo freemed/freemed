@@ -57,9 +57,7 @@ class authorizationsModule extends freemedEMRModule {
        break; // end internal addform
       case "modform":
        if (($patient<1) OR (empty($patient))) {
-         $display_buffer .= "
-           <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
-         ";
+         $display_buffer .= _("You must select a patient.")."\n";
          template_display ();
        }
        $r = freemed_get_link_rec ($id, $this->table_name);
