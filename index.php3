@@ -14,7 +14,7 @@
   freemed_display_html_top ();
   freemed_display_banner ();
 
-  freemed_display_box_top(PACKAGENAME." $Login", "index.php3");
+  freemed_display_box_top(PACKAGENAME." "._("Login"), "index.php3");
 
 echo "
 <P>
@@ -26,19 +26,19 @@ echo "
  VALUE=\"01234567890123456789012345678901234567890
         01234567890123456789012345678901234567890
         01234567890123456789012345678901234567890\">
-<TT>$Username : </TT>
+<TT>"._("Username")." : </TT>
 </TD><TD ALIGN=LEFT>
 <INPUT TYPE=TEXT NAME=\"_u\" LENGTH=20 MAXLENGTH=32>
 </TD></TR>
 <TR><TD ALIGN=RIGHT>
-<TT>$Password : </TT>
+<TT>".("Password")." : </TT>
 </TD><TD>
 <INPUT TYPE=PASSWORD NAME=\"_p\" LENGTH=20 MAXLENGTH=32></TD></TR> 
 <TR><TD ALIGN=RIGHT>
-<TT>$Language : </TT>
+<TT>".("Language")." : </TT>
 </TD><TD ALIGN=LEFT>
 <SELECT NAME=\"_l\">
- <OPTION VALUE=\"$language\">$Default $Language
+ <OPTION VALUE=\"$language\">"._("Default Language")."
 ";
 
  // if the language registry does not exist, recreate it
@@ -46,7 +46,7 @@ echo "
  if (!file_exists ("$physical_loc/lang/reg/registry")) {
    system (" ( cd $physical_loc/lang/reg; cat ?? > registry ) ");
    if (!file_exists ("$physical_loc/lang/reg/registry")) 
-     echo "<OPTION VALUE=\"\">LANGUAGE REGISTRY BUILD FAILED</OPTION>";
+     echo "<OPTION VALUE=\"\">"._("LANGUAGE REGISTRY BUILD FAILED")."</OPTION>";
  }
  // actually open the language registry
  $f_reg = fopen ("$physical_loc/lang/reg/registry", "r");
@@ -64,7 +64,7 @@ $Connection = fdb_connect (DB_HOST, DB_USER, DB_PASSWORD);
 if (fdb_query ("SELECT * FROM config")) {
 echo "
 <TR><TD ALIGN=RIGHT>
-<TT>$Facility : </TT>
+<TT>"._("Facility")." : </TT>
 </TD><TD ALIGN=LEFT>
 <SELECT NAME=\"_f\">
 ";
@@ -83,18 +83,18 @@ fdb_close ();
 if (!empty($_URL))
  echo "
   <TR><TD ALIGN=RIGHT>
-   <TT>$Resume : </TT>
+   <TT>"._("Resume")." : </TT>
   </TD><TD ALIGN=LEFT>
-   <INPUT TYPE=RADIO NAME=\"_URL\" VALUE=\"$_URL\" CHECKED>$Resume<BR>
-   <INPUT TYPE=RADIO NAME=\"_URL\" VALUE=\"\">$Reset_Resume
+   <INPUT TYPE=RADIO NAME=\"_URL\" VALUE=\"$_URL\" CHECKED>"._("Resume")."<BR>
+   <INPUT TYPE=RADIO NAME=\"_URL\" VALUE=\"\">"._("Reset Resume")."
   </TD></TR>
  ";
 
 echo "
 </TABLE>
 <CENTER>
-  <INPUT TYPE=Submit VALUE=\"$Enter_the_database\">
-  <INPUT TYPE=Reset  VALUE=\"$Clear\">
+  <INPUT TYPE=SUBMIT VALUE=\""._("Enter the database")."\">
+  <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
 </CENTER>
 </FORM>
 ";
@@ -104,7 +104,7 @@ echo "
       <TABLE WIDTH=100% BORDER=0 CELLSPACING=0 CELLPADDING=0
        VALIGN=BOTTOM ALIGN=CENTER BGCOLOR=#000000>
       <TR><TD BGCOLOR=#000000>
-      <CENTER><B><FONT COLOR=#ffffff SIZE=-2>$DEBUG_IS_ON</FONT></B></CENTER>
+      <CENTER><B><FONT COLOR=#ffffff SIZE=-2>"._("DEBUG_IS_ON")."</FONT></B></CENTER>
       </TD></TR></TABLE>
     ";
   }
@@ -119,7 +119,7 @@ echo "
 <A HREF="http://www.freemed.org"
  ><IMG SRC="img/tag-0.0.gif" BORDER=0 ALT="freemed!"></A>
 <A HREF="http://www.php.net"
- ><IMG SRC="img/phpower.jpg" BORDER=0 ALT="Powered by PHP3"></A>
+ ><IMG SRC="img/php4.gif" BORDER=0 ALT=""._("Powered by PHP").""></A>
 <A HREF="http://www.vim.org"
  ><IMG SRC="img/vi.gif" BORDER=0 ALT="100% VI Meat Content"></A>
 <?php

@@ -21,7 +21,7 @@
  freemed_display_html_top ();
  freemed_display_banner ();
 
-freemed_display_box_top(PACKAGENAME." $Main_menu", "index.php3");
+freemed_display_box_top(PACKAGENAME." "._("Main Menu"), "index.php3");
 
 echo "
   <P>
@@ -40,7 +40,7 @@ echo "
         ALT=\"\"></TD>
      <TD ALIGN=LEFT>
      <A HREF=\"admin.php3?$_auth\"
-      >$Administration_menu</A>
+      >"._("Administration Menu")."</A>
      </A>
      </TD></TR>
    ";
@@ -54,7 +54,7 @@ echo "
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"billing_functions.php3?$_auth\"
-     >$Billing_functions</A>
+     >"._("Billing Functions")."</A>
     </TD></TR>
    ";
 
@@ -65,11 +65,11 @@ echo "
     ><IMG SRC=\"img/Text.gif\" BORDER=0 ALT=\"\"></A>
    </TD>
    <TD ALIGN=LEFT>
-   <B>$Call_in : &nbsp;</B>
+   <B>"._("Call In")." : &nbsp;</B>
    <A HREF=\"call-in.php3?$_auth&action=addform\"
-    >$Entry</A> |
+    >"._("Entry")."</A> |
    <A HREF=\"call-in.php3?$_auth\"
-    >$Menu</A>
+    >"._("Menu")."</A>
    </TD></TR>
  ";
 
@@ -82,7 +82,7 @@ echo "
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"db_maintenance.php3?$_auth\"
-     >$Database_maintenance</A>
+     >"._("Database Maintenance")."</A>
     </TD></TR>
    ";
 
@@ -97,10 +97,10 @@ echo "
     <TD ALIGN=LEFT>
     <A HREF=\"physician_day_view.php3?$_auth&physician=".
       $this_user->getPhysician()."\"
-     >$Day_View</A><BR>
+     >"._("Day View")."</A><BR>
     <A HREF=\"physician_week_view.php3?$_auth&physician=".
       $this_user->getPhysician()."\"
-     >$Week_View</A>
+     >"._("Week View")."</A>
     </TD></TR>
    ";
 
@@ -113,7 +113,7 @@ echo "
     </TD>
     <TD ALIGN=LEFT>
     <A HREF=\"patient.php3?$_auth\"
-     >$Patient_functions</A>
+     >"._("Patient Functions")."</A>
     </TD></TR>
    ";
 
@@ -127,13 +127,13 @@ echo "
   </TD>
   <TD ALIGN=LEFT>
   <A HREF=\"help.php3?$_auth&page_name=$page_name\"
-   TARGET=\"__HELP__\">$Help_main_menu</A>
+   TARGET=\"__HELP__\">"._("Main Menu Help")."</A>
   </TD></TR>
   <TR>
   <TD ALIGN=RIGHT>
   </TD>
   <TD ALIGN=LEFT>
-  <B><A HREF=\"logout.php3\">$Logout_of ".PACKAGENAME."</A>
+  <B><A HREF=\"logout.php3\">"._("Logout of")." ".PACKAGENAME."</A>
   </B>
   </TD></TR>
   </TABLE>
@@ -143,7 +143,7 @@ echo "
 echo "
 <FORM ACTION=\"redirect.php3?$_auth\">
   <CENTER>
-  <B><FONT SIZE=-1>$Quickjump</FONT></B><BR>
+  <B><FONT SIZE=-1>"._("Quickjump")."</FONT></B><BR>
   <INPUT TYPE=TEXT NAME=\"location\" VALUE=\"/\" SIZE=5>
   </CENTER>
 </FORM>
@@ -157,11 +157,11 @@ echo "<$STDFONT_E>"; // end standard font
     </TD></TR>
     <TR><TD>
      <$STDFONT_B SIZE=-1>
-     $User_level: ".$this_user->getLevel()."
+     "._("User level").": ".$this_user->getLevel()."
      <$STDFONT_E>
       &nbsp;<B>|</B>&nbsp;
      <$STDFONT_B SIZE=-1>
-     $User_description: ".fm_prep($this_user->getDescription())."
+     "._("User description").": ".fm_prep($this_user->getDescription())."
      <$STDFONT_E>
     </TD></TR>
     <TR><TD>
