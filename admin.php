@@ -472,6 +472,36 @@ if ($action=="cfgform") {
     )");
   if ($result) { echo "<LI>"._("Patients")."\n"; }
 
+  // generate payer database 
+  $result=$sql->query("DROP TABLE payer");
+  $result=$sql->query("CREATE TABLE payer (
+    payerinsco        INT UNSIGNED,
+    payerstartdt      TEXT,
+    payerenddt        TEXT,
+    payerpatient      INT UNSIGNED,
+    payerpatientgrp   VARCHAR(50),
+    payerpatientinsno VARCHAR(50),
+    payertype         INT,
+    payerstatus       INT,
+    id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+  )");
+  if ($result) { echo "<LI>"._("Payer")."\n"; }
+
+  // generate guarantor database 
+  $result=$sql->query("DROP TABLE guarantor");
+  $result=$sql->query("CREATE TABLE guarantor (
+    guarpatient       INT UNSIGNED,
+    guarguar          INT UNSIGNED,
+    guarrel	      CHAR(1),
+    guarstartdt       TEXT,
+    guarenddt         TEXT,
+    guarstatus        INT,
+    id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+  )");
+  if ($result) { echo "<LI>"._("Guarantor")."\n"; }
+
   // generate proc database (second generation)
   $result=$sql->query("DROP TABLE procrec");
   $result=$sql->query("CREATE TABLE procrec (

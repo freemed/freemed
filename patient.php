@@ -1,5 +1,4 @@
 <?php
- // $Id$
  // note: patient database functions
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  //       adam b (gdrago23@yahoo.com)
@@ -8,8 +7,8 @@
  
   $page_name="patient.php"; // for help info, later
   $record_name="Patient";    // compatibility with API functions
-  include ("lib/freemed.php");
-  include ("lib/API.php");
+  include ("global.var.inc");
+  include ("freemed-functions.inc");
   include ("lib/calendar-functions.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
@@ -20,12 +19,16 @@
     SetCookie ("current_patient", $id, time()+$_cookie_expire);
     $current_patient = $id;   // patch for first time....
   } // end checking for current_patient value
+  else
+  {
+  	$current_patient=0;
+  }
 
   freemed_open_db ($LoginCookie); // authenticate user
 
 // NULL at top so next() works...
-$t_vars = array("NULL", "ptguar","ptrelguar", "ptguarstart", "ptguarend",
-    "ptins", "ptinsno", "ptinsgrp", "ptinsstart", "ptinsend"); 
+//$t_vars = array("NULL", "ptguar","ptrelguar", "ptguarstart", "ptguarend",
+//    "ptins", "ptinsno", "ptinsgrp", "ptinsstart", "ptinsend"); 
 
 switch ($action) {
   case "add": case "addform":
@@ -37,7 +40,7 @@ switch ($action) {
    switch ($action) {
      case "add": case "addform":
       if (empty($been_here)) {
-        $ins_disp_inactive=false; // TODO! not implemented
+        // $ins_disp_inactive=false; // TODO! not implemented
         $been_here = "1"; // set been_here
       } // end of checking empty been_here
       $action_name = _("Add");
@@ -51,13 +54,13 @@ switch ($action) {
         $r = $sql->fetch_array($result); // dump into array r[]
 	extract($r); // pull variables in from array
 
-	reset($t_vars);
-	while ($i=next($t_vars)) { // for all these TEXT items
-	  if (strlen($$i)>0)
-            $$i = fm_split_into_array($$i); // pull the array items
-	  else
-	    $$i = array (); // set to null array if strlen<1
-	} // for each TEXT item
+//	reset($t_vars);
+//	while ($i=next($t_vars)) { // for all these TEXT items
+//	  if (strlen($$i)>0)
+ //           $$i = fm_split_into_array($$i); // pull the array items
+//	  else
+//	    $$i = array (); // set to null array if strlen<1
+//	} // for each TEXT item
 
         $ptstate      = strtoupper ($ptstate);
 
@@ -71,7 +74,7 @@ switch ($action) {
           $ptemail2      = $ptemail_array[1];
         } // end of resplit email
 	
-        $ins_disp_inactive=false;
+        //$ins_disp_inactive=false;
         $been_here = "1"; // set been_here
       } // end of checking empty been_here
       $action_name = _("Modify");
@@ -80,9 +83,40 @@ switch ($action) {
 
    // ** DISPLAY ADD/MOD ***
 
-   if (!isset($num_inscos)) { // first time through
-     $num_inscos=count($ptins);
-     if ($num_inscos>0) $has_insurance=true;
+   if (!isset($num_inscos))
+   { 
+       // first time through
+       $ins_result = fdb_query("SELECT COUNT(*) FROM payer WHERE payerpatient='$current_patient'");
+       if ($ins_result)
+       {
+           $ins_data = fdb_fetch_array($ins_result);
+           if ($ins_data)
+           {
+               if ($ins_data[0] > 0)
+               {
+                   $num_inscos = $ins_data[0];
+                   $has_insurance=true;
+               }
+           }
+       }
+       else
+       {
+           $ins_result = fdb_query("SELECT COUNT(*) FROM guarantor WHERE guarpatient='$current_patient'");
+           if ($ins_result)
+           {
+               $ins_data = fdb_fetch_array($ins_result);
+               if ($ins_data)
+               {
+                   if ($ins_data[0] > 0)
+                   {
+                       $num_inscos = $ins_data[0];
+                       $has_insurance=true;
+                   }
+               }
+           }
+       }
+
+    
    } // checking for unset num_inscos
    
    $book->add_page (
@@ -146,7 +180,6 @@ switch ($action) {
     </TD><TD ALIGN=LEFT>
     ".date_entry("ptdob")."
     </TD></TR>
-
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Has Insurance")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
@@ -358,70 +391,193 @@ switch ($action) {
     </TD></TR>
 
     </TABLE>
-     ");     
+     ");    
 
-  if ($has_insurance) { 
+   $payer_error_msg = ""; 
 
-    // push the current insco onto the stack
-    if ($add_this_insco AND ($ptins_>0)) { // not persistent! use once!
-      $add_this_insco = false;
-      if (isset($ptins_arr)) {
-        $ptins[$ptins_arr]      = $ptins_;
-        $ptinsno[$ptins_arr]    = $ptinsno_;
-        $ptinsgrp[$ptins_arr]   = $ptinsgrp_;
-        $ptinsstart[$ptins_arr] = fm_date_assemble("ptinsstart_");
-        $ptinsend[$ptins_arr]   = fm_date_assemble("ptinsend_");
-        unset($ptins_arr);
-      } else {
-        $ptins[]      = $ptins_;
-        $ptinsno[]    = $ptinsno_;
-        $ptinsgrp[]   = $ptinsgrp_;
-        $ptinsstart[] = fm_date_assemble("ptinsstart_");
-        $ptinsend[]   = fm_date_assemble("ptinsend_");
-      }
+  if ( ($has_insurance) AND ($current_patient > 0) ) { 
+	
+	// a patient must be added before anything can be done on the payers
+
+	// if a selected payer and its an add 
+
+    if ($add_this_insco)  
+    { // not persistent! use once! we have a selection!
+
+        if ( empty($payerpatientinsgrp_) OR
+            empty($payerpatientinsno_) )   
+        {
+            $payer_error_msg = _("Please Specify Insurance ID/Number");
+        }
+        else
+        if ($payerinsco_ <= 0) 
+        {
+            $payer_error_msg = _("Please select an Insurance Co.");
+        }
+        else
+        {   // add this record
+    		$add_this_insco = false;
+  
+            	// INSERT new rec
+        	$query = "INSERT INTO payer VALUES('$payerinsco_',
+                        '".fm_date_assemble("payerstartdt_")."',
+                        '".fm_date_assemble("payerenddt_")."',
+                        '$current_patient',
+                        '$payerpatientinsgrp_',
+                        '$payerpatientinsno_',
+                        '$payertype_',
+                        '0',NULL)";
+        	$payer_result = fdb_query($query);
+		if (!$payer_result)
+		{
+             		$payer_error_msg = "$query ";
+             		$payer_error_msg .= _("Failed");
+             		$payer_error_msg .= "<BR>";
+		}
+        }
+
+    } // done add 
+
+     // check for a mod request
+
+    if (!isset($payerinscomod)) $payerinscomod=-1; // sanity check
+    if ($payerinscomod >= 0) // modify this record
+    {
+        if ( empty($payerpatientinsgrp_) OR
+            empty($payerpatientinsno_) ) 
+        {
+            $payer_error_msg = _("Please specify Insurance ID/Number");
+        }
+        else
+        {
+	    $query = "UPDATE payer SET payerstartdt = '".fm_date_assemble("payerstartdt_")."',
+					payerenddt = '".fm_date_assemble("payerenddt_")."',
+					payerpatientinsno = '$payerpatientinsno_',
+					payerpatientgrp = '$payerpatientinsgrp_',
+					payertype = '$payertype_'
+					WHERE id = '$payerid[$payerinscomod]'";
+            $payer_result = fdb_query($query);
+	    if (!$payer_result)
+	    {
+             		$payer_error_msg = "$query ";
+             		$payer_error_msg .= _("Failed");
+             		$payer_error_msg .= "<BR>";
+	    }
+        }
     }
-    if (is_array($ptins)) {
-      while (list($idx,$val)=each($ptins)) {
-        $ptins_active[$idx]=( $ins_disp_inactive OR
-          (!date_in_range($cur_date,$ptinsstart[$idx],$ptinsend[$idx])) );
-	// unsure why, but have to take !date_in_range...
-      } // for each insurance co, determine if active
-      reset($ptins);
-      for ($arr_idx=0;$arr_idx<count($ptins);) { // increment at bottom
-        if (!isset($ptinsmod)) $ptinsmod=-1; // sanity check
-	if ($ptinsmod==$arr_idx) { // push it onto the current one
-          $ptins_      = $ptins[$arr_idx];
-          $ptinsno_    = $ptinsno[$arr_idx];
-          $ptinsgrp_   = $ptinsgrp[$arr_idx];
-          $ptinsstart_ = $ptins[$arr_idx]; // what's the 
-          $ptinsend_   = $ptins[$arr_idx]; // opposite of fm_date_assemble?
-	  $ptins_arr   = $arr_idx;
-	  unset($ptins[$arr_idx]); // take it off the stack, no duplication
-	}
-        if ($ptinsdel[$arr_idx]) unset($ptins[$arr_idx]); // delete 
+
+    // check for any deletes and clear the old array while we are checking.
+
+    if (count($payerinsco) > 0)
+    {
+	$numins = count($payerinsco);
+    	for ($arr_idx=0;$arr_idx<$numins;) 
+    	{ // increment at bottom
+        	if ($payerinscodel[$arr_idx]) 
+        	{
+           		$query = "UPDATE payer SET payerstatus='1' WHERE id='$payerid[$arr_idx]'";
+          		$payer_result = fdb_query($query);
+	  		if (!$payer_result)
+		 	{
+             		    $payer_error_msg = "$query ";
+             		    $payer_error_msg .= _("Failed");
+             		    $payer_error_msg .= "<BR>";
+			}
+        	}
+        
+	unset($payerinsco[$arr_idx]);
+	unset($payerpatientinsno[$arr_idx]);
+	unset($payerpatientinsgrp[$arr_idx]);
+	unset($payerstartdt[$arr_idx]); 
+	unset($payerenddt[$arr_idx]);
+	unset($payerid[$arr_idx]);
+	unset($payerstatus[$arr_idx]);
         $arr_idx++; // increment at *end*!
-      } // for each insco listed
-    } // if ptins is an array
+    	} // for each insco listed
+    }
+
+    // refresh the array from the db 
+
+    $query = "SELECT * FROM payer WHERE payerpatient='$current_patient'";
+    $payer_result = fdb_query($query);
+
+    if ($payer_result)
+    {
+	$arr_idx = 0;
+	while($payer_rec = fdb_fetch_array($payer_result))
+        {
+		$payerinsco[$arr_idx] 		= $payer_rec[payerinsco];
+		$payerpatientinsno[$arr_idx] 	= $payer_rec[payerpatientinsno];
+		$payerpatientinsgrp[$arr_idx] 	= $payer_rec[payerpatientgrp];
+		$payerstartdt[$arr_idx] 	= $payer_rec[payerstartdt];
+		$payerenddt[$arr_idx]	 	= $payer_rec[payerenddt];
+		$payerid[$arr_idx]		= $payer_rec[id];
+		switch ($payer_rec[payertype])
+		{
+		    case 0;
+			$payertype[$arr_idx] = _("Primary");
+			break;
+		    case 1;
+			$payertype[$arr_idx] = _("Secondary");
+			break;
+		    case 2;
+			$payertype[$arr_idx] = _("Tertiary");
+			break;
+		    case 3;
+			$payertype[$arr_idx] = _("Work Comp");
+			break;
+		    case 4;
+			$payertype[$arr_idx] = _("Patient");
+			break;
+		    default;
+			$payertype[$arr_idx] = _("Unknown");
+			break;
+		}
+		// display all inscos. just tell the user if active or inactive
+        	$payerinsco_active[$arr_idx]=true;
+
+          	if (date_in_range($cur_date,$payerstartdt[$arr_idx],$payerenddt[$arr_idx]))
+		{
+			$payerstatus[$arr_idx] = _("Active");
+		}
+		else
+		{
+			$payerstatus[$arr_idx] = _("Expired");
+		}
+
+		if ($payer_rec[payerstatus] == 1)
+		{
+			$payerstatus[$arr_idx] = _("Deleted");
+		}
+			
+		
+		
+		$arr_idx++;
+	} //while we have payers
+    } // if payer_result
     
     $ins_r = freemed_search_query( array ($ins_s_val => $ins_s_field),
                array ("insconame", "inscostate", "inscocity"), "insco", 
-	       "ptins_");
+	       "payerinsco_");
     
     $book->add_page(
       _("Insurance"),
-      array ("ptins", "ptinsno", "ptinsgrp", "ptinsstart",
-        "ptinsend", "ins_disp_inactive", "ins_s_val", "ins_s_field", 
-	"ptins_", "ptinsno_", "ptinsgrp_", date_vars("ptinsstart_"), 
-	date_vars("ptinsend_"), "ptins_arr"),
+      array ("payerinsco", "payerpatientinsno", "payerpatientinsgrp", "payerstartdt",
+        "payerstatus", "payertype", "payerenddt", "ins_s_val", "ins_s_field", 
+	"payerid", "payertype_", "payerinsco_", "payerpatientinsno_", "payerpatientinsgrp_",
+        date_vars("payerstartdt_"), 
+	date_vars("payerenddt_"), "payer_arr"),
       "
-    <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0 WIDTH=\"100%\">
-     <TR><TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Display Inactive Insurance Companies")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=CHECKBOX NAME=\"ins_disp_inactive\"".
-       /*($ins_disp_inactive ? " CHECKED" : "").*/" CHECKED>
-     </TD></TR>
-     <TR><TD ALIGN=RIGHT>
+    <TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=\"100%\">
+     <TR><TD ALIGN=LEFT>
+      <$STDFONT_B>"._("Add This Insurance Company          ")." :<$STDFONT_E>
+       <INPUT TYPE=CHECKBOX NAME=\"add_this_insco\">
+       ".(isset($payer_arr) ? 
+         "<INPUT TYPE=HIDDEN NAME=\"payer_arr\" VALUE=\"$payer_arr\">" : "")."
+     </TD>
+     </TR>
+     <TR><TD>&nbsp</TD></TR>
+     <TR><TD ALIGN=LEFT>
       <$STDFONT_B>"._("Insurance")."<FONT SIZE=\"-1\">".
        select_widget("ins_s_field", array (
         _("Name") => "insconame",
@@ -430,109 +586,203 @@ switch ($action) {
         <INPUT TYPE=TEXT NAME=\"ins_s_val\" 
         VALUE=\"$ins_s_val\" SIZE=15 MAXLENGTH=20></FONT>
       <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <$STDFONT_B>"._("Add This Insurance Company")." : 
-       <INPUT TYPE=CHECKBOX NAME=\"add_this_insco\">
-       ".(isset($ptins_arr) ? 
-         "<INPUT TYPE=HIDDEN NAME=\"ptins_arr\" VALUE=\"$ptins_arr\">" 
-	                       : "")."
-     </TD></TR>
-      <TR><TD ALIGN=RIGHT>
+     </TD>
+     </TR>
+      <TR><TD ALIGN=LEFT>
         <$STDFONT_B>
          "._("Insurance Company")." :
         <$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
         <$STDFONT_B SIZE=\"-1\">
          ".freemed_display_selectbox($ins_r, 
             "#insconame# (#inscocity#, #inscostate# #inscozip#)", 
-	    "ptins_")."
+	    "payerinsco_")."
         <$STDFONT_E>
-      </TD></TR>
+      </TD>
+      </TR>
 	
-      <TR><TD ALIGN=RIGHT>
+      <TR><TD ALIGN=LEFT>
         <$STDFONT_B>
          "._("Insurance ID / Group ID")." : 
 	<$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
 	<$STDFONT_B SIZE=\"-1\">
-	  <INPUT NAME=\"ptinsno_\"  VALUE=\"".$ptinsno_."\"  SIZE=15>
-	   <INPUT NAME=\"ptinsgrp_\" VALUE=\"".$ptinsgrp_."\" SIZE=15>
+	  <INPUT NAME=\"payerpatientinsno_\"  VALUE=\"".$payerpatientinsno_."\"  SIZE=15>
+	   <INPUT NAME=\"payerpatientinsgrp_\" VALUE=\"".$payerpatientinsgrp_."\" SIZE=15>
 	<$STDFONT_E>
       </TD></TR>
 	
-      <TR><TD ALIGN=RIGHT>
+      <TR><TD ALIGN=LEFT>
         <$STDFONT_B>"._("Start Date")."<$STDFONT_E>
 	<$STDFONT_B SIZE=\"-1\">
-	  ".date_entry("ptinsstart_", 1990, "mdy")."
+	  ".date_entry("payerstartdt_", 1990, "mdy")."
 	<$STDFONT_E>
-      </TD><TD ALIGN=LEFT>
-	<$STDFONT_B>"._("End Date")."<$STDFONT_E>
+      </TD>
+      </TR>
+      <TR>
+      <TD ALIGN=LEFT>
+	<$STDFONT_B>"._(" End Date")."<$STDFONT_E>
 	<$STDFONT_B SIZE=\"-1\">
-	  ".date_entry("ptinsend_", 1990, "mdy")."
+	  ".date_entry("payerenddt_", 1990, "mdy")."
 	<$STDFONT_E>
       </TD></TR>
+     <TR><TD ALIGN=LEFT>
+      <$STDFONT_B>"._("Type")."<FONT SIZE=\"-1\">".
+       select_widget("payertype_", array (
+        _("Primary") => "0",
+	_("Secondary") => "1", 
+	_("Tertiary") => "2", 
+	_("Work Comp") => "3" ) )."</FONT><$STDFONT_E>
+     </TD>
+      </TR>
+     <TR> 
+     <TD ALIGN LEFT>&nbsp</TD>
+     </TR>
+     <TR> 
+     <TD ALIGN LEFT>$payer_error_msg</TD>
+     </TR>
+     <TR> 
+     <TD ALIGN LEFT>&nbsp</TD>
+     </TR>
       <TR WIDTH=\"100%\"><TD COLSPAN=2>
         ".freemed_display_arraylist(
-	    array (_("Insurer"  ) => "ptins",
-	           _("Start"    ) => "ptinsstart",
-	           _("End"      ) => "ptinsend",
-	           _("ID Number") => "ptinsno",
-	           _("Group"    ) => "ptinsgrp"), 
+	    array (_("Insurer"  ) => "payerinsco",
+	           _("Start"    ) => "payerstartdt",
+	           _("End"      ) => "payerenddt",
+	           _("ID Number") => "payerpatientinsno",
+	           _("Group"    ) => "payerpatientinsgrp", 
+	           _("Type"     ) => "payertype", 
+	           _("Status"   ) => "payerstatus"), 
 	    array ("insco" => "insconame",
 	           "",
 		   "",
 		   "",
+		   "",
+		   "",
 		   ""))."
       </TD></TR>
+    <TR><TD>".fm_htmlize_array("payerid",$payerid)."</TD></TR>
     </TABLE>
       "
     );
 
-    // push the current guarantor onto the stack
-    if ($add_this_guar AND ($ptguar_>0)) { // not persistent! use once!
-      $add_this_guar = false;
-      $ptguar[]      = $ptguar_;
-      $ptrelguar[]   = $ptrelguar_;
-      $ptguarstart[] = fm_date_assemble("ptguarstart_");
-      $ptguarend[]   = fm_date_assemble("ptguarend_");
+   // handle the guarantors
+    if ($add_this_guar)  
+    { // not persistent! use once! we have a selection!
+
+        if ($guarguar_ <= 0) 
+        {
+            $guar_error_msg = _("Please select a Guarantor");
+        }
+        else
+        {   // add this record
+    		$add_this_insco = false;
+  
+            	// INSERT new rec
+        	$query = "INSERT INTO guarantor VALUES('$current_patient',
+			'$guarguar_',
+			'$guarrel_',
+                        '".fm_date_assemble("guarstartdt_")."',
+                        '".fm_date_assemble("guarenddt_")."',
+                        '0',
+			NULL)";
+        	$guar_result = fdb_query($query);
+		if (!$guar_result)
+             		$guar_error_msg = "$query _(\"failed\")<BR>";
+        }
+
+    } // done add 
+
+     // check for a mod request
+
+    if (!isset($guarguarmod)) $guarguarmod=-1; // sanity check
+    if ($guarguarmod >= 0) // modify this record
+    {
+	    $query = "UPDATE guarantor SET guarstartdt = '".fm_date_assemble("guarstartdt_")."',
+					guarenddt = '".fm_date_assemble("guarenddt_")."',
+					guarrel = '$guarrel_'
+					WHERE id = '$guarid[$guarguarmod]'";
+            $guar_result = fdb_query($query);
+	    if (!$guar_result)
+             $guar_error_msg = "$query _(\"failed\")<BR>";
     }
-    $guar_r = freemed_search_query( array ($guar_s_val => $guar_s_field),
-               array ("ptlname", "ptfname", "ptdob"), "patient", "");
-    if (is_array($ptguar)) {
-      while (list($idx,$val)=each($ptguar)) {
-        $ptguar_active[$idx]=( true /* $guar_disp_inactive OR
-          (!date_in_range($cur_date,$ptinsstart[$idx],$ptinsend[$idx])) */);
-	// unsure why, but have to take !date_in_range...
-      } // for each insurance co, determine if active
-      reset($ptguar);
-      for ($arr_idx=0;$arr_idx<count($ptguar);) { // increment at bottom
-        if (!isset($ptguarmod)) $ptguarmod=-1; // sanity check
-	if ($ptguarmod==$arr_idx) { // push it onto the current one
-          $ptguar_ = $ptins[$arr_idx];echo $arr_idx;
-          $ptrelguar_ = $ptrelguar[$arr_idx];
-          $ptguarstart_ = $ptguarstart[$arr_idx]; // what's the 
-          $ptguarend_ = $ptguarend[$arr_idx]; // opposite of fm_date_assemble?
-	  $ptguar[$arr_idx]=-1; // take it off the stack so it's not added again
-	  $arr_idx++;
+
+    // check for any deletes but only if it;s an array. either way delete the old array ents
+
+    if (count($guarguar) > 0)
+    {
+	$numguars = count($guarguar);
+    	for ($arr_idx=0;$arr_idx<$numguars;) 
+    	{ // increment at bottom
+        	if ($guarguardel[$arr_idx]) 
+        	{
+           		$query = "UPDATE guarantor SET guarstatus='1' WHERE id='$guarid[$arr_idx]'";
+          		$guar_result = fdb_query($query);
+	  		if (!$guar_result)
+             			echo "$query _(\"failed\")<BR>";
+        	}
+        unset($guarpatient[$arr_idx]); 
+	unset($guarguar[$arr_idx]);
+	unset($guarrel[$arr_idx]);
+	unset($guarstartdt[$arr_idx]); 
+	unset($guarenddt[$arr_idx]);
+	unset($guarstatus[$arr_idx]);
+	unset($guarid[$arr_idx]);
+
+        $arr_idx++; // increment at *end*!
+    	} // for each insco listed
+    }
+
+    // refresh the array from the db 
+
+    $query = "SELECT * FROM guarantor WHERE guarpatient='$current_patient'";
+    $guar_result = fdb_query($query);
+
+    if ($guar_result)
+    {
+	$arr_idx = 0;
+	while($guar_rec = fdb_fetch_array($guar_result))
+        {
+		$guarpatient[$arr_idx] 	= $guar_rec[guarpatient];
+		$guarguar[$arr_idx] 	= $guar_rec[guarguar];
+		$guarrel[$arr_idx] 	= $guar_rec[guarrel];
+		$guarstartdt[$arr_idx] 	= $guar_rec[guarstartdt];
+		$guarenddt[$arr_idx]	= $guar_rec[guarenddt];
+		$guarstatus[$arr_idx]	= $guar_rec[guarstatus];
+		$guarid[$arr_idx]	= $guar_rec[id];
+
+		// display all inscos. just tell the user if active or inactive
+
+        	$guarguar_active[$arr_idx]=true;
+
+          	if (date_in_range($cur_date,$guarstartdt[$arr_idx],$guarenddt[$arr_idx]))
+		{
+			$guarstatus[$arr_idx] = _("Active");
+		}
+		else
+		{
+			$guarstatus[$arr_idx] = _("Expired");
+		}
+
+		if ($guar_rec[guarstatus] == 1)
+		{
+			$guarstatus[$arr_idx] = _("Deleted");
+		}
+			
+		
+		
+		$arr_idx++;
 	}
-        if ($ptguardel[$arr_idx]) {$ptins[$arr_idx]=-1; $arr_idx++;} // delete 
-        if ($ptins[$arr_idx]==-1) continue; // take this one off the list
-        if ($ins_disp_inactive OR !date_in_range($cur_date,
-            $ptinsstart[$arr_idx], $ptinsend[$arr_idx]) ) {
-        } // if it's a visible insco
-	$arr_idx++;
-      } // for each guar listed
-    } // if inscos already exist
-   
+    }
+
+
    $dep_r = freemed_search_query ( 
         array ($dep_s_val => $dep_s_field, $dep_s_val2 => $dep_s_field2),
         array ("ptlname", "ptfname"), "patient", 
-        "ptguar_" );
+        "guarguar_" );
    
    $book->add_page(
      _("Guarantor"),
-     array ("ptguar", "ptrelguar", "ptguarstart", "ptguarend",
-            "ptguar_","ptrelguar_","ptguarstart_","ptguarend_",
+     array ("guarpatient", "guarguar", "guarrel", "guarstartdt", "guarenddt", "guarstatus",
+            "guarid", "guarguar_","guarrel_","guarstartdt_","guarenddt_",
             "guar_disp_inactive", "dep_s_field", "dep_s_val",
             "dep_s_field2", "dep_s_val2"),
      "
@@ -570,13 +820,13 @@ switch ($action) {
       <$STDFONT_B>"._("Guarantor")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
       ".freemed_display_selectbox($dep_r,
-          "#ptlname#, #ptfname#", "ptguar_")."
+          "#ptlname#, #ptfname#", "guarguar_")."
     </TD></TR>
     
     <TR><TD ALIGN=RIGHT>
     <$STDFONT_B>"._("Relation to Guarantor")." : <$STDFONT_E>
     </TD><TD ALIGN=LEFT>
-    ".select_widget("ptrelguar_", array (
+    ".select_widget("guarrel_", array (
         _("Self")    => "S",
         _("Child")   => "C",
         _("Husband") => "H",
@@ -584,25 +834,51 @@ switch ($action) {
         _("Other")   => "O"
 	) )."
     </TD></TR>
-    
+
     <TR><TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Add This Guarantor")." : 
-       <INPUT TYPE=CHECKBOX NAME=\"add_this_guar\"><$STDFONT_E>
+        <$STDFONT_B>"._("Start Date")."<$STDFONT_E>
+        <$STDFONT_B SIZE=\"-1\">
+          ".date_entry("guarstartdt_", 1990, "mdy")."
+        <$STDFONT_E>
+      </TD><TD ALIGN=LEFT>
+        <$STDFONT_B>"._("End Date")."<$STDFONT_E>
+        <$STDFONT_B SIZE=\"-1\">
+          ".date_entry("guarenddt_", 1990, "mdy")."
+        <$STDFONT_E>
+      </TD></TR>
+ 
+    <TR><TD ALIGN=RIGHT>
+      <$STDFONT_B>"._("Add This Guarantor")." :<$STDFONT_E> 
+       <INPUT TYPE=CHECKBOX NAME=\"add_this_guar\">".(isset($guar_arr) ? 
+	"<INPUT TYPE=HIDDEN NAME=\"guar_arr\" VALUE=\"$guar_arr\">" : "")."
+     
     </TD><TD ALIGN=LEFT>
 
     </TD></TR>
+     <TR> 
+     <TD ALIGN LEFT>&nbsp</TD>
+     </TR>
+     <TR> 
+     <TD ALIGN LEFT>$guar_error_msg</TD>
+     </TR>
+     <TR> 
+     <TD ALIGN LEFT>&nbsp</TD>
+     </TR>
     
     <TR WIDTH=\"100%\"><TD COLSPAN=2>
         ".freemed_display_arraylist(
-	    array (_("Guarantor"   ) => "ptguar",
-	           _("Relationship") => "ptrelguar",
-	           _("Start"       ) => "ptguarstart",
-	           _("End"         ) => "ptguarend"),
+	    array (_("Guarantor"   ) => "guarguar",
+	           _("Relationship") => "guarrel",
+	           _("Start"       ) => "guarstartdt",
+	           _("End"         ) => "guarenddt",
+	           _("Status"      ) => "guarstatus"),
 	    array ("patient" => "ptlname",
 	           "",
 		   "",
+		   "",
 		   ""))."
     </TD></TR>
+    <TR><TD>".fm_htmlize_array("guarid",$guarid)."</TD></TR>
 	
     </TABLE>
      "
@@ -647,8 +923,8 @@ switch ($action) {
            $ptemail = $ptemail1 . "@" . $ptemail2;
        
          // collapse the TEXT variables...
-	 reset($t_vars);while ($i=next($t_vars)) 
-	                  $$i = fm_join_from_array($$i);
+	 //reset($t_vars);while ($i=next($t_vars)) 
+	 //                 $$i = fm_join_from_array($$i);
 
          $query = "INSERT INTO patient VALUES (
            '$ptdtadd',
@@ -714,12 +990,23 @@ switch ($action) {
            '$ptinsend',
            '$ptnextofkin',
            '$__ISO_SET__',
-           NULL ) ";
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL) ";
 	 break; // end add
        case "mod": case "modform":
          // collapse the TEXT variables...
-	 reset($t_vars);while ($i=next($t_vars)) 
-	                  if (is_array($$i)) $$i = implode(':', $$i);
+	 //reset($t_vars);while ($i=next($t_vars)) 
+	 //                 if (is_array($$i)) $$i = implode(':', $$i);
          //$ptins{start,end} already fm_date_assemble'd
 	 $ptdtmod  = $cur_date; // set modification date to current date
 	 $pthphone = fm_phone_assemble ("pthphone");

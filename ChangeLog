@@ -1,5 +1,14 @@
 freemed project changelog
 
+* Thu Dec 28 2000 fforest
+  - admin.php added 2 new tables guarantor and payer. the patient record no longer
+              need to carry this info around
+  - patient.php now using the new tables added above.
+  - generate_fixed_forms using sql joins to get payirecs and procrecs together. changed billing
+                         to use a payer type selected from the menu. only bills for this
+                         payer type will generate. revoced the code for invoice. no longer needed.
+
+
 * Thu Dec 28 2000 rufustfirefly
   - rehauling db layer today. i think everything that could have been broken
     is now *being* broken. using phpwebtools sql class now.

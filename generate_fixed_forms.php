@@ -1,4 +1,5 @@
 <?php
+
  // $Id$
  // desc: generate fixed forms
  // lic : GPL, v2
@@ -8,13 +9,13 @@
  include ("lib/API.php");
  include ("lib/render_forms.php");
 
+
  freemed_open_db ($LoginCookie);
 
  freemed_display_html_top ();
  freemed_display_banner ();
 
  switch ($action) { // master action switch
-  case "geninvoice":
   case "geninsform":
    //freemed_display_box_top ("Generate Insurance Claim Forms");
 
@@ -26,39 +27,39 @@
    $counter = 0;
    $current_patient = 0;
 
-//
+   //here start 
+     
+   // here end
 
    // get list of all patient who need to be billed
-//                             payreccat = '5' AND
-   if ($action=="geninvoice")
-   {
-       $b_result = $sql->query ("SELECT DISTINCT payrecpatient
-                           FROM payrec
-                           WHERE (
-                             payreccat = '".PROCEDURE."' AND
-                             payreclink = '4'
-                           ) ORDER BY payrecpatient");
-   }
-   else
-   {
-   $b_result = $sql->query ("SELECT DISTINCT payrecpatient
-                           FROM payrec
-                           WHERE (
-                             payreccat = '".PROCEDURE."' AND
-                             payreclink < '3'
-                           ) ORDER BY payrecpatient");
-   }
    // 0 = 1st insurance
    // 1 = 2nd insurance
    // 2 = 3rd insurance
    // 3 = workers' comp
    // 4 = patient/guarantor
+   $query = "SELECT DISTINCT a.payrecpatient from payrec as a, procrec as b
+                          WHERE (a.payrecproc = b.id AND
+                                 a.payreccat = '5' AND
+                                 a.payreclink = '$bill_request_type' AND
+                                 b.procbalcurrent > '0' AND
+                                 b.procbillable = '0' AND
+                                 b.procbilled = '0')";
+  
+   $b_result = fdb_query($query);
+   //  echo "
+   //   <P>
+   //   <CENTER>
+   //    <$STDFONT_B>$query<$STDFONT_E>
+   //   </CENTER>
+   //   <P>
+   //  ";
+                          
 
-   if (!$sql->results($b_result)) {
+   if (!$b_result or (fdb_num_rows($b_result)<1)) {
      echo "
       <P>
       <CENTER>
-       <$STDFONT_B>"._("There is nothing to be billed.")."<$STDFONT_E>
+       <$STDFONT_B>Nothing to be billed.<$STDFONT_E>
       </CENTER>
       <P>
      ";
@@ -68,7 +69,6 @@
      DIE(""); // kill! kill! kill!
    } // if there is no result, end
 
-
    // zero form buffer
    $form_buffer = "";
 
@@ -76,87 +76,53 @@
    $still_going    = true;
    $current_skip   = 0;
 
-   // skip kludge - moved to new kludge below
-   //if ($skip > 0)
-   //  for ($i=1;$i<=$skip;$i++)
-   //    $null_me = $sql->fetch_array ($b_result);
-
    // loop for all patients
-   while (($b_r = $sql->fetch_array ($b_result)) and ($still_going)) {
+   while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
 
     // pull current patient
     $current_patient = $b_r[payrecpatient];
-
-    $current_status = $sql->num_rows( $sql->query (
-      "SELECT * FROM procrec
-       WHERE (
-         (procpatient    = '$current_patient') AND
-         (procbilled     = '0') AND
-         (procbillable   = '0') AND
-         (procbalcurrent > '0')
-       )"
-      ) );
-    if (($current_status < 1) or ($current_skip < $skip)) {
-      if ($current_status >= 1) {
-        // then we know this is just a skip...
-        $current_skip++;
-      }
-      //echo "
-      // <B>Skipping record # $current_patient</B><BR>
-      //";
-      next; // skip
-    } else { // begin process patient
+    if ($skip > 0)
+    {
+        if ($current_skip < $skip)
+        {
+            $current_skip++;
+            //echo "
+            // <B>Skipping record # $current_patient</B><BR>
+            //";
+            continue;
+        }
+    }
 
      // get current patient information
      $this_patient = new Patient ($current_patient);
      echo "
-      <B>"._("Processing")." ".$this_patient->fullName()."
-        (<A HREF=\"manage.php?$auth&id=$current_patient\"
+      <B>Processing ".$this_patient->fullName()."
+        (<A HREF=\"manage.php3?$auth&id=$current_patient\"
          >".$this_patient->local_record[ptid]."</A>)</B>
       <BR>\n\n
      ";
      flush ();
 
      // grab current insurance company
-     if ($this_patient->local_record[ptdep] == 0) {
-       $this_insco = $this_patient->insco[($b_r[payreclink])];
+     if ($this_patient->ptdep == 0) {
+       $this_insco = $this_patient->insco[$bill_request_type];
      } else { // if get from guarantor
-       $guarantor = new Patient ($this_patient->local_record[ptdep]);
-       $this_insco = $guarantor->insco[($b_r[payreclink])];
+       $guarantor = new Patient ($this_patient->ptdep);
+       $this_insco = $guarantor->insco[$bill_request_type];
      }
 
-     //$debug=true;
 
-     // decide which ones we are generating
-     if ($action=="geninvoice")
-     {
-     $result = $sql->query ("SELECT a.* FROM payrec AS a,
+     $result = fdb_query ("SELECT a.*,b.* FROM payrec AS a,
                                            procrec AS b 
                            WHERE ( 
                              a.payreccat = '5' AND
-                             a.payreclink = '4' AND
+                             a.payreclink = '$bill_request_type' AND
                              a.payrecpatient = '$current_patient' AND
                              a.payrecproc = b.id AND
-                             b.procbilled = '0' AND
                              b.procbillable = '0' AND
-                             b.procbalcurrent > '0'
-                           ) ORDER BY payrecpatient,payrecdt");
-
-     }
-     else
-     {
-     $result = $sql->query ("SELECT a.* FROM payrec AS a,
-                                           procrec AS b 
-                           WHERE ( 
-                             a.payreccat = '5' AND
-                             a.payreclink < '3' AND
-                             a.payrecpatient = '$current_patient' AND
-                             a.payrecproc = b.id AND
                              b.procbilled = '0' AND
-                             b.procbillable = '0' AND
                              b.procbalcurrent > '0'
-                           ) ORDER BY payrecpatient,payrecdt");
-     }
+                           ) ORDER BY a.payrecpatient,a.payrecdt");
 
      if (!$result or ($result==0))
        die ("Malformed SQL query ($current_patient)");
@@ -167,7 +133,7 @@
      // create a new diagnosisSet stack
      $diag_set = new diagnosisSet (); // new stack of size 4
 
-     if ($debug) echo "\n"._("Building patient information")."...<BR>\n";
+     if ($debug) echo "\nBuilding patient information...<BR>\n";
 
      // pull in proper variables
      $ptname[last]    = $this_patient->ptlname;
@@ -195,7 +161,7 @@
 
      // relationship to guarantor
      $ptreldep[self]   = ( (($this_patient->ptreldep == "S") or
-                            ($this_patient->local_record["ptdep"] == 0)) ?
+                            ($this_patient->ptdep == 0)) ?
                             $this_form[ffcheckchar] : " " );
      $ptreldep[child]  = ( ($this_patient->ptreldep == "C") ?
                             $this_form[ffcheckchar] : " " );
@@ -228,10 +194,19 @@
      $ptemployed[yes] =
        ( ($this_patient->ptempl == "y") ?
           $this_form[ffcheckchar] : " " );
-     // no is not an option here. should be partime/fulltime student FIXME !!!
-     $ptemployed[no] =
-       ( !($this_patient->ptempl == "n") ?
+     // part time student
+     $ptemplpart[yes] =
+       ( ($this_patient->ptempl == "p") ?
           $this_form[ffcheckchar] : " " );
+     // full time student
+     $ptemplfull[yes] =
+       ( ($this_patient->ptempl == "f") ?
+          $this_form[ffcheckchar] : " " );
+
+     // no is not an option here. should be partime/fulltime student FIXME !!!
+     //$ptemployed[no] =
+     //  ( !($this_patient->ptempl == "n") ?
+     //     $this_form[ffcheckchar] : " " );
 
      // address information
      $ptaddr[line1]   = $this_patient->local_record["ptaddr1"  ];
@@ -255,6 +230,8 @@
      $phy[phone]      = $this_physician->local_record["phyphonea"];
 
      // what is this related to?
+	// We print these for default. we check the eoc later is this code
+	// and coded values will replace the default
      $employment = "n"; // PULL THIS FROM EOC LATER !! FIX ME !!
      $related_employment[yes] =
        ( ( $employment == "y" ) ? $this_form[ffcheckchar] : " " );
@@ -274,20 +251,16 @@
        ( ( $other == "n" ) ? $this_form[ffcheckchar] : " " );
 
      // insco information
-     if ($this_patient->local_record[ptdep] == 0) {
+     if ($this_patient->ptdep == 0) {
        $this_insco = new InsuranceCompany (
-              $this_patient->local_record["ptins".($b_r[payreclink]+1)]);
-       $insco[number]     = $this_patient->local_record["ptinsno".
-                            ($b_r[payreclink]+1)];
-       $insco[group]      = $this_patient->local_record["ptinsgrp".
-                            ($b_r[payreclink]+1)];
+              $this_patient->local_record["ptins".($bill_request_type+1)]);
+       $insco[number]     = $this_patient->local_record["ptinsno".($bill_request_type+1)];
+       $insco[group]      = $this_patient->local_record["ptinsgrp".($bill_request_type+1)];
      } else { // if there *is* a guarantor
        $this_insco = new InsuranceCompany (
-              $guarantor->local_record["ptins".($b_r[payreclink]+1)]);
-       $insco[number]     = $guarantor->local_record["ptinsno".
-                            ($b_r[payreclink]+1)];
-       $insco[group]      = $guarantor->local_record["ptinsgrp".
-                            ($b_r[payreclink]+1)];
+              $guarantor->local_record["ptins".($bill_request_type+1)]);
+       $insco[number]     = $guarantor->local_record["ptinsno".($bill_request_type+1)];
+       $insco[group]      = $guarantor->local_record["ptinsgrp".($bill_request_type+1)];
      } // end checking for insco
      
      $insco[name]       = $this_insco->inscoalias;
@@ -313,6 +286,7 @@
 
      // pull facility
      $this_facility     = freemed_get_link_rec ($default_facility, "facility");
+     if ($debug) echo "\n$default_facility<BR>\n";
      $fac[name]         = $this_facility[psrname];
      $fac[line1]        = $this_facility[psraddr1];
      $fac[line2]        = $this_facility[psraddr2];
@@ -339,12 +313,8 @@
      //$refphy[upin]      = $referring_physician[phyupin];
 
      // check for guarantor information
-     if ($this_patient->local_record[ptdep] == 0) {
+     if ($this_patient->ptdep == 0) {
        // if self insured, transfer data to guarantor arrays
-       //$guarname      = $ptname;  // assign name information
-       //$guaraddr      = $ptaddr;  // assign address information
-       //$guardob       = $ptdob;   // assign date of birth info
-       //$guarsex       = $ptsex;   // assign gender information
        // clear all of the guarantor fields
        unset ($guarname);
        unset ($guaraddr);
@@ -373,10 +343,8 @@
        $guaraddr[zip]     = $guarantor->local_record["ptzip"    ];
        $guarphone[full]   = $guarantor->local_record["pthphone" ];
 
-       $insco[number]     = $guarantor->local_record["ptinsno".
-                            ($b_r[payreclink]+1)];
-       $insco[group]      = $guarantor->local_record["ptinsgrp".
-                            ($b_r[payreclink]+1)];
+       $insco[number]     = $guarantor->local_record["ptinsno".($bill_request_type+1)];
+       $insco[group]      = $guarantor->local_record["ptinsgrp".($bill_request_type+1)];
        // PULL INSCO  HERE IF GUARANTOR !!!!!!!!!!!!!!!!!!!!!
        //       FIIIIIIIIIX MEEEEEEEEEEEE!
      } // end checking for dependant
@@ -407,43 +375,43 @@
 
      // queue all entries
      $first_procedure = 0;
-     while ($r = $sql->fetch_array ($result)) {
-       $p = freemed_get_link_rec ($r[payrecproc], "procrec");
-        // kludge to get eoc info from procedure. 
-	if (first_procedure == 0)
-        {
-           $eocs = explode (":", $p[proceoc]);
+     while ($r = fdb_fetch_array ($result)) {
+       //$p = freemed_get_link_rec ($r[payrecproc], "procrec");
+       if (first_procedure == 0)
+       {
+           $eocs = explode (":", $r[proceoc]);
            if ($eocs[0])
            {
-                $eoc = freemed_get_link_rec ($eocs[0], "eoc");
-                // what is this related to?
-                $employment = $eoc[eocrelemp];
+	        $eoc = freemed_get_link_rec ($eocs[0], "eoc");
+     	        // what is this related to?
+                $employment = $eoc[eocrelemp]; 
                 $related_employment[yes] =
                    ( ( $employment == "yes" ) ? $this_form[ffcheckchar] : " " );
                 $related_employment[no]  =
                    ( ( $employment == "no" ) ? $this_form[ffcheckchar] : " " );
-                $auto = $eoc[eocrelauto];
+                $auto = $eoc[eocrelauto]; 
                 $related_auto[yes] =
                    ( ( $auto == "yes" ) ? $this_form[ffcheckchar] : " " );
                 $related_auto[no]  =
                    ( ( $auto == "no" ) ? $this_form[ffcheckchar] : " " );
-                $related_auto[state] =    
+                $related_auto[state] =    // FIIIIIIIX  MEEEEEEEEEE!!!
                    ( ( $auto == "yes" ) ? $eoc[eocrelautostpr] : "  " );
-                $other = $eoc[eocrelother];
+                $other = $eoc[eocrelother]; 
                 $related_other[yes] =
                    ( ( $other == "yes" ) ? $this_form[ffcheckchar] : " " );
                 $related_other[no] =
                    ( ( $other == "no" ) ? $this_form[ffcheckchar] : " " );
-                $first_procedure = 1;
-                if ($debug) echo "\n$employment $auto $other<BR>\n";
-
-
+		$first_procedure = 1;
+       	        if ($debug) echo "\n$employment $auto $other<BR>\n";
+		
+	    
            }
-         }
-       if ($debug) echo "\n"._("Retrieved procedure")." $r[payrecproc] <BR>\n";
+       }	
+
+       if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
        flush();
 
-       if ($p[procbalcurrent]<=0) {
+       if ($r[procbalcurrent]<=0) {
          $render_form = false; // don't render the form if 0
          next; // skip if no charge
        } else {
@@ -461,8 +429,8 @@
        ////   six or less?
 
        if ($debug) echo "\nCurrent stack size = $diag_set->stack_size <BR>\n";
-       if (!($diag_set->testAddSet ($p[procdiag1], $p[procdiag2],
-                                    $p[procdiag3], $p[procdiag4])) or
+       if (!($diag_set->testAddSet ($r[procdiag1], $r[procdiag2],
+                                    $r[procdiag3], $r[procdiag4])) or
             ($number_of_charges > $this_form[ffloopnum]         )){
          if ($debug) echo "\nNew form time ... <BR>\n";
          // echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
@@ -484,8 +452,8 @@
          $number_of_charges = 1;
 
          // reset the diag_set array
-         unset ($diag_set);
-         $diag_set = new diagnosisSet ();
+         //unset ($diag_set);
+         //$diag_set = new diagnosisSet ();
 
          // and zero the arrays
          for ($j=0;$j<=$this_form[ffloopnum];$j++)
@@ -501,19 +469,19 @@
        // pull into current array
        if ($debug) echo "\nnumber of charges = $number_of_charges <BR>\n";
        flush();
-       $cur_cpt = freemed_get_link_rec ($p[proccpt], "cpt");
+       $cur_cpt = freemed_get_link_rec ($r[proccpt], "cpt");
        $tos_stack = fm_split_into_array ($cur_cpt[cpttos]);
        $this_tos = ( ($tos_stack[$cur_insco] < 1) ?
                       $cur_cpt[cptdeftos] :
                       $tos_stack[$cur_insco] );
-       $this_auth = freemed_get_link_rec ($p[procauth], "authorizations");
+       $this_auth = freemed_get_link_rec ($r[procauth], "authorizations");
        $authorized[authnum] = $this_auth[authnum];
 
-       if ($p[procrefdoc]>0) {
-         $ref_physician  = new Physician ($p[procrefdoc]);
+       if ($r[procrefdoc]>0) {
+         $ref_physician  = new Physician ($r[procrefdoc]);
          $ref[physician] = $ref_physician->fullName();
          $ref[upin]      = $ref_physician->local_record["phyupin"];
-         $ref[date]      = $p[procrefdt] ;
+         $ref[date]      = $r[procrefdt] ;
          $ref[y]         = substr ($ref[date], 0, 4);
          $ref[m]         = substr ($ref[date], 5, 2);
          $ref[d]         = substr ($ref[date], 8, 2);
@@ -527,27 +495,27 @@
        $ref[d] = ( ($ref[d]>0) ? $ref[d] : "" );
        $ref[m] = ( ($ref[m]>0) ? $ref[m] : "" );
 
-       $itemdate    [$number_of_charges] = $p[procdt];
-       $itemdate_m  [$number_of_charges] = substr($p[procdt],     5, 2);
-       $itemdate_d  [$number_of_charges] = substr($p[procdt],     8, 2);
-       $itemdate_y  [$number_of_charges] = substr($p[procdt],     0, 4);
-       $itemdate_sy [$number_of_charges] = substr($p[procdt],     2, 2);
+       $itemdate    [$number_of_charges] = $r[procdt];
+       $itemdate_m  [$number_of_charges] = substr($r[procdt],     5, 2);
+       $itemdate_d  [$number_of_charges] = substr($r[procdt],     8, 2);
+       $itemdate_y  [$number_of_charges] = substr($r[procdt],     0, 4);
+       $itemdate_sy [$number_of_charges] = substr($r[procdt],     2, 2);
        $itemcharges [$number_of_charges] = 
-           ($p[procamtallowed]) ? bcadd($p[procamtallowed], 0, 2) : bcadd($p[procbalorig], 0, 2);
-       $itemunits   [$number_of_charges] = bcadd($p[procunits],   0, 0);
+   	    ($r[procamtallowed]) ? bcadd($r[procamtallowed], 0, 2) : bcadd($r[procbalorig], 0, 2);
+       $itemunits   [$number_of_charges] = bcadd($r[procunits],   0, 0);
        $itempos     [$number_of_charges] = "11";  // KLUDGE!! KLUDGE!!
-       $itemvoucher [$number_of_charges] = $p[procvoucher];
+       $itemvoucher [$number_of_charges] = $r[procvoucher];
        $itemcpt     [$number_of_charges] = $cur_cpt[cptcode];
        $itemtos     [$number_of_charges] =
           freemed_get_link_field ($this_tos, "tos", "tosname");
        $itemcptmod  [$number_of_charges] =
-          freemed_get_link_field ($p[proccptmod], "cptmod", "cptmod");
+          freemed_get_link_field ($r[proccptmod], "cptmod", "cptmod");
        $itemdiagref [$number_of_charges] =
-          $diag_set->xrefList ($p[procdiag1], $p[procdiag2],
-                               $p[procdiag3], $p[procdiag4]);
+          $diag_set->xrefList ($r[procdiag1], $r[procdiag2],
+                               $r[procdiag3], $r[procdiag4]);
        $itemauthnum [$number_of_charges] = $this_auth [authnum];
 
-       $total_paid    += $p[procamtpaid];
+       $total_paid    += $r[procamtpaid];
        $total_charges += $itemcharges[$number_of_charges];
        if ($debug) echo "\ndiagref = $itemdiagref[$number_of_charges] <BR>\n";
 
@@ -569,7 +537,7 @@
      if (($num_patients != 0) and ($pat_processed >= $num_patients))
        $still_going = false;
 
-    } // end of conditional for checking for skip
+    //} // end of conditional for checking for skip
 
    } // end of while there are no more patients
 
@@ -580,7 +548,7 @@
    echo "
     <FORM ACTION=\"echo.php3/form.txt\" METHOD=POST>
      <CENTER>
-      <$STDFONT_B><B>"._("Preview")."</B><$STDFONT_E>
+      <$STDFONT_B><B>Preview</B><$STDFONT_E>
      </CENTER>
      <BR>
      <TEXTAREA NAME=\"text\" ROWS=10 COLS=81
@@ -588,10 +556,10 @@
     <P>
     <CENTER>
      <SELECT NAME=\"type\">
-      <OPTION VALUE=\"\">"._("Render to Screen")."
-      <OPTION VALUE=\"application/x-rendered-text\">"._("Render to File")."
+      <OPTION VALUE=\"\">Render to Screen
+      <OPTION VALUE=\"application/x-rendered-text\">Render to File
      </SELECT>
-     <INPUT TYPE=SUBMIT VALUE=\""._("Get HCFA Rendered Text File")."\">
+     <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
     </CENTER>
     </FORM>
     <P>
@@ -600,11 +568,11 @@
    // present the form so that we can mark as billed
    echo "
     <CENTER>
-    <$STDFONT_B><B>"._("Mark as Billed")."</B><$STDFONT_E>
+    <$STDFONT_B><B>Mark as Billed</B><$STDFONT_E>
     </CENTER>
     <BR>
     <FORM ACTION=\"$page_name\" METHOD=POST>
-     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
+     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
      <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"mark\">
    ";
    for ($i=1;$i<=$pat_processed;$i++) {
@@ -613,13 +581,13 @@
        <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
         VALUE=\"".$patient_forms[$i]."\" CHECKED>
        ".$this_patient->fullName(false)."
-       (<A HREF=\"manage.php?$_auth&id=$patient_forms[$i]\"
+       (<A HREF=\"manage.php3?$_auth&id=$patient_forms[$i]\"
         >".$this_patient->local_record["ptid"]."</A>) <BR>
      ";
    } // end looping for all processed patients
    echo "
     <P>
-    <INPUT TYPE=SUBMIT VALUE=\""._("Mark as Billed")."\">
+    <INPUT TYPE=SUBMIT VALUE=\"Mark as Billed\">
     </FORM>
     <P>
    ";
@@ -628,24 +596,24 @@
    break; // end of action geninsform
 
   case "mark": // mark as billed action
-   freemed_display_box_top (_("Mark as Billed"));
+   freemed_display_box_top ("Mark Forms as Billed");
    if (count($processed)<1) {
     echo "
      <P>
      <CENTER>
-      <$STDFONT_B><B>"._("Nothing set to be marked!")."</B><$STDFONT_E>
+      <$STDFONT_B><B>Nothing set to be marked!</B><$STDFONT_E>
      </CENTER>
      <P>
      <CENTER>
       <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+      ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
      </CENTER>
      <P>
     ";
    } else {
      for ($i=0;$i<count($processed);$i++) {
        echo "
-         "._("Marking")." ".$processed[$i]." ... 
+         Marking ".$processed[$i]." ... 
        ";
        $query = "UPDATE procrec
                  SET procbilled = '1'
@@ -654,7 +622,7 @@
                    (procbilled     = '0') AND
                    (procbalcurrent > '0')
                  )";
-       $result = $sql->query ($query);
+       $result = fdb_query ($query);
        if ($result) { echo "$Done.<BR>\n"; }
         else        { echo "$ERROR<BR>\n"; }
      }
@@ -662,7 +630,7 @@
       <P>
       <CENTER>
        <A HREF=\"$page_name?$_auth\"
-       ><$STDFONT_B>"._("Back")."<$STDFONT_E></A>
+       ><$STDFONT_B>Return to Fixed Forms Generation Menu<$STDFONT_E></A>
       </CENTER>
       <P>
      ";
@@ -670,12 +638,13 @@
    freemed_display_box_bottom ();
    break; // end of mark as billed action
 
-  case "invoice":
+  case "invoice": // create a patient invoice menu 
   default:
+    //<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"geninvoice\">
    if ($action=="invoice")
    {
        freemed_display_box_top ("Fixed Forms Generation Menu");
-        echo "
+   	echo "
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
      VALIGN=MIDDLE ALIGN=CENTER>
 
@@ -689,7 +658,6 @@
 
     <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"geninvoice\">
 
     <TR>
      <TD ALIGN=RIGHT>
@@ -702,8 +670,8 @@
    ";
    } // end action invoice
    else
-   {
-   freemed_display_box_top (_("Fixed Forms Generation"));
+   { // default
+   freemed_display_box_top ("Fixed Forms Generation Menu");
    echo "
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
      VALIGN=MIDDLE ALIGN=CENTER>
@@ -711,29 +679,28 @@
     <TR>
      <TD COLSPAN=2>
       <CENTER>
-       <$STDFONT_B><B>"._("Generate Insurance Claim Forms")."</B><$STDFONT_E>
+       <$STDFONT_B><B>Generate Insurance Claim Forms</B><$STDFONT_E>
       </CENTER>
      </TD>
     </TR>
 
     <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"".prepare($_auth)."\">
+    <INPUT TYPE=HIDDEN NAME=\"_auth\"  VALUE=\"$_auth\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"geninsform\">
 
     <TR>
      <TD ALIGN=RIGHT>
       <CENTER>
-       <$STDFONT_B>"._("Claim Form")." : <$STDFONT_E>
+       <$STDFONT_B>Claim Form : <$STDFONT_E>
       </CENTER>
      </TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"whichform\">
    ";
-   } // end default action
-
-   $result = $sql->query ("SELECT * FROM fixedform WHERE fftype='1'
+   }
+   $result = fdb_query ("SELECT * FROM fixedform WHERE fftype='1'
                          ORDER BY ffname, ffdescrip");
-   while ($r = $sql->fetch_array ($result)) {
+   while ($r = fdb_fetch_array ($result)) {
     echo "
      <OPTION VALUE=\"$r[id]\">".prepare($r[ffname])."
     ";
@@ -746,27 +713,44 @@
     <TR>
      <TD ALIGN=RIGHT>
       <CENTER>
-       <$STDFONT_B>"._("Number of Patients")." : <$STDFONT_E>
+       <$STDFONT_B>Number of Patients : <$STDFONT_E>
       </CENTER>
      </TD>
      <TD ALIGN=LEFT>
-   ".fm_number_select ("num_patients", 0, 200)."
+   ";
+   fm_number_select ("num_patients", 0, 200);
+   echo "
      </TD>
     </TR>
 
     <TR>
      <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Skip # of Pats to Bill")." : <$STDFONT_E>
+      <$STDFONT_B>Skip # of Pats to Bill : <$STDFONT_E>
      </TD>
      <TD ALIGN=LEFT>
-   ".fm_number_select ("skip", 0, 100)."
+   ";
+   fm_number_select ("skip", 0, 100);
+   echo "
      </TD>
+    </TR>
+    <TR>
+       <TD ALIGN=RIGHT>
+        <$STDFONT_B>To : <$STDFONT_E>
+       </TD><TD ALIGN=LEFT>
+        <SELECT NAME=\"bill_request_type\">
+         <OPTION VALUE=\"0\">1st Insurance\n
+         <OPTION VALUE=\"1\">2nd Insurance\n
+         <OPTION VALUE=\"2\">3rd Insurance\n
+         <OPTION VALUE=\"3\">Worker's Comp\n
+         <OPTION VALUE=\"4\">Patient
+        </SELECT>
+       </TD>
     </TR>
 
     <TR>
      <TD COLSPAN=2>
       <CENTER>
-       <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
+       <INPUT TYPE=SUBMIT VALUE=\"go\">
       </CENTER>
      </TD>
     </TR>
