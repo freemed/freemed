@@ -366,6 +366,7 @@
        } else {
          $render_form = true; // reset to render form
        }
+
        $number_of_charges++; // increment number of charges
 
        if ($debug) echo "\nThis form, charge $number_of_charges <BR>\n";
@@ -459,6 +460,7 @@
        $total_paid    += $p[procamtpaid];
        $total_charges += $itemcharges[$number_of_charges];
        if ($debug) echo "\ndiagref = $itemdiagref[$number_of_charges] <BR>\n";
+
      } // end of looping for all charges
 
      $ptdiag = $diag_set->getStack(); // get pt diagnoses

@@ -50,6 +50,8 @@ class diagnosisSet {
     // determine size of new array
     $size_of_new = count ($newvals);
 
+    if ($debug) echo "numberUnique->sizeOfNew = $size_of_new <BR>\n";
+
     // if the stack is empty, they are all unique
     if ($this->stack_size==0) return $size_of_new;
 
@@ -72,9 +74,10 @@ class diagnosisSet {
   // -- add value to the stack
   function popValue ($val) {
     global $debug;
-    $this->stack_size++;                           // increment the stack size
-    if (!($this->inStack ($val)) and ($val != 0))
+    if (!($this->inStack ($val)) and ($val != 0)) {
+      $this->stack_size++;                           // increment the stack size
       $this->internal_stack[$this->stack_size] = $val;
+    }
     if ($debug) echo "stack size = $this->stack_size ($val) <BR>\n";
   } // end function diagnosisSet->popValue
 
@@ -196,7 +199,7 @@ function render_FixedFormEntry ($formentry) {
   } elseif (strlen ($this_evalled) < $formentry->len) {
     $this_difference = ($formentry->len) - (strlen($this_evalled));
     for ($loop=0;$loop<$this_difference;$loop++)
-      { $this_evalled .= " "; if ($debug) echo "\nSPACE<BR>\n"; }
+      { $this_evalled .= " "; } //if ($debug) echo "\nSPACE<BR>\n"; }
     $length_adjusted = $this_evalled;
   } else { // no change neccesary
     $length_adjusted = $this_evalled;
