@@ -267,15 +267,6 @@ freemed_display_phystatus (selected)
     returns: none
     created: API epoch or prior (19990609)
 
-freemed_display_phy_degrees (selected)
-  displays the list of physician specialties for the innards
-  of a tag set. (same as freemed_display_icdcodes). Formerly
-  implemented as _specialtylist.php3, and also known as
-  freemed_display_phy_specialties
-    returns: none
-    created: 19990610
-    modified: 19990830
-
 freemed_display_phy_specialties (selected)
   displays the list of physician specialties for the innards
   of a tag set.

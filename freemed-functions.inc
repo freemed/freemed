@@ -1173,36 +1173,6 @@ function freemed_display_rooms ($param)
   } // end master loop
 } // end function freemed_display_rooms
 
-// function freemed_display_phy_degrees
-//   display <SELECT>-type list of physician
-//   specialties (formerly _specialtylist.php3)
-//   formerly freemed_display_phy_specialties
-function freemed_display_phy_degrees ($param)
-{
-  global $NONE_SELECTED;
-
-  // list degrees in SELECT/OPTION tag list, and
-  // leave degrees selected that are in param
-  echo "
-    <OPTION VALUE=\"0\">$NONE_SELECTED
-  ";
-  $query = "SELECT * FROM degrees ORDER BY ".
-     "degdegree, degname";
-  $result = fdb_query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more
-    while ($row=fdb_fetch_array($result)) {
-      echo "
-        <OPTION VALUE=\"$_deg_id\" ".
-	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".fm_prep("$row[degdegree], $row[degname]")."
-      "; // end of actual output
-    } // while there are more results...
-  }
-
-} // end function freemed_display_phy_degrees
-
 // function freemed_display_phy_specialties
 //   display <SELECT>-type list of physician specialties
 function freemed_display_phy_specialties ($param)
