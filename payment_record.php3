@@ -165,7 +165,7 @@
    ";
 
    switch ($payreccat) {
-    case "0": // payment
+    case PAYMENT: // payment (0)
     echo "
      <TR><TD COLSPAN=2>
      <$HEADERFONT_B>Step Two: Describe the Payment<$HEADERFONT_E>
@@ -218,7 +218,7 @@
    ";
    break; // end of payment
 
-   case "1": // adjustment
+   case ADJUSTMENT: // adjustment (1)
    echo "
      <TR>
       <TD ALIGN=CENTER COLSPAN=2>
@@ -255,7 +255,7 @@
    ";
    break; // end of adjustment
 
-   case "2": // refund
+   case REFUND: // refund (2)
    echo "
      <TR>
       <TD COLSPAN=2 ALIGN=CENTER>
@@ -297,7 +297,7 @@
    ";
    break; // end of refund
 
-   case "3": // denial
+   case DENIAL: // denial (3)
    echo "
      <TR>
       <TD COLSPAN=2 ALIGN=CENTER>
@@ -330,7 +330,7 @@
    ";
    break; // end of denial
 
-   case "4": // rebills
+   case REBILL: // rebills (4)
    echo "
      <TR>
       <TD COLSPAN=2 ALIGN=CENTER>
@@ -510,7 +510,7 @@
     ";
     break; // end payment (addform2)
 
-    case "1": // adjustment (addform2)
+    case ADJUSTMENT: // adjustment (addform2) 1
     echo "
      <TR><TD COLSPAN=2>
      <$HEADERFONT_B>Step Three: Adjustment Information<$HEADERFONT_E>
@@ -523,7 +523,7 @@
     ";
      break; // end adjustment (addform2)
 
-    case "2": // refund (addform2)
+    case REFUND: // refund (addform2) 2
     echo "
      <TR><TD COLSPAN=2>
      <$HEADERFONT_B>Step Three:: Refund Information<$HEADERFONT_E>
@@ -536,7 +536,7 @@
     ";
      break; // end refund (addform2)
 
-    case "3": // denial (addform2)
+    case DENIAL: // denial (addform2) 3
     echo "
      <TR><TD COLSPAN=2>
      <$HEADERFONT_B>Step Three: Denial Information<$HEADERFONT_E>
@@ -551,7 +551,7 @@
     ";
      break; // end denial (addform2)
 
-    case "4": // rebill (addform2)
+    case REBILL: // rebill (addform2) 4
     echo "
      <TR><TD COLSPAN=2>
      <$HEADERFONT_B>Step Three: Rebill Information<$HEADERFONT_E>
@@ -581,7 +581,7 @@
    freemed_display_box_top ("$Adding $record_name");
 
    switch ($payreccat) { // begin category case (add)
-     case "0": // payment category (add)
+     case PAYMENT: // payment category (add) 0
      // first clean payrecnum vars
      $payrecnum    = eregi_replace (":", "", $payrecnum   );
      $payrecnum_1  = eregi_replace (":", "", $payrecnum_1 );
@@ -616,19 +616,19 @@
      } // end switch payrectype
      break; // end payment category (add)
 
-     case "1": // adjustment category (add)
+     case ADJUSTMENT: // adjustment category (add) 1
       break; // end adjustment category (add)
 
-     case "2": // refund category (add)
+     case REFUND: // refund category (add) 2
       break; // end refund category (add)
 
-     case "3": // denial category (add)
+     case DENIAL: // denial category (add) 3
       $amount_left = freemed_get_link_field ($payrecproc, "procrec",
                                              "procbalcurrent");
       $payrecamt   = -(abs($amount_left));
       break; // end denial category (add)
 
-     case "4": // rebill category (add)
+     case REBILL: // rebill category (add) 4
       break; // end rebill category (add)
    } // end category switch (add)
 
@@ -654,19 +654,19 @@
     else        { echo "$ERROR"; }
    echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
    switch ($payreccat) {
-     case "1": // adjustment category (add)
+     case ADJUSTMENT: // adjustment category (add) 1
       $query = "UPDATE $database.procrec SET
                 procbalcurrent = procbalcurrent - $payrecamt
                 WHERE id='$payrecproc'";
       break; // end adjustment category (add)
 
-     case "2": // refund category (add)
+     case REFUND: // refund category (add) 2
       $query = "UPDATE $database.procrec SET
                 procamtpaid    = procamtpaid    + $payrecamt
                 WHERE id='$payrecproc'";
       break; // end refund category (add)
 
-     case "3": // denial category (add)
+     case DENIAL: // denial category (add) 3
       if ($payreclink==1) {
         $query = "UPDATE $database.procrec SET
                   procbalcurrent = '0'
@@ -676,11 +676,11 @@
       } // end checking for adjust to zero
       break; // end denial category (add)
 
-     case "4": // rebill category (add)
+     case REBILL: // rebill category (add) 4
       $query = "";
       break; // end rebill category (add)
 
-     case "0": // payment category (add)
+     case PAYMENT: // payment category (add) 0
      default:  // default is payment
       $query = "UPDATE $database.procrec SET
                 procbalcurrent = procbalcurrent - $payrecamt,
@@ -829,48 +829,63 @@
      $payrecdescrip   = fm_prep ($r["payrecdescrip"]);
      $payrecamt       = fm_prep ($r["payrecamt"]);
      switch ($r["payreccat"]) { // category switch
-      case "2": // refunds
-      case "5": // charges
+      case REFUND: // refunds 2
+      case PROCEDURE: // charges 5
        $pay_color       = "#000000";
        $payment         = "&nbsp;";
        $charge          = bcadd($payrecamt, 0, 2);
        $total_charges  += $payrecamt; break;
-      case "4": // rebills
+      case REBILL: // rebills 4
        $payment         = "&nbsp;";
        $charge          = "&nbsp;";
        break;
-      case "3": // denials
+      case DENIAL: // denials 3
        $pay_color       = "#000000";
        $charge          = bcadd($payrecamt, 0, 2);
        $payment         = "&nbsp;";
        $total_charges  += $charge;
        break;
-      case '1': // adjustments
-      case "0": default: // default is payments
+      case TRANSFER: // transfer 6
+      case WITHHOLD: // withhold 7
+      case DEDUCTABLE: // deductable 8
+       $pay_color       = "#000000";
+       $charge          = bcadd(-$payrecamt, 0, 2);
+       $payment         = "&nbsp;";
+       $total_charges  += $charge;
+       break;
+      case ADJUSTMENT: // adjustments 1
+      case PAYMENT: default: // default is payments 0
        $pay_color       = "#ff0000";
        $payment         = bcadd($payrecamt, 0, 2);
        $charge          = "&nbsp;";
        $total_payments += $payrecamt; break;
      } // end of category switch (for totals)
      switch ($r["payreccat"]) {
-      case "1": // adjustments
+      case ADJUSTMENT: // adjustments 1
        $this_type = "adjust";
        break;
-      case "2": // refunds
+      case REFUND: // refunds 2
        $this_type = "refund";
        break;
-      case "3": // denial
-       $this_type      = "denial";
-       $charge         = bcadd($payrecamt, 0, 2);
-       $payment        = "&nbsp;";
+      case DENIAL: // denial 3
+       $this_type = "denial";
        break;
-      case "4": // rebill
+      case REBILL: // rebill 4
        $this_type = "rebill";
        break;
-      case "5": // charge
+      case PROCEDURE: // charge 5
        $this_type = "charge";
        break;
-      case "0": // payment
+      case TRANSFER: // transfer 6
+       $this_type = "transfer";
+       break;
+      case WITHHOLD: // withhold 7
+       $this_type = "withhold";
+       break;
+      case DEDUCTABLE: // deductable 8
+       $this_type = "deductable";
+       break;
+      case PAYMENT: // payment 0
       default:  // default is payment
        $this_type = "payment";
        break;
