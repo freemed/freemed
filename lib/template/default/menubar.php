@@ -15,6 +15,7 @@ function menu_bar_cell($text, $link) {
 
 // Check for presence of patient and pagehistories
 $patient_history = patient_history_list();
+ksort($patient_history);
 $page_history = page_history_list();
 if ($patient_history or $page_history) {
 	print "
