@@ -7,6 +7,10 @@
  //       max k <amk@span.ch>
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
+ // $Log$
+ // Revision 1.35  2001/10/12 14:59:59  rufustfirefly
+ // added Log tag
+ //
 
 if (!defined("__API_PHP__")) {
 
