@@ -106,6 +106,7 @@ class SchedulerTable extends MaintenanceModule {
 
 	// Use _update to update table definitions with new versions
 	function _update () {
+		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
 
 		// Version 0.6.3
