@@ -1,8 +1,8 @@
 <?php
-  # file: manage.php3
-  # note: patient management functions -- links to other modules
-  # code: jeff b (jeff@univrel.pr.uconn.edu)
-  # lic : GPL, v2
+ // file: manage.php3
+ // note: patient management functions -- links to other modules
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
   $page_name = "manage.php3";
   include ("global.var.inc");
@@ -144,16 +144,7 @@ switch ($action) {
       $_auth   = "_ref=$page_name";
       echo "
 
-     <TABLE WIDTH=100% BORDER=1 CELLPADDING=3 BGCOLOR=#FFFFFF >
-     <TR><TD>
-        <CENTER><FONT FACE=\"Arial, Helvetica, Verdana\">
-        <B>"._("Patient")." : ".$this_patient->fullName(false)."
-           [<I>&nbsp;".$this_patient->dateOfBirth().
-           "&nbsp; </I>] ".$this_patient->idNumber()."</B>
-        </FONT></CENTER>
-     </TD></TR>
-     </TABLE>
-
+     ".freemed_patient_box($this_patient)."
 
         <TABLE WIDTH=100% BORDER=0 CELLPADDING=3>
         <TR><TD ALIGN=RIGHT>
@@ -334,7 +325,7 @@ switch ($action) {
             <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"attachform\">
             <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$id\"       >
           <$STDFONT_B><B>"._("Attach to Guarantor")."</B><$STDFONT_E><BR>
-          <$STDFONT_B>".("Last Name")." : <$STDFONT_E>
+          <$STDFONT_B>"._("Last Name")." : <$STDFONT_E>
            <SELECT NAME=\"f1\">
             <OPTION VALUE=\"\" >"._("ALL")."
             <OPTION VALUE=\"A\">A
