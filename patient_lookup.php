@@ -57,8 +57,9 @@ switch ($action) {
 		$wheres[] = "ptfname LIKE '".addslashes($first)."%'";
 		$wheres[] = "ptlname LIKE '".addslashes($last)."%'";
 	}
+	$wheres[] = "ptarchive != 1";
 
-	$query = "SELECT * FROM patient WHERE ".implode(" AND ", $wheres).
+	$query = "SELECT * FROM patient WHERE ".implode(" AND ", $wheres)." ".
 		"ORDER BY ptlname, ptfname, ptcity";
 	$result = $sql->query($query);
 
