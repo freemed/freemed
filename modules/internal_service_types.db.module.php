@@ -53,7 +53,7 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 		<input TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 
 		<div ALIGN=\"CENTER\">
-		"._($this->record_name)." :
+		".__($this->record_name)." :
 		".html_form::text_widget('intservtype', 25, 50)."
 		</div>
  
@@ -78,7 +78,7 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 			),
 			$this->page_name,
 			array (
-				_($this->record_name)	=>	"intservtype"
+				__($this->record_name)	=>	"intservtype"
 			),
 			array("")
 		);
