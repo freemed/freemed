@@ -10,7 +10,7 @@ class ScannedDocuments extends EMRModule {
 
 	var $MODULE_NAME = "Scanned Documents";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.4";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
@@ -47,6 +47,7 @@ class ScannedDocuments extends EMRModule {
 			"imagedesc"	=>	SQL__VARCHAR(150),
 			"imageeoc"	=>	SQL__TEXT,
 			"imagefile"	=>	SQL__VARCHAR(100),
+			"imagephy"	=>	SQL__INT_UNSIGNED(0),
 			"id"		=>	SQL__SERIAL
 		);
 
@@ -97,6 +98,7 @@ class ScannedDocuments extends EMRModule {
 				"imagepat" => $patient,
 				"imagetype" => $imagetype,
 				"imagecat" => $imagecat,
+				"imagephy",
 				"imagedesc",
 				"imageeoc"
 			)
@@ -258,7 +260,9 @@ class ScannedDocuments extends EMRModule {
 			fm_date_entry ("imagedt"),
 
 			__("Type of Image") =>
-			$this->tc_widget('imagetypecat')
+			$this->tc_widget('imagetypecat'),
+
+			__("Physician") => freemed_display_selectbox ($GLOBALS['sql']->query("SELECT * FROM physician WHERE phyref='no' ORDER BY phylname,phyfname"), "#phylname#, #phyfname#", "imagephy")
 
 		), $related_episode_array,
 		array (
@@ -304,6 +308,7 @@ class ScannedDocuments extends EMRModule {
 				"imagepat" => $patient,
 				"imagetype" => $imagetype,
 				"imagecat" => $imagecat,
+				"imagephy",
 				"imagedesc",
 				"imageeoc"
 			), array ( "id" => $id )
@@ -383,6 +388,9 @@ class ScannedDocuments extends EMRModule {
 					"- ".__("Thyroid Profile") => "lab_report/thyroid_profile",
 				__("Letters") => "letters/misc",
 				__("Miscellaneous") => "misc/misc",
+					"- ".__("Consult") => "misc/consult",
+					"- ".__("Discharge Summary") => "misc_discharge_summary",
+					"- ".__("History and Physical") => "misc/history_and_physical",
 				__("Operative Report") => "op_report/misc",
 					"- ".__("Colonoscopy") => "op_report/colonoscopy",
 					"- ".__("Endoscopy") => "op_report/endoscopy",
@@ -409,6 +417,15 @@ class ScannedDocuments extends EMRModule {
 		if (!version_check($version, '0.3')) {
 			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
 				' ADD COLUMN imagecat VARCHAR(50) AFTER imagetype');
+		}
+
+		// Version 0.4
+		//
+		//	Add physician field
+		//
+		if (!version_check($version, '0.4')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
+				' ADD COLUMN imagephy INT UNSIGNED AFTER imagefile');
 		}
 	} // end method _update
 

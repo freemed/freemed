@@ -197,7 +197,8 @@ class UnreadFaxes extends MaintenanceModule {
 				"imagepat" => $rec['urfpatient'],
 				"imagetype" => $type,
 				"imagecat" => $cat,
-				"imagedesc" => $rec['urfnote']
+				"imagedesc" => $rec['urfnote'],
+				"imagephy" => $rec['urfphysician']
 			)
 		));
 		$new_id = $GLOBALS['sql']->last_record($query, 'images');

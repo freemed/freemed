@@ -312,7 +312,8 @@ class UnfiledFaxes extends MaintenanceModule {
 				"imagepat" => $_REQUEST['patient'],
 				"imagetype" => $type,
 				"imagecat" => $cat,
-				"imagedesc" => $_REQUEST['note']
+				"imagedesc" => $_REQUEST['note'],
+				"imagephy" => $_REQUEST['physician']
 			)
 		));
 		$new_id = $GLOBALS['sql']->last_record($query, 'images');
