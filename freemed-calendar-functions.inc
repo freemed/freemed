@@ -334,7 +334,7 @@
     // print days across top
     for( $i = 1; $i <= 7; $i++) {
      echo "
-      <TD BGCOLOR=#cccccc>
+      <TD BGCOLOR=#cccccc ALIGN=CENTER>
        <$STDFONT_B>
        <B>".htmlentities($lang_days[$i])."</B>
        <$STDFONT_E>
