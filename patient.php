@@ -826,6 +826,24 @@ switch ($action) {
          "ORDER BY ptlname, ptfname, ptdob";
         $_crit = "Sounds Like \"".prepare($f2)."\"";
         break;
+      case "smart":
+	// decide if we're last, first or first last
+	if (!(strpos($_REQUEST['f1'], ',')===false)) {
+		// last, first
+		list ($last, $first) = explode(',', $_REQUEST['f1']);
+		$last = trim($last);
+		$first = trim($first);
+	} else {
+		// first last
+		list ($first, $last) = explode(' ', $_REQUEST['f1']);
+	}
+	$query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
+         "WHERE (ptlname LIKE '".addslashes($last)."%') ".
+         " AND (ptfname LIKE '".addslashes($first)."%') ".
+	 freemed::itemlist_conditions(false).
+	 " ORDER BY ptlname, ptfname, ptdob";
+	$_crit = __("Patient Name")." \"".prepare($_REQUEST['f1'])."\"";
+        break;
       case "all":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
 	 freemed::itemlist_conditions().

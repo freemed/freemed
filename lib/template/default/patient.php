@@ -125,6 +125,17 @@ $display_buffer .= "
       <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\">
       </form>
       <p/>
+
+      <form ACTION=\"$page_name\" METHOD=\"POST\">
+       <b>".__("Patient Smart Search")."</b>
+      <br/>
+      <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"find\"/>
+      <input TYPE=\"HIDDEN\" NAME=\"criteria\" VALUE=\"smart\"/>
+	<small><i>".__("Name ('last, first' or 'first last')")."</i></small>
+      ".html_form::text_widget('f1', 30, 60)."
+      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\">
+	</form>
+	<p/>
       </div>
 
       ".template::link_bar(array(
