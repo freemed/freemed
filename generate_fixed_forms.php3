@@ -58,12 +58,12 @@
      $current_patient = $b_r[payrecpatient];
      $this_patient = new Patient ($current_patient);
      echo "
-      <LI>Processed ".$this_patient->fullName()." ($current_patient)
+      <B>Processed ".$this_patient->fullName()." ($current_patient)</B>
+      <BR>\n\n
      ";
      flush ();
 
-     // zero current number of charges
-     $number_of_charges = 0;
+     $debug=true;
 
      // decide which ones we are generating
      $result = fdb_query ("SELECT * FROM $database.payrec
@@ -76,43 +76,10 @@
      if (!$result or ($result==0))
        die ("Malformed SQL query ($current_patient)");
 
-     // queue all entries
-     while ($r = fdb_fetch_array ($result)) {
-       $number_of_charges++; // increment number of charges
-       ////populate an array of fixed form entries, too
-       ////this array will be written to as everything is processed
-       ////except it should be done on a per-patient basis.
+     // create a new diagnosisSet stack
+     $diag_set = new diagnosisSet (); // new stack of size 4
 
-       // get the current procedure
-       #if ($r[payrecproc] > 0)
-         $p = freemed_get_link_rec ($r[payrecproc], "procedure");
-       flush ();
-
-       ////if there's room, pull another procedure:
-       //// @ are enough diagnosis spots left for the nonrepeated diags?
-       //// @ are we above the bottom of the form (is this proc number
-       ////   six or less?
-
-       ////when procedures are pulled in, create/modify fixed form entries
-       ////for each procedure (say we have line 44, char 2, len 12, $cptcode,
-       ////this would become l45, ch2, len12 $procedure_2[cptcode] or however
-       ////it's coded.
-
-       // pull into current array
-       $itemdate    [$number_of_charges] = $p[procdt];
-       $itemdate_m  [$number_of_charges] = substr($p[procdt], 5, 2);
-       $itemdate_d  [$number_of_charges] = substr($p[procdt], 8, 2);
-       $itemdate_y  [$number_of_charges] = substr($p[procdt], 0, 4);
-       $itemdate_sy [$number_of_charges] = substr($p[procdt], 2, 2);
-       $itemcharges [$number_of_charges] = $p[proccharges];
-       $itemunits   [$number_of_charges] = $p[procunits];
-       $itempos     [$number_of_charges] = $p[procpos];
-       $itemvoucher [$number_of_charges] = $p[procvoucher];
-       $itemcpt     [$number_of_charges] =
-          freemed_get_link_field ($p[proccpt], "cpt", "cptcode");
-       $itemcptmod  [$number_of_charges] =
-          freemed_get_link_field ($p[proccptmod], "cptmod", "cptmod");
-     } // end of looping for all charges
+     if ($debug) echo "\nBuilding patient information...<BR>\n";
 
      // pull in proper variables
      $ptname[last]    = $this_patient->ptlname;
@@ -236,28 +203,87 @@
        ########  NOT COMPLETED YET ###########
      } // end checking for dependant
 
-     // generate form
-     $this_form = freemed_get_link_rec ($whichform, "fixedform");
-     if (($number_of_charges <= $this_form[ffloopnum]) OR
-          ($this_form[ffloopnum] == 0)) {
-       echo " (single form render) \n";
-       flush ();
-       $form_buffer .= render_fixedForm ($whichform);
-     } else {
-       echo " (multiple form render) ";
-       $total_number_forms = 
-         ceil ($number_of_charges / $this_form[ffloopnum]);
-       for ($i=0;$i<$total_number_forms;$i++) {
-         $starting_number = ( ($i==0) ? 0 : ($i*$this_form[ffloopnum])+1 );
-         $form_buffer .= render_fixedForm ($whichform, $starting_number);
-       ////here we'll render mr. form based on our generated entry array.
-       ////extra items will be appended (i assume) so we'll have to sort the
-       ////form *after* it's put together.
+     if ($debug) echo "\nRunning through charges/procedures ... <BR>\n";
 
-       ////mark items on the form as billed. go back and check for more
-       ////items for this patient. then more patients and so on. yum.
-       } // end for/loop for number of forms
-     } // end checking for number of charges
+     flush();
+
+     // zero current number of charges
+     $number_of_charges = 0;
+     // and zero the arrays
+     for ($j=0;$j<=$this_form[ffloopnum];$j++)
+       $itemdate[$j]   = $itemdate_m[$j]  = $itemdate_d[$j]  =
+       $itemdate_y[$j] = $itemdate_sy[$j] = $itemcharges[$j] =
+       $itemunits[$j]  = $itempos[$j]     = $itemvoucher[$j] =
+       $itemcpt[$j]    = $itemcptmod[$j]  = "";
+
+     // grab form information form
+     $this_form = freemed_get_link_rec ($whichform, "fixedform");
+
+     // queue all entries
+     while ($r = fdb_fetch_array ($result)) {
+       $number_of_charges++; // increment number of charges
+
+       if ($debug) echo "\nThis form, charge $number_of_charges <BR>\n";
+       flush();
+
+       // get the current procedure
+       #if ($r[payrecproc] > 0)
+         $p = freemed_get_link_rec ($r[payrecproc], "procedure");
+
+       if ($debug) echo "\nRetrieved procedure $r[payrecproc] <BR>\n";
+       flush();
+
+       ////if there's room, pull another procedure:
+       //// @ are enough diagnosis spots left for the nonrepeated diags?
+       //// @ are we above the bottom of the form (is this proc number
+       ////   six or less?
+
+       if ($debug) echo "\nCurrent stack size = $diag_set->stack_size <BR>\n";
+       if (!($diag_set->testAddSet ($p[procdiag1], $p[procdiag2],
+                                    $p[procdiag3], $p[procdiag4])) or
+            ($number_of_charges > $this_form[ffloopnum]         )){
+         if ($debug) echo "\nNew form time ... <BR>\n";
+         echo "$number_of_charges > $this_form[ffloopnum] <BR>\n";
+         flush();
+
+         // drop the current form to the buffer
+         $form_buffer .= render_fixedForm ($whichform);
+         // reset the counter to 1, for the first...
+         $number_of_charges = 1;
+         // and zero the arrays
+         for ($j=0;$j<=$this_form[ffloopnum];$j++)
+           $itemdate[$j]   = $itemdate_m[$j]  = $itemdate_d[$j]  =
+           $itemdate_y[$j] = $itemdate_sy[$j] = $itemcharges[$j] =
+           $itemunits[$j]  = $itempos[$j]     = $itemvoucher[$j] =
+           $itemcpt[$j]    = $itemcptmod[$j]  = "";
+       } else {
+         // DONT DO ANYTHING IN THIS CASE (PLACEHOLDER)       
+       } // end checking if the set will fit
+
+       // pull into current array
+       if ($debug) echo "\nnumber of charges = $number_of_charges <BR>\n";
+       flush();
+       $itemdate    [$number_of_charges] = $p[procdt];
+       $itemdate_m  [$number_of_charges] = substr($p[procdt], 5, 2);
+       $itemdate_d  [$number_of_charges] = substr($p[procdt], 8, 2);
+       $itemdate_y  [$number_of_charges] = substr($p[procdt], 0, 4);
+       $itemdate_sy [$number_of_charges] = substr($p[procdt], 2, 2);
+       $itemcharges [$number_of_charges] = $p[proccharges];
+       $itemunits   [$number_of_charges] = $p[procunits];
+       $itempos     [$number_of_charges] = $p[procpos];
+       $itemvoucher [$number_of_charges] = $p[procvoucher];
+       $itemcpt     [$number_of_charges] =
+          freemed_get_link_field ($p[proccpt], "cpt", "cptcode");
+       $itemcptmod  [$number_of_charges] =
+          freemed_get_link_field ($p[proccptmod], "cptmod", "cptmod");
+       $itemdiagref [$number_of_charges] =
+          $diag_set->xrefList ($p[procdiag1], $p[procdiag2],
+                               $p[procdiag3], $p[procdiag4]);
+     } // end of looping for all charges
+
+     // render last form
+     $form_buffer .= render_fixedForm ($whichform);
+
    } // end of while there are no more patients
 
    #################### TAKE THIS OUT AFTER TESTING #######################
