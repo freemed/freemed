@@ -77,7 +77,7 @@ class FBPractice {
 	} // end method X12Id
 
 	function X12IdType ( $prac ) {
-		$f = freemed::get_link_field($key, 'facility', 'psrx12id');
+		$f = freemed::get_link_field($key, 'facility', 'psrx12idtype');
 		return CreateObject('PHP.xmlrpcval', $f, xmlrpcString);
 		// hardcoded 0B value
 		//return 'BQ';
