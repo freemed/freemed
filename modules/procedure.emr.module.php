@@ -9,7 +9,7 @@ class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.4";
+	var $MODULE_VERSION = "0.4.1";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.3';
@@ -1174,6 +1174,15 @@ class ProcedureModule extends EMRModule {
 		if (!version_check($version, '0.4')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN procstatus INT UNSIGNED AFTER proclabcharges');
+		}
+		// Version 0.4.1
+		//
+		//	procstatus is now a varchar(50)
+		//
+		if (!version_check($version, '0.4.1')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN procstatus '.
+				'procstatus VARCHAR(50)');
 		}
 	} // end method _update
 

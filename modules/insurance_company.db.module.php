@@ -4,9 +4,9 @@
 
 LoadObjectDependency('_FreeMED.MaintenanceModule');
 
-class InsuranceCompanyMaintenance extends MaintenanceModule {
+class InsuranceCompany extends MaintenanceModule {
 
-	var $MODULE_NAME = "Insurance Company Maintenance";
+	var $MODULE_NAME = "Insurance Companies";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.3.2";
 	var $MODULE_FILE = __FILE__;
@@ -43,7 +43,9 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 		"inscodeftargete"
 	);
 
-	function InsuranceCompanyMaintenance() {
+	var $widget_hash = '##insconame## (##inscocity##, ##inscostate##)';
+
+	function InsuranceCompany ( ) {
 		// Table definition
 		$this->table_definition = array (
 			'inscodtadd' => SQL__DATE,
@@ -75,7 +77,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 	
 		// Run parent constructor
 		$this->MaintenanceModule();
-	} // end constructor InsuranceCompanyMaintenance
+	} // end constructor InsuranceCompany
 
 	function form () {
 		global $display_buffer;
@@ -276,7 +278,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 				break; // end add/addform
 			} // end switch
 		} // end if book is done
-	} // end function InsuranceCompanyMaintenance->form()
+	} // end function InsuranceCompany->form()
 
 	function view () { 
 		global $display_buffer;
@@ -295,7 +297,7 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 			"", "",
 			ITEMLIST_MOD|ITEMLIST_VIEW
 		);
-	} // end function InsuranceCompanyMaintenance->view()
+	} // end function InsuranceCompany->view()
 
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
@@ -342,8 +344,8 @@ class InsuranceCompanyMaintenance extends MaintenanceModule {
 		}
 	} // end method _update
 
-} // end class InsuranceCompanyMaintenance
+} // end class InsuranceCompany
 
-register_module ("InsuranceCompanyMaintenance");
+register_module ("InsuranceCompany");
 
 ?>
