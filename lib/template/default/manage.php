@@ -5,8 +5,9 @@
  // lic : GPL, v2
 
 //----- Use "current_patient" SESSION variable if it's there
-if (!$id and ($SESSION["current_patient"]>0))
+if (!$id and ($SESSION["current_patient"]>0)) {
 	$id = $SESSION["current_patient"];
+}
 
 //----- Load the Patient object
 $this_patient = CreateObject('FreeMED.Patient', $id);
@@ -16,16 +17,16 @@ $patient = $id;
 
 if ($id<1) {
   // if someone needs to 1st go to the patient menu
-      $display_buffer .= "
-        <BR><BR>
-        <CENTER><B>"._("You must select a patient.")."</B></CENTER>
-        <BR><BR>
-        <CENTER>
-        <A HREF=\"patient.php\">"._("Select a Patient")."</A>
-        </CENTER>
-        <BR><BR>
-      ";
-      template_display();
+	$display_buffer .= "
+        <p/>
+        <div ALIGN=\"CENTER\"><b>"._("You must select a patient.")."</b></div>
+        <p/>
+        <div ALIGN=\"CENTER\">
+        <a HREF=\"patient.php\">"._("Select a Patient")."</a>
+        </div>
+        <p/>
+	";
+	template_display();
 } // if there is an ID specified
 
 //----- Switch management functions depending on arguments given
