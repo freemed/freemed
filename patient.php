@@ -782,7 +782,7 @@ switch ($action) {
 
   case "delete":
   case "del":
-    $page_title = __("Deleting")." "._($record_name);
+    $page_title = __("Deleting")." ".__($record_name);
     $display_buffer .= "<div ALIGN=\"CENTER\">
      <p/>".__("Deleting")." ... ";
     $query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
@@ -795,7 +795,10 @@ switch ($action) {
     $display_buffer .= "
      </div>
     ";
-    // Refresh to patient selection
+    // TODO: Go through EVERY associated record and delete all things having
+    // to do with the patient!
+
+    // Return to patient selection after deleting a patient
     $refresh = "patient.php";
   break; // end action delete
 
