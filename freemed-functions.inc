@@ -528,7 +528,7 @@ function freemed_display_drugs ($param)
       echo "
         <OPTION VALUE=\"$d_id\" ".
 	( ($param == $row[id]) ? "SELECTED" : "" ).
-        .">$d_name $debug_var
+        ">$d_name $debug_var
       "; // actually show it
     } // while there are more results...
   } // end master loop
@@ -1059,10 +1059,9 @@ function freemed_display_phy_specialties ($param)
       echo "
         <OPTION VALUE=\"$row[id]\" ".
 	( ($row[id] == $param) ? "SELECTED" : "" ).
-        ">".fm_prep($row[specname].(
+        ">".fm_prep($row[specname].
 	 ( (!empty($row[specdesc])) ? ", " : " " ).
-  	  $row[specdesc])."
-      "; // end of actual output
+  	  $row[specdesc])."\n";
     } // while there are more results...
   }
 
@@ -1265,7 +1264,7 @@ function freemed_inscogroup_display ($param)
       // don't do anything...! 
     } else { // exit if no more
       $row = fdb_fetch_array($result); 
-      echo fm_prep ($row[inscogroup]).(
+      echo fm_prep ($row[inscogroup]).
        ( $debug ? " [ $row[id] ]" : "" )."\n";
     }
   }
@@ -1383,7 +1382,6 @@ function freemed_specialty_display ($param)
     ";
   } else {
     $query = "SELECT * FROM specialty ".
-       p
        "WHERE id='$param'";
     $result = fdb_query ($query);
     if (!$result) {
@@ -1491,6 +1489,7 @@ function fdb_close ($null = "") {
 } // end function fdb_close
 
 function fdb_connect ($db_host, $user, $password) {
+  global $database;
   switch (strtolower(DB_ENGINE)) {
     case "odbc": return odbc_pconnect ($host, $user, $password); break;
     case "postgres": return pg_Connect ("dbname=$database".
@@ -1504,7 +1503,7 @@ function fdb_connect ($db_host, $user, $password) {
       break;
     case "mysql":
     default:
-      $Connection = mysql_pconnect ($db_host, $user, $password);
+      $Connection = mysql_pconnect (DB_HOST, DB_USER, DB_PASSWORD);
       if ($Connection) mysql_select_db ($database, $Connection);
       return $Connection;
       break;
