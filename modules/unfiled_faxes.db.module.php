@@ -101,6 +101,11 @@ class UnfiledFaxes extends MaintenanceModule {
 			return false;
 			break;
 
+			case __("File Directly without First Page"):
+			$new_id = $this->mod_direct(-1, true);
+			return false;
+			break;
+
 			case __("Delete"):
 			$this->del();
 			return false;
@@ -132,7 +137,16 @@ class UnfiledFaxes extends MaintenanceModule {
 				'tc_widget',
 				array('type')
 			),
-			__("Note") => html_form::text_widget("note", array('length'=>150))
+			__("Note") => html_form::text_widget("note", array('length'=>150)),
+			__("Notify") => freemed_display_selectbox(
+				$GLOBALS['sql']->query(
+					"SELECT * FROM user ".
+					"WHERE username != 'admin' ".
+					"ORDER BY userdescrip"
+					),
+				"#username# (#userdescrip#)",
+				"notify"
+			)
 		))."
 		</div>
 		<div align=\"center\">
@@ -142,6 +156,8 @@ class UnfiledFaxes extends MaintenanceModule {
 		"class=\"button\" value=\"".__("File without First Page")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("File Directly")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("File Directly without First Page")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Split Batch")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
@@ -186,6 +202,17 @@ class UnfiledFaxes extends MaintenanceModule {
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);
 
+		if ($_REQUEST['notify']+0 > 0) {
+			$msg = CreateObject('_FreeMED.Messages');
+			$msg->send(array(
+				'patient' => $_REQUEST['patient'],
+				'physician' => $_REQUEST['notify'],
+				'urgency' => 4,
+				'text' => __("Fax received for patient").
+					" (".$filename.")"
+			));
+		}
+
 		// If we're removing the first page, do that now
 		if ($_REQUEST['submit_action'] == __("File without First Page")) {
 			$command = "/usr/bin/djvm -d data/fax/unfiled/".
@@ -228,10 +255,19 @@ class UnfiledFaxes extends MaintenanceModule {
 		return $new_id;
 	} // end method mod
 
-	function mod_direct ($_id = -1) {
+	function mod_direct ($_id = -1, $remove_first = false) {
 		$id = $_REQUEST['id'];
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);
+
+		if ($remove_first) {
+			$command = "/usr/bin/djvm -d ".
+				"\"".dirname(dirname(__FILE__))."/".
+				"data/fax/unfiled/".
+				$filename."\" 1";
+			`$command`;
+			$GLOBALS['display_buffer'] .= __("Removed first page.")."<br/>\n";
+		}
 
 		// Extract type and category
 		list ($type, $cat) = explode('/', $_REQUEST['type']);
