@@ -398,22 +398,46 @@ if ($action=="addform") {
   $physsn    = $physsn1.$physsn2.$physsn3;
 
     // actual query/insert
-  $query = "INSERT INTO $database.$db_name VALUES ( ".
-    "'$phylname',  '$phyfname',    '$phytitle',   ". 
-    "'$phymname',  '$phypracname', '$phyaddr1a',  ". 
-    "'$phyaddr2a', '$phycitya',    '$phystatea',     '$phyzipa',    ". 
-    "'$phyphonea', '$phyfaxa',     '$phyaddr1b',  ".
-    "'$phyaddr2b', '$phycityb',    '$phystateb',     '$phyzipb',    ".
-    "'$phyphoneb', '$phyfaxb',     '$phyemail',   ".
-    "'$phycellular', '$phypager', ". // 19990804
-    "'$phyupin',   '$physsn',      '$phydeg1',    ".
-    "'$phydeg2',   '$phydeg3',     '$physpe1',    ".
-    "'$physpe2',   '$physpe3',     '$phyid1',     ".
-    "'$phystatus', '$phyref',      '$phyrefcount',".
-    "'$phyrefamt', '$phyrefcoll',  '$phyintext',  ".
-    "'".fm_join_from_array($phychargemap)."',     ".
-    "'".fm_join_from_array($phyidmap)."',         ".
-    " NULL ) ";
+  $query = "INSERT INTO $database.$db_name VALUES ( 
+    '$phylname',
+    '$phyfname',
+    '$phytitle',    
+    '$phymname',
+    '$phypracname',
+    '$phyaddr1a',   
+    '$phyaddr2a',
+    '$phycitya',
+    '$phystatea',
+    '$phyzipa',     
+    '$phyphonea',
+    '$phyfaxa',
+    '$phyaddr1b',
+    '$phyaddr2b',
+    '$phycityb',
+    '$phystateb',
+    '$phyzipb',    
+    '$phyphoneb',
+    '$phyfaxb',
+    '$phyemail',   
+    '$phycellular',
+    '$phypager', 
+    '$phyupin',
+    '$physsn',
+    '$phydeg1',    
+    '$phydeg2',
+    '$phydeg3',
+    '".addslashes($physpe1).             "',    
+    '".addslashes($physpe2).             "',
+    '".addslashes($physpe3).             "',
+    '".addslashes($phyid1).              "',     
+    '".addslashes($phystatus).           "',
+    '".addslashes($phyref).              "',
+    '".addslashes($phyrefcount).         "',
+    '".addslashes($phyrefamt).           "',
+    '".addslashes($phyrefcoll).          "',
+    '".fm_join_from_array($phychargemap)."',     
+    '".fm_join_from_array($phyidmap).    "',         
+     NULL ) ";
 
   $result = fdb_query($query);
   
@@ -928,25 +952,25 @@ if ($action=="addform") {
     "phyaddr1a  ='$phyaddr1a',   ". 
     "phyaddr2a  ='$phyaddr2a',   ".
     "phycitya   ='$phycitya',    ".
-    "phystatea  ='$phystatea',   ". // 19990622
+    "phystatea  ='$phystatea',   ".
     "phyzipa    ='$phyzipa',     ". 
     "phyphonea  ='$phyphonea',   ".
     "phyfaxa    ='$phyfaxa',     ".
     "phyaddr1b  ='$phyaddr1b',   ".    
     "phyaddr2b  ='$phyaddr2b',   ".
     "phycityb   ='$phycityb',    ".
-    "phystateb  ='$phystateb',   ". // 19990622
+    "phystateb  ='$phystateb',   ".
     "phyzipb    ='$phyzipb',     ".
     "phyphoneb  ='$phyphoneb',   ".
     "phyfaxb    ='$phyfaxb',     ".
     "phyemail   ='$phyemail',    ".
-    "phycellular = '$phycellular', ". // 19990804
-    "phypager   ='$phypager',    ".   // 19990804
+    "phycellular = '$phycellular', ".
+    "phypager   ='$phypager',    ".
     "phyupin    ='$phyupin',     ".
     "physsn     ='$physsn',      ".
-    "phydeg1    ='$phydeg1',     ".  // 19990830
-    "phydeg2    ='$phydeg2',     ".  // ..
-    "phydeg3    ='$phydeg3',     ".  // ..
+    "phydeg1    ='$phydeg1',     ".
+    "phydeg2    ='$phydeg2',     ".
+    "phydeg3    ='$phydeg3',     ".
     "physpe1    ='$physpe1',     ".
     "physpe2    ='$physpe2',     ".
     "physpe3    ='$physpe3',     ".
