@@ -399,6 +399,7 @@ if ($action=="cfgform") {
     pttimestamp       TIMESTAMP(16),
     ptemritimestamp   TIMESTAMP(16),
     ptemriversion     BLOB,
+    ptallergies	      TEXT,
     id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id)    
     )");
@@ -1371,6 +1372,21 @@ if ($action=="cfgform") {
   $result = $sql->query ("CREATE TABLE insmod (
      insmod                    VARCHAR(15),
      insmoddesc                VARCHAR(50),
+     id                        INT NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (id)
+     );");
+  if ($result) $display_buffer .= "<LI>"._("Insurance Modifiers")."\n";
+
+  // messages table
+  $result = $sql->query ("DROP TABLE messages"); 
+  $result = $sql->query ("CREATE TABLE messages (
+     msgtime                   TIMESTAMP(14),
+     msgfor                    INT UNSIGNED,
+     msgpatient                INT UNSIGNED,
+     msgperson                 VARCHAR(50),
+     msgurgency                INT UNSIGNED,
+     msgtext                   TEXT,
+     msgread                   INT UNSIGNED,
      id                        INT NOT NULL AUTO_INCREMENT,
      PRIMARY KEY (id)
      );");
