@@ -105,7 +105,7 @@ class diagnosisSet {
     } // end of looping through diagnoses
     $num_found = 0; $found_array = "";
     for ($i=1;$i<=$flag;$i++) {
-      if ($this->inStack ($diag[$i]) {
+      if ($this->inStack ($diag[$i])) {
         $num_found++;                  // increment counter
         $found_array[$num_found] = $i; // add reference
       } // end if found in stack
