@@ -295,14 +295,14 @@ class Parser_HL7v2 {
 	} // end method __date_to_minute
 
 	function __pid_to_patient ( $pid_id ) {
-		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."'";
+		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."' ORDER BY id";
 		$result = $GLOBALS['sql']->query($query);
 		$r = @$GLOBALS['sql']->fetch_array($result);
 		return $r['id'];
 	} // end method __pid_to_patient
 
 	function __aip_to_provider ( $aip_id ) {
-		$query = "SELECT id FROM provider WHERE phyhl7id='".addslashes($aip_id)."'";
+		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($aip_id)."'";
 		$result = $GLOBALS['sql']->query($query);
 		$r = @$GLOBALS['sql']->fetch_array($result);
 		return $r['id'];
