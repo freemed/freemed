@@ -15,8 +15,8 @@ define ('__FREEMED_PHP__', true);
     // These variables you should not touch
 define ('PACKAGENAME', "FreeMED");				// package name
 define ('CODED_BY', "The FreeMED Project");		// coded by tag
-define ('VERSION', "0.7.0");	// current version
-define ('DISPLAY_VERSION', "0.7.0");
+define ('VERSION', "0.7.1");	// current version
+define ('DISPLAY_VERSION', "0.7.1");
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
@@ -96,7 +96,7 @@ if (file_exists(PHPWEBTOOLS_LOCATION."/webtools.php")) {
 		"<b>lib/settings.php</b>.");
 }
 
-define ('WEBTOOLS_REQUIRED', '0.4.3');   // version of phpwebtools required
+define ('WEBTOOLS_REQUIRED', '0.4.4');   // version of phpwebtools required
 
   // version check for webtools
 if ( !defined("WEBTOOLS_VERSION") or
