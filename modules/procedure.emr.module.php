@@ -98,7 +98,7 @@ class ProcedureModule extends EMRModule {
 			'procmedicaidref' => SQL__VARCHAR(20),
 			'procmedicaidresub' => SQL__VARCHAR(20),
 			'proclabcharges' => SQL__REAL,
-			'procstatus' => SQL__INT_UNSIGNED(0),
+			'procstatus' => SQL__VARCHAR(50),
 			'id' => SQL__SERIAL
 		);
 		
