@@ -4,12 +4,6 @@
  // note: XML routines for import and export of patient records 
  // lic : LGPL
 
-
- // Please note that these routines will have to be called *after* the
- // module loading functions, to allow them to pick up on the loadable
- // parts of the EMR. - jeff
-
-
 if (!defined ("__XML_PHP__")) {
 
 define ('__XML_PHP__', true);
@@ -19,9 +13,21 @@ function xmlptval( $tag, $val, $tab=2 ) {
 	global $__this_patient;
 	unset ($tabs);
 	for ($i=1;$i<=$tab;$i++) $tabs .= "\t";
+
+	// Determine closing tag, if there's a space
+	if (!(strpos($tag, ' ') === false)) {
+		// Break it up and do it from there
+		$tag_parts = explode(' ', $tag);
+		$closing_tag = $tag_parts[0];
+	} else {
+		// Otherwise pass it thru
+		$closing_tag = $tag;
+	}
+	
 	if (isset($__this_patient->local_record["$val"])) {
-		return $tabs."<".stripslashes($tag)." VALUE=\"".
-			prepare($__this_patient->local_record["$val"])."\"/>\n";
+		return $tabs."<".stripslashes($tag).">".
+			prepare($__this_patient->local_record["$val"]).
+			"</".stripslashes($tag).">\n";
 	}
 } // end fucntion xmlptval
 
@@ -95,7 +101,7 @@ function freemed_emr_xml_export ( $this_patient ) {
 	// build module list
 	$module_list = CreateObject('PHP.module_list',
 		PACKAGENAME,
-		array('suffix' => ".emr.module.php")
+		array('suffix' => '.emr.module.php')
 	);
 
 	// batch execute modules list to grab emr
