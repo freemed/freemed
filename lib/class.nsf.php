@@ -522,9 +522,9 @@ class NSF
 
 	function ProviderHeader($procstack)
 	{
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+		$SESSION = &$_SESSION['SESSION'];
 		
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
 		//unset($GLOBALS[ba0]);
 		//unset($GLOBALS[ba1]);
 		global $ba0, $ba1;

@@ -8,6 +8,9 @@
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
  // $Log$
+ // Revision 1.58  2002/12/30 15:45:35  rufustfirefly
+ // Fixed register_globals = off problem with session handling. (Thanks to Fred Trotter for the bug report)
+ //
  // Revision 1.57  2002/12/29 14:40:01  rufustfirefly
  // Added patient box iconbar, defined in lib/template/*/lib.php.
  // Added autoskip feature to phone entry fields.
@@ -97,7 +100,7 @@ class freemed {
 
 	// function freemed::check_access_for_patient
 	function check_access_for_patient ($patient_number) {
-		global $SESSION;
+		$SESSION = &$_SESSION['SESSION'];
 
 		// Grab authdata
 		$authdata = $SESSION["authdata"];
@@ -486,8 +489,10 @@ class freemed {
 	} // end function freemed::support_djvu
 
 	function user_flag ( $flag ) {
-		global $database, $sql, $SESSION;
+		global $database, $sql;
 		static $userlevel;
+
+		$SESSION = &$_SESSION['SESSION'];
 
 		// Extract authdata from SESSION
 		$authdata = $SESSION["authdata"];
@@ -702,7 +707,7 @@ function freemed_alternate ($_elements) {
 
 // function freemed_check_access_for_facility
 function freemed_check_access_for_facility ($facility_number) {
-	global $SESSION;
+	$SESSION = &$_SESSION['SESSION'];
 
 	// Separate out authdata
 	$authdata = $SESSION["authdata"];
@@ -1140,7 +1145,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 // function freemed_display_facilities (selected)
 function freemed_display_facilities ($param="", $default_load = false,
                                      $intext="", $by_array="") {
-	global $SESSION, $sql;
+	global $sql;
+	$SESSION = &$_SESSION['SESSION'];
 
 	// Check for default or passed facility
 	if ($GLOBALS[$param] > 0) {
@@ -1424,7 +1430,8 @@ function freemed_import_stock_data ($table_name) {
 /*
  TODO: FIX ME!
 function freemed_log ($db_name, $record_number, $comment) {
-	global $cur_date, $sql, $SESSION;
+	global $cur_date, $sql;
+	$SESSION = &$_SESSION['SESSION'];
 
 	$f_auth = explode (":", $f_cookie);
 	$f_user = $f_auth [0];  // extract the user number
@@ -1593,69 +1600,80 @@ function freemed_search_query ($ctrl_array, $ord_array,
 // freemed_verify_auth:
 //   moved to sessions support as of version 0.3
 function freemed_verify_auth ( ) {
-	global $debug, $Connection, $sql, $REMOTE_ADDR;
-	global $PHP_SELF, $SESSION, $_username, $_password;
+	global $debug, $Connection, $sql;
+
+	// Associate "SESSION" with proper session variable
+	$SESSION = &$_SESSION['SESSION'];
+	$PHP_SELF = &$_SERVER['PHP_SELF'];
 
 	// Do we have to check for _username?
-	$check = !empty($_username);
+	$check = !empty($_REQUEST['_username']);
 
 	// Check for authdata array
-	if (is_array($SESSION["authdata"])) {
+	if (is_array($SESSION['authdata'])) {
 		// Check to see if ipaddr is set or not...
 		if (!SESSION_PROTECTION) {
 			return true;
 		} else {
-			if ( isset($SESSION["ipaddr"]) and
-				($SESSION["ipaddr"] == $REMOTE_ADDR) ) {
-				// We're already authorized
-				return true;
+			if ( !empty($SESSION['ipaddr']) ) {
+				if ($SESSION['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
+					// We're already authorized
+					return true;
+				} else {
+					// IP address has changed, ERROR
+					unset($_SESSION['SESSION']['ipaddr']);
+					return false;
+				} // end checking ipaddr
 			} else {
-				// IP address has changed, ERROR
-				return false;
-			} // end checking ipaddr
+				// Force check if no ip address is present. This
+				// should get around null IPs getting set by
+				// accident without compromising security.
+				$check = true;
+			} // end if isset ipaddr
 		} // end checking for SESSION_PROTECTION
-	} elseif ($check) {
+	} 
+	
+	if ($check) {
 		// Quickly check for root un/pw pair (handle null pw)
-		if ( ($_username=="root") and ($_password==DB_PASSWORD) ) {
+		if ( ($_REQUEST['_username'] == 'root') and 
+				($_REQUEST['_password'] == DB_PASSWORD) ) {
 			// Pass the proper session variable
 			$SESSION["authdata"] = array (
-				"username" => $_username,
+				"username" => $_REQUEST['_username'],
 				"user" => "1" // superuser id
 			);
 			// Set ipaddr for SESSION_PROTECTION
-			$SESSION["ipaddr"] = $REMOTE_ADDR;
+			$SESSION["ipaddr"] = $_SERVER['REMOTE_ADDR'];
 			// Return back that this is true
 			return true;
 		}
 
 		// Find this user
   		$result = $sql->query ("SELECT * FROM user ".
-			"WHERE username = '".addslashes($_username)."'");
+			"WHERE username = '".addslashes($_REQUEST['_username'])."'");
 
 		// If the user isn't found, false
-		if (!$sql->results($result)) {
-			return false;
-		}
+		if (!$sql->results($result)) { return false; }
 
 		// Get information
 		$r = $sql->fetch_array ($result);
 
 		// Check password
-		if ($_password == $r["userpassword"]) {
+		if ($_REQUEST['_password'] == $r['userpassword']) {
 			// Set session vars
 			$SESSION["authdata"] = array (
-				"username" => $_username,
-				"user" => $r["id"]
+				"username" => $_REQUEST['_username'],
+				"user" => $r['id']
 			);
 			// Set ipaddr for SESSION_PROTECTION
-			$SESSION["ipaddr"] = $REMOTE_ADDR;
+			$SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 
 			// Authorize
 			return true;
 		} else { // check password
 			// Failed password check
-			unset ( $SESSION["authdata"] );
-			unset ( $SESSION["ipaddr"] );
+			unset ( $SESSION['authdata'] );
+			unset ( $SESSION['ipaddr'] );
 			return false;
 		} // end check password
 	} // end of checking for authdata array
@@ -2350,7 +2368,8 @@ function template_display ($terminate_on_execute=true) {
 //********************** END TEMPLATE SUPPORT
 
 function page_push () {
-	global $SESSION, $PHP_SELF, $page_title;
+	global $PHP_SELF, $page_title;
+	$SESSION = &$_SESSION['SESSION'];
 
 	// Import it if it exists
 	if (isset($SESSION["page_history"])) {
@@ -2371,7 +2390,7 @@ function page_push () {
 } // end function page_push
 
 function page_pop () {
-	global $SESSION;
+	$SESSION = &$_SESSION['SESSION'];
 
 	// Return false if there is nothing in the list
 	if (!isset($SESSION["page_history"])) return false;
@@ -2396,7 +2415,7 @@ function page_pop () {
 } // end function page_pop
 
 function patient_push ($patient) {
-	global $SESSION;
+	$SESSION = &$_SESSION['SESSION'];
 
 	// Import it if it exists
 	if (isset($SESSION["patient_history"])) {
@@ -2427,7 +2446,7 @@ function patient_push ($patient) {
 } // end function patient_push
 
 function patient_history_list () {
-	global $SESSION;
+	$SESSION = &$_SESSION['SESSION'];
 
 	// Return false if there is nothing in the list
 	if (!isset($SESSION["patient_history"])) return false;
@@ -2458,7 +2477,7 @@ function patient_history_list () {
 } // end function patient_history_list
 
 function page_history_list () {
-	global $SESSION;
+	$SESSION = &$_SESSION['SESSION'];
 
 	// Return false if there is nothing in the list
 	if (!isset($SESSION["page_history"])) return false;

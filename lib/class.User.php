@@ -14,11 +14,10 @@ class User {
 	var $perms_fac, $perms_phy, $perms_phygrp;
 
 	function User ($param=NULL) {
-		global $SESSION; // authorization data
-		extract ($SESSION);
+		$SESSION = &$_SESSION['SESSION'];
 
-		if ($param==NULL) {
-			$this->user_number = $authdata["user"];
+		if ($param == NULL) {
+			$this->user_number = $SESSION['authdata']['user'];
 		} else {
 			$this->user_number = $param;
 		}

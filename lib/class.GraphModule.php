@@ -46,7 +46,7 @@ class GraphModule extends BaseModule {
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 	function header() {
-		global $SESSION, $graphmode;
+		global $graphmode;
 		if ($graphmode) {
 			// don't display the box top
 			freemed_open_db();

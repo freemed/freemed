@@ -292,11 +292,13 @@ class EMRModule extends BaseModule {
 		// Check for record locking
 		if ($this->locked($id)) return false;
 
+		$SESSION = &$SESSION['SESSION'];
+
 		$result = $sql->query (
 			$sql->update_query (
 				$this->table_name,
 				array (
-					"locked" => $GLOBALS['SESSION']['authdata']['user']
+					"locked" => $SESSION['authdata']['user']
 				),
 				array (
 					"id" => $id

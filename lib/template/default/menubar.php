@@ -69,7 +69,8 @@ if ($patient_history or $page_history) {
 <table CLASS="menubar" WIDTH="100%" BORDER="0">
 <?php
 	print menu_bar_cell(_("Administration Menu"), "admin.php");
-	print menu_bar_cell(_("Billing Functions"), "billing_functions.php?patient=".$SESSION["current_patient"]);
+	print menu_bar_cell(_("Billing Functions"), "billing_functions.php?patient=".
+			urlencode($_SESSION['SESSION']['current_patient']));
 	print menu_bar_cell(_("Calendar"), "calendar.php");
 	print menu_bar_cell(_("Call-In"), "call-in.php");
 	print menu_bar_cell(_("Database Maintenance"), "db_maintenance.php");
