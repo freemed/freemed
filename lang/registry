@@ -2,7 +2,7 @@
 #	This is freemed's language registry.
 #	format: [abbreviation]:[language]
 #	Lines starting with a "#" will be ignored
-EN:English
-ES:Espagnole
-DE:Deutsch
-HR:Hrvatski
+en:English
+es:Espagnole
+de:Deutsch
+hr:Hrvatski
