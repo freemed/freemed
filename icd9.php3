@@ -35,9 +35,12 @@ switch ($action) {
    case "addform":
     break;
    case "modform":
-    extract(freemed_get_link_rec ($db_name, $id));
-    $icdamt        = bcadd($icdamt, 0,2);
-    $icdcoll       = bcadd($icdcoll,0,2);
+    if (!$been_here) {
+      extract(freemed_get_link_rec ($id,$db_name));
+      $icdamt        = bcadd($icdamt, 0,2);
+      $icdcoll       = bcadd($icdcoll,0,2);
+      $been_here=1;
+    }
     break;
   } // end internal action switch
   freemed_display_box_top (( ($action=="addform") ? _("Add") : _("Modify")).
@@ -49,6 +52,7 @@ switch ($action) {
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
       ( ($action=="addform") ? "add" : "mod" )."\"> 
     <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
+    <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
 
     <TABLE WIDTH=100% BORDER=0 CELLSPACING=2 CELLPADDING=2
      VALIGN=MIDDLE ALIGN=CENTER>
