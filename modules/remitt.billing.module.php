@@ -758,6 +758,9 @@ class RemittBillingTransport extends BillingModule {
 		";
 		$alldone = true;
 		foreach ($uniques AS $b => $u) {
+			// Add to $billkeys
+			$billkeys[] = $b;
+
 			// Get individual status
 			$s = $remitt->GetStatus($u);
 			if (empty($s)) { $alldone = false; }
@@ -785,6 +788,17 @@ class RemittBillingTransport extends BillingModule {
 		if (!$alldone) {
 			global $refresh;
 			$GLOBALS['__freemed']['automatic_refresh'] = '15';
+		} else {
+			// Show mark as billed with reformed billkeys array
+			$buffer .= "<p/>".
+			__("If you are satisfied with your bills, mark them as sent.")."<br/>".
+			"<a href=\"".page_name()."?".
+			"module=".urlencode($_REQUEST['module'])."&".
+			"action=".urlencode($_REQUEST['action'])."&".
+			"type=".urlencode($_REQUEST['type'])."&".
+			"billing_action=mark&".
+			"keys=".urlencode(serialize($billkeys)).
+			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
 		}
 		
 		return $buffer;
