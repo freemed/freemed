@@ -112,9 +112,7 @@ class GenerateFormsModule extends freemedBillingModule {
 				if ($result==0)
 				{
 					$display_buffer .= "Nothing to bill for this coverage type.<BR>\n";
-					freemed_display_box_bottom();
-					freemed_display_html_bottom();
-					DIE("");
+					template_display();
 				}
 			
 				while($row = $sql->fetch_array($result))
@@ -131,9 +129,7 @@ class GenerateFormsModule extends freemedBillingModule {
 				if (!$sql->results($result)) 
 				{
 					$display_buffer .= "No patients to be billed.<BR>\n";
-					freemed_display_box_bottom();
-					freemed_display_html_bottom();
-					DIE("");
+					template_display();
 				}
 			
 				while($row = $sql->fetch_array($result))
@@ -216,7 +212,7 @@ class GenerateFormsModule extends freemedBillingModule {
        			if (!$result)
        			{
        				$display_buffer .= "Mark failed getting procrecs<BR>";
-       				DIE("Mark failed getting procrecs");
+       				template_display();
        			}
 				//$display_buffer .= "proc query $query<BR>";
        			$bill_tran = $sql->fetch_array($result);

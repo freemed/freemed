@@ -47,7 +47,7 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
        >"._("Return to the Main Menu")."</A>
       </CENTER>
     ";
-    DIE("");
+    template_display();
   }
 
     // grab record number "id"

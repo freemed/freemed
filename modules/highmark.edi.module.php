@@ -200,8 +200,10 @@ class HighmarkEDIModule extends freemedEDIModule {
 							  c.covinsco=a.id
 						ORDER BY a.insconame";
 			$result = $sql->query($query);
-			if (!$result)
-				DIE("Failed to get ins cos");
+			if (!$result) {
+				$display_buffer .= "Failed to get ins cos";
+				template_display();
+			}
 			$inscnt=0;
 			while($ins = $sql->fetch_array($result))
 			{
@@ -245,8 +247,10 @@ class HighmarkEDIModule extends freemedEDIModule {
 							  b.procpos = a.phygroupfac";
 			}
 			$result = $sql->query($query);
-			if (!$result)
-				DIE("Failed to get physicians or groups");
+			if (!$result) {
+				$display_buffer .= "Failed to get physicians or groups";
+				template_display();
+			}
 			$providers = 0;
 			while($prov = $sql->fetch_array($result))
 			{
@@ -277,8 +281,10 @@ class HighmarkEDIModule extends freemedEDIModule {
 								  b.covinsco = '$instobill[$i]' AND
 							      a.proccurcovid = b.id";
 				$provider_result = $sql->query($query);
-				if (!$provider_result)
-					DIE("No Physcians");
+				if (!$provider_result) {
+					$display_buffer .= _("ERROR")." - No Physcians";
+					template_display();
+				}
 				while($provrow = $sql->fetch_array($provider_result))
 				{
 					$this->Generate($provrow[procpatient], $provrow[proccurcovid], $providerid[$p], "PHY");
@@ -290,11 +296,15 @@ class HighmarkEDIModule extends freemedEDIModule {
 			for ($p=0;$p<$providers;$p++)
 			{
 				$pos = freemed_get_link_rec($providerid[$p],"phygroup");
-				if (!$pos)
-					DIE("failed getting facility for group");
+				if (!$pos) {
+					$display_buffer .= _("ERROR")." - failed getting facility for group";
+					template_display();
+				}
 				$fac = $pos[phygroupfac];
-				if (!$fac)
-					DIE("failed getting facility for group 2");
+				if (!$fac) {
+					$display_buffer .= _("ERROR")." -  failed getting facility for group 2";
+					template_display();
+				}
 				$query = "SELECT DISTINCT procpatient,proccurcovid
 							FROM procrec as a,coverage as b
 							WHERE a.procbalcurrent>'0' AND
@@ -304,8 +314,10 @@ class HighmarkEDIModule extends freemedEDIModule {
 								  b.covinsco = '$instobill[$i]' AND
 							      a.proccurcovid = b.id";
 				$provider_result = $sql->query($query);
-				if (!$provider_result)
-					DIE("No Physcians");
+				if (!$provider_result) {
+					$display_buffer .= _("ERROR")." - No Physicians";
+					template_display();
+				}
 				while($provrow = $sql->fetch_array($provider_result))
 				{
 					$this->Generate($provrow[procpatient], 
@@ -1027,8 +1039,10 @@ class HighmarkEDIModule extends freemedEDIModule {
 
 		// false says to return a result set
 		$result = $this->GetClaims(false);
-		if (!$result)
-			DIE("Query failed");
+		if (!$result) {
+			$display_buffer .= _("ERROR")." - Query failed";
+			template_display();
+		}
 
 		if (!$sql->results($result))
 		{

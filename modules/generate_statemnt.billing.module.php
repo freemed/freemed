@@ -91,9 +91,7 @@ class GenerateStatementsModule extends freemedBillingModule {
 			if (!$sql->results($result)) 
 			{
 				$display_buffer .= "No patients to be billed.<BR>\n";
-				freemed_display_box_bottom();
-				freemed_display_html_bottom();
-				DIE("");
+				template_display();
 			}
 		
 			while($row = $sql->fetch_array($result))

@@ -95,12 +95,10 @@ class episodeOfCare extends freemedEMRModule {
       $this_action = "Modify";
        // check to see if an id was submitted
       if ($id<1) {
-       freemed_display_box_top (_("$record_name")." :: "._("ERROR"));
+       $page_title =  _("$record_name")." :: "._("ERROR");
        $display_buffer .= _("Must select record to Modify");
-       freemed_display_box_bottom ();
        freemed_close_db ();
-       freemed_display_html_bottom ();
-       DIE("");
+       template_display();
       } // end of if.. statement checking for id #
 
       if ($been_here != "yes") {
@@ -616,7 +614,7 @@ class episodeOfCare extends freemedEMRModule {
 	function display () {
 		global $display_buffer;
    if ($id<1) {
-     freemed_display_box_top (_("ERROR"));
+     $page_title = _("$record_name")." :: "._("ERROR");
      $display_buffer .= "
        <P>
        "._("You must specify an ID to view an Episode!")."
@@ -626,10 +624,8 @@ class episodeOfCare extends freemedEMRModule {
         >"._("Manage Patient")."</A>
        </CENTER>
      ";
-     freemed_display_box_bottom ();
      freemed_close_db ();
-     freemed_display_html_bottom ();
-     DIE("");
+     template_display();
    } // end checking for ID as valid
 
    $eoc = freemed_get_link_rec($id, $this->table_name);

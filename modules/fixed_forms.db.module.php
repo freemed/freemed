@@ -139,10 +139,8 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			$display_buffer .= "
 			 "._("You must select a record to modify.")."
 			";
-			freemed_display_box_bottom ();
 			freemed_close_db ();
-			freemed_display_html_bottom ();
-			DIE("");
+			template_display();
 		}
 		//$display_buffer .= "modform<BR>";
       	if ($been_here != "yes") 

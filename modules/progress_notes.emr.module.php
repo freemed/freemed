@@ -48,9 +48,9 @@ class progressNotes extends freemedEMRModule {
          //while(list($k,$v)=each($this->variables)) { global $$v; }
 
          if (($id<1) OR (strlen($id)<1)) {
-           //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
+           $page_title = _($this->record_name)." :: "._("ERROR");
            $display_buffer .= "
-             <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
+             "._("You must select a patient.")."
            ";
            template_display();
          }
@@ -62,9 +62,6 @@ class progressNotes extends freemedEMRModule {
          break; // end modform
       } // end internal switch
      } // end checking if been here
-
-     //freemed_display_box_top (( (($action=="addform") or ($action=="add")) ?
-     //  _("Add") : _("Modify") )." "._($this->record_name));
 
      $book->add_page (
        _("Basic Information"),
@@ -268,17 +265,14 @@ class progressNotes extends freemedEMRModule {
          <BR>
          ";
      } // end if is done
-     //freemed_display_box_bottom ();
 
 
-     //freemed_display_box_bottom ();
 	} // end of function progressNotes->form()
 
 	function display () {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) global $$k;
      if (($id<1) OR (strlen($id)<1)) {
-       //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
        $display_buffer .= "
          "._("Specify Notes to Display")."
          <P>
@@ -301,7 +295,6 @@ class progressNotes extends freemedEMRModule {
 
      $this->this_patient = new Patient ($pnotespat);
 
-     //freemed_display_box_top (_($this->record_name));
      if (freemed_get_userlevel($LoginCookie)>$database_level)
        $__MODIFY__ = " |
          <A HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
@@ -442,7 +435,6 @@ class progressNotes extends freemedEMRModule {
        <P>
      ";
 
-     //freemed_display_box_bottom ();
 	} // end of case display
 
 	function view () {

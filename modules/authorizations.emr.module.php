@@ -59,8 +59,7 @@ class authorizationsModule extends freemedEMRModule {
          $display_buffer .= "
            <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
          ";
-         freemed_display_box_bottom ();
-         DIE("");
+         template_display ();
        }
        $r = freemed_get_link_rec ($id, $this->table_name);
 	   while(list($k,$v)=each($this->variables)) global $$v;

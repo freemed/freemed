@@ -62,7 +62,10 @@ class cptMaintenance extends freemedMaintenanceModule {
             global $$v;
         }
 
-     if ($id<1) DIE ("$page_name :: need to have id for modform");
+     if ($id<1) {
+		$display_buffer .= "$page_name :: need to have id for modform";
+		template_display();
+     }
      $this_record  = freemed_get_link_rec ($id, $this->table_name);
      extract ($this_record);
      $cptreqcpt    = fm_split_into_array ($cptreqcpt);
@@ -317,7 +320,7 @@ class cptMaintenance extends freemedMaintenanceModule {
   $this_code  = freemed_get_link_rec ($id, $this->table_name);
   $cpttos     = fm_split_into_array ($this_code["cpttos"]);
   $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
-  freemed_display_box_top (_($record_name));
+  $page_title = _($record_name);
   $display_buffer .= "
    <P>
     <CENTER>
@@ -385,11 +388,10 @@ class cptMaintenance extends freemedMaintenanceModule {
    <P>
    </FORM>
   ";
-  freemed_display_box_bottom ();
   break; // end insurance company profiles form 
 
  case "profile": // modification for the profile form
-  freemed_display_box_top (_("Modifying")." "._($record_name));
+  $page_title =  _("Modifying")." "._($record_name);
   $query = "UPDATE $this->table_name SET
             cpttos='".fm_join_from_array($cpttos)."',
             cptstdfee='".fm_join_from_array($cptstdfee)."'
@@ -409,7 +411,6 @@ class cptMaintenance extends freemedMaintenanceModule {
    </CENTER>
    <P>
   ";
-  freemed_display_box_bottom ();
   break; // end of mod for the profile form
 */
 	} // end function cptMaintenance->form()

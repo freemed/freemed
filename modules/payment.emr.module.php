@@ -520,7 +520,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             if ($wizard->is_done())
             {
-                //freemed_display_box_top (_("Adding")." "._($record_name));
+                //$page_title = _("Adding")." "._("$record_name");
                 //if ($patient>0) $display_buffer .= freemed_patient_box ($this_patient);
                 $display_buffer .= "<CENTER>\n";
                 switch ($payreccat)
