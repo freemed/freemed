@@ -1,9 +1,7 @@
 <?php
- // $Id$
- // desc: module prototype
- // lic : GPL, v2
-
-include_once("lib/render_forms.php");
+	// $Id$
+	// desc: module prototype
+	// lic : GPL, v2
 
 LoadObjectDependency('FreeMED.BaseModule');
 
