@@ -174,9 +174,9 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 
 		$display_buffer .= "<p/>
 		<tr><td ALIGN=\"CENTER\">
-		<input CLASS=\"button\" TYPE=\"SUBMIT\" VALUE=\"".
+		<input CLASS=\"button\" name=\"__submit\" TYPE=\"SUBMIT\" VALUE=\"".
 		(($action=="modform") ? __("Modify") : __("Add"))."\"/>
-		<input CLASS=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
+		<input CLASS=\"button\" name=\"__submit\" TYPE=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
 		<input CLASS=\"button\" TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\"/>
 		</form>
 		</td></tr>
