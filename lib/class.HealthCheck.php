@@ -148,10 +148,10 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php|Checking existence of user adm
 if(LOG_LEVEL<=4||LOG_SQL){syslog(LOG_INFO,"healthcheck.php|".$query);}
 if(!($result = @mysql_query($query)))
 {// if we didnt get anything then...
-   // include_once("initwizard.php"); 
+   // include_once("init_wizard.php"); 
 
 if(LOG_ERROR){syslog(LOG_INFO,"healthcheck.php user admin select failure. Database not init()ed creating admin...");}
-   header("Refresh: 0;url=initwizard.php?action=login");
+   header("Refresh: 0;url=init_wizard.php?action=login");
 
 }
 if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php admin exists");}
@@ -159,7 +159,7 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"healthcheck.php admin exists");}
 
 
 //if
-//include_once("initwizard.php");
+//include_once("init_wizard.php");
 
 
 
