@@ -58,11 +58,12 @@
 
    $pats_processed = 0;
    $still_going    = true;
+   $current_skip   = 0;
 
-   // skip kludge
-   if ($skip > 0)
-     for ($i=1;$i<=$skip;$i++)
-       $null_me = fdb_fetch_array ($b_result);
+   // skip kludge - moved to new kludge below
+   //if ($skip > 0)
+   //  for ($i=1;$i<=$skip;$i++)
+   //    $null_me = fdb_fetch_array ($b_result);
 
    // loop for all patients
    while (($b_r = fdb_fetch_array ($b_result)) and ($still_going)) {
@@ -78,10 +79,14 @@
          (procbalcurrent > '0')
        )"
       ) );
-    if ($current_status < 1) {
-      echo "
-       <B>Skipping record # $current_patient</B><BR>
-      ";
+    if (($current_status < 1) or ($current_skip < $skip)) {
+      if ($current_status >= 1) {
+        // then we know this is just a skip...
+        $current_skip++;
+      }
+      //echo "
+      // <B>Skipping record # $current_patient</B><BR>
+      //";
       next; // skip
     } else { // begin process patient
 
