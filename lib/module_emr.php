@@ -55,7 +55,9 @@ class freemedEMRModule extends freemedModule {
 			$this->this_user    = new User ();
 
 		// display universal patient box
+		if (!$this->disable_patient_box) {
 		$display_buffer .= freemed_patient_box($this->this_patient)."<P>\n";
+		}
 
 		// Handle cancel action from submit
 		if ($submit==_("Cancel")) {
@@ -276,15 +278,16 @@ class freemedEMRModule extends freemedModule {
 				} // end looping through summary vars
 				$buffer .= "
 				<TD VALIGN=\"MIDDLE\">
-				<A HREF=\"module_loader.php?module=".
+				".template::summary_modify_link($this,
+				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=modform&id=$r[id]&return=manage\"
-				><SMALL>"._("Modify")."</SMALL></A>
-				".( $this->summary_view_link ?
-				"| <A HREF=\"module_loader.php?module=".
+				"action=modform&id=$r[id]&return=manage")."
+				".( ($this->summary_options & SUMMARY_VIEW) ?
+				template::summary_view_link($this,
+				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
-				"action=display&id=$r[id]&return=manage\"
-				><SMALL>"._("View")."</SMALL></A>" : "" )."
+				"action=display&id=$r[id]&return=manage",
+				($this->summary_options & SUMMARY_VIEW_NEWWINDOW)) : "" )."
 				</TD>
 				</TR>
 				";
