@@ -2130,7 +2130,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
 	urlencode($this_result['id'])."\" class=\"button\">".__("VIEW")."</a>
       ";
     }
-    if (freemed::acl('support', 'modify') AND 
+    if (freemed::acl('support', 'view') AND 
          ($flags & ITEMLIST_MOD) AND (!$this_result['locked'])) {
       $buffer .= "
         <a HREF=\"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
@@ -2387,11 +2387,13 @@ function freemed_display_printerlist ($param)
 //
 //	$varname - Name of the variable to store the selected data in.
 //
+//	$size - (optional) Size of the box. Defaults to default size.
+//
 // Returns:
 //
 //	XHTML compliant selection widget.
 //
-function freemed_display_selectbox ($result, $format, $param="") {
+function freemed_display_selectbox ($result, $format, $param="", $size="") {
 	global ${$param}; // so it knows to put SELECTED on properly
 	global $sql; // for database connection
 
@@ -2414,7 +2416,8 @@ function freemed_display_selectbox ($result, $format, $param="") {
 	} // if no result
 
 	$buffer .= "
-		<select NAME=\"$param\">
+		<select NAME=\"$param\"".
+		( $size ? " size=\"".$size."\"" : "" ).">
 		<option VALUE=\"0\">".__("NONE SELECTED")."</option>
 	";
 	
