@@ -8,7 +8,7 @@ class LettersModule extends EMRModule {
 
 	var $MODULE_NAME    = "Letters";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.2";
+	var $MODULE_VERSION = "0.3.5";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -23,12 +23,15 @@ class LettersModule extends EMRModule {
 	function LettersModule () {
 		// Set vars for patient management summary
 		$this->summary_vars = array (
-			__("Date") => "letterdt",
+			__("Date") => "my_date",
 			__("From")   => "letterfrom:physician",
 			__("To")   => "letterto:physician"
 		);
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW
 			| SUMMARY_PRINT | SUMMARY_LOCK | SUMMARY_DELETE;
+		$this->summary_query = array (
+			"DATE_FORMAT(letterdt, '%m/%d/%Y') AS my_date"
+		);
 
 		// For display action, disable patient box for print
 		// but only if we're the correct module
@@ -44,8 +47,15 @@ class LettersModule extends EMRModule {
 			"lettereoc",
 			"letterfrom",
 			"letterto",
+			"lettercc" => ( is_array($_REQUEST['lettercc']) ?
+				join(',', $_REQUEST['lettercc']) :
+				$_REQUEST['lettercc'] ),
+			"letterenc" => ( is_array($_REQUEST['letterenc']) ?
+				join(',', $_REQUEST['letterenc']) :
+				$_REQUEST['letterenc'] ),
 			"lettertext",
 			"letterpatient" => $patient,
+			"lettertypist" => html_form::combo_assemble('lettertypist'),
 			"locked" => '0' // needed for when it is added
 		);
 
@@ -55,9 +65,12 @@ class LettersModule extends EMRModule {
 			"lettereoc" => SQL__TEXT,
 			"letterfrom" => SQL__VARCHAR(150),
 			"letterto" => SQL__VARCHAR(150),
+			"lettercc" => SQL__BLOB,
+			"letterenc" => SQL__BLOB,
 			"lettertext" => SQL__TEXT,
 			"lettersent" => SQL__INT_UNSIGNED(0),
 			"letterpatient" => SQL__INT_UNSIGNED(0),
+			"lettertypist" => SQL__VARCHAR(50),
 			"locked" => SQL__INT_UNSIGNED(0),
 			"id" => SQL__SERIAL
 		);
@@ -72,9 +85,20 @@ class LettersModule extends EMRModule {
 
 	function add () {
 		// Check for submit as add, else drop
-		if ($_REQUEST['my_submit'] != __("Add")) {
+		switch ($_REQUEST['my_submit']) {
+			case __("Add"):
 			global $action; $action = "addform";
 			return $this->form();
+			break;
+
+			case __("Send to Provider"):
+			include_once(resolve_module('LettersRepository'));
+			$l = new LettersRepository();
+			return $l->_add();
+			break;
+
+			case __("File Directly"):
+			default: break;
 		}
 
 		// Check for uploaded msworddoc
@@ -97,13 +121,21 @@ class LettersModule extends EMRModule {
 		$this->_add();
 
 		// If this is management, refresh properly
-		/*
-		if ($GLOBALS['return'] == 'manage') {
+		if ($_REQUEST['return'] == 'manage') {
+			global $refresh, $patient;
+			$refresh = "manage.php?id=".urlencode($patient);
+			Header("Location: ".$refresh);
+			die();
+		}
+	} // end function LettersModule->add
+
+	function mod () {
+		if ($_REQUEST['return'] == 'manage') {
 			global $refresh, $patient;
 			$refresh = "manage.php?id=".urlencode($patient);
 		}
-		*/
-	} // end function LettersModule->add
+		$this->_mod();
+	} // end method mod
 
 	function form () {
 		global $display_buffer;
@@ -134,6 +166,8 @@ class LettersModule extends EMRModule {
 				${$k} = stripslashes($v);
 			}
 			extract ($r);
+			$lettercc = explode(',', $lettercc);
+			$letterenc = explode(',', $letterenc);
 			break; // end internal modform
 
 			default:
@@ -152,7 +186,7 @@ class LettersModule extends EMRModule {
 		<input TYPE=\"HIDDEN\" NAME=\"id\"      VALUE=\"".prepare($id)."\"\>
 		<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"\>
 		<input TYPE=\"HIDDEN\" NAME=\"module\"  VALUE=\"".prepare($module)."\"\>
-		<input TYPE=\"HIDDEN\" NAME=\"return\"  VALUE=\"".prepare($return)."\"\>
+		<input TYPE=\"HIDDEN\" NAME=\"return\"  VALUE=\"".prepare($_REQUEST['return'])."\"\>
 		";
 
 		if (check_module("LettersTemplates") and ($action=="addform")) {
@@ -207,12 +241,31 @@ class LettersModule extends EMRModule {
 		freemed_display_selectbox(
 			$sql->query("SELECT * FROM physician ORDER BY phylname"),
 			"#phylname#, #phyfname#",
-			"letterto"
+			"letterto",
+			3
 		),
+
+		__("CC") =>
+		$this->cc_widget('lettercc'),
+
+		__("Enclosures") =>
+		$this->enc_widget('letterenc'),
 
 		__("Text") =>
 		//html_form::text_area("lettertext", 'VIRTUAL', 25, 70),
-		freemed::rich_text_area('lettertext', 25, 70)
+		freemed::rich_text_area('lettertext', 25, 70),
+
+		__("Typist") =>
+		html_form::combo_widget(
+			'lettertypist',
+			$GLOBALS['sql']->distinct_values(
+				$this->table_name,
+				'lettertypist'
+			)
+		),
+
+		( check_module('LettersRepository') ? __("Fax Number") : "" ) =>
+		html_form::text_widget( 'letterfax', 16 ),
 
 		)));
 
@@ -224,13 +277,27 @@ class LettersModule extends EMRModule {
 			</div>
 			";
 		}
- 
+
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
+		";
+
+		if (check_module('LettersRepository') and $action != 'modform') {
+			$display_buffer .= "
+		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
+			"VALUE=\"".__("Send to Provider")."\"/>
+		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
+			"VALUE=\"".__("File Directly")."\"/>
+			";
+		} else {
+			$display_buffer .= "
 		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
 			"VALUE=\"".
 	         ( ($action=="addform") ? __("Add") : __("Modify"))."\"/>
-		<!-- <input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/> -->
+			";
+		}
+
+		$display_buffer .= "
 		<input class=\"button\" TYPE=\"SUBMIT\" NAME=\"__submit\" VALUE=\"Cancel\"/>
 		</div>
 		</form>
@@ -331,7 +398,8 @@ class LettersModule extends EMRModule {
 			array (
 				__("Date") => "letterdt",
 				__("From") => "letterfrom",
-				__("To") => "letterto"
+				__("To") => "letterto",
+				__("Typist") => "lettertypist"
 			),
 			array ("", "", ""),
 			array (
@@ -353,18 +421,49 @@ class LettersModule extends EMRModule {
 		$tophyobj = CreateObject('_FreeMED.Physician', $r['letterto']);
 		$phf = freemed::get_link_rec($r['letterfrom'], 'physician');
 		$pht = freemed::get_link_rec($r['letterto'], 'physician');
+
+		// Check for enc
+		if ($r['letterenc']) {
+			$enc = 'Enc: ';
+			$es = explode(',', $r['letterenc']);
+			foreach ($es AS $e) {
+				$enchash[] = $TeX->_SanitizeText(freemed::get_link_field($e, 'enctype', 'enclosure'));
+			}
+			$enc .= join(', ', $enchash);
+			$enc .= " \\\\\n";
+			$enc .= "\\  \\\\\n";
+		} else {
+			$enc = '';
+		}
+
+		// Check for cc
+		if ($r['lettercc']) {
+			$cc = 'cc: ';
+			$drs = explode(',', $r['lettercc']);
+			foreach ($drs AS $dr) {
+				$_p = CreateObject('_FreeMED.Physician', $dr);
+				$cchash[] = $_p->fullName();
+				unset($_p);
+			}
+			$cc .= join(', ', $cchash);
+		} else {
+			$cc = '';
+		}
+		
 		return array (
-			'date' => $TeX->_SanitizeText( fm_date_print($r['letterdt'], true) ),
+			'date' => $TeX->_SanitizeText( fm_date_print($r['letterdt'], false) ),
 			'patient' => $TeX->_SanitizeText($pt['ptfname'].
 				' '. $pt['ptmname'] . ' ' . $pt['ptlname']),
 			'dateofbirth' => $TeX->_SanitizeText(fm_date_print($pt['ptdob'])),
 			'from' => $TeX->_SanitizeText(
-				'Dr '.$phf['phyfname'].' '.$phf['phylname']
+				'Dr. '.$phf['phyfname'].' '.$phf['phylname']
 				),
-			'to' => $TeX->_SanitizeText(
-				'Dr '.$pht['phyfname'].' '.$pht['phylname']
-				),
+			'to' => $TeX->_SanitizeText($tophyobj->fullName(false)),
+			'cc' => $TeX->_SanitizeText($cc),
+			'enclosures' => $enc,
 			'body' => $TeX->_HTMLToRichText($r['lettertext']),
+			'typist' => $TeX->_SanitizeText($r['lettertypist']),
+			'practice' => $TeX->_SanitizeText($phf['phypracname']),
 			'physician' => $TeX->_SanitizeText($phyobj->fullName()),
 			'physicianaddress' => $TeX->_SanitizeText($phf['phyaddr1a']),
 			'physiciancitystatezip' => $TeX->_SanitizeText($phf['phycitya'].', '.$phf['phystatea'].' '.$phf['phyzipa']),
@@ -376,12 +475,69 @@ class LettersModule extends EMRModule {
 				substr($phf['phyfaxa'], 0, 3).'-'.
 				substr($phf['phyfaxa'], 3, 3).'-'.
 				substr($phf['phyfaxa'], 6, 4) ),
+			'signature' => ( file_exists('/usr/share/freemed/lib/tex/img/'.$phf['id'].'.pdf') ? '\\includegraphics{/usr/share/freemed/lib/tex/img/'.$phf['id'].'}'."\n" : '\\bigskip'."\n" ),
+			'physicianid' => $phf['id'],
 			'tophysicianpractice' => $TeX->_SanitizeText($pht['phypracname']),
-			'tophysician' => $TeX->_SanitizeText($tophyobj->fullName()),
+			'tophysician' => $TeX->_SanitizeText($tophyobj->fullName(true)),
+			'tophysicianfirstname' =>$TeX->_SanitizeText($pht['phyfname']),
 			'tophysicianaddress' => $TeX->_SanitizeText($pht['phyaddr1a']),
 			'tophysiciancitystatezip' => $TeX->_SanitizeText($pht['phycitya'].', '.$pht['phystatea'].' '.$pht['phyzipa'])
 		);
 	} // end method _print_mapping
+
+	function cc_widget ( $varname ) {
+		global ${$varname};
+		$buffer .= "<select NAME=\"".$varname."[]\" SIZE=\"3\" MULTIPLE=\"multiple\">\n";
+		$query = "SELECT * FROM physician ORDER BY phylname,phyfname";
+		$res = $GLOBALS['sql']->query($query);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$selected = false;
+			if (is_array(${$varname})) {
+				foreach (${$varname} AS $v) {
+					if ($v == $r['id']) {
+						$selected = true;
+					}
+				}
+			} else {
+				if (${$varname} == $r['id']) {
+					$selected = true;
+				}
+			}
+			$buffer .= "<option value=\"".prepare($r['id'])."\" ".
+				( $selected ? "SELECTED" : "" ).">".
+				prepare($r['phylname'].', '.$r['phyfname']).
+				"</option>\n";
+		}
+		$buffer .= "</select>\n";
+		return $buffer;
+	} // end method cc_widget
+
+	function enc_widget ( $varname ) {
+		global ${$varname};
+		$buffer .= "<select NAME=\"".$varname."[]\" SIZE=\"3\" MULTIPLE=\"multiple\">\n";
+		$query = "SELECT * FROM enctype ORDER BY enclosure";
+		$res = $GLOBALS['sql']->query($query);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$selected = false;
+			if (is_array(${$varname})) {
+				foreach (${$varname} AS $v) {
+					if ($v == $r['id']) {
+						$selected = true;
+					}
+				}
+			} else {
+				if (${$varname} == $r['id']) {
+					$selected = true;
+				}
+			}
+			$buffer .= "<option value=\"".prepare($r['id'])."\" ".
+				( $selected ? "SELECTED" : "" ).">".
+				prepare($r['enclosure']).
+				"</option>\n";
+		}
+		$buffer .= "</select>\n";
+		return $buffer;
+	} // end method enc_widget
 
 	// ----- Internal update
 
@@ -392,9 +548,11 @@ class LettersModule extends EMRModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				 'ADD COLUMN lettereoc TEXT AFTER letterdt');
 		}
+
 		// Version 0.3.2
 		//
 		//	Added locking ability to letters module
+		//
 		if (!version_check($version, '0.3.2')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN locked INT UNSIGNED AFTER letterpatient');
@@ -402,6 +560,43 @@ class LettersModule extends EMRModule {
 			$sql->query('UPDATE '.$this->table_name.' SET '.
 				'locked = \'0\'');
 		}
+
+		// Version 0.3.3
+		//
+		//	Added CC
+		//
+		if (!version_check($version, '0.3.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN lettercc BLOB AFTER letterto');
+			// Make sure they are all not null
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'lettercc = \'\'');
+		}
+
+		// Version 0.3.4
+		//
+		//	Added enclosures
+		//
+		if (!version_check($version, '0.3.4')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN letterenc BLOB AFTER lettercc');
+			// Make sure they are all not null
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'letterenc = \'\'');
+		}
+
+		// Version 0.3.5
+		//
+		//	Added typist
+		//
+		if (!version_check($version, '0.3.5')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN lettertypist VARCHAR(50) AFTER letterpatient');
+			// Make sure they are all not null
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'lettertypist = \'\'');
+		}
+
 	} // end method _update
 
 } // end class LettersModule
