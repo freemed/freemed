@@ -8,6 +8,7 @@ $program_description = "patfile.dat converter";
 $version             = "20000-01-13";
 $code_bugs_email     = "jeff\@univrel.pr.uconn.edu";
 $ISO                 = "iso-8859-1";
+$debug               = 0;
 
 $program_name        = $0;
 $arg_input           = shift;
@@ -45,12 +46,29 @@ if ((length($arg_input)<3)   || (length($arg_output)<3) ||
 print "$program_description v$version\n";
 print "(c) $year under the GPL, v2\n";
 print "Please send all code bugs to $code_bugs_email\n\n";
-print "Processing $arg_icdfile ... \n";
 
 open (PATDB, $arg_input)      || die "could not open $arg_input";
 open (ICDDB, $arg_icdfile)    || die "could not open $arg_icdfile";
 open (INSDB, $arg_insfile)    || die "could not open $arg_insfile";
 open (OUTPUT, ">$arg_output") || die "could not open $arg_output";
+
+# get Medical Manager Version from header Record...
+# versions before 900 have non-year 2000 compliant dates...
+$mmVers = 0;
+$this_text = <ICDDB>;
+chop($this_text);
+@hdrwords = ();
+  push (@hdrwords, $+) while $this_text =~ m{
+       "([^\"\\]*(?:\\.[^\"\\]*)*)",?
+     | ([^,]+),?
+     | ,
+  }gx;
+$mmVers = int($hdrwords[3]);
+print "Data from Medical Manager Version $mmVers\n";
+print "Processing $arg_icdfile ... ";
+if($debug) {
+  print "\n";
+}
 
 # get associative values from ICD database to allow mapping of codes
 $icdcount = 1;
@@ -68,7 +86,9 @@ while (<ICDDB>) {
   $code_descrip = $icdwords[2];
   if (length($code_descrip)>3) {
     $icdcodes[$code_number] = $icdcount;
-    print "[$icdcount]\t$code_number\n";
+    if($debug) {
+      print "[$icdcount]\t$code_number\n";
+    }
     $icdcount++;
   } # end of if code number exists
 } # end of while
@@ -77,7 +97,10 @@ close (ICDDB);
 print "done.\n";
 
 # get associative values from insurance database
-print "Processing $arg_insfile ... \n";
+print "Processing $arg_insfile ... ";
+if($debug) {
+  print "\n";
+}
 $inscount = 1;
 @insco1   = @insco2  = @insgrp1  = @insgrp2 =
 @insid1   = @insid2  = @inslinks = @insplan = ();
@@ -107,15 +130,20 @@ while (<INSDB>) {
       $insid2 [$patient_number] = $id_number;
       $insgrp2[$patient_number] = $group_number;
     }
-    print "[$insco_number / $patient_number] ".
-          "\t$this_type \t$id_number \t$group_number\n";
+    if($debug) {
+      print "[$insco_number / $patient_number] ".
+            "\t$this_type \t$id_number \t$group_number\n";
+    }
     $inscount++;
   } # end of if code number exists
 } # end of while
 close (INSDB);
 print "done.\n";
 
-print "Processing $arg_input ... \n";
+print "Processing $arg_input ... ";
+if($debug) {
+  print "\n";
+}
 
 # extract patient db
 $count        = 1;
@@ -145,6 +173,7 @@ while (<PATDB>) {
   $pt_phone               = $words[24];
   $pt_sex                 = $words[26];
   $pt_dob                 = $words[27];
+  $pt_pc                  = $words[28];
   $pt_status              = $words[37];
   $pt_icd1                = $words[42];
   $pt_icd2                = $words[43];
@@ -173,9 +202,21 @@ while (<PATDB>) {
     $pt_insgrp1 = $insgrp1[$pt_record_number];
     $pt_insgrp2 = $insgrp2[$pt_record_number];
 
-    $pt_dob = "19".substr ($pt_dob, 0, 2)."-".
-               substr     ($pt_dob, 2, 2)."-".
-               substr     ($pt_dob, 4, 2);
+    if($mmVers < 900) {
+      if($pt_pc) {
+        $pt_dob = "18".substr ($pt_dob, 0, 2)."-".
+                   substr     ($pt_dob, 2, 2)."-".
+                   substr     ($pt_dob, 4, 2);
+      } else {
+        $pt_dob = "19".substr ($pt_dob, 0, 2)."-".
+                   substr     ($pt_dob, 2, 2)."-".
+                   substr     ($pt_dob, 4, 2);
+      }
+    } else {
+      $pt_dob = substr ($pt_dob, 0, 4)."-".
+                substr ($pt_dob, 4, 2)."-".
+                substr ($pt_dob, 6, 2);
+    }
     
     print OUTPUT "$cur_date,$cur_date,0,0,0,".
                  "$pt_ref_doc,$pt_pcp,".
@@ -194,8 +235,10 @@ while (<PATDB>) {
                  "$pt_insno1,$pt_insno2,$pt_insno3,".
                  "$pt_insgrp1,$pt_insgrp2,$pt_insgrp3,,".
                  "$ISO,$count\n";
-    print "[$count] $pt_last_name,\t$pt_first_name\t$pt_middle_name\t".
-          "\t\($pt_dob\)\tID=$pt_record_number\n";
+    if($debug) {
+      print "[$count] $pt_last_name,\t$pt_first_name\t$pt_middle_name\t".
+            "\t\($pt_dob\)\tID=$pt_record_number\n";
+    }
     $count++;
   } # end of if code number exists
 } # end of while
