@@ -257,18 +257,8 @@ class freemed {
 
 	// function freemed::module_get_value
 	function module_get_value ($module, $key) {
-		static $module_list;
-
-		// Cache module list object
-		if (!isset($module_list)) {
-			$module_list = CreateObject(
-				'PHP.module_list',
-				PACKAGENAME,
-				array(
-					'cache_file' => 'data/cache/modules'
-				)
-			);
-		}
+		// Get module list object
+		$module_list = freemed::module_cache();
 
 		// Not in the list, then we just skip it
 		if (!$module_list->check_for($module)) {
@@ -287,18 +277,7 @@ class freemed {
 
 	// function freemed::module_get_meta
 	function module_get_meta ($module, $key) {
-		static $module_list;
-
-		// Cache module list object
-		if (!isset($module_list)) {
-			$module_list = CreateObject(
-				'PHP.module_list',
-				PACKAGENAME,
-				array(
-					'cache_file' => 'data/cache/modules'
-				)
-			);
-		}
+		$module_list = freemed::module_cache();
 
 		// Not in the list, then we just skip it
 		if (!$module_list->check_for($module)) {
@@ -315,16 +294,25 @@ class freemed {
 		return false;
 	} // end function freemed::module_get_meta
 
+	// function freemed::module_cache
+	function module_cache () {
+		static $_cache;
+		if (!isset($_cache)) {
+			$_cache = CreateObject(
+				'PHP.module_list',
+				PACKAGENAME,
+				array(
+					'cache_file' => 'data/cache/modules'
+				)
+			);
+		}
+		return $_cache;
+	} // end function freemed::module_cache
+
 	// function freemed::module_handler
 	function module_handler ($handler) {
-		// Cache module list object
-		$module_list = CreateObject(
-			'PHP.module_list',
-			PACKAGENAME,
-			array(
-				'cache_file' => 'data/cache/modules'
-			)
-		);
+		// Get module list object
+		$module_list = freemed::module_cache();
 
 		// Loop through modules
 		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] as $k => $v) {
@@ -341,18 +329,8 @@ class freemed {
 	// function freemed::module_lookup
 	// - lookup by the actual class name of the module
 	function module_lookup ($module) {
-		static $module_list;
-
-		// Cache module list object
-		if (!isset($module_list)) {
-			$module_list = CreateObject(
-				'PHP.module_list',
-				PACKAGENAME,
-				array(
-					'cache_file' => 'data/cache/modules'
-				)
-			);
-		}
+		// Get module list object
+		$module_list = freemed::module_cache();
 
 		// Not in the list, then we just skip it
 		if (!$module_list->check_for($module)) {
@@ -1916,24 +1894,31 @@ function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false, $sub
 function fm_phone_assemble ($phonevarname="", $array_index=-1) {
   $buffer = ""; // we use buffered output for notebook class!
   if ($phonevarname=="") return ""; // return nothing if no variable is given
-  global $$phonevarname, ${$phonevarname."_1"},
+  global ${$phonevarname}, ${$phonevarname."_1"},
     ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
     ${$phonevarname."_4"}, ${$phonevarname."_5"};
   if ($array_index == -1) {
-    $w  = $$phonevarname;    // whole number
+    $w  = ${$phonevarname};    // whole number
     $p1 = ${$phonevarname."_1"};    // part 1
     $p2 = ${$phonevarname."_2"};    // part 2
     $p3 = ${$phonevarname."_3"};    // part 3
     $p4 = ${$phonevarname."_4"};    // part 4
     $p5 = ${$phonevarname."_5"};    // part 5
   } else {
-    $w  = $$phonevarname[$array_index];  // whole number
+    $w  = ${$phonevarname}[$array_index];  // whole number
     $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
     $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
     $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
     $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
     $p5 = ${$phonevarname."_5"}[$array_index];  // part 5
   } // end checking for array index
+
+  // Check for case where parts aren't set, but whole is
+  $phofmt = freemed::config_value('phofmt');
+  if (${$phonevarname} and !${$phonevarname.'_1'} and ($phofmt=='usa' or $phofmt=='fr')) {
+    return $w;
+  }
+  
   switch (freemed::config_value("phofmt")) {
     case "usa":
      return $p1.$p2.$p3.$p4;        // assemble number and put it all together
