@@ -133,12 +133,21 @@ switch ($action) {
 			window.self.close()
 		}
 		</SCRIPT>
-		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
+		<div ALIGN=\"CENTER\" CLASS=\"patient_search\" ".
+			"style=\"height: 100%; text-valign: middle;\">
+		<br/>
+		".__("Select a patient from the following list:")."
 		".html_form::select_widget(
 			"list",	$pick_list
-		)."
-		<input TYPE=\"BUTTON\" NAME=\"select\" ".
-		"VALUE=\"Select\" onClick=\"my_process(); return true;\">
+		)."<br/>
+		<input TYPE=\"BUTTON\" NAME=\"select\" class=\"button\" ".
+		"VALUE=\"".__("Select")."\" ".
+		"onClick=\"my_process(); return true;\"/>
+		<input type=\"BUTTON\" NAME=\"cancel\" class=\"button\" ".
+		"VALUE=\"".__("Cancel")."\" ".
+		"onClick=\"window.self.close(); return true;\" />
+		<a href=\"patient_lookup.php?varname=$varname&formname=$formname&submitname=$submitname\" ".
+		"class=\"button\">".__("Back")."</a>
 		</div>
 	";
 	break;
@@ -149,7 +158,8 @@ switch ($action) {
 		<INPUT TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\">
 		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".__("Search")."\">
-		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
+		<div ALIGN=\"CENTER\" style=\"height: 100%;\" ".
+			"class=\"patient_search\">
 		".html_form::form_table(array(
 			__("Smart Lookup") =>
 			html_form::text_widget(
@@ -174,7 +184,11 @@ switch ($action) {
 				)
 			)
 		))."
-		<input TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\" class=\"button\"/>
+		<input TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\" ".
+			"class=\"button\"/>
+		<input type=\"BUTTON\" NAME=\"cancel\" class=\"button\" ".
+		"VALUE=\"".__("Cancel")."\" ".
+		"onClick=\"window.self.close(); return true;\" />
 		</div>
 	";
 	break;

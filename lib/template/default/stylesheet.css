@@ -13,10 +13,16 @@ body {
 	text-decoration: none;
 }
 
+a {
+	padding: 1px;
+}
+
 /* Equivalent to onMouseOver */
 a:hover {
-	color: #ffffff;
-	text-decoration: underline
+	color: #555555;
+	text-decoration: underline;
+	padding: 0px;
+	border: 1px dashed;
 	/* background-color: #0000ff */
 }
 
@@ -24,7 +30,7 @@ a:hover {
 .mainbox {
 	border: thick black;
 	border-width: thick;
-	border-style: solid;
+	border-style: solid; 
 	background: #ccccff 
 }
 
@@ -392,7 +398,7 @@ a:hover {
 }
 
 /* Informational box. */
-.infobox {
+.infobox, .patient_search {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
