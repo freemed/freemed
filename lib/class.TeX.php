@@ -472,6 +472,9 @@ class TeX {
 		$string = str_replace('{', '\{', $string);
 		$string = str_replace('}', '\}', $string);
 
+		// Make sure dollar sign escaping used before $+$ escaped
+		$string = str_replace('$', '\$', $string);
+
 		// Get rid of #, _, %, +
 		$string = str_replace('#', '\#', $string);
 		$string = str_replace('_', '\_', $string);
@@ -484,7 +487,6 @@ class TeX {
 		$string = str_replace('&lt;', '$<$', $string);
 		$string = str_replace('&gt;', '$>$', $string);
 		$string = str_replace('&', '\&', $string);
-		$string = str_replace('$', '\$', $string);
 		$string = str_replace('&nbsp;', '\\ ', $string);
 
 		// HTML/SGML specific texts
