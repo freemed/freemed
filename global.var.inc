@@ -17,7 +17,7 @@ define (__GLOBAL_VAR_INC__, true);
   define (PACKAGENAME, "freemed");	// package name
   define (CODED_BY, "jeff b");		// coded by tag
   define (VERSION, "0.2pre20000725");	// current version number
-  define (BUGS_EMAIL, "code_bugs@test.pr.uconn.edu";	// coder email...
+  define (BUGS_EMAIL, "code_bugs@test.pr.uconn.edu");	// coder email...
 
   $bugs_address="http://www.freemed.org/keystone/visitor.php3";
   $cur_date=date("Y-m-d");		// SQL date format (don't touch!)

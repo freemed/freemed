@@ -133,7 +133,7 @@ echo "
   <TD ALIGN=RIGHT>
   </TD>
   <TD ALIGN=LEFT>
-  <B><A HREF=\"logout.php3\">$Logout_of ."PACKAGENAME</A>
+  <B><A HREF=\"logout.php3\">$Logout_of ".PACKAGENAME."</A>
   </B>
   </TD></TR>
   </TABLE>
