@@ -1,6 +1,17 @@
 freemed project changelog
 ($Id$)
 
+* Thu May 17 2001 fforest
+  - macros added defines for covstatus ACTIVE DELETED
+  - API change the coverage functions to use the above 
+    instead of hard coded 0 and 1
+  - patient_coverage changed to use the defines above
+  - procedure_module completely re written. now uses
+    wizard verification of fields. new page 2 to select
+    insurance coverage. new display function.
+    modform reduced to eoc, auth, voucher and comment.
+  - old procedure module copied to /old
+
 * Wed May 16 2001 fforest
   - billing_module Checkforinsbills can now take an 
     array of covtypes as a parm

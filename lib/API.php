@@ -2188,7 +2188,7 @@ function fm_get_active_coverage ($ptid=0)
 	if ($ptid == 0)
            return $result;
         $query = "SELECT id FROM coverage WHERE ";
-        $query .= "covpatient='$ptid' AND covstatus='0' ";
+        $query .= "covpatient='$ptid' AND covstatus='".ACTIVE."' ";
         $result = $sql->query($query);
         if (!$result)
            return $result;  // not an array!
@@ -2214,7 +2214,7 @@ function fm_verify_patient_coverage($ptid=0,$coveragetype=PRIMARY)
 		// default coveragetype is primary	
 
         $query = "SELECT id FROM coverage WHERE ";
-        $query .= "covpatient='$ptid' AND covstatus='0' AND covtype='$coveragetype' ";
+        $query .= "covpatient='$ptid' AND covstatus='".ACTIVE."' AND covtype='$coveragetype' ";
         $result = $sql->query($query);
 		if (!$result)
 			return 0;

@@ -177,7 +177,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 				return;
 		}
 
-		$covstatus='0';
+		$covstatus=ACTIVE;
 		$startdt = fm_date_assemble("coveffdt");
 		$covdob = fm_date_assemble("covdob");
 		$query = "UPDATE $this->table_name SET coveffdt='".addslashes($startdt)."',".
@@ -394,7 +394,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 			if ($covreplace==1) // replace an existing coverage
 			{
 				echo "<$STDFONT_B>Removing Old Coverage<BR><$STDFONT_E>\n";
-				$query = "UPDATE coverage SET covstatus='1' WHERE covtype='".addslashes($covtype)."'";
+				$query = "UPDATE coverage SET covstatus='".DELETED."' WHERE covtype='".addslashes($covtype)."'";
 				$updres = $sql->query($query);
 				if (!$updres)
 					DIE("Error updating coverage status");
@@ -402,7 +402,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 			}
 			// add the coverage
 			echo "<$STDFONT_B>"._("Adding")." ... <$STDFONT_E>\n";
-			$covstatus = 0;  // active
+			$covstatus = ACTIVE;  // active
 			$query = $sql->insert_query($this->table_name,
 										array (
 										"covdtadd" => $cur_date,
