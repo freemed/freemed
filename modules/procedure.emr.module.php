@@ -397,7 +397,7 @@ class ProcedureModule extends EMRModule {
 					"procclmtp"        =>  $procclmtp
 					)
 				);
-
+				
 				$result = $sql->query ($query);
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
 				if ($result) { $display_buffer .= __("done")."."; }
@@ -436,7 +436,7 @@ class ProcedureModule extends EMRModule {
 
 				// updating patient diagnoses
 				$display_buffer .= "
-				<BR>
+				<br/>
 				".__("Updating patient diagnoses")." ...  ";
 				$query = $sql->update_query(
 					'patient',
@@ -451,6 +451,27 @@ class ProcedureModule extends EMRModule {
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
 				if ($result) { $display_buffer .= __("done")."."; }
 				else        { $display_buffer .= __("ERROR");    }
+				$display_buffer .= "<br/>\n";
+
+				// Deduct from authorization, if there is one
+				// specified
+				if ($_REQUEST['procauth'] > 0) {
+					$a = CreateObject('FreeMED.Authorization');
+					// Check for valid first
+					if ($a->valid($_REQUEST['procauth'], fm_date_assemble('procdt'))) {
+						if ($a->use_authorization($_REQUEST['procauth'])) {
+							$display_buffer .= __("Updated authorization").
+								"<br/>\n";
+						} else {
+							$display_buffer .= __("Failed to modify authorization.").
+								"<br/>\n";
+						} // end checking if use auth success
+					} else {
+						// If not valid, display error
+						$display_buffer .= __("Invalid authorization").
+							"<br/>\n";
+					} // end checking for valid
+				} // end checking for use auth
 
 				$display_buffer .= "
 				</div>
@@ -751,6 +772,9 @@ class ProcedureModule extends EMRModule {
 
 			$display_buffer .= "<P><CENTER>".__("Modifying")." ... ";
 
+			// Save old record for authorization update
+			$_p = freemed::get_link_rec($_REQUEST['id'], 'procrec');
+
 			$query = $sql->update_query 
 				(
 					$this->table_name,
@@ -841,6 +865,33 @@ class ProcedureModule extends EMRModule {
 				if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
 				if ($result) { $display_buffer .= __("done")."."; }
 				else        { $display_buffer .= __("ERROR");    }
+				$display_buffer .= "<br/>\n";
+
+				// Check if authorization changed
+				if ($_REQUEST['procauth'] != $_p['procauth']) {
+					$a = CreateObject('FreeMED.Authorization');
+					// Try to remove old authorization
+					if ($_p['procauth'] > 0) {
+						$a->replace_authorization($_p['procauth']);
+						$display_buffer .= __("Removed old authorization")."<br/>\n";
+					}
+					if ($_REQUEST['procauth'] > 0) {
+						if ($a->valid($_REQUEST['procauth'], fm_date_assemble('procdt'))) {
+							if ($a->use_authorization($_REQUEST['procauth'])) {
+								$display_buffer .= __("Updated authorization").
+									"<br/>\n";
+							} else {
+								$display_buffer .= __("Failed to modify authorization.").
+									"<br/>\n";
+							} // end checking if use auth success
+						} else {
+							// If not valid, display error
+							$display_buffer .= __("Invalid authorization").
+								"<br/>\n";
+						} // end checking for valid
+					} // end seeing if something should be added
+				} // end checking for updated authorization
+
 
 				$display_buffer .= "
 				</div>
