@@ -9,7 +9,7 @@ $page_name = basename($GLOBALS["$PHP_SELF"]);
 include_once ("lib/freemed.php");
 
 //----- Login/authenticate
-freemed_open_db ();
+freemed::connect ();
 
 //----- Set configuration variables
 $config_vars = array (
@@ -282,50 +282,41 @@ if ($action=="cfgform") {
 	$display_buffer .= "$re_load\n";
 
 	// generate test table, if debug is on
+
+	// Fred Trotter
+	// Moved to the new class.Debug
 	if ($debug) {
-		$result=$sql->query("DROP TABLE test");
-		$result=$sql->query($sql->create_table_query(
-			'test',
-			array(
-				'name' => SQL_CHAR(10),
-				'other' => SQL_CHAR(12),
-				'phone' => SQL_INT(0),
-				'id' => SQL_SERIAL
-			)
-		));
+		$this_debug = CreateObject('FreeMED.Debug');
+		$result=$this_debug->init();
+
 		if ($result) { $display_buffer .= "<li>".__("test db")."</li>\n"; }
+
 	} // end debug section
 
 	// Generate module table
-	$result=$sql->query("DROP TABLE module"); 
-	$result=$sql->query($sql->create_table_query(
-		'module',
-		array(
-			'module_name' => SQL_VARCHAR(100),
-			'module_version' => SQL_VARCHAR(50),
-			'id' => SQL_SERIAL
-		)
-	));
+	// Fred Trotter
+	// New reference to BaseModule...
+
+	$this_module = CreateObject('FreeMED.BaseModule');
+	$result = $this_module->init();
+
 	if ($result) { $display_buffer .= "<li>".__("Modules")."</li>\n"; }
 
 	// Generate user db
-	$result=$sql->query("DROP TABLE user"); 
-	$result=$sql->query($sql->create_table_query(
-		'user',
-		array(
-			'username' => SQL_NOT_NULL(SQL_VARCHAR(16)),
-			'userpassword' => SQL_NOT_NULL(SQL_VARCHAR(16)),
-			'userdescrip' => SQL_VARCHAR(50),
-			'userlevel' => SQL_INT_UNSIGNED(0),
-			'usertype' => SQL_ENUM (array("phy", "misc")),
-			'userfac' => SQL_BLOB,
-			'userphy' => SQL_BLOB,
-			'userphygrp' => SQL_BLOB,
-			'userrealphy' => SQL_INT_UNSIGNED(0),
-			'usermanageopt' => SQL_BLOB,
-			'id' => SQL_SERIAL
-		), array ('id', 'username')
-	));
+	// Fred Trotter
+	// In order to seperate database access from super user access in freemed
+	// from the database user and password I need to first recover the password
+	// for the new "admin" user account and reuse it in the new database
+		
+	$result=$sql->query("SELECT * FROM user".
+		"WHERE username = 'admin' AND id = 1");
+	$r = $sql->fetch_array ($result);
+	
+        $admin_password=$r['userpassword'];
+
+	$this_user = CreateObject('FreeMED.User');
+	$result = $this_user->init($admin_password);
+
 	/*
 		eventually wrapper should handle...
 		PRIMARY KEY (id),
@@ -335,23 +326,9 @@ if ($action=="cfgform") {
 	*/
 	if ($result) $display_buffer .= "<li>".__("Users")."</li>\n";
 
-	$result = $sql->query($sql->insert_query(
-		"user",
-		array (
-    			"username" => "root",
-			"userpassword" => DB_PASSWORD,
-			"userdescrip" => "Superuser",
-			"userlevel" => USER_ROOT,
-			"usertype" => "misc",
-			"userfac" => "-1",
-			"userphy" => "-1",
-			"userphygrp" => "-1",
-			"userrealphy" => "0",
-			"usermanageopt" => ""
-    		)
-    	));
+
   	if ($result) $display_buffer .= "<li><i>[[".
-		__("Added Superuser")."]]</i></li>\n";
+		__("Added admin")."]]</i></li>\n";
 
 /**********************************************************************
 
@@ -410,41 +387,9 @@ if ($action=="cfgform") {
 
 **********************************************************************/
 
-	// generate configuration table info
-	$result=$sql->query("DROP TABLE config"); 
-	$result=$sql->query($sql->create_table_query(
-		'config',
-		array (
-			'c_option' => SQL_CHAR(6),
-			'c_value' => SQL_VARCHAR(100),
-			'id' => SQL_SERIAL
-		), array ('id')
-	));
-	if ($result) $display_buffer .= "<li>".__("Configuration")."</li>\n";
-
-	if ($re_load)
-	{
-		$stock_config = array (
-			'gfx' => '1',
-			'calshr' => $cal_starting_hour,
-			'calehr' => $cal_ending_hour,
-			'cal_ob' => 'enable',
-			'dtfmt' => 'ymd',
-			'phofmt' => 'unformatted',
-			'folded' => 'yes'
-		);
-		foreach ($stock_config AS $key => $val) {
-			if (!is_integer($key)) {
-				$result = $sql->query($sql->insert_query(
-					'config',
-					array (
-						'c_option' => $key,
-						'c_value' => $val
-					)
-				));
-			}
-		}
-	}
+	//----- Initialize configuration
+	$this_config = CreateObject('FreeMED.GeneralConfig');
+	$result = $this_config->init();
 
 /********************************************************************
  ***** Fax tables... need to be reenabled
