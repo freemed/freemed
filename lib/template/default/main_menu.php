@@ -23,24 +23,24 @@ $page_title = PACKAGENAME." "._("Main Menu");
 // Check for new messages
 if ($new_messages = $this_user->newMessages()) {
 	$display_buffer .= "
-		<DIV ALIGN=\"CENTER\" VALIGN=\"MIDDLE\" CLASS=\"infobox\">
-		<IMG SRC=\"img/messages_small.gif\" ALT=\"\" ".
-		"WIDTH=16 HEIGHT=16 BORDER=0>
-		<A HREF=\"messages.php\"
+		<div align=\"center\" valign=\"MIDDLE\" class=\"infobox\">
+		<img src=\"img/messages_small.gif\" alt=\"\" ".
+		"width=\"16\" height=\"16\" border=\"0\"/>
+		<a HREF=\"messages.php\"
 		>You have ".$new_messages." new message(s).</A>
-		<IMG SRC=\"img/messages_small.gif\" ALT=\"\" ".
-		"WIDTH=16 HEIGHT=16 BORDER=0>
-		</DIV>
+		<img src=\"img/messages_small.gif\" ALT=\"\" ".
+		"WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\"/>
+		</div>
 	";
 }
 
 // Header for main table
 $display_buffer .= "
-  <P>
+<p/>
 
-  <TABLE WIDTH=\"100%\" BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
-   ALIGN=CENTER>
- "; // standard font begin
+<table WIDTH=\"100%\" BORDER=0 CELLSPACING=2 CELLPADDING=0 VALIGN=MIDDLE
+ ALIGN=\"CENTER\">
+";
 
 if (freemed::user_flag(USER_ADMIN))
    $display_buffer .= "
@@ -56,7 +56,7 @@ if (freemed::user_flag(USER_ADMIN))
      </TD></TR>
    ";
 
- if (freemed::user_flag(USER_DATABASE))
+if (freemed::user_flag(USER_DATABASE))
    $display_buffer .= "
     <TR>
     <TD ALIGN=RIGHT>

@@ -24,7 +24,7 @@ switch ($action) {
 	page_push();
 
 	// Check for default or passed physician
-	if (!isset($msgfor)) { $msgfor = $this_user->user_phy; }
+	if (!isset($msgfor)) { $msgfor = $this_user->user_number; }
 
 	// Set default urgency to 3
 	if (!isset($msgurgency)) { $msgurgency = 3; }
@@ -43,9 +43,10 @@ switch ($action) {
 	".html_form::form_table(array(
 		_("For") =>
 		freemed_display_selectbox(
-			$sql->query("SELECT * FROM physician WHERE ".
-				"phyref != 'yes'"),
-			"#phylname#, #phyfname#",
+			$sql->query("SELECT * FROM user ".
+				"WHERE username != 'root' ".
+				"ORDER BY userdescrip"),
+			"#username# (#userdescrip#)",
 			"msgfor"
 		),
 
@@ -157,7 +158,7 @@ switch ($action) {
 
 	// View list of messages for this doctor
 	$query = "SELECT * FROM messages ".
-		"WHERE msgfor='".$this_user->user_phy."' AND msgread='0' ".
+		"WHERE msgfor='".$this_user->user_number."' AND msgread='0' ".
 		"ORDER BY msgtime DESC";
 	$result = $sql->query($query);
 
@@ -182,7 +183,7 @@ switch ($action) {
 		while ($r = $sql->fetch_array($result)) {
 			// Determine who we're looking at by number
 			if ($r[msgpatient] > 0) {
-				$this_patient = new Patient ($r[msgpatient]);
+				$this_patient = CreateObject('FreeMED.Patient', $r[msgpatient]);
 				$r[from] = "<A HREF=\"manage.php?id=".
 					$r[msgpatient]."\">".
 					$this_patient->fullName()."</A>";
