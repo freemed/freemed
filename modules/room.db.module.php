@@ -47,7 +47,7 @@ class roomMaintenance extends freemedMaintenanceModule {
 
   $display_buffer .= "
     <P>
-    <FORM ACTION=\"$this->page_name\" METHOD=POST>
+    <FORM ACTION=\"$this->page_name\" METHOD=\"POST\">
     <INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\">
     <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
@@ -88,13 +88,14 @@ class roomMaintenance extends freemedMaintenanceModule {
     )
    ); 
 
-  $display_buffer .= "
-    <CENTER>
-    <INPUT TYPE=SUBMIT VALUE=\" ".
-      ( ($action=="addform") ? _("Add") : _("Modify") )." \">
-    <INPUT TYPE=RESET  VALUE=\""._("Clear")."\">
-    </CENTER></FORM>
-  ";
+		$display_buffer .= "
+	<CENTER>
+	<INPUT TYPE=\"SUBMIT\" VALUE=\" ".
+	( ($action=="addform") ? _("Add") : _("Modify") )." \">
+	<INPUT TYPE=\"RESET\" VALUE=\""._("Clear")."\">
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\""._("Cancel")."\">
+	</CENTER></FORM>
+		";
 	} // end function roomMaintenance->form
 
 	function view () {
