@@ -218,7 +218,7 @@
      // pull all insco mods
      unset ($inscomod);  // clear the array first
      for ($mod_loop=0;$mod_loop<count($this_insco->modifiers);$mod_loop++) {
-       $mod_key = freemed_get_link_field ($this_insco->modifiers,
+       $mod_key = freemed_get_link_field ($this_insco->modifiers[$mod_loop],
                   "insmod", "insmod");
        $inscomod[$mod_key] = $this_form[ffcheckchar];
      } // end of modifiers loop
