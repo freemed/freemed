@@ -18,6 +18,8 @@ class LettersModule extends EMRModule {
 	var $table_name     = "letters";
 	var $patient_field  = "letterpatient";
 
+	var $print_template = 'letters';
+
 	function LettersModule () {
 		// Set vars for patient management summary
 		$this->summary_vars = array (
