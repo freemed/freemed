@@ -1,6 +1,57 @@
 freemed project changelog
 ($Id$)
 
+* Wed Apr 04 2001 rufustfirefly
+  - huge repository move in modules/ for new module scheme
+    -- billing
+    generate_forms.module.php => generate_forms.billing.module.php
+    msci_nsf_ci.module.php => msci_nsf_ci.billing.module.php
+    msci_nsf_mc.module.php => msci_nsf_mc.billing.module.php
+    -- database
+    cpt.module.php => cpt.db.module.php
+    cpt_modifiers.module.php => cpt_modifiers.db.module.php
+    diagnosis_family.module.php => diagnosis_family.db.module.php
+    facility.module.php => facility.db.module.php
+    fixed_forms.module.php => fixed_forms.db.module.php
+    icd.module.php => icd.db.module.php
+    insurance_company.module.php => insurance_company.db.module.php
+    insurance_company_group.module.php => insurance_company_group.db.module.php
+    internal_service_types.module.php => internal_service_types.db.module.php
+    patient_record_template.module.php => patient_record_template.db.module.php
+    patient_status.module.php => patient_status.db.module.php
+    place_of_service.module.php => place_of_service.db.module.php
+    provider.module.php => provider.db.module.php
+    provider_certifications.module.php => provider_certifications.db.module.php
+    provider_groups.module.php => provider_groups.db.module.php
+    provider_specialities.module.php => provider_specialities.db.module.php
+    provider_status.module.php => provider_status.db.module.php
+    questionnaire_template.module.php => questionnaire_template.db.module.php
+    room.module.php => room.db.module.php
+    room_equipment.module.php => room_equipment.db.module.php
+    type_of_service.module.php => type_of_service.db.module.php
+    -- edi
+    highmark_edi.module.php => highmark.edi.module.php
+    -- emr
+    authorizations.module.php => authorizations.emr.module.php
+    episode_of_care.module.php => episode_of_care.emr.module.php
+    patient_coverage.module.php => patient_coverage.emr.module.php
+    payment.module.php => payment.emr.module.php
+    prescription.module.php => prescription.emr.module.php
+    procedure.module.php => procedure.emr.module.php
+    progress_notes.module.php => progress_notes.emr.module.php
+    -- reports
+    patient_demographic_report.module.php =>
+      patient_demographic.report.module.php
+    unpaid_procs_report.module.php => unpaid_procs.report.module.php
+  - lib/freemed.php:
+    * changed phpwebtools dependency to 0.2.2
+    * removed loadable modules support from universal include
+  - lib/module.php: removed category module support
+  - module_information.php, module_loader.php: added individual category
+    support
+  - db_maintenance.php, manage.php, billing_functions.php, reports.php:
+    added proper headers and extensions for optimizations
+
 * Tue Apr 03 2001 fforest
   - data/EN/fixedform  Now defines ALL fields on the HCFA 1500
   - lib/containers add covpatient member variable to coverage class

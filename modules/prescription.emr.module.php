@@ -6,9 +6,6 @@
 if (!defined("__PRESCRIPTION_MODULE_PHP__")) {
 
 define(__PRESCRIPTION_MODULE_PHP__, true);
-include ("lib/module_emr.php");
-//include ("lib/freemed.php");
-//include ("lib/API.php");
 
 class prescriptionModule extends freemedEMRModule {
 
@@ -22,6 +19,10 @@ class prescriptionModule extends freemedEMRModule {
   // on drug info in a separate db, which hasn't been done yet. the display
   // action shows it in the browser window for printout. other than that,
   // you're on your own...                                           -jb-
+
+	function prescriptionModule () {
+		$this->freemedEMRModule();
+	} // end constructor prescriptionModule
 
 	function add ()    { $this->old_main(); }
 	function mod ()    { $this->old_main(); }

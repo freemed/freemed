@@ -6,6 +6,8 @@
 $page_name = "manage.php";
 include ("lib/freemed.php");
 include ("lib/API.php");
+include ("lib/module.php");
+include ("lib/module_emr.php");
 
 if ($id != $current_patient)
   SetCookie ("current_patient", $id, time()+$_cookie_expire);
@@ -146,7 +148,7 @@ if ($id<1) {
         </TD></TR>
 
 	";
-	$module_list = new module_list (PACKAGENAME);
+	$module_list = new module_list (PACKAGENAME, ".emr.module.php");
 	echo $module_list->generate_list ($category, 0, $template);
 	// end of loadable modules code
 

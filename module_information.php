@@ -7,7 +7,16 @@ $page_name   = basename($GLOBALS["REQUEST_URI"]);
 
 include ("lib/freemed.php");
 include ("lib/API.php");
+include ("lib/module.php");
 
+// module types to include ...
+include ("lib/module_billing.php");
+include ("lib/module_edi.php");
+include ("lib/module_emr.php");
+include ("lib/module_maintenance.php");
+include ("lib/module_reports.php");
+
+// top of page
 freemed_open_db ($LoginCookie); // authenticate user
 freemed_display_html_top ();  // generate top of page
 

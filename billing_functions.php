@@ -7,10 +7,8 @@
   $page_name = "billing_functions.php";
   include ("lib/freemed.php");
   include ("lib/API.php");
-  include ("lib/module_emr.php");
-  include ("lib/module_maintenance.php");
+  include ("lib/module.php");
   include ("lib/module_billing.php");
-  include ("lib/module_edi.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -73,7 +71,7 @@
         </TD>
 		</TR>";
     // modules list
-    $module_list = new module_list (PACKAGENAME);
+    $module_list = new module_list (PACKAGENAME, ".billing.module.php");
     echo "<CENTER><TABLE>\n";
     echo $module_list->generate_list($catagory, 0, $template);
     echo "</TABLE></CENTER>\n";

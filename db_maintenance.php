@@ -6,6 +6,8 @@
 $page_name = basename($GLOBALS["REQUEST_URI"]);
 include ("lib/freemed.php");
 include ("lib/API.php");
+include ("lib/module.php");
+include ("lib/module_maintenance.php");
 
 SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -61,7 +63,7 @@ echo "
 "; // end of static listing
 
 // module loader
-$module_list = new module_list (PACKAGENAME);
+$module_list = new module_list (PACKAGENAME, ".db.module.php");
 echo $module_list->generate_list($category, 0, $template);
 
 // display end of listing

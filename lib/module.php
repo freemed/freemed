@@ -76,11 +76,11 @@ class freemedModule extends module {
 } // end class freemedModule
 
 // rest of module loaders
-include ("lib/module_emr.php");
-include ("lib/module_maintenance.php");
-include ("lib/module_reports.php");
-include ("lib/module_billing.php");
-include ("lib/module_edi.php");
+//include ("lib/module_emr.php");
+//include ("lib/module_maintenance.php");
+//include ("lib/module_reports.php");
+//include ("lib/module_billing.php");
+//include ("lib/module_edi.php");
 
 } // end if not defined
 
