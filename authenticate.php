@@ -34,12 +34,12 @@ $connect = freemed::verify_auth ();
 if (!$connect) {
     if (!empty($_URL)) $__url_part = "?_URL=".urlencode($_URL);
     $display_buffer .= "
-       <div ALIGN=\"CENTER\">"._("Error")." !</div>
+       <div ALIGN=\"CENTER\">".__("Error")." !</div>
        <p/>
-       <div ALIGN=\"CENTER\">"._("You have entered an incorrect name or password.")."</div>
+       <div ALIGN=\"CENTER\">".__("You have entered an incorrect name or password.")."</div>
        <p/>
        <div ALIGN=\"CENTER\"><a HREF=\"index.php$__url_part\"
-        >"._("Return to the login screen")."</a></div>
+        >".__("Return to the login screen")."</a></div>
     ";
     template_display();
 }
@@ -76,13 +76,13 @@ if (!empty($_URL)) {
 $refresh = $_jump_page;
 
 //----- Set page title
-$page_title = _("Authenticating")." ... ";
+$page_title = __("Authenticating")." ... ";
 
 $display_buffer .= "
       <p/>
       <div ALIGN=\"CENTER\">
-        <b>"._("If your browser does not support the REFRESH tag")."
-        <a HREF=\"$_jump_page\">"._("click here")."</a></b>
+        <b>".__("If your browser does not support the REFRESH tag")."
+        <a HREF=\"$_jump_page\">".__("click here")."</a></b>
       </div>
       <p/>
 ";

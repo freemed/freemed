@@ -12,11 +12,11 @@ freemed_open_db (); // authenticate user
 // check for access
 $this_user = CreateObject('FreeMED.User');
 if (!freemed::user_flag(USER_ADMIN)) {
-	$display_buffer .= _("Access Denied");
+	$display_buffer .= __("Access Denied");
 	template_display();
 }
 // top
-$page_title = _("Module Information");
+$page_title = __("Module Information");
 
 $module_list = CreateObject(
 	'PHP.module_list', 
@@ -62,7 +62,7 @@ if ($categories != NULL) {
 	<p/>
 	<div ALIGN=\"CENTER\">
 	<a HREF=\"admin.php\"
-	>"._("Return to Admin Menu")."</a>
+	>".__("Return to Admin Menu")."</a>
 	</div>
 	";
 } else {

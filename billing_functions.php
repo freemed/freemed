@@ -15,7 +15,7 @@ freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
 //----- Set page title
-$page_title = _("Billing Functions");
+$page_title = __("Billing Functions");
 
 //----- Add page to stack
 page_push();
@@ -25,7 +25,7 @@ if ($_SESSION['current_patient'] != 0) {
 	$patient = $_SESSION['current_patient'];
 }
 
-$patient_information = "<b>"._("NO PATIENT SPECIFIED")."</b>\n";
+$patient_information = "<b>".__("NO PATIENT SPECIFIED")."</b>\n";
 if ($patient>0) {
 	$this_patient = CreateObject('FreeMED.Patient', $patient);
 	$patient_information = freemed::patient_box ($this_patient);
@@ -54,7 +54,7 @@ if (freemed::user_flag(USER_DATABASE)) {
 		<td COLSPAN=\"2\" ALIGN=\"CENTER\">
 		<div>
 			<a class=\"button\" href=\"patient.php\"
-			>"._("Select a Patient")."</a>
+			>".__("Select a Patient")."</a>
 		</div>
 		</td>
 	</tr>" )."
@@ -78,7 +78,7 @@ if (freemed::user_flag(USER_DATABASE)) {
 } else { 
 	$display_buffer .= "
 	<p/>
-	"._("You don't have access for this menu.")."
+	".__("You don't have access for this menu.")."
 	<p/>
 	";
 }

@@ -10,14 +10,14 @@ include_once ("lib/freemed.php");
 freemed_open_db ();
 
 //----- Set page title
-$page_title = _("Calendar");
+$page_title = __("Calendar");
 
 //----- Push page onto stack
 page_push ();
 
  // Check for appropriate access level
 if (!freemed::user_flag(USER_DATABASE)) {
-	$display_buffer .= " <P>"._("You don't have access for this menu.")."</P>\n";
+	$display_buffer .= " <P>".__("You don't have access for this menu.")."</P>\n";
 	template_display();
 } // end if not appropriate userlevel
 
@@ -45,7 +45,7 @@ if (!$module_list->empty_category($category)) {
 	<P>
 	<CENTER>
 		<A HREF=\"main.php\"
-		>"._("Return to Main Menu")."</A>
+		>".__("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";
@@ -53,12 +53,12 @@ if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
 	<P>
 	<CENTER>
-		"._("There are no report modules present.")."
+		".__("There are no report modules present.")."
 	</CENTER>
 	<P>
 	<CENTER>
 		<A HREF=\"main.php\"
-		>"._("Return to Main Menu")."</A>
+		>".__("Return to Main Menu")."</A>
 	</CENTER>
 	<P>
 	";

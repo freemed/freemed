@@ -11,7 +11,7 @@ freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
 //----- Check for process
-if ($action==_("Search")) {
+if ($action==__("Search")) {
 	$GLOBALS['__freemed']['on_load'] = 'process';
 }
 
@@ -22,7 +22,7 @@ $display_buffer .= "<div ALIGN=\"CENTER\">".
 
 //----- Master action switch
 switch ($action) {
-	case _("Search"):
+	case __("Search"):
 
 	// Perform query
 	unset($list);
@@ -32,7 +32,7 @@ switch ($action) {
 
 	// If no results, die right here
 	if (!isset($drug) or (count($list) < 1)) {
-		$display_buffer .= _("No drugs found with that criteria!");
+		$display_buffer .= __("No drugs found with that criteria!");
 		break;
 	}
 
@@ -100,13 +100,13 @@ switch ($action) {
 		<input TYPE=\"HIDDEN\" NAME=\"varname\" VALUE=\"".prepare($varname)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\""._("Search")."\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".__("Search")."\">
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
-			"._("Drug")." :
+			".__("Drug")." :
 			<input TYPE=\"TEXT\" NAME=\"drug\" ".
 			"VALUE=\"".prepare($drug)."\"/>
 			<input TYPE=\"SUBMIT\" NAME=\"action\" ".
-			"VALUE=\""._("Search")."\" class=\"button\"/>
+			"VALUE=\"".__("Search")."\" class=\"button\"/>
 		</div>
 	";
 	break;

@@ -37,8 +37,8 @@ $display_buffer .= "<html>
 <meta HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$location\"> 
 </head> 
 <body>
-<div ALIGN=\"CENTER\"><b>"._("If your browser does not support the REFRESH tag")."
-<a HREF=\"$redirect\">"._("click here")."</a>.</b></div>
+<div ALIGN=\"CENTER\"><b>".__("If your browser does not support the REFRESH tag")."
+<a HREF=\"$redirect\">".__("click here")."</a>.</b></div>
 </body></html>
 ";
 

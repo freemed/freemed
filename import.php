@@ -16,31 +16,31 @@ if (!freemed::user_flag(USER_ADMIN)) {
 
 switch ($action) {
  case "import":
-  $page_title = _("Import Database");
+  $page_title = __("Import Database");
   $display_buffer .= "
    <P>
-   "._("Importing Database")." \"$db\" ... 
+   ".__("Importing Database")." \"$db\" ... 
   ";
-  if (freemed_import_stock_data ($db)) { $display_buffer .= _("done");  }
-   else                                { $display_buffer .= _("ERROR"); }
+  if (freemed_import_stock_data ($db)) { $display_buffer .= __("done");  }
+   else                                { $display_buffer .= __("ERROR"); }
   $display_buffer .= "
    <P>
     <CENTER>
      <A HREF=\"$page_name\"
-     >"._("Import Another Database")."</A> <B>|</B>
+     >".__("Import Another Database")."</A> <B>|</B>
      <A HREF=\"admin.php\"
-     >"._("Return to Administration Menu")."</A>
+     >".__("Return to Administration Menu")."</A>
     </CENTER>
    <P>
   ";
   break;
  default:
-  $page_title = _("Import Database");
+  $page_title = __("Import Database");
   $display_buffer .= "
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"import\">
     <P>
-    "._("Select Database to Import")." : 
+    ".__("Select Database to Import")." : 
     <SELECT NAME=\"db\">
      <OPTION VALUE=\"authorizations\"
                                    >Authorizations (authorizations)
@@ -87,12 +87,12 @@ switch ($action) {
     </SELECT>
     <P>
     <CENTER>
-     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Import")."\"/>
+     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Import")."\"/>
     </CENTER>
     <P>
     <CENTER>
      <A HREF=\"admin.php\"
-     >"._("Return to Administration Menu")."</A>
+     >".__("Return to Administration Menu")."</A>
     </CENTER>
     <P>
    </FORM>

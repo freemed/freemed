@@ -11,7 +11,7 @@ include ("lib/freemed.php");
 freemed_open_db ();
 
 //----- Set page title
-$page_title = _("Database Maintenance");
+$page_title = __("Database Maintenance");
 
 //----- Add page to stack
 page_push();
@@ -25,7 +25,7 @@ $module_template = "<a HREF=\"module_loader.php?module=#class#\"".
 if (!freemed::user_flag(USER_DATABASE)) {
 	$display_buffer .= "
 	<p/>
-        "._("You don't have access for this menu.")."
+        ".__("You don't have access for this menu.")."
 	<p/>
 	";
 	template_display();
@@ -38,19 +38,19 @@ $display_buffer .= "
 	<!-- modules that still need to be converted ...
 
      <A HREF=\"frmlry.php\"
-      >"._("Formulary")."</A>
+      >".__("Formulary")."</A>
      <BR>
 
      <A HREF=\"phy_avail_map.php\"
-      >"._("Physician Availability Map")."</A>
+      >".__("Physician Availability Map")."</A>
      <BR>
 
      <A HREF=\"simplerep.php\"
-      >"._("Simple Reports")."</A>
+      >".__("Simple Reports")."</A>
      <BR>
 
      <A HREF=\"select_printers.php\"
-      >"._("Printers")."</A>
+      >".__("Printers")."</A>
      <BR>
 
      -->

@@ -23,7 +23,7 @@ if ($patient>0) {
 } // end generating this_patient object
 
     // display header
-$page_title = _("Show Appointments");
+$page_title = __("Show Appointments");
 
 if ($patient>0) $display_buffer .= freemed::patient_box ($this_patient);
 $display_buffer .= "
@@ -58,7 +58,7 @@ if ($debug) $display_buffer .= "query=\"$query\"";
 if ($sql->num_rows ($result) < 1) {
 	$display_buffer .= "
       <TR><TD ALIGN=CENTER>
-       <I>"._("No appointments today.")."</I>
+       <I>".__("No appointments today.")."</I>
       </TD></TR>
       </TABLE>
       <P>
@@ -67,18 +67,18 @@ if ($sql->num_rows ($result) < 1) {
 	if ($patient>0) { // if there is a patient link
 		$display_buffer .= "
       <CENTER><A HREF=\"$master_patient_link_location\"
-       >"._("Manage Patient")."</A> |
+       >".__("Manage Patient")."</A> |
        <A HREF=\"book_appointment.php?patient=$patient&type=$type\"
-       >"._("Book Appointment")."</A>
+       >".__("Book Appointment")."</A>
       </CENTER>
       <P>
     ";
 	} else {
 		$display_buffer .= "
       <CENTER><A HREF=\"main.php\"
-      >"._("Return to Main Menu")."</A> |
+      >".__("Return to Main Menu")."</A> |
       <A HREF=\"patient.php\"
-      >"._("Choose a Patient")."</A>
+      >".__("Choose a Patient")."</A>
       </CENTER>
       <P>
 		";
@@ -92,11 +92,11 @@ while ($r = $sql->fetch_array ($result)) {
 	if (!$any_appointments) // if this is the first appointment...
 	$display_buffer .= "
           <tr CLASS=".(freemed_alternate()).">
-           <td><b>"._("Time")."</b></td>
-           <td><b>"._("Patient")."</b></td>
-           <td><b>"._("Provider")."</b></td>
-           <td><b>"._("Facility")."</b></td>
-           <td><b>"._("Room")."</b></td>
+           <td><b>".__("Time")."</b></td>
+           <td><b>".__("Patient")."</b></td>
+           <td><b>".__("Provider")."</b></td>
+           <td><b>".__("Facility")."</b></td>
+           <td><b>".__("Room")."</b></td>
           </tr>
         ";
 	$any_appointments = true;         // now there are appointments
@@ -174,7 +174,7 @@ while ($r = $sql->fetch_array ($result)) {
 if (!$any_appointments)
 	$display_buffer .= "
       <TR><TD ALIGN=CENTER>
-       <I>"._("No appointments today.")."</I>
+       <I>".__("No appointments today.")."</I>
       </TD></TR>
       </TABLE>
       <P>
@@ -187,9 +187,9 @@ else $display_buffer .= "
 if ($patient>0) // if there is a patient link
     $display_buffer .= "
       <CENTER><A HREF=\"$master_patient_link_location\"
-       >"._("Manage Patient")."</A> |
+       >".__("Manage Patient")."</A> |
        <A HREF=\"book_appointment.php?patient=$patient&type=$type\"
-       >"._("Book Appointment")."</A>
+       >".__("Book Appointment")."</A>
       </CENTER>
       <P>
 ";

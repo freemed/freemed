@@ -16,10 +16,10 @@ if (!freemed::user_flag(USER_ADMIN)) {
 
 switch ($action) {
  case "export":
-  $page_title = _("Export Database");
+  $page_title = __("Export Database");
   $display_buffer .= "
    <P>
-   "._("Exporting Database")." \"$db\" ... 
+   ".__("Exporting Database")." \"$db\" ... 
   ";
   if (freemed_export_stock_data ($db)) { $display_buffer .= "$Done."; }
    else                                { $display_buffer .= "$ERROR"; }
@@ -27,20 +27,20 @@ switch ($action) {
    <P>
     <CENTER>
     <A HREF=\"$page_name\"
-     >"._("Export Another Database")."</A> <B>|</B>
+     >".__("Export Another Database")."</A> <B>|</B>
     <A HREF=\"admin.php\"
-     >"._("Return to Administration Menu")."</A>
+     >".__("Return to Administration Menu")."</A>
     </CENTER>
    <P>
   ";
   break;
  default:
-  $page_title = _("Export Database");
+  $page_title = __("Export Database");
   $display_buffer .= "
    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"export\">
     <P>
-    "._("Select Database to Export")." : 
+    ".__("Select Database to Export")." : 
     <SELECT NAME=\"db\">
      <OPTION VALUE=\"authorizations\"
                                    >Authorizations (authorizations)
@@ -87,12 +87,12 @@ switch ($action) {
     </SELECT>
     <P>
     <CENTER>
-     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Export")."\"/>
+     <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Export")."\"/>
     </CENTER>
     <P>
     <CENTER>
      <A HREF=\"admin.php\"
-     >"._("Return to Administration Menu")."</A>
+     >".__("Return to Administration Menu")."</A>
     </CENTER>
     <P>
    </FORM>

@@ -18,7 +18,7 @@ freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
 //----- Set title (default, can be overridden in lib/template/*/main_menu.php)
-$page_title = PACKAGENAME." "._("Main Menu");
+$page_title = PACKAGENAME." ".__("Main Menu");
 
 //----- Load template with main menu
 if (file_exists("./lib/template/".$template."/main_menu.php")) {

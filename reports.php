@@ -10,7 +10,7 @@ include_once ("lib/freemed.php");
 freemed_open_db ();
 
 //----- Set page title
-$page_title = _("Reports");
+$page_title = __("Reports");
 
 //----- Add page to history
 page_push();
@@ -21,9 +21,9 @@ if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
  // Check for appropriate access level
 if (!freemed::user_flag(USER_DATABASE)) {
    $display_buffer .= "
-      <p/>
-        "._("You don't have access for this menu.")."
-      <p/>
+	<p/>
+        ".__("You don't have access for this menu.")."
+	<p/>
     ";
 	template_display();
 } // end if not appropriate userlevel
@@ -52,7 +52,7 @@ if (!$module_list->empty_category($category)) {
 	<p/>
 	<div ALIGN=\"CENTER\">
 		<a HREF=\"main.php\"
-		>"._("Return to Main Menu")."</a>
+		>".__("Return to Main Menu")."</a>
 	</div>
 	<p/>
 	";
@@ -60,11 +60,11 @@ if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
 	<p/>
 	<div ALIGN=\"CENTER\">
-		"._("There are no report modules present.")."
+		".__("There are no report modules present.")."
 	</div>
 	<p/>
 	<div ALIGN=\"CENTER\">
-		<a HREF=\"main.php\">"._("Return to Main Menu")."</a>
+		<a HREF=\"main.php\">".__("Return to Main Menu")."</a>
 	</div>
 	<p/>
 	";

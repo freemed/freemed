@@ -5,13 +5,13 @@
 
 $page_name = "call-in.php";          // page name
 include ("lib/freemed.php");           // global variables
-$record_name = _("Call In");          // name of record
+$record_name = __("Call In");          // name of record
 $db_name = "callin";                  // database name
 
 freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
-if ($_REQUEST['submit'] == _("Cancel")) {
+if ($_REQUEST['submit'] == __("Cancel")) {
 	Header('Location: main.php');
 	$refresh = "main.php";
 	template_display();
@@ -21,7 +21,7 @@ switch ($action) {
 
  case "addform":
   // Set page title
-  $page_title = _("Add")." "._($record_name);
+  $page_title = __("Add")." "._($record_name);
 
   // Push onto stack
   page_push();
@@ -47,20 +47,20 @@ switch ($action) {
     <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
      VALIGN=\"TOP\" ALIGN=\"CENTER\">
     <tr VALIGN=\"TOP\"><td COLSPAN=\"2\" ALIGN=\"CENTER\" VALIGN=\"TOP\">
-      <b>"._("Name")."</b>
+      <b>".__("Name")."</b>
     </td></tr>
     <tr>
-     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">"._("Last")."</td>
+     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">".__("Last")."</td>
      <td><INPUT TYPE=TEXT NAME=\"cilname\" SIZE=20 MAXLENGTH=50
           VALUE=\"".prepare($cilname)."\"></td>
     </tr>
     <tr>
-     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">"._("First")."</td>
+     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">".__("First")."</td>
      <td><INPUT TYPE=TEXT NAME=\"cifname\" SIZE=\"20\" MAXLENGTH=\"50\"
           VALUE=\"".prepare($cifname)."\"></td>
     </tr>
     <tr>
-     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">"._("Middle")."</td>
+     <td WIDTH=\"30%\" ALIGN=\"RIGHT\">".__("Middle")."</td>
      <td><INPUT TYPE=TEXT NAME=\"cimname\" SIZE=20 MAXLENGTH=50
           VALUE=\"$cimname\"></td>
     </tr>
@@ -71,10 +71,10 @@ switch ($action) {
     <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\" VALIGN=\"TOP\"
      ALIGN=\"CENTER\" CLASS=\"reverse\">
     <tr><td COLSPAN=\"2\" ALIGN=\"CENTER\">
-     <b>"._("Contact Information")."</b>
+     <b>".__("Contact Information")."</b>
     </td></tr>
     <tr>
-     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">"._("Home Phone")." &nbsp;</td>
+     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">".__("Home Phone")." &nbsp;</td>
      <td><b>(</b> <input TYPE=\"TEXT\" NAME=\"cihphone1\" SIZE=4 MAXLENGTH=3
                    VALUE=\"".prepare($cihphone1)."\"/>
          <b>)</b> <input TYPE=\"TEXT\" NAME=\"cihphone2\" SIZE=4 MAXLENGTH=3
@@ -84,7 +84,7 @@ switch ($action) {
      </td>
     </tr>
     <tr>
-     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">"._("Work Phone")." &nbsp;</td>
+     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">".__("Work Phone")." &nbsp;</td>
      <td><b>(</b> <input TYPE=\"TEXT\" NAME=\"ciwphone1\" SIZE=4 MAXLENGTH=3
                    VALUE=\"".prepare($ciwphone1)."\"/>
          <b>)</b> <input TYPE=\"TEXT\" NAME=\"ciwphone2\" SIZE=4 MAXLENGTH=3
@@ -94,7 +94,7 @@ switch ($action) {
      </td>
     </tr>
     <tr>
-     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">"._("Took Call")." &nbsp;</td>
+     <td WIDTH=\"40%\" ALIGN=\"RIGHT\">".__("Took Call")." &nbsp;</td>
     <td><input TYPE=\"TEXT\" NAME=\"citookcall\" SIZE=\"25\" MAXLENGTH=\"50\"
       VALUE=\"".prepare($citookcall)."\"/></td>
     </tr>
@@ -113,17 +113,17 @@ switch ($action) {
     <table WIDTH=\"100%\" BORDER=\"0\" ALIGN=\"CENTER\" VALIGN=\"CENTER\"
      CELLSPACING=\"0\" CELLPADDING=\"5\">
      <tr>
-      <td ALIGN=\"RIGHT\">"._("Date of Birth")."</td>
+      <td ALIGN=\"RIGHT\">".__("Date of Birth")."</td>
       <td>".fm_date_entry("cidob")."</td>
      </tr>
      <tr>
-      <td ALIGN=\"RIGHT\">"._("Complaint")."</td>
+      <td ALIGN=\"RIGHT\">".__("Complaint")."</td>
       <td><textarea NAME=\"cicomplaint\" ROWS=\"4\" COLS=\"40\"
            WRAP=\"VIRTUAL\">".prepare($cicomplaint)."</textarea>
       </td>
      </tr>
      <tr>
-      <td ALIGN=\"RIGHT\">"._("Facility")."</td>
+      <td ALIGN=\"RIGHT\">".__("Facility")."</td>
       <td>
       ".freemed_display_selectbox (
       $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote"),
@@ -131,7 +131,7 @@ switch ($action) {
       </td>
      </tr>
      <tr>
-      <td ALIGN=\"RIGHT\">"._("Physician")."</td>
+      <td ALIGN=\"RIGHT\">".__("Physician")."</td>
       <td>
     ";
 
@@ -150,9 +150,9 @@ switch ($action) {
     </table>
     <p/>
     <div ALIGN=\"CENTER\">
-     <input class=\"button\" name=\"submit\" TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"/>
-     <input class=\"button\" TYPE=\"RESET\" VALUE=\""._("Clear")."\"/>
-     <input class=\"button\" name=\"submit\" TYPE=\"SUBMIT\" VALUE=\""._("Cancel")."\"/>
+     <input class=\"button\" name=\"submit\" TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\"/>
+     <input class=\"button\" TYPE=\"RESET\" VALUE=\"".__("Clear")."\"/>
+     <input class=\"button\" name=\"submit\" TYPE=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
     </div>
     </form>
     <p/>
@@ -160,8 +160,8 @@ switch ($action) {
   break;
 
  case "add":
-  $page_title = _("Adding")." "._("$record_name");
-  $display_buffer .= "\n"._("Adding")." "._("$record_name")." ... \n";
+  $page_title = __("Adding")." ".__("$record_name");
+  $display_buffer .= "\n".__("Adding")." ".__("$record_name")." ... \n";
   $query = $sql->insert_query(
   	"callin",
 	array (
@@ -181,14 +181,14 @@ switch ($action) {
   );
   $result = $sql->query ($query);
 
-  if ($result) $display_buffer .= _("done");
-   else $display_buffer .= _("ERROR");
+  if ($result) $display_buffer .= __("done");
+   else $display_buffer .= __("ERROR");
   $display_buffer .= " 
     <p/>
     <div ALIGN=\"CENTER\">
      <a HREF=\"patient.php\">Patient Menu</a> |
      <A HREF=\"call-in.php\">Call In Menu</a> |
-     <A HREF=\"main.php\">"._("Return to the Main Menu")."</a>
+     <A HREF=\"main.php\">".__("Return to the Main Menu")."</a>
     </div>
     <p/>
   ";
@@ -196,7 +196,7 @@ switch ($action) {
 
  case "view":
  case "display":
-  $page_title = _("$record_name")." "._("View/Manage");
+  $page_title = __("$record_name")." ".__("View/Manage");
   $query   = "SELECT * FROM scheduler WHERE
               ((calpatient='$id') AND (caltype='temp'))
               ORDER BY caldateof, calhour, calminute";
@@ -210,35 +210,35 @@ switch ($action) {
     <table WIDTH=\"100%\" CLASS=\"reverse\" CELLSPACING=\"0\" CELLPADDING=\"2\"
      VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
     <tr><td ALIGN=\"CENTER\" class=\"reverse\">
-      <b>$cilname, $cifname $cimname</b> : $rows "._("Appointments")."
+      <b>$cilname, $cifname $cimname</b> : $rows ".__("Appointments")."
     </td></tr>
     </table>
     <p/>
     <a HREF=\"show_appointments.php?patient=$id&type=temp\"
-     >"._("Show Today's Appointments")."</a>
+     >".__("Show Today's Appointments")."</a>
     <p/>
     <a HREF=\"show_appointments.php?patient=$id&type=temp&show=all\"
-     >"._("Show All Appointments")."</a>
+     >".__("Show All Appointments")."</a>
     <p/>
     <a HREF=\"main.php\"
-     >"._("Return to the Main Menu")."</a>
+     >".__("Return to the Main Menu")."</a>
     <p/>
   ";
   break;
 
  default:
   // Set page title
-  $page_title = _("$record_name");
+  $page_title = __("$record_name");
   
   // Push onto stack
   page_push();
 
   $display_buffer .= template::link_bar(array(
-		_("Old") =>
+		__("Old") =>
 		"$page_name?type=old",
-		_("All") =>
+		__("All") =>
 		"$page_name?type=all",
-		_("Current") =>
+		__("Current") =>
 		"$page_name?type=cur"
 	))."<p/>\n";
 
@@ -248,10 +248,10 @@ switch ($action) {
     <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"3\" VALIGN=\"CENTER\"
      ALIGN=\"CENTER\" CLASS=\"".freemed_alternate()."\">
     <tr>
-     <td><b>"._("Name")."</b></td>
-     <td><b>"._("Date of Call")."</b></td>
-     <td><b>"._("Home/Work Phone")."</b></td>
-     <td><b>"._("Action")."</b></td>
+     <td><b>".__("Name")."</b></td>
+     <td><b>".__("Date of Call")."</b></td>
+     <td><b>".__("Home/Work Phone")."</b></td>
+     <td><b>".__("Action")."</b></td>
     </tr> 
   ";
 
@@ -301,7 +301,7 @@ switch ($action) {
 
      // display the convert link
     $display_buffer .= template::link_bar(array(
-        _("Enter") =>
+        __("Enter") =>
      "patient.php?action=addform".
         "&ptfname=".rawurlencode ($cifname).
         "&ptlname=".rawurlencode ($cilname).
@@ -317,10 +317,10 @@ switch ($action) {
         "&ptdob3=".rawurlencode (substr($cidob, 8, 2)).
         "&ci="     . $id,
 
-      _("View") =>
+      __("View") =>
      "$page_name?action=display&id=$id",
 
-      _("Book") =>
+      __("Book") =>
      "book_appointment.php?action=&".
       "patient=$id&type=temp"
     ), array('align' => 'LEFT'));
@@ -347,11 +347,11 @@ switch ($action) {
   $display_buffer .= freemed_display_actionbar ($page_name);
 
   $display_buffer .= "<p/>\n".template::link_bar(array(
-		_("Old") =>
+		__("Old") =>
 		"$page_name?type=old",
-		_("All") =>
+		__("All") =>
 		"$page_name?type=all",
-		_("Current") =>
+		__("Current") =>
 		"$page_name?type=cur"
 	));
   break;

@@ -9,7 +9,7 @@ include_once ("lib/freemed.php");
 freemed_open_db ();
 
 //----- Set page title
-$page_title = _("Preferences");
+$page_title = __("Preferences");
 
 //----- Add page to history
 page_push();
@@ -18,7 +18,7 @@ page_push();
 if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 // Check for cancel
-if ($submit==_("Cancel")) {
+if ($submit==__("Cancel")) {
 	unset($action);
 }
 
@@ -29,16 +29,16 @@ switch ($action) {
 	<input type=\"HIDDEN\" name=\"action\" value=\"password\">
 	<div align=\"center\">
 	".html_form::form_table(array(
-		_("Current Password") =>
+		__("Current Password") =>
 		html_form::password_widget("current_password"),
 
-		_("New Password") =>
+		__("New Password") =>
 		html_form::password_widget("new_password")
 	))."
 	</div>
 	<div align=\"center\">
-	<input class=\"button\" type=\"submit\" name=\"submit\" value=\""._("Update")."\"/>
-	<input class=\"button\" type=\"submit\" name=\"submit\" value=\""._("Cancel")."\"/>
+	<input class=\"button\" type=\"submit\" name=\"submit\" value=\"".__("Update")."\"/>
+	<input class=\"button\" type=\"submit\" name=\"submit\" value=\"".__("Cancel")."\"/>
 	</div>
 	</form>
 	";
@@ -89,9 +89,9 @@ switch ($action) {
 	$display_buffer .= "
 		<div align=\"center\">
 		<input type=\"submit\" name=\"submit\" class=\"button\" value=\"".
-			_("Set Options")."\"/>
+			__("Set Options")."\"/>
 		<input type=\"submit\" name=\"submit\" class=\"button\" value=\"".
-			_("Cancel")."\"/>
+			__("Cancel")."\"/>
 		</div>
 		</form>
 	";
@@ -123,18 +123,18 @@ switch ($action) {
 	$display_buffer .= "
 	<div align=\"center\">
 	<a href=\"preferences.php?action=passwordform\"
-	>"._("Change Password")."</a>
+	>".__("Change Password")."</a>
 	</div>
 
 	<div align=\"center\">
 	<a href=\"preferences.php?action=templateform\"
-	>"._("Change Template Options")."</a>
+	>".__("Change Template Options")."</a>
 	</div>
 
 	<p/>
 
 	<div align=\"center\">
-	<a class=\"button\" href=\"main.php\">"._("Return to Main Menu")."</a>
+	<a class=\"button\" href=\"main.php\">".__("Return to Main Menu")."</a>
 	</div>
 	";
 	break;

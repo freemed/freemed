@@ -27,7 +27,7 @@ if (!freemed::check_access_for_patient($id)) {
 	trigger_error("User not authorized for this function", E_USER_ERROR);
 }
 
-$page_title = _("Manage Patient");
+$page_title = __("Manage Patient");
 
 //----- Import template piece
 if (file_exists("lib/template/".$template."/manage.php")) {

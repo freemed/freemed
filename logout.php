@@ -10,19 +10,23 @@ include_once ('lib/freemed.php');
 //if (strlen($_URL)>0) $__url_part = "?_URL=".urlencode($_URL);
 
 //----- Destroy authdata and ipaddr from session
-unset($SESSION['authdata']);
-unset($SESSION['ipaddr']);
+//unset($_SESSION['authdata']);
+//unset($_SESSION['ipaddr']);
+$_SESSION['authdata'] = NULL;
+$_SESSION['ipaddr'] = NULL;
+$_SESSION['language'] = NULL;
+SetCookie('language', '');
 
 //----- Set template pieces
 $refresh = "index.php";
 $GLOBALS['__freemed']['no_menu_bar'] = true;
-$page_title = _("Logging Out ... ");
+$page_title = __("Logging Out ... ");
 
 $display_buffer .= "
       <p/>
       <div ALIGN=\"CENTER\">
-        <b>"._("If your browser does not support the REFRESH tag")."
-        <a HREF=\"".$refresh."\">"._("click here")."</a>.</b>
+        <b>".__("If your browser does not support the REFRESH tag")."
+        <a HREF=\"".$refresh."\">".__("click here")."</a>.</b>
       </div>
       <p/>
 ";

@@ -8,7 +8,7 @@ $page_name = "index.php";
 include_once ("lib/freemed.php");
 
 //----- Set page title
-$page_title = PACKAGENAME . " - " . _("Login");
+$page_title = PACKAGENAME . " - " . __("Login");
 
 //----- Set no menu bar for login screen
 $GLOBALS['__freemed']['no_menu_bar'] = true;

@@ -40,16 +40,16 @@ switch($action) { // master action switch
     if (empty($id)) {
       $action="addform";
     } else {
-     $page_title = _("Modify")." "._($record_name);
+     $page_title = __("Modify")." "._($record_name);
     }
   } // first modform if
 
   if ($id==1) {
-    $display_buffer .= _("You cannot modify root!");
+    $display_buffer .= __("You cannot modify root!");
     template_display();
   }
   
-  $book->set_submit_name(($action=="addform") ? _("Add") : _("Modify"));
+  $book->set_submit_name(($action=="addform") ? __("Add") : __("Modify"));
   
   if ( ($action=="modform") AND (!$book->been_here()) ) { // catch the empty ID
 
@@ -93,7 +93,7 @@ switch($action) { // master action switch
   } // second modform if
   
   if ($action=="addform") {
-    $page_title =  _("Add")." "._($record_name);
+    $page_title =  __("Add")." "._($record_name);
     global $userlevel; $userlevel = array( -1 );
   } // addform if
   
@@ -106,28 +106,28 @@ switch($action) { // master action switch
   // fetch all in-house docs
   
   $book->add_page(
-    _("User"),
+    __("User"),
     array ( 
       "username", "userpassword", "userpassword1", "userpassword2", 
       "userdescrip", "userlevel", "usertype", "userrealphy"
     ),
 	html_form::form_table(array(
 
-		_("Username") =>
+		__("Username") =>
 		html_form::text_widget("username", 16),
 
-		_("Password") =>
+		__("Password") =>
 		"<INPUT TYPE=PASSWORD NAME=\"userpassword1\" SIZE=17 MAXLENGTH=16 
      VALUE=\"".prepare($userpassword1)."\">",
    
-		_("Password (Verify)") =>
+		__("Password (Verify)") =>
 		"<INPUT TYPE=PASSWORD NAME=\"userpassword2\" SIZE=17 MAXLENGTH=16 
      VALUE=\"".prepare($userpassword2)."\">",
 
-		_("Description") =>
+		__("Description") =>
 		html_form::text_widget("userdescrip", 20, 50),
 
-		_("User level") =>
+		__("User level") =>
 		html_form::checkbox_widget(
 			"userlevel",
 			USER_ADMIN,
@@ -152,23 +152,23 @@ switch($action) { // master action switch
 			"Disabled/Locked Out"
 		),
     
-		_("User type") =>
+		__("User type") =>
 		html_form::select_widget(
 			"usertype",
 			array(
-				_("Physician") => "phy",
-				_("Miscellaneous") => "misc"
+				__("Physician") => "phy",
+				__("Miscellaneous") => "misc"
 			)
 		),
 
-		_("Actual Physician") =>
+		__("Actual Physician") =>
 		freemed_display_selectbox($phy_r, "#phylname#, #phyfname#", "userrealphy")
 
 	))
   );
 
   $book->add_page(
-    _("Authorize"),
+    __("Authorize"),
     array (
       "userfac", "userphy", "userphygrp"
     ),
@@ -178,7 +178,7 @@ switch($action) { // master action switch
     <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2
      VALIGN=CENTER ALIGN=CENTER>
     <TR><TD ALIGN=CENTER>
-      <B>"._("Authorized facilities")." :
+      <B>".__("Authorized facilities")." :
         </B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
@@ -192,7 +192,7 @@ switch($action) { // master action switch
     <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0
      VALIGN=MIDDLE ALIGN=CENTER>
     <TR><TD ALIGN=CENTER>
-      <B>"._("Authorized physicians")."</B>
+      <B>".__("Authorized physicians")."</B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
       ".freemed::multiple_choice ("SELECT * FROM physician ORDER BY phylname, 
@@ -206,7 +206,7 @@ switch($action) { // master action switch
     <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0
      VALIGN=CENTER ALIGN=CENTER>
     <TR><TD ALIGN=CENTER>
-    <B>"._("Authorized physician groups")."</B>
+    <B>".__("Authorized physician groups")."</B>
     </TD></TR>
     <TR><TD ALIGN=CENTER>
       ".freemed::multiple_choice ("SELECT * FROM phygroup ORDER BY
@@ -241,7 +241,7 @@ switch($action) { // master action switch
     if ($action=="mod" || $action=="modform") {
       $display_buffer .= "
         <div ALIGN=\"CENTER\">
-        "._("Modifying")." . . . 
+        ".__("Modifying")." . . . 
       ";
         // build update query:
         // only set the values that need to be
@@ -267,7 +267,7 @@ switch($action) { // master action switch
   
       $display_buffer .= "
         <div ALIGN=\"CENTER\">
-        "._("Adding")." . . . 
+        ".__("Adding")." . . . 
       ";
 	$query = $sql->insert_query ( $table_name,
 		array (
@@ -286,28 +286,28 @@ switch($action) { // master action switch
 
     if ($userpassword1 != $userpassword2) {
       $display_buffer .= "
-        "._("Error")." !
-	<B>("._("Passwords must match").")</B>
+        ".__("Error")." !
+	<B>(".__("Passwords must match").")</B>
       ";
       template_display();
     } // if the passwords _don't_ match...
 
     if ($id != 1)
       $result = $sql->query($query); // execute query
-    else $display_buffer .= _("You cannot modify root!");
+    else $display_buffer .= __("You cannot modify root!");
 
     if ($result) {
-      $display_buffer .= " <B>"._("Done")."</B> ";
+      $display_buffer .= " <B>".__("Done")."</B> ";
       $refresh_location = "user.php";
     } else {
-      $display_buffer .= "<B>"._("Error")." [$query]</B>\n"; 
+      $display_buffer .= "<B>".__("Error")." [$query]</B>\n"; 
     } // end of error reporting clause
     $display_buffer .= "
     	</div>
 	<p/>
         <div ALIGN=\"CENTER\">
         <A HREF=\"$page_name\"
-         >"._("Go back to user menu")."</A>
+         >".__("Go back to user menu")."</A>
         </div>
     ";
 	// Set automatic refresh
@@ -318,7 +318,7 @@ switch($action) { // master action switch
  break;
 
  case "del":
-	$page_title = _("Deleting")." "._($record_name);
+	$page_title = __("Deleting")." "._($record_name);
 
     // select only "id" record, and delete
   if ($id != 1)
@@ -326,18 +326,18 @@ switch($action) { // master action switch
     	"WHERE id='".addslashes($id)."'");
   else { // if we tried to delete root!!!
     $display_buffer .= "
-      <B><CENTER>"._("You cannot delete root!")."</CENTER></B>
+      <B><CENTER>".__("You cannot delete root!")."</CENTER></B>
     ";
     template_display();
   }
 
   $display_buffer .= "
     <P ALIGN=CENTER>
-    $record_name "._("Deleted")."
+    $record_name ".__("Deleted")."
     <BR>
     <BR>
     <A HREF=\"$page_name?action=view\"
-     >"._("Go back to user menu")."</A>
+     >".__("Go back to user menu")."</A>
   ";
 
 	// Set automatic refresh
@@ -365,7 +365,7 @@ switch($action) { // master action switch
      <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0
       ALIGN=CENTER VALIGN=MIDDLE BGCOLOR=\"#777777\">
      <TR><TD ALIGN=CENTER>
-      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">"._("Users")."</FONT>
+      <FONT SIZE=\"+1\" COLOR=\"#ffffff\">".__("Users")."</FONT>
      </TD></TR>
 
      <TR><TD>
@@ -378,8 +378,8 @@ switch($action) { // master action switch
      <TR><TD>
       <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
       <TR CLASS=\"reverse\">
-       <TD>"._("Username")."</TD>
-       <TD>"._("Action")."</TD>
+       <TD>".__("Username")."</TD>
+       <TD>".__("Action")."</TD>
       </TR>
     "; // header of box
 
@@ -395,10 +395,10 @@ switch($action) { // master action switch
         $display_buffer .= "
          <A HREF=
          \"$page_name?id=$r[id]&action=modform\"
-         ><FONT SIZE=-1>"._("MOD")."</FONT></A>
+         ><FONT SIZE=-1>".__("MOD")."</FONT></A>
           &nbsp;
           <A HREF=\"$page_name?id=$r[id]&action=del\"
-          ><FONT SIZE=-1>"._("DEL")."</FONT></A>
+          ><FONT SIZE=-1>".__("DEL")."</FONT></A>
         "; // show actions...
       else $display_buffer .= "&nbsp; \n";
 
@@ -420,7 +420,7 @@ switch($action) { // master action switch
     } // if no ref, then return to home page...
 
   } else {
-    $display_buffer .= "\n<B>"._("No record found with that criteria.")."</B>\n";
+    $display_buffer .= "\n<B>".__("No record found with that criteria.")."</B>\n";
   }
 
 } // end master action switch

@@ -11,7 +11,7 @@ include ("lib/freemed.php");
 freemed_open_db ();
 
 //----- Set page title
-$page_title = _("Photographic ID Maintenance");
+$page_title = __("Photographic ID Maintenance");
 
 //----- Add page to stack
 //page_push();
@@ -46,7 +46,7 @@ switch ($action) {
 		if (!$imagefilename) {
 			$display_buffer .= "
 			<div ALIGN=\"CENTER\">
-			"._("Failed to attach the image.")."
+			".__("Failed to attach the image.")."
 			</div>
 			";
 			break;
@@ -65,7 +65,7 @@ switch ($action) {
 		// Show widget
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\">
-		"._("Attach Photographic Identification")."
+		".__("Attach Photographic Identification")."
 		</div>
 		<div ALIGN=\"CENTER\">
 		<form METHOD=\"POST\" NAME=\"form\" ENCTYPE=\"multipart/form-data\" ACTION=\"".page_name()."\" NAME=\"myform\">
@@ -91,7 +91,7 @@ switch ($action) {
 		}
 		$display_buffer .= "
 		<input TYPE=\"FILE\" NAME=\"userfile\"/>
-		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Attach Image")."\"/>
+		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Attach Image")."\"/>
 		</form>
 		</div>
 		";

@@ -23,7 +23,7 @@ for ($i=1; $i<=6; $i++)
 	$next_date = freemed_get_date_next ($next_date);
 
 //----- Set page title
-$page_title = _("Physician Weekly View");
+$page_title = __("Physician Weekly View");
 
 //----- Display previous/next bar
 $display_buffer .= "
@@ -44,7 +44,7 @@ $display_buffer .= "
 if ($physician<=0) {
 	$display_buffer .= "
      <CENTER>
-      <B>"._("No Physician Selected")."</B>
+      <B>".__("No Physician Selected")."</B>
      </CENTER>
      <BR>
 	";
@@ -55,7 +55,7 @@ if ($physician<=0) {
 	$phymname = $phyinfo["phymname"];
 	$display_buffer .= "
      <CENTER>
-      "._("Physician").": $phylname, $phyfname $phymname
+      ".__("Physician").": $phylname, $phyfname $phymname
      </CENTER>
      <BR>
 	";

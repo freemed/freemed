@@ -50,7 +50,7 @@ if (!$travel) {
 	<DIV ALIGN=\"CENTER\">
 	<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
 	<TR BGCOLOR=\"#000000\"><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-	<FONT COLOR=\"#ffffff\"><B>"._("Travel")."</B></FONT>
+	<FONT COLOR=\"#ffffff\"><B>".__("Travel")."</B></FONT>
 	</TD></TR></TABLE>
 	</DIV>
 	";
@@ -60,7 +60,7 @@ if (!$travel) {
 if (date_in_the_past($selected_date)) {
 	$form .= "
 		<DIV ALIGN=\"CENTER\"><I><FONT SIZE=-2
-		>"._("this date occurs in the past")."</FONT></I>
+		>".__("this date occurs in the past")."</FONT></I>
 		</DIV>
 	";
 }
@@ -112,7 +112,7 @@ $form .= "
 	"<small>Rm</small>" =>
 	html_form::select_widget(
 		"room",
-		( $travel ? array ( _("Travel") => "0" ) :
+		( $travel ? array ( __("Travel") => "0" ) :
 		freemed::query_to_array(
 			"SELECT CONCAT(room.roomname,' (',".
 			"facility.psrcity,', ',facility.psrstate,')') AS k,".
@@ -175,7 +175,7 @@ $form .= "
 
 	<TR>
 		<TD COLSPAN=2 WIDTH=\"20%\">&nbsp;</TD>
-		<TD COLSPAN=1 WIDTH=\"40%\">"._("Physician")."</TD>
+		<TD COLSPAN=1 WIDTH=\"40%\">".__("Physician")."</TD>
 		<TD COLSPAN=1 WIDTH=\"40%\">".prepare($rm_name)."</TD>
 	</TR>
 ";
@@ -314,15 +314,15 @@ $form .= "
 //----- Check for process form
 if ($process) {
 	// Process form here
-	$page_title = _("Add Appointment");
-	$display_buffer .= "<div ALIGN=\"CENTER\">"._("Adding")." ... ";
+	$page_title = __("Add Appointment");
+	$display_buffer .= "<div ALIGN=\"CENTER\">".__("Adding")." ... ";
 
 	// Travel kludge modifications
 	if ($travel) {
 		$calfacility = 0;
 		$calroom     = 0;
 		$calpatient  = 0;
-		$calprenote  = _("Travel");
+		$calprenote  = __("Travel");
 	}
 
 	// Get facility from room
@@ -347,8 +347,8 @@ if ($process) {
 	);
 	$result = $sql->query ($query);
 
-	if ($result) { $display_buffer .= _("done")."."; }
-	 else        { $display_buffer .= _("ERROR");    }
+	if ($result) { $display_buffer .= __("done")."."; }
+	 else        { $display_buffer .= __("ERROR");    }
 
 	$display_buffer .= " </div> <p/> <div ALIGN=\"CENTER\">\n";
 	if (!$travel) {
@@ -356,7 +356,7 @@ if ($process) {
 			$refresh = "manage.php?id=".urlencode($patient);
 			$display_buffer .= "
 			<a HREF=\"manage.php?id=$patient\"
-			>"._("Manage Patient")."</a>
+			>".__("Manage Patient")."</a>
 			</div>
 			";
 		} else {
@@ -364,7 +364,7 @@ if ($process) {
 				urlencode($patient);
 			$display_buffer .= "
 			<a HREF=\"call-in.php?action=display&id=$patient\"
-			>"._("Manage Patient")."</a>
+			>".__("Manage Patient")."</a>
 			</div>
 			";
 		} // end checking type

@@ -10,7 +10,7 @@ freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
 //----- Check for process
-if ($action==_("Search")) {
+if ($action==__("Search")) {
 	$GLOBALS['__freemed']['on_load'] = 'process';
 }
 
@@ -20,7 +20,7 @@ $display_buffer .= "<CENTER><FORM NAME=\"lookup\" ACTION=\"".$page_name."\" ".
 
 //----- Master action switch
 switch ($action) {
-	case _("Search"):
+	case __("Search"):
 	// Perform query
 
 //	if ( empty($last_name) and empty($first_name) and
@@ -43,7 +43,7 @@ switch ($action) {
 
 	// If no results, die right here
 	if (!$sql->results($result)) {
-		$display_buffer .= _("No patients found with that criteria!");
+		$display_buffer .= __("No patients found with that criteria!");
 		break;
 	}
 
@@ -127,7 +127,7 @@ switch ($action) {
 		<INPUT TYPE=\"HIDDEN\" NAME=\"varname\" VALUE=\"".prepare($varname)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"formname\" VALUE=\"".prepare($formname)."\">
 		<INPUT TYPE=\"HIDDEN\" NAME=\"submitname\" VALUE=\"".prepare($submitname)."\">
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\""._("Search")."\">
+		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".__("Search")."\">
 		<div ALIGN=\"CENTER\" CLASS=\"infobox\">
 		".html_form::form_table(array(
 			"Last Name" =>
@@ -148,7 +148,7 @@ switch ($action) {
 				)
 			)
 		))."
-		<input TYPE=\"SUBMIT\" VALUE=\""._("Search")."\" class=\"button\"/>
+		<input TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\" class=\"button\"/>
 		</div>
 	";
 	break;

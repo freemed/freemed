@@ -14,14 +14,14 @@ freemed_open_db ();
 
 // Check for no patient provided
 if ($patient<1) {
-  $page_title = _($record_name)." :: "._("ERROR");
+  $page_title = _($record_name)." :: ".__("ERROR");
   $display_buffer .= "
    <p/>
-   <b>"._("You must select a patient.")."</b>
+   <b>".__("You must select a patient.")."</b>
    <p/>
    <div ALIGN=\"CENTER\">
     <a class=\"button\" HREF=\"patient.php\"
-     >"._("Select a Patient")."</a> 
+     >".__("Select a Patient")."</a> 
    </div>
    <P>
   ";
@@ -33,16 +33,16 @@ $this_patient = CreateObject('FreeMED.Patient', $patient);
 if ( (($action=="addform") or ($action=="modform") or
        ($action=="add")     or ($action=="mod"    ))
       AND ($form<1)) {
-  $page_title = _($record_name)." :: "._("ERROR");
+  $page_title = _($record_name)." :: ".__("ERROR");
   $display_buffer .= "
    <p/>
    <div align=\"CENTER\">
-    <b>"._("You must select a template.")."</b>
+    <b>".__("You must select a template.")."</b>
    </div>
    <p/>
    <div align=\"CENTER\">
    <a class=\"button\" HREF=\"manage.php?id=".urlencode($patient)."\"
-    >"._("Manage Patient")."</a> 
+    >".__("Manage Patient")."</a> 
    </div>
    <p/>
   ";
@@ -92,7 +92,7 @@ switch ($action) {
      } // end internal loop
      break;
    } // end interior action switch
-   $page_title = (($action=="addform") ? _("Add") : _("Modify")).
+   $page_title = (($action=="addform") ? __("Add") : __("Modify")).
      " "._($record_name); 
    $display_buffer .= freemed::patient_box($this_patient)."
     <p/>
@@ -232,7 +232,7 @@ switch ($action) {
        break;
       case "select":
        $options = explode(",", $prtftypefor[$i]); // get options
-       if (count($options)<1) { $display_buffer .= _("ERROR")."\n"; break; }
+       if (count($options)<1) { $display_buffer .= __("ERROR")."\n"; break; }
        if (!$leftright) {
         $display_buffer .= "\n<select NAME=\"answer$i\">\n";
         for ($each_option=0;$each_option<count($options);$each_option++) {
@@ -323,10 +323,10 @@ switch ($action) {
      <div align=\"CENTER\">
      <select NAME=\"action\">
       <option VALUE=\"".( ($action=="addform") ? "add" : "mod" )."\">".
-        ( ($action=="addform") ? _("Add") : _("Modify") )."</option>
-      <option VALUE=\"\">"._("back")."</option>
+        ( ($action=="addform") ? __("Add") : __("Modify") )."</option>
+      <option VALUE=\"\">".__("back")."</option>
      </select>
-     <input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\""._("Go")."\"/>
+     <input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"".__("Go")."\"/>
      </div>
     </form>
     <p/>
@@ -396,24 +396,24 @@ switch ($action) {
                 WHERE   id = '$id'";
       break;
    } // end inner action switch 
-   $page_title =  ( ($action=="add") ? _("Adding") : _("Modifying")).
+   $page_title =  ( ($action=="add") ? __("Adding") : __("Modifying")).
      " "._($record_name);
    $display_buffer .= "
      <p/><div align=\"CENTER\">
-     ".( ($action=="add") ? _("Adding") : _("Modifying") )." ... 
+     ".( ($action=="add") ? __("Adding") : __("Modifying") )." ... 
     ";
    if ($debug)    $display_buffer .= "<br/>(query = \"$query\")<br/>\n";
    $result = $sql->query ($query); // send the prepared query through
-   if ($result) { $display_buffer .= _("done").".\n"; }
-    else        { $display_buffer .= _("ERROR")."\n"; }
+   if ($result) { $display_buffer .= __("done").".\n"; }
+    else        { $display_buffer .= __("ERROR")."\n"; }
    $display_buffer .= "
     </div>
     <p/>
     ".template::link_bar(array(
-		_("Manage Patient") =>
+		__("Manage Patient") =>
 		"manage.php?id=".urlencode($patient),
 
-		_("View/Modify")." "._($record_name) =>
+		__("View/Modify")." "._($record_name) =>
 		$page_name."?patient=".urlencode($patient)
     ))."
     <p/>
@@ -429,7 +429,7 @@ switch ($action) {
      $display_buffer .= freemed::patient_box($this_patient)."
       <p/>
       <div align=\"CENTER\">
-       <b>"._("No records for this patient.")."</b>
+       <b>".__("No records for this patient.")."</b>
       </div>
       <p/>
       <div align=\"CENTER\">
@@ -437,7 +437,7 @@ switch ($action) {
        <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\"/>
        <input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>
        <select NAME=\"form\">
-        <option VALUE=\"\">"._("NONE SELECTED")."</option>
+        <option VALUE=\"\">".__("NONE SELECTED")."</option>
      ";
      $f_result = $sql->query ("SELECT * FROM patrectemplate ".
                              "ORDER BY prtname");
@@ -447,14 +447,14 @@ switch ($action) {
      } // end of this internal loop
      $display_buffer .= "
        </select>
-       <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Add")."\"/>
+       <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\"/>
       </form>
       </div>
       <p/>".template::link_bar(array(
-		_("Manage Patient") =>
+		__("Manage Patient") =>
 		"manage.php?id=$patient",
 
-		_("Return to the Main Menu") =>
+		__("Return to the Main Menu") =>
 		"main.php"
       ))."<p/>
       ";
@@ -465,9 +465,9 @@ switch ($action) {
      <table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" BORDER=\"0\"
       VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"> 
       <tr CLASS=\"reverse\">
-       <td><b>"._("Date Added")."</b></td>
-       <td><b>"._("Form")."</b></td>
-       <td><b>"._("Action")."</b></td>
+       <td><b>".__("Date Added")."</b></td>
+       <td><b>".__("Form")."</b></td>
+       <td><b>".__("Action")."</b></td>
       </tr>
     ";
     while ($r = $sql->fetch_array($result)) {
@@ -486,13 +486,13 @@ switch ($action) {
       $display_buffer .= "
        <a class=\"button\" HREF=\"$page_name?id=$id&patient=$patient&".
         "form=$form_template&action=modform\"
-       >"._("MOD")."</a>
+       >".__("MOD")."</a>
       ";
 
      if (freemed::user_flag(USER_DELETE))
       $display_buffer .= "
        <a class=\"button\" HREF=\"$page_name?id=$id&patient=$patient&action=del\"
-       >"._("DEL")."</a>
+       >".__("DEL")."</a>
       ";
 
      $display_buffer .= "
@@ -504,10 +504,10 @@ switch ($action) {
    $display_buffer .= "
     </table>
     <p/>".template::link_bar(array(
-		_("Manage Patient") =>
+		__("Manage Patient") =>
 		"manage.php?id=$patient",
 
-		_("Return to the Main Menu") =>
+		__("Return to the Main Menu") =>
 		"main.php"
       ))."<p/>
     ";

@@ -5,7 +5,7 @@
 $page_name = "messages.php";          // page name
 include_once ("lib/freemed.php");          // global variables
 include_once ("lib/calendar-functions.php");
-$record_name = _("Messages");         // name of record
+$record_name = __("Messages");         // name of record
 $db_name = "messages";                // database name
 
 define ('PAGE_ROLL', 5);
@@ -14,13 +14,13 @@ define ('PAGE_ROLL', 5);
 freemed_open_db ();
 $this_user = CreateObject('FreeMED.User');
 
-if ($submit_action==" "._("Add")." ") { $action = "add"; }
+if ($submit_action==" ".__("Add")." ") { $action = "add"; }
 
 switch ($action) {
 
 	case "addform":
 	// Set page title
-	$page_title = _("Add")." "._($record_name);
+	$page_title = __("Add")." "._($record_name);
 
 	// Push onto stack
 	page_push();
@@ -44,7 +44,7 @@ switch ($action) {
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
 	<div ALIGN=\"CENTER\">
 	".html_form::form_table(array(
-		_("For") =>
+		__("For") =>
 		freemed_display_selectbox(
 			$sql->query("SELECT * FROM user ".
 				"WHERE username != 'root' ".
@@ -53,27 +53,27 @@ switch ($action) {
 			"msgfor"
 		),
 
-		_("Patient")." ("._("if applicable").")" =>
+		__("Patient")." (".__("if applicable").")" =>
 		freemed::patient_widget("msgpatient"),
 
-		_("From (if not a patient)") =>
+		__("From (if not a patient)") =>
 		html_form::text_widget("msgperson", 20, 50),
 
-		_("Subject") =>
+		__("Subject") =>
 		html_form::text_widget("msgsubject", 20, 75),
 
-		_("Message") =>
+		__("Message") =>
 		html_form::text_area("msgtext"),
 
-		_("Urgency") =>
+		__("Urgency") =>
 		html_form::select_widget(
 			"msgurgency",
 			array(
-				_("not important") => 1,
-				_("somewhat important") => 2,
-				_("moderately important") => 3,
-				_("very important") => 4,
-				_("extremely urgent") => 5,
+				__("not important") => 1,
+				__("somewhat important") => 2,
+				__("moderately important") => 3,
+				__("very important") => 4,
+				__("extremely urgent") => 5,
 			)
 		)
 	))."
@@ -82,8 +82,8 @@ switch ($action) {
 	<p/>
 	<div ALIGN=\"CENTER\">
 	<input class=\"button\" TYPE=\"SUBMIT\" ".
-	"NAME=\"submit_action\" VALUE=\" "._("Add")." \" />
-	<input class=\"button\" TYPE=\"RESET\" VALUE=\" "._("Clear")." \"/>
+	"NAME=\"submit_action\" VALUE=\" ".__("Add")." \" />
+	<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
 	</div>
 	</form>
 	<p/>
@@ -91,8 +91,8 @@ switch ($action) {
 	break; // end action addform
 
 	case "add":
-	$page_title = _("Adding")." "._("Message");
-	$display_buffer .= "\n"._("Adding")." "._("Message")." ... \n";
+	$page_title = __("Adding")." ".__("Message");
+	$display_buffer .= "\n".__("Adding")." ".__("Message")." ... \n";
 	$query = $sql->insert_query(
 		"messages",
 		array(
@@ -108,15 +108,15 @@ switch ($action) {
 	);
 	$result = $sql->query ($query);
 
-	if ($result) $display_buffer .= _("done");
-	else $display_buffer .= _("ERROR");
+	if ($result) $display_buffer .= __("done");
+	else $display_buffer .= __("ERROR");
 	$display_buffer .= " 
 	<p/>
 	<div ALIGN=\"CENTER\">
 	<a HREF=\"messages.php\"
-	>"._("Messages")."</a> |
+	>".__("Messages")."</a> |
 	<a HREF=\"main.php\"
-	>"._("Return to the Main Menu")."</A>
+	>".__("Return to the Main Menu")."</A>
 	</div>
 	<p/>
 	";
@@ -171,7 +171,7 @@ switch ($action) {
 
 	default:
 	// Set page title
-	$page_title = _("Messages");
+	$page_title = __("Messages");
   
 	// Push onto stack
 	page_push();
@@ -194,11 +194,11 @@ switch ($action) {
 
 	$display_buffer .= 
 		template::link_bar(array(
-		_("Add Message") =>
+		__("Add Message") =>
 		"messages.php?action=addform",
-		( ($old != 1) ? _("Old Messages") : _("New Messages") ) =>
+		( ($old != 1) ? __("Old Messages") : __("New Messages") ) =>
 		( ($old != 1) ? "messages.php?old=1" : "messages.php?old=0" ),
-		_("Main Menu") =>
+		__("Main Menu") =>
 		"main.php" ));
 
 	// View list of messages for this doctor
@@ -213,8 +213,8 @@ switch ($action) {
 	if (!$sql->results($result)) {
 		$display_buffer .= "<p/>
 			". ($old ?
-				_("You have no old messages.") :
-				_("You have no waiting messages.")
+				__("You have no old messages.") :
+				__("You have no waiting messages.")
 			)."<p/>";
 	} else {
 		$display_buffer .= "
@@ -224,10 +224,10 @@ switch ($action) {
 		"CELLPADDING=\"3\" ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<tr CLASS=\"menubar\">
 			<td>&nbsp;</td>
-			<td><b>"._("Date")."</b></td>
-			<td><b>"._("Time")."</b></td>
-			<td><b>"._("From")."</b></td>
-			<td><b>"._("Urgency")."</b></td>
+			<td><b>".__("Date")."</b></td>
+			<td><b>".__("Time")."</b></td>
+			<td><b>".__("From")."</b></td>
+			<td><b>".__("Urgency")."</b></td>
 		</tr>
 		";
 
@@ -310,12 +310,12 @@ switch ($action) {
 
 		<div ALIGN=\"CENTER\">
 			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"mark\"/>
-			<input TYPE=\"BUTTON\" VALUE=\""._("Select All")."\" ".
+			<input TYPE=\"BUTTON\" VALUE=\"".__("Select All")."\" ".
 			"onClick=\"selectAll(this.form); return true;\" ".
 			"class=\"button\"/>
 			".( ($old==0) ?
 			"<input class=\"button\" TYPE=\"SUBMIT\" ".
-				"VALUE=\""._("Mark as Read")."\"/>" :"")."
+				"VALUE=\"".__("Mark as Read")."\"/>" :"")."
 			</form>
 		</div>
 		";
@@ -323,11 +323,11 @@ switch ($action) {
 
 	$display_buffer .= 
 		template::link_bar(array(
-		_("Add Message") =>
+		__("Add Message") =>
 		"messages.php?action=addform",
-		( ($old != 1) ? _("Old Messages") : _("New Messages") ) =>
+		( ($old != 1) ? __("Old Messages") : __("New Messages") ) =>
 		( ($old != 1) ? "messages.php?old=1" : "messages.php?old=0" ),
-		_("Main Menu") =>
+		__("Main Menu") =>
 		"main.php" ));
 	break;
 

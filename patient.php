@@ -36,15 +36,15 @@ switch ($action) {
      NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH, 3);
    switch ($action) {
      case "add": case "addform":
-	$book->set_submit_name (_("Add"));
+	$book->set_submit_name (__("Add"));
       if ( !$book->been_here() ) {
         // $ins_disp_inactive=false; // TODO! not implemented
       } // end of checking empty been_here
-      $action_name = _("Add");
+      $action_name = __("Add");
       break; // end internal add
 
      case "mod": case "modform":
-	$book->set_submit_name (_("Modify"));
+	$book->set_submit_name (__("Modify"));
       if ( !$book->been_here() ) {
       $result = $sql->query("SELECT * FROM patient ".
          "WHERE ( id = '".prepare($id)."' )");
@@ -69,40 +69,40 @@ switch ($action) {
         //$ins_disp_inactive=false;
         $been_here = "1"; // set been_here
       } // end of checking empty been_here
-      $action_name = _("Modify");
+      $action_name = __("Modify");
       break; // end internal mod
    } // end of internal switch add/mod
 
 	if (freemed::config_value("folded") == "yes") {
    // ** DISPLAY ADD/MOD ***
    $book->add_page (
-     _("Primary Information"),
+     __("Primary Information"),
      array ("ptlname", "ptfname", "ptmname",
             date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
             "has_insurance"),
 		html_form::form_table ( array (
-			_("Last Name") =>
+			__("Last Name") =>
 				html_form::text_widget("ptlname", 25, 50),
     
-			_("First Name") =>
+			__("First Name") =>
 				html_form::text_widget("ptfname", 25, 50),
 
-			_("Middle Name") =>
+			__("Middle Name") =>
 				html_form::text_widget("ptmname", 25, 50),
 
-			_("Address Line 1") =>
+			__("Address Line 1") =>
 				html_form::text_widget("ptaddr1", 25, 45),
 
-			_("Address Line 2") =>
+			__("Address Line 2") =>
 				html_form::text_widget("ptaddr2", 25, 45),
 
-			_("City").", "._("State").", "._("Zip") =>
+			__("City").", ".__("State").", ".__("Zip") =>
 				html_form::text_widget("ptcity", 10, 45)."\n".
 				html_form::state_pulldown("ptstate").
 				html_form::text_widget("ptzip", 10),
 
-			_("Date of Birth") =>
+			__("Date of Birth") =>
 				date_entry("ptdob")
 
 
@@ -110,7 +110,7 @@ switch ($action) {
      );
 
      $book->add_page(
-       _("Contact"),
+       __("Contact"),
        array (
          "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip",
 	 "ptcountry",
@@ -128,19 +128,19 @@ switch ($action) {
          ),
 		html_form::form_table ( array (
 
-			_("Country") =>
+			__("Country") =>
 				html_form::country_pulldown("ptcountry"),
 
-			_("Home Phone") =>
+			__("Home Phone") =>
 				fm_phone_entry ("pthphone"),
 
-			_("Work Phone") =>
+			__("Work Phone") =>
 				fm_phone_entry ("ptwphone"),
     
-			_("Fax Number") =>
+			__("Fax Number") =>
 				fm_phone_entry ("ptfax"),
   
-			_("Email Address") =>
+			__("Email Address") =>
 				"<INPUT TYPE=TEXT NAME=\"ptemail1\" SIZE=20 MAXLENGTH=40 ".
 				"VALUE=\"".prepare($ptemail1)."\"> <B>@</B>\n".
 				"<INPUT TYPE=TEXT NAME=\"ptemail2\" SIZE=20 MAXLENGTH=40 ".
@@ -153,38 +153,38 @@ switch ($action) {
                             FROM ptstatus
                             ORDER BY ptstatus");
      $book->add_page(
-       _("Personal"),
+       __("Personal"),
        array (
          "ptsex", "ptmarital", "ptssn", "ptid",
 	 "ptdmv", "ptbilltype", "ptbudg", "ptempl"
 	 ),
 	html_form::form_table ( array (
 
-		_("Gender") =>
+		__("Gender") =>
 			html_form::select_widget("ptsex",
 				array (
-					 _("Female")        => "f",
-					 _("Male")          => "m",
-					 _("Transgendered") => "t"
+					 __("Female")        => "f",
+					 __("Male")          => "m",
+					 __("Transgendered") => "t"
 				)
 			),
 
-		_("Marital Status") =>
+		__("Marital Status") =>
 			html_form::select_widget("ptmarital",
 				array (
-					_("Single")    => "single",
-					_("Married")   => "married",
-					_("Divorced")  => "divorced",
-					_("Separated") => "separated",
-					_("Widowed")   => "widowed"
+					__("Single")    => "single",
+					__("Married")   => "married",
+					__("Divorced")  => "divorced",
+					__("Separated") => "separated",
+					__("Widowed")   => "widowed"
 				)
 			),
 	
-		_("Employment Status") =>
+		__("Employment Status") =>
 			html_form::select_widget("ptempl",
 				array (
-					_("Yes")    => "y",
-					_("No")     => "n",
+					__("Yes")    => "y",
+					__("No")     => "n",
 					"Part Time" => "p",
 					"Self"      => "s",
 					"Retired"   => "r",
@@ -192,29 +192,29 @@ switch ($action) {
 					"Unknown"   => "u"
 				)
 			),
-		_("Patient Status") => 
+		__("Patient Status") => 
   			freemed_display_selectbox ($ptstatus_r, "#ptstatus#, #ptstatusdescrip", "ptstatus"),
 
-		_("Social Security Number") =>
+		__("Social Security Number") =>
 			html_form::text_widget("ptssn", 9),
 
-		_("Internal Practice ID #") =>
+		__("Internal Practice ID #") =>
 			html_form::text_widget("ptid", 10),
     
-		_("Driver's License (No State)") =>
+		__("Driver's License (No State)") =>
 			html_form::text_widget("ptdmv", 9),
        
-		_("Type of Billing") =>
+		__("Type of Billing") =>
 			html_form::select_widget("ptbilltype",
 				array (
-					_("Monthly Billing On Account") => "mon",
-					_("Statement Billing")          => "sta",
-					_("Charge Card Billing")        => "chg",
-					_("NONE SELECTED")              => ""
+					__("Monthly Billing On Account") => "mon",
+					__("Statement Billing")          => "sta",
+					__("Charge Card Billing")        => "chg",
+					__("NONE SELECTED")              => ""
 				)
 			),
 
-		_("Monthly Budget Amount") =>
+		__("Monthly Budget Amount") =>
 			"<INPUT TYPE=TEXT NAME=ptbudg SIZE=10 MAXLENGTH=20 ".
 			"VALUE=\"".prepare($ptbudg)."\">"
 		) )
@@ -240,33 +240,33 @@ switch ($action) {
    } // is !isset num_other_docs
 
    $book->add_page(
-     _("Physician"),
+     __("Physician"),
      array ("ptdoc", "ptphy1", "ptphy2", "ptphy3", "ptphy4", "ptpcp",
             "ptrefdoc", "num_other_docs"),
      "
     <TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0>
 
     <TR><TD ALIGN=RIGHT>
-    "._("In House Doctor")." :
+    ".__("In House Doctor")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($int_phys_r, "#phylname#, #phyfname#", "ptdoc")."
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
-    "._("Referring Doctor")." :
+    ".__("Referring Doctor")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($ref_phys_r, "#phylname#, #phyfname#", "ptrefdoc")."
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
-    "._("Primary Care Physician")." :
+    ".__("Primary Care Physician")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptpcp")."
     </TD></TR>
 
     ".(($num_other_docs>0) ? "
     <TR><TD ALIGN=RIGHT>
-    "._("Other Physician 1")." :
+    ".__("Other Physician 1")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy1")."
     </TD></TR>
@@ -274,7 +274,7 @@ switch ($action) {
 
     (($num_other_docs>1) ? "
     <TR><TD ALIGN=RIGHT>
-    "._("Other Physician 2")." :
+    ".__("Other Physician 2")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy2")."
     </TD></TR>
@@ -282,7 +282,7 @@ switch ($action) {
 
     (($num_other_docs>2) ? "
     <TR><TD ALIGN=RIGHT>
-    "._("Other Physician 3")." :
+    ".__("Other Physician 3")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy3")."
     </TD></TR>
@@ -290,14 +290,14 @@ switch ($action) {
 
     (($num_other_docs>3) ? "
     <TR><TD ALIGN=RIGHT>
-    "._("Other Physician 4")." :
+    ".__("Other Physician 4")." :
     </TD><TD ALIGN=LEFT>
   ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy4")."
     </TD></TR>
     " : "").
 
     "<TR><TD ALIGN=RIGHT>
-    "._("Number of Other Physicians")." :
+    ".__("Number of Other Physicians")." :
     </TD><TD ALIGN=LEFT>
       ".html_form::number_pulldown("num_other_docs", 0, 4)."
       ".$book->generate_refresh()."
@@ -307,10 +307,10 @@ switch ($action) {
      ");    
 
 	$book->add_page(
-		_("Medical"),
+		__("Medical"),
 		array("ptblood"),
 		html_form::form_table(array(
-			_("Blood Type") =>
+			__("Blood Type") =>
 			html_form::select_widget(
 				"ptblood",
 				array(
@@ -332,7 +332,7 @@ switch ($action) {
 	);
 
    $book->add_page(
-     _("Notes"),
+     __("Notes"),
      array("ptnextofkin"),
      html_form::form_table(array(
        "" => "<div ALIGN=\"CENTER\">".
@@ -365,7 +365,7 @@ switch ($action) {
    } // is !isset num_other_docs
 
    $book->add_page (
-     _("Patient"),
+     __("Patient"),
      array ("ptlname", "ptfname", "ptmname",
             date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
@@ -392,72 +392,72 @@ switch ($action) {
          ),
 
 		html_form::form_table ( array (
-			_("Last Name") =>
+			__("Last Name") =>
 				html_form::text_widget("ptlname", 25, 50),
     
-			_("First Name") =>
+			__("First Name") =>
 				html_form::text_widget("ptfname", 25, 50),
 
-			_("Middle Name") =>
+			__("Middle Name") =>
 				html_form::text_widget("ptmname", 25, 50),
 
-			_("Address Line 1") =>
+			__("Address Line 1") =>
 				html_form::text_widget("ptaddr1", 25, 45),
 
-			_("Address Line 2") =>
+			__("Address Line 2") =>
 				html_form::text_widget("ptaddr2", 25, 45),
 
-			_("City").", "._("State").", "._("Zip") =>
+			__("City").", ".__("State").", ".__("Zip") =>
 				html_form::text_widget("ptcity", 10, 45)."\n".
 				html_form::state_pulldown("ptstate").
 				html_form::text_widget("ptzip", 10),
 
-			_("Date of Birth") =>
+			__("Date of Birth") =>
 				date_entry("ptdob"),
 
-			_("Country") =>
+			__("Country") =>
 				html_form::country_pulldown("ptcountry"),
 
-			_("Home Phone") =>
+			__("Home Phone") =>
 				fm_phone_entry ("pthphone"),
 
-			_("Work Phone") =>
+			__("Work Phone") =>
 				fm_phone_entry ("ptwphone"),
     
-			_("Fax Number") =>
+			__("Fax Number") =>
 				fm_phone_entry ("ptfax"),
   
-			_("Email Address") =>
+			__("Email Address") =>
 				"<INPUT TYPE=TEXT NAME=\"ptemail1\" SIZE=20 MAXLENGTH=40 ".
 				"VALUE=\"".prepare($ptemail1)."\"> <B>@</B>\n".
 				"<INPUT TYPE=TEXT NAME=\"ptemail2\" SIZE=20 MAXLENGTH=40 ".
 				"VALUE=\"".prepare($ptemail2)."\">",
 
-		_("Gender") =>
+		__("Gender") =>
 			html_form::select_widget("ptsex",
 				array (
-					 _("Female")        => "f",
-					 _("Male")          => "m",
-					 _("Transgendered") => "t"
+					 __("Female")        => "f",
+					 __("Male")          => "m",
+					 __("Transgendered") => "t"
 				)
 			),
 
-		_("Marital Status") =>
+		__("Marital Status") =>
 			html_form::select_widget("ptmarital",
 				array (
-					_("Single")    => "single",
-					_("Married")   => "married",
-					_("Divorced")  => "divorced",
-					_("Separated") => "separated",
-					_("Widowed")   => "widowed"
+					__("Single")    => "single",
+					__("Married")   => "married",
+					__("Divorced")  => "divorced",
+					__("Separated") => "separated",
+					__("Widowed")   => "widowed"
 				)
 			),
 	
-		_("Employment Status") =>
+		__("Employment Status") =>
 			html_form::select_widget("ptempl",
 				array (
-					_("Yes")    => "y",
-					_("No")     => "n",
+					__("Yes")    => "y",
+					__("No")     => "n",
 					"Part Time" => "p",
 					"Self"      => "s",
 					"Retired"   => "r",
@@ -465,58 +465,58 @@ switch ($action) {
 					"Unknown"   => "u"
 				)
 			),
-		_("Patient Status") => 
+		__("Patient Status") => 
   			freemed_display_selectbox ($ptstatus_r, "#ptstatus#, #ptstatusdescrip", "ptstatus"),
 
-		_("Social Security Number") =>
+		__("Social Security Number") =>
 			html_form::text_widget("ptssn", 9),
 
-		_("Internal Practice ID #") =>
+		__("Internal Practice ID #") =>
 			html_form::text_widget("ptid", 10),
     
-		_("Driver's License (No State)") =>
+		__("Driver's License (No State)") =>
 			html_form::text_widget("ptdmv", 9),
        
-		_("Type of Billing") =>
+		__("Type of Billing") =>
 			html_form::select_widget("ptbilltype",
 				array (
-					_("Monthly Billing On Account") => "mon",
-					_("Statement Billing")          => "sta",
-					_("Charge Card Billing")        => "chg",
-					_("NONE SELECTED")              => ""
+					__("Monthly Billing On Account") => "mon",
+					__("Statement Billing")          => "sta",
+					__("Charge Card Billing")        => "chg",
+					__("NONE SELECTED")              => ""
 				)
 			),
 
-		_("Monthly Budget Amount") =>
+		__("Monthly Budget Amount") =>
 			"<INPUT TYPE=TEXT NAME=ptbudg SIZE=10 MAXLENGTH=20 ".
 			"VALUE=\"".prepare($ptbudg)."\">",
 		 
-	_("In House Doctor") =>
+	__("In House Doctor") =>
 	freemed_display_selectbox ($int_phys_r, "#phylname#, #phyfname#", "ptdoc"),
 
-	_("Referring Doctor") =>
+	__("Referring Doctor") =>
 	freemed_display_selectbox ($ref_phys_r, "#phylname#, #phyfname#", "ptrefdoc"),
 
-	_("Primary Care Physician") =>
+	__("Primary Care Physician") =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptpcp"),
 
-	(($num_other_docs>0) ? _("Other Physician 1") : "" ) =>
+	(($num_other_docs>0) ? __("Other Physician 1") : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy1"),
 
-	(($num_other_docs>1) ? _("Other Physician 2") : "" ) =>
+	(($num_other_docs>1) ? __("Other Physician 2") : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy2"),
 
-	(($num_other_docs>2) ? _("Other Physician 3") : "" ) =>
+	(($num_other_docs>2) ? __("Other Physician 3") : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy3"),
 
-	(($num_other_docs>3) ? _("Other Physician 4") : "" ) =>
+	(($num_other_docs>3) ? __("Other Physician 4") : "" ) =>
 	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname#", "ptphy4"),
 
-	_("Number of Other Physicians") =>
+	__("Number of Other Physicians") =>
 	html_form::number_pulldown("num_other_docs", 0, 4).
         $book->generate_refresh(),
 
-			_("Blood Type") =>
+			__("Blood Type") =>
 			html_form::select_widget(
 				"ptblood",
 				array(
@@ -534,7 +534,7 @@ switch ($action) {
 					"AB-"
 				)
 			),
-       _("Next of Kin") =>
+       __("Next of Kin") =>
 	html_form::text_area("ptnextofkin", "VIRTUAL", 10, 40)
      ))
    );
@@ -542,7 +542,7 @@ switch ($action) {
 	} // end checking for folded
 
    // show notebook
-   $page_title = _("Patient")." "._("$action_name");
+   $page_title = __("Patient")." ".__("$action_name");
    if ( ($action=="modform") or ($action=="mod")) {
      $this_patient = CreateObject('FreeMED.Patient', $id);
      $display_buffer .= freemed::patient_box ($this_patient);
@@ -736,20 +736,20 @@ switch ($action) {
      } // end switch for action (done .. actual action)
      $display_buffer .= "
       <div ALIGN=\"CENTER\"><b>".( (($action=="mod") OR ($action=="modform")) ?
-             _("Modifying") : _("Adding") )." ...</b> ";
+             __("Modifying") : __("Adding") )." ...</b> ";
      $result = $sql->query($query);
-     if ($result) $display_buffer .= _("Done");
-     else $display_buffer .= _("Error");
+     if ($result) $display_buffer .= __("Done");
+     else $display_buffer .= __("Error");
      $display_buffer .= "<br/>\n";
 	 if ( ($result) AND ($action=="addform") AND (empty($ptid)) )
 	 {
-		$display_buffer .= "<b>"._("Adding Patient ID")." ...</b> ";
+		$display_buffer .= "<b>".__("Adding Patient ID")." ...</b> ";
 		$pid = $sql->last_record($result);
 		$patid = PATID_PREFIX.$pid;
 		$result = $sql->query("UPDATE patient SET ptid='".addslashes($patid)."' ".
 			"WHERE id='".addslashes($pid)."'");
-     	if ($result) $display_buffer .= _("Done");
-     	else $display_buffer .= _("Error");
+     	if ($result) $display_buffer .= __("Done");
+     	else $display_buffer .= __("Error");
 		$display_buffer .= "<br/>\n";
 		
 	 }
@@ -760,7 +760,7 @@ switch ($action) {
      $display_buffer .= "
       <p/>
       <a HREF=\"manage.php?id=".( $action=="addform" ? $pid : $id )."\">
-      "._("Manage This Patient")."
+      ".__("Manage This Patient")."
       </a>
       
       </div>
@@ -771,13 +771,13 @@ switch ($action) {
 
   case "delete":
   case "del":
-    $page_title = _("Deleting")." "._($record_name);
+    $page_title = __("Deleting")." "._($record_name);
     $display_buffer .= "<div ALIGN=\"CENTER\">
-     <p/>"._("Deleting")." ... ";
+     <p/>".__("Deleting")." ... ";
     $query = "DELETE FROM patient WHERE id='".addslashes($id)."'";
     $result = $sql->query ($query);
-    if ($result) { $display_buffer .= _("done")."."; }
-     else        { $display_buffer .= _("ERROR");    }
+    if ($result) { $display_buffer .= __("done")."."; }
+     else        { $display_buffer .= __("ERROR");    }
     $display_buffer .= "
      </div>
     ";
@@ -790,14 +790,14 @@ switch ($action) {
          "WHERE (ptlname LIKE '".addslashes($f1)."%') ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = _("Last Names")." (".prepare($f1).")";
+        $_crit = __("Last Names")." (".prepare($f1).")";
         break;
       case "contains":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (".addslashes($f1)." LIKE '%".addslashes($f2)."%') ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = _("Searching for")." \"".prepare($f2)."\"";
+        $_crit = __("Searching for")." \"".prepare($f2)."\"";
         break;
       case "soundex":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
@@ -810,21 +810,21 @@ switch ($action) {
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
 	 freemed::itemlist_conditions().
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = "\""._("All Patients")."\"";
+        $_crit = "\"".__("All Patients")."\"";
         break;
       case "dependants":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (ptdep = '".addslashes($f1)."') ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = _("Dependents");
+        $_crit = __("Dependents");
         break;
       case "guarantor":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".
          "WHERE (id = '".addslashes($f1)."') ".
 	 freemed::itemlist_conditions(false).
          "ORDER BY ptlname, ptfname, ptdob";
-        $_crit = _("Guarantor");
+        $_crit = __("Guarantor");
         break;
       default:
         $_crit = "";
@@ -846,7 +846,7 @@ switch ($action) {
 		$sql->data_seek($result, 0);
 	} // end checking for single patient jump
 
-      $page_title = _("Patients Meeting Criteria")." ".$_crit;
+      $page_title = __("Patients Meeting Criteria")." ".$_crit;
 
       if (strlen($_ref)<5) {
         $_ref="main.php";
@@ -856,10 +856,10 @@ switch ($action) {
         $result,
 	$page_name,
 	array (
-	  _("Last Name") =>     "ptlname",
-	  _("First Name") =>    "ptfname",
-	  _("Date of Birth") => "ptdob",
-	  _("Practice ID") =>   "ptid"
+	  __("Last Name") =>     "ptlname",
+	  __("First Name") =>    "ptfname",
+	  __("Date of Birth") => "ptdob",
+	  __("Practice ID") =>   "ptid"
 	),
 	array ("","",""),
 	"", "", "",
@@ -879,7 +879,7 @@ switch ($action) {
   default: // default action
 
     // Set page title
-    $page_title = _("Patients");
+    $page_title = __("Patients");
 
     // Push onto stack
     page_push();
@@ -902,25 +902,25 @@ switch ($action) {
         if ($_total>1)
           $display_buffer .= "
             <div ALIGN=\"CENTER\">
-             <b><i>$_total "._("Patient(s) In System")."</i></b>
+             <b><i>$_total ".__("Patient(s) In System")."</i></b>
             </div>
           ";
         elseif ($_total==0)
           $display_buffer .= "
             <div ALIGN=\"CENTER\">
-             <b><i>"._("No Patients In System")."</i></b>
+             <b><i>".__("No Patients In System")."</i></b>
             </div>
           ";
         elseif ($_total==1)
           $display_buffer .= "
             <div ALIGN=\"CENTER\">
-            <b><i>"._("One Patient In System")."</i></b>
+            <b><i>".__("One Patient In System")."</i></b>
             </div>
           ";
       } else {
         $display_buffer .= "
           <div ALIGN=\"CENTER\">
-           <b><i>"._("No Patients In System")."</i></b>
+           <b><i>".__("No Patients In System")."</i></b>
           </div>
         ";
       } // if there are none...
@@ -932,7 +932,7 @@ switch ($action) {
     $display_buffer .= "
       <br/>
       <div ALIGN=\"CENTER\">
-       <b>"._("Patients By Name")."</b>
+       <b>".__("Patients By Name")."</b>
       <br/>
       <a HREF=\"$page_name?action=find&criteria=letter&f1=A\">A</a>
       <a HREF=\"$page_name?action=find&criteria=letter&f1=B\">B</a>
@@ -969,62 +969,62 @@ switch ($action) {
       <p/>
 
       <form ACTION=\"$page_name\" METHOD=\"POST\">
-       <b>"._("Patients Field Search")."</b>
+       <b>".__("Patients Field Search")."</b>
       <br/>
       <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"find\"/>
       <input TYPE=\"HIDDEN\" NAME=\"criteria\" VALUE=\"contains\"/>
       ".html_form::select_widget(
         'f1',
 	array(
-          _("Last Name") => 'ptlname',
-	  _("First Name") => 'ptfname',
-	  _("Date of Birth") => 'ptdob',
-	  _("Internal Practice ID") => 'ptid',
-	  _("City") => 'ptcity',
-	  _("State") => 'ptstate',
-	  _("Zip") => 'ptzip',
-	  _("Home Phone") => 'pthphone',
-	  _("Work Phone") => 'ptwphone',
-	  _("Email Address") => 'ptemail',
-	  _("Social Security Number") => 'ptssn',
-	  _("Driver's License") => 'ptdmv'
+          __("Last Name") => 'ptlname',
+	  __("First Name") => 'ptfname',
+	  __("Date of Birth") => 'ptdob',
+	  __("Internal Practice ID") => 'ptid',
+	  __("City") => 'ptcity',
+	  __("State") => 'ptstate',
+	  __("Zip") => 'ptzip',
+	  __("Home Phone") => 'pthphone',
+	  __("Work Phone") => 'ptwphone',
+	  __("Email Address") => 'ptemail',
+	  __("Social Security Number") => 'ptssn',
+	  __("Driver's License") => 'ptdmv'
 	)
       )."	
-      <i><small>"._("contains")."</small></i>
+      <i><small>".__("contains")."</small></i>
       ".html_form::text_widget('f2', 15, 30)."
-      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\">
       </form>
       <p/>
 
       <form ACTION=\"$page_name\" METHOD=\"POST\">
       <input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"find\"/>
       <input TYPE=\"HIDDEN\" NAME=\"criteria\" VALUE=\"soundex\"/>
-      <b>"._("Soundalike Search")."</b><br/>
+      <b>".__("Soundalike Search")."</b><br/>
       ".html_form::select_widget(
         "f1",
 	array(
-          _("Last Name") => 'ptlname',
-	  _("First Name") => 'ptfname'
+          __("Last Name") => 'ptlname',
+	  __("First Name") => 'ptfname'
 	)
       )."
-        <i><small>"._("sounds like")."</small></i>
+        <i><small>".__("sounds like")."</small></i>
       ".html_form::text_widget('f2', 15, 30)."
-      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\""._("Search")."\">
+      <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".__("Search")."\">
       </form>
       <p/>
       </div>
 
       ".template::link_bar(array(
-      		_("Show All Patients") =>
+      		__("Show All Patients") =>
       		"$page_name?action=find&criteria=all&f1=",
 
-       		_("Add Patient") =>
+       		__("Add Patient") =>
       		"$page_name?action=addform",
 
-      		_("Call In Menu") =>
+      		__("Call In Menu") =>
       		"call-in.php",
 
-		_("Return to Main Menu") =>
+		__("Return to Main Menu") =>
 		"main.php"
       ))."
 

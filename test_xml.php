@@ -1,8 +1,6 @@
 <?php
 
 include_once "lib/freemed.php";
-include_once "lib/module.php";
-include_once "lib/module_emr.php";
 
 $this_patient = CreateObject('FreeMED.Patient', 1);
 

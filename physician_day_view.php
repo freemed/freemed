@@ -20,7 +20,7 @@ $prev_date = freemed_get_date_prev ($for_date);
 $next_date = freemed_get_date_next ($for_date);
 
 //----- Set page title
-$page_title = _("Physician Daily View");
+$page_title = __("Physician Daily View");
 
 //----- Display previous/next bar
 $display_buffer .= "
@@ -32,7 +32,7 @@ $display_buffer .= "
    </TD><TD VALIGN=\"CENTER\" ALIGN=\"CENTER\">
    <A HREF=\"physician_week_view.php?physician=".urlencode($physician)."&".
 	"for_date=".urlencode($for_date)."\"
-	<FONT COLOR=\"#ffffff\">"._("Week View")."</FONT></A>
+	<FONT COLOR=\"#ffffff\">".__("Week View")."</FONT></A>
    </TD><TD VALIGN=CENTER ALIGN=RIGHT>
    <A HREF=\"$page_name?selected_date=$next_date&physician=$physician\"
     ><FONT COLOR=\"#ffffff\">&gt;</FONT></A>
@@ -45,7 +45,7 @@ $display_buffer .= "
 if ($physician<=0) {
 	$display_buffer .= "
      <CENTER>
-      <B>"._("No Physician Selected")."</B>
+      <B>".__("No Physician Selected")."</B>
      </CENTER>
      <BR>
 	";
@@ -56,7 +56,7 @@ if ($physician<=0) {
 	$phymname = $phyinfo["phymname"];
 	$display_buffer .= "
      <CENTER>
-      <B>"._("Physician")." : </B>
+      <B>".__("Physician")." : </B>
        $phylname, $phyfname $phymname
      </CENTER>
      <BR>
