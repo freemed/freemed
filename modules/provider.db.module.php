@@ -81,7 +81,7 @@ class ProviderModule extends MaintenanceModule {
 			'phymname' => SQL__VARCHAR(50),
 			'phytitle' => SQL__VARCHAR(10),
 			'phypracname' => SQL__VARCHAR(45),
-			'phypracein' => SQL_VARCHAR(16),
+			'phypracein' => SQL__VARCHAR(16),
 				// Address 1
 			'phyaddr1a' => SQL__VARCHAR(30),
 			'phyaddr2a' => SQL__VARCHAR(30),
