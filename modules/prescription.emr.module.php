@@ -8,7 +8,7 @@ class PrescriptionModule extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.3";
+	var $MODULE_VERSION = "0.3.4";
 	var $MODULE_DESCRIPTION = "
 		The prescription module allows prescriptions to be written 
 		for patients from any drug in the local formulary or in the 
@@ -77,7 +77,14 @@ class PrescriptionModule extends EMRModule {
 				"q. 5h",
 				"q. 6h",
 				"q. 8h",
-				"q.d."
+				"q.d.",
+				"h.s.",
+				"q.h.s.",
+				"q.A.M.",
+				"q.P.M.",
+				"a.c.",
+				"p.c.",
+				"p.r.n."
 				)),
 			'rxsubstitute' => SQL__ENUM(array(
 				"may substitute", "may not substitute"
@@ -250,7 +257,14 @@ class PrescriptionModule extends EMRModule {
 						"q. 4h",
 						"q. 5h",
 						"q. 6h",
-						"q. 8h"
+						"q. 8h",
+						"h.s.",
+						"q.h.s.",
+						"q.A.M.",
+						"q.P.M.",
+						"a.c.",
+						"p.c.",
+						"p.r.n."
 					)
 				),
 
@@ -380,6 +394,32 @@ class PrescriptionModule extends EMRModule {
 			// Patch existing data to be unlocked
 			$sql->query('UPDATE '.$this->table_name.' SET '.
 				'locked = \'0\'');
+		}
+
+		// Version 0.3.4
+		//
+		//	Add extra intervals
+		//
+		if (!version_check($version, '0.3.4')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN rxinterval rxinterval ENUM (
+				"b.i.d.",
+				"t.i.d.",
+				"q.i.d.",
+				"q. 3h",
+				"q. 4h",
+				"q. 5h",
+				"q. 6h",
+				"q. 8h",
+				"q.d.",
+				"h.s.",
+				"q.h.s.",
+				"q.A.M.",
+				"q.P.M.",
+				"a.c.",
+				"p.c.",
+				"p.r.n."
+			)');
 		}
 	} // end function PrescriptionModule->_update
 
