@@ -164,6 +164,40 @@ class freemed {
 		return $_config["$config_var"];
 	} // end function freemed::config_value
 
+	// Function: freemed::config_user_value
+	//
+	//	Check configuration value against user database then
+	//	system configuration database.
+	//
+	// Parameters:
+	//
+	//	$key - The name of the configuration value desired.
+	//
+	// Returns:
+	//
+	//	$value - The value of the configuration key, or NULL if the
+	//	key is not found.
+	//
+	// See Also:
+	//	<freemed::config_value>
+	//
+	function config_user_value ( $key ) {
+		static $_cache;
+
+		if (!isset($_cache)) {
+			$u = CreateObject('FreeMED.User');
+			$_cache = $u->manage_config;
+		}
+
+		if (!empty($_cache[$key])) {
+			// Use user value
+			return $_cache[$key];
+		} else {
+			// Default to system-wide setting
+			return freemed::config_value($key);
+		}
+	} // end function freemed::config_user_value
+
 	// Function: freemed::connect
 	//
 	//	Master function to run authentication routines for the
@@ -2479,7 +2513,7 @@ function fm_date_assemble ($datevarname="", $array_index=-1) {
 	global ${$datevarname."_m"}, ${$datevarname."_d"}, ${$datevarname."_y"};
 
 	// Handle calendar js widget
-	if (freemed::config_value('date_widget_type') == 'js') {
+	if (freemed::config_user_value('date_widget_type') == 'js') {
 		global ${$datevarname};
 		return ${$datevarname};
 	}
@@ -2531,7 +2565,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 
 	// Quickly check to see if we have to replace the value
 	/*
-	if (empty(freemed::config_value('date_widget_type'))) {
+	if (empty(freemed::config_user_value('date_widget_type'))) {
 		$GLOBALS['sql']->query(
 			$GLOBALS['sql']->insert_query(
 				'config',
@@ -2545,7 +2579,7 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 	*/
 
 	// Check for use case to use special date widget
-	if (freemed::config_value('date_widget_type') == 'js') {
+	if (freemed::config_user_value('date_widget_type') == 'js') {
 		#static $already_js;
 		if (!$already_js) {
 			$buffer .= "<link rel=\"Stylesheet\" type=\"text/css\" href=\"lib/template/default/calendar-system.css\"></link>\n";

@@ -53,6 +53,18 @@ $USER_OPTIONS = array (
 		'freemed::printers_widget("default_printer")'
 	),
 
+	__("Date Widget") =>
+	array (
+		'var' => 'date_widget_type',
+		'widget' =>
+		'html_form::select_widget("date_widget_type", '.
+			'array ('.
+				'__("system default") => "", '.
+				'__("javascript widget") => "js", '.
+				'__("split text entry") => "split" '.
+			') )'
+	),
+
 	__("Booking Refresh") =>
 	array (
 		'var' => 'booking_refresh',
