@@ -5,8 +5,8 @@
  // lic : GPL, v2
 
   $page_name = "billing_functions.php";
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -55,7 +55,7 @@
     "<TR>
      <TD COLSPAN=2 ALIGN=CENTER>
       <CENTER>
-      <A HREF=\"patient.php3?$_auth\"
+      <A HREF=\"patient.php?$_auth\"
       >"._("Select a Patient")."</A>
       </CENTER>
      </TD>

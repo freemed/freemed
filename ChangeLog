@@ -24,6 +24,13 @@ freemed project changelog
   - moved physician_day_view.php3 -> physician_day_view.php
   - moved physician_week_view.php3 -> physician_week_view.php
   - moved freemed-mail-functions.inc -> lib/mail-functions.php
+  - moved freemed-functions.inc -> lib/API.php
+  - moved global.var.inc -> lib/freemed.php
+  - moved admin.php3 -> admin.php
+  - moved main.php3 -> main.php
+  - moved patient.php3 -> patient.php
+  - moved manage.php3 -> manage.php
+  - moved authorizations.php3 -> authorizations.php
 
 * Thu Dec 21 2000 rufustfirefly
   - more work on typeOfServiceMaintenance, now using module_maintenance.php

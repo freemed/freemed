@@ -4,7 +4,7 @@
  // lic : GPL, v2
 
   $page_name = "logout.php";
-  include ("global.var.inc");
+  include ("lib/freemed.php");
 
     // expire all of the cookies
   SetCookie("LoginCookie",      " ", time()+0);
@@ -14,7 +14,7 @@
   SetCookie("current_patient",  "0", time()+0);
 
   # Header("Location: $complete_url"); // 19990610 - header instead
-  include ("freemed-functions.inc");
+  include ("lib/API.php");
 
   if (strlen($_URL)>0) $__url_part = "?_URL=".urlencode($_URL);
   echo "

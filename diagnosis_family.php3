@@ -21,8 +21,8 @@
 
     // *** includes section ***
 
-  include ("global.var.inc");         // load global variables
-  include ("freemed-functions.inc");  // API functions
+  include ("lib/freemed.php");         // load global variables
+  include ("lib/API.php");  // API functions
 
     // *** authorizing user ***
 
@@ -90,7 +90,7 @@ switch ($action) {
     freemed_display_box_bottom (); // display the bottom of the box
     echo "
       <CENTER>
-      <A HREF=\"main.php3?$_auth\"
+      <A HREF=\"main.php?$_auth\"
        >"._("Return to the Main Menu")."</A>
       </CENTER>
     ";

@@ -6,8 +6,8 @@
  // lic : GPL, v2
 
   $page_name = "index.php3";
-  include "global.var.inc";
-  include "freemed-functions.inc";
+  include "lib/freemed.php";
+  include "lib/API.php";
 
   SetCookie ("default_facility", "0", time()-100);
 

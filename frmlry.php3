@@ -51,8 +51,8 @@
 
     // *** includes section ***
 
-  include ("global.var.inc");         // load global variables
-  include ("freemed-functions.inc");  // API functions
+  include ("lib/freemed.php");         // load global variables
+  include ("lib/API.php");  // API functions
 
     // *** setting _ref cookie ***
     // if you are going to be "chaining" out from this
@@ -201,7 +201,7 @@ if ($action=="addform") {
     freemed_display_box_bottom (); // display the bottom of the box
     echo "
       <CENTER>
-      <A HREF=\"main.php3?$_auth\"
+      <A HREF=\"main.php?$_auth\"
        >$Return_to_the_Main_Menu</A>
       </CENTER>
     ";
@@ -380,7 +380,7 @@ if ($action=="addform") {
     freemed_display_box_top ($record_name, $_ref, $page_name);
 
     if (strlen($_ref)<5) {
-      $_ref="main.php3";
+      $_ref="main.php";
     } // if no ref, then return to home page...
 
     // if you would rather have the add form built onto the view
@@ -488,7 +488,7 @@ if ($action=="addform") {
     "; // end table (fixed 19990617)
 
     if (strlen($_ref)<5) {
-      $_ref="main.php3";
+      $_ref="main.php";
     } // if no ref, then return to home page...
 
     //  if you would rather have the add form built onto the view

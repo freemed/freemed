@@ -1,6 +1,6 @@
 <?php
  // $Id$
- // note: ISO set checking, included by global.var.inc
+ // note: ISO set checking, included by lib/freemed.php
  // lic : GPL, v2
 
 if (!defined (__ISO_SET_PHP__)) {

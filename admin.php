@@ -1,13 +1,13 @@
 <?php
- // file: admin.php3
+ // $Id$
  // note: administrative functions
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  //       language support by Max Klohn (amk@span.ch)
  // lic : GPL, v2
 
  $page_name=basename($GLOBALS["REQUEST_URI"]);
- include ("global.var.inc");
- include ("freemed-functions.inc"); // include generic functions
+ include ("lib/freemed.php");
+ include ("lib/API.php"); // include generic functions
 
  SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 
@@ -25,7 +25,7 @@ if (freemed_get_userlevel($LoginCookie)<9) {
     <$HEADERFONT_E>
     <P>
     <CENTER>
-     <A HREF=\"main.php3?$_auth\"
+     <A HREF=\"main.php?$_auth\"
      ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E>
     </CENTER>
     <P>
@@ -1351,10 +1351,10 @@ if ($_userdata[0]==1)  // if we are root...
 
   echo "
     <TR><TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"main.php3?$_auth\"
+     <A HREF=\"main.php?$_auth\"
      ><IMG SRC=\"img/HandPointingLeft.gif\" BORDER=0 ALT=\"[*]\"></A>
     </TD><TD ALIGN=LEFT>
-     <A HREF=\"main.php3?$_auth\"
+     <A HREF=\"main.php?$_auth\"
      ><B><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></B></A>
     </TD></TR>
     </TABLE><$STDFONT_E>
@@ -1369,7 +1369,7 @@ echo "
   <P>
   <$STDFONT_B>
   <CENTER>
-  <A HREF=\"main.php3?$_auth\">"._("Return to the Main Menu")."</A>
+  <A HREF=\"main.php?$_auth\">"._("Return to the Main Menu")."</A>
   </CENTER>
   <$STDFONT_E>
 "; // return to main menu tab...

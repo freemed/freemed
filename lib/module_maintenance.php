@@ -7,7 +7,7 @@ if (!defined(__MODULE_MAINTENANCE_PHP__)) {
 
 define (__MODULE_MAINTENANCE_PHP__, true);
 
-include "global.var.inc";
+include "lib/freemed.php";
 
 // class freemedMaintenanceModule extends freeMedmodule
 class freemedMaintenanceModule extends freemedModule {

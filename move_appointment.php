@@ -4,8 +4,8 @@
  // lic : GPL, v2
 
   $page_name = "move_appointment.php";
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
   include ("lib/calendar-functions.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
@@ -139,7 +139,7 @@ switch ($action) {
   ";
   if ($type=="pat") {
    echo "
-    <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+    <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
     </P>
    ";
@@ -170,7 +170,7 @@ switch ($action) {
     ";
     if ($type=="pat") {
       echo "
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
+        <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
         <P>
       ";
@@ -327,7 +327,7 @@ switch ($action) {
     if ($type=="pat") {
       echo "
         <P>
-        <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+        <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
         <P>
       ";
@@ -483,7 +483,7 @@ switch ($action) {
   ";
   if ($type=="pat") {
     echo "
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     <A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
      </CENTER>
     ";

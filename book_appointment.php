@@ -4,8 +4,8 @@
  // lic : GPL, v2
 
   $page_name = "book_appointment.php";
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
   include ("freemed-calendar-functions.inc");
 
   freemed_open_db ($LoginCookie); // authenticate user
@@ -205,7 +205,7 @@ switch ($action) {
     if ($type=="pat") {
       echo "
         <P>
-        <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+        <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
         <P>
       ";
@@ -366,7 +366,7 @@ switch ($action) {
   ";
   if ($type=="pat") {
     echo "
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     <A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
      </CENTER>
     ";

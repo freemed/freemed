@@ -5,8 +5,8 @@
  // lic : GPL, v2
 
   $page_name = "call-in.php3";          // page name
-  include ("global.var.inc");           // global variables
-  include ("freemed-functions.inc");    // API calls
+  include ("lib/freemed.php");           // global variables
+  include ("lib/API.php");    // API calls
   $record_name = _("Call In");          // name of record
   $db_name = "callin";                  // database name
 
@@ -183,11 +183,11 @@ switch ($action) {
   echo " <$STDFONT_E>
     <P>
     <CENTER>
-     <A HREF=\"patient.php3?$_auth\"
+     <A HREF=\"patient.php?$_auth\"
       ><$STDFONT_B>$Patient_Menu<$STDFONT_E> |
      <A HREF=\"call-in.php3?$_auth\"
       ><$STDFONT_B>$Call_In_Menu<$STDFONT_E> |
-     <A HREF=\"main.php3?$_auth\"
+     <A HREF=\"main.php?$_auth\"
       ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E>
     </CENTER>
     <P>
@@ -223,7 +223,7 @@ switch ($action) {
     <A HREF=\"show_appointments.php?$_auth&patient=$id&type=temp&show=all\"
      ><$STDFONT_B>"._("Show All Appointments")."<$STDFONT_E></A>
     <P>
-    <A HREF=\"main.php3?$_auth\"
+    <A HREF=\"main.php?$_auth\"
      ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
     </A>
     <P>
@@ -306,7 +306,7 @@ switch ($action) {
 
      // display the convert link
     echo "
-     <A HREF=\"patient.php3?$_auth&action=addform".
+     <A HREF=\"patient.php?$_auth&action=addform".
         "&ptfname=".rawurlencode ($cifname).
         "&ptlname=".rawurlencode ($cilname).
         "&ptmname=".rawurlencode ($cimname).

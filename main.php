@@ -1,17 +1,16 @@
 <?php
- // file: main.php3
+ // $Id$
  // note: main menu module
- // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // code: jeff b (jeff@univrel.pr.uconn.edu), max k <amk@span.ch>
  // lic : GPL
- // translated by max k <amk@span.ch>
 
- $page_name="main.php3";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ $page_name="main.php";
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
    // checking for _ref tag.... (19990607) 
- if ((strlen($_ref)>0) AND ($_ref != "main.php3")) {
-   SetCookie("_ref", "main.php3", time()+$_cookie_expire);
+ if ((strlen($_ref)>0) AND ($_ref != "main.php")) {
+   SetCookie("_ref", "main.php", time()+$_cookie_expire);
       // set _ref cookie to be current menu...
  } // if there is a _ref cookie...
 
@@ -35,11 +34,11 @@ echo "
    echo "
      <TR>
      <TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"admin.php3?$_auth\"
+     <A HREF=\"admin.php?$_auth\"
       ><IMG SRC=\"img/KeysOnChain.gif\" BORDER=0
         ALT=\"\"></TD>
      <TD ALIGN=LEFT>
-     <A HREF=\"admin.php3?$_auth\"
+     <A HREF=\"admin.php?$_auth\"
       >"._("Administration Menu")."</A>
      </A>
      </TD></TR>
@@ -108,11 +107,11 @@ echo "
    echo "
     <TR> 
     <TD ALIGN=RIGHT BGCOLOR=#dddddd>
-     <A HREF=\"patient.php3?$_auth\"
+     <A HREF=\"patient.php?$_auth\"
      ><IMG SRC=\"img/HandOpen.gif\" BORDER=0 ALT=\"\"></A>
     </TD>
     <TD ALIGN=LEFT>
-    <A HREF=\"patient.php3?$_auth\"
+    <A HREF=\"patient.php?$_auth\"
      >"._("Patient Functions")."</A>
     </TD></TR>
    ";

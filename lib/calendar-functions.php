@@ -503,7 +503,7 @@ define (__CALENDAR_FUNCTIONS_PHP__, true);
       // here define the mapping
       switch ($r["caltype"]) {
        case "pat":  // actual patient
-        $mapping = "<A HREF=\"manage.php3?$_auth&id=".$r["calpatient"].
+        $mapping = "<A HREF=\"manage.php?$_auth&id=".$r["calpatient"].
                    "\">$ptname</A> [$ptdob] [$ptid] - $desc";
         break;
        case "temp": // call-in patient

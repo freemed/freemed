@@ -4,8 +4,8 @@
  // lic : GPL, v2
 
   $page_name = "show_appointments.php";
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
   include ("lib/calendar-functions.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
@@ -44,7 +44,7 @@
       case "pat": case "default":
         $qualifier .= " AND (caltype='pat')";
         $master_patient_link_location =
-          "manage.php3?$_auth&id=$patient";
+          "manage.php?$_auth&id=$patient";
         break;
     } // end switch
   } else { $qualifier = "0 = 0"; }
@@ -73,9 +73,9 @@
     ";
     } else {
      echo "
-      <CENTER><A HREF=\"main.php3?$_auth\"
+      <CENTER><A HREF=\"main.php?$_auth\"
       ><$STDFONT_B>"._("Return to Main Menu")."<$STDFONT_E></A> |
-      <A HREF=\"patient.php3?$_auth\"
+      <A HREF=\"patient.php?$_auth\"
       ><$STDFONT_B>"._("Choose a Patient")."<$STDFONT_E></A>
       </CENTER>
       <P>
@@ -134,7 +134,7 @@
                    "ptfname");
         $ptmname = freemed_get_link_field ($r["calpatient"], "patient",
                    "ptmname");
-        $patient_link_location = "manage.php3?$_auth&id=$patient";
+        $patient_link_location = "manage.php?$_auth&id=$patient";
         break;
       } // end of switch (getting proper patient info
 

@@ -8,8 +8,8 @@
  $record_name = "Manage Patient Ledger";
  $db_name     = "payrec";
 
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  freemed_open_db ($LoginCookie);
  $this_user = new User ($LoginCookie);
@@ -30,7 +30,7 @@
   <P>
   <CENTER>
    <$STDFONT_B><B>$Patient</B> : 
-    <A HREF=\"manage.php3?$_auth&id=$patient\"
+    <A HREF=\"manage.php?$_auth&id=$patient\"
     >".htmlentities($this_patient->fullName(true))."</A><BR>
     <I>(".htmlentities($physician->fullName()).")</I><$STDFONT_E>
   </CENTER>

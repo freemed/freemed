@@ -7,8 +7,8 @@
  $page_name = "cpt.php3";
  $record_name = "CPT Codes";
  $db_name = "cpt";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
 freemed_open_db ($LoginCookie);
 $this_user = new User ($LoginCookie);

@@ -3,7 +3,7 @@
  // note: redirector for /DIS, etc...
  // lic : GPL
 
- include ("freemed-functions.inc"); // API functions (19990610)
+ include ("lib/API.php"); // API functions (19990610)
 
  // then we do an if... else clause to loop through
  // any other instances, and put them here....
@@ -13,15 +13,15 @@
  // it on the tool bar.
 switch ($location) {
   case "/aicd": $redirect="icd9.php3?$_auth&action=addform"; break;
-  case "/cfg":  $redirect="admin.php3?$_auth&action=cfgform"; break;
+  case "/cfg":  $redirect="admin.php?$_auth&action=cfgform"; break;
   case "/dis":  echo "not yet"; break;
   case "/icd":  $redirect="icd9.php3?$_auth&action=view"; break;
-  case "/init": $redirect="admin.php3?$_auth&action=reinit"; break;
-  case "/npat": $redirect="patient.php3?$_auth&action=addform"; break;
+  case "/init": $redirect="admin.php?$_auth&action=reinit"; break;
+  case "/npat": $redirect="patient.php?$_auth&action=addform"; break;
   case "/nphy": $redirect="physician.php3?$_auth&action=addform"; break;
-  case "/pat":  $redirect="patient.php3?$_auth&action=view";
+  case "/pat":  $redirect="patient.php?$_auth&action=view";
   case "/phy":  $redirect="physician.php3?$_auth&action=view"; break;
-  default:      $redirect="main.php3?$_auth"; break;
+  default:      $redirect="main.php?$_auth"; break;
 }
 
   // and now the actual redirector

@@ -5,8 +5,8 @@
  // lic : GPL, v2
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
-include ("global.var.inc");
-include ("freemed-functions.inc");
+include ("lib/freemed.php");
+include ("lib/API.php");
 
 SetCookie ("_ref", $page_name, time()+$_cookie_expire);
 

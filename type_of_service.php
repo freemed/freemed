@@ -11,8 +11,8 @@
 
     // *** includes section ***
 
-  include ("global.var.inc");         // load global variables
-  include ("freemed-functions.inc");  // API functions
+  include ("lib/freemed.php");         // load global variables
+  include ("lib/API.php");  // API functions
 
     // *** authorizing user ***
 
@@ -52,7 +52,7 @@ switch($action) {
   $result = fdb_query($query);
 
   if (strlen($_ref)<5) {
-    $_ref="main.php3";
+    $_ref="main.php";
   } // if no ref, then return to home page...
 
   echo freemed_display_itemlist (

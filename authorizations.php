@@ -1,15 +1,15 @@
 <?php
- // file: authorizations.php3
+ // $Id$
  // note: patient authorizations module
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  //       adam b (gdrago23@yahoo.com)
  // lic : GPL, v2
 
  $record_name = "Authorizations";
- $page_name   = "authorizations.php3";
+ $page_name   = "authorizations.php";
  $db_name     = "authorizations";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  freemed_open_db ($LoginCookie); // authenticate
  freemed_display_html_top ();
@@ -49,7 +49,7 @@
      } // end internal action switch
      freemed_display_box_top (($action=="addform" ? _("Add") : _("Modify")).
        " "._("$record_name"), $page_name,
-       "manage.php3?id=$patient");
+       "manage.php?id=$patient");
      $pnotesdt     = $cur_date;
 
      $this_patient = new Patient ($patient);
@@ -200,7 +200,7 @@
 
    case "add":
      freemed_display_box_top (_("Adding")." "._("$record_name"), $page_name, 
-       "manage.php3?id=$patient");
+       "manage.php?id=$patient");
      echo "
        <CENTER><$STDFONT_B><B>".("Adding")." . . . </B>
      ";
@@ -230,7 +230,7 @@
      echo "
        <$STDFONT_E></CENTER>
        <BR><BR>
-       <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+       <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        <B>|</B>
        <A HREF=\"$page_name?$_auth&patient=$patient\"
@@ -262,7 +262,7 @@
      echo "
        <P>
        <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
+        <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
         <B>|</B>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
@@ -299,7 +299,7 @@
          <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
           ><$STDFONT_B>"._("Add")." "._("$record_name")."<$STDFONT_E></A>
          <B>|</B>
-         <A HREF=\"manage.php3?$_auth&id=$patient\"
+         <A HREF=\"manage.php?$_auth&id=$patient\"
           ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
          </CENTER>
          <P>
@@ -312,14 +312,14 @@
 
        // or else, display them...
      freemed_display_box_top (_($record_name),
-      "manage.php3?id=$patient");
+      "manage.php?id=$patient");
      $this_patient = new Patient ($patient);
      echo freemed_patient_box($this_patient)."
        <P>
      ".
      freemed_display_itemlist (
        $result,
-       "authorizations.php3",
+       $page_name,
        array (
          "Dates" => "authdtbegin",
 	 "<FONT COLOR=\"#000000\">_</FONT>" => 

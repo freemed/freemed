@@ -4,8 +4,8 @@
  // lic : GPL, v2
 
  $page_name = "import.php";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  freemed_open_db ($LoginCookie);
  $this_user = new User ($LoginCookie);
@@ -31,7 +31,7 @@ switch ($action) {
     <CENTER>
      <A HREF=\"$page_name?$_auth\"
      ><$STDFONT_B>"._("Import Another Database")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"admin.php3?$_auth\"
+     <A HREF=\"admin.php?$_auth\"
      ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
     </CENTER>
    <P>
@@ -94,7 +94,7 @@ switch ($action) {
     </CENTER>
     <P>
     <CENTER>
-     <A HREF=\"admin.php3?$_auth\"
+     <A HREF=\"admin.php?$_auth\"
      ><$STDFONT_B>"._("Return to Administration Menu")."<$STDFONT_E></A>
     </CENTER>
     <P>

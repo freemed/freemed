@@ -8,8 +8,8 @@
  $record_name = "Episode of Care";
  $db_name     = "eoc";
 
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  freemed_open_db ($LoginCookie);
  freemed_display_html_top ();
@@ -565,7 +565,7 @@
    echo "
      <P>
      <CENTER>
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
+      <A HREF=\"manage.php?$_auth&id=$patient\"
       ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
       <A HREF=\"$page_name?$_auth&patient=$patient\"
       ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
@@ -589,7 +589,7 @@
     <$STDFONT_E>
     <P>
     <CENTER>
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
+      <A HREF=\"manage.php?$_auth&id=$patient\"
       ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"$page_name?$_auth\"
       ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
@@ -609,7 +609,7 @@
        <$STDFONT_E>
        <P>
        <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
+        <A HREF=\"manage.php?$_auth&id=$patient\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        </CENTER>
      ";

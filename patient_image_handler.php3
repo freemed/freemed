@@ -7,8 +7,8 @@
  // obligatory initialization garbage
  $page_name = "patient_image_handler.php3";
  $db_name   = "patimg";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  // authenticate user cookie
  freemed_open_db ($LoginCookie);

@@ -7,8 +7,8 @@
  $record_name = "Patient Ledger Record";
  $db_name     = "payrec";
 
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  freemed_open_db ($LoginCookie);
  $this_user = new User ($LoginCookie);
@@ -497,7 +497,7 @@
      </CENTER>
      <P>
      <CENTER>
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
+      <A HREF=\"manage.php?$_auth&id=$patient\"
       ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
       <A HREF=\"payment_record.php?$_auth&patient=$patient\"
       ><$STDFONT_B>View Patient Ledger<$STDFONT_E></A>
@@ -528,7 +528,7 @@
     <CENTER>
      <A HREF=\"$page_name?$_auth&patient=$patient\"
      ><$STDFONT_B>"._("back")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     <A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
     <P>
@@ -559,7 +559,7 @@
        <P>
        <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
         ><$STDFONT_B>"._("Add")." "._($record_name)."<$STDFONT_E></A> <B>|</B>
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
+       <A HREF=\"manage.php?$_auth&id=$patient\"
         ><$STDFONT_B>"._("Manage_Patient")."<$STDFONT_E></A>
        <P>
       </CENTER>
@@ -758,7 +758,7 @@
     <CENTER>
      <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
      ><$STDFONT_B>"._("Add")." "._($record_name)."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     <A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
     <P>

@@ -7,8 +7,8 @@
   $page_name     = "cptmod.php3";   // for help info, later
   $record_name   = "CPT Modifiers"; // actual name of the record (english)
   $db_name       = "cptmod";
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();

@@ -5,8 +5,8 @@
  // code: jeff b <jeff@univrel.pr.uconn.edu>, max k <amk@span.ch>
 
   $page_name = "authenticate.php3" ;
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
 
   $connect = freemed_auth_login ($_u, $_p);
   if (!$connect) {
@@ -44,9 +44,9 @@
     SetCookie("default_facility", "0"  , time()+$_cookie_expire);
   }
 
-  # Header("Location: $complete_url/main.php3");
+  # Header("Location: $complete_url/main.php");
 
-  $_jump_page = "main.php3"; // by default, go to the main page
+  $_jump_page = "main.php"; // by default, go to the main page
   $_URL = ereg_replace ("$base_url/", "", $_URL);
   if (!empty($_URL)) {
     if (strpos($_URL, "?")!=false) {

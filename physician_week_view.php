@@ -4,8 +4,8 @@
  // lic : GPL, v2
 
  $page_name="physician_week_view.php";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
  include ("lib/calendar-functions.php");
 
  freemed_open_db ($LoginCookie);

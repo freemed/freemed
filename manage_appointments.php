@@ -4,8 +4,8 @@
  // lic : GPL, v2
 
  $page_name = "manage_appointments.php";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
  include ("lib/calendar-functions.php");
 
  freemed_open_db ($LoginCookie);
@@ -19,7 +19,7 @@
      "._("You must select a patient.")."
      <P>
      <CENTER>
-      <A HREF=\"patient.php3?$_auth\"
+      <A HREF=\"patient.php?$_auth\"
        ><$STDFONT_B>"._("Select a Patient")."<$STDFONT_E></A>
      </CENTER>
      <P>
@@ -42,7 +42,7 @@
     <CENTER>
      <A HREF=\"$page_name?$_auth&action=view&patient=$patient\"
      ><$STDFONT_B>"._("Manage Appointments")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     <A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
     <P>
@@ -60,7 +60,7 @@
      <CENTER>
       <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
        ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
+      <A HREF=\"manage.php?$_auth&id=$patient\"
        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
      </CENTER>
      <P>
@@ -91,7 +91,7 @@
        <CENTER>
        <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
         ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
+       <A HREF=\"manage.php?$_auth&id=$patient\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        </CENTER>
        <P>
@@ -162,7 +162,7 @@
        <CENTER>
         <A HREF=\"book_appointment.php?$_auth&patient=$patient&type=pat\"
          ><$STDFONT_B>"._("Book Appointment")."<$STDFONT_E></A> |
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
+        <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        </CENTER>
        <P>

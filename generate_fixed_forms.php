@@ -4,8 +4,8 @@
  // lic : GPL, v2
 
  $page_name = "generate_fixed_forms.php";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
  include ("lib/render_forms.php");
 
  freemed_open_db ($LoginCookie);
@@ -111,7 +111,7 @@
      $this_patient = new Patient ($current_patient);
      echo "
       <B>"._("Processing")." ".$this_patient->fullName()."
-        (<A HREF=\"manage.php3?$auth&id=$current_patient\"
+        (<A HREF=\"manage.php?$auth&id=$current_patient\"
          >".$this_patient->local_record[ptid]."</A>)</B>
       <BR>\n\n
      ";
@@ -613,7 +613,7 @@
        <INPUT TYPE=CHECKBOX NAME=\"processed$brackets\" 
         VALUE=\"".$patient_forms[$i]."\" CHECKED>
        ".$this_patient->fullName(false)."
-       (<A HREF=\"manage.php3?$_auth&id=$patient_forms[$i]\"
+       (<A HREF=\"manage.php?$_auth&id=$patient_forms[$i]\"
         >".$this_patient->local_record["ptid"]."</A>) <BR>
      ";
    } // end looping for all processed patients

@@ -6,8 +6,8 @@
  $page_name   = "procedure.php";
  $db_name     = "procrec";
  $record_name = "Procedure";
- include ("global.var.inc");
- include ("freemed-functions.inc");  // API
+ include ("lib/freemed.php");
+ include ("lib/API.php");  // API
 
  freemed_open_db ($LoginCookie);
  $this_user = new User ($LoginCookie);
@@ -24,7 +24,7 @@ if ($patient<1) {
    </CENTER>
    <P>
    <CENTER>
-    <A HREF=\"patient.php3?$_auth\"
+    <A HREF=\"patient.php?$_auth\"
     ><$STDFONT_B>"._("Select a Patient")."<$STDFONT_E></A>
    </CENTER>
    <P>
@@ -336,7 +336,7 @@ switch ($action) { // master action switch
         </CENTER>
         <P>
         <CENTER>
-         <A HREF=\"manage.php3?$_auth&id=$patient\"
+         <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
          <A HREF=\"payment_record.php?$_auth&action=addform&patient=$patient&".
          "procedure=$this_procedure\"
@@ -418,7 +418,7 @@ switch ($action) { // master action switch
       echo "
        <P>
        <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
+        <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        </CENTER>
        <P>
@@ -451,7 +451,7 @@ switch ($action) { // master action switch
     <CENTER>
      <A HREF=\"$page_name?$_auth&patient=$patient\"
      ><$STDFONT_B>"._("back")."<$STDFONT_E></A> <B>|</B>
-     <A HREF=\"manage.php3?$_auth?id=$patient\"
+     <A HREF=\"manage.php?$_auth?id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
     </CENTER>
    <P>

@@ -7,8 +7,8 @@
   $page_name="inscogroup.php3"; // for help info, later
   $db_name="inscogroup";
   $record_name="Insurance Company Groups";
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top();

@@ -6,8 +6,8 @@
 
   $page_name = "Rx.php3";
   $record_name = "Prescription";
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
 
   // note: for whoever wants to do this module -- prescription info depends
   // on drug info in a separate db, which hasn't been done yet. the display
@@ -154,7 +154,7 @@
         <CENTER>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
          ><$STDFONT_B>$Manage_Prescriptions<$STDFONT_E></A> |
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
+        <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
         </CENTER>
         <P>
@@ -174,7 +174,7 @@
         <CENTER>
          <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"
          ><$STDFONT_B>$Add $record_name<$STDFONT_E></A> |
-         <A HREF=\"manage.php3?$_auth&id=$patient\"
+         <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
         </CENTER>
         <P>
@@ -232,7 +232,7 @@
         <CENTER>
          <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"
          ><$STDFONT_B>$Add $record_name<$STDFONT_E></A> |
-         <A HREF=\"manage.php3?$_auth&id=$patient\"
+         <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
         </CENTER>
         <P>

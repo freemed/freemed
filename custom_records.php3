@@ -8,8 +8,8 @@
  $record_name = "Custom Records";
  $db_name     = "patrecdata";
 
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  freemed_open_db ($LoginCookie);
  freemed_display_html_top ();
@@ -22,7 +22,7 @@
    <B>"._("You must select a patient.")."</B>
    <P>
    <CENTER>
-    <A HREF=\"patient.php3?$_auth\"
+    <A HREF=\"patient.php?$_auth\"
      ><$STDFONT_B>"._("Select a Patient")."<$STDFONT_E></A> 
    </CENTER>
    <P>
@@ -415,7 +415,7 @@
     </CENTER><$STDFONT_E>
     <P>
     <CENTER>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     <A HREF=\"manage.php?$_auth&id=$patient\"
       ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> | 
      <A HREF=\"$page_name?$_auth&patient=$patient\"
       ><$STDFONT_B>"._("View/Modify")." "._($record_name)."<$STDFONT_E></A>
@@ -457,9 +457,9 @@
       </CENTER>
       <P>
       <CENTER>
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
+       <A HREF=\"manage.php?$_auth&id=$patient\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
-       <A HREF=\"main.php3?$_auth\"
+       <A HREF=\"main.php?$_auth\"
         ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
       </CENTER>
       <P>
@@ -517,9 +517,9 @@
     </TABLE>
     <P>
     <CENTER>
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
+     <A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> |
-     <A HREF=\"main.php3?$_auth\"
+     <A HREF=\"main.php?$_auth\"
      ><$STDFONT_B>"._("Return to the Main Menu")."<$STDFONT_E></A>
     </CENTER>
     <P>

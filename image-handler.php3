@@ -4,7 +4,7 @@
   # code: jeff b <jeff@univrel.pr.uconn.edu>
   # lic : GPL, v2
 
-  include ("global.var.inc");
+  include ("lib/freemed.php");
   $config_file = "./image.conf";
 
     // check if the configuration file exists

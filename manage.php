@@ -1,12 +1,11 @@
 <?php
- // file: manage.php3
+ // $Id$
  // note: patient management functions -- links to other modules
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-  $page_name = "manage.php3";
-  include ("global.var.inc");
-  include ("freemed-functions.inc"); // API functions
+  $page_name = "manage.php";
+  include ("lib/freemed.php");
+  include ("lib/API.php"); // API functions
 
   if ($id != $current_patient)
     SetCookie ("current_patient", $id, time()+$_cookie_expire);
@@ -35,7 +34,7 @@ switch ($action) {
         <BR><BR>
         <CENTER>
         <A HREF=
-         \"patient.php3?$_auth\"
+         \"patient.php?$_auth\"
         >"._("Select a Patient")."</A>
         </CENTER>
         <BR><BR>
@@ -66,10 +65,10 @@ switch ($action) {
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>"._("Authorizations")." : </B><$STDFONT_E>
         </TD><TD>
-        <A HREF=\"authorizations.php3?$_auth&patient=$id&action=addform\"
+        <A HREF=\"authorizations.php?$_auth&patient=$id&action=addform\"
         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
         </TD><TD>
-        <A HREF=\"authorizations.php3?$_auth&patient=$id\"
+        <A HREF=\"authorizations.php?$_auth&patient=$id\"
         ><$STDFONT_B>"._("View/Manage")."<$STDFONT_E></A>
         </TD></TR>
         <TR><TD ALIGN=RIGHT>
@@ -131,13 +130,13 @@ switch ($action) {
         echo "<$STDFONT_B>No Dependents<$STDFONT_E>";
       else
         echo "
-	 <$STDFONT_B><A HREF=\"patient.php3?$_auth&action=find&criteria=".
+	 <$STDFONT_B><A HREF=\"patient.php?$_auth&action=find&criteria=".
 	 "dependants&f1=$id\">"._("Dependents")."</A> [$num_deps]<$STDFONT_E>
         ";
       } else {
       $guarantor = new Patient ($this_patient->ptdep);
       echo "
-         <A HREF=\"manage.php3?$_auth&action=view&id=".$this_patient->ptdep."\"
+         <A HREF=\"manage.php?$_auth&action=view&id=".$this_patient->ptdep."\"
          ><$STDFONT_B>"._("Guarantor")."<$STDFONT_E></A>
 	</TD><TD><$STDFONT_B>[".$guarantor->fullName()."]<$STDFONT_E></TD></TR>
       ";
@@ -156,7 +155,7 @@ switch ($action) {
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>"._("Patient Information")."</B> : <$STDFONT_E>
         </TD><TD> 
-        <A HREF=\"patient.php3?$_auth&action=modform&id=$id\"
+        <A HREF=\"patient.php?$_auth&action=modform&id=$id\"
          ><$STDFONT_B>"._("Modify")."<$STDFONT_E></A>
         </TD><TD>&nbsp;
         </TD><TD>
@@ -212,7 +211,7 @@ switch ($action) {
         </TABLE>
 
         <CENTER>
-        <A HREF=\"patient.php3?$_auth\"
+        <A HREF=\"patient.php?$_auth\"
          ><$STDFONT_B>"._("Select Another Patient")."<$STDFONT_E></A>
         </CENTER>
         <P>

@@ -5,8 +5,8 @@
 
   $page_name="room.php"; // for help info, later
   $record_name="Room";
-  include "global.var.inc";
-  include "freemed-functions.inc"; // API functions
+  include "lib/freemed.php";
+  include "lib/API.php"; // API functions
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();

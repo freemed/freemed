@@ -10,8 +10,8 @@
   $record_name ="Provider";
   $db_name     ="physician";
 
-  include "global.var.inc";
-  include "freemed-functions.inc"; // API functions
+  include "lib/freemed.php";
+  include "lib/API.php"; // API functions
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();
@@ -344,7 +344,7 @@ switch($action) {
   );
 
   // cache this outside of the function call (can't abstract that while-loop)
-  // $brackets is defined in global.var.inc
+  // $brackets is defined in lib/freemed.php
   $cmap_buf="";
   $int_r = fdb_query("SELECT * FROM intservtype");
   while ($i_r = fdb_fetch_array ($int_r)) {

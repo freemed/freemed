@@ -6,8 +6,8 @@
 
   $page_name="degrees.php3";        // for help info, later
   $record_name="Physician Degrees"; // actual name
-  include "global.var.inc";         // global variables
-  include "freemed-functions.inc";  // API functions
+  include "lib/freemed.php";         // global variables
+  include "lib/API.php";  // API functions
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top();

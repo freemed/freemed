@@ -8,8 +8,8 @@
   $record_name   = "Patient Status";
   $db_name       = "ptstatus";
 
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
 
   freemed_open_db ($LoginCookie); // authenticate user
   freemed_display_html_top ();
@@ -58,7 +58,7 @@ switch ($action) {
     freemed_display_box_bottom ();
     echo "
       <CENTER>
-      <A HREF=\"main.php3?$_auth\"
+      <A HREF=\"main.php?$_auth\"
        >"._("back")."</A>
       </CENTER>
     ";

@@ -64,8 +64,8 @@
 
     // *** includes section ***
 
-  include ("global.var.inc") ;             // load global variables
-  include ("freemed-functions.inc") ;      // API functions
+  include ("lib/freemed.php") ;             // load global variables
+  include ("lib/API.php") ;      // API functions
 //  include ("lib/mail-functions.php") ; // Mailing functions
 
     // *** setting _ref cookie ***
@@ -308,7 +308,7 @@ if ( $mailed =="1" ) {
 
 
  echo "
-    <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+    <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
     </P>
   ";

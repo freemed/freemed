@@ -35,7 +35,7 @@ define (__LANGUAGE_LOADER_PHP__, true);
 # Note: Calculated language filename is included automatically!
 //  
 
-// This variable also may be moved to global.var.inc
+// This variable also may be moved to lib/freemed.php
 // used by selLang fxn. domain name vs language..
   $s_contry_langs= array(
 //	  "TR"=>"TR",   #  :)
@@ -55,7 +55,7 @@ define (__LANGUAGE_LOADER_PHP__, true);
 	  "PT"=>"PT"
 	 );
 	  
-  $s_lng= strtoupper($default_language); // from global.var.inc
+  $s_lng= strtoupper($default_language); // from lib/freemed.php
   
   function SelLang($lang)
   {

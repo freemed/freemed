@@ -9,8 +9,8 @@
   $record_name="User";
   $order_field="id";
 
-  include ("global.var.inc");         // load global variables
-  include ("freemed-functions.inc");  // API functions
+  include ("lib/freemed.php");         // load global variables
+  include ("lib/API.php");  // API functions
 
     // *** authorizing user ***
 
@@ -343,7 +343,7 @@ switch($action) { // master action switch
     freemed_display_box_top ("$record_name "._("Maintenance"));
 
     if (strlen($_ref)<5) {
-      $_ref="main.php3";
+      $_ref="main.php";
     } // if no ref, then return to home page...
 
     echo "
@@ -403,7 +403,7 @@ switch($action) { // master action switch
     ";
 
     if (strlen($_ref)<5) {
-      $_ref="main.php3";
+      $_ref="main.php";
     } // if no ref, then return to home page...
 
     freemed_display_box_bottom (); // display bottom of the box

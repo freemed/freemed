@@ -3,13 +3,13 @@
  // note: global variables for entire freemed code base
  // lic : GPL, v2
 
-  // This is the global.var.inc file, which keeps all
+  // This is the lib/freemed.php file, which keeps all
   // variables that the program needs to know, to
   // eliminate needless typing...
 
-if (!defined(__GLOBAL_VAR_INC__)) {
+if (!defined(__FREEMED_PHP__)) {
 
-define (__GLOBAL_VAR_INC__, true);
+define (__FREEMED_PHP__, true);
 
     // these variables you should not touch
   define (PACKAGENAME, "freemed");				// package name
@@ -141,6 +141,6 @@ define (__GLOBAL_VAR_INC__, true);
 
   // ***************************************************************
 
-} // end checking for __GLOBAL_VAR_INC__
+} // end checking for __FREEMED_PHP__
 
 ?>

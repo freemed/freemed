@@ -5,8 +5,8 @@
 
 $page_name = basename($GLOBALS["REQUEST_URI"]);
 
-include ("global.var.inc");
-include ("freemed-functions.inc");
+include ("lib/freemed.php");
+include ("lib/API.php");
 include ("lib/module.php");
 
 freemed_open_db ($LoginCookie);

@@ -7,8 +7,8 @@
   $page_name="phystatus.php3"; // for help info, later
   $record_name="Physician Status";
 
-  include "global.var.inc";
-  include "freemed-functions.inc"; // misc functions
+  include "lib/freemed.php";
+  include "lib/API.php"; // misc functions
 
   freemed_open_db ($LoginCookie); // user authentication
   freemed_display_html_top ();

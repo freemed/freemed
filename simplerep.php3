@@ -37,8 +37,8 @@
 
     // *** includes section ***
 
-  include ("global.var.inc");         // load global variables
-  include ("freemed-functions.inc");  // API functions
+  include ("lib/freemed.php");         // load global variables
+  include ("lib/API.php");  // API functions
 
     // *** setting _ref cookie ***
     // if you are going to be "chaining" out from this
@@ -68,7 +68,7 @@ if ($action=="display") {
     freemed_display_box_top ($record_name, $_ref, $page_name);
 
     if (strlen($_ref)<5) {
-      $_ref="main.php3";
+      $_ref="main.php";
     } // if no ref, then return to home page...
 
     freemed_display_actionbar($page_name, $_ref);
@@ -125,7 +125,7 @@ if ($action=="display") {
     "; // end table (fixed 19990617)
 
     if (strlen($_ref)<5) {
-      $_ref="main.php3";
+      $_ref="main.php";
     } // if no ref, then return to home page...
 
 
@@ -295,7 +295,7 @@ DIE ("");
     freemed_display_box_bottom (); // display the bottom of the box
     echo "
       <CENTER>
-      <A HREF=\"main.php3?$_auth\"
+      <A HREF=\"main.php?$_auth\"
        >$Return_to_the_Main_Menu</A>
       </CENTER>
     ";
@@ -595,7 +595,7 @@ DIE ("");
 // now we assemble a timestamp with that
   $ptdob_timestamp = mktime (0, 0, 0, $ptdob2, $ptdob3, $ptdob1); 
 
-// then set it to our format preset in global.var.inc
+// then set it to our format preset in lib/freemed.php
    $ptdob = strftime("$local_date_display", $ptdob_timestamp)     ;
 
 
@@ -820,7 +820,7 @@ echo "
   freemed_display_box_bottom ();
 
  echo "
-    <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+    <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>$Manage_Patient<$STDFONT_E></CENTER>
     </P>
   ";
@@ -1508,7 +1508,7 @@ echo "
 
 
  echo "
-    <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+    <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
      ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></CENTER>
     </P>
   ";

@@ -3,7 +3,7 @@
  // desc: form rendering functions
  // lic : GPL, v2
 
- include ("global.var.inc");
+ include ("lib/freemed.php");
  include ("freemed-functions.inc");
 
 if (!defined (__RENDER_FORMS_PHP__)) {

@@ -15,8 +15,8 @@
                                       // or "CPT Modifiers" for cptmod
   $order_field="icd9code,icdnum";
 
-  include ("global.var.inc");         // load global variables
-  include ("freemed-functions.inc");  // API functions
+  include ("lib/freemed.php");         // load global variables
+  include ("lib/API.php");  // API functions
 
     // *** authorizing user ***
 

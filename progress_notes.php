@@ -6,8 +6,8 @@
  $record_name = "Progress Notes";
  $page_name   = "progress_notes.php";
  $db_name     = "pnotes";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
 
  freemed_open_db ($LoginCookie); // authenticate
  freemed_display_html_top ();
@@ -245,7 +245,7 @@
        echo "
         </CENTER>
         <BR><BR>
-         <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+         <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
           ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
          <B>|</B>
          <A HREF=\"$page_name?$_auth&patient=$patient\"
@@ -267,7 +267,7 @@
 
    case "add":
      freemed_display_box_top (_("Adding")." "._($record_name), $page_name, 
-       "manage.php3?id=$patient");
+       "manage.php?id=$patient");
      echo "
        <$STDFONT_B><B>"._("Adding")." ... </B>
      ";
@@ -300,7 +300,7 @@
        echo " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B><$STDFONT_E>\n";
      echo "
        <BR><BR>
-       <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+       <CENTER><A HREF=\"manage.php?$_auth&id=$patient\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        <B>|</B>
        <A HREF=\"$page_name?$_auth&patient=$patient\"
@@ -340,7 +340,7 @@
        </CENTER></B>
        <P>
        <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
+        <A HREF=\"manage.php?$_auth&id=$patient\"
          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
         <B>|</B>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
@@ -361,7 +361,7 @@
          <P>
          <CENTER><A HREF=\"$page_name?$_auth&patient=$patient\"
           ><$STDFONT_B>"._("back")."<$STDFONT_E></A> |
-          <A HREF=\"manage.php3?$_auth&id=$patient\"
+          <A HREF=\"manage.php?$_auth&id=$patient\"
           ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
          </CENTER>
        ";
@@ -390,7 +390,7 @@
        <P>
        <CENTER><A HREF=\"$page_name?$_auth&patient=$pnotespat\"
         ><$STDFONT_B>"._($record_name)."<$STDFONT_E></A> |
-        <A HREF=\"manage.php3?$_auth&id=$pnotespat\"
+        <A HREF=\"manage.php?$_auth&id=$pnotespat\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> $__MODIFY__
        </CENTER>
        <P>
@@ -517,7 +517,7 @@
        <P>
        <CENTER><A HREF=\"$page_name?$_auth&patient=$pnotespat\"
         ><$STDFONT_B>"._($record_name)."<$STDFONT_E></A> |
-        <A HREF=\"manage.php3?$_auth&id=$pnotespat\"
+        <A HREF=\"manage.php?$_auth&id=$pnotespat\"
         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> $__MODIFY__
        </CENTER>
        <P>
@@ -542,7 +542,7 @@
 
      $this_patient = new Patient ($patient);
      
-     freemed_display_box_top (_($record_name), "manage.php3?id=$patient");
+     freemed_display_box_top (_($record_name), "manage.php?id=$patient");
      $this_patient = new Patient ($patient);
      echo freemed_patient_box($this_patient)."
        <P>

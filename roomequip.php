@@ -16,8 +16,8 @@
 
     // *** includes section ***
 
-  include ("global.var.inc");         // load global variables
-  include ("freemed-functions.inc");  // API functions
+  include ("lib/freemed.php");         // load global variables
+  include ("lib/API.php");  // API functions
 
     // *** authorizing user ***
 

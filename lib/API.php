@@ -1,5 +1,5 @@
 <?php
- // file: freemed-functions.inc
+ // $Id$
  // note: complete list of included functions for all modules
  //       basically to cut down on includes, and make everything
  //       a little easier
@@ -7,11 +7,10 @@
  //       max k <amk@span.ch>
  //       adam (gdrago23@yahoo.com)
  // lic : GPL, v2
- // ver : 2000-09-20
 
-if (!defined(__FREEMED_FUNCTIONS_INC__)) {
+if (!defined(__API_PHP__)) {
 
-define (__FREEMED_FUNCTIONS_INC__, true);
+define (__API_PHP__, true);
 
 // function freemed_bar_alternate_color
 function freemed_bar_alternate_color ($cur_color="")
@@ -280,7 +279,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
     $this_userlevel = freemed_get_userlevel ($LoginCookie);
 
   if (strlen($ref)<1) {
-    $ref = "main.php3";
+    $ref = "main.php";
   } // if there is no ref
 
   //if ($_pg_desc=="[HELP]") $width = "WIDTH=75%";
@@ -315,10 +314,10 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
          WIDTH=16 ALT=\"["._("back")."]\"></A
       ";
    } elseif  (($_ref == $pg_name) AND
-             ($pg_name != "main.php3")) { 
+             ($pg_name != "main.php")) { 
       // stupid ref patch, 19990701
       echo "
-         ><A HREF=\"main.php3?$_auth\"
+         ><A HREF=\"main.php?$_auth\"
          ><IMG SRC=\"img/back-widget.gif\" HEIGHT=16 BORDER=0
          WIDTH=16 ALT=\"["._("main")."]\"></A
       ";
@@ -335,7 +334,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
   if (($page_name != "index.php3") and
       ($page_name != "authenticate.php") and
       ($page_name != "logout.php") and
-      ($page_name != "main.php3") and
+      ($page_name != "main.php") and
       ($_pg_desc != "[HELP]")) {
     // display top of table
     echo "
@@ -344,16 +343,16 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      <TR BGCOLOR=\"$menubar_color\">
     ";
     if ($current_patient>0) { 
-      $p_link = "manage.php3?$_auth&id=$current_patient";
+      $p_link = "manage.php?$_auth&id=$current_patient";
     } else {
-      $p_link = "patient.php3?$_auth";
+      $p_link = "patient.php?$_auth";
     } // end creating patient link
 
     if (freemed_config_value ("gfx")=="1") {
      if ($this_userlevel>$admin_level)
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-        <A HREF=\"admin.php3?$_auth\"
+        <A HREF=\"admin.php?$_auth\"
         ><IMG SRC=\"img/KeysOnChain-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Admin Menu]\"></A>
        </TD>
@@ -409,7 +408,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
      // nothing needed for return to main menu...
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
-        <A HREF=\"main.php3?$_auth\"
+        <A HREF=\"main.php?$_auth\"
         ><IMG SRC=\"img/HandPointingLeft-mini.gif\"
         WIDTH=24 HEIGHT=24 BORDER=0 ALT=\"[Main Menu]\"></A>
        </TD>
@@ -418,7 +417,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
       if ($this_userlevel>$admin_level)
        echo "
         <TD BGCOLOR=\"$menubar_color\" ALIGN=LEFT>
-         <A HREF=\"admin.php3?$_auth\"
+         <A HREF=\"admin.php?$_auth\"
          ><$STDFONT_B SIZE=-1>Admin<$STDFONT_E></A>
         </TD>
         "; // end admin
@@ -459,7 +458,7 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
         ";
       echo "
        <TD BGCOLOR=\"$menubar_color\" ALIGN=RIGHT>
-        <A HREF=\"main.php3?$_auth\"
+        <A HREF=\"main.php?$_auth\"
         ><$STDFONT_B SIZE=-1>Main<$STDFONT_E></A>
         </TD>
        ";
@@ -483,7 +482,7 @@ function freemed_display_actionbar ($this_page_name="", $__ref="") {
   if ($this_page_name=="") $this_page_name = $page_name;
 
   if (!empty($__ref)) {
-    $_ref="main.php3";
+    $_ref="main.php";
   } // if no ref, then return to home page...
 
     // show the actual bar, build with page_name reference
@@ -1367,7 +1366,7 @@ function freemed_patient_box ($patient_object) {
     <CENTER>
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=\"100%\">
      <TR BGCOLOR=\"#000000\"><TD VALIGN=CENTER ALIGN=LEFT>
-      <A HREF=\"manage.php3?id=".urlencode($patient_object->id)."\"
+      <A HREF=\"manage.php?id=".urlencode($patient_object->id)."\"
       ><$STDFONT_B COLOR=\"#ffffff\" SIZE=\"+1\">".
        $patient_object->fullName().
       "<$STDFONT_E></A>
@@ -1569,7 +1568,7 @@ function freemed_verify_auth ($f_cookie="") {
  # FREEMED DB WRAPPERS SECTION
  #   Added 19990714 -- allows use of other databases besides MySQL by
  #   making all database access the same, specified by a variable in
- #   global.var.inc...
+ #   lib/freemed.php...
  #
  # 19990722 - Merged functions from Gianugo Rabellino's SQL
  #            Abstraction Library (SAL) from px.skylar.com
@@ -2060,6 +2059,6 @@ function fm_secure ($orig_string) {
   return $this_string;    // return cleansed string
 } // end function fm_secure
 
-} // end checking for __FREEMED_FUNCTIONS_INC__
+} // end checking for __API_PHP__
 
 ?>

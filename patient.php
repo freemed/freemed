@@ -1,15 +1,15 @@
 <?php
- // file: patient.php3
+ // $Id$
  // note: patient database functions
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  //       adam b (gdrago23@yahoo.com)
  //       some small stuff by: max k <amk@span.ch>
  // lic : GPL, v2
  
-  $page_name="patient.php3"; // for help info, later
+  $page_name="patient.php"; // for help info, later
   $record_name="Patient";    // compatibility with API functions
-  include ("global.var.inc");
-  include ("freemed-functions.inc");
+  include ("lib/freemed.php");
+  include ("lib/API.php");
   include ("lib/calendar-functions.php");
 
   SetCookie ("_ref", $page_name, time()+$_cookie_expire);
@@ -804,7 +804,7 @@ switch ($action) {
      echo "
       <$STDFONT_E>
       <P><$STDFONT_B>
-      <A HREF=\"manage.php3?$_auth&id=$id\">
+      <A HREF=\"manage.php?$_auth&id=$id\">
       "._("Manage This Patient")."
       </A><$STDFONT_E>
       
@@ -828,7 +828,7 @@ switch ($action) {
      </CENTER>
      <P>
      <CENTER>
-     <A HREF=\"patient.php3?$_auth\"
+     <A HREF=\"patient.php?$_auth\"
      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
      </CENTER>
     ";
@@ -884,7 +884,7 @@ switch ($action) {
         $page_name);
 
       if (strlen($_ref)<5) {
-        $_ref="main.php3";
+        $_ref="main.php";
       } // if no ref, then return to home page...
 
       echo freemed_display_itemlist(
@@ -915,8 +915,8 @@ switch ($action) {
   case "display":
   case "view":
     // KludgE AlerTx0r!
-    header("Location:".ereg_replace("patient.php3",
-           "manage.php3", $REQUEST_URI));
+    header("Location:".ereg_replace("patient.php",
+           "manage.php", $REQUEST_URI));
   break;
 
   default: // default action
@@ -972,7 +972,7 @@ switch ($action) {
       echo "
         <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0 ALIGN=CENTER
          VALIGN=CENTER BORDER=0><TR><TD ALIGN=CENTER><CENTER>
-	 <$STDFONT_B><A HREF=\"manage.php3?$_auth&id=$current_patient\"
+	 <$STDFONT_B><A HREF=\"manage.php?$_auth&id=$current_patient\"
          >"._("Patient")." : ".$patient->fullName(true)."</A>
 	 <$STDFONT_E>
          </CENTER></TD></TR></TABLE>
@@ -1070,7 +1070,7 @@ switch ($action) {
       <P> 
       </CENTER>
       <CENTER>
-      <A HREF=\"main.php3?$_auth\"
+      <A HREF=\"main.php?$_auth\"
       ><$STDFONT_B>"._("Return to Main Menu")."<$STDFONT_E></A>
       </CENTER>
     ";

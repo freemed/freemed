@@ -7,8 +7,8 @@
  $page_name = "manage_bills.php";
  $db_name = "procrec";
  $record_name = "Procrec";
- include ("global.var.inc");
- include ("freemed-functions.inc");
+ include ("lib/freemed.php");
+ include ("lib/API.php");
  
 
  freemed_open_db ($LoginCookie);
@@ -53,7 +53,7 @@
       			echo "
         			<TR BGCOLOR=$_alternate>
         			<TD><A HREF=
-         			\"patient.php3?$_auth&id=$id&action=display\"
+         			\"patient.php?$_auth&id=$id&action=display\"
          			>$ptlname, $ptfname</A></TD>
         			<TD><A HREF=
          			\"manage_payment_records.php3?$_auth&id=$id&patient=$id&bills=yes\"
