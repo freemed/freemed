@@ -230,7 +230,7 @@ class TeX {
 
 		// Remove intermediary step file(s)
 		unlink($tmp);
-		//unlink($tmp.'.ltx');
+		unlink($tmp.'.ltx');
 		unlink($tmp.'.log');
 		unlink($tmp.'.aux');
 
