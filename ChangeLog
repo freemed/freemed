@@ -1,13 +1,16 @@
 freemed project changelog
 ($Id$)
 
-
 * Tue Feb 20 2001 fforest
 	added unpaid_procs_report.module to the reports catagory.
     changed coverage module to enum the status and type codes as
       strings.
     changed the payment module so it can be invoked from the unpaid procs
     report to display the entire ledger for a patient.
+
+* Mon Feb 19 2001 rufustfirefly
+  - added link in reports.php back to main menu
+  - added "back" link to lib/module_maintenance.php in del method
 
 * Sat Feb 17 2001 fforest
 	Added a new patient_coverage module to eliminate the need for the patient
