@@ -36,7 +36,7 @@ class ChronicProblemsModule extends EMRModule {
 		$problems = $this_patient->local_record["ptcproblems"];
 
 		// Check to see if it's set (show listings if it is)
-		if (strlen($problems)>3) {
+		if (strlen($problems)>=3) {
 			// Form an array
 			$my_problems = sql_expand($problems);
 			if (!is_array($my_problems)) {
@@ -88,7 +88,7 @@ class ChronicProblemsModule extends EMRModule {
 			</div>
 			";
 		return $buffer;
-	} // end function ChronicProblemsModule->summary
+	} // end method summary
 
 	function summary_bar() { }
 
@@ -108,7 +108,16 @@ class ChronicProblemsModule extends EMRModule {
 		}
 
 		// Add a new member to the array
-		$my_problems[] = $problem;
+		if (strpos($problem, ',') === false) {
+			// Standard, no commas
+			$my_problems[] = $problem;
+		} else {
+			// Deal with multiples
+			$problems = explode(',', $problem);
+			foreach ($problems AS $p) {
+				$my_problems[] = trim($p);
+			}
+		}
 
 		// Remove empties
 		foreach ($my_problems AS $k => $v) {
@@ -176,6 +185,7 @@ class ChronicProblemsModule extends EMRModule {
 			array ( "ptcproblems" => $problems ),
 			array ( "id" => $patient )
 		);
+		print "query = $query<br/>\n";
 		$result = $sql->query($query);
 
 		// Check for result, etc
