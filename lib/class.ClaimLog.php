@@ -565,7 +565,7 @@ ORDER BY
 		$keys = array();
 		$_billkeys = is_array($billkeys) ? $billkeys : array($billkeys);
 		foreach ($_billkeys AS $something => $billkey) {
-			print "processing $billkey<br/>\n";
+			//print "processing $billkey<br/>\n";
 			// Get the actual bill key
 			$this_billkey = unserialize (
 				freemed::get_link_field (
@@ -574,7 +574,11 @@ ORDER BY
 					'billkey'
 				)
 			);
-			$keys = array_merge($keys, $this_billkey['procedures']);
+			//$keys = array_merge($keys, $this_billkey['procedures']);
+			foreach($this_billkey['procedures'] AS $k => $v) {
+				if (is_array($v)) { $v = $v[0]; }
+				$keys[$v] = $v;
+			}
 		}
 
 		// Create procedure set
