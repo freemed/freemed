@@ -3,6 +3,8 @@
  // desc: module prototype
  // lic : GPL, v2
 
+include_once('lib/calendar-functions.php');
+
 LoadObjectDependency('FreeMED.BaseModule');
 
 class CalendarModule extends BaseModule {
