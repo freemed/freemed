@@ -1,6 +1,71 @@
 freemed project changelog
 ($Id$)
 
+* Fri Apr 05 2002 rufustfirefly
+  - lib/API.php, lib/macros.php, user.php, lots of other files:
+    implemented user flags
+  - user.php: cleaned up some code, auto-refresh from add/mod/del
+    back to view
+  - lib/API.php: begun implementing freemed:: and EMRi::
+    namespaces and methods
+  - admin.php: moved facility and physician/provider link fields to
+    varchar(150) from int unsigned, so that they have the space to
+    become EMRi link fields
+  - modules/provider.db.module.php: removed charge map for referring
+    providers/physicians
+  - modules/cpt.db.module.php: fixed defstdfee (needed globalization)
+  - modules/episode_of_care.emr.module.php: globalized $patient in
+    episode view, so that progress notes and procedures would work
+  - lib/module_emr.php: added $this->summary_view_link true|false
+    for displaying action=display link
+  - modules/progress_notes.emr.module.php: moved to query wrappers,
+    fixed descrip not being passed in add/mod
+  - book_appointment.php: check for room.roombooking before offering
+    a room to book in the select box
+  - other files: sync with namespace change in the API
+  - modules/authorizations.emr.module.php: html_form::-ification and
+    Cancel button
+  - modules/provider_status.db.module.php: removed extra cruft
+
+* Thu Apr 04 2002 rufustfirefly
+  - lib/module_billing.php: fixed patient management return link
+  - lib/template/default/manage_main.php: custom record box accidentally
+    used $display_buffer, correctly determines last visit if today but
+    earlier today (caltime < date("H"))
+  - lib/template/default/manage_config.php: correctly handle cancel
+  - lib/calendar_functions.php: fixed mini calendar display
+  - modules/episode_of_care.emr.module.php: fixed display()
+  - patient.php: other physician 4 pulldown properly displays now,
+    more html_form::-ification
+  - lib/module_maintenance: handle "Cancel" submit action. fixed
+    list view problem of passing action after add or mod form actions
+    by forcing action="" in _add,_mod,_del
+  - modules/provider.db.module.php: moved to html_form::... set
+    proper SUBMIT button for form, removed extra link, etc
+  - modules/cpt.db.module.php: html_form::... conversions (not
+    complete!!) and added Cancel action
+  - modules/insurance_company.db.module.php: handle Cancel
+  - show_appointments.php: fixed typo in misformed table
+  - modules/progress_notes.emr.module.php: grabs physician if the
+    user *is* a physician
+  - user.php: handle "Cancel"
+  - lib/API.php, lib/macros.php, user.php: moved from userlevel to
+    user flags, same field name
+
+* Wed Apr 03 2002 rufustfirefly
+  - admin.php: removed $page_name and updated field lengths in
+    facility table, fixed cfg/cfgform to properly update, etc
+  - modules/facilities.db.module.php: moved to html_form::... for
+    some things
+  - lib/API.php: freemed_display_facilities() now displays city, state
+  - modules/episode_of_care.emr.module.php: extra eochospital field
+    taken out (paper bag froma long time ago)
+  - lib/template/default/manage.php: pass $id to $patient so that
+    summary boxes work
+  - lib/API.php: fixed freemed_config_value (typo)
+  - book_appointment.php: auto-refresh to management screen when done,
+    removed "Manage Patient" link during room selection
+
 * Wed Dec 26 2001 rufustfirefly
   - modules/*.graph.module.php: converted to $display_buffer format
     from echo (since Fred is still working with the 0.2.x tree...)
