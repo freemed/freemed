@@ -647,17 +647,17 @@ function freemed_display_itemlist ($result, $page_link,
         // the proper item is now in $xref_{k,v}
         if (strlen($xref_v)>1) {
           $is_xref=true;
-          $xref_item=freemed_get_link_field($this_result_array[$v],
+          $xref_item=freemed_get_link_field($this_result[$v],
                                                     $xref_k,$xref_v);
           $item_text = ( (strlen($xref_item)<1) ?
                          fm_prep($blank_list[$field_num]) :
                          fm_prep($xref_item) );
         }
       } // if there are any xrefs in the table
-      if (!$is_xref) { // not an xref item
-        $item_text = ( (strlen($this_result_array[$v])<1)?
+      if (!$is_xref) { // not an xref item 
+        $item_text = ( (strlen($this_result[$v])<1)?
                        fm_prep($blank_list[$field_num])  :
-                       fm_prep($this_result_array[$v]) ); 
+                       fm_prep($this_result[$v]) ); 
       }
       if ($first) {
         $first = false;
