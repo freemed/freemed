@@ -123,8 +123,8 @@ if (!function_exists("bindtextdomain"))
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
-include ("lib/error_handler.php");   // internal error handler
-include ("webtools.php");            // webtools toolkit
+include_once ("lib/error_handler.php");   // internal error handler
+include_once ("webtools.php");            // webtools toolkit
 
 define ('WEBTOOLS_REQUIRED', "0.2.3");   // version of phpwebtools required
 
@@ -133,12 +133,12 @@ if ( !defined("WEBTOOLS_VERSION") or !version_check(WEBTOOLS_VERSION, WEBTOOLS_R
 	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required for this version of freemed ".
 		"(http://phpwebtools.sourceforge.net/)\n");
 
-include ("lib/iso-set.php");         // ISO set handler
-include ("lib/API.php");             // API functions
-include ("lib/containers.php");      // class containers
-include ("lib/language-loader.php"); // external language loader
-include ("lib/macros.php");          // macros/contants
-include ("lib/xml.php");             // XML import/export routines
+include_once ("lib/iso-set.php");         // ISO set handler
+include_once ("lib/API.php");             // API functions
+include_once ("lib/containers.php");      // class containers
+include_once ("lib/language-loader.php"); // external language loader
+include_once ("lib/macros.php");          // macros/contants
+include_once ("lib/xml.php");             // XML import/export routines
 
   // ****************** INITIALIZE SQL CONNECTION ******************
 
