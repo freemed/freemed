@@ -3,7 +3,7 @@
  // note: global variables for entire freemed code base
  // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
- // mod : 2000-12-11
+ // $Id$
 
   // This is the global.var.php3 file, which keeps all
   // variables that the program needs to know, to
