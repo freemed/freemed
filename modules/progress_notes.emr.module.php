@@ -24,14 +24,36 @@ class ProgressNotes extends EMRModule {
 	var $patient_field = "pnotespat";
 
 	function ProgressNotes () {
-		// call parent constructor
-		$this->EMRModule();
+		// Table description
+		$this->table_definition = array (
+			'pnotesdt' => SQL_DATE,
+			'pnotesdtadd' => SQL_DATE,
+			'pnotesdtmod' => SQL_DATE,
+			'pnotespat' => SQL_INT_UNSIGNED(0),
+			'pnotesdescrip' => SQL_VARCHAR(100),
+			'pnotesdoc' => SQL_INT_UNSIGNED(0),
+			'pnoteseoc' => SQL_INT_UNSIGNED(0),
+			'pnotes_S' => SQL_TEXT,
+			'pnotes_O' => SQL_TEXT,
+			'pnotes_A' => SQL_TEXT,
+			'pnotes_P' => SQL_TEXT,
+			'pnotes_I' => SQL_TEXT,
+			'pnotes_E' => SQL_TEXT,
+			'pnotes_R' => SQL_TEXT,
+			'iso' => SQL_VARCHAR(15),
+			'locked' => SQL_INT_UNSIGNED(0),
+			'id' => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
+		);
+	
 		// Define variables for EMR summary
 		$this->summary_vars = array (
 			_("Date")        =>	"pnotesdt",
 			_("Description") =>	"pnotesdescrip"
 		);
-		$this->summary_options |= SUMMARY_VIEW;
+		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
+
+		// Call parent constructor
+		$this->EMRModule();
 	} // end constructor ProgressNotes
 
 	function add () { $this->form(); }
@@ -39,13 +61,12 @@ class ProgressNotes extends EMRModule {
 
 	function form () {
 		global $display_buffer, $sql, $pnoteseoc;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$book = CreateObject('PHP.notebook',
-		array ("id", "module", "patient", "action"),
-		NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
-		
+				array ("id", "module", "patient", "action", "return"),
+				NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
+
 		switch ($action) {
 			case "add": case "addform":
 			$book->set_submit_name(_("Add"));
@@ -67,7 +88,7 @@ class ProgressNotes extends EMRModule {
          $pnotesdt     = $cur_date;
          break; // end addform
         case "modform":
-         //while(list($k,$v)=each($this->variables)) { global $$v; }
+         //while(list($k,$v)=each($this->variables)) { global ${$v}; }
 
          if (($id<1) OR (strlen($id)<1)) {
            $page_title = _($this->record_name)." :: "._("ERROR");
@@ -76,17 +97,59 @@ class ProgressNotes extends EMRModule {
            ";
            template_display();
          }
-         $r = freemed::get_link_rec ($id, "pnotes");
+
+         $r = freemed::get_link_rec ($id, $this->table_name);
+
+	 if ($r['locked'] > 0) {
+		$display_buffer .= "
+		<div ALIGN=\"CENTER\">
+		"._("This record is locked, and cannot be modified.")."
+		</div>
+
+		<p/>
+		
+		<div ALIGN=\"CENTER\">
+		".
+		(($return == "manage") ?
+		"<a href=\"manage.php?id=$patient\">"._("Manage Patient")."</a>" :
+		"<a href=\"module_loader.php?module=".get_class($this)."\">".
+			_("back")."</a>" )
+		."\n</div>\n";
+		return false;
+	 }
+	 
          foreach ($r AS $k => $v) {
-           global $$k; $$k = stripslashes($v);
+           global ${$k}; ${$k} = stripslashes($v);
          }
   	 	 extract ($r);
          break; // end modform
       } // end internal switch
      } // end checking if been here
 
+	// Check for progress notes templates addon module
+	if (check_module("ProgressNotesTemplates") and ($action=='addform')) {
+		// Create picklist widget
+		$pnt_array = array (
+			_("Progress Notes Template") =>
+			module_function(
+				'ProgressNotesTemplates', 
+				'picklist', 
+				array('pnt', $book->formname)
+			)
+		);
+
+		// Check for used status
+		module_function(
+			'ProgressNotesTemplates',
+			'retrieve',
+			array('pnt')
+		);
+	} else {
+		$pnt_array = array ("" => "");
+	}
+
      // Check episode of care dependency
-     if(check_module("episodeOfCare")) {
+     if(check_module("EpisodeOfCare")) {
        // Actual piece
 	$pnoteseoc = sql_squash($pnoteseoc); // for multiple choice (HACK)
        $related_episode_array = array (
@@ -106,8 +169,10 @@ class ProgressNotes extends EMRModule {
      $book->add_page (
        _("Basic Information"),
        array ("pnotesdoc", "pnotesdescrip", "pnoteseoc", date_vars("pnotesdt")),
+       "<input TYPE=\"HIDDEN\" NAME=\"pnt_used\" VALUE=\"\"/>\n".
        html_form::form_table (
         array_merge (
+	$pnt_array,
         array (
 	 _("Provider") =>
 	   freemed_display_selectbox (
@@ -213,9 +278,13 @@ class ProgressNotes extends EMRModule {
 
 	// Handle cancel action
 	if ($book->is_cancelled()) {
-		Header("Location: ".$this->page_name."?".
-			"module=".$this->MODULE_CLASS."&".
-			"patient=".$patient);
+		if ($return=='manage') {
+			Header("Location: manage.php?id=".urlencode($patient));
+		} else {
+			Header("Location: ".$this->page_name."?".
+				"module=".$this->MODULE_CLASS."&".
+				"patient=".$patient);
+		}
 		die("");
 	}
 
@@ -225,14 +294,14 @@ class ProgressNotes extends EMRModule {
        switch ($action) {
         case "addform": case "add":
          $display_buffer .= "
-           <CENTER><B>"._("Adding")." ... </B>
+           <div ALIGN=\"CENTER\"><b>"._("Adding")." ... </b>
          ";
            // preparation of values
          $pnotesdtadd = $cur_date;
          $pnotesdtmod = $cur_date;
 
            // actual addition
-	global $patient, $__ISO_SET__, $id;
+	global $patient, $locked, $__ISO_SET__, $id;
 	$query = $sql->insert_query (
 		$this->table_name,
 		array (
@@ -250,6 +319,7 @@ class ProgressNotes extends EMRModule {
 			"pnotes_I",
 			"pnotes_E",
 			"pnotes_R",
+			"locked"         => $locked,
 			"iso"            => $__ISO_SET__
 		)
 	);
@@ -257,9 +327,9 @@ class ProgressNotes extends EMRModule {
 
 	case "modform": case "mod":
          $display_buffer .= "
-           <CENTER><B>"._("Modifying")." ... </B>
+           <div ALIGN=\"CENTER\"><b>"._("Modifying")." ... </b>
          ";
-	global $patient, $__ISO_SET__, $id;
+	global $patient, $__ISO_SET__, $locked, $id;
 	$query = $sql->update_query (
 		$this->table_name,
 		array (
@@ -276,6 +346,7 @@ class ProgressNotes extends EMRModule {
 			"pnotes_I",
 			"pnotes_E",
 			"pnotes_R",
+			"locked"         => $locked,
 			"iso"            => $__ISO_SET__
 		),
 		array ( "id" => $id )
@@ -286,28 +357,34 @@ class ProgressNotes extends EMRModule {
        $result = $sql->query ($query);
        if ($debug) $display_buffer .= "(query = '$query') ";
        if ($result)
-         $display_buffer .= " <B> "._("done").". </B>\n";
+         $display_buffer .= " <b> "._("done").". </b>\n";
        else
-         $display_buffer .= " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B>\n";
+         $display_buffer .= " <b> <font COLOR=\"#ff0000\">"._("ERROR")."</font> </b>\n";
        $display_buffer .= "
-        </CENTER>
-        <BR><BR>
-         <CENTER><A HREF=\"manage.php?id=$patient\"
-          >"._("Manage Patient")."</A>
-         <B>|</B>
-         <A HREF=\"$this->page_name?module=$module&patient=$patient\"
-          >"._($this->record_name)."</A>
+        </div>
+        <p/>
+         <div ALIGN=\"CENTER\"><a HREF=\"manage.php?id=$patient\"
+          >"._("Manage Patient")."</a>
+         <b>|</b>
+         <a HREF=\"$this->page_name?module=$module&patient=$patient\"
+          >"._($this->record_name)."</a>
 	  ";
        if ($action=="mod" OR $action=="modform")
          $display_buffer .= "
-	 <B>|</B>
-	 <A HREF=\"$this->page_name?module=$module&patient=$patient&action=view&id=$id\"
-	  >"._("View $this->record_name")."</A>
+	 <b>|</b>
+	 <a HREF=\"$this->page_name?module=$module&patient=$patient&action=view&id=$id\"
+	  >"._("View $this->record_name")."</a>
 	 ";
        $display_buffer .= "
-         </CENTER>
-         <BR>
+         </div>
+         <p/>
          ";
+
+	 // Handle returning to patient management screen after add
+	 global $refresh;
+	 if ($GLOBALS['return'] == 'manage') {
+		$refresh = 'manage.php?id='.urlencode($patient);
+	 }
      } // end if is done
 
 
@@ -323,12 +400,13 @@ class ProgressNotes extends EMRModule {
      if (($id<1) OR (strlen($id)<1)) {
        $display_buffer .= "
          "._("Specify Notes to Display")."
-         <P>
-         <CENTER><A HREF=\"$this->page_name?module=$module&patient=$patient\"
-          >"._("back")."</A> |
-          <A HREF=\"manage.php?id=$patient\"
-          >"._("Manage Patient")."</A>
-         </CENTER>
+         <p/>
+         <div ALIGN=\"CENTER\">
+	 <a HREF=\"$this->page_name?module=$module&patient=$patient\"
+          >"._("back")."</a> |
+          <a HREF=\"manage.php?id=$patient\"
+          >"._("Manage Patient")."</a>
+         </div>
        ";
        template_display();
      }
@@ -345,8 +423,8 @@ class ProgressNotes extends EMRModule {
 
      if (freemed::user_flag(USER_DATABASE))
        $__MODIFY__ = " |
-         <A HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
-          >"._("Modify")."</A>
+         <a HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
+          >"._("Modify")."</a>
        "; // add this if they have modify privledges
      $display_buffer .= "
        <P>
@@ -477,8 +555,7 @@ class ProgressNotes extends EMRModule {
 	function view () {
 		global $display_buffer;
 		global $patient, $action;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		// Check for "view" action (actually display)
 		if ($action=="view") {
@@ -503,9 +580,9 @@ class ProgressNotes extends EMRModule {
 				_("NO DESCRIPTION")
 			),
 			NULL, NULL, NULL,
-			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
+			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL | ITEMLIST_LOCK
 		);
-		$display_buffer .= "\n<P>\n";
+		$display_buffer .= "\n<p/>\n";
 	} // end function ProgressNotes->view()
 
 } // end of class ProgressNotes
