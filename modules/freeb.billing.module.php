@@ -102,8 +102,8 @@ class FreeBBillingTransport extends BillingModule {
 
 		// Get FreeB formats and information
 		$freeb = CreateObject('FreeMED.FreeB_v1');
-		$freeb_formats = $freeb->FormatList();
-		$freeb_targets = $freeb->TargetList();
+		//$freeb_formats = $freeb->FormatList();
+		//$freeb_targets = $freeb->TargetList();
 
 		// Start master form
 		$buffer .= "
@@ -225,22 +225,11 @@ class FreeBBillingTransport extends BillingModule {
 					>".__("DOS:")." ".$_record['procdt']."</a>
 					</td>
 
-					<td class=\"Data\" width=\"25%\">
-					<select name=\"format[".$c."]\">
+					<td class=\"Data\" colspan=\"2\">
+					<select name=\"media[".$c."]\">
 					";
 					// Format selection widget from FreeB server
-					foreach ($freeb_formats AS $k => $v) {
-						$buffer .= "<option value=\"".prepare($v)."\" ".( $format[$c]==$v ? 'selected' : '' ).">".prepare($v)."</option>\n";
-					}
-
-					$buffer .= "
-					</select>
-					<select name=\"target[".$c."]\">
-					";
-					// Target selection widget from FreeB server
-					foreach ($freeb_targets AS $k => $v) {
-						$buffer .= "<option value=\"".prepare($v)."\" ".( $target[$c]==$v ? 'selected' : '' ).">".prepare($v)."</option>\n";
-					}
+					$buffer .= $this->MediaWidgetOptions($media, $c);
 
 					$buffer .= "
 					</select>
@@ -287,15 +276,18 @@ class FreeBBillingTransport extends BillingModule {
 						$coverage[$c] = $curcov;
 						// These default to values used by the default
 						$this_coverage = CreateObject('FreeMED.Coverage', $curcov);
-						$format[$c] = $this_coverage->covinsco->local_record['inscodefformat'];
-						$target[$c] = $this_coverage->covinsco->local_record['inscodeftarget'];
+						$media[$c] = 'electronic';
+						//$format[$c] = $this_coverage->covinsco->local_record['inscodefformat'];
+						//$target[$c] = $this_coverage->covinsco->local_record['inscodeftarget'];
 						// Look 'em up, if not, x12/txt is the default for now
+						/*
 						if (!$format[$c]) {
 							$format[$c] = 'x12';
 						}
 						if (!$target[$c]) {
 							$target[$c] = 'txt';
 						}
+						*/
 					}
 
 					// ... and notebook-style hide their
@@ -303,8 +295,7 @@ class FreeBBillingTransport extends BillingModule {
 					$buffer .= "
 					<input type=\"hidden\" name=\"claim[".$c."]\" value=\"".prepare($claim[$c])."\" />
 					<input type=\"hidden\" name=\"claim_owner[".$c."]\" value=\"".prepare($claim_owner[$c])."\" />
-					<input type=\"hidden\" name=\"format[".$c."]\" value=\"".prepare($format[$c])."\" />
-					<input type=\"hidden\" name=\"target[".$c."]\" value=\"".prepare($target[$c])."\" />
+					<input type=\"hidden\" name=\"media[".$c."]\" value=\"".prepare($media[$c])."\" />
 					<input type=\"hidden\" name=\"coverage[".$c."]\" value=\"".prepare($coverage[$c])."\" />
 					";
 				}
@@ -381,7 +372,6 @@ class FreeBBillingTransport extends BillingModule {
 		// Make sure we don't have someone passing us bupkus
 		unset($billkey);
 
-
 		// If we're doing a single claim, handle seperately
 		if ($single != NULL) {
 			// We always pass these ...
@@ -392,6 +382,9 @@ class FreeBBillingTransport extends BillingModule {
 			// Create single array of stuff
 			$billkey['procedures'][] = $single;
 			$this_billkey = $freeb->StoreBillKey( $billkey );
+			// Get format and target from default
+			list ($my_format, $my_target) =
+				$this->MediaToFormatTarget($single, $media[$single]);
 			$result = $freeb->ProcessBill(
 				$this_billkey,
 				$format[$single],
@@ -406,9 +399,11 @@ class FreeBBillingTransport extends BillingModule {
 
 		// Create master hash to work with for all procedures, etc
 		$bill_hash = array ();
-		foreach ($claim AS $claim => $to_bill) {
+		foreach ($claim AS $my_claim => $to_bill) {
 			// First, form hash key
-			$hash_key = $format[$claim].'__'.$target[$claim];
+			list ($my_format, $my_target) =
+				$this->MediaToFormatTarget($my_claim, $media[$single]);
+			$hash_key = $my_format.'__'.$my_target;
 			print "hash key = $hash_key<br/>\n";
 
 			// Only process if the claim is to be billed
@@ -416,11 +411,11 @@ class FreeBBillingTransport extends BillingModule {
 				// And the patient is supposed to be billed
 		//TODO Jeff, this check does not belong here. It should not display a claim that is 
 		// not set to be billed in the interface.
-		//	if ($bill[$claim_owner[$claim]] == 1) {
+			//	if ($bill[$claim_owner[$my_claim]] == 1) {
 					// Add the procedure to that hash
 					$bill_hash[$hash_key]['procedures'][] = $claim;
-		//	}
-			}
+				}
+			//}
 		}
 
 		// Once we have created these hashes, we loop through the list
@@ -466,6 +461,39 @@ class FreeBBillingTransport extends BillingModule {
 	//--------------------------------------------------------------------
 	// Helper and other internal functions
 	//--------------------------------------------------------------------
+
+	function MediaToFormatTarget ( $claim, $media ) {
+		global $coverage;
+		$this_coverage = CreateObject('FreeMED.Coverage', $coverage[$claim]);
+		switch ($media) {
+			case 'paper':
+			$format = $this_coverage->covinsco->local_record['inscodefformat'];
+			$target = $this_coverage->covinsco->local_record['inscodeftarget'];
+			break;
+
+			case 'electronic': default:
+			$format = $this_coverage->covinsco->local_record['inscodefformate'];
+			$target = $this_coverage->covinsco->local_record['inscodeftargete'];
+			break;
+		}
+		return array ($format, $target);
+	}
+
+	function MediaWidgetOptions ( $media, $index ) {
+		global $coverage;
+		$this_coverage = CreateObject('FreeMED.Coverage', $coverage[$index]);
+		$l = $this_coverage->covinsco->local_record;
+		return "<option value=\"electronic\" ".
+			( ( $media[$index] == 'electronic' ) ? 'SELECTED' : '' ).
+			">".__("Electronic")." - ".
+			$l['inscodefformate'].'/'.$l['inscodeftargete'].
+			"</option>\n".
+			"<option value=\"paper\" ".
+			( ( $media[$index] == 'paper' ) ? 'SELECTED' : '' ).
+			">".__("Paper")." - ".
+			$l['inscodefformat'].'/'.$l['inscodeftarget'].
+			"</option>\n";
+	}
 
 	function PatientCoverages ( $claim, $default_coverage ) {
 		// Get all patient coverages associated with a procedure
