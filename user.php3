@@ -52,7 +52,7 @@ switch($action) { // master action switch
  case "add":
  case "modform":
  case "addform":
-  $book = new notebook($page_name, 
+  $book = new notebook( 
     array ("action", "_auth", "id", "been_here"), true);
   
   if ($action=="modform") {
@@ -256,7 +256,7 @@ switch($action) { // master action switch
       $userphygrp_s = join (":", $userphygrp);
      else $userphygrp_s = $userphygrp;
    */
-    if ($action=="mod") {
+    if ($action=="mod" || $action=="modform") {
       echo "
         <P ALIGN=CENTER>
         <$STDFONT_B>"._("Modifying")." . . . 
