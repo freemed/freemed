@@ -422,7 +422,7 @@ class EMRModule extends BaseModule {
 			if ($this->locked($id)) return false;
 		}
 
-		$query = "DELETE FROM $this->table_name ".
+		$query = "DELETE FROM ".$this->table_name." ".
 			"WHERE id = '".prepare($id)."'";
 		$result = $sql->query ($query);
 		if ($result) {
@@ -690,20 +690,20 @@ class EMRModule extends BaseModule {
 					$first = false;
 				} // end looping through summary vars
 				$buffer .= "
-				<td VALIGN=\"MIDDLE\">
-				".( ((!$r['locked'] > 0) or freemed::lock_override()) ?
-				template::summary_modify_link($this,
+				<td VALIGN=\"MIDDLE\">".
+				( ((!$r['locked'] > 0) or freemed::lock_override()) ?
+				"\n".template::summary_modify_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
 				"action=modform&id=".$r['id']."&return=manage") : "" ).
 				// Delete option
 				( (((!$r['locked'] > 0) or freemed::lock_override()) and ($this->summary_options & SUMMARY_DELETE)) ?
-				template::summary_delete_link($this,
+				"\n".template::summary_delete_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
 				"action=del&id=".$r['id']."&return=manage") : "" ).
-				"\n".( ($this->summary_options & SUMMARY_VIEW) ?
-				template::summary_view_link($this,
+				( ($this->summary_options & SUMMARY_VIEW) ?
+				"\n".template::summary_view_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
 				"action=display&id=".$r['id']."&return=manage",
@@ -711,9 +711,9 @@ class EMRModule extends BaseModule {
 
 				// "Lock" link for quick locking from the menu
 				
-				"\n".( (($this->summary_options & SUMMARY_LOCK) and
+				( (($this->summary_options & SUMMARY_LOCK) and
 				!($r['locked'] > 0)) ?
-				template::summary_lock_link($this,
+				"\n".template::summary_lock_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
 				"action=lock&id=".$r['id']."&return=manage") : "" ).
@@ -721,20 +721,20 @@ class EMRModule extends BaseModule {
 				// Process a "locked" link, which does nothing other
 				// than display that the record is locked
 				
-				"\n".( (($this->summary_options & SUMMARY_LOCK) and
+				( (($this->summary_options & SUMMARY_LOCK) and
 				($r['locked'] > 0)) ?
-				template::summary_locked_link($this) : "" ).
+				"\n".template::summary_locked_link($this) : "" ).
 
 				// Printing stuff
-				"\n".( ($this->summary_options & SUMMARY_PRINT) ?
-				template::summary_print_link($this,
+				( ($this->summary_options & SUMMARY_PRINT) ?
+				"\n".template::summary_print_link($this,
 				"module_loader.php?module=".
 				get_class($this)."&patient=$patient&".
 				"action=print&id=".$r['id']) : "" ).
 
 				// Annotations
 				( !($this->summary_options & SUMMARY_NOANNOTATE) ?
-				template::summary_annotate_link($this,
+				"\n".template::summary_annotate_link($this,
 				"module_loader.php?module=annotations&".
 				"atable=".$this->table_name."&".
 				"amodule=".get_class($this)."&".
