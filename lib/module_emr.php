@@ -47,7 +47,7 @@ class freemedEMRModule extends freemedModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $patient, $submit;
+		global $action, $patient, $submit, $return;
 
 		if (!isset($this->this_patient))
 			$this->this_patient = new Patient ($patient);
@@ -59,9 +59,14 @@ class freemedEMRModule extends freemedModule {
 
 		// Handle cancel action from submit
 		if ($submit==_("Cancel")) {
+			if ($return=="manage") {
+			Header("Location: manage.php?".
+				"id=".urlencode($patient));
+			} else {
 			Header("Location: ".$this->page_name.
 				"?module=".urlencode($this->MODULE_CLASS).
 				"&patient=".urlencode($patient));
+			}
 			die("");
 		}
 
