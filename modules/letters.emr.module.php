@@ -9,7 +9,7 @@ class LettersModule extends EMRModule {
 
 	var $MODULE_NAME    = "Letters";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.1";
+	var $MODULE_VERSION = "0.3.2";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -24,7 +24,8 @@ class LettersModule extends EMRModule {
 			__("Date") => "letterdt",
 			__("To")   => "letterto:physician"
 		);
-		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW;
+		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW
+			| SUMMARY_PRINT | SUMMARY_LOCK;
 
 		// For display action, disable patient box for print
 		// but only if we're the correct module
@@ -41,7 +42,32 @@ class LettersModule extends EMRModule {
 			"letterfrom",
 			"letterto",
 			"lettertext",
-			"letterpatient" => $patient
+			"letterpatient" => $patient,
+			"locked" => '0' // needed for when it is added
+		);
+
+		// Print format
+		$this->print_format = array (
+			array (
+				'title' => __("Date"),
+				'content' => 'letterdt',
+				'type' => 'short'
+			),
+			array (
+				'title' => __("From"),
+				'content' => '##letterfrom:phylname@physician##, ##letterfrom:phyfname@physician##',
+				'type' => 'short'
+			),
+			array (
+				'title' => __("To"),
+				'content' => '##letterfrom:phylname@physician##, ##letterfrom:phyfname@physician##',
+				'type' => 'short'
+			),
+			array (
+				'title' => '',
+				'content' => 'lettertext',
+				'type' => 'long'
+			)
 		);
 
 		// Table definition
@@ -53,6 +79,7 @@ class LettersModule extends EMRModule {
 			"lettertext" => SQL__TEXT,
 			"lettersent" => SQL__INT_UNSIGNED(0),
 			"letterpatient" => SQL__INT_UNSIGNED(0),
+			"locked" => SQL__INT_UNSIGNED(0),
 			"id" => SQL__SERIAL
 		);
 
@@ -331,7 +358,8 @@ class LettersModule extends EMRModule {
 				// key/value pairs, and it cannot have a
 				// duplicate key without being *very* funny.
 				"physician " => "phylname"
-			)
+			), NULL, NULL, 
+			ITEMLIST_LOCK | ITEMLIST_MOD | ITEMLIST_DEL
 		);
 	} // end function LettersModule->view()
 
@@ -343,6 +371,16 @@ class LettersModule extends EMRModule {
 		if (!version_check($version, '0.3.1')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				 'ADD COLUMN lettereoc TEXT AFTER letterdt');
+		}
+		// Version 0.3.2
+		//
+		//	Added locking ability to letters module
+		if (!version_check($version, '0.3.2')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN locked INT UNSIGNED AFTER letterpatient');
+			// Make sure they are all starting with 0
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'locked = \'0\'');
 		}
 	} // end method _update
 
