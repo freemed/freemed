@@ -23,6 +23,7 @@ class ScannedDocuments extends EMRModule {
 	var $table_name    = "images";
 	var $patient_field = "imagepat";
 	var $order_by      = "imagedt";
+	var $widget_hash   = "##imagecat## [##imagedt##] ##imagedesc##";
 
 	function ScannedDocuments () {
 		// Get browser information
@@ -36,7 +37,7 @@ class ScannedDocuments extends EMRModule {
 			__("Category")	  =>	"imagecat",
 			__("Description") =>	"imagedesc"
 		);
-		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK;
+		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_DELETE;
 
 		// Define table
 		$this->table_definition = array (
@@ -383,6 +384,31 @@ class ScannedDocuments extends EMRModule {
 		);
 		$display_buffer .= "\n<p/>\n";
 	} // end function ScannedDocuments->view()
+
+	function additional_move ( $id, $from, $to ) {
+		$orig = freemed::image_filename($from, $id, 'djvu');
+		$new = freemed::image_filename($to, $id, 'djvu');
+		$q = $GLOBALS['sql']->update_query(
+			$this->table_name,
+			array ( 'imagefilename' => $new ),
+			array ( 'id' => $id )
+		);
+
+		syslog(LOG_INFO, "Scanned Documents| moved $orig to $new");
+
+		$result = $GLOBALS['sql']->query($q);
+		//if (!$result) { return false; }
+
+		$result = rename ( $orig, $new );
+		$dir = dirname($new);
+		`mkdir -p "$dir"`;
+		`mv "$orig" "$new"`;
+		//print "mv \"$orig\" \"$new\"<br/>\n";
+		//print "orig = $orig, new = $new<br/>\n";
+		//if (!$result) { return false; }
+
+		return true;
+	} // end method additional_move
 
 	function prepare_tc_widget ( $varname, $id ) {
 		global ${$varname};
