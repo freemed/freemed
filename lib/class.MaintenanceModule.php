@@ -89,10 +89,10 @@ class MaintenanceModule extends BaseModule {
 		// if there's a message, display it
 		if (isset($this->message)) {
 			$display_buffer .= "
-			<P>
-			<CENTER>
-			<B>".prepare($this->message)."</B>
-			</CENTER>
+			<p/>
+			<div ALIGN=\"CENTER\">
+			<b>".prepare($this->message)."</b>
+			</div>
 			";
 		}
 	} // end display message
@@ -103,11 +103,10 @@ class MaintenanceModule extends BaseModule {
 	// - addition routine (can be overridden if need be)
 	function _add () {
 		global $display_buffer, $action;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-		$result = $sql->query (
-			$sql->insert_query (
+		$result = $GLOBALS['sql']->query (
+			$GLOBALS['sql']->insert_query (
 				$this->table_name,
 				$this->variables
 			)
@@ -124,10 +123,10 @@ class MaintenanceModule extends BaseModule {
 	// - only override this if you *really* have something weird to do
 	function _del () {
 		global $display_buffer;
-		global $id, $sql, $module, $action;
+		global $id, $module, $action;
 		$query = "DELETE FROM $this->table_name ".
 			"WHERE id = '".prepare($id)."'";
-		$result = $sql->query ($query);
+		$result = $GLOBALS['sql']->query ($query);
 		if ($result) $this->message = _("Record deleted successfully.");
 			else $this->message = _("Record deletion failed.");
 		$action = "";
@@ -139,11 +138,10 @@ class MaintenanceModule extends BaseModule {
 	// - modification routine (override if neccessary)
 	function _mod () {
 		global $display_buffer, $action;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-		$result = $sql->query (
-			$sql->update_query (
+		$result = $GLOBALS['sql']->query (
+			$GLOBALS['sql']->update_query (
 				$this->table_name,
 				$this->variables,
 				array (
@@ -171,8 +169,7 @@ class MaintenanceModule extends BaseModule {
 		global $action, $id, $sql;
 
 		if (is_array($this->form_vars)) {
-			reset ($this->form_vars);
-			while (list ($k, $v) = each ($this->form_vars)) global $$v;
+			foreach ($this->form_vars AS $k => $v) { global ${$v}; }
 		} // end if is array
 
 		switch ($action) {
@@ -193,11 +190,13 @@ class MaintenanceModule extends BaseModule {
 	// - view stub
 	function view () {
 		global $display_buffer;
-		global $sql;
-		$result = $sql->query ("SELECT ".$this->order_fields." FROM ".
-			$this->table_name." ORDER BY ".$this->order_fields);
 		$display_buffer .= freemed_display_itemlist (
-			$result,
+			$GLOBALS['sql']->query (
+				"SELECT ".$this->order_fields." ".
+				"FROM ".$this->table_name." ".
+				freemed::itemlist_conditions()." ".
+				"ORDER BY ".$this->order_fields
+			),
 			"module_loader.php",
 			$this->form_vars,
 			array ("", _("NO DESCRIPTION")),
@@ -218,11 +217,15 @@ class MaintenanceModule extends BaseModule {
 	function create_table () {
 		global $display_buffer;
 		if (!isset($this->table_definition)) return false;
-		$query = $sql->create_table_query(
+		$query = $GLOBALS['sql']->create_table_query(
 			$this->table_name,
-			$this->table_definition
+			$this->table_definition,
+			( is_array($this->table_keys) ?
+				array_merge(array("id"), $this->table_keys) :
+				array("id")
+			)
 		);
-		$result = $sql->query ($query);
+		$result = $GLOBALS['sql']->query ($query);
 		return !empty($result);
 	} // end function create_table
 
