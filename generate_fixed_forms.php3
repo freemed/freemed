@@ -456,7 +456,7 @@
     <CENTER>
      <SELECT NAME=\"type\">
       <OPTION VALUE=\"\">Render to Screen
-      <OPTION VALUE=\"file/text\">Render to File
+      <OPTION VALUE=\"application/x-rendered-text\">Render to File
      </SELECT>
      <INPUT TYPE=SUBMIT VALUE=\"Get HCFA Rendered Text File\">
     </CENTER>
