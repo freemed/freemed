@@ -9,7 +9,7 @@ class ChronicProblemsModule extends EMRModule {
 
 	var $MODULE_NAME = "Chronic Problems";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.1.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
@@ -45,29 +45,29 @@ class ChronicProblemsModule extends EMRModule {
 
 			// Show menu bar
 			$buffer .= "
-			<TABLE BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
+			<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 			"CELLPADDING=\"2\">
-			<TR CLASS=\"menubar_info\">
-			<TD>".__("Problem")."</TD>
-			<TD>".__("Action")."</TD>
-			</TR>
+			<tr CLASS=\"menubar_info\">
+			<td><b>".__("Problem")."</b></td>
+			<td><b>".__("Action")."</b></td>
+			</tr>
 			";
 
 			// Loop thru and display problems
 			foreach ($my_problems AS $k => $v) {
 				$buffer .= "
-				<TR>
-				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
-				<TD ALIGN=\"LEFT\">".
+				<tr>
+				<td ALIGN=\"LEFT\"><small>".prepare($v)."</small></td>
+				<td ALIGN=\"LEFT\">".
 				template::summary_delete_link($this,
 				"module_loader.php?module=ChronicProblemsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
-				"</TD></TR>
+				"</td></tr>
 				";
 			} // end looping thru problems
 
 			// End table
 			$buffer .= "
-			</TABLE>
+			</table>
 			";
 		}
 
