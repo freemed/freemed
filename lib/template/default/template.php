@@ -42,14 +42,12 @@ if (isset($refresh)) {
  ALINK="#000000" VLINK="#000000" LINK="#000000"
  MARGINWIDTH="0" MARGINHEIGHT="0" LEFTMARGIN="0" RIGHTMARGIN="0"
  <?php
- /*
 	// Check for close_on_load
 	if ($GLOBALS['__freemed']['close_on_load']) {
 		print "onLoad=\"window.close(); return true;\"";
 	} elseif (!empty($GLOBALS['__freemed']['on_load'])) {
-		print "onLoad=\"".$on_load."(); return true;\"";
+		print " onLoad=\"".$GLOBALS['__freemed']['on_load']."(); return true;\"";
 	}
-*/
  ?>>
 
 <!-- define main table -->
@@ -166,7 +164,14 @@ if (is_object($this_user)) {
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
 		"HREF=\"lib/template/default/stylesheet.css\"/>\n".
 		"</head>\n".
-		"<body>\n";
+		"<body";
+	// Check for close_on_load
+	if ($GLOBALS['__freemed']['close_on_load']) {
+		print " onLoad=\"window.close(); return true;\"";
+	} elseif (!empty($GLOBALS['__freemed']['on_load'])) {
+		print " onLoad=\"".$GLOBALS['__freemed']['on_load']."(); return true;\"";
+	}
+	print ">\n";
 	print $display_buffer;
 	print "</body>\n".
 		"</html>\n";
