@@ -25,7 +25,7 @@ a:hover {
 	border: thick black;
 	border-width: thick;
 	border-style: solid;
-	background: #bbbbff 
+	background: #ccccff 
 }
 
 /* Thin box for patient management */
@@ -33,7 +33,8 @@ a:hover {
 	border: thin grey;
 	border-width: thin;
 	border-style: solid;
-	background: #c3c3ff 
+	overflow: scroll;
+	background: #d9d9ff 
 }
 
 .menubar {
@@ -44,7 +45,7 @@ a:hover {
 /* Title portion of menubar */
 .menubar_title {
 	border-width: none;
-	background: #aaaaff
+	background: #9999ff
 }
 
 /* Information portion of menubar */
@@ -56,7 +57,7 @@ a:hover {
 
 .menubar_items {
 	border-width: none;
-	background: #ddddff;
+	background: #b8b8ff;
 	font-size: 8pt
 }
 
