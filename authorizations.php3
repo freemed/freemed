@@ -16,10 +16,9 @@
  freemed_display_banner ();
 
  if ($patient<1) {
-   freemed_display_box_top ("$record_name $Module :: $ERROR",
-                            $page_name, $_ref);
+   freemed_display_box_top ("$record_name $Module :: "._("ERROR"));
    echo "
-     <$HEADERFONT_B>You must specify a patient!<$HEADERFONT_E>
+     <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
    ";
    freemed_display_box_bottom ();
    freemed_close_db ();
@@ -32,36 +31,25 @@
    case "modform":
      switch ($action) { // internal action switch
       case "addform":
-       $this_action = "$Add";
-       $next_action = "add";
+       // do nothing
        break; // end internal addform
       case "modform":
-       $this_action = "$Modify";
-       $next_action = "mod";
-
        if (($patient<1) OR (empty($patient))) {
-         freemed_display_box_top ("$record_name :: $ERROR", $page_name, 
-           "$page_name?patient=$patient");
+         freemed_display_box_top (_("$record_name")." :: "._("ERROR"),
+	   $page_name, "$page_name?patient=$patient");
          echo "
-           <$HEADERFONT_B>You must call this with a patient!<$HEADERFONT_E>
+           <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
          ";
          freemed_display_box_bottom ();
          DIE("");
        }
-       $r                 = freemed_get_link_rec ($id, $db_name);
-       $authdtbegin       = $r[authdtbegin];
-       $authdtend         = $r[authdtend];
-       $authtype          = $r[authtype];
-       $authnum           = $r[authnum];
-       $authprov          = $r[authprov];
-       $authprovid        = $r[authprovid];
-       $authinsco         = $r[authinsco]; 
-       $authvisits        = $r[authvisits];
-       $authcomment       = $r[authcomment];
+       $r = freemed_get_link_rec ($id, $db_name);
+       extract ($r);
        break; // end internal modform
      } // end internal action switch
-     freemed_display_box_top ("$this_action $record_name", $page_name,
-      "manage.php3?id=$patient");
+     freemed_display_box_top (($action=="addform" ? _("Add") : _("Modify")).
+       " "._("$record_name"), $page_name,
+       "manage.php3?id=$patient");
      $pnotesdt     = $cur_date;
 
      $this_patient = new Patient ($patient);
@@ -73,48 +61,45 @@
        <P>
 
        <FORM ACTION=\"$page_name\" METHOD=POST>
-       <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"$next_action\">
-       <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"$id\">
-       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
+       <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".
+         ( ($action=="addform") ? "add" : "mod" )."\">
+       <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"".prepare($id)."\">
+       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
 
        <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
         VALIGN=MIDDLE ALIGN=CENTER>
         
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Starting Date : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Starting Date")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
-     ";
-     fm_date_entry("authdtbegin");
-     echo "
+         ".fm_date_entry("authdtbegin")."
         </TD>
        </TR>
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Ending Date : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Ending Date")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
-     ";
-     fm_date_entry("authdtend");
-     echo "
+         ".fm_date_entry("authdtend")."
         </TD>
        </TR>
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Authorization Number : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Authorization Number")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
          <INPUT TYPE=TEXT NAME=\"authnum\" SIZE=30
-          MAXLENGTH=25 VALUE=\"".fm_prep($authnum)."\">
+          MAXLENGTH=25 VALUE=\"".prepare($authnum)."\">
         </TD>
        </TR>
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Authorization Type : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Authorization Type")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
          <SELECT NAME=\"authtype\">
@@ -146,7 +131,7 @@
      echo "
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Authorizing Provider : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Authorizing Provider")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
      ".
@@ -157,18 +142,18 @@
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Physician Identifier : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Provider Identifier")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
          <INPUT TYPE=TEXT NAME=\"authprovid\" SIZE=20 MAXLENGTH=15
-          VALUE=\"".fm_prep($authprovid)."\">
+          VALUE=\"".prepare($authprovid)."\">
          </SELECT>
         </TD>
        </TR>
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Authorizing Insurance Company : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Authorizing Insurance Company")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
      ".
@@ -180,7 +165,7 @@
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Number of Visits : <$STDFONT_E>
+         <$STDFONT_B>"._("Number of Visits")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
      ";
@@ -191,35 +176,38 @@
 
        <TR>
         <TD ALIGN=RIGHT>
-         <$STDFONT_B>Comment : <$STDFONT_E><BR>
+         <$STDFONT_B>"._("Comment")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
          <INPUT TYPE=TEXT NAME=\"authcomment\" SIZE=30 MAXLENGTH=100
-          VALUE=\"".fm_prep($authcomment)."\">
+          VALUE=\"".prepare($authcomment)."\">
         </TD>
        </TR>
  
        </TABLE>
 
        <CENTER>
-       <INPUT TYPE=SUBMIT VALUE=\"  $this_action  \">
-       <INPUT TYPE=RESET  VALUE=\" $Clear \">
+       <INPUT TYPE=SUBMIT VALUE=\"  ".
+         ( ($action=="addform" ? _("Add") : _("Modify"))."  \">
+       <INPUT TYPE=RESET  VALUE=\" "._("Clear")." \">
        </CENTER>
        </FORM>
 
        <CENTER>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
-         ><$STDFONT_B>Abort $this_action<$STDFONT_E></A>
+         ><$STDFONT_B>". 
+	  ( ($action="addform") ? _("Abandon Addition") :
+	    _("Abandon Modification"))."<$STDFONT_E></A>
        </CENTER>
      ";
      freemed_display_box_bottom ();
      break;
 
    case "add":
-     freemed_display_box_top ("$Adding $record_name", $page_name, 
+     freemed_display_box_top (_("Adding")." "._("$record_name"), $page_name, 
        "manage.php3?id=$patient");
      echo "
-       <CENTER><$STDFONT_B><B>$Adding . . . </B>
+       <CENTER><$STDFONT_B><B>".("Adding")." . . . </B>
      ";
 
        // actual addition
@@ -240,18 +228,18 @@
        '".addslashes($authcomment)         ."',
        NULL ) "; // actual add query
      $result = fdb_query ($query);
-     if ($debug1) echo "(query = '$query') ";
      if ($result)
-       echo " <B> $Done. </B><$STDFONT_E></CENTER>\n";
+       echo " <B> "._("done")." </B>\n";
      else
-       echo " <B> <FONT COLOR=#ff0000>$ERROR</FONT> </B><$STDFONT_E></CENTER>\n";
+       echo " <B> <FONT COLOR=\"#ff0000\">"._("ERROR")."</FONT> </B>\n";
      echo "
+       <$STDFONT_E></CENTER>
        <BR><BR>
        <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Manage_Patient")."<$STDFONT_E></A>
        <B>|</B>
        <A HREF=\"$page_name?$_auth&patient=$patient\"
-        ><$STDFONT_B>$record_name<$STDFONT_E></A>
+        ><$STDFONT_B>"._("$record_name")."<$STDFONT_E></A>
        </CENTER>
        <BR>
      ";
@@ -259,8 +247,8 @@
      break;
 
    case "mod":
-     freemed_display_box_top ("$Modifying $record_name", $_ref, $_ref);
-     echo "<B><$STDFONT_B>$Modifying . . . <$STDFONT_E></B>\n";
+     freemed_display_box_top (_("Modifying")." "._("$record_name"))
+     echo "<B><$STDFONT_B>"._("Modifying")." . . . <$STDFONT_E></B>\n";
      $query = "UPDATE $db_name SET
        authdtmod      = '$cur_date',
        authdtbegin    = '".fm_date_assemble("authdtbegin")."',
@@ -274,20 +262,19 @@
        authcomment    = '".addslashes($authcomment)       ."'
        WHERE id='$id'";
      $result = fdb_query ($query);
-     if ($debug==1) echo "query = \"$query\", result = \"$result\"<BR>\n";
-     if ($result) echo "<B><$STDFONT_B>$Done.<$STDFONT_E></B>\n";
-      else echo "<B><$STDFONT_B>$FAILED<$STDFONT_E></B>\n";
+     if ($result) echo "<B><$STDFONT_B>"._("done")."<$STDFONT_E></B>\n";
+      else echo "<B><$STDFONT_B>"._("ERROR")."<$STDFONT_E></B>\n";
      echo "
        <P>
        <CENTER>
         <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+         ><$STDFONT_B>"_("Manage Patient")."<$STDFONT_E></A>
         <B>|</B>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
-         ><$STDFONT_B>$View_Modify $record_name<$STDFONT_E></A>
+         ><$STDFONT_B>"_("View/Modify")." "._("$record_name")."<$STDFONT_E></A>
         <BR>
         <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"
-         ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Add")." "._("$record_name")."<$STDFONT_E></A>
        </CENTER>
      ";
      freemed_display_box_bottom ();
@@ -297,7 +284,8 @@
      // in case of emergency, break glass -- default shows all things from
      // specified patient...
 
-     $query = "SELECT * FROM $db_name WHERE (authpatient='$patient')
+     $query = "SELECT * FROM $db_name
+        WHERE (authpatient='".addslashes($patient)."')
         ORDER BY authdtbegin,authdtend";
      $result = fdb_query ($query);
      $rows = ( ($result > 0) ? fdb_num_rows ($result) : 0 );
@@ -305,27 +293,27 @@
      $this_patient = new Patient ($patient);
      
      if ($rows < 1) {
-       freemed_display_box_top ("$record_name", $page_name, $_ref);
+       freemed_display_box_top (_("$record_name"));
        echo "
          <P>
          <CENTER>
           <$STDFONT_B>
-          $Patient :
+          "._("Patient")." :
            <A HREF=\"manage.php3?$_auth&id=$patient\"
             >".$this_patient->fullName(true)."</A>
           <$STDFONT_E>
          </CENTER>
          <P>
          <CENTER>
-         <$STDFONT_B>This patient has no authorizations.<$STDFONT_E>
+         <$STDFONT_B>"._("This patient has no authorizations.")."<$STDFONT_E>
          </CENTER>
          <P>
          <CENTER>
          <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-          ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
+          ><$STDFONT_B>"._("Add")." "._("$record_name")."<$STDFONT_E></A>
          <B>|</B>
          <A HREF=\"manage.php3?$_auth&id=$patient\"
-          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
          </CENTER>
          <P>
        ";
@@ -336,14 +324,14 @@
      } // if there are none...
 
        // or else, display them...
-     freemed_display_box_top ("$record_name",
+     freemed_display_box_top (_("$record_name"),
       "manage.php3?id=$patient", $page_name);
      $this_patient = new Patient ($patient);
      echo "
        <P>
        <CENTER>
        <$STDFONT_B>
-       $Patient : <A HREF=\"manage.php3?$_auth&id=$patient\"
+       "._("Patient")." : <A HREF=\"manage.php3?$_auth&id=$patient\"
          >".$this_patient->fullName(true)."</A>
        <$STDFONT_E>
        </CENTER>
