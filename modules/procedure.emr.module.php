@@ -143,21 +143,14 @@ class ProcedureModule extends EMRModule {
 
 		$auth_r_buffer = $this->GetAuthorizations($patient);
 
-		// Check for eoc
-		if (check_module("episodeOfCare")) {
-			$related_episode_array = array ( __("Episode of Care") =>
-				freemed::multiple_choice ("SELECT * FROM eoc ".
-				 "WHERE eocpatient='".addslashes($patient)."' ".
-				 "ORDER BY eocdtlastsimilar DESC",
-				 "##eocstartdate## to ##eocdtlastsimilar## ".
-				 	"(##eocdescrip##)",
-				 "proceoc",
-				 $proceoc,
-				 false)
-			);
-		} else {
-			$related_episode_array = array ( "" => "" );
-		} // end checking for eoc
+		// Determine if we have EOC support
+		$__episode_of_care = $__episode_of_care_widget = '';
+		if (check_module('EpisodeOfCare')) {
+			$__episode_of_care = __("Episode of Care");
+			$__episode_of_care_widget =
+			module_function('EpisodeOfCare', 'widget',
+				array('proceoc', $patient));
+		}
 
 		// ************** BUILD THE WIZARD ****************
 		$wizard = CreateObject('PHP.wizard', array ("been_here", "action", 
@@ -176,14 +169,12 @@ class ProcedureModule extends EMRModule {
 							  "procpos", "procvoucher","proccomment",
 								"procauth","proccert","procclmtp"),
 							  date_vars("procdt"),date_vars("procrefdt")),
-		html_form::form_table ( array_merge ( array (
+		html_form::form_table ( array (
 		  __("Provider") =>
 			freemed_display_selectbox ($phys_result, "#phylname#, #phyfname#", "procphysician"),
 		  __("Date of Procedure") =>
 			fm_date_entry ("procdt"),
-		 ),
-		 $related_episode_array,
-		 array (
+		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Procedural Code") =>
 			freemed_display_selectbox(
 			  $sql->query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
@@ -234,7 +225,7 @@ class ProcedureModule extends EMRModule {
 			fm_date_entry ("procrefdt"),
 		  __("Comment") =>
 		  	html_form::text_widget('proccomment', 30, 255)
-		) ),
+		),
 			// verify
 			array(
 					array ("procdiag1", VERIFY_NONZERO, NULL, __("Must have one diagnosis code")),
@@ -519,6 +510,7 @@ class ProcedureModule extends EMRModule {
 		$wizard->set_revise_name(__("Revise"));
 
 		// Determine if we have EOC support
+		$__episode_of_care = $__episode_of_care_widget = '';
 		if (check_module('EpisodeOfCare')) {
 			$__episode_of_care = __("Episode of Care");
 			$__episode_of_care_widget =
@@ -559,14 +551,17 @@ class ProcedureModule extends EMRModule {
 
 			$display_buffer .= "<p><div align=\"CENTER\">".__("Modifying")." ... ";
 
-			$query = "UPDATE $this->table_name SET
-			proceoc         = '".addslashes(fm_join_from_array($proceoc))."',
-			procvoucher     = '".addslashes($procvoucher).  "',
-			proccomment     = '".addslashes($proccomment).  "',
-			proccert        = '".addslashes($proccert).  "',
-			procclmtp       = '".addslashes($procclmtp).  "',
-			procauth        = '".addslashes($procauth).     "'".
-			" WHERE id='$id'";
+			$query = $sql->update_table_quer(
+				$this->table_name,
+				array (
+					'proceoc',
+					'procvoucher',
+					'proccomment',
+					'proccert',
+					'procclmtp',
+					'procauth'
+				), array ('id' => $id)
+			);
 			$result = $sql->query ($query);
 			if ($debug) $display_buffer .= " (query = $query, result = $result) <BR>\n";
 			if ($result) { $display_buffer .= __("done")."."; }
@@ -677,6 +672,16 @@ class ProcedureModule extends EMRModule {
 		$wizard->set_next_name(__("Next"));
 		$wizard->set_refresh_name(__("Refresh"));
 		$wizard->set_revise_name(__("Revise"));
+
+		// Determine if we have EOC support
+		$__episode_of_care = $__episode_of_care_widget = '';
+		if (check_module('EpisodeOfCare')) {
+			$__episode_of_care = __("Episode of Care");
+			$__episode_of_care_widget =
+			module_function('EpisodeOfCare', 'widget',
+				array('proceoc', $patient));
+		}
+
 		$wizard->add_page (__("Part One"),
 			array_merge(array("phyname", "proceoc", "refphyname",
 							  "procunits", 
@@ -687,15 +692,7 @@ class ProcedureModule extends EMRModule {
 		html_form::form_table ( array (
 		  __("Provider") => prepare($phyname),
 		  __("Date of Procedure") => prepare($procdt),
-		  __("Episode of Care") =>
-			freemed::multiple_choice ("SELECT * FROM eoc ".
-				 "WHERE eocpatient='".addslashes($patient)."' ".
-				 "ORDER BY eocdtlastsimilar DESC",
-				 "##eocstartdate## to ##eocdtlastsimilar## ".
-				 	"(##eocdescrip##)",
-				 "proceoc",
-				 $proceoc,
-				 false),
+		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Units") => prepare($procunits), 
 		  __("Diagnosis Code")." 1" => prepare($diag1),
 		  __("Diagnosis Code")." 2" => prepare($diag2),
