@@ -29,6 +29,7 @@ class progressNotes extends freemedEMRModule {
 			_("Date")        =>	"pnotesdt",
 			_("Description") =>	"pnotesdescrip"
 		);
+		$this->summary_view_link = true;
 	} // end constructor progressNotes
 
 	function add () { $this->form(); }
@@ -229,44 +230,54 @@ class progressNotes extends freemedEMRModule {
          $pnotesdtmod = $cur_date;
 
            // actual addition
-         $query = "INSERT INTO ".$this->table_name." VALUES (
-           '".fm_date_assemble("pnotesdt")."',
-           '$pnotesdtadd',
-           '$pnotesdtmod',
-           '".addslashes($patient)."',
-	   '".addslashes($pnotesdescrip)."',
-	   '".addslashes($pnotesdoc)."',
-           '".addslashes(sql_squash($pnoteseoc))."',
-           '".addslashes($pnotes_S)."',
-           '".addslashes($pnotes_O)."',
-           '".addslashes($pnotes_A)."',
-           '".addslashes($pnotes_P)."',
-           '".addslashes($pnotes_I)."',
-           '".addslashes($pnotes_E)."',
-           '".addslashes($pnotes_R)."',
-           '$__ISO_SET__',
-           NULL ) "; // actual add query
+	global $patient, $__ISO_SET__, $id;
+	$query = $sql->insert_query (
+		$this->table_name,
+		array (
+			"pnotespat"      => $patient,
+			"pnoteseoc",
+			"pnotesdoc",
+			"pnotesdt"       => fm_date_assemble("pnotesdt"),
+			"pnotesdescrip",
+			"pnotesdtadd"    => date("Y-m-d"),
+			"pnotesdtmod"    => date("Y-m-d"),
+			"pnotes_S",
+			"pnotes_O",
+			"pnotes_A",
+			"pnotes_P",
+			"pnotes_I",
+			"pnotes_E",
+			"pnotes_R",
+			"iso"            => $__ISO_SET__
+		)
+	);
          break;
 
 	case "modform": case "mod":
          $display_buffer .= "
            <CENTER><B>"._("Modifying")." ... </B>
          ";
-         $query = "UPDATE ".$this->table_name." SET
-          pnotespat      = '".addslashes($patient)."',
-          pnoteseoc      = '".addslashes(sql_squash($pnoteseoc))."',
-          pnotesdoc      = '".addslashes($pnotesdoc)."',
-          pnotesdt       = '".addslashes(fm_date_assemble("pnotesdt"))."',
-          pnotesdtmod    = '".addslashes($cur_date)."',
-          pnotes_S       = '".addslashes($pnotes_S)."',
-          pnotes_O       = '".addslashes($pnotes_O)."',
-          pnotes_A       = '".addslashes($pnotes_A)."',
-          pnotes_P       = '".addslashes($pnotes_P)."',
-          pnotes_I       = '".addslashes($pnotes_I)."',
-          pnotes_E       = '".addslashes($pnotes_E)."',
-          pnotes_R       = '".addslashes($pnotes_R)."',
-          iso            = '$__ISO_SET__'
-          WHERE id='".addslashes($id)."'";
+	global $patient, $__ISO_SET__, $id;
+	$query = $sql->update_query (
+		$this->table_name,
+		array (
+			"pnotespat"      => $patient,
+			"pnoteseoc",
+			"pnotesdoc",
+			"pnotesdt"       => fm_date_assemble("pnotesdt"),
+			"pnotesdescrip",
+			"pnotesdtmod"    => date("Y-m-d"),
+			"pnotes_S",
+			"pnotes_O",
+			"pnotes_A",
+			"pnotes_P",
+			"pnotes_I",
+			"pnotes_E",
+			"pnotes_R",
+			"iso"            => $__ISO_SET__
+		),
+		array ( "id" => $id )
+	);
 	 break;
        } // end inner switch
        // now actually send the query
@@ -330,7 +341,7 @@ class progressNotes extends freemedEMRModule {
 
      $this->this_patient = new Patient ($pnotespat);
 
-     if (freemed_get_userlevel()>$database_level)
+     if (freemed::user_flag(USER_DATABASE))
        $__MODIFY__ = " |
          <A HREF=\"$this->page_name?module=$module&patient=$patient&id=$id&action=modform\"
           >"._("Modify")."</A>
