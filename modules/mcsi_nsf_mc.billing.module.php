@@ -993,7 +993,9 @@ class MedicareMCSIFormsModule extends freemedBillingModule {
 
 		$ba0[prlname] = $this->CleanChar($physician->local_record[phylname]);
 		$ba0[prfname] = $this->CleanChar($physician->local_record[phyfname]);
-		$ba0[prspec]  = $this->CleanNumber($physician->local_record[physpe1]);
+		$prspec  = $physician->local_record[physpe1];
+        $specrow = freemed_get_link_rec($prspec,"specialties");
+        $ba0[prspec]  = $this->CleanChar($specrow[specname]);
 
 		$provider_id = "0";
         $grp = $insco->local_record[inscogroup];

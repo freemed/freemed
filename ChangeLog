@@ -2,6 +2,9 @@ freemed project changelog
 ($Id$)
 
 * Wed Apr 11 2001 fforest
+  - mcsi_nsf* fix bug in specialty code reporting.
+
+* Wed Apr 11 2001 fforest
   - API change display_itemlist so if the flags parm is 0
     we dont display the Action title and the MOD,DEL,VIEW options.
     so we can use it for nice tableized reports also.
