@@ -109,17 +109,18 @@ class Images {
 			} else {
 				// Convert to DJVU in color
 				$command = "/usr/bin/c44 ".
-					"\"".$tempname.".jpg\" ".
-					"\"".$tempname.".djvu\"";
+					"\"".freemed::secure_filename($tempname).".jpg\" ".
+					"\"".freemed::secure_filename($tempname).".djvu\"";
 				//print "DJVU: $command\n";
 				syslog(LOG_INFO,"XMLRPC|$command");	
+				exec($command);
 			}
 
 			if (!file_exists($tempname.".djvu")) { syslog(LOG_INFO,"XMLRPC|previous command failed"); }
 			//unlink($tempname.".pbm");
 	
 			// Add to stack	
-			$djvu[] = $tempname.".djvu";	
+			$djvu[] = freemed::secure_filename($tempname).".djvu";	
 		}
 
 		// Make proper directory
