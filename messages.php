@@ -3,8 +3,8 @@
  // lic : GPL, v2
 
 $page_name = "messages.php";          // page name
-include ("lib/freemed.php");          // global variables
-include ("lib/calendar-functions.php");
+include_once ("lib/freemed.php");          // global variables
+include_once ("lib/calendar-functions.php");
 $record_name = _("Messages");         // name of record
 $db_name = "messages";                // database name
 
@@ -35,11 +35,11 @@ switch ($action) {
 	}
 
 	$display_buffer .= "
-	<P>
-	<FORM NAME=\"myform\" ACTION=\"$page_name\" METHOD=POST>
-	<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
-	<INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">
-	<CENTER>
+	<p/>
+	<form NAME=\"myform\" ACTION=\"$page_name\" METHOD=\"POST\">
+	<input TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\"/>
+	<input TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\"/>
+	<div ALIGN=\"CENTER\">
 	".html_form::form_table(array(
 		_("For") =>
 		freemed_display_selectbox(
@@ -56,6 +56,9 @@ switch ($action) {
 		_("From (if not a patient)") =>
 		html_form::text_widget("msgperson", 20, 50),
 
+		_("Subject") =>
+		html_form::text_widget("msgsubject", 20, 75),
+
 		_("Message") =>
 		html_form::text_area("msgtext"),
 
@@ -71,15 +74,15 @@ switch ($action) {
 			)
 		)
 	))."
-	</CENTER>
+	</div>
 
-	<P>
-	<CENTER>
-	<INPUT TYPE=SUBMIT NAME=\"submit_action\" VALUE=\" "._("Add")." \"  >
-	<INPUT TYPE=RESET VALUE=\" "._("Clear")." \">
-	</CENTER>
-	</FORM>
-	<P>
+	<p/>
+	<div ALIGN=\"CENTER\">
+	<INPUT TYPE=SUBMIT NAME=\"submit_action\" VALUE=\" "._("Add")." \" />
+	<INPUT TYPE=RESET VALUE=\" "._("Clear")." \"/>
+	</div>
+	</form>
+	<p/>
 	";
 	break; // end action addform
 
@@ -93,6 +96,7 @@ switch ($action) {
 			"msgtime" => SQL_NOW, // pass proper timestamp
 			"msgpatient",
 			"msgperson",
+			"msgsubject",
 			"msgtext",
 			"msgurgency",
 			"msgread" => '0' // mark as not read
@@ -103,14 +107,14 @@ switch ($action) {
 	if ($result) $display_buffer .= _("done");
 	else $display_buffer .= _("ERROR");
 	$display_buffer .= " 
-	<P>
-	<CENTER>
-	<A HREF=\"messages.php\"
-	>"._("Messages")."</A> |
-	<A HREF=\"main.php\"
+	<p/>
+	<div ALIGN=\"CENTER\">
+	<a HREF=\"messages.php\"
+	>"._("Messages")."</a> |
+	<a HREF=\"main.php\"
 	>"._("Return to the Main Menu")."</A>
-	</CENTER>
-	<P>
+	</div>
+	<p/>
 	";
 	break; // end action add
 
@@ -149,44 +153,56 @@ switch ($action) {
 	// Push onto stack
 	page_push();
 
-	$display_buffer .= "<DIV ALIGN=\"CENTER\" CLASS=\"infobox\">\n".
-		"<A HREF=\"messages.php?action=addform\">".
-		_("Add Message")."</A> | \n".
-		"<A HREF=\"main.php\">".
-		_("Main Menu")."</A>\n".
-		"</DIV>\n";
+	// Check for proper "old" value
+	if (!isset($old) or ($old < 0) or ($old > 1)) $old = 0;
+
+	$display_buffer .= "<div ALIGN=\"CENTER\" CLASS=\"infobox\">\n".
+		"<a HREF=\"messages.php?action=addform\">".
+		_("Add Message")."</a> | \n".
+		( ($old != 1) ?
+			"<a HREF=\"messages.php?old=1\">".
+			_("Old Messages")."</a> | \n" :
+			"<a HREF=\"messages.php?old=0\">".
+			_("New Messages")."</a> | \n"
+		).
+		"<a HREF=\"main.php\">".
+		_("Main Menu")."</a>\n".
+		"</div>\n";
 
 	// View list of messages for this doctor
 	$query = "SELECT * FROM messages ".
-		"WHERE msgfor='".$this_user->user_number."' AND msgread='0' ".
+		"WHERE msgfor='".$this_user->user_number."' AND ".
+		"msgread='".addslashes($old)."' ".
 		"ORDER BY msgtime DESC";
 	$result = $sql->query($query);
 
 	if (!$sql->results($result)) {
-		$display_buffer .= "<P>
-			"._("You have no waiting messages.").
-			"<P>";
+		$display_buffer .= "<p/>
+			". ($old ?
+				_("You have no old messages.") :
+				_("You have no waiting messages.")
+			)."<p/>";
 	} else {
 		$display_buffer .= "
-		<CENTER>
-		<FORM ACTION=\"".$page_name."\" METHOD=\"POST\">
-		<TABLE WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\" ".
+		<div ALIGN=\"CENTER\">
+		<form ACTION=\"".$page_name."\" METHOD=\"POST\">
+		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\" ".
 		"CELLPADDING=\"3\" ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
-		<TR CLASS=\"menubar\">
-			<TD>&nbsp;</TD>
-			<TD><B>"._("Date")."</B></TD>
-			<TD><B>"._("Time")."</B></TD>
-			<TD><B>"._("From")."</B></TD>
-			<TD><B>"._("Urgency")."</B></TD>
-		</TR>
+		<tr CLASS=\"menubar\">
+			<td>&nbsp;</td>
+			<td><b>"._("Date")."</b></td>
+			<td><b>"._("Time")."</b></td>
+			<td><b>"._("From")."</b></td>
+			<td><b>"._("Urgency")."</b></td>
+		</tr>
 		";
 		while ($r = $sql->fetch_array($result)) {
 			// Determine who we're looking at by number
 			if ($r[msgpatient] > 0) {
 				$this_patient = CreateObject('FreeMED.Patient', $r[msgpatient]);
-				$r[from] = "<A HREF=\"manage.php?id=".
+				$r[from] = "<a HREF=\"manage.php?id=".
 					$r[msgpatient]."\">".
-					$this_patient->fullName()."</A>";
+					$this_patient->fullName()."</a>";
 			} else {
 				$r[from] = stripslashes($r[msgperson]);
 			}
@@ -201,24 +217,24 @@ switch ($action) {
 
 			// Display message
 			$display_buffer .= "
-			<TR>
-				<TD><INPUT TYPE=\"CHECKBOX\" ".
+			<tr>
+				<td><input TYPE=\"CHECKBOX\" ".
 					"NAME=\"mark[".$r[id]."]\" ".
-					"VALUE=\"".prepare($r[id])."\"></TD>
-				<TD>$y-$m-$d</TD>
-				<TD>".fc_get_time_string($hour,$min)."</TD>
-				<TD>".$r[from]."</TD>
-				<TD>".$r[msgurgency]." out of 5</TD>
-			</TR>
-			<TR><TD>&nbsp;</TD><TD COLSPAN=\"4\">
-				<I>".prepare($r[msgtext])."</I>
-			</TD></TR>
+					"VALUE=\"".prepare($r[id])."\"/></td>
+				<td>$y-$m-$d</td>
+				<td>".fc_get_time_string($hour,$min)."</td>
+				<td>".$r[from]."</td>
+				<td>".$r[msgurgency]." out of 5</td>
+			</tr>
+			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
+				<i>".prepare($r[msgtext])."</i>
+			</td></tr>
 			";
 		}
 		$display_buffer .= "
-		</TABLE></CENTER>
+		</table></div>
 
-		<SCRIPT LANGUAGE=\"JavaScript\"><!--
+		<script LANGUAGE=\"JavaScript\"><!--
 		// Quick script to mark all as read if the button is pressed
 		function selectAll(myform) {
 			for (var l=0; l<myform.length; l++) {
@@ -229,24 +245,31 @@ switch ($action) {
 			}
 		}
 		//-->
-		</SCRIPT>
+		</script>
 
-		<CENTER>
-			<INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"mark\">
-			<INPUT TYPE=\"BUTTON\" VALUE=\""._("Select All")."\" ".
-			"onClick=\"selectAll(this.form); return true;\">
-			<INPUT TYPE=\"SUBMIT\" VALUE=\""._("Mark as Read")."\">
-			</FORM>
-		</CENTER>
+		<div ALIGN=\"CENTER\">
+			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"mark\"/>
+			<input TYPE=\"BUTTON\" VALUE=\""._("Select All")."\" ".
+			"onClick=\"selectAll(this.form); return true;\"/>
+			".( ($old==0) ?
+			"<input TYPE=\"SUBMIT\" VALUE=\""._("Mark as Read")."\"/>" :"")."
+			</form>
+		</div>
 		";
 	}
 
-	$display_buffer .= "<DIV ALIGN=\"CENTER\" CLASS=\"infobox\">\n".
-		"<A HREF=\"messages.php?action=addform\">".
-		_("Add Message")."</A> | \n".
-		"<A HREF=\"main.php\">".
-		_("Main Menu")."</A>\n".
-		"</DIV>\n";
+	$display_buffer .= "<div ALIGN=\"CENTER\" CLASS=\"infobox\">\n".
+		"<a HREF=\"messages.php?action=addform\">".
+		_("Add Message")."</a> | \n".
+		( ($old != 1) ?
+			"<a HREF=\"messages.php?old=1\">".
+			_("Old Messages")."</a> | \n" :
+			"<a HREF=\"messages.php?old=0\">".
+			_("New Messages")."</a> | \n"
+		).
+		"<a HREF=\"main.php\">".
+		_("Main Menu")."</a>\n".
+		"</div>\n";
 
 	break;
 
