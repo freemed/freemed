@@ -348,6 +348,7 @@ class AgataMerge extends AgataCore
     {
       $pos = strpos($Line, '#set');
       $endpos = strpos($Line, ' ', $pos);
+      if (($endpos < $pos) or ($endpos < 1)) $endpos = strlen($Line);
       $format = trim(substr($Line, $pos+4, ($endpos-$pos)-4));// take out "#'
       $line1 = trim(substr($Line, 0, $pos));
       $line2 = trim(substr($Line, $endpos));
@@ -358,7 +359,7 @@ class AgataMerge extends AgataCore
         fwrite($fd, "($line1) show \n ");
 
       // Magic lines
-      fwrite($fd, $this->FormatRewriteCallback($format));
+      fwrite($fd, $this->FormatRewriteCallback($format, $lin));
       //print "  - control($format) = ".$control[$format]."\n";
       
       if (($line2) and ereg('#tab', $line2))
@@ -431,7 +432,7 @@ class AgataMerge extends AgataCore
     HelpWindow::HelpText($HelpLines, Trans::Translate('HowTo: SubQueries'));
   }
 
-  function FormatRewriteCallback ( $format ) {
+  function FormatRewriteCallback ( $format, $lin ) {
     // Do a basic lookup for font strings
     $font_lookup = array (
     'fan06' => "/Arial findfont 6 scalefont setfont\n",
@@ -481,6 +482,55 @@ class AgataMerge extends AgataCore
       if ($k == $format) { return $v; }
     }
     // Additional callback rules go here
+    if (substr($format, 0, 5) == 'image') {
+      // Handle images (EPS format only for now)
+      // format is
+      //   #setimage:name=something.eps&tab=20&scalex=1&scaley=1&type=eps
+      // defaults are
+      //   line = (current line)
+      //   tab = 0
+      //   scalex = 1
+      //   scaley = 1
+      //   type = eps
+      $scalex = $scaley = 1; $tab = 0; $type = 'eps'; $line = $lin;
+      $params = explode('&', substr($format, -(strlen($format)-6)));
+      foreach ($params as $param) {
+        list ($k, $v) = explode('=', $param);
+	${$k} = $v;
+      }
+      // Set translation, etc parameters
+      $buffer .= "%% Image loading code\n".
+        "gsave %% start level x\n".
+	"/showpage{}\n".
+	"/erasepage()\n".
+	"/copypage{}\n".
+	($tab + 0)." ".($line + 0)." translate\n".
+	($xscale + 0)." ".($yscale + 0)." scale\n".
+	"\n";
+      // Perform actual image import
+      switch (strtolower($type)) {
+        case 'eps':
+	// For EPS, simply read image into file
+	$fp = fopen(dirname(dirname(__FILE__)).'/images/'.$name, 'r');
+	if (!$fp) {
+          print "FAILED TO OPEN $name\n";
+	  return '';
+	}
+	while (!feof($fp)) {
+          $buffer .= fgets ($fp, 4096);
+	}
+	fclose($fp);
+	break;
+      }
+
+      // End of image loading code
+      $buffer .= "\n%% Restore state\ngrestore\n\n";
+
+      // Send back image loading code
+      return $buffer;
+    }
+
+    // Otherwise, if not defined, return nothing
     return '';
   } // end method FormatRewriteCallback
 
