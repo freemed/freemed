@@ -89,6 +89,17 @@ class MaintenanceModule extends BaseModule {
 	//
 	var $rpc_field_map;
 
+	// Variable: $this->distinct_fields
+	//
+	//	Specifies the field names which are allowed to have
+	//	distinct value queries against them.
+	//
+	// Example:
+	//
+	//	$this->distinct_fields = array ( "assignedto" );
+	//
+	var $distinct_fields;
+
 	// contructor method
 	function MaintenanceModule () {
 		// Set reference for itemlist to be parent menu
@@ -96,6 +107,7 @@ class MaintenanceModule extends BaseModule {
 
 		// Store the rpc map in the meta information
 		$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
+		$this->_SetMetaInformation('distinct_fields', $this->distinct_fields);
 
 		// Call parent constructor
 		$this->BaseModule();
