@@ -270,8 +270,8 @@
      echo "<B><$STDFONT_B>$Modifying . . . <$STDFONT_E></B>\n";
      $query = "UPDATE $database.$db_name SET
        authdtmod      = '$cur_date',
-       authdtbegin    = '".fm_assemble_date("authdtbegin")."',
-       authdtend      = '".fm_assemble_date("authdtend")  ."',
+       authdtbegin    = '".fm_date_assemble("authdtbegin")."',
+       authdtend      = '".fm_date_assemble("authdtend")  ."',
        authnum        = '".addslashes($authnum)           ."',
        authtype       = '".addslashes($authtype)          ."',
        authprov       = '".addslashes($authprov)          ."',
