@@ -199,7 +199,7 @@ class User {
   } // end function getName
 
   function isPhysician ($no_parameters = "") {
-    return ($this->user_phy == 0);
+    return ($this->user_phy != 0);
   } // end function isPhysician
 
 } // end class User
