@@ -167,9 +167,9 @@ class freemedMaintenanceModule extends freemedModule {
 	function form () {
 		global $action, $id, $sql;
 
-		if (is_array($form_vars)) {
-			reset ($form_vars);
-			while (list ($k, $v) = each ($form_vars)) global $$v;
+		if (is_array($this->form_vars)) {
+			reset ($this->form_vars);
+			while (list ($k, $v) = each ($this->form_vars)) global $$v;
 		} // end if is array
 
 		switch ($action) {
@@ -195,7 +195,7 @@ class freemedMaintenanceModule extends freemedModule {
 		echo freemed_display_itemlist (
 			$result,
 			"module_loader.php",
-			$form_vars,
+			$this->form_vars,
 			array ("", _("NO DESCRIPTION")),
 			"",
 			"t_page"

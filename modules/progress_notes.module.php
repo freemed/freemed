@@ -35,6 +35,11 @@ class progressNotes extends freemedEMRModule {
          $pnotesdt     = $cur_date;
          break; // end addform
         case "modform":
+         while(list($k,$v)=each($this->variables))
+         {
+            global $$v;
+         }
+
          if (($id<1) OR (strlen($id)<1)) {
            //freemed_display_box_top (_($this->record_name)." :: "._("ERROR"));
            echo "

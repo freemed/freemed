@@ -13,15 +13,26 @@ define (__CONTAINERS_PHP__, true);
 class Payer {
   var $local_record;                // stores basic record
   var $id;                          // record ID for insurance company
-  var $insconame;                   // name of company
-  var $inscoalias;                  // insurance company alias (for forms)
-  var $modifiers;                   // modifiers array
+  var $patgroupno;                  // patients group no for this payer
+  var $patinsidno;                  // patients id number for this payer
+  var $payerstatus;
+  var $payertype;                   // payertype 0 prim, 1 sec 2 tert 4 wc
+  var $payerstartdt;                // effective dates for coverage
+  var $payerenddt;
+  var $inscoid;						// pointer to corresponding insco.
 
   function Payer ($payerid = "") {
     global $database;
 
     if ($payerid=="") return false;    // error checking
     $this->local_record = freemed_get_link_rec ($payerid, "payer");
+	$this->patgroupno = $this->local_record[payerpatientgrp];	
+	$this->patinsidno = $this->local_record[payerpatientinsno];	
+	$this->payerstatus = $this->local_record[payerstatus];	
+	$this->payertype = $this->local_record[payertype];	
+	$this->payerstartdt = $this->local_record[payerstartdt];	
+	$this->payerenddt = $this->local_record[payerenddt];	
+	$this->inscoid = $this->local_record[payerinsco];	
 
   } // end constructor InsuranceCompany
 
@@ -40,6 +51,7 @@ class InsuranceCompany {
 
     if ($insco==0) return false;    // error checking
     $this->local_record = freemed_get_link_rec ($insco, "insco");
+    $this->id    		= $this->local_record["id" ];
     $this->insconame    = $this->local_record["insconame" ];
     $this->inscoalias   = $this->local_record["inscoalias"];
     $this->modifiers    = fm_split_into_array (
@@ -102,23 +114,31 @@ class Patient {
      // do payors
      $this->payer[0] = $this->payer[1] = $this->payer[2] = 0;
      $this->insco[0] = $this->insco[1] = $this->insco[2] = 0;
+
+		// get a list of the active insurance companies for this patient
+
      $payerids = fm_get_active_payerids($patient_number);
      if (is_array($payerids))
      {
+		// now for each active insurer build an array of insurers (payers)
+		// in the order of the coverage type. prim 0, sec 1, ter 2 wc 3
+		// since we allow (but warn) about having multiple inusrers of the same
+		// type we allow the second primary to overlay the first. so if they have 3 primarys
+		// the 3rd primary will be considered as THIS primary.
          $num = count($payerids);
          //echo "got $num payors<BR>";
-	 for ($i=0;$i<$num;$i++)
+	 	 for ($i=0;$i<$num;$i++)
          {
-	     $payertype = freemed_get_link_field($payerids[$i], "payer", "payertype");
-             if ($payertype=="")
-             {
-                 echo "Error getting link field payertype in patient class<BR>";
-                 DIE("Error in patient class payertype");
-             }
-	     $this->payer[$payertype] = new Payer ($payerids[$i]);
-             $this->insco[$payertype] = new InsuranceCompany ($this->payer[$payertype]->local_record["payerinsco"]);
-             $insname = $this->insco[$payertype]->insconame;
-             //echo "insname $insname";
+			 $payertype = freemed_get_link_field($payerids[$i], "payer", "payertype");
+				 if ($payertype=="")
+				 {
+					 echo "Error getting link field payertype in patient class<BR>";
+					 DIE("Error in patient class payertype");
+				 }
+			 	 $this->payer[$payertype] = new Payer ($payerids[$i]);
+				 $this->insco[$payertype] = new InsuranceCompany ($this->payer[$payertype]->inscoid);
+				 $insname = $this->insco[$payertype]->insconame;
+				 //echo "insname $insname"<BR>;
          }
      }
 
@@ -199,6 +219,28 @@ class Patient {
     } // end for loop
     return $returned_string;
   } // end function insuranceSelection
+
+  function insurersID ($offset) {
+    $returned_string = "";
+     $current = $this->insco[$offset];
+     if (is_object ($current)) {
+      $returned_string = $current->id;
+     } // end if object case
+    return $returned_string;
+  } // end function insurersID
+
+  function insuranceSelectionByType ($no_parameters = "") {
+    $returned_string = "";
+    for ($i=0;$i<=(count($this->insco));$i++) {
+     $current = $this->insco[$i];
+     if (is_object ($current)) {
+      $returned_string .= "
+        <OPTION VALUE=\"".$i."\">".
+        $current->insconame;
+     } // end if object case
+    } // end for loop
+    return $returned_string;
+  } // end function insuranceSelectionByType
 
   function isDependent ($no_parameters = "") {
     if ($is_callin) return false;  // if they are a callin, no information

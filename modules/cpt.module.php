@@ -51,6 +51,13 @@ class cptMaintenance extends freemedMaintenanceModule {
 			switch ($action) {
 				case "mod":
     			case "modform":
+		// we need to do this before the extract or mod form does not
+		// show the second page on existing data ??
+        while(list($k,$v)=each($this->variables))
+        {
+            global $$v;
+        }
+
      if ($id<1) DIE ("$page_name :: need to have id for modform");
      $this_record  = freemed_get_link_rec ($id, $this->table_name);
      extract ($this_record);

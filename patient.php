@@ -47,11 +47,11 @@ switch ($action) {
 
      case "mod": case "modform":
       if ( !$book->been_here() ) {
-        $result = $sql->query("SELECT * FROM patient ".
-          "WHERE ( id = '".prepare($id)."' )");
+      $result = $sql->query("SELECT * FROM patient ".
+         "WHERE ( id = '".prepare($id)."' )");
 
-        $r = $sql->fetch_array($result); // dump into array r[]
-	extract($r); // pull variables in from array
+      $r = $sql->fetch_array($result); // dump into array r[]
+	  extract($r); // pull variables in from array
 
 //	reset($t_vars);
 //	while ($i=next($t_vars)) { // for all these TEXT items

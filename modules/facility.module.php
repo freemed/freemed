@@ -56,6 +56,11 @@ class facilityMaintenance extends freemedMaintenanceModule {
      $next_action = "add";
      break; // end internal addform
     case "modform": // internal modform
+     while(list($k,$v)=each($this->variables))
+     {
+            global $$v;
+            //echo "$k $v<BR>";
+     }
      $next_action = "mod";
      $r = freemed_get_link_rec ($id, $this->table_name);
      extract ($r);

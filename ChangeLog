@@ -1,6 +1,36 @@
 freemed project changelog
 ($Id$)
 
+* Sun Feb 11 2001 fforest
+    added generate_edi to the billing functions to make it easier to
+    test the edi generator under freemed. the actual code is not
+    in cvs at this time so the link will be broken for others!!.
+    generate_fixed_forms. moved the bill type to payrecsource from
+       payreclink for the billed ledger entry. paylink should
+       eventually point to the recordid of the payer we billed.
+        (do that later)
+    API.php stripslashes from the facility name that appears on logon sceen.
+	so that "Moe's Medical Center" displayed correctly.
+    containers.php.  Added remaining fields to Payer class. Added comments on how 
+     we gather up payer/guar/insurer info in the patient class. added 2 new
+     get functions for Patient class. IsureeresByType and InsurerID
+
+    payment_module. now uses proccharges and procamtpaid as debit/credit
+     buckets. when the procrec is updated the procbalcurrent is recalculated
+     each time. this now stays in sync with the ledger. added proccharges field
+     to proc summary. added option from summary screen to view Closed (paid) procedures
+     to allow ledger viewing of paid accounts. added option Ledger so the ledger can be viewed
+     for all procedures.
+     Use the new functions added to containers.
+     payrecsource for payments and transfer were using the id's instead of the type (0-4)
+     of payer. consolidated some wizard pages where the 2nd page only asked for a description.
+     moved descrip to first page. (makes the process faster for the user) Documented 
+     the ledger transactions in README.tablesA
+    procedure_module  turned of the debugging code since it seems to be working now.
+    module_emr and module_maint user $form_vars instead of $this->form_vars
+
+
+ 
 * Fri Feb 09 2001 rufustfirefly
   - use new version_check() from phpwebtools 0.2 release
   - added stub lib/module_edi.php to repository

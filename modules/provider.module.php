@@ -88,6 +88,11 @@ class providerMaintenance extends freemedMaintenanceModule {
 		$book->set_submit_name("OK"); // not sure what this does...
   
   if (($action=="modform") AND (!$book->been_here())) { // load the values
+    while(list($k,$v)=each($this->variables))
+    {
+        global $$v;
+    }
+
     $r = freemed_get_link_rec ($id, $this->table_name);
     extract ($r);
     $phychargemap = fm_split_into_array( $r[phychargemap] );

@@ -478,6 +478,115 @@ Comments:
         This seems to mirror the "carrier code" concept from MM.
 
 
+###########
+Ledger Transactions
+###########
+
+payreccat
+
+PROCEDURE  created when a new procedure is added. the payrecamt contains 
+           the amount we change for this for this procedure. for the entry the payreclink
+           works like payrecsource in the others. it contains 0 - 4 depending on the payer type.
+           the payreclink is changed when a procedure is transferred to a new payer.
+           payreclink is later used by billing to select bills by type. eg. bill all primary
+           insurers will look for payreclink of 0 in payrecs that contain a payreccat of 5 (PROCEDURE).
+
+PAYMENT -  payrecamt     = the payment amount.
+           payrecsource  = 0 for primary insurer, 1 for sec 2 for tert 3 for wc or 4 for patient
+           payreclink    = id of the insco record if source 0,1,2,3 id of patient rec is source is 4
+           payrectype    = 0 cash, 1 check, 2 moneyorder, 3 creditcard, 4 travelercheck or 5 Electronic transfer
+           payrecdt      = date payment recvd.
+           payrecnum     = depends on type. ccnumber, check number etc.
+           payrecdescrip = description
+accounting process
+           procamtpaid = procamtpaid + payrecamt
+           procbalcurrent = proccharges - procamtpaid
+ledger will show the payrecamt as a positive value on the payment side.
+
+WITHOLD
+DEDUCTABLE
+ADJUSTMENT payrecamt     = adjust.deduct or withhold amount
+		   payrecdt      = date of transaction
+           payrecdescrip = description
+           others not used
+accounting process
+WITHHOLD
+DEDUCTABLE proccharges = proccharges - payrecamt
+           procbalcurrent = proccahrges - procamtpaid
+ledger will show as negative chages 
+
+ADJUSTMENT procamtpaid = procamtpaid - payrecamt
+           procbalcurrent = proccharges - procamtpaid
+ledger shows as a negative on the payment side. this can be used
+to partially or fully reverse a payment.
+
+FEEADJUST 
+(allowed amt)
+          payrecamt     = calculated later
+          payreclink    = id of insco 
+          payrecdt      = date recvd
+          payrecdescrip = description
+          others not used
+accounting process
+          payrecamt = proccharges - payrecamt  eg. ($60 = $100 - $40)  $60 adjustmemt to charges
+          proccharges = payrecamt              eg  (the new max we can charge)
+          procbalcurrent = proccharges - procamtpaid
+ledger shows this as a negative charge
+          
+		  
+
+REFUND    payrecdt     =  date of refund
+          pareclink    =  0 to credit patient, 1 to cut a check
+          payrecamt    =  amount to be refunded
+          payrecdescrip = description
+accouting process
+		  proccharges = proccharges + payrecamt
+          procbalcurrent = proccharges - procamtpaid
+ledger shows as a positive charge
+
+DENIAL    payrecdt     =  date of denial
+          payrecdescrip=  descrip
+          payreclink   =  0 dont adjust procbal to zero, 1 procbal adjusted to zero
+		  payrecamt    =  if payreclink = 0 payrecamt = 0.
+                          if payreclink = 1 payrecamt = procbalcurrent
+accouting process
+		  only used	if adjusting to 0 we adjust the balance by forcing the
+    charges to equal the payments and ledgering the difference.
+
+          proccharges = proccahrges - payrecamt
+          procbalcurrent = proccahrges - procamtpaid
+
+ledger shows as a negative charge. 
+
+
+
+TRANSFER  payrecdt     = date of transfer
+          payrecdescrip= descrip
+          payrecsource = transferring to 0 prim, 1 sec, 2 tert, 3 wc, 4 patient
+		  payreclink   = id of insco record or id of patient record depending on payrecsource.
+		  payrecamt    = procbalcurrent (transferring the balance of the bill)
+
+no real accounting done here. we just update the payreclink in the existing procedure charge
+to point to the new source of payment.
+
+
+REBILL    payrecdt     = date when rebilled
+          payrecamt    = procbalcurrent
+
+no accounting done here. we just update the procrec procbilled value to 0 so this procedure
+will be billed during the next billing cycle. eg. bill the primary, apply any recvd payments,
+transfer to the secondary, mark for rebill. run a billing cycle.
+
+BILLED    payrecamt    = procbalcurrent
+          payrecdt     = current date
+          payrecsource = 0 prim, 1 sec, 2 tert, 3 wc, 4 patient.
+
+This ledger entry is created for each procedure that was billed and marked during a billing
+cycle. it's used primarily to show when we billed the procedure, who was billed (prim,sec etc)
+when and for how much. 
+
+
+
 END OF FILE.
 
 

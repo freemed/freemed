@@ -49,6 +49,13 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
         // no prep work here
         break; // end of addform
       case "modform":
+		// need this before extract or modform wont display
+        // existing data on page 2
+		while(list($k,$v)=each($this->variables))
+        {
+           global $$v;
+        } 
+
         $r = freemed_get_link_rec ($id, $this->table_name);
         extract ($r); 
         break; // end of modform
@@ -131,7 +138,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 
   $book->add_page(
    _("Internal Information"),
-   array(""),"
+   array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod" ),"
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3>
    
     <TR>
@@ -143,7 +150,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
     <TR>
     <TD ALIGN=RIGHT><$STDFONT_B>"._("Insurance Group")." : <$STDFONT_E></TD>
     <TD ALIGN=LEFT>".freemed_display_selectbox(
-      $sql->query("SELECT inscogroup FROM inscogroup ORDER BY inscogroup"),
+      $sql->query("SELECT * FROM inscogroup ORDER BY inscogroup"),
       "#inscogroup#", "inscogroup")."</TD>
     </TR>
 

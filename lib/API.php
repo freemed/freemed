@@ -844,7 +844,7 @@ function freemed_display_facilities ($param="", $default_load = false,
       else
         $selected_var = ""; // or not...
 
-      $_psr_name = $row["psrname"];
+      $_psr_name = stripslashes($row["psrname"]);
       $_psr_note = $row["psrnote"];
       $_psr_id   = $row["id"];
 

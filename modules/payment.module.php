@@ -15,6 +15,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
         var $MODULE_VERSION = "0.1";
 
         var $item;
+		var $view_query = "!='0'";
+		var $view_closed = "='0'";
+		var $table_name = "payrec";
 
 		var $variables = array(
 			"payrecdtadd",
@@ -68,8 +71,10 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             // everything else needs the proc id.
 
             $this->item = $item;
-            if ($viewaction=="refresh" OR $item==0)
+            if ($viewaction=="refresh" OR $viewaction=="closed" OR $item==0)
             {
+				if ($viewaction=="closed")
+					$this->view_query = $this->view_closed;
                 $this->view();
                 return;
 
@@ -172,14 +177,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                         array_merge(array ("payrecsource", "payrectype", "payrecamt"), date_vars("payrecdt")),
                         html_form::form_table ( array (
                                                     "Payment Source" =>
-                                                                      "<SELECT NAME=\"payrecsource\">
-                                                                      <OPTION VALUE=\"0\" ".
-                                                                      ( ($payrecsource==0) ? "SELECTED" : "" ).">Insurance Payment
-                                                                      <OPTION VALUE=\"1\" ".
-                                                                      ( ($payrecsource==1) ? "SELECTED" : "" ).">Patient Payment
-                                                                      <OPTION VALUE=\"2\" ".
-                                                                      ( ($payrecsource==2) ? "SELECTED" : "" ).">Worker's Comp
-                                                                      </SELECT>",
+                                                                "<SELECT NAME=\"payrecsource\">
+                                                                 <OPTION VALUE=\"4\" ".
+                                                                   ( ($payrecsource==4) ? "SELECTED" : "" ).">Patient"
+                        											.$this_patient->insuranceSelectionByType()."
+                                                                 </SELECT>",
 
                                                     "Payment Type" =>
                                                                     "<SELECT NAME=\"payrectype\">
@@ -207,12 +209,12 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                               )
                     );
 
-                // second page of payments whois makeing the payment
+                // second page of payments whois making the payment
                 $second_page_array = "";
 
                 switch ($payrecsource)
                 {
-                case "1":
+                case "4":
                     if ($patient>0)
                     {
                         $second_page_array["Patient"] =
@@ -230,6 +232,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     break;
             	case "0": 
 				default:
+					// we can make this hidden now also since we know the link amount
+					// fixme when you get a chance.
                     $second_page_array["Insurance Company"] =
                         "<SELECT NAME=\"payreclink\">".
                         $this_patient->insuranceSelection().
@@ -313,7 +317,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             case FEEADJUST: // adjustment (1)
                 $wizard->add_page (
                     "Step Two: Describe the Adjustment",
-                    array_merge(array ("payreclink", "payrecamt"),date_vars("payrecdt")),
+                    array_merge(array ("payreclink", "payrecamt", "payrecdescrip"),date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 "Insurance Company" =>
                         										"<SELECT NAME=\"payreclink\">".
@@ -324,33 +328,32 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                                 "Date Received" =>
                                                                  fm_date_entry ("payrecdt"),
 
+                                                _("Description") =>
+                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n",
                                                 "Allowed Amount" =>
                                                                      "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 MAXLENGTH=9 ".
                                                                      "VALUE=\"".prepare($payrecamt)."\">\n"
                                             ) )
                 );
 
-                $wizard->add_page(
-                    "Step Three: Adjustment Information",
-                    array ("payrecdescrip"),
-                    html_form::form_table ( array (
-                                                _("Description") =>
-                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
-                                            ) )
-                );
+                //$wizard->add_page(
+                //    "Step Three: Adjustment Information",
+                //    array ("payrecdescrip"),
+                //    html_form::form_table ( array (
+                //                                _("Description") =>
+                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
+                //                            ) )
+                //);
                 break; // end of adjustment
             case REFUND: // refund (2)
                 $wizard->add_page (
                     "Step Two: Describe the Refund",
-                    array_merge(array ("payrecamt", "payreclink"),date_vars("payrecdt")),
+                    array_merge(array ("payrecamt", "payrecdescrip", "payreclink"),date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 "Date of Refund" =>
                                                                   fm_date_entry ("payrecdt"),
-
-                                                "Refund Amount" =>
-                                                                 "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
-                                                                 "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
 
                                                 "Destination" =>
                                                                "<SELECT NAME=\"payreclink\">
@@ -358,27 +361,39 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                                                ( ($payreclink==0) ? "SELECTED" : "" ).">Apply to credit
                                                                <OPTION VALUE=\"1\" ".
                                                                ( ($payreclink==1) ? "SELECTED" : "" ).">Refund to patient
-                                                               </SELECT>\n"
-                                            ) )
-                );
-                $wizard->add_page(
-                    "Step Three: Refund Information",
-                    array ("payrecdescrip"),
-                    html_form::form_table ( array (
+                                                               </SELECT>\n",
+
                                                 _("Description") =>
                                                                   "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
+                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n",
+                                                "Refund Amount" =>
+                                                                 "<INPUT TYPE=TEXT NAME=\"payrecamt\" SIZE=10 ".
+                                                                 "MAXLENGTH=9 VALUE=\"".prepare($payrecamt)."\">\n",
+
                                             ) )
                 );
+                //$wizard->add_page(
+                //    "Step Three: Refund Information",
+                //    array ("payrecdescrip"),
+                //    html_form::form_table ( array (
+                //                                _("Description") =>
+                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
+                //                            ) )
+                //);
                 break; // end of refund
 
             case DENIAL: // denial (3)
                 $wizard->add_page (
                     "Step Two: Describe the Denial",
-                    array_merge(array ("payreclink"), date_vars("payrecdt")),
+                    array_merge(array ("payreclink", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 "Date of Denial" =>
                                                                   fm_date_entry ("payrecdt"),
+
+                                                _("Description") =>
+                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n",
 
                                                 "Adjust to Zero?" =>
                                                                    "<SELECT NAME=\"payreclink\">
@@ -390,42 +405,44 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                                             ) )
                 );
 
-                $wizard->add_page(
-                    "Step Three: Denial Information",
-                    array("payrecdescrip"),
-                    html_form::form_table ( array (
-                                                _("Description") =>
-                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
-                                            ) )
-                );
+                //$wizard->add_page(
+                //    "Step Three: Denial Information",
+                //    array("payrecdescrip"),
+                //    html_form::form_table ( array (
+                //                                _("Description") =>
+                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
+                //                            ) )
+                //);
                 break; // end of denial
 
             case TRANSFER: // transfer (6)
                 $wizard->add_page (
                     "Step Two: Describe the Transfer",
-                    array_merge(array ("payreclink"), date_vars("payrecdt")),
+                    array_merge(array ("payreclink", "payrecdescrip"), date_vars("payrecdt")),
                     html_form::form_table ( array (
                                                 "Date of Transfer" =>
                                                                   fm_date_entry ("payrecdt"),
-
-                                                "Transfer to" =>
-                                                                   "<SELECT NAME=\"payreclink\">
-                                                                   <OPTION VALUE=\"4\">Patient"
-                                                                   .$this_patient->insuranceSelection().
-                                                                   "</SELECT>\n"
-                                            ) )
-                );
-
-                $wizard->add_page(
-                    "Step Three: Transfer Information",
-                    array("payrecdescrip"),
-                    html_form::form_table ( array (
                                                 _("Description") =>
-                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
-                                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
+                                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ",
+                                                "Transfer to" =>
+                                                                "<SELECT NAME=\"payrecsource\">
+                                                                 <OPTION VALUE=\"4\" ".
+                                                                   ( ($payrecsource==4) ? "SELECTED" : "" ).">Patient"
+                        											.$this_patient->insuranceSelectionByType()."
+                                                                 </SELECT>"
                                             ) )
                 );
+
+                //$wizard->add_page(
+                //    "Step Three: Transfer Information",
+                //    array("payrecdescrip"),
+                //    html_form::form_table ( array (
+                //                                _("Description") =>
+                //                                                  "<INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=30 ".
+                //                                                  "VALUE=\"".prepare($payrecdescrip)."\">\n"
+                //                            ) )
+                //);
                 break; // end of denial
             case REBILL: // rebill 4
                 $wizard->add_page(
@@ -498,18 +515,17 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     } // end switch payrectype
                     break; // end payment category (add)
 
+                case ADJUSTMENT: // adjustment category 1
                 case DEDUCTABLE: // adjustment category 8
                 case WITHHOLD: // adjustment category 7
 					$payrecamt = abs($payrecamt);
                     break; // end adjustment category 
-                case ADJUSTMENT: // adjustment category 1
-                    break; // end adjustment category allow negatives
 
                 case FEEADJUST: // adjustment category (add) 1
 					// calc the payrecamt
-                    $procbalorig = freemed_get_link_field ($payrecproc, "procrec",
-                                                               "procbalorig");
-					$payrecamt = $procbalorig - abs($payrecamt);
+                    $proccharges = freemed_get_link_field ($payrecproc, "procrec",
+                                                               "proccharges");
+					$payrecamt = $proccharges - abs($payrecamt);
                     break; // end adjustment category (add)
 
                 case REFUND: // refund category (add) 2
@@ -519,18 +535,26 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 						// show as transferring the balance
                         $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
                                                                "procbalcurrent");
+						if ($payrecsource == 4)
+							$payreclink = $patient;
+						else
+							$payreclink = $this_patient->insurersID($payrecsource);
 					
                     break; // end refund category (add)
                 case DENIAL: // denial category (add) 3
+					$payrecamt = 0; // default
                     if ($payreclink==1) // adjust to zero
                     {
-                        $amount_left = freemed_get_link_field ($payrecproc, "procrec",
+                        $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
                                                                "procbalcurrent");
-                        $payrecamt   = -(abs($amount_left));
+                        //$payrecamt   = -(abs($amount_left));
                     }
                     break; // end denial category (add)
 
                 case REBILL: // rebill category (add) 4
+						// save off the amount we are re billing
+                        $payrecamt = freemed_get_link_field ($payrecproc, "procrec",
+                                                               "procbalcurrent");
                     break; // end rebill category (add)
                 } // end category switch (add)
 
@@ -572,35 +596,50 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     echo _("ERROR");    
                 }
                 echo "  <BR><$STDFONT_B>Modifying procedural charges... <$STDFONT_E>\n";
+				$procrec = freemed_get_link_rec($payrecproc,"procrec");	
+				if (!$procrec)
+					echo _("ERROR");
+
+				$proccharges = $procrec[proccharges];
+				$procamtpaid = $procrec[procamtpaid];
+				$procbalorig = $procrec[procbalorig];
+
                 switch ($payreccat)
                 {
 
                 case FEEADJUST: // adjustment category (add) 1
-                    $procbalorig = freemed_get_link_field ($payrecproc, "procrec",
-                                                               "procbalorig");
 					// we had to blowout the payrecamt above so we calc the original
 					// amt that was entered.
-
-					$allowed = $procbalorig - $payrecamt;
+					
+					$allowed = $proccharges - $payrecamt;
+					$proccharges = $allowed;
+					$procbalcurrent = $proccharges - $procamtpaid;
                     $query = "UPDATE procrec SET
-                             procbalcurrent = '".addslashes($allowed)."' - procamtpaid,
-							 proccharges = proccharges - '".addslashes($allowed)."',
-							 procamtallowed = '".addslashes($allowed)."'
+                             procbalcurrent = '$procbalcurrent',
+							 proccharges = '$proccharges',
+							 procamtallowed = '$allowed'
                              WHERE id='".addslashes($payrecproc)."'";
                     break; // end fee adjustment 
 
                 case REFUND: // refund category (add) 2
+					$proccharges = $proccharges + $payrecamt;
+					$procbalcurrent = $proccharges - $procamtpaid;
                     $query = "UPDATE procrec SET
-                             proccharges    = proccharges    + $payrecamt
+                             proccharges    = '$proccharges',
+							 procbalcurrent = '$procbalcurrent'
                              WHERE id='$payrecproc'";
                     break; // end refund category (add)
 
                 case DENIAL: // denial category (add) 3
                     if ($payreclink==1)  // adjust to zero?
                     {
+						// this should force it to 0 naturally
+						$proccharges = $proccharges - $payrecamt;
+						$procbalcurrent = $proccharges - $procamtpaid;
                         $query = "UPDATE procrec SET
-                                 procbalcurrent = '0'
-                                 WHERE id='$payrecproc'";
+                             proccharges    = '$proccharges',
+							 procbalcurrent = '$procbalcurrent'
+                             WHERE id='$payrecproc'";
                     }
                     else
                     { // if no adjust
@@ -613,23 +652,35 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     break; // end rebill category (add)
 
                 case TRANSFER: // transfer (6)
-                    $query = "UPDATE payrec SET payreclink='".addslashes($payreclink)."' 
+					// here the link is an insurance type not an insco id.
+                    $query = "UPDATE payrec SET payreclink='".addslashes($payrecsource)."' 
 							WHERE payreccat='".PROCEDURE."' AND payrecproc='".addslashes($payrecproc)."'";
                     break; // end rebill category (add)
 
                 case DEDUCTABLE: // adjustment category 8
                 case WITHHOLD: // adjustment category 7
+					$proccharges = $proccharges - $payrecamt;
+					$procbalcurrent = $proccharges - $procamtpaid;
                     $query = "UPDATE procrec SET
-                             procbalcurrent = procbalcurrent - $payrecamt,
-                             proccharges    = proccharges    - $payrecamt
+                             procbalcurrent = '$procbalcurrent',
+                             proccharges    = '$proccharges'
                              WHERE id='".addslashes($payrecproc)."'";
                     break;
                 case ADJUSTMENT: // adjustment category (add) 1
+					$procamtpaid = $procamtpaid - $payrecamt;
+					$procbalcurrent = $proccharges - $procamtpaid;
+                    $query = "UPDATE procrec SET
+                             procbalcurrent = '$procbalcurrent',
+                             procamtpaid    = '$procamtpaid'
+                             WHERE id='".addslashes($payrecproc)."'";
+					break;
                 case PAYMENT: // payment category (add) 0
                 default:  // default is payment
+					$procamtpaid = $procamtpaid + $payrecamt;
+					$procbalcurrent = $proccharges - $procamtpaid;
                     $query = "UPDATE procrec SET
-                             procbalcurrent = procbalcurrent - $payrecamt,
-                             procamtpaid    = procamtpaid    + $payrecamt
+                             procbalcurrent = '$procbalcurrent',
+                             procamtpaid    = '$procamtpaid'
                              WHERE id='".addslashes($payrecproc)."'";
                     break;
                 } // end category switch (add)
@@ -693,7 +744,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             {
                 $pay_query  = "SELECT * FROM payrec
                               WHERE payrecpatient='$patient' AND payrecproc='$procid'
-                              ORDER BY payrecdt";
+                              ORDER BY payrecdt,id";
             }
             else
             {
@@ -701,7 +752,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                               WHERE b.procbalcurrent != '0' AND
                               b.id = a.payrecproc AND
                               a.payrecpatient='".addslashes($patient)."'
-                              ORDER BY payrecproc,payrecdt";
+                              ORDER BY payrecproc,payrecdt,b.id";
             }
             $pay_result = $sql->query ($pay_query);
 
@@ -784,17 +835,17 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 }
                 if ($prev_proc != $r["payrecproc"])
                 {  // control break
-                    $proc_total = $proc_payments - $proc_charges;
+                    $proc_total = $proc_charges - $proc_payments;
                     $proc_total = bcadd ($proc_total, 0, 2);
                     if ($proc_total<0)
                     {
                         $prc_total = "<FONT COLOR=\"#000000\">".
-                                     bcadd (-$proc_total, 0, 2)."</FONT>";
+                                     $proc_total."</FONT>";
                     }
                     else
                     {
-                        $prc_total = "-<FONT COLOR=#ff0000>".
-                                     bcadd (-$proc_total, 0, 2)."</FONT>";
+                        $prc_total = "<FONT COLOR==\"#ff0000\">".
+                                     $proc_total."</FONT>";
                     } // end of creating total string/color
 
                     // display the total payments
@@ -814,9 +865,9 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     </TD>
                     <TD>&nbsp;</TD>
                     </TR>
-                    <TR BGCOLOR=\".
+                    <TR BGCOLOR=\"".
                     ($_alternate = freemed_bar_alternate_color ($_alternate))
-					.\">
+					."\">
                     <TD COLSPAN=7>&nbsp;</TD>
                     </TR>
                     ";
@@ -841,7 +892,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     break;
                 case DENIAL: // denials 3
                     $pay_color       = "#000000";
-                    $charge          = bcadd($payrecamt, 0, 2);
+                    $charge          = bcadd(-$payrecamt, 0, 2);
                     $payment         = "&nbsp;";
                     $total_charges  += $charge;
                     $proc_charges   += $charge;
@@ -850,7 +901,6 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $payment         = "&nbsp;";
                     $charge          = "&nbsp;";
                     break;
-                //case REFUND: // refunds 2
                 case WITHHOLD: // withhold 7
                 case DEDUCTABLE: // deductable 8
                     $pay_color       = "#000000";
@@ -871,6 +921,12 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $charge          = "&nbsp;";
                     break;
                 case ADJUSTMENT: // adjustments 1
+                    $pay_color       = "#ff0000";
+                    $payment         = bcadd(-$payrecamt, 0, 2);
+                    $charge          = "&nbsp;";
+                    $total_payments += $payment;
+                    $proc_payments += $payment;
+                    break;
             	case PAYMENT: default: // default is payments 0
                     $pay_color       = "#ff0000";
                     $payment         = bcadd($payrecamt, 0, 2);
@@ -896,7 +952,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $this_type = "Charge";
                     break;
                 case TRANSFER: // transfer 6
-                    $this_type = "Transfer to ".$PAYER_TYPES[$r["payreclink"]];
+                    $this_type = "Transfer to ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 case WITHHOLD: // withhold 7
                     $this_type = "Withhold";
@@ -908,7 +964,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                     $this_type = "Fee Adjust";
                     break;
                 case BILLED: // billed 10
-                    $this_type = "Billed ".$PAYER_TYPES[$r["payreclink"]];
+                    $this_type = "Billed ".$PAYER_TYPES[$r["payrecsource"]];
                     break;
                 case PAYMENT: // payment 0
                 default:  // default is payment
@@ -950,17 +1006,17 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             // process last subtotal
             // calc last proc subtotal
-            $proc_total = $proc_payments - $proc_charges;
+            $proc_total = $proc_charges - $proc_payments;
             $proc_total = bcadd ($proc_total, 0, 2);
             if ($proc_total<0)
             {
                 $prc_total = "<FONT COLOR=\"#000000\">".
-                             bcadd (-$proc_total, 0, 2)."</FONT>";
+                             $proc_total."</FONT>";
             }
             else
             {
-                $prc_total = "-<FONT COLOR=\"#ff0000\">".
-                             bcadd (-$proc_total, 0, 2)."</FONT>";
+                $prc_total = "<FONT COLOR=\"#ff0000\">".
+                             $proc_total."</FONT>";
             } // end of creating total string/color
 
             // display the total payments
@@ -989,14 +1045,14 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             // end calc last proc subtotal
 
             // calculate patient ledger total
-            $patient_total = $total_payments - $total_charges;
+            $patient_total = $total_charges - $total_payments;
             $patient_total = bcadd ($patient_total, 0, 2);
             if ($patient_total<0) {
                 $pat_total = "<FONT COLOR=\"#000000\">".
-                             bcadd (-$patient_total, 0, 2)."</FONT>";
+                             $patient_total."</FONT>";
             } else {
                 $pat_total = "<FONT COLOR=\"#ff0000\">".
-                             bcadd (-$patient_total, 0, 2)."</FONT>";
+                             $patient_total."</FONT>";
             } // end of creating total string/color
 
             // display the total payments
@@ -1084,8 +1140,8 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
 
             $query = "SELECT * FROM procrec
                      WHERE ( (procpatient = '".addslashes($patient)."') AND
-                     (procbalcurrent !='0') )
-                     ORDER BY procdt";
+                     (procbalcurrent ".$this->view_query.") )
+                     ORDER BY procdt,id";
 
             $result = $sql->query ($query);
 
@@ -1094,12 +1150,13 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             <TR BGCOLOR=\"#cccccc\">
             <TD>&nbsp;</TD>
             <TD ALIGN=LEFT><B>Date</B></TD>
-            <TD ALIGN=RIGHT><B>Proc Code</B></TD>
+            <TD ALIGN=LEFT><B>Proc Code</B></TD>
             <TD ALIGN=LEFT><B>Provider</B></TD>
-            <TD ALIGN=LEFT><B>Charged</B></TD>
-            <TD ALIGN=LEFT><B>Allowed</B></TD>
-            <TD ALIGN=LEFT><B>Paid</B></TD>
-            <TD ALIGN=LEFT><B>Balance</B></TD>
+            <TD ALIGN=RIGHT><B>Charged</B></TD>
+            <TD ALIGN=RIGHT><B>Allowed</B></TD>
+            <TD ALIGN=RIGHT><B>Charges</B></TD>
+            <TD ALIGN=RIGHT><B>Paid</B></TD>
+            <TD ALIGN=RIGHT><B>Balance</B></TD>
             <TD ALIGN=LEFT><B>Billed</B></TD>
             <TD ALIGN=LEFT><B>Date Billed</B></TD>
             <TD ALIGN=LEFT><B>View</B></TD>
@@ -1124,10 +1181,11 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
                 <TD ALIGN=LEFT>".fm_date_print ($r[procdt])."</TD>
                 <TD ALIGN=LEFT>".prepare($this_cptcode." (".$this_cpt.")")."</TD>
                 <TD ALIGN=LEFT>".prepare($this_physician->fullName())."&nbsp;</TD>
-                <TD ALIGN=LEFT>".bcadd ($r[procbalorig], 0, 2)."</TD>
-                <TD ALIGN=LEFT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
-                <TD ALIGN=LEFT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
-                <TD ALIGN=LEFT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
+                <TD ALIGN=RIGHT>".bcadd ($r[procbalorig], 0, 2)."</TD>
+                <TD ALIGN=RIGHT>".bcadd ($r[procamtallowed], 0, 2)."</TD>
+                <TD ALIGN=RIGHT>".bcadd ($r[proccharges], 0, 2)."</TD>
+                <TD ALIGN=RIGHT>".bcadd ($r[procamtpaid], 0, 2)."</TD>
+                <TD ALIGN=RIGHT>".bcadd ($r[procbalcurrent], 0, 2)."</TD>
                 <TD ALIGN=LEFT>".(($r[procbilled]) ? "Yes" : "No")."</TD>
                 <TD ALIGN=LEFT>".( !empty($r[procdtbilled]) ?
 					prepare($r[procdtbilled]) : "&nbsp;" )."</TD>
@@ -1155,6 +1213,7 @@ if (!defined("__PAYMENT_MODULE_PHP__")) {
             <OPTION VALUE=\"refund\">Refund
             <OPTION VALUE=\"mistake\" >Mistake
             <OPTION VALUE=\"ledgerall\">Ledger
+            <OPTION VALUE=\"closed\">Closed
             </SELECT>
             <INPUT TYPE=SUBMIT VALUE=\"  Select Line Item  \">
             <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"1\">

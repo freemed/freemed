@@ -274,7 +274,7 @@ class procedureModule extends freemedEMRModule {
             "procrefdt"			=>	fm_date_assemble("procrefdt")
 		)
 	);
-	$debug=true;
+	//$debug=true;
       $result = $sql->query ($query);
       if ($debug) echo " (query = $query, result = $result) <BR>\n";
       if ($result) { echo _("done")."."; }
