@@ -61,6 +61,7 @@ class episodeOfCare extends freemedEMRModule {
 		"eocrelemprcemail",
 		"eocrelpregcycle",
 		"eocrelpreggravida",
+		"eocrelpregpara",
 		"eocrelpregmiscarry",
 		"eocrelpregabort",
 		"eocrelpreglastper",
@@ -100,7 +101,7 @@ class episodeOfCare extends freemedEMRModule {
 				"historical"
 			)),
 			
-			//"eochospital"		=> SQL_INT_UNSIGNED(0),
+			"eochospital"		=> SQL_INT_UNSIGNED(0),
 
 			// Automobile
 			"eocrelautoname"	=> SQL_VARCHAR(100),
