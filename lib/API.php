@@ -595,6 +595,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   global $page_name, $$cur_page_var, $max_num_res;
   global $_s_field, $_s_val, $sql;
 
+  //echo "page name $page_name this $this->page_name module $module<BR>";
+  
   if ($flags==-1) $flags=(ITEMLIST_MOD|ITEMLIST_DEL);
 
   // pull current page name

@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Tue May 01 2001 fforest
+  - removed modules/intake.emr.report
+  - added modules/intake.emr_report
+  - change manage.php to load .emr_report
+
 * Mon Apr 30 2001 rufustfirefly
   - manage_bills.php: moved this module to old
   - modules/unpaid_procs.report.module.php: committed changes from

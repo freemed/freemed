@@ -173,7 +173,7 @@ if ($id<1) {
 
 	";
 
-	$module_list = new module_list (PACKAGENAME, ".emr.report.module.php");
+	$module_list = new module_list (PACKAGENAME, ".emr_report.module.php");
 	echo $module_list->generate_list ($category, 0, $template);
 	// end of loadable modules code
 

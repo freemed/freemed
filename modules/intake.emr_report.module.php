@@ -82,17 +82,47 @@ if (!defined("__INTAKE_EMRREPORT_MODULE_PHP__")) {
 			$pt[homephone] = $this_patient->local_record[pthphone];
 			$pt[workphone] = $this_patient->local_record[pthwhone];
 			$ptdoc = $this_patient->local_record[ptdoc];
+			$ptrefdoc = $this_patient->local_record[ptrefdoc];
+			$ptpcp = $this_patient->local_record[ptpcp];  // primary care physician
 
-			if ($ptdoc > 0)
+			if ($ptpcp > 0)    // primary 
 			{
-				$this_doc = new Physician($ptdoc);
-				$pt[docname] = $this_doc->fullname();
-				$pt[docaddr1] = $this_doc->local_record[phyaddr1a];
-				$pt[doccity] = $this_doc->local_record[phycitya];
-				$pt[docstate] = $this_doc->local_record[phystatea];
-				$pt[doczip] = $this_doc->local_record[phyzipa];
-				$pt[docphone] = $this_doc->local_record[phyphonea];
-				$pt[docfax] = $this_doc->local_record[phyfaxa];
+				$this_primdoc = new Physician($ptpcp);
+				$pt[docname] = "Dr. ".$this_primdoc->fullname();
+				$pt[docaddr1] = $this_primdoc->local_record[phyaddr1a];
+				$pt[doccity] = $this_primdoc->local_record[phycitya];
+				$pt[docstate] = $this_primdoc->local_record[phystatea];
+				$pt[doczip] = $this_primdoc->local_record[phyzipa];
+				$pt[docphone] = $this_primdoc->local_record[phyphonea];
+				$pt[docfax] = $this_primdoc->local_record[phyfaxa];
+			}
+
+			if ($ptrefdoc > 0)  // referring doc
+			{
+				$this_refdoc = new Physician($ptrefdoc);
+				$pt[refdocname] = "Dr. ".$this_refdoc->fullname();
+
+				// below not needed at this time.
+				//$pt[docaddr1] = $this_refdoc->local_record[phyaddr1a];
+				//$pt[doccity] = $this_refdoc->local_record[phycitya];
+				//$pt[docstate] = $this_refdoc->local_record[phystatea];
+				//$pt[doczip] = $this_refdoc->local_record[phyzipa];
+				//$pt[docphone] = $this_refdoc->local_record[phyphonea];
+				//$pt[docfax] = $this_refdoc->local_record[phyfaxa];
+			}
+
+			if ($ptdoc > 0)  // in house doc
+			{
+				$this_indoc = new Physician($ptdoc);
+				$pt[interdocname] = "Dr. ".$this_indoc->fullname();
+
+				// below not needed at this time.
+				//$pt[docaddr1] = $this_indoc->local_record[phyaddr1a];
+				//$pt[doccity] = $this_indoc->local_record[phycitya];
+				//$pt[docstate] = $this_indoc->local_record[phystatea];
+				//$pt[doczip] = $this_indoc->local_record[phyzipa];
+				//$pt[docphone] = $this_indoc->local_record[phyphonea];
+				//$pt[docfax] = $this_indoc->local_record[phyfaxa];
 			}
 
 			$covid = fm_verify_patient_coverage($patient); // get primary;
