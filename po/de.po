@@ -1,0 +1,1634 @@
+# $Id$
+# Template Id: freemed.pot,v 1.17 2001/04/10 10:25:41 fforest Exp
+#
+# freemed project
+# gettext / i18n language catalog
+# language : TEMPLATE
+#   to use this template for translations, copy this file to
+#   language.po (for example, french would be fr.po) and use
+#   kbabel or a text editor to do the translations, then
+#   modify the header to reflect your changes.
+
+msgid ""
+msgstr ""
+"Last-Translator: Dr. Georg Roesler <groesle@gwdg.de>\n"
+"PO-Revision-Date: 06.05.2001 23:39\n"
+"Language-Team: Deutsch <de@li.org>\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.7\n"
+
+msgid "Login"
+msgstr "Anmeldung"
+
+msgid "Username"
+msgstr "Name"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Facility"
+msgstr "Bereich"
+
+msgid "LANGUAGE REGISTRY BUILD FAILED"
+msgstr "Sprache konnte nicht registriert werden"
+
+msgid "Resume"
+msgstr "Zusammenfassung"
+
+msgid "Reset Resume"
+msgstr "Zurück"
+
+msgid "Enter the database"
+msgstr "Datenbank öffnen"
+
+msgid "Clear"
+msgstr "Löschen"
+
+msgid "DEBUG IS ON"
+msgstr "Debug-Modus eingeschaltet"
+
+msgid "Powered by PHP"
+msgstr "Powered by PHP"
+
+msgid "Main Menu"
+msgstr "Haupt-Menü"
+
+msgid "Billing Functions"
+msgstr "Rechnung"
+
+msgid "Call In"
+msgstr "Einbestellung"
+
+msgid "Entry"
+msgstr "Neu"
+
+msgid "Menu"
+msgstr "Auswahl"
+
+msgid "Database Maintenance"
+msgstr "Datenbank bearbeiten"
+
+msgid "Day View"
+msgstr "Tagesansicht"
+
+msgid "Week View"
+msgstr "wöchentliche Ansicht"
+
+msgid "Patient Functions"
+msgstr "Patienten"
+
+msgid "Main Menu Help"
+msgstr "Hilfe"
+
+msgid "Logout of"
+msgstr "Abmelden"
+
+msgid "Quickjump"
+msgstr "Schnellzugriff"
+
+msgid "Administration"
+msgstr "Verwaltung"
+
+msgid "User level"
+msgstr "Benutzertyp"
+
+msgid "User description"
+msgstr "Benutzer"
+
+msgid "No Admin Menu Access"
+msgstr "Auf das Verwaltungsmodul haben Sie keinen Zugriff"
+
+msgid "Return to the Main Menu"
+msgstr "Zurück zum Hauptmenü"
+
+msgid "ICD Code Type"
+msgstr "ICD Code Typ"
+
+msgid "Graphics Enhanced"
+msgstr "Grafik Ein"
+
+msgid "Disabled"
+msgstr "Aus"
+
+msgid "Enabled"
+msgstr "Ein"
+
+msgid "Scheduling Start Time"
+msgstr "Beginn Arbeitszeit"
+
+msgid "Scheduling End Time"
+msgstr "Ende Arbeitszeit"
+
+msgid "Calendar Overbooking"
+msgstr "Überbuchung"
+
+msgid "Date Format"
+msgstr "Datumsformat"
+
+msgid "Phone Number Format"
+msgstr "Telefon-Nummern-Format"
+
+msgid "United States"
+msgstr "Usa"
+
+msgid "France"
+msgstr "Frankreich"
+
+msgid "Unformatted"
+msgstr "nicht formatiert"
+
+msgid "Configure"
+msgstr "Einstellen"
+
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+msgid "Update Config"
+msgstr "Konfiguration aktualisieren"
+
+msgid "Configuration Complete"
+msgstr "Konfiguration fertigstellen"
+
+msgid "Return To Administration Menu"
+msgstr "Zurück zum Verwaltungs-Menü"
+
+msgid "Reinitialize Database"
+msgstr "Datenbank NEU initialisieren"
+
+msgid "Are you sure you want to reinitialize the database?"
+msgstr "Wollen Sie wirklich alle alten Daten löschen?"
+
+msgid "This is an IRREVERSIBLE PROCESS!"
+msgstr "Es gibt KEINE Sicherung"
+
+msgid "First Initialization"
+msgstr "Erste Initialisierung"
+
+msgid "Continue"
+msgstr "Fortsetzen"
+
+msgid "Cancel"
+msgstr "Abbruch"
+
+msgid "Confirm"
+msgstr "O K"
+
+msgid "Erasing old database"
+msgstr "alte Daten löschen"
+
+msgid "Error accessing SQL"
+msgstr "SQL-Fehler"
+
+msgid "Done"
+msgstr "Fertig"
+
+msgid "Creating new database"
+msgstr "Neue Datenbank wird erstellt"
+
+msgid "Creating tables"
+msgstr "Erstelle Tabelle"
+
+msgid "test db"
+msgstr "test db"
+
+msgid "Physicians"
+msgstr "Ärzte"
+
+msgid "ICD Codes"
+msgstr "ICD Codes"
+
+msgid "Patients"
+msgstr "Patienten"
+
+msgid "Procedures"
+msgstr "Behandlungen"
+
+msgid "default facility added"
+msgstr "Muster-Behandlung zugefügt"
+
+msgid "Rooms"
+msgstr "Raum"
+
+msgid "default room added"
+msgstr "Standard-Raum zugefügt"
+
+msgid "Degrees"
+msgstr "Grade"
+
+msgid "Stock Degree Data"
+msgstr "Stammdaten der Grade"
+
+msgid "Specialties"
+msgstr "Spezielles"
+
+msgid "Stock Specialties Data"
+msgstr "Stammdaten Spezielles"
+
+msgid "Insurance Companies"
+msgstr "Versicherungen"
+
+msgid "Insurance Company"
+msgstr "Versicherung"
+
+msgid "Stock Insurance Company Data"
+msgstr "Stammdaten der Versicherungen"
+
+msgid "Insurance Company Groups"
+msgstr "Versicherungs-Gruppen"
+
+msgid "Stock Insurance Company Group Data"
+msgstr "Stammdaten der Versicherungs-Gruppen"
+
+msgid "CPT Codes"
+msgstr "CPT Codes (nicht für Deutschland)"
+
+msgid "Stock CPT Code Data"
+msgstr "Stammdaten der CPT Codes"
+
+msgid "CPT Modifiers"
+msgstr "CPT Modifiers"
+
+msgid "Stock CPT Modifier Data"
+msgstr "Stammdaten der CPT Modifier"
+
+msgid "Physician Groups"
+msgstr "Ärzte-Gruppen"
+
+msgid "Users"
+msgstr "Benutzer"
+
+msgid "Added Superuser"
+msgstr "Administrator zugefügt"
+
+msgid "Scheduler"
+msgstr "Plan"
+
+msgid "Physician Availability Map"
+msgstr "Ärzte-Dienstplan"
+
+msgid "Physician Statuses"
+msgstr "Ärztestatus"
+
+msgid "Progress Notes"
+msgstr "Fertig?"
+
+msgid "Payment Records"
+msgstr "Zahlungen"
+
+msgid "Formulary"
+msgstr "Formulare"
+
+msgid "Stock Formulary Data"
+msgstr "Stammdaten der Formulare"
+
+msgid "Prescriptions"
+msgstr "Verordnungen"
+
+msgid "Simple Reports"
+msgstr "Einfache Berichte"
+
+msgid "Call-Ins"
+msgstr "Wieder-Einbestellung"
+
+msgid "Room Equipment"
+msgstr "Raum-Ausstattung"
+
+msgid "Stock Room Equipment Data"
+msgstr "Stammdaten der Raum-Ausstattung"
+
+msgid "Type of Service"
+msgstr "Leistungstyp"
+
+msgid "Place of Service"
+msgstr "Raum"
+
+msgid "Stock Place of Service Data"
+msgstr "Stammdaten der Räume"
+
+msgid "Stock Type of Service Data"
+msgstr "Stammdaten der Leistungstypen"
+
+msgid "Internal Service Types"
+msgstr "interne Leistungstypen"
+
+msgid "Stock Internal Service Types Data"
+msgstr "Stammdaten der internen Leistungstypen"
+
+msgid "Patient Record Templates"
+msgstr "Patienten-Daten (Vorlage)"
+
+msgid "Stock Patient Record Template Data"
+msgstr "Stammdaten der Patienten-Daten (Vorlage)"
+
+msgid "Questionnaire Templates"
+msgstr "Fragensammlung (Vorlage)"
+
+msgid "Stock Questionnaire Template Data"
+msgstr "Stammdaten der Fragensammlung (Vorlage)"
+
+msgid "Diagnosis Families"
+msgstr "Diagnose-Gruppen"
+
+msgid "Stock Diagnosis Family Data"
+msgstr "Stammdaten der Diagnose-Gruppen"
+
+msgid "Patient Statuses"
+msgstr "Patienten-Daten"
+
+msgid "Stock Patient Statuses Data"
+msgstr "Stammdaten der Patienten-Daten"
+
+msgid "Patient Record Data"
+msgstr "Krankengeschichte"
+
+msgid "Action Log"
+msgstr "Protokollieren"
+
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "Incoming Faxes"
+msgstr "Eingehende Faxe"
+
+msgid "Fax Sender Lookup"
+msgstr "Tabelle der Fax-Versender"
+
+msgid "Printers"
+msgstr "Drucker"
+
+msgid "Fixed Forms"
+msgstr "Standard-Formulare"
+
+msgid "Stock Fixed Forms Data"
+msgstr "Stammdaten der Standard-Formulare"
+
+msgid "Episode of Care"
+msgstr "Behandlungszeiten"
+
+msgid "Old Reports"
+msgstr "Alte Berichte"
+
+msgid "Patient Images"
+msgstr "Patienten-Bilder"
+
+msgid "Authorizations"
+msgstr "Genehmigungen"
+
+msgid "Insurance Modifiers"
+msgstr "Versicherungs-Zusätze"
+
+msgid "Stock Insurance Modifiers"
+msgstr "Stammdaten der Versicherungs-Zusätze"
+
+msgid "Administration Menu"
+msgstr "Verwaltungs-Menü"
+
+msgid "Export"
+msgstr "Export"
+
+msgid "Export Database"
+msgstr "Datenbank-Export"
+
+msgid "Export Databases"
+msgstr "Export von Datenbanken"
+
+msgid "Export Another Database"
+msgstr "Export einer fremden Datenbank"
+
+msgid "Select Database to Export"
+msgstr "Auswahl"
+
+msgid "Import"
+msgstr "Import"
+
+msgid "Import Database"
+msgstr "Datenbank-Import"
+
+msgid "Import Databases"
+msgstr "Import der Datenbank"
+
+msgid "Import Another Database"
+msgstr "Import einer fremden Datenbank"
+
+msgid "Select Database to Import"
+msgstr "Auswahl"
+
+msgid "User Maintenance"
+msgstr "Benutzerverwaltung"
+
+msgid "Error"
+msgstr "Fehler"
+
+msgid "You have entered an incorrect name or password."
+msgstr "Name oder Passwort sind falsch"
+
+msgid "Return to the login screen"
+msgstr "Zurück zur Anmeldung"
+
+msgid "Return to Administration Menu"
+msgstr "Zurück zur Verwaltung"
+
+msgid "Authenticating"
+msgstr "Anmeldung wird überprüft"
+
+msgid "If your browser does not support the REFRESH tag"
+msgstr "Wenn Ihr Browser kein \"Neuladen\" kennt"
+
+msgid "click here"
+msgstr "hier klicken"
+
+msgid "Degree"
+msgstr "Grad"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "NO DESCRIPTION"
+msgstr "keineBeschreibung"
+
+msgid "Date Last Modified"
+msgstr "Datum der letzten Änderung"
+
+msgid "Degree Description"
+msgstr "Beschreibung der Grade"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Add"
+msgstr "Neu"
+
+msgid "Remove Changes"
+msgstr "Änderungen löschen"
+
+msgid "Abandon Modification"
+msgstr "Abbrechen"
+
+msgid "Adding"
+msgstr "Neu"
+
+msgid "Modifying"
+msgstr "Ändern"
+
+msgid "Deleting"
+msgstr "Löschen"
+
+msgid "ERROR"
+msgstr "Fehler"
+
+msgid "Must select record to Modify"
+msgstr "Ein Datensatz muss ausgewählt werden"
+
+msgid "Patient"
+msgstr "Patient"
+
+msgid "General Information"
+msgstr "Allgemeines"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nein"
+
+msgid "Related to Pregnancy"
+msgstr "Zusammenhang mit Schwangerschaft"
+
+msgid "Date of First Occurance"
+msgstr "Symptombeginn"
+
+msgid "Related to Employment"
+msgstr "Zusammenhang mit der Arbeit"
+
+msgid "Date of Last Similar"
+msgstr "Letztes ähnliches Ereignis"
+
+msgid "Related to Automobile"
+msgstr "Zusammenhang mit Straßenverkehr"
+
+msgid "Referring Physician"
+msgstr "Überweisender Arzt"
+
+msgid "Related to Other Cause"
+msgstr "Sonstige Zusammenhänge"
+
+msgid "State/Province"
+msgstr "Land/Bundesland"
+
+msgid "Diagnosis Family"
+msgstr "Diagnose-Gruppen"
+
+msgid "Episode Type"
+msgstr "Episode Type"
+
+msgid "NONE SELECTED"
+msgstr "Nichts gewählt"
+
+msgid "acute"
+msgstr "akute/r/s"
+
+msgid "chronic"
+msgstr "chronische/r/s"
+
+msgid "chronic recurrent"
+msgstr "chronisch-rezidivierend"
+
+msgid "historical"
+msgstr "historisch"
+
+msgid "Automobile Related Information"
+msgstr "Information bezüglich Automobilen"
+
+msgid "Auto Insurance"
+msgstr "Auto-Versicherung"
+
+msgid "Case Number"
+msgstr "Pat.-Nummer"
+
+msgid "Address (Line 1)"
+msgstr "Adresse (Zeile 1)"
+
+msgid "Contact Name"
+msgstr "Kontakt (Name)"
+
+msgid "Address (Line 2)"
+msgstr "Adresse (Zeile 2)"
+
+msgid "Contact Phone"
+msgstr "Kontakt (Telefon)"
+
+msgid "City, State/Prov, Postal Code"
+msgstr "PLZ, Ort, Land"
+
+msgid "Email Address"
+msgstr "E-Mail"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "Employment Related Information"
+msgstr "Information über Beschäftigung"
+
+msgid "Employment Status"
+msgstr "Tätigkeit"
+
+msgid "Patient Status"
+msgstr "Patienten-Status"
+
+msgid "Name of Employer"
+msgstr "Arbeitgeber"
+
+msgid "File Number"
+msgstr "Krankengeschichte Nr."
+
+msgid "Pregnancy Related Information"
+msgstr "Information über Schwangerschaft/en"
+
+msgid "Length of Cycle"
+msgstr "Zyklusdauer"
+
+msgid "Last Menstrual Period"
+msgstr "Letzte Regel"
+
+msgid "Gravida"
+msgstr "Gravida"
+
+msgid "Date of Confinement"
+msgstr "vorauss. Geburtstermin"
+
+msgid "Para"
+msgstr "Geburten"
+
+msgid "Miscarries"
+msgstr "Fehlgeburten"
+
+msgid "Abortions"
+msgstr "Aborte"
+
+msgid "Other Related Information"
+msgstr "Sonstiges"
+
+msgid "More Information"
+msgstr "Weitere Informationen"
+
+msgid "Go"
+msgstr "nach"
+
+msgid "Manage Patient"
+msgstr "Patienten-Verwaltung"
+
+msgid "You must specify an ID to view an Episode!"
+msgstr "Bitte eine ID eingeben, wenn Sie einen Vorgang sehen wollen"
+
+msgid "Starting Date"
+msgstr "Start-Datum"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Procedure"
+msgstr "Vorgang"
+
+msgid "Comment"
+msgstr "Kommentar"
+
+msgid "NO COMMENT"
+msgstr "Kein Kommentar"
+
+msgid "Must specify a patient!"
+msgstr "Bitte einen Pat. angeben"
+
+msgid "Previous"
+msgstr "Zurück"
+
+msgid "Page %s of %s"
+msgstr "Seite %s von %s"
+
+msgid "Next"
+msgstr "Nächster"
+
+msgid "Action"
+msgstr "Vorgang"
+
+msgid "contains"
+msgstr "enthält"
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "NONE"
+msgstr "nichts"
+
+msgid "ALL"
+msgstr "alles"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Modify"
+msgstr "Ändern"
+
+msgid "Save"
+msgstr "Sichern"
+
+msgid "Primary Information"
+msgstr "Basis-Information"
+
+msgid "Last Name"
+msgstr "Nachname"
+
+msgid "First Name"
+msgstr "Vorname"
+
+msgid "Middle Name"
+msgstr "Anrede"
+
+msgid "Address Line 1"
+msgstr "Adresse (Zeile 1)"
+
+msgid "Address Line 2"
+msgstr "Adresse (Zeile 2)"
+
+msgid "Date of Birth"
+msgstr "Geburtstag"
+
+msgid "Has Insurance"
+msgstr "versichert"
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Home Phone"
+msgstr "Telefon (zu Hause)"
+
+msgid "Work Phone"
+msgstr "Telefon (Arbeit)"
+
+msgid "Fax Number"
+msgstr "Fax"
+
+msgid "Personal"
+msgstr "Personalien"
+
+msgid "Gender"
+msgstr "Geschlecht"
+
+msgid "Female"
+msgstr "weiblich"
+
+msgid "Male"
+msgstr "männlich"
+
+msgid "Transgendered"
+msgstr "transsexuell"
+
+msgid "Married"
+msgstr "verheiratet"
+
+msgid "Single"
+msgstr "ledig"
+
+msgid "Divorced"
+msgstr "geschieden"
+
+msgid "Separated"
+msgstr "getrennt lebend"
+
+msgid "Widowed"
+msgstr "verwitwet"
+
+msgid "Social Security Number"
+msgstr "Sozialvericherungs-Nummer"
+
+msgid "Internal Practice ID #"
+msgstr "Patienten-ID der Praxis"
+
+msgid "Driver's License (No State)"
+msgstr "Führerschein"
+
+msgid "Type of Billing"
+msgstr "Rechnungsstellung"
+
+msgid "Monthly Billing On Account"
+msgstr "monatliche Rechnung"
+
+msgid "Statement Billing"
+msgstr "Kostenvoranschlag"
+
+msgid "Charge Card Billing"
+msgstr "Kreditkarte"
+
+msgid "Monthly Budget Amount"
+msgstr "monatliches Budget"
+
+msgid "In House Doctor"
+msgstr "Behand. Arzt"
+
+msgid "Referring Doctor"
+msgstr "Überweis. Arzt"
+
+msgid "Primary Care Physician"
+msgstr "Hausarzt"
+
+msgid "Number of Other Physicians"
+msgstr "andere Ärzte"
+
+msgid "Insurance"
+msgstr "Versicherung"
+
+msgid "Number of Insurance Companies"
+msgstr "Zahl der Versicherungen"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "City"
+msgstr "Ort"
+
+msgid "State"
+msgstr "Land"
+
+msgid "Zip"
+msgstr "PLZ"
+
+msgid "like"
+msgstr "wie"
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "Primary Insurance"
+msgstr "Basisversicherung"
+
+msgid "Primary Insurance ID/Group Code"
+msgstr "Kürzel der Basisversicherung"
+
+msgid "Secondary Insurance"
+msgstr "zweite Versicherung"
+
+msgid "Secondary Insurance ID/Group Code"
+msgstr "Kürzel der zweiten Versicherung"
+
+msgid "Tertiary Insurance"
+msgstr "dritte Versicherung"
+
+msgid "Tertiary Insurance ID/Group Code"
+msgstr "Kürzel der dritten Versicherung"
+
+msgid "Guarantor"
+msgstr "Bürge"
+
+msgid "Internal Practice ID"
+msgstr "Praxis-Kürzel"
+
+msgid "Modifying... "
+msgstr "ändern..."
+
+msgid "Adding..."
+msgstr "neu..."
+
+msgid "Manage This Patient"
+msgstr "Diesen Patienten bearbeiten"
+
+msgid "Practice ID"
+msgstr "Patientenkürzel"
+
+msgid "Patient(s) In System"
+msgstr "Patient(en) im System"
+
+msgid "No Patients In System"
+msgstr "Keine Patienten im System"
+
+msgid "One Patient In System"
+msgstr "eine Patient im System"
+
+msgid "Patients By Name"
+msgstr "Patienten (nach Name)"
+
+msgid "Patients Field Search"
+msgstr "Patienten (Feldsuche)"
+
+msgid "Driver's License"
+msgstr "Führerschein"
+
+msgid "Soundalike Search"
+msgstr "phonetische Suche"
+
+msgid "sounds like"
+msgstr "klingt wie"
+
+msgid "Show all Patients"
+msgstr "Alle Patienten zeigen"
+
+msgid "Add Patient"
+msgstr "Neue/r Patient/in"
+
+msgid "Call In Menu"
+msgstr "Einbestell-Menü"
+
+msgid "Return to Main Menu"
+msgstr "Zurück zum Hauptmenü"
+
+msgid "Physician"
+msgstr "Arzt"
+
+msgid "Other Physician 1"
+msgstr "weiterer Arzt"
+
+msgid "Physician Group Name"
+msgstr "Arzt-Gruppe"
+
+msgid "Default Facility"
+msgstr "Bezeichnung"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Practice Name"
+msgstr "Praxis-Name"
+
+msgid "Internal ID #"
+msgstr "Internes Kürzel"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Cellular Phone #"
+msgstr "Handy"
+
+msgid "Beeper / Pager #"
+msgstr "Pager"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Primary Address Line 1"
+msgstr "1. Adresse (Zeile 1)"
+
+msgid "Primary Address Line 2"
+msgstr "1. Adresse (Zeile 2)"
+
+msgid "Primary Address City"
+msgstr "1. Adresse (Ort)"
+
+msgid "Primary Address State"
+msgstr "1. Adresse (Land)"
+
+msgid "Primary Address Zip"
+msgstr "1. Adresse (PLZ)"
+
+msgid "Primary Address Phone #"
+msgstr "1. Adresse (Telefon)"
+
+msgid "Primary Address Fax #"
+msgstr "1. Adresse (Fax)"
+
+msgid "Has Second Address"
+msgstr "weitere Adresse?"
+
+msgid "Address 2"
+msgstr "2. Adresse"
+
+msgid "Secondary Address Line 1"
+msgstr "2. Adresse (Zeile 1)"
+
+msgid "Secondary Address Line 2"
+msgstr "2. Adresse (Zeile 2)"
+
+msgid "Secondary Address City"
+msgstr "2. Adresse (Ort)"
+
+msgid "Secondary Address State"
+msgstr "2. Adresse (Land)"
+
+msgid "Secondary Address Zip"
+msgstr "2. Adresse (PLZ)"
+
+msgid "Secondary Address Phone #"
+msgstr "2. Adresse (Telefon)"
+
+msgid "Secondary Address Fax #"
+msgstr "2. Adresse (Fax)"
+
+msgid "UPIN Number"
+msgstr "Kürzel"
+
+msgid "Social Security #"
+msgstr "Sozialversicherungs-Nummer"
+
+msgid "Degree 1"
+msgstr "Titel 1"
+
+msgid "Specialty 1"
+msgstr "Fachgebiet"
+
+msgid "Physician Internal/External"
+msgstr "Belegarzt/Kliniksarzt"
+
+msgid "In-House"
+msgstr "AIP"
+
+msgid "Referring"
+msgstr "Bezug"
+
+msgid "Charge Map"
+msgstr "Charge Map"
+
+msgid "Internal Type"
+msgstr "Beleg"
+
+msgid "Amount"
+msgstr "Betrag"
+
+msgid "Insurance IDs"
+msgstr "Versicherungs-Kürzel"
+
+msgid "Insurance Group"
+msgstr "Versicherungsgruppe"
+
+msgid "ID Number"
+msgstr "Kürzel"
+
+msgid "Specialty"
+msgstr "Fachgebiet"
+
+msgid "Specialty Description"
+msgstr "Fachgebietszusätze"
+
+msgid "Code"
+msgstr "Arzt-Nr."
+
+msgid "Password (Verify)"
+msgstr "Passwort (Bestätigung)"
+
+msgid "Locked out"
+msgstr "Abmelden"
+
+msgid "Delete privileges"
+msgstr "Privilegien löschen"
+
+msgid "Undefined"
+msgstr "undefiniert"
+
+msgid "Superuser"
+msgstr "Administrator"
+
+msgid "User type"
+msgstr "Nutzer-Typ"
+
+msgid "Miscellaneous"
+msgstr "Verschiedenes"
+
+msgid "Actual Physician"
+msgstr "Behandelnder Arzt"
+
+msgid "Authorize"
+msgstr "Genehmigung"
+
+msgid "Authorized facilities"
+msgstr "Genehmigte Leistungen"
+
+msgid "Authorized physicians"
+msgstr "Zugelassene Ärzte"
+
+msgid "Authorized physician groups"
+msgstr "Zugelassene Ärztegruppen"
+
+msgid "Abandon Addition"
+msgstr "Eingabe zurücknehmen"
+
+msgid "Passwords must match"
+msgstr "Die Passwörter sind verschieden"
+
+msgid "You cannot modify root!"
+msgstr "Administrator 'root' kann nicht geändert werden"
+
+msgid "Go back to user menu"
+msgstr "Zurück zum Benutzer-Menü"
+
+msgid "You cannot delete root!"
+msgstr "Administrator 'root' kann nicht gelöscht werden"
+
+msgid "Deleted"
+msgstr "gelöscht"
+
+msgid "Maintenance"
+msgstr "Bearbeitung"
+
+msgid "DEL"
+msgstr "DEL"
+
+msgid "MOD"
+msgstr "MOD"
+
+msgid "You have entered an incorrect username or password."
+msgstr "Name oder Passwort sind falsch"
+
+msgid "It is possible that your cookies have expired."
+msgstr "Die Cookies sind wohl verfallen"
+
+msgid "Return to the Login Screen"
+msgstr "Zurück zur Anmeldung"
+
+msgid "ADD"
+msgstr "ADD"
+
+msgid "RETURN TO MENU"
+msgstr "Zurück zum Menü"
+
+msgid "Return to Patient Management"
+msgstr "Zurück zur Patienten-Verwaltung"
+
+msgid "You must select a patient."
+msgstr "Sie müssen einen Patienten wählen"
+
+msgid "Appointments"
+msgstr "Termine"
+
+msgid "View/Manage"
+msgstr "BearbeitenSehen"
+
+msgid "Show Today"
+msgstr "Zeige heutige"
+
+msgid "Custom Records"
+msgstr "Patienten-Liste"
+
+msgid "Select Another Patient"
+msgstr "einen anderen Patienten"
+
+msgid "Select a Patient"
+msgstr "Patienten-Auswahl"
+
+msgid "Attach to Guarantor"
+msgstr "Bürge ist"
+
+msgid "done"
+msgstr "fertig"
+
+msgid "Dependents"
+msgstr "Verbindungen"
+
+msgid "Patient Information"
+msgstr "Patienten-Information"
+
+msgid "Reports and Certificates"
+msgstr "Berichte und Zertifikate"
+
+msgid "Choose"
+msgstr "wählen"
+
+msgid "No record found with that criteria."
+msgstr "Keine passenden Daten gefunden"
+
+msgid "appointment(s)"
+msgstr "Termin/e"
+
+msgid "midnight"
+msgstr "Mitternacht"
+
+msgid "noon"
+msgstr "Mittag"
+
+msgid "Week of"
+msgstr "Woche"
+
+msgid "prev"
+msgstr "vorher"
+
+msgid "next"
+msgstr "nächste/r"
+
+msgid "go to today"
+msgstr "gehe zum heutigen Tag"
+
+msgid "Logging Out ... "
+msgstr "Abmelden..."
+
+msgid "NEIC ID"
+msgstr "NEIC ID"
+
+msgid "Web Site"
+msgstr "Web Site"
+
+msgid "Company Name (full)"
+msgstr "Name der Einrichtung (voll)"
+
+msgid "Company Name (on forms)"
+msgstr "Name der Einrichtung (kurz)"
+
+msgid "Place of Service"
+msgstr "Service"
+
+msgid "Scheduling Locations"
+msgstr "Listen"
+
+msgid "You don't have access for this menu."
+msgstr "Sie haben keine Genehmigung für dieses Menü"
+
+msgid "Contact Information"
+msgstr "Kontakt"
+
+msgid "Authorization Number"
+msgstr "Genehmigungs-Nummer"
+
+msgid "Authorization Type"
+msgstr "Genehmigungs-Typ"
+
+msgid "Provider Identifier"
+msgstr "Träger"
+
+msgid "Authorizing Provider"
+msgstr "Aufsichtsbehörde"
+
+msgid "Authorizing Insurance Company"
+msgstr "Versicherung"
+
+msgid "Number of Visits"
+msgstr "Zahl der Visiten"
+
+msgid "This patient has no authorizations."
+msgstr "Dieser Patient hat keine Genehmigungen"
+
+msgid "back"
+msgstr "zurück"
+
+msgid "Mark"
+msgstr "markieren"
+
+msgid "exit"
+msgstr "zurück"
+
+msgid "NO PATIENT SPECIFIED"
+msgstr "Kein Patient gewählt"
+
+msgid "Patient Payment"
+msgstr "Patientenzahlungen"
+
+msgid "Generate Insurance Billing"
+msgstr "Versicherungsrechnung erstellen"
+
+msgid "Add Appointment"
+msgstr "neuer Termin"
+
+msgid "this date occurs in the past"
+msgstr "Das Datum ist vorbei"
+
+msgid "Change Room"
+msgstr "Wechsel-Raum"
+
+msgid "The selected room is free all day."
+msgstr "Der gewählte Raum ist am ganzen Tag frei"
+
+msgid "TIME"
+msgstr "TIME"
+
+msgid "NO PREFERENCE"
+msgstr "keine Voreinstellungen"
+
+msgid "Time"
+msgstr "Zeit"
+
+msgid "Duration"
+msgstr "Dauer"
+
+msgid "Note"
+msgstr "Notiz"
+
+msgid "Commit Booking"
+msgstr "Bestätigen"
+
+msgid "Last"
+msgstr "Letzter"
+
+msgid "Middle"
+msgstr "Mittlerer"
+
+msgid "First"
+msgstr "Erster"
+
+msgid "Took Call"
+msgstr "Anruf angenommen"
+
+msgid "Complaint"
+msgstr "Beschwerden"
+
+msgid "Show Today's Appointments"
+msgstr "Zeige heutige Termine"
+
+msgid "Show All Appointments"
+msgstr "Zeige alle Termine"
+
+msgid "Old"
+msgstr "alt"
+
+msgid "All"
+msgstr "alle"
+
+msgid "Current"
+msgstr "jetzt"
+
+msgid "Date of Call"
+msgstr "Datum des Anrufs"
+
+msgid "Home/Work Phone"
+msgstr "Telefon (zu Hause/Arbeit)"
+
+msgid "VIEW"
+msgstr "Zeige"
+
+msgid "BOOK"
+msgstr "buche"
+
+msgid "There is nothing to be billed."
+msgstr "Es gibt nichts zu berechnen"
+
+msgid "Processing"
+msgstr "Arbeite"
+
+msgid "Building patient information"
+msgstr "Erstelle Patienten-Information"
+
+msgid "Retrieved procedure"
+msgstr "Wiederhergestellte Prozedur"
+
+msgid "Preview"
+msgstr "Vorschau"
+
+msgid "Render to Screen"
+msgstr "Bildschirm-Darstellung"
+
+msgid "Render to File"
+msgstr "als Datei sichern"
+
+msgid "Get Rendered Text File"
+msgstr "als Text-Datei sichern"
+
+msgid "Mark as Billed"
+msgstr "abgerechnet"
+
+msgid "Back"
+msgstr "zurück"
+
+msgid "Marking"
+msgstr "Markierung"
+
+msgid "Fixed Forms Generation"
+msgstr "Formular-Erstellung"
+
+msgid "Generate Insurance Claim Forms"
+msgstr "Versicherungs-Antrag erstellen"
+
+msgid "Claim Form"
+msgstr "Antrag"
+
+msgid "Number of Patients"
+msgstr "Zahl der Patienten"
+
+msgid "Skip # of Pats to Bill"
+msgstr "Abrechnung von # Patienten überspringen"
+
+msgid "Nothing set to be marked!"
+msgstr "Nichts zu markieren"
+
+msgid "You must select a template."
+msgstr "Sie müssen eine Vorlage auswählen"
+
+msgid "Date Added"
+msgstr "Datum zugefügt"
+
+msgid "Form"
+msgstr "Formular"
+
+msgid "Fee Profiles"
+msgstr "Gebühren-Liste"
+
+msgid "Procedural Code"
+msgstr "Leistungs-Nr."
+
+msgid "Internal Description"
+msgstr "Kurzbeschreibung"
+
+msgid "External Description"
+msgstr "ausführliche Beschreibung"
+
+msgid "Gender Restriction"
+msgstr "Geschlechts-Einschränkung"
+
+msgid "no restriction"
+msgstr "keine Einschränkung"
+
+msgid "female only"
+msgstr "nur für Frauen"
+
+msgid "male only"
+msgstr "nur für Männer"
+
+msgid "Taxed?"
+msgstr "Abgerechnet?"
+
+msgid "Relative Value"
+msgstr "Relativer Wert"
+
+msgid "Default Type of Service"
+msgstr "Muster-Leistung"
+
+msgid "Default Standard Fee"
+msgstr "Muster-Gebühr"
+
+msgid "Diagnosis Required"
+msgstr "Diagnose fehlt"
+
+msgid "Diagnosis Excluded"
+msgstr "Diagnose ausgeschlossen"
+
+msgid "Procedural Codes Required"
+msgstr "Leistungs-Nr. fehlt"
+
+msgid "Procedural Codes Excluded"
+msgstr "Leistungs-Nr. ausgeschlossen"
+
+msgid "Please note that selecting \"0\" or \"NONE SELECTED\" will cause
+the default
+values to be used."
+msgstr "Wenn \"0\" oder \"nichts gewählt\" belassen wird, werden die
+Standard-Werte
+eingesetzt"
+
+msgid "Standard Fee"
+msgstr "Standard-Gebühr"
+
+msgid "Insurance Company"
+msgstr "Versicherung"
+
+msgid "Diagnosis Related Groups"
+msgstr "Diagnose-basierte Gruppen"
+
+msgid "Amount Billed"
+msgstr "Rechnungsbetrag"
+
+msgid "Amount Collected"
+msgstr "Zahlung"
+
+msgid "ICD9"
+msgstr "ICD9"
+
+msgid "ICD10"
+msgstr "ICD10"
+
+msgid "<U>S</U>ubjective"
+msgstr "<U>S</U>ubjektiv"
+
+msgid "<U>O</U>bjective"
+msgstr "<U>O</U>bjektiv"
+
+msgid "<U>A</U>ssessment"
+msgstr "<U>B</U>efund"
+
+msgid "<U>P</U>lan"
+msgstr "<U>P</U>lan"
+
+msgid "<U>I</U>nterval"
+msgstr "<U>T</U>ermin"
+
+msgid "<U>E</U>ducation"
+msgstr "<U>S</U>chulung"
+
+msgid "P<U>R</U>escription"
+msgstr "<U>V</U>erschreibung"
+
+msgid "Related Episode(s)"
+msgstr "Verwandte Episode(n)"
+
+msgid "Manage Appointments"
+msgstr "Termin-Verwaltung"
+
+msgid "Book Appointment"
+msgstr "Termin eingeben"
+
+msgid "This patient has no appointments."
+msgstr "Patient hat keinen Termin"
+
+msgid "Billing Information"
+msgstr "Rechnungs-Information"
+
+msgid "Inclusion/Exclusion"
+msgstr "Ein-/Ausschluss"
+
+msgid "Meta Description"
+msgstr "Beschreibung"
+
+msgid "Group"
+msgstr "Gruppe"
+
+msgid "Internal Information"
+msgstr "Interne Information"
+
+msgid "Insurance Type"
+msgstr "Versicherungs-Typ"
+
+msgid "Insurance Assign"
+msgstr "aktuelle Versicherung"
+
+msgid "Physician Degrees"
+msgstr "Arzt-Titel"
+
+msgid "Room Name"
+msgstr "Raum-Name"
+
+msgid "Default Provider"
+msgstr "Standard-Provider"
+
+msgid "Booking Enabled"
+msgstr "Eingabe erlaubt"
+
+msgid "Modifier"
+msgstr "Zusatz"
+
+msgid "Employer Identification Number"
+msgstr "Arbeitgeber-Kürzel"
+
+msgid "Internal"
+msgstr "intern"
+
+msgid "External"
+msgstr "extern"
+
+msgid "Internal or External Facility"
+msgstr "Intern oder extern"
+
+msgid "Provider"
+msgstr "Provider"
+
+msgid "Date of Procedure"
+msgstr "Behandlungsdatum"
+
+msgid "Units"
+msgstr "Einheiten"
+
+msgid "Diagnosis Code"
+msgstr "Diagnose-Kürzel"
+
+msgid "Voucher Number"
+msgstr "Versicherungs-Nummer"
+
+msgid "Authorization"
+msgstr "Genehmigung"
+
+msgid "Referring Provider"
+msgstr "gewählter Provider"
+
+msgid "Date of Last Visit"
+msgstr "Letzter Kontakt"
+
+msgid "Calculated Accepted Fee"
+msgstr "Berechnete akzeptierte Gebühr"
+
+msgid "Calculated Charge"
+msgstr "Berechnete Gebühr"
+
+msgid "Insurance Billable?"
+msgstr "Versicherung berechenbar?"
+
+msgid "Committing to ledger"
+msgstr "Rechnung erfasst"
+
+msgid "Updating patient diagnoses"
+msgstr "Diagnosen werden aktualisiert"
+
+msgid "Procedure Code"
+msgstr "Leistungskürzel"
+
+msgid "Room"
+msgstr "Raum"
+
+msgid "Show Appointments"
+msgstr "Zeige Termine"
+
+msgid "No appointments today."
+msgstr "Heute keine Termine"
+
+msgid "Label"
+msgstr "Gruppe"
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Name of Form"
+msgstr "Formular-Name"
+
+msgid "Page Length"
+msgstr "Seienlänge"
+
+msgid "Line Length"
+msgstr "Zeilenlänge"
+
+msgid "Loop Repetitions"
+msgstr "Anzahl"
+
+msgid "Check Char"
+msgstr "Text-Kontrolle"
+
+msgid "(<I>example: \"X\"</I>)"
+msgstr "(<I>Beispiel: \"X\"</I>)"
+
+msgid "Loop Line Offset"
+msgstr "Leerzeilen am Seienanfang"
+
+msgid "(<I>\"1\" skips to the next line</I>)"
+msgstr "(<I>\"1\" springt zur nächsten Zeile</I>)"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Generic"
+msgstr "Generisch"
+
+msgid "Insurance Claim"
+msgstr "Versicherungsanspruch"
+
+msgid "Patient Bill"
+msgstr "Patienten-Rechnung"
+
+msgid "Ins/Del"
+msgstr "Ins/Del"
+
+msgid "Row/Line"
+msgstr "Zeilen"
+
+msgid "Column"
+msgstr "Spalten"
+
+msgid "Length"
+msgstr "Länge"
+
+msgid "Data"
+msgstr "Daten"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "Add Payment"
+msgstr "neue Zahlung"
+
+msgid "Describe the Payment"
+msgstr "Beschreibung der Zahlung"
+
+msgid "Payment Source"
+msgstr "Einzahler"
+
+msgid "Payment Type"
+msgstr "Zahlungsart"
+
+msgid "Date Received"
+msgstr "Zahlung eingegangen"
+
+msgid "Payment Amount"
+msgstr "Zahlungsbetrag"
+
+# END
+
