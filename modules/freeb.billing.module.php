@@ -69,17 +69,27 @@ class FreeBBillingTransport extends BillingModule {
 		global $type;
 		extract ($_REQUEST);
 
-		print "__submit = ".$__submit."<br/>\n";
+		//print "__submit = ".$__submit."<br/>\n";
+
 		// Handle super submit
 		if ($__submit == __("Submit Claims")) {
-			print "__submit is Submit Claims<br/>\n";
+			//print "__submit is Submit Claims<br/>\n";
 			return $this->process();
 		}
 
-		// Handle single claim submit
-		if ($__submit_alone) {
-			print "__submit_alone = ".$__submit_alone."<br/>\n";
-			return $this->process($__submit_alone);
+		// Handle single claim submit ... huge hack since the interface
+		// calls for a button, and we can't hide button information
+		// without a seperate form... so we try an array. Cross your
+		// fingers on this one.
+		if (is_array($__submit_alone)) {
+			foreach ($__submit_alone as $k => $v) {
+				//print "__submit_alone[$k] = $v<br/>\n";
+				// Ensure that the actual button was pressed.
+				if ($v == __("Submit Alone")) {
+					//print "executing process for $k<br/>\n";
+					return $this->process($k);
+				}
+			}
 		}
 
 		// Get FreeB formats and information
@@ -109,9 +119,25 @@ class FreeBBillingTransport extends BillingModule {
 			return false;
 		}	
 
+		// Show clearinghouse, etc info
+		$buffer .= "
+		<table width=\"740\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
+		<thead><tr>
+			<td class=\"DataHead\" width=\"34%\">".__("Clearinghouse")."</td>
+			<td class=\"DataHead\" width=\"33%\">".__("Billing Service")."</td>
+			<td class=\"DataHead\" width=\"33%\">".__("Billing Contact")."</td>
+		</tr></thead>
+		<tbody><tr>
+			<td class=\"Data\">".module_function('BillingClearinghouse', 'widget', 'clearinghouse')."</td>
+			<td class=\"Data\">".module_function('BillingService', 'widget', 'service')."</td>
+			<td class=\"Data\">".module_function('BillingContact', 'widget', 'contact')."</td>
+		</tr></tbody>
+		</table>
+		";
+
 		// Show billing table header
 		$buffer .= "
-		<table width=\"100%\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
+		<table width=\"740\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
 		<thead><tr>
 			<td class=\"DataHead\" width=\"15%\">".__("Patient")."</td>
 			<td class=\"DataHead\" width=\"35%\">&nbsp;</td>
@@ -150,7 +176,7 @@ class FreeBBillingTransport extends BillingModule {
 
 			// Create master table
 			$buffer .= "
-			<table width=\"100%\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
+			<table width=\"740\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
 			<tbody><tr>
 			<td class=\"Data\" width=\"15%\"><a href=\"manage.php?id=".urlencode($p)."\"
 				>".prepare($this_patient->fullName())."</a></td>
@@ -170,7 +196,7 @@ class FreeBBillingTransport extends BillingModule {
 			if ($expand[$p]) {
 				// If expanding, display all procedures
 				$buffer .= "
-				<table width=\"100%\" cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+				<table width=\"740\" cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
 				<tbody>
 				";
 
@@ -229,7 +255,7 @@ class FreeBBillingTransport extends BillingModule {
 					
 					$buffer .= "
 					</select>
-					<input type=\"checkbox\" name=\"__submit_alone\" value=\"".prepare($c)."\" onChange=\"this.form.submit(); return true;\" />".__("Submit Alone")."
+					<input type=\"submit\" name=\"__submit_alone[".prepare($c)."]\" value=\"".__("Submit Alone")."\" />
 					</td>
 					</tr>
 					";
@@ -247,17 +273,28 @@ class FreeBBillingTransport extends BillingModule {
 					// are being submitted...
 					if (!$been_here) {
 						$claim[$c] = 1;
+						$claim_owner[$c] = $p;
 						// HACK! Should not always be X12
-						$format[$c] = 'x12';
-						$target[$c] = 'txt';
 						$__dummy = $this->PatientCoverages($c, &$curcov);
 						$coverage[$c] = $curcov;
+						// These default to values used by the default
+						$this_coverage = CreateObject('FreeMED.Coverage', $curcov);
+						$format[$c] = $this_coverage->covinsco->local_record['inscodefformat'];
+						$target[$c] = $this_coverage->covinsco->local_record['inscodeftarget'];
+						// Look 'em up, if not, x12/txt is the default for now
+						if (!$format[$c]) {
+							$format[$c] = 'x12';
+						}
+						if (!$target[$c]) {
+							$target[$c] = 'txt';
+						}
 					}
 
 					// ... and notebook-style hide their
 					// data so it can be expanded upon
 					$buffer .= "
 					<input type=\"hidden\" name=\"claim[".$c."]\" value=\"".prepare($claim[$c])."\" />
+					<input type=\"hidden\" name=\"claim_owner[".$c."]\" value=\"".prepare($claim_owner[$c])."\" />
 					<input type=\"hidden\" name=\"format[".$c."]\" value=\"".prepare($format[$c])."\" />
 					<input type=\"hidden\" name=\"target[".$c."]\" value=\"".prepare($target[$c])."\" />
 					<input type=\"hidden\" name=\"coverage[".$c."]\" value=\"".prepare($coverage[$c])."\" />
@@ -308,38 +345,70 @@ class FreeBBillingTransport extends BillingModule {
 		// Make sure we don't have someone passing us bupkus
 		unset($billkey);
 
+
 		// If we're doing a single claim, handle seperately
 		if ($single != NULL) {
+			// We always pass these ...
+			$billkey['contact'] = $_REQUEST['contact'];
+			$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
+			$billkey['service'] = $_REQUEST['service'];
+
 			// Create single array of stuff
 			$billkey['procedures'][] = $single;
-			$result = $freeb->ProcessBill($key, $format[$single], $target[$single]);
+			$result = $freeb->ProcessBill(
+				serialize($billkey),
+				$format[$single],
+				$target[$single],
+				'SingleProcedure_'.$single
+			);
+			print "DEBUG: format = ".$format[$single]." target = ".$target[$single]."<br/>\n";
+			print "DEBUG: "; print_r($result); print "<br/>\n";
+			$buffer .= "Should have returned $result.<br/>\n";
+			return $buffer;
 		}
 
-		// Add patients to be billed
-		foreach ($bill AS $patient => $to_bill) {
-			if ($to_bill == 1) {
-				// Add this key to the patients
-				$billkey['patients'][] = $patient;	
-			}
-		}
-
-		// For now, we ignore the type of bill, and focus more
-		// on the procedures and coverages
+		// Create master hash to work with for all procedures, etc
+		$bill_hash = array ();
 		foreach ($claim AS $claim => $to_bill) {
+			// First, form hash key
+			$hash_key = $format[$claim].'__'.$target[$claim];
+			print "hash key = $hash_key<br/>\n";
+
+			// Only process if the claim is to be billed
 			if ($to_bill == 1) {
-				// Add this key to the procedures
-				$billkey['procedures'][] = $claim;
+				// And the patient is supposed to be billed
+				if ($bill[$claim_owner[$claim]] == 1) {
+					// Add the procedure to that hash
+					$bill_hash[$hash_key]['procedures'][] = $claim;
+				}
 			}
 		}
 
-		// Lastly, we serialize the bill key
-		$key = serialize($billkey);
+		// Once we have created these hashes, we loop through the list
+		// of them and process each one
+		foreach ($bill_hash AS $my_key => $billkey) {
+			// Get format and target
+			list ($my_format, $my_target) = explode ('__', $my_key);
+			print "processing key = $my_key<br/>\n";
 
-		// ... and send it to FreeB, to see what we get for a result
-		$result = $freeb->ProcessBill($key, 'hcfa', 'pdf');
+			// Add contact, clearinghouse, and service info
+			$billkey['contact'] = $_REQUEST['contact'];
+			$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
+			$billkey['service'] = $_REQUEST['service'];
 
-		// DEBUG: Show what we got
-		print "DEBUG: "; print_r($result); print "<br/>\n";
+			// Lastly, we serialize the bill key
+			$key = serialize($billkey);
+
+			// ... and send it to FreeB, to see what we get for a result
+			$result = $freeb->ProcessBill($key, $my_format, $my_target, $my_key);
+
+			// DEBUG: Show what we got
+			print "DEBUG: "; print_r($result); print "<br/>\n";
+		}
+
+		$buffer .= "This should show something here eventually.<br/>\n";
+
+		return $buffer;
 	} // end method process
 
 
