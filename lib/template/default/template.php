@@ -139,5 +139,8 @@ if (is_object($this_user)) {
 </BODY>
 </HTML>
 <?php
+} else {
+	// Show what we have, if that's what we're doing
+	print $display_buffer;
 } // end checking for "no_template_display"
 ?>
