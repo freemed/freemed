@@ -21,8 +21,8 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log mess
 
 $this_user = CreateObject('FreeMED.User');
 
-if ($submit_action==" ".__("Add")." ") { $action = "add"; }
-if ($submit_action==" ".__("Cancel")) {
+if ($_REQUEST['submit_action']==" ".__("Add")." ") { $action = "add"; }
+if ($_REQUEST['submit_action']==__("Cancel")) {
 	$action = "";
 	// Handle return to patient during cancel
 	if ($return=="manage") {
@@ -306,7 +306,8 @@ switch ($action) {
 				<td>".$scheduler->get_time_string($hour,$min)."</td>
 				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
-				<td>".$r['msgurgency']."/5</td>
+				<td>".$r['msgurgency']."/5 ".
+				"<a class=\"button\" href=\"".page_name()."?action=addform&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a></td>
 			</tr>
 			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
 				".( $r['msgsubject'] ? 
