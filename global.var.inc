@@ -113,9 +113,11 @@
 
   $__global_var__ = true;
 
-  // 19990820 -- cookie setting junk
   if ($default_facility>0)
     SetCookie ("default_facility", $default_facility, time()+$_cookie_expire); 
+
+  // set the maximum timeout...
+  set_time_limit (0);
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
