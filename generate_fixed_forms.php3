@@ -240,8 +240,8 @@
      $fac[ein]          = $this_facility[psrein];
 
      // current date hashes
-     $curdate[mmddyy]   = date ("mdy");
-     $curdate[mmddyyyy] = date ("mdY");
+     $curdate[mmddyy]   = date ("m d y");
+     $curdate[mmddyyyy] = date ("m d Y");
      $curdate[m]        = date ("m");
      $curdate[d]        = date ("d");
      $curdate[sy]       = date ("y");
