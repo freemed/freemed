@@ -1,7 +1,7 @@
 <?php
- // $Id$
- // $Author$
- // lic : GPL
+	// $Id$
+	// $Author$
+	// lic : GPL
 
  // obligatory initialization garbage
 $page_name = "patient_image_handler.php";
@@ -12,7 +12,7 @@ define ('RESIZE', 800);
 freemed::connect ();
 
 //----- Check ACLs
-if (!freemed::acl('patient', 'view')) {
+if (!freemed::acl('emr', 'view')) {
 	trigger_error(__("You don't have access to do that."), E_USER_ERROR);
 }
 
