@@ -15,7 +15,7 @@ define ('__FREEMED_PHP__', true);
     // these variables you should not touch
 define ('PACKAGENAME', "freemed");				// package name
 define ('CODED_BY', "The Freemed Project");		// coded by tag
-define ('VERSION', "0.4 (Betafish)");	// current version
+define ('VERSION', "0.5 (Development/CVS)");	// current version
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
@@ -83,12 +83,6 @@ $_mail_handler="mailto:";  // where the mail goes...
     // the _mail_handler variable is so that we can farm
     // this mail to some mail hook in a program.
 
-    // user level qualifiers
-$admin_level   =8; // administrator user level
-$delete_level  =5; // user level above which someone can delete
-$export_level  =3; // user level to export databases
-$database_level=2; // level above which you can add db recs...
-
     // colors
 $bar_start_color="#dddddd";
 $bar_alt_color  ="#ffffff";
@@ -138,8 +132,7 @@ if (!isset($template)) {
  // Include library for template
 if (file_exists("lib/template/".$template."/lib.php"))
 	include_once("lib/template/".$template."/lib.php");
-//else include_once("lib/template/default/lib.php");
-
+else include_once("lib/template/default/lib.php");
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
@@ -159,17 +152,17 @@ if (!defined('SESSION_DISABLE')) {
 	// etc, so that it does not require information it can't get.
 	session_start();
 	session_register("SESSION"); // master session storage
+
+	// Load gettext routines. This can only be done if a session
+	// is running, as it stores several variables in session
+	// tracking.
+	include_once ("lib/i18n.php");
 }
 // ***************************************************************
-
-  // check for WDDX functions
-//if (!function_exists("wddx_deserialize")) 
-//	die ("WDDX support needs to be compiled into your PHP!");
 
 include_once ("lib/iso-set.php");         // ISO set handler
 include_once ("lib/API.php");             // API functions
 include_once ("lib/containers.php");      // class containers
-include_once ("lib/language-loader.php"); // external language loader
 include_once ("lib/macros.php");          // macros/contants
 include_once ("lib/xml.php");             // XML import/export routines
 
