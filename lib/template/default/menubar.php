@@ -224,7 +224,7 @@ if (is_array($menu_bar)) {
 		if ($v != "help.php") print "\t<LI><A HREF=\"#\" ".
 			"onClick=\"window.open('".$v."', 'Help', ".
 			"'width=600,height=400,resizable=yes');\" ".
-			"onMouseOver=\"window.status='".prepare(_($k))."'; ".
+			"onMouseOver=\"window.status='".prepare(__($k))."'; ".
 			"return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\">".
 			prepare(__($k))."</A>\n";
