@@ -9,6 +9,7 @@ if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
 //----- Make sure all module functions are loaded
 LoadObjectDependency('PHP.module');
+include_once('lib/calendar-functions.php');
 
 //----- Extract all configuration data
 if (is_array($this_user->manage_config)) extract($this_user->manage_config);
