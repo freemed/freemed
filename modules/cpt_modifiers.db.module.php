@@ -45,7 +45,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
      break;
 
     case "modform":
-     if ($id<1) die ("NO ID");
+     if ($id<1) trigger_error ("NO ID", E_USER_ERROR);
      $r = freemed_get_link_rec ($id, $this->table_name);
      extract ($r);
      break;
