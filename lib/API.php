@@ -230,6 +230,48 @@ class freemed {
 		return $_config["$module"];
 	} // end function freemed::module_version
 
+	// function multiple_choice (previously freemed_multiple_choice)
+	function multiple_choice ($sql_query, $display_field, $select_name,
+			$blob_data, $display_all=true) {
+		global $sql;
+		$buffer = "";
+
+		$brackets = "[]";
+		$result = $sql->query ($sql_query); // check
+		$all_selected = fm_value_in_string ($blob_data, "-1");
+
+		$buffer .= "<select NAME=\"".$select_name."[]\" multiple SIZE=\"5\">\n";
+		if ($display_all) {
+			$buffer .= "<option VALUE=\"-1\" ".
+			($all_selected ? "selected" : "").">"._("ALL")."</option>\n";
+		}
+	
+		if ( $sql->results ($result) ) {
+			while ($r = $sql->fetch_array ($result)) {
+				if (!(strpos ($display_field, "##") === false)) {
+					$displayed = ""; // set as null
+					$f_split = explode ("##", $display_field);
+					foreach ($f_split AS $f_k => $f_v) {
+						if (!($f_k & 1) ) {
+							$displayed .= $f_v;
+						} else {
+							$displayed .= prepare($r[$f_v]);
+						}
+					}
+				} else { // if it is only one field
+					$displayed = stripslashes($r[$display_field]);
+				} // end if-else displayed loop
+				$buffer .= "
+				<option VALUE=\"".prepare($r['id'])."\" ".
+				( (fm_value_in_string ($blob_data, $r['id'])) ? "selected" : "" ).
+				">$displayed".( $debug ? " [".$r['id']."]" : "" )."</option>\n";
+			} // end while
+		} // end checking for results
+		$buffer .= "</select>\n"; // end the select tag
+		return $buffer;
+	} // end function freemed::multiple_choice
+
+
 	function patient_box ($patient_object) {
 		// Make sure template functions are included
 		include_once('lib/template/'.$GLOBALS['template'].'/lib.php');
@@ -465,18 +507,19 @@ class freemed {
 		$check = !empty($_REQUEST['_username']);
 	
 		// Check for authdata array
-		if (is_array($GLOBALS['authdata'])) {
+		if (is_array($_SESSION['authdata'])) {
 			// Check to see if ipaddr is set or not...
 			if (!SESSION_PROTECTION) {
 				return true;
 			} else {
-				if ( !empty($GLOBALS['ipaddr']) ) {
-					if ($GLOBALS['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
+				if ( !empty($_SESSION['ipaddr']) ) {
+					if ($_SESSION['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
 						// We're already authorized
 						return true;
 					} else {
 						// IP address has changed, ERROR
-						unset($GLOBALS['ipaddr']);
+						unset($_SESSION['ipaddr']);
+						print "IP ADDRESS<BR>\n";
 						return false;
 					} // end checking ipaddr
 				} else {
@@ -493,12 +536,12 @@ class freemed {
 			if ( ($_REQUEST['_username'] == 'root') and 
 					($_REQUEST['_password'] == DB_PASSWORD) ) {
 				// Pass the proper session variable
-				$GLOBALS['authdata'] = array (
+				$_SESSION['authdata'] = array (
 					"username" => $_REQUEST['_username'],
 					"user" => "1" // superuser id
 				);
 				// Set ipaddr for SESSION_PROTECTION
-				$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+				$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 	
 				// Return back that this is true
 				return true;
@@ -517,19 +560,19 @@ class freemed {
 			// Check password
 			if ($_REQUEST['_password'] == $r['userpassword']) {
 				// Set session vars
-				$GLOBALS['authdata'] = array (
+				$_SESSION['authdata'] = array (
 					"username" => $_REQUEST['_username'],
 					"user" => $r['id']
 				);
 				// Set ipaddr for SESSION_PROTECTION
-				$GLOBALS['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+				$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 	
 				// Authorize
 				return true;
 			} else { // check password
 				// Failed password check
-				unset ( $GLOBALS['authdata'] );
-				unset ( $GLOBALS['ipaddr'] );
+				unset ( $_SESSION['authdata'] );
+				unset ( $_SESSION['ipaddr'] );
 				return false;
 			} // end check password
 		} // end of checking for authdata array
@@ -1314,48 +1357,6 @@ function freemed_log ($db_name, $record_number, $comment) {
 	return true;  // return true
 } // end function freemed_log
 */
-
-// function freemed_multiple_choice
-function freemed_multiple_choice ($sql_query, $display_field, $select_name,
-  $blob_data, $display_all=true) {
-	global $sql;
-	$buffer = "";
-
-	$brackets = "[]";
-	$result = $sql->query ($sql_query); // check
-	$all_selected = fm_value_in_string ($blob_data, "-1");
-
-	$buffer .= " 
-	<select NAME=\"$select_name$brackets\" multiple SIZE=\"5\">
-	";
-	if ($display_all) $buffer .= "
-		<option VALUE=\"-1\" ".
-		($all_selected ? "selected" : "").">"._("ALL")."</option>
-	"; // if there is nothing...
-
-	if ( $sql->results ($result) ) 
-		while ($r = $sql->fetch_array ($result)) {
-			if (strpos ($display_field, ":")) {
-				$displayed = ""; // set as null
-				$split_display_field = explode (":", $display_field);
-				for ($sl=0; $sl<sizeof($split_display_field); $sl++) {
-					$displayed .= stripslashes($r[$split_display_field[$sl]]);
-					// If not the last, insert separator
-					if ($sl < (sizeof ($split_display_field) - 1))
-						$displayed .= ", "; 
-				}
-			} else { // if it is only one field
-				$displayed = stripslashes($r[$display_field]);
-			} // end if-else displayed loop
-		$id = $r["id"];
-		$buffer .= "
-		<option VALUE=\"".prepare($id)."\" ".
-		( (fm_value_in_string ($blob_data, $id)) ? "selected" : "" ).
-		">$displayed".( $debug ? " [$r[id]]" : "" )."</option>\n";
-	} // end while
-	$buffer .= " </select>\n"; // end the select tag
-	return $buffer;
-} // end function freemed_multiple_choice
 
 // function freemed_open_db
 function freemed_open_db () {
