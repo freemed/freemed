@@ -149,7 +149,7 @@ switch ($action) {
         <CENTER><FONT FACE=\"Arial, Helvetica, Verdana\">
         <B>$Patient : ".$this_patient->fullName(false)."
            [<I>&nbsp;".$this_patient->dateOfBirth().
-           "&nbsp; </I>]</B>
+           "&nbsp; </I>] ".$this_patient->idNumber()."</B>
         </FONT></CENTER>
      </TD></TR>
      </TABLE>

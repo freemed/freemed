@@ -265,6 +265,7 @@
         $ptfname    = $calpatient["ptfname"];
         $ptmname    = $calpatient["ptmname"];
         $ptdob      = $calpatient["ptdob"  ];
+        $ptid       = $calpatient["ptid"   ];
         break;
        case "temp":
         $calpatient = freemed_get_link_rec ($r["calpatient"], "callin");
@@ -291,7 +292,7 @@
       switch ($r["caltype"]) {
        case "pat":  // actual patient
         $mapping = "<A HREF=\"manage.php3?$_auth&id=".$r["calpatient"].
-                   "\">$ptname</A> [$ptdob] - $desc";
+                   "\">$ptname</A> [$ptdob] [$ptid] - $desc";
         break;
        case "temp": // call-in patient
         $mapping = "<A HREF=\"call-in.php3?$_auth&action=display&id=".

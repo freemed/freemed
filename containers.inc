@@ -39,6 +39,7 @@ class Patient {
   var $id;                          // ID number
   var $is_callin;                   // flag for call ins
   var $insco;                       // array of insurance companies
+  var $ptid;			    // local practice ID (chart num)
 
   function Patient ($patient_number = 0, $is_callin = false) { // constructor
     if ($patient_number<1) return false;   // if the patient number is an error
@@ -53,7 +54,8 @@ class Patient {
      $this->ptsex        = $this->local_record["ptsex"    ];
      $this->ptmarital    = $this->local_record["ptmarital"];
      $this->ptreldep     = $this->local_record["ptreldep" ];
-     $this->id           = $this->local_record["id"     ];
+     $this->ptid         = $this->local_record["ptid"     ];
+     $this->id           = $this->local_record["id"       ];
      if ($this->local_record["ptins1"]>0)
        $this->insco[0] =
          new InsuranceCompany ($this->local_record["ptins1"]);
@@ -89,6 +91,10 @@ class Patient {
   function dateOfBirth ($no_parameters = "") {
     return fm_date_print ($this->ptdob);
   } // end function Patient->dateOfBirth
+
+  function idNumber ($no_parameters = "") {
+    return ($this->ptid);
+  } // end func idNumber
 
   function insuranceSelection ($no_parameters = "") {
     $returned_string = "";

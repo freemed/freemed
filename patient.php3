@@ -1151,6 +1151,7 @@ if ($action=="addform") {
        <TD><B>$Last_name</B></TD>
        <TD><B>$First_name</B></TD>
        <TD><B>Date of Birth</B></TD>
+       <TD><B>Practice ID</B></TD>
        <TD><B>$Action</B></TD>
       </TR>
     "; // header of box
@@ -1162,6 +1163,7 @@ if ($action=="addform") {
       $ptfname = $r["ptfname"];
       $ptlname = $r["ptlname"];
       $ptdob   = $r["ptdob"  ];
+      $ptid    = $r["ptid"   ];
       //$ptdep   = $r["ptdep"  ]; // guarantor, or 0 if guarantor
       $id      = $r["id"     ];
 
@@ -1181,6 +1183,7 @@ if ($action=="addform") {
           <TD><$STDFONT_B>$ptlname<$STDFONT_E></TD>
           <TD><$STDFONT_B>$ptfname<$STDFONT_E></TD>
           <TD><$STDFONT_B>$ptdob<$STDFONT_E></TD>
+          <TD><$STDFONT_B>$ptid<$STDFONT_E></TD>
           <TD>
         ";
         //if (freemed_get_userlevel ($LoginCookie)>$delete_level) {

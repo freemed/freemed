@@ -106,13 +106,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phyphonea");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyphonea1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphonea1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyphonea2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphonea2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyphonea3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyphonea3\"> -->
     </TD></TR>
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
     <$STDFONT_B>$Primary_Address_Fax # <$STDFONT_E>
@@ -120,13 +113,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phyfaxa");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyfaxa1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxa1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyfaxa2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxa2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyfaxa3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyfaxa3\"> -->
     </TD></TR>
     <TR><TD COLSPAN=4><HR></TD></TR>
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
@@ -199,13 +185,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phycellular");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phycellular1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phycellular1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phycellular2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phycellular2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phycellular3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phycellular3\"> -->
     </TD></TR>
     <TR><TD COLSPAN=2>&nbsp;</TD><TD ALIGN=RIGHT>
     <$STDFONT_B>$BeeperPager # <$STDFONT_E>
@@ -213,13 +192,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phypager");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phypager1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phypager1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phypager2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phypager2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phypager3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phypager3\"> -->
     </TD></TR>
     <TR><TD>
      <$STDFONT_B>$UPIN_Number<$STDFONT_E>
@@ -384,7 +356,7 @@ if ($action=="addform") {
     </TABLE>
 
     </TD></TR></TABLE>
-    
+
     <P>
     <CENTER>
     <INPUT TYPE=SUBMIT VALUE=\" $Add \">
@@ -503,7 +475,7 @@ if ($action=="addform") {
   $result = fdb_query("SELECT * FROM $database.physician ".
     "WHERE ( id = '$id' )");
 
-  if ($debug==1) {
+  if ($debug) {
     echo " <B>RESULT</B> = [$result]<BR><BR> ";
   }
 
@@ -648,14 +620,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phyphonea");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyphonea1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphonea1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyphonea2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphonea2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyphonea3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyphonea3\">
-    -->
     </TD></TR>
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
     <$STDFONT_B>$Primary_Address_Fax # <$STDFONT_E>
@@ -663,13 +627,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phyfaxa");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyfaxa1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxa1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyfaxa2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxa2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyfaxa3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyfaxa3\"> -->
     </TD></TR>
     <TR><TD COLSPAN=4><HR></TD></TR>
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
@@ -708,13 +665,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phyphoneb");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyphoneb1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphoneb1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyphoneb2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyphoneb2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyphoneb3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyphoneb3\"> -->
     </TD></TR>
     <TR><TD>&nbsp;</TD><TD COLSPAN=2>
     <$STDFONT_B>$Secondary_Address_Fax # <$STDFONT_E>
@@ -722,13 +672,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phyfaxb");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phyfaxb1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxb1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phyfaxb2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phyfaxb2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phyfaxb3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phyfaxb3\"> -->
     </TD></TR>
     <TR><TD COLSPAN=4><HR></TD></TR>
     <TR><TD> 
@@ -742,13 +685,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phycellular");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phycellular1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phycellular1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phycellular2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phycellular2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phycellular3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phycellular3\"> -->
     </TD></TR>
     <TR><TD COLSPAN=2>&nbsp;</TD><TD ALIGN=RIGHT>
     <$STDFONT_B>$BeeperPager # <$STDFONT_E>
@@ -756,13 +692,6 @@ if ($action=="addform") {
   ";
   fm_phone_entry ("phypager");
   echo "
-    <!-- <B>(</B>
-    <INPUT TYPE=TEXT NAME=phypager1 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phypager1\"> <B>)</B>
-    <INPUT TYPE=TEXT NAME=phypager2 SIZE=4 MAXLENGTH=3
-     VALUE=\"$phypager2\"> <B>-</B>
-    <INPUT TYPE=TEXT NAME=phypager3 SIZE=5 MAXLENGTH=4
-     VALUE=\"$phypager3\"> -->
     </TD></TR>
     <TR><TD>
      <$STDFONT_B>$UPIN_Number<$STDFONT_E>
@@ -883,7 +812,9 @@ if ($action=="addform") {
     <INPUT TYPE=TEXT NAME=phyrefcoll SIZE=10 MAXLENGTH=10
      VALUE=\"$phyrefcoll\">
     </TD></TR></TABLE>
+
     <P>
+
     <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=1
      VALIGN=MIDDLE ALIGN=CENTER><TR><TD>
 
@@ -918,6 +849,8 @@ if ($action=="addform") {
   } // end looping for service types
   echo "
     </TABLE>
+
+    </TR></TABLE>
 
     <BR>
     <CENTER>
