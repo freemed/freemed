@@ -16,8 +16,8 @@ body {
 /* Equivalent to onMouseOver */
 a:hover {
 	color: #ffffff;
-	text-decoration: underline;
-	background-color: #0000ff
+	text-decoration: underline
+	/* background-color: #0000ff */
 }
 
 /* Main freemed dialog box */

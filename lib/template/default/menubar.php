@@ -80,7 +80,7 @@ if ($patient_history or $page_history) {
 		"onClick=\"window.location='messages.php'; return true;\"".
 		"><a href=\"messages.php\" ".
 		"onMouseOver=\"this.className='menubar_hilite'; return true;\" ".
-		"onMouseOut=\"this.className='menubar'; return true;\" ".
+		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		">".prepare(_("Messages"))."</a></td>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
@@ -88,7 +88,7 @@ if ($patient_history or $page_history) {
 		"onClick=\"window.location='messages.php?action=addform'; return true;\"".
 		"<a href=\"messages.php?action=addform\" ".
 		"onMouseOver=\"this.className='menubar_hilite'; return true;\" ".
-		"onMouseOut=\"this.className='menubar'; return true;\" ".
+		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		">".prepare(_("Add"))."</a></td>\n".
 		"\t</tr>\n";
 	print "\t<tr>\n".
@@ -118,7 +118,7 @@ if ($patient_history or $page_history) {
 //----- Check for help file link
 if ( ($help_url = help_url()) != "help.php" ) {
 	print "\t<tr>\n".
-		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
+		"\t\t<td COLSPAN=\"2\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.open('".$help_url."', 'Help', 'width=600,height=400,".
@@ -143,7 +143,7 @@ if (is_array($menu_bar)) {
 	print "<div ALIGN=\"CENTER\">".
 		"<img src=\"lib/template/default/img/black_pixel.png\" height=\"1\" ".
 		"width=\"250\" alt=\"\"/></div>\n";
-	print "<table BORDER=\"0\" CLASS=\"menubar\">\n";
+	print "<table WIDTH=\"100%\" BORDER=\"0\" CLASS=\"menubar\">\n";
 	foreach ($menu_bar AS $k => $v) {
 		if ($v != NULL) {
 		if (strpos($v, "help.php")===false) {
