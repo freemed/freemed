@@ -27,7 +27,7 @@ if ($patient_history) {
 	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
 	<form ACTION=\"manage.php\" METHOD=\"POST\">
 	".html_form::select_widget("id", $patient_history,
-		array ('style' => 'width: 100%;', 'refresh' => true))."
+		array ('style' => 'width: 225px;', 'refresh' => true))."
 	</td><td align=\"CENTER\" valign=\"MIDDLE\">
 	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/magnifying_glass.".
 	IMAGE_TYPE."\"
@@ -46,7 +46,7 @@ if ($page_history) {
 	<tr><td align=\"RIGHT\" valign=\"MIDDLE\">
 	<form ACTION=\"redirect.php\" METHOD=\"POST\">
 	".html_form::select_widget("location", $page_history,
-		array ('style' => 'width: 100%;', 'refresh' => true))."
+		array ('style' => 'width: 225px;', 'refresh' => true))."
 	</td><td align=\"CENTER\" valign=\"MIDDLE\">
 	<input TYPE=\"IMAGE\" SRC=\"lib/template/default/forward.".
 	IMAGE_TYPE."\"
