@@ -3,7 +3,7 @@ by jeff b (jeff@univrel.pr.uconn.edu)
 Copyright 1999 under the GPL, version 2.
 
 Created       : 19990615
-Last Modified : 20000126
+Last Modified : 20000801
 
 Any statements of compatibility are listed here without
 explicit or implicit guarantee of functionality, but
@@ -21,6 +21,9 @@ will be unable to log on.
 
 Alphabetic listing of browsers (browser, platform, notes,
  date) --------------------------------------------------
+
+Internet Explorer v3.0 [Win95b] - Works fine. No problems
+  observed. (adam b) (20000801)
 
 Internet Explorer v4.01 SP1 [Win98] - Works fine. We
   initially thought there was a problem, but determined
@@ -49,6 +52,11 @@ Mozilla M8 w/Talkback 19990716 [Linux] - The rendering
   looks fine under KDE, but the GNOME snapshot they had was
   even prettier. I'll have to figure out how to make
   _mine_ look that pretty. (19990716)
+
+Netscape Communicator v4.73 [Win95b] - Works fine, except
+  <FORM> and </FORM> tags generate linebreaks. Annoying. I
+  thought this was standard behavior, but IE3 doesn't do
+  it. (adam b) (20000801)
 
 Netscape Communicator v4.6 [Linux] - Seems to work as well
   as anything. This was the primary test platform for the
