@@ -129,6 +129,19 @@ echo "
     </TD></TR>
    ";
 
+ if ($this_user->getLevel() > $database_level)
+   echo "
+    <TR> 
+    <TD ALIGN=RIGHT BGCOLOR=#dddddd>
+     <A HREF=\"calendar.php?$_auth\"
+     ><IMG SRC=\"img/reports.gif\" BORDER=0 ALT=\"\"></A>
+    </TD>
+    <TD ALIGN=LEFT>
+    <A HREF=\"calendar.php?$_auth\"
+     >"._("Calendar")."</A>
+    </TD></TR>
+   ";
+
     // help screen
 echo "
   <TR>

@@ -14,6 +14,7 @@ include "lib/module_emr.php";
 include "lib/module_emr_report.php";
 include "lib/module_maintenance.php";
 include "lib/module_reports.php";
+include "lib/module_calendar.php";
 
 // get list of modules
 $module_list = new module_list (PACKAGENAME);

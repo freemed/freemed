@@ -1,6 +1,10 @@
 freemed project changelog
 ($Id$)
 
+* Thu May 03 2001 fforest
+   - added lib/module_calendar
+   - added modules/admin.calendar 
+   - calendar code given to us by Chris Lea at Lucid.
 * Wed May 02 2001 fforest
   - modules/provider.db  changed all phone _x to 
     phone_vars(phone)

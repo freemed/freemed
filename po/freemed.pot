@@ -237,6 +237,9 @@ msgstr ""
 msgid "Calculated Accepted Fee"
 msgstr ""
 
+msgid "Calendar"
+msgstr ""
+
 msgid "Calendar Overbooking"
 msgstr ""
 
