@@ -61,6 +61,7 @@
       			$ptfname  = $r["ptfname"  ] ;
 			$procbalcurrent = $r["procbalcurrent"];
 			$procbilled = $r["procbilled"];
+			$procdtbilled = $r["procdtbilled"];
 			if ($prev_patient=="$$") // first time
 			{
 				$prev_patient = $id;

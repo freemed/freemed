@@ -27,7 +27,9 @@ class authorizationsModule extends freemedEMRModule {
 		"authprovid",
 		"authinsco",
 		"authvisits",
-		"authcomment"
+		"authcomment",
+		"authpatient",
+		"authdtadd"
 	);
 
 	function authorizationsModule () {
@@ -65,6 +67,7 @@ class authorizationsModule extends freemedEMRModule {
          ( ($action=="addform") ? "add" : "mod" )."\">
        <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"".prepare($id)."\">
        <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
+       <INPUT TYPE=HIDDEN NAME=\"authpatient\" VALUE=\"".prepare($patient)."\">
        <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\">
 
        <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3
@@ -202,19 +205,20 @@ class authorizationsModule extends freemedEMRModule {
 	} // end function authorizationsModule->form()
 
 	function add () {
-		global $authdtbegin, $authdtend, $authdtmod, $cur_date;
+		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $cur_date, $patient;
 		$authdtbegin = fm_date_assemble("authdtbegin");
 		$authdtend   = fm_date_assemble("authdtend");
-		$authdtmod   = $cur_date;
+		$authdtadd   = $cur_date;
+		$authpatient = $patient;
 		$this->_add();
 	} // end function authorizationsModule->add()
 
 	function mod () {
-		reset ($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		global $authpatient, $authdtbegin, $authdtend, $authdtmod, $cur_date, $patient;
 		$authdtbegin = fm_date_assemble("authdtbegin");
 		$authdtend   = fm_date_assemble("authdtend");
 		$authdtmod    = $cur_date;
+		$authpatient = $patient;
 		$this->_mod();
 	} // end function authorizationsModule->mod()
 

@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Fri Jan 26 2001 fforest
+  - auth module needed to use authdtadd for add and authdtmod for mod
+      also fixed patient id so records added did not have 0 patient.
+  - manage_bills needed ptocdtbilled. (bug by me from last commit)
+
 * Thu Jan 25 2001 rufustfirefly
   - fixed procedure module to pass "module" variable in wizard
   - added includes to billing functions modules so that the module loader
