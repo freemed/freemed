@@ -31,6 +31,9 @@ if(file_exists(PHPWEBTOOLS_LOCATION . '/webtools.php')) {
 define('SKIP_SQL_INIT', true);
 include_once ("lib/freemed.php");
 
+// Deal with removing auth information from the session
+unset($_SESSION['authdata']);
+
 $test = CreateObject('FreeMED.FreeMEDSelfTest');
 
 if (ALWAYS_SELFTEST) {
