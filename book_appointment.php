@@ -76,7 +76,7 @@ if ($_REQUEST['id'] and !$been_here) {
 	$_REQUEST['physician'] = $physician = $appt['calphysician'];
 	$patient = $appt['calpatient'];
 	$status = $appt['calstatus'];
-	$note = stripslashes($appt['calprenote']);
+	$_REQUEST['note'] = $note = stripslashes($appt['calprenote']);
 } elseif (!$been_here and !isset($room)) {
 	// Fudge room, if we have a current facility
 	if ($_COOKIE['default_facility']) {
@@ -168,6 +168,7 @@ switch ($_REQUEST['stage']) {
 	<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".addslashes($selected_date)."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"note\" VALUE=\"".prepare($_REQUEST['note'], true)."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"hour\" VALUE=\"".$_REQUEST['hour']."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"minute\" VALUE=\"".$_REQUEST['minute']."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"stage\" VALUE=\"0\"/>
