@@ -64,6 +64,16 @@ class EMRModule extends BaseModule {
 	//
 	var $display_format;
 
+	// Variable: summary_conditional
+	//
+	//	An SQL logical phrase which is used to pare down the
+	//	results from a summary view query.
+	//
+	// Example:
+	//
+	//	$this->summary_conditional = "ptsex = 'm'";
+	var $summary_conditional = '';
+
 	// Variable: summary_order_by
 	//
 	//	The order in which the EMR summary items are displayed.
@@ -511,6 +521,7 @@ class EMRModule extends BaseModule {
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
 			"ORDER BY ".$this->summary_order_by." DESC LIMIT ".addslashes($items);
 		$result = $sql->query($query);
 

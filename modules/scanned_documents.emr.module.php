@@ -10,14 +10,14 @@ class ScannedDocuments extends EMRModule {
 
 	var $MODULE_NAME = "Scanned Documents";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
 	";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $record_name   = "Scanned Documents";
 	var $table_name    = "images";
@@ -33,6 +33,7 @@ class ScannedDocuments extends EMRModule {
 		$this->summary_vars = array (
 			__("Date")        =>	"imagedt",
 			__("Type")        =>	"imagetype",
+			__("Category")	  =>	"imagecat",
 			__("Description") =>	"imagedesc"
 		);
 		$this->summary_options |= SUMMARY_VIEW;
@@ -42,6 +43,7 @@ class ScannedDocuments extends EMRModule {
 			"imagedt"	=>	SQL__DATE,
 			"imagepat"	=>	SQL__INT_UNSIGNED(0),
 			"imagetype"	=>	SQL__VARCHAR(50),
+			"imagecat"	=>	SQL__VARCHAR(50),
 			"imagedesc"	=>	SQL__VARCHAR(150),
 			"imageeoc"	=>	SQL__TEXT,
 			"imagefile"	=>	SQL__VARCHAR(100),
@@ -84,13 +86,17 @@ class ScannedDocuments extends EMRModule {
 			<div ALIGN=\"CENTER\"><b>".__("Adding")." ... </b>
 		";
 
+		// Get type and category from composite widget
+		list ( $imagetype, $imagecat ) = explode('/', $_REQUEST['imagetypecat']);
+
 		// Have to add then update to get file name
 		$query = $sql->insert_query (
 			$this->table_name,
 			array (
 				"imagedt" => fm_date_assemble("imagedt"),
 				"imagepat" => $patient,
-				"imagetype",
+				"imagetype" => $imagetype,
+				"imagecat" => $imagecat,
 				"imagedesc",
 				"imageeoc"
 			)
@@ -210,6 +216,7 @@ class ScannedDocuments extends EMRModule {
 				global ${$k};
 				${$k} = sql_expand($v);
 			}
+			$this->prepare_tc_widget('imagetypecat', $_REQUEST['id']);
 			break; // end mod/form
 
 			default: break;
@@ -236,7 +243,7 @@ class ScannedDocuments extends EMRModule {
 		<input TYPE=\"HIDDEN\" NAME=\"module\" ".
 		"VALUE=\"".prepare($module)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"id\" ".
-		"VALUE=\"".prepare($id)."\"/>
+		"VALUE=\"".prepare($_REQUEST['id'])."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"action\" ".
 		"VALUE=\"".($action=="addform" ? "add" : "mod" )."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"patient\" ".
@@ -251,20 +258,7 @@ class ScannedDocuments extends EMRModule {
 			fm_date_entry ("imagedt"),
 
 			__("Type of Image") =>
-			html_form::select_widget(
-				"imagetype",
-				array(
-					__("Insurance Card") => "insurance_card",
-					__("Lab Report") => "lab_report",
-					__("Miscellaneous") => "misc",
-					__("Operative Report") => "op_report",
-					__("Pathology") => "pathology",
-					__("Patient History") => "patient_history",
-					__("Questionnaire") => "questionnaire",
-					__("Radiology") => "radiology",
-					__("Referral") => "referral"
-				)
-			)
+			$this->tc_widget('imagetypecat')
 
 		), $related_episode_array,
 		array (
@@ -299,13 +293,17 @@ class ScannedDocuments extends EMRModule {
 			<div ALIGN=\"CENTER\"><b>".__("Modifying")." ... </b>
 		";
 
+		// Get type and category from composite widget
+		list ( $imagetype, $imagecat ) = explode('/', $_REQUEST['imagetypecat']);
+
 		// Have to add then update to get file name
 		$query = $sql->update_query (
 			$this->table_name,
 			array (
 				"imagedt" => fm_date_assemble("imagedt"),
 				"imagepat" => $patient,
-				"imagetype",
+				"imagetype" => $imagetype,
+				"imagecat" => $imagecat,
 				"imagedesc",
 				"imageeoc"
 			), array ( "id" => $id )
@@ -364,6 +362,51 @@ class ScannedDocuments extends EMRModule {
 		);
 		$display_buffer .= "\n<p/>\n";
 	} // end function ScannedDocuments->view()
+
+	function prepare_tc_widget ( $varname, $id ) {
+		global ${$varname};
+		$r = freemed::get_Link_rec($id, $this->table_name);
+		${$varname} = $r['imagetype'] . "/" . $r['imagecat'];
+	} // end method prepare_tc_widget
+
+	function tc_widget ( $varname ) {
+		return html_form::select_widget(
+			$varname,
+			array (
+				__("Insurance Card") => "insurance_card",
+				__("Lab Report") => "lab_report/misc",
+					"- ".__("CBC") => "lab_report/cbc",
+					"- ".__("C8") => "lab_report/c8",
+					"- ".__("LFT") => "lab_report/lft",
+					"- ".__("Thyroid Profile") => "lab_report/thyroid_profile",
+				__("Letters") => "letters/misc",
+				__("Miscellaneous") => "misc/misc",
+				__("Operative Report") => "op_report/misc",
+				__("Pathology") => "pathology/misc",
+				__("Patient History") => "patient_history/misc",
+				__("Questionnaire") => "questionnaire/misc",
+				__("Radiology") => "radiology/misc",
+					"- ".__("Abdominal Radiograph") => "radiology/abdominal_radiograph",
+					"- ".__("Chest Radiograph") => "radiology/chest_radiograph",
+					"- ".__("Abdominal CT Reports") => "radiology/abdominal_ct_reports",
+					"- ".__("Chest CT Reports") => "radiology/chest_ct_reports",
+					"- ".__("Mammogram Reports") => "radiology/mammogram_reports",
+				__("Referral") => "referral/misc"
+			)
+		);
+	} // end method tc_widget
+
+	function _update () {
+		$version = freemed::module_version($this->MODULE_NAME);
+		// Version 0.3
+		//
+		//	Add "category" sub-column
+		//
+		if (!version_check($version, '0.3')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
+				' ADD COLUMN imagecat VARCHAR(50) AFTER imagetype');
+		}
+	} // end method _update
 
 } // end of class ScannedDocuments
 
