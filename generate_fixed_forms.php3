@@ -76,6 +76,7 @@
        WHERE (
          (procpatient    = '$current_patient') AND
          (procbilled     = '0') AND
+         (procbillable   = '1') AND
          (procbalcurrent > '0')
        )"
       ) );
