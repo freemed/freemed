@@ -50,78 +50,40 @@ switch ($action) { // begin master switch
     _("Primary Information"),
     array ("cptcode", "cptnameint", "cptnameext", "cptgender",
            "cpttaxed", "cpttype"),
-    "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 VALIGN=MIDDLE
-     ALIGN=CENTER>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Procedural Code")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-       <INPUT TYPE=TEXT NAME=\"cptcode\" SIZE=8 MAXLENGTH=7
-        VALUE=\"".prepare($cptcode)."\">
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Internal Description")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"cptnameint\" SIZE=20 MAXLENGTH=50
-       VALUE=\"".prepare($cptnameint)."\">
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("External Description")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <INPUT TYPE=TEXT NAME=\"cptnameext\" SIZE=20 MAXLENGTH=50
-       VALUE=\"".prepare($cptnameext)."\">
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Gender Restriction")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"cptgender\">
+    form_table (array (
+      _("Procedural Code") =>
+       "<INPUT TYPE=TEXT NAME=\"cptcode\" SIZE=8 MAXLENGTH=7
+        VALUE=\"".prepare($cptcode)."\"> &nbsp;".
+	$book->generate_refresh(),
+      _("Internal Description") =>
+      "<INPUT TYPE=TEXT NAME=\"cptnameint\" SIZE=20 MAXLENGTH=50
+       VALUE=\"".prepare($cptnameint)."\">",
+      _("External Description") =>
+      "<INPUT TYPE=TEXT NAME=\"cptnameext\" SIZE=20 MAXLENGTH=50
+       VALUE=\"".prepare($cptnameext)."\">",
+      _("Gender Restriction") =>
+       "<SELECT NAME=\"cptgender\">
        <OPTION VALUE=\"n\" ".
          ( ($cptgender=="n") ? "SELECTED" : "" ).">"._("no restriction")."
        <OPTION VALUE=\"f\" ".
          ( ($cptgender=="f") ? "SELECTED" : "" ).">"._("female only")."
        <OPTION VALUE=\"m\" ".
          ( ($cptgender=="m") ? "SELECTED" : "" ).">"._("male only")."
-      </SELECT>
-     </TD>
-    </TR>
-    
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Taxed?")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-      <SELECT NAME=\"cpttaxed\">
+      </SELECT>",
+      _("Taxed?") =>
+      "<SELECT NAME=\"cpttaxed\">
        <OPTION VALUE=\"n\" ".
          ( ($cpttaxed=="n") ? "SELECTED" : "" ).">"._("no")."
        <OPTION VALUE=\"y\" ".
          ( ($cpttaxed=="y") ? "SELECTED" : "" ).">"._("yes")."
-      </SELECT>
-     </TD>
-    </TR>
-
-    <TR>
-     <TD ALIGN=RIGHT>
-      <$STDFONT_B>"._("Internal Service Types")." : <$STDFONT_E>
-     </TD><TD ALIGN=LEFT>
-     ".freemed_display_selectbox(
+      </SELECT>",
+      _("Internal Service Types") =>
+     freemed_display_selectbox(
        fdb_query("SELECT * FROM intservtype"),
        "#intservtype#",
-       "cpttype")."
-      </SELECT>
-     </TD>
-    </TR>
-
-    </TABLE>
-  ");
+       "cpttype")
+       ))
+  );
 
   $book->add_page (
     _("Billing Information"),
