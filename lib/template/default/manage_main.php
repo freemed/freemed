@@ -25,6 +25,7 @@ $display_buffer .= freemed::patient_box($this_patient);
 //----- Suck in management panels
 //-- Static first...
 foreach ($static_components AS $garbage => $component) {
+	if (!$already_set[$component]) {
 	switch ($component) {
 		case "appointments": // Appointments static component
 		include_once("lib/calendar-functions.php");
@@ -336,6 +337,9 @@ foreach ($static_components AS $garbage => $component) {
 		default: // Everything else.... do nothing (ERROR)
 		break; // end default
 	} // end component switch
+	} // end checking for already set
+
+	$already_set[$component] = true;
 } // end static components
 
 //-- ... then modular
