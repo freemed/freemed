@@ -28,11 +28,11 @@ class Handler_HL7v2_S15 extends Handler_HL7v2 {
 			// Use scheduler API
 			$c = CreateObject('_FreeMED.Scheduler');
 			$query = "DELETE FROM scheduler WHERE ".
-				"caltype = 'pat', ". // hardcode as patient
-				"caldateof = '".addslashes($this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]))."' ,".
-				"calhour = '".addslashes($this->parser->__date_to_hour($pr[HL7v2_AIP_DATETIME]))."', ".
-				"calminute = '".addslashes($this->parser->__date_to_minute($pr[HL7v2_AIP_DATETIME]))."', ".
-				//"calduration = '".addslashes($pr[HL7v2_AIP_DURATION]+0)."', ".
+				"caltype = 'pat' AND ". // hardcode as patient
+				"caldateof = '".addslashes($this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]))."' AND ".
+				"calhour = '".addslashes($this->parser->__date_to_hour($pr[HL7v2_AIP_DATETIME]))."' AND ".
+				"calminute = '".addslashes($this->parser->__date_to_minute($pr[HL7v2_AIP_DATETIME]))."' AND ".
+				//"calduration = '".addslashes($pr[HL7v2_AIP_DURATION]+0)."' AND ".
 				//calprovider = $this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]),
 				"calpatient = '".addslashes($this->parser->__pid_to_patient($p[HL7v2_PID_ID]))."'";
 			$result = $GLOBALS['sql']->query($query);
