@@ -150,7 +150,9 @@ switch($action) {
     array (
      "phyemail", "phycellular", "phypager",
      "phycellular_1", "phycellular_2", "phycellular_3", "phycellular_4",
-     "phypager_1", "phypager_2", "phypager_3", "phypager_4"
+     "phycellular_5",
+     "phypager_1", "phypager_2", "phypager_3", "phypager_4",
+     "phypager_5",
     ),
     "
    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100%>
@@ -179,7 +181,9 @@ switch($action) {
     array (
      "phyaddr1a", "phyaddr2a", "phycitya", "phystatea", "phyphonea", "phyzipa",
      "phyphonea_1", "phyphonea_2", "phyphonea_3", "phyphonea_4",
-     "phyfaxa_1", "phyfaxa_2", "phyfaxa_3", "phyfaxa_4", "phyfaxa", 
+     "phyphonea_5",
+     "phyfaxa_1", "phyfaxa_2", "phyfaxa_3", "phyfaxa_4", "phyfaxa",
+     "phyfaxa_5",
      "has_second_addr"
     ),
     "
@@ -240,7 +244,9 @@ switch($action) {
       "Address 2",
       array (
        "phyphoneb_1", "phyphoneb_2", "phyphoneb_3", "phyphoneb_4",
+       "phyphoneb_5",
        "phyfaxb_1", "phyfaxb_2", "phyfaxb_3", "phyfaxb_4", "phyfaxb",
+       "phyfaxb_5",
        "phyaddr1b", "phyaddr2b", "phycityb", "phystateb", "phyphoneb", "phyzipb"
       ),
     "

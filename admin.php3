@@ -107,6 +107,7 @@ if ($action=="cfgform") {
   $phofmt = freemed_config_value ("phofmt"); // get phone format
   switch ($phofmt) {
     case "usa":           $_phofmt_us = "SELECTED"; break;
+    case "fr":            $_phofmt_fr = "SELECTED"; break;
     case "unformatted":
     default:              $_phofmt_uf = "SELECTED"; break;
   } // end phone format switch
@@ -194,6 +195,7 @@ if ($action=="cfgform") {
     <TD ALIGN=LEFT>
     <SELECT NAME=\"phofmt\">
      <OPTION VALUE=\"usa\"         $_phofmt_us>United States (XXX) XXX-XXXX
+     <OPTION VALUE=\"fr\"          $_phofmt_fr>France (XX) XX XX XX XX
      <OPTION VALUE=\"unformatted\" $_phofmt_uf>Unformatted XXXXXXXXXXXXXXXX
     </SELECT>
     </TD></TR>
@@ -249,14 +251,12 @@ if ($action=="cfgform") {
     <P>
     <CENTER><B>$Configuration_complete</B></CENTER>
   ";
-  freemed_display_box_bottom ();
   echo "
-    <P>
-    <CENTER>
+    <P ALIGN=CENTER>
     <A HREF=\"$page_name?$_auth\"
      >$Return_adm_menu</A>
-    </CENTER>
   ";
+  freemed_display_box_bottom ();
 
 } elseif ($action=="reinit") {
   freemed_display_box_top ("$Reinitialize_database", $page_name);
