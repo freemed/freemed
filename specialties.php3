@@ -105,7 +105,11 @@ switch($action) { // master action switch
    break;
   } // inner action
 
-  $list_r = fdb_query("SELECT * FROM $db_name ORDER BY specname,specdesc ");
+  $list_q = "SELECT * FROM $db_name ";
+  if (strlen($_s_val)>0)
+    $list_q .= "WHERE $_s_field LIKE '%".fm_secure($_s_val)."%' ";
+  $list_q .= "ORDER BY specname,specdesc ";
+  $list_r = fdb_query($list_q);
 
   echo
    freemed_display_itemlist(
@@ -154,11 +158,10 @@ switch($action) { // master action switch
   ";
   
   if ($action=="modform") echo "
-    <P>
-    <CENTER>
+    <CENTER><$STDFONT_B>
     <A HREF=\"$page_name?$_auth&action=view\"
      >"._("Abandon Modification")."</A>
-    </CENTER>
+    <$STDFONT_E></CENTER>
   ";
 
   freemed_display_box_bottom (); // show the bottom of the box

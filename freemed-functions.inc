@@ -502,6 +502,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   global $_ref, $_auth, $LoginCookie, $STDFONT_B, $STDFONT_E, $record_name;
   global $modify_level, $delete_level, $patient, $action;
   global $page_name, $$cur_page_var, $max_num_res;
+  global $_s_field, $_s_val;
 
   // pull current page name
   if (empty ($page_link)) {
@@ -543,6 +544,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     <TR><TD>
      <$STDFONT_B COLOR=\"#ffffff\">
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var-1).
+     ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
+       .fm_prep($_s_val)."" : "").
      "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
         "._("Previous")."
      <$STDFONT_E></A>
@@ -563,6 +566,8 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
     <TD>
      <$STDFONT_B COLOR=\"#ffffff\">
      <A HREF=\"$page_name?$cur_page_var=".($$cur_page_var+1).
+     ((strlen($_s_field)>0) ? "&_s_field=$_s_field&_s_val="
+       .fm_prep($_s_val)."" : "").
      "&action=$action\"><$STDFONT_B COLOR=\"#ffffff\">
         "._("Next")."
      <$STDFONT_E></A>
@@ -679,7 +684,7 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
    $buffer .= "
     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
      <TD COLSPAN=".(count($control_list)+1)." ALIGN=CENTER>
-      <$STDFONT_B><I>No $title</I><$STDFONT_E>
+      <$STDFONT_B><I>No "._("$record_name")."</I><$STDFONT_E>
      </TD>
     </TR>
    ";
@@ -687,7 +692,37 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
    
   $buffer .= "
     </TABLE>
+   </TD></TR>
+   <TR><TD>
   ";
+  
+  // searchbox
+ if ($num_pages>1) {
+  $buffer .= "
+    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=2 BORDER=0>
+    <TR BGCOLOR=\"#000000\">
+    <FORM METHOD=POST ACTION=\"$page_name\">
+     <TD ALIGN=CENTER>
+      <SELECT NAME=\"_s_field\">
+  ";
+  reset($control_list);
+  while (list($c_k, $c_v) = each($control_list))
+    $buffer .= "<OPTION VALUE=\"$c_v\">$c_k\n";
+  $buffer .= "
+      </SELECT>
+      <$STDFONT_B COLOR=\"#ffffff\"> "._("contains")." <$STDFONT_E>
+      <INPUT TYPE=HIDDEN NAME=\"$cur_page_var\" VALUE=\"1\">
+      <INPUT TYPE=TEXT NAME=\"_s_val\">
+      <INPUT TYPE=SUBMIT VALUE=\""._("Search")."\">
+     </TD>
+    </FORM>
+    </TR>
+    </TABLE>
+   </TR></TD>
+   <TR><TD>
+  ";
+ } // no searchbox for short-short lists
+  // end searchbox
   
   // footer
   $buffer .= freemed_display_actionbar()
