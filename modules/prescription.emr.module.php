@@ -9,7 +9,7 @@ class PrescriptionModule extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_DESCRIPTION = "
 		The prescription module allows prescriptions to be written 
 		for patients from any drug in the local formulary or in the 
@@ -27,10 +27,11 @@ class PrescriptionModule extends EMRModule {
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW;
 
 		$this->summary_vars = array (
-			"Date From" => "rxdtfrom",
-			"Drug" => "_drug",
-			"Dosage" => "_dosage",
-			"Dispensed" => "_dispensed"
+			__("Date From") => "rxdtfrom",
+			__("Drug") => "_drug",
+			__("Dosage") => "_dosage",
+			__("Dispensed") => "_dispensed",
+			__("By")   => "rxphy:physician"
 			//"Crypto Key" => "rxmd5"
 		);
 		// Specialized query bits
@@ -45,6 +46,7 @@ class PrescriptionModule extends EMRModule {
 		$this->table_definition = array (
 			'rxdtadd' => SQL_DATE,
 			'rxdtmod' => SQL_DATE,
+			'rxphy' => SQL_INT_UNSIGNED(0),
 			'rxpatient' => SQL_INT_UNSIGNED(0),
 			'rxdtfrom' => SQL_DATE,
 			'rxdrug' => SQL_VARCHAR(150),
@@ -88,6 +90,7 @@ class PrescriptionModule extends EMRModule {
 
 		$this->variables = array (
 			"rxdtfrom" => date_assemble("rxdtfrom"),
+			"rxphy",
 			"rxdrug",
 			"rxsize",
 			"rxform",
@@ -139,6 +142,13 @@ class PrescriptionModule extends EMRModule {
 					global ${$k};
 					${$k} = $v;
 				}
+				if (!is_object($this_user)) {
+					$this_user = CreateObject('FreeMED.User');
+				}
+				if ($this_user->isPhysician()) {
+					global $rxphy;
+					$rxphy = $this_user->user_phy;
+				}
 			}
 		}
 
@@ -155,6 +165,7 @@ class PrescriptionModule extends EMRModule {
 			__("Prescription"),
 			array(
 				"rxdtfrom",
+				"rxphy",
 				"rxdrug",
 				"rxsize",
 				"rxunit",
@@ -168,6 +179,14 @@ class PrescriptionModule extends EMRModule {
 			html_form::form_table(array(
 				__("Starting Date") =>
 				date_entry("rxdtfrom"),
+
+				__("Physician") =>
+				freemed_display_selectbox(
+					$sql->query("SELECT * FROM physician WHERE phyref != 'yes' ".
+						"ORDER BY phylname, phyfname"),
+					"#phylname#, #phyfname# #phymname#",
+					"rxphy"
+				),
 
 				__("Drug") =>
 				freemed::drug_widget("rxdrug", "myform", "__action"),
@@ -330,6 +349,16 @@ class PrescriptionModule extends EMRModule {
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
 	} // end function PrescriptionModule->view
+
+	// Updates
+	function _update() {
+		global $sql;
+		$version = freemed::module_version($this->MODULE_NAME);
+		if (!version_check($version, '0.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN rxphy INT UNSIGNED AFTER rxdtfrom');
+		}
+	} // end function PrescriptionModule->_update
 
 } // end class PrescriptionModule
 
