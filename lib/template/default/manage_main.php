@@ -175,7 +175,6 @@ foreach ($static_components AS $garbage => $component) {
 
 		case "medical_information":
 		$modules[__("Medical Information")] = "medical_information";
-		if ($this_patient->local_record['ptpcp'] > 0) { $pcp = CreateObject('FreeMED.Physician', $this_patient->local_record['ptpcp']); }
 		$panel[__("Medical Information")] = "
 		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 		 CELLPADDING=\"3\" CLASS=\"thinbox\"
@@ -185,11 +184,7 @@ foreach ($static_components AS $garbage => $component) {
 		</TD></tr>
 		<tr><TD ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<DIV ALIGN=\"CENTER\">
-		<table WIDTH=\"100%\" BORDER=\"0\">
-		".($this_patient->local_record['ptpcp'] > 0 ? "
-		<tr><td ALIGN=\"LEFT\"><b>".__("PCP")."</b></td> 
-		<td ALIGN=\"RIGHT\">".prepare($pcp->fullName())."</td></tr>
-		" : "" ).
+		<table WIDTH=\"100%\" BORDER=\"0\">".
 		($this_patient->local_record['ptblood'] != '-' ? "
 		<tr><TD ALIGN=\"LEFT\"><B>".__("Blood Type")."</B></TD> 
 		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></tr>
@@ -360,6 +355,7 @@ foreach ($static_components AS $garbage => $component) {
 			$dolv = prepare(fm_date_print($dolv_r["caldateof"]));
 		} // end if there is no result
 		//----- Create the panel
+		if ($this_patient->local_record['ptpcp'] > 0) { $pcp = CreateObject('FreeMED.Physician', $this_patient->local_record['ptpcp']); }
 		$modules[__("Patient Information")] = "patient_information";
 		$panel[__("Patient Information")] .= "
 			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
@@ -377,7 +373,12 @@ foreach ($static_components AS $garbage => $component) {
 				<B>".__("Phone Number")."</B> :
 			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
 				".$this_patient->local_record["pthphone"]."
-			</TD></tr></table>
+			</TD></tr>
+			".($this_patient->local_record['ptpcp'] > 0 ? "
+			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("PCP")."</b>:</td> 
+			<td ALIGN=\"LEFT\">".prepare($pcp->fullName())."</td></tr>
+			" : "" )."
+			</table>
 		";
 		break; // end patient information
 
