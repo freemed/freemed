@@ -50,9 +50,9 @@ class freemedEMRModule extends freemedModule {
 	function main ($nullvar = "") {
 		global $action, $patient, $LoginCookie;
 
-		if (!isset($this_patient))
+		if (!isset($this->this_patient))
 			$this->this_patient = new Patient ($patient);
-		if (!isset($this_user))
+		if (!isset($this->this_user))
 			$this->this_user    = new User ($LoginCookie);
 
 		// display universal patient box
@@ -224,6 +224,18 @@ class freemedEMRModule extends freemedModule {
 			"t_page"
 		);
 	} // end function view
+
+	// this function exports XML for the entire patient record
+	function xml_export () {
+		global $patient;
+
+		if (!isset($this->this_patient))
+			$this->this_patient = new Patient ($patient);
+
+		return $this->xml_generate($this->this_patient);
+	} // end function freemedEMRModule->xml_export
+
+	function xml_generate ($patient) { return ""; } // stub 
 
 } // end class freemedEMRModule
 
