@@ -15,7 +15,7 @@ define ('__FREEMED_PHP__', true);
     // These variables you should not touch
 define ('PACKAGENAME', "FreeMED");				// package name
 define ('CODED_BY', "The FreeMED Project");		// coded by tag
-define ('VERSION', "0.6.1");	// current version
+define ('VERSION', "0.6.2");	// current version
 define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
@@ -83,7 +83,7 @@ if (file_exists("lib/template/".$template."/lib.php")) {
 include_once ("lib/error_handler.php");   // internal error handler
 include_once ("/usr/share/phpwebtools/webtools.php"); // webtools toolkit
 
-define ('WEBTOOLS_REQUIRED', '0.4.0');   // version of phpwebtools required
+define ('WEBTOOLS_REQUIRED', '0.4.2');   // version of phpwebtools required
 
   // version check for webtools
 if ( !defined("WEBTOOLS_VERSION") or
