@@ -1,6 +1,11 @@
 freemed project changelog
 ($Id$)
 
+* Thu Sep 06 2001 rufustfirefly
+  - data/EN/fixedform.EN.data, lib/module_billing.php,
+    modules/{generate_statemnt,rebill_bycov}.billing.module.php:
+    another merge from Fred
+
 * Wed Aug 08 2001 rufustfirefly
   - HUGE merge with Fred's code. Expect strange things for a while.
   - removed move_appointment.php legacy module

@@ -320,14 +320,17 @@ class freemedBillingModule extends freemedModule {
 
 	// get a list of bills due for this patient
     // coverage and type
-	function GetProcstoBill($covid,$covtype,$covpatient)
+	function GetProcstoBill($covid,$covtype,$covpatient,$forpat=0)
 	{
 		global $sql;
 
-		if (!$covid)
-			return 0;
-		if (!$covtype)
-			return 0;
+		if ($forpat==0) // not doing patient bills
+		{	
+			if (!$covid)
+				return 0;
+			if (!$covtype)
+				return 0;
+		}
 		if (!$covpatient)
 			return 0;
 
@@ -341,6 +344,7 @@ class freemedBillingModule extends freemedModule {
 			ORDER BY procpos,procphysician,procrefdoc,proceoc,procclmtp,procauth,proccov1,proccov2,procdt";
 
 		$result = $sql->query($query);
+
 		if (!$sql->results($result))
 			return 0;
 		else
