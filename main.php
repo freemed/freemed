@@ -15,8 +15,8 @@ include ("lib/API.php");
  } // if there is a _ref cookie...
 
 //----- Generic page opening stuff
-freemed_open_db ($LoginCookie);
-$this_user = new User ($LoginCookie);
+freemed_open_db ();
+$this_user = new User ();
 
 //----- Set title (default, can be overridden in lib/template/*/main_menu.php)
 $page_title = PACKAGENAME." "._("Main Menu");

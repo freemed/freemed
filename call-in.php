@@ -9,7 +9,8 @@ include ("lib/API.php");    // API calls
 $record_name = _("Call In");          // name of record
 $db_name = "callin";                  // database name
 
-freemed_open_db ($LoginCookie);
+freemed_open_db ();
+$this_user = new User ();
 
 switch ($action) {
 
@@ -22,8 +23,7 @@ switch ($action) {
 
   // ... continue ...
   if (strlen($citookcall)<1) {
-    $f_auth = explode (":", $LoginCookie);
-    $citookcall = freemed_get_link_field ($f_auth[0], "user", "userdescrip");
+    $citookcall = $this_user->getDescription();
   } // if there wasn't one passed to us...
   $display_buffer .= "
     <P>
@@ -278,7 +278,7 @@ switch ($action) {
   while ($r = $sql->fetch_array ($result)) {
     extract ($r);
 
-    if (freemed_check_access_for_facility ($LoginCookie, $cifacility)) {
+    if (freemed_check_access_for_facility ($cifacility)) {
 
     if (strlen($cimname)>0) $ci_comma = ", ";
      else $ci_comma = " ";

@@ -12,7 +12,7 @@ include ("lib/API.php");
 define ('TABLE_NAME', "patimg");
 
  // authenticate user cookie
-freemed_open_db ($LoginCookie);
+freemed_open_db ();
 
  // determine what we are getting, and grab it
 if ($id > 0) {

@@ -5,8 +5,7 @@
  // code: jeff b <jeff@univrel.pr.uconn.edu>, max k <amk@span.ch>
 
 $page_name = "authenticate.php" ;
-include ("lib/freemed.php");
-include ("lib/API.php");
+include_once ("lib/freemed.php");
 
 //----- Disable menu bar
 $no_menu_bar = true;
@@ -26,11 +25,7 @@ if (!$connect) {
     template_display();
 }
 
-//$f_user = explode (":", $SessionLoginCookie); 
-//SetCookie("_ref",   "",  time()+$_cookie_expire); // clear _ref
-//SetCookie("u_lang", $_l, time()+$_cookie_expire);
-
-if (freemed_check_access_for_facility ($SessionLoginCookie, $_f)) {
+if (freemed_check_access_for_facility ($_f)) {
 	SetCookie("default_facility", "$_f", time()+$_cookie_expire);
 } else {
 	SetCookie("default_facility", "0"  , time()+$_cookie_expire);
@@ -49,17 +44,6 @@ if (!empty($_URL)) {
 	} // end checking for ? in $_URL
 	$_jump_page = $_URL;  // if it's there, let 'em jump to it 
 } // end checking for $_URL
-
-/*
-$display_buffer .= "
-    <HTML>
-    <HEAD>
-     <TITLE>authentication for ".PACKAGENAME."</TITLE>
-     <META HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=$_jump_page\">
-    </HEAD>
-    <BODY BGCOLOR=\"#ffffff\">
-  ";
-*/
 
 //----- Set refresh properly
 $refresh = $_jump_page;

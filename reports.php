@@ -22,7 +22,7 @@ page_push();
 if (!is_object($this_user)) $this_user = new User;
 
  // Check for appropriate access level
-if (freemed_get_userlevel ($LoginCookie) < $database_level) { 
+if (freemed_get_userlevel () < $database_level) { 
    $display_buffer .= "
       <P>
         "._("You don't have access for this menu.")."
