@@ -96,7 +96,7 @@ if (file_exists(PHPWEBTOOLS_LOCATION."/webtools.php")) {
 		"<b>lib/settings.php</b>.");
 }
 
-define ('WEBTOOLS_REQUIRED', '0.4.2');   // version of phpwebtools required
+define ('WEBTOOLS_REQUIRED', '0.4.3');   // version of phpwebtools required
 
   // version check for webtools
 if ( !defined("WEBTOOLS_VERSION") or
