@@ -65,12 +65,22 @@ switch ($action) {
 	<div ALIGN=\"CENTER\">
 	".html_form::form_table(array(
 		__("For") =>
-		freemed_display_selectbox(
-			$sql->query("SELECT * FROM user ".
-				"WHERE username != 'admin' ".
-				"ORDER BY userdescrip"),
-			"#username# (#userdescrip#)",
-			"msgfor"
+		//freemed_display_selectbox(
+		//	$sql->query("SELECT * FROM user ".
+		//		"WHERE username != 'admin' ".
+		//		"ORDER BY userdescrip"),
+		//	"#username# (#userdescrip#)",
+		//	"msgfor"
+		//),
+		freemed::multiple_choice(
+			"SELECT CONCAT(username, ' (', userdescrip, ')')".
+				"AS descrip, id FROM user ".
+				"WHERE id > 1 ".
+				"ORDER BY descrip",
+			"descrip",
+			"msgfor",
+			fm_join_from_array($_REQUEST['msgfor']),
+			false
 		),
 
 		__("Patient")." (".__("if applicable").")" =>
@@ -116,21 +126,24 @@ switch ($action) {
 	$page_title = __("Adding")." ".__("Message");
 	$display_buffer .= "\n<div align=\"center\">".
 		__("Adding")." ".__("Message")." ... \n";
-	$query = $sql->insert_query(
-		"messages",
-		array(
-			"msgby" => $this_user->user_number, // mark from user
-			"msgfor",
-			"msgtime" => SQL__NOW, // pass proper timestamp
-			"msgpatient",
-			"msgperson",
-			"msgsubject",
-			"msgtext",
-			"msgurgency",
-			"msgread" => '0' // mark as not read
-		)
-	);
-	$result = $sql->query ($query);
+	$result = true;
+	foreach ($_REQUEST['msgfor'] AS $this_is_for) {
+		$query = $sql->insert_query(
+			"messages",
+			array(
+				"msgby" => $this_user->user_number, // mark from user
+				"msgfor" => $this_is_for,
+				"msgtime" => SQL__NOW, // pass proper timestamp
+				"msgpatient",
+				"msgperson",
+				"msgsubject",
+				"msgtext",
+				"msgurgency",
+				"msgread" => '0' // mark as not read
+			)
+		);
+		$result &= $sql->query ($query);
+	}
 
 	if ($result) $display_buffer .= __("done");
 	else $display_buffer .= __("ERROR");
