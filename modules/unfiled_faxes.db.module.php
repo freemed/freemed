@@ -81,6 +81,7 @@ class UnfiledFaxes extends MaintenanceModule {
 
 		switch ($_REQUEST['submit_action']) {
 			case __("File"):
+			case __("File without First Page"):
 			$this->mod();
 			return false;
 
@@ -136,6 +137,8 @@ class UnfiledFaxes extends MaintenanceModule {
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("File")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("File without First Page")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Delete")."\"/>
@@ -163,6 +166,14 @@ class UnfiledFaxes extends MaintenanceModule {
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);
 
+		// If we're removing the first page, do that now
+		if ($_REQUEST['submit_action'] == __("File without First Page")) {
+			$command = "/usr/bin/djvm -d data/fax/unfiled/".
+				$filename." 1";
+			`$command`;
+			$GLOBALS['display_buffer'] .= __("Removed first page.")."<br/>\n";
+		}
+
 		// Move actual file to new location
 		//echo "mv data/fax/unfiled/$filename data/fax/unread/$filename -f";
 		`mv data/fax/unfiled/$filename data/fax/unread/$filename -f`;
@@ -182,7 +193,7 @@ class UnfiledFaxes extends MaintenanceModule {
 
 		$GLOBALS['display_buffer'] .= __("Moved fax to unread box.");
 		$GLOBALS['display_buffer'] .= '<p>'.
-			'<a href="'.$this->page_name.'?module='.get_class($this).'">'.__("File Another Fax").'</a>'.
+			'<a href="'.$this->page_name.'?module='.get_class($this).'" class="button">'.__("File Another Fax").'</a>'.
 			'</p>';
 
 
