@@ -275,13 +275,25 @@ class TeX {
 
 		// Remove empty tags from HTMLarea malformatting
 		$text = str_replace('<span style="font-weight: bold;"></span>', '', $text);
+		$text = str_replace('<b></b>', '', $text);
+		$text = str_replace('<strong></strong>', '', $text);
 		$text = str_replace('<span style="font-style: italic;"></span>', '', $text);
+		$text = str_replace('<i></i>', '', $text);
+		$text = str_replace('<em></em>', '', $text);
 		$text = str_replace('<span style="font-decoration: underline;"></span>', '', $text);
+		$text = str_replace('<u></u>', '', $text);
 
-		// Also do "SPAN" tags, which are put out by HTMLarea JS
+		// Also do "SPAN" tags, which are put out by HTMLarea JS,
+		// and STRONG/EM tags which IE puts out
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\">(.*?)</SPAN>#i", '\textbf{$1}', $text);
+		$text = preg_replace("#<STRONG>(.*?)</STRONG>#i", '\textbf{$1}', $text);
 		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-STYLE:\sITALIC\;\">(.*?)</SPAN>#i", '\textit{$1}', $text);
+		$text = preg_replace("#<EM>(.*?)</EM>#i", '\textit{$1}', $text);
 		$text = preg_replace("#<SPAN\sSTYLE=\"TEXT\-DECORATION:\sUNDERLINE\;\">(.*?)</SPAN>#i", '\underline{$1}', $text);
+
+		// And combination <B><U> things sadly need to be handled...
+		$text = preg_replace("#<SPAN\sSTYLE=\"FONT\-WEIGHT:\sBOLD\;\sTEXT\-DECORATION:\sUNDERLINE\;\">(.*?)</SPAN>#i", '\textbf{\underline{$1}}', $text);
+		$text = preg_replace("#<SPAN\sSTYLE=\"TEXT\-DECORATION:\sUNDERLINE\;\sFONT\-WEIGHT:\sBOLD\;\">(.*?)</SPAN>#i", '\textbf{\underline{$1}}', $text);
 
 		// Handle embedded CRs... for now we treat them as line
 		// breaks
@@ -337,6 +349,11 @@ class TeX {
 		// Get rid of #, _
 		$string = str_replace('#', '\#', $string);
 		$string = str_replace('_', '\_', $string);
+
+		// Deal with amphersands, and &quot; &amp; stuff
+		$string = str_replace('&quot;', '\'\'', $string);
+		$string = str_replace('&amp;', '&', $string);
+		$string = str_replace('&', '\&', $string);
 
 		// HTML/SGML specific texts
 		if (!$skip_html) {
