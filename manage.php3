@@ -190,6 +190,12 @@ switch ($action) {
          ><$STDFONT_B>New Record Entry<$STDFONT_E></A>
         </TD>
         </TR>
+        <TR><TD>&nbsp;</TD><TD>
+        <A HREF=\"manage_payment_records.php3?$_auth&patient=$id\"
+         ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
+        </TD><TD>
+        &nbsp;
+        </TD></TR>
       ";
       $f_results = fdb_query("SELECT * FROM $database.patrectemplate
                               ORDER BY prtname");
@@ -265,18 +271,6 @@ switch ($action) {
          ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
         </TD><TD>
         </TD></TR>
-
-        <!--
-        <TR><TD ALIGN=RIGHT>
-        <$STDFONT_B><B>Payments</B> : <$STDFONT_E>
-        </TD><TD>
-        <A HREF=\"payment_record.php3?$_auth&patient=$id&action=addform\"
-         ><$STDFONT_B>$Post<$STDFONT_E></A>
-        </TD><TD>
-        <A HREF=\"payment_record.php3?$_auth&patient=$id&action=view\"
-         ><$STDFONT_B>$View_Manage<$STDFONT_E></A>
-        </TD></TR>
-        -->
 
         <TR><TD ALIGN=RIGHT>
         <$STDFONT_B><B>$Procedures</B> : <$STDFONT_E>
