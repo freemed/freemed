@@ -1529,4 +1529,59 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
+msgid "Name of Form"
+msgstr ""
+
+msgid "Page Length"
+msgstr ""
+
+msgid "Line Length"
+msgstr ""
+
+msgid "Loop Repetitions"
+msgstr ""
+
+msgid "Check Char"
+msgstr ""
+
+msgid "(<I>example: \"X\"</I>)"
+msgstr ""
+
+msgid "Loop Line Offset"
+msgstr ""
+
+msgid "(<I>\"1\" skips to the next line</I>)"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Generic"
+msgstr ""
+
+msgid "Insurance Claim"
+msgstr ""
+
+msgid "Patient Bill"
+msgstr ""
+
+msgid "Ins/Del"
+msgstr ""
+
+msgid "Row/Line"
+msgstr "'
+
+msgid "Column"
+msgstr ""
+
+msgid "Length"
+msgstr ""
+
+msgid "Data"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+
 # END
