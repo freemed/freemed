@@ -516,7 +516,7 @@ class Remitt {
 		$p = freemed::get_link_rec($payer, 'insco');
 		$buffer .= "<payer id=\"".htmlentities($payer)."\">\n";
 
-		$buffer .= $this->_tag('name', $p['insconame'], true);
+		$buffer .= $this->_tag('name', $p['inscoalias'], true);
 		$buffer .= $this->_addr('address', $p['inscoaddr1'], $p['inscocity'], $p['inscostate'], $p['inscozip']);
 		$buffer .= $this->_phone('phone', $p['inscophone']);
 		$buffer .= $this->_tag('x12claimtype', 'HM', true); // fix
