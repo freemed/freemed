@@ -10,7 +10,7 @@ class UnfiledFaxes extends MaintenanceModule {
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "jeff@ourexchange.net";
 	var $MODULE_FILE = __FILE__;
-	var $PACKAGE_MINIMUM_VERSION = "0.6.2";
+	var $PACKAGE_MINIMUM_VERSION = "0.7.0";
 
 	var $table_name = 'unfiledfax';
 
@@ -125,7 +125,25 @@ class UnfiledFaxes extends MaintenanceModule {
 			$date = $r['uffdate'];
 		}
 		$display_buffer .= "
-		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
+		<!-- Javascript for form validation -->
+		<script language=\"javascript\">
+		function validate ( form ) {
+			if (!validateField(form.type, \"".__("Type of Document")."\")) return false;
+			if (!validateField(form.physician, \"".__("Provider")."\")) return false;
+			if (!validateField(form.patient, \"".__("Patient")."\")) return false;
+		}
+		
+		function validateField (field, label) {
+			var result = true;
+			if ((field.value == \"\") || (field.value == \"0\")) {
+				alert(\"".__("You must enter a value for:")." '\" + label + \"'\");
+				field.focus();
+				result = false;
+			}
+			return result;
+		}
+		</script>
+		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\" id=\"myform\" onSubmit=\"return validate(this);\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
 		<input type=\"hidden\" name=\"action\" value=\"view\"/>
