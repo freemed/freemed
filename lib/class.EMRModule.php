@@ -170,7 +170,7 @@ class EMRModule extends BaseModule {
 	function add () { $this->_add(); }
 	function _add () {
 		global $display_buffer;
-		foreach ($GLOBALS as $k => $v) global $$k;
+		foreach ($GLOBALS as $k => $v) global ${$k};
 
 		$result = $sql->query (
 			$sql->insert_query (
@@ -182,6 +182,12 @@ class EMRModule extends BaseModule {
 		if ($result) $this->message = _("Record added successfully.");
 		 else $this->message = _("Record addition failed.");
 		$this->view(); $this->display_message();
+
+		// Check for return to management screen
+		if ($GLOBALS['return'] == 'manage') {
+			global $refresh, $patient;
+			$refresh = "manage.php?id=".urlencode($patient);
+		}
 	} // end function _add
 
 	// function del
@@ -200,6 +206,12 @@ class EMRModule extends BaseModule {
 		if ($result) $this->message = _("Record deleted successfully.");
 		 else $this->message = _("Record deletion failed.");
 		$this->view(); $this->display_message();
+
+		// Check for return to management screen
+		if ($GLOBALS['return'] == 'manage') {
+			global $refresh, $patient;
+			$refresh = "manage.php?id=".urlencode($patient);
+		}
 	} // end function _del
 
 	// function mod
@@ -224,6 +236,12 @@ class EMRModule extends BaseModule {
 		if ($result) $this->message = _("Record modified successfully.");
 		 else $this->message = _("Record modification failed.");
 		$this->view(); $this->display_message();
+
+		// Check for return to management screen
+		if ($GLOBALS['return'] == 'manage') {
+			global $refresh, $patient;
+			$refresh = "manage.php?id=".urlencode($patient);
+		}
 	} // end function _mod
 
 	// function add/modform
@@ -288,6 +306,12 @@ class EMRModule extends BaseModule {
 		if ($result) $this->message = _("Record locked successfully.");
 			else $this->message = _("Record locking failed.");
 		$this->view(); $this->display_message();
+
+		// Check for return to management screen
+		if ($GLOBALS['return'] == 'manage') {
+			global $refresh, $patient;
+			$refresh = "manage.php?id=".urlencode($patient);
+		}
 	} // end function _mod
 
 	// function summary
@@ -307,7 +331,7 @@ class EMRModule extends BaseModule {
 		// Check to see if there *are* any...
 		if ($sql->num_rows($result) < 1) {
 			// If not, let the world know
-			$buffer .= "<B>"._("NONE")."</B>\n";
+			$buffer .= "<b>"._("NONE")."</b>\n";
 		} else { // checking for results
 			// Or loop and display
 			$buffer .= "
