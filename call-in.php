@@ -343,6 +343,9 @@ switch ($action) {
     $display_buffer .= "
         </TD>
       </TR>
+      <TR>
+        <TD COLSPAN=4><CENTER><I>".prepare($cicomplaint)."</I></CENTER></TD>
+      </TR>
     ";
 
     } // if there was no access for the facility
