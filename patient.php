@@ -506,7 +506,7 @@ switch ($action) {
 		$pid = $sql->last_record($result);
 		$patid = PATID_PREFIX.$pid;
 		$result = $sql->query("UPDATE patient SET ptid='".addslashes($patid)."' ".
-			WHERE id='".addslashes($pid)."'");
+			"WHERE id='".addslashes($pid)."'");
      	if ($result) echo _("Done");
      	else echo _("Error");
 		echo "<BR>\n";
