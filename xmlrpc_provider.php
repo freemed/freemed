@@ -2,6 +2,9 @@
  // $Id$
  // $Author$
  // $Log$
+ // Revision 1.5  2002/11/06 13:55:45  rufustfirefly
+ // Pass the user and real physician info so it can be used by methods.
+ //
  // Revision 1.4  2002/11/03 20:41:14  rufustfirefly
  // Changes for phpwebtools 0.3 XML-RPC support.
  //
@@ -50,17 +53,26 @@ function freemed_basic_auth () {
 		list ($user, $pass) = split(':', $auth);
 	
 		// Check for username/password
-		$query = "SELECT username, userpassword FROM user ".
+		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
 			"WHERE username='".addslashes($user)."' AND ".
 			"userpassword='".addslashes($pass)."'";
 		$result = $sql->query($query);
 
 		if (@$sql->num_rows($result) == 1) {
 			$authed = true;
+			$r = $sql->fetch_array($result);
+			$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
+			$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
+		} else {
+			// Clear basic auth id
+			$GLOBALS['__freemed']['basic_auth_id'] = 0;
+			$GLOBALS['__freemed']['basic_auth_phy'] = 0;
 		}
 	} else {
 		// Otherwise return fault for no authorization
 		$authed = false;
+		$GLOBALS['__freemed']['basic_auth_id'] = 0;
+		$GLOBALS['__freemed']['basic_auth_phy'] = 0;
 	}
 	return $authed;
 } // function freemed_basic_auth
