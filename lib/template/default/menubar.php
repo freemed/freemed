@@ -13,9 +13,10 @@ if ($patient_history or $page_history) {
 }
 if ($patient_history) {
 	print "
-	<TR><TD ALIGN=CENTER>
+	<TR><TD ALIGN=RIGHT>
 	<FORM ACTION=\"manage.php\" METHOD=POST>
 	".html_form::select_widget("id", $patient_history)."
+	</TD><TD ALIGN=CENTER>
 	<INPUT TYPE=IMAGE SRC=\"lib/template/default/magnifying_glass.".
 	IMAGE_TYPE."\"
 		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Manage]\">
@@ -30,9 +31,10 @@ if ($page_history) {
 	
 	// Show the actual pick list
 	print "
-	<TR><TD ALIGN=CENTER>
+	<TR><TD ALIGN=RIGHT>
 	<FORM ACTION=\"redirect.php\" METHOD=POST>
 	".html_form::select_widget("location", $page_history)."
+	</TD><TD ALIGN=CENTER>
 	<INPUT TYPE=IMAGE SRC=\"lib/template/default/forward.".
 	IMAGE_TYPE."\"
 		WIDTH=\"16\" HEIGHT=\"16\" ALT=\"[Jump to page]\">
