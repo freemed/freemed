@@ -13,6 +13,10 @@ freemed project changelog
   - lib/freemed.php: now needs phpwebtools 0.2.1, and version kept in
     seperate define
   - reports.php: prettier output (added font tags)
+  - lib/error_handler.php: updated to be much better, now sends stubs to
+    http://www.freemed.org/report_bug.php ... must customize this at
+    some point
+  - lib/freemed.php: added BUG_TRACKER define to turn it on or off
 
 * Thu Mar 15 2001 fforest
   - lib/macros  new define for COPAY transaction
