@@ -117,6 +117,37 @@ class FixedFormRenderer extends FormRenderer {
 		return $buffer;
 	} // end method RenderToBuffer
 
+	//----- Internal Functions
+
+	function _DateInRange ($checkdate, $dtbegin, $dtend) {
+		// split all dates into component parts
+		$begin_y = substr ($dtbegin,   0, 4);
+		$begin_m = substr ($dtbegin,   5, 2);
+		$begin_d = substr ($dtbegin,   8, 2);
+		$end_y   = substr ($dtend,     0, 4);
+		$end_m   = substr ($dtend,     5, 2);
+		$end_d   = substr ($dtend,     8, 2);
+		$cur_y   = substr ($checkdate, 0, 4);
+		$cur_m   = substr ($checkdate, 5, 2);
+		$cur_d   = substr ($checkdate, 8, 2);
+
+		$end = $end_y;
+		$end .= $end_m;
+		$end .= $end_d;
+		$start = $begin_y;
+		$start .= $begin_m;
+		$start .= $begin_d;
+		$current = $cur_y;
+		$current .= $cur_m;
+		$current .= $cur_d;
+
+		if ( ($current >= $begin) AND ($current <= $end) ) {
+			return true;
+		} else {
+			return false;
+		}
+	} // end method _DateInRange
+
 	function _GetCoverages ( $patient = 0 ) {
 		if ($patient < 1) {
 			trigger_error ("_GetCoverages() should not be called without a patient.");

@@ -740,7 +740,7 @@ class HCFA1500Renderer extends FixedFormRenderer {
 		if (!$this_auth[authnum]) {
 			//$display_buffer .= "<B>Warning: Procedure not Authorized!!</B><BR>\n";
 			//flush();
-		} elseif (!date_in_range($cur_date, $this_auth['authdtbegin'], $this_auth['authdtend'])) {
+		} elseif (!$this->_DateInRange($cur_date, $this_auth['authdtbegin'], $this_auth['authdtend'])) {
 			//$display_buffer .= "<B>Warning: Authorization $this_auth[authnum] has expired!!</B><BR>\n";
 			//flush();
 
