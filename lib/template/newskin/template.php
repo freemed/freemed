@@ -67,7 +67,7 @@ if (isset($refresh)) {
 <?php if (!$GLOBALS['__freemed']['no_menu_bar']) {
 	include "lib/template/newskin/menu.php";
 } else { ?>
-<div id="top" align="left" style="width: 100%;">
+<div id="top" align="left" style="width: 100%;" class="menuBar">
 	<b><?php print PACKAGENAME." v".DISPLAY_VERSION.
 		( $GLOBALS['page_title'] ? ' - '.$GLOBALS['page_title'] : '' );
 		?></b>
