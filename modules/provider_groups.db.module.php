@@ -5,13 +5,15 @@
   //       adam b (gdrago23@yahoo.com) -- redesign and update
   // lic : GPL
 
-if (!defined("__PROVIDER_GROUPS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define(__PROVIDER_GROUPS_MODULE_PHP__, true);
-
-class providerGroupsMaintenance extends freemedMaintenanceModule {
+class ProviderGroupsMaintenance extends MaintenanceModule {
 	var $MODULE_NAME    = "Provider Groups Maintenance";
+	var $MODULE_AUTHOR  = "Adam (gdrago23@yahoo.com)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name     = "phygroup";
 	var $record_name    = "Provider Group";
@@ -27,11 +29,11 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 		"phygroupspe1"
 	);
 
-	function providerGroupsMaintenance () {
+	function ProviderGroupsMaintenance () {
 		global $phygroupdtmod, $cur_date;
-		$this->freemedMaintenanceModule();
-		$phygroupdtmod = $cur_date;
-	} // end constructor providerGroupsMaintenance
+		$this->MaintenanceModule();
+		$phygroupdtmod = date("Y-m-d");
+	} // end constructor ProviderGroupsMaintenance
 
 	function view () {  
 		global $display_buffer;
@@ -49,7 +51,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 				"facility" => "psrname"
 			)
 		); // display main itemlist
-	} // end function providerGroupsMaintenance->view()
+	} // end function ProviderGroupsMaintenance->view()
 
 	function form () {
 		global $display_buffer;
@@ -132,7 +134,7 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
   while ($i_r = $sql->fetch_array ($i_res)) {
     $i_id = $i_r ["id"];
     $insmap_buf .= "
-     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+     <TR CLASS=\"".freemed_alternate()."\">
       <TD>".prepare($i_r["inscogroup"])."</TD>
       <TD>
        <INPUT TYPE=TEXT NAME=\"phygroupidmap$brackets\"
@@ -143,14 +145,14 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
   } // end looping for service types
 	$display_buffer .= "<P>
   <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 
-   BGCOLOR=\"#000000\"> <!-- black border --><TR><TD>
+   CLASS=\"reverse\"> <!-- black border --><TR><TD>
 
     <!-- hide record zero, since it isn't used... -->
     <INPUT TYPE=HIDDEN NAME=\"phygroupidmap$brackets\" VALUE=\"0\">
 
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
-    <TR BGCOLOR=#aaaaaa>
+    <TR CLASS=\"cell_hilite\">
      <TD><B>"._("Insurance Group")."</B></TD>
      <TD><B>"._("ID Number")."</B></TD>
     </TR>
@@ -173,12 +175,10 @@ class providerGroupsMaintenance extends freemedMaintenanceModule {
 			<A HREF=\"$this->page_name?module=$module&action=view\"
 			 >"._("Abandon Modification")."</A>
 			</CENTER>\n";
-	} // end function providerGroupsMaintenance->form()
+	} // end function ProviderGroupsMaintenance->form()
 
-} // end class providerGroupsMaintenance
+} // end class ProviderGroupsMaintenance
 
-register_module ("providerGroupsMaintenance");
-
-} // end if not defined
+register_module ("ProviderGroupsMaintenance");
 
 ?>

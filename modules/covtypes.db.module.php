@@ -4,15 +4,16 @@
   // code: Fred Forester (fforest@netcarrier.com) -- modified a lot
   // lic : GPL, v2
 
-if (!defined("__COVERAGE_TYPES_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__COVERAGE_TYPES_MODULE_PHP__, true);
-
-class covtypesMaintenance extends freemedMaintenanceModule {
+class CovtypesMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Coverage Types";
-	var $MODULE_VERSION = "0.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Coverage Types";
 	var $table_name  = "covtypes";
@@ -25,12 +26,12 @@ class covtypesMaintenance extends freemedMaintenanceModule {
 			"covtpdtmod"
 	);
 
-	function covtypesMaintenance () {
+	function CovtypesMaintenance () {
 		// run constructor
-		$this->freemedMaintenanceModule();
+		$this->MaintenanceModule();
 		global $covtpdtmod;
-		$covtpdtmod = $GLOBALS["cur_date"];
-	} // end constructor covtypesMaintenance	
+		$covtpdtmod = date("Y-m-d");
+	} // end constructor CovtypesMaintenance	
 
 	function view () {
 		global $display_buffer;
@@ -103,12 +104,10 @@ class covtypesMaintenance extends freemedMaintenanceModule {
 			>"._("Abandon Modification")."</A>
 			</CENTER>
 			";
-	} // end function covtypesMaintenance->form
+	} // end function CovtypesMaintenance->form
 
-} // end of class covtypesMaintenance
+} // end of class CovtypesMaintenance
 
-register_module ("covtypesMaintenance");
-
-} // end of "if defined"
+register_module ("CovtypesMaintenance");
 
 ?>

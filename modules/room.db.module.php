@@ -3,17 +3,19 @@
  // note: room database functions
  // lic : GPL, v2
 
-if (!defined("__ROOM_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__ROOM_MODULE_PHP__, true);
+class RoomMaintenance extends MaintenanceModule {
 
-class roomMaintenance extends freemedMaintenanceModule {
-
-	var $MODULE_NAME 	= "Room Maintenance";
+	var $MODULE_NAME = "Room Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 
-	var $record_name	= "Room";
-	var $table_name 	= "room";
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
+	var $record_name = "Room";
+	var $table_name = "room";
 
 	var $variables  = array (
 		"roomname",
@@ -25,9 +27,9 @@ class roomMaintenance extends freemedMaintenanceModule {
 		"roomipaddr"
 	);
 
-	function roomMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor roomMaintenance
+	function RoomMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor RoomMaintenance
 
 	function form () {
 		global $display_buffer;
@@ -96,7 +98,7 @@ class roomMaintenance extends freemedMaintenanceModule {
 	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\""._("Cancel")."\">
 	</CENTER></FORM>
 		";
-	} // end function roomMaintenance->form
+	} // end function RoomMaintenance->form
 
 	function view () {
 		global $display_buffer;
@@ -114,12 +116,10 @@ class roomMaintenance extends freemedMaintenanceModule {
 				_("NO DESCRIPTION")
 			)
 		);
-	} // end function roomMaintenance->view
+	} // end function RoomMaintenance->view
 
-} // end class roomMaintenance
+} // end class RoomMaintenance
 
-register_module ("roomMaintenance");
-
-} // end if not defined
+register_module ("RoomMaintenance");
 
 ?>

@@ -3,25 +3,27 @@
  // note: prescription db/module functions
  // lic : GPL
 
-if (!defined("__PRESCRIPTION_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define(__PRESCRIPTION_MODULE_PHP__, true);
-
-class prescriptionModule extends freemedEMRModule {
+class PrescriptionModule extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
-	var $MODULE_VERSION = 0.2;
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_DESCRIPTION = "
 		The prescription module allows prescriptions to be written 
 		for patients from any drug in the local formulary or in the 
 		Multum drug database (if access to that database is 
 		available.";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Prescription";
 	var $table_name     = "rx";
 	var $patient_field  = "rxpatient";
 
-	function prescriptionModule () {
+	function PrescriptionModule () {
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW;
 
 		$this->summary_vars = array (
@@ -97,8 +99,8 @@ class prescriptionModule extends freemedEMRModule {
 			"rxperrefill",
 			"rxnote"
 		);
-		$this->freemedEMRModule();
-	} // end constructor prescriptionModule
+		$this->EMRModule();
+	} // end constructor PrescriptionModule
 
 	function display () {
 		global $display_buffer, $sql, $id, $patient;
@@ -114,7 +116,7 @@ class prescriptionModule extends freemedEMRModule {
 			_("Drug") => $rxdrug,
 			_("Dosage") => $rxdosage." ".$rxunit." ".$rxinterval
 		));
-	} // end function prescriptionModule->display
+	} // end function PrescriptionModule->display
 
 	function form () {
 		global $display_buffer, $sql, $action, $id, $patient,
@@ -294,14 +296,14 @@ class prescriptionModule extends freemedEMRModule {
 				"id=".urlencode($patient));
 			die("");
 		}
-	} // end function prescriptionModule->form
+	} // end function PrescriptionModule->form
 
 	function prepare () {
 		// Common stuff between add/mod to prepare vars
 		global $display_buffer,
 			$rxpatient, $patient;
 		$rxpatient = $patient;
-	} // end function prescriptionModule->prepare
+	} // end function PrescriptionModule->prepare
 
 	function view () {
 		global $display_buffer, $patient;
@@ -323,7 +325,7 @@ class prescriptionModule extends freemedEMRModule {
 			NULL, NULL, NULL,
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
-	} // end function prescriptionModule->view
+	} // end function PrescriptionModule->view
 
 	function old_main () {
 		global $display_buffer;
@@ -407,12 +409,10 @@ class prescriptionModule extends freemedEMRModule {
       break;
   } // end master action switch
 
-	} // end function prescriptionModule->main()
+	} // end function PrescriptionModule->main()
 
-} // end class prescriptionModule
+} // end class PrescriptionModule
 
-register_module ("prescriptionModule");
-
-} // end if not defined
+register_module ("PrescriptionModule");
 
 ?>

@@ -3,19 +3,19 @@
  // desc: aged bills report
  // lic : LGPL
 
-if (!defined("__RECEIVABLES_GRAPH_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.GraphModule');
 
-include ("lib/phplot.php");
-
-class ReceivablesGraph extends freemedGraphModule {
+class ReceivablesGraph extends GraphModule {
 
 	var $MODULE_NAME = "Receivables Graph";
-	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_FILE = __FILE__;
 
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function ReceivablesGraph () {
-		$this->freemedGraphModule();
+		$this->GraphModule();
 	} // end constructor ReceivablesGraph
 
 	function view()
@@ -124,11 +124,8 @@ class ReceivablesGraph extends freemedGraphModule {
 
 	} // end display
 
-
 } // end class ReceivablesGraph
 
 register_module ("ReceivablesGraph");
-
-} // end if not defined
 
 ?>

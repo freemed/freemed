@@ -3,17 +3,16 @@
 // desc: payment module 
 // lic : GPL, v2
 
-if (!defined("__PAYMENT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define (__PAYMENT_MODULE_PHP__, true);
+class PaymentModule extends EMRModule {
 
-// class testModule extends freemedModule
-class PaymentModule extends freemedEMRModule {
-
-        // override variables
 	var $MODULE_NAME    = "Payments";
 	var $MODULE_AUTHOR  = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name     = "payrec";
 	var $record_name    = "Payments";
@@ -43,7 +42,7 @@ class PaymentModule extends freemedEMRModule {
 	// contructor method
 	function PaymentModule ($nullvar = "") {
 		// call parent constructor
-		$this->freemedEMRModule($nullvar);
+		$this->EMRModule($nullvar);
 		// Summary box information
 		$this->summary_vars = array (
 			"Date" => "payrecdt",
@@ -893,7 +892,7 @@ class PaymentModule extends freemedEMRModule {
                 $id              = $r["id"];
                 $total_charges  += $procbalorig;
                 $display_buffer .= "
-                <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
+                <TR CLASS=\"".freemed_alternate()."\">
                 <TD>$procdate</TD>
                 <TD><I>".( (!empty($r[proccomment])) ?
 					prepare($r[proccomment]) : "&nbsp;" )."</I></TD>
@@ -944,7 +943,7 @@ class PaymentModule extends freemedEMRModule {
 
                     // display the total payments
                     $display_buffer .= "
-                    <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color($_alternate))."\">
+                    <TR CLASS=\"".freemed_alternate()."\">
                     <TD><B><FONT SIZE=\"-1\">SUBTOT</FONT></B></TD>
                     <TD>&nbsp;</TD>
                     <TD>&nbsp;</TD>
@@ -959,9 +958,7 @@ class PaymentModule extends freemedEMRModule {
                     </TD>
                     <TD>&nbsp;</TD>
                     </TR>
-                    <TR BGCOLOR=\"".
-                    ($_alternate = freemed_bar_alternate_color ($_alternate))
-					."\">
+                    <TR CLASS=\"".freemed_alternate()."\">
                     <TD COLSPAN=7>&nbsp;</TD>
                     </TR>
                     ";
@@ -1076,9 +1073,7 @@ class PaymentModule extends freemedEMRModule {
                 $id              = $r["id"];
                 if (empty($payrecdescrip)) $payrecdescrip="NO DESCRIPTION";
                 $display_buffer .= "
-                <TR BGCOLOR=\"".
-                ($_alternate = freemed_bar_alternate_color ($_alternate)).
-                "\">
+                <TR CLASS\"".freemed_alternate()."\">
                 <TD>$payrecdate</TD>
                 <TD><B>$this_type</B></TD>
                 <TD><I>$payrecdescrip</I></TD>
@@ -1123,9 +1118,7 @@ class PaymentModule extends freemedEMRModule {
 
             // display the total payments
             $display_buffer .= "
-            <TR BGCOLOR=\"".
-            ($_alternate = freemed_bar_alternate_color ($_alternate))
-			."\">
+            <TR CLASS=\"".freemed_alternate()."\">
             <TD><B><FONT SIZE=\"-1\">SUBTOT</FONT></B></TD>
             <TD>&nbsp;</TD>
             <TD>&nbsp;</TD>
@@ -1140,9 +1133,7 @@ class PaymentModule extends freemedEMRModule {
             </TD>
             <TD>&nbsp;</TD>
             </TR>
-            <TR BGCOLOR=\"".
-            ($_alternate = freemed_bar_alternate_color ($_alternate))
-			."\">
+            <TR CLASS=\"".freemed_alternate()."\">
             <TD COLSPAN=7>&nbsp;</TD>
             </TR>
             ";
@@ -1161,9 +1152,7 @@ class PaymentModule extends freemedEMRModule {
 
             // display the total payments
             $display_buffer .= "
-            <TR BGCOLOR=\"".
-            ($_alternate = freemed_bar_alternate_color ($_alternate))
-			."\">
+            <TR CLASS=\"".freemed_alternate()."\">
             <TD><B><FONT SIZE=\"-1\">TOTAL</FONT></B></TD>
             <TD>&nbsp;</TD>
             <TD>&nbsp;</TD>
@@ -1277,8 +1266,8 @@ class PaymentModule extends freemedEMRModule {
                                                        "cptmod", "cptmod");
                 $this_physician = CreateObject('FreeMED.Physician', $r[procphysician]);
                 $display_buffer .= "
-                <TR BGCOLOR=".( ($this->item == $r[id]) ?  "#00ffff" :
-                                ($_alternate = freemed_bar_alternate_color ($_alternate))).">
+                <TR CLASS=".( ($this->item == $r[id]) ?  "#00ffff" :
+                                freemed_alternate()).">
                 <TD>
                 <INPUT TYPE=RADIO NAME=\"item\" VALUE=\"".prepare($r[id])."\"
                 ".( ($r[id] == $this->item) ?  "CHECKED": "" )."></TD>
@@ -1358,67 +1347,50 @@ class PaymentModule extends freemedEMRModule {
 
 		}
 
-		function insuranceName($coverage) {
-		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS))
-			$insid = freemed::get_link_field($coverage,"coverage","covinsco");
-			$insname = freemed::get_link_field($insid,"insco","insconame");
-			return $insname;
+	function insuranceName($coverage) {
+		$insid = freemed::get_link_field($coverage,"coverage","covinsco");
+		return freemed::get_link_field($insid,"insco","insconame");
+	}
 
-		}
+	function coverageIDFromType($proccovmap, $type) {
+		$cov_ids = explode(":",$proccovmap);
+		return $cov_ids[$type];
+	}
 
-		function coverageIDFromType($proccovmap, $type) {
+	function insuranceSelection($proccovmap) {
 		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS))
-			$cov_ids = explode(":",$proccovmap);
-			return $cov_ids[$type];
+		foreach ($GLOBALS AS $k => $v) global ${$k};
+		$returned_string = "";
 			
-		}
-
-		function insuranceSelection($proccovmap) {
-		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS))
-			$returned_string = "";
-			
-			$cov_ids = explode(":",$proccovmap);
-			$cnt = count($cov_ids);
-			for ($i=0;$i<$cnt;$i++)
-			{
-				if ($i != 0)
-				{
-					if ($cov_ids[$i] != 0)
-					{
-						$insid = freemed::get_link_field($cov_ids[$i],"coverage","covinsco");
-						$insname = freemed::get_link_field($insid,"insco","insconame");
-						$returned_string .= "<OPTION VALUE=\"".$cov_ids[$i]."\">".$insname."\n";
-					}
-				}
+		$cov_ids = explode(":",$proccovmap);
+		$cnt = count($cov_ids);
+		for ($i=0;$i<$cnt;$i++) {
+			if (($i != 0) and ($cov_ids[$i] != 0)) {
+				$insid = freemed::get_link_field($cov_ids[$i],"coverage","covinsco");
+				$insname = freemed::get_link_field($insid,"insco","insconame");
+				$returned_string .= "<OPTION VALUE=\"".$cov_ids[$i]."\">".$insname."\n";
 			}
-			return $returned_string;
 		}
+		return $returned_string;
+	}
 
-		function IsAuthorized($proc,&$remain,&$used) {
+	function IsAuthorized($proc,&$remain,&$used) {
 		global $display_buffer;
-			global $sql;
+		global $sql;
 
-			if ($proc[procauth] == 0)
-			{
-				$remain = $used = 0;
-				return;
-			}
-
-			$auth_rec = freemed::get_link_rec($proc[procauth],"authorizations");
-			$remain = $auth_rec[authvisitsremain];
-			$used = $auth_rec[authvisitsused];
+		if ($proc[procauth] == 0)
+		{
+			$remain = $used = 0;
+			return;
 		}
 
-	} // end class PaymentModule
+		$auth_rec = freemed::get_link_rec($proc[procauth],"authorizations");
+		$remain = $auth_rec[authvisitsremain];
+		$used = $auth_rec[authvisitsused];
+	}
+
+} // end class PaymentModule
 
 register_module("PaymentModule");
-
-} // end if not defined
 
 ?>

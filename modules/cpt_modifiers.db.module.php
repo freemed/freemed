@@ -3,14 +3,16 @@
  // note: cpt modifier functions
  // lic : GPL, v2
 
-if (!defined("__CPT_MODIFIERS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__CPT_MODIFIERS_MODULE_PHP__, true);
-
-class cptModifiersMaintenance extends freemedMaintenanceModule {
+class CptModifiersMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "CPT Modifiers Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "CPT Modifiers";
 	var $table_name     = "cptmod";
@@ -20,10 +22,10 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 		"cptmoddescrip"
 	);
 
-	function cptModifiersMaintenance () {
+	function CptModifiersMaintenance () {
 		global $display_buffer;
 			// run constructor
-		$this->freemedMaintenanceModule();
+		$this->MaintenanceModule();
 			// table definition (inside constructor, as outside definitions
 			// do NOT allow function calls)
 		$this->table_definition = array (
@@ -36,7 +38,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
 			$this->table_name, $this->table_definition).
 			"\"<BR>\n";
 		} // end if $debug
-	} // end constructor cptModifiersMaintenance
+	} // end constructor CptModifiersMaintenance
 
 	function form () {
 		global $display_buffer;
@@ -85,7 +87,7 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
        ( ($action=="addform") ? "Addition" : "Modification" ))."</A>
     </CENTER>
   ";
-	} // end function cptModifiersMaintenance->form()
+	} // end function CptModifiersMaintenance->form()
 
 	function view () {
 		global $display_buffer;
@@ -110,12 +112,10 @@ class cptModifiersMaintenance extends freemedMaintenanceModule {
     ),
     array ("", _("NO DESCRIPTION"))
   );
-	} // end function cptModifiersMaintenance->view()
+	} // end function CptModifiersMaintenance->view()
 
-} // end class cptModifiersMaintenance
+} // end class CptModifiersMaintenance
 
-register_module ("cptModifiersMaintenance");
-
-} // end if defined
+register_module ("CptModifiersMaintenance");
 
 ?>

@@ -1,17 +1,18 @@
 <?php
   // $Id$
   // note: provider certification database functions
-  // code: jeff b (jeff@univrel.pr.uconn.edu)
   // lic : GPL
 
-if (!defined("__PROVIDER_CERTIFICATIONS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define(__PROVIDER_CERTIFICATIONS_MODULE_PHP__, true);
-
-class providerCertificationsMaintenance extends freemedMaintenanceModule {
+class ProviderCertificationsMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Certifications Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Provider Certifications";
 	var $table_name 	= "degrees";
@@ -22,11 +23,11 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
 		"degdate"
 	);
 
-	function providerCertificationsMaintenance () {
+	function ProviderCertificationsMaintenance () {
 		global $cur_date, $deg_date;
-		$this->freemedMaintenanceModule();
-		$degdate = $cur_date;
-	} // end constructor providerCertificationsMaintenance
+		$this->MaintenanceModule();
+		$degdate = date("Y-m-d");
+	} // end constructor ProviderCertificationsMaintenance
 
 	function form () { $this->view(); }
 
@@ -104,12 +105,10 @@ class providerCertificationsMaintenance extends freemedMaintenanceModule {
    </TABLE>
    </CENTER>
     ";
-	} // end function providerCertificationsMaintenance->view()
+	} // end function ProviderCertificationsMaintenance->view()
 
-} // end class providerCertificationsMaintenance
+} // end class ProviderCertificationsMaintenance
 
-register_module ("providerCertificationsMaintenance");
+register_module ("ProviderCertificationsMaintenance");
 
-} // end if defined
- 
 ?>

@@ -3,19 +3,18 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__HIGHMARKEDI_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EDIModule');
 
-define (__HIGHMARKEDI_MODULE_PHP__, true);
-
-// class HighmarkEDIModule extends freemedModule
-class HighmarkEDIModule extends freemedEDIModule {
+class HighmarkEDIModule extends EDIModule {
 
 	// override variables
 	var $MODULE_NAME = "Highmark EDI";
-	var $MODULE_VERSION = "0.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
 	var $CATEGORY_NAME = "EDI";
 	var $CATEGORY_VERSION = "0.1";
 	var $tier1 = array("93688", "60061", "54763", "54720", "53252", "95199", "95056", "54771");
@@ -43,18 +42,20 @@ class HighmarkEDIModule extends freemedEDIModule {
 	// contructor method
 	function HighmarkEDIModule ($nullvar = "") {
 		global $display_buffer;
+
 		// init vars
 		$this->fac_row = 0;
-        $this->CurPatient = 0;
-        $this->Guarantor = 0;
-        $this->Physician = 0;
-        $this->InsuranceCo = 0;
-        $this->Coverage = 0;
-        $this->InsuranceCoS = 0;  // secondary
-        $this->ptinsno = 0;
-        $this->ptinsgrp = 0;
+		$this->CurPatient = 0;
+		$this->Guarantor = 0;
+		$this->Physician = 0;
+		$this->InsuranceCo = 0;
+		$this->Coverage = 0;
+		$this->InsuranceCoS = 0;  // secondary
+		$this->ptinsno = 0;
+		$this->ptinsgrp = 0;
+
 		// call parent constructor
-		$this->freemedEDIModule($nullvar);
+		$this->EDIModule($nullvar);
 	} // end function HighmarkEDIModule
 
 	// override check_vars method
@@ -2002,7 +2003,5 @@ class HighmarkEDIModule extends freemedEDIModule {
 } // end class HighmarkEDIModule
 
 register_module("HighmarkEDIModule");
-
-} // end if not defined
 
 ?>

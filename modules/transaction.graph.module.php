@@ -3,19 +3,19 @@
  // desc: aged bills report
  // lic : LGPL
 
-if (!defined("__TRANSACTION_GRAPH_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.GraphModule');
 
-include ("lib/phplot.php");
-
-class TransactionGraph extends freemedGraphModule {
+class TransactionGraph extends GraphModule {
 
 	var $MODULE_NAME = "Transaction Graph";
-	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_FILE = __FILE__;
 
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function TransactionGraph () {
-		$this->freemedGraphModule();
+		$this->GraphModule();
 	} // end constructor TransactionGraph
 
 	function view()
@@ -37,11 +37,9 @@ class TransactionGraph extends freemedGraphModule {
 		
 		$tl = _("Select Transaction Graph Dates");
 		$display_buffer .= $this->GetGraphOptions($tl);
-
 	}
 
-	function display()
-	{
+	function display() {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
@@ -87,14 +85,10 @@ class TransactionGraph extends freemedGraphModule {
 		{
 			$display_buffe .= _("No Records found");
 		}
-
-	} // end display
-
+	} // end method TransactionGraph->display
 
 } // end class TransactionGraph
 
 register_module ("TransactionGraph");
-
-} // end if not defined
 
 ?>

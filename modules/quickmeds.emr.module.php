@@ -3,23 +3,25 @@
  // desc: quickmeds simple medication record
  // lic : GPL, v2
 
-if (!defined("__QUICKMEDS_EMR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define ('__QUICKMEDS_EMR_MODULE_PHP__', true);
-
-class quickmedsModule extends freemedEMRModule {
+class QuickmedsModule extends EMRModule {
 
 	var $MODULE_NAME = "Medications";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Medications";
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
-	function quickmedsModule () {
+	function QuickmedsModule () {
 		// call parent constructor
-		$this->freemedEMRModule();
-	} // end constructor quickmedsModule
+		$this->EMRModule();
+	} // end constructor QuickmedsModule
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
@@ -58,7 +60,7 @@ class quickmedsModule extends freemedEMRModule {
 				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
 				<TD ALIGN=\"LEFT\">".
 				template::summary_delete_link($this,
-				"module_loader.php?module=quickmedsModule&".
+				"module_loader.php?module=QuickmedsModule&".
 				"action=del&patient=".urlencode($patient)."&".
 				"return=manage&id=".urlencode($k))."
 				</TD>
@@ -89,7 +91,7 @@ class quickmedsModule extends freemedEMRModule {
 			</DIV>
 			";
 		return $buffer;
-	} // end function quickmedsModule->summary
+	} // end function QuickmedsModule->summary
 
 	function add () {
 		global $display_buffer, $return, $patient, $med;
@@ -140,7 +142,7 @@ class quickmedsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function quickmedsModule->add()
+	} // end function QuickmedsModule->add()
 
 	function del() { $this->delete(); }
 	function delete () {
@@ -187,19 +189,17 @@ class quickmedsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function quickmedsModule->delete()
+	} // end function QuickmedsModule->delete()
 
 	function view() {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$display_buffer .= "TODO: Listing for quickmeds here\n";
-	} // end function quickmedsModule->view()
+	} // end function QuickmedsModule->view()
 
-} // end class quickmedsModule
+} // end class QuickmedsModule
 
-register_module ("quickmedsModule");
-
-} // end if not defined
+register_module ("QuickmedsModule");
 
 ?>

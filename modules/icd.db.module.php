@@ -5,14 +5,16 @@
  //       jeff b (jeff@univrel.pr.uconn.edu) -- rewrite
  // lic : GPL, v2
 
-if (!defined("__ICD_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__ICD_MODULE_PHP__, true);
+class IcdMaintenance extends MaintenanceModule {
 
-class icdMaintenance extends freemedMaintenanceModule {
+	var $MODULE_NAME = "ICD Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
+	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 
-	var $MODULE_NAME 	 = "ICD Maintenance";
-	var $MODULE_VERSION  = "0.1";
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name 	 = "icd9";
 	var $record_name	 = "ICD9 Code";
@@ -31,9 +33,9 @@ class icdMaintenance extends freemedMaintenanceModule {
 		"icdcoll"
 	);
 
-	function icdMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor icdMaintenance
+	function IcdMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor IcdMaintenance
 
 	function form () {
 		global $display_buffer;
@@ -104,7 +106,7 @@ class icdMaintenance extends freemedMaintenanceModule {
 	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\">
 	</CENTER></FORM>
 		";
-	} // end function icdMaintenance->form
+	} // end function IcdMaintenance->form
 
 	function view () {
 		global $display_buffer;
@@ -119,12 +121,10 @@ class icdMaintenance extends freemedMaintenanceModule {
 			),
 			array ("", _("NO DESCRIPTION")), "", "t_page"
 		);
-	} // end function icdMaintenance->view
+	} // end function IcdMaintenance->view
 
-} // end class icdMaintenance
+} // end class IcdMaintenance
 
-register_module ("icdMaintenance");
-
-} // end if not defined
+register_module ("IcdMaintenance");
 
 ?>

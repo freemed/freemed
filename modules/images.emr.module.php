@@ -4,25 +4,27 @@
  // note: images module for patient management
  // lic : GPL, v2
 
-if (!defined("__IMAGES_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define ('__IMAGES_MODULE_PHP__', true);
-
-class patientImages extends freemedEMRModule {
+class PatientImages extends EMRModule {
 
 	var $MODULE_NAME = "Patient Images";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Patient Images allows images to be
 		stored, as if they were in a paper chart.
 	";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name   = "Patient Images";
 	var $table_name    = "images";
 	var $patient_field = "imagepat";
 	var $order_by      = "imagedt";
 
-	function patientImages () {
+	function PatientImages () {
 		// Get browser information
 		$browser = CreateObject('PHP.browser_detect');
 		if ($browser->BROWSER=="IE") $this->IEupload = true;
@@ -51,8 +53,8 @@ class patientImages extends freemedEMRModule {
 		);
 
 		// call parent constructor
-		$this->freemedEMRModule();
-	} // end constructor patientImages
+		$this->EMRModule();
+	} // end constructor PatientImages
 
 	function activeXupload ($name) {
 		global $display_buffer;
@@ -74,7 +76,7 @@ class patientImages extends freemedEMRModule {
 		<input TYPE=\"FILE\" NAME=\"imageupload\"/>
 		";
 		return $buffer;
-	} // end function patientImages->activeXupload
+	} // end function PatientImages->activeXupload
 
 	function add () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module;
@@ -149,7 +151,7 @@ class patientImages extends freemedEMRModule {
 		if ($return=="manage") {
 			$refresh = "manage.php?id=".$patient;
 		}
- 	} // end method patientImages->add
+ 	} // end method PatientImages->add
 
 	function del () {
 		// Delete actual image
@@ -159,7 +161,7 @@ class patientImages extends freemedEMRModule {
 
 		// Run stock deletion routine
 		$this->_del();
-	} // end function patientImages->del
+	} // end function PatientImages->del
 
 	function display () {
 		global $sql, $id, $patient, $display_buffer, $return;
@@ -185,7 +187,7 @@ class patientImages extends freemedEMRModule {
 		$display_buffer .= "</A>
 		</DIV>
 		";
-	} // end function patientImages->display
+	} // end function PatientImages->display
 
 	function form () {
 		global $display_buffer, $sql, $module, $patient, $imageeoc,
@@ -289,7 +291,7 @@ class patientImages extends freemedEMRModule {
 
 		</FORM></DIV>
 		";
-	} // end of function patientImages->form()
+	} // end of function PatientImages->form()
 
 	function mod () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module, $id;
@@ -327,7 +329,7 @@ class patientImages extends freemedEMRModule {
 		<A HREF=\"$this->page_name?module=$module&patient=$patient\"
 		>"._($this->record_name)."</A>
 		";
- 	} // end method patientImages->add
+ 	} // end method PatientImages->add
 
 	function view () {
 		global $display_buffer;
@@ -361,12 +363,10 @@ class patientImages extends freemedEMRModule {
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
 		$display_buffer .= "\n<P>\n";
-	} // end function patientImages->view()
+	} // end function PatientImages->view()
 
-} // end of class patientImages
+} // end of class PatientImages
 
-register_module ("patientImages");
-
-} // end if defined
+register_module ("PatientImages");
 
 ?>

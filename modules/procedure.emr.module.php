@@ -3,14 +3,16 @@
  // desc: procedure database module
  // lic : GPL, v2
 
-if (!defined("__PROCEDURE_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define (__PROCEDURE_MODULE_PHP__, true);
-
-class procedureModule extends freemedEMRModule {
+class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
@@ -49,23 +51,21 @@ class procedureModule extends freemedEMRModule {
 		"procclmtp"
 	);    
 
-
-	function procedureModule () {
+	function ProcedureModule () {
 		// call parent constructor
-		$this->freemedEMRModule();
+		$this->EMRModule();
 
 		// Set vars for patient management
 		$this->summary_vars = array (
 			_("Date")    => "procdt",
 			_("Comment") => "proccomment"
 		);
-	} // end constructor procedureModule
+	} // end constructor ProcedureModule
 
 	function addform() {
 		global $display_buffer;
 
-		reset ($GLOBALS);
-		 while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) global ${$k};
 
 		if (!$been_here) {
 			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
@@ -552,7 +552,7 @@ class procedureModule extends freemedEMRModule {
 		</CENTER>
 		<P>
 		";
-					} // end function procedureModule->delete()
+	} // end function ProcedureModule->delete()
 
 	function display() {
 		global $display_buffer;
@@ -680,7 +680,7 @@ class procedureModule extends freemedEMRModule {
 			  ""
 			)
 		);
-	} // end function procedureModule->view()
+	} // end function ProcedureModule->view()
 
 
 	function GetAuthorizations($patid) {
@@ -770,10 +770,8 @@ class procedureModule extends freemedEMRModule {
 
 	}
 
-} // end class procedureModule
+} // end class ProcedureModule
 
-register_module ("procedureModule");
-
-} // end if not defined
+register_module ("ProcedureModule");
 
 ?>

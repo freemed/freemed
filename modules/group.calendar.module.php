@@ -4,14 +4,19 @@
  // note: Physician Group Calendar
  // lic : GPL, v2
 
-if (!defined("__GROUP_CALENDAR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.CalendarModule');
 
-define ('__GROUP_CALENDAR_MODULE_PHP__', true);
+include_once('lib/calendar-functions.php');
 
-class groupCalendar extends freemedCalendarModule {
+class GroupCalendar extends CalendarModule {
 
 	var $MODULE_NAME = "Group Calendar";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
 	var $ICON = "img/karm.gif";
 
 	var $record_name = "Scheduler";
@@ -33,10 +38,10 @@ class groupCalendar extends freemedCalendarModule {
 		"calpostnote" 
 	);
 
-	function groupCalendar () {
+	function GroupCalendar () {
 		// run constructor
-		$this->freemedCalendarModule();
-	} // end constructor groupCalendar	
+		$this->CalendarModule();
+	} // end constructor GroupCalendar	
 
 	function mark_array() {
 		$mark[_("Travel")] = "0";
@@ -125,7 +130,7 @@ class groupCalendar extends freemedCalendarModule {
 
 		// Finally display the calendar
 		$display_buffer .= $this->displayCalendar($physicians, $map);
-	} // end function groupCalendar->view
+	} // end function GroupCalendar->view
 
 	function displayCalendar ($physicians, $map) {
 		// Globalize everything
@@ -186,7 +191,7 @@ class groupCalendar extends freemedCalendarModule {
 		";
 
 		// Add anesthesia display if that module is installed
-		if (check_module("anesthCalendar")) {
+		if (check_module("AnesthCalendar")) {
 			// Check for someone covering this day
 			$anquery = "SELECT * FROM anesth WHERE ".
 				"andate='".addslashes($selected_date)."' AND ".
@@ -328,7 +333,7 @@ class groupCalendar extends freemedCalendarModule {
 		";
 
 		return $buffer;
-	} // end function groupCalendar->displayCalendar
+	} // end function GroupCalendar->displayCalendar
 
 	// ----- "sub-action" section
 
@@ -342,7 +347,7 @@ class groupCalendar extends freemedCalendarModule {
 			"anphysician='".addslashes($id)."' AND ".
 			"anfacility='".addslashes($facility)."'";
 		$result = $sql->query($query);
-	} // end function groupCalendar->delete_anesth
+	} // end function GroupCalendar->delete_anesth
 
 	function delete_appt() {
 		// Globalize
@@ -352,7 +357,7 @@ class groupCalendar extends freemedCalendarModule {
 		$query = "DELETE FROM ".$this->table_name." ".
 			"WHERE id='".addslashes($id)."'";
 		$result = $sql->query($query);
-	} // end function groupCalendar->delete_appt
+	} // end function GroupCalendar->delete_appt
 
 	function mark_lookup($var) {
 		global ${$var};
@@ -366,7 +371,7 @@ class groupCalendar extends freemedCalendarModule {
 			default: return _("Travel"); break;
 		}
 
-	} // end function groupCalendar->mark_lookup
+	} // end function GroupCalendar->mark_lookup
 
 	function travel_book() {
 		// Globalize
@@ -393,12 +398,10 @@ class groupCalendar extends freemedCalendarModule {
 			)
 		);
 		$result = $sql->query($query);
-	} // end function groupCalendar->travel_book
+	} // end function GroupCalendar->travel_book
 
-} // end class groupCalendar
+} // end class GroupCalendar
 
-register_module ("groupCalendar");
-
-} // end if !defined
+register_module ("GroupCalendar");
 
 ?>

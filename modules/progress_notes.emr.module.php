@@ -3,34 +3,36 @@
  // note: progress notes module for patient management
  // lic : GPL, v2
 
-if (!defined("__PROGRESS_NOTES_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define (__PROGRESS_NOTES_MODULE_PHP__, true);
-
-class progressNotes extends freemedEMRModule {
+class ProgressNotes extends EMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "
 		FreeMED Progress Notes allow physicians and
 		providers to track patient activity through
 		SOAPIER style notes.
 	";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name   = "Progress Notes";
 	var $table_name    = "pnotes";
 	var $patient_field = "pnotespat";
 
-	function progressNotes () {
+	function ProgressNotes () {
 		// call parent constructor
-		$this->freemedEMRModule();
+		$this->EMRModule();
 		// Define variables for EMR summary
 		$this->summary_vars = array (
 			_("Date")        =>	"pnotesdt",
 			_("Description") =>	"pnotesdescrip"
 		);
 		$this->summary_options |= SUMMARY_VIEW;
-	} // end constructor progressNotes
+	} // end constructor ProgressNotes
 
 	function add () { $this->form(); }
 	function mod () { $this->form(); }
@@ -309,7 +311,7 @@ class progressNotes extends freemedEMRModule {
      } // end if is done
 
 
-	} // end of function progressNotes->form()
+	} // end of function ProgressNotes->form()
 
 	function display () {
 		global $display_buffer;
@@ -504,12 +506,10 @@ class progressNotes extends freemedEMRModule {
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL
 		);
 		$display_buffer .= "\n<P>\n";
-	} // end function progressNotes->view()
+	} // end function ProgressNotes->view()
 
-} // end of class progressNotes
+} // end of class ProgressNotes
 
-register_module ("progressNotes");
-
-} // end if defined
+register_module ("ProgressNotes");
 
 ?>

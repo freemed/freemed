@@ -4,15 +4,19 @@
  // note: Anesthesiology Calendar Module /w Admin
  // lic : GPL, v2
 
-if (!defined("__ANESTH_CALENDAR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.CalendarModule');
 
-define ('__ANESTH_CALENDAR_MODULE_PHP__', true);
+include_once('lib/calendar-functions.php');
 
-class anesthCalendar extends freemedCalendarModule {
+class AnesthCalendar extends CalendarModule {
 
 	var $MODULE_NAME = "Anesthesiology Calendar";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 	var $ICON = "img/karm.gif";
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Scheduler";
 	var $table_name  = "anesth";
@@ -23,10 +27,10 @@ class anesthCalendar extends freemedCalendarModule {
 		"anfacility"
 	);
 
-	function anesthCalendar () {
+	function AnesthCalendar () {
 		// run constructor
-		$this->freemedCalendarModule();
-	} // end constructor anesthCalendar	
+		$this->CalendarModule();
+	} // end constructor AnesthCalendar	
 
 	function view () {
 		global $display_buffer, $anfacility;
@@ -58,7 +62,7 @@ class anesthCalendar extends freemedCalendarModule {
 
 		// Grab the form and display it.
 		$display_buffer .= $this->displayForm();
-	} // end function anesthCalendar->view
+	} // end function AnesthCalendar->view
 
 	function displayForm ( ) {
 		// Globalize everything
@@ -136,7 +140,7 @@ class anesthCalendar extends freemedCalendarModule {
 		";
 
 		return $buffer;
-	} // end function anesthCalendar->displayForm
+	} // end function AnesthCalendar->displayForm
 
 	// ----- "sub-action" section
 
@@ -168,7 +172,7 @@ class anesthCalendar extends freemedCalendarModule {
 				)
 			));
 		}
-	} // end function anesthCalendar->single_book
+	} // end function AnesthCalendar->single_book
 
 	function delete_date() {
 		// Globalize
@@ -178,7 +182,7 @@ class anesthCalendar extends freemedCalendarModule {
 		$query = "DELETE FROM ".$this->table_name." ".
 			"WHERE id='".addslashes($id)."'";
 		$result = $sql->query($query);
-	} // end function anesthCalendar->delete_date
+	} // end function AnesthCalendar->delete_date
 
 	function bulk_book() {
 		// Globalize
@@ -192,12 +196,10 @@ class anesthCalendar extends freemedCalendarModule {
 			)
 		);
 		$result = $sql->query($query);
-	} // end function anesthCalendar->bulk_book
+	} // end function AnesthCalendar->bulk_book
 
-} // end class anesthCalendar
+} // end class AnesthCalendar
 
-register_module ("anesthCalendar");
-
-} // end if !defined
+register_module ("AnesthCalendar");
 
 ?>

@@ -3,13 +3,12 @@
  // desc: fixed type forms editing engine
  // lic : GPL, v2
 
-if (!defined("__FIXED_FORMS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__FIXED_FORMS_MODULE_PHP__, true);
-
-class fixedFormsMaintenance extends freemedMaintenanceModule {
+class FixedFormsMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME	= "Fixed Forms Maintenance";
+	var $MODULE_AUTHOR	= "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION	= "0.1";
 	var $MODULE_DESCRIPTION = "
 		Fixed forms can be used when generating fixed-column
@@ -17,6 +16,9 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		insurance/form filing and generation of custom forms
 		for internal facility use.
 	";
+	var $MODULE_FILE	= __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name	= "Fixed Form";
 	var $table_name		= "fixedform";
@@ -38,9 +40,9 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		"ffcomment"
 	);
 
-	function fixedFormsMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor fixedFormsMaintenance
+	function FixedFormsMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor FixedFormsMaintenance
 
 	function addform() {
 		global $display_buffer;
@@ -363,8 +365,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			for($i=$start;$i<$last;$i++)
 			{
 				$display_buffer .= "
-				 <TR BGCOLOR=\"".
-				  ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
+				 <TR CLASS=\"".freemed_alternate()."\">
 				  <TD><FONT COLOR=\"$colors[$i]\">".($i+1)."</FONT></TD>
 				  <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"mark$brackets\" VALUE=\"$i\"></CENTER></TD>
 				  <TD><INPUT TYPE=TEXT NAME=\"drow$brackets\" SIZE=5
@@ -751,7 +752,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		$ffformat  = fm_join_from_array ($format );
 		$ffcomment = fm_join_from_array ($comment);
 		$this->_add();
-	} // end function fixedFormsMaintenance->add
+	} // end function FixedFormsMaintenance->add
 
 	function mod () {
 		global $display_buffer;
@@ -765,7 +766,7 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 		$ffformat  = fm_join_from_array ($format );
 		$ffcomment = fm_join_from_array ($comment);
 		$this->_mod();
-	} // end function fixedFormsMaintenance->mod
+	} // end function FixedFormsMaintenance->mod
 
 	function view () {
 		global $display_buffer;
@@ -780,12 +781,10 @@ class fixedFormsMaintenance extends freemedMaintenanceModule {
 			),
 			array ( "", _("NO DESCRIPTION") )
 		);  
-	} // end function fixedFormsMaintenance->view     
+	} // end function FixedFormsMaintenance->view     
 
-} // end class fixedFormsMaintenance
+} // end class FixedFormsMaintenance
 
-register_module ("fixedFormsMaintenance");
-
-} // end if not defined
+register_module ("FixedFormsMaintenance");
 
 ?>

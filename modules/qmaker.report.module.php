@@ -4,20 +4,22 @@
  // Jay P. Narain
  // narain2@yahoo.com
  // converted to freemed by fforest
-
  // lic : LGPL
 
-if (!defined("__QMAKER_REPORT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.ReportModule');
 
-class qmakerReport extends freemedReportsModule {
+class QmakerReport extends ReportsModule {
 
 	var $MODULE_NAME = "Query Maker";
-	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_FILE = __FILE__;
 
-	function qmakerReport () {
-		$this->freemedReportsModule();
-	} // end constructor qmakerReport
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
+	function QmakerReport () {
+		$this->ReportsModule();
+	} // end constructor QmakerReport
 
 	function view() {
 		global $display_buffer;
@@ -492,8 +494,7 @@ class qmakerReport extends freemedReportsModule {
 
 		   while ($row = $sql->fetch_array($qid))
 		   {
-			$color = freemed_bar_alternate_color($color);
-			$display_buffer .= "<tr bgcolor=\"".$color."\">\n";
+			$display_buffer .= "<tr CLASS=\"".freemed_alternate()."\">\n";
 			for ($i=0; $i< $sql->num_fields($qid); $i++)
 			 {
 			  $display_buffer .= sprintf( "<td>%s</td>\n",htmlspecialchars ($row[$i]) );
@@ -578,10 +579,8 @@ class qmakerReport extends freemedReportsModule {
 
 
 
-} // end class qmakerReport
+} // end class QmakerReport
 
-register_module ("qmakerReport");
-
-} // end if not defined
+register_module ("QmakerReport");
 
 ?>

@@ -3,14 +3,16 @@
  // note: room equipment database
  // lic : GPL, v2
 
-if (!defined("__ROOM_EQUIPMENT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define(__ROOM_EQUIPMENT_MODULE_PHP__, true);
-
-class roomEquipmentMaintenance extends freemedMaintenanceModule {
+class RoomEquipmentMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Room Equipment Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name     = "roomequip";
 	var $record_name    = "Room Equipment";
@@ -22,11 +24,11 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
 		"reqdatemod"
 	);
 
-	function roomEquipmentMaintenance () {
+	function RoomEquipmentMaintenance () {
 		global $cur_date;
-		$this->freemedMaintenanceModule();
+		$this->MaintenanceModule();
 		$reqdatemod = $cur_date;
-	} // end constructor roomEquipmentMaintenance
+	} // end constructor RoomEquipmentMaintenance
 
 	function form () {
 		global $display_buffer;
@@ -74,7 +76,7 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
       "</A>
     </CENTER>
   ";
-	} // end function roomEquipmentMaintenance->form()
+	} // end function RoomEquipmentMaintenance->form()
 
 	function view () {
 		global $display_buffer;
@@ -91,12 +93,10 @@ class roomEquipmentMaintenance extends freemedMaintenanceModule {
 				"", _("NO DESCRIPTION")
 			)
 		);
-	} // end function roomEquipmentMaintenance->view()
+	} // end function RoomEquipmentMaintenance->view()
 
-} // end class roomEquipmentMaintenance
+} // end class RoomEquipmentMaintenance
 
-register_module ("roomEquipmentMaintenance");
-
-} // end if defined
+register_module ("RoomEquipmentMaintenance");
 
 ?>

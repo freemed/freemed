@@ -3,23 +3,25 @@
  // desc: previous operations summary module
  // lic : GPL, v2
 
-if (!defined("__PREVIOUS_OPERATIONS_EMR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define ('__PREVIOUS_OPERATIONS_EMR_MODULE_PHP__', true);
-
-class previousOperationsModule extends freemedEMRModule {
+class PreviousOperationsModule extends EMRModule {
 
 	var $MODULE_NAME = "Previous Operations";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Previous Operations";
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
-	function previousOperationsModule () {
+	function PreviousOperationsModule () {
 		// call parent constructor
-		$this->freemedEMRModule();
-	} // end constructor previousOperationsModule
+		$this->EMRModule();
+	} // end constructor PreviousOperationsModule
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
@@ -58,7 +60,7 @@ class previousOperationsModule extends freemedEMRModule {
 				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
 				<TD ALIGN=\"LEFT\">".
 				template::summary_delete_link($this,
-				"module_loader.php?module=previousOperationsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
+				"module_loader.php?module=PreviousOperationsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
 				"</TD></TR>
 				";
 			} // end looping thru ops 
@@ -86,7 +88,7 @@ class previousOperationsModule extends freemedEMRModule {
 			</DIV>
 			";
 		return $buffer;
-	} // end function previousOperationsModule->summary
+	} // end function PreviousOperationsModule->summary
 
 	function add () {
 		global $display_buffer, $return, $patient, $op;
@@ -137,7 +139,7 @@ class previousOperationsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function previousOperationsModule->add()
+	} // end function PreviousOperationsModule->add()
 
 	function del() { $this->delete(); }
 	function delete () {
@@ -184,19 +186,17 @@ class previousOperationsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function previousOperationsModule->delete()
+	} // end function PreviousOperationsModule->delete()
 
 	function view() {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$display_buffer .= "TODO: Listing for operations here\n";
-	} // end function previousOperationsModule->view()
+	} // end function PreviousOperationsModule->view()
 
-} // end class previousOperationsModule
+} // end class PreviousOperationsModule
 
-register_module ("previousOperationsModule");
-
-} // end if not defined
+register_module ("PreviousOperationsModule");
 
 ?>

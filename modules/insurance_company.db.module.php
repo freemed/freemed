@@ -3,17 +3,19 @@
  // note: insurance company database services
  // lic : GPL, v2
 
-if (!defined("__INSURANCE_COMPANY_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__INSURANCE_COMPANY_MODULE_PHP__, true);
+class InsuranceCompanyMaintenance extends MaintenanceModule {
 
-class insuranceCompanyMaintenance extends freemedMaintenanceModule {
-
-	var $MODULE_NAME	= "Insurance Company Maintenance";
+	var $MODULE_NAME = "Insurance Company Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 
-	var $record_name 	= "Insurance Company";
-	var $table_name     = "insco";
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
+	var $record_name = "Insurance Company";
+	var $table_name = "insco";
 
 	var $variables		= array (
 		"inscodtmod",
@@ -207,7 +209,7 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 				break; // end add/addform
 			} // end switch
 		} // end if book is done
-	} // end function insuranceCompanyMaintenance->form()
+	} // end function InsuranceCompanyMaintenance->form()
 
 	function view () { 
 		global $display_buffer;
@@ -226,12 +228,10 @@ class insuranceCompanyMaintenance extends freemedMaintenanceModule {
 			"", "",
 			ITEMLIST_MOD|ITEMLIST_VIEW
 		);
-	} // end function insuranceCompanyMaintenance->view()
+	} // end function InsuranceCompanyMaintenance->view()
 
-} // end class insuranceCompanyMaintenance
+} // end class InsuranceCompanyMaintenance
 
-register_module ("insuranceCompanyMaintenance");
-
-} // end if not defined
+register_module ("InsuranceCompanyMaintenance");
 
 ?>

@@ -3,14 +3,16 @@
  // note: patient status functions
  // lic : GPL, v2
 
-if (!defined("__PATIENT_STATUS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__PATIENT_STATUS_MODULE_PHP__, true);
+class patientStatusMaintenance extends MaintenanceModule {
 
-class patientStatusMaintenance extends freemedMaintenanceModule {
-
-	var $MODULE_NAME	= "Patient Status Maintenance";
+	var $MODULE_NAME = "Patient Status Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name 	= "Patient Status";
 	var $table_name		= "ptstatus";
@@ -20,9 +22,9 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
 		"ptstatusdescrip"
 	);
 
-	function patientStatusMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor patientStatusMaintenance
+	function PatientStatusMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor PatientStatusMaintenance
 
 	function addform () { $this->view(); }
 
@@ -71,7 +73,7 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
-	} // end function patientStatusMaintenance->modform()
+	} // end function PatientStatusMaintenance->modform()
 
 	function view () {
 		global $display_buffer;
@@ -89,7 +91,7 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
 			)
 		);  
 		$this->_addform();
-	} // end function patientStatusMaintenance->view()
+	} // end function PatientStatusMaintenance->view()
 
 	function _addform () {
 		global $display_buffer;
@@ -110,12 +112,10 @@ class patientStatusMaintenance extends freemedMaintenanceModule {
 		</FORM>
 		</CENTER>
 		";
-	} // end function patientStatusMaintenance->addform()
+	} // end function PatientStatusMaintenance->addform()
 
-} // end class patientStatusMaintenance
+} // end class PatientStatusMaintenance
 
-register_module ("patientStatusMaintenance");
-
-} // end if not defined
+register_module ("PatientStatusMaintenance");
 
 ?>

@@ -1,16 +1,17 @@
 <?php
  // $Id$
- // note: (description of this module here)
  // lic : GPL
 
-if (!defined("__INTERNAL_SERVICE_TYPES_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__INTERNAL_SERVICE_TYPES_MODULES_PHP__, true);
-
-class internalServiceTypesMaintenance extends freemedMaintenanceModule {
+class InternalServiceTypesMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Internal Service Types Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name     = "intservtype";
 	var $record_name    = "Internal Service Type";
@@ -20,9 +21,9 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
 		"intservtype"
 	); 
 
-	function internalServiceTypesMaintenance() {
-		$this->freemedMaintenanceModule();
-	} // end constructor internalServiceTypesMaintenance
+	function InternalServiceTypesMaintenance() {
+		$this->MaintenanceModule();
+	} // end constructor InternalServiceTypesMaintenance
 
 	function addform () { $this->view(); }
 
@@ -84,7 +85,7 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
-	} // end function internalSericeTypesMaintenance->modform()
+	} // end function InternalSericeTypesMaintenance->modform()
 
 	function view () {
 		global $display_buffer;
@@ -113,12 +114,10 @@ class internalServiceTypesMaintenance extends freemedMaintenanceModule {
     </TR>
     </TABLE>
 		";
-	} // end function internalServiceTypesMaintenance->view() 
+	} // end function InternalServiceTypesMaintenance->view() 
 
-} // end class internalServiceTypesMaintenance
+} // end class InternalServiceTypesMaintenance
 
-register_module ("internalServiceTypesMaintenance");
-
-} // end if defined
+register_module ("InternalServiceTypesMaintenance");
 
 ?>

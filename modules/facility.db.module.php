@@ -5,19 +5,21 @@
  //       small mods by max k <amk@span.ch>
  // lic : GPL, v2
 
-if (!defined("__FACILITY_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__FACILITY_MODULE_PHP__, true);
-
-class facilityMaintenance extends freemedMaintenanceModule {
+class FacilityMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Facility Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "
 		Facilities are used by FreeMED to describe locations where 
 		services are performed. Any physician/provider can do work 
 		at one or more of these facilities.
 	";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Facility";
 	var $table_name     = "facility";
@@ -40,9 +42,9 @@ class facilityMaintenance extends freemedMaintenanceModule {
 		"psrpos"
 	);
 
-	function facilityMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor facilityMaintenance
+	function FacilityMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor FacilityMaintenance
 
 	function add () { $this->form(); }
 
@@ -153,8 +155,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
       fm_phone_entry ("psrfax"),
 
         _("Email Address") =>
-        "<INPUT TYPE=TEXT NAME=\"psremail\" SIZE=25 MAXLENGTH=25
-         VALUE=\"".prepare($psremail)."\">"
+	html_form::text_widget('psremail', 25)
 
      ) )
     );
@@ -183,7 +184,7 @@ class facilityMaintenance extends freemedMaintenanceModule {
 
     } // end of internal action switch
   } // end checking if book is displayed
-	} // end function facilityMaintenance->form()
+	} // end function FacilityMaintenance->form()
 
 	function view () {
 		global $display_buffer;
@@ -198,12 +199,10 @@ class facilityMaintenance extends freemedMaintenanceModule {
 			),
 			array ("", " ")
 		);
-	} // end function facilityMaintenance->view()
+	} // end function FacilityMaintenance->view()
 
-} // end class facilityMaintenance
+} // end class FacilityMaintenance
 
-register_module ("facilityMaintenance");
-
-} // end if not defined
+register_module ("FacilityMaintenance");
 
 ?>

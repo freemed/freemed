@@ -4,14 +4,16 @@
   // code: adam b (gdrago23@yahoo.com) -- modified a lot
   // lic : GPL, v2
 
-if (!defined("__PLACE_OF_SERVICE_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__PLACE_OF_SERVICE_MODULE_PHP__, true);
-
-class placeOfServiceMaintenance extends freemedMaintenanceModule {
+class PlaceOfServiceMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Place of Service Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Place of Service";
 	var $table_name  = "pos";
@@ -24,18 +26,16 @@ class placeOfServiceMaintenance extends freemedMaintenanceModule {
 			"posdtmod"
 	);
 
-	function placeOfServiceMaintenance () {
+	function PlaceOfServiceMaintenance () {
 		// run constructor
-		$this->freemedMaintenanceModule();
+		$this->MaintenanceModule();
 		global $posdtmod, $posdtadd;
-		$posdtmod = $GLOBALS["cur_date"];
-		$posdtadd = $GLOBALS["cur_date"];
-	} // end constructor placeOfServiceMaintenance	
+		$posdtmod = $posdtadd = date("Y-m-d");
+	} // end constructor PlaceOfServiceMaintenance	
 
 	function view () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) global ${$k};
 
 		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT posname,posdescrip,id FROM ".$this->table_name.
@@ -51,69 +51,56 @@ class placeOfServiceMaintenance extends freemedMaintenanceModule {
 
 	function form () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k, $v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) global ${$k};
   		if ($action=="modform") { 
-    		$result = $sql->query("SELECT * FROM $this->table_name
-				WHERE ( id = '$id' )");
+    			$result = $sql->query("SELECT * FROM ".$this->table_name." ".
+				"WHERE ( id = '$id' )");
 			$r = $sql->fetch_array($result); // dump into array r[]
 			extract ($r);
 		} // if loading values
-		if ($action=="addform")
-		{
-			global $posdtadd;
-			$posdtadd = $cur_date;
+		if ($action=="addform") {
+			$GLOBALS['posdtadd'] = date("Y-m-d");
 		}
 
 		// display itemlist first
 		$this->view ();
 
 		$display_buffer .= "
-			<FORM ACTION=\"$this->page_name\" METHOD=POST>
-			<INPUT TYPE=HIDDEN NAME=\"posdtadd\"".prepare($posdtadd)."\">
-			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
-			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-			($action=="modform" ? "mod" : "add")."\">";
+			<form ACTION=\"$this->page_name\" METHOD=\"POST\">
+			<input TYPE=\"HIDDEN\" NAME=\"posdtadd\"".prepare($posdtadd)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+			($action=="modform" ? "mod" : "add")."\"/>\n";
 		if ($action=="modform")
-			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>\n";
+
+		$display_buffer .= html_form::form_table(array(
+			_("Place of Service") =>
+			html_form::text_widget('posname', 20, 75),
+
+			_("Description") =>
+			html_form::text_widget('posname', 25, 200),
+		));
 
 		$display_buffer .= "
-			<TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=2 CELLSPACING=2>
-			<TR><TD ALIGN=RIGHT>
-			 "._("Place of Service")." :
-			</TD><TD ALIGN=LEFT>
-			 <INPUT TYPE=TEXT NAME=\"posname\" SIZE=20 MAXLENGTH=75
- 			  VALUE=\"".prepare($posname)."\">
-			</TD></TR>
-
-			<TR><TD ALIGN=RIGHT>
-			 "._("Description")." :
-			</TD><TD ALIGN=LEFT>
-			 <INPUT TYPE=TEXT NAME=\"posdescrip\" SIZE=25 MAXLENGTH=200
-			  VALUE=\"".prepare($posdescrip)."\">
-			</TD></TR>
-
-			<TR><TD ALIGN=CENTER COLSPAN=2>
-			 <INPUT TYPE=SUBMIT VALUE=\"".(
-			 ($action=="modform") ? _("Modify") : _("Add"))."\">
-			 <INPUT TYPE=RESET  VALUE=\""._("Remove Changes")."\">
-			 </FORM>
-			</TD></TR>
-			</TABLE>
+			<div ALIGN=\"CENTER\">
+			<input TYPE=\"SUBMIT\" VALUE=\"".(
+			 ($action=="modform") ? _("Modify") : _("Add"))."\"/>
+			<input TYPE=\"RESET\" VALUE=\""._("Remove Changes")."\"/>
+			</div>
+			</form>
 		";
 		if ($action=="modform") $display_buffer .= "
-			<P>
-			<CENTER>
-			<A HREF=\"$this->page_name?module=$module&action=view\"
-			>"._("Abandon Modification")."</A>
-			</CENTER>
+			<p/>
+			<div ALIGN=\"CENTER\">
+			<a HREF=\"$this->page_name?module=$module&action=view\"
+			>"._("Abandon Modification")."</a>
+			</div>
 			";
-	} // end function placeOfServiceMaintenance->form
+	} // end function PlaceOfServiceMaintenance->form
 
-} // end of class placeOfServiceMaintenance
+} // end of class PlaceOfServiceMaintenance
 
-register_module ("placeOfServiceMaintenance");
-
-} // end of "if defined"
+register_module ("PlaceOfServiceMaintenance");
 
 ?>

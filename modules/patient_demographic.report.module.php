@@ -3,12 +3,16 @@
  // desc: patient demographic report module
  // lic : GPL
 
-if (!defined("__PATIENT_DEMOGRAPHIC_REPORT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.ReportsModule');
 
-class patientDemographicReport extends freemedReportsModule {
+class PatientDemographicReport extends ReportsModule {
 
 	var $MODULE_NAME = "Patient Demographic Report";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $show = array (
 		"Total Patients"	=>		"total_patients",
@@ -16,9 +20,9 @@ class patientDemographicReport extends freemedReportsModule {
 		"Total Females"		=>		"total_female"
 	);
 
-	function patientDemographicReport () {
-		$this->freemedReportsModule();
-	} // end constructor patientDemographicReport
+	function PatientDemographicReport () {
+		$this->ReportsModule();
+	} // end constructor PatientDemographicReport
 
 	// function "view" is used to show a form that would be submitted to
 	// generate the report shown in "display".
@@ -59,12 +63,10 @@ class patientDemographicReport extends freemedReportsModule {
 		</TABLE>
 		";
 	
-	} // end function freemedReportsModule->display
+	} // end function PatientDemographicReport->display
 
 } // end class freemedReportsModule
 
-register_module ("patientDemographicReport");
-
-} // end if not defined
+register_module ("PatientDemographicReport");
 
 ?>

@@ -3,27 +3,25 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__TEST_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.BaseModule');
 
-define (__TEST_MODULE_PHP__, true);
-
-// class testModule extends freemedModule
-class testModule extends freemedModule {
+class TestModule extends BaseModule {
 
 	// override variables
 	var $MODULE_NAME = "Test Module";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $CATEGORY_NAME = "Test Category";
 	var $CATEGORY_VERSION = "0.1";
 
 	// contructor method
-	function testModule ($nullvar = "") {
+	function TestModule ($nullvar = "") {
 		// call parent constructor
-		$this->freemedModule($nullvar);
-	} // end function testModule
+		$this->BaseModule($nullvar);
+	} // end function TestModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -50,10 +48,8 @@ class testModule extends freemedModule {
 		return $buffer;
 	} // end function main
 
-} // end class testModule
+} // end class TestModule
 
-register_module("testModule");
-
-} // end if not defined
+register_module("TestModule");
 
 ?>

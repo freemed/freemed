@@ -3,14 +3,16 @@
  // note: internal attributes for insurance companies
  // lic : GPL, v2
 
-if (!defined("__INSURANCE_MODIFIERS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define(__INSURANCE_MODIFIERS_MODULE_PHP__, true);
-
-class insuranceModifiersMaintenance extends freemedMaintenanceModule {
+class InsuranceModifiersMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Modifiers Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name  ="insmod";
 	var $record_name="Insurance Modifiers";
@@ -21,9 +23,9 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
 		"insmoddesc"
 	);
  
-	function insuranceModifiersMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor insuranceModifiersMaintenance
+	function InsuranceModifiersMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor InsuranceModifiersMaintenance
 
 	function addform () { $this->view(); }
 
@@ -69,7 +71,7 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
      "</A>
     </CENTER>
 		";
-	} // end function insuranceModifiersMaintenance->modform()
+	} // end function InsuranceModifiersMaintenance->modform()
 
 	function view () {
 		global $display_buffer;
@@ -110,12 +112,10 @@ class insuranceModifiersMaintenance extends freemedMaintenanceModule {
    </TABLE>
    </CENTER>
 		";
-	} // end function insuranceModifiersMaintenance->view()
+	} // end function InsuranceModifiersMaintenance->view()
 
-} // end class insuranceModifiersMaintenance
+} // end class InsuranceModifiersMaintenance
 
-register_module("insuranceModifiersMaintenance");
-
-} // end if defined
+register_module("InsuranceModifiersMaintenance");
 
 ?>

@@ -5,14 +5,16 @@
 
  // TODO: STILL NEED TO INTEGRATE REST OF FRED'S CHANGES TO THIS MODULE
 
-if (!defined("__CPT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__CPT_MODULE_PHP__, true);
-
-class cptMaintenance extends freemedMaintenanceModule {
+class CptMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "CPT Codes Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "CPT Codes";
 	var $table_name = "cpt";
@@ -36,9 +38,9 @@ class cptMaintenance extends freemedMaintenanceModule {
 		"cpttosprfx"
 	);
 
-	function cptMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor cptMaintenance
+	function CptMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor CptMaintenance
 
 	function add () { $this->form(); }
 	function mod () { $this->form(); }
@@ -214,7 +216,7 @@ class cptMaintenance extends freemedMaintenanceModule {
      if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
      $this_insco = CreateObject('FreeMED.InsuranceCompany', $insrow[id]);
      $serv_buffer .= "
-      <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+      <TR CLASS=\"".freemed_alternate()."\">
        <TD>".prepare($this_insco->insconame)."</TD>
        <TD>
         ".freemed_display_selectbox (
@@ -302,7 +304,7 @@ class cptMaintenance extends freemedMaintenanceModule {
 					break;
 			} // end switch
 
-	} // end function cptMaintenance->form()
+	} // end function CptMaintenance->form()
 
 /*
  case "profileform": // insurance company profiles form
@@ -351,7 +353,7 @@ class cptMaintenance extends freemedMaintenanceModule {
    if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
    $this_insco = CreateObject('FreeMED.InsuranceCompany', $i);
    $display_buffer .= "
-    <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+    <TR CLASS=\"".freemed_alternate()."\">
      <TD>".prepare($this_insco->insconame)."</TD>
      <TD>
       ".freemed_display_selectbox (
@@ -402,7 +404,7 @@ class cptMaintenance extends freemedMaintenanceModule {
   ";
   break; // end of mod for the profile form
 */
-	} // end function cptMaintenance->form()
+	} // end function CptMaintenance->form()
 
 	function view () {
 		global $display_buffer;
@@ -419,12 +421,10 @@ class cptMaintenance extends freemedMaintenanceModule {
 			),
 			array ("", "")
 		);
-	} // end function cptMaintenance->view()
+	} // end function CptMaintenance->view()
 
-} // end class cptMaintenance
+} // end class CptMaintenance
 
-register_module ("cptMaintenance");
-
-} // end if not defined
+register_module ("CptMaintenance");
 
 ?>

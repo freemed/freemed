@@ -1,17 +1,18 @@
 <?php
  // $Id$
  // note: insurance company group(s) functions
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-if (!defined("__INSURANCE_COMPANY_GROUP_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__INSURANCE_COMPANY_GROUP_MODULE_PHP__, true);
-
-class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
+class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME	= "Insurance Company Group Maintenance";
+	var $MODULE_AUTHOR	= "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION	= "0.1";
+	var $MODULE_FILE	= __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name		= "inscogroup";
 	var $record_name	= "Insurance Company Groups";
@@ -20,9 +21,9 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 		"inscogroup"
 	);
 
-	function insuranceCompanyGroupMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor insuranceCompanyGroupMaintenance
+	function InsuranceCompanyGroupMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor InsuranceCompanyGroupMaintenance
 
 	function addform () { $this->form(); }
 	function modform () { $this->form(); }
@@ -59,7 +60,7 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 
 		</FORM>
 		";
-	} // end function insuranceCompanyGroupMaintenance->form
+	} // end function InsuranceCompanyGroupMaintenance->form
 
 	function view () {
 		global $display_buffer;
@@ -75,12 +76,10 @@ class insuranceCompanyGroupMaintenance extends freemedMaintenanceModule {
 				""
 			)
 		);
-	} // end function insuranceCompanyGroupMaintenance->view
+	} // end function InsuranceCompanyGroupMaintenance->view
  
 } // end of master case statement
 
-register_module ("insuranceCompanyGroupMaintenance");
-
-} // end if not defined
+register_module ("InsuranceCompanyGroupMaintenance");
 
 ?>

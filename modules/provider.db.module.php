@@ -6,14 +6,16 @@
   // translation: max k <amk@span.ch>
   // lic : GPL
 
-if (!defined("__PROVIDER_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define(__PROVIDER_MODULE_PHP__, true);
-
-class providerMaintenance extends freemedMaintenanceModule {
+class ProviderMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Provider";
 	var $table_name     = "physician";
@@ -59,10 +61,10 @@ class providerMaintenance extends freemedMaintenanceModule {
 	"phyanesth"
 	); // end of variables list
 
-	function providerMaintenance () {
+	function ProviderMaintenance () {
 		foreach ($GLOBALS AS $k => $v) global $$k;
-		$this->freemedMaintenanceModule();
-	} // end constructor providerMaintenance
+		$this->MaintenanceModule();
+	} // end constructor ProviderMaintenance
 
 	// send 'em to the form for add and mod, due to notebook
 	function add() { $this->form(); }
@@ -324,7 +326,7 @@ class providerMaintenance extends freemedMaintenanceModule {
   while ($i_r = $sql->fetch_array ($int_r)) {
     $i_id = $i_r ["id"];
     $cmap_buf .= "
-     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color ($_alternate)).">
+     <TR CLASS=".freemed_alternate().">
       <TD>".prepare($i_r["intservtype"])."</TD>
       <TD>
        <INPUT TYPE=TEXT NAME=\"phychargemap$brackets\"
@@ -346,10 +348,10 @@ class providerMaintenance extends freemedMaintenanceModule {
     <INPUT TYPE=HIDDEN NAME=\"phychargemap$brackets\" VALUE=\"0\">
 
    <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2
-    BGCOLOR=\"#000000\"> <!-- black border --><TR><TD>
+    CLASS=\"reverse\"> <!-- black border --><TR><TD>
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
-    <TR BGCOLOR=#aaaaaa>
+    <TR CLASS=\"cell_hilite\">
      <TD><B>"._("Internal Type")."</B></TD>
      <TD><B>"._("Amount")."</B></TD>
     </TR>
@@ -364,7 +366,7 @@ class providerMaintenance extends freemedMaintenanceModule {
   while ($i_r = $sql->fetch_array ($i_res)) {
     $i_id = $i_r ["id"];
     $insmap_buf .= "
-     <TR BGCOLOR=".($_alternate=freemed_bar_alternate_color($_alternate)).">
+     <TR CLASS=\"".freemed_alternate()."\">
       <TD>".prepare($i_r["inscogroup"])."</TD>
       <TD>
        <INPUT TYPE=TEXT NAME=\"phyidmap$brackets\"
@@ -381,14 +383,14 @@ class providerMaintenance extends freemedMaintenanceModule {
     ),
     "
   <CENTER><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 
-   BGCOLOR=\"#000000\"> <!-- black border --><TR><TD>
+   CLASS=\"reverse\"> <!-- black border --><TR><TD>
 
     <!-- hide record zero, since it isn't used... -->
     <INPUT TYPE=HIDDEN NAME=\"phyidmap$brackets\" VALUE=\"0\">
 
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
-    <TR BGCOLOR=#aaaaaa>
+    <TR CLASS=\"cell_hilite\">
      <TD><B>"._("Insurance Group")."</B></TD>
      <TD><B>"._("ID Number")."</B></TD>
     </TR>
@@ -428,7 +430,7 @@ class providerMaintenance extends freemedMaintenanceModule {
   		  		";
 			} // error handler
 		} // if executing the action
-	} // end function providerMaintenance->form()
+	} // end function ProviderMaintenance->form()
 
 	function display () {
 		global $display_buffer;
@@ -461,7 +463,7 @@ class providerMaintenance extends freemedMaintenanceModule {
     </TABLE>
    </CENTER>
   ";
-	} // end function providerMaintenance->display()
+	} // end function ProviderMaintenance->display()
 
 	function view () {
 		global $display_buffer;
@@ -482,12 +484,10 @@ class providerMaintenance extends freemedMaintenanceModule {
       ""
     )
   );
-	} // end function providerMaintenance->view()
+	} // end function ProviderMaintenance->view()
 
-} // end class providerMaintenance
+} // end class ProviderMaintenance
 
-register_module ("providerMaintenance");
-
-} // end if defined
+register_module ("ProviderMaintenance");
 
 ?>

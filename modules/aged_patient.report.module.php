@@ -3,17 +3,20 @@
  // desc: aged bills report
  // lic : LGPL
 
-if (!defined("__AGED_PATIENT_REPORT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.ReportsModule');
 
-class agedPatientReport extends freemedReportsModule {
+class AgedPatientReport extends ReportsModule {
 
 	var $MODULE_NAME = "Patient Aged Detail Report";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_FILE = __FILE__;
 
-	function agedPatientReport () {
-		$this->freemedReportsModule();
-	} // end constructor agedPatientReport
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
+	function AgedPatientReport () {
+		$this->ReportsModule();
+	} // end constructor AgedPatientReport
 
 	function view() {
 		global $display_buffer;
@@ -57,7 +60,6 @@ class agedPatientReport extends freemedReportsModule {
 
 		$prevpat = "0";
 		$previnsco = "0";
-		$_alternate = freemed_bar_alternate_color ();
 
 		$display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
@@ -82,7 +84,6 @@ class agedPatientReport extends freemedReportsModule {
 				if ($prevpat != "0") // not first time thru
 				{
 					// calc pat totals.
-					$_alternate=freemed_bar_alternate_color ($_alternate);
 					$display_buffer .= $this->pattotals($pattot,$_alternate);
 				}
 
@@ -106,7 +107,7 @@ class agedPatientReport extends freemedReportsModule {
 			}
 
 			$age = $row[procage];
-			$display_buffer .= "<TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color ($_alternate))."\">";
+			$display_buffer .= "<TR CLASS=\"".freemed_alternate()."\">";
 			$display_buffer .= "<TD>$patname</TD>";
 			$display_buffer .= "<TD>$insconame</TD>";
 			$display_buffer .= "<TD>$row[procdt]</TD>";
@@ -122,13 +123,11 @@ class agedPatientReport extends freemedReportsModule {
 		}
 
 		// calc pat totals.
-		$_alternate=freemed_bar_alternate_color ($_alternate);
 		$display_buffer .= $this->pattotals($pattot,$_alternate);
 
 		$grandtot += $pattot;
 
 		// calc grand totals
-		$_alternate=freemed_bar_alternate_color ($_alternate);
 		$display_buffer .= $this->grtotals($grandtot,$_alternate);
 		$display_buffer .= "</TABLE>";
 				 
@@ -138,7 +137,8 @@ class agedPatientReport extends freemedReportsModule {
 	function pattotals($total,$color)
 	{
 		// calc pat totals.
-		$buffer =  "<TR BGCOLOR=\"".$color."\">";
+		$buffer =  "<TR CLASS=\"".( isset($color) ?
+			$color : freemed_alternate() )."\">";
 		$buffer .=  "<TD><B>"._("Patient Total")."</B></TD>";
 		$buffer .=  "<TD>&nbsp;</TD>";
 		$buffer .=  "<TD>&nbsp;</TD>";
@@ -152,7 +152,8 @@ class agedPatientReport extends freemedReportsModule {
 	function grtotals($total,$color)
 	{
 		// calc pat totals.
-		$buffer =  "<TR BGCOLOR=\"".$color."\">";
+		$buffer =  "<TR CLASS=\"".(
+			isset($color) ? $color : freemed_alternate() )."\">\n";
 		$buffer .=  "<TD><B>"._("Grand Total")."</B></TD>";
 		$buffer .=  "<TD>&nbsp;</TD>";
 		$buffer .=  "<TD>&nbsp;</TD>";
@@ -163,10 +164,8 @@ class agedPatientReport extends freemedReportsModule {
 		return $buffer;
 	}
 
-} // end class agedPatientReport
+} // end class AgedPatientReport
 
-register_module ("agedPatientReport");
-
-} // end if not defined
+register_module ("AgedPatientReport");
 
 ?>

@@ -4,14 +4,16 @@
   // code: fred forester fforest@netcarrier.com
   // lic : GPL, v2
 
-if (!defined("__VIEW_CALENDAR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.CalendarModule');
 
-define (__VIEW_CALENDAR_MODULE_PHP__, true);
-
-class ViewCalendar extends freemedCalendarModule {
+class ViewCalendar extends CalendarModule {
 
 	var $MODULE_NAME = "Calendar View";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Scheduler";
 	var $table_name  = "scheduler";
@@ -34,7 +36,7 @@ class ViewCalendar extends freemedCalendarModule {
 
 	function ViewCalendar () {
 		// run constructor
-		$this->freemedCalendarModule();
+		$this->CalendarModule();
 	} // end constructor ViewCalendar	
 
 	function view () {
@@ -179,7 +181,5 @@ class ViewCalendar extends freemedCalendarModule {
 } // end of class ViewCalendar
 
 register_module ("ViewCalendar");
-
-} // end of "if defined"
 
 ?>

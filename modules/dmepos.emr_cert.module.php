@@ -4,11 +4,9 @@
  // code: Fred Forester (fforest@netcarrier.com)
  // lic : GPL, v2
 
-if (!defined("__DMEPOSCERTS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.CertModule');
 
-define (__DMEPOSCERTS_MODULE_PHP__, true);
-
-class dmeposcertsModule extends freemedCERTModule {
+class DmeposcertsModule extends CertModule {
 
 	var $MODULE_NAME    = "DMEPOS Certification";
 	var $MODULE_VERSION = "0.1";
@@ -18,6 +16,9 @@ class dmeposcertsModule extends freemedCERTModule {
 		companies for payment of DMEPOS supplies
 		If you are not a DME supply this module is not needed.
 	";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Certifications";
 	var $table_name     = "certifications";
@@ -30,15 +31,15 @@ class dmeposcertsModule extends freemedCERTModule {
 		"certformdata"
 	);
 
-	function dmeposcertsModule () {
-		$this->freemedCERTModule();
-	} // end constructor dmeposcertsModule
+	function DmeposcertsModule () {
+		$this->CertModule();
+	} // end constructor DmeposcertsModule
 
 	function form () {
 		reset($GLOBALS);
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
-	} // end function dmeposcertsModule->form()
+	} // end function DmeposcertsModule->form()
 
 	function addform()
 	{
@@ -327,12 +328,10 @@ class dmeposcertsModule extends freemedCERTModule {
 								 array(_("None"),"","")
 								);
 									
-	} // end function dmeposcertsModule->view()
+	} // end function DmeposcertsModule->view()
 
-} // end class dmeposcertsModule
+} // end class DmeposcertsModule
 
-register_module ("dmeposcertsModule");
-
-} // end if defined
+register_module ("DmeposcertsModule");
 
 ?>

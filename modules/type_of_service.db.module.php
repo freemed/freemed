@@ -4,14 +4,16 @@
   // code: adam b (gdrago23@yahoo.com) -- modified a lot
   // lic : GPL, v2
 
-if (!defined("__TYPE_OF_SERVICE_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__TYPE_OF_SERVICE_MODULE_PHP__, true);
-
-class typeOfServiceMaintenance extends freemedMaintenanceModule {
+class TypeOfServiceMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Type of Service Maintenance";
+	var $MODULE_AUTHOR = "Adam (gdrago23@yahoo.com)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Type of Service";
 	var $table_name  = "tos";
@@ -24,12 +26,12 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 			"tosdtmod"
 	);
 
-	function typeOfServiceMaintenance () {
+	function TypeOfServiceMaintenance () {
 		// run constructor
-		$this->freemedMaintenanceModule();
+		$this->MaintenanceModule();
 		global $tosdtmod;
 		$tosdtmod = $GLOBALS["cur_date"];
-	} // end constructor typeOfServiceMaintenance	
+	} // end constructor TypeOfServiceMaintenance	
 
 	function view () {
 		global $display_buffer;
@@ -91,12 +93,10 @@ class typeOfServiceMaintenance extends freemedMaintenanceModule {
 			>"._("Abandon Modification")."</A>
 			</CENTER>
 			";
-	} // end function typeOfServiceMaintenance->form
+	} // end function TypeOfServiceMaintenance->form
 
-} // end of class typeOfServiceMaintenance
+} // end of class TypeOfServiceMaintenance
 
-register_module ("typeOfServiceMaintenance");
-
-} // end of "if defined"
+register_module ("TypeOfServiceMaintenance");
 
 ?>

@@ -4,14 +4,16 @@
   // code: Fred Forester (fforest@netcarrier.com) -- modified a lot
   // lic : GPL, v2
 
-if (!defined("__CLAIM_TYPES_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__CLAIM_TYPES_MODULE_PHP__, true);
-
-class claimtypesMaintenance extends freemedMaintenanceModule {
+class ClaimtypesMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Claim Types";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Claim Types";
 	var $table_name  = "claimtypes";
@@ -24,12 +26,12 @@ class claimtypesMaintenance extends freemedMaintenanceModule {
 			"clmtpdtmod"
 	);
 
-	function claimtypesMaintenance () {
+	function ClaimtypesMaintenance () {
 		// run constructor
-		$this->freemedMaintenanceModule();
+		$this->MaintenanceModule();
 		global $clmtpdtmod;
-		$clmtpdtmod = $GLOBALS["cur_date"];
-	} // end constructor claimtypesMaintenance	
+		$clmtpdtmod = date("Y-m-d");
+	} // end constructor ClaimtypesMaintenance	
 
 	function view () {
 		global $display_buffer;
@@ -102,12 +104,10 @@ class claimtypesMaintenance extends freemedMaintenanceModule {
 			>"._("Abandon Modification")."</A>
 			</CENTER>
 			";
-	} // end function claimtypesMaintenance->form
+	} // end function ClaimtypesMaintenance->form
 
-} // end of class claimtypesMaintenance
+} // end of class ClaimtypesMaintenance
 
-register_module ("claimtypesMaintenance");
-
-} // end of "if defined"
+register_module ("ClaimtypesMaintenance");
 
 ?>

@@ -4,19 +4,20 @@
   // code: fred forester fforest@netcarrier.com
   // lic : GPL, v2
 
-if (!defined("__BACKUP_MAINTENANCE_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__BACKUP_MAINTENANCE_MODULE_PHP__, true);
-
-class BackupMaintenance extends freemedMaintenanceModule {
+class BackupMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Backup Database";
+	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function BackupMaintenance () {
 		// run constructor
-		$this->freemedMaintenanceModule();
+		$this->MaintenanceModule();
 		//$this->set_icon("img/kfloppy.gif");
 	} // end constructor BackupMaintenance	
 
@@ -88,7 +89,5 @@ class BackupMaintenance extends freemedMaintenanceModule {
 } // end of class BackupMaintenance
 
 register_module ("BackupMaintenance");
-
-} // end of "if defined"
 
 ?>

@@ -3,14 +3,16 @@
  // desc: patient record template editing engine
  // lic : GPL, v2
 
-if (!defined("__PATIENT_RECORD_TEMPLATE_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__PATIENT_RECORD_TEMPLATE_MODULE_PHP__, true);
-
-class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
+class PatientRecordTemplateMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Patient Record Template Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Patient Record Templates";
 	var $table_name     = "patrectemplate";
@@ -26,9 +28,9 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 		"prtfcom"
 	);
 
-	function patientRecordTemplateMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor patientRecordTemplateMaintenance
+	function PatientRecordTemplateMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor PatientRecordTemplateMaintenance
 
 	function add () {
 		global $display_buffer;
@@ -41,7 +43,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 		$prtfmaxlen    = fm_join_from_array($prtfmaxlen);
 		$prtfcom       = fm_join_from_array($prtfcom);
 		$this->_add();
-	} // end function patientRecordTemplateMaintenance->add()
+	} // end function PatientRecordTemplateMaintenance->add()
 
 	function mod () {
 		global $display_buffer;
@@ -54,7 +56,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 		$prtfmaxlen    = fm_join_from_array($prtfmaxlen);
 		$prtfcom       = fm_join_from_array($prtfcom);
 		$this->_mod();
-	} // end function patientRecordTemplateMaintenance->mod()
+	} // end function PatientRecordTemplateMaintenance->mod()
 
 	function form () {
 		global $display_buffer;
@@ -118,16 +120,15 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
     <P>
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
-     <TR BGCOLOR=\"#000000\">
-      <TD><FONT COLOR=\"#ffffff\">#</FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><CENTER><B>"._("Ins/Del")."</B></CENTER>
-        </FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Text Name")."</B></FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Variable")."</B></FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Limits")."</B></FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Type")."</B></FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Type Formatting")."</B></FONT></TD>
-      <TD><FONT COLOR=\"#ffffff\"><B>"._("Comment")."</B></FONT></TD>
+     <TR CLASS=\"reverse\">
+      <TD>#</TD>
+      <TD ALIGN=\"CENTER\"><B>"._("Ins/Del")."</B></TD>
+      <TD><B>"._("Text Name")."</B></TD>
+      <TD><B>"._("Variable")."</B></TD>
+      <TD><B>"._("Limits")."</B></TD>
+      <TD><B>"._("Type")."</B></TD>
+      <TD><B>"._("Type Formatting")."</B></TD>
+      <TD><B>"._("Comment")."</B></TD>
      </TR>
     ";
 
@@ -140,9 +141,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
        else                         { $num_color = "#000000"; }
       // print actual record
       $display_buffer .= "
-       <TR BGCOLOR=\"".
-        ($_alternate = freemed_bar_alternate_color ($_alternate)).
-       "\">
+       <TR CLASS=\"".freemed_alternate()."\">
         <TD ALIGN=RIGHT><FONT COLOR=\"$num_color\"
          >".($cur_line_count+1)."</FONT></TD>
         <TD><CENTER>
@@ -206,9 +205,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
        else                    {  $loopfor = 1            ; }
       for ($l=0;$l<$loopfor;$l++) {
        $display_buffer .= "
-        <TR BGCOLOR=\"".
-         ($_alternate = freemed_bar_alternate_color ($_alternate)).
-	"\">
+        <TR CLASS=\"".freemed_alternate()."\">
          <TD ALIGN=RIGHT><FONT COLOR=\"#ff0000\"
           >".($cur_line_count+1)."</FONT></TD>
          <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"ins$brackets\"
@@ -268,7 +265,7 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
      <INPUT TYPE=SUBMIT VALUE=\""._("go")."\">
      </CENTER>
     ";
-	} // end function patientRecordTemplateModule->form()
+	} // end function PatientRecordTemplateModule->form()
 
 	function view () {
 		global $display_buffer;
@@ -283,12 +280,10 @@ class patientRecordTemplateMaintenance extends freemedMaintenanceModule {
 			),
 			array ( "", _("NO DESCRIPTION"))
 		);
-	} // end function patientRecordTemplateMaintenance->view()
+	} // end function PatientRecordTemplateMaintenance->view()
 
-} // end class patientRecordTemplateMaintenance
+} // end class PatientRecordTemplateMaintenance
 
-register_module ("patientRecordTemplateMaintenance");
-
-} // end if not defined
+register_module ("PatientRecordTemplateMaintenance");
 
 ?>

@@ -5,13 +5,12 @@
  //       adam b (gdrago23@yahoo.com)
  // lic : GPL, v2
 
-if (!defined("__AUTHORIZATIONS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define (__AUTHORIZATIONS_MODULE_PHP__, true);
-
-class authorizationsModule extends freemedEMRModule {
+class AuthorizationsModule extends EMRModule {
 
 	var $MODULE_NAME    = "Insurance Authorizations";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "
 		Insurance authorizations are used to track whether
@@ -20,6 +19,9 @@ class authorizationsModule extends freemedEMRModule {
 		time. If you do not use insurance support in
 		FreeMED, this module is not needed.
 	";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Authorizations";
 	var $table_name     = "authorizations";
@@ -42,15 +44,15 @@ class authorizationsModule extends freemedEMRModule {
 		"authdtadd"
 	);
 
-	function authorizationsModule () {
-		$this->freemedEMRModule();
+	function AuthorizationsModule () {
+		$this->EMRModule();
  
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			_("From") => "authdtbegin",
 			_("To")   => "authdtend"
 		);
-	} // end constructor authorizationsModule
+	} // end constructor AuthorizationsModule
 
 	function form () {
 		global $display_buffer;
@@ -150,7 +152,7 @@ class authorizationsModule extends freemedEMRModule {
        </CENTER>
        </FORM>
      ";
-	} // end function authorizationsModule->form()
+	} // end function AuthorizationsModule->form()
 
 	function add () {
 		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $cur_date, $patient;
@@ -159,7 +161,7 @@ class authorizationsModule extends freemedEMRModule {
 		$authdtadd   = $cur_date;
 		$authpatient = $patient;
 		$this->_add();
-	} // end function authorizationsModule->add()
+	} // end function AuthorizationsModule->add()
 
 	function mod () {
 		global $authpatient, $authdtbegin, $authdtend, $authdtmod, $cur_date, $patient;
@@ -168,7 +170,7 @@ class authorizationsModule extends freemedEMRModule {
 		$authdtmod    = $cur_date;
 		$authpatient = $patient;
 		$this->_mod();
-	} // end function authorizationsModule->mod()
+	} // end function AuthorizationsModule->mod()
 
 	function view () {
 		global $display_buffer;
@@ -215,12 +217,10 @@ class authorizationsModule extends freemedEMRModule {
        ),
        array ("", "/", "")
      );
-	} // end function authorizationsModule->view()
+	} // end function AuthorizationsModule->view()
 
-} // end class authorizationsModule
+} // end class AuthorizationsModule
 
-register_module ("authorizationsModule");
-
-} // end if defined
+register_module ("AuthorizationsModule");
 
 ?>

@@ -3,17 +3,20 @@
  // desc: patient demographic report module
  // lic : LGPL
 
-if (!defined("__UNPAID_PROCEDURES_REPORT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.ReportModule');
 
-class unpaidProceduresReport extends freemedReportsModule {
+class UnpaidProceduresReport extends ReportsModule {
 
 	var $MODULE_NAME = "Unpaid Procedures Report";
-	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_FILE = __FILE__;
 
-	function unpaidProceduresReport () {
-		$this->freemedReportsModule();
-	} // end constructor unpaidProceduresReport
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
+	function UnpaidProceduresReport () {
+		$this->ReportsModule();
+	} // end constructor UnpaidProceduresReport
 
 	// function "view" is used to show a form that would be submitted to
 	// generate the report shown in "display".
@@ -38,10 +41,8 @@ class unpaidProceduresReport extends freemedReportsModule {
 			template_display();
 		}
 		if ($result) {
-     		$_alternate = freemed_bar_alternate_color ();
-
     		$display_buffer .= "
-      		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
+      		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=\"100%\">
       		<TR>
        		<TD><B>"._("Name")."</B></TD>
        		<TD><B>"._("Payments")."</B></TD>
@@ -78,8 +79,7 @@ class unpaidProceduresReport extends freemedReportsModule {
 				if ($id != $prev_patient)
 				{
       				$display_buffer .= "
-        				<TR BGCOLOR=\"".
-     					($_alternate = freemed_bar_alternate_color ($_alternate))."\">
+        				<TR CLASS=\"".freemed_alternate()."\">
         				<TD><A HREF=
          				\"manage.php?id=$prev_patient\"
          				>$prev_lname, $prev_fname</A></TD>
@@ -126,7 +126,7 @@ class unpaidProceduresReport extends freemedReportsModule {
     		} // while there are no more
 			// process last record from control break;
             $display_buffer .= "
-               <TR BGCOLOR=\"".($_alternate=freemed_bar_alternate_color ($_alternate))."\">
+               <TR CLASS=\"".freemed_alternate()."\">
                   <TD><A HREF=
                   \"manage.php?id=$id\"
                   >$prev_lname, $prev_fname</A></TD>
@@ -165,10 +165,8 @@ class unpaidProceduresReport extends freemedReportsModule {
 
 	} // end view function
 
-} // end class freemedReportsModule
+} // end class ReportsModule
 
-register_module ("unpaidProceduresReport");
-
-} // end if not defined
+register_module ("UnpaidProceduresReport");
 
 ?>

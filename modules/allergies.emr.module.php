@@ -3,23 +3,25 @@
  // desc: allergies
  // lic : GPL, v2
 
-if (!defined("__ALLERGIES_EMR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define ('__ALLERGIES_EMR_MODULE_PHP__', true);
-
-class allergiesModule extends freemedEMRModule {
+class AllergiesModule extends EMRModule {
 
 	var $MODULE_NAME = "Allergies";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Allergies";
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
-	function allergiesModule () {
+	function AllergiesModule () {
 		// call parent constructor
-		$this->freemedEMRModule();
-	} // end constructor allergiesModule
+		$this->EMRModule();
+	} // end constructor AllergiesModule
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
@@ -58,7 +60,7 @@ class allergiesModule extends freemedEMRModule {
 				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
 				<TD ALIGN=\"LEFT\">".
 				template::summary_delete_link($this,
-				"module_loader.php?module=allergiesModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
+				"module_loader.php?module=AllergiesModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
 				"</TD></TR>
 				";
 			} // end looping thru allergies
@@ -86,7 +88,7 @@ class allergiesModule extends freemedEMRModule {
 			</DIV>
 			";
 		return $buffer;
-	} // end function allergiesModule->summary
+	} // end function AllergiesModule->summary
 
 	function add () {
 		global $display_buffer, $return, $patient, $allergy;
@@ -137,7 +139,7 @@ class allergiesModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function allergiesModule->add()
+	} // end function AllergiesModule->add()
 
 	function del() { $this->delete(); }
 	function delete () {
@@ -184,19 +186,17 @@ class allergiesModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function allergiesModule->delete()
+	} // end function AllergiesModule->delete()
 
 	function view() {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$display_buffer .= "TODO: Listing for allergies here\n";
-	} // end function allergiesModule->view()
+	} // end function AllergiesModule->view()
 
-} // end class allergiesModule
+} // end class AllergiesModule
 
-register_module ("allergiesModule");
-
-} // end if not defined
+register_module ("AllergiesModule");
 
 ?>

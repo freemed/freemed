@@ -3,17 +3,20 @@
  // desc: aged bills report
  // lic : LGPL
 
-if (!defined("__AGED_INSCO_REPORT_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.ReportsModule');
 
-class agedInscoReport extends freemedReportsModule {
+class AgedInscoReport extends ReportsModule {
 
 	var $MODULE_NAME = "Insurance Aged Summary Report";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_FILE = __FILE__;
 
-	function agedInscoReport () {
-		$this->freemedReportsModule();
-	} // end constructor agedInscoReport
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+
+	function AgedInscoReport () {
+		$this->ReportsModule();
+	} // end constructor AgedInscoReport
 
 	function view() {
 		global $display_buffer;
@@ -58,7 +61,6 @@ class agedInscoReport extends freemedReportsModule {
 		$prevpat = "0";
 		$previns = "0";
 		$numbuckets = 5;
-		$_alternate = freemed_bar_alternate_color ();
 
 		$display_buffer .= "
 		<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2 WIDTH=100%>
@@ -96,7 +98,6 @@ class agedInscoReport extends freemedReportsModule {
 				if ($prevpat != "0") // not first time thru
 				{
 					// calc pat totals.
-					$_alternate=freemed_bar_alternate_color ($_alternate);
 					$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
 					$patinsph = "&nbsp;";
 				}
@@ -116,7 +117,6 @@ class agedInscoReport extends freemedReportsModule {
 				if ($previns != "0")
 				{
 					// calc ins totals.
-					$_alternate=freemed_bar_alternate_color ($_alternate);
 					$display_buffer .= $this->instotals($ins_bucket,$_alternate);
 
 				}
@@ -150,7 +150,6 @@ class agedInscoReport extends freemedReportsModule {
 		}
 
 		// calc pat totals.
-		$_alternate=freemed_bar_alternate_color ($_alternate);
 		$display_buffer .= $this->pattotals($patins,$patinsph,$pat_bucket,$prevpat,$_alternate);
 
 		for ($i=0;$i<$numbuckets;$i++)
@@ -160,7 +159,6 @@ class agedInscoReport extends freemedReportsModule {
 		}
 
 		// calc ins totals.
-		$_alternate=freemed_bar_alternate_color ($_alternate);
 		$display_buffer .= $this->instotals($ins_bucket,$_alternate);
 
 		for ($i=0;$i<$numbuckets;$i++)
@@ -169,7 +167,6 @@ class agedInscoReport extends freemedReportsModule {
 			$ins_bucket[$i] = 0;
 		}
 		// calc ins totals.
-		$_alternate=freemed_bar_alternate_color ($_alternate);
 		$display_buffer .= $this->instotals($tot_bucket,$_alternate);
 
 		$display_buffer .= "</TABLE>";
@@ -182,7 +179,8 @@ class agedInscoReport extends freemedReportsModule {
 		$num = count($total);
 
 		// calc pat totals.
-		$buffer =  "<TR BGCOLOR=\"".$color."\">\n";
+		$buffer =  "<TR CLASS=\"".(
+			isset($color) ? $color : freemed_alternate() )."\">\n";
 		$buffer .=  "<TD>$insname</TD>\n";
 		$buffer .=  "<TD>$insphone</TD>\n";
 		$buffer .=  "<TD>$patname</TD>\n";
@@ -204,7 +202,8 @@ class agedInscoReport extends freemedReportsModule {
 		$num = count($total);
 
 		// calc ins totals.
-		$buffer =  "<TR BGCOLOR=\"".$color."\">\n";
+		$buffer =  "<TR CLASS=\"".(
+			isset($color) ? $color : freemed_alternate() )."\">\n";
 		$buffer .=  "<TD><B>"._("Total")."</B></TD>\n";
 		$buffer .=  "<TD>&nbsp;</TD>\n";
 		$buffer .=  "<TD>&nbsp;</TD>\n";
@@ -223,10 +222,8 @@ class agedInscoReport extends freemedReportsModule {
 	}
 
 
-} // end class agedInscoReport
+} // end class AgedInscoReport
 
-register_module ("agedInscoReport");
-
-} // end if not defined
+register_module ("AgedInscoReport");
 
 ?>

@@ -3,23 +3,25 @@
  // desc: current list of problems
  // lic : GPL, v2
 
-if (!defined("__CURRENT_PROBLEMS_EMR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define ('__CURRENT_PROBLEMS_EMR_MODULE_PHP__', true);
-
-class currentProblemsModule extends freemedEMRModule {
+class CurrentProblemsModule extends EMRModule {
 
 	var $MODULE_NAME = "Current Problems";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Current Problems";
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
-	function currentProblemsModule () {
+	function CurrentProblemsModule () {
 		// call parent constructor
-		$this->freemedEMRModule();
-	} // end constructor currentProblemsModule
+		$this->EMRModule();
+	} // end constructor CurrentProblemsModule
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
@@ -59,7 +61,7 @@ class currentProblemsModule extends freemedEMRModule {
 				<TD ALIGN=\"LEFT\">".
 				template::summary_delete_link($this,
 				"module_loader.php?".
-				"module=currentProblemsModule&".
+				"module=CurrentProblemsModule&".
 				"action=del&patient=".urlencode($patient).
 				"&return=manage&id=".urlencode($k))."</TD>
 				</TR>
@@ -89,7 +91,7 @@ class currentProblemsModule extends freemedEMRModule {
 			</DIV>
 			";
 		return $buffer;
-	} // end function currentProblemsModule->summary
+	} // end function CurrentProblemsModule->summary
 
 	function add () {
 		global $display_buffer, $return, $patient, $problem;
@@ -140,7 +142,7 @@ class currentProblemsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function currentProblemsModule->add()
+	} // end function CurrentProblemsModule->add()
 
 	function del() { $this->delete(); }
 	function delete () {
@@ -187,19 +189,17 @@ class currentProblemsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function currentProblemsModule->delete()
+	} // end function CurrentProblemsModule->delete()
 
 	function view() {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$display_buffer .= "TODO: Listing for problems here\n";
-	} // end function currentProblemsModule->view()
+	} // end function CurrentProblemsModule->view()
 
-} // end class currentProblemsModule
+} // end class CurrentProblemsModule
 
-register_module ("currentProblemsModule");
-
-} // end if not defined
+register_module ("CurrentProblemsModule");
 
 ?>

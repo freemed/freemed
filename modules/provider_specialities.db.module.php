@@ -4,14 +4,16 @@
   // code: adam b (gdrago23@yahoo.com) -- complete rewrite
   // lic : GPL, v2
 
-if(!defined("__PROVIDER_SPECIALTIES_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define(__PROVIDER_SPECIALTIES_MODULE_PHP__, true);
-
-class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
+class ProviderSpecialtiesMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Specialties Maintenance";
+	var $MODULE_AUTHOR  = "Adam (gdrago23@yahoo.com)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name     = "specialties";
 	var $record_name    = "Specialty";
@@ -22,16 +24,15 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
 		"specdesc"
 	);
 
-	function providerSpecialtiesMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor providerSpecialtiesMaintenance
+	function ProviderSpecialtiesMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor ProviderSpecialtiesMaintenance
 
 	function form () { $this->view(); }
 
 	function view () {
 		global $display_buffer;
-		reset($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) global ${$k};
 
 		if ($action=="modform") {
 			$result = $sql->query("SELECT * FROM $this->table_name ".
@@ -96,12 +97,10 @@ class providerSpecialtiesMaintenance extends freemedMaintenanceModule {
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
-	} // end function providerSpecialtiesMaintenance->view()
+	} // end function ProviderSpecialtiesMaintenance->view()
 
-} // end class providerSpecialtiesMaintenance
+} // end class ProviderSpecialtiesMaintenance
 
-register_module ("providerSpecialtiesMaintenance");
-
-} // end if not defined
+register_module ("ProviderSpecialtiesMaintenance");
 
 ?>

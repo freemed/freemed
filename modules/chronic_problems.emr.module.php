@@ -3,23 +3,25 @@
  // desc: chronic list of problems
  // lic : GPL, v2
 
-if (!defined("__CHRONIC_PROBLEMS_EMR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define ('__CHRONIC_PROBLEMS_EMR_MODULE_PHP__', true);
-
-class chronicProblemsModule extends freemedEMRModule {
+class ChronicProblemsModule extends EMRModule {
 
 	var $MODULE_NAME = "Chronic Problems";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Chronic Problems";
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
-	function chronicProblemsModule () {
+	function ChronicProblemsModule () {
 		// call parent constructor
-		$this->freemedEMRModule();
-	} // end constructor chronicProblemsModule
+		$this->EMRModule();
+	} // end constructor ChronicProblemsModule
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
@@ -58,7 +60,7 @@ class chronicProblemsModule extends freemedEMRModule {
 				<TD ALIGN=\"LEFT\"><SMALL>".prepare($v)."</SMALL></TD>
 				<TD ALIGN=\"LEFT\">".
 				template::summary_delete_link($this,
-				"module_loader.php?module=chronicProblemsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
+				"module_loader.php?module=ChronicProblemsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
 				"</TD></TR>
 				";
 			} // end looping thru problems
@@ -86,7 +88,7 @@ class chronicProblemsModule extends freemedEMRModule {
 			</DIV>
 			";
 		return $buffer;
-	} // end function chronicProblemsModule->summary
+	} // end function ChronicProblemsModule->summary
 
 	function add () {
 		global $display_buffer, $return, $patient, $problem;
@@ -137,7 +139,7 @@ class chronicProblemsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function chronicProblemsModule->add()
+	} // end function ChronicProblemsModule->add()
 
 	function del() { $this->delete(); }
 	function delete () {
@@ -184,19 +186,17 @@ class chronicProblemsModule extends freemedEMRModule {
 			Header("Location: manage.php?id=".urlencode($patient));
 			die("");
 		}
-	} // end function chronicProblemsModule->delete()
+	} // end function ChronicProblemsModule->delete()
 
 	function view() {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$display_buffer .= "TODO: Listing for problems here\n";
-	} // end function chronicProblemsModule->view()
+	} // end function ChronicProblemsModule->view()
 
-} // end class chronicProblemsModule
+} // end class ChronicProblemsModule
 
-register_module ("chronicProblemsModule");
-
-} // end if not defined
+register_module ("ChronicProblemsModule");
 
 ?>

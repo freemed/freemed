@@ -3,28 +3,30 @@
  // note: physician status db functions
  // lic : GPL
 
-if (!defined("__PROVIDER_STATUS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define(__PROVIDER_STATUS_MODULE_PHP__, true);
-
-class providerStatusMaintenance extends freemedMaintenanceModule {
+class ProviderStatusMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Status Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Provider Status";
 	var $table_name     = "phystatus";
 
 	var $variables = array ( "phystatus" );
 
-	function providerStatusMaintenance () {
-		$this->freemedMaintenanceModule();
+	function ProviderStatusMaintenance () {
+		$this->MaintenanceModule();
 
 		$this->table_definition = array (
 			"phystatus" => SQL_VARCHAR(30),
 			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
 		);
-	} // end contructor providerStatusMaintenance
+	} // end contructor ProviderStatusMaintenance
 
 	function form () {
 		global $display_buffer;
@@ -62,7 +64,7 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
-	} // end function providerStatusMaintenance->form()
+	} // end function ProviderStatusMaintenance->form()
 
 	function view () {
 		global $display_buffer;
@@ -81,11 +83,9 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
 		);
     
 		$display_buffer .= "
-    <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=3>
-    <TR BGCOLOR=\"".
-      ($_alternate = freemed_bar_alternate_color ($_alternate))
-    ."\" VALIGN=CENTER>
-    <TD VALIGN=CENTER><FORM ACTION=\"$this->page_name\" METHOD=POST>
+    <TABLE WIDTH=\"100%\" CELLSPACING=0 CELLPADDING=3>
+    <TR CLASS=\"".freemed_alternate()."\" VALIGN=\"CENTER\">
+    <TD VALIGN=\"CENTER\"><FORM ACTION=\"$this->page_name\" METHOD=\"POST\">
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"add\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($GLOBALS["module"])."\">
     	<INPUT NAME=\"phystatus\" LENGTH=20 MAXLENGTH=30></TD>
@@ -94,12 +94,10 @@ class providerStatusMaintenance extends freemedMaintenanceModule {
 
     <P>
 		";
-	} // end function providerStatusMaintenance->view()
+	} // end function ProviderStatusMaintenance->view()
 
-} // end class providerStatusMaintenance
+} // end class ProviderStatusMaintenance
 
-register_module ("providerStatusMaintenance");
-
-} // end if defined
+register_module ("ProviderStatusMaintenance");
 
 ?>

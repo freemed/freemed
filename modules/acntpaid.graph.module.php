@@ -3,18 +3,19 @@
  // desc: aged bills report
  // lic : LGPL
 
-if (!defined("__ACNTPAID_GRAPH_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.GraphModule');
 
-include ("lib/phplot.php");
-
-class AcntPaidGraph extends freemedGraphModule {
+class AcntPaidGraph extends GraphModule {
 
 	var $MODULE_NAME = "Account Paid Graph";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	function AcntPaidGraph () {
-		$this->freemedGraphModule();
+		$this->GraphModule();
 	} // end constructor AcntPaidGraph
 
 	function view()
@@ -44,8 +45,6 @@ class AcntPaidGraph extends freemedGraphModule {
 		global $display_buffer;
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
-
-		$alt_color = freemed_bar_alternate_color();
 
 		$start_dt = fm_date_assemble("start_dt");
 		$end_dt = fm_date_assemble("end_dt");
@@ -144,7 +143,5 @@ class AcntPaidGraph extends freemedGraphModule {
 } // end class AcntPaidGraph
 
 register_module ("AcntPaidGraph");
-
-} // end if not defined
 
 ?>

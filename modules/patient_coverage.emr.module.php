@@ -3,17 +3,17 @@
  // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__PATIENTCOVERAGES_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define (__PATIENTCOVERAGES_MODULE_PHP__, true);
-
-// class PatientCoveragesModule extends freemedModule
-class PatientCoveragesModule extends freemedEMRModule {
+class PatientCoveragesModule extends EMRModule {
 
 	// override variables
 	var $MODULE_NAME = "Patient Coverage";
-	var $MODULE_VERSION = "0.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name    = "coverage";
 	var $record_name   = "Patient Coverage";
@@ -22,7 +22,7 @@ class PatientCoveragesModule extends freemedEMRModule {
 	// contructor method
 	function PatientCoveragesModule ($nullvar = "") {
 		// call parent constructor
-		$this->freemedEMRModule($nullvar);
+		$this->EMRModule($nullvar);
 	} // end function PatientCoveragesModule
 
 	// override check_vars method
@@ -661,7 +661,5 @@ class PatientCoveragesModule extends freemedEMRModule {
 } // end class PatientCoveragesModule
 
 register_module("PatientCoveragesModule");
-
-} // end if not defined
 
 ?>

@@ -1,21 +1,18 @@
 <?php
  // $Id$
- // desc: module prototype
  // lic : GPL, v2
 
-if (!defined("__MEDICARENJPAMCSIFORMS_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.BillingModule');
 
-define (__MEDICARENJPAMCSIFORMS_MODULE_PHP__, true);
-
-// class MedicareNJPAMCSIFormsModule extends freemedModule
-class MedicareNJPAMCSIFormsModule extends freemedBillingModule {
+class MedicareNJPAMCSIFormsModule extends BillingModule {
 
 	// override variables
 	var $MODULE_NAME = "MCSI NSF Medicare NJ-PA";
-	var $MODULE_VERSION = "0.1";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
+	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = "0.2.1";
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $CATEGORY_NAME = "Billing";
 	var $CATEGORY_VERSION = "0.1";
@@ -70,7 +67,7 @@ class MedicareNJPAMCSIFormsModule extends freemedBillingModule {
 	// contructor method
 	function MedicareNJPAMCSIFormsModule ($nullvar = "") {
 		// call parent constructor
-		$this->freemedBillingModule($nullvar);
+		$this->BillingModule($nullvar);
 	} // end function MedicareFormsModule
 
 	// override check_vars method
@@ -2014,7 +2011,5 @@ class MedicareNJPAMCSIFormsModule extends freemedBillingModule {
 } // end class MedicareNJPAMCSIFormsModule
 
 register_module("MedicareNJPAMCSIFormsModule");
-
-} // end if not defined
 
 ?>

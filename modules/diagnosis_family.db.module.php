@@ -3,13 +3,12 @@
  // note: diagnosis family module
  // lic : GPL, v2
 
-if (!defined("__DIAGNOSIS_FAMILY_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__DIAGNOSIS_FAMILY_MODULE_PHP__, true);
-
-class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
+class DiagnosisFamilyMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Diagnosis Family Maintenance";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "
 		Diagnosis families are part of FreeMED's attempt to
@@ -18,6 +17,9 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 		diagnoses more intelligently, allowing FreeMED to
 		analyze treatment patterns.
 	";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name     = "diagfamily";
 	var $record_name    = "Diagnosis Family";
@@ -28,9 +30,9 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 		"dfdescrip"
 	);
 
-	function diagnosisFamilyMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor diagnosisFamilyMaintenance 
+	function DiagnosisFamilyMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor DiagnosisFamilyMaintenance 
 
 	//function addform () { $this->view(); }
 
@@ -86,7 +88,7 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
      >"._("Abandon Modification")."</A>
     </CENTER>
   ";
-	} // end function diagnosisFamilyMaintenance->modform
+	} // end function DiagnosisFamilyMaintenance->modform
 
 	function view () {
 		global $display_buffer;
@@ -101,7 +103,7 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 		),
 		array ("", _("NO DESCRIPTION")), "", "t_page"
 		);
-	} // end function diagnosisFamilyMaintenance->view
+	} // end function DiagnosisFamilyMaintenance->view
 
 	
 	function addform() {
@@ -130,10 +132,8 @@ class diagnosisFamilyMaintenance extends freemedMaintenanceModule {
 		";
 	} // end function _addform
 
-} // end class diagnosisFamilyMaintenance
+} // end class DiagnosisFamilyMaintenance
 
-register_module ("diagnosisFamilyMaintenance");
+register_module ("DiagnosisFamilyMaintenance");
 
-} // end if not defined
- 
 ?>

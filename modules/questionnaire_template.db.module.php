@@ -3,14 +3,16 @@
  // desc: questionnaire template editing engine
  // lic : GPL, v2
 
-if (!defined ("__QUESTIONNAIRE_TEMPLATE_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.MaintenanceModule');
 
-define (__QUESTIONNAIRE_TEMPLATE_MODULE_PHP__, true);
-
-class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
+class QuestionnaireTemplateMaintenance extends MaintenanceModule {
 
 	var $MODULE_NAME = "Questionnaire Template Maintenance";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
  	var $record_name = "Questionnaire Templates";
 	var $table_name     = "qtemplate";
@@ -26,14 +28,13 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
 		"qftext"
 	);
 
-	function questionnaireTemplateMaintenance () {
-		$this->freemedMaintenanceModule();
-	} // end constructor questionnaireTemplateMaintenance
+	function QuestionnaireTemplateMaintenance () {
+		$this->MaintenanceModule();
+	} // end constructor QuestionnaireTemplateMaintenance
 
 	function form () {
 		global $display_buffer;
-		reset ($GLOBALS);
-		while(list($k,$v)=each($GLOBALS)) global $$k;
+		foreach($GLOBALS AS $k => $v) global ${$k};
 
    switch ($action) {
      case "addform":
@@ -99,7 +100,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
     <P>
     <TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
-     <TR BGCOLOR=#000000>
+     <TR CLASS=\"reverse\">
       <TD><FONT COLOR=\"#ffffff\">#</FONT></TD>
       <TD><FONT_B COLOR=#ffffff><CENTER><B>"._("Ins/Del")."</B></CENTER>
         </FONT></TD>
@@ -121,8 +122,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
        else                         { $num_color = "#000000"; }
       // print actual record
       $display_buffer .= "
-       <TR BGCOLOR=\"".
-        ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
+       <TR CLASS=\"".freemed_alternate()."\">
         <TD ALIGN=RIGHT><FONT COLOR=\"$num_color\"
          >".($cur_line_count+1)."</FONT></TD>
         <TD><CENTER>
@@ -186,8 +186,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
        else                    {  $loopfor = 1            ; }
       for ($l=0;$l<$loopfor;$l++) {
        $display_buffer .= "
-        <TR BGCOLOR=\"".
-       ($_alternate = freemed_bar_alternate_color ($_alternate))."\">
+        <TR CLASS=\"".freemed_alternate()."\">
          <TD ALIGN=RIGHT><FONT COLOR=\"#ff0000\"
           >".($cur_line_count+1)."</FONT></TD>
          <TD><CENTER><INPUT TYPE=CHECKBOX NAME=\"ins$brackets\"
@@ -248,7 +247,7 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
      <INPUT TYPE=SUBMIT VALUE=\"go!\">
      </CENTER>
     ";
-	} // end function questionnaireTemplateMaintenance->form()
+	} // end function QuestionnaireTemplateMaintenance->form()
 
 	function view () {
 		global $display_buffer;
@@ -258,19 +257,17 @@ class questionnaireTemplateMaintenance extends freemedMaintenanceModule {
 				"ORDER BY qname, qdescrip"),
 			$this->page_name,
 			array (
-				_("Name")			=>	"qname",
-				_("Description")	=>	"qdescrip"
+				_("Name") => "qname",
+				_("Description") => "qdescrip"
 			),
 			array (
 				"", _("NO DESCRIPTION")
 			)
 		);
-	} // end function questionnaireTemplateMaintenance->view()
+	} // end function QuestionnaireTemplateMaintenance->view()
 
-} // end class questionnaireTemplateMaintenance
+} // end class QuestionnaireTemplateMaintenance
 
-register_module ("questionnaireTemplateMaintenance");
-
-} // end if not defined
+register_module ("QuestionnaireTemplateMaintenance");
 
 ?>

@@ -1,23 +1,24 @@
 <?php
  // $Id$
  // note: letters of referral, etc
- // code: jeff b (jeff@univrel.pr.uconn.edu)
  // lic : GPL, v2
 
-if (!defined("__LETTERS_EMR_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define ('__LETTERS_EMR_MODULE_PHP__', true);
-
-class lettersModule extends freemedEMRModule {
+class LettersModule extends EMRModule {
 
 	var $MODULE_NAME    = "Letters";
+	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE    = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Letters";
 	var $table_name     = "letters";
 	var $patient_field  = "letterpatient";
 
-	function lettersModule () {
+	function LettersModule () {
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			_("Date") => "letterdt",
@@ -52,8 +53,8 @@ class lettersModule extends freemedEMRModule {
 			"letterpatient" => SQL_INT_UNSIGNED(0),
 			"id" => SQL_NOT_NULL(SQL_AUTO_INCREMENT(SQL_INT(0)))
 		);
-		$this->freemedEMRModule();
-	} // end constructor lettersModule
+		$this->EMRModule();
+	} // end constructor LettersModule
 
 	function add () {
 		global $HTTP_POST_FILES;
@@ -76,7 +77,7 @@ class lettersModule extends freemedEMRModule {
 
 		// Call wrapped function
 		$this->_add();
-	} // end function lettersModule->add
+	} // end function LettersModule->add
 
 	function form () {
 		global $display_buffer;
@@ -167,7 +168,7 @@ class lettersModule extends freemedEMRModule {
 		</div>
 		</form>
 		";
-	} // end function lettersModule->form
+	} // end function LettersModule->form
 
 	function display () {
 		global $display_buffer, $patient, $action, $id, $title,
@@ -241,7 +242,7 @@ class lettersModule extends freemedEMRModule {
 		".stripslashes(str_replace("\n", "<br/>", htmlentities($record[lettertext])))."
 		</div>
 		";
-	} // end function lettersModule->display
+	} // end function LettersModule->display
 
 	function view () {
 		global $display_buffer;
@@ -294,12 +295,10 @@ class lettersModule extends freemedEMRModule {
 				"physician " => "phylname"
 			)
 		);
-	} // end function lettersModule->view()
+	} // end function LettersModule->view()
 
-} // end class lettersModule
+} // end class LettersModule
 
-register_module ("lettersModule");
-
-} // end if defined
+register_module ("LettersModule");
 
 ?>

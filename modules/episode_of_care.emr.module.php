@@ -3,13 +3,12 @@
  // desc: episode of care database module
  // lic : GPL, v2
 
-if (!defined("__EPISODE_OF_CARE_MODULE_PHP__")) {
+LoadObjectDependency('FreeMED.EMRModule');
 
-define (__EPISODE_OF_CARE_MODULE_PHP__, true);
+class EpisodeOfCare extends EMRModule {
 
-class episodeOfCare extends freemedEMRModule {
-
-	var $MODULE_NAME 	= "Episode of Care";
+	var $MODULE_NAME = "Episode of Care";
+	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "
 		Episode of care is another portion of FreeMED
@@ -19,6 +18,9 @@ class episodeOfCare extends freemedEMRModule {
 		time, and more than one epsiode of care can
 		be used per visit. 
 	";
+	var $MODULE_FILE = __FILE__;
+
+	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name    = "Episode of Care";
 	var $table_name     = "eoc";
@@ -76,8 +78,8 @@ class episodeOfCare extends freemedEMRModule {
 		"eocrelautotime"
 	);
 
-	function episodeOfCare () {
-		$this->freemedEMRModule();
+	function EpisodeOfCare () {
+		$this->EMRModule();
 
 		// define create query
 		$this->table_definition = array (
@@ -158,7 +160,7 @@ class episodeOfCare extends freemedEMRModule {
 			_("Description") => "eocdescrip"
 		);
 		$this->summary_options = SUMMARY_VIEW;
-	} // end constructor episodeOfCare
+	} // end constructor EpisodeOfCare
 
 	function form () {
 		global $display_buffer, $SESSION;
@@ -638,7 +640,7 @@ class episodeOfCare extends freemedEMRModule {
      <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
      </CENTER>
     ";
-	} // end function episodeOfCare->form
+	} // end function EpisodeOfCare->form
 
 	function prepare () {
 		global $display_buffer;
@@ -678,17 +680,17 @@ class episodeOfCare extends freemedEMRModule {
 
 			// move patient over
 		$eocpatient = $patient;
-	} // end function episodeOfCare->prepare
+	} // end function EpisodeOfCare->prepare
 
 	function add () {
 		$this->prepare();
 		$this->_add();
-	} // end function episodeOfCare->add
+	} // end function EpisodeOfCare->add
 
 	function mod () {
 		$this->prepare();
 		$this->_mod();
-	} // end function episodeOfCare->mod
+	} // end function EpisodeOfCare->mod
 
     // view of entire episode (central control screen)
 	function display () {
@@ -850,7 +852,7 @@ class episodeOfCare extends freemedEMRModule {
 		</CENTER>
 		<P>
 		";
-	} // end function episodeOfCare->display
+	} // end function EpisodeOfCare->display
 
 	function view () {
 		global $display_buffer;
@@ -872,12 +874,10 @@ class episodeOfCare extends freemedEMRModule {
 				_("NO DESCRIPTION")
 			)
 		);
-	} // end function episodeOfCare->view
+	} // end function EpisodeOfCare->view
 
-} // end class episodeOfCare
+} // end class EpisodeOfCare
 
-register_module ("episodeOfCare");
-
-} // if not defined
+register_module ("EpisodeOfCare");
 
 ?>
