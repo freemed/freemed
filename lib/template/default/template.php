@@ -86,7 +86,7 @@ if ($GLOBALS['__freemed']['no_menu_bar']) {
 		<?php
 		// Create URL
 		$_expand_url = basename($_SERVER['REQUEST_URI']);
-		if (!(strpos($_expand_url, '_collapse_menubar=1') === false)) {
+		if (strpos($_expand_url, '_collapse_menubar=1') === false) {
 			$_expand_url = str_replace('_collapse_menubar=1',
 				'', $_expand_url);
 			$_expand_url = str_replace('?&', '?', $_expand_url);
@@ -95,6 +95,9 @@ if ($GLOBALS['__freemed']['no_menu_bar']) {
 			} else {
 				$_expand_url .= '&_collapse_menubar=0';
 			}
+		} else {
+			$_expand_url = str_replace('_collapse_menubar=1',
+				'_collapse_menubar=0', $_expand_url);
 		}
 
 		// Check for _SESSION['collapsed_menu']
@@ -120,17 +123,19 @@ if ($GLOBALS['__freemed']['no_menu_bar']) {
 //----- Check to see if we skip displaying this
 if (!$GLOBALS['__freemed']['no_menu_bar']) {
 	$_hide_url = basename($_SERVER['REQUEST_URI']);
-	if (!(strpos($_hide_url, '_collapse_menubar=0') === false)) {
-		$_hide_url = str_replace('?&', '?', $_hide_url);
-		$_hide_url = str_replace('_collapse_menubar=0', '', $_hide_url);
-	} else {
+	if (strpos($_hide_url, '_collapse_menubar=0') === false) {
+		$_hide_url = str_replace('_collapse_menubar=0',
+			'', $_hide_url);
+		$_hide_url = str_replace('?&', '?', $_expand_url);
 		if (strpos($_hide_url, '?') === false) {
 			$_hide_url .= '?_collapse_menubar=1';
 		} else {
 			$_hide_url .= '&_collapse_menubar=1';
 		}
+	} else {
+		$_hide_url = str_replace('_collapse_menubar=0',
+			'_collapse_menubar=1', $_expand_url);
 	}
-
 ?>
 
 	<td COLSPAN="1" VALIGN="TOP" ALIGN="RIGHT" WIDTH="250">
