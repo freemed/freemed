@@ -8,6 +8,7 @@ $record_name = __("Call In");          // name of record
 $db_name = "callin";                  // database name
 
 freemed::connect ();
+$_cache = freemed::module_cache();
 $this_user = CreateObject('FreeMED.User');
 
 //----- Check ACLs
@@ -110,6 +111,9 @@ switch ($action) {
     if (!isset($cifacility)) $cifacility=$_SESSION['default_facility']; 
       // doesn't seem to hurt, but doesn't seem to do anything...
    
+    if ($ciphysician < 1) {
+      $ciphysician = freemed::get_link_field ($default_facility, "facility", "psrdefphy");
+    }
     $display_buffer .= "
     <table WIDTH=\"100%\" BORDER=\"0\" ALIGN=\"CENTER\" VALIGN=\"CENTER\"
      CELLSPACING=\"0\" CELLPADDING=\"5\">
@@ -125,28 +129,11 @@ switch ($action) {
      </tr>
      <tr>
       <td ALIGN=\"RIGHT\">".__("Facility")."</td>
-      <td>
-      ".freemed_display_selectbox (
-      $sql->query("SELECT * FROM facility ORDER BY psrname,psrnote"),
-      "#psrname# [#psrnote#]", "cifacility")."
-      </td>
+      <td>".module_function('facilitymodule', 'widget', array('cifacility'))."</td>
      </tr>
      <tr>
       <td ALIGN=\"RIGHT\">".__("Physician")."</td>
-      <td>
-    ";
-
-    if ($ciphysician < 1) {
-      $ciphysician = freemed::get_link_field ($default_facility, "facility",
-        "psrdefphy");
-    }
-
-    $display_buffer .= "
-    ".freemed_display_selectbox(
-		$sql->query("SELECT * FROM physician WHERE phylname != '' AND phyref != 'yes' ".
-				"ORDER BY phylname, phyfname"),
-		"#phylname#, #phyfname#", "ciphysician")."
-      </td>
+      <td>".module_function('providermodule', 'widget', array ('ciphysician'))."</td>
     </tr>
     </table>
     <p/>
