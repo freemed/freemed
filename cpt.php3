@@ -458,7 +458,7 @@ switch ($action) { // begin master switch
     $page_name,
     array (
       _("Procedural Code")	=>	"cptcode",
-      _("Internal Name")	=>	"cptnameint"
+      _("Internal Description")	=>	"cptnameint"
     ),
     array ("", "")
   );

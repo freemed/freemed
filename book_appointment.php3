@@ -64,10 +64,9 @@ switch ($action) {
 
     if ($debug) $debug_var = "[$room]";
 
-    echo "
-      <CENTER>
-      ".freemed_patient_box ($this_patient)."
+    echo freemed_patient_box ($this_patient)."
       <P>
+      <CENTER>
     ";
     fc_generate_calendar_mini($selected_date,
      "$page_name?$_auth&patient=$patient&room=$room&type=$type");
@@ -102,11 +101,11 @@ switch ($action) {
         VALUE=\"".prepare($selected_date)."\">
        <INPUT TYPE=HIDDEN NAME=\"type\"
         VALUE=\"".prepare($type)."\">
-       <SELECT NAME=\"room\">
-    ";
-    freemed_display_rooms ($room);
-    echo "
-       </SELECT>
+    ".freemed_display_selectbox (
+      fdb_query ("SELECT roomname,roomdescrip,id FROM room ORDER BY roomname"),
+      "#roomname# (#roomdescrip#)",
+      "room"
+    )."
        <INPUT TYPE=SUBMIT VALUE=\""._("Change Room")."\">
       </FORM></CENTER>
       <P>

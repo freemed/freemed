@@ -61,7 +61,7 @@ if (freemed_get_userlevel ($LoginCookie) > $database_level) {
      <BR>
 
      <A HREF=\"internal_service_type.php3?$_auth&action=view\"
-      >"._("Internal Service Type")."</A>
+      >"._("Internal Service Types")."</A>
      <BR>
 
      <A HREF=\"patient_status.php3?$_auth&action=view\"

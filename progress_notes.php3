@@ -1,8 +1,8 @@
 <?php
- # file: progress_notes.php3
- # note: progress notes module for patient management
- # code: jeff b (jeff@univrel.pr.uconn.edu)
- # lic : GPL
+ // file: progress_notes.php3
+ // note: progress notes module for patient management
+ // code: jeff b (jeff@univrel.pr.uconn.edu)
+ // lic : GPL, v2
 
  $record_name = "Progress Notes";
  $page_name   = "progress_notes.php3";
@@ -15,10 +15,9 @@
  freemed_display_banner ();
 
  if ($patient<1) {
-   freemed_display_box_top ("$record_name $Module :: $ERROR",
-                            $page_name, $_ref);
+   freemed_display_box_top (_($record_name)." :: "._("ERROR"));
    echo "
-     <$HEADERFONT_B>$Must_Specify_A_Patient<$HEADERFONT_E>
+     <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
    ";
    freemed_display_box_bottom ();
    freemed_close_db ();
@@ -27,324 +26,295 @@
  }
 
  switch ($action) { // master action switch
-   case "addform":
+   case "addform": case "modform":
+     switch ($action) { // internal switch
+       case "addform":
+        break; // end addform
+       case "modform":
+        if (($id<1) OR (strlen($id)<1)) {
+          freemed_display_box_top (_($record_name)." :: "._("ERROR"));
+          echo "
+            <$HEADERFONT_B>"._("You must select a patient.")."<$HEADERFONT_E>
+          ";
+          freemed_display_box_bottom ();
+          DIE("");
+        }
+        $r = freemed_get_link_rec ($id, "pnotes");
+	extract ($r);
+        break; // end modform
+     } // end internal switch
      freemed_display_box_top ("$record_name $Entry", $page_name,
       "manage.php3?id=$patient");
      $pnotesdt     = $cur_date;
 
      $this_patient = new Patient ($patient);
 
-     echo "
-       <$HEADERFONT_B>$Patient: <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A><$HEADERFONT_E>
+     echo freemed_patient_box($this_patient)."
        <P>
-
-       <!-- prototype for patient management bar -->
-
-       <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-        <B>|</B>
-        <A HREF=\"$page_name?$_auth&patient=$patient\"
-         ><$STDFONT_B>$View_Modify $record_name<$STDFONT_E></A>
-       </CENTER>
-
-       <!-- end prototype -->
-
-       <P>
-       <FORM ACTION=\"$page_name\">
-       <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"add\">
-       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-
-       <$STDFONT_B>Related Episode(s) : <$STDFONT_B><BR>
-     ".freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
-                                "eocpatient='$patient'",
-                                "eocdescrip:eocstartdate:eocdtlastsimilar",
-                                "pnoteseoc",
-                                $pnoteseoc,
-                                false)."
-       <P>
-       <$STDFONT_B>$Applicable_Date : <$STDFONT_E><BR>
      ";
-     fm_date_entry("pnotesdt");
-     echo "
-       <P>
 
-       <$STDFONT_B>$Subjective : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
-         WRAP=VIRTUAL></TEXTAREA>
-       <P>
+     $book = new notebook (array ("been_here", "id", "patient", "action"),
+       NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 4);
+     
+     $book->add_page (
+       _("Basic Information"),
+       array ("pnoteseoc", date_vars("pnotesdt")),
+       form_table (
+        array (
+         _("Related Episode(s)") =>
+           freemed_multiple_choice ("SELECT id,eocdescrip,eocstartdate,".
+                                  "eocdtlastsimilar FROM eoc WHERE ".
+                                  "eocpatient='$patient'",
+                                  "eocdescrip:eocstartdate:eocdtlastsimilar",
+                                  "pnoteseoc",
+                                  $pnoteseoc,
+                                  false), 
+         _("Date") => fm_date_entry("pnotesdt") 
+	 )
+        )
+      ); 
 
-       <$STDFONT_B>$Objective : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
-         WRAP=VIRTUAL></TEXTAREA>
-       <P>
+     $book->add_page (
+       _("<U>S</U>ubjective"),
+       array ("pnotes_S"),
+       form_table (
+        array (
+          _("<U>S</U>ubjective") =>
+          "<TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
+         WRAP=VIRTUAL>".prepare($pnotes_S)."</TEXTAREA>"
+        )
+       )
+     );
 
-       <$STDFONT_B>$Assessment : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_A\" ROWS=8 COLS=45
-         WRAP=VIRTUAL></TEXTAREA>
-       <P>
+     $book->add_page (
+       _("<U>O</U>bjective"),
+       array ("pnotes_O"),
+       form_table (
+        array (
+          _("<U>O</U>bjective") =>
+          "<TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
+         WRAP=VIRTUAL>".prepare($pnotes_O)."</TEXTAREA>"
+        )
+       )
+     );
 
-       <$STDFONT_B>$Plan : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_P\" ROWS=8 COLS=45
-         WRAP=VIRTUAL></TEXTAREA>
-       <P>
+     $book->add_page (
+       _("<U>A</U>ssessment"),
+       array ("pnotes_A"),
+       form_table (
+        array (
+          _("<U>A</U>ssessment") =>
+          "<TEXTAREA NAME=\"pnotes_A\" ROWS=8 COLS=45
+         WRAP=VIRTUAL>".prepare($pnotes_A)."</TEXTAREA>"
+        )
+       )
+     );
 
-       <$STDFONT_B>$Interval : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_I\" ROWS=8 COLS=45
-         WRAP=VIRTUAL></TEXTAREA>
-       <P>
+     $book->add_page (
+       _("<U>P</U>lan"),
+       array ("pnotes_P"),
+       form_table (
+        array (
+          _("<U>P</U>lan") =>
+          "<TEXTAREA NAME=\"pnotes_P\" ROWS=8 COLS=45
+         WRAP=VIRTUAL>".prepare($pnotes_P)."</TEXTAREA>"
+        )
+       )
+     );
 
-       <$STDFONT_B>$Education : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_E\" ROWS=8 COLS=45
-         WRAP=VIRTUAL></TEXTAREA>
-       <P>
+     $book->add_page (
+       _("<U>I</U>nterval"),
+       array ("pnotes_I"),
+       form_table (
+        array (
+          _("<U>I</U>nterval") =>
+          "<TEXTAREA NAME=\"pnotes_I\" ROWS=8 COLS=45
+         WRAP=VIRTUAL>".prepare($pnotes_I)."</TEXTAREA>"
+        )
+       )
+     );
 
-       <$STDFONT_B>$Prescription : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_R\" ROWS=8 COLS=45
-         WRAP=VIRTUAL></TEXTAREA>
-       <P>
+     $book->add_page (
+       _("<U>E</U>ducation"),
+       array ("pnotes_E"),
+       form_table (
+        array (
+          _("<U>E</U>ducation") =>
+          "<TEXTAREA NAME=\"pnotes_E\" ROWS=8 COLS=45
+         WRAP=VIRTUAL>".prepare($pnotes_E)."</TEXTAREA>"
+        )
+       )
+     );
 
-       <CENTER>
-       <INPUT TYPE=SUBMIT VALUE=\"  $Add  \">
-       <INPUT TYPE=RESET  VALUE=\" $Clear \">
-       </CENTER>
-       </FORM>
+     $book->add_page (
+       _("P<U>R</U>escription"),
+       array ("pnotes_R"),
+       form_table (
+        array (
+          _("P<U>R</U>escription") =>
+          "<TEXTAREA NAME=\"pnotes_R\" ROWS=8 COLS=45
+         WRAP=VIRTUAL>".prepare($pnotes_R)."</TEXTAREA>"
+        )
+       )
+     );
 
-       <CENTER>
-        <A HREF=\"$_ref?$_auth&patient=$patient\"
-         ><$STDFONT_B>$Abort_Addition<$STDFONT_E></A>
-       </CENTER>
-     ";
+     if (!$book->is_done()) {
+      echo $book->display();
+
+      echo "
+        <CENTER>
+         <A HREF=\"$page_name?$_auth&patient=$patient\"
+          ><$STDFONT_B>"._("Abandon ".( ($action=="addform") ?
+ 	   "Addition" : "Modification" ))."<$STDFONT_E></A>
+        </CENTER>
+      ";
+     } else {
+       switch ($action) {
+        case "addform": case "add":
+         echo "
+           <$STDFONT_B><B>"._("Adding")." ... </B>
+         ";
+           // preparation of values
+         $pnotesdtadd = $cur_date;
+         $pnotesdtmod = $cur_date;
+
+           // actual addition
+         $query = "INSERT INTO pnotes VALUES (
+           '".fm_date_assemble("pnotesdt")."',
+           '$pnotesdtadd',
+           '$pnotesdtmod',
+           '".addslashes($patient)."',
+           '".addslashes(sql_squash($pnoteseoc))."',
+           '".addslashes($pnotes_S)."',
+           '".addslashes($pnotes_O)."',
+           '".addslashes($pnotes_A)."',
+           '".addslashes($pnotes_P)."',
+           '".addslashes($pnotes_I)."',
+           '".addslashes($pnotes_E)."',
+           '".addslashes($pnotes_R)."',
+           '$__ISO_SET__',
+           NULL ) "; // actual add query
+         $result = fdb_query ($query);
+         if ($debug) echo "(query = '$query') ";
+         if ($result)
+           echo " <B> "._("done").". </B><$STDFONT_E>\n";
+         else
+           echo " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B><$STDFONT_E>\n";
+         echo "
+           <BR><BR>
+           <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
+            ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
+           <B>|</B>
+           <A HREF=\"$page_name?$_auth&patient=$patient\"
+            ><$STDFONT_B>"._($record_name)."<$STDFONT_E></A>
+           </CENTER>
+           <BR>
+         ";
+         break;
+
+	case "modform": case "mod":
+	 break;
+       } // end inner switch
+     } // end if is done
      freemed_display_box_bottom ();
      break;
 
    case "add":
-     freemed_display_box_top ("$Adding $record_name", $page_name, 
+     freemed_display_box_top (_("Adding")." "._($record_name), $page_name, 
        "manage.php3?id=$patient");
      echo "
-       <$STDFONT_B><B>$Adding . . . </B>
+       <$STDFONT_B><B>"._("Adding")." ... </B>
      ";
        // preparation of values
      $pnotesdtadd = $cur_date;
      $pnotesdtmod = $cur_date;
      $pnotesdt  = fm_date_assemble("pnotesdt");
-     $pnotespat = $patient;
-     $pnoteseoc_blob = addslashes (fm_join_from_array ($pnoteseoc));
-
-       // remove the 's, etc from the blobs
-     $pnotes_S_blob = addslashes ($pnotes_S);
-     $pnotes_O_blob = addslashes ($pnotes_O);
-     $pnotes_A_blob = addslashes ($pnotes_A);
-     $pnotes_P_blob = addslashes ($pnotes_P);
-     $pnotes_I_blob = addslashes ($pnotes_I);
-     $pnotes_E_blob = addslashes ($pnotes_E);
-     $pnotes_R_blob = addslashes ($pnotes_R);
 
        // actual addition
      $query = "INSERT INTO pnotes VALUES (
        '$pnotesdt',
        '$pnotesdtadd',
        '$pnotesdtmod',
-       '$pnotespat',
-       '$pnoteseoc_blob',
-       '$pnotes_S_blob',
-       '$pnotes_O_blob',
-       '$pnotes_A_blob',
-       '$pnotes_P_blob',
-       '$pnotes_I_blob',
-       '$pnotes_E_blob',
-       '$pnotes_R_blob',
+       '".addslashes($patient)."',
+       '".addslashes(sql_squash($pnoteseoc))."',
+       '".addslashes($pnotes_S)."',
+       '".addslashes($pnotes_O)."',
+       '".addslashes($pnotes_A)."',
+       '".addslashes($pnotes_P)."',
+       '".addslashes($pnotes_I)."',
+       '".addslashes($pnotes_E)."',
+       '".addslashes($pnotes_R)."',
        '$__ISO_SET__',
        NULL ) "; // actual add query
      $result = fdb_query ($query);
-     if ($debug1) echo "(query = '$query') ";
+     if ($debug) echo "(query = '$query') ";
      if ($result)
-       echo " <B> $Done. </B><$STDFONT_E>\n";
+       echo " <B> "._("done").". </B><$STDFONT_E>\n";
      else
-       echo " <B> <FONT COLOR=#ff0000>$FAILED</FONT> </B><$STDFONT_E>\n";
+       echo " <B> <FONT COLOR=#ff0000>"._("ERROR")."</FONT> </B><$STDFONT_E>\n";
      echo "
        <BR><BR>
        <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        <B>|</B>
        <A HREF=\"$page_name?$_auth&patient=$patient\"
-        ><$STDFONT_B>$record_name<$STDFONT_E></A>
+        ><$STDFONT_B>"._($record_name)."<$STDFONT_E></A>
        </CENTER>
        <BR>
      ";
      freemed_display_box_bottom ();
      break;
 
-   case "modform":
-     if (($id<1) OR (strlen($id)<1)) {
-       freemed_display_box_top ("$record_name :: $ERROR", $page_name, 
-         "$page_name?patient=$patient");
-       echo "
-         <$HEADERFONT_B>$Must_Call_With_Patient_ID<$HEADERFONT_E>
-       ";
-       freemed_display_box_bottom ();
-       DIE("");
-     }
-
-     // get data first...
-     $r = freemed_get_link_rec ($id, "pnotes");
-
-     $pnotesdt   = $r["pnotesdt"];
-     
-     $patient  = $r["pnotespat"];
-       // use patient class instead of doofy way 19991217
-     $this_patient  = new Patient ($patient);
-
-     freemed_display_box_top ("$Modify $record_name", $_ref, $_ref);
-     echo "
-       <P>
-       <$HEADERFONT_B>Patient : <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A><$HEADERFONT_E>
-       <P>
-
-       <!-- prototype for patient management bar -->
-
-       <CENTER>
-        <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-        <B>|</B>
-        <A HREF=\"$page_name?$_auth&$patient=$patient&action=addform\"
-         ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
-       </CENTER>
-
-       <!-- end prototype -->
-
-       <P>
-       <FORM ACTION=\"$page_name\" METHOD=POST>
-       <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"mod\"     >
-       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-       <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"$id\"     >
-
-       <$STDFONT_B>Related Episode(s) : <$STDFONT_E><BR>
-     ".freemed_multiple_choice ("SELECT * FROM eoc WHERE ".
-                                "eocpatient='$patient'",
-                                "eocdescrip:eocdtlastsimilar",
-                                "pnoteseoc",
-                                $r[pnoteseoc])."
-       <P>
-       <$STDFONT_B>$Applicable_Date : <$STDFONT_E><BR>
-     ";
-     fm_date_entry("pnotesdt");
-     echo "
-       <P>
-
-       <$STDFONT_B>$Subjective : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_S\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".fm_prep($r[pnotes_S])."</TEXTAREA>
-       <P>
-
-       <$STDFONT_B>$Objective : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_O\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".fm_prep($r[pnotes_O])."</TEXTAREA>
-       <P>
-
-       <$STDFONT_B>$Assessment : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_A\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".fm_prep($r[pnotes_A])."</TEXTAREA>
-       <P>
-
-       <$STDFONT_B>$Plan : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_P\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".fm_prep($r[pnotes_P])."</TEXTAREA>
-       <P>
-
-       <$STDFONT_B>$Interval : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_I\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".fm_prep($r[pnotes_I])."</TEXTAREA>
-       <P>
-
-       <$STDFONT_B>$Education : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_E\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".fm_prep($r[pnotes_E])."</TEXTAREA>
-       <P>
-
-       <$STDFONT_B>$Prescription : <$STDFONT_E><BR>
-        <TEXTAREA NAME=\"pnotes_R\" ROWS=8 COLS=45
-         WRAP=VIRTUAL>".fm_prep($r[pnotes_R])."</TEXTAREA>
-       <P>
-
-       <CENTER>
-        <INPUT TYPE=SUBMIT VALUE=\" $Change \">
-        <INPUT TYPE=RESET  VALUE=\" $Restore \">
-       </CENTER>
-       </FORM>
-       <P>
-       <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
-       <B>|</B>
-       <A HREF=\"$page_name?$_auth&action=addform&patient=$patient\"
-        ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
-       </CENTER>
-       <P>
-     ";
-     freemed_display_box_bottom ();
-     break;
-
    case "mod":
-     freemed_display_box_top ("$Modifying $record_name", $_ref, $_ref);
+     freemed_display_box_top (_("Modifying")." "._($record_name));
      echo "
-       <B><CENTER><$STDFONT_B>$Modifying . . . <$STDFONT_E></B>
+       <B><CENTER><$STDFONT_B>"._("Modifying")." ... <$STDFONT_E></B>
      ";
-     //$pnotesdt = $pnotesdt_y ."-". $pnotesdt_m ."-". $pnotesdt_d;
-     $pnotesdt  = fm_date_assemble("pnotesdt");
-     $pnoteseoc_blob = addslashes (fm_join_from_array ($pnoteseoc));
-     $pnotes_S_ = addslashes ($pnotes_S);
-     $pnotes_O_ = addslashes ($pnotes_O);
-     $pnotes_A_ = addslashes ($pnotes_A);
-     $pnotes_P_ = addslashes ($pnotes_P);
-     $pnotes_I_ = addslashes ($pnotes_I);
-     $pnotes_E_ = addslashes ($pnotes_E);
-     $pnotes_R_ = addslashes ($pnotes_R);
      $query = "UPDATE pnotes SET
-       pnotespat      = '$patient',
-       pnoteseoc      = '$pnoteseoc_blob',
-       pnotesdt       = '$pnotesdt',
-       pnotesdtmod    = '$cur_date',
-       pnotes_S       = '$pnotes_S_',
-       pnotes_O       = '$pnotes_O_',
-       pnotes_A       = '$pnotes_A_',
-       pnotes_P       = '$pnotes_P_',
-       pnotes_I       = '$pnotes_I_',
-       pnotes_E       = '$pnotes_E_',
-       pnotes_R       = '$pnotes_R_',
+       pnotespat      = '".addslashes($patient)."',
+       pnoteseoc      = '".addslashes(sql_squash($pnoteseoc))."',
+       pnotesdt       = '".addslashes(fm_date_assemble("pnotesdt"))."',
+       pnotesdtmod    = '".addslashes($cur_date)."',
+       pnotes_S       = '".addslashes($pnotes_S)."',
+       pnotes_O       = '".addslashes($pnotes_O)."',
+       pnotes_A       = '".addslashes($pnotes_A)."',
+       pnotes_P       = '".addslashes($pnotes_P)."',
+       pnotes_I       = '".addslashes($pnotes_I)."',
+       pnotes_E       = '".addslashes($pnotes_E)."',
+       pnotes_R       = '".addslashes($pnotes_R)."',
        iso            = '$__ISO_SET__'
        WHERE id='$id'";
      $result = fdb_query ($query);
-     if ($debug==1) echo "query = \"$query\", result = \"$result\"<BR>\n";
-     if ($result) echo "<B><$STDFONT_B>$Done.<$STDFONT_E></CENTER></B>\n";
-      else echo "<B><$STDFONT_B>$FAILED<$STDFONT_E></CENTER></B>\n";
+     if ($debug) echo "query = \"$query\", result = \"$result\"<BR>\n";
+     if ($result) echo "<B><$STDFONT_B>"._("done").".<$STDFONT_E>";
+      else echo "<B><$STDFONT_B>"._("ERROR")."<$STDFONT_E>";
      echo "
+       </CENTER></B>
        <P>
        <CENTER>
         <A HREF=\"manage.php3?$_auth&id=$patient\"
-         ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
         <B>|</B>
         <A HREF=\"$page_name?$_auth&patient=$patient\"
-         ><$STDFONT_B>$View_Modify $record_name<$STDFONT_E></A>
+         ><$STDFONT_B>"._("View/Modify")." "._($record_name)."<$STDFONT_E></A>
         <BR>
         <A HREF=\"$page_name?$_auth&patient=$patient&action=addform\"
-         ><$STDFONT_B>$Add $record_name<$STDFONT_E></A>
+         ><$STDFONT_B>"._("Add")."<$STDFONT_E></A>
        </CENTER>
      ";
      freemed_display_box_bottom ();
      break;
 
-   case "display":
+   case "view": case "display":
      if (($id<1) OR (strlen($id)<1)) {
-       freemed_display_box_top ("$record_name $View :: $ERROR", $page_name);
+       freemed_display_box_top (_($record_name)." :: "._("ERROR"));
        echo "
          <$HEADERFONT_B>$Specify_Notes_to_Display<$HEADERFONT_E>
          <P>
          <CENTER><A HREF=\"$page_name?$_auth&patient=$patient\"
           ><$STDFONT_B>$record_name $Menu<$STDFONT_E></A> |
           <A HREF=\"manage.php3?$_auth&id=$patient\"
-          ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A>
+          ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
          </CENTER>
        ";
        freemed_display_box_bottom ();
@@ -352,42 +322,30 @@
      }
       // if it is legit, grab the data
      $r = freemed_get_link_rec ($id, "pnotes");
-     $pnotesdt = $r ["pnotesdt"];
+     extract ($r);
      $pnotesdt_formatted = substr ($pnotesdt, 0, 4). "-".
                            substr ($pnotesdt, 5, 2). "-".
                            substr ($pnotesdt, 8, 2);
-     $pnotes_S = stripslashes ( htmlentities ( $r ["pnotes_S"] ) );
-     $pnotes_O = stripslashes ( htmlentities ( $r ["pnotes_O"] ) );
-     $pnotes_A = stripslashes ( htmlentities ( $r ["pnotes_A"] ) );
-     $pnotes_P = stripslashes ( htmlentities ( $r ["pnotes_P"] ) );
-     $pnotes_I = stripslashes ( htmlentities ( $r ["pnotes_I"] ) );
-     $pnotes_E = stripslashes ( htmlentities ( $r ["pnotes_E"] ) );
-     $pnotes_R = stripslashes ( htmlentities ( $r ["pnotes_R"] ) );
      $pnotespat = $r ["pnotespat"];
-     $pnoteseoc = fm_split_into_array ($r["pnoteseoc"]);
+     $pnoteseoc = sql_expand ($r["pnoteseoc"]);
 
-     $this_patient = new Patient ($pnotespat);  // 19991217
+     $this_patient = new Patient ($pnotespat);
 
-     $pnotesdtadd = htmlentities ( $r ["pnotesdtadd"] );
-     $pnotesdtmod = htmlentities ( $r ["pnotesdtmod"] );
-     freemed_display_box_top ("$record_name View");
+     freemed_display_box_top (_($record_name));
      if (freemed_get_userlevel($LoginCookie)>$database_level)
        $__MODIFY__ = " |
          <A HREF=\"$page_name?$_auth&patient=$patient&id=$id&action=modform\"
-          ><$STDFONT_B>$Modify_Notes<$STDFONT_E></A>
+          ><$STDFONT_B>"._("Modify")."<$STDFONT_E></A>
        "; // add this if they have modify privledges
-     echo "
+     echo freemed_patient_box($this_patient)."
        <P>
        <CENTER><A HREF=\"$page_name?$_auth&patient=$pnotespat\"
-        ><$STDFONT_B>$record_name $Menu<$STDFONT_E></A> |
+        ><$STDFONT_B>"._($record_name)."<$STDFONT_E></A> |
         <A HREF=\"manage.php3?$_auth&id=$pnotespat\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> $__MODIFY__
+        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> $__MODIFY__
        </CENTER>
        <P>
 
-       <$HEADERFONT_B>$Patient : <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A><$HEADERFONT_E>
-       <BR>
        <CENTER>
         <$STDFONT_B>
         <B>Relevant Date : </B>
@@ -396,10 +354,10 @@
        </CENTER>
        <P>
      ";
-     if (count($pnoteseoc)>0) {
+     if (count($pnoteseoc)>0 and is_array($pnoteseoc)) {
       echo "
        <CENTER>
-        <$STDFONT_B><B>Related Episode(s)</B><$STDFONT_E>
+        <$STDFONT_B><B>"._("Related Episode(s)")."</B><$STDFONT_E>
         <BR>
       ";
       for ($i=0;$i<count($pnoteseoc);$i++) {
@@ -434,74 +392,74 @@
        </CENTER>
       ";
      } // end checking for EOC stuff
-
+     echo "<CENTER>\n";
      if (!empty($pnotes_S)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>$Subjective</B><$STDFONT_E></CENTER></TD></TR>
+        <B>"._("<U>S</U>ubjective")."</B><$STDFONT_E></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
          <$STDFONT_B COLOR=#555555>
-           $pnotes_S
+           ".prepare($pnotes_S)."
          <$STDFONT_E>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_O)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>$Objective</B><$STDFONT_E></CENTER></TD></TR>
+        <B>"._("<U>O</U>bjective")."</B><$STDFONT_E></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
          <$STDFONT_B COLOR=#555555>
-           $pnotes_O
+           ".prepare($pnotes_O)."
          <$STDFONT_E>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_A)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>$Assessment</B><$STDFONT_E></CENTER></TD></TR>
+        <B>"._("<U>A</U>ssessment")."</B><$STDFONT_E></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
          <$STDFONT_B COLOR=#555555>
-           $pnotes_A
+           ".prepare($pnotes_A)."
          <$STDFONT_E>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_P)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>$Plan</B><$STDFONT_E></CENTER></TD></TR>
+        <B>"._("<U>P</U>lan")."</B><$STDFONT_E></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
          <$STDFONT_B COLOR=#555555>
-           $pnotes_P
+           ".prepare($pnotes_P)."
          <$STDFONT_E>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_I)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>$Interval</B><$STDFONT_E></CENTER></TD></TR>
+        <B>"._("<U>I</U>nterval")."</B><$STDFONT_E></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
          <$STDFONT_B COLOR=#555555>
-           $pnotes_I
+           ".prepare($pnotes_I)."
          <$STDFONT_E>
        </TD></TR></TABLE>
        ";
       if (!empty($pnotes_E)) echo "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>$Education</B><$STDFONT_E></CENTER></TD></TR>
+        <B>"._("<U>E</U>ducation")."</B><$STDFONT_E></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
          <$STDFONT_B COLOR=#555555>
-           $pnotes_E
+           ".prepare($pnotes_E)."
          <$STDFONT_E>
        </TD></TR></TABLE> 
        ";
       if (!empty($pnotes_R)) echo "
       <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=400><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><$STDFONT_B COLOR=#ffffff>
-        <B>$Prescription</B><$STDFONT_E></CENTER></TD></TR>
+        <B>"._("P<U>R</U>escription")."</B><$STDFONT_E></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
          <$STDFONT_B COLOR=#555555>
-           $pnotes_R
+           ".prepare($pnotes_R)."
          <$STDFONT_E>
        </TD></TR></TABLE>
       ";
@@ -509,39 +467,37 @@
       echo "
        <P>
        <CENTER><A HREF=\"$page_name?$_auth&patient=$pnotespat\"
-        ><$STDFONT_B>$record_name $Menu<$STDFONT_E></A> |
+        ><$STDFONT_B>"._($record_name)."<$STDFONT_E></A> |
         <A HREF=\"manage.php3?$_auth&id=$pnotespat\"
-        ><$STDFONT_B>$Manage_Patient<$STDFONT_E></A> $__MODIFY__
+        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> $__MODIFY__
        </CENTER>
        <P>
      ";
 
      freemed_display_box_bottom ();
      break;
+
+   case "del": case "delete":
+     echo "DELETE STUB!<BR>\n";
+     break; // end case del/delete
+     
    default:
      // in case of emergency, break glass -- default shows all things from
      // specified patient...
 
-     $query = "SELECT * FROM pnotes WHERE (pnotespat='$patient')
+     $query = "SELECT * FROM pnotes WHERE (pnotespat='".addslashes($patient)."')
         ORDER BY pnotesdt";
      $result = fdb_query ($query);
-     $rows = fdb_num_rows ($result);
+     //$rows = fdb_num_rows ($result);
 
      $this_patient = new Patient ($patient);
      
-     freemed_display_box_top ("$record_name",
-      "manage.php3?id=$patient", $page_name);
+     freemed_display_box_top (_($record_name), "manage.php3?id=$patient");
      $this_patient = new Patient ($patient);
-     echo "
-       <P>
-       <CENTER>
-       $Patient : <A HREF=\"manage.php3?$_auth&id=$patient\"
-         >".$this_patient->fullName(true)."</A>
-       </CENTER>
+     echo freemed_patient_box($this_patient)."
        <P>
      ";
-     freemed_display_itemlist(
-       "Progress Notes",
+     echo freemed_display_itemlist(
        $result,
        "progress_notes.php3",
        array (
@@ -550,7 +506,7 @@
        ), // array
        array (
          "",
-	 "NO DESCRIPTION"
+	 _("NO DESCRIPTION")
        )
      );
      echo "

@@ -106,8 +106,7 @@ switch ($action) { // master action switch
      </TD><TD ALIGN=LEFT>
   ";
   if (empty ($procdt)) $procdt = $cur_date; // show current date
-  fm_date_entry ("procdt");
-  echo "
+  echo fm_date_entry ("procdt")."
      </TD>
     </TR>
 
@@ -125,8 +124,6 @@ switch ($action) { // master action switch
   
   $icd_type = freemed_config_value("icd"); // '9' or '10'
 
-  $cpt_query = "SELECT * FROM cpt ORDER BY cptcode,cptnameint";
-  $cpt_result = fdb_query($cpt_query);
   $cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
   $cptmod_result = fdb_query($cptmod_query);
   $icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
@@ -141,7 +138,9 @@ switch ($action) { // master action switch
       <$STDFONT_B>CPT Code/Modifier : <$STDFONT_E>
      </TD><TD ALIGN=LEFT>
   ".
-  freemed_display_selectbox($cpt_result, "#cptcode# (#cptnameint#)", "proccpt")
+  freemed_display_selectbox(
+    fdb_query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
+    "#cptcode# (#cptnameint#)", "proccpt")
   ."
      </TD>
     </TR>
@@ -149,8 +148,9 @@ switch ($action) { // master action switch
     <TR>
      <TD ALIGN=RIGHT>&nbsp;</TD><TD ALIGN=LEFT>
   ".
-  freemed_display_selectbox($cptmod_result, 
-                            "#cptmod# (#cptmoddescrip#)", "proccptmod")
+  freemed_display_selectbox(
+    fdb_query("SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip"),
+    "#cptmod# (#cptmoddescrip#)", "proccptmod")
   ."
      </TD>
     </TR>

@@ -22,7 +22,7 @@
      case "addform":
       $go = "add";
       $this_action = "Add";
-      $eocstartdate = $eocdtlastsimilar = $cur_date;
+      if ($been_here != "yes") $eocstartdate = $eocdtlastsimilar = $cur_date;
       break;
      case "modform":
       $go = "mod";
@@ -39,88 +39,22 @@
 
       if ($been_here != "yes") {
          // now we extract the data, since the record was given...
-        $query  = "SELECT * FROM $db_name WHERE id='$id'";
-        $result = fdb_query ($query);
-        $r      = fdb_fetch_array ($result);
-
-        $eocpatient         = $r["eocpatient"      ];
-        $eocdescrip         = prepare($r["eocdescrip"]);
-        $eocstartdate       = $r["eocstartdate"    ];
-        $eocdtlastsimilar   = $r["eocdtlastsimilar"];
-        $eocreferrer        = $r["eocreferrer"     ];
-        $eocfacility        = $r["eocfacility"     ];
-        $eocdiagfamily      = $r["eocdiagfamily"   ];  // diagnosis family
-        $eocrelpreg         = $r["eocrelpreg"      ];
-        $eocrelemp          = $r["eocrelemp"       ];
-        $eocrelauto         = $r["eocrelauto"      ];
-        $eocrelother        = $r["eocrelother"     ];
-        $eocrelstpr         = prepare($r["eocrelstpr"]);
-        $eocrelautoname     = prepare($r["eocrelautoname"]);
-        $eocrelautoaddr1    = prepare($r["eocrelautoaddr1"]);
-        $eocrelautoaddr2    = prepare($r["eocrelautoaddr2"]);
-        $eocrelautocity     = prepare($r["eocrelautocity"]);
-        $eocrelautostpr     = prepare($r["eocrelautostpr"]);
-        $eocrelautozip      = prepare($r["eocrelautozip"]);
-        $eocrelautocountry  = prepare($r["eocrelautocountry"]);
-        $eocrelautocase     = prepare($r["eocrelautocase"]);
-        $eocrelautorcname   = prepare($r["eocrelautorcname"]);
-        $eocrelautorcphone  = $r["eocrelautorcphone"];
-        $eocrelempname      = prepare($r["eocrelempname"]);
-        $eocrelempaddr1     = prepare($r["eocrelempaddr1"]);
-        $eocrelempaddr2     = prepare($r["eocrelempaddr2"]);
-        $eocrelempcity      = prepare($r["eocrelempcity"]);
-        $eocrelempstpr      = prepare($r["eocrelempstpr"]);
-        $eocrelempzip       = prepare($r["eocrelempzip"]);
-        $eocrelempcountry   = prepare($r["eocrelempcountry"]);
-        $eocrelempfile      = prepare($r["eocrelempfile"]);
-        $eocrelemprcname    = prepare($r["eocrelemprcname"]);
-        $eocrelemprcphone   = $r["eocrelemprcphone"];
-        $eocrelpregcycle    = $r["eocrelpregcycle"];
-        $eocrelpreggravida  = $r["eocrelpreggravida"];
-        $eocrelpregpara     = $r["eocrelpregpara"];
-        $eocrelpregmiscarry = $r["eocrelpregmiscarry"];
-        $eocrelpregabort    = $r["eocrelpregabort"];
-        $eocrelpreglastper  = $r["eocrelpreglastper"];
-        $eocrelpregconfine  = $r["eocrelpregconfine"];
-        $eocrelothercomment = prepare($r["eocrelothercomment"]);
-        $eoctype            = $r["eoctype"];
+        $r      = freemed_get_link_rec ($id, $db_name);
+        extract ($r);
         break;
       } // end checking if we have been here yet...
    } // end of interior switch
-   freemed_display_box_top (_("$this_action $record_name"));
-
-   // fix the yes/no and multiple choice switches
-   switch ($eocrelauto) {
-     case "no":  $eocrelauto_n = "SELECTED"; break;
-     case "yes": $eocrelauto_y = "SELECTED"; break;
-   } // end eocrelauto (switch)
-   switch ($eocrelemp) {
-     case "no":  $eocrelemp_n = "SELECTED"; break;
-     case "yes": $eocrelemp_y = "SELECTED"; break;
-   } // end eocrelemp (switch)
-   switch ($eocrelpreg) {
-     case "no":  $eocrelpreg_n = "SELECTED"; break;
-     case "yes": $eocrelpreg_y = "SELECTED"; break;
-   } // end eocrelpreg (switch)
-   switch ($eocrelother) {
-     case "no":  $eocrelother_n = "SELECTED"; break;
-     case "yes": $eocrelother_y = "SELECTED"; break;
-   } // end eocrelother (switch)
+   freemed_display_box_top (_($this_action)." "._($record_name));
 
     // grab important patient information
    $this_patient = new Patient ($patient);
 
-   echo "
-    <CENTER>
-     <$STDFONT_B>"._("Patient")." :
-     <A HREF=\"manage.php3?$_auth&id=$patient\"
-      >".$this_patient->fullName (true)."</A>
-     <$STDFONT_E>
-    </CENTER><P>
+   echo freemed_patient_box($this_patient)."
+    <P>
     <FORM ACTION=\"$page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
-     <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">
-     <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
+     <INPUT TYPE=HIDDEN NAME=\"id\"        VALUE=\"".prepare($id)."\">
+     <INPUT TYPE=HIDDEN NAME=\"patient\"   VALUE=\"".prepare($patient)."\">
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>
@@ -141,8 +75,10 @@
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Pregnancy")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelpreg\">
-       <OPTION VALUE=\"no\"  $eocrelpreg_n>"._("No")."
-       <OPTION VALUE=\"yes\" $eocrelpreg_y>"._("Yes")."
+       <OPTION VALUE=\"no\"  ".
+         ( ($eocrelpreg=="no") ? "SELECTED" : "" ).">"._("No")."
+       <OPTION VALUE=\"yes\" ".
+         ( ($eocrelpreg=="yes") ? "SELECTED" : "" ).">"._("Yes")."
       </SELECT>
      </TD>
   "; } else { echo "
@@ -156,45 +92,47 @@
     </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of First Occurance")."<$STDFONT_E></TD>
       <TD ALIGN=LEFT>
-  ";
-  fm_date_entry("eocstartdate");
-  echo "
+  ".fm_date_entry("eocstartdate")."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Employment")."<$STDFONT_E></TD>
       <TD ALIGN=LEFT>
       <SELECT NAME=\"eocrelemp\">
-       <OPTION VALUE=\"no\"  $eocrelemp_n>"._("No")."
-       <OPTION VALUE=\"yes\" $eocrelemp_y>"._("Yes")."
+       <OPTION VALUE=\"no\"  ".
+         ( ($eocrelemp=="no") ? "SELECTED" : "" ).">"._("No")."
+       <OPTION VALUE=\"yes\" ".
+         ( ($eocrelemp=="yes") ? "SELECTED" : "" ).">"._("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Last Similar")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_date_entry("eocdtlastsimilar");
-   echo "
+   ".fm_date_entry("eocdtlastsimilar")."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Automobile")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelauto\">
-       <OPTION VALUE=\"no\"  $eocrelauto_n>"._("No")."
-       <OPTION VALUE=\"yes\" $eocrelauto_y>"._("Yes")."
+       <OPTION VALUE=\"no\"  ".
+         ( ($eocrelauto=="no") ? "SELECTED" : "" ).">"._("No")."
+       <OPTION VALUE=\"yes\" ".
+         ( ($eocrelauto=="yes") ? "SELECTED" : "" ).">"._("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Referring Physician")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
    ";
-   $pref_r = fdb_query("SELECT * FROM physician WHERE phyref='yes'
-                        ORDER BY phylname,phyfname");
-   echo freemed_display_selectbox ($pref_r, 
+   echo freemed_display_selectbox (
+     fdb_query("SELECT * FROM physician WHERE phyref='yes'
+       ORDER BY phylname,phyfname"),
      "#phylname#, #phyfname#", "eocreferrer")."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Related to Other Cause")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
      <SELECT NAME=\"eocrelother\">
-       <OPTION VALUE=\"no\"  $eocrelother_n>"._("No")."
-       <OPTION VALUE=\"yes\" $eocrelother_y>"._("Yes")."
+       <OPTION VALUE=\"no\"  ".
+         ( ($eocrelother=="no") ? "SELECTED" : "" ).">"._("No")."
+       <OPTION VALUE=\"yes\" ".
+         ( ($eocrelother=="yes") ? "SELECTED" : "" ).">"._("Yes")."
       </SELECT>
      </TD>
     </TR><TR>
@@ -202,16 +140,17 @@
      <TD ALIGN=LEFT>
    ";
    if (empty($eocfacility)) $eocfacility = $default_facility;
-   $fac_r = fdb_query("SELECT * FROM facility ORDER BY psrname,psrnote");
    
    echo 
-     freemed_display_selectbox ($fac_r, "#psrname# [#psrnote#]", 
-     "eocfacility")."
+     freemed_display_selectbox (
+       fdb_query("SELECT * FROM facility ORDER BY psrname,psrnote"),
+       "#psrname# [#psrnote#]", 
+       "eocfacility")."
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("State/Province")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelstpr\" SIZE=5 MAXLENGTH=5
-       VALUE=\"$eocrelstpr\">
+       VALUE=\"".prepare($eocrelstpr)."\">
      </TD>
     </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Diagnosis Family")."<$STDFONT_E></TD>
@@ -234,11 +173,16 @@
     } // end switch for $eoctype
     echo "
       <SELECT NAME=\"eoctype\">
-       <OPTION VALUE=\"\"                          >"._("NONE SELECTED")."
-       <OPTION VALUE=\"acute\"             $type_a >"._("acute")."
-       <OPTION VALUE=\"chronic\"           $type_c >"._("chronic")."
-       <OPTION VALUE=\"chronic recurrent\" $type_cr>"._("chronic recurrent")."
-       <OPTION VALUE=\"historical\"        $type_h >"._("historical")."
+       <OPTION VALUE=\"\" >"._("NONE SELECTED")."
+       <OPTION VALUE=\"acute\" ".
+         ( ($eoctype=="acute") ? "SELECTED" : "" ).">"._("acute")."
+       <OPTION VALUE=\"chronic\" ".
+         ( ($eoctype=="chronic") ? "SELECTED" : "" ).">"._("chronic")."
+       <OPTION VALUE=\"chronic recurrent\" ".
+         ( ($eoctype=="chronic recurrent") ? "SELECTED" : "" ).">".
+	 _("chronic recurrent")."
+       <OPTION VALUE=\"historical\" ".
+         ( ($eoctype=="historical") ? "SELECTED" : "" ).">"._("historical")."
       </SELECT>
      </TD>
     </TR>
@@ -263,28 +207,28 @@
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Auto Insurance")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoname\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelautoname\">
+       VALUE=\"".prepare($eocrelautoname)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Case Number")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocase\" SIZE=10 MAXLENGTH=20
-       VALUE=\"$eocrelautocase\">
+       VALUE=\"".prepare($eocrelautocase)."\">
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 1)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr1\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelautoaddr1\">
+       VALUE=\"".prepare($eocrelautoaddr1)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Name")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcname\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelautorcname\">
+       VALUE=\"".prepare($eocrelautorcname)."\">
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 2)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautoaddr2\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelautoaddr2\">
+       VALUE=\"".prepare($eocrelautoaddr2)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Phone")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -296,22 +240,22 @@
      <TD ALIGN=RIGHT><$STDFONT_B>"._("City, State/Prov, Postal Code")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautocity\" SIZE=10 MAXLENGTH=100
-       VALUE=\"$eocrelautocity\"> <B>,</B>
+       VALUE=\"".prepare($eocrelautocity)."\"> <B>,</B>
       <INPUT TYPE=TEXT NAME=\"eocrelautostpr\" SIZE=4 MAXLENGTH=3
-       VALUE=\"$eocrelautostpr\">
+       VALUE=\"".prepare($eocrelautostpr)."\">
       <INPUT TYPE=TEXT NAME=\"eocrelautozip\" SIZE=11 MAXLENGTH=10
-       VALUE=\"$eocrelautozip\">
+       VALUE=\"".prepare($eocrelautozip)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Email Address")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelautorcemail\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelautorcemail\">
+       VALUE=\"".prepare($eocrelautorcemail)."\">
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Country")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelautocountry\" SIZE=10 MAXLENGTH=100
-       VALUE=\"$eocrelautocountry\">
+       VALUE=\"".prepare($eocrelautocountry)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>&nbsp; <!-- placeholder --><$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -341,55 +285,53 @@
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Name of Employer")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempname\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelempname\">
+       VALUE=\"".prepare($eocrelempname)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("File Number")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempfile\" SIZE=10 MAXLENGTH=20
-       VALUE=\"$eocrelempfile\">
+       VALUE=\"".prepare($eocrelempfile)."\">
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 1)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr1\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelempaddr1\">
+       VALUE=\"".prepare($eocrelempaddr1)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Name")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcname\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelemprcname\">
+       VALUE=\"".prepare($eocrelemprcname)."\">
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Address (Line 2)")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempaddr2\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelempaddr2\">
+       VALUE=\"".prepare($eocrelempaddr2)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Contact Phone")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ".
-   fm_phone_entry("eocrelemprcphone")
-   ."
+   ".fm_phone_entry("eocrelemprcphone")."
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("City, State/Prov, Postal Code")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelempcity\" SIZE=10 MAXLENGTH=100
-       VALUE=\"$eocrelempcity\"> <B>,</B>
+       VALUE=\"".prepare($eocrelempcity)."\"> <B>,</B>
       <INPUT TYPE=TEXT NAME=\"eocrelempstpr\" SIZE=4 MAXLENGTH=3
-       VALUE=\"$eocrelempstpr\">
+       VALUE=\"".prepare($eocrelempstpr)."\">
       <INPUT TYPE=TEXT NAME=\"eocrelempzip\" SIZE=11 MAXLENGTH=10
-       VALUE=\"$eocrelempzip\">
+       VALUE=\"".prepare($eocrelempzip)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Email Address")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelemprcemail\" SIZE=20 MAXLENGTH=100
-       VALUE=\"$eocrelemprcemail\">
+       VALUE=\"".prepare($eocrelemprcemail)."\">
      </TD>
      </TR><TR>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Country")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
        <INPUT TYPE=TEXT NAME=\"eocrelempcountry\" SIZE=10 MAXLENGTH=100
-       VALUE=\"$eocrelempcountry\">
+       VALUE=\"".prepare($eocrelempcountry)."\">
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>&nbsp; <!-- placeholder --><$STDFONT_E></TD>
      <TD ALIGN=LEFT>
@@ -428,8 +370,7 @@
      </TD>
      <TD ALIGN=RIGHT><$STDFONT_B>"._("Date of Confinement")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
-   ";
-   fm_date_entry("eocrelpregconfine");
+   ".fm_date_entry("eocrelpregconfine");
    echo "
      </TD>
      </TR><TR>
@@ -472,7 +413,7 @@
      <TD ALIGN=RIGHT><$STDFONT_B>"._("More Information")."<$STDFONT_E></TD>
      <TD ALIGN=LEFT>
       <INPUT TYPE=TEXT NAME=\"eocrelothercomment\" SIZE=35 MAXLENGTH=100
-       VALUE=\"$eocrelothercomment\">
+       VALUE=\"".prepare($eocrelothercomment)."\">
      </TD>
      </TR>
     </TABLE>
@@ -484,7 +425,7 @@
      <SELECT NAME=\"action\">
       <OPTION VALUE=\"$action\">"._("Update")."
       <OPTION VALUE=\"$go\">"._("$this_action")."
-      <OPTION VALUE=\"view\">"._("Return to Menu")."
+      <OPTION VALUE=\"view\">"._("back")."
      </SELECT>
      <INPUT TYPE=SUBMIT VALUE=\""._("Go")."\">
      </CENTER>
@@ -619,7 +560,7 @@
 
    $result = fdb_query ($query);
    if ($debug)  { echo " ( query = \"$query\" ) <BR>"; }
-   if ($result) { echo _("Done"); }
+   if ($result) { echo _("done"); }
     else        { echo _("ERROR"); }
    echo "
      <P>
@@ -627,7 +568,7 @@
       <A HREF=\"manage.php3?$_auth&id=$patient\"
       ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
       <A HREF=\"$page_name?$_auth&patient=$patient\"
-      ><$STDFONT_B>"._("Return to $record_name Menu")."<$STDFONT_E></A>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
      </CENTER>
      <BR>
    ";
@@ -635,14 +576,14 @@
    break;
 
   case "del":
-   freemed_display_box_top (_("Deleting $record_name"));
+   freemed_display_box_top (_("Deleting")." "._($record_name));
    echo "
     <P>
     <$STDFONT_B>"._("Deleting")." ...
     ";
    $query = "DELETE FROM $db_name WHERE id='$id'";
    $result = fdb_query ($query);
-   if ($result) { echo _("Done")."\n";    }
+   if ($result) { echo _("done")."\n";    }
     else        { echo _("ERROR")."\n";   }
    echo "
     <$STDFONT_E>
@@ -651,13 +592,14 @@
       <A HREF=\"manage.php3?$_auth&id=$patient\"
       ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A> <B>|</B>
      <A HREF=\"$page_name?$_auth\"
-      ><$STDFONT_B>"._("Return to $record_name Menu")."<$STDFONT_E></A>
+      ><$STDFONT_B>"._("back")."<$STDFONT_E></A>
     </CENTER> 
    ";
    freemed_display_box_bottom ();
    break;
 
-  case "display": // view of entire episode (central control screen)
+    // view of entire episode (central control screen)
+  case "view": case "display":
    if ($id<1) {
      freemed_display_box_top (_("ERROR"));
      echo "
@@ -676,21 +618,13 @@
      freemed_display_html_bottom ();
      DIE("");
    } // end checking for ID as valid
-   freemed_display_box_top (_("$record_name View"));
+   freemed_display_box_top (_($record_name));
 
    // create new patient object
    $this_patient = new Patient ($patient);
 
    // display header of box with patient information
-   echo "
-     <P>
-      <CENTER>
-      <$STDFONT_B>"._("Patient")."<$STDFONT_E> :
-      <A HREF=\"manage.php3?$_auth&id=$patient\"
-      ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-      </CENTER>
-     <P>
-   ";
+   echo freemed_patient_box ($this_patient)." <P> \n";
 
    $eoc = freemed_get_link_rec($id,"eoc");
    // display vitals for current episode
@@ -800,10 +734,10 @@
 
   default: // default action -- menu
    if ($patient<1) {
-     freemed_display_box_top (_("$record_name :: ERROR"));
+     freemed_display_box_top (_($record_name)." :: "._("ERROR"));
      echo "
       <P>
-      <$STDFONT_B>"._("Must specify a patient!")."<$STDFONT_E>
+      <$STDFONT_B>"._("You must specify a patient.")."<$STDFONT_E>
       <P>
      ";
      freemed_display_box_bottom ();
@@ -818,13 +752,7 @@
                          ORDER BY eocstartdate DESC");
 
     $this_patient = new Patient ($patient);
-    echo "
-      <P>
-      <CENTER>
-       <$STDFONT_B>"._("Patient")." : <$STDFONT_E>
-       <A HREF=\"manage.php3?$_auth&id=$patient\"
-       ><$STDFONT_B>".$this_patient->fullName(true)."<$STDFONT_E></A>
-      </CENTER>
+    echo freemed_patient_box ($this_patient)."
       <P>
     ".freemed_display_itemlist(
       $result,

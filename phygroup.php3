@@ -5,12 +5,6 @@
   //       jeff b (jeff@univrel.pr.uconn.edu) -- template
   //       adam b (gdrago23@yahoo.com) -- redesign and update
   // lic : GPL
-  // 
-  # please note that you _can_ remove the comments down below,
-  # but everything above here should remain untouched. please
-  # do _not_ remove my name or address from this file, since I
-  # have worked very hard on it. the license must also always
-  # remain GPL.                                     -- jeff b
 
     // *** local variables section ***
     // complete these to reflect the data for this
@@ -55,12 +49,12 @@ switch($action) { // action switch
  case "del": case "delete":
   switch($action) { // inner actionswitch
    case "add":
-    freemed_display_box_top(_("Adding $record_name"), $page_name);
+    freemed_display_box_top(_("Adding")." "._($record_name));
     $query = "INSERT INTO $db_name VALUES ( ".
-      "'$phygroupname',  ".
-      "'$phygroupfac',   ".
-      "'$phygroupdtadd', ".
-      "'$phygroupdtmod', ".
+      "'".addslashes($phygroupname)."',  ".
+      "'".addslashes($phygroupfac)."',   ".
+      "'".addslashes($phygroupdtadd)."', ".
+      "'".addslashes($phygroupdtmod)."', ".
       " NULL ) ";
     echo "
       <P ALIGN=CENTER>
@@ -68,20 +62,20 @@ switch($action) { // action switch
     ";
    break;
    case "mod":
-    freemed_display_box_top (_("Modifying $record_name"), $page_name);
+    freemed_display_box_top (_("Modifying")." "._($record_name));
     $query = "UPDATE $db_name SET ".
-      "phygroupname  = '$phygroupname', ".
-      "phygroupfac   = '$phygroupfac',  ". 
-      "phygroupdtmod = '$cur_date'      ".
-      "WHERE id='$id'";
+      "phygroupname  = '".addslashes($phygroupname)."', ".
+      "phygroupfac   = '".addslashes($phygroupfac)."',  ". 
+      "phygroupdtmod = '".addslashes($cur_date)."'      ".
+      "WHERE id='".addslashes($id)."'";
     echo "
       <P ALIGN=CENTER>
       <$STDFONT_B>"._("Modifying").". . . 
     ";
    break;
    case "del": case "delete":
-    freemed_display_box_top (_("Deleting $record_name"), $page_name);
-    $query = "DELETE FROM $db_name WHERE (id = \"$id\")";
+    freemed_display_box_top (_("Deleting")." "._($record_name));
+    $query = "DELETE FROM $db_name WHERE (id = '".addslashes($id)."')";
     echo "
       <P ALIGN=CENTER>
       <$STDFONT_B>"._("Deleting").". . . 
@@ -92,16 +86,16 @@ switch($action) { // action switch
 
   if ($result) {
     echo "
-      <B>"._("Done")."</B><$STDFONT_E>
+      <B>"._("done")."</B><$STDFONT_E>
     ";
   } else {
-    echo ("<B>"._("Error")." ($result)</B><$STDFONT_E>\n"); 
+    echo ("<B>"._("ERROR")." ($result)</B><$STDFONT_E>\n"); 
   }
   echo "
     <P ALIGN=CENTER>
     <$STDFONT_B>
     <A HREF=\"$page_name?$_auth\">
-      "._("Return to $record_name Menu")."
+     "._("back")."
     </A>
     <$STDFONT_E>
   ";
@@ -112,15 +106,15 @@ switch($action) { // action switch
  case "addform":
  case "modform":
  default:
-  freemed_display_box_top (_("$record_name"), $page_name);
-  $result = fdb_query("SELECT * FROM $db_name");
+  freemed_display_box_top (_($record_name));
+  $result = fdb_query("SELECT phygroupname,phygroupfac,id FROM $db_name");
   
   echo freemed_display_itemlist(
     $result,
     $page_name,
     array (
-      "Physician Group Name" => "phygroupname",
-      "Default Facility"     => "phygroupfac"
+      _("Physician Group Name") => "phygroupname",
+      _("Default Facility")     => "phygroupfac"
     ),
     array ("",""),
     array (
@@ -136,8 +130,7 @@ switch($action) { // action switch
       break;
     }
     $r = freemed_get_link_rec($id,$db_name);
-    $phygroupname = $r[phygroupname];
-    $phygroupfac  = $r[phygroupfac];
+    extract ($r);
    break;
    case "addform": // addform *is* the default
    default:
@@ -149,14 +142,14 @@ switch($action) { // action switch
   echo "
    <TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=\"100%\">
    <TR><TD ALIGN=CENTER>
-    <FORM ACTION=\"$page_name\">
+    <FORM ACTION=\"$page_name\" METHOD=POST>
     <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
       (($action=="modform") ? "mod" : "add")."\"> 
-    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"$id\"  >
+    <INPUT TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"  >
    
     <$STDFONT_B>"._("Physician Group Name")." : <$STDFONT_E>
     <INPUT TYPE=TEXT NAME=phygroupname SIZE=20 MAXLENGTH=100
-     VALUE=\"$phygroupname\">
+     VALUE=\"".prepare($phygroupname)."\">
    </TD></TR>
 
    <TR><TD ALIGN=CENTER>

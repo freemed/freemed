@@ -242,7 +242,7 @@ msgstr ""
 msgid "Stock CPT Code Data"
 msgstr ""
 
-msgid "CPT Modifers"
+msgid "CPT Modifiers"
 msgstr ""
 
 msgid "Stock CPT Modifier Data"
@@ -1422,6 +1422,54 @@ msgid "Book Appointment"
 msgstr ""
 
 msgid "This patient has no appointments."
+msgstr ""
+
+msgid "Billing Information"
+msgstr ""
+
+msgid "Inclusion/Exclusion"
+msgstr ""
+
+msgid "Meta Description"
+msgstr ""
+
+msgid "Group"
+msgstr ""
+
+msgid "Internal Information"
+msgstr ""
+
+msgid "Insurance Type"
+msgstr ""
+
+msgid "Insurance Assign"
+msgstr ""
+
+msgid "Physician Degrees"
+msgstr ""
+
+msgid "Room Name"
+msgstr ""
+
+msgid "Default Provider"
+msgstr ""
+
+msgid "Booking Enabled"
+msgstr ""
+
+msgid "Modifier"
+msgstr ""
+
+msgid "Employer Identification Number"
+msgstr ""
+
+msgid "Internal"
+msgstr ""
+
+msgid "External"
+msgstr ""
+
+msgid "Internal or External Facility"
 msgstr ""
 
 # END

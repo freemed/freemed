@@ -59,7 +59,7 @@ switch($action) { // master action switch
   } // second modform if
   
   if ($action=="addform") {
-    freemed_display_box_top ( _("Add $record_name"), $page_name );
+    freemed_display_box_top ( _("Add")." "._($record_name) );
   } // addform if
   
   // now the body

@@ -5,7 +5,7 @@
   // lic : GPL
 
   $page_name="degrees.php3";        // for help info, later
-  $record_name="Physician Degree";  // actual name
+  $record_name="Physician Degrees"; // actual name
   include "global.var.inc";         // global variables
   include "freemed-functions.inc";  // API functions
 
