@@ -17,10 +17,6 @@ freemed::connect ();
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log message access");}	
 
-
-
-
-
 $this_user = CreateObject('FreeMED.User');
 
 if ($submit_action==" ".__("Add")." ") { $action = "add"; }
@@ -105,8 +101,9 @@ switch ($action) {
 	$query = $sql->insert_query(
 		"messages",
 		array(
+			"msgby" => $this_user->user_number, // mark from user
 			"msgfor",
-			"msgtime" => SQL_NOW, // pass proper timestamp
+			"msgtime" => SQL__NOW, // pass proper timestamp
 			"msgpatient",
 			"msgperson",
 			"msgsubject",
@@ -131,8 +128,16 @@ switch ($action) {
 
 	case "remove":
 	// Perform deletion
-	$result = $sql->query("DELETE FROM messages WHERE id='".
-		addslashes($id)."'");
+	if ($_REQUEST['id'] > 0) {
+		$result = $sql->query("DELETE FROM messages WHERE id='".
+			addslashes($id)."'");
+	} elseif (is_array($_REQUEST['mark'])) {
+		$query = "DELETE FROM messages WHERE FIND_IN_SET(id, '".
+				join(",", $_REQUEST['mark'])."')";
+		$result = $sql->query($query);
+	} else {
+		$display_buffer .= __("There is nothing to delete.");
+	}
 
 	// Check if we return to management
 	if ($return=="manage") {
@@ -140,7 +145,9 @@ switch ($action) {
 		die("");
 	} else {
 		// Otherwise refresh to messages screen
-		Header("Location: messages.php");
+		Header("Location: messages.php?".
+				"old=".urlencode($_REQUEST['old'])."&".
+				"start=".urlencode($_REQUEST['start']));
 		die("");
 	}
 	break; // end action remove
@@ -159,12 +166,14 @@ switch ($action) {
 		die("");
 	} else {
 		// Otherwise refresh to messages screen
-		Header("Location: messages.php");
+		Header("Location: messages.php?".
+				"old=".urlencode($_REQUEST['old'])."&".
+				"start=".urlencode($_REQUEST['start']));
 		die("");
 	}
 	break; // end action del
 
-	case "mark";
+	case "mark":
 	if (is_array($mark)) {
 		$query = "UPDATE messages SET msgread = '1', ".
 			"msgtime=msgtime ".
@@ -233,6 +242,7 @@ switch ($action) {
 			<td>&nbsp;</td>
 			<td><b>".__("Date")."</b></td>
 			<td><b>".__("Time")."</b></td>
+			<td><b>".__("Sent By")."</b></td>
 			<td><b>".__("From")."</b></td>
 			<td><b>".__("Urgency")."</b></td>
 		</tr>
@@ -250,6 +260,11 @@ switch ($action) {
 				$r['from'] = stripslashes($r['msgperson']);
 			}
 
+			// Figure out who sent it
+			$sent_by = '';
+			$sentuser = CreateObject('FreeMED.User', $r['msgby']);
+			$sent_by = $sentuser->getName();
+
 			// Convert from timestamp to time/date
 			$y = $m = $d = $hour = $min = '';
 			$y = substr($r['msgtime'], 0, 4);
@@ -266,8 +281,9 @@ switch ($action) {
 					"VALUE=\"".prepare($r['id'])."\"/></td>
 				<td>$y-$m-$d</td>
 				<td>".fc_get_time_string($hour,$min)."</td>
+				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
-				<td>".$r['msgurgency']." out of 5</td>
+				<td>".$r['msgurgency']."/5</td>
 			</tr>
 			<tr><td>&nbsp;</td><td COLSPAN=\"4\">
 				<i>".prepare($r['msgtext'])."</i>
@@ -316,13 +332,21 @@ switch ($action) {
 		</script>
 
 		<div ALIGN=\"CENTER\">
-			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"mark\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+				( ($old != 1) ? 'mark' : 'remove' )."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"old\" VALUE=\"".
+				prepare($old)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"start\" VALUE=\"".
+				prepare($start)."\"/>
 			<input TYPE=\"BUTTON\" VALUE=\"".__("Select All")."\" ".
 			"onClick=\"selectAll(this.form); return true;\" ".
 			"class=\"button\"/>
 			".( ($old==0) ?
 			"<input class=\"button\" TYPE=\"SUBMIT\" ".
-				"VALUE=\"".__("Mark as Read")."\"/>" :"")."
+				"VALUE=\"".__("Mark as Read")."\"/>" :
+			"<input class=\"button\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Delete Marked Messages")."\"/>"
+			)."
 			</form>
 		</div>
 		";
