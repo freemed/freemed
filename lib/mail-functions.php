@@ -8,7 +8,7 @@
 
 if (!defined ("__MAIL_FUNCTIONS_PHP__")) {
 
-define (__MAIL_FUNCTIONS_PHP__, true);
+define ('__MAIL_FUNCTIONS_PHP__', true);
 
  // Class mail_message
  // formerly: Class mime_mail

@@ -6,7 +6,7 @@
 
 if (!defined ("__CONTAINERS_PHP__")) {
 
-define (__CONTAINERS_PHP__, true);
+define ('__CONTAINERS_PHP__', true);
 
 // class Guarantor
 class Guarantor {

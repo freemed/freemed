@@ -5,7 +5,7 @@
 
 if (!defined("__MODULE_REPORTS_PHP__")) {
 
-define (__MODULE_REPORTS_PHP__, true);
+define ('__MODULE_REPORTS_PHP__', true);
 
 // class freemedReportsModule
 class freemedReportsModule extends freemedModule {

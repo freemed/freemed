@@ -5,7 +5,7 @@
 
 if (!defined("__MODULE_EMR_PHP__")) {
 
-define (__MODULE_EMR_PHP__, true);
+define ('__MODULE_EMR_PHP__', true);
 
 // class freemedEMRModule
 class freemedEMRModule extends freemedModule {

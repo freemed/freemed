@@ -5,7 +5,7 @@
 
 if (!defined ("__ISO_SET_PHP__")) {
 
-define (__ISO_SET_PHP__, true);
+define ('__ISO_SET_PHP__', true);
 
   // ISO Handler
   switch ($language) {

@@ -18,7 +18,7 @@ $EDI_TESTORPROD = "T";
 
 if (!defined("__MODULE_EDI_PHP__")) {
 
-define (__MODULE_EDI_PHP__, true);
+define ('__MODULE_EDI_PHP__', true);
 
 // class freemedEDIModule
 class freemedEDIModule extends freemedModule {

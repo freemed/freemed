@@ -5,7 +5,7 @@
 
 if (!defined ("__CALENDAR_FUNCTIONS_PHP__")) {
 
-define (__CALENDAR_FUNCTIONS_PHP__, true);
+define ('__CALENDAR_FUNCTIONS_PHP__', true);
 
   // freemed_get_date_prev (in freemed-functions.inc)
   // -- returns date before provided date

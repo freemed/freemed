@@ -1,6 +1,14 @@
 freemed project changelog
 ($Id$)
 
+* Thu Mar 15 2001 rufustfirefly
+  - updated Fred's modules to have his name on them. still need
+    $MODULE_DESCRIPTION, though ...
+  - slight alternate_colors optimizations in modules
+  - added lib/error_handler.php with hooks in freemed.php
+  - set freemed_display_box_bottom to check for a box, as well as top, so
+    that *those* errors are fixed
+
 * Thu Mar 15 2001 fforest
   - lib/macros  new define for COPAY transaction
   - lib/module_edi code to remove slashes from data.

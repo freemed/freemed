@@ -5,7 +5,7 @@
 
 if (!defined("__MODULE_PHP__")) {
 
-define (__MODULE_PHP__, true);
+define ('__MODULE_PHP__', true);
 
 include "lib/freemed.php";
 

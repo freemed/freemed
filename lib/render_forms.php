@@ -7,7 +7,7 @@
 
 if (!defined ("__RENDER_FORMS_PHP__")) {
 
-define (__RENDER_FORMS_PHP__, true);
+define ('__RENDER_FORMS_PHP__', true);
 
 // ****************************************
 // ********* FIXED FORMS SECTION **********

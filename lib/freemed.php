@@ -9,15 +9,15 @@
 
 if (!defined("__FREEMED_PHP__")) {
 
-define (__FREEMED_PHP__, true);
+define ('__FREEMED_PHP__', true);
 
     // these variables you should not touch
-define (PACKAGENAME, "freemed");				// package name
-define (CODED_BY, "The Freemed Project");		// coded by tag
-define (VERSION, "0.2.1 (Persephone/CVS)");		// current version
-define (BUGS_EMAIL, "code_bugs@ourexchange.net");	// coder email...
+define ('PACKAGENAME', "freemed");				// package name
+define ('CODED_BY', "The Freemed Project");		// coded by tag
+define ('VERSION', "0.2.1 (Persephone/CVS)");		// current version
+define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
 
-define (BUGS_ADDRESS, "http://sourceforge.net/project/freemed/");
+define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
 $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
 $cur_date_hash=date("Ymd");		// YYYYMMDD date hash
 $_auth="default_value=yes";		// authentication (KFM fix)
@@ -29,18 +29,18 @@ $local_date_display="%Y-%m-%d";       // United States
     // **********************************
     // ***** customizable variables *****
     // **********************************
-define (INSTALLATION, "Stock Freemed Install"); // installation name
-define (LOCALEDIR,	"/usr/share/locale");     // gettext location
-define (DB_HOST, "localhost");	// database (SQL) host location
-define (DB_NAME, "freemed");	// database name
-define (DB_USER, "root");				// SQL server username
-define (DB_PASSWORD, "password");		// SQL server password
-define (PHYSICAL_LOCATION, "/usr/freemed");
-define (PATID_PREFIX, "PAT"); // used to generate internal practice ID
+define ('INSTALLATION', "Stock Freemed Install"); // installation name
+define ('LOCALEDIR',	"/usr/share/locale");     // gettext location
+define ('DB_HOST', "localhost");	// database (SQL) host location
+define ('DB_NAME', "freemed");	// database name
+define ('DB_USER', "root");				// SQL server username
+define ('DB_PASSWORD', "password");		// SQL server password
+define ('PHYSICAL_LOCATION', "/usr/freemed");
+define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
 
-define (HOST, "localhost");             // host name for this system
-define (BASE_URL, "/freemed");		// offset (i.e. http://here/package)
-define (HTTP, "http");                // http for normal, https for SSL
+define ('HOST', "localhost");             // host name for this system
+define ('BASE_URL', "/freemed");		// offset (i.e. http://here/package)
+define ('HTTP', "http");                // http for normal, https for SSL
 $default_language="EN";               // default language
 
     // *************************************
@@ -58,7 +58,7 @@ if (strlen($u_lang)==2) $language=$u_lang;
   else $language=$default_language;
 
     // don't touch these variables either...
-define (COMPLETE_URL, HTTP . "://" . HOST . BASE_URL . "/" ); 
+define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
 $_cookie_expire="36000";     // cookies expire in 1 hour
 
 $debug=false;  // true=debug info on, false=debug info off
@@ -121,6 +121,7 @@ if (!function_exists("bindtextdomain"))
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
+include ("lib/error_handler.php");   // internal error handler
 include ("webtools.php");            // webtools toolkit
 
   // version check for webtools
@@ -141,7 +142,7 @@ include ("lib/module.php");          // loadable module support (phpwebtools)
     //   SQL_ODBC     - ODBC compliant (i.e. M$ SQL Server)
     //   SQL_POSTGRES - PostgreSQL backend
     //   SQL_MSQL     - mSQL backend
-define (DB_ENGINE, SQL_MYSQL);
+define ('DB_ENGINE', SQL_MYSQL);
 
 $sql = new sql (DB_ENGINE, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 

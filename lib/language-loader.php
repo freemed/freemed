@@ -7,7 +7,7 @@
 
 if (!defined ("__LANGUAGE_LOADER_PHP__")) {
 
-define (__LANGUAGE_LOADER_PHP__, true);
+define ('__LANGUAGE_LOADER_PHP__', true);
 
 # Created to allow multilingual support
 # 1. if you call a file with lang parameter:
@@ -73,16 +73,16 @@ define (__LANGUAGE_LOADER_PHP__, true);
   }
 
   
-  if ($HTTP_GET_VARS["lang"]) //  file.php?lang=en
+  if (isset($HTTP_GET_VARS["lang"])) //  file.php?lang=en
   {
      if(selLang($HTTP_GET_VARS["lang"]))
 	 // set a temporary cookie, so that next pages
 	 // automatically will be shown in this language
 	   setcookie("templang", $s_lang);
   }
-  elseif ($HTTP_COOKIE_VARS["templang"])
+  elseif (isset($HTTP_COOKIE_VARS["templang"]))
      $s_lng= $HTTP_COOKIE_VARS["templang"];
-  elseif ($HTTP_COOKIE_VARS["u_lang"])
+  elseif (isset($HTTP_COOKIE_VARS["u_lang"]))
      // a persistant cookie for user preferance
      $s_lng= $HTTP_COOKIE_VARS["u_lang"];
   else // try to guess it..

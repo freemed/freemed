@@ -5,7 +5,7 @@
 
 if (!defined("__MODULE_BILLING_PHP__")) {
 
-define (__MODULE_BILLING_PHP__, true);
+define ('__MODULE_BILLING_PHP__', true);
 
 include "lib/render_forms.php";
 include "lib/calendar-functions.php";

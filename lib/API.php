@@ -10,7 +10,7 @@
 
 if (!defined("__API_PHP__")) {
 
-define (__API_PHP__, true);
+define ('__API_PHP__', true);
 
 // function freemed_bar_alternate_color
 function freemed_bar_alternate_color ($cur_color="")
@@ -230,6 +230,8 @@ function freemed_display_box_bottom ($_null="")
 {
   global $debug;
 
+  if (!isset($GLOBALS["FREEMED_BOX"])) return false;
+
   if ($debug) {
     echo "
       
@@ -257,6 +259,12 @@ function freemed_display_box_top ($box_title="", $ref="", $pg_name="")
    $_auth, $page_name, $action, $id, $patient, $_pg_desc, $_ref,
    $admin_level, $delete_level, $export_level, $database_level,
    $menubar_color, $LoginCookie, $STDFONT_B, $STDFONT_E, $current_patient;
+
+  if (isset($GLOBALS["FREEMED_BOX"])) {
+    trigger_error("Multiple freemed_display_box_top instances!", E_USER_ERROR);
+  } // check for existing box
+
+  $GLOBALS["FREEMED_BOX"] = true;
 
   if ($ref=="") $ref = $_ref;  // pass from cookie?
 
