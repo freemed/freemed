@@ -56,7 +56,8 @@
 
      echo "
        <P ALIGN=CENTER>
-       <$STDFONT_B>$Patient: <A HREF=\"manage.php3?$_auth&id=$patient\"
+       <$STDFONT_B>"._("Patient")." :
+       <A HREF=\"manage.php3?$_auth&id=$patient\"
          >".$this_patient->fullName(true)."</A><$STDFONT_E>
        <P>
 
@@ -74,7 +75,7 @@
          <$STDFONT_B>"._("Starting Date")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
-         ".fm_date_entry("authdtbegin")."
+         ".date_entry("authdtbegin")."
         </TD>
        </TR>
 
@@ -83,7 +84,7 @@
          <$STDFONT_B>"._("Ending Date")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
-         ".fm_date_entry("authdtend")."
+         ".date_entry("authdtend")."
         </TD>
        </TR>
 
@@ -168,9 +169,7 @@
          <$STDFONT_B>"._("Number of Visits")." : <$STDFONT_E>
         </TD>
         <TD ALIGN=LEFT>
-     ";
-     fm_number_select ("authvisits", 0, 100);
-     echo "
+     ".fm_number_select ("authvisits", 0, 100)."
         </TD>
        </TR>
 
@@ -236,7 +235,7 @@
        <$STDFONT_E></CENTER>
        <BR><BR>
        <CENTER><A HREF=\"manage.php3?$_auth&id=$patient\"
-        ><$STDFONT_B>"._("Manage_Patient")."<$STDFONT_E></A>
+        ><$STDFONT_B>"._("Manage Patient")."<$STDFONT_E></A>
        <B>|</B>
        <A HREF=\"$page_name?$_auth&patient=$patient\"
         ><$STDFONT_B>"._("$record_name")."<$STDFONT_E></A>
