@@ -61,6 +61,12 @@ if ($patient_history or $page_history) {
 </UL>
 <HR>
 <UL>
+<?php
+//----- Check for help file link
+if ( ($help_url = help_url()) != "help.php" ) print "\t<LI><A HREF=\"#\" ".
+	"onClick=\"window.open('".$help_url."', 'Help', 'width=600,height=400,".
+	"resizable=yes');\">"._("Help")."</A>\n";
+?>
 	<LI><A HREF="main.php"><?php print _("Return to Main Menu"); ?></A>
 	<LI><A HREF="logout.php"><?php print _("Logout"); ?></A>
 </UL>
