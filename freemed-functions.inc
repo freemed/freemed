@@ -6,7 +6,7 @@
   # code: jeff b (jeff@univrel.pr.uconn.edu)
   #       max k <amk@span.ch>
   # lic : GPL, v2
-  # ver : 20000115
+  # ver : 2000-01-17
 
 $__freemed_functions__ = true;
 
@@ -456,7 +456,7 @@ function freemed_display_cptcodes ($param)
     <OPTION VALUE=\"0\">$NONE_SELECTED
   ";
   $result = fdb_query ("SELECT * FROM $database.cpt
-    ORDER BY cptnameint, cptcode");
+    ORDER BY cptcode, cptnameint");
   if (!$result) {
     // don't do anything...
   } else { // 
@@ -468,14 +468,11 @@ function freemed_display_cptcodes ($param)
       $cpt_code = $row["cptcode"   ];
       $cpt_id   = $row["id"];
 
-      if ($debug) 
-        $debug_var = "[$cpt_id]";
-      else $debug_var = "";
-
       echo "
-        <OPTION VALUE=\"$cpt_id\" $selected_var
-         >$cpt_name ($cpt_code) $debug_var
-      "; // actually show it
+        <OPTION VALUE=\"$cpt_id\" ".
+         ( ($param==$row[id]) ? "SELECTED" : "" ) .
+         ">$cpt_code ($cpt_name) ".
+         ( $debug ? "[$cpt_id]" : "" )."\n";
     } // while there are more results...
   } // end master loop
 } // end function freemed_display_cptcodes
@@ -1832,8 +1829,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
     $d = substr ($w, 8, 2);  // split day
   } elseif (empty($y) and empty($m) and empty($d)) {
     $y = date ("Y")+0;
-    #m = date ("m")+0;
-    #d = date ("d")+0;
+    $m = date ("m")+0;
+    $d = date ("d")+0;
   } // end if not empty whole date
 
   switch ($pre_epoch) {
@@ -1856,6 +1853,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
     case "mdy":
      echo "
       <SELECT NAME=\"".$datevarname."_m$suffix\">
+       <OPTION VALUE=\"00\" ".
+       ( ($m==0) ? "SELECTED" : "" ).">NONE
      ";
      for ($i=1;$i<=12;$i++) {
       if ($i==$m) { $this_selected="SELECTED"; }
@@ -1866,6 +1865,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
      echo "
       </SELECT> <B>-</B>
       <SELECT NAME=\"".$datevarname."_d$suffix\">
+       <OPTION VALUE=\"00\" ".
+       ( ($d==0) ? "SELECTED" : "" ).">NONE
      ";
      for ($i=1;$i<=31;$i++) {
       if ($i==$d) { $this_selected="SELECTED"; }
@@ -1876,6 +1877,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
      echo "
       </SELECT> <B>-</B>
       <SELECT NAME=\"".$datevarname."_y$suffix\">
+       <OPTION VALUE=\"0000\" ".
+       ( ($y==0) ? "SELECTED" : "" ).">NONE
      ";
      for ($i=$starting_year;$i<=$ending_year;$i++) {
       if ($i==$y) { $this_selected="SELECTED"; }
@@ -1888,6 +1891,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
     case "ymd": default:
      echo "
       <SELECT NAME=\"".$datevarname."_y$suffix\">
+       <OPTION VALUE=\"0000\" ".
+       ( ($y==0) ? "SELECTED" : "" ).">NONE
      ";
      for ($i=$starting_year;$i<=$ending_year;$i++) {
       if ($i==$y) { $this_selected="SELECTED"; }
@@ -1897,6 +1902,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
      echo "
       </SELECT> <B>-</B>
       <SELECT NAME=\"".$datevarname."_m$suffix\">
+       <OPTION VALUE=\"00\" ".
+       ( ($m==0) ? "SELECTED" : "" ).">NONE
      ";
      for ($i=1;$i<=12;$i++) {
       if ($i==$m) { $this_selected = "SELECTED"; }
@@ -1907,6 +1914,8 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
      echo "
       </SELECT> <B>-</B>
       <SELECT NAME=\"".$datevarname."_d$suffix\">
+       <OPTION VALUE=\"00\" ".
+       ( ($d==0) ? "SELECTED" : "" ).">NONE
      ";
      for ($i=1;$i<=31;$i++) {
       if ($i==$d) { $this_selected = "SELECTED"; }
