@@ -272,39 +272,50 @@
 
     if ($allowed_amount > 0)
     {
-		// recalc the procedure balance
+      $query = "SELECT procbalorig FROM procrec WHERE id='$item'";
+      $result = $sql->query ($query);
+      if (!$result)
+      {
+            DIE ("$page_name :: DB error reading procedure");
+      }
+      $rec = $sql->fetch_array($result);
+      $allowed_difference = $rec[0] - abs($allowed_amount);
+      
+      $query = "INSERT INTO $db_name VALUES (
+                '".addslashes($cur_date)."',
+                '',
+                '".addslashes($patient)."',
+                '".fm_date_assemble("date_of_action")."',
+                '".FEEADJUST."',
+                '".addslashes($item)."',
+                '0',
+                '',
+                '',
+                '".addslashes($voucher)."',
+                '".addslashes($allowed_difference)."',
+                '',
+                'unlocked',
+                NULL
+                )";
+      $result = $sql->query ($query); 
+      if ($result) 
+          echo "<$STDFONT_B>$Adding Fee adjust to ledger.<$STDFONT_E><BR> \n";
+      else
+          echo "<$STDFONT_B>$Failed Adding Fee adjust to ledger!!<$STDFONT_E><BR> \n";
 
-                $query = "UPDATE procrec 
-				SET procbalcurrent = '".addslashes($allowed_amount)."' - procamtpaid,
-                              	procamtallowed = '".addslashes($allowed_amount)."'
-                     		WHERE id='".addslashes($item)."'";
-                $result = $sql->query ($query);
-                if ($result)
-                {
-                        echo "<$STDFONT_B>Updated procedure Allowed Amount<$STDFONT_E><BR>\n";
-                }
-                else
-                {
-                        DIE ("$page_name :: DB error updating procedure");
-                }
-
-		// recalc the procedure's charge and change the type to 6 
-		// which means a PROCEDURE charge with Fee Adjustment.
-                $query = "UPDATE payrec 
-			SET payrecamt = '".addslashes($allowed_amount)."', payrectype = '6'
-                     	WHERE payrecproc ='".addslashes($item)."' AND 
-				payrecpatient = '".addslashes($patient)."' AND payreccat = '".PROCEDURE."'";
-
-                $result = $sql->query ($query);
-                if ($result)
-                {
-                        echo "<$STDFONT_B>Updated Procedure Payrec<$STDFONT_E><BR>\n";
-                }
-                else
-                {
-                        DIE ("$page_name :: DB error updateing procedure payrec");
-                }
-
+      $query = "UPDATE procrec
+                SET procbalcurrent = '".addslashes($allowed_amount)."' - procamtpaid,
+                                procamtallowed = '".addslashes($allowed_amount)."'
+                                WHERE id='".addslashes($item)."'";
+      $result = $sql->query ($query);
+      if ($result)
+      {
+          echo "<$STDFONT_B>Updated procedure Allowed Amount<$STDFONT_E><BR>\n";
+      }
+      else
+      {
+          echo "<$STDFONT_B>Failed procedure Allowed Amount<$STDFONT_E><BR>\n";
+      }
 
     } // end allowed amount
 
@@ -316,12 +327,12 @@
                 '".fm_date_assemble("date_of_action")."',
                 '".PAYMENT."',
                 '".addslashes($item)."',
-                '0',
+                '".addslashes($payrecsource)."',
                 '',
-                '',
+                '".addslashes($payrectype)."',
                 '".addslashes($voucher)."',
                 '".addslashes($payment_amount)."',
-                '',
+                '".addslashes($payrecdescrip)."',
                 'unlocked',
                 NULL
                 )";
@@ -332,7 +343,7 @@
     $total_deducts  = $total_payments = 0;
     $total_deducts  = (abs($withhold) + abs($deductable) + abs($adjustment));
     $total_payments = $payment_amount;
-    if (($total_charges != 0) or ($total_payments != 0)) {
+    if (($total_deducts != 0) or ($total_payments != 0)) {
       $query = "UPDATE procrec
                 SET procbalcurrent = 
                       procbalcurrent - '".addslashes(
@@ -343,8 +354,40 @@
       $result = $sql->query ($query);
       if ($result) 
         echo "<$STDFONT_B>Updated procedure record.<$STDFONT_E><BR>\n";
+      else
+        echo "<$STDFONT_B>Update procedure Failed!!.<$STDFONT_E><BR>\n";
     } // end of checking for any changes
-    echo "</CENTER>\n";
+    if ($payment_resubmit == "yes") {
+      $query = "UPDATE procrec
+                SET procbilled='0'
+                WHERE id='".addslashes($item)."'";
+      $result = $sql->query ($query);
+      if ($result) 
+        echo "<$STDFONT_B>Procedure set for rebill<$STDFONT_E><BR>\n";
+      else
+        echo "<$STDFONT_B>Update procedure rebill Failed!!.<$STDFONT_E><BR>\n";
+      $query = "INSERT INTO payrec VALUES (
+                '$cur_date',
+                '0000-00-00',
+                '$patient',
+                '".fm_date_assemble("date_of_action")."',
+                '".REBILL."',
+                '".addslashes($item)."',
+                '0',
+                '0',
+                '0',
+                '',
+                '0',
+                'Rebill after Payment',
+                'unlocked',
+                NULL
+              )";
+      $result = $sql->query ($query);
+      if ($result) 
+        echo "<$STDFONT_B>Added Rebill to Ledger<$STDFONT_E><BR>\n";
+      else
+        echo "<$STDFONT_B>Add for rebill Failed!!.<$STDFONT_E><BR>\n";
+    }
     $show_submit = false;
     break; // end payment action
 
@@ -519,7 +562,6 @@
         <$HEADERFONT_E>
        </TD>
       </TR>
-
       <TR>
        <TD COLSPAN=2 ALIGN=RIGHT>
         <$STDFONT_B>Date of Action : <$STDFONT_E>
@@ -527,24 +569,56 @@
     ".fm_date_entry ("date_of_action")."
        </TD>
       </TR>
-
       <TR>
-       <TD ALIGN=RIGHT>
+      <TD COLSPAN=2 ALIGN=RIGHT><$STDFONT_B>Payment Source :<$STDFONT_E></TD>
+      <TD COLSPAN=4><SELECT NAME=\"payrecsource\">
+         <OPTION VALUE=\"0\">Insurance Payment
+       <OPTION VALUE=\"1\">Patient Payment
+       <OPTION VALUE=\"2\">Worker's Comp
+      </SELECT></TD>
+      </TR>
+      <TR>
+      <TD COLSPAN=2 ALIGN=RIGHT><$STDFONT_B>Payment Type :<$STDFONT_E></TD>
+      <TD COLSPAN=4><SELECT NAME=\"payrectype\">
+       <OPTION VALUE=\"0\">cash
+       <OPTION VALUE=\"1\">check
+       <OPTION VALUE=\"2\">money order
+       <OPTION VALUE=\"3\">credit card
+       <OPTION VALUE=\"4\">traveller's check
+       <OPTION VALUE=\"5\">EFT
+      </SELECT></TD>
+      </TR>
+      <TR>
+      <TD COLSPAN=2 ALIGN=RIGHT><$STDFONT_B>Description :<$STDFONT_E></TD> 
+      <TD COLSPAN=4><INPUT TYPE=TEXT NAME=\"payrecdescrip\" SIZE=40</TD>
+      </TR>
+      <TR>
+       <TD COLSPAN=2 ALIGN=RIGHT>
+        <$STDFONT_B>Resubmit? : <$STDFONT_E>
+       </TD>
+        <TD COLSPAN=4><INPUT TYPE=RADIO NAME=\"payment_resubmit\"
+         VALUE=\"yes\" >Yes &nbsp;&nbsp;
+        <INPUT TYPE=RADIO NAME=\"payment_resubmit\"
+         VALUE=\"no\" CHECKED>No
+       </TD>
+      </TR>
+      <TR>
+       <TD ALIGN=LEFT>
         <$STDFONT_B>Voucher<$STDFONT_E>
        </TD>
-	<TD ALIGN=RIGHT>
+	<TD ALIGN=LEFT>
         <$STDFONT_B>Withhold<$STDFONT_E>
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=LEFT>
         <$STDFONT_B>Deductable<$STDFONT_E>
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=LEFT>
         <$STDFONT_B>Adjustment<$STDFONT_E>
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=LEFT>
         <$STDFONT_B>Allowed<$STDFONT_E>
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=LEFT>
         <$STDFONT_B>Payment Amt<$STDFONT_E>
        </TD>
       </TR>
@@ -552,32 +626,32 @@
       <TR>
        <TD ALIGN=RIGHT>
         <INPUT TYPE=TEXT NAME=\"voucher\"
-         SIZE=8 MAXLENGTH=8
+         SIZE=10 MAXLENGTH=8
          VALUE=\"\">
        </TD>
 	<TD ALIGN=RIGHT>
         <INPUT TYPE=TEXT NAME=\"withhold\"
-         SIZE=8 MAXLENGTH=8
+         SIZE=10 MAXLENGTH=8
          VALUE=\"0.00\">
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=RIGHT>
         <INPUT TYPE=TEXT NAME=\"deductable\"
-         SIZE=8 MAXLENGTH=8
+         SIZE=10 MAXLENGTH=8
          VALUE=\"0.00\">
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=RIGHT>
         <INPUT TYPE=TEXT NAME=\"adjustment\"
-         SIZE=8 MAXLENGTH=8
+         SIZE=10 MAXLENGTH=8
          VALUE=\"0.00\">
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=RIGHT>
         <INPUT TYPE=TEXT NAME=\"allowed_amount\"
-         SIZE=8 MAXLENGTH=8
+         SIZE=10 MAXLENGTH=8
          VALUE=\"0.00\">
        </TD>
-	<TD ALIGN=RIGHT>&nbsp;
+	<TD ALIGN=RIGHT>
         <INPUT TYPE=TEXT NAME=\"payment_amount\"
-         SIZE=8 MAXLENGTH=8
+         SIZE=10 MAXLENGTH=8
          VALUE=\"0.00\">
        </TD>
       </TR>

@@ -36,9 +36,10 @@
                 <TD COLSPAN=2 ALIGN=CENTER><B>Billing Functions</B></TD>
        		<TD><B>Procedures</B></TD>
        		<TD><B>Billed</B></TD>
+                <TD><B>Balance</B></TD>
       		</TR>
     		"; // header of box
-
+ 		$total_unpaid = 0.00;
      		$_alternate = freemed_bar_alternate_color ();
 		while ($r = $sql->fetch_array($result)) 
 		{
@@ -77,10 +78,32 @@
                                         echo "<TD> <FONT COLOR=#ff0000>&nbspNO&nbsp</FONT></TD>";
                                 else
                                         echo "<TD>YES</TD>";
+                        
+			}
+			$billed_result = $sql->query("SELECT SUM(procbalcurrent)
+                                                       FROM procrec WHERE
+                                                       procpatient='$id'
+                                                       AND procbalcurrent>'0'");
+                        $billed = $sql->fetch_array($billed_result);
+                        if ($billed)
+                        {
+                                 $total_unpaid += $billed[0];
+                                 echo "<TD ALIGN=RIGHT>".bcadd($billed[0],0,2)."</TD>";
                         }
 
 
     		} // while there are no more
+
+                echo "<TR>
+		<TD><B>Total</B></TD>
+		<TD>&nbsp;</TD>
+		<TD>&nbsp;</TD>
+		<TD>&nbsp;</TD>
+		<TD>&nbsp;</TD>
+		<TD ALIGN=RIGHT><FONT COLOR=#ff0000>".bcadd($total_unpaid,0,2)."</TD>
+		</TR>
+		";
+
 
 	 	echo "
       		</TABLE>
@@ -95,16 +118,6 @@
         break;
 	
 
-//        echo freemed_display_itemlist(
-//    		$result,
-//    		"manage_payment_records.php",
-//    		array ( // control
-//      		_("Last Name")       => "ptlname",
-//      		_("First Name")      => "ptfname"
-//    	),array ("","",""),
-//        "", "", "",ITEMLIST_VIEW,"yes");
-//	  freemed_display_box_bottom();
-//        break;
  }  // end action
 
 

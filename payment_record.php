@@ -24,7 +24,7 @@
 
   case "addform": case "add":
    // ************** PREP STUFF ****************
-
+   $stepone_error_msg="";
    // grab all procedures for patient (with non-zero balance)
    $procs = $sql->query ("SELECT * FROM procrec
                        WHERE ((procpatient='$patient')
@@ -39,11 +39,37 @@
                ")"; 
     } // end while there are results
    } // end if there are results
+   else
+   {
+       $stepone_error_msg = "No Procedures for this Patient";
+   }
+   if ( (isset($payrecproc)) AND ($payrecproc == 0))
+   {
+       freemed_display_box_top (_("Error!")." "._($record_name));
+     echo "
+      <P>
+      <CENTER>You must select a Procedure!</CENTER>
+      <P>
+      <CENTER>
+      <FORM ACTION=\"$page_name\" METHOD=POST>
+       <INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
+       <INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"addform\">
+       <INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
+       <INPUT TYPE=SUBMIT VALUE=\"  Try Again  \">
+      </FORM>
+      </CENTER>
+     ";
+     freemed_display_box_bottom ();
+     freemed_display_html_bottom ();
+     freemed_close_db ();
+     DIE("");
+   }
 
    // *************** DISPLAY TOP **************
    //freemed_display_box_top (_("Add")." "._($record_name));
    //echo freemed_patient_box ($this_patient)."<P>\n";
 
+   
  
    // **************** FORM THE WIZARD ***************
    $wizard = new wizard (array("action", "patient", "_auth"));
@@ -97,6 +123,7 @@
        <$STDFONT_B>Rebill<$STDFONT_E>
       </TD>
      </TR>
+     <TR><TD ALIGH RIGHT><$STDFONT_B>$stepone_error_msg<$STDFONT_E></TD></TR>
     </TABLE></CENTER>"
    );
 
@@ -347,7 +374,7 @@
       <CENTER>
       <FORM ACTION=\"$page_name\" METHOD=POST>
        <INPUT TYPE=HIDDEN NAME=\"_auth\"        VALUE=\"$_auth\">
-       <INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"addform1\">
+       <INPUT TYPE=HIDDEN NAME=\"action\"       VALUE=\"addform\">
        <INPUT TYPE=HIDDEN NAME=\"patient\"      VALUE=\"$patient\">
        <INPUT TYPE=HIDDEN NAME=\"payrecproc\"   VALUE=\"$payrecproc\">
        <INPUT TYPE=HIDDEN NAME=\"payreccat\"    VALUE=\"$payreccat\">
@@ -553,7 +580,7 @@
    {
        $pay_query  = "SELECT * FROM payrec
                   WHERE payrecpatient='$patient'
-                  ORDER BY payrecdt";
+                  ORDER BY payrecproc,payrecdt";
    }
    $pay_result = $sql->query ($pay_query);
    
@@ -587,6 +614,7 @@
      <TD><B>Type</B></TD>
      <TD ALIGN=RIGHT><B>Charges</B></TD>
      <TD ALIGN=RIGHT><B>Payments</B></TD>
+     <TD ALIGN=RIGHT><B>Balance</B></TD>
      <TD ALIGN=RIGHT><B>"._("Action")."</B></TD>
     </TR>
    ";
@@ -626,19 +654,73 @@
       "; 
      echo "\n   &nbsp;</TD></TR>";
    } // wend?
-
+   $prev_proc = "$";
    while ($r = $sql->fetch_array ($pay_result)) {
      $payrecdate      = fm_date_print ($r["payrecdt"]);
      $payrecdescrip   = prepare ($r["payrecdescrip"]);
      $payrecamt       = prepare ($r["payrecamt"]);
      $payrectype      = $r["payrectype"];
+
+     // start control break processing
+     // first time in
+     if ($prev_proc=="$")
+     {
+         $prev_proc = $r["payrecproc"];
+         $proc_charges = 0.00;
+         $proc_payments = 0.00;
+     }
+     if ($prev_proc != $r["payrecproc"])
+     {  // control break
+      $proc_total = $proc_payments - $proc_charges;
+      $proc_total = bcadd ($proc_total, 0, 2);
+      if ($proc_total<0)
+      {
+          $prc_total = "<FONT COLOR=#000000>".
+          bcadd (-$proc_total, 0, 2)."</FONT>";
+      }
+      else
+      {
+         $prc_total = "-<FONT COLOR=#ff0000>".
+         bcadd (-$proc_total, 0, 2)."</FONT>";
+      } // end of creating total string/color
+
+      // display the total payments
+      $_alternate = freemed_bar_alternate_color ($_alternate);
+      echo "
+      <TR BGCOLOR=$_alternate>
+      <TD><B><$STDFONT_B SIZE=-1>SUBTOT<$STDFONT_E></B></TD>
+      <TD>&nbsp;</TD>
+      <TD>&nbsp;</TD>
+      <TD ALIGN=RIGHT>
+              <FONT COLOR=#ff0000><TT>".bcadd($proc_charges,0,2)."</TT></FONT>
+      </TD>
+      <TD ALIGN=RIGHT>
+              <TT>".bcadd($proc_payments,0,2)."</TT>
+      </TD>
+      <TD ALIGN=RIGHT>
+              <B><TT>$prc_total</TT></B>
+      </TD>
+      <TD>&nbsp;</TD>
+       </TR>
+      <TR BGCOLOR=$_alternate>
+      <TD COLSPAN=7>&nbsp;</TD>
+        </TR>
+      ";
+         $prev_proc = $r["payrecproc"];
+         $proc_charges = 0.00;
+         $proc_payments = 0.00;
+     } // end control break
+
+     // end control break processing
      switch ($r["payreccat"]) { // category switch
       case REFUND: // refunds 2
       case PROCEDURE: // charges 5
        $pay_color       = "#000000";
        $payment         = "&nbsp;";
        $charge          = bcadd($payrecamt, 0, 2);
-       $total_charges  += $payrecamt; break;
+       $total_charges  += $payrecamt; 
+       $proc_charges   += $payrecamt; 
+       break;
       case REBILL: // rebills 4
        $payment         = "&nbsp;";
        $charge          = "&nbsp;";
@@ -648,6 +730,7 @@
        $charge          = bcadd($payrecamt, 0, 2);
        $payment         = "&nbsp;";
        $total_charges  += $charge;
+       $proc_charges   += $charge; 
        break;
       case TRANSFER: // transfer 6
       case WITHHOLD: // withhold 7
@@ -656,13 +739,23 @@
        $charge          = bcadd(-$payrecamt, 0, 2);
        $payment         = "&nbsp;";
        $total_charges  += $charge;
+       $proc_charges   += $charge; 
+       break;
+      case FEEADJUST: // feeadjust 9
+       $pay_color       = "#000000";
+       $charge          = bcadd(-$payrecamt, 0, 2);
+       $payment         = "&nbsp;";
+       $total_charges  += $charge;
+       $proc_charges   += $charge; 
        break;
       case ADJUSTMENT: // adjustments 1
       case PAYMENT: default: // default is payments 0
        $pay_color       = "#ff0000";
        $payment         = bcadd($payrecamt, 0, 2);
        $charge          = "&nbsp;";
-       $total_payments += $payrecamt; break;
+       $total_payments += $payrecamt; 
+       $proc_payments += $payrecamt; 
+       break;
      } // end of category switch (for totals)
      switch ($r["payreccat"]) {
       case ADJUSTMENT: // adjustments 1
@@ -678,10 +771,7 @@
        $this_type = "rebill";
        break;
       case PROCEDURE: // charge 5
-       if ($payrectype == "6")
-           $this_type = "Fee Adjust";
-       else
-       	   $this_type = "charge";
+       $this_type = "charge";
        break;
       case TRANSFER: // transfer 6
        $this_type = "transfer";
@@ -691,6 +781,9 @@
        break;
       case DEDUCTABLE: // deductable 8
        $this_type = "deductable";
+       break;
+      case FEEADJUST: // deductable 9 
+       $this_type = "Fee Adjust";
        break;
       case PAYMENT: // payment 0
       default:  // default is payment
@@ -716,6 +809,7 @@
          <TT><B>".$payment."</B></TT>
         </FONT>
        </TD>
+       <TD ALIGN=RIGHT>&nbsp;</TD>
        <TD ALIGN=RIGHT>
      ";
 
@@ -726,8 +820,47 @@
        ><$STDFONT_B>"._("DEL")."<$STDFONT_E></A>
       "; 
 
-     echo "\n   &nbsp;</TD></TR>";
+     echo "&nbsp;</TD></TR>";
    } // wend?
+
+   // process last subtotal
+   // calc last proc subtotal
+   $proc_total = $proc_payments - $proc_charges;
+   $proc_total = bcadd ($proc_total, 0, 2);
+   if ($proc_total<0)
+   {
+       $prc_total = "<FONT COLOR=#000000>".
+       bcadd (-$proc_total, 0, 2)."</FONT>";
+   }
+   else
+   {
+       $prc_total = "-<FONT COLOR=#ff0000>".
+       bcadd (-$proc_total, 0, 2)."</FONT>";
+   } // end of creating total string/color
+
+   // display the total payments
+   $_alternate = freemed_bar_alternate_color ($_alternate);
+   echo "
+   <TR BGCOLOR=$_alternate>
+   <TD><B><$STDFONT_B SIZE=-1>SUBTOT<$STDFONT_E></B></TD>
+   <TD>&nbsp;</TD>
+   <TD>&nbsp;</TD>
+   <TD ALIGN=RIGHT>
+   <FONT COLOR=#ff0000><TT>".bcadd($proc_charges,0,2)."</TT></FONT>
+   </TD>
+   <TD ALIGN=RIGHT>
+   <TT>".bcadd($proc_payments,0,2)."</TT>
+   </TD>
+   <TD ALIGN=RIGHT>
+   <B><TT>$prc_total</TT></B>
+   </TD>
+   <TD>&nbsp;</TD>
+   </TR>
+   <TR BGCOLOR=$_alternate>
+   <TD COLSPAN=7>&nbsp;</TD>
+   </TR>
+   ";
+   // end calc last proc subtotal
 
    // calculate patient ledger total
    $patient_total = $total_payments - $total_charges;

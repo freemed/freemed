@@ -1,6 +1,21 @@
 freemed project changelog
 ($Id$)
 
+* Wed Jan 09 2001 fforest
+  - manage_bills show unpaid proc totals per patient. grand total at end
+  - generate_fixed_forms Added some warning messages to spit out durin
+      during bill generation.
+  - manage_payments handling of allowed amt (fee adjust) recoded to act more like
+      a deductable but with a twist. Looks better on ledger also.
+      pick up payrectype,source and desc for payments. also allow bill to be 
+      resubmitted from a payment add.
+  - patient issue warning messages if :
+      more than 1 insurer of a type is active.
+      more than 1 guar is active.
+  - payment_records dont allow Next without selecting a proc
+      ledger is now a control break report with subtotals by procedure.
+  - macros add FEEADJUST 9
+
 * Wed Jan 09 2001 rufustfirefly
   - fixed bug in freemed_display_arraylist() [thanks to Fred for that one]
 

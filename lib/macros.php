@@ -26,6 +26,7 @@ define (__MACROS_PHP__, true);
   define (TRANSFER,             6);
   define (WITHHOLD,             7);
   define (DEDUCTABLE,           8);
+  define (FEEADJUST,            9);
 
 } // end checking for __MACROS_PHP__
 

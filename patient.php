@@ -504,6 +504,7 @@ switch ($action) {
     if ($payer_result)
     {
 	$arr_idx = 0;
+        $prim = $sec = $tert = $wc = 0;
 	while($payer_rec = $sql->fetch_array($payer_result))
         {
 		$payerinsco[$arr_idx] 		= $payer_rec[payerinsco];
@@ -512,23 +513,45 @@ switch ($action) {
 		$payerstartdt[$arr_idx] 	= $payer_rec[payerstartdt];
 		$payerenddt[$arr_idx]	 	= $payer_rec[payerenddt];
 		$payerid[$arr_idx]		= $payer_rec[id];
+
+		$act = 0;
+          	if (date_in_range($cur_date,$payerstartdt[$arr_idx],$payerenddt[$arr_idx]))
+		{
+		        if ($payer_rec[payerstatus] == 1)
+		        {
+			    $payerstatus[$arr_idx] = _("Deleted");
+		        }
+                        else
+                        {
+			    $payerstatus[$arr_idx] = _("Active");
+                            $act = 1;
+                        }
+		}
+		else
+		{
+			$payerstatus[$arr_idx] = _("Expired");
+		}
 		switch ($payer_rec[payertype])
 		{
 		    case 0;
 			$payertype[$arr_idx] = _("Primary");
+                        if ($act) $prim++;
 			break;
 		    case 1;
 			$payertype[$arr_idx] = _("Secondary");
+                        if ($act) $sec++;
 			break;
 		    case 2;
 			$payertype[$arr_idx] = _("Tertiary");
+                        if ($act) $tert++;
 			break;
 		    case 3;
 			$payertype[$arr_idx] = _("Work Comp");
+                        if ($act) $wc++;
 			break;
-		    case 4;
-			$payertype[$arr_idx] = _("Patient");
-			break;
+		//  case 4;
+		//	$payertype[$arr_idx] = _("Patient");
+		//	break;
 		    default;
 			$payertype[$arr_idx] = _("Unknown");
 			break;
@@ -536,24 +559,19 @@ switch ($action) {
 		// display all inscos. just tell the user if active or inactive
         	$payerinsco_active[$arr_idx]=true;
 
-          	if (date_in_range($cur_date,$payerstartdt[$arr_idx],$payerenddt[$arr_idx]))
-		{
-			$payerstatus[$arr_idx] = _("Active");
-		}
-		else
-		{
-			$payerstatus[$arr_idx] = _("Expired");
-		}
-
-		if ($payer_rec[payerstatus] == 1)
-		{
-			$payerstatus[$arr_idx] = _("Deleted");
-		}
-			
-		
 		
 		$arr_idx++;
 	} //while we have payers
+        // do some editing here
+        if ($prim > 1)
+            $payer_error_msg = "Too Many Primary Insurers!";
+        if ($sec > 1)
+            $payer_error_msg = "Too Many Secondary Insurers!";
+        if ($tert > 1)
+            $payer_error_msg = "Too Many Tertiary Insurers!";
+        if ($wc > 1)
+            $payer_error_msg = "Too Many Wrokers Comp Insurers!";
+           
     } // if payer_result
     
     $ins_r = freemed_search_query( array ($ins_s_val => $ins_s_field),
@@ -637,7 +655,7 @@ switch ($action) {
      <TD ALIGN LEFT>&nbsp</TD>
      </TR>
      <TR> 
-     <TD ALIGN LEFT>$payer_error_msg</TD>
+     <TD ALIGN LEFT><B>$payer_error_msg</B></TD>
      </TR>
      <TR> 
      <TD ALIGN LEFT>&nbsp</TD>
@@ -751,6 +769,7 @@ switch ($action) {
     if ($guar_result)
     {
 	$arr_idx = 0;
+        $act=0;
 	while($guar_rec = $sql->fetch_array($guar_result))
         {
 		$guarpatient[$arr_idx] 	= $guar_rec[guarpatient];
@@ -761,28 +780,31 @@ switch ($action) {
 		$guarstatus[$arr_idx]	= $guar_rec[guarstatus];
 		$guarid[$arr_idx]	= $guar_rec[id];
 
-		// display all inscos. just tell the user if active or inactive
+		// display all guars. just tell the user if active or inactive
 
         	$guarguar_active[$arr_idx]=true;
 
           	if (date_in_range($cur_date,$guarstartdt[$arr_idx],$guarenddt[$arr_idx]))
 		{
+		    if ($guar_rec[guarstatus] == 1)
+		    {
+			$guarstatus[$arr_idx] = _("Deleted");
+		    }
+                    else
+                    {
 			$guarstatus[$arr_idx] = _("Active");
+                        $act++;
+                    }
 		}
 		else
 		{
 			$guarstatus[$arr_idx] = _("Expired");
 		}
 
-		if ($guar_rec[guarstatus] == 1)
-		{
-			$guarstatus[$arr_idx] = _("Deleted");
-		}
-			
-		
-		
 		$arr_idx++;
 	}
+        if ($act > 1)
+            $guar_error_msg = "Too many Active Guarantors!!";
     }
 
 
@@ -864,14 +886,13 @@ switch ($action) {
        <INPUT TYPE=CHECKBOX NAME=\"add_this_guar\">".(isset($guar_arr) ? 
 	"<INPUT TYPE=HIDDEN NAME=\"guar_arr\" VALUE=\"$guar_arr\">" : "")."
      
-    </TD><TD ALIGN=LEFT>
-
-    </TD></TR>
+    </TD><TD ALIGN=LEFT>&nbsp;</TD>
+    </TR>
      <TR> 
      <TD ALIGN LEFT>&nbsp</TD>
      </TR>
      <TR> 
-     <TD ALIGN LEFT>$guar_error_msg</TD>
+     <TD ALIGN LEFT><B>$guar_error_msg</B></TD>
      </TR>
      <TR> 
      <TD ALIGN LEFT>&nbsp</TD>

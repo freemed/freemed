@@ -101,6 +101,14 @@
      ";
      flush ();
 
+     // make sure patient has prim sec ter or wc insurance
+     if ( ($bill_request_type < 4) AND
+          ($this_patient->payor[$bill_request_type]->local_record["payerinsco"] == 0))
+     {
+         echo "Warning - Patient does not have insurance of this type";
+         flush();
+     }
+
      // grab current insurance company
      if ($this_patient->ptdep == 0) {
        $this_insco = $this_patient->insco[$bill_request_type];
@@ -474,6 +482,16 @@
                       $tos_stack[$cur_insco] );
        $this_auth = freemed_get_link_rec ($r[procauth], "authorizations");
        $authorized[authnum] = $this_auth[authnum];
+
+       if (!date_in_range($cur_date,$this_auth[authdtbegin],$this_auth[authdtend]))
+       {
+           if (!$this_auth[authnum])
+               echo "<B>Warning - Procedure not Authorized!!</B><BR>\n";
+           else
+               echo "<B>Warning - Authorization $this_auth[authnum] has expired!!</B><BR>\n";
+           flush();
+
+       }
 
        if ($r[procrefdoc]>0) {
          $ref_physician  = new Physician ($r[procrefdoc]);
