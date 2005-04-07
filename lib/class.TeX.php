@@ -233,12 +233,12 @@ class TeX {
 
 		// Execute pdflatex rendering
 		// (twice for appropriate page numbering)
-		`( cd /tmp; pdflatex "$tmp.ltx" "$tmp.pdf" )`;
-		`( cd /tmp; pdflatex "$tmp.ltx" "$tmp.pdf" )`;
+		`( cd /tmp; pdflatex --interaction nonstopmode "$tmp.ltx" "$tmp.pdf" )`;
+		`( cd /tmp; pdflatex --interaction nonstopmode "$tmp.ltx" "$tmp.pdf" )`;
 
 		// Remove intermediary step file(s)
 		unlink($tmp);
-		//unlink($tmp.'.ltx');
+		unlink($tmp.'.ltx');
 		unlink($tmp.'.log');
 		unlink($tmp.'.aux');
 
