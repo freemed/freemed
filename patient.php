@@ -1026,11 +1026,7 @@ switch ($action) {
 	}
 
 	//----- Load template with patient menu
-	if (file_exists("./lib/template/".$template."/patient.php")) {
-	        include_once ("./lib/template/".$template."/patient.php");
-	} else {
-	        include_once ("./lib/template/default/patient.php");
-	}
+	include_once(freemed::template_file('patient.php'));
  
 	break; // end default action
 } // end action

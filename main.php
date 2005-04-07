@@ -25,11 +25,7 @@ $this_user = CreateObject('FreeMED.User');
 $page_title = PACKAGENAME." ".__("Main Menu");
 
 //----- Load template with main menu
-if (file_exists("./lib/template/".$template."/main_menu.php")) {
-	include_once ("./lib/template/".$template."/main_menu.php");
-} else {
-	include_once ("./lib/template/default/main_menu.php");
-}
+include_once(freemed::template_file('main_menu.php'));
 
 //----- Finish display template
 template_display();

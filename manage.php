@@ -43,11 +43,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"manage.php|user $user_to_log access
 $page_title = __("Manage Patient");
 
 //----- Import template piece
-if (file_exists("lib/template/".$template."/manage.php")) {
-	include_once ("lib/template/".$template."/manage.php");
-} else {
-	include_once ("lib/template/default/manage.php");
-} // end of importing template piece
+include_once(freemed::template_file('manage.php'));
 
 //----- Display template
 template_display();

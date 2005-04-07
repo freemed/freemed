@@ -164,11 +164,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 
 	case "templateform":
 	// Include proper template file
-	if (file_exists("./lib/template/".$template."/id.php")) {
-		include_once ("./lib/template/".$template."/id.php");
-	} else {
-		include_once ("./lib/template/default/id.php");
-	}
+	include_once(freemed::template_file('id.php'));
 	
 	// Form header
 	$display_buffer .= "
@@ -201,11 +197,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"preferences.php|user $user_to_log a
 
 	case "template":
 	// Include proper template file
-	if (file_exists("./lib/template/".$template."/id.php")) {
-		include_once ("./lib/template/".$template."/id.php");
-	} else {
-		include_once ("./lib/template/default/id.php");
-	}
+	include_once(freemed::template_file('id.php'));
 	
 	// Loop through variables, and set them properly
 	foreach ($TEMPLATE_OPTIONS AS $k => $v) {

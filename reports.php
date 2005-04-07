@@ -28,11 +28,7 @@ if (!freemed::acl('report', 'menu')) {
 } // end checking ACLs
 
 //----- Load template with reports menu
-if (file_exists("./lib/template/".$template."/reports_menu.php")) {
-	include_once ("./lib/template/".$template."/reports_menu.php");
-} else {
-	include_once ("./lib/template/default/reports_menu.php");
-}
+include_once (freemed::template_file('reports_menu.php'));
 
 //----- Show template
 template_display();
