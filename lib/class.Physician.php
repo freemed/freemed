@@ -39,8 +39,7 @@ class Physician {
 		$this->phylname     = $this->local_record["phylname"];
 		$this->phyfname     = $this->local_record["phyfname"];
 		$this->phymname     = $this->local_record["phymname"];
-		$this->phyidmap     = fm_split_into_array(
-		$this->local_record["phyidmap"]);
+		$this->phyidmap     = unserialize($this->local_record["phyidmap"]);
 	} // end constructor Physician
 
 	// Method: Physician->fullName

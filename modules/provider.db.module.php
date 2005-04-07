@@ -161,7 +161,7 @@ class ProviderModule extends MaintenanceModule {
 			$r = freemed::get_link_rec ($id, $this->table_name);
 			extract ($r);
 			$phychargemap = fm_split_into_array( $r[phychargemap] );
-			$phyidmap = fm_split_into_array( $r[phyidmap] );
+			$phyidmap = unserialize($r['phyidmap']);
 
 			// disassemble ssn
 			$physsn1    = substr($physsn, 0, 3);
@@ -438,13 +438,13 @@ class ProviderModule extends MaintenanceModule {
   $insmap_buf = ""; // cache the output, as above
   $i_res = $sql->query("SELECT * FROM inscogroup");
   while ($i_r = $sql->fetch_array ($i_res)) {
-    $i_id = $i_r ["id"];
+    $i_id = $i_r ['id'];
     $insmap_buf .= "
      <TR CLASS=\"".freemed_alternate()."\">
       <TD>".prepare($i_r["inscogroup"])."</TD>
       <TD>
-       <INPUT TYPE=TEXT NAME=\"phyidmap$brackets\"
-        SIZE=15 MAXLENGTH=30 VALUE=\"".$phyidmap[$i_id]."\">
+       <INPUT TYPE=TEXT NAME=\"phyidmap[".$i_id."]\"
+        SIZE=15 MAXLENGTH=30 VALUE=\"".prepare($phyidmap[$i_id])."\">
       </TD>
      </TR>
     ";
@@ -460,7 +460,7 @@ class ProviderModule extends MaintenanceModule {
    CLASS=\"reverse\"> <!-- black border --><TR><TD>
 
     <!-- hide record zero, since it isn't used... -->
-    <INPUT TYPE=HIDDEN NAME=\"phyidmap$brackets\" VALUE=\"0\">
+    <INPUT TYPE=HIDDEN NAME=\"phyidmap[0]\" VALUE=\"0\">
 
     <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 VALIGN=MIDDLE
      ALIGN=CENTER>
@@ -492,6 +492,7 @@ class ProviderModule extends MaintenanceModule {
 			$phycellular= fm_phone_assemble("phycellular");
 			$phypager	= fm_phone_assemble("phypager");
 			$physsn		= $GLOBALS["physsn1"].$GLOBALS["physsn2"].$GLOBALS["physsn3"];
+			$phyidmap       = serialize($_REQUEST['phyidmap']);
   			if ($action=="modform") {
 				$this->_mod();
 			} else if ($action=="addform") {
