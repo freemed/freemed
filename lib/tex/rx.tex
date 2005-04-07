@@ -18,35 +18,35 @@
 \framebox[5in]{
 	\parbox{4.8in}{
 		\begin{center}
-			{\relsize{1}\textbf{{{practicename}}}} \\
-			{\relsize{-1}\textsl{{{physician}}}} \\
-			\textsl{{{physicianaddress}}, {{physiciancitystatezip}}} \\
-			\textsl{phone {{physicianphone}} fax {{physicianfax}}}
+			{\relsize{1}\textbf{**link:rxphy:physician:phypracname**}} \\
+			{\relsize{-1}\textsl{**method:Physician:fullName:rxphy**}} \\
+			\textsl{**link:rxphy:physician:phyaddr1a**, **link:rxphy:physician:phycitya**, **link:rxphy:physician:phycitya** **link:rxphy:physician:phyzipa**} \\
+			\textsl{phone **link:rxphy:physician:phyphonea:phone** fax **link:rxphy:physician:phyfaxa:phone**}
 		\end{center}
 		\begin{center}
 			\begin{tabular}{r|l}
-				\textbf{Patient} & {{patient}} \\
-			 	\textbf{SSN} & {{ssn}} \\	
+				\textbf{Patient} & **method:Patient:fullName:rxpatient** \\
+			 	\textbf{SSN} & **link:rxpatient:patient:ptdob:date** \\	
 				\  & \  \\
-				\textbf{Rx Date} & {{date}} \\
+				\textbf{Rx Date} & **field:rxdtfrom:date** \\
 				\  & \  \\
-				\textbf{Address} & {{patientaddress}} \\
-				\  & {{patientcitystatezip}} \\
+				\textbf{Address} & **link:rxpatient:patient:ptaddr1** \\
+				\  & **link:rxpatient:patient:ptcity**, **link:rxpatient:patient:ptstate** **link:rxpatient:patient:ptzip** \\
 				\  & \  \\
-				\textbf{Medication}  & {\large {{drug}}} \\
-				\  & {\large {{size}} {{units}} ({{quantity}} total)} \\
-				\textbf{Dosage} & {{{dosage}} {{units}} {{interval}} ({{form}})} \\ 
+				\textbf{Medication}  & {\large **field:rxdrug**} \\
+				\  & {\large **field:rxsize** **field:rxunit** (**field:rxquantity** total)} \\
+				\textbf{Dosage} & **field:rxdosage** **field:rxunit** **field:rxinterval** (**field:rxform**) \\ 
 				\  & \  \\
-				\textbf{Refill} & {{{refill}}} \\
+				\textbf{Refill} & **field:rxrefills** refill(s) \\
 				\  & \  \\
-				\textbf{Substitution} & {{substitution}}
+				\textbf{Substitution} & **field:rxsubstitute**
 			\end{tabular}
 		\end{center}
 		\hfill \\
-		\centerline{{\large \textbf{{{physician}}}}} 
+		\centerline{{\large \textbf{**method:Physician:fullName:rxphy**}}} 
 		\centerline{{\large Signature On File}} 
-		\hfill \\
-		\centerline{{{md5}}}
+%		\hfill \\
+%		\centerline{{{md5}}}
 	}
 }
 
