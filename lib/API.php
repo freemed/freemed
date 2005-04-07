@@ -2968,9 +2968,9 @@ function fm_htmlize_array ($variable_name, $cur_array) {
 } // end function fm_htmlize_array
 
 function fm_make_string_array($string) {
-	// ensure string ends in :
-	if (!strpos($string,":"))
-		return $string.":";
+	// ensure string ends in ,
+	if (!strpos($string,","))
+		return $string.",";
 	return $string;
 } // end function fm_make_string_array
 
@@ -2981,8 +2981,8 @@ function fm_join_from_array ($cur_array) {
 	// If it is scalar, return the value
 	if (!is_array($cur_array)) return "$cur_array";
 
-	// Otherwise compact it with ":" as the separator character
-	return implode ($cur_array, ":");
+	// Otherwise compact it with "," as the separator character
+	return implode ($cur_array, ",");
 } // end function fm_join_from_array 
 
 // Function: fm_number_select
@@ -3220,7 +3220,7 @@ function fm_split_into_array ($original_string) {
 	if (empty($original_string)) return "";
 
 	// Split and return
-	return explode (":", $original_string);
+	return explode (",", $original_string);
 } // end function fm_split_into_array
 
 function fm_value_in_array ($cur_array, $value) {
@@ -3240,13 +3240,13 @@ function fm_value_in_array ($cur_array, $value) {
 } // end function fm_split_into_array
 
 function fm_value_in_string ($cur_string, $value) {
-	// Check for ":" separator indicating hash'd array
-	if ( strpos ($cur_string, ":") > 0 ) {
+	// Check for "," separator indicating hash'd array
+	if ( ! (strpos ($cur_string, ",") === false) ) {
 		// Split it out...
 		$this_array = fm_split_into_array ($cur_string);
 		// ... then use fm_value_in_array to return the value
 		return fm_value_in_array ($this_array, $value);
-	} // end checking for ":"
+	} // end checking for ","
 
 	// Otherwise do a simple substring match check
 	//if (strstr($cur_string,$value) != "") return true;
