@@ -143,7 +143,7 @@ class PrescriptionModule extends EMRModule {
 			__("Drug") => $rxdrug,
 			__("Dosage") => $rxdosage." ".$rxunit." ".$rxinterval
 		));
-	} // end function PrescriptionModule->display
+	} // end method display
 
 	function form () {
 		global $display_buffer, $sql, $action, $id, $patient,
@@ -349,14 +349,14 @@ class PrescriptionModule extends EMRModule {
 				"id=".urlencode($patient));
 			die("");
 		}
-	} // end function PrescriptionModule->form
+	} // end method form
 
 	function prepare () {
 		// Common stuff between add/mod to prepare vars
 		global $display_buffer,
 			$rxpatient, $patient;
 		$rxpatient = $patient;
-	} // end function PrescriptionModule->prepare
+	} // end method prepare
 
 	function view () {
 		global $display_buffer, $patient;
@@ -381,53 +381,7 @@ class PrescriptionModule extends EMRModule {
 			NULL, NULL, NULL,
 			ITEMLIST_MOD | ITEMLIST_VIEW | ITEMLIST_DEL | ITEMLIST_LOCK
 		);
-	} // end function PrescriptionModule->view
-
-	function _print_mapping ($TeX, $id) {
-		$r = freemed::get_link_rec($id, $this->table_name);
-		$pt = freemed::get_link_rec($r[$this->patient_field], 'patient');
-		$ph = freemed::get_link_rec($r['rxphy'], 'physician');
-		$phyobj = CreateObject('_FreeMED.Physician', $r['rxphy']);
-		return array (
-			'patient' => $TeX->_SanitizeText($pt['ptlname'].', '.
-				$pt['ptfname'].' '.$pt['ptmname'].' ('.
-				$pt['ptid'].')'),
-			'patientaddress' => $TeX->_SanitizeText($pt['ptaddr1']).' ',
-			'patientcitystatezip' => $TeX->_SanitizeText($pt['ptcity'].', '.$pt['ptstate'].' '.$pt['ptzip']),
-			'patientdob' => $TeX->_SanitizeText(fm_date_print($pt['ptdob'])),
-			'ssn' => $TeX->_SanitizeText( empty($pt['ptssn']) ?
-				"NONE PROVIDED" :
-				substr($pt['ptssn'], 0, 3).'-'.
-				substr($pt['ptssn'], 3, 2).'-'.
-				substr($pt['ptssn'], 5, 4) ),
-			'practicename' => $TeX->_SanitizeText($ph['phypracname']),
-			'physician' => $TeX->_SanitizeText($phyobj->fullName()),
-			'physicianaddress' => $TeX->_SanitizeText($ph['phyaddr1a']),
-			'physiciancitystatezip' => $TeX->_SanitizeText($ph['phycitya'].', '.$ph['phystatea'].' '.$ph['phyzipa']),
-			'physicianphone' => $TeX->_SanitizeText(
-				substr($ph['phyphonea'], 0, 3).'-'.
-				substr($ph['phyphonea'], 3, 3).'-'.
-				substr($ph['phyphonea'], 6, 4) ),
-			'physicianfax' => $TeX->_SanitizeText(
-				substr($ph['phyfaxa'], 0, 3).'-'.
-				substr($ph['phyfaxa'], 3, 3).'-'.
-				substr($ph['phyfaxa'], 6, 4) ),
-			'physiciandea' => $TeX->_SanitizeText($ph['phydea']),
-
-			// rx specific
-			'date' => $TeX->_SanitizeText(fm_date_print($r['rxdtfrom'])),
-			'size' => $TeX->_SanitizeText($r['rxsize']),
-			'units' => $TeX->_SanitizeText($r['rxunit']),
-			'refill' => $TeX->_SanitizeText(($r['rxrefills']+0).' refill(s)'),
-			'quantity' => $TeX->_SanitizeText($r['rxquantity']),
-			'drug' => $TeX->_SanitizeText($r['rxdrug']),
-			'dosage' => $TeX->_SanitizeText($r['rxdosage']),
-			'interval' => $TeX->_SanitizeText($r['rxinterval']),
-			'form' => $TeX->_SanitizeText($r['rxform']),
-			'substitution' => $TeX->_SanitizeText($r['rxsubstitute']),
-			'md5' => $TeX->_SanitizeText(md5($r['id']))
-		);
-	} // end method _print_mapping
+	} // end method view
 
 	function fax_widget ( $varname, $id ) {
 		global $sql, ${$varname};
@@ -486,7 +440,7 @@ class PrescriptionModule extends EMRModule {
 				"p.r.n."
 			)');
 		}
-	} // end function PrescriptionModule->_update
+	} // end method _update
 
 } // end class PrescriptionModule
 
