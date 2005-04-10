@@ -10,6 +10,8 @@
 //	is to build yourself a version with bcmath support. Barring
 //	this, you can use this hack. (Jeff)
 //
+// 	A regex for exponential numbers is
+//	[-+]?([0-9]*\.)?[0-9]+([eE][-+]?[0-9]+)?
 
 // Function: bcadd
 //
@@ -30,8 +32,12 @@
 //	left and right added together with a precision of scale.
 //
 function bcadd ($left, $right, $scale) {
+	// Deal with numbers smaller than $scale
+	$_left = ($left < pow(10, -$scale)) ? 0 : $left;
+	$_right = ($right < pow(10, -$scale)) ? 0 : $right;
+
 	// first add the two numbers
-	$sum = (double)($left + $right);
+	$sum = (double)($_left + $_right);
 
 	// check for a dot in the number
 	if (strpos($sum, ".") === false) {
