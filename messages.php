@@ -74,8 +74,9 @@ switch ($action) {
 	// Push onto stack
 	page_push();
 
-	// Check for default or passed physician
-	if (!isset($msgfor)) { $msgfor = $this_user->user_number; }
+	// Check for default or passed physician ... this is a bad default
+	// to have, since no one sends to themselves. - Jeff
+	//if (!isset($msgfor)) { $msgfor = $this_user->user_number; }
 
 	// Set default urgency to 3
 	if (!isset($msgurgency)) { $msgurgency = 3; }
