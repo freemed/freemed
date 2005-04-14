@@ -72,6 +72,7 @@ function patient_lookup ( $criteria ) {
 		// Either
 		$q[] = "ptfname LIKE '%".addslashes($either)."%'";
 		$q[] = "ptlname LIKE '%".addslashes($either)."%'";
+		$q[] = "ptid LIKE '".addslashes($either)."%'";
 	}
 
 	$query = "SELECT * FROM patient WHERE ( ".join(' OR ', $q)." ) ".
