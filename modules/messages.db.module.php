@@ -73,6 +73,21 @@ class MessagesTable extends EMRModule {
 		}
 	} // end method UnreadMessages
 
+	function additional_move ( $id, $from, $to ) {
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$q = $GLOBALS['sql']->update_query(
+			$this->table_name,
+			array ( 'msgpatient' => $to ),
+			array ( 'msgunique' => $r['msgunique'] )
+		);
+		if ($r['msgunique'] > 0) {
+			syslog(LOG_INFO, "Messages| moved messages with msgunique of ".$r['msgunique']." to $to");
+			$result = $GLOBALS['sql']->query($q);
+			if (!$result) { return false; }			
+		}
+		return true;
+	} // end method additional_move
+
 	// Use _update to update table definitions with new versions
 	function _update () {
 		global $sql;
