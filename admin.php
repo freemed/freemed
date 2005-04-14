@@ -21,6 +21,7 @@ $config_vars = array (
 	"date_widget_type", // type of date widget present
 	"folded", // do we fold multipage forms?
 	"lock_override", // ability to override locked records
+	"tooltip", // show tips?
 	"fax_nocover" // remove cover page?
 );
 
@@ -163,6 +164,15 @@ if ($action=="cfgform") {
 				__("no")  => "no"
 			)
 		),
+
+		__("Show Tips?") =>
+		html_form::select_widget("tooltip",
+			array (
+				__("no")  => "0",
+				__("yes") => "1"
+			)
+		),
+
 
 		__("Fax Cover Page") =>
 		html_form::select_widget("fax_nocover",
