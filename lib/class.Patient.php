@@ -142,17 +142,30 @@ class Patient {
 	//
 	function fullName ($with_dob = false) {
 		if (!$with_dob) {
-			return $this->ptlname.", ".$this->ptfname." ".
-			$this->ptmname;
+			return $this->_fixcaps($this->ptlname).", ".
+				$this->_fixcaps($this->ptfname)." ".
+				$this->_fixcaps($this->ptmname);
 		} else {
-			return $this->ptlname.", ".$this->ptfname." ".
-			$this->ptmname." [ ".$this->ptdob." ] ";
+			return $this->_fixcaps($this->ptlname).", ".
+				$this->_fixcaps($this->ptfname)." ".
+				$this->_fixcaps($this->ptmname).
+				" [ ".$this->ptdob." ] ";
 		} // end if for checking for date of birth
 	} // end function Patient->fullName
 
+	// Method: to_text
+	//
+	//	Convert record into textual representation.
+	//
+	// Returns:
+	//
+	//	Textual representation of record.
+	//
 	function to_text ( ) {
-		return $this->ptlname.", ".$this->ptfname." ".
-			$this->ptmname." [ ".$this->ptdob." ] ".
+		return $this->_fixcaps($this->ptlname).", ".
+			$this->_fixcaps($this->ptfname)." ".
+			$this->_fixcaps($this->ptmname).
+			" [ ".$this->ptdob." ] ".
 			$this->ptid;
 	} // end method to_text
 
@@ -263,6 +276,26 @@ class Patient {
 		} // end while loop
 		return $patients;
 	} // end method get_list_name
+
+	// Method: _fixcaps
+	//
+	//	Produce proper capitalization of a string.
+	//
+	// Parameters:
+	//
+	//	$string - Original string.
+	//
+	// Returns:
+	//
+	//	Properly capitalized string.
+	//
+	function _fixcaps ( $string ) {
+		$a = explode (' ', $string);
+		foreach ($a AS $k => $v) {
+			$a[$k] = ucfirst(strtolower($v));
+		} // end foreach
+		return join(' ', $a);
+	} // end method _fixcaps
 
 } // end class Patient
 
