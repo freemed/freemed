@@ -165,13 +165,19 @@ class PatientACL extends EMRModule {
 	//
 	//	$aro - Array of ARO object ids (user_1, user_2, etc)
 	//
+	//	$obj - (optional) ACL object
+	//
 	// Returns:
 	//
 	//	Boolean, success
 	//
-	function add_acl ( $pid, $aco, $aro ) {
+	function add_acl ( $pid, $aco, $aro, $obj=NULL ) {
 		// Get cached gacl_api object from ACL module
-		$acl = module_function('ACL', '_acl_object');
+		if (!is_object($obj)) {
+			$acl = module_function('ACL', '_acl_object');
+		} else {
+			$acl = &$obj;
+		}
 
 		return $acl->add_acl(
 			array ('emr' => $aco ),
