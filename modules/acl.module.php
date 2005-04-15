@@ -7,7 +7,7 @@ LoadObjectDependency('_FreeMED.MaintenanceModule');
 class ACL extends MaintenanceModule {
 	// __("Access Control Lists")
 	var $MODULE_NAME = 'Access Control Lists';
-	var $MODULE_VERSION = '0.8.0';
+	var $MODULE_VERSION = '0.8.0.1';
 	var $MODULE_DESCRIPTION = "Access Control Lists give granular access control to every part of the FreeMED system. This module is a wrapper for the phpgacl package.";
 
 	var $MODULE_HIDDEN = true;
@@ -51,38 +51,68 @@ class ACL extends MaintenanceModule {
 	//
 	//	$id - Record ID for the new patient record.
 	//
-	function acl_patient_add ( $pid ) {
+	//	$current_user - (optional) Whether or not to add the current
+	//	user to the ACL list. Defaults to true.
+	//
+	function acl_patient_add ( $pid, $current_user = true ) {
 		global $this_user;
 
 		// Create ACL manipulation class (cached, of course)
 		$acl = $this->_acl_object();
 
-		// Only do this if patient ACLs are enabled
-		//if (freemed::config_value('acl_patient') == 1) {
-			// Create an AXO object
-			$axo = $acl->add_object(
-				'patient', // AXO group name
-				'Patient '.$pid, // Proper name ??
-				'patient_'.$pid, // ACL identifier
-				$pid, // display order
-				0, // hidden
-				'AXO' // identify this as an AXO
-			);
-			//print "made new object with axo = ".$axo."<br/>\n";
+		// Create an AXO object
+		$axo = $acl->add_object(
+			'patient', // AXO group name
+			'Patient '.$pid, // Proper name ??
+			'patient_'.$pid, // ACL identifier
+			$pid, // display order
+			0, // hidden
+			'AXO' // identify this as an AXO
+		);
+		//print "made new object with axo = ".$axo."<br/>\n";
 
-			// If this fails, we die out here
-			if (!$axo) { trigger_error(__("Failed to create patient AXO ACL control object."), E_ERROR); }
+		// If this fails, we die out here
+		if (!$axo) { trigger_error(__("Failed to create patient AXO ACL control object."), E_ERROR); }
+		// Create user object if it doesn't exist yet
+		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
 
-			// Create user object if it doesn't exist yet
-			if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
+		$_pat = freemed::get_link_rec($pid, 'patient');
 
-			if (!$this_user->isPhysician()) {
-				// TODO: Add ACL for current user
-			}
+		// Get ptpcp, ptphy{1,2,3,4}, ptdoc and add their respective
+		// user numbers to the ACL.
+		$to_add = array (
+			$this->_get_user_from_phy($_pat['ptpcp']),
+			$this->_get_user_from_phy($_pat['ptdoc']),
+			$this->_get_user_from_phy($_pat['ptphy1']),
+			$this->_get_user_from_phy($_pat['ptphy2']),
+			$this->_get_user_from_phy($_pat['ptphy3']),
+			$this->_get_user_from_phy($_pat['ptphy4'])
+		);
+		if ($current_user) { $to_add[] = $this_user->user_number; }
 
-			// Send back the appropriate ACL id (AXO)
-			return $axo;
-		//} // end if acl_patient
+		// Make sure there are no zeros
+		foreach ($to_add AS $v) { if ($v) { $u[$v] = $v; } }
+		foreach ($u AS $v) { $users[] = 'user_'.$v; }
+
+		// This is a *nasty* hack, but otherwise we loop forever.
+		include_once(dirname(__FILE__).'/patient_acl.emr.module.php');
+
+		// Add the current user to have access
+		//print "access for"; print_r($users); print "<br/>\n";
+		module_function('patientacl', 'add_acl', array(
+			$pid,
+			array (
+				'add',
+				'view',
+				'modify',
+				'delete'
+			),
+			$users,
+			$this->_acl_object()
+		));
+
+		// Send back the appropriate ACL id (AXO)
+		return $axo;
 	} // end method acl_patient_add
 
 	// Method: acl_user_add
@@ -148,6 +178,32 @@ class ACL extends MaintenanceModule {
 		}
 		return $_obj;
 	} // end method _acl_object
+
+	// Method: _get_user_from_phy
+	//
+	//	Lookup user by provider, with caching
+	//
+	// Parameters:
+	//
+	//	$phy - Provider id
+	//
+	// Returns:
+	//
+	//	User id
+	//
+	function _get_user_from_phy ( $phy ) {
+		static $_cache;
+		if (!$phy) { return 0; }
+		if (!isset($_cache[$phy])) {	
+			$select = "SELECT * FROM user WHERE userrealphy='".addslashes($phy)."' AND usertype='phy'";
+			$query = $GLOBALS['sql']->query($select);
+			if ($GLOBALS['sql']->results($query)) {
+				$r = $GLOBALS['sql']->fetch_array($query);
+				$_cache[$phy] = $r['id'];
+			}
+		}
+		return $_cache[$phy];
+	} // end method _get_user_from_phy
 
 	// Method: _setup
 	//
@@ -288,12 +344,14 @@ class ACL extends MaintenanceModule {
 				'WHERE c_option = \'acl\'');
 		}
 
-		// Version 0.8.0
+		// Version 0.8.0.1
 		//
 		//	Perform actual table changes for ACL
 		//
-		if (!version_check($version, '0.8.0')) {
+		if (!version_check($version, '0.8.0.1')) {
+			//print "drop old tables<br/>\n";
 			$this->_drop_old_tables();
+			//print "setup<br/>\n";
 			$this->_setup();
 
 			// Go through all existing user records and make sure
@@ -315,8 +373,8 @@ class ACL extends MaintenanceModule {
 				// Only loop if there are users
 				while ($r = $GLOBALS['sql']->fetch_array($result)) {
 					//print "importing patient ".$r['id']."<br/>\n";
-					// For each user, add ACL record
-					$p[] = $this->acl_patient_add($r['id']);
+					// For each user, add ACL record, but without current user perms (security fix)
+					$p[] = $this->acl_patient_add($r['id'], false);
 				}
 			}
 		}
