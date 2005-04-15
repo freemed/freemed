@@ -479,8 +479,13 @@ class TeX {
 					return $this->_SanitizeText(fm_date_print($rec[$params[1]]));
 					break;
 
+					case 'ssn':
+					return $this->_SanitizeText('('.substr($rec[$params[1]], 0, 3).'-'.substr($rec[$params[1]], 3, 2).'-'.substr($rec[$params[1]], 5, 4));
+					break;
+
 					case 'phone':
 					return $this->_SanitizeText('('.substr($rec[$params[1]], 0, 3).') '.substr($rec[$params[1]], 3, 3).'-'.substr($rec[$params[1]], 6, 4));
+					break;
 
 					default:
 					return $this->_HTMLToRichText($rec[$params[1]]);
