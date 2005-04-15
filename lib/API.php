@@ -63,7 +63,7 @@ class freemed {
 				$a = $GLOBALS['acl']->acl_query (
 					$category,
 					$permission,
-					'user',
+					'individual',
 					$user_group,
 					$axo_group,
 					$axo_item
