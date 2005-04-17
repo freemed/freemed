@@ -781,7 +781,7 @@ class EMRModule extends BaseModule {
 				"patient=$patient&action=addform&".
 				"aid=".$r['id']."&return=manage") : "" ).
 				// Additional summary icon callback
-				$this->additional_summary_icons ( $r['id'] ).
+				$this->additional_summary_icons ( $patient, $r['id'] ).
 				"</td>
 				</tr>
 				";
@@ -802,13 +802,15 @@ class EMRModule extends BaseModule {
 	//
 	// Parameters:
 	//
+	//	$patient - Patient record id
+	//
 	//	$id - Record id
 	//
 	// Returns:
 	//
 	//	HTML code for additional icons
 	//
-	function additional_summary_icons ( $id ) { return ''; }
+	function additional_summary_icons ( $patient, $id ) { return ''; }
 
 	// Method: summary_bar
 	//
