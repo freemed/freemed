@@ -1,0 +1,50 @@
+%%
+%%	$Id$
+%%	$Author$
+%%
+%%	FreeMED TeX Template
+%%	Envelopes
+%%
+
+\documentclass{article}
+
+% No normal header, footer, etc
+\usepackage[hmargin={2em,2em},vmargin={2em,2em},nohead,nofoot]{geometry}
+% Orient the page properly
+\usepackage{lscape}
+% Relative size package
+\usepackage{relsize}
+% Turn off page numbering
+\usepackage{nopageno}
+
+% Special page size settings
+\paperwidth=4.125in
+\paperheight=9.5in
+\topmargin=1in
+\leftmargin=1in
+% Special stuff for custom sized PDF output
+\setlength{\pdfpagewidth}{4.125in}
+\setlength{\pdfpageheight}{9.5in}
+
+\begin{document}
+\begin{landscape}
+
+\Large
+
+\flushleft
+\leftskip=3.2in {\relsize{1}**link:letterfrom:physician:phypracname**} \\
+\leftskip=3.2in **link:letterfrom:physician:phyaddr1a** \\
+\leftskip=3.2in **link:letterfrom:physician:phycity**, **link:letterfrom:physician:phystatea** **link:letterfrom:physician:phyzipa**
+
+\bigskip
+\ \\
+\bigskip
+\ \\
+\bigskip
+
+\leftskip=6.5in \Large {\relsize{1}**method:Patient:fullName:letterpatient**} \\
+\leftskip=6.5in \Large **link:letterpatient:patient:ptaddr1** \\
+\leftskip=6.5in \Large **link:letterpatient:patient:ptcity**, **link:letterpatient:patient:ptstate** **link:letterpatient:patient:ptzip**
+
+\end{landscape}
+\end{document}
