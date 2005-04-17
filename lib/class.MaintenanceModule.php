@@ -570,31 +570,32 @@ class MaintenanceModule extends BaseModule {
 	//
 	//	$id - Record id
 	//
+	//	$field - (optional) Defaults to id for the identifying field.
+	//
 	// Returns:
 	//
 	//	Textual version of record
 	//
-	function to_text ( $id ) {
+	function to_text ( $id, $field='id' ) {
 		if (!$id) { return __("NO RECORD FOUND"); }
-		$r = freemed::get_link_rec($id, $this->table_name);
-		if ($r['id'] == $id) {
-			if (!(strpos($this->widget_hash, "##") === false)) {
-				$value = '';
-				$hash_split = explode('##', $this->widget_hash);
-				foreach ($hash_split AS $_k => $_v) {
-					if (!($_k & 1)) {
-						$value .= prepare($_v);
-					} else {
-						$value .= prepare($r[$_v]);
-					}
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE ".$field."='".addslashes($id)."'";
+		$res = $GLOBALS['sql']->query($query);
+		$r = $GLOBALS['sql']->fetch_array($res);
+		if (!(strpos($this->widget_hash, "##") === false)) {
+			$value = '';
+			$hash_split = explode('##', $this->widget_hash);
+			foreach ($hash_split AS $_k => $_v) {
+				if (!($_k & 1)) {
+					$value .= prepare($_v);
+				} else {
+					$value .= prepare($r[$_v]);
 				}
-			} else {
-				$value = $this->widget_hash;
 			}
-			return $value;
 		} else {
-			return __("ERROR");
+			$value = $this->widget_hash;
 		}
+		return $value;
 	} // end method to_text
 
 	// Method: widget
@@ -637,7 +638,7 @@ class MaintenanceModule extends BaseModule {
 		if ($c_res['my_count'] > $threshhold) {
 			// Use Ajax "widget" instead
 			include_once(freemed::template_file('ajax.php'));
-			return ajax_widget($varname, get_class($this), $this);
+			return ajax_widget($varname, get_class($this), $this, $field);
 		}
 		$query = "SELECT * FROM ".$this->table_name." WHERE ( 1 = 1) ".
 			( $conditions ? "AND ( ".$conditions." ) " : "" ).

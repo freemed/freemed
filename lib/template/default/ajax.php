@@ -42,7 +42,7 @@ ob_end_clean();
 
 //----- Widget creation code
 
-function ajax_widget ( $name, $module, &$obj ) {
+function ajax_widget ( $name, $module, &$obj, $field='id' ) {
 	global ${$name};
 	ob_start();
 ?>
@@ -54,7 +54,7 @@ function x_<?php print $name; ?>_check_input(i) {
 		<?php if ($module == 'patient') { ?>
 		x_patient_lookup(document.getElementById(i + '_text').value, x_<?php print $name; ?>_populate);
 		<?php } else { ?>
-		x_lookup('<?php print $module; ?>', document.getElementById(i + '_text').value, x_<?php print $name; ?>_populate);
+		x_lookup('<?php print $module; ?>', document.getElementById(i + '_text').value, '<?php print $field; ?>', x_<?php print $name; ?>_populate);
 		<?php } ?>
 	} else {
 		document.getElementById(i + '_hiddendiv').innerHTML = '';
@@ -97,7 +97,7 @@ function x_<?php print $name; ?>_populate(data) {
 <table border="0" cellspacing="0" cellpadding="0">
 <tr><td><input <?php if (freemed::config_value('tooltip')) { ?> onMouseover="tooltip('<?php 
 print __("Type a portion of the entry that you want to find, then select it from the pulldown menu.");
-?>'); return true;" onMouseOut="hidetooltip(); return true;" <?php } ?> type="text" id="<?php print $name; ?>_text" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; document.getElementById('<?php print $name; ?>').value = 0; }" value="<?php if (${$name}) { print $obj->to_text(${$name}); } ?>" autocomplete="off" />
+?>'); return true;" onMouseOut="hidetooltip(); return true;" <?php } ?> type="text" id="<?php print $name; ?>_text" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; document.getElementById('<?php print $name; ?>').value = 0; }" value="<?php if (${$name}) { print $obj->to_text(${$name}, $field); } ?>" autocomplete="off" />
 <input type="hidden" id="<?php print $name; ?>" name="<?php print $name; ?>" value="<?php if (${$name}) { print htmlentities(${$name}); } ?>" />
 </td></tr>
 <tr><td width="300"><div id="<?php print $name; ?>_hiddendiv" class="hiddendiv"></div></td></tr>

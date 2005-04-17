@@ -10,7 +10,7 @@ $ajax->handle_client_request();
 
 //----- Function library
 
-function lookup ( $module, $parameter, $patient = NULL ) {
+function lookup ( $module, $parameter, $field = 'id', $patient = NULL ) {
 	$_cache = freemed::module_cache();
 	include_once(resolve_module($module));
 	if (!resolve_module($module)) { return false; }
@@ -21,8 +21,8 @@ function lookup ( $module, $parameter, $patient = NULL ) {
 	
 	// Extract keys
 	$fields = _extract_keys ( $hash );
-	foreach ($fields AS $field) {
-		$q[] = $field.' LIKE \'%'.addslashes($parameter).'%\'';
+	foreach ($fields AS $f) {
+		$q[] = $f.' LIKE \'%'.addslashes($parameter).'%\'';
 	}
 	
 	$query = "SELECT * FROM ".$table." WHERE ( ".join(' OR ', $q)." ) ".
@@ -35,7 +35,7 @@ function lookup ( $module, $parameter, $patient = NULL ) {
 		if ($count < $limit) {
 			$_res = trim(_result_to_hash($r, $hash));
 			$_res = addslashes($_res);
-			$return[] = $_res.'@'.$r['id'];
+			$return[] = $_res.'@'.$r[$field];
 		}
 	}
 	if ($count >= $limit) { $return[] = " ... "; }
@@ -66,12 +66,12 @@ function patient_lookup ( $criteria ) {
 	// If first and last, then F AND L else, F OR L
 	if ($first AND $last) {
 		// And
-		$q[] = "( ptlname LIKE '%".addslashes($last)."%' AND ".
-			" ptfname LIKE '%".addslashes($first)."%' )";
+		$q[] = "( ptlname LIKE '".addslashes($last)."%' AND ".
+			" ptfname LIKE '".addslashes($first)."%' )";
 	} else {
 		// Either
-		$q[] = "ptfname LIKE '%".addslashes($either)."%'";
-		$q[] = "ptlname LIKE '%".addslashes($either)."%'";
+		$q[] = "ptfname LIKE '".addslashes($either)."%'";
+		$q[] = "ptlname LIKE '".addslashes($either)."%'";
 		$q[] = "ptid LIKE '".addslashes($either)."%'";
 	}
 
