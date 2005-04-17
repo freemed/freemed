@@ -269,7 +269,10 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 		prepare(INSTALLATION)."</title>\n".
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
 		"HREF=\"lib/template/default/stylesheet.css\"/>\n".
-		"</head>\n".
+		"<div ID=\"dhtmltooltip\"></div>\n".
+		"<script type=\"text/javascript\" src=\"lib/template/default/tooltip.js\"></script>\n";
+	if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; }
+	print "</head>\n".
 		"<body";
 	// Check for close_on_load
 	if ($GLOBALS['__freemed']['close_on_load']) {
@@ -302,6 +305,7 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 		"</script>\n";
 	}
 	print $display_buffer;
+	if ($GLOBALS['__freemed']['footer']) { print $GLOBALS['__freemed']['footer']; }
 	print "</body>\n".
 		"</html>\n";
 } // end checking for "no_template_display"
