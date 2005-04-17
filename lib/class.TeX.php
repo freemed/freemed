@@ -236,6 +236,7 @@ class TeX {
 		$text = str_replace('<em></em>', '', $text);
 		$text = str_replace('<span style="font-decoration: underline;"></span>', '', $text);
 		$text = str_replace('<u></u>', '', $text);
+		$text = preg_replace("#<U>\s<BR\s/>\s</U>#i", "", $text);
 
 		// Also do "SPAN" tags, which are put out by HTMLarea JS,
 		// and STRONG/EM tags which IE puts out
@@ -326,6 +327,18 @@ class TeX {
 				}
 				return join(', ', $values);
 				break; // end method
+
+			case 'module':
+				// Format:
+				//	module:(module):(method):(fieldtopass)
+				return module_function (
+					$params[1],
+					$params[2],
+					array (
+						$rec[$params[3]]
+					)
+				);
+				break; // end module
 
 			case 'field':
 				// Format:
@@ -458,8 +471,10 @@ class TeX {
 		$string = str_replace("\r", "", $string);
 
 		// Sanitize {, } (do NOT escape [ and ])
-		$string = str_replace('{', '\{', $string);
-		$string = str_replace('}', '\}', $string);
+		$string = str_replace('{', '\lbrace\ ', $string);
+		$string = str_replace('}', '\lbrace\ ', $string);
+		$string = str_replace('[', '\lbrack\ ', $string);
+		$string = str_replace(']', '\rbrack\ ', $string);
 
 		// Make sure dollar sign escaping used before $+$ escaped
 		$string = str_replace('$', '\$', $string);
@@ -476,7 +491,7 @@ class TeX {
 		$string = str_replace('&lt;', '$<$', $string);
 		$string = str_replace('&gt;', '$>$', $string);
 		$string = str_replace('&', '\&', $string);
-		$string = str_replace('&nbsp;', '\\ ', $string);
+		$string = str_replace('&nbsp;', '\ ', $string);
 
 		// HTML/SGML specific texts
 		if (!$skip_html) {
