@@ -83,6 +83,19 @@ class LettersModule extends EMRModule {
 		$this->EMRModule();
 	} // end constructor LettersModule
 
+	function additional_summary_icons ( $patient, $id ) {
+		return "\n"."<a onClick=\"printWindow=".
+			"window.open('".$this->page_name."?".
+			"module=".get_class($this)."&action=print&".
+			"print_template=envelope&id=".urlencode($id)."&".
+			"patient=".urlencode($patient)."', ".
+			"'printWindow', ".
+			"'width=400,height=200,menubar=no,titlebar=no'); ".
+			"printWindow.opener=self; return true;\" ".
+			"><img SRC=\"lib/template/default/img/summary_envelope.png\"
+			BORDER=\"0\" ALT=\"".__("Print Envelope")."\"/></a>";
+	} // end method additional_summary_icons
+
 	function add () {
 		// Check for submit as add, else drop
 		switch ($_REQUEST['my_submit']) {
@@ -127,7 +140,7 @@ class LettersModule extends EMRModule {
 			Header("Location: ".$refresh);
 			die();
 		}
-	} // end function LettersModule->add
+	} // end method add
 
 	function mod () {
 		if ($_REQUEST['return'] == 'manage') {
@@ -302,7 +315,7 @@ class LettersModule extends EMRModule {
 		</div>
 		</form>
 		";
-	} // end function LettersModule->form
+	} // end method form
 
 	function display () {
 		global $display_buffer, $patient, $action, $id, $title,
@@ -412,44 +425,10 @@ class LettersModule extends EMRModule {
 			), NULL, NULL, 
 			ITEMLIST_LOCK | ITEMLIST_MOD | ITEMLIST_DEL
 		);
-	} // end function LettersModule->view()
+	} // end method view
 
-	function _print_mapping ($TeX, $id) {
-		$r = freemed::get_link_rec($id, $this->table_name);
-		$pt = freemed::get_link_rec($r[$this->patient_field], 'patient');
-		$phyobj = CreateObject('_FreeMED.Physician', $r['letterfrom']);
-		$tophyobj = CreateObject('_FreeMED.Physician', $r['letterto']);
-		$phf = freemed::get_link_rec($r['letterfrom'], 'physician');
-		$pht = freemed::get_link_rec($r['letterto'], 'physician');
-
-		// Check for enc
-		if ($r['letterenc']) {
-			$enc = 'Enc: ';
-			$es = explode(',', $r['letterenc']);
-			foreach ($es AS $e) {
-				$enchash[] = $TeX->_SanitizeText(freemed::get_link_field($e, 'enctype', 'enclosure'));
-			}
-			$enc .= join(', ', $enchash);
-			$enc .= " \\\\\n";
-			$enc .= "\\  \\\\\n";
-		} else {
-			$enc = '';
-		}
-
-		// Check for cc
-		if ($r['lettercc']) {
-			$cc = 'cc: ';
-			$drs = explode(',', $r['lettercc']);
-			foreach ($drs AS $dr) {
-				$_p = CreateObject('_FreeMED.Physician', $dr);
-				$cchash[] = $_p->fullName();
-				unset($_p);
-			}
-			$cc .= join(', ', $cchash);
-		} else {
-			$cc = '';
-		}
-		
+	/*
+		OLD PRINT MAPPING:
 		return array (
 			'date' => $TeX->_SanitizeText( fm_date_print($r['letterdt'], false) ),
 			'patient' => $TeX->_SanitizeText($pt['ptfname'].
@@ -483,7 +462,7 @@ class LettersModule extends EMRModule {
 			'tophysicianaddress' => $TeX->_SanitizeText($pht['phyaddr1a']),
 			'tophysiciancitystatezip' => $TeX->_SanitizeText($pht['phycitya'].', '.$pht['phystatea'].' '.$pht['phyzipa'])
 		);
-	} // end method _print_mapping
+	*/
 
 	function cc_widget ( $varname ) {
 		global ${$varname};
