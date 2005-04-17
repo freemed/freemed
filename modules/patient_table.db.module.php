@@ -9,11 +9,11 @@ class PatientTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Patient Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.1';
+	var $MODULE_VERSION = '0.7.2';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.7.1';
+	var $PACKAGE_MINIMUM_VERSION = '0.7.2';
 
 	var $table_name = "patient";
 
@@ -189,6 +189,17 @@ class PatientTable extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN ptsalut VARCHAR(8) AFTER ptbudg');
 		} // end 0.7.1 upgrade
+
+		// Version 0.7.2
+		//
+		//	Add indexes to speed searches on large databases
+		//
+		if (!version_check($version, '0.7.2')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD INDEX(ptlname), '.
+				'ADD INDEX(ptfname), '.
+				'ADD INDEX(ptid)');
+		} // end 0.7.2 upgrade
 	} // end function _update
 }
 
