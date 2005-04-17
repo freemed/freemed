@@ -128,6 +128,11 @@ class BaseModule extends module {
 			<input type=\"hidden\" name=\"action\" value=\"".prepare($_REQUEST['action'])."\"/>
 			<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 			<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\"/>
+			";
+			if ($_REQUEST['print_template']) {
+				$display_buffer .= "<input type=\"hidden\" name=\"print_template\" value=\"".prepare($_REQUEST['print_template'])."\"/>\n";
+			}
+			$display_buffer .= "
 			<table border=\"0\" width=\"98%\" cellspacing=\"0\">
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
@@ -188,19 +193,23 @@ class BaseModule extends module {
 			));
 
 			// Actual renderer for formatting array
-			if ($this->print_template) {
-				if ($this->table_name) {
-					$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-				} else {
-					$rec = array ( 'id' => $_REQUEST['id'] );
-				}
-				$TeX->_buffer = $TeX->RenderFromTemplate(
-					$this->print_template,
-					$rec
-				);
+			if ($this->table_name) {
+				$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
 			} else {
-				$this->_RenderTex(&$TeX, $_REQUEST['id']);
+				$rec = array ( 'id' => $_REQUEST['id'] );
 			}
+
+			// Check for overridden template
+			if (file_exists('lib/tex/'.freemed::secure_filename($_REQUEST['print_template']).'.tex')) {
+				$this_template = freemed::secure_filename($_REQUEST['print_template']);
+			} else {
+				$this_template = $this->print_template;
+			}
+
+			$TeX->_buffer = $TeX->RenderFromTemplate(
+				$this_template,
+				$rec
+			);
 		}
 
 		global $display_buffer;

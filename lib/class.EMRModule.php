@@ -780,6 +780,8 @@ class EMRModule extends BaseModule {
 				"amodule=".get_class($this)."&".
 				"patient=$patient&action=addform&".
 				"aid=".$r['id']."&return=manage") : "" ).
+				// Additional summary icon callback
+				$this->additional_summary_icons ( $r['id'] ).
 				"</td>
 				</tr>
 				";
@@ -790,6 +792,23 @@ class EMRModule extends BaseModule {
 		// Send back the buffer
 		return $buffer;
 	} // end function summary
+
+	// Method: additional_summary_icons
+	//
+	//	Callback to allow additional summary icons to be added.
+	//	Each icon should be prefixed with a linefeed (\n)
+	//	character to be equally spaced in the output. By default
+	//	this is just a stub.
+	//
+	// Parameters:
+	//
+	//	$id - Record id
+	//
+	// Returns:
+	//
+	//	HTML code for additional icons
+	//
+	function additional_summary_icons ( $id ) { return ''; }
 
 	// Method: summary_bar
 	//
@@ -1019,52 +1038,20 @@ class EMRModule extends BaseModule {
 			return $buffer;
 		} else {
 			if (!$id) return false;
+			die('here');
+
+			// Determine template
+			if ($_REQUEST['print_template']) {
+				$my_template = $_REQUEST['print_template'];
+			} else {
+				$my_template = $this->print_template;
+			}
 
 			// Handle templating elsewhere
-			if (isset($this->print_template)) {
-				return $TeX->RenderFromTemplate(
-					$this->print_template,
-					$this->_print_mapping($TeX, $id)
-				);
-			}
-
-			// Get record from ID
-			$r = freemed::get_link_rec($id, $this->table_name);
-
-			// Loop through parts
-			foreach ($this->print_format AS $garbage => $f) {
-				$print = true;
-				if (isset($f['condition'])) {
-					switch ($f['condition']) {
-						case 'isset':
-						if (!$r[$f['trigger']]) {
-							$print = false;
-						}
-						break;
-					}
-				}
-
-				if ($print) {
-					if (!(strpos($f['content'], '##') === false)) {
-						$content = $f['content'];
-					} else {
-						$content = $r[$f['content']];
-					}
-					switch ($f['type']) {
-						case 'short':
-						$TeX->AddShortItems(array(
-							$f['title'] => $this->_RenderField($content)
-						));
-						break;
-					
-						case 'long':
-						$TeX->AddLongItems(array(
-							$f['title'] => $this->_RenderField($content)
-						));
-						break;
-					} // end switch by type
-				} // end if print
-			}
+			return $TeX->RenderFromTemplate(
+				$my_template,
+				$this->_print_mapping($TeX, $id)
+			);
 		}
 	} // end method _RenderTeX
 
