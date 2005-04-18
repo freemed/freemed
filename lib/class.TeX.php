@@ -363,6 +363,10 @@ class TeX {
 					return $this->_SanitizeText('('.substr($rec[$params[1]], 0, 3).') '.substr($rec[$params[1]], 3, 3).'-'.substr($rec[$params[1]], 6, 4));
 					break;
 
+					case 'fixcase':
+					return $this->_SanitizeText($this->_FixCase($rec[$params[1]]));
+					break;
+
 					default:
 					return $this->_HTMLToRichText($rec[$params[1]]);
 					break;
@@ -393,6 +397,10 @@ class TeX {
 					return join(', ', $values);
 					break;
 
+					case 'fixcase':
+					return $this->_HTMLToRichText($this->_FixCase($linkrec[$params[3]]));
+					break;
+
 					default:
 					return $this->_HTMLToRichText($linkrec[$params[3]]);
 					break;
@@ -405,6 +413,27 @@ class TeX {
 		} // end case params
 		die("Should never reach here");
 	} // end method _ParseTag
+
+	// Method: _FixCase
+	//
+	//	Fix capitalization with what we think is "natural"
+	//	capitalization.
+	//
+	// Parameters:
+	//
+	//	$string - Original string
+	//
+	// Returns:
+	//
+	//	String with appropriate capitalization.
+	//
+	function _FixCase ( $string ) {
+		$a = explode (' ', $string);
+		foreach ($a AS $k => $v) {
+			$a[$k] = ucfirst(strtolower($v));
+		} // end foreach
+		return join(' ', $a);
+	} // end method _FixCase
 
 	// Method: _ReplaceQuotes
 	//
