@@ -428,10 +428,40 @@ class TeX {
 	//	String with appropriate capitalization.
 	//
 	function _FixCase ( $string ) {
-		$a = explode (' ', $string);
+		// Simple substitutions
+		$subs = array (
+			'Ii' => 'II', // The second
+			'Iii' => 'III', // The third
+			'Iv' => 'IV', // The fourth
+			'Po' => 'PO', // PO Box 
+			'St' => 'St.', // Street/Saint
+			'Nh' => 'NH', // New Hampshire abbrev
+			'Us' => 'US', // United States route abbrev
+		);
+		$a = explode(' ', $string);
 		foreach ($a AS $k => $v) {
 			$a[$k] = ucfirst(strtolower($v));
-		} // end foreach
+
+			// Handle obvious substitutions
+			foreach ($subs AS $s_k => $s_v) {
+				if ($a[$k] == $s_k) { $a[$k] = $s_v; }
+			}
+
+			// Handle McDonald and kin
+			if ((substr($a[$k], 0, 2) == 'Mc') and (strlen($a[$k])>3)) { 
+				$a[$k] = 'Mc' . ucfirst(strtolower(substr($a[$k], -(strlen($a[$k])-2) )));
+			}
+
+			// Handle rural routes
+			if (substr($a[$k], 0, 2) == 'Rr') { 
+				$a[$k] = strtoupper($a[$k]);
+			}
+			
+			// Handle things like 212B Baker Street
+			if ((substr($a[$k], 0, 1) + 0) > 0) {
+				$a[$k] = strtoupper($a[$k]);
+			}
+		} // end foreach part of the string
 		return join(' ', $a);
 	} // end method _FixCase
 
