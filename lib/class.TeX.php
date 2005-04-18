@@ -325,17 +325,19 @@ class TeX {
 					$values[] = call_user_method($params[2], $obj);
 					unset ($obj);
 				}
-				return join(', ', $values);
+				return $this->_SanitizeText(join(', ', $values));
 				break; // end method
 
 			case 'module':
 				// Format:
 				//	module:(module):(method):(fieldtopass)
-				return module_function (
-					$params[1],
-					$params[2],
-					array (
-						$rec[$params[3]]
+				return $this->_SanitizeText(
+					module_function (
+						$params[1],
+						$params[2],
+						array (
+							$rec[$params[3]]
+						)
 					)
 				);
 				break; // end module
