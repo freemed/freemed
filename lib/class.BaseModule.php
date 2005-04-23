@@ -194,7 +194,19 @@ class BaseModule extends module {
 
 			// Actual renderer for formatting array
 			if ($this->table_name) {
-				$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+				if ($this->summary_query) {
+					// If this is an EMR module with additional
+					// fields, import them
+					$query = "SELECT *".
+						( (count($this->summary_query)>0) ? 
+						",".join(",", $this->summary_query)." " : " " ).
+						"FROM ".$this->table_name." ".
+						"WHERE id='".addslashes($_REQUEST['id'])."'";
+						$result = $GLOBALS['sql']->query($query);
+						$rec = $GLOBALS['sql']->fetch_array($result);
+				} else {
+					$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+				} // end checking for summary_query
 			} else {
 				$rec = array ( 'id' => $_REQUEST['id'] );
 			}
