@@ -297,8 +297,21 @@ class TeX {
 				//	if:(conditiontype):(var):(test?)
 				// Needs to be broken with a 'fi' tag
 				switch ($params[1]) {
+					case 'equals':
+					$p = explode(',', $params[3]);
+					foreach ($p AS $my_p) {
+						if (!($rec[$params[2]] == $my_p)) { $this->iffi = true; }
+					}
+					break;
+
 					case 'not':
 					if ($rec[$params[2]]) { $this->iffi = true; }
+					break;
+					
+					case 'linkexists':
+					$p = explode(',', $params[2]);
+					$linkrec = freemed::get_link_rec($rec[$p[1]], $p[0]);
+					if ($linkrec[$params[3]]) { $this->iffi = true; }
 					break;
 
 					default:
@@ -387,6 +400,11 @@ class TeX {
 					case 'phone':
 					$ph = $linkrec[$params[3]];
 					return $this->_SanitizeText('('.substr($ph, 0, 3).') '.substr($ph, 3, 3).'-'.substr($ph, 6, 4));
+					break;
+
+					case 'ssn':
+					$ssn = $linkrec[$params[3]];
+					return $this->_SanitizeText('('.substr($ssn, 0, 3).'-'.substr($ssn, 3, 2).'-'.substr($ssn, 5, 4));
 					break;
 
 					case 'multiple':
