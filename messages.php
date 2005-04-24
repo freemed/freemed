@@ -414,8 +414,29 @@ switch ($action) {
 			)."</p>";
 	} else {
 		$display_buffer .= "
-		<div ALIGN=\"CENTER\">
 		<form ACTION=\"".$page_name."\" METHOD=\"POST\">
+		<div ALIGN=\"CENTER\">
+			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
+				( ($old != 1) ? 'mark' : 'remove' )."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"old\" VALUE=\"".
+				prepare($old)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"start\" VALUE=\"".
+				prepare($start)."\"/>
+			<input TYPE=\"BUTTON\" VALUE=\"".__("Select All")."\" ".
+			"onClick=\"selectAll(this.form); return true;\" ".
+			"class=\"button\"/>
+			".( ($old==0) ?
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Mark as Read")."\"/> " :
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Delete Marked Messages")."\"/> "
+			).( ($old==0 and freemed::config_value('message_delete')) ?
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Delete Marked Messages")."\" ".
+				"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently delete this message?"))."')) { return true; } else { return false; }\" />" : "" ).
+
+		"</div>
+		<div ALIGN=\"CENTER\">
 		<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\" ".
 		"CELLPADDING=\"3\" ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<tr CLASS=\"menubar\">
@@ -444,7 +465,7 @@ switch ($action) {
 			$sent_by = '';
 			if ($r['msgby']) {
 				$sentuser = CreateObject('FreeMED.User', $r['msgby']);
-				$sent_by = $sentuser->getName();
+				$sent_by = $sentuser->getDescription();
 			} else {
 				$sent_by = __("FreeMED Messaging System");
 			}
@@ -468,7 +489,7 @@ switch ($action) {
 				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
 				<td>".$r['msgurgency']."/5 ".
-				"<a class=\"button\" href=\"".page_name()."?action=addform&send_stamp=".urlencode(mktime())."&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(__("You wrote:")."\n".
+				"<a class=\"button\" href=\"".page_name()."?action=addform&send_stamp=".urlencode(mktime())."&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(sprintf(__("%s wrote:"), $sent_by)."\n".
 				":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a> ".
 				"<a class=\"button\" href=\"".page_name()."?action=addform&send_stamp=".urlencode(mktime())."&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Fwd: '.$r['msgsubject'])."\">".__("Fwd")."</a>".
 				"<a class=\"button\" href=\"".page_name()."?action=printview&id=".urlencode($r['id'])."\" target=\"msgprint\">".__("Print")."</a></td>
