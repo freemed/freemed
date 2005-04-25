@@ -310,8 +310,8 @@ class TeX {
 					
 					case 'linkexists':
 					$p = explode(',', $params[2]);
-					$linkrec = freemed::get_link_rec($rec[$p[1]], $p[0]);
-					if ($linkrec[$params[3]]) { $this->iffi = true; }
+					$linkrec = freemed::get_link_rec($rec[$p[0]], $p[1]);
+					if (!$linkrec[$params[3]]) { $this->iffi = true; }
 					break;
 
 					default:
