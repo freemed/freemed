@@ -410,7 +410,7 @@ class TeX {
 					case 'multiple':
 					$ids = explode(',', $rec[$params[1]]);
 					foreach ($ids AS $v) {
-						$linkrec = freemed::get_link_rec($ids, $params[2]);
+						$linkrec = freemed::get_link_rec($v, $params[2]);
 						
 						$values[] = $this->_HTMLToRichText($linkrec[$params[3]]);
 					}
