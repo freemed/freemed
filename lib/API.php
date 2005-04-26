@@ -887,7 +887,7 @@ class freemed {
 		$result = $sql->query ($sql_query); // check
 		$all_selected = fm_value_in_string ($blob_data, "-1");
 
-		$buffer .= "<select NAME=\"".$select_name."[]\" multiple SIZE=\"5\">\n";
+		$buffer .= "<select ID=\"".$select_name."\" NAME=\"".$select_name."[]\" multiple SIZE=\"5\">\n";
 		if ($display_all) {
 			$buffer .= "<option VALUE=\"-1\" ".
 			($all_selected ? "selected" : "").">".__("ALL")."</option>\n";
@@ -2156,6 +2156,15 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
         <a HREF=\"$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
 	"module=$module&patient=$patient&action=view&id=".
 	urlencode($this_result['id'])."\" class=\"button\">".__("VIEW")."</a>
+      ";
+    }
+    if ($flags & ITEMLIST_PRINT) {
+      $buffer .= "
+        <a href=\"javascript:return false;\" onClick=\"window.open('$page_link?".( isset($_pass) ? $_pass.'&' : '' ).
+	"module=$module&patient=$patient&action=print&id=".
+	urlencode($this_result['id'])."', 'printWindow', ".
+	"'width=400,height=200,menubar=no,titlebar=no'); return true;\" ".
+	"class=\"button\">".__("PRINT")."</a>
       ";
     }
     if (freemed::acl('support', 'view') AND 
