@@ -24,7 +24,7 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log mess
 
 $this_user = CreateObject('FreeMED.User');
 
-if ($_REQUEST['submit_action']==" ".__("Add")." ") { $action = "add"; }
+if ($_REQUEST['submit_action']==__("Send")) { $action = "add"; }
 if ($_REQUEST['submit_action']==__("Save Draft")) {
 	$_SESSION['message_draft']['for'] = $_REQUEST['msgfor'];
 	$_SESSION['message_draft']['group'] = $_REQUEST['group'];
@@ -62,7 +62,7 @@ switch ($action) {
 
 	case "addform":
 	// Set page title
-	$page_title = __("Add")." ".__($record_name);
+	$page_title = __("Send")." ".__($record_name);
 
 	// Create a send stamp
 	if (!$_REQUEST['been_here']) {
@@ -105,6 +105,19 @@ switch ($action) {
 	}
 
 	$display_buffer .= "
+	<script LANGUAGE=\"JavaScript\"><!--
+	// Form verification stuff
+	function verifyRecipients(form) {
+		var my_group = document.getElementById('group').value + 0;
+		var my_recip = document.getElementById('msgfor').value + 0;
+		if ((my_recip <= 0) && (my_group <= 0)) {
+			alert('".__("You must select a recipient.")."');
+			return false;
+		} 
+		form.elements['action'].value = 'add';
+		return true;
+	}
+	//--></script>
 	<p/>
 	<form NAME=\"myform\" ACTION=\"$page_name\" METHOD=\"POST\">
 	<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\"/>
@@ -165,8 +178,9 @@ switch ($action) {
 
 	<p/>
 	<div ALIGN=\"CENTER\">
-	<input class=\"button\" TYPE=\"SUBMIT\" ".
-	"NAME=\"submit_action\" VALUE=\" ".__("Add")." \" />
+	<input class=\"button\" TYPE=\"button\" ".
+	"NAME=\"submit_action\" VALUE=\"".__("Send")."\" ".
+	"onClick=\"this.disabled=1; if (verifyRecipients(this.form)) { this.form.submit(); } else { this.disabled=0; } \" />
 	<input class=\"button\" TYPE=\"SUBMIT\" ".
 	"NAME=\"submit_action\" VALUE=\"".__("Save Draft")."\" />
 	<input class=\"button\" TYPE=\"RESET\" VALUE=\" ".__("Clear")." \"/>
@@ -189,9 +203,9 @@ switch ($action) {
 	} else {
 		$_SESSION['message_send_stamp'][$_REQUEST['send_stamp']] = true;
 	}
-	$page_title = __("Adding")." ".__("Message");
+	$page_title = __("Sending")." ".__("Message");
 	$display_buffer .= "\n<div align=\"center\">".
-		__("Adding")." ".__("Message")." ... \n";
+		__("Sending")." ".__("Message")." ... \n";
 	$result = true;
 	$unique = mktime();
 	if ($_REQUEST['group']) {
@@ -390,7 +404,7 @@ switch ($action) {
 
 	$display_buffer .= 
 		template::link_bar(array(
-		__("Add Message") =>
+		__("Send Message") =>
 		"messages.php?action=addform",
 		( ($old != 1) ? __("Old Messages") : __("New Messages") ) =>
 		( ($old != 1) ? "messages.php?old=1" : "messages.php?old=0" ),
@@ -491,7 +505,7 @@ switch ($action) {
 				<td>".$r['msgurgency']."/5 ".
 				"<a class=\"button\" href=\"".page_name()."?action=addform&send_stamp=".urlencode(mktime())."&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(sprintf(__("%s wrote:"), $sent_by)."\n".
 				":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgfor=".urlencode($r['msgby'])."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Re: '.$r['msgsubject'])."\">".__("Reply")."</a> ".
-				"<a class=\"button\" href=\"".page_name()."?action=addform&send_stamp=".urlencode(mktime())."&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Fwd: '.$r['msgsubject'])."\">".__("Fwd")."</a>".
+				"<a class=\"button\" href=\"".page_name()."?action=addform&send_stamp=".urlencode(mktime())."&been_here=1&msgperson=".urlencode($r['msgperson'])."&msgtext=".urlencode(":: ".stripslashes($r['msgtext'])." ::\n\n")."&msgpatient=".urlencode($r['msgpatient'])."&msgsubject=".urlencode('Fwd: '.$r['msgsubject'].' (originally from '.$sent_by.')')."\">".__("Fwd")."</a>".
 				"<a class=\"button\" href=\"".page_name()."?action=printview&id=".urlencode($r['id'])."\" target=\"msgprint\">".__("Print")."</a></td>
 			</tr>
 			".( $r['msgrecip'] != $r['msgfor'] ? "
@@ -579,7 +593,7 @@ switch ($action) {
 
 	$display_buffer .= 
 		template::link_bar(array(
-		__("Add Message") =>
+		__("Send Message") =>
 		"messages.php?action=addform",
 		( ($old != 1) ? __("Old Messages") : __("New Messages") ) =>
 		( ($old != 1) ? "messages.php?old=1" : "messages.php?old=0" ),
