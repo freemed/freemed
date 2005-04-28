@@ -379,22 +379,40 @@ foreach ($static_components AS $garbage => $__component) {
 		$panel[__("Patient Information")] .= "
 			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
-			<tr><TD VALIGN=MIDDLE ALIGN=CENTER
+			<tr><td VALIGN=MIDDLE ALIGN=CENTER
 			 CLASS=\"menubar_items\" COLSPAN=2>
-			<A HREF=\"patient.php?action=modform&id=$id\" 
-			>".__("Modify")."</A>
-			</TD></tr>
-			<!-- <tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
-				<B>".__("Date of Last Visit")."</B> :
-			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
+			<a HREF=\"patient.php?action=modform&id=$id\" 
+			>".__("Modify")."</a>
+			</td></tr>
+			<!-- <tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
+				<b>".__("Date of Last Visit")."</b> :
+			</TD><td ALIGN=\"LEFT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
 				".$dolv."
-			</tr> --><tr><TD ALIGN=RIGHT VALIGN=MIDDLE WIDTH=\"50%\">
-				<B>".__("Phone Number")."</B> :
-			</TD><TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=\"50%\">
-				".$this_patient->local_record["pthphone"]."
-			</TD></tr>
+			</tr> -->
+			<tr><td ALIGN=\"RIGHT\" VALIGN=\"TOP\" WIDTH=\"50%\">
+				<b>".__("Address")."</b> :
+			</td><td ALIGN=\"LEFT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
+				".$this_patient->local_record['ptaddr1']."<br/>
+				".$this_patient->local_record['ptcity'].", 
+				".$this_patient->local_record['ptstate']."
+				".$this_patient->local_record['ptzip']."
+			</td></tr>
+			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
+				<b>".__("Home Phone")."</b> :
+			</td><td ALIGN=\"LEFT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
+				".freemed::phone_display($this_patient->local_record["pthphone"])."
+			</td></tr>
+			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
+				<b>".__("Work Phone")."</b> :
+			</td><td ALIGN=\"LEFT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
+				".freemed::phone_display($this_patient->local_record["ptwphone"])."
+			</td></tr>
+			".($this_patient->local_record['ptssn'] > 0 ? "
+			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("SSN")."</b> :</td> 
+			<td ALIGN=\"LEFT\">".substr($this_patient->local_record['ptssn'], 0, 3).'-'.substr($this_patient->local_record['ptssn'], 3, 2).'-'.substr($this_patient->local_record['ptssn'], 5, 4)."</td></tr>
+			" : "" )."
 			".($this_patient->local_record['ptpcp'] > 0 ? "
-			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("PCP")."</b>:</td> 
+			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("PCP")."</b> :</td> 
 			<td ALIGN=\"LEFT\">".prepare($pcp->fullName())."</td></tr>
 			" : "" )."
 			".($this_patient->local_record['ptrefdoc'] > 0 ? "
