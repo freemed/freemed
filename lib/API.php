@@ -1584,6 +1584,7 @@ class freemed {
 	//	Formatted phone number for display
 	//
 	function phone_display ( $phone ) {
+		if (strlen($phone) < 7) { return __("NONE"); }
 		switch (freemed::config_value('phofmt')) {
 			case "usa":
 				return '('.substr($phone, 0, 3).') '.
