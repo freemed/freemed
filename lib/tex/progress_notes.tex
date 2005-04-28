@@ -31,8 +31,9 @@
 **method:Physician:fullName:pnotesdoc** \\
 \begin{tabular}{ll}
 	NAME:	&	**method:Patient:fullName:pnotespat**	\\
-	DOB:	&	**link:patientdob:patient:ptdob:date**	\\
-	DATE:	&	\today
+	CHART:	&	**link:pnotespat:patient:ptid** 	\\
+	DOB:	&	**link:pnotespat:patient:ptdob:date**	\\
+	DATE:	&	**field:pnotesdt:date**
 \end{tabular}
 
 \begin{center}
