@@ -1571,6 +1571,40 @@ class freemed {
 		return false;
 	} // end function lock_override
 
+	// Function: freemed::phone_display
+	//
+	//	Displays phone number in system format.
+	//
+	// Parameters:
+	//
+	//	$phone - Phone number raw
+	//
+	// Returns:
+	//
+	//	Formatted phone number for display
+	//
+	function phone_display ( $phone ) {
+		switch (freemed::config_value('phofmt')) {
+			case "usa":
+				return '('.substr($phone, 0, 3).') '.
+					substr($phone, 3, 3).'-'.
+					substr($phone, 6, 4).
+					( strlen($phone)>10 ? ' '.substr($phone, 10, 4) : '' );
+				break;
+			case "fr":
+				return '+'.substr($w, 0, 2).
+					substr($w, 2, 2). 
+					substr($w, 4, 2). 
+					substr($w, 6, 2). 
+					substr($w, 8, 2); 
+				break;
+			case "unformatted":
+			default:
+				return $phone;
+				break;
+		} // end formatting case statement
+	} // end function phone_display
+
 	// Function: freemed::verify_auth
 	//
 	//	Determines if the current user is authenticated when dealing
