@@ -68,6 +68,10 @@ function patient_lookup ( $criteria ) {
 		// And
 		$q[] = "( ptlname LIKE '".addslashes($last)."%' AND ".
 			" ptfname LIKE '".addslashes($first)."%' )";
+	} elseif ($first) {
+		$q[] = "ptfname LIKE '".addslashes($first)."%'";
+	} elseif ($last) {
+		$q[] = "ptfname LIKE '".addslashes($last)."%'";
 	} else {
 		// Either
 		$q[] = "ptfname LIKE '".addslashes($either)."%'";
