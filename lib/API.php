@@ -2807,9 +2807,9 @@ function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
 		});
 		</script>
 		";
-		//$GLOBALS['__freemed']['header'] .= $header;
+		$GLOBALS['__freemed']['header'] .= $header;
 		//$GLOBALS['__freemed']['footer'] .= $footer;
-		return $header.$buffer.$footer;
+		return $buffer.$footer;
 	}
 
 	// Set months
