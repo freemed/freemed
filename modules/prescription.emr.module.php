@@ -305,6 +305,9 @@ class PrescriptionModule extends EMRModule {
 			).
 			"</div>"
 		);
+		if ($book->get_current_page == __("Sig")) {
+			$GLOBALS['__freemed']['on_load'] = "document.getElementById('rxnote').focus";
+		}
 
 		// Handle cancel
 		if ($book->is_cancelled()) {
