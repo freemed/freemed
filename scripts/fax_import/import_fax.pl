@@ -51,8 +51,8 @@ print "for i in $original*jpg*.pbm; do touch \$i.txt; done\n";
 # background layer with the OCR annotations in the image. 
 # THIS NEEDS TO BE FIXED; IT CURRENTLY DOES NOT WORK PROPERLY DUE TO
 # SYNTAX ISSUES WITH DJVUSED
-print "for i in $original*jpg*.pbm; do cjb2 \$i \$i.djvu; djvused \$i.djvu -e 'set-txt \$i.txt'; done\n";
-`for i in $original*jpg*.pbm; do cjb2 \$i \$i.djvu; djvused \$i.djvu -e 'set-txt \$i.txt'; done`;
+print "for i in $original*jpg*.pbm; do cjb2 -clean \$i \$i.djvu; djvused \$i.djvu -e 'set-txt \$i.txt'; done\n";
+`for i in $original*jpg*.pbm; do cjb2 -clean \$i \$i.djvu; djvused \$i.djvu -e 'set-txt \$i.txt'; done`;
 
 # Now, assemble all of the pages into a single multipage djvu document
 print "/usr/bin/djvm -c $original.djvu $original*jpg*djvu\n";
