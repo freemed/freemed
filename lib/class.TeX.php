@@ -314,6 +314,32 @@ class TeX {
 					if (!$linkrec[$params[3]]) { $this->iffi = true; }
 					break;
 
+					case 'lengthge':
+					if (strlen($rec[$params[2]]) < $params[3]) { $this->iffi = true; }
+					break;
+
+					case 'lengthle':
+					if (strlen($rec[$params[2]]) > $params[3]) { $this->iffi = true; }
+					break;
+
+					case 'linklengthge':
+					$p = explode(',', $params[2]);
+					$linkrec = freemed::get_link_rec($rec[$p[0]], $p[1]);
+					if (strlen($linkrec[$params[3]]) != $params[4]) { $this->iffi = true; }
+					break;
+
+					case 'linklengthge':
+					$p = explode(',', $params[2]);
+					$linkrec = freemed::get_link_rec($rec[$p[0]], $p[1]);
+					if (strlen($linkrec[$params[3]]) < $params[4]) { $this->iffi = true; }
+					break;
+
+					case 'linklengthle':
+					$p = explode(',', $params[2]);
+					$linkrec = freemed::get_link_rec($rec[$p[0]], $p[1]);
+					if (strlen($linkrec[$params[3]]) > $params[4]) { $this->iffi = true; }
+					break;
+
 					default:
 					if (!$rec[$params[2]]) { $this->iffi = true; }
 					break;
