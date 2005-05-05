@@ -495,16 +495,18 @@ class ProcedureModule extends EMRModule {
 					__("Add Another") =>
 				$this->page_name."?module=".urlencode($module).
 				"&action=addform".
-				  "&procvoucher=".urlencode($procvoucher).
+				  "&procvoucher=".urlencode($_REQUEST['procvoucher']).
 				  "&patient=".urlencode($patient).
 				  "&procdt=".fm_date_assemble("procdt").
-				  "&proccpt=$proccpt".
-				  "&procpos=$procpos".
-				  "&procdiag1=$procdiag1".
-				  "&procdiag2=$procdiag2".
-				  "&procdiag3=$procdiag3".
-				  "&procdiag4=$procdiag4".
-				  "&procphysician=".urlencode($procphysician)
+				  "&proccpt=".urlencode($_REQUEST['proccpt']).
+				  "&procpos=".urlencode($_REQUEST['procpos']).
+				  "&procdiag1=".urlencode($_REQUEST['procdiag1']).
+				  "&procdiag2=".urlencode($_REQUEST['procdiag2']).
+				  "&procdiag3=".urlencode($_REQUEST['procdiag3']).
+				  "&procdiag4=".urlencode($_REQUEST['procdiag4']).
+				  "&procauth=".urlencode($_REQUEST['procauth']).
+				  "&procrefdoc=".urlencode($_REQUEST['procrefdoc']).
+				  "&procphysician=".urlencode($_REQUEST['procphysician'])
 				))."
 				</div>
 				<p/>
@@ -512,7 +514,7 @@ class ProcedureModule extends EMRModule {
 
 			global $refresh;
 			if ($GLOBALS['return'] == 'manage') {
-				$refresh = 'manage.php?id='.urlencode($patient);
+			//	$refresh = 'manage.php?id='.urlencode($patient);
 			}
 		
 		} // end wizard done
