@@ -91,104 +91,6 @@ class AuthorizationsModule extends EMRModule {
 		$this->EMRModule();
 	} // end constructor AuthorizationsModule
 
-	function __form () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-     switch ($action) { // internal action switch
-      case "addform":
-       // do nothing
-       break; // end internal addform
-      case "modform":
-       if (($patient<1) OR (empty($patient))) {
-         $display_buffer .= __("You must select a patient.")."\n";
-         template_display ();
-       }
-       $r = freemed::get_link_rec ($id, $this->table_name);
-	foreach ($r AS $k => $v) {
-		global ${$k};
-		${$k} = stripslashes($v);
-	}
-       extract ($r);
-       break; // end internal modform
-     } // end internal action switch
-
-     $display_buffer .= "
-       <P>
-
-       <FORM ACTION=\"$this->page_name\" METHOD=POST>
-       <INPUT TYPE=HIDDEN NAME=\"action\"  VALUE=\"".
-         ( ($action=="addform") ? "add" : "mod" )."\">
-       <INPUT TYPE=HIDDEN NAME=\"id\"      VALUE=\"".prepare($id)."\">
-       <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">
-       <INPUT TYPE=HIDDEN NAME=\"authpatient\" VALUE=\"".prepare($patient)."\">
-       <INPUT TYPE=HIDDEN NAME=\"module\"  VALUE=\"".prepare($module)."\">
-       <INPUT TYPE=HIDDEN NAME=\"return\"  VALUE=\"".prepare($return)."\">
-
-	";
-
-	$display_buffer .= html_form::form_table(array(
-		__("Starting Date") =>
-		fm_date_entry("authdtbegin"),
-
-		__("Ending Date") =>
-		fm_date_entry("authdtend"),
-
-		__("Authorization Number") =>
-		html_form::text_widget("authnum", 25),
-
-		__("Authorization Type") =>
-		html_form::select_widget(
-			"authtype",
-			array(
-				__("NONE SELECTED") => "0",
-				__("physician") => "1",
-				__("insurance company") => "2",
-				__("certificate of medical neccessity") => "3",
-				__("surgical") => "4",
-				__("worker's compensation") => "5",
-				__("consulatation") => "6"
-			)
-		),
-
-		__("Authorizing Provider") =>
-		freemed_display_selectbox (
-		$sql->query("SELECT * FROM physician ORDER BY phylname,phyfname"),
-		"#phylname#, #phyfname#", "authprov"),
-
-		__("Provider Identifier") =>
-		html_form::text_widget("authprovid", 20, 15),
-
-		__("Authorizing Insurance Company") =>
-		freemed_display_selectbox ( 
-		$sql->query("SELECT * FROM insco ORDER BY insconame,inscostate,inscocity"),
-		"#insconame# (#inscocity#,#inscostate#)", "authinsco"),
-
-		__("Number of Visits") =>
-		fm_number_select ("authvisits", 0, 100),
-
-		__("Used Visits") =>
-		fm_number_select ("authvisitsused", 0, 100),
-
-		__("Remaining Visits") =>
-		fm_number_select ("authvisitsremain", 0, 100),
-
-		__("Comment") =>
-		html_form::text_widget("authcomment", 30, 100)
-
-	));
- 
-	$display_buffer .= "
-       <div ALIGN=\"CENTER\">
-       <input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"  ".
-         ( ($action=="addform") ? __("Add") : __("Modify"))."  \"/>
-       <input TYPE=\"RESET\" VALUE=\" ".__("Clear")." \" class=\"button\"/>
-	<input TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"Cancel\" class=\"button\"/>
-       </div>
-       </form>
-     ";
-	} // end function AuthorizationsModule->form()
-
 	function form_table () {
 		global $action, $sql;
 
@@ -222,17 +124,21 @@ class AuthorizationsModule extends EMRModule {
 			),
 
 			__("Authorizing Provider") =>
-			freemed_display_selectbox (
-			$sql->query("SELECT * FROM physician ORDER BY phylname,phyfname"),
-			"#phylname#, #phyfname#", "authprov"),
+			module_function (
+				'providermodule',
+				'widget',
+				array ( 'authprov' )
+			),
 	
 			__("Provider Identifier") =>
 			html_form::text_widget("authprovid", 20, 15),
 	
 			__("Authorizing Insurance Company") =>
-			freemed_display_selectbox ( 
-			$sql->query("SELECT * FROM insco ORDER BY insconame,inscostate,inscocity"),
-			"#insconame# (#inscocity#,#inscostate#)", "authinsco"),
+			module_function (
+				'insurancecompany',
+				'widget',
+				array ( 'authinsco' )
+			),
 	
 			__("Number of Visits") =>
 			fm_number_select ("authvisits", 0, 100),
@@ -246,7 +152,7 @@ class AuthorizationsModule extends EMRModule {
 			__("Comment") =>
 			html_form::text_widget("authcomment", 30, 100)
 		);
-	} // end function form_table
+	} // end method form_table
 
 	function add () {
 		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $patient;
@@ -255,7 +161,7 @@ class AuthorizationsModule extends EMRModule {
 		$authdtadd   = date("Y-m-d");
 		$authpatient = $patient;
 		$this->_add();
-	} // end function AuthorizationsModule->add()
+	} // end method add
 
 	function mod () {
 		global $authpatient, $authdtbegin, $authdtend, 
@@ -265,7 +171,7 @@ class AuthorizationsModule extends EMRModule {
 		$authdtmod = date("Y-m-d");
 		$authpatient = $patient;
 		$this->_mod();
-	} // end function AuthorizationsModule->mod()
+	} // end method mod
 
 	function view () {
 		global $display_buffer;
@@ -288,7 +194,7 @@ class AuthorizationsModule extends EMRModule {
 			),
 			array ("", "/", "")
 		);
-	} // end function AuthorizationsModule->view()
+	} // end method view
 
 } // end class AuthorizationsModule
 
