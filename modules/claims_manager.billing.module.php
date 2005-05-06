@@ -64,10 +64,15 @@ class ClaimsManager extends BillingModule {
 			case __("Search Claims"):
 			case __("Return to Search"):
 			case 'search_claims':
-			if (is_array($_REQUEST['criteria']) and
-				count($_REQUEST['criteria']) > 0 ) {
-				return $this->search_engine( );
+			$found_criteria = false;
+			if (is_array($_REQUEST['criteria'])) {
+				foreach ($_REQUEST['criteria'] AS $k => $v) {
+					if ($v and !($v==-1 and $k=='billed')) {
+						 $found_criteria = true; 
+					}
+				}
 			}
+			if ($found_criteria) { return $this->search_engine( ); }
 			break; // search engine
 		} // end switchboard
 
