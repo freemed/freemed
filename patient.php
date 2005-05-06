@@ -908,9 +908,10 @@ switch ($action) {
   break; // end action delete
 
   case "find":
-     	if (!freemed::acl_patient('emr', 'view', $id)) {
-		trigger_error(__("You don't have access to do that."), E_USER_ERROR);
-	}
+	// FIXME: remove this code
+     	//if (!freemed::acl_patient('emr', 'view', $id)) {
+	//	trigger_error(__("You don't have access to do that."), E_USER_ERROR);
+	//}
     switch ($criteria) {
       case "letter":
         $query = "SELECT ptlname,ptfname,ptdob,ptid,id FROM patient ".

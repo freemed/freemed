@@ -23,10 +23,11 @@ freemed::connect ();
 if (($id<1) AND ($_COOKIE['current_patient']>0)) { $id = $_COOKIE['current_patient']; }
  elseif (($id<1) and ($patient>0))    { $id = $patient;         }
 
-//----- Check ACLs
-if (!freemed::acl_patient('emr', 'view', $id)) {
-	trigger_error(__("You are not authorized to view patient records."), E_USER_ERROR);
-}
+//----- Check ACLs 
+//FIXME: remove (this is handled by module now)
+//if (!freemed::acl_patient('emr', 'view', $id)) {
+//	trigger_error(__("You are not authorized to view patient records."), E_USER_ERROR);
+//}
 
 // Check for access to current medical record
 if (!freemed::check_access_for_patient($id)) {
