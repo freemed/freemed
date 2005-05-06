@@ -87,6 +87,8 @@ class AuthorizationsModule extends EMRModule {
 			"authdtadd"
 		);
 
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Run parent constructor
 		$this->EMRModule();
 	} // end constructor AuthorizationsModule

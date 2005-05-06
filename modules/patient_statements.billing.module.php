@@ -19,6 +19,8 @@ class PatientStatements extends BillingModule {
 		$this->_SetMetaInformation('BillingFunctionName', __("Patient Statements"));
 		$this->_SetMetaInformation('BillingFunctionDescription', __("Generate patient statements as Adobe Acrobat (PDF) or Postscript."));
 
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Call parent constructor
 		$this->BillingModule();
 	} // end constructor PatientStatements

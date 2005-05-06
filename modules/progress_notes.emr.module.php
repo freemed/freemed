@@ -68,6 +68,8 @@ class ProgressNotes extends EMRModule {
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'pnoteseoc');
 
+		$this->acl = array ( 'emr' );
+
 		// Call parent constructor
 		$this->EMRModule();
 	} // end constructor ProgressNotes

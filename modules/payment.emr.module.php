@@ -102,6 +102,8 @@ class PaymentModule extends EMRModule {
 		);
 		$this->summary_order_by = "payrecproc DESC, __actual_id";
 
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Call parent constructor
 		$this->EMRModule();
 	} // end function paymentModule

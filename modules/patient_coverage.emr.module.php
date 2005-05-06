@@ -58,6 +58,8 @@ class PatientCoveragesModule extends EMRModule {
 			__("Date") => 'coveffdt'
 		);
 
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Call parent constructor
 		$this->EMRModule($nullvar);
 	} // end function PatientCoveragesModule

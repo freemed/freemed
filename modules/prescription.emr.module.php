@@ -126,6 +126,7 @@ class PrescriptionModule extends EMRModule {
 			"rxnote",
 			"locked" => '0'
 		);
+		$this->acl = array ('emr');
 		$this->EMRModule();
 	} // end constructor PrescriptionModule
 
