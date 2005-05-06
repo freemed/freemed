@@ -37,13 +37,7 @@ $module_template = "<a HREF=\"module_loader.php?module=#class#\"".
 $display_buffer .= "<div ALIGN=\"CENTER\">\n\n";
 
 // module loader
-$module_list = CreateObject(
-	'PHP.module_list',
-	PACKAGENAME,
-	array(
-		'cache_file' => 'data/cache/modules'
-	)
-);
+$module_list = freemed::module_cache();
 $all_modules = $module_list->generate_array(
 	$category,
 	0,

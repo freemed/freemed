@@ -26,15 +26,7 @@ if ($num_summary_items < 1) $num_summary_items = 5;
 $display_buffer .= freemed::patient_box($this_patient);
 
 //----- Create module list
-if (!is_object($module_list)) {
-	$module_list = CreateObject(
-		'PHP.module_list',
-		PACKAGENAME,
-		array(
-			'cache_file' => 'data/cache/modules'	
-		)
-	);
-}
+if (!is_object($module_list)) { $module_list = freemed::module_cache(); }
 	
 //----- Suck in management panels
 //-- Static first...

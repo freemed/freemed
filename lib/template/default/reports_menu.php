@@ -13,13 +13,7 @@ $module_template = "
 ";
 
 // Module loader
-$module_list = CreateObject(
-	'PHP.module_list',
-	PACKAGENAME,
-	array(
-		'cache_file' => 'data/cache/modules'
-	)
-);
+$module_list = freemed::module_cache();
 if (!$module_list->empty_category($category)) {
 	$display_buffer .= "
 	<div class=\"section\">".__("Reports")."</div><br/>
