@@ -138,7 +138,7 @@ $book->add_page("Static Components",
 		my_select_widget (
 			"static_components[appointments][order]",
 			array (
-				'1',
+				'1 ('.__("top").')' => '1',
 				'2',
 				'3',
 				'4',
@@ -146,7 +146,7 @@ $book->add_page("Static Components",
 				'6',
 				'7',
 				'8',
-				'9'
+				'9 ('.__("bottom").')' => '9'
 			),
 			$static_components[appointments][order]
 		),
@@ -158,7 +158,7 @@ $book->add_page("Static Components",
 		my_select_widget (
 			"static_components[custom_reports][order]",
 			array (
-				'1',
+				'1 ('.__("top").')' => '1',
 				'2',
 				'3',
 				'4',
@@ -166,7 +166,7 @@ $book->add_page("Static Components",
 				'6',
 				'7',
 				'8',
-				'9'
+				'9 ('.__("bottom").')' => '9'
 			),
 			$static_components[custom_reports][order]
 		),
@@ -178,7 +178,7 @@ $book->add_page("Static Components",
 		my_select_widget (
 			"static_components[medical_information][order]",
 			array (
-				'1',
+				'1 ('.__("top").')' => '1',
 				'2',
 				'3',
 				'4',
@@ -186,7 +186,7 @@ $book->add_page("Static Components",
 				'6',
 				'7',
 				'8',
-				'9'
+				'9 ('.__("bottom").')' => '9'
 			),
 			$static_components[medical_information][order]
 		),
@@ -198,7 +198,7 @@ $book->add_page("Static Components",
 		my_select_widget (
 			"static_components[messages][order]",
 			array (
-				'1',
+				'1 ('.__("top").')' => '1',
 				'2',
 				'3',
 				'4',
@@ -206,7 +206,7 @@ $book->add_page("Static Components",
 				'6',
 				'7',
 				'8',
-				'9'
+				'9 ('.__("bottom").')' => '9'
 			),
 			$static_components[messages][order]
 		),
@@ -218,7 +218,7 @@ $book->add_page("Static Components",
 		my_select_widget (
 			"static_components[patient_information][order]",
 			array (
-				'1',
+				'1 ('.__("top").')' => '1',
 				'2',
 				'3',
 				'4',
@@ -226,7 +226,7 @@ $book->add_page("Static Components",
 				'6',
 				'7',
 				'8',
-				'9'
+				'9 ('.__("bottom").')' => '9'
 			),
 			$static_components[patient_information][order]
 		),
@@ -238,7 +238,7 @@ $book->add_page("Static Components",
 		my_select_widget (
 			"static_components[photo_id][order]",
 			array (
-				'1',
+				'1 ('.__("top").')' => '1',
 				'2',
 				'3',
 				'4',
@@ -246,7 +246,7 @@ $book->add_page("Static Components",
 				'6',
 				'7',
 				'8',
-				'9'
+				'9 ('.__("bottom").')' => '9'
 			),
 			$static_components[photo_id][order]
 		)
@@ -256,19 +256,14 @@ $book->add_page("Static Components",
 );
 
 //----- Create module list for modular configuration
-$module_list = CreateObject(
-	'PHP.module_list',
-	PACKAGENAME,
-	array(
-		'cache_file' => 'data/cache/modules'	
-	)
-);
+$module_list = freemed::module_cache();
 
 //----- This is *so* jimmy rigged... -----
 
 // Make sure that whatever it is, it's an array
-if (!is_array($modular_components))
+if (!is_array($modular_components)) {
 	$modular_components = array($modular_components);
+}
 
 // Create basic template for split
 $module_template = "#name#:#class#/";
@@ -290,25 +285,30 @@ foreach($class_array AS $k => $class_pair) {
 		if (!isset($modular_components[$val][order])) {
 			$modular_components[$val][order] = 5;
 		}
-		$modules_to_choose[__($key)] =
-			my_checkbox_widget (
-				"modular_components[$val][module]", $val, $modular_components[$val][module]
-			).
-			my_select_widget (
-				"modular_components[$val][order]",
-				array (
-					'1',
-					'2',
-					'3',
-					'4',
-					'5',
-					'6',
-					'7',
-					'8',
-					'9'
-				),
-				$modular_components[$val][order]
-			);
+
+		// Check for access using ACLs
+		if (freemed::module_check_acl($val)) {
+			// Actually add it
+			$modules_to_choose[__($key)] =
+				my_checkbox_widget (
+					"modular_components[$val][module]", $val, $modular_components[$val][module]
+				).
+				my_select_widget (
+					"modular_components[$val][order]",
+					array (
+						'1 ('.__("top").')' => '1',
+						'2',
+						'3',
+						'4',
+						'5',
+						'6',
+						'7',
+						'8',
+						'9 ('.__("bottom").')' => '9'
+					),
+					$modular_components[$val][order]
+				);
+		} // end freemed::module_check_acl check
 	} // end checking for empties
 } // end while loop
 

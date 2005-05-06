@@ -438,6 +438,9 @@ foreach ($modular_components AS $garbage => $__component) {
 		);
 	}
 	if ($module_list->check_for($component['module']) and (!$already_set[$component['module']])) {
+		// Wrap this whole thing in ACL check
+		if (freemed::module_check_acl($component['module'])) {
+
 		// Execute proper portion and add to panel
 		$modules[__($module_list->get_module_name($component['module']))] =
 			$component['module'];
@@ -459,6 +462,8 @@ foreach ($modular_components AS $garbage => $__component) {
 
 		$already_set[$component['module']] = true;
 		$ms[__($module_list->get_module_name($component['module']))] = $component;
+
+		} // end wrapper ACL check
 	} else {
 		// Don't do anything if it doesn't exist
 	} // end checking for component existing
