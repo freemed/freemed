@@ -114,6 +114,12 @@ class PatientTable extends MaintenanceModule {
 			'iso' => SQL__VARCHAR(15),
 			'id' => SQL__SERIAL
 		);
+		// Define all indices
+		$this->table_keys = array ( 
+			'id',
+			'ptlname', 'ptfname',
+			'ptid'
+		);
 
 		// Call parent constructor
 		$this->MaintenanceModule();
