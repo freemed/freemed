@@ -44,6 +44,8 @@ class BaseModule extends module {
 		$this->setup();
 		// Load language files, if necessary
 		GettextXML::textdomain(strtolower(get_class($this)));
+		// Push acl information, if there is any
+		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
 	} // end constructor BaseModule
 
 	// Method: BaseModule->check_vars

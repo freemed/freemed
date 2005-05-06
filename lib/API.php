@@ -616,6 +616,45 @@ class freemed {
 		return version_check($_config["$module"], $minimum_version);
 	} // end function freemed::module_check
 
+	// Function: freemed::module_check_acl
+	//
+	//	Check to see if module is allowable via ACLs
+	//
+	// Parameters:
+	//
+	//	$module - Module class name
+	//
+	//	$permission - Permission type (view, add, mod, et cetera)
+	//
+	// Returns:
+	//
+	//	Boolean value, true or false
+	//
+	function module_check_acl ( $module, $permission='' ) {
+		// Get meta value for acl
+		$m_acl = freemed::module_get_meta ( $module, 'acl' );
+		if (!is_array($m_acl)) {
+			// By default if there are no restrictions, allow
+			return true;
+		} else {
+			// Check each individual ACL specified, if any work, ok
+			foreach ( $m_acl AS $__grbge => $v ) {
+				if (!$permission) {
+					switch ($v) {
+						case 'bill': $p = 'menu'; break;
+						default: $p = 'view'; break;
+					}
+				} else {
+					$p = $permission;
+				}
+				if (freemed::acl($v, $permission)) { return true; }
+			} // end foreach m_acl
+
+			// If nothing passes, we fail
+			return false;
+		} // end if not array
+	} // end function module_check_acl
+
 	// Function: freemed::module_get_value
 	//
 	//	Gets a cached module value (such as "MODULE_NAME", etc)
@@ -937,7 +976,7 @@ class freemed {
 		if (!is_object($patient_object)) return NULL;
 		
 		// Make sure template functions are included
-		include_once('lib/template/'.$GLOBALS['template'].'/lib.php');
+		include_once(freemed::template_file('lib.php'));
 
 		return template::patient_box($patient_object);	
 	} // end function freemed::patient_box
@@ -3485,11 +3524,7 @@ function template_display ($terminate_on_execute=true) {
 	global $template; // localize template
 	foreach ($GLOBALS AS $k => $v) global ${$k};
 
-	if (file_exists("lib/template/".$template."/template.php")) {
-		include_once ("lib/template/".$template."/template.php");
-	} else { // otherwise load the default template
-		include_once ("lib/template/default/template.php");
-	} // end template load
+	include_once (freemed::template_file('template.php'));
 
 	// Kill everything after this has been displayed
 	if ($terminate_on_execute) die("");
