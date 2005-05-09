@@ -647,7 +647,7 @@ class freemed {
 				} else {
 					$p = $permission;
 				}
-				if (freemed::acl($v, $permission)) { return true; }
+				if (freemed::acl($v, $p)) { return true; }
 			} // end foreach m_acl
 
 			// If nothing passes, we fail
