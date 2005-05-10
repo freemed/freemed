@@ -7,13 +7,15 @@ $page_name = "manage.php";
 include_once ("lib/freemed.php");
 
 //----- Set current patient cookie if it's not set...
+$id = $_REQUEST['id'];
+$patient = $_REQUEST['patient'];
+if (!$id and $patient) { $id = $patient; }
 if ($id != $_SESSION['current_patient']) {
 	$_SESSION['current_patient'] = $id;
 	SetCookie('current_patient', $id);
 }
 
 //----- Push patient onto list
-$id = $_REQUEST['id'];
 patient_push($id);
 
 //----- Login/authenticate
@@ -21,7 +23,7 @@ freemed::connect ();
 
 //----- Determine ID
 if (($id<1) AND ($_COOKIE['current_patient']>0)) { $id = $_COOKIE['current_patient']; }
- elseif (($id<1) and ($patient>0))    { $id = $patient;         }
+elseif (($id<1) and ($_REQUEST['patient']>0)) { $id = $_REQUEST['patient']; }
 
 //----- Check ACLs 
 //FIXME: remove (this is handled by module now)

@@ -100,6 +100,7 @@ $display_buffer .= "
           __("Last Name") => 'ptlname',
 	  __("First Name") => 'ptfname',
 	  __("Date of Birth") => 'ptdob',
+	  __("Age") => '_age',
 	  __("Internal Practice ID") => 'ptid',
 	  __("City") => 'ptcity',
 	  __("State") => 'ptstate',
@@ -134,6 +135,18 @@ $display_buffer .= "
       </form>
       <p/>
 
+      <form ACTION=\"manage.php\" METHOD=\"GET\" name=\"ssearch\">
+       <b>".__("Patient Smart Search")."</b>
+      <br/>
+	<small><i>".__("Name ('last, first' or 'first last')")."</i></small>
+      ".freemed::patient_widget('patient', '', '', true)."
+	</form>
+	<p/>
+      </div>
+";
+
+// TODO: Remove old form
+$______display_buffer .= "
       <form ACTION=\"$page_name\" METHOD=\"POST\" name=\"ssearch\">
        <b>".__("Patient Smart Search")."</b>
       <br/>
@@ -145,8 +158,9 @@ $display_buffer .= "
 	</form>
 	<p/>
       </div>
+";
 
-      ".template::link_bar(
+$display_buffer .= template::link_bar(
       array(
       		( ($_total < 100) ? __("Show All Patients") : '' ) =>
       		( ($_total < 100) ? "$page_name?action=find&criteria=all&f1=" : '' ),

@@ -997,16 +997,19 @@ class freemed {
 	//	is passed to the child window that is created. Defaults to
 	//	"submit_action".
 	//
+	//	$autosubmit - (optional) Whether or not to submit on click.
+	//	Boolean, defaults to false.
+	//
 	// Returns:
 	//
 	//	XHTML compliant patient selection widget code.
 	//
-	function patient_widget ( $varname, $formname="myform", $submitname="submit_action" ) {
+	function patient_widget ( $varname, $formname="myform", $submitname="submit_action", $autosubmit = false ) {
 		global ${$varname};
 
 		include_once(freemed::template_file('ajax.php'));
 		if (${$varname}) { $_obj = CreateObject('FreeMED.Patient', ${$varname}); }
-		return ajax_widget($varname, 'patient', $_obj);
+		return ajax_widget($varname, 'patient', $_obj, 'id', $autosubmit);
 
 		// If it is set, show patient name, else widget
 		if (${$varname} > 0) {

@@ -42,7 +42,7 @@ ob_end_clean();
 
 //----- Widget creation code
 
-function ajax_widget ( $name, $module, &$obj, $field='id' ) {
+function ajax_widget ( $name, $module, &$obj, $field='id', $autosubmit=false ) {
 	global ${$name};
 	ob_start();
 ?>
@@ -65,6 +65,9 @@ function x_<?php print $name; ?>_set_field (k, v) {
 	document.getElementById('<?php print $name; ?>_hiddendiv').style.display = 'none';
 	document.getElementById('<?php print $name; ?>_text').value = k;
 	document.getElementById('<?php print $name; ?>').value = v;
+	<?php if ($autosubmit) { ?>
+	document.getElementById('<?php print $name; ?>').form.submit();
+	<?php } ?>
 }
 
 function x_<?php print $name; ?>_populate(data) {
