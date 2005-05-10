@@ -138,7 +138,8 @@ class BaseModule extends module {
 			<table border=\"0\" width=\"98%\" cellspacing=\"0\">
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
+				 onClick=\"document.getElementById('print_method_printer').click(); return true;\">
 
 				<td width=\"50\">
 				<input type=\"radio\" 
@@ -151,7 +152,8 @@ class BaseModule extends module {
 			</tr>
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
+				 onClick=\"document.getElementById('print_method_fax').click(); return true;\">
 				<td width=\"50\">
 				<input type=\"radio\"
 				 name=\"print_method\"
@@ -162,7 +164,8 @@ class BaseModule extends module {
 			</tr>
 			<tr class=\"PrintContainerItem\"
 			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\">
+				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
+				 onClick=\"document.getElementById('print_method_browser').click(); return true;\">
 				 <td width=\"50\">
 				 <input type=\"radio\"
 				  name=\"print_method\"
@@ -269,7 +272,8 @@ class BaseModule extends module {
 				$file = $TeX->RenderToPDF(!empty($this->print_template));
 			}
 			$fax = CreateObject('_FreeMED.Fax', $file, array (
-				'sender' => PACKAGENAME.' v'.DISPLAY_VERSION
+				'sender' => $this_user->user_descrip,
+				'comment' => __("HIPPA Compliance Notice: This transmission contains sensitive medical data.")
 				));
 			$output = $fax->Send($_REQUEST['fax_number']);
 			$display_buffer .= "<b>".$output."</b>\n";
