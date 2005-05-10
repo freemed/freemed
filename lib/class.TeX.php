@@ -507,6 +507,11 @@ class TeX {
 			if ((substr($a[$k], 0, 1) + 0) > 0) {
 				$a[$k] = strtoupper($a[$k]);
 			}
+
+			// Handle single letter abbreviations
+			if (strlen($a[$k]) == 1) {
+				$a[$k] = strtoupper($a[$k]).'.';
+			}
 		} // end foreach part of the string
 		return join(' ', $a);
 	} // end method _FixCase
