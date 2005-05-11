@@ -273,6 +273,12 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 		"<div ID=\"dhtmltooltip\"></div>\n".
 		"<script type=\"text/javascript\" src=\"lib/template/default/tooltip.js\"></script>\n";
 	if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; }
+	if ($refresh) { print "<meta HTTP-EQUIV=\"REFRESH\" CONTENT=\"0;URL=".$refresh."\">\n"; }
+	if ($GLOBALS['__freemed']['automatic_refresh']) {
+		print "<meta HTTP-EQUIV=\"REFRESH\" CONTENT=\"".
+			$GLOBALS['__freemed']['automatic_refresh'].";URL=".
+			basename($_SERVER['REQUEST_URI'])."\">\n";
+	}
 	// Include key bindings
 	include_once(freemed::template_file('key_bindings.php'));
 	print "</head>\n".
