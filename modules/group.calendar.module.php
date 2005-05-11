@@ -194,6 +194,25 @@ class GroupCalendar extends CalendarModule {
 
 		// Finally display the calendar
 		$display_buffer .= $this->displayCalendar($physicians, $map);
+
+		// Deal with keystrokes to move date
+		$display_buffer .= "
+<script language=\"javascript\">
+nn=(document.layers)?true:false;
+ie=(document.all)?true:false;
+function keyDown(e) {
+	var evt=(e)?e:(window.event)?event:null;
+	if(e) {
+		var key=(e.charCode)?e.charCode:((e.keyCode)?e.keyCode:((e.which)?e.which:0));
+		// Handle left arrow
+		if(key=='37') window.location='module_loader.php?module=".urlencode($_REQUEST['module'])."&group=".urlencode($_REQUEST['group'])."&action=".urlencode($_REQUEST['action'])."&mark=".urlencode($_REQUEST['mark'])."&selected_date=".freemed_get_date_prev($selected_date)."';
+		// Handle right arrow
+		if(key=='39') window.location='module_loader.php?module=".urlencode($_REQUEST['module'])."&group=".urlencode($_REQUEST['group'])."&action=".urlencode($_REQUEST['action'])."&mark=".urlencode($_REQUEST['mark'])."&selected_date=".freemed_get_date_next($selected_date)."';
+	} 
+}
+document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
+</script>
+		";
 	} // end function GroupCalendar->view
 
 	function displayCalendar ($physicians, $map) {
