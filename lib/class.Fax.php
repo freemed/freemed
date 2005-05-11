@@ -24,6 +24,7 @@ class Fax {
 	//		* size - defaults to 'letter'
 	//		* sender
 	//		* recipient
+	//		* comments
 	//
 	function Fax ( $attachment, $_options = NULL ) {
 		$this->attachment = $attachment;
@@ -44,6 +45,8 @@ class Fax {
 			$this->options['sender'] = '';
 		if (!isset($this->options['recipient']))
 			$this->options['recipient'] = '';
+		if (!isset($this->options['comments']))
+			$this->options['comments'] = '';
 
 		// Check for Hylafax install
 		if ($this->eFaxInstalled()) {
@@ -121,16 +124,66 @@ class Fax {
 				'-f "'.$this->options['sender'].'" '.
 				'-s "'.$this->options['size'].'" '.
 				'-r "'.$this->options['subject'].'" '.
+				( $this->options['comments'] ?
+					'-c "'.$this->options['comments'].'" '
+					: '' ).
 				'-d "'.(
 					$this->options['recipient'] ?
 					$this->options['recipient'].'@' : ''
 				).$number.'" '.
 				' "'.$this->attachment.'"';
+			syslog(LOG_INFO, "Fax| send cmd = ".$cmd);
 			break; // end hylafax
 		} // end switch
 		$output = `$cmd`;
-		return $output;
+		syslog(LOG_INFO, "Fax| output = $output");
+
+		// Deal with output properly
+		switch ($this->options['fax_server']) {
+			case 'efax':
+			return $output;
+			break;
+
+			case 'hylafax': default:
+			if (!(strpos($output, 'request id is ') === false)) {
+				$pieces = explode(' ', $output);
+				return $pieces[3];
+			} else {
+				return $output;
+			}
+			break;
+		} // end case fax_server
 	} // end method Send
+
+	// Method: State
+	//
+	//	Get state of job by job ID
+	//
+	// Parameters:
+	//
+	//	$jid - Fax job id
+	//
+	// Returns:
+	//
+	//	1 = finished
+	//
+	function State ( $jid ) {
+		$cmd = "faxstat -s | grep \"^$jid \"";
+		syslog(LOG_INFO, "FreeMED.Fax.State| cmd = $cmd");
+		$output = `$cmd`;
+
+		// No output; probably done
+		// TODO: Check the past jobs as well
+		if (!$output) { return 1; }
+
+		// Tokenize
+		$tokens = explode(' ', $output);
+
+		// Get comment from position 50
+		$comment = trim(substr($output, 50, 30));
+
+		return $comment;
+	} // end method State
 
 } // end class Fax
 
