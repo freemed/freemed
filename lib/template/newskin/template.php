@@ -51,6 +51,7 @@ if (isset($refresh)) {
 		HREF="lib/template/newskin/dynamic.css.php" />
 	<link rel="stylesheet" href="lib/template/newskin/layersmenu-newskin.css" type="text/css"></link>
 <?php if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; } ?>
+<?php include_once(freemed::template_file('key_bindings.php')); ?>
 </head>
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
@@ -210,6 +211,8 @@ if (is_object($this_user)) {
 		print "\n\ninitEditor();\n";
 		print "</script>\n";
 		}
+	// Add key bindings
+	include_once(freemed::template_file('key_bindings.php'));
 	print "</head>\n".
 		"<body";
 	// Check for close_on_load

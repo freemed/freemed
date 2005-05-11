@@ -39,6 +39,7 @@ if (isset($refresh)) {
 	<link REL="StyleSheet" TYPE="text/css"
 		HREF="lib/template/default/stylesheet.css" />
 <?php if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; } ?>
+<?php include_once(freemed::template_file('key_bindings.php')); ?>
 </head>
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
@@ -272,6 +273,8 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 		"<div ID=\"dhtmltooltip\"></div>\n".
 		"<script type=\"text/javascript\" src=\"lib/template/default/tooltip.js\"></script>\n";
 	if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; }
+	// Include key bindings
+	include_once(freemed::template_file('key_bindings.php'));
 	print "</head>\n".
 		"<body";
 	// Check for close_on_load

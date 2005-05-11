@@ -578,7 +578,24 @@ class freemed {
 			$m[6].$m[7].'/'.
 			substr($m, -(strlen($m)-8)).
 			'/'.$record.'.'.$type;
-	} // end function::image_filename
+	} // end method freemed::image_filename
+
+	// Function: freemed::key_binding
+	//
+	//	Set key binding for a particular key or set of keys.
+	//
+	// Parameters:
+	//
+	//	$binding - Associative array of key code => binding.
+	//
+	function key_binding ( $binding ) {
+		if (!is_array($binding)) { return false; }
+		foreach ($binding AS $k => $b) {
+			if ($k and $b) {
+				$GLOBALS['__freemed']['key_bindings'][$k] = $b;
+			}
+		}
+	} // end method freemed::key_binding
 
 	// Function: freemed::module_check
 	//
