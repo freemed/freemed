@@ -115,7 +115,24 @@ class BaseModule extends module {
 	//
 	function _print ( ) {
 		// Turn off the template
+		global $display_buffer;
 		$GLOBALS['__freemed']['no_template_display'] = true;
+
+		// Deal with faxstatus
+		if (isset($_REQUEST['faxstatus'])) {
+			$fax = CreateObject('_FreeMED.Fax', '/dev/null');
+			$status = $fax->State($_REQUEST['faxstatus']);
+			$display_buffer .= "<b>".$output."</b>\n";
+			if ($status == 1) {
+				$display_buffer .= "<div align=\"center\"><b>".__("Fax sent successfully.")."</b></div>\n";
+				$display_buffer .= "<div align=\"center\"><a onClick=\"javascript:close();\" class=\"button\">".__("Close")."</div>\n";
+			} else {
+				$display_buffer .= "<b>".__("Fax is attempting to send: ")."</b>".$status."\n";
+				$GLOBALS['__freemed']['automatic_refresh'] = 10;
+			}
+			return true;
+			break;
+		}
 
 		// Check for selected printer
 		if (!freemed::config_value('printnoselect') and !isset($_REQUEST['printer'])) {
@@ -275,9 +292,16 @@ class BaseModule extends module {
 				'sender' => $this_user->user_descrip,
 				'comment' => __("HIPPA Compliance Notice: This transmission contains sensitive medical data.")
 				));
+			//print ($_REQUEST['fax_number']);
 			$output = $fax->Send($_REQUEST['fax_number']);
-			$display_buffer .= "<b>".$output."</b>\n";
-			$GLOBALS['__freemed']['close_on_load'] = true;
+			//$display_buffer .= "<b>".$output."</b>\n";
+			$display_buffer .= "<b>".__("Refreshing")."... </b>\n";
+			$GLOBALS['refresh'] = $this->page_name."?".
+				"module=".urlencode($_REQUEST['module'])."&".
+				"type=".urlencode($_REQUEST['type'])."&".
+				"action=print&".
+				"faxstatus=".urlencode($output);
+			//$GLOBALS['__freemed']['close_on_load'] = true;
 			break;
 
 			// Handle actual printer
