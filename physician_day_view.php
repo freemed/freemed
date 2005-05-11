@@ -31,11 +31,38 @@ if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
 	substr($for_date, 0, 4))) $for_date = $cur_date;
 
 //----- Calculate previous and next dates for menubar
-$prev_date = freemed_get_date_prev ($for_date);
-$next_date = freemed_get_date_next ($for_date);
+$prev_week = $prev_date = freemed_get_date_prev ($for_date);
+for ($i=1; $i<=6; $i++)
+	$prev_week = freemed_get_date_prev ($prev_week);
+$next_week = $next_date = freemed_get_date_next ($for_date);
+for ($i=1; $i<=6; $i++)
+	$next_week = freemed_get_date_next ($next_week);
 
 //----- Set page title
 $page_title = __("Physician Daily View");
+
+//----- Create Javascript for previous/next
+$display_buffer .= "
+<script language=\"javascript\">
+nn=(document.layers)?true:false;
+ie=(document.all)?true:false;
+function keyDown(e) {
+	var evt=(e)?e:(window.event)?event:null;
+	if(e) {
+		var key=(e.charCode)?e.charCode:((e.keyCode)?e.keyCode:((e.which)?e.which:0));
+		// Handle left arrow
+		if(key=='37') window.location='$page_name?selected_date=$prev_date&physician=$physician';
+		// Handle right arrow
+		if(key=='39') window.location='$page_name?selected_date=$next_date&physician=$physician';
+		// Handle up arrow
+		if(key=='38') window.location='$page_name?selected_date=$prev_week&physician=$physician';
+		// Handle down arrow
+		if(key=='40') window.location='$page_name?selected_date=$next_week&physician=$physician';
+	} 
+}
+document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
+</script>
+";
 
 //----- Display previous/next bar
 $display_buffer .= "
