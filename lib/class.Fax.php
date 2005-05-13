@@ -106,8 +106,34 @@ class Fax {
 			'\`' => '',
 			'\'' => '',
 			'\"' => '',
+			'-', => '',
+			'+', => '',
+			'(' => '',
+			')' => '',
+			' ' => '',
 			'&' => ''
 		));
+
+		// Fix number for area code
+		switch (strlen($number)) {
+			case 7:
+			// Number with no area code, do nothing
+			break;
+
+			case 10:
+			// Add +1 if this is a 10 digit one
+			$number = '+1'.$number;
+			break;
+
+			case 11:
+			// In format 1XXXXXXXXXX, just need a +
+			$number = '+'.$number;
+			break;
+
+			default:
+			syslog("FreeMED.Fax.Send| error, number $number, length = ".strlen($number));
+			break;
+		}
 
 		// Form command
 		switch ($this->options['fax_server']) {
