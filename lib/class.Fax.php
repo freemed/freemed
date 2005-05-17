@@ -99,7 +99,7 @@ class Fax {
 	//	Fax number
 	//
 	function GetNumberFromId ( $jid ) {
-		$cmd = "faxstat -s | grep \"^$jid \"";
+		$cmd = "faxstat -d | grep \"^$jid \"";
 		syslog(LOG_INFO, "FreeMED.Fax.GetNumberFromId| cmd = $cmd");
 		$output = `$cmd`;
 
