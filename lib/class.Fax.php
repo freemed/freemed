@@ -16,7 +16,8 @@ class Fax {
 	// Parameters:
 	//
 	//	$attachment - File name of PS/PDF/etc file to fax. This
-	//	is an absolute filename.
+	//	is an absolute filename. It can also be an array of
+	//	seperate files to fax.
 	//
 	//	$_options - (optional) Associative array of options to
 	//	pass to the fax cover page.
@@ -105,7 +106,7 @@ class Fax {
 			'<' => '',
 			'\`' => '',
 			'\'' => '',
-			'\"' => '',
+			'"' => '',
 			'-' => '',
 			'+' => '',
 			'(' => '',
@@ -157,7 +158,7 @@ class Fax {
 					$this->options['recipient'] ?
 					$this->options['recipient'].'@' : ''
 				).$number.'" '.
-				' "'.$this->attachment.'"';
+				$this->_attachments();
 			syslog(LOG_INFO, "Fax| send cmd = ".$cmd);
 			break; // end hylafax
 		} // end switch
@@ -210,6 +211,25 @@ class Fax {
 
 		return $comment;
 	} // end method State
+
+	// Method: _attachments
+	//
+	//	Internal method to provide a command-line set of arguments
+	//	to be passed to the faxing application.
+	//
+	// Returns:
+	//
+	//	Command line arguments as string.
+	//
+	function _attachments ( ) {
+		if (is_array($this->attachment)) {
+			$a = $this->attachment;
+			foreach ($a AS $k => $v) { $a[$k] = '"'.$v.'"'; }
+			return join(' ', $a);
+		} else {
+			return '"'.$this->attachment.'"';
+		}
+	}
 
 } // end class Fax
 
