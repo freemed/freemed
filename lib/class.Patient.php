@@ -142,9 +142,10 @@ class Patient {
 	//
 	function fullName ($with_dob = false) {
 		if (!$with_dob) {
-			return $this->_fixcaps($this->ptlname).", ".
-				$this->_fixcaps($this->ptfname)." ".
-				$this->_fixcaps($this->ptmname);
+			return $this->_fixcaps($this->ptfname)." ".
+				$this->_fixcaps($this->ptmname).
+				( strlen($this->ptmname) == 1 ? ". " : " " ).
+				$this->_fixcaps($this->ptlname);
 		} else {
 			return $this->_fixcaps($this->ptlname).", ".
 				$this->_fixcaps($this->ptfname)." ".
@@ -290,9 +291,20 @@ class Patient {
 	//	Properly capitalized string.
 	//
 	function _fixcaps ( $string ) {
+		$subs = array (
+			'Ii' => 'II',
+			'Iii' => 'III',
+			'Iv' => 'IV'
+		);
 		$a = explode (' ', $string);
 		foreach ($a AS $k => $v) {
 			$a[$k] = ucfirst(strtolower($v));
+			foreach ($subs AS $s_k => $s_v) {
+				if ($a[$k] == $s_k) { $a[$k] = $s_v; }
+				if (substr($a[$k], 0, 2) == 'Mc') {
+					$a[$k] = 'Mc'.ucfirst(strtolower(substr($a[$k], -(strlen($a[$k])-2))));
+				}
+			}
 		} // end foreach
 		return join(' ', $a);
 	} // end method _fixcaps
