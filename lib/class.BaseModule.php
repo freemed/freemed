@@ -202,6 +202,7 @@ class BaseModule extends module {
 			return true;
 		}
 
+		// Handle render
 		if ($render = $this->print_override($_REQUEST['id'])) {
 			// Handle this elsewhere
 		} else {
@@ -295,13 +296,14 @@ class BaseModule extends module {
 			//print ($_REQUEST['fax_number']);
 			$output = $fax->Send($_REQUEST['fax_number']);
 			//$display_buffer .= "<b>".$output."</b>\n";
+			$this_user->setFaxInQueue($output);
 			$display_buffer .= "<b>".__("Refreshing")."... </b>\n";
-			$GLOBALS['refresh'] = $this->page_name."?".
-				"module=".urlencode($_REQUEST['module'])."&".
-				"type=".urlencode($_REQUEST['type'])."&".
-				"action=print&".
-				"faxstatus=".urlencode($output);
-			//$GLOBALS['__freemed']['close_on_load'] = true;
+			//$GLOBALS['refresh'] = $this->page_name."?".
+			//	"module=".urlencode($_REQUEST['module'])."&".
+			//	"type=".urlencode($_REQUEST['type'])."&".
+			//	"action=print&".
+			//	"faxstatus=".urlencode($output);
+			$GLOBALS['__freemed']['close_on_load'] = true;
 			break;
 
 			// Handle actual printer

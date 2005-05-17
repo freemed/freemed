@@ -179,15 +179,7 @@ class FaxMultiple extends UtilityModule {
 			//print ($_REQUEST['fax_number']);
 			$output = $fax->Send($_REQUEST['to']);
 			$display_buffer .= "<b>".$output."</b>\n";
-			//$display_buffer .= "<b>".__("Refreshing")."... </b>\n";
-			/*
-			$GLOBALS['refresh'] = $this->page_name."?".
-				"module=".urlencode($_REQUEST['module'])."&".
-				"type=".urlencode($_REQUEST['type'])."&".
-				"action=".urlencode($_REQUEST['action'])."&".
-				"utility_action=faxstatus&".
-				"faxstatus=".urlencode($output);
-			*/
+			$this_user->setFaxInQueue($output);
 			return $buffer;
 		}
 	} // end method menu
