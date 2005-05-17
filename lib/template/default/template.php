@@ -9,6 +9,11 @@ if (isset($refresh)) {
 }
 */
 
+//----- Create user object if it doesn't exist and we're logged in
+if (freemed::verify_auth() and !is_object($this_user)) {
+	$this_user = CreateObject('FreeMED.User');
+} // end check to see if we're logged in
+
 // Check for avoiding template
 if (!$GLOBALS['__freemed']['no_template_display']) {
 ?>
@@ -40,6 +45,7 @@ if (isset($refresh)) {
 		HREF="lib/template/default/stylesheet.css" />
 <?php if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; } ?>
 <?php include_once(freemed::template_file('key_bindings.php')); ?>
+<?php if (is_object($this_user)) { print $this_user->faxNotify(); } ?>
 </head>
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
@@ -170,11 +176,6 @@ if (isset($GLOBALS['page_title'])) {
 ?>
 	</td></tr>
 <?php
-//----- Create user object if it doesn't exist and we're logged in
-if (freemed::verify_auth() and !is_object($this_user)) {
-	$this_user = CreateObject('FreeMED.User');
-} // end check to see if we're logged in
-
 //----- Generate session information portion of the bar
 if (is_object($this_user)) {
 	print "<tr><td VALIGN=\"TOP\" ALIGN=\"LEFT\" CLASS=\"menubar_info\">\n";

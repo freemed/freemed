@@ -20,6 +20,11 @@ if (eregi('Gecko/', $_ua)) {
 }
 */
 
+//----- Create user object if it doesn't exist and we're logged in
+if (freemed::verify_auth() and !is_object($this_user)) {
+	$this_user = CreateObject('FreeMED.User');
+} // end check to see if we're logged in
+
 // Check for avoiding template
 if (!$GLOBALS['__freemed']['no_template_display']) {
 ?>
@@ -52,6 +57,7 @@ if (isset($refresh)) {
 	<link rel="stylesheet" href="lib/template/newskin/layersmenu-newskin.css" type="text/css"></link>
 <?php if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; } ?>
 <?php include_once(freemed::template_file('key_bindings.php')); ?>
+<?php if (is_object($this_user)) { print $this_user->faxNotify(); } ?>
 </head>
 
 <body BGCOLOR="#ffffff" TEXT="#555555"
@@ -125,7 +131,7 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 		"function initEditor () {\n";
 	$count = 0;
 	print "//HTMLArea.loadPlugin(\"TableOperations\");\n".
-		"//HTMLArea.loadPlugin(\"SpellChecker\");\n";
+		"HTMLArea.loadPlugin(\"SpellChecker\");\n";
 	foreach ($GLOBALS['__freemed']['rich_text_areas'] as $k => $v) {
 		print "editor".$count." = new HTMLArea(\"".$v."\");\n".
 			"//editor".$count.".registerPlugin(\"TableOperations\");\n".
@@ -149,11 +155,6 @@ if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 </span>
 <span align="center">
 <?php
-//----- Create user object if it doesn't exist and we're logged in
-if (freemed::verify_auth() and !is_object($this_user)) {
-	$this_user = CreateObject('FreeMED.User');
-} // end check to see if we're logged in
-
 //----- Generate session information portion of the bar
 if (is_object($this_user)) {
 	print "<big>|</big> ".__("User")." : ".$this_user->getDescription().
