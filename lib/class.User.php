@@ -22,7 +22,7 @@ class User {
 	var $manage_config; // configuration for patient management
 	var $perms_fac, $perms_phy, $perms_phygrp;
 
-	// method: User constructor
+	// Method: User constructor
 	//
 	// Parameters:
 	//
@@ -71,7 +71,7 @@ class User {
 		$this->manage_config = unserialize($this->local_record['usermanageopt']);
 	} // end function User
 
-	// method: User->getDescription
+	// method: getDescription
 	//
 	//	Retrieve description of current user. (Usually their name)
 	//
@@ -92,7 +92,66 @@ class User {
 		return ($this->user_phy)+0;
 	} // end function getPhysician
 
-	// Method: User->getName
+	// Method: getFaxesInQueue
+	//
+	//	Get list of faxes in queue to check
+	//
+	// Returns:
+	//
+	//	Array of fax ids, or NULL if there are none
+	function getFaxesInQueue ( ) {
+		if (is_array($_SESSION['fax_queue'])) {
+			foreach ($_SESSION['fax_queue'] AS $k => $v) {
+				if ($k and $v) { $r[$k] = $v; }
+			}
+			if (is_array($r)) { return $r; }
+		}
+		return NULL;
+	} // end method getFaxesInQueue
+
+	// Method: setFaxInQueue
+	//
+	//	Set a fax to be in the queue to check.
+	//
+	// Parameters:
+	//
+	//	$fid - Fax id
+	//
+	function setFaxInQueue ( $fid ) {
+		$_SESSION['fax_queue'][$fid] = $fid;
+	} // end method setFaxInQueue
+
+	// Method: faxNotify
+	//
+	//	Create Javascript alerts for finished faxes.
+	//
+	// Returns:
+	//
+	//	Javascript code (in SCRIPT tags) or NULL if nothing.
+	//
+	function faxNotify ( ) {
+		if (!($fax = $this->getFaxesInQueue())) { return ''; }
+		$f = CreateObject('_FreeMED.Fax');
+		foreach ($fax AS $k => $v) {
+			if ($f->State($k) == 1) {
+				$messages[] = sprintf(
+					__("Fax job %d (%s) finished."),
+					$k, $f->GetNumberFromId($k)
+					);
+				unset($_SESSION['fax_queue'][$k]);
+			}
+		}
+
+		// Create Javascript notification if there is any
+		if (is_array($messages)) {
+			$final = join('<br/>\n', $messages);
+			return "<script language=\"javascript\">\n".
+				"alert('".$final."');\n".
+				"</script>\n";
+		}
+	} // end method faxNotify
+
+	// Method: getName
 	//
 	//	Retrieves the user name. This is their login name.
 	//
@@ -104,7 +163,7 @@ class User {
 		return ($this->user_name);
 	} // end function getName
 
-	// method: User->isPhysician
+	// method: isPhysician
 	//
 	//	Determines if the user is classified as a physician/provider.
 	//
@@ -116,6 +175,16 @@ class User {
 		return ($this->user_phy != 0);
 	} // end function isPhysician
 
+	// Method: setPassword
+	//
+	//	Set password for specified user id
+	//
+	// Parameters:
+	//
+	//	$password - New password
+	//
+	//	$user_id - Id of user record
+	//
 	function setPassword ($password, $user_id) {
 		global $sql;
 
@@ -137,7 +206,7 @@ class User {
 		$result = $sql->query($my_query);
 	} // end function setPassword
 
-	// Method: User->getManageConfig
+	// Method: getManageConfig
 	//
 	//	Retrieve a user configuration variable by key.
 	//
@@ -153,7 +222,7 @@ class User {
 		return $this->manage_config["$key"];
 	} // end function getManageConfig
 
-	// Method: User->getManageConfig
+	// Method: getManageConfig
 	//
 	//	Set a user configuration variable by key to a particular
 	//	value.
@@ -178,7 +247,7 @@ class User {
 		$result = $GLOBALS['sql']->query($query);
 	} // end function setManageConfig
 
-	// Method: User->newMessages
+	// Method: newMessages
 	//
 	//	Determines how many new unread messages exist in the system
 	//	for this user.
@@ -196,7 +265,7 @@ class User {
 		return $sql->num_rows($result);
 	} // end function newMessages
 
-	// Method: User->init
+	// Method: init
 	//
 	//	Creates user database table and populates it with
 	//	required data. This is not "default" or "useful
@@ -254,7 +323,7 @@ class User {
 	    	));
 
 		return $result;
-	} // end method User->init
+	} // end method init
 
 } // end class User
 

@@ -85,6 +85,35 @@ class Fax {
 		return file_exists("/usr/bin/sendfax");
 	} // end method HylaFaxInstalled
 
+	// Method: GetNumberFromId
+	//
+	//	Retrieve the number to which a fax was sent from its job id
+	//	number
+	//
+	// Parameters:
+	//
+	//	$jid - Job id
+	//
+	// Returns:
+	//
+	//	Fax number
+	//
+	function GetNumberFromId ( $jid ) {
+		$cmd = "faxstat -s | grep \"^$jid \"";
+		syslog(LOG_INFO, "FreeMED.Fax.GetNumberFromId| cmd = $cmd");
+		$output = `$cmd`;
+
+		// No output; probably done
+		// TODO: Check the past jobs as well
+		if (!$output) { return 1; }
+
+		// Tokenize
+		$tokens = explode(' ', $output);
+
+		// Fourth field. This may break in some installs.
+		return $tokens[4];
+	} // end method GetNumberFromId
+
 	// Method: Send
 	//
 	//	Transmit a fax.
