@@ -510,7 +510,10 @@ class TeX {
 
 			// Handle single letter abbreviations
 			if (strlen($a[$k]) == 1) {
-				$a[$k] = strtoupper($a[$k]).'.';
+				// Only for letters
+				if (chr(strtoupper($a[$k])) >= 65 and chr(strtoupper($a[$k])) <= 90) {
+					$a[$k] = strtoupper($a[$k]).'.';
+				}
 			}
 		} // end foreach part of the string
 		return join(' ', $a);
