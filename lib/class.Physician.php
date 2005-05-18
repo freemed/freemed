@@ -84,6 +84,8 @@ class Physician {
 		( is_array($d) ? ', '.join(', ', $d) : '' );
 	} // end method fullName
 
+	function to_text ( ) { return $this->fullName(true); }
+
 	// Method: Physician->getMapId
 	//
 	//	Retrieves a value from the phyidmap.
