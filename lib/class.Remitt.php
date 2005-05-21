@@ -23,6 +23,49 @@ class Remitt {
 		
 	} // end constructor
 
+	// Method: GetFIleList
+	//
+	// Parameters:
+	//
+	//	$type - Type of files
+	//
+	//	$criteria - Criteria (years for output)
+	//
+	// Returns:
+	//
+	//	Array of files
+	//
+	function GetFileList ( $type, $criteria ) {
+		$results = $this->_call(
+			'Remitt.Interface.FileList',
+			array (
+			CreateObject('PHP.xmlrpcval', $type, 'string'),
+			CreateObject('PHP.xmlrpcval', $criteria, 'string')
+			),
+			false
+		);
+		return $results;
+	} // end method GetFileList
+
+	// Method: GetProtocolVersion
+	//
+	//	Retrieves the protocol revision being used by a REMITT
+	//	server. Is supported from REMITT version 0.1+.
+	//
+	// Returns:
+	//
+	//	Version number.
+	//
+	function GetProtocolVersion ( ) {
+		if (!$this->GetServerStatus()) { return NULL; }
+		$this->_connection->SetCredentials(
+			$_SESSION['remitt']['sessionid'],
+			$_SESSION['remitt']['key']
+		);
+		$version = $this->_call( 'Remitt.Interface.ProtocolVersion' );
+		return $version;
+	} // end method GetProtocolVersion
+
 	// Method: GetServerStatus
 	//
 	//	Determine if the REMITT server is up.
@@ -143,6 +186,24 @@ class Remitt {
 		}
 		return $this->_cache['ListPlugins'][$type];
 	} // end method ListPlugins
+			
+	// Method: ListYears
+	//
+	//	Wrapper for Remitt.Interface.GetOutputYears
+	//
+	// Returns:
+	//
+	//	Hash of years => number of output files available.
+	//
+	function ListYears ( ) {
+		$this->_connection->SetCredentials(
+			$_SESSION['remitt']['sessionid'],
+			$_SESSION['remitt']['key']
+		);
+		$years = $this->_call( 'Remitt.Interface.GetOutputYears' );
+		if (!is_array($years)) { $years = array ( $years ); }
+		return $years;
+	} // end method ListYears
 			
 	// Method: Login
 	//
