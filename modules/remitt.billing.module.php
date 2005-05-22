@@ -180,6 +180,8 @@ class RemittBillingTransport extends BillingModule {
 		</table>
 		";
 
+		include_once(freemed::template_file('ajax.php'));
+
 		// Loop for patients
 		foreach ($patients_to_bill AS $__garbage => $p) {
 			// Default on first (!been_here) to check patient...
@@ -209,7 +211,13 @@ class RemittBillingTransport extends BillingModule {
 			<tbody><tr>
 			<td class=\"Data\" width=\"15%\"><a href=\"manage.php?id=".urlencode($p)."\"
 				>".prepare($this_patient->fullName())."</a></td>
-			<td class=\"Data\" width=\"20%\"><input type=\"checkbox\" name=\"expand[".$p."]\" ".( $expand[$p]==1 ? 'checked="checked"' : '' )." value=\"1\" onChange=\"this.form.submit(); return true;\" />".__("expand individual claims")."</td>
+			<td class=\"Data\" width=\"20%\">".
+				ajax_expand_module_html(
+					'patient_claims_'.$p,
+					get_class($this),
+					'ajax_show_patient_claims',
+					$p
+				)." ".__("expand individual claims")."</td>
 			<td class=\"Data\" width=\"10%\">".$number_of_claims." ".__("claims")."</td>
 			<td class=\"Data\" width=\"25%\">&nbsp;</td>
 			<td class=\"Data\" width=\"20%\"><input type=\"checkbox\" name=\"bill[".$p."]\" ".( $bill[$p]==1 ? 'checked="checked"' : '' )." value=\"1\" />".__("Submit Patient?")."</td>
@@ -221,98 +229,37 @@ class RemittBillingTransport extends BillingModule {
 			$these_claims = $this->ProceduresToBill($p);
 			//print "these claims = "; print_r($these_claims); print "<br/>\n";
 
-			// Decide if we're expanding
-			if ($expand[$p]) {
-				// If expanding, display all procedures
-				$buffer .= "
-				<table width=\"740\" cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
-				<tbody>
-				";
-
-				// Loop through claims
-				foreach ($these_claims AS $__garbage => $c) {
-					// Get claim record information from procrec
-					$_record = freemed::get_link_rec($c, 'procrec');
-
-					// Display
-					//print "processing claim $c<br/>\n";
-					$buffer .= "
-					<tr>
-					<td class=\"Data\" width=\"15%\" align=\"right\">
-					<input type=\"checkbox\" name=\"claim[".$c."]\" ".( $claim[$c]==1 ? 'checked="checked"' : '' )." value=\"1\" />".__("Submit Claim?")."
-					</td>
-					<td class=\"Data\" width=\"25%\">
-					<a href=\"module_loader.php?module=proceduremodule&patient=".urlencode($p)."&action=modform&id=".urlencode($c)."\"
-					>".__("DOS:")." ".$_record['procdt']."</a>
-					</td>
-
-					<td class=\"Data\" colspan=\"2\">
-					<select name=\"media[".$c."]\">
-					";
-					// Format selection widget from Remitt server
-					$buffer .= $this->MediaWidgetOptions($media, $c);
-
-					$buffer .= "
-					</select>
-					</td>
-					<td class=\"Data\" width=\"35%\">
-					<select name=\"coverage[".$c."]\">
-					";
-
-					// Depending on coverage from procedure,
-					// we put together a list of everything
-					$coverages = $this->PatientCoverages($c, &$curcov);
-					//print "coverages ($c) = "; print_r($coverages); print "<br/>\n";
-					foreach ($coverages AS $__garbage => $cov) {
-						$this_coverage = CreateObject('FreeMED.Coverage', $cov);
-						$buffer .= "<option value=\"".prepare($cov)."\" ".( $cov == $curcov ? 'selected' : '' ).">".$this_coverage->covinsco->insconame." ".
-						( $this_coverage->covtype==1 ? __("(Primary)") : '' ).
-						( $this_coverage->covtype==2 ? __("(Secondary)") : '' ).
-						"</option>\n";
-					}
-					
-					$buffer .= "
-					</select>
-					<input type=\"submit\" name=\"__submit_alone[".prepare($c)."]\" value=\"".__("Submit Alone")."\" />
-					</td>
-					</tr>
-					";
+			// ... otherwise set hidden attributes for them,
+			// depending on what was passed
+			foreach ($these_claims AS $__garbage => $c) {
+				// On first load, assume that all claims
+				// are being submitted...
+				if (!$_REQUEST['been_here']) {
+					$claim[$c] = 1;
+					$claim_owner[$c] = $p;
+					// HACK! Should not always be X12
+					$__dummy = $this->PatientCoverages($c, &$curcov);
+					$coverage[$c] = $curcov;
+					// These default to values used by the default
+					$this_coverage = CreateObject('FreeMED.Coverage', $curcov);
+					//print "media for $c set to electronic<br/>\n";
+					$media[$c] = 'electronic';
+					//$format[$c] = $this_coverage->covinsco->local_record['inscodefformat'];
+					//$target[$c] = $this_coverage->covinsco->local_record['inscodeftarget'];
 				}
-	
-				// End display table			
-				$buffer .= "
-				</tbody></table>
-				";
-			} else {
-				// ... otherwise set hidden attributes for them,
-				// depending on what was passed
-				foreach ($these_claims AS $__garbage => $c) {
-					// On first load, assume that all claims
-					// are being submitted...
-					if (!$_REQUEST['been_here']) {
-						$claim[$c] = 1;
-						$claim_owner[$c] = $p;
-						// HACK! Should not always be X12
-						$__dummy = $this->PatientCoverages($c, &$curcov);
-						$coverage[$c] = $curcov;
-						// These default to values used by the default
-						$this_coverage = CreateObject('FreeMED.Coverage', $curcov);
-						//print "media for $c set to electronic<br/>\n";
-						$media[$c] = 'electronic';
-						//$format[$c] = $this_coverage->covinsco->local_record['inscodefformat'];
-						//$target[$c] = $this_coverage->covinsco->local_record['inscodeftarget'];
-					}
 
-					// ... and notebook-style hide their
-					// data so it can be expanded upon
-					$buffer .= "
-					<input type=\"hidden\" name=\"claim[".$c."]\" value=\"".prepare($claim[$c])."\" />
-					<input type=\"hidden\" name=\"claim_owner[".$c."]\" value=\"".prepare($claim_owner[$c])."\" />
-					<input type=\"hidden\" name=\"media[".$c."]\" value=\"".prepare($media[$c])."\" />
-					<input type=\"hidden\" name=\"coverage[".$c."]\" value=\"".prepare($coverage[$c])."\" />
-					";
-				}
+				// ... and notebook-style hide their
+				// data so it can be expanded upon
+				$buffer .= "
+				<input type=\"hidden\" name=\"claim[".$c."]\" value=\"".prepare($claim[$c])."\" />
+				<input type=\"hidden\" name=\"claim_owner[".$c."]\" value=\"".prepare($claim_owner[$c])."\" />
+				<input type=\"hidden\" name=\"media[".$c."]\" value=\"".prepare($media[$c])."\" />
+				<input type=\"hidden\" name=\"coverage[".$c."]\" value=\"".prepare($coverage[$c])."\" />
+				";
 			}
+
+			// Add hidden div for ajax stuff
+			$buffer .= "<div id=\"patient_claims_$p\"></div>\n";
 		} // end looping for patients
 
 		// End master form
@@ -580,6 +527,77 @@ class RemittBillingTransport extends BillingModule {
 		print $report;
 		die();
 	} // end method display_report
+
+	function ajax_show_patient_claims ( $patient ) {
+		$these_claims = $this->ProceduresToBill($patient);
+		//print "these claims = "; print_r($these_claims); print "<br/>\n";
+		// If expanding, display all procedures
+		$buffer .= "
+		<table width=\"740\" cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+		<tbody>
+		";
+
+		// Loop through claims
+		global $coverage;
+		foreach ($these_claims AS $__garbage => $c) {
+			$__dummy = $this->PatientCoverages($c, &$curcov);
+			$coverage[$c] = $curcov;
+
+			// Get claim record information from procrec
+			$_record = freemed::get_link_rec($c, 'procrec');
+
+			// Display
+			//print "processing claim $c<br/>\n";
+			$buffer .= "
+			<tr>
+			<td class=\"Data\" width=\"15%\" align=\"right\">
+			<input type=\"checkbox\" name=\"claim[".$c."]\" ".( $claim[$c]==1 ? 'checked="checked"' : '' )." value=\"1\" />".__("Submit Claim?")."
+			</td>
+			<td class=\"Data\" width=\"25%\">
+			<a href=\"module_loader.php?module=proceduremodule&patient=".urlencode($patient)."&action=modform&id=".urlencode($c)."\"
+			>".__("DOS:")." ".$_record['procdt']."</a>
+			</td>
+
+			<td class=\"Data\" colspan=\"2\">
+			<select name=\"media[".$c."]\">
+			";
+			// Format selection widget from Remitt server
+			$buffer .= $this->MediaWidgetOptions($media, $c);
+
+			$buffer .= "
+			</select>
+			</td>
+			<td class=\"Data\" width=\"35%\">
+			<select name=\"coverage[".$c."]\">
+			";
+
+			// Depending on coverage from procedure,
+			// we put together a list of everything
+			$coverages = $this->PatientCoverages($c, &$curcov);
+			//print "coverages ($c) = "; print_r($coverages); print "<br/>\n";
+			foreach ($coverages AS $__garbage => $cov) {
+				$this_coverage = CreateObject('FreeMED.Coverage', $cov);
+				$buffer .= "<option value=\"".prepare($cov)."\" ".( $cov == $curcov ? 'selected' : '' ).">".$this_coverage->covinsco->insconame." ".
+				( $this_coverage->covtype==1 ? __("(Primary)") : '' ).
+				( $this_coverage->covtype==2 ? __("(Secondary)") : '' ).
+				"</option>\n";
+			}
+			
+			$buffer .= "
+			</select>
+			<input type=\"submit\" name=\"__submit_alone[".prepare($c)."]\" value=\"".__("Submit Alone")."\" />
+			</td>
+			</tr>
+			";
+		}
+	
+		// End display table			
+		$buffer .= "
+		</tbody></table>
+		";
+
+		return $buffer;
+	} // end method ajax_show_patient_claims
 
 	function ajax_get_year_reports ( $year ) {
 		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
