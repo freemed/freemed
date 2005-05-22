@@ -476,15 +476,15 @@ class RemittBillingTransport extends BillingModule {
 		$buffer .= "<table border=\"0\" cellspacing=\"0\" ".
 			"width=\"75%\" cellpadding=\"2\">\n";
 		foreach ($reports AS $report_year => $report_count) {
-			$buffer .= "<tr>\n".
-				"<td>\n".
+			$buffer .= "<tr class=\"cell_alt\">\n".
+				"<td><b>\n".
 				ajax_expand_module_html(
 					'content_'.$report_year,
 					get_class($this),
 					'ajax_get_year_reports',
 					$report_year
 				).
-				" ".prepare($report_year)."</td>\n".
+				"</b> ".prepare($report_year)."</td>\n".
 				"<td>".$report_count." report(s)</td></tr>\n";
 			// Hidden cell for output
 			$buffer .= "<tr><td colspan=\"2\">\n".
@@ -592,13 +592,18 @@ class RemittBillingTransport extends BillingModule {
 		$buffer .= "<table border=\"0\" width=\"100%\">\n".
 			"<tr class=\"DataHead\">\n".
 			"<td>Report</td>\n".
-			"<td>Information</td>\n".
+			"<td>Size</td>\n".
+			"<td>Generated</td>\n".
+			"<td>&nbsp;</td>\n".
 			"<td>View</td>\n".
 			"</tr>\n";
+		krsort($reports);
 		foreach ($reports AS $report => $v) {
 			$buffer .= "<tr>\n".
 				"<td>".$report."</td>".
+				"<td>".$v['filesize']."</td>".
 				"<td>".$v['generated']."</td>".
+				"<td>".$v['format']."/".$v['transport']."</td>".
 				"<td><a href=\"".$this->page_name."?".
 				"module=".get_class($this)."&".
 				"type=".get_class($this)."&".
