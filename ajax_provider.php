@@ -5,7 +5,7 @@
 include_once ( 'lib/freemed.php' );
 
 $ajax = CreateObject( 'PHP.Sajax', 'ajax_provider.php' );
-$ajax->export ( 'lookup', 'patient_lookup' );
+$ajax->export ( 'lookup', 'module_html', 'patient_lookup' );
 $ajax->handle_client_request();
 
 //----- Function library
@@ -41,6 +41,14 @@ function lookup ( $module, $parameter, $field = 'id', $patient = NULL ) {
 	if ($count >= $limit) { $return[] = " ... "; }
 	return join('|', $return);
 } // end function lookup
+
+function module_html ( $module, $method, $parameter = NULL ) {
+	$c = freemed::module_cache();
+	include_once(resolve_module($module));
+	if (!resolve_module($module)) { return false; }
+	$m = new $module ();
+	return $m->$method($parameter);	
+} // end function module_html
 
 function patient_lookup ( $criteria ) {
 	$limit = 10;

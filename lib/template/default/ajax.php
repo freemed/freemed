@@ -5,7 +5,7 @@
 	// Ajax functionality
 
 $ajax = CreateObject('PHP.Sajax', 'ajax_provider.php');
-$ajax->export('lookup', 'patient_lookup');
+$ajax->export('lookup', 'module_html', 'patient_lookup');
 
 // Form header information regarding this
 ob_start();
@@ -41,6 +41,40 @@ $GLOBALS['__freemed']['header'] .= ob_get_contents();
 ob_end_clean();
 
 //----- Widget creation code
+
+function ajax_expand_module_html ( $content_id, $module, $method, $param ) {
+	$expand_id = $content_id . "_expand";
+	ob_start();
+?>
+<script language="javascript">
+function x_<?php print $content_id; ?>_toggle ( ) {
+	var check_toggle = document.getElementById('<?php print $expand_id; ?>').innerHTML;
+	if (check_toggle == '+') {
+		x_module_html('<?php print $module; ?>', '<?php print $method; ?>', '<?php print addslashes($param); ?>', x_<?php print $content_id; ?>_expand_div);
+	} else {
+		x_<?php print $content_id; ?>_contract_div();
+	}
+}
+
+function x_<?php print $content_id; ?>_contract_div () {
+	document.getElementById('<?php print $expand_id; ?>').innerHTML = '+';
+	document.getElementById('<?php print $content_id; ?>').innerHTML = '';
+}
+
+function x_<?php print $content_id; ?>_expand_div (v) {
+	//alert('calling <?print $module; ?> <?php print $method; ?> <?php print $param; ?>');
+	document.getElementById('<?php print $expand_id; ?>').innerHTML = '-';
+	document.getElementById('<?php print $content_id; ?>').innerHTML = v;
+}
+</script>
+<?php
+	$GLOBALS['__freemed']['header'] .= ob_get_contents();
+	ob_end_clean();
+
+	// Create HTML part
+	$buffer .= "<a onClick=\"x_".$content_id."_toggle(); return true;\"><span id=\"".$expand_id."\">+</span></a>";
+	return $buffer;
+} // end function ajax_expand_module_html
 
 function ajax_widget ( $name, $module, &$obj, $field='id', $autosubmit=false ) {
 	global ${$name};
