@@ -29,18 +29,21 @@ class Remitt {
 	//
 	//	$type - Type of files
 	//
-	//	$criteria - Criteria (years for output)
+	//	$criteria - Type of criteria (ex: years)
+	//
+	//	$value - Criteria
 	//
 	// Returns:
 	//
 	//	Array of files
 	//
-	function GetFileList ( $type, $criteria ) {
+	function GetFileList ( $type, $criteria, $value ) {
 		$results = $this->_call(
 			'Remitt.Interface.FileList',
 			array (
-			CreateObject('PHP.xmlrpcval', $type, 'string'),
-			CreateObject('PHP.xmlrpcval', $criteria, 'string')
+				CreateObject('PHP.xmlrpcval', $type, 'string'),
+				CreateObject('PHP.xmlrpcval', $criteria, 'string'),
+				CreateObject('PHP.xmlrpcval', $value, 'string')
 			),
 			false
 		);

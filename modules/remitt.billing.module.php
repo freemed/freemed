@@ -329,7 +329,8 @@ class RemittBillingTransport extends BillingModule {
 		<div class=\"section\">
 		".__("Remitt Billing System")." ( <span ".
 		( $remitt->GetServerStatus() ?
-		">".__("REMITT Server Running") :
+		">".__("REMITT Server Running")." [Protocol v".
+		$remitt->GetProtocolVersion()."] " :
 		"style=\"color: #ff0000;\"><b>".__("REMITT Server Not Running")."</b>"
 		)."</span> ) </div>
 		<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
@@ -460,12 +461,11 @@ class RemittBillingTransport extends BillingModule {
 			freemed::config_value('remitt_user'),
 			freemed::config_value('remitt_pass')
 		);	
-		$reports = $remitt->_call('Remitt.Interface.FileList', array(
-			CreateObject('PHP.xmlrpcval', 'output', 'string')
-			), false);
+		$reports = $remitt->ListYears();
 
 		$buffer .= "<div class=\"section\">".__("Remitt Results and Logs")."</div>\n";
 		//print "<br/<hr/>reports = "; print_r($reports); print "<hr/>\n";
+		include_once(freemed::template_file('ajax.php'));
 		$buffer .= "<table border=\"0\" cellspacing=\"0\" ".
 			"width=\"75%\" cellpadding=\"2\">\n".
 			"<tr>\n".
@@ -473,17 +473,26 @@ class RemittBillingTransport extends BillingModule {
 			"<td class=\"DataHead\">".__("Logs")."</td>\n".
 			"</tr>\n".
 			"<tr><td valign=\"top\">\n";
-		foreach ($reports AS $report) {
-			$buffer .= "<a href=\"".page_name()."?".
-				"module=".$_REQUEST['module']."&".
-				"type=".$_REQUEST['type']."&".
-				"action=".$_REQUEST['action']."&".
-				"billing_action=display_report&".
-				"file_type=report&".
-				"report=".urlencode($report) . "\" ".
-				"target=\"_view\">".
-				prepare($report) . "</a><br/>\n";
+		$buffer .= "<table border=\"0\" cellspacing=\"0\" ".
+			"width=\"75%\" cellpadding=\"2\">\n";
+		foreach ($reports AS $report_year => $report_count) {
+			$buffer .= "<tr>\n".
+				"<td>\n".
+				ajax_expand_module_html(
+					'content_'.$report_year,
+					get_class($this),
+					'ajax_get_year_reports',
+					$report_year
+				).
+				" ".prepare($report_year)."</td>\n".
+				"<td>".$report_count." report(s)</td></tr>\n";
+			// Hidden cell for output
+			$buffer .= "<tr><td colspan=\"2\">\n".
+				"<div id=\"content_".$report_year."\">".
+				"</div>\n".
+				"</td></tr>\n";
 		}
+		$buffer .= "</table>\n";
 		$buffer .= "</td><td valign=\"top\">\n";
 /*
 		// Get log years
@@ -571,6 +580,38 @@ class RemittBillingTransport extends BillingModule {
 		print $report;
 		die();
 	} // end method display_report
+
+	function ajax_get_year_reports ( $year ) {
+		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
+		$remitt->Login(
+			freemed::config_value('remitt_user'),
+			freemed::config_value('remitt_pass')
+		);
+		$reports = $remitt->GetFileList('output', 'year', $year);
+
+		$buffer .= "<table border=\"0\" width=\"100%\">\n".
+			"<tr class=\"DataHead\">\n".
+			"<td>Report</td>\n".
+			"<td>Information</td>\n".
+			"<td>View</td>\n".
+			"</tr>\n";
+		foreach ($reports AS $report => $v) {
+			$buffer .= "<tr>\n".
+				"<td>".$report."</td>".
+				"<td>".$v['generated']."</td>".
+				"<td><a href=\"".$this->page_name."?".
+				"module=".get_class($this)."&".
+				"type=".get_class($this)."&".
+				"action=transport&".
+				"billing_action=display_report&".
+				"file_type=report&".
+				"report=".urlencode($report)."\" ".
+				"target=\"_view\">".__("View")."</a></td>".
+				"</tr>\n";
+		}
+		$buffer .= "</table>\n<hr/>\n";
+		return $buffer;
+	} // end method ajax_get_year_reports
 
 	function process ( $single = NULL ) {
 		$buffer .= __("Submitting data to Remitt server")." ... <br/>\n"; 		
