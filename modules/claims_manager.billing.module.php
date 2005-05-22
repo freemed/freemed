@@ -124,7 +124,7 @@ class ClaimsManager extends BillingModule {
 		/*
 		$aging_form->addElement(
 			'static', 'payer', __("Payer"),
-			module_function('insurancecompany', 'widget', 'payer')
+			module_function('insurancecompanymodule', 'widget', 'payer')
 		);
 		$aging_form->addGroup($payer_group, null, null, '&nbsp;');
 		*/

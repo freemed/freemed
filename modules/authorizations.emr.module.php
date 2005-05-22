@@ -137,7 +137,7 @@ class AuthorizationsModule extends EMRModule {
 	
 			__("Authorizing Insurance Company") =>
 			module_function (
-				'insurancecompany',
+				'insurancecompanymodule',
 				'widget',
 				array ( 'authinsco' )
 			),
