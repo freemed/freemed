@@ -133,10 +133,17 @@ class User {
 		if (!($fax = $this->getFaxesInQueue())) { return ''; }
 		$f = CreateObject('_FreeMED.Fax');
 		foreach ($fax AS $k => $v) {
-			if ($f->State($k) == 1) {
+			$st = $f->State($k);
+			if ($st == 1) {
 				$messages[] = sprintf(
 					__("Fax job %d (%s) finished."),
 					$k, $f->GetNumberFromId($k)
+					);
+				unset($_SESSION['fax_queue'][$k]);
+			} elseif (is_array($st) and $st[0] == -1) {
+				$messages[] = sprintf(
+					__("Fax job %d (%s) failed with '%s'."),
+					$k, $f->GetNumberFromId($k), $st[1]
 					);
 				unset($_SESSION['fax_queue'][$k]);
 			}
@@ -146,7 +153,7 @@ class User {
 		if (is_array($messages)) {
 			$final = join('<br/>\n', $messages);
 			return "<script language=\"javascript\">\n".
-				"alert('".$final."');\n".
+				"alert('".addslashes($final)."');\n".
 				"</script>\n";
 		}
 	} // end method faxNotify

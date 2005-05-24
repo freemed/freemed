@@ -57,6 +57,16 @@ class Fax {
 		} else {
 			die(basename(__FILE__).": Hylafax or efax binaries not found");
 		}
+
+		// Define error messages
+		$this->error_messages = array (
+			'No carrier detected',
+			'Busy signal detected; too',
+			'Kill time expired',
+			'REJECT',
+			'No answer (T.30 T1 time',
+			'No local dialtone; too'
+		);
 	} // end constructor Fax
 
 	// Method: eFaxInstalled
@@ -221,7 +231,7 @@ class Fax {
 	//
 	// Returns:
 	//
-	//	1 = finished
+	//	1 = finished, array (-1, string) = error, string = comment
 	//
 	function State ( $jid ) {
 		$cmd = "faxstat -s | grep \"^$jid \"";
@@ -229,8 +239,17 @@ class Fax {
 		$output = `$cmd`;
 
 		// No output; probably done
-		// TODO: Check the past jobs as well
-		if (!$output) { return 1; }
+		if (!$output) {
+			$cmd = "faxstat -d | grep \"^$jid \"";
+			syslog(LOG_INFO, "FreeMED.Fax.State| cmd = $cmd");
+			$eoutput = `$cmd`;
+
+			foreach ($this->error_messages AS $e) {
+				if (!(strpos($eoutput, $e) === false)) {
+					return array (-1, trim (substr($eoutput, 50, strlen($eoutput)-50)) );
+				}
+			}
+		}
 
 		// Tokenize
 		$tokens = explode(' ', $output);
