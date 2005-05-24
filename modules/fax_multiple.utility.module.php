@@ -106,9 +106,16 @@ class FaxMultiple extends UtilityModule {
 
 		// Page Three: Select a Patient
 		$w->add_page ( __("Step Three: Select a Destination"),
-			array ( 'to' ),
+			array ( 'to', 'to_number' ),
 			html_form::form_table ( array (
-				__("Destination Number") => html_form::text_widget ( 'to' )
+				__("Destination (provider)") =>
+				module_function('providermodule',
+					'widget',
+					array ( $varname, false, 'phyfaxa' )
+				),
+
+				__("Destination (number)") =>
+				html_form::text_widget('to_number')
 			) )
 		);
 
@@ -177,7 +184,7 @@ class FaxMultiple extends UtilityModule {
 				)
 			);
 			//print ($_REQUEST['fax_number']);
-			$output = $fax->Send($_REQUEST['to']);
+			$output = $fax->Send($_REQUEST['to'] ? $_REQUEST['to'] : $_REQUEST['to_number']);
 			$display_buffer .= "<b>".$output."</b>\n";
 			$this_user->setFaxInQueue($output);
 			return $buffer;
