@@ -111,7 +111,7 @@ class FaxMultiple extends UtilityModule {
 				__("Destination (provider)") =>
 				module_function('providermodule',
 					'widget',
-					array ( $varname, false, 'phyfaxa' )
+					array ( 'to', false, 'phyfaxa' )
 				),
 
 				__("Destination (number)") =>
