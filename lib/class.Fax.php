@@ -249,6 +249,9 @@ class Fax {
 					return array (-1, trim (substr($eoutput, 50, strlen($eoutput)-50)) );
 				}
 			}
+
+			// Default to succeed if there are no error messages
+			return 1;
 		}
 
 		// Tokenize
