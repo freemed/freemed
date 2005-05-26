@@ -160,7 +160,6 @@ class EMRModule extends BaseModule {
 			trigger_error("User not Authorized for this function", E_USER_ERROR);
 		}
 		return true;
-
 	} // end function check_vars
 
 	// Method: locked
@@ -410,10 +409,11 @@ class EMRModule extends BaseModule {
 				$this->variables
 			)
 		);
+		$new_id = $GLOBALS['sql']->last_record($result, $this->table_name);
 
 		if ($result) {
 			$this->message = __("Record added successfully.");
-			if (is_array($_param)) { return $GLOBALS['sql']->last_record($result); }
+			if (is_array($_param)) { return $new_id; }
 		} else {
 			$this->message = __("Record addition failed.");
 			if (is_array($_param)) { return false; }
@@ -425,6 +425,9 @@ class EMRModule extends BaseModule {
 			global $refresh, $patient;
 			$refresh = "manage.php?id=".urlencode($patient);
 		}
+
+		// If called without 'return', send back new id
+		return $new_id;
 	} // end function _add
 	function _preadd ( $param = NULL ) { }
 
