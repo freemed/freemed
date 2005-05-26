@@ -151,7 +151,7 @@ class User {
 
 		// Create Javascript notification if there is any
 		if (is_array($messages)) {
-			$final = join('<br/>\n', $messages);
+			$final = join('\n', $messages);
 			return "<script language=\"javascript\">\n".
 				"alert('".addslashes($final)."');\n".
 				"</script>\n";
