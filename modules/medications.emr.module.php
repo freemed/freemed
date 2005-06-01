@@ -16,6 +16,7 @@ class MedicationsModule extends EMRModule {
 	var $record_name = "Medications";
 	var $table_name = 'medications';
 	var $patient_field = 'mpatient';
+	var $date_field = 'mdate';
 
 	function MedicationsModule () {
 		$this->table_definition = array (
@@ -84,6 +85,18 @@ class MedicationsModule extends EMRModule {
 			array('', __("Not specified")) //blanks
 		);
 	} // end method view
+
+	function recent_text ( $patient, $recent_date = NULL ) {
+		// skip recent; need all for this one
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			"ORDER BY ".$this->date_field." DESC";
+		$res = $GLOBALS['sql']->query($query);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$m[] = trim($r['mdrug'].' '.$r['mdosage'].' '.$r['mroute']);
+		}
+		return @join(', ', $m);
+	} // end method recent_text
 
 	// Update
 	function _update ( ) {

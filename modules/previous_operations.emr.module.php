@@ -16,6 +16,8 @@ class PreviousOperationsModule extends EMRModule {
 	var $record_name = "Previous Operations";
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
+	var $patient_field = "id";
+	var $date_field = "dummy";
 
 	function PreviousOperationsModule () {
 		// Call parent constructor
@@ -41,6 +43,9 @@ class PreviousOperationsModule extends EMRModule {
 			if (!is_array($my_ops)) {
 				$my_ops = array ($my_ops);
 			}
+
+			// Sort by name
+			arsort($my_ops);
 
 			// Show menu bar
 			$buffer .= "
@@ -219,7 +224,21 @@ class PreviousOperationsModule extends EMRModule {
 		reset ($GLOBALS);
 		while (list($k,$v)=each($GLOBALS)) global $$k;
 		$display_buffer .= "TODO: Listing for operations here\n";
-	} // end function PreviousOperationsModule->view()
+	} // end method view
+
+	function recent_text ( $patient, $recent_date = NULL ) {
+		// Get patient object
+		$r = freemed::get_link_rec($patient, 'patient', true);
+
+		// Get ops, and extract to an array
+		$ops = $r["ptops"];
+		$my_ops = sql_expand($ops);
+		if (!is_array($my_ops)) {
+			$my_ops = array ($my_ops);
+		}
+
+		return @join(', ', $my_ops);
+	} // end method recent_text
 
 } // end class PreviousOperationsModule
 
