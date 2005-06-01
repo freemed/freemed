@@ -5,7 +5,7 @@
 	// Ajax functionality
 
 $ajax = CreateObject('PHP.Sajax', 'ajax_provider.php');
-$ajax->export('lookup', 'module_html', 'patient_lookup');
+$ajax->export('lookup', 'module_html', 'module_recent', 'patient_lookup');
 
 // Form header information regarding this
 ob_start();
@@ -42,6 +42,25 @@ ob_end_clean();
 
 //----- Widget creation code
 
+// Function: ajax_expand_module_html
+//
+//	AJAX widget to allow "expanding" of a hidden DIV tag to allow
+//	dynamic content to be inserted without server refreshes.
+//
+// Parameters:
+//
+//	$content_id - DOM id of the content DIV
+//
+//	$module - Module class name
+//
+//	$method - Method that is to be called in the module in question
+//
+//	$param - Optional parameter
+//
+// Returns:
+//
+//	HTML widget
+//
 function ajax_expand_module_html ( $content_id, $module, $method, $param ) {
 	$expand_id = $content_id . "_expand";
 	ob_start();
@@ -75,6 +94,58 @@ function x_<?php print $content_id; ?>_expand_div (v) {
 	$buffer .= "<a onClick=\"x_".$content_id."_toggle(); return true;\"><span id=\"".$expand_id."\">+</span></a>";
 	return $buffer;
 } // end function ajax_expand_module_html
+
+// Function: ajax_insert_module_text
+//
+//	AJAX widget to allow for inserting of text into text areas,
+//	based on the recent_record callback. Only modules with
+//	$this->date_field defined will appear in the widget.
+//
+// Parameters:
+//
+//	$text_id - DOM id of the text widget in question
+//
+//	$patient - id of the patient to qualify
+//
+//	$date - (optional) date to qualify
+//
+// Returns:
+//
+//	AJAX widget
+//
+function ajax_insert_module_text ( $text_id, $patient, $date = NULL ) {
+	ob_start();
+?>
+<script language="javascript">
+function x_<?php print $text_id; ?>_call_insert ( ) {
+	var module_name = document.getElementById('<?php print $text_id; ?>_module_select').value;
+	x_module_recent(module_name, '<?php print addslashes($patient); ?>', x_<?php print $text_id; ?>_insert_text);
+	document.getElementById('<?php print $text_id; ?>_module_select').selectedIndex = 0;
+}
+
+function x_<?php print $text_id; ?>_insert_text (v) {
+	//alert('calling <?print $module; ?> <?php print $method; ?> <?php print $param; ?>');
+	document.getElementById('<?php print $text_id; ?>').value += v;
+}
+</script>
+<?php
+	$GLOBALS['__freemed']['header'] .= ob_get_contents();
+	ob_end_clean();
+
+	// Make a list of all modules which fit the bill
+	$_cache = freemed::module_cache();
+	$widget = "<option value=\"\">".__("Select information to insert:")."</option>\n";
+	foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $v) {
+		if ($v['META_INFORMATION']['date_field']) {
+			$widget .= "<option value=\"".prepare($v['MODULE_CLASS'])."\">".prepare($v['MODULE_NAME'])."</option>\n";
+			//$list[$v['MODULE_NAME']] = $v['MODULE_CLASS'];
+		}
+	} // end foreach
+
+	// Create HTML part
+	$buffer .= "<select id=\"".$text_id."_module_select\" name=\"".$text_id."_module_select\" onChange=\"if (this.selectedIndex > 0) { x_".$text_id."_call_insert(); } return true;\">\n" . $widget . "</select>\n";
+	return $buffer;
+} // end function ajax_insert_module_text
 
 function ajax_widget ( $name, $module, &$obj, $field='id', $autosubmit=false ) {
 	global ${$name};
