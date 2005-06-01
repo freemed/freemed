@@ -969,11 +969,12 @@ class ClaimsManager extends BillingModule {
 				// Move to the next coverage in the ledger
 				$l->move_to_next_coverage (
 					$k,
-					// Calculate disallow ...
-					$proc['procbalcurrent'] - (
-						$_REQUEST['pay'][$k] +
-						$_REQUEST['copay'][$k]
-					)
+					0
+					// Calculate disallow ... BORKED RIGHT NOW, PASS 0
+					//$proc['procbalcurrent'] - (
+					//	$_REQUEST['pay'][$k] +
+					//	$_REQUEST['copay'][$k]
+					//)
 				);
 
 				switch ($where) {
