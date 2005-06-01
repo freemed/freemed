@@ -39,6 +39,20 @@ class EMRModule extends BaseModule {
 	//
 	var $disable_patient_box = false;
 
+	// Variable: date_field
+	//
+	//	Field name that contains the date pertaining to the
+	//	EMR record fragment in question. This is used by
+	//	certain routines in FreeMED to guess as to the most
+	//	accurate piece of information for a particular
+	//	query.
+	//
+	// Example:
+	//
+	//	$this->date_field = 'rxdtfrom';
+	//
+	var $date_field;
+
 	// Variable: patient_field
 	//
 	//	Field name that describes the patient. This is used by
@@ -129,6 +143,9 @@ class EMRModule extends BaseModule {
 		}
 
 		// Add meta information for patient_field, if it exists
+		if (isset($this->date_field)) {
+			$this->_SetMetaInformation('date_field', $this->patient_field);
+		}
 		if (isset($this->patient_field)) {
 			$this->_SetMetaInformation('patient_field', $this->patient_field);
 		}
@@ -424,6 +441,7 @@ class EMRModule extends BaseModule {
 		if ($GLOBALS['return'] == 'manage') {
 			global $refresh, $patient;
 			$refresh = "manage.php?id=".urlencode($patient);
+			Header('Location: '.$refresh); die();
 		}
 
 		// If called without 'return', send back new id
@@ -464,6 +482,7 @@ class EMRModule extends BaseModule {
 		if ($GLOBALS['return'] == 'manage') {
 			global $refresh, $patient;
 			$refresh = "manage.php?id=".urlencode($patient);
+			Header('Location: '.$refresh); die();
 		}
 	} // end function _del
 
@@ -508,6 +527,8 @@ class EMRModule extends BaseModule {
 		if ($GLOBALS['return'] == 'manage') {
 			global $refresh, $patient;
 			$refresh = "manage.php?id=".urlencode($patient);
+			Header('Location: '.$refresh);
+			die();
 		}
 	} // end function _mod
 
@@ -1011,6 +1032,29 @@ class EMRModule extends BaseModule {
 		}
 		return html_form::select_widget($varname, $return);
 	} // end method widget
+
+	// Method: _recent_record
+	//
+	//	Return most recent record, possibly qualified by a
+	//	particular date.
+	//
+	// Parameters:
+	//
+	//	$patient - Id of patient record
+	//
+	//	$recent_date - (optional) Date to qualify this by
+	//
+	// Returns:
+	//
+	//	Associative array (hash) of record
+	//
+	function _recent_record ( $patient, $recent_date = NULL ) {
+		$query = "SELECT * FROM ".$this->table_name." ".
+			( $recent_date ? "WHERE ".$this->date_field." <= '".addslashes($recent_date)."' " : "" ).
+			"ORDER BY ".$this->date_field." DESC, id DESC";
+		$res = $GLOBALS['sql']->query($query);
+		return $GLOBALS['sql']->fetch_array($res);
+	} // end method _recent_record
 
 	//------ Internal Printing ----------------------------------------
 
