@@ -452,7 +452,8 @@ class ScannedDocuments extends EMRModule {
 					"- ".__("Chest CT Reports") => "radiology/chest_ct_reports",
 					"- ".__("Mammogram Reports") => "radiology/mammogram_reports",
 				__("Insurance Card") => "insurance_card",
-				__("Referral") => "referral/misc"
+				__("Referral") => "referral/misc",
+				__("Financial Information") => "financial/misc"
 			)
 		);
 	} // end method tc_widget
