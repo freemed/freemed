@@ -189,7 +189,7 @@ class UnreadFaxes extends MaintenanceModule {
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently remove this fax?"))."')) { return validate(this.form); } else { return false; }\" ".
+		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently remove this fax?"))."')) { return true; } else { return false; }\" ".
 		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
 		</form>
@@ -206,8 +206,17 @@ class UnreadFaxes extends MaintenanceModule {
 
 		$filename = freemed::secure_filename($rec['urffilename']);
 
+		// Fax sanity check
+		if (!file_exists('data/fax/unread/'.$filename) or empty($filename)) {
+			syslog(LOG_INFO, "UnreadFax| attempted to file fax that doesn't exist ($filename)");
+			return false;
+		}
+
 		// Extract type and category
 		list ($type, $cat) = explode('/', $rec['urftype']);
+
+		// Create user object
+		$this_user = CreateObject('FreeMED.User');
 		
 		// Insert new table query in unread
 		$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
@@ -218,7 +227,8 @@ class UnreadFaxes extends MaintenanceModule {
 				"imagetype" => $type,
 				"imagecat" => $cat,
 				"imagedesc" => $rec['urfnote'],
-				"imagephy" => $rec['urfphysician']
+				"imagephy" => $rec['urfphysician'],
+				"imagereviewed" => $this_user->user_number
 			)
 		));
 		$new_id = $GLOBALS['sql']->last_record($query, 'images');

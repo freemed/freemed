@@ -222,6 +222,7 @@ class UnfiledFaxes extends MaintenanceModule {
 
 		global $refresh;
 		$refresh = $this->page_name."?module=".get_class($this);
+		template_display();
 	} // end method del
 
 	// Modify method
@@ -334,7 +335,8 @@ class UnfiledFaxes extends MaintenanceModule {
 				"imagetype" => $type,
 				"imagecat" => $cat,
 				"imagedesc" => $_REQUEST['note'],
-				"imagephy" => $_REQUEST['physician']
+				"imagephy" => $_REQUEST['physician'],
+				"imagereviewed" => 0
 			)
 		));
 		$new_id = $GLOBALS['sql']->last_record($query, 'images');
@@ -486,6 +488,7 @@ class UnfiledFaxes extends MaintenanceModule {
 			foreach ($pages AS $_page) {
 				unlink($dir."/".$_page);
 			}
+			unlink($dir_prefix);
 			unlink($dir);
 
 			// Add new entry for fax file
