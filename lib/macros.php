@@ -86,6 +86,7 @@ define ('ITEMLIST_VIEW',        1);
 define ('ITEMLIST_MOD',         2);
 define ('ITEMLIST_DEL',         4);
 define ('ITEMLIST_LOCK',        8);
+define ('ITEMLIST_PRINT',      16);
 
 // Flags for EMR summaries
 define ('SUMMARY_VIEW',			1);
