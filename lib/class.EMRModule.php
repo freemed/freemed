@@ -730,7 +730,7 @@ class EMRModule extends BaseModule {
 
 						case "user":
 						$__u = CreateObject('FreeMED.User', ${$p1});
-						${$v} = $__u->fullName();
+						${$v} = $__u->getDescription();
 						break;
 
 						default:
