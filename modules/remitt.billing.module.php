@@ -150,7 +150,7 @@ class RemittBillingTransport extends BillingModule {
 
 		// Show clearinghouse, etc info
 		$buffer .= "
-		<table width=\"740\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
+		<table width=\"80%\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
 		<thead><tr>
 			<td class=\"DataHead\" width=\"34%\">".__("Clearinghouse")."</td>
 			<td class=\"DataHead\" width=\"33%\">".__("Billing Service")."</td>
@@ -166,7 +166,7 @@ class RemittBillingTransport extends BillingModule {
 
 		// Show billing table header
 		$buffer .= "
-		<table width=\"740\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
+		<table width=\"80%\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
 		<thead><tr>
 			<td class=\"DataHead\" width=\"15%\">".__("Patient")."</td>
 			<td class=\"DataHead\" width=\"35%\">&nbsp;</td>
@@ -207,7 +207,7 @@ class RemittBillingTransport extends BillingModule {
 
 			// Create master table
 			$buffer .= "
-			<table width=\"740\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
+			<table width=\"80%\" cellspacing=\"1\" cellpadding=\"0\" border=\"1\">
 			<tbody><tr>
 			<td class=\"Data\" width=\"15%\"><a href=\"manage.php?id=".urlencode($p)."\"
 				>".prepare($this_patient->fullName())."</a></td>
@@ -408,7 +408,7 @@ class RemittBillingTransport extends BillingModule {
 			freemed::config_value('remitt_user'),
 			freemed::config_value('remitt_pass')
 		);	
-		$reports = $remitt->ListYears();
+		$reports = $remitt->ListOutputMonths();
 
 		$buffer .= "<div class=\"section\">".__("Remitt Results and Logs")."</div>\n";
 		//print "<br/<hr/>reports = "; print_r($reports); print "<hr/>\n";
@@ -422,20 +422,23 @@ class RemittBillingTransport extends BillingModule {
 			"<tr><td valign=\"top\">\n";
 		$buffer .= "<table border=\"0\" cellspacing=\"0\" ".
 			"width=\"75%\" cellpadding=\"2\">\n";
-		foreach ($reports AS $report_year => $report_count) {
+		foreach ($reports AS $report_month => $report_count) {
+			$s_report_month = str_replace('-', '_', $report_month);
+			$t_report_month = explode('-', $report_month);
+			$p_report_month = date('M Y', mktime(0,0,0,$t_report_month[1], 1, $t_report_month[0]));
 			$buffer .= "<tr class=\"cell_alt\">\n".
 				"<td><b>\n".
 				ajax_expand_module_html(
-					'content_'.$report_year,
+					'content_'.$s_report_month,
 					get_class($this),
-					'ajax_get_year_reports',
-					$report_year
+					'ajax_get_month_reports',
+					$report_month
 				).
-				"</b> ".prepare($report_year)."</td>\n".
+				"</b> ".prepare($p_report_month)."</td>\n".
 				"<td>".$report_count." report(s)</td></tr>\n";
 			// Hidden cell for output
 			$buffer .= "<tr><td colspan=\"2\">\n".
-				"<div id=\"content_".$report_year."\">".
+				"<div id=\"content_".$s_report_month."\">".
 				"</div>\n".
 				"</td></tr>\n";
 		}
@@ -533,7 +536,7 @@ class RemittBillingTransport extends BillingModule {
 		//print "these claims = "; print_r($these_claims); print "<br/>\n";
 		// If expanding, display all procedures
 		$buffer .= "
-		<table width=\"740\" cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+		<table width=\"80%\" cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
 		<tbody>
 		";
 
@@ -599,13 +602,13 @@ class RemittBillingTransport extends BillingModule {
 		return $buffer;
 	} // end method ajax_show_patient_claims
 
-	function ajax_get_year_reports ( $year ) {
+	function ajax_get_month_reports ( $monthhash ) {
 		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
 		$remitt->Login(
 			freemed::config_value('remitt_user'),
 			freemed::config_value('remitt_pass')
 		);
-		$reports = $remitt->GetFileList('output', 'year', $year);
+		$reports = $remitt->GetFileList('output', 'month', $monthhash);
 
 		$buffer .= "<table border=\"0\" width=\"100%\">\n".
 			"<tr class=\"DataHead\">\n".
@@ -633,6 +636,40 @@ class RemittBillingTransport extends BillingModule {
 				"</tr>\n";
 		}
 		$buffer .= "</table>\n<hr/>\n";
+		return $buffer;
+	} // end method ajax_get_month_reports
+
+	function ajax_get_year_reports ( $year ) {
+		include_once(freemed::template_file('ajax.php'));
+		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
+		$remitt->Login(
+			freemed::config_value('remitt_user'),
+			freemed::config_value('remitt_pass')
+		);
+		$reports = $remitt->ListMonths( $year );
+
+		$buffer .= "<table border=\"0\" cellspacing=\"0\" ".
+			"width=\"75%\" cellpadding=\"2\">\n";
+		foreach ($reports AS $report_month => $report_count) {
+			$s_report_month = str_replace('-', '_', $report_month);
+			$buffer .= "<tr class=\"cell_alt\">\n".
+				"<td><b>\n".
+				ajax_expand_module_html(
+					'content_'.$s_report_month,
+					get_class($this),
+					'ajax_get_month_reports',
+					$report_month,
+					false
+				).
+				"</b> ".prepare($report_month)."</td>\n".
+				"<td>".$report_count." report(s)</td></tr>\n";
+			// Hidden cell for output
+			$buffer .= "<tr><td colspan=\"2\">\n".
+				"<div id=\"content_".$s_report_month."\">".
+				"</div>\n".
+				"</td></tr>\n";
+		}
+		$buffer .= "</table>\n";
 		return $buffer;
 	} // end method ajax_get_year_reports
 

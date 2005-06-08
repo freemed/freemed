@@ -190,7 +190,38 @@ class Remitt {
 		return $this->_cache['ListPlugins'][$type];
 	} // end method ListPlugins
 			
-	// Method: ListYears
+	// Method: ListOutputMonths
+	//
+	//	Wrapper for Remitt.Interface.GetOutputMonths
+	//
+	// Parameters:
+	//
+	//	$year - (optional) Year to list months for
+	//
+	// Returns:
+	//
+	//	Hash of years => number of output files available.
+	//
+	function ListOutputMonths ( $year = NULL ) {
+		$this->_connection->SetCredentials(
+			$_SESSION['remitt']['sessionid'],
+			$_SESSION['remitt']['key']
+		);
+		if ($year) {
+			$months = $this->_call( 
+				'Remitt.Interface.GetOutputMonths',
+				array (
+					CreateObject('PHP.xmlrpcval', $year, 'string'),
+				)
+			);
+		} else {
+			$months = $this->_call( 'Remitt.Interface.GetOutputMonths' );
+		}
+		if (!is_array($months)) { $months = array ( $months ); }
+		return $months;
+	} // end method ListOutputMonths
+			
+	// Method: ListOutputYears
 	//
 	//	Wrapper for Remitt.Interface.GetOutputYears
 	//
@@ -198,7 +229,7 @@ class Remitt {
 	//
 	//	Hash of years => number of output files available.
 	//
-	function ListYears ( ) {
+	function ListOutputYears ( ) {
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
 			$_SESSION['remitt']['key']
@@ -206,7 +237,7 @@ class Remitt {
 		$years = $this->_call( 'Remitt.Interface.GetOutputYears' );
 		if (!is_array($years)) { $years = array ( $years ); }
 		return $years;
-	} // end method ListYears
+	} // end method ListOutputYears
 			
 	// Method: Login
 	//
@@ -289,6 +320,33 @@ class Remitt {
 		);
 		return $output;
 	} // end method ProcessBill
+
+	// Method: ProcessStatement
+	function ProcessStatement ( $billkey, $render, $transport ) {
+		if (!$this->GetServerStatus()) {
+			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
+		}
+		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
+		// For now, just use the first ones ... FIXME FIXME FIXME
+		$bc = $bs = $ch = 1;
+		$xml = $this->RenderStatementXML(unserialize($procedures));
+		//print "length of xml = ".strlen($xml)."<br/>\n";
+		$this->_connection->SetCredentials(
+			$_SESSION['remitt']['sessionid'],
+			$_SESSION['remitt']['key']
+		);
+		//print "calling with ( ..., XSLT, $render, $transport ) <br/>\n";
+		$output = $this->_call(
+			'Remitt.Interface.Execute',
+			array(
+				CreateObject('PHP.xmlrpcval', $xml, 'base64'),
+				CreateObject('PHP.xmlrpcval', 'XSLT', 'string'),
+				CreateObject('PHP.xmlrpcval', $render, 'string'),
+				CreateObject('PHP.xmlrpcval', $transport, 'string')
+			)
+		);
+		return $output;
+	} // end method ProcessStatement
 
 	// Method: StoreBillKey
 	//
