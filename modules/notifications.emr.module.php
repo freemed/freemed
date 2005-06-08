@@ -67,6 +67,12 @@ class Notifications extends EMRModule {
 			html_form::select_widget(
 				'ntarget',
 				array (
+					__("1 Day") => $scheduler->date_add(date('Y-m-d'), 1),
+					__("2 Days") => $scheduler->date_add(date('Y-m-d'), 2),
+					__("3 Days") => $scheduler->date_add(date('Y-m-d'), 3),
+					__("4 Days") => $scheduler->date_add(date('Y-m-d'), 4),
+					__("5 Days") => $scheduler->date_add(date('Y-m-d'), 5),
+					__("6 Days") => $scheduler->date_add(date('Y-m-d'), 6),
 					__("1 Week") => $scheduler->date_add(date('Y-m-d'), 7),
 					__("2 Weeks") => $scheduler->date_add(date('Y-m-d'), 14),
 					__("1 Month") => $scheduler->date_add(date('Y-m-d'), 28),
