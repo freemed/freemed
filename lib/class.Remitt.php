@@ -130,30 +130,44 @@ class Remitt {
 	//	$plugin - Name of the plugin to query
 	//
 	//	$media - (optional) Electronic or Paper. If neither is
-	//	specified, defaults to all media forms.
+	//	specified, defaults to all media forms. (Default is NULL)
+	//
+	//	$format - (optional) Input XML format. Defaults to
+	//	NULL, which disables the qualification.
 	//
 	// Returns:
 	//
 	//	Array of available options for the specified plugin
 	//
-	function ListOptions ( $type, $plugin, $media = NULL ) {
+	function ListOptions ( $type, $plugin, $media = NULL, $format = NULL ) {
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
 			$_SESSION['remitt']['key']
 		);
 
-		if (!isset($this->_cache['ListOptions'][$type][$plugin])) {
-			$this->_cache['ListOptions'][$type][$plugin] = $this->_call(
-				'Remitt.Interface.ListOptions',
-				array(
-					CreateObject('PHP.xmlrpcval', $type, 'string'),
-					CreateObject('PHP.xmlrpcval', $plugin, 'string')
-				)
-			);
+		if (!isset($this->_cache['ListOptions'][$type][$plugin]['x_'.$format])) {
+			if ($format) {
+				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $this->_call(
+					'Remitt.Interface.ListOptions',
+					array(
+						CreateObject('PHP.xmlrpcval', $type, 'string'),
+						CreateObject('PHP.xmlrpcval', $plugin, 'string'),
+						CreateObject('PHP.xmlrpcval', $format, 'string')
+					)
+				);
+			} else {
+				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $this->_call(
+					'Remitt.Interface.ListOptions',
+					array(
+						CreateObject('PHP.xmlrpcval', $type, 'string'),
+						CreateObject('PHP.xmlrpcval', $plugin, 'string')
+					)
+				);
+			}
 		}
 
 		// Process into nice form for select widgets
-		foreach ($this->_cache['ListOptions'][$type][$plugin] AS $k => $v) {
+		foreach ($this->_cache['ListOptions'][$type][$plugin]['x_'.$format] AS $k => $v) {
 			if (($media == NULL) or ($v['Media'] == $media)) {
 				$r[$v['Description']] = $k;
 			}

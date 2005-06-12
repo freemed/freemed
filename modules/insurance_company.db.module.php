@@ -192,13 +192,13 @@ class InsuranceCompanyModule extends MaintenanceModule {
       $inscomod, false),
 
 	__("Default Paper Billing Format") =>
-	html_form::select_widget('inscodefformat', $rbe->ListOptions('Render', 'XSLT')),
+	html_form::select_widget('inscodefformat', $rbe->ListOptions('Render', 'XSLT', 'Paper', 'payerxml')),
 
 	__("Default Paper Billing Target") =>
 	html_form::select_widget('inscodeftarget', $rbe->ListPlugins('Transport')),
 
 	__("Default Electronic Billing Format") =>
-	html_form::select_widget('inscodefformate', $rbe->ListOptions('Render', 'XSLT')),
+	html_form::select_widget('inscodefformate', $rbe->ListOptions('Render', 'XSLT', 'Electronic', 'payerxml')),
 
 	__("Default Electronic Billing Target") =>
 	html_form::select_widget('inscodeftargete', $rbe->ListPlugins('Transport'))
