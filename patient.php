@@ -121,7 +121,7 @@ switch ($action) {
 			__("Middle Name") =>
 				html_form::text_widget("ptmname", 25, 50),
 
-			__("Maiden Name (if applicable)") =>
+			__("Maiden or Previous Name (if applicable)") =>
 				html_form::text_widget("ptmaidenname", 25, 50),
     
 			__("Address Line 1") =>
@@ -450,7 +450,7 @@ switch ($action) {
 			__("Middle Name") =>
 				html_form::text_widget("ptmname", 25, 50),
 
-			__("Maiden Name (if applicable)") =>
+			__("Maiden or Previous Name (if applicable)") =>
 				html_form::text_widget("ptmaidenname", 25, 50),
     
 			__("Address Line 1") =>
