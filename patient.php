@@ -260,16 +260,6 @@ switch ($action) {
 	);
 
 
-   $ref_phys_r = $sql->query("SELECT phylname,phyfname,phypracname,id
-                            FROM physician WHERE phyref='yes' 
-                            ORDER BY phylname,phyfname");
-   $int_phys_r = $sql->query("SELECT phylname,phyfname,phypracname,id
-                            FROM physician WHERE phyref='no' 
-                            ORDER BY phylname,phyfname");
-   $all_phys_r = $sql->query("SELECT phylname,phyfname,phypracname,id
-                            FROM physician
-			    ORDER BY phylname,phyfname");
-
    if (!isset($num_other_docs)) { // first time through
      $num_other_docs=0;
      for ($i=1;$i<=4;$i++) // for ptphy[1..4]
@@ -292,46 +282,46 @@ switch ($action) {
 
     <TR><TD ALIGN=RIGHT>
     ".__("Referring Doctor")." :
-    </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($ref_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptrefdoc")."
-    </TD></TR>
+    </TD><TD ALIGN=LEFT>".
+	module_function('providermodule', 'widget', array ('ptrefdoc')).
+    "</TD></TR>
 
     <TR><TD ALIGN=RIGHT>
     ".__("Primary Care Physician")." :
-    </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptpcp")."
-    </TD></TR>
+    </TD><TD ALIGN=LEFT>".
+	module_function('providermodule', 'widget', array ('ptpcp')).
+    "</TD></TR>
 
     ".(($num_other_docs>0) ? "
     <TR><TD ALIGN=RIGHT>
     ".__("Other Physician")." 1 :
-    </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy1")."
-    </TD></TR>
+    </TD><TD ALIGN=LEFT>".
+	module_function('providermodule', 'widget', array ('ptphy1')).
+    "</TD></TR>
     " : "").
 
     (($num_other_docs>1) ? "
     <TR><TD ALIGN=RIGHT>
     ".__("Other Physician")." 2 :
-    </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy2")."
-    </TD></TR>
+    </TD><TD ALIGN=LEFT>".
+	module_function('providermodule', 'widget', array ('ptphy2')).
+    "</TD></TR>
     " : "").
 
     (($num_other_docs>2) ? "
     <TR><TD ALIGN=RIGHT>
     ".__("Other Physician")." 3 :
-    </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy3")."
-    </TD></TR>
+    </TD><TD ALIGN=LEFT>".
+	module_function('providermodule', 'widget', array ('ptphy3')).
+    "</TD></TR>
     " : "").
 
     (($num_other_docs>3) ? "
     <TR><TD ALIGN=RIGHT>
     ".__("Other Physician 4")." :
-    </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy4")."
-    </TD></TR>
+    </TD><TD ALIGN=LEFT>".
+	module_function('providermodule', 'widget', array ('ptphy4')).
+    "</TD></TR>
     " : "").
 
     "<TR><TD ALIGN=RIGHT>
@@ -561,22 +551,22 @@ switch ($action) {
 	freemed_display_selectbox ($int_phys_r, "#phylname#, #phyfname#", "ptdoc"),
 
 	__("Referring Doctor") =>
-	freemed_display_selectbox ($ref_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptrefdoc"),
+	module_function('providermodule', 'widget', array ('ptrefdoc')),
 
 	__("Primary Care Physician") =>
-	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptpcp"),
+	module_function('providermodule', 'widget', array ('ptpcp')),
 
 	(($num_other_docs>0) ? __("Other Physician")." 1" : "" ) =>
-	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy1"),
+	module_function('providermodule', 'widget', array ('ptphy1')),
 
 	(($num_other_docs>1) ? __("Other Physician")." 2" : "" ) =>
-	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy2"),
+	module_function('providermodule', 'widget', array ('ptphy2')),
 
 	(($num_other_docs>2) ? __("Other Physician")." 3" : "" ) =>
-	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy3"),
+	module_function('providermodule', 'widget', array ('ptphy3')),
 
 	(($num_other_docs>3) ? __("Other Physician")." 4" : "" ) =>
-	freemed_display_selectbox ($all_phys_r, "#phylname#, #phyfname# (#phypracname#)", "ptphy4"),
+	module_function('providermodule', 'widget', array ('ptphy4')),
 
 	__("Number of Other Physicians") =>
 	html_form::number_pulldown("num_other_docs", 0, 4).
