@@ -102,12 +102,28 @@ class User {
 	function getFaxesInQueue ( ) {
 		if (is_array($_SESSION['fax_queue'])) {
 			foreach ($_SESSION['fax_queue'] AS $k => $v) {
-				if ($k and $v) { $r[$k] = $v; }
+				if ($k and $v['id']) { $r[$k] = $v['id']; }
 			}
 			if (is_array($r)) { return $r; }
 		}
 		return NULL;
 	} // end method getFaxesInQueue
+
+	// Method: getFaxDescription
+	//
+	//	Gives stored description of fax in queue by id number.
+	//
+	// Parameters:
+	//
+	//	$fid - Fax ID
+	//
+	// Returns:
+	//
+	//	String containing description
+	//
+	function getFaxDescription ( $fid ) {
+		return $_SESSION['fax_queue'][$fid]['info'];
+	} // end method getFaxDescription
 
 	// Method: setFaxInQueue
 	//
@@ -117,8 +133,11 @@ class User {
 	//
 	//	$fid - Fax id
 	//
-	function setFaxInQueue ( $fid ) {
-		$_SESSION['fax_queue'][$fid] = $fid;
+	//	$info - (optional) Textual description of fax to be stored in queue.
+	//
+	function setFaxInQueue ( $fid, $info = NULL ) {
+		$_SESSION['fax_queue'][$fid]['id'] = $fid;
+		$_SESSION['fax_queue'][$fid]['info'] = $info;
 	} // end method setFaxInQueue
 
 	// Method: faxNotify
@@ -136,8 +155,9 @@ class User {
 			$st = $f->State($k);
 			if ($st == 1) {
 				$messages[] = sprintf(
-					__("Fax job %d (%s) finished."),
-					$k, $f->GetNumberFromId($k)
+					__("Fax job %d to %s (%s) finished."),
+					$k, $f->GetNumberFromId($k),
+					$this->getFaxDescription($k)
 					);
 				unset($_SESSION['fax_queue'][$k]);
 			} elseif (is_array($st) and $st[0] == -1) {
