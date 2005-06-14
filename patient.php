@@ -95,7 +95,7 @@ switch ($action) {
    // ** DISPLAY ADD/MOD ***
    $book->add_page (
      __("Primary Information"),
-     array ("ptlname", "ptfname", "ptmname", "ptsalut",
+     array ("ptlname", "ptfname", "ptmname", "ptmaidenname", "ptsalut",
             date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
             "has_insurance"),
@@ -121,6 +121,9 @@ switch ($action) {
 			__("Middle Name") =>
 				html_form::text_widget("ptmname", 25, 50),
 
+			__("Maiden Name (if applicable)") =>
+				html_form::text_widget("ptmaidenname", 25, 50),
+    
 			__("Address Line 1") =>
 				html_form::text_widget("ptaddr1", 25, 45),
 
@@ -409,7 +412,7 @@ switch ($action) {
 
    $book->add_page (
      __("Patient"),
-     array ("ptlname", "ptfname", "ptmname", "ptsalut",
+     array ("ptlname", "ptfname", "ptmname", "ptsalut", "ptmaidenname", 
             date_vars("ptdob"),
             "ptaddr1", "ptaddr2", "ptcity", "ptstate", "ptzip", "ptcountry",
             "has_insurance",
@@ -457,6 +460,9 @@ switch ($action) {
 			__("Middle Name") =>
 				html_form::text_widget("ptmname", 25, 50),
 
+			__("Maiden Name (if applicable)") =>
+				html_form::text_widget("ptmaidenname", 25, 50),
+    
 			__("Address Line 1") =>
 				html_form::text_widget("ptaddr1", 25, 45),
 
@@ -680,6 +686,7 @@ switch ($action) {
              "ptlname",
              "ptfname",
              "ptmname",
+             "ptmaidenname",
              "ptaddr1",
              "ptaddr2",
              "ptcity",
@@ -759,6 +766,7 @@ switch ($action) {
              "ptlname",
              "ptfname",
              "ptmname",
+             "ptmaidenname",
              "ptaddr1",
              "ptaddr2",
              "ptcity",

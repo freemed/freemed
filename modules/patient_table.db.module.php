@@ -9,7 +9,7 @@ class PatientTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Patient Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.2';
+	var $MODULE_VERSION = '0.7.3';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -36,6 +36,7 @@ class PatientTable extends MaintenanceModule {
 			'ptbudg' => SQL__REAL,
 			'ptsalut' => SQL__VARCHAR(8),
 			'ptlname' => SQL__VARCHAR(50),
+			'ptmaidenname' => SQL__VARCHAR(50),
 			'ptfname' => SQL__VARCHAR(50),
 			'ptmname' => SQL__VARCHAR(50),
 			'ptaddr1' => SQL__VARCHAR(45),
@@ -206,6 +207,17 @@ class PatientTable extends MaintenanceModule {
 				'ADD INDEX(ptfname), '.
 				'ADD INDEX(ptid)');
 		} // end 0.7.2 upgrade
+
+		// Version 0.7.3
+		//
+		//	Add maiden name (ptmaidenname)
+		//
+		if (!version_check($version, '0.7.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN ptmaidenname VARCHAR(50) AFTER ptlname');
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'ptmaidenname=\'\' WHERE id > 0');
+		} // end 0.7.3 upgrade
 	} // end function _update
 }
 
