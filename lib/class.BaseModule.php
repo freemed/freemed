@@ -192,8 +192,19 @@ class BaseModule extends module {
 				 <td colspan=\"2\">".__("Browser-Based")."</td>
 			</tr>
 			</table>
+			<script language=\"javascript\">
+			function isValid(parm) {
+				var val = '0123456789';
+				if (parm == '') return false;
+				if (parm.length < 7) return false;
+				for (i=0; i<parm.length; i++) {
+					if (val.indexOf(parm.charAt(i),0) == -1) return false;
+				}
+				return true;
+			}
+			</script>
 			<div align=\"center\">
-			<input type=\"submit\" value=\"".__("Print")."\"
+			<input onClick=\"if(document.getElementById('print_method_fax').checked) { if (!isValid(document.getElementById('fax_number').value)) { alert('Invalid fax number.'); return false; } } else { this.form.submit(); }\" type=\"submit\" value=\"".__("Print")."\"
 			 class=\"button\" />
 			</div>
 			</div>
@@ -291,12 +302,18 @@ class BaseModule extends module {
 			}
 			$fax = CreateObject('_FreeMED.Fax', $file, array (
 				'sender' => $this_user->user_descrip,
-				'comment' => __("HIPPA Compliance Notice: This transmission contains sensitive medical data.")
+				'comments' => __("HIPPA Compliance Notice: This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system.")
 				));
 			//print ($_REQUEST['fax_number']);
 			$output = $fax->Send($_REQUEST['fax_number']);
 			//$display_buffer .= "<b>".$output."</b>\n";
-			$this_user->setFaxInQueue($output);
+			// TODO : Descrip call back
+			if ($this->patient_field) {
+				$_r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+				$_p = CreateObject('_FreeMED.Patient', $_r[$this->patient_field]);
+				$descrip = $this->record_name.' for '.$_p->fullName();
+			}
+			$this_user->setFaxInQueue($output, $descrip);
 			$display_buffer .= "<b>".__("Refreshing")."... </b>\n";
 			//$GLOBALS['refresh'] = $this->page_name."?".
 			//	"module=".urlencode($_REQUEST['module'])."&".
