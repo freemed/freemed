@@ -187,12 +187,14 @@ class Fax {
 			$cmd = 'sendfax '.
 			( freemed::config_value('fax_nocover') ?
 				'-n ' : '' ).
+				'-m '. // "fine" resolution for transmission
 				'-f "'.$this->options['sender'].'" '.
 				'-s "'.$this->options['size'].'" '.
 				'-r "'.$this->options['subject'].'" '.
 				( $this->options['comments'] ?
 					'-c "'.$this->options['comments'].'" '
 					: '' ).
+				'-x "'.addslashes(INSTALLATION).'" '.
 				'-d "'.(
 					$this->options['recipient'] ?
 					$this->options['recipient'].'@' : ''
@@ -243,6 +245,11 @@ class Fax {
 			$cmd = "faxstat -d | grep \"^$jid \"";
 			syslog(LOG_INFO, "FreeMED.Fax.State| cmd = $cmd");
 			$eoutput = `$cmd`;
+
+			// Look for "D" in column for done
+			$tokens = explode(' ', $eoutput);
+			if ($tokens[2] == 'F') { return array (-1, trim (substr($eoutput, 50, strlen($eoutput)-50)) ); }
+			if ($tokens[2] == 'D') { return 1; }
 
 			foreach ($this->error_messages AS $e) {
 				if (!(strpos($eoutput, $e) === false)) {
