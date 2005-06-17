@@ -409,6 +409,7 @@ class RemittBillingTransport extends BillingModule {
 			freemed::config_value('remitt_pass')
 		);	
 		$reports = $remitt->ListOutputMonths();
+		krsort($reports);
 
 		$buffer .= "<div class=\"section\">".__("Remitt Results and Logs")."</div>\n";
 		//print "<br/<hr/>reports = "; print_r($reports); print "<hr/>\n";
@@ -615,6 +616,7 @@ class RemittBillingTransport extends BillingModule {
 			"<td>Report</td>\n".
 			"<td>Size</td>\n".
 			"<td>Generated</td>\n".
+			"<td>Time</td>\n".
 			"<td>&nbsp;</td>\n".
 			"<td>View</td>\n".
 			"</tr>\n";
@@ -624,6 +626,7 @@ class RemittBillingTransport extends BillingModule {
 				"<td>".$report."</td>".
 				"<td>".$v['filesize']."</td>".
 				"<td>".$v['generated']."</td>".
+				"<td>".sprintf('%0.2d',$v['time'])."s</td>".
 				"<td>".$v['format']."/".$v['transport']."</td>".
 				"<td><a href=\"".$this->page_name."?".
 				"module=".get_class($this)."&".

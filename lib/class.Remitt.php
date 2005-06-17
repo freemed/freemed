@@ -316,7 +316,7 @@ class Remitt {
 		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
 		// For now, just use the first ones ... FIXME FIXME FIXME
 		$bc = $bs = $ch = 1;
-		$xml = $this->RenderXML($billkey_hash['procedures'], $bc, $bs, $ch);
+		$xml = $this->RenderPayerXML($billkey_hash['procedures'], $bc, $bs, $ch);
 		//print "length of xml = ".strlen($xml)."<br/>\n";
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
@@ -389,7 +389,7 @@ class Remitt {
 		return $id;
 	} // end method StoreBillKey
 	
-	// Method: RenderXML
+	// Method: RenderPayerXML
 	//
 	//	Renders procedure entries into XML file to be transmitted
 	//	to REMITT server.
@@ -408,7 +408,7 @@ class Remitt {
 	//
 	//	Text of XML file.
 	//
-	function RenderXML ( $_procedures, $bc=1, $bs=1, $ch=1 ) {
+	function RenderPayerXML ( $_procedures, $bc=1, $bs=1, $ch=1 ) {
 		// Sanitize and fold procedures array
 		if (is_array($_procedures)) {
 			foreach ($_procedures AS $k => $v) {
@@ -425,7 +425,7 @@ class Remitt {
 		$buffer .= "<?xml version=\"1.0\"?>\n";
 
 		// Create master document element
-		$buffer .= "<remitt doctype=\"request\">\n";
+		$buffer .= "<remitt doctype=\"payerxml\">\n";
 
 		// global information
 		$buffer .= "\n\t<!-- global information -->\n\n";
@@ -550,7 +550,112 @@ class Remitt {
 		$buffer .= "</remitt>\n";
 
 		return $buffer;
-	} // end method RenderXML
+	} // end method RenderPayerXML
+
+	// Method: RenderStatementXML
+	//
+	//	Renders procedure entries into XML file to be transmitted
+	//	to REMITT server for patient statement billing
+	//
+	// Parameters:
+	//
+	//	$procedures - Array of procedure id keys to be processed.
+	//
+	// Returns:
+	//
+	//	Text of XML file.
+	//
+	function RenderStatementXML ( $_procedures ) {
+		// Sanitize and fold procedures array
+		if (is_array($_procedures)) {
+			foreach ($_procedures AS $k => $v) {
+				if (is_array($v)) {
+					$procedures = array_merge($procedures, $v);
+				} else {
+					$procedures[] = $v;
+				}
+			}
+		} else {
+			$procedures = array ( $_procedures );
+		}
+
+		$buffer .= "<?xml version=\"1.0\"?>\n";
+
+		// Create master document element
+		$buffer .= "<remitt doctype=\"statementxml\">\n";
+
+		// global information
+		$buffer .= "\n\t<!-- global information -->\n\n";
+		$buffer .= $this->_tag('global',
+			$this->_tag('generator',
+				$this->_tag('program', PACKAGENAME, true).
+				$this->_tag('version', VERSION, true),
+			false).
+			$this->_date('currentdate', date('Y-m-d')).
+			$this->_tag('currenttime',
+				$this->_tag('hour', date('H'), true).
+				$this->_tag('minute', date('i'), true),
+			false),
+			false);
+
+		// Render all objects (from procedures on) to buffer,
+		// and loop to check that they all have XML representations
+		// in a hash before proceeding to generate
+
+		$_proc = ( is_array($procedures) ? $procedures :
+				array($procedures) );
+
+		foreach ($_proc as $proc) {
+			if ($proc) {
+			$buffer .= "\n\t<!-- procedure $proc -->\n\n".
+				$this->_RenderProcedure($proc).
+				"\n";
+			}
+		}
+
+		foreach ($this->ref['patient'] as $pat) {
+			if ($pat) {
+			$buffer .= "\n\t<!-- patient $pat -->\n\n".
+				$this->_RenderPatient($pat).
+				"\n";
+			}
+		}
+
+		// Loop through all providers
+		//$this->ref[$table][$id] = $id;
+		foreach ($this->ref['physician'] as $prov) {
+			if ($prov) {
+			$buffer .= "\n\t<!-- provider $prov -->\n\n".
+				$this->_RenderProvider($prov).
+				"\n";
+			}
+		}
+
+		foreach ($this->ref['facility'] as $fac) {
+			if ($fac) {
+			$buffer .= "\n\t<!-- facility $fac -->\n\n".
+				$this->_RenderFacility($fac).
+				"\n";
+			}
+		}
+
+		foreach ($this->ref['practice'] as $prac) {
+			$buffer .= "\n\t<!-- practice $prac -->\n\n".
+				$this->_RenderPractice($prac).
+				"\n";
+		}
+
+		foreach ($this->ref['diagnosis'] as $diag) {
+			$buffer .= "\n\t<!-- diagnosis $diag -->\n\n".
+				$this->_RenderDiagnosis($diag).
+				"\n";
+		}
+
+		// Closing tag
+		$buffer .= "</remitt>\n";
+
+		return $buffer;
+	} // end method RenderStatementXML
 
 	function _RenderDiagnosis ( $diagnosis ) {
 		if (!(strpos($diagnosis, ',') === false)) {
