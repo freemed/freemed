@@ -1135,7 +1135,15 @@ class Remitt {
 		if ($debug) { print_r($response); }
 
 		// Deserialize response
-		return $response->deserialize();
+		$d = $response->deserialize();
+
+		// Handle faults
+		if (isset($d['faultCode'])) {
+			trigger_error(__("XML-RPC Fault:")." ".$d['faultCode']." (".$d['faultString'].")", E_USER_ERROR);
+		} else {
+			// If there is no fault, return as usual
+			return $d;
+		}
 	} // end method _call
 
 	// Method: _is_struct
