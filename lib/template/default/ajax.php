@@ -81,6 +81,12 @@ function replaceSelection (input, replaceString) {
 		}
 	}
 }
+
+function hilight ( t, s ) {
+	n = new String( t );
+	n = n.replace( new RegExp('('+s+')', 'gi'), '<b>$1</b>' );
+	return n;
+}
 </script>
 <?php
 
@@ -224,6 +230,7 @@ function x_<?php print $name; ?>_set_field (k, v) {
 }
 
 function x_<?php print $name; ?>_populate(data) {
+	hilight_string = document.getElementById('<?php print $name; ?>_text').value;
 	if (data.length < 3) {
 		document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML = 'No results.';
 	} else {
@@ -237,12 +244,12 @@ function x_<?php print $name; ?>_populate(data) {
 			if (_this_one.indexOf('@') != -1) {
 				var innerTokenizer = new StringTokenizer ( _this_one, '@' );
 				try {
-					var _k = innerTokenizer.nextToken();
+					var _k = hilight(innerTokenizer.nextToken(), hilight_string);
 					var _v = innerTokenizer.nextToken();
 					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div onClick="x_<?php print $name; ?>_set_field(\'' + _k + '\', ' + _v + ');"><span>' + _k + '</span></div>\n';
 				} catch (e) {}
 			} else {
-				document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: #ffffff; color: #000000;" onClick="document.getElementById(\'<?php print $name; ?>_hiddendiv\').style.display = \'none\';">' + _this_one + '</div>\n';
+				document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: #ffffff; color: #000000;" onClick="document.getElementById(\'<?php print $name; ?>_hiddendiv\').style.display = \'none\';">' + hilight(_this_one, hilight_string) + '</div>\n';
 
 			}
 		}
