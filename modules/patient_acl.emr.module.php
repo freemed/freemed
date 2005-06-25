@@ -13,8 +13,6 @@ class PatientACL extends EMRModule {
 
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
-
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
