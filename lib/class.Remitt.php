@@ -864,6 +864,7 @@ class Remitt {
 		$buffer .= "<procedure id=\"".htmlentities($procedure)."\">\n".
 			$this->_tag('cpt4code', freemed::get_link_field($p['proccpt'], 'cpt', 'cptcode'), true).
 			$this->_tag('cpt5code', freemed::get_link_field($p['proccpt'], 'cpt', 'cptcode'), true).
+			$this->_tag('cptdescription', freemed::get_link_field($p['proccpt'], 'cpt', 'cptnameint'), true).
 			$this->_tag('cptcob', '0', true).
 			$this->_tag('cptcharges', $p['proccharges'], true).
 			$this->_tag('cptcount', 1, true).
@@ -961,6 +962,7 @@ class Remitt {
 
 		$buffer .= $this->_date('dateofservicestart', $p['procdt']);
 		$buffer .= $this->_date('dateofserviceend', $p['procdt']);
+		$buffer .= $this->_tag('aging', (strtotime(date("Y-m-d")) - strtotime($p['procdt'])) / (60 * 60 * 24), true);
 
 		$e = freemed::get_link_rec($eoc, 'eoc');
 		$buffer .= $this->_tag('ishospitalized', $e['eochospital'] == 1 ? '1' : '0', true);
