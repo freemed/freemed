@@ -100,6 +100,10 @@ class EMRAttachments extends UtilityModule {
 		} elseif ($w->is_cancelled()) {
 			// Cancelled
 		} else {
+			if (!$_REQUEST['from'] or !$_REQUEST['to']) {
+				trigger_error(__("Operation cannot be completed, since either source or destination patient record were not specified."), E_USER_ERROR);
+			}
+			
 			// Finished
 			list ($module, $record) = explode ('|', $_REQUEST['attachment']);
 			$f = freemed::module_get_meta ( $module, 'patient_field' );
