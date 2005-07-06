@@ -151,6 +151,11 @@ class UnreadFaxes extends MaintenanceModule {
 			return false;
 		}
 
+		if ($_REQUEST['submit_action'] == __("Send to Another Provider")) {
+			$this->move_to_another_provider();
+			return false;
+		}
+
 		$result = $GLOBALS['sql']->query("SELECT * FROM ".
 			$this->table_name." WHERE id='".addslashes($_REQUEST['id'])."'");
 		$r = $GLOBALS['sql']->fetch_array($result);
@@ -189,12 +194,64 @@ class UnreadFaxes extends MaintenanceModule {
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
+		"class=\"button\" value=\"".__("Send to Another Provider")."\"/>
+		<input type=\"submit\" name=\"submit_action\" ".
 		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently remove this fax?"))."')) { return true; } else { return false; }\" ".
 		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
 		</form>
 		";
 	} // end method display
+
+	function move_to_another_provider ( $_id = -1 ) {
+		if ($id > 0) {
+			$id = $_id;
+		} else {
+			$id = $_REQUEST['id'];
+		}
+		$rec = freemed::get_link_rec($id, $this->table_name);
+
+		$filename = freemed::secure_filename($rec['urffilename']);
+
+		// Fax sanity check
+		if (!file_exists('data/fax/unread/'.$filename) or empty($filename)) {
+			syslog(LOG_INFO, "UnreadFax| attempted to file fax that doesn't exist ($filename)");
+			return false;
+		}
+
+		if ($_REQUEST['to']) {
+			$q = $GLOBALS['sql']->update_query(
+				$this->table_name,
+				array (
+					'urfphysician' => $_REQUEST['to']
+				), array ('id' => $id)
+			);
+			$r = $GLOBALS['sql']->query($q);
+			if ($_id == -1) {
+			$GLOBALS['display_buffer'] .= '<br/>'.
+				template::link_bar(array(
+					__("View Patient Record") =>
+					'manage.php?id='.urlencode($rec['urfpatient']),
+					__("Return to Unread Fax Menu") =>
+					$this->page_name.'?module='.get_class($this)
+				));
+			}
+			return false;
+		}
+
+		// Otherwise, show form
+		global $display_buffer;
+		$display_buffer .= "
+		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
+		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
+		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
+		<input type=\"hidden\" name=\"action\" value=\"view\"/>
+		";
+		$display_buffer .= html_form::form_table(array(
+			__("Provider") => module_function('providermodule', 'widget', array ( 'to' ))
+		));
+		$display_buffer .= "<center><input type=\"submit\" name=\"submit_action\" value=\"".__("Send to Another Provider")."\" /></center></form>\n";
+	} // end method move_to_another_provider
 
 	function mod ($_id = -1) {
 		if ($id > 0) {
