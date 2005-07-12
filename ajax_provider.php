@@ -15,6 +15,9 @@ function lookup ( $module, $parameter, $field = 'id', $patient = NULL ) {
 	include_once(resolve_module($module));
 	if (!resolve_module($module)) { return false; }
 	$m = new $module ();
+	if (method_exists($m, 'ajax_lookup')) {
+		return $m->ajax_lookup($parameter, $field, $patient);
+	}
 	$table = $m->table_name;
 	$hash = $m->widget_hash;
 	$limit = 10;		// logical limit to how many we can display
