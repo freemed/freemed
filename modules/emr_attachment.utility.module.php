@@ -78,7 +78,8 @@ class EMRAttachments extends UtilityModule {
 			html_form::form_table ( array (
 				__("Attachment") => html_form::select_widget(
 					'attachment',
-					$attachments
+					$attachments,
+					array ('size' => 10)
 				)
 			) )
 		);
@@ -105,48 +106,50 @@ class EMRAttachments extends UtilityModule {
 			}
 			
 			// Finished
-			list ($module, $record) = explode ('|', $_REQUEST['attachment']);
-			$f = freemed::module_get_meta ( $module, 'patient_field' );
-			$t = freemed::module_get_meta ( $module, 'table_name' );
-			if ($f and $t) {
-				$buffer .= "Moving record ".$_REQUEST['attachment'].
-					" from patient ".$_REQUEST['from'].
-					" to patient ".$_REQUEST['to']."<br/>\n";
-				$q = $GLOBALS['sql']->update_query(
-					$t,
-					array ( $f => $_REQUEST['to'] ),
-					array ( 'id' => $record )
-				);
-				$result = $GLOBALS['sql']->query($q);
-				if ($result) {
-					$buffer .= __("Record was successfully moved.")."<br/>\n";
-				} else {
-					$buffer .= __("Failed to move record.")."<br/>\n";
-					return $buffer;
-				}
+			foreach ($_REQUEST['attachment'] AS $attachment) {
+				list ($module, $record) = explode ('|', $attachment);
+				$f = freemed::module_get_meta ( $module, 'patient_field' );
+				$t = freemed::module_get_meta ( $module, 'table_name' );
+				if ($f and $t) {
+					$buffer .= "Moving record ".$_REQUEST['attachment'].
+						" from patient ".$_REQUEST['from'].
+						" to patient ".$_REQUEST['to']."<br/>\n";
+					$q = $GLOBALS['sql']->update_query(
+						$t,
+						array ( $f => $_REQUEST['to'] ),
+						array ( 'id' => $record )
+					);
+					$result = $GLOBALS['sql']->query($q);
+					if ($result) {
+						$buffer .= __("Record was successfully moved.")."<br/>\n";
+					} else {
+						$buffer .= __("Failed to move record.")."<br/>\n";
+						return $buffer;
+					}
 
-				// Move annotations, if there are any
-				$q = "UPDATE annotations ".
+					// Move annotations, if there are any
+					$q = "UPDATE annotations ".
 					"SET ".
 						"apatient = '".addslashes($_REQUEST['to'])."' ".
 					"WHERE ".
 						"apatient = '".addslashes($_REQUEST['from'])."' AND ".
 						"atable = '".addslashes($t)."' AND ".
 						"aid = '".addslashes($record)."'";
-				$result = $GLOBALS['sql']->query($q);
-				if ($result) {
-					$buffer .= __("Annotations were successfully moved.")."<br/>\n";
-				}
+					$result = $GLOBALS['sql']->query($q);
+					if ($result) {
+						$buffer .= __("Annotations were successfully moved.")."<br/>\n";
+					}
 
-				// Additional move
-				module_function($module, 'additional_move',
-					array (
-						$record,
-						$_REQUEST['from'],
-						$_REQUEST['to']
-					)
-				);
-			}
+					// Additional move
+					module_function($module, 'additional_move',
+						array (
+							$record,
+							$_REQUEST['from'],
+							$_REQUEST['to']
+						)
+					);
+				} // end if f and t
+			} // end looping
 			return $buffer;
 		}
 	} // end method menu
