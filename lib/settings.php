@@ -17,6 +17,7 @@ define ('HOST', 'localhost'); // host name for this system
 define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('HTTP', 'http'); // http for normal, https for SSL
 define ('SESSION_PROTECTION', true); // strong session protection?
+define ('RECORD_LOCK_TIMEOUT', 180); // record lock timeout in seconds
 define ('DEFAULT_LANGUAGE', "en_US"); // default language
 define ('ALWAYS_SELFTEST', true); // We can check the health of the database etc, at every login...
 define ('ALWAYS_LANGUAGE_BAR', true); // Do we always display the language selection bar?

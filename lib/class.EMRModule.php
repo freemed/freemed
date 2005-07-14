@@ -144,7 +144,7 @@ class EMRModule extends BaseModule {
 
 		// Add meta information for patient_field, if it exists
 		if (isset($this->date_field)) {
-			$this->_SetMetaInformation('date_field', $this->patient_field);
+			$this->_SetMetaInformation('date_field', $this->date_field);
 		}
 		if (isset($this->patient_field)) {
 			$this->_SetMetaInformation('patient_field', $this->patient_field);
@@ -260,7 +260,7 @@ class EMRModule extends BaseModule {
 
 		// display universal patient box
 		if (!$this->disable_patient_box) {
-		$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
+			$display_buffer .= freemed::patient_box($this->this_patient)."<p/>\n";
 		}
 
 		// Kludge for older "submit" actions
@@ -268,6 +268,10 @@ class EMRModule extends BaseModule {
 
 		// Handle cancel action from __submit
 		if ($__submit==__("Cancel")) {
+			// Unlock record, if it is locked
+			$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+			$__lock->UnlockRow ( $_REQUEST['id'] );
+
 			if ($return=="manage") {
 			Header("Location: manage.php?".
 				"id=".urlencode($patient));
@@ -299,6 +303,7 @@ class EMRModule extends BaseModule {
 				if (!$this->acl_access('delete', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
+				$this->in_use($_REQUEST['id']);
 				$this->del();
 				break;
 
@@ -314,6 +319,7 @@ class EMRModule extends BaseModule {
 				if (!$this->acl_access('modify', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
+				$this->in_use($_REQUEST['id']);
 				$this->mod();
 				break;
 
@@ -321,6 +327,7 @@ class EMRModule extends BaseModule {
 				if (!$this->acl_access('modify', $patient)) {
 					trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 				}
+				$this->in_use($_REQUEST['id']);
 				$this->modform();
 				break;
 
@@ -400,6 +407,17 @@ class EMRModule extends BaseModule {
 	function form_table () {
 		return NULL;
 	} // end function form_table
+
+	function in_use ( $id ) {
+		// Check for record locking
+		$lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+		if ($lock->IsLocked($id)) {
+			trigger_error(__("This record is currently in use."), E_USER_ERROR);
+		} else {
+			// Add record lock
+			$lock->LockRow( $id );
+		}
+	} // end method in_use
 
 	// ********************** MODULE SPECIFIC ACTIONS *********************
 
@@ -493,16 +511,22 @@ class EMRModule extends BaseModule {
 		global $display_buffer;
 		foreach ($GLOBALS as $k => $v) global $$k;
 
-		// Check for record locking
-		if (!freemed::lock_override()) {
-			if ($this->locked($id)) return false;
-		}
-
 		if (is_array($_param)) {
 			foreach ($_param AS $k => $v) {
 				global ${$k};
 				${$k} = $v;
 			}
+		}
+
+		// Check for record locking
+		if (!freemed::lock_override()) {
+			if ($this->locked($id)) return false;
+		}
+		$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+		if ($__lock->IsLocked($id)) {
+			$this->message = __("Record modification failed due to record lock.");
+			if (is_array($_param)) { return false; }
+			$this->view(); $this->display_message();
 		}
 
 		$result = $sql->query (
@@ -514,6 +538,10 @@ class EMRModule extends BaseModule {
 				)
 			)
 		);
+
+		// Unlock row, since update is done
+		$__lock->UnlockRow( $id );
+
 		if ($result) {
 			$this->message = __("Record modified successfully.");
 			if (is_array($_param)) { return true; }
@@ -551,9 +579,14 @@ class EMRModule extends BaseModule {
 			while (list ($k, $v) = each ($this->form_vars)) global ${$v};
 		} // end if is array
 
+		// Check for record locking
+		if ($this->locked($id)) return false;
+
 		// Handle additional hidden variables
 		$this->form_hidden[] = $this->patient_field;
-		$_REQUEST[$this->patient_field] = $_REQUEST['patient'];
+		if ($this->patient_field != 'id') {
+			$_REQUEST[$this->patient_field] = $_REQUEST['patient'];
+		}
 		foreach ($this->form_hidden AS $k => $v) {
 			if ( (($k+0)>0) or empty($k)) {
 				$k = $v;
@@ -577,10 +610,6 @@ class EMRModule extends BaseModule {
 						${$k} = $v;
 					}
 				} // end checking for table name
-
-				// Check for record locking
-				if ($this->locked($id)) return false;
-
 				break;
 		} // end of switch action
 		
