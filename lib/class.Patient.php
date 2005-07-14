@@ -278,6 +278,36 @@ class Patient {
 		return $patients;
 	} // end method get_list_name
 
+	// Method: get_procedures_to_bill
+	//
+	//	Get list of procedures to bill by patient
+	//
+	// Parameters:
+	//
+	//	$by_patient - (optional) Boolean. If this is false,
+	//	all procedures which are billable in the system will
+	//	be returned. Defaults to true.
+	//
+	// Returns:
+	//
+	//	Array of procedure ids.
+	//
+	function get_procedures_to_bill ( $by_patient = true ) {
+		$s = "SELECT proc.id AS p ".
+			"FROM patient AS pat, procrec AS proc ".
+			"WHERE proc.procpatient = pat.id ".
+			"AND proc.procbalcurrent > 0 ".
+			"AND proc.proccurcovtp = '0' ".
+			( $by_patient ? "AND pat.id = '".addslashes($this->patient_number)."'" : "" );
+
+		$q = $GLOBALS['sql']->query($s);
+		while ($res = $GLOBALS['sql']->fetch_array($q)) {
+			$procs[] = $res['p'];
+		}
+
+		return $procs;
+	} // end method get_procedures_to_bill
+
 	// Method: _fixcaps
 	//
 	//	Produce proper capitalization of a string.
