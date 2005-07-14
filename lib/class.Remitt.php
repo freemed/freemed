@@ -336,14 +336,12 @@ class Remitt {
 	} // end method ProcessBill
 
 	// Method: ProcessStatement
-	function ProcessStatement ( $billkey, $render, $transport ) {
+	function ProcessStatement ( $procedures ) {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
-		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
 		// For now, just use the first ones ... FIXME FIXME FIXME
-		$bc = $bs = $ch = 1;
-		$xml = $this->RenderStatementXML(unserialize($procedures));
+		$xml = $this->RenderStatementXML($procedures);
 		//print "length of xml = ".strlen($xml)."<br/>\n";
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
@@ -355,8 +353,8 @@ class Remitt {
 			array(
 				CreateObject('PHP.xmlrpcval', $xml, 'base64'),
 				CreateObject('PHP.xmlrpcval', 'XSLT', 'string'),
-				CreateObject('PHP.xmlrpcval', $render, 'string'),
-				CreateObject('PHP.xmlrpcval', $transport, 'string')
+				CreateObject('PHP.xmlrpcval', 'statement', 'string'),
+				CreateObject('PHP.xmlrpcval', 'PDF', 'string')
 			)
 		);
 		return $output;
@@ -1140,7 +1138,7 @@ class Remitt {
 		$d = $response->deserialize();
 
 		// Handle faults
-		if (isset($d['faultCode'])) {
+		if ($response->fn) {
 			trigger_error(__("XML-RPC Fault:")." ".$d['faultCode']." (".$d['faultString'].")", E_USER_ERROR);
 		} else {
 			// If there is no fault, return as usual

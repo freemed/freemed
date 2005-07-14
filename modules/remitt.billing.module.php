@@ -62,6 +62,10 @@ class RemittBillingTransport extends BillingModule {
 				return $this->billing();
 				break;
 
+			case 'statement':
+				return $this->statement();
+				break;
+
 			case 'status':
 				return $this->status();
 				break;
@@ -285,6 +289,16 @@ class RemittBillingTransport extends BillingModule {
 		<tr>
 			<td class=\"DataHead\" width=\"15%\">".__("Function")."</td>
 			<td class=\"DataHead\">".__("Description")."</td>
+		</tr>
+
+		<tr>
+		<td>
+		<a href=\"".page_name()."?type=".get_class($this).
+			"&billing_action=statement&action=type\"
+			>".__("Patient Statements")."</a></td>
+		<td>
+		".__("Create patient statements for the system.")."
+		</td>
 		</tr>
 
 		<tr>
@@ -675,6 +689,59 @@ class RemittBillingTransport extends BillingModule {
 		$buffer .= "</table>\n";
 		return $buffer;
 	} // end method ajax_get_year_reports
+
+	function statement ( ) {
+		$buffer .= __("Submitting data to Remitt server")." ... <br/>\n"; 		
+		// Create new Remitt instance
+		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
+		$remitt->Login(
+			freemed::config_value('remitt_user'),
+			freemed::config_value('remitt_pass')
+		);	
+
+		// Create new ClaimLog instance
+		$claimlog = CreateObject ('FreeMED.ClaimLog');
+
+		// Create Bill Key
+		extract($_REQUEST);
+
+		// Get all claims in the system
+		$q = "Select proc.id AS p ".
+			"From patient AS pat, procrec AS proc ".
+			"Where proc.procpatient = pat.id and ".
+			"proc.procbalcurrent > 0 and proc.proccurcovtp = '0'";
+		$res = $GLOBALS['sql']->query($q);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$procs[] = $r['p'];
+		} // end fetch array
+
+		$result = $remitt->ProcessStatement( $procs );
+
+		$buffer .= "<div class=\"section\">".
+			__("Remitt Billing Sent")."</div><br/>\n";
+
+		// Refresh to status screen
+		global $refresh;
+		$refresh = page_name()."?".
+			"module=".$_REQUEST['module']."&".
+			"type=".$_REQUEST['type']."&".
+			"action=".$_REQUEST['action']."&".
+			"billing_action=status&".
+			"uniques=".urlencode(serialize(array(0 => $result)));
+
+		$buffer .= __("Refreshing")." ... ";
+
+		//print "DEBUG: "; print_r($result); print "<br/>\n";
+		//$buffer .= "Should have returned $result.<br/>\n";
+		// Add to claimlog
+		$result = $claimlog->log_billing (
+			$this_billkey,
+			'statement', //$my_format,
+			'PDF', //$my_target,
+			__("Patient statement generated")
+		);
+		return $buffer;
+	} // end method statement
 
 	function process ( $single = NULL ) {
 		$buffer .= __("Submitting data to Remitt server")." ... <br/>\n"; 		
