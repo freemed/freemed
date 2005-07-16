@@ -244,6 +244,10 @@ class PatientCoveragesModule extends EMRModule {
 			}
 
 		if ($book->is_cancelled()) {
+			// Unlock record, if it is locked
+			$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+			$__lock->UnlockRow ( $_REQUEST['id'] );
+
 			Header("Location: ".$this->page_name."?".
 				"module=".$this->MODULE_CLASS."&".
 				"patient=".urlencode($patient));

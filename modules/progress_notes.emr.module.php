@@ -339,6 +339,10 @@ class ProgressNotes extends EMRModule {
 
 	// Handle cancel action
 	if ($book->is_cancelled()) {
+		// Unlock record, if it is locked
+		$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+		$__lock->UnlockRow ( $_REQUEST['id'] );
+
 		if ($return=='manage') {
 			Header("Location: manage.php?id=".urlencode($patient));
 		} else {

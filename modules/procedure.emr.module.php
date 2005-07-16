@@ -924,6 +924,10 @@ class ProcedureModule extends EMRModule {
 
 		if ($wizard->is_cancelled())
 		{
+			// Unlock record, if it is locked
+			$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+			$__lock->UnlockRow ( $_REQUEST['id'] );
+
 			$display_buffer .= "
 			<p/>
 			<div ALIGN=\"CENTER\"><b>".__("Cancelled")."</b></div>
