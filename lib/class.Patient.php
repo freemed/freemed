@@ -120,7 +120,7 @@ class Patient {
 	//
 	function date_of_last_procedure ( ) {
 		$query = "SELECT procdt FROM procrec ".
-			"WHERE procpatient = '".addslashes($this->patient_number)."' ".
+			"WHERE procpatient = '".addslashes($this->id)."' ".
 			"ORDER BY procdt DESC";
 		$res = $GLOBALS['sql']->query ( $query );
 		$r = $GLOBALS['sql']->fetch_array ( $res );
@@ -298,7 +298,7 @@ class Patient {
 			"WHERE proc.procpatient = pat.id ".
 			"AND proc.procbalcurrent > 0 ".
 			"AND proc.proccurcovtp = '0' ".
-			( $by_patient ? "AND pat.id = '".addslashes($this->patient_number)."'" : "" );
+			( $by_patient ? "AND pat.id = '".addslashes($this->id)."'" : "" );
 
 		$q = $GLOBALS['sql']->query($s);
 		while ($res = $GLOBALS['sql']->fetch_array($q)) {
