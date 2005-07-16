@@ -8,7 +8,7 @@ class SinglePatientStatement extends EMRModule {
 
 	var $MODULE_NAME = "Statement";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_HIDDEN = false;
 
 	var $MODULE_FILE = __FILE__;
@@ -61,9 +61,7 @@ class SinglePatientStatement extends EMRModule {
 			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
 				prepare($patient)."\"/>
 			<input type=\"SUBMIT\" NAME=\"output\" VALUE=\"".
-				__("PDF")."\" />
-			<input type=\"SUBMIT\" NAME=\"output\" VALUE=\"".
-				__("Postscript")."\" />
+				__("Generate Statement")."\" />
 			</form>
 			</div>
 			";
@@ -72,24 +70,56 @@ class SinglePatientStatement extends EMRModule {
 
 	// view actually prints
 	function view ( ) {
-		$agata = CreateObject('FreeMED.Agata');
-		$agata->CreateReport(
-			'Merge',
-			'patient_statement',
-			'Patient Statement',
-			array ("'where' = 'where'" => "pat.id = '".
-				addslashes($_REQUEST['patient'])."'" )
-		);
-		switch ($_REQUEST['output']) {
-			case __("PDF"):
-			$agata->ServeMergeAsPDF();
-			break; // pdf
+		// We have to use REMITT to do this; the crazy part is that REMITT forks
+		// its render process into the background, so we're going to have to
+		// loop and wait for it to come back with something.
 
-			case __("Postscript"):
-			$agata->ServeReport();
-			break; // ps
-		} // end
-	} // end redirect view action
+		$pat = CreateObject('_FreeMED.Patient', $_REQUEST['patient']);
+		$procs = $pat->get_procedures_to_bill ( true );
+
+		if (!is_array($procs)) {
+			trigger_error(__("No procedures to bill seem to exist for this patient."), E_USER_ERROR);
+		}
+
+		$remitt = CreateObject('_FreeMED.Remitt', freemed::config_value('remitt_server'));
+		$remitt->Login (
+			freemed::config_value('remitt_user'),
+			freemed::config_value('remitt_pass')
+		);
+
+		$result = $remitt->ProcessStatement( $procs );
+
+		$waitcount = 0;
+		while (!($status = $remitt->GetStatus($result))) {
+			// Wait for a half a second
+			usleep (500000);
+			
+			// If this is taking hideously long, exit with error
+			if ($waitcount > 60) {
+				trigger_error(__("Operation timed out."), E_USER_ERROR);
+			}
+			$waitcount++;
+		} // end while getstatus loop
+
+		// Retrieve report from "status"
+		$this->display_report ( $remitt, $status ); die();
+	} // end view action
+
+	function display_report ( $remitt, $report ) {
+		$r = $remitt->_call (
+			'Remitt.Interface.GetFile',
+			array (
+				CreateObject('PHP.xmlrpcval', 'output', 'string'),
+				CreateObject('PHP.xmlrpcval', $report, 'string'),
+			),
+			false
+		);
+		if (eregi('\%PDF\-1', $r)) {
+			Header('Content-type: application/x-pdf');
+		}
+		Header('Content-Disposition: inline; filename="'.$report.'"');
+		print $r;
+	} // end method display_report
 
 	// Disable summary bar
 	function summary_bar() { }
