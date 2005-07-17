@@ -1,8 +1,8 @@
 <?php
- // $Id$
- // $Author$
- // note: configuration for management functions
- // lic : GPL, v2
+	// $Id$
+	// $Author$
+	// note: configuration for management functions
+	// lic : GPL, v2
 
 //----- Load the user object
 if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
@@ -13,13 +13,25 @@ $page_title = __("Management Configuration");
 //----- Add menu help item for this
 $menu_bar[__("Configuration Help")] = help_url("manage.php", "configure");
 
+function __sort_modules ( $a, $b ) {
+	if ($a['order'] == $b['order']) { return 0; }
+	return ( $a['order'] < $b['order'] ? -1 : 1 );
+}
+
 // Special widgets for priority, etc
-function my_checkbox_widget ( $varname, $value, $actual ) {
+function my_checkbox_widget ( $varname, $value, $actual, $div ) {
 	return "<input TYPE=\"CHECKBOX\" NAME=\"".$varname."\" ".
+		"onClick=\"move_div(".
+			"(this.checked==1 ? 'enabled_wrapper' : 'disabled_wrapper'), ".
+			"'".$div."'); return true;\" ".
 		"VALUE=\"".$value."\" ".
 		( ( $value == $actual ) ? "checked=\"CHECKED\" " : "" ).
 		"/>\n";
-}
+} // end function my_checkbox_widget
+function my_hidden_widget ( $varname, $value ) {
+	return "<input TYPE=\"HIDDEN\" NAME=\"".$varname."\" ".
+		"VALUE=\"".prepare($value)."\"/>\n";
+} // end function my_hidden_widget
 function my_select_widget ( $varname, $values, $actual ) {
 	$buffer = "<select name=\"".$varname."\">\n";
 	foreach ($values AS $k => $v) {
@@ -30,7 +42,181 @@ function my_select_widget ( $varname, $values, $actual ) {
 	}
 	$buffer .= "</select>\n";
 	return $buffer;
-}
+} // end function my_select_widget
+function my_module_table ( $enabled, $disabled ) {
+	// Create javascipt
+	$buffer .= "
+	<script language=\"javascript\">
+
+	function move_div(dest_name, node_name) {
+		// Move actual element using DOM
+		dest = document.getElementById(dest_name);
+		node = document.getElementById(node_name);
+		dest.appendChild(node);
+		// Change order values in each div appropriately
+		reorder_values('enabled_wrapper');
+		reorder_values('disabled_wrapper');
+	} // end function move_div
+
+	function get_next_node(container, node_position) {
+		for (i=node_position+1; i<=container.childNodes.length; i++) {
+			if (container.childNodes[i].nodeName == 'DIV') { return i; }
+		}
+		// We fail here
+		return container.childNodes.length;
+	} // end method get_next_node
+	
+	function get_previous_node(container, node_position) {
+		for (i=node_position-1; i>=0; i--) {
+			if (container.childNodes[i].nodeName == 'DIV') { return i; }
+		}
+		// We fail here
+		return 0;
+	} // end method get_previous_node
+	
+	function change_position(container, node_name, change) {
+		// Get position
+		position = -1;
+		for (i=0; i<container.childNodes.length; i++) {
+			if (container.childNodes[i].id == node_name) {
+				position = i;
+			}
+		}
+		if (position == -1) { alert('This should never happen, position = -1!'); return false; }
+
+		// Check for out of bounds
+		if (position + change > container.childNodes.length) { return false; }
+		if (position + change < 1) { return false; }
+		
+		// Swap the nodes ...
+		node = container.childNodes[position];
+		if (change == -1) {
+			// Move up
+			container.insertBefore(container.childNodes[position], container.childNodes[get_previous_node(container, position)]);
+			//alert('move to position ' + get_previous_node(container, position) + ' from ' + position );
+		} else {
+			// Move down
+			container.insertBefore(container.childNodes[get_next_node(container, position)], container.childNodes[position]);
+		}
+
+		// Make sure to reorder so we can submit the form
+		reorder_values('enabled_wrapper');
+		reorder_values('disabled_wrapper');
+	} // end function change_position
+
+	function reorder_values(node_name) {
+		count = 0;
+		var output = '';
+		node = document.getElementById(node_name);
+		for (i=0; i<node.childNodes.length; i++) {
+			if (node.childNodes[i].nodeName == 'DIV') {
+				for (j=0; j<node.childNodes[i].childNodes.length; j++) {
+					if (node.childNodes[i].childNodes[j].nodeName == 'INPUT') {
+						if (node.childNodes[i].childNodes[j].id.indexOf('_order') > -1) {
+							count++;
+							node.childNodes[i].childNodes[j].value = count;
+							output = output + 'node ' + node.childNodes[i].childNodes[j].id + ' = ' + count + '\\n';
+						}
+					}
+				}			
+			}
+		}
+		//alert (output);
+	} // end function reorder_values
+
+	function count_children(node_name) {
+		count = 0;
+		node = document.getElementById(node_name);
+		for (i=0; i<node.childNodes.length; i++) {
+			if (node.childNodes[i].nodeName == 'DIV') { count++; }
+		}
+		return count;
+	} // end function count_children
+
+	</script>
+	<style type=\"text/css\">
+		div.module_config_box {
+			border: 1pt solid #000000;
+			background: #ccccff;
+			width: 300px;
+			padding: 3px;
+			margin: 2px;
+		}
+		#enabled_wrapper div { text-weight: bold; }
+		#disabled_wrapper div { text-weight: normal; }
+	</style>
+	";
+
+	// Sort both enabled and disabled for initial view
+	uasort($enabled, '__sort_modules');
+	uasort($disabled, '__sort_modules');
+	
+	// Create the enabled, first
+	$buffer .= "<div id=\"enabled_wrapper\">\n";
+	foreach ($enabled AS $k => $v) {
+		// Create sanitized key
+		$key = $v['name'];
+		$order = $v['order'];
+		
+		// Create enabled
+		$buffer .= "<div class=\"module_config_box\" id=\"".$k."\">\n";
+		$buffer .= "<input type=\"hidden\" id=\"".$k."_order\" ".
+			"name=\"components[".$k."][order]\" ".
+			"value=\"".$order."\" />\n";
+		$buffer .= my_checkbox_widget(
+			'components['.$k.'][module]',
+			1,
+			1, // enabled
+			$k
+	       	);
+		$buffer .= $key;
+		$buffer .= "&nbsp;\n";
+		$buffer .= "<img src=\"lib/template/default/img/move_up.png\" ".
+			"onClick=\"change_position(document.getElementById('".$k."').parentNode, '".$k."', -1);\" border=\"0\" />\n";
+		$buffer .= "<img src=\"lib/template/default/img/move_down.png\" ".
+			"onClick=\"change_position(document.getElementById('".$k."').parentNode, '".$k."', 1);\" border=\"0\" />\n";
+		$buffer .= "</div>\n";
+	}
+	$buffer .= "</div>\n";
+
+	// Divider between enabled and disabled
+	$buffer .= "/\\ <b>".
+		__("Enabled").
+	       "</b> &nbsp; &nbsp; &nbsp; &nbsp; \\/ <b>".
+	       __("Disabled").
+	       "</b>\n";
+
+	// Create the enabled, first
+	$buffer .= "<div id=\"disabled_wrapper\">\n";
+	foreach ($disabled AS $k => $v) {
+		// Create sanitized key
+		$key = $v['name'];
+		$order = $v['order'];
+		
+		// Create enabled
+		$buffer .= "<div class=\"module_config_box\" id=\"".$k."\">\n";
+		$buffer .= "<input type=\"hidden\" id=\"".$k."_order\" ".
+			"name=\"components[".$k."][order]\" ".
+			"value=\"".$order."\" />\n";
+		$buffer .= my_checkbox_widget(
+			'components['.$k.'][module]',
+			1,
+			0, // disabled
+			$k
+	       	);
+		$buffer .= $key;
+		$buffer .= "&nbsp;\n";
+		$buffer .= "<img src=\"lib/template/default/img/move_up.png\" ".
+			"onClick=\"change_position(document.getElementById('".$k."').parentNode, '".$k."', -1);\" border=\"0\" />\n";
+		$buffer .= "<img src=\"lib/template/default/img/move_down.png\" ".
+			"onClick=\"change_position(document.getElementById('".$k."').parentNode, '".$k."', 1);\" border=\"0\" />\n";
+		$buffer .= "</div>\n";
+	}
+	$buffer .= "</div>\n";
+
+	// Divider between enabled and disabled
+	return $buffer;
+} // end function my_module_table
 
 //----- Create configuration notebook
 $book = CreateObject('PHP.notebook',
@@ -41,26 +227,29 @@ $book = CreateObject('PHP.notebook',
 	NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR
 );
 
+//----- Define list of configuration vars
+$config_vars = array (
+	"automatic_refresh_time",
+	"display_columns",
+	"num_summary_items",
+	"components"
+);
+
 //----- Pull out proper pieces
 if (!$book->been_here()) {
 	// Check if there are any config variables
 	if (count($this_user->manage_config) > 0) {
 		// Extract the variables into the global domain
 		extract($this_user->manage_config);
+	} else {
+		foreach ($config_vars AS $c) {
+			if (!isset($GLOBALS[$c])) { global ${$c}; ${$c} = $_REQUEST[$c]; }
+		}		
 	} // end checking for config
 } // end pulling out old values
 //print "<pre>"; print_r($this_user->manage_config); die("</pre>");
 
-//----- Define list of configuration vars
-$config_vars = array (
-	"automatic_refresh_time",
-	"display_columns",
-	"num_summary_items",
-	"static_components",
-	"modular_components"
-);
-
-//print_r($_REQUEST); die();
+//print "<pre>"; print_r($_REQUEST); print "</pre>\n"; die();
 
 //----- Basic configuration for management
 $book->add_page("General",
@@ -110,6 +299,7 @@ $book->add_page("General",
 	))
 );
 
+/*
 // Defaults for static components
 $_scs = array (
 	'appointments',
@@ -254,6 +444,7 @@ $book->add_page("Static Components",
 	)).
 	"</center>\n"
 );
+*/
 
 //----- Create module list for modular configuration
 $module_list = freemed::module_cache();
@@ -261,8 +452,8 @@ $module_list = freemed::module_cache();
 //----- This is *so* jimmy rigged... -----
 
 // Make sure that whatever it is, it's an array
-if (!is_array($modular_components)) {
-	$modular_components = array($modular_components);
+if (!is_array($components)) {
+	$components = array($components);
 }
 
 // Create basic template for split
@@ -276,46 +467,57 @@ $class_hash = $module_list->generate_list ( "Electronic Medical Record",
 // Break apart key/value pairs into array
 $class_array = explode( "/", $class_hash );
 // Loop through array to separate key and val
+$max = 0;
+foreach ($class_array AS $k => $class_pair) {
+	if (!empty($class_pair)) {
+		list ($key, $val) = explode (":", $class_pair);
+		if ($components[$val][order] > $max) {
+			$max = $components[$val][order];
+		}
+	}
+}
+foreach ($class_array AS $k => $class_pair) {
+	if (!empty($class_pair)) {
+		list ($key, $val) = explode (":", $class_pair);
+	}
+}
 foreach($class_array AS $k => $class_pair) {
 	if (!empty($class_pair)) {
 		// Break it
 		list ($key, $val) = explode (":", $class_pair);
 		// Add it
 		//$classes["$key"] = $val; // this would be for anything else
-		if (!isset($modular_components[$val][order])) {
-			$modular_components[$val][order] = 5;
+
+		// If we don't have it, and it's enabled, add it to the end
+		if (! $components[$val][order] and $components[$val][module] ) {
+			//print "<b>for $val, set as $max</b><br/>\n"; die();
+			$max++;
+			$components[$val][order] = $max;
 		}
 
 		// Check for access using ACLs
 		if (freemed::module_check_acl($val)) {
 			// Actually add it
-			$modules_to_choose[__($key)] =
-				my_checkbox_widget (
-					"modular_components[$val][module]", $val, $modular_components[$val][module]
-				).
-				my_select_widget (
-					"modular_components[$val][order]",
-					array (
-						'1 ('.__("top").')' => '1',
-						'2',
-						'3',
-						'4',
-						'5',
-						'6',
-						'7',
-						'8',
-						'9 ('.__("bottom").')' => '9'
-					),
-					$modular_components[$val][order]
-				);
+			$value = array (
+				'name' => $key,
+				'order' => $components[$val][order]
+			);
+
+			// Is module enabled?
+			if ( $components[$val][module] ) {
+				$enabled[$val] = $value;
+			} else {
+				$disabled[$val] = $value;
+			} // end checking if module is enabled
+
 		} // end freemed::module_check_acl check
 	} // end checking for empties
 } // end while loop
 
 //----- Module configuration
-$book->add_page("Modular Components",
-	array ( "modular_components" ),
-	html_form::form_table($modules_to_choose)
+$book->add_page("Components",
+	array ( "components" ),
+	my_module_table ( $enabled, $disabled )
 );
 
 //----- Handle cancel
@@ -335,7 +537,6 @@ if (!$book->is_done()) {
 	foreach ($old as $k => $v) {
 		switch ($k) {
 			case 'modular_components':
-			case 'static_components':
 				break;
 
 			default:
@@ -345,15 +546,20 @@ if (!$book->is_done()) {
 	// This is *really* fun. Make the appropriate hashes...
 	foreach ($config_vars AS $opt) {
 		switch ($opt) {
-			case 'modular_components':
+			case 'components':
 			unset($a);
-			foreach (${$opt} AS $v) { 
-				if ($v[module]) {
+			foreach (${$opt} AS $k => $v) { 
+				if (isset($v['module']) and isset($v['order'])) {
 					//print "<b>"; print_r($v); print"</b><br/>\n";
-					$a[] = $v;
+					$a[$k] = $v;
+					$a[$k][module] = $k;
 				}
 			}
 			$mc[$opt] = $a;
+			break;
+		
+			case 'modular_components':
+			unset(${$opt});
 			break;
 			
 			case 'static_components':
@@ -373,9 +579,11 @@ if (!$book->is_done()) {
 		}
 		//print $opt." ";
 		//print_r($mc[$opt]); print "<br/>\n";
-		$mc[$opt] = ${$opt};
+		//$mc[$opt] = ${$opt};
 	} // end looping through config_vars
-	
+
+	//print "<pre>"; print_r($mc); print "</pre>\n"; die();
+
 	// Form SQL query
 	$query = $sql->update_query ( 
 		"user",

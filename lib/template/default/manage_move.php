@@ -14,22 +14,33 @@ if (count($this_user->manage_config) > 0) {
 	template_display();
 } // end split apart pieces
 
-// Figure out whether it is moved up or down
-switch ($action) {
-	case 'moveup': $modifier = -1; break;
-	case 'movedown': $modifier = 1; break;
-	default: trigger_error("Should never get here!");
-} // end action
-
-// Run through them and modify level of module
-foreach ($config['modular_components'] AS $k => $v) {
+foreach ($config['components'] AS $k => $v) {
 	if ($v['module'] == $module) {
-	       	$config['modular_components'][$k][order] += $modifier;
+	       	$pos = $config['components'][$k][order];
 	}
 }
-foreach ($config['static_components'] AS $k => $v) {
-	if ($v['static'] == $module) {
-	       	$config['static_components'][$k][order] += $modifier;
+$nextup = 1; $nextdown = 999999999;
+foreach ($config['components'] AS $k => $v) {
+	if ($v['order'] > $nextup and $v['order'] < $pos) { $nextup = $v['order']; $upswitch = $v['module']; }
+	if ($v['order'] < $nextdown and $v['order'] > $pos) { $nextdown = $v['order']; $downswitch = $v['module']; }
+}
+
+// Run through them and modify level of module
+foreach ($config['components'] AS $k => $v) {
+	if ($v['module'] == $module) {
+		switch ($action) {
+			case 'moveup':
+			       	$config['components'][$k][order] = $nextup;
+			       	$config['components'][$upswitch][order] = $pos;
+				break;
+
+			case 'movedown':
+			       	$config['components'][$k][order] = $nextdown;
+			       	$config['components'][$downswitch][order] = $pos;
+				break;
+
+			default: trigger_error("Should never get here!");
+		}
 	}
 }
 

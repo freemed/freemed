@@ -15,8 +15,7 @@ if (count($this_user->manage_config) > 0) {
 } // end split apart pieces
 
 // Run through them and unset "module"
-foreach ($config['modular_components'] AS $k => $v) { if ($v == $module) unset($config['modular_components'][$k]); }
-foreach ($config['static_components'] AS $k => $v) { if ($v == $module) unset($config['static_components'][$k]); }
+foreach ($config['components'] AS $k => $v) { if ($v == $module) unset($config['components'][$k]); }
 
 // Write to usermanageopt
 $result = $sql->query($sql->update_query(
