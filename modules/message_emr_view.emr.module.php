@@ -25,7 +25,6 @@ class MessageEMRView extends EMRModule {
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $num_summary_items) {
-		$buffer .= "<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\">\n";
 		$my_result = $GLOBALS['sql']->query("SELECT * ".
 			"FROM messages WHERE ".
 			"msgpatient='".urlencode($patient)."' ".
@@ -33,7 +32,8 @@ class MessageEMRView extends EMRModule {
 			"ORDER BY msgtime DESC ".
 			"LIMIT ".$num_summary_items);
 		if ($GLOBALS['sql']->results($my_result)) {
-			$panel[__("Messages")] .= "<tr CLASS=\"menubar_info\">".
+			$buffer .= "<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\">\n";
+			$buffer .= "<tr CLASS=\"menubar_info\">".
 				"<TD><b>".__("Date")."</b></TD>".
 				"<TD><b>".__("Time")."</b></TD>".
 				"<TD><b>".__("Sender")."</b></TD>".
@@ -73,8 +73,8 @@ class MessageEMRView extends EMRModule {
 					"<tr><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
 					prepare($my_r['msgtext']).
 					"</SMALL></TD></tr>\n";			
-				$buffer .= " </table> \n";
 			}
+			$buffer .= " </table> \n";
 		} else {
 			// If there are no messages regarding this patient
 			$buffer .= __("There are currently no messages.");
