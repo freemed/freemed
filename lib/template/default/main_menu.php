@@ -19,6 +19,11 @@ if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 //---- Set page title
 $page_title = PACKAGENAME." ".__("Main Menu");
 
+//---- Add key bindings
+freemed::key_binding(array(
+	'78' => 'patient.php?action=addform' // n
+));
+
 // Check for new messages (depreciated, moved into modules)
 /*
 if ($new_messages = $this_user->newMessages()) {
