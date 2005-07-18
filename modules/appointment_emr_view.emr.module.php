@@ -25,6 +25,9 @@ class AppointmentEMRView extends EMRModule {
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $num_summary_items) {
+		// Create scheduler object
+		$scheduler = CreateObject('FreeMED.Scheduler');
+	
 		// Get last few appointments
 		$query =
 			"SELECT * FROM scheduler WHERE ".
@@ -55,7 +58,7 @@ class AppointmentEMRView extends EMRModule {
 				<b>".__("Description")."</b>
 			</td></tr>
 			";
-			while ($appoint_r=$sql->fetch_array($appoint_result)) {
+			while ($appoint_r=$GLOBALS['sql']->fetch_array($appoint_result)) {
 				$my_phy = CreateObject('FreeMED.Physician', $appoint_r['calphysician']);
 				$buffer .= "
 				<tr>
