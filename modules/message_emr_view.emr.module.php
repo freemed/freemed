@@ -59,17 +59,19 @@ class MessageEMRView extends EMRModule {
 					"<TD ALIGN=\"LEFT\"><SMALL>".$scheduler->get_time_string($hour,$min)."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$phyfrom->getDescription()."</SMALL></TD>".
 					"<TD ALIGN=\"LEFT\"><SMALL>".$phyto->getDescription()."</SMALL></TD>".
-					"<TD ALIGN=\"LEFT\"><!-- ".
+					"<TD ALIGN=\"LEFT\">".
 					html_form::confirm_link_widget(
-					"messages.php?action=remove&msgpatient=".$_REQUEST['id']."&id=".$my_r['id'].
-					"&return=manage", 
-					"<img SRC=\"lib/template/default/img/summary_delete.png\" BORDER=\"0\" ALT=\"".__("Delete")."\"/>",
-					array(
-						'confirm_text' =>
-						__("Messages should NOT be deleted. Are you sure you want to delete this message?"),
-						'text' => __("Delete")
-					)).
-					" --></tr>\n".
+						"messages.php?action=remove&msgpatient=".$_REQUEST['id']."&id=".$my_r['id'].
+						"&return=manage", 
+						"<img SRC=\"lib/template/default/img/summary_delete.png\" BORDER=\"0\" ALT=\"".__("Delete")."\"/>",
+						array(
+							'confirm_text' =>
+							__("Messages should NOT be deleted. Are you sure you want to delete this message?"),
+							'text' => __("Delete")
+						)
+					).
+					"<a class=\"button\" href=\"messages.php?action=printview&id=".urlencode($my_r['id'])."\" target=\"msgprint\">".__("Print")."</a></td>\n".
+					"</tr>\n".
 					"<tr><TD COLSPAN=4 CLASS=\"infobox\"><SMALL>".
 					prepare($my_r['msgtext']).
 					"</SMALL></TD></tr>\n";			
