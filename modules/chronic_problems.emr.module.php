@@ -8,61 +8,77 @@ class ChronicProblemsModule extends EMRModule {
 
 	var $MODULE_NAME = "Chronic Problems";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1.2";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $record_name = "Chronic Problems";
+	var $patient_field = "ppatient";
+
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
+	var $date_field = 'id';
+	var $table_name = 'chronic_problems';
+	var $order_fields = 'pdate,problem';
 
 	function ChronicProblemsModule () {
+		$this->table_definition = array (
+			'pdate'    => SQL__DATE,
+			'problem'  => SQL__VARCHAR(250),
+			'ppatient' => SQL__INT_UNSIGNED(0),
+			'id'       => SQL__SERIAL
+		);
+
+		$this->variables = array (
+			'problem',
+			'ppatient' => $_REQUEST['patient'],
+			'pdate' => date('Y-m-d')
+		);
+		
 		// call parent constructor
 		$this->EMRModule();
 	} // end constructor ChronicProblemsModule
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
-		// Get patient object from global scope (if it exists)
-		if (isset($GLOBALS[this_patient])) {
-			global $this_patient;
-		} else {
-			$this_patient = CreateObject('FreeMED.Patient', $patient);
-		}
-
-		// Extract problems
-		$problems = $this_patient->local_record["ptcproblems"];
+		$my_result = $GLOBALS['sql']->query(
+			"SELECT * FROM ".$this->table_name." ".
+			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			"ORDER BY ".$this->order_fields
+		);
 
 		// Check to see if it's set (show listings if it is)
-		if (strlen($problems)>=3) {
-			// Form an array
-			$my_problems = sql_expand($problems);
-			if (!is_array($my_problems)) {
-				$my_problems = array ($my_problems);
-			}
-
+		if ($GLOBALS['sql']->results($my_result)) {
 			// Show menu bar
 			$buffer .= "
 			<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 			"CELLPADDING=\"2\">
 			<tr CLASS=\"menubar_info\">
+			<td><b>".__("Date")."</b></td>
 			<td><b>".__("Problem")."</b></td>
 			<td><b>".__("Action")."</b></td>
 			</tr>
 			";
 
 			// Loop thru and display problems
-			foreach ($my_problems AS $k => $v) {
+			while ($my_r = $GLOBALS['sql']->fetch_array($my_result)) {
 				$buffer .= "
 				<tr>
-				<td ALIGN=\"LEFT\"><small>".prepare($v)."</small></td>
+				<td ALIGN=\"LEFT\"><small>".prepare($my_r['pdate'])."</small></td>
+				<td ALIGN=\"LEFT\"><small>".prepare($my_r['problem'])."</small></td>
 				<td ALIGN=\"LEFT\">".
-				template::summary_delete_link($this,
-				"module_loader.php?module=ChronicProblemsModule&action=del&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
 				template::summary_modify_link($this,
-				"module_loader.php?module=ChronicProblemsModule&action=modform&patient=".urlencode($patient)."&return=manage&id=".urlencode($k)).
-				"</td></tr>
+				"module_loader.php?".
+				"module=".get_class($this)."&".
+				"action=modform&patient=".urlencode($patient).
+				"&return=manage&id=".urlencode($my_r['id'])).
+				template::summary_delete_link($this,
+				"module_loader.php?".
+				"module=".get_class($this)."&".
+				"action=del&patient=".urlencode($patient).
+				"&return=manage&id=".urlencode($my_r['id']))."</td>
+				</tr>
 				";
 			} // end looping thru problems
 
@@ -90,7 +106,7 @@ class ChronicProblemsModule extends EMRModule {
 			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
 			prepare($patient)."\"/>
 			".html_form::text_widget("problem", 75)."
-			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\">
+			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\"/>
 			</form>
 			</div>
 			";
@@ -99,137 +115,57 @@ class ChronicProblemsModule extends EMRModule {
 
 	function summary_bar() { }
 
-	function form_table () {
-		$r = freemed::get_link_rec($_REQUEST['patient'], 'patient', true);
-		$p = sql_expand($r['ptcproblems']);
-		if (!is_array($p)) { $p = array($p); }
-		global $problem;
-		$problem = $p[$_REQUEST['id']];
+	function form_table ( ) {
 		return array (
-			__("Chronic Problem") =>
-			html_form::text_widget ( 'problem', 50 )
+			__("Problem") =>
+			html_form::text_widget('problem', 128)
 		);
 	} // end method form_table
 
-	function add () {
-		global $display_buffer, $return, $patient, $problem;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global ${$k};
-
-		// Get patient object
-		$r = freemed::get_link_rec($patient, 'patient', true);
-
-		// Get problems, and extract to an array
-		$problems = $r["ptcproblems"];
-		$my_problems = sql_expand($problems);
-		if (!is_array($my_problems)) {
-			$my_problems = array ($my_problems);
-		}
-
-		// Add a new member to the array
-		if (strpos($problem, ',') === false) {
-			// Standard, no commas
-			$my_problems[] = $problem;
-		} else {
-			// Deal with multiples
-			$problems = explode(',', $problem);
-			foreach ($problems AS $p) {
-				$my_problems[] = trim($p);
-			}
-		}
-
-		// Remove empties
-		foreach ($my_problems AS $k => $v) {
-			if (empty($v)) unset($my_problems[$k]);
-		}
-
-		// Recombine into a single variable
-		$problems = sql_squash($my_problems);
-
-		$display_buffer .= "
-		<P><CENTER>
-		".__("Adding")." ...
-		";
-
-		// Update the proper table
-		$query = $sql->update_query (
-			"patient",
-			array ( "ptcproblems" => $problems ),
-			array ( "id" => $patient )
-		);
-		$result = $sql->query($query);
-
-		// Check for result, etc
-		if ($result) { $display_buffer .= __("done");  }
-		 else        { $display_buffer .= __("ERROR"); }
-		$display_buffer .= "</CENTER>\n";
-
-		// If we came from patient management (EMR), return there
-		if ($return=="manage") {
-			Header("Location: manage.php?id=".urlencode($patient));
-			die("");
-		}
-	} // end function ChronicProblemsModule->add()
-
-	function del() { $this->delete(); }
-	function delete ($die = true) {
-		global $display_buffer, $return, $patient, $id;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global ${$k};
-
-		// Get patient object
-		$r = freemed::get_link_rec($patient, 'patient', true);
+	function recent_text ( $patient, $recent_date = NULL ) {
+		// skip recent; need all for this one
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			"ORDER BY ".$this->order_fields;
+		$res = $GLOBALS['sql']->query($query);
 
 		// Get problems, and extract to an array
-		$problems = $r["ptcproblems"];
-		$my_problems = sql_expand($problems);
-		if (!is_array($my_problems)) {
-			$my_problems = array ($my_problems);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$m[] = trim($r['pdate'].' '.$r['problem']);
 		}
+		return @join(', ', $m);
+	} // end method recent_text
 
-		// Unset the proper member of the array
-		unset ($my_problems[$id]);
+	function _update ( ) {
+		$version = freemed::module_version($this->MODULE_NAME);
 
-		// Recombine into a single variable
-		$problems = sql_squash($my_problems);
+		// Version 0.2
+		//
+		//	Migrated to separate table
+		//
+		if (!version_check($version, '0.2')) {
+			// Create table
+			$GLOBALS['sql']->query($GLOBALS['sql']->create_table_query($this->table_name, $this->table_definition, array('id')));
 
-		$display_buffer .= "
-		<P><CENTER>
-		".__("Deleting")." ...
-		";
-
-		// Update the proper table
-		$query = $sql->update_query (
-			"patient",
-			array ( "ptcproblems" => $problems ),
-			array ( "id" => $patient )
-		);
-		//print "query = $query<br/>\n";
-		$result = $sql->query($query);
-
-		// Check for result, etc
-		if ($result) { $display_buffer .= __("done");  }
-		 else        { $display_buffer .= __("ERROR"); }
-		$display_buffer .= "</CENTER>\n";
-
-		// If we came from patient management (EMR), return there
-		if (($return=="manage") and ($die)) {
-			Header("Location: manage.php?id=".urlencode($patient));
-			die("");
+			// Migrate old entries
+			$q = $GLOBALS['sql']->query('SELECT ptcproblems,id FROM patient WHERE LENGTH(ptcproblems) > 3');
+			while ($r = $GLOBALS['sql']->fetch_array($q)) {
+				$e = sql_expand($r['ptcproblems']);
+				if (!is_array($e)) { $e = array ($e); }
+				foreach ($e AS $a) {
+					$GLOBALS['sql']->query(
+						$GLOBALS['sql']->insert_query(
+							$this->table_name,
+							array(
+								'ppatient' => $r['id'],
+								'problem' => $a
+							)
+						)
+					); // end query
+				} // end foreach $e
+			} // end while
 		}
-	} // end function ChronicProblemsModule->delete()
-
-	function mod () {
-		$this->delete(false);
-		$this->add();
-	}
-
-	function view() {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-		$display_buffer .= "TODO: Listing for problems here\n";
-	} // end function ChronicProblemsModule->view()
+	} // end method _update
 
 } // end class ChronicProblemsModule
 
