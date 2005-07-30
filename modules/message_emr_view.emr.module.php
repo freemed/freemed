@@ -32,6 +32,7 @@ class MessageEMRView extends EMRModule {
 			"ORDER BY msgtime DESC ".
 			"LIMIT ".$num_summary_items);
 		if ($GLOBALS['sql']->results($my_result)) {
+			$buffer .= "<div style=\"overflow: auto; height: 200px;\">\n";
 			$buffer .= "<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\">\n";
 			$buffer .= "<tr CLASS=\"menubar_info\">".
 				"<TD><b>".__("Date")."</b></TD>".
@@ -77,6 +78,7 @@ class MessageEMRView extends EMRModule {
 					"</SMALL></TD></tr>\n";			
 			}
 			$buffer .= " </table> \n";
+			$buffer .= " </div> \n";
 		} else {
 			// If there are no messages regarding this patient
 			$buffer .= __("There are currently no messages.");
