@@ -123,7 +123,7 @@ class Ledger {
 			"pr.id = p.procphysician AND ".
 			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
 			"ORDER BY ".
-			"payment_date DESC, item DESC";
+			"procedure_date DESC, item";
 		//print "<hr/>query = \"$query\"<hr/>\n";
 		$result = $GLOBALS['sql']->query ( $query );
 		$return = array ( );
@@ -839,7 +839,7 @@ class Ledger {
 	//
 	// Returns:
 	//
-	//	Boolean, succesful
+	//	Boolean, successful
 	//
 	function unpostable ( $amount, $comment ) {
 		$cl = CreateObject('_FreeMED.ClaimLog');
@@ -849,6 +849,35 @@ class Ledger {
 			)
 		);
 	} // end method unpostable
+
+	// Method: writeoff_array
+	//
+	//	Write off an array of items
+	//
+	// Parameters:
+	//
+	//	$a - Array of items
+	//
+	// Returns:
+	//
+	//	Boolean, successful
+	//
+	function writeoff_array ( $a ) {
+		$query = "SELECT pr.id AS procedure_id ".
+			"FROM payrec AS p, procrec AS pr ".
+			"WHERE FIND_IN_SET(p.id, '".join(',', $a)."') AND ".
+			"p.payrecproc = pr.id";
+		$res = $GLOBALS['sql']->query($query);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$items[$r['procedure_id']] = $r['procedure_id'];
+		} // end while fetch array
+
+		$result = true;
+		foreach ($items AS $v) {
+			$result &= $this->post_writeoff ( $v );
+		}
+		return $result;
+	} // end method writeoff_array
 
 	//------------------------------------- INTERNAL METHODS ------------
 

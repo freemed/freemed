@@ -352,14 +352,14 @@ class AccountsReceivable extends BillingModule {
 
 		// Set up the table layout
 		$table->setHeaderContents(0,  0, ' ');
-		$table->setHeaderContents(0,  1, __("Date"));
+		$table->setHeaderContents(0,  1, __("Svc Date"));
 		$table->setHeaderContents(0,  2, __("Acct Bal"));
 		$table->setHeaderContents(0,  3, __("Provider"));
 		$table->setHeaderContents(0,  4, __("Patient"));
 		$table->setHeaderContents(0,  5, __("Item"));
 		$table->setHeaderContents(0,  6, __("Type"));
 		$table->setHeaderContents(0,  7, __("Svc"));
-		$table->setHeaderContents(0,  8, __("Svc Date"));
+		$table->setHeaderContents(0,  8, __("Date"));
 		$table->setHeaderContents(0,  9, __("Adjs"));
 		$table->setHeaderContents(0, 10, __("Charges"));
 
@@ -376,7 +376,12 @@ class AccountsReceivable extends BillingModule {
 				'name="check['.prepare($hash['item']).']" '.
 				( $_REQUEST['check'][$hash['item']] ? 'checked="checked" ' : '' ).
 				'value="'.prepare($hash['item']).'" />');
-			$table->setCellContents($count, 1, $hash['payment_date']); 
+			$table->setCellContents($count, 1, 
+				'<a href="'.$this->_search_link(array(
+					'date' => $hash['procedure_date']
+				)).'"><acronym TITLE="'.
+				__("Filter by this date").'">'.
+				$hash['procedure_date'].'</acronym></a>');
 			$table->setCellContents($count, 2, $hash['total_balance']);
 			$table->setCellContents($count, 3, 
 				'<a href="'.$this->_search_link(array(
@@ -425,12 +430,7 @@ class AccountsReceivable extends BillingModule {
 				__("Filter by this procedure").'">'.
 				$hash['procedure_id'].
 				'</acronym></a>');
-			$table->setCellContents($count, 8, 
-				'<a href="'.$this->_search_link(array(
-					'date' => $hash['procedure_date']
-				)).'"><acronym TITLE="'.
-				__("Filter by this date").'">'.
-				$hash['procedure_date'].'</acronym></a>');
+			$table->setCellContents($count, 8, $hash['payment_date']); 
 			$table->setCellContents($count, 9, 
 				bcadd($hash['money_in'], 0, 2));
 			$table->setCellContents($count, 10, 
