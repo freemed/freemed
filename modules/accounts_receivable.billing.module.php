@@ -340,8 +340,8 @@ class AccountsReceivable extends BillingModule {
 			__("For checked items").": ".
 			//"<input type=\"submit\" name=\"submit_action\" ".
 			//	"value=\"".__("Post Payment")."\" />\n".
-			//"<input type=\"submit\" name=\"submit_action\" ".
-			//	"value=\"".__("Writeoff")."\" />\n".
+			"<input type=\"submit\" name=\"submit_action\" ".
+				"value=\"".__("Writeoff")."\" />\n".
 			"<input type=\"button\" ".
 				"onClick=\"checkAll(this.form, true);\" ".
 				"value=\"".__("Select All")."\" />\n".
