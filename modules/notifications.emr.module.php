@@ -76,8 +76,16 @@ class Notifications extends EMRModule {
 					__("1 Week") => $scheduler->date_add(date('Y-m-d'), 7),
 					__("2 Weeks") => $scheduler->date_add(date('Y-m-d'), 14),
 					__("1 Month") => $scheduler->date_add(date('Y-m-d'), 28),
-					__("2 Months") => $scheduler->date_add(date('Y-m-d'), 56),
-					__("3 Months") => $scheduler->date_add(date('Y-m-d'), 84),
+					__("2 Months") => $scheduler->date_add(date('Y-m-d'), (2*30.5)),
+					__("3 Months") => $scheduler->date_add(date('Y-m-d'), (3*30)),
+					__("4 Months") => $scheduler->date_add(date('Y-m-d'), (4*30.5)),
+					__("5 Months") => $scheduler->date_add(date('Y-m-d'), (5*30)),
+					__("6 Months") => $scheduler->date_add(date('Y-m-d'), (6*30.5)),
+					__("7 Months") => $scheduler->date_add(date('Y-m-d'), (7*30)),
+					__("8 Months") => $scheduler->date_add(date('Y-m-d'), (8*30.5)),
+					__("9 Months") => $scheduler->date_add(date('Y-m-d'), (9*30)),
+					__("10 Months") => $scheduler->date_add(date('Y-m-d'), (10*30.5)),
+					__("11 Months") => $scheduler->date_add(date('Y-m-d'), (11*30)),
 					__("1 Year") => $scheduler->date_add(date('Y-m-d'), 365)
 				)
 			),
