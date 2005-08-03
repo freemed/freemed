@@ -278,7 +278,7 @@ switch ($action) {
     ".__("In House Doctor")." :
     </TD><TD ALIGN=LEFT>".
 	module_function('providermodule', 'widget', array ('ptdoc')).
-    </TD></TR>
+    "</TD></TR>
 
     <TR><TD ALIGN=RIGHT>
     ".__("Referring Doctor")." :
