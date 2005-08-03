@@ -276,8 +276,8 @@ switch ($action) {
 
     <TR><TD ALIGN=RIGHT>
     ".__("In House Doctor")." :
-    </TD><TD ALIGN=LEFT>
-  ".freemed_display_selectbox ($int_phys_r, "#phylname#, #phyfname#", "ptdoc")."
+    </TD><TD ALIGN=LEFT>".
+	module_function('providermodule', 'widget', array ('ptdoc')).
     </TD></TR>
 
     <TR><TD ALIGN=RIGHT>
@@ -548,7 +548,7 @@ switch ($action) {
 			"VALUE=\"".prepare($ptbudg)."\">",
 		 
 	__("In House Doctor") =>
-	freemed_display_selectbox ($int_phys_r, "#phylname#, #phyfname#", "ptdoc"),
+	module_function('providermodule', 'widget', array ('ptdoc')),
 
 	__("Referring Doctor") =>
 	module_function('providermodule', 'widget', array ('ptrefdoc')),
