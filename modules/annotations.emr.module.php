@@ -120,6 +120,44 @@ class Annotations extends EMRModule {
 		);
 	} // end method view
 
+	// Method: createAnnotation
+	//
+	//	Create an annotation.
+	//
+	// Parameters:
+	//
+	//	$module - Module to create annotation in
+	//
+	//	$id - ID number
+	//
+	//	$text - Text to annotate
+	//
+	function createAnnotation ($module, $id, $text) {
+		$q = $GLOBALS['sql']->insert_query(
+			$this->table_name,
+			array(
+				'amodule' => $module,
+				'aid' => $id,
+				'atimestamp' => SQL__NOW,
+				'apatient' => $_REQUEST['patient'],
+				'atable' => $this->_resolve_module_to_table($module),
+				'auser' => $_SESSION['authdata']['user'],
+				'annotation' => $text
+			)
+		);
+		$res = $GLOBALS['sql']->query($q);
+	} // end method createAnnotation
+
+	function _resolve_module_to_table ( $module ) {
+		$cache = freemed::module_cache();
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $v) {
+			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
+				return $v['META_INFORMATION']['table_name'];
+			}
+		}
+		trigger_error(__("Could not resolve table name!"), E_USER_ERROR);
+	} // end method _resolve_module_to_table
+
 	// Method: getAnnotations
 	//
 	//	Get annotations, if present.
