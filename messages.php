@@ -254,16 +254,28 @@ switch ($action) {
 	case "remove":
 	// Perform deletion
 	if ($_REQUEST['id'] > 0) {
-		$result = $sql->query("DELETE FROM messages WHERE id='".addslashes($id)."' ".
-			( $_REQUEST['return'] != 'manage' ? "AND msgpatient=0" : "" ));
-		$result = $sql->query("UPDATE messages SET msgread=1 WHERE ".
-			"id='".addslashes($id)."' AND msgpatient>0");
+		if ($_REQUEST['return'] == 'manage') {
+			// If this is from the patients' EMR, we should really erase the
+			// message permanently. The DELETE FROM command is CYA, since
+			// anything from a patients' EMR would have a patient attached.
+			$result = $sql->query("DELETE FROM messages WHERE id='".addslashes($id)."'");
+			$result = $sql->query("UPDATE messages SET msgread=1 WHERE ".
+				"id='".addslashes($id)."' AND msgpatient>0");
+		} else {
+			// If this is not from the patients' EMR, we should just mark it
+			// as being unviewable (out of range msgread) so it only shows up
+			// in the EMR view, not in old messages.
+			$result = $sql->query("DELETE FROM messages WHERE id='".addslashes($id)."' ".
+				"AND msgpatient=0");
+			$result = $sql->query("UPDATE messages SET msgread=2 WHERE ".
+				"id='".addslashes($id)."' AND msgpatient>0");
+		}
 	} elseif (is_array($_REQUEST['mark'])) {
 		$query = "DELETE FROM messages WHERE FIND_IN_SET(id, '".
 				join(",", $_REQUEST['mark'])."') ".
 				( $_REQUEST['return'] != 'manage' ? "AND msgpatient=0" : "" );
 		$result = $sql->query($query);
-		$query = "UPDATE messages SET msgread=1 WHERE ".
+		$query = "UPDATE messages SET msgread=2 WHERE ".
 				"FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ".
 				"AND msgpatient>0";
 		$result = $sql->query($query);
