@@ -23,6 +23,12 @@ if (!freemed::acl('schedule', 'view')) {
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"physician_week_view.php|user $user_to_log ");}	
 
+// If we are a provider, get that and throw it in
+if (!$physician) {
+	if (!is_object($this_user)) { $this_user = CreateObject('FreeMED.User'); }
+	if ($this_user->getPhysician()) { $physician = $this_user->getPhysician(); }
+}
+
 // check if there is a valid date... if not, assign current date
 if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
 	substr($for_date, 0, 4))) $for_date = $cur_date;
@@ -47,28 +53,13 @@ for ($i=1; $i<=6; $i++) {
 //----- Set page title
 $page_title = __("Physician Weekly View");
 
-//----- Create Javascript for previous/next
-$display_buffer .= "
-<script language=\"javascript\">
-nn=(document.layers)?true:false;
-ie=(document.all)?true:false;
-function keyDown(e) {
-	var evt=(e)?e:(window.event)?event:null;
-	if(e) {
-		var key=(e.charCode)?e.charCode:((e.keyCode)?e.keyCode:((e.which)?e.which:0));
-		// Handle left arrow
-		if(key=='37') window.location='$page_name?selected_date=$prev_date&physician=$physician';
-		// Handle right arrow
-		if(key=='39') window.location='$page_name?selected_date=$next_date&physician=$physician';
-		// Handle up arrow
-		if(key=='38') window.location='$page_name?selected_date=$prev_date&physician=$physician';
-		// Handle down arrow
-		if(key=='40') window.location='$page_name?selected_date=$next_date&physician=$physician';
-	} 
-}
-document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
-</script>
-";
+//----- Map key bindings
+freemed::key_binding(array(
+	'37' => "$page_name?selected_date=$prev_date&physician=$physician",
+	'39' => "$page_name?selected_date=$next_date&physician=$physician",
+	'38' => "$page_name?selected_date=$prev_date&physician=$physician",
+	'40' => "$page_name?selected_date=$next_date&physician=$physician"
+));
 
 //----- Display previous/next bar
 $display_buffer .= "
