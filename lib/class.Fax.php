@@ -171,8 +171,13 @@ class Fax {
 			break;
 
 			default:
-			syslog("FreeMED.Fax.Send| error, number $number, length = ".strlen($number));
+			syslog(LOG_INFO, "FreeMED.Fax.Send| error, number $number, length = ".strlen($number));
 			break;
+		}
+
+		// Log if we couldn't find the attachment
+		if (!file_exists($this->attachment)) {
+			syslog(LOG_INFO, "FreeMED.Fax.Send| could not find attachment file ".$this->attachment);
 		}
 
 		// Form command
@@ -200,11 +205,11 @@ class Fax {
 					$this->options['recipient'].'@' : ''
 				).$number.'" '.
 				$this->_attachments();
-			syslog(LOG_INFO, "Fax| send cmd = ".$cmd);
+			syslog(LOG_INFO, "FreeMED.Fax.Send| send cmd = ".$cmd);
 			break; // end hylafax
 		} // end switch
 		$output = `$cmd`;
-		syslog(LOG_INFO, "Fax| output = $output");
+		syslog(LOG_INFO, "FreeMED.Fax.Send| output = $output");
 
 		// Deal with output properly
 		switch ($this->options['fax_server']) {
