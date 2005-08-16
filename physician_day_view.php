@@ -19,6 +19,11 @@ if (!freemed::acl('schedule', 'view')) {
 	trigger_error(__("You do not have permission to do that."));
 }
 
+// If selected_date is set, store in session
+if ($_REQUEST['selected_date']) {
+	$_SESSION['remember']['physician_calendar_selected_date'] = $_REQUEST['selected_date'];
+}
+
 //------HIPAA Logging
 $user_to_log=$_SESSION['authdata']['user'];
 if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"physician_day_view.php|user $user_to_log ");}	
@@ -26,9 +31,13 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"physician_day_view.php|user $user_t
 
 
 //----- Check if there is a valid date... if not, assign current date
-if (!empty($selected_date)) $for_date = $selected_date;
-if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
-	substr($for_date, 0, 4))) $for_date = $cur_date;
+if ($_SESSION['remember']['physician_calendar_selected_date']) {
+	$selected_date = $for_date = $_SESSION['remember']['physician_calendar_selected_date'];
+} else {
+	if (!empty($selected_date)) $for_date = $selected_date;
+	if (!checkdate(substr($for_date, 5, 2), substr($for_date, 8, 2),
+		substr($for_date, 0, 4))) $for_date = $cur_date;
+}
 
 //----- Calculate previous and next dates for menubar
 $prev_week = $prev_date = freemed_get_date_prev ($for_date);
