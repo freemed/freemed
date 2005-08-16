@@ -5,12 +5,26 @@
 // Class: FreeMED.Procedure
 class Procedure {
 
+	// Constructor: Procedure
+	//
+	// Parameters:
+	//
+	//	$id - Procedure id
+	//
 	function Procedure ( $id ) {
 		$this->id = $id;
 		$this->local_record = freemed::get_link_rec($id, 'procrec', true);
 	} // end constructor Procedure
 
-	function CurrentBalance ( ) {
+	// Method: current_balance
+	//
+	//	Determine current balance of this object's procedure
+	//
+	// Returns:
+	//
+	//	Monetary balance amount.
+	//
+	function current_balance ( ) {
 		$total_payments = 0.00;
 		$total_charges  = 0.00;
 
@@ -47,6 +61,19 @@ class Procedure {
 	} // end method CurrentBalance
 
 	// Method: check_for_payer
+	//
+	//	Determine if a procedure has a payer associated with it.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure id or associative array of procedure
+	//
+	//	$payer - Payer to be checked
+	//
+	// Returns:
+	//
+	//	Boolean, whether payer is associated with procedure.
+	//
 	function check_for_payer ( $proc, $payer ) {
 		if (is_array($proc)) {
 			$_proc = $proc;
@@ -57,10 +84,10 @@ class Procedure {
 		// If there is no payer, return true
 		if (!$payer) { return true; }
 
-		if ($_proc['proc'] == $payer) { return true; }
+		if ($_proc['proccurcovid'] == $payer) { return true; }
 
 //		print $_proc['id']." != ".$payer."<br/>\n";
-		return true; // KLUDGE FOR TESTING
+//		return true; // KLUDGE FOR TESTING
 		return false;
 	} // end method
 
@@ -82,16 +109,16 @@ class Procedure {
 	function get_open_procedures_by_date_and_patient ( $patient, $date ) {
 		static $_cache;
 		if (!isset($_cache[$patient][$date])) {
-		$query = "SELECT * FROM procrec ".
-			"WHERE ".
-			( $date ? "procdt='".addslashes($date)."' AND " :
-			"" )." procpatient='".addslashes($patient)."'";
-		//print "query = $query<br/>\n";
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
-			$procedures[] = $r;
-		}
-		$_cache[$patient][$date] = $procedures;
+			$query = "SELECT * FROM procrec ".
+				"WHERE ".
+				( $date ? "procdt='".addslashes($date)."' AND " :
+				"" )." procpatient='".addslashes($patient)."'";
+			//print "query = $query<br/>\n";
+			$result = $GLOBALS['sql']->query ( $query );
+			while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+				$procedures[] = $r;
+			}
+			$_cache[$patient][$date] = $procedures;
 		}
 		return $_cache[$patient][$date];
 	} // end method get_open_procedures_by_date_and_patient
