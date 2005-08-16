@@ -340,6 +340,18 @@ class TeX {
 					if (strlen($linkrec[$params[3]]) > $params[4]) { $this->iffi = true; }
 					break;
 
+					case 'module':
+					$value = module_function (
+						$params[2],
+						$params[3],
+						array (
+							$rec[$params[4]]
+						)
+					);
+					unset ($obj);
+					if (!$value) { $this->iffi = true; }
+					break;
+
 					default:
 					if (!$rec[$params[2]]) { $this->iffi = true; }
 					break;
