@@ -4,8 +4,8 @@
 
 Name:		freemed
 Summary:	Opensource electronic medical record (EMR) software
-Version:	0.7.2
-Release:	1fc1
+Version:	0.8.0
+Release:	1
 License:	GPL
 Group:		Applications/Medical
 URL:		http://www.freemed.org/
@@ -15,7 +15,7 @@ Source0:	%{name}-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 
-Requires:	php >= 4.3.0, php-mysql >= 4.3.0, phpwebtools >= 0.4.4, tetex, ghostscript, mkisofs, cdrecord, netpbm-progs, ImageMagick, cups, djvulibre
+Requires:	php >= 4.3.0, php-mysql >= 4.3.0, phpwebtools >= 0.4.5, tetex, ghostscript, mkisofs, cdrecord, netpbm-progs, ImageMagick, cups, djvulibre
 BuildPrereq:	make, perl
 
 %description
@@ -49,6 +49,9 @@ rm -fr %{buildroot}
 %{_datadir}/%{name}
 
 %changelog
+
+* Sat Aug 27 2005 Jeff Buchbinder <jeff@freemedsoftware.com> - 0.8.0-1
+  - v0.8.0 release
 
 * Tue Nov 30 2004 Jeff Buchbinder <jeff@freemedsoftware.com> - 0.7.2-1fc1
   - v0.7.1 release

@@ -1,3 +1,9 @@
+freemed (0.8.0-0.1) stable; urgency=low
+
+  * Version 0.8.0 
+
+ -- Jeff Buchbinder <jeff@freemedsoftware.com>  Sat, 27 Aug 2005 13:25:40 -0400
+
 freemed (0.7.2-1) stable; urgency=low
 
   * Released final release of 0.7.2.
