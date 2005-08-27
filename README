@@ -1,5 +1,5 @@
 FreeMED documentation
-from jeff b (jeff@ourexchange.net)
+from jeff b (jeff@freemedsoftware.org)
 (c) 1999-2003 by the FreeMED Project under the GPL
 
 ********************************************************************** ERRATA
@@ -12,7 +12,7 @@ from jeff b (jeff@ourexchange.net)
   the database maintenance screen to force the modules to update their
   corresponding database tables.
 * Code is annotated with an author if the primary author is other than
-  jeff b <jeff@ourexchange.net>
+  jeff b <jeff@freemedsoftware.org>
 * Since FreeMED involves a fairly hefty codebase, php optimizing tricks,
   such as the bware_cache module or the Zend Optimizer should be used to
   minimize load times. APC is also available (apc.communityconnect.com)
@@ -107,37 +107,4 @@ A: Your version of PHP is probably broken in regard to sessions support. This
    default in newer versions of PHP, supposedly for security reasons. This
    assumption has been known to break PHP code, so you can go into your
    php.ini file and enable register_globals if you still have problems.)
-
-******************************************************** current coders/staff
-
-Jeff (jeff@ourexchange.net) -
-  Most of the code in the codebase is Jeff's. If you have any
-  problems with something non-billing related, he's probably
-  the person you want to speak to.
-
-dr_gnu (dr_gnu@ourexchange.net) -
-  DB management, planning, and direction. Architectural design
-  and questions should be addressed to him.
-
-Adam (gdrago23@yahoo.com) -
-  Much maintenance and general upkeep, as well as module
-  conversions
-
-Max Klohn (amk@span.ch) -
-  This guy is incredible. lots of translations, fixes, and bug
-  reports like you wouldn't believe, as well as things to think
-  about, and many database structures...
-
-John Gage (jgage@epo.som.sunysb.edu) -
-  Author of a great anesthesia tracking/report system, and has been
-  doing usability and capability testing for freemed.
-
-Fred Forrester (fforest@netcarrier.com) -
-  Current maintainer of the billing code. fred has done a fine job, and
-  has added much functionality. as well as cleaning up some of the age-old
-  code...
-
-Fred Trotter (ftrotter@synseer.com)
-  Fred (yes, another Fred) has HIPAA audited FreeMED, and has helped
-  revamp the billing system yet again.
 
