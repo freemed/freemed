@@ -48,7 +48,7 @@ function freemed_emr_xml_export ( $this_patient ) {
 	// add XML header code
 	$emr_xml .= "<?xml version=\"1.0\">\n";
 	$emr_xml .= "<!DOCTYPE freemed-emr SYSTEM ".
-		"\"http://www.freemed.org/dtd/freemed-0.3.dtd\">\n";
+		"\"http://www.freemedsoftware.org/dtd/freemed-0.3.dtd\">\n";
 	$emr_xml .= "<Patient PID=\"".prepare($this_patient->pid)."\" ".
 		"Version=\"".prepare($this_patient->version)."\">\n";
 	$emr_xml .= "\t<Name>\n";

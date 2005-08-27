@@ -8,7 +8,7 @@ Version:	0.8.0
 Release:	1
 License:	GPL
 Group:		Applications/Medical
-URL:		http://www.freemed.org/
+URL:		http://www.freemedsoftware.org/
 BuildArch:	noarch
 
 Source0:	%{name}-%{version}.tar.gz
