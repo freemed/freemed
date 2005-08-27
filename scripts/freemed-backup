@@ -11,13 +11,12 @@ DB_NAME=`$CFGVALUE DB_NAME`
 DB_USER=`$CFGVALUE DB_USER`
 DB_PASS=`$CFGVALUE DB_PASS`
 
-# MySQL backup
+# MySQL backup with bzip2 compression
 mysqldump \
+	--single-transaction \
 	--user=$DB_USER \
 	--password=$DB_PASS \
 	$DB_NAME \
-	> $OURPATH/data/backup/freemed.backup.$CURRENTDATE
+	| bzip2 -qc > $OURPATH/data/backup/freemed.backup.$CURRENTDATE.bz2
 
-# bzip it...
-bzip2 -q $OURPATH/data/backup/freemed.backup.$CURRENTDATE
 
