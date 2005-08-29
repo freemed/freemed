@@ -17,7 +17,7 @@ define ('PACKAGENAME', "FreeMED");				// package name
 define ('CODED_BY', "The FreeMED Project");		// coded by tag
 define ('VERSION', "0.8.0");	// current version
 define ('DISPLAY_VERSION', "0.8.0");
-define ('BUGS_EMAIL', "code_bugs@ourexchange.net");	// coder email...
+define ('BUGS_EMAIL', "support@freemedsoftware.org");	// coder email...
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
 $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
@@ -169,7 +169,6 @@ if (!defined('SESSION_DISABLE')) {
 include_once ("lib/iso-set.php");         // ISO set handler
 include_once ("lib/API.php");             // API functions
 include_once ("lib/macros.php");          // macros/contants
-include_once ("lib/xml.php");             // XML import/export routines
 
   // ****************** INITIALIZE SQL CONNECTION ******************
 
