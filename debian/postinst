@@ -5,7 +5,12 @@
 # Post-install directives for FreeMED package
 
 # Patch PHP ini file to have more than 8M per process
-perl -pi -e "s|8M|64M|;" /etc/php4/apache/php.ini
+if [ -f /etc/php4/apache/php.ini ]; do
+	perl -pi -e "s|8M|64M|;" /etc/php4/apache/php.ini
+fi
+if [ -f /etc/php4/apache2/php.ini ]; do
+	perl -pi -e "s|8M|64M|;" /etc/php4/apache2/php.ini
+fi
 
 # Apache user has to own freemed
 echo -n "Updating ownership of freemed to webserver user ... "
@@ -33,6 +38,9 @@ if [ -f /etc/init.d/apache ]; then \
 fi
 if [ -f /etc/init.d/apache-ssl ]; then \
 	/etc/init.d/apache-ssl restart; \
+fi
+if [ -f /etc/init.d/apache2 ]; then \
+	/etc/init.d/apache2 restart; \
 fi
 
 #DEBHELPER#
