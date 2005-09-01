@@ -6,6 +6,9 @@ This is a brief HOWTO concerning language translations for FreeMED using
 GettextXML. This is an XML-based format which resembles GNU gettext in
 many aspects.
 
+There is a community site for translating FreeMED, which can be
+visited at http://i18n.freemedsoftware.org/ .
+
 INITIAL TRANSLATION-------------------------------------------------------
 
 The first thing you have to do is run the generation program, to generate
