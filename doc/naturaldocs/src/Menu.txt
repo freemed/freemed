@@ -1,0 +1,229 @@
+Format: 1.3
+
+
+Title: FreeMED
+SubTitle: Opensource EMR/PM Software
+
+Footer: (c) 2005 FreeMED Software Foundation
+
+
+# --------------------------------------------------------------------------
+# 
+# Cut and paste the lines below to change the order in which your files
+# appear on the menu.  Don't worry about adding or removing files, Natural
+# Docs will take care of that.
+# 
+# You can further organize the menu by grouping the entries.  Add a
+# "Group: [name] {" line to start a group, and add a "}" to end it.
+# 
+# You can add text and web links to the menu by adding "Text: [text]" and
+# "Link: [name] ([URL])" lines, respectively.
+# 
+# The formatting and comments are auto-generated, so don't worry about
+# neatness when editing the file.  Natural Docs will clean it up the next
+# time it is run.  When working with groups, just deal with the braces and
+# forget about the indentation and comments.
+# 
+# --------------------------------------------------------------------------
+
+
+Group: Lib  {
+
+   Group: Acl  {
+
+      Group: Admin  {
+
+         File: core<br>  (lib/acl/admin/smarty/libs/core/core.display_debug_console.php)
+         File: core<br>  (lib/acl/admin/smarty/libs/core/core.assign_smarty_interface.php)
+
+         Group: Plugins  {
+
+            File: block function<br>  (lib/acl/admin/smarty/libs/plugins/block.strip.php)
+            File: block function<br>  (lib/acl/admin/smarty/libs/plugins/block.textformat.php)
+            File: compiler function<br>  (lib/acl/admin/smarty/libs/plugins/compiler.assign.php)
+            File: function.html_checkboxes.php<br>  (lib/acl/admin/smarty/libs/plugins/function.html_checkboxes.php)
+            File: function.html_radios.php<br>  (lib/acl/admin/smarty/libs/plugins/function.html_radios.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.popup_init.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.counter.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.config_load.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.debug.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_options.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.cycle.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_select_time.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.math.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.eval.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_table.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.mailto.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.fetch.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_select_date.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.popup.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_image.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.assign.php)
+            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.assign_debug_info.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.spacify.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.string_format.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.date_format.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.default.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.upper.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.replace.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.indent.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.debug_print_var.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.strip_tags.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_paragraphs.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.truncate.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_characters.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.regex_replace.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_words.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.wordwrap.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.strip.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.cat.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.escape.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.capitalize.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.nl2br.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.lower.php)
+            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_sentences.php)
+            File: outputfilter.trimwhitespace.php<br>  (lib/acl/admin/smarty/libs/plugins/outputfilter.trimwhitespace.php)
+            File: smarty_function_escape_special_chars<br>  (lib/acl/admin/smarty/libs/plugins/shared.escape_special_chars.php)
+            File: smarty_make_timestamp<br>  (lib/acl/admin/smarty/libs/plugins/shared.make_timestamp.php)
+            }  # Group: Plugins
+
+         }  # Group: Admin
+
+      Group: Adodb  {
+
+         File: adodb-connection.inc.php  (lib/acl/adodb/adodb-connection.inc.php)
+         File: adodb.inc.php  (lib/acl/adodb/adodb.inc.php)
+         File: http://msdn...asp?url=/archive/en-us/dnaraccgen/html/msdn_odk.asp  (lib/acl/adodb/drivers/adodb-odbc.inc.php)
+         File: On Windows 2000 SP4 with PHP 4...3.28,  (lib/acl/adodb/session/adodb-encrypt-secret.php)
+         File: Since 3.31, this file is no longer used, and the "postgres" driver is  (lib/acl/adodb/drivers/adodb-postgres.inc.php)
+         File: SQL string literals (input strings) must be preceded with two backslashes  (lib/acl/adodb/drivers/adodb-postgres64.inc.php)
+         }  # Group: Adodb
+
+      File: soap/clients/perl_client.pl  (lib/acl/soap/clients/perl_client.pl)
+      File: soap/nusoap.php  (lib/acl/soap/nusoap.php)
+      File: This cache must be manually cleaned each time ACL's are modified.  (lib/acl/gacl.class.php)
+      File: When asking phpGACL questions about access to an ACO, it is not possible  (lib/acl/docs/manual.txt)
+      }  # Group: Acl
+
+   File: agata/dia2sql.pl  (lib/agata/dia2sql.pl)
+   File: bcadd  (lib/bcadd.php)
+   File: Calendar API  (lib/calendar-functions.php)
+   File: Core API  (lib/API.php)
+   File: FreeMED.AdminModule  (lib/class.AdminModule.php)
+   File: FreeMED.Agata  (lib/class.Agata.php)
+   File: FreeMED.Authorizations  (lib/class.Authorizations.php)
+   File: FreeMED.BaseModule  (lib/class.BaseModule.php)
+   File: FreeMED.ClaimLog  (no auto-title, lib/class.ClaimLog.php)
+   File: FreeMED.Coverage  (lib/class.Coverage.php)
+   File: FreeMED.Djvu  (lib/class.Djvu.php)
+   File: FreeMED.EMRModule  (lib/class.EMRModule.php)
+   File: FreeMED.Fax  (lib/class.Fax.php)
+   File: FreeMED.FixedFormRenderer  (lib/class.FixedFormRenderer.php)
+   File: FreeMED.FreeMEDSelfTest  (lib/class.FreeMEDSelfTest.php)
+   File: FreeMED.GeneralConfig  (lib/class.GeneralConfig.php)
+   File: FreeMED.Guarantor  (lib/class.Guarantor.php)
+   File: FreeMED.Handler_HL7v2  (lib/class.Handler_HL7v2.php)
+   File: FreeMED.Parser_HL7v2  (no auto-title, lib/class.Parser_HL7v2.php)
+   File: FreeMED.InsuranceCompany  (lib/class.InsuranceCompany.php)
+   File: FreeMED.LanguageRegistry  (lib/class.LanguageRegistry.php)
+   File: FreeMED.Ledger  (lib/class.Ledger.php)
+   File: FreeMED.MaintenanceModule  (lib/class.MaintenanceModule.php)
+   File: FreeMED.Messages  (lib/class.Messages.php)
+   File: FreeMED.Patient  (lib/class.Patient.php)
+   File: FreeMED.Payer  (lib/class.Payer.php)
+   File: FreeMED.PHPlot  (no auto-title, lib/class.PHPlot.php)
+   File: FreeMED.Physician  (lib/class.Physician.php)
+   File: FreeMED.Procedure  (lib/class.Procedure.php)
+   File: FreeMED.RecordLock  (lib/class.RecordLock.php)
+   File: FreeMED.Remitt  (lib/class.Remitt.php)
+   File: FreeMED.RxList  (lib/class.rxlist.php)
+   File: FreeMED.Scheduler  (lib/class.Scheduler.php)
+   File: FreeMED.TeX  (lib/class.TeX.php)
+   File: FreeMED.User  (lib/class.User.php)
+   File: FreeMED.vCalendar  (lib/class.vCalendar.php)
+   File: FreeMED.vCalendarEvent  (lib/class.vCalendarEvent.php)
+
+   Group: Perl  {
+
+      File: Config::IniFiles  (lib/perl/Config/IniFiles.pm)
+
+      Group: Encode  {
+
+         File: compat  (lib/perl/Encode/compat.pm)
+         File: compat::  (lib/perl/Encode/compat/5006001.pm)
+         File: compat::Alias  (lib/perl/Encode/compat/Alias.pm)
+         File: compat::common  (lib/perl/Encode/compat/common.pm)
+         }  # Group: Encode
+
+      Group: Frontier  {
+
+         File: Client.pm  (lib/perl/Frontier/Client.pm)
+         File: Daemon.pm  (lib/perl/Frontier/Daemon.pm)
+         File: RPC2.pm  (lib/perl/Frontier/RPC2.pm)
+         }  # Group: Frontier
+
+      File: XML::RAX  (lib/perl/XML/RAX.pm)
+      }  # Group: Perl
+
+   File: ReadSqlFile  (lib/agata/lib/class.AgataCore.php)
+   File: template  (lib/template/default/lib.php)
+   File: AJAX Library Functions  (no auto-title, lib/template/default/ajax.php)
+
+   Group: Xmlrpc  {
+
+      Group: FreeB  {
+
+         File: FreeB.FBDiagnosis  (no auto-title, lib/xmlrpc/FreeB/class.FBDiagnosis.php)
+         File: FreeB.FBProcedure  (no auto-title, lib/xmlrpc/FreeB/class.FBProcedure.php)
+         File: FreeB.FBBillingContact  (no auto-title, lib/xmlrpc/FreeB/class.FBBillingContact.php)
+         File: FreeB.FBBillingService  (no auto-title, lib/xmlrpc/FreeB/class.FBBillingService.php)
+         File: FreeB.FBClearingHouse  (no auto-title, lib/xmlrpc/FreeB/class.FBClearingHouse.php)
+         File: FreeB.FBFacility  (no auto-title, lib/xmlrpc/FreeB/class.FBFacility.php)
+         File: FreeB.FBInsured  (no auto-title, lib/xmlrpc/FreeB/class.FBInsured.php)
+         File: FBProvider  (lib/xmlrpc/FreeB/class.FBProvider.php)
+         }  # Group: FreeB
+
+      File: XMLRPC FreeMED.Fax  (no auto-title, lib/xmlrpc/class.Fax.php)
+      File: XMLRPC FreeMED.Patient  (no auto-title, lib/xmlrpc/class.Patient.php)
+      File: XMLRPC FreeMED.Ticker  (no auto-title, lib/xmlrpc/class.Tickler.php)
+      File: XMLRPC FreeMED.Images  (no auto-title, lib/xmlrpc/class.Images.php)
+      }  # Group: Xmlrpc
+
+   }  # Group: Lib
+
+Group: Modules  {
+
+   File: accounts_receivable.billing.module.php  (modules/accounts_receivable.billing.module.php)
+   File: acl.module.php  (modules/acl.module.php)
+   File: annotations.emr.module.php  (modules/annotations.emr.module.php)
+   File: appointment_templates.db.module.php  (modules/appointment_templates.db.module.php)
+   File: claims_manager.billing.module.php  (modules/claims_manager.billing.module.php)
+   File: noteForDate  (modules/progress_notes.emr.module.php)
+   File: patient_acl.emr.module.php  (modules/patient_acl.emr.module.php)
+   File: printaction  (modules/patient_statements.billing.module.php)
+   }  # Group: Modules
+
+Group: Scripts  {
+
+   File: $pid  (scripts/image2md5scheme.pl)
+   File: acl2schema.pl  (scripts/acl2schema.pl)
+   File: cvs2cl.pl  (scripts/cvs2cl.pl)
+   File: fax_import/import_fax.pl  (scripts/fax_import/import_fax.pl)
+   File: fixedform2array.pl  (scripts/fixedform2array.pl)
+   File: GettextXML_Catalog.pl  (scripts/GettextXML_Catalog.pl)
+   File: md5ize.pl  (scripts/md5ize.pl)
+   File: tickler.pl  (scripts/tickler.pl)
+   }  # Group: Scripts
+
+File: generate_calendar_mini  (book_appointment.php)
+
+Group: Index  {
+
+   Index: Everything
+   Class Index: Classes
+   File Index: Files
+   Function Index: Functions
+   Type Index: Types
+   Variable Index: Variables
+   }  # Group: Index
+
