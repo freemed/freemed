@@ -65,6 +65,7 @@ class ScannedDocuments extends EMRModule {
 		$this->EMRModule();
 	} // end constructor ScannedDocuments
 
+/*
 	function activeXupload ($name) {
 		global $display_buffer;
 		$buffer .= "
@@ -86,6 +87,7 @@ class ScannedDocuments extends EMRModule {
 		";
 		return $buffer;
 	} // end function ScannedDocuments->activeXupload
+*/
 
 	function add () {
 		global $display_buffer, $sql, $imageeoc, $patient, $module;
@@ -291,8 +293,10 @@ class ScannedDocuments extends EMRModule {
 
 			__("Attach Image") =>
 			( (($action=="add") || ($action=="addform")) ?
-			( ($this->IEupload) ? $this->activeXupload() :
-			"<input TYPE=\"FILE\" NAME=\"imageupload\"/>" ) :
+			// Remove webscanner ActiveX thing from here
+			//( ($this->IEupload) ? $this->activeXupload() :
+			//"<input TYPE=\"FILE\" NAME=\"imageupload\"/>" ) :
+			"<input TYPE=\"FILE\" NAME=\"imageupload\"/>" :
 			__("ATTACHED") )
 
 		)));
