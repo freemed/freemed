@@ -1,6 +1,11 @@
-FreeMED documentation
-from jeff b (jeff@freemedsoftware.org)
-(c) 1999-2003 by the FreeMED Project under the GPL
+FreeMED README
+Written by Jeff Buchbinder
+(jeff@freemedsoftware.com)
+(c) 1999-2005 FreeMED Software Foundation (GPL)
+
+Please note that this README file is meant to help with initially setting up
+FreeMED. If you are still having trouble, try the FreeMED support list,
+support@freemedsoftware.org for community-based support.
 
 ********************************************************************** ERRATA
 * index.php has to be added in /etc/httpd/conf/?????.conf under the
@@ -12,10 +17,12 @@ from jeff b (jeff@freemedsoftware.org)
   the database maintenance screen to force the modules to update their
   corresponding database tables.
 * Code is annotated with an author if the primary author is other than
-  jeff b <jeff@freemedsoftware.org>
+  jeff b <jeff@freemedsoftware.com>
 * Since FreeMED involves a fairly hefty codebase, php optimizing tricks,
   such as the bware_cache module or the Zend Optimizer should be used to
-  minimize load times. APC is also available (apc.communityconnect.com)
+  minimize load times. APC is also available (apc.communityconnect.com), as
+  well as the venerable (but largely unmaintained) Turck MMcache
+  (http://turck-mmcache.sourceforge.net/).
 
 **************************************************************** INSTALLATION
 
@@ -24,15 +31,11 @@ from jeff b (jeff@freemedsoftware.org)
    another box, be sure that the client libraries are installed on your
    FreeMED box.
 
-2) Make sure that PHP is installed, with MySQL support. Linux-Mandrake
-   requires a seperate module (php-mysql) for MySQL support, as do some
-   versions of RedHat. FreeMED currently uses PHP version 4 and above.
+2) Make sure that PHP is installed, with MySQL support. Most distributions
+   require a separate module (php4-mysql, php-mysql) for MySQL support.
 
 3) Install phpwebtools (you can download it from
-   http://sourceforge.net/projects/phpwebtools/). This library is required
-   for versions of FreeMED starting at 0.2.0. FreeMED will give you a
-   warning if your version of phpwebtools is too old. We try not to rely
-   on a CVS version of phpwebtools for release versions of FreeMED.
+   http://sourceforge.net/projects/phpwebtools/).
 
 4) Install the FreeMED package:
 
@@ -47,14 +50,14 @@ from jeff b (jeff@freemedsoftware.org)
    settings are correct for your machine. (There is a setup wizard in the
    works that performs this step for you, using a web browser.)
 
-6) Edit your Apache configuration files to associate .php, .inc, and .php3
-   files with php, as well as setting index.php3 to be one of the default
-   indexes. Also set up access and a directory alias for FreeMED. This is
-   accomplished with the following lines:
+6) Edit your Apache configuration files to associate .php files with php, as
+   well as setting index.php to be one of the default indexes. Also set up
+   access and a directory alias for FreeMED. This is accomplished with the
+   following lines:
 
-   DirectoryIndex index.php index.php3 (et cetera...)
+   DirectoryIndex index.php index.php (et cetera...)
 
-   AddType application/x-httpd-php .php .phtml .php3
+   AddType application/x-httpd-php .php
 
    Alias /freemed /usr/share/freemed
 
@@ -66,7 +69,8 @@ from jeff b (jeff@freemedsoftware.org)
    </Directory>
 
 7) HUP apache (killall -1 httpd) to force it to reload its configuration
-   files.
+   files. Optionally you can use "/etc/init.d/apache2 restart" or its equivalent
+   in your distribution.
 
 8) Create the database with the command "mysqladmin -p create freemed"
    (if you are using MySQL). (The setup wizard also does this.) Please
