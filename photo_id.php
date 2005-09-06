@@ -70,7 +70,7 @@ switch ($action) {
 		// Browser check
 		$browser = CreateObject('PHP.browser_detect');
 		$IEupload = false;
-		if ($browser->BROWSER=="IE") { $IEupload = true; }
+		//if ($browser->BROWSER=="IE") { $IEupload = true; }
 
 		// Show widget
 		$display_buffer .= "
