@@ -1,8 +1,8 @@
 # $Id$
 # $Author$
 
-THISDIR=lib
-SUBDIR=acl agata perl phpwebtools template tex xmlrpc
+THISDIR=lib/phpwebtools
+SUBDIR=
 
 all:
 	# Nothing

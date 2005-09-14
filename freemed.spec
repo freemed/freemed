@@ -15,7 +15,7 @@ Source0:	%{name}-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 
-Requires:	php >= 4.3.0, php-mysql >= 4.3.0, phpwebtools >= 0.4.5, tetex, ghostscript, mkisofs, cdrecord, netpbm-progs, ImageMagick, cups, djvulibre
+Requires:	php >= 4.3.0, php-mysql >= 4.3.0, tetex, ghostscript, mkisofs, cdrecord, netpbm-progs, ImageMagick, cups, djvulibre
 BuildPrereq:	make, perl
 
 %description

@@ -88,23 +88,7 @@ if (file_exists("lib/template/".$template."/lib.php")) {
 
 include_once ("lib/error_handler.php");   // internal error handler
 
-if (file_exists(PHPWEBTOOLS_LOCATION."/webtools.php")) {
-	include_once (PHPWEBTOOLS_LOCATION."/webtools.php"); // webtools toolkit
-} else {
-	die("FreeMED requires that phpwebtools be installed at <b>".
-		PHPWEBTOOLS_LOCATION."</b>. This location can be changed in ".
-		"<b>lib/settings.php</b>.");
-}
-
-define ('WEBTOOLS_REQUIRED', '0.4.5');   // version of phpwebtools required
-
-  // version check for webtools
-if ( !defined("WEBTOOLS_VERSION") or
-		!version_check(WEBTOOLS_VERSION, WEBTOOLS_REQUIRED) ) {
-	die ("phpwebtools >= ".WEBTOOLS_REQUIRED." is required ".
-		"for this version of FreeMED ".
-		"(http://phpwebtools.sourceforge.net/)\n");
-}
+include_once ("lib/phpwebtools/webtools.php"); // webtools toolkit
 
 // Quick IE/Gecko browser check
 if (ereg('MSIE ([0-9].[0-9]{1,2})',$_SERVER['HTTP_USER_AGENT'])) {
