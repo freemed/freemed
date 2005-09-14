@@ -235,28 +235,11 @@ function ResolveObjectPath($object) {
 		break;
 
 		case 'PEAR':
-		// PEAR is interesting, because no two distributions
-		// (or even packagings) put the classes in the same
-		// place. We'll just guess, or use an override define
-		// if all else fails.
-		$pear_paths = array (
-			'/usr/share/pear/',
-			'/usr/share/php/',
-			'/usr/lib/pear/',
-			'/usr/local/apache/php/share/pear/',
-			'/usr/local/apache2/php/share/pear/',
-			( defined('PEAR_PATH') ? PEAR_PATH : '' )
-		);
-		foreach ($pear_paths AS $_null => $this_path) {
-			if (file_exists($this_path.'PEAR.php')) {
-				// Resolve path name. PEAR packages use
-				// _ as a path delimeter....
-				$my_class = str_replace('_','/',$classname);
-				$path = $this_path.$my_class.'.php';
-				return $path;
-			}
-		}
-		die('PEAR is not installed on this system.');
+		// Resolve path name. PEAR packages use
+		// _ as a path delimeter....
+		$my_class = str_replace('_','/',$classname);
+		$path = dirname(dirname(__FILE__)).'/pear/'.$my_class.'.php';
+		return $path;
 		break;
 
 		default:
