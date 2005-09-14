@@ -8,7 +8,7 @@ if (!defined('__WEBTOOLS_PHP__')) {
 
 define ('__WEBTOOLS_PHP__', true);
 
-define ('WEBTOOLS_ROOT', dirname(__FILE__));
+define ('WEBTOOLS_ROOT', dirname(__FILE__).'/');
 
 // Current version of phpwebtools
 define ('WEBTOOLS_VERSION', '0.4.5');
