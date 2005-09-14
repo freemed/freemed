@@ -876,6 +876,10 @@ class sql {
 		return $result;
 	} // end tablename
 
+	// Method: num_fields
+	//
+	//	SQL wrapper for field number count
+	//
 	function num_fields ( $res ) {
 		switch ($this->DB_ENGINE) {
 			case SQL_MYSQL:
@@ -909,11 +913,30 @@ class sql {
 			break; // end of default
 		} // end type switch
 		return $result;
-	} // end sql->field_name
+	} // end method field_name
 
-	function distinct_values ( $table, $field ) {
+	// Method: distinct_values
+	//
+	//	Produce a list of distinct values for an SQL table field
+	//
+	// Parameters:
+	//
+	//	$table - Name of the SQL table
+	//
+	//	$field - Name of the SQL field
+	//
+	//	$where - (optional) Where clause contents, if any. Example would be
+	//	"msgid=3" or "id=10 AND patient=12".
+	//
+	// Returns:
+	//
+	//	Array of distinct values for the selected field
+	//
+	function distinct_values ( $table, $field, $where = NULL ) {
 		$result = $this->query("SELECT DISTINCT ".addslashes($field).
-			" FROM ".addslashes($table)." ORDER BY ".
+			" FROM ".addslashes($table).
+			( $where ? " WHERE ".$where." " : " " ).
+			" ORDER BY ".
 			addslashes($field));
 		// If nothing, return a null array
 		if (!$this->results($result)) return array();
@@ -1027,6 +1050,7 @@ class sql {
 				break;
 		}
 	} // end function sql->unsquash
+
 } // end class sql
 
 ?>
