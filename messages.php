@@ -25,6 +25,8 @@ if((LOGLEVEL<1)||LOG_HIPAA){syslog(LOG_INFO,"messages.php|user $user_to_log mess
 $this_user = CreateObject('FreeMED.User');
 
 if ($_REQUEST['submit_action']==__("Send")) { $action = "add"; }
+if ($_REQUEST['submit_action']==__("Tag")) { $action = "tag"; }
+if ($_REQUEST['submit_action']==__("Remove Tag")) { $action = "deltag"; }
 if ($_REQUEST['submit_action']==__("Save Draft")) {
 	$_SESSION['message_draft']['for'] = $_REQUEST['msgfor'];
 	$_SESSION['message_draft']['group'] = $_REQUEST['group'];
@@ -59,6 +61,29 @@ if ($_REQUEST['submit_action']==__("Delete Marked Messages")) {
 }
 
 switch ($action) {
+
+	case 'tag':
+	if (is_array($_REQUEST['mark'])) {
+		$query = "UPDATE messages SET msgtag='".addslashes(html_form::combo_assemble('tag'))."' ".
+				"WHERE FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ";
+		$result = $sql->query($query);
+	}
+	Header("Location: messages.php?".
+			"tag=".urlencode($_REQUEST['tag'])."&".
+			"start=".urlencode($_REQUEST['start']));
+	die("");
+	break; // end tag
+
+	case 'deltag':
+	if (is_array($_REQUEST['mark'])) {
+		$query = "UPDATE messages SET msgtag='' ".
+				"WHERE FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ";
+		$result = $sql->query($query);
+	}
+	Header("Location: messages.php?".
+			"start=".urlencode($_REQUEST['start']));
+	die("");
+	break; // end delete tag
 
 	case "addform":
 	// Set page title
@@ -405,9 +430,10 @@ switch ($action) {
 	$paging = false;
 	$p_result = $sql->query(
 		"SELECT * FROM messages ".
-		"WHERE msgfor='".$this_user->user_number."' AND ".
-		"msgread='".addslashes($old)."' ".
-		"ORDER BY msgtime DESC"
+		"WHERE msgfor='".$this_user->user_number."' ".
+		( !$_REQUEST['tag'] ? " AND msgread='".addslashes($old)."' " : "" ).
+		" AND msgtag='".addslashes($_REQUEST['tag'])."' ".
+		"ORDER BY msgtime DESC,id DESC"
 	);
 	if ($sql->results($p_result)) {
 		$total_results = $sql->num_rows($p_result);
@@ -425,14 +451,27 @@ switch ($action) {
 
 	// View list of messages for this doctor
 	$query = "SELECT * FROM messages ".
-		"WHERE msgfor='".$this_user->user_number."' AND ".
-		"msgread='".addslashes($old)."' ".
-		"ORDER BY msgtime DESC ".
+		"WHERE msgfor='".$this_user->user_number."' ".
+		( !$_REQUEST['tag'] ? " AND msgread='".addslashes($old)."' " : "" ).
+		" AND msgtag='".addslashes($_REQUEST['tag'])."' ".
+		"ORDER BY msgtime DESC,id DESC ".
 		"LIMIT ".addslashes($start + 0).",".addslashes(PAGE_ROLL + 0);
 		// this should be LIMIT (page roll) OFFSET (start)
 	$result = $sql->query($query);
 
+	$_REQUEST['show_tag'] = $GLOBALS['show_tag'] = $_REQUEST['tag'];
 	if (!$sql->results($result)) {
+		$display_buffer .= 
+			html_form::select_widget(
+				'show_tag',
+				array_merge(
+					array ('INBOX' => '' ),
+					$sql->distinct_values('messages', 'msgtag', "msgfor='".addslashes($this_user->user_number)."'")
+				),
+				array(
+					'on_change' => "location.href='messages.php?tag='+escape(this.value)"
+				)
+			);
 		$display_buffer .= "<p align=\"center\">
 			". ($old ?
 				__("You have no old messages.") :
@@ -450,8 +489,29 @@ switch ($action) {
 				prepare($start)."\"/>
 			<input TYPE=\"BUTTON\" VALUE=\"".__("Select All")."\" ".
 			"onClick=\"selectAll(this.form); return true;\" ".
-			"class=\"button\"/>
-			".( ($old==0) ?
+			"class=\"button\"/>\n".
+			html_form::select_widget(
+				'show_tag',
+				array_merge(
+					array ('INBOX' => ''),
+					$sql->distinct_values('messages', 'msgtag', "msgfor='".addslashes($this_user->user_number)."'")
+				),
+				array(
+					'on_change' => "location.href='messages.php?tag='+escape(value)"
+				)
+			).
+			( ($tag) ?
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Remove Tag")."\"/> " :
+			"<nobr>".
+				html_form::combo_widget(
+					'tag',
+					$sql->distinct_values('messages', 'msgtag')
+				).
+			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
+				"VALUE=\"".__("Tag")."\"/></nobr>\n"
+			).
+			( ($old==0) ?
 			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
 				"VALUE=\"".__("Mark as Read")."\"/> " :
 			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".

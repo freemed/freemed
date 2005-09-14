@@ -8,7 +8,7 @@ class MessagesTable extends EMRModule {
 
 	var $MODULE_NAME = 'Messages';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.1.1';
+	var $MODULE_VERSION = '0.7.2';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -124,6 +124,18 @@ class MessagesTable extends EMRModule {
 			$sql->query('UPDATE '.$this->table_name.' '.
 				'SET msgunique=id WHERE id>0');
 		}
+
+		// Version 0.7.2
+		//
+		//	Add "msgtag" field for virtual boxes
+		//
+		if (!version_check($version, '0.7.2')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN msgtag VARCHAR(32) AFTER msgunique');
+			$sql->query('UPDATE '.$this->table_name.' '.
+				'SET msgtag=\'\' WHERE id>0');
+		}
+
 	} // end function _update
 }
 
