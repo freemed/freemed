@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=data
-SUBDIR=backup cache config en_US fax
+SUBDIR=backup cache config en_US fax keys
 
 all:
 	# Nothing

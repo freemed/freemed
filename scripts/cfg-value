@@ -4,6 +4,13 @@
 #  -- languages. to be run as "scripts/cfg-value (value-to-return, no $)"
 #  -- (ex)  scripts/cfg-value packagename   would be "freemed"....
 
+KEY=$1
+
+if [ "${KEY}" = "" ]; then
+	echo "	syntax:	$0 key"
+	exit
+fi
+
 OURPATH="/usr/share/freemed"
 GLOBALVARFILE="lib/settings.php"
 
