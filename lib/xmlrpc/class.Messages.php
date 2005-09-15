@@ -70,6 +70,7 @@ class Messages {
 					"msgtext"    => $message['text'],
 					"msgsubject" => $message['subject'],
 					"msgurgency" => $message['urgency'],
+					"msgtag"     => '',
 					"msgread"    => '0',
 					"msgtime"    => SQL__NOW
 				)
