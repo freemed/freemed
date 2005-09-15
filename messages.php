@@ -252,6 +252,7 @@ switch ($action) {
 				"msgsubject",
 				"msgtext",
 				"msgurgency",
+				"msgtag" => '', // keep NULLs from being inserted
 				"msgunique" => $unique, // unique marker
 				"msgread" => '0' // mark as not read
 			)
