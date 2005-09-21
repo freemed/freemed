@@ -1,10 +1,9 @@
 <?php
- // $Id$
- // desc: Adhoc query generator Taken from MySQL Query Maker
- // Jay P. Narain
- // narain2@yahoo.com
- // converted to freemed by fforest
- // lic : LGPL
+	// $Id$
+	// desc: Adhoc query generator Taken from MySQL Query Maker
+	// Jay P. Narain (narain2@yahoo.com)
+	// converted to freemed by fforest
+	// Additional code changes by Jeff (jeff@freemedsoftware.com)
 
 LoadObjectDependency('_FreeMED.ReportsModule');
 
@@ -12,7 +11,7 @@ class QmakerReport extends ReportsModule {
 
 	var $MODULE_NAME = "Query Maker";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.1.2";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_DESCRIPTION = "SQL query formation and execution environment.";
 	var $MODULE_FILE = __FILE__;
 
@@ -85,17 +84,18 @@ class QmakerReport extends ReportsModule {
 
 			$display_buffer .= "<CENTER>";
 			$display_buffer .= "<p>";
-			$display_buffer .= "Pick a Query";
+			$display_buffer .= __("Pick a Query");
 			$display_buffer .= "</p>";
-			$display_buffer .= "<FORM METHOD=\"POST\" ACTION=\"$this->page_name\"><SELECT  NAME=\"loadas\">\n";
-			$res = $sql->query("SELECT * FROM queries");
+			$display_buffer .= "<FORM METHOD=\"POST\" ACTION=\"$this->page_name\"><SELECT NAME=\"loadas\">\n";
+			$res = $sql->query("SELECT * FROM queries ORDER BY qtitle");
 			while($row = $sql->fetch_array($res))
-			   $display_buffer .= "<OPTION VALUE=\"$row[id]\">$row[qtitle]</OPTION>\n";
+			   $display_buffer .= "<OPTION VALUE=\"$row[id]\">".$row['qtitle']."</OPTION>\n";
 			$display_buffer .= "</select>";
 			$display_buffer .= "<p/>";
 			$display_buffer .= "<table><tr>";
 			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Load Query")."\" class=\"button\" /></td>\n";
 			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Execute Query")."\" class=\"button\" /></td>\n";
+			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Export Query to CSV")."\" class=\"button\" /></td>\n";
 			$display_buffer .= "<td><input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Create")."\" class=\"button\" /></td>\n";
 			$display_buffer .= "</tr></table>";
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"view\"/>";
@@ -473,19 +473,25 @@ class QmakerReport extends ReportsModule {
 		} // end AssembleQuery
 
 
-		if ($btnSubmit == __("Execute Query"))
+		if ($btnSubmit == __("Execute Query") or $btnSubmit == __("Export Query to CSV"))
 		{
 			if (empty($cquery)) // running from pick menu?
 			{
 				if ($loadas > 0) // yes running from pick menu
 				{
-					$res = $sql->query("SELECT qtitle,qquery FROM queries WHERE id='$loadas'");
+					$res = $sql->query("SELECT qtitle,qquery FROM queries WHERE id='".addslashes($loadas)."'");
 					$rec = $sql->fetch_array($res);
 					$cquery = $rec['qquery'];
 					$saveas = $rec['qtitle'];
 
 				}
 
+			}
+
+			if ($btnSubmit == __("Export Query to CSV")) {
+				$csv = CreateObject('_FreeMED.CSV');
+				$csv->ImportSQLQuery($cquery);
+				$csv->Export();
 			}
 
 		   $qid = $sql->query(stripslashes($cquery));
@@ -504,7 +510,7 @@ class QmakerReport extends ReportsModule {
 			  $display_buffer .= sprintf( "<th>%s</th>\n",htmlspecialchars ($hdr) );
 			
 		   }
-			$display_buffer .= "</<tr>\n";
+			$display_buffer .= "</tr>\n";
 
 		   while ($row = $sql->fetch_array($qid))
 		   {
@@ -517,6 +523,9 @@ class QmakerReport extends ReportsModule {
 		   }
 
 		  $display_buffer .= "</table>\n";
+
+		  $GLOBALS['page_title'] = $saveas;
+		  $GLOBALS['__freemed']['no_template_display'] = true;
 			return;
 
 		} // end ExecQuery
