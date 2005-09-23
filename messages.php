@@ -613,6 +613,7 @@ switch ($action) {
 					(($i-1)*PAGE_ROLL) != ($start+0) ?
 					"<a href=\"".page_name().
 					"?start=".urlencode(($i-1) * PAGE_ROLL)."&".
+					"tag=".urlencode($_REQUEST['tag'])."&".
 					"old=".urlencode($old+0)."\">"
 					: "" ).
 					"<b>".$i."</b>".(
