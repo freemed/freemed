@@ -174,10 +174,12 @@ class Messages {
 		// Perform search
 		if ($patient != NULL) {
 			$query = "SELECT * FROM messages WHERE ".
+			"LENGTH(msgtag)<1 AND ".
 			"msgpatient='".addslashes($patient)."'".
 			($unread_only ? " AND msgread='0'" : "" );
 		} else {
 			$query = "SELECT * FROM messages WHERE ".
+			"LENGTH(msgtag)<1 AND ".
 			"msgfor='".addslashes($this_user->user_number)."'".
 			($unread_only ? " AND msgread='0'" : "" );
 		}
