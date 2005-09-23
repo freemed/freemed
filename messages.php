@@ -507,7 +507,7 @@ switch ($action) {
 			"<nobr>".
 				html_form::combo_widget(
 					'tag',
-					$sql->distinct_values('messages', 'msgtag')
+					$sql->distinct_values('messages', 'msgtag', "msgfor='".addslashes($this_user->user_number)."'")
 				).
 			"<input class=\"button\" name=\"submit_action\" TYPE=\"SUBMIT\" ".
 				"VALUE=\"".__("Tag")."\"/></nobr>\n"
