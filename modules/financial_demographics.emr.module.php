@@ -109,7 +109,7 @@ class FinancialDemographics extends EMRModule {
 
 			__("Identification Issuer") =>
 			html_form::combo_widget(
-				'fdidtype'
+				'fdidtype',
 				$GLOBALS['sql']->distinct_values($this->table_name, 'fdidtype')
 			),
 
