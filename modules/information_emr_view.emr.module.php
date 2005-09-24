@@ -58,6 +58,7 @@ class InformationEMRView extends EMRModule {
 				<b>".__("Address")."</b> :
 			</td><td ALIGN=\"LEFT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\">
 				".$this_patient->local_record['ptaddr1']."<br/>
+				".( $this_patient->local_record['ptaddr2'] ? $this_patient->local_record['ptaddr2']."<br/>" : "" )."
 				".$this_patient->local_record['ptcity'].", 
 				".$this_patient->local_record['ptstate']."
 				".$this_patient->local_record['ptzip']."
