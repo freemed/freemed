@@ -544,16 +544,16 @@ class ProcedureModule extends EMRModule {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
+		global $been_here;
 		if (!$been_here)
 		{
 			while(list($k,$v)=each($this->proc_fields)) {
 				global ${$v};
 			}
 			$this_data = freemed::get_link_rec ($id, $this->table_name);
+			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
 			extract ($this_data); // extract all of this data
 
-			global $been_here;
-			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
 			$procunits = "1.0";        // default value for units
 			$this_patient = CreateObject('FreeMED.Patient', $patient);
 			$procdiag1      = $this_patient->local_record[ptdiag1];
@@ -1111,8 +1111,20 @@ class ProcedureModule extends EMRModule {
 			  ""
 			)
 		);
-	} // end function ProcedureModule->view()
+	} // end method view
 
+	// Method: GetAuthorizations
+	//
+	//	Create authorizations select widget for the specified patient ID
+	//
+	// Parameters:
+	//
+	//	$patid - Patient ID number
+	//
+	// Returns:
+	//
+	//	HTML widget
+	//
 	function GetAuthorizations($patid) {
 		global $display_buffer;
 		global $sql;
@@ -1123,17 +1135,18 @@ class ProcedureModule extends EMRModule {
 		$auth_res = $sql->query ("SELECT * FROM authorizations ".
 			"WHERE (authpatient='".addslashes($patid)."')");
 		if ($auth_res > 0) { // begin if there are authorizations...
-		while ($auth_r = $sql->fetch_array ($auth_res)) {
-		$auth_r_buffer .= "
-		 <option VALUE=\"".prepare($auth_r['id'])."\" ".
-		 ( ($auth_r[id]==$procauth) ? "SELECTED" : "" )
-		 .">".prepare($auth_r['authdtbegin'])." ".__("to")." ".
-		 prepare($auth_r['authdtend'])."</option>\n";
-		} // end while looping for authorizations
+			while ($auth_r = $sql->fetch_array ($auth_res)) {
+				$auth_r_buffer .= "
+				 <option VALUE=\"".prepare($auth_r['id'])."\" ".
+				 ( ($auth_r[id]==$procauth) ? "SELECTED" : "" )
+				 .">".prepare($auth_r['authdtbegin'])." ".__("to")." ".
+				 prepare($auth_r['authdtend'])." (".
+				 prepare($auth_r['authvisitsremain'].' of '.$auth_r['authvisits'])." left)</option>\n";
+			} // end while looping for authorizations
 		} // end if there are authorizations
 
 		return $auth_r_buffer;
-	} // end function ProcedureModule->GetAuthorizations()
+	} // end method GetAuthorizations
 
 	function CalculateCharge($covid,$procunits,$cptid,$phyid,$patid)  {
 		global $display_buffer;

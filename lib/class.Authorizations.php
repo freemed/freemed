@@ -146,16 +146,16 @@ class Authorizations {
 		$a = $this->get_authorization($auth);
 
 		// First check dates
-		$start = str_replace('-', '', $a['authdtbegin']);
-		$end   = str_replace('-', '', $a['authdtend']);
-		$curdt = str_replace('-', '', $search_date);
+		$startdt = str_replace('-', '', $a['authdtbegin']);
+		$enddt   = str_replace('-', '', $a['authdtend']);
+		$curdt   = str_replace('-', '', $search_date);
 		if ( ($curdt < $start) or ($curdt > $end) ) {
 			//print "denied by date range ($startd < $curdt < $end)<br/>\n";
 			return false;
 		} // end date check
 
 		// Check by visits remaining
-		if ($a['visitsremain'] < 1) {
+		if ($a['authvisitsremain'] < 1) {
 			//print "denied by no visits remaining<br/>\n";
 		}
 
