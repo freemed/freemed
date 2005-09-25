@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=scripts
-SUBDIR=fax_import
+SUBDIR=fax_import quest_hl7
 
 all:
 	# Nothing
