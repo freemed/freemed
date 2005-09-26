@@ -127,6 +127,8 @@ class Parser_HL7v2 {
 				break;
 
 				default:
+				// Ignore null segments
+				if (trim($type) == '') { break; }
 				// Parse all other segments
 				$this->__default_segment_parser($segment);
 				$this->map[$count]['type'] = $type;
