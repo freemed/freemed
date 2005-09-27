@@ -287,7 +287,7 @@ class User {
 		global $sql;
 		$result = $sql->query("SELECT * FROM messages WHERE ".
 			"msgfor='".addslashes($this->user_number)."' AND ".
-			"msgread='0'");
+			"msgread='0' AND msgtag=''");
 		if (!$sql->results($result)) return false;
 		return $sql->num_rows($result);
 	} // end function newMessages

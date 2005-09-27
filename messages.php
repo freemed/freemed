@@ -260,8 +260,29 @@ switch ($action) {
 		$result &= $sql->query ($query);
 	}
 
+	// Save "Sent" message
+	$query = $sql->insert_query(
+		"messages",
+		array(
+			"msgby" => $this_user->user_number, // mark from user
+			"msgfor" => $this_user->user_number,
+			"msgrecip" => join(',', $my_for),
+			"msgtime" => SQL__NOW, // pass proper timestamp
+			"msgpatient",
+			"msgperson",
+			"msgsubject",
+			"msgtext",
+			"msgurgency",
+			"msgtag" => 'Sent',
+			"msgunique" => $unique, // unique marker
+			"msgread" => '0' // mark as not read
+		)
+	);
+	$result &= $sql->query ($query);
+
 	if ($result) $display_buffer .= __("done");
 	else $display_buffer .= __("ERROR");
+
 	$display_buffer .= " 
 	</div>
 	<p/>

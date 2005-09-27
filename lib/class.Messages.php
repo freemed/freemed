@@ -134,7 +134,7 @@ class Messages {
 				"msgsubject" => $message['subject'],
 				"msgurgency" => $message['urgency'],
 				"msgread"    => '0',
-				"msgtag"     => '',
+				"msgtag"     => ( $message['tag'] ? $message['tag'] : '' ),
 				"msgunique"  => mktime(),
 				"msgtime"    => SQL__NOW
 			)
@@ -176,12 +176,12 @@ class Messages {
 			$query = "SELECT * FROM messages WHERE ".
 			"LENGTH(msgtag)<1 AND ".
 			"msgpatient='".addslashes($patient)."'".
-			($unread_only ? " AND msgread='0'" : "" );
+			($unread_only ? " AND msgread='0' AND msgtag=''" : "" );
 		} else {
 			$query = "SELECT * FROM messages WHERE ".
 			"LENGTH(msgtag)<1 AND ".
 			"msgfor='".addslashes($this_user->user_number)."'".
-			($unread_only ? " AND msgread='0'" : "" );
+			($unread_only ? " AND msgread='0' AND msgtag=''" : "" );
 		}
 		$result = $GLOBALS['sql']->query($query);
 
