@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 09:42-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Book Appointment</original>
+	<translated>Prise de rendez-vous</translated>
+</translation>
+<translation>
+	<original>Choose a Patient</original>
+	<translated>S&#258;&#352;lectionner un patient</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Installation</translated>
+</translation>
+<translation>
+	<original>No appointments today.</original>
+	<translated>Pas de rendez-vous aujourd'hui.</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Fournisseur</translated>
+</translation>
+<translation>
+	<original>Room</original>
+	<translated>Chambre</translated>
+</translation>
+<translation>
+	<original>Show Appointments</original>
+	<translated>Voir les rendez-vous</translated>
+</translation>
+<translation>
+	<original>Time</original>
+	<translated>Heure</translated>
+</translation>
+<translation>
+	<original>You do not have permission to view appointments.</original>
+	<translated>Vous n'&#258;&#350;tes pas autoris&#258;&#352; &#258;&#160; voir les rendez-vous.</translated>
+</translation>
+
+</gettextXML>
+

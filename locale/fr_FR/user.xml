@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 06:47-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>ACL</original>
+	<translated>ACL</translated>
+</translation>
+<translation>
+	<original>Access Control Lists</original>
+	<translated>Access Control Lists</translated>
+</translation>
+<translation>
+	<original>Actual Physician</original>
+	<translated>M&#258;&#352;decin r&#258;&#352;el</translated>
+</translation>
+<translation>
+	<original>Add User</original>
+	<translated>Ajouter un utilisateur</translated>
+</translation>
+<translation>
+	<original>Authorize</original>
+	<translated>Autoriser</translated>
+</translation>
+<translation>
+	<original>Authorized facilities</original>
+	<translated>Facilit&#258;&#352;s de paiement autoris&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Authorized physician groups</original>
+	<translated>Groupes de m&#258;&#352;decins autoris&#258;&#352;s</translated>
+</translation>
+<translation>
+	<original>Authorized physicians</original>
+	<translated>M&#258;&#352;decins autoris&#258;&#352;s</translated>
+</translation>
+<translation>
+	<original>Deleted</original>
+	<translated>Supprim&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Deleting User</original>
+	<translated>Suppression d'un utilisateur en cours...</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Description</translated>
+</translation>
+<translation>
+	<original>Done</original>
+	<translated>Fait</translated>
+</translation>
+<translation>
+	<original>Error</original>
+	<translated>Erreur</translated>
+</translation>
+<translation>
+	<original>Go back to user menu</original>
+	<translated>Retouner au menu utilisateur</translated>
+</translation>
+<translation>
+	<original>Miscellaneous</original>
+	<translated>Divers</translated>
+</translation>
+<translation>
+	<original>Modify User</original>
+	<translated>Modifier un utilisateur</translated>
+</translation>
+<translation>
+	<original>No record found with that criteria.</original>
+	<translated>Aucun enregistrement trouv&#258;&#352; avec ce crit&#258;&#168;re de recherche.</translated>
+</translation>
+<translation>
+	<original>Password</original>
+	<translated>Mot de passe</translated>
+</translation>
+<translation>
+	<original>Passwords must match</original>
+	<translated>Les mots de passe doivent correspondre </translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#258;&#352;decins</translated>
+</translation>
+<translation>
+	<original>Try Again</original>
+	<translated>Essayer &#258;&#160; nouveau</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Utilisateur</translated>
+</translation>
+<translation>
+	<original>User type</original>
+	<translated>Type d'utilisateur</translated>
+</translation>
+<translation>
+	<original>Username</original>
+	<translated>Nom d'utilisateur</translated>
+</translation>
+<translation>
+	<original>Users</original>
+	<translated>Utilisateurs</translated>
+</translation>
+<translation>
+	<original>You cannot delete admin!</original>
+	<translated>Vous ne pouvez pas supprimer le compte 'admin'!</translated>
+</translation>
+<translation>
+	<original>You cannot modify admin!</original>
+	<translated>Vous ne pouvez pas modifier le compte 'admin'!</translated>
+</translation>
+
+</gettextXML>
+

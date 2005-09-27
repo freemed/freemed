@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 06:33-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>By</original>
+	<translated>Par</translated>
+</translation>
+<translation>
+	<original>Date From</original>
+	<translated>A dater de </translated>
+</translation>
+<translation>
+	<original>Dispensed</original>
+	<translated>Dispens&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Dosage</original>
+	<translated>Posologie</translated>
+</translation>
+<translation>
+	<original>Drug</original>
+	<translated>M&#258;&#352;dicament</translated>
+</translation>
+<translation>
+	<original>Medicine Units</original>
+	<translated>Unit&#258;&#352;s m&#258;&#352;dicales</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#258;&#352;decin</translated>
+</translation>
+<translation>
+	<original>Prescription</original>
+	<translated>Ordonnance</translated>
+</translation>
+<translation>
+	<original>Quantity</original>
+	<translated>Quantit&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Refill</original>
+	<translated>Remplir</translated>
+</translation>
+<translation>
+	<original>Sig</original>
+	<translated>Sig</translated>
+</translation>
+<translation>
+	<original>Starting Date</original>
+	<translated>Date de d&#258;&#352;but</translated>
+</translation>
+<translation>
+	<original>Substitution</original>
+	<translated>Substitution</translated>
+</translation>
+<translation>
+	<original>in</original>
+	<translated>en</translated>
+</translation>
+<translation>
+	<original>may not substitute</original>
+	<translated>ne peut pas se substituer</translated>
+</translation>
+<translation>
+	<original>may substitute</original>
+	<translated>peut se substituer</translated>
+</translation>
+<translation>
+	<original>units</original>
+	<translated>unit&#258;&#352;s</translated>
+</translation>
+
+</gettextXML>
+

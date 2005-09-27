@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-22 14:46-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Billing Information</original>
+	<translated>Informations de facturation</translated>
+</translation>
+<translation>
+	<original>CPT Codes Maintenance</original>
+	<translated>Maintenance des codes CPT</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Effacer</translated>
+</translation>
+<translation>
+	<original>Current Code</original>
+	<translated>Code courant</translated>
+</translation>
+<translation>
+	<original>Default Standard Fee</original>
+	<translated>Amende standard par d&#258;&#352;faut</translated>
+</translation>
+<translation>
+	<original>Default Type of Service</original>
+	<translated>Type de service par d&#258;&#352;faut</translated>
+</translation>
+<translation>
+	<original>Diagnosis Excluded</original>
+	<translated>Dignostic non requis</translated>
+</translation>
+<translation>
+	<original>Diagnosis Required</original>
+	<translated>Diagnostic requis</translated>
+</translation>
+<translation>
+	<original>External Description</original>
+	<translated>Description externe</translated>
+</translation>
+<translation>
+	<original>Fee Profiles</original>
+	<translated>Profils des amendes</translated>
+</translation>
+<translation>
+	<original>Gender Restriction</original>
+	<translated>Restriction au genre</translated>
+</translation>
+<translation>
+	<original>Inclusion/Exclusion</original>
+	<translated>Inclusion/Exclusion</translated>
+</translation>
+<translation>
+	<original>Insurance Company</original>
+	<translated>Compagnie d'assurance</translated>
+</translation>
+<translation>
+	<original>Internal Description</original>
+	<translated>Description interne</translated>
+</translation>
+<translation>
+	<original>Internal Service Types</original>
+	<translated>Types de service interne</translated>
+</translation>
+<translation>
+	<original>Please note that selecting </original>
+	<translated>Please note that selecting  or  will cause the default values to be used.</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Information pr&#258;&#352;liminaire</translated>
+</translation>
+<translation>
+	<original>Procedural Code</original>
+	<translated>Code de proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Procedural Codes Excluded</original>
+	<translated>Codes de proc&#258;&#352;dures non requis</translated>
+</translation>
+<translation>
+	<original>Procedural Codes Required</original>
+	<translated>Codes de proc&#258;&#352;dures requis</translated>
+</translation>
+<translation>
+	<original>Relative Value</original>
+	<translated>Valeur relative</translated>
+</translation>
+<translation>
+	<original>Standard Fee</original>
+	<translated>Amende standard</translated>
+</translation>
+<translation>
+	<original>Taxed?</original>
+	<translated>Tax&#258;&#352;?</translated>
+</translation>
+<translation>
+	<original>Type of Service</original>
+	<translated>Type de service</translated>
+</translation>
+<translation>
+	<original>female only</original>
+	<translated>Femmes uniquement</translated>
+</translation>
+<translation>
+	<original>male only</original>
+	<translated>Hommes uniquement</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>Non</translated>
+</translation>
+<translation>
+	<original>no restriction</original>
+	<translated>Pas de restriction</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Oui</translated>
+</translation>
+
+</gettextXML>
+

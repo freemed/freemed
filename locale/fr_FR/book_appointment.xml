@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 11:13-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Book Appointment</original>
+	<translated>R&#258;&#352;servation</translated>
+</translation>
+<translation>
+	<original>Book an appointment at this time</original>
+	<translated>R&#258;&#352;server un rendez-vous &#258;&#160; cette heure</translated>
+</translation>
+<translation>
+	<original>Booking Location</original>
+	<translated>Lieu de r&#258;&#352;servation</translated>
+</translation>
+<translation>
+	<original>Confirm Booking</original>
+	<translated>Confirmer la r&#258;&#352;servation</translated>
+</translation>
+<translation>
+	<original>Duration</original>
+	<translated>Dur&#258;&#352;e</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Installation</translated>
+</translation>
+<translation>
+	<original>Fridays Only</original>
+	<translated>Seulement les Vendredis</translated>
+</translation>
+<translation>
+	<original>Mondays Only</original>
+	<translated>Seulement les Lundis</translated>
+</translation>
+<translation>
+	<original>Move Appointment</original>
+	<translated>Changer le rendez-vous</translated>
+</translation>
+<translation>
+	<original>Moving</original>
+	<translated>Changement en cours...</translated>
+</translation>
+<translation>
+	<original>Next Available</original>
+	<translated>Disponibilit&#258;&#352; suivante</translated>
+</translation>
+<translation>
+	<original>Note</original>
+	<translated>Note</translated>
+</translation>
+<translation>
+	<original>One Month From Now</original>
+	<translated>Dans un mois &#258;&#160; partir d'aujourd'hui</translated>
+</translation>
+<translation>
+	<original>One Week From Now</original>
+	<translated>Dans une semaine &#258;&#160; partir d'aujourd'hui</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Place of Service</original>
+	<translated>Lieu du service</translated>
+</translation>
+<translation>
+	<original>Please select from the following available times and dates:</original>
+	<translated>Fa&#258;&#381;tes votre s&#258;&#352;lection parmi les dates et huers suivantes</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Fournisseur</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Rafra&#258;&#381;chir</translated>
+</translation>
+<translation>
+	<original>Saturdays Only</original>
+	<translated>Seulement les Samedis</translated>
+</translation>
+<translation>
+	<original>Template</original>
+	<translated>Mod&#258;&#168;le</translated>
+</translation>
+<translation>
+	<original>That is not a valid selection!</original>
+	<translated>Ce n'est pas une section valide!</translated>
+</translation>
+<translation>
+	<original>There are no available appointments which match your criteria.</original>
+	<translated>Il n'y a pas de rendez-vous correspondant &#258;&#160; vos crit&#258;&#168;res de recherche</translated>
+</translation>
+<translation>
+	<original>Thursdays Only</original>
+	<translated>Seulement les Jeudis</translated>
+</translation>
+<translation>
+	<original>Time</original>
+	<translated>Heure</translated>
+</translation>
+<translation>
+	<original>Tuesdays Only</original>
+	<translated>Seulement les Mardis</translated>
+</translation>
+<translation>
+	<original>Two Weeks From Now</original>
+	<translated>Dans deux semaines &#258;&#160; partir d'aujourd'hui</translated>
+</translation>
+<translation>
+	<original>Unable to find open slot!</original>
+	<translated>Impossibilit&#258;&#352; de trouver un cr&#258;&#352;neau disponible</translated>
+</translation>
+<translation>
+	<original>Wednesdays Only</original>
+	<translated>Seulement les Mercredis</translated>
+</translation>
+<translation>
+	<original>Weekdays Only</original>
+	<translated>Uniquement les jours de la semaine </translated>
+</translation>
+<translation>
+	<original>You do not have permission to book an appointment.</original>
+	<translated>Vous n'avez pas l'autorisation de r&#258;&#352;server un rendez-vous</translated>
+</translation>
+<translation>
+	<original>You should never be here!</original>
+	<translated>Vous n'auriez jamais d&#258;&#357; parvenir ici</translated>
+</translation>
+<translation>
+	<original>in collection</original>
+	<translated>dans la liste</translated>
+</translation>
+<translation>
+	<original>this date occurs in the past</original>
+	<translated>this date occurs in the past</translated>
+</translation>
+
+</gettextXML>
+

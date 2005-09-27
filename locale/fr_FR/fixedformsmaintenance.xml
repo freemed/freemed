@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-22 15:32-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Check Char</original>
+	<translated>V&#258;&#352;rification</translated>
+</translation>
+<translation>
+	<original>Column</original>
+	<translated>Colonne</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Commentaire</translated>
+</translation>
+<translation>
+	<original>Copy</original>
+	<translated>Copie</translated>
+</translation>
+<translation>
+	<original>Copy After</original>
+	<translated>Copier apr&#258;&#168;s</translated>
+</translation>
+<translation>
+	<original>Copy Form</original>
+	<translated>Copier le formulaire</translated>
+</translation>
+<translation>
+	<original>Data</original>
+	<translated>Donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Description</translated>
+</translation>
+<translation>
+	<original>EMR Report</original>
+	<translated>Rapport EMR</translated>
+</translation>
+<translation>
+	<original>Format</original>
+	<translated>Format</translated>
+</translation>
+<translation>
+	<original>Generic</original>
+	<translated>G&#258;&#352;n&#258;&#352;rique</translated>
+</translation>
+<translation>
+	<original>Insert After</original>
+	<translated>Ins&#258;&#352;rer apr&#258;&#168;s</translated>
+</translation>
+<translation>
+	<original>Insert Before</original>
+	<translated>Ins&#258;&#352;rer avant</translated>
+</translation>
+<translation>
+	<original>Insurance Claim</original>
+	<translated>R&#258;&#352;clamation de l'assurance</translated>
+</translation>
+<translation>
+	<original>Length</original>
+	<translated>Longueur</translated>
+</translation>
+<translation>
+	<original>Line Count</original>
+	<translated>Nombre de lignes</translated>
+</translation>
+<translation>
+	<original>Line Length</original>
+	<translated>Longueur de ligne</translated>
+</translation>
+<translation>
+	<original>Loop Line Offset</original>
+	<translated>Loop Line Offset</translated>
+</translation>
+<translation>
+	<original>Loop Repetitions</original>
+	<translated>R&#258;&#352;p&#258;&#352;titions</translated>
+</translation>
+<translation>
+	<original>Mark</original>
+	<translated>Marque</translated>
+</translation>
+<translation>
+	<original>NSF Format</original>
+	<translated>Format NSF</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Name of Form</original>
+	<translated>Nom du formulaire</translated>
+</translation>
+<translation>
+	<original>Page Length</original>
+	<translated>Longueur de la page</translated>
+</translation>
+<translation>
+	<original>Patient Bill</original>
+	<translated>Facture du patient</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Rafra&#258;&#381;chir</translated>
+</translation>
+<translation>
+	<original>Resequence</original>
+	<translated>Resequence</translated>
+</translation>
+<translation>
+	<original>Row/Line</original>
+	<translated>Ligne</translated>
+</translation>
+<translation>
+	<original>Save</original>
+	<translated>Sauvegarder</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Type</translated>
+</translation>
+<translation>
+	<original>You must select a record to modify.</original>
+	<translated>Vous devez s&#258;&#352;lectionner un enregistrement &#258;&#160; modifier</translated>
+</translation>
+
+</gettextXML>
+

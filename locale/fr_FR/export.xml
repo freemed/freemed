@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-22 15:22-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Export</original>
+	<translated>Exporter</translated>
+</translation>
+<translation>
+	<original>Export Another Database</original>
+	<translated>Exporter une autre base de donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Export Database</original>
+	<translated>Exporter une base de donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Exporting Database</original>
+	<translated>Exportation de base de donn&#258;&#352;es en cours</translated>
+</translation>
+<translation>
+	<original>Return to Administration Menu</original>
+	<translated>Retourner au Menu Administration</translated>
+</translation>
+<translation>
+	<original>Select Database to Export</original>
+	<translated>S&#258;&#352;lectionner une base de donn&#258;&#352;es &#258;&#160; exporter</translated>
+</translation>
+<translation>
+	<original>You do not have access to import functions.</original>
+	<translated>Vous n'avez pas acc&#258;&#168;s aux fonctions d'export</translated>
+</translation>
+
+</gettextXML>
+

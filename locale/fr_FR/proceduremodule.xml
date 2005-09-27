@@ -1,0 +1,280 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 10:20-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Add Another</original>
+	<translated>Ajouter un autre</translated>
+</translation>
+<translation>
+	<original>Add Payment</original>
+	<translated>Ajouter un moyen de paiement</translated>
+</translation>
+<translation>
+	<original>Authorization</original>
+	<translated>Autorisation</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>CPT</translated>
+</translation>
+<translation>
+	<original>Calculated Accepted Fee</original>
+	<translated>Honoraire calcul&#258;&#352; accept&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Calculated Charge</original>
+	<translated>Charge clacul&#258;&#352;e</translated>
+</translation>
+<translation>
+	<original>Cancelled</original>
+	<translated>Annul&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Certifications</original>
+	<translated>Certifications</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Charges</translated>
+</translation>
+<translation>
+	<original>Claim Type</original>
+	<translated>Type de plainte</translated>
+</translation>
+<translation>
+	<original>Click Finish</original>
+	<translated>Cliquer Terminer</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Commentaire</translated>
+</translation>
+<translation>
+	<original>Committing to ledger</original>
+	<translated>Mise en comptabilit&#258;&#352; en cours...</translated>
+</translation>
+<translation>
+	<original>Current Coverage</original>
+	<translated>Couverture courante</translated>
+</translation>
+<translation>
+	<original>Date of Last Visit</original>
+	<translated>Date de derni&#258;&#168;re visite</translated>
+</translation>
+<translation>
+	<original>Date of Procedure</original>
+	<translated>Date de la proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Diagnosis Code</original>
+	<translated>Code du diagnostic</translated>
+</translation>
+<translation>
+	<original>Episode of Care</original>
+	<translated>Episode de soin</translated>
+</translation>
+<translation>
+	<original>Failed to modify authorization.</original>
+	<translated>Echec de la modification d'autorisation.</translated>
+</translation>
+<translation>
+	<original>Finish</original>
+	<translated>Terminer</translated>
+</translation>
+<translation>
+	<original>Insurance Billable?</original>
+	<translated>Assurance facturable?</translated>
+</translation>
+<translation>
+	<original>Invalid authorization</original>
+	<translated>Autorisation invalide</translated>
+</translation>
+<translation>
+	<original>Medicaid Original Reference</original>
+	<translated>R&#258;&#352;f&#258;&#352;rence Medicaid d'origine</translated>
+</translation>
+<translation>
+	<original>Medicaid Resubmission Code</original>
+	<translated>Code de resoumission Medicaid</translated>
+</translation>
+<translation>
+	<original>Miscellaneous</original>
+	<translated>Divers</translated>
+</translation>
+<translation>
+	<original>Modifier</original>
+	<translated>Modificateur</translated>
+</translation>
+<translation>
+	<original>Must Specify Amount</original>
+	<translated>Vous devez sp&#258;&#352;cifier un total</translated>
+</translation>
+<translation>
+	<original>Must Specify Place of Service</original>
+	<translated>Vous devez sp&#258;&#352;cifier une place de service </translated>
+</translation>
+<translation>
+	<original>Must Specify Proc Year</original>
+	<translated>Vous devez sp&#258;&#352;cifier l'ann&#258;&#352;e de la proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Must Specify Procedural code</original>
+	<translated>Vous devez sp&#258;&#352;cifier le code de la proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Must Specify Type of Claim</original>
+	<translated>Vous devez sp&#258;&#352;cifier le type de plainte</translated>
+</translation>
+<translation>
+	<original>Must Specify physician</original>
+	<translated>Vous devez sp&#258;&#352;cifier un m&#258;&#352;decin</translated>
+</translation>
+<translation>
+	<original>Must Specify proc Day</original>
+	<translated>Vous devez sp&#258;&#352;cifier le jour de la proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Must Specify proc Month</original>
+	<translated>Vous devez sp&#258;&#352;cifier le mois de la proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Must have one diagnosis code</original>
+	<translated>Vous devez sp&#258;&#352;cifier le code du diagnostic</translated>
+</translation>
+<translation>
+	<original>NO COMMENT</original>
+	<translated>PAS DE COMMENTAIRE</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>Non</translated>
+</translation>
+<translation>
+	<original>Outside Lab Charges</original>
+	<translated>Charges des laboratoires ext&#258;&#352;rieurs </translated>
+</translation>
+<translation>
+	<original>Part One</original>
+	<translated>Premi&#258;&#168;re partie</translated>
+</translation>
+<translation>
+	<original>Payment Record</original>
+	<translated>Enregistrement du paiement</translated>
+</translation>
+<translation>
+	<original>Place of Service</original>
+	<translated>Place de service</translated>
+</translation>
+<translation>
+	<original>Primary Coverage</original>
+	<translated>Couverture pr&#258;&#352;liminaire</translated>
+</translation>
+<translation>
+	<original>Procedural Code</original>
+	<translated>Code proc&#258;&#352;dural</translated>
+</translation>
+<translation>
+	<original>Procedure</original>
+	<translated>Proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Procedure Code</original>
+	<translated>Code de la proc&#258;&#352;dure</translated>
+</translation>
+<translation>
+	<original>Procedures</original>
+	<translated>Proc&#258;&#352;dures</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Fournisseur</translated>
+</translation>
+<translation>
+	<original>Referring Provider</original>
+	<translated>Fournisseur r&#258;&#352;f&#258;&#352;rant</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Rafra&#258;&#381;chir</translated>
+</translation>
+<translation>
+	<original>Removed old authorization</original>
+	<translated>Ancienne autorisation supprim&#258;&#352;e</translated>
+</translation>
+<translation>
+	<original>Revise</original>
+	<translated>Corriger</translated>
+</translation>
+<translation>
+	<original>Secondary Coverage</original>
+	<translated>Seconde couverture</translated>
+</translation>
+<translation>
+	<original>Step One</original>
+	<translated>Etape 1</translated>
+</translation>
+<translation>
+	<original>Step Three: Confirm</original>
+	<translated>Etape 3 : Confirmer</translated>
+</translation>
+<translation>
+	<original>Step Two: Select Coverage</original>
+	<translated>Etape 2 : S&#258;&#352;lectionner la couverture</translated>
+</translation>
+<translation>
+	<original>Tertiary Coverage</original>
+	<translated>Troisi&#258;&#168;me couverture</translated>
+</translation>
+<translation>
+	<original>Units</original>
+	<translated>Unit&#258;&#352;s</translated>
+</translation>
+<translation>
+	<original>Updated authorization</original>
+	<translated>Autorisation mise &#258;&#160; jour</translated>
+</translation>
+<translation>
+	<original>Updating patient diagnoses</original>
+	<translated>Mise &#258;&#160; jour des diagnostics patients en cours...</translated>
+</translation>
+<translation>
+	<original>Voucher Number</original>
+	<translated>Num&#258;&#352;ro Voucher</translated>
+</translation>
+<translation>
+	<original>Work Comp Coverage</original>
+	<translated>Work Comp Coverage</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Oui</translated>
+</translation>
+<translation>
+	<original>to</original>
+	<translated>&#258;&#160;</translated>
+</translation>
+
+</gettextXML>
+

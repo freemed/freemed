@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 05:02-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Admin Account Password</original>
+	<translated>Mot de passe du compte 'admin'</translated>
+</translation>
+<translation>
+	<original>Admin password set.</original>
+	<translated>Mot de passe do compte 'admin' OK.</translated>
+</translation>
+<translation>
+	<original>All modules initialized.</original>
+	<translated>Tous les modules sont initialis&#258;&#352;s.</translated>
+</translation>
+<translation>
+	<original>Before creating that account you must prove that you have the appropriate level of access.</original>
+	<translated>Avant de cr&#258;&#352;er ce compte, vous devez prouver que vous poss&#258;&#352;dez les droits d'acc&#258;&#168;s n&#258;&#352;cessaires.</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Effacer</translated>
+</translation>
+<translation>
+	<original>Confirm Admin Account Password</original>
+	<translated>Confirmer le mot de passe du compte 'admin'</translated>
+</translation>
+<translation>
+	<original>Database Password</original>
+	<translated>Mot de passe pour la base de donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Database Password Accepted</original>
+	<translated>Mot de passe pour la base de donn&#258;&#352;es accept&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Database Username</original>
+	<translated>Utilisateur de la base de donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Dynamic modules database initialized.</original>
+	<translated>Les modules dynamiques de la base de donn&#258;&#352;es sont initialis&#258;&#352;s.</translated>
+</translation>
+<translation>
+	<original>FreeMED configuration database initialized.</original>
+	<translated>Configuration FreeMED de la base de donn&#258;&#352;es OK.</translated>
+</translation>
+<translation>
+	<original>Incorrect user/password combination</original>
+	<translated>Nom d'utilisateur ou mot de passe incorrect</translated>
+</translation>
+<translation>
+	<original>Page Not Accessible from your IP Address</original>
+	<translated>Page non accessible &#258;&#160; partir de votre adresse IP</translated>
+</translation>
+<translation>
+	<original>Please provide the database user name and password, as found in settings.php.</original>
+	<translated>Fournisser le nom d'utilisateur et le mot de passe de la base de donn&#258;&#352;es, comme d&#258;&#352;clar&#258;&#352;s dans le fichier settings.php.</translated>
+</translation>
+<translation>
+	<original>Return to Login</original>
+	<translated>Retouner &#258;&#160; la page d'identification (login)</translated>
+</translation>
+<translation>
+	<original>Sign In</original>
+	<translated>Entrer</translated>
+</translation>
+<translation>
+	<original>This is the the wizard to setup the admin account.</original>
+	<translated>Ceci permet de configurer le compte 'admin' automatiquement.</translated>
+</translation>
+<translation>
+	<original>User table created.</original>
+	<translated>Utilisateur de la table cr&#258;&#352;&#258;&#352;.</translated>
+</translation>
+<translation>
+	<original>You can login using:</original>
+	<translated>Vous pouvez vous rentrer en utilisant :</translated>
+</translation>
+<translation>
+	<original>You will now be returned to the the login prompt.</original>
+	<translated>Vous allez maintenant revenir sur la page d'identifucation (login).</translated>
+</translation>
+
+</gettextXML>
+

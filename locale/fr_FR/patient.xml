@@ -1,0 +1,320 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 06:02-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Adding Patient ID</original>
+	<translated>Ajout d'un patient</translated>
+</translation>
+<translation>
+	<original>Address Line 1</original>
+	<translated>Adresse (Premi&#258;&#168;re ligne)</translated>
+</translation>
+<translation>
+	<original>Address Line 2</original>
+	<translated>Adresse (Deuxi&#258;&#168;me ligne)</translated>
+</translation>
+<translation>
+	<original>All Patients</original>
+	<translated>Tous les patients</translated>
+</translation>
+<translation>
+	<original>Archiving</original>
+	<translated>Sauvegarde en cours...</translated>
+</translation>
+<translation>
+	<original>Archiving Patient</original>
+	<translated>Sauvegarde d'un patient en cours...</translated>
+</translation>
+<translation>
+	<original>Blood Type</original>
+	<translated>Rh&#258;&#168;sus</translated>
+</translation>
+<translation>
+	<original>Charge Card Billing</original>
+	<translated>Carte bancaire</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Ville</translated>
+</translation>
+<translation>
+	<original>Contact</original>
+	<translated>Contact</translated>
+</translation>
+<translation>
+	<original>Country</original>
+	<translated>Pays</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Date de naissance</translated>
+</translation>
+<translation>
+	<original>Divorced</original>
+	<translated>Divorc&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Done</original>
+	<translated>Fait</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Adresse Email</translated>
+</translation>
+<translation>
+	<original>Employment Status</original>
+	<translated>Travail</translated>
+</translation>
+<translation>
+	<original>Error</original>
+	<translated>Erreur</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>Num&#258;&#352;ro de Fax</translated>
+</translation>
+<translation>
+	<original>Female</original>
+	<translated>Femme</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Pr&#258;&#352;nom</translated>
+</translation>
+<translation>
+	<original>Gender</original>
+	<translated>Genre</translated>
+</translation>
+<translation>
+	<original>Home Phone</original>
+	<translated>T&#258;&#352;l&#258;&#352;phone Domicile</translated>
+</translation>
+<translation>
+	<original>In House Doctor</original>
+	<translated>M&#258;&#352;decin traitant</translated>
+</translation>
+<translation>
+	<original>Internal Practice ID #</original>
+	<translated>Internal Practice ID #</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Last Names</original>
+	<translated>Autres noms</translated>
+</translation>
+<translation>
+	<original>Male</original>
+	<translated>Homme</translated>
+</translation>
+<translation>
+	<original>Manage This Patient</original>
+	<translated>G&#258;&#352;rer ce patient</translated>
+</translation>
+<translation>
+	<original>Marital Status</original>
+	<translated>Statut marital</translated>
+</translation>
+<translation>
+	<original>Married</original>
+	<translated>Mari&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Medical</original>
+	<translated>M&#258;&#352;dical</translated>
+</translation>
+<translation>
+	<original>Middle Name</original>
+	<translated>Middle Name</translated>
+</translation>
+<translation>
+	<original>Military</original>
+	<translated>Militaire</translated>
+</translation>
+<translation>
+	<original>Monthly Billing On Account</original>
+	<translated>Facture mensuelle pour un compte</translated>
+</translation>
+<translation>
+	<original>Monthly Budget Amount</original>
+	<translated>Budget mensuel</translated>
+</translation>
+<translation>
+	<original>Next of Kin</original>
+	<translated>Parent le plus proche</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>Non</translated>
+</translation>
+<translation>
+	<original>Notes</original>
+	<translated>Notes</translated>
+</translation>
+<translation>
+	<original>Number of Other Physicians</original>
+	<translated>Nombre d'autres m&#258;&#352;decins</translated>
+</translation>
+<translation>
+	<original>Other Physician</original>
+	<translated>Autre m&#258;&#352;decin</translated>
+</translation>
+<translation>
+	<original>Other Physician 4</original>
+	<translated>Autre m&#258;&#352;decin 4</translated>
+</translation>
+<translation>
+	<original>Part Time</original>
+	<translated>Temps partiel</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Patient Name</original>
+	<translated>Nom du patient</translated>
+</translation>
+<translation>
+	<original>Patient Status</original>
+	<translated>Statut du patient</translated>
+</translation>
+<translation>
+	<original>Patients</original>
+	<translated>Patients</translated>
+</translation>
+<translation>
+	<original>Patients Meeting Criteria</original>
+	<translated>Crit&#258;&#168;res de rencontre des patients</translated>
+</translation>
+<translation>
+	<original>Personal</original>
+	<translated>Personnel</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#258;&#352;decin</translated>
+</translation>
+<translation>
+	<original>Practice ID</original>
+	<translated>Practice ID</translated>
+</translation>
+<translation>
+	<original>Preferred Pharmacy</original>
+	<translated>Pharmacie pr&#258;&#352;f&#258;&#352;r&#258;&#352;e</translated>
+</translation>
+<translation>
+	<original>Primary Care Physician</original>
+	<translated>M&#258;&#352;decin de premier soin</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Information pr&#258;&#352;liminaire</translated>
+</translation>
+<translation>
+	<original>Race</original>
+	<translated>Race</translated>
+</translation>
+<translation>
+	<original>Reassigning appointments</original>
+	<translated>Modification des rendez-vous</translated>
+</translation>
+<translation>
+	<original>Referring Doctor</original>
+	<translated>Docteur r&#258;&#352;f&#258;&#352;rant</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Rafra&#258;&#381;chir</translated>
+</translation>
+<translation>
+	<original>Religion</original>
+	<translated>Religion</translated>
+</translation>
+<translation>
+	<original>Removing old temporary patient account</original>
+	<translated>Suppression d'un ancien compte patient temporaire</translated>
+</translation>
+<translation>
+	<original>Retired</original>
+	<translated>Retrait&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Salutation</original>
+	<translated>Salutation</translated>
+</translation>
+<translation>
+	<original>Searching for</original>
+	<translated>Cherche :</translated>
+</translation>
+<translation>
+	<original>Self</original>
+	<translated>Self</translated>
+</translation>
+<translation>
+	<original>Separated</original>
+	<translated>S&#258;&#352;par&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Single</original>
+	<translated>C&#258;&#352;libataire</translated>
+</translation>
+<translation>
+	<original>Social Security Number</original>
+	<translated>Num&#258;&#352;ro de S&#258;&#352;curit&#258;&#352; Sociale</translated>
+</translation>
+<translation>
+	<original>Statement Billing</original>
+	<translated>Etat de facturation</translated>
+</translation>
+<translation>
+	<original>Transgendered</original>
+	<translated>Transsexuel</translated>
+</translation>
+<translation>
+	<original>Type of Billing</original>
+	<translated>Type de facturation</translated>
+</translation>
+<translation>
+	<original>Widowed</original>
+	<translated>Veuf,veuve</translated>
+</translation>
+<translation>
+	<original>Work Phone</original>
+	<translated>T&#258;&#352;l&#258;&#352;phone Bureau</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Oui</translated>
+</translation>
+<translation>
+	<original>You don't have access to do that.</original>
+	<translated>Vous n'avez pas les droits d'acc&#258;&#168;s.</translated>
+</translation>
+
+</gettextXML>
+

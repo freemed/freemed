@@ -1,0 +1,476 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 08:49-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Add Patient</original>
+	<translated>Ajouter un patient</translated>
+</translation>
+<translation>
+	<original>Address</original>
+	<translated>Adresse</translated>
+</translation>
+<translation>
+	<original>Administration Menu</original>
+	<translated>Menu Administration</translated>
+</translation>
+<translation>
+	<original>Age</original>
+	<translated>&#258;ge</translated>
+</translation>
+<translation>
+	<original>Annotate</original>
+	<translated>Annoter</translated>
+</translation>
+<translation>
+	<original>Appointments</original>
+	<translated>Rendez-vous</translated>
+</translation>
+<translation>
+	<original>Are you sure you want to delete this?</original>
+	<translated>Etes-vous s&#258;&#357;r de vouloir supprimer ceci?</translated>
+</translation>
+<translation>
+	<original>Automatic Refresh Time</original>
+	<translated>Rafra&#258;&#381;chissement automatique</translated>
+</translation>
+<translation>
+	<original>Billing Functions</original>
+	<translated>Fonctions de facturation</translated>
+</translation>
+<translation>
+	<original>Blood Type</original>
+	<translated>Rh&#258;&#168;sus</translated>
+</translation>
+<translation>
+	<original>Book Appointment</original>
+	<translated>R&#258;&#352;servation de rendez-vous</translated>
+</translation>
+<translation>
+	<original>Calendar</original>
+	<translated>Calendrier</translated>
+</translation>
+<translation>
+	<original>Call In Menu</original>
+	<translated>Menu d'Appel</translated>
+</translation>
+<translation>
+	<original>Call-In</original>
+	<translated>Appel</translated>
+</translation>
+<translation>
+	<original>Change Language</original>
+	<translated>Modifier la langue</translated>
+</translation>
+<translation>
+	<original>Choose Another Patient</original>
+	<translated>S&#258;&#352;lectionner un autre patient</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Ville</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Effacer</translated>
+</translation>
+<translation>
+	<original>Close this Window</original>
+	<translated>Fermer cette fen&#258;&#350;tre</translated>
+</translation>
+<translation>
+	<original>Color Scheme</original>
+	<translated>Plan de couleur</translated>
+</translation>
+<translation>
+	<original>Columns in Display</original>
+	<translated>Colonnes &#258;&#160; afficher</translated>
+</translation>
+<translation>
+	<original>Configuration Help</original>
+	<translated>Aide sur la configuration</translated>
+</translation>
+<translation>
+	<original>Configure</original>
+	<translated>Configurer</translated>
+</translation>
+<translation>
+	<original>Custom Records</original>
+	<translated>Pr&#258;&#352;parer les enregistrements</translated>
+</translation>
+<translation>
+	<original>Custom Reports</original>
+	<translated>Pr&#258;&#352;parer les rapports</translated>
+</translation>
+<translation>
+	<original>DEBUG IS ON</original>
+	<translated>LE MODE DEBUG EST ACTIVE</translated>
+</translation>
+<translation>
+	<original>Daily Calendar</original>
+	<translated>Calendrier journalier</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Date de naissance</translated>
+</translation>
+<translation>
+	<original>Date of Last Visit</original>
+	<translated>Date de la derni&#258;&#168;re visite</translated>
+</translation>
+<translation>
+	<original>Default Blue</original>
+	<translated>Bleu par d&#258;&#352;faut</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Description</translated>
+</translation>
+<translation>
+	<original>Diagnosis</original>
+	<translated>Diagnostic</translated>
+</translation>
+<translation>
+	<original>Display Language Selection</original>
+	<translated>Afficher la s&#258;&#352;lection de la langue</translated>
+</translation>
+<translation>
+	<original>Driver's License</original>
+	<translated>Permis de conduire</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Adresse Email</translated>
+</translation>
+<translation>
+	<original>Enlarge image</original>
+	<translated>Agrandir l'image</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Installation</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Pr&#258;&#352;nom</translated>
+</translation>
+<translation>
+	<original>Help</original>
+	<translated>Aide</translated>
+</translation>
+<translation>
+	<original>Hide Menu</original>
+	<translated>Cacher le menu</translated>
+</translation>
+<translation>
+	<original>Home Phone</original>
+	<translated>T&#258;&#352;l&#258;&#352;phone Domicile</translated>
+</translation>
+<translation>
+	<original>Internal Practice ID</original>
+	<translated>Internal Practice ID</translated>
+</translation>
+<translation>
+	<original>Jump to page</original>
+	<translated>Aller &#258;&#160; la page</translated>
+</translation>
+<translation>
+	<original>Language</original>
+	<translated>Langue</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Locked</original>
+	<translated>Verrouill&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Login</original>
+	<translated>Se connecter</translated>
+</translation>
+<translation>
+	<original>Logout</original>
+	<translated>Se d&#258;&#352;connecter</translated>
+</translation>
+<translation>
+	<original>Main Menu</original>
+	<translated>Menu Principal</translated>
+</translation>
+<translation>
+	<original>Manage</original>
+	<translated>G&#258;&#352;rer</translated>
+</translation>
+<translation>
+	<original>Management Configuration</original>
+	<translated>Configuration de la gestion</translated>
+</translation>
+<translation>
+	<original>Medical Information</original>
+	<translated>Informations m&#258;&#352;dicales</translated>
+</translation>
+<translation>
+	<original>Messages</original>
+	<translated>Messages</translated>
+</translation>
+<translation>
+	<original>Messages should NOT be deleted. Are you sure you want to delete this message?</original>
+	<translated>Les messages ne devraient pas &#258;&#350;tre supprim&#258;&#352;s. Etes-vous s&#258;&#357;r de vouloir supprimer ce messages?</translated>
+</translation>
+<translation>
+	<original>Modify Patient Information</original>
+	<translated>Modifier les informations du patient</translated>
+</translation>
+<translation>
+	<original>New</original>
+	<translated>Nouveau</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>Non</translated>
+</translation>
+<translation>
+	<original>No Patients In System</original>
+	<translated>Pas de patient dans le syst&#258;&#168;me</translated>
+</translation>
+<translation>
+	<original>No photographic identification on file.</original>
+	<translated>Pas d'identification de photo dans le fichier</translated>
+</translation>
+<translation>
+	<original>Number of Summary Items</original>
+	<translated>Nombre d'articles de la table des mati&#258;&#168;res</translated>
+</translation>
+<translation>
+	<original>One Patient In System</original>
+	<translated>Un patient dans le syst&#258;&#168;me</translated>
+</translation>
+<translation>
+	<original>PCP</original>
+	<translated>PCP</translated>
+</translation>
+<translation>
+	<original>Password</original>
+	<translated>Mot de passe</translated>
+</translation>
+<translation>
+	<original>Patient Information</original>
+	<translated>Informations sur le patient</translated>
+</translation>
+<translation>
+	<original>Patient Smart Search</original>
+	<translated>Recherche d'un patient</translated>
+</translation>
+<translation>
+	<original>Patient(s) In System</original>
+	<translated>Patient(s) dans le syst&#258;&#168;me</translated>
+</translation>
+<translation>
+	<original>Patients</original>
+	<translated>Patients</translated>
+</translation>
+<translation>
+	<original>Patients By Name</original>
+	<translated>Patients par nom</translated>
+</translation>
+<translation>
+	<original>Patients Field Search</original>
+	<translated>Champ de recherche de patient</translated>
+</translation>
+<translation>
+	<original>Photo ID</original>
+	<translated>ID Photo</translated>
+</translation>
+<translation>
+	<original>Photographic Identification</original>
+	<translated>Identification de la photo</translated>
+</translation>
+<translation>
+	<original>Please configure panels through the </original>
+	<translated>Configurer les panneaux avec l'option du menu Patients</translated>
+</translation>
+<translation>
+	<original>Preferences</original>
+	<translated>Pr&#258;&#352;f&#258;&#352;rences</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Fournisseur</translated>
+</translation>
+<translation>
+	<original>Recipient</original>
+	<translated>Destinataire</translated>
+</translation>
+<translation>
+	<original>Referring</original>
+	<translated>En rapport avec</translated>
+</translation>
+<translation>
+	<original>Report</original>
+	<translated>Rapport</translated>
+</translation>
+<translation>
+	<original>Reset Resume</original>
+	<translated>Reset Resume</translated>
+</translation>
+<translation>
+	<original>Resume</original>
+	<translated>Reprendre</translated>
+</translation>
+<translation>
+	<original>SSN</original>
+	<translated>NSS</translated>
+</translation>
+<translation>
+	<original>Select a Patient</original>
+	<translated>S&#258;&#352;lectionner un patient</translated>
+</translation>
+<translation>
+	<original>Select information to insert:</original>
+	<translated>S&#258;&#352;lectionner les informations &#258;&#160; ins&#258;&#352;rer :</translated>
+</translation>
+<translation>
+	<original>Sender</original>
+	<translated>Emetteur</translated>
+</translation>
+<translation>
+	<original>Show All Patients</original>
+	<translated>Voir tous les patients</translated>
+</translation>
+<translation>
+	<original>Show Menubar</original>
+	<translated>Voir la barre de menus</translated>
+</translation>
+<translation>
+	<original>Show Today</original>
+	<translated>Voir Aujourd'hui</translated>
+</translation>
+<translation>
+	<original>Sign In</original>
+	<translated>Entrer</translated>
+</translation>
+<translation>
+	<original>Social Security Number</original>
+	<translated>Num&#258;&#352;ro de s&#258;&#352;curit&#258;&#352; sociale</translated>
+</translation>
+<translation>
+	<original>Soundalike Search</original>
+	<translated>Recherche approximative</translated>
+</translation>
+<translation>
+	<original>State</original>
+	<translated>D&#258;&#352;partement</translated>
+</translation>
+<translation>
+	<original>Support Data</original>
+	<translated>Support des donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>There are currently no messages.</original>
+	<translated>Il n'y a actuellement pas de message.</translated>
+</translation>
+<translation>
+	<original>There are no report modules present.</original>
+	<translated>Il n'y a pas de module de rapport pr&#258;&#352;sent</translated>
+</translation>
+<translation>
+	<original>This record has been locked, and can no longer be modified.</original>
+	<translated>Cet enregistrement a &#258;&#352;t&#258;&#352; verrouill&#258;&#352;, et ne  peut plus &#258;&#350;tre modifi&#258;&#352;.</translated>
+</translation>
+<translation>
+	<original>Time</original>
+	<translated>Heure</translated>
+</translation>
+<translation>
+	<original>Type a portion of the entry that you want to find, then select it from the pulldown menu.</original>
+	<translated>Ecrire une partie du texte recherch&#258;&#352;, puis s&#258;&#352;lectionner directement dans la liste d&#258;&#352;roulante.</translated>
+</translation>
+<translation>
+	<original>Update</original>
+	<translated>Mettre &#258;&#160; jour </translated>
+</translation>
+<translation>
+	<original>Updated configuration</original>
+	<translated>Configuration mise &#258;&#160; jour</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Utilisateur</translated>
+</translation>
+<translation>
+	<original>Username</original>
+	<translated>Nom d'utilisateur</translated>
+</translation>
+<translation>
+	<original>Utilities</original>
+	<translated>Outils</translated>
+</translation>
+<translation>
+	<original>View</original>
+	<translated>Vue</translated>
+</translation>
+<translation>
+	<original>Work Phone</original>
+	<translated>T&#258;&#352;l&#258;&#352;phone Bureau</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Oui</translated>
+</translation>
+<translation>
+	<original>You have %d new message(s).</original>
+	<translated>Vous avez %d nouveau(x) message(s).</translated>
+</translation>
+<translation>
+	<original>You must select a patient.</original>
+	<translated>Vous devez s&#258;&#352;lectionner un patient.</translated>
+</translation>
+<translation>
+	<original>Zip</original>
+	<translated>Zip</translated>
+</translation>
+<translation>
+	<original>bottom</original>
+	<translated>Bas</translated>
+</translation>
+<translation>
+	<original>no actions</original>
+	<translated>Pas d'action</translated>
+</translation>
+<translation>
+	<original>sounds like</original>
+	<translated>ressemble &#258;&#160;</translated>
+</translation>
+<translation>
+	<original>top</original>
+	<translated>Haut</translated>
+</translation>
+<translation>
+	<original>version</original>
+	<translated>version</translated>
+</translation>
+
+</gettextXML>
+

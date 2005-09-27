@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 04:44-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Anesthesiology Coverage</original>
+	<translated>Couverture Anesth&#258;&#352;siologie</translated>
+</translation>
+<translation>
+	<original>Are you sure you want to remove this booking?</original>
+	<translated>Etes-vous s&#258;&#357;r de vouloir supprimer cette r&#258;&#352;servation</translated>
+</translation>
+<translation>
+	<original>Calendar</original>
+	<translated>Calendrier</translated>
+</translation>
+<translation>
+	<original>Calendar Category</original>
+	<translated>Tranche de calendrier</translated>
+</translation>
+<translation>
+	<original>Group Calendar</original>
+	<translated>Groupe de calendrier</translated>
+</translation>
+<translation>
+	<original>Mark as</original>
+	<translated>Marqu&#258;&#352; comme</translated>
+</translation>
+<translation>
+	<original>Select a Patient</original>
+	<translated>S&#258;&#352;lectionner un patient</translated>
+</translation>
+<translation>
+	<original>physicians</original>
+	<translated>m&#258;&#352;decins</translated>
+</translation>
+
+</gettextXML>
+

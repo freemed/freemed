@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-22 13:29-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Authorization Number</original>
+	<translated>Num&#258;&#352;ro d'autorisation</translated>
+</translation>
+<translation>
+	<original>Authorization Type</original>
+	<translated>Type d'autorisation</translated>
+</translation>
+<translation>
+	<original>Authorizing Insurance Company</original>
+	<translated>Compagnie d'assurance pour l'autorisation</translated>
+</translation>
+<translation>
+	<original>Authorizing Provider</original>
+	<translated>Fournisseur pour l'autorisation</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Commentaire</translated>
+</translation>
+<translation>
+	<original>Ending Date</original>
+	<translated>Date de fin</translated>
+</translation>
+<translation>
+	<original>From</original>
+	<translated>De</translated>
+</translation>
+<translation>
+	<original>Number of Visits</original>
+	<translated>Nombre de visites</translated>
+</translation>
+<translation>
+	<original>Provider Identifier</original>
+	<translated>Identification du fournisseur</translated>
+</translation>
+<translation>
+	<original>Remaining Visits</original>
+	<translated>Visites restantes</translated>
+</translation>
+<translation>
+	<original>Starting Date</original>
+	<translated>Date de d&#258;&#352;but</translated>
+</translation>
+<translation>
+	<original>To</original>
+	<translated>A</translated>
+</translation>
+<translation>
+	<original>Used Visits</original>
+	<translated>Visites faites</translated>
+</translation>
+<translation>
+	<original>certificate of medical neccessity</original>
+	<translated>Certificat de n&#258;&#352;cessit&#258;&#352; m&#258;&#352;dicale</translated>
+</translation>
+<translation>
+	<original>consulatation</original>
+	<translated>Consultation</translated>
+</translation>
+<translation>
+	<original>insurance company</original>
+	<translated>Compagnie d'assurance</translated>
+</translation>
+<translation>
+	<original>physician</original>
+	<translated>M&#258;&#352;decin</translated>
+</translation>
+<translation>
+	<original>surgical</original>
+	<translated>Chirurgien</translated>
+</translation>
+<translation>
+	<original>worker's compensation</original>
+	<translated>Indemnit&#258;&#352; du travailleur</translated>
+</translation>
+
+</gettextXML>
+

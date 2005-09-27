@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-22 13:00-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Administration Menu</original>
+	<translated>Menu Administration</translated>
+</translation>
+<translation>
+	<original>Attach Cover Page</original>
+	<translated>Page de couverture</translated>
+</translation>
+<translation>
+	<original>Calendar Overbooking</original>
+	<translated>Agenda enti&#258;&#168;rement r&#258;&#352;serv&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Combo with past drugs</original>
+	<translated>Liste des m&#258;&#352;dicaments prescrits</translated>
+</translation>
+<translation>
+	<original>Configuration Complete</original>
+	<translated>Configuration termin&#258;&#352;e</translated>
+</translation>
+<translation>
+	<original>Configuration Help</original>
+	<translated>Aide sur la configuration</translated>
+</translation>
+<translation>
+	<original>Configure</original>
+	<translated>Configurer</translated>
+</translation>
+<translation>
+	<original>Date Format</original>
+	<translated>Format des dates</translated>
+</translation>
+<translation>
+	<original>Date Widget</original>
+	<translated>Pr&#258;&#352;sentation des dates</translated>
+</translation>
+<translation>
+	<original>Default</original>
+	<translated>D&#258;&#352;faut</translated>
+</translation>
+<translation>
+	<original>Default Area Code</original>
+	<translated>Code de la zone g&#258;&#352;ographique par d&#258;&#352;faut</translated>
+</translation>
+<translation>
+	<original>Disabled</original>
+	<translated>D&#258;&#352;sactiv&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Enabled</original>
+	<translated>Activ&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Export Databases</original>
+	<translated>Exporter les bases de donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Fax Cover Page</original>
+	<translated>Page de couverture de Fax</translated>
+</translation>
+<translation>
+	<original>Fold Multipage Forms?</original>
+	<translated>Repliage des formulaires multipages</translated>
+</translation>
+<translation>
+	<original>France</original>
+	<translated>France</translated>
+</translation>
+<translation>
+	<original>Graphics Enhanced</original>
+	<translated>Graphiques mis en valeur</translated>
+</translation>
+<translation>
+	<original>Import Databases</original>
+	<translated>Importer les bases de donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Lock Record Override</original>
+	<translated>Interdire la modification d'enregistrement</translated>
+</translation>
+<translation>
+	<original>Module Information</original>
+	<translated>Module d'information</translated>
+</translation>
+<translation>
+	<original>No Cover Page</original>
+	<translated>Pas de page de couverture</translated>
+</translation>
+<translation>
+	<original>Phone Number Format</original>
+	<translated>Format du num&#258;&#352;ro de t&#258;&#352;l&#258;&#352;phone</translated>
+</translation>
+<translation>
+	<original>Prescription Drug Widget</original>
+	<translated>Pr&#258;&#352;sentation des prescriptions m&#258;&#352;dicamenteuses</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Rafra&#258;&#381;chir</translated>
+</translation>
+<translation>
+	<original>Reinitialize Database</original>
+	<translated>R&#258;&#352;initialiser le base de donn&#258;&#352;es</translated>
+</translation>
+<translation>
+	<original>Return To Administration Menu</original>
+	<translated>Retourner au Menu Administration</translated>
+</translation>
+<translation>
+	<original>Return to the Main Menu</original>
+	<translated>Retourner au Menu Principal</translated>
+</translation>
+<translation>
+	<original>Scheduling End Time</original>
+	<translated>Heure de fin de journ&#258;&#352;e</translated>
+</translation>
+<translation>
+	<original>Scheduling Start Time</original>
+	<translated>Heure de d&#258;&#352;but de journ&#258;&#352;e</translated>
+</translation>
+<translation>
+	<original>Show Tips?</original>
+	<translated>Montrer des astuces d'utilisations?</translated>
+</translation>
+<translation>
+	<original>Standard Config</original>
+	<translated>Configuration Standard</translated>
+</translation>
+<translation>
+	<original>System Configuration</original>
+	<translated>Configuration du syst&#258;&#168;me</translated>
+</translation>
+<translation>
+	<original>Unformatted</original>
+	<translated>Non format&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>United States</original>
+	<translated>Etats-Unis</translated>
+</translation>
+<translation>
+	<original>User Maintenance</original>
+	<translated>Gestion des utilisateurs</translated>
+</translation>
+<translation>
+	<original>You do not have access to system configuration.</original>
+	<translated>Vous n'avez pas acc&#258;&#352;s &#258;&#160; la configuration du syst&#258;&#168;me</translated>
+</translation>
+<translation>
+	<original>You don't have access to the administration menu.</original>
+	<translated>Vous n'avez pas acc&#258;&#352;s au Menu Administration</translated>
+</translation>
+<translation>
+	<original>javascript widget</original>
+	<translated>javascript widget</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>Non</translated>
+</translation>
+<translation>
+	<original>rxlist.com Drug Listing</original>
+	<translated>rxlist.com Drug Listing</translated>
+</translation>
+<translation>
+	<original>split text entry</original>
+	<translated>split text entry</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Oui</translated>
+</translation>
+
+</gettextXML>
+

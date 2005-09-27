@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-22 15:26-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>City, State, Zip</original>
+	<translated>Ville, D&#258;&#352;partement, Code ZIP</translated>
+</translation>
+<translation>
+	<original>Contact</original>
+	<translated>Contact</translated>
+</translation>
+<translation>
+	<original>Country</original>
+	<translated>Pays</translated>
+</translation>
+<translation>
+	<original>Default Provider</original>
+	<translated>Fournisseur par d&#258;&#352;faut</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Description</translated>
+</translation>
+<translation>
+	<original>Details</original>
+	<translated>D&#258;&#352;tails</translated>
+</translation>
+<translation>
+	<original>Electronic Billing</original>
+	<translated>Facture &#258;&#352;lectronique</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Adresse Email</translated>
+</translation>
+<translation>
+	<original>Employer Identification Number</original>
+	<translated>Num&#258;&#352;ro d'identification de l'employeur</translated>
+</translation>
+<translation>
+	<original>External</original>
+	<translated>Externe</translated>
+</translation>
+<translation>
+	<original>Facility Name</original>
+	<translated>Nom de l'installation</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>Num&#258;&#352;ro de Fax</translated>
+</translation>
+<translation>
+	<original>Internal</original>
+	<translated>Interne</translated>
+</translation>
+<translation>
+	<original>Internal or External Facility</original>
+	<translated>Installation interne ou externe </translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>POS Code</original>
+	<translated>POS Code</translated>
+</translation>
+<translation>
+	<original>Phone Number</original>
+	<translated>Num&#258;&#352;ro de t&#258;&#352;l&#258;&#352;phone</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Information pr&#258;&#352;liminaire</translated>
+</translation>
+<translation>
+	<original>X12 Identifier</original>
+	<translated>X12 Identifier</translated>
+</translation>
+<translation>
+	<original>X12 Identifier Type</original>
+	<translated>X12 Identifier Type</translated>
+</translation>
+
+</gettextXML>
+

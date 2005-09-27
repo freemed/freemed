@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 09:50-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>ATTACHED</original>
+	<translated>ATTACHE</translated>
+</translation>
+<translation>
+	<original>Abdominal CT Reports</original>
+	<translated>Rapports CT abdominal</translated>
+</translation>
+<translation>
+	<original>Abdominal Radiograph</original>
+	<translated>Radio abdominale</translated>
+</translation>
+<translation>
+	<original>Add Another</original>
+	<translated>Ajouter un autre</translated>
+</translation>
+<translation>
+	<original>Attach Image</original>
+	<translated>Joindre une image</translated>
+</translation>
+<translation>
+	<original>C8</original>
+	<translated>C8</translated>
+</translation>
+<translation>
+	<original>CBC</original>
+	<translated>CBC</translated>
+</translation>
+<translation>
+	<original>Category</original>
+	<translated>Cat&#258;&#352;gorie</translated>
+</translation>
+<translation>
+	<original>Chest CT Reports</original>
+	<translated>Rapports CT de la poitrine</translated>
+</translation>
+<translation>
+	<original>Chest Radiograph</original>
+	<translated>Radio de la poitrine</translated>
+</translation>
+<translation>
+	<original>Colonoscopy</original>
+	<translated>Colonoscopie</translated>
+</translation>
+<translation>
+	<original>Consult</original>
+	<translated>Consulter</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Description</translated>
+</translation>
+<translation>
+	<original>Discharge Summary</original>
+	<translated>R&#258;&#352;sum&#258;&#352; de d&#258;&#352;charge</translated>
+</translation>
+<translation>
+	<original>Endoscopy</original>
+	<translated>Endoscopie</translated>
+</translation>
+<translation>
+	<original>Financial Information</original>
+	<translated>Informations financi&#258;&#168;res</translated>
+</translation>
+<translation>
+	<original>History and Physical</original>
+	<translated>Historique et Physique</translated>
+</translation>
+<translation>
+	<original>Insurance Card</original>
+	<translated>Carte d'assurance</translated>
+</translation>
+<translation>
+	<original>LFT</original>
+	<translated>LFT</translated>
+</translation>
+<translation>
+	<original>Lab Report</original>
+	<translated>Rapport du laboratoire</translated>
+</translation>
+<translation>
+	<original>Letters</original>
+	<translated>Lettres</translated>
+</translation>
+<translation>
+	<original>Lipid Profile</original>
+	<translated>Profil en lipides</translated>
+</translation>
+<translation>
+	<original>Mammogram Reports</original>
+	<translated>Rapport sur les seins</translated>
+</translation>
+<translation>
+	<original>Miscellaneous</original>
+	<translated>Divers</translated>
+</translation>
+<translation>
+	<original>Operative Report</original>
+	<translated>Rapport d'op&#258;&#352;ration</translated>
+</translation>
+<translation>
+	<original>Pathology</original>
+	<translated>Pathologie</translated>
+</translation>
+<translation>
+	<original>Patient History</original>
+	<translated>Historique du patient</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#258;&#352;decin</translated>
+</translation>
+<translation>
+	<original>Questionnaire</original>
+	<translated>Questionnaire</translated>
+</translation>
+<translation>
+	<original>Radiology</original>
+	<translated>Radiologie</translated>
+</translation>
+<translation>
+	<original>Record is locked.</original>
+	<translated>L'enregistrement est verrouill&#258;&#352;</translated>
+</translation>
+<translation>
+	<original>Referral</original>
+	<translated>R&#258;&#352;f&#258;&#352;rences</translated>
+</translation>
+<translation>
+	<original>Reviewed</original>
+	<translated>Revu</translated>
+</translation>
+<translation>
+	<original>Scanned Documents</original>
+	<translated>Documents scann&#258;&#352;s</translated>
+</translation>
+<translation>
+	<original>Thyroid Profile</original>
+	<translated>Profil de la thyro&#258;&#379;de</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Type</translated>
+</translation>
+<translation>
+	<original>Type of Image</original>
+	<translated>Type d'image</translated>
+</translation>
+<translation>
+	<original>UA</original>
+	<translated>UA</translated>
+</translation>
+<translation>
+	<original>Updating database</original>
+	<translated>Mise &#258;&#160; jour de la base de donn&#258;&#352;es en cours...</translated>
+</translation>
+
+</gettextXML>
+

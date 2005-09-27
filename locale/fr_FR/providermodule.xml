@@ -1,0 +1,240 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-09-23 11:40-0400 -->
+
+	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Address</original>
+	<translated>Adresse (Premi&#258;&#168;re ligne)</translated>
+</translation>
+<translation>
+	<original>Address 2</original>
+	<translated>Adresse (Seconde ligne)</translated>
+</translation>
+<translation>
+	<original>Amount</original>
+	<translated>Total</translated>
+</translation>
+<translation>
+	<original>Anesthesiologist</original>
+	<translated>Anesth&#258;&#352;siologiste</translated>
+</translation>
+<translation>
+	<original>Beeper / Pager #</original>
+	<translated>Beeper / Pager #</translated>
+</translation>
+<translation>
+	<original>Cellular Phone #</original>
+	<translated>Mobile #</translated>
+</translation>
+<translation>
+	<original>Charge Map</original>
+	<translated>Charge Map</translated>
+</translation>
+<translation>
+	<original>DEA Number</original>
+	<translated>Num&#258;&#352;ro DEA</translated>
+</translation>
+<translation>
+	<original>Degree 1</original>
+	<translated>Degr&#258;&#352; 1</translated>
+</translation>
+<translation>
+	<original>Degree 2</original>
+	<translated>Degr&#258;&#352; 2</translated>
+</translation>
+<translation>
+	<original>Degree 3</original>
+	<translated>Degr&#258;&#352; 3</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Adresse Email</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Pr&#258;&#352;nom</translated>
+</translation>
+<translation>
+	<original>HL7 Identifier</original>
+	<translated>Identifiant HL7</translated>
+</translation>
+<translation>
+	<original>Has Second Address</original>
+	<translated>A une seconde adresse</translated>
+</translation>
+<translation>
+	<original>ID Number</original>
+	<translated>Num&#258;&#352;ro ID</translated>
+</translation>
+<translation>
+	<original>In-House</original>
+	<translated>In-House</translated>
+</translation>
+<translation>
+	<original>Insurance Group</original>
+	<translated>Groupe d'assurance</translated>
+</translation>
+<translation>
+	<original>Insurance IDs</original>
+	<translated>Insurance IDs</translated>
+</translation>
+<translation>
+	<original>Internal ID #</original>
+	<translated>Internal ID #</translated>
+</translation>
+<translation>
+	<original>Internal Type</original>
+	<translated>Type interne</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Middle Name</original>
+	<translated>Middle Name</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Personal</original>
+	<translated>Personnel</translated>
+</translation>
+<translation>
+	<original>Physician Internal/External</original>
+	<translated>M&#258;&#352;decin Interne/Externe</translated>
+</translation>
+<translation>
+	<original>Practice EIN</original>
+	<translated>Practice EIN</translated>
+</translation>
+<translation>
+	<original>Practice Name</original>
+	<translated>Practice Name</translated>
+</translation>
+<translation>
+	<original>Primary Address City</original>
+	<translated>Premi&#258;&#168;re adresse Ville</translated>
+</translation>
+<translation>
+	<original>Primary Address Fax #</original>
+	<translated>Premi&#258;&#168;re adresse Fax #</translated>
+</translation>
+<translation>
+	<original>Primary Address Line 1</original>
+	<translated>Premi&#258;&#168;re adresse Ligne 1</translated>
+</translation>
+<translation>
+	<original>Primary Address Line 2</original>
+	<translated>Premi&#258;&#168;re adresse Ligne 2</translated>
+</translation>
+<translation>
+	<original>Primary Address Phone #</original>
+	<translated>Premi&#258;&#168;re adresse T&#258;&#352;l&#258;&#352;phone #</translated>
+</translation>
+<translation>
+	<original>Primary Address State</original>
+	<translated>Premi&#258;&#168;re adresse D&#258;&#352;partement</translated>
+</translation>
+<translation>
+	<original>Primary Address Zip</original>
+	<translated>Premi&#258;&#168;re adresse Code Zip</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Information pr&#258;&#352;liminaire</translated>
+</translation>
+<translation>
+	<original>Referring</original>
+	<translated>Referring</translated>
+</translation>
+<translation>
+	<original>Secondary Address City</original>
+	<translated>Seconde adresse Ville</translated>
+</translation>
+<translation>
+	<original>Secondary Address Fax #</original>
+	<translated>Seconde adresse Fax #</translated>
+</translation>
+<translation>
+	<original>Secondary Address Line 1</original>
+	<translated>Seconde adresse Ligne 1</translated>
+</translation>
+<translation>
+	<original>Secondary Address Line 2</original>
+	<translated>Seconde adresse Ligne 2</translated>
+</translation>
+<translation>
+	<original>Secondary Address Phone #</original>
+	<translated>Seconde adresse T&#258;&#352;l&#258;&#352;phone #</translated>
+</translation>
+<translation>
+	<original>Secondary Address State</original>
+	<translated>Seconde adresse D&#258;&#352;partement</translated>
+</translation>
+<translation>
+	<original>Secondary Address Zip</original>
+	<translated>Seconde adresse Code Zip</translated>
+</translation>
+<translation>
+	<original>Social Security #</original>
+	<translated>S&#258;&#352;curit&#258;&#352; sociale #</translated>
+</translation>
+<translation>
+	<original>Specialty 1</original>
+	<translated>Sp&#258;&#352;cialit&#258;&#352; 1</translated>
+</translation>
+<translation>
+	<original>Specialty 2</original>
+	<translated>Sp&#258;&#352;cialit&#258;&#352; 2</translated>
+</translation>
+<translation>
+	<original>Specialty 3</original>
+	<translated>Sp&#258;&#352;cialit&#258;&#352; 3</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Statut</translated>
+</translation>
+<translation>
+	<original>Title</original>
+	<translated>Titre</translated>
+</translation>
+<translation>
+	<original>UPIN Number</original>
+	<translated>Num&#258;&#352;ro UPIN</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>non</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>oui</translated>
+</translation>
+
+</gettextXML>
+
