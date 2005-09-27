@@ -28,12 +28,13 @@
         \textsl{phone **link:pnotesdoc:physician:phyphonea:phone** fax **link:pnotesdoc:physician:phyfaxa:phone**}
 \end{center}
 
-**method:Physician:fullName:pnotesdoc** \\
+% **method:Physician:fullName:pnotesdoc** \\
 \begin{tabular}{ll}
-	NAME:	&	**method:Patient:fullName:pnotespat**	\\
-	CHART:	&	**link:pnotespat:patient:ptid** 	\\
-	DOB:	&	**link:pnotespat:patient:ptdob:date**	\\
-	DATE:	&	**field:pnotesdt:date**
+NAME:	&	**method:Patient:fullName:pnotespat**	\\
+CHART:	&	**link:pnotespat:patient:ptid** 	\\
+DOB:	&	**link:pnotespat:patient:ptdob:date**	\\
+DATE:	&	**field:pnotesdt:date** \\
+PRINTED: &	\today \\
 \end{tabular}
 
 \begin{center}
@@ -67,39 +68,38 @@
 \end{tabular} \\
 \par
 
-
-**if:exists:pnotes_S**
-\sheading{SUBJECTIVE} **field:pnotes_S**
+**if:lengthge:pnotes_S:10**
+\noindent\sheading{SUBJECTIVE} **field:pnotes_S**
 \par
 **fi**
 
-**if:exists:pnotes_O**
-\sheading{OBJECTIVE} **field:pnotes_O**
+**if:lengthge:pnotes_O:10**
+\noindent\sheading{OBJECTIVE} **field:pnotes_O**
 \par
 **fi**
 
-**if:exists:pnotes_A**
-\sheading{ASSESSMENT} **field:pnotes_A**
+**if:lengthge:pnotes_A:10**
+\noindent\sheading{ASSESSMENT} **field:pnotes_A**
 \par
 **fi**
 
-**if:exists:pnotes_P**
-\sheading{PLAN} **field:pnotes_P**
+**if:lengthge:pnotes_P:10**
+\noindent\sheading{PLAN} **field:pnotes_P**
 \par
 **fi**
 
-**if:exists:pnotes_I**
-\sheading{INTERVAL} **field:pnotes_I**
+**if:lengthge:pnotes_I:10**
+\noindent\sheading{INTERVAL} **field:pnotes_I**
 \par
 **fi**
 
-**if:exists:pnotes_E**
-\sheading{EDUCATION} **field:pnotes_E**
+**if:lengthge:pnotes_E:10**
+\noindent\sheading{EDUCATION} **field:pnotes_E**
 \par
 **fi**
 
-**if:exists:pnotes_R**
-\sheading{RX} **field:pnotes_R**
+**if:lengthge:pnotes_R:10**
+\noindent\sheading{RX} **field:pnotes_R**
 \par
 **fi**
 
