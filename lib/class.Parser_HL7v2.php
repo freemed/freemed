@@ -335,7 +335,7 @@ class Parser_HL7v2 {
 	//
 	function __composite_to_provider ( $composite ) {
 		//syslog('HL7| composite[0] = '.$composite[0]);
-		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($composite[0])."'";
+		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($composite[0])."' OR phyupin='".addslashes($composite[0])."'";
 		$result = $GLOBALS['sql']->query($query);
 		if ($GLOBALS['sql']->results($result)) {
 			// Process from existing ID
