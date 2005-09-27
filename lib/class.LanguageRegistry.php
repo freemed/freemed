@@ -101,7 +101,7 @@ class LanguageRegistry {
 	//
 	function register ($dir) {
 		if (!file_exists('./locale/'.$dir.'/freemed.xml')) {
-			print "COULD NOT INDEX $dir<br/>\n";
+			//print "COULD NOT INDEX $dir<br/>\n";
 			return false;
 		}
 
