@@ -84,7 +84,7 @@ class Messages {
 		// Perform search
 		$query = "SELECT COUNT(*) AS my_count FROM messages WHERE ".
 			"msgfor='".addslashes($GLOBALS['__freemed']['basic_auth_id'])."'".
-			" AND msgread='0'";
+			" AND msgread='0' AND msgtag=''";
 		$result = $sql->query($query);
 
 		if ($sql->results($result)) {
