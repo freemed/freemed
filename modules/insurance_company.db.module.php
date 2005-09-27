@@ -162,6 +162,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 
   )));
 
+  $remitt_up = $rbe->GetServerStatus();
 	
   $book->add_page(
    __("Internal Information"),
@@ -192,16 +193,28 @@ class InsuranceCompanyModule extends MaintenanceModule {
       $inscomod, false),
 
 	__("Default Paper Billing Format") =>
-	html_form::select_widget('inscodefformat', $rbe->ListOptions('Render', 'XSLT', 'Paper', 'payerxml')),
+	( $remitt_up ?
+	html_form::select_widget('inscodefformat', $rbe->ListOptions('Render', 'XSLT', 'Paper', 'payerxml')) :
+	"<b>".__("REMITT Server not running")."</b>".
+	"<input type=\"hidden\" name=\"inscodefformat\" value=\"".prepare($GLOBALS['inscodefformat'])."\" />" ),
 
 	__("Default Paper Billing Target") =>
-	html_form::select_widget('inscodeftarget', $rbe->ListPlugins('Transport')),
+	( $remitt_up ?
+	html_form::select_widget('inscodeftarget', $rbe->ListPlugins('Transport')) :
+	"<b>".__("REMITT Server not running")."</b>".
+	"<input type=\"hidden\" name=\"inscodeftarget\" value=\"".prepare($GLOBALS['inscodeftarget'])."\" />" ),
 
 	__("Default Electronic Billing Format") =>
-	html_form::select_widget('inscodefformate', $rbe->ListOptions('Render', 'XSLT', 'Electronic', 'payerxml')),
+	( $remitt_up ?
+	html_form::select_widget('inscodefformate', $rbe->ListOptions('Render', 'XSLT', 'Electronic', 'payerxml')) :
+	"<b>".__("REMITT Server not running")."</b>".
+	"<input type=\"hidden\" name=\"inscodefformate\" value=\"".prepare($GLOBALS['inscodefformate'])."\" />" ),
 
 	__("Default Electronic Billing Target") =>
-	html_form::select_widget('inscodeftargete', $rbe->ListPlugins('Transport'))
+	( $remitt_up ?
+	html_form::select_widget('inscodeftargete', $rbe->ListPlugins('Transport')) :
+	"<b>".__("REMITT Server not running")."</b>".
+	"<input type=\"hidden\" name=\"inscodeftargete\" value=\"".prepare($GLOBALS['inscodeftargete'])."\" />" )
 
 		))
 	);
