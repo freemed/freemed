@@ -13,6 +13,14 @@
 % Relative size package
 \usepackage{relsize}
 
+% Magic to allow including EPS files
+\ifx\pdfoutput\undefined
+\usepackage{graphicx}
+\else
+\usepackage[pdftex]{graphicx}
+\usepackage{epstopdf}
+\fi
+
 \begin{document}
 
 \framebox[5in]{
@@ -21,30 +29,37 @@
 			{\relsize{1}\textbf{**link:rxphy:physician:phypracname**}} \\
 			{\relsize{-1}\textsl{**method:Physician:fullName:rxphy**}} \\
 			\textsl{**link:rxphy:physician:phyaddr1a**, **link:rxphy:physician:phycitya**, **link:rxphy:physician:phycitya** **link:rxphy:physician:phyzipa**} \\
-			\textsl{phone **link:rxphy:physician:phyphonea:phone** fax **link:rxphy:physician:phyfaxa:phone**}
+			\textsl{Phone **link:rxphy:physician:phyphonea:phone** Fax **link:rxphy:physician:phyfaxa:phone**}
+
 		\end{center}
 		\begin{center}
 			\begin{tabular}{r|l}
-				\textbf{Patient} & **method:Patient:fullName:rxpatient** \\
+				\textbf{Patient} & **link:rxpatient:patient:ptfname:fixcase** **link:rxpatient:patient:ptmname:fixcase****if:linkexists:rxpatient,patient:ptmname**.**fi** **link:rxpatient:patient:ptlname:fixcase**   \\
 			 	\textbf{Date of Birth} & **link:rxpatient:patient:ptdob:date** \\	
 			 	\textbf{SSN} & **link:rxpatient:patient:ptssn:ssn** \\	
+				\textbf{Account \#} & **link:rxpatient:patient:ptid** \\
 				\  & \  \\
 				\textbf{Rx Date} & **field:rxdtfrom:date** \\
 				\  & \  \\
-				\textbf{Address} & **link:rxpatient:patient:ptaddr1** \\
-				\  & **link:rxpatient:patient:ptcity**, **link:rxpatient:patient:ptstate** **link:rxpatient:patient:ptzip** \\
+				\textbf{Address} & **link:rxpatient:patient:ptaddr1:fixcase** \\
+				\  & **link:rxpatient:patient:ptcity:fixcase**, **link:rxpatient:patient:ptstate** **link:rxpatient:patient:ptzip** \\
 				\  & \  \\
-				\textbf{Medication}  & {\large **field:rxdrug**} \\
-				\  & {\large **field:rxsize** **field:rxunit** (**field:rxquantity** total)} \\
-				\textbf{Dosage} & **field:rxdosage** **field:rxunit** **field:rxinterval** (**field:rxform**) \\ 
+%				\textbf{Medication}  & {\large **field:rxform** **field:rxdrug** **field:rxsize** **field:rxunit**} \\
+				\textbf{Medication}  & {\large **field:_drug** } \\
+				\textbf{Disp} & **field:_dispensed** \\
+				\textbf{Sig} & \parbox{3in}{**field:rxdosage**} \\
 				\  & \  \\
-				\textbf{Refill} & **field:rxrefills** refill(s) \\
-				\  & \  \\
-				\textbf{Substitution} & **field:rxsubstitute**
+				\textbf{Refill} & **field:_refills** refill(s) \\
 			\end{tabular}
 		\end{center}
+		\ \\
+		\centerline{\textbf{Notes} \  **field:rxnotes** } \\
+		\ \\
+		\centerline{\textbf{**field:rxsubstitute**}}
+		\ \\
 		\hfill \\
 		\centerline{{\large \textbf{**method:Physician:fullName:rxphy**}}} 
+		\centerline{{\relsize{-1}DEA \#: **link:rxphy:physician:phydea**}}
 		\centerline{{\large Signature On File}} 
 %		\hfill \\
 %		\centerline{{{md5}}}

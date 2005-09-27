@@ -8,7 +8,7 @@ class PrescriptionModule extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.4";
+	var $MODULE_VERSION = "0.3.5";
 	var $MODULE_DESCRIPTION = "
 		The prescription module allows prescriptions to be written 
 		for patients from any drug in the local formulary or in the 
@@ -21,6 +21,7 @@ class PrescriptionModule extends EMRModule {
 	var $record_name    = "Prescription";
 	var $table_name     = "rx";
 	var $patient_field  = "rxpatient";
+	var $date_field	    = "rxdtfrom";
 	var $widget_hash    = "##rxdtfrom## ##rxdrug## ##rxform##";
 
 	var $print_template = 'rx';
@@ -32,17 +33,21 @@ class PrescriptionModule extends EMRModule {
 		$this->summary_vars = array (
 			__("Date From") => "rxdtfrom",
 			__("Drug") => "_drug",
-			__("Dosage") => "_dosage",
-			__("Dispensed") => "_dispensed",
+			//__("Dosage") => "_dosage",
+			__("Disp") => "_dispensed",
+			//__("Dispensed") => "_dispensed",
+			__("Sig")  => "rxdosage",
 			__("By")   => "rxphy:physician"
 			//"Crypto Key" => "rxmd5"
 		);
 		// Specialized query bits
 		$this->summary_query = array (
 			"MD5(id) AS rxmd5",
-			"CONCAT(rxdrug, ' ', rxform) AS _drug",
+			"CASE rxsize WHEN 0 THEN CONCAT(rxform, ' ', rxdrug) ELSE CASE rxform WHEN 'Spray' THEN CONCAT(rxform, ' ', rxdrug) WHEN 'Unit' THEN rxdrug ELSE CONCAT(rxform, ' ', rxdrug, ' ', rxsize, ' ', rxunit) END END AS _drug",
 			"CONCAT(rxsize, ' ', rxunit, ' ', rxinterval) AS _dosage",
-			"CASE rxform WHEN 'tablet' THEN CONCAT(rxquantity, ' tablets') WHEN 'capsule' THEN CONCAT(rxquantity, ' capsules') ELSE CONCAT(rxquantity, ' ', IF(rxunit LIKE '%cc%', 'cc', rxunit)) END AS _dispensed"
+			//"CASE rxform WHEN 'Unit' THEN rxquantity WHEN 'Tablets' THEN CONCAT(rxquantity, ' tablets') WHEN 'Spray' THEN CONCAT(rxquantity, ' ', rxunit) WHEN 'Capsules' THEN CONCAT(rxquantity, ' capsules') WHEN 'Container' THEN CONCAT(rxquantity, ' container') WHEN 'Cannister' THEN CONCAT(rxquantity, ' cannister') WHEN 'Bottle' THEN CONCAT(rxquantity, ' bottle') WHEN 'Tube' THEN CONCAT(rxquantity, ' tube') ELSE CONCAT(rxquantity, ' ', IF(rxunit LIKE '%cc%', 'cc', rxunit)) END AS _dispensed",
+			"CONCAT(rxquantity, ' ', LCASE(rxform)) AS _dispensed",
+			"CASE rxrefills WHEN 99 THEN 'p.r.n' ELSE rxrefills END AS _refills"
 		);
 
 		// Table definition
@@ -53,24 +58,11 @@ class PrescriptionModule extends EMRModule {
 			'rxpatient' => SQL__INT_UNSIGNED(0),
 			'rxdtfrom' => SQL__DATE,
 			'rxdrug' => SQL__VARCHAR(150),
-			'rxform' => SQL__ENUM(array(
-				"suspension",
-				"tablet",
-				"capsule",
-				"solution"
-				)),
-			'rxdosage' => SQL__INT_UNSIGNED(0),
-			'rxquantity' => SQL__INT_UNSIGNED(0),
-			'rxsize' => SQL__INT_UNSIGNED(0),
-			'rxunit' => SQL__ENUM(array(
-				"mg",
-				"mg/1cc",
-				"mg/2cc",
-				"mg/3cc",
-				"mg/4cc",
-				"mg/5cc",
-				"g"
-				)),
+			'rxform' => SQL__VARCHAR(32),
+			'rxdosage' => SQL__VARCHAR(128),
+			'rxquantity' => SQL__REAL,
+			'rxsize' => SQL__VARCHAR(32),
+			'rxunit' => SQL__VARCHAR(32),
 			'rxinterval' => SQL__ENUM(array(
 				"b.i.d.",
 				"t.i.d.",
@@ -113,11 +105,11 @@ class PrescriptionModule extends EMRModule {
 			"rxdtfrom" => fm_date_assemble("rxdtfrom"),
 			"rxphy",
 			"rxdrug" => $rxdrug_chosen,
-			"rxsize",
-			"rxform",
-			"rxdosage",
-			"rxquantity",
-			"rxunit",
+			"rxsize" => html_form::combo_assemble('rxsize'),
+			"rxform" => html_form::combo_assemble('rxform'),
+			"rxdosage" => html_form::combo_assemble('rxdosage'),
+			"rxquantity" => html_form::combo_assemble('rxquantity'),
+			"rxunit" => html_form::combo_assemble('rxunit'),
 			"rxinterval",
 			"rxpatient",
 			"rxsubstitute",
@@ -191,13 +183,16 @@ class PrescriptionModule extends EMRModule {
 			__("Prescription"),
 			array(
 				"rxdtfrom",
+					"rxdtfrom_m",
+					"rxdtfrom_y",
+					"rxdtfrom_d",
 				"rxphy",
 				"rxdrug",
-				"rxsize",
-				"rxunit",
+				"rxsize", "rxsize_text",
+				"rxunit", "rxunit_text",
 				"rxquantity",
-				"rxdosage",
-				"rxform",
+				"rxdosage", "rxdosage_text",
+				"rxform", "rxform_text",
 				"rxinterval",
 				"rxrefills",
 				"rxperrefill",
@@ -216,87 +211,101 @@ class PrescriptionModule extends EMRModule {
 				),
 
 				__("Drug") =>
-				freemed::drug_widget("rxdrug", "myform", "__action"),
-
-				__("Quantity") =>
-				html_form::text_widget(
-					"rxquantity", 10
-				),
-
-				__("Medicine Units") =>
-				html_form::text_widget(
-					"rxsize", 10
-				).
-				html_form::select_widget(
-					"rxunit",
-					array(
-						"mg" => "mg",
-						"mg/1cc" => "mg/1cc",
-						"mg/2cc" => "mg/2cc",
-						"mg/3cc" => "mg/3cc",
-						"mg/4cc" => "mg/4cc",
-						"mg/5cc" => "mg/5cc",
-						"g" => "g"
-					)
-				),
-
-				__("Dosage") =>
-				html_form::text_widget(
-					"rxdosage", 10
-				).
-				" ".__("in")." ".
-				html_form::select_widget(
+				html_form::combo_widget(
 					"rxform",
-					array(
-						"suspension" => "suspension",
-						"tablet" => "tablet",
-						"capsule" => "capsule",
-						"solution" => "solution"
+					array_merge(
+						$GLOBALS['sql']->distinct_values($this->table_name, 'rxform'),
+						array(
+							"Suspension" => "Suspension",
+							"Tablets" => "Tablets",
+							"Capsules" => "Capsules",
+							"Solution" => "Solution",
+							"Spray" => "Spray",
+							"Tube" => "Tube",
+							"Unit" => "Unit"
+						)
 					)
 				)." ".
+				freemed::drug_widget("rxdrug", "myform", "__action")." ".
+				"<table border=\"0\"><tr><td>".
+				html_form::text_widget('rxsize', 10)." ".
+				"</td><td>".
+				//html_form::combo_widget(
 				html_form::select_widget(
-					"rxinterval",
-					array(
-						"q.d."   => "q.d.",
-						"b.i.d." => "b.i.d.",
-						"t.i.d." => "t.i.d.",
-						"q.i.d." => "q.i.d.",
-						"q. 3h",
-						"q. 4h",
-						"q. 5h",
-						"q. 6h",
-						"q. 8h",
-						"h.s.",
-						"q.h.s.",
-						"q.A.M.",
-						"q.P.M.",
-						"a.c.",
-						"p.c.",
-						"p.r.n."
-					)
+					"rxunit",
+					//array_merge(
+						//$GLOBALS['sql']->distinct_values($this->table_name, 'rxunit'),
+						array(
+							" " => " ",
+							"cc" => "cc",
+							"g" => "g",
+							"mg" => "mg",
+							"mg/1cc" => "mg/1cc",
+							"mg/2cc" => "mg/2cc",
+							"mg/3cc" => "mg/3cc",
+							"mg/4cc" => "mg/4cc",
+							"mg/5cc" => "mg/5cc",
+							"ml" => "ml",
+							"quart" => "quart",
+							"microgram" => "microgram",
+							"mcg" => "mcg",
+							"unit" => "unit",
+							"cannister" => "cannister",
+						)
+					//)
+				).
+				"</td></tr></table>",
+
+				__("Disp") =>
+				html_form::combo_widget(
+					'rxquantity',
+					$GLOBALS['sql']->distinct_values($this->table_name, 'rxquantity')
+				),
+
+				__("Sig") =>
+				html_form::combo_widget(
+					'rxdosage',
+					$GLOBALS['sql']->distinct_values($this->table_name, 'rxdosage')
 				),
 
 				__("Refill") =>
-				html_form::number_pulldown(
-					"rxrefills", 0, 20
-				)." / ".
-				html_form::text_widget(
-					"rxperrefill", 10
-				)." ".__("units"),
+				html_form::select_widget(
+					'rxrefills',
+					array (
+						'0' => 0,
+						'1' => 1,
+						'2' => 2,
+						'3' => 3,
+						'4' => 4,
+						'5' => 5,
+						'6' => 6,
+						'7' => 7,
+						'8' => 8,
+						'9' => 9,
+						'10' => 10,
+						'11' => 11,
+						'12' => 12,
+						'p.r.n.' => 99
+					)
+				),
+				//." / ".
+				//html_form::text_widget(
+				//	"rxperrefill", 10
+				//)." ".__("units"),
 
 				__("Substitution") =>
 				html_form::select_widget(
 					"rxsubstitute",
 					array (
+					__("may substitute") => "may substitute",
 					__("may not substitute") => "may not substitute",
-					__("may substitute") => "may substitute"
 					)
 				)
 			))
 		);
 
 		$book->add_page(
-			__("Sig"),
+			__("Note"),
 			array(
 				"rxnote"
 			),
@@ -306,16 +315,12 @@ class PrescriptionModule extends EMRModule {
 			).
 			"</div>"
 		);
-		if ($book->get_current_page == __("Sig")) {
+		if ($book->get_current_page == __("Note")) {
 			$GLOBALS['__freemed']['on_load'] = "document.getElementById('rxnote').focus";
 		}
 
 		// Handle cancel
 		if ($book->is_cancelled()) {
-			// Unlock record, if it is locked
-			$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
-			$__lock->UnlockRow ( $_REQUEST['id'] );
-
 			if ($return=="manage") {
 				Header("Location: manage.php?".
 					"id=".urlencode($patient));
@@ -364,6 +369,11 @@ class PrescriptionModule extends EMRModule {
 		global $display_buffer,
 			$rxpatient, $patient;
 		$rxpatient = $patient;
+
+		if ($_REQUEST['action'] == 'addform') {
+			global $rxdtadd; $rxdtadd = date('Y-m-d');
+		}
+		global $rxdtmod; $rxdtmod = date('Y-m-d');
 	} // end method prepare
 
 	function view () {
@@ -402,6 +412,18 @@ class PrescriptionModule extends EMRModule {
 			array ( $varname, false, 'phfax' )
 		);
 	} // end method fax_widget
+
+	function recent_text ( $patient, $recent_date = NULL ) {
+		// skip recent; need all for this one
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			"ORDER BY ".$this->date_field." DESC";
+		$res = $GLOBALS['sql']->query($query);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$m[] = trim($r['rxdrug'].' '.$r['rxdosage'].' '.$r['rxroute']);
+		}
+		return @join(', ', $m);
+	} // end method recent_text
 
 	// Updates
 	function _update() {
@@ -447,6 +469,23 @@ class PrescriptionModule extends EMRModule {
 				"p.c.",
 				"p.r.n."
 			)');
+		}
+
+		// Version 0.3.5
+		//
+		//	Change prescription format
+		//
+		if (!version_check($version, '0.3.5')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN rxform rxform VARCHAR(32)');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN rxunit rxunit VARCHAR(32)');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN rxsize rxsize REAL');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'CHANGE COLUMN rxdosage rxdosage VARCHAR(128)');
+			$sql->query('UPDATE '.$this->table_name.' '.
+				'SET rxdosage = concat(rxdosage, \' \', rxinterval)');
 		}
 	} // end method _update
 
