@@ -8,6 +8,6 @@ Standards-Version: 3.6.0
 Package: freemed
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Depends: perl, libxml-parser-perl, libtext-iconv-perl, cron, djvulibre-bin, netpbm, imagemagick, php4, php4-mysql, apache | apache-ssl | apache2, tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common, php4-pear, php4-pear-html-table, php4-pear-html-quickform, php4-pear-html-common, php4-cgi
+Depends: perl, libxml-parser-perl, libtext-iconv-perl, cron, djvulibre-bin, netpbm, imagemagick, php4, php4-mysql, apache | apache-ssl | apache2, tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common, php4-pear, php4-pear-html-table, php4-pear-html-quickform, php4-pear-html-common, php4-cgi, xpdf-utils
 Suggests: freeb, cdrecord, mkisofs
 Description: FreeMED Opensource Electronic Medical Record System
