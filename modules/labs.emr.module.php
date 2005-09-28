@@ -22,7 +22,7 @@ class LabsModule extends EMRModule {
 		// Table definition
 		$this->table_definition = array (
 			'labpatient' => SQL__INT_UNSIGNED(0), // PID
-			'labfiller' => SQL__TEXT, // ORC 20/21 (decide later)
+			'labfiller' => SQL__TEXT, // OBR 21-01
 			'labstatus' => SQL__CHAR(2), // ORC 05
 			'labprovider' => SQL__INT_UNSIGNED(0), // ORC 12
 			'labordercode' => SQL__VARCHAR(16), // OBR 04-03
@@ -39,9 +39,13 @@ class LabsModule extends EMRModule {
 	
 		// Set vars for patient management summary
 		$this->summary_vars = array (
-			__("Date") => 'labtimestamp',
+			__("Date") => '_timestamp',
+			__("Lab") => 'labfiller',
 			__("Order Code") => 'labordercode',
 			__("Status") => 'labresultstatus'
+		);
+		$this->summary_query = array (
+			"DATE_FORMAT(labtimestamp, '%b %d, %Y %H:%i') AS _timestamp"
 		);
 
 		$this->form_vars = array (

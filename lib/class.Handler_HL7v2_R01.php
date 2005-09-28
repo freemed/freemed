@@ -88,6 +88,8 @@ class Handler_HL7v2_R01 extends Handler_HL7v2 {
 			$lab = array(
 				'labpatient' => $patient, // converted from PID segment
 				'labprovider' => $this->parser->__composite_to_provider($orc[12]),
+				'labfiller' => $v['OBR'][21][0],
+				'labstatus' => $orc[5],
 				'labordercode' => $v['OBR'][4][3],
 				'laborderdescrip'=> $v['OBR'][4][4],
 				'labcomponentcode' => $v['OBR'][20][3],
@@ -137,7 +139,7 @@ class Handler_HL7v2_R01 extends Handler_HL7v2 {
 					'labobsabnormal' => $vo[8],
 					'labobsstatus' => $vo[11],
 					'labobsreported' => $vo[14],
-					'labobsfiller' => $vo[15] // OBX 15 / OBR 21-01
+					'labobsfiller' => $v[21][0] // OBX 15 / OBR 21-01
 				);
 				$result = $GLOBALS['sql']->query(
 					$GLOBALS['sql']->insert_query(
