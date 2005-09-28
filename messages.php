@@ -64,7 +64,8 @@ switch ($action) {
 
 	case 'tag':
 	if (is_array($_REQUEST['mark'])) {
-		$query = "UPDATE messages SET msgtag='".addslashes(html_form::combo_assemble('tag'))."' ".
+		$query = "UPDATE messages SET msgtag='".addslashes(html_form::combo_assemble('tag'))."', ".
+				"msgtime=msgtime ".
 				"WHERE FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ";
 		$result = $sql->query($query);
 	}
@@ -76,7 +77,8 @@ switch ($action) {
 
 	case 'deltag':
 	if (is_array($_REQUEST['mark'])) {
-		$query = "UPDATE messages SET msgtag='' ".
+		$query = "UPDATE messages SET msgtag='', ".
+				"msgtime=msgtime ".
 				"WHERE FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ";
 		$result = $sql->query($query);
 	}
