@@ -83,7 +83,7 @@ close INPUT;
 
 #---------------------------------------------------------------------------
 
-sub htmlentities { my $i = shift; return ( $i ? HTML::Entities::encode_entities($i, 'numeric', '>&') : $i); }
+sub htmlentities { my $i = shift; return ( $i ? HTML::Entities::encode_entities_numeric($i, '>&\200-\377') : $i); }
 
 sub striplead { my $i = shift; $i =~ s/^\n//g; return $i; }
 
