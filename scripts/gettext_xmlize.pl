@@ -60,6 +60,8 @@ while (<INPUT>) {
 					$line =~ /([^\:]+): ([^\"]+)/;
 					if ($1 eq "Content-Transfer-Encoding") {
 						$header = tag('ContentTransferEncoding', $2);
+					} elsif ($1 eq "Last-Translator") {
+						$header = tag('Translator', $2);
 					} else {
 						$header = "<!-- type = $1, data = $2 -->\n";
 					}
@@ -83,7 +85,7 @@ close INPUT;
 
 #---------------------------------------------------------------------------
 
-sub htmlentities { my $i = shift; return ( $i ? HTML::Entities::encode_entities_numeric($i, '>&\200-\377') : $i); }
+sub htmlentities { my $i = shift; return ( $i ? HTML::Entities::encode_entities_numeric($i, '<>"&\200-\377') : $i); }
 
 sub striplead { my $i = shift; $i =~ s/^\n//g; return $i; }
 

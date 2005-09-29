@@ -10,8 +10,7 @@
 
 	<!-- type = PO-Revision-Date, data = 2005-09-23 11:11-0400 -->
 
-	<Translator>Nicolas Moulonguet &lt;moulonguetn@free.fr&gt;</Translator>
-
+	<Translator>Nicolas Moulonguet &#x3C;moulonguetn@free.fr&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -28,23 +27,23 @@
 
 </information>
 <translation>
-<original>ADD</original>
-<translated>AJOUTER</translated>
+	<original>ADD</original>
+	<translated>AJOUTER</translated>
 </translation>
 <translation>
-<original>ALL</original>
-<translated>TOUS</translated>
+	<original>ALL</original>
+	<translated>TOUS</translated>
 </translation>
 <translation>
-<original>AM</original>
-<translated>AM</translated>
+	<original>AM</original>
+	<translated>AM</translated>
 </translation>
 <translation>
-<original>Action</original>
-<translated>Action</translated>
+	<original>Action</original>
+	<translated>Action</translated>
 </translation>
 <translation>
-<original>Add</original>
+	<original>Add</original>
 	<translated>Ajouter</translated>
 </translation>
 <translation>
