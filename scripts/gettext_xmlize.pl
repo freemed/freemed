@@ -4,7 +4,7 @@
 #	$Author$
 #
 
-use HTML::Entities::Latin2;
+use HTML::Entities;
 
 my $input = shift or die options();
 
@@ -83,7 +83,7 @@ close INPUT;
 
 #---------------------------------------------------------------------------
 
-sub htmlentities { my $i = shift; return ( $i ? HTML::Entities::Latin2::encode_entities($i, 'numeric', '>&') : $i); }
+sub htmlentities { my $i = shift; return ( $i ? HTML::Entities::encode_entities($i, 'numeric', '>&') : $i); }
 
 sub striplead { my $i = shift; $i =~ s/^\n//g; return $i; }
 

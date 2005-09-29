@@ -105,6 +105,7 @@ class RAX {
 		xml_set_element_handler($this->parser,  "startElement",  "endElement");
 		xml_set_character_data_handler($this->parser,  "characterData");
 		xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_parser_set_option($this->parser, XML_OPTION_TARGET_ENCODING, 'iso-8859-1');
 
 		if (xml_parse($this->parser, '')) {
 			$this->parse_started = 1;
