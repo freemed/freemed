@@ -484,7 +484,7 @@ class notebook {
 	   "BGCOLOR=\"".$this->FGCOLOR."\"" :
 	   "BGCOLOR=\"".$this->BGCOLOR."\"" ).">
          <input TYPE=\"SUBMIT\" NAME=\"".$this->actionvar."\" VALUE=\"".
-	 htmlentities($this->name[$i]).
+	 prepare($this->name[$i]).
 	 "\" style=\"text-align: left; border: 0px; ".
 	 "text-decoration: none; width: 90%; ". 
 	 // Bold current page
@@ -555,7 +555,7 @@ class notebook {
          "BGCOLOR=\"".$this->FGCOLOR."\"" :
          "BGCOLOR=\"".$this->BGCOLOR."\"" ).">
          <input TYPE=\"SUBMIT\" NAME=\"".$this->actionvar."\" VALUE=\"".
-         htmlentities($this->name[$i])."\" ".
+         prepare($this->name[$i])."\" ".
 	 " class=\"".
 		( ($i == $page_to_display) ?
 		'notebook_tab_side' : 'notebook_tab_side_current' )."\"".
@@ -653,28 +653,28 @@ class notebook {
          "NAME=\"".$this->actionvar."\" ".
 	 "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
 	 "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->CANCEL)."\"/>\n";
+      "VALUE=\"".prepare($this->CANCEL)."\"/>\n";
   } // end function notebook->generate_cancel
 
   function generate_refresh ($null_val = "") {
     return " <input TYPE=\"SUBMIT\" NAME=\"".$this->actionvar."\" ".
 	 "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
 	 "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->REFRESH)."\"/>\n";
+      "VALUE=\"".prepare($this->REFRESH)."\"/>\n";
   } // end function notebook->generate_refresh
 
   function generate_revise ($null_val = "") {
     return " <input TYPE=\"SUBMIT\" NAME=\"".$this->actionvar."\" ".
 	 "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
 	 "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->REVISE)."\"/>\n";
+      "VALUE=\"".prepare($this->REVISE)."\"/>\n";
   } // end function notebook->generate_revise
 
   function generate_submit ($null_val = "") {
     return " <input TYPE=\"SUBMIT\" NAME=\"".$this->actionvar."\" ".
 	 "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
 	 "background-color: $this->BCOLOR; font-weight: bold;\" ".
-      "VALUE=\"".htmlentities($this->SUBMIT)."\"/>\n";
+      "VALUE=\"".prepare($this->SUBMIT)."\"/>\n";
   } // end function generate_submit
 
   function set_foreground_color ($new_color) {

@@ -324,14 +324,14 @@ class wizard {
     return " <input TYPE=\"SUBMIT\" NAME=\"__action\" ".
       "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
       "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->FINISH)."\"/>\n";
+      "VALUE=\"".prepare($this->FINISH)."\"/>\n";
   } // end function generate_finish
 
   function generate_refresh ($null_val = "") {
     return " <input TYPE=\"SUBMIT\" NAME=\"__action\" ".
       "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
       "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->REFRESH)."\"/>\n";
+      "VALUE=\"".prepare($this->REFRESH)."\"/>\n";
   } // end function generate_refresh
 
   function generate_previous ($null_val = "") {
@@ -339,14 +339,14 @@ class wizard {
       "onClick=\"__".$this->formname."_cancelled = 1; return true;\" ".
       "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
       "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->PREVIOUS)."\"/>\n";
+      "VALUE=\"".prepare($this->PREVIOUS)."\"/>\n";
   } // end function generate_previous
 
   function generate_next ($null_val = "") {
     return " <input TYPE=\"SUBMIT\" NAME=\"__action\" ".
       "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
       "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->NEXT)."\"/>\n";
+      "VALUE=\"".prepare($this->NEXT)."\"/>\n";
   } // end function generate_next
 
   function generate_cancel ($null_val = "") {
@@ -354,14 +354,14 @@ class wizard {
       "onClick=\"__".$this->formname."_cancelled = 1; return true;\" ".
       "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
       "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->CANCEL)."\"/>\n";
+      "VALUE=\"".prepare($this->CANCEL)."\"/>\n";
   } // end function generate_next
 
   function generate_revise ($null_val = "") {
     return " <input TYPE=\"SUBMIT\" NAME=\"__action\" ".
       "style=\"border: 1px solid; border-color: $this->LINECOLOR; ".
       "background-color: $this->BCOLOR;\" ".
-      "VALUE=\"".htmlentities($this->REVISE)."\"/>\n";
+      "VALUE=\"".prepare($this->REVISE)."\"/>\n";
   } // end function generate_revise
 
   function verify_page (&$message) {
