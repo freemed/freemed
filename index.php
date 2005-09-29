@@ -20,13 +20,7 @@ $page_name = "index.php";
 
 // Import settings from our global settings file
 include_once('lib/settings.php');
-
-if(file_exists(PHPWEBTOOLS_LOCATION . '/webtools.php')) {
-	require_once(PHPWEBTOOLS_LOCATION . '/webtools.php');
-} else die (
-	"FreeMED requires that phpwebtools be installed at ".PHPWEBTOOLS_LOCATION."<br/>\n".
-	"FreeMED cannot find the phpwebtools file webtools.php"."<br/>\n"
-);
+require_once('lib/phpwebtools/webtools.php');
 
 define('SKIP_SQL_INIT', true);
 include_once ("lib/freemed.php");
