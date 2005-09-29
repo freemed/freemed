@@ -101,7 +101,7 @@
 </translation>
 <translation>
 	<original>Progress Notes Template</original>
-	<translated>Mod&#258;&#168;le de note de pregression</translated>
+	<translated>Modèle de note de pregression</translated>
 </translation>
 <translation>
 	<original>Provider</original>
@@ -125,19 +125,19 @@
 </translation>
 <translation>
 	<original>Select Patient</original>
-	<translated>S&#258;&#352;lectionner un patient</translated>
+	<translated>Sélectionner un patient</translated>
 </translation>
 <translation>
 	<original>Specify Notes to Display</original>
-	<translated>Sp&#258;&#352;cifier les notes &#258;&#160; afficher</translated>
+	<translated>Spécifier les notes à afficher</translated>
 </translation>
 <translation>
 	<original>Temperature</original>
-	<translated>Temp&#258;&#352;rature</translated>
+	<translated>Température</translated>
 </translation>
 <translation>
 	<original>This record is locked, and cannot be modified.</original>
-	<translated>Cet enregistrement est verrouill&#258;&#352; et ne peut &#258;&#350;tre modifi&#258;&#352;.</translated>
+	<translated>Cet enregistrement est verrouillé et ne peut être modifié.</translated>
 </translation>
 <translation>
 	<original>View $this-CODE(0x82f1090)record_name</original>
@@ -153,7 +153,7 @@
 </translation>
 <translation>
 	<original>You must select a patient.</original>
-	<translated>Vous devez s&#258;&#352;lectionner un patient</translated>
+	<translated>Vous devez sélectionner un patient</translated>
 </translation>
 
 </gettextXML>

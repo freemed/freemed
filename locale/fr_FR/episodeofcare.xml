@@ -33,15 +33,15 @@
 </translation>
 <translation>
 	<original>Automobile Related Information</original>
-	<translated>Informations relatives au v&#258;&#352;hicule</translated>
+	<translated>Informations relatives au véhicule</translated>
 </translation>
 <translation>
 	<original>Case Number</original>
-	<translated>Num&#258;&#352;ro de case</translated>
+	<translated>Numéro de case</translated>
 </translation>
 <translation>
 	<original>City, State/Prov, Postal Code</original>
-	<translated>Ville, D&#258;&#352;partement, Code postal</translated>
+	<translated>Ville, Département, Code postal</translated>
 </translation>
 <translation>
 	<original>Comment</original>
@@ -49,7 +49,7 @@
 </translation>
 <translation>
 	<original>Condition Related to</original>
-	<translated>Conditions relative &#258;&#160;</translated>
+	<translated>Conditions relative à</translated>
 </translation>
 <translation>
 	<original>Contact Name</original>
@@ -57,7 +57,7 @@
 </translation>
 <translation>
 	<original>Contact Phone</original>
-	<translated>Num&#258;&#352;ro de t&#258;&#352;l&#258;&#352;phone du contact</translated>
+	<translated>Numéro de téléphone du contact</translated>
 </translation>
 <translation>
 	<original>Country</original>
@@ -73,7 +73,7 @@
 </translation>
 <translation>
 	<original>Date of First Occurance</original>
-	<translated>Date de premi&#258;&#168;re apparition</translated>
+	<translated>Date de première apparition</translated>
 </translation>
 <translation>
 	<original>Description</original>
@@ -85,11 +85,11 @@
 </translation>
 <translation>
 	<original>Disability Back to Work Date</original>
-	<translated>Arr&#258;&#350;t de travail jusqu'au</translated>
+	<translated>Arrêt de travail jusqu'au</translated>
 </translation>
 <translation>
 	<original>Disability From Date</original>
-	<translated>Arr&#258;&#350;t de travail &#258;&#160; partir de</translated>
+	<translated>Arrêt de travail à partir de</translated>
 </translation>
 <translation>
 	<original>Disability To Date</original>
@@ -97,7 +97,7 @@
 </translation>
 <translation>
 	<original>Disability Type</original>
-	<translated>Type d'arr&#258;&#350;t</translated>
+	<translated>Type d'arrêt</translated>
 </translation>
 <translation>
 	<original>Email Address</original>
@@ -105,11 +105,11 @@
 </translation>
 <translation>
 	<original>Employment Related Information</original>
-	<translated>Informations relatives &#258;&#160; la profession</translated>
+	<translated>Informations relatives à la profession</translated>
 </translation>
 <translation>
 	<original>Episode Type</original>
-	<translated>Type d'&#258;&#352;pisode</translated>
+	<translated>Type d'épisode</translated>
 </translation>
 <translation>
 	<original>Episode of Care</original>
@@ -121,15 +121,15 @@
 </translation>
 <translation>
 	<original>File Number</original>
-	<translated>Num&#258;&#352;ro de fichier</translated>
+	<translated>Numéro de fichier</translated>
 </translation>
 <translation>
 	<original>General Information</original>
-	<translated>Informations g&#258;&#352;n&#258;&#352;rales</translated>
+	<translated>Informations générales</translated>
 </translation>
 <translation>
 	<original>Gravida</original>
-	<translated>Gravit&#258;&#352;</translated>
+	<translated>Gravité</translated>
 </translation>
 <translation>
 	<original>HCFA-1500 box 10</original>
@@ -137,15 +137,15 @@
 </translation>
 <translation>
 	<original>Hospital</original>
-	<translated>H&#258;&#714;pital</translated>
+	<translated>Hôpital</translated>
 </translation>
 <translation>
 	<original>Hospitial Admission Date</original>
-	<translated>Date d'admission &#258;&#160; l'h&#258;&#714;pital</translated>
+	<translated>Date d'admission à l'hôpital</translated>
 </translation>
 <translation>
 	<original>Hospitial Discharge Date</original>
-	<translated>Date de sortie d'h&#258;&#714;pital</translated>
+	<translated>Date de sortie d'hôpital</translated>
 </translation>
 <translation>
 	<original>LT</original>
@@ -157,7 +157,7 @@
 </translation>
 <translation>
 	<original>Last Menstrual Period</original>
-	<translated>Derni&#258;&#168;re p&#258;&#352;riode menstruelle</translated>
+	<translated>Dernière période menstruelle</translated>
 </translation>
 <translation>
 	<original>Length of Cycle</original>
@@ -169,7 +169,7 @@
 </translation>
 <translation>
 	<original>Must select record to Modify</original>
-	<translated>Vous devez s&#258;&#352;lectionner un enregistrement &#258;&#160; modifier</translated>
+	<translated>Vous devez sélectionner un enregistrement à modifier</translated>
 </translation>
 <translation>
 	<original>NO COMMENT</original>
@@ -185,7 +185,7 @@
 </translation>
 <translation>
 	<original>No Disability</original>
-	<translated>Pas d'emp&#258;&#350;chement</translated>
+	<translated>Pas d'empêchement</translated>
 </translation>
 <translation>
 	<original>Orig</original>
@@ -209,23 +209,23 @@
 </translation>
 <translation>
 	<original>Pregnancy Related Information</original>
-	<translated>Informations relatives &#258;&#160; la grossesse</translated>
+	<translated>Informations relatives à la grossesse</translated>
 </translation>
 <translation>
 	<original>Procedure</original>
-	<translated>Proc&#258;&#168;dure</translated>
+	<translated>Procèdure</translated>
 </translation>
 <translation>
 	<original>Referring Physician</original>
-	<translated>M&#258;&#352;decin r&#258;&#352;f&#258;&#352;rant</translated>
+	<translated>Médecin référant</translated>
 </translation>
 <translation>
 	<original>Refresh</original>
-	<translated>Rafra&#258;&#381;chir</translated>
+	<translated>Rafraîchir</translated>
 </translation>
 <translation>
 	<original>Related to Automobile</original>
-	<translated>Concernant le v&#258;&#352;hicule</translated>
+	<translated>Concernant le véhicule</translated>
 </translation>
 <translation>
 	<original>Related to Employment</original>
@@ -245,15 +245,15 @@
 </translation>
 <translation>
 	<original>Select Another</original>
-	<translated>S&#258;&#352;lectionner encore</translated>
+	<translated>Sélectionner encore</translated>
 </translation>
 <translation>
 	<original>Starting Date</original>
-	<translated>Date de d&#258;&#352;but</translated>
+	<translated>Date de début</translated>
 </translation>
 <translation>
 	<original>State/Province</original>
-	<translated>D&#258;&#352;partement</translated>
+	<translated>Département</translated>
 </translation>
 <translation>
 	<original>Time of Accident</original>
@@ -265,11 +265,11 @@
 </translation>
 <translation>
 	<original>You must specify an ID to view an Episode!</original>
-	<translated>Vous devez sp&#258;&#352;cifier un num&#258;&#352;ro ID pour voir un &#258;&#352;pisode</translated>
+	<translated>Vous devez spécifier un numéro ID pour voir un épisode</translated>
 </translation>
 <translation>
 	<original>acute</original>
-	<translated>aig&#258;&#378;</translated>
+	<translated>aigü</translated>
 </translation>
 <translation>
 	<original>chronic</original>
@@ -277,7 +277,7 @@
 </translation>
 <translation>
 	<original>chronic recurrent</original>
-	<translated>chronique et r&#258;&#352;current</translated>
+	<translated>chronique et récurrent</translated>
 </translation>
 <translation>
 	<original>historical</original>
@@ -285,7 +285,7 @@
 </translation>
 <translation>
 	<original>to</original>
-	<translated>&#258;&#160;</translated>
+	<translated>à</translated>
 </translation>
 
 </gettextXML>

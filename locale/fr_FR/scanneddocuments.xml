@@ -53,7 +53,7 @@
 </translation>
 <translation>
 	<original>Category</original>
-	<translated>Cat&#258;&#352;gorie</translated>
+	<translated>Catégorie</translated>
 </translation>
 <translation>
 	<original>Chest CT Reports</original>
@@ -77,7 +77,7 @@
 </translation>
 <translation>
 	<original>Discharge Summary</original>
-	<translated>R&#258;&#352;sum&#258;&#352; de d&#258;&#352;charge</translated>
+	<translated>Résumé de décharge</translated>
 </translation>
 <translation>
 	<original>Endoscopy</original>
@@ -85,7 +85,7 @@
 </translation>
 <translation>
 	<original>Financial Information</original>
-	<translated>Informations financi&#258;&#168;res</translated>
+	<translated>Informations financières</translated>
 </translation>
 <translation>
 	<original>History and Physical</original>
@@ -121,7 +121,7 @@
 </translation>
 <translation>
 	<original>Operative Report</original>
-	<translated>Rapport d'op&#258;&#352;ration</translated>
+	<translated>Rapport d'opération</translated>
 </translation>
 <translation>
 	<original>Pathology</original>
@@ -133,7 +133,7 @@
 </translation>
 <translation>
 	<original>Physician</original>
-	<translated>M&#258;&#352;decin</translated>
+	<translated>Médecin</translated>
 </translation>
 <translation>
 	<original>Questionnaire</original>
@@ -145,11 +145,11 @@
 </translation>
 <translation>
 	<original>Record is locked.</original>
-	<translated>L'enregistrement est verrouill&#258;&#352;</translated>
+	<translated>L'enregistrement est verrouillé</translated>
 </translation>
 <translation>
 	<original>Referral</original>
-	<translated>R&#258;&#352;f&#258;&#352;rences</translated>
+	<translated>Références</translated>
 </translation>
 <translation>
 	<original>Reviewed</original>
@@ -157,11 +157,11 @@
 </translation>
 <translation>
 	<original>Scanned Documents</original>
-	<translated>Documents scann&#258;&#352;s</translated>
+	<translated>Documents scannés</translated>
 </translation>
 <translation>
 	<original>Thyroid Profile</original>
-	<translated>Profil de la thyro&#258;&#379;de</translated>
+	<translated>Profil de la thyroïde</translated>
 </translation>
 <translation>
 	<original>Type</original>
@@ -177,7 +177,7 @@
 </translation>
 <translation>
 	<original>Updating database</original>
-	<translated>Mise &#258;&#160; jour de la base de donn&#258;&#352;es en cours...</translated>
+	<translated>Mise à jour de la base de données en cours...</translated>
 </translation>
 
 </gettextXML>

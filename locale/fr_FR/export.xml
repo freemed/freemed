@@ -29,15 +29,15 @@
 </translation>
 <translation>
 	<original>Export Another Database</original>
-	<translated>Exporter une autre base de donn&#258;&#352;es</translated>
+	<translated>Exporter une autre base de données</translated>
 </translation>
 <translation>
 	<original>Export Database</original>
-	<translated>Exporter une base de donn&#258;&#352;es</translated>
+	<translated>Exporter une base de données</translated>
 </translation>
 <translation>
 	<original>Exporting Database</original>
-	<translated>Exportation de base de donn&#258;&#352;es en cours</translated>
+	<translated>Exportation de base de données en cours</translated>
 </translation>
 <translation>
 	<original>Return to Administration Menu</original>
@@ -45,11 +45,11 @@
 </translation>
 <translation>
 	<original>Select Database to Export</original>
-	<translated>S&#258;&#352;lectionner une base de donn&#258;&#352;es &#258;&#160; exporter</translated>
+	<translated>Sélectionner une base de données à exporter</translated>
 </translation>
 <translation>
 	<original>You do not have access to import functions.</original>
-	<translated>Vous n'avez pas acc&#258;&#168;s aux fonctions d'export</translated>
+	<translated>Vous n'avez pas accès aux fonctions d'export</translated>
 </translation>
 
 </gettextXML>

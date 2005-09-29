@@ -41,15 +41,15 @@
 </translation>
 <translation>
 	<original>Calculated Accepted Fee</original>
-	<translated>Honoraire calcul&#258;&#352; accept&#258;&#352;</translated>
+	<translated>Honoraire calculé accepté</translated>
 </translation>
 <translation>
 	<original>Calculated Charge</original>
-	<translated>Charge clacul&#258;&#352;e</translated>
+	<translated>Charge claculée</translated>
 </translation>
 <translation>
 	<original>Cancelled</original>
-	<translated>Annul&#258;&#352;</translated>
+	<translated>Annulé</translated>
 </translation>
 <translation>
 	<original>Certifications</original>
@@ -73,7 +73,7 @@
 </translation>
 <translation>
 	<original>Committing to ledger</original>
-	<translated>Mise en comptabilit&#258;&#352; en cours...</translated>
+	<translated>Mise en comptabilité en cours...</translated>
 </translation>
 <translation>
 	<original>Current Coverage</original>
@@ -81,11 +81,11 @@
 </translation>
 <translation>
 	<original>Date of Last Visit</original>
-	<translated>Date de derni&#258;&#168;re visite</translated>
+	<translated>Date de dernière visite</translated>
 </translation>
 <translation>
 	<original>Date of Procedure</original>
-	<translated>Date de la proc&#258;&#352;dure</translated>
+	<translated>Date de la procédure</translated>
 </translation>
 <translation>
 	<original>Diagnosis Code</original>
@@ -113,7 +113,7 @@
 </translation>
 <translation>
 	<original>Medicaid Original Reference</original>
-	<translated>R&#258;&#352;f&#258;&#352;rence Medicaid d'origine</translated>
+	<translated>Référence Medicaid d'origine</translated>
 </translation>
 <translation>
 	<original>Medicaid Resubmission Code</original>
@@ -129,39 +129,39 @@
 </translation>
 <translation>
 	<original>Must Specify Amount</original>
-	<translated>Vous devez sp&#258;&#352;cifier un total</translated>
+	<translated>Vous devez spécifier un total</translated>
 </translation>
 <translation>
 	<original>Must Specify Place of Service</original>
-	<translated>Vous devez sp&#258;&#352;cifier une place de service </translated>
+	<translated>Vous devez spécifier une place de service </translated>
 </translation>
 <translation>
 	<original>Must Specify Proc Year</original>
-	<translated>Vous devez sp&#258;&#352;cifier l'ann&#258;&#352;e de la proc&#258;&#352;dure</translated>
+	<translated>Vous devez spécifier l'année de la procédure</translated>
 </translation>
 <translation>
 	<original>Must Specify Procedural code</original>
-	<translated>Vous devez sp&#258;&#352;cifier le code de la proc&#258;&#352;dure</translated>
+	<translated>Vous devez spécifier le code de la procédure</translated>
 </translation>
 <translation>
 	<original>Must Specify Type of Claim</original>
-	<translated>Vous devez sp&#258;&#352;cifier le type de plainte</translated>
+	<translated>Vous devez spécifier le type de plainte</translated>
 </translation>
 <translation>
 	<original>Must Specify physician</original>
-	<translated>Vous devez sp&#258;&#352;cifier un m&#258;&#352;decin</translated>
+	<translated>Vous devez spécifier un médecin</translated>
 </translation>
 <translation>
 	<original>Must Specify proc Day</original>
-	<translated>Vous devez sp&#258;&#352;cifier le jour de la proc&#258;&#352;dure</translated>
+	<translated>Vous devez spécifier le jour de la procédure</translated>
 </translation>
 <translation>
 	<original>Must Specify proc Month</original>
-	<translated>Vous devez sp&#258;&#352;cifier le mois de la proc&#258;&#352;dure</translated>
+	<translated>Vous devez spécifier le mois de la procédure</translated>
 </translation>
 <translation>
 	<original>Must have one diagnosis code</original>
-	<translated>Vous devez sp&#258;&#352;cifier le code du diagnostic</translated>
+	<translated>Vous devez spécifier le code du diagnostic</translated>
 </translation>
 <translation>
 	<original>NO COMMENT</original>
@@ -173,11 +173,11 @@
 </translation>
 <translation>
 	<original>Outside Lab Charges</original>
-	<translated>Charges des laboratoires ext&#258;&#352;rieurs </translated>
+	<translated>Charges des laboratoires extérieurs </translated>
 </translation>
 <translation>
 	<original>Part One</original>
-	<translated>Premi&#258;&#168;re partie</translated>
+	<translated>Première partie</translated>
 </translation>
 <translation>
 	<original>Payment Record</original>
@@ -189,23 +189,23 @@
 </translation>
 <translation>
 	<original>Primary Coverage</original>
-	<translated>Couverture pr&#258;&#352;liminaire</translated>
+	<translated>Couverture préliminaire</translated>
 </translation>
 <translation>
 	<original>Procedural Code</original>
-	<translated>Code proc&#258;&#352;dural</translated>
+	<translated>Code procédural</translated>
 </translation>
 <translation>
 	<original>Procedure</original>
-	<translated>Proc&#258;&#352;dure</translated>
+	<translated>Procédure</translated>
 </translation>
 <translation>
 	<original>Procedure Code</original>
-	<translated>Code de la proc&#258;&#352;dure</translated>
+	<translated>Code de la procédure</translated>
 </translation>
 <translation>
 	<original>Procedures</original>
-	<translated>Proc&#258;&#352;dures</translated>
+	<translated>Procédures</translated>
 </translation>
 <translation>
 	<original>Provider</original>
@@ -213,15 +213,15 @@
 </translation>
 <translation>
 	<original>Referring Provider</original>
-	<translated>Fournisseur r&#258;&#352;f&#258;&#352;rant</translated>
+	<translated>Fournisseur référant</translated>
 </translation>
 <translation>
 	<original>Refresh</original>
-	<translated>Rafra&#258;&#381;chir</translated>
+	<translated>Rafraîchir</translated>
 </translation>
 <translation>
 	<original>Removed old authorization</original>
-	<translated>Ancienne autorisation supprim&#258;&#352;e</translated>
+	<translated>Ancienne autorisation supprimée</translated>
 </translation>
 <translation>
 	<original>Revise</original>
@@ -241,27 +241,27 @@
 </translation>
 <translation>
 	<original>Step Two: Select Coverage</original>
-	<translated>Etape 2 : S&#258;&#352;lectionner la couverture</translated>
+	<translated>Etape 2 : Sélectionner la couverture</translated>
 </translation>
 <translation>
 	<original>Tertiary Coverage</original>
-	<translated>Troisi&#258;&#168;me couverture</translated>
+	<translated>Troisième couverture</translated>
 </translation>
 <translation>
 	<original>Units</original>
-	<translated>Unit&#258;&#352;s</translated>
+	<translated>Unités</translated>
 </translation>
 <translation>
 	<original>Updated authorization</original>
-	<translated>Autorisation mise &#258;&#160; jour</translated>
+	<translated>Autorisation mise à jour</translated>
 </translation>
 <translation>
 	<original>Updating patient diagnoses</original>
-	<translated>Mise &#258;&#160; jour des diagnostics patients en cours...</translated>
+	<translated>Mise à jour des diagnostics patients en cours...</translated>
 </translation>
 <translation>
 	<original>Voucher Number</original>
-	<translated>Num&#258;&#352;ro Voucher</translated>
+	<translated>Numéro Voucher</translated>
 </translation>
 <translation>
 	<original>Work Comp Coverage</original>
@@ -273,7 +273,7 @@
 </translation>
 <translation>
 	<original>to</original>
-	<translated>&#258;&#160;</translated>
+	<translated>à</translated>
 </translation>
 
 </gettextXML>

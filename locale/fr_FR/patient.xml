@@ -29,11 +29,11 @@
 </translation>
 <translation>
 	<original>Address Line 1</original>
-	<translated>Adresse (Premi&#258;&#168;re ligne)</translated>
+	<translated>Adresse (Première ligne)</translated>
 </translation>
 <translation>
 	<original>Address Line 2</original>
-	<translated>Adresse (Deuxi&#258;&#168;me ligne)</translated>
+	<translated>Adresse (Deuxième ligne)</translated>
 </translation>
 <translation>
 	<original>All Patients</original>
@@ -49,7 +49,7 @@
 </translation>
 <translation>
 	<original>Blood Type</original>
-	<translated>Rh&#258;&#168;sus</translated>
+	<translated>Rhèsus</translated>
 </translation>
 <translation>
 	<original>Charge Card Billing</original>
@@ -73,7 +73,7 @@
 </translation>
 <translation>
 	<original>Divorced</original>
-	<translated>Divorc&#258;&#352;</translated>
+	<translated>Divorcé</translated>
 </translation>
 <translation>
 	<original>Done</original>
@@ -93,7 +93,7 @@
 </translation>
 <translation>
 	<original>Fax Number</original>
-	<translated>Num&#258;&#352;ro de Fax</translated>
+	<translated>Numéro de Fax</translated>
 </translation>
 <translation>
 	<original>Female</original>
@@ -101,7 +101,7 @@
 </translation>
 <translation>
 	<original>First Name</original>
-	<translated>Pr&#258;&#352;nom</translated>
+	<translated>Prénom</translated>
 </translation>
 <translation>
 	<original>Gender</original>
@@ -109,11 +109,11 @@
 </translation>
 <translation>
 	<original>Home Phone</original>
-	<translated>T&#258;&#352;l&#258;&#352;phone Domicile</translated>
+	<translated>Téléphone Domicile</translated>
 </translation>
 <translation>
 	<original>In House Doctor</original>
-	<translated>M&#258;&#352;decin traitant</translated>
+	<translated>Médecin traitant</translated>
 </translation>
 <translation>
 	<original>Internal Practice ID #</original>
@@ -133,7 +133,7 @@
 </translation>
 <translation>
 	<original>Manage This Patient</original>
-	<translated>G&#258;&#352;rer ce patient</translated>
+	<translated>Gérer ce patient</translated>
 </translation>
 <translation>
 	<original>Marital Status</original>
@@ -141,11 +141,11 @@
 </translation>
 <translation>
 	<original>Married</original>
-	<translated>Mari&#258;&#352;</translated>
+	<translated>Marié</translated>
 </translation>
 <translation>
 	<original>Medical</original>
-	<translated>M&#258;&#352;dical</translated>
+	<translated>Médical</translated>
 </translation>
 <translation>
 	<original>Middle Name</original>
@@ -177,15 +177,15 @@
 </translation>
 <translation>
 	<original>Number of Other Physicians</original>
-	<translated>Nombre d'autres m&#258;&#352;decins</translated>
+	<translated>Nombre d'autres médecins</translated>
 </translation>
 <translation>
 	<original>Other Physician</original>
-	<translated>Autre m&#258;&#352;decin</translated>
+	<translated>Autre médecin</translated>
 </translation>
 <translation>
 	<original>Other Physician 4</original>
-	<translated>Autre m&#258;&#352;decin 4</translated>
+	<translated>Autre médecin 4</translated>
 </translation>
 <translation>
 	<original>Part Time</original>
@@ -209,7 +209,7 @@
 </translation>
 <translation>
 	<original>Patients Meeting Criteria</original>
-	<translated>Crit&#258;&#168;res de rencontre des patients</translated>
+	<translated>Critères de rencontre des patients</translated>
 </translation>
 <translation>
 	<original>Personal</original>
@@ -217,7 +217,7 @@
 </translation>
 <translation>
 	<original>Physician</original>
-	<translated>M&#258;&#352;decin</translated>
+	<translated>Médecin</translated>
 </translation>
 <translation>
 	<original>Practice ID</original>
@@ -225,15 +225,15 @@
 </translation>
 <translation>
 	<original>Preferred Pharmacy</original>
-	<translated>Pharmacie pr&#258;&#352;f&#258;&#352;r&#258;&#352;e</translated>
+	<translated>Pharmacie préférée</translated>
 </translation>
 <translation>
 	<original>Primary Care Physician</original>
-	<translated>M&#258;&#352;decin de premier soin</translated>
+	<translated>Médecin de premier soin</translated>
 </translation>
 <translation>
 	<original>Primary Information</original>
-	<translated>Information pr&#258;&#352;liminaire</translated>
+	<translated>Information préliminaire</translated>
 </translation>
 <translation>
 	<original>Race</original>
@@ -245,11 +245,11 @@
 </translation>
 <translation>
 	<original>Referring Doctor</original>
-	<translated>Docteur r&#258;&#352;f&#258;&#352;rant</translated>
+	<translated>Docteur référant</translated>
 </translation>
 <translation>
 	<original>Refresh</original>
-	<translated>Rafra&#258;&#381;chir</translated>
+	<translated>Rafraîchir</translated>
 </translation>
 <translation>
 	<original>Religion</original>
@@ -261,7 +261,7 @@
 </translation>
 <translation>
 	<original>Retired</original>
-	<translated>Retrait&#258;&#352;</translated>
+	<translated>Retraité</translated>
 </translation>
 <translation>
 	<original>Salutation</original>
@@ -277,15 +277,15 @@
 </translation>
 <translation>
 	<original>Separated</original>
-	<translated>S&#258;&#352;par&#258;&#352;</translated>
+	<translated>Séparé</translated>
 </translation>
 <translation>
 	<original>Single</original>
-	<translated>C&#258;&#352;libataire</translated>
+	<translated>Célibataire</translated>
 </translation>
 <translation>
 	<original>Social Security Number</original>
-	<translated>Num&#258;&#352;ro de S&#258;&#352;curit&#258;&#352; Sociale</translated>
+	<translated>Numéro de Sécurité Sociale</translated>
 </translation>
 <translation>
 	<original>Statement Billing</original>
@@ -305,7 +305,7 @@
 </translation>
 <translation>
 	<original>Work Phone</original>
-	<translated>T&#258;&#352;l&#258;&#352;phone Bureau</translated>
+	<translated>Téléphone Bureau</translated>
 </translation>
 <translation>
 	<original>Yes</original>
@@ -313,7 +313,7 @@
 </translation>
 <translation>
 	<original>You don't have access to do that.</original>
-	<translated>Vous n'avez pas les droits d'acc&#258;&#168;s.</translated>
+	<translated>Vous n'avez pas les droits d'accès.</translated>
 </translation>
 
 </gettextXML>

@@ -25,7 +25,7 @@
 </information>
 <translation>
 	<original>City, State, Zip</original>
-	<translated>Ville, D&#258;&#352;partement, Code ZIP</translated>
+	<translated>Ville, Département, Code ZIP</translated>
 </translation>
 <translation>
 	<original>Contact</original>
@@ -37,7 +37,7 @@
 </translation>
 <translation>
 	<original>Default Provider</original>
-	<translated>Fournisseur par d&#258;&#352;faut</translated>
+	<translated>Fournisseur par défaut</translated>
 </translation>
 <translation>
 	<original>Description</original>
@@ -45,11 +45,11 @@
 </translation>
 <translation>
 	<original>Details</original>
-	<translated>D&#258;&#352;tails</translated>
+	<translated>Détails</translated>
 </translation>
 <translation>
 	<original>Electronic Billing</original>
-	<translated>Facture &#258;&#352;lectronique</translated>
+	<translated>Facture électronique</translated>
 </translation>
 <translation>
 	<original>Email Address</original>
@@ -57,7 +57,7 @@
 </translation>
 <translation>
 	<original>Employer Identification Number</original>
-	<translated>Num&#258;&#352;ro d'identification de l'employeur</translated>
+	<translated>Numéro d'identification de l'employeur</translated>
 </translation>
 <translation>
 	<original>External</original>
@@ -69,7 +69,7 @@
 </translation>
 <translation>
 	<original>Fax Number</original>
-	<translated>Num&#258;&#352;ro de Fax</translated>
+	<translated>Numéro de Fax</translated>
 </translation>
 <translation>
 	<original>Internal</original>
@@ -89,11 +89,11 @@
 </translation>
 <translation>
 	<original>Phone Number</original>
-	<translated>Num&#258;&#352;ro de t&#258;&#352;l&#258;&#352;phone</translated>
+	<translated>Numéro de téléphone</translated>
 </translation>
 <translation>
 	<original>Primary Information</original>
-	<translated>Information pr&#258;&#352;liminaire</translated>
+	<translated>Information préliminaire</translated>
 </translation>
 <translation>
 	<original>X12 Identifier</original>

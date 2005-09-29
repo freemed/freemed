@@ -25,15 +25,15 @@
 </information>
 <translation>
 	<original>A valid patient must be selected.</original>
-	<translated>Un patient valide doit &#258;&#350;tre s&#258;&#352;lectionn&#258;&#352;.</translated>
+	<translated>Un patient valide doit être sélectionné.</translated>
 </translation>
 <translation>
 	<original>An attempt was made to remove an ACL which does not belong to this patient!</original>
-	<translated>Tentative de suppression d'un ACL qui n'appartient pas &#258;&#160; ce patient! </translated>
+	<translated>Tentative de suppression d'un ACL qui n'appartient pas à ce patient! </translated>
 </translation>
 <translation>
 	<original>At least one user and property must be selected.</original>
-	<translated>Au moins un utilisateur et une propri&#258;&#352;t&#258;&#352; doit &#258;&#350;tre s&#258;&#352;lectionn&#258;&#352;e.</translated>
+	<translated>Au moins un utilisateur et une propriété doit être sélectionnée.</translated>
 </translation>
 <translation>
 	<original>Invalid object type specified</original>
@@ -45,11 +45,11 @@
 </translation>
 <translation>
 	<original>Properties</original>
-	<translated>Propri&#258;&#352;t&#258;&#352;s</translated>
+	<translated>Propriétés</translated>
 </translation>
 <translation>
 	<original>There are no ACL rules for this patient.</original>
-	<translated>Il n'y a pas de r&#258;&#168;gles ACL pour ce patient.</translated>
+	<translated>Il n'y a pas de règles ACL pour ce patient.</translated>
 </translation>
 <translation>
 	<original>Users</original>

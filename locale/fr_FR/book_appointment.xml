@@ -25,23 +25,23 @@
 </information>
 <translation>
 	<original>Book Appointment</original>
-	<translated>R&#258;&#352;servation</translated>
+	<translated>Réservation</translated>
 </translation>
 <translation>
 	<original>Book an appointment at this time</original>
-	<translated>R&#258;&#352;server un rendez-vous &#258;&#160; cette heure</translated>
+	<translated>Réserver un rendez-vous à cette heure</translated>
 </translation>
 <translation>
 	<original>Booking Location</original>
-	<translated>Lieu de r&#258;&#352;servation</translated>
+	<translated>Lieu de réservation</translated>
 </translation>
 <translation>
 	<original>Confirm Booking</original>
-	<translated>Confirmer la r&#258;&#352;servation</translated>
+	<translated>Confirmer la réservation</translated>
 </translation>
 <translation>
 	<original>Duration</original>
-	<translated>Dur&#258;&#352;e</translated>
+	<translated>Durée</translated>
 </translation>
 <translation>
 	<original>Facility</original>
@@ -65,7 +65,7 @@
 </translation>
 <translation>
 	<original>Next Available</original>
-	<translated>Disponibilit&#258;&#352; suivante</translated>
+	<translated>Disponibilité suivante</translated>
 </translation>
 <translation>
 	<original>Note</original>
@@ -73,11 +73,11 @@
 </translation>
 <translation>
 	<original>One Month From Now</original>
-	<translated>Dans un mois &#258;&#160; partir d'aujourd'hui</translated>
+	<translated>Dans un mois à partir d'aujourd'hui</translated>
 </translation>
 <translation>
 	<original>One Week From Now</original>
-	<translated>Dans une semaine &#258;&#160; partir d'aujourd'hui</translated>
+	<translated>Dans une semaine à partir d'aujourd'hui</translated>
 </translation>
 <translation>
 	<original>Patient</original>
@@ -89,7 +89,7 @@
 </translation>
 <translation>
 	<original>Please select from the following available times and dates:</original>
-	<translated>Fa&#258;&#381;tes votre s&#258;&#352;lection parmi les dates et huers suivantes</translated>
+	<translated>Faîtes votre sélection parmi les dates et huers suivantes</translated>
 </translation>
 <translation>
 	<original>Provider</original>
@@ -97,7 +97,7 @@
 </translation>
 <translation>
 	<original>Refresh</original>
-	<translated>Rafra&#258;&#381;chir</translated>
+	<translated>Rafraîchir</translated>
 </translation>
 <translation>
 	<original>Saturdays Only</original>
@@ -105,7 +105,7 @@
 </translation>
 <translation>
 	<original>Template</original>
-	<translated>Mod&#258;&#168;le</translated>
+	<translated>Modèle</translated>
 </translation>
 <translation>
 	<original>That is not a valid selection!</original>
@@ -113,7 +113,7 @@
 </translation>
 <translation>
 	<original>There are no available appointments which match your criteria.</original>
-	<translated>Il n'y a pas de rendez-vous correspondant &#258;&#160; vos crit&#258;&#168;res de recherche</translated>
+	<translated>Il n'y a pas de rendez-vous correspondant à vos critères de recherche</translated>
 </translation>
 <translation>
 	<original>Thursdays Only</original>
@@ -129,11 +129,11 @@
 </translation>
 <translation>
 	<original>Two Weeks From Now</original>
-	<translated>Dans deux semaines &#258;&#160; partir d'aujourd'hui</translated>
+	<translated>Dans deux semaines à partir d'aujourd'hui</translated>
 </translation>
 <translation>
 	<original>Unable to find open slot!</original>
-	<translated>Impossibilit&#258;&#352; de trouver un cr&#258;&#352;neau disponible</translated>
+	<translated>Impossibilité de trouver un créneau disponible</translated>
 </translation>
 <translation>
 	<original>Wednesdays Only</original>
@@ -145,11 +145,11 @@
 </translation>
 <translation>
 	<original>You do not have permission to book an appointment.</original>
-	<translated>Vous n'avez pas l'autorisation de r&#258;&#352;server un rendez-vous</translated>
+	<translated>Vous n'avez pas l'autorisation de réserver un rendez-vous</translated>
 </translation>
 <translation>
 	<original>You should never be here!</original>
-	<translated>Vous n'auriez jamais d&#258;&#357; parvenir ici</translated>
+	<translated>Vous n'auriez jamais dû parvenir ici</translated>
 </translation>
 <translation>
 	<original>in collection</original>

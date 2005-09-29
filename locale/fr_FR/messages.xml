@@ -25,11 +25,11 @@
 </information>
 <translation>
 	<original>%s wrote:</original>
-	<translated>%s a &#258;&#352;crit :</translated>
+	<translated>%s a écrit :</translated>
 </translation>
 <translation>
 	<original>Are you sure that you want to permanently delete this message?</original>
-	<translated>Etes-vous s&#258;&#357;r de vouloir supprimer ce message de fa&#258;&#167;on permanente?</translated>
+	<translated>Etes-vous sûr de vouloir supprimer ce message de façon permanente?</translated>
 </translation>
 <translation>
 	<original>Clear</original>
@@ -37,7 +37,7 @@
 </translation>
 <translation>
 	<original>Delete Marked Messages</original>
-	<translated>Supprimer les messages marqu&#258;&#352;s</translated>
+	<translated>Supprimer les messages marqués</translated>
 </translation>
 <translation>
 	<original>For</original>
@@ -45,7 +45,7 @@
 </translation>
 <translation>
 	<original>FreeMED Messaging System</original>
-	<translated>Syst&#258;&#168;me de messagerie FreeMED</translated>
+	<translated>Système de messagerie FreeMED</translated>
 </translation>
 <translation>
 	<original>From</original>
@@ -53,7 +53,7 @@
 </translation>
 <translation>
 	<original>Fwd</original>
-	<translated>Faire suivre &#258;&#160;</translated>
+	<translated>Faire suivre à</translated>
 </translation>
 <translation>
 	<original>Main Menu</original>
@@ -85,7 +85,7 @@
 </translation>
 <translation>
 	<original>Reply</original>
-	<translated>R&#258;&#352;pondre</translated>
+	<translated>Répondre</translated>
 </translation>
 <translation>
 	<original>Return to the Main Menu</original>
@@ -97,7 +97,7 @@
 </translation>
 <translation>
 	<original>Select All</original>
-	<translated>Tout s&#258;&#352;lectionner</translated>
+	<translated>Tout sélectionner</translated>
 </translation>
 <translation>
 	<original>Send</original>
@@ -113,11 +113,11 @@
 </translation>
 <translation>
 	<original>Sent By</original>
-	<translated>Envoy&#258;&#352; par</translated>
+	<translated>Envoyé par</translated>
 </translation>
 <translation>
 	<original>Sent to:</original>
-	<translated>Envoy&#258;&#352; &#258;&#160; :</translated>
+	<translated>Envoyé à :</translated>
 </translation>
 <translation>
 	<original>Subject</original>
@@ -125,15 +125,15 @@
 </translation>
 <translation>
 	<original>There is nothing to delete.</original>
-	<translated>Il n'y a rien &#258;&#160; supprimer.</translated>
+	<translated>Il n'y a rien à supprimer.</translated>
 </translation>
 <translation>
 	<original>There is nothing to mark as read.</original>
-	<translated>Il n'y a rien de marqu&#258;&#352; comm Lu.</translated>
+	<translated>Il n'y a rien de marqué comm Lu.</translated>
 </translation>
 <translation>
 	<original>This message has been sent multiple times.</original>
-	<translated>Ce message a &#258;&#352;t&#258;&#352; envoy&#258;&#352; plusieurs fois.</translated>
+	<translated>Ce message a été envoyé plusieurs fois.</translated>
 </translation>
 <translation>
 	<original>Time</original>
@@ -161,11 +161,11 @@
 </translation>
 <translation>
 	<original>extremely urgent</original>
-	<translated>Tr&#258;&#168;s urgent</translated>
+	<translated>Très urgent</translated>
 </translation>
 <translation>
 	<original>moderately important</original>
-	<translated>Mod&#258;&#352;r&#258;&#352;ment important</translated>
+	<translated>Modérément important</translated>
 </translation>
 <translation>
 	<original>not important</original>
@@ -173,11 +173,11 @@
 </translation>
 <translation>
 	<original>somewhat important</original>
-	<translated>L&#258;&#352;g&#258;&#168;rement important</translated>
+	<translated>Légèrement important</translated>
 </translation>
 <translation>
 	<original>very important</original>
-	<translated>Tr&#258;&#168;s important</translated>
+	<translated>Très important</translated>
 </translation>
 
 </gettextXML>

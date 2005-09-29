@@ -25,11 +25,11 @@
 </information>
 <translation>
 	<original>Address Line 1</original>
-	<translated>Adresse (Premi&#258;&#168;re ligne)</translated>
+	<translated>Adresse (Première ligne)</translated>
 </translation>
 <translation>
 	<original>Address Line 2</original>
-	<translated>Adresse (Deuxi&#258;&#168;me ligne)</translated>
+	<translated>Adresse (Deuxième ligne)</translated>
 </translation>
 <translation>
 	<original>City</original>
@@ -41,23 +41,23 @@
 </translation>
 <translation>
 	<original>Contact Phone</original>
-	<translated>T&#258;&#352;l&#258;&#352;phone du contact</translated>
+	<translated>Téléphone du contact</translated>
 </translation>
 <translation>
 	<original>Default Electronic Billing Format</original>
-	<translated>Format par d&#258;&#352;faut de la facture &#258;&#352;lectronique</translated>
+	<translated>Format par défaut de la facture électronique</translated>
 </translation>
 <translation>
 	<original>Default Electronic Billing Target</original>
-	<translated>Cible par d&#258;&#352;faut de la facture &#258;&#352;lectronique</translated>
+	<translated>Cible par défaut de la facture électronique</translated>
 </translation>
 <translation>
 	<original>Default Paper Billing Format</original>
-	<translated>Format par d&#258;&#352;faut du papier de facture</translated>
+	<translated>Format par défaut du papier de facture</translated>
 </translation>
 <translation>
 	<original>Default Paper Billing Target</original>
-	<translated>Cible par d&#258;&#352;faut du papier de facture</translated>
+	<translated>Cible par défaut du papier de facture</translated>
 </translation>
 <translation>
 	<original>Email Address</original>
@@ -65,7 +65,7 @@
 </translation>
 <translation>
 	<original>Fax Number</original>
-	<translated>Num&#258;&#352;ro de Fax</translated>
+	<translated>Numéro de Fax</translated>
 </translation>
 <translation>
 	<original>Group</original>
@@ -137,7 +137,7 @@
 </translation>
 <translation>
 	<original>State</original>
-	<translated>D&#258;&#352;partement</translated>
+	<translated>Département</translated>
 </translation>
 <translation>
 	<original>Web Site</original>

@@ -25,7 +25,7 @@
 </information>
 <translation>
 	<original>Caption</original>
-	<translated>Libell&#258;&#352;</translated>
+	<translated>Libellé</translated>
 </translation>
 <translation>
 	<original>Description</original>
@@ -41,7 +41,7 @@
 </translation>
 <translation>
 	<original>Line Insert</original>
-	<translated>Ins&#258;&#352;rer une ligne</translated>
+	<translated>Insérer une ligne</translated>
 </translation>
 <translation>
 	<original>Name</original>
@@ -49,11 +49,11 @@
 </translation>
 <translation>
 	<original>Name of Template</original>
-	<translated>Nom du mod&#258;&#168;le</translated>
+	<translated>Nom du modèle</translated>
 </translation>
 <translation>
 	<original>Questionnaire Template Maintenance</original>
-	<translated>Gestion des mod&#258;&#168;les de questionnaire</translated>
+	<translated>Gestion des modèles de questionnaire</translated>
 </translation>
 <translation>
 	<original>Type</original>
@@ -61,11 +61,11 @@
 </translation>
 <translation>
 	<original>Update</original>
-	<translated>Mettre &#258;&#160; jour</translated>
+	<translated>Mettre à jour</translated>
 </translation>
 <translation>
 	<original>You must select a record to modify.</original>
-	<translated>Vous devez s&#258;&#352;lectionner un enregistrement &#258;&#160; modifier.</translated>
+	<translated>Vous devez sélectionner un enregistrement à modifier.</translated>
 </translation>
 
 </gettextXML>

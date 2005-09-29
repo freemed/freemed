@@ -25,7 +25,7 @@
 </information>
 <translation>
 	<original>Book Appointment</original>
-	<translated>R&#258;&#352;servez un rendez-vous</translated>
+	<translated>Réservez un rendez-vous</translated>
 </translation>
 <translation>
 	<original>CPT Code</original>
@@ -33,7 +33,7 @@
 </translation>
 <translation>
 	<original>Deleting Appointment</original>
-	<translated>Enl&#258;&#168;vement du rendez-vous</translated>
+	<translated>Enlèvement du rendez-vous</translated>
 </translation>
 <translation>
 	<original>Location</original>
@@ -41,7 +41,7 @@
 </translation>
 <translation>
 	<original>Manage Appointments</original>
-	<translated>G&#258;&#352;rez les rendez-vous</translated>
+	<translated>Gérez les rendez-vous</translated>
 </translation>
 <translation>
 	<original>Note</original>
@@ -49,7 +49,7 @@
 </translation>
 <translation>
 	<original>Select a Patient</original>
-	<translated>S&#258;&#352;lectionner un patient</translated>
+	<translated>Sélectionner un patient</translated>
 </translation>
 <translation>
 	<original>This patient has no appointments.</original>
@@ -57,7 +57,7 @@
 </translation>
 <translation>
 	<original>Time/Duration</original>
-	<translated>Dur&#258;&#352;e</translated>
+	<translated>Durée</translated>
 </translation>
 <translation>
 	<original>You do not have permission to delete appointments.</original>
@@ -65,7 +65,7 @@
 </translation>
 <translation>
 	<original>You must select a patient.</original>
-	<translated>Vous devez s&#258;&#352;lectionner un patient.</translated>
+	<translated>Vous devez sélectionner un patient.</translated>
 </translation>
 
 </gettextXML>

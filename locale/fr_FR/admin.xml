@@ -33,15 +33,15 @@
 </translation>
 <translation>
 	<original>Calendar Overbooking</original>
-	<translated>Agenda enti&#258;&#168;rement r&#258;&#352;serv&#258;&#352;</translated>
+	<translated>Agenda entièrement réservé</translated>
 </translation>
 <translation>
 	<original>Combo with past drugs</original>
-	<translated>Liste des m&#258;&#352;dicaments prescrits</translated>
+	<translated>Liste des médicaments prescrits</translated>
 </translation>
 <translation>
 	<original>Configuration Complete</original>
-	<translated>Configuration termin&#258;&#352;e</translated>
+	<translated>Configuration terminée</translated>
 </translation>
 <translation>
 	<original>Configuration Help</original>
@@ -57,27 +57,27 @@
 </translation>
 <translation>
 	<original>Date Widget</original>
-	<translated>Pr&#258;&#352;sentation des dates</translated>
+	<translated>Présentation des dates</translated>
 </translation>
 <translation>
 	<original>Default</original>
-	<translated>D&#258;&#352;faut</translated>
+	<translated>Défaut</translated>
 </translation>
 <translation>
 	<original>Default Area Code</original>
-	<translated>Code de la zone g&#258;&#352;ographique par d&#258;&#352;faut</translated>
+	<translated>Code de la zone géographique par défaut</translated>
 </translation>
 <translation>
 	<original>Disabled</original>
-	<translated>D&#258;&#352;sactiv&#258;&#352;</translated>
+	<translated>Désactivé</translated>
 </translation>
 <translation>
 	<original>Enabled</original>
-	<translated>Activ&#258;&#352;</translated>
+	<translated>Activé</translated>
 </translation>
 <translation>
 	<original>Export Databases</original>
-	<translated>Exporter les bases de donn&#258;&#352;es</translated>
+	<translated>Exporter les bases de données</translated>
 </translation>
 <translation>
 	<original>Fax Cover Page</original>
@@ -97,7 +97,7 @@
 </translation>
 <translation>
 	<original>Import Databases</original>
-	<translated>Importer les bases de donn&#258;&#352;es</translated>
+	<translated>Importer les bases de données</translated>
 </translation>
 <translation>
 	<original>Lock Record Override</original>
@@ -113,19 +113,19 @@
 </translation>
 <translation>
 	<original>Phone Number Format</original>
-	<translated>Format du num&#258;&#352;ro de t&#258;&#352;l&#258;&#352;phone</translated>
+	<translated>Format du numéro de téléphone</translated>
 </translation>
 <translation>
 	<original>Prescription Drug Widget</original>
-	<translated>Pr&#258;&#352;sentation des prescriptions m&#258;&#352;dicamenteuses</translated>
+	<translated>Présentation des prescriptions médicamenteuses</translated>
 </translation>
 <translation>
 	<original>Refresh</original>
-	<translated>Rafra&#258;&#381;chir</translated>
+	<translated>Rafraîchir</translated>
 </translation>
 <translation>
 	<original>Reinitialize Database</original>
-	<translated>R&#258;&#352;initialiser le base de donn&#258;&#352;es</translated>
+	<translated>Réinitialiser le base de données</translated>
 </translation>
 <translation>
 	<original>Return To Administration Menu</original>
@@ -137,11 +137,11 @@
 </translation>
 <translation>
 	<original>Scheduling End Time</original>
-	<translated>Heure de fin de journ&#258;&#352;e</translated>
+	<translated>Heure de fin de journée</translated>
 </translation>
 <translation>
 	<original>Scheduling Start Time</original>
-	<translated>Heure de d&#258;&#352;but de journ&#258;&#352;e</translated>
+	<translated>Heure de début de journée</translated>
 </translation>
 <translation>
 	<original>Show Tips?</original>
@@ -153,11 +153,11 @@
 </translation>
 <translation>
 	<original>System Configuration</original>
-	<translated>Configuration du syst&#258;&#168;me</translated>
+	<translated>Configuration du système</translated>
 </translation>
 <translation>
 	<original>Unformatted</original>
-	<translated>Non format&#258;&#352;</translated>
+	<translated>Non formaté</translated>
 </translation>
 <translation>
 	<original>United States</original>
@@ -169,11 +169,11 @@
 </translation>
 <translation>
 	<original>You do not have access to system configuration.</original>
-	<translated>Vous n'avez pas acc&#258;&#352;s &#258;&#160; la configuration du syst&#258;&#168;me</translated>
+	<translated>Vous n'avez pas accés à la configuration du système</translated>
 </translation>
 <translation>
 	<original>You don't have access to the administration menu.</original>
-	<translated>Vous n'avez pas acc&#258;&#352;s au Menu Administration</translated>
+	<translated>Vous n'avez pas accés au Menu Administration</translated>
 </translation>
 <translation>
 	<original>javascript widget</original>

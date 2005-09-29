@@ -37,11 +37,11 @@
 </translation>
 <translation>
 	<original>Create</original>
-	<translated>Cr&#258;&#352;er</translated>
+	<translated>Créer</translated>
 </translation>
 <translation>
 	<original>Execute Query</original>
-	<translated>Ex&#258;&#352;cuter la requ&#258;&#350;te</translated>
+	<translated>Exécuter la requête</translated>
 </translation>
 <translation>
 	<original>Field</original>
@@ -49,7 +49,7 @@
 </translation>
 <translation>
 	<original>Load Query</original>
-	<translated>Charger la requ&#258;&#350;te</translated>
+	<translated>Charger la requête</translated>
 </translation>
 <translation>
 	<original>No Information available</original>
@@ -57,27 +57,27 @@
 </translation>
 <translation>
 	<original>Operator</original>
-	<translated>Op&#258;&#352;rateur</translated>
+	<translated>Opérateur</translated>
 </translation>
 <translation>
 	<original>Pick Query</original>
-	<translated>Choisir la requ&#258;&#350;te</translated>
+	<translated>Choisir la requête</translated>
 </translation>
 <translation>
 	<original>Query Maker</original>
-	<translated>Fabrique de requ&#258;&#350;te</translated>
+	<translated>Fabrique de requête</translated>
 </translation>
 <translation>
 	<original>Select Fields</original>
-	<translated>S&#258;&#352;lectionner les champs</translated>
+	<translated>Sélectionner les champs</translated>
 </translation>
 <translation>
 	<original>Select Options</original>
-	<translated>S&#258;&#352;lectionner les options</translated>
+	<translated>Sélectionner les options</translated>
 </translation>
 <translation>
 	<original>The current Select statement is:</original>
-	<translated>La d&#258;&#352;claration courante Select est :</translated>
+	<translated>La déclaration courante Select est :</translated>
 </translation>
 <translation>
 	<original>Value</original>
