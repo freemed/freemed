@@ -125,7 +125,7 @@ sub Get_Module_Name {
 
 	while (<MODULE>) {
 		chop;
-		if (/register_module+[\ ]\(\"(.+?[^\"\)])\"\)/) {
+		if (/^class\ ([^\s]+)\ /) {
 			$name = $1;
 			#print "name = $name\n";
 		}
