@@ -25,7 +25,7 @@
 </information>
 <translation>
 	<original>Address</original>
-	<translated>Adresse (Première ligne)</translated>
+	<translated>Adresse (Premi&#xC3;&#xA8;re ligne)</translated>
 </translation>
 <translation>
 	<original>Address 2</original>
@@ -37,7 +37,7 @@
 </translation>
 <translation>
 	<original>Anesthesiologist</original>
-	<translated>Anesthésiologiste</translated>
+	<translated>Anesth&#xC3;&#xA9;siologiste</translated>
 </translation>
 <translation>
 	<original>Beeper / Pager #</original>
@@ -53,19 +53,19 @@
 </translation>
 <translation>
 	<original>DEA Number</original>
-	<translated>Numéro DEA</translated>
+	<translated>Num&#xC3;&#xA9;ro DEA</translated>
 </translation>
 <translation>
 	<original>Degree 1</original>
-	<translated>Degré 1</translated>
+	<translated>Degr&#xC3;&#xA9; 1</translated>
 </translation>
 <translation>
 	<original>Degree 2</original>
-	<translated>Degré 2</translated>
+	<translated>Degr&#xC3;&#xA9; 2</translated>
 </translation>
 <translation>
 	<original>Degree 3</original>
-	<translated>Degré 3</translated>
+	<translated>Degr&#xC3;&#xA9; 3</translated>
 </translation>
 <translation>
 	<original>Email Address</original>
@@ -73,7 +73,7 @@
 </translation>
 <translation>
 	<original>First Name</original>
-	<translated>Prénom</translated>
+	<translated>Pr&#xC3;&#xA9;nom</translated>
 </translation>
 <translation>
 	<original>HL7 Identifier</original>
@@ -85,7 +85,7 @@
 </translation>
 <translation>
 	<original>ID Number</original>
-	<translated>Numéro ID</translated>
+	<translated>Num&#xC3;&#xA9;ro ID</translated>
 </translation>
 <translation>
 	<original>In-House</original>
@@ -125,7 +125,7 @@
 </translation>
 <translation>
 	<original>Physician Internal/External</original>
-	<translated>Médecin Interne/Externe</translated>
+	<translated>M&#xC3;&#xA9;decin Interne/Externe</translated>
 </translation>
 <translation>
 	<original>Practice EIN</original>
@@ -137,35 +137,35 @@
 </translation>
 <translation>
 	<original>Primary Address City</original>
-	<translated>Première adresse Ville</translated>
+	<translated>Premi&#xC3;&#xA8;re adresse Ville</translated>
 </translation>
 <translation>
 	<original>Primary Address Fax #</original>
-	<translated>Première adresse Fax #</translated>
+	<translated>Premi&#xC3;&#xA8;re adresse Fax #</translated>
 </translation>
 <translation>
 	<original>Primary Address Line 1</original>
-	<translated>Première adresse Ligne 1</translated>
+	<translated>Premi&#xC3;&#xA8;re adresse Ligne 1</translated>
 </translation>
 <translation>
 	<original>Primary Address Line 2</original>
-	<translated>Première adresse Ligne 2</translated>
+	<translated>Premi&#xC3;&#xA8;re adresse Ligne 2</translated>
 </translation>
 <translation>
 	<original>Primary Address Phone #</original>
-	<translated>Première adresse Téléphone #</translated>
+	<translated>Premi&#xC3;&#xA8;re adresse T&#xC3;&#xA9;l&#xC3;&#xA9;phone #</translated>
 </translation>
 <translation>
 	<original>Primary Address State</original>
-	<translated>Première adresse Département</translated>
+	<translated>Premi&#xC3;&#xA8;re adresse D&#xC3;&#xA9;partement</translated>
 </translation>
 <translation>
 	<original>Primary Address Zip</original>
-	<translated>Première adresse Code Zip</translated>
+	<translated>Premi&#xC3;&#xA8;re adresse Code Zip</translated>
 </translation>
 <translation>
 	<original>Primary Information</original>
-	<translated>Information préliminaire</translated>
+	<translated>Information pr&#xC3;&#xA9;liminaire</translated>
 </translation>
 <translation>
 	<original>Referring</original>
@@ -189,11 +189,11 @@
 </translation>
 <translation>
 	<original>Secondary Address Phone #</original>
-	<translated>Seconde adresse Téléphone #</translated>
+	<translated>Seconde adresse T&#xC3;&#xA9;l&#xC3;&#xA9;phone #</translated>
 </translation>
 <translation>
 	<original>Secondary Address State</original>
-	<translated>Seconde adresse Département</translated>
+	<translated>Seconde adresse D&#xC3;&#xA9;partement</translated>
 </translation>
 <translation>
 	<original>Secondary Address Zip</original>
@@ -201,19 +201,19 @@
 </translation>
 <translation>
 	<original>Social Security #</original>
-	<translated>Sécurité sociale #</translated>
+	<translated>S&#xC3;&#xA9;curit&#xC3;&#xA9; sociale #</translated>
 </translation>
 <translation>
 	<original>Specialty 1</original>
-	<translated>Spécialité 1</translated>
+	<translated>Sp&#xC3;&#xA9;cialit&#xC3;&#xA9; 1</translated>
 </translation>
 <translation>
 	<original>Specialty 2</original>
-	<translated>Spécialité 2</translated>
+	<translated>Sp&#xC3;&#xA9;cialit&#xC3;&#xA9; 2</translated>
 </translation>
 <translation>
 	<original>Specialty 3</original>
-	<translated>Spécialité 3</translated>
+	<translated>Sp&#xC3;&#xA9;cialit&#xC3;&#xA9; 3</translated>
 </translation>
 <translation>
 	<original>Status</original>
@@ -225,7 +225,7 @@
 </translation>
 <translation>
 	<original>UPIN Number</original>
-	<translated>Numéro UPIN</translated>
+	<translated>Num&#xC3;&#xA9;ro UPIN</translated>
 </translation>
 <translation>
 	<original>no</original>

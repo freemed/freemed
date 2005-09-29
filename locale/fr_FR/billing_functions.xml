@@ -29,7 +29,7 @@
 </translation>
 <translation>
 	<original>Billing System</original>
-	<translated>Système de facturation</translated>
+	<translated>Syst&#xC3;&#xA8;me de facturation</translated>
 </translation>
 <translation>
 	<original>Description</original>
@@ -41,15 +41,15 @@
 </translation>
 <translation>
 	<original>Return to</original>
-	<translated>Retourner à</translated>
+	<translated>Retourner &#xC3;&#xA0;</translated>
 </translation>
 <translation>
 	<original>You don't have access to do that.</original>
-	<translated>Vous n'avez pas accés à cette fonction</translated>
+	<translated>Vous n'avez pas acc&#xC3;&#xA9;s &#xC3;&#xA0; cette fonction</translated>
 </translation>
 <translation>
 	<original>Your FreeMED installation has no billing handlers defined. This should not happen.</original>
-	<translated>Votre installation FreeMED n'a pas de système de facturation défini. Cela ne devrait pas arriver</translated>
+	<translated>Votre installation FreeMED n'a pas de syst&#xC3;&#xA8;me de facturation d&#xC3;&#xA9;fini. Cela ne devrait pas arriver</translated>
 </translation>
 
 </gettextXML>

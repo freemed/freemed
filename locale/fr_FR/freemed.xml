@@ -10,7 +10,7 @@
 
 	<!-- type = PO-Revision-Date, data = 2005-09-23 11:11-0400 -->
 
-	<!-- type = Last-Translator, data = Nicolas Moulonguet <moulonguetn@free.fr> -->
+	<Translator>Nicolas Moulonguet &lt;moulonguetn@free.fr&gt;</Translator>
 
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
@@ -28,23 +28,23 @@
 
 </information>
 <translation>
-	<original>ADD</original>
-	<translated>AJOUTER</translated>
+<original>ADD</original>
+<translated>AJOUTER</translated>
 </translation>
 <translation>
-	<original>ALL</original>
-	<translated>TOUS</translated>
+<original>ALL</original>
+<translated>TOUS</translated>
 </translation>
 <translation>
-	<original>AM</original>
-	<translated>AM</translated>
+<original>AM</original>
+<translated>AM</translated>
 </translation>
 <translation>
-	<original>Action</original>
-	<translated>Action</translated>
+<original>Action</original>
+<translated>Action</translated>
 </translation>
 <translation>
-	<original>Add</original>
+<original>Add</original>
 	<translated>Ajouter</translated>
 </translation>
 <translation>
@@ -53,7 +53,7 @@
 </translation>
 <translation>
 	<original>Adding Bill Date to ledger.</original>
-	<translated>Ajout de la date de facture à la comptabilité</translated>
+	<translated>Ajout de la date de facture &#xC3;&#xA0; la comptabilit&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Adjustment</original>
@@ -77,11 +77,11 @@
 </translation>
 <translation>
 	<original>Are you sure you want to delete this record?</original>
-	<translated>Etes-vous sûr de vouloir supprimer cet enregistrement?</translated>
+	<translated>Etes-vous s&#xC3;&#xBB;r de vouloir supprimer cet enregistrement?</translated>
 </translation>
 <translation>
 	<original>Are you sure you want to lock this record?</original>
-	<translated>Etes-vous sûr de vouloir verrouiller cet enregistrement?</translated>
+	<translated>Etes-vous s&#xC3;&#xBB;r de vouloir verrouiller cet enregistrement?</translated>
 </translation>
 <translation>
 	<original>Asian or Pacific Islander</original>
@@ -93,7 +93,7 @@
 </translation>
 <translation>
 	<original>Aug</original>
-	<translated>Aoû</translated>
+	<translated>Ao&#xC3;&#xBB;</translated>
 </translation>
 <translation>
 	<original>Back</original>
@@ -109,7 +109,7 @@
 </translation>
 <translation>
 	<original>Billed</original>
-	<translated>Facturé</translated>
+	<translated>Factur&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Black, not of Hispanic origin</original>
@@ -129,7 +129,7 @@
 </translation>
 <translation>
 	<original>But that is not advisable from a security standpoint.</original>
-	<translated>Mais cela n'est pas conseillé d'un point de vue sécurité.</translated>
+	<translated>Mais cela n'est pas conseill&#xC3;&#xA9; d'un point de vue s&#xC3;&#xA9;curit&#xC3;&#xA9;.</translated>
 </translation>
 <translation>
 	<original>By default this database should be named 'freemed'.</original>
@@ -153,7 +153,7 @@
 </translation>
 <translation>
 	<original>Check to make sure that you have a php-mysql module installed or compiled in.</original>
-	<translated>Vérifier que vous avez bien le module php-mysql</translated>
+	<translated>V&#xC3;&#xA9;rifier que vous avez bien le module php-mysql</translated>
 </translation>
 <translation>
 	<original>Christian Scientist</original>
@@ -193,15 +193,15 @@
 </translation>
 <translation>
 	<original>Dec</original>
-	<translated>Déc</translated>
+	<translated>D&#xC3;&#xA9;c</translated>
 </translation>
 <translation>
 	<original>Deductable</original>
-	<translated>Déductible</translated>
+	<translated>D&#xC3;&#xA9;ductible</translated>
 </translation>
 <translation>
 	<original>Default Language</original>
-	<translated>Langage par défaut</translated>
+	<translated>Langage par d&#xC3;&#xA9;faut</translated>
 </translation>
 <translation>
 	<original>Delete</original>
@@ -221,7 +221,7 @@
 </translation>
 <translation>
 	<original>Drug Lookup</original>
-	<translated>Liste de médicaments</translated>
+	<translated>Liste de m&#xC3;&#xA9;dicaments</translated>
 </translation>
 <translation>
 	<original>ERROR</original>
@@ -245,7 +245,7 @@
 </translation>
 <translation>
 	<original>Failed Adding Bill Date to ledger!!</original>
-	<translated>Echec d'ajout de la date de facturation à la comptabilité</translated>
+	<translated>Echec d'ajout de la date de facturation &#xC3;&#xA0; la comptabilit&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Fax</original>
@@ -253,23 +253,23 @@
 </translation>
 <translation>
 	<original>Fax is attempting to send:</original>
-	<translated>La Fax est en émission:</translated>
+	<translated>La Fax est en &#xC3;&#xA9;mission:</translated>
 </translation>
 <translation>
 	<original>Fax job %d (%s) failed with '%s'.</original>
-	<translated>L'envoi de Fax %d (%s) a échoué '%s'.</translated>
+	<translated>L'envoi de Fax %d (%s) a &#xC3;&#xA9;chou&#xC3;&#xA9; '%s'.</translated>
 </translation>
 <translation>
 	<original>Fax job %d to %s (%s) finished.</original>
-	<translated>L'envoi de Fax %d à %s (%s) est terminé.</translated>
+	<translated>L'envoi de Fax %d &#xC3;&#xA0; %s (%s) est termin&#xC3;&#xA9;.</translated>
 </translation>
 <translation>
 	<original>Fax sent successfully.</original>
-	<translated>Le Fax a été envoyé avec succès.</translated>
+	<translated>Le Fax a &#xC3;&#xA9;t&#xC3;&#xA9; envoy&#xC3;&#xA9; avec succ&#xC3;&#xA8;s.</translated>
 </translation>
 <translation>
 	<original>Feb</original>
-	<translated>Fév</translated>
+	<translated>F&#xC3;&#xA9;v</translated>
 </translation>
 <translation>
 	<original>Fee Adjustment</original>
@@ -277,23 +277,23 @@
 </translation>
 <translation>
 	<original>FreeMED cannot seem to connect to the database.</original>
-	<translated>FreeMED semble ne pas pouvoir se connecter à la base de données</translated>
+	<translated>FreeMED semble ne pas pouvoir se connecter &#xC3;&#xA0; la base de donn&#xC3;&#xA9;es</translated>
 </translation>
 <translation>
 	<original>FreeMED could not select the database.</original>
-	<translated>FreeMED ne peut pas sélectionner la base de données</translated>
+	<translated>FreeMED ne peut pas s&#xC3;&#xA9;lectionner la base de donn&#xC3;&#xA9;es</translated>
 </translation>
 <translation>
 	<original>FreeMED was unable to create a file to record the healthy status of the system.</original>
-	<translated>FreeMED ne peut pas créer un fichier d'enregistrement d'état du système</translated>
+	<translated>FreeMED ne peut pas cr&#xC3;&#xA9;er un fichier d'enregistrement d'&#xC3;&#xA9;tat du syst&#xC3;&#xA8;me</translated>
 </translation>
 <translation>
 	<original>FreeMED was unable to create a file to record the language registry.</original>
-	<translated>FreeMED ne peut pas créer un fichier pour enregistrer le langage</translated>
+	<translated>FreeMED ne peut pas cr&#xC3;&#xA9;er un fichier pour enregistrer le langage</translated>
 </translation>
 <translation>
 	<original>FreeMED's 'locale' directory should be owned by the user that the webserver is running as...</original>
-	<translated>Le répertoire 'locale' de FreeMED devrait appartenir au même utilisateur à qui appartient le serveur Web</translated>
+	<translated>Le r&#xC3;&#xA9;pertoire 'locale' de FreeMED devrait appartenir au m&#xC3;&#xAA;me utilisateur &#xC3;&#xA0; qui appartient le serveur Web</translated>
 </translation>
 <translation>
 	<original>Fri</original>
@@ -313,7 +313,7 @@
 </translation>
 <translation>
 	<original>HIPPA Compliance Notice: This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system.</original>
-	<translated>Note sur la conformité à la norme HIPPA:This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system. </translated>
+	<translated>Note sur la conformit&#xC3;&#xA9; &#xC3;&#xA0; la norme HIPPA:This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system. </translated>
 </translation>
 <translation>
 	<original>Hispanic, black</original>
@@ -325,7 +325,7 @@
 </translation>
 <translation>
 	<original>If you are just installing FreeMED, and you are using the MySQL database, then you need to type:</original>
-	<translated>Si vous installez FreeMED, et que vous utilisez une base de données MySQL, vous devez rentrer:</translated>
+	<translated>Si vous installez FreeMED, et que vous utilisez une base de donn&#xC3;&#xA9;es MySQL, vous devez rentrer:</translated>
 </translation>
 <translation>
 	<original>If you are using Redhat Linux then you need to install the MySQL RPMs.</original>
@@ -333,19 +333,19 @@
 </translation>
 <translation>
 	<original>If you have the module you need to make sure you are using it by adding in into php.ini</original>
-	<translated>Si le module est présent, vérifier sa présence dans le fichier php.ini</translated>
+	<translated>Si le module est pr&#xC3;&#xA9;sent, v&#xC3;&#xA9;rifier sa pr&#xC3;&#xA9;sence dans le fichier php.ini</translated>
 </translation>
 <translation>
 	<original>If you installed FreeMED in the default location then you need to edit</original>
-	<translated>Si vous avez installé FreeMED dans le répertoire par défaut, vous devez éditer</translated>
+	<translated>Si vous avez install&#xC3;&#xA9; FreeMED dans le r&#xC3;&#xA9;pertoire par d&#xC3;&#xA9;faut, vous devez &#xC3;&#xA9;diter</translated>
 </translation>
 <translation>
 	<original>If you still are seeing this then you might need to check your database permisions!</original>
-	<translated>Si vous pouvez voir ceci, vous devriez contrôler les permissions de la base de données</translated>
+	<translated>Si vous pouvez voir ceci, vous devriez contr&#xC3;&#xB4;ler les permissions de la base de donn&#xC3;&#xA9;es</translated>
 </translation>
 <translation>
 	<original>In order to connect to the database three things need to set correctly: the database user, the database password, and the database location.</original>
-	<translated>Trois choses à vérifier pour pouvoir se connecter à la base de données : l'utilisateur de la base de données, le mot de passe à la base de données et le répertoire de la base de données.</translated>
+	<translated>Trois choses &#xC3;&#xA0; v&#xC3;&#xA9;rifier pour pouvoir se connecter &#xC3;&#xA0; la base de donn&#xC3;&#xA9;es : l'utilisateur de la base de donn&#xC3;&#xA9;es, le mot de passe &#xC3;&#xA0; la base de donn&#xC3;&#xA9;es et le r&#xC3;&#xA9;pertoire de la base de donn&#xC3;&#xA9;es.</translated>
 </translation>
 <translation>
 	<original>In order to connect, the MySQL database must be running.</original>
@@ -361,11 +361,11 @@
 </translation>
 <translation>
 	<original>Invalid information entered.</original>
-	<translated>Informations entrées invalides.</translated>
+	<translated>Informations entr&#xC3;&#xA9;es invalides.</translated>
 </translation>
 <translation>
 	<original>Is MySQL installed? This needs to happen before anything else.</original>
-	<translated>Est-ce-que MySQL est installé? MySQL doit être installé avant de poursuivre.</translated>
+	<translated>Est-ce-que MySQL est install&#xC3;&#xA9;? MySQL doit &#xC3;&#xAA;tre install&#xC3;&#xA9; avant de poursuivre.</translated>
 </translation>
 <translation>
 	<original>Islam</original>
@@ -373,11 +373,11 @@
 </translation>
 <translation>
 	<original>It is possible that your cookies have expired.</original>
-	<translated>Il est possible que les cookies aient expiré.</translated>
+	<translated>Il est possible que les cookies aient expir&#xC3;&#xA9;.</translated>
 </translation>
 <translation>
 	<original>It seems that you are trying to use a version of php that is not capable of accessing mysql.</original>
-	<translated>Il semble que vous utilisiez une version PHP qui ne peut pas se connecter à une base MySQL.</translated>
+	<translated>Il semble que vous utilisiez une version PHP qui ne peut pas se connecter &#xC3;&#xA0; une base MySQL.</translated>
 </translation>
 <translation>
 	<original>Jan</original>
@@ -385,7 +385,7 @@
 </translation>
 <translation>
 	<original>Jehovah's Witness</original>
-	<translated>Témoins de Jehovah</translated>
+	<translated>T&#xC3;&#xA9;moins de Jehovah</translated>
 </translation>
 <translation>
 	<original>Jewish</original>
@@ -405,15 +405,15 @@
 </translation>
 <translation>
 	<original>Latter-Day Saints</original>
-	<translated>Saints des derniers jours de Jésus Christ</translated>
+	<translated>Saints des derniers jours de J&#xC3;&#xA9;sus Christ</translated>
 </translation>
 <translation>
 	<original>Lock</original>
-	<translated>Verrouillé</translated>
+	<translated>Verrouill&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Lutheran</original>
-	<translated>Luthérien</translated>
+	<translated>Luth&#xC3;&#xA9;rien</translated>
 </translation>
 <translation>
 	<original>MOD</original>
@@ -421,11 +421,11 @@
 </translation>
 <translation>
 	<original>Make sure that the user configured in lib/settings.php has access to the FreeMED database.</original>
-	<translated>Assurez-vous que l'utilisateur configuré dans lib/settings.php a accès à la base FreeMED.</translated>
+	<translated>Assurez-vous que l'utilisateur configur&#xC3;&#xA9; dans lib/settings.php a acc&#xC3;&#xA8;s &#xC3;&#xA0; la base FreeMED.</translated>
 </translation>
 <translation>
 	<original>Manage Patient</original>
-	<translated>Gérer le patient</translated>
+	<translated>G&#xC3;&#xA9;rer le patient</translated>
 </translation>
 <translation>
 	<original>Mar</original>
@@ -437,7 +437,7 @@
 </translation>
 <translation>
 	<original>Methodist</original>
-	<translated>Méthodiste</translated>
+	<translated>M&#xC3;&#xA9;thodiste</translated>
 </translation>
 <translation>
 	<original>Modify</original>
@@ -453,7 +453,7 @@
 </translation>
 <translation>
 	<original>Move</original>
-	<translated>Déplacer</translated>
+	<translated>D&#xC3;&#xA9;placer</translated>
 </translation>
 <translation>
 	<original>NO DESCRIPTION</original>
@@ -489,11 +489,11 @@
 </translation>
 <translation>
 	<original>No Phone Number</original>
-	<translated>Pas de numéro de téléphone</translated>
+	<translated>Pas de num&#xC3;&#xA9;ro de t&#xC3;&#xA9;l&#xC3;&#xA9;phone</translated>
 </translation>
 <translation>
 	<original>No administrative access!</original>
-	<translated>Pas d'accès administratif!</translated>
+	<translated>Pas d'acc&#xC3;&#xA8;s administratif!</translated>
 </translation>
 <translation>
 	<original>No coverage</original>
@@ -501,19 +501,19 @@
 </translation>
 <translation>
 	<original>No coverages detected!</original>
-	<translated>Pas de couverture détectée!</translated>
+	<translated>Pas de couverture d&#xC3;&#xA9;tect&#xC3;&#xA9;e!</translated>
 </translation>
 <translation>
 	<original>No data entered.</original>
-	<translated>Pas de données entrées.</translated>
+	<translated>Pas de donn&#xC3;&#xA9;es entr&#xC3;&#xA9;es.</translated>
 </translation>
 <translation>
 	<original>No primary coverage</original>
-	<translated>Pas de couverture préliminaire</translated>
+	<translated>Pas de couverture pr&#xC3;&#xA9;liminaire</translated>
 </translation>
 <translation>
 	<original>Nothing set to be marked!</original>
-	<translated>Rien n'est coché comme Marqué</translated>
+	<translated>Rien n'est coch&#xC3;&#xA9; comme Marqu&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Nov</original>
@@ -525,7 +525,7 @@
 </translation>
 <translation>
 	<original>On Redhat you should type</original>
-	<translated>Sur Redhat, vous devriez écrire</translated>
+	<translated>Sur Redhat, vous devriez &#xC3;&#xA9;crire</translated>
 </translation>
 <translation>
 	<original>Other</original>
@@ -533,7 +533,7 @@
 </translation>
 <translation>
 	<original>PEAR needs to be installed (%s) with its HTML_QuickForm and HTML_Table packages.</original>
-	<translated>PEAR doit être installé (%s) avec les paquets HTML_QuickForm et HTML_Table.</translated>
+	<translated>PEAR doit &#xC3;&#xAA;tre install&#xC3;&#xA9; (%s) avec les paquets HTML_QuickForm et HTML_Table.</translated>
 </translation>
 <translation>
 	<original>PM</original>
@@ -557,7 +557,7 @@
 </translation>
 <translation>
 	<original>Pentecostal</original>
-	<translated>Pentecôtiste</translated>
+	<translated>Pentec&#xC3;&#xB4;tiste</translated>
 </translation>
 <translation>
 	<original>Please correct these fields.</original>
@@ -565,11 +565,11 @@
 </translation>
 <translation>
 	<original>Presbyterian</original>
-	<translated>Présbytériens</translated>
+	<translated>Pr&#xC3;&#xA9;sbyt&#xC3;&#xA9;riens</translated>
 </translation>
 <translation>
 	<original>Previous</original>
-	<translated>Précédent</translated>
+	<translated>Pr&#xC3;&#xA9;c&#xC3;&#xA9;dent</translated>
 </translation>
 <translation>
 	<original>Print</original>
@@ -605,7 +605,7 @@
 </translation>
 <translation>
 	<original>Record added successfully.</original>
-	<translated>Enregistrement ajouté avec succès.</translated>
+	<translated>Enregistrement ajout&#xC3;&#xA9; avec succ&#xC3;&#xA8;s.</translated>
 </translation>
 <translation>
 	<original>Record addition failed.</original>
@@ -613,7 +613,7 @@
 </translation>
 <translation>
 	<original>Record deleted successfully.</original>
-	<translated>Enregistrement supprimé avec succès.</translated>
+	<translated>Enregistrement supprim&#xC3;&#xA9; avec succ&#xC3;&#xA8;s.</translated>
 </translation>
 <translation>
 	<original>Record deletion failed.</original>
@@ -621,7 +621,7 @@
 </translation>
 <translation>
 	<original>Record locked successfully.</original>
-	<translated>Enregistrement verrouillé avec succès.</translated>
+	<translated>Enregistrement verrouill&#xC3;&#xA9; avec succ&#xC3;&#xA8;s.</translated>
 </translation>
 <translation>
 	<original>Record locking failed.</original>
@@ -633,7 +633,7 @@
 </translation>
 <translation>
 	<original>Record modified successfully.</original>
-	<translated>Enregistrement modifié avec succès.</translated>
+	<translated>Enregistrement modifi&#xC3;&#xA9; avec succ&#xC3;&#xA8;s.</translated>
 </translation>
 <translation>
 	<original>Reformed</original>
@@ -641,7 +641,7 @@
 </translation>
 <translation>
 	<original>Refreshing</original>
-	<translated>Rafraîchissement en cours...</translated>
+	<translated>Rafra&#xC3;&#xAE;chissement en cours...</translated>
 </translation>
 <translation>
 	<original>Refund</original>
@@ -657,11 +657,11 @@
 </translation>
 <translation>
 	<original>Reset</original>
-	<translated>Remise à zéro</translated>
+	<translated>Remise &#xC3;&#xA0; z&#xC3;&#xA9;ro</translated>
 </translation>
 <translation>
 	<original>Return to Fixed Forms Generation Menu</original>
-	<translated>Retourner au Menu de génération de formulaires fixes</translated>
+	<translated>Retourner au Menu de g&#xC3;&#xA9;n&#xC3;&#xA9;ration de formulaires fixes</translated>
 </translation>
 <translation>
 	<original>Return to Main Menu</original>
@@ -669,11 +669,11 @@
 </translation>
 <translation>
 	<original>Return to the Login Screen</original>
-	<translated>Retourner à l'écran d'identification (login)</translated>
+	<translated>Retourner &#xC3;&#xA0; l'&#xC3;&#xA9;cran d'identification (login)</translated>
 </translation>
 <translation>
 	<original>Salvation Army</original>
-	<translated>Armée du Salut</translated>
+	<translated>Arm&#xC3;&#xA9;e du Salut</translated>
 </translation>
 <translation>
 	<original>Sat</original>
@@ -689,7 +689,7 @@
 </translation>
 <translation>
 	<original>Start Date</original>
-	<translated>Date de début</translated>
+	<translated>Date de d&#xC3;&#xA9;but</translated>
 </translation>
 <translation>
 	<original>Submit Bug Report</original>
@@ -701,7 +701,7 @@
 </translation>
 <translation>
 	<original>The FreeMED directory should be owned by the user that the webserver is running as...</original>
-	<translated>Le répertoire FreeMED devrait appartenir à l'utilisateur auquel appartient le serveur Web...</translated>
+	<translated>Le r&#xC3;&#xA9;pertoire FreeMED devrait appartenir &#xC3;&#xA0; l'utilisateur auquel appartient le serveur Web...</translated>
 </translation>
 <translation>
 	<original>The REMITT server is not running.</original>
@@ -709,7 +709,7 @@
 </translation>
 <translation>
 	<original>The debug procedure is as follows:</original>
-	<translated>La procédure de debug est la suivante :</translated>
+	<translated>La proc&#xC3;&#xA9;dure de debug est la suivante :</translated>
 </translation>
 <translation>
 	<original>There are many reasons that this could happen.</original>
@@ -717,15 +717,15 @@
 </translation>
 <translation>
 	<original>There must be a database user who has complete access to the database that FreeMED will use.</original>
-	<translated>Il doit y avoir un utilisateur de base de données ayant un accès total à la base de données que FreeMED utilisera.</translated>
+	<translated>Il doit y avoir un utilisateur de base de donn&#xC3;&#xA9;es ayant un acc&#xC3;&#xA8;s total &#xC3;&#xA0; la base de donn&#xC3;&#xA9;es que FreeMED utilisera.</translated>
 </translation>
 <translation>
 	<original>These values are configured in</original>
-	<translated>Ces valeurs sont configurées dans</translated>
+	<translated>Ces valeurs sont configur&#xC3;&#xA9;es dans</translated>
 </translation>
 <translation>
 	<original>This database must me accessable by this user.</original>
-	<translated>Cette base de données doit être accessible par cet utilisateur.</translated>
+	<translated>Cette base de donn&#xC3;&#xA9;es doit &#xC3;&#xAA;tre accessible par cet utilisateur.</translated>
 </translation>
 <translation>
 	<original>Thu</original>
@@ -733,7 +733,7 @@
 </translation>
 <translation>
 	<original>Transfer</original>
-	<translated>Tranférer</translated>
+	<translated>Tranf&#xC3;&#xA9;rer</translated>
 </translation>
 <translation>
 	<original>Travel</original>
@@ -757,7 +757,7 @@
 </translation>
 <translation>
 	<original>Unknown/No preference</original>
-	<translated>Inconnu/Sans préférence</translated>
+	<translated>Inconnu/Sans pr&#xC3;&#xA9;f&#xC3;&#xA9;rence</translated>
 </translation>
 <translation>
 	<original>Unpostable</original>
@@ -765,11 +765,11 @@
 </translation>
 <translation>
 	<original>Usually this is 'apache'. You can also fix this by giving universal write access to the 'locale' directory of FreeMED.</original>
-	<translated>Habituellement, c'est 'apache'. Vous pouvez contourner en donnant un accès en écriture universel au répertoire 'locale' de FreeMED.</translated>
+	<translated>Habituellement, c'est 'apache'. Vous pouvez contourner en donnant un acc&#xC3;&#xA8;s en &#xC3;&#xA9;criture universel au r&#xC3;&#xA9;pertoire 'locale' de FreeMED.</translated>
 </translation>
 <translation>
 	<original>Usually this is 'apache'. You can also fix this by giving universal write access to the home directory of FreeMED.</original>
-	<translated>Habituellement, c'est 'apache'. Vous pouvez contourner en donnant un accès en écriture universel au répertoire d'installation de FreeMED.</translated>
+	<translated>Habituellement, c'est 'apache'. Vous pouvez contourner en donnant un acc&#xC3;&#xA8;s en &#xC3;&#xA9;criture universel au r&#xC3;&#xA9;pertoire d'installation de FreeMED.</translated>
 </translation>
 <translation>
 	<original>VIEW</original>
@@ -777,7 +777,7 @@
 </translation>
 <translation>
 	<original>View/Manage</original>
-	<translated>Voir/Gérer</translated>
+	<translated>Voir/G&#xC3;&#xA9;rer</translated>
 </translation>
 <translation>
 	<original>Wed</original>
@@ -805,7 +805,7 @@
 </translation>
 <translation>
 	<original>You do not have access to do that.</original>
-	<translated>Vous n'avez pas les droits d'accès.</translated>
+	<translated>Vous n'avez pas les droits d'acc&#xC3;&#xA8;s.</translated>
 </translation>
 <translation>
 	<original>You do not have permission to do that.</original>
@@ -818,11 +818,11 @@
 </translation>
 <translation>
 	<original>You have entered an incorrect username or password.</original>
-	<translated>Vous avez entré un nom d'utilisateur ou un mot de passe incorrect.</translated>
+	<translated>Vous avez entr&#xC3;&#xA9; un nom d'utilisateur ou un mot de passe incorrect.</translated>
 </translation>
 <translation>
 	<original>You will prompted for the root password to the database, and the FreeMED database will be created.</original>
-	<translated>Le mot de passe de root va être demandé, et la base de données FreeMED va se créer.</translated>
+	<translated>Le mot de passe de root va &#xC3;&#xAA;tre demand&#xC3;&#xA9;, et la base de donn&#xC3;&#xA9;es FreeMED va se cr&#xC3;&#xA9;er.</translated>
 </translation>
 <translation>
 	<original>and then hit return.</original>
@@ -830,7 +830,7 @@
 </translation>
 <translation>
 	<original>and then hit the enter key. You should see an 'OK'.</original>
-	<translated>et appuyer sur la touche Entrée. Vous devriez voir un 'OK'.</translated>
+	<translated>et appuyer sur la touche Entr&#xC3;&#xA9;e. Vous devriez voir un 'OK'.</translated>
 </translation>
 <translation>
 	<original>back</original>
@@ -850,7 +850,7 @@
 </translation>
 <translation>
 	<original>go to today</original>
-	<translated>aller à aujourd'hui</translated>
+	<translated>aller &#xC3;&#xA0; aujourd'hui</translated>
 </translation>
 <translation>
 	<original>midnight</original>
@@ -866,7 +866,7 @@
 </translation>
 <translation>
 	<original>prev</original>
-	<translated>Précédent</translated>
+	<translated>Pr&#xC3;&#xA9;c&#xC3;&#xA9;dent</translated>
 </translation>
 <translation>
 	<original>unknown race</original>

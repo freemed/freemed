@@ -33,11 +33,11 @@
 </translation>
 <translation>
 	<original>All modules initialized.</original>
-	<translated>Tous les modules sont initialisés.</translated>
+	<translated>Tous les modules sont initialis&#xC3;&#xA9;s.</translated>
 </translation>
 <translation>
 	<original>Before creating that account you must prove that you have the appropriate level of access.</original>
-	<translated>Avant de créer ce compte, vous devez prouver que vous possédez les droits d'accès nécessaires.</translated>
+	<translated>Avant de cr&#xC3;&#xA9;er ce compte, vous devez prouver que vous poss&#xC3;&#xA9;dez les droits d'acc&#xC3;&#xA8;s n&#xC3;&#xA9;cessaires.</translated>
 </translation>
 <translation>
 	<original>Clear</original>
@@ -49,23 +49,23 @@
 </translation>
 <translation>
 	<original>Database Password</original>
-	<translated>Mot de passe pour la base de données</translated>
+	<translated>Mot de passe pour la base de donn&#xC3;&#xA9;es</translated>
 </translation>
 <translation>
 	<original>Database Password Accepted</original>
-	<translated>Mot de passe pour la base de données accepté</translated>
+	<translated>Mot de passe pour la base de donn&#xC3;&#xA9;es accept&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Database Username</original>
-	<translated>Utilisateur de la base de données</translated>
+	<translated>Utilisateur de la base de donn&#xC3;&#xA9;es</translated>
 </translation>
 <translation>
 	<original>Dynamic modules database initialized.</original>
-	<translated>Les modules dynamiques de la base de données sont initialisés.</translated>
+	<translated>Les modules dynamiques de la base de donn&#xC3;&#xA9;es sont initialis&#xC3;&#xA9;s.</translated>
 </translation>
 <translation>
 	<original>FreeMED configuration database initialized.</original>
-	<translated>Configuration FreeMED de la base de données OK.</translated>
+	<translated>Configuration FreeMED de la base de donn&#xC3;&#xA9;es OK.</translated>
 </translation>
 <translation>
 	<original>Incorrect user/password combination</original>
@@ -73,15 +73,15 @@
 </translation>
 <translation>
 	<original>Page Not Accessible from your IP Address</original>
-	<translated>Page non accessible à partir de votre adresse IP</translated>
+	<translated>Page non accessible &#xC3;&#xA0; partir de votre adresse IP</translated>
 </translation>
 <translation>
 	<original>Please provide the database user name and password, as found in settings.php.</original>
-	<translated>Fournisser le nom d'utilisateur et le mot de passe de la base de données, comme déclarés dans le fichier settings.php.</translated>
+	<translated>Fournisser le nom d'utilisateur et le mot de passe de la base de donn&#xC3;&#xA9;es, comme d&#xC3;&#xA9;clar&#xC3;&#xA9;s dans le fichier settings.php.</translated>
 </translation>
 <translation>
 	<original>Return to Login</original>
-	<translated>Retouner à la page d'identification (login)</translated>
+	<translated>Retouner &#xC3;&#xA0; la page d'identification (login)</translated>
 </translation>
 <translation>
 	<original>Sign In</original>
@@ -93,7 +93,7 @@
 </translation>
 <translation>
 	<original>User table created.</original>
-	<translated>Utilisateur de la table créé.</translated>
+	<translated>Utilisateur de la table cr&#xC3;&#xA9;&#xC3;&#xA9;.</translated>
 </translation>
 <translation>
 	<original>You can login using:</original>

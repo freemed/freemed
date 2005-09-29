@@ -37,7 +37,7 @@
 </translation>
 <translation>
 	<original>Age</original>
-	<translated>Âge</translated>
+	<translated>&#xC3;&#x82;ge</translated>
 </translation>
 <translation>
 	<original>Annotate</original>
@@ -49,11 +49,11 @@
 </translation>
 <translation>
 	<original>Are you sure you want to delete this?</original>
-	<translated>Etes-vous sûr de vouloir supprimer ceci?</translated>
+	<translated>Etes-vous s&#xC3;&#xBB;r de vouloir supprimer ceci?</translated>
 </translation>
 <translation>
 	<original>Automatic Refresh Time</original>
-	<translated>Rafraîchissement automatique</translated>
+	<translated>Rafra&#xC3;&#xAE;chissement automatique</translated>
 </translation>
 <translation>
 	<original>Billing Functions</original>
@@ -61,11 +61,11 @@
 </translation>
 <translation>
 	<original>Blood Type</original>
-	<translated>Rhèsus</translated>
+	<translated>Rh&#xC3;&#xA8;sus</translated>
 </translation>
 <translation>
 	<original>Book Appointment</original>
-	<translated>Réservation de rendez-vous</translated>
+	<translated>R&#xC3;&#xA9;servation de rendez-vous</translated>
 </translation>
 <translation>
 	<original>Calendar</original>
@@ -85,7 +85,7 @@
 </translation>
 <translation>
 	<original>Choose Another Patient</original>
-	<translated>Sélectionner un autre patient</translated>
+	<translated>S&#xC3;&#xA9;lectionner un autre patient</translated>
 </translation>
 <translation>
 	<original>City</original>
@@ -97,7 +97,7 @@
 </translation>
 <translation>
 	<original>Close this Window</original>
-	<translated>Fermer cette fenêtre</translated>
+	<translated>Fermer cette fen&#xC3;&#xAA;tre</translated>
 </translation>
 <translation>
 	<original>Color Scheme</original>
@@ -105,7 +105,7 @@
 </translation>
 <translation>
 	<original>Columns in Display</original>
-	<translated>Colonnes à afficher</translated>
+	<translated>Colonnes &#xC3;&#xA0; afficher</translated>
 </translation>
 <translation>
 	<original>Configuration Help</original>
@@ -117,11 +117,11 @@
 </translation>
 <translation>
 	<original>Custom Records</original>
-	<translated>Préparer les enregistrements</translated>
+	<translated>Pr&#xC3;&#xA9;parer les enregistrements</translated>
 </translation>
 <translation>
 	<original>Custom Reports</original>
-	<translated>Préparer les rapports</translated>
+	<translated>Pr&#xC3;&#xA9;parer les rapports</translated>
 </translation>
 <translation>
 	<original>DEBUG IS ON</original>
@@ -137,11 +137,11 @@
 </translation>
 <translation>
 	<original>Date of Last Visit</original>
-	<translated>Date de la dernière visite</translated>
+	<translated>Date de la derni&#xC3;&#xA8;re visite</translated>
 </translation>
 <translation>
 	<original>Default Blue</original>
-	<translated>Bleu par défaut</translated>
+	<translated>Bleu par d&#xC3;&#xA9;faut</translated>
 </translation>
 <translation>
 	<original>Description</original>
@@ -153,7 +153,7 @@
 </translation>
 <translation>
 	<original>Display Language Selection</original>
-	<translated>Afficher la sélection de la langue</translated>
+	<translated>Afficher la s&#xC3;&#xA9;lection de la langue</translated>
 </translation>
 <translation>
 	<original>Driver's License</original>
@@ -173,7 +173,7 @@
 </translation>
 <translation>
 	<original>First Name</original>
-	<translated>Prénom</translated>
+	<translated>Pr&#xC3;&#xA9;nom</translated>
 </translation>
 <translation>
 	<original>Help</original>
@@ -185,7 +185,7 @@
 </translation>
 <translation>
 	<original>Home Phone</original>
-	<translated>Téléphone Domicile</translated>
+	<translated>T&#xC3;&#xA9;l&#xC3;&#xA9;phone Domicile</translated>
 </translation>
 <translation>
 	<original>Internal Practice ID</original>
@@ -193,7 +193,7 @@
 </translation>
 <translation>
 	<original>Jump to page</original>
-	<translated>Aller à la page</translated>
+	<translated>Aller &#xC3;&#xA0; la page</translated>
 </translation>
 <translation>
 	<original>Language</original>
@@ -205,7 +205,7 @@
 </translation>
 <translation>
 	<original>Locked</original>
-	<translated>Verrouillé</translated>
+	<translated>Verrouill&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Login</original>
@@ -213,7 +213,7 @@
 </translation>
 <translation>
 	<original>Logout</original>
-	<translated>Se déconnecter</translated>
+	<translated>Se d&#xC3;&#xA9;connecter</translated>
 </translation>
 <translation>
 	<original>Main Menu</original>
@@ -221,7 +221,7 @@
 </translation>
 <translation>
 	<original>Manage</original>
-	<translated>Gérer</translated>
+	<translated>G&#xC3;&#xA9;rer</translated>
 </translation>
 <translation>
 	<original>Management Configuration</original>
@@ -229,7 +229,7 @@
 </translation>
 <translation>
 	<original>Medical Information</original>
-	<translated>Informations médicales</translated>
+	<translated>Informations m&#xC3;&#xA9;dicales</translated>
 </translation>
 <translation>
 	<original>Messages</original>
@@ -237,7 +237,7 @@
 </translation>
 <translation>
 	<original>Messages should NOT be deleted. Are you sure you want to delete this message?</original>
-	<translated>Les messages ne devraient pas être supprimés. Etes-vous sûr de vouloir supprimer ce messages?</translated>
+	<translated>Les messages ne devraient pas &#xC3;&#xAA;tre supprim&#xC3;&#xA9;s. Etes-vous s&#xC3;&#xBB;r de vouloir supprimer ce messages?</translated>
 </translation>
 <translation>
 	<original>Modify Patient Information</original>
@@ -253,7 +253,7 @@
 </translation>
 <translation>
 	<original>No Patients In System</original>
-	<translated>Pas de patient dans le système</translated>
+	<translated>Pas de patient dans le syst&#xC3;&#xA8;me</translated>
 </translation>
 <translation>
 	<original>No photographic identification on file.</original>
@@ -261,11 +261,11 @@
 </translation>
 <translation>
 	<original>Number of Summary Items</original>
-	<translated>Nombre d'articles de la table des matières</translated>
+	<translated>Nombre d'articles de la table des mati&#xC3;&#xA8;res</translated>
 </translation>
 <translation>
 	<original>One Patient In System</original>
-	<translated>Un patient dans le système</translated>
+	<translated>Un patient dans le syst&#xC3;&#xA8;me</translated>
 </translation>
 <translation>
 	<original>PCP</original>
@@ -285,7 +285,7 @@
 </translation>
 <translation>
 	<original>Patient(s) In System</original>
-	<translated>Patient(s) dans le système</translated>
+	<translated>Patient(s) dans le syst&#xC3;&#xA8;me</translated>
 </translation>
 <translation>
 	<original>Patients</original>
@@ -313,7 +313,7 @@
 </translation>
 <translation>
 	<original>Preferences</original>
-	<translated>Préférences</translated>
+	<translated>Pr&#xC3;&#xA9;f&#xC3;&#xA9;rences</translated>
 </translation>
 <translation>
 	<original>Provider</original>
@@ -345,11 +345,11 @@
 </translation>
 <translation>
 	<original>Select a Patient</original>
-	<translated>Sélectionner un patient</translated>
+	<translated>S&#xC3;&#xA9;lectionner un patient</translated>
 </translation>
 <translation>
 	<original>Select information to insert:</original>
-	<translated>Sélectionner les informations à insérer :</translated>
+	<translated>S&#xC3;&#xA9;lectionner les informations &#xC3;&#xA0; ins&#xC3;&#xA9;rer :</translated>
 </translation>
 <translation>
 	<original>Sender</original>
@@ -373,7 +373,7 @@
 </translation>
 <translation>
 	<original>Social Security Number</original>
-	<translated>Numéro de sécurité sociale</translated>
+	<translated>Num&#xC3;&#xA9;ro de s&#xC3;&#xA9;curit&#xC3;&#xA9; sociale</translated>
 </translation>
 <translation>
 	<original>Soundalike Search</original>
@@ -381,11 +381,11 @@
 </translation>
 <translation>
 	<original>State</original>
-	<translated>Département</translated>
+	<translated>D&#xC3;&#xA9;partement</translated>
 </translation>
 <translation>
 	<original>Support Data</original>
-	<translated>Support des données</translated>
+	<translated>Support des donn&#xC3;&#xA9;es</translated>
 </translation>
 <translation>
 	<original>There are currently no messages.</original>
@@ -393,11 +393,11 @@
 </translation>
 <translation>
 	<original>There are no report modules present.</original>
-	<translated>Il n'y a pas de module de rapport présent</translated>
+	<translated>Il n'y a pas de module de rapport pr&#xC3;&#xA9;sent</translated>
 </translation>
 <translation>
 	<original>This record has been locked, and can no longer be modified.</original>
-	<translated>Cet enregistrement a été verrouillé, et ne  peut plus être modifié.</translated>
+	<translated>Cet enregistrement a &#xC3;&#xA9;t&#xC3;&#xA9; verrouill&#xC3;&#xA9;, et ne  peut plus &#xC3;&#xAA;tre modifi&#xC3;&#xA9;.</translated>
 </translation>
 <translation>
 	<original>Time</original>
@@ -405,15 +405,15 @@
 </translation>
 <translation>
 	<original>Type a portion of the entry that you want to find, then select it from the pulldown menu.</original>
-	<translated>Ecrire une partie du texte recherché, puis sélectionner directement dans la liste déroulante.</translated>
+	<translated>Ecrire une partie du texte recherch&#xC3;&#xA9;, puis s&#xC3;&#xA9;lectionner directement dans la liste d&#xC3;&#xA9;roulante.</translated>
 </translation>
 <translation>
 	<original>Update</original>
-	<translated>Mettre à jour </translated>
+	<translated>Mettre &#xC3;&#xA0; jour </translated>
 </translation>
 <translation>
 	<original>Updated configuration</original>
-	<translated>Configuration mise à jour</translated>
+	<translated>Configuration mise &#xC3;&#xA0; jour</translated>
 </translation>
 <translation>
 	<original>User</original>
@@ -433,7 +433,7 @@
 </translation>
 <translation>
 	<original>Work Phone</original>
-	<translated>Téléphone Bureau</translated>
+	<translated>T&#xC3;&#xA9;l&#xC3;&#xA9;phone Bureau</translated>
 </translation>
 <translation>
 	<original>Yes</original>
@@ -445,7 +445,7 @@
 </translation>
 <translation>
 	<original>You must select a patient.</original>
-	<translated>Vous devez sélectionner un patient.</translated>
+	<translated>Vous devez s&#xC3;&#xA9;lectionner un patient.</translated>
 </translation>
 <translation>
 	<original>Zip</original>
@@ -461,7 +461,7 @@
 </translation>
 <translation>
 	<original>sounds like</original>
-	<translated>ressemble à</translated>
+	<translated>ressemble &#xC3;&#xA0;</translated>
 </translation>
 <translation>
 	<original>top</original>

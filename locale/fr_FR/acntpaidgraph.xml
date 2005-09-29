@@ -25,11 +25,11 @@
 </information>
 <translation>
 	<original>Account Paid Graph</original>
-	<translated>Graphique des comptes soldés</translated>
+	<translated>Graphique des comptes sold&#xC3;&#xA9;s</translated>
 </translation>
 <translation>
 	<original>Account Paid Graph From</original>
-	<translated>Graphique des comptes soldés de</translated>
+	<translated>Graphique des comptes sold&#xC3;&#xA9;s de</translated>
 </translation>
 <translation>
 	<original>No Records found</original>
@@ -37,11 +37,11 @@
 </translation>
 <translation>
 	<original>Select Account Paid Graph Dates</original>
-	<translated>Sélectionnez les dates pour le graphique des comptes soldés</translated>
+	<translated>S&#xC3;&#xA9;lectionnez les dates pour le graphique des comptes sold&#xC3;&#xA9;s</translated>
 </translation>
 <translation>
 	<original>The PHP gd extension must be installed for this report to work.</original>
-	<translated>L'extension PHP doit être installée pour la génération de ce rapport</translated>
+	<translated>L'extension PHP doit &#xC3;&#xAA;tre install&#xC3;&#xA9;e pour la g&#xC3;&#xA9;n&#xC3;&#xA9;ration de ce rapport</translated>
 </translation>
 
 </gettextXML>

@@ -25,7 +25,7 @@
 </information>
 <translation>
 	<original>Authorization Number</original>
-	<translated>Numéro d'autorisation</translated>
+	<translated>Num&#xC3;&#xA9;ro d'autorisation</translated>
 </translation>
 <translation>
 	<original>Authorization Type</original>
@@ -65,7 +65,7 @@
 </translation>
 <translation>
 	<original>Starting Date</original>
-	<translated>Date de début</translated>
+	<translated>Date de d&#xC3;&#xA9;but</translated>
 </translation>
 <translation>
 	<original>To</original>
@@ -77,7 +77,7 @@
 </translation>
 <translation>
 	<original>certificate of medical neccessity</original>
-	<translated>Certificat de nécessité médicale</translated>
+	<translated>Certificat de n&#xC3;&#xA9;cessit&#xC3;&#xA9; m&#xC3;&#xA9;dicale</translated>
 </translation>
 <translation>
 	<original>consulatation</original>
@@ -89,7 +89,7 @@
 </translation>
 <translation>
 	<original>physician</original>
-	<translated>Médecin</translated>
+	<translated>M&#xC3;&#xA9;decin</translated>
 </translation>
 <translation>
 	<original>surgical</original>
@@ -97,7 +97,7 @@
 </translation>
 <translation>
 	<original>worker's compensation</original>
-	<translated>Indemnité du travailleur</translated>
+	<translated>Indemnit&#xC3;&#xA9; du travailleur</translated>
 </translation>
 
 </gettextXML>

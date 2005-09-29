@@ -25,7 +25,7 @@
 </information>
 <translation>
 	<original>Access denied</original>
-	<translated>Accès refusé</translated>
+	<translated>Acc&#xC3;&#xA8;s refus&#xC3;&#xA9;</translated>
 </translation>
 <translation>
 	<original>Description</original>
@@ -33,7 +33,7 @@
 </translation>
 <translation>
 	<original>Return to</original>
-	<translated>Retourner à</translated>
+	<translated>Retourner &#xC3;&#xA0;</translated>
 </translation>
 <translation>
 	<original>Utilities</original>
@@ -41,7 +41,7 @@
 </translation>
 <translation>
 	<original>Your FreeMED installation has no utilties handlers defined.</original>
-	<translated>Votre installation FreeMED n'a pas d'outils défini.</translated>
+	<translated>Votre installation FreeMED n'a pas d'outils d&#xC3;&#xA9;fini.</translated>
 </translation>
 
 </gettextXML>

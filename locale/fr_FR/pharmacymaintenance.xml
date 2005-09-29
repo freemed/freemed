@@ -25,15 +25,15 @@
 </information>
 <translation>
 	<original>Address Line 1</original>
-	<translated>Adresse (Première ligne)</translated>
+	<translated>Adresse (Premi&#xC3;&#xA8;re ligne)</translated>
 </translation>
 <translation>
 	<original>Address Line 2</original>
-	<translated>Adresse (Deuxième ligne)</translated>
+	<translated>Adresse (Deuxi&#xC3;&#xA8;me ligne)</translated>
 </translation>
 <translation>
 	<original>City, State</original>
-	<translated>Ville, Département</translated>
+	<translated>Ville, D&#xC3;&#xA9;partement</translated>
 </translation>
 <translation>
 	<original>City, State Zip</original>
@@ -49,7 +49,7 @@
 </translation>
 <translation>
 	<original>Preferred Transmission</original>
-	<translated>Transmission préférée</translated>
+	<translated>Transmission pr&#xC3;&#xA9;f&#xC3;&#xA9;r&#xC3;&#xA9;e</translated>
 </translation>
 
 </gettextXML>
