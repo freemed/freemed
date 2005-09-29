@@ -1,0 +1,29 @@
+$Id$
+$Author$
+
+Dependencies:
+	cron daemon
+	FreeMED
+	Perl
+	WWW::Mechanize
+	MIME::Base64
+
+To setup the Quest Diagnostics HL7 interface, first customize the
+data/config/quest_hl7.ini file's [account] section with the appropriate
+Quest Care360 username and password. Log into Care360 and retrieve the
+list of provider identification numbers to populate the "providers"
+field in the [account] section.
+
+Make sure that the data/config/xmlrpc.ini file with a correct user
+and password for your FreeMED installation.
+
+Copy the scripts/quest_hl7/cron.d file to /etc/cron.d/quest_hl7, and
+restart cron. This will activate active polling of the Quest Care360
+interface for HL7 messages.
+
+Output is logged to syslog, and can be watched with
+
+	tail -f /var/log/syslog
+
+on most Linux-based operating systems.
+
