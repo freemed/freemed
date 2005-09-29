@@ -102,7 +102,7 @@ function prepare ($string, $force_conversion=false) {
 			eregi("&quot;", $string)
 		) ) ?
 		stripslashes($string) :
-		htmlentities(stripslashes($string))
+		htmlentities(stripslashes($string), ENT_COMPAT, 'UTF-8')
 	);
 } // end function prepare
 
