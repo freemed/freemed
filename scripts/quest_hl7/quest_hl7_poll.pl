@@ -13,6 +13,8 @@ use Config::IniFiles;
 use Sys::Syslog;
 use Data::Dumper;
 
+my $report_type = shift || '';
+
 # Open XML-RPC and local configuration files
 my $config = new Config::IniFiles( -file => '/usr/share/freemed/data/config/quest_hl7.ini' );
 my $xmlrpc_config = new Config::IniFiles( -file => '/usr/share/freemed/data/config/xmlrpc.ini' );
@@ -108,7 +110,7 @@ sub quest_login {
 sub quest_get_providers {
 	my $p = $config->val('account', 'providers');
 	my @providers = split /,/, $p;
-	return @providers;
+	return \@providers;
 }
 
 sub quest_get_report_list {
@@ -128,6 +130,7 @@ sub quest_get_report_list {
 	# Fill out the report form
 	$m->form_name('ReportForm');
 	$m->select('ClientList' => quest_get_providers());
+	if ($report_type eq 'historic') { $m->field('ReportType', 'Previous'); }
 	$m->submit();
 
 	# Check for any reports
