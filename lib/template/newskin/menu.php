@@ -1,6 +1,6 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
 $GLOBALS['__freemed']['layermenu'] = '';
 
@@ -8,7 +8,7 @@ function menu_item($text, $link, $depth) {
 	for ($i = 1; $i <= $depth; $i++) {
 		$GLOBALS['__freemed']['layermenu'] .= '.';
 	}
-	$GLOBALS['__freemed']['layermenu'] .= '|'.prepare($text).'|'.
+	$GLOBALS['__freemed']['layermenu'] .= '|'.$text.'|'.
 		prepare($link)."\n";
 } // end function menu_item
 
@@ -16,7 +16,7 @@ function sub_menu($text, $depth) {
 	for ($i = 1; $i <= $depth; $i++) {
 		$GLOBALS['__freemed']['layermenu'] .= '.';
 	}
-	$GLOBALS['__freemed']['layermenu'] .= '|'.prepare($text)."\n";
+	$GLOBALS['__freemed']['layermenu'] .= '|'.$text."\n";
 } // end function sub_menu
 
 // Load handler for menu
