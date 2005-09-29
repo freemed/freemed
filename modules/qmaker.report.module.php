@@ -576,6 +576,7 @@ class QmakerReport extends ReportsModule {
 		$buffer .=  "<td>\n";
 		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Execute Query")."\"/></td>\n";
 		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Pick Query")."\"/></td>\n";
+		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Export Query to CSV")."\" /></td>\n";
 		$buffer .=  "<td><input class=\"button\" TYPE=\"RESET\" VALUE=\"".__("Clear All")."\"/></td>\n";
 		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnTable1\" VALUE=\"SaveQuery\"/></td>\n";
 		$buffer .=  "</tr></table>\n";
