@@ -27,7 +27,7 @@ function __($string) {
 		$loaded = true;
 	} // end checking for loading
 
-	return GettextXML::gettext_xml($string);
+	return prepare(GettextXML::gettext_xml($string));
 } // end function __()
 
 function web_link ($text, $link = "") {
@@ -99,7 +99,7 @@ if (floor(phpversion()) < 4) {
 function prepare ($string, $force_conversion=false) {
 	return ( (!$force_conversion and (
 			eregi("<[A-Z/]*>", $string) or
-			eregi("&quot;", $string)
+			eregi("&[A-Za-z]*;", $string)
 		) ) ?
 		stripslashes($string) :
 		htmlentities(stripslashes($string), ENT_COMPAT, 'UTF-8')
