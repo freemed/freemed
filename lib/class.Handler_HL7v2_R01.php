@@ -177,8 +177,8 @@ class Handler_HL7v2_R01 extends Handler_HL7v2 {
 		$query = "SELECT * FROM labs WHERE ".
 			"labpatient = '".addslashes($patient)."' AND ".
 			"labtimestamp = '".addslashes($obr[7])."' AND ".
-			"labordercode = '".$obr[4][3]."' AND ".
-			"labcomponentcode = '".$obr[20][3]."'";
+			"labordercode = '".addslashes($obr[4][3])."' AND ".
+			"labcomponentcode = '".addslashes($obr[20][3])."'";
 		$result = $GLOBALS['sql']->query($query);
 		if ($GLOBALS['sql']->results($result) and $GLOBALS['sql']->num_rows($result) > 0) {
 			$r = $GLOBALS['sql']->fetch_array($result);
