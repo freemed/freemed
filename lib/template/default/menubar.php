@@ -9,7 +9,7 @@ function menu_bar_cell($text, $link) {
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='".$link."'; return true;\"".
 		"><a href=\"".$link."\" ".
-		">".prepare($text)."</a></td>\n".
+		">".$text."</a></td>\n".
 		"\t</tr>\n";
 } // end function menu_bar_cell
 
@@ -136,13 +136,13 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='call-in.php'; return true;\"".
 		"><a href=\"call-in.php\">".
-		prepare(__("Call-In"))."</a></td>\n".
+		__("Call-In")."</a></td>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='call-in.php?action=addform'; return true;\"".
 		"><a href=\"call-in.php?action=addform\">".
-		prepare(__("New"))."</a></td>\n".
+		__("New")."</a></td>\n".
 		"\t</tr>\n";
 	if (is_object($this_user) and $this_user->getPhysician()) {
 		$__phy = $this_user->getPhysician();
@@ -157,7 +157,7 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		"><a href=\"messages.php\" ".
 		"onMouseOver=\"this.className='menubar_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
-		">".prepare(__("Messages"))."</a></td>\n".
+		">".__("Messages")."</a></td>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
@@ -165,7 +165,7 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		"<a href=\"messages.php?action=addform\" ".
 		"onMouseOver=\"this.className='menubar_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
-		">".prepare(__("Add"))."</a></td>\n".
+		">".__("Add")."</a></td>\n".
 		"\t</tr>\n";
 	print "\t<tr>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
@@ -173,13 +173,13 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='patient.php'; return true;\"".
 		"><a href=\"patient.php\">".
-		prepare(__("Patients"))."</a></td>\n".
+		__("Patients")."</a></td>\n".
 		"\t\t<td COLSPAN=\"1\" CLASS=\"menubar_items\" ".
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='patient.php?action=addform'; return true;\"".
 		"><a href=\"patient.php?action=addform\">".
-		prepare(__("New"))."</a></td>\n".
+		__("New")."</a></td>\n".
 		"\t</tr>\n";
 	print menu_bar_cell(__("Reports"), "reports.php");
 	print menu_bar_cell(__("Utilities"), "utilities.php");
@@ -201,7 +201,7 @@ if ( ($help_url = help_url()) != "help.php" ) {
 		"onClick=\"window.open('".$help_url."', 'Help', 'width=600,height=400,".
 			"resizable=yes'); return true;\" ".
 		"><a href=\"#\">".
-		prepare(__("Help"))."</a></td>\n".
+		__("Help")."</a></td>\n".
 		"\t</tr>\n";
 }
 
@@ -230,10 +230,10 @@ if (is_array($menu_bar)) {
 		if ($v != "help.php") print "\t<LI><A HREF=\"#\" ".
 			"onClick=\"window.open('".$v."', 'Help', ".
 			"'width=600,height=400,resizable=yes');\" ".
-			"onMouseOver=\"window.status='".prepare(__($k))."'; ".
+			"onMouseOver=\"window.status='".__($k)."'; ".
 			"return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\">".
-			prepare(__($k))."</A>\n";
+			__($k)."</A>\n";
 		} // end checking for help.php
 		} // end checking for null
 	} // end foreach

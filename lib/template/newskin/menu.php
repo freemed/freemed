@@ -8,7 +8,7 @@ function menu_item($text, $link, $depth) {
 	for ($i = 1; $i <= $depth; $i++) {
 		$GLOBALS['__freemed']['layermenu'] .= '.';
 	}
-	$GLOBALS['__freemed']['layermenu'] .= '|'.prepare($text).'|'.
+	$GLOBALS['__freemed']['layermenu'] .= '|'.$text.'|'.
 		prepare($link)."\n";
 } // end function menu_item
 
@@ -16,7 +16,7 @@ function sub_menu($text, $depth) {
 	for ($i = 1; $i <= $depth; $i++) {
 		$GLOBALS['__freemed']['layermenu'] .= '.';
 	}
-	$GLOBALS['__freemed']['layermenu'] .= '|'.prepare($text)."\n";
+	$GLOBALS['__freemed']['layermenu'] .= '|'.$text."\n";
 } // end function sub_menu
 
 // Load handler for menu
@@ -160,10 +160,10 @@ if (is_array($menu_bar)) {
 		if ($v != "help.php") print "\t<LI><A HREF=\"#\" ".
 			"onClick=\"window.open('".$v."', 'Help', ".
 			"'width=600,height=400,resizable=yes');\" ".
-			"onMouseOver=\"window.status='".prepare(_($k))."'; ".
+			"onMouseOver=\"window.status='".__($k)."'; ".
 			"return true;\" ".
 			"onMouseOut=\"window.status=''; return true;\">".
-			prepare(__($k))."</A>\n";
+			__($k)."</A>\n";
 		} // end checking for help.php
 		} // end checking for null
 	} // end foreach

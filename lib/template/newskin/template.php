@@ -93,10 +93,10 @@ if (isset($refresh)) {
 		print "\t<a HREF=\"#\" ".
 		"onClick=\"window.open('".$help_url."', 'Help', ".
 		"'width=600,height=400,resizable=yes');\" ".
-		"onMouseOver=\"window.status='".prepare(__("Help"))."'; ".
+		"onMouseOver=\"window.status='".__("Help")."'; ".
 		"return true;\" ".
 		"onMouseOut=\"window.status=''; return true;\">".
-		prepare(__("Help"))."</a>\n";
+		__("Help")."</a>\n";
 	} // end checking for help.php
 
 	print "</td><td align=\"right\" valign=\"top\">".prepare($GLOBALS['page_title'])."&nbsp;&nbsp;</td>";

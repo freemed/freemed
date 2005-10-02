@@ -96,10 +96,10 @@ class BillingService extends MaintenanceModule {
 
 		$display_buffer .= "
 		<div align=\"center\">
-		<input type=\"submit\" name=\"__submit\" value=\"".prepare( $action=='addform' ?
+		<input type=\"submit\" name=\"__submit\" value=\"".( $action=='addform' ?
 			__("Add") :
 			__("Modify") )."\" class=\"button\" />
-		<input type=\"submit\" name=\"__submit\" value=\"".prepare(__("Cancel"))."\" class=\"button\" />
+		<input type=\"submit\" name=\"__submit\" value=\"".__("Cancel")."\" class=\"button\" />
 		</div>
 		</form>
 		";

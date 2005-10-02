@@ -52,7 +52,7 @@ class PatientDemographicReport extends ReportsModule {
 			$display_buffer .= "
 			<TR>
 				<TD ALIGN=RIGHT BGCOLOR=\"#ccccff\">
-					".prepare(__($k))."
+					".__($k)."
 				</TD><TD ALIGN=LEFT BGCOLOR=\"#aaaaff\">
 					".prepare($$v)."
 				</TD>
@@ -64,7 +64,7 @@ class PatientDemographicReport extends ReportsModule {
 		</TABLE>
 		";
 	
-	} // end function PatientDemographicReport->display
+	} // end method display
 
 	function view() { $this->display(); }
 
