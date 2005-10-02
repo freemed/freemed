@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-$page_name = "billing_functions.php";
+$page_name = "utilities.php";
 include ("lib/freemed.php");
 
 //----- Login/authenticate
