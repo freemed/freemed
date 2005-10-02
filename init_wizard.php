@@ -6,7 +6,10 @@
 
 include_once("lib/freemed.php");
 $GLOBALS['__freemed']['no_menu_bar'] = true;
- 
+
+// Catch direct calls 
+if (!$action) { die(__("The initialization wizard cannot be called directly.")); }
+
    // this is the begining of a wizard init system.
    // this is the most important page to secure because access to it
    // will allow a user to destroy the database.
@@ -33,8 +36,17 @@ $page_name = "init_wizard.php";
 // IP based authentication check
 
 if(0!=strcmp($_SERVER['REMOTE_ADDR'],INIT_ADDR)){	
-	include_once("errors/init_admin_ipaddr.php");	
-	die("<br/>FreeMED expects the intial setup to be done from the localhost. Dying b/c your IP is not in settings.php as INIT_ADDR");
+	print __("In order to access the freemed intialization, your web client must come from the host defined in lib/settings.php.");
+	print "<br/>\n";
+	print __("Normally that means that you must be on the same host that FreeMED is running on (localhost).");
+	print "<br/>\n";
+	print __("You must either change your host, or change the value found in settings.php to match your host.");
+	print "<br/>\n";
+	print __("SECURITY NOTE: The default is to limit access to this function to localhost. It is wise to leave this default alone.")." ";
+	print __("This function is capable of destroying the entire database and the value in settings.php will control future access to this function.")." ";
+	print __("So if possible, go sit at the FreeMED box to do this intial configuration.");
+	print "<br/>\n";
+	die(__("FreeMED expects the intial setup to be done from the localhost. Dying because your IP is not in lib/settings.php as INIT_ADDR."));
 }
 
 if ($action=="login") {     
