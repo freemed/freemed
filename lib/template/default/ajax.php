@@ -20,8 +20,7 @@ ob_start();
 	border-bottom: 1px solid #000000;
 	border-right: 1px solid #000000;
 	z-index: 100;
-	position: fixed;
-	.position: absolute;
+	position: absolute;
 	background: #eeeeee;
 	width: 300px;
 }
