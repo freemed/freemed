@@ -8,7 +8,7 @@ class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.4.1";
+	var $MODULE_VERSION = "0.4.2";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.3';
@@ -51,6 +51,7 @@ class ProcedureModule extends EMRModule {
 		'procmedicaidref',
 		'procmedicaidresub',
 		'proclabcharges',
+		'procslidingscale',
 	);    
 
 	function ProcedureModule () {
@@ -104,6 +105,7 @@ class ProcedureModule extends EMRModule {
 			'procmedicaidresub' => SQL__VARCHAR(20),
 			'proclabcharges' => SQL__REAL,
 			'procstatus' => SQL__VARCHAR(50),
+			'procslidingscale' => SQL__CHAR(1),
 			'id' => SQL__SERIAL
 		);
 		
@@ -187,7 +189,6 @@ class ProcedureModule extends EMRModule {
 							  date_vars("procdt"),date_vars("procrefdt")),
 		html_form::form_table ( array (
 		  __("Provider") =>
-			//freemed_display_selectbox ($phys_result, "#phylname#, #phyfname# (#phypracname#)", "procphysician"),
 			module_function('providermodule', 'widget', array ('procphysician')),
 		  __("Date of Procedure") =>
 			fm_date_entry ("procdt"),
@@ -280,17 +281,25 @@ class ProcedureModule extends EMRModule {
 		$tert_result = $sql->query($tert_query);
 		$wc_result   = $sql->query($wc_query);
 
+		// Sliding scale
+		$slidingfeescale = CreateObject('FreeMED.SlidingFeeScale', $_REQUEST['patient']);
+
 		$wizard->add_page (__("Step Two: Select Coverage"),
 			array("proccurcovid","proccurcovtp","proccov1","proccov2","proccov3","proccov4"),
 			html_form::form_table(array (
 				__("Primary Coverage") =>  freemed_display_selectbox($prim_result,"#insconame# #note#","proccov1"),
 				__("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame# #note#","proccov2"),
 				__("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame# #note#","proccov3"),
-				__("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame# #note#","proccov4")
+				__("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame# #note#","proccov4"),
+				( freemed::config_value('sliding_fee') && $slidingfeescale->PatientBracket() ? __("Sliding Fee Scale") : '' ) => html_form::checkbox_widget('procslidingscale', $slidingfeescale->PatientBracket())
 				))
 			); // end coverage page	
 
 		$charge = $this->CalculateCharge($proccov1,$procunits,$proccpt,$procphysician,$patient);
+		// Adjust by sliding scale if present
+		if ($_REQUEST['procslidingscale']) {
+			$charge *= $slidingfeescale->BracketToMultiplier($_REQUEST['procslidingscale']);
+		}
 		$cpt_code = freemed::get_link_rec ($proccpt, "cpt"); // cpt code
 
 
@@ -395,6 +404,7 @@ class ProcedureModule extends EMRModule {
 					"procauth",
 					"proccert",
 					"procrefdoc",
+					"procslidingscale",
 					"procrefdt"         =>  fm_date_assemble("procrefdt"),
 					"proccurcovid"        =>  $proccurcovid,
 					"proccurcovtp"        =>  $proccurcovtp,
@@ -1228,6 +1238,7 @@ class ProcedureModule extends EMRModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN proclabcharges REAL AFTER procmedicaidresub');
 		}
+
 		// Version 0.4
 		//
 		//	Added procedure status (procstatus)
@@ -1236,6 +1247,7 @@ class ProcedureModule extends EMRModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN procstatus INT UNSIGNED AFTER proclabcharges');
 		}
+
 		// Version 0.4.1
 		//
 		//	procstatus is now a varchar(50)
@@ -1244,6 +1256,15 @@ class ProcedureModule extends EMRModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN procstatus '.
 				'procstatus VARCHAR(50)');
+		}
+
+		// Version 0.4.2
+		//
+		//	add procslidingscale
+		//
+		if (!version_check($version, '0.4.2')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN procslidingscale CHAR(1)');
+			$sql->query('UPDATE '.$this->table_name.' SET procslidingscale=\'\' WHERE id>0');
 		}
 	} // end method _update
 

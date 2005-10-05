@@ -77,9 +77,13 @@ class FinancialDemographics extends EMRModule {
 
 		// Set configuration variables for sliding fee scale
 		$this->_SetMetaInformation('global_config_vars', array (
-			'fed_pov_level', 'fed_pov_inc'
+			'sliding_fee', 'fed_pov_level', 'fed_pov_inc'
 		));
 		$this->_SetMetaInformation('global_config', array (
+			__("Sliding Fee Scale Enabled") =>
+			'html_form::select_widget("sliding_fee", array('.
+			'"'.__("no").'" => 0, '.
+			'"'.__("yes").'" => 1 ))',
 			__("Federal Poverty Level") =>
 			'html_form::text_widget("fed_pov_level", 20, 50)',
 			__("Federal Poverty Increment") =>
