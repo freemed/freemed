@@ -27,5 +27,5 @@ Expire-Date: 0
 %commit
 EOF
 
-gpg --no-options --batch -q --gen-key "${TEMPFILE}" 2>&1 > /dev/null
+gpg --homedir=data/keys --no-options --batch -q --gen-key "${TEMPFILE}" 2>&1 > /dev/null
 
