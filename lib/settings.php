@@ -61,20 +61,8 @@ define ('LOG_ERRORS', true);	// This logs major errors, this should be on by def
 // Set log level
 define('LOG_LEVEL', 100);
 
-    // GPG settings
-    //
-    // customize if you are using the db backup maintenance module with
-    // pgp. for keyring, you need to as root create /home/nobody,
-    // chown nobody:nobody /home/nobody
-    // su nobody
-    // export HOME=/home/nobody; cd $HOME
-    // use GPG to encrypt a file, run it twice
-    // you should now have /home/nobody/.gpg
-
-define ('USE_GPG', false);	// encrypt backups? (true/false)
-define ('GPG_PASSPHRASE_LOCATION', PHYSICAL_LOCATION.'/lib/gpg_phrase.php');
-define ('GPG_HOME', "/home/nobody");
-define ('FSF_USERNAME', 'demo');
-define ('FSF_PASSWORD', 'demo');
+// Archive settings
+define ('FSF_USERNAME', "demo");
+define ('FSF_PASSWORD', "demo");
 
 ?>
