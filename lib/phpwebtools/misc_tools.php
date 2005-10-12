@@ -38,6 +38,29 @@ function web_link ($text, $link = "") {
 	">$text</a>";
 } // end function web_link
 
+// Function: implode_with_key
+//
+//	implode() work-alike, but working for associative arrays
+//	(taken from http://www.php.net/implode)
+//
+// Parameters:
+//
+//	$assoc - Associative array
+//
+//	$inglue - (optional) Glue between key and value. Defaults to '='.
+//
+//	$outglue - (optional) Glue between elements. Defaults to '&'.
+//
+// Returns:
+//
+//	String
+//
+function implode_with_key ($assoc, $inglue = '=', $outglue = '&') {
+	$return = null;
+	foreach ($assoc as $tk => $tv) $return .= $outglue.$tk.$inglue.$tv;
+	return substr($return,1);
+} // end function implode_with_key
+
 // Function: in_this
 //
 //	Determines if a value is in or equal to a variable

@@ -319,6 +319,11 @@ class freemed {
 
 		// Verify
 		if (!freemed::verify_auth()) {
+			if(!isset($_SERVER['REQUEST_URI'])) {
+				$_SERVER['REQUEST_URI'] = substr($_SERVER['argv'][0],
+					strpos($_SERVER['argv'][0], ';') + 1);
+			}
+
 			$display_buffer .= "
 			<div ALIGN=\"CENTER\">
 			<b>".__("You have entered an incorrect username or password.")."</b>
@@ -327,7 +332,7 @@ class freemed {
 			<p/>
 			".template::link_button(
 				__("Return to the Login Screen"),
-				"index.php"
+				"index.php?_URL=".urlencode($_SERVER['REQUEST_URI']."&".implode_with_key($_POST))
 			)."
 			</div>
 			";
