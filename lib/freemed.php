@@ -1,12 +1,7 @@
 <?php
- // $Id$
- // $Author$
- // note: global variables for entire freemed code base
- // lic : GPL, v2
-
-  // This is the lib/freemed.php file, which keeps all
-  // variables that the program needs to know, to
-  // eliminate needless typing...
+	// $Id$
+	// $Author$
+	// lic : GPL, v2
 
 if (!defined("__FREEMED_PHP__")) {
 
@@ -31,12 +26,14 @@ $local_date_display="%Y-%m-%d";       // United States
 if (file_exists('lib/settings.php')) {
 	include_once('lib/settings.php');
 } else {
-	die("FreeMED cannot find the configuration file ".
-		"<b>lib/settings.php</b>.");
+	die("FreeMED cannot find the configuration file <b>lib/settings.php</b>.");
 }
 
-//----- Fax subsystem
-$gifhome = PHYSICAL_LOCATION . '/data/fax/incoming';
+//----- Make sure we have enough memory without having to edit {php,php4}.ini
+if (ini_get('memory_limit')+0 < 64) {
+	@ini_set('memory_limit', '64M');
+}
+
 
 define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
 
