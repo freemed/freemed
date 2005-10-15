@@ -315,14 +315,14 @@ switch ($action) {
 			// as being unviewable (out of range msgread) so it only shows up
 			// in the EMR view, not in old messages.
 			$result = $sql->query("DELETE FROM messages WHERE id='".addslashes($id)."' ".
-				"AND msgpatient=0");
+				"AND (msgpatient=0 or msgtag='Sent')");
 			$result = $sql->query("UPDATE messages SET msgread=2 WHERE ".
 				"id='".addslashes($id)."' AND msgpatient>0");
 		}
 	} elseif (is_array($_REQUEST['mark'])) {
 		$query = "DELETE FROM messages WHERE FIND_IN_SET(id, '".
 				join(",", $_REQUEST['mark'])."') ".
-				( $_REQUEST['return'] != 'manage' ? "AND msgpatient=0" : "" );
+				( $_REQUEST['return'] != 'manage' ? "AND (msgpatient=0 or msgtag='Sent')" : "" );
 		$result = $sql->query($query);
 		$query = "UPDATE messages SET msgread=2 WHERE ".
 				"FIND_IN_SET(id, '".join(",", $_REQUEST['mark'])."') ".
