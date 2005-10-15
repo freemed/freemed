@@ -1006,9 +1006,9 @@ switch ($action) {
  
 	case "display":
 	case "view":
-	// KludgE AlerTx0r!
-	header("Location:".ereg_replace("patient.php",
-		"manage.php", basename($_ENV['REQUEST_URI'])));
+	Header("Location: manage.php?id=".( $_REQUEST['id'] ? $_REQUEST['id'] : $_REQUEST['patient']));
+	//header("Location:".ereg_replace("patient.php",
+	//	"manage.php", basename($_ENV['REQUEST_URI'])));
 	break;
 
 	default: // default action
