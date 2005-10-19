@@ -1,8 +1,7 @@
 <?php
 	// $Id$
 	// $Author$
-	// code: fred trotter (ftrotter@synseer.com)
-	// lic: GPL, v2
+	// Original code by Fred Trotter (ftrotter@synseer.com)
 
 // Class: FreeMED.FreeMEDSelfTest
 //
@@ -80,15 +79,6 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|settings.php loaded"
 // Jeff I think that we should just open a help html file here???
 // Yes that is the best solution I think...
 
-//$print_dbh = DB_HOST;
-//$print_dbu = DB_USER;
-//$print_dbp = DB_PASSWORD;
-//print ($print_dbh.$print_dbu.$print_dbp);
-
-
-//$link = mysql_connect("localhost","root","password")
-// for testing...
-
 if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Attempting to connect to MySQL");}
 //if(LOG_LEVEL==0){syslog(LOG_INFO,"using ".DB_HOST." ".DB_USER." ".DB_PASSWORD);}
 
@@ -98,7 +88,7 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Attempting to connec
 
 if(!function_exists('mysql_connect'))
 {
-	die(" Hello Intrepid User <br/><br/>".
+	die(
 	__("It seems that you are trying to use a version of php that is not capable of accessing mysql.")."<br/>\n".
 	__("Check to make sure that you have a php-mysql module installed or compiled in.")."<br/>\n".
 	__("If you have the module you need to make sure you are using it by adding in into php.ini")."<br/>\n"
@@ -129,12 +119,16 @@ $link = mysql_connect(DB_HOST,DB_USER,DB_PASSWORD)
 		__("and then hit the enter key. You should see an 'OK'.").
 		"<br/>\n"
 	);
-if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Connected.");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"FreeMEDSelfTest| Connected.");}
 // Phase II Select database Check...
 // Has the freemed database been created?
 // if so then this command will succeed.             
-if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Attempting to select DB=".DB_NAME." ....");}
-mysql_select_db(DB_NAME) or die(
+if(LOG_LEVEL==0){syslog(LOG_INFO,"FreeMEDSelfTest| Attempting to select DB=".DB_NAME." ....");}
+$select_db_result = mysql_select_db(DB_NAME);
+if (!$select_db_result) {
+	syslog(LOG_INFO,"FreeMEDSelfTest| Attempting to create DB=".DB_NAME." ....");
+	$cmd = exec('mysqladmin -uroot create "'.DB_NAME.'"');
+	if ($cmd != '') { die(
                 __("FreeMED could not select the database.")."<br/>\n".
 		__("If you are just installing FreeMED, and you are using the MySQL database, then you need to type:")."<br/>\n".
 		"<b>mysqladmin -u root -p create freemed</b><br/>".
@@ -143,8 +137,15 @@ mysql_select_db(DB_NAME) or die(
          	__("If you still are seeing this then you might need to check your database permisions!")."<br/>\n".
 		__("Make sure that the user configured in lib/settings.php has access to the FreeMED database.")."<br/>\n"
 		);
+	}
 
-if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Selected.");}
+	// Attempt to reselect the database.
+	if(LOG_LEVEL==0){syslog(LOG_INFO,"FreeMEDSelfTest| Attempting to select DB=".DB_NAME." ....");}
+	$select_db_result = mysql_select_db(DB_NAME);
+}
+
+
+if(LOG_LEVEL==0){syslog(LOG_INFO,"FreeMEDSelfTest| Selected database");}
 
 // Phase III - Verification of intialization
 // Instead of using "root" as the default account name lets switch
@@ -154,38 +155,29 @@ if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Selected.");}
 // Thus an unintialized database will never show the login screen (less user confusion)
 // 
 $query = ("SELECT username FROM user WHERE id='1'");
-if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Checking existence of user admin.");}
-if(LOG_LEVEL==0||LOG_SQL){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|".$query);}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"FreeMEDSelfTest| Checking existence of user admin.");}
+if(LOG_LEVEL==0||LOG_SQL){syslog(LOG_INFO,"FreeMEDSelfTest| ".$query);}
 if(!($result = mysql_query($query)))
 {// if we didnt get anything then...
-   // include_once("init_wizard.php"); 
 
-if(LOG_ERROR){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|user admin select failure. Database not init()ed creating admin...");}
+if(LOG_ERROR){syslog(LOG_INFO,"FreeMEDSelfTest| user admin select failure. Database not init()ed creating admin...");}
    $action = "login";
    include_once("init_wizard.php"); 
    die();
 }
-if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|admin exists");}
-
-
-
-//if
-//include_once("init_wizard.php");
-
-
-
+if(LOG_LEVEL==0){syslog(LOG_INFO,"FreeMEDSelfTest| admin exists");}
 
 // if we get here we can be sure that the system works acceptably well
 // we can assume that the user table exists and is safe
 // which means we can remove the kludge from the authenticate file,
 // allowing me to build out proper authentication...
 							
-if(LOG_LEVEL==0){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|closing test link");}
+if(LOG_LEVEL==0){syslog(LOG_INFO,"FreeMEDSelfTest| closing test link");}
 mysql_close($link);
 
-if(LOG_LEVEL<=99){syslog(LOG_INFO,"class.FreeMEDSelfTest.php|Self Test Passed, returning to login");}
+if(LOG_LEVEL<=99){syslog(LOG_INFO,"FreeMEDSelfTest| Self Test Passed, returning to login");}
 
-	} // end function Check()
+	} // end method SelfTest
 
 } // end class FreeMEDSelfTest
 

@@ -155,6 +155,10 @@ if ($action=="auth") {
 ".__("Admin password set.")."<br/>
 	";
 
+	// First, remove module cache, since this will cause FreeMED to not build its
+	// tables appropriately:
+	@unlink('data/cache/modules');
+
 	// Create module table
 	$this_module = CreateObject('FreeMED.BaseModule');
 	$this_module->init();
