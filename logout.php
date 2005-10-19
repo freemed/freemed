@@ -14,6 +14,12 @@ $_SESSION['ipaddr'] = NULL;
 $_SESSION['language'] = NULL;
 SetCookie('language', '');
 
+//----- If the auth module supports logging out, do that
+$a = CreateObject('_FreeMED.Authentication', AUTHENTICATION_TYPE);
+if (method_exists($a->handler, 'Logout')) {
+	$a->handler->Logout();
+}
+
 //----- Set template pieces
 $refresh = "index.php";
 $GLOBALS['__freemed']['no_menu_bar'] = true;

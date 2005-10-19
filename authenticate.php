@@ -18,7 +18,7 @@ $GLOBALS['__freemed']['no_menu_bar'] = true;
 // That handles intial admin creation!!
 
 //$connect = freemed_auth_login ($_username, $_password);
-$connect = freemed::verify_auth ();
+$connect = freemed::connect ();
 if (!$connect) {
     if (!empty($_URL)) $__url_part = "?_URL=".urlencode($_URL);
     $display_buffer .= "

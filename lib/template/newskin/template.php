@@ -21,7 +21,7 @@ if (eregi('Gecko/', $_ua)) {
 */
 
 //----- Create user object if it doesn't exist and we're logged in
-if (freemed::verify_auth() and !is_object($this_user)) {
+if ($_SESSION['authdata'] and !is_object($this_user)) {
 	$this_user = CreateObject('FreeMED.User');
 } // end check to see if we're logged in
 
@@ -36,6 +36,10 @@ if (!$GLOBALS['__freemed']['no_template_display']) {
 		prepare(INSTALLATION); ?></title>
 	<meta HTTP-EQUIV="Content-Type" 
 		CONTENT="text/html; CHARSET=<?php print $__ISO_SET__; ?>">
+
+	<!-- compliance patch for microsoft browsers -->
+	<!--[if lt IE 7]><script src="lib/template/default/ie7/ie7-standard-p.js" type="text/javascript"></script><![endif]-->
+
 <?php
 //----- Handle refresh
 if (isset($refresh)) {
@@ -187,7 +191,10 @@ if (is_object($this_user)) {
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
 		"HREF=\"lib/template/newskin/stylesheet.css\"/>\n".
 		"<link REL=\"StyleSheet\" TYPE=\"text/css\" ".
-		"HREF=\"lib/template/newskin/dynamic.css.php\" />\n";
+		"HREF=\"lib/template/newskin/dynamic.css.php\" />\n".
+		"<!-- compliance patch for microsoft browsers -->\n".
+		"<!--[if lt IE 7]><script src=\"lib/template/default/ie7/ie7-standard-p.js\" type=\"text/javascript\"></script><![endif]-->\n";
+
 	if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n";
 		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n";

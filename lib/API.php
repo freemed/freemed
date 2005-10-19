@@ -317,27 +317,16 @@ class freemed {
 	function connect () {
 		global $display_buffer;
 
-		// Verify
-		if (!freemed::verify_auth()) {
-			if(!isset($_SERVER['REQUEST_URI'])) {
-				$_SERVER['REQUEST_URI'] = substr($_SERVER['argv'][0],
-					strpos($_SERVER['argv'][0], ';') + 1);
-			}
+		$a = CreateObject('_FreeMED.Authentication', AUTHENTICATION_TYPE);
 
-			$display_buffer .= "
-			<div ALIGN=\"CENTER\">
-			<b>".__("You have entered an incorrect username or password.")."</b>
-			<br/><br/>
-			<b><i>".__("It is possible that your cookies have expired.")."</i></b>
-			<p/>
-			".template::link_button(
-				__("Return to the Login Screen"),
-				"index.php?_URL=".urlencode($_SERVER['REQUEST_URI']."&".implode_with_key($_POST))
-			)."
-			</div>
-			";
-			template_display();
+		$v = $a->VerifyAuthentication();
+
+		// Verify
+		if (!$v) {
+			$a->RequestNewAuthentication();
 		} // end if connected loop
+
+		return true;
 	} // end function freemed::connect
 	
 	// Function: freemed::drug_widget
@@ -1669,105 +1658,6 @@ class freemed {
 				break;
 		} // end formatting case statement
 	} // end function phone_display
-
-	// Function: freemed::verify_auth
-	//
-	//	Determines if the current user is authenticated when dealing
-	//	with PHP sessions. This is not used for basic authentication.
-	//
-	// Returns:
-	//
-	//	True if the current session is authenticated.
-	//
-	function verify_auth ( ) {
-		global $debug, $Connection, $sql;
-
-		// Associate "SESSION" with proper session variable
-		$PHP_SELF = $_SERVER['PHP_SELF'];
- 
-		// Do we have to check for _username?
-		$check = !empty($_REQUEST['_username']);
-	
-		// Check for authdata array
-		if (is_array($_SESSION['authdata'])) {
-			// Check to see if ipaddr is set or not...
-			if (!SESSION_PROTECTION) {
-				return true;
-			} else {
-				if ( !empty($_SESSION['ipaddr']) ) {
-					if ($_SESSION['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
-						// We're already authorized
-						return true;
-					} else {
-						// IP address has changed, ERROR
-						unset($_SESSION['ipaddr']);
-						print "IP ADDRESS<BR>\n";
-						return false;
-					} // end checking ipaddr
-				} else {
-					// Force check if no ip address is present. This
-					// should get around null IPs getting set by
-					// accident without compromising security.
-					$check = true;
-				} // end if isset ipaddr
-			} // end checking for SESSION_PROTECTION
-		} 
-		
-		if ($check) {
-			// Find this user
-  			$result = $sql->query ("SELECT * FROM user ".
-				"WHERE username = '".addslashes($_REQUEST['_username'])."'");
-	
-			// If the user isn't found, false
-			if (!$sql->results($result)) { return false; }
-	
-			// Get information
-			$r = $sql->fetch_array ($result);
-
-			// Use _hash (md5) if passed, else plain _password
-			$login_md5 = ( $_REQUEST['_hash'] ? $_REQUEST['_hash'] : md5($_REQUEST['_password']) );
-
-			$user=$_REQUEST['_username'];
-
-			if((LOGLEVEL<1)||(LOG_HIPAA || LOG_LOGIN))
-			{
-			syslog(LOG_INFO,"API.php|verify_auth login attempt $user ");
-			}
-
-			$db_pass=$r['userpassword'];		
-
-	//		This is insecure and should not be used
-	//		It is here for debugging purposes only...
-	//		if(LOG_MD5||(LOGLEVEL<1)) // Md5 password Logging
-	//		{
-	//		syslog(LOG_INFO,"API.php|verify_auth Password entered__ $login_md5 ");
-	//		}
-
-			
-
-	
-			// Check password
-			if ($login_md5 == $r['userpassword']) {
-				// Set session vars
-				$_SESSION['authdata'] = array (
-					"username" => $_REQUEST['_username'],
-					"user" => $r['id']
-				);
-				// Set ipaddr for SESSION_PROTECTION
-				$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
-	
-				// Authorize
-				if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"API.php|verify_auth successful login");}		
-				return true;
-			} else { // check password
-				// Failed password check
-				unset ( $_SESSION['authdata'] );
-				unset ( $_SESSION['ipaddr'] );
-	                       if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"API.php|verify_auth failed login");	}	
-				return false;
-			} // end check password
-		} // end of checking for authdata array
-	} // end method freemed::verify_auth
 
 } // end namespace/class freemed
 

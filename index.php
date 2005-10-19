@@ -57,7 +57,11 @@ $GLOBALS['__freemed']['no_menu_bar'] = true;
 //----- *DON'T* Reset default facility session cookie
 
 //----- Load template with main menu
-include_once (freemed::template_file('login.php'));
+if (!freemed::connect()) {
+	include_once (freemed::template_file('login.php'));
+} else {
+	Header("Location: main.php");
+}
 
 //----- Finish display template
 template_display();

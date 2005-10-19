@@ -14,7 +14,10 @@ $display_buffer .= "
 
 <p/>
 
-<table WIDTH=\"100%\" BORDER=\"0\" CELLPADDING=\"2\">
+<div align=\"center\">
+".( $message ? "<h2>".prepare($message)."</h2>" : "" )."
+</div><table WIDTH=\"100%\" BORDER=\"0\" CELLPADDING=\"2\">
+
 <tr><td ALIGN=\"RIGHT\">
 <form ACTION=\"authenticate.php\" METHOD=\"POST\">
 
@@ -39,7 +42,7 @@ $display_buffer .= "
 $lregistry = CreateObject('FreeMED.LanguageRegistry');
 $display_buffer .= $lregistry->widget('_l')."</td></tr>\n";
 
-if ($sql->query ("SELECT * FROM config")) {
+if ($GLOBALS['sql']->query ("SELECT * FROM config")) {
 	$display_buffer .= "
 	<tr><td ALIGN=\"RIGHT\">
 	".__("Facility")." :
