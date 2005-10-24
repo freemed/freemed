@@ -7,7 +7,7 @@ include_once ("lib/freemed.php");          // global variables
 $record_name = __("Messages");         // name of record
 $db_name = "messages";                // database name
 
-define ('PAGE_ROLL', 5);
+define ('PAGE_ROLL', 25);
 
 //----- Open the database, etc
 freemed::connect ();
@@ -485,7 +485,7 @@ switch ($action) {
 
 	$_REQUEST['show_tag'] = $GLOBALS['show_tag'] = $_REQUEST['tag'];
 	if (!$sql->results($result)) {
-		$display_buffer .= 
+		$display_buffer .= "<center>\n".
 			html_form::select_widget(
 				'show_tag',
 				array_merge(
@@ -495,7 +495,7 @@ switch ($action) {
 				array(
 					'on_change' => "location.href='messages.php?tag='+escape(this.value)"
 				)
-			);
+			)."</center>\n";
 		$display_buffer .= "<p align=\"center\">
 			". ($old ?
 				__("You have no old messages.") :
