@@ -124,7 +124,7 @@ class FinancialDemographics extends EMRModule {
 			html_form::text_widget('fdidnumber', 50),
 
 			__("Size of Household") =>
-			html_form::number_widget('fdhousehold', 0, 30),
+			html_form::number_pulldown('fdhousehold', 0, 30),
 
 			__("Spouse") =>
 			html_form::select_widget(
@@ -136,10 +136,10 @@ class FinancialDemographics extends EMRModule {
 			),
 
 			__("Dependent Children") =>
-			html_form::number_widget('fdchild', 0, 30),
+			html_form::number_pulldown('fdchild', 0, 30),
 
 			__("Other Dependents") =>
-			html_form::number_widget('fdother', 0, 30),
+			html_form::number_pulldown('fdother', 0, 30),
 
 			__("Other Information") =>
 			html_form::text_area('fdfreetext')
