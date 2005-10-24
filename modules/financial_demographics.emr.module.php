@@ -42,8 +42,11 @@ class FinancialDemographics extends EMRModule {
 	
 		// Set vars for patient management summary
 		$this->summary_vars = array (
-			__("Date") => "fdtimestamp",
+			__("Date") => "_timestamp",
 			__("Household Size") => "fdhousehold"
+		);
+		$this->summary_query = array (
+			"DATE_FORMAT(fdtimestamp, '%b %d, %Y %H:%i') AS _timestamp"
 		);
 
 		$this->form_vars = array (
@@ -61,6 +64,7 @@ class FinancialDemographics extends EMRModule {
 
 		$this->variables = array (
 			'fdtimestamp' => SQL__NOW,
+			'fdpatient',
 			'fdincome',
 			'fdidtype',
 			'fdidissuer',
