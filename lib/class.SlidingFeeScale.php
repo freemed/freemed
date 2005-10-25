@@ -66,8 +66,8 @@ class SlidingFeeScale {
 
 		// Wrap DetermineBracket method
 		return $this->DetermineBracket(
-			$this->financial_record['fdincome'],
-			$this->financial_record['fdhousehold']
+			$this->financial_record['fdhousehold'],
+			$this->financial_record['fdincome']
 		);
 	} // end method Patient Bracket
 
