@@ -1,9 +1,6 @@
 <?php
- // $Id$
- // note: patient authorizations module
- // code: jeff b (jeff@ourexchange.net)
- //       adam b (gdrago23@yahoo.com)
- // lic : GPL, v2
+	// $Id$
+	// lic : GPL, v2
 
 LoadObjectDependency('_FreeMED.EMRModule');
 
@@ -26,6 +23,7 @@ class AuthorizationsModule extends EMRModule {
 	var $record_name    = "Authorizations";
 	var $table_name     = "authorizations";
 	var $patient_field  = "authpatient";
+	var $order_fields   = "authdtbegin,authdtend";
 
 	var $variables = array (
 		"authdtmod",
@@ -67,7 +65,11 @@ class AuthorizationsModule extends EMRModule {
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			__("From") => "authdtbegin",
-			__("To")   => "authdtend"
+			__("To")   => "authdtend",
+			__("Remaining") => "_remaining"
+		);
+		$this->summary_query = array (
+			"IF(authvisits>0,CONCAT(authvisitsremain,'/',authvisits),CONCAT(TO_DAYS(authdtend)-TO_DAYS(NOW()),' days')) AS _remaining"
 		);
 
 		$this->form_vars = array (
@@ -185,11 +187,11 @@ class AuthorizationsModule extends EMRModule {
 				"FROM ".$this->table_name." ".
 				"WHERE (authpatient='".addslashes($patient)."') ".
 				freemed::itemlist_conditions(false)." ".
-				"ORDER BY authdtbegin,authdtend"
+				"ORDER BY ".$this->order_fields
 			),
 			$this->page_name,
 			array (
-				"Dates" => "authdtbegin",
+				__("Dates") => "authdtbegin",
 				"<FONT COLOR=\"#000000\">_</FONT>" => 
 					"", // &nbsp; doesn't work, dunno why
 				"&nbsp;"  => "authdtend"
