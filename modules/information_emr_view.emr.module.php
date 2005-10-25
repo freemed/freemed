@@ -93,7 +93,7 @@ class InformationEMRView extends EMRModule {
 	// Disable summary bar
 	function summary_bar() {
 		$buffer .= "
-		<a HREF=\"patient.php?action=modform&id=".$_REQUEST['id']."\" 
+		<a HREF=\"patient.php?action=modform&id=".( $_REQUEST['patient'] ? $_REQUEST['patient'] : $_REQUEST['id'] )."\" 
 		>".__("Modify")."</a>
 		";
 		return $buffer;
