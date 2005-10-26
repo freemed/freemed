@@ -65,11 +65,12 @@ class SlidingFeeScale {
 		if (!is_array($this->financial_record)) { return false; }
 
 		// Wrap DetermineBracket method
-		return $this->DetermineBracket(
+		$return = $this->DetermineBracket(
 			$this->financial_record['fdhousehold'],
 			$this->financial_record['fdincome']
 		);
-	} // end method Patient Bracket
+		return $return;
+	} // end method PatientBracket
 
 	// Method: DetermineBracket
 	//
@@ -104,13 +105,13 @@ class SlidingFeeScale {
 		if ($income <= ($base * 1.25)) { return 'B'; }
 
 		// Bracket C: income at or below 150% of poverty guideline
-		if ($income <= ($base * 1.25)) { return 'C'; }
+		if ($income <= ($base * 1.50)) { return 'C'; }
 
 		// Bracket D: income at or below 175% of poverty guideline
-		if ($income <= ($base * 1.25)) { return 'D'; }
+		if ($income <= ($base * 1.75)) { return 'D'; }
 
 		// Bracket E: income at or above 200% of poverty guideline
-		if ($income >= ($base * 2.00)) { return 'E'; }
+		if ($income <= ($base * 2.00)) { return 'E'; }
 
 		// Fall through
 		return false;

@@ -291,7 +291,7 @@ class ProcedureModule extends EMRModule {
 				__("Secondary Coverage") =>  freemed_display_selectbox($sec_result,"#insconame# #note#","proccov2"),
 				__("Tertiary Coverage") =>  freemed_display_selectbox($tert_result,"#insconame# #note#","proccov3"),
 				__("Work Comp Coverage") =>  freemed_display_selectbox($tert_result,"#insconame# #note#","proccov4"),
-				( freemed::config_value('sliding_fee') && $slidingfeescale->PatientBracket() ? __("Sliding Fee Scale") : '' ) => html_form::checkbox_widget('procslidingscale', $slidingfeescale->PatientBracket())
+				( (freemed::config_value('sliding_fee') and $slidingfeescale->PatientBracket()) ? __("Sliding Fee Scale") : '' ) => html_form::checkbox_widget('procslidingscale', $slidingfeescale->PatientBracket())
 				))
 			); // end coverage page	
 
