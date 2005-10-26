@@ -3552,9 +3552,6 @@ function patient_history_list () {
 	// Import patient_history
 	$patient_history = $_SESSION['patient_history'];
 
-	// Sort by alpha
-	ksort($patient_history);
-
 	// Check for no patient history
 	if (count($patient_history)<1) return false;
 
@@ -3570,12 +3567,15 @@ function patient_history_list () {
 			$this_patient = CreateObject('FreeMED.Patient', $v);
 	
 			// Form Lastname, Firstname, ID list item
-			$key = $this_patient->fullName() . " (".$v.")";
+			$key = $this_patient->fullName(true) . " (".$v.")";
 
 			// Add to new array
 			$history["$key"] = $v;
 		}
 	} // end foreach
+
+	// Sort by alpha
+	ksort($history);
 
 	// Return generated array
 	return array_reverse($history);
