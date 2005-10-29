@@ -23,6 +23,9 @@ class Authentication_Password {
 	} // end method GetCredentials
 
 	function IsValid ( $credentials ) {
+		// Drop if no valid username
+		if (!$credentials['username']) { return false; }
+
 		// Find this user
   		$result = $GLOBALS['sql']->query ("SELECT * FROM user ".
 			"WHERE username = '".addslashes($credentials['username'])."'");
