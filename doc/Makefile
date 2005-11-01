@@ -8,11 +8,12 @@ all:
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -vf [A-B]* CH* [D-Z]* $(INSTDIR)/$(THISDIR)
-	mkdir -p $(DESTDIR)/etc/apache/conf.d
-	cp -vf freemed.apache.conf $(DESTDIR)/etc/apache/conf.d/freemed.conf
-	mkdir -p $(DESTDIR)/etc/apache-ssl/conf.d
-	cp -vf freemed.apache.conf $(DESTDIR)/etc/apache-ssl/conf.d/freemed.conf
+	cp -rvf [A-Z]* $(INSTDIR)/$(THISDIR)
+	#	No installation for apache 1.x anymore by default
+	#mkdir -p $(DESTDIR)/etc/apache/conf.d
+	#cp -vf freemed.apache.conf $(DESTDIR)/etc/apache/conf.d/freemed.conf
+	#mkdir -p $(DESTDIR)/etc/apache-ssl/conf.d
+	#cp -vf freemed.apache.conf $(DESTDIR)/etc/apache-ssl/conf.d/freemed.conf
 	mkdir -p $(DESTDIR)/etc/apache2/conf.d
 	cp -vf freemed.apache.conf $(DESTDIR)/etc/apache2/conf.d/freemed.conf
 
