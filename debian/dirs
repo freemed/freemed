@@ -1,5 +1,3 @@
 etc/cron.d
-etc/apache/conf.d
-etc/apache-ssl/conf.d
 etc/apache2/conf.d
 usr/share/freemed
