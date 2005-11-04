@@ -123,6 +123,12 @@ sub quest_get_report_list {
 	# Get main frame
 	$m->get($mainFrame);
 
+	# Determine if this is the main frame or not
+	if (!($m->content =~ /Welcome to Care360/)) {
+		# Skip opening form, if there is one
+		$m->submit();
+	}
+
 	# Get new reports
 	$NEWREPORTS = $m->find_link(text_regex => qr/new reports for viewing/)->url();
 	$m->get($NEWREPORTS);
