@@ -47,6 +47,7 @@ class LabsModule extends EMRModule {
 		$this->summary_query = array (
 			"DATE_FORMAT(labtimestamp, '%b %d, %Y %H:%i') AS _timestamp"
 		);
+		$this->summary_options |= SUMMARY_VIEW;
 
 		$this->form_vars = array (
 			// TODO - FIXME
@@ -68,9 +69,49 @@ class LabsModule extends EMRModule {
 		);
 	} // end method form_table
 
+	function display () {
+		global $display_buffer;
+		if (!$_REQUEST['id']) { trigger_error(__("You must provide an id!"), E_USER_ERROR); }
+
+		// Header
+		$display_buffer .= "<table cellpadding=\"5\">\n";
+
+		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		$display_buffer .= "<tr><td coslpan=\"4\">".
+			__("Date").': '.$rec['labtimestamp']."<br/>\n".
+			__("Order Code").': '.$rec['labordercode']."<br/>\n".
+			__("Status").': '.$rec['labresultstatus']."<br/>\n".
+			"</td></tr>\n";
+	
+		$q = "SELECT * FROM labresults ".
+			"WHERE labid='".addslashes($_REQUEST['id'])."' ";
+		$result = $GLOBALS['sql']->query($q);
+		$display_buffer .= "<tr>\n".
+			"<th>".__("Observation")."</th>\n".
+			"<th>".__("Value")."</th>\n".
+			"<th>".__("Range")."</th>\n".
+			"<th>".__("Normal")."</th>\n".
+			"<th>".__("Abnormal")."</th>\n".
+			"</tr>\n";
+		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			$display_buffer .= "<tr>\n";
+			$display_buffer .= "<td>".$r['labobscode']."</td>\n";
+			$display_buffer .= "<td>".$r['labobsvalue']." ".$r['labobsunit']."</td>\n";
+			$display_buffer .= "<td>".$r['labobsrange']."</td>\n";
+			$display_buffer .= "<td>".$r['labobsnormal']."</td>\n";
+			$display_buffer .= "<td>".$r['labobsabnormal']."</td>\n";
+			$display_buffer .= "</tr>\n";
+		} // end foreach
+	
+		// Footer
+		$display_buffer .= "</table>\n";
+	} // end method display
+
 	function view () {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
+		if ($_REQUEST['action'] == 'display') { $this->display(); }
 
 		$display_buffer .= freemed_display_itemlist (
 			$sql->query(
