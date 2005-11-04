@@ -128,7 +128,7 @@ class Handler_HL7v2_R01 extends Handler_HL7v2 {
 			// Loop through all OBX records, put into labresults
 			foreach ($v['OBX'] AS $ko => $vo) {
 				$obx_query = array (
-					'labid' => $lab_record,
+					'labid' => $last_record,
 					'labpatient' => $patient,
 					'labobsnote' => @join("\n", $v['NTE_OBX']),
 					'labobscode' => $vo[3][4],
