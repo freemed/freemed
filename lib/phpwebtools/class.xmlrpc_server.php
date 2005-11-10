@@ -305,7 +305,7 @@
 					$plist .= "$i - " . $GLOBALS['_xh'][$parser]['params'][$i]. " \n";
 					$code = '$m->addParam(' . $GLOBALS['_xh'][$parser]['params'][$i] . ');';
 					$code = ereg_replace(',,',",'',",$code);
-					eval($code);
+					@eval($code);
 				}
 				// uncomment this to really see what the server's getting!
 				// TODO: recomment this next line

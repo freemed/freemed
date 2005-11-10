@@ -404,9 +404,8 @@ if (!function_exists('xml_parser_create'))
 				// and say we've found a value
 				$GLOBALS['_xh'][$parser]['lv']=2; 
 			}
-			$GLOBALS['_xh'][$parser]['ac'].=str_replace('$', '\$',
-				str_replace('"', '\"', 
-				str_replace(chr(92),$GLOBALS['xmlrpc_backslash'], $data)));
+			$GLOBALS['_xh'][$parser]['ac'].= addslashes(
+				str_replace(chr(92),$GLOBALS['xmlrpc_backslash'], $data));
 		}
 	}
 
