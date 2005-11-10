@@ -7,7 +7,7 @@ include_once ("lib/freemed.php");          // global variables
 $record_name = __("Messages");         // name of record
 $db_name = "messages";                // database name
 
-define ('PAGE_ROLL', 25);
+define ('PAGE_ROLL', 50);
 
 //----- Open the database, etc
 freemed::connect ();
@@ -70,7 +70,7 @@ switch ($action) {
 		$result = $sql->query($query);
 	}
 	Header("Location: messages.php?".
-			"tag=".urlencode($_REQUEST['tag'])."&".
+			"tag=".urlencode($_REQUEST['origtag'])."&".
 			"start=".urlencode($_REQUEST['start']));
 	die("");
 	break; // end tag
@@ -254,7 +254,7 @@ switch ($action) {
 				"msgsubject",
 				"msgtext",
 				"msgurgency",
-				"msgtag" => '', // keep NULLs from being inserted
+				"msgtag" => '', // need to pass this for non-NULL
 				"msgunique" => $unique, // unique marker
 				"msgread" => '0' // mark as not read
 			)
@@ -340,6 +340,7 @@ switch ($action) {
 		// Otherwise refresh to messages screen
 		Header("Location: messages.php?".
 				"old=".urlencode($_REQUEST['old'])."&".
+				"tag=".urlencode(html_form::combo_assemble('show_tag'))."&".
 				"start=".urlencode($_REQUEST['start']));
 		die("");
 	}
@@ -373,6 +374,7 @@ switch ($action) {
 		// Otherwise refresh to messages screen
 		Header("Location: messages.php?".
 				"old=".urlencode($_REQUEST['old'])."&".
+				"tag=".urlencode(html_form::combo_assemble('show_tag'))."&".
 				"start=".urlencode($_REQUEST['start']));
 		die("");
 	}
@@ -511,6 +513,8 @@ switch ($action) {
 				prepare($old)."\"/>
 			<input TYPE=\"HIDDEN\" NAME=\"start\" VALUE=\"".
 				prepare($start)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"origtag\" VALUE=\"".
+				prepare($_REQUEST['tag'])."\"/>
 			<input TYPE=\"BUTTON\" VALUE=\"".__("Select All")."\" ".
 			"onClick=\"selectAll(this.form); return true;\" ".
 			"class=\"button\"/>\n".
