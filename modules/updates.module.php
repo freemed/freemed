@@ -59,7 +59,7 @@ class UpdatesModule extends BaseModule {
 			sprintf(__("The security feed was last updated on %s."), $newest_timestamp)." ".
 			"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\">".
 			"[".__("View")."]</a>",
-			"img/facsimile_icon.png"
+			"img/security_icon.png"
 		);
 	} // end method notify
 
@@ -94,7 +94,7 @@ class UpdatesModule extends BaseModule {
 		$rss = CreateObject('_FreeMED.MagpieRSS', join("\n", file("data/cache/rss.feed.${feed}")));
 		$display_buffer .= "<div class=\"DataHead\">".$rss->channel['title']."</div>\n";
 		foreach ($rss->items AS $item) {
-			$display_buffer .= "<h2><a href=\"".$item['link']."\">".$item['title']."</a></h2>\n";
+			$display_buffer .= "<h2><a href=\"".$item['link']."\">".$item['title']."</a> (".$item['dc']['date'].")</h2>\n";
 			$display_buffer .= $item['description']."<br/>\n";
 		}
 		$display_buffer .= "<br/><br/><div align=\"center\"><a href=\"javascript:history.go(-1);\" class=\"button\">".__("Go Back")."</a></div>\n";
