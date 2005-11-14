@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=data/cache
-SUBDIR=
+SUBDIR=packages pdf quest_hl7
 
 all:
 	# Nothing
@@ -12,7 +12,8 @@ install:
 	chmod a+w $(INSTDIR)/$(THISDIR)
 	#cp -vf .ht* *.php $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
-		make -C $$d install INSTDIR=$(INSTDIR); \
+		mkdir -p $(INSTDIR)/$(THISDIR)/$$d; \
+		chmod a+w $(INSTDIR)/$(THISDIR)/$$d; \
 	done
 
 clean:
