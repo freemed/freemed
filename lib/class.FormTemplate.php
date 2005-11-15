@@ -141,16 +141,51 @@ class FormTemplate {
 	//	String
 	//
 	function ProcessData ( $data ) {
-		// For now, we deal with table, field, ssn
-		// if table != patient, table == modulename
-		switch ($data['table']) {
-			case 'patient':
-				$raw = $this->patient->local_record[$data['field']];
-				break;
+		// Handle "module:" prefix
+		if (substr($data['table'], 0, 7) == 'module:') {
+			$modulename = substr($data['table'], -(strlen($data['table'])-7));
+			// Deal with method: prefix on data
+			if (substr($data['field'], 0, 7) == 'method:') {
+				$params = explode(':', $data['field']);
+				$raw = module_function(
+					$modulename,
+					$params[1],
+					array (
+						( $params[2] ? $params[2] : $this->patient->id )
+					)
+				);
+			} else {
+				// Load information from module
+				include_once(resolve_module($modulename));
+				$m = new $modulename ();
 
-			default:
-				break;
-		} // end switch
+				// Run SQL query
+				$query = "SELECT *".
+					( (count($m->summary_query)>0) ? 
+					",".join(",", $m->summary_query)." " : " " ).
+					"FROM ".$m->table_name." ".
+					"WHERE ".$m->patient_field."='".addslashes($this->patient->id)."' ".
+					($m->summary_conditional ? 'AND '.$m->summary_conditional.' ' : '' ).
+					"ORDER BY id DESC LIMIT 1";
+				$result = $GLOBALS['sql']->query($query);
+				if ($GLOBALS['sql']->num_rows($result) != 1) {
+					syslog(LOG_INFO, get_class($this)."| could not retrieve rows for ${data['table']}, ${data['field']}");
+					return "";
+				}
+				$r = $GLOBALS['sql']->fetch_array($result);
+				return $r[$data['field']];
+			}
+		} else {
+			// Deal with straight abbreviations for data
+			switch ($data['table']) {
+				case 'patient':
+					$raw = $this->patient->local_record[$data['field']];
+					break;
+
+				default:
+					break;
+			} // end switch
+		}
 
 		// Deal with output formatting
 		switch ($data['type']) {
@@ -166,6 +201,8 @@ class FormTemplate {
 	} // end method ProcessData
 
 	// Method: RenderToPDF
+	//
+	//	Render a template to a PDF file from a composited XML data string.
 	//
 	// Parameters:
 	//
