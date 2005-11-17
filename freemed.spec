@@ -4,7 +4,7 @@
 
 Name:		freemed
 Summary:	Opensource electronic medical record (EMR) software
-Version:	0.8.1
+Version:	0.8.1.1
 Release:	1
 License:	GPL
 Group:		Applications/Medical
@@ -50,8 +50,11 @@ rm -fr %{buildroot}
 
 %changelog
 
+* Thu Nov 17 2005 Jeff Buchbinder <jeff@freemedsoftware.com> - 0.8.1.1-1
+  - v0.8.1.1 release
+
 * Sun Oct 30 2005 Jeff Buchbinder <jeff@freemedsoftware.com> - 0.8.1-1
-  - v0.8.0 release
+  - v0.8.1 release
 
 * Sat Aug 27 2005 Jeff Buchbinder <jeff@freemedsoftware.com> - 0.8.0-1
   - v0.8.0 release
