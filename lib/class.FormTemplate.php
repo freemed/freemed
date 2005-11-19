@@ -26,6 +26,47 @@ class FormTemplate {
 		}
 	} // end constructor FormTemplate
 
+	// Method: GetControls
+	//
+	//	Get list of custom controls from a template.
+	//
+	// Returns:
+	//
+	//	Multidimensional array containing controls description. Keys are
+	//	the variable name.
+	//
+	function GetControls ( ) {
+		$template = $this->GetXMLTemplate();
+
+		// Extract pages, go one by one
+		$controls_dom =& $template->elementsByName('controls');
+		foreach ($controls_dom[0]->Children AS $control) {
+			unset ($c);
+			foreach ($control->Attributes AS $attr) {
+				$c[$attr->Name] = $attr->Content;
+			}
+			$results[$c['variable']] = $c;
+		} // end foreach control
+		return $results;
+	} // end method GetControls
+
+	// Method: GetXMLTemplate
+	//
+	//	Get XML template DOM tree, with caching.
+	//
+	// Returns:
+	//
+	//	eZXML object representing XML DOM tree for the loaded template.
+	//
+	function GetXMLTemplate ( ) {
+		static $template;
+		if (!isset($template)) {
+			$template_obj = CreateObject('_FreeMED.eZXML');
+			$template =& $template_obj->domTree( file_get_contents($this->xml_template), array( "TrimWhiteSpace" => true  ) );
+		} // end caching
+		return $template;
+	} // end method GetXMLTemplate
+
 	// Method: LoadPatient
 	//
 	//	Load patient information into an XML form template.
@@ -46,8 +87,7 @@ class FormTemplate {
 	function OutputData ( ) {
 		$output = '<'.'?xml version="1.0"?'.'>'."\n";
 		$output .= '<form>'."\n";
-		$template_obj = CreateObject('_FreeMED.eZXML');
-		$template =& $template_obj->domTree( file_get_contents($this->xml_template), array( "TrimWhiteSpace" => true  ) );
+		$template = $this->GetXMLTemplate();
 
 		// Extract information element
 		$information_dom =& $template->elementsByName('information');
