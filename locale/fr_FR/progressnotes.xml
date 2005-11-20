@@ -8,9 +8,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2005-09-23 11:21-0400 -->
+	<!-- type = PO-Revision-Date, data = 2005-11-17 21:54-0500 -->
 
-	<Translator>Nicolas Moulonguet &#x3C;moulonguetn@free.fr&#x3E;</Translator>
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -153,6 +153,58 @@
 <translation>
 	<original>You must select a patient.</original>
 	<translated>Vous devez s&#xC3;&#xA9;lectionner un patient</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)UCODE(0x82f0ffc)ACODE(0x82e9ba8)/UCODE(0x82f0ffc)ssessment</original>
+	<translated>CODE(0x82e9ba8)UCODE(0x82f0ffc)ACODE(0x82e9ba8)/UCODE(0x82f0ffc)ssessment</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)UCODE(0x82f0ffc)ECODE(0x82e9ba8)/UCODE(0x82f0ffc)ducation</original>
+	<translated> CODE(0x82e9ba8)UCODE(0x82f0ffc)ECODE(0x82e9ba8)/UCODE(0x82f0ffc)ducation</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)UCODE(0x82f0ffc)ICODE(0x82e9ba8)/UCODE(0x82f0ffc)nterval</original>
+	<translated>CODE(0x82e9ba8)UCODE(0x82f0ffc)ICODE(0x82e9ba8)/UCODE(0x82f0ffc)nterval</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)UCODE(0x82f0ffc)OCODE(0x82e9ba8)/UCODE(0x82f0ffc)bjective</original>
+	<translated>CODE(0x82e9ba8)UCODE(0x82f0ffc)OCODE(0x82e9ba8)/UCODE(0x82f0ffc)bjective</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)UCODE(0x82f0ffc)PCODE(0x82e9ba8)/UCODE(0x82f0ffc)lan</original>
+	<translated>CODE(0x82e9ba8)UCODE(0x82f0ffc)PCODE(0x82e9ba8)/UCODE(0x82f0ffc)lan</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)uCODE(0x82f0ffc)ECODE(0x82e9ba8)/uCODE(0x82f0ffc)ducation</original>
+	<translated>CODE(0x82e9ba8)uCODE(0x82f0ffc)ECODE(0x82e9ba8)/uCODE(0x82f0ffc)ducation</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)uCODE(0x82f0ffc)ICODE(0x82e9ba8)/uCODE(0x82f0ffc)nterval</original>
+	<translated> CODE(0x82e9ba8)uCODE(0x82f0ffc)ICODE(0x82e9ba8)/uCODE(0x82f0ffc)nterval</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)uCODE(0x82f0ffc)OCODE(0x82e9ba8)/uCODE(0x82f0ffc)bjective</original>
+	<translated>CODE(0x82e9ba8)uCODE(0x82f0ffc)OCODE(0x82e9ba8)/uCODE(0x82f0ffc)bjective</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)uCODE(0x82f0ffc)PCODE(0x82e9ba8)/uCODE(0x82f0ffc)lan</original>
+	<translated>CODE(0x82e9ba8)uCODE(0x82f0ffc)PCODE(0x82e9ba8)/uCODE(0x82f0ffc)lan</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)uCODE(0x82f0ffc)RCODE(0x82e9ba8)/uCODE(0x82f0ffc)x</original>
+	<translated>CODE(0x82e9ba8)uCODE(0x82f0ffc)RCODE(0x82e9ba8)/uCODE(0x82f0ffc)x</translated>
+</translation>
+<translation>
+	<original>CODE(0x82e9ba8)uCODE(0x82f0ffc)SCODE(0x82e9ba8)/uCODE(0x82f0ffc)ubjective</original>
+	<translated>CODE(0x82e9ba8)uCODE(0x82f0ffc)SCODE(0x82e9ba8)/uCODE(0x82f0ffc)ubjective</translated>
+</translation>
+<translation>
+	<original>PCODE(0x82e9ba8)UCODE(0x82f0ffc)RCODE(0x82e9ba8)/UCODE(0x82f0ffc)escription</original>
+	<translated>PCODE(0x82e9ba8)UCODE(0x82f0ffc)RCODE(0x82e9ba8)/UCODE(0x82f0ffc)escription</translated>
+</translation>
+<translation>
+	<original>View $this-CODE(0x82f0ffc)record_name</original>
+	<translated>Voir $this-CODE(0x82f0ffc)record_name</translated>
 </translation>
 
 </gettextXML>

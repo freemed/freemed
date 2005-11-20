@@ -8,9 +8,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2005-09-23 05:43-0400 -->
+	<!-- type = PO-Revision-Date, data = 2005-11-17 21:07-0500 -->
 
-	<Translator>Nicolas Moulonguet &#x3C;moulonguetn@free.fr&#x3E;</Translator>
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -93,6 +93,38 @@
 <translation>
 	<original>User</original>
 	<translated>Utilisateur</translated>
+</translation>
+<translation>
+	<original>10 Months</original>
+	<translated>10 Mois</translated>
+</translation>
+<translation>
+	<original>11 Months</original>
+	<translated>11 Mois</translated>
+</translation>
+<translation>
+	<original>4 Months</original>
+	<translated>4 Mois</translated>
+</translation>
+<translation>
+	<original>5 Months</original>
+	<translated>5 Mois</translated>
+</translation>
+<translation>
+	<original>6 Months</original>
+	<translated>6 Mois</translated>
+</translation>
+<translation>
+	<original>7 Months</original>
+	<translated>7 Mois</translated>
+</translation>
+<translation>
+	<original>8 Months</original>
+	<translated>8 Mois</translated>
+</translation>
+<translation>
+	<original>9 Months</original>
+	<translated>9 Mois</translated>
 </translation>
 
 </gettextXML>

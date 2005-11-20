@@ -8,9 +8,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2005-09-23 12:02-0400 -->
+	<!-- type = PO-Revision-Date, data = 2005-10-16 09:37-0400 -->
 
-	<Translator>Nicolas Moulonguet &#x3C;moulonguetn@free.fr&#x3E;</Translator>
+	<Translator>Ben Abdess &#x3C;ben_abdess@yahoo.fr&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -36,7 +36,7 @@
 </translation>
 <translation>
 	<original>Case Number</original>
-	<translated>Num&#xC3;&#xA9;ro de case</translated>
+	<translated>Cas Num&#xC3;&#xA9;ro</translated>
 </translation>
 <translation>
 	<original>City, State/Prov, Postal Code</original>

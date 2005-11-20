@@ -8,9 +8,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-07-13 13:26-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2005-09-23 11:11-0400 -->
+	<!-- type = PO-Revision-Date, data = 2005-11-17 21:01-0500 -->
 
-	<Translator>Nicolas Moulonguet &#x3C;moulonguetn@free.fr&#x3E;</Translator>
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -68,7 +68,7 @@
 </translation>
 <translation>
 	<original>American Indian or Alaska Native</original>
-	<translated>American Indian or Alaska Native</translated>
+	<translated>Am&#xC3;&#xA9;rindien ou Natif d'Alaska </translated>
 </translation>
 <translation>
 	<original>Apr</original>
@@ -84,11 +84,11 @@
 </translation>
 <translation>
 	<original>Asian or Pacific Islander</original>
-	<translated>Asian or Pacific Islander</translated>
+	<translated>Asian ou Pacific Islander</translated>
 </translation>
 <translation>
 	<original>Assembly of God</original>
-	<translated>Assembly of God</translated>
+	<translated>Assembl&#xC3;&#xA9; de Dieu</translated>
 </translation>
 <translation>
 	<original>Aug</original>
@@ -120,7 +120,7 @@
 </translation>
 <translation>
 	<original>Browser-Based</original>
-	<translated>Browser-Based</translated>
+	<translated>Bas&#xC3;&#xA9; sur le Fureteur</translated>
 </translation>
 <translation>
 	<original>Buddhist</original>
@@ -156,15 +156,15 @@
 </translation>
 <translation>
 	<original>Christian Scientist</original>
-	<translated>Christian Scientist</translated>
+	<translated>Scientiste</translated>
 </translation>
 <translation>
 	<original>Church of Christ</original>
-	<translated>Church of Christ</translated>
+	<translated>&#xC3;&#x89;glise du Christ</translated>
 </translation>
 <translation>
 	<original>Church of God</original>
-	<translated>Church of God</translated>
+	<translated>&#xC3;&#x89;glise de Dieu</translated>
 </translation>
 <translation>
 	<original>Close</original>
@@ -188,7 +188,7 @@
 </translation>
 <translation>
 	<original>Debian GNU/Linux users should type</original>
-	<translated>Debian GNU/Linux users should type</translated>
+	<translated>Les utilisateurs de Debian GNU/Linux devrait inscrire</translated>
 </translation>
 <translation>
 	<original>Dec</original>
@@ -216,7 +216,7 @@
 </translation>
 <translation>
 	<original>Disciples of Christ</original>
-	<translated>Disciples of Christ</translated>
+	<translated>Disciples du Christ</translated>
 </translation>
 <translation>
 	<original>Drug Lookup</original>
@@ -228,7 +228,7 @@
 </translation>
 <translation>
 	<original>Eastern Orthodox</original>
-	<translated>Eastern Orthodox</translated>
+	<translated>Orthodoxe de l'Est</translated>
 </translation>
 <translation>
 	<original>End Date</original>
@@ -316,11 +316,11 @@
 </translation>
 <translation>
 	<original>Hispanic, black</original>
-	<translated>Hispanic, black</translated>
+	<translated>Hispanic, noir</translated>
 </translation>
 <translation>
 	<original>Hispanic, white</original>
-	<translated>Hispanic, white</translated>
+	<translated>Hispanic, blanc</translated>
 </translation>
 <translation>
 	<original>If you are just installing FreeMED, and you are using the MySQL database, then you need to type:</original>
@@ -352,7 +352,7 @@
 </translation>
 <translation>
 	<original>Insurance company not object</original>
-	<translated>Insurance company not object</translated>
+	<translated>Assurance d'entreprise sans objet</translated>
 </translation>
 <translation>
 	<original>Insurance data fetch failed</original>
@@ -476,7 +476,7 @@
 </translation>
 <translation>
 	<original>Native American</original>
-	<translated>Native American</translated>
+	<translated>Am&#xC3;&#xA9;ricain d'origine</translated>
 </translation>
 <translation>
 	<original>Nazarene</original>
@@ -584,11 +584,11 @@
 </translation>
 <translation>
 	<original>Protestant, No Denomenation</original>
-	<translated>Protestant, No Denomenation</translated>
+	<translated>Protestant, Sans D&#xC3;&#xA9;nomination</translated>
 </translation>
 <translation>
 	<original>Protestant, Other</original>
-	<translated>Protestant, Other</translated>
+	<translated>Protestant, Autre</translated>
 </translation>
 <translation>
 	<original>Queued for Rebill</original>
@@ -788,7 +788,7 @@
 </translation>
 <translation>
 	<original>White, not of Hispanic origin</original>
-	<translated>White, not of Hispanic origin</translated>
+	<translated>Blanc, Origine non Hispanic</translated>
 </translation>
 <translation>
 	<original>Withholding</original>
@@ -874,6 +874,14 @@
 <translation>
 	<original>year(s)</original>
 	<translated>year(s)month(s)day(s)ago</translated>
+</translation>
+<translation>
+	<original>Record modification failed due to record lock.</original>
+	<translated>La modification &#xC3;&#xA0; l'enregistrement a &#xC3;&#xA9;chou&#xC3;&#xA9; en raison d'utilisation</translated>
+</translation>
+<translation>
+	<original>This record is currently in use.</original>
+	<translated>Cet enregistrement est pr&#xC3;&#xA9;sentement en utilisation</translated>
 </translation>
 
 </gettextXML>
