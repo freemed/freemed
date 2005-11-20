@@ -7,7 +7,7 @@
 $page_name   = "user.php";
 $table_name  = "user";
 $record_name = "User";
-$order_field = "id";
+$order_field = "username";
 
 include_once("lib/freemed.php");         // load global variables
 
