@@ -130,10 +130,11 @@ class CurrentProblemsModule extends EMRModule {
 		$res = $GLOBALS['sql']->query($query);
 
 		// Get problems, and extract to an array
+		$m[] ="\n\nCURRENT PROBLEMS:\n";
 		while ($r = $GLOBALS['sql']->fetch_array($res)) {
-			$m[] = trim($r['pdate'].' '.$r['problem']);
+			$m[] = trim($r['junkpdate'].' '.$r['problem']);
 		}
-		return @join(', ', $m);
+		return @join("\n", $m);
 	} // end method recent_text
 
 	function _update ( ) {

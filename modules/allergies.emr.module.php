@@ -16,6 +16,7 @@ class AllergiesModule extends EMRModule {
 	var $record_name = "Allergies";
 	var $table_name = 'allergies';
 	var $patient_field = 'patient';
+        var $date_field = 'dummy';
 
 	function AllergiesModule () {
 		$this->table_definition = array (
@@ -102,6 +103,19 @@ class AllergiesModule extends EMRModule {
 			} // end checking for results
 		}	
 	} // end method _update
+            
+            function recent_text ( $patient, $recent_date = NULL ) {
+		// skip recent; need all for this one
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE ".$this->patient_field."='".addslashes($patient)."' ";
+		$res = $GLOBALS['sql']->query($query);
+		$m[] = "\n\nALLERGIES:\n";
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$m[] = trim($r['allergy']." (".$r['severity'].")");
+		}
+		return @join("\n", $m);
+	} // end method recent_text
+
 
 } // end class AllergiesModule
 

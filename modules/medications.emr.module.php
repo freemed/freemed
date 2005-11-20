@@ -92,10 +92,11 @@ class MedicationsModule extends EMRModule {
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			"ORDER BY ".$this->date_field." DESC";
 		$res = $GLOBALS['sql']->query($query);
+	        $m[] = "\n\nMEDICATIONS:\n";
 		while ($r = $GLOBALS['sql']->fetch_array($res)) {
 			$m[] = trim($r['mdrug'].' '.$r['mdosage'].' '.$r['mroute']);
 		}
-		return @join(', ', $m);
+		return @join("\n", $m);
 	} // end method recent_text
 
 	// Update
