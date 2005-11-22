@@ -19,7 +19,7 @@ class Patient {
 	var $is_callin;                   // flag for call ins
 	var $ptid;			  // local practice ID (chart num)
 
-	// method: Patient constructor
+	// Constructor: FreeMED.Patient
 	//
 	// Parameters:
 	//
@@ -90,7 +90,7 @@ class Patient {
 		} // end if/else for is_callin
 	} // end constructor Patient
 
-	// Method: Patient->age
+	// Method: age
 	//
 	//	Produces a user-friendly age description.
 	//
@@ -107,9 +107,21 @@ class Patient {
 		return date_diff_display ($this->local_record["ptdob"],
 		( ($date_to=="") ? date("Y-m-d") : $date_to ),
 		__("year(s)"), __("month(s)"), __("day(s)"), __("ago"), __("ahead"));
-	} // end function Patient->age
+	} // end method age
 
-	// Method: Patient->date_of_last_procedure
+	// Method: numericAge
+	//
+	//	Produces a numeric age value.
+	//
+	// Returns:
+	//
+	//	Text string describing the patient's age.
+	//
+	function numericAge ( ) {
+		return array_element(date_diff($this->local_record["ptdob"]), 0);
+	} // end method numericAge
+
+	// Method: date_of_last_procedure
 	//
 	//	Determine last procedure date for this patient object.
 	//
@@ -127,7 +139,7 @@ class Patient {
 		return $r['procdt'];
 	} // end method date_of_last_procedure
 
-	// Method: Patient->fullName
+	// Method: fullName
 	//
 	//	Get the patient's full name.
 	//
@@ -152,7 +164,7 @@ class Patient {
 				$this->_fixcaps($this->ptmname).
 				" [ ".$this->ptdob." ] ";
 		} // end if for checking for date of birth
-	} // end function Patient->fullName
+	} // end method fullName
 
 	// Method: to_text
 	//
@@ -170,7 +182,21 @@ class Patient {
 			$this->ptid;
 	} // end method to_text
 
-	// Method: Patient->dateOfBirth
+	// Method: cityStateZip
+	//
+	//	Determine patient's city/state/zip address line.
+	//
+	// Returns:
+	//
+	//	String representation of patient's last address line.
+	//
+	function cityStateZip ( ) {
+		return $this->local_record['ptcity'].', '.
+			$this->local_record['ptstate'].' '.
+			$this->local_record['ptzip'];
+	} // end method cityStateZip
+
+	// Method: dateOfBirth
 	//
 	//	Determine patient's date of birth.
 	//
@@ -181,9 +207,9 @@ class Patient {
 	//
 	function dateOfBirth ($no_parameters = "") {
 		return fm_date_print ($this->ptdob);
-	} // end function Patient->dateOfBirth
+	} // end method dateOfBirth
 
-	// Method: Patient->idNumber
+	// Method: idNumber
 	//
 	//	Determine patient's database table id number.
 	//
@@ -191,11 +217,11 @@ class Patient {
 	//
 	//	SQL table id number for this patient object.
 	//
-	function idNumber ($no_parameters = "") {
-		return ($this->ptid);
-	} // end func idNumber
+	function idNumber ( ) {
+		return $this->ptid;
+	} // end method idNumber
 
-	// Method: Patient->isEmployed
+	// Method: isEmployed
 	//
 	//	Determine patient's employment status.
 	//
@@ -203,11 +229,11 @@ class Patient {
 	//
 	//	Boolean value, whether patient is employed.
 	//
-	function isEmployed ($no_parameters = "") {
+	function isEmployed ( ) {
 		return ($this->ptempl == "y");
-	} // end function Patient->isEmployed
+	} // end method isEmployed
 
-	// Method: Patient->isFemale
+	// Method: isFemale
 	//
 	//	Determine whether patient is female.
 	//
@@ -215,11 +241,11 @@ class Patient {
 	//
 	//	Boolean value, whether patient is female.
 	//
-	function isFemale ($no_parameters = "") {
+	function isFemale ( ) {
 		return ($this->ptsex == "f");
-	} // end function Patient->isFemale
+	} // end method isFemale
 
-	// Method: Patient->isMale
+	// Method: isMale
 	//
 	//	Determine whether patient is male.
 	//
@@ -227,9 +253,9 @@ class Patient {
 	//
 	//	Boolean value, whether patient is male.
 	//
-	function isMale ($no_parameters = "") {
+	function isMale ( ) {
 		return ($this->ptsex == "m");
-	} // end function Patient->isMale
+	} // end method isMale
 
 	// Method: phoneNumber
 	//
@@ -241,13 +267,7 @@ class Patient {
 		if (!$this->local_record['pthphone']) {
 			return __("No Phone Number");
 		}
-		// TODO: Fix non-US formatting...
-		return '('.
-			substr($this->local_record['pthphone'], 0, 3).
-			') '.
-			substr($this->local_record['pthphone'], 3, 3).
-			'-'.
-			substr($this->local_record['pthphone'], 6, 4);
+		return freemed::phone_display($this->local_record['pthphone']);
 	} // end method phoneNumber
 
 	// Method: get_list_by_name

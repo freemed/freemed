@@ -1,6 +1,6 @@
 <?php
- // $Id$
- // $Author$
+	// $Id$
+	// $Author$
 
 // Class: FreeMED.Physician
 //
@@ -19,15 +19,12 @@ class Physician {
 	//	$physician - Database table identifier for physician/provider.
 	//
 	function Physician ($physician = 0) {
-		global $database;
-
 		if ($physician==0) return false;    // error checking
 
 		// Check for cache
 		if (!isset($GLOBALS['__freemed']['cache']['physician'][$physician])) {
 			// Get physician record
-			$this->local_record = freemed::get_link_rec ($physician,
-				"physician");
+			$this->local_record = freemed::get_link_rec ($physician, "physician");
 
 			// and cache the record
 			$GLOBALS['__freemed']['cache']['physician'][$physician] = $this->local_record;
@@ -42,7 +39,7 @@ class Physician {
 		$this->phyidmap     = unserialize($this->local_record["phyidmap"]);
 	} // end constructor Physician
 
-	// Method: Physician->fullName
+	// Method: fullName
 	//
 	//	Form full name of physician/provider.
 	//
@@ -84,9 +81,17 @@ class Physician {
 		( is_array($d) ? ', '.join(', ', $d) : '' );
 	} // end method fullName
 
+	// Method: to_text
+	//
+	//	Generate textual representation of the current object.
+	//
+	// Returns:
+	//
+	//	Simple string consisting of the name of the current provider object.
+	//
 	function to_text ( ) { return $this->fullName(true); }
 
-	// Method: Physician->getMapId
+	// Method: getMapId
 	//
 	//	Retrieves a value from the phyidmap.
 	//
@@ -101,9 +106,9 @@ class Physician {
 	//
 	function getMapId ($this_id = 0) {
 		return ( ($this_id == 0) ? "" : $this->phyidmap[$this_id] );
-	} // end function Physician->getMapId
+	} // end method getMapId
 
-	// Method: Physician->practiceName
+	// Method: practiceName
 	//
 	//	Retrieve the full practice name for this physician/provider.
 	//
@@ -113,7 +118,19 @@ class Physician {
 	//
 	function practiceName () {
 		return $this->local_record["phypracname"];
-	} // end function Physician->practiceName
+	} // end method practiceName
+
+	// Method: practicePhoneNumber
+	//
+	//	Retrieve the providers' practice phone number.
+	//
+	// Returns:
+	//
+	//	Formatted phone number.
+	//
+	function practicePhoneNumber ( ) {
+		return freemed::phone_display ( $this->local_record['phyphonea'] );
+	} // end method practicePhoneNumber
 
 } // end class Physician
 
