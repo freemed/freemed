@@ -8,6 +8,8 @@
 //
 class FormTemplate {
 
+	var $data;
+	var $elements;
 	var $patient;
 	var $xml_template;
 
@@ -25,6 +27,24 @@ class FormTemplate {
 			trigger_error(__("Template does not exist!"), E_USER_ERROR);
 		}
 	} // end constructor FormTemplate
+
+	// Method: FetchDataElement
+	//
+	//	Get data element value associated with the currently
+	//	loaded data set.
+	//
+	// Parameters:
+	//
+	//	$key - Data element key
+	//
+	// Returns:
+	//
+	//	Value. Will return empty string if no data set is loaded.
+	//
+	function FetchDataElement ( $key ) {
+		if (!is_array($this->data)) { return ''; }
+		return $this->elements[$key];
+	} // end method FetchDataElement
 
 	// Method: GetControls
 	//
@@ -50,6 +70,17 @@ class FormTemplate {
 		return $results;
 	} // end method GetControls
 
+	// Method: GetInformation
+	function GetInformation ( ) {
+		$template = $this->GetXMLTemplate();
+
+		$information_dom =& $template->elementsByName('information');
+		foreach ($information_dom['0']->Children AS $i) {
+			$information[$i->Name] = $i->Children[0]->Content;
+		}
+		return $information;
+	} // end method GetInformation
+
 	// Method: GetXMLTemplate
 	//
 	//	Get XML template DOM tree, with caching.
@@ -67,9 +98,36 @@ class FormTemplate {
 		return $template;
 	} // end method GetXMLTemplate
 
+	// Method: LoadData
+	//
+	//	Load a form_results entry into the current set.
+	//
+	// Parameters:
+	//
+	//	$id - Row ID of form_results table entry
+	//
+	function LoadData ( $id ) {
+		$this->data = freemed::get_link_rec ( $id, 'form_results' );
+		$this->LoadPatient ( $this->data['fr_patient'] );
+
+		// Cache all data elements
+		unset($this->elements);
+		$query = "SELECT fr_name AS k, fr_value AS v ".
+			"FROM form_record ".
+			"WHERE fr_id = '".addslashes($id)."'";
+		$result = $GLOBALS['sql']->query ( $query );
+		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			$this->elements[stripslashes($r['k'])] = stripslashes($r['v']);
+		} // end while results
+	} // end method LoadData
+
 	// Method: LoadPatient
 	//
 	//	Load patient information into an XML form template.
+	//
+	// Parameters:
+	//
+	//	$patient_id - Row ID of patient table row
 	//
 	function LoadPatient ( $patient_id ) {
 		if (!$patient_id) { trigger_error(__("Must specify a patient id!"), E_USER_ERROR); }
@@ -90,10 +148,7 @@ class FormTemplate {
 		$template = $this->GetXMLTemplate();
 
 		// Extract information element
-		$information_dom =& $template->elementsByName('information');
-		foreach ($information_dom['0']->Children AS $i) {
-			$information[$i->Name] = $i->Children[0]->Content;
-		}
+		$information = $this->GetInformation();
 		
 		// Re-render information tags (with changes if necessary)
 		$output .= '<information>'."\n";
@@ -182,7 +237,18 @@ class FormTemplate {
 	//
 	function ProcessData ( $data ) {
 		// Handle "module:" prefix
-		if (substr($data['table'], 0, 7) == 'module:') {
+		if (substr($data['table'], 0, 7) == 'object:') {
+			$objectname = substr($data['table'], -(strlen($data['table'])-7));
+			$params = explode(':', $data['field']);
+			if ($params[0] == 'patient') {
+				$obj = CreateObject('_FreeMED.'.$objectname, $this->patient->local_record[$params[1]]);
+				$method = ( $params[2] ? $params[2] : 'to_text' );
+				$raw = $obj->${method}();
+			} else {
+				syslog(LOG_INFO, get_class($this)."| could not process ${data['table']}, ${data['field']}");
+				return '';
+			}
+		} elseif (substr($data['table'], 0, 7) == 'module:') {
 			$modulename = substr($data['table'], -(strlen($data['table'])-7));
 			// Deal with method: prefix on data
 			if (substr($data['field'], 0, 7) == 'method:') {
@@ -219,7 +285,24 @@ class FormTemplate {
 			// Deal with straight abbreviations for data
 			switch ($data['table']) {
 				case 'patient':
-					$raw = $this->patient->local_record[$data['field']];
+					if (strpos($data['field'], ':') === false) {
+						$raw = $this->patient->local_record[$data['field']];
+					} else {
+						list ($desc, $field) = explode(':', $data['field']);
+						switch ($desc) {
+							case 'method':
+								$raw = $this->patient->${field}();
+								break; // end method
+							default:
+								syslog(LOG_INFO, get_class($this)."| could not figure out syntax for ${data['table']}, ${data['field']}");
+								$raw = "";
+								break; // end default
+						} // end switch desc
+					}
+					break;
+
+				case 'control':
+					$raw = $this->FetchDataElement($data['field']);
 					break;
 
 				default:
@@ -231,6 +314,14 @@ class FormTemplate {
 		switch ($data['type']) {
 			case 'ssn':
 				return substr($raw, 0, 3).'-'.substr($raw, 3, 2).'-'.substr($raw, 5, 4);
+				break;
+
+			case 'conditional':
+				if ($data['value'] == $raw) { return 'X'; }
+				break;
+
+			case 'phone':
+				return freemed::phone_display ($raw);
 				break;
 
 			case 'string':
@@ -249,11 +340,11 @@ class FormTemplate {
 	//	$data - Composited XML data string
 	//
 	//	$output - (optional) Boolean, output to browser. Default is false,
-	//	return as string.
+	//	return as file name.
 	//
 	// Returns:
 	//
-	//	Optionally returns rendered PDF as string
+	//	Optionally returns filename.
 	//
 	function RenderToPDF ( $data, $output = false ) {
 		// Push to temporary file
@@ -273,7 +364,11 @@ class FormTemplate {
 		}
 
 		// Otherwise, get this as a string
-		return `${cmd}`;
+		$filename = '/tmp/form'.mktime();
+		$fp = fopen($filename, 'w');
+		fputs($fp, `${cmd}`);
+		fclose($fp);
+		return $filename;
 	} // end method RenderToPDF
 
 } // end class FormTemplate
