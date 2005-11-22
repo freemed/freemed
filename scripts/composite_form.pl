@@ -60,17 +60,29 @@ sub process_page {
 	# Create text page object
 	my $page = $pdf->openpage($count);
 	my $txt = $page->text;
+	my $gfx = $page->gfx;
+	$gfx->strokecolor('#000000');
 	my $corefont = $pdf->corefont('Courier', 1);
 	$txt->font($corefont, 12);
 
 	# Loop through elements
 	foreach my $e (@{$pxml->{element}}) {
 		# Set positioning for element
-		if (!$e->{ysize}) { $e->{ysize} = 12; }
-		$txt->translate($e->{xpos}, $page_height - ($e->{ypos} + $e->{ysize}));
-		#print "moveto (".$e->{xpos}.", ".($page_height - ($e->{ypos} + $e->{ysize})).")\n";
-		$txt->text($e->{data});
-		#print "print ( ".$e->{data}." )\n";
+		if ($e->{type} eq 'data') {
+			if (!$e->{ysize}) { $e->{ysize} = 12; }
+			$txt->translate($e->{xpos}, $page_height - ($e->{ypos} + $e->{ysize}));
+			#print "moveto (".$e->{xpos}.", ".($page_height - ($e->{ypos} + $e->{ysize})).")\n";
+			$txt->text($e->{data});
+			#print "print ( ".$e->{data}." )\n";
+		} elsif ($e->{type} eq 'outline') {
+			$gfx->move($e->{xpos}, $page_height - ($e->{ypos}));
+			$gfx->line($e->{xpos}, $page_height - ($e->{ypos} + $e->{ysize}));
+			$gfx->line($e->{xpos} + $e->{xsize}, $page_height - ($e->{ypos} + $e->{ysize}));
+			$gfx->line($e->{xpos} + $e->{xsize}, $page_height - ($e->{ypos}));
+			$gfx->line($e->{xpos}, $page_height - ($e->{ypos}));
+			$gfx->stroke;
+			$gfx->endpath();
+		}
 	}
 
 	# End page and attach

@@ -209,18 +209,33 @@ class FormTemplate {
 	//	XML formatted elements.
 	//
 	function ProcessElement ( $attr, $data ) {
-		$output = '<element ';
-		foreach ($attr AS $k => $v) {
-			$output .= $k . '="' . htmlentities($v) . '" ';
+		// Don't push the element if we don't have any data coming back and
+		// it's an outline element.
+		if ($attr['type'] == 'outline') {
+			if ($this->ProcessData($data)) {
+				$enable_output = true;
+			} else {
+				$enable_output = false;
+			}
+		} else {
+			$enable_output = true;
 		}
-		$output .= ">\n";
 
-		// Push data
-		$output .= '<data>'.htmlentities($this->ProcessData($data))."</data>\n";
+		if ($enable_output) {
+			$output = '<element ';
+			foreach ($attr AS $k => $v) {
+				$output .= $k . '="' . htmlentities($v) . '" ';
+			}
+			$output .= ">\n";
 
-		$output .= "</element>\n";
-
-		return $output;
+			// Push data
+			$output .= '<data>'.htmlentities($this->ProcessData($data))."</data>\n";
+	
+			$output .= "</element>\n";
+			return $output;
+		} else {
+			return '';
+		}
 	} // end method ProcessElement
 
 	// Method: ProcessData
@@ -321,6 +336,7 @@ class FormTemplate {
 				break;
 
 			case 'conditional':
+				if ($data['table'] == 'static') { return 'X'; }
 				if ($data['value'] == $raw) { return 'X'; }
 				else return '';
 				break;
