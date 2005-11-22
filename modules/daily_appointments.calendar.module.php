@@ -35,6 +35,8 @@ class DailyAppointmentCalendar extends CalendarModule {
 		$display_buffer .= "
 		<div align=\"center\">
 		<form method=\"post\">
+		".__("Date")." :
+		".fm_date_entry("date")."<br/>
 		".__("Select a Provider")." : 
 		".module_function('providermodule', 'widget', array ( 'provider' ) )."
 		<input type=\"submit\" name=\"my_action\" class=\"button\" value=\"".__("Select Provider")."\" />
@@ -46,18 +48,24 @@ class DailyAppointmentCalendar extends CalendarModule {
 	function displayCalendar ($provider) {
 		ob_start();
 
+		$date = fm_date_assemble('date');
+
 		$scheduler = CreateObject('_FreeMED.Scheduler');
 		include_once('lib/calendar-functions.php');
 		if ($provider > 0) {
-			$r = $scheduler->find_date_appointments(date('Y-m-d'), $provider);
+			$r = $scheduler->find_date_appointments($date, $provider);
 		} else {
-			$r = $scheduler->find_date_appointments(date('Y-m-d'));
+			$r = $scheduler->find_date_appointments($date);
 		}
 
-		print "<div align=\"center\">\n".
-			__("Daily Appointments")."<br/>\n".
-			fm_date_print(date('Y-m-d')).
-			"</div>\n";
+		print "<div align=\"center\">\n";
+		print "<h3>".__("Daily Appointments")."</h3>\n";
+		if ($provider > 0) {
+			$p = CreateObject('_FreeMED.Physician', $provider);
+			print "<h4>".$p->fullName()."</h4>\n";
+		}
+		print "<h4>".fm_date_print($date)."</h4>\n";
+		print "</div>\n";
 
 		print "<div align=\"center\">\n";
 		print "<table border=\"0\" cellpadding=\"3\">\n";
@@ -77,12 +85,13 @@ class DailyAppointmentCalendar extends CalendarModule {
 		foreach ($r AS $a) {
 			$patient = CreateObject('_FreeMED.Patient', $a['calpatient']);
 			$provider = CreateObject('_FreeMED.Physician', $a['calphysician']);
+			$age = array_element(date_diff($patient->local_record['ptdob']), 0);
 			print "<tr>\n".
 				"<td>".$a['caldateof']."</td>\n".
 				"<td>".fc_get_time_string($a['calhour'],$a['calminute'])."</td>\n".
 				"<td>".$patient->idNumber()."</td>\n".
 				"<td>".$patient->fullName()."</td>\n".
-				"<td>".$a['']."</td>\n".
+				"<td>".( $age < 1 ? '&lt; 1' : $age )."</td>\n".
 				"<td>".strtoupper($patient->ptsex)."</td>\n".
 				"<td>".$patient->dateOfBirth()."</td>\n".
 				"<td>".$provider->fullName()."</td>\n".
