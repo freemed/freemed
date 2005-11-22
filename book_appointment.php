@@ -603,6 +603,7 @@ function display_booking_calendar ($date) {
 						$maps[$cur_map][$idx]['link'],
 						'scheduler'
 					);
+					$bpatient = CreateObject('_FreeMED.Patient', $booking['calpatient']);
 	
 					// Show the event
 					$event = true;
@@ -613,7 +614,7 @@ function display_booking_calendar ($date) {
 					"\" onMouseOver=\"tooltip('".
 					str_replace("\n", '\n', htmlentities($scheduler->event_calendar_print($maps[$cur_map][$idx]['link']))).
 					"');\" onMouseOut=\"hidetooltip();\" >".
-					"&nbsp;".
+					"<small>".$bpatient->fullName()."</small>".
 					"</td>\n";
 				} else {
 					// If not, null block
