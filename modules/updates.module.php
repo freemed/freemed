@@ -19,6 +19,10 @@ class UpdatesModule extends BaseModule {
 		// Add main menu notification handlers
 		$this->_SetHandler('MenuNotifyItems', 'menu_notify');
 		$this->_SetHandler('MainMenu', 'notify');
+
+		$this->_SetHandler('Utilities', 'menu');
+		$this->_SetMetaInformation('UtilityName', __("Updates"));
+		$this->_SetMetaInformation('UtilityDescription', __("Update and security feeds menu."));
 		
 		// Form proper configuration information
 		$this->_SetMetaInformation('global_config_vars', array(
@@ -57,7 +61,7 @@ class UpdatesModule extends BaseModule {
 		return array (
 			__("Updates"),
 			sprintf(__("The security feed was last updated on %s."), $newest_timestamp)." ".
-			"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\">".
+			"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=feed\">".
 			"[".__("View")."]</a>",
 			"img/security_icon.png"
 		);
@@ -73,7 +77,7 @@ class UpdatesModule extends BaseModule {
 		if ($this->_cache_feed('Security')) {
 			return array (
 				__("There is new information in the security feed"),
-				"module_loader.php?module=".urlencode(get_class($this))."&action=display"
+				"module_loader.php?module=".urlencode(get_class($this))."&action=feed"
 			);
 		}
 		return false;
@@ -81,13 +85,33 @@ class UpdatesModule extends BaseModule {
 
 	function main () {
 		switch ($_REQUEST['action']) {
+			case 'feed':
+				$this->feed();
+				break;
 			default:
-				$this->view();
+				$this->menu();
 				break;
 		}
 	} // end method main
 
-	function view () {
+	function menu () {
+		global $display_buffer;
+
+		$display_buffer .= "<div class=\"section\">".__("Updates")."</div>\n".
+			"<p/>\n".
+			"<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\" width=\"80%\">\n".
+			"<tr class=\"reverse\">\n".
+			"<td class=\"reverse\">".__("Action")."</td>\n".
+			"<td class=\"reverse\">".__("Description")."</td>\n".
+			"</tr>\n";
+		$display_buffer .= "<tr>".
+			"<td><a href=\"module_loader.php?module=".get_class($this)."&action=feed\">".__("View Feeds")."</td>\n".
+			"<td>".__("View FreeMED Software Foundation update and security feeds.")."</td>\n".
+			"</tr>\n";
+		$display_buffer .= "</table><p/>\n";
+	} // end method menu
+
+	function feed () {
 		global $display_buffer;
 
 		$feed = 'Security';
@@ -98,7 +122,7 @@ class UpdatesModule extends BaseModule {
 			$display_buffer .= $item['description']."<br/>\n";
 		}
 		$display_buffer .= "<br/><br/><div align=\"center\"><a href=\"javascript:history.go(-1);\" class=\"button\">".__("Go Back")."</a></div>\n";
-	} // end method view
+	} // end method feed
 
 	//------ Actual functions for news feeds
 
