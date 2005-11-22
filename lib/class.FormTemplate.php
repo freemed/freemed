@@ -305,6 +305,10 @@ class FormTemplate {
 					$raw = $this->FetchDataElement($data['field']);
 					break;
 
+				case 'static':
+					$raw = $data['field'];
+					break;
+
 				default:
 					break;
 			} // end switch
@@ -318,6 +322,7 @@ class FormTemplate {
 
 			case 'conditional':
 				if ($data['value'] == $raw) { return 'X'; }
+				else return '';
 				break;
 
 			case 'phone':
