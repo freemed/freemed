@@ -211,6 +211,8 @@ class ACL extends MaintenanceModule {
 	//	bizarre XML-based schema setup.
 	//
 	function _setup ( ) {
+		syslog(LOG_INFO, "ACL| loading _setup");
+
 		// Load gacl_api instead of gacl, since we have to emulate
 		// the admin module that they have. We don't load the
 		// dependency, as it was loaded in lib/acl.php for the
@@ -236,9 +238,11 @@ class ACL extends MaintenanceModule {
 		$sql = $schema->ParseSchemaString($xml);
 
 		// Execute the SQL schema that has been built
+		syslog(LOG_INFO, "ACL| executing schema");
 		$result = $schema->ExecuteSchema($sql, true);
 		if ($result != 2) {
 			print "ACL: table creation error<br/>\n";
+			syslog(LOG_INFO, "ACL| table creation error");
 		}
 
 		// Cleanup
@@ -256,6 +260,7 @@ class ACL extends MaintenanceModule {
 	//	and methods.
 	//
 	function _set_defaults ( ) {
+		syslog(LOG_INFO, "ACL| running _set_defaults");
 		$acl = $this->_acl_object();
 		include_once (ADODB_DIR.'/adodb-xmlschema.inc.php');
 		$schema = new adoSchema ( &$acl->db, true );
@@ -264,6 +269,7 @@ class ACL extends MaintenanceModule {
 		//print "result = "; print_r($result); print "<br/>\n";
 		if ($result != 2) {
 			//print "ACL: data import error<br/>\n";
+			syslog(LOG_INFO, "ACL| data import error");
 		}
 		$schema->Destroy();
 	} // end method _set_defaults
