@@ -290,6 +290,7 @@ class Scheduler {
 			$my_patient->id."\"".
 			">".trim($my_patient->fullName())."</a> ".
 			"(".$my_event['calduration']."m)<br/>\n".
+			__("DOB").": ".$my_patient->dateOfBirth()."<br/>\n".
 			"<a href=\"book_appointment.php?id=".
 				urlencode($my_event['id'])."&".
 				"type=".$my_event['caltype']."\" ".
