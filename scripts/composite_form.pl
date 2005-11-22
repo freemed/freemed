@@ -61,11 +61,12 @@ sub process_page {
 	my $page = $pdf->openpage($count);
 	my $txt = $page->text;
 	my $corefont = $pdf->corefont('Courier', 1);
-	$txt->font($corefont, 10);
+	$txt->font($corefont, 12);
 
 	# Loop through elements
 	foreach my $e (@{$pxml->{element}}) {
 		# Set positioning for element
+		if (!$e->{ysize}) { $e->{ysize} = 12; }
 		$txt->translate($e->{xpos}, $page_height - ($e->{ypos} + $e->{ysize}));
 		#print "moveto (".$e->{xpos}.", ".($page_height - ($e->{ypos} + $e->{ysize})).")\n";
 		$txt->text($e->{data});
