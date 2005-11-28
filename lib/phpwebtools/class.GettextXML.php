@@ -49,20 +49,20 @@ class GettextXML {
 
 		extract($GLOBALS['__phpwebtools']['gettextXML']);
 
-		// Check to see if it's cached
-		if (!isset($_cache)) {
-			// If we're not cached, cache *everything*
-			$_cache = array();
-			if (is_array($domains)) {
-				$domains = array_unique($domains);
-				foreach ($domains AS $__garbage => $xmlfile) {
+		// If we're not cached, cache *everything*
+		$domains = $GLOBALS['__phpwebtools']['gettextXML']['domains'];
+		if (is_array($domains)) {
+			$domains = array_unique($domains);
+			foreach ($domains AS $__garbage => $xmlfile) {
+				if (!$GLOBALS['__phpwebtools']['gettexmXML']['domain_cached'][$xmlfile]) {
+					$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile] = $xmlfile;
 					// Add to the cache
 					$_cache = array_merge($_cache,
 						GettextXML::_parse_xml($xmlfile)
 					);
-				} // end foreach
-			} // end is array
-		} // end checking for cache
+				}
+			} // end foreach
+		} // end is array
 
 		// Get translated string
 		$translated = $_cache["$string"];
