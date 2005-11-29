@@ -505,6 +505,7 @@ class freemed {
 		$handlers = freemed::module_handler($name);
 		if (is_array($handlers)) {
 			foreach ($handlers AS $class => $handler) {
+				GettextXML::textdomain(strtolower($class));
 				if ($params != NULL) {
 					$reply[] = module_function ($class, $handler, $params);
 				} else {
