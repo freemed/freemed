@@ -38,6 +38,7 @@ switch ($_REQUEST['action']) {
 	case 'type':
 	// Execute handler
 	$module_handlers = freemed::module_handler('Utilities');
+	GettextXML::textdomain(strtolower($_REQUEST['type']));
 	$display_buffer .= module_function($_REQUEST['type'], $module_handlers[strtolower($_REQUEST['type'])]);
 
 	// Display closing information for return to menu
@@ -72,8 +73,8 @@ switch ($_REQUEST['action']) {
 		$title = freemed::module_get_meta($class, 'UtilityName');
 		$desc = freemed::module_get_meta($class, 'UtilityDescription');
 		// Add to the list
-		$types[$title] = $class;
-		$description[$title] = $desc;
+		$types[__($title)] = $class;
+		$description[__($title)] = __($desc);
 
 		if ($icon = freemed::module_get_value($class, 'ICON')) {
 			$icons[__($title)] = $icon;
