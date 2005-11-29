@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-17 21:59-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Mark claims to be rebilled by coverage. This option is depreciated.</original>
+	<translated>Marquez les r&#xC3;&#xA9;clamations &#xC3;&#xA0; refacturer par assurance. Cette option est d&#xC3;&#xA9;pr&#xC3;&#xA9;ci&#xC3;&#xA9;e.</translated>
+</translation>
+<translation>
+	<original>Rebill By Coverage</original>
+	<translated>Re-facturer Par Couverture</translated>
+</translation>
+<translation>
+	<original>Rebill by Coverage</original>
+	<translated>Re-facturer Par Couverture</translated>
+</translation>
+<translation>
+	<original>Rebill for</original>
+	<translated>Re-Facturer pour</translated>
+</translation>
+<translation>
+	<original>Return to Rebill Menu</original>
+	<translated>Revenir au Menu Re-Facturer</translated>
+</translation>
+<translation>
+	<original>There is nothing to rebill at this time.</original>
+	<translated>Il n'y a rien a re-facturer.</translated>
+</translation>
+
+</gettextXML>
+

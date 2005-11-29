@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:01-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-18 22:31-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Billing Contact</original>
+	<translated>Contact de Facturation</translated>
+</translation>
+<translation>
+	<original>Billing Service</original>
+	<translated>Service de Facturation</translated>
+</translation>
+<translation>
+	<original>Bills were not able to be marked as billed.</original>
+	<translated>Les factures ne pouvaient pas &#xC3;&#xAA;tre marqu&#xC3;&#xA9; comme factur&#xC3;&#xA9;es</translated>
+</translation>
+<translation>
+	<original>Bills were successfully marked as billed.</original>
+	<translated>Les factures ont &#xC3;&#xA9;t&#xC3;&#xA9; marqu&#xC3;&#xA9;es comme factur&#xC3;&#xA9;es.</translated>
+</translation>
+<translation>
+	<original>Clearinghouse</original>
+	<translated>Chambre de compensation</translated>
+</translation>
+<translation>
+	<original>Completed</original>
+	<translated>Compl&#xC3;&#xA9;t&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Create patient statements for the system.</original>
+	<translated>Cr&#xC3;&#xA9;&#xC3;&#xA9; la d&#xC3;&#xA9;claration du patient pour le syst&#xC3;&#xA8;me.</translated>
+</translation>
+<translation>
+	<original>DOS:</original>
+	<translated>DOS:</translated>
+</translation>
+<translation>
+	<original>Date Billed</original>
+	<translated>Date Factur&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Description</translated>
+</translation>
+<translation>
+	<original>Electronic</original>
+	<translated>Electronique</translated>
+</translation>
+<translation>
+	<original>Function</original>
+	<translated>Fonction</translated>
+</translation>
+<translation>
+	<original>Identifier</original>
+	<translated>Identifiant</translated>
+</translation>
+<translation>
+	<original>If you are satisfied with your bills, mark them as sent.</original>
+	<translated>Si vous &#xC3;&#xAA;tes satisfait de vos factures, marquez-les comme envoy&#xC3;&#xA9;es.</translated>
+</translation>
+<translation>
+	<original>Invalid keys passed to status function!</original>
+	<translated>Clefs inadmissibles pass&#xC3;&#xA9;es &#xC3;&#xA0; la fonction de statut !</translated>
+</translation>
+<translation>
+	<original>Logs</original>
+	<translated>Notations</translated>
+</translation>
+<translation>
+	<original>Mark as Billed</original>
+	<translated>Marqu&#xC3;&#xA9; comme Factur&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Paper</original>
+	<translated>Papier</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Patient Statements</original>
+	<translated>D&#xC3;&#xA9;clarations des Patients</translated>
+</translation>
+<translation>
+	<original>Patient statement generated</original>
+	<translated>D&#xC3;&#xA9;claration du patient g&#xC3;&#xA9;n&#xC3;&#xA9;r&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Perform Billing</original>
+	<translated>Effectuez la Facturation</translated>
+</translation>
+<translation>
+	<original>Perform Remitt billing runs.</original>
+	<translated>Effectuez la facturation de Remitt.</translated>
+</translation>
+<translation>
+	<original>Procedures</original>
+	<translated>Procedures</translated>
+</translation>
+<translation>
+	<original>Processing</original>
+	<translated>Traitement</translated>
+</translation>
+<translation>
+	<original>REMITT Server Not Running</original>
+	<translated>Serveur REMITT non Fonctionnel</translated>
+</translation>
+<translation>
+	<original>REMITT Server Running</original>
+	<translated>Serveur REMITT Fonctionnel</translated>
+</translation>
+<translation>
+	<original>Rebill Claims</original>
+	<translated>Re-Factur&#xC3;&#xA9; les R&#xC3;&#xA9;clamations</translated>
+</translation>
+<translation>
+	<original>Remitt Billing Sent</original>
+	<translated>La Facturations Remitt envoy&#xC3;&#xA9;e</translated>
+</translation>
+<translation>
+	<original>Remitt Billing System</original>
+	<translated>Le Syst&#xC3;&#xA8;me de Facturation Remitt</translated>
+</translation>
+<translation>
+	<original>Remitt Password</original>
+	<translated>Mot de Passe Remitt</translated>
+</translation>
+<translation>
+	<original>Remitt Results and Logs</original>
+	<translated>R&#xC3;&#xA9;sultats Remitt et Notations</translated>
+</translation>
+<translation>
+	<original>Remitt Server Hostname</original>
+	<translated>Hostname de Serveur Remitt</translated>
+</translation>
+<translation>
+	<original>Remitt Server Port</original>
+	<translated>Port du Serveur Remitt</translated>
+</translation>
+<translation>
+	<original>Remitt Username</original>
+	<translated>Nom d'Usager Remitt</translated>
+</translation>
+<translation>
+	<original>Remitt billing run sent</original>
+	<translated>Facturation Remitt envoy&#xC3;&#xA9;e</translated>
+</translation>
+<translation>
+	<original>Report</original>
+	<translated>Rapport</translated>
+</translation>
+<translation>
+	<original>Result file returned was</original>
+	<translated>Le fichier r&#xC3;&#xA9;sultat retourn&#xC3;&#xA9; &#xC3;&#xA9;tait</translated>
+</translation>
+<translation>
+	<original>Results</original>
+	<translated>R&#xC3;&#xA9;sultats</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>S&#xC3;&#xA9;lectionn&#xC3;&#xA9; Tout</translated>
+</translation>
+<translation>
+	<original>Select None</original>
+	<translated>S&#xC3;&#xA9;lectionn&#xC3;&#xA9; Aucun</translated>
+</translation>
+<translation>
+	<original>Select a previous billing to rebill.</original>
+	<translated>S&#xC3;&#xA9;lectionn&#xC3;&#xA9; une ancienne facture pour re-facturation.</translated>
+</translation>
+<translation>
+	<original>Show Reports</original>
+	<translated>Voir les Rapports</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Statut</translated>
+</translation>
+<translation>
+	<original>Submit Alone</original>
+	<translated>Soumettre Seul</translated>
+</translation>
+<translation>
+	<original>Submit Claim?</original>
+	<translated>Soumettre la D&#xC3;&#xA9;claration</translated>
+</translation>
+<translation>
+	<original>Submit Claims</original>
+	<translated>Soumettre les D&#xC3;&#xA9;clarations</translated>
+</translation>
+<translation>
+	<original>Submit Patient?</original>
+	<translated>Soumettre le Patient</translated>
+</translation>
+<translation>
+	<original>Submitting data to Remitt server</original>
+	<translated>En soumission au Serveur Remitt</translated>
+</translation>
+<translation>
+	<original>The REMITT Server is not running. Please start it and try again.</original>
+	<translated>Le serveur Remitt est non fonctionnel.SVP le red&#xC3;&#xA9;marrer et essayer encore.</translated>
+</translation>
+<translation>
+	<original>There are no billing runs to rebill.</original>
+	<translated>Il n'y a aucune facture &#xC3;&#xA0; re-facturer.</translated>
+</translation>
+<translation>
+	<original>There are no patients to bill.</original>
+	<translated>Il y a aucun patient &#xC3;&#xA0; facturer.</translated>
+</translation>
+<translation>
+	<original>Transport Protocol</original>
+	<translated>Protocol de Transport</translated>
+</translation>
+<translation>
+	<original>Use the Remitt formatting and transport system to send insurance claims electronically or generate paper claims.</original>
+	<translated>Employez le formatage de Remitt pour envoyer des d&#xC3;&#xA9;clarations de sinistre &#xC3;&#xA9;lectroniquement ou pour produire des r&#xC3;&#xA9;clamations papiers.</translated>
+</translation>
+<translation>
+	<original>View</original>
+	<translated>Voir</translated>
+</translation>
+<translation>
+	<original>View output files and logs from Remitt.</original>
+	<translated>Voir les fichiers de sorties et les notations de Remitt.</translated>
+</translation>
+<translation>
+	<original>claims</original>
+	<translated>r&#xC3;&#xA9;clamations</translated>
+</translation>
+<translation>
+	<original>expand individual claims</original>
+	<translated>Ouvrir les d&#xC3;&#xA9;clarations individuelles</translated>
+</translation>
+
+</gettextXML>
+

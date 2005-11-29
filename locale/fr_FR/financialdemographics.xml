@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-14 22:37-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Dependent Children</original>
+	<translated>Enfants &#xC3;&#xA0; Charge</translated>
+</translation>
+<translation>
+	<original>Expiration</original>
+	<translated>Expiration</translated>
+</translation>
+<translation>
+	<original>Federal Poverty Increment</original>
+	<translated>Incr&#xC3;&#xA9;ment F&#xC3;&#xA9;d&#xC3;&#xA9;ral de Pauvret&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Federal Poverty Level</original>
+	<translated>Niveau F&#xC3;&#xA9;d&#xC3;&#xA9;ral de Pauvret&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Household Size</original>
+	<translated>Taille de M&#xC3;&#xA9;nage</translated>
+</translation>
+<translation>
+	<original>Identification</original>
+	<translated>Identification</translated>
+</translation>
+<translation>
+	<original>Identification Issuer</original>
+	<translated>&#xC3;&#x89;metteur d'Identification</translated>
+</translation>
+<translation>
+	<original>Identification Number</original>
+	<translated>Num&#xC3;&#xA9;ro d'Identification</translated>
+</translation>
+<translation>
+	<original>Other Dependents</original>
+	<translated>Autres Personnes &#xC3;&#xA0; charge</translated>
+</translation>
+<translation>
+	<original>Other Information</original>
+	<translated>Autres Informations</translated>
+</translation>
+<translation>
+	<original>Size of Household</original>
+	<translated>Taille de m&#xC3;&#xA9;nage</translated>
+</translation>
+<translation>
+	<original>Spouse</original>
+	<translated>&#xC3;&#x89;pouse</translated>
+</translation>
+<translation>
+	<original>Timestamp</original>
+	<translated>Horodateur</translated>
+</translation>
+<translation>
+	<original>Yearly Income</original>
+	<translated>Revenu Annuel</translated>
+</translation>
+<translation>
+	<original>baptismal certificate</original>
+	<translated>Certificat de Bapt&#xC3;&#xAA;me</translated>
+</translation>
+<translation>
+	<original>birth certificate</original>
+	<translated>Certificat de Naissance</translated>
+</translation>
+<translation>
+	<original>driver's license</original>
+	<translated>Permis de Conduire</translated>
+</translation>
+<translation>
+	<original>green card</original>
+	<translated>Carte Verte</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>non</translated>
+</translation>
+<translation>
+	<original>passport</original>
+	<translated>passport</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>oui</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-18 22:04-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>All pages received.</original>
+	<translated>Toutes les pages ont &#xC3;&#xA9;t&#xC3;&#xA9; re&#xC3;&#xA7;ues</translated>
+</translation>
+<translation>
+	<original>Are you sure that this fax contains a cover sheet?</original>
+	<translated>&#xC3;&#x8A;tes-vous s&#xC3;&#xBB;r que ce fac-simil&#xC3;&#xA9; contient une page couverture?</translated>
+</translation>
+<translation>
+	<original>Are you sure that you want to permanently delete this fax?</original>
+	<translated>&#xC3;&#x8A;tes-vous s&#xC3;&#xBB;r que vous voulez supprimer de mani&#xC3;&#xA8;re permanente ce fac-simil&#xC3;&#xA9;?</translated>
+</translation>
+<translation>
+	<original>Confirmation fax sent.</original>
+	<translated>Confirmation d'envoi du fac-simil&#xC3;&#xA9;.</translated>
+</translation>
+<translation>
+	<original>Fax Confirmation #</original>
+	<translated>Confirmation Fac-Simil&#xC3;&#xA9; #</translated>
+</translation>
+<translation>
+	<original>Fax file does not exist!</original>
+	<translated>Le fichier du fac-simil&#xC3;&#xA9; n'existe pas!</translated>
+</translation>
+<translation>
+	<original>Fax received for patient</original>
+	<translated>Fac-Simil&#xC3;&#xA9; re&#xC3;&#xA7;u pour le patient</translated>
+</translation>
+<translation>
+	<original>File</original>
+	<translated>Classer</translated>
+</translation>
+<translation>
+	<original>File Another Fax</original>
+	<translated>Classer un Autre Fac-Simil&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>File Directly</original>
+	<translated>Classer Directement</translated>
+</translation>
+<translation>
+	<original>File Directly without First Page</original>
+	<translated>Classer Directement sans Page Couverture</translated>
+</translation>
+<translation>
+	<original>File name</original>
+	<translated>Nom du Fichier</translated>
+</translation>
+<translation>
+	<original>Moved fax to scanned documents.</original>
+	<translated>Fac-Simil&#xC3;&#xA9; d&#xC3;&#xA9;plac&#xC3;&#xA9; aux documents balay&#xC3;&#xA9;s.</translated>
+</translation>
+<translation>
+	<original>Moved fax to unread box.</original>
+	<translated>Fac-simil&#xC3;&#xA9; d&#xC3;&#xA9;plac&#xC3;&#xA9; aux nouveau documents.</translated>
+</translation>
+<translation>
+	<original>Note</original>
+	<translated>Note</translated>
+</translation>
+<translation>
+	<original>Notify</original>
+	<translated>Annoncez</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#xC3;&#xA9;decin</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Fournisseur</translated>
+</translation>
+<translation>
+	<original>Removed first page.</original>
+	<translated>Retirer la premi&#xC3;&#xA8;re page.</translated>
+</translation>
+<translation>
+	<original>Return to Unfiled Fax Menu</original>
+	<translated>Retourner au Menu des fac-simil&#xC3;&#xA9;s non class&#xC3;&#xA9;s</translated>
+</translation>
+<translation>
+	<original>Send to Provider</original>
+	<translated>Envoyer au Fournisseur</translated>
+</translation>
+<translation>
+	<original>Send to Provider without First Page</original>
+	<translated>Envoyer au Fournisseur sans la Premi&#xC3;&#xA8;re Page</translated>
+</translation>
+<translation>
+	<original>Split</original>
+	<translated>Divis&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Split Batch</original>
+	<translated>Diviser le Groupe</translated>
+</translation>
+<translation>
+	<original>Split fax successfully.</original>
+	<translated>Division du fac-simil&#xC3;&#xA9; r&#xC3;&#xA9;ussi avec succ&#xC3;&#xA8;s</translated>
+</translation>
+<translation>
+	<original>Thank you.</original>
+	<translated>Merci.</translated>
+</translation>
+<translation>
+	<original>There are currently %d unfiled fax(es) in the system.</original>
+	<translated>Il y a actuellement %d fac-simil&#xC3;&#xA9;(s) non class&#xC3;&#xA9;(s) dans le syst&#xC3;&#xA8;me.</translated>
+</translation>
+<translation>
+	<original>There are no unfiled faxes at this time.</original>
+	<translated>Il y a aucun fac-simil&#xC3;&#xA9; class&#xC3;&#xA9; en ce moment.</translated>
+</translation>
+<translation>
+	<original>There is currently 1 unfiled fax in the system.</original>
+	<translated>Il y a actuellement 1 fac-simil&#xC3;&#xA9; non class&#xC3;&#xA9; dans le syst&#xC3;&#xA8;me.</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Type</translated>
+</translation>
+<translation>
+	<original>Type of Document</original>
+	<translated>Type de Document</translated>
+</translation>
+<translation>
+	<original>Unfiled Faxes</original>
+	<translated>Fac-Simil&#xC3;&#xA9;s non class&#xC3;&#xA9;s</translated>
+</translation>
+<translation>
+	<original>View Patient Record</original>
+	<translated>Voir le Dossier du Patient</translated>
+</translation>
+<translation>
+	<original>You have %d unfiled faxes</original>
+	<translated>Vous avez %d fac-simil&#xC3;&#xA9;s non class&#xC3;&#xA9;s</translated>
+</translation>
+<translation>
+	<original>You must enter a value for:</original>
+	<translated>Vous devez entrer une valeur pour:</translated>
+</translation>
+<translation>
+	<original>page(s) received</original>
+	<translated>page(s) re&#xC3;&#xA7;ues</translated>
+</translation>
+
+</gettextXML>
+

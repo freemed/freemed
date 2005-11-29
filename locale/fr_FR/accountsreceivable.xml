@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-18 22:32-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>items were successfully written off</original>
+	<translated>Les items ont &#xC3;&#xA9;t&#xC3;&#xA9; effac&#xC3;&#xA9;s avec succ&#xC3;&#xA8;s
+  
+</translated>
+</translation>
+<translation>
+	<original>Accounts Receivable</original>
+	<translated>Compte &#xC3;&#xA0; Recevoir</translated>
+</translation>
+<translation>
+	<original>Acct Bal</original>
+	<translated>Solde au Cpt</translated>
+</translation>
+<translation>
+	<original>Add Event</original>
+	<translated>Ajouter un &#xC3;&#x89;v&#xC3;&#xA9;nement</translated>
+</translation>
+<translation>
+	<original>Add Item Event</original>
+	<translated>Ajouter un &#xC3;&#x89;v&#xC3;&#xA9;nement d'Item</translated>
+</translation>
+<translation>
+	<original>Adjs</original>
+	<translated>Ajst</translated>
+</translation>
+<translation>
+	<original>Aged Items</original>
+	<translated>Items en retard</translated>
+</translation>
+<translation>
+	<original>Aging</original>
+	<translated>Retard</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to write these items off.</original>
+	<translated>Une erreur s'est produite tout en essayant d'effacer ces items.</translated>
+</translation>
+<translation>
+	<original>Balance</original>
+	<translated>Solde</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>CPT</translated>
+</translation>
+<translation>
+	<original>Call</original>
+	<translated>Appel</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Frais</translated>
+</translation>
+<translation>
+	<original>Check #%s</original>
+	<translated>Contr&#xC3;&#xB4;le # %s</translated>
+</translation>
+<translation>
+	<original>Check Number</original>
+	<translated>Num&#xC3;&#xA9;ro du Ch&#xC3;&#xA8;que</translated>
+</translation>
+<translation>
+	<original>Claim</original>
+	<translated>R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re de R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim Status</original>
+	<translated>Statut de la R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim has nowhere to go ... no more coverages</original>
+	<translated>La r&#xC3;&#xA9;clamation n'a nulle part pour aller... plus d'assurances</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Commentaire</translated>
+</translation>
+<translation>
+	<original>Copay</original>
+	<translated>Paie Commune</translated>
+</translation>
+<translation>
+	<original>Coverage</original>
+	<translated>Couverture</translated>
+</translation>
+<translation>
+	<original>Current Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re Courant</translated>
+</translation>
+<translation>
+	<original>Date of Service</original>
+	<translated>Date du Service</translated>
+</translation>
+<translation>
+	<original>EMR</original>
+	<translated>DME</translated>
+</translation>
+<translation>
+	<original>Email</original>
+	<translated>Courriel</translated>
+</translation>
+<translation>
+	<original>Filter by this date</original>
+	<translated>Filtrer &#xC3;&#xA0; cette date</translated>
+</translation>
+<translation>
+	<original>Filter by this item type</original>
+	<translated>Filtrer par ce type d'article</translated>
+</translation>
+<translation>
+	<original>Filter by this patient</original>
+	<translated>Filtrer par ce patient</translated>
+</translation>
+<translation>
+	<original>Filter by this procedure</original>
+	<translated>Filtrer par cette proc&#xC3;&#xA9;dure</translated>
+</translation>
+<translation>
+	<original>Filter by this provider</original>
+	<translated>Filtrer par ce fournisseur</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Pr&#xC3;&#xA9;nom</translated>
+</translation>
+<translation>
+	<original>First Name like</original>
+	<translated>Synonyme du Pr&#xC3;&#xA9;nom</translated>
+</translation>
+<translation>
+	<original>For checked items</original>
+	<translated>Pour les items s&#xC3;&#xA9;lectionn&#xC3;&#xA9;s</translated>
+</translation>
+<translation>
+	<original>ICD</original>
+	<translated>ICD</translated>
+</translation>
+<translation>
+	<original>Item</original>
+	<translated>Item</translated>
+</translation>
+<translation>
+	<original>Item Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re d'Item</translated>
+</translation>
+<translation>
+	<original>Item Detail</original>
+	<translated>D&#xC3;&#xA9;tail de l'Item</translated>
+</translation>
+<translation>
+	<original>Item Details</original>
+	<translated>D&#xC3;&#xA9;tails des Items</translated>
+</translation>
+<translation>
+	<original>Item Type</original>
+	<translated>Type d'Item</translated>
+</translation>
+<translation>
+	<original>Junk</original>
+	<translated>Ordure</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Last Name like</original>
+	<translated>Synonyme du Nom</translated>
+</translation>
+<translation>
+	<original>Ledger</original>
+	<translated>Registre</translated>
+</translation>
+<translation>
+	<original>Left Over</original>
+	<translated>Restant</translated>
+</translation>
+<translation>
+	<original>Manage all transactions in the system.</original>
+	<translated>G&#xC3;&#xA9;rer toutes les transactions du syst&#xC3;&#xA8;me.</translated>
+</translation>
+<translation>
+	<original>Moved to coverage %s</original>
+	<translated>D&#xC3;&#xA9;plac&#xC3;&#xA9; &#xC3;&#xA0; la couverture %s</translated>
+</translation>
+<translation>
+	<original>Moved to patient responsibility</original>
+	<translated>D&#xC3;&#xA9;plac&#xC3;&#xA9; &#xC3;&#xA0; la responsabilit&#xC3;&#xA9; du patient</translated>
+</translation>
+<translation>
+	<original>Narrow Search</original>
+	<translated>Recherche Pr&#xC3;&#xA9;cise</translated>
+</translation>
+<translation>
+	<original>New Search</original>
+	<translated>Nouvelle Recherche</translated>
+</translation>
+<translation>
+	<original>No Search</original>
+	<translated>Aucune Recherche</translated>
+</translation>
+<translation>
+	<original>Outstanding</original>
+	<translated>En attente</translated>
+</translation>
+<translation>
+	<original>POS</original>
+	<translated>POS</translated>
+</translation>
+<translation>
+	<original>Paid</original>
+	<translated>Payer</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Patient Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re du Patient</translated>
+</translation>
+<translation>
+	<original>Patient Pay</original>
+	<translated>Paiement du Patient</translated>
+</translation>
+<translation>
+	<original>Payer</original>
+	<translated>Payeur</translated>
+</translation>
+<translation>
+	<original>Payment Received</original>
+	<translated>Paiement Re&#xC3;&#xA7;u</translated>
+</translation>
+<translation>
+	<original>Payment from Payer</original>
+	<translated>Paiement du Payeur</translated>
+</translation>
+<translation>
+	<original>Please select an item  before attempting to write off.</original>
+	<translated>Veuillez choisir un item avant d'essayer de l'effacer
+ 
+  
+</translated>
+</translation>
+<translation>
+	<original>Post</original>
+	<translated>Sauvegarde</translated>
+</translation>
+<translation>
+	<original>Post Payment</original>
+	<translated>Sauvegarde du Paiement</translated>
+</translation>
+<translation>
+	<original>Procedure</original>
+	<translated>Proc&#xC3;&#xA9;dure</translated>
+</translation>
+<translation>
+	<original>Procedures On</original>
+	<translated>Proc&#xC3;&#xA9;dures Sur</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Fournisseur</translated>
+</translation>
+<translation>
+	<original>Resp. Party</original>
+	<translated>Responsable</translated>
+</translation>
+<translation>
+	<original>Return to Search</original>
+	<translated>Retourner &#xC3;&#xA0; la Recherche</translated>
+</translation>
+<translation>
+	<original>SSN</original>
+	<translated>SSN</translated>
+</translation>
+<translation>
+	<original>Search Items</original>
+	<translated>Items de Recherche</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>S&#xC3;&#xA9;lectionner Tout</translated>
+</translation>
+<translation>
+	<original>Select None</original>
+	<translated>S&#xC3;&#xA9;lectionner Aucun</translated>
+</translation>
+<translation>
+	<original>Service Date</original>
+	<translated>Date de Service</translated>
+</translation>
+<translation>
+	<original>Svc</original>
+	<translated>Svc</translated>
+</translation>
+<translation>
+	<original>Svc Date</original>
+	<translated>Date de Svc</translated>
+</translation>
+<translation>
+	<original>Total Amount</original>
+	<translated>Montant Total</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Type</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Utilisateur</translated>
+</translation>
+<translation>
+	<original>View item details</original>
+	<translated>D&#xC3;&#xA9;tails de l'item</translated>
+</translation>
+<translation>
+	<original>Writeoff Items</original>
+	<translated>Effacer les Items</translated>
+</translation>
+
+</gettextXML>
+

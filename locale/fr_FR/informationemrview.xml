@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-17 21:01-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Address</original>
+	<translated>Adresse</translated>
+</translation>
+<translation>
+	<original>Date of Last Visit</original>
+	<translated>Date de la Derni&#xC3;&#xA8;re Visite</translated>
+</translation>
+<translation>
+	<original>Home Phone</original>
+	<translated>T&#xC3;&#xA9;l&#xC3;&#xA9;phone &#xC3;&#xA0; la Maison</translated>
+</translation>
+<translation>
+	<original>PCP</original>
+	<translated>PCP</translated>
+</translation>
+<translation>
+	<original>Patient Information</original>
+	<translated>Information du Patient</translated>
+</translation>
+<translation>
+	<original>Referring</original>
+	<translated>R&#xC3;&#xA9;f&#xC3;&#xA9;rence</translated>
+</translation>
+<translation>
+	<original>SSN</original>
+	<translated>SSN</translated>
+</translation>
+<translation>
+	<original>Work Phone</original>
+	<translated>T&#xC3;&#xA9;l&#xC3;&#xA9;phone au Travail</translated>
+</translation>
+
+</gettextXML>
+

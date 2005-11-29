@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-10-16 10:28-0400 -->
+
+	<Translator>Ben Abdess &#x3C;ben_abdess@yahoo.fr&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Description</original>
+	<translated>Description</translated>
+</translation>
+<translation>
+	<original>Patient Appointments</original>
+	<translated>Les rendez-vous du patient</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Provider</translated>
+</translation>
+<translation>
+	<original>Show Today</original>
+	<translated>Voir aujourd'hui</translated>
+</translation>
+<translation>
+	<original>Time</original>
+	<translated>Temps</translated>
+</translation>
+
+</gettextXML>
+

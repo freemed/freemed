@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:01-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-17 20:53-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Attachment</original>
+	<translated>Attachements</translated>
+</translation>
+<translation>
+	<original>Fax Multiple Attachments</original>
+	<translated>Fax &#xC3;&#xA0; attachements multiples</translated>
+</translation>
+<translation>
+	<original>Fax multiple segments of an electronic medical record.</original>
+	<translated>Envoyez les segments multiples d'un dossier m&#xC3;&#xA9;dical &#xC3;&#xA9;lectronique.</translated>
+</translation>
+<translation>
+	<original>HIPPA Compliance Notice: This transmission contains sensitive medical data.</original>
+	<translated>Notification de Conformit&#xC3;&#xA9; de HIPPA : Cette transmission contient des donn&#xC3;&#xA9;es m&#xC3;&#xA9;dicales sensibles.</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Step One: Select a Patient</original>
+	<translated>Premi&#xC3;&#xA8;re &#xC3;&#x89;tape : Choisissez un patient</translated>
+</translation>
+<translation>
+	<original>Step Three: Select a Destination</original>
+	<translated>Troisi&#xC3;&#xA8;me &#xC3;&#x89;tape: Choisissez une destination</translated>
+</translation>
+<translation>
+	<original>Step Two: Choose the Attachments to Fax</original>
+	<translated>Deuxi&#xC3;&#xA8;me &#xC3;&#x89;tape: Choisissez les attachements pour envoyer par fax</translated>
+</translation>
+
+</gettextXML>
+

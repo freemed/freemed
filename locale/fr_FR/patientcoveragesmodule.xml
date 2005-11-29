@@ -1,0 +1,339 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:01-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-17 21:31-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Address Line 1</original>
+	<translated>Ligne Adresse 1</translated>
+</translation>
+<translation>
+	<original>Address Line 2</original>
+	<translated>Ligne Adresse 2</translated>
+</translation>
+<translation>
+	<original>Assigment Of Benefits</original>
+	<translated>Attribution des b&#xC3;&#xA9;n&#xC3;&#xA9;fices</translated>
+</translation>
+<translation>
+	<original>Child</original>
+	<translated>Enfant</translated>
+</translation>
+<translation>
+	<original>Child Not Fin</original>
+	<translated>Pas d'Enfant</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Ville</translated>
+</translation>
+<translation>
+	<original>Coverage Insurance Type</original>
+	<translated>Type de Couverture d'Assurance</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Date de Naissance</translated>
+</translation>
+<translation>
+	<original>Entry error found.</original>
+	<translated>Erreur de saisie a trouv&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Error updating coverage status</original>
+	<translated>Erreur mettant &#xC3;&#xA0; jour le statut d'assurance</translated>
+</translation>
+<translation>
+	<original>Failed to get insurance companies</original>
+	<translated>N'a pas obtenu des compagnies d'assurance</translated>
+</translation>
+<translation>
+	<original>Failed to get insurance coverage types</original>
+	<translated>N'a pas obtenu des types de couverture d'assurance</translated>
+</translation>
+<translation>
+	<original>Failed to read coverage table</original>
+	<translated>Erreur de lecture des tables de couverture</translated>
+</translation>
+<translation>
+	<original>Female</original>
+	<translated>Femelle</translated>
+</translation>
+<translation>
+	<original>Finish</original>
+	<translated>Complet</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Pr&#xC3;&#xA9;nom</translated>
+</translation>
+<translation>
+	<original>Foster Child</original>
+	<translated>Enfant Adoptif</translated>
+</translation>
+<translation>
+	<original>Gender</original>
+	<translated>Genre</translated>
+</translation>
+<translation>
+	<original>Group</original>
+	<translated>Groupe</translated>
+</translation>
+<translation>
+	<original>Group - Plan Name</original>
+	<translated>Groupe - Nom du Plan</translated>
+</translation>
+<translation>
+	<original>HC Dependent</original>
+	<translated>HC D&#xC3;&#xA9;pendant</translated>
+</translation>
+<translation>
+	<original>Husband</original>
+	<translated>&#xC3;&#x89;poux</translated>
+</translation>
+<translation>
+	<original>ID</original>
+	<translated>ID</translated>
+</translation>
+<translation>
+	<original>ID not valid</original>
+	<translated>ID invalide</translated>
+</translation>
+<translation>
+	<original>Ins Co</original>
+	<translated>Co Ass</translated>
+</translation>
+<translation>
+	<original>Insurance</original>
+	<translated>Assurance</translated>
+</translation>
+<translation>
+	<original>Insurance Company</original>
+	<translated>Compagnie d'Assurance</translated>
+</translation>
+<translation>
+	<original>Insurance Group Number</original>
+	<translated>Num&#xC3;&#xA9;ro du Groupe d'Assurance</translated>
+</translation>
+<translation>
+	<original>Insurance ID Number</original>
+	<translated>Num&#xC3;&#xA9;ro ID d'Assurance</translated>
+</translation>
+<translation>
+	<original>Insurance Type</original>
+	<translated>Type d'Assurance</translated>
+</translation>
+<translation>
+	<original>Is Assigning?</original>
+	<translated>Assign&#xC3;&#xA9; ?</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Limited</original>
+	<translated>Limit&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Male</original>
+	<translated>Male</translated>
+</translation>
+<translation>
+	<original>Medicare Legal Rep</original>
+	<translated>Rep M&#xC3;&#xA9;dical L&#xC3;&#xA9;gal</translated>
+</translation>
+<translation>
+	<original>Middle Name</original>
+	<translated>2sd Pr&#xC3;&#xA9;nom</translated>
+</translation>
+<translation>
+	<original>Miscellaneous Information</original>
+	<translated>Information Vari&#xC3;&#xA9;e</translated>
+</translation>
+<translation>
+	<original>Must Select a patient</original>
+	<translated>Vous devez s&#xC3;&#xA9;lectionner un patient</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>Non</translated>
+</translation>
+<translation>
+	<original>Patient Coverage</original>
+	<translated>Couverture du Patient</translated>
+</translation>
+<translation>
+	<original>Patient has active coverage of this type. Select 'Replace' to replace.</original>
+	<translated>Le patient a l'assurance active de ce type. Choisi 'remplacez 'pour remplacer.</translated>
+</translation>
+<translation>
+	<original>Plan</original>
+	<translated>Plan</translated>
+</translation>
+<translation>
+	<original>Primary</original>
+	<translated>Primaire</translated>
+</translation>
+<translation>
+	<original>Provider Accepts Assigment</original>
+	<translated>Fournisseur Accepte Assignement</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Rafra&#xC3;&#xAE;chir</translated>
+</translation>
+<translation>
+	<original>Relationship</original>
+	<translated>Relation</translated>
+</translation>
+<translation>
+	<original>Relationship to Insured</original>
+	<translated>Relation &#xC3;&#xA0; l'Assur&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Release Date Signed</original>
+	<translated>Lib&#xC3;&#xA9;rez - Date Sign&#xC3;&#xA9;e</translated>
+</translation>
+<translation>
+	<original>Release Of Information</original>
+	<translated>Publication de l'Information</translated>
+</translation>
+<translation>
+	<original>Removing old coverage</original>
+	<translated>Suppression de l'ancienne couverture</translated>
+</translation>
+<translation>
+	<original>Replace Like Coverage</original>
+	<translated>Remplacement de Couverture Semblable</translated>
+</translation>
+<translation>
+	<original>Secondary</original>
+	<translated>Secondaire</translated>
+</translation>
+<translation>
+	<original>Select Coverage Type</original>
+	<translated>Choissir le Type de Couverture</translated>
+</translation>
+<translation>
+	<original>Self</original>
+	<translated>Soi-M&#xC3;&#xAA;me</translated>
+</translation>
+<translation>
+	<original>Social Security Number</original>
+	<translated>Num&#xC3;&#xA9;ro de S&#xC3;&#xA9;curit&#xC3;&#xA9; Social</translated>
+</translation>
+<translation>
+	<original>Sponsored Dependent</original>
+	<translated>Personne &#xC3;&#xA0; charge Commandit&#xC3;&#xA9;e</translated>
+</translation>
+<translation>
+	<original>Start date cannot be later than today's date.</original>
+	<translated>Date de d&#xC3;&#xA9;but ne peut &#xC3;&#xAA;tre plus tard qu'aujourd'hui.</translated>
+</translation>
+<translation>
+	<original>Starting Date</original>
+	<translated>Date de D&#xC3;&#xA9;but</translated>
+</translation>
+<translation>
+	<original>State</original>
+	<translated>&#xC3;&#x89;tat</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Statut</translated>
+</translation>
+<translation>
+	<original>Step Child</original>
+	<translated>Enfant d'Union</translated>
+</translation>
+<translation>
+	<original>Submit</original>
+	<translated>Soumettre</translated>
+</translation>
+<translation>
+	<original>Supply Coverage Information</original>
+	<translated>Fournir l'Information de Couverture</translated>
+</translation>
+<translation>
+	<original>Supply Insurance Information</original>
+	<translated>Fournir l'Information d'Assurance</translated>
+</translation>
+<translation>
+	<original>Supply Insureds Info if not the Patient</original>
+	<translated>Fournir l'information d'Assur&#xC3;&#xA9; au Patient</translated>
+</translation>
+<translation>
+	<original>Tertiary</original>
+	<translated>Tertiaire</translated>
+</translation>
+<translation>
+	<original>Transgendered</original>
+	<translated>Transgendered</translated>
+</translation>
+<translation>
+	<original>Try Again</original>
+	<translated>Essayez Encore</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Type</translated>
+</translation>
+<translation>
+	<original>Ward of Court</original>
+	<translated>Salle de cour</translated>
+</translation>
+<translation>
+	<original>Wife</original>
+	<translated>&#xC3;&#x89;pouse</translated>
+</translation>
+<translation>
+	<original>Work Comp</original>
+	<translated>Comp du Travail</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Oui</translated>
+</translation>
+<translation>
+	<original>You must select a patient before viewing coverages.</original>
+	<translated>Vous devez s&#xC3;&#xA9;lectionner un patient avant de visualiser la couverture.</translated>
+</translation>
+<translation>
+	<original>You must select an insurance company.</original>
+	<translated>Vous devez s&#xC3;&#xA9;lectionner un compagnie d'assurance</translated>
+</translation>
+<translation>
+	<original>You must supply ID numbers.</original>
+	<translated>Vous devez fournir un num&#xC3;&#xA9;ro d'ID</translated>
+</translation>
+<translation>
+	<original>You must supply the insured party's name.</original>
+	<translated>Vous devez fournir un nom d'assur&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Zip</original>
+	<translated>Zip</translated>
+</translation>
+
+</gettextXML>
+

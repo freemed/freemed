@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-17 21:35-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Current patient statements can be retrieved as either Postscript or PDF files.</original>
+	<translated>Des rapports patients courants peuvent &#xC3;&#xAA;tre recherch&#xC3;&#xA9;s en tant que le Postscript ou dossiers en PDF.</translated>
+</translation>
+<translation>
+	<original>Generate patient statements as Adobe Acrobat (PDF) or Postscript.</original>
+	<translated>Produisez des rapports patients comme Adobe Acrobate (PDF) ou Postscript.</translated>
+</translation>
+<translation>
+	<original>Patient Statements</original>
+	<translated>Rapports Patients</translated>
+</translation>
+
+</gettextXML>
+

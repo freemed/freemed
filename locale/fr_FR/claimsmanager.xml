@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:02-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-11-18 22:34-0500 -->
+
+	<Translator>Guy Beaupr&#xC3;&#xA9; &#x3C;gbeaupre@videotron.ca&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>claims were successfully marked as billed</original>
+	<translated>Les r&#xC3;&#xA9;clamations ont &#xC3;&#xA9;t&#xC3;&#xA9; marqu&#xC3;&#xA9;es comme factur&#xC3;&#xA9;es</translated>
+</translation>
+<translation>
+	<original>claims were successfully marked for rebill</original>
+	<translated>Les r&#xC3;&#xA9;clamations ont &#xC3;&#xA9;t&#xC3;&#xA9; marqu&#xC3;&#xA9;es pour re-facturations</translated>
+</translation>
+<translation>
+	<original>Add Claim Event</original>
+	<translated>Ajoutez l'&#xC3;&#x89;v&#xC3;&#xA9;nement de R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Add Event</original>
+	<translated>Ajouter l'&#xC3;&#x89;v&#xC3;&#xA9;nement</translated>
+</translation>
+<translation>
+	<original>Aged Claims</original>
+	<translated>D&#xC3;&#xA9;clarations Accusant un Retard</translated>
+</translation>
+<translation>
+	<original>Aging</original>
+	<translated>Retard</translated>
+</translation>
+<translation>
+	<original>Aging Summary</original>
+	<translated>Sommaire des Retards</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to mark these claims as billed.</original>
+	<translated>Une erreur s'est produite tout en essayant de marquer ces r&#xC3;&#xA9;clamations comme factur&#xC3;&#xA9;es.</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to mark these claims for rebill.</original>
+	<translated>Une erreur s'est produite tout en essayant de marquer ces r&#xC3;&#xA9;clamations comme re-factur&#xC3;&#xA9;es.</translated>
+</translation>
+<translation>
+	<original>Balance</original>
+	<translated>Solde</translated>
+</translation>
+<translation>
+	<original>Billing Status</original>
+	<translated>Statut de Facturation</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>CPT</translated>
+</translation>
+<translation>
+	<original>Call</original>
+	<translated>Appel</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Frais</translated>
+</translation>
+<translation>
+	<original>Check #%s</original>
+	<translated>Contr&#xC3;&#xB4;le # %s</translated>
+</translation>
+<translation>
+	<original>Check Number</original>
+	<translated>Num&#xC3;&#xA9;ro du Ch&#xC3;&#xA8;que</translated>
+</translation>
+<translation>
+	<original>Check Received</original>
+	<translated>Ch&#xC3;&#xA8;que(s) Re&#xC3;&#xA7;u(s)</translated>
+</translation>
+<translation>
+	<original>Claim</original>
+	<translated>R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re de R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim Detail</original>
+	<translated>D&#xC3;&#xA9;tail de la R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim Details</original>
+	<translated>D&#xC3;&#xA9;tails de la R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim Status</original>
+	<translated>Statut de la R&#xC3;&#xA9;clamation</translated>
+</translation>
+<translation>
+	<original>Claim has nowhere to go ... no more coverages</original>
+	<translated>La r&#xC3;&#xA9;clamation n'a nulle part pour aller... plus d'assurances</translated>
+</translation>
+<translation>
+	<original>Claims Criteria</original>
+	<translated>Crit&#xC3;&#xA8;res de R&#xC3;&#xA9;clamations</translated>
+</translation>
+<translation>
+	<original>Claims Manager</original>
+	<translated>Directeur de R&#xC3;&#xA9;clamations</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Commentaire</translated>
+</translation>
+<translation>
+	<original>Copay</original>
+	<translated>Paiment Commun</translated>
+</translation>
+<translation>
+	<original>Coverage</original>
+	<translated>Couverture</translated>
+</translation>
+<translation>
+	<original>Current Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re Courant</translated>
+</translation>
+<translation>
+	<original>Date of Service</original>
+	<translated>Date du Service</translated>
+</translation>
+<translation>
+	<original>EMR</original>
+	<translated>DME</translated>
+</translation>
+<translation>
+	<original>Email</original>
+	<translated>Courriel</translated>
+</translation>
+<translation>
+	<original>Filter by this date</original>
+	<translated>Filtre &#xC3;&#xA0; cette date</translated>
+</translation>
+<translation>
+	<original>Filter by this patient</original>
+	<translated>Filtre par ce patient</translated>
+</translation>
+<translation>
+	<original>Filter by this payer</original>
+	<translated>Filtre par ce d&#xC3;&#xA9;biteur</translated>
+</translation>
+<translation>
+	<original>Filter by this status</original>
+	<translated>Filtre par ce statut</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Pr&#xC3;&#xA9;nom</translated>
+</translation>
+<translation>
+	<original>First Name like</original>
+	<translated>Synonyme du Pr&#xC3;&#xA9;nom</translated>
+</translation>
+<translation>
+	<original>For checked claims</original>
+	<translated>Pour des r&#xC3;&#xA9;clamations v&#xC3;&#xA9;rifi&#xC3;&#xA9;es</translated>
+</translation>
+<translation>
+	<original>ICD</original>
+	<translated>ICD</translated>
+</translation>
+<translation>
+	<original>Ins ID</original>
+	<translated>Ins ID</translated>
+</translation>
+<translation>
+	<original>Junk</original>
+	<translated>Ordure</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nom</translated>
+</translation>
+<translation>
+	<original>Last Name like</original>
+	<translated>Synonyme du Nom</translated>
+</translation>
+<translation>
+	<original>Ledger</original>
+	<translated>Registre</translated>
+</translation>
+<translation>
+	<original>Left Over</original>
+	<translated>Restants</translated>
+</translation>
+<translation>
+	<original>Manage outstanding claims and view aging information.</original>
+	<translated>G&#xC3;&#xA9;rer les r&#xC3;&#xA9;clamations en attente et voir les informations sur la p&#xC3;&#xA9;riode.</translated>
+</translation>
+<translation>
+	<original>Mark Billed</original>
+	<translated>S&#xC3;&#xA9;lectionn&#xC3;&#xA9; comme Factur&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Mark for Rebill</original>
+	<translated>S&#xC3;&#xA9;lectionn&#xC3;&#xA9; pour re-Facturation</translated>
+</translation>
+<translation>
+	<original>Marked for Rebill</original>
+	<translated>S&#xC3;&#xA9;lectionn&#xC3;&#xA9; pour re-Facturation</translated>
+</translation>
+<translation>
+	<original>Moved to coverage %s</original>
+	<translated>D&#xC3;&#xA9;plac&#xC3;&#xA9; &#xC3;&#xA0; l'assurance %s</translated>
+</translation>
+<translation>
+	<original>Moved to patient responsibility</original>
+	<translated>D&#xC3;&#xA9;plac&#xC3;&#xA9; &#xC3;&#xA0; la responsabilit&#xC3;&#xA9; du patient</translated>
+</translation>
+<translation>
+	<original>Narrow Search</original>
+	<translated>Recherche Pr&#xC3;&#xA9;cise</translated>
+</translation>
+<translation>
+	<original>New Search</original>
+	<translated>Nouvelle Recherche</translated>
+</translation>
+<translation>
+	<original>No Search</original>
+	<translated>Aucune Recherche</translated>
+</translation>
+<translation>
+	<original>Outstanding</original>
+	<translated>En attente</translated>
+</translation>
+<translation>
+	<original>POS</original>
+	<translated>POS</translated>
+</translation>
+<translation>
+	<original>Paid</original>
+	<translated>Pay&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Patient Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re du Patient</translated>
+</translation>
+<translation>
+	<original>Patient Pay</original>
+	<translated>Paiment du Patient</translated>
+</translation>
+<translation>
+	<original>Payer</original>
+	<translated>Payeur</translated>
+</translation>
+<translation>
+	<original>Payer Criteria</original>
+	<translated>Crit&#xC3;&#xA8;re du Payeur</translated>
+</translation>
+<translation>
+	<original>Payment from Payer</original>
+	<translated>Paiement du Payeur</translated>
+</translation>
+<translation>
+	<original>Plan</original>
+	<translated>Plan</translated>
+</translation>
+<translation>
+	<original>Plan Name</original>
+	<translated>Nom du Plan</translated>
+</translation>
+<translation>
+	<original>Please select a claim before attempting to mark as billed.</original>
+	<translated>Veuillez choisir une r&#xC3;&#xA9;clamation avant d'essayer de marquer comme factur&#xC3;&#xA9;.</translated>
+</translation>
+<translation>
+	<original>Post</original>
+	<translated>Sauvegarde</translated>
+</translation>
+<translation>
+	<original>Post Check</original>
+	<translated>Validation de la Sauvegarde</translated>
+</translation>
+<translation>
+	<original>Post Checks</original>
+	<translated>Validations de la Sauvegarde</translated>
+</translation>
+<translation>
+	<original>Procedures On</original>
+	<translated>Procedures sur</translated>
+</translation>
+<translation>
+	<original>Prov ID</original>
+	<translated>Prov ID</translated>
+</translation>
+<translation>
+	<original>Queued</original>
+	<translated>En File</translated>
+</translation>
+<translation>
+	<original>Resp. Party</original>
+	<translated>Responsable</translated>
+</translation>
+<translation>
+	<original>Return to Search</original>
+	<translated>Retourner &#xC3;&#xA0; la recherche</translated>
+</translation>
+<translation>
+	<original>SSN</original>
+	<translated>SSN</translated>
+</translation>
+<translation>
+	<original>Search Claims</original>
+	<translated>Recherche R&#xC3;&#xA9;clamations</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>S&#xC3;&#xA9;lectionner Tout</translated>
+</translation>
+<translation>
+	<original>Select None</original>
+	<translated>Choisissez Aucun</translated>
+</translation>
+<translation>
+	<original>Service Date</original>
+	<translated>Date de Service</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Statut</translated>
+</translation>
+<translation>
+	<original>Svc Date</original>
+	<translated>Date de Svc</translated>
+</translation>
+<translation>
+	<original>Total Amount</original>
+	<translated>Montant Total</translated>
+</translation>
+<translation>
+	<original>Total Claims</original>
+	<translated>R&#xC3;&#xA9;clamations Total</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Usager</translated>
+</translation>
+<translation>
+	<original>View claim details</original>
+	<translated>Voir les d&#xC3;&#xA9;tails de r&#xC3;&#xA9;clamation </translated>
+</translation>
+
+</gettextXML>
+
