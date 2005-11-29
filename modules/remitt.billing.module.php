@@ -627,12 +627,12 @@ class RemittBillingTransport extends BillingModule {
 
 		$buffer .= "<table border=\"0\" width=\"100%\">\n".
 			"<tr class=\"DataHead\">\n".
-			"<td>Report</td>\n".
-			"<td>Size</td>\n".
-			"<td>Generated</td>\n".
-			"<td>Time</td>\n".
+			"<td>".__("Report")."</td>\n".
+			"<td>".__("Size")."</td>\n".
+			"<td>".__("Generated")."</td>\n".
+			"<td>".__("Time")."</td>\n".
 			"<td>&nbsp;</td>\n".
-			"<td>View</td>\n".
+			"<td>".__("View")."</td>\n".
 			"</tr>\n";
 		krsort($reports);
 		foreach ($reports AS $report => $v) {
@@ -679,7 +679,7 @@ class RemittBillingTransport extends BillingModule {
 					false
 				).
 				"</b> ".prepare($report_month)."</td>\n".
-				"<td>".$report_count." report(s)</td></tr>\n";
+				"<td>".sprintf(__("%s reports(s)"), $report_count)."</td></tr>\n";
 			// Hidden cell for output
 			$buffer .= "<tr><td colspan=\"2\">\n".
 				"<div id=\"content_".$s_report_month."\">".
