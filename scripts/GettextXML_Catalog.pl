@@ -1,11 +1,16 @@
-#!/usr/bin/perl -I/usr/share/freemed/lib/perl
+#!/usr/bin/perl
 # $Id$
 # $Author$
+
+# Auto-detect the path for libraries and the FreeMED install
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+my $rootpath = "$FindBin::Bin/.."
 
 use XML::RAX;
 
 $VERSION = "0.1.1";
-$appversion = `cat lib/freemed.php | grep \\'VERSION\\' | awk -F\\" '{ print \$2; }'`;
+$appversion = `cat $rootpath/lib/freemed.php | grep \\'VERSION\\' | awk -F\\" '{ print \$2; }'`;
 
 # Get parameters
 $locale = shift || 'template';

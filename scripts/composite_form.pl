@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I/usr/share/freemed/lib/perl
+#!/usr/bin/perl
 #	$Id$
 #	$Author$
 #
@@ -9,6 +9,11 @@
 #		data - XML data file
 #
 
+# Auto-detect the path for libraries and the FreeMED install
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+my $rootpath = "$FindBin::Bin/.."
+
 # Add proper libraries for XML-RPC access and configuration data
 use Config::IniFiles;
 use PDF::API2;
@@ -16,7 +21,7 @@ use XML::Simple;
 use Data::Dumper;
 
 # Get configuration file for paths
-my $config = new Config::IniFiles ( -file => '/usr/share/freemed/data/config/xmlrpc.ini' );
+my $config = new Config::IniFiles ( -file => $rootpath.'/data/config/xmlrpc.ini' );
 
 # Get interval parameter
 my $data = shift || die "ERROR: data XML file must be given\n";
@@ -52,10 +57,10 @@ sub process_page {
 	my $count = shift;
 
 	# Load template
-	my $original = PDF::API2->open('/usr/share/freemed/data/form/pdf/'.$xml->{information}->{pdf});
+	my $original = PDF::API2->open($rootpath.'/data/form/pdf/'.$xml->{information}->{pdf});
 	$pdf->importpage( $original, $pxml->{oid}, $count);
 
-	$page_height = get_pdf_height('/usr/share/freemed/data/form/pdf/'.$xml->{information}->{pdf});
+	$page_height = get_pdf_height($rootpath.'/data/form/pdf/'.$xml->{information}->{pdf});
 
 	# Create text page object
 	my $page = $pdf->openpage($count);

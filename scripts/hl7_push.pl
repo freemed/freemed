@@ -1,9 +1,14 @@
-#!/usr/bin/perl -I/usr/share/freemed/lib/perl
+#!/usr/bin/perl
 #	$Id$
 #	$Author$
 #
 #	HL7 push script
 #
+
+# Auto-detect the path for libraries and the FreeMED install
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+my $rootpath = "$FindBin::Bin/.."
 
 use MIME::Base64;
 use Frontier::Client;
@@ -15,7 +20,7 @@ use Data::Dumper;
 my $report_type = shift || '';
 
 # Open XML-RPC and local configuration files
-my $xmlrpc_config = new Config::IniFiles( -file => '/usr/share/freemed/data/config/xmlrpc.ini' );
+my $xmlrpc_config = new Config::IniFiles( -file => $rootpath.'/data/config/xmlrpc.ini' );
 
 # Open syslog
 openlog('hl7_push', 'cons,pid', 'root');

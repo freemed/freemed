@@ -1,8 +1,13 @@
-#!/usr/bin/perl -I/usr/share/freemed/lib/perl -w
+#!/usr/bin/perl -w
 #
 #	$Id$
 #	$Author$
 #
+
+# Auto-detect the path for libraries and the FreeMED install
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+my $rootpath = "$FindBin::Bin/.."
 
 use XML::RAX;
 

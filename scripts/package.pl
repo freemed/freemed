@@ -1,6 +1,11 @@
-#!/usr/bin/perl -I/usr/share/freemed/lib/perl
+#!/usr/bin/perl
 #	$Id$
 #	$Author$
+
+# Auto-detect the path for libraries and the FreeMED install
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+my $rootpath = "$FindBin::Bin/.."
 
 use XML::RAX;
 
@@ -71,13 +76,13 @@ sub install_package {
 	$r->setRecord('directory');
 	while (my $rec = $r->readRecord()) {
 		my $destination = $rec->getField('destination');
-		`mkdir -p "${destination}"`;
+		`mkdir -p "${rootdir}/${destination}"`;
 	}
 	$r->setRecord('file');
 	while (my $rec = $r->readRecord()) {
 		my $source = $rec->getField('source');
 		my $destination = $rec->getField('destination');
-		my $cmd = "cp \"${TEMPDIR}/${source}\" \"${destination}\"";
+		my $cmd = "cp \"${TEMPDIR}/${source}\" \"${rootdir}/${destination}\"";
 		`${cmd}`;
 	}
 

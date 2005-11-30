@@ -1,9 +1,14 @@
-#!/usr/bin/perl -I/usr/share/freemed/lib/perl
+#!/usr/bin/perl
 #	$Id$
 #	$Author$
 #
 #	Poll Quest web framework for HL7 messages
 #
+
+# Auto-detect the path for libraries and the FreeMED install
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+my $rootpath = "$FindBin::Bin/.."
 
 use WWW::Mechanize;
 use MIME::Base64;
@@ -16,8 +21,8 @@ use Data::Dumper;
 my $report_type = shift || '';
 
 # Open XML-RPC and local configuration files
-my $config = new Config::IniFiles( -file => '/usr/share/freemed/data/config/quest_hl7.ini' );
-my $xmlrpc_config = new Config::IniFiles( -file => '/usr/share/freemed/data/config/xmlrpc.ini' );
+my $config = new Config::IniFiles( -file => $rootpath.'/data/config/quest_hl7.ini' );
+my $xmlrpc_config = new Config::IniFiles( -file => $rootpath.'/data/config/xmlrpc.ini' );
 
 # Open syslog
 openlog('freemed_quest_hl7', 'cons,pid', 'root');
