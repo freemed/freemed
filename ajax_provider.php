@@ -64,6 +64,9 @@ function module_recent ( $module, $patient, $recent_date = NULL ) {
 function patient_lookup ( $criteria ) {
 	$limit = 10;
 
+	// Correction for patients with apostrophes in their names
+	$criteria = addslashes($criteria);
+
 	// Form query with "smart search"
 	if (!(strpos($criteria, ',') === false)) {
 		// last, first
@@ -107,7 +110,7 @@ function patient_lookup ( $criteria ) {
 		$count++;
 		if ($count < $limit) {
 			$_obj = CreateObject('_FreeMED.Patient', $r);
-			$return[] = trim($_obj->to_text()).'@'.$r['id'];
+			$return[] = trim(stripslashes($_obj->to_text())).'@'.$r['id'];
 		}
 	}
 	if ($count >= $limit) { $return[] = " ... "; }
