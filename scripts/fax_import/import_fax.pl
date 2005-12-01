@@ -12,7 +12,7 @@ use Frontier::Client;
 use Config::IniFiles;
 
 # First, we get the name of the tiff image
-my $original = shift || 'test.tiff';
+my $original = shift || die "No image presented to $0\n";
 print "Fax Import ------\n";
 print "original file name = $original\n";
 
