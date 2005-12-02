@@ -8,14 +8,15 @@ FreeMED. If you are still having trouble, try the FreeMED support list,
 support@freemedsoftware.org for community-based support.
 
 ********************************************************************** ERRATA
-* index.php has to be added in /etc/httpd/conf/?????.conf under the
+* index.php has to be added in /etc/apache2/?????.conf under the
   list of valid index files.
 * These are to be installed in /usr/share/freemed, and a virtual directory
-  alias should be made in the Apache configuration files, as well as
+  alias should be made in the Apache2 configuration files, as well as
   giving read perms to Apache.
 * If something doesn't work after you upgrade to a new tarball, visit
   the database maintenance screen to force the modules to update their
-  corresponding database tables.
+  corresponding database tables. If that still gives you issues, remove
+  data/cache/modules and visit the aforementioned screen.
 * Code is annotated with an author if the primary author is other than
   jeff b <jeff@freemedsoftware.com>
 * Since FreeMED involves a fairly hefty codebase, php optimizing tricks,
@@ -34,10 +35,7 @@ support@freemedsoftware.org for community-based support.
 2) Make sure that PHP is installed, with MySQL support. Most distributions
    require a separate module (php4-mysql, php-mysql) for MySQL support.
 
-3) Install phpwebtools (you can download it from
-   http://sourceforge.net/projects/phpwebtools/).
-
-4) Install the FreeMED package:
+3) Install the FreeMED package:
 
    # cd /usr/share
    # tar zxvf /location/to/tarball/freemed-version.tar.gz
@@ -46,11 +44,18 @@ support@freemedsoftware.org for community-based support.
    Redhat or Debian, you can use the precompiled packages, which will
    render instructions 6 through 9 unnecessary.
 
-5) Edit the /usr/share/freemed/lib/settings.php file to make sure that all
+   You can also install from the subversion repository:
+
+   # cd /usr/share
+   # svn co http://svn.freemedsoftware.org/freemed/trunk freemed
+
+   will install the development version.
+
+4) Edit the /usr/share/freemed/lib/settings.php file to make sure that all
    settings are correct for your machine. (There is a setup wizard in the
    works that performs this step for you, using a web browser.)
 
-6) Edit your Apache configuration files to associate .php files with php, as
+5) Edit your Apache configuration files to associate .php files with php, as
    well as setting index.php to be one of the default indexes. Also set up
    access and a directory alias for FreeMED. This is accomplished with the
    following lines:
@@ -68,21 +73,22 @@ support@freemedsoftware.org for community-based support.
      allow from all
    </Directory>
 
-7) HUP apache (killall -1 httpd) to force it to reload its configuration
+6) HUP apache (killall -1 httpd) to force it to reload its configuration
    files. Optionally you can use "/etc/init.d/apache2 restart" or its equivalent
    in your distribution.
 
-8) Create the database with the command "mysqladmin -p create freemed"
+7) NOTE: THIS STEP IS SUPPOSED TO BE PERFORMED BY FREEMED. IF IT IS NOT, YOU
+   WILL HAVE TO DO THIS MANUALLY.
+   Create the database with the command "mysqladmin -p create freemed"
    (if you are using MySQL). (The setup wizard also does this.) Please
    note that if you do not give FreeMED's MySQL user permission to the
    FreeMED database, it will generate an error. Check MySQL's manual for
    the "GRANT" command for more information on this.
-
-9) Adjust the memory limit in your php.ini file to be 64M. It is by
+   Adjust the memory limit in your php.ini file to be 64M. It is by
    default set to 8M, which causes errors, since FreeMED requires more
    memory than that for some of its functions.
 
-10) Try to load http://localhost/freemed/ in your web browser. This should
+8) Try to load http://localhost/freemed/ in your web browser. This should
    take you through a wizard which will help you set up FreeMED.
    You may now use FreeMED. Congratulations!
 
