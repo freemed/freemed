@@ -7,10 +7,6 @@ define ('SESSION_DISABLE', true);
 include_once ("lib/freemed.php");
 include_once ("lib/i18n.php");
 
-//----- Check for XML-RPC support in PHP build
-if (!file_exists(WEBTOOLS_ROOT.'/class.xmlrpc_server.php'))
-	die("There is no XML-RPC support in this build of phpwebtools!");
-
 // Create seperate XML-RPC object map
 CreateApplicationMap(array(
 	// Actual XML-RPC methods
