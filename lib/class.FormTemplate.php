@@ -42,8 +42,16 @@ class FormTemplate {
 	//	Value. Will return empty string if no data set is loaded.
 	//
 	function FetchDataElement ( $key ) {
-		if (!is_array($this->data)) { return ''; }
-		return $this->elements[$key];
+		// Lookup the appropriate data point
+		static $controls;
+		if (!$controls) { $controls = $this->GetControls(); }
+
+		// Do a quick null check for controls ...
+		if (!is_array($this->elements)) { return ''; }
+		if (!is_array($controls)) { return ''; }
+
+		// Return the appropriate value
+		return $this->elements[$controls[$key]['name']];
 	} // end method FetchDataElement
 
 	// Method: GetControls
