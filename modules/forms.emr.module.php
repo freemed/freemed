@@ -69,7 +69,8 @@ class FormsModule extends EMRModule {
 
 	function addform ( ) {
 		if (!$_REQUEST['formtemplate']) {
-			trigger_error(__("You must specify a template."), E_USER_ERROR);
+			$this->addform_requesttemplate();
+			return false;
 		}
 
 		$_REQUEST['formtemplate'] = ereg_replace('[^A-Za-z0-9_]', '', $_REQUEST['formtemplate']);
@@ -109,6 +110,33 @@ class FormsModule extends EMRModule {
 		";
 	} // end method addform
 
+	function addform_requesttemplate ( ) {
+		$tlist = CreateObject('_FreeMED.FormTemplateList');
+		$items = $tlist->GetList();
+		foreach ($items AS $item => $data) {
+			$choices[$data['name']] = $item;
+		}
+
+		$GLOBALS['display_buffer'] .= "
+		<form method=\"POST\">
+		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\" />
+		<input type=\"hidden\" name=\"return\" value=\"".prepare($_REQUEST['return'])."\" />
+		<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\" />
+		<input type=\"hidden\" name=\"action\" value=\"addform\" />
+
+		<div align=\"center\">
+		".__("Choose Template")." : 
+		".html_form::select_widget('formtemplate', $choices)."
+		</div>
+
+		<div align=\"center\">
+		<input type=\"submit\" class=\"button\" name=\"__submit\" value=\"".__("Choose")."\" />
+		<input type=\"submit\" class=\"button\" name=\"__submit\" value=\"".__("Cancel")."\" />
+		</div>
+		</form>
+		";
+	} // end method addform_requesttemplate
+
 	function add ( ) {
 		$_REQUEST['formtemplate'] = ereg_replace('[^A-Za-z0-9_]', '', $_REQUEST['formtemplate']);
 		
@@ -143,7 +171,7 @@ class FormsModule extends EMRModule {
 
 				// Build INSERT query
 				$query = $GLOBALS['sql']->insert_query(
-					'form_results',
+					'form_record',
 					array (
 						'fr_id' => $fid,
 						'fr_uuid' => $v['uuid'],
@@ -201,6 +229,31 @@ class FormsModule extends EMRModule {
 			return fm_date_entry( 'variable_'.$data['variable'] );
 		}
 	} // end method control_date
+
+	function control_module ( $action, $data ) {
+		if ($action == 'serialize') {
+			return $_REQUEST['variable_'.$data['variable']];
+		} elseif ($action == 'widget') {
+			return module_function(
+				$data['options'],
+				'widget',
+				array ( 'variable_'.$data['variable'] )
+			);
+		}
+	} // end method control_module
+
+	function control_multiple ( $action, $data ) {
+		if ($action == 'serialize') {
+			return join(',', $_REQUEST['variable_'.$data['variable']]);
+		} elseif ($action == 'widget') {
+			$buffer .= "<select name=\"variable_".$data['variable']."[]\" multiple=\"multiple\" size=\"10\">\n";
+			foreach ( explode('|', $data['options']) AS $v) {
+				$buffer .= "\t<option value=\"${v}\">${v}</option>\n";
+			}
+			$buffer .= "</select>\n";
+			return $buffer;
+		}
+	} // end method control_multiple
 
 	function control_select ( $action, $data ) {
 		if ($action == 'serialize') {
