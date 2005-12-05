@@ -77,8 +77,9 @@ sub process_page {
 			if (!$e->{ysize}) { $e->{ysize} = 12; }
 			$txt->translate($e->{xpos}, $page_height - ($e->{ypos} + $e->{ysize}));
 			#print "moveto (".$e->{xpos}.", ".($page_height - ($e->{ypos} + $e->{ysize})).")\n";
+			if ($e->{data} =~ /HASH\(/) { $e->{data} = ''; }
 			$txt->text($e->{data});
-			#print "print ( ".$e->{data}." )\n";
+			#print "print ( ".Dumper($e->{data})." )\n";
 		} elsif ($e->{type} eq 'outline') {
 			$gfx->move($e->{xpos}, $page_height - ($e->{ypos}));
 			$gfx->line($e->{xpos}, $page_height - ($e->{ypos} + $e->{ysize}));
