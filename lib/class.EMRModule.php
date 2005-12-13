@@ -1079,7 +1079,8 @@ class EMRModule extends BaseModule {
 	//
 	function _recent_record ( $patient, $recent_date = NULL ) {
 		$query = "SELECT * FROM ".$this->table_name." ".
-			( $recent_date ? "WHERE ".$this->date_field." <= '".addslashes($recent_date)."' " : "" ).
+			"WHERE ".$this->patient_field." = '".addslashes($patient)."' ".
+			( $recent_date ? "AND ".$this->date_field." <= '".addslashes($recent_date)."' " : "" ).
 			"ORDER BY ".$this->date_field." DESC, id DESC";
 		$res = $GLOBALS['sql']->query($query);
 		return $GLOBALS['sql']->fetch_array($res);
