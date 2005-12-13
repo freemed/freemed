@@ -259,6 +259,8 @@ class FormTemplate {
 	//	String
 	//
 	function ProcessData ( $data ) {
+		$cache = freemed::module_cache();
+
 		// Handle "module:" prefix
 		if (substr($data['table'], 0, 7) == 'object:') {
 			$objectname = substr($data['table'], -(strlen($data['table'])-7));
@@ -339,12 +341,34 @@ class FormTemplate {
 
 		// Deal with output formatting
 		switch ($data['type']) {
+			case 'link':
+				if (!$data['value']) {
+					syslog(LOG_INFO, get_class($this)."| could not process ${data['table']}, ${data['field']}, ${data['value']}");
+					return '';
+				}
+				return module_function($data['value'], 'to_text', array($raw));
+				break;
+
 			case 'ssn':
 				return substr($raw, 0, 3).'-'.substr($raw, 3, 2).'-'.substr($raw, 5, 4);
 				break;
 
 			case 'conditional':
+				// Handle "static" type
 				if ($data['table'] == 'static') { return 'X'; }
+
+				// Handle "multiple" type
+				if ($data['table'] == 'control') {
+					if (!isset($this->controls)) { $this->controls = $this->GetControls(); }
+					if ($this->controls[$data['field']]['type'] == 'multiple') {
+						foreach (explode(',', $raw) AS $value) {
+							if ($data['value'] == $value) { return 'X'; }
+						}
+						return '';
+					}
+				}
+
+				// Handle everything else
 				if ($data['value'] == $raw) { return 'X'; }
 				else return '';
 				break;
