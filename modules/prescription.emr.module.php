@@ -8,7 +8,7 @@ class PrescriptionModule extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.5";
+	var $MODULE_VERSION = "0.4.0";
 	var $MODULE_DESCRIPTION = "
 		The prescription module allows prescriptions to be written 
 		for patients from any drug in the local formulary or in the 
@@ -86,6 +86,7 @@ class PrescriptionModule extends EMRModule {
 				)),
 			'rxrefills' => SQL__INT_UNSIGNED(0),
 			'rxperrefill' => SQL__INT_UNSIGNED(0),
+			'rxorigrx' => SQL__INT_UNSIGNED(0),
 			'rxnote' => SQL__TEXT,
 			'locked' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
@@ -116,6 +117,7 @@ class PrescriptionModule extends EMRModule {
 			"rxrefills",
 			"rxperrefill",
 			"rxnote",
+			"rxorigrx",
 			"locked" => '0'
 		);
 		$this->acl = array ('emr');
@@ -168,6 +170,22 @@ class PrescriptionModule extends EMRModule {
 				global $rxphy;
 				$rxphy = $this_user->user_phy;
 			}
+			// Only push variables in on "Refresh"
+			if ($_REQUEST['rxorigrx'] and $_REQUEST[$book->actionvar] == $book->REFRESH) {
+				$rec = freemed::get_link_rec($_REQUEST['rxorigrx'], $this->table_name);
+				$vs = array (
+					'rxdrug',
+					'rxsize',
+					'rxform',
+					'rxdosage',
+					'rxquantity',
+					'rxunit',
+					'rxrefills'
+				);
+				foreach ($vs AS $v) {
+					global ${$v}; ${$v} = $rec[$v];
+				}
+			}
 		}
 
 		$book->set_submit_name(
@@ -196,7 +214,8 @@ class PrescriptionModule extends EMRModule {
 				"rxinterval",
 				"rxrefills",
 				"rxperrefill",
-				"rxsubstitute"
+				"rxsubstitute",
+				"rxorigrx"
 			),
 			html_form::form_table(array(
 				__("Starting Date") =>
@@ -300,7 +319,14 @@ class PrescriptionModule extends EMRModule {
 					__("may substitute") => "may substitute",
 					__("may not substitute") => "may not substitute",
 					)
-				)
+				),
+
+				__("Original Prescription") =>
+				$this->widget(
+					"rxorigrx", 
+					$_REQUEST['patient'], 
+					"id != '".addslashes($_REQUEST['id'])."'"
+				).$book->generate_refresh()
 			))
 		);
 
@@ -486,6 +512,15 @@ class PrescriptionModule extends EMRModule {
 				'CHANGE COLUMN rxdosage rxdosage VARCHAR(128)');
 			$sql->query('UPDATE '.$this->table_name.' '.
 				'SET rxdosage = concat(rxdosage, \' \', rxinterval)');
+		}
+
+		// Version 0.4.0
+		//
+		//	Allow repeats of prescriptions ...
+		//
+		if (!version_check($version, '0.4.0')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN rxorigrx INT UNSIGNED AFTER rxperrefill');
 		}
 	} // end method _update
 
