@@ -24,6 +24,7 @@ class AuthorizationsModule extends EMRModule {
 	var $table_name     = "authorizations";
 	var $patient_field  = "authpatient";
 	var $order_fields   = "authdtbegin,authdtend";
+	var $widget_hash    = "##authdtbegin##-##authdtend## (##authvisitsremain##/##authvisits##)";
 
 	var $variables = array (
 		"authdtmod",
@@ -150,7 +151,7 @@ class AuthorizationsModule extends EMRModule {
 			__("Used Visits") =>
 			fm_number_select ("authvisitsused", 0, 100),
 
-			__("Remaining Visits") =>
+			( $action=='addform' ? '' : __("Remaining Visits")) =>
 			fm_number_select ("authvisitsremain", 0, 100),
 
 			__("Comment") =>
@@ -159,11 +160,13 @@ class AuthorizationsModule extends EMRModule {
 	} // end method form_table
 
 	function add () {
-		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $patient;
+		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $patient, $authvisits, $authvisitsremain, $authvisitsused;
 		$authdtbegin = fm_date_assemble("authdtbegin");
 		$authdtend   = fm_date_assemble("authdtend");
 		$authdtadd   = date("Y-m-d");
 		$authpatient = $patient;
+		// All auth visits still remaining by default
+		if ($authvisitsused == 0) { $authvisitsremain = $authvisits; }
 		$this->_add();
 	} // end method add
 

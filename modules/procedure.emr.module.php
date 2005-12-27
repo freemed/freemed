@@ -158,8 +158,6 @@ class ProcedureModule extends EMRModule {
 		$clmtype_result = $sql->query($clmtype_query);
 
 
-		$auth_r_buffer = $this->GetAuthorizations($patient);
-
 		// Determine if we have EOC support
 		$__episode_of_care = $__episode_of_care_widget = '';
 		if (check_module('EpisodeOfCare')) {
@@ -214,12 +212,7 @@ class ProcedureModule extends EMRModule {
 		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  __("Authorization") =>
-			"<select NAME=\"procauth\">\n".
-			"<option VALUE=\"0\" ".
-			( ($procauth==0) ? "SELECTED" : "" ).">".
-			__("NONE SELECTED")."</option>\n".
-			$auth_r_buffer.
-			"</select>\n",
+		  	module_function('authorizationsmodule', 'widget', array('procauth', $patient)),
 		  __("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
 		  __("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  __("Referring Provider") =>
