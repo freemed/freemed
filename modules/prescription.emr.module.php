@@ -22,7 +22,7 @@ class PrescriptionModule extends EMRModule {
 	var $table_name     = "rx";
 	var $patient_field  = "rxpatient";
 	var $date_field	    = "rxdtfrom";
-	var $widget_hash    = "##rxdtfrom## ##rxdrug## ##rxform##";
+	var $widget_hash    = "##rxdtfrom## ##rxdrug## ##rxform## (##rxrefills##)";
 
 	var $print_template = 'rx';
 
@@ -37,7 +37,8 @@ class PrescriptionModule extends EMRModule {
 			__("Disp") => "_dispensed",
 			//__("Dispensed") => "_dispensed",
 			__("Sig")  => "rxdosage",
-			__("By")   => "rxphy:physician"
+			__("By")   => "rxphy:physician",
+			__("Refills") => "_refills",
 			//"Crypto Key" => "rxmd5"
 		);
 		// Specialized query bits
