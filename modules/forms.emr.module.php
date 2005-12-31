@@ -255,6 +255,15 @@ class FormsModule extends EMRModule {
 		}
 	} // end method control_multiple
 
+	function control_phone ( $action, $data ) {
+		if ($action == 'serialize') {
+			return fm_phone_assemble('variable_'.$data['variable']);
+		} elseif ($action == 'widget') {
+			$buffer .= fm_phone_entry('variable_'.$data['variable']);
+			return $buffer;
+		}
+	} // end method control_phone
+
 	function control_select ( $action, $data ) {
 		if ($action == 'serialize') {
 			return $_REQUEST['variable_'.$data['variable']];
