@@ -64,6 +64,8 @@ class Physician {
 				if (strpos($e, 'PA') !== false) { $dr = false; }
 				if (strpos($e, 'R.N.') !== false) { $dr = false; }
 				if (strpos($e, 'RN') !== false) { $dr = false; }
+				if (strpos($e, 'L.P.N.') !== false) { $dr = false; }
+				if (strpos($e, 'LPN') !== false) { $dr = false; }
 			}
 		}
 
