@@ -312,8 +312,15 @@ class BaseModule extends module {
 				$_r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
 				$_p = CreateObject('_FreeMED.Patient', $_r[$this->patient_field]);
 				$descrip = $this->record_name.' for '.$_p->fullName();
+
+				$this_user->setFaxInQueue(
+					$output,
+					$_r[$this->patient_field],
+					$_REQUEST['fax_number'],
+					get_class($this),
+					$_REQUEST['id']
+				);
 			}
-			$this_user->setFaxInQueue($output, $descrip);
 			$display_buffer .= "<b>".__("Refreshing")."... </b>\n";
 			//$GLOBALS['refresh'] = $this->page_name."?".
 			//	"module=".urlencode($_REQUEST['module'])."&".

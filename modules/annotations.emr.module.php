@@ -132,14 +132,16 @@ class Annotations extends EMRModule {
 	//
 	//	$text - Text to annotate
 	//
-	function createAnnotation ($module, $id, $text) {
+	//	$patient - (optional) Patient number
+	//
+	function createAnnotation ($module, $id, $text, $patient = NULL) {
 		$q = $GLOBALS['sql']->insert_query(
 			$this->table_name,
 			array(
 				'amodule' => $module,
 				'aid' => $id,
 				'atimestamp' => SQL__NOW,
-				'apatient' => $_REQUEST['patient'],
+				'apatient' => ( $patient ? $patient : $_REQUEST['patient'] ),
 				'atable' => $this->_resolve_module_to_table($module),
 				'auser' => $_SESSION['authdata']['user'],
 				'annotation' => $text

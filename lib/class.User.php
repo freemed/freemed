@@ -88,6 +88,15 @@ class User {
 		return ($this->user_level)+0;
 	} // end function getLevel
 
+	// Method: getPhysician
+	//
+	//	Get the provider associated with the current user object.
+	//
+	// Returns:
+	//
+	//	Record id of provider record, if one exists, otherwise
+	//	zero.
+	//
 	function getPhysician ($no_parameters = "") {
 		return ($this->user_phy)+0;
 	} // end function getPhysician
@@ -100,12 +109,12 @@ class User {
 	//
 	//	Array of fax ids, or NULL if there are none
 	function getFaxesInQueue ( ) {
-		if (is_array($_SESSION['fax_queue'])) {
-			foreach ($_SESSION['fax_queue'] AS $k => $v) {
-				if ($k and $v['id']) { $r[$k] = $v['id']; }
-			}
-			if (is_array($r)) { return $r; }
+		$query = "SELECT * FROM faxstatus WHERE fsuser='".addslashes($this->user_number)."'";
+		$result = $GLOBALS['sql']->query($query);
+		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			if ($r['fsid']) { $f[$r['fsid']] = $r['fsid']; }
 		}
+		if (is_array($f)) { return $f; } 
 		return NULL;
 	} // end method getFaxesInQueue
 
@@ -122,8 +131,26 @@ class User {
 	//	String containing description
 	//
 	function getFaxDescription ( $fid ) {
-		return $_SESSION['fax_queue'][$fid]['info'];
+		$r = $this->getFaxDetails ( $fid );
+		return sprintf(__("Faxed to %s"), $r['fsdestination']);
 	} // end method getFaxDescription
+
+	// Method: getFaxDetails
+	//
+	// Parameters:
+	//
+	//	$fid - Fax ID
+	//
+	// Returns:
+	//
+	//	Associative array
+	//
+	function getFaxDetails ( $fid ) {
+		$query = "SELECT * FROM faxstatus WHERE fsid='".addslashes($fid)."'";
+		$result = $GLOBALS['sql']->query($query);
+		$r = $GLOBALS['sql']->fetch_array($result);
+		return $r;
+	} // end method getFaxDetails
 
 	// Method: setFaxInQueue
 	//
@@ -133,12 +160,42 @@ class User {
 	//
 	//	$fid - Fax id
 	//
+	//	$patient - Patient id
+	//
+	//	$number - Destination number
+	//
+	//	$module - Module id
+	//
+	//	$record - Record id
+	//
 	//	$info - (optional) Textual description of fax to be stored in queue.
 	//
-	function setFaxInQueue ( $fid, $info = NULL ) {
-		$_SESSION['fax_queue'][$fid]['id'] = $fid;
-		$_SESSION['fax_queue'][$fid]['info'] = $info;
+	function setFaxInQueue ( $fid, $patient, $number, $module=NULL, $record=NULL, $info = NULL ) {
+		$q = $GLOBALS['sql']->insert_query(
+			'faxstatus',
+			array(
+				'fsid' => $fid,
+				'fsmodule' => $module,
+				'fsrecord' => $record,
+				'fsuser' => $this->user_number,
+				'fsdestination' => $number,
+				'fsstatus' => '',
+				'fspatient' => $patient,
+			)
+		);
+		$GLOBALS['sql']->query($q);
 	} // end method setFaxInQueue
+
+	// Method: removeFaxFromQueue
+	//
+	// Parameters:
+	//
+	//	$id - Fax id (fid), not record id
+	//
+	function removeFaxFromQueue ( $id ) {
+		$q = "DELETE FROM faxstatus WHERE fsid='".addslashes($id)."'";
+		$GLOBALS['sql']->query( $q );
+	} // end method removeFaxFromQueue
 
 	// Method: faxNotify
 	//
@@ -155,17 +212,28 @@ class User {
 			$st = $f->State($k);
 			if ($st == 1) {
 				$messages[] = sprintf(
-					__("Fax job %d to %s (%s) finished."),
-					$k, $f->GetNumberFromId($k),
-					$this->getFaxDescription($k)
+					__("Fax job %d to %s successful."),
+					$k, $f->GetNumberFromId($k)
 					);
-				unset($_SESSION['fax_queue'][$k]);
+				$d = $this->getFaxDetails( $k );
+				if ($d['fsmodule']) {
+					module_function(
+						'annotations',
+						'createAnnotation',
+						array(
+							$d['fsmodule'],
+							$d['fsrecord'],
+							sprintf(__("Faxed to %s"), $f->GetNumberFromId($k))
+						)
+					);
+				}
+				$this->removeFaxFromQueue($k);
 			} elseif (is_array($st) and $st[0] == -1) {
 				$messages[] = sprintf(
 					__("Fax job %d (%s) failed with '%s'."),
 					$k, $f->GetNumberFromId($k), $st[1]
 					);
-				unset($_SESSION['fax_queue'][$k]);
+				$this->removeFaxFromQueue($k);
 			}
 		}
 

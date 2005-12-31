@@ -186,7 +186,11 @@ class FaxMultiple extends UtilityModule {
 			//print ($_REQUEST['fax_number']);
 			$output = $fax->Send($_REQUEST['to'] ? $_REQUEST['to'] : $_REQUEST['to_number']);
 			$display_buffer .= "<b>".$output."</b>\n";
-			$this_user->setFaxInQueue($output);
+			$this_user->setFaxInQueue(
+				$output,
+				$_REQUEST['from'],
+				$_REQUEST['fax_number']
+				);
 			return $buffer;
 		}
 	} // end method menu
