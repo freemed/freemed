@@ -21,6 +21,7 @@ class CurrentProblemsModule extends EMRModule {
 	var $date_field = 'id';
 	var $table_name = 'current_problems';
 	var $order_fields = 'pdate,problem';
+	var $widget_hash = '##pdate## ##problem##';
 
 	function CurrentProblemsModule () {
 		$this->table_definition = array (

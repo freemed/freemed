@@ -21,6 +21,7 @@ class PreviousOperationsModule extends EMRModule {
 	var $date_field = 'id';
 	var $table_name = 'previous_operations';
 	var $order_fields = 'odate,operation';
+	var $widget_hash = '##odate## ##operation##';
 
 	function PreviousOperationsModule () {
 		$this->table_definition = array (

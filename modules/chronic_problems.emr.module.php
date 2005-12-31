@@ -21,6 +21,7 @@ class ChronicProblemsModule extends EMRModule {
 	var $date_field = 'id';
 	var $table_name = 'chronic_problems';
 	var $order_fields = 'pdate,problem';
+	var $widget_hash = '##pdate## ##problem##';
 
 	function ChronicProblemsModule () {
 		$this->table_definition = array (
