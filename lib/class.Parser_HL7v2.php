@@ -54,7 +54,7 @@ define ('HL7v2_SCH_EXTNOTE', 7);
 	define ('HL7v2_SCH_EXTNOTE_SHORT', 0);
 	define ('HL7v2_SCH_EXTNOTE_LONG', 1);
 
-// Class: _FreeMED.Parser_HL7v2
+// Class: FreeMED.Parser_HL7v2
 //
 //	HL7 v2.3 compatible generic parser
 //

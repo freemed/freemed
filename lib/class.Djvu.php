@@ -10,6 +10,12 @@ class Djvu {
 
 	var $filename;
 
+	// Constructor: Djvu
+	//
+	// Parameters:
+	//
+	//	$filename - Filename of source DjVu file.
+	//
 	function Djvu ( $filename ) {
 		$this->filename = $filename;
 		if (!file_exists($filename)) { die ("Djvu: file does not exist \"$filename\""); }
@@ -88,6 +94,20 @@ class Djvu {
 		}
 	} // end method GetPage
 
+	// Method: GetPageThumbnail
+	//
+	//	Get textual content of a page thumbnail.
+	//
+	// Parameters:
+	//
+	//	$page - Page number
+	//
+	//	$size - (optional) Maximum dimension of thumbnail. Defaults to 300 (px).
+	//
+	// Returns:
+	//
+	//	String containing JPEG thumbnail of specified page.
+	//
 	function GetPageThumbnail ( $page, $size=300 ) {
 		$filename = $this->filename;
 
@@ -107,6 +127,14 @@ class Djvu {
 		return $contents;
 	} // end method GetPageThumbnail
 
+	// Method: StoredChunks
+	//
+	//	Get list of chunks contained in the parent DjVu file.
+	//
+	// Returns:
+	//
+	//	Array of chunk names.
+	//
 	function StoredChunks ( ) {
 		$filename = $this->filename;
 
