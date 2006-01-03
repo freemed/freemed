@@ -52,7 +52,7 @@ class MFO {
 		// Pass globals as parameters
 		$variables = array_merge(
 			$_REQUEST,
-			GLOBALS,
+			$GLOBALS,
 			array (
 				'title' => 'title'
 			)
