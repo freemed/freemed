@@ -217,6 +217,7 @@ class User {
 					);
 				$d = $this->getFaxDetails( $k );
 				if ($d['fsmodule']) {
+					$_cache = freemed::module_cache();
 					module_function(
 						'annotations',
 						'createAnnotation',
