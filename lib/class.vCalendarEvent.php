@@ -21,8 +21,10 @@ class vCalendarEvent {
 		// Based on array or not, do we import?
 		if (is_array($_event)) {
 			$event = $_event;
+			$this->uid = $event['id'];
 		} else {
                 	$event = freemed::get_link_rec($_event, "scheduler");
+			$this->uid = $_event;
 		}
 
 		// Parse out from the array
@@ -31,12 +33,13 @@ class vCalendarEvent {
 		$this->minute = $event['calminute'];
 		$this->duration = $event['calduration'];
 		$this->patient = $event['calpatient'];
+		$this->facility = $event['calfacility'];
 		list ($this->year, $this->month, $this->day) =
 			explode('-', $event['caldateof']);
 		$this->note = $event['calprenote'];
 	} // end constructor vCalendarEvent
 
-	// Method: vCalendarEvent->generate
+	// Method: generate
 	//
 	//	Produce the text of a singular vCalendar event.
 	//
@@ -47,15 +50,18 @@ class vCalendarEvent {
 	function generate ( ) {
 		$buffer .= "BEGIN:VEVENT\n".
 			"SUMMARY:".$this->note."\n".
-			"DESCRIPTION:ENCODING=QUOTED-PRINTABLE: ".
-				$this->description()."\n".
+			"STATUS:TENTATIVE\n".
+			"CLASS:PUBLIC\n".
+			"DESCRIPTION:".$this->description()."\n".
+			"LOCATION:".$this->location()."\n".
+			"UID:".md5($this->uid)."\n".
 			"DTSTART:".$this->start_time()."\n".
 			"DTEND:".$this->end_time()."\n".
 			"END:VEVENT\n";
 		return $buffer;
-	} // end method vCalendarEvent->generate
+	} // end method generate
 
-	// Method: vCalendarEvent->description
+	// Method: description
 	//
 	//	Form a proper description of the event so that it is
 	//	human-readable.
@@ -66,13 +72,36 @@ class vCalendarEvent {
 	//
 	function description ( ) {
 		// Get patient information
+		if ($this->patient == 0) { return __("Non-Patient Event"); }
 		$patient = CreateObject('FreeMED.Patient', $this->patient);
 		$buffer .= $patient->fullName()." (".
 			$patient->local_record['ptid'].")\n";
 		return $this->_txt2vcal($buffer);
-	} // end method vCalendarEvent->description
+	} // end method description
 
-	// Method: vCalendarEvent->start_time
+	// Method: location
+	//
+	//	Generate text location.
+	//
+	// Returns:
+	//
+	//	Textual location.
+	//
+	function location ( ) {
+		if ($this->facility < 1) { return ''; }
+		if ($this->facility == '') { return ''; }
+		$f = freemed::get_link_rec ( $this->facility, 'facility' );
+		return $f['psrname'].' ('.$f['psrcity'].', '.$f['psrstate'].')';
+	} // end method location
+
+	// Method: start_time
+	//
+	//	Generate vCalendar formatted start time.
+	//
+	// Returns:
+	//
+	//	vCalendar formatted start time for this event.
+	//
 	function start_time ( ) {
 		return $this->_ts2vcal(mktime(
 			$this->hour,
@@ -82,9 +111,16 @@ class vCalendarEvent {
 			$this->day,
 			$this->year
 		));
-	} // end method vCalendarEvent->start_time
+	} // end method start_time
 
-	// Method: vCalendarEvent->end_time
+	// Method: end_time
+	//
+	//	Generate vCalendar formatted end time.
+	//
+	// Returns:
+	//
+	//	vCalendar formatted end time for this event.
+	//
 	function end_time ( ) {
 		// Calculate the end hour and minute
 		$hour = $this->hour;
@@ -108,11 +144,11 @@ class vCalendarEvent {
 			$this->day,
 			$this->year
 		));
-	} // end method vCalendarEvent->end_time
+	} // end method end_time
 
 	// ----- Internal methods
 
-	// Method: vCalendarEvent->_ts2vcal
+	// Method: _ts2vcal
 	//
 	//	Internal method to convert timestamps into vCalendar
 	//	format times.
@@ -126,16 +162,19 @@ class vCalendarEvent {
 	//	vCalendar format date.
 	//
 	// See Also:
-	//	vCalendar->_txt2vcal
+	//	_txt2vcal
 	//
 	function _ts2vcal ( $timestamp ) {
 		return date ( "Ymd\THi00", $timestamp );
-	} // end method vCalendarEvent->_ts2vcal
+	} // end method _ts2vcal
 
-	// Method: vCalendarEvent->_text2vcal
+	// Method: _text2vcal
 	//
 	//	Internal method to convert regular text into vCalendar
 	//	formatted text. vCalendar uses MIME-style line breaks.
+	//
+	//	For now, we break it into comma separated lines for ease
+	//	of reading.
 	//
 	// Parameters:
 	//
@@ -146,11 +185,14 @@ class vCalendarEvent {
 	//	vCalendar format text.
 	//
 	// See Also:
-	//	vCalendar->_ts2vcal
+	//	_ts2vcal
 	//
 	function _txt2vcal ( $text ) {
-		return str_replace ("\n", "=0D=0A=", $text);
-	} // end method vCalendarEvent->_txt2vcal
+		$_text = $text;
+		if (substr($_text, -1) == "\n") { $_text = substr($_text, 0, strlen($_text)-1); }
+		return str_replace ("\n", ", ", $_text);
+		//return str_replace ("\n", "=0D=0A=", $text);
+	} // end method _txt2vcal
 
 } // end class vCalendarEvent
 
