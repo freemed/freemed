@@ -209,6 +209,20 @@ class Patient {
 		return fm_date_print ($this->ptdob);
 	} // end method dateOfBirth
 
+	// Method: dateOfBirthShort
+	//
+	//	Get short date of birth output.
+	//
+	// Returns:
+	//
+	//	MM/DD/YYYY date format for patient date of birth.
+	//
+	function dateOfBirthShort ( ) {
+		if (!$this->ptdob) { return ''; }
+		list ($y, $m, $d) = explode('-', $this->ptdob);
+		return "${m}/${d}/${y}";
+	} // end method dateOfBirthShort
+
 	// Method: idNumber
 	//
 	//	Determine patient's database table id number.
