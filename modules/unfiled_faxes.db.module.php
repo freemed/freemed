@@ -169,7 +169,8 @@ class UnfiledFaxes extends MaintenanceModule {
 				"#username# (#userdescrip#)",
 				"notify"
 			),
-			__("Fax Confirmation #") => html_form::text_widget("faxback")
+			__("Fax Confirmation #") => html_form::text_widget("faxback"),
+			__("Flip") => "<input type=\"checkbox\" name=\"flip\" value=\"1\" />"
 		))."
 		</div>
 		<div align=\"center\">
@@ -236,6 +237,12 @@ class UnfiledFaxes extends MaintenanceModule {
 			trigger_error(__("Fax file does not exist!"));
 		}
 
+		if ($_REQUEST['flip'] == 1) {
+			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/fax/unfiled/${filename}\"";
+			`$command`;
+			$GLOBALS['display_buffer'] .= __("Flipped fax.")."<br/>\n";
+		}
+
 		if (!empty($_REQUEST['faxback'])) { $this->faxback(); }
 
 		if ($_REQUEST['notify']+0 > 0) {
@@ -299,6 +306,12 @@ class UnfiledFaxes extends MaintenanceModule {
 		// Catch multiple people using the same fax
 		if (!file_exists('data/fax/unfiled/'.$filename)) {
 			trigger_error(__("Fax file does not exist!"));
+		}
+
+		if ($_REQUEST['flip'] == 1) {
+			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/fax/unfiled/${filename}\"";
+			`$command`;
+			$GLOBALS['display_buffer'] .= __("Flipped fax.")."<br/>\n";
 		}
 
 		if (!empty($_REQUEST['faxback'])) { $this->faxback(); }
