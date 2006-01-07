@@ -69,6 +69,9 @@ class Physician {
 			}
 		}
 
+		// If no degrees are given, they are not a medical doctor.
+		if (count($d) < 1) { $dr = false; }
+
 		if ($use_salutation) {
 			return ( $dr ? 'Dr. ' : '' ).
 			$this->phyfname . " " . $this->phymname .
