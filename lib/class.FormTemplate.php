@@ -377,6 +377,21 @@ class FormTemplate {
 				return freemed::phone_display ($raw);
 				break;
 
+			case 'date':
+				if (!$raw) { return ''; }
+				$_date = explode('-', $raw);
+				switch (freemed::config_value('dtfmt')) {
+					case 'ymd':
+						return $raw;
+						break;
+					case 'mdy': default:
+						return "${_date[1]}/${_date[2]}/${_date[0]}";
+						break;
+				}
+				// Should never get here
+				return $raw;
+				break;
+
 			case 'string':
 			default:
 				return $raw;
