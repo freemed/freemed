@@ -38,7 +38,7 @@ class FormsModule extends EMRModule {
 		$this->summary_query = array (
 			"DATE_FORMAT(fr_timestamp, '%b %d, %Y %H:%i') AS _timestamp"
 		);
-		$this->summary_options |= SUMMARY_PRINT;
+		$this->summary_options |= SUMMARY_PRINT | SUMMARY_DELETE;
 
 		$this->acl = array ( 'emr' );
 
@@ -191,6 +191,24 @@ class FormsModule extends EMRModule {
 		}
 	} // end method add
 
+	function del ( $_id = NULL ) {
+		$id = $_id ? $_id : $_REQUEST['id'];
+
+		if (!freemed::lock_override()) {
+			if ($this->locked($id)) {
+				$GLOBALS['display_buffer'] .= __("Record is locked.");
+				return false;
+			}
+		}
+
+		// Delete all attached pieces
+		$q = "DELETE FROM form_record WHERE fr_id = '".addslashes($id)."'";
+		$GLOBALS['sql']->query($q);
+
+		// Stock deletion routine
+		$this->_del();
+	} // end method del
+
 	//----- Print Override ----------------------------------------------
 
 	function print_override ( $id ) {
@@ -226,6 +244,11 @@ class FormsModule extends EMRModule {
 		if ($action == 'serialize') {
 			return fm_date_assemble ( 'variable_'.$data['variable'] );
 		} elseif ($action == 'widget') {
+			if (!$_REQUEST['variable_'.$data['variable']]) {
+				$GLOBALS['variable_'.$data['variable']] =
+				$_REQUEST['variable_'.$data['variable']] =
+				$data['default'];
+			}
 			return fm_date_entry( 'variable_'.$data['variable'] );
 		}
 	} // end method control_date
@@ -234,6 +257,11 @@ class FormsModule extends EMRModule {
 		if ($action == 'serialize') {
 			return $_REQUEST['variable_'.$data['variable']];
 		} elseif ($action == 'widget') {
+			if (!$_REQUEST['variable_'.$data['variable']]) {
+				$GLOBALS['variable_'.$data['variable']] =
+				$_REQUEST['variable_'.$data['variable']] =
+				$data['default'];
+			}
 			return module_function(
 				$data['options'],
 				'widget',
@@ -246,9 +274,14 @@ class FormsModule extends EMRModule {
 		if ($action == 'serialize') {
 			return join(',', $_REQUEST['variable_'.$data['variable']]);
 		} elseif ($action == 'widget') {
+			if ($data['default']) {
+				$default = explode('|', $data['default']);
+			}
 			$buffer .= "<select name=\"variable_".$data['variable']."[]\" multiple=\"multiple\" size=\"10\">\n";
 			foreach ( explode('|', $data['options']) AS $v) {
-				$buffer .= "\t<option value=\"${v}\">${v}</option>\n";
+				$selected = false;
+				foreach ($default AS $d) { if ($d == $v) { $selected = true; } }
+				$buffer .= "\t<option value=\"${v}\"".( $selected ? ' SELECTED' : '' ).">${v}</option>\n";
 			}
 			$buffer .= "</select>\n";
 			return $buffer;
@@ -259,6 +292,11 @@ class FormsModule extends EMRModule {
 		if ($action == 'serialize') {
 			return fm_phone_assemble('variable_'.$data['variable']);
 		} elseif ($action == 'widget') {
+			if (!$_REQUEST['variable_'.$data['variable']]) {
+				$GLOBALS['variable_'.$data['variable']] =
+				$_REQUEST['variable_'.$data['variable']] =
+				$data['default'];
+			}
 			$buffer .= fm_phone_entry('variable_'.$data['variable']);
 			return $buffer;
 		}
@@ -268,6 +306,11 @@ class FormsModule extends EMRModule {
 		if ($action == 'serialize') {
 			return $_REQUEST['variable_'.$data['variable']];
 		} elseif ($action == 'widget') {
+			if (!$_REQUEST['variable_'.$data['variable']]) {
+				$GLOBALS['variable_'.$data['variable']] =
+				$_REQUEST['variable_'.$data['variable']] =
+				$data['default'];
+			}
 			return html_form::select_widget(
 				'variable_'.$data['variable'],
 				explode('|', $data['options'])
@@ -279,6 +322,11 @@ class FormsModule extends EMRModule {
 		if ($action == 'serialize') {
 			return $_REQUEST['variable_'.$data['variable']];
 		} elseif ($action == 'widget') {
+			if (!$_REQUEST['variable_'.$data['variable']]) {
+				$GLOBALS['variable_'.$data['variable']] =
+				$_REQUEST['variable_'.$data['variable']] =
+				$data['default'];
+			}
 			return html_form::text_widget(
 				'variable_'.$data['variable'],
 				( $data['limits'] ? $data['limits'] : 20 )
