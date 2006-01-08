@@ -45,6 +45,9 @@ class Handler_HL7v2_A08 extends Handler_HL7v2 {
 				'pthphone' => $this->_FixPhoneNumber($this->_StripToNumeric($v[HL7v2_PID_PHONE_HOME])),
 				'ptwphone' => $this->_FixPhoneNumber($this->_StripToNumeric($v[HL7v2_PID_PHONE_WORK])),
 				'ptssn' => $this->_StripToNumeric($v[HL7v2_PID_SOCIALSECURITY]),
+				'ptreligion' => '99',
+				'ptrace' => '7',
+				'ptmarital' => 'unknown',
 				'ptarchive' => '0',
 				'ptid' => $v[HL7v2_PID_ID]
 			);
