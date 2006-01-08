@@ -9,7 +9,7 @@ class PatientTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Patient Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.3';
+	var $MODULE_VERSION = '0.7.4';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -39,6 +39,7 @@ class PatientTable extends MaintenanceModule {
 			'ptmaidenname' => SQL__VARCHAR(50),
 			'ptfname' => SQL__VARCHAR(50),
 			'ptmname' => SQL__VARCHAR(50),
+			'ptsuffix' => SQL__VARCHAR(10),
 			'ptaddr1' => SQL__VARCHAR(45),
 			'ptaddr2' => SQL__VARCHAR(45),
 			'ptcity' => SQL__VARCHAR(45),
@@ -71,7 +72,7 @@ class PatientTable extends MaintenanceModule {
 			'ptid' => SQL__VARCHAR(10),
 			'pthistbal' => SQL__REAL,
 			'ptmarital' => SQL__ENUM(array(
-				'single', 'married', 'divorced', 'separated', 'widowed'
+				'single', 'married', 'divorced', 'separated', 'widowed', 'unknown'
 				)),
 			'ptempl' => SQL__ENUM(array('y', 'n')),
 			'ptemp1' => SQL__INT_UNSIGNED(0),
@@ -218,6 +219,21 @@ class PatientTable extends MaintenanceModule {
 			$sql->query('UPDATE '.$this->table_name.' SET '.
 				'ptmaidenname=\'\' WHERE id > 0');
 		} // end 0.7.3 upgrade
+
+		// Version 0.7.4
+		//
+		//	Add unknown option for ptmarital
+		//	Add suffix
+		//
+		if (!version_check($version, '0.7.4')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				"CHANGE COLUMN ".
+				"ptmarital ptmarital ENUM('single', 'married', 'divorced', 'separated', 'widowed', 'unknown')");
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN ptsuffix VARCHAR(10) AFTER ptmname');
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'ptsuffix=\'\' WHERE id > 0');
+		} // end 0.7.4 upgrade
 	} // end function _update
 }
 
