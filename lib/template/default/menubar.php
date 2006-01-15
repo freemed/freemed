@@ -162,7 +162,7 @@ if ($patient_history or $page_history or $new_messages or $language_bar) {
 		"onMouseOver=\"this.className='menubar_items_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		"onClick=\"window.location='messages.php?action=addform'; return true;\"".
-		"<a href=\"messages.php?action=addform\" ".
+		"><a href=\"messages.php?action=addform\" ".
 		"onMouseOver=\"this.className='menubar_hilite'; return true;\" ".
 		"onMouseOut=\"this.className='menubar_items'; return true;\" ".
 		">".__("Add")."</a></td>\n".
