@@ -593,7 +593,7 @@ class MaintenanceModule extends BaseModule {
 				}
 			}
 		} else {
-			$value = $this->widget_hash;
+			$value = $r[$this->widget_hash];
 		}
 		return $value;
 	} // end method to_text
