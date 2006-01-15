@@ -562,6 +562,26 @@ class MaintenanceModule extends BaseModule {
 		return $r;
 	} // end method distinct
 
+	// Method: get_field
+	//
+	//	Get single support data field.
+	//
+	// Parameters:
+	//
+	//	$id - Record id
+	//
+	//	$field - Field name
+	//
+	// Returns:
+	//
+	//	Textual version of field
+	//
+	function get_field ( $id, $field ) {
+		if (!$id) { return __("NO RECORD FOUND"); }
+		$r = freemed::get_link_rec($id, $this->table_name);
+		return $r[$field];	
+	} // end method get_field
+
 	// Method: to_text
 	//
 	//	Convert id to text, based on <$this->widget_hash>
@@ -578,10 +598,7 @@ class MaintenanceModule extends BaseModule {
 	//
 	function to_text ( $id, $field='id' ) {
 		if (!$id) { return __("NO RECORD FOUND"); }
-		$query = "SELECT * FROM ".$this->table_name." ".
-			"WHERE ".$field."='".addslashes($id)."'";
-		$res = $GLOBALS['sql']->query($query);
-		$r = $GLOBALS['sql']->fetch_array($res);
+		$r = freemed::get_link_rec($id, $this->table_name);
 		if (!(strpos($this->widget_hash, "##") === false)) {
 			$value = '';
 			$hash_split = explode('##', $this->widget_hash);

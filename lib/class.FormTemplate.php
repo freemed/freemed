@@ -346,7 +346,12 @@ class FormTemplate {
 					syslog(LOG_INFO, get_class($this)."| could not process ${data['table']}, ${data['field']}, ${data['value']}");
 					return '';
 				}
-				return module_function($data['value'], 'to_text', array($raw));
+				if ( strpos($data['value'], ':') !== false ) {
+					$params = explode(':', $data['value']);
+					return module_function($params[0], 'get_field', array($raw, $params[1]));
+				} else {
+					return module_function($data['value'], 'to_text', array($raw));
+				}
 				break;
 
 			case 'ssn':
