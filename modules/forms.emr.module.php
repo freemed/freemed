@@ -222,6 +222,7 @@ class FormsModule extends EMRModule {
 		<form method=\"POST\">
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\" />
 		<input type=\"hidden\" name=\"return\" value=\"".prepare($_REQUEST['return'])."\" />
+		<input type=\"hidden\" name=\"template\" value=\"".prepare($rec['fr_template'])."\" />
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\" />
 		<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\" />
 		<input type=\"hidden\" name=\"action\" value=\"mod\" />
@@ -239,7 +240,7 @@ class FormsModule extends EMRModule {
 	function mod ( ) {
 		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
 		
-		$template = CreateObject('_FreeMED.FormTemplate', $rec['id']);
+		$template = CreateObject('_FreeMED.FormTemplate', $rec['fr_template']);
 		$information = $template->GetInformation();
 		$controls = $template->GetControls();
 
@@ -267,16 +268,7 @@ class FormsModule extends EMRModule {
 				);
 
 				// Build UPDATE query
-				$query = $GLOBALS['sql']->update_query(
-					'form_record',
-					array (
-						'fr_value' => $value
-					),
-					array(
-						'fr_id' => $fid,
-						'fr_uuid' => $v['uuid'],
-					)
-				);
+				$query = "UPDATE form_record SET fr_value = '".addslashes($value)."' WHERE fr_id='".addslashes($fid)."' AND fr_uuid='".$v['uuid']."'";
 				$result = $GLOBALS['sql']->query ( $query );
 			}
 		} // end foreach controls
