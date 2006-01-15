@@ -191,6 +191,104 @@ class FormsModule extends EMRModule {
 		}
 	} // end method add
 
+	function modform ( ) {
+		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		foreach ($rec AS $k => $v) { $_REQUEST[$k] = $v; }
+
+		$template = CreateObject('_FreeMED.FormTemplate', $rec['fr_template']);
+		$controls = $template->GetControls();
+		$template->LoadData($_REQUEST['id']);
+
+		foreach ($controls AS $k => $v) {
+			// Decide if we have defined the control
+			if (method_exists($this, 'control_'.$v['type'])) {
+				// Set default value
+				//$_REQUEST['variable_'.$v['variable']]
+				$v['default'] = $template->FetchDataElement($v['variable']);
+
+				// Call the appropriate method
+				$widget = call_user_func(
+					array(&$this, 'control_'.$v['type']),
+					'widget',
+					$v
+				);
+
+				// Push into form
+				$form[$v['name']] = $widget;
+			}
+		} // end foreach controls
+
+		$GLOBALS['display_buffer'] .= "
+		<form method=\"POST\">
+		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\" />
+		<input type=\"hidden\" name=\"return\" value=\"".prepare($_REQUEST['return'])."\" />
+		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\" />
+		<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\" />
+		<input type=\"hidden\" name=\"action\" value=\"mod\" />
+
+		".html_form::form_table($form)."
+
+		<div align=\"center\">
+		<input type=\"submit\" class=\"button\" name=\"__submit\" value=\"".__("Modify")."\" />
+		<input type=\"submit\" class=\"button\" name=\"__submit\" value=\"".__("Cancel")."\" />
+		</div>
+		</form>
+		";
+	} // end method modform
+
+	function mod ( ) {
+		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+		
+		$template = CreateObject('_FreeMED.FormTemplate', $rec['id']);
+		$information = $template->GetInformation();
+		$controls = $template->GetControls();
+
+		// Only update timestamp on master record
+		$fr_query = $GLOBALS['sql']->update_query(
+			$this->table_name,
+			array (
+				'fr_timestamp' => SQL__NOW,
+			),
+			array ( 'id' => $_REQUEST['id'] )
+		);
+		$fr_result = $GLOBALS['sql']->query ( $fr_query );
+
+		// Get id for association
+		$fid = $_REQUEST['id'];
+
+		foreach ($controls AS $k => $v) {
+			// Decide if we have defined the control
+			if (method_exists($this, 'control_'.$v['type'])) {
+				// Call the appropriate method
+				$value = call_user_func(
+					array(&$this, 'control_'.$v['type']),
+					'serialize',
+					$v
+				);
+
+				// Build UPDATE query
+				$query = $GLOBALS['sql']->update_query(
+					'form_record',
+					array (
+						'fr_value' => $value
+					),
+					array(
+						'fr_id' => $fid,
+						'fr_uuid' => $v['uuid'],
+					)
+				);
+				$result = $GLOBALS['sql']->query ( $query );
+			}
+		} // end foreach controls
+
+		// Return to where we came from:
+		if ($_REQUEST['return'] == 'manage') {
+			$GLOBALS['refresh'] = "manage.php?id=".urlencode($_REQUEST['patient']);
+		} else {
+			$GLOBALS['refresh'] = "module_loader.php?module=".urlencode(get_class($this));
+		}
+	} // end method mod
+
 	function del ( $_id = NULL ) {
 		$id = $_id ? $_id : $_REQUEST['id'];
 
@@ -329,7 +427,9 @@ class FormsModule extends EMRModule {
 			}
 			return html_form::text_widget(
 				'variable_'.$data['variable'],
-				( $data['limits'] ? $data['limits'] : 20 )
+				array (
+					'length' => ( $data['limits'] ? $data['limits'] : 20 )
+				)
 			);
 		}
 	} // end method control_string
