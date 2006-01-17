@@ -807,6 +807,9 @@ class Scheduler {
 			}
 		}
 
+		// Set modify
+		$fields['calmodified'] = SQL__NOW;
+
 		$query = $GLOBALS['sql']->update_query (
 			'scheduler',
 			$fields,
@@ -1121,6 +1124,10 @@ class Scheduler {
 				$fields[$v] = $data[$k];
 			}
 		}
+
+		// Set add and modify
+		$fields['calcreated'] = SQL__NOW;
+		$fields['calmodified'] = SQL__NOW;
 
 		$query = $GLOBALS['sql']->insert_query (
 			'scheduler',

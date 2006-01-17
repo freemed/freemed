@@ -8,7 +8,7 @@ class SchedulerTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Scheduler Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.4';
+	var $MODULE_VERSION = '0.6.5';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -19,6 +19,8 @@ class SchedulerTable extends MaintenanceModule {
 	function SchedulerTable () {
 		$this->table_definition = array (
 			'caldateof' => SQL__DATE,
+			'calcreated' => SQL__TIMESTAMP(16),
+			'calmodified' => SQL__TIMESTAMP(16),
 			'caltype' => SQL__ENUM(array('temp', 'pat')),
 			'calhour' => SQL__INT_UNSIGNED(0),
 			'calminute' => SQL__INT_UNSIGNED(0),
@@ -148,7 +150,7 @@ class SchedulerTable extends MaintenanceModule {
 		//
 		//	Attempt revision again
 		//
-		if (!version_check($version, '0.6.3.2')) {
+		if (!version_check($version, '0.6.4')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN caltype '.
 				'caltype ENUM(\'temp\', \'pat\', \'block\')');
@@ -158,6 +160,17 @@ class SchedulerTable extends MaintenanceModule {
 			$sql->query('UPDATE '.$this->table_name.' '.
 				'SET calstatus=\'scheduled\' '.
 				'WHERE id>0');
+		}
+
+		// Version 0.6.5
+		//
+		//	Add calcreated, calmodified
+		//
+		if (!version_check($version, '0.6.5')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN calcreated TIMESTAMP(16) AFTER caldateof');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN calmodified TIMESTAMP(16) AFTER calcreated');
 		}
 	} // end function _update
 }
