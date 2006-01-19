@@ -242,7 +242,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\"
 		 WIDTH=\"100%\">
 		<tr>
-		<td COLSPAN=\"2\"><b>".__("Group Calendar")."</b>"." ".__("for")."
+		<td colspan=\"2\"><b>".__("Group Calendar")."</b>"." ".__("for")."
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"selected_date\" VALUE=\"".prepare($selected_date)."\"/>
 			".html_form::select_widget(
@@ -255,7 +255,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 				array('refresh' => true)
 			)."
 		</td></tr>
-		<tr><td ALIGN=\"CENTER\" COLSPAN=\"2\">
+		<tr><td ALIGN=\"CENTER\" colspan=\"2\">
 		<b>".fm_date_print($selected_date)."</b><br/>
 		<i>(".(count($physicians)-1)." ".__("physicians").")</i>
 		</td></tr>
@@ -316,7 +316,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 		<div ALIGN=\"CENTER\">
 		<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\"2\" ".
 		"BORDER=\"0\" CLASS=\"calendar\">
-		<tr><td COLSPAN=\"2\">&nbsp;</td>
+		<tr><td colspan=\"2\">&nbsp;</td>
 		";
 		foreach ($physicians AS $k => $v) {
 			if ($v >= 0) {
@@ -324,7 +324,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 			}
 			$buffer .= "<td ALIGN=\"LEFT\" ".
 			"STYLE=\"border: 1px solid; \" ".
-			"COLSPAN=\"".count($map[$v])."\"><b>".
+			"colspan=\"".count($map[$v])."\"><b>".
 			($v!=0 ? $p[$k]->fullName() : __("Other") ).
 			"</b></td>\n";
 		}
@@ -336,21 +336,27 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 				$c_hour++) {
 			// Beginning of hour row
 			$buffer .= "
-			<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
+			<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" rowspan=\"12\" ".
 			"CLASS=\"calcell_hour\" WIDTH=\"7%\"
 			><a NAME=\"hour$c_hour\" /><b>".
 			$scheduler->display_hour($c_hour)."</b></td>
 			";
 
-			for ($c_min="00"; $c_min<60; $c_min+=15) {
+			for ($c_min="00"; $c_min<60; $c_min+=5) {
 				// Create map index
-				$idx = $c_hour.":".$c_min;
+				$idx = sprintf('%02s:%02s', $c_hour, $c_min);
 
 				// Start with table headers
-				$buffer .= "
-				".( ($c_min>0) ? "<tr>" : "" ).
-				"<td>:".$c_min."</td>
-				";
+				if ($c_min > 0) { $buffer .= "</tr><tr>"; }
+				switch($c_min) {
+					case 0: case 15: case 30: case 45:
+					$buffer .= "<td rowspan=\"1\">:${c_min}</td>\n";
+					break;
+
+					default:
+					$buffer .= "<td rowspan=\"1\"></td>\n";
+					break;
+				}
 
 				// Loop through physicians
 				foreach ($physicians AS $_g => $this_phy) {
@@ -362,8 +368,8 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 						$event = true;
 					} elseif (($cur_map[$idx]['link']+0) != 0) {
 						$event = true;
-						$buffer .= "<td COLSPAN=\"1\" ".
-							"ROWSPAN=\"".$cur_map[$idx]['span']."\" ".
+						$buffer .= "<td colspan=\"1\" ".
+							"rowspan=\"".$cur_map[$idx]['span']."\" ".
 							"ALIGN=\"LEFT\" ".
 							"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
 							$scheduler->event_calendar_print(
@@ -386,7 +392,8 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 							)."</td>\n";
 					} else {
 						// Handle empty event
-						$buffer .= "<td COLSPAN=\"1\" CLASS=\"cell\" ALIGN=\"LEFT\" VALIGN=\"MIDDLE\">\n";
+						$buffer .= "<td colspan=\"1\" CLASS=\"cell\" align=\"LEFT\" valign=\"MIDDLE\"><!-- $idx --></td>\n";
+						/*
 						$check = array (
 							15 => "0:15",
 							30 => "0:30",
@@ -412,6 +419,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 							} // end if fit
 						} // end foreach
 						$buffer .= "</td>\n";
+						*/
 					} // end if/else
 					} // end for each current map
 				} // end loop thru physicians

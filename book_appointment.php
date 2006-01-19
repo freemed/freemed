@@ -219,9 +219,17 @@ switch ($_REQUEST['stage']) {
 	html_form::select_widget(
 		"duration", 
 		array (
+			"0:05" => 5,
+			"0:10" => 10,
 			"0:15" => 15,	
+			"0:20" => 20,
+			"0:25" => 25,
 			"0:30" => 30,	
+			"0:35" => 35,
+			"0:40" => 40,	
 			"0:45" => 45,	
+			"0:50" => 50,
+			"0:55" => 55,	
 			"1:00" => 60,	
 			"1:15" => 75,	
 			"1:30" => 90,	
@@ -232,6 +240,7 @@ switch ($_REQUEST['stage']) {
 			"2:45" => 165,
 			"3:00" => 180,	
 			"3:15" => 195,
+			"3:20" => 200,	
 			"3:30" => 210,	
 			"3:45" => 225,
 			"4:00" => 240,	
@@ -505,8 +514,8 @@ function process () {
 	}
 	if ($move) {
 		// Override refresh back to group calendar
-		$refresh = "module_loader.php?module=groupcalendar&selected_date=".
-			urlencode($_REQUEST['selected_date']);
+		//$refresh = "module_loader.php?module=groupcalendar&selected_date=".
+		//	urlencode($_REQUEST['selected_date']);
 	}
 	return $buffer;
 } // end function process
@@ -528,9 +537,9 @@ function display_booking_calendar ($date) {
 
 	//----- Set how many columns we need
 	$columns = count($maps);
-	if ($columns < 4) {
-		$columns = 4;
-		while (count($maps) < 4) {
+	if ($columns < 2) {
+		$columns = 2;
+		while (count($maps) < 2) {
 			$maps[] = $blank_map;
 		}
 	}
@@ -560,12 +569,12 @@ function display_booking_calendar ($date) {
 	// Loop through the hours
 	for ($c_hour=freemed::config_value("calshr"); $c_hour<freemed::config_value("calehr"); $c_hour++) {
 		// Display beginning of row/hour
-		$form .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
+		$form .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"12\" ".
 			"CLASS=\"calcell_hour\" width=\"50\"><b>".
 			$scheduler->display_hour($c_hour)."</b></td>\n";
 	
 		// Loop through the minutes
-		for ($c_min="00"; $c_min<60; $c_min+=15) {
+		for ($c_min="00"; $c_min<60; $c_min+=5) {
 			if ($c_min+0 != 0) { $form .= "<tr>"; }
 			
 			// Make sure to zero the current event counter
@@ -577,11 +586,11 @@ function display_booking_calendar ($date) {
 			);
 
 			// Get index
-			$idx = $c_hour.":".$c_min;
+			$idx = sprintf('%02s:%02s', $c_hour, $c_min);
 	
 			// Generate minute cell
 			$form .= "<td align=\"LEFT\" valign=\"TOP\" class=\"".
-			$cell_class."\""." width=\"30\">:".$c_min."</td>\n";
+			$cell_class."\""." width=\"30\">:".sprintf('%02s', $c_min)."</td>\n";
 
 			// Set fit to true, by default
 			$fit = true;

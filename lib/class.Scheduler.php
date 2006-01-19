@@ -240,7 +240,7 @@ class Scheduler {
 	//	User-friendly AM/PM display of time.
 	//
 	function display_time ( $hour, $minute ) {
-		$m = ($minute<10 ? '0' : '').($minute+0);
+		$m = sprintf('%02s', $minute);
 		if ($hour<12)
 			return $hour.":$m AM";
 		elseif ($hour == 12)
@@ -662,7 +662,7 @@ class Scheduler {
 				
 				// Insert into current position
 				$map[$idx]['link'] = $c['id'];
-				$map[$idx]['span'] = ceil($c['calduration'] / 15);
+				$map[$idx]['span'] = ceil($c['calduration'] / 5);
 				if ($c['calmark'] > 0) {
 					$map[$idx]['mark'] = $c['calmark'];
 				}
@@ -700,7 +700,7 @@ class Scheduler {
 	//	to check. Should be in format HH:MM.
 	//
 	//	$duration - (optional) Duration of the appointment in
-	//	minutes. This is 15 by default.
+	//	minutes. This is 5 by default.
 	//
 	//	$id - (optional) If this is specified it shows the
 	//	pre-existing scheduler id for an appointment, so that if
@@ -715,15 +715,15 @@ class Scheduler {
 	//	<map>
 	//	<map_init>
 	//
-	function map_fit ( $map, $time, $duration=15, $id = -1 ) {
+	function map_fit ( $map, $time, $duration=5, $id = -1 ) {
 		// If this is already booked, return false
 		if ($map[$time]['span'] == 0) { return false; }
 		if ($map[$time]['link'] != 0) { return false; }
 
 		// If anything *after* it for its duration is booked...
-		if ($duration > 15) {
+		if ($duration > 5) {
 			// Determine number of blocks to search
-			$blocks = ceil(($duration - 1) / 15); $cur_pos = $time;
+			$blocks = ceil(($duration - 1) / 5); $cur_pos = $time;
 			for ($check=1; $check<$blocks; $check++) {
 				// Increment pointer to time
 				$cur_pos = $this->next_time_increment($cur_pos);
@@ -743,7 +743,7 @@ class Scheduler {
 				// If there's a link, return false
 				if ($map[$cur_pos]['link'] != 0) return false;
 			} // end looping through longer duration
-		} // end if duration > 15
+		} // end if duration > 5
 
 		// If all else fails, return true
 		return true;
@@ -765,8 +765,8 @@ class Scheduler {
 		$map = array ( );
 		$map['count'] = 0;
 		for ($hour=freemed::config_value("calshr");$hour<freemed::config_value("calehr");$hour++) {
-			for ($minute=00; $minute<60; $minute+=15) {
-				$idx = $hour.":".($minute==0 ? "00" : $minute);
+			for ($minute=00; $minute<60; $minute+=5) {
+				$idx = sprintf('%02s:%02s', $hour, $minute);
 				$map[$idx]['link'] = 0; // no link
 				$map[$idx]['span'] = 1; // one slot per
 				$map[$idx]['mark'] = 0; // default marking
@@ -897,9 +897,7 @@ class Scheduler {
 				} // end removing slashes
 
 				// Determine index
-				$idx = ($c['calhour']+0).":".( $c['calminute']==0 ?
-					"00" : ($c['calminute']+0) );
-
+				$idx = sprintf('%02s:%02s', $c['calhour'], $c['calminute']);
 				// Determine which is the first map that this fits into
 				$cur_map = 0; $mapped = false;
 				while (!$mapped) {
@@ -922,7 +920,7 @@ class Scheduler {
 			
 				// Insert into current position
 				$maps[$cur_map][$idx]['link'] = $c['id'];
-				$maps[$cur_map][$idx]['span'] = ceil($c['calduration'] / 15);
+				$maps[$cur_map][$idx]['span'] = ceil($c['calduration'] / 5);
 				$maps[$cur_map][$idx]['physician'] = $c['calphysician'];
 				$maps[$cur_map][$idx]['room'] = $c['calroom'];
 
@@ -964,7 +962,7 @@ class Scheduler {
 	//	* after    - After a particular hour
 	//	* date     - Date to start the search from
 	//	* days     - Number of days to search (defaults to 4)
-	//	* duration - In minutes (defaults to 15)
+	//	* duration - In minutes (defaults to 5)
 	//	* forceday - Force day to be day of week (1..7 ~ Mon..Sun)
 	//	* location - Room location
 	//	* provider - With a particular provider
@@ -985,7 +983,7 @@ class Scheduler {
 		}
 
 		// Get duration
-		$duration = $_criteria['duration'] ? $_criteria['duration'] : 15;
+		$duration = $_criteria['duration'] ? $_criteria['duration'] : 5;
 
 		// Loop through days to create c_days array
 		$i_cur = $_criteria['date'] ? $_criteria['date'] : date('Y-m-d');
@@ -1047,8 +1045,8 @@ class Scheduler {
 			// Loop through the map and use map_fit() queries
 			// to return the first possible fit
 			for($h=$starting_time; $h<freemed::config_value('calehr'); $h++) {
-				for ($m='00'; $m<60; $m+=15) {
-					if ($this->map_fit($map, "$h:$m", $duration)) {
+				for ($m='00'; $m<60; $m+=5) {
+					if ($this->map_fit($map, sprintf('%02s:%02s', $h, $m), $duration)) {
 						if ($_criteria['single']) {
 							return array ($this_day, $h, $m);
 						} else {
@@ -1070,7 +1068,7 @@ class Scheduler {
 
 	// Method: next_time_increment
 	//
-	//	Increment time slot by 15 minutes.
+	//	Increment time slot by 5 minutes.
 	//
 	// Parameters:
 	//
@@ -1083,15 +1081,10 @@ class Scheduler {
 	function next_time_increment ( $time ) {
 		// Split into time components
 		list ($h, $m) = explode (":", $time);
-		
-		// Decide what to do based on the minutes
-		switch ($m) {
-			case "00": $return = $h.":15"; break;
-			case "15": $return = $h.":30"; break;
-			case "30": $return = $h.":45"; break;
-			case "45": $return = ($h+1).":00"; break;
-		}
-		return $return;
+
+		$new_m = ($m + 5) % 60;
+		$new_h = (int)(($m + 5) / 60) + $h;
+		return sprintf('%02s:%02s', $new_h, $new_m);
 	} // end method next_time_increment
 
 	// Method: set_appointment
