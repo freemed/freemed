@@ -9,11 +9,11 @@
 /**
 * You need PEAR only if you want to use the DB support.
 */
-require_once dirname(dirname(dirname(dirname(__FILE__))))."/pear/PEAR.php";
+require_once "PEAR.php";
 /**
 * You need DB.php only if you want to use the DB support.
 */
-require_once dirname(dirname(dirname(dirname(__FILE__))))."/pear/DB.php";
+require_once "DB.php";
 
 /**
 * This is the "common" class of the PHP Layers Menu library.
