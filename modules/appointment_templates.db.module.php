@@ -8,10 +8,10 @@ class AppointmentTemplates extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Appointment Templates";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE    = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $record_name    = "Appointment Template";
 	var $table_name     = "appttemplate";
@@ -21,7 +21,8 @@ class AppointmentTemplates extends MaintenanceModule {
 	var $variables = array (
 		'atname',
 		'atduration',
-		'atequipment'
+		'atequipment',
+		'atcolor'
 	);
 
 	function AppointmentTemplates () {
@@ -31,12 +32,14 @@ class AppointmentTemplates extends MaintenanceModule {
 			'atname'	=>	SQL__VARCHAR(50),
 			'atduration'	=>	SQL__INT_UNSIGNED(0),
 			'atequipment'	=>	SQL__BLOB,
+			'atcolor'	=>	SQL__CHAR(7),
 			'id'		=>	SQL__SERIAL
 		);
 
 		$this->rpc_field_map = array (
 			'name' => 'atname',
-			'duration' => 'atduration'
+			'duration' => 'atduration',	
+			'color' => 'atcolor'
 		);
 
 			// Run constructor
@@ -79,7 +82,8 @@ class AppointmentTemplates extends MaintenanceModule {
 				'id',
 				array ( 'multiple' => 5 )
 			)
-		)
+		),
+		__("Color") => html_form::color_widget('atcolor')
 
 		) )."
 		<p/>
@@ -201,6 +205,21 @@ class AppointmentTemplates extends MaintenanceModule {
 			return false;
 		}
 	} // end method get_rooms
+
+	function _update ( ) {
+		$version = freemed::module_version ( $this->MODULE_NAME );
+
+		// Version 0.1.1
+		//
+		//	Add colors
+		//
+		if (!version_check($version, '0.1.1')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN atcolor CHAR(7) AFTER atequipment');
+			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
+				'SET atcolor=\'\' WHERE id>0');
+		} // end version 0.1.1
+	} // end method _update
 
 } // end class AppointmentTemplates
 

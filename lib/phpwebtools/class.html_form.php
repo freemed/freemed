@@ -15,6 +15,44 @@ define ('__CLASS_HTML_FORM_PHP__', true);
 //
 class html_form {
 
+	// Method: html_form::color_widget
+	//
+	//	Color selection widget.
+	//
+	//	WARNING - This is just awful, and needs to be replaced with something
+	//	that makes more sense.
+	//
+	// Parameters:
+	//
+	//	$varname - Variable name
+	//
+	// Returns:
+	//
+	//	XHTML widget
+	//
+	function color_widget ( $varname ) {
+		global ${$varname};
+		if (isset($_REQUEST[$varname])) { ${$varname} = $_REQUEST[$varname]; }
+		$__colors__ = array (
+			'#ffffff',
+			'#ffff00',
+			'#ff00ff',
+			'#00ffff',
+			'#ff0000',
+			'#00ff00',
+			'#0000ff'
+		);
+		$buffer .= "<select class=\"nocolor\" name=\"".$varname."\">\n";
+		foreach ($__colors__ AS $__color__) {
+			$buffer .= "\t<option value=\"${__color__}\" ".
+				( ${$varname} == ${__color__} ? 'SELECTED' : '' ).
+				" style=\"background-color: ${__color__};\">${__color__}".
+				"</option>\n";
+		}
+		$buffer .= "</select>\n";
+		return $buffer;
+	} // end method color_widget
+
 	// Method: html_form::combo_widget
 	//
 	//	Creates the HTML form equivalent of a combination
