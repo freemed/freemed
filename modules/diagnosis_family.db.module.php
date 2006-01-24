@@ -70,6 +70,7 @@ class DiagnosisFamilyModule extends MaintenanceModule {
 		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
 			( ($action=='modform') ? 'mod' : 'add' )."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 
 		<div ALIGN=\"CENTER\">

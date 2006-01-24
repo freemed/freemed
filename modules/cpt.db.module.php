@@ -74,7 +74,7 @@ class CptMaintenance extends MaintenanceModule {
 		foreach ($GLOBALS as $k => $v) global $$k;
 
 		$book = CreateObject('PHP.notebook',
-			array ("action", "id", "module"),
+			array ("action", "id", "module", "return"),
 			NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH);
     
   		if (!$book->been_here()) {

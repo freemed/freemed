@@ -51,6 +51,7 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
 				( ($action=="addform") ? "add" : "mod" )."\"> 
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
+			<INPUT TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"> 
 			<INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\"  >
 			".html_form::form_table ( array (
 				__("Name") =>

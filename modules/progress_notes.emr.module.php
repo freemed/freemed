@@ -58,6 +58,7 @@ class ProgressNotes extends EMRModule {
 		// Define variables for EMR summary
 		$this->summary_vars = array (
 			__("Date")        =>	"my_date",
+			__("Provider")    =>	"pnotesdoc:physician",
 			__("Description") =>	"pnotesdescrip"
 		);
 		$this->summary_options |= SUMMARY_VIEW | SUMMARY_LOCK | SUMMARY_PRINT | SUMMARY_DELETE;

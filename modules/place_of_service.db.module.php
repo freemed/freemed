@@ -82,6 +82,7 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 			<form ACTION=\"$this->page_name\" METHOD=\"POST\">
 			<input TYPE=\"HIDDEN\" NAME=\"posdtadd\"".prepare($posdtadd)."\"/>
 			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+			<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
 			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
 			($action=="modform" ? "mod" : "add")."\"/>\n";
 		if ($action=="modform")

@@ -95,6 +95,7 @@ class QuestionnaireTemplateMaintenance extends MaintenanceModule {
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
      <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
      <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
+     <INPUT TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\">
     <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>
     <TR>

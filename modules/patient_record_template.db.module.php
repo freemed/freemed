@@ -114,6 +114,7 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
     <FORM ACTION=\"$this->page_name\" METHOD=POST>
      <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
      <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
+     <INPUT TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\">
      <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"".prepare($id)."\">
     <TABLE WIDTH=\"100%\" CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE
      ALIGN=CENTER>

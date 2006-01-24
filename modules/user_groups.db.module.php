@@ -109,6 +109,7 @@ class UserGroupsMaintenance extends MaintenanceModule {
 		  (($action=="modform") ? "mod" : "add")."\"> 
 		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"usergroupdtadd\" VALUE=\"".prepare($usergroupdtadd)."\"/>";
  
 		$display_buffer .= html_form::form_table( array (

@@ -66,6 +66,7 @@ class CptModifiersMaintenance extends MaintenanceModule {
 		( ($action=="addform") ? "add" : "mod" )."\"/> 
 		<input TYPE=\"HIDDEN\" NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"module\"   VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"return\"   VALUE=\"".prepare($_REQUEST['return'])."\"/>
 		".html_form::form_table ( array (
 		__("Modifier") =>
 		array(

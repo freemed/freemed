@@ -78,6 +78,7 @@ class CovtypesMaintenance extends MaintenanceModule {
 			<FORM ACTION=\"$this->page_name\" METHOD=POST>
 			<INPUT TYPE=HIDDEN NAME=\"covtpdtadd\"".prepare($cur_date)."\">
 			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
+			<INPUT TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\">
 			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
 			($action=="modform" ? "mod" : "add")."\">";
 		if ($action=="modform")

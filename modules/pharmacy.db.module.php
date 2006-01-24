@@ -79,6 +79,7 @@ class PharmacyMaintenance extends MaintenanceModule {
 		( ($action=="addform") ? "add" : "mod" )."\"/> 
 		<input TYPE=\"HIDDEN\" NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 		<input TYPE=\"HIDDEN\" NAME=\"module\"   VALUE=\"".prepare($module)."\"/>
+		<input TYPE=\"HIDDEN\" NAME=\"return\"   VALUE=\"".prepare($_REQUEST['return'])."\"/>
 		".html_form::form_table ( array (
 		__("Pharmacy Name") => html_form::text_widget('phname', 50),
 		__("Address Line 1") => html_form::text_widget('phaddr1', 150),

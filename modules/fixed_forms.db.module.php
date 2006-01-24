@@ -74,6 +74,7 @@ class FixedFormsMaintenance extends MaintenanceModule {
 		 <FORM ACTION=\"$this->page_name\" METHOD=POST>
 		  <INPUT TYPE=HIDDEN NAME=\"been_here\" VALUE=\"yes\">
 		  <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">
+		  <INPUT TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\">
 		  <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\""."add"."\">
 		  <INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">
 		 <TABLE WIDTH=100% CELLPSPACING=2 CELLPADDING=2 BORDER=0 VALIGN=MIDDLE

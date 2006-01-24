@@ -85,7 +85,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 		while(list($k,$v)=each($GLOBALS)) global $$k;
 
 		$book = CreateObject('PHP.notebook',
-				array ("action", "_auth", "id", "module"),
+				array ("action", "_auth", "id", "module", "return"),
 				NOTEBOOK_COMMON_BAR|NOTEBOOK_STRETCH);
 
 		// Create billing connection for target and format selects

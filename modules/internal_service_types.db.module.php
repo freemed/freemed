@@ -50,6 +50,7 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
 		<input TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"/> 
 		<input TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"/> 
+		<input TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/> 
 		<input TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
 
 		<div ALIGN=\"CENTER\">

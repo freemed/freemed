@@ -141,7 +141,7 @@ class ProviderModule extends MaintenanceModule {
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
 		$book = CreateObject('PHP.notebook',
-			array ("action", "id", "module"),
+			array ("action", "id", "module", "return"),
 			NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR,
 			4 
 		);

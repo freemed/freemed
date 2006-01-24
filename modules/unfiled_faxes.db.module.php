@@ -147,6 +147,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\" id=\"myform\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
+		<input type=\"hidden\" name=\"return\" value=\"".prepare($_REQUEST['return'])."\"/>
 		<input type=\"hidden\" name=\"action\" value=\"view\"/>
 		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
 		<div align=\"center\">

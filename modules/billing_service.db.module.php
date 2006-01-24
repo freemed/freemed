@@ -72,6 +72,7 @@ class BillingService extends MaintenanceModule {
 		<form action=\"".$this->page_name."\" method=\"post\">
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($GLOBALS['module'])."\" />
 		<input type=\"hidden\" name=\"action\" value=\"".prepare($this_action)."\" />
+		<input type=\"hidden\" name=\"return\" value=\"".prepare($_REQUEST['return'])."\" />
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($id)."\" />
 		";
 

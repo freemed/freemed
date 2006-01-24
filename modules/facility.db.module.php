@@ -102,7 +102,7 @@ class FacilityModule extends MaintenanceModule {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
-  $book = CreateObject('PHP.notebook', array ("action", "id", "module"),
+  $book = CreateObject('PHP.notebook', array ("action", "id", "module", "return"),
     NOTEBOOK_STRETCH | NOTEBOOK_COMMON_BAR);
 
   // for either add or modify form
