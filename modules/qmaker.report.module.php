@@ -39,54 +39,55 @@ class QmakerReport extends ReportsModule {
 	function view() {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-	
-		if ( (empty($btnSubmit)) OR ($btnSubmit=="PickQuery") )
+
+		if ( (empty($btnSubmit)) OR ($btnSubmit==__("Pick Query")) )
 		{  	
 
-			if ($btnTable1 == "SaveQuery")
+			if ($btnTable1 == __("Save Query"))
 			{
-				$display_buffer .= "<CENTER>";
+				$display_buffer .= "<center>";
 				if ( (isset($loadas)) AND ($loadas > 0))
 				{
-					$display_buffer .= "Updating Query $saveas<BR>";
+					$display_buffer .= __("Updating Query")." ${saveas}<br/>\n";
 					$qry = "UPDATE queries SET qquery='".addslashes($cquery)."' WHERE id='".addslashes($loadas)."'";
 					$res = $sql->query($qry);
 				}
 				else
 				{
-					$display_buffer .= "Saving Query $saveas<BR>";
+					$display_buffer .= __("Saving Query")." ${saveas}<br/>\n";
 					$qry = $sql->insert_query(
 						'queries',
 						array(
-						'qquery' => $cquery,
-						'qdatabase' => $database,
-						'qtitle' => $saveas
+							'qquery' => $cquery,
+							'qdatabase' => $database,
+							'qtitle' => $saveas
 						)
 					);
 					$res = $sql->query($qry);
 				}
-				if (!$res)
-					$display_buffer .= "Error adding $saveas<BR>";
-				else
-					$display_buffer .= "The query has been saved as $saveas<BR>";
+				if (!$res) {
+					$display_buffer .= sprintf(__("Error adding %s."), $saveas)."<br/>\n";
+				} else {
+					$display_buffer .= sprintf(__("The query has been saved as %s."), $saveas)."<br/>\n";
+				}
 
 				$display_buffer .= "
-				<P>
-				<CENTER>
-				<A HREF=\"$this->page_name?patient=$patient&module=$module\">
-				".__("Back")."</A>
-				</CENTER>
-				<P>
+				<p/>
+				<div align=\"center\">
+				<a class=\"button\" href=\"$this->page_name?patient=$patient&module=$module\">
+				".__("Back")."</a>
+				</center>
+				<p/>
 				";	
 				$display_buffer .= "</CENTER>";
 				return;
 			}
 
-			$display_buffer .= "<CENTER>";
+			$display_buffer .= "<div align=\"center\">";
 			$display_buffer .= "<p>";
 			$display_buffer .= __("Pick a Query");
 			$display_buffer .= "</p>";
-			$display_buffer .= "<FORM METHOD=\"POST\" ACTION=\"$this->page_name\"><SELECT NAME=\"loadas\">\n";
+			$display_buffer .= "<form METHOD=\"POST\" ACTION=\"$this->page_name\"><SELECT NAME=\"loadas\">\n";
 			$res = $sql->query("SELECT * FROM queries ORDER BY qtitle");
 			while($row = $sql->fetch_array($res))
 			   $display_buffer .= "<OPTION VALUE=\"$row[id]\">".$row['qtitle']."</OPTION>\n";
@@ -102,119 +103,100 @@ class QmakerReport extends ReportsModule {
 	 		$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>";
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>";
 			$display_buffer .= "</form>\n";
-			$display_buffer .= "</div>";
-			$display_buffer .= "
-			<P>
-			";	
+			$display_buffer .= "</div>\n";
+			$display_buffer .= "<p/>\n";	
 			return;
-
 		}
 
-
-		if ($btnSubmit=="Create")
-		{
+		if ($btnSubmit == __("Create")) {
 			$result = $sql->listtables($database);
-			$display_buffer .= "<CENTER>";
-			$display_buffer .= "<FORM method=\"post\" action=\"$this->page_name\"><select multiple size=5 name=\"table[]\">\n";
+			$display_buffer .= "<center>";
+			$display_buffer .= "<form method=\"post\" action=\"$this->page_name\"><select multiple size=5 name=\"table[]\">\n";
 
 			$i = 0;
-			while ($i < $sql->num_rows ($result))
-			{   $tb_names[$i] = $sql->tablename ($result, $i);
+			while ($i < $sql->num_rows ($result)) {
+				$tb_names[$i] = $sql->tablename ($result, $i);
 				$display_buffer .= "<option value=\"$tb_names[$i]\">$tb_names[$i]</option>\n";
 				$i++;
 			}
 
 			$display_buffer .= "</select>\n";
-			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"view\">";
-			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"".prepare($patient)."\">";
-			$display_buffer .= "<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\">";
-			$display_buffer .= "<INPUT TYPE=SUBMIT NAME=\"btnSubmit\" VALUE=\"".__("Select Fields")."\">";
-			$display_buffer .= "</FORM>\n";
-			$display_buffer .= "</CENTER>";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"view\">";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\" />\n";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\" />\n";
+			$display_buffer .= "<input TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Select Fields")."\" />\n";
+			$display_buffer .= "</form>\n";
+			$display_buffer .= "</center>\n";
 			return;
 		}
 
 	
-		if ($btnSubmit == __("Select Fields"))
-		{
-
-		if (isset ($table) )
-		  {
+		if ($btnSubmit == __("Select Fields")) {
+			if (isset($table)) {
 				$xz = $this->matchset($table);
 				$cnty = count($xz);
-			$fldy  = "";
+				$fldy  = "";
 				$j = 0;
-				for($j = 0; $j<$cnty; $j++)
-			   {
-				$fldy .=  $xz[$j].":"."t".$j. ($j<$cnty-1?",":"");
-			   }
-		  }
+				for($j = 0; $j<$cnty; $j++) {
+					$fldy .=  $xz[$j].":"."t".$j. ($j<$cnty-1?",":"");
+				}
+			}
 
+			$xy = $this->matchset($table);
+			$cnt = count($xy);
 
-				$xy = $this->matchset($table);
-				$cnt = count($xy);
-
-				$display_buffer .= "<h3>Select Fields from tables:</h3>\n";	
-				$display_buffer .= "<table border=1 cellpadding=3><tr>"; 
-				for($j = 0; $j<$cnt; $j++)
-			   {
+			$display_buffer .= "<h3>".__("Select fields from tables").":</h3>\n";	
+			$display_buffer .= "<table border=\"1\" cellpadding=\"3\"><tr>\n"; 
+			for($j = 0; $j<$cnt; $j++) {
 				$tabz = $xy[$j];
-				$display_buffer .= "<th><font color =red>$tabz</font></th>\n";
-			   }
-				$display_buffer .= "</tr>";
-				$display_buffer .= "</table>\n";
+				$display_buffer .= "<th><font color=\"#ff0000\">${tabz}</font></th>\n";
+			}
+			$display_buffer .= "</tr>\n";
+			$display_buffer .= "</table>\n";
 
-			$display_buffer .= "<FORM method=\"post\" action=\"$this->page_name\">\n";
-				for($j = 0; $j<$cnt; $j++)
-			   {
+			$display_buffer .= "<form method=\"post\" action=\"$this->page_name\">\n";
+			for($j=0; $j<$cnt; $j++) {
 				$tabz = $xy[$j];
-
-			$SQL = "select * from $tabz";
-			$result = $sql->query($SQL);
-			
-			$x = $sql->num_fields($result);
-
+				$query = "select * from ${tabz}";
+				$result = $sql->query($query);
+				$x = $sql->num_fields($result);
 				$display_buffer .= "<select multiple size=5 name=\"fields[]\">\n";
-			$i = 0;
-			while ($i < $x) 
-			{
-				$fx  = $sql->field_name($result, $i);
-					$fields[$i] = "t".$j.".".$fx;
+				$i = 0;
+				while ($i < $x) {
+					$fx = $sql->field_name($result, $i);
+					$fields[$i] = "t${j}.${fx}";
+					$display_buffer .= "<option value=\"${fields[$i]}\">${fields[$i]}</option>\n";
+					$i++;
+				}
+				$fields[$i] = "t".$j."."."*";
 				$display_buffer .= "<option value=\"$fields[$i]\">$fields[$i]</option>\n";
 
-				$i++;
-			}
-					$fields[$i] = "t".$j."."."*";
-					$display_buffer .= "<option value=\"$fields[$i]\">$fields[$i]</option>\n";
-
-			$display_buffer .= "</select>\n";
-
+				$display_buffer .= "</select>\n";
 				//mysql_free_result($result);
 			}
 
-		$display_buffer .= "<h4><b>Aggregate Functions</b></h4>
-		<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
-		<tr>
-		<td><b>Operator</b></td>
-		<td><b>Expr</b></td>
-		</tr>";
-		$display_buffer .= "<tr>";
-		for ($i=0; $i<5; $i++)
-		{
-		$display_buffer .= "<td>
-		<select name=\"agg_op[$i]\">
-		<option value=\"None\">None</option>
-		<option VALUE=\"AVG\">AVG(expr)</option>
-		<option VALUE=\"COUNT\">COUNT(expr)</option>
-		<option VALUE=\"MAX\">MAX(expr)</option>
-		<option VALUE=\"MIN\">MIN(expr)</option>
-		<option VALUE=\"STD\">STD(expr)</option>
-		<option VALUE=\"SUM\">SUM(expr)</option>
-		</select>
-		</td>
-		<td><input type=\"text\" size=\"60\" name=\"agg_val[$i]\"/></td>\n</tr>\n";
-		}
-		$display_buffer .= "</table>\n";
+			$display_buffer .= "<h4><b>Aggregate Functions</b></h4>
+			<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+			<tr>
+			<td><b>Operator</b></td>
+			<td><b>Expr</b></td>
+			</tr>";
+			$display_buffer .= "<tr>";
+			for ($i=0; $i<5; $i++) {
+				$display_buffer .= "<td>
+				<select name=\"agg_op[$i]\">
+				<option value=\"None\">None</option>
+				<option VALUE=\"AVG\">AVG(expr)</option>
+				<option VALUE=\"COUNT\">COUNT(expr)</option>
+				<option VALUE=\"MAX\">MAX(expr)</option>
+				<option VALUE=\"MIN\">MIN(expr)</option>
+				<option VALUE=\"STD\">STD(expr)</option>
+				<option VALUE=\"SUM\">SUM(expr)</option>
+				</select>
+				</td>
+				<td><input type=\"text\" size=\"60\" name=\"agg_val[$i]\"/></td>\n</tr>\n";
+			}
+			$display_buffer .= "</table>\n";
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"view\"/>\n";
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>\n";
 			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>";
@@ -228,264 +210,239 @@ class QmakerReport extends ReportsModule {
 			return;
 		} // end SelectFields
 
-		if ($btnSubmit == __("Select Options"))
-		{
-				$xy = $this->matchset($fields);
-				$cnt = count($xy);
-
-				$display_buffer .= __("The current Select statement is:");	
+		if ($btnSubmit == __("Select Options")) {
+			$xy = $this->matchset($fields);
+			$cnt = count($xy);
+			$display_buffer .= __("The current Select statement is:");	
 			$fldx  = "";
-				$j = 0;
-				for($j = 0; $j<$cnt; $j++)
-			   {
+			$j = 0;
+			for($j = 0; $j<$cnt; $j++) {
 				$fldx = $fldx . $xy[$j] . ($j<$cnt-1?",":"");
-			   }
+			}
+			$mysql = "SELECT ${fldx} ";
+			// Aggregation functions
 
-			$mysql = "SELECT  $fldx ";
-		//Aggregation functions
-
-		   $asql = "";
-			 for ($i=0; $i<5; $i++)
-			 {
-			 if ($agg_val[$i] != "")
-			  {
-				if (strstr($agg_val[$i],"*"))
-				{
-				   $agg_val[$i] = "*";
-				}
+			$asql = "";
+			for ($i=0; $i<5; $i++) {
+				if ($agg_val[$i] != "") {
+					if (strstr($agg_val[$i],"*")) {
+						$agg_val[$i] = "*";
+					}
 					$asql .= $agg_op[$i]."(".$agg_val[$i].")"." "; 
-			   }
-			 }
+				}
+			}
 
-			  if ( trim($mysql) == "SELECT" && $asql !== "")
+			if ( trim($mysql) == "SELECT" && $asql !== "") {
 				$mysql .= " ".$asql." From ";
-			  elseif ( $mysql != "" && $asql == "")
+			} elseif ( $mysql != "" && $asql == "") {
 				$mysql .= " From ";
-			  else
+			} else {
 				$mysql .= ",".$asql." From ";
+			}
 
-				$flex = explode(":", $fldy);
+			$flex = explode(":", $fldy);
 			$fldz  = "";
-				for($j = 0; $j<$cnty; $j++)
-			   {
+			for($j = 0; $j<$cnty; $j++) {
 				$fldz .=  $flex[2*$j]." ".$flex[2*$j+1]. ($j<cnty-1?",":" ");
-			   }
+			}
 				
 			$mysql .= $fldz;
 
-			   $display_buffer .= "<p/>";
-			   $display_buffer .= "<span class=\"query\">$mysql</span><br/><br/>\n"; 
-			   $display_buffer .= "<p/>";
+			$display_buffer .= "<p/>";
+			$display_buffer .= "<span class=\"query\">$mysql</span><br/><br/>\n"; 
+			$display_buffer .= "<p/>";
 				
-		$display_buffer .= "<form method=\"post\" action=\"$this->page_name\">\n";
-		$display_buffer .= "<input type=\"hidden\" name=\"mysql\" value=\"$mysql\"/>\n";
-		$display_buffer .= "<p>";
-		$display_buffer .= "</p>";
-		$display_buffer .= "<h3>WHERE CLAUSE</h3>
-		<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
-		<tr>
-		<td><b>".__("Field")."</b></td>
-		<td><b>".__("Operator")."</b></td>
-		<td><b>".__("Value")."</b></td>
-		<td><b>".__("Condition")."</b></td>
-		</tr>";
-		for ($i=0; $i<5; $i++)
-		{
-		$display_buffer .= "<td>";
-		$display_buffer .= "<select name=\"qfields[$i]\">";
+			$display_buffer .= "<form method=\"post\" action=\"$this->page_name\">\n";
+			$display_buffer .= "<input type=\"hidden\" name=\"mysql\" value=\"$mysql\"/>\n";
+			$display_buffer .= "<p>";
+			$display_buffer .= "</p>";
+			$display_buffer .= "<h3>WHERE CLAUSE</h3>
+			<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+			<tr>
+			<td><b>".__("Field")."</b></td>
+			<td><b>".__("Operator")."</b></td>
+			<td><b>".__("Value")."</b></td>
+			<td><b>".__("Condition")."</b></td>
+			</tr>";
+			for ($i=0; $i<5; $i++) {
+				$display_buffer .= "<td>";
+				$display_buffer .= "<select name=\"qfields[$i]\">";
 				$xy = $this->matchset($fields);
 				$cnt = count($xy);
 
 				$j = 0;
-				for($j = 0; $j<$cnt; $j++)
-			   {
-			$display_buffer .= "<option value=\"$xy[$j]\">$xy[$j]</option>\n";
-			}
+				for($j = 0; $j<$cnt; $j++) {
+					$display_buffer .= "<option value=\"$xy[$j]\">$xy[$j]</option>\n";
+				}
 
-			$display_buffer .= "</select></td>\n";
-		$display_buffer .= "<td>
-		<select NAME=\"fields_op[$i]\">
-		<option VALUE=\"=\">=</option>
-		<option VALUE=\"&lt;&gt;\">&lt;&gt;</option>
-		<option VALUE=\"&gt;\">></option>
-		<option VALUE=\"&gt;=\">&gt;=</option>
-		<option VALUE=\"&lt;\">&lt;</option>
-		<option VALUE=\"&lt;=\">&lt;=</option>
-		<option VALUE=\"LIKE\">LIKE</option>
-		</select>
-		</td>
-		<td><input type=\"text\" size=\"60\" name=\"fields_val[$i]\"/></td>
-		<td><select name=\"fields_enab[$i]\">
-		<option VALUE=\" \">  </option>
-		<option VALUE=\"AND\">AND</option>
-		<option VALUE=\"OR\">OR</option>
-		</select>";
-		$display_buffer .= "</td>\n</tr>";
-		}
-		$display_buffer .= "</table>";
-		$display_buffer .= "<p>";
-		$display_buffer .= "</p>";
-		$display_buffer .= "<h3>GROUP BY CLAUSE</h3>";
-		$display_buffer .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
-		<tr>
-		<td><b>".__("Field")."</b></td>
-		</tr>";
-		$display_buffer .= "<td>";
-		$display_buffer .= "<select NAME=\"gfields\">\n";
-				$xy = $this->matchset($fields);
-				$cnt = count($xy);
+				$display_buffer .= "</select></td>\n";
+				$display_buffer .= "<td>
+				<select NAME=\"fields_op[$i]\">
+				<option VALUE=\"=\">=</option>
+				<option VALUE=\"&lt;&gt;\">&lt;&gt;</option>
+				<option VALUE=\"&gt;\">></option>
+				<option VALUE=\"&gt;=\">&gt;=</option>
+				<option VALUE=\"&lt;\">&lt;</option>
+				<option VALUE=\"&lt;=\">&lt;=</option>
+				<option VALUE=\"LIKE\">LIKE</option>
+				</select>
+				</td>
+				<td><input type=\"text\" size=\"60\" name=\"fields_val[$i]\"/></td>
+				<td><select name=\"fields_enab[$i]\">
+				<option VALUE=\" \">  </option>
+				<option VALUE=\"AND\">AND</option>
+				<option VALUE=\"OR\">OR</option>
+				</select>";
+				$display_buffer .= "</td>\n</tr>";
+			}
+			$display_buffer .= "</table>";
+			$display_buffer .= "<p>";
+			$display_buffer .= "</p>";
+			$display_buffer .= "<h3>GROUP BY CLAUSE</h3>";
+			$display_buffer .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+			<tr>
+			<td><b>".__("Field")."</b></td>
+			</tr>";
+			$display_buffer .= "<td>";
+			$display_buffer .= "<select NAME=\"gfields\">\n";
+			$xy = $this->matchset($fields);
+			$cnt = count($xy);
 
 			$display_buffer .= "<option value=\"None\">".__("NONE")."</option>\n";
-				$j = 0;
-				for($j = 0; $j<$cnt; $j++)
-			   {
-			$display_buffer .= "<option value=\"$xy[$j]\">$xy[$j]</option>\n";
+			$j = 0;
+			for($j = 0; $j<$cnt; $j++) {
+				$display_buffer .= "<option value=\"$xy[$j]\">$xy[$j]</option>\n";
 			}
 
 			$display_buffer .= "</select></td>\n";
 
-		$display_buffer .= "</table>";
-		$display_buffer .= "<p>";
-		$display_buffer .= "</p>";
-		$display_buffer .= "<h3>HAVING  CLAUSE</h3>";
-		$display_buffer .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
-		<tr>
-		<td><b>Expr Field</b></td>
-		</tr>";
-		$display_buffer .= "<td><input type=\"text\" size=\"60\" name=\"hfields_val\"/>
-		</td>\n";
-		$display_buffer .= "</table>";
-		$display_buffer .= "<p>";
-		$display_buffer .= "</p>";
-		$display_buffer .= "<h3>ORDER BY CLAUSE</h3>";
-		$display_buffer .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
-		<tr>
-		<td><b>Field</b></td>
-		<td><b>Expr Field</b></td>
-		<td><b>SORT</b></td>
-		</tr>";
-		$display_buffer .= "<td>";
-		$display_buffer .= "<select name=\"ofields\">";
-				$xy = $this->matchset($fields);
-				$cnt = count($xy);
+			$display_buffer .= "</table>";
+			$display_buffer .= "<p>";
+			$display_buffer .= "</p>";
+			$display_buffer .= "<h3>HAVING  CLAUSE</h3>";
+			$display_buffer .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+			<tr>
+			<td><b>Expr Field</b></td>
+			</tr>";
+			$display_buffer .= "<td><input type=\"text\" size=\"60\" name=\"hfields_val\"/>
+			</td>\n";
+			$display_buffer .= "</table>";
+			$display_buffer .= "<p>";
+			$display_buffer .= "</p>";
+			$display_buffer .= "<h3>ORDER BY CLAUSE</h3>";
+			$display_buffer .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
+			<tr>
+			<td><b>Field</b></td>
+			<td><b>Expr Field</b></td>
+			<td><b>SORT</b></td>
+			</tr>";
+			$display_buffer .= "<td>";
+			$display_buffer .= "<select name=\"ofields\">";
+			$xy = $this->matchset($fields);
+			$cnt = count($xy);
 
-			$display_buffer .= "<option value=\"None\">None</option>\n";
-				$j = 0;
-				for($j = 0; $j<$cnt; $j++)
-			   {
-			$display_buffer .= "<option value=\"$xy[$j]\">$xy[$j]</option>\n";
+			$display_buffer .= "<option value=\"None\">".__("NONE")."</option>\n";
+			$j = 0;
+			for($j = 0; $j<$cnt; $j++) {
+				$display_buffer .= "<option value=\"$xy[$j]\">$xy[$j]</option>\n";
 			}
 
 			$display_buffer .= "</select></td>\n";
-		$display_buffer .= "<td><input type=\"text\" size=\"60\" name=\"ofields_val\"/></td>\n";
-		$display_buffer .= "<td><select name=\"ofields_enab\">
-		<option VALUE=\"ASC\">ASC</option>
-		<option VALUE=\"DESC\">DESC</option>
-		</select>";
-		$display_buffer .= "</td>\n";
-		$display_buffer .= "</table>";
-		$display_buffer .= "<p>";
-		$display_buffer .= "</p>";
-		$display_buffer .= "<h3>LIMIT  CLAUSE</h3>";
-		$display_buffer .= "<table cellspacing=0 cellpadding=1 border=1>
-		<tr>
-		<td><b>OFFSET BY</b></td>
-		<td><b>No.Of ROWS</b></td>
-		</tr>";
-		$display_buffer .= "<td><input type=\"text\" size=\"30\" name=\"lfields_off\"/>
-		</td>\n";
-		$display_buffer .= "<td><input type=\"text\" size=\"30\" name=\"lfields_row\"/>
-		</td>\n";
-		$display_buffer .= "</table>";
-		$display_buffer .= "<input class=\"button\" TYPE=\"RESET\" value=\"Clear All\"/>\n";
-		$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"view\"/>";
-		$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>";
-		$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>";
-		$display_buffer .= "<input class=\"button\" type=\"SUBMIT\" name=\"btnSubmit\" value=\"".__("Assemble Query")."\"/>\n";
-		$display_buffer .= "</form>\n";
-			 //mysql_close($ConID);
-		return;
+			$display_buffer .= "<td><input type=\"text\" size=\"60\" name=\"ofields_val\"/></td>\n";
+			$display_buffer .= "<td><select name=\"ofields_enab\">
+			<option VALUE=\"ASC\">ASC</option>
+			<option VALUE=\"DESC\">DESC</option>
+			</select>";
+			$display_buffer .= "</td>\n";
+			$display_buffer .= "</table>";
+			$display_buffer .= "<p>";
+			$display_buffer .= "</p>";
+			$display_buffer .= "<h3>LIMIT  CLAUSE</h3>";
+			$display_buffer .= "<table cellspacing=0 cellpadding=1 border=1>
+			<tr>
+			<td><b>OFFSET BY</b></td>
+			<td><b>No.Of ROWS</b></td>
+			</tr>";
+			$display_buffer .= "<td><input type=\"text\" size=\"30\" name=\"lfields_off\"/>
+			</td>\n";
+			$display_buffer .= "<td><input type=\"text\" size=\"30\" name=\"lfields_row\"/>
+			</td>\n";
+			$display_buffer .= "</table>";
+			$display_buffer .= "<input class=\"button\" TYPE=\"RESET\" value=\"Clear All\"/>\n";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"view\"/>";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>";
+			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>";
+			$display_buffer .= "<input class=\"button\" type=\"SUBMIT\" name=\"btnSubmit\" value=\"".__("Assemble Query")."\"/>\n";
+			$display_buffer .= "</form>\n";
+			//mysql_close($ConID);
+			return;
 
 		} // end SelectOptions
 
 
-		if ($btnSubmit == __("Assemble Query"))
-		{
+		if ($btnSubmit == __("Assemble Query")) {
+			//Construct Query from the inputs
+			//Where  Constructs
 
-		//Construct Query from the inputs
-
-		//Where  Constructs
-
-			 $whsql = "";
-			   $ssql = "";
-			 for ($i=0; $i<5; $i++)
-			 {
-			 if ($fields_val[$i] != "")
+			$whsql = "";
+			$ssql = "";
+			for ($i=0; $i<5; $i++) {
+				if ($fields_val[$i] != "") {
 					$ssql .= stripslashes($qfields[$i])." ".$fields_op[$i]." ".
-							stripslashes($fields_val[$i])." ".$fields_enab[$i]." "; 
+						stripslashes($fields_val[$i])." ".$fields_enab[$i]." "; 
+				}
 			 }
 
-			 if ( $ssql != "")
-			 {
-				$whsql .= "Where". " ". $ssql; 
-			 }
+			 if ( $ssql != "") { $whsql .= "Where". " ". $ssql; }
 
-				$mysql .= " ".$whsql;
+			$mysql .= " ".$whsql;
 
-		//Group By  Constructs
+			//Group By  Constructs
 
-			 $gpsql = "";
-			 if ( $gfields != "None")
-			  {
+			$gpsql = "";
+			if ( $gfields != "None") {
 				$gpsql = " Group By"." ".$gfields;
-			  }
-				$mysql .= " ".$gpsql;
+			}
+			$mysql .= " ".$gpsql;
 
-		//Having    Constructs
+			//Having Constructs
 
-			 $hvsql = "";
-			 if ( $hfields_val != "")
-			  {
+			$hvsql = "";
+			if ( $hfields_val != "") {
 				$hvsql = " Having"." ".$hfields_val;
-			  }
-				$mysql .= " ".$hvsql;
+			}
+			$mysql .= " ".$hvsql;
 
-		//Order by  Constructs
+			//Order by  Constructs
 
-			 $obsql = "";
-			 if ( $ofields != "None")
-			  {
+			$obsql = "";
+			if ( $ofields != "None") {
 				$obsql = " Order by"." ".$ofields." ".$ofields_val." ".$ofields_enab;
-			  }
-				$mysql .= " ".$obsql;
+			}
+			$mysql .= " ".$obsql;
 
-		//Limit Constructs
+			//Limit Constructs
 
-			 $lmsql = "";
-			 if ( $lfields_off != "" &&  $lfields_row != "" )
+			$lmsql = "";
+			if ( $lfields_off != "" &&  $lfields_row != "" ) {
 				$lmsql .= "Limit"." ".$lfields_off.", ".$lfields_row;
-			 elseif($lfields_off == "" &&  $lfields_row != "" )
+			} elseif ($lfields_off == "" &&  $lfields_row != "" ) {
 				$lmsql = " Limit"." ".$lfields_row;
+			}
 
-				$mysql .= " ".$lmsql;
+			$mysql .= " ".$lmsql;
 			$display_buffer .= $this->getqueryform($mysql,$saveas);
 			return;
 		} // end AssembleQuery
 
-
-		if ($btnSubmit == __("Execute Query") or $btnSubmit == __("Export Query to CSV"))
-		{
-			if (empty($cquery)) // running from pick menu?
-			{
-				if ($loadas > 0) // yes running from pick menu
-				{
+		if ($btnSubmit == __("Execute Query") or $btnSubmit == __("Export Query to CSV")) {
+			if (empty($cquery)) { // running from pick menu?
+				if ($loadas > 0) { // yes running from pick menu
 					$res = $sql->query("SELECT qtitle,qquery FROM queries WHERE id='".addslashes($loadas)."'");
 					$rec = $sql->fetch_array($res);
 					$cquery = $rec['qquery'];
 					$saveas = $rec['qtitle'];
-
 				}
-
 			}
 
 			if ($btnSubmit == __("Export Query to CSV")) {
@@ -494,58 +451,47 @@ class QmakerReport extends ReportsModule {
 				$csv->Export();
 			}
 
-		   $qid = $sql->query(stripslashes($cquery));
+			$qid = $sql->query(stripslashes($cquery));
 
-		  $display_buffer .= "<table>\n";
+			$display_buffer .= "<table>\n";
 			$display_buffer .= "<table border=1 cellpadding=3>\n";
 			$display_buffer .= "<caption>$saveas</caption>\n";
 			$display_buffer .= "<tr>\n";
-			for ($i=0; $i< $sql->num_fields($qid); $i++)
-		   {
-			 $hdr = $sql->field_name($qid,$i);
-			 if (!$hdr) {
-			 	$display_buffer .= __("No Information available")."<br>\n";
-			 continue;
-			 }
-			  $display_buffer .= sprintf( "<th>%s</th>\n",htmlspecialchars ($hdr) );
-			
-		   }
+			for ($i=0; $i< $sql->num_fields($qid); $i++) {
+				$hdr = $sql->field_name($qid,$i);
+				if (!$hdr) {
+			 		$display_buffer .= __("No Information available")."<br>\n";
+					continue;
+				}
+				$display_buffer .= sprintf( "<th>%s</th>\n",htmlspecialchars ($hdr) );
+		   	}
 			$display_buffer .= "</tr>\n";
 
-		   while ($row = $sql->fetch_array($qid))
-		   {
-			$display_buffer .= "<tr CLASS=\"".freemed_alternate()."\">\n";
-			for ($i=0; $i< $sql->num_fields($qid); $i++)
-			 {
-			  $display_buffer .= sprintf( "<td>%s</td>\n",htmlspecialchars ($row[$i]) );
-			 }
-			$display_buffer .= "</<tr>\n";
-		   }
+			while ($row = $sql->fetch_array($qid)) {
+				$display_buffer .= "<tr CLASS=\"".freemed_alternate()."\">\n";
+				for ($i=0; $i< $sql->num_fields($qid); $i++) {
+					$display_buffer .= sprintf( "<td>%s</td>\n",htmlspecialchars ($row[$i]) );
+				}
+				$display_buffer .= "</<tr>\n";
+			}
 
-		  $display_buffer .= "</table>\n";
+		  	$display_buffer .= "</table>\n";
 
-		  $GLOBALS['page_title'] = $saveas;
-		  $GLOBALS['__freemed']['no_template_display'] = true;
+		  	$GLOBALS['page_title'] = $saveas;
+			$GLOBALS['__freemed']['no_template_display'] = true;
 			return;
-
 		} // end ExecQuery
-
 	
 		if ($btnSubmit == __("Load Query") )
 		{
 			$saveas = "";
-			$res = $sql->query("SELECT qtitle,qquery FROM queries WHERE id='$loadas'");
+			$res = $sql->query("SELECT qtitle,qquery FROM queries WHERE id='".addslashes($loadas)."'");
 			$rec = $sql->fetch_array($res);
 			$query = $rec['qquery'];
 			$saveas = $rec['qtitle'];
 			$display_buffer .= $this->getqueryform($query,$saveas,$loadas);
-
 		} // end LoadQuery
-
-
-
-
-	} // end form
+	} // end method form
 
 	function matchset($xx) {
 		$arrx = array_values($xx);
@@ -563,13 +509,13 @@ class QmakerReport extends ReportsModule {
 		global $patient,$module;
 
 		if (empty($name)) {
-			$saveas = "Unnamed";
+			$saveas = __("Unnamed");
 		} else {
 			$saveas = $name;
 		}
 
 		$buffer =  "<div align=\"CENTER\">\n";
-		$buffer .=  "<h3>The Selected Query is \"$saveas\"</h3>";
+		$buffer .=  "<h3>".sprintf(__("The selected query is %s."), "\"$saveas\"")."</h3>\n";
 		$buffer .=  "<form METHOD=\"POST\" ACTION=\"$this->page_name\">\n";
 		$buffer .=  "<textarea ROWS=\"10\" COLS=\"100\" WRAP=\"virtual\" NAME=\"cquery\">$query</textarea>\n";
 		$buffer .=  "<table><tr>\n";
@@ -578,9 +524,9 @@ class QmakerReport extends ReportsModule {
 		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Pick Query")."\"/></td>\n";
 		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Export Query to CSV")."\" /></td>\n";
 		$buffer .=  "<td><input class=\"button\" TYPE=\"RESET\" VALUE=\"".__("Clear All")."\"/></td>\n";
-		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnTable1\" VALUE=\"SaveQuery\"/></td>\n";
+		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnTable1\" VALUE=\"".__("Save Query")."\"/></td>\n";
 		$buffer .=  "</tr></table>\n";
-		$buffer .=  "Save Query As &nbsp;";
+		$buffer .=  __("Save Query As")." &nbsp;";
 		$buffer .=  "<input TYPE=\"TEXT\" NAME=\"saveas\" VALUE=\"$saveas\"/>\n";
 		$buffer .=  "<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"view\">\n";
 		$buffer .=  "<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".prepare($patient)."\"/>\n";
@@ -589,14 +535,14 @@ class QmakerReport extends ReportsModule {
 		$buffer .=  "</form>\n";
 		$buffer .=  "</div>\n";
 		$buffer .= "<p/>
-			<div align=\"CENTER\">
-			".template::link_button(
-			__("Back"),
-			$this->page_name."?patient=$patient&module=$module"
-			)."
-			</div>
-			<p/>
-			";	
+		<div align=\"CENTER\">
+		".template::link_button(
+		__("Back"),
+		$this->page_name."?patient=$patient&module=$module"
+		)."
+		</div>
+		<p/>
+		";	
 		return $buffer;
 	}
 
