@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>transactiongraph</Component>
+		<ComponentVersion>0.2.2</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>No Records found</original>
+		<translated>記録は見つかりません。</translated>
+	</translation>
+
+	<translation>
+		<original>Printable</original>
+		<translated>印刷用</translated>
+	</translation>
+
+	<translation>
+		<original>Select Transaction Graph Dates</original>
+		<translated>取扱高グラフの日付選択</translated>
+	</translation>
+
+	<translation>
+		<original>Transaction Graph</original>
+		<translated>取扱高グラフ</translated>
+	</translation>
+
+	<translation>
+		<original>Transaction Graph From</original>
+		<translated>取扱高グラフ </translated>
+	</translation>
+
+</gettextXML>
+

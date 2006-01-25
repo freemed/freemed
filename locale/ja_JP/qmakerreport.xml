@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>qmakerreport</Component>
+		<ComponentVersion>0.1.2</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Assemble Query</original>
+		<translated>検索条件作成</translated>
+	</translation>
+
+	<translation>
+		<original>Clear All</original>
+		<translated>全消去</translated>
+	</translation>
+
+	<translation>
+		<original>Condition</original>
+		<translated>条件</translated>
+	</translation>
+
+	<translation>
+		<original>Create</original>
+		<translated>作成</translated>
+	</translation>
+
+	<translation>
+		<original>Execute Query</original>
+		<translated>検索実行</translated>
+	</translation>
+
+	<translation>
+		<original>Field</original>
+		<translated>分野</translated>
+	</translation>
+
+	<translation>
+		<original>Load Query</original>
+		<translated>検索条件記載</translated>
+	</translation>
+
+	<translation>
+		<original>No Information available</original>
+		<translated>情報は得られていません。</translated>
+	</translation>
+
+	<translation>
+		<original>Operator</original>
+		<translated>演算子</translated>
+	</translation>
+
+	<translation>
+		<original>Pick Query</original>
+		<translated>検索条件取得</translated>
+	</translation>
+
+	<translation>
+		<original>Query Maker</original>
+		<translated>検索条件作成</translated>
+	</translation>
+
+	<translation>
+		<original>Select Fields</original>
+		<translated>分野選択</translated>
+	</translation>
+
+	<translation>
+		<original>Select Options</original>
+		<translated>オプション選択</translated>
+	</translation>
+
+	<translation>
+		<original>The current Select statement is:</original>
+		<translated>今のところ選択文は：</translated>
+	</translation>
+
+	<translation>
+		<original>Value</original>
+		<translated>値</translated>
+	</translation>
+
+</gettextXML>
+

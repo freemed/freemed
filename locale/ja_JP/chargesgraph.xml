@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>chargesgraph</Component>
+		<ComponentVersion>0.2</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Charges Graph</original>
+		<translated>看護グラフ</translated>
+	</translation>
+
+	<translation>
+		<original>Charges Graph From</original>
+		<translated>の看護グラフ</translated>
+	</translation>
+
+	<translation>
+		<original>Charges Pie Chart From</original>
+		<translated>の看護円グラフ</translated>
+	</translation>
+
+	<translation>
+		<original>Chart Type</original>
+		<translated>グラフの型</translated>
+	</translation>
+
+	<translation>
+		<original>Printable</original>
+		<translated>印刷用</translated>
+	</translation>
+
+	<translation>
+		<original>Select Charges Graph Dates</original>
+		<translated>看護グラフの日付選択</translated>
+	</translation>
+
+	<translation>
+		<original>The PHP gd extension must be installed for this report to work.</original>
+		<translated>このリポートを動かすには、PHP の gd 拡張が組み込まれていなければいけません。</translated>
+	</translation>
+
+</gettextXML>
+

@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>providermodule</Component>
+		<ComponentVersion>0.3.4</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Address</original>
+		<translated>住所</translated>
+	</translation>
+
+	<translation>
+		<original>Address 2</original>
+		<translated>住所２</translated>
+	</translation>
+
+	<translation>
+		<original>Amount</original>
+		<translated>合計</translated>
+	</translation>
+
+	<translation>
+		<original>Anesthesiologist</original>
+		<translated>麻酔科医師</translated>
+	</translation>
+
+	<translation>
+		<original>Beeper / Pager #</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Cellular Phone #</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Charge Map</original>
+		<translated>看護地図</translated>
+	</translation>
+
+	<translation>
+		<original>DEA Number</original>
+		<translated>DEA 番号</translated>
+	</translation>
+
+	<translation>
+		<original>Degree 1</original>
+		<translated>程度１</translated>
+	</translation>
+
+	<translation>
+		<original>Degree 2</original>
+		<translated>程度２</translated>
+	</translation>
+
+	<translation>
+		<original>Degree 3</original>
+		<translated>程度３</translated>
+	</translation>
+
+	<translation>
+		<original>Email Address</original>
+		<translated>メールアドレス</translated>
+	</translation>
+
+	<translation>
+		<original>First Name</original>
+		<translated>名</translated>
+	</translation>
+
+	<translation>
+		<original>HL7 Identifier</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Has Second Address</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>ID Number</original>
+		<translated>ID 番号</translated>
+	</translation>
+
+	<translation>
+		<original>In-House</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Insurance Group</original>
+		<translated>保険グループ</translated>
+	</translation>
+
+	<translation>
+		<original>Insurance IDs</original>
+		<translated>保険 ID</translated>
+	</translation>
+
+	<translation>
+		<original>Internal ID #</original>
+		<translated>内部 ID #</translated>
+	</translation>
+
+	<translation>
+		<original>Internal Type</original>
+		<translated>内部型</translated>
+	</translation>
+
+	<translation>
+		<original>Last Name</original>
+		<translated>姓</translated>
+	</translation>
+
+	<translation>
+		<original>Middle Name</original>
+		<translated>中間名</translated>
+	</translation>
+
+	<translation>
+		<original>Name</original>
+		<translated>名前</translated>
+	</translation>
+
+	<translation>
+		<original>Personal</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Physician Internal/External</original>
+		<translated>医師 内部／外部</translated>
+	</translation>
+
+	<translation>
+		<original>Practice EIN</original>
+		<translated>診療 EIN</translated>
+	</translation>
+
+	<translation>
+		<original>Practice Name</original>
+		<translated>診療名</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Address City</original>
+		<translated>第一住所 市</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Address Fax #</original>
+		<translated>第一住所 FAX #</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Address Line 1</original>
+		<translated>第一住所１</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Address Line 2</original>
+		<translated>第一住所２</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Address Phone #</original>
+		<translated>第一住所 電話</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Address State</original>
+		<translated>第一住所 県</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Address Zip</original>
+		<translated>第一住所 郵便番号</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Information</original>
+		<translated>第一情報</translated>
+	</translation>
+
+	<translation>
+		<original>Referring</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Secondary Address City</original>
+		<translated>第二住所 市</translated>
+	</translation>
+
+	<translation>
+		<original>Secondary Address Fax #</original>
+		<translated>第二住所 FAX #</translated>
+	</translation>
+
+	<translation>
+		<original>Secondary Address Line 1</original>
+		<translated>第二住所１</translated>
+	</translation>
+
+	<translation>
+		<original>Secondary Address Line 2</original>
+		<translated>第二住所２</translated>
+	</translation>
+
+	<translation>
+		<original>Secondary Address Phone #</original>
+		<translated>第二住所 電話</translated>
+	</translation>
+
+	<translation>
+		<original>Secondary Address State</original>
+		<translated>第二住所 県</translated>
+	</translation>
+
+	<translation>
+		<original>Secondary Address Zip</original>
+		<translated>第二住所 郵便番号</translated>
+	</translation>
+
+	<translation>
+		<original>Social Security #</original>
+		<translated>社会保険番号</translated>
+	</translation>
+
+	<translation>
+		<original>Specialty 1</original>
+		<translated>特質 1</translated>
+	</translation>
+
+	<translation>
+		<original>Specialty 2</original>
+		<translated>特質 2</translated>
+	</translation>
+
+	<translation>
+		<original>Specialty 3</original>
+		<translated>特質 3</translated>
+	</translation>
+
+	<translation>
+		<original>Status</original>
+		<translated>症状</translated>
+	</translation>
+
+	<translation>
+		<original>Title</original>
+		<translated>表題</translated>
+	</translation>
+
+	<translation>
+		<original>UPIN Number</original>
+		<translated>UPIN 番号</translated>
+	</translation>
+
+	<translation>
+		<original>no</original>
+		<translated>いいえ</translated>
+	</translation>
+
+	<translation>
+		<original>yes</original>
+		<translated>はい</translated>
+	</translation>
+
+</gettextXML>
+

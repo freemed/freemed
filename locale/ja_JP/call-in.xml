@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>call-in</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>All</original>
+		<translated>全体</translated>
+	</translation>
+
+	<translation>
+		<original>Appointments</original>
+		<translated>予約</translated>
+	</translation>
+
+	<translation>
+		<original>Book</original>
+		<translated>記帳</translated>
+	</translation>
+
+	<translation>
+		<original>Call In</original>
+		<translated>電話連絡</translated>
+	</translation>
+
+	<translation>
+		<original>Clear</original>
+		<translated>消去</translated>
+	</translation>
+
+	<translation>
+		<original>Complaint</original>
+		<translated>病気</translated>
+	</translation>
+
+	<translation>
+		<original>Contact Information</original>
+		<translated>連絡情報</translated>
+	</translation>
+
+	<translation>
+		<original>Current</original>
+		<translated>現在の物</translated>
+	</translation>
+
+	<translation>
+		<original>Date of Birth</original>
+		<translated>誕生日</translated>
+	</translation>
+
+	<translation>
+		<original>Date of Call</original>
+		<translated>電話連絡日</translated>
+	</translation>
+
+	<translation>
+		<original>Enter</original>
+		<translated>入る</translated>
+	</translation>
+
+	<translation>
+		<original>Facility</original>
+		<translated>施設</translated>
+	</translation>
+
+	<translation>
+		<original>First</original>
+		<translated>最初</translated>
+	</translation>
+
+	<translation>
+		<original>Home Phone</original>
+		<translated>自宅電話</translated>
+	</translation>
+
+	<translation>
+		<original>Home/Work Phone</original>
+		<translated>自宅／職場 電話</translated>
+	</translation>
+
+	<translation>
+		<original>Last</original>
+		<translated>最後</translated>
+	</translation>
+
+	<translation>
+		<original>Middle</original>
+		<translated>中間</translated>
+	</translation>
+
+	<translation>
+		<original>Name</original>
+		<translated>名前</translated>
+	</translation>
+
+	<translation>
+		<original>Old</original>
+		<translated>古い物</translated>
+	</translation>
+
+	<translation>
+		<original>Physician</original>
+		<translated>医師</translated>
+	</translation>
+
+	<translation>
+		<original>Return to the Main Menu</original>
+		<translated>メインメニューへ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Show All Appointments</original>
+		<translated>全予約を表示</translated>
+	</translation>
+
+	<translation>
+		<original>Show Today's Appointments</original>
+		<translated>今日の予約を表示</translated>
+	</translation>
+
+	<translation>
+		<original>Took Call</original>
+		<translated>電話済み</translated>
+	</translation>
+
+	<translation>
+		<original>View</original>
+		<translated>閲覧</translated>
+	</translation>
+
+	<translation>
+		<original>Work Phone</original>
+		<translated>職場 電話</translated>
+	</translation>
+
+</gettextXML>
+

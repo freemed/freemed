@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>anesthcalendar</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Anesthesiology Calendar</original>
+		<translated>麻酔科カレンダー</translated>
+	</translation>
+
+	<translation>
+		<original>Anesthesiology Scheduler</original>
+		<translated>麻酔科スケジュール</translated>
+	</translation>
+
+	<translation>
+		<original>Book</original>
+		<translated>記帳</translated>
+	</translation>
+
+	<translation>
+		<original>Calendar</original>
+		<translated>カレンダー</translated>
+	</translation>
+
+	<translation>
+		<original>Group Calendar</original>
+		<translated>グループカレンダー</translated>
+	</translation>
+
+	<translation>
+		<original>on selected date</original>
+		<translated>選択日</translated>
+	</translation>
+
+</gettextXML>
+

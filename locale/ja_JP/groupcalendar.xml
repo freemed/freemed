@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>groupcalendar</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Anesthesiology Coverage</original>
+		<translated>麻酔科範囲</translated>
+	</translation>
+
+	<translation>
+		<original>Are you sure you want to remove this booking?</original>
+		<translated>本当にこの記帳を削除しますか？</translated>
+	</translation>
+
+	<translation>
+		<original>Calendar</original>
+		<translated>カレンダー</translated>
+	</translation>
+
+	<translation>
+		<original>Calendar Category</original>
+		<translated>日付類</translated>
+	</translation>
+
+	<translation>
+		<original>Group Calendar</original>
+		<translated>グループカレンダー</translated>
+	</translation>
+
+	<translation>
+		<original>Mark as</original>
+		<translated>印付けは</translated>
+	</translation>
+
+	<translation>
+		<original>Select a Patient</original>
+		<translated>患者選択</translated>
+	</translation>
+
+	<translation>
+		<original>physicians</original>
+		<translated>医師</translated>
+	</translation>
+
+</gettextXML>
+

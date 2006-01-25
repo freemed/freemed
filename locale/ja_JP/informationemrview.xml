@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>informationemrview</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Address</original>
+		<translated>住所</translated>
+	</translation>
+
+	<translation>
+		<original>Date of Last Visit</original>
+		<translated>前回訪問日</translated>
+	</translation>
+
+	<translation>
+		<original>Home Phone</original>
+		<translated>自宅電話</translated>
+	</translation>
+
+	<translation>
+		<original>PCP</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Patient Information</original>
+		<translated>患者情報</translated>
+	</translation>
+
+	<translation>
+		<original>Referring</original>
+		<translated>所属</translated>
+	</translation>
+
+	<translation>
+		<original>SSN</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Work Phone</original>
+		<translated>職場電話</translated>
+	</translation>
+
+</gettextXML>
+

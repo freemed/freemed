@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>physician_day_view</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>No Physician Selected</original>
+		<translated>°å»Õ¤¬Ì¤ÁªÂò¤Ç¤¹</translated>
+	</translation>
+
+	<translation>
+		<original>Physician</original>
+		<translated>°å»Õ</translated>
+	</translation>
+
+	<translation>
+		<original>Physician Daily View</original>
+		<translated>°å»ÕÊÌÆü³äÍ½Äê</translated>
+	</translation>
+
+	<translation>
+		<original>Week View</original>
+		<translated>½µÊÌÍ½Äê</translated>
+	</translation>
+
+</gettextXML>
+

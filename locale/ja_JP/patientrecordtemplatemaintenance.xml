@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>patientrecordtemplatemaintenance</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Back to Menu</original>
+		<translated>メニューへ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Comment</original>
+		<translated>コメント</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Ins/Del</original>
+		<translated>組み込み／削除</translated>
+	</translation>
+
+	<translation>
+		<original>Limits</original>
+		<translated>限度</translated>
+	</translation>
+
+	<translation>
+		<original>Line Insert</original>
+		<translated>一行挿入</translated>
+	</translation>
+
+	<translation>
+		<original>Name</original>
+		<translated>名前</translated>
+	</translation>
+
+	<translation>
+		<original>Name of Template</original>
+		<translated>雛型名</translated>
+	</translation>
+
+	<translation>
+		<original>Text Name</original>
+		<translated>本文の名</translated>
+	</translation>
+
+	<translation>
+		<original>Type</original>
+		<translated>型</translated>
+	</translation>
+
+	<translation>
+		<original>Type Formatting</original>
+		<translated>書式の型</translated>
+	</translation>
+
+	<translation>
+		<original>Update</original>
+		<translated>更新</translated>
+	</translation>
+
+	<translation>
+		<original>Variable</original>
+		<translated>変数</translated>
+	</translation>
+
+	<translation>
+		<original>go</original>
+		<translated>ゴーッ！</translated>
+	</translation>
+
+</gettextXML>
+

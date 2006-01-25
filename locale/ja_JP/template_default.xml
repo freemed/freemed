@@ -1,0 +1,509 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>template_default</Component>
+		<ComponentVersion></ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Add Patient</original>
+		<translated>患者追加</translated>
+	</translation>
+
+	<translation>
+		<original>Administration Menu</original>
+		<translated>管理メニュー</translated>
+	</translation>
+
+	<translation>
+		<original>Age</original>
+		<translated>年齢</translated>
+	</translation>
+
+	<translation>
+		<original>Annotate</original>
+		<translated>注釈</translated>
+	</translation>
+
+	<translation>
+		<original>Appointments</original>
+		<translated>予約</translated>
+	</translation>
+
+	<translation>
+		<original>Are you sure you want to delete this?</original>
+		<translated>本当に消去しますか？</translated>
+	</translation>
+
+	<translation>
+		<original>Automatic Refresh Time</original>
+		<translated>自動更新時間</translated>
+	</translation>
+
+	<translation>
+		<original>Billing Functions</original>
+		<translated>請求書処理</translated>
+	</translation>
+
+	<translation>
+		<original>Book Appointment</original>
+		<translated>予約記帳</translated>
+	</translation>
+
+	<translation>
+		<original>Calendar</original>
+		<translated>カレンダー</translated>
+	</translation>
+
+	<translation>
+		<original>Call In Menu</original>
+		<translated>電話連絡メニュー</translated>
+	</translation>
+
+	<translation>
+		<original>Call-In</original>
+		<translated>電話連絡</translated>
+	</translation>
+
+	<translation>
+		<original>Change Language</original>
+		<translated>言語入換え</translated>
+	</translation>
+
+	<translation>
+		<original>Choose Another Patient</original>
+		<translated>患者選択</translated>
+	</translation>
+
+	<translation>
+		<original>City</original>
+		<translated>市</translated>
+	</translation>
+
+	<translation>
+		<original>Clear</original>
+		<translated>消去</translated>
+	</translation>
+
+	<translation>
+		<original>Close this Window</original>
+		<translated>ウィンドウを閉じる</translated>
+	</translation>
+
+	<translation>
+		<original>Color Scheme</original>
+		<translated>色合い</translated>
+	</translation>
+
+	<translation>
+		<original>Columns in Display</original>
+		<translated>表示項目数</translated>
+	</translation>
+
+	<translation>
+		<original>Configuration Help</original>
+		<translated>設定ヘルプ</translated>
+	</translation>
+
+	<translation>
+		<original>Configure</original>
+		<translated>設定</translated>
+	</translation>
+
+	<translation>
+		<original>Custom Reports</original>
+		<translated>慣例報告</translated>
+	</translation>
+
+	<translation>
+		<original>DEBUG IS ON</original>
+		<translated>デバッグ</translated>
+	</translation>
+
+	<translation>
+		<original>Daily Calendar</original>
+		<translated>日めくり</translated>
+	</translation>
+
+	<translation>
+		<original>Date of Birth</original>
+		<translated>誕生日</translated>
+	</translation>
+
+	<translation>
+		<original>Default Blue</original>
+		<translated>青(既定色)</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Disabled</original>
+		<translated>不可</translated>
+	</translation>
+
+	<translation>
+		<original>Display Language Selection</original>
+		<translated>表示言語の選択</translated>
+	</translation>
+
+	<translation>
+		<original>Driver's License</original>
+		<translated>運転免許証</translated>
+	</translation>
+
+	<translation>
+		<original>Email Address</original>
+		<translated>メールアドレス</translated>
+	</translation>
+
+	<translation>
+		<original>Enabled</original>
+		<translated>可</translated>
+	</translation>
+
+	<translation>
+		<original>Enlarge image</original>
+		<translated>イメージを拡大</translated>
+	</translation>
+
+	<translation>
+		<original>Facility</original>
+		<translated>施設</translated>
+	</translation>
+
+	<translation>
+		<original>First Name</original>
+		<translated>名</translated>
+	</translation>
+
+	<translation>
+		<original>Help</original>
+		<translated>ヘルプ</translated>
+	</translation>
+
+	<translation>
+		<original>Hide Menu</original>
+		<translated>メニューを隠す</translated>
+	</translation>
+
+	<translation>
+		<original>Home Phone</original>
+		<translated>自宅電話</translated>
+	</translation>
+
+	<translation>
+		<original>Internal Practice ID</original>
+		<translated>内部診療 ID</translated>
+	</translation>
+
+	<translation>
+		<original>Jump to page</original>
+		<translated>指定ページへ跳ぶ</translated>
+	</translation>
+
+	<translation>
+		<original>Language</original>
+		<translated>言語</translated>
+	</translation>
+
+	<translation>
+		<original>Last Name</original>
+		<translated>姓</translated>
+	</translation>
+
+	<translation>
+		<original>Locked</original>
+		<translated>ロック</translated>
+	</translation>
+
+	<translation>
+		<original>Login</original>
+		<translated>ログイン</translated>
+	</translation>
+
+	<translation>
+		<original>Logout</original>
+		<translated>ログアウト</translated>
+	</translation>
+
+	<translation>
+		<original>Main Menu</original>
+		<translated>メインメニュー</translated>
+	</translation>
+
+	<translation>
+		<original>Manage</original>
+		<translated>処方</translated>
+	</translation>
+
+	<translation>
+		<original>Management Configuration</original>
+		<translated>管理設定</translated>
+	</translation>
+
+	<translation>
+		<original>Medical Information</original>
+		<translated>医療情報</translated>
+	</translation>
+
+	<translation>
+		<original>Messages</original>
+		<translated>メッセージ</translated>
+	</translation>
+
+	<translation>
+		<original>Modify Patient Information</original>
+		<translated>患者情報更</translated>
+	</translation>
+
+	<translation>
+		<original>New</original>
+		<translated>新</translated>
+	</translation>
+
+	<translation>
+		<original>No</original>
+		<translated>いいえ</translated>
+	</translation>
+
+	<translation>
+		<original>No Patients In System</original>
+		<translated>患者登録はありません。</translated>
+	</translation>
+
+	<translation>
+		<original>No photographic identification on file.</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Number of Summary Items</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>One Patient In System</original>
+		<translated>患者登録はひとり有ります。</translated>
+	</translation>
+
+	<translation>
+		<original>Password</original>
+		<translated>パスワード</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Information</original>
+		<translated>患者情報</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Smart Search</original>
+		<translated>患者検索</translated>
+	</translation>
+
+	<translation>
+		<original>Patient(s) In System</original>
+		<translated>登録患者</translated>
+	</translation>
+
+	<translation>
+		<original>Patients</original>
+		<translated>患者</translated>
+	</translation>
+
+	<translation>
+		<original>Patients By Name</original>
+		<translated>患者名で</translated>
+	</translation>
+
+	<translation>
+		<original>Patients Field Search</original>
+		<translated>患者欄検索</translated>
+	</translation>
+
+	<translation>
+		<original>Photo ID</original>
+		<translated>写真ID</translated>
+	</translation>
+
+	<translation>
+		<original>Photographic Identification</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Please configure panels through the "Configure" option of the patients menu.</original>
+		<translated>患者メニューの「設定」オプションでパネルの設定をしてください。</translated>
+	</translation>
+
+	<translation>
+		<original>Preferences</original>
+		<translated>設定</translated>
+	</translation>
+
+	<translation>
+		<original>Report</original>
+		<translated>リポート</translated>
+	</translation>
+
+	<translation>
+		<original>Reset Resume</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Resume</original>
+		<translated>要約</translated>
+	</translation>
+
+	<translation>
+		<original>Select a Patient</original>
+		<translated>患者選択</translated>
+	</translation>
+
+	<translation>
+		<original>Select information to insert:</original>
+		<translated>挿入情報の選択</translated>
+	</translation>
+
+	<translation>
+		<original>Show All Patients</original>
+		<translated>全患者表示</translated>
+	</translation>
+
+	<translation>
+		<original>Show Menubar</original>
+		<translated>メニューバー表示</translated>
+	</translation>
+
+	<translation>
+		<original>Sign In</original>
+		<translated>サインーイン</translated>
+	</translation>
+
+	<translation>
+		<original>Social Security Number</original>
+		<translated>社会保証番号</translated>
+	</translation>
+
+	<translation>
+		<original>Soundalike Search</original>
+		<translated>類似発音検索</translated>
+	</translation>
+
+	<translation>
+		<original>State</original>
+		<translated>県</translated>
+	</translation>
+
+	<translation>
+		<original>Support Data</original>
+		<translated>援用データー類</translated>
+	</translation>
+
+	<translation>
+		<original>There are no report modules present.</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>This record has been locked, and can no longer be modified.</original>
+		<translated>記録はロックされていて、変更できません。</translated>
+	</translation>
+
+	<translation>
+		<original>Type a portion of the entry that you want to find, then select it from the pulldown menu.</original>
+		<translated>見つけたい項目の一部分を入力し、プルダウンメニューから選んでください。</translated>
+	</translation>
+
+	<translation>
+		<original>Update</original>
+		<translated>更新</translated>
+	</translation>
+
+	<translation>
+		<original>Updated configuration</original>
+		<translated>更新された設定</translated>
+	</translation>
+
+	<translation>
+		<original>User</original>
+		<translated>使用者</translated>
+	</translation>
+
+	<translation>
+		<original>Username</original>
+		<translated>使用者名</translated>
+	</translation>
+
+	<translation>
+		<original>Utilities</original>
+		<translated>ユーティリティ</translated>
+	</translation>
+
+	<translation>
+		<original>View</original>
+		<translated>閲覧</translated>
+	</translation>
+
+	<translation>
+		<original>Work Phone</original>
+		<translated>職場電話</translated>
+	</translation>
+
+	<translation>
+		<original>Yes</original>
+		<translated>はい</translated>
+	</translation>
+
+	<translation>
+		<original>You have %d new message(s).</original>
+		<translated>新しいメッセージが %d 通有ります。</translated>
+	</translation>
+
+	<translation>
+		<original>You must select a patient.</original>
+		<translated>患者選択が必要です。</translated>
+	</translation>
+
+	<translation>
+		<original>Zip</original>
+		<translated>郵便番号</translated>
+	</translation>
+
+	<translation>
+		<original>bottom</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>sounds like</original>
+		<translated>類似音</translated>
+	</translation>
+
+	<translation>
+		<original>top</original>
+		<translated>トップ</translated>
+	</translation>
+
+	<translation>
+		<original>version</original>
+		<translated>バージョン</translated>
+	</translation>
+
+</gettextXML>
+

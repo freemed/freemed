@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>authenticate</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Authenticating</original>
+		<translated>認証中</translated>
+	</translation>
+
+	<translation>
+		<original>If your browser does not support the REFRESH tag</original>
+		<translated>リフレッシュタグを使えないブラウザーは、</translated>
+	</translation>
+
+	<translation>
+		<original>Return to the login screen</original>
+		<translated>ログイン画面に戻ります。</translated>
+	</translation>
+
+	<translation>
+		<original>You have entered an incorrect name or password.</original>
+		<translated>正しくない名前かパスワードが入力されました。</translated>
+	</translation>
+
+	<translation>
+		<original>click here</original>
+		<translated>ここをクリック</translated>
+	</translation>
+
+</gettextXML>
+

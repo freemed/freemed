@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>providercertificationsmaintenance</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Degree</original>
+		<translated>度合</translated>
+	</translation>
+
+	<translation>
+		<original>Degree Description</original>
+		<translated>度合解説</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Remove Changes</original>
+		<translated>変更取消</translated>
+	</translation>
+
+	<translation>
+		<original>Update</original>
+		<translated>更新</translated>
+	</translation>
+
+</gettextXML>
+

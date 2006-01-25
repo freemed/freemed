@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>patient_lookup</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>City</original>
+		<translated>市</translated>
+	</translation>
+
+	<translation>
+		<original>First Name</original>
+		<translated>名</translated>
+	</translation>
+
+	<translation>
+		<original>Last Name</original>
+		<translated>姓</translated>
+	</translation>
+
+	<translation>
+		<original>No patients found with that criteria!</original>
+		<translated>その判断基準に合う患者は見つかりませんでした。</translated>
+	</translation>
+
+	<translation>
+		<original>Recent</original>
+		<translated>最新</translated>
+	</translation>
+
+	<translation>
+		<original>Select</original>
+		<translated>選択</translated>
+	</translation>
+
+	<translation>
+		<original>Select a patient from the following list:</original>
+		<translated>次のリストから患者を選択 :</translated>
+	</translation>
+
+	<translation>
+		<original>Smart Lookup</original>
+		<translated>スマート検索</translated>
+	</translation>
+
+</gettextXML>
+

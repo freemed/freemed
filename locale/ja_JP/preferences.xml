@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>preferences</Component>
+		<ComponentVersion>0.8.0</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Booking Refresh</original>
+		<translated>記帳再表示</translated>
+	</translation>
+
+	<translation>
+		<original>Change Password</original>
+		<translated>パスワード変更</translated>
+	</translation>
+
+	<translation>
+		<original>Change Template Options</original>
+		<translated>雛型のオプション変更</translated>
+	</translation>
+
+	<translation>
+		<original>Change User Options</original>
+		<translated>使用者のオプション変更</translated>
+	</translation>
+
+	<translation>
+		<original>Current Password</original>
+		<translated>現在のパスワード</translated>
+	</translation>
+
+	<translation>
+		<original>Date Widget</original>
+		<translated>日付のウィジェット</translated>
+	</translation>
+
+	<translation>
+		<original>Default Printer</original>
+		<translated>既定のプリンター</translated>
+	</translation>
+
+	<translation>
+		<original>Default Room</original>
+		<translated>既定の病室</translated>
+	</translation>
+
+	<translation>
+		<original>Messaging: Forget recent patient</original>
+		<translated>メッセージ送信：最近の患者にはしない</translated>
+	</translation>
+
+	<translation>
+		<original>New Password</original>
+		<translated>新しいパスワード</translated>
+	</translation>
+
+	<translation>
+		<original>New Password Again</original>
+		<translated>新しいパスワードをもう一度</translated>
+	</translation>
+
+	<translation>
+		<original>Preferences</original>
+		<translated>設定</translated>
+	</translation>
+
+	<translation>
+		<original>Set Options</original>
+		<translated>設定</translated>
+	</translation>
+
+	<translation>
+		<original>Skip Printer Selection</original>
+		<translated>プリンター選択を省略</translated>
+	</translation>
+
+	<translation>
+		<original>The new passwords you entered do not match.</original>
+		<translated>入力された新しいパスワードは合いません。</translated>
+	</translation>
+
+	<translation>
+		<original>The password you entered was incorrect.</original>
+		<translated>入力されたパスワードは正しくないです。</translated>
+	</translation>
+
+	<translation>
+		<original>Update</original>
+		<translated>更新</translated>
+	</translation>
+
+	<translation>
+		<original>disable</original>
+		<translated>不動</translated>
+	</translation>
+
+	<translation>
+		<original>enable</original>
+		<translated>作動</translated>
+	</translation>
+
+	<translation>
+		<original>javascript widget</original>
+		<translated>ジャバによる物</translated>
+	</translation>
+
+	<translation>
+		<original>no</original>
+		<translated>いいえ</translated>
+	</translation>
+
+	<translation>
+		<original>split text entry</original>
+		<translated>文字入力を分割</translated>
+	</translation>
+
+	<translation>
+		<original>system default</original>
+		<translated>システム既定の物</translated>
+	</translation>
+
+	<translation>
+		<original>yes</original>
+		<translated>はい</translated>
+	</translation>
+
+</gettextXML>
+

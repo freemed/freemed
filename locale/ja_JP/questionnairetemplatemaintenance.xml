@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>questionnairetemplatemaintenance</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Caption</original>
+		<translated>見出し</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Ins/Del</original>
+		<translated>組み込み／削除</translated>
+	</translation>
+
+	<translation>
+		<original>Limits</original>
+		<translated>限度</translated>
+	</translation>
+
+	<translation>
+		<original>Line Insert</original>
+		<translated>一行挿入</translated>
+	</translation>
+
+	<translation>
+		<original>Name</original>
+		<translated>名前</translated>
+	</translation>
+
+	<translation>
+		<original>Name of Template</original>
+		<translated>雛型名</translated>
+	</translation>
+
+	<translation>
+		<original>Questionnaire Template Maintenance</original>
+		<translated>調査質問表雛型保全</translated>
+	</translation>
+
+	<translation>
+		<original>Type</original>
+		<translated>型</translated>
+	</translation>
+
+	<translation>
+		<original>Update</original>
+		<translated>更新</translated>
+	</translation>
+
+	<translation>
+		<original>You must select a record to modify.</original>
+		<translated>修正する記録を選択しなければいけません。</translated>
+	</translation>
+
+</gettextXML>
+

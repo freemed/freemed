@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>providerspecialtiesmaintenance</Component>
+		<ComponentVersion>0.1.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Abandon Modification</original>
+		<translated>修正を破棄</translated>
+	</translation>
+
+	<translation>
+		<original>Remove Changes</original>
+		<translated>変更取消</translated>
+	</translation>
+
+	<translation>
+		<original>Specialty</original>
+		<translated>特質性</translated>
+	</translation>
+
+	<translation>
+		<original>Specialty Description</original>
+		<translated>特質性解説</translated>
+	</translation>
+
+	<translation>
+		<original>Update</original>
+		<translated>更新</translated>
+	</translation>
+
+</gettextXML>
+

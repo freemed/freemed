@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>admin</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Administration Menu</original>
+		<translated>管理メニュー</translated>
+	</translation>
+
+	<translation>
+		<original>Attach Cover Page</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Calendar Overbooking</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Combo with past drugs</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Configuration Complete</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Configuration Help</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Configure</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Date Format</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Date Widget</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Default</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Default Area Code</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Disabled</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Enabled</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Export Databases</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Fax Cover Page</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Fold Multipage Forms?</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>France</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Graphics Enhanced</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Import Databases</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Lock Record Override</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Module Information</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>No Cover Page</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Phone Number Format</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Prescription Drug Widget</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Refresh</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Reinitialize Database</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Return To Administration Menu</original>
+		<translated>管理メニューへ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Return to the Main Menu</original>
+		<translated>メインメニューへ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Scheduling End Time</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Scheduling Start Time</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Show Tips?</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Standard Config</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>System Configuration</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Unformatted</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>United States</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>User Maintenance</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>You do not have access to system configuration.</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>You don't have access to the administration menu.</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>javascript widget</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>no</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>rxlist.com Drug Listing</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>split text entry</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>yes</original>
+		<translated></translated>
+	</translation>
+
+</gettextXML>
+

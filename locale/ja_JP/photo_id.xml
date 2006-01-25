@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>photo_id</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Attach Image</original>
+		<translated>画像添付</translated>
+	</translation>
+
+	<translation>
+		<original>Attach Photographic Identification</original>
+		<translated>身分証明写真添付</translated>
+	</translation>
+
+	<translation>
+		<original>Failed to attach the image.</original>
+		<translated><画像添付ができませんでした。/translated>
+	</translation>
+
+	<translation>
+		<original>Photographic ID Maintenance</original>
+		<translated>身分証明写真保全</translated>
+	</translation>
+
+</gettextXML>
+

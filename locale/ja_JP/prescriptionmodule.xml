@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>prescriptionmodule</Component>
+		<ComponentVersion>0.3.4</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>By</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Date From</original>
+		<translated>開始日</translated>
+	</translation>
+
+	<translation>
+		<original>Dispensed</original>
+		<translated>調剤された</translated>
+	</translation>
+
+	<translation>
+		<original>Dosage</original>
+		<translated>投薬量</translated>
+	</translation>
+
+	<translation>
+		<original>Drug</original>
+		<translated>薬剤</translated>
+	</translation>
+
+	<translation>
+		<original>Medicine Units</original>
+		<translated>薬剤構成</translated>
+	</translation>
+
+	<translation>
+		<original>Physician</original>
+		<translated>医師</translated>
+	</translation>
+
+	<translation>
+		<original>Prescription</original>
+		<translated>処方箋</translated>
+	</translation>
+
+	<translation>
+		<original>Quantity</original>
+		<translated>分量</translated>
+	</translation>
+
+	<translation>
+		<original>Refill</original>
+		<translated>詰め替え補充</translated>
+	</translation>
+
+	<translation>
+		<original>Sig</original>
+		<translated>サイン</translated>
+	</translation>
+
+	<translation>
+		<original>Starting Date</original>
+		<translated>発効日</translated>
+	</translation>
+
+	<translation>
+		<original>Substitution</original>
+		<translated>代用品</translated>
+	</translation>
+
+	<translation>
+		<original>in</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>may not substitute</original>
+		<translated>代用品不可</translated>
+	</translation>
+
+	<translation>
+		<original>may substitute</original>
+		<translated>代用品可</translated>
+	</translation>
+
+	<translation>
+		<original>units</original>
+		<translated>単位</translated>
+	</translation>
+
+</gettextXML>
+

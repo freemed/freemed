@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>messageemrview</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Messages should NOT be deleted. Are you sure you want to delete this message?</original>
+		<translated>メッセージは消さないこと。本当にこのメッセージを消しますか？</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Messages</original>
+		<translated>患者のメッセージ</translated>
+	</translation>
+
+	<translation>
+		<original>Recipient</original>
+		<translated>受取人</translated>
+	</translation>
+
+	<translation>
+		<original>Sender</original>
+		<translated>送信者</translated>
+	</translation>
+
+	<translation>
+		<original>There are currently no messages.</original>
+		<translated>今、メッセージは有りません。</translated>
+	</translation>
+
+	<translation>
+		<original>Time</original>
+		<translated>時間</translated>
+	</translation>
+
+</gettextXML>
+

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>appointmentemrview</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Appointments</original>
+		<translated>患者予約</translated>
+	</translation>
+
+	<translation>
+		<original>Provider</original>
+		<translated>準備担当者</translated>
+	</translation>
+
+	<translation>
+		<original>Show Today</original>
+		<translated>本日分表示</translated>
+	</translation>
+
+	<translation>
+		<original>Time</original>
+		<translated>時間</translated>
+	</translation>
+
+</gettextXML>
+

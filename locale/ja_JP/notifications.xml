@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>notifications</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>1 Day</original>
+		<translated>£±Æü</translated>
+	</translation>
+
+	<translation>
+		<original>1 Month</original>
+		<translated>£±¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>1 Week</original>
+		<translated>£±½µ´Ö</translated>
+	</translation>
+
+	<translation>
+		<original>1 Year</original>
+		<translated>£±Ç¯</translated>
+	</translation>
+
+	<translation>
+		<original>10 Months</original>
+		<translated>£±£°¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>11 Months</original>
+		<translated>£±£±¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>2 Days</original>
+		<translated>£²Æü</translated>
+	</translation>
+
+	<translation>
+		<original>2 Months</original>
+		<translated>£²¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>2 Weeks</original>
+		<translated>£²½µ´Ö</translated>
+	</translation>
+
+	<translation>
+		<original>3 Days</original>
+		<translated>£³Æü</translated>
+	</translation>
+
+	<translation>
+		<original>3 Months</original>
+		<translated>£³¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>4 Days</original>
+		<translated>£´Æü</translated>
+	</translation>
+
+	<translation>
+		<original>4 Months</original>
+		<translated>£´¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>5 Days</original>
+		<translated>£µÆü</translated>
+	</translation>
+
+	<translation>
+		<original>5 Months</original>
+		<translated>£µ¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>6 Days</original>
+		<translated>£¶Æü</translated>
+	</translation>
+
+	<translation>
+		<original>6 Months</original>
+		<translated>£¶¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>7 Months</original>
+		<translated>£·¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>8 Months</original>
+		<translated>£¸¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>9 Months</original>
+		<translated>£¹¥õ·î</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>²òÀâ</translated>
+	</translation>
+
+	<translation>
+		<original>Notification</original>
+		<translated>¤ªÃÎ¤é¤»</translated>
+	</translation>
+
+	<translation>
+		<original>Notifications</original>
+		<translated>¤ªÃÎ¤é¤»</translated>
+	</translation>
+
+	<translation>
+		<original>Target Date</original>
+		<translated>ÂÐ¾ÝÆü</translated>
+	</translation>
+
+	<translation>
+		<original>Target User</original>
+		<translated>ÂÐ¾Ý»ÈÍÑ¼Ô</translated>
+	</translation>
+
+	<translation>
+		<original>User</original>
+		<translated>»ÈÍÑ¼Ô</translated>
+	</translation>
+
+</gettextXML>
+

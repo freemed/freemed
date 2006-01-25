@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>billing_functions</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Billing Functions</original>
+		<translated>請求書処理</translated>
+	</translation>
+
+	<translation>
+		<original>Billing System</original>
+		<translated>請求書システム</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>NO PATIENT SPECIFIED</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Return to</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>You don't have access to do that.</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Your FreeMED installation has no billing handlers defined. This should not happen.</original>
+		<translated></translated>
+	</translation>
+
+</gettextXML>
+

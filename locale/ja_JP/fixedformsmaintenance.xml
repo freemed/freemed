@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>fixedformsmaintenance</Component>
+		<ComponentVersion></ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Check Char</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Column</original>
+		<translated>コラム</translated>
+	</translation>
+
+	<translation>
+		<original>Comment</original>
+		<translated>コメント</translated>
+	</translation>
+
+	<translation>
+		<original>Copy</original>
+		<translated>コピー</translated>
+	</translation>
+
+	<translation>
+		<original>Copy After</original>
+		<translated>後にコピー</translated>
+	</translation>
+
+	<translation>
+		<original>Copy Form</original>
+		<translated>をコピー</translated>
+	</translation>
+
+	<translation>
+		<original>Data</original>
+		<translated>データー</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>EMR Report</original>
+		<translated>電子カルテリポート</translated>
+	</translation>
+
+	<translation>
+		<original>Format</original>
+		<translated>様式</translated>
+	</translation>
+
+	<translation>
+		<original>Generic</original>
+		<translated>汎用</translated>
+	</translation>
+
+	<translation>
+		<original>Insert After</original>
+		<translated>後に挿入</translated>
+	</translation>
+
+	<translation>
+		<original>Insert Before</original>
+		<translated>前に挿入</translated>
+	</translation>
+
+	<translation>
+		<original>Insurance Claim</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Length</original>
+		<translated>長さ</translated>
+	</translation>
+
+	<translation>
+		<original>Line Count</original>
+		<translated>行数</translated>
+	</translation>
+
+	<translation>
+		<original>Line Length</original>
+		<translated>行長</translated>
+	</translation>
+
+	<translation>
+		<original>Loop Line Offset</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Loop Repetitions</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Mark</original>
+		<translated>印</translated>
+	</translation>
+
+	<translation>
+		<original>NSF Format</original>
+		<translated>NSF 様式</translated>
+	</translation>
+
+	<translation>
+		<original>Name</original>
+		<translated>名前</translated>
+	</translation>
+
+	<translation>
+		<original>Name of Form</original>
+		<translated>様式の名</translated>
+	</translation>
+
+	<translation>
+		<original>Page Length</original>
+		<translated>頁長</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Bill</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Refresh</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Resequence</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Row/Line</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Save</original>
+		<translated>保存</translated>
+	</translation>
+
+	<translation>
+		<original>Type</original>
+		<translated>型</translated>
+	</translation>
+
+	<translation>
+		<original>You must select a record to modify.</original>
+		<translated>修正する記録を選択しなければいけません。</translated>
+	</translation>
+
+</gettextXML>
+

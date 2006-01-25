@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>utilities</Component>
+		<ComponentVersion>0.8.0</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Access denied</original>
+		<translated>取扱拒否</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Return to</original>
+		<translated>戻り先 </translated>
+	</translation>
+
+	<translation>
+		<original>Utilities</original>
+		<translated>ユーティリティ</translated>
+	</translation>
+
+	<translation>
+		<original>Your FreeMED installation has no utilties handlers defined.</original>
+		<translated>あなたの FreeMED 組み込みにはユーティリティ取扱方法が定義されていません。</translated>
+	</translation>
+
+</gettextXML>
+

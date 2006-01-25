@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>billingcontact</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Address</original>
+		<translated>ΩªΩÍ</translated>
+	</translation>
+
+	<translation>
+		<original>Billing Contact</original>
+		<translated>¿¡µ·ΩÒœ¢ÕÌ¿Ë</translated>
+	</translation>
+
+	<translation>
+		<original>City</original>
+		<translated>ª‘</translated>
+	</translation>
+
+	<translation>
+		<original>City, State Zip</original>
+		<translated>ª‘°¢Õπ ÿ»÷πÊ</translated>
+	</translation>
+
+	<translation>
+		<original>First Name</original>
+		<translated>Ãæ</translated>
+	</translation>
+
+	<translation>
+		<original>Last Name</original>
+		<translated>¿´</translated>
+	</translation>
+
+</gettextXML>
+

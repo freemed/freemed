@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>module_information</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Access Denied</original>
+		<translated>取扱拒否</translated>
+	</translation>
+
+	<translation>
+		<original>Module Information</original>
+		<translated>モジュール情報</translated>
+	</translation>
+
+	<translation>
+		<original>No categories.</original>
+		<translated>類別性無し</translated>
+	</translation>
+
+	<translation>
+		<original>Return to Administration Menu</original>
+		<translated>管理メニューへ戻る</translated>
+	</translation>
+
+</gettextXML>
+

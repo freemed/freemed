@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>show_appointments</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Book Appointment</original>
+		<translated>予約記帳</translated>
+	</translation>
+
+	<translation>
+		<original>Choose a Patient</original>
+		<translated>患者を選ぶ</translated>
+	</translation>
+
+	<translation>
+		<original>Facility</original>
+		<translated>施設</translated>
+	</translation>
+
+	<translation>
+		<original>No appointments today.</original>
+		<translated>本日予約無し</translated>
+	</translation>
+
+	<translation>
+		<original>Patient</original>
+		<translated>患者</translated>
+	</translation>
+
+	<translation>
+		<original>Provider</original>
+		<translated>提供者</translated>
+	</translation>
+
+	<translation>
+		<original>Room</original>
+		<translated>病室</translated>
+	</translation>
+
+	<translation>
+		<original>Show Appointments</original>
+		<translated>予約閲覧</translated>
+	</translation>
+
+	<translation>
+		<original>Time</original>
+		<translated>時間</translated>
+	</translation>
+
+	<translation>
+		<original>You do not have permission to view appointments.</original>
+		<translated>予約閲覧の許可がありません。</translated>
+	</translation>
+
+</gettextXML>
+

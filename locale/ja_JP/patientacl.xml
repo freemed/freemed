@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>patientacl</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>A valid patient must be selected.</original>
+		<translated>有効な患者が選択されていなければいけません。</translated>
+	</translation>
+
+	<translation>
+		<original>An attempt was made to remove an ACL which does not belong to this patient!</original>
+		<translated>この患者のものでない ACL は削除するようにしました。</translated>
+	</translation>
+
+	<translation>
+		<original>At least one user and property must be selected.</original>
+		<translated>少なくともひとりの使用者とその特性が選択されていなければいけません。</translated>
+	</translation>
+
+	<translation>
+		<original>Invalid object type specified</original>
+		<translated>無効な対象の型が指定されました。</translated>
+	</translation>
+
+	<translation>
+		<original>Patient ACL</original>
+		<translated>患者の ACL</translated>
+	</translation>
+
+	<translation>
+		<original>Properties</original>
+		<translated>特性</translated>
+	</translation>
+
+	<translation>
+		<original>There are no ACL rules for this patient.</original>
+		<translated>この患者に対する ACL の規則がありません。</translated>
+	</translation>
+
+	<translation>
+		<original>Users</original>
+		<translated>使用者</translated>
+	</translation>
+
+	<translation>
+		<original>failed</original>
+		<translated>できませんでした。</translated>
+	</translation>
+
+</gettextXML>
+

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>agedpatientreport</Component>
+		<ComponentVersion>0.1.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Balance</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>DOS</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Days Old</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Grand Total</original>
+		<translated>総計</translated>
+	</translation>
+
+	<translation>
+		<original>Insurance</original>
+		<translated>保険</translated>
+	</translation>
+
+	<translation>
+		<original>Patient</original>
+		<translated>患者</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Aged Detail Report</original>
+		<translated>患者経年詳細リポート</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Total</original>
+		<translated>患者別合計</translated>
+	</translation>
+
+</gettextXML>
+

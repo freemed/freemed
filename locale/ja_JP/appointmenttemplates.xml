@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>appointmenttemplates</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Duration</original>
+		<translated>持続期間</translated>
+	</translation>
+
+	<translation>
+		<original>Required Equipment</original>
+		<translated>必要な備え</translated>
+	</translation>
+
+	<translation>
+		<original>Template</original>
+		<translated>雛型</translated>
+	</translation>
+
+	<translation>
+		<original>Template Name</original>
+		<translated>雛型の名</translated>
+	</translation>
+
+</gettextXML>
+

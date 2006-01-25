@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>medicationsmodule</Component>
+		<ComponentVersion>0.3</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Dosage</original>
+		<translated>ÅêÌôÎÌ</translated>
+	</translation>
+
+	<translation>
+		<original>Drug</original>
+		<translated>ÌôºŞ</translated>
+	</translation>
+
+	<translation>
+		<original>Medications</original>
+		<translated>ÅêÌô¼£ÎÅ</translated>
+	</translation>
+
+	<translation>
+		<original>Method</original>
+		<translated>¼ê½ç</translated>
+	</translation>
+
+	<translation>
+		<original>Method of Intake</original>
+		<translated>Àİ¼è¼ê½ç</translated>
+	</translation>
+
+	<translation>
+		<original>Not specified</original>
+		<translated>µ¬ÄêÌµ¤·</translated>
+	</translation>
+
+</gettextXML>
+

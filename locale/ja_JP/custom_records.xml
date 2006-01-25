@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>custom_records</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Custom Records</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Date Added</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Form</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>No records for this patient.</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Return to the Main Menu</original>
+		<translated>メインメニューへ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Select a Patient</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>View/Modify</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>You must select a patient.</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>You must select a template.</original>
+		<translated></translated>
+	</translation>
+
+</gettextXML>
+

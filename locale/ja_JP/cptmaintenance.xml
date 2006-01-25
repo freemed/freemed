@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>cptmaintenance</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Billing Information</original>
+		<translated>請求書情報</translated>
+	</translation>
+
+	<translation>
+		<original>CPT Codes Maintenance</original>
+		<translated>CPT コード保全</translated>
+	</translation>
+
+	<translation>
+		<original>Clear</original>
+		<translated>消去</translated>
+	</translation>
+
+	<translation>
+		<original>Current Code</original>
+		<translated>現用コード</translated>
+	</translation>
+
+	<translation>
+		<original>Default Standard Fee</original>
+		<translated>既定標準代金</translated>
+	</translation>
+
+	<translation>
+		<original>Default Type of Service</original>
+		<translated>既定のサービス型</translated>
+	</translation>
+
+	<translation>
+		<original>Diagnosis Excluded</original>
+		<translated>診断は除く</translated>
+	</translation>
+
+	<translation>
+		<original>Diagnosis Required</original>
+		<translated>診断が必要</translated>
+	</translation>
+
+	<translation>
+		<original>External Description</original>
+		<translated>外部への説明</translated>
+	</translation>
+
+	<translation>
+		<original>Fee Profiles</original>
+		<translated>代金のあらまし</translated>
+	</translation>
+
+	<translation>
+		<original>Gender Restriction</original>
+		<translated>性別限定</translated>
+	</translation>
+
+	<translation>
+		<original>Inclusion/Exclusion</original>
+		<translated>包含／排除</translated>
+	</translation>
+
+	<translation>
+		<original>Insurance Company</original>
+		<translated>保険会社</translated>
+	</translation>
+
+	<translation>
+		<original>Internal Description</original>
+		<translated>内部解説</translated>
+	</translation>
+
+	<translation>
+		<original>Internal Service Types</original>
+		<translated>内部サービス型</translated>
+	</translation>
+
+	<translation>
+		<original>Please note that selecting "0" or "NONE SELECTED" will cause the default values to be used.</original>
+		<translated>"0" 又は "選択無し"を選ぶと既定値が使われることに気を付けてください。</translated>
+	</translation>
+
+	<translation>
+		<original>Primary Information</original>
+		<translated>第一情報</translated>
+	</translation>
+
+	<translation>
+		<original>Procedural Code</original>
+		<translated>手続きコード</translated>
+	</translation>
+
+	<translation>
+		<original>Procedural Codes Excluded</original>
+		<translated>手続きコードは除く</translated>
+	</translation>
+
+	<translation>
+		<original>Procedural Codes Required</original>
+		<translated>手続きコードが必要</translated>
+	</translation>
+
+	<translation>
+		<original>Relative Value</original>
+		<translated>相対値</translated>
+	</translation>
+
+	<translation>
+		<original>Standard Fee</original>
+		<translated>標準代金</translated>
+	</translation>
+
+	<translation>
+		<original>Taxed?</original>
+		<translated>税込みですか？</translated>
+	</translation>
+
+	<translation>
+		<original>Type of Service</original>
+		<translated>サービスの型</translated>
+	</translation>
+
+	<translation>
+		<original>female only</original>
+		<translated>女性専用</translated>
+	</translation>
+
+	<translation>
+		<original>male only</original>
+		<translated>男性専用</translated>
+	</translation>
+
+	<translation>
+		<original>no</original>
+		<translated>いいえ</translated>
+	</translation>
+
+	<translation>
+		<original>no restriction</original>
+		<translated>制限無し</translated>
+	</translation>
+
+	<translation>
+		<original>yes</original>
+		<translated>はい</translated>
+	</translation>
+
+</gettextXML>
+

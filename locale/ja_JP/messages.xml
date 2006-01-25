@@ -1,0 +1,215 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>messages</Component>
+		<ComponentVersion>0.8.0
+</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>%s wrote:</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Are you sure that you want to permanently delete this message?</original>
+		<translated>本当にこのメッセージを完全消去しますか？</translated>
+	</translation>
+
+	<translation>
+		<original>Clear</original>
+		<translated>消去</translated>
+	</translation>
+
+	<translation>
+		<original>Delete Marked Messages</original>
+		<translated>印付きメッセージを削除</translated>
+	</translation>
+
+	<translation>
+		<original>For</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>FreeMED Messaging System</original>
+		<translated>FreeMED メッセージシステム</translated>
+	</translation>
+
+	<translation>
+		<original>From</original>
+		<translated>差出人</translated>
+	</translation>
+
+	<translation>
+		<original>Fwd</original>
+		<translated>転送先</translated>
+	</translation>
+
+	<translation>
+		<original>Main Menu</original>
+		<translated>メインメニュー</translated>
+	</translation>
+
+	<translation>
+		<original>Mark as Read</original>
+		<translated>既読印付け</translated>
+	</translation>
+
+	<translation>
+		<original>Message</original>
+		<translated>メッセージ</translated>
+	</translation>
+
+	<translation>
+		<original>Messages</original>
+		<translated>メッセージ</translated>
+	</translation>
+
+	<translation>
+		<original>Old Messages</original>
+		<translated>古いメッセージ</translated>
+	</translation>
+
+	<translation>
+		<original>Patient</original>
+		<translated>患者</translated>
+	</translation>
+
+	<translation>
+		<original>Regarding</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Reply</original>
+		<translated>応答</translated>
+	</translation>
+
+	<translation>
+		<original>Return to the Main Menu</original>
+		<translated>メインメニューへ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Save Draft</original>
+		<translated>下書き保存</translated>
+	</translation>
+
+	<translation>
+		<original>Select All</original>
+		<translated>全選択</translated>
+	</translation>
+
+	<translation>
+		<original>Send</original>
+		<translated>送信</translated>
+	</translation>
+
+	<translation>
+		<original>Send Message</original>
+		<translated>メッセージ送信</translated>
+	</translation>
+
+	<translation>
+		<original>Sending</original>
+		<translated>送信中</translated>
+	</translation>
+
+	<translation>
+		<original>Sent By</original>
+		<translated>送信者</translated>
+	</translation>
+
+	<translation>
+		<original>Sent to:</original>
+		<translated>送信先</translated>
+	</translation>
+
+	<translation>
+		<original>Subject</original>
+		<translated>主題</translated>
+	</translation>
+
+	<translation>
+		<original>There is nothing to delete.</original>
+		<translated>削除するものは有りません。</translated>
+	</translation>
+
+	<translation>
+		<original>There is nothing to mark as read.</original>
+		<translated>既読の印付けをするものは有りません。</translated>
+	</translation>
+
+	<translation>
+		<original>This message has been sent multiple times.</original>
+		<translated>このメッセージは複数回送信されました。</translated>
+	</translation>
+
+	<translation>
+		<original>Time</original>
+		<translated>時間</translated>
+	</translation>
+
+	<translation>
+		<original>To</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Urgency</original>
+		<translated>緊急度</translated>
+	</translation>
+
+	<translation>
+		<original>You have no old messages.</original>
+		<translated>古いメッセージは有りません。</translated>
+	</translation>
+
+	<translation>
+		<original>You have no waiting messages.</original>
+		<translated>まだ読まれていないメッセージは有りません。</translated>
+	</translation>
+
+	<translation>
+		<original>You must select a recipient.</original>
+		<translated>受取人を選択しなければいけません。</translated>
+	</translation>
+
+	<translation>
+		<original>extremely urgent</original>
+		<translated>非常に緊急</translated>
+	</translation>
+
+	<translation>
+		<original>moderately important</original>
+		<translated>かなり重要</translated>
+	</translation>
+
+	<translation>
+		<original>not important</original>
+		<translated>重要ではない</translated>
+	</translation>
+
+	<translation>
+		<original>somewhat important</original>
+		<translated>幾分か重要</translated>
+	</translation>
+
+	<translation>
+		<original>very important</original>
+		<translated>とても重要</translated>
+	</translation>
+
+</gettextXML>
+

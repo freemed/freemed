@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>receivablesgraph</Component>
+		<ComponentVersion>0.2</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>No receivables found.</original>
+		<translated>入金予定額は見つかりません。</translated>
+	</translation>
+
+	<translation>
+		<original>Receivables Graph</original>
+		<translated>入金予定額グラフ</translated>
+	</translation>
+
+	<translation>
+		<original>Receivables Graph From</original>
+		<translated>入金予定額グラフ </translated>
+	</translation>
+
+	<translation>
+		<original>Receivables Pie Chart From</original>
+		<translated>入金予定額の円グラフ </translated>
+	</translation>
+
+	<translation>
+		<original>Select Receivables Graph Dates</original>
+		<translated>入金予定額グラフの日付選択</translated>
+	</translation>
+
+</gettextXML>
+

@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>progressnotes</Component>
+		<ComponentVersion>0.3.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>CODE(0x82fc44c)UCODE(0x82fc6e0)ACODE(0x82fc44c)/UCODE(0x82fc6e0)ssessment</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)UCODE(0x82fc6e0)ECODE(0x82fc44c)/UCODE(0x82fc6e0)ducation</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)UCODE(0x82fc6e0)ICODE(0x82fc44c)/UCODE(0x82fc6e0)nterval</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)UCODE(0x82fc6e0)OCODE(0x82fc44c)/UCODE(0x82fc6e0)bjective</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)UCODE(0x82fc6e0)PCODE(0x82fc44c)/UCODE(0x82fc6e0)lan</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)uCODE(0x82fc6e0)ECODE(0x82fc44c)/uCODE(0x82fc6e0)ducation</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)uCODE(0x82fc6e0)ICODE(0x82fc44c)/uCODE(0x82fc6e0)nterval</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)uCODE(0x82fc6e0)OCODE(0x82fc44c)/uCODE(0x82fc6e0)bjective</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)uCODE(0x82fc6e0)PCODE(0x82fc44c)/uCODE(0x82fc6e0)lan</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)uCODE(0x82fc6e0)RCODE(0x82fc44c)/uCODE(0x82fc6e0)x</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>CODE(0x82fc44c)uCODE(0x82fc6e0)SCODE(0x82fc44c)/uCODE(0x82fc6e0)ubjective</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>BMI</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Basic Information</original>
+		<translated>基本情報</translated>
+	</translation>
+
+	<translation>
+		<original>Blood Pressure</original>
+		<translated>血圧</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Heart Rate</original>
+		<translated>心拍数</translated>
+	</translation>
+
+	<translation>
+		<original>Height</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>PCODE(0x82fc44c)UCODE(0x82fc6e0)RCODE(0x82fc44c)/UCODE(0x82fc6e0)escription</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Progress Notes</original>
+		<translated>進捗状況</translated>
+	</translation>
+
+	<translation>
+		<original>Progress Notes Template</original>
+		<translated>進捗状況雛型</translated>
+	</translation>
+
+	<translation>
+		<original>Provider</original>
+		<translated>提供者</translated>
+	</translation>
+
+	<translation>
+		<original>Respiratory Rate</original>
+		<translated>呼吸数</translated>
+	</translation>
+
+	<translation>
+		<original>Revert to Saved</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Rx</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Save</original>
+		<translated>保存</translated>
+	</translation>
+
+	<translation>
+		<original>Select Patient</original>
+		<translated>患者選択</translated>
+	</translation>
+
+	<translation>
+		<original>Specify Notes to Display</original>
+		<translated>表示記録指定</translated>
+	</translation>
+
+	<translation>
+		<original>Temperature</original>
+		<translated>体温</translated>
+	</translation>
+
+	<translation>
+		<original>This record is locked, and cannot be modified.</original>
+		<translated>この記録はロックされているので修正できません。</translated>
+	</translation>
+
+	<translation>
+		<original>View $this-CODE(0x82fc6e0)record_name</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Vitals</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Weight</original>
+		<translated>体重</translated>
+	</translation>
+
+	<translation>
+		<original>You must select a patient.</original>
+		<translated>患者を選択しなければいけません。</translated>
+	</translation>
+
+</gettextXML>
+

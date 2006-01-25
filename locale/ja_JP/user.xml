@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>user</Component>
+		<ComponentVersion>0.8.0</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>ACL</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Access Control Lists</original>
+		<translated>接続制御リスト</translated>
+	</translation>
+
+	<translation>
+		<original>Actual Physician</original>
+		<translated>実在の医師</translated>
+	</translation>
+
+	<translation>
+		<original>Add User</original>
+		<translated>使用者追加</translated>
+	</translation>
+
+	<translation>
+		<original>Authorize</original>
+		<translated>承認</translated>
+	</translation>
+
+	<translation>
+		<original>Authorized facilities</original>
+		<translated>承認済施設</translated>
+	</translation>
+
+	<translation>
+		<original>Authorized physician groups</original>
+		<translated>承認済の医師グループ</translated>
+	</translation>
+
+	<translation>
+		<original>Authorized physicians</original>
+		<translated>承認済の医師</translated>
+	</translation>
+
+	<translation>
+		<original>Deleted</original>
+		<translated>削除済</translated>
+	</translation>
+
+	<translation>
+		<original>Deleting User</original>
+		<translated>使用者削除中</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Done</original>
+		<translated>完了</translated>
+	</translation>
+
+	<translation>
+		<original>Error</original>
+		<translated>エラー</translated>
+	</translation>
+
+	<translation>
+		<original>Go back to user menu</original>
+		<translated>使用者メニューへ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Miscellaneous</original>
+		<translated>諸々の事ども</translated>
+	</translation>
+
+	<translation>
+		<original>Modify User</original>
+		<translated>使用者修正</translated>
+	</translation>
+
+	<translation>
+		<original>No record found with that criteria.</original>
+		<translated>その基準の記録は見つかりません。</translated>
+	</translation>
+
+	<translation>
+		<original>Password</original>
+		<translated>パスワード</translated>
+	</translation>
+
+	<translation>
+		<original>Passwords must match</original>
+		<translated>パスワードが合わなければいけません。</translated>
+	</translation>
+
+	<translation>
+		<original>Physician</original>
+		<translated>医師</translated>
+	</translation>
+
+	<translation>
+		<original>Try Again</original>
+		<translated>再挑戦</translated>
+	</translation>
+
+	<translation>
+		<original>User</original>
+		<translated>使用者</translated>
+	</translation>
+
+	<translation>
+		<original>User type</original>
+		<translated>使用者の型</translated>
+	</translation>
+
+	<translation>
+		<original>Username</original>
+		<translated>使用者名</translated>
+	</translation>
+
+	<translation>
+		<original>Users</original>
+		<translated>使用者</translated>
+	</translation>
+
+	<translation>
+		<original>You cannot delete admin!</original>
+		<translated>管理者を削除する事はできません。</translated>
+	</translation>
+
+	<translation>
+		<original>You cannot modify admin!</original>
+		<translated>管理者を修正する事はできません。</translated>
+	</translation>
+
+</gettextXML>
+

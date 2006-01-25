@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>template_newskin</Component>
+		<ComponentVersion></ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Administration Menu</original>
+		<translated>管理メニュー</translated>
+	</translation>
+
+	<translation>
+		<original>Billing Functions</original>
+		<translated>請求書処理</translated>
+	</translation>
+
+	<translation>
+		<original>Calendar</original>
+		<translated>カレンダー</translated>
+	</translation>
+
+	<translation>
+		<original>Call-In</original>
+		<translated>電話連絡</translated>
+	</translation>
+
+	<translation>
+		<original>Check</original>
+		<translated>チェック</translated>
+	</translation>
+
+	<translation>
+		<original>Clear</original>
+		<translated>クリア</translated>
+	</translation>
+
+	<translation>
+		<original>Color Scheme</original>
+		<translated>色合い</translated>
+	</translation>
+
+	<translation>
+		<original>Configure</original>
+		<translated>設定</translated>
+	</translation>
+
+	<translation>
+		<original>DEBUG IS ON</original>
+		<translated>デバッグ</translated>
+	</translation>
+
+	<translation>
+		<original>Day View</original>
+		<translated>日割予定一覧</translated>
+	</translation>
+
+	<translation>
+		<original>Default Blue</original>
+		<translated>青(既定値)</translated>
+	</translation>
+
+	<translation>
+		<original>Display Language Selection</original>
+		<translated>表示言語選択</translated>
+	</translation>
+
+	<translation>
+		<original>Entry</original>
+		<translated>入口項目</translated>
+	</translation>
+
+	<translation>
+		<original>Facility</original>
+		<translated>施設</translated>
+	</translation>
+
+	<translation>
+		<original>Help</original>
+		<translated>ヘルプ</translated>
+	</translation>
+
+	<translation>
+		<original>History</original>
+		<translated>履歴</translated>
+	</translation>
+
+	<translation>
+		<original>Language</original>
+		<translated>言語</translated>
+	</translation>
+
+	<translation>
+		<original>Login</original>
+		<translated>ログイン</translated>
+	</translation>
+
+	<translation>
+		<original>Logout</original>
+		<translated>ログアウト</translated>
+	</translation>
+
+	<translation>
+		<original>Main</original>
+		<translated>メイン</translated>
+	</translation>
+
+	<translation>
+		<original>Menu</original>
+		<translated>メニュー</translated>
+	</translation>
+
+	<translation>
+		<original>Messages</original>
+		<translated>メッセージ</translated>
+	</translation>
+
+	<translation>
+		<original>New</original>
+		<translated>新</translated>
+	</translation>
+
+	<translation>
+		<original>No</original>
+		<translated>いいえ</translated>
+	</translation>
+
+	<translation>
+		<original>Notify</original>
+		<translated>連絡</translated>
+	</translation>
+
+	<translation>
+		<original>Password</original>
+		<translated>パスワード</translated>
+	</translation>
+
+	<translation>
+		<original>Patients</original>
+		<translated>患者</translated>
+	</translation>
+
+	<translation>
+		<original>Preferences</original>
+		<translated>設定</translated>
+	</translation>
+
+	<translation>
+		<original>Recent</original>
+		<translated>最新</translated>
+	</translation>
+
+	<translation>
+		<original>Reset Resume</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Resume</original>
+		<translated>要約</translated>
+	</translation>
+
+	<translation>
+		<original>Schedule</original>
+		<translated>予定</translated>
+	</translation>
+
+	<translation>
+		<original>Select</original>
+		<translated>選択</translated>
+	</translation>
+
+	<translation>
+		<original>Send</original>
+		<translated>送付</translated>
+	</translation>
+
+	<translation>
+		<original>Sign In</original>
+		<translated>サイン</translated>
+	</translation>
+
+	<translation>
+		<original>Support Data</original>
+		<translated>援用データー類</translated>
+	</translation>
+
+	<translation>
+		<original>System</original>
+		<translated>システム</translated>
+	</translation>
+
+	<translation>
+		<original>User</original>
+		<translated>使用者</translated>
+	</translation>
+
+	<translation>
+		<original>Username</original>
+		<translated>使用者名</translated>
+	</translation>
+
+	<translation>
+		<original>Utilities</original>
+		<translated>ユーティリティ</translated>
+	</translation>
+
+	<translation>
+		<original>Week View</original>
+		<translated>週別予定一覧</translated>
+	</translation>
+
+	<translation>
+		<original>Yes</original>
+		<translated>はい</translated>
+	</translation>
+
+	<translation>
+		<original>version</original>
+		<translated>バージョン</translated>
+	</translation>
+
+</gettextXML>
+

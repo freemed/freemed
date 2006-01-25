@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>roommaintenance</Component>
+		<ComponentVersion>0.2</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Booking Enabled</original>
+		<translated>記帳できます。</translated>
+	</translation>
+
+	<translation>
+		<original>Default Provider</original>
+		<translated>既定の提供者</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Equipment</original>
+		<translated>装備</translated>
+	</translation>
+
+	<translation>
+		<original>IP Address</original>
+		<translated>IP アドレス</translated>
+	</translation>
+
+	<translation>
+		<original>Location</original>
+		<translated>場所</translated>
+	</translation>
+
+	<translation>
+		<original>Name</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Room Maintenance</original>
+		<translated>病室保全</translated>
+	</translation>
+
+	<translation>
+		<original>Room Name</original>
+		<translated>病室名</translated>
+	</translation>
+
+	<translation>
+		<original>Surgery Equipped</original>
+		<translated>手術室準備済</translated>
+	</translation>
+
+</gettextXML>
+

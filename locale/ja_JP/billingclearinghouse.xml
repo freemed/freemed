@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>billingclearinghouse</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Billing Clearinghouses</original>
+		<translated>¿¡µ·ΩÒ¿∂ªªΩÍ</translated>
+	</translation>
+
+	<translation>
+		<original>City</original>
+		<translated>ª‘</translated>
+	</translation>
+
+	<translation>
+		<original>City, State Zip</original>
+		<translated>ª‘°¢Õπ ÿ»÷πÊ</translated>
+	</translation>
+
+	<translation>
+		<original>Clearinghouse Address</original>
+		<translated>¿∂ªªΩÍΩªΩÍ</translated>
+	</translation>
+
+	<translation>
+		<original>Clearinghouse Name</original>
+		<translated>¿∂ªªΩÍÃæ</translated>
+	</translation>
+
+	<translation>
+		<original>ETIN</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>Name</original>
+		<translated>Ãæ¡∞</translated>
+	</translation>
+
+	<translation>
+		<original>State</original>
+		<translated>∏©</translated>
+	</translation>
+
+	<translation>
+		<original>X12 GS Receiver ID</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>X12 GS Sender ID</original>
+		<translated></translated>
+	</translation>
+
+</gettextXML>
+

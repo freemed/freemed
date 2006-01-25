@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>typeofservicemaintenance</Component>
+		<ComponentVersion>0.2</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Code</original>
+		<translated>コード</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>解説</translated>
+	</translation>
+
+	<translation>
+		<original>Remove Changes</original>
+		<translated>変更取消</translated>
+	</translation>
+
+	<translation>
+		<original>Type of Service</original>
+		<translated>勤務形態</translated>
+	</translation>
+
+	<translation>
+		<original>Type of Service Maintenance</original>
+		<translated>勤務形態保全</translated>
+	</translation>
+
+</gettextXML>
+

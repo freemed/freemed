@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>annotations</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Annotation</original>
+		<translated>注釈</translated>
+	</translation>
+
+	<translation>
+		<original>Annotations</original>
+		<translated>注釈</translated>
+	</translation>
+
+	<translation>
+		<original>Could not resolve table name!</original>
+		<translated>表の名前を割り出せません。</translated>
+	</translation>
+
+	<translation>
+		<original>Date/Time</original>
+		<translated>日時／時間</translated>
+	</translation>
+
+	<translation>
+		<original>Module</original>
+		<translated>モジュール</translated>
+	</translation>
+
+	<translation>
+		<original>Not specified</original>
+		<translated>指定無し</translated>
+	</translation>
+
+	<translation>
+		<original>Table</original>
+		<translated>表</translated>
+	</translation>
+
+	<translation>
+		<original>User</original>
+		<translated>使用者</translated>
+	</translation>
+
+	<translation>
+		<original>by</original>
+		<translated></translated>
+	</translation>
+
+</gettextXML>
+

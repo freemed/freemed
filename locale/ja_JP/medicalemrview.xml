@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>medicalemrview</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Blood Type</original>
+		<translated>∑Ï±’∑ø</translated>
+	</translation>
+
+	<translation>
+		<original>Diagnosis</original>
+		<translated>ø«√«</translated>
+	</translation>
+
+	<translation>
+		<original>Patient Medical Information</original>
+		<translated>¥µº‘ø«Œ≈æ Û</translated>
+	</translation>
+
+	<translation>
+		<original>no actions</original>
+		<translated>ÃµΩË√÷</translated>
+	</translation>
+
+</gettextXML>
+

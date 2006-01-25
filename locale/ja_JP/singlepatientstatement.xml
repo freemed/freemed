@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>singlepatientstatement</Component>
+		<ComponentVersion>0.2</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Generate Statement</original>
+		<translated>明細書発行</translated>
+	</translation>
+
+	<translation>
+		<original>No procedures to bill seem to exist for this patient.</original>
+		<translated>この患者には請求する物が無いようです。</translated>
+	</translation>
+
+	<translation>
+		<original>Operation timed out.</original>
+		<translated>操作時間切れ</translated>
+	</translation>
+
+	<translation>
+		<original>Statement</original>
+		<translated>明細書</translated>
+	</translation>
+
+	<translation>
+		<original>This patient does not have any statements to generate.</original>
+		<translated>この患者には発行すべき明細がありません。</translated>
+	</translation>
+
+</gettextXML>
+

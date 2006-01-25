@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>covtypesmaintenance</Component>
+		<ComponentVersion>0.1</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Abandon Modification</original>
+		<translated>Ω§¿µ§Ú«À¥˛</translated>
+	</translation>
+
+	<translation>
+		<original>Code</original>
+		<translated>•≥°º•…</translated>
+	</translation>
+
+	<translation>
+		<original>Coverage Type</original>
+		<translated>»œ∞œŒ‡∑ø</translated>
+	</translation>
+
+	<translation>
+		<original>Description</original>
+		<translated>≤Ú¿‚</translated>
+	</translation>
+
+	<translation>
+		<original>Insurance Coverage Types</original>
+		<translated> ›∏±»œ∞œŒ‡∑ø</translated>
+	</translation>
+
+	<translation>
+		<original>Remove Changes</original>
+		<translated> —ππºËæ√</translated>
+	</translation>
+
+</gettextXML>
+

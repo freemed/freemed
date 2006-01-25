@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>manage_appointments</Component>
+		<ComponentVersion>0.8.0</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Book Appointment</original>
+		<translated>予約記帳</translated>
+	</translation>
+
+	<translation>
+		<original>CPT Code</original>
+		<translated>CPT コード</translated>
+	</translation>
+
+	<translation>
+		<original>Deleting Appointment</original>
+		<translated>予約削除</translated>
+	</translation>
+
+	<translation>
+		<original>Location</original>
+		<translated>場所</translated>
+	</translation>
+
+	<translation>
+		<original>Manage Appointments</original>
+		<translated>予約管理</translated>
+	</translation>
+
+	<translation>
+		<original>Note</original>
+		<translated>記載</translated>
+	</translation>
+
+	<translation>
+		<original>Select a Patient</original>
+		<translated>患者選択</translated>
+	</translation>
+
+	<translation>
+		<original>This patient has no appointments.</original>
+		<translated>この患者は予約していません。</translated>
+	</translation>
+
+	<translation>
+		<original>Time/Duration</original>
+		<translated>時間／継続期間</translated>
+	</translation>
+
+	<translation>
+		<original>You do not have permission to delete appointments.</original>
+		<translated>予約削除の許可が有りません。</translated>
+	</translation>
+
+	<translation>
+		<original>You must select a patient.</original>
+		<translated>患者を選択しなければいけません。</translated>
+	</translation>
+
+</gettextXML>
+

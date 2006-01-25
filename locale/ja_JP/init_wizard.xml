@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<gettextXML lang="ja_JP">
+
+	<information>
+		<Application>FreeMED</Application>
+		<ApplicationVersion>0.8.0</ApplicationVersion>
+		<Component>init_wizard</Component>
+		<ComponentVersion>0.8.0</ComponentVersion>
+		<Locale>ja_JP</Locale>
+		<LocaleName>Japanese</LocaleName>
+		<RevisionDate>2011-14-16</RevisionDate>
+		<RevisionCount>1</RevisionCount>
+		<Generator>GettextXML</Generator>
+		<ContentTransferEncoding>8bit</ContentTransferEncoding>
+		<Translator></Translator>
+	</information>
+
+	<translation>
+		<original>Admin Account Password</original>
+		<translated>管理登録パスワード</translated>
+	</translation>
+
+	<translation>
+		<original>Admin password set.</original>
+		<translated>管理パスワードを設定しました。</translated>
+	</translation>
+
+	<translation>
+		<original>All modules initialized.</original>
+		<translated>全モジュールを初期化しました。</translated>
+	</translation>
+
+	<translation>
+		<original>Before creating that account you must prove that you have the appropriate level of access.</original>
+		<translated>登録の前に、取扱に適した許可が有ることを示さなければいけません。</translated>
+	</translation>
+
+	<translation>
+		<original>Clear</original>
+		<translated>消去</translated>
+	</translation>
+
+	<translation>
+		<original>Confirm Admin Account Password</original>
+		<translated>管理登録パスワード確認</translated>
+	</translation>
+
+	<translation>
+		<original>Database Password</original>
+		<translated>データベースパスワード</translated>
+	</translation>
+
+	<translation>
+		<original>Database Password Accepted</original>
+		<translated>データベースパスワード承認</translated>
+	</translation>
+
+	<translation>
+		<original>Database Username</original>
+		<translated>データベース使用者</translated>
+	</translation>
+
+	<translation>
+		<original>Dynamic modules database initialized.</original>
+		<translated>ダイナミックモジュールのデータベース初期化</translated>
+	</translation>
+
+	<translation>
+		<original>FreeMED configuration database initialized.</original>
+		<translated>FreeMED 設定のデータベース初期化</translated>
+	</translation>
+
+	<translation>
+		<original>Incorrect user/password combination</original>
+		<translated>使用者／パスワードの組合せが正しくありません。</translated>
+	</translation>
+
+	<translation>
+		<original>Page Not Accessible from your IP Address</original>
+		<translated>そのIPアドレスからはページに接続できません。</translated>
+	</translation>
+
+	<translation>
+		<original>Please provide the database user name and password, as found in settings.php.</original>
+		<translated>settings.php にあるデータベース使用者の名前とパスワードを入力してください。</translated>
+	</translation>
+
+	<translation>
+		<original>Return to Login</original>
+		<translated>ログイン画面へ戻る</translated>
+	</translation>
+
+	<translation>
+		<original>Sign In</original>
+		<translated></translated>
+	</translation>
+
+	<translation>
+		<original>This is the the wizard to setup the admin account.</original>
+		<translated>管理者登録を設定するウィザードです。</translated>
+	</translation>
+
+	<translation>
+		<original>User table created.</original>
+		<translated>使用者表を作成しました。</translated>
+	</translation>
+
+	<translation>
+		<original>You can login using:</original>
+		<translated>ログインに使う：</translated>
+	</translation>
+
+	<translation>
+		<original>You will now be returned to the the login prompt.</original>
+		<translated>ログインのプロンプト表示に戻っています。</translated>
+	</translation>
+
+</gettextXML>
+
