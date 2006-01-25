@@ -9,6 +9,8 @@ define ('__ISO_SET_PHP__', true);
 
 // ISO Handler
 switch (strtoupper(substr($language, 0, 2))) {
+    case "JA":   // JA = japanese
+	$__ISO_SET__ = "EUC-JP"; $GLOBALS['__phpwebtools']['disable_i18n_prepare']; break;   // EUC-JP
     case "CS":   // CS - czech
     case "HU":   // HU - hungarian
     case "PL":   // PL - polish

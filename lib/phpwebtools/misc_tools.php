@@ -27,7 +27,11 @@ function __($string) {
 		$loaded = true;
 	} // end checking for loading
 
-	return prepare(GettextXML::gettext_xml($string));
+	if ($GLOBALS['__phpwebtools']['disable_i18n_prepare']) {
+		return GettextXML::gettext_xml($string);
+	} else {
+		return prepare(GettextXML::gettext_xml($string));
+	}
 } // end function __()
 
 function web_link ($text, $link = "") {
