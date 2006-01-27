@@ -63,6 +63,9 @@ class PatientCorrespondence extends EMRModule {
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'lettereoc');
 
+		// Set ACL for billers + EMR access
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Run parent constructor
 		$this->EMRModule();
 	} // end constructor PatientCorrespondence

@@ -61,6 +61,8 @@ class ScannedDocuments extends EMRModule {
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'imageeoc');
 
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Call parent constructor
 		$this->EMRModule();
 	} // end constructor ScannedDocuments

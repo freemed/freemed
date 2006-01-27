@@ -79,6 +79,8 @@ class LettersModule extends EMRModule {
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'lettereoc');
 
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Run parent constructor
 		$this->EMRModule();
 	} // end constructor LettersModule

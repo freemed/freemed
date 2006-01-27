@@ -47,6 +47,8 @@ class Notifications extends EMRModule {
 		);
 		$this->summary_options = SUMMARY_DELETE;
 
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Set up a tickler, so we can send messages to the user
 		$this->_SetHandler('Tickler', 'notify_user');
 

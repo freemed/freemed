@@ -19,6 +19,8 @@ class MessageEMRView extends EMRModule {
 	var $summary_items = array ( 1,2,3 );
 
 	function MessageEMRView () {
+		$this->acl = array ( 'bill', 'emr' );
+
 		// Call parent constructor
 		$this->EMRModule();
 	} // end constructor 
