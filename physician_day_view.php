@@ -122,16 +122,16 @@ for ($c_hour=freemed::config_value('calshr');
 		$c_hour<freemed::config_value('calehr');
 		$c_hour++) {
 	$display_buffer .= "
-	<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"4\" ".
+	<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ROWSPAN=\"12\" ".
 	"CLASS=\"calcell_hour\" WIDTH=\"7%\"
 	><a NAME=\"hour".$c_hour."\" /><b>".
 	$scheduler->display_hour($c_hour)."</b></td>
 	";
 	
-	for ($c_min="00"; $c_min<60; $c_min+=15) {
-		$idx = $c_hour . ':' . $c_min;
+	for ($c_min="00"; $c_min<60; $c_min+=5) {
+		$idx = sprintf('%02s:%02s', $c_hour, $c_min);
 		$display_buffer .= ( ($c_min>0) ? '<tr>' : '' ).
-			"<td>:".$c_min."</td>\n";
+			"<td>".( ($c_min % 15 == 0) ? ':'.$c_min : '' )."</td>\n";
 		foreach ($map AS $map_key => $cur_map) {
 			$event = false;
 			if (($cur_map[$idx]['span']+0) == 0) {

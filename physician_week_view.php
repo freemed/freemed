@@ -126,7 +126,7 @@ foreach ($week AS $this_date) {
 		"STYLE=\"border: 1px solid; \" ".
 		"COLSPAN=\"".count($map[$this_date])."\"><b>".
 		"<a href=\"physician_day_view.php?".
-		"for_date=".urlencode($this_date)."&".
+		"selected_date=".urlencode($this_date)."&".
 		"physician=".urlencode($_REQUEST['physician'])."\"".
 		">".$this_date."</a></b></td>\n";
 } // end foreach week
