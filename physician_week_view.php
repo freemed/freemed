@@ -55,10 +55,10 @@ $page_title = __("Physician Weekly View");
 
 //----- Map key bindings
 freemed::key_binding(array(
-	'37' => "$page_name?selected_date=$prev_date&physician=$physician",
-	'39' => "$page_name?selected_date=$next_date&physician=$physician",
-	'38' => "$page_name?selected_date=$prev_date&physician=$physician",
-	'40' => "$page_name?selected_date=$next_date&physician=$physician"
+	'37' => "$page_name?for_date=$prev_date&physician=$physician",
+	'39' => "$page_name?for_date=$next_date&physician=$physician",
+	'38' => "$page_name?for_date=$prev_date&physician=$physician",
+	'40' => "$page_name?for_date=$next_date&physician=$physician"
 ));
 
 //----- Display previous/next bar
@@ -126,7 +126,7 @@ foreach ($week AS $this_date) {
 		"STYLE=\"border: 1px solid; \" ".
 		"COLSPAN=\"".count($map[$this_date])."\"><b>".
 		"<a href=\"physician_day_view.php?".
-		"selected_date=".urlencode($this_date)."&".
+		"for_date=".urlencode($this_date)."&".
 		"physician=".urlencode($_REQUEST['physician'])."\"".
 		">".$this_date."</a></b></td>\n";
 } // end foreach week
@@ -137,13 +137,13 @@ for ($c_hour=freemed::config_value('calshr');
 		$c_hour<freemed::config_value('calehr');
 		$c_hour++) {
 	$display_buffer .= "<tr><td VALIGN=\"TOP\" ALIGN=\"RIGHT\" ".
-		"ROWSPAN=\"4\" CLASS=\"calcell_hour\" WIDTH=\"7%\">".
+		"ROWSPAN=\"12\" CLASS=\"calcell_hour\" WIDTH=\"7%\">".
 		"<a NAME=\"hour".$c_hour."\" /><b>".
 		$scheduler->display_hour($c_hour)."</b></td>\n";
-	for ($c_min='00'; $c_min<60; $c_min+=15) {
-		$idx = $c_hour.':'.$c_min;
+	for ($c_min='00'; $c_min<60; $c_min+=5) {
+		$idx = sprintf('%02s:%02s', $c_hour, $c_min);
 		$display_buffer .= ( ($c_min>0) ? "<tr>" : "" ).
-			"<td>".$c_min."</td>\n";
+			"<td>".( ($c_min % 15 == 0 ) ? $c_min : "" )."</td>\n";
 		foreach ($week AS $day) {
 			foreach ($map[$day] AS $map_key => $cur_map) {
 				$event = false;
