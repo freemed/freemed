@@ -17,6 +17,7 @@ class FormsModule extends EMRModule {
 	var $record_name    = "Forms";
 	var $table_name     = "form_results";
 	var $patient_field  = "fr_patient";
+	var $widget_hash    = "##fr_timestamp## ##fr_formname##";
 
 	function FormsModule () {
 		// __("Forms")
