@@ -108,7 +108,8 @@ switch ($action) {
 						"Mr" => "Mr",
 						"Mrs" => "Mrs",
 						"Ms" => "Ms",
-						"Dr" => "Dr"
+						"Dr" => "Dr",
+						"Fr" => "Fr"
 					)
 				),
 
@@ -437,7 +438,8 @@ switch ($action) {
 						"Mr" => "Mr",
 						"Mrs" => "Mrs",
 						"Ms" => "Ms",
-						"Dr" => "Dr"
+						"Dr" => "Dr",
+						"Fr" => "Fr"
 					)
 				),
 
