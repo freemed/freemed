@@ -80,11 +80,13 @@ if ($_REQUEST['id'] and !$_REQUEST['been_here']) {
 } elseif (!$been_here and !isset($room)) {
 	// Fudge room, if we have a current facility
 	if ($_COOKIE['default_facility']) {
-		$_REQUEST['facility'] = $facility = $_COOKIE['default_facility']; 
+		if (!isset($_REQUEST['facility'])) {
+			$_REQUEST['facility'] = $facility = $_COOKIE['default_facility']; 
+		}
 		// Get first room from there
 		$result = $sql->query("SELECT * FROM room ".
 			"WHERE roompos='".addslashes(
-			$_COOKIE['default_facility'])."'");
+			$_REQUEST['facility'])."'");
 		if ($sql->results($result)) {
 			$r = $sql->fetch_array($result);
 			$room = $r['id'];
@@ -458,7 +460,7 @@ function process () {
 				"calhour" => $hour,
 				"calminute" => $minute,
 				"calduration" => $duration,
-				"calfacility" => $facility,
+				"calfacility" => $_REQUEST['facility'],
 				"calroom" => $room,
 				"calphysician" => $physician,
 				"calpatient" => $patient,	
