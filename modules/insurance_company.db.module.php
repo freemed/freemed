@@ -189,7 +189,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
     "<INPUT TYPE=TEXT NAME=\"inscoassign\" SIZE=10 MAXLENGTH=12
      VALUE=\"".prepare($inscoassign)."\" />",
 
-    __("Insurance Assign?") =>
+    __("X12 Payer Id Code") =>
     html_form::text_widget('inscox12id', 25),
 
     __("Insurance Modifiers") =>
