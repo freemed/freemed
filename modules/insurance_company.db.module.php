@@ -8,10 +8,10 @@ class InsuranceCompanyModule extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Companies";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.4.1";
+	var $MODULE_VERSION = "0.4";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $record_name = "Insurance Company";
 	var $table_name = "insco";
@@ -36,6 +36,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 		"inscoassign",
 		"inscomod",
 		"inscoidmap",
+		"inscox12id",
 		// Billing related information
 		"inscodefformat",
 		"inscodeftarget",
@@ -68,6 +69,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 			'inscoassign' => SQL__INT_UNSIGNED(0),
 			'inscomod' => SQL__TEXT,
 			'inscoidmap' => SQL__TEXT,
+			'inscox12id' => SQL__VARCHAR(32),
 			'inscodefformat' => SQL__VARCHAR(50),
 			'inscodeftarget' => SQL__VARCHAR(50),
 			'inscodefformate' => SQL__VARCHAR(50),
@@ -167,7 +169,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
   $book->add_page(
    __("Internal Information"),
    array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod",
-	'inscodefformat', 'inscodeftarget', 
+	'inscox12id', 'inscodefformat', 'inscodeftarget', 
 	'inscodefformate', 'inscodeftargete' ),
 	html_form::form_table(array(
     __("NEIC ID") =>
@@ -186,6 +188,9 @@ class InsuranceCompanyModule extends MaintenanceModule {
     __("Insurance Assign?") =>
     "<INPUT TYPE=TEXT NAME=\"inscoassign\" SIZE=10 MAXLENGTH=12
      VALUE=\"".prepare($inscoassign)."\" />",
+
+    __("Insurance Assign?") =>
+    html_form::text_widget('inscox12id', 25),
 
     __("Insurance Modifiers") =>
     freemed::multiple_choice ("SELECT * FROM insmod
@@ -377,6 +382,18 @@ class InsuranceCompanyModule extends MaintenanceModule {
 				'ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformate'
 			);
+		}
+
+		// Version 0.4
+		//
+		//	Add inscox12id for 837p/remitt
+		//
+		if (!version_check ( $version, '0.4' )) {
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscox12id VARCHAR(32) AFTER inscoidmap'
+			);
+			$GLOBALS['sql']->query( 'UPDATE '.$this->table_name.' SET inscox12id=\'\' WHERE id>0');
 		}
 	} // end method _update
 

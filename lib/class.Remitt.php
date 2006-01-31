@@ -782,6 +782,7 @@ class Remitt {
 		$buffer .= $this->_addr('address', $p['inscoaddr1'], $p['inscocity'], $p['inscostate'], $p['inscozip']);
 		$buffer .= $this->_phone('phone', $p['inscophone']);
 		$buffer .= $this->_tag('x12claimtype', 'HM', true); // fix
+		$buffer .= $this->_tag('x12id', $p['inscox12id'], true);
 
 		// IsX functions for payer types
 		$x = false;
