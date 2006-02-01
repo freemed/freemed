@@ -46,6 +46,10 @@ function my_acl_widget ( $varname ) {
 					$selected = true;
 				}
 			}
+		} else {
+			if (${$varname} == $r['value']) {
+				$selected = true;
+			}
 		}
 		$buffer .= "<option value=\"".prepare($r['value'])."\" ".
 			( $selected ? "SELECTED" : "" ).">".
