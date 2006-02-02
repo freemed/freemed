@@ -607,11 +607,11 @@ class Scheduler {
 
 		// time checking/creation if/else clause
 		if ($hour<12) {
-			$_time = $hour.":".$minute." AM";
+			$_time = sprintf('%02d:%02d AM', $hour, $minute);
 		} elseif ($hour == 12) {
-			$_time = $hour.":".$minute." PM";
+			$_time = sprintf('%02d:%02d PM', $hour, $minute);
 		} else {
-			$_time = ($hour-12).":".$minute." PM";
+			$_time = sprintf('%02d:%02d PM', $hour-12, $minute);
 		}
 		return $_time;
 	} // end method get_time_string

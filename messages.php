@@ -587,10 +587,10 @@ switch ($action) {
 			// Convert from timestamp to time/date
 			$y = $m = $d = $hour = $min = '';
 			$y = substr($r['msgtime'], 0, 4);
-			$m = substr($r['msgtime'], 4, 2);
-			$d = substr($r['msgtime'], 6, 2);
-			$hour = substr($r['msgtime'], 8, 2);
-			$min  = substr($r['msgtime'], 10, 2);
+			$m = substr($r['msgtime'], 5, 2);
+			$d = substr($r['msgtime'], 8, 2);
+			$hour = substr($r['msgtime'], 11, 2);
+			$min  = substr($r['msgtime'], 14, 2);
 
 			// Display message
 			$display_buffer .= "
@@ -598,7 +598,7 @@ switch ($action) {
 				<td><input TYPE=\"CHECKBOX\" ".
 					"NAME=\"mark[".$r['id']."]\" ".
 					"VALUE=\"".prepare($r['id'])."\"/></td>
-				<td>".date('m/d/Y', mktime(0,0,0,$m,$d,$y))."</td>
+				<td>".sprintf('%02s/%02s/%04s',$m,$d,$y)."</td>
 				<td>".$scheduler->get_time_string($hour,$min)."</td>
 				<td>".$sent_by."</td>
 				<td>".$r['from']."</td>
