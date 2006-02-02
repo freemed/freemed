@@ -64,7 +64,7 @@ class Handler_HL7v2_A08 extends Handler_HL7v2 {
 				);
 				syslog(LOG_INFO, 'HL7 parser| query = '.$query);
 				$result = $GLOBALS['sql']->query($query);
-				$r = $GLOBALS['sql']->fetch_array($GLOBALS['sql']->query("SELECT * FROM patient WHERE ptid='".addslashes($v[HL7v2_PID_ID])."'"));
+				$r = $GLOBALS['sql']->fetch_array($GLOBALS['sql']->query("SELECT * FROM patient WHERE ptid='".addslashes($v[HL7v2_PID_ID])."' AND ptarchive=0"));
 				freemed::handler_breakpoint('PatientModify', array($r['pid']));
 			} else {
 				// Otherwise use A04 type query to add patient
