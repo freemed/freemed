@@ -72,7 +72,8 @@ class Handler_HL7v2 {
 		$query = "SELECT * FROM patient WHERE ".
 			"ptlname LIKE '".addslashes($lname)."' AND ".
 			"ptfname LIKE '".addslashes($fname)."' AND ".
-			"ptdob = '".addslashes($dob)."'";
+			"ptdob = '".addslashes($dob)."' AND ".
+			"ptarchive = 0";
 		$result = $GLOBALS['sql']->query($query);
 		if (!$GLOBALS['sql']->results($result)) {
 			return 0; // false.... none found

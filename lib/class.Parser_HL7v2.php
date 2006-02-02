@@ -308,7 +308,7 @@ class Parser_HL7v2 {
 	} // end method __date_to_minute
 
 	function __pid_to_patient ( $pid_id ) {
-		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."' ORDER BY id";
+		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."' AND ptarchive=0 ORDER BY id";
 		$result = $GLOBALS['sql']->query($query);
 		$r = @$GLOBALS['sql']->fetch_array($result);
 		return $r['id'];

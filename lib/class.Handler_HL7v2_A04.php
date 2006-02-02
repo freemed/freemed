@@ -20,7 +20,7 @@ class Handler_HL7v2_A04 extends Handler_HL7v2 {
 			// if it does not.
 			$exist_query = $GLOBALS['sql']->query(
 				"SELECT * FROM patient WHERE ptid='".
-				addslashes($v[HL7v2_PID_ID])."'"
+				addslashes($v[HL7v2_PID_ID])."' AND ptarchive=0"
 			);
 
 			// Select matching PV1 segment (hack?)
