@@ -148,6 +148,9 @@ class MaintenanceModule extends BaseModule {
 				if (!$this->acl_access('add') and !$this->defeat_acl) {
 					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 				}
+				if ($_REQUEST['return'] == 'close') {
+					$GLOBALS['__freemed']['no_template_display'] = true;
+				}
 				$this->addform();
 				break;
 
@@ -237,6 +240,12 @@ class MaintenanceModule extends BaseModule {
 		//print "param = "; print_r($_param); print "\n";
 		global $display_buffer, $action;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+
+		// Set close on load if we're closing
+		if ($_REQUEST['return'] == 'close') {
+			$GLOBALS['__freemed']['no_template_display'] = true;
+			$GLOBALS['__freemed']['close_on_load'] = true;
+		}
 
 		// If there are parameters, import them into the global
 		// scope, then set their values
@@ -444,6 +453,8 @@ class MaintenanceModule extends BaseModule {
 				( $action == "addform" ? "add" : "mod" )."\" />\n".
 			"<input type=\"hidden\" name=\"module\" ".
 				"value=\"".prepare(get_class($this))."\" />\n".
+			"<input type=\"hidden\" name=\"return\" ".
+				"value=\"".prepare($_REQUEST['return'])."\" />\n".
 			( $action == "modform" ? "<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\" />\n" : "" );
 		$display_buffer .= html_form::form_table($this->generate_form());
 		$display_buffer .= "<div align=\"center\">\n".
