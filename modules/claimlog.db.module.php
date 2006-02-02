@@ -8,15 +8,15 @@ class ClaimLogTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Claim Log';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.1';
+	var $MODULE_VERSION = '0.7.2';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name = "claimlog";
 
-	function ClaimLog ( ) {
+	function ClaimLogTable ( ) {
 		$this->table_definition = array (
 			'cltimestamp' => SQL__TIMESTAMP(14),
 			'cluser' => SQL__INT_UNSIGNED(0),
@@ -42,6 +42,7 @@ class ClaimLogTable extends MaintenanceModule {
 		// Version 0.7.1
 		//
 		//	Add ability to track events by payment record (clpayrec)
+		//
 		if (!version_check($version, '0.7.1')) {
 			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN clpayrec INT UNSIGNED AFTER clprocedure');
@@ -49,9 +50,17 @@ class ClaimLogTable extends MaintenanceModule {
 			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
 				'SET clpayrec=\'0\'');
 		}
+
+		// Version 0.7.2
+		//
+		//	Force table creation, due to messed up older version
+		//
+		if (!version_check($version, '0.8.2')) {
+			$this->create_table();
+		}
 	} // end method _update
 
-} // end class ClaimLog
+} // end class ClaimLogTable
 
 register_module('ClaimLogTable');
 
