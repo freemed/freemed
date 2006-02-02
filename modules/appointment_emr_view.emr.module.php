@@ -32,11 +32,13 @@ class AppointmentEMRView extends EMRModule {
 		$query =
 			"SELECT * FROM scheduler WHERE ".
 			"calpatient='".addslashes($patient)."' AND ".
-			"caltype='pat' AND ".
-			"( caldateof > '".date("Y-m-d")."' OR ".
-			  "( caldateof = '".date("Y-m-d")."' AND ".
-			  "  calhour >= '".date("H")."' )".
-			") LIMIT ".$num_summary_items;
+			"caltype='pat' ".
+			//" AND ".
+			//"( caldateof > '".date("Y-m-d")."' OR ".
+			//  "( caldateof = '".date("Y-m-d")."' AND ".
+			//  "  calhour >= '".date("H")."' ) )".
+			" ORDER BY caldateof DESC, calhour DESC, calminute DESC ".
+			" LIMIT ".$num_summary_items;
 		$appoint_result = $GLOBALS['sql']->query($query);
 		if (!$GLOBALS['sql']->results($appoint_result)) {
 			$buffer .= "
