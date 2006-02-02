@@ -210,11 +210,11 @@ class ProgressNotes extends EMRModule {
       ); 
 
      $book->add_page (
-       __("<u>S</u>ubjective"),
+       __("Subjective"),
        array ("pnotes_S"),
        html_form::form_table (
         array (
-          __("<u>S</u>ubjective") =>
+          __("Subjective") =>
 		freemed::rich_text_area('pnotes_S', 30, 60, true),
 	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
 	  	"<input type=\"reset\" class=\"button\" value=\"".__("Revert to Saved")."\" />"
@@ -223,11 +223,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       __("<u>O</u>bjective"),
+       __("Objective"),
        array ("pnotes_O"),
        html_form::form_table (
         array (
-          __("<u>O</u>bjective") =>
+          __("Objective") =>
 		freemed::rich_text_area('pnotes_O', 30, 60, true),
 		//html_form::text_area('pnotes_O', 'VIRTUAL', 20, 75),
 	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
@@ -237,11 +237,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       __("<U>A</U>ssessment"),
+       __("Assessment"),
        array ("pnotes_A"),
        html_form::form_table (
         array (
-          __("<U>A</U>ssessment") =>
+          __("Assessment") =>
 		freemed::rich_text_area('pnotes_A', 30, 60, true),
 		//html_form::text_area('pnotes_A', 'VIRTUAL', 20, 75),
 	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
@@ -251,11 +251,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       __("<U>P</U>lan"),
+       __("Plan"),
        array ("pnotes_P"),
        html_form::form_table (
         array (
-          __("<U>P</U>lan") =>
+          __("Plan") =>
 		freemed::rich_text_area('pnotes_P', 30, 60, true),
 		//html_form::text_area('pnotes_P', 'VIRTUAL', 20, 75),
 	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
@@ -265,11 +265,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       __("<U>I</U>nterval"),
+       __("Interval"),
        array ("pnotes_I"),
        html_form::form_table (
         array (
-          __("<U>I</U>nterval") =>
+          __("Interval") =>
 		//freemed::rich_text_area('pnotes_I', 30, 60, true),
 		html_form::text_area('pnotes_I', 'VIRTUAL', 20, 75),
 	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
@@ -279,11 +279,11 @@ class ProgressNotes extends EMRModule {
      );
 
      $book->add_page (
-       __("<U>E</U>ducation"),
+       __("Education"),
        array ("pnotes_E"),
        html_form::form_table (
         array (
-          __("<U>E</U>ducation") =>
+          __("Education") =>
 		freemed::rich_text_area('pnotes_E', 30, 60, true),
 		//html_form::text_area('pnotes_E', 'VIRTUAL', 20, 75),
 	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
@@ -297,7 +297,7 @@ class ProgressNotes extends EMRModule {
        array ("pnotes_R"),
        html_form::form_table (
         array (
-          __("P<U>R</U>escription") =>
+          __("Prescription") =>
 		freemed::rich_text_area('pnotes_R', 30, 60, true),
 		//html_form::text_area('pnotes_R', 'VIRTUAL', 20, 75),
 	  " " => "<input type=\"submit\" class=\"button\" value=\"".__("Save")."\" />".
@@ -570,7 +570,7 @@ class ProgressNotes extends EMRModule {
 
       if (strlen($pnotes_S) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=\"CENTER\"><B>".__("<u>S</u>ubjective")."</B></TD></TR>
+       <TD ALIGN=\"CENTER\"><B>".__("Subjective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
 		".( eregi("<[A-Z/]*>", $pnotes_S) ?
 		prepare($pnotes_S) :
@@ -579,7 +579,7 @@ class ProgressNotes extends EMRModule {
        ";
       if (strlen($pnotes_O) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><B>".__("<U>O</U>bjective")."</B></TD></TR>
+       <TD ALIGN=CENTER><B>".__("Objective")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
 		".( eregi("<[A-Z/]*>", $pnotes_O) ?
 		prepare($pnotes_O) :
@@ -588,7 +588,7 @@ class ProgressNotes extends EMRModule {
        ";
       if (strlen($pnotes_A) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><B>".__("<U>A</U>ssessment")."</B></TD></TR>
+       <TD ALIGN=CENTER><B>".__("Assessment")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
 		".( eregi("<[A-Z/]*>", $pnotes_A) ?
 		prepare($pnotes_A) :
@@ -598,7 +598,7 @@ class ProgressNotes extends EMRModule {
       if (strlen($pnotes_P) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
        <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("<u>P</u>lan")."</B></FONT></CENTER></TD></TR>
+        <B>".__("Plan")."</B></FONT></CENTER></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
 		".( eregi("<[A-Z/]*>", $pnotes_P) ?
 		prepare($pnotes_P) :
@@ -607,7 +607,7 @@ class ProgressNotes extends EMRModule {
        ";
       if (!empty($pnotes_I)) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><B>".__("<u>I</u>nterval")."</B></TD></TR>
+       <TD ALIGN=CENTER><B>".__("Interval")."</B></TD></TR>
        <TR BGCOLOR=\"#ffffff\"><TD>
 		".( eregi("<[A-Z/]*>", $pnotes_I) ?
 		prepare($pnotes_I) :
@@ -616,7 +616,7 @@ class ProgressNotes extends EMRModule {
        ";
       if (strlen($pnotes_E) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><B>".__("<u>E</u>ducation")."</B></TD></TR>
+       <TD ALIGN=CENTER><B>".__("Education")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
 		".( eregi("<[A-Z/]*>", $pnotes_E) ?
 		prepare($pnotes_E) :
@@ -625,7 +625,7 @@ class ProgressNotes extends EMRModule {
        ";
       if (strlen($pnotes_R) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><B>".__("<u>R</u>x")."</B></TD></TR>
+       <TD ALIGN=CENTER><B>".__("Rx")."</B></TD></TR>
 		".( eregi("<[A-Z/]*>", $pnotes_R) ?
 		prepare($pnotes_R) :
 		stripslashes(str_replace("\n", "<br/>", htmlentities($pnotes_R))) )."
