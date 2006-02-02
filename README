@@ -19,6 +19,8 @@ support@freemedsoftware.org for community-based support.
   data/cache/modules and visit the aforementioned screen.
 * Code is annotated with an author if the primary author is other than
   jeff b <jeff@freemedsoftware.com>
+* MySQL version 4.1 is required for the timestamp-related display functions to
+  work properly.
 * Since FreeMED involves a fairly hefty codebase, php optimizing tricks,
   such as the bware_cache module or the Zend Optimizer should be used to
   minimize load times. APC is also available (apc.communityconnect.com), as
