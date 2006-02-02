@@ -8,11 +8,11 @@ class MessagesTable extends EMRModule {
 
 	var $MODULE_NAME = 'Messages';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.7.2';
+	var $MODULE_VERSION = '0.7.3';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.7.1';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name = "messages";
 	var $patient_field = "msgpatient";
@@ -32,6 +32,7 @@ class MessagesTable extends EMRModule {
 			'msgtext' => SQL__TEXT,
 			'msgread' => SQL__INT_UNSIGNED(0),
 			'msgunique' => SQL__VARCHAR(32),
+			'msgtag' => SQL__VARCHAR(32),
 			'id' => SQL__SERIAL
 		);
 
@@ -125,11 +126,11 @@ class MessagesTable extends EMRModule {
 				'SET msgunique=id WHERE id>0');
 		}
 
-		// Version 0.7.2
+		// Version 0.7.2 / 0.7.3
 		//
 		//	Add "msgtag" field for virtual boxes
 		//
-		if (!version_check($version, '0.7.2')) {
+		if (!version_check($version, '0.7.2') or !version_check($version, '0.7.3')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN msgtag VARCHAR(32) AFTER msgunique');
 			$sql->query('UPDATE '.$this->table_name.' '.
