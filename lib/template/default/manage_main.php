@@ -131,10 +131,12 @@ foreach ($components AS $garbage => $__component) {
 		// Wrap this whole thing in ACL check
 		if (freemed::module_check_acl($component['module'])) {
 
+		// Cache index to use
+		$__idx = __($module_list->get_module_name($component['module']));
+
 		// Execute proper portion and add to panel
-		$modules[__($module_list->get_module_name($component['module']))] =
-			$component['module'];
-		$panel[__($module_list->get_module_name($component['module']))] .= "
+		$modules[$__idx] = $component['module'];
+		$panel[$__idx] .= "
 			<table WIDTH=\"100%\" BORDER=\"0\" CELLSPACING=\"0\"
 			 CELLPADDING=\"3\" CLASS=\"thinbox\"
 			<tr><td VALIGN=\"MIDDLE\" ALIGN=\"CENTER\"
@@ -151,7 +153,7 @@ foreach ($components AS $garbage => $__component) {
 		";
 
 		$already_set[$component['module']] = true;
-		$ms[__($module_list->get_module_name($component['module']))] = $component;
+		$ms[$__idx] = $component;
 
 		} // end wrapper ACL check
 	} else {
