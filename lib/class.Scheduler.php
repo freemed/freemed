@@ -34,6 +34,7 @@ class Scheduler {
 		'calrecurnote' => 'calrecurnote',
 		'calrecurid' => 'calrecurid',
 		'calmark' => 'calmark',
+		'calappttemplate' => 'calappttemplate',
 
 		'date' => 'caldateof',
 		'type' => 'caltype',
@@ -54,7 +55,8 @@ class Scheduler {
 			'group_id' => 'calgroupid',
 			'group' => 'calgroupid',
 		'recurnote' => 'calrecurnote',
-		'recurid' => 'calrecurid'
+		'recurid' => 'calrecurid',
+		'appttemplate' => 'calappttemplate'
 	);
 
 	// STUB constructor
