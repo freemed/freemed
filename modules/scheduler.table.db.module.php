@@ -8,7 +8,7 @@ class SchedulerTable extends MaintenanceModule {
 
 	var $MODULE_NAME = 'Scheduler Table';
 	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.5';
+	var $MODULE_VERSION = '0.6.6';
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_HIDDEN = true;
 
@@ -37,6 +37,7 @@ class SchedulerTable extends MaintenanceModule {
 			'calgroupid' => SQL__INT_UNSIGNED(10),
 			'calrecurnote' => SQL__VARCHAR(100),
 			'calrecurid' => SQL__INT_UNSIGNED(10),
+			'calappttemplate' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
 		);
 
@@ -171,6 +172,17 @@ class SchedulerTable extends MaintenanceModule {
 				'ADD COLUMN calcreated TIMESTAMP(16) AFTER caldateof');
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN calmodified TIMESTAMP(16) AFTER calcreated');
+		}
+
+		// Version 0.6.6
+		//
+		//	Add calappttemplate
+		//
+		if (!version_check($version, '0.6.6')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN calappttemplate INT UNSIGNED AFTER calrecurid');
+			$sql->query('UPDATE '.$this->table_name.' '.
+				'SET calappttemplate=0 WHERE id>0');
 		}
 	} // end function _update
 }
