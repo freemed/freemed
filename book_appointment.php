@@ -173,6 +173,7 @@ switch ($_REQUEST['stage']) {
 	<input TYPE=\"HIDDEN\" NAME=\"note\" VALUE=\"".prepare($_REQUEST['note'], true)."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"hour\" VALUE=\"".$_REQUEST['hour']."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"minute\" VALUE=\"".$_REQUEST['minute']."\"/>
+	<input TYPE=\"HIDDEN\" NAME=\"appttemplate\" VALUE=\"".$_REQUEST['appttemplate']."\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"stage\" VALUE=\"0\"/>
 	<input TYPE=\"HIDDEN\" NAME=\"type\" VALUE=\"".prepare($type)."\"/>
 	<table width=\"100%\" cellspacing=\"0\" cellpadding=\"2\" border=\"0\"
@@ -465,7 +466,8 @@ function process () {
 				"calphysician" => $physician,
 				"calpatient" => $patient,	
 				"calstatus" => 'scheduled',
-				"calprenote" => $note
+				"calprenote" => $note,
+				"calappttemplate" => $_REQUEST['appttemplate']+0
 			)
 		);
 		$move = false;
