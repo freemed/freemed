@@ -120,7 +120,7 @@ class PatientCoveragesModule extends EMRModule {
 			date_vars("covrelinfodt")),
 			html_form::form_table( array (
 				__("Coverage Insurance Type") => 
-					freemed_display_selectbox($covtypes_result,"#covtpname# #covtpdescrip#","covinstp"),
+					module_function('CovtypesMaintenance', 'widget', array('covinstp')),
 				__("Provider Accepts Assigment") =>
 					html_form::select_widget("covprovasgn",array(
 						__("Yes") => "1",
@@ -391,16 +391,22 @@ class PatientCoveragesModule extends EMRModule {
 				array("covinsco"),
 				html_form::form_table( array(
 					__("Insurance Company") => 
-					freemed_display_selectbox($ins_result,"#insconame#","covinsco")
+					module_function('InsuranceCompanyModule', 'widget', array('covinsco'))
 				) )
 			);
+
+			// Push in payer name if one hasn't been put into plan name
+			if ($covinsco and !$covplanname) {
+				$_temp_rec = freemed::get_link_rec($covinsco, 'insco');
+				$covplanname = $_temp_rec['insconame'];
+			}
 
 			$wizard->add_page(__("Supply Coverage Information"),
 				array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
 					date_vars("covrelinfodt")),
 				html_form::form_table( array (
 					__("Coverage Insurance Type") => 
-						freemed_display_selectbox($covtypes_result,"#covtpname# #covtpdescrip#","covinstp"),
+						module_function('CovtypesMaintenance', 'widget', array('covinstp')),
 					__("Provider Accepts Assigment") =>
 						html_form::select_widget("covprovasgn",array(
 							__("Yes") => "1",
