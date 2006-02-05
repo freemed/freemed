@@ -300,6 +300,9 @@ class module_list {
 				$GLOBALS['__phpwebtools']['GLOBAL_CATEGORIES_VERSION'][$CATEGORY_NAME] = $this_module['CATEGORY_VERSION'];
 			}
 
+			// Load i18n, if it exists
+			GettextXML::textdomain(strtolower($this_module['MODULE_CLASS']));
+
 			// Create ICON template
 			if ( $this_module['ICON'] == NULL ) {
 				$icon_text = "";
@@ -314,7 +317,7 @@ class module_list {
 				);
 				$icon_text = str_replace (
 					"#name#",
-					$this_module['MODULE_NAME'],
+					__($this_module['MODULE_NAME']),
 					$icon_text
 				);
 			} // end creating icon template
@@ -322,7 +325,7 @@ class module_list {
 			// Fill in the key template
 			$this_key = $key_template;
 			$this_key = str_replace ("#name#", 
-				$this_module['MODULE_NAME'], $this_key);
+				__($this_module['MODULE_NAME']), $this_key);
 			$this_key = str_replace ("#class#", 
 				$this_module['MODULE_CLASS'], $this_key);
 			$this_key = str_replace ("#version#", 
@@ -334,7 +337,7 @@ class module_list {
 			$this_key = str_replace ("#icon#", $icon_text, $this_key);
 			$this_key = str_replace ("#description#", 
 				( ($this_module['MODULE_DESCRIPTION'] != NULL) ?
-				$this_module['MODULE_DESCRIPTION'] : "&nbsp;" ),
+				__($this_module['MODULE_DESCRIPTION']) : "&nbsp;" ),
 				$this_key);
 			$this_key = str_replace ("#vendor#", 
 				( ($this_module['MODULE_VENDOR'] != NULL) ?
@@ -344,7 +347,7 @@ class module_list {
 			// fill in the template
 			$this_val = $val_template;
 			$this_val = str_replace ("#name#", 
-				$this_module['MODULE_NAME'], $this_val);
+				__($this_module['MODULE_NAME']), $this_val);
 			$this_val = str_replace ("#class#", 
 				$this_module['MODULE_CLASS'], $this_val);
 			$this_val = str_replace ("#version#", 
@@ -356,7 +359,7 @@ class module_list {
 			$this_val = str_replace ("#icon#", $icon_text, $this_val);
 			$this_val = str_replace ("#description#", 
 				( ($this_module['MODULE_DESCRIPTION'] != NULL) ?
-				$this_module['MODULE_DESCRIPTION'] : "&nbsp;" ),
+				__($this_module['MODULE_DESCRIPTION']) : "&nbsp;" ),
 				$this_val);
 			$this_val = str_replace ("#vendor#", 
 				( ($this_module['MODULE_VENDOR'] != NULL) ?
@@ -404,6 +407,9 @@ class module_list {
 				$GLOBALS['__phpwebtools']['GLOBAL_CATEGORIES_VERSION'][$CATEGORY_NAME] = $this_module['CATEGORY_VERSION'];
 			}
 
+			// Load i18n, if it exists
+			GettextXML::textdomain(strtolower($this_module['MODULE_CLASS']));
+
 			// Create ICON template
 			if ( $this_module['ICON'] == NULL ) {
 				$icon_text = "";
@@ -418,7 +424,7 @@ class module_list {
 				);
 				$icon_text = str_replace (
 					"#name#",
-					$this_module['MODULE_NAME'],
+					__($this_module['MODULE_NAME']),
 					$icon_text
 				);
 			} // end creating icon template
@@ -426,7 +432,7 @@ class module_list {
 			// fill in the template
 			$this_one = $template;
 			$this_one = str_replace ("#name#", 
-				$this_module['MODULE_NAME'], $this_one);
+				__($this_module['MODULE_NAME']), $this_one);
 			$this_one = str_replace ("#class#", 
 				$this_module['MODULE_CLASS'], $this_one);
 			$this_one = str_replace ("#version#", 
@@ -438,7 +444,7 @@ class module_list {
 			$this_one = str_replace ("#icon#", $icon_text, $this_one);
 			$this_one = str_replace ("#description#", 
 				( ($this_module['MODULE_DESCRIPTION'] != NULL) ?
-				$this_module['MODULE_DESCRIPTION'] : "&nbsp;" ),
+				__($this_module['MODULE_DESCRIPTION']) : "&nbsp;" ),
 				$this_one);
 			$this_one = str_replace ("#vendor#", 
 				( ($this_module['MODULE_VENDOR'] != NULL) ? 
@@ -452,11 +458,11 @@ class module_list {
 				// Check for this actually being added
 				if (!$this_module['MODULE_HIDDEN']) {
 					$have_output = true;
-					$output[$this_module['MODULE_NAME']] = $this_one;	
+					$output[__($this_module['MODULE_NAME'])] = $this_one;	
 				} elseif ($this->display_hidden) {
 					// If *forced* to display...
 					$have_output = true;
-					$output[$this_module['MODULE_NAME']] = $this_one;	
+					$output[__($this_module['MODULE_NAME'])] = $this_one;	
 				}
 			} // end of add to buffer if in proper category
 		} // finish looping through GLOBAL_MODULES
