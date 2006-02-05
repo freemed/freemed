@@ -923,6 +923,8 @@ class Scheduler {
 				$maps[$cur_map][$idx]['span'] = ceil($c['calduration'] / 5);
 				$maps[$cur_map][$idx]['physician'] = $c['calphysician'];
 				$maps[$cur_map][$idx]['room'] = $c['calroom'];
+				// Handle appointment template colors, if joined
+				$maps[$cur_map][$idx]['color'] = $c['atcolor'];
 
 				// Check for selected
 				if ($c['id'] == $selected) {
