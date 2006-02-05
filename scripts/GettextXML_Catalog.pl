@@ -243,7 +243,7 @@ sub Parse_File {
 		chop $line;
 		if ($line =~ /__\(\"/) {
 			$_ = $line;
-			if (/__\(\"(.+?[^\"\)])\"\)/) {
+			if (/__\(\"(.+?)\"\)/g) {
 				#print $1 . "\n";	
 				push @phrases, $1;
 			}
