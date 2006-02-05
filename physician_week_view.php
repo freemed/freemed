@@ -106,9 +106,13 @@ if ($physician<=0) {
 //----- Create the maps
 $scheduler = CreateObject('FreeMED.Scheduler');
 foreach ($week AS $this_date) {
-	$map[$this_date] = $scheduler->multimap("SELECT * FROM ".
-		"scheduler WHERE calphysician='".addslashes($physician)."' ".
-		"AND caldateof='".addslashes($this_date)."'");
+	$map[$this_date] = $scheduler->multimap(
+		"SELECT scheduler.*,atcolor FROM scheduler ".
+		"LEFT OUTER JOIN appttemplate t ON t.id=scheduler.calappttemplate ".
+		"WHERE ".
+			"calphysician='".addslashes($physician)."' AND ".
+			"caldateof='".addslashes($this_date)."'"
+	);
 	if ($map[$this_date][0]['count'] !== 0) {
 		$temp = $map[$this_date];
 		unset ($map[$this_date]);
@@ -154,6 +158,7 @@ for ($c_hour=freemed::config_value('calshr');
 					$display_buffer .= "<td COLSPAN=\"1\" ".
 					"ROWSPAN=\"".$cur_map[$idx]['span']."\" ".
 					"ALIGN=\"LEFT\" ".
+					( $cur_map[$idx]['color'] ? "STYLE=\"background: ".$cur_map[$idx]['color'].";\" " : "" ).
 					"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
 					$scheduler->event_calendar_print(
 						$cur_map[$idx]['link'],

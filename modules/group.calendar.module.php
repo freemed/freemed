@@ -154,10 +154,13 @@ class GroupCalendar extends CalendarModule {
 		foreach ($physician_list AS $_garbage_ => $phy) {
 			if ($phy>0) {
 			// Create map
-				$map[$phy] = $scheduler->multimap("SELECT * FROM ".
-					"scheduler WHERE calphysician='".
-					addslashes($phy)."' AND caldateof='".
-					addslashes($selected_date)."'");
+				$map[$phy] = $scheduler->multimap(
+					"SELECT scheduler.*,atcolor FROM scheduler ".
+					"LEFT OUTER JOIN appttemplate t ON t.id=scheduler.calappttemplate ".
+					"WHERE ".
+						"calphysician='".addslashes($phy)."' AND ".
+						"caldateof='".addslashes($selected_date)."'"
+				);
 
 				// Deal with null calendar
 				if ($map[$phy][0]['count'] !== 0) {
@@ -180,11 +183,11 @@ class GroupCalendar extends CalendarModule {
 
 		// Create "other" map
 		$map[0] = $scheduler->multimap(
-				"SELECT * FROM scheduler WHERE ".
-				"calphysician='0' AND ".
-				"caldateof='".addslashes($selected_date)."' "
-				//"AND calfacility='".
-				//addslashes($my_facility)."'"
+				"SELECT scheduler.*,atcolor FROM scheduler ".
+				"LEFT OUTER JOIN appttemplate t ON t.id=scheduler.calappttemplate ".
+				"WHERE ".
+					"calphysician='0' AND ".
+					"caldateof='".addslashes($selected_date)."'"
 		);
 		$physicians[] = 0;
 		$this->display_columns += count($map[0]);
@@ -371,6 +374,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 						$buffer .= "<td colspan=\"1\" ".
 							"rowspan=\"".$cur_map[$idx]['span']."\" ".
 							"ALIGN=\"LEFT\" ".
+							( $cur_map[$idx]['color'] ? "STYLE=\"background: ".$cur_map[$idx]['color']."; \" " : "" ).
 							"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
 							$scheduler->event_calendar_print(
 								$cur_map[$idx]['link']

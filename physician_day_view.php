@@ -112,9 +112,13 @@ $display_buffer .= fc_generate_calendar_mini ($selected_date, "$page_name?physic
 //----- Create multimap
 $scheduler = CreateObject('FreeMED.Scheduler');
 unset($map);
-$map = $scheduler->multimap("SELECT * FROM scheduler WHERE ".
-	"calphysician='".$physician."' AND ".
-	"caldateof='".$selected_date."'");
+$map = $scheduler->multimap(
+	"SELECT scheduler.*,atcolor FROM scheduler ".
+	"LEFT OUTER JOIN appttemplate t ON t.id=scheduler.calappttemplate ".
+	"WHERE ".
+		"calphysician='".addslashes($physician)."' AND ".
+		"caldateof='".addslashes($selected_date)."'"
+);
 
 //----- Display table
 $display_buffer .= "<table>\n";
@@ -140,6 +144,7 @@ for ($c_hour=freemed::config_value('calshr');
 				$event = true;
 				$display_buffer .= "<td COLSPAN=\"1\" ".
 				"ROWSPAN=\"".$cur_map[$idx]['span']."\" ".
+				( $cur_map[$idx]['color'] ? "STYLE=\"background: ".$cur_map[$idx]['color']."; \" " : "" ).
 				"ALIGN=\"LEFT\" ".
 				"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
 				$scheduler->event_calendar_print($cur_map[$idx]['link']).
