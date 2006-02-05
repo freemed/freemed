@@ -41,11 +41,6 @@ class GettextXML {
 	function gettext_xml($string) {
 		static $_cache;
 
-		if ($GLOBALS['__phpwebtools']['forget_i18n_cache']) {
-			unset($_cache);
-			unset($GLOBALS['__phpwebtools']['forget_i18n_cache']);
-		}
-	
 		// Check for language, otherwise get from environment
 		if (!isset($GLOBALS['__phpwebtools']['gettextXML']['language'])) {
 			$GLOBALS['__phpwebtools']['gettextXML']['language'] =
@@ -55,21 +50,17 @@ class GettextXML {
 		extract($GLOBALS['__phpwebtools']['gettextXML']);
 
 		// If we're not cached, cache *everything*
-		if (!is_array($_cache)) {
-			$domains = $GLOBALS['__phpwebtools']['gettextXML']['domains'];
-			if (is_array($domains)) {
-				$domains = array_unique($domains);
-				foreach ($domains AS $__garbage => $xmlfile) {
-					if (!$GLOBALS['__phpwebtools']['gettexmXML']['domain_cached'][$xmlfile]) {
-						$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile] = $xmlfile;
-						// Add to the cache
-						$_cache = array_merge($_cache,
-							GettextXML::_parse_xml($xmlfile)
-						);
-					}
-				} // end foreach
-			} // end is array
-		} // end checking for cached copy
+		$domains = $GLOBALS['__phpwebtools']['gettextXML']['domains'];
+		if (is_array($domains)) {
+			$domains = array_unique($domains);
+			foreach ($domains AS $__garbage => $xmlfile) {
+				if (!$GLOBALS['__phpwebtools']['gettexmXML']['domain_cached'][$xmlfile]) {
+					$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile] = $xmlfile;
+					// Add to the cache
+					$_cache = array_merge($_cache, GettextXML::_parse_xml($xmlfile));
+				}
+			} // end foreach
+		} // end is array
 
 		// Get translated string
 		$translated = $_cache["$string"];
