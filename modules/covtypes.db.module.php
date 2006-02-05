@@ -19,6 +19,8 @@ class CovtypesMaintenance extends MaintenanceModule {
 	var $table_name  = "covtypes";
 	var $order_field = "covtpname,covtpdescrip";
 
+	var $widget_hash = '##covtpname## ##covtpdescrip##';
+
 	var $variables = array (
 			"covtpname",
 			"covtpdescrip",
