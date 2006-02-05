@@ -128,6 +128,9 @@ foreach ($components AS $garbage => $__component) {
 		);
 	}
 	if ($module_list->check_for($component['module']) and (!$already_set[$component['module']])) {
+		// Add current module to translation list
+		GettextXML::textdomain(strtolower($component['module']));
+	
 		// Wrap this whole thing in ACL check
 		if (freemed::module_check_acl($component['module'])) {
 
