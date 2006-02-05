@@ -40,6 +40,11 @@ class GettextXML {
 	//
 	function gettext_xml($string) {
 		static $_cache;
+
+		if ($GLOBALS['__phpwebtools']['forget_i18n_cache']) {
+			unset($_cache);
+			unset($GLOBALS['__phpwebtools']['forget_i18n_cache']);
+		}
 	
 		// Check for language, otherwise get from environment
 		if (!isset($GLOBALS['__phpwebtools']['gettextXML']['language'])) {
@@ -130,6 +135,7 @@ class GettextXML {
 	//
 	function textdomain ($domain) {
 		$GLOBALS['__phpwebtools']['gettextXML']['domains'][] = $domain;
+		$GLOBALS['__phpwebtools']['forget_i18n_cache'] = 1;
 	} // end GettextXML::textdomain
 
 	//----- internal functions -------------------------------------------
