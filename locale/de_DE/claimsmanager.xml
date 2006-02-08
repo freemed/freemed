@@ -1,0 +1,378 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:05-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-07 01:21-0500 -->
+
+	<Translator>Jeff Buchbinder &#x3C;freemed@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>claims were successfully marked as billed</original>
+	<translated>Forderungen wurden erfolgreich als Fakturiert markiert.</translated>
+</translation>
+<translation>
+	<original>claims were successfully marked for rebill</original>
+	<translated>Forderungen wurden erfolgreich zum nochmaligen Fakturieren markiert.</translated>
+</translation>
+<translation>
+	<original>Add Claim Event</original>
+	<translated>Neue Forderung hinzuf&#xC3;&#xBC;gen</translated>
+</translation>
+<translation>
+	<original>Add Event</original>
+	<translated>Ereignis hinzuf&#xC3;&#xBC;gen</translated>
+</translation>
+<translation>
+	<original>Aged Claims</original>
+	<translated>&#xC3;&#xA4;ltere Forderungen</translated>
+</translation>
+<translation>
+	<original>Aging</original>
+	<translated>Alter in Tagen</translated>
+</translation>
+<translation>
+	<original>Aging Summary</original>
+	<translated>Zahlungsstatistik</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to mark these claims as billed.</original>
+	<translated>Beim Fakturieren der Forderungen trat ein Fehler auf</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to mark these claims for rebill.</original>
+	<translated>Beim nochmaligen Fakturieren trat ein Fehler auf.</translated>
+</translation>
+<translation>
+	<original>Balance</original>
+	<translated>Restbetrag</translated>
+</translation>
+<translation>
+	<original>Billing Status</original>
+	<translated>Zahlungsstatus</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>Belegnummer</translated>
+</translation>
+<translation>
+	<original>Call</original>
+	<translated>Anrufen</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Betr&#xC3;&#xA4;ge</translated>
+</translation>
+<translation>
+	<original>Check #%s</original>
+	<translated>Schecknummer</translated>
+</translation>
+<translation>
+	<original>Check Number</original>
+	<translated>Schecknummer</translated>
+</translation>
+<translation>
+	<original>Check Received</original>
+	<translated>Scheck eingegangen am</translated>
+</translation>
+<translation>
+	<original>Claim</original>
+	<translated>Forderung</translated>
+</translation>
+<translation>
+	<original>Claim Criteria</original>
+	<translated>Auswahlkriterien</translated>
+</translation>
+<translation>
+	<original>Claim Detail</original>
+	<translated>Details der Forderung</translated>
+</translation>
+<translation>
+	<original>Claim Details</original>
+	<translated>Details der Forderung</translated>
+</translation>
+<translation>
+	<original>Claim Status</original>
+	<translated>Zahlungsstatus</translated>
+</translation>
+<translation>
+	<original>Claim has nowhere to go ... no more coverages</original>
+	<translated>Forderung zur&#xC3;&#xBC;ckgewiesen - keine Kostendeckung vorhanden</translated>
+</translation>
+<translation>
+	<original>Claims Criteria</original>
+	<translated>Auswahlkriterien</translated>
+</translation>
+<translation>
+	<original>Claims Manager</original>
+	<translated>Zahlungsverkehr</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Kommentar</translated>
+</translation>
+<translation>
+	<original>Copay</original>
+	<translated>Anzahlung</translated>
+</translation>
+<translation>
+	<original>Coverage</original>
+	<translated>Kostendeckung</translated>
+</translation>
+<translation>
+	<original>Current Criteria</original>
+	<translated>Derzeitige Kriterien</translated>
+</translation>
+<translation>
+	<original>Date of Service</original>
+	<translated>Behandlungsdatum</translated>
+</translation>
+<translation>
+	<original>EMR</original>
+	<translated>EMR</translated>
+</translation>
+<translation>
+	<original>Email</original>
+	<translated>Email</translated>
+</translation>
+<translation>
+	<original>Filter by this date</original>
+	<translated>Dieses Datum filtern</translated>
+</translation>
+<translation>
+	<original>Filter by this patient</original>
+	<translated>Diesen Patienten filtern</translated>
+</translation>
+<translation>
+	<original>Filter by this payer</original>
+	<translated>Diesen Einzahler filter</translated>
+</translation>
+<translation>
+	<original>Filter by this status</original>
+	<translated>Diesen Auftragsstatus filtern</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Vorname</translated>
+</translation>
+<translation>
+	<original>First Name like</original>
+	<translated>Vorname &#xC3;&#xA4;hnlich wie</translated>
+</translation>
+<translation>
+	<original>For checked claims</original>
+	<translated>Auf ausgew&#xC3;&#xA4;hlte Datens&#xC3;&#xA4;tze anwenden:</translated>
+</translation>
+<translation>
+	<original>ICD</original>
+	<translated>ICD-Schl&#xC3;&#xBC;ssel</translated>
+</translation>
+<translation>
+	<original>Ins ID</original>
+	<translated>SV-Nr.</translated>
+</translation>
+<translation>
+	<original>Junk</original>
+	<translated>M&#xC3;&#xBC;ll</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nachname</translated>
+</translation>
+<translation>
+	<original>Last Name like</original>
+	<translated>Nachname &#xC3;&#xA4;hnlich wie</translated>
+</translation>
+<translation>
+	<original>Ledger</original>
+	<translated>Hauptbuch</translated>
+</translation>
+<translation>
+	<original>Left Over</original>
+	<translated>&#xC3;&#xBC;brig</translated>
+</translation>
+<translation>
+	<original>Manage outstanding claims and view aging information.</original>
+	<translated>Ausst&#xC3;&#xA4;ndige Forderungen verwalten und anzeigen.</translated>
+</translation>
+<translation>
+	<original>Mark Billed</original>
+	<translated>Verrechnete markieren</translated>
+</translation>
+<translation>
+	<original>Mark for Rebill</original>
+	<translated>F&#xC3;&#xBC;r das nochmalige Verrechnen markieren</translated>
+</translation>
+<translation>
+	<original>Marked for Rebill</original>
+	<translated>F&#xC3;&#xBC;r das nochmalige Verrechnen markiert</translated>
+</translation>
+<translation>
+	<original>Moved to coverage %s</original>
+	<translated>Zur Kostendeckung verschoben an</translated>
+</translation>
+<translation>
+	<original>Moved to patient responsibility</original>
+	<translated>Restschuld wurde dem Patienten zur Last gelegt</translated>
+</translation>
+<translation>
+	<original>Narrow Search</original>
+	<translated>Eingeschr&#xC3;&#xA4;nkte Suche</translated>
+</translation>
+<translation>
+	<original>New Search</original>
+	<translated>Neue Suche</translated>
+</translation>
+<translation>
+	<original>No Search</original>
+	<translated>Keine Suche</translated>
+</translation>
+<translation>
+	<original>Outstanding</original>
+	<translated>Ausstehend</translated>
+</translation>
+<translation>
+	<original>POS</original>
+	<translated>Behandlungsort</translated>
+</translation>
+<translation>
+	<original>Paid</original>
+	<translated>Bezahlt</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Patient Criteria</original>
+	<translated>Kriterien den Patienten betreffend</translated>
+</translation>
+<translation>
+	<original>Patient Pay</original>
+	<translated>Patient tr&#xC3;&#xA4;gt Gesamtschuld</translated>
+</translation>
+<translation>
+	<original>Payer</original>
+	<translated>Zahlender</translated>
+</translation>
+<translation>
+	<original>Payer Criteria</original>
+	<translated>Kriterien den Zahlenden betreffend</translated>
+</translation>
+<translation>
+	<original>Payment from Payer</original>
+	<translated>Zahlung vom Zust&#xC3;&#xA4;ndigen</translated>
+</translation>
+<translation>
+	<original>Plan</original>
+	<translated>Entwurf</translated>
+</translation>
+<translation>
+	<original>Plan Name</original>
+	<translated>Name des Entwurfes</translated>
+</translation>
+<translation>
+	<original>Please select a claim before attempting to mark as billed.</original>
+	<translated>Bitte eine Forderung ausw&#xC3;&#xA4;hlen um als Fakturiert zu markieren.</translated>
+</translation>
+<translation>
+	<original>Post</original>
+	<translated>Eintragen</translated>
+</translation>
+<translation>
+	<original>Post Check</original>
+	<translated>Ausgew&#xC3;&#xA4;hlte eintragen</translated>
+</translation>
+<translation>
+	<original>Post Checks</original>
+	<translated>Scheckbetrag eintragen</translated>
+</translation>
+<translation>
+	<original>Procedures On</original>
+	<translated>Behandlungen am</translated>
+</translation>
+<translation>
+	<original>Prov ID</original>
+	<translated>Doktorkennzahl</translated>
+</translation>
+<translation>
+	<original>Queued</original>
+	<translated>In Warteschlange</translated>
+</translation>
+<translation>
+	<original>Resp. Party</original>
+	<translated>Verantwortliche Partei</translated>
+</translation>
+<translation>
+	<original>Return to Search</original>
+	<translated>Zur&#xC3;&#xBC;ck zur Suche</translated>
+</translation>
+<translation>
+	<original>SSN</original>
+	<translated>SV-Nr.</translated>
+</translation>
+<translation>
+	<original>Search Claims</original>
+	<translated>Forderungen durchsuchen</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>Alles ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Select None</original>
+	<translated>Nichts ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Service Date</original>
+	<translated>Behandlungsdatum</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Status</translated>
+</translation>
+<translation>
+	<original>Svc Date</original>
+	<translated>Beh.-Dat.</translated>
+</translation>
+<translation>
+	<original>Total Amount</original>
+	<translated>Gesamtsumme</translated>
+</translation>
+<translation>
+	<original>Total Claims</original>
+	<translated>Gesamtanzahl Foerderungen</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Benutzer</translated>
+</translation>
+<translation>
+	<original>View claim details</original>
+	<translated>Details zu den Forderungen anzeigen</translated>
+</translation>
+<translation>
+	<original>Name (Last, First)</original>
+	<translated>Nachname, Vorname</translated>
+</translation>
+
+</gettextXML>
+

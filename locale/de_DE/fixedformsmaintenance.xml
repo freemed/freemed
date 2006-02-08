@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-27 13:45-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-01-31 14:23-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Check Char</original>
+	<translated>Eingabe &#xC3;&#xBC;berpr&#xC3;&#xBC;fen</translated>
+</translation>
+<translation>
+	<original>Column</original>
+	<translated>Spalte</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Kommentar</translated>
+</translation>
+<translation>
+	<original>Copy</original>
+	<translated>Kopieren</translated>
+</translation>
+<translation>
+	<original>Copy After</original>
+	<translated>Nachher kopieren</translated>
+</translation>
+<translation>
+	<original>Copy Form</original>
+	<translated>Bitte das Formular kopieren</translated>
+</translation>
+<translation>
+	<original>Data</original>
+	<translated>Daten</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Beschreibung</translated>
+</translation>
+<translation>
+	<original>EMR Report</original>
+	<translated>EMR Bericht</translated>
+</translation>
+<translation>
+	<original>Format</original>
+	<translated>Formatieren</translated>
+</translation>
+<translation>
+	<original>Generic</original>
+	<translated>Generikum</translated>
+</translation>
+<translation>
+	<original>Insert After</original>
+	<translated>Nachher einf&#xC3;&#xBC;gen</translated>
+</translation>
+<translation>
+	<original>Insert Before</original>
+	<translated>Vorher einf&#xC3;&#xBC;gen</translated>
+</translation>
+<translation>
+	<original>Insurance Claim</original>
+	<translated>Zahlungsforderungen</translated>
+</translation>
+<translation>
+	<original>Length</original>
+	<translated>L&#xC3;&#xA4;nge</translated>
+</translation>
+<translation>
+	<original>Line Count</original>
+	<translated>Zeilennummer</translated>
+</translation>
+<translation>
+	<original>Line Length</original>
+	<translated>Zeilenl&#xC3;&#xA4;nge</translated>
+</translation>
+<translation>
+	<original>Loop Line Offset</original>
+	<translated>Loop Line Offset</translated>
+</translation>
+<translation>
+	<original>Loop Repetitions</original>
+	<translated>Loop Repetitions</translated>
+</translation>
+<translation>
+	<original>Mark</original>
+	<translated>Markieren</translated>
+</translation>
+<translation>
+	<original>NSF Format</original>
+	<translated>NSF Format</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Name</translated>
+</translation>
+<translation>
+	<original>Name of Form</original>
+	<translated>Name des Formulars</translated>
+</translation>
+<translation>
+	<original>Page Length</original>
+	<translated>Seitenl&#xC3;&#xA4;nge</translated>
+</translation>
+<translation>
+	<original>Patient Bill</original>
+	<translated>Honorarnote</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Aktualisieren</translated>
+</translation>
+<translation>
+	<original>Resequence</original>
+	<translated>Neuanordnen</translated>
+</translation>
+<translation>
+	<original>Row/Line</original>
+	<translated>Reihe / Linie</translated>
+</translation>
+<translation>
+	<original>Save</original>
+	<translated>Speichern</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Typ</translated>
+</translation>
+<translation>
+	<original>You must select a record to modify.</original>
+	<translated>Sie m&#xC3;&#xBC;ssen einen Datensatz zum &#xC3;&#x84;ndern ausw&#xC3;&#xA4;hlen.</translated>
+</translation>
+
+</gettextXML>
+

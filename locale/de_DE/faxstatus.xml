@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2006-02-02 18:54-0500 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-02 18:54-0500 -->
+
+	<Translator>FULL NAME &#x3C;EMAIL@ADDRESS&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.8rc3.20050712 -->
+</information>
+
+</gettextXML>
+

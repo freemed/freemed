@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-01-27 12:50-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Facility</original>
+	<translated>Behandlungsadresse</translated>
+</translation>
+<translation>
+	<original>Remove Changes</original>
+	<translated>&#xC3;&#x84;nderungen verwerfen</translated>
+</translation>
+<translation>
+	<original>User Group</original>
+	<translated>Benutzergruppe</translated>
+</translation>
+<translation>
+	<original>User Group Name</original>
+	<translated>Benutzergruppen-Name</translated>
+</translation>
+<translation>
+	<original>User Groups Maintenance</original>
+	<translated>Benutzergruppen-Verwaltung</translated>
+</translation>
+<translation>
+	<original>Users</original>
+	<translated>Benutzer</translated>
+</translation>
+
+</gettextXML>
+

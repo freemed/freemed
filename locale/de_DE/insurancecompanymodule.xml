@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-07 13:31-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Address Line 1</original>
+	<translated>Adresszeile 1</translated>
+</translation>
+<translation>
+	<original>Address Line 2</original>
+	<translated>Adresszeile 2</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Stadt</translated>
+</translation>
+<translation>
+	<original>Contact Information</original>
+	<translated>Kontakt-Informationen</translated>
+</translation>
+<translation>
+	<original>Contact Phone</original>
+	<translated>Kontakt- Telefonnummer</translated>
+</translation>
+<translation>
+	<original>Default Electronic Billing Format</original>
+	<translated>Standard Elektronisches Rechnungsformat</translated>
+</translation>
+<translation>
+	<original>Default Electronic Billing Target</original>
+	<translated>Standard Elektronisches Rechnungsziel</translated>
+</translation>
+<translation>
+	<original>Default Paper Billing Format</original>
+	<translated>Standard Papier-Rechnungsformat</translated>
+</translation>
+<translation>
+	<original>Default Paper Billing Target</original>
+	<translated>Standard Papier-Rechnungsziel</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Emailadresse</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>Fax-Nummer</translated>
+</translation>
+<translation>
+	<original>Group</original>
+	<translated>Gruppe</translated>
+</translation>
+<translation>
+	<original>Group ID</original>
+	<translated>Gruppen-ID-Nummer</translated>
+</translation>
+<translation>
+	<original>HCFA Form Space 10d</original>
+	<translated>HCFA Formular-Feld 10d</translated>
+</translation>
+<translation>
+	<original>HCFA Form Space 19</original>
+	<translated>HCFA Formular-Feld 19</translated>
+</translation>
+<translation>
+	<original>ID</original>
+	<translated>ID-Nummer</translated>
+</translation>
+<translation>
+	<original>ID Mappings</original>
+	<translated>ID Abbildungen</translated>
+</translation>
+<translation>
+	<original>Insurance Assign?</original>
+	<translated>Zustimmung zur Direktzahlung?</translated>
+</translation>
+<translation>
+	<original>Insurance Companies</original>
+	<translated>Versicherungsgesellschaft</translated>
+</translation>
+<translation>
+	<original>Insurance Group</original>
+	<translated>Versicherungsgruppe</translated>
+</translation>
+<translation>
+	<original>Insurance Modifiers</original>
+	<translated>Versicherungs-Ver&#xC3;&#xA4;nderungen</translated>
+</translation>
+<translation>
+	<original>Insurance Type</original>
+	<translated>Versicherungstyp</translated>
+</translation>
+<translation>
+	<original>Internal Information</original>
+	<translated>Interne Informationen</translated>
+</translation>
+<translation>
+	<original>Local Use 10d</original>
+	<translated>Lokale Informationen (Feld 10d)</translated>
+</translation>
+<translation>
+	<original>Local Use 9</original>
+	<translated>Lokale Informationen (Feld 9)</translated>
+</translation>
+<translation>
+	<original>NEIC ID</original>
+	<translated>NEIC ID</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Name</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Behandelnder</translated>
+</translation>
+<translation>
+	<original>State</original>
+	<translated>Staat</translated>
+</translation>
+<translation>
+	<original>Web Site</original>
+	<translated>Homepage</translated>
+</translation>
+<translation>
+	<original>Zip</original>
+	<translated>PLZ</translated>
+</translation>
+<translation>
+	<original>REMITT Server not running</original>
+	<translated>REMITT-Server ist offline.</translated>
+</translation>
+<translation>
+	<original>X12 Payer Id Code</original>
+	<translated>X12 Zahler-ID Code</translated>
+</translation>
+<translation>
+	<original>Company Name (full)</original>
+	<translated>Firmenname (komplett)</translated>
+</translation>
+<translation>
+	<original>Company Name (on forms)</original>
+	<translated>Firmenname (auf Formularen)</translated>
+</translation>
+
+</gettextXML>
+

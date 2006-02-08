@@ -1,0 +1,286 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:05-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-07 13:24-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Billing Contact</original>
+	<translated>Verrechnungs-Kontaktperson</translated>
+</translation>
+<translation>
+	<original>Billing Service</original>
+	<translated>Verrechnungs-Dienst</translated>
+</translation>
+<translation>
+	<original>Bills were not able to be marked as billed.</original>
+	<translated>Rechnungen konnten nicht als verrechnet markiert werden.</translated>
+</translation>
+<translation>
+	<original>Bills were successfully marked as billed.</original>
+	<translated>Rechnungen wurden erfolgreich als verrechnet markiert.</translated>
+</translation>
+<translation>
+	<original>Clearinghouse</original>
+	<translated>Verrechnungsstelle</translated>
+</translation>
+<translation>
+	<original>Completed</original>
+	<translated>Fertiggestellt</translated>
+</translation>
+<translation>
+	<original>Create patient statements for the system.</original>
+	<translated>Rechnungen f&#xC3;&#xBC;r den Patienten erstellen.</translated>
+</translation>
+<translation>
+	<original>DOS:</original>
+	<translated>Behandlungsdatum:</translated>
+</translation>
+<translation>
+	<original>Date Billed</original>
+	<translated>Rechnungsdatum</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Beschreibung</translated>
+</translation>
+<translation>
+	<original>Electronic</original>
+	<translated>Elektronisch</translated>
+</translation>
+<translation>
+	<original>Function</original>
+	<translated>Funktion</translated>
+</translation>
+<translation>
+	<original>Identifier</original>
+	<translated>Kennung</translated>
+</translation>
+<translation>
+	<original>If you are satisfied with your bills, mark them as sent.</original>
+	<translated>Wenn Sie die Rechnungen gewissenhaft durchgesehen haben, k&#xC3;&#xB6;nnen Sie sie als fakturiert markieren.</translated>
+</translation>
+<translation>
+	<original>Invalid keys passed to status function!</original>
+	<translated>Fehlerhafter Datenbank-Schl&#xC3;&#xBC;ssel wurde gesendet.</translated>
+</translation>
+<translation>
+	<original>Logs</original>
+	<translated>Logdateien</translated>
+</translation>
+<translation>
+	<original>Mark as Billed</original>
+	<translated>Als Fakturiert markieren</translated>
+</translation>
+<translation>
+	<original>Paper</original>
+	<translated>Papier</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Patient Statements</original>
+	<translated>Rechnungen des Patienten</translated>
+</translation>
+<translation>
+	<original>Patient statement generated</original>
+	<translated>Rechnung f&#xC3;&#xBC;r den Patienten generiert</translated>
+</translation>
+<translation>
+	<original>Perform Billing</original>
+	<translated>Verrechnung durchf&#xC3;&#xBC;hren</translated>
+</translation>
+<translation>
+	<original>Perform Remitt billing runs.</original>
+	<translated>Remitt auffordern die Rechnungen zu drucken.</translated>
+</translation>
+<translation>
+	<original>Procedures</original>
+	<translated>Behandlungen</translated>
+</translation>
+<translation>
+	<original>Processing</original>
+	<translated>Arbeite...</translated>
+</translation>
+<translation>
+	<original>REMITT Server Not Running</original>
+	<translated>REMITT-Server ist offline.</translated>
+</translation>
+<translation>
+	<original>REMITT Server Running</original>
+	<translated>REMITT-Server ist online.</translated>
+</translation>
+<translation>
+	<original>Rebill Claims</original>
+	<translated>Forderungen wiederverrechnen</translated>
+</translation>
+<translation>
+	<original>Remitt Billing Sent</original>
+	<translated>REMITT hat die Rechnungen erfolgreich gesendet.</translated>
+</translation>
+<translation>
+	<original>Remitt Billing System</original>
+	<translated>REMITT Rechnungs-System</translated>
+</translation>
+<translation>
+	<original>Remitt Password</original>
+	<translated>REMITT Passwort</translated>
+</translation>
+<translation>
+	<original>Remitt Results and Logs</original>
+	<translated>REMITT Ergebnisse und Logdateien</translated>
+</translation>
+<translation>
+	<original>Remitt Server Hostname</original>
+	<translated>REMITT Server Netzwerk-Name</translated>
+</translation>
+<translation>
+	<original>Remitt Server Port</original>
+	<translated>REMITT Server Netwerk-Port</translated>
+</translation>
+<translation>
+	<original>Remitt Username</original>
+	<translated>REMITT Benutzername</translated>
+</translation>
+<translation>
+	<original>Remitt billing run sent</original>
+	<translated>REMITT Verrechnungs-Instanz gesendet</translated>
+</translation>
+<translation>
+	<original>Report</original>
+	<translated>Bericht</translated>
+</translation>
+<translation>
+	<original>Result file returned was</original>
+	<translated>Retournierte Ergebnisdatei wurde</translated>
+</translation>
+<translation>
+	<original>Results</original>
+	<translated>Ergebnisse</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>Alles Ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Select None</original>
+	<translated>Nichts Ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Select a previous billing to rebill.</original>
+	<translated>Eine fr&#xC3;&#xBC;here Rechnung zum Wiederverrechnen ausw&#xC3;&#xA4;hlen.</translated>
+</translation>
+<translation>
+	<original>Show Reports</original>
+	<translated>Berichte anzeigen</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Status</translated>
+</translation>
+<translation>
+	<original>Submit Alone</original>
+	<translated>Einzelne Senden</translated>
+</translation>
+<translation>
+	<original>Submit Claim?</original>
+	<translated>Forderung senden</translated>
+</translation>
+<translation>
+	<original>Submit Claims</original>
+	<translated>Forderungen senden</translated>
+</translation>
+<translation>
+	<original>Submit Patient?</original>
+	<translated>Patienten zusenden</translated>
+</translation>
+<translation>
+	<original>Submitting data to Remitt server</original>
+	<translated>Sende Daten an den REMITT-Server</translated>
+</translation>
+<translation>
+	<original>The REMITT Server is not running. Please start it and try again.</original>
+	<translated>Der REMITT-Server l&#xC3;&#xA4;uft nicht. Bitte starten Sie ihn und probieren sie es dann erneut.</translated>
+</translation>
+<translation>
+	<original>There are no billing runs to rebill.</original>
+	<translated>Es gibt keine fehlerhaften Durchl&#xC3;&#xA4;ufe zum Wiederverrechnen.</translated>
+</translation>
+<translation>
+	<original>There are no patients to bill.</original>
+	<translated>Keine Patienten zum Abrechnen vorhanden.</translated>
+</translation>
+<translation>
+	<original>Transport Protocol</original>
+	<translated>Transportprotokoll</translated>
+</translation>
+<translation>
+	<original>Use the Remitt formatting and transport system to send insurance claims electronically or generate paper claims.</original>
+	<translated>Das REMITT Formatierungs- und Transportsystem um Rechnungen auf elektronischem Weg zu senden, oder Rechnungen zu drucken.</translated>
+</translation>
+<translation>
+	<original>View</original>
+	<translated>Anzeigen</translated>
+</translation>
+<translation>
+	<original>View output files and logs from Remitt.</original>
+	<translated>Protokoll- und Logdateien von REMITT anzeigen.</translated>
+</translation>
+<translation>
+	<original>claims</original>
+	<translated>Forderungen</translated>
+</translation>
+<translation>
+	<original>expand individual claims</original>
+	<translated>Individuelle Forderungen erweitern</translated>
+</translation>
+<translation>
+	<original>Generated</original>
+	<translated>Generiert</translated>
+</translation>
+<translation>
+	<original>Size</original>
+	<translated>Gr&#xC3;&#xB6;&#xC3;&#x9F;e</translated>
+</translation>
+<translation>
+	<original>Time</original>
+	<translated>Zeit</translated>
+</translation>
+<translation>
+	<original>%s reports(s)</original>
+	<translated>%s Berichte</translated>
+</translation>
+<translation>
+	<original>(Primary)</original>
+	<translated>(Prim&#xC3;&#xA4;r)</translated>
+</translation>
+<translation>
+	<original>(Secondary)</original>
+	<translated>(Sekund&#xC3;&#xA4;r)</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:05-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-04 17:07-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Dependent Children</original>
+	<translated>abh&#xC3;&#xA4;ngige Kinder (&#x3C;18)</translated>
+</translation>
+<translation>
+	<original>Expiration</original>
+	<translated>Ablauf</translated>
+</translation>
+<translation>
+	<original>Federal Poverty Increment</original>
+	<translated>Anhebung der Armutsgrenze</translated>
+</translation>
+<translation>
+	<original>Federal Poverty Level</original>
+	<translated>Armutsgrenze</translated>
+</translation>
+<translation>
+	<original>Household Size</original>
+	<translated>Haushaltsgr&#xC3;&#xB6;&#xC3;&#x9F;e</translated>
+</translation>
+<translation>
+	<original>Identification</original>
+	<translated>Identifikation</translated>
+</translation>
+<translation>
+	<original>Identification Issuer</original>
+	<translated>Ausstellende Beh&#xC3;&#xB6;rde</translated>
+</translation>
+<translation>
+	<original>Identification Number</original>
+	<translated>Identifikationsnummer</translated>
+</translation>
+<translation>
+	<original>Other Dependents</original>
+	<translated>Andere abh&#xC3;&#xA4;ngige Personen</translated>
+</translation>
+<translation>
+	<original>Other Information</original>
+	<translated>Andere Informationen</translated>
+</translation>
+<translation>
+	<original>Size of Household</original>
+	<translated>Haushaltsgr&#xC3;&#xB6;&#xC3;&#x9F;e</translated>
+</translation>
+<translation>
+	<original>Spouse</original>
+	<translated>Ehegatte / Ehegattin</translated>
+</translation>
+<translation>
+	<original>Timestamp</original>
+	<translated>Zeitstempel</translated>
+</translation>
+<translation>
+	<original>Yearly Income</original>
+	<translated>J&#xC3;&#xA4;hrliches Einkommen</translated>
+</translation>
+<translation>
+	<original>baptismal certificate</original>
+	<translated>Taufschein</translated>
+</translation>
+<translation>
+	<original>birth certificate</original>
+	<translated>Geburtsurkunde</translated>
+</translation>
+<translation>
+	<original>driver's license</original>
+	<translated>F&#xC3;&#xBC;hrerschein</translated>
+</translation>
+<translation>
+	<original>green card</original>
+	<translated>Green Card (Wohnsitznachweis f&#xC3;&#xBC;r Ausl&#xC3;&#xA4;nder in den USA)</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>Nein</translated>
+</translation>
+<translation>
+	<original>passport</original>
+	<translated>Reisepass</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Ja</translated>
+</translation>
+<translation>
+	<original>Income</original>
+	<translated>Einkommen</translated>
+</translation>
+<translation>
+	<original>Sliding Fee Scale Enabled</original>
+	<translated>Verschiebbarer Honorar-Regler aktiviert</translated>
+</translation>
+
+</gettextXML>
+

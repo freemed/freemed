@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2005-12-03 15:33-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Address</original>
+	<translated>Addresszeile 1</translated>
+</translation>
+<translation>
+	<original>Address 2</original>
+	<translated>Addresszeile 2</translated>
+</translation>
+<translation>
+	<original>Amount</original>
+	<translated>Betrag</translated>
+</translation>
+<translation>
+	<original>Anesthesiologist</original>
+	<translated>An&#xC3;&#xA4;sthesist</translated>
+</translation>
+<translation>
+	<original>Beeper / Pager #</original>
+	<translated>Piepser / Pager Nummer</translated>
+</translation>
+<translation>
+	<original>Cellular Phone #</original>
+	<translated>Handynummer</translated>
+</translation>
+<translation>
+	<original>Charge Map</original>
+	<translated>Verrechnungstabelle</translated>
+</translation>
+<translation>
+	<original>DEA Number</original>
+	<translated>DEA Berechtigungsnummer</translated>
+</translation>
+<translation>
+	<original>Degree 1</original>
+	<translated>1. akademischer Grad</translated>
+</translation>
+<translation>
+	<original>Degree 2</original>
+	<translated>2. akademischer Grad</translated>
+</translation>
+<translation>
+	<original>Degree 3</original>
+	<translated>3. akademischer Grad</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Emailadresse</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Vorname</translated>
+</translation>
+<translation>
+	<original>HL7 Identifier</original>
+	<translated>HL7 Kennung</translated>
+</translation>
+<translation>
+	<original>Has Second Address</original>
+	<translated>Hat eine zweite Addresse</translated>
+</translation>
+<translation>
+	<original>ID Number</original>
+	<translated>ID Nummer</translated>
+</translation>
+<translation>
+	<original>In-House</original>
+	<translated>Im Haus</translated>
+</translation>
+<translation>
+	<original>Insurance Group</original>
+	<translated>Versicherungsanstalt</translated>
+</translation>
+<translation>
+	<original>Insurance IDs</original>
+	<translated>Versicherungs ID Nummern</translated>
+</translation>
+<translation>
+	<original>Internal ID #</original>
+	<translated>Interne ID Nummer</translated>
+</translation>
+<translation>
+	<original>Internal Type</original>
+	<translated>Interne Kategorie</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nachname</translated>
+</translation>
+<translation>
+	<original>Middle Name</original>
+	<translated>Zweiter Vorname</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Name</translated>
+</translation>
+<translation>
+	<original>Personal</original>
+	<translated>Pers&#xC3;&#xB6;nliches</translated>
+</translation>
+<translation>
+	<original>Physician Internal/External</original>
+	<translated>Interner/Externer Mediziner</translated>
+</translation>
+<translation>
+	<original>Practice EIN</original>
+	<translated>Steueridentifikationsnummer</translated>
+</translation>
+<translation>
+	<original>Practice Name</original>
+	<translated>Name der Praxis</translated>
+</translation>
+<translation>
+	<original>Primary Address City</original>
+	<translated>Prim&#xC3;&#xA4;re Addresse - Stadt</translated>
+</translation>
+<translation>
+	<original>Primary Address Fax #</original>
+	<translated>Prim&#xC3;&#xA4;re Addresse - Faxnummer</translated>
+</translation>
+<translation>
+	<original>Primary Address Line 1</original>
+	<translated>Prim&#xC3;&#xA4;re Addresse - Addresszeile 1</translated>
+</translation>
+<translation>
+	<original>Primary Address Line 2</original>
+	<translated>Prim&#xC3;&#xA4;re Addresse - Addresszeile 2</translated>
+</translation>
+<translation>
+	<original>Primary Address Phone #</original>
+	<translated>Prim&#xC3;&#xA4;re Addresse - Telefonnummer</translated>
+</translation>
+<translation>
+	<original>Primary Address State</original>
+	<translated>Prim&#xC3;&#xA4;re Addresse - Staat</translated>
+</translation>
+<translation>
+	<original>Primary Address Zip</original>
+	<translated>Prim&#xC3;&#xA4;re Addresse - PLZ</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Allgemeine Informationen</translated>
+</translation>
+<translation>
+	<original>Referring</original>
+	<translated>Externe Zuweisung</translated>
+</translation>
+<translation>
+	<original>Secondary Address City</original>
+	<translated>Sekund&#xC3;&#xA4;re Addresse - Stadt</translated>
+</translation>
+<translation>
+	<original>Secondary Address Fax #</original>
+	<translated>Sekund&#xC3;&#xA4;re Addresse - Faxnummer</translated>
+</translation>
+<translation>
+	<original>Secondary Address Line 1</original>
+	<translated>Sekund&#xC3;&#xA4;re Addresse - Addresszeile 1</translated>
+</translation>
+<translation>
+	<original>Secondary Address Line 2</original>
+	<translated>Sekund&#xC3;&#xA4;re Addresse - Addresszeile 2</translated>
+</translation>
+<translation>
+	<original>Secondary Address Phone #</original>
+	<translated>Sekund&#xC3;&#xA4;re Addresse - Telefonnummer</translated>
+</translation>
+<translation>
+	<original>Secondary Address State</original>
+	<translated>Sekund&#xC3;&#xA4;re Addresse - Staat</translated>
+</translation>
+<translation>
+	<original>Secondary Address Zip</original>
+	<translated>Sekund&#xC3;&#xA4;re Addresse - PLZ</translated>
+</translation>
+<translation>
+	<original>Social Security #</original>
+	<translated>Sozialversicherungsnummer</translated>
+</translation>
+<translation>
+	<original>Specialty 1</original>
+	<translated>1. Fachgebiet</translated>
+</translation>
+<translation>
+	<original>Specialty 2</original>
+	<translated>2. Fachgebiet</translated>
+</translation>
+<translation>
+	<original>Specialty 3</original>
+	<translated>3. Fachgebiet</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Stellung</translated>
+</translation>
+<translation>
+	<original>Title</original>
+	<translated>Titel</translated>
+</translation>
+<translation>
+	<original>UPIN Number</original>
+	<translated>Eindeutige &#xC3;&#x84;rzteidentifikationnummer</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>Nein</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Ja</translated>
+</translation>
+
+</gettextXML>
+

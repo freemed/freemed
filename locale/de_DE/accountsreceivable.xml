@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:05-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-07 01:17-0500 -->
+
+	<Translator>Jeff Buchbinder &#x3C;freemed@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>items were successfully written off</original>
+	<translated>Restposten wurden erfolgreich abgeschrieben</translated>
+</translation>
+<translation>
+	<original>Accounts Receivable</original>
+	<translated>Aussenst&#xC3;&#xA4;nde</translated>
+</translation>
+<translation>
+	<original>Acct Bal</original>
+	<translated>Restbetrag</translated>
+</translation>
+<translation>
+	<original>Add Event</original>
+	<translated>Ereignis hinzuf&#xC3;&#xBC;gen</translated>
+</translation>
+<translation>
+	<original>Add Item Event</original>
+	<translated>Ereignis zur Rechnung hinzuf&#xC3;&#xBC;gen</translated>
+</translation>
+<translation>
+	<original>Adjs</original>
+	<translated>Korrekturen</translated>
+</translation>
+<translation>
+	<original>Aged Items</original>
+	<translated>Kategorie nach Alter sortieren</translated>
+</translation>
+<translation>
+	<original>Aging</original>
+	<translated>Nach Alter sortieren</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to write these items off.</original>
+	<translated>Ein Fehler trat beim Abschreiben dieser Restposten auf.</translated>
+</translation>
+<translation>
+	<original>Balance</original>
+	<translated>Bilanz</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>Belegnummer</translated>
+</translation>
+<translation>
+	<original>Call</original>
+	<translated>Anruf</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Belastungen</translated>
+</translation>
+<translation>
+	<original>Check #%s</original>
+	<translated>Schecknummer #%s</translated>
+</translation>
+<translation>
+	<original>Check Number</original>
+	<translated>Schecknummer</translated>
+</translation>
+<translation>
+	<original>Claim</original>
+	<translated>Forderung</translated>
+</translation>
+<translation>
+	<original>Claim Criteria</original>
+	<translated>Auswahlkriterien</translated>
+</translation>
+<translation>
+	<original>Claim Status</original>
+	<translated>Zahlungsstatus</translated>
+</translation>
+<translation>
+	<original>Claim has nowhere to go ... no more coverages</original>
+	<translated>Forderung zur&#xC3;&#xBC;ckgewiesen - keine Kostendeckung vorhanden.</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Kommentar</translated>
+</translation>
+<translation>
+	<original>Copay</original>
+	<translated>Anzahlung</translated>
+</translation>
+<translation>
+	<original>Coverage</original>
+	<translated>Deckung</translated>
+</translation>
+<translation>
+	<original>Current Criteria</original>
+	<translated>Derzeitige Kriterien</translated>
+</translation>
+<translation>
+	<original>Date of Service</original>
+	<translated>Behandlungsdatum</translated>
+</translation>
+<translation>
+	<original>EMR</original>
+	<translated>EMR</translated>
+</translation>
+<translation>
+	<original>Email</original>
+	<translated>Email</translated>
+</translation>
+<translation>
+	<original>Filter by this date</original>
+	<translated>Dieses Datum filtern</translated>
+</translation>
+<translation>
+	<original>Filter by this item type</original>
+	<translated>Mit diesem Typ filtern</translated>
+</translation>
+<translation>
+	<original>Filter by this patient</original>
+	<translated>Diesen Patienten filtern</translated>
+</translation>
+<translation>
+	<original>Filter by this procedure</original>
+	<translated>Diese Behandlung filtern</translated>
+</translation>
+<translation>
+	<original>Filter by this provider</original>
+	<translated>Diesen Arzt filtern</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Vorname</translated>
+</translation>
+<translation>
+	<original>First Name like</original>
+	<translated>Vorname &#xC3;&#xA4;hnlich</translated>
+</translation>
+<translation>
+	<original>For checked items</original>
+	<translated>Auf ausgew&#xC3;&#xA4;hlte Typen anwenden</translated>
+</translation>
+<translation>
+	<original>ICD</original>
+	<translated>ICD-Schl&#xC3;&#xBC;ssel</translated>
+</translation>
+<translation>
+	<original>Item</original>
+	<translated>Artikel</translated>
+</translation>
+<translation>
+	<original>Item Criteria</original>
+	<translated>Artikel Kriterien</translated>
+</translation>
+<translation>
+	<original>Item Detail</original>
+	<translated>Artikel Details</translated>
+</translation>
+<translation>
+	<original>Item Details</original>
+	<translated>Artikel Details</translated>
+</translation>
+<translation>
+	<original>Item Type</original>
+	<translated>Artikel-Typ</translated>
+</translation>
+<translation>
+	<original>Junk</original>
+	<translated>M&#xC3;&#xBC;ll</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Nachname</translated>
+</translation>
+<translation>
+	<original>Last Name like</original>
+	<translated>Nachname &#xC3;&#xA4;hnlich</translated>
+</translation>
+<translation>
+	<original>Ledger</original>
+	<translated>Hauptbuch</translated>
+</translation>
+<translation>
+	<original>Left Over</original>
+	<translated>&#xC3;&#xBC;brig</translated>
+</translation>
+<translation>
+	<original>Manage all transactions in the system.</original>
+	<translated>Alle Transaktionen im System verwalten.</translated>
+</translation>
+<translation>
+	<original>Moved to coverage %s</original>
+	<translated>zur Kostendeckung verschoben an %s</translated>
+</translation>
+<translation>
+	<original>Moved to patient responsibility</original>
+	<translated>Restschuld wurde dem Patienten zur Last gelegt.</translated>
+</translation>
+<translation>
+	<original>Narrow Search</original>
+	<translated>Eingeschr&#xC3;&#xA4;nkte Suche</translated>
+</translation>
+<translation>
+	<original>New Search</original>
+	<translated>Neue Suche</translated>
+</translation>
+<translation>
+	<original>No Search</original>
+	<translated>Keine Suche</translated>
+</translation>
+<translation>
+	<original>Outstanding</original>
+	<translated>Ausstehend</translated>
+</translation>
+<translation>
+	<original>POS</original>
+	<translated>Behandlungsort</translated>
+</translation>
+<translation>
+	<original>Paid</original>
+	<translated>Bezahlt</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Patient</translated>
+</translation>
+<translation>
+	<original>Patient Criteria</original>
+	<translated>Kriterien den Patienten betreffend</translated>
+</translation>
+<translation>
+	<original>Patient Pay</original>
+	<translated>Patient tr&#xC3;&#xA4;gt Gesamtschuld</translated>
+</translation>
+<translation>
+	<original>Payer</original>
+	<translated>Zahlender</translated>
+</translation>
+<translation>
+	<original>Payment Received</original>
+	<translated>Zahlung eingegangen</translated>
+</translation>
+<translation>
+	<original>Payment from Payer</original>
+	<translated>Zahlung vom Zust&#xC3;&#xA4;ndigen</translated>
+</translation>
+<translation>
+	<original>Please select an item  before attempting to write off.</original>
+	<translated>Bitte w&#xC3;&#xA4;hlen Sie vor dem Abschreiben einen Artikel aus.</translated>
+</translation>
+<translation>
+	<original>Post</original>
+	<translated>Eintragen</translated>
+</translation>
+<translation>
+	<original>Post Payment</original>
+	<translated>Zahlung verbuchen</translated>
+</translation>
+<translation>
+	<original>Procedure</original>
+	<translated>Behandlung</translated>
+</translation>
+<translation>
+	<original>Procedures On</original>
+	<translated>Behandlungen am</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Behandelnder</translated>
+</translation>
+<translation>
+	<original>Resp. Party</original>
+	<translated>Verantwortliche Partei</translated>
+</translation>
+<translation>
+	<original>Return to Search</original>
+	<translated>Zur&#xC3;&#xBC;ck zur Suche</translated>
+</translation>
+<translation>
+	<original>SSN</original>
+	<translated>SV-Nr.</translated>
+</translation>
+<translation>
+	<original>Search Items</original>
+	<translated>Artikel suchen</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>Alles ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Select None</original>
+	<translated>Nichts ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Service Date</original>
+	<translated>Behandlungsdatum</translated>
+</translation>
+<translation>
+	<original>Svc</original>
+	<translated>Behandlung</translated>
+</translation>
+<translation>
+	<original>Svc Date</original>
+	<translated>Behandlungsdatum</translated>
+</translation>
+<translation>
+	<original>Total Amount</original>
+	<translated>Gesamtsumme</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Typ</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Benutzer</translated>
+</translation>
+<translation>
+	<original>View item details</original>
+	<translated>Artikel-Details anzeigen</translated>
+</translation>
+<translation>
+	<original>Writeoff Items</original>
+	<translated>Artikel zum Abschreiben</translated>
+</translation>
+<translation>
+	<original>Name (Last, First)</original>
+	<translated>Nachname, Vorname</translated>
+</translation>
+
+</gettextXML>
+

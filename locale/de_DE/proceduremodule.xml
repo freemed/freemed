@@ -1,0 +1,286 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-04 17:06-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Add Another</original>
+	<translated>Weitere hinzuf&#xC3;&#xBC;gen</translated>
+</translation>
+<translation>
+	<original>Add Payment</original>
+	<translated>Zahlung einordnen</translated>
+</translation>
+<translation>
+	<original>Authorization</original>
+	<translated>Genehmigung</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>Belegnummer</translated>
+</translation>
+<translation>
+	<original>Calculated Accepted Fee</original>
+	<translated>Gedeckter Betrag</translated>
+</translation>
+<translation>
+	<original>Calculated Charge</original>
+	<translated>Berechneter Betrag</translated>
+</translation>
+<translation>
+	<original>Cancelled</original>
+	<translated>Abgebrochen</translated>
+</translation>
+<translation>
+	<original>Certifications</original>
+	<translated>Best&#xC3;&#xA4;tigung</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Betr&#xC3;&#xA4;ge</translated>
+</translation>
+<translation>
+	<original>Claim Type</original>
+	<translated>Art der Forderung</translated>
+</translation>
+<translation>
+	<original>Click Finish</original>
+	<translated>Fertigstellen dr&#xC3;&#xBC;cken</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Kommentar</translated>
+</translation>
+<translation>
+	<original>Committing to ledger</original>
+	<translated>In das Hauptbuch eintragen</translated>
+</translation>
+<translation>
+	<original>Current Coverage</original>
+	<translated>Momentane Deckung</translated>
+</translation>
+<translation>
+	<original>Date of Last Visit</original>
+	<translated>Letzter Arztbesuch (in dieser Einrichtung)</translated>
+</translation>
+<translation>
+	<original>Date of Procedure</original>
+	<translated>Durchf&#xC3;&#xBC;hrungsdatum</translated>
+</translation>
+<translation>
+	<original>Diagnosis Code</original>
+	<translated>Diagnosecode</translated>
+</translation>
+<translation>
+	<original>Episode of Care</original>
+	<translated>Krankheitsverlauf f&#xC3;&#xBC;r die Einzeldiagnose</translated>
+</translation>
+<translation>
+	<original>Failed to modify authorization.</original>
+	<translated>&#xC3;&#x84;ndern fehlgeschlagen</translated>
+</translation>
+<translation>
+	<original>Finish</original>
+	<translated>Fertigstellen</translated>
+</translation>
+<translation>
+	<original>Insurance Billable?</original>
+	<translated>Deckungsbetrag</translated>
+</translation>
+<translation>
+	<original>Invalid authorization</original>
+	<translated>Authorisierung fehlgeschlagen</translated>
+</translation>
+<translation>
+	<original>Medicaid Original Reference</original>
+	<translated>Originale Referenznummer(Medicaid)</translated>
+</translation>
+<translation>
+	<original>Medicaid Resubmission Code</original>
+	<translated>Wiedervorlagecode (Medicaid)</translated>
+</translation>
+<translation>
+	<original>Miscellaneous</original>
+	<translated>Diverses</translated>
+</translation>
+<translation>
+	<original>Modifier</original>
+	<translated>Ge&#xC3;&#xA4;ndert von</translated>
+</translation>
+<translation>
+	<original>Must Specify Amount</original>
+	<translated>Sie m&#xC3;&#xBC;ssen einen Betrag festlegen.</translated>
+</translation>
+<translation>
+	<original>Must Specify Place of Service</original>
+	<translated>Sie m&#xC3;&#xBC;ssen einen Behandlungsort festlegen.</translated>
+</translation>
+<translation>
+	<original>Must Specify Proc Year</original>
+	<translated>Sie m&#xC3;&#xBC;ssen das Behandlungsjahr festlegen.</translated>
+</translation>
+<translation>
+	<original>Must Specify Procedural code</original>
+	<translated>Sie m&#xC3;&#xBC;ssen einen Behandlungs-Code festlegen.</translated>
+</translation>
+<translation>
+	<original>Must Specify Type of Claim</original>
+	<translated>Sie m&#xC3;&#xBC;ssen den Typ der Forderung festlegen</translated>
+</translation>
+<translation>
+	<original>Must Specify physician</original>
+	<translated>Sie m&#xC3;&#xBC;ssen einen Arzt festlegen</translated>
+</translation>
+<translation>
+	<original>Must Specify proc Day</original>
+	<translated>Sie m&#xC3;&#xBC;ssen den Behandlungstag festlegen.</translated>
+</translation>
+<translation>
+	<original>Must Specify proc Month</original>
+	<translated>Sie m&#xC3;&#xBC;ssen den Behandlungsmonat festlegen.</translated>
+</translation>
+<translation>
+	<original>Must have one diagnosis code</original>
+	<translated>Sie m&#xC3;&#xBC;ssen zumindest einen Diagnosecode eingeben</translated>
+</translation>
+<translation>
+	<original>NO COMMENT</original>
+	<translated>Kein Kommentar</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>Nein</translated>
+</translation>
+<translation>
+	<original>Outside Lab Charges</original>
+	<translated>Labor Kosten (extern)</translated>
+</translation>
+<translation>
+	<original>Part One</original>
+	<translated>Erster Teil</translated>
+</translation>
+<translation>
+	<original>Payment Record</original>
+	<translated>Eingegangene Zahlungen</translated>
+</translation>
+<translation>
+	<original>Place of Service</original>
+	<translated>Behandlungsort</translated>
+</translation>
+<translation>
+	<original>Primary Coverage</original>
+	<translated>Prim&#xC3;&#xA4;re Deckung</translated>
+</translation>
+<translation>
+	<original>Procedural Code</original>
+	<translated>Behandlungscode</translated>
+</translation>
+<translation>
+	<original>Procedure</original>
+	<translated>Behandlung</translated>
+</translation>
+<translation>
+	<original>Procedure Code</original>
+	<translated>Behandlungscode</translated>
+</translation>
+<translation>
+	<original>Procedures</original>
+	<translated>Behandlungen</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Behandelnder</translated>
+</translation>
+<translation>
+	<original>Referring Provider</original>
+	<translated>Zugewiesen von</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Aktualisieren</translated>
+</translation>
+<translation>
+	<original>Removed old authorization</original>
+	<translated>Alte Genehmigung entfernt</translated>
+</translation>
+<translation>
+	<original>Revise</original>
+	<translated>&#xC3;&#x84;ndern</translated>
+</translation>
+<translation>
+	<original>Secondary Coverage</original>
+	<translated>Sekund&#xC3;&#xA4;re Deckung</translated>
+</translation>
+<translation>
+	<original>Step One</original>
+	<translated>Schritt 1</translated>
+</translation>
+<translation>
+	<original>Step Three: Confirm</original>
+	<translated>Schritt 3: Best&#xC3;&#xA4;tigen</translated>
+</translation>
+<translation>
+	<original>Step Two: Select Coverage</original>
+	<translated>Schritt 2: Deckung ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Tertiary Coverage</original>
+	<translated>Terti&#xC3;&#xA4;re Deckung</translated>
+</translation>
+<translation>
+	<original>Units</original>
+	<translated>Einheit</translated>
+</translation>
+<translation>
+	<original>Updated authorization</original>
+	<translated>Genehmigung aktualisiert</translated>
+</translation>
+<translation>
+	<original>Updating patient diagnoses</original>
+	<translated>Diagnosen des Patienten aktualisiert</translated>
+</translation>
+<translation>
+	<original>Voucher Number</original>
+	<translated>Zahlungsbeleg-Nr.</translated>
+</translation>
+<translation>
+	<original>Work Comp Coverage</original>
+	<translated>Deckung durch Arbeitsversicherung</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Ja</translated>
+</translation>
+<translation>
+	<original>to</original>
+	<translated>an</translated>
+</translation>
+<translation>
+	<original>Sliding Fee Scale</original>
+	<translated>Verschiebbarer Honorar-Regler</translated>
+</translation>
+
+</gettextXML>
+

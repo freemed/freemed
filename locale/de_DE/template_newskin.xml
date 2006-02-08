@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-06 16:17-0500 -->
+
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Administration Menu</original>
+	<translated>Administrationsmen&#xC3;&#xBC;</translated>
+</translation>
+<translation>
+	<original>Billing Functions</original>
+	<translated>Verrechnungsfunktionen</translated>
+</translation>
+<translation>
+	<original>Calendar</original>
+	<translated>Kalender</translated>
+</translation>
+<translation>
+	<original>Call-In</original>
+	<translated>Anrufer</translated>
+</translation>
+<translation>
+	<original>Check</original>
+	<translated>Anzeigen</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>L&#xC3;&#xB6;schen</translated>
+</translation>
+<translation>
+	<original>Color Scheme</original>
+	<translated>Farbschema</translated>
+</translation>
+<translation>
+	<original>Configure</original>
+	<translated>Konfigurieren</translated>
+</translation>
+<translation>
+	<original>DEBUG IS ON</original>
+	<translated>Debug-Modus eingeschaltet</translated>
+</translation>
+<translation>
+	<original>Day View</original>
+	<translated>Tagansicht</translated>
+</translation>
+<translation>
+	<original>Default Blue</original>
+	<translated>Standard Blau</translated>
+</translation>
+<translation>
+	<original>Display Language Selection</original>
+	<translated>Sprachauswahl anzeigen</translated>
+</translation>
+<translation>
+	<original>Entry</original>
+	<translated>Neuer Eintrag</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Behandlungsadresse</translated>
+</translation>
+<translation>
+	<original>Help</original>
+	<translated>Hilfe</translated>
+</translation>
+<translation>
+	<original>History</original>
+	<translated>Letzte aufgerufene Men&#xC3;&#xBC;s</translated>
+</translation>
+<translation>
+	<original>Language</original>
+	<translated>Sprache</translated>
+</translation>
+<translation>
+	<original>Login</original>
+	<translated>Anmeldung</translated>
+</translation>
+<translation>
+	<original>Logout</original>
+	<translated>Abmelden</translated>
+</translation>
+<translation>
+	<original>Main</original>
+	<translated>Haupt</translated>
+</translation>
+<translation>
+	<original>Menu</original>
+	<translated>Men&#xC3;&#xBC;</translated>
+</translation>
+<translation>
+	<original>Messages</original>
+	<translated>Nachrichten</translated>
+</translation>
+<translation>
+	<original>New</original>
+	<translated>Neu(e)</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>Nein</translated>
+</translation>
+<translation>
+	<original>Notify</original>
+	<translated>Anmerken</translated>
+</translation>
+<translation>
+	<original>Password</original>
+	<translated>Passwort</translated>
+</translation>
+<translation>
+	<original>Patients</original>
+	<translated>Patienten</translated>
+</translation>
+<translation>
+	<original>Preferences</original>
+	<translated>Einstellungen</translated>
+</translation>
+<translation>
+	<original>Recent</original>
+	<translated>Letzte</translated>
+</translation>
+<translation>
+	<original>Reset Resume</original>
+	<translated>Automatisch Zur&#xC3;&#xBC;cksetzen</translated>
+</translation>
+<translation>
+	<original>Resume</original>
+	<translated>Wiederaufnehmen</translated>
+</translation>
+<translation>
+	<original>Schedule</original>
+	<translated>Planer</translated>
+</translation>
+<translation>
+	<original>Select</original>
+	<translated>Ausw&#xC3;&#xA4;hlen</translated>
+</translation>
+<translation>
+	<original>Send</original>
+	<translated>Verfassen</translated>
+</translation>
+<translation>
+	<original>Sign In</original>
+	<translated>Anmelden</translated>
+</translation>
+<translation>
+	<original>Support Data</original>
+	<translated>Zus&#xC3;&#xA4;tzliche Informationen</translated>
+</translation>
+<translation>
+	<original>System</original>
+	<translated>System</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Benutzer</translated>
+</translation>
+<translation>
+	<original>Username</original>
+	<translated>Benutzername</translated>
+</translation>
+<translation>
+	<original>Utilities</original>
+	<translated>N&#xC3;&#xBC;tzliche Werkzeuge</translated>
+</translation>
+<translation>
+	<original>Week View</original>
+	<translated>Wochenansicht</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Ja</translated>
+</translation>
+<translation>
+	<original>version</original>
+	<translated>Version</translated>
+</translation>
+
+</gettextXML>
+

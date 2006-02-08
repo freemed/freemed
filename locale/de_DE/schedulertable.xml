@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+	<Locale>de_DE</Locale>
+	<LocaleName>Deutsche</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2005-09-29 09:06-0400 -->
+
+	<!-- type = PO-Revision-Date, data = 2006-02-02 18:57-0500 -->
+
+	<Translator>Jeff Buchbinder &#x3C;freemed@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
+</information>
+<translation>
+	<original>Patient Scheduler</original>
+	<translated>Terminplaner</translated>
+</translation>
+<translation>
+	<original>There are %s appointments scheduled for today.</original>
+	<translated>Heute haben %s Patienten einen Termin.</translated>
+</translation>
+<translation>
+	<original>You have %sCODE(0x82e9ba8)bCODE(0x82f0ffc)%dCODE(0x82e9ba8)/bCODE(0x82f0ffc) appointment(s) today%s and %sCODE(0x82e9ba8)bCODE(0x82f0ffc)%dCODE(0x82e9ba8)/bCODE(0x82f0ffc) appointment(s) this week%s.</original>
+	<translated>Sie haben
+%sCODE(0x82e9ba8)bCODE(0x82f0ffc)%dCODE(0x82e9ba8)/bCODE(0x82f0ffc) Termine heute %s und %sCODE(0x82e9ba8)bCODE(0x82f0ffc)%dCODE(0x82e9ba8)/bCODE(0x82f0ffc) Termine diese Woche %s.</translated>
+</translation>
+<translation>
+	<original>You have %s%d appointment(s) today%s and %s%d appointment(s) this week%s.</original>
+	<translated>Sie haben
+%s%d Termine heute %s und %s%d Termine diese Woche %s.</translated>
+</translation>
+
+</gettextXML>
+
