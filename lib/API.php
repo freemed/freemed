@@ -2427,6 +2427,15 @@ function freemed_display_selectbox ($result, $format, $param="", $size="") {
 	static $var; // array of $result-IDs so we only go through them once
 	static $count; // count of results
 
+	if (strpos($param, '[') !== false) {
+		$_hash = explode('[', $param);
+		$_hash[1] = str_replace(']', '', $_hash[1]);
+		global ${$_hash[0]};
+		$_param = ${$_hash[0]}[$_hash[1]];
+	} else {
+		$_param = ${$param};
+	}
+
 	if (!isset($var["$result"])) {
 		if ($result) {
 			$count["$result"] = $sql->num_rows($result);
@@ -2466,7 +2475,7 @@ function freemed_display_selectbox ($result, $format, $param="", $size="") {
 
 		$buffer .= "
 		<option VALUE=\"$item[id]\" ".
-		( ($item[id] == $$param) ? "selected" : "" ).
+		( ($item[id] == $_param) ? "selected" : "" ).
 		">".prepare($this_format)."</option>\n";
 	} // while fetching result
 	$buffer .= "
@@ -2979,6 +2988,16 @@ function fm_join_from_array ($cur_array) {
 
 	// If it is scalar, return the value
 	if (!is_array($cur_array)) return "$cur_array";
+
+	// Loop and make sure we have the maximum value
+	$max = 0;
+	foreach ($cur_array AS $k => $v) {
+		if ($k > $max) { $max = $k; }
+	}
+
+	for ($i=0; $i<=$max; $i++) {
+		if (!isset($cur_array[$i])) { $cur_array[$i] = ''; }
+	}
 
 	// Otherwise compact it with "," as the separator character
 	return implode ($cur_array, ",");
