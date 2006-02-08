@@ -928,7 +928,7 @@ class Remitt {
 
 		// Figure out type of service
 		$cptobj = freemed::get_link_rec($p['proccpt'], 'cpt');
-		$hash = explode (':', $cptobj['cpttos']);
+		$hash = unserialize($cptobj['cpttos']);
 		if ($hash[$coverage['covinsco']] > 0) {
 			$tos = freemed::get_link_field($hash[$coverage['covinsco']], 'tos', 'tosname');
 		} else {
@@ -943,11 +943,13 @@ class Remitt {
 			$this->_tag('hcfalocaluse10d', $map[$p['procphysician']]['local10d'], true).
 			$this->_tag('amountpaid', $p['procamtpaid'], true).
 			$this->_tag('providerkey', $p['procphysician'], true).
+			$this->_tag('referringproviderkey', $p['procrefdoc'], true).
 			$this->_tag('facilitykey', $p['procpos'], true).
 			$this->_tag('practicekey', $p['procphysician'], true).
 			$this->_tag('typeofservice', $tos, true).
 			'';
 		$this->_AddDependency('physician', $p['procphysician']);
+		$this->_AddDependency('physician', $p['procrefdoc']);
 		$this->_AddDependency('practice', $p['procphysician']);
 		$this->_AddDependency('facility', $p['procpos']);
 

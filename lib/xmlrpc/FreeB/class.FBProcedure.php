@@ -412,7 +412,7 @@ class FBProcedure {
 		$insco = $cov['covinsco'];
 
 		// Check the hash, and if it isn't there, use the default
-		$hash = explode (':', $cpt['cpttos']);
+		$hash = unserialize($cpt['cpttos']);
 		if ($hash[$insco] > 0) {
 			$tos_id = $hash[$insco];
 		} else {

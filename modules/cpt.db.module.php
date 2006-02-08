@@ -1,9 +1,6 @@
 <?php
- // $Id$
- // desc: CPT (procedural codes) database
- // lic : GPL, v2
-
- // TODO: STILL NEED TO INTEGRATE REST OF FRED'S CHANGES TO THIS MODULE
+	// $Id$
+	// lic : GPL, v2
 
 LoadObjectDependency('_FreeMED.MaintenanceModule');
 
@@ -21,26 +18,26 @@ class CptMaintenance extends MaintenanceModule {
 	var $order_fields = "cptcode";
 	var $widget_hash = "##cptcode## ##cptnameint##";
 
-	var $variables = array (
-		"cptcode",
-		"cptnameint",
-		"cptnameext",
-		"cptgender",
-		"cpttaxed",
-		"cpttype",
-		"cptreqcpt",
-		"cptexccpt",
-		"cptreqicd",
-		"cptexcicd",
-		"cptrelval",
-		"cptdeftos",
-		"cptdefstdfee",
-		"cptstdfee",
-		"cpttos",
-		"cpttosprfx"
-	);
-
 	function CptMaintenance () {
+		$this->variables = array (
+			"cptcode",
+			"cptnameint",
+			"cptnameext",
+			"cptgender",
+			"cpttaxed",
+			"cpttype",
+			"cptreqcpt",
+			"cptexccpt",
+			"cptreqicd",
+			"cptexcicd",
+			"cptrelval",
+			"cptdeftos",
+			"cptdefstdfee",
+			"cptstdfee" => serialize($_REQUEST['cptstdfee']),
+			"cpttos" => serialize($_REQUEST['cpttos']),
+			"cpttosprfx"
+		);
+
 		// Table definition
 		$this->table_definition = array (
 			'cptcode' => SQL__CHAR(7),
@@ -100,8 +97,8 @@ class CptMaintenance extends MaintenanceModule {
 			$cptreqicd    = fm_split_into_array ($cptreqicd);
 			$cptexcicd    = fm_split_into_array ($cptexcicd);
 			$cptrelval    = bcadd($cptrelval, 0, 2);
-			$cptstdfee    = fm_split_into_array ($cptstdfee);
-			$cpttos       = fm_split_into_array ($cpttos);
+			$cptstdfee    = unserialize($cptstdfee);
+			$cpttos       = unserialize($cpttos);
 			break;
 		} // end switch
 		} // end checking if been here
@@ -237,8 +234,8 @@ class CptMaintenance extends MaintenanceModule {
     ";
 	$i = 1;
     while ($insrow = $sql->fetch_array($insco_result)) { // loop thru inscos
-     if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
-     $this_insco = CreateObject('FreeMED.InsuranceCompany', $insrow[id]);
+     if (empty($cptstdfee[$insrow['id']])) $cptstdfee[$insrow['id']] = "0.00";
+     $this_insco = CreateObject('FreeMED.InsuranceCompany', $insrow['id']);
      $serv_buffer .= "
       <TR CLASS=\"".freemed_alternate()."\">
        <TD>".prepare($this_insco->insconame)."</TD>
@@ -246,12 +243,12 @@ class CptMaintenance extends MaintenanceModule {
         ".freemed_display_selectbox (
           $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
   	  "#tosname# #tosdescrip#",
-	  "cpttos[$i]"
+	  "cpttos[".$insrow['id']."]"
 	  )."
        </TD>
        <TD>
-        <INPUT TYPE=TEXT NAME=\"cptstdfee$brackets\" SIZE=10
-         MAXLENGTH=9 VALUE=\"".prepare($cptstdfee[$i])."\">
+        <INPUT TYPE=TEXT NAME=\"cptstdfee[".$insrow['id']."]\" SIZE=10
+         MAXLENGTH=9 VALUE=\"".prepare($cptstdfee[$insrow['id']])."\">
        </TD>
       </TR>
      ";
@@ -267,10 +264,6 @@ class CptMaintenance extends MaintenanceModule {
     array (""),
     "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2
       ALIGN=CENTER>
-
-      <!-- first values, to push offset to 1 from 0 -->
-      <INPUT TYPE=HIDDEN NAME=\"cpttos$brackets\"    VALUE=\"\">
-      <INPUT TYPE=HIDDEN NAME=\"cptstdfee$brackets\" VALUE=\"\">
 
      <TR>
       <TD ALIGN=RIGHT WIDTH=\"50%\">
@@ -327,107 +320,7 @@ class CptMaintenance extends MaintenanceModule {
 					$this->_mod();
 					break;
 			} // end switch
-
-	} // end function CptMaintenance->form()
-
-/*
- case "profileform": // insurance company profiles form
-  $num_inscos = $sql->num_rows ($sql->query ("SELECT * FROM insco"));
-  $this_code  = freemed::get_link_rec ($id, $this->table_name);
-  $cpttos     = fm_split_into_array ($this_code["cpttos"]);
-  $cptstdfee  = fm_split_into_array ($this_code["cptstdfee"]);
-  $page_title = _($record_name);
-  $display_buffer .= "
-   <P>
-    <CENTER>
-    <B>".__("Current Code")."</B> :
-    <A HREF=\"$page_name?id=$id&action=modform\"
-    >".$this_code["cptcode"]."</A>&nbsp;
-    <I>(".$this_code["cptnameint"].")</I>
-    <BR>
-    <U>".__("Default Standard Fee")."</U> :
-    ".bcadd($this_code["cptdefstdfee"],0,2)."
-    <BR>
-    <U>".__("Default Type of Service")."</U> :
-    ".freemed::get_link_field ($this_code["cptdeftos"], "tos", "tosname")."
-    </CENTER> 
-   <P>
-   <CENTER>
-    <FONT SIZE=-1><I>
-     ".__("Please note that selecting \"0\" or \"NONE SELECTED\" will cause the default values to be used.")."
-    </I></FONT> 
-   </CENTER>
-   <P>
-   <FORM ACTION=\"$page_name\" METHOD=POST>
-    <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"profile\">
-
-    <!-- first values, to push offset to 1 from 0 -->
-    <INPUT TYPE=HIDDEN NAME=\"cpttos$brackets\"    VALUE=\"\">
-    <INPUT TYPE=HIDDEN NAME=\"cptstdfee$brackets\" VALUE=\"\">
-
-   <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 VALIGN=MIDDLE
-    ALIGN=CENTER>
-   <TR>
-    <TD><B>".__("Insurance Company")."</B>&nbsp;</TD>
-    <TD><B>".__("Type of Service")."</B>&nbsp;</TD>
-    <TD><B>".__("Standard Fee")."</B></TD>
-   </TR>
-  ";
-  for ($i=1;$i<=$num_inscos;$i++) { // loop thru inscos
-   if (empty($cptstdfee[$i])) $cptstdfee[$i] = "0.00";
-   $this_insco = CreateObject('FreeMED.InsuranceCompany', $i);
-   $display_buffer .= "
-    <TR CLASS=\"".freemed_alternate()."\">
-     <TD>".prepare($this_insco->insconame)."</TD>
-     <TD>
-      ".freemed_display_selectbox (
-        $sql->query ("SELECT tosname,tosdescrip,id FROM tos ORDER BY tosname"),
-	"#tosname# #tosdescrip#",
-	"cpttos[$i]"
-	)."
-     </TD>
-     <TD>
-      <INPUT TYPE=TEXT NAME=\"cptstdfee$brackets\" SIZE=10
-       MAXLENGTH=9 VALUE=\"".prepare($cptstdfee[$i])."\">
-     </TD>
-    </TR>
-   ";
-  } // end loop thru inscos
-  $display_buffer .= "
-   </TABLE>
-   <P>
-    <CENTER>
-     <INPUT TYPE=SUBMIT VALUE=\"".__("Modify")."\">
-     <INPUT TYPE=RESET  VALUE=\"".__("Clear")."\">
-    </CENTER>
-   <P>
-   </FORM>
-  ";
-  break; // end insurance company profiles form 
-
- case "profile": // modification for the profile form
-  $page_title =  __("Modifying")." "._($record_name);
-  $query = "UPDATE $this->table_name SET
-            cpttos='".fm_join_from_array($cpttos)."',
-            cptstdfee='".fm_join_from_array($cptstdfee)."'
-            WHERE id='$id'";
-  $display_buffer .= "
-   <P>
-   ".__("Modifying")." ... 
-  ";
-  $result = $sql->query ($query);
-  if ($result) { $display_buffer .= __("done")."."; }
-   else        { $display_buffer .= __("ERROR");    }
-  $display_buffer .= "
-   <P>
-   <CENTER>
-    <A HREF=\"$page_name\"
-    >".__("back")."</A>
-   </CENTER>
-   <P>
-  ";
-  break; // end of mod for the profile form
-*/
+		}
 	} // end function CptMaintenance->form()
 
 	function view () {

@@ -1172,7 +1172,7 @@ class ProcedureModule extends EMRModule {
 		$insid = $primary->local_record[covinsco];
 
 		$cpt_code = freemed::get_link_rec ($cptid, "cpt"); // cpt code
-		$cpt_code_fees = fm_split_into_array ($cpt_code["cptstdfee"]);
+		$cpt_code_fees = unserialize($cpt_code["cptstdfee"]);
 		$cpt_code_stdfee = $cpt_code_fees[$insid]; // grab proper std fee
 		if (empty($cpt_code_stdfee) or ($cpt_code_stdfee==0))
 		$cpt_code_stdfee = $cpt_code["cptdefstdfee"]; // if none, do default
