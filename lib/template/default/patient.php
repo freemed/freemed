@@ -139,7 +139,7 @@ $display_buffer .= "
        <b>".__("Patient Smart Search")."</b>
       <br/>
 	<small><i>".__("Name ('last, first' or 'first last')")."</i></small>
-      ".freemed::patient_widget('patient', '', '', true)."
+      ".freemed::patient_widget('id', '', '', true)."
 	</form>
 	<p/>
       </div>
