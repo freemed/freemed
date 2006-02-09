@@ -695,6 +695,7 @@ class Remitt {
 		$buffer .= $this->_tag('description', $f['psrnote'], true);
 		$buffer .= $this->_tag('hcfacode', !$f['psrpos'] ? 11 : freemed::get_link_field($f['psrpos'], 'pos', 'posname'), true);
 		$buffer .= $this->_tag('x12code', !$f['psrpos'] ? 11 : freemed::get_link_field($f['psrpos'], 'pos', 'posname'), true);
+		$buffer .= $this->_tag('ein', $f['psrein'], true);
 
 		$buffer .= "</facility>\n";
 		return $buffer;
