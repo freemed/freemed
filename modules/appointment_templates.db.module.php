@@ -26,6 +26,8 @@ class AppointmentTemplates extends MaintenanceModule {
 	);
 
 	function AppointmentTemplates () {
+		// For i18n: __("Appointment Templates")
+
 		global $display_buffer;
 
 		$this->table_definition = array (

@@ -30,6 +30,8 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 	);
 
 	function ProviderGroupsMaintenance () {
+		// For i18n: __("Provider Groups Maintenance")
+
 		global $phygroupdtmod;
 		$phygroupdtmod = date("Y-m-d");
 

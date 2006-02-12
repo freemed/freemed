@@ -22,6 +22,8 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 	);
 
 	function InsuranceCompanyGroupMaintenance () {
+		// For i18n: __("Insurance Company Group Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'inscogroup' => SQL__VARCHAR(50),

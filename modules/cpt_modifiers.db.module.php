@@ -23,6 +23,8 @@ class CptModifiersMaintenance extends MaintenanceModule {
 	);
 
 	function CptModifiersMaintenance () {
+		// For i18n: __("CPT Modifiers Maintenance")
+
 		global $display_buffer;
 
 			// table definition (inside constructor, as outside definitions

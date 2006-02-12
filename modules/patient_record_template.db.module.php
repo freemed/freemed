@@ -29,6 +29,8 @@ class PatientRecordTemplateMaintenance extends MaintenanceModule {
 	);
 
 	function PatientRecordTemplateMaintenance () {
+		// For i18n: __("Patient Record Template Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'prtname' => SQL__VARCHAR(100),

@@ -32,6 +32,8 @@ class PharmacyMaintenance extends MaintenanceModule {
 	);
 
 	function PharmacyMaintenance () {
+		// For i18n: __("Pharmacy Maintenance")
+
 		global $display_buffer;
 
 		$this->table_definition = array (

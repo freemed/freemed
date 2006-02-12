@@ -37,6 +37,8 @@ class DiagnosisFamilyModule extends MaintenanceModule {
 	var $widget_hash = '##dfname## (##dfdescrip##)';
 
 	function DiagnosisFamilyModule () {
+		// For i18n: __("Diagnosis Family Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'dfname' => SQL__VARCHAR(100),
@@ -92,7 +94,7 @@ class DiagnosisFamilyModule extends MaintenanceModule {
 
 		</form>
 		";
-	} // end function DiagnosisFamilyModule->modform
+	} // end method modform
 
 	function view () {
 		global $display_buffer;
@@ -115,7 +117,7 @@ class DiagnosisFamilyModule extends MaintenanceModule {
 
 		// Addition form at the bottom of the page
 		$this->form();
-	} // end function DiagnosisFamilyModule->view
+	} // end method view
 
 } // end class DiagnosisFamilyModule
 

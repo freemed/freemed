@@ -74,6 +74,8 @@ class ProviderModule extends MaintenanceModule {
 	var $widget_hash = '##phylname##, ##phyfname## ##phymname## (##phypracname##)';
 
 	function ProviderModule () {
+		// For i18n: __("Provider Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'phylname' => SQL__VARCHAR(52),

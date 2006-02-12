@@ -67,6 +67,8 @@ class FacilityModule extends MaintenanceModule {
 	);
 
 	function FacilityModule () {
+		// For i18n: __("Facility Maintenance")
+
 		// Create table definition
 		$this->table_definition = array (
 			'psrname' => SQL__VARCHAR(100),

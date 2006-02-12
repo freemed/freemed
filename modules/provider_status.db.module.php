@@ -20,6 +20,8 @@ class ProviderStatusMaintenance extends MaintenanceModule {
 	var $variables = array ( "phystatus" );
 
 	function ProviderStatusMaintenance () {
+		// For i18n: __("Provider Status Maintenance")
+
 		// Define database table
 		$this->table_definition = array (
 			"phystatus" => SQL__VARCHAR(30),

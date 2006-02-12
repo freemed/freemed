@@ -23,6 +23,8 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 	);
 
 	function ProviderCertificationsMaintenance () {
+		// For i18n: __("Provider Certifications Maintenance")
+
 		global $deg_date;
 		$degdate = date("Y-m-d");
 

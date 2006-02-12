@@ -29,6 +29,8 @@ class RoomMaintenance extends MaintenanceModule {
 	);
 
 	function RoomMaintenance () {
+		// For i18n: __("Room Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'roomname' => SQL__VARCHAR(20),

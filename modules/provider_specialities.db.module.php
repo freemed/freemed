@@ -25,6 +25,8 @@ class ProviderSpecialtiesMaintenance extends MaintenanceModule {
 	);
 
 	function ProviderSpecialtiesMaintenance () {
+		// For i18n: __("Provider Specialties Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'specname' => SQL__VARCHAR(50),

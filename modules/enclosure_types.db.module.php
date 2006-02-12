@@ -22,6 +22,8 @@ class EnclosureTypesMaintenance extends MaintenanceModule {
 	); 
 
 	function EnclosureTypesMaintenance() {
+		// For i18n: __("Enclosure Types Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'enclosure' => SQL__VARCHAR(50),

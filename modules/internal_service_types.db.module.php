@@ -22,6 +22,8 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 	); 
 
 	function InternalServiceTypesMaintenance() {
+		// For i18n: __("Internal Service Types Maintenance")
+
 		// Table definition
 		$this->table_definition = array (
 			'intservtype' => SQL__VARCHAR(50),
