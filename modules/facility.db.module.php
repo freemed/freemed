@@ -25,7 +25,7 @@ class FacilityModule extends MaintenanceModule {
 	var $table_name     = "facility";
 	var $order_by       = "psrname";
 
-	var $widget_hash = "##psrname## (##psrcity##, ##psrstate##)";
+	var $widget_hash = "##psrname## ##psrnote## (##psrcity##, ##psrstate##)";
 
 	var $variables = array (
 		"psrname",
