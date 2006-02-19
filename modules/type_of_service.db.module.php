@@ -19,6 +19,8 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 	var $table_name  = "tos";
 	var $order_field = "tosname,tosdescrip";
 
+	var $widget_hash = "##tosname## - ##tosdescrip##";
+
 	var $variables = array (
 			"tosname",
 			"tosdescrip",

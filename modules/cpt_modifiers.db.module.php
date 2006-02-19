@@ -17,6 +17,8 @@ class CptModifiersMaintenance extends MaintenanceModule {
 	var $record_name    = "CPT Modifiers";
 	var $table_name     = "cptmod";
 
+	var $widget_hash    = '##cptmod## - ##cptmoddescrip##';
+
 	var $variables = array (
 		"cptmod",
 		"cptmoddescrip"
