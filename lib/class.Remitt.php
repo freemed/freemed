@@ -23,7 +23,7 @@ class Remitt {
 		
 	} // end constructor
 
-	// Method: GetFIleList
+	// Method: GetFileList
 	//
 	// Parameters:
 	//
@@ -935,6 +935,9 @@ class Remitt {
 		} else {
 			$tos = freemed::get_link_field($cptobj['cptdeftos'], 'tos', 'tosname');
 		}
+
+		// Check for TOS override from procedure record
+		if ($p['proctosoverride'] > 0) { $tos = $p['proctosoverride']; }
 
 		// Various resubmission codes, etc
 		$buffer .=

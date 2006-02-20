@@ -8,10 +8,10 @@ class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.4.2";
+	var $MODULE_VERSION = "0.4.3";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.3';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.1';
 
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
@@ -52,6 +52,7 @@ class ProcedureModule extends EMRModule {
 		'procmedicaidresub',
 		'proclabcharges',
 		'procslidingscale',
+		'proctosoverride'
 	);    
 
 	function ProcedureModule () {
@@ -106,12 +107,16 @@ class ProcedureModule extends EMRModule {
 			'proclabcharges' => SQL__REAL,
 			'procstatus' => SQL__VARCHAR(50),
 			'procslidingscale' => SQL__CHAR(1),
+			'proctosoverride' => SQL__INT_UNSIGNED(0),
 			'id' => SQL__SERIAL
 		);
 		
 		// Set associations
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'proceoc');
+		$this->_SetAssociation('RulesModule');
+		$this->_SetMetaInformation('RuleType', "Billing"); // __("Billing")
+		$this->_SetMetaInformation('RuleInterface', "RuleInterface");
 
 		// Call parent constructor
 		$this->EMRModule();
@@ -288,7 +293,15 @@ class ProcedureModule extends EMRModule {
 				))
 			); // end coverage page	
 
-		$charge = $this->CalculateCharge($proccov1,$procunits,$proccpt,$procphysician,$patient);
+		$charge = $this->CalculateCharge($proccov2,$procunits,$proccpt,$procphysician,$patient);
+		global $proccharges; $proccharges = $charge;
+
+		// Provide transformation by passing globals
+		$transformation = module_function('RulesModule', 'interpreter', array ( get_class($this), $GLOBALS ));
+		// Then reglobalize
+		foreach ($transformation AS $k => $v) { global ${$k}; ${$k} = $v; }
+		$charge = $proccharges;
+
 		// Adjust by sliding scale if present
 		if ($_REQUEST['procslidingscale']) {
 			$charge *= $slidingfeescale->BracketToMultiplier($_REQUEST['procslidingscale']);
@@ -405,7 +418,8 @@ class ProcedureModule extends EMRModule {
 					"proccov2"        =>  $proccov2,
 					"proccov3"        =>  $proccov3,
 					"proccov4"        =>  $proccov4,
-					"procclmtp"        =>  $procclmtp
+					"procclmtp"        =>  $procclmtp,
+					'proctosoverride' => $proctosoverride+0
 					)
 				);
 				
@@ -1212,7 +1226,64 @@ class ProcedureModule extends EMRModule {
 		//   adjust values to proper precision
 		$charge = bcadd ($charge, 0, 2);
 		return $charge;
-	} // end function ProcedureModule->CalculateCharge()
+	} // end method CalculateCharge
+
+	// Method: RuleInterface
+	//
+	//	Associated method to provide interface for billing rules
+	//
+	// Parameters:
+	//
+	//	$clause - 'if' or 'then'
+	//
+	// Returns:
+	//
+	//	Array with the following array type as each element:
+	//	* [0] - field name
+	//	* [1] - equivalence / assignment choices (array)
+	//	* [2] - widget
+	//
+	function RuleInterface ( $type ) {
+		switch ( $type ) {
+			case 'if':
+			$if[] = array (
+				'procpos',
+				array ( '=', '!=' ),
+				module_function('FacilityModule', 'widget', array('procpos')),
+				__("Facility")
+			);
+			$if[] = array (
+				'proccpt',
+				array ( '=', '!=' ),
+				module_function('CptMaintenance', 'widget', array('proccpt')),
+				__("CPT Code")
+			);
+			$if[] = array (
+				'proccptmod',
+				array ( '=', '!=' ),
+				module_function('CptModifiersMaintenance', 'widget', array('proccptmod')),
+				__("CPT Modifier")
+			);
+			return $if;
+			break;
+
+			case 'then':
+			$then[] = array (
+				'proccharges',
+				array ( '=' ),
+				html_form::text_widget('proccharges', 20),
+				__("Charges")
+			);
+			$then[] = array (
+				'proctosoverride',
+				array ( '=' ),
+				module_function('TypeOfServiceMaintenance', 'widget', array('proctosoverride')),
+				__("Type of Service")
+			);
+			return $then;
+			break;
+		}
+	} // end method RuleInterface
 
 	function _update ( ) {
 		global $sql;
@@ -1258,6 +1329,15 @@ class ProcedureModule extends EMRModule {
 		if (!version_check($version, '0.4.2')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN procslidingscale CHAR(1)');
 			$sql->query('UPDATE '.$this->table_name.' SET procslidingscale=\'\' WHERE id>0');
+		}
+
+		// Version 0.4.3
+		//
+		//	add proctosoverride
+		//
+		if (!version_check($version, '0.4.3')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN proctosoverride INT UNSIGNED AFTER procslidingscale');
+			$sql->query('UPDATE '.$this->table_name.' SET proctosoverride=0 WHERE id>0');
 		}
 	} // end method _update
 
