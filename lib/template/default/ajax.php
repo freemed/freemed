@@ -211,7 +211,7 @@ function ajax_widget ( $name, $module, &$obj, $field='id', $autosubmit=false ) {
 ?>
 <script language="javascript">
 function x_<?php print $name; ?>_check_input(i) {
-	if (document.getElementById(i + '_text').value.length >= 3) {
+	if (document.getElementById(i + '_text').value.length >= 2) {
 		document.getElementById(i + '_hiddendiv').style.display = 'block';
 		document.getElementById(i + '_hiddendiv').innerHTML = 'Loading ... ';
 		<?php if ($module == 'patient') { ?>
@@ -235,7 +235,7 @@ function x_<?php print $name; ?>_set_field (k, v) {
 
 function x_<?php print $name; ?>_populate(data) {
 	hilight_string = document.getElementById('<?php print $name; ?>_text').value;
-	if (data.length < 3) {
+	if (data.length < 2) {
 		document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML = 'No results.';
 	} else {
 		document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML = '';
@@ -264,7 +264,7 @@ function x_<?php print $name; ?>_populate(data) {
 <table border="0" cellspacing="0" cellpadding="0">
 <tr><td><input <?php if (freemed::config_value('tooltip')) { ?> onMouseover="tooltip('<?php 
 print __("Type a portion of the entry that you want to find, then select it from the pulldown menu.");
-?>'); return true;" onMouseOut="hidetooltip(); return true;" <?php } ?> type="text" id="<?php print $name; ?>_text" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; document.getElementById('<?php print $name; ?>').value = 0; }" value="<?php if (${$name}) { print $obj->to_text(${$name}, $field); } ?>" autocomplete="off" />
+?>'); return true;" onMouseOut="hidetooltip(); return true;" <?php } ?> type="text" id="<?php print $name; ?>_text" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value > 0) { this.value = ''; document.getElementById('<?php print $name; ?>').value = 0; }" value="<?php if (${$name}) { print $obj->to_text(${$name}, $field); } ?>" autocomplete="off" /><?php if ($module != 'patient') { ?><a href="module_loader.php?action=addform&module=<?php print urlencode($module); ?>&return=close" class="button" target="_entry">+</a><?php } ?>
 <input type="hidden" id="<?php print $name; ?>" name="<?php print $name; ?>" value="<?php if (${$name}) { print htmlentities(${$name}); } ?>" />
 </td></tr>
 <tr><td width="300"><div id="<?php print $name; ?>_hiddendiv" class="hiddendiv"></div></td></tr>
