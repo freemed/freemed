@@ -54,8 +54,11 @@ class PatientCoveragesModule extends EMRModule {
 		);
 	
 		$this->summary_vars = array (
-			__("Plan") => 'covplanname',
+			__("Plan") => 'insconame',
 			__("Date") => 'coveffdt'
+		);
+		$this->summary_query_link = array (
+			'covinsco' => 'insco'
 		);
 
 		$this->acl = array ( 'bill', 'emr' );
@@ -394,12 +397,6 @@ class PatientCoveragesModule extends EMRModule {
 					module_function('InsuranceCompanyModule', 'widget', array('covinsco'))
 				) )
 			);
-
-			// Push in payer name if one hasn't been put into plan name
-			if ($covinsco and !$covplanname) {
-				$_temp_rec = freemed::get_link_rec($covinsco, 'insco');
-				$covplanname = $_temp_rec['insconame'];
-			}
 
 			$wizard->add_page(__("Supply Coverage Information"),
 				array_merge(array("covinstp","covprovasgn","covbenasgn","covrelinfo","covplanname"),
