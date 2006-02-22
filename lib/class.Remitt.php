@@ -871,6 +871,9 @@ class Remitt {
 			$this->_tag('cptemergency', '0', true).
 			$this->_tag('cptepsdt', '0', true).
 			$this->_tag('cptmodifier', freemed::get_link_field($p['proccptmod'], 'cptmod', 'cptmod'), true).
+			// Optional extra cpt modifiers
+			$this->_tag('cptmodifier2', freemed::get_link_field($p['proccptmod2'], 'cptmod', 'cptmod'), true).
+			$this->_tag('cptmodifier3', freemed::get_link_field($p['proccptmod3'], 'cptmod', 'cptmod'), true).
 			$this->_tag('cptunits', $p['procunits'], true).
 			$this->_tag('weightgrams', '0', true);
 		$this->_AddDependency('cpt', $p['proccpt']);

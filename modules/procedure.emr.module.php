@@ -8,10 +8,10 @@ class ProcedureModule extends EMRModule {
 
 	var $MODULE_NAME = "Procedures";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.4.3";
+	var $MODULE_VERSION = "0.5.0";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.8.1';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.2';
 
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
@@ -21,6 +21,8 @@ class ProcedureModule extends EMRModule {
 		"proceoc",
 		"proccpt",
 		"proccptmod",
+		"proccptmod2",
+		"proccptmod3",
 		"procdiag1",
 		"procdiag2",
 		"procdiag3",
@@ -73,6 +75,8 @@ class ProcedureModule extends EMRModule {
 			'proceoc' => SQL__TEXT,
 			'proccpt' => SQL__INT_UNSIGNED(0),
 			'proccptmod' => SQL__INT_UNSIGNED(0),
+			'proccptmod2' => SQL__INT_UNSIGNED(0),
+			'proccptmod3' => SQL__INT_UNSIGNED(0),
 			'procdiag1' => SQL__INT_UNSIGNED(0),
 			'procdiag2' => SQL__INT_UNSIGNED(0),
 			'procdiag3' => SQL__INT_UNSIGNED(0),
@@ -154,8 +158,6 @@ class ProcedureModule extends EMRModule {
 			// TODO: Fix this broken behavior
 			$icd_type = 9;
 		}
-		$cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
-		$cptmod_result = $sql->query($cptmod_query);
 
 		$cert_query = "SELECT id,certdesc FROM certifications WHERE certpatient='$patient'";
 		$cert_result = $sql->query($cert_query);
@@ -185,7 +187,7 @@ class ProcedureModule extends EMRModule {
 
 		$wizard->add_page (__("Step One"),
 			array_merge(array("procphysician", "proceoc", "procrefdoc",
-							  "proccpt", "proccptmod", "procunits", 
+							  "proccpt", "proccptmod", "proccptmod2", "proccptmod3", "procunits", 
 							  "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
 							  "procpos", "procvoucher","proccomment",
 								"procauth","proccert","procclmtp"),
@@ -198,10 +200,10 @@ class ProcedureModule extends EMRModule {
 		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Procedural Code") =>
 			module_function('cptmaintenance', 'widget', array ('proccpt')).
-			  freemed_display_selectbox(
-				$sql->query("SELECT cptmod,cptmoddescrip,id ".
-				  "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
-				  "#cptmod# (#cptmoddescrip#)", "proccptmod"),
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod')),
+		  __("Additional Modifiers") =>
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod2'))."<br/>".
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod3')),
 		  __("Units") =>
 		  	html_form::text_widget('procunits', 9),
 		  __("Diagnosis Code")." 1" =>
@@ -391,6 +393,8 @@ class ProcedureModule extends EMRModule {
 					"proceoc",
 					"proccpt",
 					"proccptmod",
+					"proccptmod2",
+					"proccptmod3",
 					"procdiag1",
 					"procdiag2",
 					"procdiag3",
@@ -589,8 +593,6 @@ class ProcedureModule extends EMRModule {
 			// TODO: Fix this broken behavior
 			$icd_type = 9;
 		}
-		$cptmod_query = "SELECT * FROM cptmod ORDER BY cptmod,cptmoddescrip";
-		$cptmod_result = $sql->query($cptmod_query);
 		$icd_query = "SELECT * FROM icd9 ORDER BY icd$icd_type"."code";
 		$icd_result = $sql->query($icd_query);
 
@@ -623,7 +625,7 @@ class ProcedureModule extends EMRModule {
 
 		$wizard->add_page (__("Step One"),
 			array_merge(array("procphysician", "proceoc", "procrefdoc",
-							  "proccpt", "proccptmod", "procunits", 
+							  "proccpt", "proccptmod", "proccptmod2", "proccptmod3", "procunits", 
 							  "procdiag1", "procdiag2", "procdiag3", "procdiag4",		
 							  "procpos", "procvoucher","proccomment",
 								"procauth","proccert","procclmtp"),
@@ -635,13 +637,11 @@ class ProcedureModule extends EMRModule {
 			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Procedural Code") =>
-			freemed_display_selectbox(
-			  $sql->query("SELECT * FROM cpt ORDER BY cptcode,cptnameint"),
-				"#cptcode# (#cptnameint#)", "proccpt").
-			  freemed_display_selectbox(
-				$sql->query("SELECT cptmod,cptmoddescrip,id ".
-				  "FROM cptmod ORDER BY cptmod,cptmoddescrip"),
-				  "#cptmod# (#cptmoddescrip#)", "proccptmod"),
+			module_function('cptmaintenance', 'widget', array ('proccpt')).
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod')),
+		  __("Additional Modifiers") =>
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod2'))."<br/>".
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod3')),
 		  __("Units") =>
 		  	html_form::text_widget('procunits', 9),
 		  __("Diagnosis Code")." 1" =>
@@ -784,6 +784,8 @@ class ProcedureModule extends EMRModule {
 					"proceoc",
 					"proccpt",
 					"proccptmod",
+					"proccptmod2",
+					"proccptmod3",
 					"procdiag1",
 					"procdiag2",
 					"procdiag3",
@@ -1255,6 +1257,18 @@ class ProcedureModule extends EMRModule {
 				module_function('CptModifiersMaintenance', 'widget', array('proccptmod')),
 				__("CPT Modifier")
 			);
+			$if[] = array (
+				'proccptmod',
+				array ( '=', '!=' ),
+				module_function('CptModifiersMaintenance', 'widget', array('proccptmod2')),
+				__("CPT Modifier")." 2"
+			);
+			$if[] = array (
+				'proccptmod',
+				array ( '=', '!=' ),
+				module_function('CptModifiersMaintenance', 'widget', array('proccptmod3')),
+				__("CPT Modifier")." 3"
+			);
 			return $if;
 			break;
 
@@ -1329,6 +1343,16 @@ class ProcedureModule extends EMRModule {
 		if (!version_check($version, '0.4.3')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN proctosoverride INT UNSIGNED AFTER procslidingscale');
 			$sql->query('UPDATE '.$this->table_name.' SET proctosoverride=0 WHERE id>0');
+		}
+
+		// Version 0.5.0
+		//
+		//	add proccptmod{2,3}
+		//
+		if (!version_check($version, '0.5.0')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN proccptmod2 INT UNSIGNED AFTER proccptmod');
+			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN proccptmod3 INT UNSIGNED AFTER proccptmod2');
+			$sql->query('UPDATE '.$this->table_name.' SET proccptmod2=0,proccptmod3=0 WHERE id>0');
 		}
 	} // end method _update
 
