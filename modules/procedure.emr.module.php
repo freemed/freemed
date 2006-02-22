@@ -568,17 +568,8 @@ class ProcedureModule extends EMRModule {
 				global ${$v};
 			}
 			$this_data = freemed::get_link_rec ($id, $this->table_name);
-			global $procunits, $procdiag1,$procdiag2,$procdiag3,$procdiag4,$procphysician,$procrefdoc;
 			extract ($this_data); // extract all of this data
 
-			$procunits = "1.0";        // default value for units
-			$this_patient = CreateObject('FreeMED.Patient', $patient);
-			$procdiag1      = $this_patient->local_record[ptdiag1];
-			$procdiag2      = $this_patient->local_record[ptdiag2];
-			$procdiag3      = $this_patient->local_record[ptdiag3];
-			$procdiag4      = $this_patient->local_record[ptdiag4];
-			$procphysician = $this_patient->local_record[ptdoc];
-			$procrefdoc = $this_patient->local_record[ptrefdoc];
 			$been_here = 1;
 		}
 
