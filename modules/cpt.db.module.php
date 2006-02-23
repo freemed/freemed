@@ -261,7 +261,7 @@ class CptMaintenance extends MaintenanceModule {
 	global $cptdefstdfee;
   $book->add_page (
     __("Fee Profiles"),
-    array (""),
+    array ("cpttos", "cptstdfee"),
     "<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=2
       ALIGN=CENTER>
 
