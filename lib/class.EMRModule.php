@@ -143,6 +143,9 @@ class EMRModule extends BaseModule {
 		}
 
 		// Add meta information for patient_field, if it exists
+		if (isset($this->record_name)) {
+			$this->_SetMetaInformation('record_name', $this->record_name);
+		}
 		if (isset($this->date_field)) {
 			$this->_SetMetaInformation('date_field', $this->date_field);
 		}
@@ -679,8 +682,7 @@ class EMRModule extends BaseModule {
 		if (is_array($this->summary_query_link)) {
 			foreach ($this->summary_query_link AS $my_k => $my_v) {
 				// Format: field => table_name
-				$_from[] = $my_v;
-				$_where[] = $my_v.'.id = '.$this->table_name.'.'.$my_k;
+				$_from[] = "LEFT OUTER JOIN ${my_v} ON ${my_v}.id = ".$this->table_name.'.'.$my_k;
 			}
 			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
 		}
@@ -690,10 +692,9 @@ class EMRModule extends BaseModule {
 			( (count($this->summary_query)>0) ? 
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
-			( is_array($this->summary_query_link) ? ",".join(',',$_from).' ' : ' ' ).
+			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
-			( is_array($this->summary_query_link) ? ' AND '.join(' AND ',$_where).' ' : ' ' ).
 			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC LIMIT ".addslashes($items);
 		//if ($this->summary_query_link) { die ($query); }
 		$result = $sql->query($query);
