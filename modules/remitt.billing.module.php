@@ -938,33 +938,54 @@ class RemittBillingTransport extends BillingModule {
 		<td class=\"DataHead\">".__("Identifier")."</td>
 		<td class=\"DataHead\">".__("Status")."</td>
 		<td class=\"DataHead\">".__("Report")."</td>
+		<td class=\"DataHead\">".__("Action")."</td>
 		</tr>
 		";
 		$alldone = true;
 		foreach ($uniques AS $b => $u) {
-			// Add to $billkeys
-			$billkeys[] = $b;
+			// If we have an error from REMITT, show as such
+			if (is_array($u)) {
+				$buffer .= "
+				<tr>
+				<td>".prepare($b)."</td>
+				<td>".__("ERROR")."</td>
+				<td>".prepare($u['faultString'])."</td>
+				<td>&nbsp;</td>
+				</tr>
+				";
+			} else {
+				// Add to $billkeys
+				$billkeys[] = $b;
 
-			// Get individual status
-			$s = $remitt->GetStatus($u);
-			if (empty($s)) { $alldone = false; }
-			$buffer .= "
-			<tr>
-			<td>".prepare($b)." (".prepare($u).")</td>
-			<td>".( empty($s) ?
-				__("Processing") :
-				__("Completed") )."</td>
-			<td>".( empty($s) ? "&nbsp;" :
-				"<a href=\"".page_name()."?".
-				"module=".$_REQUEST['module']."&".
-				"type=".$_REQUEST['type']."&".
-				"action=".$_REQUEST['action']."&".
-				"billing_action=display_report&".
-				"file_type=report&".
-				"report=".urlencode(basename($s)) . "\" ".
-				"target=\"_view\">".prepare($s)."</a>" )."</td>
-			</tr>
-			";
+				// Get individual status
+				$s = $remitt->GetStatus($u);
+				if (empty($s)) { $alldone = false; }
+				$buffer .= "
+				<tr>
+				<td>".prepare($b)." (".prepare($u).")</td>
+				<td>".( empty($s) ?
+					__("Processing") :
+					__("Completed") )."</td>
+				<td>".( empty($s) ? "&nbsp;" :
+					"<a href=\"".page_name()."?".
+					"module=".urlencode( $_REQUEST['module'] )."&".
+					"type=".urlencode( $_REQUEST['type'] )."&".
+					"action=".urlencode( $_REQUEST['action'] )."&".
+					"billing_action=display_report&".
+					"file_type=report&".
+					"report=".urlencode( basename($s) ) . "\" ".
+					"target=\"_view\">".prepare($s)."</a>" )."</td>
+				<td>".( empty($s) ? "&nbsp;" :
+					"<a href=\"".page_name()."?".
+					"module=".urlencode( $_REQUEST['module'] )."&".
+					"action=".urlencode( $_REQUEST['action'] )."&".
+					"type=".urlencode( $_REQUEST['type'] )."&".
+					"billing_action=mark&".
+					"keys=".urlencode(serialize(array( $b ))).
+					"\" class=\"button\">".__("Mark as Billed")."</a>" )."</td>
+				</tr>
+				";
+			}
 		} // end foreach uniques
 		$buffer .= "</table>\n";
 
