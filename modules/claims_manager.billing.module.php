@@ -639,6 +639,28 @@ class ClaimsManager extends BillingModule {
 		// Display patient and claim information
 		$cl = CreateObject('FreeMED.ClaimLog');
 		$info = $cl->claim_information( $_REQUEST['claim'] );
+
+		// Deal with providers
+		if ($info['provider']) {
+			$provider = CreateObject('FreeMED.Physician', $info['provider']);
+			$provider_name = $provider->fullName();
+		}
+		if ($info['referring_provider']) {
+			$r_provider = CreateObject('FreeMED.Physician', $info['referring_provider']);
+			$r_provider_name = $r_provider->fullName();
+		}
+
+		// Handle coverages, if they exist
+		if ($info['coverage_primary'] > 0) {
+			$c_primary = CreateObject('FreeMED.Coverage', $info['coverage_primary']);
+			$c_primary_info = $c_primary->covinsco->get_name().' ('.$c_primary->covpatinsno.')';
+		}
+		if ($info['coverage_secondary'] > 0) {
+			$c_secondary = CreateObject('FreeMED.Coverage', $info['coverage_secondary']);
+			$c_secondary_info = $c_secondary->covinsco->get_name().' ('.$c_secondary->covpatinsno.')';
+		}
+
+		// Form actual display information table
 		$display_buffer .= 
 			"<table border=\"0\" width=\"75%\" class=\"thinbox\" ".
 				"cellpadding=\"3\">".
@@ -648,11 +670,19 @@ class ClaimsManager extends BillingModule {
 				$info['patient_name']."<br/><br/>\n".
 			"<b>".__("Resp. Party").":</b> ".
 				$info['rp_name']."<br/><br/>\n".
+			"<b>".__("Provider").":</b> ".
+				$provider_name."<br/><br/>\n".
+			"<b>".__("Date of Birth").":</b> ".
+				$info['patient_dob']."<br/><br/>\n".
 			"</td><td valign=\"top\" align=\"left\">\n".
 			"<b>".__("SSN").":</b>".
 				$info['ssn']."<br/><br/>\n".
 			"<b>".__("SSN").":</b>".
 				$info['rp_ssn']."<br/><br/>\n".
+			"<b>".__("Referring Provider").":</b> ".
+				$r_provider_name."<br/><br/>\n".
+			"<b>".__("Primary").":</b> ".
+				$c_primary_info."<br/><br/>\n".
 			"</td><td valign=\"top\" align=\"left\">\n".
 			"<b>".__("POS").":</b> ".
 				$info['facility']."<br/><br/>\n".
@@ -660,6 +690,8 @@ class ClaimsManager extends BillingModule {
 				$info['diagnosis']."<br/><br/>\n".
 			"<b>".__("CPT").":</b> ".
 				$info['cpt_code']."<br/><br/>\n".
+			"<b>".__("Secondary").":</b> ".
+				$c_secondary_info."<br/><br/>\n".
 			"</td><td valign=\"top\" align=\"right\">\n".
 			"<b>".__("Charges")."</b>: ".
 				bcadd($info['fee'], 0, 2)."<br/><br/>\n".

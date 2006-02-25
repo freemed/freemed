@@ -395,6 +395,7 @@ ORDER BY
 		$query = "SELECT ".
 			"CONCAT(pt.ptlname, ', ', pt.ptfname, ".
 				"' ', pt.ptmname) AS patient_name, ".
+			"pt.ptdob AS patient_dob, ".
 			"pt.id AS patient_id, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
 				"i.inscostate) AS payer_name, ".
@@ -406,6 +407,8 @@ ORDER BY
 				"CONCAT(pt.ptlname, ', ', pt.ptfname, ".
 					"' ', pt.ptmname) ) AS rp_name, ".
 			"IF(c.covrel != 'S', c.covssn, pt.ptssn) AS rp_ssn, ".
+			"p.proccov1 AS coverage_primary, ".
+			"p.proccov2 AS coverage_secondary, ".
 			"f.psrname AS facility, ".
 			"pc.cptcode AS cpt_code, ".
 			"p.proccharges AS fee, ".
@@ -413,6 +416,8 @@ ORDER BY
 			"p.procbalcurrent AS balance, ".
 			"p.procbilled AS billed, ".
 			"p.procdt AS service_date, ".
+			"p.procphysician AS provider, ".
+			"p.procrefdoc AS referring_provider, ".
 			"p.id AS proc ".
 			"FROM ".
 				"patient AS pt, ".
