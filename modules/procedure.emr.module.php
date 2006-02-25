@@ -199,10 +199,12 @@ class ProcedureModule extends EMRModule {
 			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Procedural Code") =>
-			module_function('cptmaintenance', 'widget', array ('proccpt')).
+			module_function('cptmaintenance', 'widget', array ('proccpt')),
+		  __("Modifier") =>
 			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod')),
-		  __("Additional Modifiers") =>
-			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod2'))."<br/>".
+		  __("Modifier 2") =>
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod2')),
+		  __("Modifier 3") =>
 			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod3')),
 		  __("Units") =>
 		  	html_form::text_widget('procunits', 9),
@@ -295,7 +297,7 @@ class ProcedureModule extends EMRModule {
 				))
 			); // end coverage page	
 
-		$charge = $this->CalculateCharge($proccov2,$procunits,$proccpt,$procphysician,$patient);
+		$charge = $this->CalculateCharge($proccov1,$procunits,$proccpt,$procphysician,$patient);
 		global $proccharges; $proccharges = $charge;
 
 		// Provide transformation by passing globals
@@ -637,10 +639,12 @@ class ProcedureModule extends EMRModule {
 			fm_date_entry ("procdt"),
 		  $__episode_of_care => $__episode_of_care_widget,
 		  __("Procedural Code") =>
-			module_function('cptmaintenance', 'widget', array ('proccpt')).
+			module_function('cptmaintenance', 'widget', array ('proccpt')),
+		  __("Modifier") =>
 			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod')),
-		  __("Additional Modifiers") =>
-			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod2'))."<br/>".
+		  __("Modifier 2") =>
+			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod2')),
+		  __("Modifier 3") =>
 			module_function('cptmodifiersmaintenance', 'widget', array ('proccptmod3')),
 		  __("Units") =>
 		  	html_form::text_widget('procunits', 9),
