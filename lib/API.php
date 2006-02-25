@@ -328,6 +328,34 @@ class freemed {
 
 		return true;
 	} // end function freemed::connect
+
+	// Function: freemed::dates_between
+	//
+	//	Determine dates between two YYYY-MM-DD dates.
+	//
+	// Parameters:
+	//
+	//	$start - Starting date in YYYY-MM-DD
+	//
+	//	$end - Ending date in YYYY-MM-DD
+	//
+	// Returns:
+	//
+	//	Array of dates in YYYY-MM-DD
+	//
+	function dates_between ( $start, $end ) {
+		$_start = explode('-', $start);
+		$_end   = explode('-', $end);
+		$ts_start = mktime(0, 0, 0, $_start[1], $_start[2], $_start[0]);
+		$ts_end   = mktime(0, 0, 0, $_end[1],   $_end[2],   $_end[0]);
+		$ts = $ts_start;
+		while ( $ts <= $ts_end ) {
+			$out[] = date('Y-m-d', $ts);
+			// Push this up by a day's worth of seconds
+			$ts += 86400;
+		} // end while
+		return $out;
+	} // end function freemed::dates_between
 	
 	// Function: freemed::drug_widget
 	//
@@ -1348,14 +1376,24 @@ class freemed {
 	//	Formatted date/time string
 	//
 	function sql2date ( $date ) {
-		$ts = mktime (
-			substr($date, 8, 2),
-			substr($date, 10, 2),
-			substr($date, 12, 2),
-			substr($date, 4, 2),
-			substr($date, 6, 2),
-			substr($date, 0, 4)
-		);
+		if (substr($date, 4, 1) == '-') {
+			// Handle MySQL 4.1+ timestamps
+			$y = substr($date, 0, 4);
+			$m = substr($date, 5, 2);
+			$d = substr($date, 8, 2);
+			$hour = substr($date, 11, 2);
+			$min  = substr($date, 14, 2);
+			$sec  = substr($date, 17, 2);
+		} else {
+			// Handle MySQL 4.0 and before timestamps
+			$y = substr($date, 0, 4);
+			$m = substr($date, 4, 2);
+			$d = substr($date, 6, 2);
+			$hour = substr($date, 8, 2);
+			$min  = substr($date, 10, 2);
+			$sec  = substr($date, 12, 2);
+		}
+		$ts = mktime ( $hour, $min, $sec, $m, $d, $y );
 		return date('m/d/Y H:i', $ts);
 	} // end function freemed::sql2date
 

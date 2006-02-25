@@ -46,11 +46,21 @@ class MessageEMRView extends EMRModule {
 			while ($my_r = $GLOBALS['sql']->fetch_array($my_result)) {
 				// Transformations for date and time
 				$y = $m = $d = $hour = $min = '';
-				$y = substr($my_r['msgtime'], 0, 4);
-				$m = substr($my_r['msgtime'], 4, 2);
-				$d = substr($my_r['msgtime'], 6, 2);
-				$hour = substr($my_r['msgtime'], 8, 2);
-				$min  = substr($my_r['msgtime'], 10, 2);
+				if (substr($my_r['msgtime'], 4, 1) == '-') {
+					// Handle MySQL 4.1+ timestamps
+					$y = substr($my_r['msgtime'], 0, 4);
+					$m = substr($my_r['msgtime'], 5, 2);
+					$d = substr($my_r['msgtime'], 8, 2);
+					$hour = substr($my_r['msgtime'], 11, 2);
+					$min  = substr($my_r['msgtime'], 14, 2);
+				} else {
+					// Handle MySQL 4.0 and before timestamps
+					$y = substr($my_r['msgtime'], 0, 4);
+					$m = substr($my_r['msgtime'], 4, 2);
+					$d = substr($my_r['msgtime'], 6, 2);
+					$hour = substr($my_r['msgtime'], 8, 2);
+					$min  = substr($my_r['msgtime'], 10, 2);
+				}
 
 				$scheduler = CreateObject('FreeMED.Scheduler');
 				$phyfrom = CreateObject('FreeMED.User', $my_r['msgby']);
