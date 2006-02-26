@@ -1,0 +1,12 @@
+$Id$
+
+The zipcode database is courtesy of http://civicpacelabs.org/ which has made this database available
+under the Creative Commons.
+
+To translate the raw version into a version capable of being imported by FreeMED:
+
+* Get a copy from http://civicpacelabs.org/home/developers/download and extract the CSV file
+* Run the following command to strip the quotes and take off the leading line:
+     tail +2 zipcodes.csv | sed -e 's/\"//g;' > ${FREEMED_HOME}/data/en_US/zipcodes.en_US.data
+
+ - Jeff Buchbinder (jeff@freemedsoftware.org)
