@@ -211,7 +211,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 
 	__("Default Electronic Billing Format") =>
 	( $remitt_up ?
-	html_form::select_widget('inscodefformate', $rbe->ListOptions('Render', 'XSLT', 'Electronic', 'payerxml')) :
+	html_form::select_widget('inscodefformate', $rbe->ListOptions('Render', 'XSLT', NULL, 'payerxml')) :
 	"<b>".__("REMITT Server not running")."</b>".
 	"<input type=\"hidden\" name=\"inscodefformate\" value=\"".prepare($GLOBALS['inscodefformate'])."\" />" ),
 
