@@ -5,7 +5,7 @@
 include_once ( 'lib/freemed.php' );
 
 $ajax = CreateObject( 'PHP.Sajax', 'ajax_provider.php' );
-$ajax->export ( 'lookup', 'module_html', 'module_recent', 'patient_lookup' );
+$ajax->export ( 'lookup', 'module_html', 'module_recent', 'patient_lookup', 'csz_lookup' );
 $ajax->handle_client_request();
 
 //----- Function library
