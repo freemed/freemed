@@ -117,6 +117,40 @@ function patient_lookup ( $criteria ) {
 	return join('|', $return);
 } // end function patient_lookup
 
+function csz_lookup ( $parameter ) {
+	$limit = 10;		// logical limit to how many we can display
+
+	// Parameter extraction
+	$params = explode(' ', $parameter);
+	
+	// Extract keys
+	foreach ($params AS $p) {
+		if ($p+0 > 0) {
+			// Numeric only is zipcode
+			$q[] = "zip LIKE '".addslashes($p)."%'";
+		} elseif (strlen($p) > 2) {
+			// City only
+			$q[] = "city LIKE '".addslashes($p)."%'";
+		} else {
+			// City + state
+			$q[] = "( city LIKE '".addslashes($p)."%' OR state LIKE '".addslashes($p)."%' ) ";
+		}
+	}
+	
+	$query = "SELECT * FROM zipcodes WHERE ( ".join(' AND ', $q)." ) ";
+	$res = $GLOBALS['sql']->query($query);
+	if (!$GLOBALS['sql']->results($res)) { return false; }
+	$count = 0;
+	while ($r = $GLOBALS['sql']->fetch_array( $res ) ) {
+		$count++;
+		if ($count < $limit) {
+			$return[] = $r['city'].','.$r['state'].','.$r['zip'];
+		}
+	}
+	if ($count >= $limit) { $return[] = " ... "; }
+	return join('|', $return);
+} // end function csz_lookup
+
 //----- Support functions
 
 function _extract_keys ( $hash ) {
