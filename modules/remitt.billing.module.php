@@ -815,7 +815,7 @@ class RemittBillingTransport extends BillingModule {
 			"type=".urlencode($_REQUEST['type'])."&".
 			"billing_action=mark&".
 			"keys=".urlencode(serialize($__billkeys)).
-			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
+			"\" class=\"button\">".__("Mark All Batches as Billed")."</a>\n";
 
 			return $buffer;
 		}
@@ -976,13 +976,16 @@ class RemittBillingTransport extends BillingModule {
 					"report=".urlencode( basename($s) ) . "\" ".
 					"target=\"_view\">".prepare($s)."</a>" )."</td>
 				<td>".( empty($s) ? "&nbsp;" :
+					( $_SESSION['mark_as_billed'][$b] ?
+					__("Marked as Billed") :
 					"<a href=\"".page_name()."?".
 					"module=".urlencode( $_REQUEST['module'] )."&".
 					"action=".urlencode( $_REQUEST['action'] )."&".
 					"type=".urlencode( $_REQUEST['type'] )."&".
 					"billing_action=mark&".
+					"return=".urlencode($_SERVER['REQUEST_URI'])."&".
 					"keys=".urlencode(serialize(array( $b ))).
-					"\" class=\"button\">".__("Mark as Billed")."</a>" )."</td>
+					"\" class=\"button\">".__("Mark as Billed")."</a>" ))."</td>
 				</tr>
 				";
 			}
@@ -1003,7 +1006,7 @@ class RemittBillingTransport extends BillingModule {
 			"type=".urlencode($_REQUEST['type'])."&".
 			"billing_action=mark&".
 			"keys=".urlencode(serialize($billkeys)).
-			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
+			"\" class=\"button\">".__("Mark All Batches as Billed")."</a>\n";
 		}
 		
 		return $buffer;
@@ -1016,11 +1019,16 @@ class RemittBillingTransport extends BillingModule {
 		foreach ($billkeys AS $key) {
 			//print "marking key $key<br/>\n";
 			$mark &= $claimlog->mark_billed ( $key );
+			$_SESSION['mark_as_billed'][$key] = 1;
 		}
 		if ($mark) {
 			$buffer .=  __("Bills were successfully marked as billed.");
 		} else {
 			$buffer .=  __("Bills were not able to be marked as billed.");
+		}
+
+		if ($_REQUEST['return']) {
+			global $refresh ; $refresh = $_REQUEST['return'];
 		}
 		return $buffer;
 	} // end method mark
