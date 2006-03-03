@@ -27,7 +27,8 @@ class MessageEMRView extends EMRModule {
 
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $num_summary_items) {
-		$my_result = $GLOBALS['sql']->query("SELECT * ".
+		$my_result = $GLOBALS['sql']->query("SELECT *, ".
+			"MIN(msgtime) AS _msgtime ".
 			"FROM messages WHERE ".
 			"msgpatient='".urlencode($patient)."' ".
 			"GROUP BY msgunique ".
@@ -46,20 +47,20 @@ class MessageEMRView extends EMRModule {
 			while ($my_r = $GLOBALS['sql']->fetch_array($my_result)) {
 				// Transformations for date and time
 				$y = $m = $d = $hour = $min = '';
-				if (substr($my_r['msgtime'], 4, 1) == '-') {
+				if (substr($my_r['_msgtime'], 4, 1) == '-') {
 					// Handle MySQL 4.1+ timestamps
-					$y = substr($my_r['msgtime'], 0, 4);
-					$m = substr($my_r['msgtime'], 5, 2);
-					$d = substr($my_r['msgtime'], 8, 2);
-					$hour = substr($my_r['msgtime'], 11, 2);
-					$min  = substr($my_r['msgtime'], 14, 2);
+					$y = substr($my_r['_msgtime'], 0, 4);
+					$m = substr($my_r['_msgtime'], 5, 2);
+					$d = substr($my_r['_msgtime'], 8, 2);
+					$hour = substr($my_r['_msgtime'], 11, 2);
+					$min  = substr($my_r['_msgtime'], 14, 2);
 				} else {
 					// Handle MySQL 4.0 and before timestamps
-					$y = substr($my_r['msgtime'], 0, 4);
-					$m = substr($my_r['msgtime'], 4, 2);
-					$d = substr($my_r['msgtime'], 6, 2);
-					$hour = substr($my_r['msgtime'], 8, 2);
-					$min  = substr($my_r['msgtime'], 10, 2);
+					$y = substr($my_r['_msgtime'], 0, 4);
+					$m = substr($my_r['_msgtime'], 4, 2);
+					$d = substr($my_r['_msgtime'], 6, 2);
+					$hour = substr($my_r['_msgtime'], 8, 2);
+					$min  = substr($my_r['_msgtime'], 10, 2);
 				}
 
 				$scheduler = CreateObject('FreeMED.Scheduler');
