@@ -358,37 +358,43 @@ class RemittBillingTransport extends BillingModule {
 		}
 
 		$buffer .= "
-		<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\">
+		<table border=\"0\" cellspacing=\"0\" cellpadding=\"5\">
 		<tr>
-			<td class=\"DataHead\">".__("Date Billed")."&nbsp;&nbsp;&nbsp;</td>
+			<td class=\"DataHead\">".__("Date Billed")."</td>
+			<td class=\"DataHead\">".__("Billkey")."</td>
+			<td class=\"DataHead\">".__("Detail")."</td>
 			<td class=\"DataHead\">".__("Procedures")."</td>
-			<td class=\"DataHead\">&nbsp;</td>
+			<td class=\"DataHead\" colspan=\"2\">".__("Action")."</td>
 		</tr>
 		";
 		while ($r = $GLOBALS['sql']->fetch_array($result)) {
 			$bk = unserialize($r['billkey']);
+			$bk_count = count($bk['procedures']);
 
 			$buffer .= "
 			<tr>
-				<td>".$r['billkeydate']."</td>
+				<td nowrap>".$r['billkeydate']."</td>
+				<td nowrap>#${r['id']}</td>
+				<td nowrap>".$bk_count." ".__("claim(s).")."</td>
 				<td align=\"right\">";
 
 			// Loop through procedures
+			$buffer .= "<select name=\"billkeydetail_".$r['id']."\" multiple size=\"5\" style=\"width: 300px;\">\n";
 			foreach ($bk['procedures'] AS $_g => $proc) {
-				if ($proc > 0) {
+				if ($proc[0] > 0) {
 					$_q = "SELECT proc.procdt AS procdt, CONCAT(pt.ptlname, ".
 					"', ', pt.ptfname, ' ', pt.ptmname) AS patient_name, ".
 					"pt.id AS patient_id ".
 					"FROM procrec AS proc, patient AS pt ".
 					"WHERE proc.procpatient=pt.id AND ".
-					"proc.id='".addslashes($proc)."'";
+					"proc.id='".addslashes($proc[0])."'";
 					$_r = $GLOBALS['sql']->query($_q);
 					$this_proc = $GLOBALS['sql']->fetch_array($_r);
-					$buffer .= $this_proc['procdt']." <a href=\"".
-					"manage.php?id=".urlencode($this_proc['patient_id']).
-					"\">".prepare($this_proc['patient_name'])."</a><br/>\n";
+					$buffer .= "<option>".$this_proc['procdt']." - ".
+					prepare($this_proc['patient_name'])."</option>\n";
 				}
 			}
+			$buffer .= "</select>\n";
 			
 			$buffer .= "
 				</td><td>
