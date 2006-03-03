@@ -1065,16 +1065,18 @@ class RemittBillingTransport extends BillingModule {
 		
 		$buffer .= "<div class=\"section\">".
 			__("Remitt Billing Sent")."</div><br/>\n";
-		$buffer .= __("Result file returned was")." ".
-			"<a href=\"".page_name()."?".
+
+		// Refresh to status screen
+		global $refresh;
+		$refresh = page_name()."?".
 			"module=".$_REQUEST['module']."&".
 			"type=".$_REQUEST['type']."&".
 			"action=".$_REQUEST['action']."&".
-			"billing_action=display_report&".
-			"file_type=report&".
-			"report=".urlencode(basename($result)) . "\" ".
-			"target=\"_view\">".
-			prepare(basename($result)) . "</a><br/>\n";
+			"billing_action=status&".
+			"uniques=".urlencode(serialize(array(0 => $result)));
+
+		$buffer .= __("Refreshing")." ... ";
+
 		// Add to claimlog
 		$result = $claimlog->log_billing (
 			$_REQUEST['key'],
@@ -1083,14 +1085,6 @@ class RemittBillingTransport extends BillingModule {
 			__("Remitt billing run sent")
 		);
 		/* $mark = $claimlog->mark_billed ( $this_billkey ); */
-		$buffer .= __("If you are satisfied with your bills, mark them as sent.")."<br/>".
-			"<a href=\"".page_name()."?".
-			"module=".urlencode($_REQUEST['module'])."&".
-			"action=".urlencode($_REQUEST['action'])."&".
-			"type=".urlencode($_REQUEST['type'])."&".
-			"billing_action=mark&".
-			"keys=".urlencode(serialize(array($_REQUEST['key']))).
-			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
 		return $buffer;
 	} // end method rebillkey
 
