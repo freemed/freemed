@@ -203,20 +203,22 @@ if ($action=="cfgform") {
 	foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
 		if (is_array($v['META_INFORMATION']['global_config'])) {
 			$this_one = $v['META_INFORMATION']['global_config'];
+			$this_one_finished = array();
+			GettextXML::textdomain(strtolower($v['MODULE_CLASS']));
 			foreach ($this_one AS $gc_k => $gc_v) {
 				// If we find ::'s... (for function)
 				if (!(strpos($gc_v, '::') === false)) {
-					$command = '$this_one["'.$gc_k.'"] = '.$gc_v.';';
+					$command = '$this_one_finished["'.__($gc_k).'"] = '.$gc_v.';';
 					//print "eval : ".$command."<br/>\n";
 					eval($command);
 				} else {
-					$this_one["$gc_k"] = $gc_v;
+					$this_one_finished[__($gc_k)] = $gc_v;
 				}
 			}
 			$book->add_page(
 				__($v['MODULE_NAME']),
 				$v['META_INFORMATION']['global_config_vars'],
-				html_form::form_table($this_one)
+				html_form::form_table($this_one_finished)
 			);
 		}
 	}
