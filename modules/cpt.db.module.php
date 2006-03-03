@@ -90,7 +90,7 @@ class CptMaintenance extends MaintenanceModule {
 				$this->table_name);
 			foreach ($this_record AS $k => $v) {
 				global ${$k};
-				${$k} = stripslashes($v);
+				$_REQUEST[$k] = ${$k} = stripslashes($v);
 			}
 			$cptreqcpt    = fm_split_into_array ($cptreqcpt);
 			$cptexccpt    = fm_split_into_array ($cptexccpt);
