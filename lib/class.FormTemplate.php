@@ -437,7 +437,7 @@ class FormTemplate {
 		}
 
 		// Otherwise, get this as a string
-		$filename = '/tmp/form'.mktime();
+		$filename = '/tmp/form'.mktime().'.pdf';
 		$fp = fopen($filename, 'w');
 		fputs($fp, `${cmd}`);
 		fclose($fp);
