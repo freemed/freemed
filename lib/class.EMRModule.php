@@ -1089,6 +1089,51 @@ class EMRModule extends BaseModule {
 
 	//------ Internal Printing ----------------------------------------
 
+	// Method: _RenderToPDF
+	//
+	//	Render internal record for printing directly to a PDF file.
+	//
+	// Parameters:
+	//
+	//	$record - Record id
+	//
+	// Returns:
+	//
+	//	File name of destination PDF file
+	//
+	function _RenderToPDF ( $record ) {
+		// Handle render
+		if ($render = $this->print_override($record)) {
+			// Handle this elsewhere
+		} else {
+			// Create TeX object for patient
+			$TeX = CreateObject('_FreeMED.TeX', array());
+
+			// Actual renderer for formatting array
+			if ($this->summary_query) {
+				// If this is an EMR module with additional
+				// fields, import them
+				$query = "SELECT *".
+					( (count($this->summary_query)>0) ? 
+					",".join(",", $this->summary_query)." " : " " ).
+					"FROM ".$t." ".
+					"WHERE id='".addslashes($record)."'";
+					$result = $GLOBALS['sql']->query($query);
+					$rec = $GLOBALS['sql']->fetch_array($result);
+			} else {
+				$rec = freemed::get_link_rec($record, $t);
+			} // end checking for summary_query
+			$TeX->_buffer = $TeX->RenderFromTemplate(
+				$this->print_template,
+				$rec
+			);
+			$render = $TeX->RenderToPDF(!(empty($this->print_template)));
+		} // end render if/else
+
+		// Return the file name
+		return $render;
+	} // end method _RenderToPDF
+
 	// Method: _RenderTeX
 	//
 	//	Internal TeX renderer for the record. By default this
