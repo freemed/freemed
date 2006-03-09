@@ -191,6 +191,21 @@ class BaseModule extends module {
 				  id=\"print_method_browser\" /></td>
 				 <td colspan=\"2\">".__("Browser-Based")."</td>
 			</tr>
+			";
+
+			// For EMR, show additional attachments
+			if ($this->patient_field) {
+				$display_buffer .= "
+				<tr>
+				<td width=\"50\">&nbsp;</td>
+				<td>".__("Attach")."</td>
+				<td>".html_form::select_widget('attachment', array_merge( array(__("NONE") => ''), module_function('FaxMultiple', 'GetEMRAttachments', array ( $_REQUEST['patient'] ))), array('style'=>'width: 200px;'))."</td>
+				</tr>
+				";
+			}
+
+			// Continue with display
+			$display_buffer .= "
 			</table>
 			<script language=\"javascript\">
 			function isValid(parm) {
@@ -275,9 +290,21 @@ class BaseModule extends module {
 			// Handle direct to browser
 			case 'browser':
 			if ($render) {
-				$file = $render;
+				$_file = $render;
 			} else {
-				$file = $TeX->RenderToPDF(!empty($this->print_template));
+				$_file = $TeX->RenderToPDF(!empty($this->print_template));
+			}
+			if ($_REQUEST['attachment']) {
+				// Render second PDF
+				$parts = explode('|', $_REQUEST['attachment']);
+
+				// Composite ...
+				$comp = CreateObject('_FreeMED.MultiplePDF');
+				$comp->Add( $_file );
+				$comp->Add( module_function($parts[0], '_RenderToPDF', array($parts[1])) );
+				$file = $comp->Composite();
+			} else {
+				$file = $_file;
 			}
 			ob_start();
 			readfile($file);
@@ -296,14 +323,31 @@ class BaseModule extends module {
 
 			case 'fax':
 			if ($render) {
-				$file = $render;
+				$_file = $render;
 			} else {
-				$file = $TeX->RenderToPDF(!empty($this->print_template));
+				$_file = $TeX->RenderToPDF(!empty($this->print_template));
 			}
-			$fax = CreateObject('_FreeMED.Fax', $file, array (
-				'sender' => $this_user->user_descrip,
-				'comments' => __("HIPPA Compliance Notice: This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system.")
-				));
+			// Handle attachments
+			if ($_REQUEST['attachment']) {
+				// Render second PDF
+				$parts = explode('|', $_REQUEST['attachment']);
+
+				// Composite ...
+				$comp = CreateObject('_FreeMED.MultiplePDF');
+				$comp->Add( $_file );
+				$comp->Add( module_function($parts[0], '_RenderToPDF', array($parts[1])) );
+				$file = $comp->Composite();
+			} else {
+				// Pass through ...
+				$file = $_file;
+			}
+			$fax = CreateObject('_FreeMED.Fax', 
+				$file, 
+				array (
+					'sender' => $this_user->user_descrip,
+					'comments' => __("HIPPA Compliance Notice: This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system.")
+				)
+			);
 			//print ($_REQUEST['fax_number']);
 			$output = $fax->Send($_REQUEST['fax_number']);
 			//$display_buffer .= "<b>".$output."</b>\n";

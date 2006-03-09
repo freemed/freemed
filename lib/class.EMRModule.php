@@ -1110,13 +1110,13 @@ class EMRModule extends BaseModule {
 			$TeX = CreateObject('_FreeMED.TeX', array());
 
 			// Actual renderer for formatting array
-			if ($this->summary_query) {
+			if ($this->patient_field) {
 				// If this is an EMR module with additional
 				// fields, import them
 				$query = "SELECT *".
 					( (count($this->summary_query)>0) ? 
 					",".join(",", $this->summary_query)." " : " " ).
-					"FROM ".$t." ".
+					"FROM ".$this->table_name." ".
 					"WHERE id='".addslashes($record)."'";
 					$result = $GLOBALS['sql']->query($query);
 					$rec = $GLOBALS['sql']->fetch_array($result);
