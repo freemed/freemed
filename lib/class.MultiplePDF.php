@@ -48,7 +48,7 @@ class MultiplePDF {
 		}
 
 		// Execute the composite command
-		$garbage_collector = system($cmd);
+		$garbage_collector = exec( $cmd );
 
 		// Return the temporary file name
 		return $tempfile;
