@@ -153,6 +153,8 @@ class ProviderModule extends MaintenanceModule {
 			case "mod": case "modform":
 				$book->set_submit_name(__("Modify")); break;
 		}
+		$book->set_cancel_name(__("Cancel"));
+		$book->set_refresh_name(__("Refresh"));
   
  		// load the values
 		if (($action=="modform") AND (!$book->been_here())) {
