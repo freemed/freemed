@@ -231,7 +231,7 @@ class notebook {
 	//
   function is_cancelled ($null_var = "") {
     global ${$this->actionvar};
-    return (prepare(${$this->actionvar}) == prepare($this->CANCEL));
+    return (html_entity_decode(${$this->actionvar}) == html_entity_decode($this->CANCEL));
   } // end function notebook->is_cancelled
 
 	// Method: is_done
@@ -243,7 +243,7 @@ class notebook {
   function is_done ($null_var = "") {
     global ${$this->actionvar};
     //$this->verify_page(&$this->messages); // KLUDGE!
-    return (prepare(${$this->actionvar}) == prepare($this->SUBMIT));
+    return (html_entity_decode(${$this->actionvar}) == html_entity_decode($this->SUBMIT));
   } // end function notebook->is_done
 
 	// Method: add_page
