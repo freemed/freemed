@@ -616,7 +616,7 @@ function display_booking_calendar ($date) {
 						$maps[$cur_map][$idx]['link'],
 						'scheduler'
 					);
-					$bpatient = CreateObject('_FreeMED.Patient', $booking['calpatient']);
+					$bpatient = CreateObject('_FreeMED.Patient', $booking['calpatient'], ($booking['caltype'] == 'temp'));
 	
 					// Show the event
 					$event = true;
