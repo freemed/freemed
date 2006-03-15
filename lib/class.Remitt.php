@@ -948,6 +948,7 @@ class Remitt {
 			$this->_tag('medicaidoriginalreference', $p['procmedicaidresub'], true).
 			$this->_tag('hcfalocaluse19', $map[$p['procphysician']]['local19'], true).
 			$this->_tag('hcfalocaluse10d', $map[$p['procphysician']]['local10d'], true).
+			$this->_tag('hcfalocaluse24k', $map[$p['procphysician']]['local24k'], true).
 			$this->_tag('amountpaid', $p['procamtpaid'], true).
 			$this->_tag('providerkey', $p['procphysician'], true).
 			$this->_tag('referringproviderkey', $p['procrefdoc'], true).

@@ -239,10 +239,13 @@ class InsuranceCompanyModule extends MaintenanceModule {
 				value=\"".prepare($inscoidmap[$i_r['id']]['group'])."\" /></td>
 			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][local10d]\"
 				size=\"20\" maxlength=\"24\"
-				value=\"".prepare($inscoidmap[$i_r['id']]['group'])."\" /></td>
+				value=\"".prepare($inscoidmap[$i_r['id']]['local10d'])."\" /></td>
 			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][local19]\"
 				size=\"20\" maxlength=\"24\"
-				value=\"".prepare($inscoidmap[$i_r['id']]['group'])."\" /></td>
+				value=\"".prepare($inscoidmap[$i_r['id']]['local19'])."\" /></td>
+			<td><input type=\"TEXT\" name=\"inscoidmap[".$i_r['id']."][local24k]\"
+				size=\"20\" maxlength=\"24\"
+				value=\"".prepare($inscoidmap[$i_r['id']]['local24k'])."\" /></td>
 			</tr>
 			";
 		}
@@ -260,7 +263,9 @@ class InsuranceCompanyModule extends MaintenanceModule {
 				<td><b><abbr TITLE=\"".__("HCFA Form Space 10d")."\"
 					>".__("Local Use 10d")."</abbr></b></td>
 				<td><b><abbr TITLE=\"".__("HCFA Form Space 19")."\"
-					>".__("Local Use 9")."</abbr></b></td>
+					>".__("Local Use 19")."</abbr></b></td>
+				<td><b><abbr TITLE=\"".__("HCFA Form Space 24k")."\"
+					>".__("Local Use 24k")."</abbr></b></td>
 			</tr>
 			$map_buffer
 			</table>
