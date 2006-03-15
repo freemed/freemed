@@ -376,8 +376,19 @@ class EMRModule extends BaseModule {
 	//	Should be overridden by any module which needs different
 	//	access checks.
 	//
-	function acl_access ( $type, $patient ) { 
-		return freemed::acl_patient('emr', $type, $patient);
+	function acl_access ( $type, $patient ) {
+		if (!is_array($this->acl)) {
+			return freemed::acl_patient('emr', $type, $patient);
+		} else {
+			$this_user = CreateObject('_FreeMED.User');
+			$xs = explode(',', $this_user->local_record['userlevel']);
+			foreach ($xs AS $x) {
+				foreach ($this->acl AS $acl) {
+					if ($acl == $x) { return true; }
+				}
+			}
+		}
+		return false;
 	} // end method acl_access
 	
 	function display_message () {
