@@ -905,6 +905,9 @@ class Remitt {
 		$buffer .= $this->_tag('payerkey', $coverage['covinsco'], true);
 		$this->_AddDependency('insco', $coverage['covinsco']);
 
+		// Get id map (while we still have the primary coverage)
+		$map = unserialize(freemed::get_link_field($coverage['covinsco'], 'insco', 'inscoidmap'));
+
 		// Handle second key
 		if ($covnum != 0) {
 			$covnum++; 
@@ -925,10 +928,6 @@ class Remitt {
 		}
 		$buffer .= $this->_tag('otherinsuredkey', $coverage['covinsco'], 'coverage');
 		$this->_AddDependency('insco', $coverage['covinsco']);
-
-		// Get id map
-		$map = unserialize(freemed::get_link_field($p['procinsco'],
-			'insco', 'inscoidmap'));
 
 		// Figure out type of service
 		$cptobj = freemed::get_link_rec($p['proccpt'], 'cpt');
