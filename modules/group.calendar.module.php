@@ -76,6 +76,11 @@ class GroupCalendar extends CalendarModule {
 		$this->CalendarModule();
 	} // end constructor GroupCalendar	
 
+	function mark_to_value ( $mark ) {
+		if ($mark == 0) { return __("Travel"); }
+		return freemed::config_value("cal".$mark);
+	} // end method mark_to_value
+
 	function mark_array() {
 		$mark[__("Travel")] = "0";
 		for ($i=1;$i<=8;$i++) {
@@ -226,6 +231,68 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 		if (empty($selected_date)) $selected_date = date("Y-m-d");
 
 		if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
+
+		$ds = array (
+			15 => "0:15",
+			30 => "0:30",
+			45 => "0:45",
+			60 => "1:00"
+		);
+		$display_buffer .= "
+		<!-- javascript for cool overlay stuff -->
+		<style type=\"text/css\">
+		.caloverlay { position: absolute; z-index: 1; height: 10ex; width: 300px; background: #cccccc; border: 1px solid #000000; }
+		</style>
+		<script langauge=\"javascript\">
+		var currentOverlayDiv = '';
+		function showOverlay(divid, phy, hour, min) {
+			// DEBUG: alert('Called with '+divid+','+phy+','+hour+','+min);
+
+			// Only display one at once
+			if (currentOverlayDiv != '') {
+				document.getElementById(currentOverlayDiv).innerHTML = '';
+			} else {
+				currentOverlayDiv = divid;
+			}
+			var newDiv = document.createElement('div');
+			newDiv.className = 'caloverlay';
+			newDiv.id = divid + '_form';
+
+			newDiv.innerHTML +=
+			'<form method=\"post\">'+
+			'<div align=\"center\">'+
+			'<input type=\"hidden\" name=\"module\" value=\"".addslashes($this->MODULE_CLASS)."\">'+
+			'<input type=\"hidden\" name=\"selected_date\" value=\"".urlencode($selected_date)."\">'+
+			'<input type=\"hidden\" name=\"group\" value=\"".urlencode($group)."\">'+
+			'<input type=\"hidden\" name=\"physician\" value=\"'+ phy + '\">'+
+			'<input type=\"hidden\" name=\"hour\" value=\"'+ hour +'\">'+
+			'<input type=\"hidden\" name=\"minute\" value=\"'+ min +'\">'+
+			'<table border=\"0\">'+
+			'<tr>'+
+				'<td colspan=\"2\">For '+ hour +':'+ min +' (".__("Mark as")." <b>".$this->mark_to_value($mark)."</b>)</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>".__("Mark As")."</td>'+ \n";
+			foreach ($ds AS $dur => $dis) {
+				$display_buffer .= "'<a class=\"button\" href=\"module_loader.php?module=".$this->MODULE_CLASS."&selected_date=".urlencode($selected_date)."&group=".urlencode($group)."&physician='+ phy +'&duration=".urlencode($dur)."&hour='+ hour +'&minute='+ min +'&mark=".urlencode($mark)."&submit=travelbook\">".$dis."</a>&nbsp'+ \n";
+			}
+			$display_buffer .= "'</td></tr>'+
+			'<tr>'+
+			'<td colspan=\"2\">'+
+			'<input type=\"button\" class=\"button\" value=\"Close\" onClick=\"document.getElementById(\''+currentOverlayDiv+'\').removeChild(document.getElementById(\''+currentOverlayDiv+'_form\')); return true;\">'+
+			'</td>'+
+			'</tr>'+
+			'</table>'+
+			'</div>'+
+			'</form>';
+			// Add overlay to DOM table
+			document.getElementById(currentOverlayDiv).appendChild(newDiv);
+			return true;
+		}
+		</script>
+		";
+			//'<input type=\"hidden\" name=\"mark\" value=\"".urlencode($mark)."\">'+
+			//'<input type=\"hidden\" name=\"duration\" value=\"".urlencode($k)."\">'+
 
 		// Display header
 		$buffer .= "
@@ -396,7 +463,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 							)."</td>\n";
 					} else {
 						// Handle empty event
-						$buffer .= "<td colspan=\"1\" CLASS=\"cell\" align=\"LEFT\" valign=\"MIDDLE\"><!-- $idx --></td>\n";
+						$buffer .= "<td colspan=\"1\" CLASS=\"cell\" align=\"LEFT\" valign=\"MIDDLE\" id=\"overlay_${this_phy}_${c_hour}_${c_min}\" onClick=\"showOverlay('overlay_${this_phy}_${c_hour}_${c_min}', '${this_phy}', '${c_hour}', '${c_min}'); return true;\"><!-- $idx --></td>\n";
 						/*
 						$check = array (
 							15 => "0:15",
