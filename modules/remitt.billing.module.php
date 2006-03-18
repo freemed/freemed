@@ -247,7 +247,7 @@ class RemittBillingTransport extends BillingModule {
 					// These default to values used by the default
 					$this_coverage = CreateObject('FreeMED.Coverage', $curcov);
 					//print "media for $c set to electronic<br/>\n";
-					$media[$c] = 'electronic';
+					$media[$c] = $this_coverage->covinsco->local_record['inscodefoutput'];
 					//$format[$c] = $this_coverage->covinsco->local_record['inscodefformat'];
 					//$target[$c] = $this_coverage->covinsco->local_record['inscodeftarget'];
 				}
@@ -564,8 +564,11 @@ class RemittBillingTransport extends BillingModule {
 		// Loop through claims
 		global $coverage;
 		foreach ($these_claims AS $__garbage => $c) {
-			$__dummy = $this->PatientCoverages($c, &$curcov);
+			$coverages = $this->PatientCoverages($c, &$curcov);
 			$coverage[$c] = $curcov;
+			$__temp = CreateObject('FreeMED.Coverage', $coverage[$c]);
+			$media[$c] = $__temp->covinsco->local_record['inscodefoutput'];
+			unset($__temp);
 
 			// Get claim record information from procrec
 			$_record = freemed::get_link_rec($c, 'procrec');
@@ -597,8 +600,6 @@ class RemittBillingTransport extends BillingModule {
 
 			// Depending on coverage from procedure,
 			// we put together a list of everything
-			$coverages = $this->PatientCoverages($c, &$curcov);
-			//print "coverages ($c) = "; print_r($coverages); print "<br/>\n";
 			foreach ($coverages AS $__garbage => $cov) {
 				$this_coverage = CreateObject('FreeMED.Coverage', $cov);
 				$buffer .= "<option value=\"".prepare($cov)."\" ".( $cov == $curcov ? 'selected' : '' ).">".$this_coverage->covinsco->insconame." ".

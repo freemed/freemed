@@ -8,7 +8,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 
 	var $MODULE_NAME = "Insurance Companies";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.4";
+	var $MODULE_VERSION = "0.4.1";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
@@ -38,6 +38,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 		"inscoidmap",
 		"inscox12id",
 		// Billing related information
+		"inscodefoutput",
 		"inscodefformat",
 		"inscodeftarget",
 		"inscodefformate",
@@ -70,6 +71,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
 			'inscomod' => SQL__TEXT,
 			'inscoidmap' => SQL__TEXT,
 			'inscox12id' => SQL__VARCHAR(32),
+			'inscodefoutput' => SQL__ENUM(array('electronic', 'paper')),
 			'inscodefformat' => SQL__VARCHAR(50),
 			'inscodeftarget' => SQL__VARCHAR(50),
 			'inscodefformate' => SQL__VARCHAR(50),
@@ -169,7 +171,7 @@ class InsuranceCompanyModule extends MaintenanceModule {
   $book->add_page(
    __("Internal Information"),
    array("inscoid", "inscogroup", "inscotype", "inscoassign", "inscomod",
-	'inscox12id', 'inscodefformat', 'inscodeftarget', 
+	'inscox12id', 'inscodefoutput', 'inscodefformat', 'inscodeftarget', 
 	'inscodefformate', 'inscodeftargete' ),
 	html_form::form_table(array(
     __("NEIC ID") =>
@@ -196,6 +198,15 @@ class InsuranceCompanyModule extends MaintenanceModule {
     freemed::multiple_choice ("SELECT * FROM insmod
       ORDER BY insmoddesc", "insmoddesc", "inscomod",
       $inscomod, false),
+
+	__("Default Output") =>
+	html_form::select_widget(
+		'inscodefoutput',
+		array(
+			__("electronic") => 'electronic',
+			__("paper") => 'paper'
+		)
+	),
 
 	__("Default Paper Billing Format") =>
 	( $remitt_up ?
@@ -400,6 +411,19 @@ class InsuranceCompanyModule extends MaintenanceModule {
 			);
 			$GLOBALS['sql']->query( 'UPDATE '.$this->table_name.' SET inscox12id=\'\' WHERE id>0');
 		}
+
+		// Version 0.4.1
+		//
+		//	Add inscodefoutput for remitt
+		//
+		if (!version_check ( $version, '0.4.1' )) {
+			$GLOBALS['sql']->query(
+				'ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN inscodefoutput ENUM(\'electronic\', \'paper\') AFTER inscox12id'
+			);
+			$GLOBALS['sql']->query( 'UPDATE '.$this->table_name.' SET inscodefoutput=\'electronic\' WHERE id>0');
+		}
+
 	} // end method _update
 
 } // end class InsuranceCompanyModule
