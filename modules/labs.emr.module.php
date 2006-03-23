@@ -19,6 +19,7 @@ class LabsModule extends EMRModule {
 	var $patient_field  = "labpatient";
 
 	function LabsModule () {
+		// __("Labs")
 		// Table definition
 		$this->table_definition = array (
 			'labpatient' => SQL__INT_UNSIGNED(0), // PID

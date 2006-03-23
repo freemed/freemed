@@ -17,6 +17,7 @@ class FaxStatus extends MaintenanceModule {
 	var $table_name = "faxstatus";
 
 	function FaxStatus () {
+		// __("Fax Status")
 		$this->table_definition = array (
 			'fsid' => SQL__VARCHAR(16),
 			'fsmodule' => SQL__VARCHAR(50),

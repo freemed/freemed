@@ -17,6 +17,7 @@ class ClaimLogTable extends MaintenanceModule {
 	var $table_name = "claimlog";
 
 	function ClaimLogTable ( ) {
+		// __("Claim Log")
 		$this->table_definition = array (
 			'cltimestamp' => SQL__TIMESTAMP(14),
 			'cluser' => SQL__INT_UNSIGNED(0),

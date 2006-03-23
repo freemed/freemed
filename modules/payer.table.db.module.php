@@ -17,6 +17,8 @@ class PayerTable extends MaintenanceModule {
 	var $table_name = "payer";
 
 	function PayerTable () {
+		// __("Payer Table")
+
 		$this->table_definition = array (
 			'payerinsco' => SQL__INT_UNSIGNED(0),
 			'payerstartdt' => SQL__TEXT,

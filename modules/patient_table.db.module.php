@@ -18,6 +18,8 @@ class PatientTable extends MaintenanceModule {
 	var $table_name = "patient";
 
 	function PatientTable () {
+		// __("Patient Table")
+
 		$this->table_definition = array (
 			'ptdtadd' => SQL__DATE,
 			'ptdtmod' => SQL__DATE,

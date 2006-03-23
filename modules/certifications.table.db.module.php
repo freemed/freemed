@@ -18,6 +18,7 @@ class CertificationsTable extends MaintenanceModule {
 	var $table_name = "certifications";
 
 	function CertificationsTable () {
+		// __("Certifications Table")
 		$this->table_definition = array (
 			'certpatient' => SQL__INT_UNSIGNED(0),
 			'certtype' => SQL__INT_UNSIGNED(0),

@@ -17,6 +17,7 @@ class LabResults extends MaintenanceModule {
 	var $table_name = "labresults";
 
 	function LabResults ( ) {
+		// __("Lab Results")
 		$this->table_definition = array (
 			'labid' => SQL__INT_UNSIGNED(0),
 			'labpatient' => SQL__INT_UNSIGNED(0),

@@ -17,6 +17,7 @@ class CallinTable extends MaintenanceModule {
 	var $table_name = "callin";
 
 	function CallinTable () {
+		// __("Call-in Table")
 		$this->table_definition = array (
 			'cilname' => SQL__VARCHAR(50),
 			'cifname' => SQL__VARCHAR(50),

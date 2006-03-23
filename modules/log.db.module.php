@@ -18,6 +18,7 @@ class LogModule extends MaintenanceModule {
 	var $table_name = 'log';
 
 	function LogModule () {
+		// __("Log")
 		$this->table_definition = array (
 			'logstamp' => SQL__TIMESTAMP(14),
 			'loguser' => SQL__INT_UNSIGNED(0),

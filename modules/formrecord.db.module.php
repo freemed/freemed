@@ -17,6 +17,7 @@ class FormRecord extends MaintenanceModule {
 	var $table_name = "form_record";
 
 	function FormRecord ( ) {
+		// __("Form Record")
 		$this->table_definition = array (
 			'fr_id' => SQL__INT_UNSIGNED(0),
 			'fr_uuid' => SQL__CHAR(36),

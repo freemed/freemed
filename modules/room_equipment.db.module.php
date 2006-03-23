@@ -20,6 +20,8 @@ class RoomEquipment extends MaintenanceModule {
 	var $widget_hash    = "##reqname## (##reqdescrip##)";
 
 	function RoomEquipment () {
+		// __("Room Equipment")
+
 		$this->table_definition = array (
 			'reqname' => SQL__VARCHAR(50),
 			'reqdescrip' => SQL__VARCHAR(150),

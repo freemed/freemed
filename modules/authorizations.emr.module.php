@@ -44,6 +44,7 @@ class AuthorizationsModule extends EMRModule {
 	);
 
 	function AuthorizationsModule () {
+		// __("Insurance Authorizations")
 		// Table definition
 		$this->table_definition = array (
 			'authdtadd' => SQL__DATE,

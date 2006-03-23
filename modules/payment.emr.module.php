@@ -40,6 +40,8 @@ class PaymentModule extends EMRModule {
 
 	// contructor method
 	function PaymentModule ($nullvar = "") {
+		// __("Transactions")
+
 		// Table definition
 		$this->table_definition = array (
 			'payrecdtadd' => SQL__DATE,

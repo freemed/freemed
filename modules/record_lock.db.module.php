@@ -17,6 +17,8 @@ class RecordLockModule extends MaintenanceModule {
 	var $table_name = "recordlock";
 
 	function RecordLockModule () {
+		// __("Record Lock")
+
 		$this->table_definition = array (
 			'lockstamp' => SQL__TIMESTAMP(16),
 			'locksession' => SQL__VARCHAR(128),

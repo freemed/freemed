@@ -22,6 +22,7 @@ class FinancialDemographics extends EMRModule {
 	var $patient_field  = "fdpatient";
 
 	function FinancialDemographics () {
+		// __("Financial Demographics")
 		// Table definition
 		$this->table_definition = array (
 			'fdtimestamp' => SQL__TIMESTAMP(16),

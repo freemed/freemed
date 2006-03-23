@@ -18,6 +18,7 @@ class AnesthTable extends MaintenanceModule {
 	var $table_name = "anesth";
 
 	function AnesthTable () {
+		// __("Anesthesiology Scheduler Table")
 		$this->table_definition = array (
 			'andate' => SQL__DATE,
 			'anphysician' => SQL__INT_UNSIGNED(0),

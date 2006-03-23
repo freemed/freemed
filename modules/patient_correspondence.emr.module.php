@@ -21,6 +21,8 @@ class PatientCorrespondence extends EMRModule {
 	var $print_template = 'patient_correspondence';
 
 	function PatientCorrespondence () {
+		// __("Patient Correspondence")
+
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			__("Date") => "letterdt",

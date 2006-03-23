@@ -17,6 +17,8 @@ class Zipcodes extends MaintenanceModule {
 	var $table_name = "zipcodes";
 
 	function Zipcodes () {
+		// __("Zipcodes")
+
 		$this->table_definition = array (
 			'zip' => SQL__CHAR(5),
 			'city' => SQL__CHAR(25),

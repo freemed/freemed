@@ -17,6 +17,8 @@ class SchedulerTable extends MaintenanceModule {
 	var $table_name = "scheduler";
 
 	function SchedulerTable () {
+		// __("Scheduler Table")
+
 		$this->table_definition = array (
 			'caldateof' => SQL__DATE,
 			'calcreated' => SQL__TIMESTAMP(16),

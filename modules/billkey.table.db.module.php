@@ -18,6 +18,7 @@ class BillKey extends MaintenanceModule {
 	var $table_name = "billkey";
 
 	function BillKey () {
+		// __("Bill Keys")
 		$this->table_definition = array (
 			'billkeydate' => SQL__DATE,
 			'billkey' => SQL__BLOB,

@@ -21,6 +21,8 @@ class PatientCorrespondenceTemplates extends MaintenanceModule {
 	var $table_name = "patletters_templates";
 
 	function PatientCorrespondenceTemplates () {
+		// __("Patient Correspondence Templates")
+
 		// Check for, and if not there create, a user object
 		global $this_user;
 		if (!is_object($this_user)) {
