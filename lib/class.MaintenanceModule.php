@@ -108,6 +108,7 @@ class MaintenanceModule extends BaseModule {
 		// Store the rpc map in the meta information
 		$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
 		$this->_SetMetaInformation('distinct_fields', $this->distinct_fields);
+		$this->_SetMetaInformation('table_name', $this->table_name);
 
 		// Call parent constructor
 		$this->BaseModule();
