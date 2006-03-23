@@ -2,7 +2,7 @@
 <gettextXML>
 <information>
 	<Locale>de_DE</Locale>
-	<LocaleName>Deutsche</LocaleName>
+	<LocaleName>Deutsch</LocaleName>
 
 
 	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
@@ -11,9 +11,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-29 09:05-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2005-09-29 09:05-0400 -->
+	<!-- type = PO-Revision-Date, data = 2006-03-23 14:56-0500 -->
 
-	<Translator>FULL NAME &#x3C;EMAIL@ADDRESS&#x3E;</Translator>
+	<Translator>Volker Bradley &#x3C;volkerbradley@gmail.com&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -23,8 +23,12 @@
 	<ContentTransferEncoding>8bit</ContentTransferEncoding>
 	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
 
-	<!-- type = X-Generator, data = Translate Toolkit 0.8rc3.20050712 -->
+	<!-- type = X-Generator, data = Pootle 0.6.3.20050712 -->
 </information>
+<translation>
+	<original>Claim Log</original>
+	<translated>Verrechnungs-Log</translated>
+</translation>
 
 </gettextXML>
 

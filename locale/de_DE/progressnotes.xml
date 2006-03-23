@@ -2,7 +2,7 @@
 <gettextXML>
 <information>
 	<Locale>de_DE</Locale>
-	<LocaleName>Deutsche</LocaleName>
+	<LocaleName>Deutsch</LocaleName>
 
 
 	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
@@ -11,9 +11,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2006-02-07 13:34-0500 -->
+	<!-- type = PO-Revision-Date, data = 2006-03-23 15:43-0500 -->
 
-	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
+	<Translator>Volker Bradley &#x3C;volkerbradley@gmail.com&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -248,6 +248,18 @@
 <translation>
 	<original>View $this-CODE(0x8330320)record_name</original>
 	<translated>View $this-CODE(0x8330320)record_name</translated>
+</translation>
+<translation>
+	<original>View $this-CODE(0x867003c)record_name</original>
+	<translated>View $this-CODE(0x867003c)record_name</translated>
+</translation>
+<translation>
+	<original>View $this-CODE(0x8664d2c)record_name</original>
+	<translated>View $this-CODE(0x8664d2c)record_name</translated>
+</translation>
+<translation>
+	<original>View $this-CODE(0x865cfa4)record_name</original>
+	<translated>View $this-CODE(0x865cfa4)record_name</translated>
 </translation>
 
 </gettextXML>

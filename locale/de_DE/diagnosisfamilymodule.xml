@@ -2,7 +2,7 @@
 <gettextXML>
 <information>
 	<Locale>de_DE</Locale>
-	<LocaleName>Deutsche</LocaleName>
+	<LocaleName>Deutsch</LocaleName>
 
 
 	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
@@ -11,7 +11,7 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2006-01-31 14:44-0500 -->
+	<!-- type = PO-Revision-Date, data = 2006-02-13 14:24-0500 -->
 
 	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
@@ -36,6 +36,10 @@
 <translation>
 	<original>Remove Changes</original>
 	<translated>&#xC3;&#x84;nderungen verwerfen</translated>
+</translation>
+<translation>
+	<original>Diagnosis Family Maintenance</original>
+	<translated>Diagnosefamilien Verwaltung</translated>
 </translation>
 
 </gettextXML>
