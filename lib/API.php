@@ -904,6 +904,26 @@ class freemed {
 		return true;
 	} // end function freemed::module_register
 
+	// Function: freemed::module_tables
+	//
+	//	Get list of tables for modules.
+	//
+	// Returns:
+	//
+	//	i18n'd associative array
+	//
+	function module_tables ( ) {
+		$_cache = freemed::module_cache();
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $k => $v) {
+			if ($t = $v['META_INFORMATION']['table_name']) {
+				GettextXML::textdomain(strtolower($v['MODULE_CLASS']));
+				$r[__($v['MODULE_NAME'])] = $t;
+			}
+		}
+		ksort($r);
+		return $r;
+	} // end function freemed::module_tables
+
 	// Function: freemed::module_version
 	//
 	//	Get the current version number of a particular module in
