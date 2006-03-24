@@ -138,7 +138,7 @@ class Annotations extends EMRModule {
 		$q = $GLOBALS['sql']->insert_query(
 			$this->table_name,
 			array(
-				'amodule' => $module,
+				'amodule' => strtolower($module),
 				'aid' => $id,
 				'atimestamp' => SQL__NOW,
 				'apatient' => ( $patient ? $patient : $_REQUEST['patient'] ),
