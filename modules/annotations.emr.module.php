@@ -88,6 +88,17 @@ class Annotations extends EMRModule {
 	function mod() { $this->add(); }
 
 	function form_table ( ) {
+		global $display_buffer;
+		$GLOBALS['__freemed']['on_load'] = 'changeFocus';
+		$display_buffer .= "
+		<script language=\"Javascript\">
+		function changeFocus () {
+		   document.getElementById('annotation').focus();
+		   return true;
+		}
+		</script>
+		";
+
 		return array (
 			__("Annotation") =>
 			html_form::text_area('annotation')
