@@ -364,6 +364,16 @@ class BaseModule extends module {
 					get_class($this),
 					$_REQUEST['id']
 				);
+				if ($_REQUEST['attachment']) {
+					$parts = explode('|', $_REQUEST['attachment']);
+					$this_user->setFaxInQueue(
+						$output,
+						$_r[$this->patient_field],
+						$_REQUEST['fax_number'],
+						$parts[0],
+						$parts[1]
+					);
+				}
 			}
 			$display_buffer .= "<b>".__("Refreshing")."... </b>\n";
 			//$GLOBALS['refresh'] = $this->page_name."?".

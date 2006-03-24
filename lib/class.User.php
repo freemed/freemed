@@ -112,7 +112,7 @@ class User {
 		$query = "SELECT * FROM faxstatus WHERE fsuser='".addslashes($this->user_number)."'";
 		$result = $GLOBALS['sql']->query($query);
 		while ($r = $GLOBALS['sql']->fetch_array($result)) {
-			if ($r['fsid']) { $f[$r['fsid']] = $r['fsid']; }
+			if ($r['fsid']) { $f[$r['id']] = $r['id']; }
 		}
 		if (is_array($f)) { return $f; } 
 		return NULL;
@@ -146,7 +146,7 @@ class User {
 	//	Associative array
 	//
 	function getFaxDetails ( $fid ) {
-		$query = "SELECT * FROM faxstatus WHERE fsid='".addslashes($fid)."'";
+		$query = "SELECT * FROM faxstatus WHERE id='".addslashes($fid)."'";
 		$result = $GLOBALS['sql']->query($query);
 		$r = $GLOBALS['sql']->fetch_array($result);
 		return $r;
@@ -193,7 +193,7 @@ class User {
 	//	$id - Fax id (fid), not record id
 	//
 	function removeFaxFromQueue ( $id ) {
-		$q = "DELETE FROM faxstatus WHERE fsid='".addslashes($id)."'";
+		$q = "DELETE FROM faxstatus WHERE id='".addslashes($id)."'";
 		$GLOBALS['sql']->query( $q );
 	} // end method removeFaxFromQueue
 
@@ -209,13 +209,14 @@ class User {
 		if (!($fax = $this->getFaxesInQueue())) { return ''; }
 		$f = CreateObject('_FreeMED.Fax');
 		foreach ($fax AS $k => $v) {
-			$st = $f->State($k);
+			$d = $this->getFaxDetails( $k );
+			$st = $f->State($d['fsid']);
 			if ($st == 1) {
-				$messages[] = sprintf(
+				$tmp = sprintf(
 					__("Fax job %d to %s successful."),
-					$k, $f->GetNumberFromId($k)
+					$d['fsid'], $f->GetNumberFromId($d['fsid'])
 					);
-				$d = $this->getFaxDetails( $k );
+				$messages[$tmp] = $tmp;
 				if ($d['fsmodule']) {
 					$_cache = freemed::module_cache();
 					module_function(
@@ -224,27 +225,34 @@ class User {
 						array(
 							$d['fsmodule'],
 							$d['fsrecord'],
-							sprintf(__("Faxed to %s"), $f->GetNumberFromId($k))
+							sprintf(__("Faxed to %s"), $f->GetNumberFromId($d['fsid']))
 						)
 					);
 				}
-				$this->removeFaxFromQueue($k);
+				$remove[$k] = $k;
 			} elseif (is_array($st) and $st[0] == -1) {
 				$messages[] = sprintf(
 					__("Fax job %d (%s) failed with '%s'."),
-					$k, $f->GetNumberFromId($k), $st[1]
+					$d['fsid'], $f->GetNumberFromId($d['fsid']), $st[1]
 					);
-				$this->removeFaxFromQueue($k);
+				$remove[$k] = $k;
 			}
 		}
 
 		// Create Javascript notification if there is any
 		if (is_array($messages)) {
 			$final = join('\n', $messages);
-			return "<script language=\"javascript\">\n".
+			$return = "<script language=\"javascript\">\n".
 				"alert('".addslashes($final)."');\n".
 				"</script>\n";
 		}
+
+		// Remove at the end, in case multiples use the same ID
+		foreach ($remove AS $k) {
+			$this->removeFaxFromQueue($k);
+		}
+
+		return $return;
 	} // end method faxNotify
 
 	// Method: getName
