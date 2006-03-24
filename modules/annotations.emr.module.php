@@ -141,7 +141,7 @@ class Annotations extends EMRModule {
 				'amodule' => strtolower($module),
 				'aid' => $id,
 				'atimestamp' => SQL__NOW,
-				'apatient' => ( $patient ? $patient : $_REQUEST['patient'] ),
+				'apatient' => ( $patient ? $patient : $this->lookupPatient($module, $id) ),
 				'atable' => $this->_resolve_module_to_table($module),
 				'auser' => $_SESSION['authdata']['user'],
 				'annotation' => $text
@@ -233,6 +233,36 @@ class Annotations extends EMRModule {
 		$b = htmlentities($b);
 		return $b;
 	} // end method prepareAnnotation
+
+	// Method: lookupPatient
+	//
+	//	Get patient from other information given.
+	//
+	// Parameters:
+	//
+	//	$module - Module name
+	//
+	//	$id - Record id
+	//
+	// Returns:
+	//
+	//	Patient id number
+	//
+	function lookupPatient ( $module, $id ) {
+		$_cache = freemed::module_cache();
+		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $k => $v) {
+			if ($t = $v['META_INFORMATION']['table_name']) {
+				$tables[strtolower($v['MODULE_CLASS'])] = $t;
+				$pfield[strtolower($v['MODULE_CLASS'])] = $v['META_INFORMATION']['patient_field'];
+			}
+		}
+		if ($pfield[strtolower($module)] and $tables[strtolower($module)]) {
+			$r = freemed::get_link_rec( $id, $tables[strtolower($module)] );
+			return $r[$pfield[strtolower($module)]];
+		} else {
+			return 0;
+		}
+	} // end function freemed::module_to_table
 
 	// Update
 	function _update ( ) {
