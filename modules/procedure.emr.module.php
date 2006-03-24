@@ -122,6 +122,8 @@ class ProcedureModule extends EMRModule {
 		$this->_SetMetaInformation('RuleType', "Billing"); // __("Billing")
 		$this->_SetMetaInformation('RuleInterface', "RuleInterface");
 
+		$this->acl = array ( 'emr', 'bill' );
+
 		// Call parent constructor
 		$this->EMRModule();
 	} // end constructor ProcedureModule
@@ -221,7 +223,7 @@ class ProcedureModule extends EMRModule {
 		  __("Voucher Number") =>
 		  	html_form::text_widget('procvoucher', 20),
 		  __("Authorization") =>
-		  	module_function('authorizationsmodule', 'widget', array('procauth', $patient)),
+		  	module_function('authorizationsmodule', 'widget', array('procauth', $patient, "( CURRENT_DATE() >= authdtbegin AND CURRENT_DATE() <= authdtend AND authvisitsremain > 0)")),
 		  __("Certifications") => freemed_display_selectbox($cert_result,"#certdesc#","proccert"),
 		  __("Claim Type") => freemed_display_selectbox($clmtype_result,"#clmtpname# #clmtpdescrip#","procclmtp"),
 		  __("Referring Provider") =>
