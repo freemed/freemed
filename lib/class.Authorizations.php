@@ -157,6 +157,7 @@ class Authorizations {
 		// Check by visits remaining
 		if ($a['authvisitsremain'] < 1) {
 			//print "denied by no visits remaining<br/>\n";
+			return false;
 		}
 
 		// If all else fails, this is valid, return pass
