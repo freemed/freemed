@@ -9,10 +9,7 @@ class FinancialDemographics extends EMRModule {
 	var $MODULE_NAME    = "Financial Demographics";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
-	var $MODULE_DESCRIPTION = "
-	Keep track of information for determining sliding fee schedule
-	and other income and dependent parties related information.
-	";
+	var $MODULE_DESCRIPTION = "Keep track of information for determining sliding fee schedule and other income and dependent parties related information.";
 	var $MODULE_FILE = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
@@ -23,6 +20,8 @@ class FinancialDemographics extends EMRModule {
 
 	function FinancialDemographics () {
 		// __("Financial Demographics")
+		// __("Keep track of information for determining sliding fee schedule and other income and dependent parties related information.")
+
 		// Table definition
 		$this->table_definition = array (
 			'fdtimestamp' => SQL__TIMESTAMP(16),
