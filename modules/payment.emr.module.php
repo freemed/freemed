@@ -810,7 +810,7 @@ class PaymentModule extends EMRModule {
                              WHERE id='".addslashes($payrecproc)."'";
                     break;
                 case ADJUSTMENT: // adjustment category (add) 1
-					$procamtpaid = $procamtpaid - $payrecamt;
+					$procamtpaid = $procamtpaid + $payrecamt;
 					$procbalcurrent = $proccharges - $procamtpaid;
                     $query = "UPDATE procrec SET
                              procbalcurrent = '$procbalcurrent',
@@ -1070,7 +1070,7 @@ class PaymentModule extends EMRModule {
                     break;
                 case ADJUSTMENT: // adjustments 1
                     $pay_color       = "#ff0000";
-                    $payment         = bcadd(-$payrecamt, 0, 2);
+                    $payment         = bcadd($payrecamt, 0, 2);
                     $charge          = "&nbsp;";
                     $total_payments += $payment;
                     $proc_payments += $payment;
