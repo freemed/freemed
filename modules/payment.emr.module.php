@@ -896,7 +896,7 @@ class PaymentModule extends EMRModule {
             if ($procid)
             {
                 $pay_query  = "SELECT * FROM payrec
-                              WHERE payrecpatient='$patient' AND payrecproc='$procid'
+                              WHERE payrecpatient='".addslashes($patient)."' AND payrecproc='".addslashes($procid)."'
                               ORDER BY payrecdt,id";
             }
             else
@@ -1224,6 +1224,10 @@ class PaymentModule extends EMRModule {
             <TD>&nbsp;</TD>
             </TR>
 			</TABLE>
+
+		<div align=\"center\">
+		<a class=\"button\" href=\"module_loader.php?module=".get_class($this)."&patient=".urlencode($patient)."&return=".$_REQUEST['return']."\">".__("Return to Ledger")."</a>
+		</div>
             ";
 
         } // end ledger
@@ -1281,9 +1285,9 @@ class PaymentModule extends EMRModule {
             global $sql,$patient,$module;
 
             $display_buffer .= "<FORM ACTION=\"$this->page_name\" METHOD=POST>
-            <INPUT TYPE=HIDDEN NAME=\"patient\" VALUE=\"$patient\">
-            <INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
-            <INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"$module\">
+            <INPUT TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"$patient\">
+            <INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\">
+            <INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"$module\">
             ";
 
             // initialize line item count
@@ -1344,7 +1348,7 @@ class PaymentModule extends EMRModule {
 					prepare($r['procdtbilled']) : "&nbsp;" )."</small></td>
                 <td ALIGN=\"LEFT\"><a class=\"button\" ".
 		"HREF=\"$this->page_name?action=addform".
-                "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=".$r['id']."\"
+                "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=".$r['id']."&return=".$_REQUEST['return']."\"
                 >Ledger</a>
                 </tr>
                 ";
