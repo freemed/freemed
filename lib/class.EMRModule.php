@@ -383,6 +383,8 @@ class EMRModule extends BaseModule {
 			$this_user = CreateObject('_FreeMED.User');
 			$xs = explode(',', $this_user->local_record['userlevel']);
 			foreach ($xs AS $x) {
+				// Admin has universal access
+				if ($x == 'admin') { return true; }
 				foreach ($this->acl AS $acl) {
 					if ($acl == $x) { return true; }
 				}
