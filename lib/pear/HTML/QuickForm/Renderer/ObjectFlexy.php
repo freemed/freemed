@@ -21,7 +21,8 @@
 require_once("HTML/QuickForm/Renderer/Object.php");
 
 /**
- * @abstract Long Description
+ * QuickForm renderer for Flexy template engine, static version.
+ * 
  * A static renderer for HTML_Quickform.  Makes a QuickFormFlexyObject
  * from the form content suitable for use with a Flexy template
  *
@@ -36,13 +37,13 @@ require_once("HTML/QuickForm/Renderer/Object.php");
  * $view->form = $renderer->toObject();
  * $template->compile("mytemplate.html");
  *
- * @see QuickFormFlexyObject
- *
  * Based on the code for HTML_QuickForm_Renderer_ArraySmarty
  *
- * @public
+ * @see QuickFormFlexyObject
+ * @access public
  */
-class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object {
+class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
+{
     /**
      * HTML_Template_Flexy instance
      * @var object $_flexy
@@ -59,7 +60,7 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
      * The current element index inside a group
      * @var integer $_groupElementIdx
      */
-     var $_groupElementIdx = 0;
+    var $_groupElementIdx = 0;
 
     /**
      * Name of template file for form html
@@ -88,11 +89,11 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
      * @param $flexy object   HTML_Template_Flexy instance
      * @public
      */
-    function HTML_QuickForm_Renderer_ObjectFlexy($flexy)
+    function HTML_QuickForm_Renderer_ObjectFlexy(&$flexy)
     {
         $this->HTML_QuickForm_Renderer_Object(true);
         $this->_obj = new QuickformFlexyForm();
-        $this->_flexy = $flexy;
+        $this->_flexy =& $flexy;
     } // end constructor
 
     function renderHeader(&$header)
@@ -115,14 +116,14 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
      * Creates an object representing an element containing
      * the key for storing this
      *
-     * @private
+     * @access private
      * @param element object     An HTML_QuickForm_element object
      * @param required bool        Whether an element is required
      * @param error string    Error associated with the element
      * @return object
      */
-     function _elementToObject(&$element, $required, $error)
-     {
+    function _elementToObject(&$element, $required, $error)
+    {
         $ret = parent::_elementToObject($element, $required, $error);
         if($ret->type == 'group') {
             $ret->html = $element->toHtml();
@@ -138,16 +139,34 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
         }
 
         // Create an element key from the name
-        $ret->key = $ret->name;
-        if(strstr($ret->key, '[')) {
-            preg_match('/\\[([^]]*)\\]/', $ret->key, $matches);
-            $ret->key = $matches[1];
-            if(empty($ret->key)) {
-                $ret->key = $this->_groupElementIdx++;
+        if (false !== ($pos = strpos($ret->name, '[')) || is_object($this->_currentGroup)) {
+            if (!$pos) {
+                $keys = '->{\'' . $ret->name . '\'}';
+            } else {
+                $keys = '->{\'' . str_replace(array('[', ']'), array('\'}->{\'', ''), $ret->name) . '\'}';
             }
-        } elseif (empty($ret->key)) {
-            $ret->key = 'element_' . $this->_elementIdx;
+            // special handling for elements in native groups
+            if (is_object($this->_currentGroup)) {
+                // skip unnamed group items unless radios: no name -> no static access
+                // identification: have the same key string as the parent group
+                if ($this->_currentGroup->keys == $keys && 'radio' != $ret->type) {
+                    return false;
+                }
+                // reduce string of keys by remove leading group keys
+                if (0 === strpos($keys, $this->_currentGroup->keys)) {
+                    $keys = substr_replace($keys, '', 0, strlen($this->_currentGroup->keys));
+                }
+            }
+        } elseif (0 == strlen($ret->name)) {
+            $keys = '->{\'element_' . $this->_elementIdx . '\'}';
+        } else {
+            $keys = '->{\'' . $ret->name . '\'}';
         }
+        // for radios: add extra key from value
+        if ('radio' == $ret->type && '[]' != substr($keys, -2)) {
+            $keys .= '->{\'' . $ret->value . '\'}';
+        }
+        $ret->keys = $keys;
         $this->_elementIdx++;
         return $ret;
     }
@@ -156,18 +175,21 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
      * Stores an object representation of an element in the 
      * QuickformFormObject instance
      *
-     * @private
+     * @access private
      * @param elObj object  Object representation of an element
      * @return void
      */
     function _storeObject($elObj) 
     {
-        $key = $elObj->key;
-        unset($elObj->key);
-        if(is_object($this->_currentGroup) && ($elObj->type != 'group')) {
-            $this->_currentGroup->$key = $elObj;
-        } else {
-            $this->_obj->$key = $elObj;
+        if ($elObj) {
+            $keys = $elObj->keys;
+            unset($elObj->keys);
+            if(is_object($this->_currentGroup) && ('group' != $elObj->type)) {
+                $code = '$this->_currentGroup' . $keys . ' = $elObj;';
+            } else {
+                $code = '$this->_obj' . $keys . ' = $elObj;';
+            }
+            eval($code);
         }
     }
 
@@ -181,7 +203,7 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
      * {end:}
      * {html:h}
      *
-     * @public
+     * @access public
      * @param template string   Filename of template
      * @return void
      */
@@ -201,7 +223,7 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
      * {end:}
      * {label:h}
      *
-     * @public
+     * @access public
      * @param template string   Filename of template
      * @return void
      */
@@ -221,172 +243,19 @@ class HTML_QuickForm_Renderer_ObjectFlexy extends HTML_QuickForm_Renderer_Object
         $this->_flexy->compile($this->_html);
         $ret->html = $this->_flexy->bufferedOutputObject($ret);
     }
-
 } // end class HTML_QuickForm_Renderer_ObjectFlexy
 
 /**
- * @abstract Long Description
- * This class represents the object passed to outputObject()
- * 
- * Eg.  
- * {form.outputJavaScript():h}
- * {form.outputHeader():h}
- *   <table>
- *     <tr>
- *       <td>{form.name.label:h}</td><td>{form.name.html:h}</td>
- *     </tr>
- *   </table>
- * </form>
- * 
- * @public
+ * Adds nothing to QuickformForm, left for backwards compatibility
  */
-class QuickformFlexyForm {
-    /**
-     * Whether the form has been frozen
-     * @var boolean $frozen
-     */
-    var $frozen;        
-    
-    /**
-     * Javascript for client-side validation
-     * @var string $javascript
-     */
-     var $javascript;
-
-     /**
-      * Attributes for form tag
-      * @var string $attributes
-      */
-     var $attributes;
-
-     /**
-      * Note about required elements
-      * @var string $requirednote
-      */
-     var $requirednote;
-
-     /**
-      * Collected html of all hidden variables
-      * @var string $hidden
-      */
-     var $hidden;
-
-     /**
-      * Set if there were validation errors.  
-      * StdClass object with element names for keys and their
-      * error messages as values
-      * @var object $errors
-      */
-     var $errors;
-
-     /**
-      * Array of QuickformElementObject elements.  If there are headers in the form
-      * this will be empty and the elements will be in the 
-      * separate sections
-      * @var array $elements
-      */
-     var $elements;
-
-     /**
-      * Array of sections contained in the document
-      * @var array $sections
-      */
-     var $sections;
-
-     /**
-      * Output &lt;form&gt; header
-      * {form.outputHeader():h} 
-      * @return string    &lt;form attributes&gt;
-      */
-     function outputHeader()
-     {
-        $hdr = "<form " . $this->attributes . ">\n";
-        return $hdr;
-     }
-
-     /**
-      * Output form javascript
-      * {form.outputJavaScript():h}
-      * @return string    Javascript
-      */
-     function outputJavaScript()
-     {
-        return $this->javascript;
-     }
-} // end class QuickformFlexyForm
+class QuickformFlexyForm extends QuickformForm
+{
+}
 
 /**
- * Convenience class describing a form element.
- * The properties defined here will be available from 
- * your flexy templates by referencing
- * {form.zip.label:h}, {form.zip.html:h}, etc.
+ * Adds nothing to QuickformElement, left for backwards compatibility
  */
-class QuickformFlexyElement {
-    
-    /**
-     * Element name
-     * @var string $name
-     */
-    var $name;
-
-    /**
-     * Element value
-     * @var mixed $value
-     */
-    var $value;
-
-    /**
-     * Type of element
-     * @var string $type
-     */
-    var $type;
-
-    /**
-     * Whether the element is frozen
-     * @var boolean $frozen
-     */
-    var $frozen;
-
-    /**
-     * Label for the element
-     * @var string $label
-     */
-    var $label;
-
-    /**
-     * Whether element is required
-     * @var boolean $required
-     */
-    var $required;
-
-    /**
-     * Error associated with the element
-     * @var string $error
-     */
-    var $error;
-
-    /**
-     * Some information about element style
-     * @var string $style
-     */
-    var $style;
-
-    /**
-     * HTML for the element
-     * @var string $html
-     */
-    var $html;
-
-    /**
-     * If element is a group, the group separator
-     * @var mixed $separator
-     */
-    var $separator;
-
-    /**
-     * If element is a group, an array of subelements
-     * @var array $elements
-     */
-    var $elements;
-} // end class QuickformFlexyElement
+class QuickformFlexyElement extends QuickformElement
+{
+}
 ?>

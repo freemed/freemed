@@ -88,6 +88,12 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     var $_error = '<font color="red">{error}</font><br />{html}';
 
    /**
+    * Collected HTML for hidden elements, if needed  
+    * @var string
+    */
+    var $_hidden = '';
+
+   /**
     * Constructor
     *
     * @param object     An HTML_Template_IT or other compatible Template object to use
@@ -107,7 +113,7 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     */
     function startForm(&$form)
     {
-        $this->_formName = $form->getAttribute('name');
+        $this->_formName = $form->getAttribute('id');
 
         if (count($form->_duplicateIndex) > 0) {
             // Take care of duplicate elements
@@ -136,6 +142,10 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
         // show required note
         if ($this->_showRequired) {
             $this->_tpl->setVariable($this->_formName.'_required_note', $form->getRequiredNote());
+        }
+        // add hidden elements, if collected
+        if (!empty($this->_hidden)) {
+            $this->_tpl->setVariable($this->_formName . '_hidden', $this->_hidden);
         }
         // assign form attributes
         $this->_tpl->setVariable($this->_formName.'_attributes', $form->getAttributes(true));
@@ -184,6 +194,7 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
                 $this->_elementIndex++;
             }
             if ($varName != $this->_inGroup) {
+                $varName .= '_' == substr($varName, -1)? '': '_';
                 // element name is of type : group[name]
                 $label = $element->getLabel();
                 $html = $element->toHtml();
@@ -246,7 +257,13 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     */
     function renderHidden(&$element)
     {
-        $this->_tpl->setVariable($this->_formName.'_'.$element->getName().'_html', $element->toHtml());
+        if ($this->_tpl->placeholderExists($this->_formName . '_hidden')) {
+            $this->_hidden .= $element->toHtml();
+        } else {
+            $name = $element->getName();
+            $name = str_replace(array('[', ']'), array('_', ''), $name);
+            $this->_tpl->setVariable($this->_formName.'_'.$name.'_html', $element->toHtml());
+        }
     } // end func renderHidden
 
    /**
@@ -280,12 +297,16 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
             // Uses error blocks to set the special groups layout error
             // <!-- BEGIN form_group_error -->{form_group_error}<!-- END form_group_error -->
             if (!empty($error)) {
-                if ($this->_tpl->placeholderExists($varName.'_error') &&
-                   (strpos($this->_error, '{html}') !== false || strpos($this->_error, '{label}') !== false)) {
-                    $error = str_replace('{error}', $error, $this->_error);
-                    $this->_tpl->setVariable($varName.'_error', $error);
-                    array_pop($this->_errors);
+                if ($this->_tpl->placeholderExists($varName.'_error')) {
+                    if ($this->_tpl->blockExists($this->_formName . '_error_block')) {
+                        $this->_tpl->setVariable($this->_formName . '_error', $error);
+                        $error = $this->_getTplBlock($this->_formName . '_error_block');
+                    } elseif (strpos($this->_error, '{html}') !== false || strpos($this->_error, '{label}') !== false) {
+                        $error = str_replace('{error}', $error, $this->_error);
+                    }
                 }
+                $this->_tpl->setVariable($varName . '_error', $error);
+                array_pop($this->_errors);
             }
         }
         if (is_array($label)) {
@@ -371,15 +392,30 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     */
     function _renderRequired(&$label, &$html)
     {
-        if (!empty($label) && strpos($this->_required, '{label}') !== false) {
-            if (is_array($label)) {
-                $label[0] = str_replace('{label}', $label[0], $this->_required);
-            } else {
-                $label = str_replace('{label}', $label, $this->_required);
+        if ($this->_tpl->blockExists($tplBlock = $this->_formName . '_required_block')) {
+            if (!empty($label) && $this->_tpl->placeholderExists($this->_formName . '_label', $tplBlock)) {
+                $this->_tpl->setVariable($this->_formName . '_label', is_array($label)? $label[0]: $label);
+                if (is_array($label)) {
+                    $label[0] = $this->_getTplBlock($tplBlock);
+                } else {
+                    $label    = $this->_getTplBlock($tplBlock);
+                }
             }
-        }
-        if (!empty($html) && strpos($this->_required, '{html}') !== false) {
-            $html = str_replace('{html}', $html, $this->_required);
+            if (!empty($html) && $this->_tpl->placeholderExists($this->_formName . '_html', $tplBlock)) {
+                $this->_tpl->setVariable($this->_formName . '_html', $html);
+                $html = $this->_getTplBlock($tplBlock);
+            }
+        } else {
+            if (!empty($label) && strpos($this->_required, '{label}') !== false) {
+                if (is_array($label)) {
+                    $label[0] = str_replace('{label}', $label[0], $this->_required);
+                } else {
+                    $label = str_replace('{label}', $label, $this->_required);
+                }
+            }
+            if (!empty($html) && strpos($this->_required, '{html}') !== false) {
+                $html = str_replace('{html}', $html, $this->_required);
+            }
         }
     } // end func _renderRequired
 
@@ -399,7 +435,22 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
     */
     function _renderError(&$label, &$html, $error)
     {
-        if (!empty($label) && strpos($this->_error, '{label}') !== false) {
+        if ($this->_tpl->blockExists($tplBlock = $this->_formName . '_error_block')) {
+            $this->_tpl->setVariable($this->_formName . '_error', $error);
+            if (!empty($label) && $this->_tpl->placeholderExists($this->_formName . '_label', $tplBlock)) {
+                $this->_tpl->setVariable($this->_formName . '_label', is_array($label)? $label[0]: $label);
+                if (is_array($label)) {
+                    $label[0] = $this->_getTplBlock($tplBlock);
+                } else {
+                    $label    = $this->_getTplBlock($tplBlock);
+                }
+            } elseif (!empty($html) && $this->_tpl->placeholderExists($this->_formName . '_html', $tplBlock)) {
+                $this->_tpl->setVariable($this->_formName . '_html', $html);
+                $html = $this->_getTplBlock($tplBlock);
+            }
+            // clean up after ourselves
+            $this->_tpl->setVariable($this->_formName . '_error', null);
+        } elseif (!empty($label) && strpos($this->_error, '{label}') !== false) {
             if (is_array($label)) {
                 $label[0] = str_replace(array('{label}', '{error}'), array($label[0], $error), $this->_error);
             } else {
@@ -411,5 +462,29 @@ class HTML_QuickForm_Renderer_ITStatic extends HTML_QuickForm_Renderer
             $this->_errors[] = $error;
         }
     }// end func _renderError
+
+
+   /**
+    * Returns the block's contents
+    *
+    * The method is needed because ITX and Sigma implement clearing
+    * the block contents on get() a bit differently
+    *
+    * @param    string  Block name
+    * @return   string  Block contents
+    */
+    function _getTplBlock($block)
+    {
+        $this->_tpl->parse($block);
+        if (is_a($this->_tpl, 'html_template_sigma')) {
+            $ret = $this->_tpl->get($block, true);
+        } else {
+            $oldClear = $this->_tpl->clearCache;
+            $this->_tpl->clearCache = true;
+            $ret = $this->_tpl->get($block);
+            $this->_tpl->clearCache = $oldClear;
+        }
+        return $ret;
+    }
 } // end class HTML_QuickForm_Renderer_ITStatic
 ?>

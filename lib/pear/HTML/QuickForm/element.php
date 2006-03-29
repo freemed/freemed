@@ -199,6 +199,21 @@ class HTML_QuickForm_element extends HTML_Common
     } //end func freeze
 
     // }}}
+    // {{{ unfreeze()
+
+   /**
+    * Unfreezes the element so that it becomes editable
+    *
+    * @access public
+    * @return void
+    * @since  3.2.4
+    */
+    function unfreeze()
+    {
+        $this->_flagFrozen = false;
+    }
+
+    // }}}
     // {{{ getFrozenHtml()
 
     /**
@@ -211,18 +226,33 @@ class HTML_QuickForm_element extends HTML_Common
     function getFrozenHtml()
     {
         $value = $this->getValue();
-        if ($value != '') {
-            $html = htmlspecialchars($value);
-        } else {
-            $html = '&nbsp;';
-        }
-        if ($this->_persistantFreeze) {
-            $html .= '<input type="hidden" name="' . 
-                $this->getName() . '" value="' . htmlspecialchars($value) . '" />';
-        }
-        return $html;
+        return ('' != $value? htmlspecialchars($value): '&nbsp;') .
+               $this->_getPersistantData();
     } //end func getFrozenHtml
     
+    // }}}
+    // {{{ _getPersistantData()
+
+   /**
+    * Used by getFrozenHtml() to pass the element's value if _persistantFreeze is on
+    * 
+    * @access private
+    * @return string
+    */
+    function _getPersistantData()
+    {
+        if (!$this->_persistantFreeze) {
+            return '';
+        } else {
+            $id = $this->getAttribute('id');
+            return '<input' . $this->_getAttrString(array(
+                       'type'  => 'hidden',
+                       'name'  => $this->getName(),
+                       'value' => $this->getValue()
+                   ) + (isset($id)? array('id' => $id): array())) . ' />';
+        }
+    }
+
     // }}}
     // {{{ isFrozen()
 

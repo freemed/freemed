@@ -253,6 +253,10 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      */
     function _ruleCheckMaxFileSize($elementValue, $maxSize)
     {
+        if (!empty($elementValue['error']) && 
+            (UPLOAD_ERR_FORM_SIZE == $elementValue['error'] || UPLOAD_ERR_INI_SIZE == $elementValue['error'])) {
+            return false;
+        }
         if (!HTML_QuickForm_file::_ruleIsUploadedFile($elementValue)) {
             return true;
         }

@@ -91,8 +91,8 @@ class HTML_QuickForm_RuleRegistry
 
         } elseif (is_object($data1)) {
             // An instance of HTML_QuickForm_Rule
-            $this->_rules[get_class($data1)] = $data1;
-            $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = array(get_class($data1), null);
+            $this->_rules[strtolower(get_class($data1))] = $data1;
+            $GLOBALS['_HTML_QuickForm_registered_rules'][$ruleName] = array(strtolower(get_class($data1)), null);
 
         } else {
             // Rule class name
@@ -215,17 +215,20 @@ class HTML_QuickForm_RuleRegistry
         $jsIndex = isset($index)? '[' . $index . ']': '';
         $tmp_reset = $reset? "    var field = frm.elements['$elementName'];\n": '';
         if (is_a($element, 'html_quickform_group')) {
-            $value = "  var {$elementName}Elements = '::";
-            for ($i = 0, $count = count($element->_elements); $i < $count; $i++) {
-                $value .= $element->getElementName($i) . '::';
+            $value = "  _qfGroups['{$elementName}'] = {";
+            $elements =& $element->getElements();
+            for ($i = 0, $count = count($elements); $i < $count; $i++) {
+                $append = ($elements[$i]->getType() == 'select' && $elements[$i]->getMultiple())? '[]': '';
+                $value .= "'" . $element->getElementName($i) . $append . "': true" .
+                          ($i < $count - 1? ', ': '');
             }
             $value .=
-                "';\n" .
+                "};\n" .
                 "  value{$jsIndex} = new Array();\n" .
                 "  var valueIdx = 0;\n" .
                 "  for (var i = 0; i < frm.elements.length; i++) {\n" .
                 "    var _element = frm.elements[i];\n" .
-                "    if ({$elementName}Elements.indexOf('::' + _element.name + '::') >= 0) {\n" . 
+                "    if (_element.name in _qfGroups['{$elementName}']) {\n" . 
                 "      switch (_element.type) {\n" .
                 "        case 'checkbox':\n" .
                 "        case 'radio':\n" .
@@ -233,9 +236,21 @@ class HTML_QuickForm_RuleRegistry
                 "            value{$jsIndex}[valueIdx++] = _element.value;\n" .
                 "          }\n" .
                 "          break;\n" .
-                "        case 'select':\n" .
+                "        case 'select-one':\n" .
                 "          if (-1 != _element.selectedIndex) {\n" .
                 "            value{$jsIndex}[valueIdx++] = _element.options[_element.selectedIndex].value;\n" .
+                "          }\n" .
+                "          break;\n" .
+                "        case 'select-multiple':\n" .
+                "          var tmpVal = new Array();\n" .
+                "          var tmpIdx = 0;\n" .
+                "          for (var j = 0; j < _element.options.length; j++) {\n" .
+                "            if (_element.options[j].selected) {\n" .
+                "              tmpVal[tmpIdx++] = _element.options[j].value;\n" .
+                "            }\n" .
+                "          }\n" .
+                "          if (tmpIdx > 0) {\n" .
+                "            value{$jsIndex}[valueIdx++] = tmpVal;\n" .
                 "          }\n" .
                 "          break;\n" .
                 "        default:\n" .
@@ -247,13 +262,14 @@ class HTML_QuickForm_RuleRegistry
                 $tmp_reset =
                     "    for (var i = 0; i < frm.elements.length; i++) {\n" .
                     "      var _element = frm.elements[i];\n" .
-                    "      if ({$elementName}Elements.indexOf('::' + _element.name + '::') >= 0) {\n" . 
+                    "      if (_element.name in _qfGroups['{$elementName}']) {\n" . 
                     "        switch (_element.type) {\n" .
                     "          case 'checkbox':\n" .
                     "          case 'radio':\n" .
                     "            _element.checked = _element.defaultChecked;\n" .
                     "            break;\n" .
-                    "          case 'select':\n" .
+                    "          case 'select-one':\n" .
+                    "          case 'select-multiple:\n" .
                     "            for (var j = 0; j < _element.options.length; j++) {\n" .
                     "              _element.options[j].selected = _element.options[j].defaultSelected;\n" .
                     "            }\n" .
@@ -277,7 +293,7 @@ class HTML_QuickForm_RuleRegistry
                     "    }\n" .
                     "  }\n";
             } else {
-                $value = "  value{$jsIndex} = frm.elements['{$elementName}'].options[frm.elements['{$elementName}'].selectedIndex].value;\n";
+                $value = "  value{$jsIndex} = frm.elements['{$elementName}'].selectedIndex == -1? '': frm.elements['{$elementName}'].options[frm.elements['{$elementName}'].selectedIndex].value;\n";
             }
             if ($reset) {
                 $tmp_reset .= 
@@ -286,7 +302,7 @@ class HTML_QuickForm_RuleRegistry
                     "    }\n";
             }
 
-        } elseif ($element->getType() == 'checkbox') {
+        } elseif ($element->getType() == 'checkbox' && !is_a($element, 'html_quickform_advcheckbox')) {
             $value = "  if (frm.elements['$elementName'].checked) {\n" .
                      "    value{$jsIndex} = '1';\n" .
                      "  } else {\n" .

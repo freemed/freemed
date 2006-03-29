@@ -98,16 +98,8 @@ class HTML_QuickForm_password extends HTML_QuickForm_input
     function getFrozenHtml()
     {
         $value = $this->getValue();
-        if (!empty($value)) {
-            $html = '**********';
-        } else {
-            $html = '&nbsp;';
-        }
-        if ($this->_persistantFreeze) {
-            $html .= '<input type="hidden" name="' . 
-                $this->getName() . '" value="' . $value . '" />';
-        }
-        return $html;
+        return ('' != $value? '**********': '&nbsp;') .
+               $this->_getPersistantData();
     } //end func getFrozenHtml
 
     // }}}

@@ -188,28 +188,41 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox
      */
     function toHtml()
     {
-        $oldName = $this->getName();
-        $oldJs   = $this->getAttribute('onclick');
-        $this->updateAttributes(array(
-            'name'    => $this->getPrivateName($oldName),
-            'onclick' => $this->getOnclickJs($oldName) . ' ' . $oldJs
-        ));
-        $html = parent::toHtml() . '<input type="hidden" name="' . $oldName . 
-                '" value="' . $this->_values[$this->getChecked()? 1: 0] . '" />';
-        // revert the name and JS, in case this method will be called once more
-        $this->updateAttributes(array('name' => $oldName, 'onclick' => $oldJs));
-        return $html;
+        if ($this->_flagFrozen) {
+            return parent::toHtml();
+        } else {
+            $oldName = $this->getName();
+            $oldJs   = $this->getAttribute('onclick');
+            $this->updateAttributes(array(
+                'name'    => $this->getPrivateName($oldName),
+                'onclick' => $this->getOnclickJs($oldName) . ' ' . $oldJs
+            ));
+            $html = parent::toHtml() . '<input' .
+                    $this->_getAttrString(array(
+                        'type'  => 'hidden', 
+                        'name'  => $oldName, 
+                        'value' => $this->getValue()
+                    )) . ' />';
+            // revert the name and JS, in case this method will be called once more
+            $this->updateAttributes(array(
+                'name'    => $oldName, 
+                'onclick' => $oldJs
+            ));
+            return $html;
+        }
     } //end func toHtml
     
     // }}}
     // {{{ getFrozenHtml()
 
    /**
-    * Do not append hidden element, this is done in toHtml() 
+    * Unlike checkbox, this has to append a hidden input in both
+    * checked and non-checked states
     */
     function getFrozenHtml()
     {
-        return $this->getChecked()? '<tt>[x]</tt>': '<tt>[ ]</tt>';
+        return ($this->getChecked()? '<tt>[x]</tt>': '<tt>[ ]</tt>') .
+               $this->_getPersistantData();
     }
 
     // }}}
@@ -238,7 +251,9 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox
                         $value = $this->_findValue($caller->_defaultValues);
                     }
                 }
-                $this->setValue($value);
+                if (null !== $value) {
+                    $this->setValue($value);
+                }
                 break;
             default:
                 parent::onQuickFormEvent($event, $arg, $caller);

@@ -357,8 +357,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
      */
     function loadDbResult(&$result, $textCol=null, $valueCol=null, $values=null)
     {
-        if (!is_object($result) || (get_class($result) != "db_result" && 
-            is_subclass_of($result, "db_result"))) {
+        if (!is_object($result) || !is_a($result, 'db_result')) {
             return PEAR::raiseError('Argument 1 of HTML_Select::loadDbResult is not a valid DB_result');
         }
         if (isset($values)) {
@@ -444,7 +443,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
             case is_array($options):
                 return $this->loadArray($options, $param1);
                 break;
-            case (get_class($options) == "db_result" || is_subclass_of($options, "db_result")):
+            case (is_a($options, 'db_result')):
                 return $this->loadDbResult($options, $param1, $param2, $param3);
                 break;
             case (is_string($options) && !empty($options) || is_subclass_of($options, "db_common")):
@@ -513,7 +512,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         if (is_array($this->_values)) {
             foreach ($this->_values as $key => $val) {
                 for ($i = 0, $optCount = count($this->_options); $i < $optCount; $i++) {
-                    if ($val == $this->_options[$i]['attr']['value']) {
+                    if ((string)$val == (string)$this->_options[$i]['attr']['value']) {
                         $value[$key] = $this->_options[$i]['text'];
                         break;
                     }
@@ -523,9 +522,19 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         $html = empty($value)? '&nbsp;': join('<br />', $value);
         if ($this->_persistantFreeze) {
             $name = $this->getPrivateName();
+            // Only use id attribute if doing single hidden input
+            if (1 == count($value)) {
+                $id     = $this->getAttribute('id');
+                $idAttr = isset($id)? array('id' => $id): array();
+            } else {
+                $idAttr = array();
+            }
             foreach ($value as $key => $item) {
-                $html .= '<input type="hidden" name="' . 
-                    $name . '" value="' . $this->_values[$key] . '" />';
+                $html .= '<input' . $this->_getAttrString(array(
+                             'type'  => 'hidden',
+                             'name'  => $name,
+                             'value' => $this->_values[$key]
+                         ) + $idAttr) . ' />';
             }
         }
         return $html;
@@ -566,6 +575,30 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         }
     }
     
+    // }}}
+    // {{{ onQuickFormEvent()
+
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        if ('updateValue' == $event) {
+            $value = $this->_findValue($caller->_constantValues);
+            if (null === $value) {
+                $value = $this->_findValue($caller->_submitValues);
+                // Fix for bug #4465
+                // XXX: should we push this to element::onQuickFormEvent()?
+                if (null === $value && !$caller->isSubmitted()) {
+                    $value = $this->_findValue($caller->_defaultValues);
+                }
+            }
+            if (null !== $value) {
+                $this->setValue($value);
+            }
+            return true;
+        } else {
+            return parent::onQuickFormEvent($event, $arg, $caller);
+        }
+    }
+
     // }}}
 } //end class HTML_QuickForm_select
 ?>

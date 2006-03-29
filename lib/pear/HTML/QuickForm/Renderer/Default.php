@@ -59,7 +59,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     * @access   private
     */
     var $_formTemplate = 
-        "\n<form{attributes}>\n<table border=\"0\">\n{content}\n</table>\n</form>";
+        "\n<form{attributes}>\n<div>\n{hidden}<table border=\"0\">\n{content}\n</table>\n</div>\n</form>";
 
    /**
     * Required Note template string
@@ -130,6 +130,13 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     var $_groupTemplate = '';
     
    /**
+    * Collected HTML of the hidden fields
+    * @var      string
+    * @access   private
+    */
+    var $_hiddenHtml = '';
+
+   /**
     * Constructor
     *
     * @access public
@@ -147,7 +154,9 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function toHtml()
     {
-        return $this->_html;
+        // _hiddenHtml is cleared in finishForm(), so this only matters when
+        // finishForm() was not called (e.g. group::toHtml(), bug #3511)
+        return $this->_hiddenHtml . $this->_html;
     } // end func toHtml
     
    /**
@@ -160,6 +169,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     function startForm(&$form)
     {
         $this->_html = '';
+        $this->_hiddenHtml = '';
     } // end func startForm
 
    /**
@@ -178,6 +188,12 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
         }
         // add form attributes and content
         $html = str_replace('{attributes}', $form->getAttributes(true), $this->_formTemplate);
+        if (strpos($this->_formTemplate, '{hidden}')) {
+            $html = str_replace('{hidden}', $this->_hiddenHtml, $html);
+        } else {
+            $this->_html .= $this->_hiddenHtml;
+        }
+        $this->_hiddenHtml = '';
         $this->_html = str_replace('{content}', $this->_html, $html);
         // add a validation script
         if ('' != ($script = $form->getValidationScript())) {
@@ -293,7 +309,7 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function renderHidden(&$element)
     {
-        $this->_html .= "\n\t". $element->toHtml();
+        $this->_hiddenHtml .= $element->toHtml() . "\n";
     } // end func renderHidden
 
    /**
@@ -336,22 +352,21 @@ class HTML_QuickForm_Renderer_Default extends HTML_QuickForm_Renderer
     */
     function finishGroup(&$group)
     {
-        if (!empty($this->_groupWrap)) {
-            $html = str_replace('{content}', implode('', $this->_groupElements), $this->_groupWrap);
-        } else {
-            $separator = $group->_separator;
-            if (is_array($separator)) {
-                $count = count($separator);
-                $html  = '';
-                for ($i = 0; $i < count($this->_groupElements); $i++) {
-                    $html .= (0 == $i? '': $separator[($i - 1) % $count]) . $this->_groupElements[$i];
-                }
-            } else {
-                if (is_null($separator)) {
-                    $separator = '&nbsp;';
-                }
-                $html = implode((string)$separator, $this->_groupElements);
+        $separator = $group->_separator;
+        if (is_array($separator)) {
+            $count = count($separator);
+            $html  = '';
+            for ($i = 0; $i < count($this->_groupElements); $i++) {
+                $html .= (0 == $i? '': $separator[($i - 1) % $count]) . $this->_groupElements[$i];
             }
+        } else {
+            if (is_null($separator)) {
+                $separator = '&nbsp;';
+            }
+            $html = implode((string)$separator, $this->_groupElements);
+        }
+        if (!empty($this->_groupWrap)) {
+            $html = str_replace('{content}', $html, $this->_groupWrap);
         }
         $this->_html   .= str_replace('{element}', $html, $this->_groupTemplate);
         $this->_inGroup = false;

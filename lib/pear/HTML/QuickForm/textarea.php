@@ -207,18 +207,13 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element
      */
     function getFrozenHtml()
     {
-        $tabs = $this->_getTabs();
         $value = htmlspecialchars($this->getValue());
         if ($this->getAttribute('wrap') == 'off') {
-            $html = "$tabs<pre>".$value."</pre>\n";
+            $html = $this->_getTabs() . '<pre>' . $value."</pre>\n";
         } else {
             $html = nl2br($value)."\n";
         }
-        if ($this->_persistantFreeze) {
-            $html .= $tabs.'<input type="hidden" name="' . 
-                $this->getName() . '" value="' . $value . '" />';
-        }
-        return $html;
+        return $html . $this->_getPersistantData();
     } //end func getFrozenHtml
 
     // }}}
