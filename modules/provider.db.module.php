@@ -8,7 +8,7 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.4";
+	var $MODULE_VERSION = "0.3.5";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -57,7 +57,8 @@ class ProviderModule extends MaintenanceModule {
         "phyidmap",
 	"phyanesth",
 	"phyhl7id",
-	"phydea"
+	"phydea",
+	"phyclia"
 	); // end of variables list
 	var $order_field = 'phylname, phyfname';
 
@@ -127,6 +128,7 @@ class ProviderModule extends MaintenanceModule {
 			'phyanesth' => SQL__INT_UNSIGNED(0),
 			'phyhl7id' => SQL__VARCHAR(16),
 			'phydea' => SQL__VARCHAR(16),
+			'phyclia' => SQL__VARCHAR(32),
 			'id' => SQL__SERIAL
 		);
 
@@ -335,7 +337,8 @@ class ProviderModule extends MaintenanceModule {
 				"physsn1", "physsn2", "physsn3", 
 				"phydeg1", "phydeg2", "phydeg3",
 				"physpe1", "physpe2", "physpe3",
-				"phyanesth", "phyhl7id", "phydea"
+				"phyanesth", "phyhl7id", "phydea",
+				"phyclia"
 			),
 			html_form::form_table(array(
 		__("UPIN Number") =>
@@ -392,7 +395,10 @@ class ProviderModule extends MaintenanceModule {
 		html_form::text_widget( 'phyhl7id' ),
 
 		__("DEA Number") =>
-		html_form::text_widget( 'phydea' )
+		html_form::text_widget( 'phydea' ),
+
+		__("CLIA Number") =>
+		html_form::text_widget( 'phyclia' ),
 
 			))
 		);
@@ -614,6 +620,17 @@ class ProviderModule extends MaintenanceModule {
 		if (!version_check($version, '0.3.4')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN phypracname phypracname VARCHAR(80)');
+		}
+
+		// Version 0.3.5
+		//
+		//	Add CLIA number
+		//
+		if (!version_check($version, '0.3.5')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN phyclia VARCHAR(32) AFTER phydea');
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'phyclia=\'\' WHERE id>0');
 		}
 
 	} // end method _update

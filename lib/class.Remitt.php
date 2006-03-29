@@ -853,6 +853,8 @@ class Remitt {
 		$buffer .= $this->_tag('socialsecuritynumber', $p['physsn'], true);
 		$buffer .= $this->_tag('tin', $p['physsn'], true);
 		$buffer .= $this->_tag('ipn', $p['phyupin'], true);
+		$buffer .= $this->_tag('clia', $p['phyclia'], true);
+		$buffer .= $this->_tag('dea', $p['phydea'], true);
 	
 		$buffer .= "</provider>\n";
 		return $buffer;		
