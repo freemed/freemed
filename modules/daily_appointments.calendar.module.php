@@ -38,7 +38,7 @@ class DailyAppointmentCalendar extends CalendarModule {
 		".__("Date")." :
 		".fm_date_entry("date")."<br/>
 		".__("Select a Provider")." : 
-		".module_function('providermodule', 'widget', array ( 'provider' ) )."
+		".module_function('providermodule', 'widget', array ( 'provider', "phyref != 'yes'" ) )."
 		<input type=\"submit\" name=\"my_action\" class=\"button\" value=\"".__("Select Provider")."\" />
 		</form>
 		</div>
