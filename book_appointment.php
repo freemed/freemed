@@ -493,6 +493,12 @@ function process () {
 
 	$display_buffer .= " </div> <p/> <div ALIGN=\"CENTER\">\n";
 	global $refresh;
+	switch ($_REQUEST['return']) {
+		case 'dayview':
+			$refresh = "physician_day_view.php?selected_date=".urlencode($_REQUEST['selected_date'])."&physician=".urlencode($_REQUEST['physician']);
+			return true;
+			break;
+	}
 	if (!$travel) {
 		if ($type != "temp") {
 			$refresh = "manage.php?id=".urlencode($patient);
