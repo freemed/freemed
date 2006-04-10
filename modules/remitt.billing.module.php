@@ -1074,7 +1074,7 @@ class RemittBillingTransport extends BillingModule {
 			"type=".$_REQUEST['type']."&".
 			"action=".$_REQUEST['action']."&".
 			"billing_action=status&".
-			"uniques=".urlencode(serialize(array(0 => $result)));
+			"uniques=".urlencode(serialize(array($_REQUEST['key'] => $result)));
 
 		$buffer .= __("Refreshing")." ... ";
 
