@@ -24,7 +24,7 @@ class RebillByCovModule extends BillingModule {
 		// Handler for the billing menu
 		$this->_SetHandler('BillingFunctions', 'view');
 		$this->_SetMetaInformation('BillingFunctionName', __("Rebill by Coverage"));
-		$this->_SetMetaInformation('BillingFunctionDescription', __("Mark claims to be rebilled by coverage. This option is depreciated."));
+		$this->_SetMetaInformation('BillingFunctionDescription', __("Mark claims to be rebilled by coverage."));
 		
 		// call parent constructor
 		$this->BillingModule($nullvar);
@@ -52,12 +52,10 @@ class RebillByCovModule extends BillingModule {
 		if ($viewaction=="rebill") {
 			//$display_buffer .= "insco $whichinsco<BR>";
 			$insco=0;
-			$insco = CreateObject('FreeMED.InsuranceCompany',
-				$whichinsco
-			);
+			$insco = CreateObject('FreeMED.InsuranceCompany', $whichinsco);
 			if ($insco==0)
 			{
-				$display_buffer .= "Error getting insco name<BR>";
+				$display_buffer .= __("Error getting payer name.")."<br/>\n";
 				return;
 			}
 			$display_buffer .= "Rebilling ".$insco->local_record[insconame]." ID $whichinsco<BR>";
@@ -140,7 +138,7 @@ class RebillByCovModule extends BillingModule {
 		<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"addform\">
 		<INPUT TYPE=HIDDEN NAME=\"viewaction\" VALUE=\"rebill\">
 		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($_REQUEST['module'])."\">
-		<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($_REQUEST['type'])."\">
+		<INPUT TYPE=HIDDEN NAME=\"type\" VALUE=\"".prepare($_REQUEST['type'])."\">
 
 		<TR>
 		 <TD ALIGN=RIGHT>
