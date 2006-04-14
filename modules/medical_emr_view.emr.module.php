@@ -33,8 +33,10 @@ class MedicalEMRView extends EMRModule {
 		$buffer .= "
 		<table WIDTH=\"100%\" BORDER=\"0\">".
 		($this_patient->local_record['ptblood'] != '-' ? "
+		<!--
 		<tr><TD ALIGN=\"LEFT\"><B>".__("Blood Type")."</B></TD> 
 		<TD ALIGN=\"RIGHT\">".prepare($this_patient->local_record['ptblood'])."</TD></tr>
+		-->
 		" : "" );
 		// Loop through last diagnoses
 		for ($diag=1; $diag<=4; $diag++) {
