@@ -414,7 +414,7 @@ class EpisodeOfCare extends EMRModule {
     <TD ALIGN=LEFT>
    	    ".fm_date_entry("eocdisfromdt")."
 	</TD>
-	<TD ALIGN=RIGHT>".__("Hospitial Admission Date")."</TD>
+	<TD ALIGN=RIGHT>".__("Hospital Admission Date")."</TD>
     <TD ALIGN=LEFT>
    	    ".fm_date_entry("eochosadmdt")."
 	</TD>
