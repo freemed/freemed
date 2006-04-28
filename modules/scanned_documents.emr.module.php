@@ -21,7 +21,7 @@ class ScannedDocuments extends EMRModule {
 	var $table_name    = "images";
 	var $patient_field = "imagepat";
 	var $order_by      = "imagedt";
-	var $widget_hash   = "##imagecat## [##imagedt##] ##imagedesc##";
+	var $widget_hash   = "##imagecat## [##imagedt##] ##imagedesc## (##imagetype##)";
 
 	function ScannedDocuments () {
 		// Get browser information
@@ -41,6 +41,7 @@ class ScannedDocuments extends EMRModule {
 			"DATE_FORMAT(imagedt, '%m/%d/%Y') AS my_date",
 			"CASE imagereviewed WHEN 0 THEN 'no' ELSE 'yes' END AS reviewed"
 		);
+		$this->summary_order_by = "imagedt";
 
 		// Define table
 		$this->table_definition = array (
@@ -239,7 +240,11 @@ class ScannedDocuments extends EMRModule {
 			}
 			foreach ($r AS $k => $v) {
 				global ${$k};
-				${$k} = sql_expand($v);
+				if ($k == 'imageeoc') {
+					${$k} = sql_expand($v); 
+				} else {
+					${$k} = $v;
+				}
 			}
 			$this->prepare_tc_widget('imagetypecat', $_REQUEST['id']);
 			break; // end mod/form
@@ -448,6 +453,9 @@ class ScannedDocuments extends EMRModule {
 					"- ".__("UA") => "lab_report/ua",
 					"- ".__("Thyroid Profile") => "lab_report/thyroid_profile",
 				__("Letters") => "letters/misc",
+				__("Oncology") => "oncology/misc",
+				__("Hospital Records") => "hospital/misc",
+					"- ".__("Discharge Summary") => "hospital/discharge",
 				__("Pathology") => "pathology/misc",
 				__("Patient History") => "patient_history/misc",
 				__("Questionnaire") => "questionnaire/misc",
@@ -459,6 +467,10 @@ class ScannedDocuments extends EMRModule {
 					"- ".__("Mammogram Reports") => "radiology/mammogram_reports",
 				__("Insurance Card") => "insurance_card",
 				__("Referral") => "referral/misc",
+					"- ".__("Notes") => "referral/notes",
+					"- ".__("Radiographs") => "referral/radiographs",
+					"- ".__("Lab Reports") => "referral/lab_reports",
+					"- ".__("Consult") => "referral/consult",
 				__("Financial Information") => "financial/misc"
 			)
 		);
@@ -471,6 +483,17 @@ class ScannedDocuments extends EMRModule {
 		$d = CreateObject('FreeMED.Djvu', $filename);
 		return $d->ToPDF(true);
 	} // end method print_override
+
+	function fax_widget ( $varname, $id ) {
+		global $sql, ${$varname};
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$phy = freemed::get_link_rec($r['imagephy'], 'physician');
+		${$varname} = $phy['phyfaxa'];
+		return module_function('faxcontacts',
+			'widget',
+			array ( $varname, false, 'phyfaxa' )
+		);
+	} // end method fax_widget
 
 	function _update () {
 		$version = freemed::module_version($this->MODULE_NAME);
