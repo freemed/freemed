@@ -215,7 +215,7 @@ class ProviderModule extends MaintenanceModule {
 		);
 
 		$book->add_page (
-			"Contact",
+			__("Contact"),
 			array_merge (
 				array( "phyemail"),
 				phone_vars("phycellular"),
