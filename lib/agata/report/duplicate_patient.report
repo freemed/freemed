@@ -1,0 +1,29 @@
+;
+;	Duplicate Patients
+;	Agata Report Format
+;	$Id$
+;
+;	jeff@ourexchange.net
+;
+;	##name=Duplicate Patients,type=standard,by=none##
+;
+
+Select:ptlname AS 'Last Name', ptfname AS 'First Name', ptdob AS 'Date of Birth', count(ptlname) as 'Count'
+From:patient
+Where:ptarchive = 0
+Group by:ptlname, ptfname, ptdob having count(concat(ptlname, ' ', ptfname, ' ', ptdob )) > 1
+Order by:'Last Name', 'First Name'
+%%: 
+&&: 
+
+@Graph Title:
+@Graph Titlex:
+@Graph Titley:
+@GraphIntroduction:
+
+@MergeSpacing:10
+@MergeTopMargin:20
+@MergeLeftMargin:10
+
+@LabelText:
+
