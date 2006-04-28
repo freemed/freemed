@@ -11,9 +11,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2006-03-23 15:45-0500 -->
+	<!-- type = PO-Revision-Date, data = 2006-04-28 12:08-0400 -->
 
-	<Translator>Volker Bradley &#x3C;volkerbradley@gmail.com&#x3E;</Translator>
+	<Translator>Jeff Buchbinder &#x3C;freemed@gmail.com&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -27,7 +27,7 @@
 </information>
 <translation>
 	<original>Address</original>
-	<translated>Addresszeile 1</translated>
+	<translated>Addresse</translated>
 </translation>
 <translation>
 	<original>Address 2</original>
@@ -244,6 +244,14 @@
 <translation>
 	<original>Refresh</original>
 	<translated>aktualisieren</translated>
+</translation>
+<translation>
+	<original>CLIA Number</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Contact</original>
+	<translated>Kontakt</translated>
 </translation>
 
 </gettextXML>
