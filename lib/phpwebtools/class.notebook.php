@@ -196,7 +196,7 @@ class notebook {
       $look_for = ${$this->actionvar."_last"};
     $found = 0;
     for ($i=1;$i<=($this->psize);$i++) {
-      if ($this->name[$i] == $look_for) $found = $i;
+      if (prepare($this->name[$i]) == prepare($look_for)) { $found = $i; }
     }  
     return $found;
   } // end function notebook->get_current_page
@@ -243,7 +243,15 @@ class notebook {
   function is_done ($null_var = "") {
     global ${$this->actionvar};
     //$this->verify_page(&$this->messages); // KLUDGE!
-    return (html_entity_decode(${$this->actionvar}) == html_entity_decode($this->SUBMIT));
+    if (html_entity_decode(${$this->actionvar}) == html_entity_decode($this->SUBMIT)) {
+      // Check for all pages verified first
+      if ($this->verify_page(&$this->messages, true)) {
+        return true;
+      } else {
+        $this->review_all = true;
+      }
+    }
+    return false;
   } // end function notebook->is_done
 
 	// Method: add_page
@@ -313,7 +321,7 @@ class notebook {
         ${$this->actionvar} = ${$this->actionvar."_last"};
 
       // check to see if we're valid
-      if (!$this->verify_page (&$this->messages)) {
+      if (!$this->verify_page (&$this->messages, $this->review_all)) {
         if (is_array($FORM_ERROR)) {
           foreach ($FORM_ERROR AS $k => $v) {
             $error_vars .= "<input TYPE=\"HIDDEN\" NAME=\"FORM_ERROR[]\" ".
@@ -725,7 +733,7 @@ class notebook {
     $this->onsubmit = $value;
   } // end method set_onsubmit
 
-  function verify_page (&$message) {
+  function verify_page (&$message, $all=false) {
     global ${$this->actionvar}, ${$this->actionvar."_been_here"},
       ${$this->actionvar."_last"}, $FORM_ERROR, $FORM_WARNING;
 
@@ -751,8 +759,15 @@ class notebook {
 
     // verification calls for checking errors and warnings
     // note: it only doesn't "pass" if it has errors
-	$passed = verify (&$message, $this->error[$last_page], CHECK_FOR_ERRORS);
-	$warn = verify (&$message, $this->warning[$last_page], CHECK_FOR_WARNINGS);
+        if ($all) {
+          foreach ($this->error AS $es) { $e = array_merge($e, $es); }
+          foreach ($this->warning AS $ws) { $w = array_merge($w, $ws); }
+	  $passed = verify (&$message, $e, CHECK_FOR_ERRORS);
+	  $warn = verify (&$message, $w, CHECK_FOR_WARNINGS);
+        } else {
+	  $passed = verify (&$message, $this->error[$last_page], CHECK_FOR_ERRORS);
+	  $warn = verify (&$message, $this->warning[$last_page], CHECK_FOR_WARNINGS);
+        }
 
 	// if not passed, change actionvar to the proper place
 	if (!$passed) {
