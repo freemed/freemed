@@ -52,6 +52,12 @@ class UnfiledFaxes extends MaintenanceModule {
 			if (!($_REQUEST['submit_action'] == __("Cancel"))) {
                         	$this->display();
 				return false;
+			} else {
+				if ($_REQUEST['id']) {
+					// Unlock
+					$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+					$__lock->UnlockRow( $_REQUEST['id'] );
+				}
 			}
                 }
 		$query = "SELECT * FROM ".$this->table_name." ".
@@ -79,6 +85,14 @@ class UnfiledFaxes extends MaintenanceModule {
 
 	function display ( ) {
 		global $display_buffer, $id;
+
+		// Check for "lock"
+		$lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
+		if ($lock->IsLocked($_REQUEST['id'])) {
+			trigger_error(__("This record is currently in use."), E_USER_ERROR);
+		} else {
+			$lock->LockRow( $_REQUEST['id'] );
+		}
 
 		switch ($_REQUEST['submit_action']) {
 			case __("Split Batch"):
@@ -147,7 +161,6 @@ class UnfiledFaxes extends MaintenanceModule {
 		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\" id=\"myform\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
 		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
-		<input type=\"hidden\" name=\"return\" value=\"".prepare($_REQUEST['return'])."\"/>
 		<input type=\"hidden\" name=\"action\" value=\"view\"/>
 		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
 		<div align=\"center\">
