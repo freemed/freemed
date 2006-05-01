@@ -37,7 +37,7 @@ class Annotations extends EMRModule {
 			'amodule',
 			'atable',
 			'aid',
-			'auser' => $_SESSION['authdata']['user'],
+			'auser' => $this_user->user_number,
 			'annotation'
 		);
 
@@ -146,6 +146,8 @@ class Annotations extends EMRModule {
 	//	$patient - (optional) Patient number
 	//
 	function createAnnotation ($module, $id, $text, $patient = NULL) {
+		global $this_user;
+		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
 		$q = $GLOBALS['sql']->insert_query(
 			$this->table_name,
 			array(
@@ -154,7 +156,7 @@ class Annotations extends EMRModule {
 				'atimestamp' => SQL__NOW,
 				'apatient' => ( $patient ? $patient : $this->lookupPatient($module, $id) ),
 				'atable' => $this->_resolve_module_to_table($module),
-				'auser' => $_SESSION['authdata']['user'],
+				'auser' => $this_user->user_number,
 				'annotation' => $text
 			)
 		);

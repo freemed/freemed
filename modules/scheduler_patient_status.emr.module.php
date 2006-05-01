@@ -36,7 +36,7 @@ class SchedulerPatientStatus extends EMRModule {
 			'csappt',
 			'csnote',
 			'csstatus',
-			'csuser' => $_SESSION['authdata']['user']
+			'csuser' => $this_user->user_number
 		);
 
 		$this->summary_vars = array (
