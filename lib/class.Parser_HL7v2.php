@@ -88,8 +88,17 @@ class Parser_HL7v2 {
 	
 		syslog (LOG_INFO, 'HL7 parser| length of data = '.strlen($message));
 
-		// Split HL7v2 message into lines
-		$segments = explode("\n", $message);
+		// Determine line separator
+		if (strpos($message, "\r") !== false) {
+			syslog (LOG_INFO, 'HL7 parser| line sep = \r');
+			$linesep = "\r";
+		} else {
+			syslog (LOG_INFO, 'HL7 parser| line sep = \n');
+			$linesep = "\n";
+		}
+
+		// Split HL7v2 message into lines with extracted line seperator
+		$segments = explode($linesep, $message);
 
 		// Fail if there are no or one segments
 		if (count($segments) <= 1) {
@@ -103,7 +112,7 @@ class Parser_HL7v2 {
 			$count++;
 
 			// Log segment
-			syslog(LOG_INFO, 'HL7 parser| segment['.$count.'] = '.$segment);
+			syslog(LOG_INFO, 'HL7 parser| length = '.strlen($segment).', segment['.$count.'] = '.$segment);
 
 			// Determine segment ID
 			$type = substr($segment, 0, 3);
@@ -158,7 +167,7 @@ class Parser_HL7v2 {
 	//	Output of the specified handler.
 	//
 	function Handle() {
-		syslog(LOG_INFO, 'HL7 parser|in handle');
+		syslog(LOG_INFO, 'HL7 parser|in handle for '.$this->MSH['message_type']);
 		// Set to handle current method
 		list ($top_level, $type) = explode ('^', $this->MSH['message_type']);
 		// Check for an appropriate handler
@@ -238,6 +247,12 @@ class Parser_HL7v2 {
 			$this->MSH['application_ack_type'],
 			$this->MSH['country_code']
 		) = $composites;
+
+		// Deal with borked "message_type" position, just in case
+		if (substr($this->MSH['message_type'], 3, 1) != '^') {
+			syslog(LOG_INFO, 'HL7 parser| borked message_type, using '.$this->MSH['security']);
+			$this->MSH['message_type'] = $this->MSH['security'];	
+		}
 
 		// TODO: Extract $this->MSH['encoding_characters'] and use
 		// it instead of assuming the defaults.
