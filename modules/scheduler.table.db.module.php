@@ -14,6 +14,8 @@ class SchedulerTable extends MaintenanceModule {
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
+	var $widget_hash = "##caldateof## ##calhour##:##calminute## (##calduration##m)";
+
 	var $table_name = "scheduler";
 
 	function SchedulerTable () {
