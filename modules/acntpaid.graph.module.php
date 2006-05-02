@@ -104,6 +104,9 @@ class AcntPaidGraph extends GraphModule {
 				$tot[4] = bcadd($tot[4],$charges,2);
 			}
 			$graph_data[] = array($this_yrmo,$tot[1],$tot[2],$tot[3],$tot[4]);
+			for ($i = 1; $i <= 4; $i++) {
+				$max_x = $tot[$i] > $max_x ? $tot[$i] : $max_x;
+			}
 			
 			$graph = CreateObject('FreeMED.PHPlot', 1200, 600); // (w,h)
 			$graph->SetDataValues($graph_data);
@@ -113,8 +116,8 @@ class AcntPaidGraph extends GraphModule {
 			$graph->SetDrawYGrid(0);
 			$graph->SetPlotType('bars');
 			$graph->SetBackgroundColor("white");
-			$graph->SetVertTickIncrement(1000);
-			$graph->SetDrawDataLabels('1'); // draw the value on top of the bar.
+			$graph->SetVertTickIncrement(ceil(ceil(($max_x / 10000) * 1000)));
+			$graph->SetDrawXDataLabels('1'); // draw the value on top of the bar.
 			$graph->DrawGraph();
 			
 		}
