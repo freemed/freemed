@@ -79,6 +79,7 @@ class TransactionGraph extends GraphModule {
 		{
 			while ($row = $sql->fetch_array($result))
 			{
+				$max = $row['payrectot'] > $max ? $row['payrectot'] : $max;
 				$graph_data[] = array($TRANS_TYPES[$row[payreccat]],bcadd($row[payrectot],0,2));
 			}
 
@@ -90,8 +91,8 @@ class TransactionGraph extends GraphModule {
 			$graph->SetTitle($title); //Lets have a legend
 			$graph->SetDrawYGrid(0);
 			$graph->SetPlotType('bars');
-			$graph->SetVertTickIncrement(10000);
-			$graph->SetDrawDataLabels('1');
+			$graph->SetVertTickIncrement(ceil($max / 10));
+			$graph->SetDrawXDataLabels('1');
 			$graph->DrawGraph();
 /*
 			// pie chart
