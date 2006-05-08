@@ -330,48 +330,30 @@ class Ledger {
 		return $result;
 	} // end method queue_for_rebill
 
+	// Method: post_adjustment
+	//
+	//	Post an adjustment for the specified procedure.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure id key
+	//
+	//	$amount - Amount of the copay as a positive number
+	//
+	//	$comment - (optional) Text comment for the record. Defaults
+	//	to a null string.
+	//
+	// Returns:
+	//
+	//	Boolean, if successful
+	//
+	function post_adjustment ( $procedure, $amount, $comment = '' ) {
+		// Get information about this procedure
+		$procedure_object = CreateObject('FreeMED.Procedure', $procedure);
+		$this_procedure = $procedure_object->get_procedure( );
 
-/* ---------------- FIX / REMOVE --------------------------------------------
-	// Method -- post_adjustment
-	function post_adjustment ( $procedure, $category,
-				$amount, $comment, $who = 0 ) {
-		// Determine patient from procedure
-		$data['patient'] = $this->_procedure_to_patient($procedure);
-
-		$actual_amount = 0;
-		$allowed = 0;
-
-		switch ($category) {
-			case ADJUSTMENT:
-			case DEDUCTABLE:
-			case WITHHOLD:
-				$actual_amount = abs ( $amount );
-				break;
-
-			case DENIAL:
-				$charges = $this_procedure['proccharges'] -
-						$amount;
-				$current_balance = $charges -
-						$this_procedure['procamtpaid'];
-				break;
-
-			case FEEADJUST:
-				// TODO: logic is 
-				//$allowed = $this_procedure['proccharges'] -
-				//		$this_procedure['payrecamt'];
-				//$charges = $allowed;
-				//$current_balance = $charges - $amount_paid;
-				//
-				break;
-
-			case WRITEOFF:
-				// Write off the entire amount
-				$actual_amount = freemed::get_link_field (
-					$procedure, 'procrec',
-					'procbalcurrent'
-				);
-				break;
-		} // end switch category
+		// Derive the patient from the procedure
+		$patient = $this->_procedure_to_patient ( $procedure );
 
 		// Create payment record query
 		$query = $GLOBALS['sql']->insert_query (
@@ -379,38 +361,31 @@ class Ledger {
 			array (
 				'payrecdtadd' => date('Y-m-d'),
 				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
 				'payrecpatient' => $patient,
-				'payreccat' => $category,
+				'payreccat' => ADJUSTMENT,
 				'payrecproc' => $procedure,
-				//'payrecsource' => '1',
-				'payreclink' => $who,
-				'payrecamt' => $actual_amount,
+				'payrecamt' => $amount,
 				'payrecdescrip' => $comment,
 				'payreclock' => 'unlocked'
 			)
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
 
-		// Get information about this procedure
-		$procedure_object = CreateObject('FreeMED.Procedure', $data['procedure']);
-		$this_procedure = $procedure_object->get_procedure( );
-
-		$amount_paid = $data['amount'] + $this_procedure['procamtpaid'];
-		$current_balance = $this_procedure['procbalorig'] -
-				$amount_paid;
-
 		$query = $GLOBALS['sql']->update_query(
 			'procrec',
 			array (
-				'procbalcurrent' => $current_balance,
-				'procamtpaid' => $amount_paid
-			), array ( 'id' => $data['procedure'] )
-		);
-		$pay_result = $GLOBALS['sql']->query ( $query );
+				'procbalcurrent' => 
+				$this_procedure['procbalcurrent'] - $amount,
 
-		return ($proc_query and $pay_query);
+				'procamtpaid' =>
+				$this_procedure['procamtpaid'] + $amount
+			), array ( 'id' => $procedure )
+		);
+		$proc_result = $GLOBALS['sql']->query ( $query );
+
+		return ($proc_result and $pay_result);
 	} // end method post_adjustment
-  ---------------- FIX / REMOVE ------------------------------------------ */
 
 	// Method: post_copay
 	//
