@@ -995,7 +995,7 @@ class ClaimsManager extends BillingModule {
 
 			// Check for adjustment
 			if ($_REQUEST['adj'][$k] > 0) {
-				$l->post_copay (
+				$l->post_adjustment (
 					$k,
 					($_REQUEST['adj'][$k] + 0),
 					__("Adjustment")
