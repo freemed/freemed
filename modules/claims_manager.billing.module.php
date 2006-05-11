@@ -1133,11 +1133,12 @@ class ClaimsManager extends BillingModule {
 		$table->setHeaderContents(0, 2, __("CPT"));
 		$table->setHeaderContents(0, 3, __("Service Date"));
 		$table->setHeaderContents(0, 4, __("Paid"));
-		$table->setHeaderContents(0, 5, __("Outstanding"));
-		$table->setHeaderContents(0, 6, __("Adustment"));
-		$table->setHeaderContents(0, 7, __("Payment"));
-		$table->setHeaderContents(0, 8, __("Copay"));
-		$table->setHeaderContents(0, 9, __("Left Over"));
+		$table->setHeaderContents(0, 5, __("Amount Billed"));
+		$table->setHeaderContents(0, 6, __("Amount Allowed"));
+		$table->setHeaderContents(0, 7, __("Adustment Balance"));
+		$table->setHeaderContents(0, 8, __("Payment"));
+		$table->setHeaderContents(0, 9, __("Copay"));
+		$table->setHeaderContents(0, 10, __("Left Over"));
 
 		$count = 0;
 		foreach ($_REQUEST['check'] AS $c) {
@@ -1153,17 +1154,18 @@ class ClaimsManager extends BillingModule {
 				$table->setCellContents($count, 2, $ci['cpt_cote']);
 				$table->setCellContents($count, 3, $ci['service_date']);
 				$table->setCellContents($count, 4, bcadd($ci['paid'],0,2));
-				$table->setCellContents($count, 5, '<input type="text" id="id_amount_'.$c.'" name="amount['.$c.']" size="6" value="'.bcadd($ci['balance'], 0, 2).'" '.
+				$table->setCellContents($count, 5, bcadd($ci['paid'],0,2));
+				$table->setCellContents($count, 6, '<input type="text" id="id_amount_'.$c.'" name="amount['.$c.']" size="6" value="'.bcadd($ci['balance'], 0, 2).'" '.
 					'onChange="this.form.id_adj_'.$c.'.value = eval('.bcadd($ci['balance'],0,2).') - eval(this.form.id_amount_'.$c.'.value); this.form.id_dis_'.$c.'.value = eval('.$ci['balance'].') - ( eval(this.form.id_pay_'.$c.'.value) + eval(this.form.id_copay_'.$c.'.value) + eval(this.form.id_adj_'.$c.'.value) ); return true;" '.
 					'/>');
-				$table->setCellContents($count, 6, '<input type="text" id="id_adj_'.$c.'" name="adj['.$c.']" size="6" value="0" disabled="1" color="#ff0000" />');
-				$table->setCellContents($count, 7, '<input type="text" id="id_pay_'.$c.'" name="pay['.$c.']" size="6" value="0" '.
+				$table->setCellContents($count, 7, '<input type="text" id="id_adj_'.$c.'" name="adj['.$c.']" size="6" value="0" disabled="1" color="#ff0000" />');
+				$table->setCellContents($count, 8, '<input type="text" id="id_pay_'.$c.'" name="pay['.$c.']" size="6" value="0" '.
 					'onChange="this.form.id_dis_'.$c.'.value = eval('.$ci['balance'].') - ( eval(this.form.id_pay_'.$c.'.value) + eval(this.form.id_copay_'.$c.'.value) + eval(this.form.id_adj_'.$c.'.value) ); return true;" '.
 					'/>');
-				$table->setCellContents($count, 8, '<input type="text" id="id_copay_'.$c.'" name="copay['.$c.']" size="6" value="0" '.
+				$table->setCellContents($count, 9, '<input type="text" id="id_copay_'.$c.'" name="copay['.$c.']" size="6" value="0" '.
 					'onChange="this.form.id_dis_'.$c.'.value = eval('.$ci['balance'].') - ( eval(this.form.id_pay_'.$c.'.value) + eval(this.form.id_copay_'.$c.'.value) + eval(this.form.id_adj_'.$c.'.value) ); return true;" '.
 					'/>');
-				$table->setCellContents($count, 9, '<input type="text" id="id_dis_'.$c.'" name="dis['.$c.']" size="6" value="'.$ci['balance'].'" disabled="1" color="#ff0000" />');
+				$table->setCellContents($count, 10, '<input type="text" id="id_dis_'.$c.'" name="dis['.$c.']" size="6" value="'.$ci['balance'].'" disabled="1" color="#ff0000" />');
 			}
 		}
 
