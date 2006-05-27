@@ -11,9 +11,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-29 09:05-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2006-03-23 14:55-0500 -->
+	<!-- type = PO-Revision-Date, data = 2006-05-02 13:29-0400 -->
 
-	<Translator>Volker Bradley &#x3C;volkerbradley@gmail.com&#x3E;</Translator>
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -332,6 +332,10 @@
 <translation>
 	<original>Transactions</original>
 	<translated>Transaktionen</translated>
+</translation>
+<translation>
+	<original>Return to Ledger</original>
+	<translated>Zur&#xC3;&#xBC;ck zum Hauptbuch</translated>
 </translation>
 
 </gettextXML>

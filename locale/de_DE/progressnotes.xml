@@ -11,9 +11,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2006-03-23 15:43-0500 -->
+	<!-- type = PO-Revision-Date, data = 2006-05-21 15:47-0400 -->
 
-	<Translator>Volker Bradley &#x3C;volkerbradley@gmail.com&#x3E;</Translator>
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -260,6 +260,10 @@
 <translation>
 	<original>View $this-CODE(0x865cfa4)record_name</original>
 	<translated>View $this-CODE(0x865cfa4)record_name</translated>
+</translation>
+<translation>
+	<original>View $this-CODE(0x865f8f8)record_name</original>
+	<translated>View $this-CODE(0x865f8f8)record_name</translated>
 </translation>
 
 </gettextXML>

@@ -11,9 +11,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-27 13:46-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2006-04-28 12:08-0400 -->
+	<!-- type = PO-Revision-Date, data = 2006-05-21 15:48-0400 -->
 
-	<Translator>Jeff Buchbinder &#x3C;freemed@gmail.com&#x3E;</Translator>
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -247,7 +247,7 @@
 </translation>
 <translation>
 	<original>CLIA Number</original>
-	<translated></translated>
+	<translated>CLIA Nummer</translated>
 </translation>
 <translation>
 	<original>Contact</original>

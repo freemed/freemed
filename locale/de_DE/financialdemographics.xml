@@ -11,9 +11,9 @@
 
 	<!-- type = POT-Creation-Date, data = 2005-09-29 09:05-0400 -->
 
-	<!-- type = PO-Revision-Date, data = 2006-03-23 15:30-0500 -->
+	<!-- type = PO-Revision-Date, data = 2006-05-21 15:46-0400 -->
 
-	<Translator>Volker Bradley &#x3C;volkerbradley@gmail.com&#x3E;</Translator>
+	<Translator>Philipp Meng &#x3C;p.meng@gmx.at&#x3E;</Translator>
 	<!-- type = Language-Team, data = LANGUAGE <LL@li.org> -->
 
 	<!-- type = MIME-Version, data = 1.0 -->
@@ -120,6 +120,10 @@
 <translation>
 	<original>Financial Demographics</original>
 	<translated>Finanzielle Informationen</translated>
+</translation>
+<translation>
+	<original>Keep track of information for determining sliding fee schedule and other income and dependent parties related information.</original>
+	<translated>Durch genaue Aufschl&#xC3;&#xBC;sselung des finanziellen Status wird eine stufenlose Honoraranpassung erm&#xC3;&#xB6;glicht.</translated>
 </translation>
 
 </gettextXML>
