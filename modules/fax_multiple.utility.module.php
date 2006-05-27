@@ -53,12 +53,26 @@ class FaxMultiple extends UtilityModule {
 
 	function fax_status ( ) {
 		global $display_buffer;
+		$GLOBALS['__freemed']['no_template_display'] = true;
+
 		$fax = CreateObject('_FreeMED.Fax', '/dev/null');
 		$status = $fax->State($_REQUEST['faxstatus']);
+		$annotate = unserialize(stripslashes($_REQUEST['annotate']));
 		$display_buffer .= "<b>".$output."</b>\n";
 		if ($status == 1) {
 			$display_buffer .= "<div align=\"center\"><b>".__("Fax sent successfully.")."</b></div>\n";
-			$display_buffer .= "<div align=\"center\"><a onClick=\"javascript:close();\" class=\"button\">".__("Close")."</div>\n";
+			// Add annotation for EMR things
+			foreach ($annotate AS $v) {
+				$display_buffer .= sprintf(__("Adding annotation for %s record %d"), $v['module'], $v['record'])."<br/>\n";
+				module_function('annotations', 
+					'createAnnotation', array(
+						$v['module'],
+						$v['record'],
+						$v['note']
+					)
+				);
+			}
+			$display_buffer .= "<div align=\"center\"><a onClick=\"javascript:window.close();\" class=\"button\">".__("Close")."</div>\n";
 		} else {
 			$display_buffer .= "<b>".__("Fax is attempting to send: ")."</b>".$status."\n";
 			$GLOBALS['__freemed']['automatic_refresh'] = 10;
@@ -67,7 +81,7 @@ class FaxMultiple extends UtilityModule {
 	} // end method fax_status
 
 	function fax_wizard ( ) {
-		global $this_user;
+		global $this_user, $display_buffer;
 		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
 	
 		$w = CreateObject('PHP.wizard', array (
@@ -109,7 +123,7 @@ class FaxMultiple extends UtilityModule {
 			array ( 'to', 'to_number' ),
 			html_form::form_table ( array (
 				__("Destination (provider)") =>
-				module_function('providermodule',
+				module_function( 'providermodule',
 					'widget',
 					array ( 'to', false, 'phyfaxa' )
 				),
@@ -139,7 +153,14 @@ class FaxMultiple extends UtilityModule {
 					//print "module = $module<br/>\n";
 					$m = new $module ( );
 					//print_r($m); print "<br/>\n";
-				
+
+					// Set to be annotated when finished
+					$annotate["$module:$record"] = array (
+						'module' => $module,
+						'record' => $record,
+						'note' => sprintf(__("Faxed to %s"), ($_REQUEST['to'] ? $_REQUEST['to'] : $_REQUEST['to_number']))
+					);
+
 					// Handle render
 					if ($render = $m->print_override($record)) {
 						// Handle this elsewhere
@@ -185,7 +206,23 @@ class FaxMultiple extends UtilityModule {
 			);
 			//print ($_REQUEST['fax_number']);
 			$output = $fax->Send($_REQUEST['to'] ? $_REQUEST['to'] : $_REQUEST['to_number']);
+
+			$display_buffer .= "<script language=\"javascript\">\n".
+				"mfPopup=window.open(".
+					"'utilities.php?".
+					"action=".urlencode($_REQUEST['action'])."&".
+					"type=".urlencode($_REQUEST['type'])."&".
+					"patient=".urlencode($_REQUEST['patient'])."&".
+					"utility_action=faxstatus&".
+					"annotate=".urlencode(serialize($annotate))."&".
+					"faxstatus=".urlencode($output)."', ".
+					"'mfPopup', 'width=400,height=200,menubar=no,titlebar=no'); \n".
+
+					"mfPopup.opener=self; \n".
+				"</script>\n";
+
 			$display_buffer .= "<b>".$output."</b>\n";
+
 			$this_user->setFaxInQueue(
 				$output,
 				$_REQUEST['from'],
