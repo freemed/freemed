@@ -205,7 +205,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		<input type=\"submit\" name=\"submit_action\" ".
 		"class=\"button\" value=\"".__("Cancel")."\"/>
 		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently delete this fax?"))."')) { this.form.submit(); } else { return false; }\" ".
+		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently delete this fax?"))."')) { this.form.submit(); return true; } else { return false; }\" ".
 		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
 		<br/><br/><br/>
@@ -233,7 +233,7 @@ class UnfiledFaxes extends MaintenanceModule {
 		unlink('data/fax/unfiled/'.$filename);
 
 		// Insert new table query in unread
-		$this->_del();
+		$this->_del($id);
 
 		global $refresh;
 		$refresh = $this->page_name."?module=".get_class($this);
