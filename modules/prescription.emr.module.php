@@ -167,7 +167,7 @@ class PrescriptionModule extends EMRModule {
 		} else {
 			global $this_user;
 			if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
-			if ($this_user->isPhysician()) {
+			if (!$book->been_here() and $this_user->isPhysician()) {
 				global $rxphy;
 				$rxphy = $this_user->user_phy;
 			}
