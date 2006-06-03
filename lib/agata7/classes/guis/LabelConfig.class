@@ -1,0 +1,164 @@
+<?
+/***********************************************************/
+/* Class for Label setup
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class LabelConfig
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function LabelConfig()
+    {
+        $this->pwindow = &new GtkWindow;
+        $this->pwindow->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->pwindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->pwindow);
+        $this->pwindow->set_title(_a('Configuration'));
+        $this->pwindow->set_position(GTK_WIN_POS_CENTER);
+        $this->pwindow->set_default_size(400,400);
+        $this->pwindow->realize();
+        $hbox = new GtkHBox;
+        $this->pwindow->add($hbox);
+        
+        include_once 'classes/guis/MeasureBox.class';
+        Wait::On();
+
+        $Labels = Label::ListLabels();
+        if ($Labels)
+        {
+            foreach ($Labels as $label)
+            {
+                $this->Labels[$label] = Label::ReadLabel($label);
+            }
+            ksort($this->Labels);
+        }
+        
+        $desc['code']               = 'code';
+        $desc['horizontal_spacing'] = 'Horizontal Spacing';
+        $desc['vertical_spacing']   = 'Vertical Spacing';
+        $desc['label_width']        = 'Width';
+        $desc['label_height']       = 'Height';
+        $desc['left_margin']        = 'Left Margin';
+        $desc['top_margin']         = 'Top Margin';
+        $desc['label_cols']         = 'Columns';
+        $desc['label_rows']         = 'Lines';
+        $desc['page_format']        = 'Page Format';
+        $desc['line_spacing']       = 'Line Spacing';
+        
+        foreach ($this->Labels as $key => $content)
+        {
+            foreach ($content as $var => $value)
+            {
+                $type = null;
+                $edit = true;
+                if (in_array($var, array('horizontal_spacing', 'vertical_spacing',
+                                   'label_width', 'label_height', 'left_margin',
+                                   'top_margin', 'line_spacing')))
+                {
+                    $type = &new MeasureBox(_a($desc[$var]));
+                }
+                else if ($var == 'page_format')
+                {
+                    $type = array('Automatic', 'A3', 'A4', 'A5', 'Letter', 'Legal');
+                    $edit = false;
+                }
+                
+                $Vars[$key][] = array($value, _a($desc[$var]), false, $type, $edit);
+                $atts[$var] = true;
+            }
+        }
+
+        $i = 0;
+        foreach ($atts as $att => $bool)
+        {
+            $Plus[] = array('', _a($desc[$att]), false, null, true);
+            $i ++;
+        }
+
+        $slot_ok = array(&$this, 'onLabelConfig');
+        $slot_del = array(&$this, 'DeleteLabel');
+
+        $this->LabelList = &new Preferences(&$hbox);
+        $this->LabelList->SetTitleImage(images . 'label_bar.xpm');
+        $this->LabelList->SetTitle(_a('Label Templates'));
+        $this->LabelList->SetPlus($Plus);
+        $this->LabelList->SetOk($slot_ok, _a('Save'));
+        $this->LabelList->SetDel($slot_del);
+        $this->LabelList->SetStatus(_a('Loaded from ^1 directory', 'label'));
+        $this->LabelList->SetSaveButton(true);
+        $this->LabelList->SetPixmap(images . 'ico_label.xpm');
+        $this->LabelList->SetListTitle(_a('Label'));
+        $this->LabelList->BuildForms($Vars);
+        $this->pwindow->show_all();
+        Wait::Off();
+    }
+
+    /***********************************************************/
+    /* Erase a label
+    /***********************************************************/
+    function DeleteLabel()
+    {
+        $label = $this->LabelList->Current();
+        @unlink("label/{$label}.agl");
+    }
+
+    /***********************************************************/
+    /* Saves the label configuration
+    /***********************************************************/
+    function onLabelConfig()
+    {
+        $return = $this->LabelList->GetVars();
+        $label = key($return);
+        $schema = $return[$label];
+        $this->pwindow->Hide();
+
+        $array['label']['code']                 = $schema[0];
+        $array['label']['horizontal_spacing']   = $schema[1];
+        $array['label']['vertical_spacing']     = $schema[2];
+        $array['label']['label_width']          = $schema[3];
+        $array['label']['label_height']         = $schema[4];
+        $array['label']['left_margin']          = $schema[5];
+        $array['label']['top_margin']           = $schema[6];
+        $array['label']['label_cols']           = $schema[7];
+        $array['label']['label_rows']           = $schema[8];
+        $array['label']['page_format']          = $schema[9];
+        $array['label']['line_spacing']         = $schema[10];
+        
+        $fd = fopen ("label/{$label}.agl", 'w');
+        if ($fd)
+        {
+            fwrite($fd, trim("<?xml version=\"1.0\"?>\n" . Array2Xml($array)));
+            fclose($fd);
+        }
+    }
+
+    /***********************************************************/
+    /* Show the window
+    /***********************************************************/
+    function Show()
+    {
+        $this->pwindow->show_all();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Hide the window
+    /***********************************************************/
+    function Hide()
+    {
+        $this->pwindow->hide();
+        return true;
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($p1, $window)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

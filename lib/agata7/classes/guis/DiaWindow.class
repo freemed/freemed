@@ -1,0 +1,177 @@
+<?php
+/***********************************************************/
+/* Diagram Generation Dialog
+/***********************************************************/
+class DiaWindow extends AgataCore
+{
+    /***********************************************************/
+    /* Constructor
+    /***********************************************************/
+    function DiaWindow($DbAttributes, $agataConfig, $ctreeTablesDia, $agataTbLinks, $project)
+    {
+        $this->agataConfig  = $agataConfig;
+        $this->agataTbLinks = $agataTbLinks;
+        $this->project      = $project;
+        $this->DbAttributes = $DbAttributes;
+
+        $this->glade = &new GladeXML(images . 'dia.glade');
+        $this->window = $this->glade->get_widget('window');
+        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->window->set_title(_a('Create Diagram'));
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+
+        $this->Containers['scrolledwindowDia'] = $this->glade->get_widget('scrolledwindowDia');
+        $this->Containers['hboxDiaTables'] = $this->glade->get_widget('hboxDiaTables');
+        $this->Containers['frameDiaTables'] = $this->glade->get_widget('frameDiaTables');
+        $this->Containers['hboxConfigDia'] = $this->glade->get_widget('hboxConfigDia');
+        $this->Containers['vboxSelectDia'] = $this->glade->get_widget('vboxSelectDia');
+        $this->Containers['hboxCreateDiagram'] = $this->glade->get_widget('hboxCreateDiagram');
+
+        $local_pix['right']= Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'bigright.xpm');
+        $local_pix['dia']= Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'dia.xpm');
+
+        $this->Buttons['SelectDia'] = &new Button(array(&$this, 'SelectDia'),  _a('Add'),           $local_pix['right'], TOPBUTTON);
+        $this->Buttons['Diagram'] =   &new Button(array(&$this, 'SaveDia'),    _a('Create Diagram'),$local_pix['dia'],   IMAGEBUTTON);
+
+        $this->Containers['vboxSelectDia']->pack_start($this->Buttons['SelectDia'], true, false);
+        $this->Containers['hboxCreateDiagram']->pack_start($this->Buttons['Diagram'], false, false);
+        
+        //$this->ctreeTablesDia = new SimpleTree(_a('Tables'));
+        $this->ctreeTablesDia = $ctreeTablesDia;
+        $this->Containers['scrolledwindowDia']->add($this->ctreeTablesDia);
+        $this->Containers['frameDiaTables']->set_label(_a('Choose the tables'));
+
+        $buttons = array('Delete' => 1, 'Clear' => 1);
+        $this->DiaTables = new Alist(&$this->Containers['hboxDiaTables'], $this->window, _a('Selected Tables'),
+                           array(_a('Table')), null, 160, 200, false, $buttons, 0, array(images . 'ico_table.xpm'));
+
+        $this->aConfigDia = null;
+        $this->ConfigDia = null;
+
+        $aDescription['Levels'] = 'Number of rows in Diagrams';
+        $aDescription['ShowLines'] = 'Show link lines';
+        $aDescription['LineDistance'] = 'Distance Between Lines';
+        $aDescription['ColumnDistance'] = 'Distance Between Columns';
+        $aDescription['LevelDistance'] = 'Distance Between Levels';
+        $aDescription['TableOffSet'] = 'Table OffSet';
+
+        $this->aConfigDia['dia'][] = array($this->agataConfig['dia']['Levels'],         _a($aDescription['Levels']),         false, null, true);
+        $this->aConfigDia['dia'][] = array($this->agataConfig['dia']['ShowLines'],      _a($aDescription['ShowLines']),      false, 'CheckButton', true);
+        $this->aConfigDia['dia'][] = array($this->agataConfig['dia']['LineDistance'],   _a($aDescription['LineDistance']),   false, null, true);
+        $this->aConfigDia['dia'][] = array($this->agataConfig['dia']['ColumnDistance'], _a($aDescription['ColumnDistance']), false, null, true);
+        $this->aConfigDia['dia'][] = array($this->agataConfig['dia']['LevelDistance'],  _a($aDescription['LevelDistance']),  false, null, true);
+        $this->aConfigDia['dia'][] = array($this->agataConfig['dia']['TableOffSet'],    _a($aDescription['TableOffSet']),    false, null, true);
+        
+        $this->ConfigDia = new FormEntry(_a('Configuration'), $this->aConfigDia['dia'], &$this->Containers['hboxConfigDia']);
+        
+        $this->ConfigDia->button->connect_object('clicked', array(&$this,'ReturnDia'));
+        $this->Show();
+    }
+
+    /***********************************************************/
+    /* Saves Diagram
+    /***********************************************************/
+    function SaveDia()
+    {
+        if (!$this->DiaTables->GetItems())
+        {
+            new Dialog(_a('Require Tables, please'));
+            return false;
+        }
+        $OutputDir = $this->agataConfig['general']['OutputDir'];
+        $button = array(images . 'output.xpm', _a('Output'), $OutputDir);
+        new FileDialog(_a('Create Diagram'), array('dia'), $button, $OutputDir, array(&$this, 'CreateDia'));
+    }
+
+    /***********************************************************/
+    /* Select table in order to generate diagram
+    /***********************************************************/
+    function SelectDia()
+    {
+        $this->ctreeTablesDia->freeze();
+        $selection = $this->ctreeTablesDia->selection;
+        
+        if (!$this->connected)
+        {
+            new Dialog(_a('Cannot connect to Database'));
+            return false;
+        }
+        
+        foreach ($selection as $SelectionLine)
+        {
+            $text = $this->ctreeTablesDia->node_get_row_data( $SelectionLine );
+            if ($text)
+            {
+                $this->DiaTables->append(array($text));
+            }
+        }
+        $this->ctreeTablesDia->thaw();
+    }
+
+    
+    /***********************************************************/
+    /* Generates the diagram
+    /***********************************************************/
+    function CreateDia($fs)
+    {
+        $FileName = $fs->get_filename();
+        if ($FileName)
+        {
+            $fs->hide();
+            $aTables = $this->DiaTables->GetItems();
+            
+            //$posAction = array(&$this, 'RefreshRepository');
+            include_once 'classes/reports/AgataDia.class';
+            $MyDia = new Dia($this->DbAttributes, $this->agataConfig, $FileName,
+                             $aTables, $this->agataTbLinks, $this->project, null);
+                             //$aTables, $this->agataTbLinks, $this->project, $posAction);
+        }
+    }
+
+    /***********************************************************/
+    /* Return vars from Dia configuration screen
+    /***********************************************************/
+    function ReturnDia()
+    {
+        $aInputEntries = $this->ConfigDia->InputEntries['unique'];
+        $this->agataConfig['dia']['Levels']     = $aInputEntries[0]->get_text();
+        $this->agataConfig['dia']['ShowLines']  = $aInputEntries[1]->get_active();
+        $this->agataConfig['dia']['LineDistance']  = $aInputEntries[2]->get_text();
+        $this->agataConfig['dia']['ColumnDistance']  = $aInputEntries[3]->get_text();
+        $this->agataConfig['dia']['LevelDistance']  = $aInputEntries[4]->get_text();
+        $this->agataConfig['dia']['TableOffSet']  = $aInputEntries[5]->get_text();
+        
+        AgataConfig::WriteConfig($this->agataConfig);
+        new Dialog(_a('Saved'), false);
+    }
+
+    /***********************************************************/
+    /* Shows the window
+    /***********************************************************/
+    function Show()
+    {
+        $this->window->show_all();
+        return true;
+    }
+    
+    /***********************************************************/
+    /* Hide the window
+    /***********************************************************/
+    function Hide()
+    {
+        $this->window->hide();
+        return true;
+    }
+
+    /***********************************************************/
+    /* KeyTestMethod
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $this->window->hide();
+        }
+    }
+}
+?>

@@ -1,0 +1,253 @@
+<?
+/***********************************************************/
+/* Function, used to allows the user to choose a function
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class MaskBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function MaskBox($Description, $guides = true)
+    {
+        global $Pixmaps;
+        $tooltip = &new GtkTooltips;
+        $this->entry = &new GtkEntry;
+        $this->guides = $guides;
+
+        $box = &new GtkHBox;
+        $this->widget = new Box($box, $Description);
+        $this->button = new Button(array($this, 'MaskSel'), _a('Format'), $Pixmaps['ico_format'], ICONBUTTON, $isdir, true);
+        $this->button->set_relief(GTK_RELIEF_NONE);
+
+        $box->pack_start($this->entry);
+        $box->pack_start($this->button);
+    }
+    /***********************************************************/
+    /* Changes the color
+    /***********************************************************/
+    function set_text($data)
+    {
+        $this->entry->set_text($data);
+    }
+
+    function set_editable($bool)
+    {
+        $this->entry->set_editable($bool);
+    }
+
+    /***********************************************************/
+    /* Returns the color
+    /***********************************************************/
+    function get_text()
+    {
+        return $this->entry->get_text();
+    }
+
+    /***********************************************************/
+    /* Changes the visibility
+    /***********************************************************/    
+    function set_visibility($bool)
+    {
+        $this->entry->set_visibility($bool);
+    }
+
+    /***********************************************************/
+    /* Show the button
+    /***********************************************************/
+    function show()
+    {
+        $this->widget->show_all();
+    }
+
+    /***********************************************************/
+    /* Define the size
+    /***********************************************************/
+    function set_usize($width, $height)
+    {
+        $this->entry->set_usize($width, $height);
+    }
+
+    /***********************************************************/
+    /* Apply a function from Repository.
+    /***********************************************************/
+    function MaskSel()
+    {
+        global $Pixmaps;
+        $glade_format       = new GladeXML('interface/format.glade');
+        $this->window       = $glade_format->get_widget('window1');
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), $this->window);
+        
+        $this->notebook           = $glade_format->get_widget('notebook1');
+        $this->spin_decimals      = $glade_format->get_widget('spin_decimals');
+        $this->entry_decimal_sep  = $glade_format->get_widget('entry_decimal_sep');
+        $this->entry_thousand_sep = $glade_format->get_widget('entry_thousand_sep');
+        $this->combo_negatives    = $glade_format->get_widget('combo_negatives');
+        $this->check_thousand     = $glade_format->get_widget('check_thousand');
+        $this->clist_masks        = $glade_format->get_widget('clist_masks');
+        $this->entry_custom       = $glade_format->get_widget('entry_custom');
+        $this->entry_currency     = $glade_format->get_widget('entry_currency');
+        $this->entry_suffix       = $glade_format->get_widget('entry_suffix');
+        if (!$this->guides)
+        {
+            $this->notebook->set_show_tabs(false);
+        }
+        $masks = file('include/masks');
+        foreach ($masks as $mask)
+        {
+            $this->clist_masks->append(array(ereg_replace("\n",'',$mask)));
+        }
+        
+        if ($text = $this->get_text())
+        {
+            $mask = $text;
+            if (substr($mask,0,1)=='@')
+            {
+                $this->entry_custom->set_text(substr($mask,1));
+                $this->notebook->set_page(1);
+            }
+            else if (substr($mask,0,1)=='#')
+            {
+                $suffix_pos = strpos($mask, 's');
+                if ($suffix_pos !== false)
+                {
+                    $suffix = substr($mask, $suffix_pos + 1);
+                    $mask   = substr($mask, 0, $suffix_pos);
+                }
+                $Currency   = substr($mask, 1, 2);
+                $Negative   = substr($mask, 3, 1);
+                $Negative_  = substr($mask, strlen($mask) -1, 1);
+                $ThousandSep= substr($mask, 5, 1);
+                $DecimalSep = substr($mask, 9, 1);
+                $Precision  = strlen(substr($mask,10));
+                if ($Negative != '-')
+                {
+                    $Precision --;
+                }
+                else
+                {
+                    $Negative_ = null;
+                }
+                
+                $this->spin_decimals->set_text($Precision);
+                $this->entry_decimal_sep->set_text($DecimalSep);
+                $this->entry_thousand_sep->set_text($ThousandSep);
+                $entry_negative = $this->combo_negatives->entry;
+                $entry_negative->set_text($Negative . $Negative_);
+                $this->entry_currency->set_text($Currency);
+                $this->entry_suffix->set_text($suffix);
+                $this->notebook->set_page(0);
+            }
+        }
+
+        $label_decimals      = $glade_format->get_widget('label_decimals');
+        $label_decimal_sep   = $glade_format->get_widget('label_decimal_sep');
+        $label_thousand_sep  = $glade_format->get_widget('label_thousand_sep');
+        $label_negatives     = $glade_format->get_widget('label_negatives');
+        $label_custom        = $glade_format->get_widget('label_custom');
+        $label_title         = $glade_format->get_widget('label_title');
+        $label_currency      = $glade_format->get_widget('label_currency');
+        $label_clear         = $glade_format->get_widget('label_clear');
+        $label_suffix        = $glade_format->get_widget('label_suffix');
+        
+        $hbox_page1          = $glade_format->get_widget('hbox_page1');
+        $hbox_page2          = $glade_format->get_widget('hbox_page2');
+        
+        $button_page1        = $glade_format->get_widget('button_page1');
+        $button_page2        = $glade_format->get_widget('button_page2');
+        
+        $button_clear        = $glade_format->get_widget('button_clear');
+        
+        $button_page1->connect_object('clicked', array(&$this, 'GetMask1'));
+        $button_page2->connect_object('clicked', array(&$this, 'GetMask2'));
+        $button_clear->connect_object('clicked', array(&$this, 'Clear'));
+        
+        $hbox_page1->pack_start(darktxt(_a('Number Format')), true, true);
+        $hbox_page2->pack_start(darktxt(_a('Text Mask')), true, true);
+        $hbox_page1->show_all();
+        $hbox_page2->show_all();
+
+        
+        $label_decimals->set_text(_a('Precision'));
+        $label_decimal_sep->set_text(_a('Decimal Separator'));
+        $label_thousand_sep->set_text(_a('Thousand Separator'));
+        $label_custom->set_text(_a('Custom'));
+        $label_title->set_text(_a('Format'));
+        $label_currency->set_text(_a('Currency'));
+        $label_negatives->set_text(_a('Negatives'));
+        $label_clear->set_text(_a('Clear'));
+        $label_suffix->set_text(_a('Suffix'));
+        
+        $this->window->set_title(_a('Format'));
+    }
+
+    /***********************************************************/
+    /* Get Monetary Format
+    /***********************************************************/
+    function GetMask1()
+    {
+        $entry1    = $this->combo_negatives->entry;
+        $negative1 = substr($entry1->get_text(),0,1);
+        $negative2 = substr($entry1->get_text(),1,1);
+        $currency  = substr($this->entry_currency->get_text(),0,2);
+        $suffix    = $this->entry_suffix->get_text();
+        
+        if ($this->check_thousand->get_active())
+        {
+            $thousand_sep = $this->entry_thousand_sep->get_text();
+        }
+        else
+        {
+            $thousand_sep = '9';
+        }
+        
+        $format = '#' . str_pad($currency, 2, ' ', STR_PAD_LEFT) . $negative1 . '9' . $thousand_sep . '999' .
+                        $this->entry_decimal_sep->get_text() . 
+                        str_repeat('9', $this->spin_decimals->get_text()) . $negative2 . "s$suffix";
+        $this->window->hide();
+        $this->set_text($format);
+    }
+
+    /***********************************************************/
+    /* Get Text Mask
+    /***********************************************************/
+    function GetMask2()
+    {
+        $custom = $this->entry_custom->get_text();
+        if ($custom)
+        {
+            $this->set_text('@' . $custom);
+        }
+        else
+        {
+            $row = $this->clist_masks->selection[0];
+            if (is_numeric($row))
+            {
+                $format = $this->clist_masks->get_text($row,0);
+                $this->set_text('@' . $format);
+            }
+        }
+        $this->window->hide();
+    }
+
+    /***********************************************************/
+    /* Clear Contents
+    /***********************************************************/
+    function Clear()
+    {
+        $this->set_text('');
+        $this->window->hide();
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

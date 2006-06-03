@@ -1,0 +1,26 @@
+Version 0.3
+
+- Añadido soporte para parrafos, paginas (con sus respectivas cabeceras y pies de pagina) y saltos de pagina
+- Soporte de estilos para todos los objetos (pdw_document, pdw_header, pdw_footer, pdw_textbox, etc)
+- Añadida la capacidad de gererar otros formatos de documento tales como MS Word, PDF, RTF, StarWriter, LaTeX, XHTML and HTML (necesita que la aplicacion OpenOffice.org este instalada)
+- Velocidad de generacion mejorada (alrededor de 7-8 veces mas rapido)
+- Añadido soporte parcial para graficos. Existe una clase para cada elemento SVG: line, rectangle, circle, ellipse, path, caption, etc.
+- Cambiada la licencia de las clases a Lesser General Public License (LGPL)
+
+Version 0.2
+
+- La clase principal se ha dividido en algunas mas (document, header, footer y texbox por el momento) cada una con sus propios metodos (write, image, etc)
+- Soporte para enlaces (todas las clases)
+- Soporte para imagenes (todas las clases)
+- Soporte para notas al pie (clase document)
+- Soporte para mas estilos de fuente (sombra,relieve saliente,relieve grabado,contorno,tachado: linea-simple/linea-doble/lina-gruesa/barras/X)
+- Soporte para definir el color de las fuentes (de fondo y de frente)
+- Soporte para la definicion de lenguaje/pais del documento
+- Arreglados varios fallos en la clase document
+- La misma imagen solo se copia una vez cuando se inserta en diferentes partes del documento
+- Terminada la documentacion y traducida al ingles
+- Eliminada la dependencia con la herramienta de consola zip
+
+Version 0.1
+
+- Versión inicial

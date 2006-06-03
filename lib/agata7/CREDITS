@@ -1,0 +1,72 @@
+Development and Coordination
+============================
+# Jamiel Spezia
+
+Project Author
+==============
+# Pablo Dall'Oglio
+
+Contributers
+============
+# Bruno Depero (InterBase, Informix, MSSQL test);
+# Jeffrey Buchbinder (Multiple Subqueries on
+  Merge, font improvements on Merge docs);
+# Thomas Sprietersbach (Deutch Translation) and
+  Translation Class improvements;
+# Brad McCrorey (PostScript output improvements);
+# Brice Vissiere (API fix bug on BreakColumns);
+# Mario H.C.T. (Patches and BugFixes on report
+  generation);
+# Hugo Sacramento (XmlArray class);
+# Mike Crowe (sql and xml patches);
+
+Translators
+===========
+# Bruno Depero (Italian translation);
+# Joachim Werner (Deutsh translation);
+# Laurent Patureaux (French translation);
+# Johannes Schill (Swedish translation);
+# Christian Etuy (French translation);
+# Lucas Di Pentima (Spanish translation);
+# Ismail çak¿r (Turkish translation);
+Gold Users
+==========
+
+# Luciano Stein (Sql Server and Oracle ODBC
+  testes under windows);
+# Rodrigo Carvalhaes (Microsiga Files);
+# Dagles Fernandes (Oracle Schemas);
+# Tarique Nagpur and Girish Nair (MySQL first
+  version and tests);
+# Steph Fox (English and PhpGtk help);
+# Frank Kromann (FrontBase help);
+# Jose Miguel Redondo (Access bug-fix);
+# Andrew M. Yochum (Sybase help);
+# Evandro Roberto dos Santos (Sybase tests
+  under windows); 
+# Flavio jose fonseca de souza (mssql help);
+# Eduardo Fernandes (Sql Server help);
+# Seann Hamilton (Wiki documentation);
+
+Suggestions
+===========
+# Markus Fisher (Pear suggestions);
+# Andrei Zmievski (theme suggestions);
+# Solis and Univates collegues (Cesar Brod,
+  Maurício de Castro, Vilson Gartner,
+  Paulo R. Mallmann, João Fritsh, Daniel Heisler);
+# Tomas Cox (Pear DB help);
+# Mike Crowe (csv suggestions);
+# API on windows separators (guillaume efrei);
+
+Projects used by Agata
+======================
+# PHP          (www.php.net);
+# PHP-GTK      (gtk.php.net);
+# PEAR         (pear.php.net);
+# FPDF         (www.fpdf.org);
+# BarCode128   (GuinuX);
+# JPGraph      (www.aditus.nu/jpgraph);
+# PhpDocWriter (http://phpdocwriter.sf.net);
+# Ximian Icons (www.ximian.com);
+# BARCODE GENERATOR  (Walter Cattebeke)

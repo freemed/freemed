@@ -1,0 +1,52 @@
+Debes rellenar el fichero conf/config.php con los valores apropiados.
+
+CONVERSION DE DOCUMENTOS
+
+Instrucciones de configuracion:
+
+Esta funcion de conversion utiliza el puente Python-UNO incluido en la distribucion OpenOffice e instalada
+por defecto desde la version OpenOffice1.1RC3 aunque es recomendable instalar la ultima (v1.1.1). No tienes
+que preocuparte por la instalacion de python ya que OpenOffice.org viene con el runtime de python v2.2.2.
+
+Este metodo sigue la arquitectura cliente-servidor, necesitas al menos una instalacion OpenOffice
+(trabajando como cliente y servidor) o una instalacion trabajando como cliente (la maquina donde se ejecuta
+phpdocwriter) y otra instalacion trabajando como servidor (la maquina que convierte documentos).
+Nota: En esta version de las clases, cliente y servidor tienen que ser la misma maquina.
+
+En el lado del servidor tienes que hacer lo siguiente:
+
+	Cierra todas las instancias de OpenOffice (incluido el quickstarter).
+
+	Para hacer que OpenOffice.org atienda peticiones solo para una sesion ejecuta desde el shell:
+	
+	<OfficePath>\soffice "-accept=socket,host=localhost,port=2002;urp;"
+	
+	Para hacer que OpenOffice.org atienda peticiones cada vez que se arranque, abre el fichero:
+	<OfficePath>/share/registry/data/org/openoffice/Setup.xcu en un editor, y busca el elemento
+	<node oor:name="Office"/>.
+	Este elemento contiene elementos <prop/>. Añade el siguiente elemento <prop/> en el mismo nivel
+	que los elementos existentes:
+	
+	<prop oor:name="ooSetupConnectionURL" oor:type="xs:string">
+	 <value>socket,host=localhost,port=2002;urp;</value>
+	</prop>
+	
+	Esto configura OpenOffice.org para proporcionar un socket en el puerto 2002, donde servira conexiones
+	mediante el protocolo remoto UNO (urp).
+  
+	Nota en maquinas Linux:
+
+		La aplicacion OpenOffice.org necesita una sesion X para ejecutarse.
+		Si eres un usuario de consola, necesitas crear una nueva.
+		
+			desde la consola ejecuta "nohup /usr/X11R6/bin/Xvfb :25 -screen scrn 800x600x32 &"
+			para comenzar una nueva sesion
+			
+			No olvides indicar la variable display:
+				DISPLAY=":25" <OfficePath>\soffice "-accept=socket,host=localhost,port=2002;urp;"
+
+			Usa "/usr/bin/killall Xvfb" para matar la sesion 
+				
+En el lado del cliente solo necesitas configurar los parametros del fichero conf/config.php. No olvides configurar tambien el script de consola ("export.bat" para windows, "export.sh" para linux), rellenando las dos rutas, la ruta al ejecutable python OpenOffice.org y la ruta al script de python ("export.py").
+
+Note: Para la conversion a LaTeX, XHTML 1.0 and XHTML 1.1 + MathML necesitas descargar e instalar los filtros de exportacion del projecto writer2Latex (http://www.hj-gym.dk/~hj/writer2latex/). Para instalar estos filtros sigue las instrucciones de su sitio web.

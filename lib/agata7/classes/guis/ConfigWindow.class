@@ -1,0 +1,138 @@
+<?php
+/***********************************************************/
+/* Configuration Dialog
+/***********************************************************/
+class ConfigWindow
+{
+    /***********************************************************/
+    /* Constructor
+    /***********************************************************/
+    function ConfigWindow($slot, $agataConfig)
+    {
+        $this->window = &new GtkWindow;
+        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->set_title(_a('Configuration'));
+        $this->window->set_position(GTK_WIN_POS_CENTER);
+        $this->window->set_default_size(400,400);
+        $aDescription      = $aDescription;
+        $this->agataConfig = $agataConfig;
+        $this->slot        = $slot;
+        
+        $vbox = &new GtkVBox;
+        $this->window->add($vbox);
+        
+        $Vars = null;
+        $this->ConfigVars = null;
+        
+        $aDescription['AgataDir'] =     'Agata Directory';
+        $aDescription['OutputDir'] =    'Output Directory';
+        $aDescription['RptDir'] =       'Reports Directory';
+        $aDescription['TmpDir'] =       'Temp Directory';
+        $aDescription['Delimiter'] =    'CSV Delimiter';
+        $aDescription['SplashScreen'] = 'Show Splash Screen';
+        $aDescription['Connect']      = 'Startup Connection';
+        $aDescription['Server']       = 'AgataWeb URL Address';
+        
+        $aDescription['PdfSoft'] =      'Viewer for PDF';
+        $aDescription['TxtSoft'] =      'Viewer for Text Files';
+        $aDescription['XmlSoft'] =      'Viewer for XML Files';
+        $aDescription['DiaSoft'] =      'Viewer for Diagrams';
+        $aDescription['BrowserSoft'] =  'Browser';
+        $aDescription['SpreadSoft'] =   'Spread Sheet';
+        $aDescription['OpenSoft'] =     'OpenOffice';
+        
+        $Vars[_a('General')][] = array($this->agataConfig['general']['AgataDir'],      _a($aDescription['AgataDir']),     false, null, false);
+        $Vars[_a('General')][] = array($this->agataConfig['general']['OutputDir'],     _a($aDescription['OutputDir']),    false, 'files2', true);
+        $Vars[_a('General')][] = array($this->agataConfig['general']['RptDir'],        _a($aDescription['RptDir']),       false, 'files2', true);
+        $Vars[_a('General')][] = array($this->agataConfig['general']['TmpDir'],        _a($aDescription['TmpDir']),       false, 'files2', true);
+        $Vars[_a('General')][] = array($this->agataConfig['general']['Delimiter'],     _a($aDescription['Delimiter']),    false, false, true);
+        $Vars[_a('General')][] = array($this->agataConfig['general']['SplashScreen'],  _a($aDescription['SplashScreen']), false, 'CheckButton', true);
+        $Vars[_a('General')][] = array($this->agataConfig['general']['StartupConnect'],_a($aDescription['Connect']),    false, 'CheckButton', true);
+        $Vars[_a('General')][] = array($this->agataConfig['general']['Server'],        _a($aDescription['Server']),     false, null, true);
+        
+        $Vars[_a('Viewers')][] = array($this->agataConfig['app']['PdfSoft'],    _a($aDescription['PdfSoft']),    false, 'files', true);
+        $Vars[_a('Viewers')][] = array($this->agataConfig['app']['TxtSoft'],    _a($aDescription['TxtSoft']),    false, 'files', true);
+        $Vars[_a('Viewers')][] = array($this->agataConfig['app']['BrowserSoft'],_a($aDescription['BrowserSoft']),false, 'files', true);
+        $Vars[_a('Viewers')][] = array($this->agataConfig['app']['SpreadSoft'], _a($aDescription['SpreadSoft']), false, 'files', true);
+        $Vars[_a('Viewers')][] = array($this->agataConfig['app']['DiaSoft'],    _a($aDescription['DiaSoft']),    false, 'files', true);
+        $Vars[_a('Viewers')][] = array($this->agataConfig['app']['XmlSoft'],    _a($aDescription['XmlSoft']),    false, 'files', true);
+        $Vars[_a('Viewers')][] = array($this->agataConfig['app']['OpenSoft'],   _a($aDescription['OpenSoft']),   false, 'files', true);
+        
+        $this->ConfigList = &new Preferences(&$vbox);
+        $this->ConfigList->SetTitleImage(images . 'preferences.xpm');
+        $this->ConfigList->SetTitle(_a('Preferences'));
+        $this->ConfigList->SetOptions(false);
+        $this->ConfigList->SetSaveButton(true);
+        $this->ConfigList->SetPlus($Plus);
+        $this->ConfigList->SetOk(array(&$this, 'Save'), _a('Save'));
+        //$this->ConfigList->SetStatus(_a('Loaded from ^1 directory', 'layout'));
+        $this->ConfigList->SetPixmap(images . 'menu_config.xpm');
+        $this->ConfigList->SetListTitle(_a('Configuration'));
+        
+        $this->ConfigList->BuildForms($Vars);
+    }
+
+    function Save()
+    {
+        $ConfigList = $this->ConfigList;
+        $return = $ConfigList->GetVars();
+        $key = key($return);
+        $schema = $return[$key];
+
+        if ($key == _a('General'))
+        {
+            $this->agataConfig['general']['AgataDir']       = $schema[0];
+            $this->agataConfig['general']['OutputDir']      = $schema[1];
+            $this->agataConfig['general']['RptDir']         = $schema[2];
+            $this->agataConfig['general']['TmpDir']         = $schema[3];
+            $this->agataConfig['general']['Delimiter']      = $schema[4];
+            $this->agataConfig['general']['SplashScreen']   = $schema[5];
+            $this->agataConfig['general']['StartupConnect'] = $schema[6];
+            $this->agataConfig['general']['Server']         = $schema[7];
+        }
+        
+        if ($key == _a('Viewers'))
+        {
+            $this->agataConfig['app']['PdfSoft']     = $schema[0];
+            $this->agataConfig['app']['TxtSoft']     = $schema[1];
+            $this->agataConfig['app']['BrowserSoft'] = $schema[2];
+            $this->agataConfig['app']['SpreadSoft']  = $schema[3];
+            $this->agataConfig['app']['DiaSoft']     = $schema[4];
+            $this->agataConfig['app']['XmlSoft']     = $schema[5];
+            $this->agataConfig['app']['OpenSoft']    = $schema[6];
+        }
+        $this->window->hide();
+        call_user_func($this->slot, $this->agataConfig);
+    }
+
+    /***********************************************************/
+    /* Key Test Method
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $this->Hide();
+        }
+    }
+
+    /***********************************************************/
+    /* Show the Window
+    /***********************************************************/
+    function Show()
+    {
+        $this->window->show_all();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Hide the Window
+    /***********************************************************/
+    function Hide()
+    {
+        $this->window->hide();
+        return true;
+    }
+}
+?>

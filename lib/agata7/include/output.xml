@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<! Please, don't delete any line, just change its contents >
+<report>
+    <title>
+    </title>
+    <header>
+        <line type="header">
+            <column type="header" numero="$colnum"> $Column </column>
+        </line>
+    </header>
+    <fields>
+        <line type="data">
+            <column type="data" align="$align" colnum="$colnum"> $QueryCell </column>
+        </line>
+    <footer>
+        <line type="total">
+            <column type="total" formula="$formula" colnum="$colnum"> $Value </column>
+        </line>
+    </footer>
+    <group label="$GroupLabel">
+    </group>
+</report>

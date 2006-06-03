@@ -1,0 +1,54 @@
+<?
+/***********************************************************/
+/* Project list
+/* by Jamiel Spezia 2006-2006
+/***********************************************************/
+class ProjectList extends GtkCList
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function ProjectList()
+    {
+        GtkCList::GtkCList(2);
+        GtkCList::set_usize(140, -1);
+        GtkCList::set_column_auto_resize(0, true);
+        GtkCList::set_column_auto_resize(1, true);
+        GtkCList::set_selection_mode(GTK_SELECTION_SINGLE);
+    }
+
+    /***********************************************************/
+    /* Set the projects in ProjectList
+    /***********************************************************/
+    function SetProjects($projects)
+    {
+        $start = Gdk::pixmap_create_from_xpm(null, null, 'interface/ico_db.xpm');
+
+        foreach ( $projects as $name=>$project )
+        {
+            $node = GtkCList::append(array('', $name));
+            GtkCList::set_pixtext($node, 0, '', 5, $start[0], $start[1]);
+        }
+    }
+
+    /***********************************************************/
+    /* Event select-row, return name of project
+    /***********************************************************/
+    function GetSelection()
+    {
+        $selection = $this->selection;
+        if ($selection)
+        {
+            $line = $selection[0];
+            return GtkCList::get_text($line,1);
+        }
+
+        return false;
+    }
+
+    function ClearProjects()
+    {
+        GtkCList::Clear();
+    }
+}
+?>

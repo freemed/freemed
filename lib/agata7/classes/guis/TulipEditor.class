@@ -1,0 +1,588 @@
+<?
+// +-----------------------------------------------------------------+
+// | Solis - Free Software Cooperative                               |
+// | Copyleft (l) 2004,  Lajeado/RS - Brasil                         |
+// +-----------------------------------------------------------------+
+// | Licensed under GPL: www.fsf.org for further details             |
+// |                                                                 |
+// +-----------------------------------------------------------------+
+// | Abstract: Tulip Editor                                          |
+// |                                                                 |
+// | Created by Pablo Dall'Oglio (pablo@dalloglio.net)               |
+// +-----------------------------------------------------------------+
+
+/***********************************************************/
+/* Embedded Tulip editor
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class TulipEditor
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function TulipEditor($Dir)
+    {
+        $this->window = &new GtkWindow;
+        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->set_title(_a('Function Repository'));
+        $this->window->set_position(GTK_WIN_POS_CENTER);
+        $this->window->set_default_size(600,400);
+        $this->window->realize();
+
+        $this->FunDir = $Dir;
+        $buttons = new GtkHandleBox;
+        $hboxbuttons = new GtkHBox;
+        $buttons->add($hboxbuttons);
+        $this->accel = new GtkAccelGroup;
+        $this->window->add_accel_group($this->accel);
+        $this->status = new GtkStatusBar;
+        
+        $this->vbox = $vbox = new GtkVBox;
+        $this->window->add($vbox);
+        $hbox = new GtkHBox;
+        
+        $buttons = new GtkHandleBox;
+        $hboxbuttons = new GtkHBox;
+        $buttons->add($hboxbuttons);
+        
+        $vbox->pack_start($buttons, false, false, 5);
+        $vbox->pack_start($hbox);
+
+        $button = array(images . 'formula.xpm', _a('Formulas'), $FormulaDir);
+
+        $novo   = new Icone($this->window->window, images . 'filenew.xpm',  ' ' . _a('New') . ' ', _a('New File'));
+        $abrir  = new Icone($this->window->window, images . 'fileopen.xpm', ' ' . _a('Open'). ' ', _a('Open File'));
+        $salvar = new Icone($this->window->window, images . 'filesave.xpm', ' ' . _a('Save'). ' ', _a('Save File'));
+        $test   = new Icone($this->window->window, images . 'filetest.xpm', ' ' . _a('Test'). ' ', _a('Test File'));
+        
+        $novo->connect_object('clicked', array(&$this, 'NewFunction'));
+        $abrir->connect_object('clicked', array(&$this, 'PreAbrir'));
+        $salvar->connect_object('clicked', array(&$this, 'Salvar'));
+        $test->connect_object('clicked', array(&$this, 'Testar'));
+
+        $widgets = array($novo, $abrir, $salvar, $test);
+        foreach ($widgets as $widget)
+        {
+            $hboxbuttons->pack_start($widget, false, false);
+            $widget->set_relief(GTK_RELIEF_NONE);
+            $widget->set_border_width(2);
+        }
+        
+        $extensions = array('.fun');
+        $this->arquivos = &new FileTree();
+        $this->arquivos->DefineExtensions($extensions);
+        $this->arquivos->set_column_width(0,400);
+        $this->arquivos->AbreDiretorio($Dir, null, 'Root');
+        $botao = $this->arquivos->BotaoOk;
+        //$botao->connect_object('clicked', array(&$this,'AbrirTree'));
+        $this->FunctionsHandler = &new TreeHandler($this->arquivos);
+        $ItemOpen = $this->FunctionsHandler->OpenAction;
+        $ItemOpen->connect_object('clicked', array(&$this, 'AbrirTree'));
+        
+        $this->paned = new GtkHPaned;
+        $hbox->pack_start($this->paned, true, true);
+
+        $this->notebook = new GtkNotebook;
+        $this->notebook->set_scrollable(true);
+        $this->AppendPage();
+        $this->AltKeys();
+        
+        $ico_box = new GtkVBox;
+        $del = new IconeImg($this->window->window, images . 'ico_del.xpm', _a('Close'));
+        $del->connect_object('clicked', array(&$this, 'Fechar'));
+        $del->set_relief(GTK_RELIEF_NONE);
+        $ico_box->pack_start($del, false, false);
+        $hbox->pack_start($ico_box, false, false);
+
+        $this->paned->add1($this->FunctionsHandler);
+        $this->paned->add2($this->notebook);
+        $this->paned->set_position(180);
+        
+        $this->FunctionsHandler->CreateToolBar();
+
+        $this->Show();
+    }
+
+    /***********************************************************/
+    /* Places the Editor on the screen
+    /***********************************************************/
+    function Place()
+    {
+        $this->paned->add1($this->FunctionsHandler);
+        $this->paned->add2($this->notebook);
+        $this->paned->set_position(180);
+        
+        $this->FunctionsHandler->CreateToolBar();
+    }
+
+    /***********************************************************/
+    /* Control ALT Keys
+    /***********************************************************/
+    function AltKeys()
+    {
+        $accelgroup = $this->accel;
+        $label = new GtkLabel;
+        for ($n=1; $n<=9; $n ++)
+        {
+            $Subitem_key = $label->parse_uline("_$n");
+            $button = new GtkButton;
+            $button->add_accelerator("clicked", $accelgroup, $Subitem_key, GDK_MOD1_MASK, 0);
+            $button->connect_object('clicked', array(&$this, 'OnAlt'), $n);
+            $button->lock_accelerators();
+        }
+        $control_shortcuts = array ('N' => 'NewFunction', 'O' => 'PreAbrir', 'S' => 'Salvar', 'W' => 'Fechar');
+        foreach($control_shortcuts as $shortcut => $function)
+        {
+            $Subitem_key = $label->parse_uline("_$shortcut");
+            $button = new GtkButton;
+            $button->add_accelerator("clicked", $accelgroup, $Subitem_key, GDK_CONTROL_MASK, 0);
+            $button->connect_object('clicked', array(&$this, $function));
+            $button->lock_accelerators();
+        }
+    }
+
+    /***********************************************************/
+    /* Creates a new function dialog
+    /***********************************************************/
+    function NewFunction()
+    {
+        $this->newfunction = &new InputBox(_a('Function Name') . ' :', 120, '', array(&$this, 'NewFunctionX'));
+    }
+
+    /***********************************************************/
+    /* Creates a new function
+    /***********************************************************/
+    function NewFunctionX()
+    {
+        $entry = $this->newfunction->InputEntry;
+        $this->newfunction->dialog->hide();
+        if ($entry)
+        {
+            $function_name = $entry->get_text();
+            if ($function_name)
+            {
+                $results = $this->AppendPage('');
+                $label = $results[0];
+                $scintilla = $results[1];
+                $string_file = 	"<?\n# function $function_name\n".
+                "# " . _a('^1 is the selected column', '$string_column') . " \n".
+                "# " . _a('^1 is the current tuple of the report', '$array_row') . "\n".
+                "# " . _a('^1 is the previous tuple of the report', '$array_row') . "\n".
+                "# " . _a('^1 is the current row number of the report', '$row_num') . " \n".
+                "# " . _a('^1 is the current column number of the report', '$col_num') . " \n\n".
+                "function $function_name(\$string_column, \$array_row, \$array_last_row, \$row_num, \$col_num)\n{\n}\n?>";
+                $scintilla->OpenString($string_file);
+                //$label->set_text($Arquivo);
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Respond to the ALT key
+    /***********************************************************/
+    function OnAlt($n)
+    {
+        $this->notebook->set_page($n-1);
+        $scintilla = $this->GetScintilla();
+        $scintilla->grab_focus();
+    }
+
+    /***********************************************************/
+    /* Open a function from the tree
+    /***********************************************************/
+    function AbrirTree()
+    {
+        $selecao = $this->arquivos->selection[0];
+        $Arquivo = $this->arquivos->node_get_row_data($selecao);
+        $results = $this->AppendPage(GetFileName($Arquivo));
+        $label = $results[0];
+        $scintilla = $results[1];
+        $scintilla->Open($Arquivo);
+        $label->set_text($Arquivo);
+    }
+
+    /***********************************************************/
+    /* Append a page
+    /***********************************************************/
+    function AppendPage($string='')
+    {
+        global $Pixmaps;
+        $vbox = new GtkVBox;
+        $path = new GtkLabel;
+        $style = &new GtkStyle();
+        $style->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-100-*-*-*-*-*-*");
+        $path->set_style($style);
+        $scintilla = new ScintillaPHP;
+        
+        $vbox->pack_start($path, false, false);
+        $vbox->pack_start($scintilla);
+        $vbox->show_all();
+        $scintilla->connect('update_ui', array(&$this, 'Refresh'));
+        $scintilla->connect('char_added', array(&$this, 'Added'));
+        $ext = explode('.', $string);
+        $ext = trim($ext[1]);
+        
+        if (!$ext || !$Pixmaps[$ext])
+        $GdkPixmap = $Pixmaps['generic'];
+        else
+        $GdkPixmap = $Pixmaps[$ext];
+        
+        $imagem = new GtkPixmap($GdkPixmap[0], $GdkPixmap[1]);
+        $label = new GtkLabel(" $string ");
+        
+        $hbox = new GtkHBox;
+        $hbox->pack_start($imagem);
+        $hbox->pack_start($label);
+        $hbox->show_all();
+        
+        $this->notebook->append_page($vbox, $hbox);
+        $page = $this->notebook->page_num($vbox);
+        $this->notebook->set_page($page);
+        $scintilla->grab_focus();
+        return array($path, $scintilla);
+    }
+
+    /***********************************************************/
+    /* Controls when a new character is added
+    /***********************************************************/
+    function Added($scintilla)
+    {
+        $current = $this->notebook->get_current_page();
+        $content = $this->notebook->get_nth_page($current);
+        $slots = $content->children;
+        $slot1 = $slots[0];
+        $label = $slot1->widget;
+        $file = $label->get();
+        if (substr($file,0,1) != '*')
+        $label->set_text("* $file");
+    }
+
+    /***********************************************************/
+    /* Refresh the COL number
+    /***********************************************************/
+    function Refresh($scintilla)
+    {
+        $this->notebook->get_current_page();
+        $line = $scintilla->get_cur_line();
+        $col = $line[1];
+        $this->status->push(1, "COL: $col");
+    }
+
+    /***********************************************************/
+    /* Returns the FileName
+    /***********************************************************/
+    function GetFileName()
+    {
+        $current = $this->notebook->get_current_page();
+        $content = $this->notebook->get_nth_page($current);
+        if ($content)
+        {
+            $slots = $content->children;
+            $slot1 = $slots[0];
+            $label = $slot1->widget;
+            $file = $label->get();
+            return $file;
+        }
+    }
+
+    /***********************************************************/
+    /* Find out the project of the file
+    /***********************************************************/
+    function GetProject()
+    {
+        $file = $this->GetFileName();
+        $path = substr(GetPath($file),0,-1);
+        if ($this->Entries)
+        {
+            foreach ($this->Entries as $entry => $project)
+            {
+                $len = strlen($entry);
+                if (substr($path,0,$len) == $entry)
+                return $project;
+            }
+        }
+        return null;
+    }
+
+    /***********************************************************/
+    /* Changes the FileName
+    /***********************************************************/
+    function SetFileName($file)
+    {
+        $current = $this->notebook->get_current_page();
+        $content = $this->notebook->get_nth_page($current);
+        $slots = $content->children;
+        $slot1 = $slots[0];
+        $label = $slot1->widget;
+        $file = $label->set_text($file);
+    }
+
+    /***********************************************************/
+    /* Returns the current Scintilla object
+    /***********************************************************/
+    function GetScintilla()
+    {
+        $current = $this->notebook->get_current_page();
+        $content = $this->notebook->get_nth_page($current);
+        if ($content)
+        {
+            $slots = $content->children;
+            $slot2 = $slots[1];
+            $scintilla = $slot2->widget;
+            return $scintilla;
+        }
+    }
+
+    /***********************************************************/
+    /* Reload the File Explorer Tree
+    /***********************************************************/
+    function ReloadTree()
+    {
+        $this->arquivos->ReadAgain();
+        //$this->ReadProjects();
+        
+        //$botao = $this->arquivos->BotaoOk;
+        //$botao->connect_object('clicked', array(&$this,'AbrirTree'));
+        
+        //$this->scroll->add($this->arquivos);
+        //$this->scroll->show_all();
+    }
+    
+
+    /***********************************************************/
+    /* Close Dialog
+    /***********************************************************/
+    function Fechar()
+    {
+        $file = $this->GetFileName();
+        if (substr($file,0,1) == '*')
+        {
+            new Ask(_a('Do you want to save this file ?'), array(&$this,'Salvar'), array(&$this, 'FechaPagina'), array($file));
+        }
+        else
+        {
+            $this->FechaPagina();
+        }
+    }
+
+    /***********************************************************/
+    /* Closes the Notebook page
+    /***********************************************************/
+    function FechaPagina()
+    {
+        $file = $this->GetFileName();
+        if (substr($file,0,1)=='*')
+        $file = substr($file,2);
+        
+        $this->notebook->remove_page($this->notebook->get_current_page());
+    }
+
+    /***********************************************************/
+    /* Next Page
+    /***********************************************************/
+    function Proximo()
+    {
+        if ($this->Ultimo)
+        $this->Encontra($this->Ultimo);
+    }
+
+    /***********************************************************/
+    /* Open a File
+    /***********************************************************/
+    function Abrir( $fs )
+    {
+        $Arquivo = $fs->get_filename();
+        if (file_exists($Arquivo))
+        {
+            $fs->hide();
+            $results = $this->AppendPage(GetFileName($Arquivo));
+            $label = $results[0];
+            $scintilla = $results[1];
+            $scintilla->Open($Arquivo);
+            $label->set_text($Arquivo);
+        }
+    }
+
+    /***********************************************************/
+    /* FastOpen
+    /***********************************************************/
+    function AtalhoAbrir($entry)
+    {
+        $file = $entry->get_text();
+        if ($file)
+        {
+            $this->AbrirRapido($file);
+        }
+    }
+
+    /***********************************************************/
+    /* FastOpen Callback
+    /***********************************************************/
+    function AbrirRapido($Arquivo)
+    {
+        $results = $this->AppendPage(GetFileName($Arquivo));
+        $label = $results[0];
+        $scintilla = $results[1];
+        $scintilla->Open($Arquivo);
+        $label->set_text($Arquivo);
+    }
+
+    /***********************************************************/
+    /* Save the File
+    /***********************************************************/
+    function Salvar()
+    {
+        $file = $this->GetFileName();
+        $scintilla = $this->GetScintilla();
+        if ($scintilla)
+        {
+            $texto = $scintilla->get_text();
+            if ($file && trim($file) != '*')
+            {
+                if (substr($file,0,1)=='*')
+                $file = substr($file,2);
+                
+                $fp = fopen($file,'w');
+                if (!$fp)
+                {
+                    new Dialog(_a('Permission Denied'));
+                    return;
+                }
+                
+                fwrite($fp, $texto);
+                fclose($fp);
+                $this->SetFileName($file);
+                $this->ReloadTree();
+            }
+            else
+            {
+                $button = array(images . 'formula.xpm', _a('Formulas'), $this->FunDir);
+                new FileDialog(_a('Save'), array('fun'), $button, $this->FunDir, array(&$this, 'SalvarComo'));
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Simple Test and Debug
+    /***********************************************************/
+    function Testar()
+    {
+        $filename = $this->GetFileName();
+        if (substr($filename,0,1) == '*')
+        {
+            new Dialog(_a('File Not Saved'));
+        }
+        else if (file_exists($filename))
+        {
+            if (OS != 'WIN')
+            {
+                $php_cmd = $_ENV['_'];
+                $a = system("$php_cmd -q $filename", $ret);
+            }
+            else
+            {
+                if (PHP_OS != 'WINNT')
+                {
+                    $a = system("php\\php -q $filename", $ret);
+                }
+            }
+            if ($ret == 255) // erro
+                new Dialog($a);
+            else
+                new Dialog(_a('No Errors'), false);
+        }
+    }
+
+    /***********************************************************/
+    /* Save as
+    /***********************************************************/
+    function SalvarComo($fs)
+    {
+        $current = $this->notebook->get_current_page();
+        $content = $this->notebook->get_nth_page($current);
+        $slots = $content->children;
+        $slot1 = $slots[0];
+        $slot2 = $slots[1];
+        $label = $slot1->widget;
+        $scintilla = $slot2->widget;
+        $file = $label->get();
+        $texto = $scintilla->get_text();
+        $Arquivo = $fs->get_filename();
+        if ($Arquivo)
+        {
+            $fs->hide();
+            $fp = fopen($Arquivo,'w');
+            if (!$fp)
+            {
+                new Dialog(_a('Permission Denied'));
+                return;
+            }
+            fwrite($fp, $texto);
+            fclose($fp);
+            $label->set_text($Arquivo);
+            $this->ReloadTree();
+        }
+    }
+
+    /***********************************************************/
+    /* Open Dialog
+    /***********************************************************/
+    function PreAbrir()
+    {
+        $button = array(images . 'formula.xpm', _a('Formulas'), $this->FunDir);
+        new FileDialog(_a('Open'), array('fun'), $button, $this->FunDir, array(&$this, 'Abrir'));
+    }
+
+    /***********************************************************/
+    /* Quick Find
+    /***********************************************************/
+    function kFind($obj, $entry)
+    {
+        if ($obj->keyval == K_ENTER)
+        {
+            $this->Encontra($entry);
+        }
+    }
+
+    /***********************************************************/
+    /* Quick Open
+    /***********************************************************/
+    function kOpen($obj, $entry)
+    {
+        if ($obj->keyval == K_ENTER)
+        {
+            $this->AbrirRapido($entry->get_text());
+        }
+    }
+
+    /***********************************************************/
+    /* Show the window
+    /***********************************************************/
+    function Show()
+    {
+        $this->window->show_all();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Hide the window
+    /***********************************************************/
+    function Hide()
+    {
+        $this->window->hide();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Test the key pressed
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $this->Hide();
+        }
+    }
+}
+?>

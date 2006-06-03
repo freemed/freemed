@@ -1,0 +1,107 @@
+<?
+/***********************************************************/
+/* ItemList, used for choose an item from a list (see layout)
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class IList
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function IList($items, $action, $list_pixmap, $title, $listtitle, $param = null)
+    {
+        $this->window = new GtkWindow(GTK_WINDOW_DIALOG);
+        $this->window->set_title($title);
+        $this->window->set_position(GTK_WIN_POS_CENTER);
+        $this->window->set_border_width(10);
+        $this->window->set_default_size(300, 160);
+        $this->window->set_policy(false, true, false);
+        $this->window->set_modal(true);
+        $this->window->realize();
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->pixmaps['ok']     = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_ok.xpm');
+        $this->pixmaps['cancel'] = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_cancel.xpm');
+
+        $this->action = &$action;
+        $this->param  = $param;
+        $scroll = new GtkScrolledWindow;
+        $scroll->set_policy(GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+        $vbox = new GtkVBox(false,10);
+        $this->window->add($vbox);
+
+        $this->clist = $clist = new GtkCList(1, array($listtitle));
+        $scroll->add($clist);
+        foreach($items as $item)
+        {
+            $node = $clist->append(array($item));
+            $clist->set_pixtext($node, 0, $item, 5, $list_pixmap[0], $list_pixmap[1]);
+        }
+
+        $vbox->pack_start($scroll, true, true);
+        $button1 = new Button(array(&$this, 'Execute'), _a('OK'), $this->pixmaps['ok'], IMAGEBUTTON);
+        $button2 = new Button(array(&$this->window, 'hide'), _a('Cancel'), $this->pixmaps['cancel'], IMAGEBUTTON);
+        $button1->set_relief(GTK_RELIEF_NONE);
+        $button2->set_relief(GTK_RELIEF_NONE);
+        $hbox = new GtkHBox;
+        $hbox->pack_start(new GtkHBox, true, true);
+        $hbox->pack_start($button1, false, false);
+        $hbox->pack_start($button2, false, false);
+        $hbox->pack_start(new GtkHBox, true, true);
+        $vbox->pack_start($hbox, false, false);
+
+        $this->window->show_all();
+    }
+
+    /***********************************************************/
+    /* Returns the current item
+    /***********************************************************/
+    function GetItem()
+    {
+        $row = $this->clist->selection[0];
+        if (($row !== false) and ($row !== null))
+        {
+            $data = $this->clist->get_pixtext($row, 0);
+            return $data[0];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /***********************************************************/
+    /* Execute the callback
+    /***********************************************************/
+    function Execute()
+    {
+        if ($this->GetItem())
+        {
+            $this->window->hide();
+            if ($this->param)
+            {
+                call_user_func($this->action, $this->param);
+            }
+            else
+            {
+                call_user_func($this->action);
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Key Test Method
+    /***********************************************************/
+    function KeyTest($obj)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $this->window->hide();
+        }
+        elseif ($obj->keyval == K_ENTER)
+        {
+            $this->Execute();
+        }
+    }
+}
+?>

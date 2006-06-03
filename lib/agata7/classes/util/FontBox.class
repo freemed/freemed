@@ -1,0 +1,300 @@
+<?
+/***********************************************************/
+/* FontBox, used to allows the user to choose colors
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class FontBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function FontBox($Description, $moreoptions)
+    {
+        global $Pixmaps;
+        $tooltip = &new GtkTooltips;
+        $this->entry = &new GtkEntry;
+
+        $box = &new GtkHBox;
+        $this->widget = new Box($box, $Description);
+        $this->button = new Button(array($this, 'SelFont'), _a('Font Selection'), $Pixmaps['font'], ICONBUTTON, $moreoptions, true);
+        $this->button->set_relief(GTK_RELIEF_NONE);
+
+        $box->pack_start($this->entry);
+        $box->pack_start($this->button);
+    }
+    /***********************************************************/
+    /* Changes the color
+    /***********************************************************/
+    function set_text($data)
+    {
+        $this->entry->set_text($data);
+    }
+
+    function set_editable($bool)
+    {
+        $this->entry->set_editable($bool);
+    }
+
+    /***********************************************************/
+    /* Returns the color
+    /***********************************************************/
+    function get_text()
+    {
+        return $this->entry->get_text();
+    }
+
+    /***********************************************************/
+    /* Changes the visibility
+    /***********************************************************/    
+    function set_visibility($bool)
+    {
+        $this->entry->set_visibility($bool);
+    }
+
+    /***********************************************************/
+    /* Show the button
+    /***********************************************************/
+    function show()
+    {
+        $this->widget->show_all();
+    }
+
+    /***********************************************************/
+    /* Define the size
+    /***********************************************************/
+    function set_usize($width, $height)
+    {
+        $this->entry->set_usize($width, $height);
+    }
+
+    /***********************************************************/
+    /* Font Selection Dialog
+    /***********************************************************/
+    function SelFont($moreoptions = false)
+    {
+        $glade  = &new GladeXML(images . 'font.glade');
+        $this->ftwindow = $window1 = $glade->get_widget( 'window1' );
+        $this->ftwindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->ftwindow);
+        $window1->set_title(_a('Font Selection'));
+        $ok= $glade->get_widget( 'ok' );
+        $status = $glade->get_widget('statusbar');
+        $status->push(1, _a('^1 are available just for OpenOffice', 'Shadow, Text OutLine'));
+        
+        $lfonts  = $glade->get_widget( 'lfonts' );
+        $lstyles = $glade->get_widget( 'lstyles' );
+        $lsizes  = $glade->get_widget( 'lsizes' );
+        $this->fonts  = $fonts  = $glade->get_widget( 'fonts' );
+        $this->styles = $styles = $glade->get_widget( 'styles' );
+        $this->sizes  = $sizes  = $glade->get_widget( 'sizes' );
+        
+        $afonts['Arial']            = 0;
+        $afonts['Courier']          = 1;
+        $afonts['Helvetica']        = 2;
+        $afonts['Tahoma']           = 3;
+        $afonts['Times New Roman']  = 4;
+        
+        foreach (array_keys($afonts) as $font)
+        {
+            $fonts->append(array($font));
+        }
+        
+        $astyles['Bold']            = 0;
+        $astyles['Italic']          = 1;
+        $astyles['Underline']       = 2;
+        $astyles['Shadow']          = 3;
+        $astyles['Text Outline']    = 4;
+        $astyles2['B']              = 0;
+        $astyles2['I']              = 1;
+        $astyles2['U']              = 2;
+        $astyles2['S']              = 3;
+        $astyles2['TO']             = 4;
+        
+        foreach (array_keys($astyles) as $style)
+        {
+            $styles->append(array($style));
+        }
+        
+        for ($n=1; $n<=62; $n++)
+        {
+            $sizes->append(array("$n"));
+        }
+        
+        
+        $text = $this->get_text();
+        if ($text)
+        {
+            $pieces = explode('-', $text);
+            $font_pos  = $afonts[$pieces[0]];
+            $style_pos = $astyles2[$pieces[1]];
+            if ($font_pos !== null)
+                $fonts->select_row($font_pos,0);
+            if ($style_pos !== null)
+                $styles->select_row($style_pos,0);
+            $sizes->select_row($pieces[2] -1,0);
+        }
+        
+        $lfonts->set_text(_a('Font'));
+        $lstyles->set_text(_a('Style'));
+        $lsizes->set_text(_a('Size'));
+        
+        $ok->connect_object('clicked', array(&$this,'GetFont'));
+        $window1->show_all();
+    }
+
+    /***********************************************************/
+    /* Return the selected Font
+    /***********************************************************/
+    function GetFont()
+    {
+        $fonts  = $this->fonts->selection;
+        $styles = $this->styles->selection;
+        $sizes  = $this->sizes->selection;
+        
+        $font  = @$this->fonts->get_text($fonts[0],0);
+        $size  = @$this->sizes->get_text($sizes[0],0);
+        
+        if ($styles)
+        foreach ($styles as $style)
+        {
+            $chars = $this->styles->get_text($style,0);
+            if ($chars == 'Text Outline')
+            {
+                $text .= 'TO';
+            }
+            else
+            {
+                $text .= substr($chars,0,1);
+            }
+            
+        }
+        
+        $this->set_text("$font-$text-$size");
+        $this->ftwindow->Hide();
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+
+
+
+/***********************************************************/
+/* FontBox, used to allows the user to choose colors
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class GtkFontBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function GtkFontBox($Description, $Content)
+    {
+        global $Pixmaps;
+        $tooltip = &new GtkTooltips;
+        $this->entry = &new GtkEntry;
+
+        $box = &new GtkHBox;
+        $this->widget = new Box($box, $Description);
+        $this->button = new Button(array($this, 'SelGtkFont'), _a('Font Selection'), $Pixmaps['font'], ICONBUTTON, $Content, true);
+        $this->button->set_relief(GTK_RELIEF_NONE);
+
+        $box->pack_start($this->entry);
+        $box->pack_start($this->button);
+    }
+    /***********************************************************/
+    /* Changes the color
+    /***********************************************************/
+    function set_text($data)
+    {
+        $this->entry->set_text($data);
+    }
+
+    function set_editable($bool)
+    {
+        $this->entry->set_editable($bool);
+    }
+
+    /***********************************************************/
+    /* Returns the color
+    /***********************************************************/
+    function get_text()
+    {
+        return $this->entry->get_text();
+    }
+
+    /***********************************************************/
+    /* Changes the visibility
+    /***********************************************************/    
+    function set_visibility($bool)
+    {
+        $this->entry->set_visibility($bool);
+    }
+
+    /***********************************************************/
+    /* Show the button
+    /***********************************************************/
+    function show()
+    {
+        $this->widget->show_all();
+    }
+
+    /***********************************************************/
+    /* Define the size
+    /***********************************************************/
+    function set_usize($width, $height)
+    {
+        $this->entry->set_usize($width, $height);
+    }
+
+    /***********************************************************/
+    /* GtkFont Selection Dialog
+    /***********************************************************/
+    function SelGtkFont($Content)
+    {
+        $this->GtkFontWindow = $janela = new GtkWindow;
+        $this->GtkFontWindow->set_title('Font');
+        $this->GtkFontWindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->GtkFontWindow);
+        $janela->set_position(GTK_WIN_POS_MOUSE);
+        $vbox = new GtkVBox;
+        
+        $this->GtkFontSel = &new GtkFontSelection();
+        $this->GtkFontSel->set_font_name($Content);
+        $botao = new GtkButton('OK');
+        $botao->connect_object('clicked', array(&$this, 'GetGtkFont'));
+        
+        $vbox->pack_start($this->GtkFontSel);
+        $vbox->pack_start($botao);
+        $janela->add($vbox);
+        
+        $janela->show_all();
+    }
+
+    /***********************************************************/
+    /* Returns the selected GtkFont
+    /***********************************************************/
+    function GetGtkFont()
+    {
+        $this->GtkFontWindow->hide();
+        $this->set_text($this->GtkFontSel->get_font_name());
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

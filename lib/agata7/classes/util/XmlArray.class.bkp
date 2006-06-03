@@ -1,0 +1,59 @@
+<?
+/** vim: set expandtab tabstop=4 shiftwidth=4:
+  * +----------------------------------------------------------------------+
+  * | PHP Version 4                                                        |
+  * +----------------------------------------------------------------------+
+  * | Copyright (c) 1997-2002 The PHP Group                                |
+  * +----------------------------------------------------------------------+
+  * | This source file is subject to version 2.02 of the PHP license,      |
+  * | that is bundled with this package in the file LICENSE, and is        |
+  * | available at through the world-wide-web at                           |
+  * | http://www.php.net/license/2_02.txt.                                 |
+  * | If you did not receive a copy of the PHP license and are unable to   |
+  * | obtain it through the world-wide-web, please send a note to          |
+  * | license@php.net so we can mail you a copy immediately.               |
+  * +----------------------------------------------------------------------+
+  * | Author:      Hugo Sacramento - S4F      <hugo@feapa.com.br>          |
+  * +----------------------------------------------------------------------+
+  *
+  * $Id: XmlArray.lib,v 1.0 2004-04-05 18:10:00 $
+  */
+
+/**
+  * Class for get array of XML files.
+  * @author Hugo Sousa Sacramento <hugo@feapa.com.br>
+  * @date 2004-04-05
+  */
+class XmlArray
+{     
+    var $xmlFile;
+    var $docElement;
+    var $document;
+    
+    function XmlArray($file) 
+    {
+        $this->xmlFile = $file;    
+        $this->document = @domxml_open_file($this->xmlFile);
+    }
+    
+    function getXmlArray($Node = null) 
+    {   
+        $Node = $Node == null ? $this->document->document_element() : $Node;
+        if ($nextNode = $Node->first_child()) {
+            while($nextNode) {
+                if ($nextNode->node_type() == XML_ELEMENT_NODE) {
+                    if ($nextNode->has_child_nodes()) {
+                        $array[$nextNode->node_name()] = $this->getXmlArray($nextNode);
+                    }
+                } elseif ($nextNode->node_type() == XML_TEXT_NODE) {
+                    if (trim($nextNode->node_value()) != "") {
+                        $array = $nextNode->node_value();
+                    }
+                }
+                $nextNode = $nextNode->next_sibling();
+            }
+        }
+        return $array;
+    }
+}
+?>

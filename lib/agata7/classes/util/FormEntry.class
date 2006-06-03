@@ -1,0 +1,139 @@
+<?
+/***********************************************************/
+/* FormEntry Class, build a simple form
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class FormEntry extends CommonForm
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function FormEntry($mensagem, $CheckVars, $container = null, $simpleColumn = false)
+    {
+        if ($container)
+        {
+            $this->window = $container;
+            $this->window->realize();
+        }
+        else
+        {
+            $this->window = new GtkWindow;
+            $this->window->set_title($mensagem);
+            $this->window->set_border_width(0);
+            $this->window->set_position(GTK_WIN_POS_CENTER);
+            $this->window->set_default_size(40,400);
+            $this->window->set_policy(false, false, false);
+            $this->window->realize();
+            $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        }
+        $this->SimpleColumn = $simpleColumn;
+        $this->CheckVars = $CheckVars;
+        $lenght = 40;
+        
+        $this->tooltips = new GtkTooltips;
+        
+        $this->window->connect_object('delete_event', array(&$this, 'Close'));
+        
+        $this->CheckVars = $CheckVars;
+
+        $this->FirstBox = $FirstBox = &new GtkVBox;
+        $this->FirstBox->pack_start(darktxt($mensagem), false, false);
+        $this->window->add($FirstBox);
+        
+        $Sbox = &new GtkHBox();
+        $FirstBox->pack_start($Sbox, false, false, 10);
+        
+        $this->vbox  = &new GtkVBox(false, 4);
+        $this->vbox2 = &new GtkVBox(false, 4);
+        
+        $Sbox->pack_start($this->vbox,  false, false, 4);
+        $Sbox->pack_start($this->vbox2, false, false, 4);
+        
+        $i = 0;
+        $count = count($CheckVars);
+
+        $this->BuildFormEntries('unique', $CheckVars);
+        $entries = $this->InputEntries['unique'];
+
+        $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_ok.xpm');
+        $this->button = &new VoidButton(' OK ', $pixmap, IMAGEBUTTON);
+        $this->button->set_border_width(5);
+
+        $tmpbox = new GtkHBox;
+        $tmpbox->pack_start(new GtkHBox, true, true);
+        $tmpbox->pack_start($this->button, false, false);
+        $tmpbox->pack_start(new GtkHBox, true, true);
+
+        $this->vbox2->pack_start($tmpbox, true, false, 0);
+        
+        $this->window->show_all();
+        if (get_class($this->window)=='GtkWindow')
+        {
+            if ($this->InputEntries['unique'][0]->entry)
+            {
+                //@$this->window->set_focus($this->InputEntries['unique'][0]->entry);
+            }
+            else
+            {
+                //@$this->window->set_focus($this->InputEntries['unique'][0]);
+            }
+        }
+        
+    }
+    
+    function AddAction($message, $ico, $callback)
+    {
+        $button = &new Icone($this->window->window, images . $ico,  '  ' . $message . '  ', $message, true);
+        $button->connect_object('clicked', $callback);
+        $box = &new GtkHBox(false, 3);
+        $box->pack_start($button, false, false, 10);
+        $this->vbox2->pack_start($box, false,false);
+        $box->show_all();
+        return $button;
+    }
+
+    /***********************************************************/
+    /* Packs a status bar
+    /***********************************************************/
+    function SetStatus($Status)
+    {
+        $statusbar = &new GtkStatusBar();
+        $statusbar->push(1, $Status);
+        $statusbar->show_all();
+
+        $this->FirstBox->pack_start($statusbar, false, 4);
+    }
+
+    /***********************************************************/
+    /* KeyTest method
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $this->window->hide();
+        }
+        elseif ($p1->keyval == K_ENTER)
+        {
+            //$this->button->clicked();
+        }
+    }
+
+    /***********************************************************/
+    /* Show the window
+    /***********************************************************/
+    function Show()
+    {
+        $this->window->Show();
+    }
+    
+    /***********************************************************/
+    /* Close the window
+    /***********************************************************/
+    function Close()
+    {
+        $this->window->hide();
+        return true;
+    }
+}
+?>

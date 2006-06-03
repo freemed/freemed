@@ -1,0 +1,261 @@
+<?
+/***********************************************************/
+/* Database Tree
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class TableTree extends GtkCTree
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function TableTree($Title, $nick)
+    {
+        GtkCTree::GtkCTree(1, 0, array($Title));
+        GtkCTree::set_selection_mode(GTK_SELECTION_SINGLE);
+        GtkCTree::set_line_style(GTK_CTREE_LINES_SOLID);
+        $this->handler = GtkCTree::connect_object('tree-select-row', array(&$this, 'Abrir'));
+        
+        $this->BotaoOk = new GtkButton;
+        $this->nick = $nick;
+        $this->opened = null;
+    }
+
+    /***********************************************************/
+    /* Load specific tables
+    /***********************************************************/
+    function LoadTheseTables($DbAttributes, $Tables, $DataDescription)
+    {
+        global $Pixmaps;
+
+        $pixmap = $Pixmaps['table'];
+        $this->DbAttributes = $DbAttributes;
+        $this->agataDataDescription = $DataDescription;
+        if ($this->handler)
+        {
+            GtkCTree::disconnect($this->handler);
+            $this->handler = null;
+        }
+        
+        foreach ($Tables as $Table)
+        {
+            $Table = trim($Table);
+            $index = "table:$Table";
+            if (!$this->Tables[$Table])
+            {
+                $this->Tables[$Table] = true;
+                
+                if ($this->nick)
+                {
+                    $text = ($this->SeekDataDescription($index)) ? array($this->SeekDataDescription($index)) : array($Table);
+                }
+                else
+                {
+                    $text = array($Table);
+                }
+
+                $table = GtkCtree::insert_node(null, null, $text, 5,
+                $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+                
+                GtkCtree::node_set_row_data($table, $index);
+                $this->LoadFields($index, $table);
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Load all the Database tables
+    /***********************************************************/
+    function LoadTables($DbAttributes, $DataDescription)
+    {
+        global $Pixmaps;
+        $this->ClearTree();
+        $this->agataDataDescription = $DataDescription;
+        $this->DbAttributes    = $DbAttributes;
+        
+        $pixmap = $Pixmaps['table'];
+        $conn   = new AgataConnection;
+        
+        $Pass   = $conn->Open($this->DbAttributes);
+        if (!$Pass)
+        {
+            $conn->Close();
+            return false;
+        }
+        
+        $Tables = $conn->LoadTables();
+        $conn->Close();
+        
+        foreach ($Tables as $Table)
+        {
+            $index = "table:$Table";
+            if ($this->nick)
+            {
+                $text = ($this->SeekDataDescription($index)) ? $this->SeekDataDescription($index) : $Table;
+            }
+            else
+            {
+                $text = $Table;
+            }
+            
+            $Tablesok[$index] = $text;
+        }
+        asort ($Tablesok);
+        
+        foreach ($Tablesok as $index => $text)
+        {
+            $table = GtkCtree::insert_node(null, null, array($text), 5,
+            $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+            
+            GtkCtree::node_set_row_data($table, $index);
+        }
+    }
+
+    /***********************************************************/
+    /* Clear the tree
+    /***********************************************************/
+    function ClearTree()
+    {
+        GtkCtree::clear();
+        $this->opened = null;
+        $this->Tables = null;
+    }
+
+    /***********************************************************/
+    /* Returns the information about the current node
+    /***********************************************************/
+    function GetInfo()
+    {
+        $selection = $this->selection;
+        
+        if ($selection)
+        {
+            $text = GtkCTree::node_get_row_data($selection[0]);
+            return $text;
+        }
+        return false;
+    }
+
+    /***********************************************************/
+    /* Expand the current node
+    /***********************************************************/
+    function ExpandCurrent()
+    {
+        $selecao = $this->selection[0];
+        GtkCTree::expand($selecao);
+    }
+
+    /***********************************************************/
+    /* Removes the current node
+    /***********************************************************/
+    function RemoveCurrent()
+    {
+        $selecao = $this->selection[0];
+        $text = GtkCTree::node_get_row_data($selecao);
+        $pieces = explode(':', $text);
+        $table = $pieces[1];
+        $this->Tables[$table] = false;
+        GtkCTree::remove_node($selecao);
+    }
+
+    /***********************************************************/
+    /* Opens the current node
+    /***********************************************************/
+    function Abrir()
+    {
+        $selecao = $this->selection[0];
+        $index = GtkCTree::node_get_row_data($selecao);
+        $pieces = explode(':', $index);
+        $is_table = (count($pieces) == 2);
+        
+        if ($is_table && (!$this->opened[$index]))
+        {
+            $this->opened[$index] = true;
+            if ($this->LoadFields($index, $selecao))
+            {
+                GtkCTree::expand($selecao);
+            }
+        }
+        elseif ($is_table && ($this->opened[$index]))
+        {
+            GtkCTree::expand($selecao);
+        }
+        else
+        {
+            $botao = $this->BotaoOk;
+            $botao->clicked();
+        }
+    }
+
+    /***********************************************************/
+    /* Load all the fields of a table
+    /***********************************************************/
+    function LoadFields($index, &$NodoRaiz)
+    {
+        global $Pixmaps;
+
+        $tmp = explode(':', $index);
+        $Table = $tmp[1];
+        $pixmap = $Pixmaps['field'];
+        $conn = new AgataConnection;
+        $Pass = $conn->Open($this->DbAttributes);
+        
+        $Fields = $conn->LoadFields($Table);
+        if (!$Fields)
+        {
+            $conn->Close();
+            new Dialog($Table . ': ' . _a('This table does not belong to this database'));
+            return;
+        }
+        $conn->Close();
+        if ($Fields)
+        {
+            foreach ($Fields as $Field)
+            {
+                if (trim($Field))
+                {
+                    $index = "table:$Table:field:$Field";
+                    if ($this->nick)
+                    {
+                        $nodetext = ($this->SeekDataDescription($index)) ? array($this->SeekDataDescription($index)) : array($Field);
+                    }
+                    else
+                    {
+                        $nodetext = array($Field);
+                    }
+                    
+                    $field = GtkCtree::insert_node($NodoRaiz, null, $nodetext, 5, $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+                    GtkCTree::node_set_row_data($field, $index);
+                    
+                }
+            }
+            return true;
+        }
+    }
+
+    function SeekDataDescription($index)
+    {
+        if ($this->agataDataDescription[$index])
+        {
+            return $this->agataDataDescription[$index];
+        }
+        else
+        {
+            $pieces = explode(':', $index);
+            if (count($pieces) == 2)
+            {
+                $upper = $this->agataDataDescription[$pieces[0] . ':' . strtoupper($pieces[1])];
+                $lower = $this->agataDataDescription[$pieces[0] . ':' . strtolower($pieces[1])];
+                
+                return ($upper ? $upper : $lower);
+            }
+            else
+            {
+                $upper = $this->agataDataDescription[$pieces[0] . ':' . strtoupper($pieces[1]) . ':' . $pieces[2] . ':' . strtoupper($pieces[3])];
+                $lower = $this->agataDataDescription[$pieces[0] . ':' . strtolower($pieces[1]) . ':' . $pieces[2] . ':' . strtolower($pieces[3])];
+                
+                return ($upper ? $upper : $lower);
+            }
+        }
+    }
+}
+?>

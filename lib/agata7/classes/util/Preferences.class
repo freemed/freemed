@@ -1,0 +1,472 @@
+<?
+/***********************************************************/
+/* Preferences Tool, used for Preferences, and Configurations
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class Preferences extends CommonForm
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function Preferences(&$container)
+    {
+        $this->container = &$container;
+    }
+
+    /***********************************************************/
+    /* Automatic Increment
+    /***********************************************************/
+    function setAutomaticIncrement($bool)
+    {
+        $this->automaticIncrement = $bool;
+    }    
+
+    /***********************************************************/
+    /* Use or not the buttons (add, del)
+    /***********************************************************/
+    function SetOptions($bool)
+    {
+        $this->UseButtons = $bool;
+    }
+
+    /***********************************************************/
+    /* Use or not the save button
+    /***********************************************************/
+    function SetSimpleColumn($bool)
+    {
+        $this->SimpleColumn = $bool;
+    }
+
+    /***********************************************************/
+    /* Use or not the save button
+    /***********************************************************/
+    function SetSaveButton($bool)
+    {
+        $this->UseSaveButton = $bool;
+    }
+
+    /***********************************************************/
+    /* Set the title image
+    /***********************************************************/
+    function SetTitleImage($imgname)
+    {
+        $this->TitleImage = $imgname;
+    }
+
+    /***********************************************************/
+    /* Set the title text
+    /***********************************************************/
+    function SetTitle($title)
+    {
+        $this->Title = $title;
+    }
+
+    /***********************************************************/
+    /* Define the empty form
+    /***********************************************************/
+    function SetPlus($Plus)
+    {
+        $this->Plus = $Plus;
+    }
+
+    /***********************************************************/
+    /* Define the OK callback
+    /***********************************************************/
+    function SetOk($slot_ok, $caption)
+    {
+        $this->slot_ok = $slot_ok;
+        $this->caption = $caption;
+    }
+
+    /***********************************************************/
+    /* Define the delete callback
+    /***********************************************************/
+    function SetDel($slot_del)
+    {
+        $this->slot_del = $slot_del;
+    }
+
+    /***********************************************************/
+    /* Change the status bar text
+    /***********************************************************/
+    function SetStatus($status)
+    {
+        $this->Status = $status;
+    }
+
+    /***********************************************************/
+    /* Changes the ico used in the list
+    /***********************************************************/
+    function SetPixmap($ico)
+    {
+        $this->Pixmap = $ico;
+    }
+
+    /***********************************************************/
+    /* Changes the title of the list
+    /***********************************************************/
+    function SetListTitle($title)
+    {
+        $this->ListTitle = $title;
+    }
+
+    /***********************************************************/
+    /* Return the current page
+    /***********************************************************/
+    function Current()
+    {
+        $current = $this->MultiPage->get_current_page();
+		$content = $this->MultiPage->get_nth_page($current);
+        if ($content)
+        {
+            $tab = $this->MultiPage->get_tab_label($content);
+            if ($tab)
+            {
+                return $tab->get();
+            }
+        }
+        return null;
+    }
+
+    /***********************************************************/
+    /* Builds the form
+    /***********************************************************/
+    function BuildForms($CheckVars)
+    {
+        if ($this->container)
+        {
+            $this->window = $this->container;
+            //$this->window->realize();
+        }
+        else
+        {
+            $this->window = new GtkWindow;
+            $this->window->set_title($this->Title);
+            $this->window->set_border_width(0);
+            $this->window->set_position(GTK_WIN_POS_CENTER);
+            $this->window->set_default_size(40,400);
+            $this->window->set_policy(false, false, false);
+            $this->window->realize();
+        }
+
+        $this->CheckVars = $CheckVars;
+        $this->tooltips = &new GtkTooltips();
+        list($this->iconpixmap, $this->iconmask) = Gdk::pixmap_create_from_xpm($this->window->window, null, $this->Pixmap);
+        $this->MultiPage = &new GtkNotebook;
+        $this->MultiPage->set_show_tabs(false);
+
+        $SVBox = new GtkVBox;
+        $this->window->pack_start($SVBox, true, true, 10);
+        
+        $HBox = &new GtkHBox;
+        $SVBox->pack_start($HBox, true, true, 10);
+        
+        $this->clistProjects = new GtkCList(1, array($this->ListTitle));
+        $this->clistProjects->connect_object('select-row', array(&$this, 'ChangePage'));
+        $this->clistProjects->set_usize(140, -1);
+        $this->clistProjects->set_column_width(0, 400);
+        
+        $scroll = new GtkScrolledWindow;
+        $scroll->set_policy(GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
+        $scroll->add($this->clistProjects);
+        
+        $BoxLeft = new GtkVBox;
+        $BoxLeft->pack_start($scroll);
+        $BoxButton = new GtkVBox;
+        $BoxLeft->pack_start($BoxButton, false, false);
+
+        if ($this->UseButtons !== false)
+        {
+            $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'del.xpm');
+            $button_del = new Button(array(&$this, 'ClosePage'), _a('Delete'), $pixmap, IMAGEBUTTON);
+            //$button_del->connect_object('clicked', $this->slot_del);
+            $button_del->set_relief(GTK_RELIEF_NONE);
+    
+            $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_add.xpm');
+            $button_add = new Button(array(&$this, 'AddPage'), _a('Add'), $pixmap, IMAGEBUTTON);
+            $button_add->set_relief(GTK_RELIEF_NONE);
+    
+            $BoxButton->pack_start(left($button_add), false, false);
+            $BoxButton->pack_start(left($button_del), false, false);
+        }
+
+        $Vbox = &new GtkVbox(false, 2);
+        $HBox->pack_start($BoxLeft);
+        $HBox->pack_start($Vbox, true, true, 4);
+
+        if ($this->TitleImage)
+        {
+            $hbox = &new GtkHbox(false, 2);
+            $Vbox->pack_start($hbox, false, false);
+            list($pixmap, $mask) = Gdk::pixmap_create_from_xpm($this->window->window, null, $this->TitleImage);
+            $pixmapwid = &new GtkPixmap($pixmap, $mask);
+            $hbox->pack_start($pixmapwid, false, false);
+        }
+
+        $Vbox->pack_start($this->MultiPage, true, true, 0);
+        if ($this->TitleImage)
+        {
+            $this->MultiPage->set_border_width(10);
+        }
+        else
+        {
+            $this->MultiPage->set_border_width(0);
+        }
+
+        $this->FillForms($CheckVars);
+
+        if ($this->Status)
+        {
+            $status = &new GtkStatusBar;
+            $SVBox->pack_start($status, false);
+            $status->push(1, $this->Status);
+        }
+    }
+
+    /***********************************************************/
+    /* Create the pages and fill them
+    /***********************************************************/
+    function FillForms($CheckVars)
+    {
+        $this->CheckVars = $CheckVars;
+        $this->i = 0;
+        if ($CheckVars)
+        {
+            foreach($CheckVars as $Config => $CheckVars_)
+            {
+                $this->NewPage($Config, $CheckVars_);
+                $node = $this->clistProjects->append(array($Config));
+                $this->clistProjects->set_pixtext($node, 0, $Config, 5, $this->iconpixmap, $this->iconmask);
+                //$this->PageNumbers[utf8_encode($Config)] = $this->i;
+                //$this->InvPageNumbers[$this->i] = $Config;
+                $this->i ++;
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Asks by a new page
+    /***********************************************************/
+    function AddPage()
+    {
+        if ($this->automaticIncrement)
+        {
+            $this->CreatePage();
+        }
+        else
+        {
+            $this->InputBox = new InputBox(_a('New Item'), 200, '', array(&$this, 'CreatePage'));
+        }
+    }
+
+    /***********************************************************/
+    /* Creates a new page
+    /***********************************************************/
+    function CreatePage($entry = null)
+    {
+        if ($entry)
+        {
+            $this->InputBox->Close();
+            $Config = $entry->get_text();
+        }
+        else
+        {
+            $Config = $this->i +1;
+        }
+        
+        if ($Config)
+        {
+            $this->NewPage($Config, $this->Plus);
+            $node = $this->clistProjects->append(array($Config));
+            $this->clistProjects->set_pixtext($node, 0, $Config, 5, $this->iconpixmap, $this->iconmask);
+            //$this->PageNumbers[utf8_encode($Config)] = $this->i;
+            //$this->InvPageNumbers[$this->i] = $Config;
+            $this->MultiPage->set_page($this->i);
+            $this->i ++;
+        }
+    }
+
+    /***********************************************************/
+    /* onEnter, calls the OK callback
+    /***********************************************************/
+    function onEnter()
+    {
+        $current = $this->MultiPage->get_current_page();
+        //$page = $this->InvPageNumbers[$current];
+        //$this->buttons[$page]->clicked();
+        $this->buttons[$current]->clicked();
+    }
+    
+    /***********************************************************/
+    /* Changes the page by name
+    /***********************************************************/
+    function SetPage($Sheet)
+    {
+        if ($Sheet)
+        {
+            $page = $this->PageNumbers[$Sheet];
+            $this->MultiPage->set_page($page);
+        }
+    }
+
+    /***********************************************************/
+    /* Creates a new FormPage
+    /***********************************************************/
+    function NewPage($Config, $CheckVars)
+    {
+        $texto = $Config;
+
+        $frame = &new GtkFrame();
+        $frame->set_border_width(0);
+        $frame->set_shadow_type(GTK_SHADOW_NONE);
+
+        $child = &new GtkVBox;
+        $child->pack_start(darktxt('  ' . $texto), false, false, 0);
+        $child->pack_start($frame, true, true, 0);
+
+        $scroll = new GtkScrolledWindow;
+        $scroll->set_policy(GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+        $view = new GtkViewPort;
+        $view->set_shadow_type(GTK_SHADOW_NONE);
+        $scroll->add($view);
+        $frame->add($scroll);
+        
+        $hbox = &new GtkHBox(false, 0);
+        $view->add($hbox);
+
+        $this->vbox = &new GtkVBox(false, 0);
+        $this->vbox->set_border_width(2);
+        $hbox->pack_start($this->vbox);
+        
+        $this->vbox2 = &new GtkVBox(false, 0);
+        $this->vbox2->set_border_width(2);
+        $hbox->pack_start($this->vbox2);
+
+
+        if ($CheckVars)
+        {
+            $this->BuildFormEntries($Config, $CheckVars);
+            if ($this->UseSaveButton)
+            {
+                $boxbt = &new GtkHBox(false, 0);
+                $boxbt->set_border_width(2);
+                $child->pack_start(new GtkHSeparator, false, false, 0);
+                $child->pack_start($boxbt, false, false, 0);
+
+                $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_ok.xpm');
+                /*$this->buttons[$Config] = &new Button($this->slot_ok, $this->caption, $pixmap, IMAGEBUTTON);
+                $this->buttons[$Config]->set_border_width(5);
+                $boxbt->pack_end($this->buttons[$Config], false, false, 0);*/
+                $this->buttons[$this->i] = &new Button($this->slot_ok, $this->caption, $pixmap, IMAGEBUTTON);
+                $this->buttons[$this->i]->set_border_width(5);
+                $boxbt->pack_end($this->buttons[$this->i], false, false, 0);
+            }
+        }
+
+        $label = new GtkLabel($Config);
+
+        /*$this->buttonsd[$Config] = &new GtkButton('-');
+        $this->tooltips->set_tip($this->buttonsd[$Config], _a('Delete'), '');
+        $this->buttonsd[$Config]->connect_object('clicked', array(&$this, 'ClosePage'));*/
+
+        $this->buttonsd[$this->i] = &new GtkButton('-');
+        $this->tooltips->set_tip($this->buttonsd[$this->i], _a('Delete'), '');
+        $this->buttonsd[$this->i]->connect_object('clicked', array(&$this, 'ClosePage'));
+
+        $menu_box = &new GtkHBox(false, 0);
+        $child->show_all();
+        $this->MultiPage->append_page_menu($child, $label, $menu_box);
+    }
+
+    /***********************************************************/
+    /* Closes the window
+    /***********************************************************/
+    function ClosePage($flag = false)
+    {
+        if (!$flag)
+        {
+            $a = new Ask(_a('Do you really want to delete ?'), array(&$this,'ClosePage'), null, array(true));
+            return true;
+        }
+        else
+        {
+            $this->clistProjects->freeze();
+            $selection = $this->clistProjects->selection;
+            if ($selection)
+            {
+                if ($this->slot_del)
+                {
+                    call_user_func($this->slot_del);
+                }
+                $line = $selection[0];
+                $text = $this->clistProjects->get_pixtext($line, 0);
+                $text = $text[0];
+                $this->CheckVars[$text] = null;
+                $this->MultiPage->remove_page($line);
+                $this->clistProjects->remove($line);
+            }
+            else
+            {
+                new Dialog(_a('Select a project'));
+            }
+            $this->clistProjects->thaw();
+        }
+        
+        return true;
+    }
+
+    /***********************************************************/
+    /* Clear all the pages
+    /***********************************************************/
+    function Clear()
+    {
+        $this->clistProjects->freeze();
+        $this->clistProjects->clear();
+        $this->clistProjects->thaw();
+
+        for ($n=0; $n<=$this->i; $n++)
+        {
+            $this->MultiPage->remove_page(0);
+        }
+        $this->i;
+        /*if ($this->PageNumbers)
+        {
+            foreach ($this->PageNumbers as $tmp)
+            {
+                $this->MultiPage->remove_page(0);
+            }
+        }
+
+        $this->PageNumbers = null;*/
+    }
+
+
+    /***********************************************************/
+    /* Changes the page by clist selection
+    /***********************************************************/
+    function ChangePage()
+    {
+        $this->clistProjects->freeze();
+        $selection = $this->clistProjects->selection;
+        if ($selection)
+        {
+            $line = $selection[0];
+            $text = $this->clistProjects->get_pixtext($line, 0);
+            //$x = $this->PageNumbers[utf8_encode($text[0])];
+            //echo "changint to $x\n";
+            //$this->MultiPage->set_page($x);
+            $this->MultiPage->set_page($line);
+            $this->Current = $x;
+        }
+        $this->clistProjects->thaw();
+    }
+
+    /***********************************************************/
+    /* Show the window
+    /***********************************************************/
+    function Show()
+    {
+        $this->window->show_all();
+    }
+}
+?>

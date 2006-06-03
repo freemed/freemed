@@ -1,0 +1,26 @@
+Version 0.3
+
+- Added support for paragraphs, pages (with respective headers and footers) and page breaks
+- Styles support for all objects (pdw_document, pdw_header, pdw_footer, pdw_textbox, etc)
+- Added ability to genenerate other document formats like MS Word, PDF, RTF, StarWriter, LaTeX, XHTML and HTML (needs OpenOffice.org to be installed)
+- Generation speed improvement (around 7-8 times faster)
+- Added partial drawing support. There is a class for each SVG element: line, rectangle, circle, ellipse, path, caption, etc.
+- Changed license to Lesser General Public License (LGPL)
+
+Version 0.2
+
+- The main class was split into several classes (document, header, footer and texbox at moment) each with its own methods (write, image, etc)
+- Support for links (all classes)
+- Support for images (all classes)
+- Support for footnotes (document class)
+- Support for more character styles (shadow,embossed,engraved,text-outline,crossing-out: single-line/double-line/thick-line/slash/X)
+- Support for character colors (background and foreground) (document class)
+- Support for language/country definition of document (document class)
+- Various fixes in document class
+- The same image it's copied only once when it's inserted at different parts of document
+- Finished documentation and added english translation
+- Removed zip console tool dependency
+
+Version 0.1
+
+- Initial release

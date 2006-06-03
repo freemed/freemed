@@ -1,0 +1,380 @@
+<?
+class AgataReport
+{
+    
+    function SetProperties($params)
+    {
+        $AgataDir = $params[1]['general']['AgataDir'];
+        $Query    = $params[3];
+
+        $this->CurrentQuery     = $Query;
+        $this->Query            = $Query->Query;
+        $this->MaxLen           = $Query->MaxLen;
+        $this->Columns          = $Query->Columns;
+        $this->ColumnTypes      = $Query->ColumnTypes;
+        $this->FunctionMatrix   = $Query->FunctionMatrix;
+        $this->Parameters       = $Query->Parameters;
+        
+        $this->agataDB          = $params[0];
+        $this->agataConfig      = $params[1];
+        $this->FileName         = $params[2];
+        
+        $this->XmlArray         = $XmlArray = $params[4];
+        $this->posAction        = $params[5];
+        $this->layout           = $params[6];
+        $this->ReportName       = $params[7];
+        
+        $this->Adjustments      = Report::ExtractAdjustments($XmlArray['Report']['DataSet']);
+        $Breaks                 = Report::ExtractBreaks($XmlArray);
+        
+        if ($Breaks)
+        {
+            foreach ($Breaks as $key => $formula)
+            {
+                if ($formula)
+                {
+                    $this->Breaks[$key] = $formula;
+                }
+                else
+                {
+                    $this->Breaks[$key] = true;
+                }
+            }
+        }
+        
+        $this->ShowBreakColumns = $XmlArray['Report']['DataSet']['Groups']['Config']['ShowGroup'];
+        $this->ShowDataColumns  = $XmlArray['Report']['DataSet']['Groups']['Config']['ShowDetail'];
+        $this->ShowTotalLabel   = $XmlArray['Report']['DataSet']['Groups']['Config']['ShowLabel'];
+        $this->ShowNumber       = $XmlArray['Report']['DataSet']['Groups']['Config']['ShowNumber'];
+        $this->ShowIndent       = $XmlArray['Report']['DataSet']['Groups']['Config']['ShowIndent'];
+        
+        $this->textHeader       = $XmlArray['Report']['Header']['Body'];
+        $this->alignHeader      = $XmlArray['Report']['Header']['Align'];
+        $this->textFooter       = $XmlArray['Report']['Footer']['Body'];
+        $this->alignFooter      = $XmlArray['Report']['Footer']['Align'];
+
+        $this->FunctionNames    = Report::GetFunctionNames();
+
+        return true;
+    }
+    
+    function GetReportName()
+    {
+        $this->InputBox = new InputBox(_a('Type the Report Name'), 200);
+        $this->InputBox->button->connect_object('clicked', array(&$this,'Process'), true);
+    }
+    
+    /**************************
+    Returns a Formatted String
+    ***************************/
+    function FormatString($Expression, $Lenght, $alignKind = 'left')
+    {
+        $Brancos  = "                                             ";
+        $Brancos .= $Brancos . $Brancos;
+
+        $aligns['center'] = STR_PAD_BOTH;
+        $aligns['left']   = STR_PAD_RIGHT;
+        $aligns['right']  = STR_PAD_LEFT;
+
+        if (strlen($Expression)>$Lenght)
+            return substr($Expression,0,$Lenght);
+
+        return str_pad($Expression, $Lenght, ' ', $aligns[$alignKind]);
+    
+        if ($alignKind == 'left')
+        {
+            return $Expression . substr($Brancos,0,$Lenght-strlen($Expression));
+        }
+        else if ($alignKind == 'center')
+        {
+            return substr($Brancos,0,($Lenght-strlen($Expression)) /2) .
+            $Expression .
+            substr($Brancos,0,($Lenght-strlen($Expression)) /2);
+        }
+        else if ($alignKind == 'right')
+        {
+            return substr($Brancos,0,$Lenght-strlen($Expression) -5) . $Expression . substr($Brancos,0,5);
+        }
+    }
+    
+    /******************************
+    Returns a Replicatted Character
+    *******************************/
+    function Replicate($Expression, $Lenght)
+    {
+        for ($n=1; $n<=$Lenght; $n++)
+        $Return .= $Expression;
+        
+        return $Return;
+    }
+
+    /**************************
+    Makes the Totalization
+    ***************************/
+    function ProcessBreaks($QueryCell, $y)
+    {
+        if ($this->Breaks)
+        {
+            $CountBreak = 0;
+            if ($this->Breaks['0'])
+            {
+                $CountBreak = -1;
+            }
+            foreach ($this->Breaks as $break => $Formulafull)
+            {
+                $Formulas = explode(',', $Formulafull);
+                
+                if ($break == $y)
+                {
+                    $ClearColumns = null;
+                    # Change in the algorithm: Instead of analize the last break change,
+                    # analize all break changes.
+                    $this->Summary[$break]['ActualValue'] = $QueryCell;
+                    
+                    if (($this->Summary[$break]['ActualValue'] != $this->Summary[$break]['LastValue']) or ($this->lastchanged < $break))
+                    {
+                        $this->Summary[$break]['Count'] ++;
+                        $this->lastchanged = $break;
+                        
+                        foreach ($Formulas as $Formula)
+                        {
+                            $tmp = explode('(', $Formula);
+                            $formula = trim($tmp[0]);
+                            $tmp = explode(')', $tmp[1]);
+                            $column = trim($tmp[0]);
+                            
+                            $this->HasFormula[$break] = ($formula) ? true : false;
+                            
+                            if ($this->Summary[$break]['LastValue'])
+                            {
+                                $result = $this->ProcessFormula($break, $column, $formula);
+                                
+                                //maskhere
+                                if ($formula != 'count') // count nao vai mascara
+                                {
+                                    $result = FormatMask($this->Adjustments[$column]['Mask'], $result);
+                                }
+                                
+                                # Custom Total Label
+                                $as_pos = strpos($Formula, ' as ');
+                                if ($as_pos !== false)
+                                {
+                                    $custom_total_label = substr($Formula, $as_pos+5, -1);
+                                    if ($custom_total_label)
+                                        $cellBreakContent =  $custom_total_label . ": $result";
+                                    else
+                                        $cellBreakContent =  $result;
+                                }
+                                else
+                                {
+                                    $cellBreakContent = _a($this->FunctionNames[$formula]) . ": $result";
+                                }
+                                
+                                $this->BreakMatrix[$break][$column][] = $cellBreakContent;
+                                $ClearColumns[] = $column;
+                            }
+                            $FormattedCell = FormatMask($this->Adjustments[$y]['Mask'], $QueryCell);
+                            $this->Headers[$CountBreak] = trim($this->Columns[$y -1]) . " : " . trim($FormattedCell);
+                            $this->Association[$break] = $CountBreak;
+                        }
+                        $this->Summary[$break + 1]['Count'] = 0;  // reinicializa contador de sub-quebras
+                    }
+                    
+                    if ($ClearColumns)
+                    {
+                        foreach ($ClearColumns as $ClearColumn)
+                        {
+                            $this->Summary[$break][$ClearColumn] = null;
+                        }
+                    }
+                    
+                    $this->Summary[$break]['BeforeLastValue'] = $this->Summary[$break]['LastValue'];
+                    $this->Summary[$break]['LastValue'] = $QueryCell;
+                }
+                
+                if (strstr($Formulafull, "($y)"))
+                {
+                    $thousep = $this->agataConfig['general']['ThouSep'];
+                    $a       = $QueryCell;
+
+                    $this->Summary[$break][$y]['sum'] += $a;
+                    $this->Summary[$break][$y]['count'] ++;
+                    $this->Summary[$break][$y]['max'] = ($QueryCell > $this->Summary[$break][$y]['max']) ? $QueryCell : $this->Summary[$break][$y]['max'];
+                    
+                    if (!$this->Summary[$break][$y]['min'])
+                    {
+                        $this->Summary[$break][$y]['min'] = $QueryCell;
+                    }
+                    
+                    $this->Summary[$break][$y]['min'] = ($QueryCell < $this->Summary[$break][$y]['min']) ? $QueryCell : $this->Summary[$break][$y]['min'];
+                }
+                $CountBreak ++;
+            }
+        } // end if Breaks
+        
+        return array($break);
+    }
+    
+    
+    
+    /******************************************
+    Makes the Totalization after the last line
+    *******************************************/
+    function ProcessLastBreak()
+    {
+        $this->Headers = null;
+        $this->BreakMatrix = null;
+        if ($this->Breaks)
+        {
+            $CountBreak = 0;
+            foreach ($this->Breaks as $Break => $Formulafull)
+            {
+                $break = $Break;
+                $Formulas = explode(',', $Formulafull);
+                
+                //if ($break == $y)
+                //{
+                $ClearColumns = null;
+                foreach ($Formulas as $Formula)
+                {
+                    $tmp = explode('(', $Formula);
+                    $formula = trim($tmp[0]);
+                    $tmp = explode(')', $tmp[1]);
+                    $column = trim($tmp[0]);
+                    
+                    $result = $this->ProcessFormula($break, $column, $formula);
+                    
+                    //maskhere
+                    if ($formula != 'count') // count nao vai mascara
+                    {
+                        $result = FormatMask($this->Adjustments[$column]['Mask'], $result);
+                    }
+                    # Custom Total Label
+                    $as_pos = strpos($Formula, ' as ');
+                    if ($as_pos !== false)
+                    {
+                        $custom_total_label = substr($Formula, $as_pos+5, -1);
+                        if ($custom_total_label)
+                            $cellBreakContent =  $custom_total_label . ": $result";
+                        else
+                            $cellBreakContent =  $result;
+                    }
+                    else
+                    {
+                        $cellBreakContent = _a($this->FunctionNames[$formula]) . ": $result";
+                    }
+                    
+                    $this->BreakMatrix[$break][$column][] = $cellBreakContent;
+                    
+                    $ClearColumns[] = $column;
+                    
+                    $this->Headers[$CountBreak] = trim($this->Columns[$y -1]) . " : " . trim($QueryCell);
+                }
+                
+                if ($ClearColumns)
+                {
+                    foreach ($ClearColumns as $ClearColumn)
+                    {
+                        $this->Summary[$break][$ClearColumn] = null;
+                    }
+                }
+                
+                $CountBreak ++;
+            }
+        } // end if Breaks
+    }
+    
+    function ProcessFormula($break, $column, $formula)
+    {
+        if ($formula == 'avg')
+        {
+            # Normal average
+            $result =  $this->Summary[$break][$column]['sum'] /
+                       $this->Summary[$break][$column]['count'];
+        }
+        else if ($formula == 'gavg')
+        {
+            for ($n=$break + 1; $n<=count($this->Columns); $n++)
+            {
+                if ($this->Summary[$n]['Count']) // se há um sub-nível
+                {
+                    $result =  $this->Summary[$break][$column]['sum'] /
+                               $this->Summary[$n]['Count'];
+                    break;
+                }
+            }
+            
+            if (!$result)
+            {
+                # Normal average
+                $result =  $this->Summary[$break][$column]['sum'] /
+                           $this->Summary[$break][$column]['count'];
+            }
+        }
+        else
+        {
+            $result = $this->Summary[$break][$column][$formula];
+        }
+        
+        return $result;
+    }
+    
+    function ExecPosAction()
+    {
+        $obj = &$this->posAction[0];
+        $att = &$this->posAction[1];
+        $obj->{$att}();
+    }
+    
+    
+    /**********************************************************
+    This Function Equilize the GroupResults
+    ***********************************************************/
+    function EqualizeBreak($chave)
+    {
+        $Biggest = 0;
+        $FinalBreak = null;
+        $linebreak = $this->BreakMatrix[$chave];
+        
+        foreach ($linebreak as $tmp)
+        {
+            $Len = count($tmp);
+            if ($Len > $Biggest)
+            $Biggest = $Len;
+        }
+        
+        for ($w=1; $w<=count($this->Columns); $w++)
+        {
+            $contents = $linebreak[$w];
+            if (!$contents)
+            $contents = array('');
+            
+            $contents = array_pad ($contents, $Biggest, '');
+            $wline = 0;
+            foreach ($contents as $content)
+            {
+                $FinalBreak[$wline][] = $content;
+                $wline ++;
+            }
+        }
+        return $FinalBreak;
+    }
+
+    function SetReportLocale()
+    {
+        setlocale(LC_ALL, 'POSIX');
+    }
+
+    function UnsetReportLocale()
+    {
+        if (OS == 'WIN')
+        {
+            setlocale(LC_ALL, 'english');
+        }
+        else
+        {
+            setlocale(LC_ALL, 'pt_BR');
+        }
+    }
+}
+?>

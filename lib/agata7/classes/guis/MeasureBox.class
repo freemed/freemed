@@ -1,0 +1,149 @@
+<?
+/***********************************************************/
+/* Measures, Dialog with measures conversions
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class MeasureBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function MeasureBox($Description)
+    {
+        global $Pixmaps;
+        $tooltip = &new GtkTooltips;
+        $this->entry = &new GtkSpinButton(new GtkAdjustment((double)0, 0, 999, 1, 10, 10), 1, 0);
+
+        $box = &new GtkHBox;
+        $this->widget = new Box($box, $Description);
+        $this->button = new Button(array($this, 'MeasuresSel'), _a('Measures'), $Pixmaps['measures'], ICONBUTTON, $isdir, true);
+        $this->button->set_relief(GTK_RELIEF_NONE);
+
+        $box->pack_start($this->entry);
+        $box->pack_start($this->button);
+    }
+    /***********************************************************/
+    /* Changes the color
+    /***********************************************************/
+    function set_text($data)
+    {
+        $this->entry->set_text($data);
+    }
+
+    function set_editable($bool)
+    {
+        $this->entry->set_editable($bool);
+    }
+
+    /***********************************************************/
+    /* Returns the color
+    /***********************************************************/
+    function get_text()
+    {
+        return $this->entry->get_text();
+    }
+
+    /***********************************************************/
+    /* Changes the visibility
+    /***********************************************************/    
+    function set_visibility($bool)
+    {
+        $this->entry->set_visibility($bool);
+    }
+
+    /***********************************************************/
+    /* Show the button
+    /***********************************************************/
+    function show()
+    {
+        $this->widget->show_all();
+    }
+
+    /***********************************************************/
+    /* Define the size
+    /***********************************************************/
+    function set_usize($width, $height)
+    {
+        $this->entry->set_usize($width, $height);
+    }
+
+    /***********************************************************/
+    /*
+    /***********************************************************/
+    function MeasuresSel()
+    {
+        global $Pixmaps;
+        $this->window = new GtkWindow;
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), $this->window);
+        $this->window->set_title(_a('Measures'));
+        $this->window->set_position(GTK_WIN_POS_CENTER);
+        $this->window->set_default_size(280,160);
+        //$this->window->set_border_width(20);
+        $this->window->realize();
+        
+        $vbox = &new GtkVBox;
+        //$vbox->set_border_width(20);
+        $hbox1 = &new GtkHBox;
+        $hbox2 = &new GtkHBox;
+        $vbox->pack_start(darktxt(_a('Measures')), false, false, 0);
+        $vbox->pack_start($hbox1, true, true, 20);
+        $vbox->pack_start($hbox2, true, true, 20);
+        
+        $this->centimeters = $cm = &new GtkSpinButton(new GtkAdjustment((double)0, 0, 999, 0.02, 10, 10), 0.02, 2);
+        $this->inches      = $in = &new GtkSpinButton(new GtkAdjustment((double)0, 0, 999, 0.02, 10, 10), 0.02, 2);
+        $cm->set_usize(80,22);
+        $in->set_usize(80,22);
+        $cm->set_numeric(true);
+        $in->set_numeric(true);
+        
+        $cm_img = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_check.xpm');
+        $in_img = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_check.xpm');
+        
+        $cm_bt = new Button(array(&$this, 'GetCm'), _a('Convert'), $cm_img, ICONBUTTON, null, true);
+        $in_bt = new Button(array(&$this, 'GetIn'), _a('Convert'), $in_img, ICONBUTTON, null, true);
+        $cm_bt->set_relief(GTK_RELIEF_NONE);
+        $in_bt->set_relief(GTK_RELIEF_NONE);
+        
+        $hbox1->pack_start(new GtkLabel(_a('Centimeters')), true, true);
+        $hbox1->pack_start($cm, false, false);
+        $hbox1->pack_start($cm_bt, false, false, 20);
+        $hbox2->pack_start(new GtkLabel(_a('Inches')), true, true);
+        $hbox2->pack_start($in, false, false);
+        $hbox2->pack_start($in_bt, false, false, 20);
+        
+        $this->window->add($vbox);
+        $this->window->show_all();
+    }
+    
+    function GetCm()
+    {
+        $centimeters = $this->centimeters->get_text();
+        $points = $centimeters / 2.54 * 72.27;
+        $points = (int) $points;
+        $this->set_text("{$points}");
+        $this->window->hide();
+        return;
+    }
+
+    function GetIn()
+    {
+        $inches = $this->inches->get_text();
+        $points = $inches * 72.27;
+        $points = (int) $points;
+        $this->set_text("{$points}");
+        $this->window->hide();
+        return;
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

@@ -1,0 +1,140 @@
+<?
+/***********************************************************/
+/* Function, used to allows the user to choose a function
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class FunctionBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function FunctionBox($Description = null)
+    {
+        global $Pixmaps;
+        $Description = (!$Description) ? _a('Functions') : $Description;
+        $tooltip = &new GtkTooltips;
+        $this->entry = &new GtkEntry;
+
+        $box = &new GtkHBox;
+        $this->widget = new Box($box, $Description);
+        $this->button = new Button(array($this, 'FunctionSel'), _a('Function Repository'), $Pixmaps['menu_function'], ICONBUTTON, $isdir, true);
+        $this->button->set_relief(GTK_RELIEF_NONE);
+
+        $box->pack_start($this->entry);
+        $box->pack_start($this->button);
+    }
+    /***********************************************************/
+    /* Changes the color
+    /***********************************************************/
+    function set_text($data)
+    {
+        $this->entry->set_text($data);
+    }
+
+    function set_editable($bool)
+    {
+        $this->entry->set_editable($bool);
+    }
+
+    /***********************************************************/
+    /* Returns the color
+    /***********************************************************/
+    function get_text()
+    {
+        return $this->entry->get_text();
+    }
+
+    /***********************************************************/
+    /* Changes the visibility
+    /***********************************************************/    
+    function set_visibility($bool)
+    {
+        $this->entry->set_visibility($bool);
+    }
+
+    /***********************************************************/
+    /* Show the button
+    /***********************************************************/
+    function show()
+    {
+        $this->widget->show_all();
+    }
+
+    /***********************************************************/
+    /* Define the size
+    /***********************************************************/
+    function set_usize($width, $height)
+    {
+        $this->entry->set_usize($width, $height);
+    }
+
+    /***********************************************************/
+    /* Apply a function from Repository.
+    /***********************************************************/
+    function FunctionSel()
+    {
+        global $Pixmaps;
+        $janela = new GtkWindow;
+        $janela->connect_object('key_press_event', array(&$this,'KeyTest'), $janela);
+        $janela->set_title(_a('Functions'));
+        $janela->set_position(GTK_WIN_POS_CENTER);
+        $janela->set_default_size(320,320);
+        $janela->realize();
+        
+        $vbox = &new GtkVBox;
+        $janela->add($vbox);
+        $extensions = array('.fun');
+        $this->RepositoryTree = $filetree = &new FileTree();
+        $this->RepositoryTree->Info = $Info;
+        $filetree->set_column_width(0,400);
+        $filetree->DefineExtensions($extensions);
+        $filetree->AbreDiretorio('functions', null);
+        $filetree->set_column_width(0, 600);
+        
+        $SavedQueriesHandler = &new TreeHandler($filetree, array(0 => array($Pixmaps['require'], 'Apply')));
+        $ItemOpen = $SavedQueriesHandler->OpenAction;
+        $ItemOpen->connect_object('clicked', array(&$this, 'GetFunction'));
+        $ItemOpen->connect_object('clicked', array(&$janela, 'hide'));
+        //$janela->add($SavedQueriesHandler);
+
+        $vbox->pack_start(darktxt(_a('Function Repository')), false, false);
+        $vbox->pack_start($SavedQueriesHandler, true, true);
+        $SavedQueriesHandler->CreateToolBar2();
+        
+        $janela->show_all();
+    }
+    
+    function GetFunction()
+    {
+        $FileTree = $this->RepositoryTree;
+        $node = $FileTree->selection[0];
+        $Info = $this->RepositoryTree->node_get_row_data($node);
+        
+        if (!$Info)
+        {
+            return true;
+        }
+        $Info = str_replace('functions', '', $Info);
+        //$function = str_replace("C:\\", "\\", $Info);
+        //$function = substr($function, 1);
+        $Info = str_replace("\\", '/', $Info);
+        $function = str_replace('functions', '', $Info);
+        $string = $this->RepositoryTree->Info;
+        $this->set_text("{$function}");
+        return;
+    }
+
+
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

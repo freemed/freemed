@@ -1,0 +1,247 @@
+Version 7.6Beta (x.x Mb) 2006-05-09
+# Bug Fixes in merge report (jamiel)
+# Open Office parsing engine2 (jamiel)
+# Recursive sub reports (jamiel)
+# Connection wizard (jamiel)
+# Manage project (jamel)
+# API suport engine2 (jamiel
+
+Version 7.5 (17.0 Mb) 2006-03-22
+# One record per page or not (jamiel)
+# SubQuerys based on the detail (jamiel)
+# Final summary (jamiel)
+# Variavel contend total number of pages (jamiel)
+# Bug Fixed on OpenOffice (jamiel
+
+Version 7.4 (?.? Mb) 2005-
+# Open Office parsing (pablo);
+# Cross-Tab Reports (pablo);
+# Allow Parameters on Form Letters (pablo);
+# ms-Access bug-fixes (jose);
+# Postgres schema support (pablo);
+# Improvements on report breaks (pablo);
+# Bug Fixes on Merge Documents (pablo);
+# API on windows fixes (guillaume efrei);
+# Oracle schema support (dagles);
+# New .agt File Structure and Compability layer (pablo);
+# Merge Generation improvements (pablo);
+# Turkish translation (Ismail çakir);
+# Report Properties (pablo);
+# Conditional Highlight (pablo);
+# OffSet, Limit (topN) and distinct per Select (pablo);
+# Publish Report for AgataWeb using Web Services (pablo);
+# Allow flexible formulas at data groups sum(6)*max(10)...(pablo);
+# Store AgataWeb dinamic report features (pablo);
+# AgataWEB fixes to run with php5 (pablo);
+# interface bugfixes on sql edition (pablo);
+# replace die on third party libs with error msg (pablo);
+# include lots of file permission checks (pablo);
+# export as SQL (pablo);
+# new features as accumulate and counter functions (pablo);
+# Fixed the historic bug on sub-totals and groups (pablo);
+
+Version 7.2 (3.7 Mb) 2005-05-08
+===============================
+# Bug Fixes in client version (pablo)
+# Bug Fixes in web version (pablo)
+# Bug Fixes in report generation (pablo)
+# New Merge Tool Features (Lines, Rounded square, Floating frames, text rotation, vertical tabulation, caret lines, EOL, wrap) (pablo)
+# Ask the sub-report parameters (pablo)
+# Allow to define text masks and format numbers for report and sub-report (pablo)
+# Now the adjustments work for sub-report too (pablo)
+# Allow word wrap inside long texts in sub-report (pablo)
+# Re-Written of AgataAPI (pablo)
+# Improvements on AgataWeb (pablo)
+# Store the report' parameters (pablo)
+# Page Setup for the main report (pablo)
+
+7 beta 001 (3.6 Mb) 2005-03-04
+==============================
+
+# Code cleanup, all classes were reestructured (pablo)
+# Entire User's Interface Redesign (pablo)
+# Entire new Label Address tool in PDF (pablo)
+# BarCode generation on Merge and Label Tool (pablo)
+# Fix Bugs on Diagram Generation (pablo)
+# Better Color Selection (pablo)
+# An Entire new Merge Tool, with PDF output,
+  sections (header, details, group) and new resources
+  (rectangle, ellipse, preview) (pablo)
+# An Entire new Database abstraction layer (pablo)
+  sqlite support added (pablo)
+  dbase support added (pablo)
+  interbase/firebird are finally working (pablo)
+  odbc support is 100% tested (pablo)
+# An Entire new AgataWeb module that
+  allows to generate the reports
+  via web browser choosing the fields,
+  changing the ordering, changing
+  the letter/label texts... (pablo)
+# Label Templates (pablo)
+# TXT Form reports (pablo)
+# HTML Framed reports (pablo)
+# Table suggestion on Require operation, following the
+  table links (pablo)
+# Headers and Footers (pablo)
+# Colors and Fonts Templates (pablo)
+# Joins (pablo)
+# Bug Fixes on Diagram Generation (pablo)
+# Bug Fixes on Graph Generation (pablo)
+# Bug Fixes on Report Generation (pablo)
+# New File Format (.agt files) (pablo)
+# Database Dictionary (.agd), and Projects (.prj) are
+  now in XML format;
+# New Adjustments tool for Queries (pablo)
+# Core of Report Generation were re-written (pablo)
+# Now You can get an external field and apply a
+  function on result (pablo)
+# Query Templates tree (pablo)
+# Inline As and Distinct (pablo)
+# Added Window Icon (pablo)
+# How to update from 6 up to 7 (pablo)
+
+
+6 beta 002 (2.1 Mb) 2004-06-25
+==============================
+# Index Numbers on Levels of the Report (pablo)
+# Report Indentation controls (on/off) (pablo)
+# Bug Fixes in summarizations (pablo)
+# Report generation in Open Office Format (pablo)
+# Graphs generation in Open Office Format (pablo)
+# New FileDialog window (pablo)
+# Code cleanup (pablo)
+
+6 beta 001 (2 Mb) 2004-05-19
+============================
+
+# Internal classes were rewriten according a better
+  structure (pablo)
+# User interface improvements (pablo)
+# CrossDB selections created (pablo)
+# Function repository created (pablo)
+# Added criptography to project properties file (pablo)
+# Address Labels with variable number of columns (pablo)
+# AgataAPI code cleanup (pablo)
+# Interface enhancements (pablo)
+# ODBC bugfixes (pablo)
+# mssql bug fixes (pablo)
+# Better preview of the report (pablo)
+# Multi subqueries on Merged Docs (jeffrey)
+# Fix bugs in PDF generation (pablo)
+
+5 beta final (1.3 Mb)
+================================
+
+# PDF Generation (pablo)
+# Many Bug Fixes (pablo)
+# MergePS improvements (pablo)
+
+5 betta 004 (2003-10-20)
+========================
+
+# Merge tool ported to this version (pablo)
+# Address label tool ported to this version (pablo)
+# New features in Merge Tool, tab stops, margins (pablo)
+# Preview of report in a tree format, according
+  to report levels definition (pablo)
+# improvements and fixed bugs in report preview (pablo)
+# fixed bugs in number format (pablo)
+# fixed bugs reggarding column sizes (pablo)
+
+5 betta 003 2003-08-13 (1.7 Mb)
+===============================
+
+# AgataAPI (You can run your reports from any
+  PHP application) (pablo)
+# New tool for Diagrams generation, new layout (pablo)
+# New tool for graph generation, new layout (pablo)
+# improvements on loading DB structure (pablo)
+# Import DBF and CSV formats is working again (pablo)
+# Save as (pablo)
+
+5 beta 002 2003-07-09 (1.9 Mb)
+==============================
+
+# Created Report Repository (pablo)
+# Total interface redesign (pablo)
+# Automatic Group by (pablo)
+# Internal classes reconstructed (pablo)
+# Export as XML (pablo)
+# Master/Detail interface redesigned (pablo)
+# auto-link among tables, just register the
+  table links (pablo)
+# Export as Diagrams (pablo)
+# Created Table Families (pablo)
+# Created DataDescription interface (pablo)
+# Running fine with Oracle on Windows (pablo)
+
+5 beta 001 2003-04-07 (1.2 Mb)
+==============================
+# Export as HTML (pablo)
+# Better Configuration Tool (pablo)
+  Configure HTML colors and fonts,
+  aplication directories...;
+# Total Parameters support on EIS too (pablo)
+# Export as CSV on Main Screen (pablo)
+# Many enhancements with confirmation dialogs,
+  message boxes (pablo)
+# Improvements in export as PS (pablo)
+
+
+Version 4  (1.1 Mb) 2002-10-22
+==============================
+
+# Table Structure Tree, beautiful icons (pablo)
+  new funcionalities;
+  new design;
+
+# SQL Repository Tree, beautiful icons (pablo)
+  new funcionalities;
+  new design;
+
+# new directory structure (pablo)
+  (/sql, /output, /label, /merge, /eis...);
+
+# Merge Tool Redesign (pablo)
+# del button on SelectList (pablo)
+# Subtotals by group and grand total (pablo)
+# Run-time parameters on queries (pablo)
+# Spanish Translation (lucas)
+# Oracle Suport (pablo)
+# Select Description (pablo)
+
+Version 3 (1 Mb) 2002-04-18
+===========================
+
+# User's Manual (pablo)
+# Theme Suport (pablo)
+# Label Tool (pablo)
+# Dia Tool (pablo)
+# DBF tool (pablo)
+# Multi Server (pablo)
+# AgataEIS (pablo)
+# Improvements (in, not in) (pablo)
+# Menus (pablo)
+# Project Manager (pablo)
+# IBM DB2 Suport (pablo)
+
+Version 2 (100 Kb) 2002-01-24
+=============================
+
+# use Pear::DB as db layer (pablo)
+# French Translation (christian)
+# Deutch Translation and Trans.class (thomas)
+# Italian Translation (bruno)
+# Swedish Translation (johannes)
+# PEAR fixes (bruno)
+# Export Ps (pablo)
+# Export Txt (pablo)
+# Merge with doc (pablo)
+# System Help (pablo)
+# Format Config (pablo)
+
+Version 1 (12 Kb) - 2001-10-23
+==============================
+# First Release
+# PostgreSQL (pablo)
+# English, Portuguese (pablo)

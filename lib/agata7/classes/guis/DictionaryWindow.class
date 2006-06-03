@@ -1,0 +1,400 @@
+<?php
+/***********************************************************/
+/* Table Configuration Method
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class DictionaryWindow
+{
+
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function DictionaryWindow()
+    {
+        $this->glade = &new GladeXML(images . 'dictionary.glade');
+        $this->window = $this->glade->get_widget('window');
+        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        
+        $this->Containers['vboxTables'] = $this->glade->get_widget('vboxTables');
+        $this->Containers['vboxGroups'] = $this->glade->get_widget('vboxGroups');
+        $this->Containers['scrolledDict'] = $this->glade->get_widget('scrolledDict');
+        $this->Containers['vboxTableFamilies'] = $this->glade->get_widget('vboxTableFamilies');
+        $this->Containers['vboxLinkingSettings'] = $this->glade->get_widget('vboxLinkingSettings');
+        $this->Containers['vboxMakeGroup'] = $this->glade->get_widget('vboxMakeGroup');
+        $this->Containers['vboxButtonLink'] = $this->glade->get_widget('vboxButtonLink');
+        $this->Containers['vboxDataDescription'] = $this->glade->get_widget('vboxDataDescription');
+        $this->Containers['hboxSaveDescription'] = $this->glade->get_widget('hboxSaveDescription');
+        $this->Containers['hboxLoadDbStructure1'] = $this->glade->get_widget('hboxLoadDbStructure1');
+        $this->Containers['hboxLoadDbStructure2'] = $this->glade->get_widget('hboxLoadDbStructure2');
+        $this->Containers['scrolledwindowTableLink1'] = $this->glade->get_widget('scrolledwindowTableLink1');
+        $this->Containers['scrolledwindowTableLink2'] = $this->glade->get_widget('scrolledwindowTableLink2');
+        $this->Containers['scrolledwindowDataDescription'] = $this->glade->get_widget('scrolledwindowDataDescription');
+        $this->Containers['frameDataDescriptionInfo'] = $this->glade->get_widget('frameDataDescriptionInfo');
+        $this->Containers['frameDataStructure'] = $this->glade->get_widget('frameDataStructure');
+        $this->Containers['frameGeneral'] = $this->glade->get_widget('frameGeneral');
+        $this->Containers['hboxTableFamiliesTitle']   = $this->glade->get_widget('hboxTableFamiliesTitle');
+        $this->Containers['hboxLinkingSettingsTitle'] = $this->glade->get_widget('hboxLinkingSettingsTitle');
+        $this->Containers['hboxDataDescriptionTitle'] = $this->glade->get_widget('hboxDataDescriptionTitle');
+
+        $this->Containers['hboxTableFamiliesTitle']->pack_start(darktxt(_a('Table Families')), true, true);
+        $this->Containers['hboxLinkingSettingsTitle']->pack_start(darktxt(_a('Linking Settings')), true, true);
+        $this->Containers['hboxDataDescriptionTitle']->pack_start(darktxt(_a('Data Structure')), true, true);
+        $this->Containers['frameDataDescriptionInfo']->set_label(_a('Data Description'));
+        $this->Containers['frameDataStructure']->set_label(_a('Data Structure'));
+
+        $this->FileList = &new FileList(_a('Dictionaries'), array(1 => array($Pixmaps['menu_open'], 'Delete')));
+        $this->FileList->Load('dictionary');
+        $this->FileList->SetWidth();
+        $this->FileList->SetExtension('agd');
+        $this->Containers['scrolledDict']->add($this->FileList);
+
+        $this->buttonSave = $this->glade->get_widget('buttonSaveDictionary');
+        $this->buttonSave->connect_object('clicked', array(&$this, 'PreSaveDictionary'));
+
+        $this->labelTableFamilies   = $this->glade->get_widget('labelTableFamilies');
+        $this->labelSaveDictionary  = $this->glade->get_widget('labelSaveDictionary');
+        $this->labelLinkingSettings = $this->glade->get_widget('labelLinkingSettings');
+        $this->labelDataDescription = $this->glade->get_widget('labelDataDescription');
+        $this->labelGeneral = $this->glade->get_widget('labelGeneral');
+
+        $this->labelDataDescription->set_text(_a('Data Description'));
+        $this->labelTableFamilies->set_text(_a('Table Families'));
+        $this->labelLinkingSettings->set_text(_a('Linking Settings'));
+        $this->labelSaveDictionary->set_text(_a('Save Dictionary'));
+
+        $this->TableList = new Alist(&$this->Containers['vboxTables'], $this->window, _a('Tables'),
+                                     array(_a('Tables')), null, 400, 200, false,
+                                     array(null), GTK_SELECTION_EXTENDED, array(images . 'ico_table.xpm'));
+        
+        $buttons = array('Add' => 1, 'Edit' => 1, 'Delete' => 1, 'Clear' => 1);
+        $this->TableGroups = new Alist(&$this->Containers['vboxGroups'], $this->window, _a('Families'),
+                                       array(_a('Families')), null, 400, 200, false,
+                                       $buttons, 0, array(images . 'ico_home.xpm'));
+        
+        $buttons = array('Add' => 1, 'Edit' => 1, 'Delete' => 1, 'Clear' => 1);
+        $this->TableFamilies = new Alist(&$this->Containers['vboxTableFamilies'], $this->window, _a('Table Families'),
+                                       array(_a('Family'), _a('Tables')), null, 400, 200, false, $buttons,
+                                       0, array(images . 'ico_home.xpm', images . 'ico_table.xpm'));
+    
+        $this->TableFamilies->clist->set_column_width(0, 200);
+        
+        $this->LinkingSettings = new Alist(&$this->Containers['vboxLinkingSettings'], $this->window, _a('Linking Settings'),
+                                       array(_a('Fields'), _a('Fields')), null, 400, 200, false, $buttons,
+                                       0, array(images . 'ico_field.xpm', images . 'ico_field.xpm'));
+    
+        $this->LinkingSettings->clist->set_column_width(0, 200);    
+    
+        $buttons = array('Delete' => 1, 'Clear' => 1);
+        $this->DataDescription = new Alist(&$this->Containers['vboxDataDescription'], $this->window, _a('Data Description'),
+                                       array(_a('Data'), _a('Description')),
+                       null, 400, 200, false, $buttons,
+                       0, array(images . 'ico_field.xpm', images . 'ico_info.xpm'));
+    
+        $this->DataDescription->clist->set_column_width(0, 200);
+
+        $this->ctreeTableLink1      = &new TableTree(_a('Tables Structure') . ' (FK)', false);
+        $this->ctreeTableLink2      = &new TableTree(_a('Tables Structure') . ' (PK)', false);
+        $this->ctreeDataDescription = &new TableTree(_a('Tables Structure'), false);
+        $this->ctreeDataDescription->connect_object('tree-select-row', array(&$this, 'FillDescr'));
+        $this->Containers['scrolledwindowDataDescription']->add($this->ctreeDataDescription);
+
+        $this->Containers['scrolledwindowTableLink1']->add($this->ctreeTableLink1);
+        $this->Containers['scrolledwindowTableLink2']->add($this->ctreeTableLink2);
+
+        $local_pix['bigdown'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'bigdown.xpm');
+        $local_pix['link']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'link.xpm');
+        $local_pix['down']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_down.xpm');
+        $local_pix['load']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'loaddb.xpm');
+
+        $this->Buttons['MakeGroup'] = 		 new Button(array(&$this, 'MakeGroup'), 	  _a('Classify'), 		       $local_pix['bigdown'],TOPBUTTON);
+        $this->Buttons['LinkTables'] = 		 new Button(array(&$this, 'Link'), 			  _a('Link Tables'), 	       $local_pix['link'], 	 TOPBUTTON);
+        $this->Buttons['AddDescr'] = 		 new Button(array(&$this, 'AddDescr'), 		  _a('Add'), 		           $local_pix['down'], 	 IMAGEBUTTON);
+        $this->Buttons['LoadDbStructure1'] = new Button(array(&$this, 'LoadDbStructure1'),_a('Load the database structure'),$local_pix['load'], 	 IMAGEBUTTON);
+        $this->Buttons['LoadDbStructure2'] = new Button(array(&$this, 'LoadDbStructure2'),_a('Load the database structure'),$local_pix['load'], 	 IMAGEBUTTON);
+
+        $this->Buttons['MakeGroup']->set_relief(GTK_RELIEF_NONE);
+        $this->Buttons['LinkTables']->set_relief(GTK_RELIEF_NONE);
+        $this->Buttons['LoadDbStructure1']->set_relief(GTK_RELIEF_NONE);
+        $this->Buttons['LoadDbStructure2']->set_relief(GTK_RELIEF_NONE);
+
+        $this->Containers['vboxMakeGroup']->pack_start($this->Buttons['MakeGroup'], true, false);
+        $this->Containers['vboxButtonLink']->pack_start($this->Buttons['LinkTables'], true, false);
+        $this->Containers['hboxSaveDescription']->pack_start($this->Buttons['AddDescr'], true, false);
+        $this->Containers['hboxLoadDbStructure1']->pack_start($this->Buttons['LoadDbStructure1'], false, false, 7);
+        $this->Containers['hboxLoadDbStructure2']->pack_start($this->Buttons['LoadDbStructure2'], false, false, 7);
+
+        $this->entryDataStructure   = $this->glade->get_widget('entryDataStructure');
+        $this->entryDataDescription = $this->glade->get_widget('entryDataDescription');
+    //$this->Buttons['AddDescr']->set_label(_a('Add'));
+    //$this->Buttons['LoadDbStructure1']->set_label(_a('Load the database structure'));
+    //$this->Buttons['LoadDbStructure2']->set_label(_a('Load the database structure'));
+    //$this->Buttons['MakeGroup']->set_label(_a('Classify'));
+    //$this->Buttons['LinkTables']->set_label(_a('Link Tables'));
+    }
+
+
+    /***********************************************************/
+    /* record a relation between a table and a table group
+    /***********************************************************/
+    function MakeGroup()
+    {
+        
+        $selection1 = $this->TableGroups->clist->selection;
+        $selection2 = $this->TableList->clist->selection;
+        
+        if (($selection1) && ($selection2))
+        {
+            $line1 = $selection1[0];
+            foreach($selection2 as $line2)
+            {
+                $text1 = $this->TableGroups->GetItem($line1, 0);
+                $text2 = $this->TableList->GetItem($line2, 0);
+                $this->TableFamilies->Append(array($text1, $text2));
+            }
+        }
+        else
+        {
+            new Dialog(_a('Select items from both lists'));
+        }
+    }
+    
+    /***********************************************************/
+    /* record a link between two tables
+    /***********************************************************/
+    function Link()
+    {
+        $text1 = $this->ctreeTableLink1->GetInfo();
+        $text2 = $this->ctreeTableLink2->GetInfo();
+        
+        if (($text1) && ($text2))
+        {
+            $aField1 = explode(':', $text1);
+            $aField2 = explode(':', $text2);
+            
+            if ((count($aField1) == 4) && (count($aField2) == 4))
+            {
+                $this->LinkingSettings->AddStart(array($aField1[1] . '.' . $aField1[3], $aField2[1] . '.' . $aField2[3]));
+            }
+            else
+            {
+                new Dialog(_a('Select fields of both columns'));
+            }
+        }
+        else
+        {
+            new Dialog(_a('Select items from both lists'));
+        }
+    }
+
+    /***********************************************************/
+    /* Prepare Data Description filling
+    /***********************************************************/
+    function FillDescr()
+    {
+        $text = $this->ctreeDataDescription->GetInfo();
+
+        if ($text)
+        {
+            $this->entryDataStructure->set_text($text);
+            $this->entryDataDescription->set_text('');
+            $this->window->set_focus($this->entryDataDescription);
+        }
+    }
+
+    /***********************************************************/
+    /* Record a Data Description
+    /***********************************************************/
+    function AddDescr()
+    {
+        $DataStructure = $this->entryDataStructure->get_text();
+        $DataDescription = $this->entryDataDescription->get_text();
+        
+        if (($DataStructure) && ($DataDescription))
+        {
+            $this->DataDescription->AddStart(array($DataStructure, $DataDescription));
+        }
+        else
+        {
+            new Dialog(_a('Fill all the required fields'));
+        }
+    }
+
+    /***********************************************************/
+    /* Load DB Structure at the Linking Settings page
+    /***********************************************************/
+    function LoadDbStructure1()
+    {
+        if (!$this->connected)
+        {
+            new Dialog(_a('Cannot connect to Database'));
+            return false;
+        }
+
+        Wait::On();
+        $this->ctreeTableLink1->LoadTables($this->agataDB, $this->agataDataDescription);
+        $this->ctreeTableLink2->LoadTables($this->agataDB, $this->agataDataDescription);
+        Wait::Off();
+    }
+    
+    /***********************************************************/
+    /* Load DB Structure at the Data Description Page
+    /***********************************************************/
+    function LoadDbStructure2()
+    {
+        if (!$this->connected)
+        {
+            new Dialog(_a('Cannot connect to Database'));
+            return false;
+        }
+        
+        Wait::On();
+        $this->ctreeDataDescription->LoadTables($this->agataDB, $this->agataDataDescription);
+        Wait::Off();
+    }
+
+    /***********************************************************/
+    /* Shows the Window
+    /***********************************************************/
+    function Show()
+    {
+        $this->window->show_all();
+        $this->entryDataDescription->set_text('');
+        $this->entryDataStructure->set_text('');
+        $this->ctreeTableLink1->ClearTree();
+        $this->ctreeTableLink2->ClearTree();
+        $this->ctreeDataDescription->ClearTree();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Hide the Window
+    /***********************************************************/
+    function Hide()
+    {
+        $this->window->hide();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Set the Definitions
+    /***********************************************************/
+    function Set($TableNames, $agataTbGroups, $PlainTbFamilies, $PlainTbLinks, $PlainDataDescription, $agataDataDescription)
+    {
+        $this->agataTbGroups = $agataTbGroups;
+        $this->agataDataDescription = $agataDataDescription;
+
+        $this->PlainTbFamilies = $PlainTbFamilies;
+        $this->PlainTbLinks = $PlainTbLinks;
+        $this->PlainDataDescription = $PlainDataDescription;
+
+        $this->TableList->StartAppend($TableNames);
+        $this->TableGroups->StartAppend($agataTbGroups);
+        $this->TableFamilies->StartAppend($PlainTbFamilies);
+        $this->LinkingSettings->StartAppend($PlainTbLinks);
+        $this->DataDescription->StartAppend($PlainDataDescription);
+        $this->window->set_title(_a('Data Dictionary') . ' : ' . ($this->agataDB['dict'] ? $this->agataDB['dict'] : _a('Not Connected')));
+    }
+
+    /***********************************************************/
+    /* Key Test Method
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $this->Hide();
+        }
+    }
+    
+    function PreSaveDictionary()
+    {
+        new FileDialog(_a('Save Dictionary'), array('agd'), null, 'dictionary', array(&$this, 'SaveDictionary'));
+    }
+    
+    function SaveDictionary($fs)
+    {
+
+        // Build array with Table Groups
+        $TbFamilies = $this->TableFamilies->GetItems();
+        $TbGroups = $this->TableGroups->GetItems();
+        
+        if (($TbFamilies) && $TbGroups)
+        {
+            foreach($TbFamilies as $TbFamily)
+            {
+                $a = $TbFamily[0];
+                $b = $TbFamily[1];
+                //$agataTbFamilies[$a][] = $b;
+                $array['tables']["dic:$b"]['dic:groups']['dic:name'][] = $a;
+            }
+            
+            //$this->agataTbFamilies = $this->ProjectDefs[$this->project][0] = $agataTbFamilies;
+            //$this->agataTbGroups   = $this->ProjectDefs[$this->project][1] = $TbGroups;
+        }
+
+        // Build array with Data Description
+        $DataDescription = $this->DataDescription->GetItems();
+        
+        if ($DataDescription)
+        {
+            foreach ($DataDescription as $peer)
+            {
+                $datastructure   = $peer[0];
+                $datadescription = $peer[1];
+                
+                //$agataDataDescription[$datastructure] = $datadescription;
+                $pieces = explode(':', $datastructure);
+                if (count($pieces) == 4)
+                {
+                    $table = $pieces[1];
+                    $field = $pieces[3];
+                    $array['tables']["dic:$table"]['dic:fields']["dic:$field"]['dic:label'] = $datadescription;
+                }
+                else
+                {
+                    $table = $pieces[1];
+                    $array['tables']["dic:$table"]['dic:label'] = $datadescription;
+                }
+            }
+            
+            //$this->agataDataDescription = $this->ProjectDefs[$this->project][3] = $agataDataDescription;
+            
+        }
+
+        $TbLinks = $this->LinkingSettings->GetItems();
+        
+        // Build array with Table Links
+        if ($TbLinks)
+        {
+            foreach ($TbLinks as $TbLink)
+            {
+                $info1 = explode('.', $TbLink[0]);
+                $info2 = explode('.', $TbLink[1]);
+                
+                $table1 = $info1[0];
+                $field1 = $info1[1];
+                
+                $table2 = $info2[0];
+                $field2 = $info2[1];
+                //$agataTbLinks[$table1][$field1] = array($table2, $field2);
+                $array['tables']["dic:$table1"]['dic:fields']["dic:$field1"]['dic:link'] = "{$table2}.{$field2}";
+            }
+        }
+
+        $file = $fs->get_filename();
+        $ok = Dictionary::WriteDictionary($file, $array);
+        $fs->hide();
+        if ($ok)
+        {
+            $this->FileList->Reload();
+            new Dialog(_a('Saved'), false);
+        }
+        else
+        {
+            new Dialog(_a('File Not Saved'), false);
+        }
+    }
+
+}
+?>

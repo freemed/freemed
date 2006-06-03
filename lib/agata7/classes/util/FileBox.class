@@ -1,0 +1,136 @@
+<?
+/***********************************************************/
+/* FileBox, used to allows the user to choose colors
+/* by Pablo Dall'Oglio 2004-2006
+/*    Jamiel Spezia 2006 - 2006
+/***********************************************************/
+class FileBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function FileBox($Description, $isdir)
+    {
+        global $Pixmaps;
+        $tooltip = &new GtkTooltips;
+        $this->entry = &new GtkEntry;
+
+        $this->box = &new GtkHBox;
+        $this->widget = new Box($this->box, $Description);
+        $this->button = new Button(array($this, 'FileSel'), _a('File Selection'), $Pixmaps['file'], ICONBUTTON, $isdir, true);
+        $this->button->set_relief(GTK_RELIEF_NONE);
+
+        $this->box->pack_start($this->entry);
+        $this->box->pack_start($this->button);
+    }
+    /***********************************************************/
+    /* Changes the color
+    /***********************************************************/
+    function set_text($data)
+    {
+        $this->entry->set_text($data);
+    }
+
+    function set_editable($bool)
+    {
+        $this->entry->set_editable($bool);
+    }
+
+    /***********************************************************/
+    /* Returns the color
+    /***********************************************************/
+    function get_text()
+    {
+        return $this->entry->get_text();
+    }
+
+    /***********************************************************/
+    /* Changes the visibility
+    /***********************************************************/    
+    function set_visibility($bool)
+    {
+        $this->entry->set_visibility($bool);
+    }
+
+    /***********************************************************/
+    /* Show the button
+    /***********************************************************/
+    function show()
+    {
+        $this->widget->show_all();
+    }
+
+    /***********************************************************/
+    /* Define the size
+    /***********************************************************/
+    function set_usize($width, $height)
+    {
+        $this->entry->set_usize($width, $height);
+    }
+
+    /***********************************************************/
+    /* File Selection Dialog
+    /***********************************************************/
+    function FileSel($is_dir = false)
+    {
+        $FileSelection = &new FileDialog(_a('File Selection'));
+        $button_ok = $FileSelection->ok_button;
+        $button_ok->connect_object('clicked', array(&$this, 'GetFileName'), &$FileSelection, $is_dir);
+
+        $button_cancel = $FileSelection->cancel_button;
+        $button_cancel->connect_object('clicked', array(&$FileSelection, 'hide'));
+    }
+
+    /***********************************************************/
+    /* Returns the selected FileName
+    /***********************************************************/
+    function GetFileName(&$FileSelection, $is_dir)
+    {
+        $FileName = $FileSelection->get_filename();
+        $PathName = $FileSelection->get_path();
+
+        if ($is_dir)
+        {
+            if (is_dir($PathName))
+            {
+                $FileSelection->hide();
+                if ((substr($PathName,-1) == '\\') || (substr($PathName,-1) == '/'))
+                {
+                    $PathName = substr($PathNameName, 0, -1);
+                }
+                $this->set_text("$PathName");
+            }
+        }
+        else
+        {
+            if (file_exists($FileName))
+            {
+                $FileSelection->hide();
+                if ((substr($FileName,-1) == '\\') || (substr($FileName,-1) == '/'))
+                {
+                    $FileName = substr($FileName, 0, -1);
+                }
+                if (strpos($FileName, ' ') !== false)
+                {
+                    $this->set_text("\"$FileName\"");
+                }
+                else
+                {
+                    $this->set_text("$FileName");
+                }
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

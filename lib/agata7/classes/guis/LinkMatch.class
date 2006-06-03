@@ -1,0 +1,247 @@
+<?
+/***********************************************************/
+/* Class that suggests linked tables
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class LinkMatch
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function LinkMatch($callback, $table1, $table2, $join, $linking, $agataDescription, $agataDB)
+    {
+        $this->window = new GtkWindow;
+        $this->window->realize();
+        $this->window->set_default_size(480,280);
+        $this->window->set_title(_a('Linking Settings'));
+        $this->window->set_position(GTK_WIN_POS_CENTER);
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), $this->window);
+        $this->agataDataDescription = $agataDescription;
+        $this->agataDB              = $agataDB;
+        $this->linking = &$linking;
+        $this->callback = &$callback;
+        $this->table1 = &$table1;
+        $this->table2 = &$table2;
+        $this->join = &$join;
+        $vbox = new GtkVBox;
+        $this->window->add($vbox);
+        $vbox->pack_start(darktxt(_a('Linking Settings')), false, false);
+        $scroll = new GtkScrolledWindow;
+        $this->list = new GtkCList(6, array('', _a('Table'), _a('Column'), '=', _a('Table'), _a('Column')));
+        $this->list->connect_object('select-row', array(&$this, 'ChangeStatus'));
+        $scroll->add($this->list);
+        $vbox->pack_start($scroll, true, true);
+
+        $this->pixmaps['on']     = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_on.xpm');
+        $this->pixmaps['add']    = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_add.xpm');
+        $this->pixmaps['off']    = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_off.xpm');
+        $this->pixmaps['ok']     = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_ok.xpm');
+        $this->pixmaps['cancel'] = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_cancel.xpm');
+
+        if ($linking)
+        {
+            foreach ($linking as $link)
+            {
+                $key1 = 'table:' . $link[1];
+                $key2 = 'table:' . $link[1] . ':field:' . $link[2];
+                $key3 = 'table:' . $link[4];
+                $key4 = 'table:' . $link[4] . ':field:' . $link[5];
+                $link[1] = ($this->SeekDataDescription($key1)) ? $this->SeekDataDescription($key1) : $link[1];
+                $link[2] = ($this->SeekDataDescription($key2)) ? $this->SeekDataDescription($key2) : $link[2];
+                $link[4] = ($this->SeekDataDescription($key3)) ? $this->SeekDataDescription($key3) : $link[4];
+                $link[5] = ($this->SeekDataDescription($key4)) ? $this->SeekDataDescription($key4) : $link[5];
+                $node = $this->list->append($link);
+                $this->list->set_pixtext($node, 0, '1', 5, $this->pixmaps['on'][0], $this->pixmaps['on'][1]);
+            }
+            $this->list->columns_autosize();
+        }
+
+        $button1 = new Button(array(&$this, 'onOK'),         _a('OK'),     $this->pixmaps['ok'],     IMAGEBUTTON);
+        $button2 = new Button(array(&$this->window, 'hide'), _a('Cancel'), $this->pixmaps['cancel'], IMAGEBUTTON);
+
+        $button1->set_relief(GTK_RELIEF_NONE);
+        $button2->set_relief(GTK_RELIEF_NONE);
+        
+        $hbox = new GtkHBox;
+        $hbox->pack_start(new GtkHBox, true, true);
+        $hbox->pack_start($button1, false, false);
+        $hbox->pack_start($button2, false, false);
+        // só para joins
+        if ($this->table1 and $this->table2)
+        {
+            $button3 = new Button(array(&$this, 'AddLink'),      _a('Add'),    $this->pixmaps['add'],    IMAGEBUTTON);
+            $button3->set_relief(GTK_RELIEF_NONE);
+            $hbox->pack_start($button3, false, false);
+        }
+        $hbox->pack_start(new GtkHBox, true, true);
+        $vbox->pack_start($hbox, false, false);
+        $this->window->show_all();
+    }
+
+    /***********************************************************/
+    /* On/OFF the link between tables
+    /***********************************************************/
+    function ChangeStatus()
+    {
+        $this->list->freeze();
+        $selection = $this->list->selection;
+        $line = $selection[0];
+        $data = $this->list->get_pixtext($line, 0);
+        $text = $data[0];
+        if ($text == 1)
+        {
+            $this->list->set_pixtext($line, 0, '0', 5, $this->pixmaps['off'][0], $this->pixmaps['off'][1]);
+        }
+        else
+        {
+            $this->list->set_pixtext($line, 0, '1', 5, $this->pixmaps['on'][0], $this->pixmaps['on'][1]);
+        }
+        $this->list->thaw();
+    }
+
+    /***********************************************************/
+    /* Accepts the links
+    /***********************************************************/    
+    function onOK()
+    {
+        $i = 0;
+        while (@$data = $this->list->get_pixtext($i,0))
+        {
+            if ($data[0] == 1)
+            {
+                $return[] = $this->linking[$i];
+                $text[] = $this->linking[$i][1] . '.'. $this->linking[$i][2] . ' = ' . $this->linking[$i][4]. '.' . $this->linking[$i][5];
+            }
+            $i ++;
+        }
+        if ($text)
+        {
+            $condition = implode(' and ', $text);
+        }
+        $this->window->hide();
+        call_user_func($this->callback, $this->table1, $this->table2, $this->join, $condition);
+    }
+
+    /***********************************************************/
+    /* Allows the user to add a link
+    /***********************************************************/    
+    function AddLink()
+    {
+        $this->lwindow = new GtkWindow;
+        $this->lwindow->realize();
+        $this->lwindow->set_default_size(480,280);
+        $this->lwindow->set_title(_a('Link Tables'));
+        $this->lwindow->set_position(GTK_WIN_POS_CENTER);
+        $this->lwindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->lwindow);
+        
+        $vbox = &new GtkVBox;
+        $vbox->pack_start(darktxt(_a('Linking Settings')), false, false);
+        $vbox->pack_start(new GtkHSeparator, false, false);
+        $hbox = &new GtkHBox;
+        $vbox->pack_start($hbox, true, true);
+        
+        $scroll1 = &new GtkScrolledWindow;
+        $scroll1->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+
+        $scroll2 = &new GtkScrolledWindow;
+        $scroll2->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+        
+        $this->ctreeTable1= &new TableTree('', true);
+        $this->ctreeTable1->set_selection_mode(GTK_SELECTION_EXTENDED);
+        $this->ctreeTable1->set_column_width(0, 200);
+        $this->ctreeTable1->column_titles_hide();
+        $scroll1->add($this->ctreeTable1);
+        $hbox->pack_start($scroll1, true, true);
+        $local_pix['link'] = Gdk::pixmap_create_from_xpm($this->lwindow->window, null,  images . 'link.xpm');
+        $button = new Button(array(&$this, 'Link'), _a('Link Tables'), $local_pix['link'], 	 TOPBUTTON);
+        $hbox->pack_start(vcentral($button), false, false);
+
+        $this->ctreeTable2= &new TableTree('', true);
+        $this->ctreeTable2->set_selection_mode(GTK_SELECTION_EXTENDED);
+        $this->ctreeTable2->set_column_width(0, 200);
+        $this->ctreeTable2->column_titles_hide();
+        $scroll2->add($this->ctreeTable2);
+        $hbox->pack_start($scroll2, true, true);
+
+        $this->ctreeTable1->LoadTheseTables($this->agataDB, array($this->table1), $this->agataDataDescription);
+        $this->ctreeTable2->LoadTheseTables($this->agataDB, array($this->table2), $this->agataDataDescription);
+
+        $this->lwindow->add($vbox);
+        $this->lwindow->show_all();
+    }
+
+    /***********************************************************/
+    /* Add a Link between the tables
+    /***********************************************************/
+    function Link()
+    {
+        $info1 = $this->ctreeTable1->GetInfo();
+        $info2 = $this->ctreeTable2->GetInfo();
+        if ($info1 and $info2)
+        {
+            $pieces1 = explode(':', $info1);
+            $pieces2 = explode(':', $info2);
+            $table1  = $pieces1[1];
+            $table2  = $pieces2[1];
+            $field1  = $pieces1[3];
+            $field2  = $pieces2[3];
+            
+            $link = array(1, $table1, $field1, '=', $table2, $field2);
+            $this->linking[count($this->linking)] = $link;
+            $key1 = 'table:' . $link[1];
+            $key2 = 'table:' . $link[1] . ':field:' . $link[2];
+            $key3 = 'table:' . $link[4];
+            $key4 = 'table:' . $link[4] . ':field:' . $link[5];
+            $link[1] = ($this->SeekDataDescription($key1)) ? $this->SeekDataDescription($key1) : $link[1];
+            $link[2] = ($this->SeekDataDescription($key2)) ? $this->SeekDataDescription($key2) : $link[2];
+            $link[4] = ($this->SeekDataDescription($key3)) ? $this->SeekDataDescription($key3) : $link[4];
+            $link[5] = ($this->SeekDataDescription($key4)) ? $this->SeekDataDescription($key4) : $link[5];
+            $node = $this->list->append($link);
+            $this->list->set_pixtext($node, 0, '1', 5, $this->pixmaps['on'][0], $this->pixmaps['on'][1]);
+            $this->list->columns_autosize();
+            $this->lwindow->hide();
+        }
+        else
+        {
+            new Dialog(_a('Select fields of both columns'));
+        }
+    }
+
+    /***********************************************************/
+    /* Key Test Method
+    /***********************************************************/
+    function KeyTest($p1, $window)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+
+    function SeekDataDescription($index)
+    {
+        if ($this->agataDataDescription[$index])
+        {
+            return $this->agataDataDescription[$index];
+        }
+        else
+        {
+            $pieces = explode(':', $index);
+            if (count($pieces) == 2)
+            {
+                $upper = $this->agataDataDescription[$pieces[0] . ':' . strtoupper($pieces[1])];
+                $lower = $this->agataDataDescription[$pieces[0] . ':' . strtolower($pieces[1])];
+                
+                return ($upper ? $upper : $lower);
+            }
+            else
+            {
+                $upper = $this->agataDataDescription[$pieces[0] . ':' . strtoupper($pieces[1]) . ':' . $pieces[2] . ':' . strtoupper($pieces[3])];
+                $lower = $this->agataDataDescription[$pieces[0] . ':' . strtolower($pieces[1]) . ':' . $pieces[2] . ':' . strtolower($pieces[3])];
+                
+                return ($upper ? $upper : $lower);
+            }
+        }
+    }
+}
+?>

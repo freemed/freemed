@@ -1,0 +1,183 @@
+<?
+/***********************************************************/
+/* Class for Layout setup
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class LayoutConfig
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function LayoutConfig()
+    {
+        $this->pwindow = &new GtkWindow;
+        $this->pwindow->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->pwindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->pwindow);
+        $this->pwindow->set_title(_a('Configuration'));
+        $this->pwindow->set_position(GTK_WIN_POS_CENTER);
+        $this->pwindow->set_default_size(400,400);
+        $this->pwindow->realize();
+        $hbox = new GtkHBox;
+        $this->pwindow->add($hbox);
+
+        $Layouts = Layout::ListLayouts();
+        if ($Layouts)
+        {
+            foreach ($Layouts as $layout)
+            {
+                $this->Layouts[$layout] = Layout::ReadLayout($layout);
+            }
+            ksort($this->Layouts);
+        }
+        
+        $desc[0] =  array('fonts',  'Data Font');
+        $desc[1] =  array('fonts',  'Total Font');
+        $desc[2] =  array('fonts',  'Group Font');
+        $desc[3] =  array('fonts',  'Column Font');
+        $desc[4] =  array('fonts',  'Header Font');
+        $desc[5] =  array('fonts',  'Footer Font');
+        $desc[6] =  array('colors', 'Data Color');
+        $desc[7] =  array('colors', 'Total Color');
+        $desc[8] =  array('colors', 'Group Color');
+        $desc[9] =  array('colors', 'Column Color');
+        $desc[10] = array('colors', 'Header Color');
+        $desc[11] = array('colors', 'Footer Color');
+        $desc[12] = array('colors', 'Data Background Color');
+        $desc[13] = array('colors', 'Total Background Color');
+        $desc[14] = array('colors', 'Group Background Color');
+        $desc[15] = array('colors', 'Column Background Color');
+        $desc[16] = array('colors', 'Header Background Color');
+        $desc[17] = array('colors', 'Footer Background Color');
+        //$desc[18] = array(array('Portrait', 'Landscape'), 'Orientation');
+        $desc[18] = array('CheckButton', 'Differentiate lines by color');
+        //$desc[20] = array('spin', 'Left Margin');
+        $desc[19] = array('spin', 'Table Border');
+        $desc[20] = array('spin', 'Spacing between cells');
+
+        foreach ($this->Layouts as $key => $content)
+        {
+            $i = 0;
+            foreach ($content as $var => $value)
+            {
+                if ($kind = $desc[$i][0])
+                {
+                    $Vars[$key][] = array($value, _a($desc[$i][1]), false, $kind, false);
+                    $atts[$var] = true;
+                    $i ++;
+                }
+            }
+        }
+
+        $i = 0;
+        foreach ($atts as $att)
+        {
+            $kind = $desc[$i][0];
+            $content = ($i <= 5) ? '' : '#FFFFFF';
+            $Plus[] = array($content, _a($desc[$i][1]), false, $kind, false);
+            $i ++;
+        }
+
+        $slot_ok = array(&$this, 'onLayoutConfig');
+        $slot_del = array(&$this, 'DeleteLayout');
+
+        $this->LayoutList = &new Preferences(&$hbox);
+        $this->LayoutList->SetTitleImage(images . 'layout.xpm');
+        $this->LayoutList->SetTitle(_a('Preferences'));
+        $this->LayoutList->SetPlus($Plus);
+        $this->LayoutList->SetOk($slot_ok, _a('Save'));
+        $this->LayoutList->SetDel($slot_del);
+        $this->LayoutList->SetStatus(_a('Loaded from ^1 directory', 'layout'));
+        $this->LayoutList->SetSaveButton(true);
+        $this->LayoutList->SetPixmap(images . 'ico_colors.xpm');
+        $this->LayoutList->SetListTitle(_a('Layout Name'));
+        $this->LayoutList->BuildForms($Vars);
+        $this->pwindow->show_all();
+    }
+
+    /***********************************************************/
+    /* Erase a layout
+    /***********************************************************/
+    function DeleteLayout()
+    {
+        $layout = $this->LayoutList->Current();
+        @unlink("layout/{$layout}.lay");
+    }
+
+    /***********************************************************/
+    /* Saves the layout configuration
+    /***********************************************************/
+    function onLayoutConfig()
+    {
+        $return = $this->LayoutList->GetVars();
+        $layout = key($return);
+        $schema = $return[$layout];
+        $this->pwindow->Hide();
+
+        $array['layout']['data']['font'] = $schema[0];
+        $array['layout']['data']['color']= $schema[6];
+        $array['layout']['data']['bgcolor'] = $schema[12];
+        
+        $array['layout']['total']['font'] = $schema[1];
+        $array['layout']['total']['color']= $schema[7];
+        $array['layout']['total']['bgcolor']= $schema[13];
+        
+        $array['layout']['group']['font'] = $schema[2];
+        $array['layout']['group']['color']= $schema[8];
+        $array['layout']['group']['bgcolor']= $schema[14];
+        
+        $array['layout']['column']['font'] = $schema[3];
+        $array['layout']['column']['color'] = $schema[9];
+        $array['layout']['column']['bgcolor'] = $schema[15];
+        
+        $array['layout']['header']['font']  = $schema[4];
+        $array['layout']['header']['color'] = $schema[10];
+        $array['layout']['header']['bgcolor'] = $schema[16];
+        
+        $array['layout']['footer']['font'] = $schema[5];
+        $array['layout']['footer']['color'] = $schema[11];
+        $array['layout']['footer']['bgcolor'] = $schema[17];
+        
+        //$array['layout']['config']['orientation'] = $schema[18];
+        $array['layout']['config']['color_lines'] = $schema[18];
+        //$array['layout']['config']['left_margin'] = $schema[20];
+        $array['layout']['config']['border']      = $schema[19];
+        $array['layout']['config']['cell_spacing']= $schema[20];
+        
+        $fd = fopen ("layout/{$layout}.lay", 'w');
+        if ($fd)
+        {
+            fwrite($fd, trim("<?xml version=\"1.0\"?>\n" . Array2Xml($array)));
+            fclose($fd);
+        }
+    }
+
+    /***********************************************************/
+    /* Show the window
+    /***********************************************************/
+    function Show()
+    {
+        $this->pwindow->show_all();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Hide the window
+    /***********************************************************/
+    function Hide()
+    {
+        $this->pwindow->hide();
+        return true;
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($p1, $window)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

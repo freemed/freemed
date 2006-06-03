@@ -1,0 +1,49 @@
+<?
+/***********************************************************/
+/* TextAreaClass, a wrapper for GtkScintilla used in Merge Tool
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class TextArea extends GtkText
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+	function TextArea()
+	{
+        GtkText::GtkText();
+        GtkText::set_editable(true);
+	}
+
+    /***********************************************************/
+    /* Open a File
+    /***********************************************************/
+	function Open($lines)
+	{
+		GtkText::clear_all();
+        foreach($lines as $line)
+        {
+            $this->insert_text(-1, $line . "\n");
+        }
+	}
+    
+    function add_text($text)
+    {
+        GtkText::insert(null, null, null, $text);
+    }
+    
+    function get_text()
+    {
+        return GtkText::get_chars(0,-1);
+    }
+    
+    function clear_all()
+    {
+        GtkText::delete_text(0,-1);
+    }
+    
+    function insertText($text)
+    {
+        GtkText::insert_text($text, GtkText::get_position());
+    }
+}
+?>

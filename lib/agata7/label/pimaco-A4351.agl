@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<label>
+    <code>pimaco-A4351</code>
+    <horizontal_spacing>7</horizontal_spacing>
+    <vertical_spacing>0</vertical_spacing>
+    <label_width>108</label_width>
+    <label_height>60</label_height>
+    <left_margin>13</left_margin>
+    <top_margin>30</top_margin>
+    <label_cols>5</label_cols>
+    <label_rows>13</label_rows>
+    <page_format>A4</page_format>
+    <line_spacing>14</line_spacing>
+</label>

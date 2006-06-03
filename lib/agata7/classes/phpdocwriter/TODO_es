@@ -1,0 +1,6 @@
+- Añadir soporte para listas, numeradas y no numeradas y gestion de estilos de las mismas
+- Mejorar el soporte para propiedades de caracter
+- Mejorar el soporte para graficos
+- Añadir soporte para la generacion de indices
+- Mejorar el soporte para frames (imagenes, cuadros de texto, etc)
+- Mejorar el soporte para tablas

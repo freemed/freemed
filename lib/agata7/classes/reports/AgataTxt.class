@@ -1,0 +1,327 @@
+<?
+class AgataTxt extends AgataReport
+{
+    var $Query;
+    var $Maior;
+    var $Columns;
+    var $FileName;
+    var $ColumnTypes;
+    
+    function Process()
+    {
+        if (isGui)
+        {
+            $InputBox = $this->InputBox;
+            $ReportName = $InputBox->InputEntry->get_text();
+            $InputBox->Close();
+        }
+        else
+        {
+            $ReportName = $this->ReportName;
+        }
+        include 'include/report_vars.inc';
+        $FileName = $this->FileName;
+
+        $fd = @fopen($FileName, "w");
+        if (!$fd)
+        {
+            if (isGui)
+                new Dialog(_a('File Error'));
+            return false;
+        }
+        Wait::On();
+
+        $this->SetReportLocale();
+        
+        if ($this->Breaks)
+        {
+            $CountBreaks=count($this->Breaks);
+            if ($this->Breaks['0'])
+            {
+                $CountBreaks --;
+            }
+            ksort($this->Breaks);
+            reset($this->Breaks);
+        }
+        
+        if ($CountBreaks > 0)
+        {
+            $MarginBreaks = ($CountBreaks * 5);
+            if ($this->ShowTotalLabel)
+            {
+                $MarginBreaks += 10;
+            }
+            if (!$this->ShowIndent)
+            {
+                $MarginBreaks = 0;
+            }
+        }
+        else
+        {
+            $MarginBreks = 0;
+        }
+
+        for ($n=1; $n<=count($this->Columns); $n++)
+        {
+            if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && !$this->Breaks[$n])) //aquipbreak
+            {
+                $Cols += $this->Adjustments[$n]['Chars'];
+            }
+        }
+
+
+        $linesize = $MarginBreaks + $Cols + (2* count($this->Columns));
+        $header = explode("\n", $this->textHeader);
+        $footer = explode("\n", $this->textFooter);
+
+        $aligns['center'] = STR_PAD_BOTH;
+        $aligns['left']   = STR_PAD_RIGHT;
+        $aligns['right']  = STR_PAD_LEFT;
+
+        # PRINT THE REPORT HEADER
+        if (strlen(trim($this->textHeader)) >0)
+        {
+            foreach($header as $headerline)
+            {
+                eval ("\$tmp = \"$headerline\";");
+                fputs($fd, str_pad($tmp, $linesize, ' ', $aligns[$this->alignHeader]) . "\n");
+            }
+        }
+
+        if ((!$this->Breaks) || ((count($this->Breaks)==1) && ($this->Breaks['0']))) //aquipbreak
+        {
+            for ($z=0; $z<=count($this->Columns); $z++)
+            {
+                $Column = $this->Columns[$z];
+                fputs($fd, $this->FormatString($Column, $this->Adjustments[$z+1]['Chars'], $this->Adjustments[$z+1]['Align']) . ' ');
+            }
+            fputs($fd, "\n" . $this->Replicate('-', $linesize) . "\n" );
+        }
+
+        while ($QueryLine = $this->CurrentQuery->FetchNext())
+        {
+            $this->BreakMatrix = null;
+            $this->Headers = null;
+            $stringline = '';
+            
+            //------------------------------------------------------------
+            list($break) = $this->ProcessBreaks($QueryLine);
+            //------------------------------------------------------------
+            
+            for ($y=1; $y<=count($QueryLine); $y++)
+            {
+                $QueryCell = $QueryLine[$y];
+                
+                //------------------------------------------------------------
+                //list($break) = $this->ProcessBreaks($QueryCell, $y);
+                //------------------------------------------------------------
+                $QueryCell = FormatMask($this->Adjustments[$y]['Mask'], $QueryCell);
+                
+                if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && !$this->Breaks[$y])) //aquipbreak
+                {
+                    $stringline .= $this->FormatString($QueryCell, $this->Adjustments[$y]['Chars'], $this->Adjustments[$y]['Align']) . ' ';
+                }
+            }
+            
+            if (($this->BreakMatrix) && ($break != '0'))
+            {
+                $chaves = array_reverse(array_keys($this->BreakMatrix));
+                
+                foreach ($chaves as $chave)
+                {
+                    //-----------------------------------------
+                    $FinalBreak = $this->EqualizeBreak($chave);
+                    //-----------------------------------------
+                    
+                    if ($this->HasFormula[$chave])
+                    {
+                        fputs($fd, $this->Replicate(' ', $MarginBreaks));
+                        fputs($fd, $this->Replicate('-', $Cols + (2* count($this->Columns))) . "\n");
+                        
+                        foreach ($FinalBreak as $FinalBreakLine)
+                        {
+                            $w = 0;
+                            if ($this->ShowTotalLabel)
+                            {
+                                if ($chave == '0')
+                                {
+                                    fputs($fd, ' (Grand Total)');
+                                }
+                                else
+                                {
+                                    fputs($fd, ' (' . substr($this->Summary[$chave]['BeforeLastValue'] ,0, 11) . ')');
+                                }
+                                fputs($fd, $this->Replicate(' ', $MarginBreaks -14));
+                            }
+                            else
+                            {
+                                fputs($fd, $this->Replicate(' ', $MarginBreaks));
+                            }
+                            
+                            foreach($FinalBreakLine as $content)
+                            {
+                                $w ++;
+                                if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && (!$this->Breaks[$w]))) //aquipbreak
+                                {
+                                    if ($content)
+                                    {
+                                        fputs($fd, $this->FormatString($content, $this->Adjustments[$w]['Chars'], $this->Adjustments[$w]['Align']) . ' ');
+                                    }
+                                    else
+                                    {
+                                        fputs($fd, $this->FormatString(' ', $this->Adjustments[$w]['Chars'], 'right') . ' ');
+                                    }
+                                }
+                            }
+                            fputs($fd,  "\n");
+                        }
+                    }
+                }
+            }
+            
+            if (($this->Headers) && ($break != '0'))
+            {
+                fputs($fd, "\n");
+                foreach ($this->Headers as $nCountBreak => $Header)
+                {
+                    $MarginHeader = $nCountBreak * 5;
+                    if (!$this->ShowIndent)
+                    {
+                        $MarginHeader = 0;
+                    }
+
+                    $this->Index[$nCountBreak +1] ++;
+                    $this->Index[$nCountBreak +2] = 0;
+
+                    $index = '';
+                    for ($n=1; $n<=$nCountBreak +1; $n ++)
+                    {
+                        $index .= $this->Index[$n]. '.';
+                    }
+                    if ($this->ShowNumber)
+                    {
+                        $Header = "{$index} {$Header}";
+                    }
+
+                    fputs($fd, $this->Replicate(' ', $MarginHeader));
+                    fputs($fd, "$Header\n");
+                    fputs($fd, $this->Replicate(' ', $MarginHeader));
+                    fputs($fd, $this->Replicate('=', strlen(trim($Header))) . "\n\n");
+                }
+                
+                fputs($fd, $this->Replicate(' ', $MarginBreaks));
+                fputs($fd, $this->Replicate('-', $Cols + (2* count($this->Columns))) . "\n");
+                
+                fputs($fd, $this->Replicate(' ', $MarginBreaks));
+                for ($z=0; $z<=count($this->Columns); $z++)
+                {
+                    $Column = $this->Columns[$z];
+                    if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && !$this->Breaks[($z +1)])) //aquipbreak
+                    {
+                        //fputs($fd, $this->FormatString($Column, $this->MaxLen[$z+1] +2));
+                        fputs($fd, $this->FormatString($Column, $this->Adjustments[$z+1]['Chars'], $this->Adjustments[$z+1]['Align']) . ' ');
+                    }
+                }
+                fputs($fd, "\n" . $this->Replicate(' ', $MarginBreaks));
+                fputs($fd, $this->Replicate('-', $Cols + (2* count($this->Columns))) . "\n" );
+            }
+            
+            if ($this->ShowDataColumns)
+            {
+                fputs($fd, $this->Replicate(' ', $MarginBreaks) . $stringline);
+                fputs($fd, "\n" );
+            }
+        }
+        
+        
+        /**************************
+        PROCESS TOTALS OF LAST LINE
+        ***************************/
+        
+        //------------------------
+        $this->ProcessLastBreak();
+        //------------------------
+        
+        if ($this->BreakMatrix)
+        {
+            $chaves = array_reverse(array_keys($this->BreakMatrix));
+            foreach ($chaves as $chave)
+            {
+                //-----------------------------------------
+                $FinalBreak = $this->EqualizeBreak($chave);
+                //-----------------------------------------
+                if (($this->HasFormula[$chave]) || ($chave =='0'))
+                {
+                    fputs($fd, $this->Replicate(' ', $MarginBreaks));
+                    fputs($fd, $this->Replicate('-', $Cols + (2* count($this->Columns))) . "\n");
+                    
+                    foreach ($FinalBreak as $FinalBreakLine)
+                    {
+                        $w = 0;
+                        if ($this->ShowTotalLabel)
+                        {
+                            if ($chave == '0')
+                            fputs($fd, ' (Grand Total)');
+                            else
+                            fputs($fd, ' (' . substr($this->Summary[$chave]['LastValue'] ,0, 11) . ')');
+                            fputs($fd, $this->Replicate(' ', $MarginBreaks -14));
+                        }
+                        else
+                        {
+                            fputs($fd, $this->Replicate(' ', $MarginBreaks));
+                        }
+
+                        foreach($FinalBreakLine as $content)
+                        {
+                            $w ++;
+                            if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && (!$this->Breaks[$w])))  //aquipbreak
+                            {
+                                if ($content)
+                                {
+                                    //fputs($fd, $content);
+                                    fputs($fd, $this->FormatString($content, $this->Adjustments[$w]['Chars'], $this->Adjustments[$w]['Align']) . ' ');
+                                }
+                                else
+                                {
+                                    //fputs($fd, $this->FormatString(' ', $this->MaxLen[$w] +2, 'right'));
+                                    fputs($fd, $this->FormatString(' ', $this->Adjustments[$w]['Chars'], 'right') . ' ');
+                                }
+                            }
+                        }
+                        fputs($fd,  "\n");
+                    }
+                }
+            }
+        }
+        
+        /******************
+        END OF LAST PROCESS
+        *******************/
+        
+        
+        # PRINT THE REPORT FOOTER
+
+        if (strlen(trim($this->textFooter)) >0)
+        {
+            foreach($footer as $footerline)
+            {
+                eval ("\$tmp = \"$footerline\";");
+                fputs($fd, str_pad($tmp, $linesize, ' ', $aligns[$this->alignFooter]) . "\n");
+            }
+        }
+        
+        
+        fclose($fd);
+        if ($this->posAction)
+        {
+            $this->ExecPosAction();
+            Project::OpenReport($FileName, $this->agataConfig);
+        }
+
+        $this->UnSetReportLocale();        
+        Wait::Off();
+        
+        return true;
+    }
+}
+?>

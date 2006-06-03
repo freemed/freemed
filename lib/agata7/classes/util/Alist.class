@@ -1,0 +1,491 @@
+<?
+/***********************************************************/
+/* Array List - List items Edition
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class Alist
+{
+    /***********************************************************/
+    /* Defines the resultant action
+    /***********************************************************/
+    function SetCallBack($callback, $param = null)
+    {
+        $this->buttonc->connect_object('clicked', $callback, $param);
+    }
+
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function Alist($container, $window, $Title, $Columns, $Elements, $width, $height, $isleft, $aButtons, $mode = GTK_SELECTION_SINGLE, $aPixTexts = null, $format = IMAGEBUTTON)
+    {
+        $this->window = &$window;
+        
+        if ($aPixTexts)
+        {
+            foreach ($aPixTexts as $aPixText)
+            {
+                $this->icons[] = Gdk::pixmap_create_from_xpm($this->window->window, null, $aPixText);
+            }
+        }
+        
+        if (!$aButtons)
+        {
+            $aButtons['Add'] = 1;
+            $aButtons['Edit'] = 1;
+            $aButtons['Delete'] = 1;
+            $aButtons['Clear'] = 1;
+            $aButtons['Up'] = 1;
+            $aButtons['Down'] = 1;
+            $aButtons['Save'] = 1;
+        }
+        
+        $this->ElementCount = count($Elements);
+        $this->ColumnCount = count($Columns);
+        $this->Columns = $Columns;
+        
+        
+        $hbox = &new GtkHBox();
+        $container->add($hbox);
+        
+        $scrolled_win = &new GtkScrolledWindow();
+        $scrolled_win->set_border_width(5);
+        $scrolled_win->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+        
+        $this->clist = &new GtkCList(count($Columns), $Columns);
+        $this->clist->set_selection_mode($mode);
+        $scrolled_win->add($this->clist);
+        
+        if ($isleft)
+        $hbox->pack_end($scrolled_win);
+        else
+        $hbox->pack_start($scrolled_win);
+        
+        $vbox = &new GtkVBox();
+        $this->vbox = &$vbox;
+        $hbox->pack_start($vbox, false, false, 5);
+        
+        $local_pix['add']   = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_add.xpm');
+        $local_pix['edit']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_edit.xpm');
+        $local_pix['delete']= Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_delete.xpm');
+        $local_pix['clear'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_clear.xpm');
+        $local_pix['up']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_up.xpm');
+        $local_pix['down']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_down.xpm');
+        $local_pix['save']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_save.xpm');
+        
+        if ($aButtons['Add'])
+            $vbox->pack_start(new Button(array(&$this, 'Add'), _a('Add'), $local_pix['add'], $format), false, false, 2);
+        
+        if ($aButtons['Edit'])
+            $vbox->pack_start(new Button(array(&$this, 'Edit'), _a('Edit'), $local_pix['edit'], $format), false, false, 2);
+        
+        if ($aButtons['Delete'])
+            $vbox->pack_start(new Button(array(&$this, 'Delete'), _a('Delete'), $local_pix['delete'], $format), false, false, 2);
+        
+        if ($aButtons['Clear'])
+            $vbox->pack_start(new Button(array(&$this, 'Clear'), _a('Clear'), $local_pix['clear'], $format), false, false, 2);
+        
+        if ($aButtons['Up'])
+            $vbox->pack_start(new Button(array(&$this, 'Up'), _a('Up'), $local_pix['up'], $format), false, false, 2);
+        
+        if ($aButtons['Down'])
+            $vbox->pack_start(new Button(array(&$this, 'Down'), _a('Down'), $local_pix['down'], $format), false, false, 2);
+        
+        if ($aButtons['Save'])
+            $vbox->pack_start($this->buttonc = new VoidButton(_a('Write'), $local_pix['save'], $format), false, false, 2);
+        
+        $this->StartAppend($Elements);
+    }
+
+    /***********************************************************/
+    /* Closes the window
+    /***********************************************************/
+    function CloseList()
+    {
+        $this->window->hide();
+    }
+
+    /***********************************************************/
+    /* Append a matrix
+    /***********************************************************/
+    function StartAppend($Elements)
+    {
+        $this->Clear();
+        if ($Elements)
+        {
+            foreach ($Elements as $Element)
+            {
+                if ($Element)
+                {
+                    if (is_array($Element))
+                    {
+                        $this->Append($Element);
+                    }
+                    else
+                    {
+                        $this->Append(array(trim($Element)));
+                    }
+                }
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Clear items
+    /***********************************************************/
+    function Clear()
+    {
+        $this->clist->clear();
+        $this->ElementCount = 0;
+    }
+
+    /***********************************************************/
+    /* Returns Selected Item
+    /***********************************************************/
+    function GetSelectedItem()
+    {
+        $this->clist->freeze();
+        $selection = $this->clist->selection;
+        $this->clist->thaw();
+        for ($i=0; $i<=$this->ColumnCount -1; $i++)
+        {
+            $tmp = $this->GetItem($selection[0],$i);
+            $return[$i] = $tmp;
+        }
+        return $return;
+    }
+
+    /***********************************************************/
+    /* Rereturn all the items
+    /***********************************************************/
+    function GetItems()
+    {
+        $this->clist->freeze();
+        if ($this->ColumnCount == 1)
+        {
+            $n = 0;
+            
+            while ($text = $this->GetItem($n,0))
+            {
+                $return[] = $text;
+                $n ++;
+            }
+        }
+        else
+        {
+            $n = 0;
+            
+            while ($tmp = $this->GetItem($n,0))
+            {
+                for ($i=0; $i<=($this->ColumnCount -1); $i++)
+                {
+                    $text = $this->GetItem($n,$i);
+                    $texts[$i] = $text;
+                }
+                
+                $return[] = $texts;
+                $n ++;
+            }
+        }
+        $this->clist->thaw();
+        return $return;
+    }
+
+    /***********************************************************/
+    /* Ask for new item or new items
+    /***********************************************************/
+    function Add()
+    {
+        if ($this->ColumnCount == 1)
+        {
+            $this->InputBox = new InputArea(_a('New Item'), 200);
+            $this->InputBox->button->connect_object('clicked', array(&$this,'AddItem'));
+        }
+        else
+        {
+            foreach ($this->Columns as $column)
+            $vars[] = array('', $column, false, null, true);
+            
+            $this->InputForm = new FormEntry(_a('New Item'), $vars);
+            $this->InputForm->button->connect_object('clicked', array(&$this,'AddGroup'));
+        }
+    }
+
+    /***********************************************************/
+    /* Add new items
+    /***********************************************************/
+    function AddGroup()
+    {
+        $aInputEntries = $this->InputForm->InputEntries['unique'];
+        $this->InputForm->Close(null);
+        
+        foreach ($aInputEntries as $key => $InputEntry)
+        {
+            $items[] = $InputEntry->get_text();
+        }
+        $this->Append($items);
+    }
+
+    /***********************************************************/
+    /* Add a new item
+    /***********************************************************/
+    function AddItem()
+    {
+        $InputBox = $this->InputBox;
+        $Item = $InputBox->InputEntry->get_chars(0, -1);
+        
+        $InputBox->Close();
+        $node = $this->Append(array($Item));
+    }
+
+    function Addstart($items)
+    {
+        if ($items)
+        {
+            $node = $this->clist->prepend($items);
+            $n = 0;
+            foreach($items as $item) // several columns
+            {
+                if ($this->icons)
+                {
+                    $this->clist->set_pixtext($node, $n, trim($item), 5, $this->icons[$n][0], $this->icons[$n][1]);
+                }
+                
+                $n ++;
+            }
+        }
+        $this->ElementCount ++;
+    }
+
+    /***********************************************************/
+    /* Append one row as an array
+    /***********************************************************/
+    function Append($items)
+    {
+        if ($items)
+        {
+            $node = $this->clist->append($items);
+            $n = 0;
+            foreach($items as $item) // several columns
+            {
+                if ($this->icons)
+                $this->clist->set_pixtext($node, $n, trim($item), 5, $this->icons[$n][0], $this->icons[$n][1]);
+                
+                $n ++;
+            }
+        }
+        $this->ElementCount ++;
+    }
+
+    /***********************************************************/
+    /* Ask for edition one item or several items
+    /***********************************************************/
+    function Edit()
+    {
+        $selection = $this->clist->selection;
+        if ($selection)
+        {
+            $line = $selection[0];
+            if ($this->ColumnCount == 1)
+            {
+                $text = $this->GetItem($line, 0);
+                $this->InputBox = new InputArea(_a('Edit Item'), 360, $text);
+                $this->InputBox->button->connect_object('clicked', array(&$this,'EditItem'), $line);
+            }
+            else
+            {
+                $i =0;
+                foreach ($this->Columns as $column)
+                {
+                    $text = $this->GetItem($line, $i);
+                    $vars[] = array($text, $column, false, null, true);
+                    $i ++;
+                }
+                
+                $this->EditForm = new FormEntry(_a('Edit Item'), $vars);
+                $this->EditForm->button->connect_object('clicked', array(&$this,'EditGroup'), $line);
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Callback for store one item
+    /***********************************************************/
+    function EditItem($line)
+    {
+        $InputBox = $this->InputBox;
+        $Item = $InputBox->InputEntry->get_chars(0, -1);
+        
+        $this->SetItem($line, 0, $Item);
+        
+        $InputBox->Close();
+    }
+
+    /***********************************************************/
+    /* Callback for store many items
+    /***********************************************************/
+    function EditGroup($line)
+    {
+        $aInputEntries = $this->EditForm->InputEntries['unique'];
+        $this->EditForm->Close(null);
+        $i = 0;
+        foreach ($aInputEntries as $key => $InputEntry)
+        {
+            $this->SetItem($line, $i, $InputEntry->get_text());
+            $i ++;
+        }
+    }
+
+    /***********************************************************/
+    /* Return one specific item
+    /***********************************************************/
+    function GetItem($line, $column)
+    {
+        $text = @$this->clist->get_text($line, $column);
+        
+        if ($this->icons)
+        {
+            $tmp = @$this->clist->get_pixtext($line, $column);
+            $text = $tmp[0];
+        }
+        
+        return $text;
+    }
+
+    /***********************************************************/
+    /* Store a diferent value at line, column
+    /***********************************************************/
+    function SetItem($line, $column, $content)
+    {
+        @$this->clist->set_text($line, $column, $content);
+        
+        if ($this->icons)
+        @$this->clist->set_pixtext($line, $column, $content, 5, $this->icons[$column][0], $this->icons[$column][1]);
+    }
+
+    /***********************************************************/
+    /* Moves the current item up
+    /***********************************************************/
+    function Up()
+    {
+        $this->clist->freeze();
+        $selection = $this->clist->selection;
+        if ($selection)
+        {
+            $line = $selection[0];
+            if ($line>0)
+            {
+                $text1 = $this->GetItem($line -1, 0);
+                $text2 = $this->GetItem($line, 0);
+                
+                if ($text1 && $text2)
+                {
+                    $this->SetItem($line -1, 0, $text2);
+                    $this->SetItem($line, 0, $text1);
+                }
+                $this->clist->select_row($line -1, 0);
+            }
+        }
+        $this->clist->thaw();
+    }
+
+    /***********************************************************/
+    /* Moves the current item down
+    /***********************************************************/
+    function Down()
+    {
+        $this->clist->freeze();
+        $selection = $this->clist->selection;
+        if ($selection)
+        {
+            $line = $selection[0];
+            if ($line +1 < $this->ElementCount)
+            {
+                $text1 = $this->GetItem($line, 0);
+                $text2 = $this->GetItem($line +1, 0);
+                
+                if ($text1 && $text2)
+                {
+                    $this->SetItem($line, 0, $text2);
+                    $this->SetItem($line +1, 0, $text1);
+                }
+                
+                $this->clist->select_row($line +1, 0);
+            }
+        }
+        $this->clist->thaw();
+    }
+
+    /***********************************************************/
+    /* Deletes the current item
+    /***********************************************************/
+    function Delete()
+    {
+        $this->clist->freeze();
+        $selection = $this->clist->selection;
+        
+        while (($row = $this->clist->selection[0]) !== null)
+        {
+            $this->clist->remove($row);
+            $this->ElementCount --;
+            
+            if ($clist->selection_mode == GTK_SELECTION_BROWSE)
+            break;
+        }
+        
+        if ($this->clist->selection_mode == GTK_SELECTION_EXTENDED &&
+        $this->clist->selection[0] === null && $this->clist->focus_row >= 0)
+        $this->clist->select_row($this->clist->focus_row, -1);
+        $this->clist->thaw();
+    }
+
+    /***********************************************************/
+    /* Show the window
+    /***********************************************************/
+    function Exibe()
+    {
+        $this->window->show_all();
+    }
+}
+
+
+/***********************************************************/
+/* Window List, the same as above, but inside a window
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class Wlist extends Alist
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function Wlist($Title, $Columns, $Elements, $width, $height,  $isleft, $aButtons)
+    {
+        $this->window = &new GtkWindow;
+        $this->window->connect_object('delete-event', array(&$this,'CloseList'));
+        $this->window->set_title($Title);
+        $this->window->set_border_width(0);
+        $this->window->set_default_size($width, $height);
+        $this->window->set_uposition(80, 80);
+        $this->window->realize();
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+
+        Alist::Alist($this->window, $this->window, $Title, $Columns, $Elements, $width, $height,  $isleft, $aButtons);
+    }
+
+    /***********************************************************/
+    /* KeyTest method
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == 65307)
+            $this->CloseList();
+    }
+
+    /***********************************************************/
+    /* Closes the window
+    /***********************************************************/
+    function Close()
+    {
+        $this->window->hide();
+    }
+}
+?>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<label>
+    <code>pimaco-87</code>
+    <horizontal_spacing>9</horizontal_spacing>
+    <vertical_spacing>0</vertical_spacing>
+    <label_width>126</label_width>
+    <label_height>36</label_height>
+    <left_margin>41</left_margin>
+    <top_margin>36</top_margin>
+    <label_cols>4</label_cols>
+    <label_rows>20</label_rows>
+    <page_format>Letter</page_format>
+    <line_spacing>14</line_spacing>
+</label>

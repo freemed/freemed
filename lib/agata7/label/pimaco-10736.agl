@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<label>
+    <code>pimaco-10736</code>
+    <horizontal_spacing>8</horizontal_spacing>
+    <vertical_spacing>5</vertical_spacing>
+    <label_width>302</label_width>
+    <label_height>103</label_height>
+    <left_margin>23</left_margin>
+    <top_margin>28</top_margin>
+    <label_cols>3</label_cols>
+    <label_rows>8</label_rows>
+    <page_format>Automatic</page_format>
+    <line_spacing>14</line_spacing>
+</label>

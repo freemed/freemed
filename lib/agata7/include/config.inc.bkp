@@ -1,0 +1,38 @@
+<?
+$agataConfig['dia']['Levels']           = '4';
+$agataConfig['dia']['ShowLines']        = '1';
+$agataConfig['dia']['LineDistance']     = '1';
+$agataConfig['dia']['ColumnDistance']   = '26';
+$agataConfig['dia']['LevelDistance']    = '24';
+$agataConfig['dia']['TableOffSet']      = '8';
+
+$agataConfig['app']['PdfSoft']          = 'gpdf';
+$agataConfig['app']['TxtSoft']          = 'gedit';
+$agataConfig['app']['BrowserSoft']      = 'firefox';
+$agataConfig['app']['SpreadSoft']       = 'openoffice';
+$agataConfig['app']['DiaSoft']          = 'dia';
+$agataConfig['app']['XmlSoft']          = 'gedit';
+$agataConfig['app']['OpenSoft']         = 'openoffice';
+
+$agataConfig['xml']['ReportTag']        = '<report>';
+$agataConfig['xml']['TitleTag']         = '<title>';
+$agataConfig['xml']['HeaderTag']        = '<header>';
+$agataConfig['xml']['HeaderRow']        = '<line type="header">';
+$agataConfig['xml']['HeaderCol']        = '<column type="header" numero="$colnum"> $Column </column>';
+$agataConfig['xml']['DataTag']          = '<fields>';
+$agataConfig['xml']['DataRow']          = '<line type="data">';
+$agataConfig['xml']['DataCol']          = '<column type="data" align="$align" colnum="$colnum"> $QueryCell </column>';
+$agataConfig['xml']['FooterTag']        = '<footer>';
+$agataConfig['xml']['TotalRow']         = '<line type="total">';
+$agataConfig['xml']['TotalCol']         = '<column type="total" formula="$formula" colnum="$colnum"> $Value </column>';
+$agataConfig['xml']['GroupTag']         = '<group label="$GroupLabel">';
+
+$agataConfig['general']['TmpDir']       = '/tmp';
+$agataConfig['general']['Delimiter']    = ',';
+$agataConfig['general']['AgataDir']     = '/agata';
+$agataConfig['general']['OutputDir']    = '/agata/output';
+$agataConfig['general']['RptDir']       = '/agata/reports';
+$agataConfig['general']['SqlDir']       = '/agata/sql';
+$agataConfig['general']['FunDir']       = '/agata/functions';
+
+?>

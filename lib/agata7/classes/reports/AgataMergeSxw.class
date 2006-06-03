@@ -1,0 +1,469 @@
+<?
+/***************************************************************/
+/*            Export merge doc in SXW format	               */
+/* by Olivier Giroussens  2004-2005  				   */
+/***************************************************************/
+
+
+class AgataMergeSxw extends AgataMerge
+{
+
+	/* class attribute */
+	var $mergeTxt;
+	
+	
+
+	/*****************************************************/
+	function ParseStringSxw ($line){
+		$nbcarac = 0;
+		$line = " $line";
+		$pos = strpos($line, '#'); // give the # position
+		$commands = array('#setc', '#tab', '#sety', '#setf', '#image', '#bgimage', '#file',
+                          '#pagebreak', '#rect', '#rectr', '#elip', '#frame', '#barcode', '#rota', '#line');
+		
+		$line1 = substr($line,0,$pos); // the text before #
+		if (trim($line1)){
+			$nbcarac = strlen($line1) + 170;
+			$this->sxw->Write($line1);
+			$has_1 = true;
+		}
+		if ($pos !== false){ // # found in the line
+
+			if (substr($line,$pos,5)=='#sety'){ // line jump
+				$jump = substr($line,$pos+5,3);
+				$jump = $jump - $this->nbJump;
+				$this->sxw->SetFont(array('family'=>'Times New Roman', 'size'=>10));
+				$this->sxw->Ln($jump*0.095);				
+				$this->SetFont();
+				$this->nbJump = $this->nbJump + $jump;
+				$offset = 8;
+			}
+			else if (substr($line,$pos,5)=='#setf'){ // set font
+				$this->CurrentFont = substr($line,$pos+5,4);
+                		$this->SetFont();
+                		$offset = 9;
+            	}
+			else if (substr($line,$pos,4)=='#tab'){ // tab
+				//echo 'nbcarac = '.$nbcarac;
+				$this->Tab(substr($line,$pos+4,3)- $nbcarac);
+				$offset = 7;
+			}
+			else if (substr($line,$pos,5)=='#line'){ // line
+				$direction = substr($line, $pos+5, 1);
+                		$size      = substr($line, $pos+6, 3) * 0.035;
+                		
+                		if ($direction == 'H') // horizontal
+                		{
+                    		$horizontal_line = &new pdw_draw_rectangle($this->sxw,array('x'=>0,'y'=>0,'w'=>$size,'h'=>0.03,'fillcolor'=>'#000000'));
+					$horizontal_line->Insert();
+					$this->sxw->Ln(1);
+					$this->nbJump = $this->nbJump + 14;
+                		}
+                		else // vertical
+                		{
+                    		$vertical_line = &new pdw_draw_rectangle($this->sxw,array('x'=>0,'y'=>0.1,'w'=>0.03,'h'=>$size,'fillcolor'=>'#000000'));
+					$vertical_line->Insert();
+					$this->sxw->Ln(1);
+					//$this->nbJump = $this->nbJump + ;
+
+                		}
+				$offset = 9;
+            	}
+			else if (substr($line,$pos,6)=='#rectr'){ // round rect
+				$x     = substr($line, $pos+7, 3) * 0.03529411765; // cm to pixel
+                		$y     = substr($line,$pos+11, 3) * 0.03529411765;
+                		$w = substr($line,$pos+15, 3) * 0.03529411765;
+                		$h = substr($line,$pos+19, 3) * 0.03529411765;
+                		$fillc = substr($line,$pos+25, 7);
+                		$linec = substr($line,$pos+33, 7);
+                		$linew = substr($line,$pos+23, 1) * 0.03529411765;
+				$rr2 = &new pdw_draw_rectangle($this->sxw,array('w'=>$w,'h'=>$h,'x'=>$x,'y'=>$y,'fillcolor'=>$fillc,'strokewidth'=>$linew,'radius'=>320,'wrap'=>"run-through"));
+				$rr2->Insert();
+				$offset = 40;
+			}
+			else if (substr($line,$pos,5)=='#rect'){ // rect
+				$x     = substr($line, $pos+6, 3) * 0.03529411765;
+                		$y     = substr($line,$pos+10, 3) * 0.03529411765;
+                		$w = substr($line,$pos+14, 3) * 0.03529411765;
+                		$h = substr($line,$pos+18, 3) * 0.03529411765;
+                		$fillc = substr($line,$pos+24, 7);
+                		$linec = substr($line,$pos+32, 7);
+                		$linew = substr($line,$pos+22, 1) * 0.03529411765;
+				$r2 = &new pdw_draw_rectangle($this->sxw,array('w'=>$w,'h'=>$h,'x'=>$x,'y'=>$y,'fillcolor'=>$fillc,'strokewidth'=>$linew,'wrap'=>"run-through"));
+				$r2->Insert();
+				$offset = 39;
+			}
+			else if (substr($line,$pos,5)=='#setc'){ // set color
+				$c = 	substr($line, $pos+5, 7);
+				$this->sxw->SetFont(array('fgcolor'=>$c));
+				$offset = 12;
+			}
+			else if (substr($line,$pos,10)=='#pagebreak') // add a new page
+           		{
+                		$line = ''; // reset line so 'PAGEBREAK' doesn't print
+                		$lin = $this->PageHeight - $this->TopMargin;
+                		$this->page ++;
+                		$this->sxw->AddPage();
+				$this->nbJump = 0; 
+                		$offset = 10;
+            	}
+			else if (substr($line,$pos,5)=='#elip')
+           		{
+                		$x1 = substr($line,$pos+6, 3)* 0.03529411765;
+                		$y1 = substr($line,$pos+10, 3)* 0.03529411765;
+                		$rx = substr($line,$pos+14, 3)* 0.03529411765;
+                		$ry = substr($line,$pos+18, 3)* 0.03529411765;
+                		$fillc = rgb2int255(substr($line,$pos+25, 7));
+                		$linec = rgb2int255(substr($line,$pos+33, 7));
+                		$linew = substr($line,$pos+23, 1)* 0.03529411765;
+				$el = &new pdw_draw_ellipse ($this->sxw,array('w'=>$rx,'h'=>$ry,'x'=>$x1,'y'=>$y1,'fillcolor'=>$fillc,'strokewidth'=>$linew));
+				$el->Insert();
+               		$offset = 39;
+            	}
+			else if (substr($line,$pos,6)=='#image') // image
+           		{
+                		$image_name = trim(substr($line, $pos+7));
+                		if (file_exists($image_name)){
+                   		$size = getimagesize($image_name);
+					$sw = $size[0] * 0.03529411765;
+					$sh = $size[1] * 0.03529411765;
+					$this->sxw->Image(array('path'=>$image_name, 'w'=>$sw, 'h'=>$sh));
+                		}
+                		$offset = strlen($line);
+            	}
+			else { // # is not use for a command
+				$offset = 1;
+				$plus = '#';
+			}
+		}
+		
+		$line2 = substr($line, $pos + $offset);
+		if (ArrayEreg($commands, $line2)){ // another command in the line
+            	$has_2 = $this->ParseStringSxw($line2);
+       	}
+		else {
+			if (trim($line2)){
+				$this->sxw->Write($plus . $line2);
+				$has_2 = true;
+			}
+		}
+		//$this->nbJump = $this->nbJump + 1; 
+		return ($has_1 or $has_2);
+	}
+
+	/*****************************************************/
+	
+	/* Change the Font */
+	function SetFont() {
+		$params = $this->CurrentFont;
+		$fonts['a'] = 'Arial';
+      		$fonts['c'] = 'Courier';
+        	$fonts['t'] = 'Times New Roman';
+
+        	$font  = $fonts[substr($params,0,1)];
+        	$style = strtoupper(substr($params,1,1));
+        	$style = ($style == 'N' ? '' : $style);
+        	$size  = substr($params, 2, 2);
+		$this->sxw->SetFont(array('family'=>$font, 'style'=>$style, 'size'=>$size));
+   	 }
+
+	/*****************************************************/
+	/* Tab */
+	function Tab($params) {
+		//echo 'tab de = '.$params;
+		$params = $params / 2.64;
+		$tab = '<text:s text:c="'.$params.'"/>';
+		$this->sxw->Write($tab);
+	}
+
+
+	/***********************************************************/
+    	/* Changes the report locale
+    	/***********************************************************/
+    	function SetReportLocale() {
+        	setlocale(LC_ALL, 'POSIX');
+    	}
+
+    	/***********************************************************/
+    	/* Use the old Report Locale
+    	/***********************************************************/
+    	function UnsetReportLocale() {
+        	if (OS == 'WIN') {
+            	setlocale(LC_ALL, 'english');
+       	}
+        	else {
+            	setlocale(LC_ALL, 'pt_BR');
+        	}
+    	}
+
+
+	/*****************************************************/
+	function Generate() {
+      	
+		$this->SetReportLocale();
+        	
+		// Measure Unit : centimeters
+        	$this->Pages['A3']        = array(29.7, 42);
+        	$this->Pages['A4']        = array(21, 29.7);
+        	$this->Pages['A5']        = array(14.8, 21);
+        	$this->Pages['Letter']    = array(21.6, 27.9);
+        	$this->Pages['Legal']     = array(21.6, 35.6);
+       
+
+        	$this->PageFormat  = $this->XmlArray['report']['merge']['pagesetup']['format']      ? $this->XmlArray['report']['merge']['pagesetup']['format']         : 'A4';
+        	$this->Orientation = $this->XmlArray['report']['merge']['pagesetup']['orientation'] ? $this->XmlArray['report']['merge']['pagesetup']['orientation']    : 'landscape';
+        	$this->LeftMargin  = $this->XmlArray['report']['merge']['pagesetup']['marginleft']  ? $this->XmlArray['report']['merge']['pagesetup']['marginleft']     : 0;
+        	$this->TopMargin   = $this->XmlArray['report']['merge']['pagesetup']['margintop']   ? $this->XmlArray['report']['merge']['pagesetup']['margintop']      : 0;
+        	$this->RightMargin = $this->XmlArray['report']['merge']['pagesetup']['marginright'] ? $this->XmlArray['report']['merge']['pagesetup']['marginright']    : 0;
+        	$this->FooterMargin= $this->XmlArray['report']['merge']['pagesetup']['marginbottom']? $this->XmlArray['report']['merge']['pagesetup']['marginbottom']   : 10;
+        	//$this->subBorder   = $this->XmlArray['report']['merge'][$key];
+        	$this->subBorder   = ' ';
+        
+        	$this->LineHeight   = 14;
+
+        	require_once('classes/phpdocwriter/lib/include.php');
+	      import('phpdocwriter.pdw_document');
+      	import('phpdocwriter.pdw_draw_line');
+		import('phpdocwriter.pdw_drawing');
+
+        	include_once('classes/barcode128/barcode128.inc');
+        	include_once('classes/barcode128/pdfbarcode128.inc');
+
+        	Wait::On();
+        	$FileName = $this->FileName;
+
+        
+		$width = $this->Pages[$this->PageFormat][0];
+		$height = $this->Pages[$this->PageFormat][1];
+		$LM = $this->LeftMargin * 0.03529411765;
+		$RM = $this->RightMargin * 0.03529411765;
+		$TM = $this->TopMargin * 0.03529411765;
+		$FM = $this->FooterMargin * 0.03529411765;
+		$margins = $LM.','.$RM.','.$TM.','.$FM;
+		
+
+		
+		$this->sxw = &new pdw_document();
+		$this->sxw->AddPageDef(array('name'=>'Standard','w'=>$width,'h'=>$height,'margins'=>$margins));
+		$this->sxw->SetKeywords('www.agata.org.br');
+		$this->sxw->SetLanguage('en','US');
+		$this->sxw->SetTitle($FileName);
+		$this->sxw->SetAuthor('Agata Report');
+		$this->sxw->SetStdFont("Times New Roman",10);
+
+        	$this->pagina = 1;
+
+        	$this->page = 0;
+
+        	while ($this->QueryLine = $this->CurrentQuery->FetchNext()) {
+            	// Início de Página
+            	$this->page ++;
+            	$this->sxw->AddPage();
+			$this->sxw->SetFont(array('family'=>'Times New Roman', 'size'=>10));
+			
+			$this->nbJump = 0;
+
+            	$this->PrintSection('header');  // Header
+            	$this->PrintSection('groupheader');  // GroupHeader
+            	$ok = $this->PrintDetails();  // Details
+            	if (!$ok)  // details not processed
+     			{
+                		break;
+            	}
+            	$this->PrintSection('groupfooter');  // GroupFooter // setY(-20) // pegar do pagesetup e botar no autopagebreak
+            	$this->PrintSection('footer');  // Footer
+  	      $current_subquery = 0;
+        	}
+        	Wait::Off();
+		$this->sxw->SetFileName($this->FileName);
+        	$this->sxw->Output("F");
+
+        	if ($this->posAction)
+        	{
+            	Project::OpenReport($this->FileName, $this->agataConfig);
+        	}
+        
+        	if ($this->posAction)
+        	{
+            	$obj = &$this->posAction[0];
+            	$att = &$this->posAction[1];
+            
+            	$obj->{$att}();
+        	}
+        	$this->UnsetReportLocale();
+        	return true;
+    	}
+
+
+	/***********************************************************/
+    	/* Print a Document Section
+    	/***********************************************************/
+    	function PrintSection($key) {
+        include 'include/report_vars.inc';
+
+        # Footer Sumarization
+        if ($key == 'groupfooter')
+        {
+            if ($this->SubTotals)
+            {
+                foreach ($this->SubTotals as $subfield => $contents)
+                {
+                    if ($contents['count'] > 0)
+                    {
+                        $contents['avg'] = $contents['sum'] / $contents['count'];
+                    }
+                    foreach ($contents as $formula => $value)
+                    {
+                        $Subcol = substr($subfield, 9); //pega o numero do campo
+                        $total_var = substr("{$subfield}_{$formula}",1); // para tirar o $
+                        $$total_var = FormatMask($this->SubAdjustments[$Subcol]['Mask'], $value);
+                    }
+                }
+            }
+        }
+        $textMerge = $this->XmlArray['report']['merge'][$key];
+
+        for ($y=1; $y<=count($this->QueryLine); $y++)
+        {
+            $QueryCell = trim($this->QueryLine[$y]);
+            $QueryCell = FormatMask($this->Adjustments[$y]['Mask'], $QueryCell);
+            
+            $MyVar = 'var' . $y;
+            $$MyVar = $QueryCell;
+        }
+
+        $Lines = explode("\n", $textMerge);
+        foreach ($Lines as $Line)
+        {
+            if (strlen($Line)>0)
+            {
+                $lineN ++;
+                $page = $this->page;
+                $Line = ereg_replace("\"", "\\\"", $Line);
+                eval ("\$Line = \"$Line\";");
+            }
+
+            if (!trim($Line))
+            {
+                $this->sxw->Ln(1);
+		    $this->nbJump = $this->nbJump + 14; 
+            }
+            else
+            {
+                $had_content = $this->ParseStringSxw($Line);
+                if ($had_content)
+                {
+                    $this->sxw->Ln(1);
+			 $this->nbJump = $this->nbJump + 14; 
+                }
+            }
+        }
+        $this->SubTotals = null;
+    }
+
+	
+    /***********************************************************/
+    /* Print the Sub Report
+    /***********************************************************/
+    function PrintDetails()
+    {
+        $this->LastHeight = 0;
+        include 'include/report_vars.inc';
+        $textMerge = $this->XmlArray['report']['merge']['detail'];
+        
+        if (!$textMerge) // there's no details
+        {
+            return true;
+        }
+        
+        for ($y=1; $y<=count($this->QueryLine); $y++)
+        {
+            $QueryCell = trim($this->QueryLine[$y]);
+            $vars['$var' . $y] = $QueryCell; 
+
+        }
+        
+        # Substituição de Parâmetros
+        krsort($vars);
+        $where = $this->XmlArray['report']['merge']['query']['where'];
+        foreach ($vars as $var => $content)
+        {
+            $where = str_replace($var, $content, $where);
+        }
+        $Report = $this->XmlArray['report']['merge'];
+        $Report['query']['where'] = $where;
+        
+        $DataSet = $Report['Report']['DataSet'];
+        # Cria Query
+        $subQuery = AgataCore::CreateQuery($this->agataDB, $DataSet, $this->Parameters);
+        
+        if (is_agata_error($subQuery))
+        {
+            //new Dialog(_a('Subquery was not processed'));
+            new Dialog($subQuery->GetError());
+            
+            Wait::Off();
+            return false;
+        }
+        else
+        {
+            $Lines = explode("\n", $textMerge);
+            $i = 0;
+            while ($Subrow = $subQuery->FetchNext())
+            {
+                for ($Subcol=1; $Subcol<=count($Subrow); $Subcol++)
+                {
+                    $SubConteudo = trim($Subrow[$Subcol]);
+                    $SubMyVar = '$subfield' . $Subcol;
+                    
+                    #Sumarization
+                    $this->SubTotals[$SubMyVar]['count'] ++;
+                    if (is_numeric($SubConteudo))
+                    {
+                        $this->SubTotals[$SubMyVar]['sum']   += $SubConteudo;
+                        $this->SubTotals[$SubMyVar]['min']   = ((!$this->SubTotals[$SubMyVar]['min']) or ($SubConteudo < $this->SubTotals[$SubMyVar]['min'])) ? $SubConteudo : $this->SubTotals[$SubMyVar]['min'];
+                        $this->SubTotals[$SubMyVar]['max']   = ($SubConteudo > $this->SubTotals[$SubMyVar]['max']) ? $SubConteudo : $this->SubTotals[$SubMyVar]['max'];
+                    }
+                    
+                    //após sumarizações, pq botar R$ na frente estraga a soma.
+                    $SubConteudo = FormatMask($this->SubAdjustments[$Subcol]['Mask'], $SubConteudo);
+                    
+                    // novo nome de variável para dar os replace
+                    // problema : replace do subfield10, subfield1...
+                    $myNewVar = 'subcolum' . $Subcol;  // primeiro sem o $ na frente, para declarar
+                    $$myNewVar = $SubConteudo;
+                    $myNewVar = '$subcolum' . $Subcol; // agora com o $ para dar o parser
+                    //$replace[$SubMyVar] = '#frame' . $this->subBorder .strtoupper(substr($this->SubAdjustments[$Subcol]['align'],0,1)) .
+                    //                                str_pad($this->SubAdjustments[$Subcol]['points'], 3, '0', STR_PAD_LEFT) . 
+                    //                                $myNewVar;
+			  $replace[$SubMyVar] = $myNewVar;
+                }
+                krsort($replace);
+                $i ++;
+                foreach ($Lines as $Line)
+                {
+                    $Line = ereg_replace("\"", "\\\"", $Line);
+                    foreach ($replace as $this_text =>$that_text)
+                    {
+                        $Line = str_replace($this_text, $that_text, $Line);
+                    }
+                    eval ("\$Line_ = \"$Line\";");
+                    
+                    $had_content = $this->ParseStringSxw($Line_);
+                    if ($had_content)
+                    {
+                        # $this->LastHeight vem da ParseStringSxw()
+                        	$this->sxw->Ln(1);
+				$this->nbJump = $this->nbJump + 14; 
+                        	$this->LastHeight = 0;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+}
+
+

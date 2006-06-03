@@ -1,0 +1,139 @@
+<?
+class FileList extends GtkCList
+{
+    function FileList($title, $names)
+    {
+        $this->names = $names;
+        GtkCList::GtkCList(1, array($title));
+        GtkCList::connect_object('select-row', array(&$this, 'Pop'));
+        
+        $this->BotaoOk = new GtkButton;
+        GtkCList::show();
+        $this->CreateMenu();
+    }
+    
+    function SetExtension($ext)
+    {
+        $this->Extension = $ext;
+    }
+    
+    function SetWidth($width = 140)
+    {
+        GtkCList::set_column_width(0, $width);
+    }
+    
+    function Load($directory)
+    {
+        global $Pixmaps;
+        $this->Directory = $directory;
+        $data = getSimpleDirArray($directory);
+        
+        foreach ($data as $line)
+        {
+            $item = substr($line, 0, -4);
+            $row = GtkCList::append(array($item));
+            GtkCList::set_pixtext($row, 0, trim($item), 5, $Pixmaps['ico_desc'][0], $Pixmaps['ico_desc'][1]);
+        }
+    }
+    
+    function Reload()
+    {
+        GtkCList::clear();
+        $this->Load($this->Directory);
+    }
+
+    /***********************************************************/
+    /* Pop the File Explorer options
+    /***********************************************************/
+    function Pop()
+    {
+        $Menu = $this->Menu;
+        $Menu->show_all();
+        $Menu->popup(null, null, null, 1, 1);
+    }
+
+    /***********************************************************/
+    /* Creates the PopMenu Options
+    /***********************************************************/
+    function CreateMenu()
+    {
+        global $Pixmaps;
+        $this->Menu = $Menu = new GtkMenu;
+        $names = $this->names;
+
+        if (!$names)
+        {
+            $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($Pixmaps['menu_open'], _a('Open'), array(&$this, 'Open'));
+            $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($Pixmaps['menu_del'], _a('Delete'), array(&$this, 'Delete'));
+        }
+        else
+        {
+            if ($names[0])
+            {
+                $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($Pixmaps['menu_open'], _a($names[0][1]) , array(&$this, 'Open'));
+            }
+            
+            if ($names[1])
+            {
+                $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($Pixmaps['menu_del'], _a($names[1][1]), array(&$this, 'Delete'));
+            }
+        }
+        
+        
+        $Menuitem3 = new GtkMenuItem;
+        $Menuitem4 = new MyNormalMenuItem($Pixmaps['menu_close'], _a('Close'), null);
+
+        if ($Menuitem1)
+        {
+            $Menu->append($Menuitem1);
+        }
+        if ($Menuitem2)
+        {
+            $Menu->append($Menuitem2);
+        }
+        $Menu->append($Menuitem3);
+        $Menu->append($Menuitem4);
+    }
+    
+    function Open()
+    {
+        $row = $this->selection[0];
+        $data = GtkCList::get_pixtext($row, 0);
+        $file = $this->Directory . bar . $data[0] . '.' . $this->Extension;
+        if (is_file($file))
+        {
+            call_user_func($this->OpenAction, $file);
+        }
+    }
+    
+    function Delete($flag = false)
+    {
+        $row = $this->selection[0];
+        $data = GtkCList::get_pixtext($row, 0);
+        $file = $this->Directory . bar .    $data[0] . '.' . $this->Extension;
+
+        if (!$flag)
+        {
+            $b = new Ask(_a('Do you really want to delete ?'), array(&$this,'Delete'), null, array(true));
+            return true;
+        }
+        else
+        {
+            if (is_file($file))
+            {
+                $t1 = unlink($file);
+                if (!$t1)
+                {
+                    new Dialog(_a('Cannot remove the file'));
+                }
+                else
+                {
+                    GtkCList::freeze();
+                    GtkCList::remove($row);
+                    GtkCList::thaw();
+                }
+            }
+        }
+    }
+}
+?>

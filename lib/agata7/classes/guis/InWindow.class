@@ -1,0 +1,81 @@
+<?
+/***********************************************************/
+/* InWindow, used to allows the user to choose a query template
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class InWindow
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function InWindow()
+    {
+        global $Pixmaps;
+        $agataConfig = AgataConfig::ReadConfig();
+        $janela = new GtkWindow;
+        $janela->connect_object('key_press_event', array(&$this,'KeyTest'), $janela);
+        $janela->set_title(_a('Queries'));
+        $janela->set_position(GTK_WIN_POS_CENTER);
+        $janela->set_default_size(320,320);
+        $janela->realize();
+        
+        $vbox = &new GtkVBox;
+        $janela->add($vbox);
+        $extensions = array('.sql');
+        $this->RepositoryTree = $filetree = &new FileTree();
+        $this->RepositoryTree->Info = $Info;
+        $filetree->set_column_width(0,400);
+        $filetree->DefineExtensions($extensions);
+        $filetree->AbreDiretorio($agataConfig['general']['SqlDir'], null);
+        $filetree->set_column_width(0, 600);
+        
+        $SavedQueriesHandler = &new TreeHandler($filetree, array(0 => array($Pixmaps['require'], 'Apply')));
+        $ItemOpen = $SavedQueriesHandler->OpenAction;
+        $ItemOpen->connect_object('clicked', array(&$this, 'GetQuery'));
+        $ItemOpen->connect_object('clicked', array(&$janela, 'hide'));
+        //$janela->add($SavedQueriesHandler);
+
+        $vbox->pack_start(darktxt(_a('Query Templates')), false, false);
+        $vbox->pack_start($SavedQueriesHandler, true, true);
+        $SavedQueriesHandler->CreateToolBar2();
+        
+        $janela->show_all();
+    }
+    
+    function GetQuery()
+    {
+        $agataConfig = AgataConfig::ReadConfig();
+        $FileTree = $this->RepositoryTree;
+        $node = $FileTree->selection[0];
+        $Info = $this->RepositoryTree->node_get_row_data($node);
+        $Info = str_replace("\\", '/', $Info);
+        
+        if (!$Info)
+        {
+            return true;
+        }
+        if ($this->signals['select-file'])
+        {
+            call_user_func($this->signals['select-file'], $Info);
+        }
+        return;
+    }
+    
+    function connect_object($signal, $handler)
+    {
+        $this->signals[$signal] = $handler;
+    }
+
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

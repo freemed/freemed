@@ -1,0 +1,48 @@
+<?
+/***********************************************************/
+/* Class to deal with Labels
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class Label
+{
+    function ListLabels()
+    {
+        $aDict = getSimpleDirArray(AGATA_PATH.'/label');
+        foreach ($aDict as $dict)
+        {
+            $result[] = substr($dict, 0, -4);
+        }
+        
+        return $result;
+    }
+
+    /***********************************************************/
+    /* Read the Label Template
+    /***********************************************************/
+    function ReadLabel($Label)
+    {
+        if (!$Label)
+        {
+            return array(null);
+        }
+        $array = Xml2Array(AGATA_PATH."/label/{$Label}.agl");
+
+        return $array;
+    }
+
+    /***********************************************************/
+    /* Write Label
+    /***********************************************************/
+    function WriteLabel($file, $array)
+    {
+        if ($array)
+        {
+            $handler = fopen($file, 'w');
+            fwrite($handler, trim( XMLHEADER . Array2Xml($array, null)));
+            fclose($handler);
+            return true;
+        }
+        return false;
+    }
+}
+?>

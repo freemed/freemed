@@ -1,0 +1,173 @@
+<?
+/***********************************************************/
+/* Class that interface sub sql
+/* by Jamiel Spezia 2006-2006
+/***********************************************************/
+class SubSql
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function SubSql($event, $eventTypeSubField)
+    {
+        global $Pixmaps;
+        $this->widget = new GtkVBox;
+        $this->widget->set_border_width(4);
+
+        $notebook = &new GtkNotebook();
+        $notebook->set_tab_pos(GTK_POS_LEFT);
+
+        $ico_sql  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_sql.xpm');
+        $ico_sql_pix = &new GtkPixmap($ico_sql[0], $ico_sql[1]);
+        $notebook->insert_page($this->generateSql(), $ico_sql_pix, 0);
+
+        $ico_width  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_width.xpm');
+        $ico_width_pix = &new GtkPixmap($ico_width[0], $ico_width[1]);
+        $this->vbox = &new GtkVBox();
+        $notebook->insert_page($this->vbox, $ico_width_pix, 1);
+        $this->generateAdjustments();
+
+        $hbox = new GtkHBox();
+        $vbox = new GtkVBox();
+        $vbox->pack_start(new GtkLabel(''), true, true, 2);
+        $ico_handata  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_handata.xpm');
+        $button = new Button($event, _a('SubQuery'), $ico_handata, TOPBUTTON);
+        $vbox->pack_start($button, false, false, 2);
+        $vbox->pack_start(new GtkLabel(''), true, true, 2);
+
+        $hbox->pack_start($notebook, true, true, 0);
+        $hbox->pack_start($vbox  , true, true, 0);
+
+        $this->notebookDetail = &new GtkNotebook();
+        $this->notebookDetail->set_tab_pos(GTK_POS_LEFT);
+
+        $ico_groupheader  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_groupheader.xpm');
+        $ico_groupheader_pix = &new GtkPixmap($ico_groupheader[0], $ico_groupheader[1]);
+        $this->notebookDetail->insert_page($this->generateGroupHeader(), $ico_groupheader_pix, 0);
+
+        $vboxNote = new GtkVBox();
+        $vboxNote->pack_start($this->generateBarSubFields($eventTypeSubField), false, false, 0);
+        $vboxNote->pack_start($this->generateDetails(), true, true, 0);
+        $ico_detail  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_detail.xpm');
+        $ico_detail_pix = &new GtkPixmap($ico_detail[0], $ico_detail[1]);
+        $this->notebookDetail->insert_page($vboxNote, $ico_detail_pix, 1);
+
+
+        $this->widget->pack_start($hbox, true, true, 0);
+        $this->widget->pack_start($this->notebookDetail, true, true, 0);
+    }
+
+    function generateSql()
+    {
+        $frame = new GtkFrame(_a('SubQuery Session'));
+        $frame->set_border_width(4);
+        $frame->set_usize(342, -1);
+        $this->selectList = &new SelectList(null);
+        $frame->add($this->selectList->widget);
+
+        return $frame;
+    }
+
+    function generateAdjustments()
+    {
+        $hbox = &new GtkHBox();
+        $this->vbox->add($hbox);
+        $this->SubAdjustmentsConfig = &new Preferences(&$hbox);
+        $this->SubAdjustmentsConfig->SetTitle(_a('Adjustments'));
+        $this->SubAdjustmentsConfig->SetOptions(false);
+        $this->SubAdjustmentsConfig->SetPlus($Plus);
+        $this->SubAdjustmentsConfig->SetOk($slot, _a('Save'));
+        $this->SubAdjustmentsConfig->SetSimpleColumn(true);
+        $this->SubAdjustmentsConfig->SetSaveButton(false);
+        $this->SubAdjustmentsConfig->SetPixmap(images . 'ico_field.xpm');
+        $this->SubAdjustmentsConfig->SetListTitle(_a('Column'));
+
+        $this->SubAdjustmentsConfig->BuildForms($Vars);
+        $this->SubAdjustmentsConfig->clistProjects->set_usize(180,-1);
+        $this->SubAdjustmentsConfig->MultiPage->set_usize(220,-1);
+        //$this->vbox->show_all();
+    }
+
+    function generateBarSubFields($event)
+    {
+        $handleBox  = &new GtkHandleBox();
+        $hHBox = &new GtkHBox();
+        $handleBox->add($hHBox);
+
+        $this->comboSubFields = &new GtkCombo();
+        $this->comboSubFields->set_border_width(4);
+        $this->comboSubFields->set_usize(220, 30);
+
+        $ico_down  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_down.xpm');
+        $buttonTypeSubField = new Button($event, '', $ico_down, ICONBUTTON);
+        $buttonTypeSubField->set_border_width(4);
+
+        $ico_column  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_column.xpm');
+
+        $hHBox->pack_start(new GtkPixmap($ico_column[0], $ico_column[1]), false, false, 0);
+        $hHBox->pack_start($this->comboSubFields, false, false, 0);
+        $hHBox->pack_start($buttonTypeSubField, false, false, 4);
+
+        return $handleBox;
+    }
+
+    function generateDetails()
+    {
+        $scrolled     = &new GtkScrolledWindow();
+        $scrolled->set_policy(GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+        $this->detail = &new TextArea;
+        $scrolled->add($this->detail);
+
+        return $scrolled;
+    }
+
+    function generateGroupHeader()
+    {
+        $scrolled     = &new GtkScrolledWindow();
+        $scrolled->set_policy(GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+        $this->groupHeader = &new TextArea;
+        $scrolled->add($this->groupHeader);
+
+        return $scrolled;
+    }
+
+    function setDetail($text, $notebook = null)
+    {
+        $textArea = $this->getCurrentTextArea($notebook);
+        $this->$textArea->delete_text(0,-1);
+        $this->addDetail($text, $notebook);
+    }
+
+    function addDetail($text, $notebook = null)
+    {
+        $textArea = $this->getCurrentTextArea($notebook);
+        $this->$textArea->insertText($text);
+        $this->$textArea->grab_focus();
+    }
+
+    function getDetail( $notebook = null)
+    {
+        $textArea = $this->getCurrentTextArea($notebook);
+
+        return $this->$textArea->get_text();
+    }
+
+    function getCurrentTextArea($notebook)
+    {
+        if (is_null($notebook))
+        {
+            $notebook = $this->notebookDetail->get_current_page();
+        }
+        if ( $notebook == 0)
+        {
+            $textArea = 'groupHeader';
+        }
+        else if ($notebook == 1)
+        {
+            $textArea = 'detail';
+        }
+
+        return $textArea;
+    }
+}
+?>

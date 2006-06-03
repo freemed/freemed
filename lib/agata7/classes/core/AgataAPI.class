@@ -1,0 +1,418 @@
+<?
+/*******************************************************************************/
+/* AgataAPI
+/* API for report generation from Web PHP scripts
+/* by Pablo Dall'Oglio - 2001 - 2006
+/*    Jamiel Spezia - 2006 - 2006
+/*******************************************************************************/
+class AgataAPI
+{
+    function AgataAPI()
+    {
+        # Define the Agata's Path
+        define('AGATA_PATH', substr(__FILE__,0,-28));
+        define('OS', strtoupper(substr(PHP_OS, 0, 3)));
+        
+        if (OS == 'WIN')
+        {
+            define("bar", '\\');
+            setlocale(LC_ALL, 'POSIX');
+            define ("cut", ';');
+            if (is_dir('C:\\temp'))
+            {
+                define("temp", 'C:\\temp');
+            }
+            else if (is_dir('C:\\windows\\temp'))
+            {
+                define("temp", 'C:\\windows\\temp');
+            }
+            else
+            {
+                define("temp", 'c:\\winnt\\temp');
+            }
+        }
+        else
+        {
+            define("bar", '/');
+            setlocale(LC_ALL, 'english');
+            define ("cut", ':');
+            define("temp", '/tmp');
+        }
+        
+        define('isGui', false);
+        define('BREAKLN', "<br>");
+        
+        if (!is_dir(AGATA_PATH))
+        {
+            echo "<b>Error</b> : Wrong Path: " . AGATA_PATH;
+        }
+        else
+        {
+            //chdir(AGATA_PATH);
+            ini_set('include_path', '.' . cut . '/usr/local/lib/php'. cut .
+                    AGATA_PATH . cut . AGATA_PATH . '/classes');
+            
+            include_once AGATA_PATH . "/include/util.inc";
+            include_once AGATA_PATH . "/classes/core/AgataCompatibility.class";
+            include_once AGATA_PATH . "/classes/core/AgataConnection.class";
+            include_once AGATA_PATH . "/classes/core/AgataQuery.class";
+            include_once AGATA_PATH . "/classes/core/AgataError.class";
+            include_once AGATA_PATH . "/classes/core/AgataDataSet.class";
+            include_once AGATA_PATH . "/classes/core/Project.class";
+            include_once AGATA_PATH . "/classes/core/Report.class";
+            include_once AGATA_PATH . "/classes/core/Layout.class";
+            include_once AGATA_PATH . "/classes/core/AgataCore.class";
+            include_once AGATA_PATH . "/classes/core/AgataConfig.class";
+            include_once AGATA_PATH . "/classes/util/Wait.class";
+            include_once AGATA_PATH . "/classes/util/Dialog.class";
+            include_once AGATA_PATH . "/classes/util/MemoArea.class";
+            include_once AGATA_PATH . "/classes/util/Trans.class";
+            include_once AGATA_PATH . "/classes/util/XmlArray.class";
+            include_once AGATA_PATH . "/classes/util/AgataOO.class";
+            include_once AGATA_PATH . "/classes/reports/AgataReport.class";
+        }
+    }
+
+    # Defining the output file that will be generated
+    function setOutputPath($output)
+    {
+        $this->outputPath= $output;
+    }
+    
+    # Getting the output file that will be generated
+    function getOutputPath()
+    {
+        return $this->output;
+    }
+
+    # Defining the Report file to interpret
+    function setReportPath($report)
+    {
+        $this->reportPath = $report;
+    }
+    
+    # Alternative way to setReportPath
+    function setReport($Report)
+    {
+        $this->Report = $Report;
+    }
+
+    # Read the Report
+    function getReport()
+    {
+        if ($this->Report)
+        {
+            return $this->Report;
+        }
+        else
+        {
+            # Reading the Report
+            $Report = @Report::OpenReport($this->reportPath);
+            if (!$Report['Report'])
+            {
+                $this->error = 'Cannot read report file.';
+                return false;
+            }
+            return $Report;
+        }
+    }
+    
+    # Return the last error
+    function getError()
+    {
+        return $this->error;
+    }
+    
+    # Return the report parameters
+    function getParameters()
+    {
+        # You can set the Database connection this way, too:
+        $Project = @Project::ReadProject($this->project);
+        if (!$Project)
+        {
+            $this->error = 'Cannot read project file.';
+            return;
+        }
+        
+        # Reading the Report
+        $Report = $this->getReport();
+        if (!$Report)
+        {
+            return;
+        }
+        if ($params = array_keys($Report['Report']['Parameters']))
+        {
+            foreach ($params as $name)
+            {
+                $return[] = "\${$name}";
+            }
+            return $return;
+        } 
+        return null;
+    }
+    
+    # Choosing the output {html, txt, pdf, csv, sxw}
+    function setFormat($format)
+    {
+        $this->format = $format;
+    }
+
+    # Set the report parameters
+    function setParameter($parameter, $value)
+    {
+        $this->parameters[$parameter] = $value;
+    }
+
+    function setLanguage($language)
+    {
+        if (!in_array($language, array('en', 'pt', 'es', 'de', 'fr', 'it', 'se')))
+        {
+            $language = 'en';
+        }
+        
+        # Set the Interface Language
+        Trans::SetLanguage($language);
+    }
+
+    # Set the layout
+    function setLayout($layout)
+    {
+        $this->layout = $layout;
+    }
+
+    # Set the project name
+    function setProject($project)
+    {
+        $this->project = $project;
+    }
+    
+    function fileDialog()
+    {
+        switch ($this->format)
+        {
+            case ('txt'):
+                $content_type = 'text/plain';
+                break;
+            case ('csv'):
+                $content_type = 'text/plain';
+                break;
+            case 'xml':
+                $content_type = 'text/xml';
+                break;
+            case 'pdf':
+                $content_type = 'application/pdf';
+                break;
+            case 'ps':
+                $content_type = 'application/postscript';
+                break;
+            case 'sxw':
+                $content_type = 'application/sxw';
+                break;
+            case 'dia':
+                $content_type = 'application/dia';
+                break;
+        }
+
+        $download = 'output.'.$this->format;
+        if ($this->format != 'html')
+        {
+            header("Content-type: $content_type");
+            header("Content-Disposition: attachment; filename=\"$download\"");
+        }
+        readfile($this->outputPath);
+    }
+    
+    function generateReport()
+    {
+        # You can set the Database connection this way, too:
+        $Project = @Project::ReadProject($this->project);
+        if (!$Project)
+        {
+            $this->error = 'Cannot read project file.';
+            return;
+        }
+        
+        # Reading the Report
+        $Report = $this->getReport();
+        if (!$Report)
+        {
+            return;
+        }
+
+        if ($this->parameters)
+        {
+            $header = $Report['Report']['Header']['Body'];
+            $footer = $Report['Report']['Footer']['Body'];
+            
+            foreach ( $this->parameters as $key => $value )
+            {
+                $header = str_replace($key,$value,$header);
+                $footer = str_replace($key,$value,$footer);
+            }
+            $Report['Report']['Header']['Body'] = $header;
+            $Report['Report']['Footer']['Body'] = $footer;
+        }
+        
+        $DataSet = $Report['Report']['DataSet'];
+        
+        # Process the Query.
+        $Query = AgataCore::CreateQuery($Project, $DataSet, $this->parameters);
+
+        if (is_agata_error($Query))
+        {
+            $this->error = $Query->GetError();
+            return;
+        }
+        else
+        {
+            $params[0] = $Project;
+            $params[1] = null;
+            $params[2] = $this->outputPath;
+            $params[3] = $Query;
+            $params[4] = $Report;
+            $params[6] = $this->layout;
+            
+            $myreport = AgataCore::CreateReport($this->format, $params);
+            $myreport->Process();
+        }
+        return true;
+    }
+
+
+    function generateDocument()
+    {
+        $this->format = 'pdf';
+        
+        # You can set the Database connection this way, too:
+        $Project = @Project::ReadProject($this->project);
+        if (!$Project)
+        {
+            $this->error = 'Cannot read project file.';
+            return;
+        }
+        
+        # Reading the Report
+        $Report = $this->getReport();
+        if (!$Report)
+        {
+            return;
+        }
+        
+        $DataSet = $Report['Report']['DataSet'];
+        
+        # Process the Query.
+        $Query = AgataCore::CreateQuery($Project, $DataSet, $this->parameters);
+        if (is_agata_error($Query))
+        {
+            $this->error = $Query->GetError();
+            return;
+        }
+        else
+        {
+            $params[0] = $Project;
+            $params[1] = null;
+            $params[2] = $this->outputPath;
+            $params[3] = $Query;
+            $params[4] = $Report;
+            $params[6] = $this->parameters;
+            
+            $obj = AgataCore::CreateMergedDocument($params, 'Pdf');
+            $obj->Generate();
+        }
+        return true;
+    }
+
+    function parseOpenOffice($source)
+    {
+        $this->format = 'sxw';
+
+        # You can set the Database connection this way, too:
+        $Project = @Project::ReadProject($this->project);
+        if (!$Project)
+        {
+            $this->error = 'Cannot read project file.';
+            return;
+        }
+        
+        # Reading the Report
+        $Report = $this->getReport();
+        if (!$Report)
+        {
+            return;
+        }
+        
+        $DataSet = $Report['Report']['DataSet'];
+
+        # Process the Query.
+        $Query = AgataCore::CreateQuery($Project, $DataSet, $this->parameters);
+        if (is_agata_error($Query))
+        {
+            $this->error = $Query->GetError();
+            return;
+        }
+        else
+        {
+            $params[0] = $Project;
+            $params[1] = null;
+            $params[2] = $this->outputPath;
+            $params[3] = $Query;
+            $params[4] = $Report;
+            $params[6] = $this->parameters;
+            
+            if (!$source)
+            {
+                $Report = $this->getReport();
+                $source = $Report['Report']['OpenOffice']['Source'];
+            }
+            
+            $config = AgataOO::GetConfig($source);
+            $obj = AgataCore::ParseOpenOffice($params, 'Sxw', $config['engine']);
+            $obj->Generate($source, $this->outputPath);
+        }
+        return true;
+    }
+
+    function generateLabel()
+    {
+        $this->format = 'pdf';
+        
+        # You can set the Database connection this way, too:
+        $Project = @Project::ReadProject($this->project);
+        if (!$Project)
+        {
+            $this->error = 'Cannot read project file.';
+            return;
+        }
+        
+        # Reading the Report
+        $Report = $this->getReport();
+        if (!$Report)
+        {
+            return;
+        }
+        
+        $DataSet = $Report['Report']['DataSet'];
+        
+        # Process the Query.
+        $Query = AgataCore::CreateQuery($Project, $DataSet, $this->parameters);
+        if (is_agata_error($Query))
+        {
+            $this->error = $Query->GetError();
+            return;
+        }
+        else
+        {
+            $params[0] = $Project;
+            $params[1] = null;
+            $params[2] = $this->outputPath;
+            $params[3] = $Query;
+            $params[4] = $Report;
+            $params[6] = $this->parameters;
+            
+            $obj = AgataCore::CreateAddressLabel($params);
+            $obj->Generate();
+        }
+        return true;
+    }
+}
+?>

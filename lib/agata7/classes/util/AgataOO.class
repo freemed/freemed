@@ -1,0 +1,71 @@
+<?php
+/* class AgataOO
+ * Jamiel Spezia 2005 - 2005
+ */
+
+class AgataOO
+{
+    function GetConfig($source)
+    {
+        require_once 'classes/pclzip/pclzip.lib.php';
+        include_once 'include/util.inc';
+
+        if (!file_exists($source))
+        {
+            return;
+        }
+
+        $this->prefix = temp . bar . RemoveExtension($source);
+        $zip      = new PclZip($source);
+
+        if (($list = $zip->listContent()) == 0)
+        {
+            adie("Error : ".$zip->errorInfo(true));
+        }
+
+        recursive_remove_directory($this->prefix);
+        if ($zip->extract(PCLZIP_OPT_PATH, $this->prefix) == 0)
+        {
+            adie("Error : ".$zip->errorInfo(true));
+        }
+
+        $content= file_get_contents($this->prefix . '/meta.xml');
+
+        $array_content = preg_split ('/(<(?:[^<>]+(?:"[^"]*"|\'[^\']*\')?)+>)/', trim ($content), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        for ($x=0; $x < count($array_content); $x++)
+        {
+            $line = $array_content[$x];
+            if ($line == '<dc:description>')
+            {
+                while ($line != '</dc:description>')
+                {
+                    $x++;
+                    $agataDescription .= $line = $array_content[$x];
+                }
+                $tags = preg_split ('/(\{AGATA::[^=]*=[^\}]*\})/', trim ($agataDescription), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+                foreach ($tags as $t)
+                {
+                    $feature = '{AGATA::';
+                    if (substr($t, 0, strlen($feature)) == $feature)
+                    {
+                        $preg = '/({AGATA::([^=]*)=([^\}]*)})/';
+                        $config[strtolower(preg_replace($preg, '\2', $t))] = preg_replace($preg, '\3', $t);
+                    }
+                }
+            }
+        }
+        return $config;
+    }
+
+    function encode($string)
+    {
+        $from = array( '<'=>'&lt;',
+                       '>'=>'&gt;',
+                       '\''=>'&apos;',
+                       '&'=>'&amp;'
+                     );
+
+        return utf8_encode(strtr($string, $from));
+    }
+}

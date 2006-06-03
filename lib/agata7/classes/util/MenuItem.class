@@ -1,0 +1,176 @@
+<?
+/***********************************************************/
+/* MenuItem class, a wrapper for GtkMenuItem
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class MyNormalMenuItem extends GtkMenuItem
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+	function MyNormalMenuItem($img, $label, $function = null, $param = null)
+	{
+		GtkMenuItem::GtkMenuItem($label);
+        $child = $this->child;
+
+        GtkMenuItem::remove($child);
+        $pixmap = new GtkPixmap($img[0], $img[1]);
+
+        $hbox = new GtkHBox;
+        $hbox->pack_start($pixmap, false, false, 5);
+        $hbox->pack_start($child, true, true);
+        GtkMenuItem::add($hbox);
+        
+        if ($function)
+        {
+            GtkMenuItem::connect_object('activate', $function, $param);
+        }
+		GtkMenuItem::lock_accelerators();
+	}
+}
+
+/***********************************************************/
+/* MenuItem class for Control Key actions
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class MyControlMenuItem extends GtkMenuItem
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+	function MyControlMenuItem($img, $label, $underscore, $accelgroup, $function, $param = null)
+	{
+		GtkMenuItem::GtkMenuItem($label);
+        $child = $this->child;
+
+        GtkMenuItem::remove($child);
+        $pixmap = new GtkPixmap($img[0], $img[1]);
+
+        $hbox = new GtkHBox;
+        $hbox->pack_start($pixmap, false, false, 5);
+        $hbox->pack_start($child, true, true);
+        GtkMenuItem::add($hbox);
+        
+		if (strlen($label)!=(strlen($underscore)-1))
+			$parse = new GtkLabel;
+		else
+			$parse = $child;
+
+		$Subitem_key = $parse->parse_uline($underscore);
+
+		GtkMenuItem::add_accelerator("activate", $accelgroup, $Subitem_key, GDK_CONTROL_MASK, ($underscore)? 1:0);
+        if ($function)
+        {
+            if ($param)
+            {
+                GtkMenuItem::connect_object('activate', $function, $param);
+            }
+            else
+            {
+                GtkMenuItem::connect_object('activate', $function);
+            }
+        }
+		GtkMenuItem::lock_accelerators();
+	}
+}
+
+/***********************************************************/
+/* MenuItem class for CheckItems
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class MyCheckMenuItem extends GtkCheckMenuItem
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+	function MyCheckMenuItem($img, $label, $underscore, $accelgroup, $function)
+	{
+		GtkCheckMenuItem::GtkCheckMenuItem($label);
+        $child = $this->child;
+        GtkMenuItem::remove($child);
+        $pixmap = new GtkPixmap($img[0], $img[1]);
+
+        $hbox = new GtkHBox;
+        $hbox->pack_start($pixmap, false, false, 5);
+        $hbox->pack_start($child, true, true);
+        GtkMenuItem::add($hbox);
+
+		if (strlen($label)!=(strlen($underscore)-1))
+			$parse = new GtkLabel;
+		else
+			$parse = $child;
+
+		$Subitem_key = $parse->parse_uline($underscore);
+
+
+		GtkMenuItem::add_accelerator("activate", $accelgroup, $Subitem_key, GDK_MOD1_MASK, ($underscore)? 1:0);
+		GtkMenuItem::connect_object('activate', $function);
+		GtkMenuItem::lock_accelerators();
+	}
+}
+
+/***********************************************************/
+/* MenuItem class for ALT Key actions
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class MyAltMenuItem extends GtkMenuItem
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+	function MyAltMenuItem($label, $underscore, $accelgroup)
+	{
+		GtkMenuItem::GtkMenuItem($label);
+
+		if (strlen($label)!=(strlen($underscore)-1))
+			$label = new GtkLabel;
+		else
+			$label = $this->child;
+
+		$Subitem_key = $label->parse_uline($underscore);
+		GtkMenuItem::add_accelerator("activate_item", $accelgroup, $Subitem_key, GDK_MOD1_MASK, 0);
+	}
+}
+
+/***********************************************************/
+/* MenuItem class for Simple function actions
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class MyFunctionMenuItem extends GtkMenuItem
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+	function MyFunctionMenuItem($img, $label, $key, $accelgroup, $function, $param = null)
+	{
+		GtkMenuItem::GtkMenuItem($label);
+        $child = $this->child;
+        GtkMenuItem::remove($child);
+        $pixmap = new GtkPixmap($img[0], $img[1]);
+
+        $hbox = new GtkHBox;
+        $hbox->pack_start($pixmap, false, false, 5);
+        $hbox->pack_start($child, true, true);
+        if (is_integer($key))
+        {
+            GtkMenuItem::add_accelerator("activate", $accelgroup, $key, 0, 1);
+        }
+        else
+        {
+            $hbox->pack_start(new GtkLabel($key), false, false);
+        }
+        GtkMenuItem::add($hbox);
+        if ($function)
+        {
+            if ($param)
+            {
+                GtkMenuItem::connect_object('activate', $function, $param);
+            }
+            else
+            {
+                GtkMenuItem::connect_object('activate', $function);
+            }
+        }
+	}
+}
+?>

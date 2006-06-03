@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<layout>
+    <data>
+        <font>Tahoma--8</font>
+        <color>#120a92</color>
+        <bgcolor>#fff7ec</bgcolor>
+    </data>
+
+    <total>
+        <font>Courier-B-7</font>
+        <color>#ff0f0f</color>
+        <bgcolor>#d4d4d4</bgcolor>
+    </total>
+
+    <group>
+        <font>Tahoma-TO-10</font>
+        <color>#0ca819</color>
+        <bgcolor>#daf5aa</bgcolor>
+    </group>
+
+    <column>
+        <font>Helvetica--6</font>
+        <color>#010101</color>
+        <bgcolor>#d4d4d4</bgcolor>
+    </column>
+
+    <header>
+        <font>Helvetica-B-10</font>
+        <color>#1a0764</color>
+        <bgcolor>#bdbdbd</bgcolor>
+    </header>
+
+    <footer>
+        <font>Helvetica-B-10</font>
+        <color>#6e0401</color>
+        <bgcolor>#d4d4d4</bgcolor>
+    </footer>
+
+    <config>
+        <color_lines>1</color_lines>
+        <border>1</border>
+        <cell_spacing>5</cell_spacing>
+    </config>
+
+</layout>

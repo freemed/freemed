@@ -1,0 +1,159 @@
+<?
+class FieldArea extends GtkFixed
+{
+    function FieldArea($horizontal = true, $limit = false)
+    {
+        GtkFixed::GtkFixed();
+        GtkFixed::connect('drag_data_received', array(&$this, 'DragReceive'));
+        $targets = array(array('text/plain', 0, -1));
+        GtkFixed::drag_dest_set(GTK_DEST_DEFAULT_ALL, $targets, GDK_ACTION_COPY);
+        
+        $this->horizontal = $horizontal;
+        $this->limit      = $limit;
+        $this->fields     = 0;
+        $this->row        = 0;
+        $this->col        = 4;
+    }
+    
+    function connect_object($signal, $callback)
+    {
+        $this->callbacks[$signal] = $callback;
+    }
+    
+    function add($widget)
+    {
+        if ((!$this->limit) or ($this->fields == 0))
+        {
+            GtkFixed::put($widget,$this->col,$this->row);
+            $widget->show();
+            $this->fields = $this->fields +1;
+            
+            if ($this->horizontal)
+            {
+                $this->row = $this->row + 30;
+                
+            }
+            else
+            {
+                $this->col = $this->col + 124;
+            }
+        }
+        
+        $this->Refresh();
+    }
+
+    #arrancada do botao
+    function getDrag($widget, $context, $selection_data, $info, $time, $data)
+    {
+        $selection_data->set($selection_data->target, 8, $data);
+        $udata = unserialize($data);
+        $this->EraseByName($udata[1]);
+    }
+    #chegada do botao
+    function DragReceive($widget, $context, $x, $y, $data, $info, $time)
+    {
+        global $Pixmaps;
+        if ($data && $data->format == 8)
+        {
+            $udata = unserialize($data->data);
+            $alldata = $this->GetInfo();
+            if (!$alldata[$udata[1]])
+            {
+                call_user_func($this->callbacks['receive'], $udata);
+                $label = $udata[0];
+                $name  = $udata[1];
+                
+                $button = &new VoidButton($label, $Pixmaps['field'], IMAGEBUTTON);
+                # set_tip com a descricao full
+                $tooltips = $button->tooltips;
+                $tooltips->set_tip($button, $name);
+                $button->show_all();
+                
+                $button->connect('drag_data_get', array(&$this, 'getDrag'), $data->data);
+                $targets = array(array('text/plain', 0, -1));
+                $button->drag_source_set(GDK_BUTTON1_MASK, $targets, GDK_ACTION_COPY);
+                $button->set_data(0, $udata);
+                $button->set_usize(120,26);
+                $button->connect('clicked', array(&$this, 'Popup'));
+                $this->add($button);
+            }
+        }
+    }
+    
+    function Refresh()
+    {
+        $this->row = 0;
+        $this->col = 4;
+        foreach ($this->children() as $widget)
+        {
+            GtkFixed::move($widget, $this->col, $this->row);
+            if ($this->horizontal)
+            {
+                $this->row = $this->row + 30;
+            }
+            else
+            {
+                $this->col = $this->col + 124;
+            }
+        }
+    }
+    
+    function Popup($widget)
+    {
+        //var_dump($widget->get_data(0));
+        $menu = new GtkMenu;
+        $icon = gdk::pixmap_create_from_xpm($widget->window, null, images . 'menu_del.xpm');
+        $item1 = new MyNormalMenuItem($icon, 'Remover');
+        $item1->connect_object('activate', array(&$this, 'RemoveWidget'), $widget);
+        $menu->append($item1);
+        $menu->show_all();
+        $menu->popup(null,null,null,1,1);
+    }
+    
+    function RemoveWidget($widget)
+    {
+        $this->remove($widget);
+        $this->Refresh();
+        $this->fields = $this->fields - 1;
+    }
+
+    function Clear()
+    {
+        foreach ($this->children() as $widget)
+        {
+            $this->remove($widget);
+        }
+        $this->Refresh();
+        $this->fields     = 0;
+        $this->row        = 0;
+        $this->col        = 4;
+    }
+    
+    function EraseByName($name)
+    {
+        foreach ($this->children() as $widget)
+        {
+            $data = $widget->get_data(0);
+            if ($name == $data[1])
+            {
+                $this->RemoveWidget($widget);
+            }
+        }
+    }
+    
+    function GetInfo()
+    {
+        if ($this->children())
+        {
+            foreach ($this->children() as $widget)
+            {
+                $data = $widget->get_data(0);
+                $pieces = explode('#', $data[1], 2);
+                $position = $pieces[0];
+                $result[$position] = $data;
+            }
+        }
+        return $result;
+    }
+}
+?>

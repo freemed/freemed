@@ -1,0 +1,223 @@
+<?
+/*******************************************************************************/
+/* AgataWEB
+/* WEB for report generation
+/* by Pablo Dall'Oglio - 2001 - 2006
+/*******************************************************************************/
+class AgataWEB
+{
+    function AgataWEB()
+    {
+        include_once AGATA_PATH . '/web/class/sys.html/core/TMaster.class.php';
+    }
+    
+    function readReports($user, $dir)
+    {
+        $permissions = TMaster::getModel('Permissions');
+        $filelist = getSimpleDirArray($dir, true);
+        
+        foreach($filelist as $file)
+        {
+            $report = $dir . bar . $file;
+            $report = str_replace('/', bar, $report);
+            $report = str_replace('\\', bar, $report);
+            $filter->login  = $user;
+            $filter->report = $report;
+            if ($permissions->getObjects($filter) or $user == 'admin')
+            {
+                $return[] = $report;
+            }
+        }
+        
+        return $return;
+    }
+    
+    
+    function DirList($BrowseDir, $filter, $action, $agataConfig)
+    {
+        if ($action == 'browse.php?goal=2')
+        {
+            $OutputDir = $agataConfig['general']['OutputDir'];
+            $dir_len = strlen($OutputDir);
+            if (substr($BrowseDir,0,$dir_len) != $OutputDir)
+            {
+                $BrowseDir = $OutputDir;
+            }
+        }
+        else
+        {
+            $RptDir = $agataConfig['general']['RptDir'];
+            $dir_len = strlen($RptDir);
+            if (substr($BrowseDir,0,$dir_len) != $RptDir)
+            {
+                $BrowseDir = $RptDir;
+            }    
+        }
+    
+        $icofolder        = 'imagens/folder.png';
+        $Images['sql']    = 'imagens/ico_sql.png';
+        $Images['agt']    = 'imagens/ico_agt.png';
+        $Images['html']   = 'imagens/ico_html.png';
+        $Images['sxw']    = 'imagens/ico_sxw.png';
+        $Images['txt']    = 'imagens/ico_txt.png';
+        $Images['pdf']    = 'imagens/ico_pdf.png';
+        $Images['ps']     = 'imagens/ico_ps.png';
+        $Images['csv']    = 'imagens/ico_csv.png';
+        $Images['xml']    = 'imagens/ico_xml.png';
+        $Images['dia']    = 'imagens/ico_dia.png';
+        $Images['generic']= 'imagens/generic.png';
+    
+        # Opens the Sql's Dir
+        
+        $filelist = getSimpleDirArray($BrowseDir, false);
+        if ($filelist)
+        {
+            echo '<link href="site.css" rel="stylesheet" type="text/css">';
+            echo '<table width=700 cellspacing=0 class=table border=0>';
+            echo '<tr height=30 class=tabletitle>';
+            echo '<td colspan=6>';
+            if ($action == 'browse.php?goal=1')
+            {
+                echo '<b>&nbsp; Agata Report:: ' . _a('Query Explorer') .'</b>';
+                echo '</td>';
+                echo '</tr>';
+                echo '<tr class=line1>';
+                echo '<td colspan=6 align=right>';
+                echo '<a href=browse.php?goal=2>' . _a('Repository Explorer') . '</a>';
+            }
+            else
+            {
+                echo '<b>&nbsp; Agata Report:: ' . _a('Repository Explorer') . '</b>';
+                echo '</td>';
+                echo '</tr>';
+                echo '<tr class=line1>';
+                echo '<td colspan=6 align=right>';
+                echo '<a href=browse.php?goal=1>' . _a('Query Explorer') . '</a>';
+            }
+            echo '</td>';
+            echo '</tr>';
+    
+            echo '<tr class=tablepath>';
+            echo '<td colspan=6>';
+            echo '&nbsp;' . $BrowseDir;
+            echo '</td>';
+            echo '</tr>';
+    
+            
+            $back = dir_back($BrowseDir);
+            if ($back != $agataConfig['general']['AgataDir'])
+            {
+                echo '<tr>';
+                echo '<td width=10% align=center>';
+                echo "<a href=$action&BrowseDir=$back><img src=$icofolder border=0></a>";
+                echo '</td>';
+                echo '<td width=40% colspan=5 align=left>';
+                echo "<a href=$action&BrowseDir=$back>..</a>";
+                echo '</td>';
+                echo '</tr>';
+            }
+            $i = 0;
+            foreach ($filelist as $arquivo)
+            {
+                $arquivo = trim($arquivo);
+                $path = $BrowseDir . bar . $arquivo;
+                $i++;
+                
+                if (($i % 2) == 0)
+                {
+                    $class = 'line1';
+                }
+                else
+                {
+                    $class = 'line2';
+                }
+                
+                if (is_dir($path))
+                {
+                    $meta = "$action&BrowseDir=$path";
+                    echo "<tr class=$class>";
+                    echo '<td width=5% align=center>';
+                    echo "<a href=$meta><img src=$icofolder border=0></a>";
+                    echo '</td>';
+                    echo '<td width=95% colspan=5 align=left valign=center>';
+                    echo "<a class=report href=$meta>$arquivo</a>";
+                    echo '</td>';
+                    echo '</tr>';
+                }
+                else
+                {
+                    if (count($filter) == 1)
+                    {
+                        $ok = ($filter) ? (in_array(substr($path,-strlen($filter[0])), $filter)) : true;
+                    }
+                    else
+                    {
+                        $ok0 = ($filter) ? (in_array(substr($path,-2), $filter)) : true;
+                        $ok1 = ($filter) ? (in_array(substr($path,-3), $filter)) : true;
+                        $ok2 = ($filter) ? (in_array(substr($path,-4), $filter)) : true;
+                        $ok = ($ok0 or $ok1 or $ok2);
+                    }
+                    if ($ok)
+                    {
+                        $posicao = strpos($arquivo, '.');
+                        $ext = substr($arquivo, $posicao+1);
+                        $ico = $Images[$ext];
+        
+                        if (!$ico)
+                        {
+                            $ico = $Images['generic'];
+                        }
+        
+                        echo "<tr class=$class>";
+                        echo '<td class=report width=5% align=center>';
+    
+                        if ($action == 'browse.php?goal=2')
+                        {
+                            $meta = "download.php?file=$path&download=$arquivo&type=$ext";
+                            echo "<a href=$meta><img src=$ico border=0></a>";
+                            echo '</td>';
+                            echo '<td width=30% align=left valign=center>';
+                            echo "<a href=$meta>$arquivo</a>";
+                        }
+                        else
+                        {
+                            $lang = Trans::GetLanguage();
+                            $meta = "agataweb.php?file=$path&lang=$lang&AgataDir=" . AgataDir;
+                            echo "<a href=$meta><img src=$ico border=0></a>";
+                            echo '</td>';
+                            echo '<td width=30% align=left valign=center>';
+                            
+                            echo "<a class=report href=$meta>$arquivo</a>";
+                        }
+                        if (substr($path,-3)=='agt')
+                        {
+                            $Report = Report::OpenReport($path);
+                        }
+                        echo '</td>';
+                        echo '<td width=5% align=right>';
+                        if ($Report['Report']['Properties']['Layout'] and $Report['Report']['Properties']['Format'])
+                        {
+                            echo "<a href='fastgenerate.php?file=$path'><img border=0 src=imagens/generate.png></a>";
+                        }
+                        echo '</td>';
+                        
+                        echo '<td class=texto width=10% align=right>';
+                        echo file_size($path);
+                        echo '</td>';
+                        
+                        echo '<td class=texto width=30% align=center>';
+                        echo file_date($path);
+                        echo '</td>';
+                        
+                        echo '<td class=texto width=20%>';
+                        echo '<font size=2><i>'. $Report['Report']['Properties']['Description'].'</i></font>';
+                        echo '</td>';
+                        echo '</tr>';
+                    }
+                }
+            }
+            echo "</table>";
+        }
+    }
+}
+?>

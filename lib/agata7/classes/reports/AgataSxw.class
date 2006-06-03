@@ -1,0 +1,532 @@
+<?
+class AgataSxw extends AgataReport
+{
+    var $Query;
+    var $Maior;
+    var $Columns;
+    var $FileName;
+    var $ColumnTypes;
+
+    function font($fontset, $fgcolor, $bgcolor)
+    {
+        $split = explode('-', $fontset);
+
+        return array('family'=>     $split[0],
+                     'style'=>      $split[1],
+                     'size'=>       $split[2],
+                     'color' =>     $fgcolor,
+                     'bgcolor' =>   $bgcolor);
+    }
+
+    function inflate($CountBreaks)
+    {
+        for ($tmp=1; $tmp<=$CountBreaks; $tmp++)
+        {
+            $header[] = '';
+        }
+        return $header;
+    }
+
+    function Process()
+    {
+        if (isGui)
+        {
+            $InputBox = $this->InputBox;
+            $ReportName = $InputBox->InputEntry->get_text();
+            $InputBox->Close();
+        }
+        else
+        {
+            $ReportName = $this->ReportName;
+        }
+
+        include 'include/report_vars.inc';
+        $FileName = $this->FileName;
+        
+        $fd = @fopen($FileName, "w");
+        if (!$fd)
+        {
+            if (isGui)
+                new Dialog(_a('File Error'));
+            return false;
+        }
+        Wait::On();
+        
+
+        if ($this->Breaks)
+        {
+            $CountBreaks=count($this->Breaks);
+            if ($this->Breaks['0'])
+            {
+                $CountBreaks --;
+            }
+            
+            ksort($this->Breaks);
+            reset($this->Breaks);
+        }
+        
+        $MarginBreaks = $CountBreaks * 5;
+        
+        $Schema = Layout::ReadLayout($this->layout);
+        //$titlefont = $Schema['TitleFont'];
+        $datafont = $Schema['DataFont'];
+        $totalfont = $Schema['TotalFont'];
+        $groupfont = $Schema['GroupFont'];
+        $columnfont = $Schema['ColumnFont'];
+        $headerfont = $Schema['HeaderFont'];
+        $footerfont = $Schema['FooterFont'];
+
+        //$titlecolor = $Schema['TitleColor'];
+        $datacolor = $Schema['DataColor'];
+        $totalcolor = $Schema['TotalColor'];
+        $groupcolor = $Schema['GroupColor'];
+        $columncolor = $Schema['ColumnColor'];
+        $headercolor = $Schema['HeaderColor'];
+        $footercolor = $Schema['FooterColor'];
+
+        //$titlebgcolor = $Schema['TitleBgColor'];
+        $databgcolor = $Schema['DataBgColor'];
+        $totalbgcolor = $Schema['TotalBgColor'];
+        $groupbgcolor = $Schema['GroupBgColor'];
+        $columnbgcolor = $Schema['ColumnBgColor'];
+        $headerbgcolor = $Schema['HeaderBgColor'];
+        $footerbgcolor = $Schema['FooterBgColor'];
+        
+        $this->Orientation = $this->XmlArray['Report']['PageSetup']['Orientation'] ? $this->XmlArray['Report']['PageSetup']['Orientation']    : 'portrait';
+        $this->LeftMargin  = $this->XmlArray['Report']['PageSetup']['LeftMargin']  ? $this->XmlArray['Report']['PageSetup']['LeftMargin']     : 5;
+        $this->TopMargin   = $this->XmlArray['Report']['PageSetup']['TopMargin']   ? $this->XmlArray['Report']['PageSetup']['TopMargin']      : 5;
+        $this->RightMargin = $this->XmlArray['Report']['PageSetup']['RightMargin'] ? $this->XmlArray['Report']['PageSetup']['RightMargin']    : 5;
+        $this->FooterMargin= $this->XmlArray['Report']['PageSetup']['BottomMargin']? $this->XmlArray['Report']['PageSetup']['BottomMargin']   : 10;
+        $this->PageFormat  = $this->XmlArray['Report']['PageSetup']['Format']      ? $this->XmlArray['Report']['PageSetup']['Format']         : 'A4';
+       
+        # Converting from Points to centimeters
+        $this->LeftMargin   = $this->LeftMargin   * 0.0352777778;
+        $this->TopMargin    = $this->TopMargin    * 0.0352777778;
+        $this->RightMargin  = $this->RightMargin  * 0.0352777778;
+        $this->BottomMargin = $this->BottomMargin * 0.0352777778;
+
+        $this->Pages['A3']        = array(841, 1190);
+        $this->Pages['A4']        = array(595, 841);
+        $this->Pages['A5']        = array(419, 595);
+        $this->Pages['Letter']    = array(612, 790);
+        $this->Pages['Legal']     = array(612, 1009);
+
+        # Converting from Points to centimeters
+        if ($this->Orientation == 'landscape')
+        {
+            $h = $this->Pages[$this->PageFormat][0] * 0.0352777778;
+            $w = $this->Pages[$this->PageFormat][1] * 0.0352777778;
+        }
+        else
+        {
+            $h = $this->Pages[$this->PageFormat][1] * 0.0352777778;
+            $w = $this->Pages[$this->PageFormat][0] * 0.0352777778;
+        }
+        
+        $margins = "{$this->LeftMargin},{$this->RightMargin},{$this->TopMargin},{$this->BottomMargin}";
+        
+        # Import PhpDocWriter classes
+        require_once('classes/phpdocwriter/lib/include.php');
+        import('phpdocwriter.pdw_document');
+        import('phpdocwriter.pdw_header');
+        import('phpdocwriter.pdw_footer');
+        import('phpdocwriter.pdw_draw_line');
+
+        # Start new OpenOffice Document
+        $sxw = new pdw_document;
+        $sxw->SetLanguage('en','US');
+        $sxw->AddPageDef(array('name'=>'Standard','w'=>$w, 'h'=>$h, 'margins'=>$margins));
+
+        $stdfont = $this->font($datafont, $datacolor, $databgcolor);
+        $sxw->SetStdFont($stdfont['family'],$stdfont['size']);
+
+        $header = explode("\n", $this->textHeader);
+        $footer = explode("\n", $this->textFooter);
+
+        $aligns['center'] = 'C';
+        $aligns['left']   = 'L';
+        $aligns['right']  = 'R';
+
+        # PRINT THE REPORT HEADER
+        $head = new pdw_header($sxw,'Standard');
+        $sxw->AddParaDef(array('name'=>'header',
+                               'align'=>$this->alignHeader,
+                               'shadow'=>'#b0b0b0',
+                               'font'=>$this->font($headerfont, $headercolor, $headerbgcolor)));
+        $head->SetParagraph('header');
+
+        $sxw->AddParaDef(array('name'=>'footer',
+                               'align'=>$this->alignFooter,
+                               'shadow'=>'#b0b0b0',
+                               'font'=>$this->font($footerfont, $footercolor, $footerbgcolor)));
+
+        //$sxw->SetFont($this->font($groupfont));
+        $group = $sxw->AddParaDef(array('align'=>'start',
+                                        'shadow'=>'#b0b0b0',
+                                        'margins' => $nCountBreak,
+                                        'font'=>$this->font($groupfont, $groupcolor, $groupbgcolor)));
+
+        if (strlen(trim($this->textHeader)) >0)
+        {
+            foreach($header as $headerline)
+            {
+                eval ("\$tmp = \"$headerline\";");
+                if (substr($tmp,0,6) == '#image')
+                {
+                    $image_file = trim(substr($tmp, 7));
+                    if (file_exists($image_file))
+                    {
+                        $size = getimagesize($image_file);
+                        $width = ((int) ($size[0] / 28.344 * 75)) /100;
+                        $height =((int) ($size[1] / 28.344 * 75)) /100;
+                        $width = str_replace(',', '.', (string) $width);
+                        $height= str_replace(',', '.', (string) $height);
+                        $head->Image(array('path'=>$image_file,'w'=>$width,'h'=>$height));
+                        $head->Ln();
+                        $head->Ln();
+                        $head->Ln();
+                    }
+                }
+                else
+                {
+                    if (strlen(trim($tmp))>0)
+                    {
+                        if (strpos($headerline, '$page') !== false)
+                        {
+                            $pieces = explode('$page', $tmp);
+                            $head->Write($pieces[0]);
+                            $head->PageNo(0, 'current');
+                            $head->Write($pieces[1]);
+                        }
+                        else
+                        {
+                            $head->Write($tmp);
+                        }
+                        $head->Ln();
+                    }
+                }
+            }
+            $head->Insert();
+        }
+
+        # PRINT THE REPORT HEADER
+        $foot = new pdw_footer($sxw,'Standard');
+        $foot->SetParagraph('footer');
+
+        if (strlen(trim($this->textFooter)) >0)
+        {
+            foreach($footer as $footerline)
+            {
+                eval ("\$tmp = \"$footerline\";");
+                if (substr($tmp,0,6) == '#image')
+                {
+                    $image_file = trim(substr($tmp, 7));
+                    if (file_exists($image_file))
+                    {
+                        $size = getimagesize($image_file);
+                        $width = ((int) ($size[0] / 28.344 * 75)) /100;
+                        $height =((int) ($size[1] / 28.344 * 75)) /100;
+                        $width = str_replace(',', '.', (string) $width);
+                        $height= str_replace(',', '.', (string) $height);
+                        $foot->Image(array('path'=>$image_file,'w'=>$width,'h'=>$height));
+                        $foot->Ln();
+                        $foot->Ln();
+                        $foot->Ln();
+                    }
+                }
+                else
+                {
+                    if (strlen(trim($tmp))>0)
+                    {
+                        if (strpos($footerline, '$page') !== false)
+                        {
+                            $pieces = explode('$page', $tmp);
+                            $foot->Write($pieces[0]);
+                            $foot->PageNo(0, 'current');
+                            $foot->Write($pieces[1]);
+                        }
+                        else
+                        {
+                            $foot->Write($tmp);
+                        }
+                        $foot->Ln();
+                    }
+                }
+            }
+            $foot->Insert();
+        }
+        
+        $sxw->SetTitle ($ReportName);
+        //$sxw->SetAuthor ('José Manuel Sánchez');
+        $sxw->SetSubject ($ReportName. ' generated by Agata Report (www.agata.org.br)');
+
+        /*$sxw->AddParaDef(array('name'=>'title',
+                               'align'=>'center',
+                               'shadow'=>'#b0b0b0',
+                               'font'=>$this->font($titlefont, $titlecolor, $titlebgcolor)));
+
+        $sxw->SetParagraph('title');
+        $sxw->Write ($ReportName);*/
+
+        //$line = new pdw_draw_line($sxw, 
+        //$line->Insert();
+        $sxw->SetParagraph();
+        //$sxw->Ln();
+        //$sxw->PageNo(10, 'current');
+
+        if ((!$this->Breaks) || ((count($this->Breaks)==1) && ($this->Breaks['0']))) //aquipbreak
+        {
+            $sxw->SetFont($this->font($columnfont, $columncolor, $columnbgcolor));
+            $header = $this->Columns;
+        }
+
+        //$sxw->Ln();
+        $linecount = 0;
+
+
+        while ($QueryLine = $this->CurrentQuery->FetchNext())
+        {
+            $this->BreakMatrix = null;
+            $this->Headers = null;
+            $arrayline = null;
+            
+            if ($this->ShowIndent)
+            {
+                $arrayline = $this->inflate($CountBreaks);
+            }
+            
+            //------------------------------------------------------------
+            list($break) = $this->ProcessBreaks($QueryLine);
+            //------------------------------------------------------------
+            
+            for ($y=1; $y<=count($QueryLine); $y++)
+            {
+                $QueryCell = htmlspecialchars($QueryLine[$y]);
+                
+                //------------------------------------------------------------
+                //list($break) = $this->ProcessBreaks($QueryCell, $y);
+                //------------------------------------------------------------
+                $QueryCell = FormatMask($this->Adjustments[$y]['Mask'], $QueryCell);
+                
+                if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && !$this->Breaks[$y])) //aquipbreak
+                {
+                    if ($this->ShowDataColumns)
+                    {
+                        $arrayline[] = $QueryCell;
+                    }
+                }
+            }
+
+            
+            if (($this->BreakMatrix) && ($break != '0'))
+            {
+                $chaves = array_reverse(array_keys($this->BreakMatrix));
+
+                foreach ($chaves as $chave)
+                {
+                    //-----------------------------------------
+                    $FinalBreak = $this->EqualizeBreak($chave);
+                    //-----------------------------------------
+                    if ($this->HasFormula[$chave])
+                    {
+                        foreach ($FinalBreak as $FinalBreakLine)
+                        {
+                            $w = 0;
+                            $linecount ++;
+
+                            if ($this->ShowTotalLabel)
+                            {
+                                if ($chave == '0')
+                                {
+                                    $printarray[$linecount][] = '(Grand Total)';
+                                }
+                                else
+                                {
+                                    $printarray[$linecount][] = $this->Summary[$chave]['BeforeLastValue'];
+                                }
+                                
+                                if ($this->ShowIndent)
+                                {
+                                    $printarray[$linecount] = array_merge($printarray[$linecount], $this->inflate($CountBreaks -1));
+                                }
+                            }
+                            else
+                            {
+                                if ($this->ShowIndent)
+                                {
+                                    $printarray[$linecount] = array_merge($printarray[$linecount], $this->inflate($CountBreaks));
+                                }
+                            }
+
+                            foreach($FinalBreakLine as $content)
+                            {
+                                $w ++;
+                                if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && (!$this->Breaks[$w])))
+                                {
+                                    if ($content)
+                                    {
+                                        $printarray[$linecount][] = $content;
+                                    }
+                                    else
+                                    {
+                                        $printarray[$linecount][] = '';
+                                    }
+                                }
+                            }
+                            $linecount ++;
+                        }
+                    }
+                }
+                $sxw->Table($header, $printarray);
+                $linecount = 0;
+                $printarray = null;
+            }
+
+            $printarray[$linecount] = $arrayline;
+            $linecount ++;
+
+            if (($this->Headers) && ($break != '0'))
+            {
+                foreach ($this->Headers as $nCountBreak => $Header)
+                {
+        
+
+                    $MarginHeader = $nCountBreak * 5;
+                    $this->Index[$nCountBreak +1] ++;
+                    $this->Index[$nCountBreak +2] = 0;
+
+                    $index = '';
+                    for ($n=1; $n<=$nCountBreak +1; $n ++)
+                    {
+                        $index .= $this->Index[$n]. '.';
+                    }
+                    if ($this->ShowNumber)
+                    {
+                        $Header = "{$index} {$Header}";
+                    }
+
+                    $sxw->Ln();
+                    $Header = trim($Header);
+                    $sxw->SetParagraph($group);
+                    $sxw->Write($Header);
+                }
+                $sxw->Ln();
+
+                if ($this->ShowIndent)
+                {
+                    $header = $this->inflate($CountBreaks);
+                }
+                else
+                {
+                    $header = null;
+                }
+                
+                for ($z=0; $z<=count($this->Columns) -1; $z++)
+                {
+                    $Column = $this->Columns[$z];
+                    if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && !$this->Breaks[($z +1)])) //aquipbreak
+                    {
+                        $header[] = $Column;
+                    }
+                }
+            }
+        }
+        
+        
+        /**************************
+        PROCESS TOTALS OF LAST LINE
+        ***************************/
+        
+        //------------------------
+        $this->ProcessLastBreak();
+        //------------------------
+        
+        if ($this->BreakMatrix)
+        {
+            $chaves = array_reverse(array_keys($this->BreakMatrix));
+            
+            foreach ($chaves as $chave)
+            {
+                //-----------------------------------------
+                $FinalBreak = $this->EqualizeBreak($chave);
+                //-----------------------------------------
+                if (($this->HasFormula[$chave]) || ($chave =='0'))
+                {
+                    foreach ($FinalBreak as $FinalBreakLine)
+                    {
+                        $w = 0;
+                        
+                        $linecount ++;
+                        if ($this->ShowTotalLabel)
+                        {
+                            if ($chave == '0')
+                            {
+                                $printarray[$linecount][] = '(Grand Total)';
+                            }
+                            else
+                            {
+                                $printarray[$linecount][] = $this->Summary[$chave]['BeforeLastValue'];
+                            }
+                            if ($this->ShowIndent)
+                            {
+                                $printarray[$linecount] = array_merge($printarray[$linecount], $this->inflate($CountBreaks -1));
+                            }
+                        }
+                        else
+                        {
+                            if ($this->ShowIndent)
+                            {
+                                $printarray[$linecount] = array_merge($printarray[$linecount], $this->inflate($CountBreaks));
+                            }
+                        }
+                        
+                        foreach($FinalBreakLine as $content)
+                        {
+                            $w ++;
+                            if (($this->ShowBreakColumns) || (!$this->ShowBreakColumns && (!$this->Breaks[$w])))
+                            {
+                                if ($content)
+                                {
+                                    $printarray[$linecount][] = $content;
+                                }
+                                else
+                                {
+                                    $printarray[$linecount][] = '';
+                                }
+                            }
+                        }
+                        $linecount ++;
+                    }
+                }
+            }
+            @$sxw->Table($header, $printarray);
+            $linecount = 0;
+            $printarray = null;
+        }
+
+        if ($printarray)
+        {
+            $printarray[$linecount] = $arrayline;
+            @$sxw->Table($header, $printarray);
+        }
+        
+        /******************
+        END OF LAST PROCESS
+        *******************/
+        
+        //$sxw->SetFileName($FileName);
+        $sxw->CompressOutput();
+        $sxw->Output($FileName);
+
+        if ($this->posAction)
+        {
+            $this->ExecPosAction();
+            Project::OpenReport($FileName, $this->agataConfig);
+        }
+
+        Wait::Off();
+        
+        return true;
+    }
+}
+?>

@@ -1,0 +1,485 @@
+<?
+// Find flags
+@define(  "SCINTILLA_FIND_DOWN"                     ,   1 ); 
+@define(  "SCINTILLA_FIND_WHOLE_WORDS"              ,   2 ); 
+@define(  "SCINTILLA_FIND_MATCH_CASE"               ,   4 ); 
+@define(  "SCINTILLA_FIND_WORD_START"               ,   0x00100000 ); 
+@define(  "SCINTILLA_FIND_REGEXP"                   ,   0x00200000 ); 
+@define(  "SCINTILLA_LEXER_HTML"                    ,   4 );
+
+// GtkScintillaStyle
+@define(  "SCINTILLA_STYLE_DEFAULT"                 ,   32 ); 
+@define(  "SCINTILLA_STYLE_LINE_NUMBER"             ,   33 ); 
+@define(  "SCINTILLA_STYLE_BRACE_LIGHT"             ,   34 ); 
+@define(  "SCINTILLA_STYLE_BRACE_BAD"               ,   35 ); 
+@define(  "SCINTILLA_STYLE_CONTROL_CHAR"            ,   36 ); 
+@define(  "SCINTILLA_STYLE_INDENT_GUIDE"            ,   37 ); 
+@define(  "SCINTILLA_STYLE_MAX"                     ,   127 ); 
+
+// LEXER_HTML Lexical states
+@define(  "SCINTILLA_HTML_TEXT"                     ,   0 ); 
+@define(  "SCINTILLA_HTML_TAG"                      ,   1 ); 
+@define(  "SCINTILLA_HTML_TAG_UNKNOWN"              ,   2 ); 
+@define(  "SCINTILLA_HTML_ATTRIBUTE"                ,   3 ); 
+@define(  "SCINTILLA_HTML_ATTRIBUTE_UNKNOWN"        ,   4 ); 
+@define(  "SCINTILLA_HTML_NUMBER"                   ,   5 ); 
+@define(  "SCINTILLA_HTML_DOUBLE_STRING"            ,   6 ); 
+@define(  "SCINTILLA_HTML_SINGLE_STRING"            ,   7 ); 
+@define(  "SCINTILLA_HTML_OTHER"                    ,   8 ); 
+@define(  "SCINTILLA_HTML_COMMENT"                  ,   9 ); 
+@define(  "SCINTILLA_HTML_ENTITY"                   ,   10 ); 
+@define(  "SCINTILLA_HTML_XML_TAG_END"              ,   11    ); 
+@define(  "SCINTILLA_HTML_XML_ID_START"             ,   12    ); 
+@define(  "SCINTILLA_HTML_XML_ID_END"               ,   13    ); 
+@define(  "SCINTILLA_HTML_SCRIPT"                   ,   14 ); 
+@define(  "SCINTILLA_HTML_ASP_1"                    ,   15  ); 
+@define(  "SCINTILLA_HTML_ASP_2"                    ,   16   ); 
+@define(  "SCINTILLA_HTML_CDATA"                    ,   17 ); 
+@define(  "SCINTILLA_HTML_PHP"                      ,   18 ); 
+@define(  "SCINTILLA_HTML_UNQUOTED"                 ,   19 ); 
+
+// LEXER HTML :: Embedded Javascript
+@define(  "SCINTILLA_HTML_JS_START"                 ,   40 ); 
+@define(  "SCINTILLA_HTML_JS_DEFAULT"               ,   41 ); 
+@define(  "SCINTILLA_HTML_JS_COMMENT_BLOCK"         ,   42 ); 
+@define(  "SCINTILLA_HTML_JS_COMMENT_LINE"          ,   43 ); 
+@define(  "SCINTILLA_HTML_JS_COMMENT_DOC"           ,   44 ); 
+@define(  "SCINTILLA_HTML_JS_NUMBER"                ,   45 ); 
+@define(  "SCINTILLA_HTML_JS_WORD"                  ,   46 ); 
+@define(  "SCINTILLA_HTML_JS_KEYWORD"               ,   47 ); 
+@define(  "SCINTILLA_HTML_JS_STRING_DOUBLE"         ,   48 ); 
+@define(  "SCINTILLA_HTML_JS_STRING_SINGLE"         ,   49 ); 
+@define(  "SCINTILLA_HTML_JS_SYMBOL"                ,   50 ); 
+@define(  "SCINTILLA_HTML_JS_EOL"                   ,   51 ); 
+@define(  "SCINTILLA_HTML_JS_REGEX"                 ,   52 ); 
+
+// LEXER_HTML :: PHP
+@define(  "SCINTILLA_HTML_PHP_DEFAULT"              ,   118 ); 
+@define(  "SCINTILLA_HTML_PHP_STRING_DOUBLE"        ,   119 ); 
+@define(  "SCINTILLA_HTML_PHP_STRING_SINGLE"        ,   120 ); 
+@define(  "SCINTILLA_HTML_PHP_KEYWORD"              ,   121 ); 
+@define(  "SCINTILLA_HTML_PHP_NUMBER"               ,   122 ); 
+@define(  "SCINTILLA_HTML_PHP_VARIABLE"             ,   123 ); 
+@define(  "SCINTILLA_HTML_PHP_COMMENT_BLOCK"        ,   124 ); 
+@define(  "SCINTILLA_HTML_PHP_COMMENT_LINE"         ,   125 ); 
+@define(  "SCINTILLA_HTML_PHP_EOL"                  ,   126 ); 
+@define(  "SCINTILLA_HTML_PHP_OPERATOR"             ,   127 ); 
+
+@define(  "SCINTILLA_PERL_WHITE_SPACE"              ,   0 ); 
+@define(  "SCINTILLA_PERL_ERROR"                    ,   1 ); 
+@define(  "SCINTILLA_PERL_COMMENT_LINE"             ,   2 ); 
+@define(  "SCINTILLA_PERL_POD"                      ,   3 ); 
+@define(  "SCINTILLA_PERL_NUMBER"                   ,   4 ); 
+@define(  "SCINTILLA_PERL_KEYWORD"                  ,   5 ); 
+@define(  "SCINTILLA_PERL_STRING"                   ,   6 ); 
+@define(  "SCINTILLA_PERL_CHARACTER"                ,   7 ); 
+@define(  "SCINTILLA_PERL_PUNCTUATION"              ,   8 ); 
+@define(  "SCINTILLA_PERL_PREPROCESSOR"             ,   9 ); 
+@define(  "SCINTILLA_PERL_OPERATOR"                 ,   10 ); 
+@define(  "SCINTILLA_PERL_IDENTIFIER"               ,   11 ); 
+@define(  "SCINTILLA_PERL_SCALAR"                   ,   12 ); 
+@define(  "SCINTILLA_PERL_ARRAY"                    ,   13 ); 
+@define(  "SCINTILLA_PERL_HASH"                     ,   14 ); 
+@define(  "SCINTILLA_PERL_SYMBOL_TABLE"             ,   15 ); 
+@define(  "SCINTILLA_PERL_REGEX"                    ,   17 ); 
+@define(  "SCINTILLA_PERL_REGSUBST"                 ,   18 ); 
+@define(  "SCINTILLA_PERL_LONG_QUOTE"               ,   19 ); 
+@define(  "SCINTILLA_PERL_BACKTICKS"                ,   20 ); 
+@define(  "SCINTILLA_PERL_DATA_SECTION"             ,   21 ); 
+@define(  "SCINTILLA_PERL_HERE_DELIM"               ,   22 ); 
+@define(  "SCINTILLA_PERL_HERE_Q"                   ,   23 ); 
+@define(  "SCINTILLA_PERL_HERE_QQ"                  ,   24 ); 
+@define(  "SCINTILLA_PERL_HERE_QX"                  ,   25 ); 
+@define(  "SCINTILLA_PERL_STRING_Q"                 ,   26 ); 
+@define(  "SCINTILLA_PERL_STRING_QQ"                ,   27 ); 
+@define(  "SCINTILLA_PERL_STRING_QX"                ,   28 ); 
+@define(  "SCINTILLA_PERL_STRING_QR"                ,   29 ); 
+@define(  "SCINTILLA_PERL_STRING_QW"                ,   30 ); 
+
+// LEXER_XML Lexical states
+@define(  "SCINTILLA_XML_DEFAULT"                   ,   0 ); 
+@define(  "SCINTILLA_XML_TAG"                       ,   1 ); 
+@define(  "SCINTILLA_XML_TAG_UNKNOWN"               ,   2 ); 
+@define(  "SCINTILLA_XML_ATTRIBUTE"                 ,   3 ); 
+@define(  "SCINTILLA_XML_ATTRIBUTE_UNKNOWN"         ,   4 ); 
+@define(  "SCINTILLA_XML_NUMBER"                    ,   5 ); 
+@define(  "SCINTILLA_XML_DOUBLE_STRING"             ,   6 ); 
+@define(  "SCINTILLA_XML_SINGLE_STRING"             ,   7 ); 
+@define(  "SCINTILLA_XML_OTHER"                     ,   8 ); 
+@define(  "SCINTILLA_XML_COMMENT"                   ,   9 ); 
+@define(  "SCINTILLA_XML_ENTITY"                    ,   10 ); 
+@define(  "SCINTILLA_XML_TAG_END"                   ,   11 ); 
+@define(  "SCINTILLA_XML_ID_START"                  ,   12 ); 
+@define(  "SCINTILLA_XML_ID_END"                    ,   13 ); 
+@define(  "SCINTILLA_XML_CDATA"                     ,   17 ); 
+@define(  "SCINTILLA_XML_QUESTION"                  ,   18 ); 
+@define(  "SCINTILLA_XML_UNQUOTED"                  ,   19 ); 
+
+// LEXER_SQL Lexical states
+@define(  "SCINTILLA_SQL_WHITE_SPACE"               ,   0 ); 
+@define(  "SCINTILLA_SQL_COMMENT_BLOCK"             ,   1 ); 
+@define(  "SCINTILLA_SQL_COMMENT_LINE"              ,   2 ); 
+@define(  "SCINTILLA_SQL_COMMENT_DOC"               ,   3 ); 
+@define(  "SCINTILLA_SQL_NUMBER"                    ,   4 ); 
+@define(  "SCINTILLA_SQL_KEYWORD"                   ,   5 ); 
+@define(  "SCINTILLA_SQL_DOUBLE_STRING"             ,   6 ); 
+@define(  "SCINTILLA_SQL_SINGLE_STRING"             ,   7 ); 
+@define(  "SCINTILLA_SQL_SYMBOLS"                   ,   8 ); 
+@define(  "SCINTILLA_SQL_PREPROCESSOR"              ,   9 ); 
+@define(  "SCINTILLA_SQL_OPERATOR"                  ,   10 ); 
+@define(  "SCINTILLA_SQL_IDENTIFIER"                ,   11 ); 
+@define(  "SCINTILLA_SQL_STRING_EOL"                ,   12 ); 
+
+// LEXER_DIFF Lexical states
+@define(  "SCINTILLA_DIFF_DEFAULT"                  ,   0 ); 
+@define(  "SCINTILLA_DIFF_COMMENT"                  ,   1 ); 
+@define(  "SCINTILLA_DIFF_COMMAND"                  ,   2 ); 
+@define(  "SCINTILLA_DIFF_FILES"                    ,   3 ); 
+@define(  "SCINTILLA_DIFF_POSITION"                 ,   4 ); 
+@define(  "SCINTILLA_DIFF_DEL_LINE"                 ,   5 ); 
+@define(  "SCINTILLA_DIFF_ADD_LINE"                 ,   6 ); 
+
+// LEXER_CONF Lexical states
+@define(  "SCINTILLA_CONF_DEFAULT"                  ,   0 ); 
+@define(  "SCINTILLA_CONF_COMMENT"                  ,   1 ); 
+@define(  "SCINTILLA_CONF_NUMBER"                   ,   2 ); 
+@define(  "SCINTILLA_CONF_IDENTIFIER"               ,   3 ); 
+@define(  "SCINTILLA_CONF_EXTENSION"                ,   4 ); 
+@define(  "SCINTILLA_CONF_PARAMETER"                ,   5 ); 
+@define(  "SCINTILLA_CONF_STRING"                   ,   6 ); 
+@define(  "SCINTILLA_CONF_OPERATOR"                 ,   7 ); 
+@define(  "SCINTILLA_CONF_IP"                       ,   8 ); 
+@define(  "SCINTILLA_CONF_DIRECTIVE"                ,   9 ); 
+
+/***********************************************************/
+/* Embedded editor from Tulip
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class ScintillaPHP extends GtkScintilla
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function ScintillaPHP()
+    {
+        GtkScintilla::GtkScintilla();
+        GtkScintilla::connect_object('char_added', array(&$this,'char_added'));
+        GtkScintilla::set_margin_type_n(2, 0);
+        GtkScintilla::set_margin_width_n(2, 0);
+        GtkScintilla::set_margin_width_n(1, 20);
+        GtkScintilla::autoc_set_choose_single(TRUE);
+        GtkScintilla::set_tab_indents(1);
+        GtkScintilla::set_backspace_unindents(1);
+        GtkScintilla::set_usize(400, 200);
+        GtkScintilla::use_pop_up(0);
+        
+        GtkScintilla::set_sel_back(true,    11250603);
+        GtkScintilla::marker_set_back(true, 15908608);
+        
+        GtkScintilla::set_caret_fore(0);
+        GtkScintilla::set_caret_width(2);
+        GtkScintilla::set_caret_period(250);
+        
+        $this->DefinePHP();
+        
+        GtkScintilla::set_tab_width(4);
+        GtkScintilla::set_use_tabs(1);
+        GtkScintilla::set_indent(4);
+        GtkScintilla::set_indentation_guides(1);
+        GtkScintilla::set_edge_mode(0);
+        GtkScintilla::set_edge_column( 80);
+        GtkScintilla::set_edge_colour( 8355712);
+        GtkScintilla::set_style_bits(7);
+        GtkScintilla::set_lexer(SCINTILLA_LEXER_HTML);
+        
+        GtkScintilla::show_lines(0,GtkScintilla::get_line_count());
+        GtkScintilla::show();
+    }
+
+    /***********************************************************/
+    /* Opens a file
+    /***********************************************************/    
+    function Open($file)
+    {
+        GtkScintilla::clear_all();
+        if (file_exists($file))
+        {
+            $lines = file($file);
+            $lines = array_reverse($lines);
+            
+            foreach($lines as $line)
+            GtkScintilla::insert_text(-1, $line);
+        }
+        GtkScintilla::empty_undo_buffer();
+    }
+
+    /***********************************************************/
+    /* Inserts a string
+    /***********************************************************/
+    function OpenString($string)
+    {
+        GtkScintilla::clear_all();
+        GtkScintilla::insert_text(-1, $string);
+        GtkScintilla::empty_undo_buffer();
+    }
+
+    /***********************************************************/
+    /* When a char is added
+    /***********************************************************/
+    function char_added($char)
+    {
+        /*$pos = $this->scintilla->get_current_pos();
+        $this->curstyle = $this->scintilla->get_style_at($pos);
+        if ($this->do_auto_indent && ($char == 10 || $char == 13) )
+        $this->auto_indent();
+        if ($this->curstyle == 0) return;*/
+        //if (eregi("[a-z>-]+",chr($char)))
+        $this->complete_word_activate(1,1);
+    }
+
+    /***********************************************************/
+    /* Returns the current word
+    /***********************************************************/
+    function get_current_word($n = 0)
+    {
+        $this->curpos = GtkScintilla::get_current_pos();
+        GtkScintilla::word_left_extend();
+        if ($n ==1)
+        GtkScintilla::word_left_extend();
+        
+        $word = GtkScintilla::get_sel_text();
+        GtkScintilla::goto_pos($this->curpos);
+        return trim($word);
+    }
+
+    /***********************************************************/
+    /* Auto complete control
+    /***********************************************************/
+    function complete_word_activate($is_key=0)
+    {
+        $disable_autocomplete = FALSE;
+        //$word = strtolower($this->get_current_word());
+        $word = $this->get_current_word();
+        
+        if (@$this->lastword && $is_key)
+        if (substr(trim($word),0,strlen($this->lastword)) == $this->lastword)
+        $disable_autocomplete = TRUE;
+        if (trim($word) == substr($word,1)) $word[0] = " ";
+        if ((strlen($word) > 2) || $word == '(')
+        switch ($word{0})
+        {
+            case "$":
+            if ($is_key) $this->lastword = $word;
+            if (preg_match_all("/\\".$word."[a-z0-9_>=-]*/",
+            GtkScintilla::get_text(), $matches ))
+            {
+                if (!$matches[0]) return;
+                $matches[0][0] = "";
+                $linematches =$matches[0];
+                if (!$linematches) return;
+                $linematches=array_unique($linematches);
+                if (!$linematches) return;
+                asort($linematches);
+                
+                $l = trim(implode(" ",$linematches));
+                if ($is_key && count($linematches) < 2) $l.="   ";
+                if (!$is_key || (count($linematches) < 5))
+                if (!$disable_autocomplete )
+                {
+                    GtkScintilla::autoc_show(strlen($word), $l);
+                    if ($is_key) $this->lastword = $word;
+                }
+            }
+            break;
+            default:
+            $word = trim($word);
+            if ($linematches = $this->get_suggestions($word))
+            {
+                $l = trim(implode("",array_unique($linematches)));
+                if ($is_key && count($linematches) == 1) $l.=" ";
+                //if (!$is_key || (count($linematches) < 5))
+                //if (!$disable_autocomplete )
+                {
+                    if ($is_key) $this->lastword = $word;
+                    GtkScintilla::autoc_show(strlen($word), $l);
+                    //return;
+                }
+            }
+            elseif ($word == '(')
+            {
+                $this->lastword = substr($this->get_current_word(1), 0, -1);
+                $start = $this->curpos - strlen($this->lastword);
+                if ($f = $this->get_definition($this->lastword))
+                {
+                    GtkScintilla::call_tip_show($start,$f);
+                }
+            }
+            break;
+        }
+    }
+
+    /***********************************************************/
+    /* Return the suggestions for autocomplete
+    /***********************************************************/
+    function get_suggestions ($word)
+    {
+        for($i=1;$i<=8;$i++)
+        {
+            if (!$this->keywords[$i]) continue;
+            if (isset($matches)) unset($matches);
+            if (@preg_match_all ("( ".$word ."[^ ]*)" , $this->keywords[$i],
+            $matches, PREG_PATTERN_ORDER))
+            return $matches[0];
+        }
+    }
+
+    /***********************************************************/
+    /* Read the support files
+    /***********************************************************/
+    function read_function_file()
+    {
+        $data = file('include/php_functions');
+        for ($i=0;$i<count($data);$i++)
+        {
+            $line = $data[$i];
+            $info  = explode(" ",trim($line));
+            $this->functions[$info[1]] = trim($line);
+        }
+        
+        $data = file('include/gtk_functions');
+        for ($i=0;$i<count($data);$i++)
+        {
+            $line = $data[$i];
+            $info  = explode(" ",trim($line));
+            $function_name = $info[1];
+            $this->functions[$function_name] = trim($line);
+            $gtkfunctions[] = $function_name;
+        }
+        $this->keywords[7] = implode(' ', $gtkfunctions);
+        
+        $data = file('include/extra_functions');
+        for ($i=0;$i<count($data);$i++)
+        {
+            $line = $data[$i];
+            $info  = explode(" ",trim($line));
+            $function_name = $info[1];
+            $this->functions[$function_name] = trim($line);
+            $extrafunctions[] = $function_name;
+        }
+        $this->keywords[8] = implode(' ', $extrafunctions);
+    }
+
+    /***********************************************************/
+    /* Get definitions from a function
+    /***********************************************************/
+    function get_definition($function)
+    {
+        $a =  @$this->functions[$function];
+        return $a;
+    }
+
+    /***********************************************************/
+    /* highlight as PHP style
+    /***********************************************************/
+    function DefinePHP()
+    {
+        if (OS == 'WIN')
+        {
+            $font = '-*-lucida console-*-*-*-*-*-140-*-*-*-*-*-*';
+            $lilfont = '-*-lucida console-*-*-*-*-*-140-*-*-*-*-*-*';
+            $etcfont = '-*-lucida console-*-*-*-*-*-140-*-*-*-*-*-*';
+        }
+        else
+        {
+            $font = '-*-luxisans-bold-r-normal-*-18-*-*-*-*-*-*-*';
+            $lilfont = '-*-luxisans-medium-r-normal-*-18-*-*-*-*-*-*';
+            $etcfont = '-*-lucidatypewriter-medium-r-normal-*-18-*-*-*-*-*-*';
+            //	$lilfont = $font;
+        }
+        
+        GtkScintilla::style_set_font(SCINTILLA_STYLE_DEFAULT, $lilfont);
+        GtkScintilla::style_set_fore(SCINTILLA_STYLE_DEFAULT, 0);
+        GtkScintilla::style_set_back(SCINTILLA_STYLE_DEFAULT, 15987699 );
+        
+        GtkScintilla::style_set_font(SCINTILLA_STYLE_LINE_NUMBER, $lilfont);
+        GtkScintilla::style_set_fore(SCINTILLA_STYLE_LINE_NUMBER, 0);
+        GtkScintilla::style_set_back(SCINTILLA_STYLE_LINE_NUMBER, 11053224);
+        
+        GtkScintilla::style_set_font(SCINTILLA_STYLE_BRACE_LIGHT, $lilfont);
+        GtkScintilla::style_set_fore(SCINTILLA_STYLE_BRACE_LIGHT, 12517376);
+        GtkScintilla::style_set_back(SCINTILLA_STYLE_BRACE_LIGHT,15987699);
+        
+        GtkScintilla::style_set_font(SCINTILLA_STYLE_BRACE_BAD, $lilfont);
+        GtkScintilla::style_set_fore(SCINTILLA_STYLE_BRACE_BAD, 12517376);
+        GtkScintilla::style_set_back(SCINTILLA_STYLE_BRACE_BAD,15987699);
+        
+        $font2 = Gdk::font_load($etcfont);
+        if ($font2)
+        {
+            GtkScintilla::set_margin_width_n(0, $font2->width(str_repeat('0',(4))));
+        }
+        
+        $this->keywords[1] = 'doctype a abbr abbr accept accept-charset accesskey acronym action address align alink alt applet archive area axis b background base basefont bdo bgcolor big blockquote body border br button caption cellpadding cellspacing center char charoff charset checkbox checked cite cite class classid clear code codebase codetype col colgroup color cols colspan compact content coords data datafld dataformatas datapagesize datasrc datetime dd declare defer del dfn dir dir disabled div dl dt em enctype event face fieldset file font for foreach form frame frame frameborder frameset h1 h2 h3 h4 h5 h6 head headers height hidden hr href hreflang hspace html http-equiv i id iframe image img input ins isindex ismap kbd label label lang language leftmargin legend li link link longdesc map marginheight marginwidth maxlength media menu meta method multiple name noframes nohref noresize noscript noshade nowrap object object ol onblur onchange onclick ondblclick onfocus onkeydown onkeypress onkeyup onload onmousedown onmousemove onmouseout onmouseover onmouseup onreset onselect onsubmit onunload optgroup option p param password pre profile prompt public q radio readonly rel reset rev rows rowspan rules s samp scheme scope script select selected shape size small span span src standby start strike strong style style sub submit summary sup tabindex table target tbody td text text textarea tfoot th thead title title topmargin tr tt type u ul usemap valign value valuetype var version vlink vspace width xml xmlns';
+        $this->keywords[2] = 'abstract boolean break byte case catch char class const continue debugger default delete do double else enum export extends final finally float for foreach function goto if implements import in instanceof int interface long native new package private protected public return short static super switch synchronized this throw throws transient try typeof var void volatile while with';
+        $this->keywords[4] = 'None and assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while function include include_once require require_once';
+        $df = get_defined_functions();
+        $dc = get_declared_classes();
+        $this->keywords[5] = implode(' ', $df['internal']);
+        $this->keywords[6] = implode(' ', $dc);
+        GtkScintilla::set_keywords(1, $this->keywords[1]);
+        GtkScintilla::set_keywords(2, $this->keywords[2]);
+        GtkScintilla::set_keywords(4, $this->keywords[4]);
+        
+        $this->read_function_file();
+        
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_COMMENT_LINE, 8355711);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_COMMENT_BLOCK, 8421504);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_VARIABLE, 21504);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_NUMBER, 9204544);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_OPERATOR, 8388608);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_PHP_OPERATOR, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_KEYWORD, 8388608); //keywords 4
+        GtkScintilla::style_set_font(SCINTILLA_HTML_PHP_KEYWORD, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_STRING_SINGLE, 8388736);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_STRING_DOUBLE, 8388736);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_JS_SYMBOL, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_STRING_SINGLE, 8388736);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_STRING_DOUBLE, 8388736);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_KEYWORD, 8388608);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_JS_KEYWORD, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_NUMBER, 9204544);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_COMMENT_DOC, 8355712);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_COMMENT_LINE, 8421504);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_COMMENT_BLOCK, 8421504);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_UNQUOTED, 21632);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP, 7553165);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_PHP, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_SCRIPT, 7553165);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_SCRIPT, $font);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_ENTITY, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_COMMENT, 8421504);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_SINGLE_STRING, 32768);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_DOUBLE_STRING, 32768);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_NUMBER, 9204544);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_ATTRIBUTE_UNKNOWN, 7572544);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_ATTRIBUTE_UNKNOWN, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_ATTRIBUTE, 9204544);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_ATTRIBUTE, $font);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_TAG_UNKNOWN, 7553164);
+        GtkScintilla::style_set_fore(SCINTILLA_HTML_TAG, 7553164);
+        GtkScintilla::style_set_font(SCINTILLA_HTML_TAG, $font);
+        
+        for  ($n=118; $n<=127; $n++) //PHP BACK
+        {
+            GtkScintilla::style_set_back($n, 15987699);
+            GtkScintilla::style_set_font($n, $font);
+        }
+        for  ($n=0; $n<=29; $n++) //HTML BACK
+        {
+            GtkScintilla::style_set_back($n, 15987699);
+            GtkScintilla::style_set_font($n, $font);
+        }
+        GtkScintilla::style_set_back(SCINTILLA_HTML_PHP, 15987699); // HTML AND PHP TAGS
+    }
+}
+?>

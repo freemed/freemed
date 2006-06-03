@@ -1,0 +1,264 @@
+<?
+/***********************************************************/
+/* Tree handler, a wrapper for FileExplorer
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class TreeHandler extends GtkBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function TreeHandler($FileTree, $names = null, $horizontal = false)
+    {
+        $this->horizontal = $horizontal;
+        $this->FileTree = $FileTree;
+        GtkVBox::GtkVBox();
+        $scroll = new GtkScrolledWindow;
+        $view = new GtkViewPort;
+        $hbox = new GtkHBox;
+        $scroll->add($view);
+        $view->add($hbox);
+        $hbox->pack_start($FileTree);
+        $this->names = $names;
+
+        if ($horizontal)
+        {
+            GtkHBox::GtkHBox();
+        }
+        else
+        {
+            GtkVBox::GtkVBox();
+        }
+        $this->widget = $widget;
+
+        GtkBox::pack_start($scroll);
+        
+        $this->CreateMenu();
+        $this->OpenAction = new GtkButton();
+        $botao = $FileTree->BotaoOk;
+        
+        $botao->connect_object('clicked', array(&$this, 'Pop'));
+
+        GtkVBox::show_all();
+    }
+
+    /***********************************************************/
+    /* Pop the File Explorer options
+    /***********************************************************/
+    function Pop()
+    {
+        $Menu = $this->Menu;
+        $Menu->show_all();
+        $Menu->popup(null, null, null, 1, 1);
+    }
+
+    /***********************************************************/
+    /* Creates the PopMenu Options
+    /***********************************************************/
+    function CreateMenu()
+    {
+        global $Pixmaps;
+        $this->Menu = $Menu = new GtkMenu;
+        $names = $this->names;
+
+        if (!$names)
+        {
+            $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($Pixmaps['menu_open'], _a('Open'), array(&$this, 'Open'));
+            $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($Pixmaps['menu_del'], _a('Delete'), array(&$this, 'Delete'));
+        }
+        else
+        {
+            if ($names[0])
+            {
+                $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($names[0][0], _a($names[0][1]) , array(&$this, 'Open'));
+            }
+            
+            if ($names[1])
+            {
+                $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($names[1][0], _a($names[1][1]), array(&$this, 'Delete'));
+            }
+        }
+        
+        
+        $Menuitem3 = new GtkMenuItem;
+        $Menuitem4 = new MyNormalMenuItem($Pixmaps['menu_close'], _a('Close'), null);
+
+        $Menu->append($Menuitem1);
+        if ($Menuitem2)
+        {
+            $Menu->append($Menuitem2);
+        }
+        $Menu->append($Menuitem3);
+        $Menu->append($Menuitem4);
+    }
+
+    /***********************************************************/
+    /* Creates the toolbar
+    /***********************************************************/
+    function CreateToolBar()
+    {
+        global $Pixmaps;
+        GtkVBox::realize();
+
+        if ($this->horizontal)
+            $ButtonBox = new GtkVBox;
+        else
+            $ButtonBox = new GtkHBox;
+
+        GtkBox::pack_start($ButtonBox, false, false);
+
+        $ButtonBox->pack_start($a = new Button(array(&$this, 'CreateFolder'),  _a('Create Folder'), $Pixmaps['folder_new'], ICONBUTTON), false, false);
+        $ButtonBox->pack_start($b = new Button(array(&$this, 'Open'),          _a('Open'),          $Pixmaps['file_open'],  ICONBUTTON), false, false);
+        $ButtonBox->pack_start($c = new Button(array(&$this, 'Delete'),        _a('Delete'),        $Pixmaps['file_del'],   ICONBUTTON), false, false);
+
+        $a->set_relief(GTK_RELIEF_NONE);
+        $b->set_relief(GTK_RELIEF_NONE);
+        $c->set_relief(GTK_RELIEF_NONE);
+    }
+
+    /***********************************************************/
+    /* Complementary options
+    /***********************************************************/
+    function CreateToolBar2()
+    {
+        GtkVBox::realize();
+        $ButtonBox = new GtkHBox;
+        GtkVBox::pack_start($ButtonBox, false, false);
+        $ButtonBox->pack_start(new GtkHBox);
+        $pixmap = Gdk::pixmap_create_from_xpm($this->window, null, images . 'ico_require.xpm');
+        $ButtonBox->pack_start($b = new Button(array(&$this, 'Open'),    _a('Apply'), $pixmap, IMAGEBUTTON), false, false);
+        
+        $b->set_relief(GTK_RELIEF_NONE);
+    }
+
+    /***********************************************************/
+    /* Asks by the Folder name
+    /***********************************************************/
+    function CreateFolder()
+    {
+        $FileTree = $this->FileTree;
+        $node = $FileTree->selection[0];
+        if ($node)
+        {
+            $info = $FileTree->node_get_row_data($node);
+            if (is_dir($info))
+            {
+                $this->InputBox = new InputBox(_a('Folder Name'), 180, '');
+                $button =  $this->InputBox->button;
+                $button->connect_object('clicked', array(&$this,'MakeFolder'), $node, $info);
+            }
+            else
+            {
+                new Dialog(_a('Cannot create the directory'));
+            }
+        }
+        else
+        {
+            $this->InputBox = new InputBox(_a('Folder Name'), 180, '');
+            $button =  $this->InputBox->button;
+            $button->connect_object('clicked', array(&$this,'MakeFolder'), null, $FileTree->entries[0]);
+        }
+    }
+
+    /***********************************************************/
+    /* Creates the folder
+    /***********************************************************/
+    function MakeFolder($node, $folder)
+    {
+        global $Pixmaps;
+        $InputBox = $this->InputBox;
+        $Item = $InputBox->InputEntry->get_text();
+        $InputBox->Close();
+        $FileTree = $this->FileTree;
+        $Caminho =  $folder . bar . $Item;
+        if (mkdir($Caminho))
+        {
+            $ico1 = $Pixmaps['folder1'];
+            $ico2 = $Pixmaps['folder2'];
+            $NodoPasta = $FileTree->insert_node($node, null, array($Item), 5, $ico1[0], $ico1[1], $ico2[0], $ico2[1], false, false);
+            $FileTree->node_set_row_data($NodoPasta, $Caminho);
+        }
+        else
+        {
+            new Dialog(_a('Cannot create the directory'));
+        }
+    }
+
+    /***********************************************************/
+    /* Opens a node
+    /***********************************************************/
+    function Open()
+    {
+        $FileTree = $this->FileTree;
+        $node = $FileTree->selection[0];
+        if (!$node)
+        {
+            return;
+        }
+
+        $Menu = $this->Menu;
+        if ($Menu)
+        {
+            $Menu->popdown();
+        }
+        
+        $info = $FileTree->node_get_row_data($node);
+        if (($info) &&  is_file($info))// arquivo
+        {
+            $ItemOpen = $this->OpenAction;
+            $ItemOpen->emit('clicked');
+        }
+        else
+        {
+            $FileTree->expand($node);
+        }
+    }
+
+    /***********************************************************/
+    /* Deletes the selected node (file or dir)
+    /***********************************************************/
+    function Delete($flag = false)
+    {
+        $FileTree = $this->FileTree;
+        $node = $FileTree->selection[0];
+        
+        if (!$flag)
+        {
+            $b = new Ask(_a('Do you really want to delete ?'), array(&$this,'Delete'), null, array(true));
+            return true;
+        }
+        else
+        {
+            if ($node)
+            {
+                $info = $FileTree->node_get_row_data($node);
+                if (is_file($info)) // arquivo
+                {
+                    $t1 = unlink($info);
+                    if (!$t1)
+                    {
+                        new Dialog(_a('Cannot remove the file'));
+                    }
+                    else
+                    {
+                        $FileTree->remove_node($node);
+                    }
+                }
+                else
+                {
+                    $t1 = rmdir($info);
+                    if (!$t1)
+                    {
+                        new Dialog(_a('Cannot remove the directory'));
+                    }
+                    else
+                    {
+                        $FileTree->remove_node($node);
+                    }
+                }
+            }
+        }
+    }
+    
+}
+?>

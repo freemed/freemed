@@ -1,0 +1,110 @@
+<?php
+/***********************************************************/
+/* Custom Paramater
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class CustomParameterWindow
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function CustomParameterWindow()
+    {
+        $this->window = &new GtkWindow;
+        $this->window->set_position(GTK_WIN_POS_CENTER);
+        $this->window->set_default_size(400,240);
+        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->set_title(_a('Custom Parameters'));
+        $this->window->realize();
+        
+        $vbox = new GtkVBox;
+        $this->window->add($vbox);
+        
+        $buttons = array('Add' => 1, 'Edit' => 1, 'Delete' => 1, 'Clear' => 1, 'Up' => 1, 'Down' => 1, 'Save' => 1);
+        $this->ParameterList = &new Alist(&$vbox, $this->window, _a('Tables'),
+                                     array(_a('Parameter'), _a('Mask'), _a('Value')), null, 400, 200, false,
+                                     $buttons, GTK_SELECTION_EXTENDED, array(images . 'ico_edit.xpm', images . 'ico_edit.xpm', images . 'ico_edit.xpm'));
+        
+        $this->ParameterList->clist->set_column_width(0, 100);
+        $this->ParameterList->clist->set_column_width(1, 100);
+                                       
+        $this->ParameterList->SetCallBack(array(&$this, 'ReturnParameterList'));
+        $vbox->pack_start(left(new GtkLabel(' ' . _a('Parameters must start with "$"'))), false, false);
+    }
+
+    /***********************************************************/
+    /* SetParameters
+    /***********************************************************/
+    function SetParameters($Parameters)
+    {
+        if ($Parameters)
+        {
+            foreach ($Parameters as $Parameter => $Properties)
+            {
+                $add[] = array($Parameter, $Properties['mask'], $Properties['value']);
+            }
+            $ParameterList = $this->ParameterList;
+            $ParameterList->StartAppend($add);
+        }
+    }
+
+    /***********************************************************/
+    /* ReturnParameterList
+    /***********************************************************/
+    function ReturnParameterList($p1)
+    {
+        $ParameterList = $this->ParameterList;
+        $items = $ParameterList->GetItems();
+        
+        foreach ($items as $item)
+        {
+            $return[$item[0]]['mask']  = $item[1];
+            $return[$item[0]]['value'] = $item[2];
+        }
+        
+        $ParameterList->CloseList();
+        if ($this->callbacks['return-parameters'])
+        {
+            call_user_func($this->callbacks['return-parameters'], $return);
+        }
+    }
+
+    /***********************************************************/
+    /* Connects the signals
+    /***********************************************************/
+    function connect_object($signal, $callback)
+    {
+        $this->callbacks[$signal] = $callback;
+    }
+
+    /***********************************************************/
+    /* Key Test Method
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $this->Hide();
+        }
+    }
+
+    /***********************************************************/
+    /* Shows the Window
+    /***********************************************************/
+    function Show()
+    {
+        $this->window->show_all();
+        return true;
+    }
+
+    /***********************************************************/
+    /* Hide the Window
+    /***********************************************************/
+    function Hide()
+    {
+        $this->window->hide();
+        return true;
+    }
+}
+?>

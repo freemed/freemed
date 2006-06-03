@@ -1,0 +1,124 @@
+<?
+/***********************************************************/
+/* FileBox, used to allows the user to choose colors
+/* by Pablo Dall'Oglio 2004-2006
+/***********************************************************/
+class CrossBox
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function CrossBox($Description)
+    {
+        global $Pixmaps;
+        $tooltip = &new GtkTooltips;
+        $this->entry = &new GtkEntry;
+
+        $box = &new GtkHBox;
+        $this->widget = new Box($box, $Description);
+        $this->button = new Button(array(&$this, 'CrossSel'), _a('Get External Field'), $Pixmaps['field'], ICONBUTTON, $isdir, true);
+        $this->button->set_relief(GTK_RELIEF_NONE);
+
+        $box->pack_start($this->entry);
+        $box->pack_start($this->button);
+    }
+    /***********************************************************/
+    /* Changes the color
+    /***********************************************************/
+    function set_text($data)
+    {
+        $this->entry->set_text($data);
+    }
+
+    function set_editable($bool)
+    {
+        $this->entry->set_editable($bool);
+    }
+
+    /***********************************************************/
+    /* Returns the color
+    /***********************************************************/
+    function get_text()
+    {
+        return $this->entry->get_text();
+    }
+
+    /***********************************************************/
+    /* Changes the visibility
+    /***********************************************************/    
+    function set_visibility($bool)
+    {
+        $this->entry->set_visibility($bool);
+    }
+
+    /***********************************************************/
+    /* Show the button
+    /***********************************************************/
+    function show()
+    {
+        $this->widget->show_all();
+    }
+
+    /***********************************************************/
+    /* Define the size
+    /***********************************************************/
+    function set_usize($width, $height)
+    {
+        $this->entry->set_usize($width, $height);
+    }
+
+    /***********************************************************/
+    /* Cross Table with another Databases
+    /***********************************************************/
+    function CrossSel()
+    {
+        $this->crossdb = &new CrossDB($this->info);
+        $this->crossdb->buttonok->connect_object('clicked', array(&$this, 'SetCross'));
+    }
+    
+    function SetCross()
+    {
+        $database = $this->crossdb->project;
+        $info = $this->crossdb->info;
+        $getcolumn = $this->crossdb->tree1->GetInfo();
+        $equalcolumn = $this->crossdb->tree2->GetInfo();
+        if ($database && $getcolumn && $equalcolumn)
+        {
+            $getcolumns = explode(':', $getcolumn);
+            $equalcolumns = explode(':', $equalcolumn);
+            $infos = explode(':', $info);
+            
+            if (count($getcolumns)==4 && count($equalcolumns)==4)
+            {
+                $index = 'Select';
+                $get_table = $getcolumns[1];
+                $get_field = $getcolumns[3];
+                $equ_table = $equalcolumns[1];
+                $equ_field = $equalcolumns[3];
+                $inf_table = $infos[1];
+                $inf_field = $infos[3];
+                $this->set_text("@{$database}#{$get_table}.{$get_field}({$equ_table}.{$equ_field})");
+            }
+            else
+            {
+                new Dialog(_a('Select field, please'));
+            }
+        }
+        else
+        {
+            new Dialog(_a('Select items from both lists'));
+        }
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($obj, $window)
+    {
+        if ($obj->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>

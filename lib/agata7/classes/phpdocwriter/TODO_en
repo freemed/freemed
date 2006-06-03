@@ -1,0 +1,6 @@
+- Add support for numbered lists, unnumbered lists and style management of both
+- Better support for character propieties
+- Improve support for drawing functions
+- Add support for indexes generation
+- Better support for frames (images, textboxes, etc)
+- Better support for tables

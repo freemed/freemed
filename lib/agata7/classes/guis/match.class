@@ -1,0 +1,136 @@
+<?
+/***********************************************************/
+/* Match listing class used in importCSV and importDBF
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class Match
+{
+    var $window;
+    var $clist;
+    var $button;
+
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function Match($agataDB)
+    {
+        $bar = (OS == 'WIN') ? $bar = '\\' : $bar = '/';
+        $this->glade= &new GladeXML(images . 'match.glade');
+        $this->window = $this->glade->get_widget( 'window1' );
+        $this->window->connect_object('key_press_event', array(&$this, 'KeyTest'));
+        
+        $this->clist1   = $this->glade->get_widget("clist1");
+        $this->clist2   = $this->glade->get_widget("clist2");
+        $this->clist3   = $this->glade->get_widget("clist3");
+        $this->ok       = $this->glade->get_widget("ok");
+        $this->view     = $this->glade->get_widget("view");
+        $this->direita  = $this->glade->get_widget("direita");
+        $this->column1  = $this->glade->get_widget("column1");
+        $this->result   = $this->glade->get_widget("result");
+        $this->cancel   = $this->glade->get_widget("cancel");
+
+        $this->comboTables  = $this->glade->get_widget("comboTables");
+        $this->agataDB = $agataDB;
+        $combolist = $this->comboTables->list;
+        
+        $combolist->connect_object('button_press_event', array(&$this,'on_comboTablesClick'));
+        $this->cancel->connect_object('clicked', array(&$this,'Close'));
+        $this->direita->connect_object('clicked', array(&$this, 'on_direita_clicked'));
+    }
+
+    /***********************************************************/
+    /* Load the fields of the table
+    /***********************************************************/
+    function on_comboTablesClick()
+    {
+        $combo_entry = $this->comboTables->entry;
+        $this->Table = $Table = $combo_entry->get_text();
+        
+        if ($Table)
+        {
+            $this->clist2->clear();
+            $conn = new AgataConnection;
+            if ($conn->Open($this->agataDB))
+            {
+                $Fields = $conn->LoadFields($Table);
+                $conn->Close();
+                
+                if ($Fields)
+                foreach ($Fields as $Field)
+                {
+                    $this->clist2->append(array($Field));
+                }
+                $this->comboTables->hide();
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Put element in column 1
+    /***********************************************************/
+    function PutInColumn1($array)
+    {
+        $this->window->show();
+        foreach ($array as $element)
+        {
+            $this->clist1->append(array($element));
+        }
+    }
+
+    /***********************************************************/
+    /* Fills the combo
+    /***********************************************************/
+    function PutInCombo($array)
+    {
+        $this->comboTables->set_popdown_strings($array);
+    }
+
+    /***********************************************************/
+    /* Stablish the mapping between the fields
+    /***********************************************************/
+    function on_direita_clicked()
+    {
+        $selection1 = $this->clist1->selection;
+        $selection2 = $this->clist2->selection;
+        if ((!$selection1) || (!$selection2))
+        {
+            new Dialog(_a('Select fields of both columns'));
+            return false;
+        }
+        
+        $line1 = $selection1[0];
+        $text1 = $this->clist1->get_text($line1, 0);
+        
+        $line2 = $selection2[0];
+        $text2 = $this->clist2->get_text($line2, 0);
+        
+        $row1 = $line1;
+        $row2 = $line2;
+        
+        $this->clist1->remove($row1);
+        $this->clist2->remove($row2);
+        
+        $this->clist3->append(array("$text1 => $text2"));
+        
+        $this->clist1->thaw();
+        $this->clist2->thaw();
+    }
+
+    /***********************************************************/
+    /* Close the window
+    /***********************************************************/
+    function Close()
+    {
+        $this->window->hide();
+    }
+
+    /***********************************************************/
+    /* KeyTest Method
+    /***********************************************************/
+    function KeyTest($p1)
+    {
+        if ($p1->keyval == K_ESC)
+        $this->Close();
+    }
+}
+?>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<layout>
+    <data>
+        <font>Helvetica--9</font>
+        <color>#000001</color>
+        <bgcolor>#fffea5</bgcolor>
+    </data>
+
+    <total>
+        <font>Helvetica-B-10</font>
+        <color>#ff0f0f</color>
+        <bgcolor>#d4d4d4</bgcolor>
+    </total>
+
+    <group>
+        <font>Helvetica-BI-10</font>
+        <color>#3623a0</color>
+        <bgcolor>#fff9fd</bgcolor>
+    </group>
+
+    <column>
+        <font>Helvetica-B-9</font>
+        <color>#010101</color>
+        <bgcolor>#d4d4d4</bgcolor>
+    </column>
+
+    <header>
+        <font>Helvetica-B-9</font>
+        <color>#ad1619</color>
+        <bgcolor>#d4d4d4</bgcolor>
+    </header>
+
+    <footer>
+        <font>Helvetica-B-11</font>
+        <color>#22198e</color>
+        <bgcolor>#cacaca</bgcolor>
+    </footer>
+
+    <config>
+        <orientation>Landscape</orientation>
+        <color_lines>1</color_lines>
+        <left_margin>5</left_margin>
+        <border>0</border>
+        <cell_spacing>4</cell_spacing>
+    </config>
+
+</layout>

@@ -1,0 +1,89 @@
+<?
+/***********************************************************/
+/* TextAreaClass, a wrapper for GtkScintilla used in Merge Tool
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class TextArea extends GtkScintilla
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+	function TextArea()
+	{
+        GtkScintilla::GtkScintilla();
+		GtkScintilla::set_margin_type_n(2, 0);
+		GtkScintilla::set_margin_width_n(2, 0);
+		GtkScintilla::set_margin_width_n(1, 6);
+		GtkScintilla::set_usize(400, 300);
+		GtkScintilla::set_sel_back(true,    11250603);
+		GtkScintilla::marker_set_back(true, 15908608);
+		GtkScintilla::marker_set_back(true, 15908608);
+        GtkScintilla::set_caret_line_visible(1);
+        GtkScintilla::set_caret_line_back(9999204548);
+        GtkScintilla::set_view_eol(0);
+		GtkScintilla::set_tab_width(4);
+		GtkScintilla::set_use_tabs(0);
+		GtkScintilla::set_indent(4);
+		GtkScintilla::set_edge_mode(0);
+		GtkScintilla::set_edge_column(80);
+		GtkScintilla::set_edge_colour(8355712);
+		GtkScintilla::set_style_bits(7);
+		GtkScintilla::show_lines(0,GtkScintilla::get_line_count());
+		GtkScintilla::show();
+
+		if (OS == 'WIN')
+		{
+			$font =    '-*-courier new-bold-*-*-*-*-140-*-*-*-*-*-*';
+			$lilfont = '-*-courier new-bold-*-*-*-*-140-*-*-*-*-*-*';
+			$etcfont = '-*-courier new-bold-*-*-*-*-140-*-*-*-*-*-*';
+		}
+		else
+		{
+			$font    = '-*-luxisans-bold-r-normal-*-18-*-*-*-*-*-*-*';
+			$lilfont = '-*-luxisans-medium-r-normal-*-18-*-*-*-*-*-*';
+			$etcfont = '-*-lucidatypewriter-medium-r-normal-*-18-*-*-*-*-*-*';
+		}
+		$font2 = Gdk::font_load($etcfont);
+		GtkScintilla::set_margin_width_n(0, $font2->width(str_repeat('0',(4))));
+
+
+		GtkScintilla::style_set_font(SCINTILLA_STYLE_DEFAULT, $lilfont);
+		GtkScintilla::style_set_fore(SCINTILLA_STYLE_DEFAULT, 0);
+		GtkScintilla::style_set_back(SCINTILLA_STYLE_DEFAULT, hexdec('#FFFFFF'));
+	
+		GtkScintilla::style_set_font(SCINTILLA_STYLE_LINE_NUMBER, $lilfont);
+		GtkScintilla::style_set_fore(SCINTILLA_STYLE_LINE_NUMBER, 0);
+		GtkScintilla::style_set_back(SCINTILLA_STYLE_LINE_NUMBER, 11053224);
+
+
+		for  ($n=118; $n<=127; $n++) //PHP BACK
+		{
+			GtkScintilla::style_set_back($n, hexdec('#FFFFFF'));
+            GtkScintilla::style_set_fore($n, hexdec('#242424'));
+			GtkScintilla::style_set_font($n, $font);
+		}
+		for  ($n=0; $n<=29; $n++) //HTML BACK
+		{
+			GtkScintilla::style_set_back($n, hexdec('#FFFFFF'));
+            GtkScintilla::style_set_fore($n, hexdec('#242424'));
+			GtkScintilla::style_set_font($n, $font);
+		}
+		GtkScintilla::style_set_back(18, hexdec('#FFFFFF')); // HTML AND PHP TAGS
+
+	}
+
+    /***********************************************************/
+    /* Open a File
+    /***********************************************************/
+	function Open($lines)
+	{
+		GtkScintilla::clear_all();
+        foreach($lines as $line)
+        {
+            GtkScintilla::insert_text(-1, $line . "\n");
+        }
+		GtkScintilla::empty_undo_buffer();
+        GtkScintilla::set_read_only(1);
+	}
+}
+?>

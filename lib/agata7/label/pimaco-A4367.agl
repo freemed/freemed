@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<label>
+    <code>pimaco-A4367</code>
+    <horizontal_spacing>0</horizontal_spacing>
+    <vertical_spacing>0</vertical_spacing>
+    <label_width>567</label_width>
+    <label_height>818</label_height>
+    <left_margin>14</left_margin>
+    <top_margin>12</top_margin>
+    <label_cols>1</label_cols>
+    <label_rows>1</label_rows>
+    <page_format>A4</page_format>
+    <line_spacing>14</line_spacing>
+</label>

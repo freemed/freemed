@@ -1,0 +1,309 @@
+<?
+/***********************************************************/
+/* Class that suggests linked tables
+/* by Pablo Dall'Oglio 2001-2006
+/***********************************************************/
+class LinkedTables
+{
+    /***********************************************************/
+    /* Constructor Method
+    /***********************************************************/
+    function LinkedTables($callback, $TableNames, &$AgataLinks, &$AgataDescription, &$AgataDB)
+    {
+        $this->callback         = &$callback;
+        $this->TableNames       = &$TableNames;
+        $this->agataLinks       = &$AgataLinks;
+        $this->agataDescription = &$AgataDescription;
+        $this->agataDB          = &$AgataDB;
+    }
+
+    /***********************************************************/
+    /* Find all the linked tables
+    /***********************************************************/
+    function CallLinks($RequiredTables, $AllTables, $Recursive)
+    {
+        $plus_tables = null;
+        if ($RequiredTables)
+        {
+            foreach ($RequiredTables as $table)
+            {
+                if ($this->agataLinks[$table])
+                {
+                    foreach ($this->agataLinks[$table] as $foreign_key)
+                    {
+                        $plus_table = $foreign_key[0];
+                        if (!in_array($plus_table, $AllTables))
+                        {
+                            $plus_tables[$plus_table] = true;
+                        }
+                    }
+                    /* IMPORTANT !! LINKS ALL THE TABLES FK WITH PK AND PK WITH FK
+                    if ($this->agataLinks)
+                    foreach ($this->agataLinks as $foreign_table => $content)
+                    {
+                        foreach ($content as $foreign_field => $primary_key)
+                        {
+                            $plus_table = $foreign_table;
+                            if ($table == $primary_key[0])
+                            {
+                                if (!in_array($plus_table, $AllTables))
+                                {
+                                    $plus_tables[$plus_table] = true;
+                                }
+                            }
+
+                            $plus_table = $primary_key[0];
+                            if ($table == $foreign_table)
+                            {
+                                if (!in_array($plus_table, $AllTables))
+                                {
+                                    $plus_tables[$plus_table] = true;
+                                }
+                            }
+                        }
+                    }*/
+
+                    if (is_array($plus_tables))
+                    {
+                        $new_required = array_unique(array_merge($AllTables, array_keys($plus_tables)));
+                    }
+                    else
+                    {
+                        $new_required = array_unique($AllTables);
+                    }
+                    if ($Recursive)
+                    {
+                        if ($plus_tables)
+                        {
+                            foreach ($plus_tables as $plus_table => $bool)
+                            {
+                                $plus_tables[$plus_table] = $this->CallLinks(array($plus_table), $new_required, $Recursive);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $plus_tables;
+    }
+
+    /***********************************************************/
+    /* Show all the linked tables on screen
+    /***********************************************************/
+    function BuildScreen($Hierarquical, $join = false, $last = '', $AllTables = null)
+    {
+        global $Pixmaps;
+        $this->TreeList = new SimpleTree(array(_a('Table')));
+        $this->TreeList->set_selection_mode(GTK_SELECTION_SINGLE);
+        $this->BuildRecursive($Hierarquical, $nullparent);
+        $this->window = new GtkWindow;
+        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), $this->window);
+        $lastname = $this->agataDescription["table:$last"] ? $this->agataDescription["table:$last"] : $last;
+        $this->jointable1 = $last;
+        $this->window->set_title(($join) ? _a('Join') . ":: $lastname" : _a('Require Tables'));
+        $this->window->set_uposition(((int) (Gdk::screen_width() /2)) -190, (((int) (Gdk::screen_height() /2)))-240);
+        $this->window->set_default_size(380,280);
+        $this->window->realize();
+
+        $Scroll = new GtkScrolledWindow;
+        $Scroll->add($this->TreeList);
+
+        $vbox = new GtkVBox;
+        $vbox->pack_start(darktxt(_a('Linked Tables')), false, false);
+        $vbox->pack_start($Scroll, true, true, 0);
+        
+
+        if ($join)
+        {
+            $button1 = new Button(array(&$this, 'JoinTables'),    _a('Join Tables'),    $Pixmaps['ok'], IMAGEBUTTON);
+            $button2 = new Button(array(&$this->window, 'hide'), _a('Close'), $Pixmaps['cancel'], IMAGEBUTTON);
+            $Scroll = new GtkScrolledWindow;
+            $this->AllTableList = new SimpleTree(array(_a('Tables')));
+            $this->AllTableList->set_selection_mode(GTK_SELECTION_SINGLE);
+            $Scroll->add($this->AllTableList);
+            $vbox->pack_start(darktxt(_a('All Tables')), false, false);
+            $vbox->pack_start($Scroll, true, true, 0);
+            $this->window->set_default_size(380,380);
+            asort($AllTables);
+            foreach ($AllTables as $table => $nickname)
+            {
+                $filho = $this->AllTableList->AppendLineItems(null, array($nickname), $Pixmaps['table']);
+                $this->TreeList->node_set_row_data($filho, array($table));
+            }
+        }
+        else
+        {
+            $button1 = new Button(array(&$this, 'RequireTables'), _a('Require Tables'), $Pixmaps['ok'], IMAGEBUTTON);
+            $button2 = new Button(array(&$this->window, 'hide'), _a('Close'), $Pixmaps['cancel'], IMAGEBUTTON);
+        }
+        
+        $this->window->add($vbox);
+        $button1->set_relief(GTK_RELIEF_NONE);
+        $button2->set_relief(GTK_RELIEF_NONE);
+        $hbox = new GtkHBox;
+        $hbox->pack_start(new GtkHBox, true, true);
+        $hbox->pack_start($button1, false, false);
+        $hbox->pack_start($button2, false, false);
+        $hbox->pack_start(new GtkHBox, true, true);
+        $vbox->pack_start($hbox, false, false);
+        $this->window->show_all();
+    }
+
+    /***********************************************************/
+    /* Builds the recursive Tree
+    /***********************************************************/
+    function BuildRecursive($Hierarquical, $parent = null, $pathtables = null)
+    {
+        global $Pixmaps;
+        if ($Hierarquical)
+        {
+            foreach ($Hierarquical as $key => $table)
+            {
+                $tmp = $pathtables;
+                $nickname = ($this->agataDescription["table:$key"]) ? $this->agataDescription["table:$key"] : $key;
+                $tmp[] = $key;
+
+                if (is_array($table))
+                {
+                    $nodo = $this->TreeList->AppendSubTree(array($nickname), $Pixmaps['table'], $parent);
+                    $this->BuildRecursive($table, $nodo, $tmp);
+                    $this->TreeList->node_set_row_data($nodo, $tmp);
+                }
+                else
+                {
+                    $filho = $this->TreeList->AppendLineItems($parent, array($nickname), $Pixmaps['table']);
+                    $this->TreeList->node_set_row_data($filho, $tmp);
+                }
+            }
+        }
+        $this->TreeList->expand_recursive($parent);
+    }
+
+    /***********************************************************/
+    /* Require Table
+    /***********************************************************/
+    function RequireTables()
+    {
+        $selection = $this->TreeList->selection[0];
+        if ($selection)
+        {
+            $tables = $this->TreeList->node_get_row_data($selection);
+            if ($tables)
+            {
+                call_user_func($this->callback, $tables);
+            }
+        }
+    }
+
+    /***********************************************************/
+    /* Join Tables
+    /***********************************************************/
+    function JoinTables()
+    {
+        $data = @$this->TreeList->GetData();
+        
+        if (!$data) // from linked tables list
+        {
+            if ($this->AllTableList)
+            {
+                // from all table list
+                $data = @$this->AllTableList->GetData();
+            }
+        }
+
+        if (!$data)
+        {
+            new Dialog(_a('Select a table, please'));
+            return;
+        }
+        $table2 = $data[0];
+
+        $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_join2.xpm');
+        $this->MenuJoins = new GtkMenu;
+
+        $this->joinkinds = null;
+        $this->joinkinds[] = 'INNER JOIN';
+        $this->joinkinds[] = 'CROSS JOIN';
+        $this->joinkinds[] = 'STRAIGHT JOIN';
+    
+        $this->joinkinds[] = 'LEFT JOIN';
+        $this->joinkinds[] = 'LEFT OUTER JOIN';
+        $this->joinkinds[] = 'RIGHT JOIN';
+        $this->joinkinds[] = 'RIGHT OUTER JOIN';
+        $this->joinkinds[] = 'FULL OUTER JOIN';
+    
+        $this->joinkinds[] = 'NATURAL JOIN';
+        $this->joinkinds[] = 'NATURAL LEFT JOIN';
+        $this->joinkinds[] = 'NATURAL RIGHT JOIN';
+        $this->joinkinds[] = 'NATURAL OUTER JOIN';
+        $this->joinkinds[] = 'NATURAL LEFT OUTER JOIN';
+        $this->joinkinds[] = 'NATURAL RIGHT OUTER JOIN';
+        
+        foreach ($this->joinkinds as $joinkind)
+        {
+            $option = new MyNormalMenuItem($pixmap,  FirstUpper($joinkind), null);
+            $this->MenuJoins->append($option);
+            $option->connect_object('activate', array(&$this, 'SelectConstraints'), $joinkind, $table2);
+        }
+
+        $this->MenuJoins->popup(null, null, null, 1, 1);
+        $this->MenuJoins->show_all();
+    }
+
+    /***********************************************************/
+    /* Lets the user select the constraints
+    /***********************************************************/
+    function SelectConstraints($joinkind, $table2)
+    {
+        $table1 = trim($this->jointable1);
+        $table2 = trim($table2);
+
+        $links = $this->agataLinks[$table1];
+        if ($links)
+        {
+            foreach ($links as $field => $fk_reg)
+            {
+                if (($fk_reg[0] == $table2) and ($table1 != $fk_reg[0])) // evitar cíclico
+                {
+                    $linking[] = array(1, $table1, $field, '=', $fk_reg[0], $fk_reg[1]);
+                }
+            }
+        }
+
+        $links = $this->agataLinks[$table2];
+        if ($links)
+        {
+            foreach ($links as $field => $fk_reg)
+            {
+                if (($fk_reg[0] == $table1) and ($table2 != $fk_reg[0])) // evitar cíclico
+                {
+                    $linking[] = array(1, $table2, $field, '=', $fk_reg[0], $fk_reg[1]);
+                }
+            }
+        }
+        new LinkMatch(array(&$this, 'ApplyJoin'), $table1, $table2, $joinkind, $linking, $this->agataDescription, $this->agataDB);
+    }
+
+    /***********************************************************/
+    /* Apply Join
+    /***********************************************************/
+    function ApplyJoin($table1, $table2, $joinkind, $condition)
+    {
+        if ($condition)
+        {
+            call_user_func($this->callback, $table1, $table2, $joinkind, $condition);
+        }
+    }
+
+    /***********************************************************/
+    /* Key Test method
+    /***********************************************************/
+    function KeyTest($p1, $window)
+    {
+        if ($p1->keyval == K_ESC)
+        {
+            $window->hide();
+        }
+    }
+}
+?>
