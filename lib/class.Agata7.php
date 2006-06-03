@@ -83,6 +83,79 @@ class Agata7 {
 		}
 	} // end method CreateReport
 
+	// Method: CreateForm
+	//
+	//	Create HTML_QuickForm object to represent parameters for a report.
+	//
+	// Parameters:
+	//
+	//	$report - Name of report
+	//
+	// Returns:
+	//
+	//	HTML_QuickForm object
+	//
+	function CreateForm ( $report ) {
+		$form = CreateObject('PEAR.HTML_QuickForm', 'form', 'get');
+                freemed::quickform_i18n(&$form);
+		$form->addElement('hidden', 'module', $_REQUEST['module']);
+		$form->addElement('hidden', 'report', $_REQUEST['report']);
+		$form->addElement('hidden', 'action', 'view');
+		$form->setDefaults(array('action' => 'view'));
+
+		// Make sure module cache is loaded, just in case
+		$_cache = freemed::module_cache();
+
+		// Get meta-information from the report
+		$this->api->setReportPath(dirname(dirname(__FILE__)).'/data/report/'.$report.'.report');
+		$report = $this->api->getReport();
+
+		// Display the header if one exists
+		if ($report['Report']['Properties']['Description']) {
+			$form->addElement( 'header', '', $report['Report']['Properties']['Description'] );
+		}
+
+		//if (!is_array($report['Report']['Parameters'])) { return NULL; }
+		foreach ($report['Report']['Parameters'] AS $k => $v) {
+			if ($k == 'module') { next; }
+			list( $desc, $type, $detail ) = explode(':', $v['value']);
+			switch ($type) {
+				case 'date':
+				$form->addElement('static', $k, $desc, fm_date_entry($k));
+				break; // date
+
+				case 'module':
+				$form->addElement('static', $k, $desc, module_function($detail, 'widget', $k));
+				break; // module
+
+				case 'select':
+				$form->addElement('select', $k, $desc, explode(',', $detail));
+				break; // select
+
+				case 'text':
+				$form->addElement('text', $k, $desc);
+				break; // text
+
+				default:
+				break;
+			}
+		}
+
+		// Show format selection
+		$form->addElement('select', 'format', __("Report Format"), array (
+			'csv' => 'CSV',
+			'html' => 'HTML',
+			'pdf' => 'PDF',
+			'ps' => 'Postscript',
+			'txt' => 'Plain Text'
+		));
+
+		$submit_group[] = &HTML_QuickForm::createElement( 'submit', 'submit_action', __("Generate") );
+		$submit_group[] = &HTML_QuickForm::createElement( 'submit', 'submit_action', __("Cancel") );
+		$form->addGroup( $submit_group, null, null, '&nbsp;' );
+		return $form;
+	} // end method CreateForm
+
 	// Method: GetReports
 	//
 	//	Get array of report information for reports available
@@ -90,7 +163,7 @@ class Agata7 {
 	//
 	function GetReports ( ) {
 		if (! ($d = dir(dirname(dirname(__FILE__)).'/data/report/')) ) {
-			DIE(get_class($this)." :: could not open directory '".dirname(__FILE__)."/agata/report/'");
+			DIE(get_class($this)." :: could not open directory '".dirname(__FILE__)."/data/report/'");
 		}
 		while ($entry = $d->read()) {
 			if (eregi('\.report$', $entry)) {
@@ -155,29 +228,11 @@ class Agata7 {
 	//	meta-information.
 	//
 	function _ReadMetaInformation ( $report ) {
-		//print "checking $report\n";
-		$fp = fopen(dirname(__FILE__).'/agata/report/'.$report, 'r');
-		if (!$fp) { DIE(get_class($this).' :: could not open '.$report); }
-		while (!feof($fp)) { $buffer .= fgets($fp, 1024); }
-		fclose($fp);
-		$lines = explode("\n", $buffer);
-		foreach ($lines AS $_garbage => $line) {
-			if (eregi('##[A-Za-z=\.\/, ]*##', $line)) {
-				// Process meta line
-				//print "meta line = $line\n";
-				$chunks = explode('##', $line);
-				$meta = explode(',', $chunks[1]);
-				foreach ($meta AS $garbage => $info) {
-					list ($k, $v) = explode('=', $info);
-					if (strpos($v, '/') !== false) {
-						$return[$k] = explode('/', $v);
-					} else {
-						$return[$k] = $v;
-					}
-				}
-				return $return;
-			}
-		}
+                // Get meta-information from the report
+                $this->api->setReportPath(dirname(dirname(__FILE__)).'/data/report/'.$report);
+                $report = $this->api->getReport();
+
+		return $report['Report']['Properties'];
 	} // end method _ReadMetaInformation
 
 } // end class Agata
