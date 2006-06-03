@@ -237,6 +237,7 @@ function ResolveObjectPath($object) {
 		case 'PEAR':
 		// Resolve path name. PEAR packages use
 		// _ as a path delimeter....
+		ini_set('include_path', ini_get('include_path').':'.dirname(dirname(__FILE__)).'/pear');
 		$my_class = str_replace('_','/',$classname);
 		$path = dirname(dirname(__FILE__)).'/pear/'.$my_class.'.php';
 		return $path;
