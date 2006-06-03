@@ -2,6 +2,9 @@
 	// $Id$
 	// $Author$
 
+// Hack to make sure PEAR is in the path
+ini_set('include_path', ini_get('include_path').':'.dirname(dirname(dirname(__FILE__))).'/pear');
+
 $GLOBALS['__freemed']['layermenu'] = '';
 
 function menu_item($text, $link, $depth) {
