@@ -19,13 +19,13 @@ function file_magic ($filename) {
 	return trim ($hash_array[1]);
 } // end function file_magic
 
-function file_size ($filename) {
+function get_file_size ($filename) {
 	if (!is_file ($filename))
-		die ("file_size :: file does not exist");
+		die ("get_file_size :: file does not exist");
 	clearstatcache(); // prevent PHP from choking
 	$file_stat = stat($filename);
 	return $file_stat[7];
-} // end function file_size
+} // end function get_file_size
 
 function human_readable_filesize ($filename) {
 	// calculate file size (in human readable format)
@@ -36,7 +36,7 @@ function human_readable_filesize ($filename) {
 	if (($filename+0)>0) {
 		$file_size_num = $filename + 0;
 	} else {
-		$file_size_num = file_size ($filename);
+		$file_size_num = get_file_size ($filename);
 	}
 	if (($file_size_num > 1024) and ($file_size_num < (1024*750))) {
 		return number_format (($file_size_num / (1024)), 3)."k ".
@@ -68,7 +68,7 @@ function transfer_time ($filename, $linespeed) {
 	if (($filename+0) > 0) {
 		$file_size = $filename;
 	} else {
-		$file_size = file_size ($filename);
+		$file_size = get_file_size ($filename);
 	}
 	$bps       = ($linespeed * 1000) / 8;
 	return ceil (($file_size / $bps));
