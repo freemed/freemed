@@ -1,0 +1,6 @@
+A3C,Anticipating Arrival at Counter,#0000ff,1
+CIAC,Checked in at Counter,#ff0000,2
+E/PIP,Encounter/Procedure in Progress,#ffff00,3
+E/PIC,Encounter/Procedure is Complete,#00ff00,4
+CO,Checked Out,#aaaaaa,5
+NS,No Show,#ff00ff,6
