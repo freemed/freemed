@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<Report>
+    <Version>7.5</Version>
+    <Properties>
+        <Title>Provider Patient List</Title>
+        <Description>List of patients per provider.</Description>
+        <Author>Jeff Buchbinder</Author>
+        <Keywords></Keywords>
+        <Date>2006-06-04</Date>
+        <FrameSize></FrameSize>
+    </Properties>
+
+    <Header>
+        <Body></Body>
+        <Align>center</Align>
+    </Header>
+
+    <Footer>
+        <Body></Body>
+        <Align>center</Align>
+    </Footer>
+
+    <Parameters>
+        <provider>
+            <mask></mask>
+            <value>Provider:module:providermodule</value>
+        </provider>
+
+    </Parameters>
+
+    <DataSet>
+        <DataSource>
+            <Name>FreeMED</Name>
+        </DataSource>
+
+        <Query>
+            <Select>CONCAT(ptlname, ', ', ptfname, ' ', ptmname) AS 'Patient Name', ptaddr1 AS 'Address Line 1', ptaddr2 AS 'Address Line 2', DATE_FORMAT(ptdob, '%Y/%m/%d') AS 'Date of Birth', IF(LENGTH(pthphone)&lt;10, '', CONCAT('(', SUBSTRING(pthphone FROM 1 FOR 3), ') ', SUBSTRING(pthphone FROM 4 FOR 3), '-', SUBSTRING(pthphone FROM 7 FOR 4))) AS 'Home Phone', IF(LENGTH(ptwphone)&lt;10, '', CONCAT('(', SUBSTRING(ptwphone FROM 1 FOR 3), ') ', SUBSTRING(ptwphone FROM 4 FOR 3), '-', SUBSTRING(ptwphone FROM 7 FOR 4))) AS 'Work Phone', ptid AS 'Patient ID'</Select>
+            <From>patient</From>
+            <Where>ptdoc=$provider</Where>
+            <GroupBy></GroupBy>
+            <OrderBy>'Patient Name'</OrderBy>
+            <Config>
+                <Distinct></Distinct>
+                <OffSet>0</OffSet>
+                <Limit>0</Limit>
+            </Config>
+
+        </Query>
+
+        <Groups>
+            <Config>
+                <ShowGroup></ShowGroup>
+                <ShowDetail>1</ShowDetail>
+                <ShowLabel></ShowLabel>
+                <ShowNumber>1</ShowNumber>
+                <ShowIndent>1</ShowIndent>
+            </Config>
+
+        </Groups>
+
+        <Fields>
+            <Column1>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column1>
+
+            <Column2>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column2>
+
+            <Column3>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column3>
+
+            <Column4>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column4>
+
+            <Column5>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column5>
+
+            <Column6>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column6>
+
+            <Column7>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column7>
+
+        </Fields>
+
+    </DataSet>
+
+    <PageSetup></PageSetup>
+    <Graph>
+        <Title></Title>
+        <TitleX></TitleX>
+        <TitleY></TitleY>
+        <Width>480</Width>
+        <Height>268</Height>
+        <Description></Description>
+        <ShowData>1</ShowData>
+        <ShowValues>1</ShowValues>
+        <Orientation>columns</Orientation>
+    </Graph>
+
+    <Merge>
+        <ReportHeader></ReportHeader>
+        <Details>
+            <Detail1>
+                <GroupHeader></GroupHeader>
+                <DataSet1>
+                    <Body></Body>
+                    <Query>
+                        <Select></Select>
+                        <From></From>
+                        <Where></Where>
+                        <GroupBy></GroupBy>
+                        <OrderBy></OrderBy>
+                        <Config>
+                            <Distinct></Distinct>
+                            <OffSet>0</OffSet>
+                            <Limit>0</Limit>
+                        </Config>
+
+                    </Query>
+
+                    <Fields></Fields>
+                </DataSet1>
+
+                <NumberSubSql>0</NumberSubSql>
+                <GroupFooter></GroupFooter>
+            </Detail1>
+
+        </Details>
+
+        <ReportFooter></ReportFooter>
+        <FinalSummary></FinalSummary>
+        <PageSetup></PageSetup>
+    </Merge>
+
+    <Label>
+        <Body></Body>
+        <Config>
+            <HorizontalSpacing>15</HorizontalSpacing>
+            <VerticalSpacing>0</VerticalSpacing>
+            <LabelWidth>288</LabelWidth>
+            <LabelHeight>72</LabelHeight>
+            <LeftMargin>11</LeftMargin>
+            <TopMargin>36</TopMargin>
+            <Columns>2</Columns>
+            <Rows>10</Rows>
+            <PageFormat>A3</PageFormat>
+            <LineSpacing>14</LineSpacing>
+        </Config>
+
+    </Label>
+
+    <OpenOffice>
+        <Source></Source>
+        <Config>
+            <FixedDetails>1</FixedDetails>
+            <ExpandDetails></ExpandDetails>
+            <printEmptyDetail>1</printEmptyDetail>
+            <SumByTotal>1</SumByTotal>
+            <RepeatHeader>1</RepeatHeader>
+            <RepeatFooter>1</RepeatFooter>
+        </Config>
+
+    </OpenOffice>
+
+</Report>

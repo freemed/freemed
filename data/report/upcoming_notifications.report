@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<Report>
+    <Version>7.5</Version>
+    <Properties>
+        <Title>Upcoming Notifications</Title>
+        <Description>One year worth of upcoming patient notifications.</Description>
+        <Author>Jeff Buchbinder</Author>
+        <Keywords></Keywords>
+        <Date></Date>
+        <FrameSize></FrameSize>
+    </Properties>
+
+    <Header>
+        <Body></Body>
+        <Align>center</Align>
+    </Header>
+
+    <Footer>
+        <Body></Body>
+        <Align>center</Align>
+    </Footer>
+
+    <DataSet>
+        <DataSource>
+            <Name>FreeMED</Name>
+        </DataSource>
+
+        <Query>
+            <Select>CONCAT(p.ptlname, ', ', p.ptfname, ' ', p.ptmname) AS 'Patient Name', p.ptid AS 'Patient Id', IF(LENGTH(p.pthphone)=10,CONCAT(SUBSTR(p.pthphone,1,3),'-',SUBSTR(p.pthphone,4,3),'-',SUBSTR(p.pthphone,7,4)),'NONE') AS 'Home Phone', IF(LENGTH(p.ptwphone)=10,CONCAT(SUBSTR(p.ptwphone,1,3),'-',SUBSTR(p.ptwphone,4,3),'-',SUBSTR(p.ptwphone,7,4)),'NONE') AS 'Work Phone', n.ntarget AS 'Date of Notification', n.ndescrip AS 'Description'</Select>
+            <From>notification n LEFT OUTER JOIN patient p ON n.npatient=p.id</From>
+            <Where>n.ntarget &gt; CURRENT_DATE() AND n.ntarget &lt; DATE_ADD(CURRENT_DATE(), INTERVAL 1 YEAR)</Where>
+            <GroupBy></GroupBy>
+            <OrderBy>n.ntarget</OrderBy>
+            <Config>
+                <Distinct></Distinct>
+                <OffSet>0</OffSet>
+                <Limit>0</Limit>
+            </Config>
+
+        </Query>
+
+        <Groups>
+            <Config>
+                <ShowGroup></ShowGroup>
+                <ShowDetail>1</ShowDetail>
+                <ShowLabel></ShowLabel>
+                <ShowNumber>1</ShowNumber>
+                <ShowIndent>1</ShowIndent>
+            </Config>
+
+        </Groups>
+
+        <Fields>
+            <Column1>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column1>
+
+            <Column2>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column2>
+
+            <Column3>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column3>
+
+            <Column4>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column4>
+
+            <Column5>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column5>
+
+            <Column6>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column6>
+
+        </Fields>
+
+    </DataSet>
+
+    <PageSetup></PageSetup>
+    <Graph>
+        <Title></Title>
+        <TitleX></TitleX>
+        <TitleY></TitleY>
+        <Width>480</Width>
+        <Height>268</Height>
+        <Description></Description>
+        <ShowData>1</ShowData>
+        <ShowValues>1</ShowValues>
+        <Orientation>columns</Orientation>
+    </Graph>
+
+    <Merge>
+        <ReportHeader></ReportHeader>
+        <Details>
+            <Detail1>
+                <GroupHeader></GroupHeader>
+                <DataSet1>
+                    <Body></Body>
+                    <Query>
+                        <Select></Select>
+                        <From></From>
+                        <Where></Where>
+                        <GroupBy></GroupBy>
+                        <OrderBy></OrderBy>
+                        <Config>
+                            <Distinct></Distinct>
+                            <OffSet>0</OffSet>
+                            <Limit>0</Limit>
+                        </Config>
+
+                    </Query>
+
+                    <Fields></Fields>
+                </DataSet1>
+
+                <NumberSubSql>0</NumberSubSql>
+                <GroupFooter></GroupFooter>
+            </Detail1>
+
+        </Details>
+
+        <ReportFooter></ReportFooter>
+        <FinalSummary></FinalSummary>
+        <PageSetup></PageSetup>
+    </Merge>
+
+    <Label>
+        <Body></Body>
+        <Config>
+            <HorizontalSpacing>15</HorizontalSpacing>
+            <VerticalSpacing>0</VerticalSpacing>
+            <LabelWidth>288</LabelWidth>
+            <LabelHeight>72</LabelHeight>
+            <LeftMargin>11</LeftMargin>
+            <TopMargin>36</TopMargin>
+            <Columns>2</Columns>
+            <Rows>10</Rows>
+            <PageFormat>A3</PageFormat>
+            <LineSpacing>14</LineSpacing>
+        </Config>
+
+    </Label>
+
+    <OpenOffice>
+        <Source></Source>
+        <Config>
+            <FixedDetails>1</FixedDetails>
+            <ExpandDetails></ExpandDetails>
+            <printEmptyDetail>1</printEmptyDetail>
+            <SumByTotal>1</SumByTotal>
+            <RepeatHeader>1</RepeatHeader>
+            <RepeatFooter>1</RepeatFooter>
+        </Config>
+
+    </OpenOffice>
+
+</Report>
