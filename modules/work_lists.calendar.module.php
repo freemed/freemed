@@ -148,7 +148,6 @@ class WorkListsModule extends BaseModule {
 
 	function generate_worklist ( $provider ) {
 		$date = date('Y-m-d');
-		$date = '2006-05-01'; // FIXME FIXME FIXME
 
 		// Load lookup table
 		$q = $GLOBALS['sql']->query( "SELECT * FROM schedulerstatustype" );
