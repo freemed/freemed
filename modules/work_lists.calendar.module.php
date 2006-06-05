@@ -89,8 +89,11 @@ class WorkListsModule extends BaseModule {
 		}
 
 		function workListPopulate ( value ) {
-			document.getElementById(workListElementCurrent).style.backgroundColor = value;
-			document.getElementById(workListElementCurrent).innerHTML = '&nbsp;';
+			var tokenizer = new StringTokenizer ( value, ':' );
+			var _color = tokenizer.nextToken();
+			var _text  = tokenizer.nextToken();
+			document.getElementById('r' + workListElementCurrent).style.backgroundColor = _color;
+			document.getElementById(workListElementCurrent).innerHTML = _text;
 			workListElementCurrent = '';
 			workListElementActive = 0;
 		}
@@ -141,7 +144,7 @@ class WorkListsModule extends BaseModule {
 		// Return status color properly
 		$q = $GLOBALS['sql']->query("SELECT * FROM schedulerstatustype WHERE id='".addslashes($status)."'");
 		$r = $GLOBALS['sql']->fetch_array($q);
-		return $r['scolor'];
+		return $r['scolor'].":".$r['sname'];
 	}
 
 	// ----- Internal methods ------------------------------------------------------
@@ -153,6 +156,7 @@ class WorkListsModule extends BaseModule {
 		$q = $GLOBALS['sql']->query( "SELECT * FROM schedulerstatustype" );
 		while ($r = $GLOBALS['sql']->fetch_array( $q )) {
 			$lookup[$r['id']] = $r['scolor'];
+			$name_lookup[$r['id']] = $r['sname'];
 		}
 		unset ($q); unset ($r);
 
@@ -170,10 +174,10 @@ class WorkListsModule extends BaseModule {
 		while ( $r = $GLOBALS['sql']->fetch_array( $q ) ) {
 			$current_status = module_function( 'schedulerpatientstatus', 'getPatientStatus', array( $r['s_patient_id'], $r['id'] ) );
 			
-			$buffer .= "<tr>\n".
+			$buffer .= "<tr id=\"rx${r['id']}\" ".( $current_status ? "bgcolor=\"${lookup[$current_status]}\"" : "" ).">\n".
 				"<td><a href=\"manage.php?id=${r['s_patient_id']}\">".prepare($r['s_patient'])."</a></td>\n".
 				"<td>".Scheduler::display_time($r['s_hour'], $r['s_minute'])."</td>\n".
-				"<td ".( $current_status ? "bgcolor=\"${lookup[$current_status]}\"" : "" )." id=\"x${r['id']}\" onClick=\"workListClick('x${r['id']}'); return true;\">&nbsp;</td>\n".
+				"<td id=\"x${r['id']}\" onClick=\"workListClick('x${r['id']}'); return true;\">${name_lookup[$current_status]}&nbsp;</td>\n".
 				"</tr>\n";
 		} // end fetch_array
 
