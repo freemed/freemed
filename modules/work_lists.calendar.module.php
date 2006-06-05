@@ -74,6 +74,7 @@ class WorkListsModule extends BaseModule {
 			$display_buffer .= "'<option value=\"${r['id']}\">${r['sname']}</option>'+\n";
 		}
 		$display_buffer .= "
+			'<option value=\"\">-</option>'+
 			'</select>';
 			workListElementActive = 1;
 		}
