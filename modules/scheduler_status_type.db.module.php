@@ -8,7 +8,7 @@ class SchedulerStatusType extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Scheduler Status Type";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
@@ -21,7 +21,8 @@ class SchedulerStatusType extends MaintenanceModule {
 	var $variables = array (
 		'sname',
 		'sdescrip',
-		'scolor'
+		'scolor',
+		'sage'
 	);
 
 	function SchedulerStatusType () {
@@ -31,13 +32,15 @@ class SchedulerStatusType extends MaintenanceModule {
 			'sname'		=>	SQL__VARCHAR(50),
 			'sdescrip'	=>	SQL__BLOB,
 			'scolor'	=>	SQL__CHAR(7),
+			'sage'		=>	SQL__INT_UNSIGNED(0),
 			'id'		=>	SQL__SERIAL
 		);
 
 		$this->rpc_field_map = array (
 			'name' => 'sname',
 			'description' => 'sdescrip',	
-			'color' => 'scolor'
+			'color' => 'scolor',
+			'age' => 'sage'
 		);
 
 			// Run constructor
@@ -72,7 +75,16 @@ class SchedulerStatusType extends MaintenanceModule {
 		".html_form::form_table ( array (
 		__("Status Name") => html_form::text_widget('sname', array('length'=>50)),
 		__("Description") => html_form::text_widget('sdescrip', array('length'=>50)),
-		__("Color") => html_form::color_widget('scolor')
+		__("Color") => html_form::color_widget('scolor'),
+		__("Age for Alert") => html_form::select_widget( 'sage', 
+		array (
+			"--" => 0,
+			"1m" => 60,
+			"5m" => 300,
+			"10m" => 600,
+			"30m" => 1800,
+			"1h" => 3600
+		) )
 
 		) )."
 		<p/>
@@ -106,6 +118,14 @@ class SchedulerStatusType extends MaintenanceModule {
 
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
+		// Version 0.2
+		//
+		//	Add age limit (sage)
+		//
+		if (!version_check($version, '0.2')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' ADD COLUMN sage INT UNSIGNED AFTER scolor');
+			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' SET sage=0 WHERE id>0');
+		}
 	} // end method _update
 
 } // end class SchedulerStatusType

@@ -158,6 +158,7 @@ class WorkListsModule extends BaseModule {
 		while ($r = $GLOBALS['sql']->fetch_array( $q )) {
 			$lookup[$r['id']] = $r['scolor'];
 			$name_lookup[$r['id']] = $r['sname'];
+			$age_lookup[$r['id']] = $r['sage'];
 		}
 		unset ($q); unset ($r);
 
@@ -174,11 +175,17 @@ class WorkListsModule extends BaseModule {
 		$q = $GLOBALS['sql']->query( $query );
 		while ( $r = $GLOBALS['sql']->fetch_array( $q ) ) {
 			$current_status = module_function( 'schedulerpatientstatus', 'getPatientStatus', array( $r['s_patient_id'], $r['id'] ) );
+			if ($age_lookup[$current_status[0]] > 0 and $current_status[1] >= $age_lookup[$current_status[0]]) {
+				//syslog(LOG_INFO, "age_lookup ( $current_status[0] ) = ".$age_lookup[$current_status[0]].", current_status[1] = $current_status[1]");
+				$expired = true;
+			} else {
+				$expired = false;
+			}
 			
-			$buffer .= "<tr id=\"rx${r['id']}\" ".( $current_status ? "bgcolor=\"${lookup[$current_status]}\"" : "" ).">\n".
+			$buffer .= "<tr id=\"rx${r['id']}\" ".( $current_status ? "bgcolor=\"${lookup[$current_status[0]]}\"" : "" ).">\n".
 				"<td><a href=\"manage.php?id=${r['s_patient_id']}\">".prepare($r['s_patient'])."</a></td>\n".
 				"<td>".Scheduler::display_time($r['s_hour'], $r['s_minute'])."</td>\n".
-				"<td id=\"x${r['id']}\" onClick=\"workListClick('x${r['id']}'); return true;\">${name_lookup[$current_status]}&nbsp;</td>\n".
+				"<td id=\"x${r['id']}\" onClick=\"workListClick('x${r['id']}'); return true;\">".( $expired ? "<b><blink>" : "" )."${name_lookup[$current_status[0]]}&nbsp;".( $expired ? "</blink></b>" : "" )."</td>\n".
 				"</tr>\n";
 		} // end fetch_array
 

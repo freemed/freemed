@@ -128,16 +128,25 @@ class SchedulerPatientStatus extends EMRModule {
 	//
 	// Returns:
 	//
-	//	Numeric id describing current status
+	//	Array (
+	//		Numeric id describing current status
+	//		Age in seconds
+	//	)
 	//
-	function getPatientStatus ( $patient, $appt ) {
-		$q = "SELECT * FROM ".$this->table_name." WHERE cspatient = '".addslashes($patient)."' AND csappt = '".addslashes($appt)."' ORDER BY csstamp DESC LIMIT 1";
-		$res = $GLOBALS['sql']->query($q);
-		if (!$GLOBALS['sql']->results($res)) {
-			return false;
+	function getPatientStatus ( $patient, $appt) {
+		static $_cache;
+
+		if (!isset($_cache[$appt])) {
+			$q = "SELECT *,(NOW()-csstamp) AS age FROM ".$this->table_name." WHERE cspatient = '".addslashes($patient)."' AND csappt = '".addslashes($appt)."' ORDER BY csstamp DESC LIMIT 1";
+			$res = $GLOBALS['sql']->query($q);
+			if (!$GLOBALS['sql']->results($res)) {
+				$_cache[$appt] = false;
+			}
+			$r = $GLOBALS['sql']->fetch_array($res);
+			$_cache[$appt] = $r;
 		}
-		$r = $GLOBALS['sql']->fetch_array($res);
-		return $r['csstatus'];
+
+		return array ( $_cache[$appt]['csstatus'], $_cache[$appt]['age'] );
 	} // end method getPatientStatus
 
 	// Update
