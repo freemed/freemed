@@ -93,8 +93,9 @@ class WorkListsModule extends BaseModule {
 			var tokenizer = new StringTokenizer ( value, ':' );
 			var _color = tokenizer.nextToken();
 			var _text  = tokenizer.nextToken();
+			var _desc  = tokenizer.nextToken();
 			document.getElementById('r' + workListElementCurrent).style.backgroundColor = _color;
-			document.getElementById(workListElementCurrent).innerHTML = _text;
+			document.getElementById(workListElementCurrent).innerHTML = '<acronym title=\"' + _desc + '\">' + _text + '</acronym>';
 			workListElementCurrent = '';
 			workListElementActive = 0;
 		}
@@ -145,7 +146,7 @@ class WorkListsModule extends BaseModule {
 		// Return status color properly
 		$q = $GLOBALS['sql']->query("SELECT * FROM schedulerstatustype WHERE id='".addslashes($status)."'");
 		$r = $GLOBALS['sql']->fetch_array($q);
-		return $r['scolor'].":".$r['sname'];
+		return $r['scolor'].":".$r['sname'].":".$r['sdescrip'];
 	}
 
 	// ----- Internal methods ------------------------------------------------------
@@ -158,6 +159,7 @@ class WorkListsModule extends BaseModule {
 		while ($r = $GLOBALS['sql']->fetch_array( $q )) {
 			$lookup[$r['id']] = $r['scolor'];
 			$name_lookup[$r['id']] = $r['sname'];
+			$fullname_lookup[$r['id']] = $r['sdescrip'];
 			$age_lookup[$r['id']] = $r['sage'];
 		}
 		unset ($q); unset ($r);
@@ -175,17 +177,16 @@ class WorkListsModule extends BaseModule {
 		$q = $GLOBALS['sql']->query( $query );
 		while ( $r = $GLOBALS['sql']->fetch_array( $q ) ) {
 			$current_status = module_function( 'schedulerpatientstatus', 'getPatientStatus', array( $r['s_patient_id'], $r['id'] ) );
+			$expired = false;
 			if ($age_lookup[$current_status[0]] > 0 and $current_status[1] >= $age_lookup[$current_status[0]]) {
-				//syslog(LOG_INFO, "age_lookup ( $current_status[0] ) = ".$age_lookup[$current_status[0]].", current_status[1] = $current_status[1]");
+				syslog(LOG_INFO, "age_lookup ( $current_status[0] ) = ".$age_lookup[$current_status[0]].", current_status[1] = $current_status[1]");
 				$expired = true;
-			} else {
-				$expired = false;
 			}
 			
 			$buffer .= "<tr id=\"rx${r['id']}\" ".( $current_status ? "bgcolor=\"${lookup[$current_status[0]]}\"" : "" ).">\n".
 				"<td><a href=\"manage.php?id=${r['s_patient_id']}\">".prepare($r['s_patient'])."</a></td>\n".
-				"<td>".Scheduler::display_time($r['s_hour'], $r['s_minute'])."</td>\n".
-				"<td id=\"x${r['id']}\" onClick=\"workListClick('x${r['id']}'); return true;\">".( $expired ? "<b><blink>" : "" )."${name_lookup[$current_status[0]]}&nbsp;".( $expired ? "</blink></b>" : "" )."</td>\n".
+				"<td nowrap>".Scheduler::display_time($r['s_hour'], $r['s_minute'])."</td>\n".
+				"<td nowrap id=\"x${r['id']}\" onClick=\"workListClick('x${r['id']}'); return true;\">".( $expired ? "<b><blink>" : "" )."<acronym title=\"${fullname_lookup[$current_status[0]]}\">${name_lookup[$current_status[0]]}</acronym>&nbsp;".( $expired ? "</blink></b>" : "" )."</td>\n".
 				"</tr>\n";
 		} // end fetch_array
 
