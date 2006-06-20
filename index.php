@@ -19,11 +19,11 @@ $page_name = "index.php";
 // to this file...
 
 // Import settings from our global settings file
-include_once('lib/settings.php');
-require_once('lib/phpwebtools/webtools.php');
+include_once(dirname(__FILE__).'/lib/settings.php');
+require_once(dirname(__FILE__).'/lib/phpwebtools/webtools.php');
 
 define('SKIP_SQL_INIT', true);
-include_once ("lib/freemed.php");
+include_once (dirname(__FILE__).'/lib/freemed.php');
 
 // Deal with removing auth information from the session
 unset($_SESSION['authdata']);

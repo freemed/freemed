@@ -23,8 +23,8 @@ $local_date_display="%Y-%m-%d";       // United States
   // $local_date_display="%d.%m.%Y";    // European countries
 
 //----- Import settings
-if (file_exists('lib/settings.php')) {
-	include_once('lib/settings.php');
+if (file_exists(dirname(__FILE__).'/settings.php')) {
+	include_once(dirname(__FILE__).'/settings.php');
 } else {
 	die("FreeMED cannot find the configuration file <b>lib/settings.php</b>.");
 }
@@ -77,7 +77,7 @@ if (strstr($HTTP_USER_AGENT, "Lynx")) {
   // ****************** CHECK FOR PHP MODULES **********************
 
   // If there's no bcmath module, use fake bcadd() function
-if (!function_exists("bcadd")) include_once ("lib/bcadd.php");
+if (!function_exists("bcadd")) include_once (dirname(__FILE__).'/bcadd.php');
 
   // Check for proper template, and load default if not provided
 if (!isset($template)) { $template = TEMPLATE; }
@@ -89,9 +89,9 @@ if (file_exists("lib/template/".$template."/lib.php")) {
 
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
-include_once ("lib/error_handler.php");   // internal error handler
+include_once (dirname(__FILE__)."/error_handler.php");   // internal error handler
 
-include_once ("lib/phpwebtools/webtools.php"); // webtools toolkit
+include_once (dirname(__FILE__)."/phpwebtools/webtools.php"); // webtools toolkit
 
 // Quick IE/Gecko browser check
 if (ereg('MSIE ([0-9].[0-9]{1,2})',$_SERVER['HTTP_USER_AGENT'])) {
@@ -146,16 +146,16 @@ if (!defined('SESSION_DISABLE')) {
 	$GLOBALS['freemed']['__language'] = $_SESSION['language'];
 
 	// Load GettextXML routines (most non-session things don't need it).
-	include_once ("lib/i18n.php");
+	include_once (dirname(__FILE__)."/i18n.php");
 
 	// Load ACL routines
-	include_once ("lib/acl.php");
+	include_once (dirname(__FILE__)."/acl.php");
 }
 // ***************************************************************
 
-include_once ("lib/iso-set.php");         // ISO set handler
-include_once ("lib/API.php");             // API functions
-include_once ("lib/macros.php");          // macros/contants
+include_once (dirname(__FILE__)."/iso-set.php");         // ISO set handler
+include_once (dirname(__FILE__)."/API.php");             // API functions
+include_once (dirname(__FILE__)."/macros.php");          // macros/contants
 
   // ****************** INITIALIZE SQL CONNECTION ******************
 
