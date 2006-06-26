@@ -438,6 +438,16 @@ class ProcedureModule extends EMRModule {
 
 				$this_procedure = $sql->last_record ($result);
 
+				// Add to Claimlog
+				$claimlog = CreateObject('_FreeMED.ClaimLog');
+				$claimlog->log_event(
+					$this_procedure,
+					array (
+						'action' => __("Create"),
+						'comment' => __("Procedure created")
+					)
+				);
+
 				// form add query
 				$display_buffer .= "
 				<br/>
