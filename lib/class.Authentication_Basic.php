@@ -18,6 +18,9 @@ class Authentication_Basic {
 	} // end method GetCredentials
 
 	function Logout ( ) {
+		$log = freemed::log_object();
+		$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Logged out" );
+
 		Header('WWW-Authenticate: Basic realm="FreeMED"');
 		Header('HTTP/1.0 401 Unauthorized');
 		global $refresh;
@@ -56,13 +59,17 @@ class Authentication_Basic {
 			$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 	
 			// Authorize
-			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Basic| verify_auth successful login");}		
+			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Basic| verify_auth successful login");}
+			$log = freemed::log_object();
+			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Successfully logged in" );
 			return true;
 		} else { // check password
 			// Failed password check
 			unset ( $_SESSION['authdata'] );
 			unset ( $_SESSION['ipaddr'] );
 			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"FreeMED.Authentication_Basic| verify_auth failed login");	}	
+			$log = freemed::log_object();
+			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Failed login" );
 			return false;
 		} // end check password
 	} // end method IsValid

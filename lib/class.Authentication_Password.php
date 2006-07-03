@@ -54,15 +54,25 @@ class Authentication_Password {
 	
 			// Authorize
 			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth successful login");}		
+			$log = freemed::log_object();
+			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Successfully logged in" );
 			return true;
 		} else { // check password
 			// Failed password check
 			unset ( $_SESSION['authdata'] );
 			unset ( $_SESSION['ipaddr'] );
 			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth failed login");	}	
+			$log = freemed::log_object();
+			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Failed login" );
 			return false;
 		} // end check password
 	} // end method IsValid
+
+	function Logout ( ) {
+		// Stub method, just to keep track for audit purposes
+		$log = freemed::log_object();
+		$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Logged out" );
+	} // end method Logout
 
 	function RequestNewAuthentication ( ) {
 		// IE fix for REQUEST_URI
