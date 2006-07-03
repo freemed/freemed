@@ -1708,6 +1708,20 @@ class freemed {
 		return false;
 	} // end function lock_override
 
+	// Function: freemed::log_object
+	//
+	//	Get log object with caching.
+	//
+	// Returns:
+	//
+	//	FreeMED.Log object
+	//
+	function log_object ( ) {
+		static $_cache;
+		if (!isset($_cache)) { $_cache = CreateObject('_FreeMED.Log'); }
+		return $_cache;
+	} // end function freemed::log_object
+
 	// Function: freemed::phone_display
 	//
 	//	Displays phone number in system format.
