@@ -96,6 +96,12 @@ define ('SUMMARY_PRINT',		8);
 define ('SUMMARY_DELETE',		16);
 define ('SUMMARY_NOANNOTATE',		32);
 
+// Logging levels
+define ('LOG__INFO',			1);
+define ('LOG__SECURITY',		2);
+define ('LOG__ERROR',			4);
+define ('LOG__ADMIN',			4);
+
 } // end checking for __MACROS_PHP__
 
 ?>
