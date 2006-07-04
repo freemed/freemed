@@ -110,6 +110,44 @@ class GroupCalendar extends CalendarModule {
 		// Create scheduler object
 		$scheduler = CreateObject('FreeMED.Scheduler');
 
+		// Javascript/DHTML nonsense
+		include_once('lib/template/default/ajax.php');
+		$display_buffer .= $GLOBALS['__freemed']['header'];
+
+		$display_buffer .= "
+		<!-- Load 'window' -->
+		<div id=\"loading\" style=\"position: fixed; .position: absolute; top: 40%; left: 40%; background-color: #aaaaaa; -moz-border-radius: 2em; font-family: sans serif; size: 32pt; border: 3px solid #000000; width: 150px; height: 50px; padding: 30px; z-index: 1000;\" align=\"center\"><blink>Loading ...</blink></div>
+
+		<script language=\"javascript\" src=\"lib/template/default/prototype-1.5.0.js\"></script>
+		<script language=\"javascript\" src=\"lib/template/default/scriptaculous.js\"></script>
+		<script language=\"javascript\" src=\"lib/template/default/effects.js\"></script>
+		<script language=\"javascript\" src=\"lib/template/default/dragdrop.js\"></script>
+		<script language=\"javascript\">
+		function handleApptDrop ( from, to ) {
+			 //alert('DROP: '+from+' to '+to);
+			document.getElementById('loading').style.visibility = 'none';
+			x_module_html('".get_class($this)."', 'ajax_move', '".( $GLOBALS['selected_date'] ? $GLOBALS['selected_date'] : date('Y-m-d') )."' + ',' + from + ',' + to, processApptDrop);
+		}
+
+		function processApptDrop ( value ) {
+			//document.getElementById('loading').style.visibility = 'hidden';
+			window.location.reload();
+		}
+
+		function submitBook ( ) {
+			var this_patient = document.getElementById('book_patient').value;
+			var this_template = document.getElementById('book_template').value;
+			document.getElementById('loading').style.visibility = 'none';
+			x_module_html('".get_class($this)."', 'ajax_book', '".( $GLOBALS['selected_date'] ? $GLOBALS['selected_date'] : date('Y-m-d') )."' + ',' + this_patient + ',' + this_template + ',' + currentHour + ',' + currentMin + ',' + currentPhy, processBook);
+		}
+
+		function processBook ( value ) {
+			//document.getElementById('loading').style.visibility = 'hidden';
+			window.location.reload();
+		}
+		</script>
+		";
+
 		// Create user object
 		if (!is_object($this_user)) $this_user = CreateObject('FreeMED.User');
 
@@ -219,6 +257,9 @@ function keyDown(e) {
 	} 
 }
 document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
+
+// Kill the loading window
+document.getElementById('loading').style.visibility = 'hidden';
 </script>
 		";
 	} // end function GroupCalendar->view
@@ -241,58 +282,63 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 		$display_buffer .= "
 		<!-- javascript for cool overlay stuff -->
 		<style type=\"text/css\">
-		.caloverlay { position: absolute; z-index: 1; height: 10ex; width: 300px; background: #cccccc; border: 1px solid #000000; }
+		#backgroundoverlay { position: fixed; z-index: 10; width: 100%; height: 100%; opacity: 0.4; background: #555555; }
+		.caloverlay { position: fixed; z-index: 30; top: 30%; left: 30%; width: 400px; background: #cccccc; border: 1px solid #000000; padding: 2em; border: 2px solid #555555; }
 		</style>
-		<script langauge=\"javascript\">
+		<script language=\"javascript\">
 		var currentOverlayDiv = '';
+		var currentPhy = '';
+		var currentHour = '';
+		var currentMin = '';
+
+		function closeOverlay ( ) {
+			if (currentOverlayDiv != '') {
+				document.getElementById('bookingdiv').style.display = 'none';
+				document.getElementById('backgroundoverlay').style.display = 'none';
+				currentOverlayDiv = '';
+				currentPhy = '';
+				currentHour = '';
+				currentMin = '';
+			}
+		}
+		</script>
+		<div style=\"display: none;\" id=\"backgroundoverlay\"></div>
+		<div style=\"display: none;\" class=\"caloverlay\" id=\"bookingdiv\">
+			<form style=\"margin:0;\">
+			<div align=\"center\"><b>".__("Book Appointment")."</b></div>
+			<div>".__("Patient")." : ".freemed::patient_widget('book_patient')."</div>
+			<div>".__("Template")." : ".module_function( "AppointmentTemplates", "widget", array ( "book_template", '', 'id' ) )."</div>
+			<div align=\"center\"><input type=\"button\" class=\"button\" value=\"".__("Book Appointment")."\" onClick=\"submitBook(); return true;\" /></div>
+			<br/>
+			<div align=\"center\">".__("Mark As")."</div>
+			<div>".html_form::select_widget( "mark", $this->mark_array() )."</div>
+			<div>";
+			foreach ($ds AS $dur => $dis) {
+				$display_buffer .= "<a class=\"button\" onClick=\"window.location='module_loader.php?module=".$this->MODULE_CLASS."&selected_date=".urlencode($selected_date)."&group=".urlencode($group)."&physician='+ currentPhy +'&duration=".urlencode($dur)."&hour='+ currentHour +'&minute='+ currentMin +'&mark=".urlencode($mark)."&submit=travelbook'; return true;\">".$dis."</a>&nbsp;\n";
+			}
+			$display_buffer .= "
+			</div>
+			<div style=\"padding: 10px;\" align=\"center\">
+			<input type=\"button\" class=\"button\" value=\" ".__("Close")." \" onClick=\"closeOverlay(); return true;\" />
+			</div>
+			</form>
+		</div>
+		<script langauge=\"javascript\">
 		function showOverlay(divid, phy, hour, min) {
 			// DEBUG: alert('Called with '+divid+','+phy+','+hour+','+min);
 
 			// Only display one at once
-			if (currentOverlayDiv != '') {
-				document.getElementById(currentOverlayDiv).innerHTML = '';
-			} else {
+			if (currentOverlayDiv == '') {
+				document.getElementById('bookingdiv').style.display = 'block';
+				document.getElementById('backgroundoverlay').style.display = 'block';
 				currentOverlayDiv = divid;
+				currentPhy = phy;
+				currentHour = hour;
+				currentMin = min;
 			}
-			var newDiv = document.createElement('div');
-			newDiv.className = 'caloverlay';
-			newDiv.id = divid + '_form';
-
-			newDiv.innerHTML +=
-			'<form method=\"post\">'+
-			'<div align=\"center\">'+
-			'<input type=\"hidden\" name=\"module\" value=\"".addslashes($this->MODULE_CLASS)."\">'+
-			'<input type=\"hidden\" name=\"selected_date\" value=\"".urlencode($selected_date)."\">'+
-			'<input type=\"hidden\" name=\"group\" value=\"".urlencode($group)."\">'+
-			'<input type=\"hidden\" name=\"physician\" value=\"'+ phy + '\">'+
-			'<input type=\"hidden\" name=\"hour\" value=\"'+ hour +'\">'+
-			'<input type=\"hidden\" name=\"minute\" value=\"'+ min +'\">'+
-			'<table border=\"0\">'+
-			'<tr>'+
-				'<td colspan=\"2\">For '+ hour +':'+ min +' (".__("Mark as")." <b>".$this->mark_to_value($mark)."</b>)</td>'+
-			'</tr>'+
-			'<tr>'+
-				'<td>".__("Mark As")."</td>'+ \n";
-			foreach ($ds AS $dur => $dis) {
-				$display_buffer .= "'<a class=\"button\" href=\"module_loader.php?module=".$this->MODULE_CLASS."&selected_date=".urlencode($selected_date)."&group=".urlencode($group)."&physician='+ phy +'&duration=".urlencode($dur)."&hour='+ hour +'&minute='+ min +'&mark=".urlencode($mark)."&submit=travelbook\">".$dis."</a>&nbsp'+ \n";
-			}
-			$display_buffer .= "'</td></tr>'+
-			'<tr>'+
-			'<td colspan=\"2\">'+
-			'<input type=\"button\" class=\"button\" value=\"Close\" onClick=\"document.getElementById(\''+currentOverlayDiv+'\').removeChild(document.getElementById(\''+currentOverlayDiv+'_form\')); return true;\">'+
-			'</td>'+
-			'</tr>'+
-			'</table>'+
-			'</div>'+
-			'</form>';
-			// Add overlay to DOM table
-			document.getElementById(currentOverlayDiv).appendChild(newDiv);
-			return true;
 		}
 		</script>
 		";
-			//'<input type=\"hidden\" name=\"mark\" value=\"".urlencode($mark)."\">'+
-			//'<input type=\"hidden\" name=\"duration\" value=\"".urlencode($k)."\">'+
 
 		// Display header
 		$buffer .= "
@@ -329,12 +375,14 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 		<b>".fm_date_print($selected_date)."</b><br/>
 		<i>(".(count($physicians)-1)." ".__("physicians").")</i>
 		</td></tr>
+		<!--
 		<tr>
 		<td>".__("Mark as")."</td>
 		<td>".html_form::select_widget(
 			"mark", $this->mark_array(), array('refresh'=>true)
 		)."</td>
 		</tr>
+		-->
 		</table>
 		</form>
 		</td>
@@ -415,6 +463,7 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 			for ($c_min="00"; $c_min<60; $c_min+=5) {
 				// Create map index
 				$idx = sprintf('%02s:%02s', $c_hour, $c_min);
+				$niceidx = sprintf('%02s_%02s', $c_hour, $c_min);
 
 				// Start with table headers
 				if ($c_min > 0) { $buffer .= "</tr><tr>"; }
@@ -443,6 +492,9 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 							"ALIGN=\"LEFT\" ".
 							( $cur_map[$idx]['color'] ? "STYLE=\"background: ".$cur_map[$idx]['color']."; \" " : "" ).
 							"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
+							"<div id=\"item_${this_phy}_${niceidx}_".$cur_map[$idx][link]."\" ".
+							( $cur_map[$idx]['color'] ? "STYLE=\"background: ".$cur_map[$idx]['color']."; \" " : "" ).
+							"CLASS=\"calmark".($cur_map[$idx]['mark']+0)."\">".
 							$scheduler->event_calendar_print(
 								$cur_map[$idx]['link']
 							).html_form::confirm_link_widget(
@@ -460,37 +512,15 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 									__("Are you sure you want to remove this booking?"),
 									'text' => __("Delete")
 								)
-							)."</td>\n";
+							)."</div></td>\n";
+						$buffer .= "<script language=\"javascript\">new Draggable('item_${this_phy}_${niceidx}_".$cur_map[$idx][link]."',{revert:true});</script>\n";
 					} else {
 						// Handle empty event
-						$buffer .= "<td colspan=\"1\" CLASS=\"cell\" align=\"LEFT\" valign=\"MIDDLE\" id=\"overlay_${this_phy}_${c_hour}_${c_min}\" onClick=\"showOverlay('overlay_${this_phy}_${c_hour}_${c_min}', '${this_phy}', '${c_hour}', '${c_min}'); return true;\"><!-- $idx --></td>\n";
-						/*
-						$check = array (
-							15 => "0:15",
-							30 => "0:30",
-							45 => "0:45",
-							60 => "1:00"
-						);
-						foreach ($check as $k => $v) {
-							if ($scheduler->map_fit( $cur_map, $idx, $k)) {
-								$buffer .= template::link_button($v,
-									"module_loader.php?".
-									"module=".$this->MODULE_CLASS."&".
-									"selected_date=".urlencode($selected_date)."&".
-									"group=".urlencode($group)."&".
-									"physician=".urlencode($this_phy)."&".
-									"duration=".urlencode($k)."&".
-									"hour=".urlencode($c_hour)."&".
-									"minute=".urlencode($c_min)."&".
-									"mark=".urlencode($mark)."&".
-									"submit=travelbook#hour".
-									$c_hour, 
-									array('type' => 'button_small')).
-									"&nbsp;";
-							} // end if fit
-						} // end foreach
-						$buffer .= "</td>\n";
-						*/
+						$buffer .= "<td colspan=\"1\" CLASS=\"cell\" align=\"LEFT\" valign=\"MIDDLE\" id=\"overlay_${this_phy}_${c_hour}_${c_min}\" onClick=\"showOverlay('overlay_${this_phy}_${c_hour}_${c_min}', '${this_phy}', '${c_hour}', '${c_min}'); return true;\"><div id=\"blank_${this_phy}_${niceidx}\" width=\"100%\">&nbsp;</div></td>\n";
+						$buffer .= "<script language=\"javascript\">Droppables.add('blank_${this_phy}_${niceidx}', {
+	hoverclass: 'calmark0',
+	onDrop: function( element ) { handleApptDrop(element.id, 'blank_${this_phy}_${niceidx}'); }
+						});</script>\n";
 					} // end if/else
 					} // end for each current map
 				} // end loop thru physicians
@@ -576,6 +606,49 @@ document.onkeydown=keyDown; if(nn) document.captureEvents(Event.KEYDOWN);
 
 		return $result;
 	} // end function GroupCalendar->travel_book
+
+	function ajax_book ( $param ) {
+		$_cache = freemed::module_cache();
+		//x_module_html('".get_class($this)."', 'ajax_book', '".$GLOBALS['selected_date']."' + ',' + this_patient + ',' + this_template + ',' + currentHour + ',' + currentMin + ',' + currentPhy, processBook);
+		list ( $selected_date, $patient, $template, $hour, $min, $phy ) = explode ( ',', $param );
+		syslog(LOG_INFO, "groupcalendar book | $param");
+		$scheduler = CreateObject('_FreeMED.Scheduler');
+		syslog(LOG_INFO, "groupcalendar book | created object");
+
+		// variables
+		$duration = module_function('appointmenttemplates', 'get_duration', array($template));
+		$note = module_function('appointmenttemplates', 'get_description', array($template));
+		$scheduler->set_appointment(array(
+			'date' => $selected_date,
+			'provider' => $phy,
+			'hour' => $hour,
+			'minute' => $min,
+			'patient' => $patient,
+			'appttemplate' => $template,
+			'duration' => $duration,
+			'note' => $note
+		));
+	} // end method ajax_book
+
+	function ajax_move ( $param ) {
+		list ( $selected_date, $from, $to ) = explode (',', $param);
+		// 2006-06-19,item_3_08_00_20876,blank_3_07_35
+		syslog(LOG_INFO, "groupcalendar move | $param");
+
+		list ( $null, $null, $null, $null, $original_id ) = explode ( '_', $from );
+		list ( $null, $provider, $hour, $minute ) = explode ( '_', $to );
+
+		if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
+		$scheduler->move_appointment (
+			$original_id,
+			array (
+				//'caldateof' => $selected_date,
+				'calhour' => $hour + 0,
+				'calminute' => $minute + 0,
+				'calphysician' => $provider + 0
+			)
+		);
+	}
 
 } // end class GroupCalendar
 
