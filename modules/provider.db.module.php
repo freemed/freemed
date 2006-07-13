@@ -377,8 +377,8 @@ class ProviderModule extends MaintenanceModule {
 		html_form::select_widget(
 			"phyref",
 			array (
-				__("In-House") => "no",
-				__("Referring") => "yes"
+				__("Referring") => "yes",
+				__("In-House") => "no"
 			)
 		),
 
