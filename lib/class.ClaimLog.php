@@ -418,6 +418,8 @@ ORDER BY
 			"p.procdt AS service_date, ".
 			"p.procphysician AS provider, ".
 			"p.procrefdoc AS referring_provider, ".
+			"c.covcopay AS copay, ".
+			"c.covdeduct AS deduct, ".
 			"p.id AS proc ".
 			"FROM ".
 				"patient AS pt, ".

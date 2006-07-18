@@ -683,6 +683,8 @@ class ClaimsManager extends BillingModule {
 				$r_provider_name."<br/><br/>\n".
 			"<b>".__("Primary").":</b> ".
 				$c_primary_info."<br/><br/>\n".
+			"<b>".__("Copay").":</b> ".
+				bcadd($info['copay'],0,2)."<br/><br/>\n".
 			"</td><td valign=\"top\" align=\"left\">\n".
 			"<b>".__("POS").":</b> ".
 				$info['facility']."<br/><br/>\n".
@@ -692,6 +694,8 @@ class ClaimsManager extends BillingModule {
 				$info['cpt_code']."<br/><br/>\n".
 			"<b>".__("Secondary").":</b> ".
 				$c_secondary_info."<br/><br/>\n".
+			"<b>".__("Deductable").":</b> ".
+				bcadd($info['deduct'],0,2)."<br/><br/>\n".
 			"</td><td valign=\"top\" align=\"right\">\n".
 			"<b>".__("Charges")."</b>: ".
 				bcadd($info['fee'], 0, 2)."<br/><br/>\n".

@@ -7,10 +7,10 @@ LoadObjectDependency('_FreeMED.EMRModule');
 class PatientCoveragesModule extends EMRModule {
 	var $MODULE_NAME = "Patient Coverage";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com), Jeff (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.1";
+	var $MODULE_VERSION = "0.3.2";
 	var $MODULE_FILE = __FILE__;
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.2';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.2';
 
 	var $table_name    = "coverage";
 	var $record_name   = "Patient Coverage";
@@ -50,6 +50,8 @@ class PatientCoveragesModule extends EMRModule {
 			'covisassigning' => SQL__INT_UNSIGNED(0),
 			'covschool' => SQL__VARCHAR(50),
 			'covemployer' => SQL__VARCHAR(50),
+			'covcopay' => SQL_REAL,
+			'covdeduct' => SQL_REAL,
 			'id' => SQL__SERIAL
 		);
 	
@@ -146,17 +148,17 @@ class PatientCoveragesModule extends EMRModule {
 		);
 
 		$book->add_page("Modify Insurance Information",
-			array_merge( array("covpatgrpno", "covpatinsno", "covrel"), 
+			array_merge( array("covpatgrpno", "covpatinsno", "covrel", "covcopay", "covdeduct"), 
 				  date_vars("coveffdt")),
 			html_form::form_table( array (
-				"Start Date" => fm_date_entry("coveffdt"),
-				"Insurance ID Number" => 
+				__("Start Date") => fm_date_entry("coveffdt"),
+				__("Insurance ID Number") => 
 				"<INPUT TYPE=TEXT NAME=\"covpatinsno\" SIZE=20 MAXLENGTH=30 ".
                                 "VALUE=\"".prepare($covpatinsno)."\">\n",
-				"Insurance Group Number" => 
+				__("Insurance Group Number") => 
 				"<INPUT TYPE=TEXT NAME=\"covpatgrpno\" SIZE=20 MAXLENGTH=30 ".
                                 "VALUE=\"".prepare($covpatgrpno)."\">\n",
-				"Relationship to Insured" => html_form::select_widget("covrel", array (
+				__("Relationship to Insured") => html_form::select_widget("covrel", array (
 					__("Self")    => "S",
 					__("Child")   => "C",
 					__("Husband") => "H",
@@ -168,9 +170,10 @@ class PatientCoveragesModule extends EMRModule {
 					__("HC Dependent") => "HD",
 					__("Sponsored Dependent") => "SD",
 					__("Medicare Legal Rep") => "LR",
-					__("Other")   => "O" ) )
-				 ) 
-			) 
+					__("Other")   => "O" ) ),
+				__("Copay") => html_form::text_widget('covcopay'),
+				__("Deductable") => html_form::text_widget('covdeduct')
+			) )
 		); // end add page
 
 		// Add employment assigning and school information
@@ -313,7 +316,9 @@ class PatientCoveragesModule extends EMRModule {
 				'covplanname' => $covplanname,
 				'covisassigning' => $covisassigning,
 				'covschool' => $covschool,
-				'covemployer' => $covemployer
+				'covemployer' => $covemployer,
+				'covcopay' => $covcopay,
+				'covdeduct' => $covdeduct
 			), array ('id' => $id)
 		);
 		$result = $sql->query($query);
@@ -425,7 +430,7 @@ class PatientCoveragesModule extends EMRModule {
 			);
 										
 			$wizard->add_page(__("Supply Insurance Information"),
-				array_merge( array("covpatgrpno", "covpatinsno", "covreplace", 
+				array_merge( array("covpatgrpno", "covpatinsno", "covreplace", "covcopay", "covdeduct",
 				  "covtype", "covstatus", "covrel"),date_vars("coveffdt")),
 				html_form::form_table( array (
 					__("Start Date") => fm_date_entry("coveffdt"),
@@ -452,6 +457,8 @@ class PatientCoveragesModule extends EMRModule {
 						__("Sponsored Dependent") => "SD",
 						__("Medicare Legal Rep") => "LR",
 						__("Other")   => "O" ) ),
+					__("Copay") => html_form::text_widget('covcopay'),
+					__("Deductable") => html_form::text_widget('covdeduct'),
 					__("Replace Like Coverage") => html_form::select_widget("covreplace", array (
 						__("No") => "0",
 						__("Yes") => "1" ) )
@@ -628,7 +635,9 @@ class PatientCoveragesModule extends EMRModule {
 					"covrelinfodt" => fm_date_assemble('covrelinfodt'),
 					'covisassigning' => $covisassigning,
 					'covschool' => $covschool,
-					'covemployer' => $covemployer
+					'covemployer' => $covemployer,
+					'covcopay' => $covcopay,
+					'covdeduct' => $covdeduct
 				)
 			);
 			$coverage = $sql->query($query);
@@ -781,6 +790,20 @@ class PatientCoveragesModule extends EMRModule {
 		if (!version_check($version, '0.3.1')) {
 			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN covssn CHAR(9) AFTER covsex');
+		}
+
+		// Version 0.3.2
+		//
+		//	Added covcopay and covdeduct to track copay and
+		//	deductable per coverage
+		//
+		if (!version_check($version, '0.3.2')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN covcopay REAL AFTER covemployer');
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN covdeduct REAL AFTER covcopay');
+			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
+				'SET covcopay=0, covdeduct=0 WHERE id>0');
 		}
 	} // end method _update
 
