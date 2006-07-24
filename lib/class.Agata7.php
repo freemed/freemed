@@ -11,6 +11,7 @@ include_once (dirname(__FILE__).'/agata7/classes/core/AgataAPI.class');
 //
 class Agata7 {
 
+	// Constructor: Agata7
 	function Agata7 ( ) {
 		$this->api = new AgataAPI ( );
 		// Set defaults
@@ -62,7 +63,14 @@ class Agata7 {
 			}
 		}
 
-		$ok = $this->api->generateReport ( );
+		$report = $this->api->getReport();
+		$merge = $this->DetermineMergedFormat ( $report );
+
+		if (!$merge) {
+			$ok = $this->api->generateReport ( );
+		} else {
+			$ok = $this->api->generateDocument ( );
+		}
 
 		// Read file into buffer
 		$fp = fopen($output, 'r');
@@ -115,6 +123,8 @@ class Agata7 {
 			$form->addElement( 'header', '', $report['Report']['Properties']['Description'] );
 		}
 
+		$merged = $this->DetermineMergedFormat($report);
+
 		//if (!is_array($report['Report']['Parameters'])) { return NULL; }
 		foreach ($report['Report']['Parameters'] AS $k => $v) {
 			if ($k == 'module') { next; }
@@ -142,19 +152,47 @@ class Agata7 {
 		}
 
 		// Show format selection
-		$form->addElement('select', 'format', __("Report Format"), array (
-			'csv' => 'CSV',
-			'html' => 'HTML',
-			'pdf' => 'PDF',
-			'ps' => 'Postscript',
-			'txt' => 'Plain Text'
-		));
+		if (!$merged) {
+			$form->addElement('select', 'format', __("Report Format"), array (
+				'csv' => 'CSV',
+				'html' => 'HTML',
+				'pdf' => 'PDF',
+				'ps' => 'Postscript',
+				'txt' => 'Plain Text'
+			)); 
+		} else {
+			$form->addElement('select', 'format', __("Report Format"), array (
+				'pdf' => 'PDF',
+			));
+		}
 
 		$submit_group[] = &HTML_QuickForm::createElement( 'submit', 'submit_action', __("Generate") );
 		$submit_group[] = &HTML_QuickForm::createElement( 'submit', 'submit_action', __("Cancel") );
 		$form->addGroup( $submit_group, null, null, '&nbsp;' );
 		return $form;
 	} // end method CreateForm
+
+	// Method: DetermineMergedFormat
+	//
+	//	Figure out if a report is supposed to be an Agata "Merge"
+	//	report or not
+	//
+	// Parameters:
+	//
+	//	$report - Array, passed by reference, which contains the
+	//	representation of a report's XML format.
+	//
+	// Returns:
+	//
+	//	Boolean, true if merged report, false if not.
+	//
+	function DetermineMergedFormat ( &$report ) {
+		if (strlen($report['Report']['Merge']['ReportHeader']) > 10) {
+			return true;
+		} else {
+			return false;
+		}
+	} // end method DetermineMergedFormat
 
 	// Method: GetReports
 	//
