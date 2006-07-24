@@ -1,13 +1,13 @@
 Source: freemed
 Section: unknown
 Priority: optional
-Maintainer: Jeff Buchbinder <jeff@freemedsoftware.com>
+Maintainer: Jeff Buchbinder <jeff@freemedsoftware.org>
 Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.0
 
 Package: freemed
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Depends: perl, libxml-parser-perl, libtext-iconv-perl, cron, djvulibre-bin, netpbm, imagemagick, php4, php4-mysql, php4-gd, php4-cli, php4-cgi, apache2, tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common, xpdf-utils, mysql-server-4.1
+Depends: perl, libxml-parser-perl, libtext-iconv-perl, cron, djvulibre-bin, netpbm, imagemagick, php4, php4-mysql, php4-gd, php4-cli, php4-cgi, php4-curl, php4-domxml, apache2, tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common, xpdf-utils, mysql-server, mysql-client, djvulibre-bin, libxml-simple-perl, libpdf-api2-perl
 Suggests: remitt, cdrecord, mkisofs, turck-mmcache
 Description: FreeMED Opensource Electronic Medical Record System
