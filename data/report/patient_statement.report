@@ -1,0 +1,333 @@
+<?xml version="1.0"?>
+<Report>
+    <Version>7.5</Version>
+    <Properties>
+        <Description></Description>
+        <Title>Patient Statements</Title>
+        <Author>Jeff Buchbinder</Author>
+        <Keywords></Keywords>
+        <Date></Date>
+        <FrameSize></FrameSize>
+    </Properties>
+
+    <Header>
+        <Body></Body>
+        <Align>center</Align>
+    </Header>
+
+    <Footer>
+        <Body></Body>
+        <Align>center</Align>
+    </Footer>
+
+    <DataSet>
+        <DataSource>
+            <Name>FreeMED</Name>
+        </DataSource>
+
+        <Query>
+            <Select>CONCAT(pat.ptlname,', ', pat.ptfname, ' ', pat.ptmname) AS patient_name, pat.ptid AS internal_id, pat.id AS patient_id, ROUND(SUM(proc.procbalcurrent),2) AS total_balance, phy.phypracname AS practice_name, phy.phyaddr1a AS address_1, phy.phyaddr2a AS address_2, CONCAT(phy.phycitya,', ',phy.phystatea,' ',phy.phyzipa) AS csz, CONCAT(phy.phylname, ', ', phy.phyfname, ' ', phy.phymname) AS physician_name, ROUND(SUM(proc.procamtpaid),2) AS total_paid, ROUND(SUM(proc.proccharges),2) AS total_charges, CONCAT('(',SUBSTRING(phy.phyphonea FROM 1 FOR 3),') ',SUBSTRING(phy.phyphonea FROM 4 FOR 3),'-',SUBSTRING(phy.phyphonea FROM 7 FOR 4)) AS office_phone, CONCAT(pat.ptfname,' ',pat.ptmname, IF(LENGTH(pat.ptmname)&gt;0,'. ', ''), pat.ptlname) AS patient_label_name, pat.ptaddr1 AS patient_address, CONCAT(pat.ptcity,', ',pat.ptstate,' ',pat.ptzip) AS patient_csz</Select>
+            <From>patient AS pat, procrec AS proc, physician AS phy</From>
+            <Where>proc.procpatient = pat.id and proc.procbalcurrent &gt; 0 and proc.proccurcovtp = '0' and pat.ptdoc = phy.id</Where>
+            <GroupBy>pat.id</GroupBy>
+            <OrderBy>patient_name</OrderBy>
+            <Config>
+                <Distinct></Distinct>
+                <OffSet>0</OffSet>
+                <Limit>0</Limit>
+            </Config>
+
+        </Query>
+
+        <Groups>
+            <Config>
+                <ShowGroup></ShowGroup>
+                <ShowDetail>1</ShowDetail>
+                <ShowLabel></ShowLabel>
+                <ShowNumber>1</ShowNumber>
+                <ShowIndent>1</ShowIndent>
+            </Config>
+
+        </Groups>
+
+        <Fields>
+            <Column1>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column1>
+
+            <Column2>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column2>
+
+            <Column3>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column3>
+
+            <Column4>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column4>
+
+            <Column5>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column5>
+
+            <Column6>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column6>
+
+            <Column7>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column7>
+
+            <Column8>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column8>
+
+            <Column9>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column9>
+
+            <Column10>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column10>
+
+            <Column11>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column11>
+
+            <Column12>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column12>
+
+            <Column13>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column13>
+
+            <Column14>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column14>
+
+            <Column15>
+                <Chars>30</Chars>
+                <Points>60</Points>
+                <Align>left</Align>
+                <Mask></Mask>
+                <Function></Function>
+                <Cross></Cross>
+                <Conditional></Conditional>
+            </Column15>
+
+        </Fields>
+
+    </DataSet>
+
+    <PageSetup></PageSetup>
+    <Graph>
+        <Title></Title>
+        <TitleX></TitleX>
+        <TitleY></TitleY>
+        <Width>480</Width>
+        <Height>268</Height>
+        <Description></Description>
+        <ShowData>1</ShowData>
+        <ShowValues>1</ShowValues>
+        <Orientation>columns</Orientation>
+    </Graph>
+
+    <Merge>
+        <ReportHeader>#setfan14 #tab400 Patient Statement
+$fan10
+$line3
+#tab20 Pay To #tab400 Patient #tab460 $var1
+#tab40 $var5 #tab400 ID #tab460 $var2
+#tab40 $var6 #tab400 Amount Due #tab460 $var4
+#tab40 $var8 #tab400 Amount Paid #tab460 _________
+#setfan08 #tab400 Bill Generated on $weekday, $monthname $day, $year
+$fan10
+
+#tab20 Provider
+#tab40 $var9
+
+#setfan10 #tab080 $var13 #setfan08 #tab400 Account No #tab460 _____________________
+#setfan10 #tab080 $var14 #setfan08 #tab400 Expiration Date #tab460 _____________________
+#setfan10 #tab080 $var15 #setfan08 #tab400 Signature #tab460 _____________________
+</ReportHeader>
+
+        <Details>
+            <Detail1>
+                <GroupHeader>$fan14
+#tab20 Charges
+$fan10
+$line2
+#tab20 Date #tab100 Type #tab250 Comment #tab500 Amount
+$line1
+</GroupHeader>
+
+                <DataSet1>
+                    <Body>#tab20 $subfield1 #tab100 $subfield2 #tab250 $subfield3 #tab500 $subfield4</Body>
+                    <Query>
+                        <Select>DATE_FORMAT(p.payrecdt, '%b %e, %Y') AS payment_date, CASE p.payreccat WHEN 0 THEN 'Payment' WHEN 1 THEN 'Adjustment' WHEN 5 THEN 'Procedure' WHEN 11 THEN 'Copay' ELSE '--' END AS category, CASE p.payreccat WHEN 5 THEN CONCAT(c.cptcode, ' / ', c.cptnameext) ELSE p.payrecdescrip END AS comment, IF((p.payrecamt&lt;0),CONCAT('(',ROUND(p.payrecamt,2),')'),ROUND(p.payrecamt,2)) AS amount, proc.procbalcurrent AS procedure_balance</Select>
+                        <From>payrec p LEFT OUTER JOIN procrec proc ON p.payrecproc = proc.id LEFT OUTER JOIN cpt c ON proc.proccpt=c.id</From>
+                        <Where>proc.procbalcurrent &gt; 0 AND p.payrecpatient = '$var3' AND FIND_IN_SET(p.payreccat, '0,1,5,7,8,11')</Where>
+                        <GroupBy></GroupBy>
+                        <OrderBy>proc.id, p.payrecdt</OrderBy>
+                        <Config>
+                            <Distinct></Distinct>
+                            <OffSet>0</OffSet>
+                            <Limit>0</Limit>
+                        </Config>
+
+                    </Query>
+
+                    <Fields>
+
+                        <Column1>
+                           <Chars>30</Chars>
+                           <Points>60</Points>
+                           <Align>left</Align>
+                           <Mask></Mask>
+                           <Function></Function>
+                           <Cross></Cross>
+                           <Conditional></Conditional>
+                        </Column1>
+
+                        <Column2>
+                           <Chars>30</Chars>
+                           <Points>60</Points>
+                           <Align>left</Align>
+                           <Mask></Mask>
+                           <Function></Function>
+                           <Cross></Cross>
+                           <Conditional></Conditional>
+                        </Column2>
+
+                    </Fields>
+
+                </DataSet1>
+
+                <NumberSubSql>0</NumberSubSql>
+                <GroupFooter>$line1</GroupFooter>
+            </Detail1>
+
+        </Details>
+
+        <ReportFooter></ReportFooter>
+        <FinalSummary></FinalSummary>
+        <PageSetup></PageSetup>
+    </Merge>
+
+    <Label>
+        <Body></Body>
+        <Config>
+            <HorizontalSpacing>15</HorizontalSpacing>
+            <VerticalSpacing>0</VerticalSpacing>
+            <LabelWidth>288</LabelWidth>
+            <LabelHeight>72</LabelHeight>
+            <LeftMargin>11</LeftMargin>
+            <TopMargin>36</TopMargin>
+            <Columns>2</Columns>
+            <Rows>10</Rows>
+            <PageFormat>A3</PageFormat>
+            <LineSpacing>14</LineSpacing>
+        </Config>
+
+    </Label>
+
+    <OpenOffice>
+        <Source></Source>
+        <Config>
+            <FixedDetails>1</FixedDetails>
+            <ExpandDetails></ExpandDetails>
+            <printEmptyDetail>1</printEmptyDetail>
+            <SumByTotal>1</SumByTotal>
+            <RepeatHeader>1</RepeatHeader>
+            <RepeatFooter>1</RepeatFooter>
+        </Config>
+
+    </OpenOffice>
+
+</Report>
