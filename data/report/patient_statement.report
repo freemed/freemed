@@ -221,36 +221,33 @@
     <Merge>
         <ReportHeader>#setfan14 #tab400 Patient Statement
 $fan10
-$line3
+#lineH600
 #tab20 Pay To #tab400 Patient #tab460 $var1
-#tab40 $var5 #tab400 ID #tab460 $var2
-#tab40 $var6 #tab400 Amount Due #tab460 $var4
-#tab40 $var8 #tab400 Amount Paid #tab460 _________
+#setfan08 #tab40 $var5 #tab400 ID #tab460 $var2
+#setfan08 #tab40 $var6 #tab400 Amount Due #tab460 $var4
+#setfan08 #tab40 $var8 #tab400 Amount Paid #tab460 _________
 #setfan08 #tab400 Bill Generated on $weekday, $monthname $day, $year
-$fan10
+#setfan10
 
-#tab20 Provider
-#tab40 $var9
+#tab20 Provider : #setfab10 $var9 #setfan10
 
 #setfan10 #tab080 $var13 #setfan08 #tab400 Account No #tab460 _____________________
 #setfan10 #tab080 $var14 #setfan08 #tab400 Expiration Date #tab460 _____________________
 #setfan10 #tab080 $var15 #setfan08 #tab400 Signature #tab460 _____________________
+
 </ReportHeader>
 
         <Details>
             <Detail1>
-                <GroupHeader>$fan14
-#tab20 Charges
-$fan10
-$line2
-#tab20 Date #tab100 Type #tab250 Comment #tab500 Amount
-$line1
+                <GroupHeader>#lineH600
+#setfab08 #tab20 Date #tab100 Type #tab250 Comment #tab500 Amount #setfan08
+#lineH600
 </GroupHeader>
 
                 <DataSet1>
                     <Body>#tab20 $subfield1 #tab100 $subfield2 #tab250 $subfield3 #tab500 $subfield4</Body>
                     <Query>
-                        <Select>DATE_FORMAT(p.payrecdt, '%b %e, %Y') AS payment_date, CASE p.payreccat WHEN 0 THEN 'Payment' WHEN 1 THEN 'Adjustment' WHEN 5 THEN 'Procedure' WHEN 11 THEN 'Copay' ELSE '--' END AS category, CASE p.payreccat WHEN 5 THEN CONCAT(c.cptcode, ' / ', c.cptnameext) ELSE p.payrecdescrip END AS comment, IF((p.payrecamt&lt;0),CONCAT('(',ROUND(p.payrecamt,2),')'),ROUND(p.payrecamt,2)) AS amount, proc.procbalcurrent AS procedure_balance</Select>
+                        <Select>DATE_FORMAT(p.payrecdt, '%b %e, %Y') AS payment_date, CASE p.payreccat WHEN 0 THEN 'Payment' WHEN 1 THEN 'Adjustment' WHEN 5 THEN 'Procedure' WHEN 11 THEN 'Copay' ELSE '--' END AS category, CASE p.payreccat WHEN 5 THEN CONCAT(c.cptcode, ' / ', c.cptnameext) ELSE p.payrecdescrip END AS comment, IF((p.payrecamt&lt;0),CONCAT('(',ROUND(p.payrecamt,2),')'),ROUND(p.payrecamt,2)) AS amount, proc.procbalcurrent AS procedure_balance, CASE p.payreccat WHEN 0 THEN p.payrecamt ELSE 0 END AS charge_accumulator, CASE p.payreccat WHEN 5 THEN p.payrecamt WHEN 11 THEN p.payrecamt ELSE 0 END AS payment_accumulator</Select>
                         <From>payrec p LEFT OUTER JOIN procrec proc ON p.payrecproc = proc.id LEFT OUTER JOIN cpt c ON proc.proccpt=c.id</From>
                         <Where>proc.procbalcurrent &gt; 0 AND p.payrecpatient = '$var3' AND FIND_IN_SET(p.payreccat, '0,1,5,7,8,11')</Where>
                         <GroupBy></GroupBy>
@@ -264,40 +261,102 @@ $line1
                     </Query>
 
                     <Fields>
-
                         <Column1>
-                           <Chars>30</Chars>
-                           <Points>60</Points>
-                           <Align>left</Align>
-                           <Mask></Mask>
-                           <Function></Function>
-                           <Cross></Cross>
-                           <Conditional></Conditional>
+                            <Chars>30</Chars>
+                            <Points>60</Points>
+                            <Align>left</Align>
+                            <Mask></Mask>
+                            <Function></Function>
+                            <Cross></Cross>
+                            <Conditional></Conditional>
                         </Column1>
 
                         <Column2>
-                           <Chars>30</Chars>
-                           <Points>60</Points>
-                           <Align>left</Align>
-                           <Mask></Mask>
-                           <Function></Function>
-                           <Cross></Cross>
-                           <Conditional></Conditional>
+                            <Chars>30</Chars>
+                            <Points>60</Points>
+                            <Align>left</Align>
+                            <Mask></Mask>
+                            <Function></Function>
+                            <Cross></Cross>
+                            <Conditional></Conditional>
                         </Column2>
+
+                        <Column3>
+                            <Chars>50</Chars>
+                            <Points>200</Points>
+                            <Align>left</Align>
+                            <Mask></Mask>
+                            <Function></Function>
+                            <Cross></Cross>
+                            <Conditional></Conditional>
+                        </Column3>
+
+                        <Column4>
+                            <Chars>30</Chars>
+                            <Points>60</Points>
+                            <Align>right</Align>
+                            <Mask></Mask>
+                            <Function></Function>
+                            <Cross></Cross>
+                            <Conditional></Conditional>
+                        </Column4>
+
+                        <Column5>
+                            <Chars>30</Chars>
+                            <Points>60</Points>
+                            <Align>left</Align>
+                            <Mask></Mask>
+                            <Function></Function>
+                            <Cross></Cross>
+                            <Conditional></Conditional>
+                        </Column5>
+
+                        <Column6>
+                            <Chars>30</Chars>
+                            <Points>60</Points>
+                            <Align>right</Align>
+                            <Mask># $-9,999.99s</Mask>
+                            <Function></Function>
+                            <Cross></Cross>
+                            <Conditional></Conditional>
+                        </Column6>
+
+                        <Column7>
+                            <Chars>30</Chars>
+                            <Points>60</Points>
+                            <Align>right</Align>
+                            <Mask># $-9,999.99s</Mask>
+                            <Function></Function>
+                            <Cross></Cross>
+                            <Conditional></Conditional>
+                        </Column7>
 
                     </Fields>
 
                 </DataSet1>
 
                 <NumberSubSql>0</NumberSubSql>
-                <GroupFooter>$line1</GroupFooter>
+                <GroupFooter>#lineH600
+
+#tab250 #setfab08 Total Payments #tab500 $subfield6_sum
+#tab250 #setfab08 Total Charges #tab500 $subfield7_sum</GroupFooter>
+
             </Detail1>
 
         </Details>
 
         <ReportFooter></ReportFooter>
         <FinalSummary></FinalSummary>
-        <PageSetup></PageSetup>
+        <PageSetup>
+            <Format>Letter</Format>
+            <Orientation>portrait</Orientation>
+            <LeftMargin>5</LeftMargin>
+            <RightMargin>7</RightMargin>
+            <TopMargin>6</TopMargin>
+            <BottomMargin>8</BottomMargin>
+            <LineSpace>10</LineSpace>
+        </PageSetup>
+
     </Merge>
 
     <Label>
