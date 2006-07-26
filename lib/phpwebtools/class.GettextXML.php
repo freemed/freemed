@@ -57,7 +57,7 @@ class GettextXML {
 				if (!$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile]) {
 					$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile] = $xmlfile;
 					// Add to the cache
-					$_cache = array_merge($_cache, GettextXML::_parse_xml($xmlfile));
+					$_cache = @array_merge($_cache, GettextXML::_parse_xml($xmlfile));
 				}
 			} // end foreach
 		} // end is array
