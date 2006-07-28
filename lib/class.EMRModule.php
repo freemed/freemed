@@ -1053,7 +1053,7 @@ class EMRModule extends BaseModule {
 		$query = "SELECT * FROM ".$this->table_name." WHERE ".
 			"( ".$this->patient_field.
 				" = '".addslashes($patient)."') ".
-			( $conditions ? "AND ( ".$conditions." ) " : "" ).
+			( $conditions ? " AND ( ".$conditions." ) " : "" ).
 			( $this->order_fields ? "ORDER BY ".$this->order_fields : "" );
 		$result = $GLOBALS['sql']->query($query);
 		$return[__("NONE SELECTED")] = "";
@@ -1094,7 +1094,7 @@ class EMRModule extends BaseModule {
 	function _recent_record ( $patient, $recent_date = NULL ) {
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field." = '".addslashes($patient)."' ".
-			( $recent_date ? "AND ".$this->date_field." <= '".addslashes($recent_date)."' " : "" ).
+			( $recent_date ? " AND ".$this->date_field." <= '".addslashes($recent_date)."' " : "" ).
 			"ORDER BY ".$this->date_field." DESC, id DESC";
 		$res = $GLOBALS['sql']->query($query);
 		return $GLOBALS['sql']->fetch_array($res);
