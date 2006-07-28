@@ -101,11 +101,6 @@ class LettersModule extends EMRModule {
 	function add () {
 		// Check for submit as add, else drop
 		switch ($_REQUEST['my_submit']) {
-			case __("Add"):
-			global $action; $action = "addform";
-			return $this->form();
-			break;
-
 			case __("Send to Provider"):
 			include_once(resolve_module('LettersRepository'));
 			$l = new LettersRepository();
@@ -113,7 +108,13 @@ class LettersModule extends EMRModule {
 			break;
 
 			case __("File Directly"):
-			default: break;
+			case __("Add"):
+			break;
+
+			default:
+			global $action; $action = "addform";
+			return $this->form();
+			break;
 		}
 
 		// Check for uploaded msworddoc
