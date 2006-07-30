@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=lib
-SUBDIR=acl agata perl phpwebtools template tex xmlrpc
+SUBDIR=acl agata7 pear perl phpwebtools template tex xmlrpc
 
 all:
 	# Nothing
@@ -10,10 +10,8 @@ all:
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
 	cp -vf *.php $(INSTDIR)/$(THISDIR)
-	# Hack up installing all of PEAR with no makefiles
-	cp -rvf pear $(INSTDIR)/$(THISDIR)/
 	for d in $(SUBDIR); do \
-		make -C $$d install INSTDIR=$(INSTDIR); \
+		cp -rvf $$d $(INSTDIR)/$(THISDIR)/; \
 	done
 
 clean:
