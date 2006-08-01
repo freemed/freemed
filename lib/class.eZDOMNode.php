@@ -85,7 +85,7 @@ class eZDOMNode
     /*!
      Makes a copy of the current node and returns a reference to it.
     */
-    function clone()
+    function clone_node()
     {
         $tmp = new eZDOMNode();
         $tmp->Name = $this->Name;
