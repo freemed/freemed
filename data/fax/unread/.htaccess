@@ -1,0 +1,4 @@
+<Files *.djvu>
+order allow,deny
+allow from all
+</Files>
