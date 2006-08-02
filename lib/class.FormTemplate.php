@@ -8,10 +8,11 @@
 //
 class FormTemplate {
 
-	var $data;
-	var $elements;
-	var $patient;
-	var $xml_template;
+	private $data;
+	private $elements;
+	private $patient;
+	private $xml_template;
+	private $template;
 
 	// Constructor: FormTemplate
 	//
@@ -66,12 +67,22 @@ class FormTemplate {
 	function GetControls ( ) {
 		$template = $this->GetXMLTemplate();
 
+		$attributes = array (
+			'uuid',
+			'name',
+			'variable',
+			'type',
+			'options'
+		);
+
 		// Extract pages, go one by one
-		$controls_dom =& $template->elementsByName('controls');
-		foreach ($controls_dom[0]->Children AS $control) {
+		$controls = $template->getElementsByTagName('control');
+		foreach ($controls AS $control) {
 			unset ($c);
-			foreach ($control->Attributes AS $attr) {
-				$c[$attr->Name] = $attr->Content;
+			foreach ($attributes AS $a) {
+				if ($control->hasAttribute( $a )) {
+					$c[$a] = $control->getAttribute( $a );
+				}
 			}
 			$results[$c['variable']] = $c;
 		} // end foreach control
@@ -82,11 +93,20 @@ class FormTemplate {
 	function GetInformation ( ) {
 		$template = $this->GetXMLTemplate();
 
-		$information_dom =& $template->elementsByName('information');
-		foreach ($information_dom['0']->Children AS $i) {
-			$information[$i->Name] = $i->Children[0]->Content;
+		$tags = array (
+			'name',
+			'pdf',
+			'creator'
+		);
+
+		$information = $template->getElementsByTagName('information')->item(0);
+		foreach ($tags AS $t) {
+			unset ( $set ); unset ( $value );
+			$set = $information->getElementsByTagName( $t );
+			$value = $set->item(0)->nodeValue;
+			$i[$t] = $value;
 		}
-		return $information;
+		return $i;
 	} // end method GetInformation
 
 	// Method: GetXMLTemplate
@@ -95,15 +115,14 @@ class FormTemplate {
 	//
 	// Returns:
 	//
-	//	eZXML object representing XML DOM tree for the loaded template.
+	//	DOMDocument object representing XML DOM tree for the loaded template.
 	//
 	function GetXMLTemplate ( ) {
-		static $template;
-		if (!isset($template)) {
-			$template_obj = CreateObject('_FreeMED.eZXML');
-			$template =& $template_obj->domTree( file_get_contents($this->xml_template), array( "TrimWhiteSpace" => true  ) );
+		if (!isset($this->template)) {
+			$this->template = new DOMDocument ( ) ;
+			$this->template->load( $this->xml_template );
 		} // end caching
-		return $template;
+		return $this->template;
 	} // end method GetXMLTemplate
 
 	// Method: LoadData
@@ -166,25 +185,31 @@ class FormTemplate {
 		$output .= '</information>'."\n";
 
 		// Extract pages, go one by one
-		$page_dom =& $template->elementsByName('page');
+		$page_dom = $template->getElementsByTagName('page');
 		foreach ($page_dom AS $sub) {
 			// Extract original page id (need to translate as-is)
-			$oid = $sub->Attributes[0]->Content;
+			$oid = $sub->getAttribute('oid');
 			//print "<b>processing page $oid</b><br/>\n";
+
+			$e_attr = array ( 'xpos', 'ypos', 'xsize', 'ysize', 'type' );
+			$d_attr = array ( 'table', 'field', 'type', 'link', 'value' );
 
 			$output .= '<page oid="'.$oid.'">'."\n";
 
 			// Loop through all children elements ...
 			//	d = data element
 			//	e = element attributes
-			foreach ($sub->Children AS $element) {
-				foreach ($element->Attributes AS $attr) {
-					$e[$attr->Name] = $attr->Content;
+			$elements = $sub->getElementsByTagName('element');
+			foreach ($elements AS $eobj) {
+				foreach ($e_attr AS $attr) {
+					if ($eobj->hasAttribute($attr)) {
+						$e[$attr] = $eobj->getAttribute($attr);
+					}
 				}
-				foreach ($element->Children AS $children) {
-					if ($children->Name == 'data') {
-						foreach ($children->Attributes AS $attr) {
-							$d[$attr->Name] = $attr->Content;
+				foreach ($eobj->getElementsByTagName('data') AS $children) {
+					foreach ($d_attr AS $attr) {
+						if ($children->hasAttribute($attr)) {
+							$d[$attr] = $children->getAttribute($attr);
 						}
 					}
 				}
