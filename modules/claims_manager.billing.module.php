@@ -49,7 +49,11 @@ class ClaimsManager extends BillingModule {
 			break; // post check form
 
 			case __("Post"):
-			return $this->post_check( );
+			if ($_REQUEST['c_total'] and $_REQUEST['c_checkno'] and $_REQUEST['c_payer']) {
+				return $this->post_check( );
+			} else {
+				return $this->post_check_form( );
+			}
 			break; // actual post check
 
 			case __("Mark Billed"):
@@ -1155,7 +1159,7 @@ class ClaimsManager extends BillingModule {
 					.'">'.$ci['patient_name'].'</a>'.
 					'<input type="hidden" name="post['.$c.']" value="'.$c.'" />');
 				$table->setCellContents($count, 1, $ci['proc']);
-				$table->setCellContents($count, 2, $ci['cpt_cote']);
+				$table->setCellContents($count, 2, $ci['cpt_code']);
 				$table->setCellContents($count, 3, $ci['service_date']);
 				$table->setCellContents($count, 4, bcadd($ci['paid'],0,2));
 				$table->setCellContents($count, 5, bcadd($ci['paid'],0,2));
