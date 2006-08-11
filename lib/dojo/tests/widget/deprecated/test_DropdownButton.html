@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>Dropdown Button Widget Test</title>
+
+	<script>
+		var djConfig = {
+			isDebug: true,
+			debugAtAllCosts: true
+		};
+	</script>
+	<script type="text/javascript" src="../../../dojo.js"></script>
+	<script>
+		dojo.require("dojo.widget.*");
+		dojo.require("dojo.widget.Menu");
+		dojo.require("dojo.widget.MenuItem");
+		dojo.require("dojo.widget.ColorPalette");
+		dojo.require("dojo.widget.DropdownButton");
+		dojo.require("dojo.widget.html.DropdownButton");
+		dojo.hostenv.writeIncludes(); // include scripts directly, for debugging
+	</script>
+	<style type="text/css">
+		body { font-family : sans-serif; }
+		img { border: 0; }
+		body .dojoButton { margin-right: 10px; }		
+	</style>
+
+</head>
+
+<body>
+	<h1>Drop down button test</h1>
+	<span style="color: red">These buttons are deprecated in favor of ComboButton</span>
+	<p>Each buttons below contains a link, plus something else (usually a menu)
+	that shows up if you press the down arrow.</p>
+
+	<p>This paragraph preceeds the list!</p>
+
+		<div dojoType="dropdownbutton">
+			<a href="#edit"><img src="../images/reply.gif"> Reply</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#1"><img src="../images/reply.gif"> Reply All</a>
+				<a dojotype="menuitem" href="#2"><img src="../images/forward.gif"> Forward</a>
+			</div>
+		</div>
+
+		<div dojoType="dropdownbutton">
+			<a href="#send"><img src="../images/check.gif"> Mark</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#2">As Read</a>
+				<a dojotype="menuitem" href="#3">As Unread</a>
+				<a dojotype="menuitem" href="#4">Important</a>
+			</div>
+		</div>
+
+		<div dojoType="dropdownbutton">
+			<a href="#"><div style="float: left; background-color: red; width: 20px; height: 20px; margin-right: 5px;"></div> Foreground color</a>
+			<div dojoType="ColorPalette"></div>
+		</div>
+
+		<div dojoType="dropdownbutton">
+			<a href="#menu"><img src="../images/graph.gif"> Short</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#1"><img src="../images/graph.gif"> Something really, really long!</a>
+				<a dojotype="menuitem" href="#2"><img src="../images/graph.gif"> You think that's long? I can do much better.</a>
+				<a dojotype="menuitem" href="#3"><img src="../images/graph.gif"> Short again</a>
+			</div>
+		</div>
+		
+		<div dojoType="dropdownbutton">
+			<a class="disabled"><img src="../images/x.gif"> Don't click me!</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#1"><img src="../images/graph.gif"> But what about the children?</a>
+			</div>
+		</div>
+	
+	<p>Here are the same buttons with different formatting (text below the icon)</p>
+		<div dojoType="dropdownbutton">
+			<a href="#edit"><img src="../images/reply.gif"><br>Reply</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#1"><img src="../images/reply.gif"> Reply All</a>
+				<a dojotype="menuitem" href="#2"><img src="../images/forward.gif"> Forward</a>
+			</div>
+		</div>
+
+		<div dojoType="dropdownbutton">
+			<a href="#send"><img src="../images/check.gif"><br>Mark</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#2">As Read</a>
+				<a dojotype="menuitem" href="#3">As Unread</a>
+				<a dojotype="menuitem" href="#4">Important</a>
+			</div>
+		</div>
+
+		<div dojoType="dropdownbutton">
+			<a href="#color">
+				<div style="background-color: red; width: 20px; height: 20px;"></div>
+				Foreground color
+			</a>
+			<div dojoType="ColorPalette"></div>
+		</div>
+
+		<div dojoType="dropdownbutton">
+			<a href="#menu"><img src="../images/graph.gif"><br>Short</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#1"><img src="../images/graph.gif"> Something really, really long!</a>
+				<a dojotype="menuitem" href="#2"><img src="../images/graph.gif"> You think that's long? I can do much better.</a>
+				<a dojotype="menuitem" href="#3"><img src="../images/graph.gif"> Short again</a>
+			</div>
+		</div>
+		
+		<div dojoType="dropdownbutton">
+			<a class="disabled"><img src="../images/x.gif"><br>Don't click me!</a>
+			<div dojoType="menu">
+				<a dojotype="menuitem" href="#1"><img src="../images/graph.gif"> But what about the children?</a>
+			</div>
+		</div>
+
+	<p>This paragraph comes later.</p>
+	<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce placerat luctus eros. Morbi est augue, porta ut, feugiat nec, aliquam et, neque. Vestibulum eu ipsum nec justo tristique vehicula. Curabitur iaculis imperdiet augue. Vestibulum placerat orci et dui. Morbi cursus suscipit magna. Ut eget arcu. Mauris vehicula.
+	<br>
+	
+	<p>Nulla sit amet dui. Cras pretium, ipsum vitae posuere semper, dolor enim tempor quam, ut facilisis lorem urna ut massa. Nullam urna est, bibendum nec, suscipit quis, auctor in, lorem. Aliquam justo lectus, gravida vitae, pretium sit amet, placerat in, augue.
+</body>
+</html>

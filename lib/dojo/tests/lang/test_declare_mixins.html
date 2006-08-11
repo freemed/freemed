@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>declare Test</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+	<style type="text/css">
+		body {
+			font-family: Tahoma, Arial, Helvetica, sans-serif;
+			font-size: 11px;
+		}
+	</style>
+	<script>djConfig = { isDebug: true }</script>
+	<script language="JavaScript" type="text/javascript" src="../../dojo.js"></script>
+	<script language="JavaScript" type="text/javascript">
+		dojo.require("dojo.lang.declare");
+
+		dojo.debug("> dojo.declare('my.classes.foo'...");
+		dojo.declare('my.classes.foo', null, {
+				method: function() {
+					return "A method in foo";
+				},
+				method2: function() {
+					return "Another method in foo";
+				}
+			},
+			function(arg) {
+				dojo.debug('foo: initializing instance' + (arg ? ' [' + arg + ']' : '')); 
+				this.id = 'foo';
+			}
+		);
+
+		dojo.declare('mixinBase', null, {
+				mixid: "mixinBase",
+				identify: function() {
+					return "mixinBase";
+				},
+				method: function() {
+					return "A method in mixinBase";
+				}
+		 	},
+			function() {
+			}
+		);
+
+		dojo.declare('mixin', null, {
+				mixid: "mixin",
+				identify: function() {
+					return "mixin";
+				},
+				method: function() {
+					return "A method in mixin";
+				},
+				method2: function() {
+					return "Another method in mixin";
+				}
+		 	},
+			function() {
+				this.mixables = [ ];
+			}
+		);
+				
+		dojo.debug("> dojo.declare('my.classes.bar'...");
+		dojo.declare('my.classes.bar', [my.classes.foo, mixin], {
+			initializer: function(arg) {
+				dojo.debug('bar: initializing instance' + (arg ? ' [' + arg + ']' : '')); 
+				this.id = 'bar';
+			},
+			method: function() {
+				return "A method in bar";
+			}
+		});
+		
+		dojo.debug("> dojo.declare('my.classes.zot', [null, mixinBase, mixin]...");
+		dojo.declare('my.classes.zot', [null, mixinBase, mixin], {
+			initializer: function(arg) {
+				dojo.debug('zot: initializing instance' + (arg ? ' [' + arg + ']' : '')); 
+				this.id = 'zot';
+			},
+			method: function() {
+				return "A method in zot";
+			}
+		});
+		
+		dojo.debug('> b = new my.classes.bar()');
+		b = new my.classes.bar();
+		dojo.debug('> b.method()');
+		dojo.debug(b.method());
+		dojo.debug("> b.inherited('method')");
+		dojo.debug(b.inherited('method'));
+		dojo.debug("> b.identify");
+		dojo.debug(b.identify());
+		dojo.debug("> b.inherited('identify')");
+		dojo.debug(b.inherited('identify'));
+		dojo.debug("> b.method2()");
+		dojo.debug(b.method2());
+		dojo.debug("> b.inherited('method2')");
+		dojo.debug(b.inherited('method2'));
+		dojo.debug("> b.mixid");
+		dojo.debug(b.mixid);
+		dojo.debug('> ************************');
+		dojo.debug('> z = new my.classes.zot()');
+		z = new my.classes.zot();
+		dojo.debug("> z.mixid");
+		dojo.debug(z.mixid);
+		dojo.debug("> z.method()");
+		dojo.debug(z.method());
+		dojo.debug("> z.inherited('method')");
+		dojo.debug(z.inherited('method'));
+		dojo.debug("> my.mixinBase.prototype.method.call(z)");
+		dojo.debug(mixinBase.prototype.method.call(z));
+		dojo.debug("> z.inheritedFrom(mixinBase, 'method')");
+		dojo.debug(z.inheritedFrom(mixinBase, 'method'));
+	</script>
+</head>
+<body> 
+</body>
+</html>

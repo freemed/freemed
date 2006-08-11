@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript">
+			// Dojo configuration
+			djConfig = { 
+				parseWidgets: false,
+				isDebug: true
+			};
+		</script>
+		<script language="JavaScript" type="text/javascript" 
+			src="../../dojo.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			dojo.require("dojo.event.*");
+
+			function logIt(evt){
+				dojo.debug(evt.type + ' was fired');
+			}
+
+			function init(){
+				var kwArgs = {
+					srcObj: document.getElementById("rater"),
+					srcFunc: "onmousemove",
+					adviceFunc: "logIt",
+					rate: 500
+				};
+				dojo.event.kwConnect(kwArgs);
+			}
+
+			dojo.event.connect(dojo, "loaded", "init")
+		</script>
+		<style>
+			#rater {
+				width: 50%;
+				margin-left: 25%;
+				padding: 20px;
+				border: 1px solid #ffef26;
+				background-color: #f5ffbf;
+			}
+		</style>
+	</head>
+	<body>
+		Check your javascript log; the scripts were all loaded in the head.
+
+		<div id="rater">
+			when you move your mouse over this container, you should see
+			logging messages appear every 500ms (half second) but no more
+			frequently than that. Once the you mouse off of this area, the last
+			event should be delivered 1 second afterward, although it's
+			properties might not be what you expect since the referenced object
+			has likely mutated.
+		</div>
+
+	</body>
+</html>

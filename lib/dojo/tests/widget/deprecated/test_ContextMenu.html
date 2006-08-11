@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<script type="text/javascript">
+	var djConfig = {
+	//	debugAtAllCosts: true,
+		isDebug: true
+	};
+</script>
+<script type="text/javascript" src="../../../dojo.js"></script>
+<script type="text/javascript">
+	dojo.require("dojo.widget.MenuItem");
+	dojo.require("dojo.widget.Menu");
+	dojo.require("dojo.widget.ContextMenu");
+	dojo.hostenv.writeIncludes();
+</script>
+</head>
+<body>
+
+<h3 id="test1" style="background-color: gray; display: inline;">Right click here!</h3>
+
+<div dojoType="contextMenu" targetNodeIds="test1"><!--Note no spaces between nodeIds-->
+	<div dojoType="menuitem"> <b>MENU 1</b> </div>
+	<div dojoType="menuitem"> MENU1-Item 1 </div>
+	<div dojoType="menuitem"> MENU2-Item 2 </div>
+</div>
+
+<div dojoType="contextMenu" targetNodeIds="test2"><!--Note no spaces between nodeIds-->
+	<div dojoType="menuitem"> <b>MENU2</b></div>
+	<div dojoType="menuitem"> MENU2-Item 1</div>
+	<div dojoType="menuitem"> MENU2-Item 2</div>
+</div>
+
+<div dojoType="contextMenu" targetNodeIds="testwithindiv"><!--Note no spaces between nodeIds-->
+	<div dojoType="menuitem"> <b>MENU3</b> within a div</div>
+	<div dojoType="menuitem"> MENU3-Item 1</div>
+	<div dojoType="menuitem"> MENU2-Item 2</div>
+</div>
+
+<br /><br />
+
+<h3 id="test2" style="background-color: #C1C1C1;display: inline;">Or here!</h3><br /><br />
+
+<div style="display: tablecell; width; 70%; background-color: navy; text-align: center; padding: 1em;">
+	<h3 style="background-color: #B2B2B2; display: inline;" id="testwithindiv">Testing from within a DIV</h3>
+</div>
+
+<H2 style="color: blue;">All non gray areas in this page should have the browsers default contextmenu</H2><br />
+
+This is if you supply targetNodeIds in contextMenu properties, default behaviour is to stop default contextmenu on the hole document.
+
+<p>Opera is not going to work here because it doesnt trigger events on rightclicks or oncontextmenu</p>
+
+</body>
+</html>

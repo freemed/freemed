@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<title>ContentPane executeScripts Test</title>
+
+<script type="text/javascript">
+	var djConfig = {isDebug: true};
+// 	djConfig.debugAtAllCosts = true;
+
+</script>
+<script type="text/javascript" src="../../dojo.js"></script>
+<script language="JavaScript" type="text/javascript">
+	dojo.require("dojo.widget.LayoutContainer");
+	dojo.require("dojo.widget.LinkPane");
+	dojo.require("dojo.widget.ContentPane");
+	dojo.hostenv.writeIncludes();
+</script>
+
+</head>
+<body>
+This is a test for ContentPanes executeScripts, all the controll scripts are evaled contained in linkPane's scriptScope property
+<p>HTML before</p>
+<p>HTML before</p>
+<p>HTML before</p>
+
+<div dojoType="LayoutContainer"
+	layoutChildPriority='none'
+	style="border: 2px solid black; width: 90%; height: 300px; padding: 10px;">
+	<div dojoType="LinkPane" id='linkPane' layoutAlign="left" style="background-color: #b39b86; height: 250px; width: 200px;" executeScripts="true" href="scriptScope.html">
+	</div>
+	<div dojoType="ContentPane" id="docpane" layoutAlign="client" style="background-color: beige;" executeScripts="true">
+
+	</div>
+</div>
+
+<p>HTML after</p>
+<p>HTML after</p>
+<p>HTML after</p>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>HTML Effects, Part Deux</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript">
+	djConfig = { isDebug: true };
+</script>
+<script type="text/javascript" src="../../dojo.js"></script>
+<script type="text/javascript">
+	dojo.require("dojo.fx.*");
+
+	dojo.addOnLoad(init);
+
+	function init() {
+		dojo.fx.wipeIn("wipe", 500);
+		new dojo.fx.wiper("wipe2", "toggle");
+	}
+</script>
+<style type="text/css">
+	#wipe {
+		display : none;
+	}
+
+	p { margin : 0; }
+</style>
+</head>
+
+<body>
+</body>
+
+<p>Testing some FX when they are displayed inline with other elements.
+I turned off margins on the paragaphs because you can't really account for that when you show/hide. :(</p>
+
+<p id="wipe">Hey-o. I wipe in. <a href="#" onclick="dojo.fx.wipeHide(this.parentNode); return false;">hide me</a></p>
+
+<p>
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam arcu dolor, nonummy vel, aliquet in, consequat eget, metus. Sed volutpat arcu sit amet eros posuere placerat. Duis id lectus. Nulla facilisi. Etiam ipsum felis, rutrum nec, mattis eget, dapibus a, mi. Donec convallis justo et massa. Suspendisse mollis feugiat leo. Sed dignissim nibh eget velit. Aliquam erat volutpat. Fusce enim purus, facilisis et, viverra sed, congue eget, neque. Nullam mollis semper quam. Fusce molestie. Vestibulum aliquet, quam id porta euismod, felis elit pulvinar metus, eget adipiscing nunc dolor quis augue. Pellentesque facilisis elit eget turpis. Ut lobortis mauris eu dui. Curabitur lacus.
+</p>
+<a href="javascript:;" id="toggle">Toggle the next paragraph</a>
+<p id="wipe2">
+Pellentesque scelerisque. Cras consectetuer. Praesent non leo in pede aliquam tristique. Integer ut justo sed magna placerat semper. In volutpat porttitor lorem. Donec tincidunt ipsum a ipsum. Cras nunc est, bibendum rhoncus, sagittis consequat, varius in, est. Nunc nec risus. Nulla facilisi. Integer mollis nulla a mi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+</p>
+<p>
+Nam odio. Praesent vitae mi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla facilisi. Morbi vel mi. Duis imperdiet, lectus nec mollis auctor, dui mauris semper ipsum, et dapibus lacus orci in sem. Nulla porttitor dignissim libero. Phasellus sed felis eget nunc laoreet ornare. Quisque eu tellus eu risus posuere pulvinar. Integer volutpat laoreet urna. Aliquam scelerisque neque vel urna. Suspendisse potenti. Donec congue pede ac diam. Mauris ut dui quis metus pulvinar porta. Mauris dapibus fermentum pede. Quisque adipiscing augue eget leo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Sed id tellus id enim blandit aliquam.
+</p>
+
+</html>
+

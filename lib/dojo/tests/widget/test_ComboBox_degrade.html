@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+
+<title>Dojo ComboBox Widget Test</title>
+
+<script type="text/javascript"> var djConfig = {isDebug: true}; </script>
+<script type="text/javascript" src="../../dojo.js"></script>
+<script type="text/javascript">
+	dojo.require("dojo.widget.ComboBox");
+</script>
+
+<select dojoType="combobox">
+	<option value="foo">foo</option>
+	<option value="bar">bar</option>
+	<option value="baz" selected>baz</option>
+	<option value="thud">thud</option>
+</select>
+
+<p>this is some text below the combo box. It shouldn't get pushed out of the way when search results get returned.
+
+<!-- maintain state of combo box if user presses back/forward button -->
+<form name="_dojo_form" style="display:none"><textarea name=stabile cols=80 rows=10></textarea></form>

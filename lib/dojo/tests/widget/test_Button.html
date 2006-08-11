@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd"> 
+
+<title>Dojo Button Widget Test</title>
+	<link rel="stylesheet" type="text/css" href="css/demos.css" />
+<script type="text/javascript">
+	var djConfig = {isDebug: true /*, debugAtAllCosts: true*/ };
+</script>
+
+<script type="text/javascript" src="../../dojo.js"></script>
+<script type="text/javascript">
+	dojo.require("dojo.widget.Button");
+	dojo.require("dojo.widget.Menu2");
+	dojo.require("dojo.widget.Manager");
+	dojo.hostenv.writeIncludes();
+</script>
+
+<script>
+	// Load user custom button
+	
+	// 1. set directory for acme package (which contains widgets)
+	// The path is relative to the dojo/ directory, so typically
+	// it's something like "../acme"
+	dojo.setModulePrefix('acme', 'tests/widget/acme');
+	dojo.widget.manager.registerWidgetPackage('acme');
+	
+	// 2. load the user defined button
+	dojo.require("acme.UserButton");
+
+	function widgetClick() {
+		dojo.debug('widget [' + this.widgetId + '] was clicked');
+	}
+</script>
+<style>
+	/* group multiple buttons in a row */
+	.box {
+		display: block;
+		text-align: center;
+	}
+	.box .dojoButton {
+		float: left;
+		margin-right: 10px;
+	}
+	.dojoButton .dojoButtonContents {
+		font-size: medium;
+	}
+
+	/* make the menu style match the buttons */
+	.dojoPopupMenu2, .dojoPopupMenu2Client, .dojoMenuItem2,
+		.dojoMenuItem2Label, 
+		.dojoMenuItem2Accel {
+		color: white;
+		background-color: #B9D4FE;
+		border:1px solid #b8d4fe;
+	}
+	
+	body .dojoMenuItem2.dojoMenuItem2Hover,
+		.dojoMenuItem2.dojoMenuItem2Hover .dojoMenuItem2Label, 
+		.dojoMenuItem2.dojoMenuItem2Hover .dojoMenuItem2Accel,
+		.dojoMenuItem2.dojoMenuItem2Hover .dojoMenuItem2Icon {
+			background-color: #6F95CD;
+		border-color:#6F95CD;
+	}
+
+	/* todo: find good color for disabled menuitems, and teset */
+	.dojoMenuItem2Disabled .dojoMenuItem2Label span,
+	.dojoMenuItem2Disabled .dojoMenuItem2Accel span {
+		color: ThreeDShadow;
+	}
+	
+	.dojoMenuItem2Disabled .dojoMenuItem2Label span span,
+	.dojoMenuItem2Disabled .dojoMenuItem2Accel span span {
+		color: ThreeDHighlight;
+	}
+</style>
+
+<h2>Simple, drop down & combo buttons</h2>
+<p>
+Buttons can do an action, display a menu, or both:
+</p>
+<div class="box">
+	<button dojoType="Button" onclick='dojo.debug("clicked simple")'>
+		<img src="images/plus.gif"> Create
+	</button>
+	<button dojoType="Button" onclick='dojo.debug("clicked simple")'>
+		<img src="images/plus.gif"><br>Create
+	</button>
+	<button dojoType="dropdownButton" menuId='editMenu'>
+		<img src="images/note.gif"> Edit
+	</button>
+	<button dojoType="dropdownButton" menuId='editMenu'>
+		<img src="images/note.gif"><br>Edit
+	</button>
+	<button dojoType="comboButton" menuId='saveMenu' onClick='dojo.debug("clicked combo save");'>
+		<img src="images/note.gif"> Save
+	</button>
+	<button dojoType="comboButton" menuId='saveMenu' onClick='dojo.debug("clicked combo save");'>
+		<img src="images/note.gif"><br>Save
+	</button>
+</div>
+<br clear=both>
+
+<h2>Sizing</h2>
+<p>Short buttons, tall buttons, big buttons, small buttons...
+These buttons size to their content (just like &lt;button&gt;).</p>
+<div class="box">
+	<button dojoType="Button" onclick='dojo.debug("big");'>
+			<img src="images/flatScreen.gif">
+		<span style="font-size:xx-large">big</span>
+	</button>
+	<button id="smallButton1" dojoType="Button" onclick='dojo.debug("small");'>
+		<img src="images/arrowSmall.gif">
+		<span style="font-size:x-small">small</span>
+	</button>
+	<button dojoType="Button" onclick='dojo.debug("long");'>
+		<img src="images/tube.gif" height=16>
+		long
+	</button>
+	<button dojoType="Button" onclick='dojo.debug("tall");' width2height="0.1">
+	   <div>
+		<img src="images/tubeTall.gif" height=75px width=35px><br>
+		<span style="font-size:medium">tall</span>
+	   </div>
+	</button>
+	<div style="clear: both;"></div>
+</div>
+<br clear=both>
+
+<h2>User defined button</h2>
+<p>Dojo users can extend the button class and define their own background images.
+Here's an example:</p>
+<style>
+  .dc {
+  	font-size: x-large;
+  	padding-top: 10px;
+  	padding-bottom: 10px;
+  }
+</style>
+<div class="box">
+	<button dojoType="UserButton" onclick='dojo.debug("short");'>
+		<div class="dc">short</div>
+	</button>
+	<button dojoType="UserButton" onclick='dojo.debug("longer");'>
+		<div class="dc">bit longer</div>
+	</button>
+	<button dojoType="UserButton" onclick='dojo.debug("longer yet");'>
+		<div class="dc">ridiculously long</div>
+	</button>
+	<div style="clear: both;"></div>
+</div>
+
+<h2>Programatically changing buttons</h2>
+<p>clicking the buttons below will change the buttons above</p>
+<script>
+	function forEachButton(func){
+		dojo.lang.forEach(
+			dojo.lang.unnest(
+				dojo.widget.manager.getWidgetsByType("Button"),
+				dojo.widget.manager.getWidgetsByType("DropDownButton"),
+				dojo.widget.manager.getWidgetsByType("ComboButton"),
+				dojo.widget.manager.getWidgetsByType("UserButton")
+			),
+			func
+		);
+	}
+
+	var disabled=false;
+	function toggleDisabled(){	
+		disabled=!disabled;
+		forEachButton(function(widget){ widget.setDisabled(disabled); });
+		dojo.byId("toggle").innerHTML= disabled ? "Enable all" : "Disable all";
+	}
+	var captions=["<img src='images/note.gif'>All", "<i>work</i>", "and", "no", "<h1>play</h1>",
+				 "<span style='color: red'>makes</span>", "Jack", "<h3>a</h3>", "dull",
+				 "<img src='images/plus.gif'>boy"];
+	var idx=0;
+	function changeCaptions(){	
+		forEachButton(function(widget){ widget.setCaption( captions[idx++ % captions.length]); });
+	}
+</script>
+<div>
+	<button id="toggle" onclick='toggleDisabled()'>Disable all</button>
+	<button onclick='changeCaptions()'>Change caption</button>
+	<button onclick='location.reload()'>Revert</button>
+</div>
+
+<div dojoType="PopupMenu2" id="editMenu" toggle="wipe">
+	<div dojoType="MenuItem2" iconSrc="../../src/widget/templates/buttons/cut.gif" caption="Cut" accelKey="Ctrl+C"
+		onClick="dojo.debug('not actually cutting anything, just a test!')"></div>
+	<div dojoType="MenuItem2" iconSrc="../../src/widget/templates/buttons/copy.gif" caption="Copy" accelKey="Ctrl+X"
+		onClick="dojo.debug('not actually copying anything, just a test!')"></div>
+	<div dojoType="MenuItem2" iconSrc="../../src/widget/templates/buttons/paste.gif" caption="Paste" accelKey="Ctrl+V"
+		onClick="dojo.debug('not actually pasting anything, just a test!')"></div>
+</div>
+
+<div dojoType="PopupMenu2" id="saveMenu" toggle="wipe">
+	<div dojoType="MenuItem2" iconSrc="../../src/widget/templates/buttons/save.gif" caption="Save" accelKey="Ctrl+S"
+		onClick="dojo.debug('not actually saving anything, just a test!')"></div>
+	<div dojoType="MenuItem2" iconSrc="../../src/widget/templates/buttons/save.gif" caption="Save As" accelKey="Ctrl+A"
+		onClick="dojo.debug('not actually saving anything, just a test!')"></div>
+</div>

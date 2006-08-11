@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<title>AccordionPane Test</title>
+
+<script type="text/javascript">
+	var djConfig = {isDebug: true, debugAtAllCost: true};
+</script>
+<script type="text/javascript" src="../../dojo.js"></script>
+<script language="JavaScript" type="text/javascript">
+	dojo.require("dojo.widget.AccordionPane");
+	dojo.hostenv.writeIncludes();
+</script>
+<style>
+
+div.container {
+	background-color: white;
+	border: 2px solid black;
+	width: 200px;
+	height: 600px;
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+}
+
+.label , .content {
+	width: 100%;
+}
+
+.label {
+	background: grey;
+	height: 20px;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+.content {
+	background: #eeeeee;
+}
+
+
+
+</style>
+</head>
+<body>
+	<div class="container">
+		<div dojoType="AccordionPane" label="TestLabel" labelNodeClass="label" containerNodeClass="content" open="true">
+		Lorem Ipsum
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Quisque iaculis, nulla id semper faucibus, pede tellus nonummy magna, vitae adipiscing orci arcu ut augue. Nunc condimentum, magna a vestibulum convallis, libero purus pulvinar orci, sed vestibulum urna sem ut pede.
+More Ipsum...
+
+Sed sollicitudin suscipit risus. Nam ullamcorper. Sed nisl lectus, pellentesque nec, malesuada eget, ornare a, libero. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+		</div>
+		<div dojoType="AccordionPane" label="TestLabel2" labelNodeClass="label" containerNodeClass="content" open="false">
+		Lorem Ipsum
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Quisque iaculis, nulla id semper faucibus, pede tellus nonummy magna, vitae adipiscing orci arcu ut augue. Nunc condimentum, magna a vestibulum convallis, libero purus pulvinar orci, sed vestibulum urna sem ut pede.
+More Ipsum...
+
+Sed sollicitudin suscipit risus. Nam ullamcorper. Sed nisl lectus, pellentesque nec, malesuada eget, ornare a, libero. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+		</div>
+		<div dojoType="AccordionPane" label="TestLabel3" labelNodeClass="label" containerNodeClass="content" open="false">
+		Lorem Ipsum
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Quisque iaculis, nulla id semper faucibus, pede tellus nonummy magna, vitae adipiscing orci arcu ut augue. Nunc condimentum, magna a vestibulum convallis, libero purus pulvinar orci, sed vestibulum urna sem ut pede.
+More Ipsum...
+
+Sed sollicitudin suscipit risus. Nam ullamcorper. Sed nisl lectus, pellentesque nec, malesuada eget, ornare a, libero. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Quisque iaculis, nulla id semper faucibus, pede tellus nonummy magna, vitae adipiscing orci arcu ut augue. Nunc condimentum, magna a vestibulum convallis, libero purus pulvinar orci, sed vestibulum urna sem ut pede.
+		</div>
+
+	</div>
+
+</body>
+</html>

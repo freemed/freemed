@@ -1,0 +1,80 @@
+<!--
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Tabs Demo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+
+<script type="text/javascript">
+	var djConfig = { isDebug: true };
+</script>
+<script type="text/javascript" src="../../../dojo.js"></script>
+<script type="text/javascript">
+	dojo.require("dojo.widget.*");
+	dojo.require("dojo.widget.Tabs");
+</script>
+
+<style type="text/css">
+body {
+	font-family : sans-serif;
+}
+</style>
+<script type="text/javascript">
+function boo(panel, node) {
+	node.innerHTML = "Handlers override grabbing from URLs. They run in context of the widget, so 'this' refers to the tab widget.";
+}
+</script>
+</head>
+
+<body>
+	<p>These tabs are made up of local and external content. Tab 1 and Tab 2 are loading
+	files tab1.html and tab2.html. Tab 3 and Another Tab are using content that is already
+	part of this page.</p>
+
+	<ul class="tabs" dojoType="tabs">
+		<li><a href="../tab1.html">Tab 1</a></li>
+		<li><a href="../tab2.html" tabid="tab2">Tab 2</a></li>
+		<li><a href="#tab3" tabhandler="boo">Tab 3</a></li>
+		<li><a href="#another">Another Tab</a></li>
+		<li><a href="#tab2cont">Sub-tabs</a></li>
+	</ul>
+
+	<div id="tab3">
+		<h1>I am tab 3</h1>
+		<p>And I was already part of the page! That's cool, no?</p>
+	</div>
+
+	<div id="another">
+		<h1>I love local content</h1>
+		<p>And I'm not ashamed to admit it.</p>
+		<p>venga venga venga venga venga venga venga venga venga venga venga venga
+		venga venga venga venga venga venga venga venga venga venga venga venga
+		venga venga venga venga venga venga venga venga venga venga venga venga
+		venga venga venga venga venga venga venga venga venga venga venga venga
+		venga venga venga venga venga venga venga venga venga venga venga venga
+		venga venga venga venga venga venga venga venga venga venga venga venga
+		venga venga venga venga venga venga venga venga venga venga venga venga</p>
+	</div>
+
+	<br style="clear:both" />
+
+	<div id="tab2cont">
+		<ul class="tabs" dojoType="tabs">
+			<li><a href="../tab1.html">Tab 1</a></li>
+			<li class="current"><a href="../tab2.html">Tab 2</a></li>
+		</ul>
+	</div>
+
+	<div id="tabsHere"></div>
+	<ul class="tabs bottom" dojoType="tabs" tabtarget="tabsHere" extractcontent="true" parsecontent="true">
+		<li><a href="../tab1.html">Tab 1</a></li>
+		<li class="current"><a href="../tab2.html">Tab 2</a></li>
+		<li><a href="test_Tabs.html">Again!</a></li>
+	</ul>
+
+</body>
+</html>

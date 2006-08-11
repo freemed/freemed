@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<title>Test1 </title>
+		<script type="text/javascript">
+			var djConfig = {isDebug: true};
+		</script>
+		
+		<script type="text/javascript" src="../../dojo.js"></script>
+		<script type="text/javascript">
+			dojo.require("dojo.widget.Wizard");
+			dojo.require("dojo.widget.WizardContainer");
+			dojo.require("dojo.widget.ContentPane");
+			dojo.require("dojo.widget.TabContainer");						
+		</script>
+	</head>
+	<body>
+		<div id="wizard" dojoType="WizardContainer" >
+	        <div dojoType="WizardPane">
+	            <h1>wizard panel 1</h1>
+				<div id="tabContainer1" dojoType="TabContainer" selectedTab="tab1" style="height:300px">
+					<div dojoType="ContentPane" label="Tab 1" id="tab1" ><h1>tab 1</h1></div>		
+					<div dojoType="ContentPane" label="Tab 2"><h1>tab 2</h1></div>
+				</div>	            
+			</div>
+	        <div dojoType="WizardPane">
+	            <h1>wizard panel 2</h1>
+				<div id="tabContainer2" dojoType="TabContainer" selectedTab="tab2" style="height:300px">
+					<div dojoType="ContentPane" label="Tab 1" id="tab2" ><h1>tab 1</h1></div>		
+					<div dojoType="ContentPane" label="Tab 2"><h1>tab 2</h1></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

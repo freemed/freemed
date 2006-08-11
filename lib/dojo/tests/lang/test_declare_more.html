@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>dojo.declare: More Tests</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+	<style type="text/css">
+		body {
+			font-family: Tahoma, Arial, Helvetica, sans-serif;
+			font-size: 11px;
+		}
+	</style>
+	<script>djConfig = { isDebug: true }</script>
+	<script language="JavaScript" type="text/javascript" src="../../dojo.js"></script>
+	<script language="JavaScript" type="text/javascript">
+		dojo.require("dojo.lang.declare");
+
+		dojo.debug('testing expanded usage for dojo.declare');
+		dojo.debug('');
+		dojo.debug('');
+		
+		// usually taken care of by dojo.provide
+		dojo.evalObjPath('my.classes', true);
+
+		dojo.debug("> dojo.declare('my.classes.foo'...");
+		// out-of-line initializer declaration
+		my.classes.foo = function(arg) {
+			dojo.debug('foo: initializing instance' + (arg ? ' [' + arg + ']' : '')); 
+			this.id = 'foo';
+		}
+		// note array of property objects
+		dojo.declare('my.classes.foo', null, [{	protoId: 'foo' }, {
+				getProtoId: function() {
+					var ancestorId = this.inherited('getProtoId', arguments);
+					// FIXME: _getPropContext is not intended for public usage except in very rare cases
+					return "I am a " + this._getPropContext().protoId + (ancestorId ? " and " + ancestorId : '');
+				},
+				getInstanceId: function(extra) {
+					var ancestorId = this.inherited('getInstanceId', [ extra ]);
+					return "a " + this.id + (ancestorId ? " is " + ancestorId : '');
+				},
+				getId: function() {
+					return "I am a foo";
+				},
+				method: function() {
+					return "A method in foo";
+				}
+			}]
+		);
+		
+		dojo.debug("> dojo.declare('my.classes.bar'...");
+		// out-of-line initializer declaration
+		my.classes.bar = function(arg) {
+				dojo.debug('bar: initializing instance' + (arg ? ' [' + arg + ']' : '')); 
+				this.id = 'bar';
+		}
+		dojo.declare('my.classes.bar', my.classes.foo, {
+			protoId: 'bar',
+			getId: function(extra) {
+				return "I am a bar and " + this.inherited('getId', [ extra ]);
+			}
+		});
+		dojo.debug('******');
+		
+		dojo.debug('> b = new my.classes.bar()');
+		b = new my.classes.bar();
+		dojo.debug('******');
+		
+		dojo.debug("> dojo.declare('my.classes.zot'...");
+		// out-of-line initializer declaration
+		my.classes.zot = function(arg) {
+				dojo.debug('zot: initializing instance' + (arg ? ' [' + arg + ']' : '')); 
+				this.id = 'zot';
+		}
+		dojo.declare('my.classes.zot', my.classes.bar, {
+			protoId: 'zot',
+			getId: function(extra) {
+				return "I am a zot and " + this.inherited('getId', [ extra ]);
+			}
+		});
+		dojo.debug('******');
+		
+		dojo.debug('> f = new my.classes.foo()');
+		f = new my.classes.foo();
+		dojo.debug('******');
+		
+		dojo.debug('> z = new my.classes.zot("with an argument")');
+		z = new my.classes.zot("with an argument");
+		dojo.debug('******');
+		
+		dojo.debug('> f.getId()');
+		dojo.debug('> f.getInstanceId()');
+		dojo.debug('> f.getProtoId()');
+		dojo.debug(f.getId());
+		dojo.debug(f.getInstanceId());
+		dojo.debug(f.getProtoId());
+		dojo.debug('******');
+		
+		dojo.debug('> b.getId()');
+		dojo.debug('> b.getInstanceId()');
+		dojo.debug('> b.getProtoId()');
+		dojo.debug(b.getId());
+		dojo.debug(b.getInstanceId());
+		dojo.debug(b.getProtoId());
+		dojo.debug('******');
+		
+		dojo.debug('> z.getId()');
+		dojo.debug('> z.getInstanceId()');
+		dojo.debug('> z.getProtoId()');
+		dojo.debug(z.getId());
+		dojo.debug(z.getInstanceId());
+		dojo.debug(z.getProtoId());
+		dojo.debug('******');
+		
+		dojo.debug('> z.inherited("method")');
+		dojo.debug(z.inherited("method"));
+	</script>
+</head>
+<body> 
+</body>
+</html>
