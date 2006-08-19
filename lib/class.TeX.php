@@ -409,7 +409,7 @@ class TeX {
 					break;
 
 					case 'ssn':
-					return $this->_SanitizeText('('.substr($rec[$params[1]], 0, 3).'-'.substr($rec[$params[1]], 3, 2).'-'.substr($rec[$params[1]], 5, 4));
+					return $this->_SanitizeText(substr($rec[$params[1]], 0, 3).'-'.substr($rec[$params[1]], 3, 2).'-'.substr($rec[$params[1]], 5, 4));
 					break;
 
 					case 'phone':
