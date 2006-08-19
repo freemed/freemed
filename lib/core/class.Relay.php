@@ -35,12 +35,22 @@ class Relay {
 		// Deserialize the "raw" data
 		$data = $this->deserialize_request( $raw );
 		$p = $this->extract_parameters( $data, $_REQUEST );
+		//syslog(LOG_INFO, "params = ".serialize($p));
 
-		syslog(LOG_INFO, "params = ".serialize($p));
+		// Figure method
+		$method = $data['method'] ? $data['method'] : $_method;
+
+		// Determine if this is okay to do, based on the namespace
+		if ( substr($method, 0, 27) != 'org.freemedsoftware.public.' ) {
+			if ( ! CallMethod ( 'org.freemedsoftware.public.Login.LoggedIn' ) ) {
+				syslog( LOG_INFO, "Access attempt for '${method}' denied due to user not being logged in" );
+				trigger_error( "Access attempt for '${method}' denied due to user not being logged in", E_USER_ERROR );
+			}
+		}
 
 		// TODO: call appropriate method:
 		// $output = CallMethod ( $data['method'], $data['params'] );
-		$output = call_user_func_array ( 'CallMethod', array_merge ( array ( $data['method'] ? $data['method'] : $_method ), $p ) );
+		$output = call_user_func_array ( 'CallMethod', array_merge ( array ( $method ), $p ) );
 
 		// Reserialize and return the appropriate data
 		return $this->serialize_response( $output );
