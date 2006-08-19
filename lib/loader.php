@@ -170,6 +170,9 @@ function ResolveObjectPath ( $object ) {
 			$name = str_replace ( 'org.freemedsoftware.', '', $object );
 			list ( $pname, $cname ) = explode ( '.', $name );
 			$cname = eregi_replace( '\..+', '', $cname );
+			if (!file_exists("${base_path}/lib/${pname}/.namespace")) {
+				trigger_error("Object ${object} not valid.", E_USER_ERROR);
+			}
 			if (file_exists("${base_path}/lib/${pname}/class.${cname}.php")) {
 				return "${base_path}/lib/${pname}/class.${cname}.php";
 			} else {
