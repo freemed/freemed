@@ -8,11 +8,12 @@ if (!defined("__FREEMED_PHP__")) {
 define ('__FREEMED_PHP__', true);
 
     // These variables you should not touch
-define ('PACKAGENAME', "FreeMED");				// package name
-define ('CODED_BY', "The FreeMED Project");		// coded by tag
-define ('VERSION', "0.8.3");	// current version
-define ('DISPLAY_VERSION', "0.8.3");
-define ('BUGS_EMAIL', "support@freemedsoftware.org");	// coder email...
+define ('PACKAGENAME', "FreeMED");
+define ('CODED_BY', "FreeMED Software Foundation");
+define ('VERSION', "0.8.8");	// current version
+define ('DISPLAY_VERSION', "0.9.0-dev");
+define ('BUGS_EMAIL', "support@freemedsoftware.org");
+define ('PHYSICAL_LOCATION', dirname(dirname(__FILE__)) );
 
 define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
 $cur_date=date("Y-m-d");		// SQL date format (don't touch!)
@@ -42,11 +43,6 @@ if (function_exists('set_include_path')) {
 }
 
 define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
-
-$debug=false;  // true=debug info on, false=debug info off
-$_mail_handler="mailto:";  // where the mail goes...
-    // the _mail_handler variable is so that we can farm
-    // this mail to some mail hook in a program.
 
   // related to the calendar --
   //   times are given in 24 hour format, then reformatted for
@@ -79,26 +75,10 @@ if (strstr($HTTP_USER_AGENT, "Lynx")) {
   // If there's no bcmath module, use fake bcadd() function
 if (!function_exists("bcadd")) include_once (dirname(__FILE__).'/bcadd.php');
 
-  // Check for proper template, and load default if not provided
-if (!isset($template)) { $template = TEMPLATE; }
-
- // Include library for template
-if (file_exists("lib/template/".$template."/lib.php")) {
-	include_once("lib/template/".$template."/lib.php");
-} else { include_once("lib/template/default/lib.php"); }
-
   // ************ HANDLERS AND OTHER MODULE LOADERS ****************
 
-include_once (dirname(__FILE__)."/error_handler.php");   // internal error handler
-
-include_once (dirname(__FILE__)."/phpwebtools/webtools.php"); // webtools toolkit
-
-// Quick IE/Gecko browser check
-if (ereg('MSIE ([0-9].[0-9]{1,2})',$_SERVER['HTTP_USER_AGENT'])) {
-	$GLOBALS['__freemed']['IE'] = true;
-} elseif (ereg('Mozilla/([0-9].[0-9]{1,2})',$_SERVER['HTTP_USER_AGENT'])) {
-	$GLOBALS['__freemed']['Mozilla'] = true;
-}
+include_once ( dirname(__FILE__)."/loader.php" );
+include_once ( dirname(__FILE__)."/module.php" );
 
 // ********************** START SESSION **************************
 if (!defined('SESSION_DISABLE')) {
@@ -121,18 +101,6 @@ if (!defined('SESSION_DISABLE')) {
 		'patient_history'
 	);
 
-	// Bring session and request variables into the global scope.
-	if (is_array($_SESSION)) { extract($_SESSION); }
-
-	// Create object map for FreeMED
-	CreateApplicationMap(array(
-		'FreeMED' => 'lib/class.*.php',
-		'Agata' => 'lib/agata/lib/class.*.php',
-		// Protected namespaces:
-		'_FreeMED' => 'lib/class.*.php',
-		'_ACL' => 'lib/acl/*.class.php'
-	));
-
 	//----- Gettext and language settings
 	if (isset($_POST['_l'])) {
 		// Handle template language changes
@@ -146,7 +114,9 @@ if (!defined('SESSION_DISABLE')) {
 	$GLOBALS['freemed']['__language'] = $_SESSION['language'];
 
 	// Load GettextXML routines (most non-session things don't need it).
-	include_once (dirname(__FILE__)."/i18n.php");
+	//include_once (dirname(__FILE__)."/i18n.php");
+	// Stub this until we fix i18n
+	function __($p) { return $p; }
 
 	// Load ACL routines
 	include_once (dirname(__FILE__)."/acl.php");
@@ -169,7 +139,7 @@ define ('DB_ENGINE', SQL_MYSQL);
 //----- Create SQL database object
 if (!defined('SKIP_SQL_INIT')) {
 	$sql = CreateObject (
-		'PHP.sql', 
+		'org.freemedsoftware.phpwebtools.sql',
 		DB_ENGINE,
 		array(
 			'host' => DB_HOST, 
@@ -181,7 +151,7 @@ if (!defined('SKIP_SQL_INIT')) {
 }
 
 //----- Create Log target
-openlog("freemed", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+openlog( "freemed", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
 
   // ***************************************************************
 
