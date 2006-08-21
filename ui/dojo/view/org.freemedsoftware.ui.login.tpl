@@ -109,6 +109,11 @@
 			</tr>
 			<tr>
 				<td colspan="2" align="center" valign="top">
+					<small><strong>{$INSTALLATION}</strong></small>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center" valign="top">
 					<small>version {$VERSION}</small>
 				</td>
 			</tr>

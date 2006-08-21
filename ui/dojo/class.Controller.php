@@ -56,6 +56,7 @@ class Controller {
 		$this->load_data ( $_SESSION );
 
 		// Master overrides
+		$this->smarty->assign ( "INSTALLATION", INSTALLATION );
 		$this->smarty->assign ( "VERSION", DISPLAY_VERSION );
 		$this->smarty->assign ( "base_uri", $base_uri );
 		$this->smarty->assign ( "htdocs", "${base_uri}/ui/${ui}/htdocs" );
