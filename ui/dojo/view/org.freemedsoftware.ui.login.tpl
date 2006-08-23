@@ -36,8 +36,10 @@
 	<script type="text/javascript">
 	var dlg;
 	function initLogin(e) {literal} { {/literal}
-		dlg = dojo.widget.byId("DialogContent");
+		var dlg = dojo.widget.byId("DialogContent");
 		dlg.show();
+		var username = document.getElementById("username");
+		username.focus();
 	{literal} } {/literal}
 
 	function doFreemedLogin ( ) {literal} { {/literal}
