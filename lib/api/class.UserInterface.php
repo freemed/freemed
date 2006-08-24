@@ -28,9 +28,26 @@ class UserInterface {
 		$this->user = CreateObject('org.freemedsoftware.core.User');
 	}
 
+	// Method: GetCurrentUsername
+	//
+	//	Determine the username for the current user.
+	//
+	// Returns:
+	//
+	//	String.
+	//
 	public function GetCurrentUsername ( ) {
 		return $this->user->getDescription();
-	}
+	} // end method GetCurrentUsername
+
+	// Method: GetEMRConfiguration
+	public function GetEMRConfiguration ( ) {
+		return $this->user->manage_config;
+	} // end method GetEMRConfiguration
+
+	public function GetNewMessages ( ) {
+		return $this->user->newMessages();
+	} // end method GetNewMessages
 
 } // end class UserInterface
 
