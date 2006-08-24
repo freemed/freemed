@@ -33,29 +33,24 @@
 
 <style type="text/css">
 {literal}
-		/***
-			The following is just an example of how to use the table.
-			You can override any class names to be used if you wish.
-		***/
-
 		table {
-			font-family:Lucida Grande, Verdana;
-			font-size:0.8em;
-			width:100%;
-			border:1px solid #ccc;
-			cursor:default;
+			width: 100%;
 		}
 
 		* html div.tableContainer {	/* IE only hack */
 			width:95%;
-			border:1px solid #ccc;
+			/* border:1px solid #ccc; */
 			height: 285px;
 			overflow-x:hidden;
 			overflow-y: auto;
 		}
 
-		table td,
-		table th{
+		* html div.tableContainer table {
+			width:100%; border:1px solid #ccc; cursor:default;
+		}
+
+		div.tableContainer table td,
+		div.tableContainer table th{
 			border-right:1px solid #999;
 			padding:2px;
 			font-weight:normal;
@@ -105,14 +100,15 @@
 <div class="tableContainer">
 	<table dojoType="SortableTable" widgetId="dailyPatientAppointments" headClass="fixedHeader"
 	 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
-	 border="0" onUISelect="freemedPatientLoad(dojo.widget.byId('dailyPatientAppointments').getValue());" >
+	 border="0" onUISelect="freemedPatientLoad(dojo.widget.byId('dailyPatientAppointments').getValue());">
 	<thead>
 		<tr>
 			<th field="Id" dataType="Number"></th>
 			<th field="Date" dataType="String">Date</th>
+			<th field="Time" dataType="String">Time</th>
 			<th field="Patient" dataType="String">Patient</th>
 			<th field="Provider" dataType="String">Provider</th>
-			<th field="Time" dataType="String">Time</th>
+			<th field="Note" dataType="String">Note</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -121,9 +117,10 @@
 		<tr>
 			<td>{$calItem.patient_id}</td>
 			<td>{$calItem.date_of}</td>
+			<td>{$calItem.hour|string_format:"%02d"}:{$calItem.minute|string_format:"%02d"}</td>
 			<td>{$calItem.patient}</td>
 			<td>{$calItem.provider}</td>
-			<td>{$calItem.hour|string_format:"%02d"}:{$calItem.minute|string_format:"%02d"}</td>
+			<td>{$calItem.note}</td>
 		</tr>
 {/foreach}
 	</tbody>
