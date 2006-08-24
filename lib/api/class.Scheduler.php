@@ -1,10 +1,28 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: FreeMED.Scheduler
+// Class: org.freemedsoftware.api.Scheduler
 //
-//	Holds methods for dealing with calendar ans scheduling appointments.
+//	Holds methods for dealing with calendar and scheduling appointments.
 //	Most methods from lib/calendar-functions.php that were important
 //	should have been migrated here.
 //
@@ -16,7 +34,7 @@ class Scheduler {
 	//	their SQL names. For copying purposes, it also contains
 	//	SQL names mapped to themselves.
 	//
-	var $calendar_field_mapping = array (
+	protected $calendar_field_mapping = array (
 		// Original mappings are first so they can be overwritten
 		'caldateof' => 'caldateof',
 		'caltype' => 'caltype',
@@ -60,7 +78,29 @@ class Scheduler {
 	);
 
 	// STUB constructor
-	function Scheduler ( ) { }
+	public function __construct ( ) { } 
+
+	// Method: GetDailyAppointments
+	//
+	// Parameters:
+	//
+	//	$date - (optional) Date to get appointments for. Defaults to current date.
+	//
+	// Returns:
+	//
+	//	Hash of daily appointments
+	//	* scheduler_id
+	//	* patient
+	//	* patient_id
+	//	* provider
+	//	* provider_id
+	//	* note
+	//	* hour
+	public function GetDailyAppointments ( $date = NULL ) {
+		$this_date = $date ? $date : date('Y-m-d');
+		$query = "SELECT s.caldateof AS date_of, s.calhour AS hour, s.calminute AS minute, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') AS patient, pa.id AS patient_id, s.calprenote AS note, s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id WHERE s.caldateof='".addslashes($this_date)."' AND s.calstatus != 'cancelled' ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician";
+		return freemed::query_to_array( $query );
+	} // end method GetDailyAppointments
 
 	// Method: copy_appointment
 	//
@@ -219,12 +259,13 @@ class Scheduler {
 	//
   	function display_hour ( $hour ) {
 		// time checking/creation if/else clause
-		if ($hour<12)
+		if ($hour<12) {
 			return $hour." AM";
-		elseif ($hour == 12)
+		} elseif ($hour == 12) {
 			return $hour." PM";
-		else
+		} else {
 			return ($hour-12)." PM";
+		}
   	} // end method display_hour
 
 	// Method: display_time
@@ -282,7 +323,7 @@ class Scheduler {
 		}
 
 		// Get patient information
-		$my_patient = CreateObject('_FreeMED.Patient', $my_event['calpatient'],
+		$my_patient = CreateObject('org.freemedsoftware.core.Patient', $my_event['calpatient'],
 			($my_event['caltype']=="temp"));
 
 		if (!$short) {
@@ -394,182 +435,6 @@ class Scheduler {
 			"ORDER BY caldateof, calhour, calminute";
 		return $this->_query_to_result_array ( $query );
 	} // end method find_group_appointments
-
-	// Method: generate_calendar_mini
-	//
-	//	Generate a miniature calendar, linking to the given page
-	//
-	// Parameters:
-	//
-	//	$given_date - Date to be selected
-	//
-	//	$this_url - URL to append the date to in links
-	//
-	// Returns:
-	//
-	//	HTML code for miniature calendar
-	//
-	function generate_calendar_mini ($given_date, $this_url) {
-		// mostly hacked code from TWIG's calendar - ancient
-		$cur_date = date('Y-m-d');
-
-		$lang_days = array (
-			"",
-			__("Sun"),
-			__("Mon"),
-			__("Tue"),
-			__("Wed"),
-			__("Thu"),
-			__("Fri"),
-			__("Sat")
-		);
-		$lang_months = array (
-			'',
-			__("Jan"),
-			__("Feb"),
-			__("Mar"),
-			__("Apr"),
-			__("May"),
-			__("Jun"),
-			__("Jul"),
-			__("Aug"),
-			__("Sep"),
-			__("Oct"),
-			__("Nov"),
-			__("Dec")
-		);
-
-    // break current day into pieces
-    list ($cur_year, $cur_month, $cur_day) = explode ("-", $cur_date);
-    if ($cur_month < 10) $cur_month = "0".$cur_month;
-    if ($cur_day   < 10) $cur_day   = "0".$cur_day  ;
-
-    // validate day
-    if ((empty ($given_date)) or (!strpos($given_date, "-")))
-          { $this_date = $cur_date;   }
-     else { $this_date = $given_date; }
-
-    // break day into pieces
-    list ($this_year, $this_month, $this_day) = explode ("-", $this_date);
-
-    // Figure out the last day of the month
-    $lastday  [4] = $lastday [6] = $lastday [9] = $lastday [11] = 30;
-    // check for leap years in february)
-    if (checkdate( $this_month, 29, $this_year )) { $lastday [2] = 29; }
-      else                                        { $lastday [2] = 28; }
-    $lastday  [1] = $lastday  [3] = $lastday  [5] = $lastday [7] =
-    $lastday  [8] = $lastday [10] = $lastday [12] = 31;
-
-    // generate top of table
-    $buffer .= "
-     <center>
-     <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" VALIGN=\"MIDDLE\"
-      ALIGN=\"CENTER\" class=\"calendar_mini\" bgcolor=\"#dfdfdf\">
-      <tr BGCOLOR=\"#ffffff\">
-       <td ALIGN=\"LEFT\" colspan=\"2\">
-    ";
-
-    // previous month link
-    $buffer .= "     
-     <a href=\"$this_url&selected_date=".
-       $this->scroll_prev_month(
-        $this->scroll_prev_month(
-         $this->scroll_prev_month($this_date)
-        )
-       )."\" class=\"button_text\"
-      >3</A>
-     <a href=\"$this_url&selected_date=".$this->scroll_prev_month($this_date)."\"
-      class=\"button_text\"><small>".__("prev")."</small></a>
-     </td>
-     <td COLSPAN=\"5\" ALIGN=\"CENTER\">
-       <b>".prepare($lang_months[0+$this_month])." ".$this_year."</b>
-     </td>
-     <td ALIGN=\"RIGHT\" colspan=\"2\">
-     <a href=\"$this_url&selected_date=".$this->scroll_next_month($this_date)."\"
-      class=\"button_text\"><small>".__("next")."</small></a>
-     <a href=\"$this_url&selected_date=".
-       $this->scroll_next_month(
-        $this->scroll_next_month(
-         $this->scroll_next_month($this_date)
-        )
-       )."\" class=\"button_text\"
-      >3</a>
-     </td>
-     </tr>
-     <tr>
-      <td colspan=\"1\">&nbsp;</td>
-    ";
-    // print days across top
-    for( $i = 1; $i <= 7; $i++) {
-     $buffer .= "
-      <td ALIGN=\"CENTER\">
-       <small>".htmlentities($lang_days[$i])."</small>
-      </td>
-     ";
-    } // end of day display
-    $buffer .= "
-      <td colspan=\"1\">&nbsp;</td>
-     </tr>
-     <tr>
-      <td colspan=\"1\">&nbsp;</td>
-    ";
-
-    // calculate first day
-    $first_day = date( 'w', mktime( 0, 0, 0, $this_month, 1, $this_year ) );
-    $day_row = 0;
-
-    if( $first_day > 0 ) {
-  	while( $day_row < $first_day ) {
-   		$buffer .= "\t<td ALIGN=\"RIGHT\" BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
-   		$day_row += 1;  
-  		}
- 	} // end while day row < first day
-
- 	while( $day < $lastday[($this_month + 0)] ) 
-		{
-  		if( ( $day_row % 7 ) == 0) 
-			{
-   			$buffer .= "\t<td colspan=\"1\">&nbsp;</td>\n".
-				"</tr>\n<tr>\n".
-				"<td colspan=\"1\">&nbsp;</td>\n";
-  			}
-
-  		$dayp = $day + 1;
-
-        $thisclass = (
-	  ( $dayp       == $cur_day AND
-            $this_month == $cur_month AND
-            $this_year  == $cur_year ) ?
-            "calendar_mini_selected" : 
-	  ( $dayp       == $this_day ?
-	    "calendar_mini_current" : "calendar_mini_cell" ) );
-       
-	$buffer .= "<td align=\"RIGHT\" class=\"".$thisclass."\">\n";
-
-        $buffer .= "<a ".
-	  "href=\"$this_url&selected_date=".
-         date("Y-m-d",mktime(0,0,0,$this_month,$dayp,$this_year) ).
-         "\">$dayp</a>\n";
-      $buffer .= "
-       </td>
-      ";
-      $day++;
-      $day_row++;
-    }
-
-		while( $day_row % 7 ) {
-			$buffer .= "<td ALIGN=\"RIGHT\" BGCOLOR=\"#dfdfdf\">&nbsp;</td>\n";
-			$day_row += 1;  
-		} // end of day row
-		$buffer .= "<td colspan=\"1\">&nbsp;</td>\n".
-		"</tr><tr>\n".
-		"<td COLSPAN=\"9\" ALIGN=\"RIGHT\" class=\"button_style\">\n".
-		"<a HREF=\"$this_url&selected_date=".date('Y-m-d').
-		"\" class=\"button_text\" ".
-		"><small>".__("go to today")."</small></a>\n".
-		"</td></tr></table></center>\n";
-		return $buffer;
-	} // end function generate_calendar_mini
 
 	// Method: get_appointment
 	//
