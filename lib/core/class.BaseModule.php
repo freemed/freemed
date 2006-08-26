@@ -1,10 +1,28 @@
 <?php
-	// $Id$
-	// lic : GPL, v2
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 LoadObjectDependency('org.freemedsoftware.core.module');
 
-// Class: FreeMED.BaseModule
+// Class: org.freemedsoftware.core.BaseModule
 //
 //	Basic FreeMED module class. All modules in FreeMED inheirit methods
 //	from this class. It extends the phpwebtools module class.
@@ -37,50 +55,17 @@ class BaseModule extends module {
 	var $print_template = '';
 
 	// Method: BaseModule constructor
-	function BaseModule () {
+	public function __construct ( ) {
 		LoadObjectDependency('org.freemedsoftware.core.GettextXML');
 		// Call parent constructor
-		$this->module();
+		parent::__construct ( );
 		// Call setup
-		$this->setup();
+		$this->setup ( );
 		// Load language files, if necessary
 		GettextXML::textdomain(strtolower(get_class($this)));
 		// Push acl information, if there is any
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
 	} // end constructor BaseModule
-
-	// Method: BaseModule->check_vars
-	function check_vars ($nullvar = "") {
-		global $module;
-		if (!isset($module))
-		{
-			 trigger_error("No Module Defined",E_ERROR);
-		}
-		return true;
-	} // end function check_vars
-
-	// Method: BaseModule->_header
-	function _header ($nullvar = "") {
-		global $display_buffer, $page_name;
-		freemed::connect ();
-		$page_name = __($this->MODULE_NAME);
-
-		// Check for existance of separate "record_name"
-		if (!isset($this->record_name)) {
-			$this->record_name = __($this->MODULE_NAME);
-		}
-
-		// Globalize record_name and page_title
-		if (page_name() == $this->page_name) {
-			$GLOBALS['record_name'] = $this->record_name;
-			$GLOBALS['page_title'] = $this->record_name;
-		}
-	} // end function _header
-	function header ( ) { $this->_header(); }
-
-	// Method: BaseModule->_footer
-	function footer ($nullvar = "") {
-	} // end function footer
 
 	// Method: fax_widget
 	//
