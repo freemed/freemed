@@ -49,6 +49,10 @@ class Controller {
 		$this->smarty->compile_dir = dirname(__FILE__)."/../../data/cache/smarty/templates_c/";
 		$this->smarty->cache_dir = dirname(__FILE__)."/../../data/cache/smarty/cache/";
 
+		// Change delimiters to be something a bit more sane
+		$this->smarty->left_delimiter = '<!--{';
+		$this->smarty->right_delimiter = '}-->';
+
 		// Load global passed data in whichever order it needs
 		$this->load_data ( $_GET );
 		$this->load_data ( $_POST );

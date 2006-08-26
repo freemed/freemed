@@ -1,5 +1,5 @@
-{* Smarty *}
-{*
+<!--{* Smarty *}-->
+<!--{*
  // $Id$
  //
  // Authors:
@@ -20,7 +20,8 @@
  // You should have received a copy of the GNU General Public License
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*}
+*}-->
+
 <script type="text/javascript">
                 dojo.require("dojo.widget.TabContainer");
 //              dojo.require("dojo.widget.Tooltip");
@@ -29,9 +30,9 @@
 </script>
 
 <div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 85%;">
-	<div dojoType="ContentPane" id="patientDemographicsPane" label="Demographics" href="{$base_uri}/controller.php/{$ui}/org.freemedsoftware.controller.patient.form?page=demographics">
+	<div dojoType="ContentPane" id="patientDemographicsPane" label="Demographics" href="<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.form?page=demographics">
 	</div>
-	<div dojoType="ContentPane" id="patientContactPane" label="Contact" href="{$base_uri}/controller.php/{$ui}/org.freemedsoftware.controller.patient.form?page=contact">
+	<div dojoType="ContentPane" id="patientContactPane" label="Contact" href="<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.form?page=contact">
 	</div>
 </div>
 

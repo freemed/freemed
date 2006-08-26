@@ -1,5 +1,5 @@
-{* Smarty *}
-{*
+<!--{* Smarty *}-->
+<!--{*
  // $Id$
  //
  // Authors:
@@ -20,11 +20,11 @@
  // You should have received a copy of the GNU General Public License
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*}
+*}-->
 
 <div align="center" style="size: 10pt; border: 1px solid #5555ff; padding: 5px; background-color: #aaaaff;">
 <b>Today's Patients</b>
 </div>
 
-{include file="org.freemedsoftware.ui.dailyappointmenttable.tpl"}
+<!--{include file="org.freemedsoftware.ui.dailyappointmenttable.tpl"}-->
 

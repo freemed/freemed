@@ -1,5 +1,5 @@
-{* Smarty *}
-{*
+<!--{* Smarty *}-->
+<!--{*
  // $Id$
  //
  // Authors:
@@ -20,19 +20,18 @@
  // You should have received a copy of the GNU General Public License
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*}
+*}-->
 <script type="text/javascript">
 	dojo.require("dojo.event.*");
 	dojo.require("dojo.widget.SortableTable");
 
-	function handleDailyCalendar ( ) {literal} { {/literal}
+	function handleDailyCalendar ( ) {
 		alert('got a click');
 		return true;
-	{literal} } {/literal}
+	}
 </script>
 
 <style type="text/css">
-{literal}
 		table {
 			width: 100%;
 		}
@@ -94,7 +93,6 @@
 			background: #ffff33;
 			padding: 2px;
 		}
-{/literal}
 </style>
 
 <div class="tableContainer">
@@ -112,17 +110,17 @@
 		</tr>
 	</thead>
 	<tbody>
-{* Loop through all $dailyCalendar[] items as set in the controller *}
-{foreach from=$dailyCalendar item=calItem}
+<!--{* Loop through all $dailyCalendar[] items as set in the controller *}-->
+<!--{foreach from=$dailyCalendar item=calItem}-->
 		<tr>
-			<td>{$calItem.patient_id}</td>
-			<td>{$calItem.date_of}</td>
-			<td>{$calItem.hour|string_format:"%02d"}:{$calItem.minute|string_format:"%02d"}</td>
-			<td>{$calItem.patient}</td>
-			<td>{$calItem.provider}</td>
-			<td>{$calItem.note}</td>
+			<td><!--{$calItem.patient_id}--></td>
+			<td><!--{$calItem.date_of}--></td>
+			<td><!--{$calItem.hour|string_format:"%02d"}-->:<!--{$calItem.minute|string_format:"%02d"}--></td>
+			<td><!--{$calItem.patient}--></td>
+			<td><!--{$calItem.provider}--></td>
+			<td><!--{$calItem.note}--></td>
 		</tr>
-{/foreach}
+<!--{/foreach}-->
 	</tbody>
 	</table>
 </div>
