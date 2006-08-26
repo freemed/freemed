@@ -1,5 +1,24 @@
 <?php
-	// $Id$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 class module {
 		// package related variables
@@ -33,15 +52,16 @@ class module {
 	var $META_INFORMATION = NULL;
 
 	// constructor module
-	function module ($nullval="") {
+	public function __construct ( ) {
 		$this->MODULE_CLASS = get_class($this);
-		if (!$this->check_version())
+		if (!$this->check_version()) {
 			$this->error("module needs higher version of superclass");
+		}
 	} // end constructor module
 
 	// function check_dependency
 	// - checks variables provided, returns false if not properly provided
-	function check_dependency ($nullval="") {
+	public function check_dependency ($nullval="") {
 		// if there are no dependencies, always succeeds
 		if ($this->DEPENDENCY == NULL) return true;
 
@@ -62,13 +82,13 @@ class module {
 
 	// function check_vars (STUB)
 	// - checks variables provided, returns false if not properly provided
-	function check_vars ($nullval="") {
+	public function check_vars ($nullval="") {
 		return true;
 	} // end function check_vars
 
 	// function check_version
 	// - checks variables provided, returns false if not properly provided
-	function check_version ($nullval="") {
+	public function check_version ($nullval="") {
 		// check version for this class
 		$parent_class = get_parent_class($this);
 		if ( (!empty($parent_class)) and ($parent_class != "module") ) {
@@ -81,68 +101,36 @@ class module {
 		} // end  
 	} // end function check_vars
 
-	// function error
-	// - this is the stub for the modules' common error message
-	function error ($error_string = "ERROR") {
-		DIE(get_class($this)." :: ".$error_string);
-	} // end function error
-
-	// function execute
-	// - this is the code for "executing" the module. It's very
-	//   useful for page generation modules, but not much else.
-	//   for anything else, you should probably call
-	//   module_function().
-	function execute ($nullval="") {
-		if (!$this->check_vars()) $this->error();
-		echo $this->header();
-		echo $this->main();
-		echo $this->footer();
-	} // end function execute
-
-	// function footer (STUB)
-	// - this is the stub for the modules' common footer
-	function footer ($nullval="") {
-		return "";
-	} // end function footer
-
-	// function header (STUB)
-	// - this is the stub for the modules' common header
-	function header ($nullval="") {
-		return "";
-	} // end function header
-
-	// function main (STUB)
-	// - this is the stub for the functionality of the module
-	function main ($nullval="") {
-		return "";
-	} // end function main
-
-	// function run
-	// - this just calls this->execute()
-	function run ($nullval="") {
-		$this->execute($nullval);
-	} // end function run
-
-	// function set_dependency
-	// - this is an array of the modules that have to be present
-	function set_dependency ($deps) {
-		$this->DEPENDENCY = $deps;
-	} // end function set_dependency
-
-	// function set_icon
-	// - this allows an icon to be set for the current module
-	function set_icon ($icon_path) {
-		$this->ICON = $icon_path;
-	} // end function set_icon
+	// Method: OnError
+	//
+	//	Generic module error handling. Terminates execution by default.
+	//
+	// Parameters:
+	//
+	//	$error_string - (optional) Error message to display.
+	//
+	public function OnError ($error_string = "ERROR") {
+		die(get_class($this)." :: ".$error_string);
+	} // end method OnError
 
 	// function setup
 	// - this function calls the setup routine for the module
-	function _setup () {
+	protected function _setup () {
 		// STUB
 		return true;
 	} // end function _setup
-	function setup () { return $this->_setup(); }
+	public function setup () { return $this->_setup(); }
 
+	// Method: _SetMetaInformation
+	//
+	//	Set stored information associated with module.
+	//
+ 	// Parameters:
+	//
+	//	$key - Information key.
+	//
+	//	$value - Value to be stored.
+	//
 	protected function _SetMetaInformation($key, $value) {
 		$this->META_INFORMATION["$key"] = $value;
 	} // end function _SetMetaInformation
