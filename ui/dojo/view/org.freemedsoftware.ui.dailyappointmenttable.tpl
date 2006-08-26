@@ -95,6 +95,9 @@
 		}
 </style>
 
+<!--{if not $dailyCalendar.0.patient_id}-->
+<div align="center"><i>No appointments scheduled for today.</i></div>
+<!--{else}-->
 <div class="tableContainer">
 	<table dojoType="SortableTable" widgetId="dailyPatientAppointments" headClass="fixedHeader"
 	 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
@@ -124,4 +127,5 @@
 	</tbody>
 	</table>
 </div>
+<!--{/if}-->
 
