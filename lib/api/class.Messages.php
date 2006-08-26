@@ -1,11 +1,29 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: FreeMED.Messages
+// Class: org.freemedsoftware.api.Messages
 class Messages {
 
-	function Messages ( ) { }
+	public function __construct ( ) { }
 
 	// Method: get
 	//
@@ -21,7 +39,7 @@ class Messages {
 	//
 	function get ($message) {
 		global $this_user;
-		if (!is_object($this_user)) $this_user = CreateObject('_FreeMED.User');
+		if (!is_object($this_user)) $this_user = CreateObject('org.freemedsoftware.core.User');
 
 		// Perform search
 		$query = "SELECT * FROM messages WHERE id='".addslashes($message)."'";
@@ -88,7 +106,7 @@ class Messages {
 	//
 	function remove ($message_id) {
 		global $this_user;
-		if (!is_object($this_user)) $this_user = CreateObject('_FreeMED.User');
+		if (!is_object($this_user)) $this_user = CreateObject('org.freemedsoftware.core.User');
 		
 		// Perform actual deletion
 		$result = $GLOBALS['sql']->query(
@@ -114,7 +132,7 @@ class Messages {
 	//
 	function send ($message) {
 		global $this_user;
-		if (!is_object($this_user)) $this_user = CreateObject('_FreeMED.User');
+		if (!is_object($this_user)) $this_user = CreateObject('org.freemedsoftware.core.User');
 
 		// Check for error conditions
 		if (($message['patient'] < 1) and (empty($message['person']))) { 
@@ -169,7 +187,7 @@ class Messages {
 	//
 	function view ($unread_only=false, $patient=NULL) {
 		global $this_user;
-		if (!is_object($this_user)) $this_user = CreateObject('_FreeMED.User');
+		if (!is_object($this_user)) $this_user = CreateObject('org.freemedsoftware.core.User');
 
 		// Perform search
 		if ($patient != NULL) {
