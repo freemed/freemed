@@ -91,6 +91,41 @@ class Controller {
 		}
 	} // end private function load_data
 
+	protected function export_date ( $data ) {
+		switch (true) {
+			case ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $data, $regs):
+			return sprintf('%d/%d/%04d', $regs[2], $regs[3], $regs[1]);
+			break;
+
+			case ereg("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})", $data, $regs):
+			return $data;
+
+			default: return $data;
+		}
+	} // end protected function export_date
+
+	protected function import_date ( $varname, $default = NULL ) {
+		$data = $_REQUEST[$varname] ? $_REQUEST[$varname] : $default;
+		switch (true) {
+			case ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $data, $regs):
+			return sprintf('%04d-%02d-%02d', $regs[1], $regs[2], $regs[3]);
+			break;
+
+			case ereg("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})", $data, $regs):
+			if ($regs[3] < 30) {
+				$regs[3] += 2000;
+			} elseif ($regs[3] < 1800) {
+				$regs[3] += 1900;
+			}
+			return sprintf('%04d-%02d-%02d', $regs[3], $regs[1], $regs[2]);
+			break;
+
+			default:
+			return false;
+			break;
+		}
+	} // end protected function import_date
+
 } // end class Controller
 
 ?>
