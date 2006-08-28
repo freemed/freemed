@@ -1270,7 +1270,7 @@ class freemed {
 		// HL7 v2.3.1 compliant race widget (table 0006)
 		return html_form::select_widget($varname,
 			array (
-				"---" => '',
+				__("Unknown/No preference") => '29',
 				__("Catholic") => '0',
 				__("Jewish") => '1',
 				__("Eastern Orthodox") => '2',
@@ -1300,7 +1300,6 @@ class freemed {
 				__("Reformed") => '26',
 				__("Salvation Army") => '27',
 				__("Unitarian; Universalist") => '28',
-				__("Unknown/No preference") => '29',
 				__("Native American") => '30',
 				__("Buddhist") => '31'
 			)
@@ -2645,7 +2644,7 @@ function freemed_import_stock_data ($table_name) {
 	$query = "LOAD DATA LOCAL INFILE '".addslashes($physical_file)."' ".
 		"INTO TABLE ".addslashes($table_name)." ".
 		"FIELDS TERMINATED BY ','";
-           
+
 	$result = $sql->query ($query); // try doing it
 
 	return $result; // send the results home...
