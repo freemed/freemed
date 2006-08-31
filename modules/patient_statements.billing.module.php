@@ -57,22 +57,9 @@ class PatientStatements extends BillingModule {
 	//
 	function printaction ( ) {
 		// Create patient_statement report
-		$agata = CreateObject('FreeMED.Agata');
-		$agata->CreateReport(
-			'Merge',
-			'patient_statement',
-			'Patient Statements',
-			NULL // parameters (use in future)
-		);
-		switch (strtolower($_REQUEST['format'])) {
-			case 'ps': case 'postscript':
-			$agata->ServeReport();
-			break;
-
-			case 'pdf':
-			$agata->ServeMergeAsPDF();
-			break;
-		}
+		$agata = CreateObject('_FreeMED.Agata7');
+		$agata->CreateReport( 'Merge', 'patient_statement' );
+		$agata->ServeReport();
 		die(); // die, otherwise we would template, and that's ugly
 	} // end method printaction
 
