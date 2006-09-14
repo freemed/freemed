@@ -96,6 +96,10 @@ class ClaimLog {
 				if ($v) $q[] = "c.covinsco = '".addslashes($v)."'";
 				break; // end payer case
 
+				case 'provider':
+				if ($v) $q[] = "p.procphysician = '".addslashes($v)."'";
+				break; // end provider case
+
 				case 'plan':
 				if ($v) $q[] = "c.covplanname = '".addslashes($v)."'";
 				break;

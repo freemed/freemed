@@ -102,6 +102,7 @@ class ClaimsManager extends BillingModule {
 		$search_form->setDefaults(array(
 			'criteria[payer]' => '',
 			'criteria[plan]' => '',
+			'criteria[provider]' => '',
 			'criteria[last_name]' => '',
 			'criteria[first_name]' => '',
 			'criteria[patient]' => '',
@@ -132,6 +133,11 @@ class ClaimsManager extends BillingModule {
 		);
 		$aging_form->addGroup($payer_group, null, null, '&nbsp;');
 		*/
+
+		$search_form->addElement(
+			'select', 'criteria[provider]', __("Provider"),
+			array_flip ( module_function('accountsreceivable', '_provider_list') )
+		);
 
 		$search_form->addElement(
 			'header', '', __("Payer Criteria") );
@@ -389,6 +395,10 @@ class ClaimsManager extends BillingModule {
 			'select', 'criteria[payer]', __("Payer"),
 			array_flip($cl->aging_insurance_companies( )) );
 		$search_form->addElement(
+			'select', 'criteria[provider]', __("Provider"),
+			array_flip ( module_function('accountsreceivable', '_provider_list') )
+		);
+		$search_form->addElement(
 			'select', 'criteria[billed]', __("Billing Status"),
 			array (
 				'-1' => '----',
@@ -435,6 +445,16 @@ class ClaimsManager extends BillingModule {
 				))."\" class=\"remove_link\">X</a><br/>\n";
 			$criteria['payer'] = $_REQUEST['criteria']['payer'];
 		} // payer
+		if ($_REQUEST['criteria']['provider']) {
+			$provider = CreateObject('FreeMED.Physician', 
+				$_REQUEST['criteria']['provider']);
+			$display_buffer .= "<b>".__("Provider").":".
+				"</b> ".$provider->fullName()."</b> ".
+				"<a href=\"".$this->_search_link(array(
+					'provider' => ''	
+				))."\" class=\"remove_link\">X</a><br/>\n";
+			$criteria['provider'] = $_REQUEST['criteria']['provider'];
+		} // provider
 		if ($_REQUEST['criteria']['last_name']) {
 			$display_buffer .= "<b>".__("Last Name like").":".
 				"</b> ".$_REQUEST['criteria']['last_name']."</b> ".
