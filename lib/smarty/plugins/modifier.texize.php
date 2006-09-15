@@ -16,10 +16,37 @@
  * @param string
  * @return string
  */
-function smarty_modifier_texize( $string )
+function smarty_modifier_texize( $text )
 {
         // Sanitize all but HTML markers
-        $text = $this->_SanitizeText($string, true);
+        $text = str_replace('\\', '\\\\', $string);
+
+        // Get rid of \r character
+        $text = str_replace("\r", "", $text);
+
+        // Sanitize {, } (do NOT escape [ and ])
+        $text = str_replace('{', '\lbrace\ ', $text);
+        $text = str_replace('}', '\lbrace\ ', $text);
+        $text = str_replace('[', '\lbrack\ ', $text);
+        $text = str_replace(']', '\rbrack\ ', $text);
+        
+        // Make sure dollar sign escaping used before $+$ escaped
+        $text = str_replace('$', '\$', $text);
+        
+        // Get rid of #, _, %, +
+        $text = str_replace('#', '\#', $text);
+        $text = str_replace('_', '\_', $text);
+        $text = str_replace('%', '\%', $text);
+        $text = str_replace('+', '$+$', $text);
+        
+        // Deal with amphersands, and &quot; &amp; stuff
+        $text = str_replace('&quot;', '"', $text);
+        $text = str_replace('&amp;', '&', $text);
+        $text = str_replace('&lt;', '$<$', $text);
+        $text = str_replace('&gt;', '$>$', $text);
+        $text = str_replace('&', '\&', $text);
+        $text = str_replace('&nbsp;', '\ ', $text);
+        
         $text = str_replace('\\\\', '\\', $text); // kill double slashes
 
         // Remove leading CRs if present (mucks with the formatting)
@@ -122,6 +149,8 @@ function smarty_modifier_texize( $string )
         // breaks
         $text = str_replace("\n", "\\  \\\\\n", $text);
 
+	$text = str_replace('<', '\<', $text);
+	$text = str_replace('>', '\>', $text);
         return $text;
 }
 
