@@ -507,6 +507,7 @@ class html_form {
 			">\n";
 
 		reset ($this_values);
+		if (is_array($this_values[0])) { return $buffer .= "</select>\n"; }
 		while (list($k, $v) = each ($this_values)) {
 			if ( (is_integer($k) and ($this_values[($k+0)] == $v))
 				 or (empty($k)) ) {
