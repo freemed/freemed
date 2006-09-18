@@ -34,4 +34,8 @@ function t ( $test, $output ) {
 	print ( !$_SERVER['argv'] ? "<br/>\n" : "\n" );
 }
 
+// Cache the admin user for these tests...
+print ( !$_SERVER['argv'] ? "<b>Loading user #1 (admin)</b><br/>" : " * Loading user #1 (admin)\n" );
+$this_user = CreateObject('org.freemedsoftware.core.User', 1);
+
 ?>
