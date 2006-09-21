@@ -3756,6 +3756,9 @@ function help_url ( $page = "", $section = "" ) {
 
 	// Produce name by removing .php
 	$page_name = str_replace(".php", "", $page_name);
+	if ($page_name == 'module_loader' and $_REQUEST['module']) {
+		$page_name = strtolower($_REQUEST['module']);
+	}
 
 	// Build helpfile name...
 	if (empty($page_name) AND empty($section)) {
