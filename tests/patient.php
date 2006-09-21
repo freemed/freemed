@@ -20,30 +20,10 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-if ($_SERVER['PHP_SELF'] == basename(__FILE__)) {
-	die("Bootstrap cannot be run directly.\n");
-}
+include_once ( dirname(__FILE__).'/bootstrap.test.php' );
 
-ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
-
-include_once ( 'lib/freemed.php' );
-
-function t ( $test, $output ) {
-	print ( !$_SERVER['argv'] ? "<b>$test</b>" : " [[ $test ]] : " );
-	print_r($output);
-	print ( !$_SERVER['argv'] ? "<br/>\n" : "\n" );
-}
-
-function tm ( $method, $params = NULL ) {
-	if (is_array($params)) {
-		t($method, call_user_func_array('CallMethod', array_merge(array($method), $params)));
-	} else {
-		t($method, CallMethod($method));
-	}
-}
-
-// Cache the admin user for these tests...
-print ( !$_SERVER['argv'] ? "<b>Loading user #1 (admin)</b><br/>" : " * Loading user #1 (admin)\n" );
-$this_user = CreateObject('org.freemedsoftware.core.User', 1);
+t("org.freemedsoftware.api.PatientInterface.picklist", CallMethod("org.freemedsoftware.api.PatientInterface.picklist", 'john'));
+t("org.freemedsoftware.api.PatientInterface.ProceduresToBill", CallMethod("org.freemedsoftware.api.PatientInterface.ProceduresToBill"));
+t("org.freemedsoftware.api.PatientInterface.ToText", CallMethod("org.freemedsoftware.api.PatientInterface.ToText", 1 ));
 
 ?>
