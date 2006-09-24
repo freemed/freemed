@@ -34,7 +34,7 @@ for UI in ui/*; do
 	echo " * Processing interface ${UI}"
 
 	echo -n " - Creating translation catalog ... "
-	php ./scripts/tsmarty2c.php ${UI}/view | xgettext --language=C - - > "locale/$(basename "${UI}").po"
+	php ./scripts/tsmarty2c.php ${UI}/view | xgettext --language=C - - > "locale/$(basename "${UI}").pot"
 	echo "[done]"
 
 	echo " "
