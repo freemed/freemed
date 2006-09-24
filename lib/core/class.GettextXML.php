@@ -1,10 +1,26 @@
 <?php
-	// $Id$
-	// $Author$
-	// GettextXML format
-	// Must be loaded by LoadObjectDependency()
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: PHP.GettextXML
+// Class: org.freemedsoftware.core.GettextXML
 class GettextXML {
 
 	// Method: GettextXML::bindtextdomain
@@ -17,9 +33,9 @@ class GettextXML {
 	//
 	//	$dir - Name of directory to use
 	//
-	function bindtextdomain ($package, $dir) {
-		$GLOBALS['__phpwebtools']['gettextXML']['package'] = $package;
-		$GLOBALS['__phpwebtools']['gettextXML']['dir'] = $dir;
+	public function bindtextdomain ($package, $dir) {
+		$GLOBALS['__freemed']['gettextXML']['package'] = $package;
+		$GLOBALS['__freemed']['gettextXML']['dir'] = $dir;
 	} // end GettextXML::bindtextdomain
 
 	// Method: GettextXML::gettext_xml
@@ -38,24 +54,24 @@ class GettextXML {
 	// See Also:
 	//	<__>
 	//
-	function gettext_xml($string) {
+	public function gettext_xml ( $string ) {
 		static $_cache;
 
 		// Check for language, otherwise get from environment
-		if (!isset($GLOBALS['__phpwebtools']['gettextXML']['language'])) {
-			$GLOBALS['__phpwebtools']['gettextXML']['language'] =
+		if (!isset($GLOBALS['__freemed']['gettextXML']['language'])) {
+			$GLOBALS['__freemed']['gettextXML']['language'] =
 				getenv('LANGUAGE');
 		}
 
-		extract($GLOBALS['__phpwebtools']['gettextXML']);
+		extract($GLOBALS['__freemed']['gettextXML']);
 
 		// If we're not cached, cache *everything*
-		$domains = $GLOBALS['__phpwebtools']['gettextXML']['domains'];
+		$domains = $GLOBALS['__freemed']['gettextXML']['domains'];
 		if (is_array($domains)) {
 			$domains = array_unique($domains);
 			foreach ($domains AS $__garbage => $xmlfile) {
-				if (!$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile]) {
-					$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile] = $xmlfile;
+				if (!$GLOBALS['__freemed']['gettextXML']['domain_cached'][$xmlfile]) {
+					$GLOBALS['__freemed']['gettextXML']['domain_cached'][$xmlfile] = $xmlfile;
 					// Add to the cache
 					$_cache = @array_merge($_cache, GettextXML::_parse_xml($xmlfile));
 				}
@@ -68,7 +84,7 @@ class GettextXML {
 		// If there's no translation, return original, with possible
 		// marker
 		if (empty($translated)) {
-			$translated = $string . $GLOBALS['__phpwebtools']['gettextXML']['marker'];
+			$translated = $string . $GLOBALS['__freemed']['gettextXML']['marker'];
 		}
 
 		return $translated;
@@ -83,8 +99,8 @@ class GettextXML {
 	//
 	//	$marker - Characters to append to untranslated strings.
 	//
-	function markuntranslated($marker) {
-		$GLOBALS['__phpwebtools']['gettextXML']['marker'] = $marker;
+	public function markuntranslated ( $marker ) {
+		$GLOBALS['__freemed']['gettextXML']['marker'] = $marker;
 	} // end GettextXML::markuntranslated
 
 	// Method: GettextXML::metainformation
@@ -99,7 +115,7 @@ class GettextXML {
 	//
 	//	Associative array of meta information.
 	//
-	function metainformation($filename) {
+	public function metainformation ( $filename ) {
 		return GettextXML::_parse_xml_meta($filename);
 	} // end GettextXML::metainformation
 
@@ -111,8 +127,8 @@ class GettextXML {
 	//
 	//	$language - Language to use for internationalization
 	//
-	function setlanguage ($language) {
-		$GLOBALS['__phpwebtools']['gettextXML']['language'] = $language;
+	public function setlanguage ( $language ) {
+		$GLOBALS['__freemed']['gettextXML']['language'] = $language;
 	} // end GettextXML::setlanguage
 
 	// Method: GettextXML::textdomain
@@ -124,20 +140,20 @@ class GettextXML {
 	//
 	//	$domain - Text domain
 	//
-	function textdomain ($domain) {
-		$GLOBALS['__phpwebtools']['gettextXML']['domains'][] = $domain;
-		$GLOBALS['__phpwebtools']['forget_i18n_cache'] = 1;
+	public function textdomain ( $domain ) {
+		$GLOBALS['__freemed']['gettextXML']['domains'][] = $domain;
+		$GLOBALS['__freemed']['forget_i18n_cache'] = 1;
 	} // end GettextXML::textdomain
 
 	//----- internal functions -------------------------------------------
 
-	function _parse_xml_meta($file) {
+	protected function _parse_xml_meta ( $file ) {
 		// Create RAX objects
-		$parser = CreateObject('PHP.RAX');
-		$record = CreateObject('PHP.RAX');
+		$parser = CreateObject('org.freemedsoftware.core.RAX');
+		$record = CreateObject('org.freemedsoftware.core.RAX');
 
 		// Grab external variables to local scope, for readability
-		extract($GLOBALS['__phpwebtools']['gettextXML']);
+		extract($GLOBALS['__freemed']['gettextXML']);
 
 		if (!$parser->openfile($file)) {
 			// If not openable, return null array
@@ -155,13 +171,13 @@ class GettextXML {
 		return $record->getRow();
 	} // end GettextXML::_parse_xml_meta
 
-	function _parse_xml($file) {
+	protected function _parse_xml ( $file ) {
 		// Create RAX objects
-		$parser = CreateObject('PHP.RAX');
-		$record = CreateObject('PHP.RAX');
+		$parser = CreateObject('org.freemedsoftware.core.RAX');
+		$record = CreateObject('org.freemedsoftware.core.RAX');
 
 		// Grab external variables to local scope, for readability
-		extract($GLOBALS['__phpwebtools']['gettextXML']);
+		extract($GLOBALS['__freemed']['gettextXML']);
 
 		$fq_path = $dir . '/' . $language . '/' . $file .  '.xml';
 
