@@ -36,10 +36,10 @@
  */
 
 // smarty open tag
-$ldq = preg_quote('{');
+$ldq = preg_quote('<!--{');
 
 // smarty close tag
-$rdq = preg_quote('}');
+$rdq = preg_quote('}-->');
 
 // smarty command
 $cmd = preg_quote('t');
