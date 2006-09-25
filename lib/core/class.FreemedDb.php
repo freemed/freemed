@@ -20,17 +20,37 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('net.php.pear.Db');
+LoadObjectDependency('net.php.pear.MDB2');
 
 // Class: org.freemedsoftware.core.FreemedDb
 //
-class FreemedDb extends Db {
+class FreemedDb extends MDB2 {
 
-	public function connect ( ) {
+	private $db;
+
+	public function __construct (  ) {
 		PEAR::setErrorHandling ( PEAR_ERROR_RETURN );
-		$uri = "mysql://".DB_USER.":".DB_PASSWORD."@".DB_HOST."/".DB_NAME;
-		return DB::connect ( $uri, false );
-	} // end public function connect
+		$uri = "mysqli://". DB_USER .":". DB_PASSWORD ."@". DB_HOST ."/". DB_NAME;
+		$this->db =& MDB2::factory ( $uri );
+		if ( PEAR::isError ( $this->db ) ) {
+			trigger_error ( $this->db->getMessage(), E_USER_ERROR );
+		}
+
+		$this->db->setFetchMode( MDB2_FETCHMODE_ASSOC );
+		$this->db->loadModule( 'Extended' );
+		$this->db->loadModule( 'Manager' );
+		$this->db->loadModule( 'Reverse' );
+	}
+
+	function __call ( $method, $param ) {
+		if ( method_exists ( $this, $method ) ) {
+			return call_user_func_array ( array ( $this, $method ), $param );
+		} elseif ( method_exists ( $this->db, $method ) ) {
+			return call_user_func_array ( array ( $this->db, $method ), $param );
+		} else {
+			trigger_error ( "Could not load method $method", E_USER_ERROR );
+		}
+	}
 
 } // end class FreemedDb
 
