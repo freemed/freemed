@@ -1,8 +1,26 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: FreeMED.ExternalPlugin
+// Class: org.freemedsoftware.core.ExternalPlugin
 //
 //	Allows for CLI plugins to extend FreeMED functionality
 //
@@ -13,23 +31,23 @@ class ExternalPlugin {
 	//	Holds the location of the plugins to be "scanned".
 	//	Assigned by the <ExternalPlugin> constructor.
 	//
-	var $path;
+	protected $path;
 
 	// Variable: $cache
 	//
 	//	Fully qualified path to plugin cache. Assigned by the
 	//	<ExternalPlugin> constructor.
 	//
-	var $cache;
+	protected $cache;
 
 	// Variable: $plugin_cache
 	//
 	//	Internal storage of plugins' metainformation.
 	//
-	var $plugin_cache;
+	protected $plugin_cache;
 
 	// Constructor: ExternalPlugin
-	function ExternalPlugin ( $path ) {
+	public function __construct ( $path ) {
 		$this->path = dirname(dirname(__FILE__)).'/'.$path;
 		$this->cache = dirname(dirname(__FILE__)).'/data/cache/'.strtolower(get_class($this));
 	} // end constructor ExternalPlugin
@@ -38,7 +56,7 @@ class ExternalPlugin {
 	//
 	//	Get associative array of available plugins with metainformation
 	//
-	function GetCatalog ( ) {
+	public function GetCatalog ( ) {
 		// Make sure we have the appropriate information
 		$this->Cache();
 
@@ -60,7 +78,7 @@ class ExternalPlugin {
 	//
 	//	Associative array
 	//
-	function GetPicklist ( $format = '##NAME##' ) {
+	public function GetPicklist ( $format = '##NAME##' ) {
 		// Get information from cache first
 		$this->Cache();
 
@@ -92,7 +110,7 @@ class ExternalPlugin {
 	//
 	//	Filename of plugin, or boolean false if the plugin is not resolved.
 	//
-	function UUIDToPlugin ( $uuid ) {
+	public function UUIDToPlugin ( $uuid ) {
 		// Get cache information
 		$this->Cache();
 
@@ -111,7 +129,7 @@ class ExternalPlugin {
 	// SeeAlso:
 	//	<IsCached>
 	//
-	function Cache ( ) {
+	public function Cache ( ) {
 		if (is_array($this->plugin_cache)) { return true; }
 		if (!$this->IsCached()) {
 			if ($this->debug) { print "Caching\n"; }
@@ -153,7 +171,7 @@ class ExternalPlugin {
 	// SeeAlso:
 	//	<Cache>
 	//
-	function IsCached ( ) {
+	public function IsCached ( ) {
 		clearstatcache();
 		$d_lstat = lstat($this->path);
 		$d = $d_lstat[9];
@@ -183,7 +201,7 @@ class ExternalPlugin {
 	//
 	//	Full text output of the plugin
 	//
-	function Command ( $plugin, $command ) {
+	public function Command ( $plugin, $command ) {
 		$output = shell_exec($this->path.'/'.$plugin.' '.$command);
 		return $output;
 	} // end method Command
@@ -192,7 +210,7 @@ class ExternalPlugin {
 	//
 	//	Parse the results of a module INFO query.
 	//
-	function ParseInfo ( $info ) {
+	protected function ParseInfo ( $info ) {
 		$lines = explode("\n", $info);
 		foreach ($lines AS $line) {
 			if (!(strpos($line, ':') === false)) {
@@ -202,7 +220,7 @@ class ExternalPlugin {
 			}
 		}
 		return $parsed;
-	} // end method ParseInfo
+	} // end protected method ParseInfo
 
 } // end class ExternalPlugin
 
