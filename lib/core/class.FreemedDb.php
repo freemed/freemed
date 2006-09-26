@@ -112,9 +112,9 @@ class FreemedDb extends MDB2 {
 	//	Array of distinct values for the selected field
 	//
 	public function distinct_values ( $table, $field, $where = NULL ) {
-		$query = "SELECT DISTINCT `".addslashes($field)."` FROM `".addslashes($table)."` ".
+		$query = "SELECT DISTINCT `".$this->db->escape($field)."` FROM `".$this->db->escape($table)."` ".
 			( $where ? " WHERE ${where} " : " " ).
-			"ORDER BY `".addslashes($field)."`";
+			"ORDER BY `".$this->db->escape($field)."`";
 		$result = $this->db->queryCol( $query );
 		if ( PEAR::isError( $result ) ) { return array ( ); }
 		return $result;
@@ -145,13 +145,13 @@ class FreemedDb extends MDB2 {
 			if ($v == SQL__NOW) {
 				$values_hash .= ( $in_loop ? ", " : " " )."NOW()";
 			} else {
-				$values_hash .= ( $in_loop ? ", " : " " )."'".addslashes( is_array($v) ? join(',', $v) : $v )."'";
+				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->quote( is_array($v) ? join(',', $v) : $v );
 			}
-			$cols_hash .= ( $in_loop ? ", " : " " )."`".addslashes( $k )."`";
+			$cols_hash .= ( $in_loop ? ", " : " " )."`".$this->db->escape( $k )."`";
 			$in_loop = true;
 		}
 
-		$query = "INSERT INTO `".addslashes($table)."` ( ${cols_hash} ) VALUES ( ${values_hash} )";
+		$query = "INSERT INTO `".$this->db->escape($table)."` ( ${cols_hash} ) VALUES ( ${values_hash} )";
 		return $query;
 	} // end public function insert_query 
 
@@ -179,17 +179,17 @@ class FreemedDb extends MDB2 {
 
 			// Handle timestamp
 			if ($v == SQL__NOW) {
-				$values_clause[] = "`".addslashes($k)."` = NOW()";
+				$values_clause[] = "`".$this->db->escape($k)."` = NOW()";
 			} else {
-				$values_clause[] = "`".addslashes($k)."` = '".addslashes( is_array( $v ) ? join(',', $v) : $v )."'";
+				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->quote( is_array( $v ) ? join(',', $v) : $v );
 			}
 		}
 
 		foreach ( $where AS $k => $v ) {
-			$where_clause[] = "`".addslashes( $k )."` = '".addslashes( $v )."'";
+			$where_clause[] = "`".$this->db->escape( $k )."` = ".$this->db->quote( $v );
 		}
 
-		$query = "UPDATE `".addslashes($table)."` SET ".join(', ', $values_clause)." WHERE ".join(' AND ', $where_clause);
+		$query = "UPDATE `".$this->db->escape($table)."` SET ".join(', ', $values_clause)." WHERE ".join(' AND ', $where_clause);
 		return $query;
 	} // end public function update_query
 
