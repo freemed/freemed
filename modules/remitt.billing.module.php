@@ -342,8 +342,9 @@ class RemittBillingTransport extends BillingModule {
 		}
 
 		$buffer = '';
+		$offset = $_REQUEST['offset']+0;
 
-		$query = "SELECT * FROM billkey ORDER BY id DESC LIMIT 50";
+		$query = "SELECT * FROM billkey ORDER BY id DESC LIMIT 50 OFFSET ${offset}";
 		$result = $GLOBALS['sql']->query($query);
 
 		$buffer .= "<div class=\"section\">".__("Rebill Claims")."</div><br/>\n";
@@ -414,6 +415,16 @@ class RemittBillingTransport extends BillingModule {
 			";
 		}
 		$buffer .= "</table>";
+		$buffer .= "
+			<div align=\"center\">
+			<a href=\"".page_name()."?type=".urlencode(get_class($this))."&".
+			"billing_action=".urlencode($_REQUEST['billing_action'])."&".
+			"module=".urlencode($_REQUEST['module'])."&".
+			"action=".urlencode($_REQUEST['action'])."&".
+			"offset=".($_REQUEST['offset']+50)."\" class=\"button\"
+			>Next Page</a>
+			</div>
+			";
 		return $buffer;
 	} // end method rebill_menu
 
