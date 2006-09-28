@@ -5,7 +5,7 @@
 include_once ( 'lib/freemed.php' );
 
 $ajax = CreateObject( 'PHP.Sajax', 'ajax_provider.php' );
-$ajax->export ( 'lookup', 'module_html', 'module_recent', 'patient_lookup', 'csz_lookup' );
+$ajax->export ( 'lookup', 'module_html', 'module_recent', 'patient_lookup', 'csz_lookup', 'distinct_lookup' );
 $ajax->handle_client_request();
 
 //----- Function library
@@ -176,5 +176,23 @@ function _result_to_hash ( $r, $hash ) {
 	}
 	return $return;
 } // end function _result_to_hash
+
+function distinct_lookup ( $table, $parameter, $field ) {
+	$limit = 10;		// logical limit to how many we can display
+	
+	// Extract keys
+	$query = "SELECT DISTINCT(`".addslashes($field)."`) FROM `".addslashes($table)."` WHERE ( `".addslashes($field)."` LIKE '%".addslashes($parameter)."%' ) ";
+	$res = $GLOBALS['sql']->query($query);
+	if (!$GLOBALS['sql']->results($res)) { return false; }
+	$count = 0;
+	while ($r = $GLOBALS['sql']->fetch_array( $res ) ) {
+		$count++;
+		if ($count < $limit) {
+			$return[] = $r[$field].'@'.$r[$field];
+		}
+	}
+	if ($count >= $limit) { $return[] = " ... "; }
+	return join('|', $return);
+} // end function distinct_lookup
 
 ?>

@@ -5,7 +5,7 @@
 	// Ajax functionality
 
 $ajax = CreateObject('PHP.Sajax', 'ajax_provider.php');
-$ajax->export('lookup', 'module_html', 'module_recent', 'patient_lookup');
+$ajax->export('lookup', 'module_html', 'module_recent', 'patient_lookup', 'distinct_lookup');
 
 // Form header information regarding this
 ob_start();
@@ -274,5 +274,71 @@ print __("Type a portion of the entry that you want to find, then select it from
 	ob_end_clean();
 	return $buffer;
 } // end function ajax_widget
+
+function ajax_distinct_widget ( $name, $table, $field, $autosubmit=false ) {
+	global ${$name};
+	ob_start();
+?>
+<script language="javascript">
+function x_<?php print $name; ?>_check_input(i) {
+	if (document.getElementById(i).value.length >= 3) {
+		document.getElementById(i + '_hiddendiv').style.display = 'block';
+		document.getElementById(i + '_hiddendiv').innerHTML = 'Loading ... ';
+		x_distinct_lookup('<?php print $table; ?>', document.getElementById(i).value, '<?php print $field; ?>', x_<?php print $name; ?>_populate);
+	} else {
+		document.getElementById(i + '_hiddendiv').innerHTML = '';
+		document.getElementById(i + '_hiddendiv').style.display = 'none';
+	}
+}
+function x_<?php print $name; ?>_set_field (k, v) {
+	document.getElementById('<?php print $name; ?>_hiddendiv').style.display = 'none';
+	document.getElementById('<?php print $name; ?>').value = v;
+	<?php if ($autosubmit) { ?>
+	document.getElementById('<?php print $name; ?>').form.submit();
+	<?php } ?>
+}
+
+function x_<?php print $name; ?>_populate(data) {
+	hilight_string = document.getElementById('<?php print $name; ?>').value;
+	if (data.length < 3) {
+		// Hide if we have < 3 chars
+		document.getElementById('<?php print $name; ?>_hiddendiv').style.display = 'none';
+		document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML = 'No results.';
+	} else {
+		document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML = '';
+		var tokenizer = new StringTokenizer ( data, '|' );
+		var alt = 0;
+		while (tokenizer.hasMoreTokens()) {
+			var _this_one = tokenizer.nextToken();
+			if (alt==0) { alt = 1; } else { alt = 0; }
+			if (alt==0) { myColor='#cccccc'; } else { myColor='#bbbbbb'; }
+			if (_this_one.indexOf('@') != -1) {
+				var innerTokenizer = new StringTokenizer ( _this_one, '@' );
+				try {
+					var _k = innerTokenizer.nextToken();
+					var _v = innerTokenizer.nextToken();
+					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div onClick="x_<?php print $name; ?>_set_field(\'' + _k + '\', \'' + _v + '\');"><span>' + hilight(_k, hilight_string) + '</span></div>\n';
+				} catch (e) {}
+			} else {
+				document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: #ffffff; color: #000000;" onClick="document.getElementById(\'<?php print $name; ?>_hiddendiv\').style.display = \'none\';">' + hilight(_this_one, hilight_string) + '</div>\n';
+
+			}
+		}
+	}
+}
+</script>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><input <?php if (freemed::config_value('tooltip')) { ?> onMouseover="tooltip('<?php 
+print __("Type a portion of the entry that you want to find, then select it from the pulldown menu.");
+?>'); return true;" onMouseOut="hidetooltip(); return true;" <?php } ?> type="text" name="<?php print $name; ?>" id="<?php print $name; ?>" style="width:300px;" maxlength="150" onKeyup="x_<?php print $name; ?>_check_input('<?php print $name; ?>');" onClick="if (document.getElementById('<?php print $name; ?>').value) { this.value = ''; document.getElementById('<?php print $name; ?>').value = ''; }" value="<?php if (${$name}) { print ${$name}; } ?>" autocomplete="off" />
+</td></tr>
+<tr><td width="300"><div id="<?php print $name; ?>_hiddendiv" class="hiddendiv"></div></td></tr>
+</table>
+<?php
+	$buffer .= ob_get_contents();
+	ob_end_clean();
+	return $buffer;
+} // end function ajax_distinct_widget
 
 ?>
