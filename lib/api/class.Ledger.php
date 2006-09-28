@@ -1,8 +1,26 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: FreeMED.Ledger
+// Class: org.freemedsoftware.api.Ledger
 class Ledger {
 
 	// STUB constructor
@@ -349,7 +367,7 @@ class Ledger {
 	//
 	function post_adjustment ( $procedure, $amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('FreeMED.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -365,7 +383,7 @@ class Ledger {
 				'payrecpatient' => $patient,
 				'payreccat' => ADJUSTMENT,
 				'payrecproc' => $procedure,
-				'payrecamt' => $amount,
+				'payrecamt' => abs($amount),
 				'payrecdescrip' => $comment,
 				'payreclock' => 'unlocked'
 			)
@@ -406,7 +424,7 @@ class Ledger {
 	//
 	function post_copay ( $procedure, $amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('FreeMED.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -463,7 +481,7 @@ class Ledger {
 	//
 	function post_deductable ( $procedure, $amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('FreeMED.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -523,14 +541,14 @@ class Ledger {
 	function post_fee_adjustment ( $procedure, $coverage,
 				$amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('_FreeMED.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
 		$patient = $this->_procedure_to_patient ( $procedure );
 
 		// Figure out who gave us this
-		$coverage_object = CreateObject('_FreeMED.Coverage', $coverage);
+		$coverage_object = CreateObject('org.freemedsoftware.core.Coverage', $coverage);
 		$who = $coverage_object->covinsco;
 
 		// Calculate the new proc charges
@@ -609,7 +627,7 @@ class Ledger {
 		$pay_result = $GLOBALS['sql']->query ( $query );
 
 		// Get information about this procedure
-		$procedure_object = CreateObject('FreeMED.Procedure', $data['procedure']);
+		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $data['procedure']);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		$amount_paid = $data['amount'] + $this_procedure['procamtpaid'];
@@ -764,7 +782,7 @@ class Ledger {
 	function post_writeoff ( $procedure, $comment = '' ,
 				$category = WRITEOFF ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('FreeMED.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -817,7 +835,7 @@ class Ledger {
 	//	Boolean, successful
 	//
 	function unpostable ( $amount, $comment ) {
-		$cl = CreateObject('_FreeMED.ClaimLog');
+		$cl = CreateObject('org.freemedsoftware.api.ClaimLog');
 		return $cl->log_event ( 0, array(
 			'comment' => '$'.bcadd($amount,0,2).' '.
 				__("Unpostable")." (".$comment.")"
