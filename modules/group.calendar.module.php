@@ -314,7 +314,7 @@ document.getElementById('loading').style.visibility = 'hidden';
 			<div>".html_form::select_widget( "mark", $this->mark_array() )."</div>
 			<div>";
 			foreach ($ds AS $dur => $dis) {
-				$display_buffer .= "<a class=\"button\" onClick=\"window.location='module_loader.php?module=".$this->MODULE_CLASS."&selected_date=".urlencode($selected_date)."&group=".urlencode($group)."&physician='+ currentPhy +'&duration=".urlencode($dur)."&hour='+ currentHour +'&minute='+ currentMin +'&mark=".urlencode($mark)."&submit=travelbook'; return true;\">".$dis."</a>&nbsp;\n";
+				$display_buffer .= "<a class=\"button\" onClick=\"window.location='module_loader.php?module=".$this->MODULE_CLASS."&selected_date=".urlencode($selected_date)."&group=".urlencode($group)."&physician='+ currentPhy +'&duration=".urlencode($dur)."&hour='+ currentHour +'&minute='+ currentMin +'&mark=' + document.getElementById('mark').value +'&submit=travelbook'; return true;\">".$dis."</a>&nbsp;\n";
 			}
 			$display_buffer .= "
 			</div>
@@ -581,7 +581,7 @@ document.getElementById('loading').style.visibility = 'hidden';
 	function travel_book() {
 		// Globalize
 		foreach ($GLOBALS AS $k => $v) global ${$k};
-		global $mark, $scheduler;
+		global $scheduler;
 
 		if (!is_object($scheduler)) $scheduler = CreateObject('FreeMED.Scheduler');
 
@@ -600,7 +600,7 @@ document.getElementById('loading').style.visibility = 'hidden';
 				"calroom" => "0",
 				"calpatient" => "0",
 				"calprenote" => $this->mark_lookup("mark"),
-				"calmark" => $mark
+				"calmark" => $_REQUEST['mark']
 			)
 		);
 
