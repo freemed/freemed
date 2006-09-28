@@ -49,8 +49,59 @@ class AllergiesModule extends EMRModule {
 		$this->EMRModule();
 	} // end constructor AllergiesModule
 
+        function summary_bar ($patient) {
+                return "
+		<a HREF=\"module_loader.php?module=".
+		get_class($this)."&patient=".urlencode($patient).
+		"&return=manage\">".__("View/Manage")."</a> |
+		<a HREF=\"module_loader.php?module=".
+		get_class($this)."&patient=".urlencode($patient).
+		"&action=addform&return=manage\">".__("Add")."</a> |
+		<a HREF=\"module_loader.php?module=".
+		get_class($this)."&patient=".urlencode($patient).
+		"&subaction=review&return=manage\">".__("Review All")."</a>
+		";
+	} // end function summary_bar
+
+	function add () {
+		// Save original values
+		$v = array(
+			'allergy' => $_REQUEST['allergy'],
+			'allergy_text' => $_REQUEST['allergy_text'],
+			'severity' => $_REQUEST['severity'],
+			'severity_text' => $_REQUEST['severity_text'],
+		);
+		// Loop through all possibles
+		for ($i=2; $i<=5; $i++) {
+			// Only add if it looks like we have values
+			if ($_REQUEST['allergy'.$i] or $_REQUEST['allergy'.$i.'_text']) {
+				$this->_add(array(
+					'allergy' => $_REQUEST['allergy'.$i],
+					'allergy_text' => $_REQUEST['allergy'.$i.'_text'],
+					'severity' => $_REQUEST['severity'.$i],
+					'severity_text' => $_REQUEST['severity'.$i.'_text'],
+				));
+			}
+		}
+
+		// Restore from saved values
+		foreach ($v as $key => $value) {
+			$_REQUEST[$key] = $GLOBALS[$key] = $value;
+		}
+		// Call the regular way, so we get good handling...
+		$this->_add();
+	}
+	function _preadd($p) {
+		$this->variables = array (
+			'allergy' => ( $p['allergy_text'] ? $p['allergy_text'] : $p['allergy'] ),
+			'severity' => ( $p['severity_text'] ? $p['severity_text'] : $p['severity'] ),
+			'patient' => $_REQUEST['patient'],
+			'reviewed' => SQL__NOW
+		);
+	}
+
 	function form_table ( ) {
-		return array (
+		$a = array (
 			__("Allergy") =>
 			html_form::combo_widget(
 				'allergy',
@@ -63,9 +114,31 @@ class AllergiesModule extends EMRModule {
 				$GLOBALS['sql']->distinct_values('allergies','severity')
 			)
 		);
+		for ($i=2; $i<=5; $i++) {
+		$a = array_merge($a,
+			array (
+			__("Allergy")." $i" =>
+			html_form::combo_widget(
+				'allergy'.$i,
+				$GLOBALS['sql']->distinct_values('allergies','allergy')
+			),
+
+			__("Reaction")." $i" =>
+			html_form::combo_widget(
+				'severity'.$i,
+				$GLOBALS['sql']->distinct_values('allergies','severity')
+			)
+		)
+		);
+		}
+		return $a;
 	} // end method form_table
 
 	function view ( ) {
+		if ($_REQUEST['subaction'] == 'review') {
+			$this->review_all();
+		}
+		
 		global $sql; global $display_buffer; global $patient;
 		$display_buffer .= freemed_display_itemlist (
 			$sql->query("SELECT * FROM ".$this->table_name." ".
@@ -80,6 +153,15 @@ class AllergiesModule extends EMRModule {
 			array('', __("Not specified")) //blanks
 		);
 	} // end method view
+
+	function review_all () {
+		$q = $GLOBALS['sql']->update_query(
+			$this->table_name,
+			array ( 'reviewed' => SQL__NOW ),
+			array ( 'patient' => $_REQUEST['patient'] )
+		);
+		$r = $GLOBALS['sql']->query($q);
+	} // end method review_all
 
 	function recent_text ( $patient, $recent_date = NULL ) {
 		// skip recent; need all for this one
