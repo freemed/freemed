@@ -342,10 +342,11 @@ $fan10
 #tab250 #setfab08 Total Charges #tab500 $subfield7_sum</GroupFooter>
 
             </Detail1>
-
         </Details>
 
-        <ReportFooter></ReportFooter>
+        <ReportFooter>
+#pagebreak
+	</ReportFooter>
         <FinalSummary></FinalSummary>
         <PageSetup>
             <Format>Letter</Format>
