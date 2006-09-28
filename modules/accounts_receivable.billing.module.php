@@ -251,7 +251,7 @@ class AccountsReceivable extends BillingModule {
 			"<big><b><u>".__("Current Criteria")."</u></b></big>".
 			"</center>".
 			"<br/>\n";
-		if ($_REQUEST['criteria']['patient'] and !$_REQUEST['criteria']['last_name'] and !$_REQUEST['criteria']['first_name']) {
+		if ($_REQUEST['criteria']['patient']) {// and !$_REQUEST['criteria']['last_name'] and !$_REQUEST['criteria']['first_name']) {
 			$display_buffer .= "<b>".__("Patient").":".
 				"</b> ".$this->_lookup_patient($_REQUEST['criteria']['patient'])."</b> ".
 				"<a href=\"".$this->_search_link(array(
