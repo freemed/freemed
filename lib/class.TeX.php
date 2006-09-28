@@ -382,15 +382,25 @@ class TeX {
 			case 'module':
 				// Format:
 				//	module:(module):(method):(fieldtopass)
-				return $this->_SanitizeText(
-					module_function (
+				if (! $params[4] ) {
+					return $this->_SanitizeText(
+						module_function (
+							$params[1],
+							$params[2],
+							array (
+								$rec[$params[3]]
+							)
+						)
+ 					);
+				} else {
+					return module_function (
 						$params[1],
 						$params[2],
 						array (
 							$rec[$params[3]]
 						)
-					)
-				);
+					);
+				}
 				break; // end module
 
 			case 'field':
