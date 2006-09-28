@@ -102,7 +102,7 @@ class Scheduler {
 		return freemed::query_to_array( $query );
 	} // end method GetDailyAppointments
 
-	// Method: copy_appointment
+	// Method: CopyAppointment
 	//
 	//	Copy the given appointment to a specified date
 	//
@@ -118,16 +118,17 @@ class Scheduler {
 	//	Boolean, whether successful
 	//
 	// See Also:
-	//	<copy_group_appointment>
+	//	<CopyGroupAppointment>
 	//
-	function copy_appointment ( $id, $date ) {
+	public function CopyAppointment ( $id, $date ) {
 		$appointment = $this->get_appointment ( $id );
 		$appointment['caldateof'] = $date;
-		$result = $this->set_appointment ( $appointment );
+		$result = $this->SetAppointment ( $appointment );
 		return $result;
-	} // end method copy_appointment
+	} // end method CopyAppointment
+	public function copy_appointment ( $id, $date ) { return $this->CopyAppointment( $id, $date ); }
 
-	// Method: copy_group_appointment
+	// Method: CopyGroupAppointment
 	//
 	// Parameters:
 	//
@@ -140,10 +141,10 @@ class Scheduler {
 	//	Boolean, whether successful
 	//
 	// See Also:
-	//	<copy_appointment>
+	//	<CopyAppointment>
 	//
-	function copy_group_appointment ( $group_id, $date ) {
-		$group_appointments = $this->find_group_appointments($group_id);
+	public function CopyGroupAppointment ( $group_id, $date ) {
+		$group_appointments = $this->FindGroupAppointments($group_id);
 		$result = true;
 		foreach ($group_appointments AS $appointment) {
 			$temp_result = $this->copy_appointment ( $appointment, $date );
@@ -152,7 +153,8 @@ class Scheduler {
 			}
 		}
 		return $result;
-	} // end method copy_group_appointment
+	} // end method CopyGroupAppointment
+	public function copy_group_appointment ( $group_id, $date ) { return $this->CopyGroupAppointment( $group_id, $date ); }
 
 	// Method: date_add
 	//
@@ -160,12 +162,15 @@ class Scheduler {
 	//
 	// Parameters:
 	//
+	//	$starting - Date in YYYY-MM-DD format
+	//
+	//	$interval - Number of days to add to the starting date.
 	//
 	// Returns:
 	//
 	//	Date in SQL date format.
 	//
-	function date_add ( $starting, $interval ) {
+	public function date_add ( $starting, $interval ) {
 		if ($interval < 1) { return $starting; }
 		$q = $GLOBALS['sql']->query("SELECT DATE_ADD('".
 			addslashes($starting)."', INTERVAL ".
@@ -191,7 +196,7 @@ class Scheduler {
 	//
 	//	Boolean value, whether date falls between specified dates.
 	//
-	function date_in_range ($checkdate, $dtbegin, $dtend) {
+	public function date_in_range ($checkdate, $dtbegin, $dtend) {
 		// split all dates into component parts
 		list ($begin_y, $begin_m, $begin_d) = explode('-', $dtbegin);
 		list ($end_y, $end_m, $end_d) = explode('-', $dtend);
@@ -220,7 +225,7 @@ class Scheduler {
 	//
 	//	Boolean, true if date is past, false if date is present or future.
 	//
-	function date_in_the_past ($datestamp) {
+	public function date_in_the_past ( $datestamp ) {
 		list ($y_c, $m_c, $d_c) = explode ('-', date('Y-m-d'));
 		list ($y, $m, $d) = explode ('-', $datestamp);
 
@@ -257,7 +262,7 @@ class Scheduler {
 	//
 	//	AM/PM display of hour
 	//
-  	function display_hour ( $hour ) {
+  	public function display_hour ( $hour ) {
 		// time checking/creation if/else clause
 		if ($hour<12) {
 			return $hour." AM";
@@ -282,85 +287,16 @@ class Scheduler {
 	//
 	//	User-friendly AM/PM display of time.
 	//
-	function display_time ( $hour, $minute ) {
+	public function display_time ( $hour, $minute ) {
 		$m = sprintf('%02s', $minute);
-		if ($hour<12)
+		if ($hour<12) {
 			return $hour.":$m AM";
-		elseif ($hour == 12)
+		} elseif ($hour == 12) {
 			return $hour.":$m PM";
-		else
-			return ($hour-12).":$m PM";
-		
-	} // end method display_time
-
-	// Method: event_calendar_print
-	//
-	//	Display calendar event from scheduler.
-	//
-	// Parameters:
-	//
-	//	$event - scheduler table event id number.
-	//
-	//	$short - (optional) boolean, whether to shorten the
-	//	view for a concise output. Defaults to false.
-	//
-	// Returns:
-	//
-	//	XHTML formatted calendar event.
-	//
-	function event_calendar_print ( $event, $short = false ) {
-		global $sql;
-
-		$cache = freemed::module_cache();
-
-		// Get event
-		$my_event = freemed::get_link_rec($event, "scheduler");
-
-		// Handle travel
-		if ($my_event['calpatient'] == 0) {
-			return $this->event_special($my_event['calmark'])." ".
-			"(".$my_event['calduration']."m)\n";
-		}
-
-		// Get patient information
-		$my_patient = CreateObject('org.freemedsoftware.core.Patient', $my_event['calpatient'],
-			($my_event['caltype']=="temp"));
-
-		if (!$short) {
-			return "<a HREF=\"".(($my_event['caltype']=="temp") ?
-				"call-in.php?action=display&id=" :
-				"manage.php?id=" ).
-			$my_patient->id."\"".
-			">".trim($my_patient->fullName())."</a> ".
-			"(".$my_event['calduration']."m)<br/>\n".
-			__("DOB").": ".$my_patient->dateOfBirth()."<br/>\n".
-			"<a href=\"book_appointment.php?id=".
-				urlencode($my_event['id'])."&".
-				"type=".$my_event['caltype']."\" ".
-			">".__("Move")."</a>".
-			( module_function('progressnotes', 'noteForDate',
-					array($my_event['calpatient'], $my_event['caldateof'])) ?
-			"&nbsp;[".__("NOTE")."] " : "" ).
-			//" ( phy = ".$my_event['calphysician']." ) ".
-			( !empty($my_event['calprenote']) ?
-			"<br/>&nbsp;&nbsp;<i>".
-			prepare(stripslashes($my_event[calprenote])).
-			"</i>\n" : "" );
 		} else {
-			return "<a HREF=\"".(($my_event['caltype']=="temp") ?
-				"call-in.php?action=display&id=" :
-				"manage.php?id=" ).
-			$my_patient->id."\"".
-			"><acronym TITLE=\"".prepare(stripslashes($my_event[calprenote]))."\">".
-			"<small>".
-			trim($my_patient->fullName()).
-			"</small>".
-			"</acronym></a> ".
-			"<acronym TITLE=\"".prepare(stripslashes($my_event[calprenote]))."\">".
-			"<small>(".$my_event['calduration']."m)</small>".
-			"</acronym>\n";
+			return ($hour-12).":$m PM";
 		}
-	} // end method event_calendar_print
+	} // end method display_time
 
 	// Method: event_special
 	//
@@ -376,7 +312,7 @@ class Scheduler {
 	//
 	//	Text name of specified mapping.
 	//
-	function event_special ( $mapping ) {
+	public function event_special ( $mapping ) {
 		switch ($mapping) {
 			case 1: case 2: case 3: case 4:
 			case 5: case 6: case 7: case 8:
@@ -387,7 +323,7 @@ class Scheduler {
 		}
 	} // end method event_special
 
-	// Method: find_date_appointments
+	// Method: FindDateAppointments
 	//
 	//	Look up list of appointments for specified day and provider.
 	//
@@ -403,7 +339,7 @@ class Scheduler {
 	//	Array of associative arrays containing appointment
 	//	information
 	//
-	function find_date_appointments ( $date, $provider = -1 ) {
+	public function FindDateAppointments ( $date, $provider = -1 ) {
 		$query = "SELECT * FROM scheduler WHERE ".
 			"(caldateof = '".addslashes($date)."' ".
 			"AND calstatus != 'cancelled' ".
@@ -411,10 +347,11 @@ class Scheduler {
 				"AND calphysician = '".prepare($provider)."'" :
 				"" ).
 			") ORDER BY calhour,calminute";
-		return $this->_query_to_result_array ( $query );
-	} // end method find_date_appointments
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method FindDateAppointments
+	public function find_date_appointments ( $date, $provider = -1 ) { return $this->FindDateAppointments( $date, $provider ); }
 
-	// Method: find_group_appointments
+	// Method: FindGroupAppointments
 	//
 	//	Given a group id, return the appointments in that group
 	//
@@ -427,16 +364,17 @@ class Scheduler {
 	//	Array of associative arrays containing appointment 
 	//	information.
 	//
-	function find_group_appointments ( $group_id ) {
+	public function FindGroupAppointments ( $group_id ) {
 		$query = "SELECT * FROM scheduler WHERE ( ".
 			"calgroupid = '".addslashes($group_id)."' ".
 			"AND calstatus != 'cancelled' ".
 			" ) ".
 			"ORDER BY caldateof, calhour, calminute";
-		return $this->_query_to_result_array ( $query );
-	} // end method find_group_appointments
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method FindGroupAppointments
+	public function find_group_appointments ( $group_id ) { return $this->FindGroupAppointments( $group_id ); }
 
-	// Method: get_appointment
+	// Method: GetAppointment
 	//
 	//	Retrieves an appointment record from its id
 	//
@@ -448,12 +386,13 @@ class Scheduler {
 	//
 	//	Associative array containing appointment information
 	//
-	function get_appointment ( $id ) {
+	public function GetAppointment ( $id ) {
 		$query = "SELECT * FROM scheduler WHERE ".
 			" ( id = '".addslashes($id)."' ) ";
 		$result = $GLOBALS['sql']->query( $query );
-		return $GLOBALS['sql']->fetch_array( $result );
-	} // end method get_appointment
+		return $result->fetchRow( );
+	} // end method GetAppointment
+	public function get_appointment ( $id ) { return $this->GetAppointment( $id ); }
 
 	// Method: get_time_string
 	//
@@ -469,7 +408,7 @@ class Scheduler {
 	//
 	//	Formatted time string.
 	//
-	function get_time_string ( $hour, $minute ) {
+	public function get_time_string ( $hour, $minute ) {
 		if ($minute==0) $minute="00";
 
 		// time checking/creation if/else clause
@@ -501,7 +440,7 @@ class Scheduler {
 	//	<map_fit>
 	//	<map_init>
 	//
-	function map ( $query ) {
+	public function map ( $query ) {
 		global $sql;
 
 		// Initialize the map;
@@ -582,7 +521,7 @@ class Scheduler {
 	//	<map>
 	//	<map_init>
 	//
-	function map_fit ( $map, $time, $duration=5, $id = -1 ) {
+	public function map_fit ( $map, $time, $duration = 5, $id = -1 ) {
 		// If this is already booked, return false
 		if ($map[$time]['span'] == 0) { return false; }
 		if ($map[$time]['link'] != 0) { return false; }
@@ -628,7 +567,7 @@ class Scheduler {
 	//	<map>
 	//	<map_fit>
 	//
-	function map_init () {
+	public function map_init () {
 		$map = array ( );
 		$map['count'] = 0;
 		for ($hour=freemed::config_value("calshr");$hour<freemed::config_value("calehr");$hour++) {
@@ -645,7 +584,7 @@ class Scheduler {
 		return $map;
 	} // end method map_init
 
-	// Method: move_appointment
+	// Method: MoveAppointment
 	//
 	//	Given an appointment id and data, modify an appointment
 	//	record.
@@ -662,7 +601,7 @@ class Scheduler {
 	//
 	//	Boolean, whether successful.
 	//
-	function move_appointment ( $original, $data = NULL ) {
+	public function MoveAppointment ( $original, $data = NULL ) {
 		// Check for bogus data
 		if ($data == NULL) { return false; }
 
@@ -684,13 +623,14 @@ class Scheduler {
 		);
 		$result = $GLOBALS['sql']->query ( $query );
 		return $result;
-	} // end method move_appointment
+	} // end method MoveAppointment
+	public function move_appointment ( $original, $data = NULL ) { return $this->MoveAppointment ( $original, $data ); }
 
-	// Method: move_group_appointment
+	// Method: MoveGroupAppointment
 	//
 	//	Given a group id (for a group of appointments), modify a
 	//	group of appointment records with the given data. This
-	//	follows the same basic format as <move_appointment>
+	//	follows the same basic format as <MoveAppointment>
 	//
 	// Parameters:
 	//
@@ -705,20 +645,21 @@ class Scheduler {
 	//	Boolean, whether successful.
 	//
 	// See Also:
-	//	<move_appointment>
+	//	<MoveAppointment>
 	//
-	function move_group_appointment ( $group_id, $data ) {
-		$group_appointments = $this->find_group_appointments($group_id);
+	public function MoveGroupAppointment ( $group_id, $data ) {
+		$group_appointments = $this->FindGroupAppointments($group_id);
 		$result = true;
 		foreach ($group_appointments AS $appointment) {
-			$temp_result = $this->move_appointment (
+			$temp_result = $this->MoveAppointment (
 				$appointment['id'],
 				$data
 			);
 			if (!($result and $temp_result)) { $result = false; }
 		} // end foreach
 		return $result;
-	} // end method move_group_appointment
+	} // end method MoveGroupAppointment
+	public function move_group_appointment ( $group_id, $data ) { return $this->MoveGroupAppointment ( $group_id, $data ); }
 
 	// Method: multimap
 	//
@@ -741,7 +682,7 @@ class Scheduler {
 	// See Also:
 	//	<map>
 	//
-	function multimap ( $query, $selected = -1 ) {
+	public function multimap ( $query, $selected = -1 ) {
 		global $sql;
 
 		// Initialize the first map and current index
@@ -843,7 +784,7 @@ class Scheduler {
 	//	array ( of array ( date, hour, minute ) )
 	//	false if nothing is open
 	//
-	function next_available ( $_criteria ) {
+	public function next_available ( $_criteria ) {
 		// Error checking
 		if ($_criteria['days']<1 or $_criteria['days']>90) {
 			$days = 4;
@@ -943,20 +884,25 @@ class Scheduler {
 	//
 	//	$time - Time in HH:MM format.
 	//
+	//	$increment - (optional) Size of time slots. Defaults to 5 min.
+	//
 	// Returns:
 	//
 	//	Next time slot in HH:MM format.
 	//
-	function next_time_increment ( $time ) {
+	public function next_time_increment ( $time, $increment = 5 ) {
+		// Save us from bad data
+		if ($increment < 1) { return $time; }
+
 		// Split into time components
 		list ($h, $m) = explode (":", $time);
 
-		$new_m = ($m + 5) % 60;
-		$new_h = (int)(($m + 5) / 60) + $h;
+		$new_m = ($m + $increment) % 60;
+		$new_h = (int)(($m + $increment) / 60) + $h;
 		return sprintf('%02s:%02s', $new_h, $new_m);
 	} // end method next_time_increment
 
-	// Method: set_appointment
+	// Method: SetAppointment 
 	//
 	//	Create an appointment record with the specified data
 	//
@@ -970,7 +916,7 @@ class Scheduler {
 	//
 	//	id of created appointment
 	//
-	function set_appointment ( $data = NULL ) {
+	public function SetAppointment ( $data = NULL ) {
 		// Check for bogus data
 		if ($data == NULL) { return false; }
 
@@ -1001,9 +947,10 @@ class Scheduler {
 		} else {
 			return $GLOBALS['sql']->last_record ( $result );
 		}
-	} // end method set_appointment
+	} // end method SetAppointment
+	public function set_appointment ( $data = NULL ) { return $this->SetAppointment ( $data ); }
 
-	// Method: set_group_appointment
+	// Method: SetGroupAppointment
 	//
 	// Parameters:
 	//
@@ -1011,28 +958,28 @@ class Scheduler {
 	//	array will be the appointment used to generate the group id.
 	//
 	//	$data - Associative array of data used to populate the
-	//	appointment data. Same syntax as <set_appointment>.
+	//	appointment data. Same syntax as <SetAppointment>.
 	//
 	// Returns:
 	//
 	//	Group key id for new group created.
 	//
 	// See Also:
-	//	<set_appointment>
+	//	<SetAppointment>
 	//
-	function set_group_appointment ( $patients, $data ) {
+	public function SetGroupAppointment ( $patients, $data ) {
 		$first_patient = $patients[0];
 
 		// Create the initial appointment, and get the key
-		$key = $this->set_appointment ( $first_patient, $data );
+		$key = $this->SetAppointment ( $first_patient, $data );
 		$count = 0;
 		$my_data = $data;
 		foreach ($patient_array as $patient) {
 			// For the first patient, we update, everyone else
-			// we wrap set_appointment() again
+			// we wrap SetAppointment() again
 			if ($count == 0) {
 				// Pass the id back as the group key
-				$this->move_appointment (
+				$this->MoveAppointment (
 					$key,
 					array ('group' => $key)
 				);
@@ -1040,14 +987,15 @@ class Scheduler {
 				$my_data['group'] = $key;
 			} else {
 				// Just wrap it
-				$this->set_appointment($patient, $my_data);
+				$this->SetAppointment($patient, $my_data);
 			}
 			$count++;
 		} // end foreach patient_array
 
 		// Pass the group key back to FreeMED
 		return $key;
-	} // end method set_group_appointment
+	} // end method SetGroupAppointment
+	public function set_group_appointment ( $patients, $data ) { return $this->SetGroupAppointment ( $patients, $data ); }
 
 	// Method: set_recurring_appointment
 	//
@@ -1068,15 +1016,15 @@ class Scheduler {
 	//
 	//	$desc - Description of the recurrance
 	//
-	function set_recurring_appointment ( $appointment, $ts, $desc ) {
+	public function set_recurring_appointment ( $appointment, $ts, $desc ) {
 		// Fetch the original
 		$a = $this->get_appointment ( $appointment );
 
 		// Instead of actually physically modifying the record,
-		// we use move_appointment to set the recurring information,
+		// we use MoveAppointment() to set the recurring information,
 		// causing it to begin a group of recurring appts.
 		if ($a['calgroupid'] == 0) {
-			$this->move_appointment (
+			$this->MoveAppointment (
 				$appointment,
 				array (
 					'recurnote' => $desc,
@@ -1084,7 +1032,7 @@ class Scheduler {
 				)
 			);
 		} else {
-			$this->move_group_appointment (
+			$this->MoveGroupAppointment (
 				$a['calgroupid'],
 				array (
 					'recurnote' => $desc,
@@ -1124,7 +1072,7 @@ class Scheduler {
 	//	SQL formatted date string for a date approximately one month
 	//	previous to the given date.
 	//
-	function scroll_prev_month ($given_date="") {
+	public function scroll_prev_month ($given_date="") {
 		$cur_date = date("Y-m-d");
 		$this_date = (
 			(empty($given_date) or !strpos($given_date, "-")) ?
@@ -1153,7 +1101,7 @@ class Scheduler {
 	//	SQL formatted date string for a date approximately one month
 	//	after the given date.
 	//
-	function scroll_next_month ($given_date="") {
+	public function scroll_next_month ($given_date="") {
 		$cur_date = date("Y-m-d");
 		$this_date = (
 			(empty($given_date) or !strpos($given_date, "-")) ?
@@ -1167,27 +1115,6 @@ class Scheduler {
 		}
 		return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
 	} // end function scroll_next_month
-
-	// Method: _query_to_result_array
-	//
-	//	Internal helper function to convert SQL queries into
-	//	scheduler appointment arrays (arrays of associative arrays).
-	//
-	// Parameters:
-	//
-	//	$query - SQL query text
-	//
-	// Returns:
-	//
-	//	Array of associative arrays containing appointment data.
-	//
-	function _query_to_result_array ( $query ) {
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
-			$return[$r['id']] = $r;
-		}
-		return $return;
-	} // end method _query_to_result_array
 
 } // end method Scheduler
 
