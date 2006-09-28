@@ -1,7 +1,24 @@
 <?php
-	// $Id$
-	// $Author$
-	// lic : GPL, v2
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 if (!defined("__FREEMED_PHP__")) {
 
@@ -30,7 +47,7 @@ if (file_exists(dirname(__FILE__).'/settings.php')) {
 	die("FreeMED cannot find the configuration file <b>lib/settings.php</b>.");
 }
 
-//----- Make sure we have enough memory without having to edit {php,php4}.ini
+//----- Make sure we have enough memory without having to edit {php,php4,php5}.ini
 if (ini_get('memory_limit')+0 < 64) {
 	@ini_set('memory_limit', '64M');
 }
@@ -54,11 +71,6 @@ $cal_ending_hour   = "18"; // end at 6 o'clock pm
 
   // maximum number of returned results in multipage result queries
 $max_num_res = 15;
-
-  // now, some all-purpose time savers
-  // don't touch unless you -KNOW- what you are doing.
-
-$brackets     = "[]";
 
   // set the maximum timeout...
 set_time_limit (0);
@@ -114,9 +126,7 @@ if (!defined('SESSION_DISABLE')) {
 	$GLOBALS['freemed']['__language'] = $_SESSION['language'];
 
 	// Load GettextXML routines (most non-session things don't need it).
-	//include_once (dirname(__FILE__)."/i18n.php");
-	// Stub this until we fix i18n
-	function __($p) { return $p; }
+	include_once (dirname(__FILE__)."/i18n.php");
 
 	// Load ACL routines
 	include_once (dirname(__FILE__)."/acl.php");
@@ -129,25 +139,11 @@ include_once (dirname(__FILE__)."/macros.php");          // macros/contants
 
   // ****************** INITIALIZE SQL CONNECTION ******************
 
-    // *** database engine ***
-    //   SQL_MYSQL    - MySQL backend
-    //   SQL_ODBC     - ODBC compliant (i.e. M$ SQL Server)
-    //   SQL_POSTGRES - PostgreSQL backend
-    //   SQL_MSQL     - mSQL backend
-define ('DB_ENGINE', SQL_MYSQL);
+define ('DB_ENGINE', 'mysqli');
 
 //----- Create SQL database object
 if (!defined('SKIP_SQL_INIT')) {
-	$sql = CreateObject (
-		'org.freemedsoftware.phpwebtools.sql',
-		DB_ENGINE,
-		array(
-			'host' => DB_HOST, 
-			'user' => DB_USER, 
-			'password' => DB_PASSWORD, 
-			'database' => DB_NAME,
-		)
-	);
+	$sql = CreateObject ( 'org.freemedsoftware.core.FreemedDb' );
 }
 
 //----- Create Log target
