@@ -144,7 +144,6 @@ class ChargesGraph extends GraphModule {
 				$graph->SetNewPlotAreaPixels(50,50,400,400);
 				$graph->SetPlotType('bars');
 				$graph->SetDataValues($bar_data);
-				$graph->SetDrawDataLabels('1');
 				$graph->SetBackgroundColor("white");
 				$graph->SetDataColors(array("yellow","cyan","pink","orange","gray","green"));
 				$graph->SetVertTickIncrement(10000);
