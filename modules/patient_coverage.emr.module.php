@@ -15,6 +15,7 @@ class PatientCoveragesModule extends EMRModule {
 	var $table_name    = "coverage";
 	var $record_name   = "Patient Coverage";
 	var $patient_field = "covpatient";
+	var $widget_hash   = '[##covrel##] ##insconame## (##inscocity##, ##inscostate##)';
 
 	// contructor method
 	function PatientCoveragesModule ($nullvar = "") {
