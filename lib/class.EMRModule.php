@@ -1045,11 +1045,13 @@ class EMRModule extends BaseModule {
 	//	$conditions - (optional) Additional clauses for SQL WHERE.
 	//	defaults to none.
 	//
+	//	$keyfield - (optional) Field used as key. Defaults to 'id'.
+	//
 	// Returns:
 	//
 	//	XHTML-compliant picklist widget.
 	//
-	function widget ( $varname, $patient, $conditions = false, $key = 'id' ) {
+	function widget ( $varname, $patient, $conditions = false, $keyfield = 'id' ) {
 		if (is_array($this->summary_query_link)) {
 			foreach ($this->summary_query_link AS $my_k => $my_v) {
 				// Format: field => table_name
@@ -1070,6 +1072,7 @@ class EMRModule extends BaseModule {
 		$result = $GLOBALS['sql']->query($query);
 		$return[__("NONE SELECTED")] = "";
 		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			if ($r['__actual_id']) { $r['id'] = $r['__actual_id']; }
 			if (!(strpos($this->widget_hash, "##") === false)) {
 				$key = '';
 				$hash_split = explode('##', $this->widget_hash);
@@ -1083,7 +1086,7 @@ class EMRModule extends BaseModule {
 			} else {
 				$key = $this->widget_hash;
 			}
-			$return[$key] = $r[$key];
+			$return[$key] = $r[$keyfield];
 		}
 		return html_form::select_widget($varname, $return);
 	} // end method widget
