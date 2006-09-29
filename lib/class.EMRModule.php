@@ -1050,7 +1050,19 @@ class EMRModule extends BaseModule {
 	//	XHTML-compliant picklist widget.
 	//
 	function widget ( $varname, $patient, $conditions = false ) {
-		$query = "SELECT * FROM ".$this->table_name." WHERE ".
+		if (is_array($this->summary_query_link)) {
+			foreach ($this->summary_query_link AS $my_k => $my_v) {
+				// Format: field => table_name
+				$_from[] = "LEFT OUTER JOIN ${my_v} ON ${my_v}.id = ".$this->table_name.'.'.$my_k;
+			}
+			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
+		}
+
+		$query = "SELECT *".
+			( is_array($this->summary_query) ? ','.join(', ', $this->summary_query) : ' ' ).
+			" FROM ".$this->table_name." ".
+			( is_array($_from) ? join(' ', $_from) : '' ).
+			" WHERE ".
 			"( ".$this->patient_field.
 				" = '".addslashes($patient)."') ".
 			( $conditions ? " AND ( ".$conditions." ) " : "" ).
