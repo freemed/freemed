@@ -195,6 +195,7 @@ if (is_object($this_user)) {
 		"<!-- compliance patch for microsoft browsers -->\n".
 		"<!--[if lt IE 7]><script src=\"lib/template/default/ie7/ie7-standard-p.js\" type=\"text/javascript\"></script><![endif]-->\n";
 
+	if ($GLOBALS['__freemed']['header']) { print $GLOBALS['__freemed']['header']; }
 	if (is_array($GLOBALS['__freemed']['rich_text_areas'])) {
 		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n";
 		print "<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n";
@@ -232,6 +233,7 @@ if (is_object($this_user)) {
 	print "><div class=\"main\">\n";
 	print $display_buffer;
 	print "</div>\n";
+	if ($GLOBALS['__freemed']['footer']) { print $GLOBALS['__freemed']['footer']; }
 	print "</body></html>\n";
 } // end checking for "no_template_display"
 ?>
