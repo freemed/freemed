@@ -1049,7 +1049,7 @@ class EMRModule extends BaseModule {
 	//
 	//	XHTML-compliant picklist widget.
 	//
-	function widget ( $varname, $patient, $conditions = false ) {
+	function widget ( $varname, $patient, $conditions = false, $key = 'id' ) {
 		if (is_array($this->summary_query_link)) {
 			foreach ($this->summary_query_link AS $my_k => $my_v) {
 				// Format: field => table_name
@@ -1083,7 +1083,7 @@ class EMRModule extends BaseModule {
 			} else {
 				$key = $this->widget_hash;
 			}
-			$return[$key] = $r['id'];
+			$return[$key] = $r[$key];
 		}
 		return html_form::select_widget($varname, $return);
 	} // end method widget
