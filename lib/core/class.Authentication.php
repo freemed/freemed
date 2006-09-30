@@ -1,8 +1,26 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: FreeMED.Authentication
+// Class: org.freemedsoftware.core.Authentication
 //
 //	Superclass for authentication. This is the loader/bootstrap for all FreeMED
 //	authentication classes.
@@ -12,9 +30,9 @@ class Authentication {
 	var $handler;
 
 	function Authentication ( $type ) {
-		$this->handler = CreateObject('_FreeMED.Authentication_'.$type);
+		$this->handler = CreateObject('org.freemedsoftware.core.Authentication_'.$type);
 		if (!is_object($this->handler)) {
-			die ( "FreeMED.Authentication: could not load ".$type );
+			die ( "org.freemedsoftware.core.Authentication: could not load ".$type );
 		}
 	} // end constructor Authentication
 

@@ -1,8 +1,26 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: FreeMED.Authentication_Password
+// Class: org.freemedsoftware.core.Authentication_Password
 //
 //	Classic FreeMED authentication via password.
 //
@@ -104,7 +122,8 @@ class Authentication_Password {
 		if ($_REQUEST['user']) {
 			$message = __("You have entered an incorrect username or password.");
 		}
-		require(freemed::template_file('login.php'));
+		Header('Location: index.php?message='.urlencode($message));
+		die();
 
 		/*
 		Header("Location: index.php?message=".urlencode(__("You have entered an incorrect username or password.")). ( strpos($_SERVER['REQUEST_URI'], 'index.php') === false and strpos($_SERVER['REQUEST_URI'], 'authenticate.php') === false ? "&_URL=".urlencode($_SERVER['REQUEST_URI']."&".implode_with_key($_POST))) : "" );
