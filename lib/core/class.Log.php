@@ -20,14 +20,14 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: FreeMED.Log
+// Class: org.freemedsoftware.core.Log
 //
 //	Handle logging to FreeMED's internal event log.
 //
 class Log {
 
 	// Constructor: Log
-	function Log ( ) { }
+	public function __construct ( ) { }
 
 	// Method: SystemLog
 	//

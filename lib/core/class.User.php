@@ -26,7 +26,7 @@
 // 	verify that there are no md5 calls outside of this class!!
 
 
-// class: FreeMED.User
+// Class: org.freemedsoftware.core.User
 //
 //	Class container for FreeMED user information.
 //
@@ -48,7 +48,7 @@ class User {
 	//	If not specified, the system will default to using
 	//	cookie session data to supply it.
 	//
-	function User ($param=NULL) {
+	function __construct ($param=NULL) {
 		if ($param == NULL) {
 			// Check to see if XML-RPC or session data
 			if ($_SESSION['authdata']['user']) {
@@ -87,9 +87,9 @@ class User {
 
 		// Map configuration vars
 		$this->manage_config = unserialize($this->local_record['usermanageopt']);
-	} // end function User
+	} // end constructor
 
-	// method: getDescription
+	// Method: getDescription
 	//
 	//	Retrieve description of current user. (Usually their name)
 	//
@@ -97,12 +97,12 @@ class User {
 	//
 	//	Description of the current user object.
 	//
-	function getDescription ($no_parameters = "") {
+	public function getDescription ($no_parameters = "") {
 		if (empty($this->user_descrip)) return __("(no description)");
 		return ($this->user_descrip);
 	} // end function getDescription
 
-	function getLevel ($no_parameters = "") {
+	public function getLevel ($no_parameters = "") {
 		return ($this->user_level)+0;
 	} // end function getLevel
 
@@ -115,7 +115,7 @@ class User {
 	//	Record id of provider record, if one exists, otherwise
 	//	zero.
 	//
-	function getPhysician ($no_parameters = "") {
+	public function getPhysician ($no_parameters = "") {
 		return ($this->user_phy)+0;
 	} // end function getPhysician
 
@@ -126,10 +126,10 @@ class User {
 	// Returns:
 	//
 	//	Array of fax ids, or NULL if there are none
-	function getFaxesInQueue ( ) {
+	public function getFaxesInQueue ( ) {
 		$query = "SELECT * FROM faxstatus WHERE fsuser='".addslashes($this->user_number)."'";
 		$result = $GLOBALS['sql']->query($query);
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+		while ($r = $result->fetchRow()) {
 			if ($r['fsid']) { $f[$r['id']] = $r['id']; }
 		}
 		if (is_array($f)) { return $f; } 
@@ -148,7 +148,7 @@ class User {
 	//
 	//	String containing description
 	//
-	function getFaxDescription ( $fid ) {
+	public function getFaxDescription ( $fid ) {
 		$r = $this->getFaxDetails ( $fid );
 		return sprintf(__("Faxed to %s"), $r['fsdestination']);
 	} // end method getFaxDescription
@@ -163,11 +163,10 @@ class User {
 	//
 	//	Associative array
 	//
-	function getFaxDetails ( $fid ) {
+	public function getFaxDetails ( $fid ) {
 		$query = "SELECT * FROM faxstatus WHERE id='".addslashes($fid)."'";
 		$result = $GLOBALS['sql']->query($query);
-		$r = $GLOBALS['sql']->fetch_array($result);
-		return $r;
+		return $result->fetchRow();
 	} // end method getFaxDetails
 
 	// Method: setFaxInQueue
@@ -188,7 +187,7 @@ class User {
 	//
 	//	$info - (optional) Textual description of fax to be stored in queue.
 	//
-	function setFaxInQueue ( $fid, $patient, $number, $module=NULL, $record=NULL, $info = NULL ) {
+	public function setFaxInQueue ( $fid, $patient, $number, $module=NULL, $record=NULL, $info = NULL ) {
 		$q = $GLOBALS['sql']->insert_query(
 			'faxstatus',
 			array(
@@ -210,7 +209,7 @@ class User {
 	//
 	//	$id - Fax id (fid), not record id
 	//
-	function removeFaxFromQueue ( $id ) {
+	public function removeFaxFromQueue ( $id ) {
 		$q = "DELETE FROM faxstatus WHERE id='".addslashes($id)."'";
 		$GLOBALS['sql']->query( $q );
 	} // end method removeFaxFromQueue
@@ -223,9 +222,9 @@ class User {
 	//
 	//	Javascript code (in SCRIPT tags) or NULL if nothing.
 	//
-	function faxNotify ( ) {
+	public function faxNotify ( ) {
 		if (!($fax = $this->getFaxesInQueue())) { return ''; }
-		$f = CreateObject('_FreeMED.Fax');
+		$f = CreateObject( 'org.freemedsoftware.core.Fax' );
 		foreach ($fax AS $k => $v) {
 			$d = $this->getFaxDetails( $k );
 			$st = $f->State($d['fsid']);
@@ -281,7 +280,7 @@ class User {
 	//
 	//	User name for user.
 	//
-	function getName ($no_parameters = "") {
+	public function getName ($no_parameters = "") {
 		return ($this->user_name);
 	} // end function getName
 
@@ -293,7 +292,7 @@ class User {
 	//
 	//	Boolean, true if they are a physician/provider.
 	//
-	function isPhysician ($no_parameters = "") {
+	public function isPhysician ($no_parameters = "") {
 		return ($this->user_phy != 0);
 	} // end function isPhysician
 
@@ -307,17 +306,15 @@ class User {
 	//
 	//	$user_id - Id of user record
 	//
-	function setPassword ($password, $user_id) {
-		global $sql;
-
+	public function setPassword ($password, $user_id) {
 		if ($user_id == "") {
 			if((LOGLEVEL<1)||LOG_ERRORS){syslog(LOG_INFO,"class.User.php|setPassword| no user id!!");}
 			return false;
 		}
 
-		$md5_password=md5($password);
+		$md5_password = md5($password);
 		
-		$my_query = $sql->update_query(
+		$my_query = $GLOBALS['sql']->update_query(
 			"user",
 			array (
 				"userpassword" => $md5_password
@@ -340,7 +337,7 @@ class User {
 	//
 	//	Value of the specified key.
 	//
-	function getManageConfig ($key) {
+	public function getManageConfig ($key) {
 		return $this->manage_config["$key"];
 	} // end function getManageConfig
 
@@ -355,7 +352,7 @@ class User {
 	//
 	//	$val - Configuration value to set.
 	//
-	function setManageConfig ($new_key, $new_val) {
+	public function setManageConfig ($new_key, $new_val) {
 		// Now, set extra value(s)
 		$this->manage_config["$new_key"] = $new_val;
 
@@ -378,13 +375,13 @@ class User {
 	//
 	//	Number of unread messages in the system for this user.
 	//
-	function newMessages () {
-		global $sql;
-		$result = $sql->query("SELECT * FROM messages WHERE ".
+	public function newMessages () {
+		$result = $GLOBALS['sql']->query(
+			"SELECT * FROM messages WHERE ".
 			"msgfor='".addslashes($this->user_number)."' AND ".
 			"msgread='0' AND msgtag=''");
-		if (!$sql->results($result)) return false;
-		return $sql->num_rows($result);
+		if (!$GLOBALS['sql']->results($result)) { return 0; }
+		return $GLOBALS['sql']->num_rows($result);
 	} // end function newMessages
 
 	// Method: init
@@ -398,14 +395,12 @@ class User {
 	//
 	//	$adminpassword - New administrative password.
 	//
-	function init($adminpassword) {
-		global $sql;
-
+	public function init ( $adminpassword ) {
 		// Database Clean
-		$result=$sql->query("DROP TABLE user"); 
+		$result = $GLOBALS['sql']->query("DROP TABLE user"); 
 
 		// Database Rebuild
-		$result = $sql->query($sql->create_table_query(
+		$result = $GLOBALS['sql']->query($GLOBALS['sql']->create_table_query(
 			'user',
 			array(
 				'username' => SQL__NOT_NULL(SQL__VARCHAR(16)),
@@ -428,7 +423,7 @@ class User {
 
 		// Required Data!!
 
-		$result = $sql->query($sql->insert_query(
+		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 			"user",
 			array (
 	    			"username" => "admin",

@@ -20,7 +20,7 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// class: FreeMED.Patient
+// Class: org.freemedsoftware.core.Patient
 //
 //	Patient object container.
 //
@@ -37,7 +37,7 @@ class Patient {
 	var $is_callin;                   // flag for call ins
 	var $ptid;			  // local practice ID (chart num)
 
-	// Constructor: FreeMED.Patient
+	// Constructor: org.freemedsoftware.core.Patient
 	//
 	// Parameters:
 	//
@@ -47,7 +47,7 @@ class Patient {
 	//	$is_callin - (optional) Boolean flag to specify if the
 	//	patient is a "call-in" patient. Defaults to false.
 	//
-	function Patient ($_patient_number, $is_callin = false) { // constructor
+	function __construct ($_patient_number, $is_callin = false) { // constructor
 		if (is_array($_patient_number)) {
 			$patient_number = $_patient_number['id'];
 		} else {
@@ -372,7 +372,7 @@ class Patient {
 	//
 	//	Properly capitalized string.
 	//
-	function _fixcaps ( $string ) {
+	protected function _fixcaps ( $string ) {
 		$subs = array (
 			'Ii' => 'II',
 			'Iii' => 'III',
