@@ -1,23 +1,24 @@
 <?php
  // $Id$
- // $Author$
  //
- // $Log$
- // Revision 1.4  2004/02/23 05:50:45  rufustfirefly
- // NaturalDocs cleanup
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
- // Revision 1.3  2003/11/05 04:40:54  rufustfirefly
- // Documentation. (Jeff)
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
- // Revision 1.2  2002/08/06 13:49:08  rufustfirefly
- // updated rxlist class for changes in RxList.com
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
  //
- // Revision 1.1  2002/07/08 14:42:25  rufustfirefly
- // RxList.com prescription "module" for formulary
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
  //
-
-if (!defined('__CLASS_RXLIST_PHP__')) {
-define('__CLASS_RXLIST_PHP__', true);
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 // class: FreeMED.RxList
 //
@@ -168,7 +169,6 @@ class RxList {
 
 } // end class RxList
 
-} // end if not defined
 /*
 // TEST CRAP HERE
 $page = RxList::getPage("ace");
