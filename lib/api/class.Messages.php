@@ -61,7 +61,8 @@ class Messages {
 				'text'       => $r['msgtext'],
 				'urgency'    => $r['msgurgency'],
 				'read'       => $r['msgread'],
-				'time'       => $r['msgtime']
+				'time'       => $r['msgtime'],
+				'id'         => $r['id']
 			);
 		} else {
 			return false;
@@ -213,7 +214,8 @@ class Messages {
 					"text"       => $r['msgtext'],
 					"urgency"    => $r['msgurgency'],
 					"read"       => $r['msgread'],
-					"time"       => $r['msgtime']
+					"time"       => $r['msgtime'],
+					"id"         => $r['id']
 				);
 			} // end while
 
