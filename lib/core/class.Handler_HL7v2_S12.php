@@ -39,7 +39,7 @@ class Handler_HL7v2_S12 extends Handler_HL7v2 {
 			$pr = $this->parser->message['AIP'][$k];
 
 			// Use scheduler API
-			$c = CreateObject('_FreeMED.Scheduler');
+			$c = CreateObject('org.freemedsoftware.api.Scheduler');
 			$c->set_appointment(array(
 				'type' => 'pat', // hardcode as patient
 				'date' => $this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]),

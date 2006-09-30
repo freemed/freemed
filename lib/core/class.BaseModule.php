@@ -106,7 +106,7 @@ class BaseModule extends module {
 
 		// Deal with faxstatus
 		if (isset($_REQUEST['faxstatus'])) {
-			$fax = CreateObject('_FreeMED.Fax', '/dev/null');
+			$fax = CreateObject('org.freemedsoftware.core.Fax', '/dev/null');
 			$status = $fax->State($_REQUEST['faxstatus']);
 			$display_buffer .= "<b>".$output."</b>\n";
 			if ($status == 1) {
@@ -221,7 +221,7 @@ class BaseModule extends module {
 			list ($title, $heading, $physician) = $this->_TeX_Information();
 
 			// Create TeX object for patient
-			$TeX = CreateObject('FreeMED.TeX', array (
+			$TeX = CreateObject('org.freemedsoftware.core.TeX', array (
 				'title' => $title,
 				'heading' => $heading,
 				'physician' => $physician
@@ -285,7 +285,7 @@ class BaseModule extends module {
 				$parts = explode('|', $_REQUEST['attachment']);
 
 				// Composite ...
-				$comp = CreateObject('_FreeMED.MultiplePDF');
+				$comp = CreateObject('org.freemedsoftware.core.MultiplePDF');
 				$comp->Add( $_file );
 				$comp->Add( module_function($parts[0], '_RenderToPDF', array($parts[1])) );
 				$file = $comp->Composite();
@@ -319,7 +319,7 @@ class BaseModule extends module {
 				$parts = explode('|', $_REQUEST['attachment']);
 
 				// Composite ...
-				$comp = CreateObject('_FreeMED.MultiplePDF');
+				$comp = CreateObject('org.freemedsoftware.core.MultiplePDF');
 				$comp->Add( $_file );
 				$comp->Add( module_function($parts[0], '_RenderToPDF', array($parts[1])) );
 				$file = $comp->Composite();
@@ -327,7 +327,7 @@ class BaseModule extends module {
 				// Pass through ...
 				$file = $_file;
 			}
-			$fax = CreateObject('_FreeMED.Fax', 
+			$fax = CreateObject('org.freemedsoftware.core.Fax', 
 				$file, 
 				array (
 					'sender' => $this_user->user_descrip,
@@ -340,7 +340,7 @@ class BaseModule extends module {
 			// TODO : Descrip call back
 			if ($this->patient_field) {
 				$_r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-				$_p = CreateObject('_FreeMED.Patient', $_r[$this->patient_field]);
+				$_p = CreateObject('org.freemedsoftware.core.Patient', $_r[$this->patient_field]);
 				$descrip = $this->record_name.' for '.$_p->fullName();
 
 				$this_user->setFaxInQueue(
@@ -430,14 +430,14 @@ class BaseModule extends module {
 	function _TeX_Information ( ) {
 		// abstract
 		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-		$patient = CreateObject('FreeMED.Patient', $_REQUEST['patient']);
-		$user = CreateObject('FreeMED.User');
+		$patient = CreateObject('org.freemedsoftware.core.Patient', $_REQUEST['patient']);
+		$user = CreateObject('org.freemedsoftware.core.User');
 		if ($user->isPhysician()) {
 			$phy = $user->getPhysician();
 		} else {
 			$phy = $patient->local_record['patphy'];
 		}
-		$physician_object = CreateObject('FreeMED.Physician', $phy);
+		$physician_object = CreateObject('org.freemedsoftware.core.Physician', $phy);
 		$title = __($this->record_name);
 		$heading = $patient->fullName().' ('.$patient->local_record['ptid'].')';
 		$physician = $physician_object->fullName();

@@ -43,7 +43,7 @@ class Handler_HL7v2_S15 extends Handler_HL7v2 {
 			// else. - Jeff
 
 			// Use scheduler API
-			$c = CreateObject('_FreeMED.Scheduler');
+			$c = CreateObject('org.freemedsoftware.api.Scheduler');
 			$query = "DELETE FROM scheduler WHERE ".
 				"caltype = 'pat' AND ". // hardcode as patient
 				"caldateof = '".addslashes($this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]))."' AND ".
