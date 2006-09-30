@@ -91,6 +91,9 @@ function register_module ($module_name) {
 	// load module through object
 	$this_module = new $module_name ();
 
+	// Handle the possibility of something bad.
+	if (!is_object($this_module)) { return true; }
+
 	// move information into array
 	$GLOBALS['__freemed']['GLOBAL_MODULES'][] = array (
 			// package information
