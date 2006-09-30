@@ -49,6 +49,20 @@ class UserInterface {
 		return $this->user->newMessages();
 	} // end method GetNewMessages
 
+	// Method: SetConfigValue
+	//
+	//	Set user configurable variable.
+	//
+	// Parameters:
+	//
+	//	$key - Configuration key
+	//
+	//	$value - Configuration value
+	//
+	public function SetConfigValue ( $key, $value ) {
+		return $this->user->setManageConfig ( $key, $value );
+	} // end method SetConfigValue
+
 } // end class UserInterface
 
 ?>

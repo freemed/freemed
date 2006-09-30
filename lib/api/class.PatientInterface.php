@@ -92,4 +92,38 @@ class PatientInterface {
 		return $return;
 	} // end public function picklist
 
+	// Method: ProceduresToBill
+	//
+	//	Determine list of procedures to bill, optionally by patient.
+	//
+	// Parameters:
+	//
+	//	$patient - (optional) Patient id to get, otherwise does not qualify
+	//
+	// Return:
+	//
+	//	Array of procedure ids
+	//
+	public function ProceduresToBill ( $patient = 0 ) {
+		$_obj = CreateObject('org.freemedsoftware.core.Patient', $patient+0);
+		return $_obj->get_procedures_to_bill ( $patient ? true : false );
+	} // end public function ProceduresToBill
+
+	// Method: ToText
+	//
+	//	Get a textual representation of a patient
+	//
+	// Parameters:
+	//
+	//	$patient - Database id of patient
+	//
+	// Returns:
+	//
+	//	String representation of patient.
+	//
+	public function ToText ( $patient ) {
+		$_obj = CreateObject('org.freemedsoftware.core.Patient', $patient);
+		return $_obj->to_text( );
+	} // end public function ToText
+
 } // end class PatientInterface
