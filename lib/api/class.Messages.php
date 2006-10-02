@@ -43,11 +43,9 @@ class Messages {
 
 		// Perform search
 		$query = "SELECT * FROM messages WHERE id='".addslashes($message)."'";
-		$result = $GLOBALS['sql']->query($query);
+		$r = $GLOBALS['sql']->queryOne( $query );
 
-		if ($GLOBALS['sql']->results($result)) {
-			$r = $GLOBALS['sql']->fetch_array($result);
-
+		if ($r['id']) {
 			// Check for appropriate access (correct user)
 			if ($r['msgfor'] != $this_user->user_number) {
 				return false;
@@ -85,9 +83,9 @@ class Messages {
 	function recipients_to_text ( $recip ) {
 		$query = "SELECT * FROM user WHERE ".
 			"FIND_IN_SET(id, '".addslashes($recip)."')";
-		$res = $GLOBALS['sql']->query($query);
+		$res = $GLOBALS['sql']->queryAll($query);
 		$a = array ();
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		foreach ($res AS $r) {
 			$a[] = prepare($r['userdescrip']);
 		}
 		return join(', ', $a);
@@ -115,7 +113,7 @@ class Messages {
 			"id='".addslashes($message_id)."' AND ".
 			"msgfor='".addslashes($this_user->user_number)."'"
 		);
-		return result;
+		return $result;
 	} // end method remove
 
 	// Method: send
@@ -204,8 +202,8 @@ class Messages {
 		}
 		$result = $GLOBALS['sql']->query($query);
 
-		if ($GLOBALS['sql']->results($result)) {
-			while ($r = $GLOBALS['sql']->fetch_array($result)) {
+		if (count($result)) {
+			foreach ($result AS $r) {
 				$return[] = array(
 					"user"       => $r['msgfor'],
 					"patient"    => $r['msgpatient'],

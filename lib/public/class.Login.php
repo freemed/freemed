@@ -44,15 +44,11 @@ class Login {
 		if (!$username) { return false; }
 
 		// Find this user
-  		$result = $GLOBALS['sql']->query ("SELECT * FROM user ".
-			"WHERE username = '".addslashes($username)."'");
+  		$r = $GLOBALS['sql']->queryRow("SELECT * FROM user WHERE username = '".addslashes($username)."'");
 	
 		// If the user isn't found, false
-		if (!$GLOBALS['sql']->results($result)) { return false; }
+		if (!$r['username']) { return false; }
 	
-		// Get information
-		$r = $GLOBALS['sql']->fetch_array ($result);
-
 		syslog(LOG_INFO, "pw in db = $r[userpassword]");
 
 		$db_pass = $r['userpassword'];

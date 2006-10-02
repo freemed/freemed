@@ -99,7 +99,7 @@ class Scheduler {
 	public function GetDailyAppointments ( $date = NULL ) {
 		$this_date = $date ? $date : date('Y-m-d');
 		$query = "SELECT s.caldateof AS date_of, s.calhour AS hour, s.calminute AS minute, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') AS patient, pa.id AS patient_id, s.calprenote AS note, s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id WHERE s.caldateof='".addslashes($this_date)."' AND s.calstatus != 'cancelled' ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician";
-		return freemed::query_to_array( $query );
+		return $GLOBALS['sql']->queryAll ( $query );
 	} // end method GetDailyAppointments
 
 	// Method: CopyAppointment
@@ -172,11 +172,10 @@ class Scheduler {
 	//
 	public function date_add ( $starting, $interval ) {
 		if ($interval < 1) { return $starting; }
-		$q = $GLOBALS['sql']->query("SELECT DATE_ADD('".
+		$q = $GLOBALS['sql']->queryOne("SELECT DATE_ADD('".
 			addslashes($starting)."', INTERVAL ".
 			($interval+0)." DAY) AS mydate");
-		extract($GLOBALS['sql']->fetch_array($q));
-		return $mydate;
+		return $q['mydate'];
 	} // end method date_add
 
 	// Method: date_in_range
@@ -441,20 +440,18 @@ class Scheduler {
 	//	<map_init>
 	//
 	public function map ( $query ) {
-		global $sql;
-
 		// Initialize the map;
 		$idx = "";
 		$map = $this->map_init();
 
 		// Get the query
-		$result = $sql->query($query);
+		$result = $GLOBALS['sql']->queryAll($query);
 
 		// If nothing, return empty map
-		if (!$sql->results($result)) return $map;
+		if (count($result) < 1) { return $map; }
 
 		// Run through query
-		while ($r = $sql->fetch_array($result)) {
+		foreach ($result AS $r) {
 			// Don't regard cancelled appointments
 			if ($r['calstatus'] != 'cancelled') {
 				// Move to "c" array, which is stripslashes'd
@@ -683,20 +680,18 @@ class Scheduler {
 	//	<map>
 	//
 	public function multimap ( $query, $selected = -1 ) {
-		global $sql;
-
 		// Initialize the first map and current index
 		$idx = "";
 		$maps[0] = $this->map_init();
 
 		// Get the query
-		$result = $sql->query($query);
+		$result = $GLOBALS['sql']->queryAll($query);
 
 		// If nothing, return empty multimap
-		if (!$sql->results($result)) return $maps;
+		if (count($result) < 1) { return $maps; }
 
 		// Run through query
-		while ($r = $sql->fetch_array($result)) {
+		foreach ($result AS $r) {
 			// Ignore cancelled appointments
 			if ($r['calstatus'] != 'cancelled') {
 				// Move to "c" array, which is stripslashes'd

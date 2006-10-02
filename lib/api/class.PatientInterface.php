@@ -78,10 +78,10 @@ class PatientInterface {
 		$query = "SELECT * FROM patient WHERE ( ".join(' OR ', $q)." ) ".
 			"AND ( ISNULL(ptarchive) OR ptarchive=0 )";
 		syslog(LOG_INFO, "PICK| $query");
-		$result = $GLOBALS['sql']->query( $query );
-		if (!$GLOBALS['sql']->results( $result )) { return array (); }
+		$result = $GLOBALS['sql']->queryAll( $query );
+		if (count($result) < 1) { return array (); }
 		$count = 0;
-		while ($r = $GLOBALS['sql']->fetch_array( $result )) {
+		foreach ($result AS $r) {
 			$count++;
 			if ($count < $limit) {
 				$_obj = CreateObject('org.freemedsoftware.core.Patient', $r);
