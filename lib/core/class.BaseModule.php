@@ -56,13 +56,10 @@ class BaseModule extends Module {
 
 	// Method: BaseModule constructor
 	public function __construct ( ) {
-		LoadObjectDependency('org.freemedsoftware.core.GettextXML');
 		// Call parent constructor
 		parent::__construct ( );
-		// Call setup
-		$this->setup ( );
 		// Load language files, if necessary
-		GettextXML::textdomain(strtolower(get_class($this)));
+		T_textdomain( strtolower( get_class( $this ) ) );
 		// Push acl information, if there is any
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
 	} // end constructor BaseModule
@@ -418,43 +415,16 @@ class BaseModule extends Module {
 		return array ( );
 	} // end method _print_mapping
 
-	// Method: _TeX_Information
-	//
-	//	Callback to provide information to the TeX renderer about
-	//	formatting. (Should be depreciated)
-	//
-	// Returns:
-	//
-	//	Array ( title, heading, physician )
-	//
-	function _TeX_Information ( ) {
-		// abstract
-		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-		$patient = CreateObject('org.freemedsoftware.core.Patient', $_REQUEST['patient']);
-		$user = CreateObject('org.freemedsoftware.core.User');
-		if ($user->isPhysician()) {
-			$phy = $user->getPhysician();
-		} else {
-			$phy = $patient->local_record['patphy'];
-		}
-		$physician_object = CreateObject('org.freemedsoftware.core.Physician', $phy);
-		$title = __($this->record_name);
-		$heading = $patient->fullName().' ('.$patient->local_record['ptid'].')';
-		$physician = $physician_object->fullName();
-		return array ($title, $heading, $physician);
-	} // end method _TeX_Information
-
-	// Method: BaseModule->setup
+	// Method: setup
 	//
 	//	Overrides the internal phpwebtools setup method. This causes
 	//	FreeMED to run either _setup() on first run, or _update()
 	//	if the module has an older version installed.
 	//
 	function setup () {
-		global $display_buffer;
-		if (!freemed::module_check($this->MODULE_NAME,$this->MODULE_VERSION)) {
+		if (!freemed::module_check($this->MODULE_UID, $this->MODULE_VERSION)) {
 			// check if it is installed *AT ALL*
-			if (!freemed::module_check($this->MODULE_NAME, "0.0001")) {
+			if (!freemed::module_check($this->MODULE_UID, "0.0001")) {
 				// run internal setup routine
 				$val = $this->_setup();
 			} else {
@@ -463,7 +433,7 @@ class BaseModule extends Module {
 			} // end checking to see if installed at all
 
 			// register module
-			freemed::module_register($this->MODULE_NAME, $this->MODULE_VERSION);
+			freemed::module_register($this->MODULE_UID, $this->MODULE_VERSION);
 
 			return $val;
 		} // end checking for module
@@ -474,28 +444,6 @@ class BaseModule extends Module {
 
 	// _update (in this case, wrapped in classes...)
 	public function _update () { }
-
-	// Method: BaseModule->init
-	//
-	//	Initializes the module table in the database. This should
-	//	only be called by the setup routines in FreeMED, otherwise
-	//	it poses a major system risk.
-	//
-	public function init($test) {
-		global $sql;
-	
-		$result = $GLOBALS['sql']->query("DROP TABLE modules"); 
-
-		$result = $GLOBALS['sql']->query($sql->create_table_query(
-			'modules',
-			array(
-				'module_name' => SQL__VARCHAR(100),
-				'module_version' => SQL__VARCHAR(50),
-				'id' => SQL__SERIAL
-			), array('id')
-		));
-		return $result;
-	} // end method init
 
 	//----- Internal module functions
 
@@ -525,18 +473,10 @@ class BaseModule extends Module {
 	//	Array of associations made to this module.
 	//
 	function _GetAssociations () {
-		if (!is_array($GLOBALS['GLOBAL_MODULES'])) {
-			$modules = CreateObject(
-				'PHP.module_list',
-				PACKAGENAME,
-				array(
-					'cache_file' => 'data/cache/modules'
-				)
-			);
-		}
+		$index = freemed::module_cache();
 		$associations = array();
-		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $__crap => $v) {
-			$a = $v['META_INFORMATION']['__associations'];
+		foreach ( $index AS $module ) {
+			$a = $module['META_INFORMATION']['__associations'];
 			foreach ($a as $_k => $_v) {
 				if (strtolower($_k) == strtolower($this->MODULE_CLASS)) {
 					$associations[] = $_v;
@@ -544,7 +484,7 @@ class BaseModule extends Module {
 			}
 		}
 		return $associations;
-	} // end method BaseModule->_GetAssociations
+	} // end method _GetAssociations
 
 	// Method: BaseModule->_SetAssociation
 	//
@@ -554,7 +494,8 @@ class BaseModule extends Module {
 	//
 	//	$with - Module name (class name) of module to associate with.
 	//
-	function _SetAssociation ($with) {
+	protected function _SetAssociation ( $with ) {
+		$this->META_INFORMATION['__associations_list'][] = $with;
 		$this->META_INFORMATION['__associations']["$with"] = get_class($this);
 	} // end method BaseModule->_SetAssociation
 
@@ -571,7 +512,7 @@ class BaseModule extends Module {
 	//	$method - Method that will be called by the specified handler.
 	//	This is 'handler' by default.
 	//
-	function _SetHandler ($handler, $method = 'handler') {
+	protected function _SetHandler ($handler, $method = 'handler') {
 		$this->META_INFORMATION['__handler']["$handler"] = $method;
 	} // end method BaseModule->_SetHandler
 

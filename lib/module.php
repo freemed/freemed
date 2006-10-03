@@ -137,7 +137,8 @@ function register_module ($module_name) {
 		'module_category' => ( $data['MODULE_CATEGORY'] ? $data['MODULE_CATEGORY'] : 'Unknown' ),
 		'module_path' => $data['MODULE_FILE'],
 		'module_stamp' => $lstat[7],
-		'module_handlers' => 'handlers',
+		'module_handlers' => join(',', $data['META_INFORMATION']['__handler']),
+		'module_associations' => join(',', $data['META_INFORMATION']['__associations_list']),
 		'module_meta' => serialize($data['META_INFORMATION'])
 	);
 
