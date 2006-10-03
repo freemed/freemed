@@ -180,7 +180,7 @@ class EMRModule extends BaseModule {
 		}
 
 		// Call parent constructor
-		$this->BaseModule();
+		parent::__construct();
 	} // end function EMRModule
 
 	// override check_vars method
@@ -220,38 +220,21 @@ class EMRModule extends BaseModule {
 	//	if ($this->locked($id)) return false;
 	//
 	function locked ($id, $quiet = false) {
-		global $sql, $display_buffer;
+		global $display_buffer;
 		static $locked;
 
 		// If there is no table_name, we can skip this altogether
 		if (empty($this->table_name)) { return false; }
 
 		if (!isset($locked)) {
-			$query = "SELECT * FROM ".$this->table_name." WHERE ".
+			$query = "SELECT COUNT(*) AS lock_count ".
+				"FROM ".$this->table_name." WHERE ".
 				"id='".addslashes($id)."' AND (locked > 0)";
-			$result = $sql->query($query);
-			$locked = $sql->results($result);
+			$result = $GLOBALS['sql']->queryOne( $query );
+			$locked = ($result['lock_count'] > 0);
 		}
 
 		if ($locked) {
-			if (!$quiet) 
-			$display_buffer .= "
-			<div ALIGN=\"CENTER\">
-
-			</div>
-
-			<p/>
-
-			<div ALIGN=\"CENTER\">
-			".(
-				($GLOBALS['return'] == "manage") ?
-				"<a href=\"manage.php?id=".urlencode($GLOBALS['patient']).
-					"\">".__("Manage Patient")."</a>" :
-				"<a href=\"module_loader.php?module=".
-					get_class($this)."\">".__("back")."</a>"
-			)."
-			</div>
-			";
 			return true;
 		} else {
 			return false;
@@ -444,7 +427,7 @@ class EMRModule extends BaseModule {
 	function in_use ( $id ) {
 		// Check for record locking
 		$lock = CreateObject('org.freemedsoftware.core.RecordLock', $this->table_name);
-		if ($lock->IsLocked($id)) {
+		if ($lock->IsLocked( $id )) {
 			trigger_error(__("This record is currently in use."), E_USER_ERROR);
 		} else {
 			// Add record lock

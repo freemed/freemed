@@ -25,12 +25,13 @@
 //	Class that does the work of indexing and caching information
 //	regarding directories of multiple modules.
 //
-// See Also: <org.freemedsoftware.core.module>
+// See Also: <org.freemedsoftware.core.Module>
 
 class ModuleIndex {
 
 	protected $index;
 	private $ttl = '3600'; // 1h TTL
+	private $quiet;
 
 	// Method: constructor
 	//
@@ -38,7 +39,9 @@ class ModuleIndex {
 	//
 	//	$force_index - (optional) Force indexing
 	//
-	function __construct ( $force_index = false ) {
+	//	$quiet - (optional) Boolean, supress output
+	//
+	function __construct ( $force_index = false, $quiet = true ) {
 		$this->display_hidden = true;
 
 		// Derive module directory from the mask
@@ -51,14 +54,21 @@ class ModuleIndex {
 		$this->extension = ".module.php";
 
 		$this->index = $this->LoadIndex ( );
+		$this->quiet = $quiet;
 
 		if ($force_index) {
+			// Set caching flag
+			$GLOBALS['__freemed']['modules_caching'] = true;
+
 			// Check to see if the directory is cached
 			if ( !$this->IsCached( ) ) {
 				// Farm the call out to a function so we can handle
 				// recursive directory entries ...
-				$this->_ScanDirectory($this->modules_directory, $this->recursive);
+				$this->ScanDirectory($this->modules_directory, $this->recursive);
 			} // end checking for cache
+
+			// Unset flag
+			$GLOBALS['__freemed']['modules_caching'] = false;
 		} // if forced index
 	} // end constructor module_list
 
@@ -76,9 +86,9 @@ class ModuleIndex {
 		return $results;
 	} // end protected function LoadIndex
 
-	// Method: _ScanDirectory
+	// Method: ScanDirectory
 	//
-	//	Scans directory for modules
+	//	Scans directory for modules. Protected function.
 	//
 	// Parameters:
 	//
@@ -87,7 +97,8 @@ class ModuleIndex {
 	//	$recurse - (optional) Whether or not to recurse. Default is
 	//	false.
 	//
-	function _ScanDirectory ( $dir, $recurse = false ) {
+	protected function ScanDirectory ( $dir, $recurse = false ) {
+		//print "ScanDirectory $dir\n";
 		if (! ($d = dir($dir)) ) {
 			die(get_class($this)." :: could not open directory '".$dir."'");
 		}
@@ -98,7 +109,7 @@ class ModuleIndex {
 			if (strtolower(substr($entry,-(strlen($this->extension)))) == $this->extension) {
 				// include the module (which registers it)
 				//print "include ".( $dir . ( (substr($dir,-1)!="/") ? "/" : "" ).$entry )."<br/>\n";
-				$this->_ScanFile ( $dir . ( (substr($dir,-1)!="/") ? "/" : "" ).$entry );
+				$this->ScanFile ( $dir . ( (substr($dir,-1)!="/") ? "/" : "" ).$entry );
 				// [ Create cache entries from register_module() ]
 			} else { // if it *isn't* a module
 				// If we recurse and it's a directory
@@ -107,30 +118,36 @@ class ModuleIndex {
 					if ( ($entry != 'CVS') and (substr($entry, 0, 1) != '.') ) {
 						//print "entering recurse on $entry<br/>\n";
 						// Recurse into this directory
-						$this->_ScanDirectory( $dir . ( (substr($dir,-1)!="/") ? "/" : "" ).$entry, true);
+						$this->ScanDirectory( $dir . ( (substr($dir,-1)!="/") ? "/" : "" ).$entry, true);
 					}
 				}
 			} // end determining if it is a module
 		} // end looping through directory entries
-	} // end method _ScanDirectory
+	} // end method ScanDirectory
 
-	// Method: _ScanFile
+	// Method: ScanFile
 	//
-	//	Scan file against the 'modules' table.
+	//	Scan file against the 'modules' table. Protected function.
 	//
 	// Parameters:
 	//
 	//	$file - Fully qualified file path/name to module file
 	//
-	protected function _ScanFile ( $file ) {
+	protected function ScanFile ( $file ) {
+
 		// Determine if this file is indexed or not
 		if ($this->IsIndexed( $file )) {
-
+			// Skip indexing this file
 		} else {
 			// If not, index this module
-			@include_once ( $file );
+			if ($this->quiet) {
+				@include_once ( $file );
+			} else {
+				print "[ Indexing $file ]\n";
+				include_once ( $file );
+			}
 		}
-	} // end protected function _ScanFile
+	} // end protected function ScanFile
 
 	// Method: IsIndexed
 	//
@@ -197,45 +214,11 @@ class ModuleIndex {
 	//
 	//	Boolean, whether module exists in the loaded list.
 	//
-	function CheckForModule ($module_name) {
+	public function CheckForModule ($module_name) {
 		if (empty($module_name)) { return false; }
 		if ($this->GetModuleProperty( $module_name, 'MODULE_CLASS' )) { return true; }
 		return false;
 	} // end function CheckForModule
-
-	function execute ($name, $parameters = NULL) {
-		if (!is_array($this->index)) return NULL;
-		$buffer = "";
-		foreach ($this->index AS $this_module) {
-			// execute constructor
-			$this_class = new $this_module['MODULE_CLASS'] ( );
-
-			// determine if it's a method or not...
-			if (method_exists($this_class, $name)) {
-
-				// execute actual function
-				if (!is_array ($parameters))
-					$ret = call_user_method (
-						$name,
-						$this_class
-					);
-				else {
-					$ret = call_user_method_array (
-						$name,
-						$this_class,
-						$parameters
-					);
-				} // end checking for parameters
-
-				// add to buffer
-				$buffer .= $ret;
-
-			} // end checking to see if method exists
-		} // end foreach module
-
-		// return the buffer value
-		return $buffer;
-	} // end function execute
 
 	// Method: GetModuleProperty
 	//

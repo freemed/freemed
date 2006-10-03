@@ -28,7 +28,7 @@ include_once ( 'lib/freemed.php' );
 // Force recaching of modules
 print date('r')." : Loaded ".__FILE__."\n";
 print date('r')." : Forcing recache of modules ... \n";
-$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true );
+$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
 print date('r')." :- org.freemedsoftware.core.ModuleIndex instantiated\n";
 
 ?>

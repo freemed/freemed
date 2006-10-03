@@ -82,11 +82,10 @@ function execute_module ($module_name) {
 //	order for this to properly register a module.
 //
 function register_module ($module_name) {
-	global $GLOBAL_CATEGORIES_VERSION;
-
 	// check for module existing
-	if (!class_exists($module_name))
-		DIE("register_module :: class \"$module_name\" doesn't exist");
+	if (!class_exists($module_name)) {
+		die("register_module :: class \"$module_name\" doesn't exist");
+	}
 
 	// load module through object
 	$this_module = new $module_name ();
@@ -95,7 +94,7 @@ function register_module ($module_name) {
 	if (!is_object($this_module)) { return true; }
 
 	// move information into array
-	$GLOBALS['__freemed']['GLOBAL_MODULES'][] = array (
+	$data = array (
 			// package information
 		'PACKAGE_NAME' => $this_module->PACKAGE_NAME,
 		'PACKAGE_VERSION' => $this_module->PACKAGE_VERSION,
@@ -105,13 +104,14 @@ function register_module ($module_name) {
 			// module information
 		'MODULE_NAME' => $this_module->MODULE_NAME,
 		'MODULE_CLASS' => $module_name, // (like $this_module->MODULE_CLASS)
+		'MODULE_UID' => $this_module->MODULE_UID,
 		'MODULE_VERSION' => $this_module->MODULE_VERSION,
 		'MODULE_AUTHOR' => $this_module->MODULE_AUTHOR,
 		'MODULE_DESCRIPTION' => $this_module->MODULE_DESCRIPTION,
 		'MODULE_VENDOR' => $this_module->MODULE_VENDOR,
 		'MODULE_HIDDEN' => $this_module->MODULE_HIDDEN,
 			// file name information for non-standard class loading
-		'MODULE_FILE' => $this_module->MODULE_FILE,
+		'MODULE_FILE' => str_replace(dirname(dirname(__FILE__)).'/', '', $this_module->MODULE_FILE),
 			// minimum version requirement information
 		'PACKAGE_MINIMUM_VERSION' => $this_module->PACKAGE_MINIMUM_VERSION,
 		'CATEGORY_MINIMUM_VERSION' => $this_module->CATEGORY_MINIMUM_VERSION,
@@ -121,8 +121,52 @@ function register_module ($module_name) {
 			// misc information to pass around
 		'META_INFORMATION' => $this_module->META_INFORMATION
 	);
-	$GLOBAL_CATEGORIES_VERSION["$this_module->CATEGORY_NAME"] =
-		$this_module->CATEGORY_VERSION;
+
+	//print "[ Loading index ]\n";
+	$index = $GLOBALS['sql']->queryAll("SELECT * FROM modules");
+	//print "[ Index loaded ]\n";
+
+	$lstat = lstat($data['MODULE_FILE']);
+
+	// Prepare data for insertion or update
+	$a = array (
+		'module_uid' => $data['MODULE_UID'],
+		'module_name' => $data['MODULE_NAME'],
+		'module_class' => $data['MODULE_CLASS'],
+		'module_version' => $data['MODULE_VERSION'],
+		'module_category' => ( $data['MODULE_CATEGORY'] ? $data['MODULE_CATEGORY'] : 'Unknown' ),
+		'module_path' => $data['MODULE_FILE'],
+		'module_stamp' => $lstat[7],
+		'module_handlers' => 'handlers',
+		'module_meta' => serialize($data['META_INFORMATION'])
+	);
+
+	// Only do this if we are currently caching modules
+	if ($GLOBALS['__freemed']['modules_caching']) {
+		// Check the index to see if something is in there
+		//print $data['MODULE_UID']." = UID\n";
+		foreach ($index AS $m) {
+			if ($m['module_uid'] == $data['MODULE_UID']) {
+				// If we've found it, update
+				//print "should update $m[MODULE_NAME]\n";
+				$query = $GLOBALS['sql']->update_query (
+					'modules',
+					$a,
+					array ( 'module_uid' => $data['MODULE_UID'] )
+				);
+				$GLOBALS['sql']->query ( $query );
+				return true;
+			}
+		}
+
+		// If all else fails, add
+		print "should INSERT $m[MODULE_NAME]\n";
+		$query = $GLOBALS['sql']->insert_query (
+			'modules',
+			$a
+		);
+		$GLOBALS['sql']->query ( $query );
+	} // end checking for caching
 
 	// be nice and return true
 	return true;
@@ -142,17 +186,23 @@ function register_module ($module_name) {
 //	File name of the module.
 //
 function resolve_module ($module_name) {
-	static $_cache;
-
-	if (!isset($_cache)) {
-		$q = $GLOBALS['sql']->query('SELECT * FROM modules');
-		while ($r = $GLOBALS['sql']->fetch_array( $q )) {
-			$_cache[strtolower($r['module_class'])] = $r;
-		}
-	}
-
-	return $_cache[strtolower($module_name)]['module_path'];
+	$cache = _cache_module();
+	return $cache[strtolower($module_name)]['module_path'];
 } // end function resolve_module
+
+// Function: _cache_modules
+//
+// Returns:
+//
+//	Array of module information hashes
+//
+function _cache_modules ( ) {
+	static $cache;
+	if (!isset($cache)) {
+		$cache = $GLOBALS['sql']->queryAll('SELECT * FROM modules');
+	}
+	return $cache;
+} // end function _cache_modules
 
 function setup_module ($module_name) {
 	// check for module existing
@@ -188,7 +238,7 @@ function module_function ($module_name, $function, $params = "") {
 
 	// check for module existing
 	if (!class_exists($module_name)) {
-		DIE("module_function :: class \"$module_name\" doesn't exist");
+		trigger_error("module_function :: class \"$module_name\" doesn't exist");
 	}
 
 	// Load module through object
@@ -201,8 +251,7 @@ function module_function ($module_name, $function, $params = "") {
 	} elseif ($params=="") {
 		return call_user_method ( $function, $this_module );
 	} else {
-		return call_user_method_array ( $function, $this_module,
-			array($params) );
+		return call_user_method_array ( $function, $this_module, array($params) );
 	}
 } // end function module_function
 
