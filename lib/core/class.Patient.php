@@ -152,9 +152,8 @@ class Patient {
 		$query = "SELECT procdt FROM procrec ".
 			"WHERE procpatient = '".addslashes($this->id)."' ".
 			"ORDER BY procdt DESC";
-		$res = $GLOBALS['sql']->query ( $query );
-		$r = $GLOBALS['sql']->fetch_array ( $res );
-		return $r['procdt'];
+		$result = $GLOBALS['sql']->queryOne ( $query );
+		return $result['procdt'];
 	} // end method date_of_last_procedure
 
 	// Method: fullName
@@ -323,8 +322,8 @@ class Patient {
 			"ptlname LIKE '%".addslashes($last)."%' AND ".
 			"ptfname LIKE '%".addslashes($first)."%' ".
 			"ORDER BY ptlname,ptfname,ptmname";
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		$result = $GLOBALS['sql']->queryAll ( $query );
+		foreach ( $result AS $r ) {
 			$patients[] = $r['id'];
 		} // end while loop
 		return $patients;
@@ -351,12 +350,7 @@ class Patient {
 			"AND proc.procbalcurrent > 0 ".
 			"AND proc.proccurcovtp = '0' ".
 			( $by_patient ? "AND pat.id = '".addslashes($this->id)."'" : "" );
-
-		$q = $GLOBALS['sql']->query($s);
-		while ($res = $GLOBALS['sql']->fetch_array($q)) {
-			$procs[] = $res['p'];
-		}
-
+		$procs = $GLOBALS['sql']->queryCol( $s );
 		return $procs;
 	} // end method get_procedures_to_bill
 

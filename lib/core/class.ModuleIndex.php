@@ -72,10 +72,7 @@ class ModuleIndex {
 	//
 	protected function LoadIndex ( ) {
 		$query = "SELECT * FROM modules";
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
-			$results[] = $r;
-		} // end while loop
+		$results = $GLOBALS['sql']->queryAll ( $query );
 		return $results;
 	} // end protected function LoadIndex
 
@@ -171,8 +168,7 @@ class ModuleIndex {
 		if (!file_exists($this->cache_file)) { return false; }
 
 		// Get cached modification time
-		$q = $GLOBALS['sql']->query('SELECT MAX(stamp) AS cache_modified FROM modules');
-		expand( $GLOBALS['sql']->fetch_array( $q ) );
+		$q = $GLOBALS['sql']->queryOne('SELECT MAX(stamp) AS cache_modified FROM modules');
 
 		// Get directory modification date
 		clearstatcache();
@@ -180,7 +176,7 @@ class ModuleIndex {
 		//print "DEBUG: dir_modified = $dir_modified<br/>\n";
 
 		// If the cache is older than the directory...
-		if ($cache_modified < $dir_modified) {
+		if ($q['cache_modified'] < $dir_modified) {
 			// .. the cache needs to be rebuilt
 			return false;
 		} else {

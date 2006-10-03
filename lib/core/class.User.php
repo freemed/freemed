@@ -128,8 +128,8 @@ class User {
 	//	Array of fax ids, or NULL if there are none
 	public function getFaxesInQueue ( ) {
 		$query = "SELECT * FROM faxstatus WHERE fsuser='".addslashes($this->user_number)."'";
-		$result = $GLOBALS['sql']->query($query);
-		while ($r = $result->fetchRow()) {
+		$result = $GLOBALS['sql']->queryAll($query);
+		foreach ($result AS $r) {
 			if ($r['fsid']) { $f[$r['id']] = $r['id']; }
 		}
 		if (is_array($f)) { return $f; } 
@@ -165,8 +165,8 @@ class User {
 	//
 	public function getFaxDetails ( $fid ) {
 		$query = "SELECT * FROM faxstatus WHERE id='".addslashes($fid)."'";
-		$result = $GLOBALS['sql']->query($query);
-		return $result->fetchRow();
+		$result = $GLOBALS['sql']->queryOne($query);
+		return $result;
 	} // end method getFaxDetails
 
 	// Method: setFaxInQueue
@@ -375,13 +375,12 @@ class User {
 	//
 	//	Number of unread messages in the system for this user.
 	//
-	public function newMessages () {
-		$result = $GLOBALS['sql']->query(
+	public function newMessages ( ) {
+		$result = $GLOBALS['sql']->queryAll(
 			"SELECT * FROM messages WHERE ".
 			"msgfor='".addslashes($this->user_number)."' AND ".
 			"msgread='0' AND msgtag=''");
-		if (!$GLOBALS['sql']->results($result)) { return 0; }
-		return $GLOBALS['sql']->num_rows($result);
+		return count($result);
 	} // end function newMessages
 
 	// Method: init

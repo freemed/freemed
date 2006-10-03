@@ -44,10 +44,10 @@ class CSV {
 	//	$query - SQL query text
 	//
 	function ImportSQLQuery ( $query ) {
-		$q = $GLOBALS['sql']->query($query);
+		$q = $GLOBALS['sql']->queryAll($query);
 
 		$notset = false;
-		while ($r = $GLOBALS['sql']->fetch_array($q)) {
+		foreach ($q AS $r) {
 			// Unset integer keys
 			foreach($r AS $k=>$v) {
 				if (is_int($k)) {

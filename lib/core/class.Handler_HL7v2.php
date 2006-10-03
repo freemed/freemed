@@ -92,16 +92,13 @@ class Handler_HL7v2 {
 			"ptfname LIKE '".addslashes($fname)."' AND ".
 			"ptdob = '".addslashes($dob)."' AND ".
 			"ptarchive = 0";
-		$result = $GLOBALS['sql']->query($query);
-		if (!$GLOBALS['sql']->results($result)) {
-			return 0; // false.... none found
-		}
+		$result = $GLOBALS['sql']->queryOne( $query );
+
 		// If we found it, return the id
-		if ($GLOBALS['sql']->num_rows($result)) {
-			$r = $GLOBALS['sql']->fetch_array($result);
-			return stripslashes($r['id']);
+		if ($result['id']) {
+			return stripslashes($result['id']);
 		} else {
-			die('_PIDToPatient - Need smarter algorithm ... several patients found in search.');
+			return 0;
 		}
 	} // end method _PIDToPatient
 
