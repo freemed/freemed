@@ -20,7 +20,7 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-class module {
+class Module {
 		// package related variables
 	var $PACKAGE_NAME;
 	var $PACKAGE_VERSION = 0;
@@ -90,11 +90,10 @@ class module {
 	// - checks variables provided, returns false if not properly provided
 	public function check_version ($nullval="") {
 		// check version for this class
-		$parent_class = get_parent_class($this);
+		$parent_class = strtolower(get_parent_class($this));
 		if ( (!empty($parent_class)) and ($parent_class != "module") ) {
 			// check for minimum version, and return
-			return version_check($this->PACKAGE_VERSION,
-				 $this->PACKAGE_MINIMUM_VERSION);
+			return version_check($this->PACKAGE_VERSION, $this->PACKAGE_MINIMUM_VERSION);
 		} else {
 			// if this isn't a subclass, of course it is a good version
 			return true;

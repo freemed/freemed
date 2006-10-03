@@ -20,14 +20,14 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('org.freemedsoftware.core.module');
+LoadObjectDependency('org.freemedsoftware.core.Module');
 
 // Class: org.freemedsoftware.core.BaseModule
 //
 //	Basic FreeMED module class. All modules in FreeMED inheirit methods
 //	from this class. It extends the phpwebtools module class.
 //
-class BaseModule extends module {
+class BaseModule extends Module {
 
 	// override variables
 	var $PACKAGE_NAME = PACKAGENAME;
