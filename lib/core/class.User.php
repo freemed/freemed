@@ -306,23 +306,17 @@ class User {
 	//
 	//	$user_id - Id of user record
 	//
-	public function setPassword ($password, $user_id) {
-		if ($user_id == "") {
-			if((LOGLEVEL<1)||LOG_ERRORS){syslog(LOG_INFO,"class.User.php|setPassword| no user id!!");}
-			return false;
-		}
+	public function setPassword ( $password, $user_id = 0 ) {
+		$id = ($user_id == 0) ? $this->user_number : $user_id;
 
-		$md5_password = md5($password);
-		
 		$my_query = $GLOBALS['sql']->update_query(
 			"user",
 			array (
-				"userpassword" => $md5_password
-			), array ("id" => $user_id)
+				"userpassword" => $md5( $password )
+			), array ( "id" => $id )
 		);
 		if((LOGLEVEL<1)||LOG_SQL){syslog(LOG_INFO,"setPassword query=$my_query");}	
-
-		$result = $sql->query($my_query);
+		$result = $GLOBALS['sql']->query($my_query);
 	} // end function setPassword
 
 	// Method: getManageConfig
@@ -360,8 +354,8 @@ class User {
 		$query = $GLOBALS['sql']->update_query(
 			'user',
 			array(
-				'usermanageopt' => serialize($this->manage_config)
-			), array ('id' => $this->user_number)
+				'usermanageopt' => serialize( $this->manage_config )
+			), array ( 'id' => $this->user_number )
 		);
 		$result = $GLOBALS['sql']->query($query);
 	} // end function setManageConfig
