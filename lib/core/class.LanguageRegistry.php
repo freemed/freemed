@@ -1,18 +1,35 @@
 <?php
-    // $Id$
-    // $Author$
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('PHP.GettextXML');
-
-// Class: FreeMED.LanguageRegistry
+// Class: org.freemedsoftware.core.LanguageRegistry
 //
 //	Class to handle FreeMED's language registry, built from entries
 //	in FreeMED's "locale" folder. These are in the GettextXML format.
 //
 class LanguageRegistry {
 
-	function LanguageRegistry () {
+	private $registry;
 
+	public function __construct () {
 		// Get directory
 		if (! ($d = dir("./locale/")) ) {
 			die(get_class($this)." :: could not open directory ./locale");
@@ -20,7 +37,7 @@ class LanguageRegistry {
 
 		// Check for serialized file
 		$cache = CreateObject(
-			'PHP.FileSerialize',
+			'org.freemedsoftware.core.FileSerialize',
 			'data/cache/language_registry'
 		);
 
@@ -42,9 +59,9 @@ class LanguageRegistry {
 			// Read from cache
 			$this->registry = $cache->read();
 		}
-	} // end constructor LanguageRegistry
+	} // end constructor
 
-	// Method: LanguageRegistry->cached
+	// Method: cached
 	//
 	//	Determine if the language registry cache is up to date.
 	//
@@ -53,19 +70,9 @@ class LanguageRegistry {
 	//	Boolean, true if data is up to date, false if recaching
 	//	is necessary.
 	//
-	function cached () {
+	public function cached () {
 		// Check for non-existant cache file
 		if (!file_exists('data/cache/language_registry')) {
-		/*
-			$touched = touch ('data/cache/language_registry');
-			if (!$touched) {
-				die(
-				__("FreeMED was unable to create a file to record the language registry.")."<br/>\n".
-				__("FreeMED's 'locale' directory should be owned by the user that the webserver is running as...")."<br/>\n".
-				__("Usually this is 'apache'. You can also fix this by giving universal write access to the 'locale' directory of FreeMED.")."<br/>\n"
-				);
-			}
-		*/
 			return false;
 		}
 
@@ -89,7 +96,7 @@ class LanguageRegistry {
 		}
 	} // end method cached
 
-	// Method: LanguageRegistry->register
+	// Method: register
 	//
 	//	Register a language directory with the FreeMED language
 	//	registry.
@@ -99,46 +106,28 @@ class LanguageRegistry {
 	//	$dir - Directory. This should be a subdirectory of
 	//	FreeMED's "locale" folder.
 	//
-	function register ($dir) {
-		if (!file_exists('./locale/'.$dir.'/freemed.xml')) {
+	function register ( $dir ) {
+		if (!file_exists('./locale/'.$dir.'/registry')) {
 			//print "COULD NOT INDEX $dir<br/>\n";
 			return false;
 		}
-
-		// Read the using GettextXML::metainformation
-		$meta = GettextXML::metainformation(
-			'./locale/'.$dir.'/freemed.xml'
-		);
-
-		//print "meta[Locale] = ".$meta['Locale']."<br/>\n";
-		$this->registry[$meta['LocaleName']] = $meta['Locale'];
+		$meta = file_get_contents ( './locale/'.$dir.'/registry' );
+		$a = explode ( ':', $meta );
+		$this->registry[$a[1]] = $a[0];
 	} // end method register
 
-	// Method: LanguageRegistry->widget
+	// Method: picklist
 	//
 	//	Create a language selection widget based on the current
 	//	language registry.
 	//
-	// Parameters:
-	//
-	//	$varname - Variable name to store the data
-	//
-	//	$options - Options, as passed to html_form::select_widget
-	//
 	// Returns:
 	//
-	//	XHTML-formatted language selection widget
+	//	Language selection picklist
 	//
-	function widget ($varname, $_options = NULL) {
-		return html_form::select_widget(
-			$varname,
-			array_merge(
-				array(__("Default Language") => DEFAULT_LANGUAGE),
-				$this->registry
-			),
-			$_options
-		);
-	} // end method widget
+	public function picklist ( ) {
+		return $this->registry;
+	} // end method picklist 
 
 } // end class LanguageRegistry
 
