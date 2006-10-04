@@ -26,8 +26,8 @@
 //
 class SlidingFeeScale {
 
-	var $financial_record;
-	var $patient;
+	private $financial_record;
+	private $patient;
 
 	// Constructor: SlidingFeeScale
 	//
@@ -146,8 +146,7 @@ class SlidingFeeScale {
 		$query = "SELECT * FROM financialdemographics ".
 			"WHERE fdpatient='".addslashes($this->patient)."' ".
 			"ORDER BY fdtimestamp DESC LIMIT 1";
-		$result = $GLOBALS['sql']->query ( $query );
-		$r = $GLOBALS['sql']->fetch_array( $result );
+		$r = $GLOBALS['sql']->queryOne ( $query );
 		return $r;
 	} // end method _GetLastFinancialRecord
 

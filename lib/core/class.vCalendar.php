@@ -22,6 +22,8 @@
 
 // Class: org.freemedsoftware.core.vCalendar
 class vCalendar {
+	private $name;
+	private $criteria;
 
 	// Method: vCalendar constructor
 	//
@@ -32,7 +34,7 @@ class vCalendar {
 	//	$criteria - SQL "WHERE" clause text defining the
 	//	qualifiers of the schedule.
 	//
-	function vCalendar ( $name, $criteria ) {
+	public function __construct ( $name, $criteria ) {
 		$this->name = $name;
 		$this->criteria = $criteria;
 	} // end constructor vCalendar
@@ -47,7 +49,7 @@ class vCalendar {
 	//
 	function generate ( ) {
 		$query = "SELECT * FROM scheduler WHERE ".$this->criteria;
-		$result = $GLOBALS['sql']->query($query);
+		$result = $GLOBALS['sql']->queryAll( $query );
 		
 		// Add vCalendar header
 		$buffer .= "BEGIN:VCALENDAR\n".
@@ -56,16 +58,16 @@ class vCalendar {
 			"TZ:-07\n"; // TODO: Fix timezone
 
 		// Loop through applicable calendar entries
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+		foreach ( $result AS $r ) {
 			$entry = CreateObject('org.freemedsoftware.core.vCalendarEvent', $r);
-			$buffer .= $entry->generate();
+			$buffer .= $entry->generate( );
 		}
 
 		// Add vCalendar footer
 		$buffer .= "END:VCALENDAR\n";
 
 		return $buffer;
-	} // end method vCalendar->generate
+	} // end method generate
 
 } // end class vCalendar
 

@@ -35,13 +35,13 @@ class vCalendarEvent {
 	//	from the scheduler table, as returned by
 	//	<freemed::get_link_rec>.
 	//
-	function vCalendarEvent ( $_event ) {
+	public function __construct ( $_event ) {
 		// Based on array or not, do we import?
 		if (is_array($_event)) {
 			$event = $_event;
 			$this->uid = $event['id'];
 		} else {
-                	$event = freemed::get_link_rec($_event, "scheduler");
+                	$event = $GLOBALS['sql']->get_link( 'scheduler', $_event );
 			$this->uid = $_event;
 		}
 
@@ -65,7 +65,7 @@ class vCalendarEvent {
 	//
 	//	vCalendar event to be included in vCalendar export.
 	//
-	function generate ( ) {
+	public function generate ( ) {
 		$buffer .= "BEGIN:VEVENT\n".
 			"SUMMARY:".$this->note."\n".
 			"STATUS:TENTATIVE\n".
@@ -88,7 +88,7 @@ class vCalendarEvent {
 	//
 	//	Human readable event description.
 	//
-	function description ( ) {
+	protected function description ( ) {
 		// Get patient information
 		if ($this->patient == 0) { return __("Non-Patient Event"); }
 		$patient = CreateObject('org.freemedsoftware.core.Patient', $this->patient);
@@ -105,10 +105,10 @@ class vCalendarEvent {
 	//
 	//	Textual location.
 	//
-	function location ( ) {
+	protected function location ( ) {
 		if ($this->facility < 1) { return ''; }
 		if ($this->facility == '') { return ''; }
-		$f = freemed::get_link_rec ( $this->facility, 'facility' );
+		$f = $GLOBALS['sql']->get_link( 'facility', $this->facility );
 		return $f['psrname'].' ('.$f['psrcity'].', '.$f['psrstate'].')';
 	} // end method location
 
@@ -120,7 +120,7 @@ class vCalendarEvent {
 	//
 	//	vCalendar formatted start time for this event.
 	//
-	function start_time ( ) {
+	protected function start_time ( ) {
 		return $this->_ts2vcal(mktime(
 			$this->hour,
 			$this->minute,
@@ -139,7 +139,7 @@ class vCalendarEvent {
 	//
 	//	vCalendar formatted end time for this event.
 	//
-	function end_time ( ) {
+	protected function end_time ( ) {
 		// Calculate the end hour and minute
 		$hour = $this->hour;
 		$minute = $this->minute;
@@ -182,7 +182,7 @@ class vCalendarEvent {
 	// See Also:
 	//	_txt2vcal
 	//
-	function _ts2vcal ( $timestamp ) {
+	private function _ts2vcal ( $timestamp ) {
 		return date ( "Ymd\THi00", $timestamp );
 	} // end method _ts2vcal
 
@@ -205,7 +205,7 @@ class vCalendarEvent {
 	// See Also:
 	//	_ts2vcal
 	//
-	function _txt2vcal ( $text ) {
+	private function _txt2vcal ( $text ) {
 		$_text = $text;
 		if (substr($_text, -1) == "\n") { $_text = substr($_text, 0, strlen($_text)-1); }
 		return str_replace ("\n", ", ", $_text);
