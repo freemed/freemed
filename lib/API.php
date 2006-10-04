@@ -263,7 +263,7 @@ class freemed {
 			if (!$query) return false;
 	
 			// Loop through results
-			while ($r = $sql->fetch_array($query)) {
+			while ($r = $query->fetchRow()) {
 				$_config[stripslashes($r[c_option])] =
 					stripslashes($r[c_value]);
 			} // end of looping through results
@@ -294,7 +294,7 @@ class freemed {
 		static $_cache;
 
 		if (!isset($_cache)) {
-			$u = CreateObject('FreeMED.User');
+			$u = CreateObject('org.freemedsoftware.core.User');
 			$_cache = $u->manage_config;
 		}
 
@@ -388,7 +388,7 @@ class freemed {
 			// Use frequency
 			$q = "select rxdrug, count(rxdrug) as occur from rx where length(rxdrug) > 3 group by rxdrug order by occur desc";
 			$result = $GLOBALS['sql']->query($q);
-			while ($r = $GLOBALS['sql']->fetch_array($result)) {
+			while ($r = $result->fetchRow()) {
 				$values[stripslashes($r['rxdrug'])] = stripslashes($r['rxdrug']);
 			}
 			return html_form::combo_widget(
@@ -471,10 +471,10 @@ class freemed {
 		// Check to see if it's cached
 		if (!isset($_cache[$table][$id]) or $force_no_cache) {
 			// Perform the actual query
-			$result = $sql->query("SELECT * FROM ".addslashes($table)." ".
+			$result = $GLOBALS['sql']->query("SELECT * FROM ".addslashes($table)." ".
 				"WHERE id='".addslashes($id)."'");
 			// Fetch the array from the result into cache
-			$_cache[$table][$id] = $sql->fetch_array($result);
+			$_cache[$table][$id] = $result->fetchRow();
 		}
 
 		// Return member from cache
@@ -533,7 +533,7 @@ class freemed {
 		$handlers = freemed::module_handler($name);
 		if (is_array($handlers)) {
 			foreach ($handlers AS $class => $handler) {
-				GettextXML::textdomain(strtolower($class));
+				T_textdomain(strtolower($class));
 				if ($params != NULL) {
 					$reply[] = module_function ($class, $handler, $params);
 				} else {
@@ -628,7 +628,7 @@ class freemed {
 	//
 	// Parameters:
 	//
-	//	$module - Name of the module
+	//	$uid - Unique ID of the module
 	//
 	//	$minimum_version (optional) - The minimum allowable version
 	//	of the specified module. If this is not specified, any
@@ -638,22 +638,20 @@ class freemed {
 	//
 	//	$installed - Boolean, whether the module is installed
 	//
-	function module_check ($module, $minimum_version="0.01")
-	{
-		static $_config; global $sql;
+	function module_check ($uid, $minimum_version="0.01") {
+		static $_config;
 
 		// cache all modules  
 		if (!is_array($_config)) {
 			unset ($_config);
-			$query = $sql->query("SELECT * FROM module");
-			while ($r = $sql->fetch_array($query)) {
-				extract ( $r );
-				$_config["$module_name"] = $module_version;
+			$query = ModuleIndex::LoadIndex ( );
+			foreach ( $query AS $r ) {
+				$_config[$r[$module_name]] = $r[$module_version];
 			} // end of while results
 		} // end caching modules config
 	
 		// check in cache for version > minimum_version
-		return version_check($_config["$module"], $minimum_version);
+		return version_check($_config["$uid"], $minimum_version);
 	} // end function freemed::module_check
 
 	// Function: freemed::module_check_acl
@@ -783,7 +781,7 @@ class freemed {
 		static $_cache;
 		if (!isset($_cache)) {
 			$_cache = CreateObject(
-				'PHP.module_list',
+				'org.freemedsoftware.core.module_list',
 				PACKAGENAME,
 				array(
 					'cache_file' => 'data/cache/modules',
@@ -864,43 +862,23 @@ class freemed {
 	//
 	// Parameters:
 	//
-	//	$module - Name of module (must be resolved using
-	//	freemed::module_lookup, or by using MODULE_NAME).
+	//	$uid - Unique ID of module. ($this->MODULE_UID for any module)
 	//
 	//	$version - Version of module to register.
 	//
-	function module_register ($module, $version) {
-		global $sql;
-
-		// check for modules  
-		if (!freemed::module_check($module, $version)) {
-			// Check for preexisting module record
-			$q = $sql->query("SELECT * FROM module ".
-				"WHERE module_name='".
-				addslashes($module)."'");
-			if (!$sql->results($q)) {
-				$query = $sql->query($sql->insert_query(
-					'module',
-					array (
-						'module_name' => $module,
-						'module_version' => $version
-					)
-				));
-			} else {
-				// Perform update query
-				$query = $sql->query($sql->update_query(
-					'module',
-					array (
-						'module_version' => $version
-					),
-					array (
-						'module_name' => $module
-					)
-				));
-			}
-			return (!empty($query));
-		} // end checking for module installed
-
+	function module_register ( $uid, $version ) {
+		// Perform update query
+		$query = $GLOBALS['sql']->query(
+			$GLOBALS['sql']->update_query(
+				'module',
+				array (
+					'module_version' => $version
+				),
+				array (
+					'module_uid' => $uid
+				)
+			)
+		);
 		return true;
 	} // end function freemed::module_register
 
@@ -916,7 +894,7 @@ class freemed {
 		$_cache = freemed::module_cache();
 		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $k => $v) {
 			if ($t = $v['META_INFORMATION']['table_name']) {
-				GettextXML::textdomain(strtolower($v['MODULE_CLASS']));
+				T_textdomain(strtolower($v['MODULE_CLASS']));
 				$r[__($v['MODULE_NAME'])] = $t;
 			}
 		}
@@ -966,7 +944,7 @@ class freemed {
 		if (!is_array($_config)) {
 			unset ($_config);
 			$query = $sql->query("SELECT * FROM module");
-			while ($r = $sql->fetch_array($query)) {
+			while ($r = $query->fetchRow()) {
 				extract ( $r );
 				$_config["$module_name"] = $module_version;
 			} // end of while results
@@ -1042,30 +1020,6 @@ class freemed {
 		return $buffer;
 	} // end function freemed::multiple_choice
 
-	// Function: freemed::patient_box
-	//
-	//	Create a "patient box" with quick access to various patient
-	//	functions.
-	//
-	// Parameters:
-	//
-	//	$patient_object - An object of type 'FreeMED.Patient' which
-	//	encapsulates the selected patient's data.
-	//
-	// Returns:
-	//
-	//	XHTML compliant patient box widget code.
-	//
-	function patient_box ($patient_object) {
-		// Catch to make sure it's an actual object
-		if (!is_object($patient_object)) return NULL;
-		
-		// Make sure template functions are included
-		include_once(freemed::template_file('lib.php'));
-
-		return template::patient_box($patient_object);	
-	} // end function freemed::patient_box
-
 	// Function: freemed::patient_widget
 	//
 	//	Create a patient selection widget
@@ -1093,7 +1047,7 @@ class freemed {
 		global ${$varname};
 
 		include_once(freemed::template_file('ajax.php'));
-		if (${$varname}) { $_obj = CreateObject('FreeMED.Patient', ${$varname}); }
+		if (${$varname}) { $_obj = CreateObject('org.freemedsoftware.api.Patient', ${$varname}); }
 		return ajax_widget($varname, 'patient', $_obj, 'id', $autosubmit);
 
 		// If it is set, show patient name, else widget
@@ -1134,36 +1088,6 @@ class freemed {
 		}
 	} // end function freemed::patient_widget
 
-	// Function: freemed::printers_widget
-	//
-	//	Create XHTML widget to represent printer selection
-	//
-	// Parameters:
-	//
-	//	$varname - Name of the variable which will hold the
-	//	data returned by this widget
-	//
-	// Returns:
-	//
-	//	XHTML compliant widget code
-	//
-	function printers_widget ( $varname ) {
-		global $this_user;
-		if (!is_object($this_user)) {
-			$this_user = CreateObject('FreeMED.User');
-		}
-
-		static $_driver;
-		if (!isset($_driver)) {
-			$_driver = CreateObject('PHP.PrinterWrapper');
-		}
-
-		return html_form::select_widget(
-			$varname,
-			$_driver->driver->GetPrinters()
-		);
-	} // end function freemed::printers_widget
-
 	// Function: freemed::query_to_array
 	//
 	//	Dumps the output of an SQL query to a multidimentional
@@ -1174,24 +1098,24 @@ class freemed {
 	//	$query - Text SQL query
 	//
 	//	$single_dimension - (optional) Reduce to single array, using
-	//	k and v table columns as key and value. Defaults to true.
+	//	k and v table columns as key and value. Defaults to false.
 	//
 	// Returns:
 	//
 	//	Multidimentional hashed array.
 	//
-	function query_to_array ( $query, $single_dimension=true ) {
-		global $sql;
+	function query_to_array ( $query, $single_dimension=false ) {
 		unset ($this_array);
 
-		$result = $sql->query($query);
+		$result = $GLOBALS['sql']->query($query);
 
-		if (!$sql->results($result)) return array("" => "");
+		if (!$GLOBALS['sql']->results($result)) { return false; }
 
 		$index = 0;
-		while ($r = $sql->fetch_array($result)) {
+		while ($r = $GLOBALS['sql']->fetch_array($result)) {
 			foreach ($r AS $k => $v) {
-				$this_array[$index][(stripslashes($k))] =
+				$this_index = $r['id'] ? $r['id'] : $index;
+				$this_array[$this_index][(stripslashes($k))] =
 					stripslashes($v);
 			}
 			$index++;
@@ -1211,21 +1135,6 @@ class freemed {
 			}
 		}
 	} // end function freemed::query_to_array
-
-	// Function: freemed::quickform_i18n
-	//
-	//	Perform internationalization (i18n) on an HTML_QuickForm
-	//	PEAR object.
-	//
-	// Parameters:
-	//
-	//	&$object - Object reference
-	//
-	function quickform_i18n ( &$object ) {
-		$object->_requiredNote = '<span style="font-size:80%; color:#ff0000;">*</span><span style="font-size:80%;"> '.__("denotes required field").'</span>';
-		$object->_jsPrefix = __("Invalid information entered.");
-		$object->_jsPostfix = __("Please correct these fields.");
-	} // end method quickform_i18n
 
 	// Function: freemed::race_widget
 	//
@@ -1306,69 +1215,6 @@ class freemed {
 			)
 		);
 	} // end function freemed::religion_widget
-
-	// Function: freemed::rich_text_area
-	//
-	//	Creates a rich text editing widget (HTML)
-	//
-	// Parameters:
-	//
-	//	$varname - Name of variable to store the data in
-	//
-	//	$rows - (optional) Vertical size of text area. Defaults to
-	//	10 lines.
-	//
-	//	$cols - (optional) Horizontal size of text area. Defaults to
-	//	60 characters.
-	//
-	//	$force_js - (optional) Force Javascript to be displayed
-	//	every time. Defaults to false.
-	//
-	// Returns:
-	//
-	//	XHTML-compliant rich text area widget
-	function rich_text_area ( $varname, $rows=10, $cols=60, $force_js=false ) {
-		static $_jsset;
-
-		// For compatibility with html_form::text_area()
-		$wrap = 'VIRTUAL';
-
-		// Handle initial setting of includes, etc
-		// If force_js is set, we put this in anyway for things like
-		// notebooks, where even if something is generated, it isn't
-		// always displayed.
-		if (!$_jsset or $force_js) {
-		/*
-			$buffer .= 
-			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/htmlarea.js\"></script>\n".
-			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/lang/en.js\"></script>\n".
-			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/dialog.js\"></script>\n".
-			"<script type=\"text/javascript\" src=\"lib/template/default/htmlarea/popupwin.js\"></script>\n".
-			"<script type=\"text/javascript\">\n".
-			"\tHTMLArea.loadPlugin(\"TableOperations\");\n".
-			"\tHTMLArea.loadPlugin(\"SpellChecker\");\n".
-			"</script>\n".
-			"<link rel=\"stylesheet\" type=\"text/css\" ".
-				"href=\"lib/template/default/htmlarea/htmlarea.css\" />\n";
-				    
-			$_jsset = true;
-			*/
-		}
-
-		// For this, we're just going to add the name of this
-		// widget to the list, and we'll generate this on the
-		// fly from elsewhere in the template.
-		$GLOBALS['__freemed']['rich_text_areas'][] = $varname;
-
-		// Set this to be what we do
-		$GLOBALS['__freemed']['on_load'] = 'initEditor';
-			
-		// Add the actual widget from phpwebtools
-		$buffer .= html_form::text_area($varname,$wrap,$rows,$cols);
-
-		// Return the whole bundle
-		return $buffer;
-	} // end function freemed::rich_text_area
 
 	// Function: freemed::secure_filename
 	//
@@ -1580,47 +1426,6 @@ class freemed {
 		} // end checking by extension
 	} // end function freemed::store_image
 
-	// Function: freemed::support_djvu
-	//
-	//	Determines whether the current browser supports DjVu.
-	//
-	// Parameters:
-	//
-	//	$browser - PHP.browser_detect object.
-	//
-	// Returns:
-	//
-	//	Boolean, whether DjVu is supported or not.
-	//
-	function support_djvu ( $browser ) {
-		// Assume true
-		$support = true;
-
-		return $support;
-	} // end function freemed::support_djvu
-
-	// Function: freemed::template_file
-	//
-	//	Resolve file to existing either in default template or
-	//	current template.
-	//
-	// Parameters:
-	//
-	//	$file - Filename, relative to the template structure
-	//	(login_form.php would resolve to lib/template/*/login_form.php)
-	//
-	// Returns:
-	//
-	//	Fully qualified template path (lib/template/*/*)
-	//
-	function template_file ( $file ) {
-		if (file_exists('lib/template/'.$GLOBALS['template'].'/'.$file)) {
-			return 'lib/template/'.$GLOBALS['template'].'/'.$file;
-		} else {
-			return 'lib/template/default/'.$file;
-		}
-	} // end function freemed::template_file
-
 	// Function: freemed::user_flag
 	//
 	//	Determine if a particular user flag is set for the current
@@ -1697,7 +1502,7 @@ class freemed {
 	function lock_override () {
 		global $this_user;
 		if (!is_object($this_user)) {
-			$this_user = CreateObject('_FreeMED.User');
+			$this_user = CreateObject('org.freemedsoftware.core.User');
 		}
 
 		$a = explode(',', freemed::config_value('lock_override'));
@@ -1718,7 +1523,7 @@ class freemed {
 	//
 	function log_object ( ) {
 		static $_cache;
-		if (!isset($_cache)) { $_cache = CreateObject('_FreeMED.Log'); }
+		if (!isset($_cache)) { $_cache = CreateObject('org.freemedsoftware.core.Log'); }
 		return $_cache;
 	} // end function freemed::log_object
 
@@ -1918,103 +1723,6 @@ class EMRi {
 } // end namespace/class EMRi
 
 //------------------ NON NAMESPACE FUNCTIONS ---------------------
-
-// Function: freemed_alternate
-//
-//	Create alternating texts. Used mostly for alternating
-//	row displays, either as CLASS tags or as BGCOLOR tags.
-//
-// Parameters:
-//
-//	$elements - Array of elements which are to be alternated
-//	between. Defaults to array ('cell', 'cell_alt').
-//
-// Returns:
-//
-//	The next element in the circular loop of the presented
-//	array.
-//
-function freemed_alternate ($_elements) {
-	static $_pos;
-
-	if (!is_array($_elements)) {
-		// By default, cell and cell_alt
-		$elements = array ("cell", "cell_alt");
-	} else {
-		// Otherwise, pull into local scope
-		$elements = $_elements;
-	}
-
-	if (!isset($_pos)) {
-		// If there is no current position, set to initial state
-		$_pos = 0;
-	} else {
-		// Otherwise increment and wrap around
-		$_pos++;
-		if ($_pos >= count($elements)) { $_pos = 0; }
-	}
-
-	return $elements[$_pos];
-} // end function freemed_alternate
-
-// Function: freemed_display_actionbar
-//
-//	Creates the ADD/RETURN TO MENU bar present in most FreeMED
-//	modules.
-//
-// Parameters:
-//
-//	$page_name - (optional) Name of the current page.
-//
-//	$ref - (optional) Name of the referring page. If this is not
-//	explicitly set, the global variable '_ref' acts as the
-//	default value.
-//
-// Returns:
-//
-//	XHTML compliant actionbar widget.
-//
-function freemed_display_actionbar ($this_page_name="", $__ref="") {
-	global $page_name, $patient, $_ref, $_pass, $module;
-
-	$buffer = "";
-
-	if (!empty($_ref)) $__ref = $_ref;
-
-	if ($this_page_name=="") $this_page_name = $page_name;
-
-	// No reference, return to homepage
-	if (empty($__ref)) { $_ref="main.php"; }
-
-	// Assume return to management if nothing else
-	if ($GLOBALS["return"] == "manage") {
-		$__ref = "manage.php?id=$patient";
-	}
-
-    // show the actual bar, build with page_name reference
-    // and global variables
-	global $globaladdcounter; $globaladdcounter++;
-	global $template;
-
-	$buffer .= "
-    <table CLASS=\"reverse\" WIDTH=\"100%\" BORDER=\"0\"
-     CELLSPACING=\"0\" CELLPADDING=\"3\">
-    <tr CLASS=\"reverse\">
-    <td ALIGN=\"LEFT\"><a HREF=\"$this_page_name?".
-    	( isset($_pass) ? $_pass.'&' : '' )."module=".urlencode($module)."&".
-	"action=addform".
-     ( !empty($patient) ? "&patient=".urlencode($patient) : "" )."\"
-	onMouseOver=\"window.status='".__("Add")."'; return true;\"
-	onMouseOut=\"window.status=''; return true;\"
-	><small><b>".__("ADD")."</b></small></a></td>
-    <td WIDTH=\"30%\">&nbsp;</td>
-    <td ALIGN=\"RIGHT\"><a HREF=\"$__ref\" CLASS=\"reverse\"
-     ><small><b>".__("RETURN TO MENU")."</b></small></a></td>
-    </tr></table>
-  	";
-	return $buffer;
-
-} // end function freemed_display_actionbar
 
 // Function: freemed_display_itemlist
 //
@@ -2364,140 +2072,6 @@ function freemed_display_itemlist ($result, $page_link, $control_list,
   return $buffer; // gotta remember this part!
 }
 
-// Function: freemed_display_facilities
-//
-//	Creates an XHTML facility selection widget.
-//
-// Parameters:
-//
-//	$varname - Name of the global variable containing the data for this
-//	widget.
-//
-//	$default_load - (optional) Depreciated.
-//
-//	$internal_external - (optional) Exclusively internal or external
-//	facilities. If this is passed at all, "0" selects internal
-//	facilities and "1" selects external facilities.
-//
-//	$by_array - (optional) Array of facility id numbers to limit the
-//	selection to.
-//
-// Returns:
-//
-//	XHTML compliant facility selection widget.
-//
-function freemed_display_facilities ($param="", $default_load = false,
-                                     $intext="", $by_array="") {
-	global $sql, $_COOKIE;
-
-	// Check for default or passed facility
-	if ($GLOBALS[$param] > 0) {
-		// Only set this if $param is a legal value
-		$facility = $GLOBALS[$param];
-	} else {
-		// Otherwise set via cookie
-		$facility = ( $_SESSION['default_facility'] > 0 ?
-			$_SESSION['default_facility'] :
-			$_COOKIE['default_facility'] ) + 0;
-	}
-
-	$buffer = "";
-
-	switch ($intext) {
-		case "0": // internal
-			$intextquery = "WHERE psrintext='0'";
-			break;
-		case "1": // external
-			$intextquery = "WHERE psrintext='1'";
-			break;
-		default:
-			$intextquery = "";
-	}
-
-	// Check for "by_array"
-	if (is_array($by_array)) {
-		$intextquery .= " AND id IN ( ".implode(",", $by_array)." ) ";
-	} // end checking for by_array
-
-	// list doctors in SELECT/OPTION tag list, and
-	// leave doctor selected who is in param
-	$buffer .= "<option VALUE=\"0\"".
-		( ($param == 0) ? " selected" : "" ).">".__("NONE SELECTED").
-		"</option>\n";
-	$query = "SELECT * FROM facility ".$intextquery.
-		"ORDER BY psrname,psrnote";
-	$result = $sql->query ($query);
-	if (!$result) return false;
-
-	while ($row = $sql->fetch_array($result)) {
-		$buffer .= "<option VALUE=\"".prepare($row[id]).
-			"\" ".
-			( ($row[id]==$facility) ? "selected" : "" ).">".
-			prepare($row[psrname]." (".$row[psrcity].", ".
-				$row[psrstate].")").
-			( ($debug) ? "[".$row[psrnote]."]" :
-			"" )."</option>\n";
-	} // while there are more results...
-	return $buffer;
-} // end function freemed_display_facilities
-
-function freemed_display_physicians ($param, $intext="") {
-	die ("freemed_display_physicians - DEPRECIATED");
-/*
-	$buffer = "";
-
-	// list doctors in SELECT/OPTION tag list, and
-	// leave doctor selected who is in param
-	$buffer .= "
-		<option VALUE=\"0\">".__("NONE SELECTED")."</option>
-	";
-	$query = "SELECT * FROM physician ".
-		( ($intext != "") ? " WHERE phyref='$intext'" : "" ).
-		"ORDER BY phylname,phyfname";
-	$result = $sql->query ($query);
-	if (!$sql->results($result)) {
-		// don't do anything...! 
-	} else { // exit if no more docs
-		while ($row = $sql->fetch_array($result)) {
-			$buffer .= "
-			<option VALUE=\"$row[id]\" ".
-			( ($row[id] == $param) ? "selected" : "" ).
-			">".prepare("$row[phylname], $row[phyfname]")."</option>
-			"; // end of actual output
-		} // while there are more results...
-	}
-	return $buffer;
-*/
-} // end function freemed_display_physicians
-
-///////////////////////////////////////////////////
-// function freemed_display_printerlist
-// displays printers from the database
-function freemed_display_printerlist ($param)
-{
-  global $sql;
-
-  // list printers in SELECT/OPTION tag list, and
-  // leave printer selected who is in param
-  echo "
-    <OPTION VALUE=\"0\">".__("NONE SELECTED")."
-  ";
-  $query = "SELECT * FROM printer ORDER BY ".
-     "prnthost, prntname";
-  $result = $sql->query ($query);
-  if (!$result) {
-    // don't do anything...! 
-  } else { // exit if no more printers
-    while ($row=$sql->fetch_array($result)) {
-      echo "
-        <OPTION VALUE=\"$row[id]\" ".
-	( ($param == $row[id]) ? "SELECTED" : "" ).
-        ">".prepare("$row[prnthost] $row[prntname]")."
-      "; // end of actual output
-    } // while there are more results...
-  }
-} // end function freemed_display_printerlist
-
 // Function: freemed_display_selectbox
 //
 //	Create an XHTML selection box
@@ -2581,81 +2155,6 @@ function freemed_display_selectbox ($result, $format, $param="", $size="") {
   
 	return $buffer;
 } // end function freemed_display_selectbox
-
-// Function: freemed_export_stock_data
-//
-//	Export FreeMED database table to a file
-//
-// Parameters:
-//
-//	$table_name - Name of the SQL table to export
-//
-function freemed_export_stock_data ($table_name, $file_name="") {
-	global $sql, $debug;
-
-	$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE . 
-		"/" .  $table_name . "." . DEFAULT_LANGUAGE . "." . 
-		date("Ymd");
-
-	//if (strlen ($file_name) > 2) $physical_file = $file_name;
-
-	//if (file_exists ($physical_file)) { return false; } // fix this later
-
-	$query = "SELECT * FROM ".addslashes($table_name)." ".
-		"INTO OUTFILE '".addslashes($physical_file)."' ".
-		"FIELDS TERMINATED BY ',' ".
-		"OPTIONALLY ENCLOSED BY '' ".
-		"ESCAPED BY '\\\\'";
-
-	if ($debug) echo "<BR> query = \"$query\" <BR> \n";
-
-	$result = $sql->query ($query);
-
-	if ($debug) echo "<BR> result = \"$result\" <BR> \n";
-
-	return $result;
-} // end function freemed_export_stock_data
-
-// function freemed_get_userlevel
-//   returns user level (1-10)
-//   (assumes 1 if not found, 9 if root)
-function freemed_get_userlevel ( $param = "" ) {
-	die("called freemed_get_userlevel: obsolete STUB");
-}
-
-// Function: freemed_import_stock_data
-//
-//	Import an SQL table into FreeMED
-//
-// Parameters:
-//
-//	$table_name - Name of the SQL table to import
-//
-function freemed_import_stock_data ($table_name) {
-	global $sql;
-
-	// Produce a physical location
-	$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE .
-		"/" .  $table_name . "." . DEFAULT_LANGUAGE . ".data";
-
-	// Die if the phile doesn't exist
-	if (!file_exists($physical_file)) return false;
-
-	// Create the query
-	$query = "LOAD DATA LOCAL INFILE '".addslashes($physical_file)."' ".
-		"INTO TABLE ".addslashes($table_name)." ".
-		"FIELDS TERMINATED BY ','";
-           
-	$result = $sql->query ($query); // try doing it
-
-	return $result; // send the results home...
-} // end function freemed_import_stock_data
-
-// function freemed_open_db
-// --- simply backwards compatibility stub for freemed::connect
-function freemed_open_db () {
-	freemed::connect();
-} // end function freemed_open_db
 
 //---------------------------------------------------------------------------
 // Time and Date Functions
@@ -2741,242 +2240,6 @@ function freemed_get_date_prev ($cur_dt) {
 		return date ("Y-m-d",mktime(0,0,0,$m,$d,$y));
 	} // end checking for first day
 } // end function freemed_get_date_prev
-
-// Function: fm_date_assemble
-//
-//	Assemble seperate date fields into single SQL format date hash
-//
-// Parameters:
-//
-//	$varname - Name of the date variable
-//
-//	$array_index - (optional) Array index of $varname that should
-//	contain the result data.
-//
-// Returns:
-//
-//	SQL formated date string.
-//
-function fm_date_assemble ($datevarname="", $array_index=-1) {
-	// Check for variable name
-	if ($datevarname=="")
-		trigger_error ("fm_date_assemble: no variable name given",
-			E_USER_ERROR);
-
-	// Import into local scope
-	global ${$datevarname."_m"}, ${$datevarname."_d"}, ${$datevarname."_y"};
-
-	// Handle calendar js widget
-	if (freemed::config_user_value('date_widget_type') == 'js') {
-		global ${$datevarname};
-		return ${$datevarname};
-	}
-
-	// Decide where they come from if they are from an array
-	if ($array_index == -1) {
-		$m = ${$datevarname."_m"};
-		$d = ${$datevarname."_d"};
-		$y = ${$datevarname."_y"};
-	} else {
-		$m = ${$datevarname."_m"}[$array_index];
-		$d = ${$datevarname."_d"}[$array_index];
-		$y = ${$datevarname."_y"}[$array_index];
-	} // end checking for array index
-
-	// Return assembled string in SQL format
-	return $y."-".$m."-".$d;
-} // end function fm_date_assemble
-
-// Function: fm_date_entry
-//
-//	Creates XHTML-compliant date selection widget
-//
-// Parameters:
-//
-//	$varname - Variable name to contain the result data.
-//
-//	$pre_epoch - (optional) Whether the date selection widget should
-//	contain years more than 20 in the past. Defaults to false.
-//
-//	$array_index - (optional) Array index for varname to determine
-//	which element of the array is being used. Defaults to no array
-//	index.
-//
-// Returns:
-//
-//	XHTML-compliant date selection widget.
-//
-function fm_date_entry ($datevarname="", $pre_epoch=false, $arrayvalue=-1) {
-	if ($datevarname=="") return false;  // indicate problems
-
-	// Determine array "suffix"
-	if (($arrayvalue+0)==-1) { $suffix=""; $pos=""; }
-	  else { $suffix="[]"; $pos="[$arrayvalue]"; }
-
-	// Import into local scope present values
-	global $$datevarname, ${$datevarname."_y"}, 
-	  ${$datevarname."_m"}, ${$datevarname."_d"};
-
-	// Quickly check to see if we have to replace the value
-	/*
-	if (empty(freemed::config_user_value('date_widget_type'))) {
-		$GLOBALS['sql']->query(
-			$GLOBALS['sql']->insert_query(
-				'config',
-				array(
-					'c_option' => 'date_widget_type',
-					'c_value' => 'js'
-				)
-			)
-		);
-	}
-	*/
-
-	// Check for use case to use special date widget
-	if (freemed::config_user_value('date_widget_type') == 'js') {
-		static $already_js;
-		if (!$already_js) {
-			$header .= "<link rel=\"Stylesheet\" type=\"text/css\" href=\"lib/template/default/calendar-system.css\"></link>\n";
-			$header .= "<script language=\"javascript\" ".
-				"src=\"lib/template/default/calendar_stripped.js\"></script>\n";
-			$header .= "<script language=\"javascript\" ".
-				"src=\"lib/template/default/calendar-en.js\"></script>\n";
-			$header .= "<script language=\"javascript\" ".
-				"src=\"lib/template/default/calendar-setup_stripped.js\"></script>\n";
-			$already_js = true;
-		}
-		$buffer .= html_form::text_widget (
-			$datevarname,
-			array (
-				'length' => 10,
-				'id' => $datevarname.'_cal'
-			)
-		);
-		$buffer .= "
-		<img src=\"lib/template/default/img/calendar_widget.gif\" border=\"0\" id=\"".$datevarname."_img\" />
-		";
-		$footer .= "
-		<script type=\"text/javascript\">
-		Calendar.setup({
-			inputField	:	\"".$datevarname."_cal\",
-			ifFormat	:	'%Y-%m-%d',
-			daFormat	:	'Y-d-m',
-			singleClick	:	true,
-			".( !empty(${$datevarname}) ?
-			"date		:	'".${$datevarname}."'," : '' )."
-			button		:	\"".$datevarname."_img\"
-		});
-		</script>
-		";
-		$GLOBALS['__freemed']['header'] .= $header;
-		//$GLOBALS['__freemed']['footer'] .= $footer;
-		return $buffer.$footer;
-	}
-
-	// Set months
-	$months = array (
-		"", // null so that 1 = Jan, not 0 = Jan
-		__("Jan"),
-		__("Feb"),
-		__("Mar"),
-		__("Apr"),
-		__("May"),
-		__("Jun"),
-		__("Jul"),
-		__("Aug"),
-		__("Sep"),
-		__("Oct"),
-		__("Nov"),
-		__("Dec")
-	);
-
-	// For brevity, import into single letter variables
-	$w = ${$datevarname.$pos};
-	$m = ${$datevarname."_m".$pos};
-	$d = ${$datevarname."_d".$pos};
-	$y = ${$datevarname."_y".$pos};
-
-	// Determine *where the date is coming from...
-	if (!empty($w)) {
-		// If the whole is set... split into parts and use that
-		$y = substr ($w, 0, 4);  // split year
-		$m = substr ($w, 5, 2);  // split month
-		$d = substr ($w, 8, 2);  // split day
-	} elseif (empty($y) and empty($m) and empty($d)) {
-		// If there is no whole and no parts, use current date
-		$y = date ("Y")+0;
-		$m = date ("m")+0;
-		$d = date ("d")+0;
-	} // end if not empty whole date
-
-	// Determine what the range should be
-	switch ($pre_epoch) {
-		case true:
-			$starting_year = (date("Y")-120);
-			$ending_year   = (date("Y")+20);
-			break;
-		case false: default:
-			$starting_year = (date("Y")-20);
-			$ending_year   = (date("Y")+20);
-			break;
-	} // end switch for pre_epoch
-
-	// If the dates are legacy, reasonable and out of range, accept
-	if (($y>1800) AND ($y<$starting_year)) $starting_year = $y;
-	if (($y>1800) AND ($y>$ending_year))   $ending_year   = $y;
-
-	// Form the buffers, then assemble
-
-	// Month buffer
-	$buffer_m = "\t<select NAME=\"".$datevarname."_m$suffix\">\n".
-		"\t\t<option VALUE=\"00\" ".
-		( ($m==0) ? "SELECTED" : "" ).">".__("NONE")."</option>\n";
-	for ($i=1;$i<=12;$i++) {
-		$buffer_m .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
-			"$i\" ".  ( ($i==$m) ? "SELECTED" : "" ).
-			">".__($months[$i])."</option>\n";
-	} // end for loop (months) 
-	$buffer_m .= "\t</select>\n";
-
-	// Day buffer
-	$buffer_d = "\t<select NAME=\"".$datevarname."_d$suffix\">\n".
-		"\t\t<option VALUE=\"00\" ".
-		( ($d==0) ? "SELECTED" : "" ).">".__("NONE")."</option>\n";
-	for ($i=1;$i<=31;$i++) {
-		$buffer_d .= "\n\t\t<option VALUE=\"".( ($i<10) ? "0" : "" ).
-			"$i\" ".( ($i==$d) ? "SELECTED" : "" ).">$i</option>\n";
-	} // end looping for days
-	$buffer_d .= "\t</select>\n";
-
-	// Year buffer
-	$buffer_y = "\t<select NAME=\"".$datevarname."_y$suffix\">\n".
-		"\t\t<option VALUE=\"0000\" ".
-		( ($y==0) ? "SELECTED" : "" ).">".__("NONE")."</option>\n";
-	for ($i=$starting_year;$i<=$ending_year;$i++) {
-		$buffer_y .= "\n\t\t<option VALUE=\"$i\" ".
-			( ($i==$y) ? "SELECTED" : "" ).">$i</option>\n";
-	} // end for look (years)
-	$buffer_y .= "\t</select>\n";
-
-	// now actually display the input boxes
-	switch (freemed::config_value("dtfmt")) {
-		case "mdy":
-			return $buffer_m . " <b>-</b> ".
-			$buffer_d . " <b>-</b> ".
-			$buffer_y;
-			break;
-		case "dmy":
-			return $buffer_d . " <b>-</b> ".
-			$buffer_m . " <b>-</b> ".
-			$buffer_y;
-			break;
-		case "ymd": default:
-			return $buffer_y . " <b>-</b> ".
-			$buffer_m . " <b>-</b> ".
-			$buffer_d;
-			break;
-	} // end switch for dtfmt config value
-} // end function fm_date_entry
 
 // Function: fm_date_print
 //
@@ -3100,63 +2363,6 @@ function fm_join_from_array ($cur_array) {
 	return implode ($cur_array, ",");
 } // end function fm_join_from_array 
 
-// Function: fm_number_select
-//
-//	Create an XHTML compliant number selection widget
-//
-// Parameters:
-//
-//	$varname - Name of the variable to store this data in
-//
-//	$min - (optional) Minimum value. Defaults to 0.
-//
-//	$max - (optional) Maximum value. Defaults to 10.
-//
-//	$step - (optional) Incrementing value. Defaults to 1.
-//
-//	$add_zero - (optional) Prepend zeros to values under 10. Defaults
-//	to false.
-//
-//	$submit_on_blur - (optional) Submit the form when focus on the
-//	widget is lost. Defaults to false.
-//
-// Returns:
-//
-//	XHTML-compliant number selection widget
-//
-function fm_number_select ($varname, $min=0, $max=10, $step=1, $addz=false, $submit_on_blur = false) {
-	global ${$varname}; // bring in the variable
-
-	// Pull into local scope
-	$selected = ${$varname};
-
-	// Start header
-	$buffer = "\n\t<select NAME=\"".prepare($varname)."\" ".
-		( $submit_on_blur ?
-		"onChange=\"this.form.submit(); return true;\"" :
-		"" ).">\n";
-
-	// Check to make sure step isn't illegal
-	if ($step==0) $step = 1;
-
-	// Check to see if parameters are legal
-	if ( ($min>$max) AND ($step>=0) )  return false;
-	if ( ($min<$max) AND ($step<=0) )  return false;
-
-	for ($i=$min; $i<=$max; $i+=$step) {
-		$buffer .=  "\t\t<option VALUE=\"$i\"".
-			( (("$selected"=="$i") or ($selected==$i)) ?
-			"selected" : "" ).
-			">".( (($i<10) and ($addz)) ? "0" : "" )."$i</option>\n";
-	} // end for loop
-
-	// Footer
-	$buffer .= "\t</select>\n";
-
-  	// Return buffer
-	return $buffer;
-} // end function fm_number_select
-
 function fm_phone_assemble ($phonevarname="", $array_index=-1) {
   $buffer = ""; // we use buffered output for notebook class!
   if ($phonevarname=="") return ""; // return nothing if no variable is given
@@ -3196,139 +2402,9 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
   } // end switch for formatting
 } // end function fm_phone_assemble
 
-function fm_phone_entry ($phonevarname="", $array_index=-1, $ext=true) {
-  if ($phonevarname=="") return false;  // indicate problems
-  if (($array_index+0)==-1) { $suffix="";   }     
-   else                     { $suffix="[]"; }
-  $formatting = freemed::config_value("phofmt"); // get phone formatting
-  global $$phonevarname, ${$phonevarname."_1"},	 // get global vars
-         ${$phonevarname."_2"}, ${$phonevarname."_3"}, 
-         ${$phonevarname."_4"}, ${$phonevarname."_5"}; 
-
-  // Check to see if autoskip JS is enabled
-  if (!$GLOBALS['__phpwebtools']['autoskip']) {
-    // Enable autoskip
-    $buffer .= "
-    	<script LANGUAGE=\"JavaScript\">
-	function autoskip(here, next) {
-		if (here.value.length==here.getAttribute('maxlength') && here.getAttribute) {
-			next.focus()
-		}
-	}
-	</script>
-    ";
-    
-    // Set for future reference
-    $GLOBALS['__phpwebtools']['autoskip'] = 1;
-  }
-
-  if ($array_index == -1)  {
-    $w = ${$phonevarname};    // whole number
-  } else {
-    $w = ${$phonevarname}[$array_index];  // whole number
-  }
-
-  if (!empty($w)) {
-    // if phone # is not empty, split
-    switch ($formatting) {
-      case "usa":
-       $p1 = substr($w,  0, 3); // area code
-       $p2 = substr($w,  3, 3); // prefix
-       $p3 = substr($w,  6, 4); // local number
-       $p4 = substr($w, 10, 4); // extention
-       break;
-      case "fr":
-       $p1 = substr($w, 0, 2); 
-       $p2 = substr($w, 2, 2); 
-       $p3 = substr($w, 4, 2); 
-       $p4 = substr($w, 6, 2); 
-       $p5 = substr($w, 8, 2); 
-       break;
-      case "unformatted":
-      default:
-       // nothing!! hahahahahahahahahahahahaha!
-       break;
-    } // end formatting case statement
-  } else { // end if not empty whole date
-    if ($array_index == -1) {
-      $p1 = ${$phonevarname."_1"};    // part 1
-    $p2 = ${$phonevarname."_2"};    // part 2
-    $p3 = ${$phonevarname."_3"};    // part 3
-    $p4 = ${$phonevarname."_4"};    // part 4
-    $p5 = ${$phonevarname."_5"};    // part 5
-    } else {
-    $p1 = ${$phonevarname."_1"}[$array_index];  // part 1
-    $p2 = ${$phonevarname."_2"}[$array_index];  // part 2
-    $p3 = ${$phonevarname."_3"}[$array_index];  // part 3
-    $p4 = ${$phonevarname."_4"}[$array_index];  // part 4
-    $p5 = ${$phonevarname."_5"}[$array_index];  // part 5
-    } // end checking for array index
-  }
-
-  // now actually display the input boxes
-  switch ($formatting) {
-    case "usa":
-     $buffer .= "
-      <b>(</b>
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_1$suffix\" SIZE=\"4\"
-       MAXLENGTH=\"3\" VALUE=\"$p1\"
-       onFocus=\"if (!this.value) { this.value='".freemed::config_value('default_area_code')."'; } return true;\" 
-       onKeyup=\"autoskip(this, ".$phonevarname."_2$suffix); return true;\"
-       /> <b>)</b>
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_2$suffix\" SIZE=\"4\"
-       MAXLENGTH=\"3\" VALUE=\"$p2\"
-       onFocus=\"if (!".$phonevarname."_1.value) { ".$phonevarname."_1.value='".freemed::config_value('default_area_code')."'; } return true;\" 
-       onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
-       /> <b>-</b>
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_3$suffix\" SIZE=\"5\"
-       MAXLENGTH=\"4\" VALUE=\"$p3\" ".( $ext ? "
-       onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
-       " : "" )."/>".( $ext ? " <i>ext.</i>
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_4$suffix\" SIZE=\"5\"
-       MAXLENGTH=\"4\" VALUE=\"$p4\"/>" : "" ); break;
-    case "fr":
-     $buffer .= "
-      <B>(</B>
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_1$suffix\" SIZE=\"3\"
-       MAXLENGTH=\"2\" VALUE=\"$p1\"
-       onKeyup=\"autoskip(this, ".$phonevarname."_2$suffix); return true;\"
-       /> <b>)</b>
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_2$suffix\" SIZE=\"3\"
-       MAXLENGTH=\"2\" VALUE=\"$p2\"
-       onKeyup=\"autoskip(this, ".$phonevarname."_3$suffix); return true;\"
-       /> 
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_3$suffix\" SIZE=\"3\"
-       MAXLENGTH=\"2\" VALUE=\"$p3\"
-       onKeyup=\"autoskip(this, ".$phonevarname."_4$suffix); return true;\"
-       />
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_4$suffix\" SIZE=\"3\"
-       MAXLENGTH=\"2\" VALUE=\"$p4\"
-       onKeyup=\"autoskip(this, ".$phonevarname."_5$suffix); return true;\"
-       />
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."_5$suffix\" SIZE=\"3\"
-       MAXLENGTH=\"2\" VALUE=\"$p5\"
-       />
-     "; break;
-    case "unformatted": 
-    default:
-     $buffer .= "
-      <input TYPE=\"TEXT\" NAME=\"".$phonevarname."$suffix\" SIZE=\"15\"
-       MAXLENGTH=\"16\" VALUE=\"$w\"/>
-     "; break;
-  } // end switch for dtfmt config value
-
-  return $buffer;                         // we exited well!
-} // end function fm_phone_entry
-
 //---------------------------------------------------------------------------
 // Variable Manipulation Functions
 //---------------------------------------------------------------------------
-
-// I am tired of trying to log stuff
-// These all need an entry and log exit for log level 0
-// Fred Trotter....
-
-
 
 function fm_split_into_array ($original_string) {
 	// If there is nothing to split, return nothing
@@ -3370,53 +2446,6 @@ function fm_value_in_string ($cur_string, $value) {
 	// If it hasn't been found, return false
 	return false;
 } // end function fm_value_in_string
-
-// fm_eval -- evaluate string variables (with security checks, of course)
-function fm_eval ($orig_string) {
-	// Import all global variables
-	foreach ($GLOBALS AS $k => $v) global ${$k};
-
-	// Transfer to internal variable
-	$loc_string = $orig_string;
-
-	// Secure the string so that kiddies don't mess anything up
-	$sec_string = fm_secure ($loc_string);
-
-	// Use eval to pull in the proper variables
-	eval ("\$new_string = \"$sec_string\";");
-
-	// Return the processed string
-	return $new_string;
-} // end function fm_eval
-
-// fm_secure -- secures strings that are to be evaled by simply removing
-//              all secure varaibles...
-function fm_secure ($orig_string) {
-	// Variables to secure
-	$secure_these = array (
-		"db_user",
-		"db_password",
-		"db_host",
-		"database",
-		"gifhome",
-		"db_engine"
-	);
-
-	// Pass to internal variable
-	$this_string = "$orig_string"; 
-
-	// Perform replacements
-	foreach ( $secure_these AS $drek => $secure_var ) {
-		$this_string = str_replace (
-			"\$".$secure_var,
-			"",
-			$this_string
-		);
-	}
-
-	// Return secured string
-	return $this_string;
-} // end function fm_secure
 
 //---------------------------------------------------------------------------
 // Patient Coverage Functions
@@ -3477,92 +2506,6 @@ function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
 //---------------------------------------------------------------------------
 // Time-related Functions
 //---------------------------------------------------------------------------
-
-function fm_time_entry ($timevarname="") {
-  if ($timevarname=="") return false;  // indicate problems
-  global $$timevarname, ${$timevarname."_h"}, 
-    ${$timevarname."_m"}, ${$timevarname."_ap"};
-
-
-  $w = $$timevarname;       
-  $h = ${$timevarname."_h"};
-  if (!empty($w))
-  {
-		// if timeval then extract the pieces
-		// this could be first time thru since $timevarname
-        // will not be saved across page invocations
-	  $values = explode(":",$$timevarname);
-      ${$timevarname."_h"}  = $values[0];
-      ${$timevarname."_m"}  = $values[1];
-      ${$timevarname."_ap"} = $values[2];
-      $ap = $values[2];
-     
-  }
-  elseif (empty($h))
-  {
-	  // if not timeval and not hour then
-      // plug a default. we shoud have a value in $h
-      // secondtime thru
-	  $$timevarname = "00:00:AM";
-      ${$timevarname."_h"} = "00";
-	  ${$timevarname."_m"} = "00";
-	  ${$timevarname."_ap"} = __("AM");
-	  $ap = __("AM");
-  }
-
-  //echo ${$timevarname."_h"}."<BR>";
-  //echo ${$timevarname."_m"}."<BR>";
-  //echo ${$timevarname."_ap"}."<BR>";
-	
-
-  $buffer_h = fm_number_select($timevarname."_h",0,12);
-  $buffer_m = fm_number_select($timevarname."_m",0,59);
-  $buffer_ap = "<select NAME=\"$timevarname"."_ap"."\">".
-	"<option VALUE=\"AM\" ".
-		( $ap=="AM" ? "SELECTED" : "").">". __("AM")."</option>\n".
-	"<option VALUE=\"PM\" ".
-		( $ap=="PM" ? "SELECTED" : "").">". __("PM")."</option>\n";
-   
-  return $buffer_h.$buffer_m.$buffer_ap;
-  
-} // end fm_time_entry
-
-
-function fm_time_assemble ($timevarname="") {
-  if ($timevarname=="") return ""; // return nothing if no variable is given
-  global ${$timevarname."_h"}, ${$timevarname."_m"}, ${$timevarname."_ap"};
-
-    $m = ${$timevarname."_m"};
-    $h = ${$timevarname."_h"};
-    $ap = ${$timevarname."_ap"};
-  return $h.":".$m.":".$ap;                     // return SQL format date
-} // end function fm_time_assemble
-
-//---------------------------------------------------------------------------
-// Template-related Functions
-//---------------------------------------------------------------------------
-
-// Function: template_display
-//
-//	Display the current template
-//
-// Parameters:
-//
-//	$terminate - (optional) End script execution on termination of
-//	function. Defaults to true.
-//
-function template_display ($terminate_on_execute=true) {
-	global $display_buffer; // localize display buffer
-	global $template; // localize template
-	foreach ($GLOBALS AS $k => $v) global ${$k};
-
-	include_once (freemed::template_file('template.php'));
-
-	// Kill everything after this has been displayed
-	if ($terminate_on_execute) die("");
-} // end function template_display
-
-//********************** END TEMPLATE SUPPORT
 
 // Function: page_push
 //
@@ -3731,67 +2674,6 @@ function page_history_list () {
 	return array_reverse($history);
 } // end function page_history_list
 
-// Function: help_url
-//
-//	Contruct a help link from the specified page and section
-//
-// Parameters:
-//
-//	$page - (optional) Name of the page that this relates to.
-//
-//	$section - (optional) Subsection of the page.
-//
-// Returns:
-//
-//	Fully formed URL to the specified help page.
-//
-function help_url ( $page = "", $section = "" ) {
-	$language = $_SESSION['language'];
-
-	// If there's no page name, substitute in $PHP_SELF
-	if ($page == "") {
-		$page_name = page_name();
-	} else {
-		$page_name = $page;
-	}
-
-	// Produce name by removing .php
-	$page_name = str_replace(".php", "", $page_name);
-
-	// Build helpfile name...
-	if (empty($page_name) AND empty($section)) {
-		// Default if nothing is provided
-		$_help_name = "locale/$language/doc/default.$language.html";
-	} elseif (!empty($page_name) AND empty($section)) {
-		// If just page name, leave out section
-		$_help_name = "locale/$language/doc/$page_name.$language.html";
-	} elseif (!empty($page_name) AND !empty($section)) {
-		// Page name and section provided
-		$_help_name = "locale/$language/doc/$page_name.$section.$language.html";
-	} else {
-		// Should never have section with no page name
-		$_help_name = "locale/$language/doc/default.$language.html";
-	}
-
-	// Check to see if it exists
-	if (!file_exists($_help_name)) {
-		// Try to pass it back thru with just the page if section bites
-		if (!empty($section)) {
-			return help_url ($page_name);
-		} else {
-			// If it doesn't exist, don't pass it...
-			return "help.php";
-		}
-	} else {
-		if ($section != "") {
-			return "help.php?page_name=".urlencode($page_name)."&".
-				"section=".urlencode($section);
-		} else {
-			return "help.php?page_name=".urlencode($page_name);
-		}
-	}
-} // end function help_url
-
 //---------------------------------------------------------------------------
 // Authentication Subsystem
 //---------------------------------------------------------------------------
@@ -3824,6 +2706,40 @@ function check_basic_authentication () {
 	// Call phpwebtools' basic authentication function
 	return basic_authentication(PACKAGENAME, $users);
 } // end function check_basic_authentication
+
+// Function: version_check
+//
+//	Compare a version number with single or multiple dots against
+//	an arbitrary versioning number.
+//
+// Parameters:
+//
+//	$version - Version to test
+//
+//	$minimum - Arbitrary version to check against.
+//
+// Returns:
+//
+//	Boolean, depending on whether the version was greater than the
+//	provided value.
+//
+function version_check ( $version, $minimum ) {
+	// first, see if any .'s at all
+	if ( !strpos($version, ".") ) {
+		//echo "no dot";
+		return ( $version >= $minimum );
+	} else { // if there are dots
+		$version_array = explode (".", $version);
+		$minimum_array = explode (".", $minimum);
+		for ($i=0; $i<count($minimum_array); $i++) {
+			if (!isset($version_array[$i])) $version_array[$i] = 0;
+			if ($version_array[$i] < $minimum_array[$i]) return false; 
+			if ($version_array[$i] > $minimum_array[$i]) return true;
+		} // end for
+		return true; // true if they are *exactly* the same
+	} // end if there are/n't dots
+} // end function version_check
+
 
 } // end checking for __API_PHP__
 
