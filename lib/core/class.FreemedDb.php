@@ -94,6 +94,27 @@ class FreemedDb extends MDB2 {
 		}	
 	} // end public function load_data
 
+	// Method: get_link
+	//
+	//	Retrieve a linked record by table name and index.
+	//
+	// Parameters:
+	//
+	//	$table - Table name
+	//
+	//	$key - Key value for field
+	//
+	//	$field - (optional) Field name to index by. Defaults to 'id'
+	//
+	// Returns:
+	//
+	//	Hash of table row.
+	//
+	public function get_link ( $table, $key, $field = 'id' ) {
+		$query = "SELECT * FROM `".$this->db->escape( $table )."` WHERE `".$this->db->escape( $field )."` = ".$this->db->quote( $key );
+		return $this->db->queryOne( $query );
+	} // end public function get_link
+
 	// Method: distinct_values
 	//
 	//	Produce a list of distinct values for an SQL table field

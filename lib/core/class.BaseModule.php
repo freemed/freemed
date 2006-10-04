@@ -237,7 +237,7 @@ class BaseModule extends Module {
 						$result = $GLOBALS['sql']->query($query);
 						$rec = $GLOBALS['sql']->fetch_array($result);
 				} else {
-					$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+					$rec = $GLOBALS['sql']->get_link($this->table_name, $_REQUEST['id']);
 				} // end checking for summary_query
 			} else {
 				$rec = array ( 'id' => $_REQUEST['id'] );
@@ -336,7 +336,7 @@ class BaseModule extends Module {
 			//$display_buffer .= "<b>".$output."</b>\n";
 			// TODO : Descrip call back
 			if ($this->patient_field) {
-				$_r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
+				$_r = $GLOBALS['sql']->get_link( $this->table_name, $_REQUEST['id'] );
 				$_p = CreateObject('org.freemedsoftware.core.Patient', $_r[$this->patient_field]);
 				$descrip = $this->record_name.' for '.$_p->fullName();
 
@@ -395,25 +395,6 @@ class BaseModule extends Module {
 			break;
 		}
 	} // end function print
-
-	// Method: _print_mapping
-	//
-	//	Callback to provide a macro mapping for TeX templating.
-	//
-	// Parameters:
-	//
-	//	$TeX - TeX rendering object of type <FreeMED.TeX>
-	//
-	//	$id - Record id of the target record.
-	//
-	// Returns:
-	//
-	//	Associative array containing mapping information.
-	//
-	function _print_mapping ( $TeX, $id ) {
-		// By default superclass returns nothing
-		return array ( );
-	} // end method _print_mapping
 
 	// Method: setup
 	//
