@@ -37,34 +37,6 @@ class ReportsModule extends BaseModule {
 		parent::__construct();
 	} // end constructor
 
-	// override check_vars method
-	function check_vars ($nullvar = "") {
-		global $module;
-		if (!isset($module)) 
-		{
-			trigger_error("Module not Defined", E_ERROR);
-		}
-		// FIXME!!: check access to facility
-		//if (!freemed::check_access_for_patient($patient)) return false;
-		return true;
-	} // end function check_vars
-
-	// function create_table
-	// - used to initially create SQL table
-	public function create_table () {
-		if (!isset($this->table_definition)) return false;
-		$query = $GLOBALS['sql']->create_table_query(
-			$this->table_name,
-			$this->table_definition,
-			( is_array($this->table_keys) ?
-				array_merge(array("id"), $this->table_keys) :
-				array("id")
-			)
-		);
-		$result = $GLOBALS['sql']->query ($query);
-		return !empty($result);
-	} // end function create_table
-
 } // end class ReportsModule
 
 ?>
