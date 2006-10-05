@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.Handler_HL7v2');
 
 class Handler_HL7v2_S15 extends Handler_HL7v2 {
 
-	function Handle () {
+	public function Handle () {
 		syslog(LOG_INFO, 'HL7 parser| Entered S15 parser');
 		if (!is_object($this->parser)) {
 			die('Handler_HL7v2_S15: parser object not present');
@@ -46,16 +46,16 @@ class Handler_HL7v2_S15 extends Handler_HL7v2 {
 			$c = CreateObject('org.freemedsoftware.api.Scheduler');
 			$query = "DELETE FROM scheduler WHERE ".
 				"caltype = 'pat' AND ". // hardcode as patient
-				"caldateof = '".addslashes($this->parser->__date_to_sql($pr[HL7v2_AIP_DATETIME]))."' AND ".
-				"calhour = '".addslashes($this->parser->__date_to_hour($pr[HL7v2_AIP_DATETIME]))."' AND ".
-				"calminute = '".addslashes($this->parser->__date_to_minute($pr[HL7v2_AIP_DATETIME]))."' AND ".
+				"caldateof = '".addslashes($this->parser->date_to_sql($pr[HL7v2_AIP_DATETIME]))."' AND ".
+				"calhour = '".addslashes($this->parser->date_to_hour($pr[HL7v2_AIP_DATETIME]))."' AND ".
+				"calminute = '".addslashes($this->parser->date_to_minute($pr[HL7v2_AIP_DATETIME]))."' AND ".
 				//"calduration = '".addslashes($pr[HL7v2_AIP_DURATION]+0)."' AND ".
-				//calprovider = $this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]),
-				"calpatient = '".addslashes($this->parser->__pid_to_patient($p[HL7v2_PID_ID]))."'";
+				//calprovider = $this->parser->aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]),
+				"calpatient = '".addslashes($this->parser->pid_to_patient($p[HL7v2_PID_ID]))."'";
 			$result = $GLOBALS['sql']->query($query);
 
 			// Quickly log what has happened
-			syslog(LOG_INFO, 'HL7 parser| deleted S15 appointment record for patient #'.$this->parser->__pid_to_patient($p[HL7v2_PID_ID]).', provider #'.$this->parser->__aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]).' at '.$this->parser->__date_to_hour($pr[HL7v2_AIP_DATETIME]).':'.$this->parser->__date_to_minute($pr[HL7v2_AIP_DATETIME]));
+			syslog(LOG_INFO, 'HL7 parser| deleted S15 appointment record for patient #'.$this->parser->pid_to_patient($p[HL7v2_PID_ID]).', provider #'.$this->parser->aip_to_provider($pr[HL7v2_AIP_PROVIDER][HL7v2_AIP_PROVIDER_ID]).' at '.$this->parser->date_to_hour($pr[HL7v2_AIP_DATETIME]).':'.$this->parser->date_to_minute($pr[HL7v2_AIP_DATETIME]));
 			syslog(LOG_INFO, 'HL7 parser| sql query = '.$query.', result = '.$result);
 		}
 	} // end method Handle

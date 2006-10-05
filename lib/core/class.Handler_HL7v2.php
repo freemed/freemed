@@ -28,7 +28,7 @@
 //
 class Handler_HL7v2 {
 
-	var $parser;
+	protected $parser;
 
 	// Method: Handler_HL7v2 constructor
 	//
@@ -36,17 +36,17 @@ class Handler_HL7v2 {
 	//
 	//	$parser - Passed parser object of type Parser_HL7v2
 	//
-	function Handler_HL7v2 ($parser) {
+	public function __construct ($parser) {
 		$this->parser = &$parser;
 	}
 
-	function Type () {
+	public function Type () {
 		return false;
 	}
 
 	//----- Internal methods
 
-	// Method: Handler_HL7v2->_ConvertDate
+	// Method: ConvertDate
 	//
 	//	Convert date from HL7 v2.3 date format to standard
 	//	SQL date format.
@@ -59,7 +59,7 @@ class Handler_HL7v2 {
 	//
 	//	SQL date formatted date.
 	//
-	function _ConvertDate ($string) {
+	protected function ConvertDate ($string) {
 		// Handle invalid dates
 		if (strlen($string) != 8) return '';
 		// Seperate out by components
@@ -68,9 +68,9 @@ class Handler_HL7v2 {
 		$d = substr($string, 6, 2);
 		// ... and reassemble
 		return $y . '-' . $m . '-' . $d;
-	} // end method _ConvertDate
+	} // end method ConvertDate
 
-	// Method: Handler_HL7v2->_PIDToPatient
+	// Method: PIDToPatient
 	//
 	//	Determine patient identifier by PID segment.
 	//
@@ -82,7 +82,7 @@ class Handler_HL7v2 {
 	//
 	//	Patient identifier, or 0 if none is found.
 	//
-	function _PIDToPatient ($pid) {
+	protected function PIDToPatient ($pid) {
 		$lname = $pid[HL7v2_PID_NAME][HL7v2_PID_NAME_LAST];
 		$fname = $pid[HL7v2_PID_NAME][HL7v2_PID_NAME_FIRST];
 		$mname = $pid[HL7v2_PID_NAME][HL7v2_PID_NAME_MIDDLE];
@@ -100,9 +100,9 @@ class Handler_HL7v2 {
 		} else {
 			return 0;
 		}
-	} // end method _PIDToPatient
+	} // end method PIDToPatient
 
-	// Method: Handler_HL7v2->_StripToNumeric
+	// Method: StripToNumeric
 	//
 	//	Strip all non-numeric characters from a string
 	//
@@ -114,7 +114,7 @@ class Handler_HL7v2 {
 	//
 	//	Numeric string.
 	//
-	function _StripToNumeric ($string) {
+	function StripToNumeric ($string) {
 		$target = '';
 		for ($pos=0; $pos<strlen($string); $pos++) {
 			switch (substr($string, $pos, 1)) {
@@ -129,9 +129,9 @@ class Handler_HL7v2 {
 		}
 		//print "original = $string, stripped = $target<br/>\n";
 		return $target;
-	} // end method _StripToNumeric
+	} // end method StripToNumeric
 
-	// Method: Handler_HL7v2->_FixPhoneNumber
+	// Method: FixPhoneNumber
 	//
 	//	Make sure phone number has area code when pulling into
 	//	system.
@@ -146,13 +146,13 @@ class Handler_HL7v2 {
 	//
 	//	Phone number, possibly with system default area code.
 	//
-	function _FixPhoneNumber ($phone) {
+	protected function FixPhoneNumber ($phone) {
 		if (strlen($phone) == 7) {
 			return freemed::config_value('default_area_code').$phone;
 		} else {
 			return $phone;
 		}
-	} // end method _FixPhoneNumber
+	} // end method FixPhoneNumber
 
 } // end class Handler_HL7v2
 

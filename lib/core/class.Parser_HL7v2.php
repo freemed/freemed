@@ -95,7 +95,7 @@ class Parser_HL7v2 {
 	//	$options - (optional) Additional options to be passed
 	//	to the parser. This is an associative array.
 	//
-	function Parser_HL7v2 ( $message, $_options = NULL ) {
+	public function __construct ( $message, $_options = NULL ) {
 		syslog(LOG_INFO, 'HL7 parser|Created HL7 parser object');
 	
 		// Assume separator is a pipe
@@ -126,7 +126,7 @@ class Parser_HL7v2 {
 
 		// Loop through messages
 		$count = 0;
-		foreach ($segments AS $__garbage => $segment) {
+		foreach ($segments AS $segment) {
 			$count++;
 
 			// Log segment
@@ -157,7 +157,7 @@ class Parser_HL7v2 {
 				// Ignore null segments
 				if (trim($type) == '') { break; }
 				// Parse all other segments
-				$this->__default_segment_parser($segment);
+				$this->default_segment_parser($segment);
 				$this->map[$count]['type'] = $type;
 				$this->map[$count]['position'] = count($this->message[$type]);
 				break;
@@ -184,7 +184,7 @@ class Parser_HL7v2 {
 	//
 	//	Output of the specified handler.
 	//
-	function Handle() {
+	public function Handle() {
 		syslog(LOG_INFO, 'HL7 parser|in handle for '.$this->MSH['message_type']);
 		// Set to handle current method
 		list ($top_level, $type) = explode ('^', $this->MSH['message_type']);
@@ -209,8 +209,8 @@ class Parser_HL7v2 {
 
 	//----- All handlers go below here
 
-	function _EVN ($segment) {
-		$composites = $this->__parse_segment ($segment);
+	protected function _EVN ($segment) {
+		$composites = $this->parse_segment ($segment);
 		if ($this->options['debug']) {
 			print "<b>EVN segment</b><br/>\n";
 			foreach ($composites as $k => $v) {
@@ -234,10 +234,10 @@ class Parser_HL7v2 {
 		}
 	} // end method _EVN
 
-	function _MSH ($segment) {
+	protected function _MSH ($segment) {
 		// Get separator
 		$this->field_separator = substr($segment, 0, 1);
-		$composites = $this->__parse_segment ($segment);
+		$composites = $this->parse_segment ($segment);
 		if ($this->options['debug']) {
 			print "<b>MSH segment</b><br/>\n";
 			foreach ($composites as $k => $v) {
@@ -284,8 +284,8 @@ class Parser_HL7v2 {
 
 	//----- Truly internal functions
 
-	function __default_segment_parser ($segment) {
-		$composites = $this->__parse_segment($segment);
+	private function default_segment_parser ($segment) {
+		$composites = $this->parse_segment($segment);
 
 		// The first composite is always the message type
 		$type = $composites[0];
@@ -302,7 +302,7 @@ class Parser_HL7v2 {
 		foreach ($composites as $key => $composite) {
 			// If it is a composite ...
 			if (!(strpos($composite, '^') === false)) {
-				$composites[$key] = $this->__parse_composite($composite);
+				$composites[$key] = $this->parse_composite($composite);
 			}
 		}
 
@@ -315,46 +315,45 @@ class Parser_HL7v2 {
 
 		// Add parsed segment to message
 		$this->message[$type][$pos] = $composites;
-	} // end method __default_segment_parser
+	} // end method default_segment_parser
 
-	function __parse_composite ($composite) {
+	private function parse_composite ($composite) {
 		return explode('^', $composite);
-	} // end method __parse_composite
+	} // end method parse_composite
 
-	function __parse_segment ($segment) {
+	private function parse_segment ($segment) {
 		return explode($this->field_separator, $segment);
-	} // end method __parse_segment
+	} // end method parse_segment
 
-	function __date_to_sql ( $date ) {
+	public function date_to_sql ( $date ) {
 		$year = substr($date, 0, 4);
 		$month = substr($date, 4, 2);
 		$day = substr($date, 6, 2);
 		return $year.'-'.$month.'-'.$day;
-	} // end method __date_to_sql
+	} // end method date_to_sql
 
-	function __date_to_hour ( $date ) {
+	public function date_to_hour ( $date ) {
 		return substr($date, 8, 2);
-	} // end method __date_to_hour
+	} // end method date_to_hour
 
-	function __date_to_minute ( $date ) {
+	public function date_to_minute ( $date ) {
 		return substr($date, 10, 2);
-	} // end method __date_to_minute
+	} // end method date_to_minute
 
-	function __pid_to_patient ( $pid_id ) {
+	public function pid_to_patient ( $pid_id ) {
 		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."' AND ptarchive=0 ORDER BY id";
 		$result = $GLOBALS['sql']->query($query);
 		$r = @$GLOBALS['sql']->fetch_array($result);
 		return $r['id'];
-	} // end method __pid_to_patient
+	} // end method pid_to_patient
 
-	function __aip_to_provider ( $aip_id ) {
+	public function aip_to_provider ( $aip_id ) {
 		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($aip_id)."'";
-		$result = $GLOBALS['sql']->query($query);
-		$r = @$GLOBALS['sql']->fetch_array($result);
+		$r = $GLOBALS['sql']->queryOne($query);
 		return $r['id'];
-	} // end method __aip_to_provider
+	} // end method aip_to_provider
 
-	// Method: __composite_to_provider
+	// Method: composite_to_provider
 	//
 	//	Resolve CN composite to provider in FreeMED.
 	//
@@ -366,29 +365,27 @@ class Parser_HL7v2 {
 	//
 	//	Valid ID or 0 to indicate non-existance.
 	//
-	function __composite_to_provider ( $composite ) {
+	public function composite_to_provider ( $composite ) {
 		//syslog('HL7| composite[0] = '.$composite[0]);
 		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($composite[0])."' OR phyupin='".addslashes($composite[0])."'";
-		$result = $GLOBALS['sql']->query($query);
-		if ($GLOBALS['sql']->results($result)) {
+		$result = $GLOBALS['sql']->queryOne($query);
+		if ($result['id']) {
 			// Process from existing ID
-			$r = @$GLOBALS['sql']->fetch_array($result);
-			//syslog('HL7 parser| found single with id = '.$r['id']);
-			return $r['id'];
+			//syslog('HL7 parser| found single with id = '.$result['id']);
+			return $result['id'];
 		} else {
 			// Infer using first and last name
 			$query = "SELECT id FROM physician WHERE phyfname='".addslashes($composite[2])."' AND phylname='".addslashes($composite[1])."'";
-			$result = $GLOBALS['sql']->query($query);
-			if ($GLOBALS['sql']->results($result)) {
+			$result = $GLOBALS['sql']->queryOne($query);
+			if ($result['id']) {
 				// Use the names ...
-				$r = @$GLOBALS['sql']->fetch_array($result);
-				return $r['id'];
+				return $result['id'];
 			} else {
 				// Otherwise, bork and return none
 				return 0;
 			}
 		}
-	} // end method __composite_to_provider
+	} // end method composite_to_provider
 
 } // end class Parser_HL7v2
 
