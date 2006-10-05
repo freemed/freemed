@@ -1,8 +1,33 @@
 #!/bin/bash
-#  cfg-value
-#  -- returns the config value from global.var.inc, for use with non-PHP
-#  -- languages. to be run as "scripts/cfg-value (value-to-return, no $)"
-#  -- (ex)  scripts/cfg-value packagename   would be "freemed"....
+# $Id$
+#
+# Authors:
+#      Jeff Buchbinder <jeff@freemedsoftware.org>
+#
+# Copyright (C) 1999-2006 FreeMED Software Foundation
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+# Parameters:
+#
+#	key - Configuration key
+#
+# Returns:
+#
+#	Configuration value from lib/settings.php, for use with non-PHP
+# 	languages.
 
 KEY=$1
 
@@ -11,11 +36,7 @@ if [ "${KEY}" = "" ]; then
 	exit
 fi
 
-OURPATH="/usr/share/freemed"
+OURPATH="$(dirname "$0")/../"
 GLOBALVARFILE="lib/settings.php"
-
-#if [ -f $GLOBALVARFILE ]; then
-#  GLOBALVARFILE="../settings.php";
-#fi
 
 cat $OURPATH/$GLOBALVARFILE | grep "define ('$1" | awk -F\" '{ print $2 } ' | cat
