@@ -143,9 +143,9 @@ class Ledger {
 			"ORDER BY ".
 			"procedure_date DESC, item";
 		//print "<hr/>query = \"$query\"<hr/>\n";
-		$result = $GLOBALS['sql']->query ( $query );
+		$result = $GLOBALS['sql']->queryAll ( $query );
 		$return = array ( );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		foreach ( $result AS $r ) {
 			// Make sure to deserialize the id map, since
 			// we can't actually extract values from it using
 			// SQL regex's, or if we could, it would be a
@@ -176,12 +176,11 @@ class Ledger {
 	//	Amount in collections, or a testing false value (0)?
 	//
 	function collection_warning ( $pid ) {
-		$res = $GLOBALS['sql']->query(
+		$r = $GLOBALS['sql']->queryOne(
 		       	"SELECT	sum(procbalcurrent) AS outstanding ".
 			"FROM procrec ".
 			"WHERE TO_DAYS(NOW())-TO_DAYS(procdt) > 180 ".
 			"AND procpatient='".addslashes($pid)."'");
-		$r = $GLOBALS['sql']->fetch_array($res);
 		if ($r['outstanding']) { return bcadd($r['outstanding'],0,2); }
 		return false; // fall through to this
 	} // end method collection_warning
@@ -197,7 +196,7 @@ class Ledger {
 	function get_list ( ) {
 		$query = "SELECT * FROM payrec ORDER BY payrecdtmod";
 		// Return sequentially
-		return $this->_query_to_result_array ( $query, true );
+		return $GLOBALS['sql']->queryAll( $query );
 	} // end method get_list
 
 	// Method: move_to_next_coverage
@@ -328,8 +327,8 @@ class Ledger {
 			$query = "SELECT proccov".($type + 0)." AS ".
 				"coverage FROM procrec WHERE ".
 				"id = '".addslashes($proc)."'";
-			$result = $GLOBALS['sql']->query($query);
-			extract($GLOBALS['sql']->fetch_array($result));
+			$result = $GLOBALS['sql']->queryOne($query);
+			extract( $result );
 		} else {
 			$coverage = 0;
 		}
@@ -858,10 +857,10 @@ class Ledger {
 	function writeoff_array ( $a ) {
 		$query = "SELECT pr.id AS procedure_id ".
 			"FROM payrec AS p, procrec AS pr ".
-			"WHERE FIND_IN_SET(p.id, '".join(',', $a)."') AND ".
+			"WHERE FIND_IN_SET(p.id, '".addslashes(join(',', $a))."') AND ".
 			"p.payrecproc = pr.id";
-		$res = $GLOBALS['sql']->query($query);
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		$res = $GLOBALS['sql']->queryAll( $query );
+		foreach ( $res AS $r ) {
 			$items[$r['procedure_id']] = $r['procedure_id'];
 		} // end while fetch array
 
@@ -907,8 +906,8 @@ class Ledger {
 	//	Array of associative arrays.
 	//
 	function _query_to_result_array ( $query, $sequential = false ) {
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		$result = $GLOBALS['sql']->queryAll ( $query );
+		foreach ( $result AS $r ) {
 			if ($sequential) {
 				$return[] = $r;
 			} else {

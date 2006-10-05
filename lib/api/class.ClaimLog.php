@@ -154,9 +154,9 @@ class ClaimLog {
 			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
 			"ORDER BY patient_name, balance DESC";
 		//print "<hr/>query = \"$query\"<hr/>\n";
-		$result = $GLOBALS['sql']->query ( $query );
+		$result = $GLOBALS['sql']->queryAll ( $query );
 		$return = array ( );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		foreach ( $result AS $r ) {
 			// Make sure to deserialize the id map, since
 			// we can't actually extract values from it using
 			// SQL regex's, or if we could, it would be a
@@ -331,7 +331,7 @@ ORDER BY
 	//
 	//	Associative array of payers.
 	//
-	function aging_insurance_companies ( $provider = NULL ) {
+	function aging_insurance_companies ( $provider = 0 ) {
 		$query = "SELECT CONCAT(i.insconame, ' (', ".
 			"i.inscocity, ', ',i.inscostate, ')') AS payer, ".
 			"i.id AS payer_id, ".
@@ -349,8 +349,8 @@ ORDER BY
 			// next line orders by remaining balance:
 			//"ORDER BY balance DESC";
 		//print "query = \"$query\"<br/>\n";
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		$result = $GLOBALS['sql']->queryAll ( $query );
+		foreach ( $result AS $r ) {
 			$return[$r['payer']] = $r['payer_id'];
 		}
 		return $return;
@@ -383,8 +383,8 @@ ORDER BY
 				"p.procbalcurrent > 0 ".
 			"ORDER BY plan";
 		//print "query = \"$query\"<br/>\n";
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		$result = $GLOBALS['sql']->queryAll ( $query );
+		foreach ( $result AS $r ) {
 			$return[$r['plan']] = $r['plan'];
 		}
 		return $return;
@@ -459,8 +459,7 @@ ORDER BY
 					"p.id = '".addslashes($proc)."'" 
 				);
 		//print "query = \"$query\"<br/>\n";
-		$result = $GLOBALS['sql']->query ( $query );
-		$r = $GLOBALS['sql']->fetch_array ( $result );
+		$r = $GLOBALS['sql']->queryOne ( $query );
 		return $r;
 	} // end method claim_information
 
@@ -481,7 +480,7 @@ ORDER BY
 	//	Array of associative arrays containing billing event
 	//	data from the claimlog table.
 	//
-	function events_for_procedure ( $proc, $payrec = NULL ) {
+	function events_for_procedure ( $proc, $payrec = 0 ) {
 		$query = "SELECT ".
 			"u.username AS user, ".
 			"e.claction AS action, ".
@@ -600,7 +599,7 @@ ORDER BY
 		);
 		//print "query = ".$query."<hr/>\n";
 		$result = $GLOBALS['sql']->query ( $query );
-		return $GLOBALS['sql']->last_record ( $result );
+		return $GLOBALS['sql']->lastInsertId ( 'claimlog', 'id' );
 	} // end method log_event
 
 	// Method: mark_billed
@@ -687,9 +686,9 @@ ORDER BY
 	function procedure_status_list ( ) {
 		$query = "SELECT DISTINCT(procstatus) AS procstatus ".
 			"FROM procrec ORDER BY procstatus";
-		$result = $GLOBALS['sql']->query ( $query );
+		$result = $GLOBALS['sql']->queryAll ( $query );
 		$return = array ( );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		foreach ( $result AS $r ) {
 			// Key and value are the same...
 			$return[$r['procstatus']] = $r['procstatus'];
 		} // end while loop
@@ -781,8 +780,8 @@ ORDER BY
 	//	Array of associative arrays.
 	//
 	protected function _query_to_result_array ( $query, $sequential = false ) {
-		$result = $GLOBALS['sql']->query ( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+		$result = $GLOBALS['sql']->queryAll ( $query );
+		foreach ( $result AS $r ) {
 			if ($sequential) {
 				$return[] = $r;
 			} else {
