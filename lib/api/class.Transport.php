@@ -1,0 +1,49 @@
+<?php
+ // $Id$
+ //
+ // Authors:
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+class Transport {
+
+	public function __construct ( ) { } 
+
+	// Method: parse
+	//
+	//	Insert payload into a FreeMED Parser_* object
+	//
+	// Parameters:
+	//
+	//	$transport - Name of the transport
+	//
+	//	$message - Text of the message to be inserted
+	//
+	// Returns:
+	//
+	//	Output from the specified parser.
+	//
+	public function parse ( $transport, $message ) {
+		$parser = CreateObject('org.freemedsoftware.core.Parser_'.$transport, $message);
+		if (!is_object($parser)) return false;
+		return $parser->Handle();
+	} // end method parse
+
+} // end class Transport
+
+?>
