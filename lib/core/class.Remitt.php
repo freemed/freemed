@@ -31,12 +31,12 @@ class Remitt {
 	var $_cache; // result cache
 	var $_connection; // XMLRPC connection
 
-	function Remitt ( $server = '127.0.0.1' ) {
+	public function __construct ( $server = '127.0.0.1' ) {
 		$this->protocol = 'http';
 		$this->server = $server;
 		$this->port = freemed::config_value('remitt_port'); 
 		if (!$this->port) { $this->port = '7688'; }
-		$this->_connection = CreateObject('PHP.xmlrpc_client', '/RPC2', $this->server, $this->port);
+		$this->_connection = CreateObject('org.freemedsoftware.core.xmlrpc_client', '/RPC2', $this->server, $this->port);
 		// TODO: set credentials ...
 		
 	} // end constructor
@@ -55,13 +55,13 @@ class Remitt {
 	//
 	//	Array of files
 	//
-	function GetFileList ( $type, $criteria, $value ) {
+	public function GetFileList ( $type, $criteria, $value ) {
 		$results = $this->_call(
 			'Remitt.Interface.FileList',
 			array (
-				CreateObject('PHP.xmlrpcval', $type, 'string'),
-				CreateObject('PHP.xmlrpcval', $criteria, 'string'),
-				CreateObject('PHP.xmlrpcval', $value, 'string')
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $criteria, 'string'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $value, 'string')
 			),
 			false
 		);
@@ -77,7 +77,7 @@ class Remitt {
 	//
 	//	Version number.
 	//
-	function GetProtocolVersion ( ) {
+	public function GetProtocolVersion ( ) {
 		if (!$this->GetServerStatus()) { return NULL; }
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
@@ -95,7 +95,7 @@ class Remitt {
 	//
 	//	true if up, false if not
 	//
-	function GetServerStatus ( ) {
+	public function GetServerStatus ( ) {
 		if (@fsockopen($this->server, $this->port, $_err, $_str, 10)) {
 			return true;
 		} else {
@@ -116,7 +116,7 @@ class Remitt {
 	//
 	//	NULL meaning still in process, or name of result file.
 	//
-	function GetStatus ( $unique ) {
+	public function GetStatus ( $unique ) {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
@@ -127,7 +127,7 @@ class Remitt {
 		$status = $this->_call(
 			'Remitt.Interface.GetStatus',
 			array(
-				CreateObject('PHP.xmlrpcval', $unique, 'string')
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $unique, 'string')
 			)
 		);
 		switch ($status) {
@@ -157,7 +157,7 @@ class Remitt {
 	//
 	//	Array of available options for the specified plugin
 	//
-	function ListOptions ( $type, $plugin, $media = NULL, $format = NULL ) {
+	public function ListOptions ( $type, $plugin, $media = NULL, $format = NULL ) {
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
 			$_SESSION['remitt']['key']
@@ -168,17 +168,17 @@ class Remitt {
 				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $this->_call(
 					'Remitt.Interface.ListOptions',
 					array(
-						CreateObject('PHP.xmlrpcval', $type, 'string'),
-						CreateObject('PHP.xmlrpcval', $plugin, 'string'),
-						CreateObject('PHP.xmlrpcval', $format, 'string')
+						CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string'),
+						CreateObject('org.freemedsoftware.core.xmlrpcval', $plugin, 'string'),
+						CreateObject('org.freemedsoftware.core.xmlrpcval', $format, 'string')
 					)
 				);
 			} else {
 				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $this->_call(
 					'Remitt.Interface.ListOptions',
 					array(
-						CreateObject('PHP.xmlrpcval', $type, 'string'),
-						CreateObject('PHP.xmlrpcval', $plugin, 'string')
+						CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string'),
+						CreateObject('org.freemedsoftware.core.xmlrpcval', $plugin, 'string')
 					)
 				);
 			}
@@ -205,7 +205,7 @@ class Remitt {
 	//
 	//	Array of available plugins
 	//
-	function ListPlugins ( $type ) {
+	public function ListPlugins ( $type ) {
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
 			$_SESSION['remitt']['key']
@@ -215,7 +215,7 @@ class Remitt {
 			$this->_cache['ListPlugins'][$type] = $this->_call(
 				'Remitt.Interface.ListPlugins',
 				array(
-					CreateObject('PHP.xmlrpcval', $type, 'string')
+					CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string')
 				)
 			);
 		}
@@ -234,7 +234,7 @@ class Remitt {
 	//
 	//	Hash of years => number of output files available.
 	//
-	function ListOutputMonths ( $year = NULL ) {
+	public function ListOutputMonths ( $year = NULL ) {
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
 			$_SESSION['remitt']['key']
@@ -243,7 +243,7 @@ class Remitt {
 			$months = $this->_call( 
 				'Remitt.Interface.GetOutputMonths',
 				array (
-					CreateObject('PHP.xmlrpcval', $year, 'string'),
+					CreateObject('org.freemedsoftware.core.xmlrpcval', $year, 'string'),
 				)
 			);
 		} else {
@@ -261,7 +261,7 @@ class Remitt {
 	//
 	//	Hash of years => number of output files available.
 	//
-	function ListOutputYears ( ) {
+	public function ListOutputYears ( ) {
 		$this->_connection->SetCredentials(
 			$_SESSION['remitt']['sessionid'],
 			$_SESSION['remitt']['key']
@@ -282,7 +282,7 @@ class Remitt {
 	//
 	//	$password - Password to be passed to the Remitt server
 	//
-	function Login ( $username, $password ) {
+	public function Login ( $username, $password ) {
 /*
 		// Check for session data
 		if ($_SESSION['remitt']) { 
@@ -300,11 +300,11 @@ class Remitt {
 		// Otherwise, attempt to establish credentials
 		//print "Logging in with $username and $password<br/>\n";
 		$this->_connection->SetCredentials($username, $password);
-		$message = CreateObject('PHP.xmlrpcmsg',
+		$message = CreateObject('org.freemedsoftware.core.xmlrpcmsg',
 			'Remitt.Interface.SystemLogin',
 			array(
-				CreateObject('PHP.xmlrpcval', $username, 'string'),
-				CreateObject('PHP.xmlrpcval', $password, 'string')
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $username, 'string'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $password, 'string')
 			)
 		);
 		$response_raw = $this->_connection->send(
@@ -327,7 +327,7 @@ class Remitt {
 	} // end method Login
 
 	// Method: ProcessBill
-	function ProcessBill ( $billkey, $render, $transport ) {
+	public function ProcessBill ( $billkey, $render, $transport ) {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
@@ -344,17 +344,17 @@ class Remitt {
 		$output = $this->_call(
 			'Remitt.Interface.Execute',
 			array(
-				CreateObject('PHP.xmlrpcval', $xml, 'base64'),
-				CreateObject('PHP.xmlrpcval', 'XSLT', 'string'),
-				CreateObject('PHP.xmlrpcval', $render, 'string'),
-				CreateObject('PHP.xmlrpcval', $transport, 'string')
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $xml, 'base64'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', 'XSLT', 'string'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $render, 'string'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $transport, 'string')
 			)
 		);
 		return $output;
 	} // end method ProcessBill
 
 	// Method: ProcessStatement
-	function ProcessStatement ( $procedures ) {
+	public function ProcessStatement ( $procedures ) {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
@@ -369,10 +369,10 @@ class Remitt {
 		$output = $this->_call(
 			'Remitt.Interface.Execute',
 			array(
-				CreateObject('PHP.xmlrpcval', $xml, 'base64'),
-				CreateObject('PHP.xmlrpcval', 'XSLT', 'string'),
-				CreateObject('PHP.xmlrpcval', 'statement', 'string'),
-				CreateObject('PHP.xmlrpcval', 'PDF', 'string')
+				CreateObject('org.freemedsoftware.core.xmlrpcval', $xml, 'base64'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', 'XSLT', 'string'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', 'statement', 'string'),
+				CreateObject('org.freemedsoftware.core.xmlrpcval', 'PDF', 'string')
 			)
 		);
 		return $output;
@@ -390,7 +390,7 @@ class Remitt {
 	//
 	//	Table key for billkey
 	//
-	function StoreBillKey ( $billkey ) {
+	public function StoreBillKey ( $billkey ) {
 		$query = $GLOBALS['sql']->insert_query (
 			'billkey',
 			array(
@@ -424,7 +424,7 @@ class Remitt {
 	//
 	//	Text of XML file.
 	//
-	function RenderPayerXML ( $_procedures, $bc=1, $bs=1, $ch=1 ) {
+	public function RenderPayerXML ( $_procedures, $bc=1, $bs=1, $ch=1 ) {
 		// Sanitize and fold procedures array
 		if (is_array($_procedures)) {
 			foreach ($_procedures AS $k => $v) {
@@ -458,7 +458,7 @@ class Remitt {
 			false);
 
 		// Handle billing service
-		$bcobj = freemed::get_link_rec($bc, 'bcontact');
+		$bcobj = $GLOBALS['sql']->get_link( 'bcontact', $bc );
 		$buffer .= "\n\t<!-- billing contact $bc -->\n\n".
 			"<billingcontact>\n".
 			$this->_tag('name', $bcobj['bcname'], true).
@@ -469,7 +469,7 @@ class Remitt {
 			"</billingcontact>\n\n";
 
 		// Handle billing service
-		$bsobj = freemed::get_link_rec($bs, 'bservice');
+		$bsobj = $GLOBALS['sql']->get_link( 'bservice', $bs );
 		$buffer .= "\n\t<!-- billing service $bs -->\n\n".
 			"<billingservice>\n".
 			$this->_tag('name', $bsobj['bsname'], true).
@@ -480,7 +480,7 @@ class Remitt {
 			"</billingservice>\n\n";
 
 		// Handle clearinghouse
-		$chobj = freemed::get_link_rec($ch, 'clearinghouse');
+		$chobj = $GLOBALS['sql']->get_link( 'clearinghouse', $ch );
 		$buffer .= "\n\t<!-- clearinghouse $ch -->\n\n".
 			"<clearinghouse>\n".
 			$this->_tag('name', $chobj['chname'], true).
@@ -581,7 +581,7 @@ class Remitt {
 	//
 	//	Text of XML file.
 	//
-	function RenderStatementXML ( $_procedures ) {
+	public function RenderStatementXML ( $_procedures ) {
 		// Sanitize and fold procedures array
 		if (is_array($_procedures)) {
 			foreach ($_procedures AS $k => $v) {
@@ -673,7 +673,7 @@ class Remitt {
 		return $buffer;
 	} // end method RenderStatementXML
 
-	function _RenderDiagnosis ( $diagnosis ) {
+	protected function _RenderDiagnosis ( $diagnosis ) {
 		if (!(strpos($diagnosis, ',') === false)) {
 			list ($eoc, $diag) = explode (',', $diagnosis);
 		} else {
@@ -683,8 +683,8 @@ class Remitt {
 		}
 
 		// Get records from keys
-		$e = freemed::get_link_rec($eoc, 'eoc');
-		$d = freemed::get_link_rec($diag, 'icd9');
+		$e = $GLOBALS['sql']->get_link( 'eoc', $eoc );
+		$d = $GLOBALS['sql']->get_link( 'icd9', $diag );
 
 		$buffer .= "<diagnosis id=\"".htmlentities($diagnosis)."\">\n";
 
@@ -702,8 +702,8 @@ class Remitt {
 		return $buffer;
 	} // end method _RenderDiagnosis
 
-	function _RenderFacility ( $facility ) {
-		$f = freemed::get_link_rec($facility, 'facility');
+	protected function _RenderFacility ( $facility ) {
+		$f = $GLOBALS['sql']->get_link( 'facility', $facility );
 		$buffer .= "<facility id=\"".htmlentities($facility)."\">\n";
 
 		$buffer .= $this->_tag('name', $f['psrname'], true);
@@ -719,11 +719,11 @@ class Remitt {
 		return $buffer;
 	} // end method _RenderFacility
 
-	function _RenderInsured ( $insured ) {
-		$i = freemed::get_link_rec($insured, 'coverage');
+	protected function _RenderInsured ( $insured ) {
+		$i = $GLOBALS['sql']->get_link( 'coverage', $insured );
 		$buffer .= "<insured id=\"".htmlentities($insured)."\">\n";
 
-		$p = freemed::get_link_rec($i['covpatient'], 'patient');
+		$p = $GLOBALS['sql']->get_link( 'patient', $i['covpatient'] );
 
 		// Handle not self covered
 		$buffer .= $this->_tag('relationship', $i['covrel'], true);
@@ -757,8 +757,8 @@ class Remitt {
 		return $buffer;
 	} // end method _RenderInsured
 
-	function _RenderPatient ( $patient ) {
-		$p = freemed::get_link_rec($patient, 'patient');
+	protected function _RenderPatient ( $patient ) {
+		$p = $GLOBALS['sql']->get_link( 'patient', $patient );
 		$buffer .= "<patient id=\"".htmlentities($patient)."\">\n";
 
 		$buffer .= $this->_name('name', $p['ptlname'], $p['ptfname'], $p['ptmname']);
@@ -793,8 +793,8 @@ class Remitt {
 		return $buffer;
 	} // end method _RenderPatient
 
-	function _RenderPayer ( $payer ) {
-		$p = freemed::get_link_rec($payer, 'insco');
+	protected function _RenderPayer ( $payer ) {
+		$p = $GLOBALS['sql']->get_link( 'insco', $payer );
 		$buffer .= "<payer id=\"".htmlentities($payer)."\">\n";
 
 		$buffer .= $this->_tag('name', $p['inscoalias'], true);
@@ -823,14 +823,14 @@ class Remitt {
 		return $buffer;		
 	} // end method _RenderPayer
 
-	function _RenderPractice ( $facility ) {
-		$f = freemed::get_link_rec($facility, 'physician');
+	protected function _RenderPractice ( $facility ) {
+		$f = $GLOBALS['sql']->get_link( 'physician', $facility );
 		$buffer .= "<practice id=\"".htmlentities($facility)."\">\n";
 
 		// loop through payers that are in the system
 		foreach ($this->ref['insco'] as $i) {
 			// loop through providers
-			$_i = freemed::get_link_rec($i, 'insco');
+			$_i = $GLOBALS['sql']->get_link( 'insco', $i );
 			$map = unserialize($_i['inscoidmap']);
 			foreach ($this->ref['physician'] as $p) {
 				if ($p and $i) {
@@ -861,8 +861,8 @@ class Remitt {
 		return $buffer;
 	} // end method _RenderPractice
 
-	function _RenderProvider ( $provider ) {
-		$p = freemed::get_link_rec($provider, 'physician');
+	protected function _RenderProvider ( $provider ) {
+		$p = $GLOBALS['sql']->get_link( 'physician', $provider );
 		$buffer .= "<provider id=\"".htmlentities($provider)."\">\n";
 
 		$buffer .= $this->_name('name', $p['phylname'], $p['phyfname'], $p['phymname']);
@@ -878,8 +878,8 @@ class Remitt {
 		return $buffer;		
 	} // end method _RenderProvider
 
-	function _RenderProcedure ( $procedure ) {
-		$p = freemed::get_link_rec($procedure, 'procrec');
+	protected function _RenderProcedure ( $procedure ) {
+		$p = $GLOBALS['sql']->get_link( 'procrec', $procedure );
 
 		$buffer .= "<procedure id=\"".htmlentities($procedure)."\">\n".
 			$this->_tag('cpt4code', freemed::get_link_field($p['proccpt'], 'cpt', 'cptcode'), true).
@@ -918,7 +918,7 @@ class Remitt {
 			case '4': $covnum = 4; break;
 			default:  $covnum = 0; break;
 		}
-		$coverage = freemed::get_link_rec($p['proccov'.$covnum], 'coverage');
+		$coverage = $GLOBALS['sql']->get_link( 'coverage', $p['proccov'.$covnum] );
 		$buffer .= $this->_tag('insuredkey', $p['proccov'.$covnum], true);
 		//print "Should have added $coverage as coverage<br/>\n";
 		$this->_AddDependency('coverage', $p['proccov'.$covnum]);
@@ -935,7 +935,7 @@ class Remitt {
 		}
 		$buffer .= $this->_tag('secondinsuredkey', $p['proccov'.$covnum], true);
 		$this->_AddDependency('coverage', $p['proccov'.$covnum]);
-		$coverage = freemed::get_link_rec($p['proccov'.$covnum], 'coverage');
+		$coverage = $GLOBALS['sql']->get_link( 'coverage', $p['proccov'.$covnum] );
 		$buffer .= $this->_tag('secondpayerkey', $coverage['covinsco'], true);
 		$this->_AddDependency('insco', $coverage['covinsco']);
 
@@ -950,7 +950,7 @@ class Remitt {
 		$this->_AddDependency('insco', $coverage['covinsco']);
 
 		// Figure out type of service
-		$cptobj = freemed::get_link_rec($p['proccpt'], 'cpt');
+		$cptobj = $GLOBALS['sql']->get_link( 'cpt', $p['proccpt'] );
 		$hash = unserialize($cptobj['cpttos']);
 		if ($hash[$coverage['covinsco']] > 0) {
 			$tos = freemed::get_link_field($hash[$coverage['covinsco']], 'tos', 'tosname');
@@ -992,7 +992,7 @@ class Remitt {
 		$buffer .= $this->_date('dateofserviceend', $p['procdt']);
 		$buffer .= $this->_tag('aging', (strtotime(date("Y-m-d")) - strtotime($p['procdt'])) / (60 * 60 * 24), true);
 
-		$e = freemed::get_link_rec($eoc, 'eoc');
+		$e = $GLOBALS['sql']->get_link( 'eoc', $eoc );
 		$buffer .= $this->_tag('ishospitalized', $e['eochospital'] == 1 ? '1' : '0', true);
 		$buffer .= $this->_date('dateofhospitalstart', $e['eochosadmdt']);
 		$buffer .= $this->_date('dateofhospitalend', $e['eochosdischrgdt']);
@@ -1001,13 +1001,11 @@ class Remitt {
 		return $buffer;
 	} // end method RenderProcedure
 
-	function _isPayerX ( $payer, $mod ) {
-		$i = freemed::get_link_rec($payer, 'insco');
+	protected function _isPayerX ( $payer, $mod ) {
+		$i = $GLOBALS['sql']->get_link( 'insco', $payer );
 		$mods = explode (':', $i['inscomod']);
 		if (!is_array($mods)) { $mods = array ( $mods ); }
-		$q = $GLOBALS['sql']->query('SELECT * FROM insmod '.
-			'WHERE insmod = \''.addslashes($mod).'\'');
-		$r = $GLOBALS['sql']->fetch_array($q);
+		$r = $GLOBALS['sql']->queryOne('SELECT * FROM insmod WHERE insmod = \''.addslashes($mod).'\'');
 		foreach ($mods AS $k => $v) {
 			if ($v == $r['id']) {
 				return true;
@@ -1016,12 +1014,12 @@ class Remitt {
 		return false;
 	} // end method _isPayerX
 
-	function _AddDependency($table, $id) {
+	protected function _AddDependency($table, $id) {
 		// Make sure no duplicates
 		$this->ref[$table][$id] = $id;
 	}
 
-	function _addr ( $tag, $a, $c, $s, $z) {
+	protected function _addr ( $tag, $a, $c, $s, $z) {
 		return $this->_tag($tag,
 			"\t".$this->_tag('streetaddress', $a, true).
 			"\t".$this->_tag('city', $c, true).
@@ -1030,7 +1028,7 @@ class Remitt {
 			false);
 	} // end method _addr
 
-	function _date ( $name, $sqlvalue ) {
+	protected function _date ( $name, $sqlvalue ) {
 		list ($y, $m, $d) = explode ('-', $sqlvalue);
 		if (strlen($y) != 4) { $y = '0000'; $m = '00'; $d = '00'; }
 		return $this->_tag($name,
@@ -1040,7 +1038,7 @@ class Remitt {
 			false);
 	} // end method _date
 
-	function _name ( $tag, $l, $f, $m = '' ) {
+	protected function _name ( $tag, $l, $f, $m = '' ) {
 		return $this->_tag($tag,
 			"\t".$this->_tag('last', $l, true).
 			"\t".$this->_tag('first', $f, true).
@@ -1048,7 +1046,7 @@ class Remitt {
 			false);
 	} // end method _name
 
-	function _phone ( $tag, $phone ) {
+	protected function _phone ( $tag, $phone ) {
 		$a = substr($phone, 0, 3);
 		$n = substr($phone, 3, 7);
 		$e = substr($phone, 10, 4);
@@ -1060,7 +1058,7 @@ class Remitt {
 			false);
 	} // end method _phone
 
-	function _tag ( $tag, $value, $inner = false ) {
+	protected function _tag ( $tag, $value, $inner = false ) {
 		return "<".htmlentities($tag).">". ( !$inner ? "\n" : "" ) .
 			( $inner ?  trim(htmlentities(stripslashes($value))) : stripslashes($value) ).
 			"</".htmlentities($tag).">\n";
@@ -1069,7 +1067,7 @@ class Remitt {
 	// Method: _autoserialize
 	//
 	//	Automagically determines what kind of resource this is
-	//	supposed to be and creates a PHP.xmlrpcval object to
+	//	supposed to be and creates a org.freemedsoftware.core.xmlrpcval object to
 	//	wrap it in.
 	//
 	// Parameters:
@@ -1078,9 +1076,9 @@ class Remitt {
 	//
 	// Returns:
 	//
-	//	PHP.xmlrpcval object
+	//	org.freemedsoftware.core.xmlrpcval object
 	//
-	function _autoserialize ( $mixed ) {
+	protected function _autoserialize ( $mixed ) {
 		// Handle already serialized
 		if (is_object($mixed) and method_exists($mixed, 'serialize')) {
 			return $mixed;
@@ -1094,7 +1092,7 @@ class Remitt {
 			}
 			// Determine if struct or array as we return it
 			return CreateObject (
-				'PHP.xmlrpcval',
+				'org.freemedsoftware.core.xmlrpcval',
 				$ele,
 				$this->_is_struct($ele) ? 'struct' : 'array'
 			);
@@ -1102,7 +1100,7 @@ class Remitt {
 			// This is an *awful* way to check for binary data,
 			// and is probably broken in a thousand ways.
 			return CreateObject (
-				'PHP.xmlrpcval',
+				'org.freemedsoftware.core.xmlrpcval',
 				$mixed,
 				'base64'
 			);
@@ -1110,7 +1108,7 @@ class Remitt {
 			// Otherwise, use PHP auto-typing
 			$type = (is_integer($mixed) ? 'int' : gettype($mixed));
 			return CreateObject (
-				'PHP.xmlrpcval',
+				'org.freemedsoftware.core.xmlrpcval',
 				$mixed,
 				$type
 			);
@@ -1137,17 +1135,17 @@ class Remitt {
 	//
 	//	Reply to call as PHP variable.
 	//
-	function _call ( $method, $parameters = NULL, $debug = false ) {
+	protected function _call ( $method, $parameters = NULL, $debug = false ) {
 		// Form proper message object
 		if ($parameters != NULL) {
 			$message = CreateObject(
-				'PHP.xmlrpcmsg',
+				'org.freemedsoftware.core.xmlrpcmsg',
 				$method,
 				( is_array($parameters) ? $parameters : array($parameters) )
 			);
 		} else {
 			$message = CreateObject(
-				'PHP.xmlrpcmsg',
+				'org.freemedsoftware.core.xmlrpcmsg',
 				$method
 			);
 		}
@@ -1190,7 +1188,7 @@ class Remitt {
 	//	Boolean, true if $var is an associative array, false if it
 	//	is not.
 	//
-	function _is_struct ( $var ) {
+	protected function _is_struct ( $var ) {
 		// Catch non-array instance
 		if (!is_array($var)) return false;
 

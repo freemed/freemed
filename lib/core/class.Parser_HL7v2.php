@@ -342,8 +342,7 @@ class Parser_HL7v2 {
 
 	public function pid_to_patient ( $pid_id ) {
 		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."' AND ptarchive=0 ORDER BY id";
-		$result = $GLOBALS['sql']->query($query);
-		$r = @$GLOBALS['sql']->fetch_array($result);
+		$r = $GLOBALS['sql']->queryOne($query);
 		return $r['id'];
 	} // end method pid_to_patient
 

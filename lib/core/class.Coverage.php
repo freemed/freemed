@@ -50,15 +50,13 @@ class Coverage {
 	//	$coverageid - Database table identifier for the
 	//	specified coverage.
 	//
-	function Coverage ($coverageid = "") {
-		if ($coverageid=="" OR $coverageid==0) return false;
+	public function __construct ($coverageid = "") {
+		if ($coverageid=="" OR $coverageid==0) { return false; }
 
 		// Check in the cache
 		if (!isset($GLOBALS['__freemed']['cache']['coverage'][$coverageid])) {
 			// Get record
-			$this->local_record = freemed::get_link_rec (
-				$coverageid, "coverage"
-			);
+			$this->local_record = $GLOBALS['sql']->get_link( 'coverage', $coverageid );
 
 			// Cache it
 			$GLOBALS['__freemed']['cache']['coverage'][$coverageid] = $this->local_record;
@@ -66,15 +64,15 @@ class Coverage {
 			// Retrieve from cache
 			$this->local_record = $GLOBALS['__freemed']['cache']['coverage'][$coverageid];
 		}
-		$this->covpatgrpno = $this->local_record[covpatgrpno];	
-		$this->covpatinsno = $this->local_record[covpatinsno];	
-		$this->covstatus = $this->local_record[covstatus];	
-		$this->covtype = $this->local_record[covtype];	
-		$this->coveffdt = $this->local_record[coveffdt];	
-		$this->covinsco = CreateObject('org.freemedsoftware.core.InsuranceCompany', $this->local_record[covinsco]);	
-		$this->covreldep = $this->local_record[covrel];	
-		$this->id = $this->local_record[id];
-		$this->covpatient = $this->local_record[covpatient];	
+		$this->covpatgrpno = $this->local_record['covpatgrpno'];	
+		$this->covpatinsno = $this->local_record['covpatinsno'];	
+		$this->covstatus = $this->local_record['covstatus'];	
+		$this->covtype = $this->local_record['covtype'];	
+		$this->coveffdt = $this->local_record['coveffdt'];	
+		$this->covinsco = CreateObject('org.freemedsoftware.core.InsuranceCompany', $this->local_record['covinsco']);	
+		$this->covreldep = $this->local_record['covrel'];	
+		$this->id = $this->local_record['id'];
+		$this->covpatient = $this->local_record['covpatient'];	
 		if ($this->covreldep != "S") {
 			// you pass this to the guarantor class
 			$this->covdep = $this->id;
@@ -84,7 +82,7 @@ class Coverage {
 
 	} // end constructor Coverage
 
-	// Method: Coverage->GetProceduresToBill
+	// Method: GetProceduresToBill
 	//
 	//	Returns the list of procedures that should be billed
 	//	based on the information given.
@@ -99,8 +97,7 @@ class Coverage {
 	//
 	//	$forpat - (optional)
 	//
-	function GetProceduresToBill ( $pat=-1, $id=-1, $type=-1, $forpat=0 ) {
-		global $display_buffer;
+	public function GetProceduresToBill ( $pat=-1, $id=-1, $type=-1, $forpat=0 ) {
 		//print "GetProceduresToBill (pat = $pat, id = $id, type = $type, forpat = $forpat)\n";
 
 		if ($forpat == 0) {
@@ -129,8 +126,8 @@ class Coverage {
 				"procclmtp,procauth,proccov1,proccov2,".
 				"procdt";
 		//print "query = \"$query\"\n";
-		$result = $GLOBALS['sql']->query($query);
-		if (!$GLOBALS['sql']->results($result)) {
+		$result = $GLOBALS['sql']->queryAll($query);
+		if (count($result) < 1) {
 			return 0;
 		} else {
 			return $result;
@@ -138,7 +135,7 @@ class Coverage {
 	} // end method GetProceduresToBill
 
 	// Method: get_coverage
-	function get_coverage ( ) {
+	public function get_coverage ( ) {
 		return $this->local_record;
 	} // end method get_coverage
 
@@ -150,14 +147,9 @@ class Coverage {
 	//
 	//	Array of payer id keys
 	//
-	function get_payers ( ) {
-		$query = "SELECT insconame, inscocity, inscostate, id ".
-			"FROM insco ORDER BY insconame, inscocity, ".
-			"inscostate";
-		$result = $GLOBALS['sql']->query( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
-			$payers[] = $r['id'];
-		} // end while there are no more
+	public function get_payers ( ) {
+		$query = "SELECT id FROM insco ORDER BY insconame, inscocity, inscostate";
+		$payers = $GLOBALS['sql']->queryCol( $query );
 		return $payers;
 	} // end method get_payers
 
