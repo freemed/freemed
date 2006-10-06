@@ -191,6 +191,7 @@ function distinct_lookup ( $table, $parameter, $field ) {
 			$return[] = $r[$field].'@'.$r[$field];
 		}
 	}
+	$return[] = $parameter;
 	if ($count >= $limit) { $return[] = " ... "; }
 	return join('|', $return);
 } // end function distinct_lookup
