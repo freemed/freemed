@@ -83,7 +83,7 @@
 			{
 				// we're adding to an array here
 				$ar = $this->me['array'];
-				$ar[] = CreateObject('PHP.xmlrpcval',$val, $type);
+				$ar[] = CreateObject('org.freemedsoftware.core.xmlrpcval',$val, $type);
 				$this->me['array'] = $ar;
 			}
 			else

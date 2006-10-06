@@ -151,7 +151,7 @@
 			xml_set_element_handler($parser, 'xmlrpc_se', 'xmlrpc_ee');
 			xml_set_character_data_handler($parser, 'xmlrpc_cd');
 			xml_set_default_handler($parser, 'xmlrpc_dh');
-//			$xmlrpc_value = CreateObject('PHP.xmlrpcval');
+//			$xmlrpc_value = CreateObject('org.freemedsoftware.core.xmlrpcval');
 
 			$hdrfnd = 0;
 			if ($this->debug)
@@ -162,7 +162,7 @@
 			{
 				error_log('No response received from server.');
 				$r = CreateObject(
-					'PHP.xmlrpcresp',
+					'org.freemedsoftware.core.xmlrpcresp',
 					0,
 					$GLOBALS['xmlrpcerr']['no_data'],
 					$GLOBALS['xmlrpcstr']['no_data']
@@ -177,7 +177,7 @@
 			{
 				$errstr = substr($data, 0, strpos($data, "\n")-1);
 				error_log('HTTP error, got response: ' .$errstr);
-				$r = CreateObject('PHP.xmlrpcresp','', $GLOBALS['xmlrpcerr']['http_error'],
+				$r = CreateObject('org.freemedsoftware.core.xmlrpcresp','', $GLOBALS['xmlrpcerr']['http_error'],
 					$GLOBALS['xmlrpcstr']['http_error'] . ' (' . $errstr . ')');
 				xml_parser_free($parser);
 				return $r;
@@ -226,7 +226,7 @@
 				}
 //				echo $errstr;
 				error_log($errstr);
-				$r = CreateObject('PHP.xmlrpcresp', '', $GLOBALS['xmlrpcerr']['invalid_return'],$GLOBALS['xmlrpcstr']['invalid_return']);
+				$r = CreateObject('org.freemedsoftware.core.xmlrpcresp', '', $GLOBALS['xmlrpcerr']['invalid_return'],$GLOBALS['xmlrpcstr']['invalid_return']);
 				xml_parser_free($parser);
 				return $r;
 			}
@@ -242,7 +242,7 @@
 				// then something odd has happened
 				// and it's time to generate a client side error
 				// indicating something odd went on
-				$r = CreateObject('PHP.xmlrpcresp', '', $GLOBALS['xmlrpcerr']['invalid_return'],$GLOBALS['xmlrpcstr']['invalid_return']);
+				$r = CreateObject('org.freemedsoftware.core.xmlrpcresp', '', $GLOBALS['xmlrpcerr']['invalid_return'],$GLOBALS['xmlrpcstr']['invalid_return']);
 			}
 			else
 			{
@@ -253,11 +253,11 @@
 				{
 					$f  = $v->structmem('faultCode');
 					$fs = $v->structmem('faultString');
-					$r  = CreateObject('PHP.xmlrpcresp',$v, $f->scalarval(), $fs->scalarval());
+					$r  = CreateObject('org.freemedsoftware.core.xmlrpcresp',$v, $f->scalarval(), $fs->scalarval());
 				}
 				else
 				{
-					$r = CreateObject('PHP.xmlrpcresp',$v);
+					$r = CreateObject('org.freemedsoftware.core.xmlrpcresp',$v);
 				}
 			}
 			$r->hdrs = $GLOBALS['_xh'][$parser]['ha']; //split("\r?\n", $GLOBALS['_xh'][$parser]['ha'][1]);

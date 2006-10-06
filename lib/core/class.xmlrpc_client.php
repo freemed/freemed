@@ -121,7 +121,7 @@
 			if(!$fp)
 			{
 				$r = CreateObject(
-					'PHP.xmlrpcresp',
+					'org.freemedsoftware.core.xmlrpcresp',
 					'',
 					$GLOBALS['xmlrpcerr']['http_error'],
 					$GLOBALS['xmlrpcstr']['http_error']
@@ -155,7 +155,7 @@
 			{
 				$this->errstr = 'Write error';
 				return CreateObject(
-					'PHP.xmlrpcresp',
+					'org.freemedsoftware.core.xmlrpcresp',
 					'',
 					$GLOBALS['xmlrpcerr']['http_error'],
 					$GLOBALS['xmlrpcstr']['http_error']
@@ -172,7 +172,7 @@
 			if(!function_exists('curl_init'))
 			{
 				return CreateObject(
-					'PHP.xmlrpcresp',
+					'org.freemedsoftware.core.xmlrpcresp',
 					'',
 					$GLOBALS['xmlrpcerr']['no_ssl'],
 					$GLOBALS['xmlrpcstr']['no_ssl']
@@ -234,7 +234,7 @@
 			{
 				$this->errstr = 'Write error';
 				$resp = CreateObject(
-					'PHP.xmlrpcresp',
+					'org.freemedsoftware.core.xmlrpcresp',
 					'',
 					$GLOBALS['xmlrpcerr']['curl_fail'],
 					$GLOBALS['xmlrpcstr']['curl_fail'] . ': ' . curl_error($curl)
