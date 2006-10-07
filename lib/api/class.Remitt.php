@@ -20,7 +20,7 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: org.freemedsoftware.core.Remitt
+// Class: org.freemedsoftware.api.Remitt
 //
 //	Communication and document creation class for interfacing with
 //	a REMITT server.
@@ -31,9 +31,9 @@ class Remitt {
 	var $_cache; // result cache
 	var $_connection; // XMLRPC connection
 
-	public function __construct ( $server = '127.0.0.1' ) {
+	public function __construct ( ) {
 		$this->protocol = 'http';
-		$this->server = $server;
+		$this->server = freemed::config_value('remitt_server');
 		$this->port = freemed::config_value('remitt_port'); 
 		if (!$this->port) { $this->port = '7688'; }
 		$this->_connection = CreateObject('org.freemedsoftware.core.xmlrpc_client', '/RPC2', $this->server, $this->port);
