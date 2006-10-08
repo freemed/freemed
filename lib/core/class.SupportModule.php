@@ -22,12 +22,12 @@
 
 LoadObjectDependency('org.freemedsoftware.core.BaseModule');
 
-// Class: org.freemedsoftware.core.MaintenanceModule
+// Class: org.freemedsoftware.core.SupportModule
 //
 //	Database table maintenance module superclass. This is descended
 //	from <BaseModule>.
 //
-class MaintenanceModule extends BaseModule {
+class SupportModule extends BaseModule {
 
 	// override variables
 	var $CATEGORY_NAME = "Support Data";
@@ -119,7 +119,7 @@ class MaintenanceModule extends BaseModule {
 	var $distinct_fields;
 
 	// contructor method
-	function MaintenanceModule () {
+	function SupportModule () {
 		// Set reference for itemlist to be parent menu
 		$GLOBALS['_ref'] = 'db_maintenance.php';
 
@@ -130,7 +130,7 @@ class MaintenanceModule extends BaseModule {
 
 		// Call parent constructor
 		parent::__construct();
-	} // end function MaintenanceModule
+	} // end function SupportModule
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -628,7 +628,7 @@ class MaintenanceModule extends BaseModule {
 	//
 	function to_text ( $id, $field='id' ) {
 		if (!$id) { return __("NO RECORD FOUND"); }
-		$r = freemed::get_link_rec($id, $this->table_name);
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $rec );
 		if (!(strpos($this->widget_hash, "##") === false)) {
 			$value = '';
 			$hash_split = explode('##', $this->widget_hash);
@@ -776,6 +776,6 @@ class MaintenanceModule extends BaseModule {
 		return !empty($result);
 	} // end function create_table
 
-} // end class MaintenanceModule
+} // end class SupportModule
 
 ?>
