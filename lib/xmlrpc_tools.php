@@ -37,6 +37,19 @@ function xmlrpc_register ($method, $doc='') {
 	);
 } // end function xmlrpc_register
 
+function xmlrpc_error_handler ( $no, $str, $file, $line, $context ) {
+	$r = CreateObject('org.freemedsoftware.core.xmlrpcresp',
+		CreateObject('org.freemedsoftware.core.xmlrpcval'),
+		10,
+		"${str} (${file}:${line})"
+	);
+	$payload = '<?xml version="1.0"?>' . "\n" . $r->serialize();
+	Header('Content-type: text/xml');
+	Header('Content-length: ' . strlen($payload));
+	print $payload;
+	die();
+}
+
 // Following code is:
 // by Edd Dumbill (C) 1999-2001
 // <edd@usefulinc.com>
