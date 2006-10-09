@@ -366,7 +366,7 @@ class Ledger {
 	//
 	function post_adjustment ( $procedure, $amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -423,7 +423,7 @@ class Ledger {
 	//
 	function post_copay ( $procedure, $amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -480,7 +480,7 @@ class Ledger {
 	//
 	function post_deductable ( $procedure, $amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -540,7 +540,7 @@ class Ledger {
 	function post_fee_adjustment ( $procedure, $coverage,
 				$amount, $comment = '' ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure
@@ -626,7 +626,7 @@ class Ledger {
 		$pay_result = $GLOBALS['sql']->query ( $query );
 
 		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $data['procedure']);
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $data['procedure']);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		$amount_paid = $data['amount'] + $this_procedure['procamtpaid'];
@@ -781,7 +781,7 @@ class Ledger {
 	function post_writeoff ( $procedure, $comment = '' ,
 				$category = WRITEOFF ) {
 		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.core.Procedure', $procedure);
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
 
 		// Derive the patient from the procedure

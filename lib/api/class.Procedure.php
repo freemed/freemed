@@ -20,18 +20,18 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: org.freemedsoftware.core.Procedure
+// Class: org.freemedsoftware.api.Procedure
 class Procedure {
 
 	// Constructor: Procedure
 	//
 	// Parameters:
 	//
-	//	$id - Procedure id
+	//	$id - (optional) Procedure id
 	//
-	function Procedure ( $id ) {
+	public function __construct ( $id = 0 ) {
 		$this->id = $id;
-		$this->local_record = freemed::get_link_rec($id, 'procrec', true);
+		$this->local_record = $GLOBALS['sql']->get_link( 'procrec', $id );
 	} // end constructor Procedure
 
 	// Method: current_balance
@@ -42,7 +42,9 @@ class Procedure {
 	//
 	//	Monetary balance amount.
 	//
-	function current_balance ( ) {
+	function current_balance ( $_id = 0 ) {
+		$id = $_id ? $_id : $this->id;
+
 		$total_payments = 0.00;
 		$total_charges  = 0.00;
 
@@ -50,9 +52,9 @@ class Procedure {
 		$result = $GLOBALS['sql']->query(
 			"SELECT * FROM payrec AS a, procrec AS b ".
 			"WHERE b.id = a.payrecproc AND ".
-			"a.payrecproc = '".addslashes($this->id)."'"
+			"a.payrecproc = '".addslashes($id)."'"
 		);
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
+		foreach ( $result AS $r ) {
 			switch ($r['payreccat']) {
 				case REFUND:
 				case PROCEDURE:
@@ -92,20 +94,16 @@ class Procedure {
 	//
 	//	Boolean, whether payer is associated with procedure.
 	//
-	function check_for_payer ( $proc, $payer ) {
-		if (is_array($proc)) {
+	public function check_for_payer ( $proc, $payer ) {
+		if ( is_array( $proc ) ) {
 			$_proc = $proc;
 		} else {
-			$_proc = freemed::get_link_rec($proc, 'procrec', true);
+			$_proc = $GLOBALS['sql']->get_link( 'procrec', $proc );
 		}
 
 		// If there is no payer, return true
 		if (!$payer) { return true; }
-
 		if ($_proc['proccurcovid'] == $payer) { return true; }
-
-//		print $_proc['id']." != ".$payer."<br/>\n";
-//		return true; // KLUDGE FOR TESTING
 		return false;
 	} // end method
 
@@ -124,7 +122,7 @@ class Procedure {
 	//
 	//	Array of procedure keys
 	//
-	function get_open_procedures_by_date_and_patient ( $patient, $date ) {
+	public function get_open_procedures_by_date_and_patient ( $patient, $date ) {
 		static $_cache;
 		if (!isset($_cache[$patient][$date])) {
 			$query = "SELECT * FROM procrec ".
@@ -132,15 +130,14 @@ class Procedure {
 				( $date ? "procdt='".addslashes($date)."' AND " :
 				"" )." procpatient='".addslashes($patient)."'";
 			//print "query = $query<br/>\n";
-			$result = $GLOBALS['sql']->query ( $query );
-			while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
+			$result = $GLOBALS['sql']->queryAll ( $query );
+			foreach ( $result AS $r ) {
 				$procedures[] = $r;
 			}
 			$_cache[$patient][$date] = $procedures;
 		}
 		return $_cache[$patient][$date];
 	} // end method get_open_procedures_by_date_and_patient
-	
 
 	// Method: get_procedure
 	//
@@ -155,9 +152,9 @@ class Procedure {
 	//
 	//	Associative array containing procedure record information.
 	//
-	function get_procedure ( $id = NULL ) {
+	public function get_procedure ( $id = NULL ) {
 		if ($id != NULL) {
-			return freemed::get_link_rec($id, 'procrec', true);
+			return $GLOBALS['sql']->get_link( 'procrec', $id );
 		} else {
 			return $this->local_record; 
 		}
