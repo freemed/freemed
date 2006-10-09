@@ -63,9 +63,7 @@ class User {
 		// Check for cached copy
 		if (!isset($GLOBALS['__freemed']['cache']['user'][$this->user_number])) {
 			// Retrieve copy
-			$this->local_record = freemed::get_link_rec (
-				$this->user_number, "user"
-			);
+			$this->local_record = $GLOBALS['sql']->get_link ( 'user', $this->user_number );
 
 			// Store in the cache
 			$GLOBALS['__freemed']['cache']['user'][$this->user_number] = $this->local_record;

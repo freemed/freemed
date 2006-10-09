@@ -64,34 +64,6 @@ class BaseModule extends Module {
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
 	} // end constructor BaseModule
 
-	// Method: fax_widget
-	//
-	//	Callback to allow custom fax controls (for addressbook,
-	//	et cetera). By default, this is disabled, and a standard
-	//	text entry is used.
-	//
-	// Parameters:
-	//
-	//	$varname - Name of the variable
-	//
-	//	$id - Record id that is being printed
-	//
-	// Returns:
-	//
-	//	XHTML widget.
-	//
-	function fax_widget ( $varname, $id ) {
-		return html_form::text_widget('fax_number',
-			array( 'length' => '16' )
-		);
-	} // end method fax_widget
-
-	// Method: printaction
-	//
-	//	Basic printing functionality
-	//
-	function printaction ( ) { $this->_print(); }
-
 	// Method: _print
 	//
 	//	Provides basic printing interface

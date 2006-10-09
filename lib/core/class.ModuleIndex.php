@@ -134,7 +134,6 @@ class ModuleIndex {
 	//	$file - Fully qualified file path/name to module file
 	//
 	protected function ScanFile ( $file ) {
-
 		// Determine if this file is indexed or not
 		if ($this->IsIndexed( $file )) {
 			// Skip indexing this file
