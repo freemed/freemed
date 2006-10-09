@@ -1,17 +1,26 @@
 <?php
  // $Id$
- // $Author$
  //
- // $Log: xmlrpc_tools.php,v $
- // Revision 1.3  2002/11/04 13:41:49  rufustfirefly
- // xmlrpc_decode() -> xmlrpc_php_decode() for namespace reasons.
+ // Authors:
+ // 	 Edd Dumbill <edd@usefulinc.com>
+ //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
- // Revision 1.2  2002/11/04 04:05:58  rufustfirefly
- // xmlrpc_encode() -> xmlrpc_php_encode() to avoid conflicts
+ // Copyright (C) 1999-2001 Edd Dumbill
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
- // Revision 1.1  2002/10/17 15:51:02  rufustfirefly
- // Import of XMLRPC server and client pieces (modified from phpgroupware).
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
  //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 // Internal function for preparing raw values for XML-RPC transport
 function xmlrpc_prepare ($value) {
@@ -119,8 +128,8 @@ if (!function_exists('xml_parser_create'))
 	*/
 	function xmlrpcfault($string)
 	{
-		$r = CreateObject('PHP.xmlrpcresp',
-			CreateObject('PHP.xmlrpcval'),
+		$r = CreateObject('org.freemedsoftware.core.xmlrpcresp',
+			CreateObject('org.freemedsoftware.core.xmlrpcval'),
 			$GLOBALS['xmlrpcerr']['unknown_method'],
 			$string
 		);
@@ -210,7 +219,7 @@ if (!function_exists('xml_parser_create'))
 				$GLOBALS['_xh'][$parser]['st'] = '';
 				break;
 			case 'VALUE':
-				$GLOBALS['_xh'][$parser]['st'] .= " CreateObject('PHP.xmlrpcval',"; 
+				$GLOBALS['_xh'][$parser]['st'] .= " CreateObject('org.freemedsoftware.core.xmlrpcval',"; 
 				$GLOBALS['_xh'][$parser]['vt']  = xmlrpcString;
 				$GLOBALS['_xh'][$parser]['ac']  = '';
 				$GLOBALS['_xh'][$parser]['qt']  = 0;
@@ -528,7 +537,7 @@ if (!function_exists('xml_parser_create'))
 	function xmlrpc_php_encode($php_val)
 	{
 		$type = gettype($php_val);
-		$xmlrpc_val = CreateObject('PHP.xmlrpcval');
+		$xmlrpc_val = CreateObject('org.freemedsoftware.core.xmlrpcval');
 
 		switch($type)
 		{
@@ -564,128 +573,6 @@ if (!function_exists('xml_parser_create'))
 		return $xmlrpc_val;
 	}
 
-	// listMethods: either a string, or nothing
-	$GLOBALS['_xmlrpcs_listMethods_sig'] = array(array(xmlrpcArray, xmlrpcString), array(xmlrpcArray));
-	$GLOBALS['_xmlrpcs_listMethods_doc'] = 'This method lists all the methods that the XML-RPC server knows how to dispatch';
-	function _xmlrpcs_listMethods($server, $m)
-	{
-		$v     =  CreateObject('PHP.xmlrpcval');
-		$dmap  = $server->dmap;
-		$outAr = array();
-		for(reset($dmap); list($key, $val) = each($dmap); )
-		{
-			$outAr[] = CreateObject('PHP.xmlrpcval',$key, 'string');
-		}
-		$dmap = $GLOBALS['_xmlrpcs_dmap'];
-		for(reset($dmap); list($key, $val) = each($dmap); )
-		{
-			$outAr[] = CreateObject('PHP.xmlrpcval',$key, 'string');
-		}
-		$v->addArray($outAr);
-		return CreateObject('PHP.xmlrpcresp',$v);
-	}
-
-	$GLOBALS['_xmlrpcs_methodSignature_sig']=array(array(xmlrpcArray, xmlrpcString));
-	$GLOBALS['_xmlrpcs_methodSignature_doc']='Returns an array of known signatures (an array of arrays) for the method name passed. If no signatures are known, returns a none-array (test for type != array to detect missing signature)';
-	function _xmlrpcs_methodSignature($server, $m)
-	{
-		$methName = $m->getParam(0);
-		$methName = $methName->scalarval();
-		if (ereg("^system\.", $methName))
-		{
-			$dmap = $GLOBALS['_xmlrpcs_dmap'];
-			$sysCall = 1;
-		}
-		else
-		{
-			$dmap = $server->dmap;
-			$sysCall = 0;
-		}
-		//	print "<!-- ${methName} -->\n";
-		if (isset($dmap[$methName]))
-		{
-			if ($dmap[$methName]['signature'])
-			{
-				$sigs = array();
-				$thesigs=$dmap[$methName]['signature'];
-				for($i=0; $i<sizeof($thesigs); $i++)
-				{
-					$cursig = array();
-					$inSig  = $thesigs[$i];
-					for($j=0; $j<sizeof($inSig); $j++)
-					{
-						$cursig[] = CreateObject('PHP.xmlrpcval',$inSig[$j], 'string');
-					}
-					$sigs[] = CreateObject('PHP.xmlrpcval',$cursig, 'array');
-				}
-				$r = CreateObject('PHP.xmlrpcresp',CreateObject('PHP.xmlrpcval',$sigs, 'array'));
-			}
-			else
-			{
-				$r = CreateObject('PHP.xmlrpcresp', CreateObject('PHP.xmlrpcval','undef', 'string'));
-			}
-		}
-		else
-		{
-			$r = CreateObject('PHP.xmlrpcresp',0,$GLOBALS['xmlrpcerr']['introspect_unknown'],$GLOBALS['xmlrpcstr']['introspect_unknown']);
-		}
-		return $r;
-	}
-
-	$GLOBALS['_xmlrpcs_methodHelp_sig'] = array(array(xmlrpcString, xmlrpcString));
-	$GLOBALS['_xmlrpcs_methodHelp_doc'] = 'Returns help text if defined for the method passed, otherwise returns an empty string';
-	function _xmlrpcs_methodHelp($server, $m)
-	{
-		$methName = $m->getParam(0);
-		$methName = $methName->scalarval();
-		if (ereg("^system\.", $methName))
-		{
-			$dmap = $GLOBALS['_xmlrpcs_dmap'];
-			$sysCall=1;
-		}
-		else
-		{
-			$dmap = $server->dmap;
-			$sysCall=0;
-		}
-		//	print "<!-- ${methName} -->\n";
-		if (isset($dmap[$methName]))
-		{
-			if ($dmap[$methName]['docstring'])
-			{
-				$r = CreateObject('PHP.xmlrpcresp', CreateObject('PHP.xmlrpcval',$dmap[$methName]['docstring']),'string');
-			}
-			else
-			{
-				$r = CreateObject('PHP.xmlrpcresp', CreateObject('PHP.xmlrpcval'), 'string');
-			}
-		}
-		else
-		{
-			$r = CreateObject('PHP.xmlrpcresp',0,$GLOBALS['xmlrpcerr']['introspect_unknown'],$GLOBALS['xmlrpcstr']['introspect_unknown']);
-		}
-		return $r;
-	}
-
-	$GLOBALS['_xmlrpcs_dmap'] = array(
-		'system.listMethods' => array(
-			'function'  => '_xmlrpcs_listMethods',
-			'signature' => $GLOBALS['_xmlrpcs_listMethods_sig'],
-			'docstring' => $GLOBALS['_xmlrpcs_listMethods_doc']
-		),
-		'system.methodSignature' => array(
-			'function'  => '_xmlrpcs_methodSignature',
-			'signature' => $GLOBALS['_xmlrpcs_methodSignature_sig'],
-			'docstring' => $GLOBALS['_xmlrpcs_methodSignature_doc']
-		),
-		'system.methodHelp' => array(
-			'function'  => '_xmlrpcs_methodHelp',
-			'signature' => $GLOBALS['_xmlrpcs_methodHelp_sig'],
-			'docstring' => $GLOBALS['_xmlrpcs_methodHelp_doc']
-		)
-	);
-
-	$GLOBALS['_xmlrpc_debuginfo'] = '';
 	function xmlrpc_debugmsg($m)
 	{
 		$GLOBALS['_xmlrpc_debuginfo'] .= $m . "\n";
