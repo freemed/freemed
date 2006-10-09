@@ -1,14 +1,35 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 //----- Load neccesary headers
 define ('SESSION_DISABLE', true);
 include_once ("lib/freemed.php");
 
+if ($_SERVER['argc']) {
+	trigger_error('Cannot be called from the command line.', E_USER_ERROR);
+}
+
 //----- Define freemed authorization
 function freemed_basic_auth () {
-	global $sql;
 	//----- Check for authentication
 	$headers = getallheaders(); $authed = false;
 	if (ereg('Basic', $headers['Authorization'])) {
@@ -23,11 +44,10 @@ function freemed_basic_auth () {
 		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
 			"WHERE username='".addslashes($user)."' AND ".
 			"userpassword=MD5('".addslashes($pass)."')";
-		$result = $sql->query($query);
+		$r = $GLOBALS['sql']->queryOne( $query );
 
-		if (@$sql->num_rows($result) == 1) {
+		if ($r['id']) {
 			$authed = true;
-			$r = $sql->fetch_array($result);
 			$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
 			$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
 		} else {
@@ -47,14 +67,13 @@ function freemed_basic_auth () {
 
 function freemed_get_auth ( ) {
 	global $sql;
-	syslog(LOG_INFO, "XMLRPC [get] username = ".$_GET['user']);
+	syslog(LOG_INFO, "vCalendar [get] username = ".$_GET['user']);
 	$query = "SELECT username, userpassword, userrealphy, id FROM user ".
 		"WHERE username='".addslashes($_GET['user'])."' AND ".
 		"userpassword='".addslashes($_GET['hash'])."'";
-	$result = $sql->query($query);
-	if (@$sql->num_rows($result) == 1) {
+	$r = $sql->queryOne( $query );
+	if ($r['id']) {
 		$authed = true;
-		$r = $sql->fetch_array($result);
 		$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
 		$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
 		return true;
@@ -86,10 +105,10 @@ switch ($_REQUEST['type']) {
 	if ($__phy > 0) {
 		// Assume that it's for a physician
 		$ts = mktime (0,0,0, $_REQUEST['m'], $_REQUEST['d'], $_REQUEST['y']);
-		$physician = CreateObject('FreeMED.Physician', $__phy);
+		$physician = CreateObject('org.freemedsoftware.core.Physician', $__phy);
 		$name = $physician->fullName();
 		$criteria = "calphysician='".addslashes($__phy)."' AND ".
-			"caldateof >= '".date("Y-m-d", $ts)."'";
+			"caldateof >= '".addslashes(date("Y-m-d", $ts))."'";
 		$stamp = date("Ymd", $ts) . '.' . $__phy;
 	} else {
 		die('Not enough information provided.');
@@ -99,10 +118,10 @@ switch ($_REQUEST['type']) {
 	default:
 	if ($__phy > 0) {
 		// Assume that it's for a physician
-		$physician = CreateObject('FreeMED.Physician', $__phy);
+		$physician = CreateObject('org.freemedsoftware.core.Physician', $__phy);
 		$name = $physician->fullName();
 		$criteria = "calphysician='".addslashes($__phy)."' AND ".
-			"caldateof >= '".date("Y-m-d")."'";
+			"caldateof >= '".addslashes(date("Y-m-d"))."'";
 		$stamp = date("Ymd") . '.' . $__phy;
 	} else {
 		die('Not enough information provided.');
@@ -115,9 +134,9 @@ Header("Content-Type: text/x-vCalendar");
 Header("Content-Disposition: inline; filename=".$stamp.".vcs");
 
 // Create vCalendar object
-$v = CreateObject('FreeMED.vCalendar', $name, $criteria);
+$v = CreateObject('org.freemedsoftware.core.vCalendar', $name, $criteria);
 
 // Output the information
-echo $v->generate();
+print $v->generate();
 
 ?>
