@@ -91,6 +91,16 @@ class SupportModule extends BaseModule {
 	//	
 	var $widget_hash;
 
+	// Variable: $this->list_view
+	//
+	//	Describe the "listing" view of the format : name => field
+	//
+	// Example:
+	//
+	//	$this->list_view = array ( __("CPT Code") => 'cptcode', __("Description") => 'cptnameint' );
+	//
+	protected $list_view = NULL;
+
 	// Variable: $this->rpc_field_map
 	//
 	//	Specifies the format of the XML-RPC structures returned by
@@ -119,10 +129,7 @@ class SupportModule extends BaseModule {
 	var $distinct_fields;
 
 	// contructor method
-	function SupportModule () {
-		// Set reference for itemlist to be parent menu
-		$GLOBALS['_ref'] = 'db_maintenance.php';
-
+	public function __construct () {
 		// Store the rpc map in the meta information
 		$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
 		$this->_SetMetaInformation('distinct_fields', $this->distinct_fields);
@@ -133,14 +140,26 @@ class SupportModule extends BaseModule {
 	} // end function SupportModule
 
 	// override check_vars method
-	function check_vars ($nullvar = "") {
-		global $module;
-		if (!isset($module)) 
-		{
-			trigger_error("Module not Defined", E_ERROR);
-		}
+	protected function check_vars ($nullvar = "") {
 		return true;
 	} // end function check_vars
+
+	// Method: prepare
+	//
+	//	Prepare data for insertion into SQL using variables mapping. Must be
+	//	overridden per module.
+	//
+	// Parameters:
+	//
+	//	$data - Hash of input data
+	//
+	// Returns:
+	//
+	//	$hash - Hash of sanitized output data
+	//
+	protected function prepare ( $data ) {
+		return $data;
+	} // end protected function prepare
 
 	// function main
 	// - generic main function
@@ -216,27 +235,11 @@ class SupportModule extends BaseModule {
 	//	Should be overridden by any module which needs different
 	//	access checks.
 	//
-	function acl_access ( $type ) { 
+	protected function acl_access ( $type ) { 
 		return freemed::acl_patient('support', $type);
 	} // end method acl_access
 	
-	// function display_message
-	function display_message () {
-		global $display_buffer;
-		// if there's a message, display it
-		if (isset($this->message)) {
-			$display_buffer .= "
-			<p/>
-			<div ALIGN=\"CENTER\">
-			<b>".prepare($this->message)."</b>
-			</div>
-			";
-		}
-	} // end display message
-
-	// ********************** MODULE SPECIFIC ACTIONS *********************
-
-	// Method: _add
+	// Method: add
 	//
 	//	Basic superclass addition routine.
 	//
@@ -252,36 +255,14 @@ class SupportModule extends BaseModule {
 	//	specified, _add will return the id number if successful
 	//	or false if unsuccessful.
 	//
-	// See Also:
-	//	<add>
-	//
-	function _add ($_param = NULL) {
-		//print "param = "; print_r($_param); print "\n";
-		global $display_buffer, $action;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		// Set close on load if we're closing
-		if ($_REQUEST['return'] == 'close') {
-			$GLOBALS['__freemed']['no_template_display'] = true;
-			$GLOBALS['__freemed']['close_on_load'] = true;
+	public function add ( $data ) {
+		if (!$this->acl_access('add') and !$this->defeat_acl) {
+			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
-		// If there are parameters, import them into the global
-		// scope, then set their values
-		if (is_array($_param)) {
-			foreach ($_param AS $k => $v) {
-				global ${$k}; ${$k} = $v;
-				$_REQUEST[$k] = $v;
-				//print "mapped $k to $v\n";
-			}
-		}
+		$GLOBALS['sql']->load_data( $this->prepare ( $data ) );
 
-		// If we're an XML-RPC process, need to re-call the
-		// constructor, as well as execute optional _preadd for
-		// specific things that have to be done beforehand ...
-		$this->_preadd($_param);
-		$this->{get_class($this)}();
-
+		$this->preadd( $data );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->insert_query (
 				$this->table_name,
@@ -289,28 +270,13 @@ class SupportModule extends BaseModule {
 			)
 		);
 
-		if ($result) {
-			$this->message = __("Record added successfully.");
-			if (is_array($_param)) { return $GLOBALS['sql']->last_record($result); }
-		} else {
-			$this->message = __("Record addition failed.");
-			if (is_array($_param)) { return false; }
-		}
-		$action = "";
-		$this->view(); $this->display_message();
-	} // end function _add
-	function _preadd ( $params = NULL ) { }
+		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
+		$this->postadd( $new_id );
+		return $new_id;
+	} // end function add
 
-	// Method: add
-	//
-	//	Wrapper for _add. This exists so that FreeMED modules
-	//	can override the basic add functionality while still
-	//	having access to the low-level functionality.
-	//
-	// See Also:
-	//	<_add>
-	//
-	function add () { $this->_add(); }
+	protected function preadd ( $data ) { }
+	protected function postadd ( $id ) { }
 
 	// Method: _del
 	//
@@ -328,194 +294,55 @@ class SupportModule extends BaseModule {
 	//	depending on whether it is successful.
 	//
 	// See Also:
-	//	<del>
+	//	<predel>
 	//
-	function _del ($_id = -1) {
-		global $display_buffer;
-		global $id, $module, $action;
-
-		// Override with parameter, if present
-		if ($_id > 0) { $id = $_id; }
-
-		$query = "DELETE FROM $this->table_name ".
-			"WHERE id = '".prepare($id)."'";
-		$result = $GLOBALS['sql']->query ($query);
-
-		// If we were passed a parameter, we don't go to doing
-		// anything fancy, just return a true or false.
-		if ($result) {
-			$this->message = __("Record deleted successfully.");
-			if ($_id > 0) { return true; }
-		} else {
-			$this->message = __("Record deletion failed.");
-			if ($_id > 0) { return true; }
+	public function del ( $id ) {
+		if ( !$this->acl_access( 'delete' ) ) {
+			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
-		$action = "";
-		$this->view(); $this->display_message();
-	} // end function _del
 
-	// Method: del
-	//
-	//	Wrapper for _del. This exists so that FreeMED modules
-	//	can override the basic del while still
-	//	having access to the low-level functionality.
-	//
-	// See Also:
-	//	<_del>
-	//
-	function del () { $this->_del(); }
+		$this->predel( $id + 0 );
+		$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id+0 )."'";
+		$result = $GLOBALS['sql']->query ( $query );
+	} // end function del
 
-	// Method: _mod
+	protected function predel ( $id ) { }
+
+	// Method: mod
 	//
 	//	Basic superclass modification routine.
 	//
 	// Parameters:
 	//
-	//	$_param - (optional) Associative array of values. If
-	//	specified, _mod will run quiet. The associative array
-	//	is in the format of sql_name => sql_value.
-	//
-	// Returns:
-	//
-	//	Nothing if there are no parameters. If $_param is
-	//	specified, _mod will return boolean true or false
-	//	depending on whether it is successful.
+	//	$data - 
 	//
 	// See Also:
-	//	<mod>
+	//	<premod>
+	//	<postmod>
 	//
-	function _mod ($_param = NULL) {
-		global $display_buffer, $action;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		// If there are parameters, import them into the global
-		// scope, then set their values
-		if (is_array($_param)) {
-			foreach ($_param AS $k => $v) {
-				global ${$k};
-				${$k} = $v;
-			}
+	public function mod ( $data ) {
+		if ( !$this->acl_access( 'modify' ) ) {
+			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
-		// If we're an XML-RPC process, need to re-call the
-		// constructor ...
-		if ($GLOBALS['XMLRPC_SERVER']) { $this->{$this->get_class()}(); }
+		if ( !$data['id'] ) { return false; }
 
+		$this->premod( $data );
+		$GLOBALS['sql']->load_data( $this->prepare( $data ) );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
 				$this->table_name,
 				$this->variables,
-				array (
-					"id"	=>	$id
-				)
+				array ( "id" => $id )
 			)
 		);
+		$this->postmod( $data );
 
-		// If we were passed a parameter, we don't go to doing
-		// anything fancy, just return a true or false.
-		if ($result) {
-			$this->message = __("Record modified successfully.");
-			if (is_array($_param)) { return true; }
-		} else {
-			$this->message = __("Record modification failed.");
-			if (is_array($_param)) { return false; }
-		}
+		return $result ? true : false;
+	} // end function mod
 
-		$action = "";
-		$this->view(); $this->display_message();
-	} // end function _mod
-
-	// Method: mod
-	//
-	//	Wrapper for _mod. This exists so that FreeMED modules
-	//	can override the basic mod while still
-	//	having access to the low-level functionality.
-	//
-	// See Also:
-	//	<_mod>
-	//
-	function mod() { $this->_mod(); }
-
-	// function add/modform
-	// - wrappers for form
-	function addform () { $this->form(); }
-	function modform () { $this->form(); }
-
-	// Method: form
-	//
-	//	Superclass stub for basic add/modify form capabilities.
-	//	Performs no useful task, and should be overridden with
-	//	the methods producing an addition/modification form.
-	//
-	function form () {
-		global $display_buffer;
-		global $action, $id, $sql;
-
-		if (is_array($this->form_vars)) {
-			foreach ($this->form_vars AS $k => $v) { global ${$v}; }
-		} // end if is array
-
-		switch ($action) {
-			case "addform":
-				break;
-
-			case "modform":
-				$r = freemed::get_link_rec($id, $this->table_name);
-				foreach ($r AS $k => $v) {
-					global ${$k};
-					${$k} = stripslashes($v);
-				}
-				break;
-		} // end of switch action
-		$display_buffer .= "<form method=\"post\">\n".
-			"<input type=\"hidden\" name=\"action\" value=\"".
-				( $action == "addform" ? "add" : "mod" )."\" />\n".
-			"<input type=\"hidden\" name=\"module\" ".
-				"value=\"".prepare(get_class($this))."\" />\n".
-			"<input type=\"hidden\" name=\"return\" ".
-				"value=\"".prepare($_REQUEST['return'])."\" />\n".
-			( $action == "modform" ? "<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\" />\n" : "" );
-		$display_buffer .= html_form::form_table($this->generate_form());
-		$display_buffer .= "<div align=\"center\">\n".
-			"<input type=\"submit\" name=\"__submit\" value=\"".(
-				$action == "addform" ?
-					__("Add") :
-					__("Modify")
-				)."\" class=\"button\" />\n".
-			"<input type=\"submit\" name=\"__submit\" value=\"".__("Cancel")."\" class=\"button\" />\n".
-			"</div>\n".	
-			"</form>\n";
-	} // end function form
-
-	// Method: generate_form
-	//
-	//	Returns an array of form elements to be passed to
-	//	<html_form::form_table> which are to be used in an add or
-	//	modify form. This should be overridden, and has no use
-	//	if <form> is overridden.
-	//
-	function generate_form ( ) {
-		die("generate form should never be called without being overridden");
-	} // end method generate_form
-
-	// function view
-	// - view stub
-	function view () {
-		global $display_buffer;
-		$display_buffer .= freemed_display_itemlist (
-			$GLOBALS['sql']->query (
-				"SELECT ".$this->order_field." ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions()." ".
-				"ORDER BY ".$this->order_field
-			),
-			"module_loader.php",
-			$this->form_vars,
-			array ("", __("NO DESCRIPTION")),
-			"",
-			"t_page"
-		);
-	} // end function view
+	private function premod ( $data ) { }
+	private function postmod ( $data ) { }
 
 	// Method: picklist
 	//
@@ -551,9 +378,7 @@ class SupportModule extends BaseModule {
 		//syslog(LOG_INFO, $query);
 		$result = $GLOBALS['sql']->query($query);
 		if (!$GLOBALS['sql']->results($result)) {
-			return CreateObject('PHP.xmlrpcresp',
-				CreateObject('PHP.xmlrpcval', 'none', 'string')
-			);
+			return '';
 		}
 		return rpc_generate_sql_hash(
 			$this->table_name,
@@ -587,8 +412,7 @@ class SupportModule extends BaseModule {
 		if (!$found) { return false; }
 
 		// Parse distinct_values and return an array
-		$x = $GLOBALS['sql']->distinct_values($this->table_name, $field);
-		foreach ($x AS $v) { $r[] = $v; }
+		$r = $GLOBALS['sql']->distinct_values($this->table_name, $field);
 		return $r;
 	} // end method distinct
 
@@ -606,10 +430,10 @@ class SupportModule extends BaseModule {
 	//
 	//	Textual version of field
 	//
-	function get_field ( $id, $field ) {
+	protected function get_field ( $id, $field ) {
 		if (!$id) { return __("NO RECORD FOUND"); }
-		$r = freemed::get_link_rec($id, $this->table_name);
-		return $r[$field];	
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		return $r[$field];
 	} // end method get_field
 
 	// Method: to_text
@@ -626,7 +450,7 @@ class SupportModule extends BaseModule {
 	//
 	//	Textual version of record
 	//
-	function to_text ( $id, $field='id' ) {
+	public function to_text ( $id, $field='id' ) {
 		if (!$id) { return __("NO RECORD FOUND"); }
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $rec );
 		if (!(strpos($this->widget_hash, "##") === false)) {
@@ -634,9 +458,9 @@ class SupportModule extends BaseModule {
 			$hash_split = explode('##', $this->widget_hash);
 			foreach ($hash_split AS $_k => $_v) {
 				if (!($_k & 1)) {
-					$value .= prepare($_v);
+					$value .= stripslashes($_v);
 				} else {
-					$value .= prepare($r[$_v]);
+					$value .= stripslashes($r[$_v]);
 				}
 			}
 		} else {
@@ -645,135 +469,37 @@ class SupportModule extends BaseModule {
 		return $value;
 	} // end method to_text
 
-	// Method: widget
-	//
-	//	Generic widget code to allow a picklist-based widget for
-	//	simple modules. Should be overridden for more complex tasks.
-	//
-	//	This function uses $this->widget_hash, which contains field
-	//	names surrounded by '##'s.
-	//
-	// Parameters:
-	//
-	//	$varname - Name of the variable that the widget's data is
-	//	passed in.
-	//
-	//	$conditions - (optional) Additional clauses for SQL WHERE.
-	//	defaults to none.
-	//
-	//	$field - (optional) Field to return as value. Defaults to
-	//	id.
-	//
-	//	$options - (optional) Options to pass to 
-	//	html_form::select_widget
-	//	* multiple - Pass a size value for this to be a multiple
-	//	  selection widget
-	//
-	// Returns:
-	//
-	//	XHTML-compliant picklist widget.
-	//
-	function widget ( $varname, $conditions = false, $field = 'id', $options = NULL ) {
-		$threshhold = 20;
-
-		// Check for count
-		$c_query = "SELECT COUNT(*) AS my_count ".
-			"FROM ".$this->table_name." ".
-			( $conditions ? "WHERE ( ".$conditions." ) " : "" );
-		$c_result = $GLOBALS['sql']->query($c_query);
-		$c_res = $GLOBALS['sql']->fetch_array($c_result);
-		if ($c_res['my_count'] > $threshhold) {
-			// Use Ajax "widget" instead
-			include_once(freemed::template_file('ajax.php'));
-			return ajax_widget($varname, get_class($this), $this, $field);
-		}
-		$query = "SELECT * FROM ".$this->table_name." WHERE ( 1 = 1) ".
-			( $conditions ? "AND ( ".$conditions." ) " : "" ).
-			"ORDER BY ".$this->order_field;
-		$result = $GLOBALS['sql']->query($query);
-		if (!$options['multiple']) { $return[__("NONE SELECTED")] = ""; }
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
-			if (!(strpos($this->widget_hash, "##") === false)) {
-				$key = '';
-				$hash_split = explode('##', $this->widget_hash);
-				foreach ($hash_split AS $_k => $_v) {
-					if (!($_k & 1)) {
-						$key .= prepare($_v);
-					} else {
-						$key .= prepare($r[$_v]);
-					}
-				}
-			} else {
-				$key = $this->widget_hash;
-			}
-			$return[$key] = $r[$field];
-		}
-		if (!$options['multiple']) {
-			return html_form::select_widget($varname, $return, $options);
-		} else {
-			// Process multiple
-			global ${$varname};
-			$buffer .= "<select NAME=\"".$varname."[]\" SIZE=\"".
-				($options['multiple']+0)."\" ".
-				"MULTIPLE=\"multiple\">\n";
-			foreach ($return AS $k => $v) {
-				$selected = false;
-				if (is_array(${$varname})) {
-					foreach (${$varname} AS $_v) {
-						if ($_v == $v) {
-							$selected = true;
-						}
-					}
-				} else {
-					if (${$varname} == $v) {
-						$selected = true;
-					}
-				}
-				$buffer .= "<option VALUE=\"".prepare($v)."\" ".
-					( $selected ? "SELECTED" : "" ).">".
-					prepare($k)."</option>\n";
-			}
-			$buffer .= "</select>\n";
-			return $buffer;
-		}
-	} // end method widget
-
 	// Method: _setup
 	//
 	//	Internal method called by the module superclass, which
 	//	executes initial table creation from <create_table> and
 	//	initial data import from <freemed_import_stock_data>.
 	//
-	function _setup () {
+	public function _setup () {
 		global $display_buffer;
-		if (!$this->create_table()) return false;
+		if (!$this->create_table()) { return false; }
 		return freemed_import_stock_data ($this->table_name);
 	} // end function _setup
 
 	// Method: create_table
 	//
 	//	Creates the initial table definition required by this
-	//	module to function properly. Relies on the
-	//	table_definition class variable, and will not execute
-	//	if it is not present.
+	//	module to function properly. Relies on the existance of
+	//	data/schema/VERSION/TABLENAME.sql
 	//
 	// Returns:
 	//
 	//	Boolean, false if failed.
 	//
-	function create_table () {
-		global $display_buffer;
-		if (!isset($this->table_definition)) return false;
-		$query = $GLOBALS['sql']->create_table_query(
-			$this->table_name,
-			$this->table_definition,
-			( is_array($this->table_keys) ?
-				array_merge(array("id"), $this->table_keys) :
-				array("id")
-			)
-		);
-		$result = $GLOBALS['sql']->query ($query);
-		return !empty($result);
+	protected function create_table ( ) {
+		// Check for data/schema/(version)/(table_name).sql
+		$path = dirname(__FILE__).'/../../data/schema/'.VERSION.'/'.$this->table_name.'.sql';
+		if ( file_exists ( $path ) ) {
+			$query = $GLOBALS['sql']->query ( readfile ( $path ) );
+			return $query ? true : false;
+		} else {
+			return false;
+		}
 	} // end function create_table
 
 } // end class SupportModule

@@ -224,14 +224,22 @@ class EMRModule extends BaseModule {
 		return $locked ? true : false;
 	} // end function locked
 
-	protected function prepare ( ) {
-		if (!isset($this->this_patient)) {
-			$this->this_patient = CreateObject('org.freemedsoftware.core.Patient', $patient);
-		}
-		if (!isset($this->this_user)) {
-			$this->this_user    = CreateObject('org.freemedsoftware.core.User');
-		}
-	}
+	// Method: prepare
+	//
+	//	Prepare data for insertion into SQL using variables mapping. Must be
+	//	overridden per module.
+	//
+	// Parameters:
+	//
+	//	$data - Hash of input data
+	//
+	// Returns:
+	//
+	//	$hash - Hash of sanitized output data
+	//
+	protected function prepare ( $data ) {
+		return $data;
+	} // end protected function prepare
 
 	// Method: additional_move
 	//
@@ -295,11 +303,11 @@ class EMRModule extends BaseModule {
 	//	$data -
 	//
 	public function add ( $data ) {
-		if (!$this->acl_access('modify', $patient)) {
+		if ( !$this->acl_access( 'add', $patient ) ) {
 			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 		}
 
-		$GLOBALS['sql']->load_data( $data );
+		$GLOBALS['sql']->load_data( $this->prepare ( $data ) );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->insert_query (
 				$this->table_name,
@@ -318,6 +326,10 @@ class EMRModule extends BaseModule {
 	//	$id - Record id
 	//
 	public function del ( $id ) {
+		if ( !$this->acl_access( 'delete', $patient ) ) {
+			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+		}
+
 		// If there is an override ...
 		if (!freemed::lock_override()) {
 			if ($this->locked($id)) return false;
@@ -330,18 +342,26 @@ class EMRModule extends BaseModule {
 
 	// Method: mod
 	public function mod ( $data ) {
+		if ( !$this->acl_access( 'modify', $patient ) ) {
+			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+		}
+
 		if (!$data['id']) { return false; }
 
-		// Check for record locking
+		// Check for modification locking
 		if (!freemed::lock_override()) {
 			if ($this->locked($data['id'])) { return false; }
 		}
+
+		// Handle row-level locking mechanism
 		$lock = CreateObject('org.freemedsoftware.core.RecordLock', $this->table_name);
-		if ($lock->IsLocked($data['id'])) {
+		if ( $lock->IsLocked( $data['id'] ) ) {
 			return false;
+		} else {
+			$lock->LockRock( $data['id'] );
 		}
 
-		$GLOBALS['sql']->load_data ( $data );
+		$GLOBALS['sql']->load_data( $this->prepare ( $data ) );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
 				$this->table_name,
@@ -353,24 +373,10 @@ class EMRModule extends BaseModule {
 		);
 
 		// Unlock row, since update is done
-		$__lock->UnlockRow( $data['id'] );
+		$lock->UnlockRow( $data['id'] );
 
-		if ($result) {
-			$this->message = __("Record modified successfully.");
-			if (is_array($_param)) { return true; }
-		} else {
-			$this->message = __("Record modification failed.");
-			if (is_array($_param)) { return false; }
-		}
-
-		// Check for return to management screen
-		if ($GLOBALS['return'] == 'manage') {
-			global $refresh, $patient;
-			$refresh = "manage.php?id=".urlencode($patient);
-			Header('Location: '.$refresh);
-			die();
-		}
-	} // end function _mod
+		return $result ? true : false;
+	} // end public function mod
 
 	// Method: lock
 	//
@@ -379,6 +385,10 @@ class EMRModule extends BaseModule {
 	//	$id - Record id
 	//
 	public function lock ( $id ) {
+		if ( !$this->acl_access( 'lock', $patient ) ) {
+			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
+		}
+
 		// Check for record locking
 		if ($this->locked( $id )) { return false; }
 
@@ -398,9 +408,9 @@ class EMRModule extends BaseModule {
 	} // end public function lock
 
 	// Method: _setup
-	protected function _setup ( ) {
+	public function _setup ( ) {
 		if (!$this->create_table()) { return false; }
-		return freemed_import_stock_data ($this->table_name);
+		return freemed_import_stock_data ( $this->table_name );
 	} // end function _setup
 
 	// Method: create_table
@@ -451,16 +461,15 @@ class EMRModule extends BaseModule {
 			( $conditions ? " AND ( ".$conditions." ) " : "" ).
 			( $this->order_fields ? "ORDER BY ".$this->order_fields : "" );
 		$result = $GLOBALS['sql']->queryAll( $query );
-		$return[__("NONE SELECTED")] = "";
 		foreach ( $result AS $r ) {
 			if (!(strpos($this->widget_hash, "##") === false)) {
 				$key = '';
 				$hash_split = explode('##', $this->widget_hash);
 				foreach ($hash_split AS $_k => $_v) {
 					if (!($_k & 1)) {
-						$key .= prepare($_v);
+						$key .= stripslashes($_v);
 					} else {
-						$key .= prepare($r[$_v]);
+						$key .= stripslashes($r[$_v]);
 					}
 				}
 			} else {
@@ -471,7 +480,7 @@ class EMRModule extends BaseModule {
 		return $return;
 	} // end method picklist
 
-	// Method: _recent_record
+	// Method: recent_record
 	//
 	//	Return most recent record, possibly qualified by a
 	//	particular date.
