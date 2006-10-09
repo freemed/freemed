@@ -140,7 +140,7 @@ class SupportModule extends BaseModule {
 	} // end function SupportModule
 
 	// override check_vars method
-	protected function check_vars ($nullvar = "") {
+	public function check_vars ($nullvar = "") {
 		return true;
 	} // end function check_vars
 

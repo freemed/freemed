@@ -480,6 +480,29 @@ class EMRModule extends BaseModule {
 		return $return;
 	} // end method picklist
 
+	protected function qualified_query ( $patient, $items = NULL ) {
+		if (is_array($this->summary_query_link)) {
+			foreach ($this->summary_query_link AS $my_k => $my_v) {
+				// Format: field => table_name
+				$_from[] = "LEFT OUTER JOIN ${my_v} ON ${my_v}.id = ".$this->table_name.'.'.$my_k;
+			}
+			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
+		}
+
+		// get last $items results
+		$query = "SELECT *".
+			( (count($this->summary_query)>0) ? 
+			",".join(",", $this->summary_query)." " : " " ).
+			"FROM ".$this->table_name." ".
+			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
+			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
+			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC ".
+			( $items ? "LIMIT ".addslashes($items) : '' );
+
+		return $query;
+	} // end protected function qualified_query
+
 	// Method: recent_record
 	//
 	//	Return most recent record, possibly qualified by a
