@@ -1,26 +1,39 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class UnfiledFaxes extends MaintenanceModule {
+class UnfiledFaxes extends SupportModule {
 
 	var $MODULE_NAME = "Unfiled Faxes";
 	var $MODULE_VERSION = "0.1.1";
-	var $MODULE_AUTHOR = "jeff@ourexchange.net";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "edcf764c-1c99-4abd-924a-39d795541b44";
 	var $PACKAGE_MINIMUM_VERSION = "0.7.0";
 
 	var $table_name = 'unfiledfax';
 
-	function UnfiledFaxes ( ) {
+	public function __construct ( ) {
 		// __("Unfiled Faxes")
-		$this->table_definition = array (
-			'uffdate'      => SQL__DATE, // date received
-			'ufffilename'  => SQL__VARCHAR(150), // temp file name
-			'id' => SQL__SERIAL
-		);
 
 		// Add main menu notification handlers
 		$this->_SetHandler('MenuNotifyItems', 'menu_notify');
@@ -38,439 +51,148 @@ class UnfiledFaxes extends MaintenanceModule {
 				'"uffax_user", fm_join_from_array($uffax_user))'
 			)
 		);
+	
+		$this->list_view = array (
+			__("Date")        => "uffdate",
+			__("File name")   => "ufffilename"
+		);
 		
 		// Call parent constructor
-		$this->MaintenanceModule();
+		parent::__construct();
 	} // end constructor UnfiledFaxes
 
-	function view ( ) {
-		global $display_buffer, $sql, $action;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-		if ($_REQUEST['condition']) { unset($condition); }
-		// Check for "view" action (actually display)
-                if ($_REQUEST['action']=="view") {
-			if (!($_REQUEST['submit_action'] == __("Cancel"))) {
-                        	$this->display();
-				return false;
-			} else {
-				if ($_REQUEST['id']) {
-					// Unlock
-					$__lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
-					$__lock->UnlockRow( $_REQUEST['id'] );
-				}
-			}
-                }
-		$query = "SELECT * FROM ".$this->table_name." ".
-                        freemed::itemlist_conditions(true)." ".
-                        ( $condition ? 'AND '.$condition : '' )." ".
-                        "ORDER BY uffdate";
-                $result = $sql->query ($query);
-
-                $display_buffer .= freemed_display_itemlist(
-                        $result,
-                        $this->page_name,
-                        array (
-                                __("Date")        => "uffdate",
-                                __("File name")   => "ufffilename"
-                        ), // array
-                        array (
-                                "",
-                                __("NO DESCRIPTION")
-                        ),
-                        NULL, NULL, NULL,
-                        ITEMLIST_VIEW | ITEMLIST_DEL
-                );
-                $display_buffer .= "\n<p/>\n";
-	} // end method view
-
-	function display ( ) {
-		global $display_buffer, $id;
-
-		// Check for "lock"
-		$lock = CreateObject('_FreeMED.RecordLock', $this->table_name);
-		if ($lock->IsLocked($_REQUEST['id'])) {
-			trigger_error(__("This record is currently in use."), E_USER_ERROR);
-		} else {
-			$lock->LockRow( $_REQUEST['id'] );
-		}
-
-		switch ($_REQUEST['submit_action']) {
-			case __("Split Batch"):
-			$this->batch_split_screen();
-			return false;
-			break;
-
-			case __("Split"):
-			$this->batch_split();
-			return false;
-			break;
-			
-			case __("Send to Provider"):
-			case __("Send to Provider without First Page"):
-			$this->mod();
-			return false;
-			break;
-
-			case __("File Directly"):
-			$new_id = $this->mod_direct();
-			return false;
-			break;
-
-			case __("File Directly without First Page"):
-			$new_id = $this->mod_direct(-1, true);
-			return false;
-			break;
-
-			case __("Delete"):
-			$this->del();
-			return false;
-			break;
-
-			case "pageview":
-			$this->get_pageview();
-			return false;
-			break;
-		}
-
-		$result = $GLOBALS['sql']->query("SELECT * FROM ".
-			$this->table_name." WHERE id='".addslashes($_REQUEST['id'])."'");
-		$r = $GLOBALS['sql']->fetch_array($result);
-		if (!$_REQUEST['been_here']) {
-			global $date;
-			$date = $r['uffdate'];
-		}
-		$display_buffer .= "
-		<!-- Javascript for form validation -->
-		<script language=\"javascript\">
-		function validate ( form ) {
-			if (!validateField(form.type, \"".__("Type of Document")."\")) return false;
-			if (!validateField(form.physician, \"".__("Provider")."\")) return false;
-			if (!validateField(form.patient, \"".__("Patient")."\")) return false;
-		}
-		
-		function validateField (field, label) {
-			var result = true;
-			if ((field.value == \"\") || (field.value == \"0\")) {
-				alert(\"".__("You must enter a value for:")." '\" + label + \"'\");
-				field.focus();
-				result = false;
-			}
-			return result;
-		}
-		</script>
-		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\" id=\"myform\">
-		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
-		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
-		<input type=\"hidden\" name=\"action\" value=\"view\"/>
-		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
-		<div align=\"center\">
-		".html_form::form_table(array(
-			__("Date") => fm_date_entry('date'),
-			__("Patient") => freemed::patient_widget("patient"),
-			__("Physician") => freemed_display_selectbox ($GLOBALS['sql']->query("SELECT * FROM physician WHERE phyref='no' ORDER BY phylname,phyfname"), "#phylname#, #phyfname#", "physician"),
-			__("Type") => module_function(
-				'ScannedDocuments',
-				'tc_widget',
-				array('type')
-			),
-			__("Note") => html_form::text_widget("note", array('length'=>150)),
-			__("Notify") => freemed_display_selectbox(
-				$GLOBALS['sql']->query(
-					"SELECT * FROM user ".
-					"WHERE username != 'admin' ".
-					"ORDER BY userdescrip"
-					),
-				"#username# (#userdescrip#)",
-				"notify"
-			),
-			__("Fax Confirmation #") => html_form::text_widget("faxback"),
-			__("Flip") => "<input type=\"checkbox\" name=\"flip\" value=\"1\" />"
-		))."
-		</div>
-		<div align=\"center\">
-		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"return validate(this.form);\" ".
-		"class=\"button\" value=\"".__("Send to Provider")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"if (confirm('".addslashes(__("Are you sure that this fax contains a cover sheet?"))."')) { return validate(this.form); } else { return false; }\" ".
-		"class=\"button\" value=\"".__("Send to Provider without First Page")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"return validate(this.form);\" ".
-		"class=\"button\" value=\"".__("File Directly")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"if (confirm('".addslashes(__("Are you sure that this fax contains a cover sheet?"))."')) { return validate(this.form); } else { return false; }\" ".
-		"class=\"button\" value=\"".__("File Directly without First Page")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"class=\"button\" value=\"".__("Split Batch")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"class=\"button\" value=\"".__("Cancel")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"onClick=\"if (confirm('".addslashes(__("Are you sure that you want to permanently delete this fax?"))."')) { this.form.submit(); return true; } else { return false; }\" ".
-		"class=\"button\" value=\"".__("Delete")."\"/>
-		</div>
-		<br/><br/><br/>
-		<div align=\"center\">
-                <embed SRC=\"data/fax/unfiled/".$r['ufffilename']."\"
-		BORDER=\"0\"
-		FLAGS=\"width=100% height=100% passive=yes toolbar=yes keyboard=yes zoom=stretch\"
-                PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-                TYPE=\"image/x.djvu\" WIDTH=\"".
-		( $GLOBALS['__freemed']['Mozilla'] ? '800' : '100%' ).
-		"\" HEIGHT=\"800\"></embed>
-		</div>
-
-		</form>
-		";
-	} // end method display
-
-	// Delete method
-	function del () {
-		$id = $_REQUEST['id'];
-		$rec = freemed::get_link_rec($id, $this->table_name);
+	protected function predel ( $id ) {
+		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = freemed::secure_filename($rec['ufffilename']);
 
 		// Remove file name
 		unlink('data/fax/unfiled/'.$filename);
-
-		// Insert new table query in unread
-		$this->_del($id);
-
-		global $refresh;
-		$refresh = $this->page_name."?module=".get_class($this);
-		template_display();
 	} // end method del
 
-	// Modify method
-	function mod () {
-		$id = $_REQUEST['id'];
-		$rec = freemed::get_link_rec($id, $this->table_name);
-		$filename = freemed::secure_filename($rec['ufffilename']);
+	protected function premod ( $data ) {
+		$id = $data['id'];
+		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$filename = freemed::secure_filename( $rec['ufffilename'] );
 
 		// Catch multiple people using the same fax
 		if (!file_exists('data/fax/unfiled/'.$filename)) {
 			trigger_error(__("Fax file does not exist!"));
 		}
 
-		if ($_REQUEST['flip'] == 1) {
+		if ($data['flip'] == 1) {
 			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/fax/unfiled/${filename}\"";
-			`$command`;
-			$GLOBALS['display_buffer'] .= __("Flipped fax.")."<br/>\n";
+			system("$command");
 		}
 
-		if (!empty($_REQUEST['faxback'])) { $this->faxback(); }
+		if (!empty($data['faxback'])) {
+			$this->faxback( $data['id'], $data['faxback'] );
+		}
 
-		if ($_REQUEST['notify']+0 > 0) {
-			$msg = CreateObject('_FreeMED.Messages');
+		if ($data['notify']+0 > 0) {
+			$msg = CreateObject('org.freemedsoftware.api.Messages');
 			$msg->send(array(
-				'patient' => $_REQUEST['patient'],
-				'user' => $_REQUEST['notify'],
+				'patient' => $data['patient'],
+				'user' => $data['notify'],
 				'urgency' => 4,
 				'text' => __("Fax received for patient").
-					" (".$_REQUEST['note'].")"
+					" (".$data['note'].")"
 			));
 		}
 
 		// If we're removing the first page, do that now
-		if ($_REQUEST['submit_action'] == __("Send to Provider without First Page")) {
-			$command = "/usr/bin/djvm -d \"data/fax/unfiled/".
-				$filename."\" 1";
-			`$command`;
-			$GLOBALS['display_buffer'] .= __("Removed first page.")."<br/>\n";
+		if ($data['withoutfirstpage']) {
+			$command = "/usr/bin/djvm -d ".escapeshellarg("data/fax/unfiled/${filename}")." 1";
+			system("$command");
 		}
 
 		// Move actual file to new location
 		//echo "mv data/fax/unfiled/$filename data/fax/unread/$filename -f";
-		if ($filename) { `mv "data/fax/unfiled/$filename" "data/fax/unread/$filename" -f`; }
+		if ($filename) { system('mv '.escapeshellarg("data/fax/unfiled/${filename}").' '.escapeshellarg("data/fax/unread/${filename}").' -f'); }
 
-		// Insert new table query in unread
-		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
-			'unreadfax',
-			array (
-				"urfdate" => fm_date_assemble('date'),
-				"urffilename" => $filename,
-				"urfpatient" => $_REQUEST['patient'],
-				"urfphysician" => $_REQUEST['physician'],
-				"urftype" => $_REQUEST['type'],
-				"urfnote" => $_REQUEST['note']
-			)
-		));
-		$new_id = $GLOBALS['sql']->last_record($result);
-
-		$GLOBALS['display_buffer'] .= __("Moved fax to unread box.");
-		$GLOBALS['display_buffer'] .= '<p>'.
-			'<a href="'.$this->page_name.'?module='.get_class($this).'" class="button">'.__("File Another Fax").'</a>'.
-			'</p>';
-
-		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." ".
-			"WHERE id='".addslashes($id)."'");
-
-		// Refresh to unfiled faxes main screen
-		global $refresh;
-		$refresh = $this->page_name . "?".
-			"module=".urlencode(get_class($this));
-
-		return $new_id;
-	} // end method mod
-
-	function mod_direct ($_id = -1, $remove_first = false) {
-		$id = $_REQUEST['id'];
-		$rec = freemed::get_link_rec($id, $this->table_name);
-		$filename = freemed::secure_filename($rec['ufffilename']);
-
-		// Catch multiple people using the same fax
-		if (!file_exists('data/fax/unfiled/'.$filename)) {
-			trigger_error(__("Fax file does not exist!"));
-		}
-
-		if ($_REQUEST['flip'] == 1) {
-			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/fax/unfiled/${filename}\"";
-			`$command`;
-			$GLOBALS['display_buffer'] .= __("Flipped fax.")."<br/>\n";
-		}
-
-		if (!empty($_REQUEST['faxback'])) { $this->faxback(); }
-
-		if ($_REQUEST['notify']+0 > 0) {
-			$msg = CreateObject('_FreeMED.Messages');
-			$msg->send(array(
-				'patient' => $_REQUEST['patient'],
-				'user' => $_REQUEST['notify'],
-				'urgency' => 4,
-				'text' => __("Fax received for patient").
-					" (".$_REQUEST['note'].")"
-			));
-		}
-
-		if ($remove_first) {
-			$command = "/usr/bin/djvm -d ".
-				"\"".dirname(dirname(__FILE__))."/".
-				"data/fax/unfiled/".
-				$filename."\" 1";
-			`$command`;
-			$GLOBALS['display_buffer'] .= __("Removed first page.")."<br/>\n";
-		}
-
-		// Extract type and category
-		list ($type, $cat) = explode('/', $_REQUEST['type']);
+		if ($data['filedirectly']) {
+			// Extract type and category
+			list ($type, $cat) = explode('/', $data['type']);
 		
-		// Insert new table query in unread
-		$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
-			'images',
-			array (
-				"imagedt" => fm_date_assemble('date'),
-				"imagepat" => $_REQUEST['patient'],
-				"imagetype" => $type,
-				"imagecat" => $cat,
-				"imagedesc" => $_REQUEST['note'],
-				"imagephy" => $_REQUEST['physician'],
-				"imagereviewed" => 0
-			)
-		));
-		$new_id = $GLOBALS['sql']->last_record($query, 'images');
-
-		$new_filename = freemed::image_filename(
-			freemed::secure_filename($_REQUEST['patient']),
-			$new_id,
-			'djvu',
-			true
-		);
-
-		$query = $GLOBALS['sql']->update_query(
-			'images',
-			array ( 'imagefile' => $new_filename ),
-			array ( 'id' => $new_id )
-		);
-		$result = $GLOBALS['sql']->query( $query );
-		syslog(LOG_INFO, "UnfiledFax| query = $query, result = $result");
-
-		// Move actual file to new location
-		//echo "mv data/fax/unfiled/$filename $new_filename -f<br/>\n";
-		$dirname = dirname($new_filename);
-		`mkdir -p "$dirname"`;
-		//echo "mkdir -p $dirname";
-		if ($filename) { `mv "data/fax/unfiled/$filename" "$new_filename" -f`; syslog(LOG_INFO, "UnfiledFax| mv data/fax/unfiled/$filename $new_filename -f"); }
-
-		$GLOBALS['display_buffer'] .= __("Moved fax to scanned documents.");
-
-		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." ".
-			"WHERE id='".addslashes($id)."'");
-
-		global $refresh;
-		//$refresh = $page_name."?module=".get_class($this);
-
-		$GLOBALS['display_buffer'] = '<br/>'.
-			template::link_bar(array(
-				__("View Patient Record") =>
-				'manage.php?id='.urlencode($_REQUEST['patient']),
-				__("Return to Unfiled Fax Menu") =>
-				$this->page_name.'?module='.get_class($this)
+			// Insert new table query in unread
+			$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+				'images',
+				array (
+					"imagedt" => $data['date'],
+					"imagepat" => $data['patient'],
+					"imagetype" => $type,
+					"imagecat" => $cat,
+					"imagedesc" => $data['note'],
+					"imagephy" => $data['physician'],
+					"imagereviewed" => 0
+				)
 			));
-	} // end method mod_direct
+			$new_id = $GLOBALS['sql']->lastInsertID( 'images', 'id' );
 
-	function batch_split_screen ( ) {
-		global $display_buffer;
+			$new_filename = freemed::image_filename(
+				freemed::secure_filename($data['patient']),
+				$new_id,
+				'djvu',
+				true
+			);
 
-		$r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-		$display_buffer .= "
-		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
-		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
-		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
-		<input type=\"hidden\" name=\"action\" value=\"view\"/>
-		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
-		";
+			$query = $GLOBALS['sql']->update_query(
+				'images',
+				array ( 'imagefile' => $new_filename ),
+				array ( 'id' => $new_id )
+			);
 
-		// Use Djvu object to get thumbnails, etc
-		$djvu = CreateObject('_FreeMED.Djvu', 
+			// Move actual file to new location
+			//echo "mv data/fax/unfiled/$filename $new_filename -f<br/>\n";
+			$dirname = dirname($new_filename);
+			system('mkdir -p '.escapeshellarg($dirname));
+			if ($filename) { system('mv '.escapeshellarg("data/fax/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f'); syslog(LOG_INFO, "UnfiledFax| mv data/fax/unfiled/$filename $new_filename -f"); }
+		} else {
+			// Insert new table query in unread
+			$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+				'unreadfax',
+				array (
+					"urfdate" => $data['date'],
+					"urffilename" => $filename,
+					"urfpatient" => $data['patient'],
+					"urfphysician" => $data['physician'],
+					"urftype" => $data['type'],
+					"urfnote" => $data['note']
+				)
+			));
+		}
+
+		$new_id = $GLOBALS['sql']->lastInsertID( $this->table_name, 'id' );
+	} // end method premod
+
+	function postmod ( $data ) {
+		// Don't use the delete method, because we don't want to remove files
+		$GLOBALS['sql']->query("DELETE FROM `".$this->table_name."` WHERE id='".addslashes($data['id'])."'");
+	} // end method postmod
+
+	public function numberOfPages ( $id ) {
+		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
 			$r['ufffilename']);
-		$pages = $djvu->NumberOfPages();
-		if ($pages < 2) {
-			trigger_error("You can't split a single page document.");
-		}
+		return $djvu->NumberOfPages();
+	} // end method numberOfPages
 
-		for ( $i = 1; $i <= $pages; $i++ ) {
-			// Display icon/thumb
-			$display_buffer .= "
-			<div align=\"center\">
-			<img src=\"".$this->page_name."?module=".
-			get_class($this)."&".
-			"action=".$_REQUEST['action']."&".
-			"submit_action=pageview&".
-			"id=".$_REQUEST['id']."&".
-			"page=".$i."\" alt=\"page $i\" border=\"1\" />
-			</div>
-			";
-			if ($i != $pages) {
-			$display_buffer .= "
-			<div align=\"center\">
-			<input type=\"checkbox\" name=\"splitafter[".$i."]\" ".
-			"value=\"1\" /> ----------------------
-			</div>
-			";
-			}
-		}
-
-		$display_buffer .= "
-		<div align=\"center\">
-		<input type=\"submit\" name=\"submit_action\" ".
-		"class=\"button\" value=\"".__("Split")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"class=\"button\" value=\"".__("Cancel")."\"/>
-		<input type=\"submit\" name=\"submit_action\" ".
-		"class=\"button\" value=\"".__("Delete")."\"/>
-		</div>
-
-		</form>
-		";
-	} // end method batch_split_screen
-
-	function batch_split ( ) {
+	// Method: batchSplit
+	//
+	//	Split multiple faxed documents.
+	//
+	// Parameters:
+	//
+	//	$id - Record id
+	//
+	//	$splitafter - Array of "splits"
+	//
+	public function batchSplit ( $id, $splitafter ) {
 		// Get the "splits"
-		$s = $_REQUEST['splitafter'];
 
 		// Get page information
-		$r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-		$djvu = CreateObject('_FreeMED.Djvu', 
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
 			$r['ufffilename']);
 		$pages = $djvu->NumberOfPages();
@@ -482,15 +204,15 @@ class UnfiledFaxes extends MaintenanceModule {
 
 		// Extract
 		$filename = $djvu->filename;
-		`mkdir "$dir"`;
+		system('mkdir '.escapeshellarg($dir));
 		//print "dir = $dir<br/>\n";
-		`djvmcvt -i "$filename" "$dir" "$dir/index.djvu"`;
+		system('djvmcvt -i '.escapeshellarg($filename).' '.escapeshellarg($dir).' '.escapeshellarg("$dir/index.djvu"));;
 
 		// Figure out where the splits are ...
 		$cur = 1;
 		for ($i = 1; $i <= $pages; $i++) {
 			$d[$cur][] = $i;
-			if ($s[$i] == 1) {
+			if ($splitafter[$i] == 1) {
 				$cur++;
 			}
 		}
@@ -501,14 +223,14 @@ class UnfiledFaxes extends MaintenanceModule {
 
 			// Put together lists of files
 			foreach ($v AS $this_file) {
-				$hash .= "\"".$dir."/".$chunks[$this_file-1]."\" ";
+				$hash .= escapeshellarg($dir."/".$chunks[$this_file-1]).' ';
 			}
 
 			// New Filename
 			$new_filename = $filename.'.'.$k.'.djvu';
 
 			// Create new file
-			$output = `djvm -c "$new_filename" $hash`;
+			$output = system('djvm -c '.escapeshellarg($new_filename).' '.$hash);
 
 			// Erase temporary files
 			unlink($dir."/index.djvu");
@@ -532,45 +254,55 @@ class UnfiledFaxes extends MaintenanceModule {
 			// TODO TODO: Make sure to erase old fax
 		}
 		
-		// Show some output
-		$display_buffer .= __("Split fax successfully.").
-			"<br/>";
-		global $refresh;
-		$refresh = $this->page_name."?module=".get_class($this).
-			"&action=display";
-
 		// Cleanup
 		unlink($dir);
 		unlink($dir_prefix);
-	} // end method batch_split
+	} // end method batchSplit
 
-	function get_pageview() {
+	// Method: getFaxPage
+	//
+	//	Get fax page image as JPEG.
+	//
+	// Parameters:
+	//
+	//	$id - Record id of unfiled fax
+	//
+	//	$page - Page number
+	//
+	// Returns:
+	//
+	//	BLOB data containing jpeg image.
+	//
+	public function getFaxPage( $id, $page ) {
 		// Return image ...
-		$r = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-		$djvu = CreateObject('_FreeMED.Djvu', 
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
 			$r['ufffilename']);
-		Header('Content-type: image/jpeg');
-		print $djvu->GetPageThumbnail($_REQUEST['page']);
-		die();
-	} // end method get_pageview
+		return $djvu->GetPageThumbnail($page);
+	} // end method getFaxPage
 
-	function faxback ( ) {
-		global $display_buffer;
-	
-		$id = $_REQUEST['id'];
-		$rec = freemed::get_link_rec($id, $this->table_name);
-		$filename = freemed::secure_filename($rec['ufffilename']);
+	// Method: faxback
+	//
+	// Parameters:
+	//
+	//	$id - Record id
+	//
+	//	$faxback - Fax number to send faxback to
+	//
+	public function faxback ( $id, $faxback ) {
+		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$filename = freemed::secure_filename( $rec['ufffilename'] );
 
 		// Analyze File
-		$djvu = CreateObject('_FreeMED.Djvu', 
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
 			$filename);
-		$pages = $djvu->NumberOfPages();
+		$pages = $djvu->NumberOfPages( );
 
 		// Fax the first page back
-		$tempfile = $djvu->GetPage(1, false, true);
-		$fax = CreateObject('_FreeMED.Fax',
+		$tempfile = $djvu->GetPage( 1, false, true );
+		$fax = CreateObject('org.freemedsoftware.core.Fax',
 			$tempfile,
 			array (
 				'sender' => INSTALLATION." (".PACKAGENAME." v".DISPLAY_VERSION.")",
@@ -579,10 +311,8 @@ class UnfiledFaxes extends MaintenanceModule {
 					__("Thank you.")
 			)
 		);
-		$output = $fax->Send($_REQUEST['faxback']);
+		$output = $fax->Send( $faxback );
 		unlink($tempfile);
-
-		$display_buffer .= __("Confirmation fax sent.");
 	} // end method faxback
 
 	function notify ( ) {
@@ -660,16 +390,6 @@ class UnfiledFaxes extends MaintenanceModule {
 			return false;
 		}
 	} // end method menu_notify
-
-	function user_select ( ) {
-		$results[__("NONE")] = 0;
-		$result = $GLOBALS['sql']->query("SELECT * FROM user ".
-			"ORDER BY username");
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
-			$results[$r['username']." (".$r['userdescrip'].")"] = $r['id'];
-		}
-		return $results;
-	} // end method user_select
 
 } // end class UnfiledFaxes
 
