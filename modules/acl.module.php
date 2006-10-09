@@ -1,17 +1,36 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class ACL extends MaintenanceModule {
+class ACL extends SupportModule {
 	// __("Access Control Lists")
-	var $MODULE_NAME = 'Access Control Lists';
-	var $MODULE_VERSION = '0.8.0.1';
+	var $MODULE_NAME = "Access Control Lists";
+	var $MODULE_VERSION = "0.8.0.1";
 	var $MODULE_DESCRIPTION = "Access Control Lists give granular access control to every part of the FreeMED system. This module is a wrapper for the phpgacl package.";
 
 	var $MODULE_HIDDEN = true;
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "a6ac7151-bc5a-4ae1-853a-cec0b53a2ea6";
 
 	function ACL ( ) {
 		$this->_SetMetaInformation('global_config_vars', array ( 'acl_enable', 'acl_patient' ) );
@@ -38,7 +57,7 @@ class ACL extends MaintenanceModule {
 		$this->_SetHandler('PatientAdd', 'acl_patient_add');
 		$this->_SetHandler('UserAdd', 'acl_user_add');
 		
-		$this->MaintenanceModule();
+		parent::__construct();
 	} // end constructor ACL
 
 	// Method: acl_patient_add
@@ -54,11 +73,11 @@ class ACL extends MaintenanceModule {
 	//	$current_user - (optional) Whether or not to add the current
 	//	user to the ACL list. Defaults to true.
 	//
-	function acl_patient_add ( $pid, $current_user = true ) {
+	public function acl_patient_add ( $pid, $current_user = true ) {
 		global $this_user;
 
 		// Create ACL manipulation class (cached, of course)
-		$acl = $this->_acl_object();
+		$acl = $this->acl_object();
 
 		// Create an AXO object
 		$axo = $acl->add_object(
@@ -74,19 +93,19 @@ class ACL extends MaintenanceModule {
 		// If this fails, we die out here
 		if (!$axo) { trigger_error(__("Failed to create patient AXO ACL control object."), E_ERROR); }
 		// Create user object if it doesn't exist yet
-		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
+		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
 
 		$_pat = freemed::get_link_rec($pid, 'patient');
 
 		// Get ptpcp, ptphy{1,2,3,4}, ptdoc and add their respective
 		// user numbers to the ACL.
 		$to_add = array (
-			$this->_get_user_from_phy($_pat['ptpcp']),
-			$this->_get_user_from_phy($_pat['ptdoc']),
-			$this->_get_user_from_phy($_pat['ptphy1']),
-			$this->_get_user_from_phy($_pat['ptphy2']),
-			$this->_get_user_from_phy($_pat['ptphy3']),
-			$this->_get_user_from_phy($_pat['ptphy4'])
+			$this->get_user_from_phy($_pat['ptpcp']),
+			$this->get_user_from_phy($_pat['ptdoc']),
+			$this->get_user_from_phy($_pat['ptphy1']),
+			$this->get_user_from_phy($_pat['ptphy2']),
+			$this->get_user_from_phy($_pat['ptphy3']),
+			$this->get_user_from_phy($_pat['ptphy4'])
 		);
 		if ($current_user) { $to_add[] = $this_user->user_number; }
 
@@ -108,7 +127,7 @@ class ACL extends MaintenanceModule {
 				'delete'
 			),
 			$users,
-			$this->_acl_object()
+			$this->acl_object()
 		));
 
 		// Send back the appropriate ACL id (AXO)
@@ -124,12 +143,12 @@ class ACL extends MaintenanceModule {
 	//
 	//	$id - Record ID for the user in question
 	//
-	function acl_user_add ( $id ) {
+	public function acl_user_add ( $id ) {
 		// Get the user record in question to play with
-		$user = CreateObject('_FreeMED.User', $id);
+		$user = CreateObject('org.freemedsoftware.core.User', $id);
 
 		// Create ACL manipulation class
-		$acl = $this->_acl_object();
+		$acl = $this->acl_object();
 
 		// Create an ARO object
 		$acl_id = $acl->add_object(
@@ -146,7 +165,7 @@ class ACL extends MaintenanceModule {
 		return $acl_id;
 	} // end method acl_user_add
 
-	// Method: _acl_object
+	// Method: acl_object
 	//
 	//	Simple way to get complex ACL API object
 	//
@@ -154,10 +173,10 @@ class ACL extends MaintenanceModule {
 	//
 	//	ACL API object
 	//
-	function _acl_object ( ) {
+	private function acl_object ( ) {
 		static $_obj;
 		if (!isset($_obj)) {
-		$_obj = CreateObject('_ACL.gacl_api',
+		$_obj = CreateObject('org.freemedsoftware.acl.gacl_api',
 			array (
 				// Unfortunately, we duplicate to avoid
 				// security risks from the global array having
@@ -177,9 +196,9 @@ class ACL extends MaintenanceModule {
 		);
 		}
 		return $_obj;
-	} // end method _acl_object
+	} // end method acl_object
 
-	// Method: _get_user_from_phy
+	// Method: get_user_from_phy
 	//
 	//	Lookup user by provider, with caching
 	//
@@ -191,19 +210,18 @@ class ACL extends MaintenanceModule {
 	//
 	//	User id
 	//
-	function _get_user_from_phy ( $phy ) {
+	private function get_user_from_phy ( $phy ) {
 		static $_cache;
 		if (!$phy) { return 0; }
 		if (!isset($_cache[$phy])) {	
 			$select = "SELECT * FROM user WHERE userrealphy='".addslashes($phy)."' AND usertype='phy'";
-			$query = $GLOBALS['sql']->query($select);
-			if ($GLOBALS['sql']->results($query)) {
-				$r = $GLOBALS['sql']->fetch_array($query);
+			$query = $GLOBALS['sql']->queryAll($select);
+			foreach ($query AS $r) {
 				$_cache[$phy] = $r['id'];
 			}
 		}
 		return $_cache[$phy];
-	} // end method _get_user_from_phy
+	} // end method get_user_from_phy
 
 	// Method: _setup
 	//
@@ -217,7 +235,7 @@ class ACL extends MaintenanceModule {
 		// the admin module that they have. We don't load the
 		// dependency, as it was loaded in lib/acl.php for the
 		// global $acl object.
-		$acl = $this->_acl_object();
+		$acl = $this->acl_object();
 
 		// Until we figure out what is going on, include this
 		// verbatim
@@ -261,7 +279,7 @@ class ACL extends MaintenanceModule {
 	//
 	function _set_defaults ( ) {
 		syslog(LOG_INFO, "ACL| running _set_defaults");
-		$acl = $this->_acl_object();
+		$acl = $this->acl_object();
 		include_once (ADODB_DIR.'/adodb-xmlschema.inc.php');
 		$schema = new adoSchema ( &$acl->db, true );
 		$sql = $schema->ParseSchemaFile('lib/acl/freemed-acl-defaults.xml');
@@ -310,7 +328,7 @@ class ACL extends MaintenanceModule {
 	} // end method _drop_old_tables
 
 	// ----- Internal helper functions
-	function _file_get_contents ( $filename ) {
+	private function _file_get_contents ( $filename ) {
 		if (function_exists('file_get_contents')) {
 			return file_get_contents($filename);
 		} else {
@@ -327,7 +345,7 @@ class ACL extends MaintenanceModule {
 		}
 	} // end method _file_get_contents
 
-	function _file_put_contents ( $filename, $content ) {
+	private function _file_put_contents ( $filename, $content ) {
 		$fp = fopen($filename, 'w');
 		if (!$fp) {
 			die('ACL: unable to open '.$filename.' for writing');

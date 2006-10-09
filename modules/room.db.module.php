@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('_FreeMED.SupportModule');
 
-class RoomMaintenance extends MaintenanceModule {
+class RoomMaintenance extends SupportModule {
 
 	var $MODULE_NAME = "Room Maintenance";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "b3992bbd-4920-4243-bc5f-97f333edbc44";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
@@ -28,91 +47,17 @@ class RoomMaintenance extends MaintenanceModule {
 		"roomipaddr"
 	);
 
-	function RoomMaintenance () {
+	public function __construct ( ) {
 		// For i18n: __("Room Maintenance")
 
-		// Table definition
-		$this->table_definition = array (
-			'roomname' => SQL__VARCHAR(20),
-			'roompos' => SQL__INT_UNSIGNED(0),
-			'roomdescrip' => SQL__VARCHAR(40),
-			'roomdefphy' => SQL__INT_UNSIGNED(0),
-			'roomequipment' => SQL__BLOB,
-			'roomsurgery' => SQL__ENUM(array('y', 'n')),
-			'roombooking' => SQL__ENUM(array('y', 'n')),
-			'roomipaddr' => SQL__VARCHAR(15),
-			'id' => SQL__SERIAL
+		$this->list_view = array (
+			__("Name")		=>	"roomname",
+			__("Description")	=>	"roomdescrip"
 		);
 
 		// Run constructor
-		$this->MaintenanceModule();
+		parent::__construct();
 	} // end constructor RoomMaintenance
-
-	function generate_form () {
-		return array (
-			__("Room Name") =>
-			html_form::text_widget('roomname', array('length'=>20)),
-
-			__("Location") =>
-			"<SELECT NAME=\"roompos\">".
-			freemed_display_facilities ("roompos", true).
-			"</SELECT>",
-
-			__("Description") =>
-			html_form::text_widget('roomdescrip', array('length'=>40)),
-
-			__("Default Provider") =>
-			freemed_display_selectbox (
-			$GLOBALS['sql']->query ("SELECT * FROM physician WHERE phyref != 'yes' AND phylname != ''"),
-			"#phylname#, #phyfname#",
-			"roomdefphy"),
-
-			__("Equipment") =>
-			module_function(
-				'RoomEquipment',
-				'widget',
-				array (
-					'roomequipment',
-					false,
-					'id',
-					array ('multiple' => 5)
-				)
-			),
-
-			//__("Surgery Equipped") =>
-			//"<INPUT TYPE=CHECKBOX NAME=\"roomsurgery\" VALUE=\"y\"
-			//".( ($roomsurgery=="y") ? "CHECKED" : "" ).">",
-
-			__("Booking Enabled") =>
-			"<INPUT TYPE=CHECKBOX NAME=\"roombooking\" VALUE=\"y\" 
-			".( ($roombooking!='n') ? "CHECKED" : "" ).">",
-
-			__("IP Address") =>
-			html_form::text_widget('roomipaddr', array('length'=>16))
-		); 
-	} // end method generate_form
-
-	function view () {
-		global $display_buffer;
-		global $sql;
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query (
-				"SELECT roomname,roomdescrip,id ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions()." ".
-				"ORDER BY ".$this->order_field
-			),
-			$this->page_name,
-			array (
-				__("Name")		=>	"roomname",
-				__("Description")	=>	"roomdescrip"
-			),
-			array (
-				"",
-				__("NO DESCRIPTION")
-			)
-		);
-	} // end method view
 
 	function _update ( ) {
 		$version = freemed::module_version($this->MODULE_NAME);

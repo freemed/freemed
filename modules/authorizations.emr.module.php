@@ -1,8 +1,26 @@
 <?php
-	// $Id$
-	// lic : GPL, v2
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class AuthorizationsModule extends EMRModule {
 
@@ -17,6 +35,7 @@ class AuthorizationsModule extends EMRModule {
 		FreeMED, this module is not needed.
 	";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "33447e8d-ba54-4255-af85-21876c020fa3";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -43,7 +62,7 @@ class AuthorizationsModule extends EMRModule {
 		"authdtadd"
 	);
 
-	function AuthorizationsModule () {
+	public function __construct () {
 		// __("Insurance Authorizations")
 		// Table definition
 		$this->table_definition = array (
@@ -94,115 +113,26 @@ class AuthorizationsModule extends EMRModule {
 		$this->acl = array ( 'bill', 'emr' );
 
 		// Run parent constructor
-		$this->EMRModule();
-	} // end constructor AuthorizationsModule
+		parent::__construct();
+	} // end constructor
 
-	function form_table () {
-		global $action, $sql;
+	protected function prepare ( $data ) {
+		$d = $data;
+		$d['authvisitsremain'] = $d['authvisits'] - $d['authvisitsused'];
+		return $d;
+	}
 
-		if ($action=="addform") {
-			global $authdtbegin;
-			$authdtbegin = date("Y-m-d");
-		}
-		
-		return array (
-			__("Starting Date") =>
-			fm_date_entry("authdtbegin"),
+	protected function preadd ( $data ) {
+		$d = $data;
+		$d['authdtadd'] = date('Y-m-d');
+		return $d;
+	}
 
-			__("Ending Date") =>
-			fm_date_entry("authdtend"),
-
-			__("Authorization Number") =>
-			html_form::text_widget("authnum", 25),
-
-			__("Authorization Type") =>
-			html_form::select_widget(
-				"authtype",
-				array(
-					__("NONE SELECTED") => "0",
-					__("physician") => "1",
-					__("insurance company") => "2",
-					__("certificate of medical neccessity") => "3",
-					__("surgical") => "4",
-					__("worker's compensation") => "5",
-					__("consulatation") => "6"
-				)
-			),
-
-			__("Authorizing Provider") =>
-			module_function (
-				'providermodule',
-				'widget',
-				array ( 'authprov' )
-			),
-	
-			__("Provider Identifier") =>
-			html_form::text_widget("authprovid", 20, 15),
-	
-			__("Authorizing Insurance Company") =>
-			module_function (
-				'insurancecompanymodule',
-				'widget',
-				array ( 'authinsco' )
-			),
-	
-			__("Number of Visits") =>
-			fm_number_select ("authvisits", 0, 100),
-	
-			__("Used Visits") =>
-			fm_number_select ("authvisitsused", 0, 100),
-
-			( $action=='addform' ? '' : __("Remaining Visits")) =>
-			fm_number_select ("authvisitsremain", 0, 100),
-
-			__("Comment") =>
-			html_form::text_widget("authcomment", 30, 100)
-		);
-	} // end method form_table
-
-	function add () {
-		global $authpatient, $authdtbegin, $authdtend, $authdtadd, $patient, $authvisits, $authvisitsremain, $authvisitsused;
-		$authdtbegin = fm_date_assemble("authdtbegin");
-		$authdtend   = fm_date_assemble("authdtend");
-		$authdtadd   = date("Y-m-d");
-		$authpatient = $patient;
-		// All auth visits still remaining by default
-		if ($authvisitsused == 0) { $authvisitsremain = $authvisits; }
-		$this->_add();
-	} // end method add
-
-	function mod () {
-		global $authpatient, $authdtbegin, $authdtend, 
-			$authdtmod, $patient;
-		$authdtbegin = fm_date_assemble("authdtbegin");
-		$authdtend = fm_date_assemble("authdtend");
-		$authdtmod = date("Y-m-d");
-		$authpatient = $patient;
-		$this->_mod();
-	} // end method mod
-
-	function view () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query(
-				"SELECT * ".
-				"FROM ".$this->table_name." ".
-				"WHERE (authpatient='".addslashes($patient)."') ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY ".$this->order_fields
-			),
-			$this->page_name,
-			array (
-				__("Dates") => "authdtbegin",
-				"<FONT COLOR=\"#000000\">_</FONT>" => 
-					"", // &nbsp; doesn't work, dunno why
-				"&nbsp;"  => "authdtend"
-			),
-			array ("", "/", "")
-		);
-	} // end method view
+	protected function premod ( $data ) {
+		$d = $data;
+		$d['authdtmod'] = date('Y-m-d');
+		return $d;
+	}
 
 } // end class AuthorizationsModule
 
