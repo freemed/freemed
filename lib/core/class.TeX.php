@@ -81,12 +81,12 @@ class TeX {
 	// Method: RenderFromTemplate
 	//
 	//	Renders a TeX document with substitutions from a TeX
-	//	template in the lib/tex/ directory.
+	//	template in the data/tex/ directory.
 	//
 	// Parameters:
 	//
 	//	$template - Name of the template to be used. For
-	//	lib/tex/rx.tex this would be 'rx';
+	//	data/tex/rx.tex this would be 'rx';
 	//
 	//	$rec - Associative array of primary record data.
 	//
@@ -95,7 +95,7 @@ class TeX {
 	//	TeX document (not rendered into a result format).
 	//
 	public function RenderFromTemplate ( $template, $rec ) {
-		if (!file_exists('lib/tex/'.$template.'.tex')) {
+		if (!file_exists('data/tex/'.$template.'.tex')) {
 			die("Could not load $template TeX template.");
 		}
 
@@ -119,7 +119,7 @@ class TeX {
 		}
 
 		// Get the important part into the buffer
-		$buffer = $this->smarty->fetch('lib/tex/'.$template.'.tex');
+		$buffer = $this->smarty->fetch('data/tex/'.$template.'.tex');
 
 		// Return processed string
 		return $buffer;
