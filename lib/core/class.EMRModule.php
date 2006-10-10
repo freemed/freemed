@@ -561,7 +561,7 @@ class EMRModule extends BaseModule {
 					"WHERE id='".addslashes($record)."'";
 				$rec = $GLOBALS['sql']->queryOne($query);
 			} else {
-				$rec = freemed::get_link_rec($record, $t);
+				$rec = $GLOBALS['sql']->get_link( $t, $record );
 			} // end checking for summary_query
 
 			$TeX->_buffer = $TeX->RenderFromTemplate(

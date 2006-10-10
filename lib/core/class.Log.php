@@ -43,7 +43,7 @@ class Log {
 	//
 	//	$msg - Text of log message
 	//
-	function SystemLog ( $sev, $sys, $subsys, $msg ) {
+	public function SystemLog ( $sev, $sys, $subsys, $msg ) {
 		global $this_user;
 		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
 
@@ -78,7 +78,7 @@ class Log {
 	//
 	//	$msg - Text of log message
 	//
-	function PatientLog ( $sev, $patient, $sys, $subsys, $msg ) {
+	global function PatientLog ( $sev, $patient, $sys, $subsys, $msg ) {
 		global $this_user;
 		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
 

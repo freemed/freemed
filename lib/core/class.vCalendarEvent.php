@@ -32,8 +32,7 @@ class vCalendarEvent {
 	//
 	//	$event - If passed as a number, this denotes the scheduler
 	//	table identifier. If passed as an array, this is the record
-	//	from the scheduler table, as returned by
-	//	<freemed::get_link_rec>.
+	//	from the scheduler table.
 	//
 	public function __construct ( $_event ) {
 		// Based on array or not, do we import?

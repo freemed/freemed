@@ -29,7 +29,7 @@ class MultiplePDF {
 	var $stack;
 
 	// Constructor: MultiplePDF
-	function MultiplePDF ( ) {
+	public function __construct ( ) {
 	} // end method constructor
 
 	// Method: Add
@@ -40,7 +40,7 @@ class MultiplePDF {
 	//
 	//	$pdffile - PDF file name
 	//
-	function Add ( $pdffile ) {
+	public function Add ( $pdffile ) {
 		if (file_exists($pdffile)) { $this->stack[] = $pdffile; }
 	} // end method Add
 
@@ -52,7 +52,7 @@ class MultiplePDF {
 	//
 	//	Name of temporary file containing all PDF information.
 	//
-	function Composite ( ) {
+	public function Composite ( ) {
 		// If there is nothing on the stack, null filename
 		if (count($this->stack) < 1) { return ''; }
 

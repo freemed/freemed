@@ -70,8 +70,6 @@ class BaseModule extends Module {
 	//
 	function _print ( ) {
 		// Turn off the template
-		global $display_buffer;
-		$GLOBALS['__freemed']['no_template_display'] = true;
 
 		// Deal with faxstatus
 		if (isset($_REQUEST['faxstatus'])) {
@@ -89,112 +87,12 @@ class BaseModule extends Module {
 			break;
 		}
 
-		// Check for selected printer
-		if (!freemed::config_value('printnoselect') and !isset($_REQUEST['printer'])) {
-			// select printer form
-			global $display_buffer;
-			$display_buffer .= "
-			<form action=\"".$this->page_name."\" method=\"post\"
-			 name=\"myform\">
-			<div class=\"PrintContainer\">
-			<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\"/>
-			<input type=\"hidden\" name=\"type\" value=\"".prepare($_REQUEST['type'])."\"/>
-			<input type=\"hidden\" name=\"action\" value=\"".prepare($_REQUEST['action'])."\"/>
-			<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
-			<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\"/>
-			";
-			if ($_REQUEST['print_template']) {
-				$display_buffer .= "<input type=\"hidden\" name=\"print_template\" value=\"".prepare($_REQUEST['print_template'])."\"/>\n";
-			}
-			$display_buffer .= "
-			<table border=\"0\" width=\"98%\" cellspacing=\"0\">
-			<tr class=\"PrintContainerItem\"
-			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
-				 onClick=\"document.getElementById('print_method_printer').click(); return true;\">
-
-				<td width=\"50\">
-				<input type=\"radio\" 
-				 name=\"print_method\"
-				 value=\"printer\" checked
-				 id=\"print_method_printer\" /></td>
-				<td
-				>".__("Printer")."</td>
-				<td>".freemed::printers_widget('printer')."</td>
-			</tr>
-			<tr class=\"PrintContainerItem\"
-			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
-				 onClick=\"document.getElementById('print_method_fax').click(); return true;\">
-				<td width=\"50\">
-				<input type=\"radio\"
-				 name=\"print_method\"
-				 value=\"fax\"
-				 id=\"print_method_fax\" /></td>
-				<td>".__("Fax")."</td>
-				<td>".$this->fax_widget('fax_number', $_REQUEST['id'])."</td>
-			</tr>
-			<tr class=\"PrintContainerItem\"
-			 	 onMouseOver=\"this.className='PrintContainerItemSelected'; return true;\"
-				 onMouseOut=\"this.className='PrintContainerItem'; return true;\"
-				 onClick=\"document.getElementById('print_method_browser').click(); return true;\">
-				 <td width=\"50\">
-				 <input type=\"radio\"
-				  name=\"print_method\"
-				  value=\"browser\"
-				  checked=\"checked\" 
-				  id=\"print_method_browser\" /></td>
-				 <td colspan=\"2\">".__("Browser-Based")."</td>
-			</tr>
-			";
-
-			// For EMR, show additional attachments
-			if ($this->patient_field) {
-				$display_buffer .= "
-				<tr>
-				<td width=\"50\">&nbsp;</td>
-				<td>".__("Attach")."</td>
-				<td>".html_form::select_widget('attachment', array_merge( array(__("NONE") => ''), module_function('FaxMultiple', 'GetEMRAttachments', array ( $_REQUEST['patient'] ))), array('style'=>'width: 200px;'))."</td>
-				</tr>
-				";
-			}
-
-			// Continue with display
-			$display_buffer .= "
-			</table>
-			<script language=\"javascript\">
-			function isValid(parm) {
-				var val = '0123456789';
-				if (parm == '') return false;
-				if (parm.length < 7) return false;
-				for (i=0; i<parm.length; i++) {
-					if (val.indexOf(parm.charAt(i),0) == -1) return false;
-				}
-				return true;
-			}
-			</script>
-			<div align=\"center\">
-			<input onClick=\"if(document.getElementById('print_method_fax').checked) { if (!isValid(document.getElementById('fax_number').value)) { alert('Invalid fax number.'); return false; } } else { this.form.submit(); }\" type=\"submit\" value=\"".__("Print")."\"
-			 class=\"button\" />
-			</div>
-			</div>
-			</form>
-			";
-			return true;
-		}
-
 		// Handle render
 		if ($render = $this->print_override($_REQUEST['id'])) {
 			// Handle this elsewhere
 		} else {
-			list ($title, $heading, $physician) = $this->_TeX_Information();
-
 			// Create TeX object for patient
-			$TeX = CreateObject('org.freemedsoftware.core.TeX', array (
-				'title' => $title,
-				'heading' => $heading,
-				'physician' => $physician
-			));
+			$TeX = CreateObject( 'org.freemedsoftware.core.TeX' );
 
 			// Actual renderer for formatting array
 			if ($this->table_name) {
@@ -206,8 +104,7 @@ class BaseModule extends Module {
 						",".join(",", $this->summary_query)." " : " " ).
 						"FROM ".$this->table_name." ".
 						"WHERE id='".addslashes($_REQUEST['id'])."'";
-						$result = $GLOBALS['sql']->query($query);
-						$rec = $GLOBALS['sql']->fetch_array($result);
+						$rec = $GLOBALS['sql']->queryOne( $query );
 				} else {
 					$rec = $GLOBALS['sql']->get_link($this->table_name, $_REQUEST['id']);
 				} // end checking for summary_query
@@ -227,8 +124,6 @@ class BaseModule extends Module {
 				$rec
 			);
 		}
-
-		global $display_buffer;
 
 		// Get appropriate printer from user settings
 		global $this_user;

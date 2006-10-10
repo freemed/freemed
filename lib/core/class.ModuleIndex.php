@@ -70,7 +70,7 @@ class ModuleIndex {
 			// Unset flag
 			$GLOBALS['__freemed']['modules_caching'] = false;
 		} // if forced index
-	} // end constructor module_list
+	} // end constructor
 
 	// Method: LoadIndex
 	//
@@ -275,6 +275,6 @@ class ModuleIndex {
 		return $this->GetModuleProperty ( $module, 'MODULE_FILE' );
 	} // end method GetModuleFile
 
-} // end class module_list
+} // end class ModuleIndex
 
 ?>

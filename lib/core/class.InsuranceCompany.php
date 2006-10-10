@@ -42,9 +42,7 @@ class InsuranceCompany {
 
 		if (!isset($GLOBALS['__freemed']['cache']['insco'][$insco])) {
 			// Get record
-			$this->local_record = freemed::get_link_rec (
-				$insco, "insco"
-			);
+			$this->local_record = $GLOBALS['sql']->get_link( 'insco', $insco );
 
 			// Cache it
 			$GLOBALS['__freemed']['cache']['insco'][$insco] = $this->local_record;

@@ -210,6 +210,14 @@ class ExternalPlugin {
 	//
 	//	Parse the results of a module INFO query.
 	//
+	// Parameters:
+	//
+	//	$info - Raw text string returned by INFO query to external plugin.
+	//
+	// Returns:
+	//
+	//	Hash of INFO values.
+	//
 	protected function ParseInfo ( $info ) {
 		$lines = explode("\n", $info);
 		foreach ($lines AS $line) {
