@@ -1,15 +1,33 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Annotations extends EMRModule {
 
 	var $MODULE_NAME = "Annotations";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "58b7eb4e-a4dc-46db-841f-4e2bf3b64ddd";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
@@ -17,119 +35,37 @@ class Annotations extends EMRModule {
 	var $table_name = 'annotations';
 	var $patient_field = 'apatient';
 
-	function Annotations () {
-		$this->table_definition = array (
-			'atimestamp' => SQL__TIMESTAMP(14),
-			'apatient' => SQL__INT_UNSIGNED(0),
-			'amodule' => SQL__VARCHAR(150),
-			'atable' => SQL__VARCHAR(150),
-			'aid' => SQL__INT_UNSIGNED(0),
-			'auser' => SQL__INT_UNSIGNED(0),
-			'annotation' => SQL__TEXT,
-			'id' => SQL__SERIAL
-		);
+	public function __construct () {
+		// __("Annotations")
 
-		global $this_user;
-		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
 		$this->variables = array (
-			'atimestamp' => SQL__NOW,
-			'apatient' => $_REQUEST['patient'],
+			'atimestamp'.
+			'apatient',
 			'amodule',
 			'atable',
 			'aid',
-			'auser' => $this_user->user_number,
+			'auser',
 			'annotation'
 		);
 
-		$this->summary_vars = array (
-			__("Date/Time") => 'atimestamp',
-			__("Table") => 'atable',
-			" " => 'annotation'
+		$this->list_view = array (
+			__("Date") => 'ts',
+			__("Module") => 'amodule',
+			__("User") => 'auser',
+			__("Annotation") => 'annotation'
 		);
-		$this->summary_options = SUMMARY_VIEW | SUMMARY_DELETE |
-			SUMMARY_NOANNOTATE;
 
-		$this->form_hidden = array (
-			'amodule',
-			'atable',
-			'aid'
-		);
+		$this->summary_options = SUMMARY_VIEW | SUMMARY_DELETE | SUMMARY_NOANNOTATE;
 
 		// call parent constructor
-		$this->EMRModule();
-	} // end constructor Annotations
+		parent::__construct( );
+	} // end constructor
 
-	function addform () {
-		// Display parent form
-		$this->form();
-
-		// Display all past annotations, if present
-		global $display_buffer;
-		$q = "SELECT ".
-			"DATE_FORMAT(atimestamp, '%d %M %Y %H:%i') AS ts,".
-				"annotation,auser ".
-			"FROM ".$this->table_name." ".
-			"WHERE aid='".addslashes($_REQUEST['aid'])."' AND ".
-			"atable='".addslashes($_REQUEST['atable'])."' AND ".
-			"apatient='".addslashes($_REQUEST['patient'])."' ".
-			"ORDER BY atimestamp DESC";
-		$a = $GLOBALS['sql']->query($q);
-		while ($r = $GLOBALS['sql']->fetch_array($a)) {
-			$display_buffer .=
-			"<div class=\"thinbox_noscroll\" width=\"60%\">".
-			"<i>".$r['ts']."</i> ".__("by")." <b>".freemed::get_link_field($r['auser'], 'user', 'username')."</b>".
-			"<br/>\n".
-			prepare($r['annotation'])."</div>\n";
-		}
+	protected function add_pre ( &$data ) {
+ 		$data['auser'] = $this_user->user_number;
 	}
 
-	// Keep people from trying to modify these ...
-	function modform() { $this->view(); }
-	function mod() { $this->add(); }
-
-	function form_table ( ) {
-		global $display_buffer;
-		$GLOBALS['__freemed']['on_load'] = 'changeFocus';
-		$display_buffer .= "
-		<script language=\"Javascript\">
-		function changeFocus () {
-		   document.getElementById('annotation').focus();
-		   return true;
-		}
-		</script>
-		";
-
-		return array (
-			__("Annotation") =>
-			html_form::text_area('annotation')
-		);
-	} // end method form_table
-
-	function view ( ) {
-		global $sql; global $display_buffer; global $patient;
-
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT DATE_FORMAT(atimestamp, '%d %M %Y %H:%i') AS ts, ".
-				"amodule, auser, annotation, id FROM ".$this->table_name." ".
-				"WHERE apatient='".addslashes($patient)."' ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY atimestamp DESC"),
-			$this->page_name,
-			array(
-				__("Date") => 'ts',
-				__("Module") => 'amodule',
-				__("User") => 'auser',
-				__("Annotation") => 'annotation'
-			),
-			array('', __("Not specified")), //blanks
-			array(
-				"",
-				"",
-				"user" => "username",
-				""
-			)
-		);
-	} // end method view
+	public function mod ( $data ) { return false; }
 
 	// Method: createAnnotation
 	//
@@ -147,7 +83,7 @@ class Annotations extends EMRModule {
 	//
 	function createAnnotation ($module, $id, $text, $patient = NULL) {
 		global $this_user;
-		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
+		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
 		$q = $GLOBALS['sql']->insert_query(
 			$this->table_name,
 			array(
@@ -155,7 +91,7 @@ class Annotations extends EMRModule {
 				'aid' => $id,
 				'atimestamp' => SQL__NOW,
 				'apatient' => ( $patient ? $patient : $this->lookupPatient($module, $id) ),
-				'atable' => $this->_resolve_module_to_table($module),
+				'atable' => $this->resolve_module_to_table($module),
 				'auser' => $this_user->user_number,
 				'annotation' => $text
 			)
@@ -163,15 +99,15 @@ class Annotations extends EMRModule {
 		$res = $GLOBALS['sql']->query($q);
 	} // end method createAnnotation
 
-	function _resolve_module_to_table ( $module ) {
+	private function resolve_module_to_table ( $module ) {
 		$cache = freemed::module_cache();
-		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $v) {
+		foreach ( $cache AS $v ) {
 			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
 				return $v['META_INFORMATION']['table_name'];
 			}
 		}
 		trigger_error(__("Could not resolve table name!"), E_USER_ERROR);
-	} // end method _resolve_module_to_table
+	} // end method resolve_module_to_table
 
 	// Method: getAnnotations
 	//
@@ -187,18 +123,12 @@ class Annotations extends EMRModule {
 	//
 	//	Array of annotations, otherwise false.
 	//
-	function getAnnotations ($module, $id) {
+	public function getAnnotations ($module, $id) {
 		$q = "SELECT * FROM ".$this->table_name." ".
 			"WHERE amodule = '".addslashes($module)."' ".
 			"AND aid = '".addslashes($id)."'";
-		$res = $GLOBALS['sql']->query($q);
-		if (!$GLOBALS['sql']->results($res)) {
-			return false;
-		}
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
-			$a[] = $r;
-		}
-		return $a;
+		$res = $GLOBALS['sql']->queryAll( $q );
+		return $res;
 	} // end method getAnnotations
 
 	// Method: outputAnnotations
@@ -214,9 +144,9 @@ class Annotations extends EMRModule {
 	//
 	//	XHTML-formatted annotation string
 	//
-	function outputAnnotations ( $annotations ) {
+	public function outputAnnotations ( $annotations ) {
 		foreach ($annotations AS $a) {
-			$user = freemed::get_link_rec($a['auser'], 'user');
+			$user = $GLOBALS['sql']->get_link( 'user', $a['auser'] );
 			$p = str_replace("\r", '', stripslashes($a['annotation']));
 			$b[] .= "<b>".stripslashes($user['userdescrip'])."</b>\n".
 				"<i>".freemed::sql2date($a['atimestamp'])."</i>\n".
@@ -238,7 +168,7 @@ class Annotations extends EMRModule {
 	//
 	//	Javascript string formatted text.
 	//
-	function prepareAnnotation ( $a ) {
+	public function prepareAnnotation ( $a ) {
 		$b = $a;
 		$b = str_replace("'", '\\\'', $b);
 		$b = str_replace("\"", '\\"', $b);
@@ -261,21 +191,21 @@ class Annotations extends EMRModule {
 	//
 	//	Patient id number
 	//
-	function lookupPatient ( $module, $id ) {
-		$_cache = freemed::module_cache();
-		foreach ($GLOBALS['__phpwebtools']['GLOBAL_MODULES'] AS $k => $v) {
+	public function lookupPatient ( $module, $id ) {
+		$cache = freemed::module_cache();
+		foreach ( $cache AS $v ) {
 			if ($t = $v['META_INFORMATION']['table_name']) {
 				$tables[strtolower($v['MODULE_CLASS'])] = $t;
 				$pfield[strtolower($v['MODULE_CLASS'])] = $v['META_INFORMATION']['patient_field'];
 			}
 		}
 		if ($pfield[strtolower($module)] and $tables[strtolower($module)]) {
-			$r = freemed::get_link_rec( $id, $tables[strtolower($module)] );
+			$r = $GLOBALS['sql']->get_link( $tables[strtolower($module)], $id );
 			return $r[$pfield[strtolower($module)]];
 		} else {
 			return 0;
 		}
-	} // end function freemed::module_to_table
+	} // end method lookupPatient
 
 	// Update
 	function _update ( ) {

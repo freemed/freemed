@@ -104,18 +104,17 @@ class ProviderModule extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &data ) {
+	protected function add_pre ( &$data ) {
 		$data['phychargemap'] = serialize( $data['phychargemap'] );
 		$data['phyidmap'] = serialize( $data['phyidmap'] );
 	}
 
-	protected function mod_pre ( &data ) {
+	protected function mod_pre ( &$data ) {
 		$data['phychargemap'] = serialize( $data['phychargemap'] );
 		$data['phyidmap'] = serialize( $data['phyidmap'] );
 	}
 
 	function _update ( ) {
-		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
 
 		// Version 0.3
@@ -123,7 +122,7 @@ class ProviderModule extends SupportModule {
 		//	Add hl7 id field
 		//
 		if (!version_check($version, '0.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN phyhl7id INT UNSIGNED AFTER phyanesth');
 		}
 
@@ -133,9 +132,9 @@ class ProviderModule extends SupportModule {
 		//	Change practice name to max 45 characters
 		//
 		if (!version_check($version, '0.3.1')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN phydea VARCHAR(16) AFTER phyhl7id');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN phypracname phypracname VARCHAR(45)');
 		}
 
@@ -144,7 +143,7 @@ class ProviderModule extends SupportModule {
 		//	Add practice EIN number
 		//
 		if (!version_check($version, '0.3.2')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN phypracein VARCHAR(16) AFTER phypracname');
 		}
 
@@ -153,7 +152,7 @@ class ProviderModule extends SupportModule {
 		//	HL7 ID needs to be alpha
 		//
 		if (!version_check($version, '0.3.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN phyhl7id phyhl7id VARCHAR(16)');
 		}
 
@@ -162,7 +161,7 @@ class ProviderModule extends SupportModule {
 		//	Extend practice name to 80 chars
 		//
 		if (!version_check($version, '0.3.4')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'CHANGE COLUMN phypracname phypracname VARCHAR(80)');
 		}
 
@@ -171,9 +170,9 @@ class ProviderModule extends SupportModule {
 		//	Add CLIA number
 		//
 		if (!version_check($version, '0.3.5')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN phyclia VARCHAR(32) AFTER phydea');
-			$sql->query('UPDATE '.$this->table_name.' SET '.
+			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' SET '.
 				'phyclia=\'\' WHERE id>0');
 		}
 

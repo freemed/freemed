@@ -1,15 +1,33 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class PlaceOfServiceMaintenance extends MaintenanceModule {
+class PlaceOfService extends SupportModule {
 
-	var $MODULE_NAME = "Place of Service Maintenance";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
+	var $MODULE_NAME = "Place of Service";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "178bb3ad-fb08-433c-9c90-02f830db5992";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -18,111 +36,23 @@ class PlaceOfServiceMaintenance extends MaintenanceModule {
 	var $order_field = "posname,posdescrip";
 
 	var $variables = array (
-			"posname",
-			"posdescrip",
-			"posdtadd",
-			"posdtmod"
+		"posname",
+		"posdescrip",
+		"posdtadd",
+		"posdtmod"
 	);
 
-	function PlaceOfServiceMaintenance () {
-		global $posdtmod, $posdtadd;
-		$posdtmod = $posdtadd = date("Y-m-d");
-
-		// Table definition
-		$this->table_definition = array (
-			'posname' => SQL__VARCHAR(75),
-			'posdescrip' => SQL__VARCHAR(200),
-			'posdtadd' => SQL__DATE,
-			'posdtmod' => SQL__DATE,
-			'id' => SQL__SERIAL
+	public function __construct () {
+		$this->list_view = array (
+			__("Code") => "posname",
+			__("Description") => "posdescrip"
 		);
-		
-		// Run parent constructor
-		$this->MaintenanceModule();
-	} // end constructor PlaceOfServiceMaintenance	
 
-	function view () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) global ${$k};
+		parent::__construct( );
+	} // end constructor PlaceOfService	
 
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query(
-				"SELECT posname,posdescrip,id ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions()." ".
-				"ORDER BY ".prepare($this->order_field)
-			),
-			$this->page_name,
-			array (
-				__("Code") => "posname",
-				__("Description") => "posdescrip"
-			),
-			array ("", __("NO DESCRIPTION"))
-		);
-	} // end function module->view
+} // end of class PlaceOfService
 
-	function form () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) global ${$k};
-  		if ($action=="modform") { 
-    			$result = $sql->query("SELECT * FROM ".$this->table_name." ".
-				"WHERE ( id = '$id' )");
-			$r = $sql->fetch_array($result); // dump into array r[]
-			extract ($r);
-		} // if loading values
-		if ($action=="addform") {
-			global $posdtadd;
-			$posdtadd = date("Y-m-d");
-		}
-
-		// display itemlist first
-		$this->view ();
-
-		$display_buffer .= "
-			<form ACTION=\"$this->page_name\" METHOD=\"POST\">
-			<input TYPE=\"HIDDEN\" NAME=\"posdtadd\"".prepare($posdtadd)."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-			($action=="modform" ? "mod" : "add")."\"/>\n";
-		if ($action=="modform")
-			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>\n";
-
-		$display_buffer .= html_form::form_table(array(
-			__("Place of Service") =>
-			html_form::text_widget('posname', 20, 75),
-
-			__("Description") =>
-			html_form::text_widget('posdescrip', 25, 200),
-		));
-
-		$display_buffer .= "
-			<div ALIGN=\"CENTER\">
-			<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".(
-			 ($action=="modform") ? __("Modify") : __("Add"))."\"/>
-			<input class=\"button\" TYPE=\"RESET\" VALUE=\"".
-				__("Remove Changes")."\"/>
-			</div>
-			</form>
-		";
-	} // end function PlaceOfServiceMaintenance->form
-
-	function widget ( $varname ) {
-		global $sql;
-		$result = array ();
-		$query = $sql->query("SELECT * FROM ".$this->table_name." ".
-			"ORDER BY posname, posdescrip");
-		while ($r = $sql->fetch_array($query)) {
-			$result[stripslashes($r['posname'].' '.$r['posdescrip'])] = $r['id'];
-		}
-		return html_form::select_widget(
-			$varname,
-			$result
-		);
-	} // end method widget
-
-} // end of class PlaceOfServiceMaintenance
-
-register_module ("PlaceOfServiceMaintenance");
+register_module ("PlaceOfService");
 
 ?>
