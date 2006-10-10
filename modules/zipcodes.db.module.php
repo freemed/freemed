@@ -22,7 +22,7 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class Zipcodes extends MaintenanceModule {
+class Zipcodes extends SupportModule {
 
 	var $MODULE_NAME = "Zipcodes";
 	var $MODULE_VERSION = "0.1";

@@ -25,7 +25,6 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 class AuthorizationsModule extends EMRModule {
 
 	var $MODULE_NAME    = "Insurance Authorizations";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1.2";
 	var $MODULE_DESCRIPTION = "
 		Insurance authorizations are used to track whether
@@ -64,50 +63,15 @@ class AuthorizationsModule extends EMRModule {
 
 	public function __construct () {
 		// __("Insurance Authorizations")
-		// Table definition
-		$this->table_definition = array (
-			'authdtadd' => SQL__DATE,
-			'authdtmod' => SQL__DATE,
-			'authpatient' => SQL__INT_UNSIGNED(0),
-			'authdtbegin' => SQL__DATE,
-			'authdtend' => SQL__DATE,
-			'authnum' => SQL__VARCHAR(25),
-			'authtype' => SQL__INT_UNSIGNED(0),
-			'authprov' => SQL__INT_UNSIGNED(0),
-			'authprovid' => SQL__VARCHAR(20),
-			'authinsco' => SQL__INT_UNSIGNED(0),
-			'authvisits' => SQL__INT_UNSIGNED(0),
-			'authvisitsused' => SQL__INT_UNSIGNED(0),
-			'authvisitsremain' => SQL__INT_UNSIGNED(0),
-			'authcomment' => SQL__VARCHAR(100),
-			'id' => SQL__SERIAL
-		);
 	
 		// Set vars for patient management summary
-		$this->summary_vars = array (
+		$this->list_view = array (
 			__("From") => "authdtbegin",
 			__("To")   => "authdtend",
 			__("Remaining") => "_remaining"
 		);
-		$this->summary_query = array (
+		$this->additional_query = array (
 			"IF(authvisits>0,CONCAT(authvisitsremain,'/',authvisits),CONCAT(TO_DAYS(authdtend)-TO_DAYS(NOW()),' days')) AS _remaining"
-		);
-
-		$this->form_vars = array (
-			"authdtmod",
-			"authdtbegin",
-			"authdtend",
-			"authnum",
-			"authtype",
-			"authprov",
-			"authprovid",
-			"authinsco",
-			"authvisits",
-			"authvisitsused",
-			"authvisitsremain",
-			"authcomment",
-			"authpatient",
-			"authdtadd"
 		);
 
 		$this->acl = array ( 'bill', 'emr' );
@@ -122,16 +86,12 @@ class AuthorizationsModule extends EMRModule {
 		return $d;
 	}
 
-	protected function preadd ( $data ) {
-		$d = $data;
-		$d['authdtadd'] = date('Y-m-d');
-		return $d;
+	protected function add_pre ( &$data ) {
+		$data['authdtadd'] = date('Y-m-d');
 	}
 
-	protected function premod ( $data ) {
-		$d = $data;
-		$d['authdtmod'] = date('Y-m-d');
-		return $d;
+	protected function mod_pre ( &$data ) {
+		$data['authdtmod'] = date('Y-m-d');
 	}
 
 } // end class AuthorizationsModule

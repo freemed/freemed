@@ -61,25 +61,15 @@ class MessagesTable extends EMRModule {
 		parent::__construct();
 	} // end constructor MessagesTable
 
-	function UnreadMessages ( ) {
+	public function UnreadMessages ( ) {
 		// Ask the API how many messages we have
 		$m = CreateObject('org.freemedsoftware.api.Messages');
 		if (!$m->view_per_user(true)) { return false; }
-		if (($c = count($m->view_per_user(true))) > 0) {
-			return array (
-				__("Unread Messages"),
-				sprintf(__("You have %s unread messages."), $c).
-				" <a href=\"messages.php\">[".__("View")."]</a>",
-				"img/envelope_icon.png"
-			);
-		} else {
-			// Don't show up if there are no unread messages
-			return false;
-		}
+		return count($m->view_per_user(true));
 	} // end method UnreadMessages
 
 	protected function additional_move ( $id, $from, $to ) {
-		$r = freemed::get_link_rec($id, $this->table_name);
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$q = $GLOBALS['sql']->update_query(
 			$this->table_name,
 			array ( 'msgpatient' => $to ),

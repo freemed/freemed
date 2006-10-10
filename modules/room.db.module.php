@@ -20,7 +20,7 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
-LoadObjectDependency('_FreeMED.SupportModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
 class RoomMaintenance extends SupportModule {
 

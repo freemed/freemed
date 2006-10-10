@@ -61,15 +61,15 @@ class UnfiledFaxes extends SupportModule {
 		parent::__construct();
 	} // end constructor UnfiledFaxes
 
-	protected function predel ( $id ) {
+	protected function del_pre ( $id ) {
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = freemed::secure_filename($rec['ufffilename']);
 
 		// Remove file name
 		unlink('data/fax/unfiled/'.$filename);
-	} // end method del
+	} // end method del_pre
 
-	protected function premod ( $data ) {
+	protected function mod_pre ( $data ) {
 		$id = $data['id'];
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = freemed::secure_filename( $rec['ufffilename'] );
@@ -162,12 +162,12 @@ class UnfiledFaxes extends SupportModule {
 		}
 
 		$new_id = $GLOBALS['sql']->lastInsertID( $this->table_name, 'id' );
-	} // end method premod
+	} // end method mod_pre
 
-	function postmod ( $data ) {
+	function mod_post ( $data ) {
 		// Don't use the delete method, because we don't want to remove files
 		$GLOBALS['sql']->query("DELETE FROM `".$this->table_name."` WHERE id='".addslashes($data['id'])."'");
-	} // end method postmod
+	} // end method mod_post
 
 	public function numberOfPages ( $id ) {
 		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );

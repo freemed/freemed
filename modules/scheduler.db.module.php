@@ -1,15 +1,33 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class SchedulerTable extends MaintenanceModule {
+class SchedulerTable extends SupportModule {
 
-	var $MODULE_NAME = 'Scheduler Table';
-	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.6';
+	var $MODULE_NAME = "Scheduler Table";
+	var $MODULE_VERSION = "0.6.6";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "a992b0a0-97f7-4deb-a56d-5970bf6d3c97";
 	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -18,38 +36,14 @@ class SchedulerTable extends MaintenanceModule {
 
 	var $table_name = "scheduler";
 
-	function SchedulerTable () {
+	public function __construct () {
 		// __("Scheduler Table")
-
-		$this->table_definition = array (
-			'caldateof' => SQL__DATE,
-			'calcreated' => SQL__TIMESTAMP(16),
-			'calmodified' => SQL__TIMESTAMP(16),
-			'caltype' => SQL__ENUM(array('temp', 'pat')),
-			'calhour' => SQL__INT_UNSIGNED(0),
-			'calminute' => SQL__INT_UNSIGNED(0),
-			'calduration' => SQL__INT_UNSIGNED(0),
-			'calfacility' => SQL__INT_UNSIGNED(0),
-			'calroom' => SQL__INT_UNSIGNED(0),
-			'calphysician' => SQL__INT_UNSIGNED(0),
-			'calpatient' => SQL__INT_UNSIGNED(0),
-			'calcptcode' => SQL__INT_UNSIGNED(0),
-			'calstatus' => SQL__ENUM(array('scheduled','confirmed','attended','cancelled','noshow','tenative')),
-			'calprenote' => SQL__VARCHAR(250),
-			'calpostnote' => SQL__TEXT,
-			'calmark' => SQL__INT_UNSIGNED(0),
-			'calgroupid' => SQL__INT_UNSIGNED(10),
-			'calrecurnote' => SQL__VARCHAR(100),
-			'calrecurid' => SQL__INT_UNSIGNED(10),
-			'calappttemplate' => SQL__INT_UNSIGNED(0),
-			'id' => SQL__SERIAL
-		);
 
 		// Have main menu handler for physician appointments, etc
 		$this->_SetHandler('MainMenu', 'MainMenuAppointments');
 
 		// Call parent constructor
-		$this->MaintenanceModule();
+		parent::__construct();
 	} // end constructor SchedulerTable
 
 	function MainMenuAppointments ( ) {
@@ -57,7 +51,7 @@ class SchedulerTable extends MaintenanceModule {
 	
 		// Decide if this user is a physician or not...
 		if (!is_object($GLOBALS['this_user'])) {
-			$GLOBALS['this_user'] = CreateObject('FreeMED.User');
+			$GLOBALS['this_user'] = CreateObject('org.freemedsoftware.core.User');
 		}
 		if ($GLOBALS['this_user']->isPhysician()) {
 			// If physician, give links to daily and weekly
