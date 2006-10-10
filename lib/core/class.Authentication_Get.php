@@ -20,29 +20,26 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// Class: org.freemedsoftware.core.Authentication_Password
+// Class: org.freemedsoftware.core.Authentication_Get
 //
-//	Classic FreeMED authentication via password.
+//	FreeMED authentication via HTTP GET request
 //
-class Authentication_Password {
+class Authentication_Get {
 
 	public function __construct ( ) { } 
 
 	function GetCredentials ( ) {
-		// Use _hash (md5) if passed, else plain _password
-		$login_md5 = ( $_REQUEST['_hash'] ? $_REQUEST['_hash'] : md5($_REQUEST['_password']) );
-
-		$user = $_REQUEST['_username'];
-
 		return array (
-			'username' => $user,
-			'password' => $login_md5
+			'username' => $_GET['user'],
+			'password' => $_GET['hash']
 		);
 	} // end method GetCredentials
 
+	function Logout ( ) { }
+
 	function IsValid ( $credentials ) {
-		// Drop if no valid username
-		if (!$credentials['username']) { return false; }
+		syslog(LOG_INFO, "isvalid");
+		if (!isset($credentials['username'])) { return false; }
 
 		// Find this user
   		$r = $GLOBALS['sql']->queryOne ("SELECT * FROM user ".
@@ -52,7 +49,7 @@ class Authentication_Password {
 		if (!$r['id']) { return false; }
 	
 		if((LOGLEVEL<1)||(LOG_HIPAA || LOG_LOGIN)) {
-			syslog(LOG_INFO, "FreeMED.Authentication_Password| verify_auth login attempt $user ");
+			syslog(LOG_INFO, "FreeMED.Authentication_Basic| verify_auth login attempt $user ");
 		}
 
 		$db_pass = $r['userpassword'];
@@ -68,7 +65,7 @@ class Authentication_Password {
 			$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 	
 			// Authorize
-			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth successful login");}		
+			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Basic| verify_auth successful login");}
 			$log = freemed::log_object();
 			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Successfully logged in" );
 			return true;
@@ -76,37 +73,17 @@ class Authentication_Password {
 			// Failed password check
 			unset ( $_SESSION['authdata'] );
 			unset ( $_SESSION['ipaddr'] );
-			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth failed login");	}	
+			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"FreeMED.Authentication_Basic| verify_auth failed login");	}	
 			$log = freemed::log_object();
 			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Failed login" );
 			return false;
 		} // end check password
 	} // end method IsValid
 
-	function Logout ( ) {
-		// Stub method, just to keep track for audit purposes
-		$log = freemed::log_object();
-		$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Logged out" );
-	} // end method Logout
-
 	function RequestNewAuthentication ( ) {
-		// IE fix for REQUEST_URI
-		if(!isset($_SERVER['REQUEST_URI'])) {
-			$_SERVER['REQUEST_URI'] = substr($_SERVER['argv'][0],
-				strpos($_SERVER['argv'][0], ';') + 1);
-		}
-
-		// Log to syslog
-		syslog(LOG_INFO, "Authentication: password| requesting new auth");
-
-		Header('Location: index.php?message='.urlencode($message));
-		die();
-
-		/*
-		Header("Location: index.php?message=".urlencode(__("You have entered an incorrect username or password.")). ( strpos($_SERVER['REQUEST_URI'], 'index.php') === false and strpos($_SERVER['REQUEST_URI'], 'authenticate.php') === false ? "&_URL=".urlencode($_SERVER['REQUEST_URI']."&".implode_with_key($_POST))) : "" );
-		template_display();
-		*/
+		die(__("Access denied."));
 	}
-} // end class Authentication_Password
+
+} // end class Authentication_Get
 
 ?>

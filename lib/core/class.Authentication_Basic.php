@@ -26,7 +26,7 @@
 //
 class Authentication_Basic {
 
-	function Authentication_Basic ( ) { } 
+	public function __construct ( ) { } 
 
 	function GetCredentials ( ) {
 		return array (
@@ -50,15 +50,12 @@ class Authentication_Basic {
 		if (!isset($credentials['username'])) { return false; }
 
 		// Find this user
-  		$result = $GLOBALS['sql']->query ("SELECT * FROM user ".
+  		$r = $GLOBALS['sql']->queryOne ("SELECT * FROM user ".
 			"WHERE username = '".addslashes($credentials['username'])."'");
 	
 		// If the user isn't found, false
-		if (!$GLOBALS['sql']->results($result)) { return false; }
+		if (!$r['id']) { return false; }
 	
-		// Get information
-		$r = $GLOBALS['sql']->fetch_array ($result);
-
 		if((LOGLEVEL<1)||(LOG_HIPAA || LOG_LOGIN)) {
 			syslog(LOG_INFO, "FreeMED.Authentication_Basic| verify_auth login attempt $user ");
 		}
@@ -97,23 +94,6 @@ class Authentication_Basic {
 			$_SERVER['REQUEST_URI'] = substr($_SERVER['argv'][0],
 				strpos($_SERVER['argv'][0], ';') + 1);
 		}
-
-		// Determine whether or not we have a "refresh URL"
-		switch ($GLOBALS['page_name']) {
-			// Entry and exit pages don't need to be reloaded
-			case 'index.php':
-			case 'logout.php':
-				$GLOBALS['_URL'] = 'main.php';
-				break;
-
-			case 'authenticate.php':
-				return false;
-				break;
-
-			default:
-				$GLOBALS['_URL'] = $_SERVER['REQUEST_URI'];
-				break;
-		} // end page_name switch
 
 		// Log to syslog
 		syslog(LOG_INFO, "Authentication: password| requesting new auth");

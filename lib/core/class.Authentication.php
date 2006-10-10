@@ -29,7 +29,7 @@ class Authentication {
 
 	var $handler;
 
-	function Authentication ( $type ) {
+	public function __construct ( $type ) {
 		$this->handler = CreateObject('org.freemedsoftware.core.Authentication_'.$type);
 		if (!is_object($this->handler)) {
 			die ( "org.freemedsoftware.core.Authentication: could not load ".$type );
