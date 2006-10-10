@@ -29,6 +29,8 @@ T_setlocale ( LC_MESSAGES, $_SESSION['language'] ? $_SESSION['language'] : DEFAU
 // Set text domain for page
 T_bindtextdomain ( 'freemed', LOCALE_DIR );
 T_bind_textdomain_codeset ( 'freemed', language2isoset ( $_SESSION['language'] ? $_SESSION['language'] : DEFAULT_LANGUAGE ) );
-T_textdomain ( 'freemed' );
+
+// Load text domain for UI
+T_textdomain ( UI );
 
 ?>
