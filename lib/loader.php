@@ -163,7 +163,11 @@ function ResolveObjectPath ( $object ) {
 		case substr( $object, 0, 27 ) == 'org.freemedsoftware.module.':
 			$cname = str_replace ( 'org.freemedsoftware.module.', '', $object );
 			$cname = eregi_replace( '\..+', '', $cname );
-			return "${base_path}/".resolve_module( $cname );
+			$module_path = resolve_module( $cname );
+			if (! $module_path ) {	
+				trigger_error( "Could not resolve object path ${object}", E_USER_ERROR );
+			}
+			return "${base_path}/${module_path}";
 			break;
 
 		case substr( $object, 0, 20 ) == 'org.freemedsoftware.':
