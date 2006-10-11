@@ -153,7 +153,7 @@ class Patient {
 			"WHERE procpatient = '".addslashes($this->id)."' ".
 			"ORDER BY procdt DESC";
 		$result = $GLOBALS['sql']->queryOne ( $query );
-		return $result['procdt'];
+		return $result;
 	} // end method date_of_last_procedure
 
 	// Method: fullName

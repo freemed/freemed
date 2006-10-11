@@ -343,13 +343,13 @@ class Parser_HL7v2 {
 	public function pid_to_patient ( $pid_id ) {
 		$query = "SELECT id FROM patient WHERE ptid='".addslashes($pid_id)."' AND ptarchive=0 ORDER BY id";
 		$r = $GLOBALS['sql']->queryOne($query);
-		return $r['id'];
+		return $r;
 	} // end method pid_to_patient
 
 	public function aip_to_provider ( $aip_id ) {
 		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($aip_id)."'";
 		$r = $GLOBALS['sql']->queryOne($query);
-		return $r['id'];
+		return $r;
 	} // end method aip_to_provider
 
 	// Method: composite_to_provider
@@ -367,7 +367,7 @@ class Parser_HL7v2 {
 	public function composite_to_provider ( $composite ) {
 		//syslog('HL7| composite[0] = '.$composite[0]);
 		$query = "SELECT id FROM physician WHERE phyhl7id='".addslashes($composite[0])."' OR phyupin='".addslashes($composite[0])."'";
-		$result = $GLOBALS['sql']->queryOne($query);
+		$result = $GLOBALS['sql']->queryRow($query);
 		if ($result['id']) {
 			// Process from existing ID
 			//syslog('HL7 parser| found single with id = '.$result['id']);
@@ -375,7 +375,7 @@ class Parser_HL7v2 {
 		} else {
 			// Infer using first and last name
 			$query = "SELECT id FROM physician WHERE phyfname='".addslashes($composite[2])."' AND phylname='".addslashes($composite[1])."'";
-			$result = $GLOBALS['sql']->queryOne($query);
+			$result = $GLOBALS['sql']->queryRow($query);
 			if ($result['id']) {
 				// Use the names ...
 				return $result['id'];

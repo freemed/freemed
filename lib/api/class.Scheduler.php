@@ -175,7 +175,7 @@ class Scheduler {
 		$q = $GLOBALS['sql']->queryOne("SELECT DATE_ADD('".
 			addslashes($starting)."', INTERVAL ".
 			($interval+0)." DAY) AS mydate");
-		return $q['mydate'];
+		return $q;
 	} // end method date_add
 
 	// Method: date_in_range

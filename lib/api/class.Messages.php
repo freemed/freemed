@@ -43,7 +43,7 @@ class Messages {
 
 		// Perform search
 		$query = "SELECT * FROM messages WHERE id='".addslashes($message)."'";
-		$r = $GLOBALS['sql']->queryOne( $query );
+		$r = $GLOBALS['sql']->queryRow( $query );
 
 		if ($r['id']) {
 			// Check for appropriate access (correct user)

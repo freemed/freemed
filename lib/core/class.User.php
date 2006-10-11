@@ -163,7 +163,7 @@ class User {
 	//
 	public function getFaxDetails ( $fid ) {
 		$query = "SELECT * FROM faxstatus WHERE id='".addslashes($fid)."'";
-		$result = $GLOBALS['sql']->queryOne($query);
+		$result = $GLOBALS['sql']->queryRow($query);
 		return $result;
 	} // end method getFaxDetails
 

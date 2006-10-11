@@ -260,13 +260,7 @@ class ClaimLog {
 			"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).") ".
 			"GROUP BY i.id";
 		//print "query = \"$query\"<br/>\n";
-		$result = $GLOBALS['sql']->query ( $query );
-		$return = array ( );
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
-			$return[] = $r;
-			 // payer, claims, paid, balance, ratio
-		} 
-		return $return;
+		return $GLOBALS['sql']->queryAll ( $query );
 	} // end method aging_summary_payer_range
 
 /*
@@ -459,7 +453,7 @@ ORDER BY
 					"p.id = '".addslashes($proc)."'" 
 				);
 		//print "query = \"$query\"<br/>\n";
-		$r = $GLOBALS['sql']->queryOne ( $query );
+		$r = $GLOBALS['sql']->queryRow ( $query );
 		return $r;
 	} // end method claim_information
 

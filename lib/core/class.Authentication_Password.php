@@ -45,7 +45,7 @@ class Authentication_Password {
 		if (!$credentials['username']) { return false; }
 
 		// Find this user
-  		$r = $GLOBALS['sql']->queryOne ("SELECT * FROM user ".
+  		$r = $GLOBALS['sql']->queryRow ("SELECT * FROM user ".
 			"WHERE username = '".addslashes($credentials['username'])."'");
 	
 		// If the user isn't found, false

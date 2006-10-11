@@ -104,7 +104,7 @@ class BaseModule extends Module {
 						",".join(",", $this->summary_query)." " : " " ).
 						"FROM ".$this->table_name." ".
 						"WHERE id='".addslashes($_REQUEST['id'])."'";
-						$rec = $GLOBALS['sql']->queryOne( $query );
+						$rec = $GLOBALS['sql']->queryRow( $query );
 				} else {
 					$rec = $GLOBALS['sql']->get_link($this->table_name, $_REQUEST['id']);
 				} // end checking for summary_query

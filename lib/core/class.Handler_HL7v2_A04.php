@@ -36,7 +36,7 @@ class Handler_HL7v2_A04 extends Handler_HL7v2 {
 			// this will check to see if the PID exists in the
 			// system and generate the equivalent of an A04 call
 			// if it does not.
-			$exist_query = $GLOBALS['sql']->queryOne(
+			$exist_query = $GLOBALS['sql']->queryRow(
 				"SELECT * FROM patient WHERE ptid='".
 				addslashes($v[HL7v2_PID_ID])."' AND ptarchive=0"
 			);
@@ -82,7 +82,7 @@ class Handler_HL7v2_A04 extends Handler_HL7v2 {
 				);
 				syslog(LOG_INFO, 'HL7 parser| query = '.$query);
 				$result = $GLOBALS['sql']->query( $query );
-				$r = $GLOBALS['sql']->queryOne("SELECT * FROM patient WHERE ptid='".addslashes($v[HL7v2_PID_ID])."' AND ptarchive=0"));
+				$r = $GLOBALS['sql']->queryRow("SELECT * FROM patient WHERE ptid='".addslashes($v[HL7v2_PID_ID])."' AND ptarchive=0"));
 				freemed::handler_breakpoint('PatientModify', array($r['pid']));
 			} else {
 				// Otherwise use A04 type query to add patient

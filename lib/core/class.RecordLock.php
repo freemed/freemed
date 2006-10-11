@@ -60,7 +60,7 @@ class RecordLock {
 			"locktable='".addslashes($this->table)."' AND ".
 			"lockrow='".addslashes($row)."' AND ".
 			"( (CURRENT_TIMESTAMP + 0) - (lockstamp + 0) ) < ".$this->expiry;
-		$result = $GLOBALS['sql']->queryOne( $query );
+		$result = $GLOBALS['sql']->queryRow( $query );
 		if ($result['id']) {
 			return $result['lockuser'];
 		} else {
@@ -88,7 +88,7 @@ class RecordLock {
 			"locktable='".addslashes($this->table)."' AND ".
 			"lockrow='".addslashes($row)."' AND ".
 			"( (CURRENT_TIMESTAMP + 0) - (lockstamp + 0) ) < ".$this->expiry;
-		$result = $GLOBALS['sql']->queryOne( $query );
+		$result = $GLOBALS['sql']->queryRow( $query );
 		if ($result['id']) {
 			$query = $GLOBALS['sql']->update_query(
 				'recordlock',

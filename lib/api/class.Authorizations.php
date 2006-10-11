@@ -29,7 +29,7 @@
 class Authorizations {
 
 	// constructor STUB
-	function Authorizations ( ) { }
+	public function __construct ( ) { }
 
 	// Method: find_by_coverage
 	//
@@ -46,7 +46,7 @@ class Authorizations {
 	//
 	function find_by_coverage ( $coverage ) {
 		// Get insurance company and patient from coverage
-		$this_coverage = freemed::get_link_rec($coverage, 'coverage');
+		$this_coverage = $GLOBALS['sql']->get_link( 'coverage', $coverage );
 		$patient = $this_coverage['covpatient'];
 		$insco = $this_coverage['covinsco'];
 
@@ -57,11 +57,7 @@ class Authorizations {
 		$query = "SELECT id FROM authorizations WHERE ".
 			"authinsco = '".addslashes($insco)."' AND ".
 			"authpatient = '".addslashes($patient)."'";
-
-		// Loop through all records
-		while ( $r = $GLOBALS['sql']->fetch_array ( $result ) ) {
-			$return[] = $r['id'];
-		} // end while
+		$return = $GLOBALS['sql']->queryCol( $query );
 
 		// Return array of identifiers
 		return $return;
@@ -80,7 +76,7 @@ class Authorizations {
 	//	Associative array of values.
 	//
 	function get_authorization ( $auth ) {
-		return freemed::get_link_rec ( $auth, 'authorizations' );
+		return $GLOBALS['sql']->get_link( 'authorizations', $auth );
 	} // end method get_authorization
 
 	// Method: replace

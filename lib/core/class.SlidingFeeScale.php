@@ -146,7 +146,7 @@ class SlidingFeeScale {
 		$query = "SELECT * FROM financialdemographics ".
 			"WHERE fdpatient='".addslashes($this->patient)."' ".
 			"ORDER BY fdtimestamp DESC LIMIT 1";
-		$r = $GLOBALS['sql']->queryOne ( $query );
+		$r = $GLOBALS['sql']->queryRow ( $query );
 		return $r;
 	} // end method _GetLastFinancialRecord
 

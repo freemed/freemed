@@ -218,7 +218,7 @@ class EMRModule extends BaseModule {
 				"FROM ".$this->table_name." WHERE ".
 				"id='".addslashes($id)."' AND (locked > 0)";
 			$result = $GLOBALS['sql']->queryOne( $query );
-			$locked = ($result['lock_count'] > 0);
+			$locked = ($result > 0);
 		}
 
 		return $locked ? true : false;
@@ -523,7 +523,7 @@ class EMRModule extends BaseModule {
 			"WHERE `".$this->patient_field."` = '".addslashes($patient)."' ".
 			( $recent_date ? " AND `".$this->date_field."` <= '".addslashes($recent_date)."' " : "" ).
 			"ORDER BY ".$this->date_field." DESC, id DESC";
-		$res = $GLOBALS['sql']->queryOne( $query );
+		$res = $GLOBALS['sql']->queryRow( $query );
 		return $res;
 	} // end public function recent_record
 
@@ -559,7 +559,7 @@ class EMRModule extends BaseModule {
 					",".join(",", $this->summary_query)." " : " " ).
 					"FROM ".$this->table_name." ".
 					"WHERE id='".addslashes($record)."'";
-				$rec = $GLOBALS['sql']->queryOne($query);
+				$rec = $GLOBALS['sql']->queryRow($query);
 			} else {
 				$rec = $GLOBALS['sql']->get_link( $t, $record );
 			} // end checking for summary_query
@@ -614,7 +614,7 @@ class EMRModule extends BaseModule {
 				",".join(",", $this->summary_query)." " : " " ).
 				"FROM ".$this->table_name." ".
 				"WHERE id='".addslashes($record)."'";
-			$rec = $GLOBALS['sql']->queryOne($query);
+			$rec = $GLOBALS['sql']->queryRow($query);
 
 			// Handle templating elsewhere
 			return $TeX->RenderFromTemplate( $my_template, $rec );

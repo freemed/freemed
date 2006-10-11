@@ -1005,7 +1005,7 @@ class Remitt {
 		$i = $GLOBALS['sql']->get_link( 'insco', $payer );
 		$mods = explode (':', $i['inscomod']);
 		if (!is_array($mods)) { $mods = array ( $mods ); }
-		$r = $GLOBALS['sql']->queryOne('SELECT * FROM insmod WHERE insmod = \''.addslashes($mod).'\'');
+		$r = $GLOBALS['sql']->queryRow('SELECT * FROM insmod WHERE insmod = \''.addslashes($mod).'\'');
 		foreach ($mods AS $k => $v) {
 			if ($v == $r['id']) {
 				return true;

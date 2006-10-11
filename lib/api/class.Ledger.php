@@ -24,7 +24,7 @@
 class Ledger {
 
 	// STUB constructor
-	function Ledger ( ) { }
+	public function __constructor ( ) { }
 
 	// Method: aging_report_qualified
 	//
@@ -176,7 +176,7 @@ class Ledger {
 	//	Amount in collections, or a testing false value (0)?
 	//
 	function collection_warning ( $pid ) {
-		$r = $GLOBALS['sql']->queryOne(
+		$r = $GLOBALS['sql']->queryRow(
 		       	"SELECT	sum(procbalcurrent) AS outstanding ".
 			"FROM procrec ".
 			"WHERE TO_DAYS(NOW())-TO_DAYS(procdt) > 180 ".
@@ -252,7 +252,7 @@ class Ledger {
 	//
 	function next_coverage ( $proc ) {
 		// Get procedure record
-		$this_procedure = freemed::get_link_rec($proc, 'procrec', true);
+		$this_procedure = $GLOBALS['sql']->get_link( 'procrec', $proc );
 		$current_type = $this_procedure['proccurcovtp'];
 		for ($i=1; $i<=4; $i++) {
 			// Determine if a certain coverage exists
@@ -327,7 +327,7 @@ class Ledger {
 			$query = "SELECT proccov".($type + 0)." AS ".
 				"coverage FROM procrec WHERE ".
 				"id = '".addslashes($proc)."'";
-			$result = $GLOBALS['sql']->queryOne($query);
+			$result = $GLOBALS['sql']->queryRow($query);
 			extract( $result );
 		} else {
 			$coverage = 0;

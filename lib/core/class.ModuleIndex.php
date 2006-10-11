@@ -184,7 +184,7 @@ class ModuleIndex {
 		if (!file_exists($this->cache_file)) { return false; }
 
 		// Get cached modification time
-		$q = $GLOBALS['sql']->queryOne('SELECT MAX(stamp) AS cache_modified FROM modules');
+		$cache_modified = $GLOBALS['sql']->queryOne('SELECT MAX(stamp) AS cache_modified FROM modules');
 
 		// Get directory modification date
 		clearstatcache();
@@ -192,7 +192,7 @@ class ModuleIndex {
 		//print "DEBUG: dir_modified = $dir_modified<br/>\n";
 
 		// If the cache is older than the directory...
-		if ($q['cache_modified'] < $dir_modified) {
+		if ($cache_modified < $dir_modified) {
 			// .. the cache needs to be rebuilt
 			return false;
 		} else {
