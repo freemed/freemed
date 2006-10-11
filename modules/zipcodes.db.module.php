@@ -41,6 +41,42 @@ class Zipcodes extends SupportModule {
 		parent::__construct();
 	} // end constructor Zipcodes
 
+	// Method: CalculateDistance
+	//
+	//	Calculate distance between two zipcodes. Many thanks to
+	//	http://jan.ucc.nau.edu/~cvm/latlon_formula.html from whence I
+	//	napped the magic formula.
+	//
+	// Parameters:
+	//
+	//	$zipa - Source zipcode
+	//
+	//	$zipb - Destination zipcode
+	//
+	// Returns:
+	//
+	//	Distance in statute miles between the two zipcodes.
+	//
+	public function CalculateDistance ( $zipa, $zipb ) {
+		$r = 3963.1; // 3963.1 statute miles, 6378 km
+
+		$arec = $GLOBALS['sql']->get_link ( $this->table_name, $zipa, 'zip' );
+		$brec = $GLOBALS['sql']->get_link ( $this->table_name, $zipb, 'zip' );
+
+		$c = M_PI / 180;
+
+		$a[1] = abs ( $arec['latitude'] * $c );
+		$b[1] = abs ( $arec['longitude'] * $c );
+		$a[2] = abs ( $brec['latitude'] * $c );
+		$b[2] = abs ( $brec['longitude'] * $c );
+
+		return acos( 
+			( cos($a[1]) * cos($b[1]) * cos($a[2]) * cos($b[2]) ) + 
+			( cos($a[1]) * sin($b[1]) * cos($a[2]) * sin($b[2]) ) + 
+			( sin($a[1]) * sin($a[2]) ) 
+		) * $r;
+	} // end function CalculateDistance
+
 } // end class Zipcodes
 
 register_module("Zipcodes");
