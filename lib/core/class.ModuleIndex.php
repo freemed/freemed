@@ -215,7 +215,7 @@ class ModuleIndex {
 	//
 	public function CheckForModule ($module_name) {
 		if (empty($module_name)) { return false; }
-		if ($this->GetModuleProperty( $module_name, 'MODULE_CLASS' )) { return true; }
+		if ($this->GetModuleProperty( $module_name, 'module_class' )) { return true; }
 		return false;
 	} // end function CheckForModule
 
@@ -237,7 +237,7 @@ class ModuleIndex {
 		static $idx;
 		if (!is_array ($idx)) {
 			foreach ($this->index AS $this_module) {
-				$idx[($this_module['MODULE_CLASS'])] = $this_module;
+				$idx[strtolower($this_module['module_class'])] = $this_module;
 			}
 		}
 		return $idx[$module][$property];
@@ -256,7 +256,7 @@ class ModuleIndex {
 	//	Textual name of the module
 	//
 	public function GetModuleName ( $module ) {
-		return $this->GetModuleProperty ( $module, 'MODULE_NAME' );
+		return $this->GetModuleProperty ( $module, 'module_name' );
 	} // end method GetModuleName
 
 	// Method: GetModuleFile
@@ -272,7 +272,7 @@ class ModuleIndex {
 	//	Textual name of the module
 	//
 	public function GetModuleFile ( $module ) {
-		return $this->GetModuleProperty ( $module, 'MODULE_FILE' );
+		return $this->GetModuleProperty ( $module, 'module_path' );
 	} // end method GetModuleFile
 
 } // end class ModuleIndex

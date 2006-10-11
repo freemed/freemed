@@ -19,8 +19,6 @@
 
 // File: Module API
 
-// ***************** FUNCTIONS FOR MANIPULATING MODULES ****************
-
 unset ($GLOBALS['__freemed']['GLOBAL_MODULES']); // make sure nothing is using this
 
 // Function: check_module
@@ -137,7 +135,7 @@ function register_module ($module_name) {
 		'module_category' => ( $data['MODULE_CATEGORY'] ? $data['MODULE_CATEGORY'] : 'Unknown' ),
 		'module_path' => $data['MODULE_FILE'],
 		'module_stamp' => $lstat[7],
-		'module_handlers' => is_array($data['META_INFORMATION']['__handler']) ? join(',', $data['META_INFORMATION']['__handler']) : '',
+		'module_handlers' => is_array($data['META_INFORMATION']['__handler']) ? join(',', array_keys($data['META_INFORMATION']['__handler'])) : '',
 		'module_associations' => is_array($data['META_INFORMATION']['__associations_list']) ? join(',', $data['META_INFORMATION']['__associations_list']) : '',
 		'module_meta' => serialize($data['META_INFORMATION'])
 	);
@@ -187,23 +185,13 @@ function register_module ($module_name) {
 //	File name of the module.
 //
 function resolve_module ($module_name) {
-	$cache = _cache_module();
-	return $cache[strtolower($module_name)]['module_path'];
-} // end function resolve_module
-
-// Function: _cache_modules
-//
-// Returns:
-//
-//	Array of module information hashes
-//
-function _cache_modules ( ) {
 	static $cache;
+
 	if (!isset($cache)) {
-		$cache = $GLOBALS['sql']->queryAll('SELECT * FROM modules');
+		$cache = CreateObject('org.freemedsoftware.core.ModuleIndex');
 	}
-	return $cache;
-} // end function _cache_modules
+	return $cache->GetModuleProperty( strtolower($module_name), 'module_path' );
+} // end function resolve_module
 
 function setup_module ($module_name) {
 	// check for module existing
