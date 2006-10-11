@@ -262,7 +262,7 @@ class SupportModule extends BaseModule {
 
 		$GLOBALS['sql']->load_data( $this->prepare ( $data ) );
 
-		$this->preadd( $data );
+		$this->add_pre( &$data );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->insert_query (
 				$this->table_name,
@@ -271,12 +271,12 @@ class SupportModule extends BaseModule {
 		);
 
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
-		$this->postadd( $new_id );
+		$this->add_post( $new_id );
 		return $new_id;
 	} // end function add
 
-	protected function preadd ( $data ) { }
-	protected function postadd ( $id ) { }
+	protected function add_pre ( $data ) { }
+	protected function add_post ( $id ) { }
 
 	// Method: _del
 	//
@@ -301,12 +301,12 @@ class SupportModule extends BaseModule {
 			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
-		$this->predel( $id + 0 );
+		$this->del_pre( $id + 0 );
 		$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id+0 )."'";
 		$result = $GLOBALS['sql']->query ( $query );
 	} // end function del
 
-	protected function predel ( $id ) { }
+	protected function del_pre ( $id ) { }
 
 	// Method: mod
 	//
@@ -327,7 +327,7 @@ class SupportModule extends BaseModule {
 
 		if ( !$data['id'] ) { return false; }
 
-		$this->premod( $data );
+		$this->mod_pre( &$data );
 		$GLOBALS['sql']->load_data( $this->prepare( $data ) );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
@@ -336,13 +336,13 @@ class SupportModule extends BaseModule {
 				array ( "id" => $id )
 			)
 		);
-		$this->postmod( $data );
+		$this->mod_post( &$data );
 
 		return $result ? true : false;
 	} // end function mod
 
-	private function premod ( $data ) { }
-	private function postmod ( $data ) { }
+	private function mod_pre ( $data ) { }
+	private function mod_post ( $data ) { }
 
 	// Method: picklist
 	//
