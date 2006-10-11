@@ -112,7 +112,7 @@ class FreemedDb extends MDB2 {
 	//
 	public function get_link ( $table, $key, $field = 'id' ) {
 		$query = "SELECT * FROM `".$this->db->escape( $table )."` WHERE `".$this->db->escape( $field )."` = ".$this->db->quote( $key );
-		return $this->db->queryOne( $query );
+		return $this->db->queryRow( $query );
 	} // end public function get_link
 
 	// Method: distinct_values
