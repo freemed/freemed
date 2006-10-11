@@ -290,9 +290,9 @@ function fc_generate_interference_map ($query_part, $this_date,
     $querystring = "SELECT * FROM scheduler WHERE ".
       "(($query_part) AND (caldateof='".addslashes($this_date)."')) ".
       "ORDER BY caldateof,calhour,calminute";
-    $result = $sql->query ($querystring);
+    $result = $sql->queryAll ($querystring);
 
-    while ($r = $sql->fetch_array($result)) { // loop for all patients
+    foreach ( $result AS $r ) {
       // get all common data
       $calhour     = $r["calhour"    ];
       $calminute   = $r["calminute"  ];
@@ -587,20 +587,18 @@ class freemedCalendar {
 	//	<freemedCalendar::map_fit>
 	//	<freemedCalendar::map_init>
 	function map ( $query ) {
-		global $sql;
-
 		// Initialize the map;
 		$idx = "";
 		$map = freemedCalendar::map_init();
 
 		// Get the query
-		$result = $sql->query($query);
+		$result = $GLOBALS['sql']->queryAll( $query );
 
 		// If nothing, return empty map
-		if (!$sql->results($result)) return $map;
+		if (!count($result)) { return $map; }
 
 		// Run through query
-		while ($r = $sql->fetch_array($result)) {
+		foreach ( $result AS $r ) {
 			// Move to "c" array, which is stripslashes'd
 			foreach ($r AS $k => $v) {
 				$c[(stripslashes($k))] = stripslashes($v);
@@ -747,20 +745,18 @@ class freemedCalendar {
 	// See Also:
 	//	<freemedCalendar::map>
 	function multimap ( $query, $selected = -1 ) {
-		global $sql;
-
 		// Initialize the first map and current index
 		$idx = "";
 		$maps[0] = freemedCalendar::map_init();
 
 		// Get the query
-		$result = $sql->query($query);
+		$result = $GLOBALS['sql']->queryAll( $query );
 
 		// If nothing, return empty map
-		if (!$sql->results($result)) return $map;
+		if (!count($result)) { return $map; }
 
 		// Run through query
-		while ($r = $sql->fetch_array($result)) {
+		foreach ( $result AS $r ) {
 			// Move to "c" array, which is stripslashes'd
 			foreach ($r AS $k => $v) {
 				$c[(stripslashes($k))] = stripslashes($v);
