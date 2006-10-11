@@ -441,16 +441,16 @@ class freemed {
 	//
 	//	$type - File type (usually "djvu")
 	//
-	//	$img_store (optional) - Boolean, whether or not
-	//	the relative pathname will be prepended (usually "img/store/").
+	//	$date_store - (optional) Boolean, whether or not
+	//	the relative pathname will be prepended (usually "data/store/").
 	//
 	// Returns:
 	//
 	//	The relative path and file name of the image.
 	//
-	public function image_filename($patient, $record, $type, $img_store = true) {
+	public function image_filename($patient, $record, $type, $data_store = true) {
 		$m = md5($patient);
-		return ($img_store ? 'img/store/' : '' ).
+		return ($data_store ? 'data/store/' : '' ).
 			$m[0].$m[1].'/'.
 			$m[2].$m[3].'/'.
 			$m[4].$m[5].'/'.
@@ -1140,7 +1140,7 @@ class freemed {
 				return true;
 			}
 		} else {
-			$result = $GLOBALS['sql']->queryOne( "SELECT * FROM user WHERE id='".addslashes($authdata["user"])."'" );
+			$result = $GLOBALS['sql']->queryRow( "SELECT * FROM user WHERE id='".addslashes($authdata["user"])."'" );
 
 			// Check for improper results, return "unauthorized"
 			if (!$r['id']) {
@@ -1353,7 +1353,7 @@ class EMRi {
 
 		foreach ($patients AS $k => $v) {
 			// Process scalar
-			$this_patient = $GLOBALS['sql']->get_link_rec( 'patient', $v );
+			$this_patient = $GLOBALS['sql']->get_link( 'patient', $v );
 
 			// Add to param
 			$param[] = array (
@@ -1633,8 +1633,6 @@ function fm_value_in_string ($cur_string, $value) {
 //---------------------------------------------------------------------------
 
 function fm_get_active_coverage ($ptid=0) {
-	global $sql;
-
 	// Initialize results
 	$result = 0;
 
@@ -1645,24 +1643,16 @@ function fm_get_active_coverage ($ptid=0) {
 	$query = "SELECT id FROM coverage WHERE ".
 		"covpatient='".addslashes($ptid)."' ".
 		"AND covstatus='".ACTIVE."'";
-	$result = $sql->query($query);
+	$ins_id = $GLOBALS['sql']->queryAll( $query );
 
 	// If nothing was returned, return 0
-	if (!$result) return $result;
-
-	// Pull in id's for all pertinent records
-        while ($rec = $sql->fetch_array($result)) $ins_id[] = $rec["id"];
-
-	// If nothing was done, nothing return 0
-	if (!isset($ins_id)) return 0;
+	if (!count($ins_id)) { return 0; }
 
 	// Return the array of coverages
         return $ins_id;
 } // end function fm_get_active_coverages
 
 function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
-	global $sql, $cur_date;
-
 	// Initialize result
 	$result = 0;
 
@@ -1674,14 +1664,10 @@ function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
 		"covpatient='".addslashes($ptid)."' AND ".
 		"covstatus='".ACTIVE."' AND ".
 		"covtype='".addslashes($coveragetype)."'";
-	$result = $sql->query($query);
+	$result = $GLOBALS['sql']->queryOne( $query );
 
-	// Check for results, otherwise return 0
-	if (!$sql->results($result)) return 0;
-		
 	// Return the id
-	$row = $sql->fetch_array($result);
-	return $row[id];
+	return $result;
 } // end function fm_verify_patient_coverage
 
 //---------------------------------------------------------------------------

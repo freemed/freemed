@@ -1,7 +1,7 @@
 # $Id$
 # $Author$
 
-THISDIR=img/store
+THISDIR=data/store
 SUBDIR=
 
 all:
