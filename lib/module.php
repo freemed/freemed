@@ -50,7 +50,7 @@ function check_module ($module_name, $version = NULL) {
 		}
 		// Check for version as well
 		return ( (resolve_module($module_name) != false) and
-			version_check($actual_version, $version) );
+			version_compare($actual_version, $version) >= 0 );
 	}
 } // end function check_module
 

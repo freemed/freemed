@@ -93,7 +93,7 @@ class Module {
 		$parent_class = strtolower(get_parent_class($this));
 		if ( (!empty($parent_class)) and ($parent_class != "module") ) {
 			// check for minimum version, and return
-			return version_check($this->PACKAGE_VERSION, $this->PACKAGE_MINIMUM_VERSION);
+			return version_compare( $this->PACKAGE_VERSION, $this->PACKAGE_MINIMUM_VERSION ) >= 0;
 		} else {
 			// if this isn't a subclass, of course it is a good version
 			return true;

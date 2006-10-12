@@ -490,7 +490,7 @@ class freemed {
 		} // end caching modules config
 	
 		// check in cache for version > minimum_version
-		return version_check($_config["$uid"], $minimum_version);
+		return version_compare( $_config["$uid"], $minimum_version ) >= 0;
 	} // end function freemed::module_check
 
 	// Function: freemed::module_check_acl
@@ -554,12 +554,7 @@ class freemed {
 		// Get module list object
 		$module_list = freemed::module_cache();
 
-		// Not in the list, then we just skip it
-		if (!$module_list->check_for($module)) {
-			return false;
-		}
-
-		foreach ($GLOBALS['__freemed']['GLOBAL_MODULES'] as $k => $v) {
+		foreach ($module_list AS $v) {
 			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
 				return $v[$key];
 			}
@@ -591,12 +586,7 @@ class freemed {
 	function module_get_meta ($module, $key) {
 		$module_list = freemed::module_cache();
 
-		// Not in the list, then we just skip it
-		if (!$module_list->check_for($module)) {
-			return false;
-		}
-
-		foreach ($GLOBALS['__freemed']['GLOBAL_MODULES'] as $k => $v) {
+		foreach ($module_list AS $v) {
 			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
 				return $v['META_INFORMATION'][$key];
 			}
@@ -608,7 +598,7 @@ class freemed {
 
 	// Function: freemed::module_cache
 	//
-	//	Provides global access to a PHP.module_list object with
+	//	Provides global access to an array of hashes containing
 	//	cached module information.
 	//
 	// Returns:
@@ -666,13 +656,8 @@ class freemed {
 		// Get module list object
 		$module_list = freemed::module_cache();
 
-		// Not in the list, then we just skip it
-		if (!$module_list->check_for($module)) {
-			return false;
-		}
-
 		// Use protected __freemed array to get module name
-		foreach ($GLOBALS['__freemed']['GLOBAL_MODULES'] as $k => $v) {
+		foreach ($module_list AS $v) {
 			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
 				return $v['MODULE_NAME'];
 			}
@@ -743,9 +728,9 @@ class freemed {
 	//
 	function module_to_table ( $module ) {
 		static $lookup;
-		$_cache = freemed::module_cache();
+		$cache = freemed::module_cache();
 		if (!$lookup) {
-			foreach ($GLOBALS['__freemed']['GLOBAL_MODULES'] AS $k => $v) {
+			foreach ($cache AS $v) {
 				if ($t = $v['META_INFORMATION']['table_name']) {
 					$lookup[strtolower($v['MODULE_CLASS'])] = $t;
 				}
@@ -770,7 +755,7 @@ class freemed {
 		// cache all modules  
 		if (!is_array($cache)) {
 			$mcache = freemed::module_cache ( );
-			foreach ($mcache AS $r ) {
+			foreach ( $mcache AS $r ) {
 				$_config[$r['module_name']] = $r['module_version'];
 			} // end of while results
 		} // end caching modules config
@@ -1840,44 +1825,5 @@ function page_history_list () {
 	// Return generated array
 	return array_reverse($history);
 } // end function page_history_list
-
-//---------------------------------------------------------------------------
-// Authentication Subsystem
-//---------------------------------------------------------------------------
-
-// TODO: Upgrade basic_authentication to deal with MD5 sums, since we're no longer doing plain text.
-
-// Function: version_check
-//
-//	Compare a version number with single or multiple dots against
-//	an arbitrary versioning number.
-//
-// Parameters:
-//
-//	$version - Version to test
-//
-//	$minimum - Arbitrary version to check against.
-//
-// Returns:
-//
-//	Boolean, depending on whether the version was greater than the
-//	provided value.
-//
-function version_check ( $version, $minimum ) {
-	// first, see if any .'s at all
-	if ( !strpos($version, ".") ) {
-		//echo "no dot";
-		return ( $version >= $minimum );
-	} else { // if there are dots
-		$version_array = explode (".", $version);
-		$minimum_array = explode (".", $minimum);
-		for ($i=0; $i<count($minimum_array); $i++) {
-			if (!isset($version_array[$i])) $version_array[$i] = 0;
-			if ($version_array[$i] < $minimum_array[$i]) return false; 
-			if ($version_array[$i] > $minimum_array[$i]) return true;
-		} // end for
-		return true; // true if they are *exactly* the same
-	} // end if there are/n't dots
-} // end function version_check
 
 ?>
