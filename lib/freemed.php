@@ -4,6 +4,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -125,7 +126,7 @@ if (!defined('SESSION_DISABLE')) {
 	}
 	$GLOBALS['freemed']['__language'] = $_SESSION['language'];
 
-	// Load GettextXML routines (most non-session things don't need it).
+	// Load Gettext routines (most non-session things don't need it).
 	include_once (dirname(__FILE__)."/i18n.php");
 
 	// Load ACL routines

@@ -30,10 +30,9 @@ function lookup ( $module, $parameter, $field = 'id', $patient = NULL ) {
 	
 	$query = "SELECT * FROM ".$table." WHERE ( ".join(' OR ', $q)." ) ".
 		($patient ? "AND ".$pfield."='".addslashes($patient)."'" : '' );
-	$res = $GLOBALS['sql']->query($query);
-	if (!$GLOBALS['sql']->results($res)) { return false; }
+	$res = $GLOBALS['sql']->queryAll( $query );
 	$count = 0;
-	while ($r = $GLOBALS['sql']->fetch_array( $res ) ) {
+	foreach ( $res AS $r ) {
 		$count++;
 		if ($count < $limit) {
 			$_res = trim(_result_to_hash($r, $hash));
@@ -103,10 +102,9 @@ function patient_lookup ( $criteria ) {
 
 	$query = "SELECT * FROM patient WHERE ( ".join(' OR ', $q)." ) ".
 		"AND ( ISNULL(ptarchive) OR ptarchive=0 )";
-	$res = $GLOBALS['sql']->query($query);
-	if (!$GLOBALS['sql']->results($res)) { return false; }
+	$res = $GLOBALS['sql']->queryAll( $query );
 	$count = 0;
-	while ($r = $GLOBALS['sql']->fetch_array( $res ) ) {
+	foreach ( $res AS $r ) {
 		$count++;
 		if ($count < $limit) {
 			$_obj = CreateObject('_FreeMED.Patient', $r);
@@ -138,10 +136,9 @@ function csz_lookup ( $parameter ) {
 	}
 	
 	$query = "SELECT * FROM zipcodes WHERE ( ".join(' AND ', $q)." ) ";
-	$res = $GLOBALS['sql']->query($query);
-	if (!$GLOBALS['sql']->results($res)) { return false; }
+	$res = $GLOBALS['sql']->queryAll( $query );
 	$count = 0;
-	while ($r = $GLOBALS['sql']->fetch_array( $res ) ) {
+	foreach ( $res AS $r ) {
 		$count++;
 		if ($count < $limit) {
 			$return[] = $r['city'].','.$r['state'].','.$r['zip'];

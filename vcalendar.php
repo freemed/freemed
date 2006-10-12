@@ -4,6 +4,7 @@
  // Authors:
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -44,7 +45,7 @@ function freemed_basic_auth () {
 		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
 			"WHERE username='".addslashes($user)."' AND ".
 			"userpassword=MD5('".addslashes($pass)."')";
-		$r = $GLOBALS['sql']->queryOne( $query );
+		$r = $GLOBALS['sql']->queryRow( $query );
 
 		if ($r['id']) {
 			$authed = true;
@@ -71,7 +72,7 @@ function freemed_get_auth ( ) {
 	$query = "SELECT username, userpassword, userrealphy, id FROM user ".
 		"WHERE username='".addslashes($_GET['user'])."' AND ".
 		"userpassword='".addslashes($_GET['hash'])."'";
-	$r = $sql->queryOne( $query );
+	$r = $sql->queryRow( $query );
 	if ($r['id']) {
 		$authed = true;
 		$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];

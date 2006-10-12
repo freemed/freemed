@@ -4,6 +4,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -613,6 +614,23 @@ class freemed {
 		}
 		return $cache;
 	} // end function freemed::module_cache
+
+	// Function: freemed::user_cache
+	//
+	//	Provides global access to a user object for the current user.
+	//
+	// Returns:
+	//
+	//	$cache - An object (org.freemedsoftware.core.User) containing the
+	//	current user information.
+	//
+	function user_cache ( ) {
+		static $cache;
+		if (! isset($cache) ) {
+			$cache = CreateObject( 'org.freemedsoftware.core.User' );
+		}
+		return $cache;
+	} // end function freemed::user_cache
 
 	// Function: freemed::module_handler
 	//
