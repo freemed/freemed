@@ -452,7 +452,7 @@ class TeX {
 
 					case 'ssn':
 					$ssn = $linkrec[$params[3]];
-					return $this->_SanitizeText('('.substr($ssn, 0, 3).'-'.substr($ssn, 3, 2).'-'.substr($ssn, 5, 4));
+					return $this->_SanitizeText(substr($ssn, 0, 3).'-'.substr($ssn, 3, 2).'-'.substr($ssn, 5, 4));
 					break;
 
 					case 'multiple':
