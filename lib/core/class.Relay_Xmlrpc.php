@@ -141,7 +141,6 @@ class Relay_Xmlrpc extends Relay {
 			$method = $this->_xh['method'];
 			$rawparams = CreateObject( 'org.freemedsoftware.core.xmlrpcval' );
 			foreach ($this->_xh['params'] AS $_p) {
-				print('$p[] = '.$_p.';'."\n");
 				eval('$p[] = '.$_p.';');
 			}
 			$rawparams->addArray ( $p );
