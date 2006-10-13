@@ -1176,6 +1176,9 @@ class ProcedureModule extends EMRModule {
 
 	function CalculateCharge($covid,$procunits,$cptid,$phyid,$patid)  {
 		global $display_buffer;
+
+		syslog(LOG_INFO, "CalculateCharge ( $covid, $procunits, $cptid, $phyid, $patid )");
+
 		// id of coverage record, cpt record, physician record
 		// and patient record
 
@@ -1193,6 +1196,7 @@ class ProcedureModule extends EMRModule {
 		//		return 0;
 		$primary = CreateObject('FreeMED.Coverage', $covid);
 		$insid = $primary->local_record[covinsco];
+		syslog(LOG_INFO, "CalculateCharge | insid = $insid");
 
 		$cpt_code = freemed::get_link_rec ($cptid, "cpt"); // cpt code
 		$cpt_code_fees = unserialize($cpt_code["cptstdfee"]);
@@ -1200,10 +1204,12 @@ class ProcedureModule extends EMRModule {
 		if (empty($cpt_code_stdfee) or ($cpt_code_stdfee==0))
 		$cpt_code_stdfee = $cpt_code["cptdefstdfee"]; // if none, do default
 		$cpt_code_stdfee = bcadd ($cpt_code_stdfee, 0, 2);
+		syslog(LOG_INFO, "CalculateCharge | cptcodestdfee = $cpt_code_stdfee");
 
 		// step two:
 		//   grab the relative value from the CPT db
 		$relative_value = $cpt_code["cptrelval"];
+		syslog(LOG_INFO, "CalculateCharge | relative value = $relative_value");
 		if ($debug) $display_buffer .= " (relative_value = \"$relative_value\")\n";
 
 		// step three:
@@ -1214,6 +1220,7 @@ class ProcedureModule extends EMRModule {
 		$this_physician = freemed::get_link_rec ($physid, "physician");
 		$charge_map     = fm_split_into_array($this_physician ["phychargemap"]);
 		$base_value     = $charge_map [$internal_type];
+		syslog(LOG_INFO, "CalculateCharge | base value = $base_value");
 		if ($debug) $display_buffer .= "<BR>base value = \"$base_value\"\n";
 
 		// step four:
@@ -1227,8 +1234,9 @@ class ProcedureModule extends EMRModule {
 		// step five:
 		//   calculate formula...
 		$charge = ($base_value * $procunits * $relative_value) - $discount; 
+		syslog(LOG_INFO, "CalculateCharge | procunits = $procunits, charge = $charge");
 		if ($charge == 0)
-		$charge = $cpt_code_stdfee;
+		$charge = $cpt_code_stdfee * $procunits;
 		if ($debug) $display_buffer .= " (charge = \"$charge\") \n";
 
 		// step six:
