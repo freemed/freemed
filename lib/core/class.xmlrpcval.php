@@ -1,6 +1,8 @@
 <?php
  // $Id$
 
+include_once (dirname(__FILE__).'/../xmlrpc_tools.php');
+
 	// by Edd Dumbill (C) 1999-2001
 	// <edd@usefulinc.com>
 	// xmlrpc.inc,v 1.18 2001/07/06 18:23:57 edmundd
