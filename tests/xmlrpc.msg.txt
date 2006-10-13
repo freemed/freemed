@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<methodCall>
+	<methodName>forums.getNumTodaysThreads</methodName>
+	<params>
+		<param><value><string>PHP Development</string></value></param>
+	</params>
+</methodCall>
