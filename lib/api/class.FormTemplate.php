@@ -136,10 +136,10 @@ class FormTemplate {
 	//
 	function GetXMLTemplate ( ) {
 		static $template;
-		if (!isset($template)) {
-			$template = simplexml_load_file ( $this->xml_template );
+		if (!isset($template[$this->xml_template])) {
+			$template[$this->xml_template] = simplexml_load_file ( $this->xml_template );
 		} // end caching
-		return $template;
+		return $template[$this->xml_template];
 	} // end method GetXMLTemplate
 
 	// Method: LoadData
