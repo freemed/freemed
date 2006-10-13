@@ -135,7 +135,6 @@ class Relay_Xmlrpc extends Relay {
 				xml_error_string(xml_get_error_code($this->parser)),
 				xml_get_current_line_number($this->parser))
 			);
-			print_r($r);
 			xml_parser_free($this->parser);
 		} else {
 			xml_parser_free($this->parser);
@@ -145,7 +144,6 @@ class Relay_Xmlrpc extends Relay {
 				print('$p[] = '.$_p.';'."\n");
 				eval('$p[] = '.$_p.';');
 			}
-			print_r($p);
 			$rawparams->addArray ( $p );
 			$params = $this->xmlrpc_php_decode ( $rawparams );
 			return array (
