@@ -78,7 +78,7 @@ class Log {
 	//
 	//	$msg - Text of log message
 	//
-	global function PatientLog ( $sev, $patient, $sys, $subsys, $msg ) {
+	public function PatientLog ( $sev, $patient, $sys, $subsys, $msg ) {
 		global $this_user;
 		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
 
