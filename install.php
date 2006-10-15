@@ -24,7 +24,7 @@
 $ui = 'dojo';
 
 if ( file_exists ( dirname(__FILE__).'/data/cache/healthy' ) ) {
-	trigger_error("FreeMED is already installed!", E_USER_ERROR);
+//	trigger_error("FreeMED is already installed!", E_USER_ERROR);
 }
 
 // TODO : Handle JSON requests for handling things here?
@@ -49,6 +49,7 @@ $smarty->assign ( "htdocs", "${base_uri}/ui/${ui}/htdocs" );
 $smarty->assign ( "ui", $ui );
 $smarty->assign ( "webroot", dirname ( __FILE__ ) );
 $smarty->assign ( "webuser", exec ( "whoami" ) );
+$smarty->assign ( "configwrite", is_writable ( dirname(__FILE__).'/lib/settings.php' ) );
 
 $smarty->display ( 'install.tpl' );
 

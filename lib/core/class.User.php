@@ -49,6 +49,8 @@ class User {
 	//	cookie session data to supply it.
 	//
 	function __construct ($param=NULL) {
+		if (defined('SKIP_SQL_INIT')) { return false; }
+
 		if ($param == NULL) {
 			// Check to see if XML-RPC or session data
 			if ($_SESSION['authdata']['user']) {

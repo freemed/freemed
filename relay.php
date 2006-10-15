@@ -21,12 +21,19 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+// Handle public methods for initialization
+if ( ! file_exists( dirname(__FILE__).'/data/cache/healthy' ) ) {
+	define( 'SKIP_SQL_INIT', true );
+}
+
 include_once ( 'lib/freemed.php' );
 
 // Start logging
-unset ( $log );
-$log = freemed::log_object ( );
-$log->SystemLog( LOG__SECURITY, 'Provider', 'Relay', "Relay called with ".$_SERVER['PATH_INFO'] );
+if ( ! defined ( 'SKIP_SQL_INIT' ) ) {
+	unset ( $log );
+	$log = freemed::log_object ( );
+	$log->SystemLog( LOG__SECURITY, 'Provider', 'Relay', "Relay called with ".$_SERVER['PATH_INFO'] );
+}
 
 // Get provider from URL
 unset ( $_provider ); unset ( $_method );
