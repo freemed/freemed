@@ -42,11 +42,10 @@ if (freemed::acl('emr', 'view')) {
       "; // end table statement for bar
 }
 
-$GLOBALS['__freemed']['on_load'] = 'changeFocus';
 $display_buffer .= "
       <script language=\"Javascript\">
 	function changeFocus() {
-		document.forms.ssearch.smart.focus();
+		document.getElementById('id_text').focus();
 		return true;
 	}
       </script>
@@ -175,6 +174,12 @@ $display_buffer .= template::link_bar(
       ))."
 
       <p/> 
+";
+
+$GLOBALS['__freemed']['footer'] .= "
+      <script language=\"Javascript\">
+		changeFocus();
+      </script>
 ";
 
 ?>
