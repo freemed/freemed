@@ -30,16 +30,7 @@ define ('PACKAGENAME', "FreeMED");
 define ('CODED_BY', "FreeMED Software Foundation");
 define ('VERSION', "0.8.8");	// current version
 define ('DISPLAY_VERSION', "0.9.0-dev");
-define ('BUGS_EMAIL', "support@freemedsoftware.org");
 define ('PHYSICAL_LOCATION', dirname(dirname(__FILE__)) );
-
-define ('BUGS_ADDRESS', "http://sourceforge.net/project/freemed/");
-$cur_date=date("Y-m-d");		// SQL date format (don't touch!)
-$cur_date_hash=date("Ymd");		// YYYYMMDD date hash
-
-   // CHANGE THIS FOR YOUR LOCAL DATE DISPLAY
-$local_date_display="%Y-%m-%d";       // United States
-  // $local_date_display="%d.%m.%Y";    // European countries
 
 //----- Import settings
 if (file_exists(dirname(__FILE__).'/settings.php')) {
@@ -60,8 +51,6 @@ if (function_exists('set_include_path')) {
 	ini_set('include_path', dirname(dirname(__FILE__)).PATH_SEPARATOR.dirname(__FILE__).'/pear/');
 }
 
-define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" ); 
-
   // related to the calendar --
   //   times are given in 24 hour format, then reformatted for
   //   am and pm by the program
@@ -69,9 +58,6 @@ define ('COMPLETE_URL', HTTP . "://" . HOST . BASE_URL . "/" );
   // but these are there by default
 $cal_starting_hour = "8";  // start at 8 o'clock
 $cal_ending_hour   = "18"; // end at 6 o'clock pm
-
-  // maximum number of returned results in multipage result queries
-$max_num_res = 15;
 
   // set the maximum timeout...
 set_time_limit (0);
