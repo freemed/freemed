@@ -2,7 +2,7 @@
 // $Id$
 // $Author$
 //
-// Class: PHP.xmlrpc_client
+// Class: org.freemedsoftware.core.xmlrpc_client
 //
 // Copyright (c) 1999,2000,2001 Edd Dumbill.
 // All rights reserved.

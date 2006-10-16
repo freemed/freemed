@@ -6,6 +6,7 @@
  // 	Sascha Schumann <sascha@schumann.cx>
  // 	Tobias Ratschiller <tobias@dnet.it>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
