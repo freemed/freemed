@@ -52,6 +52,45 @@ class Installation {
 		return mysql_select_db( $name, $link );
 	} // end method CheckDbCredentials
 
+	// Method: CreateAdministrationAccount
+	//
+	//	Create system administration account.
+	//
+	// Parameters:
+	//
+	//	$username - Target username for administration account
+	//
+	//	$password - Target password for administration account
+	//
+	// Returns:
+	//
+	//	Boolean, on success or failure
+	//
+	public function CreateAdministrationAccount ( $username, $password ) {
+		// Check for an admin account (id = 1) already
+		$q = $GLOBALS['sql']->queryOne ( "SELECT id FROM user WHERE id=1" );
+		if ($q == 1) { return false; }
+
+		// Otherwise, add an admin account
+		$query = $GLOBALS['sql']->insert_query (
+			'user',
+			array (
+				'username' => $username,
+				'userpassword' => md5( $password ),
+				'userlevel' => 'admin',
+				'userdescrip' => 'Administrator',
+				'usertype' => 'misc',
+				'userfac' => '-1',
+				'userphy' => '-1',
+				'userphygrp' => '-1',
+				'userrealphy' => '0'
+				'id' => '1'
+			)
+		);
+		$res = $GLOBALS['sql']->query( $query );
+		return $res ? true : false;
+	} // end method CreateAdministrationAccount
+
 } // end class Installation
 
 ?>
