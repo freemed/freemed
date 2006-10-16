@@ -23,9 +23,9 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class UnfiledFaxes extends SupportModule {
+class UnfiledDocuments extends SupportModule {
 
-	var $MODULE_NAME = "Unfiled Faxes";
+	var $MODULE_NAME = "Unfiled Documents";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "edcf764c-1c99-4abd-924a-39d795541b44";
@@ -34,7 +34,7 @@ class UnfiledFaxes extends SupportModule {
 	var $table_name = 'unfiledfax';
 
 	public function __construct ( ) {
-		// __("Unfiled Faxes")
+		// __("Unfiled Documents")
 
 		// Add main menu notification handlers
 		$this->_SetHandler('MenuNotifyItems', 'menu_notify');
@@ -60,7 +60,7 @@ class UnfiledFaxes extends SupportModule {
 		
 		// Call parent constructor
 		parent::__construct();
-	} // end constructor UnfiledFaxes
+	} // end constructor UnfiledDocuments
 
 	protected function del_pre ( $id ) {
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
@@ -75,9 +75,9 @@ class UnfiledFaxes extends SupportModule {
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = freemed::secure_filename( $rec['ufffilename'] );
 
-		// Catch multiple people using the same fax
+		// Catch multiple people using the same document
 		if (!file_exists('data/fax/unfiled/'.$filename)) {
-			trigger_error(__("Fax file does not exist!"));
+			trigger_error(__("Document file does not exist!"));
 		}
 
 		if ($data['flip'] == 1) {
@@ -95,7 +95,7 @@ class UnfiledFaxes extends SupportModule {
 				'patient' => $data['patient'],
 				'user' => $data['notify'],
 				'urgency' => 4,
-				'text' => __("Fax received for patient").
+				'text' => __("Document received for patient").
 					" (".$data['note'].")"
 			));
 		}
@@ -146,7 +146,7 @@ class UnfiledFaxes extends SupportModule {
 			//echo "mv data/fax/unfiled/$filename $new_filename -f<br/>\n";
 			$dirname = dirname($new_filename);
 			system('mkdir -p '.escapeshellarg($dirname));
-			if ($filename) { system('mv '.escapeshellarg("data/fax/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f'); syslog(LOG_INFO, "UnfiledFax| mv data/fax/unfiled/$filename $new_filename -f"); }
+			if ($filename) { system('mv '.escapeshellarg("data/fax/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f'); syslog(LOG_INFO, "UnfiledDocument| mv data/fax/unfiled/$filename $new_filename -f"); }
 		} else {
 			// Insert new table query in unread
 			$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
@@ -260,9 +260,9 @@ class UnfiledFaxes extends SupportModule {
 		unlink($dir_prefix);
 	} // end method batchSplit
 
-	// Method: getFaxPage
+	// Method: getDocumentPage
 	//
-	//	Get fax page image as JPEG.
+	//	Get fax/document page image as JPEG.
 	//
 	// Parameters:
 	//
@@ -274,14 +274,14 @@ class UnfiledFaxes extends SupportModule {
 	//
 	//	BLOB data containing jpeg image.
 	//
-	public function getFaxPage( $id, $page ) {
+	public function getDocumentPage( $id, $page ) {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
 			$r['ufffilename']);
 		return $djvu->GetPageThumbnail($page);
-	} // end method getFaxPage
+	} // end method getDocumentPage
 
 	// Method: faxback
 	//
@@ -333,16 +333,16 @@ class UnfiledFaxes extends SupportModule {
 			}
 		}
 	
-		// Decide if we have any "unfiled faxes" in the system
+		// Decide if we have any "unfiled documents" in the system
 		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
 		$result = $GLOBALS['sql']->query($query);
 		extract($GLOBALS['sql']->fetch_array($result));
 		if ($unfiled > 0) {
 			return array (
-				__("Unfiled Faxes"),
+				__("Unfiled Documents"),
 				( $unfiled==1 ?
-				__("There is currently 1 unfiled fax in the system.") :
-				sprintf(__("There are currently %d unfiled fax(es) in the system."), $unfiled) )." ".
+				__("There is currently 1 unfiled document in the system.") :
+				sprintf(__("There are currently %d unfiled document(s) in the system."), $unfiled) )." ".
 				"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\">".
 				"[".__("File")."]</a>",
 				"img/facsimile_icon.png"
@@ -352,8 +352,8 @@ class UnfiledFaxes extends SupportModule {
 			// the box doesn't show up
 			return false;
 			return array (
-				__("Unfiled Faxes"),
-				__("There are no unfiled faxes at this time."),
+				__("Unfiled Documents"),
+				__("There are no unfiled documents at this time."),
 				"img/facsimile_icon.png"
 			);
 		}
@@ -376,13 +376,13 @@ class UnfiledFaxes extends SupportModule {
 			}
 		}
 	
-		// Decide if we have any "unfiled faxes" in the system
+		// Decide if we have any "unfiled documents" in the system
 		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
 		$result = $GLOBALS['sql']->query($query);
 		extract($GLOBALS['sql']->fetch_array($result));
 		if ($unfiled > 0) {
 			return array (
-				sprintf(__("You have %d unfiled faxes"), $unfiled),
+				sprintf(__("You have %d unfiled documents"), $unfiled),
 				"module_loader.php?module=".urlencode(get_class($this))."&action=display"
 			);
 		} else {
@@ -392,8 +392,8 @@ class UnfiledFaxes extends SupportModule {
 		}
 	} // end method menu_notify
 
-} // end class UnfiledFaxes
+} // end class UnfiledDocuments
 
-register_module('UnfiledFaxes');
+register_module('UnfiledDocuments');
 
 ?>

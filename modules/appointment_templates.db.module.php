@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class AppointmentTemplates extends MaintenanceModule {
+class AppointmentTemplates extends SupportModule {
 
 	var $MODULE_NAME    = "Appointment Templates";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE    = __FILE__;
+	var $MODULE_UID     = "c5a9345d-ccb5-476a-83ed-59b4c1f21aad";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -25,10 +44,8 @@ class AppointmentTemplates extends MaintenanceModule {
 		'atcolor'
 	);
 
-	function AppointmentTemplates () {
+	public function __construct ( ) {
 		// For i18n: __("Appointment Templates")
-
-		global $display_buffer;
 
 		$this->table_definition = array (
 			'atname'	=>	SQL__VARCHAR(50),
@@ -44,79 +61,14 @@ class AppointmentTemplates extends MaintenanceModule {
 			'color' => 'atcolor'
 		);
 
-			// Run constructor
-		$this->MaintenanceModule();
-	} // end constructor AppointmentTemplates
-
-	function form () {
-		global $display_buffer, $action;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-		switch ($action) { // inner switch
-			case "addform":
-			break;
-
-			case "modform":
-			if ($id<1) trigger_error ("NO ID", E_USER_ERROR);
-			$r = freemed::get_link_rec ($id, $this->table_name);
-			foreach ($r AS $k => $v) {
-				global ${$k};
-				${$k} = $v;
-			}
-			break;
-		} // end inner switch
-
-		$display_buffer .= "
-		<p/>
-		<form ACTION=\"".$this->page_name."\" METHOD=\"POST\">
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-		( ($action=="addform") ? "add" : "mod" )."\"/> 
-		<input TYPE=\"HIDDEN\" NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"module\"   VALUE=\"".prepare($module)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"return\"   VALUE=\"".prepare($_REQUEST['return'])."\"/>
-		".html_form::form_table ( array (
-		__("Template Name") => html_form::text_widget('atname', array('length'=>50)),
-		__("Duration") => html_form::number_pulldown('atduration', 1, 90),
-		__("Required Equipment") => module_function(
-			'RoomEquipment',
-			'widget',
-			array(
-				'atequipment',
-				false,
-				'id',
-				array ( 'multiple' => 5 )
-			)
-		),
-		__("Color") => html_form::color_widget('atcolor')
-
-		) )."
-		<p/>
-		<div ALIGN=\"CENTER\">
-		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".
-		( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
-		<input class=\"button\" NAME=\"submit\" TYPE=\"SUBMIT\" ".
-			"VALUE=\"".__("Cancel")."\"/>
-		</div></form>
-		";
-	} // end method form
-
-	function view () {
-		global $display_buffer;
-		global $sql;
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query (
-				"SELECT atname, atduration, id ".
-				"FROM ".addslashes($this->table_name)." ".
-				freemed::itemlist_conditions().
-                		"ORDER BY atname"
-			),
-			$this->page_name,
-			array (
-				__("Template") => 'atname',
-				__("Duration") => 'atduration'
-			),
-			array ("", __("NO DESCRIPTION"))
+		$this->list_view = array (
+			__("Template") => 'atname',
+			__("Duration") => 'atduration'
 		);
-	} // end method view
+
+			// Run constructor
+		parent::__construct( );
+	} // end constructor
 
 	// Method: get_description
 	//
@@ -130,8 +82,8 @@ class AppointmentTemplates extends MaintenanceModule {
 	//
 	//	Description of specified template.
 	//
-	function get_description ( $id ) {
-		$r = freemed::get_link_rec ( $id, $this->table_name );
+	public function get_description ( $id ) {
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		return $r['atname'];
 	} // end method get_description
 
@@ -147,8 +99,8 @@ class AppointmentTemplates extends MaintenanceModule {
 	//
 	//	Duration of specified template.
 	//
-	function get_duration ( $id ) {
-		$r = freemed::get_link_rec ( $id, $this->table_name );
+	public function get_duration ( $id ) {
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		return $r['atduration'] + 0;
 	} // end method get_duration
 
@@ -166,13 +118,13 @@ class AppointmentTemplates extends MaintenanceModule {
 	//	Array of acceptable ids, or false if there is no
 	//	limit on rooms.
 	//
-	function get_rooms ( $id ) {
-		$t = freemed::get_link_rec($id, $this->table_name);
+	public function get_rooms ( $id ) {
+		$t = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		if (!$t['atequipment']) { return false; }
 
 		// Cache rooms
-		$res = $GLOBALS['sql']->query("SELECT * FROM room");
-		while ($my_r = $GLOBALS['sql']->fetch_array($res)) {
+		$res = $GLOBALS['sql']->queryAll( "SELECT * FROM room" );
+		foreach ( $res AS $my_r ) {
 			$rooms[$my_r['id']] = explode(',', $my_r['roomequipment']);
 		}
 		

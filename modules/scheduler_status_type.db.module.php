@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class SchedulerStatusType extends MaintenanceModule {
+class SchedulerStatusType extends SupportModule {
 
 	var $MODULE_NAME    = "Scheduler Status Type";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
+	var $MODULE_UID     = "e80e6d88-ebc1-4ccc-a432-8a9ee69404d1";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -25,7 +44,7 @@ class SchedulerStatusType extends MaintenanceModule {
 		'sage'
 	);
 
-	function SchedulerStatusType () {
+	public function __construct ( ) {
 		// For i18n: __("Scheduler Status")
 
 		$this->table_definition = array (
@@ -43,78 +62,14 @@ class SchedulerStatusType extends MaintenanceModule {
 			'age' => 'sage'
 		);
 
-			// Run constructor
-		$this->MaintenanceModule();
-	} // end constructor SchedulerStatusType
-
-	function form () {
-		global $display_buffer, $action;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-		switch ($action) { // inner switch
-			case "addform":
-			break;
-
-			case "modform":
-			if ($id<1) trigger_error ("NO ID", E_USER_ERROR);
-			$r = freemed::get_link_rec ($id, $this->table_name);
-			foreach ($r AS $k => $v) {
-				global ${$k};
-				${$k} = $v;
-			}
-			break;
-		} // end inner switch
-
-		$display_buffer .= "
-		<p/>
-		<form ACTION=\"".$this->page_name."\" METHOD=\"POST\">
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-		( ($action=="addform") ? "add" : "mod" )."\"/> 
-		<input TYPE=\"HIDDEN\" NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"module\"   VALUE=\"".prepare($module)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"return\"   VALUE=\"".prepare($_REQUEST['return'])."\"/>
-		".html_form::form_table ( array (
-		__("Status Name") => html_form::text_widget('sname', array('length'=>50)),
-		__("Description") => html_form::text_widget('sdescrip', array('length'=>50)),
-		__("Color") => html_form::color_widget('scolor'),
-		__("Age for Alert") => html_form::select_widget( 'sage', 
-		array (
-			"--" => 0,
-			"1m" => 60,
-			"5m" => 300,
-			"10m" => 600,
-			"30m" => 1800,
-			"1h" => 3600
-		) )
-
-		) )."
-		<p/>
-		<div ALIGN=\"CENTER\">
-		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".
-		( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
-		<input class=\"button\" NAME=\"submit\" TYPE=\"SUBMIT\" ".
-			"VALUE=\"".__("Cancel")."\"/>
-		</div></form>
-		";
-	} // end method form
-
-	function view () {
-		global $display_buffer;
-		global $sql;
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query (
-				"SELECT sname, sdescrip, id ".
-				"FROM ".addslashes($this->table_name)." ".
-				freemed::itemlist_conditions().
-                		"ORDER BY sname"
-			),
-			$this->page_name,
-			array (
-				__("Name") => 'sname',
-				__("Description") => 'sdescrip'
-			),
-			array ("", __("NO DESCRIPTION"))
+		$this->list_view = array (
+			__("Name") => 'sname',
+			__("Description") => 'sdescrip'
 		);
-	} // end method view
+
+			// Run constructor
+		parent::__construct();
+	} // end constructor
 
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
