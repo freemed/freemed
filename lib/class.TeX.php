@@ -455,6 +455,12 @@ class TeX {
 					return $this->_SanitizeText(substr($ssn, 0, 3).'-'.substr($ssn, 3, 2).'-'.substr($ssn, 5, 4));
 					break;
 
+					case 'user':
+					$u = $linkrec[$params[3]];
+					$_u = CreateObject('_FreeMED.User', $u);
+					return $this->_SanitizeText($_u->getName());
+					break;
+
 					case 'multiple':
 					$ids = explode(',', $rec[$params[1]]);
 					foreach ($ids AS $v) {
