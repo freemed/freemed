@@ -23,40 +23,47 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class ProviderSpecialtiesMaintenance extends SupportModule {
+class PatientTag extends SupportModule {
 
-	var $MODULE_NAME    = "Provider Specialties";
-	var $MODULE_VERSION = "0.1.1";
-	var $MODULE_FILE    = __FILE__;
-	var $MODULE_UID     = "db74f325-0dfa-4e7f-8c7e-82f5a72f7f57";
+	var $MODULE_NAME = "Patient Tag";
+	var $MODULE_VERSION = "0.1";
+	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "1c34f308-1503-4478-9179-896248067fb4";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
-	var $table_name     = "specialties";
-	var $record_name    = "Specialty";
-	var $order_field    = "specname";
+	var $record_name = "Patient Tag";
+	var $table_name  = "patienttag";
+	var $order_field = "datecreate,dateexpire";
 
-	var $variables      = array (
-		"specname",
-		"specdesc"
+	var $widget_hash = "##tag## (##datecreate## - ##dateexpire##)";
+
+	var $variables = array (
+		"tag",
+		"patient",
+		"datecreate",
+		"dateexpire"
 	);
 
-	public function __construct () {
-		// For i18n: __("Provider Specialties")
-
+	public function __construct ( ) {
+		// __("Patient Tag")
+	
 		$this->list_view = array (
-			__("Specialty") 		=> 	"specname",
-			__("Specialty Description") 	=> 	"specdesc"
+			__("Tag") => 'tag',
+			__("Date Created") => 'datecreate',
+			__("Date Expires") => 'dateexpire'
 		);
 
-		// Call parent constructor
+		// Run parent constructor
 		parent::__construct();
-	} // end constructor 
+	} // end constructor
 
-	function form () { $this->view(); }
+	protected function add_pre ( &$date ) {
+		$date['datecreate'] = '';
+	}
 
-} // end class ProviderSpecialtiesMaintenance
+} // end class PatientTag
 
-register_module ("ProviderSpecialtiesMaintenance");
+register_module ("PatientTag");
 
 ?>

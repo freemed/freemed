@@ -1,17 +1,35 @@
 <?php
-  // $Id$
-  // note: type of service (TOS) database module
-  // code: adam b (gdrago23@yahoo.com) -- modified a lot
-  // lic : GPL, v2
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //     Adam Buchbinder <grendelkhan@gmail.com>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class TypeOfServiceMaintenance extends MaintenanceModule {
+class TypeOfServiceMaintenance extends SupportModule {
 
-	var $MODULE_NAME = "Type of Service Maintenance";
-	var $MODULE_AUTHOR = "Adam (gdrago23@yahoo.com)";
+	var $MODULE_NAME = "Type of Service";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "1c34f308-1503-4478-9179-896248067fb4";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -22,86 +40,29 @@ class TypeOfServiceMaintenance extends MaintenanceModule {
 	var $widget_hash = "##tosname## - ##tosdescrip##";
 
 	var $variables = array (
-			"tosname",
-			"tosdescrip",
-			"tosdtadd",
-			"tosdtmod"
+		"tosname",
+		"tosdescrip",
+		"tosdtadd",
+		"tosdtmod"
 	);
 
-	function TypeOfServiceMaintenance () {
-		$this->table_definition = array (
-			'tosname' => SQL__VARCHAR(75),
-			'tosdescrip' => SQL__VARCHAR(200),
-			'tosdtadd' => SQL__DATE,
-			'tosdtmod' => SQL__DATE,
-			'id' => SQL__SERIAL
-		);
+	public function __construct ( ) {
+		// __("Type of Service")
 	
-		global $tosdtmod; $tosdtmod = date("Y-m-d");
+		$this->list_view = array (
+			__("Code") => "tosname",
+			__("Description") => "tosdescrip"
+		);
 
 		// Run parent constructor
-		$this->MaintenanceModule();
-	} // end constructor TypeOfServiceMaintenance	
+		parent::__construct();
+	} // end constructor
 
-	function view () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+	protected function mod_pre ( &$data ) {
+		$data['tosdtmod'] = date('Y-m-d');
+	}
 
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query(
-				"SELECT tosname,tosdescrip,id ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions().
-				"ORDER BY ".prepare($this->order_field)),
-			$this->page_name,
-			array (
-				__("Code") => "tosname",
-				__("Description") => "tosdescrip"
-			),
-			array ("", __("NO DESCRIPTION")), "", "t_page"
-		);
-	} // end function module->view
-
-	function form () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-  		if ($action=="modform") { 
-    		$result = $sql->query("SELECT tosname,tosdescrip FROM $this->table_name
-				WHERE ( id = '$id' )");
-			$r = $sql->fetch_array($result); // dump into array r[]
-			extract ($r);
-		} // if loading values
-
-		// display itemlist first
-		$this->view ();
-
-		$display_buffer .= "
-			<form ACTION=\"$this->page_name\" METHOD=\"POST\">
-			<input TYPE=\"HIDDEN\" NAME=\"tosdtadd\"".date('Y-m-d')."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-			($action=="modform" ? "mod" : "add")."\"/>\n";
-		if ($action=="modform")
-			$display_buffer .= "<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>\n";
-
-		$display_buffer .= html_form::form_table(array(
-			__("Type of Service") =>
-			html_form::text_widget("tosname", 20, 75),
-
-			__("Description") =>
-			html_form::text_widget("tosdescrip", 25, 200)
-		)).
-			"<div ALIGN=\"CENTER\">\n".
-			"<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\"".(
-			 ($action=="modform") ? __("Modify") : __("Add"))."\"/>
-			 <input TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\" ".
-			 "class=\"button\"/>
-			</div></form>
-		";
-	} // end function TypeOfServiceMaintenance->form
-
-} // end of class TypeOfServiceMaintenance
+} // end class TypeOfServiceMaintenance
 
 register_module ("TypeOfServiceMaintenance");
 

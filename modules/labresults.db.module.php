@@ -1,41 +1,45 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class LabResults extends MaintenanceModule {
+class LabResults extends SupportModule {
 
-	var $MODULE_NAME = 'Lab Results';
-	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.1';
+	var $MODULE_NAME = "Lab Results";
+	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "2b9665c3-3cfa-4cce-9588-d8e3a602c697";
 	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name = "labresults";
 
-	function LabResults ( ) {
+	public function __construct ( ) {
 		// __("Lab Results")
-		$this->table_definition = array (
-			'labid' => SQL__INT_UNSIGNED(0),
-			'labpatient' => SQL__INT_UNSIGNED(0),
-			'labobsnote' => SQL__TEXT, // HL7 NTE segment
-			'labobscode' => SQL__VARCHAR(150), // OBX 03-04
-			'labobsdescrip' => SQL__VARCHAR(250), // OBX 03-05
-			'labobsvalue' => SQL__TEXT, // OBX 05 / NTE
-			'labobsunit' => SQL__VARCHAR(150), // OBX 06
-			'labobsranges' => SQL__VARCHAR(50), // OBX 07
-			'labobsabnormal' => SQL__CHAR(5), // OBX 08
-			'labobsstatus' => SQL__CHAR(1), // OBX 11
-			'labobsreported' => SQL__TIMESTAMP(14), // OBX 14
-			'labobsfiller' => SQL__VARCHAR(60), // OBX 15 / OBR 21-01
-			'id' => SQL__SERIAL
-		);
 
 		// Call parent constructor
-		$this->MaintenanceModule();
+		parent::__construct();
 	} // end constructor
 
 } // end class LabResults

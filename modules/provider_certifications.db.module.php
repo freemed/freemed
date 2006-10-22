@@ -1,17 +1,36 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class ProviderCertificationsMaintenance extends MaintenanceModule {
+class ProviderCertifications extends SupportModule {
 
-	var $MODULE_NAME    = "Provider Certifications Maintenance";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
+	var $MODULE_NAME    = "Provider Certifications";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE    = __FILE__;
+	var $MODULE_UID     = "69d60f3a-408d-4995-b729-7a3c74ea8c6c";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $record_name = "Provider Certifications";
 	var $table_name = "degrees";
@@ -22,80 +41,14 @@ class ProviderCertificationsMaintenance extends MaintenanceModule {
 		"degdate"
 	);
 
-	function ProviderCertificationsMaintenance () {
-		// For i18n: __("Provider Certifications Maintenance")
+	// For i18n: __("Provider Certifications")
 
-		global $deg_date;
-		$degdate = date("Y-m-d");
+	protected function add_pre ( &$data ) {
+		$data['degdate'] = date ('Y-m-d');
+	}
 
-		// Table definition
-		$this->table_definition = array (
-			'degdegree' => SQL__CHAR(10),
-			'degname' => SQL__VARCHAR(50),
-			'degdate' => SQL__DATE,
-			'id' => SQL__SERIAL
-		);
+} // end class ProviderCertifications
 
-		// Run constructor
-		$this->MaintenanceModule();
-	} // end constructor ProviderCertificationsMaintenance
-
-	function form () { $this->view(); }
-
-	function view () {
-		global $display_buffer, $action;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		if ($action=="modform") {
-			$r = freemed::get_link_rec($id, $this->table_name);
-			foreach ($r AS $k => $v) { global ${$k}; ${$k} = $v; }
-		} // modform fetching
-
-		// display the table 
-		$display_buffer .= freemed_display_itemlist(
-			$sql->query(
-				"SELECT * ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions()." ".
-				"ORDER BY degdegree,degname"
-			),
-			$this->page_name,
-			array (
-				__("Degree") => "degdegree",
-				__("Description") => "degname"
-			),
-			array ( "", __("NO DESCRIPTION") ), "", "d_page"
-		);
-  
-		$display_buffer .= "
-		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".(($action=="modform") ? 
-				"mod" : "add")."\"/> 
-		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
-		<div ALIGN=\"CENTER\">
-		".html_form::form_table(array(
-
-		__("Degree") =>
-		html_form::text_widget('degdegree', 10),
-
-		__("Degree Description") =>
-		html_form::text_widget('degname', 30, 50)
-
-		))."
-		</div>
-		<div align=\"CENTER\">
-		<input TYPE=\"SUBMIT\" VALUE=\"".($action=="modform" ? 
-		__("Update") : __("Add"))." \"/>
-		<input TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\"/>
-		</div>
-		</form>
-		";
-	} // end function ProviderCertificationsMaintenance->view()
-
-} // end class ProviderCertificationsMaintenance
-
-register_module ("ProviderCertificationsMaintenance");
+register_module ("ProviderCertifications");
 
 ?>

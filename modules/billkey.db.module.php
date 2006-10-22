@@ -23,40 +23,32 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class ProviderSpecialtiesMaintenance extends SupportModule {
+class BillKey extends SupportModule {
 
-	var $MODULE_NAME    = "Provider Specialties";
-	var $MODULE_VERSION = "0.1.1";
-	var $MODULE_FILE    = __FILE__;
-	var $MODULE_UID     = "db74f325-0dfa-4e7f-8c7e-82f5a72f7f57";
+	var $MODULE_NAME = "Bill Keys";
+	var $MODULE_VERSION = "0.6.2";
+	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "54e71fb9-8197-44a8-be8b-7233c459ac81";
+	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
-	var $table_name     = "specialties";
-	var $record_name    = "Specialty";
-	var $order_field    = "specname";
-
-	var $variables      = array (
-		"specname",
-		"specdesc"
-	);
+	var $table_name = "billkey";
 
 	public function __construct () {
-		// For i18n: __("Provider Specialties")
-
-		$this->list_view = array (
-			__("Specialty") 		=> 	"specname",
-			__("Specialty Description") 	=> 	"specdesc"
+		// __("Bill Keys")
+		$this->table_definition = array (
+			'billkeydate' => SQL__DATE,
+			'billkey' => SQL__BLOB,
+			'id' => SQL__SERIAL
 		);
 
 		// Call parent constructor
 		parent::__construct();
 	} // end constructor 
 
-	function form () { $this->view(); }
+} // end module BillKey
 
-} // end class ProviderSpecialtiesMaintenance
-
-register_module ("ProviderSpecialtiesMaintenance");
+register_module('BillKey');
 
 ?>
