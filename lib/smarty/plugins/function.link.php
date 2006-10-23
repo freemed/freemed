@@ -21,13 +21,19 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-function smarty_function_method ( $params, &$smarty ) {
-	if ( !isset ( $params['namespace'] ) ) { $smarty->error ( "Namespace not specified" ); }
-	if ( count ( $params['param'] ) > 0 ) {
-		return call_user_func_array ( 'CallMethod', array ( $params['namespace'], $params['param'] ) );
-	} else {
-		return CallMethod ( $params['namespace'] );
+function smarty_function_link ( $params, &$smarty ) {
+	static $cache;
+
+	if ( !isset ( $params['table'] ) ) { $smarty->error ( "Table not specified" ); }
+	if ( !isset ( $params['link'] ) ) { $smarty->error ( "Link not specified" ); }
+	if ( !isset ( $params['field'] ) ) { $smarty->error ( "Field not specified" ); }
+
+	// Check for cache
+	if ( !isset ( $cache[$params['table']][$params['link']] ) ) {
+		$cache[$params['table']][$params['link']] = $GLOBALS['sql']->get_link( $params['table'], $params['link'] );
 	}
-} // end function smarty_function_method
+
+	return $cache[$params['table']][$params['link']][$params['field']];
+} // end function smarty_function_link
 
 ?>
