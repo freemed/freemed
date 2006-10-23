@@ -115,6 +115,26 @@ class ProviderModule extends SupportModule {
 		$data['phyidmap'] = serialize( $data['phyidmap'] );
 	}
 
+	// Method: fullName
+	//
+	//	Get full name for specified provider.
+	//
+	// Parameters:
+	//
+	//	$id - Record id for specified provider.
+	//
+	//	$full - (optional) Boolean, whether to output full name with all
+	//	qualifications. Defaults to false.
+	//
+	// Returns:
+	//
+	//	Full name of provider.
+	//
+	public function fullName ( $id, $full=false ) {
+		$phy = CreateObject('org.freemedsoftware.core.Physician', $id);
+		return $phy->fullName( $full );
+	} // end method fullName
+
 	function _update ( ) {
 		$version = freemed::module_version($this->MODULE_NAME);
 
