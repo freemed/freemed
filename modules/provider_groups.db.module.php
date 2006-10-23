@@ -1,19 +1,36 @@
 <?php
-  // $Id$
-  // note: provider groups, used for booking? and user levels
-  // code: jeff b (jeff@ourexchange.net) -- template
-  //       adam b (gdrago23@yahoo.com) -- redesign and update
-  // lic : GPL
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class ProviderGroupsMaintenance extends MaintenanceModule {
-	var $MODULE_NAME    = "Provider Groups Maintenance";
-	var $MODULE_AUTHOR  = "Adam (gdrago23@yahoo.com)";
+class ProviderGroups extends SupportModule {
+
+	var $MODULE_NAME    = "Provider Groups";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE    = __FILE__;
+	var $MODULE_UID     = "710abf21-d584-41a9-a579-5dc2d8d80310";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name     = "phygroup";
 	var $record_name    = "Provider Group";
@@ -29,172 +46,34 @@ class ProviderGroupsMaintenance extends MaintenanceModule {
 		"phygroupspe1"
 	);
 
-	function ProviderGroupsMaintenance () {
-		// For i18n: __("Provider Groups Maintenance")
+	public function __construct () {
+		// For i18n: __("Provider Groups")
 
 		global $phygroupdtmod;
-		$phygroupdtmod = date("Y-m-d");
 
-		// Table definition
-		$this->table_definition = array (
-			'phygroupname' => SQL__VARCHAR(100),
-			'phygroupfac' => SQL__INT_UNSIGNED(0),
-			'phygroupdtadd' => SQL__DATE,
-			'phygroupdtmod' => SQL__DATE,
-			'phygroupidmap' => SQL__TEXT,
-			'phygroupdocs' => SQL__TEXT,
-			'phygroupspe1' => SQL__INT_UNSIGNED(0),
-			'id' => SQL__SERIAL
+		$this->list_view = array (
+			__("Physician Group Name") => "phygroupname",
+			__("Default Facility")     => "phygroupfac"
 		);
 
 		// Run constructor
-		$this->MaintenanceModule();
-	} // end constructor ProviderGroupsMaintenance
+		parent::__construct();
+	} // end constructor
 
-	function view () {  
-		global $display_buffer;
-		global $sql;
-		$display_buffer .= freemed_display_itemlist(
-			$sql->query(
-				"SELECT phygroupname,phygroupfac,id ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions()." ".
-				"ORDER BY phygroupname"
-			),
-			$this->page_name,
-			array (
-				__("Physician Group Name") => "phygroupname",
-				__("Default Facility")     => "phygroupfac"
-			),
-			array ("",""),
-			array (
-				""         => "",
-				"facility" => "psrname"
-			)
-		); // display main itemlist
-	} // end function ProviderGroupsMaintenance->view()
+	protected function add_pre ( &$data ) {
+		$data['phygroupidmap'] = serialize ( $data['phygroupidmap'] );
+		$data['phygroupidmap'] = join ( ',', $data['phygroupdocs'] );
+		$data['phygroupdtadd'] = date("Y-m-d");
+	}
 
-	function form () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
+	protected function mod_pre ( &$data ) {
+		$data['phygroupidmap'] = serialize ( $data['phygroupidmap'] );
+		$data['phygroupidmap'] = join ( ',', $data['phygroupdocs'] );
+		$data['phygroupdtmod'] = date("Y-m-d");
+	}
 
-		if ($_REQUEST['__submit'] == __("Cancel")) {
-			global $refresh;
-			$refresh = $this->page_name.'?module='.get_class($this);
-			return false;
-		}
+} // end class ProviderGroups
 
-		// too much data for this now
-		//$this->view();
-
-		switch($action) { // inner action switch
-			case "modform":
-				if (strlen($id)<1) {
-					$action="addform";
-					break;
-				}
-				foreach ($this->variables AS $k => $v) { global ${$v}; }
-				$r = freemed::get_link_rec($id, $this->table_name);
-				extract ($r);
-				$phygroupidmap  = fm_split_into_array($phygroupidmap);
-				//$phygroupdocs = fm_split_into_array($phygroupdocs);
-				break;
-			case "addform": // addform *is* the default
-			default:
-				// nothing right here...
-				break;
-		} // inner action switch
-
-		// set date of addition if not set 
-		if (!isset($phygroupdtadd)) $phygroupdtadd = $cur_date;
-
-		$display_buffer .= "
-		<table CELLSPACING=\"0\" CELLPADDING=\"0\" BORDER=\"0\" WIDTH=\"100%\">
-		<tr><td ALIGN=\"CENTER\">
-		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
-		<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-		  (($action=="modform") ? "mod" : "add")."\"> 
-		<input TYPE=\"HIDDEN\" NAME=\"id\" VALUE=\"".prepare($id)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"phygroupdtadd\" VALUE=\"".prepare($phygroupdtadd)."\"/>";
- 
-		$display_buffer .= html_form::form_table( array (
-
-			__("Physician Group Name") => 
-				html_form::text_widget('phygroupname', 20, 100),
-		
-			__("Default Facility") => freemed_display_selectbox(
-
-					$sql->query("SELECT psrname,psrnote,id FROM facility ORDER BY psrname,psrnote"),
-					"#psrname# [#psrnote#]",
-       					"phygroupfac"),
-
-			__("Specialty 1") => freemed_display_selectbox (
-					$sql->query("SELECT * FROM specialties ORDER BY specname,specdesc"),
-       					"#specname#, #specdesc#",
-					 "phygroupspe1"),
-
-			__("Physicians") => freemed::multiple_choice(
-					"SELECT phylname,phyfname,id FROM physician WHERE phylname != '' ORDER BY phylname",
-					"##phylname##, ##phyfname## ##phymname##",
-					"phygroupdocs",
-					$phygroupdocs,
-					false)
-		) );
-
-		// handle groupidmap (just like phyidmap)
-		$insmap_buf = ""; // cache the output, as above
-		$i_res = $sql->query("SELECT * FROM inscogroup");
-		while ($i_r = $sql->fetch_array ($i_res)) {
-			$i_id = $i_r ["id"];
-			$insmap_buf .= "
-			<tr CLASS=\"".freemed_alternate()."\">
-			 <td>".prepare($i_r["inscogroup"])."</td>
-			 <td>
-			  <input TYPE=\"TEXT\" NAME=\"phygroupidmap$brackets\"
-			   SIZE=\"15\" MAXLENGTH=\"30\" ".
-			   "VALUE=\"".$phygroupidmap[$i_id]."\"/>
-			 </td>
-			</tr>
-			";
-		} // end looping for service types
-
-		if (!empty($insmap_buf)) $display_buffer .= "
-		<p/>
-		<div ALIGN=\"CENTER\">
-		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"2\" 
-		CLASS=\"reverse\" ALIGN=\"CENTER\"> <!-- black border --><tr><td>
-
-		<!-- hide record zero, since it isn't used... -->
-		<input TYPE=\"HIDDEN\" NAME=\"phygroupidmap$brackets\" VALUE=\"0\"/>
-
-		<table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\"
-		 VALIGN=\"MIDDLE\" ALIGN=\"CENTER\">
-		<tr CLASS=\"cell_hilite\">
-		<td><b>".__("Insurance Group")."</b></td>
-		<td><b>".__("ID Number")."</b></td>
-		</tr>
-		$insmap_buf
-		</table>
-		</td></tr></table></div>
-		";
-		// end groupidmap
-
-		$display_buffer .= "<p/>
-		<tr><td ALIGN=\"CENTER\">
-		<input CLASS=\"button\" name=\"__submit\" TYPE=\"SUBMIT\" VALUE=\"".
-		(($action=="modform") ? __("Modify") : __("Add"))."\"/>
-		<input CLASS=\"button\" name=\"__submit\" TYPE=\"SUBMIT\" VALUE=\"".__("Cancel")."\"/>
-		<input CLASS=\"button\" TYPE=\"RESET\" VALUE=\"".__("Remove Changes")."\"/>
-		</form>
-		</td></tr>
-		</table>
-		";
-	} // end function ProviderGroupsMaintenance->form()
-
-} // end class ProviderGroupsMaintenance
-
-register_module ("ProviderGroupsMaintenance");
+register_module ("ProviderGroups");
 
 ?>

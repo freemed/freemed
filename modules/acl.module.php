@@ -96,7 +96,7 @@ class ACL extends SupportModule {
 		// Create user object if it doesn't exist yet
 		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
 
-		$_pat = freemed::get_link_rec($pid, 'patient');
+		$_pat = $GLOBALS['sql']->get_link( 'patient', $pid );
 
 		// Get ptpcp, ptphy{1,2,3,4}, ptdoc and add their respective
 		// user numbers to the ACL.

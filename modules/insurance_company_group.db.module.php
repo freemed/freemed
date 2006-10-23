@@ -1,28 +1,46 @@
 <?php
  // $Id$
- // note: insurance company group(s) functions
- // lic : GPL, v2
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
+class InsuranceCompanyGroup extends SupportModule {
 
-	var $MODULE_NAME	= "Insurance Company Group Maintenance";
-	var $MODULE_AUTHOR	= "jeff b (jeff@ourexchange.net)";
+	var $MODULE_NAME	= "Insurance Company Group";
 	var $MODULE_VERSION	= "0.1";
 	var $MODULE_FILE	= __FILE__;
+	var $MODULE_UID 	= "b1b4455a-2151-46fe-baca-dc43694be609";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name		= "inscogroup";
-	var $record_name	= "Insurance Company Groups";
+	var $record_name	= "Insurance Company Group";
 
 	var $variables		= array (
 		"inscogroup"
 	);
 
-	function InsuranceCompanyGroupMaintenance () {
-		// For i18n: __("Insurance Company Group Maintenance")
+	public function __construct () {
+		// For i18n: __("Insurance Company Group")
 
 		// Table definition
 		$this->table_definition = array (
@@ -30,66 +48,16 @@ class InsuranceCompanyGroupMaintenance extends MaintenanceModule {
 			'id' => SQL__SERIAL
 		);
 	
-		// Run parent constructor
-		$this->MaintenanceModule();
-	} // end constructor InsuranceCompanyGroupMaintenance
-
-	function addform () { $this->form(); }
-	function modform () { $this->form(); }
-
- 	function form () {
-		global $display_buffer;
-		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
-
-		if ($id) {
-			$r = freemed::get_link_rec ($id, $this->table_name);
-			extract ($r);
-		} // end checking for id
-
-		$display_buffer .= "
-		<P>
-		<FORM ACTION=\"$this->page_name\" METHOD=POST>
-			<INPUT TYPE=HIDDEN NAME=\"action\" VALUE=\"".
-				( ($action=="addform") ? "add" : "mod" )."\"> 
-			<INPUT TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"> 
-			<INPUT TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"> 
-			<INPUT TYPE=HIDDEN NAME=\"id\"     VALUE=\"".prepare($id)."\"  >
-			".html_form::form_table ( array (
-				__("Name") =>
-					"<INPUT TYPE=TEXT NAME=\"inscogroup\" SIZE=20 MAXLENGTH=20 ".
-					"VALUE=\"".prepare($inscogroup)."\">"
-			) )."
-		<BR>
-
-		<CENTER>
-			<INPUT TYPE=SUBMIT VALUE=\" ".
-				( ($action=="addform") ? __("Add") : __("Modify") )." \">
-			<INPUT TYPE=RESET  VALUE=\"".__("Clear")."\">
-		</CENTER>
-
-		</FORM>
-		";
-	} // end function InsuranceCompanyGroupMaintenance->form
-
-	function view () {
-		global $display_buffer;
-		global $sql;
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query ("SELECT inscogroup,id FROM inscogroup ".
-				"ORDER BY inscogroup"),
-			$this->page_name,
-			array (
-				__($this->record_name)		=>	"inscogroup"
-			),
-			array (
-				""
-			)
+		$this->list_view = array (
+			__("Insurance Company Group") => "inscogroup"
 		);
-	} // end function InsuranceCompanyGroupMaintenance->view
- 
-} // end of master case statement
 
-register_module ("InsuranceCompanyGroupMaintenance");
+		// Run parent constructor
+		parent::__construct( );
+	} // end constructor InsuranceCompanyGroup
+
+} // end class InsuranceCompanyGroup
+
+register_module ("InsuranceCompanyGroup");
 
 ?>

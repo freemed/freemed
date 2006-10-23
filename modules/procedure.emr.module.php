@@ -311,10 +311,10 @@ class ProcedureModule extends EMRModule {
 		//   calculate the standard fee
 		//if ($covid==0)
 		//		return 0;
-		$primary = CreateObject('FreeMED.Coverage', $covid);
+		$primary = CreateObject('org.freemedsoftware.core.Coverage', $covid);
 		$insid = $primary->local_record[covinsco];
 
-		$cpt_code = freemed::get_link_rec ($cptid, "cpt"); // cpt code
+		$cpt_code = $GLOBALS['sql']->get_link( 'cpt', $cptid ); // cpt code
 		$cpt_code_fees = unserialize($cpt_code["cptstdfee"]);
 		$cpt_code_stdfee = $cpt_code_fees[$insid]; // grab proper std fee
 		if (empty($cpt_code_stdfee) or ($cpt_code_stdfee==0))
@@ -331,14 +331,14 @@ class ProcedureModule extends EMRModule {
 		$internal_type  = $cpt_code ["cpttype"]; // grab internal type
 		if ($debug) 
 		$display_buffer .= " (inttype = $internal_type) (procphysician = $procphysician) ";
-		$this_physician = freemed::get_link_rec ($physid, "physician");
+		$this_physician = $GLOBALS['sql']->get_link( 'physician', $physid );
 		$charge_map     = fm_split_into_array($this_physician ["phychargemap"]);
 		$base_value     = $charge_map [$internal_type];
 		if ($debug) $display_buffer .= "<BR>base value = \"$base_value\"\n";
 
 		// step four:
 		//   check for patient discount percentage
-		$this_patient = CreateObject('FreeMED.Patient', $patid);
+		$this_patient = CreateObject('org.freemedsoftware.core.Patient', $patid);
 		$percentage = $this_patient->local_record["ptdisc"];
 		if ($percentage>0) { $discount = $percentage / 100; }
 		else              { $discount = 0;                 }
