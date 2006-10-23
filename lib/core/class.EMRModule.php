@@ -536,13 +536,16 @@ class EMRModule extends BaseModule {
 	//
 	//	$record - Record id
 	//
+	//	$texonly - (optional) Boolean, whether to generate only the TeX source
+	//	instead of the destination PDF. Defaults to false.
+	//
 	// Returns:
 	//
 	//	File name of destination PDF file
 	//
-	public function RenderToPDF ( $record ) {
+	public function RenderToPDF ( $record, $texonly = false ) {
 		// Sanity checking
-		if (!is_integer($record)) { return false; }
+		if ($record+0 <= 0) { return false; }
 
 		// Handle render
 		if ($render = $this->print_override($record)) {
@@ -565,10 +568,23 @@ class EMRModule extends BaseModule {
 				$rec = $GLOBALS['sql']->get_link( $t, $record );
 			} // end checking for summary_query
 
-			$TeX->_buffer = $TeX->RenderFromTemplate(
+			// Make sure we import everything but id from patient
+			$pat = $GLOBALS['sql']->get_link( 'patient', $rec[$this->patient_field] );
+			unset ($pat['id']);
+			foreach ($pat AS $k => $v) {
+				if (!isset($rec[$k])) { $rec[$k] = $v; }
+			}
+
+			if ($texonly) {
+				return $TeX->RenderFromTemplate(
+					$this->print_template,
+					$rec
+				);
+			}
+			$TeX->SetBuffer($TeX->RenderFromTemplate(
 				$this->print_template,
 				$rec
-			);
+			));
 			$render = $TeX->RenderToPDF( );
 		} // end render if/else
 

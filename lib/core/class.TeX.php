@@ -104,9 +104,9 @@ class TeX {
 		if (!is_object($this->smarty)) {
 			include_once ( dirname(dirname(__FILE__)) . '/smarty/Smarty.class.php' );
 			$this->smarty = new Smarty;
-			$this->smarty->template_dir = dirname(__FILE__).'/../tex/';
-			$this->smarty->compile_dir = dirname(__FILE__).'../../data/cache/smarty/templates_c/';
-			$this->smarty->cache_dir = dirname(__FILE__).'../../data/cache/smarty/cache/';
+			$this->smarty->template_dir = dirname(__FILE__).'/../../data/tex/';
+			$this->smarty->compile_dir = dirname(__FILE__).'/../../data/cache/smarty/templates_c/';
+			$this->smarty->cache_dir = dirname(__FILE__).'/../../data/cache/smarty/cache/';
 			$this->smarty->left_delimiter = '{[';
 			$this->smarty->right_delimiter = ']}';
 		}
@@ -120,7 +120,7 @@ class TeX {
 		}
 
 		// Get the important part into the buffer
-		$buffer = $this->smarty->fetch('data/tex/'.$template.'.tex');
+		$buffer = $this->smarty->fetch($template.'.tex');
 
 		// Return processed string
 		return $buffer;
@@ -157,6 +157,16 @@ class TeX {
 
 		return ($tmp.'.pdf');
 	} // end method RenderToPDF
+
+	// Method: SetBuffer
+	//
+	// Parameters:
+	//
+	//	$buffer - Rendered TeX buffer.
+	//
+	public function SetBuffer ( $buffer ) {
+		$this->_buffer = $buffer;
+	} // end method SetBuffer
 
 	// Method: SetPrinter
 	//
