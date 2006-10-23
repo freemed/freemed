@@ -30,6 +30,10 @@ class Patient {
 	//	patient is a "call-in" patient. Defaults to false.
 	//
 	function Patient ($_patient_number, $is_callin = false) { // constructor
+		$this->load_data($_patient_number, $is_callin);
+	}
+
+	function load_data ( $_patient_number, $is_callin = false ) {
 		if (is_array($_patient_number)) {
 			$patient_number = $_patient_number['id'];
 		} else {
@@ -175,7 +179,7 @@ class Patient {
 	//	Textual representation of record.
 	//
 	function to_text ( $id=0 ) {
-		if ($id) { $this->Patient ( $id ); }
+		if ($id>0) { $this->load_data ( $id ); }
 		return $this->_fixcaps($this->ptlname).", ".
 			$this->_fixcaps($this->ptfname)." ".
 			$this->_fixcaps($this->ptmname).
