@@ -4,6 +4,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -43,7 +44,7 @@ function tm ( $method, $params = NULL ) {
 }
 
 // Cache the admin user for these tests...
-print ( !$_SERVER['argv'] ? "<b>Loading user #1 (admin)</b><br/>" : " * Loading user #1 (admin)\n" );
+//print ( !$_SERVER['argv'] ? "<b>Loading user #1 (admin)</b><br/>" : " * Loading user #1 (admin)\n" );
 $this_user = CreateObject('org.freemedsoftware.core.User', 1);
 
 ?>

@@ -4,6 +4,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -22,12 +23,14 @@
 
 include_once( dirname(__FILE__).'/bootstrap.test.php' );
 
-if ($argc < 2) { die("syntax: $argv[0] filename\n"); }
+if ($argc < 3) { die("syntax: $argv[0] transport filename\n"); }
 
-$message = file_get_contents($argv[1]);
+$transport = $argv[1];
+$message = file_get_contents($argv[2]);
 
-$parser = CreateObject('org.freemedsoftware.core.Parser_HL7v2', $message);
+$parser = CreateObject('org.freemedsoftware.core.Parser_'.$transport, $message);
 $value = $parser->Handle(); 
-print "value = $value\n";
+print "value:\n";
+print_r($value); print "\n";
 
 ?>
