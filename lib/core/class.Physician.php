@@ -43,7 +43,7 @@ class Physician {
 		// Check for cache
 		if (!isset($GLOBALS['__freemed']['cache']['physician'][$physician])) {
 			// Get physician record
-			$this->local_record = freemed::get_link_rec ($physician, "physician");
+			$this->local_record = $GLOBALS['sql']->get_link( 'physician', $physician );
 
 			// and cache the record
 			$GLOBALS['__freemed']['cache']['physician'][$physician] = $this->local_record;
@@ -77,8 +77,8 @@ class Physician {
 		$dr = true;
 		for ($i=1; $i<=3; $i++) {
 			if ($this->local_record['phydeg'.$i] > 0) {
-				$e = freemed::get_link_field($this->local_record['phydeg'.$i], 'degrees', 'degdegree');
-				$d[] = $e;
+				$e = $GLOBALS['sql']->get_link( 'degrees', $this->local_record['phydeg'.$i]);
+				$d[] = $e['degdegree'];
 				if (strpos($e, 'P.A.') !== false) { $dr = false; }
 				if (strpos($e, 'PA') !== false) { $dr = false; }
 				if (strpos($e, 'R.N.') !== false) { $dr = false; }
