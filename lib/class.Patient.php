@@ -174,7 +174,8 @@ class Patient {
 	//
 	//	Textual representation of record.
 	//
-	function to_text ( ) {
+	function to_text ( $id=0 ) {
+		if ($id) { $this->Patient ( $id ); }
 		return $this->_fixcaps($this->ptlname).", ".
 			$this->_fixcaps($this->ptfname)." ".
 			$this->_fixcaps($this->ptmname).
