@@ -65,7 +65,7 @@ class Patient {
 			if (is_array($_patient_number)) {
 				$this->local_record = $_patient_number;
 			} else {
-				$this->local_record = freemed::get_link_rec ( $patient_number, $_callin );
+				$this->local_record = $GLOBALS['sql']->get_link ( $_callin, $patient_number );
 			}
 
 			// ... and store in the cache
