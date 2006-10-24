@@ -851,13 +851,11 @@ class RemittBillingTransport extends BillingModule {
 			// (also check for null hash key)
 			if (($to_bill == 1) and ($hash_key != '__')) {
 				// And the patient is supposed to be billed
-		//TODO Jeff, this check does not belong here. It should not display a claim that is 
-		// not set to be billed in the interface.
-			//	if ($bill[$claim_owner[$my_claim]] == 1) {
+				if ($bill[$claim_owner[$my_claim]] == 1) {
 					// Add the procedure to that hash
 					$bill_hash[$hash_key]['procedures'][] = is_array($my_claim) ? $my_claim : array($my_claim);
 				}
-			//}
+			}
 		}
 
 		// Once we have created these hashes, we loop through the list
