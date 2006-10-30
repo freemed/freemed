@@ -1,6 +1,25 @@
 %%
-%%	$Id$
-%%	$Author$
+%% $Id$
+%%
+%% Authors:
+%% 	Jeff Buchbinder <jeff@freemedsoftware.org>
+%%
+%% FreeMED Electronic Medical Record and Practice Management System
+%% Copyright (C) 1999-2006 FreeMED Software Foundation
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 %%
 %%	FreeMED TeX Template
 %%	Progress Notes
@@ -22,18 +41,18 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-        {\relsize{1}\textbf{**link:pnotesdoc:physician:phypracname**}} \\
-        {\relsize{-1}\textsl{**method:Physician:fullName:pnotesdoc**}} \\
-        \textsl{**link:pnotesdoc:physician:phyaddr1a**, **link:pnotesdoc:physician:phycitya**, **link:pnotesdoc:physician:phystatea** **link:pnotesdoc:physician:phyzipa** } \\
-        \textsl{phone **link:pnotesdoc:physician:phyphonea:phone** fax **link:pnotesdoc:physician:phyfaxa:phone**}
+        {\relsize{1}\textbf{{[link link=$pnotesdoc table='physician' field='phypracname'|texize]}
+        {\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.core.Physician.fullName' param=$pnotesdoc|texize]}}} \\
+        \textsl{{[link link=$pnotesdoc table='physician' field='phyaddr1a'|texize]}, {[link link=$pnotesdoc table='physician' field='phycitya'|texize]}, {[link link=$pnotesdoc table='physician' field='phystatea'|texize]} {[link link=$pnotesdoc table='physician' field='phyzipa'|texize]} } \\
+        \textsl{phone {[link link=$pnotesdoc table='physician' field='phyphonea'|texize]} fax {[link link=$pnotesdoc table='physician' field='phyfaxa']}}
 \end{center}
 
-% **method:Physician:fullName:pnotesdoc** \\
+% {[method:namespace='org.freemedsoftware.core.Physician.fullName' param=$pnotesdoc|texize]} \\
 \begin{tabular}{ll}
-NAME:	&	**method:Patient:fullName:pnotespat**	\\
-CHART:	&	**link:pnotespat:patient:ptid** 	\\
-DOB:	&	**link:pnotespat:patient:ptdob:date**	\\
-DATE:	&	**field:pnotesdt:date** \\
+NAME:	&	{[method namespace='org.freemedsoftware.com.Patient.fullName' param=$pnotespat|texize]}	\\
+CHART:	&	{[link link=$pnotespat table='patient' field='ptid'|texize]} 	\\
+DOB:	&	{[link link=$pnotespat table='patient' field='ptdob'|texize]}	\\
+DATE:	&	{[$pnotesdt|texize]} \\
 PRINTED: &	\today \\
 \end{tabular}
 
@@ -43,64 +62,64 @@ PRINTED: &	\today \\
 
 % Nice fixed block with \cr's in between them
 \begin{tabular}{ll}
-**if:exists:pnotesbmi**
-\sheading{BMI} & **field:pnotesbmi** \\
-**fi**
-**if:exists:pnotesheight**
-\sheading{Height} & **field:pnotesheight** \\
-**fi**
-**if:exists:pnotesweight**
-\sheading{Weight} & **field:pnotesweight** \\
-**fi**
-**if:exists:pnotessbp**
-\sheading{Blood Pressure} & **field:pnotessbp** over **field:pnotesdbp** \\
-**fi**
-**if:exists:pnotesheartrate**
-\sheading{Heart Rate} & **field:pnotesheartrate** \\
-**fi**
-**if:exists:pnotesresprate**
-\sheading{Respiratory Rate} & **field:pnotesresprate** \\
-**fi**
-**if:exists:pnotestemp**
-\sheading{Temperature} & **field:pnotestemp** \\
-**fi**
+{[if $pnotesbmi]}
+\sheading{BMI} & {[$pnotesbmi|texize]} \\
+{[/if]}
+{[if $pnotesheight]}
+\sheading{Height} & {[$pnotesheight]} \\
+{[/if]}
+{[if $pnotesweight]}
+\sheading{Weight} & {[$pnotesweight]} \\
+{[/if]}
+{[if $pnotessbp]}
+\sheading{Blood Pressure} & {[$pnotessbp]} over {[$pnotesdbp]} \\
+{[/if]}
+{[if $pnotesheartrate]}
+\sheading{Heart Rate} & {[$pnotesheartrate]} \\
+{[/if]}
+{[if $pnotesresprate]}
+\sheading{Respiratory Rate} & {[$pnotesresprate]} \\
+{[/if]}
+{[if $pnotestemp]}
+\sheading{Temperature} & {[$pnotestemp]} \\
+{[/if]}
 \  &  \  
 \end{tabular} \\
 \par
 
-**if:lengthge:pnotes_S:10**
-\noindent\sheading{SUBJECTIVE} **field:pnotes_S**
+{[if strlen($pnotes_S) ge 10]}
+\noindent\sheading{SUBJECTIVE} {[$pnotes_S|texize]}
 \par
-**fi**
+{[/if]}
 
-**if:lengthge:pnotes_O:10**
-\noindent\sheading{OBJECTIVE} **field:pnotes_O**
+{[if strlen($pnotes_O) ge 10]}
+\noindent\sheading{OBJECTIVE} {[$pnotes_O|texize]}
 \par
-**fi**
+{[/if]}
 
-**if:lengthge:pnotes_A:10**
-\noindent\sheading{ASSESSMENT} **field:pnotes_A**
+{[if strlen($pnotes_A) ge 10]}
+\noindent\sheading{ASSESSMENT} {[$pnotes_A|texize]}
 \par
-**fi**
+{[/if]}
 
-**if:lengthge:pnotes_P:10**
-\noindent\sheading{PLAN} **field:pnotes_P**
+{[if strlen($pnotes_P) ge 10]}
+\noindent\sheading{PLAN} {[$pnotes_P|texize]}
 \par
-**fi**
+{[/if]}
 
-**if:lengthge:pnotes_I:10**
-\noindent\sheading{INTERVAL} **field:pnotes_I**
+{[if strlen($pnotes_I) ge 10]}
+\noindent\sheading{INTERVAL} {[$pnotes_I|texize]}
 \par
-**fi**
+{[/if]}
 
-**if:lengthge:pnotes_E:10**
-\noindent\sheading{EDUCATION} **field:pnotes_E**
+{[if strlen($pnotes_E) ge 10]}
+\noindent\sheading{EDUCATION} {[$pnotes_E|texize]}
 \par
-**fi**
+{[/if]}
 
-**if:lengthge:pnotes_R:10**
-\noindent\sheading{RX} **field:pnotes_R**
+{[if strlen($pnotes_R) ge 10]}
+\noindent\sheading{RX} {[$pnotes_R|texize]}
 \par
-**fi**
+{[/if]}
 
 \end{document}
