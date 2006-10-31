@@ -1,6 +1,25 @@
 %%
-%%	$Id$
-%%	$Author$
+%% $Id$
+%%
+%% Authors:
+%% 	Jeff Buchbinder <jeff@freemedsoftware.org>
+%%
+%% FreeMED Electronic Medical Record and Practice Management System
+%% Copyright (C) 1999-2006 FreeMED Software Foundation
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 %%
 %%	FreeMED TeX Template
 %%	Patient Correspondence
@@ -18,10 +37,10 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-	{\relsize{1}\textbf{**link:letterfrom:physician:phypracname**}} \\
-%	{\relsize{-1}\textsl{**method:Physician:fullName:letterfrom**}} \\
-	\textsl{**link:letterfrom:physician:phyaddr1a**, **link:letterfrom:physician:phycitya**, **link:letterfrom:physician:phystatea** **link:letterfrom:physician:phyzipa** } \\
-	\textsl{phone **link:letterfrom:physician:phyphonea:phone** fax **link:letterfrom:physician:phyfaxa:phone**}
+	{\relsize{1}\textbf{{[link link=$letterfrom table='physician' field='phypracname'|texize]}}} \\
+%	{\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.core.Physician.fullName' param=$letterfrom|texize]}}} \\
+	\textsl{{[link link=$letterfrom table='physician' field='phyaddr1a'|texize]}, {[link link=$letterfrom table='physician' field='phycitya'|texize]}, {[link link=$letterfrom table='physician' field='phystatea'|texize]} {[link link=$letterfrom table='physician' field='phyzipa'|texize]} } \\
+	\textsl{phone {[link link=$letterfrom table='physician' field='phyphonea'|texize]} fax {[link link=$letterfrom table='physician' field='phyfaxa'|texize]}}
 \end{center}
 
 \flushleft
@@ -32,17 +51,17 @@
 
 \  \\
 
-**method:Patient:fullName:letterpatient**	\\
-**link:letterpatient:patient:ptaddr1**		\\
-**link:letterpatient:patient:ptcity**, **link:letterpatient:patient:ptstate** **link:letterpatient:patient:ptzip** \\
+{[method namespace='org.freemedsoftware.core.Patient.fullName' param=$letterpatient|texize]}	\\
+{[$ptaddr1|texize]}		\\
+{[$ptcity|texize]}, {[$ptstate|texize]} {[$ptzip|texize]} \\
 
 \  \\
 
-**field:lettertext**
+{[$lettertext|texize]}
 
 \  \\
 
-**method:Physician:fullName:letterfrom** \\
-**link:letterfrom:physician:phypracname**
+{[method namespace='org.freemedsoftware.core.Physician.fullName' param='letterfrom'|texize]} \\
+{[link link=$letterfrom table='physician' field='phypracname'|texize]}
 
 \end{document}
