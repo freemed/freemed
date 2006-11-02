@@ -50,6 +50,7 @@ $smarty->assign ( "ui", $ui );
 $smarty->assign ( "webroot", dirname ( __FILE__ ) );
 $smarty->assign ( "webuser", exec ( "whoami" ) );
 $smarty->assign ( "configwrite", is_writable ( dirname(__FILE__).'/lib/settings.php' ) );
+$smarty->assign ( "mysqlenabled", function_exists ( 'mysql_connect' ) );
 
 $smarty->display ( 'install.tpl' );
 

@@ -114,6 +114,71 @@
 		if (!okay) { return messages; }
 	} // end function verifyDatabasePane
 
+	function verifySystemPane ( ) {
+		return true;
+	} // end function verifySystemPane
+
+	function verifyAdministrationPane ( ) {
+		var okay = true;
+		var messages = '';
+
+		if ( ! document.getElementById('name').value ) {
+			okay = false;
+			messages += "<!--{t}-->Database name has not been set.<!--{/t}-->\n";
+		}
+		if ( ! document.getElementById('adminuser').value ) {
+			okay = false;
+			messages += "<!--{t}-->Username has not been set.<!--{/t}-->\n";
+		}
+		if ( ! document.getElementById('adminpass').value ) {
+			okay = false;
+			messages += "<!--{t}-->Password has not been set.<!--{/t}-->\n";
+		}
+		if ( document.getElementById('adminpass').value != document.getElementById('adminpass_confirm').value ) {
+			okay = false;
+			messages += "<!--{t}-->Password do not match.<!--{/t}-->\n";
+		}
+
+		// If something is wrong already, don't run check.
+		if ( okay ) {
+			// Functional check; needs to run synchronous, otherwise we
+			// won't be able to wait for the status of 'okay' variable.
+			dojo.io.bind({
+				method : 'POST',
+				sync : true,
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateAdminAccount',
+				content: {
+					param0: document.getElementById('adminuser').value,
+					param1: document.getElementById('adminpass').value
+				},
+				error: function(type, data, evt) {
+					alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+				},
+				load: function(type, data, evt) {
+					if (!data) {
+						okay = false;
+						messages += "<!--{t}-->Administrative account creation failed.<!--{/t}-->\n";
+					}
+				},
+				mimetype: "text/json"
+			});
+		}
+
+		if (!okay) { return messages; }
+	} // end function verifyAdministrationPane
+
+	function checkpwconfirm ( pw, pwc, out ) {
+		var pw1 = document.getElementById(pw).value;
+		var pw2 = document.getElementById(pwc).value;
+		if ( pw1 == pw2 ) {
+			document.getElementById(out).innerHTML = '';
+			document.getElementById(out).style.display = 'none';
+		} else {
+			document.getElementById(out).innerHTML = "<!--{t}-->Passwords do not match.<!--{/t}-->\n";
+			document.getElementById(out).style.display = 'block';
+		}
+	} // end function checkpwconfirm
+
 	function done ( ) {
 		alert('done');
 	} // end function done
@@ -134,6 +199,17 @@
 		</p>
 
 		<p>
+		<!--{if not $mysqlenabled}-->
+		<span style="color: #ff0000;">
+		<!--{t}-->We have detected that your PHP installation either does not have support for MySQL or does not have that support enabled. Please reconfigure your PHP installation, then reload this wizard to continue.<!--{/t}-->
+		</span>
+		<pre>
+		<script language="javascript">
+			function initialCheck ( ) {
+				return "<!--{t}-->Please install or enable MySQL support in your PHP installation, then reload this wizard to continue.<!--{/t}-->";
+			} // end function initialCheck
+		</script>
+		<!--{else}-->
 		<!--{if $configwrite}-->
 		<!--{t escape="no"}-->We have detected that your <b>lib/settings.php</b> file is writable, and that the installation may continue.<!--{/t}-->
 		<script language="javascript">
@@ -154,7 +230,8 @@
 				return "<!--{t}-->Please follow the instructions on this pane and reload the wizard to proceed.<!--{/t}-->";
 			} // end function initialCheck
 		</script>
-		<!--{/if}-->
+		<!--{/if}--> <!--{* configwrite *}-->
+		<!--{/if}--> <!--{* not mysqlenabled *}-->
 		</p>
 	</div>
 
@@ -184,15 +261,15 @@
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Password<!--{/t}--></td>
-				<td align="left"><input type="password" id="password" name="password" /></td>
+				<td align="left"><input type="password" id="password" name="password" onKeyUp="checkpwconfirm('password', 'password_confirm', 'pwconfirm');" /></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Password (confirm)<!--{/t}--></td>
-				<td align="left"><input type="password" id="password_confirm" name="password_confirm" /></td>
+				<td align="left"><input type="password" id="password_confirm" name="password_confirm" onKeyUp="checkpwconfirm('password', 'password_confirm', 'pwconfirm');" /><span id="pwconfirm" style="border: 1px solid #000000; padding: 2px; color: #ff0000; display: none;"></span></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Database Name<!--{/t}--></td>
-				<td align="left"><input type="input" id="name" name="name" /></td>
+				<td align="left"><input type="input" id="name" name="name"  value="freemed" /></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}--><!--{/t}--></td>
@@ -217,6 +294,25 @@
 		</script>
 	</div>
 
+	<div dojoType="WizardPane" label="Administration Configuration" passFunction="verifyAdministrationPane">
+		<h1><!--{t}-->Administration Configuration<!--{/t}--></h1>
+
+		<div>
+		<!--{t}-->Please configure the administrative account for this system. We recomment that you use the name "admin", but please select a relatively complex password, as this account has full access to all system data and functions.<!--{/t}-->	
+		</div>
+
+		<table border="0">
+			<tr>
+				<td align="right"><!--{t}-->Administrative Account<!--{/t}--></td>
+				<td align="left"><input type="input" id="adminuser" name="adminuser" size="50" maxlength="50" value="admin" /></td>
+			</tr>
+			<tr>
+				<td align="right"><!--{t}-->Administrative Password<!--{/t}--></td>
+				<td align="left"><input type="password" id="adminpass" name="adminpass" size="50" maxlength="50" value="" /></td>
+			</tr>
+		</table>
+	</div>
+
 	<div dojoType="WizardPane" label="System Configuration" passFunction="verifySystemPane">
 		<h1><!--{t}-->System Configuration<!--{/t}--></h1>
 
@@ -226,6 +322,18 @@
 
 		<table border="0">
 			<tr>
+				<td align="right"><!--{t}-->Installation Name<!--{/t}--></td>
+				<td align="left"><input type="input" id="installation" name="installation" size="50" maxlength="50" value="<!--{t}-->Installation Name<!--{/t}-->"/></td>
+			</tr>
+			<tr>
+				<td align="right"><!--{t}-->Default Language<!--{/t}--></td>
+				<td align="left"></td>
+			</tr>
+			<tr>
+				<td align="right"><!--{t}-->Default Language<!--{/t}--></td>
+				<td align="left"></td>
+			</tr>
+			<tr>
 				<td align="right"><!--{t}-->Scheduler Start Time<!--{/t}--></td>
 				<td align="left"><div name="starttime" dojoType="TimePicker"></div></td>
 			</tr>
@@ -233,15 +341,16 @@
 				<td align="right"><!--{t}-->Scheduler End Time<!--{/t}--></td>
 				<td align="left"><div name="endtime" dojoType="TimePicker"></div></td>
 			</tr>
-			<tr>
-				<td align="right"><!--{t}--><!--{/t}--></td>
-				<td align="left"></td>
-			</tr>
 		</table>
 	</div>
 
 	<div dojoType="WizardPane" label="Confirm Configuration" doneFunction="done">
-		Confirm config pane contents
+		<h1><!--{t}-->Confirm Configuration<!--{/t}--></h1>
+
+		<div>
+		<!--{t}--><!--{/t}-->	
+		</div>
+
 	</div>
 </div>
 
