@@ -127,7 +127,7 @@ function register_module ($module_name) {
 	$index = $GLOBALS['sql']->queryAll("SELECT * FROM modules");
 	//print "[ Index loaded ]\n";
 
-	$lstat = lstat($data['MODULE_FILE']);
+	$lstat = lstat(dirname(__FILE__).'/../'.$data['MODULE_FILE']);
 
 	// Prepare data for insertion or update
 	$a = array (
