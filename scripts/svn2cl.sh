@@ -5,6 +5,7 @@
 #      Arthur de Jong <adejong@debian.org>
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
+# FreeMED Electronic Medical Record and Practice Management System
 # Copyright (C) 2005 Arthur de Jong
 # Copyright (C) 1999-2006 FreeMED Software Foundation
 #

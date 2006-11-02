@@ -1,10 +1,10 @@
-#!/usr/bin/env php
 <?php
  // $Id$
  //
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -30,5 +30,7 @@ print date('r')." : Loaded ".__FILE__."\n";
 print date('r')." : Forcing recache of modules ... \n";
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
 print date('r')." :- org.freemedsoftware.core.ModuleIndex instantiated\n";
+print date('r')." : Run completed.\n";
+exit(0);
 
 ?>
