@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class RoomEquipment extends MaintenanceModule {
+class RoomEquipment extends SupportModule {
 
 	var $MODULE_NAME    = "Room Equipment";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE    = __FILE__;
+	var $MODULE_UID     = "3c993257-d9d0-46db-a731-bb1f6df7b59c";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
@@ -19,14 +38,12 @@ class RoomEquipment extends MaintenanceModule {
 
 	var $widget_hash    = "##reqname## (##reqdescrip##)";
 
-	function RoomEquipment () {
+	public function __construct () {
 		// __("Room Equipment")
 
-		$this->table_definition = array (
-			'reqname' => SQL__VARCHAR(50),
-			'reqdescrip' => SQL__VARCHAR(150),
-			'reqmovable' => SQL__INT_UNSIGNED(0),
-			'id' => SQL__SERIAL
+		$this->list_view = array (
+			__("Name")		=>	"reqname",
+			__("Description")	=>	"reqdescrip"
 		);
 
 		$this->variables = array (
@@ -34,39 +51,8 @@ class RoomEquipment extends MaintenanceModule {
 			"reqdescrip"
 		);
 
-		$this->MaintenanceModule();
+		parent::__construct( );
 	} // end constructor
-
-	function generate_form ( ) {
-		return array (
-			__("Name") =>
-			html_form::text_widget('reqname', 20, 100),
-
-			__("Description") =>
-			html_form::text_widget('reqdescrip', 30)
-		);
-	} // end method generate_form
-
-	function view () {
-		global $display_buffer;
-		global $sql;
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query(
-				"SELECT * ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions()." ".
-				"ORDER BY ".$this->order_field
-			),
-			$this->page_name,
-			array (
-				__("Name")		=>	"reqname",
-				__("Description")	=>	"reqdescrip"
-			),
-			array (
-				"", __("NO DESCRIPTION")
-			)
-		);
-	} // end method view
 
 } // end class RoomEquipment
 
