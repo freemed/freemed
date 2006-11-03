@@ -175,7 +175,7 @@ class FormTemplate {
 	//
 	function LoadPatient ( $patient_id ) {
 		if (!$patient_id) { trigger_error(__("Must specify a patient id!"), E_USER_ERROR); }
-		$this->patient = CreateObject('_FreeMED.Patient', $patient_id);
+		$this->patient = CreateObject('org.freemedsoftware.core.Patient', $patient_id);
 	} // end method LoadPatient
 
 	// Method: OutputData
@@ -302,7 +302,7 @@ class FormTemplate {
 			$objectname = substr($data['table'], -(strlen($data['table'])-7));
 			$params = explode(':', $data['field']);
 			if ($params[0] == 'patient') {
-				$obj = CreateObject('_FreeMED.'.$objectname, $this->patient->local_record[$params[1]]);
+				$obj = CreateObject('org.freemedsoftware.core.'.$objectname, $this->patient->local_record[$params[1]]);
 				$method = ( $params[2] ? $params[2] : 'to_text' );
 				$raw = $obj->${method}();
 			} else {
