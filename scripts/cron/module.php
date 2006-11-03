@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
  // $Id$
  //
@@ -22,6 +23,9 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 ini_set('include_path', dirname(dirname(dirname(__FILE__))).':'.ini_get('include_path'));
+
+// Load MySQL support if this doesn't exist in the CLI version
+if (!function_exists('mysql_pconnect')) { dl('mysql.so'); }
 
 include_once ( 'lib/freemed.php' );
 
