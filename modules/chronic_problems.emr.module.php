@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
-class ChronicProblemsModule extends EMRModule {
+class ChronicProblems extends EMRModule {
 
 	var $MODULE_NAME = "Chronic Problems";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "6645734d-9213-4df0-b165-a47a309f1f83";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -23,105 +42,26 @@ class ChronicProblemsModule extends EMRModule {
 	var $order_fields = 'pdate,problem';
 	var $widget_hash = '##pdate## ##problem##';
 
-	function ChronicProblemsModule () {
-		$this->table_definition = array (
-			'pdate'    => SQL__DATE,
-			'problem'  => SQL__VARCHAR(250),
-			'ppatient' => SQL__INT_UNSIGNED(0),
-			'id'       => SQL__SERIAL
-		);
+	public function __construct ( ) {
+		// __("Chronic Problems")
 
 		$this->variables = array (
 			'problem',
-			'ppatient' => $_REQUEST['patient'],
-			'pdate' => date('Y-m-d')
+			'ppatient',
+			'pdate'
 		);
 		
 		// call parent constructor
-		$this->EMRModule();
-	} // end constructor ChronicProblemsModule
+		parent::__construct( );
+	} // end constructor ChronicProblems
 
-	// The EMR box; probably the most important part of this module
-	function summary ($patient, $dummy_items) {
-		$my_result = $GLOBALS['sql']->query(
-			"SELECT * FROM ".$this->table_name." ".
-			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY ".$this->order_fields
-		);
+	protected function add_pre ( &$data ) {
+		$data['pdate'] = date('Y-m-d');
+	}
 
-		// Check to see if it's set (show listings if it is)
-		if ($GLOBALS['sql']->results($my_result)) {
-			// Show menu bar
-			$buffer .= "
-			<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
-			"CELLPADDING=\"2\">
-			<tr CLASS=\"menubar_info\">
-			<td><b>".__("Date")."</b></td>
-			<td><b>".__("Problem")."</b></td>
-			<td><b>".__("Action")."</b></td>
-			</tr>
-			";
-
-			// Loop thru and display problems
-			while ($my_r = $GLOBALS['sql']->fetch_array($my_result)) {
-				$buffer .= "
-				<tr>
-				<td ALIGN=\"LEFT\"><small>".prepare($my_r['pdate'])."</small></td>
-				<td ALIGN=\"LEFT\"><small>".prepare($my_r['problem'])."</small></td>
-				<td ALIGN=\"LEFT\">".
-				template::summary_modify_link($this,
-				"module_loader.php?".
-				"module=".get_class($this)."&".
-				"action=modform&patient=".urlencode($patient).
-				"&return=manage&id=".urlencode($my_r['id'])).
-				template::summary_delete_link($this,
-				"module_loader.php?".
-				"module=".get_class($this)."&".
-				"action=del&patient=".urlencode($patient).
-				"&return=manage&id=".urlencode($my_r['id']))."</td>
-				</tr>
-				";
-			} // end looping thru problems
-
-			// End table
-			$buffer .= "
-			</table>
-			";
-		} else {
-			$buffer .= "
-			<div ALIGN=\"CENTER\">
-			<b>".__("No data entered.")."</b>
-			</div>
-			";
-		}
-
-		$buffer .= "
-			<div ALIGN=\"CENTER\">
-			<form ACTION=\"module_loader.php\" METHOD=\"POST\">
-			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".
-			prepare($this->MODULE_CLASS)."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-			"add\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".
-			"manage\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
-			prepare($patient)."\"/>
-			".html_form::text_widget("problem", 75)."
-			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\"/>
-			</form>
-			</div>
-			";
-		return $buffer;
-	} // end method summary
-
-	function summary_bar() { }
-
-	function form_table ( ) {
-		return array (
-			__("Problem") =>
-			html_form::text_widget('problem', 128)
-		);
-	} // end method form_table
+	protected function mod_pre ( &$data ) {
+		$data['pdate'] = date('Y-m-d');
+	}
 
 	function recent_text ( $patient, $recent_date = NULL ) {
 		// skip recent; need all for this one
@@ -169,8 +109,8 @@ class ChronicProblemsModule extends EMRModule {
 		}
 	} // end method _update
 
-} // end class ChronicProblemsModule
+} // end class ChronicProblems
 
-register_module ("ChronicProblemsModule");
+register_module ("ChronicProblems");
 
 ?>

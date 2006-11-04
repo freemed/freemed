@@ -1,18 +1,37 @@
 <?php
-	// $Id: updates.module.php 2333 2005-11-22 21:13:38Z jeff $
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.BaseModule');
+LoadObjectDependency('org.freemedsoftware.core.BaseModule');
 
 class WorkListsModule extends BaseModule {
 
 	var $MODULE_NAME = "Work Lists";
 	var $MODULE_VERSION = "0.1";
-	var $MODULE_AUTHOR = "jeff@ourexchange.net";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "f49d3432-1682-49c7-a3db-f5ff0d93c2b3";
 	var $PACKAGE_MINIMUM_VERSION = "0.8.2";
 
-	function WorkListsModule ( ) {
+	public function __construct ( ) {
 		// __("Work Lists")
 
 		// Add main menu notification handlers
@@ -43,7 +62,7 @@ class WorkListsModule extends BaseModule {
 		);
 		
 		// Call parent constructor
-		$this->BaseModule();
+		parent::__construct ( );
 	} // end constructor WorkListsModule
 
 	function notify ( ) {
@@ -70,7 +89,7 @@ class WorkListsModule extends BaseModule {
 		";
 
 		$q = $GLOBALS['sql']->query("SELECT * FROM schedulerstatustype ORDER BY id");
-		while ($r = $GLOBALS['sql']->fetch_array($q)) {
+		foreach ($q AS $r) {
 			$display_buffer .= "'<option value=\"${r['id']}\">${r['sname']}</option>'+\n";
 		}
 		$display_buffer .= "
@@ -118,12 +137,25 @@ class WorkListsModule extends BaseModule {
 		);
 	} // end method notify
 
-	function ajax_process ( $v ) {
+	// Method: ProcessChange
+	//
+	// Parameters:
+	//
+	//	$status -
+	//
+	//	$appt - Scheduler id
+	//
+	// Returns:
+	//
+	//	Hash containing:
+	//	* color
+	//	* name
+	//	* descrip
+	//
+	public function ProcessChange ( $status, $appt ) {
 		if (!is_object($GLOBALS['this_user'])) {
-			$GLOBALS['this_user'] = CreateObject('FreeMED.User');
+			$GLOBALS['this_user'] = CreateObject('org.freemedsoftware.core.User');
 		}
-
-		list( $status, $appt ) = explode('x', $v);
 
 		// Keep funky things from happening
 		if ($status+0 == 0) { return ''; }
@@ -144,19 +176,25 @@ class WorkListsModule extends BaseModule {
 		);
 
 		// Return status color properly
-		$q = $GLOBALS['sql']->query("SELECT * FROM schedulerstatustype WHERE id='".addslashes($status)."'");
-		$r = $GLOBALS['sql']->fetch_array($q);
-		return $r['scolor'].":".$r['sname'].":".$r['sdescrip'];
-	}
+		$q = $GLOBALS['sql']->query("SELECT scolor AS color, sname AS name, sdescrip AS descrip FROM schedulerstatustype WHERE id='".addslashes($status)."'");
+		$r = $GLOBALS['sql']->fetchRow( $q );
+		return $r;
+	} // end method ProcessChange
 
-	// ----- Internal methods ------------------------------------------------------
-
-	function generate_worklist ( $provider ) {
+	// Method: GenerateWorklist
+	//
+	// Parameters:
+	//
+	//	$provider - Provider id
+	//
+	// Returns:
+	//
+	public function GenerateWorklist ( $provider ) {
 		$date = date('Y-m-d');
 
 		// Load lookup table
-		$q = $GLOBALS['sql']->query( "SELECT * FROM schedulerstatustype" );
-		while ($r = $GLOBALS['sql']->fetch_array( $q )) {
+		$q = $GLOBALS['sql']->queryAll( "SELECT * FROM schedulerstatustype" );
+		foreach ( $q AS $r ) {
 			$lookup[$r['id']] = $r['scolor'];
 			$name_lookup[$r['id']] = $r['sname'];
 			$fullname_lookup[$r['id']] = $r['sdescrip'];
@@ -164,36 +202,31 @@ class WorkListsModule extends BaseModule {
 		}
 		unset ($q); unset ($r);
 
-		$pobj = CreateObject( '_FreeMED.Physician', $provider );
-		LoadObjectDependency( '_FreeMED.Scheduler' );
-
-		$buffer = '<table border="0" cellpadding="2" cellspacing="0" bgcolor="#aaaaff">'.
-			'<tr><td colspan="3"><b><a href="physician_day_view.php?physician='.$provider.'">'.$pobj->fullName().'</a></b></td></tr>'.
-			'<tr><th>'.__("Name").'</th>'.
-			'<th>'.__("Time").'</th>'.
-			'<th>'.__("Status").'</th></tr>';
+		$pobj = CreateObject( 'org.freemedsoftware.core.Physician', $provider );
+		LoadObjectDependency( 'org.freemedsoftware.api.Scheduler' );
 
 		$query = "SELECT s.id AS id, p.id AS s_patient_id, CONCAT(p.ptlname,', ', p.ptfname) AS s_patient, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient WHERE s.caldateof='".addslashes($date)."' AND s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
-		$q = $GLOBALS['sql']->query( $query );
-		while ( $r = $GLOBALS['sql']->fetch_array( $q ) ) {
+		$q = $GLOBALS['sql']->queryAll( $query );
+		foreach ( $q AS $r ) {
 			$current_status = module_function( 'schedulerpatientstatus', 'getPatientStatus', array( $r['s_patient_id'], $r['id'] ) );
 			$expired = false;
 			if ($age_lookup[$current_status[0]] > 0 and $current_status[1] >= $age_lookup[$current_status[0]]) {
 				syslog(LOG_INFO, "age_lookup ( $current_status[0] ) = ".$age_lookup[$current_status[0]].", current_status[1] = $current_status[1]");
 				$expired = true;
 			}
-			
-			$buffer .= "<tr id=\"rx${r['id']}\" ".( $current_status ? "bgcolor=\"${lookup[$current_status[0]]}\"" : "" ).">\n".
-				"<td><a href=\"manage.php?id=${r['s_patient_id']}\">".prepare($r['s_patient'])."</a></td>\n".
-				"<td nowrap>".Scheduler::display_time($r['s_hour'], $r['s_minute'])."</td>\n".
-				"<td nowrap id=\"x${r['id']}\" onClick=\"workListClick('x${r['id']}'); return true;\">".( $expired ? "<b><blink>" : "" )."<acronym title=\"${fullname_lookup[$current_status[0]]}\">${name_lookup[$current_status[0]]}</acronym>&nbsp;".( $expired ? "</blink></b>" : "" )."</td>\n".
-				"</tr>\n";
+		
+			$return[] = array (
+				'status_name' => $name_lookup[$current_status[0]],
+				'status_fullname' => $fullname_lookup[$current_status[0]],
+				'status_color' => ( $current_status ? $lookup[$current_status[0]] : "" ),
+				'patient' => $r['s_patient_id'],
+				'hour' => $r['s_hour'],
+				'minute' => $r['s_minute'],
+				'expired' => ( $expired ? true : false )
+			);
 		} // end fetch_array
 
-		// Footer
-		$buffer .= "</table>\n";
-
-		return $buffer;
+		return $return;
 	} // end method generate_worklist
 
 } // end class WorkListsModule

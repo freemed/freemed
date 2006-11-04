@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class SchedulerPatientStatus extends EMRModule {
 
 	var $MODULE_NAME = "Scheduler Patient Status";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "f58a3945-4b47-42de-b74c-6e43608dd98e";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -17,28 +36,8 @@ class SchedulerPatientStatus extends EMRModule {
 	var $table_name = 'scheduler_status';
 	var $patient_field = 'cspatient';
 
-	function SchedulerPatientStatus () {
-		$this->table_definition = array (
-			'csstamp' => SQL__TIMESTAMP(14),
-			'cspatient' => SQL__INT_UNSIGNED(0),
-			'csappt' => SQL__INT_UNSIGNED(0),
-			'csnote' => SQL__VARCHAR(250),
-			'csstatus' => SQL__INT_UNSIGNED(0),
-			'csuser' => SQL__INT_UNSIGNED(0),
-			'id' => SQL__SERIAL
-		);
-
-		global $this_user;
-		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
-		$this->variables = array (
-			'csstamp' => SQL__NOW,
-			'cspatient' => $_REQUEST['patient'],
-			'csappt',
-			'csnote',
-			'csstatus',
-			'csuser' => $this_user->user_number
-		);
-
+	public function __construct ( ) {
+		// __("Scheduler Patient Status")
 		$this->summary_vars = array (
 			__("Date/Time") => 'csstamp',
 			__("Status") => 'sname',
@@ -48,73 +47,14 @@ class SchedulerPatientStatus extends EMRModule {
 		$this->summary_query_link = array ( 'csstatus' => 'schedulerstatustype' );
 
 		// call parent constructor
-		$this->EMRModule();
+		parent::__construct( );
 	} // end constructor SchedulerPatientStatus
 
-	function addform () {
-		// Display parent form
-		$this->form();
-
-		// Display all past annotations, if present
-		global $display_buffer;
-		$q = "SELECT ".
-			"DATE_FORMAT(atimestamp, '%d %M %Y %H:%i') AS ts,".
-				"annotation,auser ".
-			"FROM ".$this->table_name." ".
-			"WHERE aid='".addslashes($_REQUEST['aid'])."' AND ".
-			"atable='".addslashes($_REQUEST['atable'])."' AND ".
-			"apatient='".addslashes($_REQUEST['patient'])."' ".
-			"ORDER BY atimestamp DESC";
-		$a = $GLOBALS['sql']->query($q);
-		while ($r = $GLOBALS['sql']->fetch_array($a)) {
-			$display_buffer .=
-			"<div class=\"thinbox_noscroll\" width=\"60%\">".
-			"<i>".$r['ts']."</i> ".__("by")." <b>".freemed::get_link_field($r['auser'], 'user', 'username')."</b>".
-			"<br/>\n".
-			prepare($r['annotation'])."</div>\n";
-		}
+	protected function add_pre ( &$data ) {
+		if (!is_object($GLOBALS['this_user'])) { $GLOBALS['this_user'] = CreateObject('org.freemedsoftware.core.User'); }
+		$data['csstamp'] = SQL__NOW;
+		$data['csuser'] = $GLOBALS['this_user']->user_number;
 	}
-
-	// Keep people from trying to modify these ...
-	function modform() { $this->view(); }
-	function mod() { $this->add(); }
-
-	function form_table ( ) {
-		return array (
-			__("Appointment") =>
-			module_function('schedulertable', 'widget', array('csappt', "calpatient='".addslashes($_REQUEST['patient'])."'")),
-			__("Status") =>
-			module_function('schedulerstatustype', 'widget', array('csstatus')),
-			__("Note") =>
-			html_form::text_area('csnote')
-		);
-	} // end method form_table
-
-	function view ( ) {
-		global $sql; global $display_buffer; global $patient;
-
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT DATE_FORMAT(csstamp, '%d %M %Y %H:%i') AS ts, ".
-				"csuser, csnote, id FROM ".$this->table_name." ".
-				"WHERE cspatient='".addslashes($patient)."' ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY csstamp DESC"),
-			$this->page_name,
-			array(
-				__("Date") => 'ts',
-				__("Status") => 'csstatus',
-				__("User") => 'csuser',
-				__("Note") => 'csnote'
-			),
-			array('', __("Not specified")), //blanks
-			array(
-				"",
-				"schedulerstatustype" => "sname",
-				"user" => "username",
-				""
-			)
-		);
-	} // end method view
 
 	// Method: getPatientStatus
 	//
@@ -133,17 +73,16 @@ class SchedulerPatientStatus extends EMRModule {
 	//		Age in seconds
 	//	)
 	//
-	function getPatientStatus ( $patient, $appt) {
+	public function getPatientStatus ( $patient, $appt) {
 		static $_cache;
 
 		if (!isset($_cache[$appt])) {
 			$q = "SELECT *,(NOW()-csstamp) AS age FROM ".$this->table_name." WHERE cspatient = '".addslashes($patient)."' AND csappt = '".addslashes($appt)."' ORDER BY csstamp DESC LIMIT 1";
-			$res = $GLOBALS['sql']->query($q);
-			if (!$GLOBALS['sql']->results($res)) {
+			$res = $GLOBALS['sql']->queryRow($q);
+			if (!count($res)) {
 				$_cache[$appt] = false;
 			}
-			$r = $GLOBALS['sql']->fetch_array($res);
-			$_cache[$appt] = $r;
+			$_cache[$appt] = $res;;
 		}
 
 		return array ( $_cache[$appt]['csstatus'], $_cache[$appt]['age'] );

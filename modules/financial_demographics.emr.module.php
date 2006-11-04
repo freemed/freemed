@@ -1,16 +1,35 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class FinancialDemographics extends EMRModule {
 
 	var $MODULE_NAME    = "Financial Demographics";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "Keep track of information for determining sliding fee schedule and other income and dependent parties related information.";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "1571145e-50f0-4b6d-87ce-37c519c8dfed";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -18,7 +37,7 @@ class FinancialDemographics extends EMRModule {
 	var $table_name     = "financialdemographics";
 	var $patient_field  = "fdpatient";
 
-	function FinancialDemographics () {
+	public function __construct ( ) {
 		// __("Financial Demographics")
 		// __("Keep track of information for determining sliding fee schedule and other income and dependent parties related information.")
 
@@ -96,80 +115,8 @@ class FinancialDemographics extends EMRModule {
 		));
 
 		// Run parent constructor
-		$this->EMRModule();
+		parent::__construct();
 	} // end constructor FinancialDemographics
-
-	function form_table () {
-		return array (
-			__("Yearly Income") =>
-			html_form::text_widget('fdincome', 10),
-
-			__("Identification") =>
-			html_form::select_widget(
-				'fdidtype',
-				array(
-					__("driver's license") => 'driver\'s license',
-					__("passport") => 'passport',
-					__("baptismal certificate") => 'baptismal certificate',
-					__("green card") => 'green card',
-					__("birth certificate") => 'birth certificate'
-				)
-			),
-
-			__("Identification Issuer") =>
-			html_form::combo_widget(
-				'fdidtype',
-				$GLOBALS['sql']->distinct_values($this->table_name, 'fdidtype')
-			),
-
-			__("Identification Number") =>
-			html_form::text_widget('fdidnumber', 50),
-
-			__("Expiration") =>
-			html_form::text_widget('fdidnumber', 50),
-
-			__("Size of Household") =>
-			html_form::number_pulldown('fdhousehold', 0, 30),
-
-			__("Spouse") =>
-			html_form::select_widget(
-				'fdspouse',
-				array(
-					__("no") => 0,
-					__("yes") => 1
-				)
-			),
-
-			__("Dependent Children") =>
-			html_form::number_pulldown('fdchild', 0, 30),
-
-			__("Other Dependents") =>
-			html_form::number_pulldown('fdother', 0, 30),
-
-			__("Other Information") =>
-			html_form::text_area('fdfreetext')
-		);
-	} // end method form_table
-
-	function view () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query(
-				"SELECT * ".
-				"FROM ".$this->table_name." ".
-				"WHERE (".$this->patient_field."='".addslashes($_REQUEST['patient'])."') ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY ".$this->order_fields
-			),
-			$this->page_name,
-			array (
-				__("Timestamp") => "fdtimestamp",
-			),
-			array ("")
-		);
-	} // end method view
 
 } // end class FinancialDemographics
 

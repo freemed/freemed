@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// lic : GPL, v2
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
-class MedicationsModule extends EMRModule {
+class Medications extends EMRModule {
 
 	var $MODULE_NAME = "Medications";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "11644a0c-9efb-4db2-857f-3e4d86b1b2ea";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
@@ -18,22 +37,15 @@ class MedicationsModule extends EMRModule {
 	var $patient_field = 'mpatient';
 	var $date_field = 'mdate';
 
-	function MedicationsModule () {
-		$this->table_definition = array (
-			'mdrug' => SQL__VARCHAR(150),
-			'mdosage' => SQL__VARCHAR(150),
-			'mroute' => SQL__VARCHAR(150),
-			'mpatient' => SQL__INT_UNSIGNED(0),
-			'mdate' => SQL__DATE,
-			'id' => SQL__SERIAL
-		);
+	public function __construct ( ) {
+		// __("Medications")
 
 		$this->variables = array (
-			'mdrug' => html_form::combo_assemble('mdrug'),
-			'mdosage' => html_form::combo_assemble('mdosage'),
-			'mroute' => html_form::combo_assemble('mroute'),
-			'mpatient' => $_REQUEST['patient'],
-			'mdate' => date('Y-m-d')
+			'mdrug',
+			'mdosage',
+			'mroute',
+			'mpatient',
+			'mdate',
 		);
 
 		$this->summary_vars = array (
@@ -44,56 +56,21 @@ class MedicationsModule extends EMRModule {
 		$this->summary_order_by = 'mdrug';
 
 		// call parent constructor
-		$this->EMRModule();
-	} // end constructor MedicationsModule
+		parent::__construct( );
+	} // end constructor Medications
 
-	function form_table ( ) {
-		return array (
-			__("Drug") =>
-			html_form::combo_widget(
-				'mdrug',
-				$GLOBALS['sql']->distinct_values($this->table_name,'mdrug')
-			),
-
-			__("Dosage") =>
-			html_form::combo_widget(
-				'mdosage',
-				$GLOBALS['sql']->distinct_values($this->table_name,'mdosage')
-			),
-
-			__("Method of Intake") =>
-			html_form::combo_widget(
-				'mroute',
-				$GLOBALS['sql']->distinct_values($this->table_name,'mroute')
-			)
-		);
-	} // end method form_table
-
-	function view ( ) {
-		global $sql; global $display_buffer; global $patient;
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT * FROM ".$this->table_name." ".
-				"WHERE mpatient='".addslashes($patient)."' ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY mdrug"),
-			$this->page_name,
-			array(
-				__("Drug") => 'mdrug',
-				__("Dosage") => 'mdosage',
-				__("Method") => 'mroute'
-			),
-			array('', __("Not specified")) //blanks
-		);
-	} // end method view
+	protected function add_pre ( &$data ) {
+		$data['mdate'] = date('Y-m-d');
+	}
 
 	function recent_text ( $patient, $recent_date = NULL ) {
 		// skip recent; need all for this one
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			"ORDER BY ".$this->date_field." DESC";
-		$res = $GLOBALS['sql']->query($query);
+		$res = $GLOBALS['sql']->queryAll($query);
 	        $m[] = "\n\nMEDICATIONS:\n";
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		foreach ( $res AS $r ) {
 			$m[] = trim($r['mdrug'].' '.$r['mdosage'].' '.$r['mroute']);
 		}
 		return @join("\n", $m);
@@ -131,8 +108,8 @@ class MedicationsModule extends EMRModule {
 		}	
 	} // end method _update
 
-} // end class MedicationsModule
+} // end class Medications
 
-register_module ("MedicationsModule");
+register_module ("Medications");
 
 ?>

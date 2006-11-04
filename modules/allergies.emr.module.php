@@ -1,15 +1,34 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
-class AllergiesModule extends EMRModule {
+class Allergies extends EMRModule {
 
 	var $MODULE_NAME = "Allergies";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.2.1";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "e58a3f17-817f-4444-b573-c8827fa38a16";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -19,7 +38,8 @@ class AllergiesModule extends EMRModule {
 	var $date_field = 'reviewed';
 	var $widget_hash = '##allergy## (##severity##)';
 
-	function AllergiesModule () {
+	public function __construct ( ) {
+		// __("Allergies")
 		$this->table_definition = array (
 			'allergy' => SQL__VARCHAR(150),
 			'severity' => SQL__VARCHAR(150),
@@ -29,8 +49,8 @@ class AllergiesModule extends EMRModule {
 		);
 
 		$this->variables = array (
-			'allergy' => html_form::combo_assemble('allergy'),
-			'severity' => html_form::combo_assemble('severity'),
+			'allergy',
+			'severity',
 			'patient',
 			'reviewed' => SQL__NOW
 		);
@@ -46,48 +66,16 @@ class AllergiesModule extends EMRModule {
 		$this->summary_options = SUMMARY_DELETE;
 
 		// call parent constructor
-		$this->EMRModule();
-	} // end constructor AllergiesModule
-
-	function form_table ( ) {
-		return array (
-			__("Allergy") =>
-			html_form::combo_widget(
-				'allergy',
-				$GLOBALS['sql']->distinct_values('allergies','allergy')
-			),
-
-			__("Reaction") =>
-			html_form::combo_widget(
-				'severity',
-				$GLOBALS['sql']->distinct_values('allergies','severity')
-			)
-		);
-	} // end method form_table
-
-	function view ( ) {
-		global $sql; global $display_buffer; global $patient;
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query("SELECT * FROM ".$this->table_name." ".
-				"WHERE patient='".addslashes($patient)."' ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY allergy"),
-			$this->page_name,
-			array(
-				__("Allergy") => 'allergy',
-				__("Reaction") => 'severity'
-			),
-			array('', __("Not specified")) //blanks
-		);
-	} // end method view
+		parent::__construct();
+	} // end constructor Allergies
 
 	function recent_text ( $patient, $recent_date = NULL ) {
 		// skip recent; need all for this one
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			"ORDER BY ".$this->date_field." DESC";
-		$res = $GLOBALS['sql']->query($query);
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		$res = $GLOBALS['sql']->queryAll( $query );
+		foreach ( $res AS $r ) {
 			$m[] = trim($r['allergy']).' ('.trim($r['severity']).')';
 		}
 		return @join(', ', $m);
@@ -132,8 +120,8 @@ class AllergiesModule extends EMRModule {
 		}
 	} // end method _update
 
-} // end class AllergiesModule
+} // end class Allergies
 
-register_module ("AllergiesModule");
+register_module ("Allergies");
 
 ?>
