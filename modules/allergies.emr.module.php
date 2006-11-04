@@ -83,7 +83,6 @@ class Allergies extends EMRModule {
 
 	// Update
 	function _update ( ) {
-		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
 		// Version 0.2
 		//
@@ -93,9 +92,9 @@ class Allergies extends EMRModule {
 			// Create new table
 			$sql->query($sql->create_table_query($this->table_name, $this->table_definition, array('id')));
 			// Migrate old entries
-			$q = $sql->query("SELECT ptallergies,id FROM patient WHERE LENGTH(ptallergies) > 3");
-			if ($sql->results($q)) {
-				while ($r = $sql->fetch_array($q)) {
+			$q = $GLOBALS['sql']->queryAll("SELECT ptallergies,id FROM patient WHERE LENGTH(ptallergies) > 3");
+			if (count($q)) {
+				foreach ( $q AS $r ) {
 					$e = sql_expand($r['ptallergies']);
 					foreach ($e AS $a) {
 						$sql->query($sql->insert_query(

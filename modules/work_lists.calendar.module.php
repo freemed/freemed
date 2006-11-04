@@ -224,7 +224,7 @@ class WorkListsModule extends BaseModule {
 				'minute' => $r['s_minute'],
 				'expired' => ( $expired ? true : false )
 			);
-		} // end fetch_array
+		} // end get array
 
 		return $return;
 	} // end method generate_worklist

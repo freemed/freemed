@@ -335,8 +335,7 @@ class UnfiledDocuments extends SupportModule {
 	
 		// Decide if we have any "unfiled documents" in the system
 		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
-		$result = $GLOBALS['sql']->query($query);
-		extract($GLOBALS['sql']->fetch_array($result));
+		$unfiled = $GLOBALS['sql']->queryOne( $query );
 		if ($unfiled > 0) {
 			return array (
 				__("Unfiled Documents"),
@@ -378,8 +377,7 @@ class UnfiledDocuments extends SupportModule {
 	
 		// Decide if we have any "unfiled documents" in the system
 		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
-		$result = $GLOBALS['sql']->query($query);
-		extract($GLOBALS['sql']->fetch_array($result));
+		$unfiled = $GLOBALS['sql']->queryOne( $query );
 		if ($unfiled > 0) {
 			return array (
 				sprintf(__("You have %d unfiled documents"), $unfiled),

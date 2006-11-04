@@ -89,8 +89,8 @@ class CurrentProblems extends EMRModule {
 			$GLOBALS['sql']->query($GLOBALS['sql']->create_table_query($this->table_name, $this->table_definition, array('id')));
 
 			// Migrate old entries
-			$q = $GLOBALS['sql']->query('SELECT ptproblems,id FROM patient WHERE LENGTH(ptproblems) > 3');
-			while ($r = $GLOBALS['sql']->fetch_array($q)) {
+			$q = $GLOBALS['sql']->queryAll('SELECT ptproblems,id FROM patient WHERE LENGTH(ptproblems) > 3');
+			foreach ( $q AS $r ) {
 				$e = sql_expand($r['ptproblems']);
 				if (!is_array($e)) { $e = array ( $e ); }
 				foreach ($e AS $a) {

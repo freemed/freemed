@@ -124,8 +124,8 @@ class PrescriptionModule extends EMRModule {
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			"ORDER BY ".$this->date_field." DESC";
-		$res = $GLOBALS['sql']->query($query);
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		$res = $GLOBALS['sql']->queryAll($query);
+		foreach ( $res AS $r ) {
 			$m[] = trim($r['rxdrug'].' '.$r['rxdosage'].' '.$r['rxroute']);
 		}
 		return @join(', ', $m);

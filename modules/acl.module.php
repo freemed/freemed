@@ -381,10 +381,10 @@ class ACL extends SupportModule {
 
 			// Go through all existing user records and make sure
 			// that there are existing ACL ARO objects
-			$result = $GLOBALS['sql']->query('SELECT * FROM user');
-			if ($GLOBALS['sql']->num_rows($result) > 0) {
+			$result = $GLOBALS['sql']->queryAll('SELECT * FROM user');
+			if (count($result) > 0) {
 				// Only loop if there are users
-				while ($r = $GLOBALS['sql']->fetch_array($result)) {
+				foreach ( $result AS $r ) {
 					//print "importing user ".$r['id']."<br/>\n";
 					// For each user, add ACL record
 					$u[] = $this->acl_user_add($r['id']);
@@ -393,10 +393,10 @@ class ACL extends SupportModule {
 
 			// Go through all existing patient records and make
 			// sure that there are existing ACL AXO objects
-			$result = $GLOBALS['sql']->query('SELECT * FROM patient');
-			if ($GLOBALS['sql']->num_rows($result) > 0) {
+			$result = $GLOBALS['sql']->queryAll('SELECT * FROM patient');
+			if (count($result) > 0) {
 				// Only loop if there are users
-				while ($r = $GLOBALS['sql']->fetch_array($result)) {
+				foreach ( $result AS $r ) {
 					//print "importing patient ".$r['id']."<br/>\n";
 					// For each user, add ACL record, but without current user perms (security fix)
 					$p[] = $this->acl_patient_add($r['id'], false);

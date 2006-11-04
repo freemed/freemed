@@ -68,11 +68,11 @@ class ChronicProblems extends EMRModule {
 		$query = "SELECT * FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			"ORDER BY ".$this->order_fields;
-		$res = $GLOBALS['sql']->query($query);
+		$res = $GLOBALS['sql']->queryAll( $query );
 
 		// Get problems, and extract to an array
                         $m[]="\n\nCHRONIC PROBLEMS:\n"; 
-	        while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		foreach ( $res AS $r ) {
 			$m[] = trim($r['junkpdate'].' '.$r['problem']);
 		}
 		return @join("\n", $m);
@@ -90,8 +90,8 @@ class ChronicProblems extends EMRModule {
 			$GLOBALS['sql']->query($GLOBALS['sql']->create_table_query($this->table_name, $this->table_definition, array('id')));
 
 			// Migrate old entries
-			$q = $GLOBALS['sql']->query('SELECT ptcproblems,id FROM patient WHERE LENGTH(ptcproblems) > 3');
-			while ($r = $GLOBALS['sql']->fetch_array($q)) {
+			$q = $GLOBALS['sql']->queryAll('SELECT ptcproblems,id FROM patient WHERE LENGTH(ptcproblems) > 3');
+			foreach ( $q AS $r ) {
 				$e = sql_expand($r['ptcproblems']);
 				if (!is_array($e)) { $e = array ($e); }
 				foreach ($e AS $a) {

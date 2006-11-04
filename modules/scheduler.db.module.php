@@ -66,21 +66,19 @@ class SchedulerTable extends SupportModule {
 			}
 
 			// Figure out appointments for today
-			$day_result = $GLOBALS['sql']->query(
+			$day_count = $GLOBALS['sql']->queryOne(
 				"SELECT COUNT(*) AS day_count FROM scheduler WHERE ".
 				"caldateof='".$begin_date."' AND ".
 				"calphysician='".$GLOBALS['this_user']->getPhysician()."'"
 			);
-			extract($GLOBALS['sql']->fetch_array($day_result));
 
 			// Figure out appointments for this week
-			$week_result = $GLOBALS['sql']->query(
+			$week_count = $GLOBALS['sql']->queryOne(
 				"SELECT COUNT(*) AS week_count FROM scheduler WHERE ".
 				"caldateof >= '".$begin_date."' AND ".
 				"caldateof <= '".$end_date."' AND ".
 				"calphysician='".$GLOBALS['this_user']->getPhysician()."'"
 			);
-			extract($GLOBALS['sql']->fetch_array($week_result));
 
 			return array (
 				__("Patient Scheduler"),
@@ -92,13 +90,12 @@ class SchedulerTable extends SupportModule {
 		} else {
 			// If not a physician, give number of appointments
 			// for the current facility if there is one
-			$day_result = $GLOBALS['sql']->query(
+			$day_count = $GLOBALS['sql']->query(
 				"SELECT COUNT(*) AS day_count FROM scheduler WHERE ".
 				"caldateof = '".date('Y-m-d')."' ".
 				( $_SESSION['default_facility'] ?
 					"AND calfacility='".addslashes($_SESSION['default_facility'])."' " : "" )
 			);
-			extract($GLOBALS['sql']->fetch_array($day_result));
 
 			// Figure out appointments for this week
 			return array (

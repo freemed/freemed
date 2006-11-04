@@ -69,13 +69,12 @@ class UnreadDocuments extends SupportModule {
 		if (!$user->isPhysician()) return false;
 
 		// Get number of unread documentes from table
-		$result = $GLOBALS['sql']->query("SELECT COUNT(*) AS count ".
+		$count = $GLOBALS['sql']->queryOne("SELECT COUNT(*) AS count ".
 			"FROM ".$this->table_name." ".
 			"WHERE urfphysician='".addslashes($user->getPhysician())."'");
-		$r = $GLOBALS['sql']->fetch_array($result);
-		if ($r['count'] < 1) { return false; }
+		if ($count < 1) { return false; }
 
-		return array (sprintf(__("You have %d unread documentes"), $r['count']), 
+		return array (sprintf(__("You have %d unread documentes"), $count), 
 			"module_loader.php?module=".urlencode(get_class($this)).
 			"&action=display");
 	} // end method notify

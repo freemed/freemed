@@ -108,9 +108,8 @@ class ProgressNotes extends EMRModule {
 			"FROM ".$this->table_name." WHERE ".
 			"pnotespat = '".addslashes($patient)."' AND ".
 			"pnotesdt = '".addslashes($date)."'";
-		$res = $GLOBALS['sql']->query($q);
-		$r = $GLOBALS['sql']->fetch_array($res);
-		if ($r['my_count'] > 0) {
+		$my_count = $GLOBALS['sql']->queryOne($q);
+		if ($my_count > 0) {
 			return true;
 		} else {
 			return false;
