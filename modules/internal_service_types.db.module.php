@@ -1,15 +1,34 @@
 <?php
  // $Id$
- // lic : GPL
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class InternalServiceTypesMaintenance extends MaintenanceModule {
+class InternalServiceTypes extends SupportModule {
 
-	var $MODULE_NAME    = "Internal Service Types Maintenance";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
+	var $MODULE_NAME    = "Internal Service Types";
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE    = __FILE__;
+	var $MODULE_UID     = "531424f9-37a5-48d2-b7b9-4f271325d67b";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -21,88 +40,19 @@ class InternalServiceTypesMaintenance extends MaintenanceModule {
 		"intservtype"
 	); 
 
-	function InternalServiceTypesMaintenance() {
-		// For i18n: __("Internal Service Types Maintenance")
+	public function __construct ( ) {
+		// For i18n: __("Internal Service Types")
 
-		// Table definition
-		$this->table_definition = array (
-			'intservtype' => SQL__VARCHAR(50),
-			'id' => SQL__SERIAL
+		$this->list_view = array (
+			__("Types")	=>	"intservtype"
 		);
 
 		// Run parent constructor
-		$this->MaintenanceModule();
-	} // end constructor InternalServiceTypesMaintenance
+		parent::__construct ( );
+	} // end constructor InternalServiceTypes
 
-	function addform () { $this->view(); }
+} // end class InternalServiceTypes
 
-	function modform () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		 // grab record number "id"
-		$r = freemed::get_link_rec($id, $this->table_name);
-		foreach ($r AS $k => $v) {
-			global ${$k};
-			${$k} = stripslashes($v);
-		}
-
-		$display_buffer .= "
-		<p/>
-		<form ACTION=\"$this->page_name\" METHOD=\"POST\">
-		<input TYPE=HIDDEN NAME=\"action\" VALUE=\"mod\"/> 
-		<input TYPE=HIDDEN NAME=\"module\" VALUE=\"".prepare($module)."\"/> 
-		<input TYPE=HIDDEN NAME=\"return\" VALUE=\"".prepare($_REQUEST['return'])."\"/> 
-		<input TYPE=HIDDEN NAME=\"id\"   VALUE=\"".prepare($id)."\"/>
-
-		<div ALIGN=\"CENTER\">
-		".__($this->record_name)." :
-		".html_form::text_widget('intservtype', 25, 50)."
-		</div>
- 
-		<p/>
-		<div ALIGN=\"CENTER\">
-		<input TYPE=\"SUBMIT\" VALUE=\" ".__("Modify")." \"/>
-		<input TYPE=\"RESET\" VALUE=\"".__("Clear")."\"/>
-		</div></form>
-		";
-
-	} // end function InternalSericeTypesMaintenance->modform()
-
-	function view () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-		$display_buffer .= freemed_display_itemlist (
-			$GLOBALS['sql']->query(
-				"SELECT * ".
-				"FROM ".$this->table_name." ".
-				freemed::itemlist_conditions()." ".
-				"ORDER BY ".$this->order_field
-			),
-			$this->page_name,
-			array (
-				__($this->record_name)	=>	"intservtype"
-			),
-			array("")
-		);
- 
-		$display_buffer .= "
-		<table CLASS=\"reverse\" WIDTH=\"100%\" BORDER=\"0\"
-		 CELLSPACING=\"0\" CELLPADDING=\"3\">
-		<tr VALIGN=\"CENTER\">
-		<td VALIGN=\"CENTER\"><form ACTION=\"$this->page_name\" METHOD=\"POST\"
-		 ><input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"add\"/>
-		<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".prepare($module)."\">
-		".html_form::text_widget('intservtype', 20, 50)."</td>
-		<td VALIGN=\"CENTER\">
-		<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\"/></form></td>
-		</tr>
-		</table>
-		";
-	} // end function InternalServiceTypesMaintenance->view() 
-
-} // end class InternalServiceTypesMaintenance
-
-register_module ("InternalServiceTypesMaintenance");
+register_module ("InternalServiceTypes");
 
 ?>

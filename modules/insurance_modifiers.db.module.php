@@ -23,37 +23,38 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class patientStatus extends SupportModule {
+class InsuranceModifiers extends SupportModule {
 
-	var $MODULE_NAME = "Patient Status";
+	var $MODULE_NAME = "Insurance Modifiers";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
-	var $MODULE_UID = "83021f95-1d5a-4ee2-9841-c3088c2307e0";
+	var $MODULE_UID = "e685b8b7-e3f7-486d-ab05-133172dfbfa2";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
-	var $record_name 	= "Patient Status";
-	var $table_name		= "ptstatus";
-
-	var $variables 		= array (
-		"ptstatus",
-		"ptstatusdescrip"
+	var $table_name = "insmod";
+	var $record_name = "Insurance Modifiers";
+	var $order_field = "insmoddesc";
+ 
+	var $variables = array (
+		"insmod",
+		"insmoddesc"
 	);
-
+ 
 	public function __construct ( ) {
-		// __("Patient Status")
+		// __("Insurance Modifiers")
 
 		$this->list_view = array (
-			__("Status")		=>	"ptstatus",
-			__("Description")	=>	"ptstatusdescrip"
+			__("Modifier") => "insmod",
+			__("Description") => "insmoddesc"
 		);
 
 		// Run parent constructor
 		parent::__construct ( );
-	} // end constructor PatientStatus
+	} // end constructor InsuranceModifiers
 
-} // end class PatientStatus
+} // end class InsuranceModifiers
 
-register_module ("PatientStatus");
+register_module("InsuranceModifiers");
 
 ?>

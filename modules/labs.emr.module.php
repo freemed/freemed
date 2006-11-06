@@ -1,16 +1,35 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class LabsModule extends EMRModule {
 
 	var $MODULE_NAME    = "Labs";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "Lab reports";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "c91c2113-4750-48c5-9c71-2dfe81435a07";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -18,8 +37,9 @@ class LabsModule extends EMRModule {
 	var $table_name     = "labs";
 	var $patient_field  = "labpatient";
 
-	function LabsModule () {
+	public function __construct ( ) {
 		// __("Labs")
+
 		// Table definition
 		$this->table_definition = array (
 			'labpatient' => SQL__INT_UNSIGNED(0), // PID
@@ -61,76 +81,32 @@ class LabsModule extends EMRModule {
 		$this->acl = array ( 'emr' );
 
 		// Run parent constructor
-		$this->EMRModule();
+		parent::__construct ( );
 	} // end constructor LabsModule
 
-	function form_table () {
-		return array (
-			// TODO - FIXME
-		);
-	} // end method form_table
-
-	function display () {
-		global $display_buffer;
-		if (!$_REQUEST['id']) { trigger_error(__("You must provide an id!"), E_USER_ERROR); }
-
-		// Header
-		$display_buffer .= "<table cellpadding=\"5\">\n";
-
-		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-		$display_buffer .= "<tr><td coslpan=\"4\">".
-			__("Date").': '.$rec['labtimestamp']."<br/>\n".
-			__("Order Code").': '.$rec['labordercode']."<br/>\n".
-			__("Status").': '.$rec['labresultstatus']."<br/>\n".
-			"</td></tr>\n";
-	
-		$q = "SELECT * FROM labresults ".
-			"WHERE labid='".addslashes($_REQUEST['id'])."' ";
-		$result = $GLOBALS['sql']->query($q);
-		$display_buffer .= "<tr>\n".
-			"<th>".__("Observation")."</th>\n".
-			"<th>".__("Value")."</th>\n".
-			"<th>".__("Range")."</th>\n".
-			"<th>".__("Normal")."</th>\n".
-			"<th>".__("Abnormal")."</th>\n".
-			"</tr>\n";
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
-			$display_buffer .= "<tr>\n";
-			$display_buffer .= "<td>".$r['labobscode']."</td>\n";
-			$display_buffer .= "<td>".$r['labobsvalue']." ".$r['labobsunit']."</td>\n";
-			$display_buffer .= "<td>".$r['labobsrange']."</td>\n";
-			$display_buffer .= "<td>".$r['labobsnormal']."</td>\n";
-			$display_buffer .= "<td>".$r['labobsabnormal']."</td>\n";
-			$display_buffer .= "</tr>\n";
-		} // end foreach
-	
-		// Footer
-		$display_buffer .= "</table>\n";
-	} // end method display
-
-	function view () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		if ($_REQUEST['action'] == 'display') { $this->display(); }
-
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query(
-				"SELECT * ".
-				"FROM ".$this->table_name." ".
-				"WHERE (".$this->patient_field."='".addslashes($_REQUEST['patient'])."') ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY ".$this->order_fields
-			),
-			$this->page_name,
-			array (
-				__("Date") => 'labtimestamp',
-				__("Order Code") => 'labordercode',
-				__("Status") => 'labresultstatus'
-			),
-			array ("")
-		);
-	} // end method view
+	// Method: GetLabValues
+	//
+	//	Retrieve lab values for a particular lab request.
+	//
+	// Parameters:
+	//
+	//	$id - Record id for the lab request
+	//
+	// Returns:
+	//
+	//	Array of hashes containing the following hash keys:
+	//	* labobscode - Observation
+	//	* labobsvalue - Value of observation
+	//	* labobsunit - Unit of observation value
+	//	* labobsrange - Range
+	//	* labobsnormal - Normal
+	//	* labobsabnormal - Abnormal
+	//
+	public function GetLabValues ( $id ) {
+		$query = "SELECT * FROM labresults WHERE labid='".addslashes( $id )."' ";
+		$result = $GLOBALS['sql']->queryAll($query);
+		return $result;
+	} // end method GetLabValues
 
 } // end class LabsModule
 
