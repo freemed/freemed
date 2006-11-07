@@ -19,26 +19,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-#
-# Top-level FreeMED Makefile
-#
 
-prefix=/usr
-INSTDIR=$(DESTDIR)$(prefix)/share/freemed
-SUBDIR=data doc img lib locale modules scripts ui
+THISDIR=ui
 
 all:
-	# Nothing to do
+	# Nothing
 
 install:
-	mkdir -p $(INSTDIR)
-	cp -vf .htaccess *.php *.html $(INSTDIR)
-	for d in $(SUBDIR); do \
-		make -C $$d install DESTDIR=$(DESTDIR) INSTDIR=$(INSTDIR); \
-	done
+	mkdir -p $(INSTDIR)/$(THISDIR)
+	cp -rvf [a-z]* $(INSTDIR)/$(THISDIR)
 
 clean:
-	# Nothing to do
-	
+	# Nothing
+
 dist-clean:
-	# Nothing to do
+	# Nothing
+	
