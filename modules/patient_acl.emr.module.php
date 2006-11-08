@@ -1,150 +1,84 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class PatientACL extends EMRModule {
 
 	var $MODULE_NAME = "Patient ACL";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_HIDDEN = false;
 
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "8cd616c5-241f-4b12-97cf-847c5d5ddb0e";
 
 	// Dummy array for prototype:
 	var $summary_items = array ( 1,2,3 );
 
-	function PatientACL () {
+	public function __construct ( ) {
 		// Call parent constructor
-		$this->EMRModule();
+		parent::__construct ( );
 	} // end constructor
 
-	// The EMR box; probably the most important part of this module
-	function summary ($patient, $dummy_items) {
-		// Get patient object from global scope (if it exists)
-		if (isset($GLOBALS['this_patient'])) {
-			global $this_patient;
-		} else {
-			$this_patient = CreateObject('FreeMED.Patient', $patient);
-		}
-
-		// Check to see if we *can* generate a statement for this
-		// patient
+	// Method: GetList
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id.
+	//
+	// Return:
+	//
+	//	Array of hashes.
+	//
+	function GetList ( $patient ) {
 		$acls = $this->get_acl_for_patient($patient);
-		if (count($acls) < 1) {
-			$buffer .= "
-			<div align=\"center\">
-			".__("There are no ACL rules for this patient.")."
-			</div>
-			";
-			return $buffer;
-		}
-
-		$buffer .= "
-		<table WIDTH=\"100%\" cellspacing=\"0\" cellpadding=\"2\"
-		 border=\"0\">
-		<tr>
-			<td><b>ARO</b></td>
-			<td><b>ACO</b></td>
-			<td><b>".__("Action")."</b></td>
-		</tr>
-		";
+		if (count($acls) < 1) { return array (); }
 
 		// Generate actual ACL display for modification, et cetera
 		foreach ($acls AS $this_acl) {
-			$buffer .= "
-			<tr>
-				<td>".join(', ', $this->get_object_for_acl ($this_acl, 'aro'))."</td>
-				<td>".join(', ', $this->get_object_for_acl ($this_acl, 'aco'))."</td>
-				<td>".
-				template::summary_delete_link($this,
-				"module_loader.php?module=".
-				get_class($this)."&patient=$patient&".
-				"action=del&id=".urlencode($this_acl).
-				"&return=manage")."
-				</td>
-			</tr>
-			";
+			$r[] = array (
+				'aro' => join(', ', $this->get_object_for_acl ($this_acl, 'aro')),
+				'aco' => join(', ', $this->get_object_for_acl ($this_acl, 'aco')),
+				'id' => $this_acl
+			);
 		}
-		$buffer .= "</table>\n";
 		
-		return $buffer;
-	} // end method summary
+		return $r;
+	} // end method GetList
 
-	function addform ( ) {
-		global $display_buffer;
-
-		$display_buffer .= "<form>\n";
-		$display_buffer .= "
-		<input type=\"hidden\" name=\"module\" value=\"".prepare($_REQUEST['module'])."\" />
-		<input type=\"hidden\" name=\"patient\" value=\"".prepare($_REQUEST['patient'])."\" />
-		<input type=\"hidden\" name=\"action\" value=\"".prepare($_REQUEST['manage'])."\" />
-		<input type=\"hidden\" name=\"action\" value=\"add\" />
-		";
-		$display_buffer .= html_form::form_table(array(
-			__("Users") =>
-			$this->_multiple_select('aro', $this->get_aro()),
-
-			__("Properties") =>
-			$this->_multiple_select('aco', $this->get_aco())
-		));
-		$display_buffer .= "
-		<div align=\"center\">
-		<input type=\"submit\" class=\"button\" name=\"__submit\" value=\"".__("Add")."\" />
-		<input type=\"submit\" class=\"button\" name=\"__submit\" value=\"".__("Cancel")."\" />
-		</div>
-		";
-		$display_buffer .= "</form>\n";
-	} // end method addform
-
-	function add ( ) {
-		global $display_buffer;
-	
-		// Lint checking
-		if (count($_REQUEST['aco']) < 1 or count($_REQUEST['aro']) < 1) {
-			trigger_error(__("At least one user and property must be selected."), E_USER_ERROR);
-		}
-		if ($_REQUEST['patient'] < 1) {
-			trigger_error(__("A valid patient must be selected."), E_USER_ERROR);
-		}
-		$display_buffer .= __("Adding")." ... ";
+	/*
+		// FIXME: implement add function
 		$result = $this->add_acl(
 			$_REQUEST['patient'], 
 			$_REQUEST['aco'], 
 			$_REQUEST['aro']
 		);
-		if (!$result) {
-			$display_buffer .= __("failed");
-		} else {
-			$display_buffer .= __("done");
-		}
+	*/
 
-		if ($_REQUEST['return'] == 'manage') {
-			$GLOBALS['refresh'] = 'manage.php?id='.$_REQUEST['patient'];
-		}
-	} // end method add
-
-	function del ( ) {
-		global $display_buffer;
-		$display_buffer .= __("Deleting") . " ... ";
-		$result = $this->delete_acl ( $_REQUEST['patient'], $_REQUEST['id'] );
-		if ($result) {
-			$display_buffer .= __("done");
-		} else {
-			$display_buffer .= __("failed");
-		}
-
-		if ($_REQUEST['return'] == 'manage') {
-			$GLOBALS['refresh'] = 'manage.php?id='.$_REQUEST['patient'];
-		}
-
-		return false;
-	} // end method del
-
-	function view ( ) {
-	} // end method view
+	public function del ( $patient, $id ) {
+		$result = $this->delete_acl ( $patient + 0, $id + 0 );
+		return $result;
+	}
 
 	// ----- HELPER FUNCTIONS -------------------------------------------
 
@@ -169,7 +103,7 @@ class PatientACL extends EMRModule {
 	//
 	//	Boolean, success
 	//
-	function add_acl ( $pid, $aco, $aro, $obj=NULL ) {
+	protected function add_acl ( $pid, $aco, $aro, $obj=NULL ) {
 		// Get cached gacl_api object from ACL module
 		if (!is_object($obj)) {
 			$acl = module_function('ACL', '_acl_object');
@@ -206,7 +140,7 @@ class PatientACL extends EMRModule {
 	//
 	//	Boolean, success.
 	//
-	function delete_acl ( $pid, $acl_id ) {
+	protected function delete_acl ( $pid, $acl_id ) {
 		// Make sure that we are deleting the correct thing, otherwise
 		// this is a HUGE security hole...
 		$valid_acl = $this->get_acl_for_patient($pid);
@@ -240,7 +174,7 @@ class PatientACL extends EMRModule {
 	//
 	//	Array of ACL ids, or empty array if none are found.
 	//
-	function get_acl_for_patient ( $pid ) {
+	public function get_acl_for_patient ( $pid ) {
 		$query = "
 			SELECT
 			DISTINCT a.id
@@ -257,9 +191,9 @@ class PatientACL extends EMRModule {
 		$where[] = " (lower(x.value) LIKE 'patient_".addslashes($pid)."') ";
 		$query .= " WHERE ".join(' AND ', $where);
 		
-		$res = $GLOBALS['sql']->query($query);
+		$res = $GLOBALS['sql']->queryAll($query);
 		$return = array();
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		foreach ( $res AS $r ) {
 			$return[] = $r['id'];
 		}
 		return $return;
@@ -275,12 +209,12 @@ class PatientACL extends EMRModule {
 	//	Associative array with keys representing the names of the
 	//	ACOs in question and the values containing their IDs.
 	//
-	function get_aco ( ) {
+	public function get_aco ( ) {
 		$query = "SELECT * FROM acl_aco WHERE section_value='emr' ".
 			"ORDER BY order_value";
-		$res = $GLOBALS['sql']->query($query);
+		$res = $GLOBALS['sql']->queryAll( $query );
 		$return = array ( );
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		foreach ( $res AS $r ) {
 			$return[stripslashes($r['name'])] = $r['value'];
 		}
 		return $return;
@@ -296,12 +230,12 @@ class PatientACL extends EMRModule {
 	//	Associative array with keys representing the names of the
 	//	AROs in question and the values containing their IDs.
 	//
-	function get_aro ( ) {
+	public function get_aro ( ) {
 		$query = "SELECT * FROM acl_aro WHERE section_value='individual' ".
 			"ORDER BY order_value";
-		$res = $GLOBALS['sql']->query($query);
+		$res = $GLOBALS['sql']->queryAll( $query );
 		$return = array ( );
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+		foreach ( $res AS $r ) {
 			$return[stripslashes($r['name'])] = $r['value'];
 		}
 		return $return;
@@ -317,22 +251,22 @@ class PatientACL extends EMRModule {
 	//
 	//	$type - aco or aro
 	//
-	function get_object_for_acl ( $acl_id, $type ) {
+	public function get_object_for_acl ( $acl_id, $type ) {
 		if ($type != 'aro' and $type != 'aco') {
 			trigger_error(__("Invalid object type specified"), E_USER_ERROR);
 		}
 		$query = "
-			SELECT  a.acl_id,o.name,s.name
+			SELECT  a.acl_id AS acl_id,o.name AS o_name,s.name AS s_name
 			FROM    acl_".$type."_map a
 			INNER JOIN      acl_".$type." o ON (o.section_value=a.section_value AND o.value=a.value)
 			INNER JOIN      acl_".$type."_sections s ON s.value=a.section_value
 			WHERE   a.acl_id IN (".$acl_id.")
 		";
-		$res = $GLOBALS['sql']->query($query);
+		$res = $GLOBALS['sql']->queryAll($query);
 		$return = array();
-		while ($r = $GLOBALS['sql']->fetch_array($res)) {
-			//$return[] = $r[2] . " / " . $r[1];
-			$return[] = $r[1];
+		foreach ( $res AS $r ) {
+			//$return[] = $r['s_name'] . " / " . $r['o_name'];
+			$return[] = $r['o_name'];
 		}
 		return $return;
 	} // end method get_object_for_acl
@@ -349,12 +283,11 @@ class PatientACL extends EMRModule {
 	//
 	//	ACL AXO record id
 	//
-	function get_axo_for_patient ( $pid ) {
-		$query = "SELECT * FROM acl_axo ".
+	public function get_axo_for_patient ( $pid ) {
+		$query = "SELECT id FROM acl_axo ".
 			"WHERE value='patient_".addslashes($pid)."'";
-		$res = $GLOBALS['sql']->query($query);
-		$r = $GLOBALS['sql']->fetch_array($res);
-		return $r['id'];
+		$res = $GLOBALS['sql']->queryOne($query);
+		return $res;
 	} // end method get_axo_for_patient
 
 	// Method: get_object_section
@@ -371,27 +304,12 @@ class PatientACL extends EMRModule {
 	//
 	//	ACL id for section
 	//
-	function get_object_section ( $type, $value ) {
-		$query = "SELECT * FROM acl_".$type."_sections ".
+	public function get_object_section ( $type, $value ) {
+		$query = "SELECT id FROM acl_".$type."_sections ".
 			"WHERE value='".addslashes($value)."'";
-		$res = $GLOBALS['sql']->query($query);
-		$r = $GLOBALS['sql']->fetch_array($res);
-		return $r['id'];
+		$res = $GLOBALS['sql']->queryOne($query);
+		return $res;
 	} // end method get_object_section
-
-	function _multiple_select ( $name, $values ) {
-		$buffer .= "<select name=\"".prepare($name)."[]\" ".
-			"size=\"6\" multiple=\"multiple\">\n";
-		foreach ($values AS $k => $v) {
-			$buffer .= html_form::select_option (
-				$name,
-				$v,
-				$k
-			);
-		}
-		$buffer .= "</select>\n";
-		return $buffer;
-	} // end method _multiple_choice
 
 } // end class PatientACL
 

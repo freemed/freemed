@@ -1,36 +1,49 @@
 <?php
-	// $Id$
-	// $Author$
-	// note: stub module for certifications table definition
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.MaintenanceModule');
+LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class CertificationsTable extends MaintenanceModule {
+class Certifications extends SupportModule {
 
-	var $MODULE_NAME = 'Certifications Table';
-	var $MODULE_AUTHOR = 'jeff b (jeff@ourexchange.net)';
-	var $MODULE_VERSION = '0.6.0';
+	var $MODULE_NAME = "Certifications";
+	var $MODULE_VERSION = "0.6.0";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "9b839df2-e815-462e-a793-e106cfbbfcb0";
 	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
 	var $table_name = "certifications";
 
-	function CertificationsTable () {
-		// __("Certifications Table")
-		$this->table_definition = array (
-			'certpatient' => SQL__INT_UNSIGNED(0),
-			'certtype' => SQL__INT_UNSIGNED(0),
-			'certformnum' => SQL__INT_UNSIGNED(0),
-			'certdesc' => SQL__VARCHAR(20),
-			'certformdata' => SQL__TEXT,
-			'id' => SQL__SERIAL
-		);
+	var $patient_field = 'certpatient';
+	var $widget_hash = '##certdesc## (##certtype##)';
+
+	public function __construct ( ) {
+		// __("Certifications")
 
 		// Call parent constructor
-		$this->MaintenanceModule();
-	} // end constructor CertificationsTable
+		parent::__construct ( );
+	} // end constructor Certifications
 
 	// Use _update to update table definitions with new versions
 	function _update () {
@@ -59,6 +72,6 @@ class CertificationsTable extends MaintenanceModule {
 	} // end function _update
 }
 
-register_module('CertificationsTable');
+register_module('Certifications');
 
 ?>

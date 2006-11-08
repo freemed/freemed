@@ -1,15 +1,35 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //	Fred Forester <fforest@netcarrier.com>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class PaymentModule extends EMRModule {
 
 	var $MODULE_NAME    = "Transactions";
-	var $MODULE_AUTHOR  = "Fred Forester (fforest@netcarrier.com)";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
+	var $MODULE_UID	    = "715acf0f-9fd8-40cd-932c-1e864099d0e3";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
@@ -18,9 +38,6 @@ class PaymentModule extends EMRModule {
 	var $patient_field  = "payrecpatient";
 
 	var $item;
-	var $view_query = "!='0'";  // by default see unpaid and overpaid
-	var $view_closed = "='0'";  // see paid procedures when closed is selected
-	var $view_unpaid = ">'0'";  // we use this when being called from the unpaid procs report
 
 	var $variables = array(
 		"payrecdtadd",
@@ -38,28 +55,9 @@ class PaymentModule extends EMRModule {
 		"payreclock"
 	);
 
-	// contructor method
-	function PaymentModule ($nullvar = "") {
+	public function __construct ( ) {
 		// __("Transactions")
 
-		// Table definition
-		$this->table_definition = array (
-			'payrecdtadd' => SQL__DATE,
-			'payrecdtmod' => SQL__DATE,
-			'payrecpatient' => SQL__INT_UNSIGNED(0),
-			'payrecdt' => SQL__DATE,
-			'payreccat' => SQL__INT_UNSIGNED(0),
-			'payrecproc' => SQL__INT_UNSIGNED(0),
-			'payrecsource' => SQL__INT_UNSIGNED(0),
-			'payreclink' => SQL__INT_UNSIGNED(0),
-			'payrectype' => SQL__INT_UNSIGNED(0),
-			'payrecnum' => SQL__VARCHAR(100),
-			'payrecamt' => SQL__REAL,
-			'payrecdescrip' => SQL__TEXT,
-			'payreclock' => SQL__ENUM(array('unlocked', 'locked')),
-			'id' => SQL__SERIAL
-		);
-	
 		// Summary box information
 		$this->summary_vars = array (
 			"Date" => "payrecdt",
@@ -84,7 +82,7 @@ class PaymentModule extends EMRModule {
 				"WHEN 10 THEN '".addslashes(__("Billed"))."' ".
 				"WHEN 11 THEN '".addslashes(__("Copayment"))."' ".
 				"WHEN 12 THEN '".addslashes(__("Writeoff"))."' ".
-				"ELSE '".__("Unknown")."' END AS _type",
+				"ELSE '".addslashes(__("Unknown"))."' END AS _type",
 			"CASE payreccat ".
 				"WHEN 0 THEN ".
 				"CASE payrectype ".
@@ -107,130 +105,8 @@ class PaymentModule extends EMRModule {
 		$this->acl = array ( 'bill', 'emr' );
 
 		// Call parent constructor
-		$this->EMRModule();
-	} // end function paymentModule
-
-	function modform() {
-		global $display_buffer;
-		$display_buffer .= "
-			Temporarily, please use the <A HREF=\"billing_functions.php\"
-			>Billing Functions</A> menu to access this portion of FreeMED.
-		";
-	}
-
-	function addform() {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		// special circumstances when being called from the unpaid
-		// reports module
-		if ($viewaction=="paidledger")  
-		{
-			$this->view_query = $this->view_closed;
-			$this->ledger();
-			return;
-		}
-
-            if (!$been_here)
-            {
-                $this->item = 0;
-                $this->view();
-                return;
-            }
-
-            if ($viewaction=="ledgerall")
-            {
-                $this->ledger();
-                return;
-            }
-
-            if ($viewaction=="ledger") // triggered from the ledger link
-            {
-                $this->ledger($item);
-                return;
-            }
-
-
-            // everything else needs the proc id.
-
-            $this->item = $item;
-            if ($viewaction=="refresh" OR $viewaction=="closed" OR $item==0)
-            {
-				if ($viewaction=="closed")
-					$this->view_query = $this->view_closed;
-                $this->view();
-                return;
-
-            }
-
-            if ($viewaction=="mistake")
-            {
-                $this->mistake($item);
-            }
-
-            //$this->view();  // always show the procs
-
-            // from here on we should be processing the request type
-            // start a wizard
-
-
-            if ($viewaction=="rebill")
-            {
-                $this->transaction_wizard($item, REBILL);
-            }
-
-            if ($viewaction=="copay")
-            {
-                $this->transaction_wizard($item, COPAY);
-            }
-
-            if ($viewaction=="payment")
-            {
-                $this->transaction_wizard($item, PAYMENT);
-            } 
-
-            if ($viewaction=="transfer")
-            {
-                $this->transaction_wizard($item, TRANSFER);
-            }
-
-            if ($viewaction=="adjustment")
-            {
-                $this->transaction_wizard($item, ADJUSTMENT);
-            }
-
-            if ($viewaction=="deductable")
-            {
-                $this->transaction_wizard($item, DEDUCTABLE);
-            }
-
-            if ($viewaction=="withhold")
-            {
-                $this->transaction_wizard($item, WITHHOLD);
-            }
-
-            if ($viewaction=="denial")
-            {
-                $this->transaction_wizard($item, DENIAL);
-            }
-
-            if ($viewaction=="writeoff")
-            {
-                $this->transaction_wizard($item, WRITEOFF);
-            }
-
-            if ($viewaction=="refund")
-            {
-                $this->transaction_wizard($item, REFUND);
-            }
-
-            if ($viewaction=="allowedamt")
-            {
-                $this->transaction_wizard($item, FEEADJUST);
-            }
-
-	} // end function paymentModule->addform
-
+		parent::__construct ( );
+	} // end function PaymentModule
 
 	function transaction_wizard($procid, $paycat) {
 		global $display_buffer;
@@ -868,22 +744,6 @@ class PaymentModule extends EMRModule {
 
         } // wizard code
 
-        function mod() {
-		global $display_buffer;
-            $display_buffer .= "Mod<BR>";
-        }
-
-        function add() {
-		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS))
-            {
-                global $$k;
-                $display_buffer .= "$$k $v<BR>";
-            }
-            $display_buffer .= "Add<BR>";
-        }
-
         function ledger($procid=0) {
 		global $display_buffer;
             reset ($GLOBALS);
@@ -1232,73 +1092,84 @@ class PaymentModule extends EMRModule {
 
         } // end ledger
 
-        function mistake($procid) {
-		global $display_buffer;
-            reset ($GLOBALS);
-            while (list($k,$v)=each($GLOBALS))
-            {
-                global $$k;
-                //$display_buffer .= "$$k $v<BR>";
-            }
+	// Method: RemoveProcedureAsMistake
+	//
+	//	Removes procedure record and all payment/transaction records
+	//	with it.
+	//
+	// Parameters:
+	//
+	//	$procid - Procedure record id
+	//
+        public function RemoveProcedureAsMistake ( $procid ) {
+		$query = "DELETE FROM procrec WHERE id='".addslashes($procid)."'";
+		$result = $GLOBALS['sql']->query( $query );
+		$query = "DELETE FROM payrec WHERE payrecproc='".addslashes($procid)."'";
+		$result = $GLOBALS['sql']->query( $query );
+        } // end method RemoveAsMistake
 
-            if (isset($delete))
-            {
-                $query = "DELETE FROM procrec WHERE id='".addslashes($procid)."'";
-                $result = $sql->query($query);
-                $query = "DELETE FROM payrec WHERE payrecproc='".addslashes($procid)."'";
-                $result = $sql->query($query);
-                $display_buffer .= "
-                <p/>
-                <div align=\"CENTER\">
-                <B>".__("All records for this procedure have been deleted.")."</B><BR><BR>
-                <a class=\"button\" HREF=\"$this->page_name?been_here=1&viewaction=refresh".
-                "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
-                ".__("Back")."</a>
-                </div>
-                <p/>
-                ";
-                return;
+	// Method: GetLedger
+	//
+	//	Get ledger records for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient record id
+	//
+	//	$type - Type of query to return. Values are:
+	//	* all - All records
+	//	* closed - All closed records
+	//	* nonclosed - All non closed, whether underpaid or overpaid
+	//	* unpaid - All records with an unpaid balance
+	//
+	// Returns:
+	//
+	//	Ledger records for patient matching specified parameters as
+	//	an array of hashes.
+	//
+        function GetLedger ( $patient ) {
+		// initialize line item count
+		$line_item_count = 0;
 
-            } // end mistake
+		switch ($type) {
+			case 'closed':
+			// see paid procedures when closed is selected
+			$view_query = "procbalcurrent = '0'"; 
+			break; // end closed
 
-            $display_buffer .= "
-            <p/>
-            <div align=\"CENTER\">
-            ".__("Confirm delete request or cancel?")."<p/>
-	    </div>
-	    ".template::link_bar(array(
-	    	__("Confirm") =>
-			"$this->page_name?been_here=1&viewaction=mistake".
-			"&action=addform&delete=1&item=$procid&patient=$patient&module=$module",
-		__("Cancel") =>
-			"$this->page_name?been_here=1&viewaction=refresh".
-			"&action=addform&item=$procid&patient=$patient&module=$module"
-		))."
-            <p/>
-            ";
+			case 'nonclosed':
+			// by default see unpaid and overpaid
+			$view_query = "procbalcurrent !='0'";
+			break; // end nonclosed
 
+			case 'unpaid':
+  			// we use this when being called from the unpaid procs report
+			$view_unpaid = "procbalcurrent >'0'";
+			break; // end unpaid
 
+			case 'all': default:
+			$view_query = "1 == 1";
+			break; // end all
+		} // end switch for view_query
 
-        }
-        function view() {
-		global $display_buffer;
-            global $sql,$patient,$module;
-
-            $display_buffer .= "<FORM ACTION=\"$this->page_name\" METHOD=POST>
-            <INPUT TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"$patient\">
-            <INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"addform\">
-            <INPUT TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"$module\">
-            ";
-
-            // initialize line item count
-            $line_item_count = 0;
-
-            $query = "SELECT * FROM procrec
-                     WHERE ( (procpatient = '".addslashes($patient)."') AND
-                     (procbalcurrent ".$this->view_query.") )
-                     ORDER BY procdt,id";
-
-            $result = $sql->query ($query);
+		$query = "SELECT ".
+				"pr.id AS id, ".
+				"c.cptname AS cpt_code, ".
+				"cm.cptmod AS cpt_modifier, ".
+				"pr.procbalorig AS balance_original, ".
+				"pr.procamtallowed AS amount_allowed, ".
+				"pr.procamtpaid AS amount_paid, ".
+				"pr.proccharges AS charges, ".
+				"pr.procbalcurrent AS balance_current, ".
+				"IF(pr.procbilled > 0, 'Yes', 'No') AS billed, ".
+				"pr.procdtbileld AS billed_date ".
+			"FROM procrec pr ".
+				"LEFT OUTER JOIN cpt c ON pr.proccpt=c.id ". 
+				"LEFT OUTER JOIN cptmod cm ON pr.proccptmod=cm.id ". 
+			"WHERE ".
+				"( procpatient = '".addslashes($patient)."' AND  ${view_query} ) ".
+			"ORDER BY procdt,id";
+		$result = $sql->queryAll ($query);
 
             $display_buffer .= "
             <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" WIDTH=\"100%\">
@@ -1384,8 +1255,7 @@ class PaymentModule extends EMRModule {
             ";
         } // end view function
 		
-		function insuranceSelectionByType($proccovmap) {
-		global $display_buffer;
+	function insuranceSelectionByType($proccovmap) {
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 			$returned_string = "";
 			
@@ -1422,7 +1292,7 @@ class PaymentModule extends EMRModule {
 		return $cov_ids[$type];
 	}
 
-	function insuranceSelection($proccovmap) {
+	function InsuranceSelection ( $proccovmap ) {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) global ${$k};
 		$returned_string = "";

@@ -1,16 +1,35 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
-class FormsModule extends EMRModule {
+class Forms extends EMRModule {
 
 	var $MODULE_NAME    = "Forms";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "Custom forms module";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "f1a2619e-f54b-4190-b112-7b9cf7ff6212";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -19,7 +38,7 @@ class FormsModule extends EMRModule {
 	var $patient_field  = "fr_patient";
 	var $widget_hash    = "##fr_timestamp## ##fr_formname##";
 
-	function FormsModule () {
+	public function __construct ( ) {
 		// __("Forms")
 
 		// Table definition
@@ -44,29 +63,8 @@ class FormsModule extends EMRModule {
 		$this->acl = array ( 'emr' );
 
 		// Run parent constructor
-		$this->EMRModule();
-	} // end constructor FormsModule
-
-	function view () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		$display_buffer .= freemed_display_itemlist (
-			$sql->query(
-				"SELECT * ".
-				"FROM ".$this->table_name." ".
-				"WHERE (".$this->patient_field."='".addslashes($_REQUEST['patient'])."') ".
-				freemed::itemlist_conditions(false)." ".
-				"ORDER BY ".$this->order_fields
-			),
-			$this->page_name,
-			array (
-				__("Date") => 'fr_timestamp',
-				__("Form") => 'fr_formname'
-			),
-			array ("")
-		);
-	} // end method view
+		parent::__construct ( );
+	} // end constructor Forms
 
 	function addform ( ) {
 		if (!$_REQUEST['formtemplate']) {
@@ -75,7 +73,7 @@ class FormsModule extends EMRModule {
 		}
 
 		$_REQUEST['formtemplate'] = ereg_replace('[^A-Za-z0-9_]', '', $_REQUEST['formtemplate']);
-		$template = CreateObject('_FreeMED.FormTemplate', $_REQUEST['formtemplate']);
+		$template = CreateObject('org.freemedsoftware.core.FormTemplate', $_REQUEST['formtemplate']);
 		$controls = $template->GetControls();
 
 		foreach ($controls AS $k => $v) {
@@ -112,7 +110,7 @@ class FormsModule extends EMRModule {
 	} // end method addform
 
 	function addform_requesttemplate ( ) {
-		$tlist = CreateObject('_FreeMED.FormTemplateList');
+		$tlist = CreateObject('org.freemedsoftware.core.FormTemplateList');
 		$items = $tlist->GetList();
 		foreach ($items AS $item => $data) {
 			$choices[$data['name']] = $item;
@@ -141,7 +139,7 @@ class FormsModule extends EMRModule {
 	function add ( ) {
 		$_REQUEST['formtemplate'] = ereg_replace('[^A-Za-z0-9_]', '', $_REQUEST['formtemplate']);
 		
-		$template = CreateObject('_FreeMED.FormTemplate', $_REQUEST['formtemplate']);
+		$template = CreateObject('org.freemedsoftware.core.FormTemplate', $_REQUEST['formtemplate']);
 		$information = $template->GetInformation();
 		$controls = $template->GetControls();
 
@@ -196,7 +194,7 @@ class FormsModule extends EMRModule {
 		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
 		foreach ($rec AS $k => $v) { $_REQUEST[$k] = $v; }
 
-		$template = CreateObject('_FreeMED.FormTemplate', $rec['fr_template']);
+		$template = CreateObject('org.freemedsoftware.core.FormTemplate', $rec['fr_template']);
 		$controls = $template->GetControls();
 		$template->LoadData($_REQUEST['id']);
 
@@ -241,7 +239,7 @@ class FormsModule extends EMRModule {
 	function mod ( ) {
 		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
 		
-		$template = CreateObject('_FreeMED.FormTemplate', $rec['fr_template']);
+		$template = CreateObject('org.freemedsoftware.core.FormTemplate', $rec['fr_template']);
 		$information = $template->GetInformation();
 		$controls = $template->GetControls();
 
@@ -302,17 +300,17 @@ class FormsModule extends EMRModule {
 
 	//----- Print Override ----------------------------------------------
 
-	function print_override ( $id ) {
+	public function print_override ( $id ) {
 		// Get actual record text
-		$rec = freemed::get_link_rec ( $id, $this->table_name );
+		$rec = $GLOBALS['sql']->get_link ( $this->table_name, $id );
 
 		// Render
-		$t = CreateObject( '_FreeMED.FormTemplate', $rec['fr_template'] );
+		$t = CreateObject( 'org.freemedsoftware.core.FormTemplate', $rec['fr_template'] );
 		$t->LoadData( $id );
 		$data = $t->OutputData();
 
 		// Return file name to the calling function
-		return $t->RenderToPDF($data, false);
+		return $t->RenderToPDF( $data, false );
 	} // end method print_override
 
 	//----- Controls ----------------------------------------------------
@@ -436,8 +434,8 @@ class FormsModule extends EMRModule {
 	} // end method control_
 	*/
 
-} // end class FormsModule
+} // end class Forms
 
-register_module ("FormsModule");
+register_module ("Forms");
 
 ?>
