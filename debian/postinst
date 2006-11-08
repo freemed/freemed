@@ -1,15 +1,32 @@
 #! /bin/sh -e
 # $Id$
-# $Author$
 #
-# Post-install directives for FreeMED package
+# Authors:
+#      Jeff Buchbinder <jeff@freemedsoftware.org>
+#
+# FreeMED Electronic Medical Record and Practice Management System
+# Copyright (C) 1999-2006 FreeMED Software Foundation
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#	Post-install directives for FreeMED package
+#
 
 # Patch PHP ini file to have more than 8M per process
-if [ -f /etc/php4/apache/php.ini ]; do
-	perl -pi -e "s|8M|64M|;" /etc/php4/apache/php.ini
-fi
-if [ -f /etc/php4/apache2/php.ini ]; do
-	perl -pi -e "s|8M|64M|;" /etc/php4/apache2/php.ini
+if [ -f /etc/php5/apache2/php.ini ]; do
+	perl -pi -e "s|8M|64M|;" /etc/php5/apache2/php.ini
 fi
 
 # Apache user has to own freemed
@@ -27,18 +44,12 @@ echo "[done]"
 # version installed.
 if [ ! -d /var/lib/mysql/freemed ]; then \ 
 	echo "Attempting to create freemed database (enter password, or enter if none) ... "; \
-	mysqladmin -u root -p create freemed 2>&1; \
+	X=$(mysqladmin -u root -p create freemed 2>&1); \
 	echo "[done]"; \
 fi
 
 # Restart apache ...
 echo "Restarting apache to reload configuration files ... "
-if [ -f /etc/init.d/apache ]; then \
-	/etc/init.d/apache restart; \
-fi
-if [ -f /etc/init.d/apache-ssl ]; then \
-	/etc/init.d/apache-ssl restart; \
-fi
 if [ -f /etc/init.d/apache2 ]; then \
 	/etc/init.d/apache2 restart; \
 fi
