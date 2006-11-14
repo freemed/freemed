@@ -64,12 +64,15 @@ class ClaimLog {
 					break;
 
 					case '120+':
-					$lower='120'; $upper='10000';
+					$lower='120'; $upper=false;
 					break;
 				} // end inner aging switch
-				if ($upper) $q[] =
+				if ($upper && lower) { $q[] =
 				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($lower).") AND ".
 				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).")";
+				} elseif ($lower) { $q[] =
+				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($lower).")";
+				}
 				break; // end aging case
 
 				case 'billed':
@@ -178,12 +181,12 @@ class ClaimLog {
 	//
 	function aging_summary_payer_full ( $provider = 0 ) {
 		$p = $provider;
-		$summary['everything'] = $this->aging_summary_payer_range(0, 10000, $p);
+		$summary['everything'] = $this->aging_summary_payer_range(0, false, $p);
 		$summary['0-30'] = $this->aging_summary_payer_range(0, 30, $p);
 		$summary['31-60'] = $this->aging_summary_payer_range(31, 60, $p);
 		$summary['61-90'] = $this->aging_summary_payer_range(61, 90, $p);
 		$summary['91-120'] = $this->aging_summary_payer_range(91, 120, $p);
-		$summary['120+'] = $this->aging_summary_payer_range(121, 100000, $p);
+		$summary['120+'] = $this->aging_summary_payer_range(121, false, $p);
 
 		uasort($summary['everything'], "___sort_aging");
 
@@ -215,7 +218,7 @@ class ClaimLog {
 	//
 	//	$lower - Lower aging range in days.
 	//
-	//	$upper - Upper aging range in days.
+	//	$upper - (optional) Upper aging range in days. Defaults to false.
 	//
 	//	$provider - (optional) Provider to restrict search by.
 	//	Defaults to disabled.
@@ -227,7 +230,7 @@ class ClaimLog {
 	// See Also:
 	//	<aging_summary_payer_full>
 	//
-	function aging_summary_payer_range ( $lower, $upper, $provider = 0 ) {
+	function aging_summary_payer_range ( $lower, $upper = false, $provider = 0 ) {
 		$query = "SELECT i.insconame AS payer,".
 			"COUNT(p.id) AS claims, ".
 			"SUM(p.procamtpaid) AS paid, ".
@@ -241,9 +244,9 @@ class ClaimLog {
 			( $provider > 0 ? "p.procphy = '".addslashes($provider)."' AND " : "" ).
 			"c.covinsco=i.id AND ".
 			// lower bounds
-			"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($lower).") AND ".
-			// upper bounds
-			"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).") ".
+			"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($lower).") ".
+			// upper bounds (if there)
+			( $upper ? "AND (TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).") " : "" ).
 			"GROUP BY i.id";
 		//print "query = \"$query\"<br/>\n";
 		$result = $GLOBALS['sql']->query ( $query );

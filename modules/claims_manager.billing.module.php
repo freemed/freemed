@@ -297,9 +297,9 @@ class ClaimsManager extends BillingModule {
 			$table->setCellContents($count, 10, '<i>'.
 				($hash['120+']['claims']+0).'</i>');
 			$table->setCellContents($count, 11,
-				($hash['total_claims']+0));
+				($hash['everything']['claims']+0));
 			$table->setCellContents($count, 12,
-				bcadd($hash['total_amount'], 0, 2));
+				bcadd($hash['everything']['amount'], 0, 2));
 		}
 
 		// Set alignment on money columns
