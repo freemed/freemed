@@ -373,11 +373,20 @@ class Remitt {
 	//	Table key for billkey
 	//
 	function StoreBillKey ( $billkey ) {
+		$b = $billkey;
+		// Awful, awful hack for PHP misbehaving and inserting arrays into the procedure array
+		// ... fixes Mac issues, but is so incredibly ugly.
+		if (is_array($b['procedures'][0])) {
+			foreach ($b['procedures'] AS $a) {
+				$c[] = $a[0];
+			}
+			$b['procedures'] = $c;
+		}
 		$query = $GLOBALS['sql']->insert_query (
 			'billkey',
 			array(
 				'billkeydate' => date('Y-m-d'),
-				'billkey' => serialize($billkey)
+				'billkey' => serialize($b)
 			)
 		);
 		$result = $GLOBALS['sql']->query($query);
