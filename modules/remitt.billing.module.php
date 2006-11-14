@@ -838,6 +838,13 @@ class RemittBillingTransport extends BillingModule {
 			return $buffer;
 		}
 
+		// Look for claim owners, lookup table
+		$_cs = array_keys ( $claim );
+		$_cs_res = $GLOBALS['sql']->query("SELECT id, procpatient FROM procrec WHERE FIND_IN_SET(id, '".addslashes(join(',', $_cs))."')");
+		while ($_cs_r = $GLOBALS['sql']->fetch_array($_cs_res)) {
+			$claim_owner[$_cs_r['id']] = $_cs_r['procpatient'];
+		}
+
 		// Create master hash to work with for all procedures, etc
 		$bill_hash = array ();
 		foreach ($claim AS $my_claim => $to_bill) {
