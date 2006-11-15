@@ -1,10 +1,15 @@
-Version 7.6Beta (x.x Mb) 2006-05-09
+Version 7.6 rc1 (x.x Mb) 2006-10-25
+# Bug fixes in temporary files (jamiel)
+# Definition of the table number for page in Engine2 (jamiel)
+# Control of files for simultaneous access (jamiel)
+
+Version 7.6 Beta (x.x Mb) 2006-05-09
 # Bug Fixes in merge report (jamiel)
 # Open Office parsing engine2 (jamiel)
 # Recursive sub reports (jamiel)
 # Connection wizard (jamiel)
 # Manage project (jamel)
-# API suport engine2 (jamiel
+# API suport engine2 (jamiel)
 
 Version 7.5 (17.0 Mb) 2006-03-22
 # One record per page or not (jamiel)

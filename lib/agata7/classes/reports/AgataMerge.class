@@ -1,4 +1,4 @@
-<?
+<?php
 /***********************************************************/
 /* Abstract Merge class
 /* by Pablo Dall'Oglio  2001-2006
@@ -21,10 +21,10 @@ class AgataMerge
         $this->posAction    = $params[5];
         $this->Parameters   = $params[6];
         $this->oneRecordPerPage = $params[7];
-        $this->Adjustments  = Report::ExtractAdjustments($this->XmlArray['Report']['DataSet']);
+        $this->Adjustments  = CoreReport::ExtractAdjustments($this->XmlArray['Report']['DataSet']);
         for ($x=0;$x<=$this->XmlArray['Report']['Merge']['Details']['Detail1']['NumberSubSql']; $x++)
         {
-            $this->SubAdjustments[$x]=Report::ExtractAdjustments($this->XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($x+1)]);
+            $this->SubAdjustments[$x]=CoreReport::ExtractAdjustments($this->XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($x+1)]);
         }
     }
 
@@ -517,6 +517,11 @@ class AgataMerge
         {
             $this->PDF->SetFillColor($colorR, $colorG, $colorB);
         }
+    }
+
+    function SetSubDataArray($subDataArray)
+    {
+        $this->subDataArray = $subDataArray;
     }
 }
 ?>

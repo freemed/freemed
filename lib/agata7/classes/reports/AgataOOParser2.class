@@ -15,6 +15,8 @@ class AgataOOParser2 extends AgataMerge
      */
     function Generate($source, $target)
     {
+        $this->config = AgataOO::GetConfig($source);
+
         $this->fixedDetails     = $this->XmlArray['Report']['OpenOffice']['Config']['FixedDetails'];
         $this->expandDetails    = $this->XmlArray['Report']['OpenOffice']['Config']['ExpandDetails'];
         $this->printEmptyDetail = $this->XmlArray['Report']['OpenOffice']['Config']['printEmptyDetail'];
@@ -28,6 +30,7 @@ class AgataOOParser2 extends AgataMerge
         $this->break_style = '<style:style style:name="AgataPageBreak" style:family="paragraph" style:parent-style-name="Standard">' .
                              '<style:properties fo:break-before="page"/>' .
                              '</style:style>';
+
 
         //Usado para definir a quebra de página
         $this->page_break = '<text:p text:style-name="AgataPageBreak"/>';
@@ -50,7 +53,6 @@ class AgataOOParser2 extends AgataMerge
         {
             adie("Error : ".$zip->errorInfo(true));
         }
-        
         $content= file_get_contents($this->prefix . '/content.xml');
         
         # break xml tags
@@ -72,44 +74,59 @@ class AgataOOParser2 extends AgataMerge
             
             if ($line == '</office:automatic-styles>')
             {
-                $line = $this->break_style . $line;
+                $line = $this->break_style . $this->user_style . $line;
             }
-            
+
+            if (AgataOO::isDrawLine($line))
+            {
+                $drawName = AgataOO::drawName($line);
+                if ($this->imageReplace[$drawName])
+                {
+                    AgataOO::drawReplace($line, $this->imageReplace[$drawName], $this->prefix);
+                }
+            }
             $this->buffer[strtolower($section)][] = $line;
         }
 
         $output = implode('', $this->buffer['start']);
 
         //Imprime cabeçalho do relatório uma vez no início da página
+        $this->SubTotals = array();
         $output .= $this->printSection('reportHeader',  $line);
         # Percore os registros da consulta principal
         $break = false;
+        $lineFatherQuery = 0;
         while ($line = $this->CurrentQuery->FetchNext())
         {
             # Ajusta as variáveis globais para este registro
             for ($y=1; $y<=count($line); $y++)
             {
                 $QueryCell = trim($line[$y]);
-                $globalVars['$var' . $y] = FormatMask($this->Adjustments[$y]['Mask'], $QueryCell);
+                $globalVars['$var' . $y] = AgataOO::encode(FormatMask($this->Adjustments[$y]['Mask'], $QueryCell));
             }
 
             //Imprime o cabeçalho da página
+            $this->SubTotals = array();
             $output .= $this->printSection('pageHeader',  $line, $break);
 
             //Imprime os dados
-            $output .= $this->printSection('data',  $line, $globalVars);
+            $this->SubTotals = array();
+            $output .= $this->printSection('data',  $line, $globalVars, $lineFatherQuery);
 
             //Imprime o cabeçalho da página
+            $this->SubTotals = array();
             $output .= $this->printSection('pageFooter',  $line);
             $break = true;
+            $lineFatherQuery++;
         }
+        $this->SubTotals = array();
         $output .= $this->printSection('reportFooter',  $line);
 
         $output .= implode('', $this->buffer['end']);
         $fd = fopen($this->prefix . '/content.xml', 'w');
         fwrite($fd, $output);
         fclose($fd);
-        
+
         @unlink ($target);
         $zip2 = new PclZip($target);
         foreach ($list as $file)
@@ -130,11 +147,10 @@ class AgataOOParser2 extends AgataMerge
      * method printSection
      * 
      */
-    function printSection($section, $data, $plus = false)
+    function printSection($section, $data, $plus = false, $lineFatherQuery = 0)
     {
         $output = '';
         $section = strtolower($section);
-        $this->SubTotals = array();
 
         # Percore o array buffer para fazer as substituições
         for ($bufferLine = 0; $bufferLine < count($this->buffer[$section]); $bufferLine++)
@@ -162,7 +178,7 @@ class AgataOOParser2 extends AgataMerge
 
             if ( $section == 'data' )
             {
-                $text_line = $this->parseRepeatTable($this->buffer[$section], $bufferLine, 0, $plus);
+                $text_line = $this->parseRepeatTable($this->buffer[$section], $bufferLine, 0, $plus, $lineFatherQuery);
                 if (!$text_line)
                 {
                     $text_line = $this->buffer[$section][$bufferLine];
@@ -176,7 +192,7 @@ class AgataOOParser2 extends AgataMerge
             for ($i=sizeof($data); $i>0; $i--)
             {
                 $cell = $data[$i];
-                $text_line = str_replace('$var' . $i, utf8_encode($cell), $text_line);
+                $text_line = str_replace('$var' . $i, AgataOO::encode($cell), $text_line);
                 $text_line = str_replace('[' . $this->CurrentQuery->ColumnNames[$i -1] . ']', utf8_encode($cell), $text_line);
             }
 
@@ -200,7 +216,7 @@ class AgataOOParser2 extends AgataMerge
      * mothod parseRepeatTable
      *
      */
-    function parseRepeatTable($buffer, &$bufferLine, $level, $globalVars)
+    function parseRepeatTable($buffer, &$bufferLine, $level, $globalVars, $lineFatherQuery)
     {
         $repeatTable = '<table:table table:name="RepeatTable_';
         $text_line = $buffer[$bufferLine];
@@ -246,19 +262,28 @@ class AgataOOParser2 extends AgataMerge
                     $bufferLine++;
                 }
             }
-            # Substituição de Parâmetros
-            $where = $this->XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($level+1)]['Query']['Where'];
-            krsort($globalVars);
-            foreach ($globalVars as $var => $content)
+
+            #Verifica se está utilizando o modo data ou query
+            if ( $this->agataDB )
             {
-                $where = str_replace($var, $content, $where);
+                # Substituição de Parâmetros
+                $where = $this->XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($level+1)]['Query']['Where'];
+                krsort($globalVars);
+                foreach ($globalVars as $var => $content)
+                {
+                    $where = str_replace($var, $content, $where);
+                }
+                $DataSet = $this->XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($level+1)];
+                $DataSet['Query']['Where'] = $where;
+
+                # Cria Query
+                $subQuery = AgataCore::CreateQuery($this->agataDB, $DataSet, $this->Parameters);
             }
-            $DataSet = $this->XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($level+1)];
-            $DataSet['Query']['Where'] = $where;
-
-
-            # Cria Query
-            $subQuery = AgataCore::CreateQuery($this->agataDB, $DataSet, $this->Parameters);
+            else
+            {
+                $subQuery = AgataCore::CreateSubQueryArray($this->subDataArray[$level]);
+                $subQuery->SetFatherLineQuery($lineFatherQuery);
+            }
 
             if (is_agata_error($subQuery))
             {
@@ -285,11 +310,13 @@ class AgataOOParser2 extends AgataMerge
                     }
                     $x++;
                 }
+
+
                 $text = $modelTable[0];
                 $z=0;
                 for ($x=0; $x<count($modelCell); $x++)
                 {
-                    $textDetail = $this->parseDetailTable($modelCell[$x], $data, $z, $level+1, $globalVars, $localVars);
+                    $textDetail = $this->parseDetailTable($modelCell[$x], $data, $z, $level+1, $globalVars, $localVars, $bufferBreak);
                     if (!$textDetail)
                     {
                         $text .= implode('',$modelCell[$x]);
@@ -298,15 +325,28 @@ class AgataOOParser2 extends AgataMerge
                     {
                         $text .= $textDetail;
                     }
+                    //Verifica se terminou o modelo, se tem mais dados e se é para quebrar página. Se tiver mais dados, terminou o modelo e não há outra página, então, abre uma nova linha;
                     if ($x+1 == count($modelCell) && $data[$z+$back])
                     {
-                        $text .= '</table:table-row><table:table-row>';
+                        if (!$bufferBreak['content'])
+                        {
+                            $text .= '</table:table-row><table:table-row>';
+                        }
+                        //Tira um do X para repetir os dados
+                        $x=-1;
+                    }
+                    //Se há quebra de página
+                    if ($bufferBreak['content'])
+                    {
+                        $text .= $modelTable[1] . $bufferBreak['content'] . $modelTable[0];
+                        //Conta as página para a comparação da quantidade de tabelas
+                        $bufferBreak['page']++;
+                        unset($bufferBreak['content']);
                         $x=-1;
                     }
                 }
                 $text .= $modelTable[1];
             }
-
             return $text;
         }
         return false;
@@ -316,7 +356,7 @@ class AgataOOParser2 extends AgataMerge
      * mothod parseDetailTable
      *
      */
-    function parseDetailTable($content, $data, &$dataPosition, $level, $globalVars, $localVars)
+    function parseDetailTable($content, $data, &$dataPosition, $level, $globalVars, $localVars, &$bufferBreak)
     {
         $existDetailTable = false;
         for ($x=0; $x<count($content); $x++)
@@ -329,6 +369,28 @@ class AgataOOParser2 extends AgataMerge
                 {
                     $dataPosition++;
                 }
+
+                //Extrai o nome da tabela
+                $detailTableName = preg_replace('/' . $detailTable . '([^_]*)?.*/', '\1', $text_line);
+                //Verifica de há configuração
+                if ($this->config['break']['detailtable'][$detailTableName])
+                {
+                    if (!$bufferBreak['page'])
+                    {
+                        //Inicia o número de páginas
+                        $bufferBreak['page'] = 1;
+                    }
+
+                    //Se ultrapassou o número definido de tabelas gera o conteudo
+                    if (($this->config['break']['detailtable'][$detailTableName] * $bufferBreak['page']) == ($dataPosition+1) && $data[$dataPosition+1])
+                    {
+                        // Adiciona rodapé
+                        $bufferBreak['content'] = $this->printSection('pageFooter',  $line);
+                        // Adicona cabeçalho
+                        $bufferBreak['content'] .= $this->printSection('pageHeader',  $line, true);
+                    }
+                }
+
                 $globalVars_ = array_merge($globalVars, $localVars[$dataPosition]);
                 $existDetailTable = true;
                 $controlOperation = array();
@@ -338,7 +400,7 @@ class AgataOOParser2 extends AgataMerge
                 {
                     if ($data[$dataPosition])
                     {
-                        $text_line = $this->parseRepeatTable($content, $x, $level, $globalVars_);
+                        $text_line = $this->parseRepeatTable($content, $x, $level, $globalVars_, $dataPosition);
                     }
                     else
                     {
@@ -404,13 +466,13 @@ class AgataOOParser2 extends AgataMerge
             {
                 $levelTmp = $level;
             }
-            foreach ($data as $column=>$dt)
+            for ($x=sizeof($data); $x>0; $x--)
             {
-                $this_text = '$' . $levelTmp . 'subfield' . $column;
+                $this_text = '$' . $levelTmp . 'subfield' . $x;
                 $subMyVar = $this_text;
                 if (strpos($text_line, $subMyVar) !== false)
                 {
-                    $that_text = AgataOO::encode(FormatMask($this->SubAdjustments[$level][$column]['Mask'], $dt));
+                    $that_text = AgataOO::encode(FormatMask($this->SubAdjustments[$level][$x]['Mask'], $data[$x]));
                     # renomeia para não substituir a variável operação
                     $text_line = str_replace($this_text . '_', 'AgataOperation_', $text_line);
                     $text_line = str_replace($this_text, $that_text, $text_line);
@@ -421,16 +483,16 @@ class AgataOOParser2 extends AgataMerge
                         # Conta o número de registros para cada variável
                         $this->SubTotals[$level][$subMyVar]['count'] ++;
                         $this->GrandTotal[$level][$subMyVar]['count'] ++;
-                        if (is_numeric($dt))
+                        if (is_numeric($data[$x]))
                         {
-                            $this->SubTotals[$level][$subMyVar]['sum'] += $dt;
-                            $this->SubTotals[$level][$subMyVar]['min'] = ((!$this->SubTotals[$level][$subMyVar]['min']) or ($dt < $this->SubTotals[$level][$subMyVar]['min'])) ? $dt : $this->SubTotals[$level][$subMyVar]['min'];
-                            $this->SubTotals[$level][$subMyVar]['max'] = ($dt > $this->SubTotals[$level][$subMyVar]['max']) ? $dt : $this->SubTotals[$level][$subMyVar]['max'];
+                            $this->SubTotals[$level][$subMyVar]['sum'] += $data[$x];
+                            $this->SubTotals[$level][$subMyVar]['min'] = ((!$this->SubTotals[$level][$subMyVar]['min']) or ($data[$x] < $this->SubTotals[$level][$subMyVar]['min'])) ? $data[$x] : $this->SubTotals[$level][$subMyVar]['min'];
+                            $this->SubTotals[$level][$subMyVar]['max'] = ($data[$x] > $this->SubTotals[$level][$subMyVar]['max']) ? $data[$x] : $this->SubTotals[$level][$subMyVar]['max'];
                             $this->SubTotals[$level][$subMyVar]['avg'] = $this->SubTotals[$level][$subMyVar]['sum'] / $this->SubTotals[$level][$subMyVar]['count'];
     
-                            $this->GrandTotal[$level][$subMyVar]['sum'] += $dt;
-                            $this->GrandTotal[$level][$subMyVar]['min'] = ((!$this->GrandTotal[$level][$subMyVar]['min']) or ($dt < $this->GrandTotal[$level][$subMyVar]['min'])) ? $dt : $this->GrandTotal[$level][$subMyVar]['min'];
-                            $this->GrandTotal[$level][$subMyVar]['max'] = ($dt > $this->GrandTotal[$level][$subMyVar]['max']) ? $dt : $this->GrandTotal[$level][$subMyVar]['max'];
+                            $this->GrandTotal[$level][$subMyVar]['sum'] += $data[$x];
+                            $this->GrandTotal[$level][$subMyVar]['min'] = ((!$this->GrandTotal[$level][$subMyVar]['min']) or ($data[$x] < $this->GrandTotal[$level][$subMyVar]['min'])) ? $data[$x] : $this->GrandTotal[$level][$subMyVar]['min'];
+                            $this->GrandTotal[$level][$subMyVar]['max'] = ($data[$x] > $this->GrandTotal[$level][$subMyVar]['max']) ? $data[$x] : $this->GrandTotal[$level][$subMyVar]['max'];
                             $this->GrandTotal[$level][$subMyVar]['avg'] = $this->GrandTotal[$level][$subMyVar]['sum'] / $this->GrandTotal[$level][$subMyVar]['count'];
                         }
                         $controlOperation[$subMyVar] = true;
@@ -452,7 +514,7 @@ class AgataOOParser2 extends AgataMerge
         {
             foreach ($this->Parameters as $var=>$content)
             {
-                $line = str_replace($var, $content, $line);
+                $line = str_replace($var, AgataOO::encode($content), $line);
             }
         }
         return $line;
@@ -564,6 +626,16 @@ class AgataOOParser2 extends AgataMerge
         # end BarCode #
         
         return "<draw:image draw:style-name=\"fr2\" draw:name=\"Graphic1\" text:anchor-type=\"paragraph\" svg:x=\"{$x}cm\" svg:y=\"{$y}cm\" svg:width=\"{$width}cm\" svg:height=\"{$height}cm\" draw:z-index=\"0\" xlink:href=\"#Pictures/barcode{$rand}.png\" xlink:type=\"simple\" xlink:show=\"embed\" xlink:actuate=\"onLoad\"/>";
+    }
+
+    function SetUserStyle($style)
+    {
+        $this->user_style = $style;
+    }
+
+    function SetImageReplace($imageName, $imagePath)
+    {
+        $this->imageReplace[$imageName] = $imagePath;
     }
 }
 ?>

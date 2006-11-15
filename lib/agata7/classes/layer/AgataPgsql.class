@@ -19,7 +19,7 @@ class AgataPgsql
             $port = $pieces[1];
             $connstr = ' port=' . $port;
         }
-        $connstr = ' host=' . $host;
+        $connstr .= ' host=' . $host;
         if (isset($database))
         {
             $connstr .= ' dbname=' . $database;

@@ -10,24 +10,28 @@ class Dialog
     /***********************************************************/
     function Dialog($mensagem, $erro = true, $kill = false, $submessage = null)
     {
-        if (!is_array($mensagem))
+        $agataConfig = AgataConfig::ReadConfig();
+        if ($agataConfig['general']['ShowMessage'])
         {
-            $mensagem = ereg_replace("\r", ' ', $mensagem);
-            $mensagem = ereg_replace("\n", ' ', $mensagem);
-            if (strlen($mensagem) >40)
+            if (!is_array($mensagem))
             {
-            $msgs = explode(' ', $mensagem);
-            $n = 0;
-            foreach ($msgs as $msg)
-            {
-                $result[$n] .= ' ' . $msg;
-                if (strlen($result[$n]) > 40)
-                $n ++;
+                $mensagem = ereg_replace("\r", ' ', $mensagem);
+                $mensagem = ereg_replace("\n", ' ', $mensagem);
+                if (strlen($mensagem) >40)
+                {
+                $msgs = explode(' ', $mensagem);
+                $n = 0;
+                foreach ($msgs as $msg)
+                {
+                    $result[$n] .= ' ' . $msg;
+                    if (strlen($result[$n]) > 40)
+                    $n ++;
+                }
+                $mensagem = $result;
+                }
             }
-            $mensagem = $result;
-            }
+            $this->ShowMessage($mensagem, $erro, $kill, $submessage);
         }
-        $this->ShowMessage($mensagem, $erro, $kill, $submessage);
     }
 
     /***********************************************************/

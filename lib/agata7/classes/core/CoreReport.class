@@ -3,7 +3,7 @@
 /* Class to deal with Report Files
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class Report
+class CoreReport
 {
     /***********************************************************/
     /*
@@ -11,7 +11,6 @@ class Report
     function OpenReport($FileName)
     {
         $Report['Report'] = AgataCompatibility::readReport($FileName);
-        //var_dump($Report);
         return $Report;
     }
 
@@ -127,7 +126,7 @@ class Report
     /***********************************************************/    
     function SqlFromReport($DataSet)
     {
-        return Report::BlockToSql(Report::ExtractBlock($DataSet), $DataSet['Query']['Config']['Distinct'], false);
+        return CoreReport::BlockToSql(CoreReport::ExtractBlock($DataSet), $DataSet['Query']['Config']['Distinct'], false);
     }
 
     /***********************************************************/
@@ -159,7 +158,6 @@ class Report
                 }
             }
         }
-        //var_dump($Adjustments);
         return $Adjustments;
     }
     
@@ -187,7 +185,7 @@ class Report
     {
         $Elements_ = MyExplode(trim($Select), null, true);
         $Formulas  = MyExplode($Formula);
-        $Functions = Report::GetFunctionNames();
+        $Functions = CoreReport::GetFunctionNames();
         
         for ($n=0; $n<=count($Formulas) -1; $n++)
         {

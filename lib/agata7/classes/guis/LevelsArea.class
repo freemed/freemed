@@ -92,7 +92,7 @@ class LevelsArea
             foreach ($this->Breaks as $Break => $Formula)
             {
                 $this->Append(array($Break, $Formula));
-                $Formulas = Report::TranslateFormulas($Content, $Formula);
+                $Formulas = CoreReport::TranslateFormulas($Content, $Formula);
 
                 if ($Break == '0')
                 {

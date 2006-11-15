@@ -283,8 +283,10 @@ function GetFileName($Path)
 /*******************************************************************************/
 function RemoveExtension($FileName)
 {
-    $file = explode('.', $FileName, 2);
-    return $file[0];
+    $file = explode('.', $FileName);
+    unset($file[sizeof($file)-1]);
+
+    return implode('.', $file);
 }
 
 
@@ -1037,5 +1039,23 @@ function suported_databases_type()
     }
 
     return $aDB;
+}
+
+function suggestion_archive_name($source, $suggestion=null, $number=null)
+{
+    $withoutExtension = RemoveExtension($source);
+    $extension = str_replace($withoutExtension, '', $source);
+    $fileName = $withoutExtension . $suggestion . $number . $extension;
+
+    if (file_exists($fileName))
+    {
+        $source = suggestion_archive_name($source, '-', ++$number);
+    }
+    else
+    {
+        $source = $fileName;
+    }
+
+    return $source;
 }
 ?>

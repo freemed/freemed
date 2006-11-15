@@ -50,7 +50,10 @@ class AgataOO
                     if (substr($t, 0, strlen($feature)) == $feature)
                     {
                         $preg = '/({AGATA::([^=]*)=([^\}]*)})/';
-                        $config[strtolower(preg_replace($preg, '\2', $t))] = preg_replace($preg, '\3', $t);
+
+                        $array = '[\'' . implode('\'][\'', explode('::', strtolower(preg_replace($preg, '\2', $t)))) . '\']';
+                        $result = preg_replace($preg, '\3', $t);
+                        eval("\$config$array = \$result;");
                     }
                 }
             }
@@ -66,6 +69,39 @@ class AgataOO
                        '&'=>'&amp;'
                      );
 
-        return utf8_encode(strtr($string, $from));
+        $x = 0;
+        foreach ($from as $caracter=>$f)
+        {
+            $scape['\\' . $caracter] = 'AGATASCAPE' . $x;
+            $scapeReverse['AGATASCAPE' . $x] = $caracter;
+            $x++;
+        }
+        $textScape   = strtr($string, $scape);
+        $text        = strtr($textScape, $from);
+        $textReverse = strtr($text, $scapeReverse);
+
+        return utf8_encode($textReverse);
+    }
+
+
+
+    function drawReplace($line, $imagePath, $tmpPath)
+    {
+        #extrai informações necessárias para identificação da imagem
+        ereg ("<draw:image .* xlink:href=\"#([^\"]*)\" .*", $line, $link);
+
+        return copy($imagePath, $tmpPath . '/' . $link[1]);
+    }
+
+    function drawName($line)
+    {
+        ereg ("<draw:image .* draw:name=\"([^\"]*)\" .*", $line, $name);
+        return $name[1];
+    }
+
+    function isDrawLine($line)
+    {
+        $draw = '<draw:image ';
+        return (substr($line, 0, strlen($draw)) == $draw);
     }
 }

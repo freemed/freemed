@@ -102,13 +102,13 @@ class Project
         $app['.dia']  = $agataConfig['app']['DiaSoft'];
         $app['.xml']  = $agataConfig['app']['XmlSoft'];
         $app['.sxw']  = $agataConfig['app']['OpenSoft'];
-        
+      
         foreach ($app as $key => $ext)
         {
             if (strstr($FileName, $key))
             $launch = $ext;
         }
-        
+ 
         if ($launch)
         {
             if (OS == 'WIN')

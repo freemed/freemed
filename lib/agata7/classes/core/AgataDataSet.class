@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************/
 /* AgataDataSet - Class that means the query itself and
 /* its funcionalities
@@ -114,6 +114,45 @@ class AgataQueryArray
         $i = $this->i;
         $this->i ++;
         return $this->QueryArray[$i];
+    }
+}
+
+/*******************************************************************************/
+/* AgataSubQueryArray - A Sub Query stored in one big array
+/* by Jamiel Spezia - 2006 - 2006
+/*******************************************************************************/
+class AgataSubQueryArray
+{
+    var $SubQueryArray;
+    var $query;
+    var $line;
+
+    /*******************************************************************************/
+    /* Constructor
+    /*******************************************************************************/
+    function AgataSubQueryArray($SubQueryArray)
+    {
+        $this->SubQueryArray = $SubQueryArray;
+        $this->line = 0;
+        $this->query = 0;
+    }
+
+    /*******************************************************************************/
+    /* Fetch next result
+    /*******************************************************************************/
+    function FetchNext()
+    {
+        $line = $this->line;
+        $this->line ++;
+        return $this->SubQueryArray[$this->query][$line];
+    }
+
+    /*******************************************************************************/
+    /* Fetch next query
+    /*******************************************************************************/
+    function SetFatherLineQuery($query)
+    {
+        $this->query = $query;
     }
 }
 ?>

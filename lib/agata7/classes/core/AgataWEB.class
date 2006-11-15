@@ -78,7 +78,7 @@ class AgataWEB
             echo '<td colspan=6>';
             if ($action == 'browse.php?goal=1')
             {
-                echo '<b>&nbsp; Agata Report:: ' . _a('Query Explorer') .'</b>';
+                echo '<b>&nbsp; Agata CoreReport:: ' . _a('Query Explorer') .'</b>';
                 echo '</td>';
                 echo '</tr>';
                 echo '<tr class=line1>';
@@ -87,7 +87,7 @@ class AgataWEB
             }
             else
             {
-                echo '<b>&nbsp; Agata Report:: ' . _a('Repository Explorer') . '</b>';
+                echo '<b>&nbsp; Agata CoreReport:: ' . _a('Repository Explorer') . '</b>';
                 echo '</td>';
                 echo '</tr>';
                 echo '<tr class=line1>';
@@ -191,7 +191,7 @@ class AgataWEB
                         }
                         if (substr($path,-3)=='agt')
                         {
-                            $Report = Report::OpenReport($path);
+                            $Report = CoreReport::OpenReport($path);
                         }
                         echo '</td>';
                         echo '<td width=5% align=right>';

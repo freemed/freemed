@@ -911,7 +911,7 @@ class AgataInterface
     {
         $sql = ereg_replace("\n", ' ', $this->textAreas['@ManualQuery']->get_chars(0, -1));
         $this->ClearQuery(true, false);
-        $this->SelectList->LoadBlocks(Report::SqlToBlock($sql));
+        $this->SelectList->LoadBlocks(CoreReport::SqlToBlock($sql));
         $this->LoadTablesFrom();
     }
     
@@ -1394,11 +1394,11 @@ class AgataInterface
     {
         if ($kind == 1)
         {
-            $sql = Report::BlockToSql($this->SelectList->Block, $this->SelectList->getDistinct(), true);
+            $sql = CoreReport::BlockToSql($this->SelectList->Block, $this->SelectList->getDistinct(), true);
         }
         else
         {
-            $sql = Report::BlockToSql($this->MergeInterface->SubSelectList[0]->Block, true);
+            $sql = CoreReport::BlockToSql($this->MergeInterface->SubSelectList[0]->Block, true);
         }
         return $sql;
     }
@@ -1743,10 +1743,10 @@ class AgataInterface
             {
                 return;
             }
-            $XmlArray = Report::OpenSql($FileName);
+            $XmlArray = CoreReport::OpenSql($FileName);
             if ($XmlArray)
             {
-                $this->SelectList->LoadBlocks(Report::ExtractBlock($XmlArray));
+                $this->SelectList->LoadBlocks(CoreReport::ExtractBlock($XmlArray));
             }
             $this->LoadTablesFrom();
         }
@@ -1810,7 +1810,7 @@ class AgataInterface
         $this->ClearQuery(true);
         $this->FileName = $FileName;
         
-        $XmlArray = Report::OpenReport($FileName);
+        $XmlArray = CoreReport::OpenReport($FileName);
         if ($XmlArray)
         {
             # Reading Parameters
@@ -1823,13 +1823,13 @@ class AgataInterface
                 }
             }
             
-            $this->SelectList->LoadBlocks(Report::ExtractBlock($XmlArray['Report']['DataSet']));
-            $this->Adjustments       = Report::ExtractAdjustments($XmlArray['Report']['DataSet']);
-            $this->SubAdjustments    = Report::ExtractAdjustments($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet1']);
+            $this->SelectList->LoadBlocks(CoreReport::ExtractBlock($XmlArray['Report']['DataSet']));
+            $this->Adjustments       = CoreReport::ExtractAdjustments($XmlArray['Report']['DataSet']);
+            $this->SubAdjustments    = CoreReport::ExtractAdjustments($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet1']);
 
             for ($x=1; $x<=$XmlArray['Report']['Merge']['Details']['Detail1']['NumberSubSql']; $x++)
             {
-                $this->MergeInterface->SubAdjustments[$x] = Report::ExtractAdjustments($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($x+1)]);;
+                $this->MergeInterface->SubAdjustments[$x] = CoreReport::ExtractAdjustments($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($x+1)]);;
             }
 
             $this->SelectList->setDistinct($XmlArray['Report']['DataSet']['Query']['Config']['Distinct']);
@@ -1837,7 +1837,7 @@ class AgataInterface
             $this->SelectList->setLimit($XmlArray['Report']['DataSet']['Query']['Config']['Limit']);
             
             # Reading Breaks
-            $Breaks = Report::ExtractBreaks($XmlArray);
+            $Breaks = CoreReport::ExtractBreaks($XmlArray);
             if ($Breaks)
             {
                 foreach ($Breaks as $break=>$formula)
@@ -1898,7 +1898,7 @@ class AgataInterface
                         $this->MergeInterface->SubSql[$x]->setDetail($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['GroupHeader'], 0);
                         $this->MergeInterface->SubSql[$x]->setDetail($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Body'], 1);
                     }
-                    $this->MergeInterface->SubSelectList[$x]->LoadBlocks(Report::ExtractBlock($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]));
+                    $this->MergeInterface->SubSelectList[$x]->LoadBlocks(CoreReport::ExtractBlock($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]));
                     $this->MergeInterface->SubSelectList[$x]->setOffSet($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Query']['Config']['OffSet']);
                     $this->MergeInterface->SubSelectList[$x]->setLimit($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Query']['Config']['Limit']);
                     $this->MergeInterface->SubSelectList[$x]->setDistinct($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Query']['Config']['Distinct']);
@@ -2086,7 +2086,7 @@ class AgataInterface
         }
         
         $XmlArray = $this->GetXmlArray();
-        Report::SaveReport($FileName, $XmlArray);
+        CoreReport::SaveReport($FileName, $XmlArray);
 
         if ($fs)
         {
@@ -2430,10 +2430,10 @@ class AgataInterface
             {
                 return;
             }
-            $XmlArray = Report::OpenReport($FileName);
+            $XmlArray = CoreReport::OpenReport($FileName);
             if ($XmlArray)
             {
-                $this->TypeExpression(' (' . Report::SqlFromReport($XmlArray['Report']['DataSet']) . ') ');
+                $this->TypeExpression(' (' . CoreReport::SqlFromReport($XmlArray['Report']['DataSet']) . ') ');
             }
         }
     }

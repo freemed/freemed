@@ -26,8 +26,8 @@ class AgataReport
         $this->layout           = $params[6];
         $this->ReportName       = $params[7];
         
-        $this->Adjustments      = Report::ExtractAdjustments($XmlArray['Report']['DataSet']);
-        $Breaks                 = Report::ExtractBreaks($XmlArray);
+        $this->Adjustments      = CoreReport::ExtractAdjustments($XmlArray['Report']['DataSet']);
+        $Breaks                 = CoreReport::ExtractBreaks($XmlArray);
         
         if ($Breaks)
         {
@@ -55,7 +55,7 @@ class AgataReport
         $this->textFooter       = $XmlArray['Report']['Footer']['Body'];
         $this->alignFooter      = $XmlArray['Report']['Footer']['Align'];
         
-        $this->FunctionNames    = Report::GetFunctionNames();
+        $this->FunctionNames    = CoreReport::GetFunctionNames();
         
         return true;
     }

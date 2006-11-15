@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************/
 /* Agata Core - Class that creates the queries and calls
 /* the report classes
@@ -69,13 +69,89 @@ class AgataCore
         return $obj;
     }
 
+    /********************************************************************************/
+    /* Creates a query array object
+    /********************************************************************************/
+    function CreateQueryArray($array)
+    {
+        if (is_null($array))
+        {
+            $data[0][0] = '';
+        }
+
+        if (is_array($array))
+        {
+            $x = 0;
+            foreach ($array as $line)
+            {
+                $y = 1;
+                foreach ($line as $col)
+                {
+                    $newArray[$x][$y] = $col;
+                    $y++;
+                }
+                $x++;
+            }
+            $CurrentQuery = &new AgataQueryArray($newArray);
+            return $CurrentQuery;
+        }
+        else
+        {
+            return new AgataError(_a('Variable is nor array'));
+        }
+    }
+
+    /********************************************************************************/
+    /* Creates a query array object
+    /********************************************************************************/
+    function CreateSubQueryArray($array)
+    {
+        if (is_null($array))
+        {
+            $array[0][0][0] = '';
+        }
+
+        if (is_array($array))
+        {
+            $z = 0;
+            foreach ($array as $vector)
+            {
+                $x = 0;
+                if ($vector)
+                {
+                    foreach ($vector as $line)
+                    {
+                        $y = 1;
+                        foreach ($line as $col)
+                        {
+                            $newArray[$z][$x][$y] = $col;
+                            $y++;
+                        }
+                        $x++;
+                    }
+                    $z++;
+                }
+                else
+                {
+                    $newArray[$z][0][0] = $col;
+                }
+            }
+            $CurrentSubQuery = &new AgataSubQueryArray($newArray);
+            return $CurrentSubQuery;
+        }
+        else
+        {
+            return new AgataError(_a('Variable is nor array'));
+        }
+    }
+
     /*******************************************************************************/
     /* Creates a query object
     /*******************************************************************************/
     function CreateQuery($agataDB, $DataSet, $ParametersContent)
     {
-        $sql = Report::SqlFromReport($DataSet);
-        $Adjustments = Report::ExtractAdjustments($DataSet);
+        $sql = CoreReport::SqlFromReport($DataSet);
+        $Adjustments = CoreReport::ExtractAdjustments($DataSet);
         
         if ($ParametersContent)
         {

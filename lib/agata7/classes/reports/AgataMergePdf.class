@@ -207,9 +207,12 @@ class AgataMergePdf extends AgataMerge
                 $Line = ereg_replace("\"", "\\\"", $Line);
                 if ($key == 'groupfooter')
                 {
-                    foreach ($replace as $this_text =>$that_text)
+                    if ($replace)
                     {
-                        $Line = str_replace($this_text, $that_text, $Line);
+                        foreach ($replace as $this_text =>$that_text)
+                        {
+                            $Line = str_replace($this_text, $that_text, $Line);
+                        }
                     }
                 }
                 eval ("\$Line = \"$Line\";");
@@ -274,7 +277,6 @@ class AgataMergePdf extends AgataMerge
 
         # Cria Query
         $subQuery = AgataCore::CreateQuery($this->agataDB, $DataSet, $this->Parameters);
-
         return $subQuery;
     }
 
@@ -307,9 +309,11 @@ class AgataMergePdf extends AgataMerge
         {
             $Lines = explode("\n", $textMerge);
             $i = 0;
+            unset($this->subQueryLine[$numberSubReport]);
             while ($Subrow = $subQuery->FetchNext())
             {
                 $this->subQueryLine[$numberSubReport][] = $Subrow;
+
                 for ($Subcol=1; $Subcol<=count($Subrow); $Subcol++)
                 {
                     $SubConteudo = trim($Subrow[$Subcol]);

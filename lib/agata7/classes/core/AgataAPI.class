@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************/
 /* AgataAPI
 /* API for report generation from Web PHP scripts
@@ -59,7 +59,7 @@ class AgataAPI
             include_once AGATA_PATH . "/classes/core/AgataError.class";
             include_once AGATA_PATH . "/classes/core/AgataDataSet.class";
             include_once AGATA_PATH . "/classes/core/Project.class";
-            include_once AGATA_PATH . "/classes/core/Report.class";
+            include_once AGATA_PATH . "/classes/core/CoreReport.class";
             include_once AGATA_PATH . "/classes/core/Layout.class";
             include_once AGATA_PATH . "/classes/core/AgataCore.class";
             include_once AGATA_PATH . "/classes/core/AgataConfig.class";
@@ -76,13 +76,16 @@ class AgataAPI
     # Defining the output file that will be generated
     function setOutputPath($output)
     {
+        $output = suggestion_archive_name($output);
+        touch($output);
+
         $this->outputPath= $output;
     }
     
     # Getting the output file that will be generated
     function getOutputPath()
     {
-        return $this->output;
+        return $this->outputPath;
     }
 
     # Defining the Report file to interpret
@@ -107,7 +110,7 @@ class AgataAPI
         else
         {
             # Reading the Report
-            $Report = @Report::OpenReport($this->reportPath);
+            $Report = @CoreReport::OpenReport($this->reportPath);
             if (!$Report['Report'])
             {
                 $this->error = 'Cannot read report file.';
@@ -185,7 +188,33 @@ class AgataAPI
     {
         $this->project = $project;
     }
-    
+
+    # Set report data. This not need Query and Report set, only data
+    function setDataArray($dataArray)
+    {
+        if (is_null($dataArray))
+        {
+            $dataArray[0][0] = '';
+        }
+        $this->dataArray = $dataArray;
+    }
+
+    # Set report sub data. This not need Query and Report set, only data
+    function setSubDataArray($subDataArray)
+    {
+        if (is_null($subDataArray))
+        {
+            $subDataArrayb[0][0] = '';
+        }
+         $this->subDataArray = $subDataArray;
+    }
+
+    # Set image replace
+    function setImageReplace($imageName, $imagePath)
+    {
+        $this->imageReplace[$imageName] = $imagePath;
+    }
+
     function fileDialog()
     {
         switch ($this->format)
@@ -216,10 +245,20 @@ class AgataAPI
         $download = 'output.'.$this->format;
         if ($this->format != 'html')
         {
+            header("Content-Length: " . filesize($this->outputPath));
             header("Content-type: $content_type");
             header("Content-Disposition: attachment; filename=\"$download\"");
+            header ("Cache-Control: cache"); // HTTP/1.1 
+            header ("Content-Transfer-Encoding: binary");
         }
         readfile($this->outputPath);
+        $this->removeOutputFile();
+    }
+
+    function removeOutputFile()
+    {
+        @unlink(RemoveExtension($this->getOutputPath()) . '.pdf');
+        @unlink(RemoveExtension($this->getOutputPath()) . '.sxw');
     }
     
     function generateReport()
@@ -322,29 +361,42 @@ class AgataAPI
         return true;
     }
 
+    function SetUserStyle($style)
+    {
+        $this->user_style = $style;
+    }
+
     function parseOpenOffice($source)
     {
         $this->format = 'sxw';
 
-        # You can set the Database connection this way, too:
-        $Project = @Project::ReadProject($this->project);
-        if (!$Project)
+        if ($this->dataArray)
         {
-            $this->error = 'Cannot read project file.';
-            return;
+            #Process the data.
+            $Query = AgataCore::CreateQueryArray($this->dataArray);
         }
-        
-        # Reading the Report
-        $Report = $this->getReport();
-        if (!$Report)
+        else
         {
-            return;
+            # You can set the Database connection this way, too:
+            $Project = @Project::ReadProject($this->project);
+            if (!$Project)
+            {
+                $this->error = 'Cannot read project file.';
+                return;
+            }
+            
+            # Reading the Report
+            $Report = $this->getReport();
+            if (!$Report)
+            {
+                return;
+            }
+            
+            $DataSet = $Report['Report']['DataSet'];
+            # Process the Query.
+            $Query = AgataCore::CreateQuery($Project, $DataSet, $this->parameters);
         }
-        
-        $DataSet = $Report['Report']['DataSet'];
 
-        # Process the Query.
-        $Query = AgataCore::CreateQuery($Project, $DataSet, $this->parameters);
         if (is_agata_error($Query))
         {
             $this->error = $Query->GetError();
@@ -364,12 +416,45 @@ class AgataAPI
                 $Report = $this->getReport();
                 $source = $Report['Report']['OpenOffice']['Source'];
             }
-            
             $config = AgataOO::GetConfig($source);
             $obj = AgataCore::ParseOpenOffice($params, 'Sxw', $config['engine']);
+
+            if ($this->subDataArray)
+            {
+                $obj->SetSubDataArray($this->subDataArray);
+            }
+            if ($this->user_style)
+            {
+                $obj->SetUserStyle($this->user_style);
+            }
+            if ($this->imageReplace)
+            {
+                foreach ($this->imageReplace as $imageName => $imagePath)
+                {
+                    $obj->SetImageReplace($imageName, $imagePath);
+                }
+            }
+
             $obj->Generate($source, $this->outputPath);
         }
         return true;
+    }
+
+    function openOffice2pdf($file)
+    {
+        $this->format = 'pdf';
+        $this->outputPath = RemoveExtension($file) . '.pdf';
+        $config = AgataConfig::ReadConfig();
+
+        //$cmn = 'export HOME=' . AGATA_PATH . '; ' . $config['app']['OpenofficeToPdf'] . ' '  . $file;
+        $cmn =  $config['app']['OpenofficeToPdf'] . ' '  . $file;
+
+        system($cmn, $return);
+        if ($return == 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     function generateLabel()

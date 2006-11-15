@@ -31,7 +31,7 @@ class Dictionary
         // it will use simpleXml when PHP-GTK2...
 
         //$array = Xml2Array("dictionary/{$Dictionary}.agd");
-        
+
         $handler = fopen(AGATA_PATH . "/dictionary/{$Dictionary}.agd", 'r');
         while($line = fgets($handler, 500))
         {

@@ -56,7 +56,7 @@
   //       Samples :
   // define( 'PCLZIP_TEMPORARY_DIR', '/temp/' );
   // define( 'PCLZIP_TEMPORARY_DIR', 'C:/Temp/' );
-  define( 'PCLZIP_TEMPORARY_DIR', '' );
+  define( 'PCLZIP_TEMPORARY_DIR', temp . '/' );
 
 // --------------------------------------------------------------------------------
 // ***** UNDER THIS LINE NOTHING NEEDS TO BE MODIFIED *****
@@ -180,7 +180,6 @@
       //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 1, "zlib extension seems to be missing");
       adie('Abort '.basename(__FILE__).' : Missing zlib extensions');
     }
-
     // ----- Set the attributes
     $this->zipname = $p_zipname;
     $this->zip_fd = 0;
