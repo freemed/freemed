@@ -37,6 +37,8 @@ class EpisodeOfCare extends EMRModule {
 	var $table_name     = "eoc";
 	var $patient_field  = "eocpatient";
 
+	var $widget_hash = "##eocdescrip## (##eocdatelastsimilar##)";
+
 	var $variables		= array (
 		"eocpatient",
 		"eocdescrip",
