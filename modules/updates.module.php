@@ -1,19 +1,38 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.BaseModule');
+LoadObjectDependency('org.freemedsoftware.core.BaseModule');
 
 class UpdatesModule extends BaseModule {
 
 	var $MODULE_NAME = "Updates";
 	var $MODULE_VERSION = "0.1";
-	var $MODULE_AUTHOR = "jeff@ourexchange.net";
 	var $MODULE_DESCRIPTION = "FreeMED Software Foundation RSS feeds for software and security updates.";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "7835c6ac-115e-44d9-bc1c-7a02d3ca21c1";
 	var $PACKAGE_MINIMUM_VERSION = "0.8.1";
 
-	function UpdatesModule ( ) {
+	public function __construct ( ) {
 		// __("Updates")
 
 		// Add main menu notification handlers
@@ -38,7 +57,7 @@ class UpdatesModule extends BaseModule {
 		);
 		
 		// Call parent constructor
-		$this->BaseModule();
+		parent::__construct ( );
 	} // end constructor UpdatesModule
 
 	function notify ( ) {
@@ -55,7 +74,7 @@ class UpdatesModule extends BaseModule {
 
 		// Get date information from the security feed
 		$feed = 'Security';
-		$rss = CreateObject('_FreeMED.MagpieRSS', join("\n", file("data/cache/rss.feed.${feed}")));
+		$rss = CreateObject('org.freemedsoftware.core.MagpieRSS', join("\n", file("data/cache/rss.feed.${feed}")));
 		$newest_timestamp = $rss->items[0]['dc']['date'];
 
 		return array (
@@ -83,46 +102,40 @@ class UpdatesModule extends BaseModule {
 		return false;
 	} // end method menu_notify
 
-	function main () {
-		switch ($_REQUEST['action']) {
-			case 'feed':
-				$this->feed();
-				break;
-			default:
-				$this->menu();
-				break;
-		}
-	} // end method main
-
-	function menu () {
-		global $display_buffer;
-
-		$display_buffer .= "<div class=\"section\">".__("Updates")."</div>\n".
-			"<p/>\n".
-			"<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\" width=\"80%\">\n".
-			"<tr class=\"reverse\">\n".
-			"<td class=\"reverse\">".__("Action")."</td>\n".
-			"<td class=\"reverse\">".__("Description")."</td>\n".
-			"</tr>\n";
-		$display_buffer .= "<tr>".
-			"<td><a href=\"module_loader.php?module=".get_class($this)."&action=feed\">".__("View Feeds")."</td>\n".
-			"<td>".__("View FreeMED Software Foundation update and security feeds.")."</td>\n".
-			"</tr>\n";
-		$display_buffer .= "</table><p/>\n";
-	} // end method menu
-
-	function feed () {
-		global $display_buffer;
-
-		$feed = 'Security';
-		$rss = CreateObject('_FreeMED.MagpieRSS', join("\n", file("data/cache/rss.feed.${feed}")));
-		$display_buffer .= "<div class=\"DataHead\">".$rss->channel['title']."</div>\n";
+	// Method: GetFeed
+	//
+	//	Retrieve update feed
+	//
+	// Parameters:
+	//
+	//	$feed - (optional) Feed name. Defaults to 'Security'.
+	//
+	// Returns:
+	//
+	//	Hash containing:
+	//	* title - Title of feed
+	//	* feed - Hash containing feed
+	//	  * link
+	//	  * title
+	//	  * date
+	//	  * description
+	//
+	public function GetFeed ( $feed = 'Security' ) {
+		$myfeed = freemed::secure_filename ( $feed );
+		
+		$rss = CreateObject('org.freemedsoftware.core.MagpieRSS', join("\n", file("data/cache/rss.feed.${myfeed}")));
+		$display_buffer .= "<div class=\"DataHead\">".
+		$return['title'] = $rss->channel['title'];
 		foreach ($rss->items AS $item) {
-			$display_buffer .= "<h2><a href=\"".$item['link']."\">".$item['title']."</a> (".$item['dc']['date'].")</h2>\n";
-			$display_buffer .= $item['description']."<br/>\n";
+			$return['feed'][] = array (
+				'link' => $item['link'],
+				'title' => $item['title'],
+				'date' => $item['dc']['date'],
+				'description' => $item['description']
+			);
 		}
-		$display_buffer .= "<br/><br/><div align=\"center\"><a href=\"javascript:history.go(-1);\" class=\"button\">".__("Go Back")."</a></div>\n";
-	} // end method feed
+		return $return;
+	} // end method GetFeed
 
 	//------ Actual functions for news feeds
 
@@ -137,7 +150,7 @@ class UpdatesModule extends BaseModule {
 	//	Boolean, whether or not the user needs to be notified of
 	//	a new feed.
 	//
-	function _cache_feed ( $feed ) {
+	private function _cache_feed ( $feed ) {
 		$u = freemed::config_value('update_user');
 		$p = freemed::config_value('update_pass');
 		$notify = false;
@@ -169,7 +182,7 @@ class UpdatesModule extends BaseModule {
 	//	Boolean, true if there is a cached copy, false if there is
 	//	no cached copy or it is stale.
 	//
-	function _check_cached_copy ( $feed ) {
+	private function _check_cached_copy ( $feed ) {
 		$hours = 24;
 		$cache_file = "data/cache/rss.feed.${feed}";
 
@@ -202,7 +215,7 @@ class UpdatesModule extends BaseModule {
 	//
 	//	Text of the resultant page, or false if it fails.
 	//
-	function _get ( $host, $url, $username, $password ) {
+	private function _get ( $host, $url, $username, $password ) {
 		if (!$fp = fsockopen($host, 80, $errno, $errstr, 15)) {
 			return false;
 		}

@@ -1,20 +1,40 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2006 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.AdminModule');
+LoadObjectDependency('org.freemedsoftware.core.BaseModule');
 
-class CDRWBackup extends AdminModule {
+class CDRWBackup extends BaseModule {
 
 	var $MODULE_NAME = "CD/RW Backup";
 	var $MODULE_VERSION = "0.1";
-	var $MODULE_AUTHOR = "jeff@ourexchange.net";
-	var $MODULE_HIDDEN = true;
 	var $ICON = "img/cdrw_backup.gif";
 
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "11d64a77-2eca-4348-8061-bd59ab360fb1";
 
-	function CDRWBackup ( ) {
+	public function __construct ( ) {
+		// __("CD/RW Backup")
+
 		// Set administration handler
 		$this->_SetHandler('AdminMenu', 'menu');
 
@@ -49,34 +69,36 @@ class CDRWBackup extends AdminModule {
 		));
 
 		// Call parent constructor
-		$this->AdminModule();
+		parent::__construct ( );
 	} // end constructor CDRWBackup
 
-	function menu ( ) {
-		global $display_buffer;
-		$display_buffer .= $this->action();
-	} // end method menu
-
-	function action ( ) {
-		$buffer .= __("Creating backup")." ... ";
+	// Method: RunBackup
+	//
+	//	Execute the backup routine.
+	//
+	// Returns:
+	//
+	//	Textual output from the backup commands.
+	//
+	public function RunBackup( ) {
 		$pwd = `pwd`;
-		$dev = freemed::config_value('cdrw_device');
-		$driver = freemed::config_value('cdrw_driver');
-		$speed = freemed::config_value('cdrw_speed');
+		$dev = escapeshellarg( freemed::config_value('cdrw_device') );
+		$driver = escapeshellarg( freemed::config_value('cdrw_driver') );
+		$speed = escapeshellarg( freemed::config_value('cdrw_speed') );
 		$output = `/usr/share/freemed/scripts/cdrw_backup.sh $dev $driver $speed`;
 		//print "/usr/share/freemed/scripts/cdrw_backup.sh $dev | $driver | $speed\n";
-		$buffer .= "<b>".__("done")."</b><br/>\n";
-		$buffer .= "<pre>".prepare($output, true)."</pre>\n";
-		$buffer .= "<br/><br/>\n".
-			"<div align=\"center\">\n".
-			"<a href=\"admin.php\" class=\"button\"".
-			">".__("Return to Administration Menu")."</a>\n";
-		return $buffer;
+		return $output;
 	} // end method action
 
 	// Picklist callbacks
 
-	function device_list ( ) {
+	// Method: device_list
+	//
+	// Returns:
+	//
+	//	Hash containing available CD/RW devices.
+	//
+	public function device_list ( ) {
 		global ${$varname};
 
 		// Get devices from cdrecord -scanbus
@@ -103,7 +125,13 @@ class CDRWBackup extends AdminModule {
 		return $stack;
 	} // end method device_list
 
-	function driver_list ( ) {
+	// Method: driver_list
+	//
+	// Returns:
+	//
+	//	Hash of available drivers.
+	//
+	public function driver_list ( ) {
 		$_list = `cdrecord driver=help 2>&1`;
 		$_list = explode("\n", $_list);
 		$stack = array ( );
