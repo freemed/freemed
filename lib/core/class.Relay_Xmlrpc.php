@@ -36,6 +36,10 @@ if (!defined('xmlrpcI4')) {
 	define( 'xmlrpcStruct', 'struct' );
 }
 
+// Class: org.freemedsoftware.core.Relay_Xmlrpc
+//
+//	XML-RPC data relay methods.
+//
 class Relay_Xmlrpc extends Relay {
 
 	protected $xmlrpcTypes = array (

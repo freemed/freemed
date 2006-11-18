@@ -23,6 +23,10 @@
 
 LoadObjectDependency('org.freemedsoftware.core.Handler_HL7v2');
 
+// Class: org.freemedsoftware.core.Handler_HL7v2_R01
+//
+//	HL7 v2.3 R01 handler.
+//
 class Handler_HL7v2_R01 extends Handler_HL7v2 {
 
 	public function Handle () {

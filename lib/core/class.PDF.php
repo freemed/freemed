@@ -21,6 +21,10 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+// Class: org.freemedsoftware.core.PDF
+//
+//	PDF access class.
+//
 class PDF {
 
 	var $cache_dir;
@@ -28,9 +32,13 @@ class PDF {
 	var $page_count;
 	var $uid;
 
-	function __constructor ( $file ) { $this->PDF($file); }
-
-	function PDF ( $file ) {
+	// Constructor: PDF
+	//
+	// Parameters:
+	//
+	//	$file - PDF file to access.
+	//
+	function __constructor ( $file ) {
 		$this->file = $file;
 		$this->page_count = $this->NumberOfPages();
 		$this->uid = md5_file($this->file);

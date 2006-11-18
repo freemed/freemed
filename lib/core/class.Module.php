@@ -21,6 +21,12 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+// Class: org.freemedsoftware.core.Module
+//
+//	Module superclass. This class should not be accessed directly,
+//	but instead should be used as an anscestor for <BaseModule>
+//	and derived classes.
+//
 class Module {
 		// package related variables
 	var $PACKAGE_NAME;

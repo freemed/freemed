@@ -23,6 +23,10 @@
 
 LoadObjectDependency('org.freemedsoftware.core.Relay');
 
+// Class: org.freemedsoftware.core.Relay_Json
+//
+//	JSON data relay methods.
+//
 class Relay_Json extends Relay {
 
 	// Method: deserialize_request

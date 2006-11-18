@@ -21,10 +21,20 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+// Class: org.freemedsoftware.core.CHMReader
+//
+//	Class for reading from a CHM compressed help file.
+//
 class CHMReader {
 
 	protected $file = '';
 
+	// Constructor: CHMReader
+	//
+	// Parameters:
+	//
+	//	$file - Name of CHM file to open.
+	//
 	public function __construct ( $file ) {
 		if ( file_exists ( $file ) ) {
 			$this->file = $file;
