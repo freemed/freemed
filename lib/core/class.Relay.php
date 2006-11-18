@@ -57,6 +57,18 @@ class Relay {
 		return $this->serialize_response( $output );
 	} // end public function handle_request
 
+	// Method: extract_parameters
+	//
+	//	This should be overridden with a Relay provider's ability
+	//	to extract parameter data from $_REQUEST or other sources.
+	//
+	// Parameters:
+	//
+	//
+	protected function extract_parameters ( $data, $post ) {
+		return $data['params'];
+	} // end method extract_parameters
+
 } // end class Relay
 
 ?>
