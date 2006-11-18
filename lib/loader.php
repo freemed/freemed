@@ -21,6 +21,12 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+// File: Object Loader API
+//
+//	These functions should only be used internally in FreeMED
+//	module and class handling routines.
+//
+
 // Function: CallMethod
 //
 // Parameters:
