@@ -299,10 +299,20 @@ class EMRModule extends BaseModule {
 
 	// Method: add
 	//
+	//	Publically accessible record insertion routine.
+	//
 	// Parameters:
 	//
-	//	$data -
+	//	$data - Hash of values to be inserted into the record.
 	//
+	// Returns:
+	//
+	//	'id' field of newly created record.
+	//
+	// SeeAlso:
+	//	<add_pre>
+	//	<add_post>
+	// 
 	public function add ( $data ) {
 		if ( !$this->acl_access( 'add', $patient ) ) {
 			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
@@ -481,13 +491,53 @@ class EMRModule extends BaseModule {
 		return $return;
 	} // end method picklist
 
-	protected function qualified_query ( $patient, $items = NULL ) {
+	// Method: GetList
+	//
+	//	ACL controlled wrapper around <qualified_query> which allows lists of
+	//	records to be pulled for the current component.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$items - (optional) Limit on number of items returned. Defaults to 10.
+	//
+	//	$conditional - (optional) Hash of key => value conditions for the
+	//	query.
+	//
+	// Returns:
+	//
+	//	Array of hashes containing records.
+	//
+	// SeeAlso:
+	//	<qualified_query>
+	//
+	public function GetList ( $patient, $items = 10, $conditional = NULL ) {
+		// ACL
+		if (!$this->acl_access ( 'view', $patient ) ) {
+			syslog(LOG_INFO, "ACL: Access denied for $patient (".get_class($this).")");
+			return false;
+		}
+
+		// Wrapper
+		return $this->qualified_query ( $patient, $items, $conditional );
+	} // end method GetList
+
+	protected function qualified_query ( $patient, $items = NULL, $conditional = NULL ) {
 		if (is_array($this->summary_query_link)) {
 			foreach ($this->summary_query_link AS $my_k => $my_v) {
 				// Format: field => table_name
 				$_from[] = "LEFT OUTER JOIN ${my_v} ON ${my_v}.id = ".$this->table_name.'.'.$my_k;
 			}
 			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
+		}
+
+		// Form conditional clause, if it exists
+		if ( is_array ($conditional) ) {
+			foreach ($conditional AS $k => $v) {
+				$c[] = "`".$GLOBALS['sql']->escape($k)."` = ".$GLOBALS['sql']->quote($v);
+			}
+			$conditional_clause = join ( ' AND ', $c );
 		}
 
 		// get last $items results
@@ -498,10 +548,12 @@ class EMRModule extends BaseModule {
 			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
+			($conditional ? 'AND ( '.$conditional_clause.' ) ' : '' ).
 			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC ".
 			( $items ? "LIMIT ".addslashes($items) : '' );
 
-		return $query;
+		// Return full hash
+		return $GLOBALS['sql']->queryAll( $query );
 	} // end protected function qualified_query
 
 	// Method: recent_record
