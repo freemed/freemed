@@ -45,7 +45,7 @@ function ___sort_aging ( $a, $b ) {
 	return ( ($a['balance'] > $b['balance']) ? -1 : 1 );
 }
 
-// Class: FreeMED.ClaimLog
+// Class: org.freemedsoftware.api.ClaimLog
 //
 //	Allows access to functions involving the internal FreeMED claim
 //	log, which is used by the system to track billing, rebilling,
@@ -53,7 +53,7 @@ function ___sort_aging ( $a, $b ) {
 //
 class ClaimLog {
 
-	// STUB constructor
+	// Constructor: ClaimLog
 	function ClaimLog ( ) { }
 
 	// Method: aging_report_qualified

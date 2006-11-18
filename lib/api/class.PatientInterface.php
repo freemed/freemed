@@ -21,6 +21,10 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+// Class: org.freemedsoftware.api.PatientInterface
+//
+//	Class to access patient functions.
+//
 class PatientInterface {
 
 	public function __constructor ( ) { }
