@@ -167,16 +167,16 @@ class ScannedDocuments extends EMRModule {
 
 	function print_override ( $id ) {
 		// Create djvu object
-		$rec = freemed::get_link_rec($id, $this->table_name);
+		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = freemed::image_filename($rec[$this->patient_field], $id, 'djvu');
 		$d = CreateObject('org.freemedsoftware.core.Djvu', $filename);
 		return $d->ToPDF( true );
 	} // end method print_override
 
 	function fax_widget ( $varname, $id ) {
-		global $sql, ${$varname};
-		$r = freemed::get_link_rec($id, $this->table_name);
-		$phy = freemed::get_link_rec($r['imagephy'], 'physician');
+		global ${$varname};
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$phy = $GLOBALS['sql']->get_link( 'physician', $r['imagephy'] );
 		${$varname} = $phy['phyfaxa'];
 		return module_function('faxcontacts',
 			'widget',

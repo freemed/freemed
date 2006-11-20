@@ -78,7 +78,7 @@ class IcdCodes extends SupportModule {
 				$suffix = '9'; break;
 		}
 
-		$code_record = freemed::get_link_rec($code, $this->table_name);
+		$code_record = $GLOBALS['sql']->get_link( $this->table_name, $code );
 		return $code_record['icd'.$suffix.'code'].' - '.
 			$code_record['icd'.$suffix.'descrip'];
 	} // end method display_short

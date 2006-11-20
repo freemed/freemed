@@ -161,7 +161,7 @@ class WorkListsModule extends BaseModule {
 		if ($status+0 == 0) { return ''; }
 
 		// Actual change
-		$a = freemed::get_link_rec($appt, 'scheduler');
+		$a = $GLOBALS['sql']->get_link( 'scheduler', $appt );
 		$GLOBALS['sql']->query(
 			$GLOBALS['sql']->insert_query(
 				'scheduler_status',
