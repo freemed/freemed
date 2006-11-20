@@ -38,9 +38,9 @@
 % only display. FIXME: Migrate this to a header.
 \begin{center}
 	{\relsize{1}\textbf{{[link link=$letterfrom table='physician' field='phypracname'|texize]}}} \\
-	{\relsize{-1}\textsl{**method:Physician:fullName:letterfrom**}} \\
+	{\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.core.Physician.fullName' param=$letterfrom|texize]}}} \\
 	\textsl{{[link link=$letterfrom table='physician' field='phyaddr1a'|texize]}, {[link link=$letterfrom table='physician' field='phycitya'|texize]}, {[link link=$letterfrom table='physician' field='phystatea'|texize]} {[link link=$letterfrom table='physician' field='phyzipa'|texize]} } \\
-	\textsl{phone **link:letterfrom:physician:phyphonea:phone** fax **link:letterfrom:physician:phyfaxa:phone**}
+	\textsl{phone {[link link=$letterfrom table='physician' field='phyphonea'|texize]} fax {[link link=$letterfrom table='physician' field='phyfaxa'|texize]}}
 \end{center}
 
 
