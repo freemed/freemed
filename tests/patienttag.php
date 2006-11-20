@@ -23,7 +23,11 @@
 
 include_once ( dirname(__FILE__).'/bootstrap.test.php' );
 
+t('org.freemedsoftware.module.patienttag.CreateTag', CallMethod('org.freemedsoftware.module.patienttag.CreateTag', 1, 'test' ));
+t('org.freemedsoftware.module.patienttag.CreateTag', CallMethod('org.freemedsoftware.module.patienttag.CreateTag', 1, 'also' ));
 t('org.freemedsoftware.module.patienttag.SimpleTagSearch', CallMethod('org.freemedsoftware.module.patienttag.SimpleTagSearch', 'test' ));
 t('org.freemedsoftware.module.patienttag.AdvancedTagSearch', CallMethod('org.freemedsoftware.module.patienttag.AdvancedTagSearch', 'test', array ( array ( 'tag' => 'also', 'operator' => 'AND' ) ) ));
+t('org.freemedsoftware.module.patienttag.ExpireTag', CallMethod('org.freemedsoftware.module.patienttag.ExpireTag', 1, 'test' ));
+t('org.freemedsoftware.module.patienttag.ExpireTag', CallMethod('org.freemedsoftware.module.patienttag.ExpireTag', 1, 'also' ));
 
 ?>
