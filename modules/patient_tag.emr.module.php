@@ -62,6 +62,102 @@ class PatientTag extends SupportModule {
 		$date['datecreate'] = '';
 	}
 
+	// Method: SimpleTagSearch
+	//
+	//	Tag search function.
+	//
+	// Parameters:
+	//
+	//	$tag - Name of tag to search for.
+	//
+	//	$include_inactive - (optional) Boolean, include inactive tags.
+	//	Defaults to false.
+	//
+	// Returns:
+	//
+	//	Array of hashes. (See <SearchEngine> output)
+	//
+	// SeeAlso:
+	//	<AdvancedTagSearch>
+	//	<SearchEngine>
+	//
+	public function SimpleTagSearch ( $tag, $include_inactive = false ) {
+		// Handle anything "funny"
+		if (!$tag) { return false; }
+
+		return $this->SearchEngine( "t.tag=".$GLOBALS['sql']->quote($tag), $include_inactive );
+	} // end method SimpleTagSearch
+
+	// Method: AdvancedTagSearch
+	//
+	//	Advanced tag searching function, allowing simple boolean searching.
+	//
+	// Parameters:
+	//
+	//	$tag - Name of primary tag to search for.
+	//
+	//	$clauses - Array of hashes like this:
+	//	* tag - Name of tag
+	//	* operator - 'AND' or 'OR'
+	//
+	//	$include_inactive - (optional) Boolean, include inactive tags.
+	//	Defaults to false.
+	//
+	// Returns:
+	//
+	//	Array of hashes. (See <SearchEngine> output)
+	//
+	// SeeAlso:
+	//	<SimpleTagSearch>
+	//	<SearchEngine>
+	//
+	public function AdvancedTagSearch ( $tag, $clauses, $include_inactive = false ) {
+		// Handle anything "funny"
+		if (!$tag) { return false; }
+
+		$where = "t.patient IN ( SELECT t.patient FROM patienttag t WHERE t.tag=".$GLOBALS['sql']->quote($tag)." ) ";
+
+		foreach ($clauses AS $clause) {
+			if ($clause['tag']) {
+				switch ($clause['operator']) {
+					case 'AND': case 'OR':
+					$where .= $clause['operator']." t.patient IN ( SELECT t.patient FROM patienttag t WHERE t.tag=".$GLOBALS['sql']->quote($clause['tag'])." ) ";
+					break;
+
+					default: break;
+				}
+			}
+		}
+		return $this->SearchEngine( $where, $include_inactive );
+	} // end method SimpleTagSearch
+
+	// Method: SearchEngine
+	//
+	//	Protected internal function with actual searching capabilities.
+	//
+	// Parameters:
+	//
+	//	$clase - WHERE clause
+	//
+	//	$include_inactive - (optional) Boolean, include inactive tags.
+	//	Defaults to false.
+	//
+	// Returns:
+	//
+	//	Hash of found values.
+	//	* patient_record - Patient record id
+	//	* patient_id - Practice ID for patient
+	//	* last_seen - Date last seen/next appointment
+	//	* first_name - First name of patient
+	//	* last_name - Last name of patient
+	//	* middle_name - Middle name of patient
+	//	* date_of_birth - Patient's date of birth
+	//
+	protected function SearchEngine ( $clause, $include_inactive = false ) {
+		$query = "SELECT p.id AS patient_record, p.ptid AS patient_id, MAX(c.caldateof) AS last_seen, p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptdob AS date_of_birth FROM patient p LEFT OUTER JOIN patienttag t ON p.id=t.patient LEFT OUTER JOIN scheduler c ON p.id=c.calpatient WHERE ".( !$include_inactive ? "( t.dateexpire=0 OR t.dateexpire>NOW() ) AND" : "" )." ( ${clause} ) GROUP BY p.id";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method SearchEngine
+
 } // end class PatientTag
 
 register_module ("PatientTag");
