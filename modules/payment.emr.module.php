@@ -108,6 +108,7 @@ class PaymentModule extends EMRModule {
 		parent::__construct ( );
 	} // end function PaymentModule
 
+/*		// FIXME: migrate this code to functions :
 	function transaction_wizard($procid, $paycat) {
 		global $display_buffer;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
@@ -117,13 +118,13 @@ class PaymentModule extends EMRModule {
             $payrecproc = $procid;
 
             if ($patient>0) {
-                $this_patient = CreateObject('FreeMED.Patient', $patient);
+                $this_patient = CreateObject('org.freemedsoftware.core.Patient', $patient);
             } else {
 		$display_buffer .= __("No patient");
                 template_display();
 	    }
 
-			$proc_rec = freemed::get_link_rec($procid, "procrec");
+			$proc_rec = $GLOBALS['sql']->get_link('procrec', $procid);
 			if (!$proc_rec) {
 				$display_buffer .= __("Error getting procedure");
 				template_display();
@@ -1089,8 +1090,10 @@ class PaymentModule extends EMRModule {
 		<a class=\"button\" href=\"module_loader.php?module=".get_class($this)."&patient=".urlencode($patient)."&return=".$_REQUEST['return']."\">".__("Return to Ledger")."</a>
 		</div>
             ";
-
         } // end ledger
+
+		// FIXME: end of code block to migrate
+	*/
 
 	// Method: RemoveProcedureAsMistake
 	//
@@ -1127,10 +1130,7 @@ class PaymentModule extends EMRModule {
 	//	Ledger records for patient matching specified parameters as
 	//	an array of hashes.
 	//
-        function GetLedger ( $patient ) {
-		// initialize line item count
-		$line_item_count = 0;
-
+	public function GetLedger ( $patient, $type ) {
 		switch ($type) {
 			case 'closed':
 			// see paid procedures when closed is selected
@@ -1155,6 +1155,7 @@ class PaymentModule extends EMRModule {
 		$query = "SELECT ".
 				"pr.id AS id, ".
 				"c.cptname AS cpt_code, ".
+				"c.cptnameint AS cpt_name, ".
 				"cm.cptmod AS cpt_modifier, ".
 				"pr.procbalorig AS balance_original, ".
 				"pr.procamtallowed AS amount_allowed, ".
@@ -1171,158 +1172,98 @@ class PaymentModule extends EMRModule {
 			"ORDER BY procdt,id";
 		$result = $sql->queryAll ($query);
 
-            $display_buffer .= "
-            <table BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"3\" WIDTH=\"100%\">
-            <tr CLASS=\"thinbox\" style=\"text-size: 8pt;\">
-            <td>&nbsp;</td>
-            <td ALIGN=\"LEFT\"><b><small>".__("Date")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>".__("Proc Code")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>".__("Provider")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>".__("Charged")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>".__("Allowed")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>".__("Charges")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>".__("Paid")."</small></b></td>
-            <td ALIGN=\"RIGHT\"><b><small>".__("Balance")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>".__("Billed")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>".__("Date Billed")."</small></b></td>
-            <td ALIGN=\"LEFT\"><b><small>".__("View")."</small></b></td>
-            </tr>
-            ";
+		return $result;
+        } // end method GetLedger
 
-            // loop for all "line items"
-            while ($r = $sql->fetch_array ($result))
-            {
-                $line_item_count++;
-                $this_cpt = freemed::get_link_field ($r[proccpt], "cpt", "cptnameint");
-                $this_cptcode = freemed::get_link_field ($r[proccpt], "cpt", "cptcode");
-                $this_cptmod = freemed::get_link_field ($r[proccptmod],
-                                                       "cptmod", "cptmod");
-                $this_physician = CreateObject('FreeMED.Physician', $r[procphysician]);
-                $display_buffer .= "
-                <tr CLASS=".( ($this->item == $r['id']) ?  "#00ffff" :
-                                freemed_alternate()).">
-                <td>
-                <input TYPE=\"RADIO\" NAME=\"item\" VALUE=\"".prepare($r['id'])."\"
-                ".( ($r['id'] == $this->item) ?  "CHECKED": "" )." /></td>
-                <td ALIGN=\"LEFT\"><small>".fm_date_print ($r['procdt'])."</small></td>
-                <td ALIGN=\"LEFT\"><small>".
-			prepare($this_cptcode." (".$this_cpt.")")."</small></td>
-                <td ALIGN=\"LEFT\"><small>".
-			prepare($this_physician->fullName())."&nbsp;</small></td>
-                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procbalorig'], 0, 2)."</small></td>
-                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procamtallowed'], 0, 2)."</small></td>
-                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['proccharges'], 0, 2)."</small></td>
-                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procamtpaid'], 0, 2)."</small></td>
-                <td ALIGN=\"RIGHT\"><small>".bcadd ($r['procbalcurrent'], 0, 2)."</small></td>
-                <td ALIGN=\"LEFT\"><small>".(($r['procbilled']) ? __("Yes") : __("No") )."</small></td>
-                <td ALIGN=\"LEFT\"><small>".( !empty($r['procdtbilled']) ?
-					prepare($r['procdtbilled']) : "&nbsp;" )."</small></td>
-                <td ALIGN=\"LEFT\"><a class=\"button\" ".
-		"HREF=\"$this->page_name?action=addform".
-                "&module=$module&been_here=1&patient=$patient&viewaction=ledger&item=".$r['id']."&return=".$_REQUEST['return']."\"
-                >Ledger</a>
-                </tr>
-                ";
-            } // end looping for results
+	// Method: CoverageToInsuranceName
+	//
+	// Parameters:
+	//
+	//	$coverage - Coverage id
+	//
+	// Returns:
+	//
+	//	Textual name of insurance company / payer.
+	//
+	public function CoverageToInsuranceName( $coverage ) {
+		$query = "SELECT i.insconame FROM coverage c LEFT OUTER JOIN insco i ON i.id=c.covinsco WHERE c.id='".addslashes($coverage)."'";
+		return $GLOBALS['sql']->queryOne( $query );
+	} // end method CoverageToInsuranceName
 
-            $display_buffer .= "
-            </table>
-            <p/>
-            <div ALIGN=\"CENTER\">
-            <select NAME=\"viewaction\">
-            <option VALUE=\"refresh\"  >".__("Refresh")."</option>
-            <option VALUE=\"rebill\"  >".__("Rebill")."</option>
-            <option VALUE=\"payment\" >".__("Payment")."</option>
-            <option VALUE=\"copay\" >".__("Copay")."</option>
-            <option VALUE=\"adjustment\" >".__("Adjustment")."</option>
-            <option VALUE=\"deductable\" >".__("Deductable")."</option>
-            <option VALUE=\"withhold\" >".__("Withhold")."</option>
-            <option VALUE=\"transfer\">".__("Transfer")."</option>
-            <option VALUE=\"allowedamt\">".__("Allowed Amount")."</option>
-            <option VALUE=\"denial\"  >".__("Denial")."</option>
-            <option VALUE=\"writeoff\"  >".__("Writeoff")."</option>
-            <option VALUE=\"refund\">".__("Refund")."</option>
-            <option VALUE=\"mistake\" >".__("Mistake")."</option>
-            <option VALUE=\"ledgerall\">".__("Ledger")."</option>
-            <option VALUE=\"paidledger\">".__("Ledger Closed")."</option>
-            <option VALUE=\"closed\">".__("Closed")."</option>
-            </select>
-            <input class=\"button\" TYPE=\"SUBMIT\" ".
-	    "VALUE=\"".__("Select Line Item")."\"/>
-            <input TYPE=\"HIDDEN\" NAME=\"been_here\" VALUE=\"1\"/>
-            </div>
-            </form>
-            ";
-        } // end view function
-		
-	function insuranceSelectionByType($proccovmap) {
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-			$returned_string = "";
-			
-			$cov_ids = explode(":",$proccovmap);
+	// Method: CoverageIdFromType
+	//
+	//	Get coverage record id from procedure record.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure id
+	//
+	//	$type - "Type" of coverage, from 1 to 4
+	//
+	// Returns:
+	//
+	//	Coverage record number or 0 if invalid or nonexistent.
+	//
+	public function CoverageIdFromType( $proc, $type ) {
+		switch ($type+0) {
+			case 1: case 2: case 3: case 4:
+			$query = "SELECT proccov".($type+0)." FROM procrec WHERE id='".addslashes($proc)."'";
+			return $GLOBALS['sql']->queryOne( $query );
+			break;
 
-			$cnt = count($cov_ids);
-			for ($i=0;$i<$cnt;$i++)
-			{
-				if ($i != 0)
-				{
-					if ($cov_ids[$i] != 0)
-					{
-						$insid = freemed::get_link_field($cov_ids[$i],"coverage","covinsco");
-						$insname = freemed::get_link_field($insid,"insco","insconame");
-						$returned_string .= "<OPTION VALUE=\"".$i."\">".$insname."\n";
-					}
-				}
-				else
-				{
-					$returned_string .= "<OPTION VALUE=\"".$i."\">".__("Patient")."\n";
-				}
-			}
-			return $returned_string;
-
+			default: return 0; break;
 		}
+	} // end method CoverageIdFromType
 
-	function insuranceName($coverage) {
-		$insid = freemed::get_link_field($coverage,"coverage","covinsco");
-		return freemed::get_link_field($insid,"insco","insconame");
-	}
-
-	function coverageIDFromType($proccovmap, $type) {
-		$cov_ids = explode(":",$proccovmap);
-		return $cov_ids[$type];
-	}
-
-	function InsuranceSelection ( $proccovmap ) {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) global ${$k};
-		$returned_string = "";
-			
-		$cov_ids = explode(":",$proccovmap);
-		$cnt = count($cov_ids);
-		for ($i=0;$i<$cnt;$i++) {
-			if (($i != 0) and ($cov_ids[$i] != 0)) {
-				$insid = freemed::get_link_field($cov_ids[$i],"coverage","covinsco");
-				$insname = freemed::get_link_field($insid,"insco","insconame");
-				$returned_string .= "<OPTION VALUE=\"".$cov_ids[$i]."\">".$insname."\n";
+	// Method: PayerSelection
+	//
+	//	Get selection of payers for a particular procedure record.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure id
+	//
+	// Returns:
+	//
+	//	Hash of available payer/coverage options
+	//
+	public function PayerSelection ( $proc ) {
+		$query = "SELECT p.id AS proc_id, c.id AS cov_id, i.insconame AS insconame FROM proc p LEFT OUTER JOIN coverage c ON ( c.id=p.proccov1 OR c.id=p.proccov2 OR c.id=p.proccov3 OR c.id=p.proccov4 ) LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE p.id='".addslashes( $proc )."'";
+		$result = $GLOBALS['sql']->queryAll ( $query );
+		foreach ( $result AS $r ) {
+			$count++;
+			if ( $r['proc_id'] ) {
+				$return[$r['cov_id']] = $r['insconame'];			
 			}
 		}
-		return $returned_string;
-	}
+		return $return;
+	} // end method PayerSelection
 
-	function IsAuthorized($proc,&$remain,&$used) {
-		global $display_buffer;
-		global $sql;
-
-		if ($proc[procauth] == 0)
-		{
-			$remain = $used = 0;
-			return;
+	// Method: IsAuthorized
+	//
+	//	Determine authorization information for a procedure record.
+	//
+	// Parameters:
+	//
+	//	$proc - Procedure record (procrec) id
+	//
+	// Returns:
+	//
+	// 	Hash containing:
+	//	* remain : authorization visits remaining
+	//	* used : authorization visits used
+	//
+	public function IsAuthorized ( $proc ) {
+		$query = "SELECT p.procauth, a.authvisitsremain AS remain, a.authvisitsused AS used FROM procrec p LEFT OUTER JOIN authorizations a ON a.id=p.procauth WHERE p.id='".addslashes($proc)."'";
+		$auth = $GLOBALS['sql']->queryRow( $query );
+		if ( $auth['procauth'] == 0 ) {
+			return array ( 'remain' => 0, 'used' => 0 );
 		}
-
-		$auth_rec = freemed::get_link_rec($proc['procauth'],"authorizations");
-		$remain = $auth_rec['authvisitsremain'];
-		$used = $auth_rec['authvisitsused'];
-	}
+		return array (
+			'remain' => $auth['remain'],
+			'used' => $auth['used']
+		);
+	} // end method IsAuthorized
 
 } // end class PaymentModule
 
