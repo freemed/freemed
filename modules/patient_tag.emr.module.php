@@ -62,6 +62,44 @@ class PatientTag extends SupportModule {
 		$date['datecreate'] = '';
 	}
 
+	// Method: CreateTag
+	//
+	//	Attach a new tag to a patient
+	//
+	// Parameters:
+	//
+	//	$patient - Patient record id.
+	//
+	//	$tag - Textual name of tag
+	//
+	public function CreateTag ( $patient, $tag ) {
+		if ($patient and $tag) {
+			$query = $GLOBALS['sql']->insert_query (
+				$this->table_name,
+				array (
+					'patient' => $patient,
+					'tag' => $tag
+				)
+			);
+			$GLOBALS['sql']->query( $query );
+		}
+	} // end method CreateTag
+
+	// Method: ExpireTag
+	//
+	//	Force tag to expire for specified patient and tag.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient record id.
+	//
+	//	$tag - Textual name of tag in question.
+	//
+	public function ExpireTag ( $patient, $tag ) {
+		$query = "UPDATE `".$this->table_name."` SET dateexpire=NOW() WHERE patient=".$GLOBALS['sql']->quote( $patient )." AND tag=".$GLOBALS['sql']->quote( $tag );
+		$GLOBALS['sql']->query( $query );
+	} // end method ExpireTag
+
 	// Method: SimpleTagSearch
 	//
 	//	Tag search function.
@@ -115,13 +153,13 @@ class PatientTag extends SupportModule {
 		// Handle anything "funny"
 		if (!$tag) { return false; }
 
-		$where = "t.patient IN ( SELECT t.patient FROM patienttag t WHERE t.tag=".$GLOBALS['sql']->quote($tag)." ) ";
+		$where = "t.patient IN ( SELECT t.patient FROM patienttag t WHERE t.tag=".$GLOBALS['sql']->quote($tag).( !$include_inactive ? " AND ( t.dateexpire=0 OR t.dateexpire>NOW() )" : "" )." ) ";
 
 		foreach ($clauses AS $clause) {
 			if ($clause['tag']) {
 				switch ($clause['operator']) {
 					case 'AND': case 'OR':
-					$where .= $clause['operator']." t.patient IN ( SELECT t.patient FROM patienttag t WHERE t.tag=".$GLOBALS['sql']->quote($clause['tag'])." ) ";
+					$where .= $clause['operator']." t.patient IN ( SELECT t.patient FROM patienttag t WHERE t.tag=".$GLOBALS['sql']->quote($clause['tag']).( !$include_inactive ? " AND ( t.dateexpire=0 OR t.dateexpire>NOW() )" : "" )." ) ";
 					break;
 
 					default: break;
