@@ -25,6 +25,7 @@ if ($_SERVER['PHP_SELF'] == basename(__FILE__)) {
 	die("Bootstrap cannot be run directly.\n");
 }
 
+if (!function_exists('mysql_pconnect')) { dl('mysql.so'); }
 ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
 
 include_once ( 'lib/freemed.php' );
