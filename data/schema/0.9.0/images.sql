@@ -28,6 +28,7 @@ CREATE TABLE `images` (
 	imagedesc		VARCHAR (150),
 	imageeoc		TEXT,
 	imagefile		VARCHAR (100),
+	imageformat		CHAR (4) NOT NULL DEFAULT 'djvu',
 	imagephy		INT UNSIGNED DEFAULT 0,
 	imagereviewed		INT UNSIGNED DEFAULT 0,
 	locked			INT UNSIGNED DEFAULT 0,

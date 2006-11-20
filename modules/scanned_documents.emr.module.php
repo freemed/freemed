@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 class ScannedDocuments extends EMRModule {
 
 	var $MODULE_NAME = "Scanned Documents";
-	var $MODULE_VERSION = "0.4.2";
+	var $MODULE_VERSION = "0.4.3";
 	var $MODULE_DESCRIPTION = "Allows images to be stored, as if they were in a paper chart.";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "5291e9dc-f660-4776-a52e-099ba7de9790";
@@ -38,6 +38,19 @@ class ScannedDocuments extends EMRModule {
 	var $patient_field = "imagepat";
 	var $order_by      = "imagedt";
 	var $widget_hash   = "##imagecat## [##imagedt##] ##imagedesc## (##imagetype##)";
+
+	var $variables = array (
+		'imagedt',
+		'imagepat',
+		'imagetype',
+		'imagecat',
+		'imagedesc',
+		'imageeoc',
+		'imagefile',
+		'imageformat',
+		'imagephy',
+		'imagereviewed',
+	);
 
 	public function __construct () {
 		// __("Scanned Documents")
@@ -72,7 +85,6 @@ class ScannedDocuments extends EMRModule {
 		list ( $data['imagetype'], $data['imagecat'] ) = explode('/', $data['imagetypecat']);
 		$data['imagereviewed'] = 0;
 	}
-
 
 	protected function add_post ( $id ) {
 		// Handle upload
@@ -222,6 +234,17 @@ class ScannedDocuments extends EMRModule {
 				' ADD COLUMN imagereviewed INT UNSIGNED AFTER imagephy');
 			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
 				'SET imagereviewed=0');
+		}
+
+		// Version 0.4.3
+		//
+		//	Add format
+		//
+		if (!version_check($version, '0.4.3')) {
+			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
+				' ADD COLUMN imageformat CHAR (4) AFTER imagefile');
+			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
+				"SET imageformat='djvu'");
 		}
 	} // end method _update
 
