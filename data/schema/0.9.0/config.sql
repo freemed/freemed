@@ -25,5 +25,5 @@ CREATE TABLE `config` (
 	c_value			VARCHAR (100),
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		(id)
-);
+) ENGINE=InnoDB;
 

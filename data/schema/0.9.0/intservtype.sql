@@ -24,5 +24,5 @@ CREATE TABLE `intservtype` (
 	intservtype		VARCHAR (15) NOT NULL,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id )
-);
+) ENGINE=InnoDB;
 

@@ -93,5 +93,5 @@ CREATE TABLE `patient` (
 
 	#	Define keys
 	KEY			( ptlname, ptfname, ptmname, ptid, ptdob )
-);
+) ENGINE=InnoDB;
 

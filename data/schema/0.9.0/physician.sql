@@ -71,5 +71,5 @@ CREATE TABLE `physician` (
 
 	#	Define keys
 	KEY			( phylname, phyfname, phymname )
-);
+) ENGINE=InnoDB;
 

@@ -38,6 +38,6 @@ CREATE TABLE `cpt` (
 	cpttos			TEXT,
 	cpttosprfx		TEXT,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		(id)
-);
+	PRIMARY KEY 		( id )
+) ENGINE=InnoDB;
 

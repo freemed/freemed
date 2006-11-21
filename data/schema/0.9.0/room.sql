@@ -35,5 +35,5 @@ CREATE TABLE `room` (
 	# Define keys
 
 	KEY			( roomname, roompos )
-);
+) ENGINE=InnoDB;
 

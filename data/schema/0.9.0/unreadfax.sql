@@ -28,10 +28,11 @@ CREATE TABLE `unreadfax` (
 	urfphysician		INT UNSIGNED NOT NULL DEFAULT 0,
 	urfnote			TEXT,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	PRIMARY KEY 		( id ),
 
 	#	Define keys
 
-	KEY			( urfphysician, urfpatient )
-);
+	KEY			( urfphysician, urfpatient ),
+	FOREIGN KEY		( urfpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

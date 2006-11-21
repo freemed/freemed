@@ -33,6 +33,7 @@ CREATE TABLE `translation` (
 
 	#	Define keys
 
-	KEY			( tpatient, tmodule, tid, tlanguage )
-);
+	KEY			( tpatient, tmodule, tid, tlanguage ),
+	FOREIGN KEY		( tpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

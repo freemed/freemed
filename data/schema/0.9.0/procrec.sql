@@ -66,6 +66,6 @@ CREATE TABLE `procrec` (
 
 	#	Define keys
 
-	KEY			( procpatient )
-);
+	FOREIGN KEY		( procpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

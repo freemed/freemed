@@ -36,5 +36,5 @@ CREATE TABLE `claimlog` (
 	#	Define keys
 
 	KEY			( clprocedure, clpayrec )
-);
+) ENGINE=InnoDB;
 

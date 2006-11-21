@@ -21,20 +21,20 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE `rx` (
-	rxdtadd			DATE,
+	rxdtadd			DATE NOT NULL,
 	rxdtmod			DATE,
-	rxphy			INT UNSIGNED,
-	rxpatient		INT UNSIGNED,
+	rxphy			INT UNSIGNED NOT NULL,
+	rxpatient		INT UNSIGNED NOT NULL,
 	rxdtfrom		DATE,
-	rxdrug			VARCHAR (150),
+	rxdrug			VARCHAR (150) NOT NULL,
 	rxform			VARCHAR (32),
 	rxdosage		VARCHAR (128),
-	rxquantity		REAL,
+	rxquantity		REAL NOT NULL DEFAULT 0,
 	rxsize			VARCHAR (32),
 	rxunit			VARCHAR (32),
 	rxinterval		ENUM( 'b.i.d.', 't.i.d.', 'q.i.d.', 'q. 3h', 'q. 4h', 'q. 5h', 'q. 6h', 'q. 8h', 'q.d.', 'h.s.', 'q.h.s.', 'q.A.M.', 'q.P.M.', 'a.c.', 'p.c.', 'p.r.n.' ),
 	rxsubstitute		ENUM( 'may substitute', 'may not substitute' ),
-	rxrefills		INT UNSIGNED,
+	rxrefills		INT UNSIGNED NOT NULL DEFAULT 0,
 	rxperrefill		INT UNSIGNED,
 	rxorigrx		INT UNSIGNED,
 	rxnote			TEXT,
@@ -44,6 +44,6 @@ CREATE TABLE `rx` (
 
 	#	Default key
 
-	KEY			( rxpatient )
-);
+	FOREIGN KEY		( rxpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

@@ -29,6 +29,7 @@ CREATE TABLE `patienttag` (
 	PRIMARY KEY 		( id ),
 
 	#	Define keys
-	KEY			( patient, tag )
-);
+	KEY			( patient, tag ),
+	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

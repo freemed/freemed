@@ -25,6 +25,7 @@ CREATE TABLE `appttemplate` (
 	atduration		INT UNSIGNED NOT NULL DEFAULT 15,
 	atequipment		BLOB,
 	atcolor			CHAR (7) NOT NULL DEFAULT '#ffffff',
+	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id )
-);
+) ENGINE=InnoDB;
 

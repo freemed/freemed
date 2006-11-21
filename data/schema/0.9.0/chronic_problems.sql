@@ -29,6 +29,7 @@ CREATE TABLE `chronic_problems` (
 
 	#	Define keys
 
-	KEY			( ppatient, pdate )
-);
+	KEY			( ppatient, pdate ),
+	FOREIGN KEY		( ppatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

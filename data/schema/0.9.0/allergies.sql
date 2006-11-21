@@ -30,6 +30,7 @@ CREATE TABLE `allergies` (
 
 	#	Define keys
 
-	KEY			( patient, allergy )
-);
+	KEY			( patient, allergy ),
+	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

@@ -32,6 +32,7 @@ CREATE TABLE `scheduler_status` (
 
 	#	Define keys
 
-	KEY			( cspatient, csstatus, csstamp )
-);
+	KEY			( cspatient, csstatus, csstamp ),
+	FOREIGN KEY		( cspatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

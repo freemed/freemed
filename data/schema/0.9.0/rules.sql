@@ -33,5 +33,5 @@ CREATE TABLE `rules` (
 	#	Define keys
 
 	KEY			( rule_type, rule_prio )
-);
+) ENGINE=InnoDB;
 

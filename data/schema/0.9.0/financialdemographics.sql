@@ -39,6 +39,7 @@ CREATE TABLE `financialdemographics` (
 
 	#	Define keys
 
-	KEY			( fdpatient, fdtimestamp )
-);
+	KEY			( fdpatient, fdtimestamp ),
+	FOREIGN KEY		( fdpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

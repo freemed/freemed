@@ -38,6 +38,7 @@ CREATE TABLE `payrec` (
 	PRIMARY KEY 		( id ),
 
 	#	Define keys
-	KEY			( payrecpatient, payrecproc )
-);
+	KEY			( payrecpatient, payrecproc ),
+	FOREIGN KEY		( payrecpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

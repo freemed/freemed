@@ -31,6 +31,7 @@ CREATE TABLE `medications` (
 
 	#	Define keys
 
-	KEY			( mpatient, mdate )
-);
+	KEY			( mpatient, mdate ),
+	FOREIGN KEY		( mpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

@@ -34,9 +34,11 @@ CREATE TABLE `labs` (
 	labtimestamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	labresultstatus		CHAR (1),
 	labnotes		TEXT,
-	PRIMARY KEY 		(id),
+	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY 		( id ),
 
 	#	Define keys
-	KEY			( labpatient, labprovider, labtimestamp )
-);
+	KEY			( labpatient, labprovider, labtimestamp ),
+	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

@@ -58,6 +58,7 @@ CREATE TABLE `coverage` (
 
 	#	Define keys
 
-	KEY			( covpatient, covinsco, covrel )
-);
+	KEY			( covpatient, covinsco, covrel ),
+	FOREIGN KEY		( covpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

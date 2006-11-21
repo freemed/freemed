@@ -25,5 +25,5 @@ CREATE TABLE `cptmod` (
 	cptmoddescrip		VARCHAR (50) DEFAULT '',
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id )
-);
+) ENGINE=InnoDB;
 

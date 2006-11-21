@@ -31,5 +31,5 @@ CREATE TABLE `form_record` (
 	#	Define keys
 
 	KEY			( fr_id, fr_uuid )
-);
+) ENGINE=InnoDB;
 

@@ -23,7 +23,7 @@
 CREATE TABLE `scheduler` (
 	caldateof		DATE,
 	calcreated		TIMESTAMP (16),
-	calmodified		TIMESTAMP (16) DEFAULT NOW(),
+	calmodified		TIMESTAMP (16),
 	caltype			ENUM( 'temp', 'pat' ) NOT NULL DEFAULT 'pat',
 	calhour			INT UNSIGNED,
 	calminute		INT UNSIGNED,
@@ -47,6 +47,6 @@ CREATE TABLE `scheduler` (
 	# Define keys
 
 	KEY			( caldateof, calhour, calminute ),
-	KEY			( calpatient )
-);
+	FOREIGN KEY		( calpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

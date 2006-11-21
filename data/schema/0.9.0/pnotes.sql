@@ -46,9 +46,10 @@ CREATE TABLE `pnotes` (
 	iso			VARCHAR (15),
 	locked			INT UNSIGNED,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		(id),
+	PRIMARY KEY 		( id ),
 
 	#	Define keys
-	KEY			( pnotespat, pnotesdt, pnotesdoc )
-);
+	KEY			( pnotespat, pnotesdt, pnotesdoc ),
+	FOREIGN KEY		( pnotespat ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

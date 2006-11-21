@@ -27,5 +27,5 @@ CREATE TABLE `schedulerstatustype` (
 	sage			INT UNSIGNED NOT NULL DEFAULT 1,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id )
-);
+) ENGINE=InnoDB;
 

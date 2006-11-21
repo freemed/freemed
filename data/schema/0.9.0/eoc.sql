@@ -76,6 +76,7 @@ CREATE TABLE `eoc` (
 
 	#	Define keys
 
-	KEY			( eocpatient, eocstartdate, eocdtlastsimilar )
-);
+	KEY			( eocpatient, eocstartdate, eocdtlastsimilar ),
+	FOREIGN KEY		( eocpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

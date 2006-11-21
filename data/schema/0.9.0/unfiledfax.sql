@@ -25,5 +25,5 @@ CREATE TABLE `unfiledfax` (
 	ufffilename		VARCHAR (150) NOT NULL,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id )
-);
+) ENGINE=InnoDB;
 

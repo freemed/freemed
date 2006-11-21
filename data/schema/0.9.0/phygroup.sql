@@ -22,7 +22,7 @@
 
 CREATE TABLE `phygroup` (
 	phygroupname		VARCHAR (100) NOT NULL DEFAULT '',
-	phygroupfac		INT_UNSIGNED,
+	phygroupfac		INT UNSIGNED,
 	phygroupdtadd		DATE,
 	phygroupdtmod		DATE,
 	phygroupidmap		TEXT,
@@ -30,5 +30,5 @@ CREATE TABLE `phygroup` (
 	phygroupspe1		INT UNSIGNED,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id )
-);
+) ENGINE=InnoDB;
 

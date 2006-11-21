@@ -30,6 +30,7 @@ CREATE TABLE `form_results` (
 
 	#	Define keys
 
-	KEY			( fr_patient, fr_timestamp )
-);
+	KEY			( fr_patient, fr_timestamp ),
+	FOREIGN KEY		( fr_patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

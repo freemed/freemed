@@ -25,5 +25,5 @@ CREATE TABLE `billkey` (
 	billkey			BLOB,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id )
-);
+) ENGINE=InnoDB;
 

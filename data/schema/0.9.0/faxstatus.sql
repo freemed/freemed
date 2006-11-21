@@ -22,7 +22,7 @@
 
 CREATE TABLE `faxstatus` (
 	fsid			VARCHAR (16) NOT NULL,
-	fsmodule		VARCHAR (50) NOT NULL
+	fsmodule		VARCHAR (50) NOT NULL,
 	fsrecord		INT UNSIGNED NOT NULL DEFAULT 0,
 	fspatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	fsdestination		VARCHAR (50) NOT NULL,
@@ -32,6 +32,7 @@ CREATE TABLE `faxstatus` (
 
 	#	Define keys
 
-	KEY			( fsid, fspatient )
-);
+	KEY			( fsid, fspatient ),
+	FOREIGN KEY		( fspatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

@@ -29,5 +29,5 @@ CREATE TABLE `anesth` (
 
 	#	Define keys
 	KEY			( andate )
-);
+) ENGINE=InnoDB;
 

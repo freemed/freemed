@@ -22,8 +22,8 @@
 
 CREATE TABLE `patletter` (
 	letterdt		DATE,
-	lettereoc		TEXT,
-	letterfrom		VARCHAR (150),
+	lettereoc		VARCHAR (250),
+	letterfrom		INT UNSIGNED NOT NULL DEFAULT 0,
 	lettertext		TEXT,
 	lettersent		INT UNSIGNED NOT NULL DEFAULT 0,
 	letterpatient		INT UNSIGNED NOT NULL DEFAULT 0,
@@ -33,6 +33,7 @@ CREATE TABLE `patletter` (
 
 	#	Define keys
 
-	KEY			( letterpatient, lettersent, letterfrom, lettereoc )
-);
+	KEY			( letterpatient, lettersent, letterfrom, lettereoc ),
+	FOREIGN KEY		( letterpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

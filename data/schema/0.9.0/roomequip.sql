@@ -25,6 +25,6 @@ CREATE TABLE `roomequip` (
 	reqdescrip		VARCHAR (150),
 	reqmovable		INT UNSIGNED NOT NULL DEFAULT 0,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		(id)
-);
+	PRIMARY KEY 		( id )
+) ENGINE=InnoDB;
 

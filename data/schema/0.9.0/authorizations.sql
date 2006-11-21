@@ -21,8 +21,8 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE `authorizations` (
-	authdtadd		DATE NOT NULL DEFAULT NOW(),
-	authdtmod		DATE NOT NULL DEFAULT NOW(),
+	authdtadd		DATE NOT NULL,
+	authdtmod		DATE NOT NULL,
 	authpatient		INT UNSIGNED NOT NULL,
 	authdtbegin		DATE,
 	authdtend		DATE,
@@ -40,6 +40,7 @@ CREATE TABLE `authorizations` (
 
 	# Define keys
 
-	KEY			( authpatient, authdtbegin, authdtend )
-);
+	KEY			( authpatient, authdtbegin, authdtend ),
+	FOREIGN KEY		( authpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

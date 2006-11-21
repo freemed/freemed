@@ -34,11 +34,11 @@ CREATE TABLE `messages` (
 	msgunique	VARCHAR(32),
 	msgtag		VARCHAR(32),
 	id		INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 	(id),
+	PRIMARY KEY 	( id ),
 
-	# Define keys
+	#	Define keys
 
 	KEY 		( msgfor ),
-	KEY 		( msgpatient )
-);
+	FOREIGN KEY	( msgpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

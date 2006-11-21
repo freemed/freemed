@@ -37,6 +37,7 @@ CREATE TABLE `images` (
 
 	#	Define keys
 
-	KEY			( imagepat, imagetype, imagecat, imagedt )
-);
+	KEY			( imagepat, imagetype, imagecat, imagedt ),
+	FOREIGN KEY		( imagepat ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

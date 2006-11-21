@@ -25,12 +25,13 @@ CREATE TABLE `phone` (
 	phonetype		VARCHAR (50) NOT NULL,
 	phonecategory		VARCHAR (50) NOT NULL,
 	phonenumber		VARCHAR (16) NOT NULL,
-	phonestampadd		TIMESTAMP (14) NOT NULL DEFAULT NOW(), 
-	phonestampmod		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	phonestampadd		TIMESTAMP (14) NOT NULL,
+	phonestampmod		TIMESTAMP (14) NOT NULL,
+	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY 		( id ),
 
 	# Define keys
 
 	KEY			( phonetype, phonecategory, phonelink )
-);
+) ENGINE=InnoDB;
 

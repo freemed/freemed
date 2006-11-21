@@ -32,6 +32,6 @@ CREATE TABLE `modules` (
 	module_handlers			TEXT,
 	module_associations		TEXT,
 	module_meta			TEXT,
-	PRIMARY KEY 			(module_uid)
-);
+	PRIMARY KEY 			( module_uid )
+) ENGINE=InnoDB;
 

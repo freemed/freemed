@@ -34,6 +34,11 @@ CREATE TABLE `labresults` (
 	labobsreported		TIMESTAMP (14),
 	labobsfiller		VARCHAR (60),
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		(id)
-);
+	PRIMARY KEY 		( id ),
+
+	#	Define keys
+
+	KEY			( labpatient, labid ),
+	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

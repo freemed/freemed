@@ -22,9 +22,9 @@
 
 CREATE TABLE `letters` (
 	letterdt		DATE,
-	lettereoc		TEXT,
-	letterfrom		VARCHAR (150),
-	letterto		VARCHAR (150),
+	lettereoc		VARCHAR (250) NOT NULL DEFAULT '',
+	letterfrom		INT UNSIGNED NOT NULL DEFAULT 0,
+	letterto		INT UNSIGNED NOT NULL DEFAULT 0,
 	lettercc		BLOB,
 	letterenc		BLOB,
 	lettertext		TEXT,
@@ -37,6 +37,7 @@ CREATE TABLE `letters` (
 
 	#	Define keys
 
-	KEY			( letterpatient, lettersent, letterfrom, lettereoc )
-);
+	KEY			( letterpatient, lettersent, letterfrom, lettereoc ),
+	FOREIGN KEY		( letterpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

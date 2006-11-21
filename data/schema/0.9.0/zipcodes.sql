@@ -34,5 +34,5 @@ CREATE TABLE `zipcodes` (
 	# Define keys
 
 	KEY			( city, state, zip )
-);
+) ENGINE=InnoDB;
 

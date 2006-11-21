@@ -31,6 +31,7 @@ CREATE TABLE `certifications` (
 
 	#	Define keys
 
-	KEY			( certpatient, certtype )
-);
+	KEY			( certpatient, certtype ),
+	FOREIGN KEY		( certpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

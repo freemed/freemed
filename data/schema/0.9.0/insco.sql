@@ -48,6 +48,6 @@ CREATE TABLE `insco` (
 	inscodefformate		VARCHAR (50),
 	inscodeftargete		VARCHAR (50),
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		(id)
-);
+	PRIMARY KEY 		( id )
+) ENGINE=InnoDB;
 

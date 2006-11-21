@@ -32,6 +32,7 @@ CREATE TABLE `annotations` (
 
 	#	Define keys
 
-	KEY			( apatient, amodule, aid )
-);
+	KEY			( apatient, amodule, aid ),
+	FOREIGN KEY		( apatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 

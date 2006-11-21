@@ -32,6 +32,7 @@ CREATE TABLE `notification` (
 
 	#	Default key
 
-	KEY			( nuser, npatient, nfor, ntarget )
-);
+	KEY			( nuser, npatient, nfor, ntarget ),
+	FOREIGN KEY		( npatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
