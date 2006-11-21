@@ -496,7 +496,7 @@ class SupportModule extends BaseModule {
 		// Check for data/schema/(version)/(table_name).sql
 		$path = dirname(__FILE__).'/../../data/schema/'.VERSION.'/'.$this->table_name.'.sql';
 		if ( file_exists ( $path ) ) {
-			$query = $GLOBALS['sql']->query ( readfile ( $path ) );
+			$query = $GLOBALS['sql']->query ( file_get_contents ( $path ) );
 			return $query ? true : false;
 		} else {
 			return false;
