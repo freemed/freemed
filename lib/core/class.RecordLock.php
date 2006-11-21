@@ -56,6 +56,7 @@ class RecordLock {
 	//	returns false.
 	//
 	function IsLocked ( $row ) {
+		if ( !$row ) { return false }
 		$query = "SELECT * FROM recordlock WHERE ".
 			"locksession <> '".session_id()."' AND ".
 			"locktable='".addslashes($this->table)."' AND ".
@@ -82,6 +83,7 @@ class RecordLock {
 	//	Boolean, success.
 	//
 	function LockRow ( $row ) {
+		if ( !$row ) { return false; }
 		// Find out if we already have *a* row locked ...
 		$u = CreateObject('org.freemedsoftware.core.User');
 		$query = "SELECT * FROM recordlock WHERE ".
