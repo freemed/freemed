@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `insmod` (
+CREATE TABLE IF NOT EXISTS `insmod` (
 	insmod			VARCHAR (15) NOT NULL,
 	insmoddesc		VARCHAR (50) NOT NULL,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,

@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `patienttag` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `patienttag` (
 	tag			VARCHAR (100) NOT NULL,
 	patient			INT UNSIGNED NOT NULL DEFAULT 0,
 	datecreate		TIMESTAMP (14) DEFAULT NOW(),

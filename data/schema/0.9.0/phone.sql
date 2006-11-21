@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `phone` (
+CREATE TABLE IF NOT EXISTS `phone` (
 	phonelink		INT UNSIGNED NOT NULL DEFAULT 0,
 	phonetype		VARCHAR (50) NOT NULL,
 	phonecategory		VARCHAR (50) NOT NULL,

@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `specialties` (
+CREATE TABLE IF NOT EXISTS `specialties` (
 	specname		VARCHAR (50) NOT NULL,
 	specdesc		VARCHAR (100),
 	specdatestamp		DATE,

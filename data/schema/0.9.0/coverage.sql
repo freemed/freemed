@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `coverage` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `coverage` (
 	covdtadd		DATE,
 	covdtmod		DATE,
 	covpatient		INT UNSIGNED NOT NULL DEFAULT 0,

@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `usergroup` (
+CREATE TABLE IF NOT EXISTS `usergroup` (
 	usergroupname		VARCHAR (100) NOT NULL,
 	usergroupfac		INT UNSIGNED DEFAULT 0,
 	usergroupdtadd		DATE,

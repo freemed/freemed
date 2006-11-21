@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `unreadfax` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `unreadfax` (
 	urfdate			DATE NOT NULL,
 	urffilename		VARCHAR (150) NOT NULL,
 	urftype			VARCHAR (50),

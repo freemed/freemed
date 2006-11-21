@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `room` (
+CREATE TABLE IF NOT EXISTS `room` (
 	roomname		VARCHAR (50) NOT NULL,
 	roompos			INT UNSIGNED NOT NULL,
 	roomdescrip		VARCHAR (50) NOT NULL DEFAULT '',

@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `icd9` (
+CREATE TABLE IF NOT EXISTS `icd9` (
 	icd9code		VARCHAR (6),
 	icd10code		VARCHAR (7),
 	icd9descrip		VARCHAR (45),

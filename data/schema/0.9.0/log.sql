@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `log` (
+CREATE TABLE IF NOT EXISTS `log` (
 	logstamp		TIMESTAMP (14) DEFAULT NOW(),
 	loguser			INT UNSIGNED NOT NULL,
 	logpatient		INT UNSIGNED NOT NULL DEFAULT 0,

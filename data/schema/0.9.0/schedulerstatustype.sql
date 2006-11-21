@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `schedulerstatustype` (
+CREATE TABLE IF NOT EXISTS `schedulerstatustype` (
 	sname			VARCHAR (50) NOT NULL,
 	sdescrip		TEXT,
 	scolor			CHAR (7) NOT NULL DEFAULT '#ffffff',

@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `callin` (
+CREATE TABLE IF NOT EXISTS `callin` (
 	cilname			VARCHAR (50) NOT NULL,
 	cifname			VARCHAR (50) NOT NULL,
 	cimname			VARCHAR (50) DEFAULT '',

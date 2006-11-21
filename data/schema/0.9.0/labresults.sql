@@ -20,7 +20,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `labresults` (
+SOURCE patient.sql
+SOURCE labs.sql
+
+CREATE TABLE IF NOT EXISTS `labresults` (
 	labid			INT UNSIGNED NOT NULL,
 	labpatient		INT UNSIGNED NOT NULL,
 	labobsnote		TEXT,
@@ -39,6 +42,7 @@ CREATE TABLE `labresults` (
 	#	Define keys
 
 	KEY			( labpatient, labid ),
-	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE,
+	FOREIGN KEY		( labid ) REFERENCES labs ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

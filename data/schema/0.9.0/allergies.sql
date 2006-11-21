@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `allergies` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `allergies` (
 	allergy			VARCHAR (150) NOT NULL,
 	severity		VARCHAR (150) NOT NULL,
 	patient			INT UNSIGNED NOT NULL DEFAULT 0,

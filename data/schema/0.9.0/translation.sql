@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `translation` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `translation` (
 	ttimestamp		TIMESTAMP (14) DEFAULT NOW(),
 	tpatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	tmodule			VARCHAR (150) NOT NULL,

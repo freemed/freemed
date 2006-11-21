@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `chronic_problems` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `chronic_problems` (
 	pdate			DATE NOT NULL,
 	problem			VARCHAR (250) NOT NULL DEFAULT '',
 	ppatient		INT UNSIGNED NOT NULL DEFAULT 0,

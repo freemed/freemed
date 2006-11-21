@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `annotations` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `annotations` (
 	atimestamp		TIMESTAMP (14) DEFAULT NOW(),
 	apatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	amodule			VARCHAR (150) NOT NULL,

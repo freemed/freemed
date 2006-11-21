@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `authorizations` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `authorizations` (
 	authdtadd		DATE NOT NULL,
 	authdtmod		DATE NOT NULL,
 	authpatient		INT UNSIGNED NOT NULL,

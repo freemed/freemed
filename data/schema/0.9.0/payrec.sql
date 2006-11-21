@@ -20,7 +20,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `payrec` (
+SOURCE patient.sql
+SOURCE procrec.sql
+
+CREATE TABLE IF NOT EXISTS `payrec` (
 	payrecdtadd		DATE,
 	payrecdtmod		DATE,
 	payrecpatient		INT UNSIGNED NOT NULL,
@@ -39,6 +42,7 @@ CREATE TABLE `payrec` (
 
 	#	Define keys
 	KEY			( payrecpatient, payrecproc ),
-	FOREIGN KEY		( payrecpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( payrecpatient ) REFERENCES patient ( id ) ON DELETE CASCADE,
+	FOREIGN KEY		( payrecproc ) REFERENCES procrec ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

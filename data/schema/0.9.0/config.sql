@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `config` (
+CREATE TABLE IF NOT EXISTS `config` (
 	c_option		CHAR (64) UNIQUE NOT NULL,
 	c_value			VARCHAR (100),
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,

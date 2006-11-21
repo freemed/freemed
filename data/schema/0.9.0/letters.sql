@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `letters` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `letters` (
 	letterdt		DATE,
 	lettereoc		VARCHAR (250) NOT NULL DEFAULT '',
 	letterfrom		INT UNSIGNED NOT NULL DEFAULT 0,

@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `financialdemographics` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `financialdemographics` (
 	fdtimestamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	fdpatient		INT UNSIGNED NOT NULL,
 	fdincome		INT UNSIGNED,

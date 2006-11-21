@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `diagfamily` (
+CREATE TABLE IF NOT EXISTS `diagfamily` (
 	dfname			VARCHAR (100) NOT NULL,
 	dfdescrip		VARCHAR (100),
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,

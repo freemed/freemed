@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `pharmacy` (
+CREATE TABLE IF NOT EXISTS `pharmacy` (
 	phname			VARCHAR (50) NOT NULL,
 	phaddr1			VARCHAR (150) NOT NULL,
 	phaddr2			VARCHAR (150),

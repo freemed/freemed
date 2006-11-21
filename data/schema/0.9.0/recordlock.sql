@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `recordlock` (
+CREATE TABLE IF NOT EXISTS `recordlock` (
 	lockstamp		TIMESTAMP (14) DEFAULT NOW(),
 	locksession		VARCHAR (128),
 	lockuser		INT UNSIGNED NOT NULL,

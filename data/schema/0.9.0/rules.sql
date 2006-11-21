@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `rules` (
+CREATE TABLE IF NOT EXISTS `rules` (
 	rule_created		TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 	rule_descrip		VARCHAR (150),
 	rule_prio		INT UNSIGNED,

@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `certifications` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `certifications` (
 	certpatient		INT UNSIGNED NOT NULL,
 	certtype		INT UNSIGNED NOT NULL,
 	certformnum		INT UNSIGNED,

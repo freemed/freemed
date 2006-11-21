@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `ptstatus` (
+CREATE TABLE IF NOT EXISTS `ptstatus` (
 	ptstatus		CHAR (3) NOT NULL,
 	ptstatusdescrip		VARCHAR (50) NOT NULL,
 	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,

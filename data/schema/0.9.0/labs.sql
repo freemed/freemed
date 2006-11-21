@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `labs` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `labs` (
 	labpatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	labfiller		TEXT,
 	labstatus		CHAR (2),

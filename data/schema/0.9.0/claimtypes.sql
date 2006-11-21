@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `claimtypes` (
+CREATE TABLE IF NOT EXISTS `claimtypes` (
 	clmtpname		CHAR (5) NOT NULL,
 	clmtpdescrip		VARCHAR (60) NOT NULL DEFAULT '',
 	clmtpdtadd		DATE,

@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `zipcodes` (
+CREATE TABLE IF NOT EXISTS `zipcodes` (
 	zip			CHAR (5) NOT NULL,
 	city			CHAR (25) NOT NULL,
 	state			CHAR (3) NOT NULL,

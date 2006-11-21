@@ -20,7 +20,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `procrec` (
+SOURCE patient.sql
+SOURCE physician.sql
+SOURCE cpt.sql
+
+CREATE TABLE IF NOT EXISTS `procrec` (
 	procpatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	proceoc			TEXT,
 	proccpt			INT UNSIGNED DEFAULT 0,
@@ -66,6 +70,8 @@ CREATE TABLE `procrec` (
 
 	#	Define keys
 
-	FOREIGN KEY		( procpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( procpatient ) REFERENCES patient ( id ) ON DELETE CASCADE,
+	FOREIGN KEY		( proccpt ) REFERENCES cpt ( id ),
+	FOREIGN KEY		( procphysician ) REFERENCES physician ( id )
 ) ENGINE=InnoDB;
 

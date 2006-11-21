@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `covtypes` (
+CREATE TABLE IF NOT EXISTS `covtypes` (
 	covtpname		VARCHAR (5) NOT NULL,
 	covtpdescrip		VARCHAR (60) NOT NULL,
 	covtpdtadd		DATE,

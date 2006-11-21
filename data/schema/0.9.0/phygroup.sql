@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `phygroup` (
+CREATE TABLE IF NOT EXISTS `phygroup` (
 	phygroupname		VARCHAR (100) NOT NULL DEFAULT '',
 	phygroupfac		INT UNSIGNED,
 	phygroupdtadd		DATE,

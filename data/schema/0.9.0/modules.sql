@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `modules` (
+CREATE TABLE IF NOT EXISTS `modules` (
 	module_uid			CHAR (36) UNIQUE NOT NULL,
 	module_name			VARCHAR (100) NOT NULL,
 	module_class			VARCHAR (100) NOT NULL,

@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `scheduler_status` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `scheduler_status` (
 	csstamp			TIMESTAMP (14) DEFAULT NOW(),
 	cspatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	csappt			INT UNSIGNED NOT NULL DEFAULT 0,

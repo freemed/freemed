@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `facility` (
+CREATE TABLE IF NOT EXISTS `facility` (
 	psrname			VARCHAR (100) NOT NULL,
 	psraddr1		VARCHAR (50),
 	psraddr2		VARCHAR (50),

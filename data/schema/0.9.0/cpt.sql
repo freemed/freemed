@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `cpt` (
+CREATE TABLE IF NOT EXISTS `cpt` (
 	cptcode			CHAR (7) NOT NULL,
 	cptnameint		VARCHAR (50),
 	cptnameext		VARCHAR (50),

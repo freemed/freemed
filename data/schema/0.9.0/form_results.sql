@@ -20,7 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE `form_results` (
+SOURCE patient.sql
+
+CREATE TABLE IF NOT EXISTS `form_results` (
 	fr_patient		INT UNSIGNED NOT NULL,
 	fr_timestamp		TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 	fr_template		VARCHAR (50),
