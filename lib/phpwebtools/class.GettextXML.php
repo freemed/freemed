@@ -53,7 +53,7 @@ class GettextXML {
 		$domains = $GLOBALS['__phpwebtools']['gettextXML']['domains'];
 		if (is_array($domains)) {
 			$domains = array_unique($domains);
-			$_cache = array ();
+			if ( ! is_array ( $_cache ) ) { $_cache = array (); }
 			foreach ($domains AS $xmlfile) {
 				if (!$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile]) {
 					$GLOBALS['__phpwebtools']['gettextXML']['domain_cached'][$xmlfile] = $xmlfile;
