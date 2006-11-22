@@ -496,8 +496,9 @@ class SupportModule extends BaseModule {
 		// Check for data/schema/(version)/(table_name).sql
 		$path = dirname(__FILE__).'/../../data/schema/'.VERSION.'/'.$this->table_name.'.sql';
 		if ( file_exists ( $path ) ) {
-			$query = $GLOBALS['sql']->query ( file_get_contents ( $path ) );
-			return $query ? true : false;
+			$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+			system ( $command );
+			return true;
 		} else {
 			return false;
 		}

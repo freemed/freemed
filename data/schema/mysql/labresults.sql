@@ -20,8 +20,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-SOURCE patient.sql
-SOURCE labs.sql
+SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/labs.sql
 
 CREATE TABLE IF NOT EXISTS `labresults` (
 	labid			INT UNSIGNED NOT NULL,

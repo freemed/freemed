@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-SOURCE patient.sql
+SOURCE data/schema/mysql/patient.sql
 
 CREATE TABLE IF NOT EXISTS `patienttag` (
 	tag			VARCHAR (100) NOT NULL,

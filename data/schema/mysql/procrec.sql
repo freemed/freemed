@@ -20,9 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-SOURCE patient.sql
-SOURCE physician.sql
-SOURCE cpt.sql
+SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/physician.sql
+SOURCE data/schema/mysql/cpt.sql
 
 CREATE TABLE IF NOT EXISTS `procrec` (
 	procpatient		INT UNSIGNED NOT NULL DEFAULT 0,

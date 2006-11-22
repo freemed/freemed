@@ -486,12 +486,12 @@ class freemed {
 			unset ($_config);
 			$query = ModuleIndex::LoadIndex ( );
 			foreach ( $query AS $r ) {
-				$_config[$r[$module_name]] = $r[$module_version];
+				$_config[$r['module_uid']] = $r['module_version'];
 			} // end of while results
 		} // end caching modules config
 	
 		// check in cache for version > minimum_version
-		return version_compare( $_config["$uid"], $minimum_version ) >= 0;
+		return ( version_compare( $_config["$uid"], $minimum_version ) >= 0 );
 	} // end function freemed::module_check
 
 	// Function: freemed::module_check_acl
@@ -1194,7 +1194,7 @@ class freemed {
 	//
 	// Returns:
 	//
-	//	FreeMED.Log object
+	//	org.freemedsoftware.core.Log object
 	//
 	function log_object ( ) {
 		static $_cache;
@@ -1238,164 +1238,6 @@ class freemed {
 	} // end function phone_display
 
 } // end namespace/class freemed
-
-class EMRi {
-	// EMRi Server information
-	var $EMRi_server_host;
-	var $EMRi_server_port;
-	var $EMRi_server_uri;
-	var $EMRi_user;
-	var $EMRi_password;
-
-	function EMRi () {
-		$this->get_server_name();
-		// FIXME: Kludge for fqdn
-		$this->fqdn = 'test';
-		// FIXME: EXTREME KLUDGE for testing purposes only!
-		$this->EMRi_user = 'root';
-		$this->EMRi_password = 'password';
-	} // end constructor EMRi
-
-	// TODO: finish EMRi linking functions
-	function get_link_rec ( $url ) {
-		die("STUB: EMRi::get_link_rec()");
-	} // end method EMRi->get_link_rec
-
-	function get_server_name () {
-		// This should actually get the best EMRi server.
-		// Barring that, we assign static
-		$this->EMRi_server_host = 'localhost';
-		$this->EMRi_server_port = '3674';
-		$this->EMRi_server_uri  = '/RPC2';
-	} // end method EMRi->get_server_name
-
-	//----- Method calls for hosts and servers ---------------------------
-
-	function host_method ($fqdn, $method, $argv) {
-		// Make sure we're connected
-		if (!isset($this->EMRi_server_host)) $this->get_server_name();
-
-		// Call the proper function on the server
-		return xu_rpc_http_concise(array(
-			'method' => $method,
-			'args'   => $argv,
-			'host'   => $this->EMRi_server_host,
-			'port'   => $this->EMRi_server_port,
-			'uri'    => $this->EMRi_server_uri,
-			'debug'  => 1,
-			'output' => NULL,
-			'secure' => 0, // this needs to be fixed!
-
-			// FIXME: These should be pulled from the database
-			'user'   => 'root',
-			'pass'   => 'password'
-		));
-	} // end method EMRi->host_method
-
-	function server_method ($method, $argv) {
-		static $client;
-	
-		// Make sure we're connected
-		if (!isset($this->EMRi_server_host)) $this->get_server_name();
-
-		// Check for prexisting client
-		if (!is_object($client)) {
-			$client = CreateObject(
-				'org.freemedsoftware.core.xmlrpc_client',
-				$this->EMRi_server_uri, // URI
-				$this->EMRi_server_host, // HOST
-				$this->EMRi_server_port // PORT
-			);
-			$client->setDebug();
-		}
-
-		// Set proper credentials
-		$client->setCredentials($this->EMRi_user, $this->EMRi_password);
-
-		// TODO: Pre-call argument processing
-
-		// Call with function
-		$response = $client->send (
-			CreateObject(
-				'org.freemedsoftware.core.xmlrpcmsg',
-				$method,
-				$argv // arguments
-			)
-		);
-
-		// Return deserialized version
-		return $response->deserialize();
-	} // end method EMRi->server_method
-
-	//-------------------------------------------------------------------
-
-
-	//----- Authenticate methods ----------------------------------------
-
-	function authenticate_user ($user, $pass) {
-		// Call EMRi.Authentication.user on server
-		return $this->server_method(
-			"EMRi.Authentication.user",
-			array(
-				$user,
-				$pass
-			)
-		);
-	} // end method EMRi->authenticate_user
-
-	//----- Patient methods ---------------------------------------------
-
-	function patient_index ($pid) {
-		// If it's an array, send the array, if not,
-		// send an array wrapper for the scalar value
-		if (!is_array($pid)) {
-			$patients = array ($pid);			
-		} else {
-			$patients = $pid;
-		}
-
-		foreach ($patients AS $k => $v) {
-			// Process scalar
-			$this_patient = $GLOBALS['sql']->get_link( 'patient', $v );
-
-			// Add to param
-			$param[] = array (
-				'fqdn'       => $this->fqdn,
-				'pid'        => $this_patient['ptssn'],
-				'last_name'  => $this_patient['ptlname'],
-				'first_name' => $this_patient['ptfname'],
-				'version'    => $this_patient['version']
-			);
-			
-		}
-
-		// Call the method
-		return $this->server_method(
-			"EMRi.Patient.index",
-			array($param)
-		);
-	} // end method EMRi->patient_index
-
-	function patient_search ($pid) {
-		// If it's an array, send the array, if not,
-		// send an array wrapper for the scalar value
-		if (!is_array($pid)) {
-			$param = array ("pid" => $pid);			
-		} else {
-			$param = $pid;
-		}
-
-		// Call the method
-		$result = $this->server_method(
-			"EMRi.Patient.search",
-			array($param)
-		);
-
-		// For now, return the raw result
-		return $result;
-	} // end method EMRi->patient_search
-
-} // end namespace/class EMRi
 
 //------------------ NON NAMESPACE FUNCTIONS ---------------------
 

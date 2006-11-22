@@ -421,7 +421,7 @@ class EMRModule extends BaseModule {
 	// Method: _setup
 	public function _setup ( ) {
 		if (!$this->create_table()) { return false; }
-		return freemed_import_stock_data ( $this->table_name );
+		return CallMethod('org.freemedsoftware.api.TableMaintenance.ImportStockData', $this->table_name );
 	} // end function _setup
 
 	// Method: create_table
@@ -432,10 +432,11 @@ class EMRModule extends BaseModule {
 	//
 	protected function create_table () {
 		// Check to see if the current version exits
-		$path = BASE_PATH.'/data/schema/'.VERSION.'/'.$this->table_name.'.sql';
+		$path = dirname(__FILE__).'/../../data/schema/mysql/'.$this->table_name.'.sql';
 		if (file_exists( $path )) {
-			$result = $GLOBALS['sql']->query( file_get_contents( $path ) );
-			return $result ? true : false;
+			$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+			system ( $command );
+			return true;
 		} else {
 			return false;
 		}

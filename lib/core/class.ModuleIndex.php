@@ -81,7 +81,7 @@ class ModuleIndex {
 	//
 	//	Array of hashes containing module information.
 	//
-	protected function LoadIndex ( ) {
+	public function LoadIndex ( ) {
 		$query = "SELECT * FROM modules";
 		$results = $GLOBALS['sql']->queryAll ( $query );
 		return $results;

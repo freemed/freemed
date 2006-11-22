@@ -1,3 +1,4 @@
+#!/bin/bash
 # $Id$
 #
 # Authors:
@@ -20,20 +21,37 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-SOURCE data/schema/mysql/patient.sql
+ENGINE=$1
+TABLE=$2
+DBUSER=$3
+DBPASS=$4
+DBNAME=$5
 
-CREATE TABLE IF NOT EXISTS `medications` (
-	mdrug			VARCHAR (150),
-	mdosage			VARCHAR (150),
-	mroute			VARCHAR (150),
-	mpatient		INT UNSIGNED NOT NULL DEFAULT 0,
-	mdate			DATE,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+# Get current path so we can be sure to load from proper location
+OLDDIR="$(pwd)"
+PWD="$(dirname "$0")/.."
 
-	#	Define keys
+if [ ! -f "${PWD}/controller.php" ]; then
+	echo "ERROR: improper directory"
+	exit 1
+fi
 
-	KEY			( mpatient, mdate ),
-	FOREIGN KEY		( mpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
-) ENGINE=InnoDB;
+if [ ! -f "${PWD}/data/schema/${ENGINE}/${TABLE}.sql" ]; then
+	echo "ERROR: could not find schema for ${TABLE}"
+	exit 1
+fi
+
+# Run actual MySQL command to do this...
+case "${ENGINE}" in
+	mysql)
+	cd "${PWD}"
+	mysql --user="${DBUSER}" --password="${DBPASS}" "${DBNAME}" < "data/schema/${ENGINE}/${TABLE}.sql"
+	;;
+
+	*)
+	;;
+esac
+
+# Restore old environment
+cd "${OLDDIR}"
 

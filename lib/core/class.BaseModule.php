@@ -63,6 +63,8 @@ class BaseModule extends Module {
 		T_textdomain( strtolower( get_class( $this ) ) );
 		// Push acl information, if there is any
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
+		// Run setup if necessary
+		$this->setup();
 	} // end constructor BaseModule
 
 	// Method: _print
@@ -273,7 +275,7 @@ class BaseModule extends Module {
 	function setup () {
 		if (!freemed::module_check($this->MODULE_UID, $this->MODULE_VERSION)) {
 			// check if it is installed *AT ALL*
-			if (!freemed::module_check($this->MODULE_UID, "0.0001")) {
+			if (!freemed::module_check($this->MODULE_UID)) {
 				// run internal setup routine
 				$val = $this->_setup();
 			} else {
