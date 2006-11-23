@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS `certifications` (
 	certformnum		INT UNSIGNED,
 	certdesc		VARCHAR (20),
 	certformdata		TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

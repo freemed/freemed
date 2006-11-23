@@ -24,8 +24,7 @@ CREATE TABLE IF NOT EXISTS `anesth` (
 	andate			DATE NOT NULL,
 	anphysician		INT UNSIGNED NOT NULL,
 	anfacility		INT UNSIGNED NOT NULL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 	KEY			( andate )

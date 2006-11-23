@@ -36,8 +36,7 @@ CREATE TABLE IF NOT EXISTS `labresults` (
 	labobsstatus		CHAR (1),
 	labobsreported		TIMESTAMP (14),
 	labobsfiller		VARCHAR (60),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

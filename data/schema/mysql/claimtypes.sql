@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS `claimtypes` (
 	clmtpdescrip		VARCHAR (60) NOT NULL DEFAULT '',
 	clmtpdtadd		DATE,
 	clmtpdtmod		DATE,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

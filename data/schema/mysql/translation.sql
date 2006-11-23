@@ -30,8 +30,7 @@ CREATE TABLE IF NOT EXISTS `translation` (
 	tuser			INT UNSIGNED NOT NULL,
 	tlanguage		CHAR(10) NOT NULL,
 	tcomment		TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

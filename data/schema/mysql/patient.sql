@@ -88,8 +88,7 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptreligion		INT UNSIGNED,
 	ptarchive		INT UNSIGNED,
 	iso			VARCHAR (15),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 	KEY			( ptlname, ptfname, ptmname, ptid, ptdob )

@@ -43,8 +43,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	calrecurnote		VARCHAR (100),
 	calrecurid		INT UNSIGNED,
 	calappttemplate		INT UNSIGNED,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	# Define keys
 

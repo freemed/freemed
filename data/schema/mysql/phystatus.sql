@@ -22,7 +22,6 @@
 
 CREATE TABLE IF NOT EXISTS `phystatus` (
 	phystatus		VARCHAR (30) NOT NULL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

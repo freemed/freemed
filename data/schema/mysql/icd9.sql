@@ -31,8 +31,7 @@ CREATE TABLE IF NOT EXISTS `icd9` (
 	icdnum			INT UNSIGNED,
 	icdamt			REAL,
 	icdcoll			REAL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

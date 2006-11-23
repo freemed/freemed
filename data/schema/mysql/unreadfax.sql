@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS `unreadfax` (
 	urfpatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	urfphysician		INT UNSIGNED NOT NULL DEFAULT 0,
 	urfnote			TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

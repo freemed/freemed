@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS `medications` (
 	mroute			VARCHAR (150),
 	mpatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	mdate			DATE,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

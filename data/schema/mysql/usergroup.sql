@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS `usergroup` (
 	usergroupdtadd		DATE,
 	usergroupdtmod		DATE,
 	usergroup		TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

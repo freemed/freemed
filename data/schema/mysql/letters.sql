@@ -34,8 +34,7 @@ CREATE TABLE IF NOT EXISTS `letters` (
 	letterpatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	lettertypist		VARCHAR (50),
 	locked			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

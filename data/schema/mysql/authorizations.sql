@@ -37,8 +37,7 @@ CREATE TABLE IF NOT EXISTS `authorizations` (
 	authvisitsused		INT UNSIGNED,
 	authvisitsremain	INT UNSIGNED,
 	authcomment		VARCHAR (100),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	# Define keys
 

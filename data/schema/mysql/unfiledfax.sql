@@ -23,7 +23,6 @@
 CREATE TABLE IF NOT EXISTS `unfiledfax` (
 	uffdate			DATE NOT NULL,
 	ufffilename		VARCHAR (150) NOT NULL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

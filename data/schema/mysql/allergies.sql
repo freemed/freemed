@@ -27,8 +27,7 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 	severity		VARCHAR (150) NOT NULL,
 	patient			INT UNSIGNED NOT NULL DEFAULT 0,
 	reviewed		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

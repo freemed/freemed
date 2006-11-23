@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS `faxstatus` (
 	fspatient		INT UNSIGNED NOT NULL DEFAULT 0,
 	fsdestination		VARCHAR (50) NOT NULL,
 	fsstatus		VARCHAR (255),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

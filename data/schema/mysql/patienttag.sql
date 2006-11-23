@@ -27,8 +27,7 @@ CREATE TABLE IF NOT EXISTS `patienttag` (
 	patient			INT UNSIGNED NOT NULL DEFAULT 0,
 	datecreate		TIMESTAMP (14) DEFAULT NOW(),
 	dateexpire		TIMESTAMP (14),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 	KEY			( patient, tag ),

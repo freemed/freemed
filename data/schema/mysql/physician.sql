@@ -66,8 +66,7 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	phydea			VARCHAR (16),
 	phyclia			VARCHAR (32),
 	
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 	KEY			( phylname, phyfname, phymname )

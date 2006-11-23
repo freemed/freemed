@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS `room` (
 	roomsurgery		ENUM ( 'y', 'n' ) DEFAULT 'n',
 	roombooking		ENUM ( 'y', 'n' ) DEFAULT 'y',
 	roomipaddr		VARCHAR (15),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	# Define keys
 

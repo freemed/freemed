@@ -35,8 +35,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
 	msgread		INT UNSIGNED DEFAULT 0,
 	msgunique	VARCHAR(32),
 	msgtag		VARCHAR(32),
-	id		INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 	( id ),
+	id		SERIAL,
 
 	#	Define keys
 

@@ -27,8 +27,7 @@ CREATE TABLE IF NOT EXISTS `rules` (
 	rule_type		VARCHAR (150),
 	rule_clause_if		TEXT,
 	rule_clause_then	TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

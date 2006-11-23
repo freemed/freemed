@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS `degrees` (
 	degdegree		VARCHAR (10) NOT NULL,
 	degname			VARCHAR (50) NOT NULL,
 	degdate			DATE, 
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

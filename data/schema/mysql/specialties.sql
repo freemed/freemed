@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS `specialties` (
 	specname		VARCHAR (50) NOT NULL,
 	specdesc		VARCHAR (100),
 	specdatestamp		DATE,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

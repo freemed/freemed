@@ -55,8 +55,7 @@ CREATE TABLE IF NOT EXISTS `coverage` (
 	covemployer		VARCHAR (50),
 	covcopay		REAL,
 	covdeduct		REAL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS `schedulerstatustype` (
 	sdescrip		TEXT,
 	scolor			CHAR (7) NOT NULL DEFAULT '#ffffff',
 	sage			INT UNSIGNED NOT NULL DEFAULT 1,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

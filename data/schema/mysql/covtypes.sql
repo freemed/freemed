@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS `covtypes` (
 	covtpdescrip		VARCHAR (60) NOT NULL,
 	covtpdtadd		DATE,
 	covtpdtmod		DATE,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

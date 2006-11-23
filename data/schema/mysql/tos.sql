@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS `tos` (
 	tosdescrip		VARCHAR (200),
 	tosdtadd		DATE,
 	tosdtmod		DATE,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

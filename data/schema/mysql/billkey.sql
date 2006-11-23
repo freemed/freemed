@@ -23,7 +23,6 @@
 CREATE TABLE IF NOT EXISTS `billkey` (
 	billkeydate		TIMESTAMP (14) DEFAULT NOW(),
 	billkey			BLOB,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

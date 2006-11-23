@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS `pos` (
 	posdescrip		VARCHAR (200) DEFAULT '',
 	posdtadd		DATE,
 	posdtmod		DATE,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

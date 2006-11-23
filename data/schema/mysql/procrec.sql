@@ -65,8 +65,7 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	procstatus		VARCHAR (50),
 	procslidingscale	CHAR (1),
 	proctosoverride		INT UNSIGNED DEFAULT 0,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

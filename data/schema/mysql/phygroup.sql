@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS `phygroup` (
 	phygroupidmap		TEXT,
 	phygroupdocs		TEXT,
 	phygroupspe1		INT UNSIGNED,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

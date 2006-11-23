@@ -23,7 +23,6 @@
 CREATE TABLE IF NOT EXISTS `cptmod` (
 	cptmod			CHAR (2) NOT NULL,
 	cptmoddescrip		VARCHAR (50) DEFAULT '',
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

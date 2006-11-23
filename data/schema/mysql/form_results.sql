@@ -27,8 +27,7 @@ CREATE TABLE IF NOT EXISTS `form_results` (
 	fr_timestamp		TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 	fr_template		VARCHAR (50),
 	fr_formname		VARCHAR (50),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

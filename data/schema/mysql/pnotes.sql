@@ -47,8 +47,7 @@ CREATE TABLE IF NOT EXISTS `pnotes` (
 	pnotesbmi		INT UNSIGNED,
 	iso			VARCHAR (15),
 	locked			INT UNSIGNED,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 	KEY			( pnotespat, pnotesdt, pnotesdoc ),

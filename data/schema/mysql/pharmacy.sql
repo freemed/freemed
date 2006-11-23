@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS `pharmacy` (
 	phstate			CHAR (3) NOT NULL,
 	phzip			VARCHAR (10) NOT NULL,
 	phmethod		VARCHAR (150) NOT NULL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	# Define keys
 

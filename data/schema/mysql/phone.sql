@@ -27,8 +27,7 @@ CREATE TABLE IF NOT EXISTS `phone` (
 	phonenumber		VARCHAR (16) NOT NULL,
 	phonestampadd		TIMESTAMP (14) NOT NULL,
 	phonestampmod		TIMESTAMP (14) NOT NULL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	# Define keys
 

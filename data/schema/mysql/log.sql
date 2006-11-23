@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS `log` (
 	logsubsystem		VARCHAR (150),
 	logseverity		INT UNSIGNED NOT NULL,
 	logmsg			TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

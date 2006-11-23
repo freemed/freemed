@@ -36,8 +36,7 @@ CREATE TABLE IF NOT EXISTS `labs` (
 	labtimestamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	labresultstatus		CHAR (1),
 	labnotes		TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 	KEY			( labpatient, labprovider, labtimestamp ),

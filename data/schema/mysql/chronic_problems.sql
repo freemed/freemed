@@ -26,8 +26,7 @@ CREATE TABLE IF NOT EXISTS `chronic_problems` (
 	pdate			DATE NOT NULL,
 	problem			VARCHAR (250) NOT NULL DEFAULT '',
 	ppatient		INT UNSIGNED NOT NULL DEFAULT 0,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

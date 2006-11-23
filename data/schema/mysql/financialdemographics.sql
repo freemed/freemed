@@ -36,8 +36,7 @@ CREATE TABLE IF NOT EXISTS `financialdemographics` (
 	fdother			INT UNSIGNED,
 	fdfreetext		TEXT,
 	fdentry			VARCHAR (75),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

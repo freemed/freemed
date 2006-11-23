@@ -30,8 +30,7 @@ CREATE TABLE IF NOT EXISTS `claimlog` (
 	clformat		VARCHAR (32) DEFAULT '',
 	cltarget		VARCHAR (32) DEFAULT '',
 	clbillkey		INT UNSIGNED NOT NULL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

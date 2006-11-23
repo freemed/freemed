@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS `cpt` (
 	cptstdfee		TEXT,
 	cpttos			TEXT,
 	cpttosprfx		TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

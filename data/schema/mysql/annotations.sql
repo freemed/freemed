@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS `annotations` (
 	aid			INT UNSIGNED NOT NULL,
 	auser			INT UNSIGNED NOT NULL,
 	annotation		TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

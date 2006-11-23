@@ -37,8 +37,7 @@ CREATE TABLE IF NOT EXISTS `payrec` (
 	payrecamt		REAL,
 	payrecdescrip		TEXT,
 	payreclock		ENUM ( 'unlocked', 'locked' ),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 	KEY			( payrecpatient, payrecproc ),

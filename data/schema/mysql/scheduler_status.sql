@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS `scheduler_status` (
 	csnote			VARCHAR (250),
 	csstatus		INT UNSIGNED NOT NULL DEFAULT 0,
 	csuser			INT UNSIGNED NOT NULL,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

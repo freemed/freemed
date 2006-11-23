@@ -41,8 +41,7 @@ CREATE TABLE IF NOT EXISTS `rx` (
 	rxorigrx		INT UNSIGNED,
 	rxnote			TEXT,
 	locked			INT UNSIGNED DEFAULT 0,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Default key
 

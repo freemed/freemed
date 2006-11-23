@@ -26,8 +26,7 @@ CREATE TABLE IF NOT EXISTS `recordlock` (
 	lockuser		INT UNSIGNED NOT NULL,
 	locktable		VARCHAR (128),
 	lockrow			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 

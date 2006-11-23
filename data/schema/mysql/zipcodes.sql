@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS `zipcodes` (
 	longitude		REAL,
 	timezone		INT,
 	dst			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	# Define keys
 

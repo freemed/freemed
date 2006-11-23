@@ -23,7 +23,6 @@
 CREATE TABLE IF NOT EXISTS `diagfamily` (
 	dfname			VARCHAR (100) NOT NULL,
 	dfdescrip		VARCHAR (100),
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 

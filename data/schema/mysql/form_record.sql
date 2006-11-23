@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS `form_record` (
 	fr_uuid			CHAR (36) NOT NULL,
 	fr_name			VARCHAR (100) NOT NULL,
 	fr_value		TEXT,
-	id			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY 		( id ),
+	id			SERIAL,
 
 	#	Define keys
 
