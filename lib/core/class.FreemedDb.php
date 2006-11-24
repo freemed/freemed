@@ -23,23 +23,6 @@
 
 LoadObjectDependency('net.php.pear.MDB2');
 
-// Declare macros
-define ( 'SQL__BIT_SHIFT',		8);
-define ( 'SQL__BLOB',			1);
-function SQL__CHAR ($size)              { return 2 + ($size<<SQL__BIT_SHIFT); }
-define ( 'SQL__DATE',			3);
-function SQL__DOUBLE ($size)            { return 4 + ($size<<SQL__BIT_SHIFT); }
-function SQL__ENUM ($elements = "") { if ($elements != "") return array(5, $elements); else return 5; } // end SQL__ENUM
-function SQL__INT ($size)		{ return 6 + ($size<<SQL__BIT_SHIFT); }
-function SQL__INT_UNSIGNED ($size)	{ return 7 + ($size<<SQL__BIT_SHIFT); }
-define ( 'SQL__TEXT',			8);
-function SQL__VARCHAR ($size)           { return 9 + ($size<<SQL__BIT_SHIFT); }
-define ( 'SQL__REAL',			10);
-function SQL__TIMESTAMP ($size)		{ return 11 + ($size<<SQL__BIT_SHIFT); }
-define ( 'SQL__SERIAL',			12);
-function SQL__AUTO_INCREMENT ($var)	{ return ($var) + (1<<(SQL__BIT_SHIFT*3)); }
-function SQL__NOT_NULL ($var)   { return ($var) + (2<<(SQL__BIT_SHIFT*3)); }
-define ( 'SQL__THRESHHOLD', (1<<(SQL__BIT_SHIFT*3))-1 );
 define ( 'SQL__NOW', 			"~~~~~NOW~~~~~" );
 
 // Class: org.freemedsoftware.core.FreemedDb
@@ -61,6 +44,10 @@ class FreemedDb extends MDB2 {
 		$this->db->loadModule( 'Extended' );
 		$this->db->loadModule( 'Manager' );
 		$this->db->loadModule( 'Reverse' );
+		$this->db->loadModule( 'Function' );
+
+		// Required multi query option for stored procedures
+		$this->db->setOption( 'multi_query', true );
 	} // end constructor
 
 	// Method: __call
@@ -73,6 +60,8 @@ class FreemedDb extends MDB2 {
 			return call_user_func_array ( array ( $this, $method ), $param );
 		} elseif ( method_exists ( $this->db, $method ) ) {
 			return call_user_func_array ( array ( $this->db, $method ), $param );
+		} elseif ( method_exists ( $this->db->function, $method ) ) {
+			return call_user_func_array ( array ( $this->db->function, $method ), $param );
 		} else {
 			trigger_error ( "Could not load method $method", E_USER_ERROR );
 		}
@@ -165,7 +154,7 @@ class FreemedDb extends MDB2 {
 
 			// Handle timestamp
 			if ($v == SQL__NOW) {
-				$values_hash .= ( $in_loop ? ", " : " " )."NOW()";
+				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->now();
 			} else {
 				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->quote( is_array($v) ? join(',', $v) : $v );
 			}
@@ -201,7 +190,7 @@ class FreemedDb extends MDB2 {
 
 			// Handle timestamp
 			if ($v == SQL__NOW) {
-				$values_clause[] = "`".$this->db->escape($k)."` = NOW()";
+				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->now();
 			} else {
 				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->quote( is_array( $v ) ? join(',', $v) : $v );
 			}
