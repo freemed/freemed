@@ -75,6 +75,10 @@ class User {
 			$this->local_record = $GLOBALS['__freemed']['cache']['user'][$this->user_number];
 		}
 
+		if (PEAR::isError($this->local_record)) {
+			return false;
+		}
+
 		$this->user_name    = stripslashes($this->local_record["username"]);
 		$this->user_descrip = stripslashes($this->local_record["userdescrip"]);
 		$this->user_level   = $this->local_record["userlevel"  ];
