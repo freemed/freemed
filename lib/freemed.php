@@ -81,13 +81,7 @@ include_once ( dirname(__FILE__)."/module.php" );
 
 // ********************** START SESSION **************************
 if (!defined('SESSION_DISABLE')) {
-	// This is *only* disabled when XML-RPC calls are being made,
-	// etc, so that it does not require information it can't get.
-	if ($_REQUEST['action'] == 'print') {
-		session_cache_limiter('public');
-	} else {
-		session_cache_limiter('nocache');
-	}
+	session_cache_limiter('nocache');
 	session_start();
 
 	session_register(
