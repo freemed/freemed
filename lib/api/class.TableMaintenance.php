@@ -25,7 +25,7 @@
 //
 class TableMaintenance {
 
-	public __construct ( ) { }
+	public function __construct ( ) { }
 
 	public function ExportStockData ( $table ) {
 		// Produce a physical location
@@ -37,7 +37,7 @@ class TableMaintenance {
 		if (file_exists($physical_file)) { return false; }
 
 		// Create the query
-		$query = "SELECT * FROM '".addslashes($table)."'
+		$query = "SELECT * FROM '".addslashes($table)."' ".
 			"INTO OUTFILE '".addslashes( $physical_file )."' ".
 			"FIELDS TERMINATED BY ',' ".
 			"OPTIONALLY ENCLOSED BY '' ".
