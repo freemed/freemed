@@ -499,51 +499,6 @@ class freemedCalendar {
 		
 	} // end method freemedCalendar::display_time
 
-	// Function: freemedCalendar::event_calendar_print
-	//
-	//	Display calendar event from scheduler.
-	//
-	// Parameters:
-	//
-	//	$event - scheduler table event id number.
-	//
-	// Returns:
-	//
-	//	XHTML formatted calendar event.
-	//
-	function event_calendar_print ( $event ) {
-		global $sql;
-
-		// Get event
-		$my_event = freemed::get_link_rec($event, "scheduler");
-
-		// Handle travel
-		if ($my_event['calpatient'] == 0) {
-			return freemedCalendar::event_special($my_event['calmark'])." ".
-			"(".$my_event['calduration']."m)\n";
-		}
-
-		// Get patient information
-		$my_patient = CreateObject('FreeMED.Patient', $my_event['calpatient'],
-			($my_event['caltype']=="temp"));
-
-		return "<a HREF=\"".(($my_event['caltype']=="temp") ?
-				"call-in.php?action=display&id=" :
-				"manage.php?id=" ).
-			$my_patient->id."\"".
-			">".trim($my_patient->fullName())."</a> ".
-			"(".$my_event['calduration']."m)<br/>\n".
-			"<a href=\"book_appointment.php?id=".
-				urlencode($my_event['id'])."&".
-				"type=".$my_event['caltype']."\" ".
-			">".__("Move")."</a>".
-			//" ( phy = ".$my_event['calphysician']." ) ".
-			( !empty($my_event['calprenote']) ?
-			"<br/>&nbsp;&nbsp;<i>".
-			prepare(stripslashes($my_event[calprenote])).
-			"</i>\n" : "" );
-	} // end method freemedCalendar::event_calendar_print
-
 	// Method: freemedCalendar::event_special
 	//
 	//	Return proper names for special event mappings, as per the
