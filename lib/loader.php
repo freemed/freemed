@@ -29,6 +29,9 @@
 
 // Function: CallMethod
 //
+//	Call a method in a designated namespace, automatically instantiating the
+//	appropriate class.
+//
 // Parameters:
 //
 //	$namespace - FreeMED object namespace
@@ -69,6 +72,8 @@ function CallMethod ( $namespace ) {
 
 // Function: CreateObject
 //
+//	Instantiate a new object based on a namespace.
+//
 // Parameters:
 //
 //	$namespace - Class namespace.
@@ -106,6 +111,9 @@ function CreateObject ( $namespace ) {
 
 // Function: LoadObjectDependency
 //
+//	Load PHP classes required by a file. This is necessary when it is not
+//	possible to use <CreateObject>.
+//
 // Parameters:
 //
 //	$dependency - Object path required.
@@ -116,6 +124,8 @@ function LoadObjectDependency ( $dependency ) {
 } // end function LoadObjectDependency
 
 // Function: ResolveClassName
+//
+//	Determine the name of a PHP class from a namespace.
 //
 // Parameters:
 //
@@ -132,6 +142,8 @@ function ResolveClassName ( $object ) {
 
 // Function: ResolveMethodName
 //
+//	Determine the name of a PHP method from a namespace.
+//
 // Parameters:
 //
 //	$object - Object namespace
@@ -146,6 +158,8 @@ function ResolveMethodName ( $object ) {
 } // end function ResolveMethodName
 
 // Function: ResolveObjectPath
+//
+//	Determine the file path of a PHP class based on its namespace.
 //
 // Parameters:
 //
