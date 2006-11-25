@@ -21,22 +21,22 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-define ('INSTALLATION', "%%INSTALLATION%%"); // installation name
-define ('DB_HOST', "%%HOST%%"); // database (SQL) host location
-define ('DB_NAME', "%%NAME%%"); // database name
-define ('DB_USER', "%%USER%%"); // SQL server username
-define ('DB_PASSWORD', "%%PASSWORD%%"); // SQL server password
-define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
+define ('INSTALLATION', "<{$installation|escape}>"); // installation name
+define ('DB_HOST', "<{$host|escape}>"); // database (SQL) host location
+define ('DB_NAME', "<{$name|escape}>"); // database name
+define ('DB_USER', "<{$name|escape}>"); // SQL server username
+define ('DB_PASSWORD', "<{$password|escape}>"); // SQL server password
+define ('PATID_PREFIX', "<{$patientidprefix|escape}>"); // used to generate internal practice ID
 define ('UI', "dojo");	// set default template
-define ('HOST', "%%HOSTNAME%%"); // host name for this system
+define ('HOST', "<{$host|escape}>"); // host name for this system
 define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('SESSION_PROTECTION', true); // strong session protection?
 define ('RECORD_LOCK_TIMEOUT', 180); // record lock timeout in seconds
-define ('DEFAULT_LANGUAGE', "%%LANGUAGE%%"); // default language
+define ('DEFAULT_LANGUAGE', "<{$language|escape}>"); // default language
 define ('INIT_ADDR',"127.0.0.1"); // this is the only IP address that can run the init wizard...
 
 // Archive settings
-define ('FSF_USERNAME', "%%FSFUSERNAME%%");
-define ('FSF_PASSWORD', "%%FSFPASSWORD%%");
+define ('FSF_USERNAME', "<{$fsfusername|escape}>");
+define ('FSF_PASSWORD', "<{$fsfpassword|escape}>");
 
 ?>
