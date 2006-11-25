@@ -196,17 +196,6 @@ function resolve_module ($module_name) {
 	return $cache->GetModuleProperty( strtolower($module_name), 'module_path' );
 } // end function resolve_module
 
-function setup_module ($module_name) {
-	// check for module existing
-	if (!class_exists($module_name))
-		DIE("register_module :: class \"$module_name\" doesn't exist");
-
-	// load module through object
-	$this_module = new $module_name ();
-
-	$this_module->setup();
-} // end function setup_module
-
 // Function: module_function
 //
 //	Execute an arbitrary method in a module
