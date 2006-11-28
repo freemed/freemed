@@ -230,7 +230,7 @@ class RemittBillingTransport extends BillingModule {
 				)." ".__("expand individual claims")."</td>
 			<td class=\"Data\" width=\"10%\">".$number_of_claims." ".__("claims")."</td>
 			<td class=\"Data\" width=\"25%\">&nbsp;</td>
-			<td class=\"Data\" width=\"20%\"><input type=\"checkbox\" name=\"bill[".$p."]\" ".( $bill[$p]==1 ? 'checked="checked"' : '' )." value=\"1\" />".__("Submit Patient?")."</td>
+			<td class=\"Data\" width=\"20%\"><input type=\"checkbox\" id=\"bill_$p\" name=\"bill[".$p."]\" ".( $bill[$p]==1 ? 'checked="checked"' : '' )." value=\"1\" />".__("Submit Patient?")."</td>
 			</tr>
 			</tbody></table>
 			";
@@ -595,7 +595,7 @@ class RemittBillingTransport extends BillingModule {
 			$buffer .= "
 			<tr>
 			<td class=\"Data\" width=\"15%\" align=\"right\">
-			<input type=\"checkbox\" name=\"claim[".$c."]\" ".( $claim[$c]==1 ? 'checked="checked"' : '' )." value=\"1\" />".__("Submit Claim?")."
+			<input type=\"checkbox\" onClick=\"document.getElementById('bill_".$_record['procpatient']."').checked = true; return true;\" name=\"claim[".$c."]\" ".( $claim[$c]==1 ? 'checked="checked"' : '' )." value=\"1\" />".__("Submit Claim?")."
 			</td>
 			<td class=\"Data\" width=\"25%\">
 			<a href=\"module_loader.php?module=proceduremodule&patient=".urlencode($patient)."&action=modform&id=".urlencode($c)."\"
