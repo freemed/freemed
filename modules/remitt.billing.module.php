@@ -175,14 +175,20 @@ class RemittBillingTransport extends BillingModule {
 			<td class=\"DataHead\" width=\"15%\">".__("Patient")."</td>
 			<td class=\"DataHead\" width=\"35%\">&nbsp;</td>
 			<td class=\"DataHead\" width=\"15%\" align=\"center\">
-				<!-- <input type=\"checkbox\" onClick=\"alert('FIXME!'); return true;\"/>".__("Select None")." -->&nbsp;</td>
+				<input type=\"button\" onClick=\"checkAll(this.form, false); return true;\" value=\"".__("Select None")."\" /> &nbsp;</td>
 			<td class=\"DataHead\" width=\"15%\" align=\"center\">
-				<!-- <input type=\"checkbox\" onClick=\"alert('FIXME!'); return true;\"/>".__("Select All")." -->&nbsp;</td>
+				<input type=\"button\" onClick=\"checkAll(this.form, true); return true;\" value=\"".__("Select All")."\" />&nbsp;</td>
 			<td class=\"DataHead\" width=\"20%\" align=\"center\">
 				<input type=\"submit\" name=\"__submit\" value=\"".__("Submit Claims")."\" /></td>
 		</td></thead>
 		</table>
-		";
+		<script language=\"javascript\">\n".
+         "function checkAll ( f, c ) { \n".
+                        "       for (var i=0; i < f.elements.length; i++ ) {\n".
+                        "               if (f.elements[i].type == 'checkbox') { f.elements[i].checked = c; } \n".
+                        "       }\n".
+                        "}\n".
+		"</script>\n";
 
 		include_once(freemed::template_file('ajax.php'));
 
