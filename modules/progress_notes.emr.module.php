@@ -190,13 +190,7 @@ class ProgressNotes extends EMRModule {
 	$pnt_array,
         array (
 	 __("Provider") =>
-	   freemed_display_selectbox (
-            $sql->query ("SELECT * FROM physician ".
-	    	"WHERE phyref != 'yes' AND phylname != '' ".
-		"ORDER BY phylname,phyfname"),
-	    "#phylname#, #phyfname#",
-	    "pnotesdoc"
-	   ),
+	module_function('providermodule', 'widget', 'pnotesdoc'),
 	   
          __("Description") =>
 	html_form::text_widget("pnotesdescrip", 25, 100)
@@ -207,7 +201,118 @@ class ProgressNotes extends EMRModule {
 	 )
         ) // end array_merge	
         )
-      ); 
+      );
+
+	if (substr($_REQUEST['action'], 0, 3) == 'add') {
+	// form ...
+	function __form_procs ( ) {
+		$procs = $_REQUEST['procs'];
+		if (!is_array($procs)) { return ''; }
+		foreach ( $procs AS $p ) {
+			$r .= '<div id="procs_div_'.$p.'">'.
+			'<input type="hidden" name="procs[]" value="'.$p.'" /> '.
+			module_function('cptmaintenance', 'to_text', array($p)).
+			'[<a onClick="removePx('.$p.')">X</a>]</div>';
+
+		}
+		return $r;
+	}
+	function __form_dx ( ) {
+		$dx = $_REQUEST['dx'];
+		if (!is_array($dx)) { return ''; }
+		foreach ( $dx AS $d ) {
+			$r .= '<div id="dx_div_'.$d.'">'.
+			'<input type="hidden" name="dx[]" value="'.$d.'" /> '.
+			module_function('icdmaintenance', 'to_text', array($d)).
+			'[<a onClick="removeDx('.$d.')">X</a>]</div>';
+
+		}
+		return $r;
+	}
+
+	$book->add_page(
+		__("Superbill"),
+		array ( 'procs', 'dx' ),
+		html_form::form_table( array (
+			__("Procedures") => "
+			<script language=\"javascript\">
+			function addPx ( ) {
+				container = document.getElementById('px_container');
+				id = document.getElementById('p').value;
+				text = document.getElementById('p_text').value;
+				if ( id != '' && id > 0 ) {
+					var tempElement;
+					try {
+						tempElement = document.getElementById('procs_div_'+id);
+						if (!tempElement.innerHTML) {
+
+							tempElement = document.createElement('div');
+							tempElement.id = 'procs_div_'+id;
+						}
+					} catch (err) {
+						tempElement = document.createElement('div');
+						tempElement.id = 'procs_div_'+id;
+					}
+					tempElement.innerHTML = '<input type=\"hidden\" name=\"procs[]\" value=\"'+id+'\" /> '+
+						text +
+						'[<a onClick=\"removePx('+id+')\">X</a>]';
+					container.appendChild( tempElement );
+				}
+			}
+			function removePx ( id ) {
+				try {
+					document.getElementById('procs_div_'+id).innerHTML = '';
+				} catch (err) { }
+			}
+			</script>
+			".module_function('cptmaintenance', 'widget', array ('p'))."
+			<input type=\"button\" class=\"button\" value=\"Add Procedure\" onClick=\"addPx(); return true;\" />
+			<br/>
+			<div id=\"px_container\">
+			".__form_procs()."
+			</div>
+			",
+			__("Diagnoses") => "
+			<script language=\"javascript\">
+			function addDx ( ) {
+				container = document.getElementById('dx_container');
+				id = document.getElementById('d').value;
+				text = document.getElementById('d_text').value;
+				if ( id != '' && id > 0 ) {
+					var tempElement;
+					try {
+						tempElement = document.getElementById('dx_div_'+id);
+						if (!tempElement.innerHTML) {
+
+							tempElement = document.createElement('div');
+							tempElement.id = 'dx_div_'+id;
+						}
+					} catch (err) {
+						tempElement = document.createElement('div');
+						tempElement.id = 'dx_div_'+id;
+					}
+					tempElement.innerHTML = '<input type=\"hidden\" name=\"dx[]\" value=\"'+id+'\" /> '+
+						text +
+						'[<a onClick=\"removeDx('+id+')\">X</a>]';
+					container.appendChild( tempElement );
+				}
+			}
+			function removeDx ( id ) {
+				try {
+					document.getElementById('dx_div_'+id).innerHTML = '';
+				} catch (err) { }
+			}
+			</script>
+			".module_function('icdmaintenance', 'widget', array ('d'))."
+			<input type=\"button\" class=\"button\" value=\"Add Dx\" onClick=\"addDx(); return true;\" />
+			<br/>
+			<div id=\"dx_container\">
+			".__form_dx()."
+			</div>
+			"
+		) )
+	);
+	} // end superbill page
 
      $book->add_page (
        __("Subjective"),
@@ -434,6 +539,23 @@ class ProgressNotes extends EMRModule {
          $display_buffer .= " <b> ".__("done").". </b>\n";
        else
          $display_buffer .= " <b> <font COLOR=\"#ff0000\">".__("ERROR")."</font> </b>\n";
+
+	// handle superbills if they exist
+	if ( is_array($_REQUEST['dx']) or is_array($_REQUEST['procs']) ) {
+		$GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+			'superbill',
+			array (
+				'dateofservice' => fm_date_assemble('pnotesdt'),
+				'enteredby' => $this_user->user_number,
+				'patient',
+				'note' => $_REQUEST['pnotesdescrip'],
+				'procs' => join ( ',', $_REQUEST['procs'] ),
+				'dx' => join ( ',', $_REQUEST['dx'] ),
+				'reviewed' => 0
+			)
+		));
+	}
+
        $display_buffer .= "
         </div>
         <p/>
