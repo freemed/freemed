@@ -226,7 +226,8 @@ class SuperBill extends EMRModule {
 
 	function MainMenuNotify ( ) {
 		$cresult = $GLOBALS['sql']->query("SELECT COUNT(*) AS my_count FROM ".$this->table_name." WHERE reviewed='0' GROUP BY patient");
-		if ($cresult['my_count'] == 0) {
+		$cr = $GLOBALS['sql']->fetch_array ( $cresult );
+		if ($cr['my_count'] == 0) {
 			return array (
 				__("Superbill"),
 				__("There are currently no superbills waiting for entry.")
@@ -243,7 +244,7 @@ class SuperBill extends EMRModule {
 		// Display ...
 		return array (
 			__("Superbill"),
-			sprintf(__("There are currently %d superbills waiting for entry."), $cresult['my_count'])."<br/>\n".
+			sprintf(__("There are currently %d superbills waiting for entry."), $cr['my_count'])."<br/>\n".
 			"<table>".
 			"<tr><td>".join('</td></tr><tr><td>', $entry)."</td></tr>".
 			"</table>"
