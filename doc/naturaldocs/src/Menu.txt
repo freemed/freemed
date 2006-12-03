@@ -1,4 +1,4 @@
-Format: 1.3
+Format: 1.35
 
 
 Title: FreeMED
@@ -31,126 +31,274 @@ Group: Lib  {
 
    Group: Acl  {
 
+      File: gacl  (lib/acl/gacl.class.php)
+
       Group: Admin  {
 
-         File: core<br>  (lib/acl/admin/smarty/libs/core/core.display_debug_console.php)
-         File: core<br>  (lib/acl/admin/smarty/libs/core/core.assign_smarty_interface.php)
+         File: core.display_debug_console  (no auto-title, lib/acl/admin/smarty/libs/core/core.display_debug_console.php)
+         File: core.assign_smarty_interface  (no auto-title, lib/acl/admin/smarty/libs/core/core.assign_smarty_interface.php)
 
          Group: Plugins  {
 
-            File: block function<br>  (lib/acl/admin/smarty/libs/plugins/block.strip.php)
-            File: block function<br>  (lib/acl/admin/smarty/libs/plugins/block.textformat.php)
-            File: compiler function<br>  (lib/acl/admin/smarty/libs/plugins/compiler.assign.php)
-            File: function.html_checkboxes.php<br>  (lib/acl/admin/smarty/libs/plugins/function.html_checkboxes.php)
-            File: function.html_radios.php<br>  (lib/acl/admin/smarty/libs/plugins/function.html_radios.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.popup_init.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.counter.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.config_load.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.debug.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_options.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.cycle.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_select_time.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.math.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.eval.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_table.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.mailto.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.fetch.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_select_date.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.popup.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.html_image.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.assign.php)
-            File: function<br>  (lib/acl/admin/smarty/libs/plugins/function.assign_debug_info.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.spacify.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.string_format.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.date_format.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.default.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.upper.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.replace.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.indent.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.debug_print_var.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.strip_tags.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_paragraphs.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.truncate.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_characters.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.regex_replace.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_words.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.wordwrap.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.strip.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.cat.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.escape.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.capitalize.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.nl2br.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.lower.php)
-            File: modifier<br>  (lib/acl/admin/smarty/libs/plugins/modifier.count_sentences.php)
-            File: outputfilter.trimwhitespace.php<br>  (lib/acl/admin/smarty/libs/plugins/outputfilter.trimwhitespace.php)
-            File: smarty_function_escape_special_chars<br>  (lib/acl/admin/smarty/libs/plugins/shared.escape_special_chars.php)
-            File: smarty_make_timestamp<br>  (lib/acl/admin/smarty/libs/plugins/shared.make_timestamp.php)
+            File: block.strip>  (no auto-title, lib/acl/admin/smarty/libs/plugins/block.strip.php)
+            File: block.textformat  (no auto-title, lib/acl/admin/smarty/libs/plugins/block.textformat.php)
+            File: compiler.assign  (no auto-title, lib/acl/admin/smarty/libs/plugins/compiler.assign.php)
+            File: function.html_checkboxes.php  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.html_checkboxes.php)
+            File: function.html_radios.php  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.html_radios.php)
+            File: function.popup_init  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.popup_init.php)
+            File: function.counter  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.counter.php)
+            File: function.config_load  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.config_load.php)
+            File: function.debug  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.debug.php)
+            File: function.html_options  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.html_options.php)
+            File: function.cycle  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.cycle.php)
+            File: function.html_select_time  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.html_select_time.php)
+            File: function.math  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.math.php)
+            File: function.eval  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.eval.php)
+            File: function.html_table  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.html_table.php)
+            File: function.mailto  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.mailto.php)
+            File: function.fetch  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.fetch.php)
+            File: function.html_select_date  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.html_select_date.php)
+            File: function.popup  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.popup.php)
+            File: function  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.html_image.php)
+            File: function.assign  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.assign.php)
+            File: function.assign_debug_info  (no auto-title, lib/acl/admin/smarty/libs/plugins/function.assign_debug_info.php)
+            File: modifier.spacify  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.spacify.php)
+            File: modifier.string_format  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.string_format.php)
+            File: modifier.date_format  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.date_format.php)
+            File: modifier.default  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.default.php)
+            File: modifier.upper  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.upper.php)
+            File: modifier.replace  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.replace.php)
+            File: modifier.indent  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.indent.php)
+            File: modifier.debug_print_var  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.debug_print_var.php)
+            File: modifier.strip_tags  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.strip_tags.php)
+            File: modifier.count_paragraphs  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.count_paragraphs.php)
+            File: modifier.truncate  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.truncate.php)
+            File: modifier.count_characters  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.count_characters.php)
+            File: modifier.regex_replace  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.regex_replace.php)
+            File: modifier.count_words  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.count_words.php)
+            File: modifier.wordwrap  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.wordwrap.php)
+            File: modifier.strip  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.strip.php)
+            File: modifier.cat  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.cat.php)
+            File: modifier.escape  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.escape.php)
+            File: modifier.capitalize  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.capitalize.php)
+            File: modifier.nl2br  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.nl2br.php)
+            File: modifier.lower  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.lower.php)
+            File: modifier.count_sentences  (no auto-title, lib/acl/admin/smarty/libs/plugins/modifier.count_sentences.php)
+            File: outputfilter.trimwhitespace  (no auto-title, lib/acl/admin/smarty/libs/plugins/outputfilter.trimwhitespace.php)
+            File: shared.escape_special_chars  (no auto-title, lib/acl/admin/smarty/libs/plugins/shared.escape_special_chars.php)
+            File: shared.make_timestamp  (no auto-title, lib/acl/admin/smarty/libs/plugins/shared.make_timestamp.php)
             }  # Group: Plugins
 
          }  # Group: Admin
 
       Group: Adodb  {
 
-         File: adodb-connection.inc.php  (lib/acl/adodb/adodb-connection.inc.php)
-         File: adodb.inc.php  (lib/acl/adodb/adodb.inc.php)
-         File: http://msdn...asp?url=/archive/en-us/dnaraccgen/html/msdn_odk.asp  (lib/acl/adodb/drivers/adodb-odbc.inc.php)
-         File: On Windows 2000 SP4 with PHP 4...3.28,  (lib/acl/adodb/session/adodb-encrypt-secret.php)
-         File: Since 3.31, this file is no longer used, and the "postgres" driver is  (lib/acl/adodb/drivers/adodb-postgres.inc.php)
-         File: SQL string literals (input strings) must be preceded with two backslashes  (lib/acl/adodb/drivers/adodb-postgres64.inc.php)
+         File: adodb-connection  (no auto-title, lib/acl/adodb/adodb-connection.inc.php)
+         File: adodb  (no auto-title, lib/acl/adodb/adodb.inc.php)
+         File: adodb-odbc  (no auto-title, lib/acl/adodb/drivers/adodb-odbc.inc.php)
+         File: adodb-encrypt-secret  (no auto-title, lib/acl/adodb/session/adodb-encrypt-secret.php)
+         File: adodb-postgres  (no auto-title, lib/acl/adodb/drivers/adodb-postgres.inc.php)
+         File: adodb-postgres64  (no auto-title, lib/acl/adodb/drivers/adodb-postgres64.inc.php)
          }  # Group: Adodb
 
-      File: soap/clients/perl_client.pl  (lib/acl/soap/clients/perl_client.pl)
-      File: soap/nusoap.php  (lib/acl/soap/nusoap.php)
-      File: This cache must be manually cleaned each time ACL's are modified.  (lib/acl/gacl.class.php)
-      File: When asking phpGACL questions about access to an ACO, it is not possible  (lib/acl/docs/manual.txt)
       }  # Group: Acl
 
-   File: agata/dia2sql.pl  (lib/agata/dia2sql.pl)
+   Group: Agata7  {
+
+      File: excel/Workbook  (no auto-title, lib/agata7/classes/excel/Workbook.php)
+      File: excel/Worksheet  (no auto-title, lib/agata7/classes/excel/Worksheet.php)
+
+      Group: Jpgraph  {
+
+         File: JPGRAPH  (no auto-title, lib/agata7/classes/jpgraph/jpgraph.php)
+         File: JPGRAPH_BAR  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_bar.php)
+         File: JPGRAPH_CANVAS  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_canvas.php)
+         File: JPGRAPH_ERROR  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_error.php)
+         File: JPGRAPH_GANTT  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_gantt.php)
+         File: JPGRAPH_LINE  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_line.php)
+         File: JPGRAPH_LOG  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_log.php)
+         File: JPGRAPH_ODO  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_odo.php)
+         File: JPGRAPH_PIE  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_pie.php)
+         File: JPGRAPH_PIE3D  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_pie3d.php)
+         File: JPGRAPH_SCATTER  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_scatter.php)
+         File: JPGRAPH_SPIDER  (no auto-title, lib/agata7/classes/jpgraph/jpgraph_spider.php)
+         }  # Group: Jpgraph
+
+      File: util/nusoap.php  (lib/agata7/classes/util/nusoap.php)
+      }  # Group: Agata7
+
+   Group: Api  {
+
+      File: Agata7  (lib/api/class.Agata7.php)
+      File: Authorizations  (lib/api/class.Authorizations.php)
+      File: class.ClaimLog.php  (lib/api/class.ClaimLog.php)
+      File: Fax  (lib/api/class.Fax.php)
+      File: FormTemplate  (lib/api/class.FormTemplate.php)
+      File: FormTemplateList  (lib/api/class.FormTemplateList.php)
+      File: Ledger  (lib/api/class.Ledger.php)
+      File: Messages  (lib/api/class.Messages.php)
+      File: PatientInterface  (lib/api/class.PatientInterface.php)
+      File: Procedure  (lib/api/class.Procedure.php)
+      File: Remitt  (lib/api/class.Remitt.php)
+      File: RxList  (lib/api/class.RxList.php)
+      File: Scheduler  (lib/api/class.Scheduler.php)
+      File: SystemConfig  (lib/api/class.SystemConfig.php)
+      File: TableMaintenance  (lib/api/class.TableMaintenance.php)
+      File: Tickler  (lib/api/class.Tickler.php)
+      File: Transport  (lib/api/class.Transport.php)
+      File: UserInterface  (lib/api/class.UserInterface.php)
+      }  # Group: Api
+
    File: bcadd  (lib/bcadd.php)
    File: Calendar API  (lib/calendar-functions.php)
+
+   Group: Core  {
+
+      File: org.freemedsoftware.core.PHPlot  (no auto-title, lib/core/class.PHPlot.php)
+      File: org.freemedsoftware.core.Relay  (no auto-title, lib/core/class.Relay.php)
+      File: Authentication  (lib/core/class.Authentication.php)
+      File: Authentication_Basic  (lib/core/class.Authentication_Basic.php)
+      File: Authentication_Get  (lib/core/class.Authentication_Get.php)
+      File: Authentication_Password  (lib/core/class.Authentication_Password.php)
+      File: BaseModule  (lib/core/class.BaseModule.php)
+      File: CHMReader  (lib/core/class.CHMReader.php)
+      File: Coverage  (lib/core/class.Coverage.php)
+      File: CSV  (lib/core/class.CSV.php)
+      File: Djvu  (lib/core/class.Djvu.php)
+      File: EMRModule  (lib/core/class.EMRModule.php)
+      File: ExternalPlugin  (lib/core/class.ExternalPlugin.php)
+      File: Fax  (lib/core/class.Fax.php)
+      File: FileSerialize  (lib/core/class.FileSerialize.php)
+      File: FreemedDb  (lib/core/class.FreemedDb.php)
+      File: GraphNormalize  (lib/core/class.GraphNormalize.php)
+      File: Handler_HL7v2  (lib/core/class.Handler_HL7v2.php)
+      File: Handler_HL7v2_R01  (lib/core/class.Handler_HL7v2_R01.php)
+      File: HL7v3_CDA  (lib/core/class.HL7v3_CDA.php)
+      File: InsuranceCompany  (lib/core/class.InsuranceCompany.php)
+      File: LanguageRegistry  (lib/core/class.LanguageRegistry.php)
+      File: Log  (lib/core/class.Log.php)
+      File: Module  (lib/core/class.Module.php)
+      File: ModuleIndex  (lib/core/class.ModuleIndex.php)
+      File: MultiplePDF  (lib/core/class.MultiplePDF.php)
+      File: Parser_HL7v2  (lib/core/class.Parser_HL7v2.php)
+      File: Parser_HL7v3_CDA  (lib/core/class.Parser_HL7v3_CDA.php)
+      File: Patient  (lib/core/class.Patient.php)
+      File: PDF  (lib/core/class.PDF.php)
+      File: Physician  (lib/core/class.Physician.php)
+      File: RecordLock  (lib/core/class.RecordLock.php)
+      File: Relay_Json  (lib/core/class.Relay_Json.php)
+      File: Relay_Xmlrpc  (lib/core/class.Relay_Xmlrpc.php)
+      File: SlidingFeeScale  (lib/core/class.SlidingFeeScale.php)
+      File: SupportModule  (lib/core/class.SupportModule.php)
+      File: TeX  (lib/core/class.TeX.php)
+      File: User  (lib/core/class.User.php)
+      File: vCalendar  (lib/core/class.vCalendar.php)
+      File: vCalendarEvent  (lib/core/class.vCalendarEvent.php)
+      File: xmlrpc_client  (lib/core/class.xmlrpc_client.php)
+      }  # Group: Core
+
    File: Core API  (lib/API.php)
-   File: FreeMED.AdminModule  (lib/class.AdminModule.php)
-   File: FreeMED.Agata  (lib/class.Agata.php)
-   File: FreeMED.Authorizations  (lib/class.Authorizations.php)
-   File: FreeMED.BaseModule  (lib/class.BaseModule.php)
-   File: FreeMED.ClaimLog  (no auto-title, lib/class.ClaimLog.php)
-   File: FreeMED.Coverage  (lib/class.Coverage.php)
-   File: FreeMED.Djvu  (lib/class.Djvu.php)
-   File: FreeMED.EMRModule  (lib/class.EMRModule.php)
-   File: FreeMED.Fax  (lib/class.Fax.php)
-   File: FreeMED.FixedFormRenderer  (lib/class.FixedFormRenderer.php)
-   File: FreeMED.FreeMEDSelfTest  (lib/class.FreeMEDSelfTest.php)
-   File: FreeMED.GeneralConfig  (lib/class.GeneralConfig.php)
-   File: FreeMED.Guarantor  (lib/class.Guarantor.php)
-   File: FreeMED.Handler_HL7v2  (lib/class.Handler_HL7v2.php)
-   File: FreeMED.Parser_HL7v2  (no auto-title, lib/class.Parser_HL7v2.php)
-   File: FreeMED.InsuranceCompany  (lib/class.InsuranceCompany.php)
-   File: FreeMED.LanguageRegistry  (lib/class.LanguageRegistry.php)
-   File: FreeMED.Ledger  (lib/class.Ledger.php)
-   File: FreeMED.MaintenanceModule  (lib/class.MaintenanceModule.php)
-   File: FreeMED.Messages  (lib/class.Messages.php)
-   File: FreeMED.Patient  (lib/class.Patient.php)
-   File: FreeMED.Payer  (lib/class.Payer.php)
-   File: FreeMED.PHPlot  (no auto-title, lib/class.PHPlot.php)
-   File: FreeMED.Physician  (lib/class.Physician.php)
-   File: FreeMED.Procedure  (lib/class.Procedure.php)
-   File: FreeMED.RecordLock  (lib/class.RecordLock.php)
-   File: FreeMED.Remitt  (lib/class.Remitt.php)
-   File: FreeMED.RxList  (lib/class.rxlist.php)
-   File: FreeMED.Scheduler  (lib/class.Scheduler.php)
-   File: FreeMED.TeX  (lib/class.TeX.php)
-   File: FreeMED.User  (lib/class.User.php)
-   File: FreeMED.vCalendar  (lib/class.vCalendar.php)
-   File: FreeMED.vCalendarEvent  (lib/class.vCalendarEvent.php)
+
+   Group: Dojo  {
+
+      File: dojo.js.uncompressed.js  (lib/dojo/dojo.js.uncompressed.js)
+
+      Group: Src  {
+
+         File: event/common.js  (no auto-title, lib/dojo/src/event/common.js)
+         File: date/format.js  (no auto-title, lib/dojo/src/date/format.js)
+         File: dnd/DragAndDrop.js  (lib/dojo/src/dnd/DragAndDrop.js)
+         File: dnd/HtmlDragManager.js  (lib/dojo/src/dnd/HtmlDragManager.js)
+
+         Group: Flash  {
+
+            File: DojoExternalInterface  (lib/dojo/src/flash/flash6/DojoExternalInterface.as)
+            File: DojoExternalInterface  (lib/dojo/src/flash/flash8/DojoExternalInterface.as)
+            File: flash8/ExpressInstall.as  (lib/dojo/src/flash/flash8/ExpressInstall.as)
+            }  # Group: Flash
+
+         File: lfx/extras.js  (no auto-title, lib/dojo/src/lfx/extras.js)
+         File: gfx/Colorspace.js  (lib/dojo/src/gfx/Colorspace.js)
+
+         Group: Io  {
+
+            File: io/IframeIO.js  (no auto-title, lib/dojo/src/io/IframeIO.js)
+            File: io/RepubsubIO.js  (no auto-title, lib/dojo/src/io/RepubsubIO.js)
+            File: io/cometd.js  (no auto-title, lib/dojo/src/io/cometd.js)
+            }  # Group: Io
+
+         Group: Lang  {
+
+            File: an object (or array of objects) whose properties are copied to the created prototype  (lib/dojo/src/lang/declare.js)
+            File: extras.js  (lib/dojo/src/lang/extras.js)
+            File: repr.js  (lib/dojo/src/lang/repr.js)
+            }  # Group: Lang
+
+         File: html/util.js  (no auto-title, lib/dojo/src/html/util.js)
+         File: string/extras.js  (no auto-title, lib/dojo/src/string/extras.js)
+         File: ns.js  (no auto-title, lib/dojo/src/ns.js)
+         File: regexp.js  (lib/dojo/src/regexp.js)
+         File: storage/Storage.js  (no auto-title, lib/dojo/src/storage/Storage.as)
+         File: string/Builder.js  (no auto-title, lib/dojo/src/string/Builder.js)
+         File: Deferred.js  (no auto-title, lib/dojo/src/Deferred.js)
+         File: hostenv_adobesvg.js  (no auto-title, lib/dojo/src/hostenv_adobesvg.js)
+         File: hostenv_rhino.js  (no auto-title, lib/dojo/src/hostenv_rhino.js)
+         File:   This is an  (lib/dojo/src/loader.js)
+
+         Group: Widget  {
+
+            File: ComboBox.js  (lib/dojo/src/widget/ComboBox.js)
+            File: SvgWidget.js  (no auto-title, lib/dojo/src/widget/SvgWidget.js)
+            File: HtmlWidget.js  (no auto-title, lib/dojo/src/widget/HtmlWidget.js)
+            File: ContentPane.js  (lib/dojo/src/widget/ContentPane.js)
+            File: DomWidget.js  (lib/dojo/src/widget/DomWidget.js)
+            File: DropdownContainer.js  (lib/dojo/src/widget/DropdownContainer.js)
+            File: Editor2.js  (lib/dojo/src/widget/Editor2.js)
+            File: Editor2Toolbar.js  (lib/dojo/src/widget/Editor2Toolbar.js)
+            File: PopupContainer.js  (lib/dojo/src/widget/PopupContainer.js)
+            File: RadioGroup.js  (lib/dojo/src/widget/RadioGroup.js)
+            File: MonthlyCalendar.js  (no auto-title, lib/dojo/src/widget/MonthlyCalendar.js)
+            File: RichText.js  (lib/dojo/src/widget/RichText.js)
+            File: Widget.js  (lib/dojo/src/widget/Widget.js)
+            }  # Group: Widget
+
+         }  # Group: Src
+
+      }  # Group: Dojo
+
+   File: get  (lib/xmlrpc/class.Images.php)
+   File: Module API  (lib/module.php)
+   File: Object Loader API  (lib/loader.php)
+
+   Group: Pear  {
+
+      File: 251 is also a valid response code  (lib/pear/Net/SMTP.php)
+      File: as the class use fopen, urls should work also (test that)  (lib/pear/System.php)
+
+      Group: DB  {
+
+         File: DB_ibase  (no auto-title, lib/pear/DB/ibase.php)
+         File: DB_common  (no auto-title, lib/pear/DB/common.php)
+         File: DB_oci8  (no auto-title, lib/pear/DB/oci8.php)
+         File: DB_pgsql  (no auto-title, lib/pear/DB/pgsql.php)
+         File: DB_sybase  (no auto-title, lib/pear/DB/sybase.php)
+         File: DB_mssql  (no auto-title, lib/pear/DB/mssql.php)
+         File: DB_ifx  (no auto-title, lib/pear/DB/ifx.php)
+         File: DB_odbc  (no auto-title, lib/pear/DB/odbc.php)
+         }  # Group: DB
+
+      File: MDB2.php  (lib/pear/MDB2.php)
+      }  # Group: Pear
 
    Group: Perl  {
 
-      File: Config::IniFiles  (lib/perl/Config/IniFiles.pm)
+      File: Config::IniFiles  (no auto-title, lib/perl/Config/IniFiles.pm)
+      File: Config::Tiny  (no auto-title, lib/perl/Config/Tiny.pm)
 
       Group: Encode  {
 
          File: compat  (lib/perl/Encode/compat.pm)
-         File: compat::  (lib/perl/Encode/compat/5006001.pm)
+         File: compat::5006001  (no auto-title, lib/perl/Encode/compat/5006001.pm)
          File: compat::Alias  (lib/perl/Encode/compat/Alias.pm)
          File: compat::common  (lib/perl/Encode/compat/common.pm)
          }  # Group: Encode
@@ -162,60 +310,128 @@ Group: Lib  {
          File: RPC2.pm  (lib/perl/Frontier/RPC2.pm)
          }  # Group: Frontier
 
-      File: XML::RAX  (lib/perl/XML/RAX.pm)
+      Group: Locale  {
+
+         File: Framework  (lib/perl/Locale/Framework.pm)
+         File: Framework::Dumb  (lib/perl/Locale/Framework/Dumb.pm)
+         File: Framework::GettextXML  (lib/perl/Locale/Framework/GettextXML.pm)
+         }  # Group: Locale
+
+      Group: HTML  {
+
+         File: Entities  (lib/perl/HTML/Entities.pm)
+         }  # Group: HTML
+
+      Group: XML  {
+
+         File: RAX  (lib/perl/XML/RAX.pm)
+         }  # Group: XML
+
       }  # Group: Perl
 
-   File: ReadSqlFile  (lib/agata/lib/class.AgataCore.php)
-   File: template  (lib/template/default/lib.php)
-   File: AJAX Library Functions  (no auto-title, lib/template/default/ajax.php)
+   Group: Public  {
 
-   Group: Xmlrpc  {
+      File: Installation  (lib/public/class.Installation.php)
+      }  # Group: Public
 
-      Group: FreeB  {
+   Group: Smarty  {
 
-         File: FreeB.FBDiagnosis  (no auto-title, lib/xmlrpc/FreeB/class.FBDiagnosis.php)
-         File: FreeB.FBProcedure  (no auto-title, lib/xmlrpc/FreeB/class.FBProcedure.php)
-         File: FreeB.FBBillingContact  (no auto-title, lib/xmlrpc/FreeB/class.FBBillingContact.php)
-         File: FreeB.FBBillingService  (no auto-title, lib/xmlrpc/FreeB/class.FBBillingService.php)
-         File: FreeB.FBClearingHouse  (no auto-title, lib/xmlrpc/FreeB/class.FBClearingHouse.php)
-         File: FreeB.FBFacility  (no auto-title, lib/xmlrpc/FreeB/class.FBFacility.php)
-         File: FreeB.FBInsured  (no auto-title, lib/xmlrpc/FreeB/class.FBInsured.php)
-         File: FBProvider  (lib/xmlrpc/FreeB/class.FBProvider.php)
-         }  # Group: FreeB
+      File: core.display_debug_console  (no auto-title, lib/smarty/internals/core.display_debug_console.php)
+      File: core.assign_smarty_interface  (no auto-title, lib/smarty/internals/core.assign_smarty_interface.php)
 
-      File: XMLRPC FreeMED.Fax  (no auto-title, lib/xmlrpc/class.Fax.php)
-      File: XMLRPC FreeMED.Patient  (no auto-title, lib/xmlrpc/class.Patient.php)
-      File: XMLRPC FreeMED.Ticker  (no auto-title, lib/xmlrpc/class.Tickler.php)
-      File: XMLRPC FreeMED.Images  (no auto-title, lib/xmlrpc/class.Images.php)
-      }  # Group: Xmlrpc
+      Group: Plugins  {
+
+         File: block.textformat  (no auto-title, lib/smarty/plugins/block.textformat.php)
+         File: compiler.assign  (no auto-title, lib/smarty/plugins/compiler.assign.php)
+         File: function.html_checkboxes  (no auto-title, lib/smarty/plugins/function.html_checkboxes.php)
+         File: function.html_radios.php  (no auto-title, lib/smarty/plugins/function.html_radios.php)
+         File: function.html_select_date  (no auto-title, lib/smarty/plugins/function.html_select_date.php)
+         File: function.assign_debug_info  (no auto-title, lib/smarty/plugins/function.assign_debug_info.php)
+         File: function.counter  (no auto-title, lib/smarty/plugins/function.counter.php)
+         File: function.popup_init  (no auto-title, lib/smarty/plugins/function.popup_init.php)
+         File: function.html_image  (no auto-title, lib/smarty/plugins/function.html_image.php)
+         File: function.mailto  (no auto-title, lib/smarty/plugins/function.mailto.php)
+         File: function.config_load  (no auto-title, lib/smarty/plugins/function.config_load.php)
+         File: function.cycle  (no auto-title, lib/smarty/plugins/function.cycle.php)
+         File: function.html_options  (no auto-title, lib/smarty/plugins/function.html_options.php)
+         File: function.math  (no auto-title, lib/smarty/plugins/function.math.php)
+         File: function.debug  (no auto-title, lib/smarty/plugins/function.debug.php)
+         File: function.popup  (no auto-title, lib/smarty/plugins/function.popup.php)
+         File: function.html_select_time  (no auto-title, lib/smarty/plugins/function.html_select_time.php)
+         File: function.fetch  (no auto-title, lib/smarty/plugins/function.fetch.php)
+         File: function.eval  (no auto-title, lib/smarty/plugins/function.eval.php)
+         File: function.html_table  (no auto-title, lib/smarty/plugins/function.html_table.php)
+         File: modifier.spacify  (no auto-title, lib/smarty/plugins/modifier.spacify.php)
+         File: modifier.count_paragraphs  (no auto-title, lib/smarty/plugins/modifier.count_paragraphs.php)
+         File: modifier.count_characters  (no auto-title, lib/smarty/plugins/modifier.count_characters.php)
+         File: modifier.escape  (no auto-title, lib/smarty/plugins/modifier.escape.php)
+         File: modifier.count_sentences  (no auto-title, lib/smarty/plugins/modifier.count_sentences.php)
+         File: modifier.strip  (no auto-title, lib/smarty/plugins/modifier.strip.php)
+         File: modifier.regex_replace  (no auto-title, lib/smarty/plugins/modifier.regex_replace.php)
+         File: modifier.upper  (no auto-title, lib/smarty/plugins/modifier.upper.php)
+         File: modifier.cat  (no auto-title, lib/smarty/plugins/modifier.cat.php)
+         File: modifier.strip_tags  (no auto-title, lib/smarty/plugins/modifier.strip_tags.php)
+         File: modifier.nl2br  (no auto-title, lib/smarty/plugins/modifier.nl2br.php)
+         File: modifier.debug_print_var  (no auto-title, lib/smarty/plugins/modifier.debug_print_var.php)
+         File: modifier.capitalize  (no auto-title, lib/smarty/plugins/modifier.capitalize.php)
+         File: modifier.count_words  (no auto-title, lib/smarty/plugins/modifier.count_words.php)
+         File: modifier.lower  (no auto-title, lib/smarty/plugins/modifier.lower.php)
+         File: modifier.string_format  (no auto-title, lib/smarty/plugins/modifier.string_format.php)
+         File: modifier.date_format  (no auto-title, lib/smarty/plugins/modifier.date_format.php)
+         File: modifier.default  (no auto-title, lib/smarty/plugins/modifier.default.php)
+         File: modifier.wordwrap  (no auto-title, lib/smarty/plugins/modifier.wordwrap.php)
+         File: modifier.texize  (no auto-title, lib/smarty/plugins/modifier.texize.php)
+         File: modifier.truncate  (no auto-title, lib/smarty/plugins/modifier.truncate.php)
+         File: modifier.replace  (no auto-title, lib/smarty/plugins/modifier.replace.php)
+         File: modifier.indent  (no auto-title, lib/smarty/plugins/modifier.indent.php)
+         File: outputfilter.trimwhitespace  (no auto-title, lib/smarty/plugins/outputfilter.trimwhitespace.php)
+         File: shared.escape_special_chars  (no auto-title, lib/smarty/plugins/shared.escape_special_chars.php)
+         File: shared.make_timestamp  (no auto-title, lib/smarty/plugins/shared.make_timestamp.php)
+         }  # Group: Plugins
+
+      }  # Group: Smarty
 
    }  # Group: Lib
 
-Group: Modules  {
-
-   File: accounts_receivable.billing.module.php  (modules/accounts_receivable.billing.module.php)
-   File: acl.module.php  (modules/acl.module.php)
-   File: annotations.emr.module.php  (modules/annotations.emr.module.php)
-   File: appointment_templates.db.module.php  (modules/appointment_templates.db.module.php)
-   File: claims_manager.billing.module.php  (modules/claims_manager.billing.module.php)
-   File: noteForDate  (modules/progress_notes.emr.module.php)
-   File: patient_acl.emr.module.php  (modules/patient_acl.emr.module.php)
-   File: printaction  (modules/patient_statements.billing.module.php)
-   }  # Group: Modules
-
 Group: Scripts  {
 
-   File: $pid  (scripts/image2md5scheme.pl)
    File: acl2schema.pl  (scripts/acl2schema.pl)
-   File: cvs2cl.pl  (scripts/cvs2cl.pl)
+   File: composite_form.pl  (scripts/composite_form.pl)
    File: fax_import/import_fax.pl  (scripts/fax_import/import_fax.pl)
-   File: fixedform2array.pl  (scripts/fixedform2array.pl)
-   File: GettextXML_Catalog.pl  (scripts/GettextXML_Catalog.pl)
+   File: hl7_push.pl  (scripts/hl7_push.pl)
+   File: image2md5scheme.pl  (no auto-title, scripts/image2md5scheme.pl)
    File: md5ize.pl  (scripts/md5ize.pl)
+   File: package.pl  (scripts/package.pl)
+   File: quest_hl7/quest_hl7_poll.pl  (scripts/quest_hl7/quest_hl7_poll.pl)
    File: tickler.pl  (scripts/tickler.pl)
    }  # Group: Scripts
 
-File: generate_calendar_mini  (book_appointment.php)
+Group: Modules  {
+
+   File: acl.module.php  (modules/acl.module.php)
+   File: annotations.emr.module.php  (modules/annotations.emr.module.php)
+   File: appointment_templates.db.module.php  (modules/appointment_templates.db.module.php)
+   File: ZipCodes  (no auto-title, modules/zipcodes.db.module.php)
+   File: cdrw_backup.admin.module.php  (modules/cdrw_backup.admin.module.php)
+   File: createTranslation  (modules/translations.emr.module.php)
+   File: fullName  (modules/provider.db.module.php)
+   File: GetLabValues  (modules/labs.emr.module.php)
+   File: getPatientStatus  (modules/scheduler_patient_status.emr.module.php)
+   File: Insurance Claim types database module  (modules/claimtypes.db.module.php)
+   File: interpreter  (modules/rules.db.module.php)
+   File: MoveToAnotherProvider  (modules/unread_documents.db.module.php)
+   File: patient_acl.emr.module.php  (modules/patient_acl.emr.module.php)
+   File: patient_tag.emr.module.php  (modules/patient_tag.emr.module.php)
+   File: payment.emr.module.php  (modules/payment.emr.module.php)
+   File: phone.db.module.php  (modules/phone.db.module.php)
+   File: procedure.emr.module.php  (modules/procedure.emr.module.php)
+   File: progress_notes.emr.module.php  (modules/progress_notes.emr.module.php)
+   File: RemoveOldCoverage  (modules/patient_coverage.emr.module.php)
+   File: Search  (modules/patient.db.module.php)
+   File: unfiled_documents.db.module.php  (modules/unfiled_documents.db.module.php)
+   File: updates.module.php  (modules/updates.module.php)
+   File: work_lists.calendar.module.php  (modules/work_lists.calendar.module.php)
+   }  # Group: Modules
 
 Group: Index  {
 
@@ -225,5 +441,6 @@ Group: Index  {
    Function Index: Functions
    Type Index: Types
    Variable Index: Variables
+   Property Index: Properties
    }  # Group: Index
 
