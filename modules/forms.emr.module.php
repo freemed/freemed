@@ -41,15 +41,6 @@ class Forms extends EMRModule {
 	public function __construct ( ) {
 		// __("Forms")
 
-		// Table definition
-		$this->table_definition = array (
-			'fr_patient' => SQL__INT_UNSIGNED(0),
-			'fr_timestamp' => SQL__TIMESTAMP(16),
-			'fr_template' => SQL__VARCHAR(50),
-			'fr_formname' => SQL__VARCHAR(50),
-			'id' => SQL__SERIAL
-		);
-	
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			__("Date") => '_timestamp',

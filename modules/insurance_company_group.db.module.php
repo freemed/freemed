@@ -42,12 +42,6 @@ class InsuranceCompanyGroup extends SupportModule {
 	public function __construct () {
 		// For i18n: __("Insurance Company Group")
 
-		// Table definition
-		$this->table_definition = array (
-			'inscogroup' => SQL__VARCHAR(50),
-			'id' => SQL__SERIAL
-		);
-	
 		$this->list_view = array (
 			__("Insurance Company Group") => "inscogroup"
 		);

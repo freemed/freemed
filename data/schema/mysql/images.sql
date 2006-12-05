@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `images` (
 	imagedt			DATE,
 	imagepat		INT UNSIGNED NOT NULL DEFAULT 0,
 	imagetype		VARCHAR (50),
-	imagecat		VARCHAR (50),
+	imagecat		VARCHAR (50) DEFAULT '',
 	imagedesc		VARCHAR (150),
 	imageeoc		TEXT,
 	imagefile		VARCHAR (100),
@@ -41,4 +41,19 @@ CREATE TABLE IF NOT EXISTS `images` (
 	KEY			( imagepat, imagetype, imagecat, imagedt ),
 	FOREIGN KEY		( imagepat ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+#	Version 0.3
+ALTER IGNORE TABLE images ADD COLUMN imagecat VARCHAR(50) DEFAULT '' AFTER imagetype;
+
+#	Version 0.4
+ALTER IGNORE TABLE images ADD COLUMN imagephy INT UNSIGNED DEFAULT 0 AFTER imagefile;
+
+#	Version 0.4.1
+ALTER IGNORE TABLE images ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+
+#	Version 0.4.2
+ALTER IGNORE TABLE images ADD COLUMN imagereviewed INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+
+#	Version 0.4.3
+ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
 

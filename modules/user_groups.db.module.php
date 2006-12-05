@@ -49,14 +49,6 @@ class UserGroups extends SupportModule {
 	public function __construct ( ) {
 		// __("User Group")
 		// __("User Groups")
-		$this->table_definition = array (
-			'usergroupname' => SQL__VARCHAR(100),
-			'usergroupfac' => SQL__INT_UNSIGNED(0),
-			'usergroupdtadd' => SQL__DATE,
-			'usergroupdtmod' => SQL__DATE,
-			'usergroup' => SQL__TEXT,
-			'id' => SQL__SERIAL
-		);
 
 		$this->list_view = array (
 			__("User Group Name") => "usergroupname",

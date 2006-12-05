@@ -47,14 +47,6 @@ class SchedulerStatusType extends SupportModule {
 	public function __construct ( ) {
 		// For i18n: __("Scheduler Status")
 
-		$this->table_definition = array (
-			'sname'		=>	SQL__VARCHAR(50),
-			'sdescrip'	=>	SQL__BLOB,
-			'scolor'	=>	SQL__CHAR(7),
-			'sage'		=>	SQL__INT_UNSIGNED(0),
-			'id'		=>	SQL__SERIAL
-		);
-
 		$this->rpc_field_map = array (
 			'name' => 'sname',
 			'description' => 'sdescrip',	

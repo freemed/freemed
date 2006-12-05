@@ -40,12 +40,6 @@ class ProviderStatus extends SupportModule {
 	public function __construct ( ) {
 		// For i18n: __("Provider Status")
 
-		// Define database table
-		$this->table_definition = array (
-			"phystatus" => SQL__VARCHAR(30),
-			"id" => SQL__SERIAL
-		);
-
 		$this->list_view = array (
 			__("Status") => "phystatus" 
 		);

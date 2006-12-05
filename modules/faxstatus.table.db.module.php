@@ -37,16 +37,6 @@ class FaxStatus extends SupportModule {
 
 	public function __construct ( ) {
 		// __("Fax Status")
-		$this->table_definition = array (
-			'fsid' => SQL__VARCHAR(16),
-			'fsmodule' => SQL__VARCHAR(50),
-			'fsrecord' => SQL__INT_UNSIGNED(0),
-			'fsuser' => SQL__INT_UNSIGNED(0),
-			'fspatient' => SQL__INT_UNSIGNED(0),
-			'fsdestination' => SQL__VARCHAR(50),
-			'fsstatus' => SQL__VARCHAR(250),
-			'id' => SQL__SERIAL
-		);
 
 		// Call parent constructor
 		parent::__construct( );

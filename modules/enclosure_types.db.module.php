@@ -43,12 +43,6 @@ class EnclosureTypes extends SupportModule {
 	public function __construct ( ) {
 		// For i18n: __("Enclosure Types")
 
-		// Table definition
-		$this->table_definition = array (
-			'enclosure' => SQL__VARCHAR(50),
-			'id' => SQL__SERIAL
-		);
-
 		$this->list_view = array (
 			__("Enclosure") => 'enclosure'
 		);

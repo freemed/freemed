@@ -40,13 +40,6 @@ class Allergies extends EMRModule {
 
 	public function __construct ( ) {
 		// __("Allergies")
-		$this->table_definition = array (
-			'allergy' => SQL__VARCHAR(150),
-			'severity' => SQL__VARCHAR(150),
-			'patient' => SQL__INT_UNSIGNED(0),
-			'reviewed' => SQL__TIMESTAMP(14),
-			'id' => SQL__SERIAL
-		);
 
 		$this->variables = array (
 			'allergy',
@@ -80,44 +73,6 @@ class Allergies extends EMRModule {
 		}
 		return @join(', ', $m);
 	} // end method recent_text
-
-	// Update
-	function _update ( ) {
-		$version = freemed::module_version($this->MODULE_NAME);
-		// Version 0.2
-		//
-		//	Migrated to seperate table ...
-		//
-		if (!version_check($version, '0.2')) {
-			// Create new table
-			$sql->query($sql->create_table_query($this->table_name, $this->table_definition, array('id')));
-			// Migrate old entries
-			$q = $GLOBALS['sql']->queryAll("SELECT ptallergies,id FROM patient WHERE LENGTH(ptallergies) > 3");
-			if (count($q)) {
-				foreach ( $q AS $r ) {
-					$e = sql_expand($r['ptallergies']);
-					foreach ($e AS $a) {
-						$sql->query($sql->insert_query(
-							$this->table_name,
-							array(
-								'allergy' => $a,								'severity' => '',
-								'patient' => $r['id']	
-							)
-						));
-					} // end foreach entry
-				} // end loop through patient entries
-			} // end checking for results
-		}
-
-		// Version 0.2.1
-		//
-		//	Add "reviewed" field
-		//
-		if (!version_check($version, '0.2.1')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN reviewed TIMESTAMP(14) AFTER patient');
-		}
-	} // end method _update
 
 } // end class Allergies
 

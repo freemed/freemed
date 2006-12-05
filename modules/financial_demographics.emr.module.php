@@ -41,24 +41,6 @@ class FinancialDemographics extends EMRModule {
 		// __("Financial Demographics")
 		// __("Keep track of information for determining sliding fee schedule and other income and dependent parties related information.")
 
-		// Table definition
-		$this->table_definition = array (
-			'fdtimestamp' => SQL__TIMESTAMP(16),
-			'fdpatient' => SQL__INT_UNSIGNED(0),
-			'fdincome' => SQL__INT_UNSIGNED(0),
-			'fdidtype' => SQL__VARCHAR(50),
-			'fdidissuer' => SQL__VARCHAR(50),
-			'fdidnumber' => SQL__VARCHAR(50),
-			'fdidexpire' => SQL__VARCHAR(10),
-			'fdhousehold' => SQL__INT_UNSIGNED(0),
-			'fdspouse' => SQL__INT_UNSIGNED(0),
-			'fdchild' => SQL__INT_UNSIGNED(0),
-			'fdother' => SQL__INT_UNSIGNED(0),
-			'fdfreetext' => SQL__TEXT,
-			'fdentry' => SQL__VARCHAR(75),
-			'id' => SQL__SERIAL
-		);
-	
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			__("Date") => "_timestamp",

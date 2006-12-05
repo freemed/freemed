@@ -35,3 +35,6 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+#	Version 0.2.1
+ALTER IGNORE TABLE allergies ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
+

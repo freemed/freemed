@@ -41,16 +41,6 @@ class UnreadDocuments extends SupportModule {
 		// Add this as a main menu handler as well
 		$this->_SetHandler('MainMenu', 'MainMenuNotify');
 
-		$this->table_definition = array (
-			'urfdate'      => SQL__DATE, // date received
-			'urffilename'  => SQL__VARCHAR(150), // temp file name
-			'urftype'      => SQL__VARCHAR(50), // document type
-			'urfpatient'   => SQL__INT_UNSIGNED(0),
-			'urfphysician' => SQL__INT_UNSIGNED(0),
-			'urfnote'      => SQL__TEXT, // note from filer
-			'id' => SQL__SERIAL
-		);
-
 	 	$this->list_view = array (
 			__("Date")        => "urfdate",
 			__("Patient")     => "urfpatient:patient",

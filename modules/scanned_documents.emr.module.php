@@ -196,58 +196,6 @@ class ScannedDocuments extends EMRModule {
 		);
 	} // end method fax_widget
 
-	function _update () {
-		$version = freemed::module_version($this->MODULE_NAME);
-		// Version 0.3
-		//
-		//	Add "category" sub-column
-		//
-		if (!version_check($version, '0.3')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
-				' ADD COLUMN imagecat VARCHAR(50) AFTER imagetype');
-		}
-
-		// Version 0.4
-		//
-		//	Add physician field
-		//
-		if (!version_check($version, '0.4')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
-				' ADD COLUMN imagephy INT UNSIGNED AFTER imagefile');
-		}
-
-		// Version 0.4.1
-		//
-		//	Add locking
-		//
-		if (!version_check($version, '0.4.1')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
-				' ADD COLUMN locked INT UNSIGNED AFTER imagephy');
-		}
-
-		// Version 0.4.2
-		//
-		//	Add reviewed flag
-		//
-		if (!version_check($version, '0.4.2')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
-				' ADD COLUMN imagereviewed INT UNSIGNED AFTER imagephy');
-			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
-				'SET imagereviewed=0');
-		}
-
-		// Version 0.4.3
-		//
-		//	Add format
-		//
-		if (!version_check($version, '0.4.3')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
-				' ADD COLUMN imageformat CHAR (4) AFTER imagefile');
-			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
-				"SET imageformat='djvu'");
-		}
-	} // end method _update
-
 } // end of class ScannedDocuments
 
 register_module ("ScannedDocuments");

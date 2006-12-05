@@ -47,14 +47,6 @@ class AppointmentTemplates extends SupportModule {
 	public function __construct ( ) {
 		// For i18n: __("Appointment Templates")
 
-		$this->table_definition = array (
-			'atname'	=>	SQL__VARCHAR(50),
-			'atduration'	=>	SQL__INT_UNSIGNED(0),
-			'atequipment'	=>	SQL__BLOB,
-			'atcolor'	=>	SQL__CHAR(7),
-			'id'		=>	SQL__SERIAL
-		);
-
 		$this->rpc_field_map = array (
 			'name' => 'atname',
 			'duration' => 'atduration',	

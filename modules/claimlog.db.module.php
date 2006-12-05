@@ -37,20 +37,6 @@ class ClaimLogTable extends SupportModule {
 
 	public function __construct ( ) {
 		// __("Claim Log")
-		$this->table_definition = array (
-			'cltimestamp' => SQL__TIMESTAMP(14),
-			'cluser' => SQL__INT_UNSIGNED(0),
-			'clprocedure' => SQL__INT_UNSIGNED(0),
-			'clpayrec' => SQL__INT_UNSIGNED(0),
-			'claction' => SQL__VARCHAR(50),
-			'clcomment' => SQL__TEXT,
-
-			// Billing specific
-			'clformat' => SQL__VARCHAR(32),
-			'cltarget' => SQL__VARCHAR(32),
-			'clbillkey' => SQL__INT_UNSIGNED(0),
-			'id' => SQL__SERIAL
-		);
 
 		// Call parent constructor
 		parent::__construct();

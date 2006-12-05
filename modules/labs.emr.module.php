@@ -40,24 +40,6 @@ class LabsModule extends EMRModule {
 	public function __construct ( ) {
 		// __("Labs")
 
-		// Table definition
-		$this->table_definition = array (
-			'labpatient' => SQL__INT_UNSIGNED(0), // PID
-			'labfiller' => SQL__TEXT, // OBR 21-01
-			'labstatus' => SQL__CHAR(2), // ORC 05
-			'labprovider' => SQL__INT_UNSIGNED(0), // ORC 12
-			'labordercode' => SQL__VARCHAR(16), // OBR 04-03
-			'laborderdescrip' => SQL__VARCHAR(250), // OBR 04-04
-			'labcomponentcode' => SQL__VARCHAR(16), // OBR 20-03
-			'labcomponentdescrip' => SQL__VARCHAR(250), // OBR 20-04
-			'labfillernum' => SQL__VARCHAR(16), // OBR 02
-			'labplacernum' => SQL__VARCHAR(16), // OBR 03
-			'labtimestamp' => SQL__TIMESTAMP(14), // OBR 07
-			'labresultstatus' => SQL__CHAR(1), // OBR 25
-			'labnotes' => SQL__TEXT, // NTE
-			'id' => SQL__SERIAL
-		);
-	
 		// Set vars for patient management summary
 		$this->summary_vars = array (
 			__("Date") => '_timestamp',
