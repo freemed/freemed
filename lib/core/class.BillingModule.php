@@ -37,9 +37,9 @@ class BillingModule extends BaseModule {
 	var $patient_procs;  // 2d array [patient][ids of procs processed]
 
 	// contructor method
-	function BillingModule () {
+	public function __construct ( ) {
 		// call parent constructor
-		$this->BaseModule();
+		parent::__construct ();
 	} // end function BillingModule
 
 	// all reporting data must stipped of junk
