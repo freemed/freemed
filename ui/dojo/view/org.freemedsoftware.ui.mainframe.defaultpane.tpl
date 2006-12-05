@@ -5,6 +5,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2006 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -22,8 +23,17 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<script language="javascript">
+	dojo.require('dojo.widget.DropdownDatePicker');
+</script>
+
 <div align="center" style="size: 10pt; border: 1px solid #5555ff; padding: 5px; background-color: #aaaaff;">
-<b>Today's Patients</b>
+<table border="0">
+	<tr>
+		<td><b>Today's Patients (<!--{$dailyAppointmentsDate}-->)</b></td>
+		<td><input dojoType="DropdownDatePicker" date="<!--{$dailyAppointmentsDate}-->" id="dailyAppointmentsDate" onSetDate="freemedLoad('org.freemedsoftware.controller.mainframe?piece=defaultpane&dailyAppointmentsDate='+dojo.widget.byId('dailyAppointmentsDate').inputNode.value);"</td>
+	</tr>
+</table>
 </div>
 
 <!--{include file="org.freemedsoftware.ui.dailyappointmenttable.tpl"}-->
