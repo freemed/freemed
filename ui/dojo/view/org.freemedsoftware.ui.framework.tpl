@@ -45,6 +45,11 @@
 	//	Common FreeMED UI Functions
 	//
 
+	function openHelpPage ( ) {
+		// TODO: make sure to open help for the current topic, as stored by a global JS variable ...
+		var popup = window.open('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=500,width=300,resizable=yes');
+	}
+
 	function freemedLogout ( ) {
 		var logoutDialog = dojo.widget.getWidgetById('freemedLogoutDialog');
 		logoutDialog.show();
@@ -161,16 +166,18 @@ dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Rolodex.png"}}),
 {link:"http://eudock.jules.it"});
 dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Rolodex.png"}}),
 {link:"http://eudock.jules.it"});
+dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Yellow-Pages.png"}}),
+{link:"<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.mainframe"});
 					dock.setScreenAlign(euTOP, 5);
 					</script>
 					</div>
 				</td>
 				<td align="right" nowrap="nowrap" valign="middle">
-					<img src="<!--{$htdocs}-->/images/techsupport.png" alt="" width="73" height="30" border="0" id="supportButton"/><img src="<!--{$htdocs}-->/images/usermanual.png" alt="" width="73" height="30" border="0" id="manualButton" /><img src="<!--{$htdocs}-->/images/logoff.png" alt="" width="73" height="30" border="0" id="logoffButton" onClick="freemedLogout();" />
+					<img src="<!--{$htdocs}-->/images/techsupport.png" alt="" width="73" height="30" border="0" id="supportButton"/><img src="<!--{$htdocs}-->/images/usermanual.png" alt="" width="73" height="30" border="0" id="manualButton" onClick="openHelpPage(); return true;" /><img src="<!--{$htdocs}-->/images/logoff.png" alt="" width="73" height="30" border="0" id="logoffButton" onClick="freemedLogout();" />
 					<!-- Tooltips -->
-					<span dojoType="tooltip" connectId="supportButton" toggle="explode" toggleDuration="100">Access technical support</span>
-					<span dojoType="tooltip" connectId="manualButton" toggle="explode" toggleDuration="100">View online FreeMED documentation</span>
-					<span dojoType="tooltip" connectId="logoffButton" toggle="explode" toggleDuration="100">Terminate your current FreeMED session</span>
+					<span dojoType="tooltip" connectId="supportButton" toggle="explode" toggleDuration="100"><!--{t}-->Access technical support<!--{/t}--></span>
+					<span dojoType="tooltip" connectId="manualButton" toggle="explode" toggleDuration="100"><!--{t}-->View online FreeMED documentation<!--{/t}--></span>
+					<span dojoType="tooltip" connectId="logoffButton" toggle="explode" toggleDuration="100"><!--{t}-->Terminate your current FreeMED session<!--{/t}--></span>
 				</td>
 			</tr>
 		</table>
