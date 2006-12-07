@@ -1,9 +1,9 @@
 /*
  * euDock.Label
  *
- * euDock 2.0 plugin
+ * euDock 2.0.04 plugin
  *
- * Copyright (C) 2006 Parodi (Pier...) Eugenio <piercingslugx@inwind.it>
+ * Copyright (C) 2006 Parodi (Pier...) Eugenio <eudock@inwind.it>
  *                                              http://eudock.jules.it
  *
  * This library is free software; you can redistribute it and/or             
@@ -124,8 +124,11 @@
 				}else if (this.anchor==euLEFT){
 					document.getElementById(this.id).style.left=(this.posX+this.offsetX)+'px';					
 					document.getElementById(this.id).style.top =(this.posY+this.offsetY+(this.height-document.getElementById(this.id).offsetHeight)/2)+'px';					
-				}else{
+				}else if (this.anchor==euRIGHT){
 					document.getElementById(this.id).style.left=(this.posX+this.width+this.offsetX)+'px';					
+					document.getElementById(this.id).style.top =(this.posY+this.offsetY+(this.height-document.getElementById(this.id).offsetHeight)/2)+'px';					
+				}else if (this.anchor==euCENTER){
+					document.getElementById(this.id).style.left=(this.posX+this.offsetX+(this.width-document.getElementById(this.id).offsetWidth)/2)+'px';					
 					document.getElementById(this.id).style.top =(this.posY+this.offsetY+(this.height-document.getElementById(this.id).offsetHeight)/2)+'px';					
 				}
 			};			

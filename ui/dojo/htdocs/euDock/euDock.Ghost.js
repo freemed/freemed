@@ -3,7 +3,7 @@
  *
  * euDock 2.0 plugin
  *
- * Copyright (C) 2006 Parodi (Pier...) Eugenio <piercingslugx@inwind.it>
+ * Copyright (C) 2006 Parodi (Pier...) Eugenio <eudock@inwind.it>
  *                                              http://eudock.jules.it
  *
  * This library is free software; you can redistribute it and/or             

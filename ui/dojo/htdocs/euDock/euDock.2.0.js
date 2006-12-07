@@ -1,9 +1,9 @@
 /*
  * euDock - javascript Emulation of Dock style MAC OS X bar
  *
- * Version: 2.0.02
+ * Version: 2.0.04
  *
- * Copyright (C) 2006 Parodi (Pier...) Eugenio <piercingslugx@inwind.it>
+ * Copyright (C) 2006 Parodi (Pier...) Eugenio <eudock@inwind.it>
  *                                              http://eudock.jules.it
  *
  * SPECIAL THANKS TO Tiago D'Herbe (tvidigal) FOR (Multiple Dock) INSPIRATION
@@ -205,8 +205,8 @@ var euOPAQUE      = 16;
  */
 		function euDock(){
 			this.id = 'euDock_'+euEnv.Kost.next();
-			document.write("<div id='"+this.id+"_bar' style='z-index:10000;position:fixed;border:0px solid black;'></div>");	
-			document.write("<div onMouseOut='euEnv.euDockArray."+this.id+".mouseOut();' onMouseOver='euEnv.euDockArray."+this.id+".mouseOver();' id='"+this.id+"' style='z-index:10000;position:fixed;border:0px solid black;'></div>");	
+			document.write("<div id='"+this.id+"_bar' style='z-index:1000;position:fixed;border:0px solid black;'></div>");	
+			document.write("<div onMouseOut='euEnv.euDockArray."+this.id+".mouseOut();' onMouseOver='euEnv.euDockArray."+this.id+".mouseOver();' id='"+this.id+"' style='z-index:1000;position:fixed;border:0px solid black;'></div>");	
 			this.div   =document.getElementById(this.id);
 			this.divBar=document.getElementById(this.id+"_bar");
 			this.iconsArray=new Array();
@@ -402,7 +402,7 @@ var euOPAQUE      = 16;
 			this.updateDims = function(){
 				var bakWidth  = 0;
 				var bakHeight = 0;
-				for (var i in this.iconsArray){					
+				for (var i in this.iconsArray) if (this.iconsArray[i].id){					
 					if (this.position==euUP || this.position==euDOWN || this.position==euHORIZONTAL){						
 						bakWidth  += this.iconsArray[i].getWidth();
 						bakHeight = (this.iconsArray[i].getHeight()>bakHeight)?this.iconsArray[i].getHeight():bakHeight;
@@ -429,7 +429,7 @@ var euOPAQUE      = 16;
 				var posy=0;
 				var updPosX=0;
 				var updPosY=0;
-				for (var i in this.iconsArray){					
+				for (var i in this.iconsArray) if (this.iconsArray[i].id){					
 					if (this.position==euDOWN){
 						updPosX=posx;
 						updPosY=posy;
@@ -484,7 +484,7 @@ var euOPAQUE      = 16;
 				var overIcon;
 				if (this.position==euUP || this.position==euDOWN || this.position==euHORIZONTAL){
 					venusWidth = this.getVenusWidth();
-					for (var i in this.iconsArray)
+					for (var i in this.iconsArray) if (this.iconsArray[i].id)
 						if (this.iconsArray[i].isInsideX(mouseRelX)){
 							overIcon=i;
 							border=this.iconsArray[i].getWidth()/2;
@@ -493,7 +493,7 @@ var euOPAQUE      = 16;
 								border=0;
 							}
 						}
-					for (var i in this.iconsArray){
+					for (var i in this.iconsArray) if (this.iconsArray[i].id){
 						mediana = this.iconsArray[i].posX+this.iconsArray[i].getWidth()/2;
 						if (Math.abs(mediana-mouseRelX)<=border)
 							mediana=mouseRelX;
@@ -522,7 +522,7 @@ var euOPAQUE      = 16;
 					}
 				}else{
 					venusHeight = this.getVenusHeight();
-					for (var i in this.iconsArray)
+					for (var i in this.iconsArray) if (this.iconsArray[i].id)
 						if (this.iconsArray[i].isInsideY(mouseRelY)){
 							overIcon=i;
 							border=this.iconsArray[i].getHeight()/2;
@@ -531,7 +531,7 @@ var euOPAQUE      = 16;
 								border=0;
 							}
 						}					
-					for (var i in this.iconsArray){
+					for (var i in this.iconsArray) if (this.iconsArray[i].id){
 						mediana = this.iconsArray[i].posY+this.iconsArray[i].getHeight()/2;
 						if (Math.abs(mediana-mouseRelY)<=border)
 							mediana=mouseRelY;
@@ -566,7 +566,7 @@ var euOPAQUE      = 16;
 			
 			this.kernelMouseOut = function(){
 				var ret=false;
-				for (var i in this.iconsArray)
+				for (var i in this.iconsArray) if (this.iconsArray[i].id)
 					ret|=this.iconsArray[i].setAllFrameTo(0);	
 				if (ret)
 					this.updateDims();				
@@ -596,15 +596,15 @@ var euOPAQUE      = 16;
 					ret=true;
 				}
 								
-				for (var i in this.iconsArray)
-					ret|=this.iconsArray[i].isRunning();					
+				for (var i in this.iconsArray) if (this.iconsArray[i].id)
+						ret|=this.iconsArray[i].isRunning();					
 				return ret;
 			};
 			
 			this.iconParams=new Array();
 			this.setAllFrameStep = function(step){
 				this.iconParams.frameStep=step;
-				for (var i in this.iconsArray)
+				for (var i in this.iconsArray) if (this.iconsArray[i].id)
 					this.iconsArray[i].frameStep=step;				
 			};
 			
@@ -615,13 +615,13 @@ var euOPAQUE      = 16;
 			
 			this.setAllZoomFuncW = function(func){
 				this.iconParams.zoomFuncW=func;
-				for (var i in this.iconsArray)
+				for (var i in this.iconsArray) if (this.iconsArray[i].id)
 					this.iconsArray[i].zoomFuncW=func;
 			};
 			
 			this.setAllZoomFuncH = function(func){
 				this.iconParams.zoomFuncH=func;
-				for (var i in this.iconsArray)
+				for (var i in this.iconsArray) if (this.iconsArray[i].id)
 					this.iconsArray[i].zoomFuncH=func;	
 			};
 			
@@ -749,12 +749,12 @@ var euOPAQUE      = 16;
 					this.setDim(elem.getWidth(),elem.getHeight());
 				elem.loaded=true;				
 				var ret=true;			
-				for (var i in this.elementsArray)
-					ret&=this.elementsArray[i].loaded
+				for (var i in this.elementsArray) if (this.elementsArray[i].id)
+						ret&=this.elementsArray[i].loaded
 				this.loaded=ret;	
 				if (this.loaded){
 					this.parentDock.updateDims();					
-					for (var i in this.elementsArray)
+					for (var i in this.elementsArray) if (this.elementsArray[i].id)
 						this.elementsArray[i].show();
 				}
 				if (elem.onLoadNext)
@@ -853,8 +853,6 @@ var euOPAQUE      = 16;
 				if (this.isAbsoluteInside(x,y)){
 					if (this.link)					
 						document.location.href=this.link;
-					else if (this.code)
-						try { eval(this.code); } catch (err) { }
 					else if (this.mouseInsideClick)
 						this.mouseInsideClick(x,y);						
 				}
@@ -943,12 +941,12 @@ var euOPAQUE      = 16;
 					elem.onLoadPrev();
 				elem.loaded=true;				
 				var ret=true;			
-				for (var i in this.elementsArray)
+				for (var i in this.elementsArray) if (this.elementsArray[i].id)
 					ret&=this.elementsArray[i].loaded
 				this.loaded=ret;	
 				if (this.loaded){
 					this.parentDock.updateDims();					
-					for (var i in this.elementsArray)
+					for (var i in this.elementsArray) if (this.elementsArray[i].id)
 						this.elementsArray[i].show();
 				}
 				if (elem.onLoadNext)

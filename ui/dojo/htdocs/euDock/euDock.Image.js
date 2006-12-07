@@ -3,7 +3,7 @@
  *
  * euDock 2.0 plugin
  *
- * Copyright (C) 2006 Parodi (Pier...) Eugenio <piercingslugx@inwind.it>
+ * Copyright (C) 2006 Parodi (Pier...) Eugenio <eudock@inwind.it>
  *                                              http://eudock.jules.it
  *
  * This library is free software; you can redistribute it and/or             
@@ -151,8 +151,6 @@ if (!euEnv.imageBasePath)
 				this.width=Math.round(w);		
 				document.getElementById(this.id).style.width=Math.round(w)+'px';
 				document.getElementById(this.id+"_IMG").style.width=Math.round(w)+'px';				
-				//if (document.getElementById(this.id).contentWindow.document.getElementById('IMG'))
-				//	document.getElementById(this.id).contentWindow.document.getElementById('IMG').style.width=Math.round(w)+'px';
 			};
 			this.getHeight  = function() {if (!this.height)return 0;return this.height;};		
 			this.setHeight = function(h){
@@ -160,8 +158,6 @@ if (!euEnv.imageBasePath)
 				this.height=Math.round(h);		
 				document.getElementById(this.id).style.height=Math.round(h)+'px';
 				document.getElementById(this.id+"_IMG").style.height=Math.round(h)+'px';				
-				//if (document.getElementById(this.id).contentWindow.document.getElementById('IMG'))
-				//	document.getElementById(this.id).contentWindow.document.getElementById('IMG').style.height=Math.round(h)+'px';
 			};
 			
 			this.onLoadPrev = function(){
@@ -245,8 +241,8 @@ if (!euEnv.imageBasePath)
 			
 			this.setFading = function(fad){};
 			
-		container.innerHTML+="<img src='"+euEnv.imageBasePath+"blank.gif' id='"+this.id+"' style='position:absolute;visibility:hidden;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\""+args.image+"\",sizingMethod=\"scale\");' >";
-		container.innerHTML+="<img onLoad='"+onLoadFunc+";' id='"+this.id+"_IMG_BAK' src='"+args.image+"' style='position:absolute;visibility:hidden;'>";
+			container.innerHTML+="<img src='"+euEnv.imageBasePath+"blank.gif' id='"+this.id+"' style='position:absolute;visibility:hidden;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\""+args.image+"\",sizingMethod=\"scale\");' >";
+			container.innerHTML+="<img onLoad='"+onLoadFunc+";' id='"+this.id+"_IMG_BAK' src='"+args.image+"' style='position:absolute;visibility:hidden;'>";
 		};
 /* 
  ****************************************
