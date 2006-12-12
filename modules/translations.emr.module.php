@@ -112,14 +112,6 @@ class Translations extends EMRModule {
 		trigger_error(__("Could not resolve table name!"), E_USER_ERROR);
 	} // end method resolve_module_to_table
 
-	// Update
-	function _update ( ) {
-		global $sql;
-		$version = freemed::module_version($this->MODULE_NAME);
-		//if (!version_check($version, '0.2')) {
-		//}	
-	} // end method _update
-
 } // end class Translations
 
 register_module ("Translations");

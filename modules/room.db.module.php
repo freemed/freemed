@@ -60,19 +60,6 @@ class RoomMaintenance extends SupportModule {
 		parent::__construct();
 	} // end constructor RoomMaintenance
 
-	function _update ( ) {
-		$version = freemed::module_version($this->MODULE_NAME);
-
-		// Version 0.2
-		//
-		//	Added room equipment (roomequipment)
-		//
-		if (!version_check($version, '0.2')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.
-				' ADD COLUMN roomequipment BLOB AFTER roomdefphy');
-		}
-	} // end method _update
-
 } // end class RoomMaintenance
 
 register_module ("RoomMaintenance");

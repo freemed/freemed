@@ -28,3 +28,6 @@ CREATE TABLE IF NOT EXISTS `schedulerstatustype` (
 	id			SERIAL
 ) ENGINE=InnoDB;
 
+#	Version 0.2
+ALTER IGNORE TABLE schedulerstatustype ADD COLUMN sage INT UNSIGNED NOT NULL DEFAULT 1 AFTER scolor;
+

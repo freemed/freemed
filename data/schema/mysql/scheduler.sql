@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	caldateof		DATE,
 	calcreated		TIMESTAMP (16),
 	calmodified		TIMESTAMP (16),
-	caltype			ENUM( 'temp', 'pat' ) NOT NULL DEFAULT 'pat',
+	caltype			ENUM( 'temp', 'pat', 'block' ) NOT NULL DEFAULT 'pat',
 	calhour			INT UNSIGNED,
 	calminute		INT UNSIGNED,
 	calduration		INT UNSIGNED,
@@ -38,11 +38,11 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	calstatus		ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled',
 	calprenote		VARCHAR (250),
 	calpostnote		TEXT,
-	calmark			INT UNSIGNED,
-	calgroupid		INT UNSIGNED,
+	calmark			INT UNSIGNED NOT NULL DEFAULT 0,
+	calgroupid		INT UNSIGNED NOT NULL DEFAULT 0,
 	calrecurnote		VARCHAR (100),
-	calrecurid		INT UNSIGNED,
-	calappttemplate		INT UNSIGNED,
+	calrecurid		INT UNSIGNED NOT NULL DEFAULT 0,
+	calappttemplate		INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,
 
 	# Define keys
@@ -50,4 +50,21 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	KEY			( caldateof, calhour, calminute ),
 	FOREIGN KEY		( calpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+#	Version 0.6.3
+ALTER IGNORE TABLE scheduler ADD COLUMN calgroupid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calmark;
+ALTER IGNORE TABLE scheduler ADD COLUMN calrecurnote VARCHAR (100) AFTER calgroupid;
+ALTER IGNORE TABLE scheduler ADD COLUMN calrecurid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurnote;
+ALTER IGNORE TABLE scheduler CHANGE COLUMN caltype caltype ENUM ( 'temp', 'pat', 'block' );
+ALTER IGNORE TABLE scheduler CHANGE COLUMN calstatus caltype ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled';
+
+#	Version 0.6.3.1
+ALTER IGNORE TABLE scheduler CHANGE COLUMN calprenote calprenote VARCHAR (250);
+
+#	Version 0.6.5
+ALTER IGNORE TABLE scheduler ADD COLUMN calcreated TIMESTAMP (16) AFTER caldateof;
+ALTER IGNORE TABLE scheduler ADD COLUMN calmodified TIMESTAMP (16) AFTER calcreated;
+
+#	Version 0.6.6
+ALTER IGNORE TABLE scheduler ADD COLUMN calappttemplate INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurid;
 

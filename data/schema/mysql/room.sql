@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `room` (
 	roompos			INT UNSIGNED NOT NULL,
 	roomdescrip		VARCHAR (50) NOT NULL DEFAULT '',
 	roomdefphy		INT UNSIGNED NOT NULL DEFAULT 0,
-	roomequip		BLOB,
+	roomequipment		BLOB,
 	roomsurgery		ENUM ( 'y', 'n' ) DEFAULT 'n',
 	roombooking		ENUM ( 'y', 'n' ) DEFAULT 'y',
 	roomipaddr		VARCHAR (15),
@@ -35,4 +35,7 @@ CREATE TABLE IF NOT EXISTS `room` (
 
 	KEY			( roomname, roompos )
 ) ENGINE=InnoDB;
+
+#	Version 0.2
+ALTER IGNORE TABLE room ADD COLUMN roomequipment BLOB AFTER roomdefphy;
 

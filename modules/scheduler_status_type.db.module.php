@@ -63,18 +63,6 @@ class SchedulerStatusType extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	function _update ( ) {
-		$version = freemed::module_version ( $this->MODULE_NAME );
-		// Version 0.2
-		//
-		//	Add age limit (sage)
-		//
-		if (!version_check($version, '0.2')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' ADD COLUMN sage INT UNSIGNED AFTER scolor');
-			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' SET sage=0 WHERE id>0');
-		}
-	} // end method _update
-
 } // end class SchedulerStatusType
 
 register_module ("SchedulerStatusType");
