@@ -7,7 +7,7 @@ define ('DB_HOST', "localhost"); // database (SQL) host location
 define ('DB_NAME', "freemed"); // database name
 define ('DB_USER', "root"); // SQL server username
 define ('DB_PASSWORD', "");		// SQL server password
-define ('PHYSICAL_LOCATION', "/usr/share/freemed");
+define ('PHYSICAL_LOCATION', dirname(dirname(__FILE__)));
 define ('PATID_PREFIX', "PAT"); // used to generate internal practice ID
 define ('BUG_TRACKER', false); // set bug tracker on or off
 //define ('TEMPLATE', "default");	// set default template
