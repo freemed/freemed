@@ -113,7 +113,7 @@ if ($action=="cfgform") {
 		),
 
 		__("Hour Format") =>
-		html_form::select_widget("calehr",
+		html_form::select_widget("hourformat",
 			array (
 				"12 hour"  => "12",
 				"24 hour"  => "24",
