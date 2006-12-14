@@ -3514,9 +3514,10 @@ function fm_time_entry ($timevarname="") {
   //echo ${$timevarname."_ap"}."<BR>";
 	
 
-  $buffer_h = fm_number_select($timevarname."_h",0,12);
+  $buffer_h = fm_number_select($timevarname."_h",0,(freemed::config_value('hourformat')==24 ? 24 : 12));
   $buffer_m = fm_number_select($timevarname."_m",0,59);
-  $buffer_ap = "<select NAME=\"$timevarname"."_ap"."\">".
+  $buffer_ap = (freemed::config_value('hourformat')==24) ? "" :
+	"<select NAME=\"$timevarname"."_ap"."\">".
 	"<option VALUE=\"AM\" ".
 		( $ap=="AM" ? "SELECTED" : "").">". __("AM")."</option>\n".
 	"<option VALUE=\"PM\" ".

@@ -219,12 +219,21 @@ class Scheduler {
 	//
   	function display_hour ( $hour ) {
 		// time checking/creation if/else clause
-		if ($hour<12)
-			return $hour." AM";
-		elseif ($hour == 12)
-			return $hour." PM";
-		else
-			return ($hour-12)." PM";
+		switch (freemed::config_value('hourformat')) {
+			case '24':
+			return $hour;
+			break;
+
+			case '12': default:
+			if ($hour<12) {
+				return $hour." AM";
+			} elseif ($hour == 12) {
+				return $hour." PM";
+			} else {
+				return ($hour-12)." PM";
+			}
+			break;
+		}
   	} // end method display_hour
 
 	// Method: display_time
@@ -243,13 +252,21 @@ class Scheduler {
 	//
 	function display_time ( $hour, $minute ) {
 		$m = sprintf('%02s', $minute);
-		if ($hour<12)
-			return $hour.":$m AM";
-		elseif ($hour == 12)
-			return $hour.":$m PM";
-		else
-			return ($hour-12).":$m PM";
-		
+		switch (freemed::config_value('hourformat')) {
+			case '24':
+			return $hour.':'.$m;
+			break;
+
+			case '12': default:
+			if ($hour<12) {
+				return $hour.":$m AM";
+			} elseif ($hour == 12) { 
+				return $hour.":$m PM";
+			} else {
+				return ($hour-12).":$m PM";
+			}
+			break;
+		}
 	} // end method display_time
 
 	// Method: event_calendar_print
@@ -608,14 +625,22 @@ class Scheduler {
 		if ($minute==0) $minute="00";
 
 		// time checking/creation if/else clause
-		if ($hour<12) {
-			$_time = sprintf('%02d:%02d AM', $hour, $minute);
-		} elseif ($hour == 12) {
-			$_time = sprintf('%02d:%02d PM', $hour, $minute);
-		} else {
-			$_time = sprintf('%02d:%02d PM', $hour-12, $minute);
+		switch (freemed::config_value('hourformat')) {
+			case '24':
+			$_time = sprintf('%02d:%02d', $hour, $minute);
+			break;
+
+			case '12': default:
+			if ($hour<12) {
+				$_time = sprintf('%02d:%02d AM', $hour, $minute);
+			} elseif ($hour == 12) {
+				$_time = sprintf('%02d:%02d PM', $hour, $minute);
+			} else {
+				$_time = sprintf('%02d:%02d PM', $hour-12, $minute);
+			}
+			return $_time;
+			break;
 		}
-		return $_time;
 	} // end method get_time_string
 
 	// Method: map

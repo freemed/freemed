@@ -14,6 +14,7 @@ $config_vars = array (
 	"cal_ob", // calendar overbooking
 	"calshr", // calendar start time
 	"calehr", // calendar end time
+	"hourformat", // hour format (12/24)
 	"dtfmt", // date format
 	"phofmt", // phone format
 	"default_area_code", // default area code
@@ -108,6 +109,14 @@ if ($action=="cfgform") {
 				"9 pm"  => "21",
 				"10 pm" => "22",
 				"11 pm" => "23"
+			)
+		),
+
+		__("Hour Format") =>
+		html_form::select_widget("calehr",
+			array (
+				"12 hour"  => "12",
+				"24 hour"  => "24",
 			)
 		),
 

@@ -155,13 +155,22 @@ function fc_get_time_string ( $hour, $minute ) {
 	if ($minute==0) $minute="00";
 
 	// time checking/creation if/else clause
-	if ($hour<12)
-		$_time = $hour.":".$minute." AM";
-	elseif ($hour == 12)
-		$_time = $hour.":".$minute." PM";
-	else
-		$_time = ($hour-12).":".$minute." PM";
-	return $_time;
+	switch (freemed::config_value('hourformat')) {
+		case '24':
+		return $hour.":".$minute;
+		break;
+
+		case '12': default:
+		if ($hour<12) {
+			$_time = $hour.":".$minute." AM";
+		} elseif ($hour == 12) {
+			$_time = $hour.":".$minute." PM";
+		} else {
+			$_time = ($hour-12).":".$minute." PM";
+		}
+		return $_time;
+		break;
+	}
 }
 
 // Function: fc_scroll_prev_month
@@ -774,12 +783,21 @@ class freemedCalendar {
 	//
   	function display_hour ( $hour ) {
 		// time checking/creation if/else clause
-		if ($hour<12)
-			return $hour." AM";
-		elseif ($hour == 12)
-			return $hour." PM";
-		else
-			return ($hour-12)." PM";
+		switch (freemed::config_value('hourformat')) {
+			case '24':
+			return $hour;
+			break;
+
+			case '12': default:
+			if ($hour<12) {
+				return $hour." AM";
+			} elseif ($hour == 12) {
+				return $hour." PM";
+			} else {
+				return ($hour-12)." PM";
+			}
+			break;
+		}
   	} // end method freemedCalendar::display_hour
 
 	// Method: freemedCalendar::display_time
@@ -798,13 +816,21 @@ class freemedCalendar {
 	//
 	function display_time ( $hour, $minute ) {
 		$m = ($minute<10 ? '0' : '').($minute+0);
-		if ($hour<12)
-			return $hour.":$m AM";
-		elseif ($hour == 12)
-			return $hour.":$m PM";
-		else
-			return ($hour-12).":$m PM";
-		
+		switch (freemed::config_value('hourformat')) {
+			case '24':
+			return $hour.':'.$m;
+			break;
+
+			case '12': default:
+			if ($hour<12) {
+				return $hour.":$m AM";
+			} elseif ($hour == 12) {
+				return $hour.":$m PM";
+			} else {
+				return ($hour-12).":$m PM";
+			}
+			break;
+		}
 	} // end method freemedCalendar::display_time
 
 	// Function: freemedCalendar::event_calendar_print
