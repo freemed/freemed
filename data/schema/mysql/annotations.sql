@@ -22,6 +22,7 @@
 
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/_functions.sql
 
 CREATE TABLE IF NOT EXISTS `annotations` (
 	atimestamp		TIMESTAMP (14) DEFAULT NOW(),
@@ -62,7 +63,12 @@ DELIMITER //
 CREATE TRIGGER annotations_Delete
 	AFTER DELETE ON annotations
 	FOR EACH ROW BEGIN
+		DECLARE a TEXT;
+		DECLARE t VARCHAR(50);
+		SELECT module_table INTO t FROM `modules` WHERE LOWER(module_class) = OLD.amodule;
+		SELECT annotation INTO a FROM `patient_emr` WHERE module=t AND oid=OLD.aid;
 		DELETE FROM `patient_emr` WHERE module='annotations' AND oid=OLD.id;
+		UPDATE `patient_emr` SET annotation=REMOVE_FROM_SET( a, OLD.id ) WHERE module=t AND oid=OLD.aid;
 	END;
 //
 
