@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `modules` (
 	module_uid			CHAR (36) UNIQUE NOT NULL,
 	module_name			VARCHAR (100) NOT NULL,
 	module_class			VARCHAR (100) NOT NULL,
+	module_table			VARCHAR (100) NOT NULL,
 	module_version			VARCHAR (50) NOT NULL,
 	module_version_installed	VARCHAR (50),
 	module_category			VARCHAR (50) NOT NULL,

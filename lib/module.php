@@ -134,6 +134,7 @@ function register_module ($module_name) {
 		'module_uid' => $data['MODULE_UID'],
 		'module_name' => $data['MODULE_NAME'],
 		'module_class' => $data['MODULE_CLASS'],
+		'module_table' => $data['META_INFORMATION']['table_name'],
 		'module_version' => $data['MODULE_VERSION'],
 		'module_category' => ( $data['MODULE_CATEGORY'] ? $data['MODULE_CATEGORY'] : 'Unknown' ),
 		'module_path' => $data['MODULE_FILE'],
