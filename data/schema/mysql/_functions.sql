@@ -20,13 +20,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+# File: MySQL Function Library
+
 DROP FUNCTION IF EXISTS REMOVE_FROM_SET;
 
 DELIMITER //
 
+# Function: REMOVE_FROM_SET
+#
+#	MySQL UDF to remove a value from a set.
+#
+# Parameters:
+#
+#	str - Value to remove from set. VARCHAR(255)
+#
+#	strlist - Set to operate on. TEXT
+#
+# Returns:
+#
+#	TEXT, strlist set without str value present.
+#
 CREATE FUNCTION REMOVE_FROM_SET( str VARCHAR(255), strlist TEXT )
 	RETURNS TEXT
-	DETERMINISTIC
+	DETERMINISTIC CONTAINS SQL
 BEGIN
 	DECLARE res TEXT DEFAULT NULL;
 
@@ -39,3 +55,4 @@ BEGIN
 END//
 
 DELIMITER ;
+
