@@ -69,7 +69,16 @@ CREATE TRIGGER annotations_Delete
 CREATE TRIGGER annotations_Insert
 	AFTER INSERT ON annotations
 	FOR EACH ROW BEGIN
+		DECLARE a TEXT;
+		DECLARE t VARCHAR(50);
+		SELECT module_table INTO t FROM `modules` WHERE LOWER(module_class) = NEW.amodule;
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'annotations', NEW.apatient, NEW.id, NEW.atimestamp, NEW.annotation );
+		SELECT annotation INTO a FROM `patient_emr` WHERE module=t AND oid=NEW.aid;
+		IF ISNULL(a) THEN
+			UPDATE `patient_emr` SET annotation=NEW.id WHERE module=t AND oid=NEW.aid;
+		ELSE
+			UPDATE `patient_emr` SET annotation=CONCAT(a, ',', NEW.id) WHERE module=t AND oid=NEW.aid;
+		END IF;
 	END;
 //
 
