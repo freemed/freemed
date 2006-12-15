@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `unreadfax` (
 	urfdate			DATE NOT NULL,
@@ -36,4 +37,48 @@ CREATE TABLE IF NOT EXISTS `unreadfax` (
 	KEY			( urfphysician, urfpatient ),
 	FOREIGN KEY		( urfpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS unreadfax_Upgrade;
+DELIMITER //
+CREATE PROCEDURE unreadfax_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER unreadfax_Delete;
+	DROP TRIGGER unreadfax_Insert;
+	DROP TRIGGER unreadfax_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL unreadfax_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER unreadfax_Delete
+	AFTER DELETE ON unreadfax
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='unreadfax' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER unreadfax_Insert
+	AFTER INSERT ON unreadfax
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'unreadfax', NEW.urfpatient, NEW.id, NEW.urfdate, NEW.urfnote );
+	END;
+//
+
+CREATE TRIGGER unreadfax_Update
+	AFTER UPDATE ON unreadfax
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.urfdate, patient=NEW.urfpatient, summary=NEW.urfnote WHERE module='unreadfax' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

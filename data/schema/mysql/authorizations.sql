@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `authorizations` (
 	authdtadd		DATE NOT NULL,
@@ -44,4 +45,48 @@ CREATE TABLE IF NOT EXISTS `authorizations` (
 	KEY			( authpatient, authdtbegin, authdtend ),
 	FOREIGN KEY		( authpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS authorizations_Upgrade;
+DELIMITER //
+CREATE PROCEDURE authorizations_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER authorizations_Delete;
+	DROP TRIGGER authorizations_Insert;
+	DROP TRIGGER authorizations_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL authorizations_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER authorizations_Delete
+	AFTER DELETE ON authorizations
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='authorizations' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER authorizations_Insert
+	AFTER INSERT ON authorizations
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'authorizations', NEW.authpatient, NEW.id, NEW.authdtadd, CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')') );
+	END;
+//
+
+CREATE TRIGGER authorizations_Update
+	AFTER UPDATE ON authorizations
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.authdtmod, patient=NEW.authpatient, summary=CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')') WHERE module='authorizations' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `messages` (
 	msgby		INT UNSIGNED,
@@ -42,4 +43,52 @@ CREATE TABLE IF NOT EXISTS `messages` (
 	KEY 		( msgfor ),
 	FOREIGN KEY	( msgpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS messages_Upgrade;
+DELIMITER //
+CREATE PROCEDURE messages_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER messages_Delete;
+	DROP TRIGGER messages_Insert;
+	DROP TRIGGER messages_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL messages_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER messages_Delete
+	AFTER DELETE ON messages
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='messages' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER messages_Insert
+	AFTER INSERT ON messages
+	FOR EACH ROW BEGIN
+		IF NEW.msgpatient > 0 THEN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'messages', NEW.msgpatient, NEW.id, NEW.msgtime, NEW.msgsubject );
+		END IF;
+	END;
+//
+
+CREATE TRIGGER messages_Update
+	AFTER UPDATE ON messages
+	FOR EACH ROW BEGIN
+		IF NEW.msgpatient > 0 THEN
+		UPDATE `patient_emr` SET stamp=NEW.msgtime, patient=NEW.msgpatient, summary=NEW.msgsubject WHERE module='messages' AND oid=NEW.id;
+		END IF;
+	END;
+//
+
+DELIMITER ;
 

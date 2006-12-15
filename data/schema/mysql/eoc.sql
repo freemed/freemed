@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `eoc` (
 	eocpatient		INT UNSIGNED NOT NULL,
@@ -80,4 +81,48 @@ CREATE TABLE IF NOT EXISTS `eoc` (
 	KEY			( eocpatient, eocstartdate, eocdtlastsimilar ),
 	FOREIGN KEY		( eocpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS eoc_Upgrade;
+DELIMITER //
+CREATE PROCEDURE eoc_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER eoc_Delete;
+	DROP TRIGGER eoc_Insert;
+	DROP TRIGGER eoc_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL eoc_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER eoc_Delete
+	AFTER DELETE ON eoc
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='eoc' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER eoc_Insert
+	AFTER INSERT ON eoc
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'eoc', NEW.eocpatient, NEW.id, NOW(), NEW.eocdescrip );
+	END;
+//
+
+CREATE TRIGGER eoc_Update
+	AFTER UPDATE ON eoc
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.eocpatient, summary=NEW.eocdescrip WHERE module='eoc' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

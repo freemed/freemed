@@ -22,41 +22,18 @@
 
 SOURCE data/schema/mysql/patient.sql
 
-CREATE TABLE IF NOT EXISTS `patienttag` (
-	tag			VARCHAR (100) NOT NULL,
+CREATE TABLE IF NOT EXISTS `patient_emr` (
 	patient			INT UNSIGNED NOT NULL DEFAULT 0,
-	datecreate		TIMESTAMP (14) DEFAULT NOW(),
-	dateexpire		TIMESTAMP (14),
+	module			VARCHAR (150) NOT NULL,
+	oid			INT UNSIGNED NOT NULL,
+	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+	summary			VARCHAR (250) NOT NULL,
+	annotation		TEXT,
 	id			SERIAL,
 
 	#	Define keys
-	KEY			( patient, tag ),
+
+	KEY			( patient, module, oid ),
 	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-
-#	Define stored procedures
-
--- Simple tag search procedure --
-DROP PROCEDURE IF EXISTS patientTagSearchSimple;
-DELIMITER //
-CREATE PROCEDURE patientTagSearchSimple ( IN param VARCHAR(250) )
-BEGIN
-	SELECT
-		p.id AS patient_record,
-		p.ptid AS patient_id,
-		MAX(c.caldateof) AS last_seen,
-		p.ptlname AS last_name,
-		p.ptfname AS first_name,
-		p.ptmname AS middle_name,
-		p.ptdob AS date_of_birth
-	FROM
-		patient p
-	LEFT OUTER JOIN patienttag t ON p.id=t.patient
-	LEFT OUTER JOIN scheduler c ON p.id=c.calpatient
-	WHERE
-		( t.dateexpire = 0 OR t.dateexpire > NOW() ) AND
-		( t.tag = param )
-	GROUP BY p.id;
-END//
-DELIMITER ;
 

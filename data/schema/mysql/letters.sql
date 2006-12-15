@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `letters` (
 	letterdt		DATE,
@@ -41,4 +42,52 @@ CREATE TABLE IF NOT EXISTS `letters` (
 	KEY			( letterpatient, lettersent, letterfrom, lettereoc ),
 	FOREIGN KEY		( letterpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS letters_Upgrade;
+DELIMITER //
+CREATE PROCEDURE letters_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER letters_Delete;
+	DROP TRIGGER letters_Insert;
+	DROP TRIGGER letters_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL letters_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER letters_Delete
+	AFTER DELETE ON letters
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='letters' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER letters_Insert
+	AFTER INSERT ON letters
+	FOR EACH ROW BEGIN
+		DECLARE p VARCHAR(250);
+		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterto;
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'letters', NEW.letterpatient, NEW.id, NEW.letterdt, p );
+	END;
+//
+
+CREATE TRIGGER letters_Update
+	AFTER UPDATE ON letters
+	FOR EACH ROW BEGIN
+		DECLARE p VARCHAR(250);
+		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterto;
+		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p WHERE module='letters' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

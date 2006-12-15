@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `allergies` (
 	allergy			VARCHAR (150) NOT NULL,
@@ -35,6 +36,50 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-#	Version 0.2.1
-ALTER IGNORE TABLE allergies ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
+DROP PROCEDURE IF EXISTS allergies_Upgrade;
+DELIMITER //
+CREATE PROCEDURE allergies_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER allergies_Delete;
+	DROP TRIGGER allergies_Insert;
+	DROP TRIGGER allergies_Update;
+
+	#----- Upgrades
+
+	#	Version 0.2.1
+	ALTER TABLE allergies ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
+END
+//
+DELIMITER ;
+CALL allergies_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER allergies_Delete
+	AFTER DELETE ON allergies
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='allergies' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER allergies_Insert
+	AFTER INSERT ON allergies
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'allergies', NEW.patient, NEW.id, NEW.reviewed, NEW.allergy );
+	END;
+//
+
+CREATE TRIGGER allergies_Update
+	AFTER UPDATE ON allergies
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.reviewed, patient=NEW.patient, summary=NEW.allergy WHERE module='allergies' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

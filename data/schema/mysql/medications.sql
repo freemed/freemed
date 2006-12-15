@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `medications` (
 	mdrug			VARCHAR (150),
@@ -35,4 +36,48 @@ CREATE TABLE IF NOT EXISTS `medications` (
 	KEY			( mpatient, mdate ),
 	FOREIGN KEY		( mpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS medications_Upgrade;
+DELIMITER //
+CREATE PROCEDURE medications_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER medications_Delete;
+	DROP TRIGGER medications_Insert;
+	DROP TRIGGER medications_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL medications_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER medications_Delete
+	AFTER DELETE ON medications
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='medications' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER medications_Insert
+	AFTER INSERT ON medications
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'medications', NEW.mpatient, NEW.id, NEW.mdate, CONCAT(NEW.mdrug, ' ', NEW.mdosage) );
+	END;
+//
+
+CREATE TRIGGER medications_Update
+	AFTER UPDATE ON medications
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.mdate, patient=NEW.mpatient, summary=CONCAT(NEW.mdrug, ' ', NEW.mdosage) WHERE module='medications' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

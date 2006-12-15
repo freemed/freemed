@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `pnotes` (
 	pnotesdt		DATE,
@@ -53,4 +54,48 @@ CREATE TABLE IF NOT EXISTS `pnotes` (
 	KEY			( pnotespat, pnotesdt, pnotesdoc ),
 	FOREIGN KEY		( pnotespat ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS pnotes_Upgrade;
+DELIMITER //
+CREATE PROCEDURE pnotes_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER pnotes_Delete;
+	DROP TRIGGER pnotes_Insert;
+	DROP TRIGGER pnotes_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL pnotes_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER pnotes_Delete
+	AFTER DELETE ON pnotes
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='pnotes' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER pnotes_Insert
+	AFTER INSERT ON pnotes
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'pnotes', NEW.pnotespat, NEW.id, NEW.pnotesdt, NEW.pnotesdescrip );
+	END;
+//
+
+CREATE TRIGGER pnotes_Update
+	AFTER UPDATE ON pnotes
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.pnotesdt, patient=NEW.pnotespat, summary=NEW.pnotesdescrip WHERE module='pnotes' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

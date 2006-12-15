@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `form_results` (
 	fr_patient		INT UNSIGNED NOT NULL,
@@ -34,4 +35,48 @@ CREATE TABLE IF NOT EXISTS `form_results` (
 	KEY			( fr_patient, fr_timestamp ),
 	FOREIGN KEY		( fr_patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS form_results_Upgrade;
+DELIMITER //
+CREATE PROCEDURE form_results_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER form_results_Delete;
+	DROP TRIGGER form_results_Insert;
+	DROP TRIGGER form_results_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL form_results_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER form_results_Delete
+	AFTER DELETE ON form_results
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='form_results' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER form_results_Insert
+	AFTER INSERT ON form_results
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'form_results', NEW.fr_patient, NEW.id, NEW.fr_timestamp, NEW.fr_template );
+	END;
+//
+
+CREATE TRIGGER form_results_Update
+	AFTER UPDATE ON form_results
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.fr_timestamp, patient=NEW.fr_patient, summary=NEW.fr_template WHERE module='form_results' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

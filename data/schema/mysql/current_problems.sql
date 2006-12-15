@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `current_problems` (
 	pdate			DATE NOT NULL,
@@ -33,4 +34,48 @@ CREATE TABLE IF NOT EXISTS `current_problems` (
 	KEY			( ppatient, pdate ),
 	FOREIGN KEY		( ppatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS current_problems_Upgrade;
+DELIMITER //
+CREATE PROCEDURE current_problems_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER current_problems_Delete;
+	DROP TRIGGER current_problems_Insert;
+	DROP TRIGGER current_problems_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL current_problems_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER current_problems_Delete
+	AFTER DELETE ON current_problems
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='current_problems' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER current_problems_Insert
+	AFTER INSERT ON current_problems
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'current_problems', NEW.ppatient, NEW.id, NEW.pdate, NEW.problem );
+	END;
+//
+
+CREATE TRIGGER current_problems_Update
+	AFTER UPDATE ON current_problems
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.pdate, patient=NEW.ppatient, summary=NEW.problem WHERE module='current_problems' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

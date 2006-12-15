@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `images` (
 	imagedt			DATE,
@@ -42,18 +43,62 @@ CREATE TABLE IF NOT EXISTS `images` (
 	FOREIGN KEY		( imagepat ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-#	Version 0.3
-ALTER IGNORE TABLE images ADD COLUMN imagecat VARCHAR(50) DEFAULT '' AFTER imagetype;
+DROP PROCEDURE IF EXISTS images_Upgrade;
+DELIMITER //
+CREATE PROCEDURE images_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
-#	Version 0.4
-ALTER IGNORE TABLE images ADD COLUMN imagephy INT UNSIGNED DEFAULT 0 AFTER imagefile;
+	#----- Remove triggers
+	DROP TRIGGER images_Delete;
+	DROP TRIGGER images_Insert;
+	DROP TRIGGER images_Update;
 
-#	Version 0.4.1
-ALTER IGNORE TABLE images ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+	#----- Upgrades
 
-#	Version 0.4.2
-ALTER IGNORE TABLE images ADD COLUMN imagereviewed INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+	#	Version 0.3
+	ALTER IGNORE TABLE images ADD COLUMN imagecat VARCHAR(50) DEFAULT '' AFTER imagetype;
 
-#	Version 0.4.3
-ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
+	#	Version 0.4
+	ALTER IGNORE TABLE images ADD COLUMN imagephy INT UNSIGNED DEFAULT 0 AFTER imagefile;
+
+	#	Version 0.4.1
+	ALTER IGNORE TABLE images ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+
+	#	Version 0.4.2
+	ALTER IGNORE TABLE images ADD COLUMN imagereviewed INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+
+	#	Version 0.4.3
+	ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
+END
+//
+DELIMITER ;
+CALL images_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER images_Delete
+	AFTER DELETE ON images
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='images' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER images_Insert
+	AFTER INSERT ON images
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc );
+	END;
+//
+
+CREATE TRIGGER images_Update
+	AFTER UPDATE ON images
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc WHERE module='images' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

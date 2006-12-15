@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/physician.sql
 SOURCE data/schema/mysql/cpt.sql
 
@@ -73,4 +74,52 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	FOREIGN KEY		( proccpt ) REFERENCES cpt ( id ),
 	FOREIGN KEY		( procphysician ) REFERENCES physician ( id )
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS procrec_Upgrade;
+DELIMITER //
+CREATE PROCEDURE procrec_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER procrec_Delete;
+	DROP TRIGGER procrec_Insert;
+	DROP TRIGGER procrec_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL procrec_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER procrec_Delete
+	AFTER DELETE ON procrec
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='procrec' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER procrec_Insert
+	AFTER INSERT ON procrec
+	FOR EACH ROW BEGIN
+		DECLARE c VARCHAR(250);
+		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'procrec', NEW.procpatient, NEW.id, NEW.procdt, c );
+	END;
+//
+
+CREATE TRIGGER procrec_Update
+	AFTER UPDATE ON procrec
+	FOR EACH ROW BEGIN
+		DECLARE c VARCHAR(250);
+		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
+		UPDATE `patient_emr` SET stamp=NEW.procdt, patient=NEW.procpatient, summary=c WHERE module='procrec' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

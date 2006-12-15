@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `coverage` (
 	covdtadd		DATE,
@@ -62,4 +63,48 @@ CREATE TABLE IF NOT EXISTS `coverage` (
 	KEY			( covpatient, covinsco, covrel ),
 	FOREIGN KEY		( covpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS coverage_Upgrade;
+DELIMITER //
+CREATE PROCEDURE coverage_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER coverage_Delete;
+	DROP TRIGGER coverage_Insert;
+	DROP TRIGGER coverage_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL coverage_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER coverage_Delete
+	AFTER DELETE ON coverage
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='coverage' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER coverage_Insert
+	AFTER INSERT ON coverage
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'coverage', NEW.covpatient, NEW.id, NEW.covdtadd, CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ) );
+	END;
+//
+
+CREATE TRIGGER coverage_Update
+	AFTER UPDATE ON coverage
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.covdtmod, patient=NEW.covpatient, summary=CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ) WHERE module='coverage' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

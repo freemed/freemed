@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler` (
 	caldateof		DATE,
@@ -51,20 +52,64 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	FOREIGN KEY		( calpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-#	Version 0.6.3
-ALTER IGNORE TABLE scheduler ADD COLUMN calgroupid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calmark;
-ALTER IGNORE TABLE scheduler ADD COLUMN calrecurnote VARCHAR (100) AFTER calgroupid;
-ALTER IGNORE TABLE scheduler ADD COLUMN calrecurid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurnote;
-ALTER IGNORE TABLE scheduler CHANGE COLUMN caltype caltype ENUM ( 'temp', 'pat', 'block' );
-ALTER IGNORE TABLE scheduler CHANGE COLUMN calstatus caltype ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled';
+DROP PROCEDURE IF EXISTS scheduler_Upgrade;
+DELIMITER //
+CREATE PROCEDURE scheduler_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
-#	Version 0.6.3.1
-ALTER IGNORE TABLE scheduler CHANGE COLUMN calprenote calprenote VARCHAR (250);
+	#----- Remove triggers
+	DROP TRIGGER scheduler_Delete;
+	DROP TRIGGER scheduler_Insert;
+	DROP TRIGGER scheduler_Update;
 
-#	Version 0.6.5
-ALTER IGNORE TABLE scheduler ADD COLUMN calcreated TIMESTAMP (16) AFTER caldateof;
-ALTER IGNORE TABLE scheduler ADD COLUMN calmodified TIMESTAMP (16) AFTER calcreated;
+	#----- Upgrades
 
-#	Version 0.6.6
-ALTER IGNORE TABLE scheduler ADD COLUMN calappttemplate INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurid;
+	#	Version 0.6.3
+	ALTER IGNORE TABLE scheduler ADD COLUMN calgroupid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calmark;
+	ALTER IGNORE TABLE scheduler ADD COLUMN calrecurnote VARCHAR (100) AFTER calgroupid;
+	ALTER IGNORE TABLE scheduler ADD COLUMN calrecurid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurnote;
+	ALTER IGNORE TABLE scheduler CHANGE COLUMN caltype caltype ENUM ( 'temp', 'pat', 'block' );
+	ALTER IGNORE TABLE scheduler CHANGE COLUMN calstatus caltype ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled';
+
+	#	Version 0.6.3.1
+	ALTER IGNORE TABLE scheduler CHANGE COLUMN calprenote calprenote VARCHAR (250);
+
+	#	Version 0.6.5
+	ALTER IGNORE TABLE scheduler ADD COLUMN calcreated TIMESTAMP (16) AFTER caldateof;
+	ALTER IGNORE TABLE scheduler ADD COLUMN calmodified TIMESTAMP (16) AFTER calcreated;
+
+	#	Version 0.6.6
+	ALTER IGNORE TABLE scheduler ADD COLUMN calappttemplate INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurid;
+END
+//
+DELIMITER ;
+CALL scheduler_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER scheduler_Delete
+	AFTER DELETE ON scheduler
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='scheduler' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER scheduler_Insert
+	AFTER INSERT ON scheduler
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, NEW.calprenote );
+	END;
+//
+
+CREATE TRIGGER scheduler_Update
+	AFTER UPDATE ON scheduler
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=NEW.calprenote WHERE module='scheduler' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 
