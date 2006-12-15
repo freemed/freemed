@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `annotations` (
 	atimestamp		TIMESTAMP (14) DEFAULT NOW(),
@@ -36,4 +37,41 @@ CREATE TABLE IF NOT EXISTS `annotations` (
 	KEY			( apatient, amodule, aid ),
 	FOREIGN KEY		( apatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS annotations_Upgrade;
+DELIMITER //
+CREATE PROCEDURE annotations_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER annotations_Delete;
+	DROP TRIGGER annotations_Insert;
+	DROP TRIGGER annotations_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL annotations_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER annotations_Delete
+	AFTER DELETE ON annotations
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='annotations' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER annotations_Insert
+	AFTER INSERT ON annotations
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'annotations', NEW.apatient, NEW.id, NEW.atimestamp, NEW.annotation );
+	END;
+//
+
+DELIMITER ;
 

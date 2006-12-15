@@ -51,9 +51,6 @@ BEGIN
 	DROP TRIGGER translation_Update;
 
 	#----- Upgrades
-
-	#	Version 0.2.1
-	ALTER TABLE translation ADD COLUMN ttimestamp TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
 END
 //
 DELIMITER ;

@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/procrec.sql
 
 CREATE TABLE IF NOT EXISTS `payrec` (
@@ -44,4 +45,48 @@ CREATE TABLE IF NOT EXISTS `payrec` (
 	FOREIGN KEY		( payrecpatient ) REFERENCES patient ( id ) ON DELETE CASCADE,
 	FOREIGN KEY		( payrecproc ) REFERENCES procrec ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS payrec_Upgrade;
+DELIMITER //
+CREATE PROCEDURE payrec_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER payrec_Delete;
+	DROP TRIGGER payrec_Insert;
+	DROP TRIGGER payrec_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL payrec_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER payrec_Delete
+	AFTER DELETE ON payrec
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='payrec' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER payrec_Insert
+	AFTER INSERT ON payrec
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip );
+	END;
+//
+
+CREATE TRIGGER payrec_Update
+	AFTER UPDATE ON payrec
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.payrecpatient, summary=NEW.payrecdescrip WHERE module='payrec' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 
