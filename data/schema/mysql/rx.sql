@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `rx` (
 	rxdtadd			DATE NOT NULL,
@@ -47,4 +48,48 @@ CREATE TABLE IF NOT EXISTS `rx` (
 
 	FOREIGN KEY		( rxpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS rx_Upgrade;
+DELIMITER //
+CREATE PROCEDURE rx_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER rx_Delete;
+	DROP TRIGGER rx_Insert;
+	DROP TRIGGER rx_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL rx_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER rx_Delete
+	AFTER DELETE ON rx
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='rx' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER rx_Insert
+	AFTER INSERT ON rx
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'rx', NEW.rxpatient, NEW.id, NOW(), NEW.rxdrug );
+	END;
+//
+
+CREATE TRIGGER rx_Update
+	AFTER UPDATE ON rx
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.rxpatient, summary=NEW.rxdrug WHERE module='rx' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

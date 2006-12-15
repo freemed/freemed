@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `notification` (
 	noriginal		DATE,
@@ -36,4 +37,48 @@ CREATE TABLE IF NOT EXISTS `notification` (
 	KEY			( nuser, npatient, nfor, ntarget ),
 	FOREIGN KEY		( npatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS notifications_Upgrade;
+DELIMITER //
+CREATE PROCEDURE notifications_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER notifications_Delete;
+	DROP TRIGGER notifications_Insert;
+	DROP TRIGGER notifications_Update;
+
+	#----- Upgrades
+END
+//
+DELIMITER ;
+CALL notifications_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER notifications_Delete
+	AFTER DELETE ON notifications
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='notifications' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER notifications_Insert
+	AFTER INSERT ON notifications
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'notifications', NEW.npatient, NEW.id, NOW(), NEW.ndescrip );
+	END;
+//
+
+CREATE TRIGGER notifications_Update
+	AFTER UPDATE ON notifications
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.npatient, summary=NEW.ndescrip WHERE module='notifications' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 

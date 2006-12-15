@@ -60,3 +60,50 @@ BEGIN
 END//
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS patienttag_Upgrade;
+DELIMITER //
+CREATE PROCEDURE patienttag_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER patienttag_Delete;
+	DROP TRIGGER patienttag_Insert;
+	DROP TRIGGER patienttag_Update;
+
+	#----- Upgrades
+
+	#	Version 0.2.1
+	ALTER TABLE patienttag ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
+END
+//
+DELIMITER ;
+CALL patienttag_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER patienttag_Delete
+	AFTER DELETE ON patienttag
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='patienttag' AND oid=OLD.id;
+	END;
+//
+
+CREATE TRIGGER patienttag_Insert
+	AFTER INSERT ON patienttag
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'patienttag', NEW.patient, NEW.id, NEW.datecreate, NEW.tag );
+	END;
+//
+
+CREATE TRIGGER patienttag_Update
+	AFTER UPDATE ON patienttag
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.datecreate, patient=NEW.patient, summary=NEW.tag WHERE module='patienttag' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
+
